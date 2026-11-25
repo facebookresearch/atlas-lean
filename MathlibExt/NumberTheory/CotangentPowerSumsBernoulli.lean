@@ -333,10 +333,7 @@ private theorem choose_diff {r k : ℕ} (hr : 1 ≤ r) (hk : k + 1 ≤ r) :
   rw [Nat.factorial_succ]
   field_simp
   simp only [Nat.cast_add, Nat.cast_one, Nat.cast_mul]
-  first
-    | linear_combination hkey
-    | linear_combination ((k.factorial : ℚ) - 1) * hkey
-    | linear_combination (k.factorial : ℚ) * hkey
+  linear_combination (k.factorial : ℚ) * hkey
 
 /-- Moving the factor `k` from a Stirling term into the factorial denominator. -/
 private theorem term_factor (r k j : ℕ) :

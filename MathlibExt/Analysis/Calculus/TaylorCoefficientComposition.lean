@@ -36,7 +36,7 @@ open Finset Multiset OrderedFinpartition
 
 /-- The integer partition underlying an ordered finpartition, given by the
 multiset of its block sizes. -/
-def toPartition {n : ℕ} (c : OrderedFinpartition n) : Nat.Partition n where
+private def toPartition {n : ℕ} (c : OrderedFinpartition n) : Nat.Partition n where
   parts := (Finset.univ : Finset (Fin c.length)).val.map c.partSize
   parts_pos := by
     intro i hi
@@ -53,22 +53,22 @@ def toPartition {n : ℕ} (c : OrderedFinpartition n) : Nat.Partition n where
     simp
 
 @[simp]
-theorem toPartition_parts {n : ℕ} (c : OrderedFinpartition n) :
+private theorem toPartition_parts {n : ℕ} (c : OrderedFinpartition n) :
     (toPartition c).parts = (Finset.univ : Finset (Fin c.length)).val.map c.partSize :=
   rfl
 
-theorem toPartition_card {n : ℕ} (c : OrderedFinpartition n) :
+private theorem toPartition_card {n : ℕ} (c : OrderedFinpartition n) :
     (toPartition c).parts.card = c.length := by
   simp [toPartition]
 
-theorem toPartition_count {n : ℕ} (c : OrderedFinpartition n) (i : ℕ) :
+private theorem toPartition_count {n : ℕ} (c : OrderedFinpartition n) (i : ℕ) :
     (toPartition c).parts.count i
       = (Finset.univ.filter (fun j => c.partSize j = i)).card := by
   simp [toPartition]
 
 /-- The product over the blocks of an ordered finpartition depends only on the
 underlying integer partition. -/
-theorem prod_partSize_eq {n : ℕ} (c : OrderedFinpartition n) {R : Type*}
+private theorem prod_partSize_eq {n : ℕ} (c : OrderedFinpartition n) {R : Type*}
     [CommMonoid R] (B : ℕ → R) :
     ∏ j, B (c.partSize j)
       = ∏ i ∈ Finset.Icc 1 n, B i ^ (toPartition c).parts.count i := by
@@ -238,7 +238,7 @@ private theorem bell_eq_sum_predecessors {m : Multiset ℕ} (h0 : 0 ∉ m) {n : 
            * ((a - 1) ::ₘ m.erase a).count (a - 1)) := by rw [Finset.mul_sum]
 
 /-- Extending on the left adds a singleton part. -/
-theorem toPartition_extendLeft_parts {n : ℕ} (c : OrderedFinpartition n) :
+private theorem toPartition_extendLeft_parts {n : ℕ} (c : OrderedFinpartition n) :
     (toPartition (c.extendLeft)).parts = 1 ::ₘ (toPartition c).parts := by
   apply Multiset.ext.mpr
   intro i
@@ -269,7 +269,7 @@ theorem toPartition_extendLeft_parts {n : ℕ} (c : OrderedFinpartition n) :
     ring
 
 /-- Extending in the middle grows one part by one. -/
-theorem toPartition_extendMiddle_parts {n : ℕ} (c : OrderedFinpartition n)
+private theorem toPartition_extendMiddle_parts {n : ℕ} (c : OrderedFinpartition n)
     (j : Fin c.length) :
     (toPartition (c.extendMiddle j)).parts
       = (c.partSize j + 1) ::ₘ (toPartition c).parts.erase (c.partSize j) := by
@@ -357,7 +357,7 @@ theorem toPartition_extendMiddle_parts {n : ℕ} (c : OrderedFinpartition n)
 
 /-- Extending on the left lands in a given partition exactly when the
 original partition is the given one with a part of size `1` removed. -/
-theorem extendLeft_eq_iff {n : ℕ} (c : OrderedFinpartition n)
+private theorem extendLeft_eq_iff {n : ℕ} (c : OrderedFinpartition n)
     (π : Nat.Partition (n + 1)) :
     toPartition (c.extendLeft) = π ↔
       (toPartition c).parts = π.parts.erase 1 ∧ 1 ∈ π.parts := by
@@ -377,7 +377,7 @@ theorem extendLeft_eq_iff {n : ℕ} (c : OrderedFinpartition n)
 /-- Extending in the middle lands in a given partition exactly when the
 original partition is the given one with one part of size `a` decremented to
 `a - 1`, where `a` is one more than the size of the extended part. -/
-theorem extendMiddle_eq_iff {n : ℕ} (c : OrderedFinpartition n)
+private theorem extendMiddle_eq_iff {n : ℕ} (c : OrderedFinpartition n)
     (j : Fin c.length) (π : Nat.Partition (n + 1)) (a : ℕ)
     (ha : c.partSize j + 1 = a) :
     (toPartition (c.extendMiddle j) = π ∧ c.partSize j + 1 = a) ↔
