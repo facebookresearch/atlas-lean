@@ -34,19 +34,23 @@ The unique product property is Mathlib's `UniqueProds`: for finite nonempty `A, 
 under left multiplication.
 -/
 
-/-- `G` is left-orderable: it admits a linear order invariant under left multiplication. -/
+/-- **Left-orderable groups.** A group $G$ is left-orderable if it admits a linear order $\le$ such
+that $a \le b$ implies $ca \le cb$ for all $a, b, c \in G$. -/
 def IsLeftOrderable (G : Type*) [Group G] : Prop :=
   ∃ r : LinearOrder G, letI := r; ∀ a b c : G, a ≤ b → c * a ≤ c * b
 
-/-- Kourovka 15.49 (P. Linnell): there is a unique product group that is not left-orderable.
-Mathlib's `UniqueProds G` says that for all finite nonempty `X, Y ⊆ G` some product `x y` has
-exactly one such representation. -/
+/-- **Kourovka Problem 15.49 (unique product groups and left orders).** The statement, asked by
+P. Linnell, that there exists a group $G$ with unique products that is not left-orderable. Here $G$
+has unique products if for all finite nonempty subsets $X, Y \subseteq G$ there are $x_0 \in X$ and
+$y_0 \in Y$ such that $(x_0, y_0)$ is the only pair $(x, y) \in X \times Y$ with $xy = x_0 y_0$. -/
 def uniqueProductGroupNotLeftOrderable : Prop :=
   ∃ (G : Type) (_ : Group G), UniqueProds G ∧ ¬ IsLeftOrderable G
 
-/--
-Resolved true: the Kourovka Archive answers 15.49 "Yes, there does", citing Dunfield's appendix to
-the paper of Kionke and Raimbault, which gives a unique product group that is not left-orderable.
+/-- **A unique product group need not be left-orderable.** There exists a group $G$ that has unique
+products but is not left-orderable: for all finite nonempty subsets $X, Y \subseteq G$ there are
+$x_0 \in X$ and $y_0 \in Y$ such that $(x_0, y_0)$ is the only pair $(x, y) \in X \times Y$ with
+$xy = x_0 y_0$, and yet $G$ admits no linear order invariant under left multiplication.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.49 (P.
 Linnell); resolution: N. Dunfield, Appendix B in S. Kionke and J. Raimbault, On geometric aspects of

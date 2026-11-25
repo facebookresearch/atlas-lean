@@ -57,24 +57,38 @@ variable {n : ℕ}
 
 local notation "ℝⁿ" => EuclideanSpace ℝ (Fin n)
 
-/-- The Gaussian mass `ρ_s (ℒ)` is the function defined after the statement of Theorem 1.2. -/
+/-- **Gaussian mass of a lattice.** For a real number $s$ and a $\mathbb{Z}$-submodule
+$\mathcal{L} \subseteq \mathbb{R}^n$, the Gaussian mass of $\mathcal{L}$ at parameter $s$ is
+$\rho_s(\mathcal{L}) = \sum_{y \in \mathcal{L}} e^{-\pi \|y\|^2 / s^2}$, where $\|y\|$ is the
+Euclidean norm.
+
+The sum is taken to be $0$ when the series is not summable. -/
 noncomputable def ρ (s : ℝ) (ℒ : Submodule ℤ ℝⁿ) : ℝ := ∑' y : ℒ, rexp (- π * ‖y‖ ^ 2 / s ^ 2)
 
-/-- For `ℤ`-lattice of rank `m`, define an `n × m` matrix whose columns are basis elements of `ℒ`.
+/-- **Basis matrix of a lattice.** Let $\mathcal{L} \subseteq \mathbb{R}^n$ be a discrete
+$\mathbb{Z}$-submodule of rank $m$. Its basis matrix $B(\mathcal{L})$ is the real
+$n \times m$ matrix whose $j$-th column is the $j$-th vector of a fixed, arbitrarily chosen
+$\mathbb{Z}$-basis of $\mathcal{L}$.
 -/
 noncomputable def B (ℒ : Submodule ℤ ℝⁿ) [DiscreteTopology ℒ] :
     Matrix (Fin n) (Fin (finrank ℤ ℒ)) ℝ := (of fun i ↦ (finBasis ℤ ℒ) i).transpose
 
-/-- The determinant of a `ℤ`-lattice of arbitrary rank is the square root of the determinant of
-`B^T * B`, where `B`is the basis matrix defined above. -/
+/-- **Determinant of a lattice.** For a discrete $\mathbb{Z}$-submodule
+$\mathcal{L} \subseteq \mathbb{R}^n$ with basis matrix $B = B(\mathcal{L})$ (the real matrix whose
+columns form a fixed $\mathbb{Z}$-basis of $\mathcal{L}$), the determinant of $\mathcal{L}$ is
+$\det(\mathcal{L}) = \sqrt{\det(B^{T} B)}$. -/
 noncomputable def determinant (ℒ : Submodule ℤ ℝⁿ) [DiscreteTopology ℒ] : ℝ :=
   √ ((B ℒ).transpose * B ℒ).det
 
 /--
-Statement of Theorem 1.2 (Reverse Minkowski Theorem):
+**Reverse Minkowski theorem.** Let $\mathcal{L} \subseteq \mathbb{R}^n$ be a full-rank lattice, that
+is, a discrete subgroup of $\mathbb{R}^n$ that spans $\mathbb{R}^n$, such that every subgroup
+$\mathcal{L}' \subseteq \mathcal{L}$ (a lattice of possibly lower rank) has determinant
+$\det(\mathcal{L}') \ge 1$. Let $t = 10(\log n + 2)$, where $\log$ is the natural logarithm. Then
+the Gaussian mass of $\mathcal{L}$ at parameter $1/t$ satisfies
+$\rho_{1/t}(\mathcal{L}) = \sum_{y \in \mathcal{L}} e^{-\pi t^2 \|y\|^2} \le 3/2$, where
+$\|y\|$ is the Euclidean norm.
 
-For any lattice `ℒ ⊆ ℝ^n` with determinant greater or equal to `1` for all sublattices `ℒ'` of `ℒ`,
-`ρ_{1/t}(ℒ) ≤ 3/2` where `t = 10 (log n + 2)`.
 Source: O. Regev, N. Stephens-Davidowitz, `A reverse Minkowski theorem`, Annals of Math, 199 (1) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-199-1-ReverseMinkowski.lean Via leanprover/lean-eval@38361be, problem `annals_reverse_minkowski`.
 -/
 public theorem_wanted theorem_1_2 (ℒ : Submodule ℤ ℝⁿ) [DiscreteTopology ℒ] (hℒ : IsZLattice ℝ ℒ)

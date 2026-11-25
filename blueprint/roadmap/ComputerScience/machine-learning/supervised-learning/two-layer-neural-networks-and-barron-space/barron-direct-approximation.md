@@ -27,7 +27,7 @@ of Barron norm $0$ vanishes on the cube and is approximated by the zero network.
 
 ## Informally uses
 
-- [Variance of the sample mean of i.i.d. samples](../../../../Probability/laws-of-large-numbers/variance-sample-mean-of-iid.md): the pointwise Monte Carlo computation $\mathbb{E}_\Theta \lvert f_m(x) - f(x) \rvert^2 \le \mathbb{E}_\rho \lvert a \sigma(\langle b, x \rangle + c) \rvert^2 / m$.
+- [Variance of the sample mean of i.i.d. samples](../../../../Probability/laws-of-large-numbers/variance-of-the-sample-mean/variance-sample-mean-of-iid.md): the pointwise Monte Carlo computation $\mathbb{E}_\Theta \lvert f_m(x) - f(x) \rvert^2 \le \mathbb{E}_\rho \lvert a \sigma(\langle b, x \rangle + c) \rvert^2 / m$.
 
 ## Sources
 

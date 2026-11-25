@@ -15,7 +15,7 @@ public import MathlibExt.NumberTheory.ModularForms.AtkinLehnerSlash
 open UpperHalfPlane
 
 /-- Source consumer with the original binders. -/
-theorem exactSource {M q : ℕ} [NeZero M] (W : ModularForm.AtkinLehnerDatum M q)
+private theorem exactSource {M q : ℕ} [NeZero M] (W : ModularForm.AtkinLehnerDatum M q)
     (k₁ k₂ : ℤ) (F G : ℍ → ℂ) :
     ModularForm.alSlash W (k₁ + k₂) (F * G) =
       (q : ℂ) • (ModularForm.alSlash W k₁ F * ModularForm.alSlash W k₂ G) :=

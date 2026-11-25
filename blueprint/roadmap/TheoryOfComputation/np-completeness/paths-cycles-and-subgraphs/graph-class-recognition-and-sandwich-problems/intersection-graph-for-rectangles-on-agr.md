@@ -1,0 +1,3 @@
+# Feasible instances of INTERSECTION GRAPH FOR RECTANGLES ON A GRID
+
+An instance $(n, E, M, N)$ of INTERSECTION GRAPH FOR SEGMENTS ON A GRID is feasible for INTERSECTION GRAPH FOR RECTANGLES ON A GRID when there is a one-to-one assignment of rectangles $((x_v, y_v), (z_v, w_v))$ on the $M \times N$ grid ($1 \le x_v \le z_v \le M$, $1 \le y_v \le w_v \le N$) to the vertices $v < n$ such that two distinct vertices $u$ and $v$ are adjacent in the graph on $0, \dots, n-1$ given by $E$ (adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$) exactly when the closed rectangles $[x_u, z_u] \times [y_u, w_u]$ and $[x_v, z_v] \times [y_v, w_v]$ in $\mathbb{R}^2$ have a common point.

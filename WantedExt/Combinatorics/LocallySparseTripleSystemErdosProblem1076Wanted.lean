@@ -47,24 +47,39 @@ this problem.
 
 open Filter Topology
 
-/-- `ex₃(n, 𝓕_k)`: the largest number of triples of a `3`-uniform hypergraph on `Fin n`
-(`SetFamily.IsUniform E 3`) containing no member of `𝓕_k`, the family of all `3`-graphs with `k`
-vertices and `k - 2` edges (the literal, single-`k` family of the problem). Containing a member of
-`𝓕_k` is `SetFamily.ContainsSubgraph E k (k - 2)`: some `k` vertices span at least `k - 2`
-triples (a member may have isolated vertices, and extra triples can be dropped). -/
+/-- **Extremal number for $k$ vertices spanning $k - 2$ triples.** For $k, n \in \mathbb{N}$ let
+$\mathcal{F}_k$ be the family of all $3$-uniform hypergraphs with $k$ vertices and $k - 2$ edges.
+Then $\mathrm{ex}_3(n, \mathcal{F}_k)$ is the largest number of triples in a $3$-uniform
+hypergraph $E$ on the vertex set $\{0, \dots, n-1\}$ that contains no member of $\mathcal{F}_k$,
+meaning that no set of exactly $k$ vertices contains $k - 2$ or more triples of $E$ (a member may
+have isolated vertices, and extra triples can be dropped). Here $k - 2$ is read as $0$ when
+$k < 2$, and $\mathrm{ex}_3(n, \mathcal{F}_k) = 0$ when no such hypergraph exists, which happens
+exactly when $k \le 2$ and $k \le n$. -/
 noncomputable def exSingle (k n : ℕ) : ℕ :=
   sSup {m | ∃ E : Finset (Finset (Fin n)), SetFamily.IsUniform E 3 ∧
     ¬ SetFamily.ContainsSubgraph E k (k - 2) ∧ E.card = m}
 
-/-- Erdős Problem 1076 as worded: for every `k ≥ 5`, `ex₃(n, 𝓕_k) ∼ n² / 6`, with `𝓕_k` the
-single family of `3`-graphs with `k` vertices and `k - 2` edges. -/
+/-- **Erdős Problem 1076 as worded.** For $k, n \in \mathbb{N}$ let
+$\mathrm{ex}_3(n, \mathcal{F}_k)$ be the largest number of triples in a $3$-uniform hypergraph on
+$n$ vertices in which no $k$ vertices span $k - 2$ or more triples, that is, which contains no
+member of the family $\mathcal{F}_k$ of $3$-graphs with $k$ vertices and $k - 2$ edges. This is
+the statement that for every $k \ge 5$, $\mathrm{ex}_3(n, \mathcal{F}_k) / n^2 \to 1/6$ as
+$n \to \infty$, that is, $\mathrm{ex}_3(n, \mathcal{F}_k) \sim n^2 / 6$. -/
 def singleFamilyAsymptotic : Prop :=
   ∀ k : ℕ, 5 ≤ k → Tendsto (fun n : ℕ => (exSingle k n : ℝ) / (n : ℝ) ^ 2) atTop (𝓝 (1 / 6))
 
 /--
-Resolved false as worded: for `k = 5`, Glock proved that the largest triple system on `n` vertices
-with no five vertices spanning three triples has `(1 + o(1)) n² / 5` triples, so `ex₃(n, 𝓕_5) / n²
-→ 1/5`, not `1/6`; his §1 states this as the answer to whether `1/6` is sharp for every `k`.
+**Erdős Problem 1076 fails as worded.** For $k, n \in \mathbb{N}$ let $\mathcal{F}_k$ be the family
+of $3$-graphs with $k$ vertices and $k - 2$ edges, and let $\mathrm{ex}_3(n, \mathcal{F}_k)$ be the
+largest number of triples in a $3$-uniform hypergraph on $n$ vertices that contains no member of
+$\mathcal{F}_k$, that is, in which no $k$ vertices span $k - 2$ or more triples. It is not true
+that for every $k \ge 5$, $\mathrm{ex}_3(n, \mathcal{F}_k) / n^2 \to 1/6$ as $n \to \infty$.
+
+Already $k = 5$ fails: Glock proved that the largest triple system on $n$ vertices with no five
+vertices spanning three triples has $(1 + o(1)) n^2 / 5$ triples, so
+$\mathrm{ex}_3(n, \mathcal{F}_5) / n^2 \to 1/5$; his §1 states this as the answer to whether $1/6$
+is sharp for every $k$.
+
 Source: T. F. Bloom, Erdős Problems, Problem #1076, https://www.erdosproblems.com/1076 (status
 PROVED); resolution: S. Glock, Triple systems with no three triples spanning at most five points,
 Bull. Lond. Math. Soc. 51 (2019), 230-236, abstract and Theorem 2: lim n⁻² f⁽³⁾(n; 5, 3) = 1/5,
