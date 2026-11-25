@@ -82,6 +82,33 @@ private lemma fibStep_add_two (m n : ℕ) :
   exact Finset.sum_congr rfl fun j hj =>
     getD_fibStepSeq m (n + 1) _ (by have := (Finset.mem_Icc.mp hj).1; omega)
 
+/-- **Alternating sum of the tribonacci numbers.** Write $T_n$ for the tribonacci numbers (the
+Fibonacci $3$-step numbers $F^{(3)}_n$). For every integer $n \ge 0$,
+$2 \sum_{j=0}^{n} (-1)^j T_j = (-1)^n (T_{n+1} - T_{n-1}) - 1$, where $T_{n-1}$ is read as
+$T_0 = 0$ when $n = 0$.
+
+The source prints this identity with a factor $1/2$; it is stated here multiplied by $2$.
+
+Source: Robert Frontczak and Karol Gryszka, "General
+Convolution Sums Involving Fibonacci `m`-Step Numbers",
+Corollary 18. -/
+theorem two_mul_sum_neg_one_pow_trib (n : ℕ) :
+    2 * ∑ j ∈ Finset.range (n + 1),
+        (-1 : ℤ) ^ j * fibStep 3 j =
+      (-1 : ℤ) ^ n * (fibStep 3 (n + 1) - fibStep 3 (n - 1)) - 1 := by
+  induction n with
+  | zero =>
+    simp [show fibStep 3 0 = 0 from rfl, show fibStep 3 1 = 1 from rfl]
+  | succ n ih =>
+    -- At n = 0, the last index saturates to 0 and the extra term is zero.
+    have hrec : fibStep 3 (n + 2) = fibStep 3 (n + 1) + fibStep 3 n + fibStep 3 (n - 1) := by
+      rw [fibStep_add_two 3 n, Finset.sum_Icc_succ_top (by decide : 1 ≤ 3),
+        Finset.sum_Icc_succ_top (by decide : 1 ≤ 2), Finset.Icc_self, Finset.sum_singleton]
+      congr 1
+    -- The change in the signed boundary term is twice the new summand.
+    rw [Finset.sum_range_succ, mul_add, ih, pow_succ, Nat.add_sub_cancel, hrec]
+    ring
+
 open PowerSeries
 
 private lemma coeff_shift (m j n : ℕ) :

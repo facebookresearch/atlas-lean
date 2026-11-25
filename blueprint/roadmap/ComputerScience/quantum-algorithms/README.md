@@ -8,6 +8,11 @@ Algorithms for quantum computers and their analysis: Fourier sampling with the D
 - [Shor's order-finding algorithm](shor-s-order-finding-algorithm/README.md)
 - [Shor's reduction of factoring to order finding](shor-s-reduction-of-factoring-to-order-finding/README.md)
 
+- [Quantum query lower bounds](quantum-query-lower-bounds/README.md)
+- [Quantum phase estimation](quantum-phase-estimation.md)
+- [Simon's algorithm](simon-s-algorithm.md)
+- [Classical lower bound for Simon's problem](classical-lower-bound-for-simon-s-problem.md)
+
 ## Related topics
 
 - [Quantum Information](../../QuantumInformation/README.md): states, channels, the quantum Fourier transform and error correction.

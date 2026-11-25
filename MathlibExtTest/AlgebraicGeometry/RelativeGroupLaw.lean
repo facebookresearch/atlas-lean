@@ -73,4 +73,64 @@ example {R : Type u} [CommRing R] {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.
     G.mul_natural t t' ψ hψ x y
   exact h
 
+section BaseChange
+
+variable {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
+  (ι : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
+  {f : A ⟶ Spec (CommRingCat.of R)} (G : RelativeGroupLaw R f) {T : Scheme.{u}}
+  {t' : T ⟶ Spec (CommRingCat.of R')}
+
+/-- Base change consumer with the original binders: a relative group law over
+`Spec R` gives one on the base change along `ι : Spec R' ⟶ Spec R`. -/
+example : Nonempty (RelativeGroupLaw R' (RelativeGroupLaw.baseChangeStr ι f)) :=
+  ⟨G.baseChange ι⟩
+
+/-- The image of a point of the base change over the original base is its
+composite with the first projection. -/
+example (x : Over.mk t' ⟶ Over.mk (RelativeGroupLaw.baseChangeStr ι f)) :
+    (RelativeGroupLaw.baseChangePointToBase ι x).left = x.left ≫ Limits.pullback.fst f ι :=
+  rfl
+
+/-- Points of the base change are determined by their images over the
+original base. -/
+example (x y : Over.mk t' ⟶ Over.mk (RelativeGroupLaw.baseChangeStr ι f))
+    (h : RelativeGroupLaw.baseChangePointToBase ι x =
+      RelativeGroupLaw.baseChangePointToBase ι y) : x = y := by
+  rw [← RelativeGroupLaw.baseChangePointOfBase_toBase ι x, h,
+    RelativeGroupLaw.baseChangePointOfBase_toBase]
+
+/-- The base-changed law multiplies points by multiplying their images over
+the original base. -/
+example (x y : Over.mk t' ⟶ Over.mk (RelativeGroupLaw.baseChangeStr ι f)) :
+    RelativeGroupLaw.baseChangePointToBase ι ((G.baseChange ι).mul t' x y) =
+      G.mul (t' ≫ ι) (RelativeGroupLaw.baseChangePointToBase ι x)
+        (RelativeGroupLaw.baseChangePointToBase ι y) :=
+  RelativeGroupLaw.baseChangePointToBase_ofBase ι _
+
+/-- The identity of the base-changed law maps to the identity of the original
+law. -/
+example : RelativeGroupLaw.baseChangePointToBase ι ((G.baseChange ι).one t') =
+    G.one (t' ≫ ι) :=
+  RelativeGroupLaw.baseChangePointToBase_ofBase ι _
+
+/-- The inverse of the base-changed law maps to the inverse of the original
+law. -/
+example (x : Over.mk t' ⟶ Over.mk (RelativeGroupLaw.baseChangeStr ι f)) :
+    RelativeGroupLaw.baseChangePointToBase ι ((G.baseChange ι).inv t' x) =
+      G.inv (t' ≫ ι) (RelativeGroupLaw.baseChangePointToBase ι x) :=
+  RelativeGroupLaw.baseChangePointToBase_ofBase ι _
+
+/-- The base-changed law gives a group object over the new base. -/
+example : Nonempty (GrpObj (Over.mk (RelativeGroupLaw.baseChangeStr ι f))) :=
+  ⟨(G.baseChange ι).grpObjOverMk⟩
+
+end BaseChange
+
+/-- The base change consumer in a higher universe. -/
+example {R : Type 1} [CommRing R] {R' : Type 1} [CommRing R']
+    (ι : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{1}}
+    {f : A ⟶ Spec (CommRingCat.of R)} (G : RelativeGroupLaw R f) :
+    Nonempty (RelativeGroupLaw R' (RelativeGroupLaw.baseChangeStr ι f)) :=
+  ⟨G.baseChange ι⟩
+
 end RelativeGroupLawTest

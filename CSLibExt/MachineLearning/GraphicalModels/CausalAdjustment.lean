@@ -313,10 +313,18 @@ private lemma not_isDescendant_of_blocked {k m : Fin n} (hkm' : m ≠ k)
     exact absurd (h1'.1.trans this.1) (lt_irrefl _)
   · exact h2'
 
-/-- Relating two interventions `do(X_W = w)` and `do(X_{W'} = w)` for `W ⊆ W'` on assignments
-agreeing with `w` on `W'`: the larger one drops the tables of `W' \ W`. -/
-private lemma joint_mutilateSet_mul {W W' : Finset (Fin n)} (hWW' : W ⊆ W')
-    (w : Fin n → α) {x : Fin n → α} (hx : ∀ j ∈ W', x j = w j) :
+/-- **Relating two nested interventions.** Let $B$ be a Bayesian network on the nodes
+$0, \dots, n - 1$ with values in a nonempty type $\alpha$, write $p_j(\cdot \mid z)$ for the table
+of node $j$, and let $P_W$ be the joint distribution of the mutilated network of
+$\mathrm{do}(X_W = w_W)$. For finite sets $W \subseteq W'$ of nodes, $w \in \alpha^n$ and every
+$x \in \alpha^n$ that agrees with $w$ on $W'$,
+$P_W(x) = P_{W'}(x) \prod_{j \in W' \setminus W} p_j(x_j \mid x_{\mathrm{pa}(j)})$.
+
+With $W = \emptyset$ (`BayesNet.joint_mutilateSet_empty`) this writes the joint law, on the
+event $X_{W'} = w_{W'}$, as the interventional law of $\mathrm{do}(X_{W'} = w_{W'})$ times the
+tables of $W'$. -/
+theorem joint_mutilateSet_eq_mul_prod_sdiff {W W' : Finset (Fin n)} {w x : Fin n → α}
+    (hWW' : W ⊆ W') (hx : ∀ j ∈ W', x j = w j) :
     (b.mutilateSet W w).joint x = (b.mutilateSet W' w).joint x *
       ∏ j ∈ W' \ W, (b.cpt j (b.paVal j x)).weights (x j) := by
   classical
@@ -713,8 +721,8 @@ theorem frontdoor_adjustment [Fintype α] [DecidableEq α] (k y : Fin n) (M : Fi
           simp [Ne.symm hky, hyM])
         (hPaMs (insert k M) (subset_insert _ _)))
   have hC := marginal_reweight (L := Q) (L' := R') hPaMy hPaMC xb hM hhM (fun x hx => by
-      rw [← hJ1, b.joint_mutilateSet_mul (singleton_subset_iff.2 (mem_insert_self k M)) xb hx,
-        hsd]) hciC
+      rw [← hJ1, b.joint_mutilateSet_eq_mul_prod_sdiff
+        (singleton_subset_iff.2 (mem_insert_self k M)) hx, hsd]) hciC
   have hR'1 : marginal R' ↑(insert k M) xb = 1 := b.marginal_mutilateSet_self _ xb fun _ _ => rfl
   have hR'y : marginal R' ↑({y} ∪ insert k M) xb = marginal R' ↑({y} : Finset (Fin n)) xb :=
     b.marginal_mutilateSet_union _ xb {y} fun _ _ => rfl
@@ -777,8 +785,9 @@ theorem frontdoor_adjustment [Fintype α] [DecidableEq α] (k y : Fin n) (M : Fi
     have hxaM' : ∀ j ∈ M, xa j = xb j := hxaM a'
     have h2 := marginal_reweight (L := P) (L' := R) hPaMy hPaMC xa hM hhM (fun x hx => by
         change b.joint x = _
-        rw [← b.joint_mutilateSet_empty xb, b.joint_mutilateSet_mul (empty_subset M) xb
-          (fun j hj => (hx j (mem_insert_of_mem hj)).trans (hxaM' j hj)), sdiff_empty]) hciE
+        rw [← b.joint_mutilateSet_empty xb, b.joint_mutilateSet_eq_mul_prod_sdiff (empty_subset M)
+          (w := xb) (fun j hj => (hx j (mem_insert_of_mem hj)).trans (hxaM' j hj)), sdiff_empty])
+      hciE
     have hRk : marginal R ↑(insert k M) xa = marginal P ↑({k} : Finset (Fin n)) xa := by
       rw [← hMk, union_comm, ← hkN a']
       exact b.marginal_mutilateSet_union M xb {k} hxaM'
