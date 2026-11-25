@@ -14,27 +14,35 @@ public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Data.Fintype.BigOperators
 
 /-!
-# Distinct constant-block partitions
+# Constant-block partitions
 
-The number of partitions into distinct constant blocks with support an initial interval
-equals the number of compositions whose summands are colored by distinct-part partitions.
+The number of partitions into constant blocks with support an initial interval equals the
+number of double compositions. Requiring distinct blocks restricts each color to a partition
+into distinct parts.
 -/
 
 namespace MetaMathlibExt
 
 open Multiset
 
-namespace ncard_distinctConstantBlockPartitions_eq_coloredCompositions
+namespace ConstantBlockPartitions
 
 private def IsConstant (b : Multiset ℕ) : Prop :=
   ∃ x c : ℕ, 0 < c ∧ b = replicate c x
 
-private def blockPartitions (n : ℕ) : Set (Multiset (Multiset ℕ)) :=
-  {P | P.Nodup ∧ (∀ b ∈ P, IsConstant b) ∧ P.join.card = n ∧
+private def blockPartitions (distinct : Bool) (n : ℕ) : Set (Multiset (Multiset ℕ)) :=
+  {P | (distinct = true → P.Nodup) ∧ (∀ b ∈ P, IsConstant b) ∧ P.join.card = n ∧
     ∃ k : ℕ, P.join.toFinset = Finset.Icc 1 k}
 
-private abbrev ColoredComposition (n : ℕ) :=
-  Σ c : Composition n, (i : Fin c.length) → ↥(Nat.Partition.distincts (c.blocksFun i))
+private def partitionColors (distinct : Bool) (m : ℕ) : Finset (Nat.Partition m) :=
+  if distinct then Nat.Partition.distincts m else Finset.univ
+
+private lemma mem_partitionColors {distinct : Bool} {m : ℕ} {p : Nat.Partition m} :
+    p ∈ partitionColors distinct m ↔ (distinct = true → p.parts.Nodup) := by
+  cases distinct <;> simp [partitionColors, Nat.Partition.distincts]
+
+private abbrev ColoredComposition (distinct : Bool) (n : ℕ) :=
+  Σ c : Composition n, (i : Fin c.length) → ↥(partitionColors distinct (c.blocksFun i))
 
 private lemma replicate_eq_iff {m l x y : ℕ} (hm : 0 < m) :
     replicate m x = replicate l y ↔ m = l ∧ x = y := by
@@ -128,71 +136,86 @@ private lemma support_gather {k : ℕ} {sizes : Fin k → Multiset ℕ}
     obtain ⟨m, hm⟩ := Multiset.exists_mem_of_ne_zero (hne i)
     exact ⟨_, mem_gather.mpr ⟨i, m, hm, rfl⟩, mem_replicate.mpr ⟨(hpos i m hm).ne', hi.symm⟩⟩
 
-private lemma group_gather {k : ℕ} {sizes : Fin k → Multiset ℕ}
-    (hpos : ∀ i m, m ∈ sizes i → 0 < m) (hnd : ∀ i, (sizes i).Nodup) (i : Fin k) :
-    group (gather sizes) (i.val + 1) = sizes i := by
-  have hconst := gather_constant hpos
-  refine (Nodup.ext (group_nodup (gather_nodup hpos hnd) hconst _) (hnd i)).mpr ?_
-  intro m
-  rw [mem_group hconst]
-  constructor
-  · rintro ⟨_, hm⟩
-    obtain ⟨j, l, hl, heq⟩ := mem_gather.mp hm
-    obtain ⟨rfl, hji⟩ := (replicate_eq_iff (hpos j l hl)).mp heq
-    obtain rfl : j = i := Fin.ext (Nat.add_right_cancel hji)
-    exact hl
-  · intro hm
-    exact ⟨hpos i m hm, mem_gather.mpr ⟨i, m, hm, rfl⟩⟩
+private lemma bind_finRange_eq_single {α : Type*} {k : ℕ} (i : Fin k) (f : Fin k → Multiset α) :
+    (↑(List.finRange k) : Multiset (Fin k)).bind (fun j => if j = i then f j else 0) = f i := by
+  rw [← bind_filter, Multiset.filter_eq', coe_count, List.count_finRange]
+  simp
 
-private lemma gather_group {P : Multiset (Multiset ℕ)} {k : ℕ} (hnd : P.Nodup)
+-- Filtering by a value selects exactly one group, keeping all its multiplicities.
+private lemma group_gather {k : ℕ} {sizes : Fin k → Multiset ℕ}
+    (hpos : ∀ i m, m ∈ sizes i → 0 < m) (i : Fin k) :
+    group (gather sizes) (i.val + 1) = sizes i := by
+  simp only [group, gather, filter_bind, map_bind, filter_map, map_map, Function.comp_def,
+    card_replicate, map_id']
+  rw [← bind_finRange_eq_single i sizes]
+  apply Multiset.bind_congr
+  intro j _
+  by_cases h : j = i
+  · subst j
+    rw [ite_eq_left rfl, filter_eq_self]
+    exact fun m hm => mem_replicate.mpr ⟨(hpos i m hm).ne', rfl⟩
+  · rw [ite_eq_right h, filter_eq_nil]
+    intro m _ hm
+    exact h (Fin.ext (Nat.add_right_cancel (eq_of_mem_replicate hm).symm))
+
+-- Interchange the bind over indices with the bind over blocks. Each occurrence of a block
+-- lands at exactly one index, where taking its size and replicating recovers that block.
+private lemma gather_group {P : Multiset (Multiset ℕ)} {k : ℕ}
     (hconst : ∀ b ∈ P, IsConstant b) (hsupp : P.join.toFinset = Finset.Icc 1 k) :
     gather (fun i : Fin k => group P (i.val + 1)) = P := by
-  refine (Nodup.ext (gather_nodup (fun _ _ hm => ((mem_group hconst).mp hm).1)
-    (fun _ => group_nodup hnd hconst _)) hnd).mpr ?_
-  intro b
-  rw [mem_gather]
-  constructor
-  · rintro ⟨i, m, hm, rfl⟩
-    exact ((mem_group hconst).mp hm).2
-  · intro hb
-    obtain ⟨x, m, hm, rfl⟩ := hconst b hb
-    have hx : x ∈ P.join.toFinset :=
-      mem_toFinset.mpr (mem_join.mpr ⟨_, hb, mem_replicate.mpr ⟨hm.ne', rfl⟩⟩)
-    rw [hsupp, Finset.mem_Icc] at hx
-    let i : Fin k := ⟨x - 1, by omega⟩
-    have hi : i.val + 1 = x := by dsimp [i]; omega
-    exact ⟨i, m, (mem_group hconst).mpr ⟨hm, hi.symm ▸ hb⟩, by rw [hi]⟩
+  simp only [gather, group, map_map, Function.comp_def]
+  simp_rw [← bind_singleton, bind_filter]
+  rw [bind_bind]
+  calc
+    _ = P.bind (fun b => {b}) := by
+      apply Multiset.bind_congr
+      intro b hb
+      obtain ⟨x, m, hm, rfl⟩ := hconst b hb
+      have hx : x ∈ P.join.toFinset :=
+        mem_toFinset.mpr (mem_join.mpr ⟨_, hb, mem_replicate.mpr ⟨hm.ne', rfl⟩⟩)
+      rw [hsupp, Finset.mem_Icc] at hx
+      let i : Fin k := ⟨x - 1, by omega⟩
+      have hi : i.val + 1 = x := by dsimp [i]; omega
+      rw [← bind_finRange_eq_single i (fun _ => {replicate m x})]
+      apply Multiset.bind_congr
+      intro j _
+      have hmem : j.val + 1 ∈ replicate m x ↔ j = i := by
+        rw [mem_replicate, and_iff_right hm.ne', ← hi]
+        exact ⟨fun h => Fin.ext (Nat.add_right_cancel h), fun h => congrArg (·.val + 1) h⟩
+      simp only [hmem, card_replicate]
+      split_ifs with h
+      · rw [h, hi]
+      · rfl
+    _ = P := by rw [bind_singleton, map_id']
 
-private def parts {n : ℕ} (c : ColoredComposition n) (i : Fin c.1.length) : Multiset ℕ :=
+private variable {distinct : Bool} {n : ℕ}
+
+private def parts (c : ColoredComposition distinct n) (i : Fin c.1.length) : Multiset ℕ :=
   (c.2 i).1.parts
 
-private lemma parts_pos {n : ℕ} (c : ColoredComposition n) (i : Fin c.1.length)
+private lemma parts_pos (c : ColoredComposition distinct n) (i : Fin c.1.length)
     (m : ℕ) (hm : m ∈ parts c i) : 0 < m :=
   (c.2 i).1.parts_pos hm
 
-private lemma parts_nodup {n : ℕ} (c : ColoredComposition n) (i : Fin c.1.length) :
-    (parts c i).Nodup :=
-  (Finset.mem_filter.mp (c.2 i).2).2
-
-private lemma parts_sum {n : ℕ} (c : ColoredComposition n) (i : Fin c.1.length) :
+private lemma parts_sum (c : ColoredComposition distinct n) (i : Fin c.1.length) :
     (parts c i).sum = c.1.blocksFun i :=
   (c.2 i).1.parts_sum
 
-private lemma parts_ne_zero {n : ℕ} (c : ColoredComposition n) (i : Fin c.1.length) :
+private lemma parts_ne_zero (c : ColoredComposition distinct n) (i : Fin c.1.length) :
     parts c i ≠ 0 := by
   intro hi
   have h := parts_sum c i
   rw [hi, sum_zero] at h
   exact (c.1.blocks_pos (c.1.blocksFun_mem_blocks i)).ne' h.symm
 
-private def assemble {n : ℕ} (c : ColoredComposition n) : blockPartitions n :=
+private def assemble (c : ColoredComposition distinct n) : blockPartitions distinct n :=
   ⟨gather (parts c), by
-    refine ⟨gather_nodup (parts_pos c) (parts_nodup c), gather_constant (parts_pos c), ?_,
-      c.1.length, support_gather (parts_pos c) (parts_ne_zero c)⟩
+    refine ⟨fun h => gather_nodup (parts_pos c) (fun i => (mem_partitionColors.mp (c.2 i).2) h),
+      gather_constant (parts_pos c), ?_, c.1.length, support_gather (parts_pos c) (parts_ne_zero c)⟩
     rw [card_join_gather]
     simp only [parts_sum, Composition.ofFn_blocksFun, Composition.blocks_sum]⟩
 
-private lemma assemble_injective {n : ℕ} : Function.Injective (@assemble n) := by
+private lemma assemble_injective : Function.Injective (@assemble distinct n) := by
   rintro ⟨c, f⟩ ⟨d, g⟩ h
   have hP : gather (parts ⟨c, f⟩) = gather (parts ⟨d, g⟩) := congrArg Subtype.val h
   have hsupp : Finset.Icc 1 c.length = Finset.Icc 1 d.length := by
@@ -202,8 +225,7 @@ private lemma assemble_injective {n : ℕ} : Function.Injective (@assemble n) :=
     simpa using congrArg Finset.card hsupp
   have hparts (i : Fin c.length) (j : Fin d.length) (hij : i.val = j.val) :
       parts ⟨c, f⟩ i = parts ⟨d, g⟩ j := by
-    rw [← group_gather (parts_pos ⟨c, f⟩) (parts_nodup ⟨c, f⟩) i,
-      ← group_gather (parts_pos ⟨d, g⟩) (parts_nodup ⟨d, g⟩) j, hP, hij]
+    rw [← group_gather (parts_pos ⟨c, f⟩) i, ← group_gather (parts_pos ⟨d, g⟩) j, hP, hij]
   have hcd : c = d := by
     apply Composition.ext
     refine List.ext_getElem hlen fun i hi hj => ?_
@@ -214,7 +236,7 @@ private lemma assemble_injective {n : ℕ} : Function.Injective (@assemble n) :=
   cases hfg
   rfl
 
-private lemma assemble_surjective {n : ℕ} : Function.Surjective (@assemble n) := by
+private lemma assemble_surjective : Function.Surjective (@assemble distinct n) := by
   rintro ⟨P, hnd, hconst, hcard, k, hsupp⟩
   let sizes (x : ℕ) := group P (x + 1)
   have hsum (i : Fin k) : 0 < (sizes i.val).sum := by
@@ -233,21 +255,38 @@ private lemma assemble_surjective {n : ℕ} : Function.Surjective (@assemble n) 
       fun hm => by
         obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hm
         exact hsum i,
-      by rw [← card_join_gather, gather_group hnd hconst hsupp, hcard]⟩
+      by rw [← card_join_gather, gather_group hconst hsupp, hcard]⟩
   have hlen : c.length = k := List.length_ofFn
   have hsize (i : Fin c.length) : (sizes i.val).sum = c.blocksFun i := by
     change (sizes i.val).sum = (List.ofFn fun j : Fin k => (sizes j.val).sum)[i.val]'i.isLt
     rw [List.getElem_ofFn]
-  let f (i : Fin c.length) : ↥(Nat.Partition.distincts (c.blocksFun i)) :=
+  let f (i : Fin c.length) : ↥(partitionColors distinct (c.blocksFun i)) :=
     ⟨⟨sizes i.val, fun hm => ((mem_group hconst).mp hm).1, hsize i⟩,
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, group_nodup hnd hconst _⟩⟩
+      mem_partitionColors.mpr fun h => group_nodup (hnd h) hconst _⟩
   refine ⟨⟨c, f⟩, Subtype.ext ?_⟩
   change gather (fun i : Fin c.length => sizes i.val) = P
-  exact gather_group hnd hconst (by rw [hlen]; exact hsupp)
+  exact gather_group hconst (by rw [hlen]; exact hsupp)
 
-end ncard_distinctConstantBlockPartitions_eq_coloredCompositions
+private lemma ncard_blockPartitions (distinct : Bool) (n : ℕ) :
+    (blockPartitions distinct n).ncard =
+      ∑ c : Composition n, (c.blocks.map fun m => (partitionColors distinct m).card).prod := by
+  let e := Equiv.ofBijective (assemble (distinct := distinct) (n := n))
+    ⟨assemble_injective, assemble_surjective⟩
+  change Nat.card (blockPartitions distinct n) = _
+  rw [← Nat.card_congr e, Nat.card_eq_fintype_card, Fintype.card_sigma]
+  refine Finset.sum_congr rfl fun c _ => ?_
+  rw [Fintype.card_pi]
+  calc
+    _ = ∏ i : Fin c.length, (partitionColors distinct (c.blocksFun i)).card :=
+      Finset.prod_congr rfl fun i _ => Fintype.card_coe _
+    _ = _ := by
+      rw [← List.prod_ofFn]
+      congr 1
+      exact List.ofFn_getElem_eq_map c.blocks fun m => (partitionColors distinct m).card
 
-open ncard_distinctConstantBlockPartitions_eq_coloredCompositions
+end ConstantBlockPartitions
+
+open ConstantBlockPartitions
 
 /-- **Distinct constant-block partitions and colored compositions.** For $n \ge 0$, count the
 pairs $(A, P)$ where $A$ is a multiset of $n$ positive integers whose distinct elements are
@@ -266,18 +305,25 @@ public theorem ncard_distinctConstantBlockPartitions_eq_coloredCompositions (n :
         P.Nodup ∧ (∀ b ∈ P, ∃ x c : ℕ, 0 < c ∧ b = Multiset.replicate c x) ∧
           P.join.card = n ∧ ∃ k : ℕ, P.join.toFinset = Finset.Icc 1 k}.ncard =
       ∑ c : Composition n, (c.blocks.map fun m => (Nat.Partition.distincts m).card).prod := by
-  change (blockPartitions n).ncard = _
-  let e := Equiv.ofBijective (assemble (n := n)) ⟨assemble_injective, assemble_surjective⟩
-  change Nat.card (blockPartitions n) = _
-  rw [← Nat.card_congr e, Nat.card_eq_fintype_card, Fintype.card_sigma]
-  refine Finset.sum_congr rfl fun c _ => ?_
-  rw [Fintype.card_pi]
-  calc
-    _ = ∏ i : Fin c.length, (Nat.Partition.distincts (c.blocksFun i)).card :=
-      Finset.prod_congr rfl fun i _ => Fintype.card_coe _
-    _ = _ := by
-      rw [← List.prod_ofFn]
-      congr 1
-      exact List.ofFn_getElem_eq_map c.blocks fun m => (Nat.Partition.distincts m).card
+  simpa [blockPartitions, IsConstant, partitionColors] using ncard_blockPartitions true n
+
+/-- **Constant-block partitions and double compositions.** For $n \ge 0$, count the pairs
+$(A, P)$ where $A$ is a multiset of $n$ positive integers whose distinct elements are exactly
+$1, \dots, k$ for some $k \ge 0$, and $P$ is a partition of $A$ into constant blocks, that is,
+a multiset of nonempty multisets, each with all its elements equal, whose sum is $A$. The number
+of such pairs equals the number $d_c(n)$ of double compositions of $n$, that is, compositions of
+$n$ in which each summand $m$ is colored by a partition of $m$:
+$$d_c(n) = \sum_{(c_1, \dots, c_r)} p(c_1) \cdots p(c_r),$$
+where the sum runs over all compositions $(c_1, \dots, c_r)$ of $n$ and $p(m)$ is the number of
+partitions of $m$.
+
+Source: Beimar J. Naranjo and José L. Ramírez, *On Colored Partitions and Euler-Type
+Identities*, INTEGERS 26 (2026), Article A20, Theorem 4 (`integers-2026-A20-thm-4`). -/
+public theorem ncard_constantBlockPartitions_eq_doubleCompositions (n : ℕ) :
+    {P : Multiset (Multiset ℕ) |
+        (∀ b ∈ P, ∃ x c : ℕ, 0 < c ∧ b = Multiset.replicate c x) ∧ P.join.card = n ∧
+          ∃ k : ℕ, P.join.toFinset = Finset.Icc 1 k}.ncard =
+      ∑ c : Composition n, (c.blocks.map fun m => Fintype.card (Nat.Partition m)).prod := by
+  simpa [blockPartitions, IsConstant, partitionColors] using ncard_blockPartitions false n
 
 end MetaMathlibExt
