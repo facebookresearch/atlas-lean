@@ -36,7 +36,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-public import Mathlib.RepresentationTheory.Basic
+public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
 
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Data.Nat.Prime.Int
@@ -57,6 +57,12 @@ upper-triangular subgroup, the values of `z` at conjugate elements, twisted by
 an intertwining endomorphism.  Modulo coboundaries, this operator for a
 product `m = ℓ * ℓ'` of coprime factors is the composite of the operators for
 `ℓ` and for `ℓ'`.
+
+Cocycles and coboundaries are Mathlib's `groupCohomology.cocycles₁` and
+`groupCohomology.coboundaries₁` of `Rep.of ρ`, and the parabolic classes form a
+submodule of `groupCohomology.H1 (Rep.of ρ)`. Mathlib's low-degree group
+cohomology takes the coefficient ring in the universe of the group, and `H1`
+also the representation space, so for `Gamma0 N` these live in `Type`.
 -/
 
 @[expose] public section
@@ -365,74 +371,23 @@ end HeckeOperator
 open CongruenceSubgroup
 open scoped MatrixGroups
 
-section Cocycles
-
-variable {G : Type*} [Group G] {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
-
-def coeffCocycles (ρ : Representation K G V) : Submodule K (G → V) where
-  carrier := {z | ∀ g h : G, z (g * h) = z g + ρ g (z h)}
-  zero_mem' := by
-    intro g h
-    simp
-  add_mem' := by
-    intro z w hz hw g h
-    simp only [Pi.add_apply, hz g h, hw g h, map_add]
-    abel
-  smul_mem' := by
-    intro c z hz g h
-    simp only [Pi.smul_apply, hz g h, smul_add, map_smul]
-
-theorem mem_coeffCocycles_iff (ρ : Representation K G V) (z : G → V) :
-    z ∈ coeffCocycles ρ ↔ ∀ g h : G, z (g * h) = z g + ρ g (z h) :=
-  Iff.rfl
-
-def coeffCoboundaryMap (ρ : Representation K G V) : V →ₗ[K] (G → V) where
-  toFun v := fun g => ρ g v - v
-  map_add' v w := by
-    ext g
-    simp only [map_add, Pi.add_apply]
-    abel
-  map_smul' c v := by
-    ext g
-    simp only [map_smul, Pi.smul_apply, RingHom.id_apply, smul_sub]
-
-@[simp]
-theorem coeffCoboundaryMap_apply (ρ : Representation K G V) (v : V) (g : G) :
-    coeffCoboundaryMap ρ v g = ρ g v - v :=
-  rfl
-
-def coeffCoboundaries (ρ : Representation K G V) : Submodule K (G → V) :=
-  LinearMap.range (coeffCoboundaryMap ρ)
-
-theorem mem_coeffCoboundaries_iff (ρ : Representation K G V) (z : G → V) :
-    z ∈ coeffCoboundaries ρ ↔ ∃ v : V, (fun g => ρ g v - v) = z := by
-  simp [coeffCoboundaries, LinearMap.mem_range]
-  constructor
-  · rintro ⟨v, hv⟩
-    exact ⟨v, by rw [← hv]; rfl⟩
-  · rintro ⟨v, hv⟩
-    exact ⟨v, by rw [← hv]; rfl⟩
-
-theorem coeffCoboundaries_le_coeffCocycles (ρ : Representation K G V) :
-    coeffCoboundaries ρ ≤ coeffCocycles ρ := by
-  rintro z ⟨v, rfl⟩ g h
-  show ρ (g * h) v - v = (ρ g v - v) + ρ g (ρ h v - v)
-  rw [map_mul, map_sub]
-  simp only [Module.End.mul_apply]
-  abel
-
-end Cocycles
-
 section Parabolic
 
-variable {Γ : Subgroup SL(2, ℤ)} {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+variable {Γ : Subgroup SL(2, ℤ)}
 
-def IsParabolicCocycle (ρ : Representation K Γ V) (z : Γ → V) : Prop :=
+def IsParabolicCocycle {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+    (ρ : Representation K Γ V) (z : Γ → V) : Prop :=
   ∀ γ : Γ, ((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).trace ^ 2 = 4 →
     z γ ∈ LinearMap.range (ρ γ - 1)
 
+open groupCohomology
+
+section Cocycles
+
+variable {K : Type} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+
 def coeffParabolicCocycles (ρ : Representation K Γ V) : Submodule K (Γ → V) where
-  carrier := {z | z ∈ coeffCocycles ρ ∧ IsParabolicCocycle ρ z}
+  carrier := {z | z ∈ cocycles₁ (Rep.of ρ) ∧ IsParabolicCocycle ρ z}
   zero_mem' := ⟨Submodule.zero_mem _, fun γ _ => by simp⟩
   add_mem' := by
     rintro z w ⟨hz, hz'⟩ ⟨hw, hw'⟩
@@ -442,41 +397,43 @@ def coeffParabolicCocycles (ρ : Representation K Γ V) : Submodule K (Γ → V)
     exact ⟨Submodule.smul_mem _ c hz, fun γ hγ => Submodule.smul_mem _ c (hz' γ hγ)⟩
 
 theorem mem_coeffParabolicCocycles_iff (ρ : Representation K Γ V) (z : Γ → V) :
-    z ∈ coeffParabolicCocycles ρ ↔ z ∈ coeffCocycles ρ ∧ IsParabolicCocycle ρ z :=
+    z ∈ coeffParabolicCocycles ρ ↔ z ∈ cocycles₁ (Rep.of ρ) ∧ IsParabolicCocycle ρ z :=
   Iff.rfl
 
-theorem coeffParabolicCocycles_le_coeffCocycles (ρ : Representation K Γ V) :
-    coeffParabolicCocycles ρ ≤ coeffCocycles ρ :=
+theorem coeffParabolicCocycles_le_cocycles₁ (ρ : Representation K Γ V) :
+    coeffParabolicCocycles ρ ≤ cocycles₁ (Rep.of ρ) :=
   fun _ hz => hz.1
 
-theorem coeffCoboundaries_le_coeffParabolicCocycles (ρ : Representation K Γ V) :
-    coeffCoboundaries ρ ≤ coeffParabolicCocycles ρ := by
+theorem coboundaries₁_le_coeffParabolicCocycles (ρ : Representation K Γ V) :
+    coboundaries₁ (Rep.of ρ) ≤ coeffParabolicCocycles ρ := by
   intro z hz
-  refine ⟨coeffCoboundaries_le_coeffCocycles ρ hz, fun γ _ => ?_⟩
+  refine ⟨coboundaries₁_le_cocycles₁ _ hz, fun γ _ => ?_⟩
   obtain ⟨v, rfl⟩ := hz
-  exact ⟨v, by simp [coeffCoboundaryMap]⟩
+  exact ⟨v, rfl⟩
 
-def coeffH1par (ρ : Representation K Γ V) : Type _ :=
-  ↥(coeffParabolicCocycles ρ) ⧸ (coeffCoboundaries ρ).comap (coeffParabolicCocycles ρ).subtype
+end Cocycles
 
-instance instAddCommGroupCoeffH1par (ρ : Representation K Γ V) : AddCommGroup (coeffH1par ρ) :=
-  inferInstanceAs (AddCommGroup
-    (↥(coeffParabolicCocycles ρ) ⧸ (coeffCoboundaries ρ).comap (coeffParabolicCocycles ρ).subtype))
+variable {K V : Type} [CommRing K] [AddCommGroup V] [Module K V]
 
-instance instModuleCoeffH1par (ρ : Representation K Γ V) : Module K (coeffH1par ρ) :=
-  inferInstanceAs (Module K
-    (↥(coeffParabolicCocycles ρ) ⧸ (coeffCoboundaries ρ).comap (coeffParabolicCocycles ρ).subtype))
+/-- The parabolic classes: the image in `H¹` of the parabolic cocycles. -/
+noncomputable def coeffH1par (ρ : Representation K Γ V) : Submodule K (H1 (Rep.of ρ)) :=
+  ((coeffParabolicCocycles ρ).comap (cocycles₁ (Rep.of ρ)).subtype).map (H1π (Rep.of ρ)).hom
 
-def coeffH1parMk (ρ : Representation K Γ V) : ↥(coeffParabolicCocycles ρ) →ₗ[K] coeffH1par ρ :=
-  ((coeffCoboundaries ρ).comap (coeffParabolicCocycles ρ).subtype).mkQ
+/-- The class in `coeffH1par ρ` of a parabolic cocycle. -/
+noncomputable def coeffH1parMk (ρ : Representation K Γ V) :
+    ↥(coeffParabolicCocycles ρ) →ₗ[K] ↥(coeffH1par ρ) :=
+  ((H1π (Rep.of ρ)).hom ∘ₗ Submodule.inclusion (coeffParabolicCocycles_le_cocycles₁ ρ)).codRestrict
+    (coeffH1par ρ) fun z => ⟨_, z.2, rfl⟩
 
 theorem coeffH1parMk_surjective (ρ : Representation K Γ V) :
-    Function.Surjective (coeffH1parMk ρ) :=
-  Submodule.mkQ_surjective _
+    Function.Surjective (coeffH1parMk ρ) := by
+  rintro ⟨_, c, hc, rfl⟩
+  exact ⟨⟨c, hc⟩, rfl⟩
 
 theorem coeffH1parMk_eq_zero_iff (ρ : Representation K Γ V) (z : ↥(coeffParabolicCocycles ρ)) :
-    coeffH1parMk ρ z = 0 ↔ (z : Γ → V) ∈ coeffCoboundaries ρ :=
-  (Submodule.Quotient.mk_eq_zero _).trans Submodule.mem_comap
+    coeffH1parMk ρ z = 0 ↔ (z : Γ → V) ∈ coboundaries₁ (Rep.of ρ) :=
+  Submodule.coe_eq_zero.symm.trans <|
+    H1π_eq_zero_iff (A := Rep.of ρ) (Submodule.inclusion (coeffParabolicCocycles_le_cocycles₁ ρ) z)
 
 end Parabolic
 
@@ -511,11 +468,11 @@ end Hecke
 
 
 namespace Sh2
-open CongruenceSubgroup
+open CongruenceSubgroup groupCohomology
 open scoped MatrixGroups
 
 variable (N ℓ : ℕ) [NeZero ℓ]
-  {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+  {K : Type} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
   (ρ : Representation K (Gamma0 N) V) (a : V →ₗ[K] V)
   (ha : ∀ u : ↥(heckeUpper N ℓ), a ∘ₗ ρ (heckeConj N ℓ u) = ρ (u : Gamma0 N) ∘ₗ a)
 
@@ -527,18 +484,12 @@ theorem ha_apply (u : ↥U) (v : V) : a (ρ (c u) v) = ρ (u : Gamma0 N) (a v) :
   have := LinearMap.congr_fun (ha u) v
   simpa using this
 
-theorem cocycle_one {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) : z 1 = 0 := by
-  have h := hz 1 1
-  rw [mul_one, map_one, Module.End.one_apply] at h
-
-  have : z 1 + z 1 = z 1 + 0 := by rw [add_zero]; exact h.symm
-  exact add_left_cancel this
-
-theorem cocycle_map_inv {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) (x : ↥U) :
+theorem cocycle_map_inv {z : Gamma0 N → V} (hz : z ∈ cocycles₁ (Rep.of ρ)) (x : ↥U) :
     z (c x⁻¹) = -(ρ (c x⁻¹) (z (c x))) := by
-  have h1 : z (c x⁻¹ * c x) = z (c x⁻¹) + ρ (c x⁻¹) (z (c x)) := hz _ _
-  rw [← map_mul, inv_mul_cancel, map_one, cocycle_one N ρ hz] at h1
-  exact eq_neg_of_add_eq_zero_left h1.symm
+  have h1 := (mem_cocycles₁_iff (A := Rep.of ρ) z).1 hz (c x⁻¹) (c x)
+  have h0 : z 1 = 0 := cocycles₁_map_one (⟨z, hz⟩ : cocycles₁ (Rep.of ρ))
+  rw [← map_mul, inv_mul_cancel, map_one, h0] at h1
+  exact eq_neg_of_add_eq_zero_right h1.symm
 
 theorem out_mul_transferAux (g : Gamma0 N) (q : Gamma0 N ⧸ U) :
     (g • q).out * (transferAux U g q : Gamma0 N) = g * q.out := by
@@ -546,17 +497,20 @@ theorem out_mul_transferAux (g : Gamma0 N) (q : Gamma0 N ⧸ U) :
 
 include ha in
 
-theorem mem_coeffCocycles {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) :
-    coeffHeckeFun N ℓ ρ a z ∈ coeffCocycles ρ := by
+theorem mem_cocycles₁ {z : Gamma0 N → V} (hz : z ∈ cocycles₁ (Rep.of ρ)) :
+    coeffHeckeFun N ℓ ρ a z ∈ cocycles₁ (Rep.of ρ) := by
   letI := (heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
-  intro g h
+  have hz' : ∀ g h : Gamma0 N, z (g * h) = z g + ρ g (z h) := fun g h =>
+    ((mem_cocycles₁_iff (A := Rep.of ρ) z).1 hz g h).trans (add_comm _ _)
+  refine (mem_cocycles₁_iff (A := Rep.of ρ) _).2 fun g h => ?_
+  rw [Rep.of_ρ, add_comm]
   simp only [coeffHeckeFun_apply]
   have key : ∀ q : Gamma0 N ⧸ U,
       ρ ((g * h) • q).out (a (z (c (transferAux U (g * h) q))))
         = ρ (g • (h • q)).out (a (z (c (transferAux U g (h • q)))))
           + ρ g (ρ (h • q).out (a (z (c (transferAux U h q))))) := by
     intro q
-    rw [transferAux_mul, map_mul, hz, map_add, map_add, mul_smul]
+    rw [transferAux_mul, map_mul, hz', map_add, map_add, mul_smul]
     congr 1
     rw [ha_apply N ℓ ρ a ha, ← Module.End.mul_apply, ← map_mul, out_mul_transferAux, map_mul,
       Module.End.mul_apply]
@@ -566,14 +520,14 @@ theorem mem_coeffCocycles {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) :
 
 include ha in
 
-theorem mem_coeffCoboundaries {z : Gamma0 N → V} (hz : z ∈ coeffCoboundaries ρ) :
-    coeffHeckeFun N ℓ ρ a z ∈ coeffCoboundaries ρ := by
+theorem mem_coboundaries₁ {z : Gamma0 N → V} (hz : z ∈ coboundaries₁ (Rep.of ρ)) :
+    coeffHeckeFun N ℓ ρ a z ∈ coboundaries₁ (Rep.of ρ) := by
   letI := (heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
   obtain ⟨v, rfl⟩ := hz
-  refine ⟨∑ q : Gamma0 N ⧸ U, ρ q.out (a v), ?_⟩
-  funext g
-  simp only [coeffCoboundaryMap_apply, coeffHeckeFun_apply, map_sub, map_sum,
-    Finset.sum_sub_distrib]
+  change coeffHeckeFun N ℓ ρ a (fun g => ρ g v - v) ∈ coboundaries₁ (Rep.of ρ)
+  refine ⟨∑ q : Gamma0 N ⧸ U, ρ q.out (a v), funext fun g => ?_⟩
+  change ρ g (∑ q : Gamma0 N ⧸ U, ρ q.out (a v)) - ∑ q : Gamma0 N ⧸ U, ρ q.out (a v) = _
+  simp only [coeffHeckeFun_apply, map_sub, map_sum, Finset.sum_sub_distrib]
   congr 1
   · refine Finset.sum_congr rfl fun q _ => ?_
     simp only [ha_apply N ℓ ρ a ha]
@@ -585,15 +539,17 @@ theorem mem_coeffCoboundaries {z : Gamma0 N → V} (hz : z ∈ coeffCoboundaries
 
 include ha in
 
-theorem sum_repr_sub_mem_coeffCoboundaries
+theorem sum_repr_sub_mem_coboundaries₁
     (s : Gamma0 N ⧸ U → Gamma0 N) (t : Gamma0 N → Gamma0 N ⧸ U → ↥U)
     (hs : ∀ q, (s q : Gamma0 N ⧸ U) = q)
     (hst : ∀ g q, s (g • q) * (t g q : Gamma0 N) = g * s q)
-    {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) :
+    {z : Gamma0 N → V} (hz : z ∈ cocycles₁ (Rep.of ρ)) :
     (fun g => letI := (heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
         ∑ q : Gamma0 N ⧸ U, ρ (s (g • q)) (a (z (c (t g q)))))
-      - coeffHeckeFun N ℓ ρ a z ∈ coeffCoboundaries ρ := by
+      - coeffHeckeFun N ℓ ρ a z ∈ coboundaries₁ (Rep.of ρ) := by
   letI := (heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
+  have hz' : ∀ g h : Gamma0 N, z (g * h) = z g + ρ g (z h) := fun g h =>
+    ((mem_cocycles₁_iff (A := Rep.of ρ) z).1 hz g h).trans (add_comm _ _)
   have hu_mem : ∀ q : Gamma0 N ⧸ U, (q.out)⁻¹ * s q ∈ U := fun q =>
     QuotientGroup.eq.mp ((QuotientGroup.out_eq' q).trans (hs q).symm)
   have hex : ∀ q : Gamma0 N ⧸ U, ∃ uq : ↥U, s q = q.out * (uq : Gamma0 N) := fun q =>
@@ -611,9 +567,9 @@ theorem sum_repr_sub_mem_coeffCoboundaries
       _ = (↑(u (g • q)))⁻¹ * ((g • q).out⁻¹ * (g * q.out)) * ↑(u q) := by group
 
   set F : V := ∑ q : Gamma0 N ⧸ U, ρ q.out (a (z (c (u q)))) with hF
-  refine ⟨F, ?_⟩
-  funext g
-  simp only [coeffCoboundaryMap_apply, Pi.sub_apply, coeffHeckeFun_apply]
+  refine ⟨F, funext fun g => ?_⟩
+  change ρ g F - F = _
+  simp only [Pi.sub_apply, coeffHeckeFun_apply]
 
   have key : ∀ q : Gamma0 N ⧸ U,
       ρ (s (g • q)) (a (z (c (t g q))))
@@ -622,8 +578,8 @@ theorem sum_repr_sub_mem_coeffCoboundaries
           + ρ g (ρ q.out (a (z (c (u q))))) := by
     intro q
     rw [hsq (g • q), ht g q, map_mul c, map_mul c,
-      hz (c (u (g • q))⁻¹ * c (transferAux U g q)) (c (u q)),
-      hz (c (u (g • q))⁻¹) (c (transferAux U g q)),
+      hz' (c (u (g • q))⁻¹ * c (transferAux U g q)) (c (u q)),
+      hz' (c (u (g • q))⁻¹) (c (transferAux U g q)),
       cocycle_map_inv N ℓ ρ hz (u (g • q)), ← map_mul c]
     simp only [map_add, map_neg, ha_apply N ℓ ρ a ha]
     have e12 : ∀ v : V, ρ ((g • q).out * ((u (g • q) : ↥U) : Gamma0 N)) (ρ (((u (g • q))⁻¹ : ↥U) :
@@ -648,8 +604,8 @@ theorem sum_repr_sub_mem_coeffCoboundaries
 
 end Sh2
 
-theorem sum_repr_sub_coeffHeckeFun_mem_coeffCoboundaries (N ℓ : ℕ) [NeZero ℓ]
-    {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+theorem sum_repr_sub_coeffHeckeFun_mem_coboundaries₁ (N ℓ : ℕ) [NeZero ℓ]
+    {K : Type} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
     (ρ : Representation K (CongruenceSubgroup.Gamma0 N) V) (a : V →ₗ[K] V)
     (ha : ∀ u : ↥(HeckeEis.heckeUpper N ℓ),
       a ∘ₗ ρ (HeckeEis.heckeConj N ℓ u) = ρ (u : CongruenceSubgroup.Gamma0 N) ∘ₗ a)
@@ -658,26 +614,26 @@ theorem sum_repr_sub_coeffHeckeFun_mem_coeffCoboundaries (N ℓ : ℕ) [NeZero �
       ↥(HeckeEis.heckeUpper N ℓ))
     (hs : ∀ q, (s q : CongruenceSubgroup.Gamma0 N ⧸ HeckeEis.heckeUpper N ℓ) = q)
     (hst : ∀ g q, s (g • q) * (t g q : CongruenceSubgroup.Gamma0 N) = g * s q)
-    {z : CongruenceSubgroup.Gamma0 N → V} (hz : z ∈ HeckeEis.coeffCocycles ρ) :
+    {z : CongruenceSubgroup.Gamma0 N → V} (hz : z ∈ groupCohomology.cocycles₁ (Rep.of ρ)) :
     (fun g => letI := (HeckeEis.heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
         ∑ q : CongruenceSubgroup.Gamma0 N ⧸ HeckeEis.heckeUpper N ℓ,
           ρ (s (g • q)) (a (z (HeckeEis.heckeConj N ℓ (t g q)))))
-      - HeckeEis.coeffHeckeFun N ℓ ρ a z ∈ HeckeEis.coeffCoboundaries ρ :=
-  Sh2.sum_repr_sub_mem_coeffCoboundaries N ℓ ρ a ha s t hs hst hz
+      - HeckeEis.coeffHeckeFun N ℓ ρ a z ∈ groupCohomology.coboundaries₁ (Rep.of ρ) :=
+  Sh2.sum_repr_sub_mem_coboundaries₁ N ℓ ρ a ha s t hs hst hz
 
-theorem coeffHeckeFun_mem_coeffCoboundaries (N ℓ : ℕ) [NeZero ℓ]
-    {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+theorem coeffHeckeFun_mem_coboundaries₁ (N ℓ : ℕ) [NeZero ℓ]
+    {K : Type} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
     (ρ : Representation K (CongruenceSubgroup.Gamma0 N) V) (a : V →ₗ[K] V)
     (ha : ∀ u : ↥(HeckeEis.heckeUpper N ℓ),
       a ∘ₗ ρ (HeckeEis.heckeConj N ℓ u) = ρ (u : CongruenceSubgroup.Gamma0 N) ∘ₗ a)
-    {z : CongruenceSubgroup.Gamma0 N → V} (hz : z ∈ HeckeEis.coeffCoboundaries ρ) :
-    HeckeEis.coeffHeckeFun N ℓ ρ a z ∈ HeckeEis.coeffCoboundaries ρ :=
-  Sh2.mem_coeffCoboundaries N ℓ ρ a ha hz
+    {z : CongruenceSubgroup.Gamma0 N → V} (hz : z ∈ groupCohomology.coboundaries₁ (Rep.of ρ)) :
+    HeckeEis.coeffHeckeFun N ℓ ρ a z ∈ groupCohomology.coboundaries₁ (Rep.of ρ) :=
+  Sh2.mem_coboundaries₁ N ℓ ρ a ha hz
 
 
 namespace R2CompTT
 
-open CongruenceSubgroup Matrix
+open CongruenceSubgroup Matrix groupCohomology
 open scoped MatrixGroups
 
 section Entries
@@ -917,7 +873,7 @@ end Coset
 section Main
 
 variable {N ℓ ℓ' m : ℕ} [NeZero ℓ] [NeZero ℓ'] [NeZero m]
-variable {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+variable {K : Type} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
 variable (ρ : Representation K (Gamma0 N) V) (a a' : V →ₗ[K] V)
 variable (σ : Gamma0 N ⧸ heckeUpper N ℓ' → ↥(heckeUpper N ℓ))
 variable (hσ : ∀ q', ((heckeConj N ℓ (σ q') : Gamma0 N) : Gamma0 N ⧸ heckeUpper N ℓ') = q')
@@ -948,9 +904,9 @@ noncomputable def Ty (z : Gamma0 N → V) : Gamma0 N → V := fun h =>
 
 theorem Ty_sub_mem
     (ha' : ∀ u : ↥(heckeUpper N ℓ'), a' ∘ₗ ρ (heckeConj N ℓ' u) = ρ (u : Gamma0 N) ∘ₗ a')
-    {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) :
-    Ty ρ a' σ hσ z - coeffHeckeFun N ℓ' ρ a' z ∈ coeffCoboundaries ρ :=
-  sum_repr_sub_coeffHeckeFun_mem_coeffCoboundaries N ℓ' ρ a' ha' (sP σ) (tP σ hσ)
+    {z : Gamma0 N → V} (hz : z ∈ cocycles₁ (Rep.of ρ)) :
+    Ty ρ a' σ hσ z - coeffHeckeFun N ℓ' ρ a' z ∈ coboundaries₁ (Rep.of ρ) :=
+  sum_repr_sub_coeffHeckeFun_mem_coboundaries₁ N ℓ' ρ a' ha' (sP σ) (tP σ hσ)
     (sP_coe σ hσ) (sP_mul_tP σ hσ) hz
 
 noncomputable def PsiFun (x : (Gamma0 N ⧸ heckeUpper N ℓ) × (Gamma0 N ⧸ heckeUpper N ℓ')) :
@@ -1133,9 +1089,9 @@ theorem compat_mul
 theorem TmS_sub_mem
     (ha : ∀ u : ↥(heckeUpper N ℓ), a ∘ₗ ρ (heckeConj N ℓ u) = ρ (u : Gamma0 N) ∘ₗ a)
     (ha' : ∀ u : ↥(heckeUpper N ℓ'), a' ∘ₗ ρ (heckeConj N ℓ' u) = ρ (u : Gamma0 N) ∘ₗ a')
-    {z : Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) :
-    TmS ρ a a' σ hσ hm z - coeffHeckeFun N m ρ (a ∘ₗ a') z ∈ coeffCoboundaries ρ :=
-  sum_repr_sub_coeffHeckeFun_mem_coeffCoboundaries N m ρ (a ∘ₗ a') (compat_mul ρ a a' hm ha ha')
+    {z : Gamma0 N → V} (hz : z ∈ cocycles₁ (Rep.of ρ)) :
+    TmS ρ a a' σ hσ hm z - coeffHeckeFun N m ρ (a ∘ₗ a') z ∈ coboundaries₁ (Rep.of ρ) :=
+  sum_repr_sub_coeffHeckeFun_mem_coboundaries₁ N m ρ (a ∘ₗ a') (compat_mul ρ a a' hm ha ha')
     (SS σ hσ hm) (TT σ hσ hm) (SS_coe σ hσ hm) (SS_mul_TT σ hσ hm) hz
 
 theorem coeffHeckeFun_Ty
@@ -1185,30 +1141,32 @@ end R2CompTT
 coboundaries: for prime `ℓ` not dividing `N` or `ℓ'`, and `m = ℓ * ℓ'`, the
 composite of the coefficient Hecke operators at `ℓ'` and then at `ℓ`, twisted
 by intertwining endomorphisms `a'` and `a`, differs from the coefficient
-Hecke operator at `m`, twisted by `a ∘ₗ a'`, by a coboundary. -/
-public theorem coeffHeckeFun_coeffHeckeFun_sub_coeffHeckeFun_mul_mem_coeffCoboundaries
+Hecke operator at `m`, twisted by `a ∘ₗ a'`, by a coboundary. Cocycles and
+coboundaries are Mathlib's `groupCohomology.cocycles₁` and
+`groupCohomology.coboundaries₁` of `Rep.of ρ`. -/
+public theorem coeffHeckeFun_coeffHeckeFun_sub_coeffHeckeFun_mul_mem_coboundaries₁
     (N ℓ ℓ' m : ℕ) [NeZero ℓ] [NeZero ℓ'] [NeZero m] (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N)
     (hℓℓ' : ¬ ℓ ∣ ℓ') (hm : m = ℓ * ℓ')
-    {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+    {K : Type} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
     (ρ : Representation K (CongruenceSubgroup.Gamma0 N) V) (a a' : V →ₗ[K] V)
     (ha : ∀ u : ↥(heckeUpper N ℓ),
       a ∘ₗ ρ (heckeConj N ℓ u) = ρ (u : CongruenceSubgroup.Gamma0 N) ∘ₗ a)
     (ha' : ∀ u : ↥(heckeUpper N ℓ'),
       a' ∘ₗ ρ (heckeConj N ℓ' u) = ρ (u : CongruenceSubgroup.Gamma0 N) ∘ₗ a')
-    {z : CongruenceSubgroup.Gamma0 N → V} (hz : z ∈ coeffCocycles ρ) :
+    {z : CongruenceSubgroup.Gamma0 N → V} (hz : z ∈ groupCohomology.cocycles₁ (Rep.of ρ)) :
     coeffHeckeFun N ℓ ρ a (coeffHeckeFun N ℓ' ρ a' z)
-      - coeffHeckeFun N m ρ (a ∘ₗ a') z ∈ coeffCoboundaries ρ := by
+      - coeffHeckeFun N m ρ (a ∘ₗ a') z ∈ groupCohomology.coboundaries₁ (Rep.of ρ) := by
   obtain ⟨σ, hσ⟩ := R2CompTT.exists_section N ℓ ℓ' hℓ hℓN hℓℓ'
   have h1 : coeffHeckeFun N ℓ ρ a
       (R2CompTT.Ty ρ a' σ hσ z - coeffHeckeFun N ℓ' ρ a' z) ∈
-      coeffCoboundaries ρ :=
-    coeffHeckeFun_mem_coeffCoboundaries N ℓ ρ a ha
+      groupCohomology.coboundaries₁ (Rep.of ρ) :=
+    coeffHeckeFun_mem_coboundaries₁ N ℓ ρ a ha
       (R2CompTT.Ty_sub_mem ρ a' σ hσ ha' hz)
   have h2 : coeffHeckeFun N ℓ ρ a (R2CompTT.Ty ρ a' σ hσ z)
-      - coeffHeckeFun N m ρ (a ∘ₗ a') z ∈ coeffCoboundaries ρ := by
+      - coeffHeckeFun N m ρ (a ∘ₗ a') z ∈ groupCohomology.coboundaries₁ (Rep.of ρ) := by
     rw [R2CompTT.coeffHeckeFun_Ty ρ a a' σ hσ hm ha]
     exact R2CompTT.TmS_sub_mem ρ a a' σ hσ hm ha ha' hz
-  have h3 := (coeffCoboundaries ρ).sub_mem h2 h1
+  have h3 := (groupCohomology.coboundaries₁ (Rep.of ρ)).sub_mem h2 h1
   rw [R2CompTT.coeffHeckeFun_sub] at h3
   convert h3 using 1
   abel
