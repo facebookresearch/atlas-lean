@@ -31,6 +31,27 @@ public import MathlibExt.NumberTheory.Cyclotomic.CyclotomicUnitEigenspace
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Galois
 import Mathlib.NumberTheory.NumberField.Units.DirichletTheorem
 
+/-!
+# The `ω²` eigenspace of the units of `ℚ(ζ_p)` modulo `p`-th powers
+
+For a prime `p ≥ 5`, `Stickelberger.finrank_unitsOmegaEigenspace_two` shows that the `ω²`
+eigenspace `Stickelberger.unitsOmegaEigenspace p 2` of `E / E ^ p`, where `E = 𝓞 (ℚ(ζ_p))ˣ`
+with the Galois action `Stickelberger.unitsGalAction`, has dimension 1 over `ZMod p`.
+
+## References
+
+* L. C. Washington, *Introduction to Cyclotomic Fields*, 2nd ed., Graduate Texts in Mathematics
+  83, Springer, 1997.
+* S. Lang, *Cyclotomic Fields I and II*, Graduate Texts in Mathematics 121, Springer, 1990.
+
+The statement is the `ω²` case of the standard description of the units of `ℚ(ζ_p)` modulo
+`p`-th powers as a Galois module; we know of no numbered result of exactly this form in these
+sources. It is derived here directly: Dirichlet's unit theorem and the `p`-torsion of `E` give
+`dim E / E ^ p = (p - 1) / 2`, the trace of each `unitsGalAction p d` is computed from the
+infinite places it fixes, and the trace of the projector `Stickelberger.omegaIdempotent` with
+`i = 2` is then `1` in `ZMod p`, which pins the dimension of its range.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false

@@ -39,6 +39,51 @@ import Mathlib.RingTheory.RootsOfUnity.Lemmas
 import MathlibExt.NumberTheory.Cyclotomic.CyclotomicUnitOmegaTwo
 import MathlibExt.NumberTheory.Cyclotomic.UnitsOmegaEigenspaceFinrank
 
+/-!
+# A Thaine relation for a degree-one prime of `ℚ(ζ_p)⁺`
+
+For a prime `p ≥ 5`, `Stickelberger.thaine_relation_plusField` takes a totally real field `K⁺`
+over which `ℚ(ζ_p)` has degree 2, a unit `δ` of `𝓞 K⁺` in the `ω²` eigenspace modulo `p`-th
+powers, and a prime `𝔏` of `K⁺` of absolute norm `ℓ ≠ p` modulo which `δ` is not a `p`-th power.
+It produces `α ≠ 0`, `t ≠ 0` in `ZMod p` and an ideal `J` with
+`(α) = ∏_d σ_d(𝔏) ^ (t d⁻²) · J ^ p`: the `ω²` component of the class of `𝔏` is trivial in
+`Cl(K⁺) / p`.
+
+## References
+
+* F. Thaine, *On the ideal class groups of real abelian number fields*, Ann. of Math. (2) 128
+  (1988), 1–18.
+* L. C. Washington, *Introduction to Cyclotomic Fields*, 2nd ed., Graduate Texts in Mathematics
+  83, Springer, 1997, Chapter 15 (Thaine's theorem).
+
+The statement is the per-prime step of Thaine's argument, specialized to the `ω²` eigenspace of
+`ℚ(ζ_p)⁺`. Neither source states it verbatim as a numbered result, so the citation is to the
+argument, not to a theorem number.
+
+## Modeling notes
+
+* `Kplus` is any totally real field with `[Algebra Kplus (CyclotomicField p ℚ)]` and
+  `Module.finrank Kplus (CyclotomicField p ℚ) = 2`. Its image is the unique index-2 subfield of
+  `ℚ(ζ_p)`, the source's `K⁺ = ℚ(ζ_p + ζ_p⁻¹)`. `Kplus` is universe-polymorphic.
+* The source's action of `Gal(K⁺ / ℚ)` is `Δact : (ZMod p)ˣ →* (𝓞 Kplus ≃+* 𝓞 Kplus)`, which
+  `hΔact` makes compatible with `Stickelberger.clRingAction`, the transport of
+  `Gal(ℚ(ζ_p) / ℚ) ≃ (ZMod p)ˣ` to ring automorphisms of `𝓞 (ℚ(ζ_p))`.
+* The Teichmüller character `ω` enters through its reduction `d ↦ (d : ZMod p)`: `hδeig` says
+  `σ_d δ = δ ^ (d²) · v ^ p`, the `ω²` eigen-condition on `E⁺ / (E⁺) ^ p`.
+* A degree-one prime is a maximal ideal `𝔏` with `Ideal.absNorm 𝔏 = ℓ`. The hypothesis that `δ`
+  is not a `p`-th power modulo `𝔏` can only hold when `p ∣ ℓ - 1`, as for the source's auxiliary
+  primes.
+* The conclusion uses fractional ideals and exponents `(t * (d ^ 2)⁻¹).val ∈ [0, p)` rather than
+  `Stickelberger.ClGalModule`. Up to the unit `t`, the exponents are the coefficients of
+  `(p - 1) e₂`, where `e₂ = (p - 1)⁻¹ ∑_d (d²)⁻¹ σ_d` is the source's idempotent, here
+  `Stickelberger.omegaIdempotent` with `i = 2`.
+* The proof uses `Stickelberger.finrank_unitsOmegaEigenspace_two` (the `ω²` eigenspace
+  `Stickelberger.unitsOmegaEigenspace p 2` of `E / E ^ p` is a line) and
+  `Stickelberger.omegaIdempotent_two_cycloUnitTwo_ne_zero` (the cyclotomic unit `1 + ζ_p` has
+  nonzero `ω²` component).
+* `p ≥ 5` excludes `p = 3`, where `ω²` is trivial.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false

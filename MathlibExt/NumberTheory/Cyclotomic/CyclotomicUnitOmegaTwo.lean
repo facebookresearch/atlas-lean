@@ -30,6 +30,21 @@ module
 public import MathlibExt.NumberTheory.Cyclotomic.CyclotomicUnitEigenspace
 import Mathlib.NumberTheory.NumberField.Cyclotomic.Galois
 
+/-!
+# The `ω²` component of the cyclotomic unit `1 + ζ_p`
+
+For a prime `p ≥ 5`, `Stickelberger.omegaIdempotent_two_cycloUnitTwo_ne_zero` shows that the
+projector `Stickelberger.omegaIdempotent` with `i = 2` does not kill the class of the unit
+`1 + ζ_p` in `E / E ^ p`, where `E = 𝓞 (ℚ(ζ_p))ˣ`.
+
+## References
+
+* L. C. Washington, *Introduction to Cyclotomic Fields*, 2nd ed., Graduate Texts in Mathematics
+  83, Springer, 1997, Chapters 8 and 15.
+* F. Thaine, *On the ideal class groups of real abelian number fields*, Ann. of Math. (2) 128
+  (1988), 1–18.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
