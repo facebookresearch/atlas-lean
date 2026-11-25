@@ -44,8 +44,12 @@ open Finset Set
 
 variable {R : Type*} [Semiring R]
 
-/-- The sum convolution of two functions `f, g : ℕ → R`, also known as the Cauchy product.
-`sumConv f g n = ∑_{a+b=n} f(a)g(b)`. -/
+/-- **Sum convolution.** Let $R$ be a non-unital non-associative semiring (for example, any
+semiring). The sum convolution, or Cauchy product, of two functions
+$f, g \colon \mathbb{N} \to R$ is the function $\mathbb{N} \to R$ whose value at
+$n \in \mathbb{N}$ is
+$$\sum_{a + b = n} f(a)\, g(b),$$
+where the sum runs over all pairs $(a, b)$ of natural numbers with $a + b = n$. -/
 def sumConv {R : Type*} [NonUnitalNonAssocSemiring R] (f g : ℕ → R) (n : ℕ) : R := ∑ p ∈ antidiagonal n, f p.1 * g p.2
 
 /-- Total of the sum convolution over the padded horizon

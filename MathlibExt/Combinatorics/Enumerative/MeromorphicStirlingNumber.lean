@@ -26,55 +26,77 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Meromorphic Stirling member `S_{2;-1}` from its StirW1 formula.
+/-- **The meromorphic Stirling numbers $S_{2;-1}(n,k)$.** For natural numbers $n$ and $k$ with
+$1 \le k \le n$, the meromorphic Stirling number $S_{2;-1}(n,k)$ is the rational number
+$$S_{2;-1}(n,k) = \frac{(-1)^{n-k}\,(n-1)!}{2^{n-k}\,(k-1)!}\binom{2n-k-1}{n-1}.$$
 
-Concept `meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`),
-source `jis_source_f3006b7ef496c012bfca9644`, statement `jis_9901739ac9112adc8aea1afb`,
-required clause `first_meromorphic`: `(-1)^(n-k)*(n-1)!/(2^(n-k)*(k-1)!)*choose(2n-k-1,n-1)`
-on `1 <= k <= n`. Defined independently from the Bessel side. -/
+For other $n$ and $k$ the same expression is evaluated with natural-number subtraction truncated
+at $0$.
+
+Source: Schork, On Generalized Stirling Numbers and Normal Ordering, StirW1 formula; concept
+`meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`), source
+`jis_source_f3006b7ef496c012bfca9644`, statement `jis_9901739ac9112adc8aea1afb`, required clause
+`first_meromorphic`. Defined independently from the Bessel side. -/
 public def meromorphicStirlingFirst (n k : ℕ) : ℚ :=
   (((-1 : ℚ) ^ (n - k) * (((n - 1).factorial : ℕ) : ℚ)) /
     (((2 : ℚ) ^ (n - k)) * ((((k - 1).factorial : ℕ)) : ℚ))) *
     (((Nat.choose (2 * n - k - 1) (n - 1) : ℕ)) : ℚ)
 
-/-- Meromorphic Stirling member `S_{-1;1}` from its StirW2 formula.
+/-- **The meromorphic Stirling numbers $S_{-1;1}(n,k)$.** For natural numbers $n$ and $k$ with
+$k \le n \le 2k$, the meromorphic Stirling number $S_{-1;1}(n,k)$ is the rational number
+$$S_{-1;1}(n,k) = \frac{(2n-2k)!}{2^{n-k}\,(n-k)!}\binom{n}{2k-n}.$$
 
-Concept `meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`),
-source `jis_source_f3006b7ef496c012bfca9644`, statement `jis_9901739ac9112adc8aea1afb`,
-required clause `second_meromorphic`: `(2n-2k)!/(2^(n-k)*(n-k)!)*choose(n,2k-n)`
-on `n <= 2*k` and `k <= n`. Defined independently from the Bessel side. -/
+For other $n$ and $k$ the same expression is evaluated with natural-number subtraction truncated
+at $0$.
+
+Source: Schork, On Generalized Stirling Numbers and Normal Ordering, StirW2 formula; concept
+`meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`), source
+`jis_source_f3006b7ef496c012bfca9644`, statement `jis_9901739ac9112adc8aea1afb`, required clause
+`second_meromorphic`. Defined independently from the Bessel side. -/
 public def meromorphicStirlingSecond (n k : ℕ) : ℚ :=
   ((((2 * n - 2 * k).factorial : ℕ)) : ℚ) /
     (((2 : ℚ) ^ (n - k)) * ((((n - k).factorial : ℕ)) : ℚ)) *
     (((Nat.choose n (2 * k - n) : ℕ)) : ℚ)
 
-/-- Bessel number of the first kind `b` from its Bessfirst formula.
+/-- **Bessel numbers of the first kind.** For natural numbers $n$ and $k$ with $1 \le k \le n$, the
+Bessel number of the first kind is the rational number
+$$b(n,k) = \frac{(-1)^{n-k}\,(2n-k-1)!}{2^{n-k}\,(k-1)!\,(n-k)!}.$$
 
-Concept `meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`),
-source `jis_source_f3006b7ef496c012bfca9644`, statement `jis_9901739ac9112adc8aea1afb`,
-required clause `first_bessel`: `(-1)^(n-k)*(2n-k-1)!/(2^(n-k)*(k-1)!*(n-k)!)`
-on `1 <= k <= n`. Defined independently from the meromorphic side. -/
+For other $n$ and $k$ the same expression is evaluated with natural-number subtraction truncated
+at $0$.
+
+Source: Schork, On Generalized Stirling Numbers and Normal Ordering, Bessfirst formula; concept
+`meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`), source
+`jis_source_f3006b7ef496c012bfca9644`, statement `jis_9901739ac9112adc8aea1afb`, required clause
+`first_bessel`. Defined independently from the meromorphic side. -/
 public def besselNumberFirst (n k : ℕ) : ℚ :=
   ((-1 : ℚ) ^ (n - k) * ((((2 * n - k - 1).factorial : ℕ)) : ℚ)) /
     (((2 : ℚ) ^ (n - k)) * ((((k - 1).factorial : ℕ)) : ℚ) *
       ((((n - k).factorial : ℕ)) : ℚ))
 
-/-- Bessel number of the second kind `B` from its Besssecond formula.
+/-- **Bessel numbers of the second kind.** For natural numbers $n$ and $k$ with $k \le n \le 2k$,
+the Bessel number of the second kind is the rational number
+$$B(n,k) = \frac{n!}{2^{n-k}\,(2k-n)!\,(n-k)!}.$$
 
-Concept `meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`),
-source `jis_source_f3006b7ef496c012bfca9644`, statement `jis_9901739ac9112adc8aea1afb`,
-required clause `second_bessel`: `n!/(2^(n-k)*(2k-n)!*(n-k)!)`
-on `n <= 2*k` and `k <= n`. Defined independently from the meromorphic side. -/
+For other $n$ and $k$ the same expression is evaluated with natural-number subtraction truncated
+at $0$.
+
+Source: Schork, On Generalized Stirling Numbers and Normal Ordering, Besssecond formula; concept
+`meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`), source
+`jis_source_f3006b7ef496c012bfca9644`, statement `jis_9901739ac9112adc8aea1afb`, required clause
+`second_bessel`. Defined independently from the meromorphic side. -/
 public def besselNumberSecond (n k : ℕ) : ℚ :=
   ((((n.factorial : ℕ))) : ℚ) /
     (((2 : ℚ) ^ (n - k)) * ((((2 * k - n).factorial : ℕ)) : ℚ) *
       ((((n - k).factorial : ℕ)) : ℚ))
 
-/-- First dual identification `S_{2;-1}(n,k) = b(n,k)`.
+/-- **First identification of meromorphic Stirling and Bessel numbers.** For all natural numbers
+$n$ and $k$ with $1 \le k \le n$, the meromorphic Stirling number $S_{2;-1}(n,k)$ equals the
+Bessel number of the first kind $b(n,k)$.
 
-Concept `meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`),
+Source: concept `meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`),
 source `jis_source_f3006b7ef496c012bfca9644`, statement `jis_9901739ac9112adc8aea1afb`,
-required clause `first_identification`, under `1 <= k <= n`. -/
+required clause `first_identification`. -/
 public theorem meromorphicStirlingFirst_eq_besselNumberFirst
     (n k : ℕ) (h1 : 1 ≤ k) (h2 : k ≤ n) :
     meromorphicStirlingFirst n k = besselNumberFirst n k := by
@@ -143,11 +165,13 @@ public theorem meromorphicStirlingFirst_eq_besselNumberFirst
     ((2 : ℚ) ^ (1 + k' + m - (1 + k')) *
       ((((1 + k') - 1).factorial : ℕ) : ℚ))) * key
 
-/-- Second dual identification `S_{-1;1}(n,k) = B(n,k)`.
+/-- **Second identification of meromorphic Stirling and Bessel numbers.** For all natural numbers
+$n$ and $k$ with $k \le n \le 2k$, the meromorphic Stirling number $S_{-1;1}(n,k)$ equals the
+Bessel number of the second kind $B(n,k)$.
 
-Concept `meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`),
+Source: concept `meromorphic Stirling number` (`jis_sem_0210f8899dc06a2d15855412`),
 source `jis_source_f3006b7ef496c012bfca9644`, statement `jis_9901739ac9112adc8aea1afb`,
-required clause `second_identification`, under `n <= 2*k` and `k <= n`. -/
+required clause `second_identification`. -/
 public theorem meromorphicStirlingSecond_eq_besselNumberSecond
     (n k : ℕ) (h1 : n ≤ 2 * k) (h2 : k ≤ n) :
     meromorphicStirlingSecond n k = besselNumberSecond n k := by

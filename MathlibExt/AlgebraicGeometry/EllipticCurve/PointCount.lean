@@ -44,8 +44,9 @@ end Point
 
 variable {F : Type u} [Field F]
 
-/-- The Frobenius trace of an elliptic curve over a finite field, defined by
-`a_q(E) = q + 1 - #E(𝔽_q)`. The point at infinity belongs to `W.Point`. -/
+/-- **Frobenius trace.** Let $W$ be a Weierstrass curve over a finite field $F$ with $q$ elements,
+and let $\#W(F)$ be the number of nonsingular $F$-points of $W$, counting the point at infinity.
+The Frobenius trace of $W$ is the integer $a_q(W) = q + 1 - \#W(F)$. -/
 noncomputable def frobeniusTrace (W : Affine F) [Finite F] : ℤ :=
   (Nat.card F : ℤ) + 1 - (Nat.card W.Point : ℤ)
 
@@ -55,8 +56,9 @@ theorem frobeniusTrace_eq [Finite F] :
     W.frobeniusTrace = (Nat.card F : ℤ) + 1 - (Nat.card W.Point : ℤ) :=
   rfl
 
-/-- The rational-point count is one plus the number of affine solutions to the Weierstrass
-equation; the extra point is the point at infinity. -/
+/-- **Point count from affine solutions.** Let $W$ be an elliptic curve in Weierstrass form over a
+finite field $F$. The number of $F$-points of $W$, counting the point at infinity, is one more than
+the number of pairs $(x, y) \in F \times F$ satisfying the Weierstrass equation of $W$. -/
 theorem natCard_point_eq_natCard_affineSolutions_add_one [Finite F] [W.IsElliptic] :
     Nat.card W.Point = Nat.card {xy : F × F // W.Equation xy.1 xy.2} + 1 := by
   calc
@@ -108,8 +110,12 @@ private def affineSolutionsEquivSigma :
   left_inv _ := rfl
   right_inv _ := rfl
 
-/-- A Weierstrass equation over a finite field has at most two affine points over each
-`x`-coordinate, plus the point at infinity. -/
+/-- **Upper bound on the point count.** Let $W$ be a Weierstrass curve over a finite field $F$
+with $q$ elements. The number of nonsingular $F$-points of $W$, counting the point at infinity, is
+at most $2q + 1$.
+
+Each $x \in F$ lies under at most two affine points, since the Weierstrass equation is quadratic
+in $y$. -/
 theorem natCard_point_le_two_mul_natCard_add_one [Finite F] :
     Nat.card W.Point ≤ 2 * Nat.card F + 1 := by
   let _ : Fintype F := Fintype.ofFinite F
@@ -132,13 +138,18 @@ theorem natCard_point_le_two_mul_natCard_add_one [Finite F] :
       exact equationFiber_natCard_le_two W x
     _ = 2 * Nat.card F + 1 := by simp [Nat.card_eq_fintype_card, mul_comm]
 
-/-- The point-count formula rearranged as `#E(𝔽_q) = q + 1 - a_q(E)`. -/
+/-- **Point count from the Frobenius trace.** Let $W$ be a Weierstrass curve over a finite field
+$F$ with $q$ elements, and let $\#W(F)$ be the number of nonsingular $F$-points of $W$, counting
+the point at infinity. Then $\#W(F) = q + 1 - a_q(W)$, where $a_q(W)$ is the Frobenius trace of
+$W$. -/
 theorem natCard_point_eq_natCard_add_one_sub_frobeniusTrace [Finite F] :
     (Nat.card W.Point : ℤ) = (Nat.card F : ℤ) + 1 - W.frobeniusTrace := by
   rw [frobeniusTrace]
   ring
 
-/-- The point count and Frobenius trace sum to `q + 1`. -/
+/-- **Point count plus Frobenius trace.** Let $W$ be a Weierstrass curve over a finite field $F$
+with $q$ elements, and let $\#W(F)$ be the number of nonsingular $F$-points of $W$, counting the
+point at infinity. Then $\#W(F) + a_q(W) = q + 1$, where $a_q(W)$ is the Frobenius trace of $W$. -/
 theorem natCard_point_add_frobeniusTrace_eq [Finite F] :
     (Nat.card W.Point : ℤ) + W.frobeniusTrace = (Nat.card F : ℤ) + 1 := by
   rw [frobeniusTrace]

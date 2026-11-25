@@ -38,26 +38,37 @@ exp(C √n)` (`f(0) = 1`). Erdős's follow-up on the limit of `log f(n) / √n` 
 -/
 
 open Classical in
-/-- The multiset of the numbers `|ℓ ∩ P|` over the lines `ℓ` determined by a finite set `P ⊆ ℝ²`
-(the lines `line[ℝ, p, q]` through two distinct points of `P`, each line counted once). -/
+/-- **Line sizes of a planar point set.** For a finite set $P \subseteq \mathbb{R}^2$, this is
+the multiset of the numbers $|\ell \cap P|$, where $\ell$ ranges over the lines determined by
+$P$, that is, the distinct lines through two distinct points of $P$, each counted once. -/
 noncomputable def lineSizes (P : Finset (ℝ × ℝ)) : Multiset ℕ :=
   ((P.offDiag.image fun pq => line[ℝ, pq.1, pq.2]).val.map fun ℓ =>
     (P.filter fun r => r ∈ ℓ).card)
 
-/-- `f(n)`: the number of line-compatible sequences for `n`, i.e. of distinct multisets
-`lineSizes P` over `n`-point sets `P ⊆ ℝ²` (a finite set: each has at most `n²` entries, all at most
-`n`). -/
+/-- **Number of line-compatible sequences.** For a natural number $n$, $f(n)$ is the number of
+distinct multisets that arise as the line sizes of some $n$-point set $P \subseteq \mathbb{R}^2$,
+that is, as the multiset of the numbers $|\ell \cap P|$ over the distinct lines $\ell$ through
+two distinct points of $P$, each line counted once. These multisets are the line-compatible
+sequences for $n$; there are finitely many, since each has at most $n^2$ entries, all at most
+$n$. -/
 noncomputable def lineCompatibleCount (n : ℕ) : ℕ :=
   {X : Multiset ℕ | ∃ P : Finset (ℝ × ℝ), P.card = n ∧ lineSizes P = X}.ncard
 
-/-- Erdős Problem 733: there are at most `exp(O(n^{1/2}))` line-compatible sequences, i.e.
-`f(n) ≤ exp(C √n)` for some constant `C` and all `n`. -/
+/-- **Subexponential count of line-compatible sequences (statement).** The proposition that
+there is a real constant $C$ such that for every natural number $n$, the number $f(n)$ of
+line-compatible sequences for $n$ is at most $e^{C \sqrt{n}}$; that is, there are at most
+$\exp(O(\sqrt{n}))$ line-compatible sequences. This is Erdős Problem 733. -/
 def lineCompatibleCountSubexponential : Prop :=
   ∃ C : ℝ, ∀ n : ℕ, (lineCompatibleCount n : ℝ) ≤ Real.exp (C * Real.sqrt n)
 
 /--
-Resolved true: Szemerédi and Trotter proved that there are at most `exp(O(n^{1/2}))` line-compatible
-sequences; erdosproblems.com/733 lists the problem as proved. Source: T. F. Bloom, Erdős Problems,
+**Szemerédi–Trotter bound on line-compatible sequences.** There is a real constant $C$ such that
+for every natural number $n$, the number of line-compatible sequences for $n$, that is, of
+distinct multisets of the numbers $|\ell \cap P|$ over the distinct lines $\ell$ through two
+distinct points of an $n$-point set $P \subseteq \mathbb{R}^2$, each line counted once, is at
+most $e^{C \sqrt{n}}$. This answers Erdős Problem 733.
+
+Source: T. F. Bloom, Erdős Problems,
 Problem #733, https://www.erdosproblems.com/733 (status PROVED); resolution: E. Szemerédi and W. T.
 Trotter, Extremal problems in discrete geometry, Combinatorica 3 (1983), 381-392,
 erdosproblems.com/733: 'This is true, and was proved by Szemerédi and Trotter',

@@ -50,3 +50,11 @@ example : (∫⁻ x, ENNReal.ofReal ((‖x‖ - Real.sqrt (1 : ℝ)) ^ 2)
 
 example : ¬ IsIsotropicLogConcave (uniformInterval 1) :=
   uniformInterval_one_not_isIsotropicLogConcave
+
+example : IsIsotropicLogConcave (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin 1))) ∧
+    normalizedRadiusVariance (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin 1))) = 2 :=
+  stdGaussian_isotropic_variance 1 (by norm_num)
+
+example : IsIsotropicLogConcave (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin 2))) ∧
+    normalizedRadiusVariance (ProbabilityTheory.stdGaussian (EuclideanSpace ℝ (Fin 2))) = 2 :=
+  stdGaussian_isotropic_variance 2 (by norm_num)

@@ -28,8 +28,10 @@ This file proves the Mansour-Shattuck peak generating function for set partition
 encoded as surjective restricted-growth strings.
 -/
 
-/-- A surjective restricted-growth string: every label smaller than the label
-at position `i` already occurs at an earlier position. -/
+/-- **Surjective restricted-growth strings.** A word $w = w_0 w_1 \cdots w_{n-1}$ of length $n$
+with letters in $\{0, 1, \dots, k-1\}$ is a surjective restricted-growth string if every letter
+$0, \dots, k-1$ occurs in $w$ and, for every position $i$ and every letter $m < w_i$, some
+position $j < i$ has $w_j = m$. -/
 def IsSurjectiveRestrictedGrowthString {n k : ℕ} (w : Fin n → Fin k) : Prop :=
   Function.Surjective w ∧
     ∀ i : Fin n, ∀ m : Fin k,
@@ -1368,25 +1370,30 @@ private lemma pgf_PP_triples (k : ℕ) :
   rw [pgf_peakTriples_eq_peak]
 
 /--
-For `k ≥ 1`, the generating function `PP_k(x, q)` counting partitions of
-`[n]` with `k` blocks by peaks equals the Chebyshev closed form
-`x^k (1-q)^k ∏_{j=1}^k (...)`, using Mathlib's second-kind Chebyshev
-polynomials evaluated at `t = 1 + x^2 (1-q)/2`. Integer indexing expresses
-the source denominator `U_{j-1}(t) - U_{j-2}(t)` directly, including `j = 1`.
+**Peak generating function for set partitions.** Let $k \ge 1$. Work in the fraction field of
+the ring $\mathbb{Z}[q][[x]]$ of power series in $x$ with coefficients in $\mathbb{Z}[q]$. For
+a word $w = w_0 \cdots w_{n-1}$, let $\mathrm{pk}(w)$ be the number of positions $a$ with
+$a + 2 < n$ and $w_a < w_{a+1} > w_{a+2}$, and let $W_{n,k}$ be the set of surjective
+restricted-growth strings of length $n$ with letters in $\{0, \dots, k-1\}$. Let
+$t = 1 + x^2 (1-q)/2$, let $U_m = U_m(t)$ for $m \in \mathbb{Z}$, where $U_m$ is the Chebyshev
+polynomial of the second kind extended to negative indices by its recurrence (so $U_{-1} = 0$
+and $U_{-2} = -1$), and let $R_j = (U_j - U_{j-1})/(U_{j-1} - U_{j-2})$. Then
+$$\sum_{n \ge 0} \sum_{w \in W_{n,k}} q^{\mathrm{pk}(w)} x^n = x^k (1-q)^k \prod_{j=1}^{k}
+\frac{1 + x + x^2 (1-q) - R_j}{1 + x (1-q) - R_j}.$$
 
-Source: Toufik Mansour and Mark Shattuck, "Counting Peaks and Valleys in
-a Partition of a Set," Journal of Integer Sequences 13 (2010),
-Article 10.6.8, Theorem (label th_peak_part), lines 313–317,
-<https://cs.uwaterloo.ca/journals/JIS/VOL13/Shattuck/shattuck3.tex>.
-
-Partitions are encoded via restricted-growth strings, with peaks as
-strict-rise/strict-descent triples; division is total in the fraction field,
-so no nonvanishing hypotheses are part of the formalized statement.
+Set partitions of $\{1, \dots, n\}$ with $k$ blocks are encoded by the strings in $W_{n,k}$, and
+$\mathrm{pk}(w)$ counts the peaks of the encoded partition. Division is total in the fraction
+field, so the statement carries no nonvanishing hypotheses.
 
 Proves `Wanted` entry `peak_generating_function_set_partitions`.
 
 Proof: Following Mansour and Shattuck, Lemmas 2.1, 2.2, and 2.6 and Theorem 2.7,
 the proof combines first-occurrence decompositions with the Chebyshev recurrence.
+
+Source: Toufik Mansour and Mark Shattuck, "Counting Peaks and Valleys in
+a Partition of a Set," Journal of Integer Sequences 13 (2010),
+Article 10.6.8, Theorem (label th_peak_part), lines 313–317,
+<https://cs.uwaterloo.ca/journals/JIS/VOL13/Shattuck/shattuck3.tex>.
 -/
 public theorem peak_generating_function_set_partitions
     (k : ℕ) (hk : 1 ≤ k)

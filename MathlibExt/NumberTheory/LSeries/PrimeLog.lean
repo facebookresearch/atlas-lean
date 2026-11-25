@@ -53,19 +53,31 @@ open scoped LSeries.notation
 
 namespace Nat.Primes
 
-/-- The prime logarithmic Dirichlet series `Φ(s) = ∑_p log p / p ^ s`. -/
+/-- **Prime logarithmic Dirichlet series.** For a complex number $s$, the prime logarithmic
+Dirichlet series is $\Phi(s) = \sum_{p} \frac{\log p}{p^s}$, summed over all primes $p$ (the sum
+is taken to be $0$ where the family is not summable). -/
 noncomputable def logDirichletSeries (s : ℂ) : ℂ :=
   ∑' p : Nat.Primes, (Real.log ((p : ℕ) : ℝ) : ℂ) / (((p : ℕ)) : ℂ) ^ s
 
-/-- One summand of the higher-prime-power correction series. -/
+/-- **Summand of the prime-power correction series.** For a prime $p$, a natural number $k$ and a
+complex number $s$, the correction summand is $\frac{\log p}{(p^{k+2})^s}$, the term of the
+prime-power correction series that belongs to the prime power $p^{k+2}$. -/
 noncomputable def logDirichletCorrectionTerm (p : Nat.Primes) (k : ℕ) (s : ℂ) : ℂ :=
   (Real.log ((p : ℕ) : ℝ) : ℂ) / (Nat.cast ((p : ℕ) ^ (k + 2)) : ℂ) ^ s
 
-/-- The higher-prime-power correction series `C(s) = ∑_{p, k} log p / p ^ ((k+2) s)`. -/
+/-- **Prime-power correction series.** For a complex number $s$, the prime-power correction series
+is $C(s) = \sum_{(p, k)} \frac{\log p}{(p^{k+2})^s}$, summed over all pairs of a prime $p$ and a
+natural number $k \ge 0$ (the sum is taken to be $0$ where the family is not summable). -/
 noncomputable def logDirichletCorrection (s : ℂ) : ℂ :=
   ∑' x : Nat.Primes × ℕ, logDirichletCorrectionTerm x.1 x.2 s
 
-/-- The canonical continuation of `Φ(s) - 1 / (s - 1)` to `Re s > 1 / 2`. -/
+/-- **The canonical prime logarithmic continuation.** For a complex number $s$, the prime
+logarithmic continuation is $G(s) = -\frac{\zeta_1'(s)}{\zeta_1(s)} - C(s)$, where $\zeta_1$ is
+the entire function with $\zeta_1(s) = (s - 1)\zeta(s)$ for $s \ne 1$ and $\zeta_1(1) = 1$, the
+quotient is taken to be $0$ where $\zeta_1(s) = 0$, and $C$ is the prime-power correction series.
+
+This function continues $\Phi(s) - \frac{1}{s-1}$ from $\operatorname{Re} s > 1$ to a meromorphic
+function on $\operatorname{Re} s > 1/2$, where $\Phi$ is the prime logarithmic Dirichlet series. -/
 noncomputable def logDirichletContinuation (s : ℂ) : ℂ :=
   -(deriv riemannZeta₁ s / riemannZeta₁ s) - logDirichletCorrection s
 
@@ -227,7 +239,10 @@ private lemma summable_logDirichletCorrectionTerm {s : ℂ} (hs : 1 / 2 < s.re) 
   obtain ⟨p, k⟩ := x
   exact norm_correctionTerm_le p k s s.re le_rfl
 
-/-- The correction series is analytic on `Re s > 1 / 2`. -/
+/-- **Analyticity of the prime-power correction series.** The prime-power correction series
+$C(s) = \sum_{(p, k)} \frac{\log p}{(p^{k+2})^s}$, summed over all primes $p$ and natural
+numbers $k \ge 0$, is analytic at every point of the open half-plane
+$\{s \in \mathbb{C} : \operatorname{Re} s > 1/2\}$. -/
 theorem logDirichletCorrection_analyticOn :
     AnalyticOnNhd ℂ logDirichletCorrection {s | 1 / 2 < s.re} := by
   intro s₀ hs₀
@@ -249,7 +264,12 @@ theorem logDirichletCorrection_analyticOn :
   have hanal := hdiff.analyticOnNhd hUopen
   exact hanal s₀ hσs
 
-/-- Prime-power splitting of the von Mangoldt L-series into `Φ` plus correction. -/
+/-- **Splitting the von Mangoldt L-series over prime powers.** For every complex number $s$
+with $\operatorname{Re} s > 1$, the L-series $\sum_{n \ge 1} \Lambda(n) n^{-s}$ of the von
+Mangoldt function $\Lambda$ equals $\Phi(s) + C(s)$, where $\Phi(s) = \sum_p \log p / p^s$ is
+the prime logarithmic Dirichlet series, summed over all primes $p$, and
+$C(s) = \sum_{(p, k)} \log p / (p^{k+2})^s$ is the higher-prime-power correction series, summed
+over all pairs of a prime $p$ and a natural number $k \ge 0$. -/
 theorem logDirichlet_vonMangoldt_split {s : ℂ} (hs : 1 < s.re) :
     LSeries ↗ArithmeticFunction.vonMangoldt s
       = logDirichletSeries s + logDirichletCorrection s := by
@@ -301,7 +321,10 @@ theorem logDirichlet_vonMangoldt_split {s : ℂ} (hs : 1 < s.re) :
     rw [Summable.tsum_prod hcorr]
     exact tsum_congr fun p => tsum_congr fun k => hterm2 p k
 
-/-- The prime sum via the logarithmic derivative of zeta, up to the correction. -/
+/-- **Prime logarithmic series via the logarithmic derivative of zeta.** For every complex number
+$s$ with $\operatorname{Re} s > 1$, $\Phi(s) = -\frac{\zeta'(s)}{\zeta(s)} - C(s)$, where $\Phi$
+is the prime logarithmic Dirichlet series, $\zeta$ is the Riemann zeta function and $C$ is the
+prime-power correction series. -/
 theorem logDirichletSeries_eq {s : ℂ} (hs : 1 < s.re) :
     logDirichletSeries s
       = -deriv riemannZeta s / riemannZeta s - logDirichletCorrection s := by
@@ -313,7 +336,10 @@ theorem logDirichletSeries_eq {s : ℂ} (hs : 1 < s.re) :
     exact hΛ
   linear_combination hcomb
 
-/-- `riemannZeta₁` does not vanish on the closed half-plane `Re s ≥ 1`. -/
+/-- **Nonvanishing of the Riemann zeta function times $s - 1$ on $\operatorname{Re} s \ge 1$.**
+Let $\zeta$ be the Riemann zeta function and let $\zeta_1 \colon \mathbb{C} \to \mathbb{C}$ be
+given by $\zeta_1(s) = (s - 1)\zeta(s)$ for $s \ne 1$ and $\zeta_1(1) = 1$. Then
+$\zeta_1(s) \ne 0$ for every complex number $s$ with $\operatorname{Re} s \ge 1$. -/
 lemma riemannZeta₁_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) :
     riemannZeta₁ s ≠ 0 := by
   rcases eq_or_ne s 1 with rfl | hne
@@ -323,7 +349,8 @@ lemma riemannZeta₁_ne_zero_of_one_le_re {s : ℂ} (hs : 1 ≤ s.re) :
     rw [riemannZeta_eq_inv_sub_mul hne] at hζ
     exact (mul_ne_zero_iff.mp hζ).2
 
-/-- The canonical continuation is meromorphic on `Re s > 1 / 2`. -/
+/-- **Meromorphy of the prime logarithmic continuation.** The prime logarithmic continuation $G$
+is meromorphic on the open half-plane $\{s \in \mathbb{C} : \operatorname{Re} s > 1/2\}$. -/
 theorem logDirichletContinuation_meromorphic :
     MeromorphicOn logDirichletContinuation {s | 1 / 2 < s.re} := by
   have hanal : AnalyticOnNhd ℂ riemannZeta₁ {s : ℂ | 1 / 2 < s.re} :=
@@ -335,7 +362,9 @@ theorem logDirichletContinuation_meromorphic :
     (fun s => -(deriv riemannZeta₁ s / riemannZeta₁ s) - logDirichletCorrection s) _
   exact (hmero.deriv.div hmero).neg.sub hC
 
-/-- The canonical continuation is analytic on the closed half-plane `Re s ≥ 1`. -/
+/-- **Analyticity of the prime logarithmic continuation.** The prime logarithmic continuation
+$G$ is analytic at every point of the closed half-plane
+$\{s \in \mathbb{C} : \operatorname{Re} s \ge 1\}$. -/
 theorem logDirichletContinuation_analyticOn :
     AnalyticOnNhd ℂ logDirichletContinuation {s | 1 ≤ s.re} := by
   have huniv : AnalyticOnNhd ℂ riemannZeta₁ Set.univ :=
@@ -354,7 +383,10 @@ theorem logDirichletContinuation_analyticOn :
     (fun s => -(deriv riemannZeta₁ s / riemannZeta₁ s) - logDirichletCorrection s) _
   exact hdiv.neg.sub hC
 
-/-- The canonical continuation agrees with `Φ(s) - 1 / (s - 1)` on `Re s > 1`. -/
+/-- **The prime logarithmic continuation on the half-plane $\operatorname{Re} s > 1$.** Let
+$\Phi(s) = \sum_p \frac{\log p}{p^s}$ be the prime logarithmic Dirichlet series, summed over all
+primes $p$, and let $G$ be the prime logarithmic continuation. Then
+$G(s) = \Phi(s) - \frac{1}{s - 1}$ for every complex number $s$ with $\operatorname{Re} s > 1$. -/
 theorem logDirichletContinuation_agree :
     Set.EqOn logDirichletContinuation
       (fun s => logDirichletSeries s - 1 / (s - 1)) {s | 1 < s.re} := by
@@ -379,7 +411,14 @@ theorem logDirichletContinuation_agree :
   rw [hPhi, hid]
   ring
 
-/-- NumberTheoryI Lemma 16.11: one continuation with all three properties. -/
+/-- **Meromorphic continuation of the prime logarithmic Dirichlet series.** Let
+$\Phi(s) = \sum_p \frac{\log p}{p^s}$ be the prime logarithmic Dirichlet series. There is a
+function $g : \mathbb{C} \to \mathbb{C}$ that is meromorphic on the open half-plane
+$\operatorname{Re} s > 1/2$, analytic at every point of the closed half-plane
+$\operatorname{Re} s \ge 1$, and satisfies $g(s) = \Phi(s) - \frac{1}{s-1}$ whenever
+$\operatorname{Re} s > 1$.
+
+Source: NumberTheoryI Lemma 16.11. -/
 theorem logDirichlet_meromorphicContinuation :
     ∃ g : ℂ → ℂ,
       MeromorphicOn g {s | 1 / 2 < s.re} ∧

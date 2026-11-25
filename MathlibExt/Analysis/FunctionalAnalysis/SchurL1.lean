@@ -66,13 +66,18 @@ namespace MathlibExt.Analysis.FunctionalAnalysis.SchurL1
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
-/-- The norm on `ℓ¹(ℕ, 𝕜)` is the sum of the coordinate norms. -/
+/-- **The $\ell^1$ norm is the sum of the coordinate norms.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. Every $x \in \ell^1(\mathbb{N}, \mathbb{K})$ satisfies
+$\|x\| = \sum_{i=0}^{\infty} |x_i|$. -/
 theorem l1_norm_eq_tsum (x : lp (fun _ : ℕ => 𝕜) 1) : ‖x‖ = ∑' i, ‖x i‖ := by
   have h1 : (1 : ℝ≥0∞).toReal = 1 := ENNReal.toReal_one
   rw [lp.norm_eq_tsum_rpow (by rw [h1]; norm_num : (0 : ℝ) < (1 : ℝ≥0∞).toReal) x, h1]
   simp [Real.rpow_one]
 
-/-- Summability of the pairing of a bounded sequence with an `ℓ¹` element. -/
+/-- **The pairing of $\ell^1$ with sequences bounded by $1$ is summable.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$. If $y : \mathbb{N} \to \mathbb{K}$ satisfies $\|y_i\| \le 1$ for
+every $i$ and $x \in \ell^1(\mathbb{N}, \mathbb{K})$, then the series $\sum_i y_i x_i$ is
+summable. -/
 theorem summable_bounded_mul_l1 (y : ℕ → 𝕜) (hy : ∀ i, ‖y i‖ ≤ 1)
     (x : lp (fun _ : ℕ => 𝕜) 1) : Summable fun i => y i * x i := by
   apply Summable.of_norm_bounded (summable_norm_lp_one x)
@@ -81,8 +86,10 @@ theorem summable_bounded_mul_l1 (y : ℕ → 𝕜) (hy : ∀ i, ‖y i‖ ≤ 1)
   calc ‖y i‖ * ‖x i‖ ≤ 1 * ‖x i‖ := by gcongr; exact hy i
     _ = ‖x i‖ := one_mul _
 
-/-- The functional on `ℓ¹` given by pairing with a bounded sequence:
-`x ↦ ∑' i, y i * x i`. -/
+/-- **Pairing $\ell^1$ with a sequence bounded by one.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, and let $(y_i)_{i \in \mathbb{N}}$ be a sequence in $\mathbb{K}$ with
+$|y_i| \le 1$ for every $i$. The pairing with $y$ is the continuous linear functional
+$\ell^1(\mathbb{N}, \mathbb{K}) \to \mathbb{K}$ given by $x \mapsto \sum_{i=0}^{\infty} y_i x_i$. -/
 noncomputable def l1DualOfBounded (y : ℕ → 𝕜) (hy : ∀ i, ‖y i‖ ≤ 1) :
     lp (fun _ : ℕ => 𝕜) 1 →L[𝕜] 𝕜 :=
   LinearMap.mkContinuous
@@ -111,7 +118,11 @@ theorem l1DualOfBounded_apply (y : ℕ → 𝕜) (hy : ∀ i, ‖y i‖ ≤ 1)
     (x : lp (fun _ : ℕ => 𝕜) 1) : l1DualOfBounded y hy x = ∑' i, y i * x i :=
   rfl
 
-/-- The norm of the pairing functional is at most `1`. -/
+/-- **Pairing with a sequence bounded by one has norm at most one.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, and let $(y_i)_{i \in \mathbb{N}}$ be a sequence in $\mathbb{K}$
+with $|y_i| \le 1$ for every $i$. The continuous linear functional
+$x \mapsto \sum_{i=0}^{\infty} y_i x_i$ on $\ell^1(\mathbb{N}, \mathbb{K})$ has operator norm at
+most $1$. -/
 theorem norm_l1DualOfBounded_le (y : ℕ → 𝕜) (hy : ∀ i, ‖y i‖ ≤ 1) :
     ‖l1DualOfBounded y hy‖ ≤ 1 :=
   ContinuousLinearMap.opNorm_le_bound _ zero_le_one (fun x => by
@@ -126,7 +137,10 @@ theorem norm_l1DualOfBounded_le (y : ℕ → 𝕜) (hy : ∀ i, ‖y i‖ ≤ 1)
             (summable_bounded_mul_l1 y hy x).norm (summable_norm_lp_one x)
       _ = ‖x‖ := (l1_norm_eq_tsum x).symm)
 
-/-- Splitting a `tsum` over `ℕ` into a head, a middle block, and a tail. -/
+/-- **Splitting a series into a head, a middle block and a tail.** Let $\mathbb{K}$ be $\mathbb{R}$
+or $\mathbb{C}$, let $h : \mathbb{N} \to \mathbb{K}$ be summable and let $a \le b$ be natural
+numbers. Then $\sum_{i=0}^{\infty} h(i)$ equals
+$\sum_{i < a} h(i) + \sum_{a \le i < b} h(i) + \sum_{j=0}^{\infty} h(j + b)$. -/
 theorem tsum_split3 {h : ℕ → 𝕜} (hs : Summable h) {a b : ℕ} (hab : a ≤ b) :
     ∑' i, h i = (∑ i ∈ Finset.range a, h i) + (∑ i ∈ Finset.Ico a b, h i) +
       ∑' j, h (j + b) := by
@@ -134,25 +148,37 @@ theorem tsum_split3 {h : ℕ → 𝕜} (hs : Summable h) {a b : ℕ} (hab : a �
   have h2 := Finset.sum_range_add_sum_Ico h hab
   rw [← h1, ← h2]
 
-/-- The tail of the norm series of an `ℓ¹` element is summable. -/
+/-- **Tails of an $\ell^1$ sequence are absolutely summable.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. For every $x \in \ell^1(\mathbb{N}, \mathbb{K})$ and every $b \in \mathbb{N}$, the
+series $\sum_{j=0}^{\infty} \|x_{j+b}\|$ is summable. -/
 theorem summable_norm_shift (x : lp (fun _ : ℕ => 𝕜) 1) (b : ℕ) :
     Summable fun j => ‖x (j + b)‖ :=
   (summable_nat_add_iff (f := fun i => ‖x i‖) b).mpr (summable_norm_lp_one x)
 
-/-- The tail of the norm series of an `ℓ¹` element. -/
+/-- **Tail of the norm series of an $\ell^1$ sequence.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. For every $x \in \ell^1(\mathbb{N}, \mathbb{K})$ and every $b \in \mathbb{N}$,
+$\sum_{j=0}^{\infty} \|x_{j+b}\| = \|x\| - \sum_{i < b} \|x_i\|$, where $\|x\|$ is the $\ell^1$
+norm of $x$. -/
 theorem tail_tsum_norm (x : lp (fun _ : ℕ => 𝕜) 1) (b : ℕ) :
     ∑' j, ‖x (j + b)‖ = ‖x‖ - ∑ i ∈ Finset.range b, ‖x i‖ := by
   have h1 := (summable_norm_lp_one x).sum_add_tsum_nat_add b
   have h2 := (l1_norm_eq_tsum x).symm
   linarith
 
-/-- The block containing `i` for an increasing cutoff sequence `M'` with
-`M' 0 = 0`: the least `k` with `i < M' (k + 1)`. -/
+/-- **Block index for a cutoff sequence.** Let $M : \mathbb{N} \to \mathbb{N}$ be such that
+every $i \in \mathbb{N}$ satisfies $i < M(k + 1)$ for some $k$. The block index of
+$i \in \mathbb{N}$ is the least $k$ with $i < M(k + 1)$.
+
+When $M$ is monotone and $M(0) = 0$, the block index of $i$ is the unique $k$ with
+$M(k) \le i < M(k + 1)$. -/
 noncomputable def schurBlockOf (M' : ℕ → ℕ) (hex : ∀ i, ∃ k, i < M' (k + 1))
     (i : ℕ) : ℕ :=
   Nat.find (hex i)
 
-/-- The block index lies in the block it selects. -/
+/-- **An index lies in the block it is assigned to.** Let $M : \mathbb{N} \to \mathbb{N}$ satisfy
+$M(0) = 0$, and suppose every $i \in \mathbb{N}$ satisfies $i < M(j + 1)$ for some $j$. For
+every $i \in \mathbb{N}$, if $k$ is the block index of $i$ (the least $k$ with
+$i < M(k + 1)$), then $M(k) \le i < M(k + 1)$. -/
 theorem schurBlockOf_mem (M' : ℕ → ℕ) (hM'0 : M' 0 = 0)
     (hex : ∀ i, ∃ k, i < M' (k + 1)) (i : ℕ) :
     i ∈ Finset.Ico (M' (schurBlockOf M' hex i)) (M' (schurBlockOf M' hex i + 1)) := by
@@ -166,7 +192,10 @@ theorem schurBlockOf_mem (M' : ℕ → ℕ) (hM'0 : M' 0 = 0)
     push Not at hmin
     exact hmin
 
-/-- An index in block `k` has block index `k`, for a monotone cutoff sequence. -/
+/-- **Indices in block $k$ have block index $k$.** Let $M : \mathbb{N} \to \mathbb{N}$ be
+monotone, and suppose every $i \in \mathbb{N}$ satisfies $i < M(j + 1)$ for some $j$. For all
+$k, i \in \mathbb{N}$ with $M(k) \le i < M(k + 1)$, the block index of $i$ (the least $j$ with
+$i < M(j + 1)$) is $k$. -/
 theorem schurBlockOf_eq {M' : ℕ → ℕ} (hmono : Monotone M')
     (hex : ∀ i, ∃ k, i < M' (k + 1)) (k : ℕ)
     {i : ℕ} (hi : i ∈ Finset.Ico (M' k) (M' (k + 1))) :
@@ -183,15 +212,24 @@ theorem schurBlockOf_eq {M' : ℕ → ℕ} (hmono : Monotone M')
     have hspec : i < M' (schurBlockOf M' hex i + 1) := Nat.find_spec (hex i)
     omega
 
-/-- The conjugate-sign sequence attached to a block decomposition: on block
-`k`, the sign of the `k`-th chosen term. -/
+/-- **Conjugate-sign sequence of a block decomposition.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $(x_n)$ be a sequence in $\ell^1(\mathbb{N}, \mathbb{K})$, let
+$n' : \mathbb{N} \to \mathbb{N}$, and let $M : \mathbb{N} \to \mathbb{N}$ be such that every
+$i \in \mathbb{N}$ satisfies $i < M(j + 1)$ for some $j$. For $i \in \mathbb{N}$, let $k$ be
+the block index of $i$ (the least $k$ with $i < M(k + 1)$) and let $v = x_{n'(k)}(i)$. The
+$i$-th term $\sigma_i$ of the conjugate-sign sequence is $0$ if $v = 0$, and
+$\overline{v} / |v|$ otherwise. -/
 noncomputable def schurSignSeq (x : ℕ → lp (fun _ : ℕ => 𝕜) 1) (n' : ℕ → ℕ)
     (M' : ℕ → ℕ) (hex : ∀ i, ∃ k, i < M' (k + 1)) (i : ℕ) : 𝕜 :=
   if x (n' (schurBlockOf M' hex i)) i = 0 then 0
   else starRingEnd 𝕜 (x (n' (schurBlockOf M' hex i)) i) /
     (‖x (n' (schurBlockOf M' hex i)) i‖ : 𝕜)
 
-/-- The sign sequence is bounded by `1` in norm. -/
+/-- **The conjugate-sign sequence is bounded by one.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $(x_n)$ be a sequence in $\ell^1(\mathbb{N}, \mathbb{K})$, let
+$n' : \mathbb{N} \to \mathbb{N}$, and let $M : \mathbb{N} \to \mathbb{N}$ be such that every
+$i \in \mathbb{N}$ satisfies $i < M(j + 1)$ for some $j$. Every term $\sigma_i$ of the
+conjugate-sign sequence of $(x_n)$, $n'$ and $M$ satisfies $|\sigma_i| \le 1$. -/
 theorem norm_schurSignSeq_le (x : ℕ → lp (fun _ : ℕ => 𝕜) 1) (n' : ℕ → ℕ)
     (M' : ℕ → ℕ) (hex : ∀ i, ∃ k, i < M' (k + 1)) (i : ℕ) :
     ‖schurSignSeq x n' M' hex i‖ ≤ 1 := by
@@ -210,7 +248,12 @@ theorem norm_schurSignSeq_le (x : ℕ → lp (fun _ : ℕ => 𝕜) 1) (n' : ℕ 
     rw [hif, norm_div, RCLike.norm_conj, RCLike.norm_ofReal,
       abs_of_nonneg (norm_nonneg _), div_self (norm_ne_zero_iff.mpr hz)]
 
-/-- On block `k`, the sign sequence times the `k`-th chosen term is its norm. -/
+/-- **On block $k$, the conjugate signs recover absolute values.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $(x_n)$ be a sequence in $\ell^1(\mathbb{N}, \mathbb{K})$,
+let $n' : \mathbb{N} \to \mathbb{N}$, and let $M : \mathbb{N} \to \mathbb{N}$ be monotone and
+such that every $i \in \mathbb{N}$ satisfies $i < M(j + 1)$ for some $j$. Let $\sigma$ be the
+conjugate-sign sequence of $(x_n)$, $n'$ and $M$. For all $k, i \in \mathbb{N}$ with
+$M(k) \le i < M(k + 1)$, we have $\sigma_i \, x_{n'(k)}(i) = |x_{n'(k)}(i)|$. -/
 theorem schurSignSeq_mul (x : ℕ → lp (fun _ : ℕ => 𝕜) 1) (n' : ℕ → ℕ)
     (M' : ℕ → ℕ) (hmono : Monotone M') (hex : ∀ i, ∃ k, i < M' (k + 1)) (k : ℕ)
     {i : ℕ} (hi : i ∈ Finset.Ico (M' k) (M' (k + 1))) :
@@ -501,8 +544,10 @@ private theorem tendsto_norm_zero_of_weak {x : ℕ → lp (fun _ : ℕ => 𝕜) 
   have hlow := hlower K
   exact absurd hlt (not_lt_of_ge hlow)
 
-/-- **Schur's theorem.** A sequence in `ℓ¹(ℕ, 𝕜)` converging weakly to
-`x₀` converges to `x₀` in norm. -/
+/-- **Schur's theorem.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $(x_n)$ be a sequence
+in $\ell^1(\mathbb{N}, \mathbb{K})$ and let $x_0 \in \ell^1(\mathbb{N}, \mathbb{K})$. If
+$F(x_n) \to F(x_0)$ for every continuous linear functional $F$ on $\ell^1(\mathbb{N}, \mathbb{K})$,
+that is, if $(x_n)$ converges weakly to $x_0$, then $x_n \to x_0$ in the $\ell^1$ norm. -/
 theorem schur_tendsto_of_weak_tendsto {x : ℕ → lp (fun _ : ℕ => 𝕜) 1}
     {x₀ : lp (fun _ : ℕ => 𝕜) 1}
     (hx : ∀ F : lp (fun _ : ℕ => 𝕜) 1 →L[𝕜] 𝕜,
@@ -517,8 +562,11 @@ theorem schur_tendsto_of_weak_tendsto {x : ℕ → lp (fun _ : ℕ => 𝕜) 1}
   rw [tendsto_iff_norm_sub_tendsto_zero]
   exact h0
 
-/-- **Schur's theorem, norm form.** Under the hypotheses of
-`schur_tendsto_of_weak_tendsto`, `‖x n - x₀‖ → 0`. -/
+/-- **Schur's theorem, norm form.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let
+$(x_n)$ be a sequence in $\ell^1(\mathbb{N}, \mathbb{K})$, and let
+$x \in \ell^1(\mathbb{N}, \mathbb{K})$. If $F(x_n) \to F(x)$ as $n \to \infty$ for every
+continuous linear functional $F : \ell^1(\mathbb{N}, \mathbb{K}) \to \mathbb{K}$, then
+$\|x_n - x\| \to 0$ as $n \to \infty$. -/
 theorem schur_tendsto_norm_sub_of_weak_tendsto {x : ℕ → lp (fun _ : ℕ => 𝕜) 1}
     {x₀ : lp (fun _ : ℕ => 𝕜) 1}
     (hx : ∀ F : lp (fun _ : ℕ => 𝕜) 1 →L[𝕜] 𝕜,

@@ -20,7 +20,10 @@ This file proves the existence direction of Euler's theorem for finite simple gr
 
 namespace SimpleGraph
 
-/-- An Eulerian trail uses exactly one incidence for every edge at a vertex. -/
+/-- **Edges at a vertex of an Eulerian trail.** Let $G$ be a finite simple graph and let $p$ be an
+Eulerian trail in $G$, that is, a walk between any two vertices that uses every edge of $G$
+exactly once. Then for every vertex $x$, the number of edges of $p$ that contain $x$, counted
+with multiplicity along $p$, equals the degree of $x$ in $G$. -/
 public theorem Walk.IsEulerian.countP_edges_eq_degree {V : Type*} [Fintype V]
     [DecidableEq V] {G : SimpleGraph V} [DecidableRel G.Adj] {u v : V}
     {p : G.Walk u v} (hp : p.IsEulerian) (x : V) :
@@ -35,8 +38,9 @@ public theorem Walk.IsEulerian.countP_edges_eq_degree {V : Type*} [Fintype V]
       rw [hp.edgesFinset_eq, G.incidenceFinset_eq_filter]
     _ = G.degree x := G.card_incidenceFinset_eq_degree x
 
-/-- A finite connected simple graph whose vertex degrees are all even has a closed Eulerian
-trail. -/
+/-- **Euler circuits in connected even graphs.** Every finite connected simple graph in which every
+vertex has even degree has a closed Eulerian trail, that is, a closed walk that uses every edge of
+the graph exactly once. -/
 public theorem Connected.exists_isEulerian {V : Type*} [Fintype V] [DecidableEq V]
     {G : SimpleGraph V} [DecidableRel G.Adj] (hG : G.Connected)
     (heven : ∀ v, Even (G.degree v)) :
@@ -128,7 +132,10 @@ private theorem Walk.support_subset_graph_support {V : Type*} {G : SimpleGraph V
       · apply ih (G.mem_support.mpr ⟨u, huw.symm⟩)
         exact hz
 
-/-- Reachability between supported vertices lifts to the graph induced on its support. -/
+/-- **Reachability among non-isolated vertices.** Let $G$ be a simple graph and let $u$ and $v$ be
+non-isolated vertices of $G$, that is, vertices with at least one neighbour. If $v$ is reachable
+from $u$ in $G$, then $v$ is reachable from $u$ in the subgraph of $G$ induced on the set of
+non-isolated vertices. -/
 public theorem Reachable.induce_support {V : Type*} {G : SimpleGraph V}
     {u v : V} (h : G.Reachable u v) (hu : u ∈ G.support) (hv : v ∈ G.support) :
     (G.induce G.support).Reachable ⟨u, hu⟩ ⟨v, hv⟩ := by
@@ -136,9 +143,13 @@ public theorem Reachable.induce_support {V : Type*} {G : SimpleGraph V}
   let q := p.induce G.support (p.support_subset_graph_support hu)
   exact ⟨q⟩
 
-/-- A finite simple graph whose non-isolated vertices induce a connected graph and whose
-degrees are all even has a closed Eulerian trail. Isolated vertices are irrelevant to an Euler
-tour. -/
+/-- **Euler circuits in simple graphs whose non-isolated vertices are connected.** Let $G$ be a
+finite simple graph in which every vertex has even degree, and suppose that the subgraph of $G$
+induced on its non-isolated vertices is connected (in particular nonempty, so $G$ has at least
+one edge). Then $G$ has a closed Eulerian trail, that is, a closed walk that uses every edge of
+$G$ exactly once.
+
+Isolated vertices are irrelevant to an Euler tour. -/
 public theorem ConnectedSupport.exists_isEulerian {V : Type*} [Fintype V]
     [DecidableEq V] {G : SimpleGraph V} [DecidableRel G.Adj]
     (hG : (G.induce G.support).Connected)

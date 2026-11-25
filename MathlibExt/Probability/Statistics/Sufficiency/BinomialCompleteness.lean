@@ -89,9 +89,9 @@ private theorem binomPoly_coeff (n : ℕ) (u : ℕ → ℝ) (k : ℕ) (hk : k �
     (binomPoly n u).coeff k = (n.choose k : ℝ) * u k := by
   unfold binomPoly
   rw [Polynomial.finsetSum_coeff, Finset.sum_eq_single k
-    (fun b _ hb => by rw [Polynomial.coeff_monomial]; exact ite_eq_right hb)
+    (fun b _ hb => by rw [Polynomial.coeff_monomial_apply]; exact ite_eq_right hb)
     (fun h => absurd hk h)]
-  rw [Polynomial.coeff_monomial]
+  rw [Polynomial.coeff_monomial_apply]
   exact ite_eq_left rfl
 
 /-- The reparameterization `p ↦ p / (1 - p)` is injective on the interior interval. -/
