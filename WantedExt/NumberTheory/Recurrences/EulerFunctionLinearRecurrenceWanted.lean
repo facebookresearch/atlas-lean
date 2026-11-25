@@ -13,6 +13,7 @@ public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.RoughNumberSieve
+public import MathlibExt.NumberTheory.Recurrences.EulerFunctionLinearRecurrence
 
 /-!
 Statements from Luca and Manape on the Euler function of linearly recurrent sequences.
@@ -28,21 +29,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter
-
-/-- **Lower bound for Euler's function and upper bound for the sum of divisors.** Let $\varphi$
-be Euler's totient function and $\sigma(n)$ the sum of the positive divisors of $n$. There is a
-constant $C > 0$ such that $\varphi(n)/n \ge C/\log\log n$ for every integer $n \ge 3$, and there
-is a constant $C'$ such that $\sigma(n)/n \le C' \log\log n$ for every integer $n \ge 3$.
-
-Source: Florian Luca and Makoko Campbell Manape, *On the Euler Function of Linearly Recurrence
-Sequences*, Fibonacci Quarterly 62 (2024), Article 62-4/luca09162024rev2,
-Lemma 1 (`fq-2024-luca09162024rev2-lem-1`),
-quoted from Hardy and Wright, Theorems 323, 328 and 329. -/
-public theorem_wanted totient_div_gg_and_sigma_div_ll_log_log :
-    (∃ C : ℝ, 0 < C ∧ ∀ n : ℕ, 3 ≤ n →
-        C / Real.log (Real.log n) ≤ (Nat.totient n : ℝ) / n) ∧
-      ∃ C : ℝ, ∀ n : ℕ, 3 ≤ n →
-        (ArithmeticFunction.sigma 1 n : ℝ) / n ≤ C * Real.log (Real.log n)
 
 /-- **Integers with many prime factors are rare.** Let $\Omega(n)$ be the number of prime factors
 of $n$ counted with multiplicity. There is a constant $C$ such that for every real $x \ge 10$, the
