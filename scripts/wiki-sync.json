@@ -54006,6 +54006,7 @@
     "MathlibExt.Biology.PopulationGenetics.WrightFisherChain.wrightFisher_prob_eq_binomial": "37acf1d9f65d9ea4",
     "MathlibExt.Biology.PopulationGenetics.WrightFisherChain.wrightFisher_prob_last_last": "56a784288266ccd1",
     "MathlibExt.Biology.PopulationGenetics.WrightFisherChain.wrightFisher_prob_zero_zero": "1d8b846a3939ecee",
+    "MathlibExt.Biology.PopulationGenetics.haploid_mutation_selection_balance": "4fcc4c306c6ceff4",
     "MathlibExt.Biology.StatisticalGenetics.AssociationTests.Calibration.DependenceRegime": "d8d13455935a03b8",
     "MathlibExt.Biology.StatisticalGenetics.AssociationTests.Calibration.DependenceRegime.Holds": "b00f583ef8a7ced7",
     "MathlibExt.Biology.StatisticalGenetics.AssociationTests.Calibration.GenomeWideAssumptions": "96fb2dd88ce9967f",
