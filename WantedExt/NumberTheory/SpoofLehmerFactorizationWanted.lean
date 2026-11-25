@@ -39,18 +39,6 @@ Article A33, Theorem 3 (`integers-2026-A33-thm-3`). -/
 public theorem_wanted spoofLehmer_exponents_eq_one (F : Multiset (ℕ × ℕ))
     (k : ℤ) (hL : IsSpoofLehmer k F) (hnt : ¬ IsTrivialSpoof F) : ∀ p ∈ F, p.2 = 1
 
-/-- **Bases of a nontrivial spoof Lehmer factorization are not $1$ modulo one another.** Let
-$x_1, \dots, x_r$ be natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization with
-these bases, all with exponent $1$. If $F$ is a nontrivial spoof $k$-Lehmer factorization for some
-integer $k$, then $x_i \not\equiv 1 \pmod{x_j}$ for all $i$ and $j$, including $i = j$.
-
-Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
-Article A33, Corollary 1 (`integers-2026-A33-cor-1`). -/
-public theorem_wanted spoofLehmer_base_not_modEq_one_base (x : Multiset ℕ) (k : ℤ)
-    (hL : IsSpoofLehmer k (spoofOfBases x))
-    (hnt : ¬ IsTrivialSpoof (spoofOfBases x)) :
-    ∀ a ∈ x, ∀ b ∈ x, ¬ a ≡ 1 [MOD b]
-
 /-- **Primes dividing the evaluation of a spoof Lehmer factorization.** Let $x_1, \dots, x_r$ be
 natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization with these bases, all with
 exponent $1$. Suppose $F$ is a nontrivial spoof $k$-Lehmer factorization for some integer $k$. If

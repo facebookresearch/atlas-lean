@@ -33,4 +33,12 @@ example : ¬ (3 : ℤ) ≡ 1 [ZMOD 3] := by
 
 example : (3 : ℤ) ≡ 1 [ZMOD 1] := by decide
 
+-- The same base can be used on both sides of the congruence.
+example : ¬ (3 : ℕ) ≡ 1 [MOD 3] := by
+  have hL : IsSpoofLehmer 2 (spoofOfBases {3, 3}) := by
+    rw [spoofOfBases_three_three]
+    exact isSpoofLehmer_three_three
+  exact spoofLehmer_base_not_modEq_one_base (x := {3, 3}) (k := 2)
+    (hL := hL) (hnt := threeThree_not_trivial) 3 (by simp) 3 (by simp)
+
 end MetaMathlibExt

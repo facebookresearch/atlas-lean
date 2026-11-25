@@ -46,4 +46,32 @@ public theorem spoofLehmer_base_not_modEq_one (x : Multiset ℕ) (k : ℤ)
     exact dvd_mul_of_dvd_right htot k
   exact hunit (isUnit_of_dvd_one (by simpa using dvd_sub hn hdiff))
 
+/-- **Bases of a nontrivial spoof Lehmer factorization are not $1$ modulo one another.** Let
+$x_1, \dots, x_r$ be natural numbers and let $F = x_1 \cdots x_r$ be the spoof factorization with
+these bases, all with exponent $1$. If $F$ is a nontrivial spoof $k$-Lehmer factorization for some
+integer $k$, then $x_i \not\equiv 1 \pmod{x_j}$ for all $i$ and $j$, including $i = j$.
+
+Source: Grant Molnar and Guntas Singh, *Spoof Lehmer Factorizations*, INTEGERS 26 (2026),
+Article A33, Corollary 1 (`integers-2026-A33-cor-1`). -/
+public theorem spoofLehmer_base_not_modEq_one_base (x : Multiset ℕ) (k : ℤ)
+    (hL : IsSpoofLehmer k (spoofOfBases x))
+    (hnt : ¬ IsTrivialSpoof (spoofOfBases x)) :
+    ∀ a ∈ x, ∀ b ∈ x, ¬ a ≡ 1 [MOD b] := by
+  intro a ha b hb hab
+  have hbmem : (b, 1) ∈ spoofOfBases x := Multiset.mem_map_of_mem _ hb
+  have hbpos : 0 < b := (hL.1 (b, 1) hbmem).1
+  have hbne : b ≠ 1 := fun h =>
+    hnt (isTrivialSpoof_of_isSpoofLehmer_of_one_mem _ ⟨k, hL⟩ ⟨(b, 1), hbmem, h⟩)
+  have hbnonunit : ¬ IsUnit (b : ℤ) := by
+    intro hu
+    rcases Int.isUnit_iff.mp hu with h | h
+    · exact hbne (Int.ofNat_inj.mp h)
+    · have hbpos' : 0 < (b : ℤ) := Int.natCast_pos.mpr hbpos
+      exact (ne_of_gt (lt_trans (by decide : (-1 : ℤ) < 0) hbpos')) h
+  have hbdvd : (b : ℤ) ∣ spoofEval (spoofOfBases x) := by
+    apply Multiset.dvd_prod
+    exact Multiset.mem_map.mpr ⟨(b, 1), hbmem, by simp⟩
+  exact spoofLehmer_base_not_modEq_one x k hL hnt (b : ℤ) hbdvd hbnonunit a ha
+    (by simpa only [Nat.cast_one] using Int.natCast_modEq_iff.mpr hab)
+
 end MetaMathlibExt
