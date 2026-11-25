@@ -29,6 +29,7 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import MathlibExt.AlgebraicGeometry.Curve.ChartDichotomy
 public import MathlibExt.AlgebraicGeometry.Curve.Divisor
 public import MathlibExt.AlgebraicGeometry.Curve.Place
 
@@ -80,9 +81,6 @@ variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 namespace Place
 
 variable {K F} (v : Place K F)
-
-/-- The residue field of a place: the residue field of its valuation subring. -/
-abbrev ResidueField : Type _ := IsLocalRing.ResidueField v.toValuationSubring
 
 /-- The degree of a place whose residue field is finite-dimensional over `K`: the dimension of
 the residue field over `K`. -/
