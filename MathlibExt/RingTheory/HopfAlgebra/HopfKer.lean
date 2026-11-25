@@ -35,6 +35,7 @@ public import Mathlib.RingTheory.Coalgebra.TensorProduct
 public import Mathlib.RingTheory.Flat.Basic
 public import Mathlib.RingTheory.HopfAlgebra.Convolution
 public import Mathlib.RingTheory.HopfAlgebra.Quotient
+import MathlibExt.Algebra.Algebra.HopfAlgebra.ComulAntipode
 
 @[expose] public section
 
@@ -112,117 +113,14 @@ namespace HopfKerHopf
 
 section AntiCoalgebra
 
-open WithConv
-
-noncomputable section
-
 variable {R : Type u} [CommSemiring R]
 variable {A : Type v} [Semiring A] [HopfAlgebra R A]
-
-theorem toConv_includeLeft_comp_antipode_mul_toConv_includeLeft :
-    toConv ((Algebra.TensorProduct.includeLeft : A →ₐ[R] A ⊗[R] A).toLinearMap ∘ₗ antipode R)
-        * toConv (Algebra.TensorProduct.includeLeft : A →ₐ[R] A ⊗[R] A).toLinearMap
-      = (1 : WithConv (A →ₗ[R] A ⊗[R] A)) := by
-  refine WithConv.ext (LinearMap.ext fun a => ?_)
-  simp only [LinearMap.convMul_def, LinearMap.convOne_def, WithConv.ofConv_toConv,
-    LinearMap.comp_apply, Algebra.linearMap_apply]
-  rw [← (ℛ R a).eq]
-  simp only [map_sum, TensorProduct.map_tmul, LinearMap.mul'_apply, LinearMap.comp_apply,
-    AlgHom.toLinearMap_apply, Algebra.TensorProduct.includeLeft_apply,
-    Algebra.TensorProduct.tmul_mul_tmul, mul_one]
-  rw [Algebra.TensorProduct.algebraMap_apply, ← sum_antipode_mul_eq_algebraMap_counit (ℛ R a)]
-  exact (TensorProduct.sum_tmul _ _ _).symm
-
-theorem toConv_includeRight_comp_antipode_mul_toConv_includeRight :
-    toConv ((Algebra.TensorProduct.includeRight : A →ₐ[R] A ⊗[R] A).toLinearMap ∘ₗ antipode R)
-        * toConv (Algebra.TensorProduct.includeRight : A →ₐ[R] A ⊗[R] A).toLinearMap
-      = (1 : WithConv (A →ₗ[R] A ⊗[R] A)) := by
-  refine WithConv.ext (LinearMap.ext fun a => ?_)
-  simp only [LinearMap.convMul_def, LinearMap.convOne_def, WithConv.ofConv_toConv,
-    LinearMap.comp_apply, Algebra.linearMap_apply]
-  rw [← (ℛ R a).eq]
-  simp only [map_sum, TensorProduct.map_tmul, LinearMap.mul'_apply, LinearMap.comp_apply,
-    AlgHom.toLinearMap_apply, Algebra.TensorProduct.includeRight_apply,
-    Algebra.TensorProduct.tmul_mul_tmul, one_mul]
-  rw [Algebra.TensorProduct.algebraMap_apply', ← sum_antipode_mul_eq_algebraMap_counit (ℛ R a)]
-  exact (TensorProduct.tmul_sum _ _ _).symm
-
-theorem toConv_includeLeft_mul_toConv_includeRight :
-    toConv (Algebra.TensorProduct.includeLeft : A →ₐ[R] A ⊗[R] A).toLinearMap
-        * toConv (Algebra.TensorProduct.includeRight : A →ₐ[R] A ⊗[R] A).toLinearMap
-      = toConv (comul : A →ₗ[R] A ⊗[R] A) := by
-  refine WithConv.ext (LinearMap.ext fun a => ?_)
-  simp only [LinearMap.convMul_def, WithConv.ofConv_toConv, LinearMap.comp_apply]
-  rw [← (ℛ R a).eq]
-  simp only [map_sum, TensorProduct.map_tmul, LinearMap.mul'_apply, AlgHom.toLinearMap_apply,
-    Algebra.TensorProduct.includeLeft_apply, Algebra.TensorProduct.includeRight_apply,
-    Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
-
-theorem toConv_includeRight_comp_antipode_mul_toConv_includeLeft_comp_antipode :
-    toConv ((Algebra.TensorProduct.includeRight : A →ₐ[R] A ⊗[R] A).toLinearMap ∘ₗ antipode R)
-        * toConv
-            ((Algebra.TensorProduct.includeLeft : A →ₐ[R] A ⊗[R] A).toLinearMap ∘ₗ antipode R)
-      = toConv ((TensorProduct.comm R A A).toLinearMap
-          ∘ₗ TensorProduct.map (antipode R) (antipode R) ∘ₗ comul) := by
-  refine WithConv.ext (LinearMap.ext fun a => ?_)
-  simp only [LinearMap.convMul_def, WithConv.ofConv_toConv, LinearMap.comp_apply]
-  rw [← (ℛ R a).eq]
-  simp only [map_sum, TensorProduct.map_tmul, LinearMap.mul'_apply, LinearMap.comp_apply,
-    AlgHom.toLinearMap_apply, Algebra.TensorProduct.includeLeft_apply,
-    Algebra.TensorProduct.includeRight_apply, Algebra.TensorProduct.tmul_mul_tmul, mul_one,
-    one_mul, LinearEquiv.coe_toLinearMap, TensorProduct.comm_tmul]
-
-theorem toConv_comm_map_antipode_comul_mul_toConv_comul :
-    toConv ((TensorProduct.comm R A A).toLinearMap
-          ∘ₗ TensorProduct.map (antipode R) (antipode R) ∘ₗ comul)
-        * toConv (comul : A →ₗ[R] A ⊗[R] A)
-      = (1 : WithConv (A →ₗ[R] A ⊗[R] A)) := by
-  rw [← toConv_includeRight_comp_antipode_mul_toConv_includeLeft_comp_antipode,
-    ← toConv_includeLeft_mul_toConv_includeRight, mul_assoc,
-    ← mul_assoc (toConv
-      ((Algebra.TensorProduct.includeLeft : A →ₐ[R] A ⊗[R] A).toLinearMap ∘ₗ antipode R)),
-    toConv_includeLeft_comp_antipode_mul_toConv_includeLeft, one_mul]
-  exact toConv_includeRight_comp_antipode_mul_toConv_includeRight
-
-theorem toConv_comul_mul_toConv_comul_comp_antipode :
-    toConv (comul : A →ₗ[R] A ⊗[R] A)
-        * toConv (comul ∘ₗ antipode R : A →ₗ[R] A ⊗[R] A)
-      = (1 : WithConv (A →ₗ[R] A ⊗[R] A)) := by
-  refine WithConv.ext (LinearMap.ext fun a => ?_)
-  simp only [LinearMap.convMul_def, LinearMap.convOne_def, WithConv.ofConv_toConv,
-    LinearMap.comp_apply, Algebra.linearMap_apply]
-  rw [← (ℛ R a).eq]
-  simp only [map_sum, TensorProduct.map_tmul, LinearMap.mul'_apply, LinearMap.comp_apply,
-    ← Bialgebra.comul_mul]
-  rw [show ∑ i ∈ (ℛ R a).index,
-        comul (R := R) ((ℛ R a).left i * antipode R ((ℛ R a).right i))
-      = comul (R := R) (∑ i ∈ (ℛ R a).index, (ℛ R a).left i * antipode R ((ℛ R a).right i)) from
-      (map_sum _ _ _).symm,
-    sum_mul_antipode_eq_algebraMap_counit (ℛ R a), Bialgebra.comul_algebraMap]
-
-theorem comul_comp_antipode :
-    comul ∘ₗ antipode R
-      = (TensorProduct.comm R A A).toLinearMap
-          ∘ₗ TensorProduct.map (antipode R) (antipode R) ∘ₗ comul :=
-  (WithConv.toConv_injective
-    (left_inv_eq_right_inv
-      (toConv_comm_map_antipode_comul_mul_toConv_comul (R := R) (A := A))
-      (toConv_comul_mul_toConv_comul_comp_antipode (R := R) (A := A)))).symm
-
-theorem comul_antipode (a : A) :
-    comul (antipode R a)
-      = TensorProduct.comm R A A
-          (TensorProduct.map (antipode R) (antipode R) (comul a)) := by
-  have h := LinearMap.congr_fun (comul_comp_antipode (R := R) (A := A)) a
-  simpa only [LinearMap.comp_apply, LinearEquiv.coe_toLinearMap] using h
 
 theorem comul_antipode_eq_sum {a : A} {ι : Type*} (𝓡 : Coalgebra.Repr R a ι) :
     comul (antipode R a)
       = ∑ i ∈ 𝓡.index, antipode R (𝓡.right i) ⊗ₜ[R] antipode R (𝓡.left i) := by
-  rw [comul_antipode a, ← 𝓡.eq]
+  rw [HopfAlgebra.comul_antipode a, ← 𝓡.eq]
   simp only [map_sum, TensorProduct.map_tmul, TensorProduct.comm_tmul]
-
-end
 
 end AntiCoalgebra
 
@@ -233,25 +131,14 @@ open WithConv
 variable {R : Type u} [CommRing R] {A : Type v} [CommRing A] [HopfAlgebra R A]
 variable {B : Type w} [CommRing B] [HopfAlgebra R B]
 
-noncomputable def reprMap (π : A →ₐc[R] B) {a : A} {ι : Type*} (𝓡 : Coalgebra.Repr R a ι) :
-    Coalgebra.Repr R (π a) ι where
-  index := 𝓡.index
-  left := fun i => π (𝓡.left i)
-  right := fun i => π (𝓡.right i)
-  eq := by
-    rw [← CoalgHomClass.map_comp_comul_apply, ← 𝓡.eq, map_sum]
-    simp only [TensorProduct.map_tmul]
-    rfl
-
 theorem map_antipode (π : A →ₐc[R] B) (a : A) : π (antipode R a) = antipode R (π a) := by
-
   let f : WithConv (A →ₗ[R] B) := toConv ((π : A →ₐc[R] B).toLinearMap ∘ₗ antipode R)
   let g : WithConv (A →ₗ[R] B) := toConv (antipode R ∘ₗ (π : A →ₐc[R] B).toLinearMap)
   let h : WithConv (A →ₗ[R] B) := toConv (π : A →ₐc[R] B).toLinearMap
   have hfh : f * h = 1 := by
     refine WithConv.ext (LinearMap.ext fun x => ?_)
     rw [(ℛ R x).convMul_apply, LinearMap.convOne_def]
-    simp only [f, h, WithConv.ofConv_toConv, LinearMap.comp_apply]
+    simp only [f, h, LinearMap.comp_apply]
     have : ∑ i ∈ (ℛ R x).index, (π : A →ₐc[R] B).toLinearMap (antipode R ((ℛ R x).left i))
           * (π : A →ₐc[R] B).toLinearMap ((ℛ R x).right i)
         = π (∑ i ∈ (ℛ R x).index, antipode R ((ℛ R x).left i) * (ℛ R x).right i) := by
@@ -261,9 +148,10 @@ theorem map_antipode (π : A →ₐc[R] B) (a : A) : π (antipode R a) = antipod
   have hhg : h * g = 1 := by
     refine WithConv.ext (LinearMap.ext fun x => ?_)
     rw [(ℛ R x).convMul_apply, LinearMap.convOne_def]
-    simp only [g, h, WithConv.ofConv_toConv, LinearMap.comp_apply]
-    have := sum_mul_antipode_eq_algebraMap_counit (reprMap π (ℛ R x))
-    simp only [reprMap] at this
+    simp only [g, h, LinearMap.comp_apply]
+    have := sum_mul_antipode_eq_algebraMap_counit ((ℛ R x).induced π)
+    simp only [Coalgebra.Repr.induced_index, Coalgebra.Repr.induced_left,
+      Coalgebra.Repr.induced_right, Function.comp_apply] at this
     have e : ∀ i, (π : A →ₐc[R] B).toLinearMap ((ℛ R x).left i) * antipode R ((π : A →ₐc[R]
       B).toLinearMap ((ℛ R x).right i))
         = π ((ℛ R x).left i) * antipode R (π ((ℛ R x).right i)) := fun i => rfl
@@ -271,7 +159,7 @@ theorem map_antipode (π : A →ₐc[R] B) (a : A) : π (antipode R a) = antipod
     rfl
   have := left_inv_eq_right_inv hfh hhg
   have := congr((WithConv.ofConv $this) a)
-  simp only [f, g, WithConv.ofConv_toConv, LinearMap.comp_apply] at this
+  simp only [f, g, LinearMap.comp_apply] at this
   exact this
 
 end MapAntipode
@@ -298,20 +186,10 @@ theorem coaction_repr {a : A} {ι : Type*} (𝓡 : Coalgebra.Repr R a ι) :
 
 theorem toLinearMap_apply' (x : A) : (π : A →ₐc[R] B).toLinearMap x = π x := rfl
 
-theorem map_comm {M N P Q : Type*} [AddCommGroup M] [AddCommGroup N] [AddCommGroup P] [AddCommGroup
-  Q]
-    [Module R M] [Module R N] [Module R P] [Module R Q] (f : M →ₗ[R] P) (g : N →ₗ[R] Q) (z : N ⊗[R]
-      M) :
-    TensorProduct.map f g (TensorProduct.comm R N M z) = TensorProduct.comm R Q P
-      (TensorProduct.map g f z) := by
-  induction z using TensorProduct.inductionOn with
-  | add x y hx hy => simp only [map_add, hx, hy]
-  | tmul x y => simp
-
 theorem map_toLinearMap_id_comul [Coalgebra.IsCocomm R A] (x : A) :
     TensorProduct.map (π : A →ₐc[R] B).toLinearMap LinearMap.id (Coalgebra.comul (R := R) x)
       = TensorProduct.comm R A B (coaction π x) := by
-  rw [coaction_eq_map, ← map_comm, Coalgebra.comm_comul]
+  rw [coaction_eq_map, ← TensorProduct.map_comm, Coalgebra.comm_comul]
 
 theorem map_toLinearMap_id_comul' [Coalgebra.IsCocomm R A] (x : A) :
     TensorProduct.map (π : A →ₐc[R] B).toLinearMap LinearMap.id (Coalgebra.comul (R := R) x)
@@ -320,7 +198,7 @@ theorem map_toLinearMap_id_comul' [Coalgebra.IsCocomm R A] (x : A) :
 
 theorem antipode_mem [Coalgebra.IsCocomm R A] {a : A} (ha : a ∈ hopfKer π) :
     antipode R a ∈ hopfKer π := by
-  rw [mem_hopfKer_iff, coaction_eq_map, comul_antipode, map_comm]
+  rw [mem_hopfKer_iff, coaction_eq_map, HopfAlgebra.comul_antipode, TensorProduct.map_comm]
   have h1 : ∀ z : A ⊗[R] A,
       TensorProduct.map (π : A →ₐc[R] B).toLinearMap LinearMap.id
           (TensorProduct.map (antipode R (A := A)) (antipode R (A := A)) z)
@@ -351,7 +229,6 @@ theorem lTensor_coaction_comul {a : A} (ha : a ∈ hopfKer π) :
   have key := congr((TensorProduct.map LinearMap.id (π : A →ₐc[R] B).toLinearMap).lTensor A
     $(sum_tmul_tmul_eq 𝓡 a₁ a₂))
   simp only [map_sum, LinearMap.lTensor_tmul, TensorProduct.map_tmul, LinearMap.id_apply] at key
-
   have lhs : (coaction π).toLinearMap.lTensor A (Coalgebra.comul (R := R) a)
       = ∑ i ∈ 𝓡.index, ∑ k ∈ (a₂ i).index,
           𝓡.left i ⊗ₜ[R] ((a₂ i).left k ⊗ₜ[R] (π : A →ₐc[R] B).toLinearMap ((a₂ i).right k)) := by
@@ -361,7 +238,6 @@ theorem lTensor_coaction_comul {a : A} (ha : a ∈ hopfKer π) :
     rw [LinearMap.lTensor_tmul, AlgHom.toLinearMap_apply, coaction_repr π (a₂ i),
       TensorProduct.tmul_sum]
     rfl
-
   have rhs : ∑ i ∈ 𝓡.index, ∑ k ∈ (a₁ i).index,
         (a₁ i).left k ⊗ₜ[R] ((a₁ i).right k ⊗ₜ[R] (π : A →ₐc[R] B).toLinearMap (𝓡.right i))
       = (TensorProduct.assoc R A A B)
@@ -648,7 +524,7 @@ noncomputable instance instHopfAlgebra : HopfAlgebra R ↥(hopfKer π) where
 
 theorem ι₂_comm (z : ↥(hopfKer π) ⊗[R] ↥(hopfKer π)) :
     ι₂ π (TensorProduct.comm R _ _ z) = TensorProduct.comm R A A (ι₂ π z) := by
-  rw [ι₂_eq_map, map_comm]
+  rw [ι₂_eq_map, TensorProduct.map_comm]
 
 instance instIsCocomm : Coalgebra.IsCocomm R ↥(hopfKer π) where
   comm_comp_comul := by
