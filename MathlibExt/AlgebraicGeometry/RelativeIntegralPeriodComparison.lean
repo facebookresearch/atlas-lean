@@ -166,7 +166,12 @@ variable (SC : SourceSquare Q.functor (Zhat p Y.left PY) SY.absolutePositive
   [PreservesFiniteColimits (MathlibExt.CategoryTheory.NativeScalarProjectionMaps.scalarY (Zhat p Y.left PY) SY.absolutePositive
     (scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY)))]
 
-/-- The comparison is the computed native scalar projection; IsIso is requested as a conclusion. -/
+/-- The degree-$i$ relative period comparison map for the $\hat{\mathbb{Z}}_p$-module $\mathbb{L}$
+realizing the lisse integral tower `T`, placed in degree zero: from $R^i f_* \mathbb{L}$ with
+scalars extended to $\mathbb{B}^+_{\mathrm{dR}}$ on $Y$, to $R^i f_*$ of the derived scalar
+extension of $\mathbb{L}$ to $\mathbb{B}^+_{\mathrm{dR}}$ on $X$. It is the cohomology comparison of
+the scalar extension on $Y$ followed by the degree-$i$ cohomology of the projection map, the mate of
+the scalar square `SC` under the derived pullback–pushforward adjunctions `AZ` and `AB`. -/
 def comparison (i : ℤ) := degreeProjection Q.functor (Zhat p Y.left PY) SY.absolutePositive
   (Zhat p X.left PX) SX.absolutePositive (scalarY (p := p) (K := K) (B := B) (Y := Y) (PY := PY) (SY := SY) (FY := FY) (IY := IY))
   (scalarX (p := p) (K := K) (B := B) (X := X) (PX := PX) (SX := SX) (FX := FX) (IX := IX)) (coefficientScalar p K B X Y f PX PY E Q N PS) PM.absolutePositive

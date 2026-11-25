@@ -1,0 +1,17 @@
+# Proper Geometric Coefficient Families
+
+- [Coefficient Ring Map](coefficient-ring-map.md)
+- [Coefficient Base Map](coefficient-base-map.md)
+- [Coefficient Ring Arrow](coefficient-ring-arrow.md)
+- [Coefficient Ring Map comp](coefficient-ring-map-comp.md)
+- [Coefficient Base Map naturality](coefficient-base-map-naturality.md)
+- [Coefficient Family](coefficient-family.md)
+- [Coefficient To Base](coefficient-to-base.md)
+- [Coefficient Arrow](coefficient-arrow.md)
+- [Coefficient Space](coefficient-space.md)
+- [Coefficient Source Map](coefficient-source-map.md)
+- [Coefficient Projection](coefficient-projection.md)
+- [Base Coefficient Projection](base-coefficient-projection.md)
+- [Coefficient Geometric Arrow](coefficient-geometric-arrow.md)
+- [Family Map projection](family-map-projection.md)
+- [Coefficient Source Map projection](coefficient-source-map-projection.md)
