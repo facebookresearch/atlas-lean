@@ -29,6 +29,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Cotangent
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.Analysis.CatalanDigammaSeries
 public import MathlibExt.Analysis.CatalanSeriesSpecialValues
 public import MathlibExt.Analysis.CentralBinomDigammaSeries
 public import MathlibExt.Analysis.OddWeightedCatalanSeries
@@ -90,18 +91,6 @@ public theorem_wanted harmonic_nat_sub_half_values (k : ℕ) :
       ∑' j : ℕ, (1 / ((j : ℂ) + 1) ^ 3 - 1 / ((j : ℂ) + 1 / 2) ^ 3) = -6 * riemannZeta 3 ∧
       ∀ m : ℕ, ∑' j : ℕ, (1 / ((j : ℂ) + 1 / 2) ^ (m + 1) - 1 / ((j : ℂ) + k + 1 / 2) ^ (m + 1)) =
         2 ^ (m + 1) * ∑ j ∈ Finset.range k, 1 / (2 * (j : ℂ) + 1) ^ (m + 1)
-
-/-- **A Catalan series in terms of the digamma function.** Let $z$ be a complex number with
-$\operatorname{Re} z > 0$, let $\binom{n+z}{n} = \prod_{j=1}^{n} \frac{z + j}{j}$, let $C_n$ be the
-$n$th Catalan number and $\psi$ the digamma function. Then
-$$\sum_{n=0}^{\infty} \frac{C_n}{4^n \binom{n+z}{n}} =
--2z \bigl(\psi(z) - \psi(z + \tfrac12)\bigr).$$
-
-Source: Kunle Adegoke and Robert Frontczak, *Series Associated with a Forgotten Identity of
-Nörlund*, INTEGERS 25 (2025), Article A18, Theorem 3, identity (7) (`integers-2025-A18-thm-3`). -/
-public theorem_wanted tsum_catalan_div_four_pow_mul_binom {z : ℂ} (hz : 0 < z.re) :
-    ∑' n : ℕ, (catalan n : ℂ) / (4 ^ n * ∏ j ∈ Finset.Icc 1 n, (z + j) / j) =
-      -2 * z * (Complex.digamma z - Complex.digamma (z + 1 / 2))
 
 /-- **An odd harmonic series for $\pi^2/6$ and a Catalan–harmonic series for $8 - 2\pi^2/3$.**
 Let $O_k = \sum_{j=1}^{k} 1/(2j-1)$ be the $k$-th odd harmonic number, $C_n$ the $n$-th Catalan

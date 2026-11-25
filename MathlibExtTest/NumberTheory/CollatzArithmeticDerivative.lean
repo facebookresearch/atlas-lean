@@ -63,3 +63,28 @@ example : 2 * (19 + 62) = 5 + 157 ∧ 2 * (19 * 62) = 3 * (5 * 157) + 1 ∧
     ¬ IsCompatibleSemiprimePair 5 157 19 62 := by
   refine ⟨rfl, rfl, fun h => ?_⟩
   exact (by decide : 5 * 157 % 4 ≠ 3) h.mod_four.1
+
+-- The prime gap bound for the solution `1609 · 71`: `1609 - 71 = 1538` and
+-- `2 √(30 · 1609² + 2) - 10 · 1609 ≈ 1536.2`, so the bound is nearly sharp here.
+example : 2 * Real.sqrt (30 * (1609 : ℝ) ^ 2 + 2) - 10 * 1609 ≤ (1609 : ℝ) - 71 := by
+  have h : arithmeticDerivative (collatzAccelerated (1609 * 71)) =
+      collatzAccelerated (arithmeticDerivative (1609 * 71)) := by
+    rw [show collatzAccelerated (1609 * 71) = 349 * 491 from rfl, arithmeticDerivative_mul,
+      arithmeticDerivative_mul, arithmeticDerivative_prime (by norm_num : Nat.Prime 349),
+      arithmeticDerivative_prime (by norm_num : Nat.Prime 491),
+      arithmeticDerivative_prime (by norm_num : Nat.Prime 1609),
+      arithmeticDerivative_prime (by norm_num : Nat.Prime 71)]
+    rfl
+  exact_mod_cast prime_gap_bound_of_arithmeticDerivative_collatz_comm 1609 71
+    (by norm_num) (by norm_num) (by norm_num) h
+
+-- The bound rules out the twin primes `5` and `3`: `2 √752 - 50 > 2`, since `26² < 752`.
+example : arithmeticDerivative (collatzAccelerated (5 * 3)) ≠
+    collatzAccelerated (arithmeticDerivative (5 * 3)) := by
+  intro h
+  have hb := prime_gap_bound_of_arithmeticDerivative_collatz_comm 5 3
+    (by norm_num) (by norm_num) (by norm_num) h
+  have h26 : (26 : ℝ) < Real.sqrt (30 * ((5 : ℕ) : ℝ) ^ 2 + 2) :=
+    Real.lt_sqrt_of_sq_lt (by norm_num)
+  push_cast at hb h26
+  linarith

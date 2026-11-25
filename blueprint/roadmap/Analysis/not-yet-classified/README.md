@@ -385,3 +385,5 @@ Topics added since this subject's fields were last revised.
 - [Bounded left representation of the finite GNS core algebra](tomita-core-left-representation/README.md)
 - [Scalar Haar transformation-group representation](transformation-regular-model/README.md)
 - [Uniform and positive representative properties](uniform/README.md)
+- [Arch Datum RDerivative](exists-w-eq-fderiv-within-mul.md)
+- [Arch Datum RLinear Combination](exists-lincomb.md)

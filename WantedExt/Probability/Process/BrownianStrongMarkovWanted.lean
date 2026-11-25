@@ -12,7 +12,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.Probability.ConditionalProbability
 public import Mathlib.Probability.Process.Stopping
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import MathlibExt.Probability.BrownianHittingTime
 
 /-!
 # Wanted: the strong Markov property of Brownian motion and its consequences
@@ -77,18 +77,5 @@ theorem_wanted IsBrownianReal.map_iSup_eq_map_abs {Ω : Type*} [MeasurableSpace 
     {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P) (hBm : ∀ t, Measurable (B t))
     (hcont : ∀ ω, Continuous fun t ↦ B t ω) {t : ℝ≥0} (ht : 0 < t) :
     P.map (fun ω ↦ ⨆ s : Set.Icc (0 : ℝ≥0) t, B s ω) = P.map (fun ω ↦ |B t ω|)
-
-/-- **Law of the hitting time of a level.** For a Brownian motion `B` with continuous paths and
-`a > 0`, the hitting time `T_a = inf {t ≥ 0 : B t = a}` has the density
-`a / √(2π s³) · exp(-a² / (2s))` on `(0, ∞)`; equivalently, since `T_a ≤ t` exactly when the
-path reaches `a` on `[0, t]`, `P(T_a ≤ t) = ∫_0^t a / √(2π s³) · exp(-a² / (2s)) ds` for every
-`t ≥ 0` (Le Gall, ENS notes *Intégration, Probabilités et Processus Aléatoires*,
-Corollaire 14.5.3). -/
-theorem_wanted IsBrownianReal.measure_hitting_le {Ω : Type*} [MeasurableSpace Ω]
-    {P : Measure Ω} {B : ℝ≥0 → Ω → ℝ} (hB : IsBrownianReal B P)
-    (hcont : ∀ ω, Continuous fun t ↦ B t ω) {a : ℝ} (ha : 0 < a) (t : ℝ≥0) :
-    P {ω | ∃ s ∈ Set.Icc (0 : ℝ≥0) t, B s ω = a} =
-      ENNReal.ofReal (∫ s in (0 : ℝ)..t,
-        a / Real.sqrt (2 * Real.pi * s ^ 3) * Real.exp (-a ^ 2 / (2 * s)))
 
 end MathlibExt.Probability.BrownianStrongMarkovWanted

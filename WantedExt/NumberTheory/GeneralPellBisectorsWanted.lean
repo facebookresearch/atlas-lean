@@ -15,6 +15,7 @@ public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.NumberTheory.Pell
 public import MathlibExt.NumberTheory.Diophantine.NegativePellRational
 public import MathlibExt.NumberTheory.GeneralPellBisectors
+public import MathlibExt.NumberTheory.NegativePellDivisibility
 
 namespace MetaMathlibExt
 
@@ -267,18 +268,6 @@ Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 11(c) (`integers-202
 public theorem_wanted negPellF_dvd_iff (d : ℕ) (hd : 1 < d)
     (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (m n : ℕ) (hn : 0 < n) (hnm : n ≤ m) :
     negPellF d n ∣ negPellF d m ↔ (d = 2 ∧ n = 1) ∨ (n ∣ m ∧ Odd (m / n))
-
-/-- **Divisibility of the second coordinates of negative Pell powers.** Let $d > 1$ be a natural
-number such that $x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its fundamental
-solution (the one with $X, Y > 0$ and $Y$ least), and write
-$(X + Y \sqrt{d})^n = f_n + g_n \sqrt{d}$. For natural numbers $0 < n \le m$, $g_n$ divides $g_m$
-if and only if $n$ divides $m$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 11(d) (`integers-2024-A111-thm-11`). -/
-public theorem_wanted negPellG_dvd_iff (d : ℕ) (hd : 1 < d)
-    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (m n : ℕ) (hn : 0 < n) (hnm : n ≤ m) :
-    negPellG d n ∣ negPellG d m ↔ n ∣ m
 
 /-- **Solutions of |x² − dy²| = z are even when d ≡ 1 and z ≡ 4 (mod 8).** Let $d$ and $z$ be
 integers with $d \equiv 1 \pmod 8$ and $z \equiv 4 \pmod 8$. If integers $x$ and $y$ satisfy
