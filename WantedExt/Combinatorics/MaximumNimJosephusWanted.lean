@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.JosephusFunction
 public import MathlibExt.Combinatorics.MaximumNimJosephus
+public import MathlibExt.Combinatorics.MaximumNimJosephusIteration
 public import MathlibExt.GameTheory.SpragueGrundy
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Tactic
@@ -474,23 +475,8 @@ public theorem_wanted josephus_eq_mul_sub_iterate_maximumNimH_zero (k n : ℕ)
       n * (k - 1) ≤ Nat.iterate (maximumNimH k) p 0 ∧
       josephus k n = n * k - Nat.iterate (maximumNimH k) p 0
 
-/-- **Josephus survivor via the shifted iteration.** Let $k \ge 2$ and $n \ge 2$ be natural
-numbers, let $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ for natural numbers $x$, and write
-$h_k^p$ for the $p$-th iterate of $h_k$. Then there is a natural number $p \ge 1$ with
-$h_k^{p-1}(k-1) < n(k-1) \le h_k^p(k-1)$ and $J_k(n) = nk - h_k^p(k-1)$, where $J_k$ is the
-Josephus function for elimination step $k$.
-
-The hypothesis $n \ge 2$ is needed: for $n = 1$ every $p \ge 1$ has
-$h_k^{p-1}(k-1) \ge k - 1 = n(k-1)$, so no such $p$ exists.
-
-Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
-        INTEGERS 24 (2024), Article G5, Corollary 1 (`integers-2024-G5-cor-1`). -/
-public theorem_wanted josephus_eq_mul_sub_iterate_maximumNimH_pred (k n : ℕ)
-    (hk : 2 ≤ k) (hn : 2 ≤ n) :
-    ∃ p, 1 ≤ p ∧
-      Nat.iterate (maximumNimH k) (p - 1) (k - 1) < n * (k - 1) ∧
-      n * (k - 1) ≤ Nat.iterate (maximumNimH k) p (k - 1) ∧
-      josephus k n = n * k - Nat.iterate (maximumNimH k) p (k - 1)
+-- Corollary 1, `josephus_eq_mul_sub_iterate_maximumNimH_pred`, is proved in
+-- `MathlibExt.Combinatorics.MaximumNimJosephusIteration`, which this module publicly imports.
 
 /-- **Logarithmic bounds on the iterates of h_k.** Let $k \ge 2$ and $n \ge 1$ be natural numbers,
 let $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on natural numbers, write $h_k^p$ for its $p$-fold
