@@ -16,4 +16,3 @@ so any other predictor adds a nonnegative error. With the trivial σ-algebra the
 - [Orthogonality of the conditional-expectation residual](integral-sub-cond-exp-mul-eq-zero.md): lemma: orthogonality of the residual, used for the Pythagorean identity
 - [Pythagorean identity for the conditional mean](integral-sq-sub-eq-integral-sq-sub-cond.md): lemma used in the proof of the main statement
 - [The regression function is the Bayes-optimal regressor](integral-sq-sub-cond-exp-comap-le.md): regression-function form
-- [Uniqueness of the best predictor](uniqueness-of-the-best-predictor.md)
