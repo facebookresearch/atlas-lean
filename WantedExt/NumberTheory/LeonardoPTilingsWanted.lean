@@ -36,6 +36,8 @@ public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.NumberTheory.IncompleteLeonardoP
 public import MathlibExt.NumberTheory.IncompleteLeonardoPBinomialSum
 public import MathlibExt.NumberTheory.IncompleteLeonardoPPartialSum
+public import MathlibExt.NumberTheory.IncompleteLucasLeonardoPRecurrence
+public import MathlibExt.NumberTheory.HyperLeonardoPRec
 public import MathlibExt.NumberTheory.LeonardoPTilings
 public import MathlibExt.NumberTheory.LucasLeonardoPIdentity
 public import WantedExt.NumberTheory.LeonardoPWanted
@@ -84,20 +86,6 @@ public theorem_wanted hyperLeonardoP_add (p n m k : ℕ) (hp : 1 ≤ p) (hn : 1 
     (hm : 1 ≤ m) (hmk : m ≤ k) :
     hyperLeonardoP p (n + m) k =
       ∑ i ∈ Finset.range (m + 1), (m.choose i : ℤ) * hyperLeonardoP p (n + i) (k - i)
-
-/-- **Recurrence for the hyper Leonardo $p$-numbers.** Let $p \ge 1$ be a natural number. For all
-natural numbers $n \ge 1$ and $k \ge 1$, the hyper Leonardo $p$-numbers satisfy
-$\mathcal{L}^{(k)}_{p,n} = \mathcal{L}^{(k)}_{p,n-1} + \mathcal{L}^{(k-1)}_{p,n}$, and for every
-natural number $n$, $\mathcal{L}^{(0)}_{p,n} = \mathcal{L}_{p,n}$, where $\mathcal{L}_{p,n}$ is the
-Leonardo $p$-number: $\mathcal{L}_{p,n} = 1$ for $n \le p$ and
-$\mathcal{L}_{p,n} = \mathcal{L}_{p,n-1} + \mathcal{L}_{p,n-p-1} + p$ for $n > p$.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 10. -/
-public theorem_wanted hyperLeonardoP_rec (p : ℕ) (hp : 1 ≤ p) :
-    (∀ n k, 1 ≤ n → 1 ≤ k →
-      hyperLeonardoP p n k = hyperLeonardoP p (n - 1) k + hyperLeonardoP p n (k - 1)) ∧
-    ∀ n, hyperLeonardoP p n 0 = leonardoPK p p n
 
 /-- **Leonardo p-numbers split into incomplete and hyper parts.** For natural numbers $p \ge 1$,
 $n > p$ and $k \ge 1$, let $N = n + (p + 1)k$. Then
@@ -159,24 +147,6 @@ Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 16. -/
 public theorem_wanted sum_lucasLeonardoP_stride (p n : ℕ) (hp : 1 ≤ p) :
     ∑ i ∈ Finset.range (n + 1), lucasLeonardoP p ((p + 1) * i) =
       lucasLeonardoP p ((p + 1) * n + 1) - p * ((n : ℤ) - p - 1)
-
-/-- **Recurrence for incomplete Lucas-Leonardo p-numbers.** For natural numbers $p \ge 1$,
-$n > p + 1$ and $k \le \lfloor n/(p+1) \rfloor$, the incomplete Lucas-Leonardo $p$-numbers
-$R_{p,m}(j)$ satisfy
-$$
-R_{p,n}(k + 1) = R_{p,n-1}(k + 1) + R_{p,n-p-1}(k) + p.
-$$
-
-At $n = p + 1$ the term $R_{p,0}(k)$ would contain the undefined summand
-$\frac{0}{0} \binom{0}{0}$, so that case is excluded.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 17. -/
-public theorem_wanted incompleteLucasLeonardoP_succ (p n k : ℕ) (hp : 1 ≤ p)
-    (hn : p + 1 < n) (hk : k ≤ n / (p + 1)) :
-    incompleteLucasLeonardoP p n (k + 1) =
-      incompleteLucasLeonardoP p (n - 1) (k + 1) + incompleteLucasLeonardoP p (n - p - 1) k +
-        p
 
 /-- **Binomial sum identity for incomplete Lucas-Leonardo p-numbers.** For natural numbers
 $p \ge 1$, $n$, $r$ and $k$ with $n \ge p + r$ and $k \le \lfloor (n - p - r)/(p + 1) \rfloor$,
