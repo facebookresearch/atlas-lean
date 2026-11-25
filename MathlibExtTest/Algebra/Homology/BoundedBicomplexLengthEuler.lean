@@ -14,7 +14,14 @@ public import MathlibExt.Algebra.Homology.FirstQuadrantEdge
 public import MathlibExtTest.Algebra.Category.ModuleCat.NativeTorLongExactUniverse
 public import Mathlib.RingTheory.Artinian.Module
 
-/-! An actual bounded integer bicomplex with infinite-length terms and nonzero first homology. -/
+/-!
+# A bounded integer bicomplex with finite-length total homology
+
+Horizontal multiplication by two on two copies of a zero-differential
+integer complex gives nonzero mod-two total homology in degree one.
+The term modules have infinite composition length, while the surviving
+homology has length one.
+-/
 
 @[expose] public section
 noncomputable section
@@ -25,34 +32,34 @@ open scoped ZeroObject BigOperators
 
 namespace BoundedBicomplexLengthEulerTests
 
-/-- The original free integer coefficient with its actual scalar action. -/
+/-- The free integer module. -/
 abbrev Z := NativeTorBoundaryTests.Z
 
-/-- The original integral mod-two quotient coefficient. -/
+/-- The integer module `ℤ/2`. -/
 abbrev Q := NativeTorBoundaryTests.Q
 
-/-- The actual original vertical term family. -/
+/-- The two nonzero terms of the vertical complex. -/
 abbrev VObj (q : ℕ) : ModuleCat ℤ := match q with
   | 0 => Z
   | 1 => Z
   | .succ (.succ _) => 0
 
-/-- A two-term zero-differential vertical complex with original integer terms. -/
+/-- The vertical complex has integer terms in degrees zero and one and zero differentials. -/
 abbrev V : ChainComplex (ModuleCat ℤ) ℕ :=
   ChainComplex.of VObj (fun _ => 0) (by intro q; simp)
 
-/-- The actual original horizontal term family. -/
+/-- The two columns of the bicomplex. -/
 abbrev BObj (p : ℕ) : ChainComplex (ModuleCat ℤ) ℕ := match p with
   | 0 => V
   | 1 => V
   | .succ (.succ _) => 0
 
-/-- The original horizontal differential is twice the identity in the retained degree. -/
+/-- The horizontal differential is twice the identity. -/
 abbrev BDiff (p : ℕ) : BObj (p + 1) ⟶ BObj p := match p with
   | 0 => (2 : ℕ) • (𝟙 V)
   | .succ _ => 0
 
-/-- The actual two-column bicomplex whose horizontal map is twice the identity. -/
+/-- The bicomplex has two integer rows and horizontal multiplication by two. -/
 abbrev B : HomologicalComplex₂ (ModuleCat ℤ) (ComplexShape.down ℕ) (ComplexShape.down ℕ) :=
   ChainComplex.of BObj BDiff (by intro p; cases p <;> simp [BDiff])
 
@@ -61,7 +68,7 @@ theorem V_d_zero (i j : ℕ) : V.d i j = 0 := by
   dsimp only [ChainComplex.of.d]
   split_ifs <;> simp only [comp_zero]
 
-/-- Canonical actual homology of the vertical zero differential is the original term. -/
+/-- Homology of the zero-differential vertical complex identifies with its terms. -/
 def vHomologyIsoX (q : ℕ) : V.homology q ≅ V.X q :=
   (ShortComplex.HomologyData.ofZeros (V.sc q)
     (V_d_zero _ _) (V_d_zero _ _)).left.homologyIso
@@ -104,7 +111,7 @@ theorem B_bound (p q : ℕ) (h : 1 < p ∨ 1 < q) : IsZero ((B.X p).X q) := by
         exact (HomologicalComplex.eval (ModuleCat ℤ) (ComplexShape.down ℕ) q).map_isZero
           (isZero_zero (ChainComplex (ModuleCat ℤ) ℕ))
 
-/-- Actual vertical homology is the original integer module in each retained row. -/
+/-- Vertical homology in each of the two rows identifies with the integer module. -/
 def vHomologyIsoZ (q : ℕ) (hq : q ≤ 1) : V.homology q ≅ Z := by
   cases q with
   | zero => exact vHomologyIsoX 0
@@ -132,14 +139,14 @@ theorem mulTwo_eq_nsmul : NativeTorBoundaryTests.mulTwo = (2 : ℕ) • (𝟙 Z)
   intro z
   simp [NativeTorBoundaryTests.mulTwo, ModuleCat.hom_id, two_smul]
 
-/-- The original integral exact presentation computes the actual cokernel. -/
+/-- The cokernel of multiplication by two is `ℤ/2`. -/
 def mulTwoCokernelIsoQ :
     (cokernel (C := ModuleCat ℤ) NativeTorBoundaryTests.mulTwo) ≅ Q :=
   IsColimit.coconePointUniqueUpToIso (colimit.isColimit
     (parallelPair NativeTorBoundaryTests.mulTwo (0 : Z ⟶ Z)))
     NativeTorBoundaryTests.integralShortComplex_shortExact.gIsCokernel
 
-/-- The actual first horizontal homology in column zero is the original mod-two quotient. -/
+/-- Column-zero horizontal homology is `ℤ/2`. -/
 def iteratedZeroIsoQ (q : ℕ) (hq : q ≤ 1) :
     (B.verticalHomologyComplex q).homology 0 ≅ Q := by
   let C := B.verticalHomologyComplex q
@@ -194,7 +201,7 @@ theorem iteratedOne_isZero (q : ℕ) (hq : q ≤ 1) :
   exact hzero.of_iso (C.homologyIsoSc' 2 1 0
     ((ComplexShape.down ℕ).prev_eq' (by simp)) ((ComplexShape.down ℕ).next_eq' (by simp)))
 
-/-- The actual surviving second-page object is the original integral mod-two quotient. -/
+/-- The surviving column-zero second-page objects are `ℤ/2`. -/
 def secondPageZeroIsoQ (q : ℕ) (hq : q ≤ 1) :
     ((HomologicalComplex₂.horizontalFirstQuadrantSpectralSequence B).page 2).X (0, q) ≅ Q :=
   HomologicalComplex₂.horizontalSecondPageVerticalHorizontalHomologyIso B 0 q ≪≫
@@ -225,7 +232,7 @@ theorem iterated_length_finite (p : ℕ) (hp : p ≤ 1) (q : ℕ) (hq : q ≤ 1)
       (iteratedOne_isZero q hq))]
     exact ENat.zero_ne_top
 
-/-- The actual degree-one total homology is the nonzero integral mod-two module. -/
+/-- Degree-one total homology is the nonzero integer module `ℤ/2`. -/
 def totalH1IsoQ : (B.total (ComplexShape.down ℕ)).homology 1 ≅ Q :=
   (HomologicalComplex₂.horizontalSecondPageZeroColumnTotalHomologyIso B 1
     secondPage_positive_isZero).symm ≪≫ secondPageZeroIsoQ 1 (by omega)

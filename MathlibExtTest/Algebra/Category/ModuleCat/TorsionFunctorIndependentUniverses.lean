@@ -19,13 +19,13 @@ import Mathlib.RingTheory.Ideal.Span
 import Mathlib.Tactic.NormNum
 
 /-!
-# Actual primary components in a larger coefficient universe
+# Primary components with a lifted coefficient module
 
-The coefficient is the lifted product Z/4 x Z. For I=(4), its primary
-component contains (1,0) but excludes (0,1), so it is genuinely a proper
-nonzero submodule. The actual restricted map 3 times the identity sends
-(1,0) to (3,0). Native degree-zero derived torsion uses the existing
-enough-injectives instance, not a supplied comparison or inverse.
+The coefficient module is the universe-one lift of `ℤ/4 × ℤ`. For the ideal
+`(4)`, its primary component contains `(1,0)` and excludes `(0,1)`, giving
+a proper nonzero submodule. Multiplication by three sends `(1,0)` to `(3,0)`.
+The canonical degree-zero comparison with derived torsion gives the
+identity triangle.
 -/
 
 noncomputable section

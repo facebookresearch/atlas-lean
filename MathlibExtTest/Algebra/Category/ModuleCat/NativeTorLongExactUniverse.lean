@@ -13,7 +13,12 @@ public import MathlibExt.Algebra.Category.ModuleCat.NativeTorLongExactUniverse
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.Algebra.ZMod
 
-/-! The actual integral mod-two sequence has a nonzero native Tor boundary. -/
+/-!
+# Nonzero Tor from the integral mod-two sequence
+
+The integral multiplication-by-two sequence gives a nonzero Tor boundary
+identifying degree-one Tor with the mod-two coefficient.
+-/
 
 @[expose] public section
 noncomputable section
@@ -23,16 +28,16 @@ open scoped TensorProduct ModuleCat.UniverseTensor
 
 namespace NativeTorBoundaryTests
 
-/-- The original free integral coefficient. -/
+/-- The free integer module. -/
 abbrev Z : ModuleCat ℤ := ModuleCat.of ℤ ℤ
 
-/-- The integral mod-two coefficient with its canonical integer action. -/
+/-- The integer module `ℤ/2`. -/
 abbrev Q : ModuleCat ℤ := ModuleCat.of ℤ (ZMod 2)
 
-/-- The actual multiplication-by-two map in the original integral sequence. -/
+/-- Multiplication by two in the integral sequence. -/
 abbrev mulTwo : Z ⟶ Z := ModuleCat.ofHom ((2 : ℤ) • (LinearMap.id : ℤ →ₗ[ℤ] ℤ))
 
-/-- The actual quotient map reduces the original integer modulo two. -/
+/-- Reduction of integers modulo two. -/
 abbrev quotient : Z ⟶ Q :=
   ModuleCat.ofHom ((Int.castAddHom (ZMod 2)).toIntLinearMap)
 
@@ -45,7 +50,7 @@ theorem mulTwo_quotient_zero : mulTwo ≫ quotient = 0 := by
   have h2 : (2 : ZMod 2) = 0 := ZMod.natCast_self 2
   simp only [Int.cast_ofNat, h2, zero_mul]
 
-/-- The original integral presentation of the mod-two coefficient. -/
+/-- The integral presentation of `ℤ/2`. -/
 abbrev integralShortComplex : ShortComplex (ModuleCat ℤ) :=
   ShortComplex.mk mulTwo quotient mulTwo_quotient_zero
 
@@ -76,7 +81,7 @@ theorem length_Q : Module.length ℤ Q = 1 := by
         ZMod.intCast_surjective
     _ = 1 := Module.length_eq_one (ZMod 2) (ZMod 2)
 
-/-- The canonical native degree-zero comparison with the free integral coefficient. -/
+/-- Degree-zero Tor with the free integer module identifies with `ℤ/2`. -/
 def zeroFreeIso : (((Tor (ModuleCat ℤ) 0).obj Q).obj Z) ≅ Q :=
   ModuleCat.UniverseTensor.nativeTorZeroIso ℤ Q Z ≪≫ (TensorProduct.rid ℤ Q).toModuleIso
 
@@ -101,7 +106,7 @@ theorem zero_map_mulTwo : ((Tor (ModuleCat ℤ) 0).obj Q).map mulTwo = 0 := by
   apply (cancel_mono e.hom).mp
   simpa only [zero_comp] using h
 
-/-- The actual integral-sequence boundary identifies native degree one with degree zero. -/
+/-- The integral-sequence boundary identifies degree-one Tor with degree-zero Tor. -/
 def boundaryIso : (((Tor (ModuleCat ℤ) 1).obj Q).obj Q) ≅
     (((Tor (ModuleCat ℤ) 0).obj Q).obj Z) := by
   have hZ : IsZero (((Tor (ModuleCat ℤ) 1).obj Q).obj integralShortComplex.X₂) := by

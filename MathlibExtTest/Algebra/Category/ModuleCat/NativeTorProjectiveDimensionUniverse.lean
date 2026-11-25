@@ -12,7 +12,14 @@ module
 public import MathlibExtTest.Algebra.Category.ModuleCat.NativeTorEulerAdditivityUniverse
 public import MathlibExt.CategoryTheory.Abelian.Projective.PresentationComplex
 
-/-! Actual two-term projective resolutions, independent universes, and the zero cutoff. -/
+/-!
+# A bounded projective resolution of the mod-two module
+
+The integral multiplication-by-two presentation gives a two-term projective
+resolution of `ℤ/2`. It vanishes from degree two and gives native Tor
+cutoffs and Euler additivity laws. The examples retain separate scalar
+and coefficient universes.
+-/
 
 @[expose] public section
 noncomputable section
@@ -24,7 +31,7 @@ namespace NativeTorBoundaryTests
 
 open ModuleCat.UniverseTensor
 
-/-- The real two-term projective resolution from the original integral presentation. -/
+/-- The two-term projective resolution from the integral presentation. -/
 def actualPresentationResolution : ProjectiveResolution Q := by
   have : Projective integralShortComplex.X₁ := by
     change Projective Z

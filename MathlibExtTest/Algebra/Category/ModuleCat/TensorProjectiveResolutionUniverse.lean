@@ -15,14 +15,14 @@ public import MathlibExtTest.Algebra.Category.ModuleCat.NativeTorProjectiveDimen
 public import Mathlib.RingTheory.Artinian.Module
 
 /-!
-# Actual tensor-total resolution clients
+# Tensor totals of integral projective resolutions
 
 The split integral presentation has nonzero projective terms in degrees zero
-and one, each of infinite length. Tensoring its actual resolution with itself
-has infinite-length H0. Pairing it with the original multiplication-by-two
-presentation gives a genuine positive-degree tensor/Koszul client with nonzero
-H0. Pairing two multiplication-by-two presentations has nonzero Tor1, which
-rejects unconditional exactness of the literal tensor augmentation.
+and one, each of infinite length. Tensoring its resolution with itself has
+infinite-length degree-zero homology. Pairing it with the multiplication-by-two
+presentation gives nonzero mod-two degree-zero homology and a signed degree-two
+differential. Tensoring two multiplication-by-two presentations has nonzero
+degree-one homology, so the tensor augmentation is not a quasi-isomorphism.
 -/
 
 @[expose] public section
@@ -36,9 +36,7 @@ namespace TensorProjectiveResolutionTests
 
 open ModuleCat.UniverseTensor NativeTorBoundaryTests
 
-/-- The integral coefficient fixture has infinite composition length.
-Adapted from `MathlibExtTest/Algebra/Homology/BoundedBicomplexLengthEuler.lean`
-at commit `74245d6bfc646c5e3a327852651520b1c45279d4`, using stock length and Artinian APIs. -/
+/-- The integer module has infinite composition length. -/
 private theorem integer_length_top : Module.length ℤ Z = ⊤ := by
   by_contra h
   have hfin : IsFiniteLength ℤ ℤ := Module.length_ne_top_iff.mp h
@@ -51,15 +49,14 @@ private theorem integer_length_top : Module.length ℤ Z = ⊤ := by
   change (2 : ℤ) * z = 1 at hz
   omega
 
-/-- The explicitly raw expression records the `ENat.toNat` value at infinite length;
-it must not be used as a finite Euler characteristic without its length data. -/
+/-- The raw length expression is zero because `ENat.toNat` sends infinite length to zero. -/
 theorem rawEuler_integer_infinite_length : rawNativeTorEulerSum ℤ Z Z 1 = 0 := by
   have h : Module.length ℤ (((Tor (ModuleCat ℤ) 0).obj Z).obj Z) = ⊤ :=
     (nativeTorZeroIso ℤ Z Z).toLinearEquiv.length_eq.trans
       ((TensorProduct.lid ℤ ℤ).length_eq.trans integer_length_top)
   simp [rawNativeTorEulerSum, h]
 
-/-- The original split integral short complex, with its original inclusion and projection. -/
+/-- The split integral short complex with its inclusion and projection. -/
 def splitPresentation : ShortComplex (ModuleCat ℤ) :=
   ShortComplex.mk
     (ModuleCat.ofHom (LinearMap.inl ℤ ℤ ℤ))
@@ -81,7 +78,7 @@ theorem splitPresentation_shortExact : splitPresentation.ShortExact := by
     change Function.Surjective (LinearMap.snd ℤ ℤ ℤ)
     exact LinearMap.snd_surjective
 
-/-- The actual two-term projective resolution of the original integer module. -/
+/-- The two-term projective resolution of the integer module. -/
 def splitResolution : ProjectiveResolution Z := by
   have : Projective splitPresentation.X₁ := by change Projective Z; infer_instance
   have : Projective splitPresentation.X₂ := by
@@ -102,7 +99,7 @@ theorem integral_positiveTor_zero (n : ℕ) :
     IsZero (((Tor (ModuleCat ℤ) (n + 1)).obj Z).obj Z) :=
   isZero_Tor_succ_of_projective (ModuleCat ℤ) Z Z n
 
-/-- The actual original tensor total is a genuine resolution with its literal augmentation. -/
+/-- The tensor total resolves the tensor product through its canonical augmentation. -/
 def infiniteLengthTensorResolution : ProjectiveResolution (Z ⊗ Z) :=
   tensorProjectiveResolution ℤ splitResolution splitResolution integral_positiveTor_zero
 
@@ -112,7 +109,7 @@ example : infiniteLengthTensorResolution.complex =
 example : infiniteLengthTensorResolution.π =
     tensorResolutionAugmentation ℤ splitResolution splitResolution := rfl
 
-/-- The genuine tensor-total H0 is the original infinite-length integer module. -/
+/-- The tensor-total degree-zero homology is the infinite-length integer module. -/
 def infiniteLengthHomologyZeroIso :
     (HomologicalComplex.tensorObj splitResolution.complex splitResolution.complex).homology 0 ≅ Z :=
   tensorResolutionHomologyZeroIso ℤ splitResolution splitResolution ≪≫
@@ -136,12 +133,12 @@ theorem modTwo_integral_positiveTor_zero (n : ℕ) :
     IsZero (((Tor (ModuleCat ℤ) (n + 1)).obj Q).obj Z) :=
   isZero_Tor_succ_of_projective (ModuleCat ℤ) Q Z n
 
-/-- Both original positive-degree presentations form a genuine tensor/Koszul resolution. -/
+/-- The integral and mod-two presentations form a tensor-total resolution. -/
 def positiveKoszulResolution : ProjectiveResolution (Q ⊗ Z) :=
   tensorProjectiveResolution ℤ actualPresentationResolution splitResolution
     modTwo_integral_positiveTor_zero
 
-/-- The actual positive-degree tensor total has the original nonzero mod-two H0. -/
+/-- The tensor total has nonzero mod-two degree-zero homology. -/
 def positiveKoszulHomologyZeroIso :
     (HomologicalComplex.tensorObj actualPresentationResolution.complex splitResolution.complex).homology 0 ≅ Q :=
   tensorResolutionHomologyZeroIso ℤ actualPresentationResolution splitResolution ≪≫
@@ -158,7 +155,7 @@ example (z a b : ℤ) : positiveKoszulResolution.π.f 0
     (ι_tensorResolutionAugmentation_zero ℤ actualPresentationResolution splitResolution)
   exact h
 
-/-- The second differential of the actual positive-degree tensor uses the negative Koszul sign. -/
+/-- The degree-two tensor differential has the negative Koszul sign. -/
 example :
     (HomologicalComplex.ιTensorObj actualPresentationResolution.complex splitResolution.complex
       1 1 2 rfl ≫ positiveKoszulResolution.complex.d 2 1) ≫
@@ -197,7 +194,8 @@ example :
     simpa only [pow_one, Units.neg_smul, one_smul] using h
   rw [h₁, h₂, zero_add]
 
-/-- Actual nonzero native Tor1 prevents the literal tensor total from being a resolution. -/
+/-- Nonzero degree-one Tor prevents the mod-two tensor augmentation from being a quasi-
+isomorphism. -/
 theorem modTwo_tensor_augmentation_not_quasiIso :
     ¬ QuasiIso (tensorResolutionAugmentation ℤ actualPresentationResolution actualPresentationResolution) := by
   intro h
@@ -241,7 +239,7 @@ theorem integral_tensor_second_positiveTor_zero (n : ℕ) :
     exact ModuleCat.projective_of_categoryTheory_projective _
   exact isZero_Tor_succ_of_projective (ModuleCat ℤ) Z (Z ⊗ Z) n
 
-/-- The actual ordered associator compares two infinite-length integral resolutions. -/
+/-- The tensor associator compares the two parenthesizations of three integral resolutions. -/
 example : IsIso
     (tensorProjectiveResolutionAssociatorHom ℤ splitResolution splitResolution splitResolution
       integral_positiveTor_zero integral_positiveTor_zero

@@ -12,7 +12,13 @@ module
 public import MathlibExtTest.Algebra.Category.ModuleCat.NativeTorLongExactUniverse
 public import MathlibExt.Algebra.Category.ModuleCat.NativeTorProjectiveDimensionUniverse
 
-/-! Native Euler sums for a genuine nonsplit integral mod-two coefficient sequence. -/
+/-!
+# Euler sums for the integral mod-two sequence
+
+The nonsplit integral sequence gives native Tor with Euler sum one for the
+free coefficient and zero for the mod-two coefficient. Truncating before
+the nonzero degree-one boundary gives sum one.
+-/
 
 @[expose] public section
 noncomputable section
@@ -36,7 +42,7 @@ theorem zeroQuotient_isIso : IsIso (((Tor (ModuleCat ℤ) 0).obj Q).map quotient
   change IsIso (T.map quotient)
   exact isIso_of_mono_of_epi _
 
-/-- The actual native degree-zero quotient map is an isomorphism in the mod-two client. -/
+/-- The degree-zero quotient map is an isomorphism for the mod-two coefficient. -/
 def zeroQuotientIso : (((Tor (ModuleCat ℤ) 0).obj Q).obj Z) ≅
     (((Tor (ModuleCat ℤ) 0).obj Q).obj Q) := by
   letI : IsIso (((Tor (ModuleCat ℤ) 0).obj Q).map quotient) := zeroQuotient_isIso

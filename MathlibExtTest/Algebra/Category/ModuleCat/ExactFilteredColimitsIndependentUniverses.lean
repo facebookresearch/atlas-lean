@@ -20,14 +20,13 @@ public import Mathlib.Tactic.NormNum
 public import Lean.Elab.Tactic.Omega
 
 /-!
-# A nonzero filtered module colimit with larger-world scalars
+# A nonzero filtered module colimit over larger-universe scalars
 
-The scalar ring is the actual product of integers indexed by small types,
-valued in world one. Evaluation at the natural-number type acts on the
-world-zero coefficient Z/4 x Z. The sequence retains the torsion coordinate
-and doubles the free coordinate, so its transition is not invertible. Projection
-to Z/4 is a genuine cocone and detects a nonzero element in the native colimit.
-No scalar-ring object, separator, alternative colimit or injectivity is supplied.
+The scalar ring is a product of integers indexed by small types and lies in
+universe one. Evaluation at the natural-number type acts on the universe-zero
+module `ℤ/4 × ℤ`. Transition maps preserve the torsion coordinate and double
+the free coordinate. Projection to `ℤ/4` defines a detecting cocone and proves
+that the colimit contains a nonzero element.
 -/
 
 @[expose] public section
@@ -38,23 +37,23 @@ namespace MathlibExtTest.ExactFilteredModuleColimits
 
 open CategoryTheory CategoryTheory.Limits
 
-/-- The larger-world scalar ring, without a small-ring premise. -/
+/-- The scalar ring lies in universe one. -/
 abbrev Scalar : Type 1 := Type → ℤ
 
-/-- Actual evaluation gives the scalar action used on all coefficient modules. -/
+/-- Evaluation at the natural-number type determines the scalar action. -/
 def evaluation : Scalar →+* ℤ := Pi.evalRingHom (fun _ : Type => ℤ) ℕ
 
-/-- The torsion coordinate has the actual restricted evaluation action. -/
+/-- The torsion coordinate carries the evaluation action. -/
 instance scalarModuleTorsion : Module Scalar (ZMod 4) :=
   Module.compHom (ZMod 4) evaluation
 
-/-- The free coordinate has the same restricted evaluation action. -/
+/-- The integer coordinate carries the same evaluation action. -/
 instance scalarModuleInteger : Module Scalar ℤ := Module.compHom ℤ evaluation
 
-/-- Original small coefficients retain both nonzero torsion and a free coordinate. -/
+/-- The universe-zero module has a torsion coordinate and an integer coordinate. -/
 def M : ModuleCat.{0} Scalar := ModuleCat.of Scalar (ZMod 4 × ℤ)
 
-/-- The actual torsion coordinate as a small module over the same large ring. -/
+/-- The torsion module over the larger-universe scalar ring. -/
 def T : ModuleCat.{0} Scalar := ModuleCat.of Scalar (ZMod 4)
 
 /-- The transition preserves torsion and doubles the free coordinate. -/
@@ -62,7 +61,7 @@ def step : M ⟶ M :=
   ModuleCat.ofHom ((LinearMap.id : ZMod 4 →ₗ[Scalar] ZMod 4).prodMap
     ((2 : ℕ) • (LinearMap.id : ℤ →ₗ[Scalar] ℤ)))
 
-/-- The transition's torsion coordinate is literally retained. -/
+/-- The transition fixes the torsion coordinate. -/
 theorem step_torsion (x : M) : (step.hom x).1 = x.1 := rfl
 
 /-- The free coordinate is multiplied by two. -/
@@ -70,7 +69,7 @@ theorem step_free (x : M) : (step.hom x).2 = 2 * x.2 := by
   change (2 : ℕ) • x.2 = 2 * x.2
   norm_num [nsmul_eq_mul]
 
-/-- These transitions are genuinely noninvertible. -/
+/-- The transition is not invertible. -/
 theorem step_not_isIso : ¬ IsIso step := by
   intro h
   let : IsIso step := h
@@ -80,35 +79,35 @@ theorem step_not_isIso : ¬ IsIso step := by
   rw [step_free] at hf
   omega
 
-/-- The actual filtered diagram uses the native sequence constructor. -/
+/-- The sequence diagram formed by the transition maps. -/
 def diagram : ℕ ⥤ ModuleCat.{0} Scalar :=
   Functor.ofSequence (X := fun _ => M) (fun _ => step)
 
-/-- Its adjacent morphism is the original transition, not a chosen comparison. -/
+/-- Every adjacent map is the transition. -/
 theorem diagram_succ (n : ℕ) :
     diagram.map (homOfLE (Nat.le_add_right n 1)) = step :=
   Functor.ofSequence_map_homOfLE_succ (fun _ => step) n
 
-/-- Native module colimits of this filtered shape are exact across the unequal worlds. -/
+/-- Filtered colimits of these modules are exact across the two universes. -/
 theorem exact_filtered_shape : HasExactColimitsOfShape ℕ (ModuleCat.{0} Scalar) :=
   ModuleCat.hasExactFilteredColimitsOfShape Scalar ℕ
 
-/-- The actual colimit functor retains finite-limit preservation from that capability. -/
+/-- The colimit functor preserves finite limits. -/
 theorem colim_preserves_finite_limits :
     PreservesFiniteLimits (colim (J := ℕ) (C := ModuleCat.{0} Scalar)) := by
   let := exact_filtered_shape
   infer_instance
 
-/-- Projection onto the actual retained torsion coefficient. -/
+/-- Projection onto the torsion coordinate. -/
 def torsionProjection : M ⟶ T := ModuleCat.ofHom (LinearMap.fst Scalar (ZMod 4) ℤ)
 
-/-- The original transition commutes with the detecting projection. -/
+/-- The transition commutes with the detecting projection. -/
 theorem step_projection : step ≫ torsionProjection = torsionProjection := by
   apply ModuleCat.hom_ext
   ext x
   rfl
 
-/-- Native sequence naturality packages the detecting maps into a real cocone. -/
+/-- The detecting projections form a cocone over the sequence. -/
 def detectingCocone : Cocone diagram where
   pt := T
   ι := NatTrans.ofSequence (fun _ => torsionProjection) (fun n => by
@@ -116,10 +115,10 @@ def detectingCocone : Cocone diagram where
     change step ≫ torsionProjection = torsionProjection ≫ 𝟙 T
     simpa only [Category.comp_id] using step_projection)
 
-/-- The nonzero original torsion coefficient. -/
+/-- A nonzero torsion element. -/
 def one : M := (1, 0)
 
-/-- The native colimit injection is detected by an actual module map to Z/4. -/
+/-- The colimit injection is detected by a module map to `ℤ/4`. -/
 theorem detect_native_colimit_one :
     (colimit.desc diagram detectingCocone).hom ((colimit.ι diagram 0).hom one) = (1 : ZMod 4) := by
   have h := congrArg (fun f : M ⟶ T => f.hom one) (colimit.ι_desc detectingCocone 0)
@@ -127,7 +126,7 @@ theorem detect_native_colimit_one :
     ((colimit.ι diagram 0).hom one) = (1 : ZMod 4) at h
   exact h
 
-/-- The actually chosen native colimit has a nonzero element. -/
+/-- The colimit contains a nonzero element. -/
 theorem native_colimit_one_nonzero : (colimit.ι diagram 0).hom one ≠ 0 := by
   intro h
   have hz : (colimit.desc diagram detectingCocone).hom ((colimit.ι diagram 0).hom one) = 0 := by
