@@ -14,10 +14,14 @@ public import Mathlib.Order.Prod.Lex.Basic
 /-!
 # Classical processes: top-level cut elimination
 
-Top-level cut elimination for the exponential- and quantifier-free fragment
-of Wadler's classical processes (*Propositions as Sessions*, ICFP 2012,
-§2.7, Theorem 2): every typed process reduces in finitely many steps to a
-process that is not a cut. A process is a cut when it has the form
+Top-level cut elimination for Wadler's classical processes
+(*Propositions as Sessions*, ICFP 2012, §2.7, Theorem 2): every typed
+process reduces in finitely many steps to a process that is not a cut.
+The process grammar and the reduction formalized here include no
+introduction or communication rules for the exponentials or the
+quantifiers; the propositions annotating processes and cuts are
+unrestricted, and the theorem imposes no restriction on them. A process
+is a cut when it has the form
 `νx.(Q | R)`; a typed process that is not a cut acts on, or links, a free
 channel of its environment, so it is ready for external communication. This
 is the sense in which the theorem expresses deadlock freedom.
@@ -501,9 +505,10 @@ theorem HasType.reducible_of_isCut {Γ : Context Atom} {p : Proc Atom}
     obtain ⟨_, _, _, he⟩ := hc
     cases he
 
-/-- **Top-level cut elimination** (Wadler, Theorem 2) for the exponential- and
-quantifier-free fragment: if `P ⊢ Γ`, then `P ⟹* Q` for some `Q` that is not a
-cut. -/
+/-- **Top-level cut elimination** (Wadler, Theorem 2): if `P ⊢ Γ`, then
+`P ⟹* Q` for some `Q` that is not a cut. The cut propositions are
+unrestricted. Not being a cut constrains only the outermost constructor:
+`Q` may still contain cuts guarded by a prefix. -/
 theorem HasType.exists_steps_not_cut {Γ : Context Atom} {p : Proc Atom}
     (h : HasType Γ p) : ∃ q, Steps p q ∧ ¬ ∃ a q₁ q₂, q = .cut a q₁ q₂ := by
   obtain ⟨q, hpq, hnf⟩ := (Step.terminating.apply p).normalizable
