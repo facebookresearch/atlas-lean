@@ -67,6 +67,41 @@ Rotated Square Region*, INTEGERS 25 (2025), Article A112, Section 1, Equation (1
 public theorem pellV_zero (D α β : ℤ) : pellV D α β 0 = 0 := by
   norm_num [pellV]
 
+/-- **The Pell interpolation functions agree with the solution sequence at natural numbers.** Let
+$D$ be an integer and let $(\alpha, \beta)$ be a fundamental solution of $x^2 - Dy^2 = 1$, that
+is, an integer solution with $\alpha > 1$ and $\beta > 0$ such that $\alpha \le x$ for every
+integer solution $(x, y)$ with $x > 1$ (one exists only when $D$ is positive and not a square).
+For $n \ge 0$ let $u_n, v_n$ be the integers with $u_n + v_n\sqrt D = (\alpha + \beta\sqrt D)^n$,
+and for real $t$ let $u(t) = ((\alpha + \beta\sqrt D)^t + (\alpha - \beta\sqrt D)^t)/2$ and
+$v(t) = ((\alpha + \beta\sqrt D)^t - (\alpha - \beta\sqrt D)^t)/(2\sqrt D)$. Then $u(n) = u_n$ and
+$v(n) = v_n$ for every natural number $n$.
+
+Source: Kun Yi Ong and Eddie Shahril Bin Ismail, *Integer Solutions of Pell Equation in a Closed
+Rotated Square Region*, INTEGERS 25 (2025), Article A112, Proposition 1.2
+(`integers-2025-A112-prop-1-2`). -/
+public theorem pellU_pellV_natCast {D : ℤ} {a : Pell.Solution₁ D}
+    (ha : Pell.IsFundamental a) (n : ℕ) :
+    pellU D a.x a.y n = (a ^ n).x ∧ pellV D a.x a.y n = (a ^ n).y := by
+  have hD : (0 : ℝ) < D := by exact_mod_cast ha.d_pos
+  have hr2 : Real.sqrt D ^ 2 = D := Real.sq_sqrt hD.le
+  -- Both conjugate powers expand into the coordinates of `a ^ k`, using `(√D)² = D`.
+  have hpow (k : ℕ) :
+      ((a.x : ℝ) + a.y * Real.sqrt D) ^ k = (a ^ k).x + (a ^ k).y * Real.sqrt D ∧
+      ((a.x : ℝ) - a.y * Real.sqrt D) ^ k = (a ^ k).x - (a ^ k).y * Real.sqrt D := by
+    induction k with
+    | zero => simp
+    | succ k ih =>
+      simp only [pow_succ, ih.1, ih.2, Pell.Solution₁.x_mul, Pell.Solution₁.y_mul]
+      push_cast
+      constructor <;> linear_combination ((a ^ k).y * a.y : ℝ) * hr2
+  obtain ⟨hp, hq⟩ := hpow n
+  unfold pellU pellV
+  rw [Real.rpow_natCast, Real.rpow_natCast, hp, hq]
+  constructor
+  · ring
+  · field_simp [(Real.sqrt_pos.mpr hD).ne']
+    ring
+
 /-- **Pell solutions are signed powers of the fundamental solution.** Let $D$ be an integer and
 let $(\alpha, \beta)$ be a fundamental solution of $x^2 - Dy^2 = 1$, that is, an integer solution
 with $\alpha > 1$ and $\beta > 0$ such that $\alpha \le x$ for every integer solution $(x, y)$ with

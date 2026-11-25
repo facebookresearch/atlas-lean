@@ -10,18 +10,21 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Finset.Powerset
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.BigOperators.Group.List
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Data.List.GetD
 import Mathlib.Data.List.Induction
+import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Tactic.Ring
 
 /-!
 # Weighted file placements on Ferrers boards
 
 This module defines weighted file numbers and proves their factorization in the basis of
-$m$-falling factorials by adjoining one column at a time.
+$m$-falling factorials by adjoining one column at a time. It also counts the file placements
+in a block on a singleton board and proves that their weights sum to zero.
 -/
 
 namespace MetaMathlibExt
@@ -566,5 +569,275 @@ public theorem weightedFileNumber_factorization (m : ℕ) (_hm : 1 ≤ m) (b : L
         congr 1
         exact Finset.prod_congr rfl fun i hi => by
           rw [b.getD_append [h] 0 i (Finset.mem_range.mp hi)]
+
+namespace sum_filePlacementWeight_block
+
+open Finset weightedFileNumber_factorization
+
+-- Extend a fixed placement `G` by one cell in each column in `s`, using rows in `R`.
+private def extensions (b : List ℕ) (G : Finset (ℕ × ℕ)) (R s : Finset ℕ) :
+    Finset (Finset (ℕ × ℕ)) :=
+  (filePlacements b).filter fun F => G ⊆ F ∧ (F \ G).image Prod.fst = s ∧
+    ∀ c ∈ F \ G, c.2 ∈ R
+
+private theorem mem_extensions {b : List ℕ} {G F : Finset (ℕ × ℕ)} {R s : Finset ℕ} :
+    F ∈ extensions b G R s ↔
+      F ∈ filePlacements b ∧ G ⊆ F ∧ (F \ G).image Prod.fst = s ∧
+        ∀ c ∈ F \ G, c.2 ∈ R :=
+  mem_filter
+
+private theorem sum_extensions_insert {b : List ℕ} {G : Finset (ℕ × ℕ)} {R s : Finset ℕ}
+    {i : ℕ} (hi : i ∉ s) (hGi : i ∉ G.image Prod.fst)
+    (hboard : ∀ r ∈ R, (i, r) ∈ ferrersBoardCells b) (m : ℕ) :
+    ∑ F ∈ extensions b G R (insert i s), filePlacementWeight m F =
+      ∑ F ∈ extensions b G R s, ∑ r ∈ R, filePlacementWeight m (insert (i, r) F) := by
+  have hcol (F : Finset (ℕ × ℕ)) (hF : F ∈ extensions b G R s) (c : ℕ × ℕ)
+      (hc : c ∈ F) : c.1 ≠ i := by
+    obtain ⟨_, _, hcols, _⟩ := mem_extensions.mp hF
+    intro he
+    by_cases hg : c ∈ G
+    · exact hGi (he ▸ mem_image_of_mem Prod.fst hg)
+    · exact hi (he ▸ hcols ▸ mem_image_of_mem Prod.fst (mem_sdiff.mpr ⟨hc, hg⟩))
+  rw [← sum_product']
+  symm
+  refine sum_nbij (fun p : Finset (ℕ × ℕ) × ℕ => insert (i, p.2) p.1) ?_ ?_ ?_
+    (fun _ _ => rfl)
+  · rintro ⟨F, r⟩ hp
+    obtain ⟨hF, hr⟩ := mem_product.mp hp
+    obtain ⟨hfile, hGF, hcols, hrows⟩ := mem_extensions.mp hF
+    have hnew : (i, r) ∉ F := fun h => hcol F hF (i, r) h rfl
+    have hnewG : (i, r) ∉ G := fun h => hGi (mem_image_of_mem Prod.fst h)
+    obtain ⟨hsub, hinj⟩ := mem_placements.mp hfile
+    apply mem_extensions.mpr
+    refine ⟨mem_placements.mpr ⟨insert_subset (hboard r hr) hsub, ?_⟩,
+      hGF.trans (subset_insert _ _), ?_, ?_⟩
+    · rw [coe_insert, Set.injOn_insert hnew]
+      exact ⟨hinj, fun ⟨c, hc, he⟩ => hcol F hF c hc he⟩
+    · rw [insert_sdiff_of_notMem _ hnewG, image_insert, hcols]
+    · rw [insert_sdiff_of_notMem _ hnewG]
+      intro c hc
+      rcases mem_insert.mp hc with rfl | hc
+      · exact hr
+      · exact hrows c hc
+  · rintro ⟨F, r⟩ hp ⟨H, t⟩ hq he
+    obtain ⟨hF, _⟩ := mem_product.mp hp
+    obtain ⟨hH, _⟩ := mem_product.mp hq
+    change insert (i, r) F = insert (i, t) H at he
+    have hrt : r = t := by
+      have hc : (i, r) ∈ insert (i, t) H := he ▸ mem_insert_self _ _
+      exact congrArg Prod.snd ((mem_insert.mp hc).resolve_right (fun h => hcol H hH _ h rfl))
+    subst t
+    have hnF : (i, r) ∉ F := fun hc => hcol F hF (i, r) hc rfl
+    have hnH : (i, r) ∉ H := fun hc => hcol H hH (i, r) hc rfl
+    have hFH : F = H := by
+      simpa only [erase_insert hnF, erase_insert hnH]
+        using congrArg (fun K => K.erase (i, r)) he
+    exact Prod.ext hFH rfl
+  · intro F hF
+    obtain ⟨hfile, hGF, hcols, hrows⟩ := mem_extensions.mp hF
+    obtain ⟨hsub, hinj⟩ := mem_placements.mp hfile
+    have hi' : i ∈ (F \ G).image Prod.fst := hcols ▸ mem_insert_self _ _
+    obtain ⟨⟨j, r⟩, hcell, hj⟩ := mem_image.mp hi'
+    change j = i at hj
+    subst j
+    obtain ⟨hcF, hcG⟩ := mem_sdiff.mp hcell
+    have hcols' : ((F.erase (i, r)) \ G).image Prod.fst = s := by
+      rw [← sdiff_singleton_eq_erase, sdiff_right_comm,
+        image_sdiff_of_injOn (hinj.mono sdiff_subset) (singleton_subset_iff.mpr hcell),
+        hcols, image_singleton, sdiff_singleton_eq_erase, erase_insert hi]
+    have hGone : G ⊆ F.erase (i, r) := fun c hc =>
+      mem_erase.mpr ⟨fun he => hcG (he ▸ hc), hGF hc⟩
+    have hErase : F.erase (i, r) ∈ extensions b G R s := mem_extensions.mpr
+      ⟨mem_placements.mpr ⟨(erase_subset _ _).trans hsub,
+        hinj.mono (erase_subset _ _)⟩, hGone, hcols',
+        fun c hc => hrows c (mem_sdiff.mpr
+          ⟨erase_subset _ _ (mem_sdiff.mp hc).1, (mem_sdiff.mp hc).2⟩)⟩
+    exact ⟨(F.erase (i, r), r), mem_product.mpr ⟨hErase, hrows _ hcell⟩,
+      insert_erase hcF⟩
+
+private theorem row_count {b : List ℕ} {G F : Finset (ℕ × ℕ)} {R s : Finset ℕ}
+    (hF : F ∈ extensions b G R s) :
+    (F.filter fun c => c.2 ∈ R).card = s.card + (G.filter fun c => c.2 ∈ R).card := by
+  obtain ⟨hfile, hGF, hcols, hrows⟩ := mem_extensions.mp hF
+  have hdiff : (F.filter fun c => c.2 ∈ R) \ (G.filter fun c => c.2 ∈ R) = F \ G := by
+    ext c
+    simp only [mem_sdiff, mem_filter]
+    exact ⟨fun ⟨⟨hc, hr⟩, hg⟩ => ⟨hc, fun he => hg ⟨he, hr⟩⟩,
+      fun ⟨hc, hg⟩ => ⟨⟨hc, hrows c (mem_sdiff.mpr ⟨hc, hg⟩)⟩, fun he => hg he.1⟩⟩
+  have hcard := card_sdiff_add_card_eq_card
+    (filter_subset_filter (fun c : ℕ × ℕ => c.2 ∈ R) hGF)
+  rw [hdiff, ← card_image_of_injOn ((mem_placements.mp hfile).2.mono sdiff_subset),
+    hcols] at hcard
+  exact hcard.symm
+
+private theorem sum_insert_rows (m : ℕ) {F : Finset (ℕ × ℕ)} {R : Finset ℕ} {i : ℕ}
+    (hnew : ∀ r ∈ R, (i, r) ∉ F) :
+    ∑ r ∈ R, filePlacementWeight m (insert (i, r) F) =
+      filePlacementWeight m F * (R.card - (m : ℤ) * (F.filter fun c => c.2 ∈ R).card) := by
+  have hbound (c : ℕ × ℕ) (hc : c ∈ F) : c.2 < ((F.image Prod.snd) ∪ R).sup id + 1 :=
+    Nat.lt_succ_of_le (le_sup (s := F.image Prod.snd ∪ R) (f := id)
+      (mem_union_left _ (mem_image_of_mem Prod.snd hc)))
+  have hcard := card_eq_sum_card_fiberwise (f := Prod.snd)
+    (fun c hc => (mem_filter.mp hc).2 : ∀ c ∈ F.filter (fun c => c.2 ∈ R), c.2 ∈ R)
+  have hrow (r : ℕ) (hr : r ∈ R) :
+      ((F.filter fun c => c.2 ∈ R).filter fun c => c.2 = r) = F.filter (fun c => c.2 = r) := by
+    ext c
+    simp only [mem_filter]
+    exact ⟨fun ⟨⟨hc, _⟩, he⟩ => ⟨hc, he⟩, fun ⟨hc, he⟩ => ⟨⟨hc, he ▸ hr⟩, he⟩⟩
+  have hcounts : ∑ r ∈ R, (F.filter fun c => c.2 = r).card =
+      (F.filter fun c => c.2 ∈ R).card := by
+    rw [hcard]
+    exact sum_congr rfl fun r hr => by rw [hrow r hr]
+  calc
+    _ = ∑ r ∈ R, filePlacementWeight m F *
+          (1 - m * ((F.filter fun c => c.2 = r).card : ℤ)) :=
+      sum_congr rfl fun r hr => weight_insert m hbound
+        (Nat.lt_succ_of_le (le_sup (f := id) (mem_union_right _ hr))) (hnew r hr)
+    _ = _ := by
+      rw [← mul_sum, sum_sub_distrib, ← mul_sum, ← Nat.cast_sum, hcounts]
+      simp
+
+private theorem sum_extensions_eq_zero {b : List ℕ} {G : Finset (ℕ × ℕ)} {R s : Finset ℕ}
+    (m : ℕ) (hR : R.card = m) (hG : (G.filter fun c => c.2 ∈ R).card = 1)
+    (hs : s.Nonempty) (hdisj : Disjoint s (G.image Prod.fst))
+    (hboard : ∀ i ∈ s, ∀ r ∈ R, (i, r) ∈ ferrersBoardCells b) :
+    ∑ F ∈ extensions b G R s, filePlacementWeight m F = 0 := by
+  induction s using Finset.induction_on with
+  | empty => exact (not_nonempty_empty hs).elim
+  | @insert i s hi ih =>
+    rw [sum_extensions_insert hi (disjoint_left.mp hdisj (mem_insert_self _ _))
+      (hboard i (mem_insert_self _ _))]
+    calc
+      _ = ∑ F ∈ extensions b G R s,
+          filePlacementWeight m F * (m - (m : ℤ) * (s.card + 1)) := by
+        refine sum_congr rfl fun F hF => ?_
+        rw [sum_insert_rows, row_count hF, hR, hG, Nat.cast_add, Nat.cast_one]
+        intro r hr hc
+        obtain ⟨_, _, hcols, _⟩ := mem_extensions.mp hF
+        by_cases h : (i, r) ∈ G
+        · exact disjoint_left.mp hdisj (mem_insert_self _ _) (mem_image_of_mem Prod.fst h)
+        · exact hi (hcols ▸ mem_image_of_mem Prod.fst (mem_sdiff.mpr ⟨hc, h⟩))
+      _ = 0 := by
+        -- The multiplier depends only on the number of occupied columns.
+        -- It vanishes when the only previous cell in these rows is the fixed cell.
+        rw [← sum_mul]
+        rcases s.eq_empty_or_nonempty with rfl | hs'
+        · simp
+        · rw [ih hs' (hdisj.mono_left (subset_insert _ _))
+            (fun j hj => hboard j (mem_insert_of_mem hj)), zero_mul]
+
+end sum_filePlacementWeight_block
+
+open Finset weightedFileNumber_factorization sum_filePlacementWeight_block in
+-- The chosen level already contains two cells, so the non-rook hypothesis is redundant.
+set_option linter.unusedVariables false in
+/-- **Cancellation of the weights over a block.** Let $m \ge 2$ and let $B$ be a singleton board
+for $m$. Let $F_0$ be a file placement on $B$ that is not an $m$-level rook placement. Let $l$ be a
+level and $c_0$ a cell such that $l$ holds at least two cells of $F_0$ and holds the fewest cells
+of $F_0$ among all such levels (the lowest such level on ties), and $c_0$ is the leftmost cell of
+$F_0$ in level $l$. Then the $m$-weights of the file placements in the block $P(F_0)$ determined
+by $l$ and $c_0$ sum to $0$: $\sum_{F \in P(F_0)} \mathrm{wt}_m(F) = 0$.
+
+Source: Kenny Barrese, *Weighted File Placements on Singleton Boards*, INTEGERS 24 (2024),
+Article A58, Theorem 9 (`integers-2024-A58-thm-9`). -/
+public theorem sum_filePlacementWeight_block (m : ℕ) (hm : 2 ≤ m) (b : List ℕ)
+    (hb : IsSingletonBoard m b) (F₀ : Finset (ℕ × ℕ)) (hF₀ : F₀ ∈ filePlacements b)
+    (hF₀r : F₀ ∉ levelRookPlacements m b) (l : ℕ) (c₀ : ℕ × ℕ)
+    (hl : IsChosenLevelAndLeftmost m F₀ l c₀) :
+    ∑ F ∈ filePlacementBlock m b F₀ l c₀, filePlacementWeight m F = 0 := by
+  classical
+  obtain ⟨htwo, _, hc₀, hc₀l, hleft⟩ := hl
+  have hm₀ : 0 < m := by omega
+  let R := Ico (l * m) ((l + 1) * m)
+  have hrow (r : ℕ) : r ∈ R ↔ r / m = l := by
+    rw [mem_Ico, ← Nat.le_div_iff_mul_le hm₀, ← Nat.div_lt_iff_lt_mul hm₀]
+    omega
+  have hR : R.card = m := by simp [R, Nat.add_mul]
+  let L := F₀.filter (fun c => c.2 / m = l)
+  -- Keep the outside cells and the leftmost cell, and let the other columns vary.
+  let G := insert c₀ (F₀.filter (fun c => c.2 / m ≠ l))
+  let s := (L.image Prod.fst).erase c₀.1
+  have hc₀L : c₀ ∈ L := mem_filter.mpr ⟨hc₀, hc₀l⟩
+  have hG : (G.filter fun c => c.2 ∈ R).card = 1 := by
+    have he : G.filter (fun c => c.2 ∈ R) = {c₀} := by
+      ext c
+      simp only [G, mem_filter, mem_insert, mem_singleton, hrow]
+      grind
+    rw [he, card_singleton]
+  obtain ⟨hboard, hinj⟩ := mem_placements.mp hF₀
+  have hs : s.Nonempty := by
+    apply card_pos.mp
+    rw [card_erase_of_mem (mem_image_of_mem Prod.fst hc₀L),
+      card_image_of_injOn (hinj.mono (filter_subset _ _))]
+    omega
+  have hd : Disjoint s (G.image Prod.fst) := by
+    refine disjoint_left.mpr fun i hi hg => ?_
+    obtain ⟨hne, hi⟩ := mem_erase.mp hi
+    obtain ⟨c, hc, rfl⟩ := mem_image.mp hi
+    obtain ⟨d, hd, he⟩ := mem_image.mp hg
+    obtain ⟨hc, hcl⟩ := mem_filter.mp hc
+    rcases mem_insert.mp hd with rfl | hd
+    · exact hne he.symm
+    · obtain ⟨hd, hdl⟩ := mem_filter.mp hd
+      exact hdl (hinj hd hc he ▸ hcl)
+  have hfull (i : ℕ) (hi : i ∈ s) (r : ℕ) (hr : r ∈ R) : (i, r) ∈ ferrersBoardCells b := by
+    obtain ⟨hne, hi⟩ := mem_erase.mp hi
+    obtain ⟨c, hc, rfl⟩ := mem_image.mp hi
+    obtain ⟨hc, hcl⟩ := mem_filter.mp hc
+    have hlt := (hleft c hc hcl).lt_of_ne (Ne.symm hne)
+    have hj := (mem_cells.mp (hboard hc)).1
+    exact mem_cells.mpr
+      ⟨hj, (mem_Ico.mp hr).2.trans_le (level_full_to_right hm₀ hb (hboard hc₀) hc₀l hlt hj)⟩
+  have hext : filePlacementBlock m b F₀ l c₀ = extensions b G R s := by
+    have hcols {F : Finset (ℕ × ℕ)} (hF : F ∈ filePlacements b)
+        (hout : F.filter (fun c => c.2 / m ≠ l) = F₀.filter (fun c => c.2 / m ≠ l))
+        (hfix : c₀ ∈ F) :
+        (F \ G).image Prod.fst = ((F.filter (fun c => c.2 / m = l)).image Prod.fst).erase c₀.1 := by
+      have hinj' := (mem_placements.mp hF).2
+      have hdiff : F \ G = (F.filter fun c => c.2 / m = l) \ {c₀} := by
+        ext c
+        simp only [G, ← hout, mem_sdiff, mem_insert, mem_filter, mem_singleton]
+        grind
+      have hc : {c₀} ⊆ F.filter (fun c => c.2 / m = l) :=
+        singleton_subset_iff.mpr (mem_filter.mpr ⟨hfix, hc₀l⟩)
+      rw [hdiff, image_sdiff_of_injOn (hinj'.mono (filter_subset _ _)) hc,
+        image_singleton, sdiff_singleton_eq_erase]
+    ext F
+    change F ∈ (filePlacements b).filter _ ↔ F ∈ extensions b G R s
+    rw [mem_filter, mem_extensions]
+    constructor
+    · rintro ⟨hF, hout, he, hfix⟩
+      refine ⟨hF, ?_, (hcols hF hout hfix).trans (congrArg (fun t => t.erase c₀.1) he), ?_⟩
+      · dsimp only [G]
+        rw [← hout]
+        exact insert_subset hfix (filter_subset _ _)
+      · intro c hc
+        obtain ⟨hcF, hcG⟩ := mem_sdiff.mp hc
+        apply (hrow c.2).mpr
+        by_contra hn
+        apply hcG
+        dsimp only [G]
+        rw [← hout]
+        exact mem_insert_of_mem (mem_filter.mpr ⟨hcF, hn⟩)
+    · rintro ⟨hF, hGF, he, hrows⟩
+      have hfix : c₀ ∈ F := hGF (mem_insert_self _ _)
+      have hout : F.filter (fun c => c.2 / m ≠ l) = F₀.filter (fun c => c.2 / m ≠ l) := by
+        ext c
+        simp only [mem_filter]
+        refine ⟨fun ⟨hc, hne⟩ => ?_, fun ⟨hc, hne⟩ => ?_⟩
+        · have hcg : c ∈ G := by
+            by_contra hn
+            exact hne ((hrow c.2).mp (hrows c (mem_sdiff.mpr ⟨hc, hn⟩)))
+          exact (mem_filter.mp ((mem_insert.mp hcg).resolve_left
+            (fun h => hne (h ▸ hc₀l))))
+        · exact ⟨hGF (mem_insert_of_mem (mem_filter.mpr ⟨hc, hne⟩)), hne⟩
+      have he' := (hcols hF hout hfix).symm.trans he
+      have hmem : c₀.1 ∈ (F.filter (fun c => c.2 / m = l)).image Prod.fst :=
+        mem_image_of_mem Prod.fst (mem_filter.mpr ⟨hfix, hc₀l⟩)
+      refine ⟨hF, hout, ?_, hfix⟩
+      simpa only [s, insert_erase hmem, insert_erase (mem_image_of_mem Prod.fst hc₀L)]
+        using congrArg (insert c₀.1) he'
+  rw [hext]
+  exact sum_extensions_eq_zero m hR hG hs hd hfull
 
 end MetaMathlibExt

@@ -15,7 +15,8 @@ finite `p`-groups, the restricted wreath product, Skiba's `σ`-notions (partitio
 primes, `σ`-primary integers, `σ`-subnormal subgroups, `σ`-nilpotent and `σ`-soluble groups), and
 verbal subgroups (Problems 2.43, 8.18).
 The prime partitions, σ-primary integers and σ-subnormal subgroups are imported from
-`MathlibExt.GroupTheory.SigmaSubnormal`. The Fitting subgroup and the free
+`MathlibExt.GroupTheory.SigmaSubnormal`, and residually finite `p`-groups from
+`MathlibExt.GroupTheory.ResiduallyFiniteP`. The Fitting subgroup and the free
 soluble groups are `fittingSubgroup` and `FreeSolubleGroup` of the Kourovka 17.40 and 1.89
 entries.
 -/
@@ -28,6 +29,7 @@ public import Mathlib.GroupTheory.Nilpotent
 public import Mathlib.GroupTheory.RegularWreathProduct
 public import Mathlib.GroupTheory.Solvable
 public import Mathlib.Order.CompletePartialOrder
+public import MathlibExt.GroupTheory.ResiduallyFiniteP
 public import MathlibExt.GroupTheory.SigmaSubnormal
 
 @[expose] public section
@@ -62,14 +64,6 @@ finite index (that is, $g x g^{-1} y^{-1} \in N$ for some $g \in G$) are conjuga
 def IsConjugacySeparable (G : Type*) [Group G] : Prop :=
   ∀ x y : G, (∀ N : Subgroup G, N.Normal → N.FiniteIndex → ∃ g : G, g * x * g⁻¹ * y⁻¹ ∈ N) →
     IsConj x y
-
-/-- **Residually finite $p$-groups.** For a natural number $p$, a group $G$ is residually a finite
-$p$-group if every element $g \ne 1$ of $G$ lies outside some normal subgroup of $G$ whose index
-is $p^k$ for some $k \ge 0$, where an infinite index counts as $0$.
-
-This notion appears in Kourovka Notebook problems 1.84, 4.52 and 10.30. -/
-def IsResiduallyFiniteP (p : ℕ) (G : Type*) [Group G] : Prop :=
-  ∀ g : G, g ≠ 1 → ∃ N : Subgroup G, N.Normal ∧ (∃ k : ℕ, N.index = p ^ k) ∧ g ∉ N
 
 /-- **Restricted wreath product.** For groups $A$ and $B$, let $A \wr_r B = A^B \rtimes B$ be the
 regular (unrestricted) wreath product, where $A^B$ is the group of all functions $f : B \to A$ and

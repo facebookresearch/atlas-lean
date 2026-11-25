@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.KuniskyKomlosLowerBound
+public import MathlibExt.Combinatorics.NikolovVectorColoring
 public import MathlibExt.Combinatorics.VectorDiscrepancy
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -109,19 +110,6 @@ def kuniskyInfinitelyManyDimensionsLowerBound : Prop :=
       ((2 : ℝ) ^ (-(k : ℝ) / 2) + ∑ a ∈ Finset.Icc 1 k, (2 : ℝ) ^ (-(a : ℝ) / 2)) ≤
       dimensionConstant (2 ^ k)
 
-/-- **Komlós conjecture for vector colorings (statement).** The statement that for all natural
-numbers $m$ and $n \ge 1$ and every real $m \times n$ matrix $A$ whose columns all lie in the
-closed Euclidean unit ball, there are unit vectors $u_1, \dots, u_n$ in the Euclidean space
-$\mathbb{R}^n$ such that $\lVert \sum_{j=1}^{n} A_{ij} u_j \rVert \le 1$ for every row index $i$,
-where $\lVert \cdot \rVert$ is the Euclidean norm.
-
-Source: Nikolov, arXiv1301.4039, retained KomlosSDP.tex lines 115-139,
-Theorem `thm:main`. Positive column dimension is explicit. -/
-def nikolov2013VectorColoringBound : Prop :=
-  ∀ (m n : ℕ), 1 ≤ n → ∀ A : Matrix (Fin m) (Fin n) ℝ, ColumnAdmissible A →
-    ∃ u : Fin n → EuclideanSpace ℝ (Fin n), (∀ j, ‖u j‖ = 1) ∧
-      ∀ i, ‖∑ j, A i j • u j‖ ≤ 1
-
 /-- **Statement of Nikolov's bound on vector discrepancy.** This is the proposition that for all
 natural numbers $m$ and $n$ with $n \ge 1$ and every real $m \times n$ matrix $A$ whose columns
 all lie in the closed Euclidean unit ball, that is, $\sum_{i} A_{ij}^2 \le 1$ for every
@@ -188,15 +176,6 @@ theorem_wanted bansalJiang2025LittleSqrtLogUpperBound_holds :
 Theorem 1.1, at each dyadic dimension `2 ^ k`. -/
 theorem_wanted kuniskyInfinitelyManyDimensionsLowerBound_holds :
   kuniskyInfinitelyManyDimensionsLowerBound
-
-/-- **Nikolov's theorem: the Komlós conjecture holds for vector colorings.** For all natural
-numbers $m$ and $n \ge 1$ and every real $m \times n$ matrix $A$ whose columns all have Euclidean
-norm at most $1$, there are unit vectors $u_1, \dots, u_n$ in the Euclidean space $\mathbb{R}^n$
-such that $\lVert \sum_{j=1}^{n} A_{ij} u_j \rVert \le 1$ for every row index $i$, where
-$\lVert \cdot \rVert$ is the Euclidean norm.
-
-Source: Nikolov, arXiv1301.4039, retained Theorem `thm:main`. -/
-theorem_wanted nikolov2013VectorColoringBound_holds : nikolov2013VectorColoringBound
 
 /-- **Nikolov's bound on vector discrepancy.** For all natural numbers $m$ and $n$ with
 $n \ge 1$ and every real $m \times n$ matrix $A$ whose columns all lie in the closed

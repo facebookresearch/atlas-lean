@@ -17,6 +17,20 @@ open MathlibExt.Probability.JansonInequalityWanted
 
 namespace MathlibExtTest.Probability.Combinatorics.JansonInequality
 
+/-- Avoiding a singleton also avoids its superset. The two ordered overlap terms
+cancel the contribution of the superset to the exponent. -/
+example (p : Bool → I) :
+    (randomSubsetLaw p).real {ω | ω true = false} ≤ Real.exp (-(p true : ℝ)) := by
+  let S : Fin 2 → Finset Bool := ![{true}, {true, false}]
+  have hevent : {ω | ∀ i, ω ∉ containsEvent (S i)} = {ω : Bool → Bool | ω true = false} := by
+    ext ω
+    simp +contextual [Fin.forall_fin_two, S, containsEvent]
+  rw [← hevent]
+  refine (janson_inequality p S).trans_eq (congrArg Real.exp ?_)
+  norm_num [jansonMu, jansonDelta, Fin.sum_univ_two, S, containsEvent_inter,
+    randomSubsetLaw_real_containsEvent]
+  ring
+
 /-- With no events, both sums vanish and the bound is attained. -/
 example {α : Type*} [Fintype α] [DecidableEq α] (p : α → I) (S : Empty → Finset α) :
     (randomSubsetLaw p).real {ω | ∀ i, ω ∉ containsEvent (S i)} =

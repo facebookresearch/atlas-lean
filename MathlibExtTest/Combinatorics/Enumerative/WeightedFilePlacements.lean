@@ -38,3 +38,44 @@ set_option maxRecDepth 4096 in
 example : filePlacementBlock 2 [1, 4, 4] {(0, 0), (1, 3), (2, 2)} 1 (1, 3) =
     {{(0, 0), (1, 3), (2, 2)}, {(0, 0), (1, 3), (2, 3)}} := by
   decide
+
+-- The leftmost column is partial, but the other column can use either row.
+example : ∑ F ∈ filePlacementBlock 2 [1, 2] {(0, 0), (1, 1)} 0 (0, 0),
+    filePlacementWeight 2 F = 0 := by
+  refine sum_filePlacementWeight_block 2 (by decide) [1, 2] ?_ _ (by decide) (by decide) 0 (0, 0) ?_
+  · unfold IsSingletonBoard
+    decide
+  · refine ⟨by decide, ?_, by decide, by decide, by simp⟩
+    intro k hk
+    by_cases h : k = 0
+    · subst k
+      exact Or.inr ⟨rfl, le_rfl⟩
+    · simp [Finset.filter_insert, Finset.filter_singleton, Ne.symm h] at hk
+
+-- Two columns vary in level one, and the cell in level zero stays fixed.
+example : ∑ F ∈ filePlacementBlock 2 [1, 3, 4, 4] {(0, 0), (1, 2), (2, 3), (3, 3)} 1 (1, 2),
+    filePlacementWeight 2 F = 0 := by
+  apply sum_filePlacementWeight_block 2 (by decide)
+  · unfold IsSingletonBoard
+    decide
+  · rw [filePlacements, Finset.mem_filter, Finset.mem_powerset]
+    decide
+  · simp only [levelRookPlacements, Finset.mem_filter, not_and]
+    intro _
+    decide
+  · refine ⟨by decide, ?_, by decide, by decide, ?_⟩
+    · intro k hk
+      by_cases h : k = 1
+      · subst k
+        exact Or.inr ⟨rfl, le_rfl⟩
+      · by_cases h₀ : k = 0
+        · subst k
+          simp [Finset.filter_insert, Finset.filter_singleton] at hk
+        · simp [Finset.filter_insert, Finset.filter_singleton, Ne.symm h, Ne.symm h₀] at hk
+    · intro c hc hlevel
+      simp only [Finset.mem_insert, Finset.mem_singleton] at hc
+      rcases hc with rfl | rfl | rfl | rfl
+      · exact (by decide : ¬ 0 / 2 = (1 : ℕ)) hlevel |>.elim
+      · decide
+      · decide
+      · decide

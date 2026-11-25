@@ -13,6 +13,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Topology.MetricSpace.Isometry
 public import MathlibExt.NumberTheory.ConsecutiveSquares
+public import MathlibExt.NumberTheory.ConsecutiveSquaresPlane
 
 namespace MetaMathlibExt
 
@@ -31,22 +32,6 @@ public theorem_wanted soCS_pell_param_pos_nonsquare (a b c : ℤ)
     (h : IsSoCSSolution a b c) :
     0 < 3 * (b - c) ^ 2 * (12 * (b - a) ^ 2 * (c - b) ^ 2 - (a - 2 * b + c) ^ 4) ∧
     ¬ IsSquare (3 * (b - c) ^ 2 * (12 * (b - a) ^ 2 * (c - b) ^ 2 - (a - 2 * b + c) ^ 4))
-
-/-- **Infinite families of solutions in a plane.** Let $(a, b, c)$ be a solution of the sum of
-consecutive squares problem. Then there are infinitely many distinct integer triples $(x, y, z)$
-satisfying the sum of consecutive squares equation
-$2\,y(y+1)(2y+1) = x(x+1)(2x+1) + z(z+1)(2z+1)$, with no order or sign condition, such that
-$(b - c)x + (c - a)y + (a - b)z = 0$ and $z - x \equiv c - a \pmod 2$.
-
-Source: Anderson, Woodall and Zaharescu, *Arithmetic Polygons and Sums of
-Consecutive Squares*, INTEGERS 26 (2026), Article A1, Proposition 1
-(`integers-2026-A1-prop-1`). -/
-public theorem_wanted soCS_infinite_family_plane (a b c : ℤ)
-    (h : IsSoCSSolution a b c) :
-    ∃ f : ℕ → ℤ × ℤ × ℤ, Function.Injective f ∧
-      ∀ n, SoCSEq (f n).1 (f n).2.1 (f n).2.2 ∧
-        (b - c) * (f n).1 + (c - a) * (f n).2.1 + (a - b) * (f n).2.2 = 0 ∧
-        (f n).2.2 - (f n).1 ≡ c - a [ZMOD 2]
 
 /-- **Solutions with odd span $c - a$.** For every odd integer $N \ge 3$ there is a solution
 $(a, b, c)$ of the sum of consecutive squares problem with $c - a = N$, together with infinitely

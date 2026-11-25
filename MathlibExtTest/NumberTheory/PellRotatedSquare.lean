@@ -37,3 +37,29 @@ example : pellShiftBound 3 (-2) 4 = 9 := by
   norm_num [pellShiftBound]
 
 end MetaMathlibExt.pell_solutions_eq_signed_powers
+
+namespace MetaMathlibExt.pellU_pellV_natCast
+
+private def fundamental : Pell.Solution₁ 3 := .mk 2 1 (by decide)
+
+private theorem isFundamental : Pell.IsFundamental fundamental :=
+  ⟨by decide, by decide, fun {_} hb => hb⟩
+
+-- At n = 1 the interpolations return the fundamental solution itself.
+example {D : ℤ} {a : Pell.Solution₁ D} (ha : Pell.IsFundamental a) :
+    pellU D a.x a.y 1 = a.x ∧ pellV D a.x a.y 1 = a.y := by
+  simpa using pellU_pellV_natCast ha 1
+
+-- For D = 3, (2 + √3)² = 7 + 4√3, so the interpolations at 2 give the solution (7, 4).
+example : pellU 3 2 1 2 = 7 ∧ pellV 3 2 1 2 = 4 := by
+  have h := pellU_pellV_natCast isFundamental 2
+  norm_num [fundamental, sq, Pell.Solution₁.x_mul, Pell.Solution₁.y_mul] at h
+  exact h
+
+-- The real powers at 3 sum to twice the first coordinate of (2 + √3)³ = 26 + 15√3.
+example : (2 + Real.sqrt 3) ^ (3 : ℝ) + (2 - Real.sqrt 3) ^ (3 : ℝ) = 52 := by
+  have h := (pellU_pellV_natCast isFundamental 3).1
+  norm_num [fundamental, pow_succ, Pell.Solution₁.x_mul, Pell.Solution₁.y_mul, pellU] at h ⊢
+  linarith
+
+end MetaMathlibExt.pellU_pellV_natCast
