@@ -10,7 +10,7 @@ module
 
 public import MathlibExt.Analysis.PDE.InitialInverseColeHopf
 public import MathlibExt.Analysis.PDE.HeatKernelUniqueness
-public import MathlibExt.Analysis.PDE.BurgersBounds
+import MathlibExt.Analysis.PDE.BurgersExponentialGrowth
 
 /-!
 # Uniqueness for bounded classical Burgers solutions

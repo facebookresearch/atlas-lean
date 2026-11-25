@@ -13,6 +13,7 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutCount
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutSubdivision
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTree
 public import MathlibExt.Combinatorics.ArithmeticalStructureStar
@@ -31,61 +32,6 @@ The coconut tree `CT(p, s)` has vertex type `Fin p ⊕ Fin s`: the path vertex
 `v_p` is `.inl ⟨p - 1, _⟩`. A structure `(d, r)` is a pair of labelings of the
 vertices. Counts `|Arith(G)|` and `|SArith(G)|` are `Set.ncard` of the sets of
 pairs `(d, r)`. -/
-
-/-- **Ballot numbers.** For natural numbers $n$ and $k$, the ballot number $B(n, k)$ is the
-integer part of $\max(n + 1 - k, 0) \binom{n+k}{n} / (n + 1)$. For $k \le n + 1$ the division
-is exact, so $B(n, k) = \frac{n - k + 1}{n + 1} \binom{n+k}{n}$ (OEIS A009766), and
-$B(n, k) = 0$ for $k > n + 1$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Section 1. -/
-public def ballotNumber (n k : ℕ) : ℕ :=
-  (n + 1 - k) * (n + k).choose n / (n + 1)
-
-/-- **Ballot numbers with second index zero.** For every natural number $n$, the ballot number
-$B(n, 0)$ equals $1$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Section 1. -/
-public theorem ballotNumber_zero_right (n : ℕ) : ballotNumber n 0 = 1 := by
-  simp [ballotNumber]
-
-/-- **Diagonal ballot numbers are Catalan numbers.** For every natural number $n$, the ballot
-number $B(n, n)$ equals the $n$-th Catalan number $C_n$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Section 1. -/
-public theorem ballotNumber_self (n : ℕ) : ballotNumber n n = catalan n := by
-  rw [ballotNumber, show n + 1 - n = 1 by omega, one_mul, ← two_mul,
-    ← Nat.centralBinom_eq_two_mul_choose, ← succ_mul_catalan_eq_centralBinom,
-    Nat.mul_div_cancel_left _ (Nat.succ_pos n)]
-
-/-- **Terms of the coconut tree count.** For natural numbers $x$ and $y$, the term $A(x, y)$ is
-defined by $A(x, 0) = C_{x-1}$, $A(x, 1) = C_{x-1} - C_{x-2}$ and, for $y \ge 2$,
-
-$$A(x, y) = \sum_{i=y+1}^{x} B(x - y - 1, x - i) \, |\mathrm{SArith}(CT(i - y, y))|,$$
-
-where $C_n$ is the $n$-th Catalan number (a negative index is read as $0$), $B$ is the ballot
-number, and $|\mathrm{SArith}(CT(m, y))|$ is the number of smooth arithmetical structures
-$(d, r)$ on the coconut tree $CT(m, y)$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Theorem 1. -/
-public noncomputable def coconutCountTerm (x y : ℕ) : ℕ :=
-  if y = 0 then catalan (x - 1)
-  else if y = 1 then catalan (x - 1) - catalan (x - 2)
-  else ∑ i ∈ Finset.Icc (y + 1) x, ballotNumber (x - y - 1) (x - i) *
-    Set.ncard {z : (Fin (i - y) ⊕ Fin y → ℕ) × (Fin (i - y) ⊕ Fin y → ℕ) |
-      IsSmoothCoconut (i - y) y z.1 z.2}
-
-/-- **The coconut count term with second argument zero.** For every natural number $x$, the
-term $A(x, 0)$ of the coconut tree count equals the Catalan number $C_{x-1}$, read as $C_0$
-when $x = 0$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Theorem 1. -/
-public theorem coconutCountTerm_zero (x : ℕ) : coconutCountTerm x 0 = catalan (x - 1) := by
-  simp [coconutCountTerm]
 
 /-- **Monotonicity criteria for arithmetical structures on coconut trees.** Let $(d, r)$ be an
 arithmetical structure on the coconut tree $CT(p, s)$ with path vertices $v_1, \dots, v_p$, and
@@ -133,20 +79,6 @@ public theorem_wanted ncard_arithmeticalStructure_coconutTree_one_leaf_ne_one {p
     Set.ncard {x : (Fin p ⊕ Fin 1 → ℕ) × (Fin p ⊕ Fin 1 → ℕ) |
       IsArithmeticalStructure (coconutTree p 1) x.1 x.2 ∧ x.1 (.inr 0) ≠ 1}
       = catalan p - catalan (p - 1)
-
-/-- **Number of arithmetical structures on coconut trees.** For $p \ge 1$ and $s \ge 2$, the number
-of arithmetical structures on the coconut tree $CT(p, s)$ is
-$$\sum_{j=0}^{s} \binom{s}{j} A(p + s - j, s - j),$$
-where $A(x, y)$ is the coconut count term.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Theorem 1
-(`integers-2025-A82-thm-1`). -/
-public theorem_wanted ncard_arithmeticalStructure_coconutTree {p s : ℕ} (hp : 1 ≤ p)
-    (hs : 2 ≤ s) :
-    Set.ncard {x : (Fin p ⊕ Fin s → ℕ) × (Fin p ⊕ Fin s → ℕ) |
-      IsArithmeticalStructure (coconutTree p s) x.1 x.2}
-      = ∑ j ∈ Finset.range (s + 1), s.choose j * coconutCountTerm (p + s - j) (s - j)
 
 /-- **Number of arithmetical structures on coconut trees with two leaves.** For $p \ge 2$, the
 number of arithmetical structures on the coconut tree $CT(p, 2)$ is
