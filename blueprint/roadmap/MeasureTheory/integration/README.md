@@ -17,6 +17,7 @@ The Lebesgue integral and its convergence theorems, modes of convergence of meas
 - [Jensen's inequality for integrals](jensen-s-inequality-for-integrals/README.md)
 - [Products of measures with densities](products-of-measures-with-densities/README.md)
 - [Scheffé's lemma](scheff-s-lemma/README.md)
+- [Integral of a product of coordinate functions over Euclidean space](integral-prod-coord.md)
 - [Egorov's theorem on the real line under integrable domination](egorov-s-theorem/README.md)
 - [Lusin's theorem](lusin-s-theorem/README.md)
 - [Monotonicity of Lorentzian integrals in the width](lorentzian-width-monotonicity/README.md)

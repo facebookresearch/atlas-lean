@@ -90,9 +90,10 @@ noncomputable def frameRotation (c s : ℝ) : Matrix (Fin 6) (Fin 6) ℝ :=
     0, 0, 0, -s, c, 0;
     0, 0, 0, 0, 0, 1]
 
-/-- Global frame-element stiffness by orthogonal congruence:
-`K_global = Tᵀ * K_local * T`, with local displacements
-`T *ᵥ d_global`. -/
+/-- Global frame-element stiffness by congruence with the frame
+transform: `K_global = Tᵀ * K_local * T`, with local displacements
+`T *ᵥ d_global`. For direction cosines on the unit circle
+(`c ^ 2 + s ^ 2 = 1`) the congruence is orthogonal. -/
 noncomputable def frameStiffnessGlobal (EA EI L c s : ℝ) :
     Matrix (Fin 6) (Fin 6) ℝ :=
   (frameRotation c s)ᵀ * frameStiffness EA EI L * frameRotation c s
@@ -115,7 +116,9 @@ theorem frameRotation_mul_transpose {c s : ℝ}
   ext i j
   fin_cases i <;> fin_cases j <;> simp [Matrix.mul_apply, Fin.sum_univ_six] <;> linarith [hcs]
 
-/-- Coordinate round trips for the orthogonal frame transform. -/
+/-- Coordinate round trips for the frame transform, which is
+orthogonal for direction cosines on the unit circle
+(`c ^ 2 + s ^ 2 = 1`). -/
 theorem frameRotation_mulVec_round_trip {c s : ℝ}
     (hcs : c ^ 2 + s ^ 2 = 1) (d : Fin 6 → ℝ) :
     (frameRotation c s)ᵀ *ᵥ (frameRotation c s *ᵥ d) = d ∧
@@ -209,8 +212,8 @@ theorem frameRotation_mulVec_globalTranslation
   fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_six]
 
 /-- A global rigid rotation about end 1, for an element of
-length `L` in direction `(c, s)`, maps to the local rigid
-rotation mode. -/
+length `L` in direction `(c, s)` with `c ^ 2 + s ^ 2 = 1`, maps to
+the local rigid rotation mode. -/
 theorem frameRotation_mulVec_globalRotation
     (L c s w : ℝ) (hcs : c ^ 2 + s ^ 2 = 1) :
     frameRotation c s *ᵥ ![0, 0, w, -L * s * w, L * c * w, w]

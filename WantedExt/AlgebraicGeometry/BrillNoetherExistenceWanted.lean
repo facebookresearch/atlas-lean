@@ -48,6 +48,6 @@ public theorem_wanted brillNoether_nonempty
     (C : Over (Spec (.of k))) [IsIntegral C.left] [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom]
     (d r : ℕ) (hρ : 0 ≤ brillNoetherNumber (genus C.hom) d r) :
-    Nonempty (LinearSeries C.hom (d : ℤ) r)
+    Nonempty (LinearSeries C.hom d r)
 
 end WantedExt.AlgebraicGeometry.BrillNoetherExistence

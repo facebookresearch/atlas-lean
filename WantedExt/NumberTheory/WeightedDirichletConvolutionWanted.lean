@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Algebra.BigOperators.HomogeneousGeomSum
 public import MathlibExt.NumberTheory.ArithmeticFunction.CompletelyMultiplicative
+public import MathlibExt.NumberTheory.ArithmeticFunction.WeightedDirichletConvolution
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -136,26 +137,6 @@ public theorem_wanted sum_dirichletConvolution_mul_eq {u v : ArithmeticFunction 
     ∑ j ∈ Finset.Icc 1 ⌊x / r⌋₊, (u * v) (r * j) =
       ∑ d ∈ r.divisors, u d * v (r / d) * ∑ m ∈ d.divisors, (μ m : ℂ) * v m *
         ∑ j ∈ Finset.Icc 1 ⌊x / (m * r)⌋₊, (u * v) j
-
-/-- **Möbius expansion of weighted sums of a Dirichlet convolution.** Let $w$, $u$ and $v$ be
-arithmetic functions with complex values, let $*$ denote Dirichlet convolution, let $\mu$ be the
-Möbius function and put $g = w * \mu$. Then for every real $x$,
-$$
-\sum_{1 \le j \le x} w(j)\, (u * v)(j) =
-\sum_{1 \le r \le x} g(r) \sum_{1 \le j \le x/r} (u * v)(rj),
-$$
-where $j$ and $r$ run over positive integers.
-
-Both sides vanish for $x < 1$; the source assumes $x \ge 1$.
-
-Source: André Pierro de Camargo, *Weighted Summation of Dirichlet Convolutions and Applications
-to Some Divisor Problems over k-Free and B-Free Integers*, INTEGERS 24 (2024), Article A75,
-Lemma 4 (`integers-2024-A75-lem-4`). -/
-public theorem_wanted sum_mul_dirichletConvolution_eq_sum_moebius (w u v : ArithmeticFunction ℂ)
-    (x : ℝ) :
-    ∑ j ∈ Finset.Icc 1 ⌊x⌋₊, w j * (u * v) j =
-      ∑ r ∈ Finset.Icc 1 ⌊x⌋₊, (w * (μ : ArithmeticFunction ℂ)) r *
-        ∑ j ∈ Finset.Icc 1 ⌊x / r⌋₊, (u * v) (r * j)
 
 /-- **Weighted summation of Dirichlet convolutions.** Let $u$ and $v$ be completely
 multiplicative arithmetic functions with complex values, let $w$ be any arithmetic function with

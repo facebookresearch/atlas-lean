@@ -182,14 +182,16 @@ theorem graph_adj_inr_inr (x y : Fin k × Fin q) :
     (graph p k q).Adj (.inr x) (.inr y) ↔ x.1 = y.1 ∧ x ≠ y :=
   Iff.rfl
 
-/-- A vertex of the independent set is adjacent to all `k * q` clique vertices. -/
+/-- In the join of $p$ independent vertices with $k$ disjoint cliques of size $q$, each
+independent vertex has degree $kq$, the total number of clique vertices. -/
 theorem degree_inl (a : Fin p) : (graph p k q).degree (.inl a) = k * q := by
   rw [← SimpleGraph.card_neighborFinset_eq_degree, SimpleGraph.neighborFinset_eq_filter,
     Finset.card_filter, Fintype.sum_sum_type]
   simp
 
-/-- A clique vertex is adjacent to the `p` vertices of the independent set and to the other
-`q - 1` vertices of its clique. -/
+/-- In the join of $p$ independent vertices with $k$ disjoint cliques of size $q$, a clique
+vertex has degree $p+(q-1)$. Its neighbors are the independent vertices and the other
+vertices of its clique. -/
 theorem degree_inr (x : Fin k × Fin q) : (graph p k q).degree (.inr x) = p + (q - 1) := by
   rw [← SimpleGraph.card_neighborFinset_eq_degree, SimpleGraph.neighborFinset_eq_filter,
     Finset.card_filter, Fintype.sum_sum_type]
@@ -197,7 +199,9 @@ theorem degree_inr (x : Fin k × Fin q) : (graph p k q).degree (.inr x) = p + (q
   simp only [Fintype.sum_prod_type]
   simp [Prod.ext_iff, ite_and, Finset.filter_ne, Finset.card_erase_of_mem]
 
-/-- Twice the number of edges of `CliqueJoin.graph p k q`, by the degree-sum formula. -/
+/-- For natural numbers $p,k,q$, let $G$ be the join of an independent set of $p$ vertices with
+$k$ disjoint cliques of size $q$. Summing the degrees in these two parts gives
+$2|E(G)| = p(kq) + kq\bigl(p+(q-1)\bigr)$, with $q-1$ truncated at zero. -/
 theorem two_mul_card_edgeFinset :
     2 * (graph p k q).edgeFinset.card = p * (k * q) + k * q * (p + (q - 1)) := by
   rw [← SimpleGraph.sum_degrees_eq_twice_card_edges, Fintype.sum_sum_type]

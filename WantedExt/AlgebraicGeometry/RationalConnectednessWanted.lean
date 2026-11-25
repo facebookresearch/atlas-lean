@@ -43,14 +43,14 @@ universe u
 def_wanted fanoFamily (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left] [IsProper X.hom] [IsNoetherian X.left]
     (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (projective : IsProjectiveVariety X) (K : LineBundle X.left)
+    (projective : ProjectiveSpace.IsProjective X) (K : LineBundle X.left)
     (canonical : SerreDualizingLine X.hom K.val n) (Kinv : InverseLine K)
     (ample : IsAmpleLine Kinv.inverse) : RationalCurveFamily X
 
 theorem_wanted birational_invariance (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X Y : Over (Spec (.of k))) [IsIntegral X.left] [IsIntegral Y.left]
     [IsProper X.hom] [IsProper Y.hom] [Smooth X.hom] [Smooth Y.hom]
-    (projectiveX : IsProjectiveVariety X) (projectiveY : IsProjectiveVariety Y)
+    (projectiveX : ProjectiveSpace.IsProjective X) (projectiveY : ProjectiveSpace.IsProjective Y)
     (birational : Scheme.BirationalOver X.hom Y.hom) :
     IsRationallyConnected X ↔ IsRationallyConnected Y
 

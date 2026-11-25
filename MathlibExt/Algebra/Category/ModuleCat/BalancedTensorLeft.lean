@@ -6,25 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
+
 module
 
 public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced.Actions
 
 /-!
-# The computed outer module functor on a ground-balanced tensor
+# Outer scalar actions on balanced tensor functors
 
-The fixed factor Q has its given left S and right R actions. The object is
-the existing balanced quotient, with the earned outer S-module structure.
-The variable left R-module uses native restriction for the ground action.
+Let `Q` have compatible left `S` and right `R` actions, and let both factors
+be modules over the commutative ground ring `k`. The balanced tensor product
+of `Q` with a left `R`-module carries an `S`-module structure. Tensoring maps
+is functorial and additive.
 
-S need not be a ground algebra for this functor. If it is one and the given
-ground and S actions on Q form a scalar tower, restriction recovers the
-existing ground-linear balanced functor by the actual identity-coordinate
-natural isomorphism. No Morita equivalence or desired action is an input.
+If `S` is a `k`-algebra and the `k` and `S` actions on `Q` form a scalar
+tower, restriction of scalars identifies this functor with the ground-linear
+balanced tensor functor. The comparison is the identity on balanced classes.
 -/
 
 @[expose] public section
@@ -43,22 +41,14 @@ variable (k : Type u) (R : Type v) (S : Type v') (Q : Type w)
   [AddCommGroup Q] [Module k Q] [Module Rᵐᵒᵖ Q] [Module S Q]
   [SMulCommClass S k Q] [SMulCommClass S Rᵐᵒᵖ Q]
 
-/-- Let `k` be a commutative ring, `R` a `k`-algebra, and `S` a ring. Let `Q` be
-an additive commutative group with `k`, right `R`, and left `S` module actions.
-Assume the `S` action commutes with both the `k` and right `R` actions. For a left
-`R`-module `N`, take `TensorProduct.Balanced k R Q N` with the `S` action
-induced by `s • [q, n] = [s • q, n]`. Restrict the action on `N` to `k`. -/
+/-- The original quotient, bundled with its computed outer module. -/
 def obj (N : ModuleCat.{z} R) : ModuleCat.{max w z} S :=
   letI : Module k N.carrier := Module.compHom N.carrier (algebraMap k R)
   letI : Module S (TensorProduct.Balanced k R Q N.carrier) :=
     TensorProduct.Balanced.leftModule k R S Q N.carrier
   ModuleCat.of S (TensorProduct.Balanced k R Q N.carrier)
 
-/-- Let `k` be a commutative ring, `R` a `k`-algebra, and `S` a ring. Let `Q` be
-an additive commutative group with `k`, right `R`, and left `S` module actions.
-Assume the `S` action commutes with both the `k` and right `R` actions. A left `R`-linear
-map `g : N ⟶ N′` induces an `S`-linear map on the balanced tensors
-sending the class `[q, n]` to `[q, g n]`. -/
+/-- Tensoring a morphism in the second factor gives an `S`-linear map on balanced classes. -/
 def map {N N' : ModuleCat.{z} R} (g : N ⟶ N') :
     obj k R S Q N ⟶ obj k R S Q N' := by
   letI : Module k N.carrier := Module.compHom N.carrier (algebraMap k R)
@@ -104,13 +94,7 @@ theorem map_mk {N N' : ModuleCat.{z} R} (g : N ⟶ N') (q : Q) (n : N.carrier) :
     ((TensorProduct.map (LinearMap.id : Q →ₗ[k] Q) l) (q ⊗ₜ[k] n)) = _
   rfl
 
-/-- Let `k` be a commutative ring, `R` a `k`-algebra, and `S` a ring. Let `Q` be
-an additive commutative group with `k`, right `R`, and left `S` module actions.
-Assume the `S` action commutes with both the `k` and right `R` actions. The functor sends
-a left `R`-module `N` to `TensorProduct.Balanced k R Q N` as a left
-`S`-module, and `g : N ⟶ N′` to the map sending `[q, n]` to `[q, g n]`.
-The `S` action is on the first factor and the `k` action on `N`
-is obtained by restriction of scalars. -/
+/-- The balanced tensor functor with its outer `S`-action. -/
 def functor : ModuleCat.{z} R ⥤ ModuleCat.{max w z} S where
   obj := obj k R S Q
   map := map k R S Q
@@ -168,11 +152,7 @@ def functor : ModuleCat.{z} R ⥤ ModuleCat.{max w z} S where
         (map_mk k R S Q g q n).symm
     exact h₀.trans (h₁.trans (h₂.trans h₃))
 
-/-- Let `k` be a commutative ring, `R` a `k`-algebra, and `S` a ring. Let `Q` be
-an additive commutative group with `k`, right `R`, and left `S` module actions.
-Assume the `S` action commutes with both the `k` and right `R` actions. The balanced tensor
-functor from left `R`-modules to left `S`-modules preserves addition
-of morphisms. -/
+/-- Additivity of the actual S-module functor is proved on quotient classes. -/
 theorem additive : (functor k R S Q : ModuleCat.{z} R ⥤ ModuleCat.{max w z} S).Additive where
   map_add := by
     intro N N' g h
@@ -213,13 +193,7 @@ theorem additive : (functor k R S Q : ModuleCat.{z} R ⥤ ModuleCat.{max w z} S)
 variable [Algebra k S] [hSQ : IsScalarTower k S Q]
 
 include hSQ in
-/-- Let `k` be a commutative ring, `R` a `k`-algebra, and `S` a ring. Let `Q` be
-an additive commutative group with `k`, right `R`, and left `S` module actions.
-Assume the `S` action commutes with both the `k` and right `R` actions. Assume also that
-`S` is a `k`-algebra and `IsScalarTower k S Q` holds.
-Then `functor k R S Q ⋙ ModuleCat.restrictScalars (algebraMap k S)`
-is naturally isomorphic to `ModuleCat.BalancedTensor.functor k R Q`.
-Each component takes a balanced tensor class to that same class. -/
+/-- Restriction of the outer scalar action identifies the two functors by the identity on balanced classes. -/
 def groundIso :
     functor k R S Q ⋙ ModuleCat.restrictScalars (algebraMap k S) ≅
       ModuleCat.BalancedTensor.functor k R Q := by

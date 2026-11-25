@@ -6,20 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
+
 module
 
 public import Mathlib.Algebra.Homology.Embedding.StupidTrunc
 
 /-!
-# Inverse naturality for stupid-truncation component isomorphisms
+# Inverse naturality for stupid-truncation components
 
-This is the inverse companion to
-`stupidTruncMap_stupidTruncXIso_hom`.  It lets clients move a chain map
-across the inverse component comparison without cancelling an isomorphism by
-hand.
+The inverse component isomorphisms of stupid truncation commute with
+chain maps.
 -/
 
 @[expose] public section

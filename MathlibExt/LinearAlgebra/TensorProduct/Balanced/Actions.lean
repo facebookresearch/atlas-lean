@@ -6,9 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
+
 module
 
 public import Mathlib.Algebra.Module.LinearMap.End
@@ -16,16 +14,12 @@ public import Mathlib.Algebra.Algebra.Tower
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced
 
 /-!
-# Earned outer actions on a ground-balanced tensor quotient
+# Outer actions on balanced tensor products
 
-The quotient and its maps are the existing `TensorProduct.Balanced`. An
-outer action on the first factor descends when it commutes with both the
-original ground action and the balancing action. The resulting module is
-a named dictionary; it does not install a second global action on the carrier.
-
-No algebra structure on the outer semiring is needed for descent. When it
-is a ground algebra and the original first-factor actions form a scalar
-tower, the computed quotient action has that same ground compatibility.
+An action on the first tensor factor descends to the balanced quotient when it commutes with
+the ground action and the balancing action. The descended action defines a module structure
+without requiring an algebra structure on the outer semiring. If the first-factor actions form
+a scalar tower over the ground ring, the quotient action has the corresponding compatibility.
 -/
 
 @[expose] public section
@@ -42,8 +36,10 @@ variable (k : Type u) (R : Type v) (Q : Type w) (N : Type z)
   [CommRing k] [Semiring R] [AddCommGroup Q] [AddCommGroup N]
   [Module k Q] [Module k N] [Module Rᵐᵒᵖ Q] [Module R N]
 
-/-- Pure balanced representatives determine an additive map, without a
-ground-module structure on its target. -/
+/--
+Pure balanced representatives determine an additive map, without a
+ground-module structure on its target.
+-/
 theorem addHom_ext {P : Type t} [AddCommMonoid P]
     {f g : Balanced k R Q N →+ P}
     (h : ∀ (q : Q) (n : N), f (mk k R Q N q n) = g (mk k R Q N q n)) :
@@ -73,11 +69,11 @@ variable (k : Type u) (R : Type v) (S : Type v') (Q : Type w) (N : Type z)
   [Module k Q] [Module k N] [Module Rᵐᵒᵖ Q] [Module R N]
   [Module S Q] [SMulCommClass S k Q] [SMulCommClass S Rᵐᵒᵖ Q]
 
-/-- Actual native endomorphism evaluation, with the original scalar dictionaries. -/
+/-- Endomorphism evaluation, with the scalar dictionaries. -/
 theorem leftOperator_apply (s : S) (q : Q) :
     Module.toModuleEnd k Q s q = s • q := rfl
 
-/-- The native operator preserves the original balancing action. -/
+/-- The operator preserves the balancing action. -/
 theorem leftOperator_equivariant (s : S) :
     ∀ (r : R) (q : Q),
       (Module.toModuleEnd k Q s) (op r • q) =
@@ -86,12 +82,12 @@ theorem leftOperator_equivariant (s : S) :
   rw [leftOperator_apply, leftOperator_apply]
   exact smul_comm s (op r) q
 
-/-- The actual identity operator preserves the second factor's original action. -/
+/-- The identity operator preserves the second factor's action. -/
 theorem leftIdentity_equivariant :
     ∀ (r : R) (n : N), (LinearMap.id : N →ₗ[k] N) (r • n) =
       r • (LinearMap.id : N →ₗ[k] N) n := fun _ _ => rfl
 
-/-- Literal pure-generator value of the actual operator-induced balanced map. -/
+/-- Literal pure-generator value of the operator-induced balanced map. -/
 theorem leftOperator_map_mk (s : S) (q : Q) (n : N) :
     map (Module.toModuleEnd k Q s) (LinearMap.id : N →ₗ[k] N)
         (leftOperator_equivariant k R S Q s) (leftIdentity_equivariant k R N)
@@ -101,7 +97,7 @@ theorem leftOperator_map_mk (s : S) (q : Q) (n : N) :
     (leftOperator_equivariant k R S Q s) (leftIdentity_equivariant k R N) q n
   exact h.trans (by rw [leftOperator_apply, LinearMap.id_apply])
 
-/-- The given outer action descends through the actual balancing quotient. -/
+/-- The given outer action descends through the balancing quotient. -/
 def leftAction : S →+* Module.End k (Balanced k R Q N) where
   toFun s := map (Module.toModuleEnd k Q s) (LinearMap.id : N →ₗ[k] N)
     (leftOperator_equivariant k R S Q s) (leftIdentity_equivariant k R N)
@@ -114,7 +110,7 @@ def leftAction : S →+* Module.End k (Balanced k R Q N) where
   map_mul' s t := by
     apply hom_ext
     intro q n
-    simp only [mul_apply_eq_comp, leftOperator_map_mk]
+    simp only [Module.End.mul_apply, leftOperator_map_mk]
     change mk k R Q N ((s * t) • q) n = mk k R Q N (s • (t • q)) n
     rw [mul_smul]
   map_zero' := by
@@ -136,8 +132,10 @@ theorem leftAction_mk (s : S) (q : Q) (n : N) :
     leftAction k R S Q N s (mk k R Q N q n) = mk k R Q N (s • q) n := by
   exact leftOperator_map_mk k R S Q N s q n
 
-/-- Restriction of the native endomorphism action gives the actual outer
-module, retaining the original ground module on the quotient. -/
+/--
+Restriction of the endomorphism action gives the outer module, retaining the ground module on the
+quotient.
+-/
 abbrev leftModule : Module S (Balanced k R Q N) :=
   Module.compHom (Balanced k R Q N) (leftAction k R S Q N)
 
@@ -148,7 +146,7 @@ theorem leftModule_smul_mk (s : S) (q : Q) (n : N) :
   change leftAction k R S Q N s (mk k R Q N q n) = _
   exact leftAction_mk k R S Q N s q n
 
-/-- Every computed outer scalar remains linear for the original ground action. -/
+/-- Every computed outer scalar remains linear for the ground action. -/
 theorem leftSMulCommClass :
     letI := leftModule k R S Q N
     SMulCommClass S k (Balanced k R Q N) := by
@@ -161,7 +159,7 @@ theorem leftSMulCommClass :
 variable [Algebra k S] [hSQ : IsScalarTower k S Q]
 
 include hSQ in
-/-- Ground scalars act on the quotient through the original ground action. -/
+/-- Ground scalars act on the quotient through the ground action. -/
 theorem leftAction_algebraMap (c : k) :
     leftAction k R S Q N (algebraMap k S c) =
       c • (1 : Module.End k (Balanced k R Q N)) := by
@@ -175,8 +173,10 @@ theorem leftAction_algebraMap (c : k) :
       ((mk k R Q N).map_smul c q)
 
 include hSQ in
-/-- Compatibility of the original first-factor actions earns the quotient
-scalar tower; no quotient compatibility is requested from the caller. -/
+/--
+Compatibility of the first-factor actions gives the quotient scalar tower; no quotient
+compatibility is requested from the caller.
+-/
 theorem leftScalarTower :
     letI := leftModule k R S Q N
     IsScalarTower k S (Balanced k R Q N) := by
@@ -201,7 +201,7 @@ variable {k : Type u} {R : Type v} {S : Type v'}
   [SMulCommClass S k Q] [SMulCommClass S Rᵐᵒᵖ Q]
   [SMulCommClass S k Q'] [SMulCommClass S Rᵐᵒᵖ Q']
 
-/-- The existing quotient map intertwines the computed outer actions. -/
+/-- The quotient map intertwines the computed outer actions. -/
 theorem map_leftAction (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (q : Q), f (op r • q) = op r • f q)
     (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)
@@ -213,7 +213,7 @@ theorem map_leftAction (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
   simp only [LinearMap.comp_apply, leftAction_mk, map_mk]
   rw [hfS]
 
-/-- The same actual ground-linear quotient map, now with earned S-linearity. -/
+/-- The same ground-linear quotient map, now with constructed S-linearity. -/
 def mapLeft (f : Q →ₗ[k] Q') (g : N →ₗ[k] N')
     (hf : ∀ (r : R) (q : Q), f (op r • q) = op r • f q)
     (hg : ∀ (r : R) (n : N), g (r • n) = r • g n)
