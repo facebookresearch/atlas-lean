@@ -18,9 +18,11 @@ public meta import Mathlib.Data.Fin.VecNotation
 
 Executed fixtures: the `q`-grams of `ACGTAC` and the number of aligned `q`-grams it shares with
 `ACCTAC` (one mismatch) for `q = 0, 2, 3, 4, 6`, where the bound `w - q + 1 ≤ s + k q` is attained
-for `q = 2, 3`; two mismatches in a word of length `8`; the boundary `k q = w - q + 1`, where two
-words at Hamming distance `k` share no aligned `q`-gram, so the strict hypothesis of the
-corollary cannot be relaxed. Closed checks: the three theorems instantiated.
+for `q = 2, 3`; `q = 7 > w`, where `ACGTAC` shares no aligned `q`-gram even with itself, so the
+hypothesis `q ≤ w` is needed; two mismatches in a word of length `8`; the boundary
+`k q = w - q + 1`, where two words at Hamming distance `k` share no aligned `q`-gram, so the
+strict hypothesis of the corollary cannot be relaxed. Closed checks: the three theorems
+instantiated.
 -/
 
 @[expose] public section
@@ -50,8 +52,9 @@ def y₁ : Fin 6 → Char := !['A', 'C', 'C', 'T', 'A', 'C']
 #guard #{i | qGram x₁ 6 i = qGram x₁ 6 i} = 1
 -- `q = 0`: all `w + 1` empty windows agree.
 #guard #{i | qGram x₁ 0 i = qGram y₁ 0 i} = 7
--- `q > w`: there are no windows.
-#guard Fintype.card (Fin (6 + 1 - 7)) = 0
+-- `q > w`: there are no windows, so a word shares no `7`-gram even with itself; without `q ≤ w`
+-- the corollary would claim one, as `k * q = 0 < 1 = 6 - 7 + 1` in `ℕ`.
+#guard #{i | qGram x₁ 7 i = qGram x₁ 7 i} = 0
 
 /-- `AAAAAAAA`. -/
 def x₂ : Fin 8 → Char := !['A', 'A', 'A', 'A', 'A', 'A', 'A', 'A']

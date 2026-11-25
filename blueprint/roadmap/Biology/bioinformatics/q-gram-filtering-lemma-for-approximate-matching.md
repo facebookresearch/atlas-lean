@@ -14,9 +14,8 @@ $q$-gram.
 In particular, if $w - q + 1 > kq$, the two strings
 [share at least one aligned $q$-gram](exists-q-gram-eq-of-mul-lt.md); consequently
 [an exhaustive filter that reports every window pair sharing an aligned $q$-gram loses no pair at Hamming distance at most $k$](set-of-hamming-dist-le-subset.md).
-These two consequences have their own pages. This is a statement about exhaustive seeding; it is not a sensitivity
-guarantee for BLAST, whose extension and filtering steps are heuristic, and the edit-distance version of the lemma has a
-different bound.
+This is a statement about exhaustive seeding; it is not a sensitivity guarantee for BLAST, whose extension and filtering
+steps are heuristic.
 
 ## Proof
 
