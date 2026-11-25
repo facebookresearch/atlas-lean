@@ -152,27 +152,42 @@ fetched.
 
 ### Lean pull requests and graph pull requests
 
-A pull request changes the Lean or the graph, and rarely both:
+A pull request changes the Lean or the graph:
 
-- A **Lean pull request** changes Lean files and their rows in `provenance/`.
-  It leaves the graph to the next
-  [graph-sync batch](docs/BLUEPRINT.md#graph-sync-batches), which gives its
-  new documented declarations their pages, annotation rows and folder lists,
-  writes their docstring digests and places its new modules. So it runs no
-  sync and changes nothing under `blueprint/` and none of
-  `scripts/taxonomy.json`, `scripts/wiki-sync.json`,
-  `scripts/card-moves.jsonl` and `scripts/mathgraph-map.jsonl`, with one
-  exception: it repoints the links to each declaration it renames, moves or
-  removes, as [the next section](#say-how-a-pull-request-touches-the-graph)
-  says, so that `main` never links a declaration it lacks.
-- A **graph pull request** changes the wiki: its pages, annotations, cards and
-  taxonomy. It changes Lean only as the
-  [graph rules](docs/BLUEPRINT.md#graph-rules) allow, such as an expansion's
-  wanted statements or the docstring a page's fix needs, and then runs the
-  sync for its own declarations ([Graph PRs](#graph-prs)).
-- A **graph-sync batch** is the graph pull request `scripts/graph_batch.py`
-  makes on a fresh `main`, one at a time, every one or two hours. The site is
-  built once a day, so readers never see pages a batch behind.
+- **Lean side:** Lean files and their rows in `provenance/`. A **Lean pull
+  request** changes these, and in the graph only what keeps `main`'s links
+  whole (below). It runs no sync: the next
+  [graph-sync batch](docs/BLUEPRINT.md#graph-sync-batches) gives its new
+  documented declarations their pages, annotation rows and folder lists,
+  writes their docstring digests, and places the new modules that a `Place:`
+  line names or that take a placed module's declarations.
+- **Graph side:** everything under `blueprint/`, and `scripts/taxonomy.json`,
+  `scripts/wiki-sync.json`, `scripts/card-moves.jsonl` and
+  `scripts/mathgraph-map.jsonl`. A **graph pull request** changes the wiki.
+  It changes Lean only as the [graph rules](docs/BLUEPRINT.md#graph-rules)
+  allow, such as an expansion's wanted statements or the docstring a page's fix
+  needs, and then runs the sync for its own declarations
+  ([Graph PRs](#graph-prs)). A pull request that changes both Lean and pages is
+  a graph pull request in full; split it when you can.
+- **What stays coupled:** a Lean pull request that renames, moves or removes a
+  declaration updates, in the same pull request, the links, `held` markers and
+  `duplicates` entries that name it, and a bump updates the rows of the
+  Mathlib-credited pages whose declarations it moves
+  ([the next section](#say-how-a-pull-request-touches-the-graph)). Removing a
+  page's own declaration with no successor stays a graph change. Provenance
+  rows stay with the Lean they describe.
+- **Placement:** a new module may say where it goes on a `Place:` line.
+  Otherwise the batch gives it the place of the module whose declarations it
+  takes, or leaves it in its subject's `not-yet-classified/` folder for an
+  editor to place; a module in a folder that is no subject gets no pages until
+  it is placed.
+
+A **graph-sync batch** is the graph pull request `scripts/graph_batch.py`
+makes on a fresh `main`, one at a time, every one or two hours: a maintainer,
+or an agent a maintainer runs, makes it, and someone else reviews it. When no
+batch has merged for several hours, any maintainer may make one. The site is
+built once a day, so it is at most about one batch behind the Lean. Pull
+requests opened before this rule may land with the graph files they carry.
 
 Why: of the 379 pull requests merged into `main` from 24 November 18:22 to
 25 November 17:04 UTC,
@@ -181,23 +196,25 @@ Why: of the 379 pull requests merged into `main` from 24 November 18:22 to
   are shared: `scripts/taxonomy.json` was in 55% of all the merges,
   `blueprint/links/` in 18%, folder pages in 16% and `scripts/wiki-sync.json`
   in 13%. One rewrite of `scripts/wiki-sync.json`
-  ([#8044](https://github.com/facebookresearch/atlas-lean/pull/8044), all
-  110,062 lines) or one large pull request
+  ([#8044](https://github.com/facebookresearch/atlas-lean/pull/8044), 110,062
+  of its 110,064 lines) or one large pull request
   ([#7617](https://github.com/facebookresearch/atlas-lean/pull/7617), 2,830
   files) made most open pull requests that carried digests conflict, and
   [#7690](https://github.com/facebookresearch/atlas-lean/pull/7690) appended
   317 lines to one folder page. Lean pull requests now share only the
   provenance files, which were in 59% of the merges.
-- **Review:** the graph part of those mixed pull requests was mostly
-  generated: `scripts/taxonomy.json` was in 90% of them, and 80% changed only
-  generated files or indexes, no page. A batch does that work once, and
-  `scripts/graph_batch.py verify` shows that it is exactly the tools' output.
-- **CI:** little changes, as Blueprint Pages already built the site for only 48
+- **Review:** in 167 of those 217 (77%), the graph change was only
+  `scripts/taxonomy.json`, placing new modules. A `Place:` line now carries
+  that choice, the batch gives a module that takes a placed module's
+  declarations its place, and `scripts/graph_batch.py verify` shows that the
+  rest of a batch is exactly the sync's output.
+- **CI:** little changes, as Blueprint Pages already built the site for only 47
   of those 217; but a Lean pull request needs no graph check beyond
-  `check the graph`, and a batch, which changes no Lean, needs no Lean build.
+  `check the graph`, and a batch changes no Lean, so its build has nothing to
+  rebuild.
 - **Throughput:** Lean pull requests merge without waiting on graph work, as
-  most of the Lean-only ones already did: 80 of the 125 added modules with no
-  placement and no page and passed every required check.
+  most of the 125 Lean-only ones already did: 71 added a module that nothing
+  placed, with no page.
 
 ### Say how a pull request touches the graph
 
@@ -209,35 +226,41 @@ under [Maintaining articles](docs/BLUEPRINT.md#maintaining-articles). It is
 `Graph: none` only when the pull request changes nothing the graph shows, and
 `Graph: batch` on a graph-sync batch.
 
-- **A new module may say where it goes.** The batch gives a new module the
-  place of the module whose declarations it takes, as a proof takes the place
-  of the wanted statement it moves; a module that takes none goes to its
-  subject's `not-yet-classified/` folder until an editor places it. To place
-  one yourself, add a line for it after the `Graph:` line,
-  `Place: <module> -> <field>`, or `Place: <module> -> <field> | <topic>` to
-  name its topic, with the module as a path without `.lean` and a field or
+- **A new module may say where it goes.** Add a line for it after the `Graph:`
+  line, `Place: <module> -> <field>`, or `Place: <module> -> <field> | <topic>`
+  to name its topic, with the module as a path without `.lean` and a field or
   subfield of `scripts/taxonomy.json`:
 
   ```text
   Place: MathlibExt/Algebra/Ring/Idempotents -> Algebra/rings-and-fields
   ```
 
-  The batch reads the line once the pull request has merged
-  ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)); leave
+  Give one to each new module that takes no placed module's declarations when
+  you know its field, and always to a module in a folder that is no subject,
+  one that neither the taxonomy nor `generate_wiki.LIBRARIES` maps to one: it
+  gets no pages without one. The batch reads the line once the pull request has
+  merged ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)); leave
   `scripts/taxonomy.json` as it is.
 - **A renamed, moved or removed declaration keeps its pages.** In the same pull
   request, point each link to it at its successor, keeping every article id. A
   link that is only a reference may instead be removed: the page keeps its own
-  declaration. When a page's own declaration goes with no successor, remove its
-  link and keep the page as a planned page
-  ([Writing pages](docs/BLUEPRINT.md#writing-pages)). Update or remove a `held`
-  marker or a `duplicates` entry that names it in the same way, and a Lean or
-  Mathlib bump updates the row of a Mathlib-credited page whose declaration it
-  moves ([Mathlib-credited pages](docs/BLUEPRINT.md#mathlib-credited-pages)).
-  `check the graph` fails on a link to a declaration the Lean lacks, and
-  `graph sync` names each one with what to do. These edits keep a Lean pull
-  request a Lean pull request; their digests in `scripts/wiki-sync.json` are
-  the batch's.
+  declaration. Update or remove a `held` marker or a `duplicates` entry that
+  names it in the same way, and a Lean or Mathlib bump updates the row of a
+  Mathlib-credited page whose declaration it moves
+  ([Mathlib-credited pages](docs/BLUEPRINT.md#mathlib-credited-pages)). These
+  edits keep a Lean pull request a Lean pull request. `check the graph` fails
+  on a link to a declaration the Lean lacks; a `held` marker or `duplicates`
+  entry left naming one is reported only by the advisory `graph sync`, and stops
+  every batch until it is fixed, so fix it here.
+- **A page's own declaration removed with no successor** leaves a planned page
+  ([Writing pages](docs/BLUEPRINT.md#writing-pages)), which needs its own
+  prerequisites: remove the declaration in a graph pull request that unlinks
+  the page and writes them.
+- **A changed docstring** of a declaration that has a page: `graph sync` lists
+  the page, to check. If it no longer says what the declaration states, fix it
+  in a graph pull request, or open a
+  [page-problem issue](https://github.com/facebookresearch/atlas-lean/issues/new?template=page-problem.yml).
+  The batch records the new digest.
 
 ### Public references
 
@@ -414,13 +437,16 @@ is advisory CI, not a standalone merge barrier.
 
 A graph PR changes the ATLAS wiki; its content follows the
 [graph rules](docs/BLUEPRINT.md#graph-rules). Two kinds of wiki change don't
-make a pull request one: a Lean pull request's repointed links
-([Say how a pull request touches the graph](#say-how-a-pull-request-touches-the-graph)),
+make a pull request one: a Lean pull request's edits for the declarations it
+renames, moves or removes (links, `held` markers, `duplicates` entries and
+Mathlib-credited rows,
+[Say how a pull request touches the graph](#say-how-a-pull-request-touches-the-graph)),
 which `check the graph` and `graph sync` check, and a graph-sync batch, which
 `scripts/graph_batch.py verify` shows to be exactly what the tools write for
 what `main` merged ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)).
-Neither needs an issue or a code owner's approval; Codex still reviews them,
-and a batch's reviewer runs `verify` on its exact head. When a graph PR's only
+Neither needs an issue, or a code owner's approval unless GitHub requires one;
+Codex still reviews them, and a batch's reviewer runs `verify` on its exact
+head. Unlinking a page's own declaration with no successor is not one of them. When a graph PR's only
 wiki changes are what `scripts/sync_wiki.py declarations` writes for its own
 declarations, as the `graph sync` check reports, it needs no issue for them,
 and they need no code owner's approval unless GitHub requires one; Codex still

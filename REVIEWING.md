@@ -100,7 +100,9 @@ Check that each added or changed module is in the correct top-level library.
 A graph PR changes the ATLAS wiki: `blueprint/roadmap/`, `blueprint/links/`,
 `blueprint/atlas.json`, `blueprint/coverage/`, `scripts/taxonomy.json`,
 `scripts/wiki-sync.json`, `scripts/card-moves.jsonl`, or
-`scripts/mathgraph-map.jsonl`. Hold it against the
+`scripts/mathgraph-map.jsonl`, except for a Lean PR's edits for the
+declarations it renames, moves or removes, and a graph-sync batch (below).
+Hold it against the
 [graph rules](docs/BLUEPRINT.md#graph-rules) and the
 [graph PR requirements](CONTRIBUTING.md#graph-prs). Don't re-report what CI's
 required `check the graph` job fails on
@@ -120,14 +122,29 @@ reader can:
 A Lean pull request leaves pages, placements and docstring digests to the next
 graph-sync batch: don't ask it for them
 ([Lean pull requests and graph pull requests](CONTRIBUTING.md#lean-pull-requests-and-graph-pull-requests)).
-Check instead that its only wiki changes repoint the links to declarations it
-renames, moves or removes, keeping their article ids, and that each `Place:`
-line names a field that fits the module. Review a graph-sync batch by running
-`python3 scripts/graph_batch.py verify` on its exact head, from an up-to-date
-checkout of `main`, then reading its placements and the notes it leaves for an
-editor ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)). Its pages
-are the sync's, made from docstrings reviewed with their Lean: a docstring
-that misstates its declaration is a finding on the Lean, for an issue.
+Check instead:
+
+- that its only wiki changes are for the declarations it renames, moves or
+  removes: links pointed at their successors, keeping their article ids, or
+  reference links removed, and the `held` markers and `duplicates` entries that
+  name them updated as well, which `check the graph` does not check. Removing a
+  page's own declaration with no successor is a graph change;
+- that each `Place:` line names a field that fits its module, and that a new
+  module in a folder that is no subject has one;
+- for each page `graph sync` lists as its declaration's docstring changed, that
+  the page still says what the declaration states, or that the PR opens a
+  page-problem issue for it.
+
+Review a graph-sync batch by running `python3 scripts/graph_batch.py verify`
+on its exact head, from an up-to-date checkout of `main`, then reading its
+placements and the notes it leaves for an editor
+([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)). A PR whose
+commits carry `Graph-sync-base:` or `Graph-sync-through:` trailers is a batch,
+whatever its description says: review it as one. Its pages are the sync's,
+made from docstrings reviewed with their Lean: a docstring that misstates its
+declaration is a finding on the Lean, for an issue. Compare each page under
+"Pages to check" with its new docstring, and open a page-problem issue for one
+that no longer matches.
 
 A code owner's approval is a person's, not a finding: don't request changes
 because it is missing.

@@ -136,6 +136,8 @@ jobs:
             deferred=yes
             status=0
           fi
+          # Values from the report name the pull request's files and declarations: shown as indented code too.
+          shown() { head -c "$1" | sed -e 's/\r$//' -e 's/\r/\n/g' | sed 's/^/    /'; }
           {
             echo "### Graph sync"
             echo
@@ -143,18 +145,30 @@ jobs:
               echo "Nothing to do here: this change's Lean leaves no link or marker behind, and the next graph-sync"
               echo "batch writes its new declarations' pages (docs/BLUEPRINT.md, Graph-sync batches). A Lean pull"
               echo "request runs no sync. The log has the check's full report."
-            else
-              head -c 60000 build/graph-sync.txt | sed -e 's/\r$//' -e 's/\r/\n/g' | sed 's/^/    /'
+            elif [[ "$failed" == no && "$status" -ne 0 && "$graph" == no ]]; then
+              echo "This change's Lean leaves links or markers behind. A Lean pull request runs no sync: fix in it"
+              echo "only what these errors name (CONTRIBUTING.md, Say how a pull request touches the graph). The"
+              echo "next graph-sync batch writes its pages."
               echo
+              { jq -r '.errors // [] | .[]' build/graph-sync.json || true; } | shown 60000
+            else
+              shown 60000 < build/graph-sync.txt
+              echo
+            fi
+            if [[ "$failed" == no && "$graph" == no ]]; then
+              pages="$(jq -r '.changed // [] | .[]' build/graph-sync.json 2>/dev/null || true)"
+              if [[ -n "$pages" ]]; then
+                echo
+                echo "Pages whose declaration's docstring changed, for the reviewer to check that each still says what"
+                echo "its declaration states:"
+                echo
+                shown 20000 <<< "$pages"
+              fi
             fi
             if [[ "$failed" == yes ]]; then
               echo
               echo "The check could not run (exit $status): the log above says why."
-            elif [[ "$status" -ne 0 && "$graph" == no ]]; then
-              echo
-              echo "A Lean pull request runs no sync: fix in it only what the errors above name (CONTRIBUTING.md,"
-              echo "Say how a pull request touches the graph). The next graph-sync batch writes its pages."
-            elif [[ "$status" -ne 0 ]]; then
+            elif [[ "$status" -ne 0 && "$graph" == yes ]]; then
               # From where the branch starts on the one the change targets, or, with none, the commit the check
               # compared with.
               if [[ -n "${FIX_FETCH:-}" ]]; then

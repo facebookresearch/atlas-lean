@@ -164,7 +164,7 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   ([Cards](#cards)). A Lean pull request that moves a module's declarations to
   a new module leaves this to the next
   [graph-sync batch](#graph-sync-batches), which gives the new module their
-  place.
+  place when they keep their names, or to a `Place:` line.
 
 ### Library navigation
 
@@ -505,7 +505,9 @@ sync` check runs it on every pull request and merge group, and only reports for
 now ([GitHub Actions and publication](#github-actions-and-publication)). Of a
 Lean pull request, whose wiki changes are at most edits to links files, and of
 a merge group, it asks only for what the errors above name: their missing
-pages, digests and part lists are the next batch's.
+pages, digests and part lists are the next batch's. It still lists the pages
+whose declaration's docstring changed, for the pull request's reviewer to
+check.
 
 After an upstream merge, a maintainer runs the sync over the whole project:
 
@@ -947,9 +949,10 @@ now: the check's step cannot fail the job, which is not a required check. The
 verdict, the command that fixes it and whether the PR's wiki changes are only
 the sync's go to the job summary and the `graph-sync` artifact. A PR that
 changes no graph file but links files, and a merge group, are held only to the
-check's errors: the links and markers their Lean leaves behind. With none, the
-job says that the next graph-sync batch writes their pages, and asks for no
-sync.
+check's errors: the links and markers their Lean leaves behind, which the
+summary lists alone. With none, the job says that the next graph-sync batch
+writes their pages, asks for no sync, and lists the pages whose declaration's
+docstring changed, to check.
 
 Publication is disabled until a repository maintainer:
 

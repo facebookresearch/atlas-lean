@@ -67,7 +67,12 @@ merge of main a few minutes. A maintainer decides when to queue the bump.
 3. **Open the bump** when every pinned dependency has tagged `vX.Y.Z`. Commit
    the output of `python3 scripts/bump/pinned_bump.py prepare vX.Y.Z` unchanged,
    so that `guard` accepts it. Put the remaining fixes in separate commits after
-   it.
+   it. A bump is a Lean pull request and runs no wiki sync, but when it renames,
+   moves or removes a declaration it updates the links, `held` markers and
+   `duplicates` entries that name it, and the rows of the Mathlib-credited
+   pages whose Mathlib declarations it moves
+   ([Say how a pull request touches the graph](../CONTRIBUTING.md#say-how-a-pull-request-touches-the-graph),
+   [Mathlib-credited pages](BLUEPRINT.md#mathlib-credited-pages)).
 
 4. **Keep it close to main.** Merge main in, never rebase, so the first commit
    stays exactly what `pinned_bump.py` produced:
