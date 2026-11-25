@@ -172,6 +172,27 @@ public theorem lipSubring_isDomain {U : Set ℤ} (hU : U.Infinite) :
   · exact Or.inl (Subtype.ext (lip_eq_zero_of_infinite_zeros f.property hf))
   · exact Or.inr (Subtype.ext (lip_eq_zero_of_infinite_zeros g.property hg))
 
+/-- **$\mathrm{LIP}(\mathbb{Z})$ is closed under the discrete derivative.** If $f$ lies in
+$\mathrm{LIP}(\mathbb{Z})$, the ring of locally integer polynomial functions
+$\mathbb{Z} \to \mathbb{Z}$, then so does the function $x \mapsto f(x) - f(x - 1)$.
+
+Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
+Article A41, Theorem 5 (`integers-2025-A41-thm-5`). -/
+public theorem lip_univ_sub_shift {f : ↥(Set.univ : Set ℤ) → ℤ}
+    (hf : f ∈ lipSubring Set.univ) :
+    (fun x => f x - f ⟨(x : ℤ) - 1, Set.mem_univ _⟩) ∈ lipSubring Set.univ := by
+  rw [mem_lipSubring_iff]
+  intro S
+  let shift (x : (Set.univ : Set ℤ)) : (Set.univ : Set ℤ) :=
+    ⟨(x : ℤ) - 1, Set.mem_univ _⟩
+  obtain ⟨p, hp⟩ := mem_lipSubring_iff.mp hf (S ∪ S.image shift)
+  refine ⟨p - p.comp (X - C 1), ?_⟩
+  intro x hx
+  have hshift : shift x ∈ S ∪ S.image shift :=
+    Finset.mem_union_right _ (Finset.mem_image_of_mem shift hx)
+  rw [eval_sub, eval_comp, eval_sub, eval_X, eval_C, hp x (Finset.mem_union_left _ hx)]
+  exact congrArg (f x - ·) (hp (shift x) hshift)
+
 end
 
 end MetaMathlibExt

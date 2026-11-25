@@ -11,6 +11,8 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 - [Policy gradients for softmax policies](policy-gradients-for-softmax-policies/README.md)
 - [Linear quadratic regulator](linear-quadratic-regulator/README.md)
 
+- [Multi-armed bandits](multi-armed-bandits/README.md)
+
 ## Related topics
 
 - [Value iteration](../../heuristic-search-and-planning/value-iteration/README.md)
