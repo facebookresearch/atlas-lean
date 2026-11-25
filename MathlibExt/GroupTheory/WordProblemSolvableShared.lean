@@ -7,8 +7,15 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Shared word-problem solvability predicate
+Portions of this file are adapted from:
 
+`LeanEval/GroupTheory/BooneHigmanEmbedding.lean`,
+`LeanEval/GroupTheory/BooneHigmanSimple.lean`, and
+`LeanEval/GroupTheory/NovikovUnsolvable.lean` (leanprover/lean-eval, commit
+38361be884302c7edce1908c4aef8296eb2cb27e), for the definition of word-problem solvability.
+Copyright 2026 Lean FRO, LLC.
+Author (benchmark submitter): Kim Morrison.
+The ATLAS adaptation retains the shared definition in its existing namespace.
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -20,23 +27,17 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-This neutral helper module is shared by the Boone–Higman and Novikov
-wanted entries, so all three theorems speak about the same word-problem
-predicate. The definition is the trusted (non-hole) helper from
-leanprover/lean-eval at commit 38361be884302c7edce1908c4aef8296eb2cb27e
-(modules `LeanEval.GroupTheory.BooneHigmanEmbedding`,
-`LeanEval.GroupTheory.BooneHigmanSimple`, and
-`LeanEval.GroupTheory.NovikovUnsolvable`), distributed under the Apache
-License, Version 2.0; it is unchanged apart from the namespace.
 -/
 module
 
-
-public import Mathlib.GroupTheory.FreeGroup.Basic
-public import Mathlib.Computability.PartrecCode
 public import Mathlib.Computability.RE
+public import Mathlib.GroupTheory.FreeGroup.Basic
 
+/-!
+# Solvable word problem for a group presentation
+
+`WordProblemSolvable` expresses the computability of the identity predicate on signed words.
+-/
 
 @[expose] public section
 
