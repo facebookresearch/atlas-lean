@@ -10321,6 +10321,7 @@
 "Chemistry.ReactingTransportPorts.temperatureFloor": "a9336b54b4ad3ae6",
 "Chemistry.ReactingTransportPorts.temperatureFloor_pos": "08e17966ee396904",
 "Chemistry.ReactingTransportPorts.temperatureRhs": "d486a6060ee13970",
+"Chemistry.Separations.batchLangmuirBalance": "8c32f46a9d8922b8",
 "Chemistry.SolutionComposition.amounts_massFraction_eq_massFraction": "0b67bdf62970a81e",
 "Chemistry.SolutionComposition.bijOn_molalityToMolarity": "9aeaf7ed7d44baf6",
 "Chemistry.SolutionComposition.bijOn_molarityToMolality": "a4b5905857780f0e",
