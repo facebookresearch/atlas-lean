@@ -10,7 +10,6 @@ module
 
 public import Domains.Biology.Ecology.LevinsMetapopulation
 public import Domains.Biology.Epidemiology.NextGenerationMatrix
-public import MathlibExt.Dynamics.LevinsNetwork.Basic
 public import MathlibExt.LinearAlgebra.Matrix.PerronFrobenius
 public import MathlibExt.Analysis.ODE.InvariantRegions
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
@@ -32,12 +31,11 @@ population of patch `i` goes extinct at rate `e i > 0`:
   `p_i' = (1 - p_i) ∑_j C_ij p_j - e_i p_i`.
 
 The right-hand side is `field C e p`, and `IsSolution C e p` says that `p` solves the system on
-`[0, ∞)`; these definitions and `persistenceNumber` are in
-`MathlibExt.Dynamics.LevinsNetwork.Basic`. Its linear part at the empty landscape `p = 0` is
-`C - diag(e)` (`field_eq_sub_mulVec`), so with new colonizations `F = C` and losses
-`V = diag(e)` the next-generation matrix is `C diag(e)⁻¹`, whose `(i, j)` entry `C_ij / e_j` is
-the expected number of colonizations of patch `i` by one population on patch `j` during its
-lifetime. The **persistence number** is its spectral radius,
+`[0, ∞)`. Its linear part at the empty landscape `p = 0` is `C - diag(e)`
+(`field_eq_sub_mulVec`), so with new colonizations `F = C` and losses `V = diag(e)` the
+next-generation matrix is `C diag(e)⁻¹`, whose `(i, j)` entry `C_ij / e_j` is the expected number
+of colonizations of patch `i` by one population on patch `j` during its lifetime. The
+**persistence number** is its spectral radius,
 
   `persistenceNumber C e = ρ(C diag(e)⁻¹)`
 
@@ -121,6 +119,25 @@ namespace MathlibExt.Biology.Ecology.LevinsNetwork
 open MathlibExt.Biology.Epidemiology
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+
+/-- The vector field of the network Levins model: patch `i` is colonized from the occupied patches
+`j` at rates `C i j` when empty (probability `1 - p i`), and goes extinct at rate `e i`,
+`p_i' = (1 - p_i) (C p)_i - e_i p_i`. The formula is defined for all real `p`; the probability
+reading is for `p ∈ [0, 1]^ι`. -/
+def field (C : Matrix ι ι ℝ) (e p : ι → ℝ) : ι → ℝ :=
+  fun i => (1 - p i) * (C *ᵥ p) i - e i * p i
+
+/-- `p` solves the network Levins system `p' = field C e p` for all `t ≥ 0` (a two-sided derivative,
+also at `t = 0`). -/
+structure IsSolution (C : Matrix ι ι ℝ) (e : ι → ℝ) (p : ℝ → ι → ℝ) : Prop where
+  /-- Each patch changes by colonization of its empty fraction minus local extinction. -/
+  hasDerivAt : ∀ t, 0 ≤ t → HasDerivAt p (field C e (p t)) t
+
+/-- The **persistence number** `R₀ = ρ(C diag(e)⁻¹)` of the network: the spectral radius of the
+next-generation matrix with new colonizations `F = C` and losses `V = diag(e)`. When some `e i = 0`,
+`diag(e)` is singular, its inverse is the zero matrix and `R₀ = 0`; with no patches, `R₀ = 0`. -/
+noncomputable def persistenceNumber (C : Matrix ι ι ℝ) (e : ι → ℝ) : ℝ :=
+  NextGenerationMatrix.R0 C (diagonal e)
 
 variable {C : Matrix ι ι ℝ} {e : ι → ℝ}
 

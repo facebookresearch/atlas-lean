@@ -33,8 +33,8 @@ assumed here.
 
 The single-group SEIR case with vital dynamics is proved in
 `Domains.Biology.Epidemiology.SEIRGlobalStability`, and the finite next-generation matrix
-threshold in `Domains.Biology.Epidemiology.NextGenerationMatrix` (the definition of `R₀` is in
-`MathlibExt.Dynamics.Epidemiology.NextGenerationMatrixBasic`).
+threshold, with the definition of `R₀` used here, in
+`Domains.Biology.Epidemiology.NextGenerationMatrix`.
 
 Sources: H. Guo, M. Y. Li and Z. Shuai, "Global stability of the endemic equilibrium of
 multigroup SIR epidemic models", Canad. Appl. Math. Q. 14 (2006) 259–284, model (1.3),
@@ -44,7 +44,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import MathlibExt.Dynamics.Epidemiology.NextGenerationMatrixBasic
+public import Domains.Biology.Epidemiology.NextGenerationMatrix
 public import Mathlib.LinearAlgebra.Complex.Module
 public import Mathlib.LinearAlgebra.Matrix.Irreducible.Defs
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
@@ -132,12 +132,12 @@ end Params
 
 open Params
 
-/-- **Guo–Li–Shuai theorem** (Guo, Li and Shuai 2006, Theorem 3.3, with Corollary 3.2). For
-admissible parameters (in particular `p_k < 1` for every `k`) with `(β_kj)` irreducible and
-`R₀ > 1`, there is an endemic equilibrium `x*` (all `S_k*, I_k* > 0`); it is the only
-equilibrium with all coordinates positive, it is Lyapunov stable for solutions starting in
-the interior of `Γ`, and every forward solution starting in the interior of `Γ` converges
-to it.
+/-- **Guo–Li–Shuai theorem** (Guo, Li and Shuai 2006, Theorem 3.3, with Corollary 3.2). Let the
+index set `ι` of groups be finite and nonempty. For admissible parameters (in particular `p_k < 1`
+for every `k`) with `(β_kj)` irreducible and `R₀ > 1`, there is an endemic equilibrium `x*` (all
+`S_k*, I_k* > 0`); it is the only equilibrium with all coordinates positive, it is Lyapunov stable
+for solutions starting in the interior of `Γ`, and every forward solution starting in the interior
+of `Γ` converges to it.
 
 Source: Guo, Li and Shuai (2006), Theorem 3.3. -/
 theorem_wanted exists_endemic_globallyStable [Nonempty ι] (P : Params ι) (hP : P.Admissible)

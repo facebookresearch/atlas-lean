@@ -29,8 +29,8 @@ So the theorem reads: if `C` is irreducible, every solution with initial data in
 to `0` when `R₀ ≤ 1`; when `R₀ > 1` there is a unique equilibrium in `(0, 1)ⁿ`, and it attracts
 every solution with some group initially infected.
 
-The model, `IsSolution` and `R₀` are those of `Domains.Biology.Ecology.LevinsNetwork` (whose
-definitions are in `MathlibExt.Dynamics.LevinsNetwork.Basic`), which proves invariance of the box
+The model, `IsSolution` and `R₀` are those of `Domains.Biology.Ecology.LevinsNetwork`, which
+proves invariance of the box
 `[0, 1]ⁿ` (`IsSolution.mem_Icc`), extinction for `R₀ < 1` (`tendsto_zero_of_lt_one`) and
 non-extinction for `R₀ > 1` with `C` irreducible (`not_tendsto_zero_of_one_lt`). The statements
 below add the critical case `R₀ = 1`, the existence and uniqueness of the endemic equilibrium,
@@ -44,7 +44,7 @@ in Biomathematics 56, Springer (1984), Section 3.1, model [3.1] and Theorem 3.1.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Dynamics.LevinsNetwork.Basic
+public import Domains.Biology.Ecology.LevinsNetwork
 public import Mathlib.LinearAlgebra.Matrix.Irreducible.Defs
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 
@@ -56,12 +56,12 @@ open Filter Topology MathlibExt.Biology.Ecology
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-- **Well-posedness** (Lajmanovich and Yorke 1976, as restated by Hethcote and Yorke 1984,
-p. 27): let `C` be a contact matrix with every `C_ij ≥ 0` and `e` recovery rates with every
-`e_i > 0` (for the multigroup SIS model, `C_ij = λ_ij N_j / N_i` and `e_i = 1 / d_i`). For every
-initial state `I₀ ∈ [0, 1]ⁿ` there is a solution `I` of `I' = LevinsNetwork.field C e I` on
-`[0, ∞)` (`LevinsNetwork.IsSolution C e I`) with `I 0 = I₀`; it stays in `[0, 1]ⁿ`, and every
-solution `J` with `J 0 = I₀` agrees with `I` for all `t ≥ 0`. -/
+/-- **Well-posedness** (Lajmanovich and Yorke 1976, as restated by Hethcote and Yorke 1984, p. 27):
+on a finite index set `ι` of groups, let `C` be a contact matrix with every `C_ij ≥ 0` and `e`
+recovery rates with every `e_i > 0` (for the multigroup SIS model, `C_ij = λ_ij N_j / N_i` and
+`e_i = 1 / d_i`). For every initial state `I₀ ∈ [0, 1]ⁿ` there is a solution `I` of
+`I' = LevinsNetwork.field C e I` on `[0, ∞)` (`LevinsNetwork.IsSolution C e I`) with `I 0 = I₀`; it
+stays in `[0, 1]ⁿ`, and every solution `J` with `J 0 = I₀` agrees with `I` for all `t ≥ 0`. -/
 theorem_wanted exists_unique_solution (C : Matrix ι ι ℝ) (e : ι → ℝ)
     (hC : ∀ i j, 0 ≤ C i j) (he : ∀ i, 0 < e i)
     (I₀ : ι → ℝ) (hI₀ : ∀ i, I₀ i ∈ Set.Icc (0 : ℝ) 1) :
@@ -70,23 +70,23 @@ theorem_wanted exists_unique_solution (C : Matrix ι ι ℝ) (e : ι → ℝ)
       ∀ J : ℝ → ι → ℝ, J 0 = I₀ → LevinsNetwork.IsSolution C e J → ∀ t, 0 ≤ t → J t = I t
 
 /-- **Lajmanovich–Yorke theorem, die-out** (Theorem 3.1 of Hethcote and Yorke 1984, after
-Lajmanovich and Yorke 1976): let `C` be an irreducible contact matrix (in particular every
-`C_ij ≥ 0`) on a nonempty set of groups and `e` recovery rates with every `e_i > 0`. If the
-persistence number satisfies `R₀ = LevinsNetwork.persistenceNumber C e ≤ 1` (the critical case
-`R₀ = 1` included; equivalently `s(A) ≤ 0` in Lajmanovich and Yorke's notation), then every
-solution `I` of `LevinsNetwork.IsSolution C e I` with `I 0 ∈ [0, 1]ⁿ` tends to `0`. -/
+Lajmanovich and Yorke 1976): let the index set `ι` of groups be finite and nonempty, let `C` be an
+irreducible contact matrix (in particular every `C_ij ≥ 0`), and let `e` be recovery rates with
+every `e_i > 0`. If the persistence number satisfies `R₀ = LevinsNetwork.persistenceNumber C e ≤ 1`
+(the critical case `R₀ = 1` included; equivalently `s(A) ≤ 0` in Lajmanovich and Yorke's notation),
+then every solution `I` of `LevinsNetwork.IsSolution C e I` with `I 0 ∈ [0, 1]ⁿ` tends to `0`. -/
 theorem_wanted tendsto_zero_of_persistenceNumber_le_one [Nonempty ι] (C : Matrix ι ι ℝ)
     (e : ι → ℝ) (hirr : C.IsIrreducible) (he : ∀ i, 0 < e i)
     (hR : LevinsNetwork.persistenceNumber C e ≤ 1) (I : ℝ → ι → ℝ)
     (hI : LevinsNetwork.IsSolution C e I) (hI₀ : ∀ i, I 0 i ∈ Set.Icc (0 : ℝ) 1) :
     Tendsto I atTop (𝓝 0)
 
-/-- **Lajmanovich–Yorke theorem, endemic case** (Theorem 3.1 of Hethcote and Yorke 1984,
-after Lajmanovich and Yorke 1976): let `C` be an irreducible contact matrix on a nonempty set
-of groups and `e` recovery rates with every `e_i > 0`. If `1 < LevinsNetwork.persistenceNumber C e`
-(equivalently `s(A) > 0`), there is a unique equilibrium `E` (`LevinsNetwork.field C e E = 0`)
-with every coordinate in `(0, 1)`, and every solution `I` of `LevinsNetwork.IsSolution C e I`
-with `I 0 ∈ [0, 1]ⁿ` and `I 0 ≠ 0` tends to `E`. -/
+/-- **Lajmanovich–Yorke theorem, endemic case** (Theorem 3.1 of Hethcote and Yorke 1984, after
+Lajmanovich and Yorke 1976): let the index set `ι` of groups be finite and nonempty, let `C` be an
+irreducible contact matrix, and let `e` be recovery rates with every `e_i > 0`. If
+`1 < LevinsNetwork.persistenceNumber C e` (equivalently `s(A) > 0`), there is a unique equilibrium
+`E` (`LevinsNetwork.field C e E = 0`) with every coordinate in `(0, 1)`, and every solution `I` of
+`LevinsNetwork.IsSolution C e I` with `I 0 ∈ [0, 1]ⁿ` and `I 0 ≠ 0` tends to `E`. -/
 theorem_wanted exists_endemic_of_one_lt_persistenceNumber [Nonempty ι] (C : Matrix ι ι ℝ)
     (e : ι → ℝ) (hirr : C.IsIrreducible) (he : ∀ i, 0 < e i)
     (hR : 1 < LevinsNetwork.persistenceNumber C e) :
