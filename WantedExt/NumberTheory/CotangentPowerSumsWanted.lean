@@ -11,47 +11,13 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.NumberTheory.BernoulliPolynomials
 public import Mathlib.NumberTheory.DirichletCharacter.Basic
+public import MathlibExt.NumberTheory.CotangentPowerSums
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Girstmair's cotangent power coefficients.** For natural numbers $r$ and $j$, the rational
-number $c_{r,j}$ is
-$$c_{r,j} = (-1)^{r-1} \sum_{k=j}^{r} \frac{(-2)^{k-j}}{(k-1)!} \binom{r}{k} S(k, j),$$
-where $S(k, j)$ is the unsigned Stirling number of the first kind, the number of permutations
-of $k$ elements with exactly $j$ cycles. Subtraction of natural numbers is truncated at $0$: for
-$r = 0$ the exponent $r - 1$ is read as $0$, and for $j = 0$ the factor $(k-1)!$ of the term
-$k = 0$ is read as $0! = 1$.
-
-These coefficients express $(i \cot)^r$ in terms of the derivatives $i^j \cot^{(j-1)}$.
-
-Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
-Article A63, Equation (8). The equation is not in the journal record; it is read from the arXiv
-version, arXiv:2504.08330, Section 3, where it also follows from the displayed derivation. -/
-def cotangentPowerCoeff (r j : ℕ) : ℚ :=
-  (-1) ^ (r - 1) * ∑ k ∈ Finset.Icc j r,
-    (-2) ^ (k - j) / ((k - 1).factorial : ℚ) * (r.choose k : ℚ) * (Nat.stirlingFirst k j : ℚ)
-
-/-- **Girstmair's coefficient at index (1, 1).** Girstmair's cotangent power coefficient
-$c_{1,1}$ equals $1$, matching the identity $i \cot = i \cot$.
-
-Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
-Article A63, characteristic value of Equation (8). -/
-theorem cotangentPowerCoeff_one_one : cotangentPowerCoeff 1 1 = 1 := by
-  simp [cotangentPowerCoeff, Nat.stirlingFirst]
-
-/-- **Girstmair's coefficient at index (2, 2).** Girstmair's cotangent power coefficient
-$c_{2,2}$ equals $-1$, matching the identity $(i \cot)^2 = 1 - i^2 \cot'$ with
-$\cot' = -1 - \cot^2$.
-
-Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
-Article A63, characteristic value of Equation (8). -/
-theorem cotangentPowerCoeff_two_two : cotangentPowerCoeff 2 2 = -1 := by
-  simp [cotangentPowerCoeff, Nat.stirlingFirst]
 
 /-- **Cotangent powers through cotangent derivatives.** Let $c_{r,j}$ be Girstmair's cotangent
 power coefficients and $\cot^{(m)}$ the $m$-th derivative of the real cotangent function. For
@@ -65,18 +31,6 @@ public theorem_wanted I_mul_cot_pow_eq_sum_iteratedDeriv_cot (r : ℕ) (hr : 1 �
     (Complex.I * Real.cot x) ^ r = ((-1) ^ r + 1) / 2 +
       ∑ j ∈ Finset.Icc 1 r, (cotangentPowerCoeff r j : ℂ) * Complex.I ^ j *
         ((iteratedDeriv (j - 1) Real.cot x : ℝ) : ℂ)
-
-/-- **Parity of Girstmair's cotangent power coefficients.** For natural numbers $j$ and $r$ with
-$1 \le j \le r$ and $r \not\equiv j \pmod 2$, Girstmair's cotangent power coefficient $c_{r,j}$
-is $0$.
-
-The source deduces this from the $\mathbb{Q}$-linear independence of the functions
-$i^j \cot^{(j-1)}$.
-
-Source: Kurt Girstmair, *Cotangent Power Sums and Character Coordinates*, INTEGERS 25 (2025),
-Article A63, Proposition 1, the sentence that follows it (`integers-2025-A63-prop-1`). -/
-public theorem_wanted cotangentPowerCoeff_eq_zero_of_mod_two_ne {r j : ℕ} (hj : 1 ≤ j)
-    (hjr : j ≤ r) (hpar : r % 2 ≠ j % 2) : cotangentPowerCoeff r j = 0
 
 /-- **Girstmair's cotangent power sums, odd case.** Let $n \ge 2$, let $r$ be odd, and let $\chi$
 be a complex Dirichlet character modulo $n$ with $\chi(-1) = -1$. Let $f$ be the conductor of

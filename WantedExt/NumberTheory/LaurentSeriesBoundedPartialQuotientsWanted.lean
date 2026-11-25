@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.LaurentSeriesBoundedPartialQuotients
+public import MathlibExt.NumberTheory.LaurentSeriesConvergentProperties
 public import Mathlib.Algebra.Polynomial.FieldDivision
 
 namespace MetaMathlibExt
@@ -64,45 +64,6 @@ public theorem_wanted baumSweet_exists_root_continuedFraction (n : ℕ)
         laurentPartialQuotient f 0 = polyToLaurentInv Q ∧
         ∀ k, 1 ≤ k → laurentPartialQuotient f k =
           polyToLaurentInv (P ^ (2 ^ ((k - 1) * n)) + Q ^ (2 ^ (k * n)))
-
-/-- **Basic properties of the convergents of a Laurent series.** Let $K$ be a field and let
-$\alpha \in K((x^{-1}))$ be irrational, with partial quotients $b_0, b_1, \dots$ and convergents
-$P_n / Q_n$, where $P_{-1} = 1$, $Q_{-1} = 0$, $P_0 = b_0$, $Q_0 = 1$,
-$P_{n+1} = b_{n+1} P_n + P_{n-1}$ and $Q_{n+1} = b_{n+1} Q_n + Q_{n-1}$. For a Laurent series
-$y = \sum_m c_m x^{-m}$ let $v(y)$ be its order, the least $m$ with $c_m \ne 0$, and let
-$v(0) = 0$; thus $|y| = |x|^{-v(y)}$ for $y \ne 0$. For $\beta \in K((x^{-1}))$ write
-$[b_k, \dots, b_n, \beta] = b_k + 1/(b_{k+1} + 1/(\cdots + 1/(b_n + 1/\beta)))$. Then:
-(i) for every $n \ge 0$ and every $\beta \ne 0$ such that $[b_k, \dots, b_n, \beta] \ne 0$ for
-all $1 \le k \le n$, $(\beta P_n + P_{n-1}) / (\beta Q_n + Q_{n-1}) = [b_0, \dots, b_n, \beta]$;
-(ii) $P_n Q_{n-1} - P_{n-1} Q_n = (-1)^{n+1}$ for every $n \ge 0$;
-(iii) $Q_{n-1} \ne 0$ and $v(Q_n) < v(Q_{n-1})$ for every $n \ge 1$;
-(iv) $v(Q_n) = v(b_1) + \dots + v(b_n)$ for every $n \ge 1$;
-(v) $v(\alpha - P_n / Q_n) = -v(b_{n+1}) - 2 v(Q_n)$ for every $n \ge 1$;
-(vi) $v(Q_n \alpha - P_n) < v(Q_{n+1} \alpha - P_{n+1})$ for every $n \ge 1$.
-
-Part (iii) fails at $n = 0$ because $Q_{-1} = 0$.
-
-Source: Tuangrat Chaichana, Natthaphong Chitmung, and Vichian Laohakosol, *Certain Algebraic
-Formal Laurent Series with Bounded Partial Quotients*, INTEGERS 26 (2026), Article A57,
-Lemma 1 (`integers-2026-A57-lem-1`). -/
-public theorem_wanted laurentConvergent_properties (α : LaurentSeries K)
-    (hα : LaurentIsIrrational α) :
-    (∀ n : ℕ, ∀ β : LaurentSeries K, β ≠ 0 →
-        (∀ k, 1 ≤ k → k ≤ n → ((List.range' k (n + 1 - k)).map (laurentPartialQuotient α)).foldr
-          (fun b t => b + t⁻¹) β ≠ 0) →
-        (β * laurentConvNum α (n + 1) + laurentConvNum α n) /
-            (β * laurentConvDen α (n + 1) + laurentConvDen α n) =
-          ((List.range (n + 1)).map (laurentPartialQuotient α)).foldr (fun b t => b + t⁻¹) β) ∧
-      (∀ n : ℕ, laurentConvNum α (n + 1) * laurentConvDen α n -
-          laurentConvNum α n * laurentConvDen α (n + 1) = (-1) ^ (n + 1)) ∧
-      (∀ n : ℕ, 1 ≤ n → laurentConvDen α n ≠ 0 ∧
-          (laurentConvDen α (n + 1)).order < (laurentConvDen α n).order) ∧
-      (∀ n : ℕ, 1 ≤ n → (laurentConvDen α (n + 1)).order =
-          ∑ i ∈ Finset.Icc 1 n, (laurentPartialQuotient α i).order) ∧
-      (∀ n : ℕ, 1 ≤ n → (α - laurentConvNum α (n + 1) / laurentConvDen α (n + 1)).order =
-          -(laurentPartialQuotient α (n + 1)).order - 2 * (laurentConvDen α (n + 1)).order) ∧
-      (∀ n : ℕ, 1 ≤ n → (laurentConvDen α (n + 1) * α - laurentConvNum α (n + 1)).order <
-          (laurentConvDen α (n + 2) * α - laurentConvNum α (n + 2)).order)
 
 /-- **Frobenius acts on continued fractions of Laurent series.** Let $K$ be a finite field with
 $q$ elements and let $\alpha \in K((x^{-1}))$, with partial quotients $b_0, b_1, \dots$ and

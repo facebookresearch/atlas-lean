@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.PrimeCounting
+public import MathlibExt.Analysis.SpecialFunctions.Exp.Zelinsky
 public import MathlibExt.Analysis.SpecialFunctions.Log.Zelinsky
 public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancySupDivIndex
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
@@ -59,17 +60,6 @@ Corollary 2 (`integers-2025-A59-cor-2`). -/
 public theorem_wanted oddPerfect_abundancySup_sub_two_lt
     (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h11 : 11 ≤ n.minFac) :
     (abundancySup n : ℝ) - 2 < 25 / (8 * (n.minFac : ℝ) * Real.log n.minFac)
-
-/-- **Exponential lower bound for $1 + x + x^2$ on $[0, 1/11]$.** For every real $x$ with
-$0 \le x \le 1/11$, $\exp(x + 2x^2/5) \le 1 + x + x^2$, with equality if and only if $x = 0$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 3 (`integers-2025-A59-lem-3`). -/
-public theorem_wanted exp_add_two_fifths_sq_le_one_add_add_sq
-    (x : ℝ) (h0 : 0 ≤ x) (h1 : x ≤ 1 / 11) :
-    Real.exp (x + 2 * x ^ 2 / 5) ≤ 1 + x + x ^ 2 ∧
-      (Real.exp (x + 2 * x ^ 2 / 5) = 1 + x + x ^ 2 ↔ x = 0)
 
 /-- **Lower bound for the prime-counting function at primes $p \ge 19$.** For every prime
 $p \ge 19$, the number $\pi(p)$ of primes at most $p$ satisfies $\pi(p) \ge p/\log p + 1$,

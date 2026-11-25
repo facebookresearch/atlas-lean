@@ -46,6 +46,8 @@ use the hypothesis that `p` is odd, which the statement keeps.
 
 * `MetaMathlibExt.exists_small_gap_of_limsup_count` gives a recurring positive gap below `n₀`
   when the count of a set in `[1, n]` exceeds `n / n₀` by arbitrarily large amounts.
+* `MetaMathlibExt.rainbowFree_powDiff_lift_of_zmod` lifts a rainbow-free coloring of
+  `ZMod n` to the positive integers by reduction modulo `n`.
 * `MetaMathlibExt.color_dominant_powStrings_of_rainbowFree_zmod`: in an exact rainbow-free
   3-coloring of `ℤ/pℤ` for `x - y = z ^ k`, every bichromatic `aᵏ`-string with `a ≠ 0` contains
   the color `c a`.
@@ -56,6 +58,8 @@ use the hypothesis that `p` is odd, which the statement keeps.
 * `MetaMathlibExt.isCycleVertex_powMap_iff_orderOf_dvd`: a nonzero `a : ZMod p` satisfies
   `a ^ k ^ m = a` for some `m ≥ 1` if and only if `orderOf a` divides the largest divisor of
   `p - 1` coprime to `k`.
+* `MetaMathlibExt.nondominant_string_length_bounded` gives a uniform bound on non-dominant
+  monochromatic runs under a common density hypothesis on the three colors.
 
 ## Implementation notes
 
@@ -329,5 +333,97 @@ theorem exists_forall_gcd_dvd_eq_add_mul (i j : ℕ) (hi : 0 < i) (hj : 0 < j) :
   obtain ⟨u, v, huv⟩ :=
     Nat.exists_add_mul_eq_of_gcd_dvd_of_mul_pred_le a.succ b.succ m hdvd (Nat.le_of_pred_lt hm)
   exact ⟨u, v, huv.symm⟩
+
+/-- **Non-dominant monochromatic strings have bounded length.** Let $k$ be a natural number, let
+$n_0 \ge 2$ be an integer, and let $c$ be a coloring of the positive integers by three colors
+with no rainbow solution of $x - y = z^k$: there are no positive integers $x, y, z$ with
+$x = y + z^k$ and $c(x)$, $c(y)$, $c(z)$ pairwise distinct. For a color $e$ write $N_e(n)$ for
+the number of $x \in \{1, \dots, n\}$ with $c(x) = e$, and assume that for every real $M$ there
+are arbitrarily large $n$ with $N_e(n) - n / n_0 > M$ for all three colors $e$, that is,
+$\limsup_{n \to \infty} \bigl(\min_e N_e(n) - n / n_0\bigr) = \infty$. Let $d$ be a dominant
+color: for all positive integers $i$ and all $\ell \ge 0$, if $c$ takes exactly two colors on
+$\{i, i + 1, \dots, i + \ell - 1\}$, then one of them is $d$. Then there is an $L$ such that for
+all positive integers $i$ and all $\ell \ge 0$, if $c(i) \ne d$ and $c(i + t) = c(i)$ for all
+$0 \le t < \ell$, then $\ell \le L$.
+
+Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 4
+(`integers-2024-A105-lem-4`). -/
+theorem nondominant_string_length_bounded (k : ℕ) (c : ℕ → Fin 3)
+    (hrf : ∀ x y z : ℕ, 0 < x → 0 < y → 0 < z → x = y + z ^ k →
+      ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
+    (n₀ : ℕ) (hn₀ : 2 ≤ n₀)
+    (hdens : ∀ M : ℝ, ∀ N₀ : ℕ, ∃ n : ℕ, N₀ ≤ n ∧ ∀ e : Fin 3,
+      M < (((Finset.Icc 1 n).filter fun x => c x = e).card : ℝ) - n / n₀)
+    (d : Fin 3) (hdom : ∀ i ℓ : ℕ, 0 < i → ((Finset.Ico i (i + ℓ)).image c).card = 2 →
+      d ∈ (Finset.Ico i (i + ℓ)).image c) :
+    ∃ L : ℕ, ∀ i ℓ : ℕ, 0 < i → c i ≠ d → (∀ t < ℓ, c (i + t) = c i) → ℓ ≤ L := by
+  -- Every color occurs beyond any prescribed prefix, all within a common larger prefix.
+  have hits (m : ℕ) : ∃ N : ℕ, ∀ e : Fin 3, ∃ z, m < z ∧ z ≤ N ∧ c z = e := by
+    obtain ⟨N, hN, hcount⟩ := hdens m n₀
+    have hquot : 0 < (N : ℝ) / n₀ :=
+      div_pos (Nat.cast_pos.mpr (by omega)) (Nat.cast_pos.mpr (by omega))
+    refine ⟨N, fun e => ?_⟩
+    have hcard : (Finset.Icc 1 m).card < ((Finset.Icc 1 N).filter fun x => c x = e).card := by
+      rw [Nat.card_Icc, Nat.add_sub_cancel]
+      exact_mod_cast (hcount e).trans (sub_lt_self _ hquot)
+    obtain ⟨z, hz, hzm⟩ := Finset.exists_mem_notMem_of_card_lt_card hcard
+    simp only [Finset.mem_filter, Finset.mem_Icc] at hz hzm
+    exact ⟨z, by omega, hz.1.2, hz.2⟩
+  obtain ⟨N, hN⟩ := hits 0
+  refine ⟨N ^ k, fun i ℓ hi hnd hrun => ?_⟩
+  by_contra! hlong
+  -- Locate the first change of color to the right of i.
+  obtain ⟨_, hlater⟩ := hits i
+  obtain ⟨j, hj, _, hcj⟩ := hlater d
+  have hex : ∃ t, c (i + t) ≠ c i :=
+    ⟨j - i, by simpa [Nat.add_sub_of_le hj.le, hcj] using hnd.symm⟩
+  let t := Nat.find hex
+  have hchange : c (i + t) ≠ c i := Nat.find_spec hex
+  have hbefore {s : ℕ} (hs : s < t) : c (i + s) = c i :=
+    not_ne_iff.mp (Nat.find_min hex hs)
+  have hlen : ℓ ≤ t := le_of_not_gt fun h => hchange (hrun t h)
+  have ht : 0 < t := by omega
+  -- The two adjacent colors at the boundary must include d.
+  have hpair : (Finset.Ico (i + t - 1) (i + t - 1 + 2)).image c = {c i, c (i + t)} := by
+    have heq : Finset.Ico (i + t - 1) (i + t - 1 + 2) = {i + (t - 1), i + t} := by
+      ext x
+      simp only [Finset.mem_Ico, Finset.mem_insert, Finset.mem_singleton]
+      omega
+    simp [heq, hbefore (show t - 1 < t by omega)]
+  have hboundary := hdom (i + t - 1) 2 (by omega) (hpair ▸ Finset.card_pair hchange.symm)
+  rw [hpair, Finset.mem_insert, Finset.mem_singleton] at hboundary
+  have hd : d = c (i + t) := hboundary.resolve_left hnd.symm
+  -- A representative of the third color puts the other endpoint inside the run.
+  have third : ∀ a b : Fin 3, ∃ e : Fin 3, e ≠ a ∧ e ≠ b := by decide
+  obtain ⟨e, he, hed⟩ := third (c i) d
+  obtain ⟨z, hz, hzN, hcz⟩ := hN e
+  have hpow := Nat.pow_le_pow_left hzN k
+  have hpos := Nat.pow_pos hz (n := k)
+  have hy := hbefore (show t - z ^ k < t by omega)
+  apply hrf (i + t) (i + (t - z ^ k)) z (by omega) (by omega) hz (by omega)
+  rw [hy, hcz, ← hd]
+  exact ⟨hnd.symm, he.symm, hed.symm⟩
+
+set_option linter.unusedVariables false in
+/-- **Rainbow-free colorings of $\mathbb{Z}/n\mathbb{Z}$ lift to the positive integers.** Let $n$
+and $k$ be natural numbers and let $c$ be a coloring of $\mathbb{Z}/n\mathbb{Z}$ with three colors
+that is rainbow-free for $x - y = z^k$: there are no $x, y, z \in \mathbb{Z}/n\mathbb{Z}$ with
+$x - y = z^k$ whose colors $c(x)$, $c(y)$, $c(z)$ are pairwise distinct. Then the coloring
+$i \mapsto c(i \bmod n)$ of the positive integers is rainbow-free for $x - y = z^k$: for all
+positive integers $x, y, z$ with $x = y + z^k$, the colors $c(x \bmod n)$, $c(y \bmod n)$ and
+$c(z \bmod n)$ are not pairwise distinct. (For $n = 0$, $\mathbb{Z}/0\mathbb{Z}$ is $\mathbb{Z}$
+and $i \bmod 0 = i$.)
+
+Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Lemma 7
+(`integers-2024-A105-lem-7`). -/
+theorem rainbowFree_powDiff_lift_of_zmod
+    (n k : ℕ) (c : ZMod n → Fin 3)
+    (hrf : ∀ x y z : ZMod n, x - y = z ^ k → ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z))
+    (x y z : ℕ) (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) (h : x = y + z ^ k) :
+    ¬ (c x ≠ c y ∧ c y ≠ c z ∧ c x ≠ c z) := by
+  apply hrf
+  simp [h]
 
 end MetaMathlibExt

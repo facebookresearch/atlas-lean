@@ -25,3 +25,5 @@
 - [A sampled expectation is an expectation over the parent map](expect-sample-law.md)
 - [Relabelling the parents does not change sampled expectations](expect-sample-law-perm-comp.md)
 - [Relabelling the sampled children does not change sampled expectations](expect-sample-law-comp-perm.md)
+
+- [One-generation sampling identity for Cannings partitions](exact-one-generation-sampling-identity-for-canni.md)

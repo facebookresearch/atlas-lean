@@ -100,21 +100,6 @@ public theorem_wanted extendedCunninghamChain_exists_composite_run (p : ℕ) (hp
     (n : ℕ) (hn : 0 < n) :
     ∃ i, 0 < i ∧ ∀ j < n, ¬ (extendedCunninghamChain p (i + j)).Prime
 
-/-- **No binary prime walk to infinity in steps of one or two digits.** There is no sequence of
-primes $p_0, p_1, p_2, \ldots$ such that for every $i \ge 0$ there are $n \in \{1, 2\}$ and a
-natural number $k < 2^n$ with $p_{i+1} = 2^n p_i + k$. That is, starting from any prime, one
-cannot walk to infinity on primes by appending one or two binary digits at a time on the right.
-
-The appended blocks are the paper's $0, 1, 00, 01, 10, 11$ (a block may begin with $0$).
-
-Source: Steven J. Miller, Fei Peng, Tudor Popescu, Joshua M. Siktar, and Nawapan
-Wattanawanichkul, *Walking to Infinity Along Some Number Theory Sequences*, INTEGERS 24 (2024),
-Article A78, Theorem 2.7. -/
-public theorem_wanted not_exists_binary_prime_walk_appending_at_most_two_digits :
-    ¬ ∃ p : ℕ → ℕ, (∀ i, (p i).Prime) ∧
-      ∀ i, ∃ n k : ℕ, 1 ≤ n ∧ n ≤ 2 ∧ k < 2 ^ n ∧ p (i + 1) = 2 ^ n * p i + k
-
-
 /-- **Counting right-truncatable square-free numbers.** For natural numbers $b$ and $k$,
 $L_{b,k}$ is the number of right-truncatable square-free numbers with exactly $k$ digits in
 base $b$: the number of natural numbers $x$ with $b^{k-1} \le x < b^k$ such that

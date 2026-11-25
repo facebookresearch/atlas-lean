@@ -12,10 +12,18 @@ import MathlibExt.Combinatorics.Enumerative.GeneralizedSchreierPadovan
 import Mathlib.Tactic.Ring
 
 /-!
-# Tests for polynomial recurrences
+# Tests for generalized Schreier counts and polynomial recurrences
 -/
 
 open Polynomial MetaMathlibExt
+
+-- No positive set has maximum zero, and the shifted family is empty too.
+example : schreierCount 3 1 0 = 0 ∧ maximalSchreierCount 3 1 4 = 0 := by
+  decide +kernel
+
+-- At p = 2 and n = 5, the ordinary sets are {5} and {4, 5}.
+example : schreierCount 2 1 5 = 2 ∧ maximalSchreierCount 2 1 8 = 2 := by
+  decide +kernel
 
 -- The coefficient of X multiplies the preceding term of the geometric sequence.
 example : SatisfiesPoly ((X - C (1 / 2 : ℝ)) * (X + 1)) (fun n => 2 ^ n) := by
