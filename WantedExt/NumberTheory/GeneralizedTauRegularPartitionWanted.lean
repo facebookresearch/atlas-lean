@@ -19,6 +19,7 @@ public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.NumberTheory.ChooseAddModEqPrime
 public import MathlibExt.NumberTheory.GeneralizedTau
 public import MathlibExt.NumberTheory.NineRegularPartitionIteration
+public import MathlibExt.NumberTheory.RamanujanTauModNineteen
 
 /-!
 # Regular partition functions and a generalized tau function
@@ -241,27 +242,6 @@ public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_seven (n : ℕ) (hn
         if 17 * pentagonal r ≤ n then
           (r.negOnePow : ℤ) * generalizedTau 7 (n - 17 * pentagonal r + 1)
         else 0 [ZMOD 17]
-
-/-- **Ramanujan's $\tau$ modulo $19$ via $\tau_5$.** Let $\tau = \tau_{24}$ be Ramanujan's tau
-function, where $\tau_k$ is the generalized tau function, and let $P(r) = r(3r - 1)/2$ for
-integers $r$. For every integer $n \ge 1$,
-$$\tau(n + 1) \equiv \sum_{19P(r) \le n} (-1)^r \tau_5(n - 19P(r) + 1) \pmod{19},$$
-the sum running over all integers $r$ with $19P(r) \le n$.
-
-The source record prints $\tau_5(s)$ in place of $\tau_5(s + 1)$, where $n = 19P(r) + s$;
-that version is false at $n = 1$. The shifted index comes from the identity
-$\prod_{m \ge 1} (1 - q^m)^5 (1 - q^{19m}) = \sum_{r, s} (-1)^r \tau_5(s + 1) q^{19P(r) + s}$,
-which follows from Definition 1.1 and is used in the proof.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Theorem 12 (`integers-2024-A39-thm-12`). -/
-public theorem_wanted ramanujanTau_succ_modEq_pentagonal_tau_five (n : ℕ) (hn : 0 < n) :
-    generalizedTau 24 (n + 1) ≡
-      ∑ r ∈ Finset.Icc (-(n : ℤ)) n,
-        if 19 * pentagonal r ≤ n then
-          (r.negOnePow : ℤ) * generalizedTau 5 (n - 19 * pentagonal r + 1)
-        else 0 [ZMOD 19]
 
 /-- **Ramanujan's $\tau$ modulo $23$ via pentagonal numbers.** Let $\tau = \tau_{24}$ be
 Ramanujan's tau function, where $\tau_k$ is the generalized tau function, and let

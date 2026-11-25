@@ -12,6 +12,7 @@ Topics added since this subject's fields were last revised.
 - [Good Turing](good-turing/README.md)
 - [Hidden Markov MLEConsistency](hidden-markov-mleconsistency/README.md)
 - [Longest Match Shifts](longest-match-shifts/README.md)
+- [Nicholson Bailey](nicholson-bailey/README.md)
 - [No Common Mechanism Parsimony](no-common-mechanism-parsimony/README.md)
 - [Pattern Occurrence Moments](pattern-occurrence-moments/README.md)
 - [Phylogenetic Tree Space](phylogenetic-tree-space/README.md)
