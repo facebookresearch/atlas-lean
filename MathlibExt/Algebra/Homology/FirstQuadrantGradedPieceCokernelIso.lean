@@ -242,14 +242,10 @@ noncomputable def horizontalFilteredTopInclusion (p q : ℕ) :
   horizontalFilteredTotalι K p (p + q)
     (horizontalFilteredTopIndex p q)
 
-/-- Filtration stage zero has only its top-column summand. -/
-noncomputable def horizontalFilteredTopProjectionZeroIso (q : ℕ) :
-    horizontalFilteredTotalObj K 0 (0 + q) ≅ (K.X 0).X q where
-  hom := horizontalFilteredTopProjection K 0 q
-  inv := horizontalFilteredTopInclusion K 0 q
-  hom_inv_id := by
-    unfold horizontalFilteredTopProjection horizontalFilteredTopInclusion
-      horizontalFilteredTotalι
+private theorem singleHorizontalFiberProjectionInverse (q : ℕ)
+    (F : DownNatHorizontalFilteredFiber (0 + q) 0 → C) :
+    Sigma.π F (horizontalFilteredTopIndex 0 q) ≫
+      Sigma.ι F (horizontalFilteredTopIndex 0 q) = 𝟙 (∐ F) := by
     apply Sigma.hom_ext
     intro idx
     have hidx : idx = horizontalFilteredTopIndex 0 q := by
@@ -264,8 +260,19 @@ noncomputable def horizontalFilteredTopProjectionZeroIso (q : ℕ) :
       apply Subtype.ext
       rfl
     subst idx
+    dsimp only [_root_.id]
     rw [← Category.assoc, Sigma.ι_π]
     simp only [dite_eq_left rfl, eqToHom_refl, Category.id_comp, Category.comp_id]
+
+/-- Filtration stage zero has only its top-column summand. -/
+noncomputable def horizontalFilteredTopProjectionZeroIso (q : ℕ) :
+    horizontalFilteredTotalObj K 0 (0 + q) ≅ (K.X 0).X q where
+  hom := horizontalFilteredTopProjection K 0 q
+  inv := horizontalFilteredTopInclusion K 0 q
+  hom_inv_id :=
+    singleHorizontalFiberProjectionInverse q
+      (fun pq : DownNatHorizontalFilteredFiber (0 + q) 0 =>
+        (K.X pq.val.val.1).X pq.val.val.2)
   inv_hom_id := by
     simpa [horizontalFilteredTopInclusion, horizontalFilteredTopIndex] using
       horizontalFilteredTopι_topProjection K 0 q
@@ -281,8 +288,11 @@ theorem horizontalCompleteDirectColumnProjectionMap_zero_f_isIso_of_degree
   rw [dite_eq_left
     (show -(0 : ℤ) - (q : ℤ) ≤ -((0 : ℕ) : ℤ) by omega)]
   let q' := horizontalColumnDegree 0 (-(0 : ℤ) - (q : ℤ))
+  let eTop : horizontalFilteredTotalObj K 0 (0 + q') ≅ (K.X 0).X q' :=
+    horizontalFilteredTopProjectionZeroIso K q'
+  have hTopHom : eTop.hom = horizontalFilteredTopProjection K 0 q' := rfl
   have htop : IsIso (horizontalFilteredTopProjection K 0 q') :=
-    (horizontalFilteredTopProjectionZeroIso K q').isIso_hom
+    hTopHom ▸ eTop.isIso_hom
   let e₂ := horizontalDirectColumnCochainXIso K 0 q'
   have hcomp : IsIso (horizontalFilteredTopProjection K 0 q' ≫ e₂.inv) :=
     IsIso.comp_isIso'

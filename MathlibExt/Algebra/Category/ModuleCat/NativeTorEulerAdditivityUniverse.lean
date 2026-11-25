@@ -166,9 +166,28 @@ theorem nativeTor_length_relation_succ (M : ModuleCat.{max u v} R)
       (Module.length R (((Tor (ModuleCat.{max u v} R) (j + 1)).obj M).obj S.X₂)).toNat +
       (Module.length R (((Tor (ModuleCat.{max u v} R) (j + 1)).obj M).obj S.X₃)).toNat =
       (Module.length R (nativeTorConnecting R M S hS (j + 1)).hom.range).toNat +
-        (Module.length R (nativeTorConnecting R M S hS j).hom.range).toNat :=
-  leftDerived_middleThreeLengths R ((tensoringLeft (ModuleCat.{max u v} R)).obj M)
-    S hS j h₁ h₂ h₃
+        (Module.length R (nativeTorConnecting R M S hS j).hom.range).toNat := by
+  let F : ModuleCat.{max u v} R ⥤ ModuleCat.{max u v} R :=
+    (tensoringLeft (ModuleCat.{max u v} R)).obj M
+  letI : F.Additive := tensoringLeft_additive (C := ModuleCat.{max u v} R) M
+  let D₁ : ModuleCat.{max u v} R ⥤ ModuleCat.{max u v} R := F.leftDerived (j + 1)
+  let D₀ : ModuleCat.{max u v} R ⥤ ModuleCat.{max u v} R := F.leftDerived j
+  let X₁ : ModuleCat.{max u v} R := D₁.obj S.X₁
+  let X₂ : ModuleCat.{max u v} R := D₁.obj S.X₂
+  let X₃ : ModuleCat.{max u v} R := D₁.obj S.X₃
+  have hX₁ : Module.length R X₁ ≠ ⊤ := h₁
+  have hX₂ : Module.length R X₂ ≠ ⊤ := h₂
+  have hX₃ : Module.length R X₃ ≠ ⊤ := h₃
+  let δ₁ : (F.leftDerived (j + 1 + 1)).obj S.X₃ ⟶ X₁ :=
+    LeftDerivedDelta.LDdelta F (j + 1) S hS
+  let δ₀ : X₃ ⟶ D₀.obj S.X₁ := LeftDerivedDelta.LDdelta F j S hS
+  have hδ₁ : nativeTorConnecting R M S hS (j + 1) = δ₁ := rfl
+  have hδ₀ : nativeTorConnecting R M S hS j = δ₀ := rfl
+  rw [hδ₁, hδ₀]
+  change ((Module.length R X₁).toNat : ℤ) - (Module.length R X₂).toNat +
+      (Module.length R X₃).toNat =
+    (Module.length R δ₁.hom.range).toNat + (Module.length R δ₀.hom.range).toNat
+  exact leftDerived_middleThreeLengths R F S hS j hX₁ hX₂ hX₃
 
 /-- The actual degree-zero quotient endpoint leaves only the first boundary range. -/
 theorem nativeTor_length_relation_zero (M : ModuleCat.{max u v} R)

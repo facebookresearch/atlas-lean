@@ -58,6 +58,13 @@ variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
 local notation "core" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat
 
+private theorem partialTotalIsoCancelTail
+    {D : Type*} [Category D] {X₀ X₁ X₂ X₃ X₄ X₅ : D}
+    (a : X₀ ⟶ X₁) (b : X₁ ⟶ X₂) (e : X₃ ≅ X₂)
+    (f : X₂ ⟶ X₄) (g : X₄ ⟶ X₅) :
+    ((a ≫ b ≫ e.inv) ≫ e.hom) ≫ f ≫ g = a ≫ b ≫ f ≫ g := by
+  simp only [Category.assoc, Iso.inv_hom_id_assoc]
+
 private theorem partialTotalHomologyFactors_inv_naturality
     {K L : CochainComplex C ℤ} (f : K ⟶ L) (n : ℤ) :
     (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n).inv.app K ≫
@@ -903,12 +910,12 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
     dsimp only [F, fIdx, d₀₀₁, D₀,
       partialTotalE₁AdjacentCoreDiagram]
     convert rfl using 1
-    all_goals subsingleton
+    subsingleton
   have hdG : F.map gIdx = d₀₁₂ := by
     dsimp only [F, gIdx, d₀₁₂, D₀,
       partialTotalE₁AdjacentCoreDiagram]
     convert rfl using 1
-    all_goals subsingleton
+    subsingleton
   let iF : ComposableArrows.mk₁ (F.map fIdx) ≅
       ComposableArrows.mk₁ d₀₀₁ :=
     ComposableArrows.isoMk₁ (Iso.refl _) (Iso.refl _) (by
@@ -936,7 +943,7 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
     have ht : F.map (eqToHom hmid.symm) = t.inv := by
       dsimp only [t, partialTotalE₁MiddleTransportIso]
       convert CategoryTheory.eqToHom_map F hmid.symm using 1
-      all_goals subsingleton
+      subsingleton
     have he10 : ComposableArrows.app' e₁.inv 0 = (e₁.app 0).inv := rfl
     have he11 : ComposableArrows.app' e₁.inv 1 = (e₁.app 1).inv := rfl
     have heC0 : ComposableArrows.app' eC.inv 0 = 𝟙 _ := rfl
@@ -945,7 +952,7 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
         ((F.mapComposableArrows 1).map γIdx.inv) 0 =
         F.map (eqToHom hmid.symm) := by
       convert rfl using 1
-      all_goals subsingleton
+      subsingleton
     have hγ1 : ComposableArrows.app'
         ((F.mapComposableArrows 1).map γIdx.inv) 1 = 𝟙 _ := by
       change F.map (𝟙 _) = 𝟙 _
@@ -1996,12 +2003,39 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
             Lext 1 nPlus nZero hShiftX).hom ≫
           ((B.totalRow p).extendXIso eNat hNatZero).hom ≫
           xRowZero.hom := by
-    slice_lhs 3 4 => rw [hRowZeroICycles]
-    slice_lhs 2 3 =>
-      rw [HomologicalComplex.extendCyclesIso_hom_iCycles]
-    slice_lhs 1 2 => rw [HomologicalComplex.liftCycles_i]
-    dsimp only [Kext]
-    simp only [Category.assoc]
+    dsimp only [signedRow]
+    have hNatZeroICycles :
+        cNatZero.hom ≫ (B.totalRow p).iCycles NZero =
+          Lext.iCycles nZero ≫ ((B.totalRow p).extendXIso eNat hNatZero).hom :=
+      HomologicalComplex.extendCyclesIso_hom_iCycles
+        (K := B.totalRow p) (e := eNat) (hj' := hNatZero)
+    have hLift :
+        Lext.liftCycles
+            (x ≫ (CochainComplex.shiftFunctorObjXIso Lext 1 nPlus nZero hShiftX).hom)
+            (nZero + 1) hnextZero hy ≫ Lext.iCycles nZero =
+          x ≫ (CochainComplex.shiftFunctorObjXIso Lext 1 nPlus nZero hShiftX).hom := by
+      rw [HomologicalComplex.liftCycles_i]
+    calc
+      _ = Lext.liftCycles
+          (x ≫ (CochainComplex.shiftFunctorObjXIso Lext 1 nPlus nZero hShiftX).hom)
+          (nZero + 1) hnextZero hy ≫
+            cNatZero.hom ≫ (B.totalRow p).iCycles NZero ≫ xRowZero.hom := by
+        simpa only [Category.assoc, signedRow] using
+          congrArg (fun f => Lext.liftCycles
+            (x ≫ (CochainComplex.shiftFunctorObjXIso Lext 1 nPlus nZero hShiftX).hom)
+            (nZero + 1) hnextZero hy ≫ cNatZero.hom ≫ f) hRowZeroICycles
+      _ = Lext.liftCycles
+          (x ≫ (CochainComplex.shiftFunctorObjXIso Lext 1 nPlus nZero hShiftX).hom)
+          (nZero + 1) hnextZero hy ≫ Lext.iCycles nZero ≫
+            ((B.totalRow p).extendXIso eNat hNatZero).hom ≫ xRowZero.hom := by
+        simpa only [Category.assoc] using
+          congrArg (fun f => Lext.liftCycles
+            (x ≫ (CochainComplex.shiftFunctorObjXIso Lext 1 nPlus nZero hShiftX).hom)
+            (nZero + 1) hnextZero hy ≫ f ≫ xRowZero.hom) hNatZeroICycles
+      _ = _ := by
+        simpa only [Category.assoc] using
+          congrArg (fun f => f ≫ ((B.totalRow p).extendXIso eNat hNatZero).hom ≫
+            xRowZero.hom) hLift
   have hRightCycles :
       cNatPlus.hom ≫ cRowPlusSource.hom ≫
           HomologicalComplex.cyclesMap F q ≫
@@ -2011,13 +2045,36 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
           xRowPlus.hom ≫
           ((ComplexShape.down ℕ).ε q •
             (B.d (p + 1) p).f q) := by
-    slice_lhs 3 4 => rw [HomologicalComplex.cyclesMap_i]
-    slice_lhs 2 3 => rw [hRowPlusICycles]
-    slice_lhs 1 2 =>
-      rw [HomologicalComplex.extendCyclesIso_hom_iCycles]
-    rw [partialTotalHorizontalSignedRowMap_f]
-    dsimp only [Kext]
-    simp only [Category.assoc]
+    dsimp only [signedRow]
+    have hNatPlusICycles :
+        cNatPlus.hom ≫ (B.totalRow (p + 1)).iCycles NPlus =
+          Kext.iCycles nPlus ≫
+            ((B.totalRow (p + 1)).extendXIso eNat hNatPlus).hom :=
+      HomologicalComplex.extendCyclesIso_hom_iCycles
+        (K := B.totalRow (p + 1)) (e := eNat) (hj' := hNatPlus)
+    have hFICycles :
+        HomologicalComplex.cyclesMap F q ≫ (B.signedRow p).iCycles q =
+          (B.signedRow (p + 1)).iCycles q ≫
+            ((ComplexShape.down ℕ).ε q • (B.d (p + 1) p).f q) := by
+      rw [HomologicalComplex.cyclesMap_i]
+      simp only [F, partialTotalHorizontalSignedRowMap_f]
+    calc
+      _ = cNatPlus.hom ≫ cRowPlusSource.hom ≫
+          (B.signedRow (p + 1)).iCycles q ≫
+            ((ComplexShape.down ℕ).ε q • (B.d (p + 1) p).f q) := by
+        simpa only [Category.assoc, signedRow] using
+          congrArg (fun f => cNatPlus.hom ≫ cRowPlusSource.hom ≫ f) hFICycles
+      _ = cNatPlus.hom ≫ (B.totalRow (p + 1)).iCycles NPlus ≫
+          xRowPlus.hom ≫ ((ComplexShape.down ℕ).ε q • (B.d (p + 1) p).f q) := by
+        simpa only [Category.assoc, signedRow] using
+          congrArg (fun f => cNatPlus.hom ≫ f ≫
+            ((ComplexShape.down ℕ).ε q • (B.d (p + 1) p).f q)) hRowPlusICycles
+      _ = Kext.iCycles nPlus ≫
+          ((B.totalRow (p + 1)).extendXIso eNat hNatPlus).hom ≫
+            xRowPlus.hom ≫ ((ComplexShape.down ℕ).ε q • (B.d (p + 1) p).f q) := by
+        simpa only [Category.assoc] using
+          congrArg (fun f => f ≫ xRowPlus.hom ≫
+            ((ComplexShape.down ℕ).ε q • (B.d (p + 1) p).f q)) hNatPlusICycles
   have hCycle
       (hy :
         (x ≫ (CochainComplex.shiftFunctorObjXIso
@@ -2034,7 +2091,7 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
     rw [← cancel_mono ((B.signedRow p).iCycles q)]
     simp only [Category.assoc, Linear.units_smul_comp]
     rw [hLeftCycles, hRightCycles]
-    dsimp only [x]
+    dsimp only [x, signedRow]
     simpa only [Category.assoc] using hComponent
   have hRightHomology :
       Kext.homologyπ nPlus ≫ eNatPlus.hom ≫
@@ -2055,7 +2112,21 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
     Lext x (nPlus + 1) hnextPlus hx nZero hShift
       (nZero + 1) hnextZero]
   simp only [Category.assoc]
-  erw [Iso.inv_hom_id_app_assoc]
+  let eShift :=
+    ((HomologicalComplex.homologyFunctor C (ComplexShape.up ℤ) 0).shiftIso
+      1 nPlus nZero hShift).app Lext
+  have hShiftInv :
+      ((HomologicalComplex.homologyFunctor C (ComplexShape.up ℤ) 0).shiftIso
+        1 nPlus nZero hShift).inv.app Lext = eShift.inv := rfl
+  have hShiftHom :
+      ((HomologicalComplex.homologyFunctor C (ComplexShape.up ℤ) 0).shiftIso
+        1 nPlus nZero hShift).hom.app Lext = eShift.hom := rfl
+  have hCancel (a : Kext.cycles nPlus ⟶ Lext.cycles nZero) :
+      ((a ≫ Lext.homologyπ nZero ≫ eShift.inv) ≫ eShift.hom) ≫
+          eNatZero.hom ≫ eRowZero.hom =
+        a ≫ Lext.homologyπ nZero ≫ eNatZero.hom ≫ eRowZero.hom :=
+    partialTotalIsoCancelTail a (Lext.homologyπ nZero) eShift eNatZero.hom eRowZero.hom
+  rw [hShiftInv, hShiftHom, hCancel]
   slice_lhs 2 3 =>
     rw [HomologicalComplex.homologyπ_extendHomologyIso_hom]
   simp only [Category.assoc]
@@ -2304,15 +2375,31 @@ noncomputable def partialTotalFirstPageSignedVerticalHomologyIso (q : ℕ) :
   intro i j hij
   change j + 1 = i at hij
   subst i
-  have hpage := (partialTotalFirstPageRestrictionD P₁ q j).trans
-    (B.partialTotalSpectralSequenceFirstPage_d_eq j q)
-  exact partialTotalIsoCoordinatesComm
-    (B.partialTotalSpectralSequenceFirstPageRowIso (j + 1) q)
-    (B.partialTotalSpectralSequenceFirstPageRowIso j q)
-    (B.totalRowHomologyIso (j + 1) q) (B.totalRowHomologyIso j q)
-    (B.partialTotalHorizontalRowHomology j q) (L.d (j + 1) j)
-    ((P₁.restriction (partialTotalFirstPageRowEmbedding q)).d (j + 1) j)
-    (B.partialTotalHorizontalRowHomology_totalRowHomologyIso j q) hpage
+  let e₀ := B.partialTotalSpectralSequenceFirstPageRowIso (j + 1) q
+  let e₁ := B.partialTotalSpectralSequenceFirstPageRowIso j q
+  let r₀ := B.totalRowHomologyIso (j + 1) q
+  let r₁ := B.totalRowHomologyIso j q
+  let f := B.partialTotalHorizontalRowHomology j q
+  let d := (P₁.restriction (partialTotalFirstPageRowEmbedding q)).d (j + 1) j
+  have hRestrictionD : d = P₁.d (j + 1, q) (j, q) := by
+    let e := partialTotalFirstPageRowEmbedding q
+    change (P₁.restriction e).d (j + 1) j = _
+    rw [P₁.restriction_d_eq e
+      (show e.f (j + 1) = (j + 1, q) by rfl)
+      (show e.f j = (j, q) by rfl)]
+    change (𝟙 _) ≫ P₁.d (j + 1, q) (j, q) ≫ (𝟙 _) = _
+    simp only [Category.id_comp, Category.comp_id]
+  have hpage : d = e₀.hom ≫ f ≫ e₁.inv :=
+    hRestrictionD.trans (B.partialTotalSpectralSequenceFirstPage_d_eq j q)
+  have hrow : f ≫ r₁.hom = r₀.hom ≫ L.d (j + 1) j :=
+    B.partialTotalHorizontalRowHomology_totalRowHomologyIso j q
+  change (e₀.hom ≫ r₀.hom) ≫ L.d (j + 1) j = d ≫ (e₁.hom ≫ r₁.hom)
+  calc
+    _ = e₀.hom ≫ (f ≫ r₁.hom) :=
+      (Category.assoc _ _ _).trans (congrArg (fun k => e₀.hom ≫ k) hrow.symm)
+    _ = (e₀.hom ≫ f ≫ e₁.inv) ≫ (e₁.hom ≫ r₁.hom) := by
+      simp only [Category.assoc, Iso.inv_hom_id_assoc]
+    _ = _ := congrArg (fun k => k ≫ (e₁.hom ≫ r₁.hom)) hpage.symm
 
 /-- Forward components of the signed first-page row isomorphism. -/
 @[simp]
