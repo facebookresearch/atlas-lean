@@ -47,10 +47,10 @@ example
     (ha' : ∀ u : ↥(HeckeEis.heckeUpper N ℓ'),
       a' ∘ₗ ρ (HeckeEis.heckeConj N ℓ' u) = ρ (u : CongruenceSubgroup.Gamma0 N) ∘ₗ a')
     {z : CongruenceSubgroup.Gamma0 N → V} (hz : z ∈ cocycles₁ (Rep.of ρ)) :
-    H1π (Rep.of ρ) (⟨_, HeckeEis.Sh2.mem_cocycles₁ N ℓ ρ a ha
-        (HeckeEis.Sh2.mem_cocycles₁ N ℓ' ρ a' ha' hz)⟩ : cocycles₁ (Rep.of ρ)) =
-      H1π (Rep.of ρ) (⟨_, HeckeEis.Sh2.mem_cocycles₁ N m ρ (a ∘ₗ a')
-        (HeckeEis.R2CompTT.compat_mul ρ a a' hm ha ha') hz⟩ : cocycles₁ (Rep.of ρ)) :=
+    H1π (Rep.of ρ) (⟨_, HeckeEis.coeffHeckeFun_mem_cocycles₁ N ℓ ρ a ha
+        (HeckeEis.coeffHeckeFun_mem_cocycles₁ N ℓ' ρ a' ha' hz)⟩ : cocycles₁ (Rep.of ρ)) =
+      H1π (Rep.of ρ) (⟨_, HeckeEis.coeffHeckeFun_mem_cocycles₁ N m ρ (a ∘ₗ a')
+        (HeckeEis.heckeConj_intertwines_comp hm ρ ha ha') hz⟩ : cocycles₁ (Rep.of ρ)) :=
   (H1π_eq_iff _ _).2 <|
     HeckeEis.coeffHeckeFun_coeffHeckeFun_sub_coeffHeckeFun_mul_mem_coboundaries₁
       N ℓ ℓ' m hℓ hℓN hℓℓ' hm ρ a a' ha ha' hz

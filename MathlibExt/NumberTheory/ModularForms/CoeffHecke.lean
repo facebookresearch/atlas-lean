@@ -35,6 +35,7 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import Mathlib.GroupTheory.Transfer
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import Mathlib.RepresentationTheory.Homological.GroupCohomology.LowDegree
 
@@ -65,8 +66,6 @@ cohomology takes the coefficient ring in the universe of the group, and `H1`
 also the representation space, so for `Gamma0 N` these live in `Type`.
 -/
 
-@[expose] public section
-
 open CongruenceSubgroup Subgroup Matrix
 open scoped MatrixGroups
 
@@ -78,14 +77,14 @@ open scoped MatrixGroups
 
 section ConjMatrix
 
-def alphaMat (ℓ : ℕ) : Matrix (Fin 2) (Fin 2) ℤ := !![1, 0; 0, (ℓ : ℤ)]
+@[expose] public def alphaMat (ℓ : ℕ) : Matrix (Fin 2) (Fin 2) ℤ := !![1, 0; 0, (ℓ : ℤ)]
 
-@[simp] theorem alphaMat_apply_zero_zero (ℓ : ℕ) : alphaMat ℓ 0 0 = 1 := rfl
-@[simp] theorem alphaMat_apply_zero_one (ℓ : ℕ) : alphaMat ℓ 0 1 = 0 := rfl
-@[simp] theorem alphaMat_apply_one_zero (ℓ : ℕ) : alphaMat ℓ 1 0 = 0 := rfl
-@[simp] theorem alphaMat_apply_one_one (ℓ : ℕ) : alphaMat ℓ 1 1 = (ℓ : ℤ) := rfl
+@[simp] public theorem alphaMat_apply_zero_zero (ℓ : ℕ) : alphaMat ℓ 0 0 = 1 := rfl
+@[simp] public theorem alphaMat_apply_zero_one (ℓ : ℕ) : alphaMat ℓ 0 1 = 0 := rfl
+@[simp] public theorem alphaMat_apply_one_zero (ℓ : ℕ) : alphaMat ℓ 1 0 = 0 := rfl
+@[simp] public theorem alphaMat_apply_one_one (ℓ : ℕ) : alphaMat ℓ 1 1 = (ℓ : ℤ) := rfl
 
-theorem det_alphaMat (ℓ : ℕ) : (alphaMat ℓ).det = (ℓ : ℤ) := by
+public theorem det_alphaMat (ℓ : ℕ) : (alphaMat ℓ).det = (ℓ : ℤ) := by
   rw [alphaMat, det_fin_two_of]; ring
 
 theorem eq_of_mul_alphaMat_eq {ℓ : ℕ} (hℓ : (ℓ : ℤ) ≠ 0) {A B : Matrix (Fin 2) (Fin 2) ℤ}
@@ -100,19 +99,20 @@ theorem eq_of_mul_alphaMat_eq {ℓ : ℕ} (hℓ : (ℓ : ℤ) ≠ 0) {A B : Matr
   · exact h0
   · exact mul_right_cancel₀ hℓ h1
 
-def heckeConjMat (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) : Matrix (Fin 2) (Fin 2) ℤ :=
+@[expose] public def heckeConjMat (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) :
+    Matrix (Fin 2) (Fin 2) ℤ :=
   !![g 0 0, g 0 1 / (ℓ : ℤ); g 1 0 * (ℓ : ℤ), g 1 1]
 
-@[simp] theorem heckeConjMat_apply_zero_zero (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) :
+@[simp] public theorem heckeConjMat_apply_zero_zero (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) :
     heckeConjMat ℓ g 0 0 = g 0 0 := rfl
-@[simp] theorem heckeConjMat_apply_zero_one (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) :
+@[simp] public theorem heckeConjMat_apply_zero_one (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) :
     heckeConjMat ℓ g 0 1 = g 0 1 / (ℓ : ℤ) := rfl
-@[simp] theorem heckeConjMat_apply_one_zero (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) :
+@[simp] public theorem heckeConjMat_apply_one_zero (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) :
     heckeConjMat ℓ g 1 0 = g 1 0 * (ℓ : ℤ) := rfl
-@[simp] theorem heckeConjMat_apply_one_one (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) :
+@[simp] public theorem heckeConjMat_apply_one_one (ℓ : ℕ) (g : Matrix (Fin 2) (Fin 2) ℤ) :
     heckeConjMat ℓ g 1 1 = g 1 1 := rfl
 
-theorem heckeConjMat_mul_alphaMat {ℓ : ℕ} {g : Matrix (Fin 2) (Fin 2) ℤ}
+public theorem heckeConjMat_mul_alphaMat {ℓ : ℕ} {g : Matrix (Fin 2) (Fin 2) ℤ}
     (hg : (ℓ : ℤ) ∣ g 0 1) :
     heckeConjMat ℓ g * alphaMat ℓ = alphaMat ℓ * g := by
   ext i j
@@ -131,7 +131,7 @@ theorem dvd_mul_apply_zero_one {ℓ : ℕ} {g h : Matrix (Fin 2) (Fin 2) ℤ}
   rw [(Matrix.two_mul_expl g h).2.1]
   exact dvd_add (hh.mul_left _) (hg.mul_right _)
 
-theorem heckeConjMat_mul {ℓ : ℕ} (hℓ : (ℓ : ℤ) ≠ 0) {g h : Matrix (Fin 2) (Fin 2) ℤ}
+public theorem heckeConjMat_mul {ℓ : ℕ} (hℓ : (ℓ : ℤ) ≠ 0) {g h : Matrix (Fin 2) (Fin 2) ℤ}
     (hg : (ℓ : ℤ) ∣ g 0 1) (hh : (ℓ : ℤ) ∣ h 0 1) :
     heckeConjMat ℓ (g * h) = heckeConjMat ℓ g * heckeConjMat ℓ h := by
   have key : (heckeConjMat ℓ g * heckeConjMat ℓ h) * alphaMat ℓ = alphaMat ℓ * (g * h) := by
@@ -140,17 +140,17 @@ theorem heckeConjMat_mul {ℓ : ℕ} (hℓ : (ℓ : ℤ) ≠ 0) {g h : Matrix (F
   exact eq_of_mul_alphaMat_eq hℓ
     ((heckeConjMat_mul_alphaMat (dvd_mul_apply_zero_one hg hh)).trans key.symm)
 
-theorem det_heckeConjMat {ℓ : ℕ} (hℓ : (ℓ : ℤ) ≠ 0) {g : Matrix (Fin 2) (Fin 2) ℤ}
+public theorem det_heckeConjMat {ℓ : ℕ} (hℓ : (ℓ : ℤ) ≠ 0) {g : Matrix (Fin 2) (Fin 2) ℤ}
     (hg : (ℓ : ℤ) ∣ g 0 1) : (heckeConjMat ℓ g).det = g.det := by
   have h := congrArg Matrix.det (heckeConjMat_mul_alphaMat hg)
   rw [Matrix.det_mul, Matrix.det_mul, det_alphaMat] at h
   exact mul_right_cancel₀ hℓ (by linear_combination h)
 
-theorem heckeConjMat_one (ℓ : ℕ) : heckeConjMat ℓ (1 : Matrix (Fin 2) (Fin 2) ℤ) = 1 := by
+public theorem heckeConjMat_one (ℓ : ℕ) : heckeConjMat ℓ (1 : Matrix (Fin 2) (Fin 2) ℤ) = 1 := by
   ext i j
   fin_cases i <;> fin_cases j <;> simp [heckeConjMat]
 
-theorem heckeConjMat_injective {ℓ : ℕ} (hℓ : (ℓ : ℤ) ≠ 0) {g h : Matrix (Fin 2) (Fin 2) ℤ}
+public theorem heckeConjMat_injective {ℓ : ℕ} (hℓ : (ℓ : ℤ) ≠ 0) {g h : Matrix (Fin 2) (Fin 2) ℤ}
     (hg : (ℓ : ℤ) ∣ g 0 1) (hh : (ℓ : ℤ) ∣ h 0 1)
     (e : heckeConjMat ℓ g = heckeConjMat ℓ h) : g = h := by
   have key : alphaMat ℓ * g = alphaMat ℓ * h := by
@@ -169,7 +169,7 @@ end ConjMatrix
 
 section HeckeSubgroup
 
-def heckeUpperSL (ℓ : ℕ) : Subgroup SL(2, ℤ) where
+@[expose] public def heckeUpperSL (ℓ : ℕ) : Subgroup SL(2, ℤ) where
   carrier := {g | (ℓ : ℤ) ∣ g 0 1}
   one_mem' := by simp
   mul_mem' := by
@@ -186,14 +186,14 @@ def heckeUpperSL (ℓ : ℕ) : Subgroup SL(2, ℤ) where
     simpa using ha
 
 @[simp]
-theorem mem_heckeUpperSL {ℓ : ℕ} {g : SL(2, ℤ)} : g ∈ heckeUpperSL ℓ ↔ (ℓ : ℤ) ∣ g 0 1 :=
+public theorem mem_heckeUpperSL {ℓ : ℕ} {g : SL(2, ℤ)} : g ∈ heckeUpperSL ℓ ↔ (ℓ : ℤ) ∣ g 0 1 :=
   Iff.rfl
 
 variable (N ℓ : ℕ)
 
-def heckeUpper : Subgroup (Gamma0 N) := (heckeUpperSL ℓ).subgroupOf (Gamma0 N)
+@[expose] public def heckeUpper : Subgroup (Gamma0 N) := (heckeUpperSL ℓ).subgroupOf (Gamma0 N)
 
-theorem mem_heckeUpper {γ : Gamma0 N} :
+public theorem mem_heckeUpper {γ : Gamma0 N} :
     γ ∈ heckeUpper N ℓ ↔ (ℓ : ℤ) ∣ (γ : SL(2, ℤ)) 0 1 :=
   Iff.rfl
 
@@ -210,24 +210,24 @@ theorem ker_gammaZeroRed_le_heckeUpper : (gammaZeroRed N ℓ).ker ≤ heckeUpper
     simpa [gammaZeroRed, Matrix.one_apply] using h
   exact_mod_cast (ZMod.intCast_zmod_eq_zero_iff_dvd _ ℓ).mp h01
 
-instance instFiniteIndexHeckeUpper [NeZero ℓ] : (heckeUpper N ℓ).FiniteIndex :=
+public instance instFiniteIndexHeckeUpper [NeZero ℓ] : (heckeUpper N ℓ).FiniteIndex :=
   haveI : (gammaZeroRed N ℓ).ker.FiniteIndex := Subgroup.finiteIndex_ker _
   Subgroup.finiteIndex_of_le (ker_gammaZeroRed_le_heckeUpper N ℓ)
 
 variable [NeZero ℓ]
 
-def heckeConjSL (γ : heckeUpper N ℓ) : SL(2, ℤ) :=
+@[expose] public def heckeConjSL (γ : heckeUpper N ℓ) : SL(2, ℤ) :=
   ⟨heckeConjMat ℓ ((γ : Gamma0 N) : SL(2, ℤ)), by
     rw [det_heckeConjMat (Int.natCast_ne_zero.mpr (NeZero.ne ℓ)) ((mem_heckeUpper N ℓ).mp γ.2)]
     exact ((γ : Gamma0 N) : SL(2, ℤ)).2⟩
 
 @[simp]
-theorem coe_heckeConjSL (γ : heckeUpper N ℓ) :
+public theorem coe_heckeConjSL (γ : heckeUpper N ℓ) :
     (heckeConjSL N ℓ γ : Matrix (Fin 2) (Fin 2) ℤ) =
       heckeConjMat ℓ ((γ : Gamma0 N) : SL(2, ℤ)) :=
   rfl
 
-theorem heckeConjSL_mem_Gamma0 (γ : heckeUpper N ℓ) : heckeConjSL N ℓ γ ∈ Gamma0 N := by
+public theorem heckeConjSL_mem_Gamma0 (γ : heckeUpper N ℓ) : heckeConjSL N ℓ γ ∈ Gamma0 N := by
   rw [Gamma0_mem]
   show (((heckeConjMat ℓ ((γ : Gamma0 N) : SL(2, ℤ))) 1 0 : ℤ) : ZMod N) = 0
   rw [heckeConjMat_apply_one_zero, Int.cast_mul]
@@ -235,7 +235,7 @@ theorem heckeConjSL_mem_Gamma0 (γ : heckeUpper N ℓ) : heckeConjSL N ℓ γ �
     Gamma0_mem.mp (γ : Gamma0 N).2
   rw [hc, zero_mul]
 
-def heckeConj : heckeUpper N ℓ →* Gamma0 N where
+@[expose] public def heckeConj : heckeUpper N ℓ →* Gamma0 N where
   toFun γ := ⟨heckeConjSL N ℓ γ, heckeConjSL_mem_Gamma0 N ℓ γ⟩
   map_one' := by
     refine Subtype.ext (Subtype.ext ?_)
@@ -252,11 +252,11 @@ def heckeConj : heckeUpper N ℓ →* Gamma0 N where
       ((mem_heckeUpper N ℓ).mp γ.2) ((mem_heckeUpper N ℓ).mp δ.2)
 
 @[simp]
-theorem coe_heckeConj (γ : heckeUpper N ℓ) :
+public theorem coe_heckeConj (γ : heckeUpper N ℓ) :
     ((heckeConj N ℓ γ : Gamma0 N) : SL(2, ℤ)) = heckeConjSL N ℓ γ :=
   rfl
 
-theorem heckeConj_injective : Function.Injective (heckeConj N ℓ) := by
+public theorem heckeConj_injective : Function.Injective (heckeConj N ℓ) := by
   intro γ δ h
   have hmat : heckeConjMat ℓ (((γ : Gamma0 N) : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) =
       heckeConjMat ℓ (((δ : Gamma0 N) : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) :=
@@ -271,15 +271,15 @@ section Transfer
 
 variable {G : Type*} [Group G] (H : Subgroup G) {A : Type*} [AddCommGroup A]
 
-def resHom : (Additive G →+ A) →+ (Additive H →+ A) :=
+@[expose] public def resHom : (Additive G →+ A) →+ (Additive H →+ A) :=
   AddMonoidHom.mk' (fun φ => φ.comp (MonoidHom.toAdditive H.subtype)) fun _ _ => rfl
 
 @[simp]
-theorem resHom_apply (φ : Additive G →+ A) (γ : H) :
+public theorem resHom_apply (φ : Additive G →+ A) (γ : H) :
     resHom H φ (Additive.ofMul γ) = φ (Additive.ofMul (γ : G)) :=
   rfl
 
-noncomputable def transferAux (g : G) (q : G ⧸ H) : H :=
+@[expose] public noncomputable def transferAux (g : G) (q : G ⧸ H) : H :=
   ⟨(g • q).out⁻¹ * (g * q.out), by
     refine QuotientGroup.eq.mp ?_
     rw [QuotientGroup.out_eq']
@@ -288,11 +288,11 @@ noncomputable def transferAux (g : G) (q : G ⧸ H) : H :=
       QuotientGroup.out_eq']⟩
 
 @[simp]
-theorem coe_transferAux (g : G) (q : G ⧸ H) :
+public theorem coe_transferAux (g : G) (q : G ⧸ H) :
     (transferAux H g q : G) = (g • q).out⁻¹ * (g * q.out) :=
   rfl
 
-theorem transferAux_mul (g₁ g₂ : G) (q : G ⧸ H) :
+public theorem transferAux_mul (g₁ g₂ : G) (q : G ⧸ H) :
     transferAux H (g₁ * g₂) q = transferAux H g₁ (g₂ • q) * transferAux H g₂ q := by
   ext
   push_cast [coe_transferAux]
@@ -301,32 +301,48 @@ theorem transferAux_mul (g₁ g₂ : G) (q : G ⧸ H) :
 
 variable [H.FiniteIndex]
 
-noncomputable def coresHom : (Additive H →+ A) →+ (Additive G →+ A) :=
-  AddMonoidHom.mk'
-    (fun φ =>
-      letI := H.fintypeQuotientOfFiniteIndex
-      AddMonoidHom.mk'
-        (fun g => ∑ q : G ⧸ H, φ (Additive.ofMul (transferAux H g.toMul q)))
-        (fun g₁ g₂ => by
-          show ∑ q : G ⧸ H, φ (Additive.ofMul (transferAux H (g₁.toMul * g₂.toMul) q)) =
-            (∑ q : G ⧸ H, φ (Additive.ofMul (transferAux H g₁.toMul q))) +
-              ∑ q : G ⧸ H, φ (Additive.ofMul (transferAux H g₂.toMul q))
-          simp_rw [transferAux_mul, ofMul_mul, map_add]
-          rw [Finset.sum_add_distrib]
-          exact congrArg₂ (· + ·)
-            (Fintype.sum_bijective (g₂.toMul • ·) (MulAction.bijective g₂.toMul)
-              (fun q => φ (Additive.ofMul (transferAux H g₁.toMul (g₂.toMul • q))))
-              (fun q => φ (Additive.ofMul (transferAux H g₁.toMul q))) fun q => rfl) rfl))
-    (fun φ ψ => by
-      letI := H.fintypeQuotientOfFiniteIndex
-      ext g
-      exact Finset.sum_add_distrib)
+/-- The coset formula for Mathlib's transfer on homomorphisms to an additive group, with the
+representatives `Quotient.out`. -/
+theorem toAdditiveLeft_transfer_apply (φ : Additive H →+ A) (g : G) :
+    letI := H.fintypeQuotientOfFiniteIndex
+    MonoidHom.toAdditiveLeft (MonoidHom.transfer (AddMonoidHom.toMultiplicativeRight φ))
+        (Additive.ofMul g) = ∑ q : G ⧸ H, φ (Additive.ofMul (transferAux H g q)) := by
+  let _ := H.fintypeQuotientOfFiniteIndex
+  let T : H.LeftTransversal :=
+    ⟨Set.range Quotient.out, Subgroup.isComplement_range_left Quotient.out_eq'⟩
+  have hT : ∀ q : G ⧸ H, (T.2.leftQuotientEquiv q : G) = q.out :=
+    Subgroup.IsComplement.leftQuotientEquiv_apply Quotient.out_eq'
+  rw [MonoidHom.coe_toAdditiveLeft, Function.comp_apply, Function.comp_apply, toMul_ofMul,
+    MonoidHom.transfer_def _ T g, Subgroup.leftTransversals.diff, toAdd_prod]
+  refine (Fintype.sum_equiv (MulAction.toPerm g) _ _ fun q => ?_).symm
+  simp only [MulAction.toPerm_apply, AddMonoidHom.toMultiplicativeRight_apply_apply, toAdd_ofAdd]
+  congr 2
+  ext
+  rw [coe_transferAux, Subgroup.coe_mk, hT, ← Subgroup.smul_leftQuotientEquiv, hT, smul_eq_mul]
 
-theorem coresHom_apply (φ : Additive H →+ A) (g : G) :
+/-- The transfer `Additive G →+ A` of a homomorphism `Additive H →+ A`: Mathlib's
+`MonoidHom.transfer` through `Multiplicative A`, additive in the homomorphism. -/
+public noncomputable def coresHom : (Additive H →+ A) →+ (Additive G →+ A) :=
+  AddMonoidHom.mk'
+    (fun φ => MonoidHom.toAdditiveLeft (MonoidHom.transfer (AddMonoidHom.toMultiplicativeRight φ)))
+    fun φ ψ => AddMonoidHom.ext fun g => by
+      let _ := H.fintypeQuotientOfFiniteIndex
+      rw [← ofMul_toMul g, AddMonoidHom.add_apply, toAdditiveLeft_transfer_apply,
+        toAdditiveLeft_transfer_apply, toAdditiveLeft_transfer_apply, ← Finset.sum_add_distrib]
+      rfl
+
+public theorem coresHom_apply (φ : Additive H →+ A) (g : G) :
     letI := H.fintypeQuotientOfFiniteIndex
     coresHom H φ (Additive.ofMul g) =
       ∑ q : G ⧸ H, φ (Additive.ofMul (transferAux H g q)) :=
-  rfl
+  toAdditiveLeft_transfer_apply H φ g
+
+/-- `coresHom` is Mathlib's transfer, through `Multiplicative A`. -/
+public theorem coresHom_eq_transfer (φ : Additive H →+ A) :
+    coresHom H φ =
+      MonoidHom.toAdditiveLeft (MonoidHom.transfer (AddMonoidHom.toMultiplicativeRight φ)) :=
+  AddMonoidHom.ext fun g =>
+    (coresHom_apply H φ g.toMul).trans (toAdditiveLeft_transfer_apply H φ g.toMul).symm
 
 end Transfer
 
@@ -334,11 +350,11 @@ section Pullback
 
 variable {G K : Type*} [Group G] [Group K] {A : Type*} [AddCommGroup A]
 
-def pullbackHom (f : G →* K) : (Additive K →+ A) →+ (Additive G →+ A) :=
+@[expose] public def pullbackHom (f : G →* K) : (Additive K →+ A) →+ (Additive G →+ A) :=
   AddMonoidHom.mk' (fun φ => φ.comp (MonoidHom.toAdditive f)) fun _ _ => rfl
 
 @[simp]
-theorem pullbackHom_apply (f : G →* K) (φ : Additive K →+ A) (g : G) :
+public theorem pullbackHom_apply (f : G →* K) (φ : Additive K →+ A) (g : G) :
     pullbackHom f φ (Additive.ofMul g) = φ (Additive.ofMul (f g)) :=
   rfl
 
@@ -348,22 +364,22 @@ section HeckeOperator
 
 variable (N ℓ : ℕ) [NeZero ℓ] (A : Type*) [AddCommGroup A]
 
-noncomputable def heckeOperatorHom :
+@[expose] public noncomputable def heckeOperatorHom :
     (Additive (Gamma0 N) →+ A) →+ (Additive (Gamma0 N) →+ A) :=
   (coresHom (heckeUpper N ℓ)).comp (pullbackHom (heckeConj N ℓ))
 
-theorem heckeOperatorHom_apply (φ : Additive (Gamma0 N) →+ A) (g : Gamma0 N) :
+public theorem heckeOperatorHom_apply (φ : Additive (Gamma0 N) →+ A) (g : Gamma0 N) :
     letI := (heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
     heckeOperatorHom N ℓ A φ (Additive.ofMul g) =
       ∑ q : Gamma0 N ⧸ heckeUpper N ℓ,
         φ (Additive.ofMul ((heckeConj N ℓ (transferAux (heckeUpper N ℓ) g q) : Gamma0 N))) :=
-  rfl
+  coresHom_apply _ _ g
 
-noncomputable abbrev uOperatorHom (q : ℕ) [NeZero q] :
+public noncomputable abbrev uOperatorHom (q : ℕ) [NeZero q] :
     (Additive (Gamma0 N) →+ A) →+ (Additive (Gamma0 N) →+ A) :=
   heckeOperatorHom N q A
 
-def HeckeIndexEq : Prop := (heckeUpper N ℓ).index = ℓ + 1
+@[expose] public def HeckeIndexEq : Prop := (heckeUpper N ℓ).index = ℓ + 1
 
 end HeckeOperator
 
@@ -375,7 +391,8 @@ section Parabolic
 
 variable {Γ : Subgroup SL(2, ℤ)}
 
-def IsParabolicCocycle {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+@[expose] public def IsParabolicCocycle {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V]
+    [Module K V]
     (ρ : Representation K Γ V) (z : Γ → V) : Prop :=
   ∀ γ : Γ, ((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).trace ^ 2 = 4 →
     z γ ∈ LinearMap.range (ρ γ - 1)
@@ -386,7 +403,7 @@ section Cocycles
 
 variable {K : Type} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
 
-def coeffParabolicCocycles (ρ : Representation K Γ V) : Submodule K (Γ → V) where
+@[expose] public def coeffParabolicCocycles (ρ : Representation K Γ V) : Submodule K (Γ → V) where
   carrier := {z | z ∈ cocycles₁ (Rep.of ρ) ∧ IsParabolicCocycle ρ z}
   zero_mem' := ⟨Submodule.zero_mem _, fun γ _ => by simp⟩
   add_mem' := by
@@ -396,15 +413,15 @@ def coeffParabolicCocycles (ρ : Representation K Γ V) : Submodule K (Γ → V)
     rintro c z ⟨hz, hz'⟩
     exact ⟨Submodule.smul_mem _ c hz, fun γ hγ => Submodule.smul_mem _ c (hz' γ hγ)⟩
 
-theorem mem_coeffParabolicCocycles_iff (ρ : Representation K Γ V) (z : Γ → V) :
+public theorem mem_coeffParabolicCocycles_iff (ρ : Representation K Γ V) (z : Γ → V) :
     z ∈ coeffParabolicCocycles ρ ↔ z ∈ cocycles₁ (Rep.of ρ) ∧ IsParabolicCocycle ρ z :=
   Iff.rfl
 
-theorem coeffParabolicCocycles_le_cocycles₁ (ρ : Representation K Γ V) :
+public theorem coeffParabolicCocycles_le_cocycles₁ (ρ : Representation K Γ V) :
     coeffParabolicCocycles ρ ≤ cocycles₁ (Rep.of ρ) :=
   fun _ hz => hz.1
 
-theorem coboundaries₁_le_coeffParabolicCocycles (ρ : Representation K Γ V) :
+public theorem coboundaries₁_le_coeffParabolicCocycles (ρ : Representation K Γ V) :
     coboundaries₁ (Rep.of ρ) ≤ coeffParabolicCocycles ρ := by
   intro z hz
   refine ⟨coboundaries₁_le_cocycles₁ _ hz, fun γ _ => ?_⟩
@@ -416,21 +433,23 @@ end Cocycles
 variable {K V : Type} [CommRing K] [AddCommGroup V] [Module K V]
 
 /-- The parabolic classes: the image in `H¹` of the parabolic cocycles. -/
-noncomputable def coeffH1par (ρ : Representation K Γ V) : Submodule K (H1 (Rep.of ρ)) :=
+@[expose] public noncomputable def coeffH1par (ρ : Representation K Γ V) :
+    Submodule K (H1 (Rep.of ρ)) :=
   ((coeffParabolicCocycles ρ).comap (cocycles₁ (Rep.of ρ)).subtype).map (H1π (Rep.of ρ)).hom
 
 /-- The class in `coeffH1par ρ` of a parabolic cocycle. -/
-noncomputable def coeffH1parMk (ρ : Representation K Γ V) :
+@[expose] public noncomputable def coeffH1parMk (ρ : Representation K Γ V) :
     ↥(coeffParabolicCocycles ρ) →ₗ[K] ↥(coeffH1par ρ) :=
   ((H1π (Rep.of ρ)).hom ∘ₗ Submodule.inclusion (coeffParabolicCocycles_le_cocycles₁ ρ)).codRestrict
     (coeffH1par ρ) fun z => ⟨_, z.2, rfl⟩
 
-theorem coeffH1parMk_surjective (ρ : Representation K Γ V) :
+public theorem coeffH1parMk_surjective (ρ : Representation K Γ V) :
     Function.Surjective (coeffH1parMk ρ) := by
   rintro ⟨_, c, hc, rfl⟩
   exact ⟨⟨c, hc⟩, rfl⟩
 
-theorem coeffH1parMk_eq_zero_iff (ρ : Representation K Γ V) (z : ↥(coeffParabolicCocycles ρ)) :
+public theorem coeffH1parMk_eq_zero_iff (ρ : Representation K Γ V)
+    (z : ↥(coeffParabolicCocycles ρ)) :
     coeffH1parMk ρ z = 0 ↔ (z : Γ → V) ∈ coboundaries₁ (Rep.of ρ) :=
   Submodule.coe_eq_zero.symm.trans <|
     H1π_eq_zero_iff (A := Rep.of ρ) (Submodule.inclusion (coeffParabolicCocycles_le_cocycles₁ ρ) z)
@@ -442,14 +461,14 @@ section Hecke
 variable (N : ℕ) (ℓ : ℕ) [NeZero ℓ]
 variable {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
 
-noncomputable def coeffHeckeFun (ρ : Representation K (Gamma0 N) V) (a : V →ₗ[K] V)
+@[expose] public noncomputable def coeffHeckeFun (ρ : Representation K (Gamma0 N) V) (a : V →ₗ[K] V)
     (z : Gamma0 N → V) : Gamma0 N → V :=
   fun g =>
     letI := (heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
     ∑ q : Gamma0 N ⧸ heckeUpper N ℓ,
       ρ (g • q).out (a (z (heckeConj N ℓ (transferAux (heckeUpper N ℓ) g q))))
 
-theorem coeffHeckeFun_apply (ρ : Representation K (Gamma0 N) V) (a : V →ₗ[K] V)
+public theorem coeffHeckeFun_apply (ρ : Representation K (Gamma0 N) V) (a : V →ₗ[K] V)
     (z : Gamma0 N → V) (g : Gamma0 N) :
     coeffHeckeFun N ℓ ρ a z g =
       letI := (heckeUpper N ℓ).fintypeQuotientOfFiniteIndex
@@ -457,7 +476,7 @@ theorem coeffHeckeFun_apply (ρ : Representation K (Gamma0 N) V) (a : V →ₗ[K
         ρ (g • q).out (a (z (heckeConj N ℓ (transferAux (heckeUpper N ℓ) g q)))) :=
   rfl
 
-theorem coeffHeckeFun_trivial (φ : Additive (Gamma0 N) →+ K) (g : Gamma0 N) :
+public theorem coeffHeckeFun_trivial (φ : Additive (Gamma0 N) →+ K) (g : Gamma0 N) :
     coeffHeckeFun N ℓ (1 : Representation K (Gamma0 N) K) LinearMap.id
         (fun h => φ (Additive.ofMul h)) g
       = heckeOperatorHom N ℓ K φ (Additive.ofMul g) := by
@@ -604,7 +623,7 @@ theorem sum_repr_sub_mem_coboundaries₁
 
 end Sh2
 
-theorem sum_repr_sub_coeffHeckeFun_mem_coboundaries₁ (N ℓ : ℕ) [NeZero ℓ]
+public theorem sum_repr_sub_coeffHeckeFun_mem_coboundaries₁ (N ℓ : ℕ) [NeZero ℓ]
     {K : Type} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
     (ρ : Representation K (CongruenceSubgroup.Gamma0 N) V) (a : V →ₗ[K] V)
     (ha : ∀ u : ↥(HeckeEis.heckeUpper N ℓ),
@@ -621,7 +640,7 @@ theorem sum_repr_sub_coeffHeckeFun_mem_coboundaries₁ (N ℓ : ℕ) [NeZero ℓ
       - HeckeEis.coeffHeckeFun N ℓ ρ a z ∈ groupCohomology.coboundaries₁ (Rep.of ρ) :=
   Sh2.sum_repr_sub_mem_coboundaries₁ N ℓ ρ a ha s t hs hst hz
 
-theorem coeffHeckeFun_mem_coboundaries₁ (N ℓ : ℕ) [NeZero ℓ]
+public theorem coeffHeckeFun_mem_coboundaries₁ (N ℓ : ℕ) [NeZero ℓ]
     {K : Type} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
     (ρ : Representation K (CongruenceSubgroup.Gamma0 N) V) (a : V →ₗ[K] V)
     (ha : ∀ u : ↥(HeckeEis.heckeUpper N ℓ),
@@ -629,6 +648,17 @@ theorem coeffHeckeFun_mem_coboundaries₁ (N ℓ : ℕ) [NeZero ℓ]
     {z : CongruenceSubgroup.Gamma0 N → V} (hz : z ∈ groupCohomology.coboundaries₁ (Rep.of ρ)) :
     HeckeEis.coeffHeckeFun N ℓ ρ a z ∈ groupCohomology.coboundaries₁ (Rep.of ρ) :=
   Sh2.mem_coboundaries₁ N ℓ ρ a ha hz
+
+/-- The coefficient Hecke operator, twisted by an intertwining endomorphism, sends cocycles to
+cocycles. -/
+public theorem coeffHeckeFun_mem_cocycles₁ (N ℓ : ℕ) [NeZero ℓ]
+    {K : Type} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+    (ρ : Representation K (CongruenceSubgroup.Gamma0 N) V) (a : V →ₗ[K] V)
+    (ha : ∀ u : ↥(HeckeEis.heckeUpper N ℓ),
+      a ∘ₗ ρ (HeckeEis.heckeConj N ℓ u) = ρ (u : CongruenceSubgroup.Gamma0 N) ∘ₗ a)
+    {z : CongruenceSubgroup.Gamma0 N → V} (hz : z ∈ groupCohomology.cocycles₁ (Rep.of ρ)) :
+    HeckeEis.coeffHeckeFun N ℓ ρ a z ∈ groupCohomology.cocycles₁ (Rep.of ρ) :=
+  Sh2.mem_cocycles₁ N ℓ ρ a ha hz
 
 
 namespace R2CompTT
@@ -724,6 +754,22 @@ theorem heckeConj_mul_eq (hm : m = ℓ * ℓ') (w : ↥(heckeUpper N m)) (u : �
   exact Subtype.ext hwu
 
 end Levels
+
+/-- If `a` intertwines `ρ ∘ heckeConj N ℓ` with `ρ` on `heckeUpper N ℓ`, and `a'` does so at
+`ℓ'`, then `a ∘ₗ a'` does so at `m = ℓ * ℓ'`. -/
+public theorem _root_.HeckeEis.heckeConj_intertwines_comp {N ℓ ℓ' m : ℕ} [NeZero ℓ] [NeZero ℓ']
+    [NeZero m] (hm : m = ℓ * ℓ') {K : Type*} [CommRing K] {V : Type*} [AddCommGroup V] [Module K V]
+    (ρ : Representation K (CongruenceSubgroup.Gamma0 N) V) {a a' : V →ₗ[K] V}
+    (ha : ∀ u : ↥(heckeUpper N ℓ),
+      a ∘ₗ ρ (heckeConj N ℓ u) = ρ (u : CongruenceSubgroup.Gamma0 N) ∘ₗ a)
+    (ha' : ∀ u : ↥(heckeUpper N ℓ'),
+      a' ∘ₗ ρ (heckeConj N ℓ' u) = ρ (u : CongruenceSubgroup.Gamma0 N) ∘ₗ a')
+    (w : ↥(heckeUpper N m)) :
+    (a ∘ₗ a') ∘ₗ ρ (heckeConj N m w) = ρ (w : CongruenceSubgroup.Gamma0 N) ∘ₗ (a ∘ₗ a') := by
+  rw [heckeConj_mul N ℓ ℓ' m hm w, LinearMap.comp_assoc, ha', ← LinearMap.comp_assoc]
+  change (a ∘ₗ ρ (heckeConj N ℓ (toLeft N ℓ ℓ' m hm w))) ∘ₗ a' = _
+  rw [ha, LinearMap.comp_assoc]
+  rfl
 
 section Coset
 
@@ -1074,24 +1120,13 @@ noncomputable def TmS (z : Gamma0 N → V) : Gamma0 N → V := fun g =>
   ∑ Q : Gamma0 N ⧸ heckeUpper N m, ρ (SS σ hσ hm (g • Q)) ((a ∘ₗ a') (z (heckeConj N m (TT σ hσ hm
     g Q))))
 
-include hm in
-
-theorem compat_mul
-    (ha : ∀ u : ↥(heckeUpper N ℓ), a ∘ₗ ρ (heckeConj N ℓ u) = ρ (u : Gamma0 N) ∘ₗ a)
-    (ha' : ∀ u : ↥(heckeUpper N ℓ'), a' ∘ₗ ρ (heckeConj N ℓ' u) = ρ (u : Gamma0 N) ∘ₗ a')
-    (w : ↥(heckeUpper N m)) :
-    (a ∘ₗ a') ∘ₗ ρ (heckeConj N m w) = ρ (w : Gamma0 N) ∘ₗ (a ∘ₗ a') := by
-  rw [heckeConj_mul N ℓ ℓ' m hm w, LinearMap.comp_assoc, ha', ← LinearMap.comp_assoc]
-  change (a ∘ₗ ρ (heckeConj N ℓ (toLeft N ℓ ℓ' m hm w))) ∘ₗ a' = _
-  rw [ha, LinearMap.comp_assoc]
-  rfl
-
 theorem TmS_sub_mem
     (ha : ∀ u : ↥(heckeUpper N ℓ), a ∘ₗ ρ (heckeConj N ℓ u) = ρ (u : Gamma0 N) ∘ₗ a)
     (ha' : ∀ u : ↥(heckeUpper N ℓ'), a' ∘ₗ ρ (heckeConj N ℓ' u) = ρ (u : Gamma0 N) ∘ₗ a')
     {z : Gamma0 N → V} (hz : z ∈ cocycles₁ (Rep.of ρ)) :
     TmS ρ a a' σ hσ hm z - coeffHeckeFun N m ρ (a ∘ₗ a') z ∈ coboundaries₁ (Rep.of ρ) :=
-  sum_repr_sub_coeffHeckeFun_mem_coboundaries₁ N m ρ (a ∘ₗ a') (compat_mul ρ a a' hm ha ha')
+  sum_repr_sub_coeffHeckeFun_mem_coboundaries₁ N m ρ (a ∘ₗ a')
+    (heckeConj_intertwines_comp hm ρ ha ha')
     (SS σ hσ hm) (TT σ hσ hm) (SS_coe σ hσ hm) (SS_mul_TT σ hσ hm) hz
 
 theorem coeffHeckeFun_Ty
