@@ -18,7 +18,8 @@ import Mathlib.Tactic.Ring
 
 /-! Tests for the fed-batch bioreactor balances: an explicit solution with a sterile inoculum
 (`X = 0`) fed at a constant rate, as a non-vacuity witness of the account theorem; and a
-constant solution with negative substrate, which shows that `S(0) ≥ 0` cannot be dropped. -/
+constant solution with negative substrate off the Monod pole, which shows that `S(0) ≥ 0`
+cannot be dropped. -/
 
 open Set Chemistry.Bioreactors.FedBatch
 open MathlibExt.Biology.Dynamics.MichaelisMenten (mmRate)
@@ -53,17 +54,25 @@ example (t : ℝ) (ht : 0 ≤ t) :
   exact ⟨h1 t ht ht, h2 t ht ht, (h3 t ht ht).1⟩
 
 /-- Without feed or biomass, every constant substrate level is a solution, a negative one
-included: the hypothesis `S(0) ≥ 0` cannot be dropped from the nonnegativity clause. -/
+included. -/
 theorem constant_isSolution (μ : ℝ → ℝ) (Sin Y S₀ : ℝ) (I : Set ℝ) :
     IsSolution μ Sin Y (fun _ ↦ 0) I (fun _ ↦ 1) (fun _ ↦ S₀) (fun _ ↦ 0) where
   hasDerivWithinAt_volume t _ := hasDerivWithinAt_const t I 1
   hasDerivWithinAt_substrate t _ := by simpa using hasDerivWithinAt_const t I S₀
   hasDerivWithinAt_biomass t _ := by simpa using hasDerivWithinAt_const t I (0 : ℝ)
 
-/-- All other hypotheses of the account theorem hold for the constant solution `S = -1`, and
-the substrate is negative at every time. -/
-example : IsSolution (mmRate 1 1) 0 1 (fun _ ↦ 0) (Ici 0) (fun _ ↦ 1) (fun _ ↦ -1) (fun _ ↦ 0) ∧
-    ∀ t ∈ Ici (0 : ℝ), (fun _ : ℝ ↦ (-1 : ℝ)) t < 0 :=
-  ⟨constant_isSolution _ 0 1 (-1) _, fun _ _ ↦ by norm_num⟩
+/-- For `μm = Ks = 1`, the substrate level `-1/2` lies off the pole `-Ks = -1` of the Monod rate,
+which takes the real value `μ(-1/2) = -1` there (not the junk value of a quotient by `0`). -/
+example : mmRate 1 1 (-1 / 2) = -1 := by norm_num [mmRate]
+
+/-- The hypothesis `S(0) ≥ 0` cannot be dropped from the nonnegativity clause. With
+`μm = Ks = Y = 1`, `Sin = 0`, no feed, `I = [0, ∞)`, `V = 1` and no biomass, every other
+hypothesis of `IsSolution.substrate_biomass_account` holds, but the constant solution
+`S = -1/2`, which stays off the pole of the Monod rate, is negative at time `0`. -/
+example : ¬ ∀ V S X : ℝ → ℝ, IsSolution (mmRate 1 1) 0 1 (fun _ ↦ 0) (Ici 0) V S X →
+    0 < V 0 → 0 ≤ X 0 → ∀ t ∈ Ici (0 : ℝ), 0 ≤ S t := by
+  intro h
+  have := h _ _ _ (constant_isSolution _ 0 1 (-1 / 2) _) one_pos le_rfl 0 self_mem_Ici
+  norm_num at this
 
 end DomainsTest.Chemistry.Bioreactors.FedBatch

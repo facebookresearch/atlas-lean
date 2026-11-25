@@ -28,7 +28,10 @@ The species balances of the semi-batch reactor, `(V c)' = F c_in + R V`, divided
 
   `S' = (F / V) (S_in - S) - μ(S) X / Y`,   `X' = μ(S) X - (F / V) X`.
 
-The feed rate is any nonnegative function of time; no continuity of it is needed.
+The feed rate is any nonnegative function of time; no continuity of it is assumed. Since
+`V' = F` must hold at every time of the interval on which the balances are posed, a feed switched
+abruptly is covered by applying the result on each interval between switches, with time measured
+from the start of that interval.
 
 ## Main definitions
 
@@ -50,7 +53,11 @@ continuous induction on `[0, t]` keeps `S` above the pole `-K_s` of the Monod ra
 ## References
 
 * J. B. Rawlings and J. G. Ekerdt, *Chemical Reactor Analysis and Design Fundamentals*, 2nd
-  edition, Nob Hill Publishing, Section 4.4, the semi-batch reactor, Equation 4.44 (p. 131).
+  edition, Nob Hill Publishing: Section 4.4, the semi-batch reactor, Equation 4.44 (p. 131), the
+  species balance; Section 4.5, Equation 4.48 (p. 132), the total mass balance, and
+  Equation 4.51 (p. 134), its constant-density form `V' = Q_f - Q`; Section 10.5, the
+  nonsegregated fermentation model, Equation 10.18 (p. 596), the Monod growth rate and the
+  biomass and substrate balances with yield `y`.
 -/
 
 @[expose] public section
@@ -212,8 +219,8 @@ private theorem IsSolution.nonneg {μm Ks Sin Y : ℝ} {F : ℝ → ℝ} {I : Se
 `μ(S) = μm S / (Ks + S)`), `Sin ≥ 0` and `Y > 0`. Let `I` be an interval containing `0` and let
 `(V, S, X)` solve the fed-batch balances `V' = F`, `S' = (F / V) (Sin - S) - μ(S) X / Y`,
 `X' = μ(S) X - (F / V) X` on `I`, with derivatives within `I`, for a feed rate `F : ℝ → ℝ` with
-`F t ≥ 0` at the times `t ≥ 0` of `I` (no continuity of `F` is assumed). If `V 0 > 0`,
-`S 0 ≥ 0` and `X 0 ≥ 0`, then at every time `t ≥ 0` of `I`:
+`F t ≥ 0` at the times `t ≥ 0` of `I` (no continuity of `F` is assumed), a quotient by `0`
+being `0`. If `V 0 > 0`, `S 0 ≥ 0` and `X 0 ≥ 0`, then at every time `t ≥ 0` of `I`:
 1. `V t ≥ V 0`;
 2. the stocks `m_S = V S` and `m_X = V X` satisfy `(m_S + m_X / Y)' = F Sin`: the function
    `t ↦ V t * S t + V t * X t / Y` has derivative `F t * Sin` at `t` within `I`;
