@@ -91,6 +91,18 @@ example (δ : ℕ → ℤ) (hz : ∀ j ≤ 8, shiftingStepSum j = 0) (n : ℕ) :
     (by decide) δ (fun j _ hj ↦ by simpa [shiftingStepSum] using hz j hj) n (Nat.zero_le _)
   simpa [shiftingStepSum] using h
 
+-- Starting one row down gives a nonzero odd-residue sum at time zero. The selected
+-- parity alternates, and the four checks at times 1 through 4 imply the formula for all n ≥ 1.
+example (n : ℕ) (hn : 1 ≤ n) :
+    let c : ℕ → ℤ := fun j =>
+      ∑ m ∈ (Finset.range (2 * j + 1 + 1)).filter (fun m => m % 2 = (3 * j + 1) % 2),
+        ((2 * j + 1).choose m : ℤ)
+    c n = 4 * c (n - 1) := by
+  intro c
+  have h := shiftedBinomialStepSum_recurrence_of_window 2 1 2 3 1 1 (by decide) (by decide)
+    (by decide) (by decide) (fun _ ↦ 4) (by intro j hj hcut; interval_cases j <;> decide) n hn
+  simpa [c] using h
+
 open PowerSeries
 
 local notation "Xq" => (X : PowerSeries ℚ)

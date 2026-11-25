@@ -14,6 +14,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.GameTheory.SlowANim
 public import MathlibExt.GameTheory.SlowANimGeneralReduction
 public import MathlibExt.GameTheory.SlowANimParity
+public import MathlibExt.GameTheory.SlowANimThreeStacks
 
 /-!
 # P-positions of Slow`A`-Nim
@@ -57,15 +58,6 @@ public theorem_wanted slowANim_one_n_even_isP_iff (n : ℕ) (hn : 0 < n) (hne : 
     (p : Fin n → ℕ) :
     SpragueGrundy.IsP (slowANimGame n {1, n}) p ↔
       Even (∑ i, p i) ∧ ∃ i, (∀ j, p i ≤ p j) ∧ Even (p i)
-
-/-- **P-positions of Slow $\{1,2\}$-Nim on three stacks.** In Slow $A$-Nim with $A = \{1, 2\}$
-on three stacks, let $p = (p_0, p_1, p_2)$ be a position with $p_0 \le p_1 \le p_2$. Then $p$
-is a P-position if and only if its three stack heights are all even or all odd.
-
-Source: Matthieu Dufour and Silvia Heubach, *On the 𝒫-Positions of Some Infinite Families of
-Slow`A`-Nim*, INTEGERS 26 (2026), Article G3, Theorem 3. -/
-public theorem_wanted slowANim_one_two_three_isP_iff (p : Fin 3 → ℕ) (hp : Monotone p) :
-    SpragueGrundy.IsP (slowANimGame 3 {1, 2}) p ↔ (∀ i, Even (p i)) ∨ ∀ i, Odd (p i)
 
 /-- **P-positions of Slow $\{1,2\}$-Nim on four stacks.** In Slow $A$-Nim with $A = \{1, 2\}$
 on four stacks, let $p = (p_0, p_1, p_2, p_3)$ be a position with
