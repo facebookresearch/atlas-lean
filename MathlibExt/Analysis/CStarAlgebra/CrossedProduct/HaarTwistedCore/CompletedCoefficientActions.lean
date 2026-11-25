@@ -225,8 +225,8 @@ theorem star_coefficientLeftCompletion (a : A) (x : p.NonUnitalCompletion) :
     (coefficientLeftCompletion μ α p a).continuous.star
     ((coefficientRightCompletion μ α p (star a)).continuous.comp continuous_star) ?_) x
   funext f
-  simp only [Function.comp_apply, coefficientLeftCompletion_apply, ← map_star,
-    coefficientRightCompletion_apply]
+  simp only [Function.comp_apply, Pi.star_apply,
+    coefficientLeftCompletion_apply, ← map_star, coefficientRightCompletion_apply]
   exact congrArg p.toNonUnitalCompletion (crossedStar_coefficientLeft μ α a f)
 
 /-- The completed involution exchanges right coefficients with adjoint left coefficients. -/
@@ -237,8 +237,8 @@ theorem star_coefficientRightCompletion (a : A) (x : p.NonUnitalCompletion) :
     (coefficientRightCompletion μ α p a).continuous.star
     ((coefficientLeftCompletion μ α p (star a)).continuous.comp continuous_star) ?_) x
   funext f
-  simp only [Function.comp_apply, coefficientRightCompletion_apply, ← map_star,
-    coefficientLeftCompletion_apply]
+  simp only [Function.comp_apply, Pi.star_apply,
+    coefficientRightCompletion_apply, ← map_star, coefficientLeftCompletion_apply]
   exact congrArg p.toNonUnitalCompletion (crossedStar_coefficientRight μ α a f)
 
 /-- The two computed completed coefficient maps are an actual compatible centralizer pair. -/

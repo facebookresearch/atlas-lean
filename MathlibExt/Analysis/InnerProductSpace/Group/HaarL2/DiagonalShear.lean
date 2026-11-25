@@ -113,7 +113,7 @@ def diagonalShearIsometry :
         change Lp.compMeasurePreserving e hE (Lp.compMeasurePreserving e.symm hInv ξ) = ξ
         apply Lp.ext
         have hQ : QuasiMeasurePreserving e (Measure.radonProd μ μ) (Measure.radonProd μ μ) :=
-          ⟨hE.measurable, by rw [hE.map_eq]⟩
+          hE.quasiMeasurePreserving
         filter_upwards [Lp.coeFn_compMeasurePreserving
             (Lp.compMeasurePreserving e.symm hInv ξ) hE,
           hQ.ae_eq_comp (Lp.coeFn_compMeasurePreserving ξ hInv)] with z h₁ h₂
@@ -122,7 +122,7 @@ def diagonalShearIsometry :
         change Lp.compMeasurePreserving e.symm hInv (Lp.compMeasurePreserving e hE ξ) = ξ
         apply Lp.ext
         have hQ : QuasiMeasurePreserving e.symm (Measure.radonProd μ μ) (Measure.radonProd μ μ) :=
-          ⟨hInv.measurable, by rw [hInv.map_eq]⟩
+          hInv.quasiMeasurePreserving
         filter_upwards [Lp.coeFn_compMeasurePreserving
             (Lp.compMeasurePreserving e hE ξ) hInv,
           hQ.ae_eq_comp (Lp.coeFn_compMeasurePreserving ξ hE)] with z h₁ h₂
@@ -177,7 +177,7 @@ theorem diagonalShearIsometry_apply_compactSupport (f : C_c(G × G, H)) :
   have hpres := Measure.measurePreserving_diagonalDifferenceShear_symm_radonProd μ
   have hquasi : QuasiMeasurePreserving e.symm
       (Measure.radonProd μ μ) (Measure.radonProd μ μ) :=
-    ⟨hpres.measurable, by rw [hpres.map_eq]⟩
+    hpres.quasiMeasurePreserving
   have hinput := hquasi.ae_eq_comp (compactSupportInclusion_ae_eq (Measure.radonProd μ μ) f)
   filter_upwards [diagonalShearIsometry_ae_eq μ
       (compactSupportInclusion (Measure.radonProd μ μ) f), hinput,

@@ -74,7 +74,7 @@ def radonProductSwapIsometry :
         apply Lp.ext
         have hQ : QuasiMeasurePreserving (Prod.swap : X × Y → Y × X)
             (Measure.radonProd μ ν) (Measure.radonProd ν μ) :=
-          ⟨hXY.measurable, by rw [hXY.map_eq]⟩
+          hXY.quasiMeasurePreserving
         filter_upwards [Lp.coeFn_compMeasurePreserving
             (Lp.compMeasurePreserving (Prod.swap : Y × X → X × Y) hYX ξ) hXY,
           hQ.ae_eq_comp (Lp.coeFn_compMeasurePreserving ξ hYX)] with z h₁ h₂
@@ -83,7 +83,7 @@ def radonProductSwapIsometry :
         apply Lp.ext
         have hQ : QuasiMeasurePreserving (Prod.swap : Y × X → X × Y)
             (Measure.radonProd ν μ) (Measure.radonProd μ ν) :=
-          ⟨hYX.measurable, by rw [hYX.map_eq]⟩
+          hYX.quasiMeasurePreserving
         filter_upwards [Lp.coeFn_compMeasurePreserving
             (Lp.compMeasurePreserving (Prod.swap : X × Y → Y × X) hXY ξ) hYX,
           hQ.ae_eq_comp (Lp.coeFn_compMeasurePreserving ξ hXY)] with z h₁ h₂

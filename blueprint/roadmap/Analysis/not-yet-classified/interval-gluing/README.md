@@ -5,5 +5,5 @@
 - [Reverse Hom](reverse-hom.md)
 - [Matching Paths](matching-paths.md)
 - [Glue](glue.md)
-- [Glue apply](glue-apply.md)
+- [Half-interval concatenation of matching paths](glue-apply.md)
 - [Glue Hom](glue-hom.md)

@@ -103,7 +103,7 @@ def reindexMulEquiv (e : n ≃ m) : GL n A ≃* GL m A :=
 
 @[simp]
 lemma coe_reindexMulEquiv (e : n ≃ m) (g : GL n A) :
-    (↑(reindexMulEquiv e g) : Matrix m m A) = reindex e e (↑g : Matrix n n A) :=
+    (↑(reindexMulEquiv e g) : Matrix m m A) = Matrix.reindex e e (↑g : Matrix n n A) :=
   rfl
 
 /-- Coefficient-map naturality for reindexing as an equality of bundled

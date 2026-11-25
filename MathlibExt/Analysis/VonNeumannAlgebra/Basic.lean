@@ -58,7 +58,9 @@ noncomputable instance instOrderTop
     [CompleteSpace E] : OrderTop (VonNeumannAlgebra E) where
   top :=
     { toStarSubalgebra := ⊤
-      centralizer_centralizer' := by simp }
+      centralizer_centralizer' := by
+        change (Set.univ : Set (E →L[ℂ] E)).centralizer.centralizer = Set.univ
+        exact Set.Subset.antisymm (Set.subset_univ _) Set.subset_centralizer_centralizer }
   le_top A := by
     intro x hx
     change x ∈ (⊤ : StarSubalgebra ℂ (E →L[ℂ] E))

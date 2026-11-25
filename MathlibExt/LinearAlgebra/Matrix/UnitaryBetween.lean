@@ -172,12 +172,9 @@ public theorem exists_unitary_mul_eq_of_isometry
       rw [not_nonempty_iff] at h
       have hIsEmptyOut : IsEmpty out := h
       have hZero : Vᴴ * V = (0 : Matrix inp inp ℂ) := by
-        ext a b
-        simp only [mul_apply, conjTranspose_apply, zero_apply]
-        have huniv : (Finset.univ : Finset out) = ∅ :=
-          Finset.univ_eq_empty_iff.mpr hIsEmptyOut
-        rw [huniv]
-        simp
+        have hVzero : V = 0 :=
+          Matrix.ext fun i _ => (hIsEmptyOut.false i).elim
+        rw [hVzero, Matrix.conjTranspose_zero, Matrix.zero_mul]
       have h01 : (0 : Matrix inp inp ℂ) = 1 := by
         calc (0 : Matrix inp inp ℂ) = Vᴴ * V := hZero.symm
           _ = 1 := hV
