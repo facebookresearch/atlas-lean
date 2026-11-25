@@ -44,7 +44,9 @@ instance (n k : ℕ) : DecidableRel (kneserGraph n k).Adj := by
   unfold kneserGraph
   infer_instance
 
-/-- The adjacency relation of the Kneser graph. -/
+/-- **Adjacency in the Kneser graph.** For natural numbers $n$ and $k$ and $k$-element subsets
+$x$ and $y$ of $\{0, 1, \dots, n-1\}$, the vertices $x$ and $y$ of the Kneser graph $K(n, k)$
+are adjacent if and only if $x$ and $y$ are disjoint and $x \ne y$. -/
 public theorem kneserGraph_adj_iff (n k : ℕ) (x y : KneserVertex n k) :
     (kneserGraph n k).Adj x y ↔ Disjoint x.val y.val ∧ x ≠ y :=
   Iff.rfl
@@ -694,24 +696,12 @@ private theorem knOut_image_card {n : ℕ} (σ : Finset (Finset (Bool × Fin n))
   have hxo : x ∈ knOut σ L := Finset.mem_coe.mp hx
   exact (knMem_out.mp hxo).1
 
-private theorem knErase_injOn_in {n : ℕ} (σ : Finset (Finset (Bool × Fin n))) :
-    Set.InjOn (fun w => σ.erase w) (↑σ : Set (Finset (Bool × Fin n))) := by
-  classical
-  intro a ha b hb hab
-  have ha' : a ∈ σ := Finset.mem_coe.mp ha
-  have hb' : b ∈ σ := Finset.mem_coe.mp hb
-  by_contra hne0
-  have hmem : a ∈ σ.erase b := Finset.mem_erase.mpr ⟨hne0, ha'⟩
-  have hab' : σ.erase a = σ.erase b := hab
-  rw [← hab'] at hmem
-  exact Finset.notMem_erase a σ hmem
-
 private theorem knIn_image_card {n : ℕ} (σ : Finset (Finset (Bool × Fin n)))
     (L : Finset (Bool × Fin n) → Bool × Fin n) :
     ((knIn σ L).image (fun w => σ.erase w)).card = (knIn σ L).card := by
   classical
   apply Finset.card_image_of_injOn
-  refine Set.InjOn.mono ?_ (knErase_injOn_in σ)
+  refine Set.InjOn.mono ?_ (Finset.erase_injOn σ)
   intro x hx
   have hxo : x ∈ knIn σ L := Finset.mem_coe.mp hx
   exact Finset.mem_coe.mpr (knMem_in.mp hxo).1
@@ -3105,10 +3095,14 @@ private theorem knNotColorable {n k : ℕ} (hk : 0 < k) (h2 : 2 * k ≤ n) :
   exact knLab_noCompl C hn hk h2 x y hconsX hconsY hsub heq
 
 /--
-For 0<k and 2k≤n the Kneser graph on k-subsets has chromatic number n-2k+2.
-Source: L. Lovasz, JCT A 25 (1978), 319-324, DOI 10.1016/0097-3165(78)90022-5.
+**Kneser–Lovász theorem.** Let $n$ and $k$ be natural numbers with $0 < k$ and $2k \le n$. The
+Kneser graph $K(n, k)$, whose vertices are the $k$-element subsets of $\{0, 1, \dots, n-1\}$ and
+in which two such subsets are adjacent when they are disjoint and distinct, has chromatic number
+$n - 2k + 2$.
 
 Proves `Wanted` entry `kneser_lovasz`.
+
+Source: L. Lovasz, JCT A 25 (1978), 319-324, DOI 10.1016/0097-3165(78)90022-5.
 -/
 public theorem kneser_lovasz {n k : ℕ} (hk : 0 < k) (h : 2 * k ≤ n) :
     (kneserGraph n k).chromaticNumber = (n - 2 * k + 2 : ℕ∞) := by

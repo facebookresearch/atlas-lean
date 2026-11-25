@@ -54,7 +54,7 @@ lemma thresholdOpportunitySum_mono_opportunities {ι : Type*}
     · rw [thresholdContribution_eq_zero_of_gt o₁ t T hti (lt_of_not_ge hle),
         thresholdContribution_eq_zero_of_gt o₂ t T hti (lt_of_not_ge hle)]
 
-/-- Accessibility is bounded by the total opportunities. -/
+/-- Accessibility is bounded by the total opportunities when the opportunities are nonnegative. -/
 lemma thresholdOpportunitySum_le_total {ι : Type*} (s : Finset ι)
     (o : ι → ℝ) (t : ι → Option NNReal) (T : NNReal)
     (ho : ∀ i ∈ s, 0 ≤ o i) :

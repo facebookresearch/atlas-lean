@@ -42,3 +42,5 @@
 - [Dančík's lower bound for the binary Chvátal–Sankoff constant](dancik-lower-bound-wanted.md)
 - [Lueker's lower bound for the binary Chvátal–Sankoff constant](lueker-lower-bound-wanted.md)
 - [Heineman et al. lower bound for the binary Chvátal–Sankoff constant](heineman-lower-bound-wanted.md)
+
+- [Variance of the longest common subsequence of random binary words](variance-of-the-longest-common-subsequence.md)

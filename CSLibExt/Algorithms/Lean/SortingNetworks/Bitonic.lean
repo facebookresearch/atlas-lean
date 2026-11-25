@@ -66,12 +66,19 @@ section Runner
 
 variable {α : Type*} [LinearOrder α]
 
-/-- A comparator on `ℕ`-indexed wires: the minimum of wires `i` and `j` to `i`, the maximum to
-`j`. -/
+/-- **Comparator on natural-number-indexed wires.** Let $\alpha$ be a linear order. For wires
+$i, j \in \mathbb{N}$ and an assignment $f$ of values in $\alpha$ to the wires $x \in \mathbb{N}$,
+the comparator $(i, j)$ applied to $f$ puts $\min(f(i), f(j))$ on wire $i$, puts
+$\max(f(i), f(j))$ on wire $j$ when $j \ne i$, and leaves every other wire unchanged. -/
 def cmp (i j : ℕ) (f : ℕ → α) : ℕ → α :=
   fun x => if x = i then min (f i) (f j) else if x = j then max (f i) (f j) else f x
 
-/-- Run a list of comparators on `ℕ`-indexed wires. -/
+/-- **Running a comparator network on natural-number-indexed wires.** Let $\alpha$ be a
+linear order. Given a list $ps$ of comparators, each a pair $(i, j)$ of natural numbers, and
+an input $f : \mathbb{N} \to \alpha$ giving the value on each wire, running $ps$ on $f$
+applies the comparators of $ps$ to the wire values one after another, from first to last. The
+comparator $(i, j)$ puts the minimum of the values on wires $i$ and $j$ on wire $i$ and their
+maximum on wire $j$, and leaves the other wires unchanged. -/
 def runN (ps : List (ℕ × ℕ)) (f : ℕ → α) : ℕ → α :=
   ps.foldl (fun g c => cmp c.1 c.2 g) f
 
@@ -84,11 +91,17 @@ theorem runN_append (ps qs : List (ℕ × ℕ)) (f : ℕ → α) :
     runN (ps ++ qs) f = runN qs (runN ps f) := by
   simp [runN, List.foldl_append]
 
-/-- All comparators of `ps` join wires in `[lo, hi)`. -/
+/-- **Comparators within an interval.** A list $ps$ of comparators, each a pair $(i, j)$ of
+natural numbers, lies within $[l, h)$ if every comparator $(i, j)$ in $ps$ satisfies
+$l \le i < h$ and $l \le j < h$. -/
 def Within (ps : List (ℕ × ℕ)) (lo hi : ℕ) : Prop :=
   ∀ p ∈ ps, lo ≤ p.1 ∧ p.1 < hi ∧ lo ≤ p.2 ∧ p.2 < hi
 
-/-- **Locality**: comparators inside `[lo, hi)` leave the other wires alone. -/
+/-- **Locality of comparator networks.** Let $\alpha$ be a linear order and let $ps$ be a list
+of comparators $(i, j)$ on $\mathbb{N}$-indexed wires that all lie within $[l, h)$, that is,
+$l \le i < h$ and $l \le j < h$ for every $(i, j)$ in $ps$. Then for every input
+$f : \mathbb{N} \to \alpha$ and every wire $x$ with $x < l$ or $h \le x$, the value of wire $x$
+after running $ps$ on $f$ is $f(x)$. -/
 theorem runN_of_not_mem : ∀ {ps : List (ℕ × ℕ)} {lo hi : ℕ}, Within ps lo hi →
     ∀ (f : ℕ → α) (x : ℕ), (x < lo ∨ hi ≤ x) → runN ps f x = f x
   | [], _, _, _, _, _, _ => rfl
@@ -98,7 +111,11 @@ theorem runN_of_not_mem : ∀ {ps : List (ℕ × ℕ)} {lo hi : ℕ}, Within ps 
       simp only [cmp]
       split_ifs <;> first | omega | rfl
 
-/-- **Constant blocks stay constant** under comparators inside the block. -/
+/-- **Constant blocks stay constant.** Let $\alpha$ be a linear order, let $l, h \in \mathbb{N}$,
+and let $c$ be a list of comparators on $\mathbb{N}$-indexed wires each of which joins two wires
+$x$ with $l \le x < h$. If an input $f : \mathbb{N} \to \alpha$ takes the same value $a$ on
+every wire $x$ with $l \le x < h$, then running $c$ on $f$ gives an output that also takes the
+value $a$ on every such wire. -/
 theorem runN_const : ∀ {ps : List (ℕ × ℕ)} {lo hi : ℕ}, Within ps lo hi →
     ∀ (f : ℕ → α) (a : α), (∀ x, lo ≤ x → x < hi → f x = a) →
     ∀ x, lo ≤ x → x < hi → runN ps f x = a
@@ -133,7 +150,9 @@ section HalfCleaner
 
 variable {α : Type*} [LinearOrder α]
 
-/-- The half-cleaner on the block `[b, b + 2 m)`: compare wire `b + i` with wire `b + m + i`. -/
+/-- **Half-cleaner.** For natural numbers $m$ and $b$, the half-cleaner on the block of wires
+$[b, b + 2m)$ is the list of comparators $(b + i, b + m + i)$ for $i = 0, 1, \dots, m - 1$, in
+this order: it compares wire $b + i$ with wire $b + m + i$. -/
 def halfCleaner (m b : ℕ) : List (ℕ × ℕ) := (List.range m).map fun i => (b + i, b + m + i)
 
 theorem halfCleaner_within (m b : ℕ) : Within (halfCleaner m b) b (b + 2 * m) := by
@@ -158,8 +177,11 @@ private theorem runN_halfCleaner_aux (m b : ℕ) (f : ℕ → α) :
       split_ifs <;> first | omega | (subst_vars; simp_all; done) |
         (subst_vars; rw [show b + j + m = b + m + j by omega])
 
-/-- **The half-cleaner**: on `[b, b + 2 m)` it puts the minimum of wires `b + i` and `b + m + i`
-on the first and the maximum on the second; other wires are untouched. -/
+/-- **Output of the half-cleaner.** Let $\alpha$ be a linear order, let $m, b \in \mathbb{N}$, and
+let $f : \mathbb{N} \to \alpha$ be an input on $\mathbb{N}$-indexed wires. Running the
+half-cleaner on $[b, b + 2m)$ on $f$ puts $\min(f(b + i), f(b + m + i))$ on wire $b + i$ and
+$\max(f(b + i), f(b + m + i))$ on wire $b + m + i$ for every $i < m$, and leaves the value $f(x)$
+on every wire $x$ outside $[b, b + 2m)$ unchanged. -/
 theorem runN_halfCleaner (m b : ℕ) (f : ℕ → α) (x : ℕ) :
     runN (halfCleaner m b) f x =
       if b ≤ x ∧ x < b + m then min (f x) (f (x + m))
@@ -170,12 +192,16 @@ end HalfCleaner
 
 /-! ## Bitonic `0`-`1` sequences -/
 
-/-- `s` is the indicator of an interval `[a, e)` on positions `[0, L)`. -/
+/-- **Interval indicators.** A sequence $s : \mathbb{N} \to \{0, 1\}$ is an interval indicator
+of length $L$ if there are natural numbers $a \le e \le L$ such that for every $i < L$,
+$s(i) = 1$ exactly when $a \le i < e$. -/
 def IsInterval (s : ℕ → Bool) (L : ℕ) : Prop :=
   ∃ a e, a ≤ e ∧ e ≤ L ∧ ∀ i < L, s i = decide (a ≤ i ∧ i < e)
 
-/-- A bitonic `0`-`1` sequence of length `L`: `0ᵃ1ᵇ0ᶜ` or `1ᵃ0ᵇ1ᶜ`, the indicator of an interval
-or of its complement. -/
+/-- **Bitonic 0-1 sequences.** A sequence $s : \mathbb{N} \to \{0, 1\}$ is bitonic of length $L$
+if either $s$ or its complement $1 - s$ is an interval indicator of length $L$; that is, on the
+positions $0, \dots, L - 1$ it has the form $0^a 1^b 0^c$ or $1^a 0^b 1^c$. Values of $s$ at
+positions $i \ge L$ are unconstrained. -/
 def IsBitonic (s : ℕ → Bool) (L : ℕ) : Prop :=
   IsInterval s L ∨ IsInterval (fun i => !s i) L
 
@@ -242,7 +268,14 @@ private theorem halfClean_interval {s : ℕ → Bool} {m : ℕ} (h : IsInterval 
       simp only [Bool.and_eq_true, decide_eq_true_eq]
       omega
 
-/-- **The half-cleaner lemma** (CLRS Lemma 27.3) for bitonic `0`-`1` sequences. -/
+/-- **The half-cleaner lemma.** Let $m \in \mathbb{N}$ and let $s_0, s_1, \dots, s_{2m-1}$ be a
+bitonic sequence of Booleans, ordered by $\mathrm{false} < \mathrm{true}$. For $i < m$ put
+$\ell_i = \min(s_i, s_{i+m})$ and $u_i = \max(s_i, s_{i+m})$. Then either $\ell_i = \mathrm{false}$
+for every $i < m$ and $u_0, \dots, u_{m-1}$ is bitonic, or $u_i = \mathrm{true}$ for every
+$i < m$ and $\ell_0, \dots, \ell_{m-1}$ is bitonic.
+
+The $\ell_i$ and $u_i$ are the outputs of the half-cleaner on $2m$ wires. This is CLRS Lemma 27.3
+for bitonic $0$-$1$ sequences. -/
 theorem halfClean_bitonic {s : ℕ → Bool} {m : ℕ} (h : IsBitonic s (2 * m)) :
     ((∀ i < m, (s i && s (i + m)) = false) ∧ IsBitonic (fun i => s i || s (i + m)) m) ∨
     ((∀ i < m, (s i || s (i + m)) = true) ∧ IsBitonic (fun i => s i && s (i + m)) m) := by
@@ -261,11 +294,17 @@ theorem halfClean_bitonic {s : ℕ → Bool} {m : ℕ} (h : IsBitonic s (2 * m))
 
 /-! ## The bitonic merger -/
 
-/-- `g` is sorted on the block `[b, b + L)`. -/
+/-- **Sorted on a block.** A Boolean sequence $g : \mathbb{N} \to \mathrm{Bool}$ is sorted on
+the block $[b, b + L)$ if $g(b + i) \le g(b + j)$ for all $i \le j < L$, where Booleans are
+ordered by $\mathrm{false} < \mathrm{true}$. -/
 def SortedOn (g : ℕ → Bool) (b L : ℕ) : Prop := ∀ i j, i ≤ j → j < L → g (b + i) ≤ g (b + j)
 
-/-- The bitonic merger (CLRS's `BITONIC-SORTER`) on the block `[b, b + 2 ^ k)`: a half-cleaner,
-then bitonic mergers on both halves. -/
+/-- **Bitonic merger.** The bitonic merger on the block of wires $[b, b + 2^k)$ is the list of
+comparators defined by recursion on $k$. For $k = 0$ it is empty. On the block $[b, b + 2^{k+1})$
+it is the half-cleaner on $[b, b + 2^{k+1})$, followed by the bitonic merger on $[b, b + 2^k)$,
+followed by the bitonic merger on $[b + 2^k, b + 2^{k+1})$.
+
+This is CLRS's `BITONIC-SORTER`. -/
 def bitonicMerge : ℕ → ℕ → List (ℕ × ℕ)
   | 0, _ => []
   | k + 1, b => halfCleaner (2 ^ k) b ++ bitonicMerge k b ++ bitonicMerge k (b + 2 ^ k)
@@ -279,8 +318,14 @@ theorem bitonicMerge_within : ∀ k b, Within (bitonicMerge k b) b (b + 2 ^ k)
       · exact (bitonicMerge_within k b).mono (Nat.le_refl _) (by omega)
       · exact (bitonicMerge_within k (b + 2 ^ k)).mono (by omega) (by omega)
 
-/-- **The bitonic merger sorts every bitonic `0`-`1` input** (the correctness of CLRS's
-`BITONIC-SORTER`, by recursion on the half-cleaner lemma). -/
+/-- **The bitonic merger sorts every bitonic `0`-`1` input.** Let $k, b \in \mathbb{N}$ and let $f$
+assign a Boolean value to each wire $x \in \mathbb{N}$, with Booleans ordered by
+$\mathrm{false} < \mathrm{true}$. If the sequence $f(b), f(b + 1), \dots, f(b + 2^k - 1)$ is
+bitonic, then running the bitonic merger on the block $[b, b + 2^k)$ on $f$ gives an assignment
+$g$ that is sorted on that block: $g(b + i) \le g(b + j)$ whenever $i \le j < 2^k$.
+
+This is the correctness of CLRS's `BITONIC-SORTER`, proved by recursion on the half-cleaner
+lemma. -/
 theorem bitonicMerge_sorts : ∀ (k b : ℕ) (f : ℕ → Bool), IsBitonic (fun i => f (b + i)) (2 ^ k) →
     SortedOn (runN (bitonicMerge k b) f) b (2 ^ k)
   | 0, b, f, _ => fun i j hij hj => by
@@ -340,7 +385,11 @@ theorem bitonicMerge_sorts : ∀ (k b : ℕ) (f : ℕ → Bool), IsBitonic (fun 
 
 /-! ## The bitonic sorter -/
 
-/-- Reversing every comparator sorts the complement: `runN (ps.map swap) f = ¬ runN ps (¬ f)`. -/
+/-- **Reversing the comparators conjugates the network by complement on Booleans.** Let $ps$ be
+a list of comparators on $\mathbb{N}$-indexed wires and let $ps'$ be obtained by replacing each
+comparator $(i, j)$ in $ps$ by $(j, i)$. For every input $f : \mathbb{N} \to \mathrm{Bool}$ and
+every wire $x$, the value of wire $x$ after running $ps'$ on $f$ is the negation of the value of
+wire $x$ after running $ps$ on the complemented input $y \mapsto \lnot f(y)$. -/
 theorem runN_swap : ∀ (ps : List (ℕ × ℕ)) (f : ℕ → Bool) (x : ℕ),
     runN (ps.map Prod.swap) f x = !runN ps (fun y => !f y) x
   | [], f, x => by simp
@@ -394,9 +443,15 @@ private theorem exists_threshold {s : ℕ → Bool} :
           · rw [hs i hi]; simp only [decide_eq_decide]; omega
           · rw [hsL]; simp
 
-/-- Batcher's bitonic sorter on `[b, b + 2 ^ k)`: sort the first half up, the second half down
-(reversed comparators), then merge the resulting bitonic sequence. (CLRS's `SORTER` instead sorts
-both halves up and uses `MERGER`.) -/
+/-- **Batcher's bitonic sorter on a block of wires.** A comparator $(i, j)$ puts the minimum of
+the values on wires $i$ and $j$ on wire $i$ and the maximum on wire $j$. Batcher's bitonic sorter
+on the block of wires $[b, b + 2^k)$ is the list of comparators defined by recursion on $k$. For
+$k = 0$ it is empty. On the block $[b, b + 2^{k+1})$ it is Batcher's bitonic sorter on
+$[b, b + 2^k)$, followed by Batcher's bitonic sorter on $[b + 2^k, b + 2^{k+1})$ with every
+comparator $(i, j)$ replaced by $(j, i)$, followed by the bitonic merger on $[b, b + 2^{k+1})$.
+
+Reversing the comparators makes the second half sort downwards, so the merger receives a bitonic
+sequence. (CLRS's `SORTER` instead sorts both halves up and uses `MERGER`.) -/
 def bitonicSortN : ℕ → ℕ → List (ℕ × ℕ)
   | 0, _ => []
   | k + 1, b => bitonicSortN k b ++ (bitonicSortN k (b + 2 ^ k)).map Prod.swap ++
@@ -411,7 +466,11 @@ theorem bitonicSortN_within : ∀ k b, Within (bitonicSortN k b) b (b + 2 ^ k)
       · exact (bitonicSortN_within k b).mono (Nat.le_refl _) (by omega)
       · exact within_swap ((bitonicSortN_within k (b + 2 ^ k)).mono (by omega) (by omega))
 
-/-- **The bitonic sorter sorts every `0`-`1` input.** -/
+/-- **The bitonic sorter sorts every `0`-`1` input.** Let $k, b \in \mathbb{N}$ and let $f$ assign
+a Boolean value to each wire $x \in \mathbb{N}$, with Booleans ordered by
+$\mathrm{false} < \mathrm{true}$. Running Batcher's bitonic sorter on the block $[b, b + 2^k)$
+on $f$ gives an assignment $g$ that is sorted on that block: $g(b + i) \le g(b + j)$ whenever
+$i \le j < 2^k$. -/
 theorem bitonicSortN_sorts : ∀ (k b : ℕ) (f : ℕ → Bool),
     SortedOn (runN (bitonicSortN k b) f) b (2 ^ k)
   | 0, b, f => fun i j hij hj => by
@@ -457,10 +516,14 @@ theorem bitonicSortN_sorts : ∀ (k b : ℕ) (f : ℕ → Bool),
 
 /-! ## Sizes -/
 
+/-- **Size of the half-cleaner.** For all natural numbers $m$ and $b$, the half-cleaner on the
+block of wires $[b, b + 2m)$ has exactly $m$ comparators. -/
 theorem length_halfCleaner (m b : ℕ) : (halfCleaner m b).length = m := by
   simp [halfCleaner]
 
-/-- The bitonic merger on `2 ^ k` wires has `k 2 ^ (k - 1)` comparators. -/
+/-- **Size of the bitonic merger.** For all natural numbers $k$ and $b$, the bitonic merger on
+the block of wires $[b, b + 2^k)$ has $k \cdot 2^{k-1}$ comparators; precisely, twice its number
+of comparators equals $k \cdot 2^k$. -/
 theorem length_bitonicMerge : ∀ k b, 2 * (bitonicMerge k b).length = k * 2 ^ k
   | 0, _ => rfl
   | k + 1, b => by
@@ -469,7 +532,9 @@ theorem length_bitonicMerge : ∀ k b, 2 * (bitonicMerge k b).length = k * 2 ^ k
       simp only [bitonicMerge, List.length_append, length_halfCleaner, Nat.pow_succ]
       linarith
 
-/-- The bitonic sorter on `2 ^ k` wires has `k (k + 1) 2 ^ k / 4` comparators. -/
+/-- **Size of the bitonic sorter on a block of wires.** For all natural numbers $k$ and $b$, the
+bitonic sorter on the block of $\mathbb{N}$-indexed wires $[b, b + 2^k)$ has $k(k+1)2^k/4$
+comparators; precisely, four times its number of comparators equals $k(k+1)2^k$. -/
 theorem length_bitonicSortN : ∀ k b, 4 * (bitonicSortN k b).length = k * (k + 1) * 2 ^ k
   | 0, _ => rfl
   | k + 1, b => by
@@ -482,11 +547,16 @@ theorem length_bitonicSortN : ∀ k b, 4 * (bitonicSortN k b).length = k * (k + 
 
 /-! ## The network on `2 ^ k` wires -/
 
-/-- Comparators on `ℕ`-indexed wires as a network on `N` wires, dropping any out of range. -/
+/-- **Restricting comparators to finitely many wires.** For a natural number $N$ and a list of
+comparators on wires indexed by $\mathbb{N}$, this is the network on the $N$ wires
+$0, \dots, N - 1$ that keeps, in their original order, the comparators $(i, j)$ with $i < N$
+and $j < N$, and drops all the others. -/
 def ofPairs (N : ℕ) (ps : List (ℕ × ℕ)) : Network N :=
   ps.filterMap fun p => if h : p.1 < N ∧ p.2 < N then some (⟨p.1, h.1⟩, ⟨p.2, h.2⟩) else none
 
-/-- Extend a `Fin N`-indexed Boolean vector by `false`. -/
+/-- **Extension of a Boolean vector by false.** For $N \in \mathbb{N}$ and a Boolean vector
+$v = (v_0, \dots, v_{N-1})$, its extension by $\mathrm{false}$ is the function on $\mathbb{N}$
+that takes the value $v_j$ at each $j < N$ and the value $\mathrm{false}$ at each $j \ge N$. -/
 def extendFalse {N : ℕ} (v : Fin N → Bool) : ℕ → Bool :=
   fun j => if h : j < N then v ⟨j, h⟩ else false
 
@@ -500,7 +570,12 @@ private theorem ext_comparator {N : ℕ} (i j : Fin N) (v : Fin N → Bool) :
     have h2 : x ≠ j.val := fun h => hx (h ▸ j.isLt)
     simp only [hx, ↓reduceDIte, h1, h2, ↓reduceIte]
 
-/-- On comparators in range, the `Fin N` network and the `ℕ`-indexed runner agree. -/
+/-- **Transported comparator lists agree with the original on Boolean inputs.** Let
+$N \in \mathbb{N}$ and let $P$ be a list of comparators on natural-number-indexed wires, each of
+which joins two wires below $N$. For every Boolean input $v$ on the wires $0, \dots, N - 1$, run
+the network on $N$ wires obtained from $P$ on $v$ and extend its output by $\mathrm{false}$ to
+all wires in $\mathbb{N}$; the result equals the result of running $P$ on the extension of $v$ by
+$\mathrm{false}$. -/
 theorem ext_run_ofPairs {N : ℕ} : ∀ (ps : List (ℕ × ℕ)), Within ps 0 N →
     ∀ v : Fin N → Bool, extendFalse (run (ofPairs N ps) v) = runN ps (extendFalse v)
   | [], _, _ => rfl
@@ -521,21 +596,30 @@ theorem length_ofPairs {N : ℕ} : ∀ (ps : List (ℕ × ℕ)), Within ps 0 N �
       simp only [ofPairs, List.filterMap_cons, hcN, and_self, ↓reduceDIte, List.length_cons]
       exact congrArg (· + 1) (length_ofPairs ps fun p hp => h p (List.mem_cons_of_mem _ hp))
 
-/-- Batcher's bitonic sorting network on `2 ^ k` wires. -/
+/-- **Batcher's bitonic sorting network.** For $k \in \mathbb{N}$, Batcher's bitonic sorting
+network on $2^k$ wires is the comparator network on the wires $0, 1, \dots, 2^k - 1$ made of the
+comparators of Batcher's bitonic sorter on the block $[0, 2^k)$ that join two wires below $2^k$
+(in fact all of them), applied in the same order. -/
 def bitonicSorter (k : ℕ) : Network (2 ^ k) := ofPairs (2 ^ k) (bitonicSortN k 0)
 
 theorem bitonicSortN_within_zero (k : ℕ) : Within (bitonicSortN k 0) 0 (2 ^ k) := by
   simpa using bitonicSortN_within k 0
 
-/-- **Batcher's bitonic sorter sorts every input over every linear order**, via the 0-1
-principle. -/
+/-- **Batcher's bitonic sorter sorts every input over every linear order.** For every
+$k \in \mathbb{N}$ and every linearly ordered type $\alpha$, Batcher's bitonic sorting network on
+$2^k$ wires sorts inputs over $\alpha$: for every assignment $v$ of elements of $\alpha$ to the
+wires $0, 1, \dots, 2^k - 1$, the output of the network on $v$ is monotone in the wire order.
+
+The proof goes through the 0-1 principle. -/
 theorem bitonicSorter_sorts (k : ℕ) (α : Type*) [LinearOrder α] : Sorts (bitonicSorter k) α := by
   refine sorts_of_sorts_bool (fun v i j hij => ?_) α
   have hs := bitonicSortN_sorts k 0 (extendFalse v) i.val j.val hij j.isLt
   rw [← ext_run_ofPairs _ (bitonicSortN_within_zero k)] at hs
   simpa [extendFalse, bitonicSorter] using hs
 
-/-- The bitonic sorter on `2 ^ k` wires has `k (k + 1) 2 ^ k / 4` comparators. -/
+/-- **Comparator count of Batcher's bitonic sorter.** For every natural number $k$, Batcher's
+bitonic sorting network on $2^k$ wires has $k(k+1)2^k/4$ comparators; precisely, four times its
+number of comparators equals $k(k+1)2^k$. -/
 theorem length_bitonicSorter (k : ℕ) : 4 * (bitonicSorter k).length = k * (k + 1) * 2 ^ k := by
   rw [bitonicSorter, length_ofPairs _ (bitonicSortN_within_zero k), length_bitonicSortN]
 

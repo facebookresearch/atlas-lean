@@ -1,4 +1,4 @@
-# Measurable functions representing $L^0((0,1))$
+# Measurable functions representing $L^0([0,1])$
 
 The type of Borel measurable functions
 $f : \mathbb{R} \to \mathbb{R}$, used as representatives of the elements of $L^0([0,1])$.

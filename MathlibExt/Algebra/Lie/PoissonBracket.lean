@@ -26,14 +26,15 @@ public import Mathlib.RingTheory.Ideal.Prime
 
 namespace MathlibExt.Algebra.Lie.PoissonBracket
 
-/-- Poisson-bracket data: the bracket with bilinearity, skew-symmetry,
-the Leibniz rule, the Jacobi identity, and `ℂ`-bilinearity over a
-complex algebra structure. (Design note: the laws are carried
-explicitly rather than via Mathlib's Lie classes because Mathlib has
-no `PoissonAlgebra` class, and combining `LieRing`/`LieAlgebra` with
-`CommRing` on one carrier creates `Add`/`Zero` instance diamonds
-under which Mathlib's `lie_add`/`lie_zero` no longer rewrite ring
-expressions.) -/
+/-- **Poisson bracket.** Let $A$ be a commutative $\mathbb{C}$-algebra. A Poisson bracket on $A$
+is a map assigning to $x, y \in A$ an element $\lbrace x, y \rbrace \in A$ such that for all
+$x, y, z \in A$ and $c \in \mathbb{C}$: $\lbrace x + y, z \rbrace = \lbrace x, z \rbrace +
+\lbrace y, z \rbrace$ and $\lbrace x, y + z \rbrace = \lbrace x, y \rbrace + \lbrace x, z \rbrace$;
+$\lbrace x, y \rbrace = -\lbrace y, x \rbrace$; the Leibniz rule
+$\lbrace x, yz \rbrace = y \lbrace x, z \rbrace + \lbrace x, y \rbrace z$ holds; the Jacobi
+identity $\lbrace x, \lbrace y, z \rbrace \rbrace + \lbrace y, \lbrace z, x \rbrace \rbrace +
+\lbrace z, \lbrace x, y \rbrace \rbrace = 0$ holds; and $\lbrace c x, y \rbrace =
+c \lbrace x, y \rbrace$ and $\lbrace x, c y \rbrace = c \lbrace x, y \rbrace$. -/
 structure PoissonBracket (A : Type) [CommRing A] [Algebra ℂ A] where
   bracket : A → A → A
   add_left : ∀ x y z, bracket (x + y) z = bracket x z + bracket y z
@@ -48,23 +49,30 @@ structure PoissonBracket (A : Type) [CommRing A] [Algebra ℂ A] where
   smul_right : ∀ (c : ℂ) (x y : A),
     bracket x (c • y) = c • bracket x y
 
-/-- `P` is a Poisson ideal: stable under bracketing with all of `A`. -/
+/-- **Poisson ideal.** Let $A$ be a commutative $\mathbb{C}$-algebra with a Poisson bracket
+$\lbrace \cdot, \cdot \rbrace$. An ideal $P$ of $A$ is a Poisson ideal when
+$\lbrace a, p \rbrace \in P$ for all $a \in A$ and all $p \in P$. -/
 def IsPoissonIdeal (A : Type) [CommRing A] [Algebra ℂ A]
     (br : PoissonBracket A) (P : Ideal A) : Prop :=
   ∀ (a p : A), p ∈ P → br.bracket a p ∈ P
 
-/-- `P` is a Poisson prime: prime and Poisson. -/
+/-- **Poisson prime ideal.** Let $A$ be a commutative $\mathbb{C}$-algebra with a Poisson bracket.
+An ideal $P$ of $A$ is a Poisson prime when it is both a prime ideal and a Poisson ideal. -/
 def IsPoissonPrime (A : Type) [CommRing A] [Algebra ℂ A]
     (br : PoissonBracket A) (P : Ideal A) : Prop :=
   P.IsPrime ∧ IsPoissonIdeal A br P
 
-/-- The Poisson core of `J`: the largest Poisson ideal inside `J`,
-as the supremum of all Poisson ideals below `J`. -/
+/-- **Poisson core.** Let $A$ be a commutative $\mathbb{C}$-algebra with a Poisson bracket. For an
+ideal $J$ of $A$, the Poisson core of $J$ is the supremum, in the lattice of ideals of $A$, of the
+set of all Poisson ideals of $A$ contained in $J$.
+
+It is the largest Poisson ideal contained in $J$ (universal property of the Poisson core). -/
 def poissonCore (A : Type) [CommRing A] [Algebra ℂ A]
     (br : PoissonBracket A) (J : Ideal A) : Ideal A :=
   sSup {P : Ideal A | P ≤ J ∧ IsPoissonIdeal A br P}
 
-/-- Bracketing with zero vanishes. -/
+/-- **Bracket with zero.** Let $A$ be a commutative $\mathbb{C}$-algebra with a Poisson bracket
+$\lbrace \cdot, \cdot \rbrace$. For every $a \in A$, $\lbrace a, 0 \rbrace = 0$. -/
 theorem bracket_zero (A : Type) [CommRing A] [Algebra ℂ A]
     (br : PoissonBracket A) (a : A) : br.bracket a 0 = 0 := by
   have h := br.add_right a 0 0
@@ -75,7 +83,8 @@ theorem bracket_zero (A : Type) [CommRing A] [Algebra ℂ A]
   have := add_left_cancel h2
   simpa using this.symm
 
-/-- The zero ideal is Poisson. -/
+/-- **The zero ideal is a Poisson ideal.** Let $A$ be a commutative $\mathbb{C}$-algebra with a
+Poisson bracket. The zero ideal of $A$ is a Poisson ideal. -/
 theorem bot_poisson (A : Type) [CommRing A] [Algebra ℂ A]
     (br : PoissonBracket A) : IsPoissonIdeal A br ⊥ := by
   intro a p hp
@@ -83,7 +92,10 @@ theorem bot_poisson (A : Type) [CommRing A] [Algebra ℂ A]
   rw [hp, bracket_zero]
   exact Submodule.zero_mem _
 
-/-- The supremum of two Poisson ideals below `J` is Poisson below `J`. -/
+/-- **The sum of two Poisson ideals inside an ideal.** Let $A$ be a commutative
+$\mathbb{C}$-algebra with a Poisson bracket, and let $I$, $K$ and $J$ be ideals of $A$. If $I$
+and $K$ are Poisson ideals contained in $J$, then their sum $I + K$ is a Poisson ideal contained
+in $J$. -/
 theorem sup_poisson {A : Type} [CommRing A] [Algebra ℂ A]
     (br : PoissonBracket A)
     {J I K : Ideal A} (hI : I ≤ J ∧ IsPoissonIdeal A br I)
@@ -95,9 +107,11 @@ theorem sup_poisson {A : Type} [CommRing A] [Algebra ℂ A]
   exact add_mem (Ideal.mem_sup_left (hI.2 a i hi))
     (Ideal.mem_sup_right (hK.2 a k hk))
 
-/-- The Poisson core of `J` is Poisson: the family of Poisson ideals
-below `J` is directed (closed under suprema), so membership in the
-core reduces to membership in some member. -/
+/-- **The Poisson core is a Poisson ideal.** Let $A$ be a commutative $\mathbb{C}$-algebra with a
+Poisson bracket. For every ideal $J$ of $A$, the Poisson core of $J$ is a Poisson ideal.
+
+The family of Poisson ideals contained in $J$ is nonempty and directed (the sum of two members
+is again a member), so every element of the core lies in some member of the family. -/
 theorem poissonCore_poisson (A : Type) [CommRing A] [Algebra ℂ A]
     (br : PoissonBracket A) (J : Ideal A) :
     IsPoissonIdeal A br (poissonCore A br J) := by
@@ -115,21 +129,26 @@ theorem poissonCore_poisson (A : Type) [CommRing A] [Algebra ℂ A]
   obtain ⟨I, hI, hpI⟩ := hmem.mp hp
   exact hmem.mpr ⟨I, hI, hI.2 a p hpI⟩
 
-/-- The Poisson core lies below `J`. -/
+/-- **The Poisson core is contained in the ideal.** Let $A$ be a commutative $\mathbb{C}$-algebra
+with a Poisson bracket. For every ideal $J$ of $A$, the Poisson core of $J$ is contained in $J$. -/
 theorem poissonCore_le (A : Type) [CommRing A] [Algebra ℂ A]
     (br : PoissonBracket A) (J : Ideal A) :
     poissonCore A br J ≤ J :=
   sSup_le (fun P hP => hP.1)
 
-/-- Every Poisson ideal below `J` lies below the core. -/
+/-- **Poisson ideals inside an ideal lie in its Poisson core.** Let $A$ be a commutative
+$\mathbb{C}$-algebra with a Poisson bracket, and let $J$ and $P$ be ideals of $A$. If
+$P \subseteq J$ and $P$ is a Poisson ideal, then $P$ is contained in the Poisson core of $J$. -/
 theorem le_poissonCore (A : Type) [CommRing A] [Algebra ℂ A]
     (br : PoissonBracket A) {J P : Ideal A}
     (hP : P ≤ J ∧ IsPoissonIdeal A br P) :
     P ≤ poissonCore A br J :=
   le_sSup hP
 
-/-- Universal property: the Poisson core is the largest Poisson ideal
-below `J`. -/
+/-- **Universal property of the Poisson core.** Let $A$ be a commutative $\mathbb{C}$-algebra
+with a Poisson bracket. For every ideal $J$ of $A$, the Poisson core of $J$ is the greatest
+element of the set of Poisson ideals of $A$ contained in $J$: it is a Poisson ideal contained in
+$J$, and it contains every Poisson ideal of $A$ contained in $J$. -/
 theorem poissonCore_isGreatest (A : Type) [CommRing A] [Algebra ℂ A]
     (br : PoissonBracket A) (J : Ideal A) :
     IsGreatest {P : Ideal A | P ≤ J ∧ IsPoissonIdeal A br P}
