@@ -760,3 +760,195 @@ Their original file identifiers and authorship are retained:
     Original source SHA-256: a07e62d19e8f1e07f753d7ee7444652c75dddebaf1db896872ea5bb9bb276679
 
 Author: @toskua
+
+General balanced Hom, Ext and semilinear tensor APIs
+---------------------------------------------------
+
+The following source headers and authorship are retained for the added API batch.
+
+Files:
+
+  MathlibExt/Algebra/Category/FGProjectiveCat/Basic.lean
+  MathlibExt/Algebra/Category/ModuleCat/ChangeOfRings.lean
+  MathlibExt/Algebra/Homology/CochainChainGradedPairing.lean
+  MathlibExt/Algebra/Homology/CochainChainPairingDinaturality.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainChainPairing.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainChainPairingAssociativity.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainChainPairingAssociativityOrdered.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainChainPairingCoefficientNaturality.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainChainPairingLeftDescNaturality.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainChainPairingLeftNaturality.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainChainPairingLeftTmulNaturality.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainChainPairingNaturality.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainChainPairingUnit.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainCrossEvaluation.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainEvaluation.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainEvaluationActionNaturality.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainHomologyComparison.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainHomologyComparisonModuleCat.lean
+  MathlibExt/CategoryTheory/ExactCategory/ExactFunctor.lean
+  MathlibExt/CategoryTheory/ExactCategory/Split.lean
+  MathlibExt/LinearAlgebra/TensorAlgebra/Grading.lean
+  MathlibExt/RingTheory/Morita/Finite.lean
+  MathlibExtTest/Algebra/Homology/LinearHomCochainCrossEvaluation.lean
+
+/-
+Author: @toskua, Avocado
+-/
+
+Files:
+
+  MathlibExt/Algebra/Category/ModuleCat/AnnihilatorQuotient.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensor/Bifunctor.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensor/Flat.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensor/GroupAdjunction.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensor/HomCoordinates.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensor/IntegerCoordinates.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensor/LeftGroupAdjunction.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensor/ProjectiveExact.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensor/TorBalance.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorLeft/Morita.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight/CoefficientIsomorphisms.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight/CoefficientMaps.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight/CoefficientMapsAdditive.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight/Derived.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight/ExtCoefficientMaps.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight/Morita.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight/OriginalWorldComparison.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight/Universe.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight/UniverseLongExact.lean
+  MathlibExt/Algebra/Category/ModuleCat/BalancedTensorRight/UniverseNaturality.lean
+  MathlibExt/Algebra/Category/ModuleCat/DirectedSubmoduleColimit.lean
+  MathlibExt/Algebra/Category/ModuleCat/ExactFilteredColimits.lean
+  MathlibExt/Algebra/Category/ModuleCat/PIDGlobalDimension.lean
+  MathlibExt/Algebra/Category/ModuleCat/TensorHomFinite.lean
+  MathlibExt/Algebra/Category/ModuleCat/TensorHomFiniteFactor.lean
+  MathlibExt/Algebra/Category/ModuleCat/TensorIntegerProductFiniteFactor.lean
+  MathlibExt/Algebra/Category/ModuleCat/TorPID.lean
+  MathlibExt/Algebra/Category/ModuleCat/Torsion/QuotientHomColimit.lean
+  MathlibExt/Algebra/Category/ModuleCat/TorsionAnnihilatorColimit.lean
+  MathlibExt/Algebra/Category/ModuleCat/TorsionFunctor.lean
+  MathlibExt/Algebra/Category/ModuleCat/UliftCoherenceSelf.lean
+  MathlibExt/Algebra/Homology/Bifunctor.lean
+  MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor.lean
+  MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/Curry.lean
+  MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/Cycles.lean
+  MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/Differential.lean
+  MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/DifferentialCoordinates.lean
+  MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/HomIso.lean
+  MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/InverseLaws.lean
+  MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/Naturality.lean
+  MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/Uncurry.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/BoundedSupport.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/CochainProductCoordinates.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/CoordinateOrthogonality.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/Coordinates.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/Curry.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/DegreeComponents.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/FiniteCoordinates.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/FiniteFactorInverse.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/FiniteFactorIso.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/FiniteFactorNaturality.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/HomTensorCoordinates.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/HomTensorDifferential.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/HomTensorNaturality.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/HomotopyComparison.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/Support.lean
+  MathlibExt/Algebra/Homology/CochainComplex/TensorHom/TensorFiniteDecomposition.lean
+  MathlibExt/Algebra/Homology/HomComplex/HomotopyFunctor.lean
+  MathlibExt/Algebra/Homology/HomComplex/LinearFunctor.lean
+  MathlibExt/Algebra/Homology/HomComplex/LinearHomotopy.lean
+  MathlibExt/Algebra/Module/NatInt.lean
+  MathlibExt/Algebra/Module/PIDProjectiveSubmodule.lean
+  MathlibExt/Algebra/Module/ULiftActions.lean
+  MathlibExt/AlgebraicTopology/DoldKan/AdditiveNormalizationCoherence.lean
+  MathlibExt/CategoryTheory/Functor/ComparisonTransport.lean
+  MathlibExt/LinearAlgebra/LinearMap/RetractComparison.lean
+  MathlibExt/LinearAlgebra/Quotient/IdealHom.lean
+  MathlibExt/LinearAlgebra/TensorAlgebra/NonUnital.lean
+  MathlibExt/LinearAlgebra/TensorAlgebra/NonUnitalLift.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/Associator.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/Contraction.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/Finiteness.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/GroundChange.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/Hom.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/LiftCoordinates.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/MoritaCoefficients.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/MoritaComposition.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/MoritaFinite.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/MoritaLeft.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/MoritaNormalization.lean
+  MathlibExt/LinearAlgebra/TensorProduct/BalancedIntegralCancellation.lean
+  MathlibExt/LinearAlgebra/TensorProduct/DirectLimit/Diagonal.lean
+  MathlibExt/LinearAlgebra/TensorProduct/DirectLimit/Finite.lean
+  MathlibExt/LinearAlgebra/TensorProduct/HomFiniteFactor.lean
+  MathlibExt/LinearAlgebra/TensorProduct/HomFiniteFactorScalar.lean
+  MathlibExt/LinearAlgebra/TensorProduct/HomInjective.lean
+  MathlibExt/LinearAlgebra/TensorProduct/ModuleMap.lean
+  MathlibExt/LinearAlgebra/TensorProduct/PiFiniteFactor.lean
+  MathlibExt/LinearAlgebra/TensorProduct/PiFiniteFactorScalar.lean
+  MathlibExt/LinearAlgebra/TensorProduct/SurjectiveScalarHom.lean
+  MathlibExtTest/Algebra/Category/ModuleCat/BalancedTensorRight/UniverseMatrix.lean
+  MathlibExtTest/Algebra/Category/ModuleCat/BalancedTensorRight/UniverseTorsion.lean
+  MathlibExtTest/Algebra/Category/ModuleCat/PIDGlobalDimension.lean
+  MathlibExtTest/Algebra/Homology/CochainComplex/TensorHom/FiniteFactorIsoAPI.lean
+  MathlibExtTest/LinearAlgebra/TensorProduct/Balanced/Associator.lean
+  MathlibExtTest/LinearAlgebra/TensorProduct/Balanced/MoritaFinite.lean
+  MathlibExtTest/LinearAlgebra/TensorProduct/BalancedIntegralCancellation.lean
+
+/-
+Author: @toskua
+-/
+
+Files:
+
+  MathlibExt/Algebra/Homology/CochainGradedPairingHomologyCommutativity.lean
+  MathlibExt/Algebra/Homology/CochainGradedPairingHomologyLaws.lean
+  MathlibExt/Algebra/Homology/HomCochainComplexShortExact.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainGradedCommutativity.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainPairingBraiding.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainPairingHeterogeneous.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainPairingHeterogeneousBasic.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainPairingHeterogeneousEngine.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainPairingHomotopy.lean
+  MathlibExt/Algebra/Homology/LinearHomCochainPairingHomotopyNaturality.lean
+
+/-
+Copyright (c) 2026 Avocado. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Avocado
+-/
+
+Files:
+
+  MathlibExt/Algebra/Homology/HomCochainComplexQuasiIso.lean
+
+/-
+Copyright (c) 2025 Avocado. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Avocado
+-/
+
+Files:
+
+  MathlibExt/Algebra/Homology/TensorSignsDownInt.lean
+  MathlibExt/RingTheory/GradedAlgebra/Projection.lean
+
+/-
+  Author: @toskua, Avocado
+-/
+
+Files:
+
+  MathlibExt/LinearAlgebra/TensorProduct/ZModRestrictNaturality.lean
+
+/-
+  Author: @toskua
+-/
+
+New semilinear finite-factor client:
+
+  MathlibExtTest/LinearAlgebra/TensorProduct/HomFiniteFactorSemilinearTests.lean
+
+Author: @toskua
