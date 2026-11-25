@@ -40,7 +40,10 @@ hypotheses are needed: the tests exhibit an undetected single-bit error for `g =
 `g = 1` (which has `X ∤ g` but one term), and an undetected burst of length 2 for `g = X^2 + X`
 (two terms, but `X ∣ g`). The bound `deg g` is sharp: `g` itself is an undetected burst of length
 `deg g + 1`. The encoder here is the polynomial-level specification (Mathlib's polynomials are
-noncomputable); a bit-level shift-register implementation proved equal to it is future work.
+noncomputable); the bit-level shift-register implementation proved equal to it lives in
+`CSLibExt/Coding/UnreflectedSerialCRC.lean`, whose
+`final_register_represents_shifted_message_remainder` shows the unreflected serial register
+reaches exactly this shifted-message remainder.
 
 ## References
 
