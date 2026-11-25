@@ -29,6 +29,7 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Find
 public import Mathlib.Order.Monotone.Defs
@@ -50,6 +51,9 @@ expansion `a = C(k_d, d) + C(k_{d-1}, d - 1) + ⋯`, where `k_d` is the largest 
   `C(k, d + 1) ≤ a < C(k + 1, d + 1)`.
 * `Nat.macaulayPow_mono`: `Nat.macaulayPow d` is monotone.
 * `Nat.macaulayPow_succ_add_le`: the superadditivity step used in Macaulay's bound.
+* `Nat.macaulayPow_sum_choose`: the value on a strict binomial cascade
+  `C(a₀, 1) + C(a₁, 2) + ⋯ + C(a_{d-1}, d)` with `a₀ < a₁ < ⋯ < a_{d-1}`, the form of
+  `MathlibExt.RingTheory.ProjectiveHilbertGrowth.MacaulayExpansion.successor`.
 -/
 
 @[expose] public section
@@ -377,6 +381,21 @@ private theorem le_add_low : ∀ (d a s : ℕ), a ≤ macaulayPow d s → a ≤ 
         have ih := le_add_low d R (rem d s) hR'
         omega
 
+/-- A strict binomial cascade whose upper indices are all below `b` sums to less than
+`C(b, d)`. -/
+private theorem sum_choose_lt_choose : ∀ (d b : ℕ) (a : Fin d → ℕ), StrictMono a →
+    (∀ i, a i < b) → ∑ i, (a i).choose (i.val + 1) < b.choose d
+  | 0, b, a, _, _ => by simp
+  | d + 1, b, a, ha, hb => by
+      rw [Fin.sum_univ_castSucc]
+      simp only [Fin.val_castSucc, Fin.val_last]
+      have hlow := sum_choose_lt_choose d (a (Fin.last d)) (fun i => a i.castSucc)
+        (ha.comp Fin.strictMono_castSucc) (fun i => ha (Fin.castSucc_lt_last i))
+      have h1 := Nat.choose_succ_succ' (a (Fin.last d)) d
+      have h2 : (a (Fin.last d) + 1).choose (d + 1) ≤ b.choose (d + 1) :=
+        Nat.choose_le_choose _ (hb (Fin.last d))
+      omega
+
 end MacaulayPowAux
 
 open MacaulayPowAux
@@ -412,5 +431,20 @@ theorem macaulayPow_succ_add_le (d b s : ℕ) (h : b + s ≤ macaulayPow d s) :
   have h2 := macaulayPow_mono' (d + 1) h1
   have h3 := macaulayPow_low_add d (b + s)
   omega
+
+/-- `Nat.macaulayPow` on a strict binomial cascade: if `a₀ < a₁ < ⋯ < a_{d-1}`, then
+`(∑ᵢ C(aᵢ, i + 1))^⟨d⟩ = ∑ᵢ C(aᵢ + 1, i + 2)`. -/
+theorem macaulayPow_sum_choose : ∀ (d : ℕ) (a : Fin d → ℕ), StrictMono a →
+    macaulayPow d (∑ i, (a i).choose (i.val + 1)) = ∑ i, (a i + 1).choose (i.val + 2)
+  | 0, a, _ => by simp
+  | d + 1, a, ha => by
+      have hlow := sum_choose_lt_choose d (a (Fin.last d)) (fun i => a i.castSucc)
+        (ha.comp Fin.strictMono_castSucc) (fun i => ha (Fin.castSucc_lt_last i))
+      have ih := macaulayPow_sum_choose d (fun i => a i.castSucc) (ha.comp Fin.strictMono_castSucc)
+      have h1 := Nat.choose_succ_succ' (a (Fin.last d)) d
+      rw [Fin.sum_univ_castSucc, Fin.sum_univ_castSucc]
+      simp only [Fin.val_castSucc, Fin.val_last] at ih ⊢
+      rw [macaulayPow_succ_eq d _ (a (Fin.last d)) (Nat.le_add_left _ _) (by omega),
+        Nat.add_sub_cancel, ih, add_comm]
 
 end Nat

@@ -24,3 +24,14 @@ example : Nat.macaulayPow 2 4 = 5 := by
 
 example (d : ℕ) {a b : ℕ} (h : a ≤ b) : Nat.macaulayPow d a ≤ Nat.macaulayPow d b :=
   Nat.macaulayPow_mono d h
+
+-- Consumer of the cascade form with the original binders.
+example (d : ℕ) (a : Fin d → ℕ) (ha : StrictMono a) :
+    Nat.macaulayPow d (∑ i, (a i).choose (i.val + 1)) = ∑ i, (a i + 1).choose (i.val + 2) :=
+  Nat.macaulayPow_sum_choose d a ha
+
+-- On the strict cascade `a = ![1, 3]`, `C(1, 1) + C(3, 2) = 4` and the value is
+-- `C(2, 2) + C(4, 3) = 5`, matching the greedy recursion above.
+example : Nat.macaulayPow 2 4 = 5 := by
+  convert Nat.macaulayPow_sum_choose 2 ![1, 3] (Fin.strictMono_iff_lt_succ.2 (by decide))
+    using 2 <;> decide

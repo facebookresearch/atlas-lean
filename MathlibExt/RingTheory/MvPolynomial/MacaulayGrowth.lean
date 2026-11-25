@@ -31,6 +31,7 @@ module
 
 public import MathlibExt.AlgebraicGeometry.HilbertFunctorPoint
 public import MathlibExt.Combinatorics.Enumerative.MacaulayPow
+public import MathlibExt.RingTheory.ProjectiveHilbertGrowth
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 import MathlibExt.Combinatorics.Enumerative.MacaulayBound
 import Mathlib.Data.Finsupp.MonomialOrder
@@ -53,9 +54,28 @@ The proof passes to lexicographic leading monomials: the standard monomials of d
 have all their degree-`d` divisors standard, so the bound follows from
 `Finsupp.card_le_macaulayPow_card_of_forall_sub_single_mem`.
 
+The same bound is also stated through the projective Hilbert-growth API of
+`MathlibExt/RingTheory/ProjectiveHilbertGrowth.lean`: for a homogeneous ideal `I` of
+`k[x₀, …, xₙ₋₁]`, in any number `n ≥ 0` of variables, `hilbertFunction I (d + 1)` is at most the
+Macaulay transform `E.successor` read from any `d`-th Macaulay expansion `E` of
+`hilbertFunction I d`. Two bridges connect the formulations: `E.successor = Nat.macaulayPow d h`
+for every expansion `E` of `h`, and `hilbertFunction I d` is the dimension of `piece I d`.
+
 ## Main declarations
 
-* `MvPolynomial.finrank_piece_succ_le_macaulayPow`: Macaulay's bound.
+* `MvPolynomial.finrank_piece_succ_le_macaulayPow`: Macaulay's bound for the graded pieces
+  `AlgebraicGeometry.HilbertFunctor.piece`.
+* `MathlibExt.RingTheory.ProjectiveHilbertGrowth.macaulay_growth`: Macaulay's bound for
+  `MathlibExt.RingTheory.ProjectiveHilbertGrowth.hilbertFunction`, with the transform
+  `MathlibExt.RingTheory.ProjectiveHilbertGrowth.MacaulayExpansion.successor`.
+* `MathlibExt.RingTheory.ProjectiveHilbertGrowth.MacaulayExpansion.successor_eq_macaulayPow`
+  and `MathlibExt.RingTheory.ProjectiveHilbertGrowth.hilbertFunction_eq_finrank_piece`: the
+  bridges between the two formulations.
+
+## References
+
+* F. S. Macaulay, *Some properties of enumeration in the theory of modular systems*,
+  Proc. London Math. Soc. 26 (1927), 531–555.
 -/
 
 namespace MvPolynomial
@@ -134,12 +154,8 @@ private theorem mem_W (J : Ideal (MvPolynomial (Fin (n + 1)) K)) (e : ℕ)
   Iff.rfl
 
 private theorem finite_homogeneousSubmodule (e : ℕ) :
-    Module.Finite K ↥(homogeneousSubmodule (Fin (n + 1)) K e) := by
-  rw [MvPolynomial.homogeneousSubmodule_eq_finsupp_supported]
-  have : Finite {x : Fin (n + 1) →₀ ℕ | x.degree = e} :=
-    ((Finsupp.finite_of_degree_le e).subset fun x (hx : x.degree = e) => le_of_eq hx).to_subtype
-  exact Module.Finite.of_basis
-    (MvPolynomial.basisRestrictSupport K {x : Fin (n + 1) →₀ ℕ | x.degree = e})
+    Module.Finite K ↥(homogeneousSubmodule (Fin (n + 1)) K e) :=
+  Module.Finite.iff_fg.mpr (homogeneousSubmodule_fg (Fin (n + 1)) K e)
 
 attribute [local instance] finite_homogeneousSubmodule
 
@@ -276,3 +292,74 @@ public theorem finrank_piece_succ_le_macaulayPow
     rwa [Finsupp.sub_add_single_one_cancel (by omega)] at this
 
 end MvPolynomial
+
+namespace MathlibExt.RingTheory.ProjectiveHilbertGrowth
+
+open MvPolynomial
+
+attribute [local instance] MvPolynomial.gradedAlgebra
+
+variable {k : Type*} [Field k] {n : ℕ}
+
+/-- Macaulay's transform read from any `d`-th Macaulay expansion of `h` is `Nat.macaulayPow d h`;
+in particular it does not depend on the expansion. -/
+theorem MacaulayExpansion.successor_eq_macaulayPow {d h : ℕ} (E : MacaulayExpansion d h) :
+    E.successor = Nat.macaulayPow d h := by
+  have := Nat.macaulayPow_sum_choose d E.upper E.strictMono
+  rw [E.value_eq] at this
+  exact this.symm
+
+/-- The Hilbert function of `k[x₀, …, xₙ] ⧸ I` in degree `d` is the dimension of the graded piece
+`AlgebraicGeometry.HilbertFunctor.piece I d`: both are the degree-`d` homogeneous polynomials
+modulo those in `I`. -/
+theorem hilbertFunction_eq_finrank_piece
+    (I : HomogeneousIdeal (homogeneousSubmodule (Fin (n + 1)) k)) (d : ℕ) :
+    hilbertFunction I d =
+      Module.finrank k (AlgebraicGeometry.HilbertFunctor.piece I.toIdeal d) := by
+  let f : homogeneousSubmodule (Fin (n + 1)) k d →ₗ[k]
+      MvPolynomial (Fin (n + 1)) k ⧸ I.toIdeal :=
+    (Ideal.Quotient.mkₐ k I.toIdeal).toLinearMap ∘ₗ
+      (homogeneousSubmodule (Fin (n + 1)) k d).subtype
+  have hrange : LinearMap.range f = quotientPiece I d := by
+    rw [LinearMap.range_comp, Submodule.range_subtype]
+    rfl
+  have hker : LinearMap.ker f = Submodule.comap
+      (homogeneousSubmodule (Fin (n + 1)) k d).subtype (I.toIdeal.restrictScalars k) := by
+    rw [LinearMap.ker_comp]
+    congr 1
+    ext x
+    simp [Ideal.Quotient.eq_zero_iff_mem]
+  change Module.finrank k (quotientPiece I d) = _
+  rw [← hrange]
+  exact ((Submodule.quotEquivOfEq _ _ hker).symm.trans f.quotKerEquivRange).finrank_eq.symm
+
+/-- In zero variables every graded piece of positive degree is zero. -/
+private theorem hilbertFunction_fin_zero_succ
+    (I : HomogeneousIdeal (homogeneousSubmodule (Fin 0) k)) (d : ℕ) :
+    hilbertFunction I (d + 1) = 0 := by
+  have hbot : homogeneousSubmodule (Fin 0) k (d + 1) = ⊥ := by
+    refine (Submodule.eq_bot_iff _).2 fun p hp => ?_
+    ext m
+    rw [Subsingleton.elim m 0]
+    simpa using ((mem_homogeneousSubmodule _ _).1 hp).coeff_eq_zero (d := 0) (by simp)
+  change Module.finrank k ((homogeneousSubmodule (Fin 0) k (d + 1)).map
+    (Ideal.Quotient.mkₐ k I.toIdeal).toLinearMap) = 0
+  rw [hbot, Submodule.map_bot, finrank_bot]
+
+/-- **Macaulay's bound** on the growth of the Hilbert function: for a homogeneous ideal `I` of
+`k[x₀, …, xₙ₋₁]` (any `n`, including `n = 0`), `d > 0`, and a `d`-th Macaulay expansion `E` of
+`hilbertFunction I d`, the next value `hilbertFunction I (d + 1)` is at most Macaulay's transform
+`E.successor`, that is `h^⟨d⟩` for `h = hilbertFunction I d`. -/
+theorem macaulay_growth (I : HomogeneousIdeal (homogeneousSubmodule (Fin n) k))
+    (d : ℕ) (hd : 0 < d) (E : MacaulayExpansion d (hilbertFunction I d)) :
+    hilbertFunction I (d + 1) ≤ E.successor := by
+  rw [E.successor_eq_macaulayPow]
+  clear E
+  cases n with
+  | zero => simp [hilbertFunction_fin_zero_succ]
+  | succ n =>
+    rw [hilbertFunction_eq_finrank_piece, hilbertFunction_eq_finrank_piece]
+    exact MvPolynomial.finrank_piece_succ_le_macaulayPow n d hd k I.toIdeal
+      fun _ hp i => homogeneousComponent_mem_of_mem I.isHomogeneous hp i
+
+end MathlibExt.RingTheory.ProjectiveHilbertGrowth
