@@ -40,6 +40,7 @@ public import MathlibExt.Data.Nat.Choose.AlternatingRowSums
 public import MathlibExt.Data.Nat.Choose.AlternatingShiftedSum
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
 public import MathlibExt.NumberTheory.Recurrences.FloorPowBinomialSum
+public import MathlibExt.NumberTheory.Recurrences.GFPFibSumChoose
 public import MathlibExt.NumberTheory.Recurrences.GFPLucasCatalan
 public import MathlibExt.NumberTheory.Recurrences.OddBinomialAlternatingSum
 
@@ -48,20 +49,6 @@ namespace MetaMathlibExt
 open Polynomial Finset
 
 @[expose] public section
-
-/-- **Explicit formula for Fibonacci-type generalized Fibonacci polynomials.** Let $d$ and $g$ be
-polynomials with integer coefficients, and let $F_n$ be the generalized Fibonacci polynomials
-defined by $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = d F_{n+1} + g F_n$. Then for every $n \ge 1$,
-$$F_n = \sum_{i=0}^{\lfloor (n-1)/2 \rfloor} \binom{n-i-1}{i} d^{n-2i-1} g^i.$$
-
-The source quotes this formula from Flórez and Saunders.
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Lemma 3.1 (1) (`fq-2024-florez11012023-lem-3.1`). -/
-public theorem_wanted gfp_fib_eq_sum_choose (d g : ℤ[X]) {n : ℕ} (hn : 1 ≤ n) :
-    generalizedFibonacciPolynomial 0 1 d g n =
-      ∑ i ∈ range ((n - 1) / 2 + 1), ((n - i - 1).choose i : ℤ[X]) * d ^ (n - 2 * i - 1) * g ^ i
 
 /-- **Explicit formula for Lucas-type generalized Fibonacci polynomials.** Let $\alpha$ and $p_0$
 be integers with $\alpha p_0 = 2$, let $p_1$ and $g$ be polynomials with integer coefficients, and

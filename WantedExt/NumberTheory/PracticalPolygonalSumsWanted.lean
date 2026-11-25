@@ -14,6 +14,7 @@ public import MathlibExt.NumberTheory.PolygonalSumParity
 public import MathlibExt.NumberTheory.PracticalNumber
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.PracticalPolygonalSums
+public import MathlibExt.NumberTheory.OddSquareTriangular
 
 /-!
 # Sums of practical numbers and polygonal numbers
@@ -66,16 +67,6 @@ Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 4
 public theorem_wanted isPracticalNumber_mul_of_le_sigma_add_one (m n : ℕ)
     (hm : IsPracticalNumber m) (hn : 0 < n) (hnm : n ≤ sigma 1 m + 1) :
     IsPracticalNumber (m * n)
-
-/-- **Odd squares and triangular numbers.** For every odd natural number $x$, the number
-$(x^2 - 1)/8$ is a triangular number: there is a natural number $k$ with
-$(x^2 - 1)/8 = p_3(k)$, where $p_3(k) = k(k+1)/2$ is the $k$-th $3$-gonal number.
-
-Source: Sai Teja Somu and Duc Van Khanh Tran, *On Sums of Practical Numbers and Polygonal
-Numbers*, Journal of Integer Sequences 27 (2024), Article 24.5.1, Lemma 5
-(arXiv Lemma 3.3; `jis-2024-24.5.1-lem-5`). -/
-public theorem_wanted sq_sub_one_div_eight_eq_triangular (x : ℕ) (hx : Odd x) :
-    ∃ k : ℕ, (x ^ 2 - 1) / 8 = Nat.polygonalNumber 3 k
 
 /-- **Sums of two squares modulo prime powers.** Let $p$ be a prime with $p \equiv 1 \pmod{4}$.
 For all natural numbers $n > 0$ and $k > 0$ there are natural numbers $x, y > 0$ with

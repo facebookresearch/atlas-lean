@@ -14,3 +14,4 @@ Distribution-free and semiparametric methods: empirical distribution functions (
 - [Potential outcomes and causal identification](potential-outcomes-and-causal-identification/README.md)
 - [System reliability and replacement](system-reliability/README.md)
 - [U-statistics](u-statistics/README.md)
+- [Reliability and monitoring](reliability-and-monitoring/README.md)

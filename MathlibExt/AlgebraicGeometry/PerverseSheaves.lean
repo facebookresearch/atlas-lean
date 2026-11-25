@@ -102,6 +102,10 @@ namespace IsComplexVariety
 
 variable (X : ComplexScheme) [IsComplexVariety X]
 
+/-! The four structure-morphism instances below restate `IsVariety`'s instances for `X.hom`.
+They are not duplicates: `IsVariety` provides them for `X.left ↘ Spec ℂ`, and instance search
+does not find them for `X.hom` (removing them breaks `isReduced` below). -/
+
 instance isSeparated : IsSeparated X.hom :=
   IsVariety.isSeparated (k := ℂ) (X := X.left)
 

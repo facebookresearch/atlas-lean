@@ -52,7 +52,7 @@ source modules; planned destinations are listed separately when added.
 - [Population genetics](../roadmap/Biology/population-genetics/README.md), including selection, inbreeding, effective size and diffusion models.
 - [Systems biology](../roadmap/Biology/systems-biology/README.md)
 - [Phylogenetics](../roadmap/Biology/phylogenetics/README.md)
-- [Neuroscience and biological oscillators](../roadmap/Biology/neuroscience/README.md)
+- [Neuroscience and biological oscillators](../roadmap/Biology/mathematical-neuroscience/README.md)
 
 ### CSLibExt
 

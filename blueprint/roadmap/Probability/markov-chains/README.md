@@ -10,6 +10,7 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Finite Markov chains](finite-markov-chains/README.md)
 - [Construction of Markov chains](construction-of-markov-chains/README.md)
 - [Dirichlet forms](dirichlet-forms/README.md)
+- [Finite birth–death chains and moment closure](finite-birth-death-chains-and-moment-closure/README.md)
 - [Markov and strong Markov properties](markov-and-strong-markov-properties/README.md)
 - [Markov processes from transition semigroups](markov-processes-from-transition-semigroups/README.md)
 - [Mixing times of Markov chains](mixing-times-of-markov-chains/README.md)
