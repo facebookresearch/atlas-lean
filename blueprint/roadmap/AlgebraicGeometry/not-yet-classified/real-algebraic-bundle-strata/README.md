@@ -9,3 +9,4 @@
 - [Bundle Iso](bundle-iso.md)
 - [Admits Stratified Algebraic Structure](admits-stratified-algebraic-structure.md)
 - [Is Algebraic Iso For](is-algebraic-iso-for.md)
+- [Uniform nonsingular strata for stratified-algebraic bundles](uniform-bundle-stratification.md)
