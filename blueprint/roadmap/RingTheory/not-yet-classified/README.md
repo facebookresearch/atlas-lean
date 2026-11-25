@@ -28,6 +28,7 @@ Topics added since this subject's fields were last revised.
 - [Derived Module Scalar Operations](derived-module-scalar-operations/README.md)
 - [Dual Hochschild Forms](dual-hochschild-forms/README.md)
 - [Flat Closure](flat-closure/README.md)
+- [Frobenius Exists](frobenius-exists/README.md)
 - [Geometric Differential Operators](geometric-differential-operators/README.md)
 - [Hochschild Cochains](hochschild-cochains/README.md)
 - [Infinite Sum](infinite-sum/README.md)
