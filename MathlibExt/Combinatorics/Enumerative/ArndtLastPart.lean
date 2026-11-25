@@ -356,8 +356,19 @@ private lemma count_eq_card {n m : ℕ} (hm : 0 < m) (hn : m ≤ n) :
 end arndtLastPartCount_isEquivalent
 
 open arndtLastPartCount_isEquivalent in
-/-- The contributions from a terminal singleton and a terminal descending pair, respectively.
-At their minimum weights the singleton and the pair each have just the empty paired prefix. -/
+/-- Let $n,m$ be natural numbers with $0 < m \le n$. The number $b(n,m)$ of Arndt compositions
+of $n$ with last part $m$ is the sum of the contributions from a terminal singleton and a
+terminal descending pair, respectively.
+
+$$
+b(n,m) =
+\begin{cases} 1 & n=m, \\ F_{n-m-2} & \text{otherwise} \end{cases}
++
+\begin{cases} 1 & n=2m+1, \\ F_{n-2m-1} & \text{otherwise} \end{cases}.
+$$
+
+Here $F_j$ is the Fibonacci number with $F_0=0$ and $F_1=1$, and subtraction in its index
+is truncated at zero. At each terminal block's minimum weight, only the empty prefix occurs. -/
 theorem arndtLastPart_atMost_atLeast.count_by_terminal_block {n m : ℕ}
     (hm : 0 < m) (hn : m ≤ n) :
     arndtLastPartCount n m =

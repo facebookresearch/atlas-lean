@@ -15,7 +15,7 @@ public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import MathlibExt.Algebra.Polynomial.PrimeValueConditions
 public import MathlibExt.NumberTheory.AbsoluteLucasPseudoprimes
 public import MathlibExt.NumberTheory.LucasSequence
-public import MathlibExt.NumberTheory.TwoPrimeDCarmichael
+public import MathlibExt.NumberTheory.ThreePrimeDCarmichael
 import Mathlib.Tactic.NormNum.LegendreSymbol
 
 namespace MetaMathlibExt
@@ -36,28 +36,6 @@ public theorem_wanted jacobiSym_prime_add_mul_eq {p p' : ℕ} (hp : p.Prime) (hp
     (hp' : p'.Prime) (hp'2 : p' ≠ 2) {D : ℤ} (hD : D % 4 = 0 ∨ D % 4 = 1)
     (hDp : IsCoprime D p) {x : ℤ} (hx : (p' : ℤ) = p + D * x) :
     jacobiSym D p' = jacobiSym D p
-
-/-- **Ballot's Lemma 2: three divisibilities as one congruence.** Let
-$\varepsilon_1, \varepsilon_2, \varepsilon_3 \in \{1, -1\}$, let $c_1, c_2, c_3$ be pairwise coprime
-positive integers, let $g \ne 0$ be an integer, and put
-$n = (c_1 g + \varepsilon_1)(c_2 g + \varepsilon_2)(c_3 g + \varepsilon_3)$ and
-$\varepsilon_n = \varepsilon_1 \varepsilon_2 \varepsilon_3$. Then $c_i g \mid n - \varepsilon_n$ for
-$i = 1, 2, 3$ if and only if
-$$c_1 c_2 c_3 \mid g (\varepsilon_3 c_1 c_2 + \varepsilon_2 c_1 c_3 + \varepsilon_1 c_2 c_3) +
-\varepsilon_n (\varepsilon_1 c_1 + \varepsilon_2 c_2 + \varepsilon_3 c_3).$$
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Lemma 2 (`integers-2026-A102-lem-2`). -/
-public theorem_wanted mul_dvd_prod_sub_sign_iff {ε₁ ε₂ ε₃ c₁ c₂ c₃ g : ℤ}
-    (hε₁ : ε₁ = 1 ∨ ε₁ = -1) (hε₂ : ε₂ = 1 ∨ ε₂ = -1) (hε₃ : ε₃ = 1 ∨ ε₃ = -1)
-    (hc₁ : 0 < c₁) (hc₂ : 0 < c₂) (hc₃ : 0 < c₃)
-    (h₁₂ : IsCoprime c₁ c₂) (h₁₃ : IsCoprime c₁ c₃) (h₂₃ : IsCoprime c₂ c₃) (hg : g ≠ 0) :
-    (c₁ * g ∣ (c₁ * g + ε₁) * (c₂ * g + ε₂) * (c₃ * g + ε₃) - ε₁ * ε₂ * ε₃ ∧
-      c₂ * g ∣ (c₁ * g + ε₁) * (c₂ * g + ε₂) * (c₃ * g + ε₃) - ε₁ * ε₂ * ε₃ ∧
-      c₃ * g ∣ (c₁ * g + ε₁) * (c₂ * g + ε₂) * (c₃ * g + ε₃) - ε₁ * ε₂ * ε₃) ↔
-    c₁ * c₂ * c₃ ∣
-      g * (ε₃ * c₁ * c₂ + ε₂ * c₁ * c₃ + ε₁ * c₂ * c₃) +
-        ε₁ * ε₂ * ε₃ * (ε₁ * c₁ + ε₂ * c₂ + ε₃ * c₃)
 
 /-! ## Absolute Lucas pseudoprimes -/
 
@@ -337,22 +315,6 @@ public theorem_wanted infinite_primary_fiveCarmichael_of_primeKTuples
     (σ : List ℤ) (hσ : ∀ e ∈ σ, e = 1 ∨ e = -1) (hlen : σ.length = 3) :
     {n : ℕ | IsPrimaryDCarmichael 5 n ∧
       n.primeFactorsList.map (fun p => jacobiSym 5 p) = σ}.Infinite
-
-/-- **The $D$-Carmichael numbers of the form $3qr$.** Let $q < r$ be primes with $3 < q$. Then
-$3qr$ is a $D$-Carmichael number for some integer $D$ if and only if $3qr$ is one of $105$,
-$195$, $255$, $399$, $561$ and $2703$. Moreover, for all integers $D$ and $D'$ such that $3qr$
-is both $D$-Carmichael and $D'$-Carmichael, the Jacobi symbols agree at $3$, $q$ and $r$:
-$(D \mid 3) = (D' \mid 3)$, $(D \mid q) = (D' \mid q)$ and $(D \mid r) = (D' \mid r)$.
-
-Source: Christian Ballot, *On Absolute Lucas Pseudoprimes*, INTEGERS 26 (2026), Article A102,
-Theorem 7 (`integers-2026-A102-thm-7`). -/
-public theorem_wanted threeQR_isDCarmichael_iff {q r : ℕ} (hq : q.Prime) (hr : r.Prime)
-    (h3q : 3 < q) (hqr : q < r) :
-    ((∃ D : ℤ, IsDCarmichael D (3 * q * r)) ↔
-      3 * q * r ∈ ({105, 195, 255, 399, 561, 2703} : Finset ℕ)) ∧
-    ∀ D D' : ℤ, IsDCarmichael D (3 * q * r) → IsDCarmichael D' (3 * q * r) →
-      jacobiSym D 3 = jacobiSym D' 3 ∧ jacobiSym D q = jacobiSym D' q ∧
-        jacobiSym D r = jacobiSym D' r
 
 /-- **Primary and secondary $5$-Carmichael numbers from prime quadruples.** Assume the prime
 $k$-tuples conjecture (the paper's Conjecture 1) in the following form: for every finite list

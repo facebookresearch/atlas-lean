@@ -94,7 +94,7 @@ lemma missing_ray_column_nullspace :
     simp [Matrix.mulVec, Matrix.cons_val_zero, Matrix.cons_val_one,
       Matrix.head_cons, Matrix.tail_cons]
 
-/-- Noiseless full-rank recovery: the identity matrix has trivial nullspace. -/
+/-- Noiseless full-rank recovery: the `2 × 2` identity matrix has trivial nullspace. -/
 theorem identity_nullspace_trivial (v : Fin 2 → ℝ)
     (hv : Matrix.mulVec (1 : Matrix (Fin 2) (Fin 2) ℝ) v = 0) :
     v = 0 := by

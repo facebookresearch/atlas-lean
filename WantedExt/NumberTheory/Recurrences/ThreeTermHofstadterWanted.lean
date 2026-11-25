@@ -10,6 +10,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.List.GetD
+public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterSevenCycle
+public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterSixteenCycleTwo
 public import MathlibExt.NumberTheory.Recurrences.ThreeTermHofstadterTwoCycle
 
 namespace MetaMathlibExt
@@ -63,38 +65,6 @@ public theorem_wanted threeTermHofstadter_padded_linear_endsAfter {N : ℕ}
     ThreeTermHofstadterEndsAfter true ((List.range N).map fun i : ℕ => (i : ℤ) + 1)
       (2 * N + [27, 254, 524, 560, 20, 4547, 9].getD (N % 7) 0)
 
-/-- **Seven-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K$, $c$ and
-$\gamma$ be natural numbers with $K \ge 7$, $c \ge 1$, $\gamma \le 6$ and $7c + \gamma \le K$, and
-put $L = K - 7c - \gamma$ and $M = K + L + 5$. For a tuple $(t_0, \dots, t_6)$ write
-$(t_0, \dots, t_6)_\gamma$ for its entry $t_\gamma$. Let $\lambda$ and $\mu$ be integers with
-$\lambda \ge -2c + (2, 1, 4, 3, 2, 1, 0)_\gamma$ and $\mu \ge -c + (0, 0, 3, 2, 1, 0, -1)_\gamma$,
-and put $\nu = (-2, -2, 2, 1, 0, -1, -2)_\gamma$. Let $a_1, \dots, a_L$ be arbitrary integers and
-let $B$ be the padded three-term Hofstadter-like sequence with initial conditions
-$1, 2, \dots, K, 6, a_1, \dots, a_L, 2K + \lambda - 2, 2K + \mu - 1, K - 2$. Then for every
-integer $k$ and every $r \in \{0, 1, \dots, 6\}$ with $M - 3 \le M + 7k + r \le 2K + \nu$, the
-term $B(M + 7k + r)$ is defined, and these terms are $B(M + 7k) = L + 7k + 7$,
-$B(M + 7k + 1) = M + 7k + 2$, $B(M + 7k + 2) = M + 7k + 4$, $B(M + 7k + 3) = 7$,
-$B(M + 7k + 4) = 2K + 2k + \lambda$, $B(M + 7k + 5) = 2K + k + \mu$ and $B(M + 7k + 6) = K - 2$.
-
-Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
-Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Lemma 3
-(`jis-2024-24.7.4-lem-3`). -/
-public theorem_wanted threeTermHofstadter_sevenCycle {K c γ : ℕ} (hK : 7 ≤ K) (hc : 1 ≤ c)
-    (hγ : γ ≤ 6) (hL : 7 * c + γ ≤ K) {lam mu : ℤ}
-    (hlam : -2 * (c : ℤ) + [2, 1, 4, 3, 2, 1, 0].getD γ 0 ≤ lam)
-    (hmu : -(c : ℤ) + [0, 0, 3, 2, 1, 0, -1].getD γ 0 ≤ mu)
-    (a : List ℤ) (ha : a.length = K - 7 * c - γ) (k : ℤ) (r : ℕ) (hr : r < 7)
-    (hlo : ((2 * K - 7 * c - γ + 5 : ℕ) : ℤ) - 3 ≤ (2 * K - 7 * c - γ + 5 : ℕ) + 7 * k + r)
-    (hhi : ((2 * K - 7 * c - γ + 5 : ℕ) : ℤ) + 7 * k + r ≤
-      2 * K + [-2, -2, 2, 1, 0, -1, -2].getD γ 0) :
-    threeTermHofstadterTerm true
-        ((List.range K).map (fun i : ℕ => (i : ℤ) + 1) ++ [6] ++ a ++
-          [2 * K + lam - 2, 2 * K + mu - 1, K - 2])
-        (((2 * K - 7 * c - γ + 5 : ℕ) : ℤ) + 7 * k + r).toNat =
-      some ([((K - 7 * c - γ : ℕ) : ℤ) + 7 * k + 7, ((2 * K - 7 * c - γ + 5 : ℕ) : ℤ) + 7 * k + 2,
-        ((2 * K - 7 * c - γ + 5 : ℕ) : ℤ) + 7 * k + 4, 7, 2 * K + 2 * k + lam, 2 * K + k + mu,
-        K - 2].getD r 0)
-
 /-- **Five-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K \ge 3$ be a
 natural number, $\mu \ge 1$ an integer, and $a_4, \dots, a_K$ arbitrary integers. Let $B$ be
 the sequence given by $B(n) = B(n - B(n-1)) + B(n - B(n-2)) + B(n - B(n-3))$, padded with
@@ -114,34 +84,6 @@ public theorem_wanted threeTermHofstadter_fiveCycle {K : ℕ} (hK : 3 ≤ K) {mu
     threeTermHofstadterTerm true ([1, 2, 3] ++ a ++ [K + mu, 3, K + 3, K + mu + 1, 5])
         (K + 5 * k + r) =
       some ([5, K + 3 * k + mu, 3, K + 5 * k + 3, K + 3 * k + mu + 1].getD r 0 : ℤ)
-
-/-- **Second sixteen-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K \ge 1$
-be a natural number and let $\lambda$, $\mu_1$, $\mu_2$, $\gamma_1$, $\gamma_2$, $\gamma_3$ be
-integers with $\lambda > 31 + K$ and $\mu_1, \mu_2, \gamma_1, \gamma_2, \gamma_3 > \lambda$. Let
-$a_1, \dots, a_K$ be arbitrary integers and let $B$ be the padded three-term Hofstadter-like
-sequence with initial conditions $a_1, \dots, a_K, 16, \mu_2, 7, \gamma_2, \lambda, 16, \lambda,
-16, \mu_1, 10, \gamma_3, \mu_2, 7, \lambda, 16, \gamma_1$. Then for all natural numbers $k$ and
-$r \le 15$ with $K + 1 \le K + 16k + r \le \lambda$, the term $B(K + 16k + r)$ is defined, and
-these terms are $B(K + 16k) = \mu_1 2^k + \gamma_1 - 2\mu_1$, $B(K + 16k + 1) = 16$,
-$B(K + 16k + 2) = \mu_2 2^k$, $B(K + 16k + 3) = 7$, $B(K + 16k + 4) = 7k + \gamma_2$,
-$B(K + 16k + 5) = \lambda$, $B(K + 16k + 6) = 16$, $B(K + 16k + 7) = \lambda$,
-$B(K + 16k + 8) = 16$, $B(K + 16k + 9) = \mu_1 2^k$, $B(K + 16k + 10) = 10$,
-$B(K + 16k + 11) = 16k + \gamma_3$, $B(K + 16k + 12) = \mu_2 2^k$, $B(K + 16k + 13) = 7$,
-$B(K + 16k + 14) = \lambda$ and $B(K + 16k + 15) = 16$.
-
-Source: Nathan Fox, *The Behavior of a Three-Term Hofstadter-Like Recurrence with Linear
-Initial Conditions*, Journal of Integer Sequences 27 (2024), Article 24.7.4, Lemma 7,
-citing the author's thesis, Proposition 9.16 (`jis-2024-24.7.4-lem-7`). -/
-public theorem_wanted threeTermHofstadter_sixteenCycle_two {K : ℕ} (hK : 1 ≤ K)
-    {lam mu₁ mu₂ ga₁ ga₂ ga₃ : ℤ} (hlam : 31 + (K : ℤ) < lam) (hmu₁ : lam < mu₁)
-    (hmu₂ : lam < mu₂) (hga₁ : lam < ga₁) (hga₂ : lam < ga₂) (hga₃ : lam < ga₃)
-    (a : List ℤ) (ha : a.length = K) (k r : ℕ) (hr : r < 16) (hlo : K + 1 ≤ K + 16 * k + r)
-    (hhi : ((K + 16 * k + r : ℕ) : ℤ) ≤ lam) :
-    threeTermHofstadterTerm true
-        (a ++ [16, mu₂, 7, ga₂, lam, 16, lam, 16, mu₁, 10, ga₃, mu₂, 7, lam, 16, ga₁])
-        (K + 16 * k + r) =
-      some ([mu₁ * 2 ^ k + ga₁ - 2 * mu₁, 16, mu₂ * 2 ^ k, 7, 7 * k + ga₂, lam, 16, lam, 16,
-        mu₁ * 2 ^ k, 10, 16 * k + ga₃, mu₂ * 2 ^ k, 7, lam, 16].getD r 0)
 
 /-- **First sixteen-cycle lemma for the three-term Hofstadter-like recurrence.** Let $K \ge 1$ be
 a natural number and let $\lambda$, $\mu_1$, $\mu_2$, $\gamma$ be integers with $\lambda > 31 + K$
