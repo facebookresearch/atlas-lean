@@ -2,10 +2,8 @@
 
 Topics added since this subject's fields were last revised.
 
-- [Actions](actions/README.md)
 - [Algebra Tensor Hom](algebra-tensor-hom-equiv.md)
 - [Balanced Integral Cancellation](balanced-integral-cancellation/README.md)
-- [Balanced](balanced/README.md)
 - [Right Exact](base-change-right-exact-bijective.md)
 - [Basic Compat](basic-compat/README.md)
 - [Basic](basic/README.md)
@@ -88,7 +86,6 @@ Topics added since this subject's fields were last revised.
 - [Regular Representation](regular-representation/README.md)
 - [Reindex](reindex/README.md)
 - [Residue Cyclic Shift](residue-cyclic-shift/README.md)
-- [Restrict Scalars](restrict-scalars.md)
 - [Right Actions](right-actions/README.md)
 - [Ring](ring/README.md)
 - [Round](round/README.md)
