@@ -10,6 +10,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Algebra.Homology.Hochschild.PolynomialEulerianRepresentatives
 public import MathlibExt.Algebra.Homology.Hochschild.PolynomialNormalizedExterior
 public import MathlibExt.Algebra.Homology.Hochschild.NormalizedEulerianHodge
 public import MathlibExt.LinearAlgebra.TensorPower.EulerianAntisymmetrization
@@ -56,38 +57,6 @@ private theorem nativeCycleClass_congr
       HomologicalComplex.moduleCatCycleClass C n t ht := by
   subst t
   rfl
-
-/-- Every original signed polynomial degree-n tensor has exactly its top Eulerian weight. -/
-theorem polynomialSignedRepresentative_eulerian (n i : ℕ) (x : M ⊗[k] (⋀[k]^n V)) :
-    Symmetric.coefficientEulerianOperator k A M n i (polynomialSignedRepresentative k σ M n x) =
-      if i = n then polynomialSignedRepresentative k σ M n x else 0 := by
-  let F := TensorProduct.map (LinearMap.id : M →ₗ[k] M) (TensorPower.exteriorAntisymmetrization k A n)
-  let L := TensorProduct.map (LinearMap.id : M →ₗ[k] M)
-    (exteriorPower.map n (polynomialGeneratorLinear k σ))
-  have hF : ((polynomialAntisymmetricCoefficientMap k σ M).f n).hom.comp
-      (coefficientFreeExteriorEquiv k σ M n).symm.toLinearMap = F.comp L := by
-    rw [polynomialAntisymmetricCoefficientMap_free_coordinates,
-      AdjacentBar.exteriorAntisymmetrizationAlong,
-      TensorPower.exteriorAntisymmetrization_naturality]
-    change TensorProduct.map (LinearMap.id : M →ₗ[k] M)
-        ((TensorPower.exteriorAntisymmetrization k A n).comp
-          (exteriorPower.map n (polynomialGeneratorLinear k σ))) = F.comp L
-    apply TensorProduct.ext'
-    intro m ω
-    change TensorProduct.map (LinearMap.id : M →ₗ[k] M)
-        ((TensorPower.exteriorAntisymmetrization k A n).comp
-          (exteriorPower.map n (polynomialGeneratorLinear k σ))) (m ⊗ₜ[k] ω) = F (L (m ⊗ₜ[k] ω))
-    simp only [F, L, TensorProduct.map_tmul, LinearMap.id_apply, LinearMap.comp_apply]
-  have hx : polynomialSignedRepresentative k σ M n x = F (L x) :=
-    DFunLike.congr_fun hF x
-  have hE : (Symmetric.coefficientEulerianOperator k A M n i).comp F =
-      if i = n then F else 0 :=
-    TensorPower.coefficientEulerian_exteriorAntisymmetrization k A M n i
-  rw [hx]
-  have h := DFunLike.congr_fun hE (L x)
-  by_cases hi : i = n
-  · simpa only [LinearMap.comp_apply, if_pos hi] using h
-  · simpa only [LinearMap.comp_apply, if_neg hi, LinearMap.zero_apply] using h
 
 /-- The rational convolution on an original polynomial signed degree-n tensor has eigenvalue a^n. -/
 theorem polynomialSignedRepresentative_convolution
