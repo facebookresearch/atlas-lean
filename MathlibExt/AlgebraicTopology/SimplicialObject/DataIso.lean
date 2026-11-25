@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
@@ -221,8 +218,10 @@ noncomputable def isoOfHom (f : X ⟶ Y) (hf : ∀ n, IsIso (f.app n)) : X ≅ Y
 theorem isIso_of_isIso (f : X ⟶ Y) (hf : ∀ n, IsIso (f.app n)) : IsIso f where
   out := ⟨(isoOfHom f hf).inv, (isoOfHom f hf).hom_inv_id, (isoOfHom f hf).inv_hom_id⟩
 
-/-- A morphism of simplicial data is an isomorphism when all of its degreewise components are
-isomorphisms. -/
+/--
+A morphism of simplicial data is an isomorphism when all of its degreewise components are
+isomorphisms.
+-/
 instance (priority := 100) isIso_of_isIso_app (f : X ⟶ Y) [∀ n, IsIso (f.app n)] : IsIso f :=
   isIso_of_isIso f (fun _ ↦ inferInstance)
 

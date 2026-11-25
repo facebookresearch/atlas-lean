@@ -13,6 +13,7 @@ public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutSubdivision
 public import MathlibExt.Combinatorics.ArithmeticalStructureCoconutTree
 public import MathlibExt.Combinatorics.ArithmeticalStructureStar
 public import MathlibExt.Combinatorics.EuclideanChainLength
@@ -259,37 +260,6 @@ public def coconutSmoothLeaf {p s : ℕ} (l : Fin (s + 1))
       (fun m => x.1 (.inr (l.succAbove m))),
     Sum.elim (fun j => x.2 (.inl j)) (fun m => x.2 (.inr (l.succAbove m))))
 
-/-- **Subdivision at a path vertex of a coconut tree.** Let the coconut tree $CT(p, s)$ have path
-vertices $v_1, \dots, v_p$ and leaves $\ell_1, \dots, \ell_s$, let $d$ and $r$ be labelings of
-its vertices by natural numbers, and let $1 \le k \le p$. Subdividing $(d, r)$ at position $k$
-gives the labelings $(d', r')$ of $CT(p + 1, s)$ obtained by inserting a new path vertex $w$
-just before $v_k$, so that the path becomes $v_1, \dots, v_{k-1}, w, v_k, \dots, v_p$, with
-$d'(w) = 1$ and $r'(w) = r(v_{k-1}) + r(v_k)$, where $r(v_0) = 0$ (so $r'(w) = r(v_1)$ when
-$k = 1$). The path neighbours of $w$, namely $v_{k-1}$ (when $k \ge 2$) and $v_k$, get
-$d' = d + 1$; every other vertex keeps its value of $d$, and every vertex other than $w$ keeps
-its value of $r$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 3.9
-(arXiv numbering). -/
-public def coconutSubdivide {p s : ℕ} (i : Fin p)
-    (x : (Fin p ⊕ Fin s → ℕ) × (Fin p ⊕ Fin s → ℕ)) :
-    (Fin (p + 1) ⊕ Fin s → ℕ) × (Fin (p + 1) ⊕ Fin s → ℕ) :=
-  let pd : ℕ → ℕ := fun t => if h : t < p then x.1 (.inl ⟨t, h⟩) else 0
-  let pr : ℕ → ℕ := fun t => if h : t < p then x.2 (.inl ⟨t, h⟩) else 0
-  (Sum.elim
-      (fun j => if j.val + 1 < i.val then pd j.val
-        else if j.val + 1 = i.val then pd j.val + 1
-        else if j.val = i.val then 1
-        else if j.val = i.val + 1 then pd (j.val - 1) + 1
-        else pd (j.val - 1))
-      (fun l => x.1 (.inr l)),
-    Sum.elim
-      (fun j => if j.val < i.val then pr j.val
-        else if j.val = i.val then (if i.val = 0 then 0 else pr (i.val - 1)) + pr i.val
-        else pr (j.val - 1))
-      (fun l => x.2 (.inr l)))
-
 /-- **Example of smoothing a coconut tree at a path vertex.** List a labeling of a coconut tree as
 its values on the path vertices $v_1, v_2, \dots$, then $\mid$, then its values on the leaves.
 Smoothing the labelings $d = (3, 1, 3, 2, 2 \mid 2, 2, 4)$ and $r = (1, 3, 2, 3, 4 \mid 2, 2, 1)$
@@ -319,22 +289,6 @@ public theorem coconutSmoothLeaf_example :
         (coconutSmoothPath (p := 3) (s := 4) 0
           (Sum.elim ![1, 3, 2, 3] ![2, 2, 3, 1], Sum.elim ![2, 2, 4, 6] ![3, 3, 2, 6])) =
       (Sum.elim ![2, 2, 2] ![2, 2, 3], Sum.elim ![2, 4, 6] ![3, 3, 2]) := by
-  decide
-
-/-- **Example of subdividing a coconut tree.** List a labeling of a coconut tree as its values on
-the path vertices $v_1, v_2, \dots$, then $\mid$, then its values on the leaves. Subdividing the
-labelings $d = (2, 2, 2, 2 \mid 2, 2, 4)$ and $r = (1, 2, 3, 4 \mid 2, 2, 1)$ of $CT(4, 3)$ at
-position $2$ gives the labelings $d' = (3, 1, 3, 2, 2 \mid 2, 2, 4)$ and
-$r' = (1, 3, 2, 3, 4 \mid 2, 2, 1)$ of $CT(5, 3)$. These are the labelings of Example 3.2, whose
-smoothing at $v_2$ is $(d, r)$, so here subdivision undoes that smoothing.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Definition 3.9 and
-Example 3.2 (arXiv numbering). -/
-public theorem coconutSubdivide_example :
-    coconutSubdivide (p := 4) (s := 3) 1
-        (Sum.elim ![2, 2, 2, 2] ![2, 2, 4], Sum.elim ![1, 2, 3, 4] ![2, 2, 1]) =
-      (Sum.elim ![3, 1, 3, 2, 2] ![2, 2, 4], Sum.elim ![1, 3, 2, 3, 4] ![2, 2, 1]) := by
   decide
 
 /-- **Ancestors of labelings of coconut trees.** Let $x$ be a pair of vertex labelings $(d, r)$
@@ -390,20 +344,6 @@ public theorem_wanted IsArithmeticalStructure.coconutSmoothLeaf {p s : ℕ} (hps
     (hx : IsArithmeticalStructure (coconutTree p (s + 1)) x.1 x.2) (l : Fin (s + 1))
     (hd : x.1 (.inr l) = 1) :
     IsArithmeticalStructure (coconutTree p s) (coconutSmoothLeaf l x).1 (coconutSmoothLeaf l x).2
-
-/-- **Subdivision preserves arithmetical structures on coconut trees.** If $(d, r)$ is an
-arithmetical structure on the coconut tree $CT(p, s)$, whose path vertices are $v_1, \dots, v_p$,
-then for every $1 \le k \le p$, subdividing $(d, r)$ at position $k$ (inserting a new path vertex
-just before $v_k$) gives an arithmetical structure on $CT(p + 1, s)$.
-
-Source: Diaz-Lopez, Ha, Harris, Rogers, Koss and Smith, *Arithmetical
-Structures on Coconut Trees*, INTEGERS 25 (2025), Article A82, Proposition 3.11
-(`integers-2025-A82-prop-3`). -/
-public theorem_wanted IsArithmeticalStructure.coconutSubdivide {p s : ℕ}
-    {x : (Fin p ⊕ Fin s → ℕ) × (Fin p ⊕ Fin s → ℕ)}
-    (hx : IsArithmeticalStructure (coconutTree p s) x.1 x.2) (i : Fin p) :
-    IsArithmeticalStructure (coconutTree (p + 1) s) (coconutSubdivide i x).1
-      (coconutSubdivide i x).2
 
 /-- **Unique smooth ancestor.** Let $s \ge 1$ and let $(d, r)$ be an arithmetical structure on the
 coconut tree $CT(p, s)$ with $d(\ell_j) \ge 2$ at every leaf $\ell_j$. Then there is exactly one

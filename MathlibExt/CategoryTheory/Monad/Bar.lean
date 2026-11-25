@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
@@ -31,7 +28,7 @@ left-module end and `barMuAtPos`/`barEtaAtPos` apply `Fin.rev`.
 General machinery: `monadPow`, `monadPow_obj_T_comm`, `monadPow_succ_obj_eq`,
 naturality lemmas, `muAtPos`, `etaAtPos` with naturality, public reversed
 wrappers `barMuAtPos n i = muAtPos n i.rev` and `barEtaAtPos n i = etaAtPos n i.rev`
-with naturality, reusable recursive iterated right-module action `rightActionPow`
+with naturality, recursive iterated right-module action `rightActionPow`
 with naturality and optional comparison to the old `eqToHom` formula, `barObj`
 with `barObj_obj`, `barObj_map`, `barObj_zero`, `barFaceApp` component formula,
 `barFace n i : B_{n+1} ⟶ B_n` (`d₀` recursive iterated right action, `d_{n+1}`
@@ -66,8 +63,10 @@ variable {C : Type u₁} [Category.{v₁} C]
 variable {D : Type u₂} [Category.{v₂} D]
 variable {A : Type u₃} [Category.{v₃} A]
 
-/-- Left-associated monad power `T ^ n`: `T ^ 0 = 𝟭` and
-`T ^ (n + 1) = T ⋙ T ^ n`. Bar degree `n` is `R ∘ T ^ n ∘ L`. -/
+/--
+Left-associated monad power `T ^ n`: `T ^ 0 = 𝟭` and
+`T ^ (n + 1) = T ⋙ T ^ n`. Bar degree `n` is `R ∘ T ^ n ∘ L`.
+-/
 abbrev monadPow (T : Monad C) : ℕ → C ⥤ C
 | 0 => 𝟭 C
 | n + 1 => (T : C ⥤ C) ⋙ monadPow T n
@@ -99,9 +98,11 @@ lemma monadPow_succ_obj_eq_naturality (T : Monad C) (n : ℕ) {X Y : C} (f : X �
     eqToHom (monadPow_succ_obj_eq T n X) ≫ T.map ((monadPow T n).map f) :=
   monadPow_obj_T_comm_naturality T n f
 
-/-- Raw left-counted multiplication `T ^ (n + 1) ⟶ T ^ n`: position `0` is the
+/--
+Raw left-counted multiplication `T ^ (n + 1) ⟶ T ^ n`: position `0` is the
 innermost (left-module end) factor and successors recurse under `T`. Public bar
-faces use the right-counted wrapper `barMuAtPos n i = muAtPos n i.rev`. -/
+faces use the right-counted wrapper `barMuAtPos n i = muAtPos n i.rev`.
+-/
 noncomputable def muAtPos (T : Monad C) : (n : ℕ) → (i : Fin n) → (X : C) →
     (monadPow T (n + 1)).obj X ⟶ (monadPow T n).obj X
 | 0, i, _ => nomatch i
@@ -127,9 +128,11 @@ lemma muAtPos_naturality (T : Monad C) (n : ℕ) (k : Fin n) {X Y : C} (f : X �
       simp only [muAtPos]
       exact ih ⟨k, by omega⟩ (T.map f)
 
-/-- Raw left-counted unit insertion `T ^ n ⟶ T ^ (n + 1)`: position `0` is the
+/--
+Raw left-counted unit insertion `T ^ n ⟶ T ^ (n + 1)`: position `0` is the
 innermost (left-module end) factor and successors recurse under `T`. Public bar
-degeneracies use the right-counted wrapper `barEtaAtPos n i = etaAtPos n i.rev`. -/
+degeneracies use the right-counted wrapper `barEtaAtPos n i = etaAtPos n i.rev`.
+-/
 noncomputable def etaAtPos (T : Monad C) : (n : ℕ) → (i : Fin (n + 1)) → (X : C) →
     (monadPow T n).obj X ⟶ (monadPow T (n + 1)).obj X
 | 0, _, X => T.η.app X
@@ -159,9 +162,11 @@ lemma etaAtPos_naturality (T : Monad C) (n : ℕ) (i : Fin (n + 1)) {X Y : C} (f
       simp only [etaAtPos]
       exact ih ⟨k, by omega⟩ (T.map f)
 
-/-- Public reversed-position wrapper for inner bar faces: counts from the right-module end
+/--
+Public reversed-position wrapper for inner bar faces: counts from the right-module end
 (`d₀` = right action), i.e. `barMuAtPos n i = muAtPos n i.rev`. Raw `muAtPos` is preserved
-unchanged and counts from the left-module end. -/
+unchanged and counts from the left-module end.
+-/
 noncomputable def barMuAtPos (T : Monad C) (n : ℕ) (i : Fin n) (X : C) :
     (monadPow T (n + 1)).obj X ⟶ (monadPow T n).obj X :=
   muAtPos T n i.rev X
@@ -205,11 +210,13 @@ abbrev barObj (T : Monad C) (R : RightModule T D) (L : LeftModule A T) (n : ℕ)
     barObj T R L 0 = L.functor ⋙ R.functor := rfl
 
 set_option linter.defProp false in
-/-- Reusable recursive iterated right-module action:
+/--
+Recursive iterated right-module action:
 `R.functor.obj ((monadPow T (n+1)).obj X) ⟶ R.functor.obj ((monadPow T n).obj X)`.
 Degree zero is definitionally `R.action.app X`; successor is definitionally the preceding
 iterated action evaluated at `T.obj X`. This avoids `eqToHom` transports for the right
-endpoint while keeping left-associated `monadPow` and all pure `mu`/`eta` coherence. -/
+endpoint while keeping left-associated `monadPow` and all pure `mu`/`eta` coherence.
+-/
 noncomputable def rightActionPow (T : Monad C) (R : RightModule T D) :
     (n : ℕ) → (X : C) → R.functor.obj ((monadPow T (n + 1)).obj X) ⟶
       R.functor.obj ((monadPow T n).obj X)
@@ -258,10 +265,12 @@ theorem rightActionPow_eq (T : Monad C) (R : RightModule T D) (n : ℕ) (X : C) 
       _ = R.functor.map (eqToHom (monadPow_succ_obj_eq T (n + 1) X)) ≫
             R.action.app ((monadPow T (n + 1)).obj X) := by rfl
 
-/-- Two successive iterated right actions equal the outermost/raw-last
+/--
+Two successive iterated right actions equal the outermost/raw-last
 multiplication `muAtPos (n+1) last` followed by `rightActionPow`. Proved by
 induction via `rightActionPow_succ` and `muAtPos_succ_eq`; base case is the
-right-module associativity. -/
+right-module associativity.
+-/
 theorem rightActionPow_assoc_last (T : Monad C) (R : RightModule T D) (n : ℕ) (X : C) :
     rightActionPow T R (n + 1) X ≫ rightActionPow T R n X =
       R.functor.map (muAtPos T (n + 1) ⟨n, by omega⟩ X) ≫ rightActionPow T R n X := by
@@ -282,9 +291,11 @@ theorem rightActionPow_assoc_last (T : Monad C) (R : RightModule T D) (n : ℕ) 
         rw [hmu]
         rfl
 
-/-- Raw-last unit insertion followed by the iterated right action is the
+/--
+Raw-last unit insertion followed by the iterated right action is the
 identity. Proved by induction via `rightActionPow_succ` and
-`etaAtPos_succ_eq`; base case is the right-module unit. -/
+`etaAtPos_succ_eq`; base case is the right-module unit.
+-/
 theorem rightActionPow_unit_last (T : Monad C) (R : RightModule T D) (n : ℕ) (X : C) :
     R.functor.map (etaAtPos T n ⟨n, by omega⟩ X) ≫ rightActionPow T R n X = 𝟙 _ := by
   induction n generalizing X with
@@ -299,13 +310,15 @@ theorem rightActionPow_unit_last (T : Monad C) (R : RightModule T D) (n : ℕ) (
               rightActionPow T R n (T.obj X) := rfl
       _ = 𝟙 _ := ih (T.obj X)
 
-/-- Distant right-endpoint interchange:
+/--
+Distant right-endpoint interchange:
 `muAtPos` at degree `n+1` and position `castSucc i` commutes with `rightActionPow`.
 For `n`, `i : Fin n`, `R.map (muAtPos (n+1) (castSucc i)) ≫ rightActionPow n =
 rightActionPow (n+1) ≫ R.map (muAtPos n i)`.
 Proved by induction on `n`, using definitional successor equations (`rightActionPow_succ`,
 `muAtPos_succ_eq`) with explicit `change` where elaboration does not unfold, and
-`rightActionPow_naturality` for the raw position-zero case. -/
+`rightActionPow_naturality` for the raw position-zero case.
+-/
 theorem rightActionPow_mu_castSucc (T : Monad C) (R : RightModule T D) (n : ℕ)
     (i : Fin n) (X : C) :
     R.functor.map (muAtPos T (n + 1) i.castSucc X) ≫ rightActionPow T R n X =
@@ -374,7 +387,8 @@ theorem rightActionPow_mu_castSucc (T : Monad C) (R : RightModule T D) (n : ℕ)
         _ = rightActionPow T R n (T.obj (T.obj X)) ≫
                 R.functor.map (muAtPos T n i0 (T.obj X)) := rfl
 
-/-- Distant right-endpoint unit insertion:
+/--
+Distant right-endpoint unit insertion:
 `etaAtPos` at degree `n+1` and position `castSucc i` commutes with `rightActionPow`.
 For `n`, `i : Fin (n+1)`,
 `R.map (etaAtPos (n+1) (castSucc i)) ≫ rightActionPow (n+1) = rightActionPow n ≫
@@ -382,7 +396,8 @@ R.map (etaAtPos n i)`.
 Proved by induction on `n`, using definitional successor equations (`rightActionPow_succ`,
 `etaAtPos_succ_eq`) with explicit `change` where elaboration does not unfold, and
 `RightModule.action.naturality` in the base case and `rightActionPow_naturality` for the raw
-position-zero case. -/
+position-zero case.
+-/
 theorem rightActionPow_eta_castSucc (T : Monad C) (R : RightModule T D) (n : ℕ)
     (i : Fin (n + 1)) (X : C) :
     R.functor.map (etaAtPos T (n + 1) i.castSucc X) ≫ rightActionPow T R (n + 1) X =
@@ -456,10 +471,12 @@ theorem rightActionPow_eta_castSucc (T : Monad C) (R : RightModule T D) (n : ℕ
           R.functor.map (etaAtPos T n i0 (T.obj X))
       exact h_eq
 
-/-- Raw-position-zero unit insertion at degree `n`, mapped by `R`,
+/--
+Raw-position-zero unit insertion at degree `n`, mapped by `R`,
 followed by the left action whiskered by `monadPow n` and mapped by `R`,
 is identity. Derived from `LeftModule.unit_app` and functoriality.
-Parallel to `rightActionPow_unit_last`. -/
+Parallel to `rightActionPow_unit_last`.
+-/
 theorem leftAction_unit_zero (T : Monad C) (R : RightModule T D) (L : LeftModule A T)
     (n : ℕ) (a : A) :
     R.functor.map (etaAtPos T n ⟨0, by omega⟩ (L.functor.obj a)) ≫
@@ -489,10 +506,12 @@ theorem leftAction_unit_zero (T : Monad C) (R : RightModule T D) (L : LeftModule
     _ = 𝟙 _ := by
       rw [R.functor.map_id]
 
-/-- Two successive left endpoint actions at degrees `n+1` and `n`
+/--
+Two successive left endpoint actions at degrees `n+1` and `n`
 equal raw-position-zero multiplication at degree `n+1` followed by
 the left endpoint action. Derived from `LeftModule.assoc_app` and functoriality.
-Parallel to `rightActionPow_assoc_last`. -/
+Parallel to `rightActionPow_assoc_last`.
+-/
 theorem leftAction_assoc_zero (T : Monad C) (R : RightModule T D) (L : LeftModule A T)
     (n : ℕ) (a : A) :
     R.functor.map ((monadPow T (n + 1)).map (L.action.app a)) ≫
@@ -526,12 +545,14 @@ theorem leftAction_assoc_zero (T : Monad C) (R : RightModule T D) (L : LeftModul
           R.functor.map ((monadPow T n).map (L.action.app a)) := by
       rw [R.functor.map_comp]
 
-/-- Right and left bar endpoints commute: mapping the left action through
+/--
+Right and left bar endpoints commute: mapping the left action through
 `monadPow` at degree `n+1` and then applying `rightActionPow` at degree `n`
 equals applying `rightActionPow` at degree `n+1` and then mapping the left
 action through `monadPow` at degree `n`. Thin consequence of
 `rightActionPow_naturality` at `L.action.app a` and the definitional
-successor equation `rightActionPow_succ`. -/
+successor equation `rightActionPow_succ`.
+-/
 theorem rightActionPow_leftAction (T : Monad C) (R : RightModule T D)
     (L : LeftModule A T) (n : ℕ) (a : A) :
     R.functor.map ((monadPow T (n + 1)).map (L.action.app a)) ≫
@@ -541,13 +562,15 @@ theorem rightActionPow_leftAction (T : Monad C) (R : RightModule T D)
   have h := rightActionPow_naturality T R n (f := L.action.app a)
   simpa using h
 
-/-- Distant left-endpoint interchange for multiplication:
+/--
+Distant left-endpoint interchange for multiplication:
 `muAtPos` at degree `n+1` and position `i.succ` commutes with the left action
 mapped through `monadPow`. For `n`, `i : Fin n`, `a`,
 `R.map (muAtPos (n+1) (i.succ)) ≫ R.map (monadPow n (L.action)) =
 R.map (monadPow (n+1) (L.action)) ≫ R.map (muAtPos n i)`.
 Thin consequence of `muAtPos_naturality` at `L.action.app a` and the definitional
-successor equation for `muAtPos`, followed by `R.map`. -/
+successor equation for `muAtPos`, followed by `R.map`.
+-/
 theorem leftAction_mu_succ (T : Monad C) (R : RightModule T D) (L : LeftModule A T)
     (n : ℕ) (i : Fin n) (a : A) :
     R.functor.map (muAtPos T (n + 1) i.succ (L.functor.obj a)) ≫
@@ -589,13 +612,15 @@ theorem leftAction_mu_succ (T : Monad C) (R : RightModule T D) (L : LeftModule A
             R.functor.map (muAtPos T n i (L.functor.obj a)) := by
       rw [R.functor.map_comp]
 
-/-- Distant left-endpoint interchange for unit insertion:
+/--
+Distant left-endpoint interchange for unit insertion:
 `etaAtPos` at degree `n+1` and position `i.succ` commutes with the left action
 mapped through `monadPow`. For `n`, `i : Fin (n+1)`, `a`,
 `R.map (etaAtPos (n+1) (i.succ)) ≫ R.map (monadPow (n+1) (L.action)) =
 R.map (monadPow n (L.action)) ≫ R.map (etaAtPos n i)`.
 Thin consequence of `etaAtPos_naturality` at `L.action.app a` and the definitional
-successor equation for `etaAtPos`, followed by `R.map`. -/
+successor equation for `etaAtPos`, followed by `R.map`.
+-/
 theorem leftAction_eta_succ (T : Monad C) (R : RightModule T D) (L : LeftModule A T)
     (n : ℕ) (i : Fin (n + 1)) (a : A) :
     R.functor.map (etaAtPos T (n + 1) i.succ (L.functor.obj a)) ≫
@@ -641,12 +666,14 @@ section Elementary
 
 variable {T : Monad C} {R : RightModule T D} {L : LeftModule A T}
 
-/-- Component formula for faces: extracted to avoid self-reference while defining `barFace`.
-The right endpoint `d₀` is the reusable recursive iterated right action
+/--
+Component formula for faces: extracted to avoid self-reference while defining `barFace`.
+The right endpoint `d₀` is the recursive iterated right action
 `rightActionPow T R n (L a)`, avoiding `eqToHom` transports while keeping
 left-associated `monadPow`. The left endpoint `d_{n+1}` is the left action.
 Interior faces use the public reversed-position wrapper `barMuAtPos`, i.e.
-`muAtPos` with `Fin.rev`. -/
+`muAtPos` with `Fin.rev`.
+-/
 noncomputable def barFaceApp (n : ℕ) (i : Fin (n + 2)) (a : A) :
     (barObj T R L (n + 1)).obj a ⟶ (barObj T R L n).obj a :=
   if h0 : i.val = 0 then
@@ -661,8 +688,10 @@ noncomputable def barFaceApp (n : ℕ) (i : Fin (n + 2)) (a : A) :
       omega
     R.functor.map (barMuAtPos T n ⟨i.val - 1, hk⟩ (L.functor.obj a))
 
-/-- Public face `d_i : B_{n+1} ⟶ B_n`: `d₀` is the right action,
-  `d_{n+1}` is the left action, interior faces use `barMuAtPos`. -/
+/--
+Public face `d_i : B_{n+1} ⟶ B_n`: `d₀` is the right action,
+  `d_{n+1}` is the left action, interior faces use `barMuAtPos`.
+-/
 noncomputable def barFace (n : ℕ) (i : Fin (n + 2)) :
     barObj T R L (n + 1) ⟶ barObj T R L n where
   app a := barFaceApp n i a
@@ -931,13 +960,11 @@ theorem muAtPos_separated (n : ℕ) (i : Fin n) (j : Fin (n + 1))
       rw [h_eq2] at ih_eq
       exact ih_eq
 
-/-- For a monad `T` on `C`, `X : C`, and raw left-counted indices `i, j : Fin n`
-with `i ≤ j`, the two composites of monad multiplication agree:
-
-`muAtPos T (n + 1) j.succ X ≫ muAtPos T n i X =`
-`muAtPos T (n + 1) i.castSucc X ≫ muAtPos T n j X`.
-
-These indices are not the reversed indices of the public bar faces. -/
+/--
+Unified face–face law for `muAtPos`: for `i ≤ j : Fin n`,
+`d_i d_j` versus `d_j d_i` in the clean `succ`/`castSucc` indexing.
+`i = j` is `muAtPos_adjacent`, `i < j` is `muAtPos_separated`.
+-/
 theorem muAtPos_face_face (n : ℕ) (i j : Fin n) (h : i ≤ j) (X : C) :
     muAtPos T (n + 1) j.succ X ≫ muAtPos T n i X =
     muAtPos T (n + 1) i.castSucc X ≫ muAtPos T n j X := by
@@ -1153,7 +1180,7 @@ theorem etaAtPos_castSucc_muAtPos (n : ℕ) (i : Fin n) (X : C) :
           rw [← (monadPow T n).map_comp]
         _ = (monadPow T n).map (𝟙 _) := by
           rw [T.right_unit X]
-          rfl
+          simp only [Functor.id_obj]
         _ = 𝟙 _ := by
           rw [(monadPow T n).map_id]
     · have hpos : 0 < i.val := by omega
@@ -1221,7 +1248,7 @@ theorem etaAtPos_succ_muAtPos (n : ℕ) (i : Fin n) (X : C) :
           rw [← (monadPow T n).map_comp]
         _ = (monadPow T n).map (𝟙 _) := by
           rw [T.left_unit X]
-          rfl
+          simp only [Functor.id_obj]
         _ = 𝟙 _ := by
           rw [(monadPow T n).map_id]
     · have hpos : 0 < i.val := by omega

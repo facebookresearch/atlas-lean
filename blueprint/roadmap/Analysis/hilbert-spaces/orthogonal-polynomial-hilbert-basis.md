@@ -1,4 +1,4 @@
-# Hilbert basis of orthogonal polynomials on $(-1, 1)$
+# Hilbert basis of orthogonal polynomials on $[-1, 1]$
 
 Let $L^2([-1, 1])$ be the real
 Hilbert space of square-integrable real-valued functions on $[-1, 1]$ with respect to

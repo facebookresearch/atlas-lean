@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
@@ -121,8 +118,10 @@ theorem constFunctor_map_app (Q R : C) (f : Q ⟶ R) (n : ℕ) :
 
 variable {X : Data C}
 
-/-- Predicate that `p : X.obj 0 ⟶ Q` equalizes the two face maps in degree one.
-Uses unambiguous `Fin 2` indices. -/
+/--
+Predicate that `p : X.obj 0 ⟶ Q` equalizes the two face maps in degree one.
+Uses unambiguous `Fin 2` indices.
+-/
 def IsBalanced {Q : C} (p : X.obj 0 ⟶ Q) : Prop :=
   X.δ (0 : Fin 2) ≫ p = X.δ (1 : Fin 2) ≫ p
 
@@ -268,10 +267,12 @@ theorem hom_eq_of_app_zero_eq {Q : C} {f g : X ⟶ constData Q}
 /-- Balanced degree-zero maps as a subtype. -/
 def Balanced (Q : C) := { p : X.obj 0 ⟶ Q // IsBalanced (X := X) p }
 
-/-- Equivalence from balanced degree-zero maps to maps into constant data:
+/--
+Equivalence from balanced degree-zero maps to maps into constant data:
 forward sends `⟨p, hp⟩` to `balancedHom hp`; backward sends `f` to
 `⟨f.app 0, isBalanced_of_hom f⟩`. Requires the equalizer hypothesis
-`IsBalanced p : δ 0 ≫ p = δ 1 ≫ p`. -/
+`IsBalanced p : δ 0 ≫ p = δ 1 ≫ p`.
+-/
 def balancedEquiv {Q : C} : Balanced (X := X) Q ≃ (X ⟶ constData Q) where
   toFun p := balancedHom p.2
   invFun f := ⟨f.app 0, isBalanced_of_hom (X := X) f⟩
@@ -315,8 +316,10 @@ def mk (X : Data C) (Q : C) (f : X ⟶ constData Q) : Augmented C where
   right := Q
   hom := f
 
-/-- Augmentation over `Q` from a degree-zero map satisfying the equalizer
-hypothesis `IsBalanced p`; packages `balancedHom hp` via `mk`. -/
+/--
+Augmentation over `Q` from a degree-zero map satisfying the equalizer
+hypothesis `IsBalanced p`; packages `balancedHom hp` via `mk`.
+-/
 def augment (X : Data C) (Q : C) (p : X.obj 0 ⟶ Q) (hp : IsBalanced (X := X) p) :
     Augmented C :=
   mk X Q (balancedHom hp)
