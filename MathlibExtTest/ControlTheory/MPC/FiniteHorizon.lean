@@ -147,4 +147,37 @@ example : Feasible (fun x u : ℝ => x + u) (0 + 0) (Set.Icc (-1) 1)
     (Set.Icc (-1) 1) ({0} : Set ℝ) le_rfl hsub (fun x => -x) hκU hκf
     (fun _ => 0) hfeas
 
+
+-- Horizon `2` with nonconstant input: the first shifted entry is the
+-- dropped-and-shifted second input, and the last entry is the appended
+-- terminal feedback. Dynamics `x + u` over `ℤ`, `u = [1, 2]`,
+-- `κ x = 10 * x + 7`: the trajectory is `0, 1, 3`, so the shifted
+-- sequence is `[2, κ 3] = [2, 37]` and the shifted trajectory from
+-- `x₁ = 1` reaches `3` and then `3 + 37 = 40`.
+example : shiftAppend (fun x u : ℤ => x + u) 0
+    (fun k => if k.val = 0 then 1 else 2) (fun x => 10 * x + 7) (0 : Fin 2) = 2 := by
+  simp [shiftAppend, traj]
+
+example : shiftAppend (fun x u : ℤ => x + u) 0
+    (fun k => if k.val = 0 then 1 else 2) (fun x => 10 * x + 7) (1 : Fin 2) = 37 := by
+  simp [shiftAppend, traj]
+
+example : traj (fun x u : ℤ => x + u) (0 + 1)
+    (shiftAppend (fun x u : ℤ => x + u) 0
+      (fun k => if k.val = 0 then 1 else 2) (fun x => 10 * x + 7)) 2 le_rfl = 40 := by
+  decide
+
+-- Feasibility at horizon `2` transported by `feasible_shift` itself,
+-- with the trivial (full) constraint sets.
+example : Feasible (fun x u : ℝ => x + u) (0 + (1 : ℝ)) Set.univ Set.univ
+    Set.univ 2 (shiftAppend (fun x u : ℝ => x + u) 0
+      (fun k => if k.val = 0 then 1 else 2) (fun x => -x)) := by
+  have hfeas : Feasible (fun x u : ℝ => x + u) 0 Set.univ Set.univ
+      Set.univ 2 (fun k => if k.val = 0 then (1 : ℝ) else 2) :=
+    ⟨fun _ => Set.mem_univ _, fun _ _ => Set.mem_univ _, Set.mem_univ _⟩
+  exact feasible_shift (fun x u : ℝ => x + u) 0 Set.univ Set.univ Set.univ
+    (by decide) (Set.Subset.refl _) (fun x => -x)
+    (fun x _ => Set.mem_univ _) (fun x _ => Set.mem_univ _)
+    (fun k => if k.val = 0 then (1 : ℝ) else 2) hfeas
+
 #print axioms exists_optimal
