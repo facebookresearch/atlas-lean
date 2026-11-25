@@ -12,6 +12,7 @@ public import Mathlib.Algebra.ContinuedFractions.Computation.Approximations
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # Clean lattice parallelograms
@@ -96,6 +97,97 @@ theorem unimodularlyEquivalent_refl (P : Set (ℝ × ℝ)) : UnimodularlyEquival
     funext p
     simp [unimodularMap]
   simp [this]
+
+/-- The closed standard parallelogram in coordinates along its two sides. -/
+private theorem mem_stdCleanParallelogram_iff {a n : ℕ} {p : ℝ × ℝ} :
+    p ∈ stdCleanParallelogram a n ↔
+      ∃ s t : ℝ, 0 ≤ s ∧ s ≤ 1 ∧ 0 ≤ t ∧ t ≤ 1 ∧ p = (s + a * t, n * t) := by
+  simp [stdCleanParallelogram, latticeParallelogram, Prod.smul_mk, smul_eq_mul, mul_comm]
+
+set_option linter.unusedVariables false in
+/-- **Unimodular equivalences between the parallelograms $P_{b,n}$.** For natural numbers $b$
+and $n$ let $P_{b,n}$ be the parallelogram spanned by $(1, 0)$ and $(b, n)$, with vertices
+$(0, 0)$, $(1, 0)$, $(b, n)$, $(b + 1, n)$. Let $n$, $a$ and $a'$ be natural numbers with $n > 1$,
+$1 \le a < n$, $\gcd(a, n) = 1$, $1 \le a' < n$ and $a a' \equiv 1 \pmod{n}$. Then $P_{a,n}$ is
+unimodularly equivalent to each of $P_{n-a,n}$, $P_{a',n}$ and $P_{n-a',n}$.
+
+Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
+between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
+Lemma 2 (`integers-2026-A10-lem-2`). -/
+theorem stdCleanParallelogram_unimodularlyEquivalent {a n ai : ℕ} (hn : 1 < n)
+    (ha : 1 ≤ a) (han : a < n) (hcop : Nat.Coprime a n) (hai : 1 ≤ ai) (hain : ai < n)
+    (hinv : a * ai ≡ 1 [MOD n]) :
+    UnimodularlyEquivalent (stdCleanParallelogram a n) (stdCleanParallelogram (n - a) n) ∧
+      UnimodularlyEquivalent (stdCleanParallelogram a n) (stdCleanParallelogram ai n) ∧
+      UnimodularlyEquivalent (stdCleanParallelogram a n) (stdCleanParallelogram (n - ai) n) := by
+  obtain ⟨m, hm⟩ := hinv.dvd
+  have hbezout : (a : ℤ) * ai + m * n = 1 := by
+    simp only [Nat.cast_one, Nat.cast_mul] at hm
+    linear_combination -hm
+  have hbezoutR : (a : ℝ) * ai + (m : ℝ) * n = 1 := by exact_mod_cast hbezout
+  refine ⟨?_, ?_, ?_⟩
+  · -- Reverse the coordinate along the horizontal side.
+    let M : Matrix (Fin 2) (Fin 2) ℤ := !![-1, 1; 0, 1]
+    have hM (s t : ℝ) : unimodularMap M (1, 0) (s + a * t, n * t) =
+        (1 - s + (↑(n - a) : ℝ) * t, n * t) := by
+      apply Prod.ext
+      · simp [unimodularMap, M, Nat.cast_sub han.le]
+        ring
+      · simp [unimodularMap, M]
+    refine ⟨M, (1, 0), Or.inr (by norm_num [M, Matrix.det_fin_two]), ?_⟩
+    ext p
+    constructor
+    · rintro ⟨q, hq, rfl⟩
+      obtain ⟨s, t, hs₀, hs₁, ht₀, ht₁, rfl⟩ := mem_stdCleanParallelogram_iff.mp hq
+      exact mem_stdCleanParallelogram_iff.mpr
+        ⟨1 - s, t, sub_nonneg.mpr hs₁, sub_le_self _ hs₀, ht₀, ht₁, hM s t⟩
+    · intro hp
+      obtain ⟨s, t, hs₀, hs₁, ht₀, ht₁, rfl⟩ := mem_stdCleanParallelogram_iff.mp hp
+      refine ⟨_, mem_stdCleanParallelogram_iff.mpr
+        ⟨1 - s, t, sub_nonneg.mpr hs₁, sub_le_self _ hs₀, ht₀, ht₁, rfl⟩, ?_⟩
+      rw [hM, sub_sub_cancel]
+  · -- Exchange the coordinates along the two sides.
+    let M : Matrix (Fin 2) (Fin 2) ℤ := !![↑ai, m; ↑n, -(a : ℤ)]
+    have hM (s t : ℝ) : unimodularMap M 0 (s + a * t, n * t) = (t + ai * s, n * s) := by
+      apply Prod.ext
+      · simp [unimodularMap, M]
+        linear_combination t * hbezoutR
+      · simp [unimodularMap, M]
+        ring
+    refine ⟨M, 0, Or.inr ?_, ?_⟩
+    · simp [M, Matrix.det_fin_two]
+      linear_combination -hbezout
+    · ext p
+      constructor
+      · rintro ⟨q, hq, rfl⟩
+        obtain ⟨s, t, hs₀, hs₁, ht₀, ht₁, rfl⟩ := mem_stdCleanParallelogram_iff.mp hq
+        exact mem_stdCleanParallelogram_iff.mpr ⟨t, s, ht₀, ht₁, hs₀, hs₁, hM s t⟩
+      · intro hp
+        obtain ⟨s, t, hs₀, hs₁, ht₀, ht₁, rfl⟩ := mem_stdCleanParallelogram_iff.mp hp
+        exact ⟨_, mem_stdCleanParallelogram_iff.mpr ⟨t, s, ht₀, ht₁, hs₀, hs₁, rfl⟩, hM t s⟩
+  · -- Compose the exchange with reversal of the new horizontal coordinate.
+    let M : Matrix (Fin 2) (Fin 2) ℤ := !![(n : ℤ) - ai, -m - a; ↑n, -(a : ℤ)]
+    have hM (s t : ℝ) : unimodularMap M (1, 0) (s + a * t, n * t) =
+        (1 - t + (↑(n - ai) : ℝ) * s, n * s) := by
+      apply Prod.ext
+      · simp [unimodularMap, M, Nat.cast_sub hain.le]
+        linear_combination -t * hbezoutR
+      · simp [unimodularMap, M]
+        ring
+    refine ⟨M, (1, 0), Or.inl ?_, ?_⟩
+    · simp [M, Matrix.det_fin_two]
+      linear_combination hbezout
+    · ext p
+      constructor
+      · rintro ⟨q, hq, rfl⟩
+        obtain ⟨s, t, hs₀, hs₁, ht₀, ht₁, rfl⟩ := mem_stdCleanParallelogram_iff.mp hq
+        exact mem_stdCleanParallelogram_iff.mpr
+          ⟨1 - t, s, sub_nonneg.mpr ht₁, sub_le_self _ ht₀, hs₀, hs₁, hM s t⟩
+      · intro hp
+        obtain ⟨s, t, hs₀, hs₁, ht₀, ht₁, rfl⟩ := mem_stdCleanParallelogram_iff.mp hp
+        refine ⟨_, mem_stdCleanParallelogram_iff.mpr
+          ⟨t, 1 - s, ht₀, ht₁, sub_nonneg.mpr hs₁, sub_le_self _ hs₀, rfl⟩, ?_⟩
+        rw [hM, sub_sub_cancel]
 
 /-- **Clean lattice parallelogram.** For points $u, v \in \mathbb{R}^2$, the parallelogram
 spanned by $u$ and $v$ is clean when $u$ and $v$ are lattice points and the lattice points on the
