@@ -191,13 +191,17 @@ class WorkflowTests(unittest.TestCase):
         gated = text.split('\nif [[ "$tool_tests" == run ]]; then\n', 1)[1].split("\nelse\n", 1)[0]
         rest = text.replace(gated, "")
 
+        suite = re.compile(r'\s*(?:PYTHONPATH=\S+\s+)?python3 (?:-m unittest discover\s+-s "\$REPO_ROOT/([\w/]+)" '
+                           r'-p \'?([\w*.]+)\'?( -v)?|"\$REPO_ROOT/([\w/.]+)")')
+
         def suites(block: str) -> list[str]:
             joined = block.replace("\\\n", " ")
-            found = re.findall(r'^\s*(?:PYTHONPATH=\S+\s+)?python3 (?:-m unittest discover\s+-s "\$REPO_ROOT/([\w/]+)" '
-                               r'-p \'?([\w*.]+)\'?|"\$REPO_ROOT/([\w/.]+)")', joined, re.M)
-            return [f"{s} {p}" if s else script for s, p, script in found]
+            return [f"{m[1]} {m[2]}" if m[1] else m[4] for m in re.finditer(r"(?m)^" + suite.pattern, joined)]
         self.assertEqual(suites(gated), TOOL_TESTS)
         self.assertEqual(suites(rest), ALWAYS)
+        # The skipped block holds those suites and nothing else: another command there would be skipped unseen.
+        lines = [line for line in gated.replace("\\\n", " ").splitlines() if line.strip()]
+        self.assertEqual([line for line in lines if not suite.fullmatch(line)], [])
         self.assertIn('tool_tests="${ATLAS_TOOL_TESTS-run}"\ncase "$tool_tests" in\n  run|skip) ;;\n', text)
         for value in ("", "yes", "Skip"):
             with self.subTest(value=value):
