@@ -86,31 +86,43 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
   [IsContMDiffRiemannianBundle I ∞ E (fun x : M ↦ TangentSpace I x)]
 
-/-- The Riemann curvature endomorphism of a `C^∞` Riemannian manifold `(M, g)` at `x`:
-`R(u, v) w = ∇_u ∇_v w - ∇_v ∇_u w - ∇_[u, v] w`, the curvature expression
-(`CovariantDerivative.extendCurvature`) of the Levi-Civita connection on the extensions of
-`u`, `v`, `w`; since the Levi-Civita connection of a `C^∞` metric is `C^∞`, this is the textbook
-curvature (see the module docstring).
+/-- **Riemann curvature endomorphism.** For a point $x$ of a $C^\infty$ Riemannian manifold $(M, g)$
+with Levi-Civita connection $\nabla$, and tangent vectors $u, v, w \in T_x M$,
+$$R(u, v) w = (\nabla_X \nabla_Y W - \nabla_Y \nabla_X W - \nabla_{[X, Y]} W)(x),$$
+where $X$, $Y$, $W$ are the vector fields extending $u$, $v$, $w$ that have constant coordinates
+in the preferred chart at $x$. Since the Levi-Civita connection of a $C^\infty$ metric is
+$C^\infty$, this is the textbook curvature endomorphism and does not depend on the extensions.
 
-Sign convention of [Lang, Def. 2.1] and [Gud, Def. 8.8] (see the module docstring); the opposite
-sign convention is also common. -/
+This is the sign convention of [Lang, Def. 2.1] and [Gud, Def. 8.8]; the opposite sign convention
+is also common. -/
 def riemannCurvature (x : M) (u v w : TangentSpace I x) : TangentSpace I x :=
   (CovariantDerivative.leviCivitaConnection I M).extendCurvature x u v w
 
-/-- The Riemann curvature endomorphism is antisymmetric in its first two arguments. -/
+/-- **Antisymmetry of the Riemann curvature.** Let $(M, g)$ be a $C^\infty$ Riemannian manifold.
+Its Riemann curvature endomorphism $R$ is antisymmetric in its first two arguments:
+$R(u, v) w = -R(v, u) w$ for every point $x \in M$ and all tangent vectors $u, v, w \in T_x M$. -/
 theorem riemannCurvature_antisymm (x : M) (u v w : TangentSpace I x) :
     riemannCurvature I x u v w = - riemannCurvature I x v u w :=
   (CovariantDerivative.leviCivitaConnection I M).extendCurvature_antisymm x u v w
 
-/-- The sectional curvature `K(u, v) = ⟪R(u, v) v, u⟫ / (‖u‖² ‖v‖² - ⟪u, v⟫²)` of the plane
-spanned by tangent vectors `u` and `v` at `x` ([Lang, Def. 2.4], [Gud, Def. 8.14]). With the sign
-convention of `riemannCurvature`, the round unit sphere has `K = 1`. The denominator vanishes, and
-so does the value, when `u` and `v` are linearly dependent. -/
+/-- **Sectional curvature.** Let $(M, g)$ be a $C^\infty$ Riemannian manifold modeled on a
+finite-dimensional real space (boundary and corners allowed), with Riemann curvature
+endomorphism $R$, and let $x \in M$. The sectional curvature of tangent vectors
+$u, v \in T_x M$ is
+$$K(u, v) = \frac{\langle R(u, v) v, u \rangle}{\|u\|^2 \|v\|^2 - \langle u, v \rangle^2},$$
+the sectional curvature of the plane spanned by $u$ and $v$ when they are linearly independent
+([Lang, Def. 2.4], [Gud, Def. 8.14]). When $u$ and $v$ are linearly dependent the denominator
+vanishes and $K(u, v)$ is $0$ by definition.
+
+With the sign convention used here for $R$, the round unit sphere has $K = 1$. -/
 def sectionalCurvature (x : M) (u v : TangentSpace I x) : ℝ :=
   inner ℝ (riemannCurvature I x u v v) u / (‖u‖ ^ 2 * ‖v‖ ^ 2 - inner ℝ u v ^ 2)
 
-/-- The sectional curvature formula vanishes on linearly dependent pairs `u`, `c • u`, where its
-denominator `‖u‖² ‖c • u‖² - ⟪u, c • u⟫²` vanishes. -/
+/-- **Sectional curvature vanishes on a vector and a multiple of it.** Let $(M, g)$ be a
+$C^\infty$ Riemannian manifold modeled on a finite-dimensional real space (boundary and corners
+allowed), and let $x \in M$, $u \in T_x M$ and $c \in \mathbb{R}$. Then the sectional curvature
+at $x$ satisfies $K(u, cu) = 0$: the denominator $\|u\|^2 \|cu\|^2 - \langle u, cu \rangle^2$ of
+its defining formula vanishes, and the quotient is then $0$ by definition. -/
 theorem sectionalCurvature_smul_right (x : M) (u : TangentSpace I x) (c : ℝ) :
     sectionalCurvature I x u (c • u) = 0 := by
   have h : ‖u‖ ^ 2 * ‖c • u‖ ^ 2 - inner ℝ u (c • u) ^ 2 = 0 := by
@@ -119,51 +131,69 @@ theorem sectionalCurvature_smul_right (x : M) (u : TangentSpace I x) (c : ℝ) :
     ring
   rw [sectionalCurvature, h, div_zero]
 
-/-- The sectional curvature formula vanishes on a pair of equal vectors. -/
+/-- **Sectional curvature vanishes on equal vectors.** For every point $x$ of a $C^\infty$
+Riemannian manifold $(M, g)$ and every tangent vector $u \in T_x M$, the sectional curvature formula
+$K$ gives $K(u, u) = 0$: its denominator $\|u\|^2 \|u\|^2 - \langle u, u \rangle^2$ vanishes, where
+$\langle \cdot, \cdot \rangle$ and $\|\cdot\|$ are the inner product and norm on $T_x M$ given by
+$g$, and a quotient by $0$ is taken to be $0$. -/
 @[simp]
 theorem sectionalCurvature_self (x : M) (u : TangentSpace I x) :
     sectionalCurvature I x u u = 0 := by
   simpa using sectionalCurvature_smul_right I x u 1
 
-/-- The Ricci curvature `Ric(v, w)` at `x`: the trace of the endomorphism `z ↦ R(z, v) w` of
-`T_x M` ([Lang, Def. 2.7]), i.e. the metric-free Ricci contraction
-`CovariantDerivative.extendRicci` of the Levi-Civita connection. The unit `n`-sphere has
-`Ric = (n - 1) g`. -/
+/-- **Ricci curvature.** For a point $x$ of a $C^\infty$ Riemannian manifold $(M, g)$ and tangent
+vectors $v, w \in T_x M$, the Ricci curvature is
+$\operatorname{Ric}_x(v, w) = \sum_i e_i^*(R(e_i, v) w)$, where $R$ is the Riemann curvature
+endomorphism of the Levi-Civita connection of $g$, $(e_i)$ is a fixed basis of $T_x M$ and
+$(e_i^*)$ is its dual basis; the contraction itself uses no metric. Since $z \mapsto R(z, v) w$ is
+linear, this is its trace and does not depend on the basis ([Lang, Def. 2.7]). The unit
+$n$-sphere has $\operatorname{Ric} = (n - 1) g$. -/
 def ricci (x : M) (v w : TangentSpace I x) : ℝ :=
   (CovariantDerivative.leviCivitaConnection I M).extendRicci x v w
 
-/-- The scalar curvature at `x`: the metric trace `∑ i, Ric(eᵢ, eᵢ)` of the Ricci curvature, for
-the orthonormal basis `e = stdOrthonormalBasis ℝ (TangentSpace I x)` ([Gud, Def. 8.32]). The
-unit `n`-sphere has scalar curvature `n (n - 1)`. -/
+/-- **Scalar curvature.** The scalar curvature of a $C^\infty$ Riemannian manifold $(M, g)$ at a
+point $x$ is $\sum_i \operatorname{Ric}_x(e_i, e_i)$, the metric trace of the Ricci curvature
+$\operatorname{Ric}$, where $(e_i)$ is a fixed orthonormal basis of $T_x M$ ([Gud, Def. 8.32]).
+The unit $n$-sphere has scalar curvature $n (n - 1)$. -/
 def scalarCurvature (x : M) : ℝ :=
   ∑ i, ricci I x (stdOrthonormalBasis ℝ (TangentSpace I x) i)
     (stdOrthonormalBasis ℝ (TangentSpace I x) i)
 
 variable (M)
 
-/-- `M` has sectional curvature `≥ k`: `K(u, v) ≥ k` for every point `x` and all linearly
-independent `u v : T_x M`. -/
+/-- **Sectional curvature bounded below.** A $C^\infty$ Riemannian manifold $M$ has sectional
+curvature at least $k \in \mathbb{R}$ when $K(u, v) \ge k$ for every point $x \in M$ and all
+linearly independent tangent vectors $u, v \in T_x M$, where $K(u, v)$ is the sectional curvature
+of the plane spanned by $u$ and $v$. -/
 def SectionalCurvatureGE (k : ℝ) : Prop :=
   ∀ (x : M) (u v : TangentSpace I x), LinearIndependent ℝ ![u, v] →
     k ≤ sectionalCurvature I x u v
 
-/-- `M` has sectional curvature `≤ k`: `K(u, v) ≤ k` for every point `x` and all linearly
-independent `u v : T_x M`. -/
+/-- **Sectional curvature bounded above.** A $C^\infty$ Riemannian manifold $M$ has sectional
+curvature at most $k \in \mathbb{R}$ when $K(u, v) \le k$ for every point $x \in M$ and all
+linearly independent tangent vectors $u, v \in T_x M$, where $K(u, v)$ is the sectional curvature
+of the plane spanned by $u$ and $v$. -/
 def SectionalCurvatureLE (k : ℝ) : Prop :=
   ∀ (x : M) (u v : TangentSpace I x), LinearIndependent ℝ ![u, v] →
     sectionalCurvature I x u v ≤ k
 
-/-- `M` has Ricci curvature `≥ k`, i.e. `Ric ≥ k g`: `Ric(v, v) ≥ k ‖v‖²` for every point `x` and
-every `v : T_x M`. -/
+/-- **Ricci curvature bounded below.** A $C^\infty$ Riemannian manifold $(M, g)$ has Ricci curvature
+at least $k \in \mathbb{R}$, written $\operatorname{Ric} \ge k g$, when
+$\operatorname{Ric}_x(v, v) \ge k \|v\|^2$ for every point $x \in M$ and every tangent vector
+$v \in T_x M$, where $\operatorname{Ric}$ is the Ricci curvature and $\|v\|$ is the norm of $v$
+given by $g$. -/
 def RicciGE (k : ℝ) : Prop :=
   ∀ (x : M) (v : TangentSpace I x), k * ‖v‖ ^ 2 ≤ ricci I x v v
 
-/-- `M` has scalar curvature `≥ k` at every point. -/
+/-- **Scalar curvature bounded below.** A $C^\infty$ Riemannian manifold $M$ has scalar curvature at
+least $k \in \mathbb{R}$ when its scalar curvature at every point $x \in M$ is at least $k$. -/
 def ScalarCurvatureGE (k : ℝ) : Prop :=
   ∀ x : M, k ≤ scalarCurvature I x
 
-/-- The metric of `M` is Einstein: `Ric = λ g` for a constant `λ` ([Lang], Einstein manifolds).
-Ricci-flat is the case `λ = 0`. -/
+/-- **Einstein metric.** A $C^\infty$ Riemannian manifold $(M, g)$ is Einstein when there is a real
+constant $\lambda$ such that $\operatorname{Ric}_x(v, w) = \lambda \, g_x(v, w)$ for every point
+$x \in M$ and all tangent vectors $v, w \in T_x M$, where $\operatorname{Ric}$ is the Ricci
+curvature ([Lang], Einstein manifolds). Ricci-flat is the case $\lambda = 0$. -/
 def IsEinstein : Prop :=
   ∃ c : ℝ, ∀ (x : M) (v w : TangentSpace I x), ricci I x v w = c * inner ℝ v w
 

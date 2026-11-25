@@ -27,7 +27,7 @@ separator argument `detoursNormal_of_isHamPath` and `cnfSat_of_isHamPath`. Undec
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 /-- **The construction has a Hamiltonian path iff the formula is satisfiable.** Let
 $\varphi$ be a CNF formula with $m$ clauses and $k$ distinct variables, and let

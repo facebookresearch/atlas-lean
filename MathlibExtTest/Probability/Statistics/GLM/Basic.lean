@@ -228,7 +228,7 @@ theorem glmScore_exponential_X₁ (β : Fin 1 → ℝ) :
   fin_cases k
   simp only [CanonicalCumulant.glmScore, glmPredictor_X₁]
   simp [exponential, X₁, y₁, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.vecHead,
-    Matrix.vecTail]
+    Matrix.vecTail, -Matrix.transpose_of]
 
 /-- Non-vacuity on a restricted domain: the exponential-family log likelihood has at most one
 maximizer on `b < -1 / 2`. -/

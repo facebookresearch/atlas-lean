@@ -21,7 +21,10 @@ universe u
 
 namespace Cslib.Algorithms.Lean.TimeM
 
-/-- Every admissible vector runs the same actual FFT through array admission. -/
+/-- **The array FFT agrees with the vector FFT.** Let $R$ be a commutative ring, $d$ a natural
+number, $\omega \in R$ and $x$ a vector over $R$ of length $2^d$. Then the array FFT of $x$,
+viewed as an array, with root $\omega$ returns a result, namely the output of the radix-two FFT
+of the length-$2^d$ vector $x$ with root $\omega$, viewed as an array. -/
 theorem fftArray_ret_of_vector {R : Type u} [CommRing R]
     (d : Nat) (omega : R) (xs : Vector R (2 ^ d)) :
     (fftArray omega xs.toArray).ret = some (fft d omega xs).ret.toArray := by
@@ -32,7 +35,10 @@ theorem fftArray_ret_of_vector {R : Type u} [CommRing R]
   rw [dite_eq_left hsize]
   rfl
 
-/-- Admission preserves the charge of the actual FFT on each valid vector. -/
+/-- **The array FFT costs the same as the vector FFT.** Let $R$ be a commutative ring, $d$ a
+natural number, $\omega \in R$ and $x$ a vector over $R$ of length $2^d$. Then the cost of the
+array FFT of $x$, viewed as an array, with root $\omega$ equals the cost of the radix-two FFT of
+the length-$2^d$ vector $x$ with root $\omega$. -/
 theorem fftArray_time_of_vector {R : Type u} [CommRing R]
     (d : Nat) (omega : R) (xs : Vector R (2 ^ d)) :
     (fftArray omega xs.toArray).time = (fft d omega xs).time := by
@@ -43,7 +49,11 @@ theorem fftArray_time_of_vector {R : Type u} [CommRing R]
   rw [dite_eq_left hsize]
   rfl
 
-/-- An actual admitted Complex array has its full source coefficient at every valid frequency. -/
+/-- **The array FFT computes the discrete Fourier transform.** Let $d$ be a natural number,
+$\omega \in \mathbb{C}$ a primitive $2^d$-th root of unity, $x_0, \dots, x_{2^d - 1}$ complex
+numbers and $k < 2^d$. Then the array FFT of the array $(x_0, \dots, x_{2^d - 1})$ with root
+$\omega$ returns an array $y$ of length $2^d$ whose entry at index $k$ is the discrete Fourier
+sum $\sum_{j=0}^{2^d - 1} \omega^{jk} x_j$. -/
 theorem fftArray_correct (d : Nat) (omega : ℂ)
     (hroot : IsPrimitiveRoot omega (2 ^ d)) (xs : Vector ℂ (2 ^ d))
     (k : Fin (2 ^ d)) :
@@ -59,7 +69,11 @@ theorem fftArray_correct (d : Nat) (omega : ℂ)
     (Array.getElem_eq_getD (h := by simp) 0).symm
   exact hsample.trans (fft_correct d omega hroot xs k)
 
-/-- The admitted array's actual execution satisfies the same exact count. -/
+/-- **Exact cost of the array FFT.** Let $R$ be a commutative ring, $d$ a natural number,
+$\omega \in R$ and $x$ a vector over $R$ of length $2^d$. Then the cost $T$ of the array FFT of
+$x$, viewed as an array, with root $\omega$ satisfies $T + 1 = (7d + 1) \cdot 2^d$.
+
+Costs are counted in the scalar-operation and array-access model of the radix-two FFT. -/
 theorem fftArray_time_add_one {R : Type u} [CommRing R]
     (d : Nat) (omega : R) (xs : Vector R (2 ^ d)) :
     (fftArray omega xs.toArray).time + 1 = (7 * d + 1) * 2 ^ d := by

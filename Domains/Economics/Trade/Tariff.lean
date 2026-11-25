@@ -94,7 +94,8 @@ theorem demand_sub_tariff (m : LinearMarket) (Pw t : ℝ) :
   simp only [demand]
   ring
 
-/-- In the non-prohibitive regime, imports fall by `(b + d) t`. -/
+/-- For `t ≥ 0`, in the non-prohibitive regime `S (Pw + t) ≤ D (Pw + t)`, imports fall by
+`(b + d) t`. -/
 theorem imports_sub_tariff (m : LinearMarket) {Pw t : ℝ} (ht : 0 ≤ t)
     (hint : supply m (Pw + t) ≤ demand m (Pw + t)) :
     imports m Pw - imports m (Pw + t) = (m.b + m.d) * t := by
@@ -139,7 +140,8 @@ theorem integral_supply (m : LinearMarket) (u v : ℝ) :
     smul_eq_mul]
   ring
 
-/-- **Tariff welfare loss.** In the non-prohibitive regime, the change in total
+/-- **Tariff welfare loss.** For `t ≥ 0`, in the non-prohibitive regime
+`S (Pw + t) ≤ D (Pw + t)`, the change in total
 surplus (consumer surplus + producer surplus + tariff revenue) is minus the sum of
 the production and consumption deadweight triangles. -/
 theorem welfare_change_tariff (m : LinearMarket) {Pw t : ℝ} (ht : 0 ≤ t)

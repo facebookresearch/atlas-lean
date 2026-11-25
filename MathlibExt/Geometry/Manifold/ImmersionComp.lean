@@ -347,8 +347,18 @@ private lemma immersionComp_mem_codChart_source {F : Type*}
 
 set_option maxHeartbeats 800000 in
 -- The nested chart and partial-equivalence calculation needs extra elaboration budget.
-/-- The composition of two pointwise immersions with fixed complements is an immersion when the
-intermediate and target models are boundaryless, with the product of the two complements. -/
+/-- **Composition of immersions at a point with fixed complements.** Let $\mathbb{K}$ be a
+nontrivially normed field, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$
+be charted spaces modelled through models with corners on normed spaces over $\mathbb{K}$, where
+the models of $N$ and $N'$ are boundaryless. Let $F_1$ and $F_2$ be normed spaces over
+$\mathbb{K}$. If $f : M \to N$ is a $C^n$ immersion at a point $x \in M$ with complement $F_1$
+and $g : N \to N'$ is a $C^n$ immersion at $f(x)$ with complement $F_2$, then $g \circ f$ is a
+$C^n$ immersion at $x$ with complement $F_1 \times F_2$.
+
+Here a map is a $C^n$ immersion at a point with complement $F$ when there are charts of the
+maximal $C^n$ atlases around the point and its image, the first mapped by the map into the
+second, in which the map reads $u \mapsto \varphi(u, 0)$ for a continuous linear isomorphism
+$\varphi$ from the product of the source model space with $F$ onto the target model space. -/
 theorem _root_.Manifold.IsImmersionAtOfComplement.comp {F₁ F₂ : Type*}
     [NormedAddCommGroup F₁] [NormedSpace 𝕜 F₁]
     [NormedAddCommGroup F₂] [NormedSpace 𝕜 F₂]
@@ -429,8 +439,18 @@ theorem _root_.Manifold.IsImmersionAtOfComplement.comp {F₁ F₂ : Type*}
   rw [hgp, hw]
   exact (immersionCompEquiv_apply_zero hf.equiv hg.equiv z).symm
 
-/-- The composition of two immersions at a point is an immersion at that point when the
-intermediate and target models are boundaryless. -/
+/-- **Composition of immersions at a point over boundaryless models.** Let $\mathbb{K}$ be a
+nontrivially normed field, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$
+be charted spaces modelled through models with corners on normed spaces over $\mathbb{K}$, where
+the models of $N$ and $N'$ are boundaryless. If $f : M \to N$ is a $C^n$ immersion at a point
+$x \in M$ and $g : N \to N'$ is a $C^n$ immersion at $f(x)$, then $g \circ f$ is a $C^n$
+immersion at $x$.
+
+Here a map is a $C^n$ immersion at a point when, for some normed space $F$ over $\mathbb{K}$,
+there are charts of the maximal $C^n$ atlases around the point and its image, the first mapped by
+the map into the second, in which the map reads $u \mapsto \varphi(u, 0)$ for a continuous linear
+isomorphism $\varphi$ from the product of the source model space with $F$ onto the target model
+space. -/
 theorem _root_.Manifold.IsImmersionAt.comp [J.Boundaryless] [J'.Boundaryless]
     {f : M → N} {g : N → N'} {x : M}
     (hg : IsImmersionAt J J' n g (f x)) (hf : IsImmersionAt I J n f x) :
@@ -438,8 +458,17 @@ theorem _root_.Manifold.IsImmersionAt.comp [J.Boundaryless] [J'.Boundaryless]
   (hg.isImmersionAtOfComplement_complement.comp
     hf.isImmersionAtOfComplement_complement).isImmersionAt
 
-/-- The composition of two immersions with fixed complements is an immersion when the intermediate
-and target models are boundaryless, with the product of the two complements. -/
+/-- **Composition of immersions with fixed complements.** Let $\mathbb{K}$ be a nontrivially normed
+field, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$ be charted spaces
+modelled through models with corners on normed spaces over $\mathbb{K}$, where the models of $N$
+and $N'$ are boundaryless. Let $F_1$ and $F_2$ be normed spaces over $\mathbb{K}$. If
+$f : M \to N$ is a $C^n$ immersion with complement $F_1$ and $g : N \to N'$ is a $C^n$ immersion
+with complement $F_2$, then $g \circ f$ is a $C^n$ immersion with complement $F_1 \times F_2$.
+
+Here a map is a $C^n$ immersion with complement $F$ when for every point there are charts of the
+maximal $C^n$ atlases around the point and its image, the first mapped by the map into the
+second, in which the map reads $u \mapsto \varphi(u, 0)$ for a continuous linear isomorphism
+$\varphi$ from the product of the source model space with $F$ onto the target model space. -/
 theorem _root_.Manifold.IsImmersionOfComplement.comp {F₁ F₂ : Type*}
     [NormedAddCommGroup F₁] [NormedSpace 𝕜 F₁]
     [NormedAddCommGroup F₂] [NormedSpace 𝕜 F₂]
@@ -450,8 +479,17 @@ theorem _root_.Manifold.IsImmersionOfComplement.comp {F₁ F₂ : Type*}
     IsImmersionOfComplement (F₁ × F₂) I J' n (g ∘ f) :=
   fun x ↦ (hg (f x)).comp (hf x)
 
-/-- The composition of two immersions is an immersion when the intermediate and target models are
-boundaryless. -/
+/-- **Composition of immersions over boundaryless models.** Let $\mathbb{K}$ be a nontrivially
+normed field, let $n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$ be charted
+spaces modelled through models with corners on normed spaces over $\mathbb{K}$, where the models
+of $N$ and $N'$ are boundaryless. If $f : M \to N$ and $g : N \to N'$ are $C^n$ immersions, then
+$g \circ f$ is a $C^n$ immersion.
+
+Here a map is a $C^n$ immersion when there is a normed space $F$ over $\mathbb{K}$ such that for
+every point there are charts of the maximal $C^n$ atlases around the point and its image, the
+first mapped by the map into the second, in which the map reads $u \mapsto \varphi(u, 0)$ for a
+continuous linear isomorphism $\varphi$ from the product of the source model space with $F$ onto
+the target model space. -/
 theorem _root_.Manifold.IsImmersion.comp [J.Boundaryless] [J'.Boundaryless]
     {f : M → N} {g : N → N'}
     (hg : IsImmersion J J' n g) (hf : IsImmersion I J n f) :
@@ -460,15 +498,26 @@ theorem _root_.Manifold.IsImmersion.comp [J.Boundaryless] [J'.Boundaryless]
     hf.isImmersionOfComplement_complement).isImmersion
 
 /--
-Composition of immersions at a point between Banach manifolds without boundary. Sources:
-Mathlib `Mathlib/Geometry/Manifold/Immersion.lean` TODO (`IsImmersionAt.comp`);
-J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
+**Composition of immersions at a point.** Let $\mathbb{K}$ be a nontrivially normed field, let
+$n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$ be $C^n$ manifolds without
+boundary modeled on Banach spaces over $\mathbb{K}$. If $f : M \to N$ is a $C^n$ immersion at a
+point $x \in M$ and $g : N \to N'$ is a $C^n$ immersion at $f(x)$, then $g \circ f$ is a $C^n$
+immersion at $x$.
+
+Here a map is a $C^n$ immersion at a point when, in suitable charts around the point and its
+image, it reads $u \mapsto \varphi(u, 0)$ for a continuous linear isomorphism
+$\varphi : E \times F \to E'$, where $E$ and $E'$ are the model spaces of the source and target
+and $F$ is some normed space over $\mathbb{K}$.
 
 Proves `Wanted` entry `immersionAt_comp`.
 
 Proof: Restrict the first immersion's codomain chart to the second immersion's domain chart, then
 conjugate that chart transition through the second linear normal form. The normal forms compose
 with the product of their complements.
+
+Sources:
+Mathlib `Mathlib/Geometry/Manifold/Immersion.lean` TODO (`IsImmersionAt.comp`);
+J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
 -/
 theorem immersionAt_comp
     [CompleteSpace E] [CompleteSpace E''] [CompleteSpace E''']
@@ -480,14 +529,24 @@ theorem immersionAt_comp
   exact hg.comp hf
 
 /--
-Composition of immersions between Banach manifolds without boundary. Sources:
-Mathlib `Mathlib/Geometry/Manifold/Immersion.lean` TODO (`IsImmersion.comp`);
-J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
+**Composition of immersions.** Let $\mathbb{K}$ be a nontrivially normed field, let
+$n \in \mathbb{N} \cup \{\infty, \omega\}$, and let $M$, $N$, $N'$ be $C^n$ manifolds without
+boundary modeled on Banach spaces over $\mathbb{K}$. If $f : M \to N$ and $g : N \to N'$ are
+$C^n$ immersions, then $g \circ f$ is a $C^n$ immersion.
+
+Here a map is a $C^n$ immersion when there is a normed space $F$ over $\mathbb{K}$ such that
+around every point, in suitable charts around the point and its image, the map reads
+$u \mapsto \varphi(u, 0)$ for some continuous linear isomorphism $\varphi : E \times F \to E'$,
+where $E$ and $E'$ are the model spaces of the source and target.
 
 Proves `Wanted` entry `immersion_comp`.
 
 Proof: Apply the pointwise composition construction using the product of the two global
 complements, then package the resulting fixed-complement immersion.
+
+Sources:
+Mathlib `Mathlib/Geometry/Manifold/Immersion.lean` TODO (`IsImmersion.comp`);
+J. Lee, Introduction to Smooth Manifolds, 2nd ed., Ch. 4.
 -/
 theorem immersion_comp
     [CompleteSpace E] [CompleteSpace E''] [CompleteSpace E''']

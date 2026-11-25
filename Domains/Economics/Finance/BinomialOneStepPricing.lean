@@ -46,31 +46,36 @@ namespace MathlibExt.Probability.Finance.BinomialOneStepPricing
 
 open MathlibExt.Probability.Finance.BinomialReplication
 
-/-- One-step risk-neutral price of a claim paying `Cu` in the up state and `Cd` in the down
-state, with risk-neutral up probability `q = (R - d) / (u - d)` (source clause: "the one-step
-`q` price"). -/
+/-- One-step risk-neutral price of a claim paying `Cu` in the up state and `Cd` in the down state,
+with risk-neutral up probability `q = (R - d) / (u - d)` (source clause: "the one-step `q` price").
+Division follows the convention `x / 0 = 0`, so `q = 0` when `u = d` and the price is `0` when
+`R = 0`. -/
 noncomputable def riskNeutralPrice (u d R Cu Cd : ℝ) : ℝ :=
   (rnProb u d R * Cu + (1 - rnProb u d R) * Cd) / R
 
-/-- The delta hedge of the one-step claim: the share holding `Δ = (Cu - Cd) / ((u - d) * S₀)`
-that makes the portfolio payoff match the claim in both states (assuming `S₀ ≠ 0`,
-`u ≠ d`, `R ≠ 0`). -/
+/-- The delta hedge of the one-step claim: the share holding `Δ = (Cu - Cd) / ((u - d) * S₀)` that
+makes the portfolio payoff match the claim in both states (assuming `S₀ ≠ 0`, `u ≠ d`, `R ≠ 0`). It
+is defined for all real values, with the convention `x / 0 = 0` (`Δ = 0` when `u = d` or `S₀ = 0`).
+-/
 noncomputable def deltaHedge (S₀ u d Cu Cd : ℝ) : ℝ :=
   (Cu - Cd) / ((u - d) * S₀)
 
-/-- The bond holding of the one-step replicating portfolio:
-`B = (u * Cd - d * Cu) / ((u - d) * R)`, so that (assuming `S₀ ≠ 0`, `u ≠ d`, `R ≠ 0`)
-`Δ * (u * S₀) + B * R = Cu` and `Δ * (d * S₀) + B * R = Cd`. -/
+/-- The bond holding of the one-step replicating portfolio: `B = (u * Cd - d * Cu) / ((u - d) * R)`,
+so that (assuming `S₀ ≠ 0`, `u ≠ d`, `R ≠ 0`) `Δ * (u * S₀) + B * R = Cu` and
+`Δ * (d * S₀) + B * R = Cd`. It is defined for all real values, with the convention `x / 0 = 0` (`B
+= 0` when `u = d` or `R = 0`). -/
 noncomputable def bondHolding (u d R Cu Cd : ℝ) : ℝ :=
   (u * Cd - d * Cu) / ((u - d) * R)
 
-/-- Replication cost of the one-step claim: the initial capital `Δ * S₀ + B` of the
-delta-and-bond replicating portfolio. -/
+/-- Replication cost of the one-step claim: the initial capital `Δ * S₀ + B` of the delta-and-bond
+replicating portfolio. It is defined for all real values, with the convention `x / 0 = 0` in `Δ` and
+`B`. -/
 noncomputable def replicationCost (S₀ u d R Cu Cd : ℝ) : ℝ :=
   deltaHedge S₀ u d Cu Cd * S₀ + bondHolding u d R Cu Cd
 
-/-- **The one-step `q` price equals replication cost** (Atlas roadmap FI12.T02, algebra half).
-Pure algebra: `field_simp` with `u ≠ d`, `R ≠ 0`, `S₀ ≠ 0`, then `ring`. -/
+/-- **The one-step `q` price equals replication cost** (Atlas roadmap FI12.T02, algebra half),
+for `S₀ ≠ 0`, `u ≠ d` and `R ≠ 0`. Pure algebra: `field_simp` with these hypotheses, then
+`ring`. -/
 theorem riskNeutralPrice_eq_replicationCost {S₀ u d R Cu Cd : ℝ} (hS₀ : S₀ ≠ 0)
     (hud : u ≠ d) (hR : R ≠ 0) :
     riskNeutralPrice u d R Cu Cd = replicationCost S₀ u d R Cu Cd := by
@@ -79,8 +84,9 @@ theorem riskNeutralPrice_eq_replicationCost {S₀ u d R Cu Cd : ℝ} (hS₀ : S�
   field_simp
   ring
 
-/-- The landed backward-induction value at horizon `1` is the one-step `q` price: unfold
-`claimValue` once (`claimValue ... 0 s = V s`) and rewrite with the payoff hypotheses. -/
+/-- The landed backward-induction value at horizon `1` of a claim with `V [true] = Cu` and
+`V [false] = Cd` is the one-step `q` price: unfold `claimValue` once
+(`claimValue ... 0 s = V s`) and rewrite with the payoff hypotheses. -/
 theorem claimValue_one_eq_riskNeutralPrice {u d R : ℝ} {V : List Bool → ℝ} {Cu Cd : ℝ}
     (hCu : V [true] = Cu) (hCd : V [false] = Cd) :
     claimValue u d R V 1 [] = riskNeutralPrice u d R Cu Cd := by
@@ -89,7 +95,8 @@ theorem claimValue_one_eq_riskNeutralPrice {u d R : ℝ} {V : List Bool → ℝ}
   rw [hCu, hCd]
 
 /-- **The one-step `q` price equals replication cost** (Atlas roadmap FI12.T02, in the landed
-model): the backward-induction value at horizon `1` is the replication cost. Follows from
+model): for `S₀ ≠ 0`, `u ≠ d`, `R ≠ 0` and a claim with `V [true] = Cu` and `V [false] = Cd`,
+the backward-induction value at horizon `1` is the replication cost. Follows from
 the two theorems above. -/
 theorem claimValue_one_eq_replicationCost {S₀ u d R : ℝ} {V : List Bool → ℝ} {Cu Cd : ℝ}
     (hS₀ : S₀ ≠ 0) (hud : u ≠ d) (hR : R ≠ 0) (hCu : V [true] = Cu) (hCd : V [false] = Cd) :
@@ -97,10 +104,11 @@ theorem claimValue_one_eq_replicationCost {S₀ u d R : ℝ} {V : List Bool → 
   rw [claimValue_one_eq_riskNeutralPrice hCu hCd]
   exact riskNeutralPrice_eq_replicationCost hS₀ hud hR
 
-/-- The landed delta-hedging ratio at horizon `1` is the one-step delta hedge: unfold
-`hedgeRatio` (the `claimValue ... 0` terms are the payoffs, the `price` terms are
-`u * S₀` and `d * S₀`) and use `u * S₀ - d * S₀ = (u - d) * S₀`. No nonvanishing
-hypothesis is needed: both sides are the same quotient. -/
+/-- The landed delta-hedging ratio at horizon `1` of a claim with `V [true] = Cu` and
+`V [false] = Cd` is the one-step delta hedge: unfold `hedgeRatio` (the `claimValue ... 0` terms
+are the payoffs, the `price` terms are `u * S₀` and `d * S₀`) and use
+`u * S₀ - d * S₀ = (u - d) * S₀`. No nonvanishing hypothesis is needed: both sides are the same
+quotient. -/
 theorem hedgeRatio_one_eq_deltaHedge {S₀ u d R : ℝ} {V : List Bool → ℝ} {Cu Cd : ℝ}
     (hCu : V [true] = Cu) (hCd : V [false] = Cd) :
     hedgeRatio S₀ u d R V 1 [] = deltaHedge S₀ u d Cu Cd := by

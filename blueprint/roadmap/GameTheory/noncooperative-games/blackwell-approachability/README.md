@@ -5,6 +5,8 @@ In a repeated game with vector payoffs, a closed convex set is approachable when
 - [Running average of a sequence](average.md)
 - [Sum form of the running average](nat-cast-smul-average.md)
 - [Recursion for the running average](succ-smul-average.md)
+- [Norm bound for the running averages](norm-average-le.md)
+- [One step of Blackwell's recursion](sq-succ-mul-inf-dist-average-le.md)
 - [Blackwell's approachability recursion](sq-mul-inf-dist-average-le.md)
 - [The M/√t rate of approachability](inf-dist-average-le.md)
 
@@ -21,6 +23,9 @@ In a repeated game with vector payoffs, a closed convex set is approachable when
 ## Almost-sure approachability
 
 - [σ-algebra of a history](history-sigma.md)
+- [Monotonicity of the history σ-algebras](history-sigma-mono.md)
+- [History σ-algebras are sub-σ-algebras](history-sigma-le.md)
+- [Measurability of functions of the history](measurable-history-sigma.md)
 - [Blackwell's approachability theorem](blackwell-approachability.md)
 
 ## Related topics

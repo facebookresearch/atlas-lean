@@ -39,12 +39,15 @@ The topology of pointwise convergence on `Sym(Ω)` is the shared `Equiv.Perm.poi
 compactness refers to the subspace topology on `G`.
 -/
 
-/-- `G` is cofinitary: every non-identity element fixes only finitely many points. -/
+/-- **Cofinitary permutation groups.** A subgroup $G$ of the group of permutations of a set
+$\Omega$ is cofinitary when every non-identity element of $G$ fixes only finitely many points of
+$\Omega$. -/
 def IsCofinitary {Ω : Type} (G : Subgroup (Equiv.Perm Ω)) : Prop :=
   ∀ g ∈ G, g ≠ 1 → {x : Ω | g x = x}.Finite
 
-/-- Kourovka 13.28 (P. J. Cameron; D. M. Evans): every closed cofinitary permutation group on an
-infinite set is locally compact in the topology of pointwise convergence. -/
+/-- **Claim of Kourovka Problem 13.28.** For every infinite set $\Omega$, every cofinitary subgroup
+$G$ of the group of permutations of $\Omega$ that is closed in the topology of pointwise
+convergence is locally compact in the subspace topology. -/
 def closedCofinitaryLocallyCompact : Prop :=
   ∀ (Ω : Type) [Infinite Ω] (G : Subgroup (Equiv.Perm Ω)), IsCofinitary G →
     @IsClosed _ (Equiv.Perm.pointwiseTopology (α := Ω)) (G : Set (Equiv.Perm Ω)) →
@@ -53,11 +56,16 @@ def closedCofinitaryLocallyCompact : Prop :=
         (Equiv.Perm.pointwiseTopology (α := Ω)))
 
 /--
-Resolved false: the Kourovka Archive answers 13.28 "No, not always" (G. Hjorth, 1998): some closed
-cofinitary permutation group is not locally compact. Source: E. I. Khukhro and V. D. Mazurov (eds.),
-Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026),
-Archive of Solved Problems, Problem 13.28 (D. M. Evans; P. J. Cameron); resolution: G. Hjorth, J.
-Algebra 200 (1998), no. 2, 439-448, Kourovka Archive, Problem 13.28: No, not always.
+**Closed cofinitary permutation groups need not be locally compact.** The claim of Kourovka
+Problem 13.28 is false: there are an infinite set $\Omega$ and a subgroup $G$ of the group of
+permutations of $\Omega$ such that $G$ is cofinitary (every non-identity element of $G$ fixes only
+finitely many points of $\Omega$) and closed in the topology of pointwise convergence, but $G$ is
+not locally compact in the subspace topology.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 13.28 (D. M.
+Evans; P. J. Cameron); resolution: G. Hjorth, J. Algebra 200 (1998), no. 2, 439-448, Kourovka
+Archive, Problem 13.28: No, not always.
 -/
 public theorem_wanted closedCofinitaryLocallyCompact_refuted : ¬ closedCofinitaryLocallyCompact
 
