@@ -28,6 +28,7 @@ removed and the names restated in Mathlib style.
 
 module
 
+public import MathlibExt.AlgebraicGeometry.Curve.ChartDichotomy
 public import MathlibExt.AlgebraicGeometry.Curve.Place
 import Mathlib.RingTheory.Henselian
 import Mathlib.RingTheory.RegularLocalRing.Defs
@@ -36,9 +37,11 @@ import Mathlib.RingTheory.SimpleRing.Principal
 /-!
 # Divisors and principal divisors of a function field
 
-This file defines the residue field and degree of a place, the group of divisors `Place K F →₀ ℤ`
-with its degree map, principal divisors, the class groups `Pic` and `Pic0`, and the places attached
-to height-one primes of a Dedekind domain with fraction field `F`.
+This file defines the degree of a place (the dimension over `K` of its residue field
+`AlgebraicCurve.Place.ResidueField`, from `MathlibExt.AlgebraicGeometry.Curve.ChartDichotomy`),
+the group of divisors `Place K F →₀ ℤ` with its degree map, principal divisors, the class groups
+`Pic` and `Pic0`, and the places attached to height-one primes of a Dedekind domain with fraction
+field `F`.
 -/
 
 @[expose] public section
@@ -54,8 +57,6 @@ variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 namespace Place
 
 variable {K F} (v : Place K F)
-
-abbrev ResidueField : Type _ := IsLocalRing.ResidueField v.toValuationSubring
 
 def deg : ℕ := Module.finrank K v.ResidueField
 
