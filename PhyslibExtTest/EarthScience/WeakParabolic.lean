@@ -170,7 +170,7 @@ lemma quad_eLpNorm_ne_zero :
     (eLpNorm (fun x : ℝ => x * (1 - x)) 2 (volume.restrict (Set.Icc 0 1))).toReal ≠ 0 := by
   intro h
   have hmem : MemLp (fun x : ℝ => x * (1 - x)) 2 (volume.restrict (Set.Icc 0 1)) :=
-    weakH10_toFun_memLp quadWeak
+    WeakH10.memLp_toFun quadWeak
   have h0 : eLpNorm (fun x : ℝ => x * (1 - x)) 2 (volume.restrict (Set.Icc 0 1)) = 0 :=
     ((ENNReal.toReal_eq_zero_iff _).mp h).resolve_right hmem.eLpNorm_ne_top
   have hae := (eLpNorm_eq_zero_iff two_ne_zero).mp h0

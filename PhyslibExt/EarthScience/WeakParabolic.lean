@@ -203,17 +203,8 @@ lemma intervalIntegral_eq_integral_restrict_Icc {g : ℝ → ℝ} :
   exact (setIntegral_eq_of_subset_of_ae_sdiff_eq_zero ht hts h't).symm
 
 
-lemma isFiniteMeasure_restrict_Icc01 :
-    IsFiniteMeasure (volume.restrict (Set.Icc (0:ℝ) 1)) := by
-  rw [isFiniteMeasure_restrict]
-  rw [Real.volume_Icc]
-  simp
-
-
 lemma WeakH10.memLp_toFun (u : WeakH10) :
     MemLp u.toFun 2 (volume.restrict (Set.Icc 0 1)) := by
-  have _hfin : IsFiniteMeasure (volume.restrict (Set.Icc (0:ℝ) 1)) :=
-    isFiniteMeasure_restrict_Icc01
   have hw_int : Integrable u.weakDeriv (volume.restrict (Set.Icc (0:ℝ) 1)) :=
     u.weakDeriv_memLp.integrable (by simp)
   have huIcc : Set.uIcc (0:ℝ) 1 = Set.Icc 0 1 := Set.uIcc_of_le zero_le_one
@@ -257,8 +248,6 @@ lemma parabolic_euler_step_energy
         + 2 * τ * kmin * (eLpNorm u.weakDeriv 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
       ≤ (eLpNorm uprev 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
         + (τ / kmin) * (eLpNorm F 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2 := by
-  have _hfin : IsFiniteMeasure (volume.restrict (Set.Icc (0:ℝ) 1)) :=
-    isFiniteMeasure_restrict_Icc01
   have hu : MemLp u.toFun 2 (volume.restrict (Set.Icc (0:ℝ) 1)) :=
     u.memLp_toFun
   have hstep_u := hstep u
@@ -409,17 +398,12 @@ lemma parabolic_euler_step_energy
 
 /-! ## B. `H¹₀(0,1)` as a Hilbert space -/
 
-lemma weakH10_meas_finite :
-    IsFiniteMeasure (volume.restrict (Set.Icc (0 : ℝ) (1 : ℝ))) :=
-  ⟨by simp [Real.volume_Icc]⟩
-
 /-- The primitive of an `L²` function is a.e. strongly measurable. -/
 
 lemma weakH10_prim_aes (g : ℝ → ℝ)
     (hg : MemLp g 2 (volume.restrict (Set.Icc 0 1))) :
     AEStronglyMeasurable (fun x => ∫ t in (0 : ℝ)..x, g t)
       (volume.restrict (Set.Icc 0 1)) := by
-  have := weakH10_meas_finite
   have hInt : Integrable g (volume.restrict (Set.Icc 0 1)) := hg.integrable one_le_two
   have hInd : Integrable ((Set.Icc (0 : ℝ) 1).indicator g) volume :=
     (integrable_indicator_iff (s := Set.Icc (0 : ℝ) 1) measurableSet_Icc).mpr hInt
@@ -445,7 +429,6 @@ lemma weakH10_memLp_intervalIntegrable (g : ℝ → ℝ)
     (hg : MemLp g 2 (volume.restrict (Set.Icc 0 1))) (x : ℝ)
     (hx : x ∈ Set.Icc (0 : ℝ) 1) :
     IntervalIntegrable g volume 0 x := by
-  have := weakH10_meas_finite
   have hIntOn : IntegrableOn g (Set.Icc 0 1) volume := hg.integrable one_le_two
   rw [intervalIntegrable_iff_integrableOn_Ioc_of_le hx.1]
   exact hIntOn.mono_set (fun t ht => ⟨ht.1.le, ht.2.trans hx.2⟩)
@@ -456,7 +439,6 @@ lemma weakH10_prim_bound (g : ℝ → ℝ)
     (hg : MemLp g 2 (volume.restrict (Set.Icc 0 1))) (x : ℝ)
     (hx : x ∈ Set.Icc (0 : ℝ) 1) :
     ‖∫ t in (0 : ℝ)..x, g t‖ ≤ (eLpNorm g 2 (volume.restrict (Set.Icc 0 1))).toReal := by
-  have := weakH10_meas_finite
   have hx0 : (0 : ℝ) ≤ x := hx.1
   have hx1 : x ≤ 1 := hx.2
   have hsub01 : Set.Ioc (0 : ℝ) x ⊆ Set.Icc 0 1 :=
@@ -556,7 +538,6 @@ lemma weakH10_complete (u : ℕ → WeakH10)
         (volume.restrict (Set.Icc 0 1))).toReal) Filter.atTop (nhds 0)
       ∧ Filter.Tendsto (fun n => (eLpNorm ((u n).weakDeriv - w.weakDeriv) 2
         (volume.restrict (Set.Icc 0 1))).toReal) Filter.atTop (nhds 0) := by
-  have := weakH10_meas_finite
   have : Fact (1 ≤ (2 : ENNReal)) := ⟨one_le_two⟩
   have : Nonempty (Lp ℝ 2 (volume.restrict (Set.Icc (0 : ℝ) (1 : ℝ)))) := ⟨0⟩
   have hmemW : ∀ n, MemLp ((u n).weakDeriv) 2 (volume.restrict (Set.Icc 0 1)) :=
@@ -912,30 +893,11 @@ instance : Module ℝ WeakH10 where
     · exact smul_zero c
 
 
-lemma weakH10_toFun_memLp (u : WeakH10) :
-    MemLp u.toFun 2 (volume.restrict (Set.Icc 0 1)) := by
-  have := weakH10_meas_finite
-  have haes : AEStronglyMeasurable u.toFun (volume.restrict (Set.Icc 0 1)) := by
-    have heq : u.toFun =ᵐ[volume.restrict (Set.Icc 0 1)]
-        (fun x => ∫ t in (0 : ℝ)..x, u.weakDeriv t) :=
-      (ae_restrict_mem measurableSet_Icc).mono
-        fun x hx => u.toFun_eq_integral x hx
-    exact (weakH10_prim_aes _ u.weakDeriv_memLp).congr heq.symm
-  refine MemLp.of_bound haes
-    ((eLpNorm u.weakDeriv 2 (volume.restrict (Set.Icc 0 1))).toReal) ?_
-  apply (ae_restrict_mem measurableSet_Icc).mono
-  intro x hx
-  calc ‖u.toFun x‖ = ‖∫ t in (0 : ℝ)..x, u.weakDeriv t‖ := by
-        rw [u.toFun_eq_integral x hx]
-    _ ≤ (eLpNorm u.weakDeriv 2 (volume.restrict (Set.Icc 0 1))).toReal :=
-        weakH10_prim_bound _ u.weakDeriv_memLp x hx
-
-
 /-- The `H¹(0,1)` inner product `∫₀¹ u v + ∫₀¹ u' v'`, computed on the `L²(0,1)`
 classes of the representatives and of the weak derivatives. -/
 noncomputable def weakH10_inner (u v : WeakH10) : ℝ :=
-  inner ℝ ((weakH10_toFun_memLp u).toLp u.toFun)
-    ((weakH10_toFun_memLp v).toLp v.toFun)
+  inner ℝ ((WeakH10.memLp_toFun u).toLp u.toFun)
+    ((WeakH10.memLp_toFun v).toLp v.toFun)
   + inner ℝ (u.weakDeriv_memLp.toLp u.weakDeriv)
     (v.weakDeriv_memLp.toLp v.weakDeriv)
 
@@ -950,9 +912,9 @@ noncomputable instance weakH10_preInnerCore : PreInnerProductSpace.Core ℝ Weak
     simp only [weakH10_inner, RCLike.re_to_real]
     exact add_nonneg real_inner_self_nonneg real_inner_self_nonneg
   add_left u v w := by
-    have hT : (weakH10_toFun_memLp (u + v)).toLp ((u + v).toFun)
-        = (weakH10_toFun_memLp u).toLp u.toFun
-          + (weakH10_toFun_memLp v).toLp v.toFun :=
+    have hT : (WeakH10.memLp_toFun (u + v)).toLp ((u + v).toFun)
+        = (WeakH10.memLp_toFun u).toLp u.toFun
+          + (WeakH10.memLp_toFun v).toLp v.toFun :=
       MemLp.toLp_add _ _
     have hD : ((u + v).weakDeriv_memLp).toLp ((u + v).weakDeriv)
         = (u.weakDeriv_memLp.toLp u.weakDeriv)
@@ -961,8 +923,8 @@ noncomputable instance weakH10_preInnerCore : PreInnerProductSpace.Core ℝ Weak
     simp only [weakH10_inner, hT, hD, inner_add_left]
     ring
   smul_left u v c := by
-    have hT : (weakH10_toFun_memLp (c • u)).toLp ((c • u).toFun)
-        = c • (weakH10_toFun_memLp u).toLp u.toFun :=
+    have hT : (WeakH10.memLp_toFun (c • u)).toLp ((c • u).toFun)
+        = c • (WeakH10.memLp_toFun u).toLp u.toFun :=
       MemLp.toLp_const_smul _ _
     have hD : ((c • u).weakDeriv_memLp).toLp ((c • u).weakDeriv)
         = c • (u.weakDeriv_memLp.toLp u.weakDeriv) :=
@@ -990,8 +952,8 @@ lemma weakH10_norm_sq (w : WeakH10) :
       + (eLpNorm w.weakDeriv 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2 := by
   have h := InnerProductSpace.norm_sq_eq_re_inner (𝕜 := ℝ) (E := WeakH10) w
   simp only [RCLike.re_to_real, weakH10_inner_eq, weakH10_inner] at h
-  have hT : inner ℝ ((weakH10_toFun_memLp w).toLp w.toFun)
-      ((weakH10_toFun_memLp w).toLp w.toFun)
+  have hT : inner ℝ ((WeakH10.memLp_toFun w).toLp w.toFun)
+      ((WeakH10.memLp_toFun w).toLp w.toFun)
       = (eLpNorm w.toFun 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2 := by
     rw [real_inner_self_eq_norm_sq, Lp.norm_toLp]
   have hD : inner ℝ (w.weakDeriv_memLp.toLp w.weakDeriv)
@@ -1233,7 +1195,7 @@ lemma eulerB_coercive_of_aestronglyMeasurable
   have hmin1 : min (1 / τ) kmin ≤ 1 / τ := min_le_left _ _
   have hmin2 : min (1 / τ) kmin ≤ kmin := min_le_right _ _
   have hTmem : MemLp u.toFun 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-    weakH10_toFun_memLp u
+    WeakH10.memLp_toFun u
   have hDmem : MemLp u.weakDeriv 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
     u.weakDeriv_memLp
   have hTsq := eulerB_eLpNorm_sq u.toFun hTmem
@@ -1412,9 +1374,9 @@ lemma eulerB_bounded
   have hτ0 : (0 : ℝ) < 1 / τ := one_div_pos.mpr hτ
   have hM_nn : (0 : ℝ) ≤ max (1 / τ) kmax := le_trans hτ0.le (le_max_left _ _)
   have huTν : MemLp u.toFun 2 (volume.restrict (Set.Ioc (0 : ℝ) 1)) :=
-    eulerB_memLp_Ioc _ (weakH10_toFun_memLp u)
+    eulerB_memLp_Ioc _ (WeakH10.memLp_toFun u)
   have hvTν : MemLp v.toFun 2 (volume.restrict (Set.Ioc (0 : ℝ) 1)) :=
-    eulerB_memLp_Ioc _ (weakH10_toFun_memLp v)
+    eulerB_memLp_Ioc _ (WeakH10.memLp_toFun v)
   have huDν : MemLp u.weakDeriv 2 (volume.restrict (Set.Ioc (0 : ℝ) 1)) :=
     eulerB_memLp_Ioc _ u.weakDeriv_memLp
   have hvDν : MemLp v.weakDeriv 2 (volume.restrict (Set.Ioc (0 : ℝ) 1)) :=
@@ -1531,10 +1493,10 @@ lemma eulerB_bounded
           ring
   have hAu_le : (eLpNorm u.toFun 2 (volume.restrict (Set.Ioc (0 : ℝ) 1))).toReal
       ≤ (eLpNorm u.toFun 2 (volume.restrict (Set.Icc 0 1))).toReal :=
-    eulerB_eLpNorm_Ioc_le _ (weakH10_toFun_memLp u)
+    eulerB_eLpNorm_Ioc_le _ (WeakH10.memLp_toFun u)
   have hAv_le : (eLpNorm v.toFun 2 (volume.restrict (Set.Ioc (0 : ℝ) 1))).toReal
       ≤ (eLpNorm v.toFun 2 (volume.restrict (Set.Icc 0 1))).toReal :=
-    eulerB_eLpNorm_Ioc_le _ (weakH10_toFun_memLp v)
+    eulerB_eLpNorm_Ioc_le _ (WeakH10.memLp_toFun v)
   have hBu_le : (eLpNorm u.weakDeriv 2 (volume.restrict (Set.Ioc (0 : ℝ) 1))).toReal
       ≤ (eLpNorm u.weakDeriv 2 (volume.restrict (Set.Icc 0 1))).toReal :=
     eulerB_eLpNorm_Ioc_le _ u.weakDeriv_memLp
@@ -1658,7 +1620,7 @@ lemma eulerRhs_bound
       ≤ ((eLpNorm F 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal
           + (eLpNorm uprev 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal / τ) * ‖v‖ := by
   have hvt : MemLp v.toFun 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-    weakH10_toFun_memLp v
+    WeakH10.memLp_toFun v
   have hsub : Set.Ioc (0 : ℝ) 1 ⊆ Set.Icc 0 1 :=
     fun t ht => ⟨ht.1.le, ht.2⟩
   have hμν : (volume.restrict (Set.Icc (0 : ℝ) 1)).restrict (Set.Ioc (0 : ℝ) 1)
@@ -1821,7 +1783,7 @@ lemma eulerB_clm
       volume 0 1 := by
     intro u v
     have hT : MemLp (u.toFun * v.toFun) 1 (volume.restrict (Set.Icc 0 1)) :=
-      (weakH10_toFun_memLp u).mul (weakH10_toFun_memLp v)
+      (WeakH10.memLp_toFun u).mul (WeakH10.memLp_toFun v)
     have hD : MemLp (u.weakDeriv * v.weakDeriv) 1
         (volume.restrict (Set.Icc 0 1)) :=
       (u.weakDeriv_memLp).mul (v.weakDeriv_memLp)
@@ -1944,7 +1906,6 @@ lemma eulerB_clm
 lemma eulerRhs_memLp_one_intervalIntegrable (g : ℝ → ℝ)
     (hg : MemLp g 1 (volume.restrict (Set.Icc 0 1))) :
     IntervalIntegrable g volume 0 1 := by
-  have := weakH10_meas_finite
   have hIntOn : IntegrableOn g (Set.Icc 0 1) volume := hg.integrable (le_refl 1)
   rw [intervalIntegrable_iff_integrableOn_Ioc_of_le zero_le_one]
   exact hIntOn.mono_set (fun t ht => ⟨ht.1.le, ht.2.trans le_rfl⟩)
@@ -1971,7 +1932,7 @@ lemma eulerRhs_clm
   have hInt : ∀ v : WeakH10,
       IntervalIntegrable (fun x => (F x + uprev x / τ) * v.toFun x) volume 0 1 :=
     fun v => eulerRhs_memLp_one_intervalIntegrable _
-      (hG.mul (weakH10_toFun_memLp v))
+      (hG.mul (WeakH10.memLp_toFun v))
   have hadd : ∀ v w : WeakH10,
       (∫ x in (0 : ℝ)..1, (F x + uprev x / τ) * (v + w).toFun x)
         = (∫ x in (0 : ℝ)..1, (F x + uprev x / τ) * v.toFun x)
@@ -2034,7 +1995,7 @@ lemma weakH10_ae_mem_Ioc (w : WeakH10) (hw : ‖w‖ = 0) :
   have eA : eLpNorm w.toFun 2 (volume.restrict (Set.Icc 0 1)) = 0 := by
     rcases (ENNReal.toReal_eq_zero_iff _).mp hA0 with h | h
     · exact h
-    · exact absurd h (weakH10_toFun_memLp w).eLpNorm_lt_top.ne
+    · exact absurd h (WeakH10.memLp_toFun w).eLpNorm_lt_top.ne
   have eB : eLpNorm w.weakDeriv 2 (volume.restrict (Set.Icc 0 1)) = 0 := by
     rcases (ENNReal.toReal_eq_zero_iff _).mp hB0 with h | h
     · exact h
@@ -2359,17 +2320,19 @@ lemma parabolic_euler_step_laxMilgram
   exact hqv
 
 
-lemma weakH10_memLp_mul_intervalIntegrable (f g : ℝ → ℝ)
-    (hf : MemLp f 2 (volume.restrict (Set.Icc 0 1)))
-    (hg : MemLp g 2 (volume.restrict (Set.Icc 0 1))) :
-    IntervalIntegrable (fun x => f x * g x) volume 0 1 := by
-  have hInt : Integrable (f * g) (volume.restrict (Set.Icc 0 1)) :=
+lemma intervalIntegrable_mul_of_memLp
+    {f g : ℝ → ℝ}
+    (hf : MemLp f 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    (hg : MemLp g 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) :
+    IntervalIntegrable (fun x => f x * g x) volume (0 : ℝ) 1 := by
+  have hInt : Integrable (f * g) (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
     hf.integrable_mul hg
-  have hOn : IntegrableOn (f * g) (Set.Icc 0 1) volume := hInt
-  have hU : IntegrableOn (fun x => f x * g x) (Set.uIcc (0 : ℝ) 1) volume := by
-    rw [Set.uIcc_of_le (zero_le_one : (0 : ℝ) ≤ 1)]
-    exact hOn
-  exact hU.intervalIntegrable
+  have huIcc : Set.uIcc (0 : ℝ) 1 = Set.Icc (0 : ℝ) 1 := Set.uIcc_of_le (by norm_num)
+  have hOn : IntegrableOn (f * g) (Set.uIcc (0 : ℝ) 1) volume := by
+    rw [huIcc]
+    exact hInt
+  exact hOn.intervalIntegrable
+
 
 /-- Dividing an `L²` function on `[0,1]` by a constant stays `L²`. -/
 
@@ -2435,9 +2398,9 @@ lemma euler_step_intervalIntegrable
       ∧ IntervalIntegrable
         (fun x => F x * v.toFun x) volume 0 1 := by
   have hTu : MemLp u.toFun 2 (volume.restrict (Set.Icc 0 1)) :=
-    weakH10_toFun_memLp u
+    WeakH10.memLp_toFun u
   have hTv : MemLp v.toFun 2 (volume.restrict (Set.Icc 0 1)) :=
-    weakH10_toFun_memLp v
+    WeakH10.memLp_toFun v
   have hDu : MemLp u.weakDeriv 2 (volume.restrict (Set.Icc 0 1)) :=
     u.weakDeriv_memLp
   have hDv : MemLp v.weakDeriv 2 (volume.restrict (Set.Icc 0 1)) :=
@@ -2450,22 +2413,22 @@ lemma euler_step_intervalIntegrable
     weakH10_kappa_intervalIntegrable κ u.weakDeriv v.weakDeriv hkmin
       hκ_meas hκ hDu hDv
   have h5 : IntervalIntegrable (fun x => F x * v.toFun x) volume 0 1 :=
-    weakH10_memLp_mul_intervalIntegrable F v.toFun hF hTv
+    intervalIntegrable_mul_of_memLp hF hTv
   have h4 : IntervalIntegrable (fun x => uprev x / τ * v.toFun x) volume 0 1 :=
-    weakH10_memLp_mul_intervalIntegrable _ v.toFun huprev_div hTv
+    intervalIntegrable_mul_of_memLp huprev_div hTv
   have h3 : IntervalIntegrable (fun x => (F x + uprev x / τ) * v.toFun x)
       volume 0 1 :=
-    weakH10_memLp_mul_intervalIntegrable _ v.toFun (hF.add huprev_div) hTv
+    intervalIntegrable_mul_of_memLp (hF.add huprev_div) hTv
   have h2a : IntervalIntegrable (fun x => u.toFun x * v.toFun x / τ)
       volume 0 1 :=
-    (weakH10_memLp_mul_intervalIntegrable u.toFun v.toFun hTu hTv).div_const τ
+    (intervalIntegrable_mul_of_memLp hTu hTv).div_const τ
   have h2 : IntervalIntegrable
       (fun x => u.toFun x * v.toFun x / τ
         + κ x * u.weakDeriv x * v.weakDeriv x) volume 0 1 :=
     h2a.add hkap
   have h1a : IntervalIntegrable
       (fun x => (u.toFun x - uprev x) / τ * v.toFun x) volume 0 1 := by
-    have hprod := weakH10_memLp_mul_intervalIntegrable _ v.toFun
+    have hprod := intervalIntegrable_mul_of_memLp
       (hTu.sub huprev) hTv
     have hdiv := hprod.div_const τ
     have heq : (fun x => ((u.toFun - uprev) x * v.toFun x) / τ)
@@ -3598,7 +3561,7 @@ noncomputable def rotheSeq (u0 : ℝ → ℝ)
           · rw [ite_eq_left hk0]
             exact hu0
           · rw [ite_eq_right hk0]
-            exact weakH10_toFun_memLp _))
+            exact WeakH10.memLp_toFun _))
     else 0
 
 
@@ -3942,7 +3905,7 @@ lemma interp_memLp_bounds
       if t = t1 then (U N).toFun x
       else (U (Nat.floor ((t - t0) / ((t1 - t0) / N)) + 1)).toFun x)) 2
       (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) :=
-    memLp_rothe_interp ht hN (fun j => weakH10_toFun_memLp (U j))
+    memLp_rothe_interp ht hN (fun j => WeakH10.memLp_toFun (U j))
   have hmem2 : MemLp (Function.uncurry (fun t x =>
       if t = t1 then (U N).weakDeriv x
       else (U (Nat.floor ((t - t0) / ((t1 - t0) / N)) + 1)).weakDeriv x)) 2
@@ -4017,49 +3980,6 @@ lemma sq_integral_le_length_mul_sq_integral
     _ ≤ (∫ x, ‖f x‖ ∂μ) ^ 2 := pow_le_pow_left₀ (abs_nonneg _) htri 2
     _ ≤ (∫ x, (f x) ^ 2 ∂μ) * (b - a) := hsq
     _ = (b - a) * ∫ x, (f x) ^ 2 ∂μ := mul_comm _ _
-
-
-lemma intervalJensen_sq {a b : ℝ} (hab : a ≤ b) {f : ℝ → ℝ}
-    (h1 : IntegrableOn f (Set.Icc a b) volume)
-    (h2 : IntegrableOn (fun x => (f x) ^ 2) (Set.Icc a b) volume) :
-    (∫ x in a..b, f x) ^ 2 ≤ (b - a) * ∫ x in a..b, (f x) ^ 2 := by
-  rcases eq_or_lt_of_le hab with rfl | hlt
-  · simp [intervalIntegral.integral_same]
-  · have hba : 0 < b - a := sub_pos.mpr hlt
-    have hI1 : IntervalIntegrable f volume a b :=
-      (intervalIntegrable_iff_integrableOn_Ioc_of_le hab).mpr
-        (Iff.mp integrableOn_Icc_iff_integrableOn_Ioc h1)
-    have hI2 : IntervalIntegrable (fun x => (f x) ^ 2) volume a b :=
-      (intervalIntegrable_iff_integrableOn_Ioc_of_le hab).mpr
-        (Iff.mp integrableOn_Icc_iff_integrableOn_Ioc h2)
-    set S := ∫ x in a..b, f x with hS
-    set Q := ∫ x in a..b, (f x) ^ 2 with hQ
-    set c := S / (b - a) with hc
-    have hnn : 0 ≤ ∫ x in a..b, (f x - c) ^ 2 :=
-      intervalIntegral.integral_nonneg_of_ae hab
-        (Eventually.of_forall fun x => sq_nonneg (f x - c))
-    have hexpand : (fun x => (f x - c) ^ 2)
-        = fun x => (f x) ^ 2 - (2 * c) * f x + c ^ 2 := by
-      funext x; ring
-    have hIc : IntervalIntegrable (fun _ => c ^ 2) volume a b := intervalIntegrable_const
-    have hIm : IntervalIntegrable (fun x => (2 * c) * f x) volume a b :=
-      hI1.const_mul (2 * c)
-    have hIsub : IntervalIntegrable (fun x => (f x) ^ 2 - (2 * c) * f x) volume a b :=
-      hI2.sub hIm
-    rw [hexpand, intervalIntegral.integral_add hIsub hIc,
-      intervalIntegral.integral_sub hI2 hIm,
-      intervalIntegral.integral_const_mul, intervalIntegral.integral_const,
-      smul_eq_mul, ← hS, ← hQ] at hnn
-    have hc' : c * (b - a) = S := by rw [hc]; field_simp
-    have hkey : (b - a) * Q - S ^ 2
-        = (b - a) * (Q - (2 * c) * S + (b - a) * c ^ 2) := by
-      have hcc : S = c * (b - a) := hc'.symm
-      rw [hcc]
-      ring
-    have hnonneg : 0 ≤ (b - a) * Q - S ^ 2 := by
-      rw [hkey]
-      exact mul_nonneg hba.le hnn
-    linarith
 
 
 lemma slab_avg_sq_integral_le_one_slab
@@ -4262,7 +4182,7 @@ lemma slab_sq_one
     exact (hf.sub hg).restrict _
   rw [hwid]
   exact slab_avg_sq_integral_le_one_slab (f := fun s x => f s x - g s x) hab hdiff
-    intervalJensen_sq
+    sq_integral_le_length_mul_sq_integral
 
 
 lemma rectangle_integral_sum_slabs
@@ -9100,72 +9020,6 @@ lemma tendsto_of_split_add
   simpa using herr.add hmain
 
 
-lemma WeakH10.toFun_memLp (w : WeakH10) :
-    MemLp w.toFun 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
-  have hvol : volume (Set.Icc (0 : ℝ) 1) ≠ ⊤ := by
-    rw [Real.volume_Icc]
-    exact ENNReal.ofReal_ne_top
-  have : IsFiniteMeasure (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-    isFiniteMeasure_restrict.mpr hvol
-  have hInt : Integrable w.weakDeriv (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-    MemLp.integrable one_le_two w.weakDeriv_memLp
-  have hOn : IntegrableOn w.weakDeriv (Set.Icc (0 : ℝ) 1) volume := hInt
-  have hOnU : IntegrableOn w.weakDeriv (Set.uIcc (0 : ℝ) 1) volume := by
-    rw [Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)]
-    exact hOn
-  have hContPrim : ContinuousOn (fun x => ∫ t in (0 : ℝ)..x, w.weakDeriv t) (Set.uIcc 0 1) :=
-    intervalIntegral.continuousOn_primitive_interval hOnU
-  rw [Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)] at hContPrim
-  have hEq : Set.EqOn w.toFun (fun x => ∫ t in (0 : ℝ)..x, w.weakDeriv t) (Set.Icc 0 1) :=
-    fun x hx => w.toFun_eq_integral x hx
-  have hCont : ContinuousOn w.toFun (Set.Icc (0 : ℝ) 1) := hContPrim.congr hEq
-  have hMeas : AEStronglyMeasurable w.toFun (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-    hCont.aestronglyMeasurable measurableSet_Icc
-  have hComp : IsCompact (Set.Icc (0 : ℝ) 1) := isCompact_Icc
-  have hNe : (Set.Icc (0 : ℝ) 1).Nonempty :=
-    Set.nonempty_Icc.mpr (by norm_num : (0 : ℝ) ≤ 1)
-  have hNormCont : ContinuousOn (fun x => ‖w.toFun x‖) (Set.Icc (0 : ℝ) 1) :=
-    continuous_norm.comp_continuousOn hCont
-  obtain ⟨x0, hx0mem, hx0max⟩ := hComp.exists_isMaxOn hNe hNormCont
-  have hBound : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), ‖w.toFun x‖ ≤ ‖w.toFun x0‖ := by
-    filter_upwards [ae_restrict_mem measurableSet_Icc] with x hx
-    exact isMaxOn_iff.mp hx0max x hx
-  exact MemLp.of_bound hMeas _ hBound
-
-
-lemma integral_abs_mul_le_eLpNorm_mul
-    {α : Type*} [MeasurableSpace α] {μ : Measure α} {f g : α → ℝ}
-    (hf : MemLp f 2 μ) (hg : MemLp g 2 μ) :
-    |∫ x, f x * g x ∂μ| ≤ (eLpNorm f 2 μ).toReal * (eLpNorm g 2 μ).toReal := by
-  have hmul : MemLp (f * g) 1 μ := hf.mul hg
-  have hint : Integrable (f * g) μ := memLp_one_iff_integrable.mp hmul
-  have hHolder : eLpNorm (f * g) 1 μ ≤ eLpNorm f 2 μ * eLpNorm g 2 μ := by
-    have h : eLpNorm (f • g) 1 μ ≤ eLpNorm f 2 μ * eLpNorm g 2 μ :=
-      eLpNorm_smul_le_mul_eLpNorm hf.aestronglyMeasurable hg.aestronglyMeasurable
-    have hfg : (f • g) = (f * g) := funext fun x => smul_eq_mul _ _
-    rwa [hfg] at h
-  have hnorm : ‖∫ x, f x * g x ∂μ‖ ≤ ∫ x, ‖f x * g x‖ ∂μ :=
-    norm_integral_le_integral_norm _
-  rw [Real.norm_eq_abs] at hnorm
-  have h_eq1 : (∫ x, f x * g x ∂μ) = ∫ x, (f * g) x ∂μ := by simp [Pi.mul_apply]
-  have h_eq2 : (∫ x, ‖f x * g x‖ ∂μ) = ∫ x, ‖(f * g) x‖ ∂μ := by simp [Pi.mul_apply]
-  rw [h_eq1, h_eq2] at hnorm
-  have h_ofReal : ENNReal.ofReal (∫ x, ‖(f * g) x‖ ∂μ) = eLpNorm (f * g) 1 μ := by
-    rw [ofReal_integral_norm_eq_lintegral_enorm hint,
-      eLpNorm_one_eq_lintegral_enorm hint.aestronglyMeasurable]
-  have h_nonneg : 0 ≤ ∫ x, ‖(f * g) x‖ ∂μ := integral_nonneg (fun _ => norm_nonneg _)
-  have h_toReal : (∫ x, ‖(f * g) x‖ ∂μ) = (eLpNorm (f * g) 1 μ).toReal := by
-    have hcongr := congrArg ENNReal.toReal h_ofReal
-    rw [ENNReal.toReal_ofReal h_nonneg] at hcongr
-    exact hcongr
-  have h_le : (eLpNorm (f * g) 1 μ).toReal ≤ (eLpNorm f 2 μ).toReal * (eLpNorm g 2 μ).toReal := by
-    have hne : eLpNorm f 2 μ * eLpNorm g 2 μ ≠ ⊤ :=
-      ENNReal.mul_ne_top hf.eLpNorm_ne_top hg.eLpNorm_ne_top
-    have hmono := ENNReal.toReal_mono hne hHolder
-    rwa [ENNReal.toReal_mul] at hmono
-  rw [h_toReal] at hnorm
-  rw [h_eq1]
-  exact hnorm.trans h_le
 /-- Equicontinuity of the pairing functions. -/
 
 lemma pairing_equicont
@@ -9195,17 +9049,17 @@ lemma pairing_equicont
       2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
     by_cases h : τ = t1
     · simp [h]
-      exact (U_of (φ N) (φ N)).toFun_memLp
+      exact (U_of (φ N) (φ N)).memLp_toFun
     · simp [h]
-      exact (U_of (φ N) _).toFun_memLp
+      exact (U_of (φ N) _).memLp_toFun
   have hMemT : MemLp (fun x : ℝ => (if t = t1 then (U_of (φ N) (φ N)).toFun x
       else (U_of (φ N) (Nat.floor ((t - t0) / ((t1 - t0) / (φ N : ℝ))) + 1)).toFun x))
       2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
     by_cases h : t = t1
     · simp [h]
-      exact (U_of (φ N) (φ N)).toFun_memLp
+      exact (U_of (φ N) (φ N)).memLp_toFun
     · simp [h]
-      exact (U_of (φ N) _).toFun_memLp
+      exact (U_of (φ N) _).memLp_toFun
   have hConvTau : (∫ x in (0 : ℝ)..1, (if τ = t1 then (U_of (φ N) (φ N)).toFun x
       else (U_of (φ N) (Nat.floor ((τ - t0) / ((t1 - t0) / (φ N : ℝ))) + 1)).toFun x) * ψ x)
       = ∫ x, (if τ = t1 then (U_of (φ N) (φ N)).toFun x
@@ -9261,7 +9115,8 @@ lemma pairing_equicont
       - ((if t = t1 then (U_of (φ N) (φ N)).toFun x
       else (U_of (φ N) (Nat.floor ((t - t0) / ((t1 - t0) / (φ N : ℝ))) + 1)).toFun x)))
       2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := hMemTau.sub hMemT
-  have hCS := integral_abs_mul_le_eLpNorm_mul hMemDiff hψ
+  have hCS := norm_integral_mul_le_eLpNorm_toReal_mul_toReal hMemDiff hψ
+  rw [Real.norm_eq_abs] at hCS
   have hth : t + (τ - t) = τ := by ring
   have hτmem' : t + (τ - t) ∈ Set.Icc t0 t1 := by rw [hth]; exact hτ
   have hBound := hC (φ N) hN t (τ - t) htmem hτmem'
@@ -11328,8 +11183,8 @@ lemma pairing_reps_cauchy
         - (Classical.choose (hRepH10Thm (w m))) t|
         ≤ 2 * (eLpNorm (fun x => (w n).toFun x - (w m).toFun x) 2
           (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal :=
-    fun n m => key (w n) (w m) (weakH10_toFun_memLp (w n))
-      (weakH10_toFun_memLp (w m)) _ _ (hgspec n).1 (hgspec m).1
+    fun n m => key (w n) (w m) (WeakH10.memLp_toFun (w n))
+      (WeakH10.memLp_toFun (w m)) _ _ (hgspec n).1 (hgspec m).1
       (hgspec n).2 (hgspec m).2
   have hδ : (0 : ℝ) < ε / 4 := by linarith
   have hev := hwspec.eventually (Iio_mem_nhds hδ)
@@ -11355,10 +11210,10 @@ lemma pairing_reps_cauchy
     exact eLpNorm_add_le one_le_two
   have hAn : eLpNorm (fun x => (w n).toFun x - v x) 2
       (volume.restrict (Set.Icc (0 : ℝ) 1)) ≠ ⊤ :=
-    lt_top_iff_ne_top.mp ((weakH10_toFun_memLp (w n)).sub hv)
+    lt_top_iff_ne_top.mp ((WeakH10.memLp_toFun (w n)).sub hv)
   have hBn : eLpNorm (fun x => v x - (w m).toFun x) 2
       (volume.restrict (Set.Icc (0 : ℝ) 1)) ≠ ⊤ :=
-    lt_top_iff_ne_top.mp (hv.sub (weakH10_toFun_memLp (w m)))
+    lt_top_iff_ne_top.mp (hv.sub (WeakH10.memLp_toFun (w m)))
   have hsum_ne : eLpNorm (fun x => (w n).toFun x - v x) 2
         (volume.restrict (Set.Icc (0 : ℝ) 1))
       + eLpNorm (fun x => v x - (w m).toFun x) 2
@@ -11395,27 +11250,6 @@ lemma pairing_reps_cauchy
           (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal) < ε := by
     linarith [hdn, hdm]
   exact le_of_lt (lt_of_le_of_lt hle2 hlt2)
-
-
-lemma weakH10_memLp_toFun (w : WeakH10) :
-    MemLp w.toFun 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
-  have hInt : Integrable w.weakDeriv (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-    w.weakDeriv_memLp.integrable (by norm_num)
-  have hOn : IntegrableOn w.weakDeriv (Set.Icc (0 : ℝ) 1) volume := hInt
-  have hprim : ContinuousOn (fun x => ∫ t in Set.Ioc (0 : ℝ) x, w.weakDeriv t)
-      (Set.Icc (0 : ℝ) 1) :=
-    intervalIntegral.continuousOn_primitive hOn
-  have hcongr : Set.EqOn w.toFun (fun x => ∫ t in Set.Ioc (0 : ℝ) x, w.weakDeriv t)
-      (Set.Icc (0 : ℝ) 1) := by
-    intro x hx
-    rw [w.toFun_eq_integral x hx, intervalIntegral.integral_of_le hx.1]
-  have hcont : ContinuousOn w.toFun (Set.Icc (0 : ℝ) 1) := hprim.congr hcongr
-  obtain ⟨C, hC⟩ := isCompact_Icc.exists_bound_of_continuousOn hcont
-  have hae : AEStronglyMeasurable w.toFun (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-    hcont.aestronglyMeasurable measurableSet_Icc
-  have hb : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), ‖w.toFun x‖ ≤ C := by
-    filter_upwards [ae_restrict_mem measurableSet_Icc] with x hx using hC x hx
-  exact MemLp.of_bound hae C hb
 
 
 lemma pair_intervalIntegrable (u : ℝ → ℝ → ℝ) (t : ℝ) (v : ℝ → ℝ)
@@ -11542,7 +11376,7 @@ lemma pairing_rep_final
             ∫ x in (0 : ℝ)..1, u t x * (v x - (w n).toFun x) := by
         have h1 := pair_intervalIntegrable u t v (hMemThm t ht) hv
         have h2 := pair_intervalIntegrable u t (fun x => (w n).toFun x)
-          (hMemThm t ht) (weakH10_memLp_toFun (w n))
+          (hMemThm t ht) (WeakH10.memLp_toFun (w n))
         have hsub := intervalIntegral.integral_sub h1 h2
         have hfun : (fun x => u t x * v x - u t x * (w n).toFun x) =
             (fun x => u t x * (v x - (w n).toFun x)) := by
@@ -11551,7 +11385,7 @@ lemma pairing_rep_final
         rw [hfun] at hsub
         exact hsub.symm
       rw [hrewrite]
-      exact hCSBoundThm t ht _ (hv.sub (weakH10_memLp_toFun (w n)))
+      exact hCSBoundThm t ht _ (hv.sub (WeakH10.memLp_toFun (w n)))
     have h0 : Filter.Tendsto (fun n => (∫ x in (0 : ℝ)..1, u t x * v x) -
         (∫ x in (0 : ℝ)..1, u t x * (w n).toFun x)) Filter.atTop (nhds 0) := by
       refine squeeze_zero_norm (a := fun n : ℕ => 2 * (eLpNorm
@@ -11703,19 +11537,6 @@ lemma init_cs_bound
   exact hCSThm hdiff hψ
 
 
-lemma memlp_intervalIntegrable_mul
-    {f ψ : ℝ → ℝ}
-    (hf : MemLp f 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hψ : MemLp ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) :
-    IntervalIntegrable (fun x => f x * ψ x) volume 0 1 := by
-  have hInt : Integrable (fun x => f x * ψ x) (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-    hf.integrable_mul hψ
-  have hOn : IntegrableOn (fun x => f x * ψ x) (Set.Icc (0 : ℝ) 1) volume := hInt
-  have hsub : Set.uIcc (0 : ℝ) 1 ⊆ Set.Icc (0 : ℝ) 1 := by
-    rw [Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)]
-  exact (hOn.mono_set hsub).intervalIntegrable
-
-
 lemma integral_diff_mul_split
     {f g ψ : ℝ → ℝ}
     (hf : MemLp f 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -11724,9 +11545,9 @@ lemma integral_diff_mul_split
     (∫ x in (0 : ℝ)..1, (f x - g x) * ψ x)
       = (∫ x in (0 : ℝ)..1, f x * ψ x) - (∫ x in (0 : ℝ)..1, g x * ψ x) := by
   have h1 : IntervalIntegrable (fun x => f x * ψ x) volume 0 1 :=
-    memlp_intervalIntegrable_mul hf hψ
+    intervalIntegrable_mul_of_memLp hf hψ
   have h2 : IntervalIntegrable (fun x => g x * ψ x) volume 0 1 :=
-    memlp_intervalIntegrable_mul hg hψ
+    intervalIntegrable_mul_of_memLp hg hψ
   simp only [sub_mul]
   exact intervalIntegral.integral_sub h1 h2
 
@@ -12200,40 +12021,6 @@ lemma null_union_pairing_fixed
     exact htNot ⟨htIcc, hne⟩
 
 
-lemma helper_interval_eq_restrict (f : ℝ → ℝ) :
-    (∫ x in (0 : ℝ)..1, f x) = ∫ x, f x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)) := by
-  rw [intervalIntegral.integral_of_le zero_le_one, ← integral_Icc_eq_integral_Ioc]
-
-
-lemma helper_eLpNorm_sq (f : ℝ → ℝ) (μ : Measure ℝ)
-    (hf : MemLp f 2 μ) :
-    (eLpNorm f 2 μ).toReal ^ 2 = ∫ x, (f x)^2 ∂μ := by
-  have h2zero : (2 : ENNReal) ≠ 0 := by simp
-  have h2top : (2 : ENNReal) ≠ ⊤ := by simp
-  have hfin : eLpNorm f 2 μ < ⊤ := hf.eLpNorm_lt_top
-  have hLtop : (∫⁻ x, eNorm (f x) ^ (2 : ℝ) ∂μ) < ⊤ := by
-    have h := lintegral_rpow_enorm_lt_top_of_eLpNorm_lt_top h2zero h2top hfin
-    simp only [ENNReal.toReal_ofNat] at h
-    exact h
-  rw [eLpNorm_eq_lintegral_rpow_enorm_toReal h2zero h2top hf.aestronglyMeasurable]
-  simp only [ENNReal.toReal_ofNat]
-  have hexp : (1 / 2 : ℝ) * ((2 : ℕ) : ℝ) = 1 := by norm_num
-  have hstep : ((∫⁻ x, eNorm (f x) ^ (2 : ℝ) ∂μ) ^ (1 / 2 : ℝ)).toReal ^ 2
-      = (∫⁻ x, eNorm (f x) ^ (2 : ℝ) ∂μ).toReal := by
-    rw [← ENNReal.toReal_pow, ← ENNReal.rpow_natCast, ← ENNReal.rpow_mul, hexp,
-      ENNReal.rpow_one]
-  rw [hstep]
-  have hpt : ∀ x : ℝ, eNorm (f x) ^ (2 : ℝ) = ENNReal.ofReal ((f x)^2) := by
-    intro x
-    rw [← ofReal_norm, ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) zero_le_two,
-      Real.rpow_two, Real.norm_eq_abs, sq_abs]
-  rw [lintegral_congr_ae (ae_of_all _ hpt)]
-  have hfm : AEStronglyMeasurable (fun x => (f x)^2) μ := by
-    simp only [pow_two]
-    exact hf.aestronglyMeasurable.mul hf.aestronglyMeasurable
-  rw [integral_eq_lintegral_of_nonneg_ae (ae_of_all _ fun x => sq_nonneg (f x)) hfm]
-
-
 lemma helper_polarization (f g : ℝ → ℝ) (μ : Measure ℝ)
     (hf : MemLp f 2 μ) (hg : MemLp g 2 μ) :
     (eLpNorm (fun x => f x - g x) 2 μ).toReal ^ 2
@@ -12247,8 +12034,8 @@ lemma helper_polarization (f g : ℝ → ℝ) (μ : Measure ℝ)
     simp only [pow_two]
     exact hg.integrable_mul hg
   have hfg : Integrable (fun x => f x * g x) μ := hf.integrable_mul hg
-  rw [helper_eLpNorm_sq _ _ hsub, helper_eLpNorm_sq _ _ hf,
-    helper_eLpNorm_sq _ _ hg]
+  rw [eLpNorm_two_toReal_sq hsub, eLpNorm_two_toReal_sq hf,
+    eLpNorm_two_toReal_sq hg]
   have hpt : ∀ x : ℝ, (f x - g x)^2 = (f x)^2 + (g x)^2 - 2 * (f x * g x) := by
     intro x; ring
   have e1 : ∫ x, ((f x)^2 + (g x)^2 - 2 * (f x * g x)) ∂μ
@@ -12317,7 +12104,7 @@ lemma rothe_good_point_convergence_fixed
         ≤ (eLpNorm f 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal
           * (eLpNorm g 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal := by
     intro f g hf hg
-    rw [← helper_interval_eq_restrict]
+    rw [← intervalIntegral_eq_integral_restrict_Icc]
     exact hCSThm hf hg
   intro t htIcc htN ε hε
   have hUt : MemLp (fun x => u t x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
@@ -12374,14 +12161,14 @@ lemma rothe_good_point_convergence_fixed
         - ∫ x, u s x * w x ∂(volume.restrict (Set.Icc (0 : ℝ) 1))| ≤ η / 3 :=
       le_trans (le_trans hT1 hT1b) hρM
     have hT2 : |∫ x, u s x * w x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)) - ĝ t| < η / 3 := by
-      rw [← helper_interval_eq_restrict, hĝrep s hsN]
+      rw [← intervalIntegral_eq_integral_restrict_Icc, hĝrep s hsN]
       have hst' : dist s t < δ := by rw [Real.dist_eq]; exact hst
       have h2 := hδ hst'
       rw [← Real.dist_eq]
       exact h2
     have hNt : (eLpNorm (fun x => u t x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
         = ∫ x, u t x * u t x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)) := by
-      rw [helper_eLpNorm_sq _ _ hUt]
+      rw [eLpNorm_two_toReal_sq hUt]
       exact integral_congr_ae (ae_of_all _ fun x => pow_two _)
     have hsymm : (eLpNorm (fun x => w x - u t x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal
         = (eLpNorm (fun x => u t x - w x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal := by
@@ -12390,7 +12177,7 @@ lemma rothe_good_point_convergence_fixed
       rw [hneg, eLpNorm_neg]
     have hT3 : |ĝ t - (eLpNorm (fun x => u t x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2|
         ≤ η / 3 := by
-      rw [← hĝrep t htN, helper_interval_eq_restrict, hNt]
+      rw [← hĝrep t htN, intervalIntegral_eq_integral_restrict_Icc, hNt]
       have h1 : |∫ x, u t x * w x ∂(volume.restrict (Set.Icc (0 : ℝ) 1))
           - ∫ x, u t x * u t x ∂(volume.restrict (Set.Icc (0 : ℝ) 1))|
           ≤ (eLpNorm (fun x => u t x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal
@@ -14054,19 +13841,6 @@ lemma rothe_timetrans_passage
         _ ≤ ε ^ 2 := hC2δ
     exact lt_of_le_of_lt (hpass s s' hs hs') hsqrt
 
-
-lemma intervalIntegrable_mul_of_memLp
-    {f g : ℝ → ℝ}
-    (hf : MemLp f 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hg : MemLp g 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) :
-    IntervalIntegrable (fun x => f x * g x) volume (0 : ℝ) 1 := by
-  have hInt : Integrable (f * g) (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-    hf.integrable_mul hg
-  have huIcc : Set.uIcc (0 : ℝ) 1 = Set.Icc (0 : ℝ) 1 := Set.uIcc_of_le (by norm_num)
-  have hOn : IntegrableOn (f * g) (Set.uIcc (0 : ℝ) 1) volume := by
-    rw [huIcc]
-    exact hInt
-  exact hOn.intervalIntegrable
 
 /-- Slice pairing limit at `t0`. -/
 
@@ -16011,16 +15785,10 @@ lemma slice_cauchy_asm
 
 /-! ## N. Profiles of the limit -/
 
-lemma WeakH10_intervalIntegrable (w : WeakH10) :
-    IntervalIntegrable w.weakDeriv volume 0 1 := by
-  have hside : ‖w.weakDeriv 0‖ₑ ≠ ⊤ := by simp
-  rw [intervalIntegrable_iff_integrableOn_Icc_of_le (by norm_num) hside]
-  exact w.weakDeriv_memLp.integrable (by norm_num)
-
-
 lemma WeakH10_absCont (w : WeakH10) :
     AbsolutelyContinuousOnInterval w.toFun 0 1 := by
-  have hac := (WeakH10_intervalIntegrable w).absolutelyContinuousOnInterval_intervalIntegral
+  have hac :=
+    (WeakH10.intervalIntegrable_weakDeriv w).absolutelyContinuousOnInterval_intervalIntegral
     (c := 0) (by simp [Set.uIcc_of_le])
   apply hac.congr
   intro x hx
@@ -16030,7 +15798,7 @@ lemma WeakH10_absCont (w : WeakH10) :
 
 lemma WeakH10_deriv_ae (w : WeakH10) :
     ∀ᵐ x ∂volume, x ∈ Set.uIoc 0 1 → deriv w.toFun x = w.weakDeriv x := by
-  have hder := (WeakH10_intervalIntegrable w).ae_hasDerivAt_integral
+  have hder := (WeakH10.intervalIntegrable_weakDeriv w).ae_hasDerivAt_integral
   have h0mem : (0 : ℝ) ∈ Set.uIcc 0 1 := by simp [Set.uIcc_of_le]
   have hne1 : ∀ᵐ x ∂(volume : Measure ℝ), x ≠ 1 := Measure.ae_ne _ 1
   filter_upwards [hder, hne1] with x hx hne hxuIoc
@@ -16054,11 +15822,6 @@ lemma WeakH10_endpoints (w : WeakH10) : w.toFun 0 = 0 ∧ w.toFun 1 = 0 := by
     exact intervalIntegral.integral_same
   · rw [w.toFun_eq_integral 1 (by simp)]
     exact w.integral_weakDeriv_eq_zero
-
-
-lemma WeakH10_continuousOn (w : WeakH10) : ContinuousOn w.toFun (Set.Icc 0 1) := by
-  have h := (WeakH10_absCont w).continuousOn
-  rwa [Set.uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)] at h
 
 
 lemma ContinuousOn_bound_Icc (f : ℝ → ℝ) (a b : ℝ) (hf : ContinuousOn f (Set.Icc a b)) :
@@ -16235,21 +15998,21 @@ lemma integrated_ibp
       (volume.restrict (Set.Icc 0 1)) := by
     intro j
     obtain ⟨C, hC⟩ := ContinuousOn_bound_Icc _ 0 1
-      (WeakH10_continuousOn (U_of (φ N) j))
+      (WeakH10.continuousOn_toFun (U_of (φ N) j))
     have hb : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), ‖(U_of (φ N) j).toFun x‖ ≤ C := by
       filter_upwards [ae_restrict_mem measurableSet_Icc] with x hx using hC x hx
     exact Integrable.bdd_mul (v.weakDeriv_memLp.integrable (by norm_num))
-      ((WeakH10_continuousOn _).aestronglyMeasurable measurableSet_Icc) hb
+      ((WeakH10.continuousOn_toFun _).aestronglyMeasurable measurableSet_Icc) hb
   have hPQ_B : ∀ j, Integrable (fun x => (U_of (φ N) j).weakDeriv x * v.toFun x)
       (volume.restrict (Set.Icc 0 1)) := by
     intro j
-    obtain ⟨C, hC⟩ := ContinuousOn_bound_Icc _ 0 1 (WeakH10_continuousOn v)
+    obtain ⟨C, hC⟩ := ContinuousOn_bound_Icc _ 0 1 (WeakH10.continuousOn_toFun v)
     have hb : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), ‖v.toFun x‖ ≤ C := by
       filter_upwards [ae_restrict_mem measurableSet_Icc] with x hx using hC x hx
     have h1 : Integrable (fun x => v.toFun x * (U_of (φ N) j).weakDeriv x)
         (volume.restrict (Set.Icc 0 1)) :=
       Integrable.bdd_mul ((U_of (φ N) j).weakDeriv_memLp.integrable (by norm_num))
-        ((WeakH10_continuousOn v).aestronglyMeasurable measurableSet_Icc) hb
+        ((WeakH10.continuousOn_toFun v).aestronglyMeasurable measurableSet_Icc) hb
     apply h1.congr
     filter_upwards with x
     ring
@@ -16295,35 +16058,6 @@ lemma integrated_ibp
       linear_combination WeakH10_ibp_Icc (U_of (φ N) (Nat.floor ((t - t0) / ((t1 - t0) / (φ N))) + 1)) v
   rw [hcd]
   ring
-
-
-lemma toFun_memLp_of_weak (v : WeakH10) :
-    MemLp v.toFun 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
-  have : IsFiniteMeasure (volume.restrict (Set.Icc (0 : ℝ) 1)) := ⟨by
-    rw [Measure.restrict_apply_univ, Real.volume_Icc]
-    exact ENNReal.ofReal_lt_top⟩
-  have hw1 : Integrable v.weakDeriv (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-    v.weakDeriv_memLp.integrable one_le_two
-  have hw'ind : Integrable ((Set.Icc (0 : ℝ) 1).indicator v.weakDeriv) volume :=
-    (integrable_indicator_iff measurableSet_Icc).mpr hw1
-  have hFc : Continuous (fun x : ℝ =>
-      ∫ t in (0 : ℝ)..x, (Set.Icc (0 : ℝ) 1).indicator v.weakDeriv t) :=
-    hw'ind.continuous_primitive 0
-  have heq : ∀ x ∈ Set.Icc (0 : ℝ) 1, v.toFun x
-      = ∫ t in (0 : ℝ)..x, (Set.Icc (0 : ℝ) 1).indicator v.weakDeriv t := by
-    intro x hx
-    rw [v.toFun_eq_integral x hx, intervalIntegral.integral_of_le hx.1,
-      intervalIntegral.integral_of_le hx.1]
-    apply setIntegral_congr_ae measurableSet_Ioc
-    apply Filter.Eventually.of_forall
-    intro t ht
-    have hmem : t ∈ Set.Icc (0 : ℝ) 1 := ⟨ht.1.le, le_trans ht.2 hx.2⟩
-    exact (Set.indicator_of_mem hmem _).symm
-  obtain ⟨C, hC⟩ := isCompact_Icc.exists_bound_of_continuousOn hFc.continuousOn
-  refine MemLp.of_bound (hFc.aestronglyMeasurable.congr ?_) C ?_
-  · exact (ae_restrict_mem measurableSet_Icc).mono (fun x hx => (heq x hx).symm)
-  · exact (ae_restrict_mem measurableSet_Icc).mono
-      (fun x hx => by rw [heq x hx]; exact hC x hx)
 
 
 lemma memLp_uncurry_mul (t0 t1 : ℝ) (ζ g : ℝ → ℝ)
@@ -16407,7 +16141,7 @@ lemma ibp_weak_passage
     memLp_uncurry_mul t0 t1 ζ v.weakDeriv hζtop v.weakDeriv_memLp
   have hT : MemLp (Function.uncurry fun t x => ζ t * v.toFun x) 2
       (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)) :=
-    memLp_uncurry_mul t0 t1 ζ v.toFun hζtop (toFun_memLp_of_weak v)
+    memLp_uncurry_mul t0 t1 ζ v.toFun hζtop (WeakH10.memLp_toFun v)
   have eU := hWeakU (fun t x => ζ t * v.weakDeriv x) hD
   have eUx := hWeakUx (fun t x => ζ t * v.toFun x) hT
   have hEq : ∀ N : ℕ, (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
@@ -16468,7 +16202,7 @@ lemma ibp_rep_transfer
         = -(∫ x in (0 : ℝ)..1, ux τ x * v.toFun x) := by
   intro τ hτ v
   obtain ⟨s, hs_mem, hs_lim, hs_enorm⟩ := hRepDef τ hτ
-  obtain ⟨ĝ, hĝ_cont, hĝ_eq⟩ := hPairUx v.toFun (weakH10_toFun_memLp v)
+  obtain ⟨ĝ, hĝ_cont, hĝ_eq⟩ := hPairUx v.toFun (WeakH10.memLp_toFun v)
   have h1 : Filter.Tendsto (fun n => ∫ x in (0 : ℝ)..1, u (s n) x * v.weakDeriv x)
       Filter.atTop (nhds (∫ x in (0 : ℝ)..1, ũ τ x * v.weakDeriv x)) :=
     hPairLim τ hτ s hs_mem hs_lim hs_enorm v
@@ -16940,7 +16674,6 @@ lemma intervalIntegral_eq_Icc (f : ℝ → ℝ) (a b : ℝ) (hab : a ≤ b) :
 lemma integrable_of_memLp2_Icc01 (g : ℝ → ℝ)
     (hg : MemLp g 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) :
     Integrable g (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
-  haveI := isFiniteMeasure_restrict_Icc01
   exact memLp_one_iff_integrable.mp (hg.mono_exponent (show (1 : ENNReal) ≤ 2 from one_le_two))
 
 
@@ -16975,7 +16708,6 @@ lemma primitive_continuousOn (g : ℝ → ℝ)
 lemma memLp_two_of_continuousOn_Icc01 (f : ℝ → ℝ)
     (hf : ContinuousOn f (Set.Icc (0 : ℝ) 1)) :
     MemLp f 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
-  haveI := isFiniteMeasure_restrict_Icc01
   obtain ⟨C, hC⟩ := isCompact_Icc.exists_bound_of_continuousOn hf
   refine MemLp.of_bound (hf.aestronglyMeasurable measurableSet_Icc) C
     ((ae_restrict_mem measurableSet_Icc).mono (fun x hx => hC x hx))
@@ -16988,7 +16720,6 @@ lemma fubini_ibp (g h V : ℝ → ℝ)
     (hh0 : (∫ t in (0 : ℝ)..1, h t) = 0) :
     (∫ x in (0 : ℝ)..1, (∫ t in (0 : ℝ)..x, g t) * h x)
       = -∫ x in (0 : ℝ)..1, g x * V x := by
-  haveI := isFiniteMeasure_restrict_Icc01
   have hgI : Integrable g (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
     integrable_of_memLp2_Icc01 g hg
   have hhI : Integrable h (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
@@ -17167,7 +16898,6 @@ lemma profiles_of_ibp
     ∀ t : ℝ, t ∈ Set.Icc t0 t1 →
       ∃ h : WeakH10, h.toFun = ũ t ∧ h.weakDeriv = ux t := by
   intro t htmem
-  haveI := isFiniteMeasure_restrict_Icc01
   have hg : MemLp (fun x => ux t x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := hMemUx t htmem
   have hU : Continuous (ũ t) := hCont t htmem
   have htr : ũ t 0 = 0 := hTrace t htmem
@@ -17294,12 +17024,6 @@ lemma profiles_of_ibp
   exact ⟨⟨ũ t, (fun x => ux t x), hg, hfinal, hmean⟩, rfl, rfl⟩
 
 
-lemma bridge01 (f : ℝ → ℝ) :
-    (∫ x in (0:ℝ)..1, f x) = ∫ x, f x ∂(volume.restrict (Set.Icc (0:ℝ) 1)) := by
-  rw [intervalIntegral.integral_of_le (by norm_num : (0:ℝ) ≤ 1)]
-  rw [setIntegral_congr_set (Ioc_ae_eq_Icc (μ := volume) (a := (0:ℝ)) (b := 1))]
-
-
 lemma memLp_slice (ux : ℝ → ℝ → ℝ) (C : ℝ) (t : ℝ)
     (h : eLpNorm (fun x => ux t x) 2 (volume.restrict (Set.Icc (0:ℝ) 1)) ≤ ENNReal.ofReal C) :
     MemLp (fun x => ux t x) 2 (volume.restrict (Set.Icc (0:ℝ) 1)) :=
@@ -17320,7 +17044,8 @@ lemma eq_at_of_eq_on_seq (ĝ₁ ĝ₂ : ℝ → ℝ) (s : ℕ → ℝ) (τ : ℝ
 lemma intervalIntegral_congr_ae01 (F G : ℝ → ℝ)
     (hFG : F =ᵐ[volume.restrict (Set.Icc (0:ℝ) 1)] G) :
     (∫ x in (0:ℝ)..1, F x) = ∫ x in (0:ℝ)..1, G x := by
-  rw [bridge01 F, bridge01 G]
+  rw [intervalIntegral_eq_integral_restrict_Icc (g := F),
+    intervalIntegral_eq_integral_restrict_Icc (g := G)]
   exact integral_congr_ae hFG
 
 
@@ -17440,7 +17165,7 @@ lemma grad_rep_bad_t_fixed
         have hInt_w : Integrable (fun x => ux (s n) x * ⇑w x)
             (volume.restrict (Set.Icc (0:ℝ) 1)) :=
           memLp_one_iff_integrable.1 (hux.mul (Lp.memLp w))
-        simp only [bridge01]
+        simp only [intervalIntegral_eq_integral_restrict_Icc]
         have hae : (fun x => ux (s n) x * ⇑(v + w) x) =ᵐ[volume.restrict (Set.Icc (0:ℝ) 1)]
             (fun x => ux (s n) x * ⇑v x + ux (s n) x * ⇑w x) := by
           filter_upwards [Lp.coeFn_add v w] with x hx
@@ -17458,7 +17183,7 @@ lemma grad_rep_bad_t_fixed
         rw [← hĝeq _ _ (s n) hsG, ← hĝeq _ _ (s n) hsG]
         have hux : MemLp (fun x => ux (s n) x) 2 (volume.restrict (Set.Icc (0:ℝ) 1)) :=
           memLp_slice _ _ _ (hCbdd _ hsI)
-        simp only [bridge01]
+        simp only [intervalIntegral_eq_integral_restrict_Icc]
         have hae : (fun x => ux (s n) x * ⇑(c • v) x) =ᵐ[volume.restrict (Set.Icc (0:ℝ) 1)]
             (fun x => c • (ux (s n) x * ⇑v x)) := by
           filter_upwards [Lp.coeFn_smul c v] with x hx
@@ -17478,7 +17203,7 @@ lemma grad_rep_bad_t_fixed
         memLp_slice _ _ _ (hCbdd _ hsI)
       have heq1 : ĝ ⇑v (Lp.memLp v) (s n) = ∫ x in (0:ℝ)..1, ux (s n) x * ⇑v x :=
         (hĝeq _ _ (s n) hsG).symm
-      rw [heq1, bridge01 _]
+      rw [heq1, intervalIntegral_eq_integral_restrict_Icc]
       have hinner : (∫ x, ux (s n) x * ⇑v x ∂(volume.restrict (Set.Icc (0:ℝ) 1))) =
           inner ℝ (hux.toLp _) v := by
         rw [L2.inner_def]
@@ -17517,7 +17242,7 @@ lemma grad_rep_bad_t_fixed
       rw [intervalIntegral_congr_ae01 _ _ hae]
       exact h1
     · have hmain : (∫ x in (0:ℝ)..1, ⇑x₀ x * v x) = inner ℝ x₀ (hv.toLp v) := by
-        rw [bridge01 _]
+        rw [intervalIntegral_eq_integral_restrict_Icc]
         rw [L2.inner_def]
         apply integral_congr_ae
         filter_upwards [hv.coeFn_toLp] with x hx
@@ -17909,11 +17634,11 @@ theorem weak_parabolic_unique_final
   have hmem : ∀ t, MemLp (u t) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := fun t => by
     obtain ⟨h, hh, -⟩ := hProfileThm t
     rw [← hh]
-    exact weakH10_toFun_memLp h
+    exact WeakH10.memLp_toFun h
   have hmem' : ∀ t, MemLp (u' t) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := fun t => by
     obtain ⟨h, hh, -⟩ := hProf' t
     rw [← hh]
-    exact weakH10_toFun_memLp h
+    exact WeakH10.memLp_toFun h
   have hProfW : ∀ t, ∃ h : WeakH10,
       h.toFun = (fun x => u' t x - u t x) ∧ h.weakDeriv = (fun x => ux' t x - ux t x) := by
     intro t
@@ -17977,7 +17702,7 @@ theorem weak_parabolic_unique_final
   obtain ⟨h, hh1, -⟩ := hProfileThm τ
   obtain ⟨h', hh1', -⟩ := hProf' τ
   have hc : ContinuousOn (fun x => u' τ x - u τ x) (Set.Icc 0 1) := by
-    have hc' := (WeakH10_continuousOn h').sub (WeakH10_continuousOn h)
+    have hc' := (WeakH10.continuousOn_toFun h').sub (WeakH10.continuousOn_toFun h)
     rw [hh1, hh1'] at hc'
     exact hc'
   have heq := Measure.eqOn_Icc_of_ae_eq (μ := volume) zero_ne_one hae hc continuousOn_const
