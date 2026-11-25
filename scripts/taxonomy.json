@@ -11630,6 +11630,7 @@
   "MathlibExt/Combinatorics/Words/LyndonWord": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Lyndon and primitive words"},
   "MathlibExt/Combinatorics/Words/MetaAutomaticOne": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Meta-automatic sequences"},
   "MathlibExt/Combinatorics/Words/MetaAutomaticTwo": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Meta-automatic sequences"},
+  "MathlibExt/Combinatorics/Words/MetaAutomaticTwoAffine": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Meta-automatic sequences"},
   "MathlibExt/Combinatorics/Words/PisaEigenvector": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Relative position in binary words"},
   "MathlibExt/Combinatorics/Words/PisaRelativePosition": {"to": "Combinatorics/combinatorics-on-words/morphic-sturmian-words", "title": "Relative position in binary words"},
   "MathlibExt/Combinatorics/Words/PrimitiveWord": {"to": "Combinatorics/combinatorics-on-words/finite-words", "title": "Lyndon and primitive words"},
