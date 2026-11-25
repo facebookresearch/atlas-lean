@@ -84,6 +84,24 @@ example (D E : Divisor.degZero (K := K) (F := F)) :
 example (x : Pic0 K F) : ∃ D : Divisor.degZero (K := K) (F := F), Pic0.mk D = x :=
   Pic0.mk_surjective x
 
+-- The class of `P - Q` for two places of the same degree vanishes exactly when `P - Q` is the
+-- divisor of a nonzero element.
+example (P Q : Place K F) (h : P.deg = Q.deg) :
+    Pic0.mk ⟨CurveDivisor.pointDiff P Q, (Divisor.pointDiff_mem_degZero_iff P Q).mpr h⟩ = 0 ↔
+      ∃ f : F, f ≠ 0 ∧ ∀ v : Place K F, CurveDivisor.pointDiff P Q v = v.ord f :=
+  Pic0.mk_eq_zero_iff _
+
+-- A function whose divisor is `P - Q` makes the class of `P - Q` vanish.
+example (P Q : Place K F) (h : P.deg = Q.deg) (f : F) (hf : f ≠ 0)
+    (hdiv : ∀ v : Place K F, CurveDivisor.pointDiff P Q v = v.ord f) :
+    Pic0.mk ⟨CurveDivisor.pointDiff P Q, (Divisor.pointDiff_mem_degZero_iff P Q).mpr h⟩ = 0 :=
+  (Pic0.mk_eq_zero_iff _).mpr ⟨f, hf, hdiv⟩
+
+-- Boundary: when the two places coincide, `P - P = 0` and its class vanishes.
+example (P : Place K F) :
+    Pic0.mk ⟨CurveDivisor.pointDiff P P, (Divisor.pointDiff_mem_degZero_iff P P).mpr rfl⟩ = 0 :=
+  (Pic0.mk_eq_zero_iff _).mpr ⟨1, one_ne_zero, fun v => by simp [CurveDivisor.pointDiff_self]⟩
+
 end FiniteResidueFields
 
 end AlgebraicCurve.DivisorClassGroupTest
