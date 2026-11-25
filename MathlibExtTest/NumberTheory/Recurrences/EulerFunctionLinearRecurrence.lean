@@ -15,6 +15,17 @@ import Mathlib.Tactic.NormNum
 
 namespace MathlibExtTest.NumberTheory.Recurrences.EulerFunctionLinearRecurrence
 
+example : ArithmeticFunction.cardFactors (2 ^ 12) = 12 := by
+  exact ArithmeticFunction.cardFactors_apply_prime_pow Nat.prime_two
+
+example : ∃ C : ℝ, ∀ N : ℕ, 10 ≤ N →
+    ((Finset.Icc 1 N).filter (fun n =>
+      10 * Real.log (Real.log N) ≤ (ArithmeticFunction.cardFactors n : ℝ))).card ≤
+        C * (N : ℝ) / Real.log N ^ 2 := by
+  obtain ⟨C, hC⟩ := MetaMathlibExt.card_cardFactors_ge_ten_log_log_le
+  refine ⟨C, fun N hN => ?_⟩
+  simpa only [Nat.floor_natCast] using hC N (by exact_mod_cast hN)
+
 public theorem totient_bound_three_and_twelve :
     ∃ C : ℝ, 0 < C ∧
       C / Real.log (Real.log (3 : ℕ)) ≤ (2 : ℝ) / 3 ∧
