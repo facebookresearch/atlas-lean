@@ -1,0 +1,225 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import Mathlib.Data.Fintype.Card
+public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.NumberTheory.PFrobeniusStarNumbers
+import Mathlib.Data.Nat.ModEq
+import Mathlib.Tactic.IntervalCases
+
+/-!
+# Frobenius numbers of three consecutive star numbers for indices six through nine
+
+We prove the formula for the p-Frobenius number of three consecutive star numbers
+when the starting index is six through nine and p is zero, one, or two.
+The proof counts representations in one finite interval and extends the count bound
+to all larger numbers by adding copies of the first star number.
+-/
+
+set_option autoImplicit false
+
+@[expose] public section
+
+namespace MathlibExt.NumberTheory.PFrobeniusStarNumbersWanted
+
+export MetaMathlibExt.StarNumber (star)
+
+/-- **Representation count for three consecutive star numbers.** Write $S_m$ for the $m$-th star
+number $6m(m-1)+1$. For natural numbers $n$ and $N$, the representation count of $N$ is the
+number of triples $(x, y, z)$ of natural numbers with $x S_n + y S_{n+1} + z S_{n+2} = N$.
+
+The star numbers are positive, so there are only finitely many such triples. -/
+noncomputable def starRepCount (n N : ℕ) : ℕ :=
+  Nat.card {xyz : ℕ × ℕ × ℕ //
+    xyz.1 * star n + xyz.2.1 * star (n + 1) +
+      xyz.2.2 * star (n + 2) = N}
+
+/-- **$p$-Frobenius number of three consecutive star numbers.** Write $S_m$ for the $m$-th star
+number $6m(m-1)+1$. For natural numbers $p$, $n$ and $g$, $g$ is the $p$-Frobenius number of
+$S_n, S_{n+1}, S_{n+2}$ when at most $p$ triples $(x, y, z)$ of natural numbers satisfy
+$x S_n + y S_{n+1} + z S_{n+2} = g$, and every natural number $N > g$ has more than $p$ triples
+$(x, y, z)$ of natural numbers with $x S_n + y S_{n+1} + z S_{n+2} = N$. -/
+def IsPFrobeniusStarNumber (p n g : ℕ) : Prop :=
+  starRepCount n g ≤ p ∧ ∀ N : ℕ, g < N → p < starRepCount n N
+
+/-- **$p$-Sylvester number of three consecutive star numbers.** Write $S_m$ for the $m$-th star
+number $6m(m-1)+1$. For natural numbers $p$ and $n$, the $p$-Sylvester number of
+$S_n, S_{n+1}, S_{n+2}$ is the number of natural numbers $N$ for which at most $p$ triples
+$(x, y, z)$ of natural numbers satisfy $x S_n + y S_{n+1} + z S_{n+2} = N$.
+
+For $n \ge 1$ the three star numbers are relatively prime, so this set of natural numbers is
+finite. -/
+noncomputable def pSylvesterStarCount (p n : ℕ) : ℕ :=
+  Nat.card {N : ℕ // starRepCount n N ≤ p}
+
+private abbrev Representation (n N : ℕ) :=
+  {xyz : ℕ × ℕ × ℕ //
+    xyz.1 * star n + xyz.2.1 * star (n + 1) + xyz.2.2 * star (n + 2) = N}
+
+private theorem star_pos (n : ℕ) : 0 < star n := by
+  unfold star
+  omega
+
+private theorem finite_representation (n N : ℕ) : Finite (Representation n N) := by
+  let bounded (r : Representation n N) : Fin (N + 1) × Fin (N + 1) × Fin (N + 1) := by
+    rcases r with ⟨⟨x, y, z⟩, h⟩
+    change x * star n + y * star (n + 1) + z * star (n + 2) = N at h
+    have hx := Nat.le_mul_of_pos_right x (star_pos n)
+    have hy := Nat.le_mul_of_pos_right y (star_pos (n + 1))
+    have hz := Nat.le_mul_of_pos_right z (star_pos (n + 2))
+    exact (⟨x, by omega⟩, ⟨y, by omega⟩, ⟨z, by omega⟩)
+  refine Finite.of_injective bounded (fun r s h => Subtype.ext ?_)
+  exact congrArg (fun t : Fin (N + 1) × Fin (N + 1) × Fin (N + 1) =>
+    (t.1.val, t.2.1.val, t.2.2.val)) h
+
+-- Adding copies of the first generator preserves distinct representations.
+private theorem starRepCount_le_add_mul (n N k : ℕ) :
+    starRepCount n N ≤ starRepCount n (N + k * star n) := by
+  let := finite_representation n (N + k * star n)
+  change Nat.card (Representation n N) ≤ Nat.card (Representation n (N + k * star n))
+  let shift (r : Representation n N) : Representation n (N + k * star n) :=
+    ⟨(r.val.1 + k, r.val.2), by
+      have h := r.property
+      simp only [Nat.add_mul]
+      omega⟩
+  apply Nat.card_le_card_of_injective shift
+  intro r s h
+  have hval : (r.val.1 + k, r.val.2) = (s.val.1 + k, s.val.2) := congrArg Subtype.val h
+  have htail := congrArg Prod.snd hval
+  exact Subtype.ext (Prod.ext (Nat.add_right_cancel (congrArg Prod.fst hval)) htail)
+
+-- Below the product of the first two generators, a fixed third coefficient
+-- allows at most one second coefficient. Compute it with a modular inverse.
+private def inverse (n : ℕ) : ℕ := 3 * n * (n - 1) ^ 2
+
+private def secondCoeff (n remaining : ℕ) : ℕ := (remaining * inverse n) % star n
+
+private def countCandidates (n N : ℕ) : ℕ :=
+  (List.range (N / star (n + 2) + 1)).countP fun z =>
+    let remaining := N - z * star (n + 2)
+    decide (secondCoeff n remaining * star (n + 1) ≤ remaining)
+
+private theorem starRepCount_eq_countCandidates (n N : ℕ)
+    (hinv : star (n + 1) * inverse n ≡ 1 [MOD star n])
+    (hN : N < star n * star (n + 1)) :
+    starRepCount n N = countCandidates n N := by
+  let a := star n
+  let b := star (n + 1)
+  let c := star (n + 2)
+  let fits (z : ℕ) := secondCoeff n (N - z * c) * b ≤ N - z * c
+  let bound := List.range (N / c + 1)
+  let candidates := bound.toFinset.filter fits
+  have hb : 0 < b := star_pos _
+  have hc : 0 < c := star_pos _
+  change N < a * b at hN
+  have second_eq {x y z : ℕ} (h : x * a + y * b + z * c = N) :
+      secondCoeff n (N - z * c) = y := by
+    have hy : y < a := (Nat.mul_lt_mul_right hb).mp (by omega)
+    have hrest : x * a + y * b = N - z * c := by omega
+    have hmod : y * b ≡ N - z * c [MOD a] := by
+      rw [← hrest, Nat.modEq_mul_modulus_add_iff]
+    apply Nat.mod_eq_of_modEq _ hy
+    calc
+      (N - z * c) * inverse n ≡ (y * b) * inverse n [MOD a] := hmod.symm.mul_right _
+      _ ≡ y [MOD a] := by simpa only [Nat.mul_assoc, Nat.mul_one] using hinv.mul_left y
+  let project (r : Representation n N) : ↥candidates := by
+    rcases r with ⟨⟨x, y, z⟩, h⟩
+    change x * a + y * b + z * c = N at h
+    refine ⟨z, Finset.mem_filter.mpr ⟨?_, ?_⟩⟩
+    · exact List.mem_toFinset.mpr (List.mem_range.mpr
+        (Nat.lt_succ_of_le ((Nat.le_div_iff_mul_le hc).mpr (by omega))))
+    · change secondCoeff n (N - z * c) * b ≤ N - z * c
+      rw [second_eq h]
+      omega
+  change Nat.card (Representation n N) = countCandidates n N
+  calc
+    Nat.card (Representation n N) = Nat.card ↥candidates := by
+      refine Nat.card_eq_of_bijective project ⟨?_, ?_⟩
+      · rintro ⟨⟨x, y, z⟩, hx⟩ ⟨⟨x', y', z'⟩, hx'⟩ heq
+        change x * a + y * b + z * c = N at hx
+        change x' * a + y' * b + z' * c = N at hx'
+        have hz : z = z' := congrArg Subtype.val heq
+        subst z'
+        have hy := (second_eq hx).symm.trans (second_eq hx')
+        subst y'
+        have hxmul : x * a = x' * a := by omega
+        have hxx : x = x' := Nat.eq_of_mul_eq_mul_right (star_pos n) hxmul
+        exact Subtype.ext (congrArg (fun j => (j, y, z)) hxx)
+      · intro ⟨z, hz⟩
+        obtain ⟨hz, hfit⟩ := Finset.mem_filter.mp hz
+        have hzle : z * c ≤ N := (Nat.le_div_iff_mul_le hc).mp
+          (Nat.lt_succ_iff.mp (List.mem_range.mp (List.mem_toFinset.mp hz)))
+        let remaining := N - z * c
+        let y := secondCoeff n remaining
+        have hle : y * b ≤ remaining := hfit
+        have hmod : y * b ≡ remaining [MOD a] := calc
+          y * b ≡ (remaining * inverse n) * b [MOD a] := (Nat.mod_modEq _ _).mul_right _
+          _ ≡ remaining [MOD a] := by
+            rw [Nat.mul_assoc, Nat.mul_comm (inverse n) b]
+            simpa only [Nat.mul_one] using hinv.mul_left remaining
+        have hdiv := Nat.div_mul_cancel ((Nat.modEq_iff_dvd' hle).mp hmod)
+        refine ⟨⟨((remaining - y * b) / a, y, z), ?_⟩, Subtype.ext rfl⟩
+        change (remaining - y * b) / a * a + y * b + z * c = N
+        dsimp only [remaining] at hdiv ⊢
+        omega
+    _ = countCandidates n N := by
+      rw [Nat.card_eq_fintype_card, Fintype.card_coe, List.nodup_range.card_eq_countP]
+      rfl
+
+private def thresholdSum (n p : ℕ) : ℕ :=
+  2 * n * star (n + 1) + (p + 2) * n * star (n + 2)
+
+-- Check the threshold and one complete interval of residue representatives above it.
+private theorem checkThreshold (n p : ℕ) (hn : 6 ≤ n) (hn9 : n ≤ 9) (hp : p ≤ 2) :
+    let g := thresholdSum n p - star n
+    star n ≤ thresholdSum n p ∧
+    star (n + 1) * inverse n ≡ 1 [MOD star n] ∧
+    g + star n < star n * star (n + 1) ∧
+    countCandidates n g ≤ p ∧
+    (List.range (star n)).all (fun i => decide (p < countCandidates n (g + i + 1))) = true := by
+  interval_cases n <;> interval_cases p <;> decide +kernel
+
+/-- **Frobenius numbers of three consecutive star numbers for $6 \le n \le 9$.** Write $S_m$ for
+the $m$-th star number $6m(m-1)+1$. For natural numbers $n$ and $p$ with $6 \le n \le 9$ and
+$p \in \{0, 1, 2\}$, there is a natural number $g$ such that at most $p$ triples $(x, y, z)$ of
+natural numbers satisfy $x S_n + y S_{n+1} + z S_{n+2} = g$, every natural number larger than
+$g$ has more than $p$ such triples, and $g = 2n S_{n+1} + (p + 2) n S_{n+2} - S_n$. That is,
+the $p$-Frobenius number of $S_n, S_{n+1}, S_{n+2}$ is $2n S_{n+1} + (p + 2) n S_{n+2} - S_n$.
+
+Source: "On p-Frobenius Numbers for the Numerical Semigroups
+Generated by Three Consecutive Star Numbers", Theorem 1. -/
+theorem exists_isPFrobeniusNumber_star_of_le_nine
+    (n p : ℕ) (hn : 6 ≤ n) (hn9 : n ≤ 9) (hp : p = 0 ∨ p = 1 ∨ p = 2) :
+    ∃ g : ℕ, IsPFrobeniusStarNumber p n g ∧
+      (g : ℤ) = 2 * n * star (n + 1) + (p + 2) * n * star (n + 2) -
+        star n := by
+  have hp2 : p ≤ 2 := by omega
+  obtain ⟨hsub, hinv, hprod, hcount, hwindow⟩ := checkThreshold n p hn hn9 hp2
+  let g := thresholdSum n p - star n
+  refine ⟨g, ⟨?_, ?_⟩, ?_⟩
+  · rw [starRepCount_eq_countCandidates n g hinv (by omega)]
+    exact hcount
+  · intro N hN
+    let i := (N - (g + 1)) % star n
+    let k := (N - (g + 1)) / star n
+    have hi : i < star n := Nat.mod_lt _ (star_pos n)
+    have hsum : i + star n * k = N - (g + 1) := Nat.mod_add_div _ _
+    have hsplit : g + i + 1 + k * star n = N := by
+      rw [Nat.mul_comm k]
+      omega
+    have hbase : p < countCandidates n (g + i + 1) := of_decide_eq_true
+      (List.all_eq_true.mp hwindow i (List.mem_range.mpr hi))
+    rw [← starRepCount_eq_countCandidates n (g + i + 1) hinv (by omega)] at hbase
+    exact hbase.trans_le (hsplit ▸ starRepCount_le_add_mul n (g + i + 1) k)
+  · change ((thresholdSum n p - star n : ℕ) : ℤ) = _
+    rw [Int.ofNat_sub hsub]
+    simp only [thresholdSum, Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat]
+
+end MathlibExt.NumberTheory.PFrobeniusStarNumbersWanted
