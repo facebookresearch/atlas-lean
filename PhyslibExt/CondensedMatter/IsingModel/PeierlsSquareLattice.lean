@@ -447,11 +447,12 @@ lemma outerContourWinding_of_outerContourFill (n : ℕ) (h : OuterContourFill n)
 lemma spinCompatibleFill_outerContourWinding (n : ℕ) : OuterContourWinding n :=
   outerContourWinding_of_outerContourFill n (spinCompatibleFill_outerContourFill n)
 
-/-- **The outer contour map exists.** For every `n`, `OuterContourMap n` holds. The interior of a
-cycle is the connected cluster in `Λ_n` through the origin whose crossing bonds it traces, which is
-unique, and each plus-boundary configuration on `Λ_n` with the origin minus is sent to a simple
-cycle through the whole contour of its filled minus cluster, based at an anchor on the positive
-axis. -/
+/-- **The outer contour map exists.** For every `n`, `OuterContourMap n` holds. The witnessing
+interior assignment sends a closed walk to the connected cluster in `Λ_n` through the origin whose
+crossing bonds it traces, when there is one (it is then unique), and to `∅` otherwise. Each
+plus-boundary configuration on `Λ_n` with the origin minus is sent to a simple cycle through the
+whole contour of its filled minus cluster, based at a site `(j, 0)` with `j` less than the contour
+length, and the interior of that cycle is the filled cluster. -/
 lemma spinCompatibleFill_outerContourMap (n : ℕ) : OuterContourMap n := by
   classical
   refine ⟨fun u γ => if h : ∃ K ∈ connClusterFamily (d := 2) n,
