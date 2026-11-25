@@ -9,4 +9,4 @@ solution starts within `δ` of it and later leaves its `ε`-neighbourhood.
 
 ## Sources
 
-- Hofbauer and Sigmund (1998), §3.3.
+- S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (NTHU), case (ii) (Lyapunov instability and trichotomy derived from the planar phase analysis).

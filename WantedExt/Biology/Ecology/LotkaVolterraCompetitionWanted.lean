@@ -21,17 +21,14 @@ interior equilibrium is a saddle and every solution tends to it or to one of `(K
 (iv) symmetrically, every solution tends to `(0, K₂)`.
 
 Recorded here: the four cases for solutions on `[0, ∞)` with positive initial densities; in case
-(ii) the saddle is stated as Lyapunov instability, and the separatrix is not formalized. The
-classical primary sources (Lotka 1925; Volterra 1926; Gause 1934) and Hofbauer–Sigmund (1998,
-§3.3) were not read; the case analysis follows university lecture notes on the competition
-equations, and the reduction of "all interior orbits" to a rigorous argument (no periodic
-orbits) is derived.
+(ii) the saddle is stated as Lyapunov instability, and the separatrix is not formalized. The four
+cases follow S.-B. Hsu, lecture notes §3.12 "Competition models, Mutualism or Symbiosis" (National
+Tsing Hua University); the global convergence of all interior orbits (ruling out periodic orbits
+in the open quadrant) is derived from that phase-plane analysis.
 
-Sources: A. J. Lotka, *Elements of Physical Biology* (1925); V. Volterra, "Fluctuations in the
-abundance of a species considered mathematically", Nature 118 (1926) 558–560,
-doi:10.1038/118558a0; B. S. Goh, "Global stability in two species interactions", J. Math. Biol.
-3 (1976) 313–318, doi:10.1007/BF00275063; J. Hofbauer and K. Sigmund, *Evolutionary Games and
-Population Dynamics*, Cambridge Univ. Press (1998), §3.3.
+Sources: S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (National
+Tsing Hua University); background references (not directly consulted): A. J. Lotka (1925),
+V. Volterra (1926), B. S. Goh (1976), J. Hofbauer and K. Sigmund (1998).
 -/
 module
 
@@ -93,7 +90,8 @@ noncomputable def interiorEq : ℝ × ℝ :=
 `α₂₁ < K₂ / K₁`, the interior equilibrium has both coordinates positive, and every solution on
 `[0, ∞)` with both initial densities positive converges to it.
 
-Sources: Goh (1976); Hofbauer and Sigmund (1998), §3.3. -/
+Source: S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (NTHU),
+case (i) (global convergence over all interior orbits derived from the planar phase analysis). -/
 public theorem_wanted tendsto_interiorEq (h₁ : p.α₁₂ < p.K₁ / p.K₂) (h₂ : p.α₂₁ < p.K₂ / p.K₁) :
     0 < p.interiorEq.1 ∧ 0 < p.interiorEq.2 ∧
       ∀ z : ℝ → ℝ × ℝ, p.IsSolution z → 0 < (z 0).1 → 0 < (z 0).2 →
@@ -103,7 +101,8 @@ public theorem_wanted tendsto_interiorEq (h₁ : p.α₁₂ < p.K₁ / p.K₂) (
 `α₂₁ > K₂ / K₁`, every solution on `[0, ∞)` with both initial densities positive converges to
 `(K₁, 0)`.
 
-Source: Hofbauer and Sigmund (1998), §3.3. -/
+Source: S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (NTHU),
+case (iii) (global convergence over all interior orbits derived from the planar phase analysis). -/
 public theorem_wanted tendsto_first (h₁ : p.α₁₂ < p.K₁ / p.K₂) (h₂ : p.K₂ / p.K₁ < p.α₂₁)
     (z : ℝ → ℝ × ℝ) (hz : p.IsSolution z) (h₀₁ : 0 < (z 0).1) (h₀₂ : 0 < (z 0).2) :
     Tendsto z atTop (𝓝 (p.K₁, 0))
@@ -112,7 +111,8 @@ public theorem_wanted tendsto_first (h₁ : p.α₁₂ < p.K₁ / p.K₂) (h₂ 
 `α₂₁ < K₂ / K₁`, every solution on `[0, ∞)` with both initial densities positive converges to
 `(0, K₂)`.
 
-Source: Hofbauer and Sigmund (1998), §3.3. -/
+Source: S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (NTHU),
+case (iv) (global convergence over all interior orbits derived from the planar phase analysis). -/
 public theorem_wanted tendsto_second (h₁ : p.K₁ / p.K₂ < p.α₁₂) (h₂ : p.α₂₁ < p.K₂ / p.K₁)
     (z : ℝ → ℝ × ℝ) (hz : p.IsSolution z) (h₀₁ : 0 < (z 0).1) (h₀₂ : 0 < (z 0).2) :
     Tendsto z atTop (𝓝 (0, p.K₂))
@@ -124,7 +124,8 @@ interior equilibrium; each of `(K₁, 0)` and `(0, K₂)` is the limit of some s
 interior equilibrium is Lyapunov unstable: there is `ε > 0` such that for every `δ > 0` some such
 solution starts within `δ` of it and later leaves its `ε`-neighbourhood.
 
-Source: Hofbauer and Sigmund (1998), §3.3. -/
+Source: S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (NTHU),
+case (ii) (Lyapunov instability and trichotomy derived from the planar phase analysis). -/
 public theorem_wanted bistable (h₁ : p.K₁ / p.K₂ < p.α₁₂) (h₂ : p.K₂ / p.K₁ < p.α₂₁) :
     0 < p.interiorEq.1 ∧ 0 < p.interiorEq.2 ∧
       (∀ z : ℝ → ℝ × ℝ, p.IsSolution z → 0 < (z 0).1 → 0 < (z 0).2 →

@@ -6,4 +6,4 @@
 
 ## Sources
 
-- Hofbauer and Sigmund (1998), §3.3.
+- S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (NTHU), case (iii) (global convergence over all interior orbits derived from the planar phase analysis).
