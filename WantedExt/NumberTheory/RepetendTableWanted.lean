@@ -20,6 +20,7 @@ public import Mathlib.Data.Nat.Factorization.Defs
 public import MathlibExt.NumberTheory.RepetendTable
 public import MathlibExt.NumberTheory.RepetendTable.BaseShift
 public import MathlibExt.NumberTheory.RepetendTable.DigitDifference
+public import MathlibExt.NumberTheory.RepetendTable.HalfPeriod
 public import MathlibExt.NumberTheory.RepetendTable.TwoRowColumns
 public import MathlibExt.NumberTheory.RepetendTable.InversePairs
 public import MathlibExt.NumberTheory.RepetendTable.OrderCount
@@ -42,6 +43,9 @@ INTEGERS 25 (2025), Article A26. The `j`-th base-`B` digit of `m/n` is written
 
 `MetaMathlibExt.repetend_digit_sub_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.DigitDifference`.
+
+`MetaMathlibExt.pow_add_half_mod_eq_and_digit_add` is proved in
+`MathlibExt.NumberTheory.RepetendTable.HalfPeriod`.
 
 `MetaMathlibExt.repetend_digit_diff_of_columns_eq` is proved in
 `MathlibExt.NumberTheory.RepetendTable.TwoRowColumns`.
@@ -371,20 +375,6 @@ public theorem_wanted repetend_columns_ne_of_card_eq_one_or_three (n L : ℕ) :
     let B := (Finset.Ico 1 n).filter fun b => Nat.Coprime b n ∧ orderOf (b : ZMod n) = L
     (B.card = 1 ∨ B.card = 3) → ∀ i < L, ∀ j < L, i ≠ j →
       (B.val.map fun b => b ^ (i + 1) / n % b) ≠ B.val.map fun b => b ^ (j + 1) / n % b
-
-/-- **Half-period symmetry of the repetend of $1/n$.** Let $n$ be a natural number whose unit
-group $(\mathbb{Z}/n\mathbb{Z})^\times$ is cyclic, let $L > 0$ be even, and let $b < n$ be a
-natural number whose multiplicative order modulo $n$ is $L$. For natural numbers $m$ write
-$b_m = b^m \bmod n$ and $r_m = \lfloor b^{m+1}/n \rfloor \bmod b$, the $m$-th base-$b$ digit of
-$1/n$. Then for every natural number $j$ we have $b_{j+L/2} = n - b_j$ and
-$r_j + r_{j+L/2} = r_{L/2}$.
-
-Source: R. J. Booth and D. J. Horton, *Matched Column Sets in Repetend Tables*, INTEGERS 25 (2025),
-Article A26, Lemma 29 (`integers-2025-A26-lem-29`). -/
-public theorem_wanted pow_add_half_mod_eq_and_digit_add (n L b j : ℕ) [IsCyclic (ZMod n)ˣ]
-    (hL : Even L) (hL0 : 0 < L) (hbn : b < n) (hb : orderOf (b : ZMod n) = L) :
-    b ^ (j + L / 2) % n = n - b ^ j % n ∧
-      b ^ (j + 1) / n % b + b ^ (j + L / 2 + 1) / n % b = b ^ (L / 2 + 1) / n % b
 
 /-- **Two-row repetend tables of length $3$ have no matched columns.** For a natural number $n$,
 let the rows be the integers $b$ with $1 \le b < n$, $\gcd(b, n) = 1$ and multiplicative order $3$
