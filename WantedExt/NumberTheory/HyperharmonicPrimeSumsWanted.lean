@@ -18,7 +18,7 @@ public import Mathlib.NumberTheory.PrimeCounting
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import WantedExt.NumberTheory.GeneralizedHarmonicGammaWanted
+public import MathlibExt.NumberTheory.GeneralizedHarmonicGamma
 
 /-!
 # Sums over primes II (statements)
