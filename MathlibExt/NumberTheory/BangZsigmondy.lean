@@ -415,16 +415,16 @@ private theorem zsVal_odd {a b n p : ℕ} [Fact p.Prime]
     intro h
     apply hDn0
     rw [ht, h, mul_zero]
-  have hval : padicValNat p (zsPhi n a b).toNat + padicValNat p (a ^ N - b ^ N)
-      ≤ padicValNat p (a ^ n - b ^ n) := by
-    have e1 : padicValNat p (a ^ n - b ^ n)
-        = padicValNat p ((zsPhi n a b).toNat * (a ^ N - b ^ N))
-          + padicValNat p t := by
+  have hval : multiplicity p (zsPhi n a b).toNat + multiplicity p (a ^ N - b ^ N)
+      ≤ multiplicity p (a ^ n - b ^ n) := by
+    have e1 : multiplicity p (a ^ n - b ^ n)
+        = multiplicity p ((zsPhi n a b).toNat * (a ^ N - b ^ N))
+          + multiplicity p t := by
       conv_lhs => rw [ht]
-      exact padicValNat.mul (mul_ne_zero hZ0 hDN0) ht0
-    have e2 : padicValNat p ((zsPhi n a b).toNat * (a ^ N - b ^ N))
-        = padicValNat p (zsPhi n a b).toNat + padicValNat p (a ^ N - b ^ N) :=
-      padicValNat.mul hZ0 hDN0
+      exact Nat.multiplicity_mul (mul_ne_zero hZ0 hDN0) ht0
+    have e2 : multiplicity p ((zsPhi n a b).toNat * (a ^ N - b ^ N))
+        = multiplicity p (zsPhi n a b).toNat + multiplicity p (a ^ N - b ^ N) :=
+      Nat.multiplicity_mul hZ0 hDN0
     omega
   have hord : orderOf ((a : ZMod p) * ((b : ZMod p))⁻¹) = n' :=
     zsOrder_of_dvd_phi hpb heq hndvd hdvd
@@ -447,14 +447,14 @@ private theorem zsVal_odd {a b n p : ℕ} [Fact p.Prime]
     rw [hpow_n a, hpow_n b]
   have eDN : a ^ N - b ^ N = (a ^ n') ^ (p ^ k') - (b ^ n') ^ (p ^ k') := by
     rw [hpow_N a, hpow_N b]
-  have e1 : padicValNat p ((a ^ n') ^ (p ^ (k' + 1)) - (b ^ n') ^ (p ^ (k' + 1)))
-      = padicValNat p (a ^ n' - b ^ n') + (k' + 1) := by
-    rw [padicValNat.pow_sub_pow hodd hyx hxy hxp hpk0, padicValNat.prime_pow]
-  have e2 : padicValNat p ((a ^ n') ^ (p ^ k') - (b ^ n') ^ (p ^ k'))
-      = padicValNat p (a ^ n' - b ^ n') + k' := by
-    rw [padicValNat.pow_sub_pow hodd hyx hxy hxp hpk'0, padicValNat.prime_pow]
+  have e1 : multiplicity p ((a ^ n') ^ (p ^ (k' + 1)) - (b ^ n') ^ (p ^ (k' + 1)))
+      = multiplicity p (a ^ n' - b ^ n') + (k' + 1) := by
+    rw [Nat.multiplicity_pow_sub_pow hodd hyx hxy hxp hpk0, Nat.multiplicity_prime_pow]
+  have e2 : multiplicity p ((a ^ n') ^ (p ^ k') - (b ^ n') ^ (p ^ k'))
+      = multiplicity p (a ^ n' - b ^ n') + k' := by
+    rw [Nat.multiplicity_pow_sub_pow hodd hyx hxy hxp hpk'0, Nat.multiplicity_prime_pow]
   rw [eDn, eDN] at hval
-  have hvZ : padicValNat p (zsPhi n a b).toNat ≤ 1 := by omega
+  have hvZ : multiplicity p (zsPhi n a b).toNat ≤ 1 := by omega
   intro hsq
   have hsqNat : p ^ 2 ∣ (zsPhi n a b).toNat := by
     have h2 : ((((p ^ 2 : ℕ))) : ℤ) ∣ (((zsPhi n a b).toNat : ℕ) : ℤ) := by
@@ -462,8 +462,8 @@ private theorem zsVal_odd {a b n p : ℕ} [Fact p.Prime]
       rw [Int.toNat_of_nonneg (le_of_lt hZpos)]
       exact hsq
     exact Int.natCast_dvd_natCast.mp h2
-  have h2le : 2 ≤ padicValNat p (zsPhi n a b).toNat :=
-    (padicValNat_dvd_iff_le hZ0).mp hsqNat
+  have h2le : 2 ≤ multiplicity p (zsPhi n a b).toNat :=
+    (multiplicity_dvd_iff_le hZ0).mp hsqNat
   omega
 
 /-- `p = 2`: `2 ^ 2 ∤ zsPhi n a b` when no prime is primitive at index `n ≥ 3`. -/
@@ -525,16 +525,16 @@ private theorem zsVal_two {a b n : ℕ} [Fact (Nat.Prime 2)]
     intro h
     apply hDn0
     rw [ht, h, mul_zero]
-  have hval : padicValNat 2 (zsPhi n a b).toNat + padicValNat 2 (a ^ N - b ^ N)
-      ≤ padicValNat 2 (a ^ n - b ^ n) := by
-    have e1 : padicValNat 2 (a ^ n - b ^ n)
-        = padicValNat 2 ((zsPhi n a b).toNat * (a ^ N - b ^ N))
-          + padicValNat 2 t := by
+  have hval : multiplicity 2 (zsPhi n a b).toNat + multiplicity 2 (a ^ N - b ^ N)
+      ≤ multiplicity 2 (a ^ n - b ^ n) := by
+    have e1 : multiplicity 2 (a ^ n - b ^ n)
+        = multiplicity 2 ((zsPhi n a b).toNat * (a ^ N - b ^ N))
+          + multiplicity 2 t := by
       conv_lhs => rw [ht]
-      exact padicValNat.mul (mul_ne_zero hZ0 hDN0) ht0
-    have e2 : padicValNat 2 ((zsPhi n a b).toNat * (a ^ N - b ^ N))
-        = padicValNat 2 (zsPhi n a b).toNat + padicValNat 2 (a ^ N - b ^ N) :=
-      padicValNat.mul hZ0 hDN0
+      exact Nat.multiplicity_mul (mul_ne_zero hZ0 hDN0) ht0
+    have e2 : multiplicity 2 ((zsPhi n a b).toNat * (a ^ N - b ^ N))
+        = multiplicity 2 (zsPhi n a b).toNat + multiplicity 2 (a ^ N - b ^ N) :=
+      Nat.multiplicity_mul hZ0 hDN0
     omega
   have hab2 : 2 ∣ a - b := by omega
   have heven_n : Even n := by
@@ -543,19 +543,19 @@ private theorem zsVal_two {a b n : ℕ} [Fact (Nat.Prime 2)]
   have heven_N : Even N := by
     rw [hN_eq]
     exact even_iff_two_dvd.mpr (dvd_pow_self 2 (by omega : k' ≠ 0))
-  have e1 : padicValNat 2 (a ^ n - b ^ n) + 1
-      = padicValNat 2 (a + b) + padicValNat 2 (a - b) + padicValNat 2 n :=
-    padicValNat.pow_two_sub_pow hba hab2 hpa (by omega : n ≠ 0) heven_n
-  have e2 : padicValNat 2 (a ^ N - b ^ N) + 1
-      = padicValNat 2 (a + b) + padicValNat 2 (a - b) + padicValNat 2 N :=
-    padicValNat.pow_two_sub_pow hba hab2 hpa (by omega : N ≠ 0) heven_N
-  have evn : padicValNat 2 n = k' + 1 := by
+  have e1 : multiplicity 2 (a ^ n - b ^ n) + 1
+      = multiplicity 2 (a + b) + multiplicity 2 (a - b) + multiplicity 2 n :=
+    Nat.multiplicity_pow_two_sub_pow hba hab2 hpa (by omega : n ≠ 0) heven_n
+  have e2 : multiplicity 2 (a ^ N - b ^ N) + 1
+      = multiplicity 2 (a + b) + multiplicity 2 (a - b) + multiplicity 2 N :=
+    Nat.multiplicity_pow_two_sub_pow hba hab2 hpa (by omega : N ≠ 0) heven_N
+  have evn : multiplicity 2 n = k' + 1 := by
     rw [hn_eq2]
-    exact padicValNat.prime_pow _
-  have evN : padicValNat 2 N = k' := by
+    exact Nat.multiplicity_prime_pow _
+  have evN : multiplicity 2 N = k' := by
     rw [hN_eq]
-    exact padicValNat.prime_pow _
-  have hvZ : padicValNat 2 (zsPhi n a b).toNat ≤ 1 := by omega
+    exact Nat.multiplicity_prime_pow _
+  have hvZ : multiplicity 2 (zsPhi n a b).toNat ≤ 1 := by omega
   intro hsq
   have hsqNat : 2 ^ 2 ∣ (zsPhi n a b).toNat := by
     have h2 : ((((2 ^ 2 : ℕ))) : ℤ) ∣ (((zsPhi n a b).toNat : ℕ) : ℤ) := by
@@ -563,8 +563,8 @@ private theorem zsVal_two {a b n : ℕ} [Fact (Nat.Prime 2)]
       rw [Int.toNat_of_nonneg (le_of_lt hZpos)]
       exact hsq
     exact Int.natCast_dvd_natCast.mp h2
-  have h2le : 2 ≤ padicValNat 2 (zsPhi n a b).toNat :=
-    (padicValNat_dvd_iff_le hZ0).mp hsqNat
+  have h2le : 2 ≤ multiplicity 2 (zsPhi n a b).toNat :=
+    (multiplicity_dvd_iff_le hZ0).mp hsqNat
   omega
 
 /-- If no prime is primitive at index `n ≥ 3`, `p ^ 2 ∤ zsPhi n a b`. -/

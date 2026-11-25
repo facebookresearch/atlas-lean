@@ -82,8 +82,8 @@ private def mgsyz_freeComponent (K : Type u) [Field K] {n : ℕ} {ι : Type u}
   letI : Module K (ι →₀ MvPolynomial (Fin n) K) :=
     Module.compHom _ (MvPolynomial.C : K →+* MvPolynomial (Fin n) K)
   exact
-    { carrier := fun f => ∀ j a, a ∈ (f j).support →
-        natDegreeToInt a + δ j = α
+    { carrier := {f | ∀ j a, a ∈ (f j).support →
+        natDegreeToInt a + δ j = α}
       zero_mem' := by
         intro j a ha
         simp at ha
@@ -176,8 +176,8 @@ private def mgsyz_freeComplement (K : Type u) [Field K] {n : ℕ} {ι : Type u}
   letI : Module K (ι →₀ MvPolynomial (Fin n) K) :=
     Module.compHom _ (MvPolynomial.C : K →+* MvPolynomial (Fin n) K)
   exact
-    { carrier := fun f => ∀ j a, a ∈ (f j).support →
-        natDegreeToInt a + δ j ≠ α
+    { carrier := {f | ∀ j a, a ∈ (f j).support →
+        natDegreeToInt a + δ j ≠ α}
       zero_mem' := by
         intro j a ha
         simp at ha

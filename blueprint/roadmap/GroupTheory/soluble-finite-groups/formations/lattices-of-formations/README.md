@@ -10,6 +10,8 @@
 - [Modular sets of group classes](is-modular-in.md)
 - [Existence of non-algebraic complete lattices of formations (Kourovka 18.92(a))](non-algebraic-complete-lattice-of-format.md)
 - [The non-modular formation lattice problem (Kourovka 18.92(b))](non-modular-complete-lattice-of-formatio.md)
+- [Prime Support Class](prime-support-class.md)
+- [Is Formation prime Support Class](is-formation-prime-support-class.md)
 - [Non-algebraic complete lattices of formations exist](non-algebraic-complete-lattice-of-format-2.md)
 - [A non-modular complete lattice of formations exists (Kourovka 18.92(b))](non-modular-complete-lattice-of-formatio-2.md)
 - [Class of finite groups (Kourovka 13.51)](finite-group-class.md)

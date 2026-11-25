@@ -17,7 +17,7 @@ doi:10.1137/0222015.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Basic
 public import Mathlib.Order.Lattice.Nat
 public import MathlibExt.Computability.BinaryNatEncoding
@@ -27,7 +27,7 @@ public import MathlibExt.Computability.Complexity
 
 namespace MetaMathlibExt.Complexity.NPComplete.KSSatOccurrenceThreshold
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-!
 # (k,s)-SAT at the occurrence threshold is NP-complete
@@ -45,9 +45,9 @@ Kratochvíl, Savický and Tuza prove that for every `k ≥ 3` such an `f(k)` exi
 NP-complete for every `s ≥ f(k) + 1`; the case `s = f(k) + 1` is the occurrence threshold. They
 also show `⌊2^k / (e k)⌋ ≤ f(k) ≤ 2^(k-1) - 2^(k-4) - 1` for `k ≥ 4`.
 
-Formulas are CSLib's `Cslib.Logic.PL.CNF` (clauses are lists of literals
+Formulas are ATLAS's CNF encoding `Cslib.Logic.LegacyPL.CNF` (clauses are lists of literals
 `(variable, polarity)`, a formula is a list of clauses) and satisfiability is
-`Cslib.Logic.PL.CNFSat`. A clause contains exactly `k` distinct variables when it has `k`
+`Cslib.Logic.LegacyPL.CNFSat`. A clause contains exactly `k` distinct variables when it has `k`
 literals whose variables are pairwise distinct. A variable occurs in a clause when the clause
 has a literal on it; occurrences are counted over the list of clauses, so a repeated clause is
 counted each time. `f(k)` is `kSThreshold k`, the supremum of the `s` for which every

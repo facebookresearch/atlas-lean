@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Module.Lattice
+public import Mathlib.Algebra.Module.Lattice.Full
 public import Mathlib.LinearAlgebra.BilinearForm.DualLattice
 public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Localization.Integer
@@ -171,11 +171,13 @@ field $K$, let $V$ be a $K$-vector space, viewed as an $A$-module through $A \su
 $B$ be a nondegenerate bilinear form on $V$. If $M$ is an $A$-lattice in $V$, that is, a finitely
 generated $A$-submodule that spans $V$ over $K$, then so is its dual submodule
 $M^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in M\}$. -/
-theorem LinearMap.BilinForm.dualSubmodule_isLattice [IsDomain A] [IsNoetherianRing A]
+theorem LinearMap.BilinForm.dualSubmodule_isFullLattice [IsDomain A] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    [Submodule.IsLattice K M] : Submodule.IsLattice K (B.dualSubmodule M) where
-  fg := B.dualSubmodule_fg hB M IsLattice.span_eq_top
-  span_eq_top := B.dualSubmodule_span_eq_top M IsLattice.fg
+    [Submodule.IsFullLattice K M] : Submodule.IsFullLattice K (B.dualSubmodule M) where
+  toIsLattice :=
+    haveI := IsLattice.finite K M
+    IsLattice.of_fg K (B.dualSubmodule_fg hB M IsFullLattice.span_eq_top)
+  span_eq_top := B.dualSubmodule_span_eq_top M (IsLattice.fg K M)
 
 /-- **The dual lattice and the dual module.** Let $A$ be a Noetherian integral domain with
 fraction field $K$, let $V$ be a finite-dimensional $K$-vector space, viewed as an $A$-module
@@ -184,14 +186,14 @@ $A$-lattice in $V$, that is, a finitely generated $A$-submodule that spans $V$ o
 $M^\vee = \{x \in V : B(x, y) \in A \text{ for all } y \in M\}$. Then $M^\vee$ is an $A$-lattice
 in $V$, and the map $M^\vee \to \operatorname{Hom}_A(M, A)$ sending $x$ to the functional
 $y \mapsto B(x, y)$ is bijective. -/
-theorem LinearMap.BilinForm.dualSubmodule_isLattice_and_dualSubmoduleToDual_bijective
+theorem LinearMap.BilinForm.dualSubmodule_isFullLattice_and_dualSubmoduleToDual_bijective
     [IsDomain A] [FiniteDimensional K V] [IsNoetherianRing A]
     (B : LinearMap.BilinForm K V) (hB : B.Nondegenerate) (M : Submodule A V)
-    [Submodule.IsLattice K M] :
-    Submodule.IsLattice K (B.dualSubmodule M) ∧
+    [Submodule.IsFullLattice K M] :
+    Submodule.IsFullLattice K (B.dualSubmodule M) ∧
       Function.Bijective (B.dualSubmoduleToDual M) :=
-  ⟨B.dualSubmodule_isLattice hB M,
-    B.dualSubmoduleToDual_bijective hB M IsLattice.span_eq_top⟩
+  ⟨B.dualSubmodule_isFullLattice hB M,
+    B.dualSubmoduleToDual_bijective hB M IsFullLattice.span_eq_top⟩
 
 /-- **The dual submodule is the dual module.** Let $A$ be an integral domain with fraction field
 $K$, let $V$ be a finite-dimensional $K$-vector space, viewed as an $A$-module through

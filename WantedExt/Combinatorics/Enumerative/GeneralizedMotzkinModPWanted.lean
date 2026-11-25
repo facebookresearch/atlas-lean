@@ -14,183 +14,17 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Algebra.Group.Subgroup.Lattice
 public import Mathlib.Data.Nat.Digits.Defs
+public import MathlibExt.Combinatorics.Enumerative.GeneralizedMotzkinCentralTrinomial
 public import MathlibExt.Combinatorics.Enumerative.GeneralizedMotzkinModP
 public import MathlibExt.Combinatorics.Enumerative.RiordanNumber
 public import MathlibExt.Data.Set.Density
-import Mathlib.Tactic.NormNum
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
-open LaurentPolynomial
-
-/-- **The symmetric trinomial Laurent polynomial.** For integers $a$ and $b$, this is the Laurent
-polynomial $a x^{-1} + b + a x$ with integer coefficients, used to define the generalized central
-trinomial coefficients and the generalized Motzkin numbers.
-
-Source: Nadav Kohen, *Density and Symmetry in the
-Generalized Motzkin Numbers Modulo p*, INTEGERS 26 (2026), Article A22, Definitions. -/
-public noncomputable def trinomialLaurent (a b : ℤ) : LaurentPolynomial ℤ :=
-  C a * T (-1) + C b + C a * T 1
-
-/-- **Generalized central trinomial coefficients.** For integers $a, b$ and a natural number $n$,
-the generalized central trinomial coefficient $T_n^{(a/b)}$ is the constant term of the Laurent
-polynomial $(a x^{-1} + b + a x)^n$.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*,
-INTEGERS 26 (2026), Article A22, Definitions. -/
-public noncomputable def centralTrinomial (a b : ℤ) (n : ℕ) : ℤ :=
-  (trinomialLaurent a b ^ n).coeff 0
-
-/-- **Generalized Motzkin numbers.** For integers $a, b$ and a natural number $n$, the generalized
-Motzkin number $M^{(a,b)}_n$ is the constant term of the Laurent polynomial
-$(a x^{-1} + b + a x)^n (1 - x^2)$ with integer coefficients.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*,
-INTEGERS 26 (2026), Article A22, Definitions. -/
-public noncomputable def generalizedMotzkin (a b : ℤ) (n : ℕ) : ℤ :=
-  (trinomialLaurent a b ^ n * (1 - T 2)).coeff 0
-
-/-- **OEIS A005717.** For a natural number $n$, $a_n$ is the constant term of the Laurent
-polynomial $x (x^{-1} + 1 + x)^n$ with integer coefficients.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*,
-INTEGERS 26 (2026), Article A22, Definitions. -/
-public noncomputable def a005717 (n : ℕ) : ℤ :=
-  (trinomialLaurent 1 1 ^ n * T 1).coeff 0
-
-/-- **OEIS A005773.** For a natural number $n$, $a_n$ is the constant term of the Laurent
-polynomial $(1 + x)(x^{-1} + 1 + x)^n$ with integer coefficients.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*,
-INTEGERS 26 (2026), Article A22, Definitions. -/
-public noncomputable def a005773 (n : ℕ) : ℤ :=
-  (trinomialLaurent 1 1 ^ n * (1 + T 1)).coeff 0
-
-/-- **The first five powers of $x^{-1} + 1 + x$.** In the ring of Laurent polynomials over
-$\mathbb{Z}$,
-$(x^{-1} + 1 + x)^0 = 1$,
-$(x^{-1} + 1 + x)^1 = x^{-1} + 1 + x$,
-$(x^{-1} + 1 + x)^2 = x^{-2} + 2x^{-1} + 3 + 2x + x^2$,
-$(x^{-1} + 1 + x)^3 = x^{-3} + 3x^{-2} + 6x^{-1} + 7 + 6x + 3x^2 + x^3$ and
-$(x^{-1} + 1 + x)^4 = x^{-4} + 4x^{-3} + 10x^{-2} + 16x^{-1} + 19 + 16x + 10x^2 + 4x^3 + x^4$.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*, INTEGERS 26
-(2026), Article A22, Definitions. -/
-public theorem trinomialLaurent_one_one_powers :
-    trinomialLaurent 1 1 ^ 0 = AddMonoidAlgebra.single 0 1 ∧
-    trinomialLaurent 1 1 ^ 1 =
-      AddMonoidAlgebra.single (-1) 1 + AddMonoidAlgebra.single 0 1 +
-        AddMonoidAlgebra.single 1 1 ∧
-    trinomialLaurent 1 1 ^ 2 =
-      AddMonoidAlgebra.single (-2) 1 + AddMonoidAlgebra.single (-1) 2 +
-        AddMonoidAlgebra.single 0 3 + AddMonoidAlgebra.single 1 2 +
-        AddMonoidAlgebra.single 2 1 ∧
-    trinomialLaurent 1 1 ^ 3 =
-      AddMonoidAlgebra.single (-3) 1 + AddMonoidAlgebra.single (-2) 3 +
-        AddMonoidAlgebra.single (-1) 6 + AddMonoidAlgebra.single 0 7 +
-        AddMonoidAlgebra.single 1 6 + AddMonoidAlgebra.single 2 3 +
-        AddMonoidAlgebra.single 3 1 ∧
-    trinomialLaurent 1 1 ^ 4 =
-      AddMonoidAlgebra.single (-4) 1 + AddMonoidAlgebra.single (-3) 4 +
-        AddMonoidAlgebra.single (-2) 10 + AddMonoidAlgebra.single (-1) 16 +
-        AddMonoidAlgebra.single 0 19 + AddMonoidAlgebra.single 1 16 +
-        AddMonoidAlgebra.single 2 10 + AddMonoidAlgebra.single 3 4 +
-        AddMonoidAlgebra.single 4 1 := by
-  constructor
-  · simp [trinomialLaurent, LaurentPolynomial.single_eq_C_mul_T]
-  constructor
-  · simp [trinomialLaurent, LaurentPolynomial.single_eq_C_mul_T]
-  constructor
-  · simp only [LaurentPolynomial.single_eq_C_mul_T]
-    simp [trinomialLaurent]
-    ring_nf
-    simp only [LaurentPolynomial.T_pow, ← LaurentPolynomial.T_add]
-    norm_num
-    ring
-  constructor
-  · simp only [LaurentPolynomial.single_eq_C_mul_T]
-    simp [trinomialLaurent]
-    ring_nf
-    simp only [LaurentPolynomial.T_pow, ← LaurentPolynomial.T_add]
-    norm_num
-    ring
-  · simp only [LaurentPolynomial.single_eq_C_mul_T]
-    simp [trinomialLaurent]
-    ring_nf
-    simp only [LaurentPolynomial.T_pow, ← LaurentPolynomial.T_add]
-    norm_num
-    ring
-
-/-- **First five central trinomial coefficients.** The central trinomial coefficients $T_n$, the
-constant terms of $(x^{-1} + 1 + x)^n$, are $1, 1, 3, 7, 19$ for $n = 0, 1, 2, 3, 4$.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*, INTEGERS 26
-(2026), Article A22, Definitions. -/
-public theorem centralTrinomial_one_one_values :
-    (List.range 5).map (centralTrinomial 1 1) = [1, 1, 3, 7, 19] := by
-  rcases trinomialLaurent_one_one_powers with ⟨h0, h1, h2, h3, h4⟩
-  have hr : List.range 5 = [0, 1, 2, 3, 4] := by decide
-  rw [hr]
-  simp only [List.map_cons, List.map_nil]
-  unfold centralTrinomial
-  rw [h0, h1, h2, h3, h4]
-  simp only [AddMonoidAlgebra.coeff_add, AddMonoidAlgebra.coeff_single,
-    Finsupp.add_apply, Finsupp.single_apply]
-  norm_num
-
-/-- **First five generalized Motzkin numbers at $a = b = 1$.** The generalized Motzkin numbers
-$M_n$ for $a = b = 1$, the constant terms of $(x^{-1} + 1 + x)^n (1 - x^2)$, are $1, 1, 2, 4, 9$
-for $n = 0, 1, 2, 3, 4$.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*, INTEGERS 26
-(2026), Article A22, Definitions. -/
-public theorem generalizedMotzkin_one_one_values :
-    (List.range 5).map (generalizedMotzkin 1 1) = [1, 1, 2, 4, 9] := by
-  rcases trinomialLaurent_one_one_powers with ⟨h0, h1, h2, h3, h4⟩
-  have hr : List.range 5 = [0, 1, 2, 3, 4] := by decide
-  rw [hr]
-  simp only [List.map_cons, List.map_nil]
-  unfold generalizedMotzkin
-  rw [h0, h1, h2, h3, h4]
-  simp only [sub_eq_add_neg, mul_add, add_mul, mul_neg, mul_one,
-    LaurentPolynomial.T, AddMonoidAlgebra.single_mul_single,
-    AddMonoidAlgebra.coeff_add, AddMonoidAlgebra.coeff_neg,
-    AddMonoidAlgebra.coeff_single, Finsupp.add_apply, Finsupp.neg_apply,
-    Finsupp.single_apply]
-  norm_num
-
-/-- **Generalized Motzkin numbers from three central trinomial coefficients.** For integers $a$, $b$
-let $T_r$ and $M_r$ be the constant terms of $(a x^{-1} + b + a x)^r$ and of
-$(a x^{-1} + b + a x)^r (1 - x^2)$, the generalized central trinomial coefficients and generalized
-Motzkin numbers. Then for every natural number $n$,
-$$
-2a^2 M_n = (4a^2 - b^2) T_n + 2b T_{n+1} - T_{n+2}.
-$$
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*, INTEGERS 26
-(2026), Article A22, Proposition 1. -/
-public theorem_wanted generalizedMotzkin_centralTrinomial_relation
-    (a b : ℤ) (n : ℕ) :
-    2 * a ^ 2 * generalizedMotzkin a b n =
-      (4 * a ^ 2 - b ^ 2) * centralTrinomial a b n +
-        2 * b * centralTrinomial a b (n + 1) -
-          centralTrinomial a b (n + 2)
-
-/-- **Recurrence for generalized central trinomial coefficients.** Let $a, b$ be integers and let
-$T_n$ be the constant term of $(a x^{-1} + b + a x)^n$. For every natural number $n$,
-$$(n + 2) T_{n+2} = b (2n + 3) T_{n+1} - (b^2 - 4a^2)(n + 1) T_n.$$
-
-This is the source's recurrence with its index shifted by two, so that every index is a natural
-number.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*,
-INTEGERS 26 (2026), Article A22, Proposition 2. -/
-public theorem_wanted centralTrinomial_recurrence (a b : ℤ) (n : ℕ) :
-    (n + 2 : ℤ) * centralTrinomial a b (n + 2) =
-      b * (2 * n + 3 : ℤ) * centralTrinomial a b (n + 1) -
-        (b ^ 2 - 4 * a ^ 2) * (n + 1 : ℤ) * centralTrinomial a b n
+-- `centralTrinomial_recurrence` is proved in
+-- `GeneralizedMotzkinCentralTrinomial`, publicly imported above.
 
 /-- **Three-term recurrence for generalized Motzkin numbers.** For integers $a$, $b$ let $M_r$ be
 the constant term of $(a x^{-1} + b + a x)^r (1 - x^2)$, the generalized Motzkin number. Then for
@@ -262,29 +96,6 @@ Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Mo
 public theorem_wanted prime_dvd_motzkin_prime_minus_two_iff
     (p : ℕ) (hp : p.Prime) :
     generalizedMotzkin 1 1 (p - 2) ≡ 0 [ZMOD p] ↔ p ≡ 1 [MOD 3]
-
-/-- **Lucas property for constant terms of powers of linear Laurent polynomials.** Let $p$ be a
-prime, let $\alpha$, $\beta$, $\gamma$, $a$, $b$ be integers, and let $n$ be a natural number whose
-base-$p$ digits are $d_0, \dots, d_s$ (there are none when $n = 0$, and both products below are
-then $1$). Write $\operatorname{ct}(F)$ for the constant term of a Laurent polynomial $F$ and put
-$P = \alpha x^{-1} + \beta + \gamma x$. Then
-$$
-\operatorname{ct}(P^n) \equiv \prod_{i=0}^{s} \operatorname{ct}(P^{d_i}) \pmod p,
-$$
-and the generalized central trinomial coefficients $T_r = \operatorname{ct}((a x^{-1} + b + a x)^r)$
-satisfy $T_n \equiv \prod_{i=0}^{s} T_{d_i} \pmod p$.
-
-The source assumes that $P$ has degree one; here $\alpha$ and $\gamma$ are arbitrary, which
-includes that case.
-
-Source: Nadav Kohen, *Density and Symmetry in the Generalized Motzkin Numbers Modulo p*, INTEGERS 26
-(2026), Article A22, Proposition 4. -/
-public theorem_wanted constantTerm_linearLaurent_pow_digits (α β γ a b : ℤ) (p n : ℕ)
-    (hp : p.Prime) :
-    (linearLaurent α β γ ^ n).coeff 0 ≡
-        ((Nat.digits p n).map fun d => (linearLaurent α β γ ^ d).coeff 0).prod [ZMOD p] ∧
-      centralTrinomial a b n ≡
-        ((Nat.digits p n).map fun d => centralTrinomial a b d).prod [ZMOD p]
 
 /-- **Digit decomposition of shifted sums of constant terms modulo a prime.** Let $\alpha, \beta,
 \gamma$ be integers with $\alpha \ne 0$ or $\gamma \ne 0$, let $a_r$ be the constant term of

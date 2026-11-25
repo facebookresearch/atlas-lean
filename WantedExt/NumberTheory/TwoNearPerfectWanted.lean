@@ -24,8 +24,12 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.NearPerfectPowerTwoDivisibility
+public import MathlibExt.NumberTheory.StrongTwoNearPerfectExponentBound
 public import MathlibExt.NumberTheory.TwoNearPerfectEquationSeven
 public import MathlibExt.NumberTheory.TwoNearPerfectEquationSix
+public import MathlibExt.NumberTheory.TwoNearPerfectOddDivisor
+public import MathlibExt.NumberTheory.TwoNearPerfectOmittedDivisors
 public import MathlibExt.NumberTheory.TwoNearPerfectPowerOfTwoDivisors
 
 namespace MetaMathlibExt
@@ -82,33 +86,6 @@ public theorem_wanted eq_one_of_isSquare_discriminant {a k : ℕ} (ha : 0 < a) (
     (hD : IsSquare ((2 : ℤ) ^ (2 * k + 2) + 2 ^ (k + 2) - 2 ^ (a + 2) - 7)) :
     k = 1 ∧ a = 1
 
-/-- **Sum and parity of the omitted divisors of a $2$-near perfect $2^k p^2$.** Let $p$ be an odd
-prime, let $k$ be a natural number, and let $d_1 \ne d_2$ be divisors of $n = 2^k p^2$ with
-$\sigma(n) = 2n + d_1 + d_2$, where $\sigma$ denotes the sum of divisors. Then
-$d_1 + d_2 = -p^2 + (2^{k+1} - 1) p + (2^{k+1} - 1)$, and $d_1$ and $d_2$ have opposite parity.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 5
-(`integers-2024-A61-lem-5`). -/
-public theorem_wanted omitted_divisors_sum_two_pow_mul_prime_sq {k p d₁ d₂ : ℕ}
-    (hp : p.Prime) (hp2 : p ≠ 2) (hd₁ : d₁ ∣ 2 ^ k * p ^ 2) (hd₂ : d₂ ∣ 2 ^ k * p ^ 2)
-    (hne : d₁ ≠ d₂)
-    (hσ : ArithmeticFunction.sigma 1 (2 ^ k * p ^ 2) = 2 * (2 ^ k * p ^ 2) + d₁ + d₂) :
-    ((d₁ + d₂ : ℕ) : ℤ) = -(p : ℤ) ^ 2 + (2 ^ (k + 1) - 1) * p + (2 ^ (k + 1) - 1) ∧
-      d₁ % 2 ≠ d₂ % 2
-
-/-- **Odd solutions $p$ of $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$ divide
-$2^k - 1$.** Let $k$ and $b$ be positive natural numbers and let $p$ be an odd natural number
-such that $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$. Then $p$ divides $2^k - 1$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 6
-(`integers-2024-A61-lem-6`). -/
-public theorem_wanted dvd_of_two_near_perfect_eq_twelve {b k p : ℕ} (hk : 0 < k) (hb : 0 < b)
-    (hp : Odd p)
-    (h : ((2 : ℤ) ^ (k + 1) - 1) * (p ^ 2 + p + 1) = 2 ^ (k + 1) * p ^ 2 + 2 ^ b * p ^ 2 + 1) :
-    (p : ℤ) ∣ 2 ^ k - 1
-
 /-- **Odd solutions $p$ of $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$ satisfy
 $p + 1 \mid 2^b + 2$.** Let $k$ and $b$ be positive natural numbers and let $p$ be an odd natural
 number such that $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$. Then, as integers,
@@ -136,33 +113,6 @@ public theorem_wanted strong_two_near_perfect_two_pow_mul_prime_form {k p : ℕ}
     (hstrong : ∃ d, d ∣ 2 ^ k * p ∧
       ArithmeticFunction.sigma 1 (2 ^ k * p) = 2 * (2 ^ k * p) + d + 2 ^ k * p / d) :
     ∃ a ≤ k, (p : ℤ) * (1 + 2 ^ (k - a)) = 2 ^ (k + 1) - 2 ^ a - 1
-
-/-- **Prime solutions of $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$ satisfy $k < 2a$.** Let $a \le k$
-be natural numbers and let $p$ be a prime with $p(1 + 2^{k-a}) = 2^{k+1} - 2^a - 1$, that is,
-$p = (2^{k+1} - 2^a - 1)/(1 + 2^{k-a})$. Then $k < 2a$.
-
-The source also assumes that $n = 2^k p$ is strongly $2$-near perfect, that is, that
-$\sigma(n) = 2n + d + n/d$ for some divisor $d$ of $n$, where $\sigma$ is the sum of divisors.
-This follows from the equation for $p$ by taking $d = 2^a$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 9
-(`integers-2024-A61-lem-9`). -/
-public theorem_wanted lt_two_mul_of_strong_two_near_perfect_form {a k p : ℕ} (hp : p.Prime)
-    (hak : a ≤ k) (hform : (p : ℤ) * (1 + 2 ^ (k - a)) = 2 ^ (k + 1) - 2 ^ a - 1) :
-    k < 2 * a
-
-/-- **If $b \ge 1$ and $2^b + 1$ divides $3 \cdot 2^a + 1$, then $b = 2$.** Let $a$ and $b$ be
-natural numbers with $b \ge 1$. If $2^b + 1$ divides $3 \cdot 2^a + 1$, then $b = 2$.
-
-The source prints the lemma with no range for $b$; its proof divides $a$ by $b$, so $b \ge 1$ is
-assumed here. The hypothesis is needed: for $b = 0$, $2^0 + 1 = 2$ divides $3 \cdot 2^0 + 1 = 4$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 10
-(`integers-2024-A61-lem-10`). -/
-public theorem_wanted eq_two_of_two_pow_add_one_dvd {a b : ℕ} (hb : 1 ≤ b)
-    (h : 2 ^ b + 1 ∣ 3 * 2 ^ a + 1) : b = 2
 
 /-- **No $2$-near perfect $2^k p^2$ with omitted divisors $2^i$ and $p$ or $p^2$.** Let $p$ be an
 odd prime, let $k$ and $i$ be natural numbers with $i \le k$, let $m$ be $1$ or $2$, and let
