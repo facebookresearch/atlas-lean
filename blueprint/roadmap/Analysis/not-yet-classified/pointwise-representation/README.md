@@ -1,9 +1,9 @@
 # Pointwise Representation
 
-- [Continuous Coefficient Graded Representation](continuous-coefficient-graded-representa.md)
-- [Continuous Coefficient Graded Representation to Non Unital Star Alg Hom](continuous-coefficient-graded-representa-2.md)
-- [Continuous Coefficient Graded Representation apply](continuous-coefficient-graded-representa-3.md)
-- [Continuous Coefficient Graded Representation const](continuous-coefficient-graded-representa-4.md)
+- [Pointwise graded representation on sections](continuous-coefficient-graded-representa.md)
+- [Underlying pointwise section representation](continuous-coefficient-graded-representa-2.md)
+- [Evaluation of a pointwise graded representation](continuous-coefficient-graded-representa-3.md)
+- [Constant coefficients in the graded section representation](continuous-coefficient-graded-representa-4.md)
 - [Coefficient Vector CLM](coefficient-vector-clm.md)
 - [Coefficient Vector CLM apply](coefficient-vector-clm-apply.md)
 - [Continuous Coefficient Representation](continuous-coefficient-representation.md)

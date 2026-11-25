@@ -33,7 +33,9 @@ universe u
 
 namespace ClosedStarIdeal
 
-/-- Equality of actual closed ideals identifies their same algebraic quotient structures. -/
+/-- **Quotient equivalence from ideal equality.** Let `D` be a nonunital complex C*-algebra and `I,J`
+closed two-sided star ideals of `D`. An equality `I = J` defines a complex star-algebra equivalence
+`D/I ≃ D/J`. -/
 noncomputable def quotientStarAlgEquivOfEq
     {D : Type u} [NonUnitalCStarAlgebra D]
     (I J : ClosedStarIdeal D) (h : I = J) :
@@ -44,7 +46,9 @@ noncomputable def quotientStarAlgEquivOfEq
   let : I.carrier.IsTwoSided := I.isTwoSided
   exact StarAlgEquiv.refl ℂ I.Quotient
 
-/-- Ideal-equality transport retains the literal canonical quotient projection. -/
+/-- **Classes under ideal-equality transport.** Let `D` be a nonunital complex C*-algebra and `I,J`
+closed two-sided star ideals of `D`. For an equality `I = J`, the induced quotient equivalence sends
+the class of every `d ∈ D` modulo `I` to its class modulo `J`. -/
 theorem quotientStarAlgEquivOfEq_quotientMap
     {D : Type u} [NonUnitalCStarAlgebra D]
     (I J : ClosedStarIdeal D) (h : I = J) :

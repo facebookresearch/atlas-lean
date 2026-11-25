@@ -82,8 +82,9 @@ variable {B : Type uB} [NonUnitalCStarAlgebra B]
 variable [PartialOrder B] [StarOrderedRing B]
 variable {I : Type uI} [Fintype I]
 
-/-- The coefficient quadratic form of a positive C-star matrix is nonnegative,
-including for an empty finite index and nonunital coefficients. -/
+/-- **Positive matrix quadratic form.** Let `B` be a nonunital complex C*-algebra with a star-compatible
+partial order, let `I` be finite, let `P` be a positive `I × I` C*-matrix over `B`, and let `b : I →
+B`. Then `∑ i j, bᵢ* Pᵢⱼ bⱼ ≥ 0`. The empty index type is allowed. -/
 theorem quadraticForm_nonneg (P : CStarMatrix I I B) (hP : 0 ≤ P) (b : I → B) :
     0 ≤ ∑ i, ∑ j, star (b i) * P i j * b j := by
   classical
@@ -102,8 +103,9 @@ theorem quadraticForm_nonneg (P : CStarMatrix I I B) (hP : 0 ≤ P) (b : I → B
     rw [hsum]
     exact add_nonneg ihP ihQ
 
-/-- The actual matrix with entries star(a_i)*a_j is positive in the existing
-C-star matrix cone, without a coefficient unit or nonempty index premise. -/
+/-- **Positivity of a finite Gram matrix.** For a nonunital complex C*-algebra `B` with a
+star-compatible partial order, a finite index type `I`, and `a : I → B`, the C*-matrix with entries
+`aᵢ* aⱼ` is positive. No unit or nonempty index is required. -/
 theorem gram_nonneg (a : I → B) :
     0 ≤ CStarMatrix.ofMatrix (Matrix.of fun i j => star (a i) * a j) := by
   classical
@@ -143,8 +145,9 @@ variable {B : Type uB} [NonUnitalCStarAlgebra B]
 variable [PartialOrder B] [StarOrderedRing B]
 variable {I : Type uI} [Fintype I]
 
-/-- An ordinary completely positive map satisfies the literal algebra-valued
-finite Gram inequality, in the caller's lawful coefficient orders. -/
+/-- **Finite Gram inequality for CP maps.** For nonunital complex C*-algebras `A,B` with star-compatible
+partial orders, a completely positive map `φ : A → B`, a finite index type `I`, and families `a : I
+→ A`, `b : I → B`, `∑ i j, bᵢ* φ(aᵢ* aⱼ) bⱼ ≥ 0` in `B`. This includes the empty family. -/
 theorem finite_gram_nonneg (phi : A →CP B) (a : I → A) (b : I → B) :
     0 ≤ ∑ i, ∑ j, star (b i) * phi (star (a i) * a j) * b j := by
   let G : CStarMatrix I I A :=

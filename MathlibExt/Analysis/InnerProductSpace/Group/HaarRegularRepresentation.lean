@@ -43,7 +43,11 @@ variable (G : Type uG) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable (H : Type uH) [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The Haar left regular representation on the original `L²(G,H)` carrier. -/
+/-- Let `G` be a locally compact topological group with its Borel σ-algebra, let `μ` be a regular
+left Haar measure on `G`, and let `H` be a complete complex inner-product space. The
+representation acts on the Hilbert space `L²(G,μ;H)`.
+
+The Haar left regular representation on the `L²(G,H)` carrier. -/
 def haarLeftRegular : StronglyContinuousUnitaryRepresentation G (Lp H 2 μ) := by
   let e (g : G) : Lp H 2 μ ≃ₗᵢ[ℂ] Lp H 2 μ :=
     { toFun := fun ξ => DomMulAct.mk g⁻¹ • ξ
@@ -93,20 +97,32 @@ def haarLeftRegular : StronglyContinuousUnitaryRepresentation G (Lp H 2 μ) := b
     change Continuous (fun g : G => DomMulAct.mk g⁻¹ • ξ)
     exact (DomMulAct.continuous_mk.comp continuous_inv).smul continuous_const
 
-/-- The full operator action is the existing inverse domain action. -/
+/-- Let `G` be a locally compact topological group with its Borel σ-algebra, let `μ` be a regular
+left Haar measure on `G`, and let `H` be a complete complex inner-product space. The
+representation acts on the Hilbert space `L²(G,μ;H)`.
+
+The full operator action is the existing inverse domain action. -/
 @[simp]
 theorem haarLeftRegular_apply (g : G) (ξ : Lp H 2 μ) :
     (haarLeftRegular G μ H g : Lp H 2 μ →L[ℂ] Lp H 2 μ) ξ =
       DomMulAct.mk g⁻¹ • ξ :=
   rfl
 
-/-- The original Haar function representatives translate by `g⁻¹` almost everywhere. -/
+/-- Let `G` be a locally compact topological group with its Borel σ-algebra, let `μ` be a regular
+left Haar measure on `G`, and let `H` be a complete complex inner-product space. The
+representation acts on the Hilbert space `L²(G,μ;H)`.
+
+The Haar function representatives translate by `g⁻¹` almost everywhere. -/
 theorem haarLeftRegular_ae_eq (g : G) (ξ : Lp H 2 μ) :
     (haarLeftRegular G μ H g : Lp H 2 μ →L[ℂ] Lp H 2 μ) ξ =ᵐ[μ]
       fun t : G => ξ (g⁻¹ * t) := by
   exact DomMulAct.smul_Lp_ae_eq (DomMulAct.mk g⁻¹) ξ
 
-/-- The adjoint is the literal inverse left translation. -/
+/-- Let `G` be a locally compact topological group with its Borel σ-algebra, let `μ` be a regular
+left Haar measure on `G`, and let `H` be a complete complex inner-product space. The
+representation acts on the Hilbert space `L²(G,μ;H)`.
+
+The adjoint is the inverse left translation. -/
 theorem star_haarLeftRegular (g : G) :
     star (haarLeftRegular G μ H g : Lp H 2 μ →L[ℂ] Lp H 2 μ) =
       (haarLeftRegular G μ H g⁻¹ : Lp H 2 μ →L[ℂ] Lp H 2 μ) := by

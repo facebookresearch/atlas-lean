@@ -1,4 +1,5 @@
-# Quotient Ker Equiv Range quotient Map
+# Evaluation of the first-isomorphism equivalence
 
-The first-isomorphism equivalence sends the canonical class of `a` to
-`rho a` in the bundled range.
+Let `A,B` be nonunital complex C*-algebras and
+`ρ : A → B` a nonunital complex star-algebra homomorphism. The canonical equivalence `A/ker(ρ) ≃
+range(ρ)` sends `[a]` to `ρ(a)` for every `a ∈ A`.

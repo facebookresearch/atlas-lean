@@ -26,7 +26,9 @@ namespace CompletelyPositiveMap
 
 variable {m n : Type*} [Fintype m] [Fintype n] [DecidableEq m] [DecidableEq n]
 
-/-- Linear map `X ↦ K * X * Kᴴ` for a fixed rectangular Kraus operator `K`. -/
+/-- **Single-Kraus linear map.** Let `n` be a finite index type and `m` any index type. A complex
+rectangular matrix `K : Matrix m n ℂ` defines the complex-linear map `X ↦ K X Kᴴ` from `Matrix n n
+ℂ` to `Matrix m m ℂ`. -/
 noncomputable def singleKrausLinearMap (K : Matrix m n ℂ) :
     Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ where
   toFun X := K * X * Kᴴ
@@ -311,7 +313,9 @@ private lemma flatEquivOutput_map_eq (k : ℕ) (K : Matrix m n ℂ)
     _ = krausAmplification k K * flatEquivInput k M * (krausAmplification k K)ᴴ := by
       rw [flatEquivInput_eq_comp]
 
-/-- Single-Kraus map `X ↦ K * X * Kᴴ` as a bundled completely positive map. -/
+/-- **Single-Kraus completely positive map.** Let `n,m` be finite index types with decidable equality. A
+complex rectangular matrix `K : Matrix m n ℂ` defines the completely positive map `X ↦ K X Kᴴ` from
+`Matrix n n ℂ` to `Matrix m m ℂ`. -/
 noncomputable def singleKraus (K : Matrix m n ℂ) : Matrix n n ℂ →CP Matrix m m ℂ where
   toLinearMap := singleKrausLinearMap K
   map_cstarMatrix_nonneg' k M hM := by
@@ -342,8 +346,9 @@ theorem singleKraus_apply (K : Matrix m n ℂ) (X : Matrix n n ℂ) :
 variable {r : Type*} [Fintype r]
 
 omit [Fintype m] [DecidableEq m] [DecidableEq n] in
-/-- Finite Kraus family linear map `X ↦ ∑ i, K i * X * (K i)ᴴ`,
-defined as the finite sum of `singleKrausLinearMap (K i)`. -/
+/-- **Finite-family Kraus linear map.** Let `n` be a finite index type and `m` any index type. For a
+finite index type `r` and `K : r → Matrix m n ℂ`, this is the complex-linear map `Matrix n n ℂ →
+Matrix m m ℂ` given by `X ↦ ∑ i, Kᵢ X Kᵢᴴ`; an empty family gives zero. -/
 noncomputable def krausLinearMap (K : r → Matrix m n ℂ) :
     Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ :=
   ∑ i, singleKrausLinearMap (K i)
@@ -360,8 +365,9 @@ theorem krausLinearMap_apply (K : r → Matrix m n ℂ) (X : Matrix n n ℂ) :
     _ = ∑ i, K i * X * (K i)ᴴ := by
       simp [singleKrausLinearMap_apply]
 
-/-- Finite Kraus family as a bundled completely positive map,
-via `CompletelyPositiveMap.sum (fun i => singleKraus (K i))`. -/
+/-- **Finite-family completely positive map.** Let `n,m` be finite index types with decidable equality.
+For a finite index type `r` and `K : r → Matrix m n ℂ`, the map `Matrix n n ℂ → Matrix m m ℂ` given
+by `X ↦ ∑ i, Kᵢ X Kᵢᴴ` is completely positive. The empty family gives zero. -/
 noncomputable def kraus (K : r → Matrix m n ℂ) :
     Matrix n n ℂ →CP Matrix m m ℂ :=
   sum fun i => singleKraus (K i)
@@ -451,7 +457,10 @@ section Composition
 
 variable {l : Type*} [Fintype l] [DecidableEq l]
 
-/-- Composition family on `r × s` with exact operator order `L p.2 * K p.1`. -/
+/-- **Kraus family for composition.** For a finite matrix index type `l` and arbitrary index types
+`n,m,r,s`, families `K : r → Matrix l n ℂ` and `L : s → Matrix m l ℂ` define a family on `r × s` by
+`(i,j) ↦ Lⱼ Kᵢ`. Its matrices have output index `m` and input index `n`; the product order
+corresponds to applying the map of `K` before the map of `L`. -/
 noncomputable def krausCompFamily (K : r → Matrix l n ℂ) (L : s → Matrix m l ℂ) :
     r × s → Matrix m n ℂ :=
   fun p => L p.2 * K p.1
@@ -591,7 +600,9 @@ private lemma singleKraus_choi_entry (K : Matrix m n ℂ) (i j : n) (a b : m) :
           rw [Matrix.conjTranspose_apply]
 
 omit [Fintype m] [DecidableEq m] in
-/-- Single-Kraus Choi matrix is the outer product of the vectorization. -/
+/-- **Choi matrix of a single-Kraus linear map.** Let `n` be finite with decidable equality and let `m`
+be any index type. For `K : Matrix m n ℂ`, the Choi matrix of the complex-linear map `X ↦ K X Kᴴ` is
+the outer product `vec(K) vec(K)ᴴ`, indexed by `n × m`. -/
 theorem choiMatrix_singleKrausLinearMap (K : Matrix m n ℂ) :
     LinearMap.choiMatrix (singleKrausLinearMap K) =
       Matrix.vecMulVec (Matrix.vec K) (star (Matrix.vec K)) := by
@@ -608,7 +619,9 @@ theorem choiMatrix_singleKrausLinearMap (K : Matrix m n ℂ) :
           simp [Matrix.vecMulVec]
 
 omit [Fintype m] [DecidableEq m] in
-/-- Finite-family Choi matrix is the sum of single-Kraus outer products. -/
+/-- **Choi matrix of a finite Kraus linear map.** Let `n` be finite with decidable equality and let `m`
+be any index type. For a finite family `K : r → Matrix m n ℂ`, the Choi matrix of the complex-linear
+map `X ↦ ∑ i, Kᵢ X Kᵢᴴ` is `∑ i, vec(Kᵢ) vec(Kᵢ)ᴴ`, indexed by `n × m`. -/
 theorem choiMatrix_krausLinearMap (K : r → Matrix m n ℂ) :
     LinearMap.choiMatrix (krausLinearMap K) =
       ∑ i : r, Matrix.vecMulVec (Matrix.vec (K i)) (star (Matrix.vec (K i))) := by
@@ -627,7 +640,9 @@ theorem choiMatrix_krausLinearMap (K : r → Matrix m n ℂ) :
           intro i _
           exact choiMatrix_singleKrausLinearMap (K i)
 
-/-- Single-Kraus CP Choi matrix. -/
+/-- **Choi matrix of a single-Kraus CP map.** Let `n,m` be finite index types with decidable equality.
+For `K : Matrix m n ℂ`, the Choi matrix of `X ↦ K X Kᴴ` is the outer product `vec(K) vec(K)ᴴ`,
+indexed by `n × m`. -/
 theorem choiMatrix_singleKraus (K : Matrix m n ℂ) :
     CompletelyPositiveMap.choiMatrix (singleKraus K) =
       Matrix.vecMulVec (Matrix.vec K) (star (Matrix.vec K)) := by
@@ -639,7 +654,9 @@ theorem choiMatrix_singleKraus (K : Matrix m n ℂ) :
     _ = Matrix.vecMulVec (Matrix.vec K) (star (Matrix.vec K)) :=
           choiMatrix_singleKrausLinearMap K
 
-/-- Finite-family CP Choi matrix. -/
+/-- **Choi matrix of a finite Kraus CP map.** Let `n,m` be finite index types with decidable equality.
+For a finite family `K : r → Matrix m n ℂ`, the Choi matrix of `X ↦ ∑ i, Kᵢ X Kᵢᴴ` is `∑ i, vec(Kᵢ)
+vec(Kᵢ)ᴴ`, indexed by `n × m`. -/
 theorem choiMatrix_kraus (K : r → Matrix m n ℂ) :
     CompletelyPositiveMap.choiMatrix (kraus K) =
       ∑ i : r, Matrix.vecMulVec (Matrix.vec (K i)) (star (Matrix.vec (K i))) := by

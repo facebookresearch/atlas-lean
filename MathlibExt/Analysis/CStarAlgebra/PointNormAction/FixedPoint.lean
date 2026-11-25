@@ -36,8 +36,11 @@ variable {G : Type uG} {A : Type uA} {B : Type uB}
 variable [Monoid G] [TopologicalSpace G]
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- The nonunital star subalgebra of coefficients fixed by every monoid
-element. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The nonunital star subalgebra of coefficients fixed by every monoid element. -/
 def fixedPointSubalgebra (alpha : PointNormCStarAction G A) :
     NonUnitalStarSubalgebra ℂ A where
   carrier := {a | ∀ g, alpha g a = a}
@@ -61,7 +64,11 @@ theorem mem_fixedPointSubalgebra
     a ∈ alpha.fixedPointSubalgebra ↔ ∀ g, alpha g a = a :=
   Iff.rfl
 
-/-- The fixed-point subalgebra is closed in the ambient C-star algebra. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The fixed-point subalgebra is closed in the ambient C-star algebra. -/
 theorem isClosed_fixedPointSubalgebra
     (alpha : PointNormCStarAction G A) :
     IsClosed (alpha.fixedPointSubalgebra : Set A) := by
@@ -85,8 +92,11 @@ namespace Hom
 variable {alpha : PointNormCStarAction G A}
 variable {beta : PointNormCStarAction G B}
 
-/-- An equivariant homomorphism sends fixed coefficients to fixed
-coefficients. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` and `B` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+An equivariant homomorphism sends fixed coefficients to fixed coefficients. -/
 theorem mapsTo_fixedPointSubalgebra (phi : PointNormCStarAction.Hom alpha beta) :
     Set.MapsTo phi (alpha.fixedPointSubalgebra : Set A)
       (beta.fixedPointSubalgebra : Set B) := by
@@ -96,8 +106,11 @@ theorem mapsTo_fixedPointSubalgebra (phi : PointNormCStarAction.Hom alpha beta) 
   intro g
   rw [← phi.equivariant g a, ha g]
 
-/-- Restriction of an equivariant homomorphism to fixed-point
-subalgebras. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` and `B` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+Restriction of an equivariant homomorphism to fixed-point subalgebras. -/
 def fixedPointMap (phi : PointNormCStarAction.Hom alpha beta) :
     alpha.fixedPointSubalgebra →⋆ₙₐ[ℂ] beta.fixedPointSubalgebra :=
   NonUnitalStarAlgHom.codRestrict

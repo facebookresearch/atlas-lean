@@ -1,4 +1,7 @@
 # Hom
 
-A nonunital star-algebra homomorphism intertwining two point-norm
-actions.
+Let `G` be a monoid equipped with a topology, and let `A` and `B` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+A nonunital star-algebra homomorphism intertwining two point-norm actions.

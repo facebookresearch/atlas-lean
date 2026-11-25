@@ -1,3 +1,5 @@
-# One Point Character Precomposition infty
+# Character precomposition fixes infinity
 
-Every nonunital map preserves infinity in this actual compactification.
+Let `A,B` be nonunital complex Banach algebras and `f :
+A → B` a continuous nonunital complex algebra homomorphism. The map on one-point character
+compactifications induced by `f` sends infinity to infinity.

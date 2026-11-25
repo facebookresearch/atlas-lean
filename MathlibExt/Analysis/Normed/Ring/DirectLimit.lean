@@ -52,8 +52,12 @@ variable {I : Type uI} [Preorder I] [IsDirectedOrder I] [Nonempty I]
   [DirectedSystem G (f · · ·)]
   (hNorm : ∀ i j (h : i ≤ j) (x : G i), ‖f i j h x‖ = ‖x‖)
 
-/-- The explicit nonunital normed-ring dictionary with the stock multiplication
-and exactly the previously constructed additive-group norm and metric. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. Every transition preserves norms exactly.
+
+The nonunital normed-ring structure with the multiplication and exactly the previously
+constructed additive-group norm and metric. -/
 @[instance_reducible]
 noncomputable def nonUnitalNormedRingOfNormPreserving :
     NonUnitalNormedRing (_root_.DirectLimit G f) := by
@@ -83,8 +87,10 @@ variable {I : Type uI} [Preorder I]
   [∀ i j (h : i ≤ j), NonUnitalRingHomClass (T h) (G i) (G j)]
   (f : ∀ i j (h : i ≤ j), T h)
 
-/-- The actual ring transitions give the pointwise product norm bound for
-the original representative norm nets. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Specify a transition map for every ordered pair of indices.
+
+The ring transitions give the pointwise product norm bound for the representative norm nets. -/
 theorem stageTailNorm_mul_le (i : I) (x y : G i) (j : I) :
     stageTailNorm f i (x * y) j ≤ stageTailNorm f i x j * stageTailNorm f i y j := by
   classical
@@ -97,7 +103,12 @@ theorem stageTailNorm_mul_le (i : I) (x y : G i) (j : I) :
 
 variable [IsDirectedOrder I] [Nonempty I]
 
-/-- The finite real limsups of the original norms are submultiplicative. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. Specify a transition map for every ordered pair of
+indices. For each starting stage there is a nonnegative common operator-norm bound on a tail of
+its transition maps.
+
+The finite real limsups of the norms are submultiplicative. -/
 theorem stageTailNorm_limsup_mul_le
     (hBound : IsEventuallyNormBounded f) (i : I) (x y : G i) :
     limsup (stageTailNorm f i (x * y)) atTop ≤
@@ -116,8 +127,13 @@ theorem stageTailNorm_limsup_mul_le
 
 variable [DirectedSystem G (f · · ·)]
 
-/-- The actual algebraic limit has the nonunital seminormed-ring dictionary
-given by its stock multiplication and constructed limsup additive seminorm. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The algebraic limit has the nonunital seminormed-ring structure given by its multiplication and
+constructed limsup additive seminorm. -/
 @[instance_reducible]
 noncomputable def nonUnitalSeminormedRingOfEventuallyBounded
     (hBound : IsEventuallyNormBounded f) : NonUnitalSeminormedRing (_root_.DirectLimit G f) := by
@@ -133,8 +149,13 @@ noncomputable def nonUnitalSeminormedRingOfEventuallyBounded
     limsup (stageTailNorm f i x) atTop * limsup (stageTailNorm f i y) atTop
   exact stageTailNorm_limsup_mul_le f hBound i x y
 
-/-- The explicit nonunital normed ring on the actual zero-seminorm quotient,
-using exactly its previously constructed additive norm and metric. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The nonunital normed ring on the zero-seminorm quotient, using exactly its previously
+constructed additive norm and metric. -/
 @[instance_reducible]
 noncomputable def nonUnitalNormedRingNormedLimit
     (hBound : IsEventuallyNormBounded f) : NonUnitalNormedRing (NormedLimit f hBound) :=
@@ -143,8 +164,12 @@ noncomputable def nonUnitalNormedRingNormedLimit
 
 namespace NonUnitalRing
 
-/-- The actual ring homomorphism that quotients the algebraic limit by its
-zero seminorm. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The ring homomorphism that quotients the algebraic limit by its zero seminorm. -/
 noncomputable def normedLimitMk (hBound : IsEventuallyNormBounded f) :
     letI : NonUnitalNormedRing (NormedLimit f hBound) := nonUnitalNormedRingNormedLimit f hBound;
     _root_.DirectLimit G f →ₙ+* NormedLimit f hBound := by
@@ -161,15 +186,24 @@ noncomputable def normedLimitMk (hBound : IsEventuallyNormBounded f) :
 
 end NonUnitalRing
 
-/-- The actual zero-seminorm two-sided ideal in the original nonunital
-algebraic direct limit. Its congruence is the kernel of the constructed quotient. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The zero-seminorm two-sided ideal in the nonunital algebraic direct limit. Its congruence is the
+kernel of the constructed quotient. -/
 noncomputable def zeroSeminormIdeal (hBound : IsEventuallyNormBounded f) :
     TwoSidedIdeal (_root_.DirectLimit G f) := by
   letI : NonUnitalNormedRing (NormedLimit f hBound) := nonUnitalNormedRingNormedLimit f hBound
   exact TwoSidedIdeal.ker (NonUnitalRing.normedLimitMk f hBound)
 
-/-- Membership in that actual two-sided ideal is exactly zero of the
-original real limsup seminorm. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+Membership in that two-sided ideal is exactly zero of the real limsup seminorm. -/
 theorem mem_zeroSeminormIdeal_iff (hBound : IsEventuallyNormBounded f)
     (z : _root_.DirectLimit G f) :
     z ∈ zeroSeminormIdeal f hBound ↔ addGroupSeminormOfEventuallyBounded f hBound z = 0 := by
@@ -201,8 +235,15 @@ section ScalarTower
 
 variable [∀ i, IsScalarTower 𝕜 (G i) (G i)]
 
-/-- Scalar multiplication on the constructed quotient has the original
-left multiplication compatibility from the actual stage algebras. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps. The scalars `𝕜` form a normed field; each stage is a normed
+`𝕜`-algebra and the transition maps preserve the algebra operations and scalar action. Assume
+scalar action commutes with left multiplication at each stage.
+
+Scalar multiplication on the constructed quotient has the left multiplication compatibility from
+the stage algebras. -/
 theorem isScalarTowerNormedLimit (hBound : IsEventuallyNormBounded f) :
     let : NonUnitalNormedRing (NormedLimit f hBound) := nonUnitalNormedRingNormedLimit f hBound;
     let : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound;
@@ -227,8 +268,15 @@ section CommScalar
 
 variable [∀ i, SMulCommClass 𝕜 (G i) (G i)]
 
-/-- Scalar multiplication on the same quotient retains the right
-multiplication compatibility of the actual stage algebras. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps. The scalars `𝕜` form a normed field; each stage is a normed
+`𝕜`-algebra and the transition maps preserve the algebra operations and scalar action. Assume
+scalar action commutes with right multiplication at each stage.
+
+Scalar multiplication on the same quotient retains the right multiplication compatibility of the
+stage algebras. -/
 theorem smulCommClassNormedLimit (hBound : IsEventuallyNormBounded f) :
     let : NonUnitalNormedRing (NormedLimit f hBound) := nonUnitalNormedRingNormedLimit f hBound;
     let : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound;
@@ -251,8 +299,14 @@ end CommScalar
 
 namespace NonUnitalAlgebra
 
-/-- The actual nonunital algebra quotient map, with the multiplication and
-scalar action from the previously constructed quotient dictionaries. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps. The scalars `𝕜` form a normed field; each stage is a normed
+`𝕜`-algebra and the transition maps preserve the algebra operations and scalar action.
+
+The nonunital algebra quotient map, with the multiplication and scalar action from the
+previously constructed quotient structures. -/
 noncomputable def normedLimitMk (hBound : IsEventuallyNormBounded f) :
     letI : NonUnitalNormedRing (NormedLimit f hBound) := nonUnitalNormedRingNormedLimit f hBound;
     letI : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound;
@@ -272,8 +326,13 @@ noncomputable def normedLimitMk (hBound : IsEventuallyNormBounded f) :
       map_mul' := SeparationQuotient.mk_mul
       map_smul' := SeparationQuotient.mk_smul }
 
-/-- The original nonunital algebra stage map followed by the genuine
-zero-seminorm quotient. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps. The scalars `𝕜` form a normed field; each stage is a normed
+`𝕜`-algebra and the transition maps preserve the algebra operations and scalar action.
+
+The nonunital algebra stage map followed by the zero-seminorm quotient. -/
 noncomputable def ofNormed (hBound : IsEventuallyNormBounded f) (i : I) :
     letI : NonUnitalNormedRing (NormedLimit f hBound) := nonUnitalNormedRingNormedLimit f hBound;
     letI : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound;
@@ -282,7 +341,13 @@ noncomputable def ofNormed (hBound : IsEventuallyNormBounded f) (i : I) :
   letI : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound
   exact (normedLimitMk f hBound).comp (_root_.DirectLimit.NonUnitalAlgebra.of G f i)
 
-/-- The nonunital normed algebra stage has its actual quotient coefficient value. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps. The scalars `𝕜` form a normed field; each stage is a normed
+`𝕜`-algebra and the transition maps preserve the algebra operations and scalar action.
+
+The nonunital normed algebra stage has its quotient coefficient value. -/
 @[simp]
 theorem ofNormed_apply (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
     letI : NonUnitalNormedRing (NormedLimit f hBound) := nonUnitalNormedRingNormedLimit f hBound;
@@ -293,7 +358,13 @@ theorem ofNormed_apply (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
   let : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound
   rfl
 
-/-- Every actual transition leaves the nonunital normed algebra stage value unchanged. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps. The scalars `𝕜` form a normed field; each stage is a normed
+`𝕜`-algebra and the transition maps preserve the algebra operations and scalar action.
+
+Every transition leaves the nonunital normed algebra stage value unchanged. -/
 theorem ofNormed_of_f (hBound : IsEventuallyNormBounded f)
     {i j : I} (hij : i ≤ j) (x : G i) :
     letI : NonUnitalNormedRing (NormedLimit f hBound) := nonUnitalNormedRingNormedLimit f hBound;
@@ -305,7 +376,13 @@ theorem ofNormed_of_f (hBound : IsEventuallyNormBounded f)
   exact congrArg (DirectLimit.normedLimitMk f hBound)
     (_root_.DirectLimit.mk_apply (f := f) i j x hij)
 
-/-- The nonunital algebra stage and bounded linear stage have the same entire function. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps. The scalars `𝕜` form a normed field; each stage is a normed
+`𝕜`-algebra and the transition maps preserve the algebra operations and scalar action.
+
+The nonunital algebra stage and bounded linear stage have the same entire function. -/
 theorem ofNormed_eq_ofCLM (hBound : IsEventuallyNormBounded f) (i : I) :
     letI : NonUnitalNormedRing (NormedLimit f hBound) := nonUnitalNormedRingNormedLimit f hBound;
     letI : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound;
@@ -316,8 +393,14 @@ theorem ofNormed_eq_ofCLM (hBound : IsEventuallyNormBounded f) (i : I) :
   funext x
   rw [ofNormed_apply, Module.ofCLM_apply]
 
-/-- The algebra stage map is the previously proved bounded linear stage
-map on the same carrier with the same norms and scalar action. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of possibly nonunital normed
+rings. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps. The scalars `𝕜` form a normed field; each stage is a normed
+`𝕜`-algebra and the transition maps preserve the algebra operations and scalar action.
+
+The algebra stage map is the previously proved bounded linear stage map on the same carrier with
+the same norms and scalar action. -/
 theorem ofNormed_continuous (hBound : IsEventuallyNormBounded f) (i : I) :
     let : NonUnitalNormedRing (NormedLimit f hBound) := nonUnitalNormedRingNormedLimit f hBound;
     let : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound;
@@ -344,8 +427,13 @@ variable {I : Type uI} [Preorder I] [IsDirectedOrder I] [Nonempty I]
   (f : ∀ i j (h : i ≤ j), T h)
   [DirectedSystem G (f · · ·)]
 
-/-- The unital raw ring retains the actual direct-limit unit and the same
-constructed limsup seminorm and multiplication. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed rings. Assume `I` is
+nonempty and directed. The transition homomorphisms form a compatible directed system. For each
+starting stage there is a nonnegative common operator-norm bound on a tail of its transition
+maps.
+
+The unital raw ring retains the direct-limit unit and the same constructed limsup seminorm and
+multiplication. -/
 @[instance_reducible]
 noncomputable def seminormedRingOfEventuallyBounded (hBound : IsEventuallyNormBounded f) :
     SeminormedRing (_root_.DirectLimit G f) := by
@@ -354,8 +442,12 @@ noncomputable def seminormedRingOfEventuallyBounded (hBound : IsEventuallyNormBo
     nonUnitalSeminormedRingOfEventuallyBounded f hBound
   exact { rawRing, rawNormedRing with }
 
-/-- The unital normed ring on the same zero-seminorm quotient of the actual
-unital algebraic limit. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed rings. Assume `I` is
+nonempty and directed. The transition homomorphisms form a compatible directed system. For each
+starting stage there is a nonnegative common operator-norm bound on a tail of its transition
+maps.
+
+The unital normed ring on the same zero-seminorm quotient of the unital algebraic limit. -/
 @[instance_reducible]
 noncomputable def normedRingNormedLimit (hBound : IsEventuallyNormBounded f) :
     NormedRing (NormedLimit f hBound) :=
@@ -381,8 +473,14 @@ variable {𝕜 : Type uK} [NormedField 𝕜]
   [∀ i, NormedAlgebra 𝕜 (G i)]
   [∀ i j (h : i ≤ j), AlgHomClass (T h) 𝕜 (G i) (G j)]
 
-/-- The actual raw algebra, equipped with the constructed limsup seminorm
-and the existing scalar action of its original algebraic directed limit. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed rings. Assume `I` is
+nonempty and directed. The transition homomorphisms form a compatible directed system. For each
+starting stage there is a nonnegative common operator-norm bound on a tail of its transition
+maps. The scalars `𝕜` form a normed field; each stage is a normed `𝕜`-algebra and the transition
+maps preserve the algebra operations and scalar action.
+
+The raw algebra, equipped with the constructed limsup seminorm and the existing scalar action of
+its algebraic directed limit. -/
 @[instance_reducible]
 noncomputable def normedAlgebraOfEventuallyBounded (hBound : IsEventuallyNormBounded f) :
     letI : SeminormedRing (_root_.DirectLimit G f) := seminormedRingOfEventuallyBounded f hBound;
@@ -392,8 +490,14 @@ noncomputable def normedAlgebraOfEventuallyBounded (hBound : IsEventuallyNormBou
     normedSpaceOfEventuallyBounded (𝕜 := 𝕜) f hBound
   exact { norm_smul_le := norm_smul_le }
 
-/-- The original quotient's unital normed-algebra dictionary, preserving
-the same quotient norm, unit, product, and scalar action. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed rings. Assume `I` is
+nonempty and directed. The transition homomorphisms form a compatible directed system. For each
+starting stage there is a nonnegative common operator-norm bound on a tail of its transition
+maps. The scalars `𝕜` form a normed field; each stage is a normed `𝕜`-algebra and the transition
+maps preserve the algebra operations and scalar action.
+
+The quotient's unital normed-algebra structure, preserving the same quotient norm, unit,
+product, and scalar action. -/
 @[instance_reducible]
 noncomputable def normedAlgebraNormedLimit (hBound : IsEventuallyNormBounded f) :
     letI : NormedRing (NormedLimit f hBound) := normedRingNormedLimit f hBound;
@@ -406,7 +510,13 @@ noncomputable def normedAlgebraNormedLimit (hBound : IsEventuallyNormBounded f) 
 
 namespace Algebra
 
-/-- The genuine unital algebra quotient map to the zero-seminorm quotient. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed rings. Assume `I` is
+nonempty and directed. The transition homomorphisms form a compatible directed system. For each
+starting stage there is a nonnegative common operator-norm bound on a tail of its transition
+maps. The scalars `𝕜` form a normed field; each stage is a normed `𝕜`-algebra and the transition
+maps preserve the algebra operations and scalar action.
+
+The unital algebra quotient map to the zero-seminorm quotient. -/
 noncomputable def normedLimitMk (hBound : IsEventuallyNormBounded f) :
     letI : NormedRing (NormedLimit f hBound) := normedRingNormedLimit f hBound;
     letI : NormedAlgebra 𝕜 (NormedLimit f hBound) := normedAlgebraNormedLimit (𝕜 := 𝕜) f hBound;
@@ -426,8 +536,13 @@ noncomputable def normedLimitMk (hBound : IsEventuallyNormBounded f) :
       map_mul' := SeparationQuotient.mk_mul
       commutes' := SeparationQuotient.mk_algebraMap }
 
-/-- The original unital algebraic coefficient map followed by the actual
-zero-seminorm algebra quotient. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed rings. Assume `I` is
+nonempty and directed. The transition homomorphisms form a compatible directed system. For each
+starting stage there is a nonnegative common operator-norm bound on a tail of its transition
+maps. The scalars `𝕜` form a normed field; each stage is a normed `𝕜`-algebra and the transition
+maps preserve the algebra operations and scalar action.
+
+The unital algebraic coefficient map followed by the zero-seminorm algebra quotient. -/
 noncomputable def ofNormed (hBound : IsEventuallyNormBounded f) (i : I) :
     letI : NormedRing (NormedLimit f hBound) := normedRingNormedLimit f hBound;
     letI : NormedAlgebra 𝕜 (NormedLimit f hBound) := normedAlgebraNormedLimit (𝕜 := 𝕜) f hBound;
@@ -436,7 +551,13 @@ noncomputable def ofNormed (hBound : IsEventuallyNormBounded f) (i : I) :
   letI : NormedAlgebra 𝕜 (NormedLimit f hBound) := normedAlgebraNormedLimit (𝕜 := 𝕜) f hBound
   exact (normedLimitMk f hBound).comp (_root_.DirectLimit.Algebra.of G f i)
 
-/-- The unital normed algebra stage has its actual quotient coefficient value. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed rings. Assume `I` is
+nonempty and directed. The transition homomorphisms form a compatible directed system. For each
+starting stage there is a nonnegative common operator-norm bound on a tail of its transition
+maps. The scalars `𝕜` form a normed field; each stage is a normed `𝕜`-algebra and the transition
+maps preserve the algebra operations and scalar action.
+
+The unital normed algebra stage has its quotient coefficient value. -/
 @[simp]
 theorem ofNormed_apply (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
     letI : NormedRing (NormedLimit f hBound) := normedRingNormedLimit f hBound;
@@ -447,7 +568,13 @@ theorem ofNormed_apply (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
   let : NormedAlgebra 𝕜 (NormedLimit f hBound) := normedAlgebraNormedLimit (𝕜 := 𝕜) f hBound
   rfl
 
-/-- Every actual transition leaves the unital normed algebra stage value unchanged. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed rings. Assume `I` is
+nonempty and directed. The transition homomorphisms form a compatible directed system. For each
+starting stage there is a nonnegative common operator-norm bound on a tail of its transition
+maps. The scalars `𝕜` form a normed field; each stage is a normed `𝕜`-algebra and the transition
+maps preserve the algebra operations and scalar action.
+
+Every transition leaves the unital normed algebra stage value unchanged. -/
 theorem ofNormed_of_f (hBound : IsEventuallyNormBounded f)
     {i j : I} (hij : i ≤ j) (x : G i) :
     letI : NormedRing (NormedLimit f hBound) := normedRingNormedLimit f hBound;
@@ -459,7 +586,13 @@ theorem ofNormed_of_f (hBound : IsEventuallyNormBounded f)
   exact congrArg (DirectLimit.normedLimitMk f hBound)
     (_root_.DirectLimit.mk_apply (f := f) i j x hij)
 
-/-- The unital algebra stage and bounded linear stage have the same entire function. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed rings. Assume `I` is
+nonempty and directed. The transition homomorphisms form a compatible directed system. For each
+starting stage there is a nonnegative common operator-norm bound on a tail of its transition
+maps. The scalars `𝕜` form a normed field; each stage is a normed `𝕜`-algebra and the transition
+maps preserve the algebra operations and scalar action.
+
+The unital algebra stage and bounded linear stage have the same entire function. -/
 theorem ofNormed_eq_ofCLM (hBound : IsEventuallyNormBounded f) (i : I) :
     letI : NormedRing (NormedLimit f hBound) := normedRingNormedLimit f hBound;
     letI : NormedAlgebra 𝕜 (NormedLimit f hBound) := normedAlgebraNormedLimit (𝕜 := 𝕜) f hBound;
@@ -470,8 +603,14 @@ theorem ofNormed_eq_ofCLM (hBound : IsEventuallyNormBounded f) (i : I) :
   funext x
   rw [ofNormed_apply, Module.ofCLM_apply]
 
-/-- The actual unital algebra stage is the already constructed bounded
-linear coefficient map, on the same original carrier and norm dictionaries. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed rings. Assume `I` is
+nonempty and directed. The transition homomorphisms form a compatible directed system. For each
+starting stage there is a nonnegative common operator-norm bound on a tail of its transition
+maps. The scalars `𝕜` form a normed field; each stage is a normed `𝕜`-algebra and the transition
+maps preserve the algebra operations and scalar action.
+
+The unital algebra stage is the already constructed bounded linear coefficient map, on the same
+carrier and norm structures. -/
 theorem ofNormed_continuous (hBound : IsEventuallyNormBounded f) (i : I) :
     letI : NormedRing (NormedLimit f hBound) := normedRingNormedLimit f hBound;
     letI : NormedAlgebra 𝕜 (NormedLimit f hBound) := normedAlgebraNormedLimit (𝕜 := 𝕜) f hBound;

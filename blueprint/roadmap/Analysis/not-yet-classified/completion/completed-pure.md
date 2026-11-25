@@ -1,3 +1,9 @@
 # Completed Pure
 
-The literal pure tensor through balancing, the radical and completion.
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The completed pure vector associated to x ∈ E₁ and y ∈ E₂ is the canonical completed image of
+the balanced tensor x ⊗φ y.

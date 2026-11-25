@@ -1,5 +1,6 @@
-# Matrix Factorization
+# Matrix CP contraction factorization
 
-The actual finite complex C-star matrix specialization. The scalar
-spectral dictionaries stay in the result type, and the stock norm is retained.
-Natural size zero is legal and produces the genuine zero middle algebra.
+For nonunital complex C*-algebras `A,B` and `n ∈ ℕ`, this
+is a pair of completely positive contractions from `A` to the complex `n × n` C*-matrix algebra and
+from that matrix algebra to `B`, all in their spectral orders. Size zero gives the zero intermediate
+algebra.

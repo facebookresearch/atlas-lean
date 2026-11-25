@@ -192,9 +192,16 @@ private theorem canonicalFunction_smul
     exact Eventually.of_forall fun u => (hF.2.2.1 c x u).symm
   exact tendsto_nhds_unique (canonicalFunction_tendsto hF (c • x)) ht
 
-/-- The canonical contractive complex-linear map into coefficient change.
-It is constructed without a target coefficient unit and without a supplied
-factorization, essentiality or endpoint-map premise. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+Coefficient change along g defines a canonical contractive complex-linear map from E to F.
+-/
 def canonicalBaseChangeMap
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure) :
     E →L[ℂ] F := by
@@ -282,7 +289,17 @@ private theorem canonicalBaseChangeMap_apply
     canonicalFunction, factorPair]
   rfl
 
-/-- The actual approximate-unit limit uniquely characterizes the computed map. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+For x ∈ E, the pure vectors pure(x,u) converge to the canonical image of x as u tends along the
+approximate unit of B.
+-/
 theorem canonicalBaseChangeMap_tendsto
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)
     (x : E) :
@@ -291,7 +308,16 @@ theorem canonicalBaseChangeMap_tendsto
   rw [canonicalBaseChangeMap_apply]
   exact canonicalFunction_tendsto hF x
 
-/-- Every genuine right factorization has the same canonical image. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+If x = ya for x, y ∈ E and a ∈ A, the canonical image of x is pure(y,g(a)).
+-/
 theorem canonicalBaseChangeMap_factor
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)
     (x y : E) (a : A) (h : x = y <• a) :
@@ -299,7 +325,16 @@ theorem canonicalBaseChangeMap_factor
   rw [canonicalBaseChangeMap_apply]
   exact canonicalFunction_factor hF x y a h
 
-/-- The original coefficient-valued inner product changes by exactly g. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+The canonical vector map changes inner products by g: ⟨j(x),j(y)⟩ = g(⟨x,y⟩) for x, y ∈ E.
+-/
 @[simp]
 theorem canonicalBaseChangeMap_inner
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)
@@ -310,14 +345,32 @@ theorem canonicalBaseChangeMap_inner
   rw [canonicalBaseChangeMap_apply, canonicalBaseChangeMap_apply]
   exact canonicalFunction_inner hF x y
 
-/-- Coefficient change is contractive for the original vector norms. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+For x ∈ E, the canonical vector map satisfies ‖j(x)‖ ≤ ‖x‖.
+-/
 theorem norm_canonicalBaseChangeMap_le
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)
     (x : E) : ‖canonicalBaseChangeMap hF x‖ ≤ ‖x‖ := by
   rw [canonicalBaseChangeMap_apply]
   exact canonicalFunction_norm_le hF x
 
-/-- The canonical vector map preserves the original right action along g. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+For x ∈ E and a ∈ A, the canonical vector map satisfies j(xa) = j(x)g(a).
+-/
 @[simp]
 theorem canonicalBaseChangeMap_right_smul
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)
@@ -326,7 +379,16 @@ theorem canonicalBaseChangeMap_right_smul
   CStarModule.map_right_smul_of_map_rightInner g
     (canonicalBaseChangeMap hF) (canonicalBaseChangeMap_inner hF) x a
 
-/-- Pure tensors are right coefficient multiples of the canonical image. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+For x ∈ E and b ∈ B, the pure vector pure(x,b) equals j(x)b.
+-/
 theorem canonicalBaseChangeMap_pure
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)
     (x : E) (b : B) : canonicalBaseChangeMap hF x <• b = pure x b := by
@@ -352,8 +414,16 @@ theorem canonicalBaseChangeMap_pure
       hF.2.2.2.2.2.1 x u b
   exact tendsto_nhds_unique hleft hright
 
-/-- For a surjective coefficient map, the canonical vector image is dense
-in the actual tensor completion. No endpoint-surjectivity premise is supplied. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+If g is surjective, the canonical vector map E → F has dense range.
+-/
 theorem canonicalBaseChangeMap_denseRange_of_surjective
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)
     (hg : Function.Surjective g) : DenseRange (canonicalBaseChangeMap hF) := by
@@ -375,7 +445,17 @@ theorem canonicalBaseChangeMap_denseRange_of_surjective
     exact Submodule.topologicalClosure_mono hPQ
   exact Submodule.dense_iff_topologicalClosure_eq_top.mpr hQ
 
-/-- The computed tensor operator acts on every canonical vector image. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+For an adjointable endomorphism L of E and x ∈ E, its tensor extension satisfies L_F(j(x)) =
+j(Lx).
+-/
 @[simp]
 theorem mapLeftStarAlgHom_canonicalBaseChangeMap
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)
@@ -390,8 +470,17 @@ theorem mapLeftStarAlgHom_canonicalBaseChangeMap
     exact L.map_right_smul y a
   exact (canonicalBaseChangeMap_factor hF (L x) (L y) a hL).symm
 
-/-- The real rank-one module operator maps to the rank-one of the original
-canonical vector images. The coefficient self-action is genuinely compact. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+The tensor extension of the rank-one module operator determined by x, y ∈ E is the rank-one
+operator determined by their canonical images j(x), j(y) ∈ F.
+-/
 @[simp]
 theorem mapLeftStarAlgHom_rankOne_baseChange
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)
@@ -413,7 +502,17 @@ theorem mapLeftStarAlgHom_rankOne_baseChange
     ← canonicalBaseChangeMap_inner hF y z]
   rw [AdjointableOperator.map_right_smul, AdjointableOperator.rankOne_apply]
 
-/-- Actual module compacts are preserved by the computed base-change map. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+The tensor extension of a compact module endomorphism of E is a compact module endomorphism of
+F.
+-/
 theorem mapLeftStarAlgHom_mem_compact_baseChange
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)
     {T : AdjointableOperator.End A E}
@@ -439,7 +538,17 @@ theorem mapLeftStarAlgHom_mem_compact_baseChange
       hfinite hSclosed
   exact hcompact hT
 
-/-- The strict compact-to-compact coefficient-change homomorphism. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+Tensor extension along g restricts to a nonunital complex star homomorphism from the compact
+module endomorphisms of E to those of F.
+-/
 def baseChangeCompactHom
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure) :
     AdjointableOperator.CompactEnd A E →⋆ₙₐ[ℂ] AdjointableOperator.CompactEnd B F :=
@@ -450,7 +559,17 @@ def baseChangeCompactHom
     (AdjointableOperator.compactStarSubalgebra (B := B) (E := F))
     (fun T => mapLeftStarAlgHom_mem_compact_baseChange hF T.property)
 
-/-- Restriction retains the literal endomorphism action. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with star-compatible partial orders on
+their opposite algebras. Let E and F be complete normed right inner-product modules over A and
+B, respectively, with compatible complex normed-space structures. Let g : A → B be a nonunital
+complex star homomorphism. Suppose pure : E × B → F satisfies the internal-tensor
+complex-linearity, balancing, right-action and inner-product laws for the left multiplication
+representation induced by g, and has dense complex-linear span in F.
+
+For a compact endomorphism T of E, the induced compact endomorphism of F has underlying
+adjointable map equal to the tensor extension of T.
+-/
 @[simp]
 theorem baseChangeCompactHom_apply
     (hF : IsModel ((AdjointableOperator.leftRegular (B := B)).comp g) pure)

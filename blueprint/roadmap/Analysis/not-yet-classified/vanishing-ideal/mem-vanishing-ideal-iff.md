@@ -1,3 +1,5 @@
 # Mem vanishing Ideal iff
 
-Membership is precisely the actual cocompact vanishing property.
+Let `X` be a topological space. Let `B` be a possibly nonunital complex C*-algebra.
+
+Membership is precisely the cocompact vanishing property.

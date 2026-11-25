@@ -39,7 +39,10 @@ noncomputable section
 
 universe u v
 
-/-- Finite inflation preserves the adjoint on a complete complex Hilbert space. -/
+/-- **Adjoint of a finite diagonal amplification.** For a complete complex Hilbert space `H`, a natural
+number `n`, and a bounded operator `T` on `H`, the coordinatewise amplification to the Hilbert sum
+of `n` copies of `H` commutes with taking adjoints: amplification of `T*` is the adjoint of
+amplification of `T`. -/
 theorem ContinuousLinearMap.finiteInflation_star
     {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
     (n : ℕ) (T : H →L[ℂ] H) :
@@ -58,7 +61,9 @@ namespace MathlibExt.Analysis.CStarAlgebra
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Finite diagonal inflation bundled as the original unital complex star-algebra map. -/
+/-- **Finite diagonal star homomorphism.** Let `H` be a complete complex Hilbert space and `n ∈ ℕ`. The
+assignment `T ↦ diag(T,…,T)` is a unital complex star-algebra homomorphism from `B(H)` to the
+bounded operators on the Hilbert sum of `n` copies of `H`. -/
 def finiteCoordinateStarAlgHom (n : ℕ) :
     (H →L[ℂ] H) →⋆ₐ[ℂ]
       (PiLp 2 (fun _ : Fin n => H) →L[ℂ] PiLp 2 (fun _ : Fin n => H)) := by
@@ -81,7 +86,9 @@ def finiteCoordinateStarAlgHom (n : ℕ) :
         (fun c A => map_smul f c A)
       map_star' := map_star f }
 
-/-- Every amplified value is the original operator on that original coordinate. -/
+/-- **Coordinates of diagonal amplification.** Let `H` be a complete complex Hilbert space and `n ∈ ℕ`.
+For a bounded operator `T`, a tuple `x` in the Hilbert sum of `n` copies of `H`, and `i ∈ Fin n`,
+the amplified operator has coordinate `T(xᵢ)`. -/
 theorem finiteCoordinateStarAlgHom_apply (n : ℕ) (A : H →L[ℂ] H)
     (x : PiLp 2 (fun _ : Fin n => H)) (i : Fin n) :
     finiteCoordinateStarAlgHom (H := H) n A x i = A (x i) :=
@@ -94,12 +101,18 @@ namespace StarAlgHom
 variable {A : Type u} [Semiring A] [Algebra ℂ A] [Star A]
 variable {H : Type v} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Finite inflation of a representation composes it with the single diagonal star-algebra map. -/
+/-- **Finite amplification of a representation.** Let `A` be a complex algebra with a star operation,
+let `H` be a complete complex Hilbert space, let `π : A → B(H)` be a unital complex star
+homomorphism, and let `n ∈ ℕ`. Its amplification is the unital star representation on the Hilbert
+sum of `n` copies of `H`, acting by `π(a)` on every coordinate. -/
 def finiteInflation (n : ℕ) (π : A →⋆ₐ[ℂ] (H →L[ℂ] H)) :
     A →⋆ₐ[ℂ] (PiLp 2 (fun _ : Fin n => H) →L[ℂ] PiLp 2 (fun _ : Fin n => H)) :=
   (MathlibExt.Analysis.CStarAlgebra.finiteCoordinateStarAlgHom (H := H) n).comp π
 
-/-- The inflated representation acts by the original representation on each coordinate. -/
+/-- **Coordinates of an amplified representation.** Let `A` be a complex algebra with a star operation,
+let `H` be a complete complex Hilbert space, let `π : A → B(H)` be a unital complex star
+homomorphism, and let `n ∈ ℕ`. For `a ∈ A` and a tuple `x` in that Hilbert sum, the amplified
+representation has `i` coordinate `π(a)(xᵢ)` for every `i ∈ Fin n`. -/
 @[simp]
 theorem finiteInflation_apply (n : ℕ) (π : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (a : A)
     (x : PiLp 2 (fun _ : Fin n => H)) (i : Fin n) :

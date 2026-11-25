@@ -46,7 +46,10 @@ section OperatorAlgebra
 
 variable [NormedSpace ℂ H]
 
-/-- Finite diagonal inflation on the stock finite l² carrier of a complex normed space. -/
+/-- Let `H` be a normed complex vector space and let `n` be a natural number. The amplified operator
+acts coordinatewise on the Euclidean product of `n` copies of `H`.
+
+Finite diagonal inflation on the finite l² carrier of a complex normed space. -/
 noncomputable def finiteInflation (n : ℕ) (T : H →L[ℂ] H) :
     PiLp 2 (fun _ : Fin n => H) →L[ℂ] PiLp 2 (fun _ : Fin n => H) :=
   ((PiLp.continuousLinearEquiv 2 ℂ (fun _ : Fin n => H)).symm :
@@ -55,36 +58,54 @@ noncomputable def finiteInflation (n : ℕ) (T : H →L[ℂ] H) :
       ((PiLp.continuousLinearEquiv 2 ℂ (fun _ : Fin n => H)) :
         PiLp 2 (fun _ : Fin n => H) →L[ℂ] (Fin n → H)))
 
-/-- Coordinate formula for finite operator inflation: `(A⁽ⁿ⁾ x) i = A (x i)`. -/
+/-- Let `H` be a normed complex vector space and let `n` be a natural number. The amplified operator
+acts coordinatewise on the Euclidean product of `n` copies of `H`.
+
+Coordinate formula for finite operator inflation: `(A⁽ⁿ⁾ x) i = A (x i)`. -/
 @[simp]
 theorem finiteInflation_apply (n : ℕ) (T : H →L[ℂ] H)
     (x : PiLp 2 (fun _ : Fin n => H)) (i : Fin n) :
     finiteInflation n T x i = T (x i) := by
   simp [finiteInflation]
 
-/-- Finite inflation preserves `0`. -/
+/-- Let `H` be a normed complex vector space and let `n` be a natural number. The amplified operator
+acts coordinatewise on the Euclidean product of `n` copies of `H`.
+
+Finite inflation preserves `0`. -/
 theorem finiteInflation_zero (n : ℕ) : finiteInflation (H := H) n 0 = 0 := by
   ext x i
   simp
 
-/-- Finite inflation preserves addition. -/
+/-- Let `H` be a normed complex vector space and let `n` be a natural number. The amplified operator
+acts coordinatewise on the Euclidean product of `n` copies of `H`.
+
+Finite inflation preserves addition. -/
 theorem finiteInflation_add (n : ℕ) (S T : H →L[ℂ] H) :
     finiteInflation n (S + T) = finiteInflation n S + finiteInflation n T := by
   ext x i
   simp [finiteInflation_apply]
 
-/-- Finite inflation preserves scalar multiplication. -/
+/-- Let `H` be a normed complex vector space and let `n` be a natural number. The amplified operator
+acts coordinatewise on the Euclidean product of `n` copies of `H`.
+
+Finite inflation preserves scalar multiplication. -/
 theorem finiteInflation_smul (n : ℕ) (c : ℂ) (T : H →L[ℂ] H) :
     finiteInflation n (c • T) = c • finiteInflation n T := by
   ext x i
   simp
 
-/-- Finite inflation preserves `1`. -/
+/-- Let `H` be a normed complex vector space and let `n` be a natural number. The amplified operator
+acts coordinatewise on the Euclidean product of `n` copies of `H`.
+
+Finite inflation preserves `1`. -/
 theorem finiteInflation_one (n : ℕ) : finiteInflation (H := H) n 1 = 1 := by
   ext x i
   simp
 
-/-- Finite inflation preserves multiplication. -/
+/-- Let `H` be a normed complex vector space and let `n` be a natural number. The amplified operator
+acts coordinatewise on the Euclidean product of `n` copies of `H`.
+
+Finite inflation preserves multiplication. -/
 theorem finiteInflation_mul (n : ℕ) (S T : H →L[ℂ] H) :
     finiteInflation n (S * T) = finiteInflation n S * finiteInflation n T := by
   ext x i
@@ -107,7 +128,10 @@ private theorem finiteInflation_single (n : ℕ) (T : H →L[ℂ] H) (i₀ : Fin
     simp
   · simp [h]
 
-/-- The operator-norm bound holds for every finite index, including zero. -/
+/-- Let `H` be a normed complex vector space and let `n` be a natural number. The amplified operator
+acts coordinatewise on the Euclidean product of `n` copies of `H`.
+
+The operator-norm bound holds for every finite index, including zero. -/
 theorem finiteInflation_norm_le (n : ℕ) (T : H →L[ℂ] H) :
     ‖finiteInflation n T‖ ≤ ‖T‖ := by
   refine ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _) fun x => ?_
@@ -157,12 +181,20 @@ private theorem finiteInflation_norm_ge_of_nonempty (n : ℕ) [Nonempty (Fin n)]
     _ = ‖finiteInflation n T‖ * ‖y‖ := by
           rw [PiLp.norm_single 2 (fun _ : Fin n => H) i₀ y]
 
-/-- A nonempty finite index preserves the original operator norm. -/
+/-- Let `H` be a normed complex vector space and let `n` be a natural number. The amplified operator
+acts coordinatewise on the Euclidean product of `n` copies of `H`. For the exact norm equality
+assume `n>0`.
+
+A nonempty finite index preserves the operator norm. -/
 theorem finiteInflation_norm_eq (n : ℕ) [Nonempty (Fin n)] (T : H →L[ℂ] H) :
     ‖finiteInflation n T‖ = ‖T‖ :=
   le_antisymm (finiteInflation_norm_le n T) (finiteInflation_norm_ge_of_nonempty n T)
 
-/-- A positive coordinate count preserves the original operator norm. -/
+/-- Let `H` be a normed complex vector space and let `n` be a natural number. The amplified operator
+acts coordinatewise on the Euclidean product of `n` copies of `H`. For the exact norm equality
+assume `n>0`.
+
+A positive coordinate count preserves the operator norm. -/
 theorem finiteInflation_norm_eq_of_pos (n : ℕ) (hn : 0 < n) (T : H →L[ℂ] H) :
     ‖finiteInflation n T‖ = ‖T‖ := by
   have hn' : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩

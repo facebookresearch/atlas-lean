@@ -1,3 +1,4 @@
-# Non Unital CStar Alg Cat
+# Category of nonunital C*-algebras
 
-Actual complex C-star algebras, without a coefficient identity requirement.
+**Category of nonunital C*-algebras.** Its objects are nonunital complex C*-algebras and its
+morphisms are nonunital complex star-algebra homomorphisms.

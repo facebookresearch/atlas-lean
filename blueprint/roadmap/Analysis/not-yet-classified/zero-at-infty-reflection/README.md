@@ -1,9 +1,9 @@
 # Zero At Infty Reflection
 
-- [Zero At Infty Neg](zero-at-infty-neg.md)
-- [Zero At Infty Neg generator Aut](zero-at-infty-neg-generator-aut.md)
-- [Zero At Infty Neg generator apply](zero-at-infty-neg-generator-apply.md)
-- [Mem zero At Infty Neg even Part iff](mem-zero-at-infty-neg-even-part-iff.md)
-- [Mem zero At Infty Neg odd Part iff](mem-zero-at-infty-neg-odd-part-iff.md)
-- [Zero At Infty Neg even Projection apply](zero-at-infty-neg-even-projection-apply.md)
-- [Zero At Infty Neg odd Projection apply](zero-at-infty-neg-odd-projection-apply.md)
+- [Reflection grading of vanishing functions](zero-at-infty-neg.md)
+- [Reflection automorphism of vanishing functions](zero-at-infty-neg-generator-aut.md)
+- [Values of the reflection generator](zero-at-infty-neg-generator-apply.md)
+- [Even functions for reflection grading](mem-zero-at-infty-neg-even-part-iff.md)
+- [Odd functions for reflection grading](mem-zero-at-infty-neg-odd-part-iff.md)
+- [Even projection by reflection averaging](zero-at-infty-neg-even-projection-apply.md)
+- [Odd projection by reflection averaging](zero-at-infty-neg-odd-projection-apply.md)

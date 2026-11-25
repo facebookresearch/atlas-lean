@@ -1,56 +1,56 @@
 # Module
 
-- [CStar Module Grading](cstar-module-grading.md)
-- [Generator CLM](generator-clm.md)
-- [Even Part](even-part.md)
-- [Odd Part](odd-part.md)
-- [Part](part.md)
+- [Grading of a complete right Hilbert module](cstar-module-grading.md)
+- [Bounded linear module-grading generator](generator-clm.md)
+- [Even part of a Hilbert-module grading](even-part.md)
+- [Odd part of a Hilbert-module grading](odd-part.md)
+- [Degree-indexed Hilbert-module parts](part.md)
 
 ## Projections and decomposition
 
-- [Even Projection](even-projection.md)
-- [Odd Projection](odd-projection.md)
-- [Decomposition](decomposition.md)
+- [Even projection of a Hilbert-module grading](even-projection.md)
+- [Odd projection of a Hilbert-module grading](odd-projection.md)
+- [Even-odd topological decomposition of a Hilbert module](decomposition.md)
 
 ## Isometry and homogeneous laws
 
-- [Norm generator](norm-generator.md)
-- [Isometry generator](isometry-generator.md)
-- [Right smul mem part](right-smul-mem-part.md)
-- [Right Inner mem part](right-inner-mem-part.md)
-- [Right Inner generator right](right-inner-generator-right.md)
-- [Right Inner generator left](right-inner-generator-left.md)
+- [Norm of the module-grading generator](norm-generator.md)
+- [Module-grading generator is an isometry](isometry-generator.md)
+- [Degree of a homogeneous right product](right-smul-mem-part.md)
+- [Degree of a Hilbert-module inner product](right-inner-mem-part.md)
+- [Moving the generator from the second inner-product slot](right-inner-generator-right.md)
+- [Moving the generator from the first inner-product slot](right-inner-generator-left.md)
 
 ## Opposite grading
 
-- [Opposite Generator](opposite-generator.md)
-- [Opposite](opposite.md)
+- [Opposite module-grading generator](opposite-generator.md)
+- [Opposite Hilbert-module grading](opposite.md)
 
 ## Homogeneous adjointable operators
 
-- [Is Homogeneous Operator](is-homogeneous-operator.md)
-- [Adjoint is Homogeneous Operator](adjoint-is-homogeneous-operator.md)
-- [Opposite is Homogeneous Operator iff](opposite-is-homogeneous-operator-iff.md)
-- [Rank One is Homogeneous Operator](rank-one-is-homogeneous-operator.md)
+- [Degree of an adjointable operator](is-homogeneous-operator.md)
+- [Adjoint of a homogeneous module operator](adjoint-is-homogeneous-operator.md)
+- [Operator degree under opposite module gradings](opposite-is-homogeneous-operator-iff.md)
+- [Degree of a rank-one module operator](rank-one-is-homogeneous-operator.md)
 
 ## The induced grading on adjointable endomorphisms
 
-- [Operator Conjugate](operator-conjugate.md)
-- [Operator Generator](operator-generator.md)
-- [Operator Grading](operator-grading.md)
-- [Compact Grading](compact-grading.md)
+- [Conjugation of adjointable endomorphisms by a grading](operator-conjugate.md)
+- [Grading automorphism of adjointable endomorphisms](operator-generator.md)
+- [Induced grading on adjointable endomorphisms](operator-grading.md)
+- [Induced grading on compact module endomorphisms](compact-grading.md)
 
 ## Grading-equivariant unitary equivalences
 
-- [Is Graded Unitary Equiv](is-graded-unitary-equiv.md)
+- [Graded unitary module equivalence](is-graded-unitary-equiv.md)
 
 ## Direct sums
 
-- [Prod Generator Raw](prod-generator-raw.md)
-- [Prod Generator](prod-generator.md)
-- [Prod](prod.md)
+- [Generator on the topological product of graded modules](prod-generator-raw.md)
+- [Generator of the Hilbert-module direct sum](prod-generator.md)
+- [Grading of the Hilbert-module direct sum](prod.md)
 
 ## The coefficient self-module
 
-- [Self Generator](self-generator.md)
-- [Self](self.md)
+- [Generator on the coefficient self-module](self-generator.md)
+- [Grading of the right coefficient self-module](self.md)

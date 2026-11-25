@@ -30,7 +30,10 @@ universe uI uR
 
 variable {ι : Type uI} {R : Type uR} [Fintype ι] [DecidableEq ι]
 
-/-- A finite diagonal with unit entries is a unit, also over noncommutative coefficients. -/
+/-- Let `ι` be a finite index type with decidable equality. Let `R` be a semiring. For `d : ι → R`.
+Assume `∀ i, IsUnit (d i)`. A finite diagonal with unit entries is a unit, also over noncommutative
+coefficients.
+-/
 theorem isUnit_ofMatrix_diagonal [Semiring R] (d : ι → R) (hd : ∀ i, IsUnit (d i)) :
     IsUnit (ofMatrix (Matrix.diagonal d)) := by
   classical
@@ -56,7 +59,11 @@ theorem isUnit_ofMatrix_diagonal [Semiring R] (d : ι → R) (hd : ∀ i, IsUnit
         rfl }
   exact w.isUnit
 
-/-- A finite diagonal of star projections is a star projection in the actual matrix copy. -/
+/-- Let `ι` be a finite index type with decidable equality. Let `R` be a possibly nonunital semiring.
+The star on `R` is an additive involution reversing products. For `d : ι → R`. Assume `∀ i,
+IsStarProjection (d i)`. A finite diagonal of star projections is a star projection in the matrix
+copy.
+-/
 theorem isStarProjection_ofMatrix_diagonal [NonUnitalSemiring R] [StarRing R]
     (d : ι → R) (hd : ∀ i, IsStarProjection (d i)) :
     IsStarProjection (ofMatrix (Matrix.diagonal d)) := by

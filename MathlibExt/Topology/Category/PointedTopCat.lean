@@ -22,10 +22,17 @@ open CategoryTheory Topology
 
 universe u
 
-/-- Topological spaces equipped with a distinguished point and basepoint-preserving maps. -/
+/-- The spaces are topological and carry a distinguished point. Their morphisms are continuous maps
+preserving that point.
+
+The category has pointed topological spaces as objects and continuous basepoint-preserving maps
+as morphisms. -/
 abbrev PointedTopCat := Under (TopCat.of PUnit)
 
-/-- Adjoin a disjoint basepoint to a topological space. -/
+/-- The input is an arbitrary topological space. The output is a topological space with a
+distinguished point and the usual category of continuous basepoint-preserving maps.
+
+Adjoin a disjoint basepoint to a topological space. -/
 noncomputable abbrev PointedTopCat.addBasepoint := Under.costar (TopCat.of PUnit)
 
 namespace PointedTopCat
@@ -37,7 +44,10 @@ set_option warningAsError true
 
 open scoped OnePoint
 
-/-- The one-point compactification of a space, pointed at infinity. -/
+/-- The spaces are topological and carry a distinguished point. Their morphisms are continuous maps
+preserving that point. The one-point extensions are pointed at infinity.
+
+The one-point compactification of a space, pointed at infinity. -/
 abbrev onePointPointed (X : Type u) [TopologicalSpace X] :
     PointedTopCat.{u} :=
   Under.mk (TopCat.ofHom
@@ -49,7 +59,10 @@ theorem onePointPointed_basepoint
     (onePointPointed X).hom PUnit.unit = (∞ : OnePoint X) :=
   rfl
 
-/-- A homeomorphism extends by sending infinity to infinity. -/
+/-- The spaces are topological and carry a distinguished point. Their morphisms are continuous maps
+preserving that point. The one-point extensions are pointed at infinity.
+
+A homeomorphism extends by sending infinity to infinity. -/
 def onePointPointedIsoOfHomeomorph {A B : Type u} [TopologicalSpace A] [TopologicalSpace B]
     (e : A ≃ₜ B) : onePointPointed A ≅ onePointPointed B :=
   Under.isoMk (TopCat.isoOfHomeo e.onePointCongr) (by
@@ -60,13 +73,19 @@ def onePointPointedIsoOfHomeomorph {A B : Type u} [TopologicalSpace A] [Topologi
 
 end
 
-/-- A based map sends the source basepoint to the target basepoint. -/
+/-- The spaces are topological and carry a distinguished point. Their morphisms are continuous maps
+preserving that point.
+
+A based map sends the source basepoint to the target basepoint. -/
 @[simp]
 theorem map_basepoint {X Y : PointedTopCat.{u}} (f : X ⟶ Y) :
     f.right (X.hom PUnit.unit) = Y.hom PUnit.unit :=
   ConcreteCategory.congr_hom f.w PUnit.unit
 
-/-- Regard a pointed space as the topological pair consisting of its basepoint inclusion. -/
+/-- The spaces are topological and carry a distinguished point. Their morphisms are continuous maps
+preserving that point.
+
+Regard a pointed space as the topological pair consisting of its basepoint inclusion. -/
 def pointedPair : PointedTopCat.{u} ⥤ TopPair.{u} where
   obj X := TopPair.of X.hom (Topology.IsEmbedding.of_subsingleton X.hom)
   map {X Y} f := TopPair.ofHom f.right (𝟙 _) ((Category.id_comp _).trans f.w.symm)

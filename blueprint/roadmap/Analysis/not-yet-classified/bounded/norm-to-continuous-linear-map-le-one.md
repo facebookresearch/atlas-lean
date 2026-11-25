@@ -1,3 +1,5 @@
-# Norm to Continuous Linear Map le one
+# Norm of a completely positive contraction
 
-A supplied pointwise contraction has operator norm at most one.
+For nonunital complex C*-algebras `A` and `B` with
+star-compatible partial orders, a completely positive map `φ : A → B` satisfying `‖φ(a)‖ ≤ ‖a‖` for
+every `a` has operator norm at most one.

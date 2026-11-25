@@ -41,7 +41,8 @@ universe u
 
 variable {A : Type u} [NonUnitalCStarAlgebra A]
 
-/-- A partial-isometry witness is supported on its actual source projection. -/
+/-- **Source support of a partial isometry.** Let `A` be a nonunital complex C*-algebra. If `p` is a
+self-adjoint idempotent and `v ∈ A` satisfies `v* v = p`, then `v p = v`. -/
 theorem mul_source_projection_eq (p : StarProjection A) (v : A)
     (hp : (p : A) = star v * v) : v * (p : A) = v := by
   let w := v - v * (p : A)
@@ -61,13 +62,15 @@ theorem mul_source_projection_eq (p : StarProjection A) (v : A)
   have hwzero : w = 0 := norm_eq_zero.mp (by nlinarith [norm_nonneg w])
   exact (sub_eq_zero.mp hwzero).symm
 
-/-- A partial-isometry witness is supported on its actual target projection. -/
+/-- **Target support of a partial isometry.** Let `A` be a nonunital complex C*-algebra. If `q` is a
+self-adjoint idempotent and `v ∈ A` satisfies `v v* = q`, then `q v = v`. -/
 theorem target_projection_mul_eq (q : StarProjection A) (v : A)
     (hq : (q : A) = v * star v) : (q : A) * v = v := by
   have h := mul_source_projection_eq q (star v) (by simpa only [star_star] using hq)
   simpa only [star_mul, star_star, q.property.isSelfAdjoint.star_eq] using congrArg star h
 
-/-- The actual source projection controls the norm of its equivalence witness. -/
+/-- **Norm bound from the source projection.** Let `A` be a nonunital complex C*-algebra. If `p` is a
+self-adjoint idempotent and `v* v = p`, then `‖v‖ ≤ 1`. -/
 theorem norm_intertwiner_le_one (p : StarProjection A) (v : A)
     (hp : (p : A) = star v * v) : ‖v‖ ≤ 1 := by
   have hnorm : ‖v‖ * ‖v‖ ≤ 1 := by
@@ -75,7 +78,8 @@ theorem norm_intertwiner_le_one (p : StarProjection A) (v : A)
     exact IsStarProjection.norm_le (p : A) p.property
   nlinarith [norm_nonneg v]
 
-/-- A quantitative bound for the original two adjoint products. -/
+/-- **Difference bound for adjoint products.** Let `A` be a nonunital complex C*-algebra. For `x,y ∈ A`,
+`‖x* x - y* y‖ ≤ ‖x-y‖ (‖x‖ + ‖y‖)`. -/
 theorem norm_star_mul_self_sub_le (x y : A) :
     ‖star x * x - star y * y‖ ≤ ‖x - y‖ * (‖x‖ + ‖y‖) := by
   have heq : star x * x - star y * y =
@@ -89,8 +93,9 @@ theorem norm_star_mul_self_sub_le (x y : A) :
       gcongr <;> exact norm_mul_le _ _
     _ = ‖x - y‖ * (‖x‖ + ‖y‖) := by simp only [norm_star]; ring
 
-/-- Correct an actual compressed approximate intertwiner. Both adjoint-product
-defects are original norm bounds; no factorization or equivalence is an input. -/
+/-- **Projection equivalence from an approximate intertwiner.** Let `A` be a nonunital complex
+C*-algebra. If self-adjoint idempotents `p,q` and `x ∈ A` satisfy `x p = x`, `q x = x`, `‖p - x* x‖
+< 1`, and `‖q - x x*‖ < 1`, then `p` and `q` are Murray-von Neumann equivalent. -/
 theorem murrayVonNeumannEquivalent_of_approximate_intertwiner
     (p q : StarProjection A) (x : A)
     (hxp : x * (p : A) = x) (hqx : (q : A) * x = x)

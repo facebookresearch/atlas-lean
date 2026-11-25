@@ -34,7 +34,10 @@ open scoped CStarAlgebra
 
 universe uA uB uE uA' uB' uE' uA'' uB'' uE''
 
-/-- A normalized concrete extension of `A` by `B`. -/
+/-- **Normalized C*-algebra extension.** For nonunital complex C*-algebras `A,B`, a normalized extension
+of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and quotient
+identified with `A`, giving `0 → B → E → A → 0`. The endpoint identifications are complex
+star-algebra equivalences. -/
 structure CStarExtension
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] where
@@ -58,7 +61,10 @@ attribute [instance] CStarExtension.middleCStar
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- The canonical inclusion of the ideal coefficient into the middle algebra. -/
+/-- **Ideal inclusion in a C*-extension.** For nonunital complex C*-algebras `A,B`, a normalized
+extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and
+quotient identified with `A`, giving `0 → B → E → A → 0`. Its ideal identification gives the
+nonunital complex star homomorphism `B → E`. -/
 noncomputable def inclusion (X : CStarExtension A B) :
     B →⋆ₙₐ[ℂ] X.Middle :=
   (NonUnitalStarSubalgebraClass.subtype X.ideal.carrier).comp
@@ -69,7 +75,10 @@ theorem inclusion_apply (X : CStarExtension A B) (b : B) :
     X.inclusion b = (X.idealEquiv b : X.Middle) :=
   rfl
 
-/-- The canonical quotient map from the middle algebra to the quotient coefficient. -/
+/-- **Quotient projection in a C*-extension.** For nonunital complex C*-algebras `A,B`, a normalized
+extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and
+quotient identified with `A`, giving `0 → B → E → A → 0`. Its quotient identification gives the
+nonunital complex star homomorphism `E → A`. -/
 noncomputable def quotient (X : CStarExtension A B) :
     X.Middle →⋆ₙₐ[ℂ] A := by
   let _ : X.ideal.carrier.IsTwoSided := X.ideal.isTwoSided
@@ -115,7 +124,10 @@ theorem quotient_eq_zero_iff (X : CStarExtension A B) (e : X.Middle) :
     change X.quotientEquiv (X.ideal.quotientMap e) = 0
     rw [(X.ideal.quotientMap_eq_zero_iff e).mpr he, map_zero]
 
-/-- The derived inclusion and quotient form an exact pair. -/
+/-- **Exactness of the normalized extension maps.** For nonunital complex C*-algebras `A,B`, a
+normalized extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified
+with `B` and quotient identified with `A`, giving `0 → B → E → A → 0`. The image of `B → E` equals
+the kernel of `E → A`. -/
 theorem exact (X : CStarExtension A B) :
     Function.Exact X.inclusion X.quotient := by
   intro e
@@ -144,7 +156,11 @@ theorem range_inclusion (X : CStarExtension A B) :
 variable {A' : Type uA'} {B' : Type uB'}
 variable [NonUnitalCStarAlgebra A'] [NonUnitalCStarAlgebra B']
 
-/-- A morphism of concrete extensions, including its two endpoint maps. -/
+/-- **Morphism of normalized C*-extensions.** For nonunital complex C*-algebras `A,B`, a normalized
+extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and
+quotient identified with `A`, giving `0 → B → E → A → 0`. A morphism to another such extension
+consists of nonunital star homomorphisms on both endpoints and on the middle algebra, making both
+squares commute. -/
 structure Hom (X : CStarExtension A B) (Y : CStarExtension A' B') where
   idealMap : B →⋆ₙₐ[ℂ] B'
   middleMap : X.Middle →⋆ₙₐ[ℂ] Y.Middle
@@ -180,7 +196,10 @@ theorem ext {f g : CStarExtension.Hom X Y}
   cases hquotient
   rfl
 
-/-- Identity morphism of a concrete extension. -/
+/-- **Identity morphism of a C*-extension.** For nonunital complex C*-algebras `A,B`, a normalized
+extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and
+quotient identified with `A`, giving `0 → B → E → A → 0`. The identity maps on the endpoints and
+middle algebra form its identity extension morphism. -/
 def id (X : CStarExtension A B) : CStarExtension.Hom X X where
   idealMap := NonUnitalStarAlgHom.id ℂ B
   middleMap := NonUnitalStarAlgHom.id ℂ X.Middle
@@ -192,7 +211,10 @@ variable {A'' : Type uA''} {B'' : Type uB''}
 variable [NonUnitalCStarAlgebra A''] [NonUnitalCStarAlgebra B'']
 variable {Z : CStarExtension A'' B''}
 
-/-- Composition of concrete extension morphisms. -/
+/-- **Composition of C*-extension morphisms.** For nonunital complex C*-algebras `A,B`, a normalized
+extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and
+quotient identified with `A`, giving `0 → B → E → A → 0`. Compatible extension morphisms compose by
+composing their endpoint and middle star homomorphisms. -/
 def comp (g : CStarExtension.Hom Y Z) (f : CStarExtension.Hom X Y) :
     CStarExtension.Hom X Z where
   idealMap := g.idealMap.comp f.idealMap
@@ -248,7 +270,10 @@ end Hom
 
 /-! ## Equivalences of normalized extensions -/
 
-/-- An equivalence of concrete extensions, including both endpoint equivalences. -/
+/-- **Equivalence of normalized C*-extensions.** For nonunital complex C*-algebras `A,B`, a normalized
+extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and
+quotient identified with `A`, giving `0 → B → E → A → 0`. An equivalence consists of star-algebra
+equivalences on the endpoints and middle algebra, compatible with the inclusion and quotient maps. -/
 structure Equiv (X : CStarExtension A B) (Y : CStarExtension A' B') where
   idealEquiv : B ≃⋆ₐ[ℂ] B'
   middleEquiv : X.Middle ≃⋆ₐ[ℂ] Y.Middle
@@ -286,7 +311,11 @@ theorem ext {f g : CStarExtension.Equiv X Y}
   cases hquotient
   rfl
 
-/-- Forget an extension equivalence to an extension morphism. -/
+/-- **Morphisms underlying extension equivalences.** For nonunital complex C*-algebras `A,B`, a
+normalized extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified
+with `B` and quotient identified with `A`, giving `0 → B → E → A → 0`. An equivalence of normalized
+extensions gives a morphism by taking the nonunital star homomorphisms underlying its three
+equivalences. -/
 def toHom (f : CStarExtension.Equiv X Y) : CStarExtension.Hom X Y where
   idealMap := f.idealEquiv.toNonUnitalStarAlgHom
   middleMap := f.middleEquiv.toNonUnitalStarAlgHom
@@ -294,7 +323,10 @@ def toHom (f : CStarExtension.Equiv X Y) : CStarExtension.Hom X Y where
   inclusion_commutes := f.inclusion_commutes
   quotient_commutes := f.quotient_commutes
 
-/-- Reflexive equivalence of a concrete extension. -/
+/-- **Reflexive equivalence of a C*-extension.** For nonunital complex C*-algebras `A,B`, a normalized
+extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and
+quotient identified with `A`, giving `0 → B → E → A → 0`. The identity star-algebra equivalences on
+its three algebras give its reflexive extension equivalence. -/
 def refl (X : CStarExtension A B) : CStarExtension.Equiv X X where
   idealEquiv := StarAlgEquiv.refl ℂ B
   middleEquiv := StarAlgEquiv.refl ℂ X.Middle
@@ -302,7 +334,10 @@ def refl (X : CStarExtension A B) : CStarExtension.Equiv X X where
   inclusion_commutes := by ext; rfl
   quotient_commutes := by ext; rfl
 
-/-- Symmetry of concrete extension equivalence. -/
+/-- **Inverse of a C*-extension equivalence.** For nonunital complex C*-algebras `A,B`, a normalized
+extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and
+quotient identified with `A`, giving `0 → B → E → A → 0`. Inverting the three star-algebra
+equivalences gives an equivalence in the opposite direction. -/
 def symm (f : CStarExtension.Equiv X Y) : CStarExtension.Equiv Y X where
   idealEquiv := f.idealEquiv.symm
   middleEquiv := f.middleEquiv.symm
@@ -330,7 +365,10 @@ variable {A'' : Type uA''} {B'' : Type uB''}
 variable [NonUnitalCStarAlgebra A''] [NonUnitalCStarAlgebra B'']
 variable {Z : CStarExtension A'' B''}
 
-/-- Transitivity of concrete extension equivalence. -/
+/-- **Composition of C*-extension equivalences.** For nonunital complex C*-algebras `A,B`, a normalized
+extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and
+quotient identified with `A`, giving `0 → B → E → A → 0`. Two consecutive extension equivalences
+compose by composing their endpoint and middle equivalences. -/
 def trans (f : CStarExtension.Equiv X Y) (g : CStarExtension.Equiv Y Z) :
     CStarExtension.Equiv X Z where
   idealEquiv := f.idealEquiv.trans g.idealEquiv
@@ -384,7 +422,10 @@ theorem trans_assoc (f : CStarExtension.Equiv X Y)
 
 end Equiv
 
-/-- An extension equivalence is strong when it fixes both endpoint algebras. -/
+/-- **Strong equivalence of C*-extensions.** For nonunital complex C*-algebras `A,B`, a normalized
+extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and
+quotient identified with `A`, giving `0 → B → E → A → 0`. An equivalence between two extensions with
+the same endpoints is strong when both endpoint equivalences are identities. -/
 def Equiv.IsStrong {X Y : CStarExtension A B} (f : Equiv X Y) : Prop :=
   f.idealEquiv = StarAlgEquiv.refl ℂ B ∧
     f.quotientEquiv = StarAlgEquiv.refl ℂ A
@@ -393,7 +434,10 @@ def Equiv.IsStrong {X Y : CStarExtension A B} (f : Equiv X Y) : Prop :=
 
 variable {E : Type uE} [NonUnitalCStarAlgebra E]
 
-/-- Normalize an injective/surjective exact pair of C-star homomorphisms. -/
+/-- **Normalizing an exact pair of C*-homomorphisms.** Let `A,B,E` be nonunital complex C*-algebras, and
+let `j : B → E`, `q : E → A` be nonunital complex star homomorphisms. If `j` is injective, `q` is
+surjective, and `range(j) = ker(q)`, they determine a normalized extension of `A` by `B`, with
+middle algebra `E`. -/
 noncomputable def ofExact
     (j : B →⋆ₙₐ[ℂ] E) (q : E →⋆ₙₐ[ℂ] A)
     (hj : Function.Injective j) (hq : Function.Surjective q)
@@ -449,8 +493,10 @@ theorem ofExact_quotient
   ext e
   exact ofExact_quotient_apply j q hj hq hexact e
 
-/-- Normalizing the derived maps of an extension preserves it up to an
-endpoint-identity extension equivalence. -/
+/-- **Equivalence with the normalization of an extension.** For nonunital complex C*-algebras `A,B`, a
+normalized extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified
+with `B` and quotient identified with `A`, giving `0 → B → E → A → 0`. Normalizing its own inclusion
+and quotient maps gives a strongly equivalent extension, with the identity on the middle algebra. -/
 noncomputable def normalizationEquiv
     (X : CStarExtension.{uA, uB, uE} A B) :
     Equiv X (ofExact X.inclusion X.quotient X.inclusion_injective
@@ -479,8 +525,11 @@ theorem normalizationEquiv_isStrong
     (normalizationEquiv X).IsStrong :=
   ⟨rfl, rfl⟩
 
-/-- The normalization equivalence is the unique strong extension equivalence
-whose middle action is the identity. -/
+/-- **Uniqueness of the normalization equivalence.** For nonunital complex C*-algebras `A,B`, a
+normalized extension of `A` by `B` is a middle C*-algebra `E` with a closed star ideal identified
+with `B` and quotient identified with `A`, giving `0 → B → E → A → 0`. Among equivalences to the
+normalization, the normalization equivalence is the unique strong equivalence whose middle map is
+the identity. -/
 theorem normalizationEquiv_unique
     (X : CStarExtension.{uA, uB, uE} A B)
     (f : Equiv X (ofExact X.inclusion X.quotient X.inclusion_injective
@@ -496,7 +545,10 @@ theorem normalizationEquiv_unique
 
 /-! ## The product extension -/
 
-/-- The canonical product extension of `A` by `B`. -/
+/-- **Product C*-extension.** For nonunital complex C*-algebras `A,B`, a normalized extension of `A` by
+`B` is a middle C*-algebra `E` with a closed star ideal identified with `B` and quotient identified
+with `A`, giving `0 → B → E → A → 0`. The direct product gives the normalized extension `0 → B → A ×
+B → A → 0`, with inclusion `b ↦ (0,b)` and projection `(a,b) ↦ a`. -/
 noncomputable def product (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
     CStarExtension A B :=

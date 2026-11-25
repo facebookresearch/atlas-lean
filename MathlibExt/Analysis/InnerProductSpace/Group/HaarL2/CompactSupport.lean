@@ -49,7 +49,10 @@ variable {G : Type uG} [TopologicalSpace G] [MeasurableSpace G] [BorelSpace G]
 variable (μ : Measure G) [μ.Regular]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
-/-- The literal compact-support linear inclusion into the original Hilbert-valued L2 space. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The compact-support linear inclusion into the Hilbert-valued L2 space. -/
 def compactSupportInclusion : C_c(G, H) →ₗ[ℂ] Lp H 2 μ where
   toFun f :=
     ((map_continuous f).memLp_of_hasCompactSupport f.hasCompactSupport).toLp (f : G → H)
@@ -69,12 +72,18 @@ def compactSupportInclusion : C_c(G, H) →ₗ[ℂ] Lp H 2 μ where
     change c • f s = c • (hf.toLp (f : G → H)) s
     rw [h₂]
 
-/-- The inclusion has the exact original compact-support representative almost everywhere. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The inclusion has the exact compact-support representative almost everywhere. -/
 theorem compactSupportInclusion_ae_eq (f : C_c(G, H)) :
     compactSupportInclusion (H := H) μ f =ᵐ[μ] (f : G → H) :=
   MemLp.coeFn_toLp ((map_continuous f).memLp_of_hasCompactSupport f.hasCompactSupport)
 
-/-- The original compact-support integral is the actual L2 inner product, linear in the second variable. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The compact-support integral is the L2 inner product, linear in the second variable. -/
 theorem compactSupportInclusion_inner (f g : C_c(G, H)) :
     ⟪compactSupportInclusion (H := H) μ f, compactSupportInclusion μ g⟫_ℂ =
       ∫ s : G, ⟪f s, g s⟫_ℂ ∂μ := by
@@ -84,7 +93,10 @@ theorem compactSupportInclusion_inner (f g : C_c(G, H)) :
     compactSupportInclusion_ae_eq μ g] with s hf hg
   rw [hf, hg]
 
-/-- The inclusion preserves the exact original squared integral norm. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space.
+
+The inclusion preserves the exact squared integral norm. -/
 theorem norm_compactSupportInclusion_sq (f : C_c(G, H)) :
     ‖compactSupportInclusion (H := H) μ f‖ ^ 2 = ∫ s : G, ‖f s‖ ^ 2 ∂μ := by
   let ζ := compactSupportInclusion (H := H) μ f
@@ -103,7 +115,10 @@ theorem norm_compactSupportInclusion_sq (f : C_c(G, H)) :
 
 variable [R1Space G] [LocallyCompactSpace G]
 
-/-- Compact-support vectors are dense in the actual Hilbert-valued L2 space for a regular measure. -/
+/-- Let `G` be a topological space with its Borel σ-algebra, let `μ` be a regular measure on `G`,
+and let `H` be a complex normed inner-product space. Assume `G` is locally compact and R₁.
+
+Compact-support vectors are dense in the Hilbert-valued L2 space for a regular measure. -/
 theorem denseRange_compactSupportInclusion :
     DenseRange (compactSupportInclusion (H := H) μ) := by
   intro ξ

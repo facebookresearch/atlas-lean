@@ -1,3 +1,5 @@
-# Is Closed pullback
+# Closedness of a C*-pullback
 
-The pullback is closed as an equalizer of continuous homomorphisms.
+**Closedness of a C*-pullback.** Let `A,B,C` be nonunital complex C*-algebras and `f : A → C`, `g :
+B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) = g(b)}`, with
+the inherited maximum norm. The pullback is closed in the norm topology of `A × B`.

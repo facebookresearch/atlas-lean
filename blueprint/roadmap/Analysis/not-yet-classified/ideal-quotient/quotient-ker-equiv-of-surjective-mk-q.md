@@ -1,3 +1,5 @@
-# Quotient Ker Equiv Of Surjective mk Q
+# Quotient classes under the surjective first isomorphism
 
-Surjective first-isomorphism evaluation in the canonical submodule projection normal form.
+Let `A,B` be nonunital complex
+C*-algebras and `ρ : A → B` a nonunital complex star-algebra homomorphism. If `ρ` is surjective, the
+canonical equivalence from the vector-space quotient `A/ker(ρ)` to `B` evaluates at `[a]` to `ρ(a)`.

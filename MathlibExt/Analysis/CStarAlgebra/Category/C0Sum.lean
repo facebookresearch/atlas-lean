@@ -35,32 +35,50 @@ namespace NonUnitalCStarAlgCat
 
 universe u
 
-/-- The literal closed c0-subalgebra carrier of a heterogeneous family. -/
+/-- **Carrier of a heterogeneous c₀ sum.** For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its `c₀` sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for
+every `ε > 0`, equipped with the supremum norm and coordinatewise operations. This is that closed
+nonunital star-subalgebra carrier. -/
 abbrev c0SumCarrier {I : Type u} (A : I → NonUnitalCStarAlgCat.{u}) :=
   CStarC0Sum (fun i => A i)
 
-/-- The actual completed heterogeneous c0 sum, including an empty index type. -/
+/-- **Categorical c₀ sum.** For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex C*-algebras, its `c₀`
+sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for every `ε > 0`, equipped
+with the supremum norm and coordinatewise operations. The sum is a nonunital complex C*-algebra and
+hence an object of the nonunital C*-algebra category. An empty index set gives the zero algebra. -/
 def c0SumObj {I : Type u} (A : I → NonUnitalCStarAlgCat.{u}) :
     NonUnitalCStarAlgCat.{u} :=
   NonUnitalCStarAlgCat.of (c0SumCarrier A)
 
-/-- The canonical single-coordinate inclusion into the actual c0 sum. -/
+/-- **Coordinate inclusion into a c₀ sum.** For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its `c₀` sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for
+every `ε > 0`, equipped with the supremum norm and coordinatewise operations. For `i ∈ I`, the star
+homomorphism `Aᵢ → ⨁₀ Aᵢ` puts its input at coordinate `i` and zero at every other coordinate. -/
 def c0SumInclusion {I : Type u} (A : I → NonUnitalCStarAlgCat.{u}) (i : I) :
     A i ⟶ c0SumObj A := by
   classical
   exact CStarC0Sum.single (fun j => A j) i
 
-/-- Coordinate evaluation on the actual completed c0 sum. -/
+/-- **Coordinate projection from a c₀ sum.** For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its `c₀` sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for
+every `ε > 0`, equipped with the supremum norm and coordinatewise operations. For `i ∈ I`,
+coordinate evaluation is a nonunital star homomorphism `⨁₀ Aᵢ → Aᵢ`. -/
 def c0SumProjection {I : Type u} (A : I → NonUnitalCStarAlgCat.{u}) (i : I) :
     c0SumObj A ⟶ A i :=
   CStarC0Sum.eval (fun j => A j) i
 
-/-- Actual component star homomorphisms act coordinatewise on the c0 sum. -/
+/-- **Coordinatewise map on c₀ sums.** For families `(Aᵢ)ᵢ∈I` and `(Bᵢ)ᵢ∈I` of nonunital complex
+C*-algebras and nonunital star homomorphisms `fᵢ : Aᵢ → Bᵢ`, both c₀ sums have the supremum norm.
+The family defines a nonunital star homomorphism between their c₀ sums, sending `(aᵢ)` to
+`(fᵢ(aᵢ))`. -/
 def c0SumMap {I : Type u} {A B : I → NonUnitalCStarAlgCat.{u}}
     (f : ∀ i, A i ⟶ B i) : c0SumObj A ⟶ c0SumObj B :=
   CStarC0Sum.map (fun i => A i) (fun i => B i) f
 
-/-- The category inclusion has the literal dependent single-coordinate value. -/
+/-- **Coordinates of a c₀ inclusion.** For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its `c₀` sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for
+every `ε > 0`, equipped with the supremum norm and coordinatewise operations. The `j` coordinate of
+the inclusion of `a ∈ Aᵢ` is the dependent single-coordinate section: `a` at `i`, zero elsewhere. -/
 theorem c0SumInclusion_apply {I : Type u} (A : I → NonUnitalCStarAlgCat.{u})
     (i : I) (a : A i) (j : I) :
     c0SumProjection A j (c0SumInclusion A i a) = (by
@@ -70,7 +88,10 @@ theorem c0SumInclusion_apply {I : Type u} (A : I → NonUnitalCStarAlgCat.{u})
   classical
   rfl
 
-/-- The actual inclusion is the identity at the included coordinate. -/
+/-- **Projection retracts a c₀ inclusion.** For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its `c₀` sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for
+every `ε > 0`, equipped with the supremum norm and coordinatewise operations. Projecting the
+inclusion of `a ∈ Aᵢ` onto coordinate `i` returns `a`. -/
 @[simp]
 theorem c0SumInclusion_apply_self {I : Type u}
     (A : I → NonUnitalCStarAlgCat.{u}) (i : I) (a : A i) :
@@ -78,7 +99,10 @@ theorem c0SumInclusion_apply_self {I : Type u}
   classical
   exact CStarC0Sum.single_apply_self (fun j => A j) i a
 
-/-- A different coordinate of an actual inclusion is zero. -/
+/-- **Other coordinates of a c₀ inclusion.** For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its `c₀` sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for
+every `ε > 0`, equipped with the supremum norm and coordinatewise operations. For `j ≠ i`,
+projecting the inclusion of `a ∈ Aᵢ` onto coordinate `j` gives zero. -/
 @[simp]
 theorem c0SumInclusion_apply_ne {I : Type u}
     (A : I → NonUnitalCStarAlgCat.{u}) (i : I) (a : A i)
@@ -86,19 +110,27 @@ theorem c0SumInclusion_apply_ne {I : Type u}
   classical
   exact CStarC0Sum.single_apply_ne (fun k => A k) i a hji
 
-/-- The projection has exactly the existing coordinate-evaluation formula. -/
+/-- **Evaluation of a c₀ projection.** For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its `c₀` sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for
+every `ε > 0`, equipped with the supremum norm and coordinatewise operations. For a section `a` in
+the c₀ sum, its projection to `Aᵢ` is `aᵢ`. -/
 @[simp]
 theorem c0SumProjection_apply {I : Type u}
     (A : I → NonUnitalCStarAlgCat.{u}) (i : I) (a : c0SumCarrier A) :
     c0SumProjection A i a = a i := rfl
 
-/-- The family homomorphism retains every original component value. -/
+/-- **Coordinates of a c₀ sum map.** For families `(Aᵢ)ᵢ∈I` and `(Bᵢ)ᵢ∈I` of nonunital complex
+C*-algebras and nonunital star homomorphisms `fᵢ : Aᵢ → Bᵢ`, both c₀ sums have the supremum norm.
+The `i` coordinate of the image of a section `a` is `fᵢ(aᵢ)`. -/
 @[simp]
 theorem c0SumMap_apply {I : Type u} {A B : I → NonUnitalCStarAlgCat.{u}}
     (f : ∀ i, A i ⟶ B i) (a : c0SumObj A) (i : I) :
     c0SumProjection B i (c0SumMap f a) = f i (c0SumProjection A i a) := rfl
 
-/-- Matching coordinate evaluation retracts the actual inclusion. -/
+/-- **Categorical retraction of a c₀ inclusion.** For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its `c₀` sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for
+every `ε > 0`, equipped with the supremum norm and coordinatewise operations. The inclusion `Aᵢ → ⨁₀
+Aᵢ` followed by projection to `Aᵢ` is the identity morphism. -/
 @[simp]
 theorem c0SumInclusion_projection {I : Type u}
     (A : I → NonUnitalCStarAlgCat.{u}) (i : I) :
@@ -106,7 +138,10 @@ theorem c0SumInclusion_projection {I : Type u}
   ext a
   exact c0SumInclusion_apply_self A i a
 
-/-- A component inclusion is norm preserving on the actual completed carrier. -/
+/-- **Isometric c₀ coordinate inclusion.** For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its `c₀` sum consists of sections `aᵢ ∈ Aᵢ` for which `{i : ‖aᵢ‖ ≥ ε}` is finite for
+every `ε > 0`, equipped with the supremum norm and coordinatewise operations. For `a ∈ Aᵢ`, the norm
+of its inclusion into the c₀ sum is `‖a‖`. -/
 @[simp]
 theorem norm_c0SumInclusion {I : Type u}
     (A : I → NonUnitalCStarAlgCat.{u}) (i : I) (a : A i) :

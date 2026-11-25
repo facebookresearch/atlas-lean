@@ -1,3 +1,5 @@
-# Le directed Sup
+# Each ideal lies in the directed supremum
 
-Every stage embeds in the constructed closed union.
+Let `A` be a nonunital complex C*-algebra and
+`(Iᵢ)ᵢ∈ι` a nonempty directed family of closed two-sided star ideals of `A`, ordered by inclusion.
+Every `Iᵢ` is contained in the closed ideal defined by the norm closure of the union.

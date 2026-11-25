@@ -1,3 +1,6 @@
 # Continuous unitary Character
 
-The actual scalar unitary character is continuous, without an extra continuity certificate.
+Let `G` be a group equipped with a topology. A Pontryagin character is a continuous homomorphism
+from `G` to the complex unit circle.
+
+The associated scalar unitary character is continuous.

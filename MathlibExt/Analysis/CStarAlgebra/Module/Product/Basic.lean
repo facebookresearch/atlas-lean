@@ -36,7 +36,10 @@ namespace CStarModule
 
 universe uB uE uF uE' uF'
 
-/-- The binary coefficient-inner-product product of two right C-star modules. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. The two-factor right
+module has coefficient-valued inner product equal to the sum of the factor inner products, and
+squared norm equal to the norm of that sum. -/
 abbrev Product
     (B : Type uB) (E : Type uE) (F : Type uF) :=
   WithCStarModule Bᵐᵒᵖ (E × F)
@@ -50,7 +53,10 @@ variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace ℂ F]
   [SMul Bᵐᵒᵖ F] [CStarModule Bᵐᵒᵖ F]
 
-/-- The first coordinate inclusion as an adjointable operator. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. The first-coordinate
+inclusion into the Hilbert-module product is adjointable; its adjoint is projection onto the
+first coordinate. -/
 def inl : AdjointableOperator B E (WithCStarModule Bᵐᵒᵖ (E × F)) where
   toContinuousLinearMap :=
     (WithCStarModule.equivL (R := ℂ) (A := Bᵐᵒᵖ)
@@ -65,7 +71,10 @@ def inl : AdjointableOperator B E (WithCStarModule Bᵐᵒᵖ (E × F)) where
       intro x y
       simp [rightInner, WithCStarModule.prod_inner]
 
-/-- The second coordinate inclusion as an adjointable operator. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. The second-coordinate
+inclusion into the Hilbert-module product is adjointable; its adjoint is projection onto the
+second coordinate. -/
 def inr : AdjointableOperator B F (WithCStarModule Bᵐᵒᵖ (E × F)) where
   toContinuousLinearMap :=
     (WithCStarModule.equivL (R := ℂ) (A := Bᵐᵒᵖ)
@@ -80,11 +89,17 @@ def inr : AdjointableOperator B F (WithCStarModule Bᵐᵒᵖ (E × F)) where
       intro x y
       simp [rightInner, WithCStarModule.prod_inner]
 
-/-- Projection onto the first coordinate. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. Projection from the
+Hilbert-module product onto the first coordinate is adjointable, with first-coordinate
+inclusion as adjoint. -/
 def fst : AdjointableOperator B (WithCStarModule Bᵐᵒᵖ (E × F)) E :=
   (inl (B := B) (E := E) (F := F)).adjointOperator
 
-/-- Projection onto the second coordinate. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. Projection from the
+Hilbert-module product onto the second coordinate is adjointable, with second-coordinate
+inclusion as adjoint. -/
 def snd : AdjointableOperator B (WithCStarModule Bᵐᵒᵖ (E × F)) F :=
   (inr (B := B) (E := E) (F := F)).adjointOperator
 
@@ -147,7 +162,9 @@ variable {E' : Type uE'} [NormedAddCommGroup E'] [NormedSpace ℂ E']
 variable {F' : Type uF'} [NormedAddCommGroup F'] [NormedSpace ℂ F']
   [SMul Bᵐᵒᵖ F'] [CStarModule Bᵐᵒᵖ F']
 
-/-- The block-diagonal product of two adjointable operators. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. A pair of adjointable
+maps defines the block-diagonal adjointable map between the two Hilbert-module products. -/
 def prodMap (T : AdjointableOperator B E E')
     (S : AdjointableOperator B F F') :
     AdjointableOperator B (WithCStarModule Bᵐᵒᵖ (E × F))

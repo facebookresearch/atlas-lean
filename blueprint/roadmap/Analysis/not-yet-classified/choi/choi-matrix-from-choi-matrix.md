@@ -1,3 +1,4 @@
-# Choi Matrix from Choi Matrix
+# Choi matrix after reconstruction
 
-`J( fromChoi(J) ) = J` : Choi of reconstruction is the original matrix.
+For finite decidable `n`, any index type `m`, and a complex
+matrix `J` indexed by `n × m`, the Choi matrix of the reconstructed complex-linear map equals `J`.

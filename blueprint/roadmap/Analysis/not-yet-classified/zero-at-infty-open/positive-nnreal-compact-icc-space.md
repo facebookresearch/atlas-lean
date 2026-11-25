@@ -1,4 +1,6 @@
 # Positive NNReal Compact Icc Space
 
-Closed intervals in the positive nonnegative reals are compact.  This is
-kept as explicit data rather than installed as a global instance.
+The domain is the positive part `(0,∞)` of the nonnegative real numbers, with its usual order
+topology.
+
+Every closed order interval in this positive half-line is compact.

@@ -47,7 +47,10 @@ variable {E₁ : Type uE₁} [NormedAddCommGroup E₁] [NormedSpace ℂ E₁]
 variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
   [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂] [CompleteSpace E₂]
 
-/-- The genuine source identity induces the genuine completed identity. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. The identity endomorphism of E₁ induces the identity endomorphism of the completed tensor
+product. -/
 @[simp]
 theorem completedLeftOperator_one
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
@@ -74,7 +77,9 @@ theorem completedLeftOperator_one
   rw [completedLeftOperator_pure, AdjointableOperator.one_apply,
     AdjointableOperator.one_apply]
 
-/-- Actual left operators preserve addition, by pure values and dense span. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. The induced first-factor operator of a sum is the sum of the induced operators. -/
 theorem completedLeftOperator_add
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L M : AdjointableOperator.End B₁ E₁) :
@@ -101,7 +106,10 @@ theorem completedLeftOperator_add
     AdjointableOperator.add_apply, completedPure_add_left,
     completedLeftOperator_pure, completedLeftOperator_pure]
 
-/-- Actual End multiplication is composition in the source and target. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Composition of first-factor endomorphisms is carried to composition of their induced
+operators. -/
 theorem completedLeftOperator_mul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L M : AdjointableOperator.End B₁ E₁) :
@@ -128,7 +136,10 @@ theorem completedLeftOperator_mul
     AdjointableOperator.mul_apply, completedLeftOperator_pure,
     completedLeftOperator_pure]
 
-/-- Actual complex scalar actions agree on the source and completed End algebras. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Multiplying a first-factor operator by a complex scalar multiplies its induced operator by
+the same scalar. -/
 theorem completedLeftOperator_smul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (c : ℂ) (L : AdjointableOperator.End B₁ E₁) :
@@ -154,7 +165,9 @@ theorem completedLeftOperator_smul
     AdjointableOperator.smul_apply, completedPure_smul_left,
     completedLeftOperator_pure]
 
-/-- The genuine input adjoint maps to the genuine constructed output adjoint. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Taking the adjoint of a first-factor operator takes the adjoint of its induced operator. -/
 theorem completedLeftOperator_star
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator.End B₁ E₁) :
@@ -179,7 +192,10 @@ theorem completedLeftOperator_star
   rw [completedLeftOperator_pure, AdjointableOperator.star_apply,
     AdjointableOperator.star_apply, completedLeftOperator_adjoint_pure]
 
-/-- The actual natural unital complex star homomorphism on the literal completed tensor. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. First-factor endomorphisms define a unital complex star algebra homomorphism into the
+adjointable endomorphisms of the completed tensor product. -/
 def completedLeftStarAlgHom
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
   letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
@@ -206,7 +222,9 @@ def completedLeftStarAlgHom
         (completedLeftOperator_mul φ)
       map_star' := completedLeftOperator_star φ }
 
-/-- Public application uses the same computed completed operator. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. This star algebra homomorphism evaluates to the induced first-factor adjointable operator. -/
 theorem completedLeftStarAlgHom_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator.End B₁ E₁) :
@@ -225,7 +243,9 @@ theorem completedLeftStarAlgHom_apply
   let : CStarModule B₂ᵐᵒᵖ (CompletedTensor (E₁ := E₁) φ) := completedCStarModule φ
   rfl
 
-/-- The actual homomorphism has the printed F tensor1 pure-action law. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Its value at L sends the pure tensor of x and y to the pure tensor of Lx and y. -/
 @[simp]
 theorem completedLeftStarAlgHom_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)

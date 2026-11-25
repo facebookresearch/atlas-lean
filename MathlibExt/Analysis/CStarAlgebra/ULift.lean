@@ -29,7 +29,9 @@ universe u v
 
 namespace NonUnitalCStarAlgebra
 
-/-- A genuine C-star dictionary on the stock lifted carrier. -/
+/-- **Universe lift of a nonunital C*-algebra.** For a nonunital complex C*-algebra `A`, its
+universe-lifted carrier has a nonunital complex C*-algebra structure transporting its given norm,
+operations, and involution along the up/down bijection. -/
 def ulift (A : Type u) [NonUnitalCStarAlgebra A] :
     NonUnitalCStarAlgebra (ULift.{v} A) where
   star x := ULift.up (star x.down)
@@ -52,7 +54,8 @@ def ulift (A : Type u) [NonUnitalCStarAlgebra A] :
     change ‖x.down‖ * ‖x.down‖ ≤ ‖star x.down * x.down‖
     exact (CStarRing.norm_star_mul_self (x := x.down)).symm.le
 
-/-- The literal up/down equivalence, with the computed lifted dictionary. -/
+/-- **Star equivalence of a universe lift.** For a nonunital complex C*-algebra `A`, the up/down
+bijection gives a complex star-algebra equivalence between its universe-lifted C*-algebra and `A`. -/
 def uliftStarAlgEquiv (A : Type u) [NonUnitalCStarAlgebra A] :
     letI : NonUnitalCStarAlgebra (ULift.{v} A) := ulift A;
     A ≃⋆ₐ[ℂ] ULift.{v} A := by

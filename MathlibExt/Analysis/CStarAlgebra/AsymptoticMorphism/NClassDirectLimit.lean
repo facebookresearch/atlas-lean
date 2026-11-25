@@ -286,16 +286,5 @@ theorem nClassesDirectLimitLift_of
   unfold nClassesDirectLimitLift nClassesDirectLimitOf
   rfl
 
-#print axioms nClassesCast
-#print axioms nClassesCast_rfl
-#print axioms stageTransitionLE
-#print axioms stageTransitionLE_classOf
-#print axioms stageTransitionLE_of_add
-#print axioms nClassesDirectedSystem
-#print axioms NClassesDirectLimit
-#print axioms nClassesDirectLimitOf
-#print axioms nClassesDirectLimitOf_transition
-#print axioms nClassesDirectLimitLift
-#print axioms nClassesDirectLimitLift_of
 
 end IteratedAsymptoticAlgebra

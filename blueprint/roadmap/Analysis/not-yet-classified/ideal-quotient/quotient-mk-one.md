@@ -1,4 +1,4 @@
-# Quotient mk one
+# Unit class in a C*-quotient
 
-The ambient unit's class is the unit of the canonical unital quotient.
-This uses the actual submodule projection normal form.
+**Unit class in a C*-quotient.** Let `U` be a unital complex C*-algebra and `I ⊆ U` a closed
+two-sided star ideal. The class of the unit of `U` is the unit of `U/I`.

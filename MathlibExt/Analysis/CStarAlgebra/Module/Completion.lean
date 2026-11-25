@@ -43,12 +43,26 @@ variable [PartialOrder A] [StarOrderedRing A]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable [SMul A E] [CStarModule A E]
 
-/-- The two-stage continuous sesquilinear extension of the actual input inner product. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+The A-valued inner product on E extends to a continuous sesquilinear form on Ē × Ē,
+conjugate-linear in the first argument and linear in the second.
+-/
 def completionInnerSL :
     UniformSpace.Completion E →L⋆[ℂ] UniformSpace.Completion E →L[ℂ] A :=
   ((((CStarModule.innerSL (A := A) (E := E)).flip).fromCompletion).flip).fromCompletion
 
-/-- Both canonical completion images retain the exact original inner product. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+The extended inner product of the canonical images of x, y ∈ E is the original A-valued inner
+product of x and y.
+-/
 @[simp]
 theorem completionInnerSL_apply_coe_coe (x y : E) :
     completionInnerSL (A := A) (x : UniformSpace.Completion E)
@@ -60,7 +74,13 @@ theorem completionInnerSL_apply_coe_coe (x y : E) :
   change CStarModule.innerSL (A := A) x y = inner A x y
   exact CStarModule.innerSL_apply
 
-/-- Joint continuity uses ordinary continuous evaluation, not global uniform continuity. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+The extended A-valued inner product is jointly continuous on Ē × Ē.
+-/
 @[continuity, fun_prop]
 theorem continuous_completionInnerSL :
     Continuous fun p : UniformSpace.Completion E × UniformSpace.Completion E =>
@@ -104,7 +124,12 @@ private def completionInputCoeffCLM (a : A) : E →L[ℂ] E := by
         ring
 
 omit [StarOrderedRing A] in
-/-- Fixed-coefficient input continuity is derived, never given as an extra premise. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a partial order. Let E be a normed complex
+inner-product A-module with its compatible coefficient action, and let Ē be its norm completion.
+
+For each a ∈ A, the coefficient action x ↦ a • x on E is uniformly continuous.
+-/
 theorem completionInputUniformContinuousConstSMul : UniformContinuousConstSMul A E := by
   constructor
   intro a
@@ -112,7 +137,12 @@ theorem completionInputUniformContinuousConstSMul : UniformContinuousConstSMul A
   exact (completionInputCoeffCLM (A := A) (E := E) a).uniformContinuous
 
 omit [StarOrderedRing A] in
-/-- The existing stock completion coefficient action extends the actual input action. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a partial order. Let E be a normed complex
+inner-product A-module with its compatible coefficient action, and let Ē be its norm completion.
+
+For a ∈ A and x ∈ E, the canonical image of a • x in Ē equals a • the canonical image of x.
+-/
 @[simp]
 theorem coe_completion_coeff_smul (a : A) (x : E) :
     (↑(a • x) : UniformSpace.Completion E) =
@@ -121,7 +151,13 @@ theorem coe_completion_coeff_smul (a : A) (x : E) :
     completionInputUniformContinuousConstSMul (A := A) (E := E)
   exact UniformSpace.Completion.coe_smul a x
 
-/-- The two-stage completed inner product is conjugate symmetric. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+For x, y ∈ Ē, conjugating their extended inner product exchanges the two arguments.
+-/
 theorem completionInnerSL_star (x y : UniformSpace.Completion E) :
     star (completionInnerSL (A := A) x y) = completionInnerSL (A := A) y x := by
   have hc := continuous_completionInnerSL (A := A) (E := E)
@@ -136,7 +172,13 @@ theorem completionInnerSL_star (x y : UniformSpace.Completion E) :
   rw [completionInnerSL_apply_coe_coe, completionInnerSL_apply_coe_coe]
   exact CStarModule.star_inner u v
 
-/-- Positivity passes through the actual closed coefficient cone and dense image. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+For x ∈ Ē, the extended inner product ⟨x, x⟩ is nonnegative in A.
+-/
 theorem completionInnerSL_self_nonneg (x : UniformSpace.Completion E) :
     0 ≤ completionInnerSL (A := A) x x := by
   have hc : Continuous fun y : UniformSpace.Completion E =>
@@ -149,7 +191,13 @@ theorem completionInnerSL_self_nonneg (x : UniformSpace.Completion E) :
   rw [completionInnerSL_apply_coe_coe]
   exact CStarModule.inner_self_nonneg
 
-/-- The norm is the STOCK completion norm, recovered from the completed inner product. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+For x ∈ Ē, the completion norm satisfies ‖x‖ = sqrt(‖⟨x, x⟩‖).
+-/
 theorem norm_completion_eq_sqrt_norm_completionInnerSL (x : UniformSpace.Completion E) :
     ‖x‖ = √‖completionInnerSL (A := A) x x‖ := by
   have hc : Continuous fun y : UniformSpace.Completion E =>
@@ -163,7 +211,13 @@ theorem norm_completion_eq_sqrt_norm_completionInnerSL (x : UniformSpace.Complet
   rw [completionInnerSL_apply_coe_coe, UniformSpace.Completion.norm_coe]
   exact CStarModule.norm_eq_sqrt_norm_inner_self (A := A) u
 
-/-- The completed form is definite because its diagonal recovers the unchanged norm. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+For x ∈ Ē, the extended inner product ⟨x, x⟩ is zero if and only if x = 0.
+-/
 theorem completionInnerSL_self_eq_zero_iff (x : UniformSpace.Completion E) :
     completionInnerSL (A := A) x x = 0 ↔ x = 0 := by
   constructor
@@ -174,7 +228,13 @@ theorem completionInnerSL_self_eq_zero_iff (x : UniformSpace.Completion E) :
   · rintro rfl
     exact (completionInnerSL (A := A) (E := E) 0).map_zero
 
-/-- The same stock coefficient action satisfies the full completed inner action law. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+For x, y ∈ Ē and a ∈ A, the extended inner product satisfies ⟨x, a • y⟩ = a * ⟨x, y⟩.
+-/
 theorem completionInnerSL_coeff_smul_right (a : A) (x y : UniformSpace.Completion E) :
     completionInnerSL (A := A) x (a • y) = a * completionInnerSL (A := A) x y := by
   have hc := continuous_completionInnerSL (A := A) (E := E)
@@ -190,8 +250,14 @@ theorem completionInnerSL_coeff_smul_right (a : A) (x y : UniformSpace.Completio
     completionInnerSL_apply_coe_coe, completionInnerSL_apply_coe_coe]
   exact CStarModule.inner_op_smul_right
 
-/-- A genuine completed C-star module, using only the existing stock norm and actions.
-This is a plain locally activatable value, not a globally registered instance. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+The completion Ē is an inner-product C*-module over A with its completion norm, extended
+coefficient action and extended A-valued inner product.
+-/
 @[instance_reducible]
 def completionCStarModule : CStarModule A (UniformSpace.Completion E) where
   inner := fun x y => completionInnerSL (A := A) x y
@@ -217,13 +283,27 @@ def completionCStarModule : CStarModule A (UniformSpace.Completion E) where
     intro x
     exact norm_completion_eq_sqrt_norm_completionInnerSL (A := A) (E := E) x
 
-/-- The completed module's inner field is exactly the already constructed extension. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+The inner product of the completed C*-module is the continuous sesquilinear extension of the
+inner product on E.
+-/
 theorem completionCStarModule_inner (x y : UniformSpace.Completion E) :
     letI : CStarModule A (UniformSpace.Completion E) :=
       completionCStarModule (A := A) (E := E)
     inner A x y = completionInnerSL (A := A) x y := rfl
 
-/-- The completed module agrees with the original module on both canonical images. -/
+/--
+Let A be a possibly nonunital complex C*-algebra with a star-compatible partial order. Let E be
+a normed complex inner-product A-module with its compatible coefficient action, and let Ē be its
+norm completion.
+
+In the completed C*-module, the inner product of the canonical images of x, y ∈ E is their
+original inner product.
+-/
 @[simp]
 theorem completionCStarModule_inner_coe_coe (x y : E) :
     letI : CStarModule A (UniformSpace.Completion E) :=

@@ -1,4 +1,4 @@
 # Seminorm Unitary
 
-- [Map one le](map-one-le.md)
-- [Map unitary le](map-unitary-le.md)
+- [C*-seminorm of the unit](map-one-le.md)
+- [C*-seminorm of a unitary](map-unitary-le.md)

@@ -54,8 +54,10 @@ section Hilbert
 variable [StarOrderedRing B₁ᵐᵒᵖ] [CompleteSpace E₁]
 variable [StarOrderedRing B₂ᵐᵒᵖ] [CompleteSpace E₂]
 
-/-- The actual finite tensor self-inner is nonnegative in the caller B₂op
-order. The mapped Gram matrix and its square root are derived. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. For a finite family of elementary tensors, the self-inner product of their sum is
+nonnegative in the positive order of the opposite coefficient algebra B₂ᵐᵒᵖ. -/
 theorem rawInner_sum_self_nonneg {I : Type uI} [Fintype I]
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (x : I → E₁) (u : I → E₂) :
@@ -132,8 +134,9 @@ theorem rawInner_sum_self_nonneg {I : Type uI} [Fintype I]
     CStarModule.inner_self_nonneg
       (A := B₂ᵐᵒᵖ) (E := E₂) (x := ∑ i, R k i (u i))
 
-/-- Every actual raw complex tensor has a nonnegative self-inner in the
-same caller B₂op order, by a genuine finite pure-tensor presentation. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Every algebraic tensor has nonnegative self-inner product in the positive order of B₂ᵐᵒᵖ. -/
 theorem rawInner_self_nonneg
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z : AlgebraicTensor E₁ E₂) :
@@ -149,8 +152,9 @@ theorem rawInner_self_nonneg
   rw [hsum]
   exact rawInner_sum_self_nonneg φ (fun p : s => p.1.1) (fun p : s => p.1.2)
 
-/-- Positivity descends to the actual balancing quotient by its canonical
-surjective map, without choosing a completed model or inserting a new field. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Every balanced tensor has nonnegative self-inner product in the positive order of B₂ᵐᵒᵖ. -/
 theorem balancedInner_self_nonneg
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z : BalancedTensor (E₁ := E₁) φ) :

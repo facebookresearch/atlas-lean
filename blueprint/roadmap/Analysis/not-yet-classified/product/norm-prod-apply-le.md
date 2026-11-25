@@ -1,4 +1,5 @@
-# Norm prod apply le
+# Contractivity of a pair of CP maps
 
-Pairing two pointwise contractions is a pointwise contraction for the
-product maximum norm.
+For nonunital complex C*-algebras `A,B,C` in spectral order,
+suppose `f : A → B` and `g : A → C` are completely positive and satisfy `‖f(a)‖ ≤ ‖a‖` and `‖g(a)‖ ≤
+‖a‖` for every `a`. Then `a ↦ (f(a),g(a))` is contractive for the maximum norm on `B × C`.

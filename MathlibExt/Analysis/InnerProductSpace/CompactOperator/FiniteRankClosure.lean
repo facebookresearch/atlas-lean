@@ -40,17 +40,23 @@ variable {𝕜 : Type u𝕜} [RCLike 𝕜]
 variable {E : Type uE} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
 
-/-- The complex or real linear span of Hilbert-space rank-one operators. -/
+/-- Let `𝕜` be a real or complex scalar field and let `E` and `F` be normed
+inner-product spaces over `𝕜`. The finite-rank submodule of `E →L[𝕜] F` is
+the `𝕜`-linear span of the maps `z ↦ ⟪y, z⟫_𝕜 • x`, with `x : F` and `y : E`. -/
 def finiteRankSubmodule : Submodule 𝕜 (E →L[𝕜] F) :=
   Submodule.span 𝕜
     (Set.range fun p : F × E => rankOne 𝕜 p.1 p.2)
 
-/-- Every rank-one Hilbert-space operator belongs to the finite-rank span. -/
+/-- Let `𝕜` be a real or complex scalar field, let `E` and `F` be normed
+inner-product spaces over `𝕜`, and let `x : F` and `y : E`. The rank-one map
+`z ↦ ⟪y, z⟫_𝕜 • x` belongs to the finite-rank submodule of `E →L[𝕜] F`. -/
 theorem rankOne_mem_finiteRankSubmodule (x : F) (y : E) :
     rankOne 𝕜 x y ∈ finiteRankSubmodule (𝕜 := 𝕜) (E := E) (F := F) :=
   Submodule.subset_span ⟨(x, y), rfl⟩
 
-/-- Every member of the rank-one span is a compact operator. -/
+/-- Let `𝕜` be a real or complex scalar field and let `E` and `F` be normed
+inner-product spaces over `𝕜`. Every continuous `𝕜`-linear map `T : E →L[𝕜] F`
+in the linear span of Hilbert-space rank-one maps is a compact operator. -/
 theorem finiteRankSubmodule_isCompactOperator
     {T : E →L[𝕜] F}
     (hT : T ∈ finiteRankSubmodule (𝕜 := 𝕜) (E := E) (F := F)) :
@@ -74,7 +80,10 @@ theorem finiteRankSubmodule_isCompactOperator
   · intro c T _ hT
     exact hT.smul c
 
-/-- The closure of the rank-one span still consists of compact operators. -/
+/-- Let `𝕜` be a real or complex scalar field, let `E` be a normed
+inner-product space over `𝕜`, and let `F` be a complete inner-product space
+over `𝕜`. If `T : E →L[𝕜] F` belongs to the operator-norm closure of the
+linear span of rank-one maps, then `T` is a compact operator. -/
 theorem topologicalClosure_finiteRankSubmodule_isCompactOperator
     [CompleteSpace F] {T : E →L[𝕜] F}
     (hT : T ∈
@@ -93,8 +102,10 @@ theorem topologicalClosure_finiteRankSubmodule_isCompactOperator
       isClosed_setOfPred_isCompactOperator
   exact hsubset hT
 
-/-- A compact operator between complete Hilbert spaces lies in the closure of
-the rank-one span. -/
+/-- Let `𝕜` be a real or complex scalar field and let both `E` and `F` be
+complete inner-product spaces over `𝕜`. Every compact continuous linear map
+`T : E →L[𝕜] F` lies in the operator-norm closure of the `𝕜`-linear span of
+Hilbert-space rank-one maps from `E` to `F`. -/
 theorem _root_.IsCompactOperator.mem_topologicalClosure_finiteRankSubmodule
     [CompleteSpace E] [CompleteSpace F]
     {T : E →L[𝕜] F} (hT : IsCompactOperator T) :
@@ -138,8 +149,10 @@ theorem _root_.IsCompactOperator.mem_topologicalClosure_finiteRankSubmodule
   refine ⟨A, hA_mem, ?_⟩
   simpa only [dist_eq_norm] using hNorm
 
-/-- Compactness is exactly membership in the operator-norm closure of the
-rank-one span. -/
+/-- Let `𝕜` be a real or complex scalar field and let both `E` and `F` be
+complete inner-product spaces over `𝕜`. A continuous linear map
+`T : E →L[𝕜] F` is compact if and only if it belongs to the operator-norm
+closure of the `𝕜`-linear span of Hilbert-space rank-one maps. -/
 theorem isCompactOperator_iff_mem_topologicalClosure_finiteRankSubmodule
     [CompleteSpace E] [CompleteSpace F] (T : E →L[𝕜] F) :
     IsCompactOperator T ↔
@@ -148,7 +161,10 @@ theorem isCompactOperator_iff_mem_topologicalClosure_finiteRankSubmodule
   ⟨IsCompactOperator.mem_topologicalClosure_finiteRankSubmodule,
     topologicalClosure_finiteRankSubmodule_isCompactOperator⟩
 
-/-- The compact-operator submodule is the closure of the rank-one span. -/
+/-- Let `𝕜` be a real or complex scalar field and let both `E` and `F` be
+complete inner-product spaces over `𝕜`. In the operator-norm space
+`E →L[𝕜] F`, the submodule of compact operators equals the closure of the
+`𝕜`-linear span of Hilbert-space rank-one maps from `E` to `F`. -/
 theorem compactOperator_eq_topologicalClosure_finiteRankSubmodule
     [CompleteSpace E] [CompleteSpace F] :
     compactOperator (RingHom.id 𝕜) E F =

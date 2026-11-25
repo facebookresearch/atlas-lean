@@ -123,8 +123,16 @@ variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace ℂ F]
 variable [SMul Bᵐᵒᵖ F] [CStarModule Bᵐᵒᵖ F]
 
-/-- A uniformly bounded strong-adjoint family acts on the function modules.
-Completeness of E and F is not required by this general constructor. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures. Let X be a compact topological space, and equip C(X,
+B)ᵐᵒᵖ with a star-compatible partial order. Let T(t) : E → F be adjointable maps such that every
+orbit t ↦ T(t)x and every adjoint orbit t ↦ T(t)*y is continuous.
+
+If C ≥ 0 and ‖T(t)‖ ≤ C for all t ∈ X, then pointwise application defines an adjointable map
+C(X, E) → C(X, F) over C(X, B).
+-/
 def continuousMapOfBound
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ]
@@ -174,7 +182,16 @@ def continuousMapOfBound
             CStarModule.rightInner (B := B) (f t) ((T t).adjoint (g t))
           exact (T t).adjoint_inner (f t) (g t) }
 
-/-- Primal evaluation is the original operator evaluated on the vector. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures. Let X be a compact topological space, and equip C(X,
+B)ᵐᵒᵖ with a star-compatible partial order. Let T(t) : E → F be adjointable maps such that every
+orbit t ↦ T(t)x and every adjoint orbit t ↦ T(t)*y is continuous.
+
+If C ≥ 0 uniformly bounds ‖T(t)‖, the induced operator satisfies (T_X f)(t) = T(t)(f(t)) for f ∈
+C(X, E).
+-/
 @[simp]
 theorem continuousMapOfBound_apply
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]
@@ -195,7 +212,16 @@ theorem continuousMapOfBound_apply
      continuousMapOfBound X T hT hTstar C hC0 hC f t = T t (f t)) := by
   rfl
 
-/-- The actual adjoint evaluates to the pointwise original adjoint. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures. Let X be a compact topological space, and equip C(X,
+B)ᵐᵒᵖ with a star-compatible partial order. Let T(t) : E → F be adjointable maps such that every
+orbit t ↦ T(t)x and every adjoint orbit t ↦ T(t)*y is continuous.
+
+If C ≥ 0 uniformly bounds ‖T(t)‖, the adjoint of the induced operator satisfies (T_X* g)(t) =
+T(t)*(g(t)) for g ∈ C(X, F).
+-/
 @[simp]
 theorem continuousMapOfBound_adjoint_apply
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]
@@ -235,8 +261,16 @@ private theorem compactFamily_bound
     simpa only [AdjointableOperator.norm_eq] using hC t
   exact ht.trans (le_max_left _ _)
 
-/-- On a complete source carrier, compactness and strong continuity derive
-the uniform bound; no output norm-bound hypothesis is supplied. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures. Let X be a compact topological space, and equip C(X,
+B)ᵐᵒᵖ with a star-compatible partial order. Let T(t) : E → F be adjointable maps such that every
+orbit t ↦ T(t)x and every adjoint orbit t ↦ T(t)*y is continuous.
+
+If E is complete, pointwise application of the family defines an adjointable operator C(X, E) →
+C(X, F) over C(X, B).
+-/
 def continuousMap
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ]
@@ -258,7 +292,16 @@ def continuousMap
     (Classical.choose_spec (compactFamily_bound X T hT)).1
     (Classical.choose_spec (compactFamily_bound X T hT)).2
 
-/-- Evaluation of the compact-source lift. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures. Let X be a compact topological space, and equip C(X,
+B)ᵐᵒᵖ with a star-compatible partial order. Let T(t) : E → F be adjointable maps such that every
+orbit t ↦ T(t)x and every adjoint orbit t ↦ T(t)*y is continuous.
+
+If E is complete, the induced operator satisfies (T_X f)(t) = T(t)(f(t)) for f ∈ C(X, E) and t ∈
+X.
+-/
 @[simp]
 theorem continuousMap_apply
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]
@@ -283,7 +326,16 @@ theorem continuousMap_apply
       (Classical.choose_spec (compactFamily_bound X T hT)).1
       (Classical.choose_spec (compactFamily_bound X T hT)).2 f t
 
-/-- Evaluation of the compact-source lift's actual adjoint. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures. Let X be a compact topological space, and equip C(X,
+B)ᵐᵒᵖ with a star-compatible partial order. Let T(t) : E → F be adjointable maps such that every
+orbit t ↦ T(t)x and every adjoint orbit t ↦ T(t)*y is continuous.
+
+If E is complete, the adjoint of the induced operator satisfies (T_X* g)(t) = T(t)*(g(t)) for g
+∈ C(X, F) and t ∈ X.
+-/
 @[simp]
 theorem continuousMap_adjoint_apply
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]
@@ -313,10 +365,16 @@ section Representation
 
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
-/-- Lift a strongly continuous family of actual coefficient representations.
-The adjoint continuity and uniform bound are derived from the star law and
-star-homomorphism contractivity, not passed as extra hypotheses.
-The input module need not be complete: this uses the bound-based constructor. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with a star-compatible partial order on
+Bᵐᵒᵖ. Let E be a normed right inner-product B-module with a compatible complex normed-space
+structure. Let X be a compact topological space, equip C(X, B)ᵐᵒᵖ with a star-compatible partial
+order, and let φ(t) be nonunital complex star representations of A on E. Assume t ↦ φ(t)(a)x is
+continuous for every a ∈ A and x ∈ E.
+
+Pointwise action gives a nonunital complex star representation of A on the right C(X, B)-module
+C(X, E).
+-/
 def continuousMapRepresentation
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ]
@@ -385,7 +443,16 @@ def continuousMapRepresentation
         intro t
         simp only [hLift, map_star, AdjointableOperator.star_apply, hLiftStar] }
 
-/-- The lifted representation has the literal pointwise evaluation formula. -/
+/--
+Let A and B be possibly nonunital complex C*-algebras, with a star-compatible partial order on
+Bᵐᵒᵖ. Let E be a normed right inner-product B-module with a compatible complex normed-space
+structure. Let X be a compact topological space, equip C(X, B)ᵐᵒᵖ with a star-compatible partial
+order, and let φ(t) be nonunital complex star representations of A on E. Assume t ↦ φ(t)(a)x is
+continuous for every a ∈ A and x ∈ E.
+
+The induced representation acts by (φ_X(a)f)(t) = φ(t)(a)(f(t)) for a ∈ A, f ∈ C(X, E) and t ∈
+X.
+-/
 @[simp]
 theorem continuousMapRepresentation_apply
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]

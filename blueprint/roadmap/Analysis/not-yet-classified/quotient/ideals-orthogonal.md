@@ -1,3 +1,5 @@
-# Ideals Orthogonal
+# Orthogonality of closed star ideals
 
-Orthogonality of the actual closed ideals, in the printed coefficient ring.
+A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. For another closed two-sided
+star ideal `K ⊆ A`, this means that every product `j k` with `j ∈ J` and `k ∈ K` is zero.

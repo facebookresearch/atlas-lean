@@ -1,3 +1,5 @@
-# Faithful Hilbert Representation Data
+# Faithful Hilbert representation
 
-Actual same-universe faithful Hilbert data, with no redundant norm witness or model input.
+Let `A` be a nonunital complex C*-algebra. This consists of a
+complete complex Hilbert space `H` in the universe of `A` and an injective nonunital complex star
+homomorphism `A → B(H)`.

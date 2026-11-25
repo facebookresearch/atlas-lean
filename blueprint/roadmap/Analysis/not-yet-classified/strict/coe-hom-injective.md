@@ -1,3 +1,5 @@
-# Coe Hom injective
+# Injective coefficient embedding
 
-The canonical coefficient homomorphism into the multiplier algebra is injective.
+Let `A` be a nonunital complex C*-algebra and `M(A)` its
+multiplier algebra. For `a ∈ A`, strict convergence tests the two coefficient products `a T` and `T
+a` in the norm of `A`. The coefficient homomorphism `ι : A → M(A)` is injective.

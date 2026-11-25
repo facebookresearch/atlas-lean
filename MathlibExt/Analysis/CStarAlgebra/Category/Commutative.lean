@@ -38,7 +38,8 @@ universe u
 
 open CategoryTheory Opposite WeakDual
 
-/-- Commutative unital complex C-star algebras with their original dictionaries. -/
+/-- **Category of commutative unital C*-algebras.** Objects are commutative unital complex C*-algebras
+and morphisms are unital complex star-algebra homomorphisms. -/
 structure CommCStarAlgCat : Type (u + 1) where
   /-- The original carrier of the algebra. -/
   carrier : Type u
@@ -51,7 +52,8 @@ namespace CommCStarAlgCat
 
 instance instCoeSort : CoeSort CommCStarAlgCat.{u} (Type u) := ⟨carrier⟩
 
-/-- Bundle the existing commutative unital algebra without changing its norm or unit. -/
+/-- **Commutative unital C*-algebra as an object.** A commutative unital complex C*-algebra `A`
+determines a categorical object with its given carrier, norm, unit, and involution. -/
 abbrev of (A : Type u) [CommCStarAlgebra A] : CommCStarAlgCat.{u} := ⟨A⟩
 
 instance category : Category.{u} CommCStarAlgCat.{u} where
@@ -70,30 +72,39 @@ instance concreteCategory : ConcreteCategory CommCStarAlgCat.{u} (fun A B => A �
   id_apply _a := rfl
   comp_apply _f _g _a := rfl
 
-/-- Recover the same original unital star-algebra homomorphism. -/
+/-- **Homomorphism of a commutative C*-algebra morphism.** For commutative unital complex C*-algebras
+`A,B`, a categorical morphism `A → B` is its unital complex star-algebra homomorphism. -/
 abbrev hom {A B : CommCStarAlgCat.{u}} (f : A ⟶ B) : A →⋆ₐ[ℂ] B := f
 
 @[ext]
 theorem hom_ext {A B : CommCStarAlgCat.{u}} {f g : A ⟶ B} (h : ∀ a, f a = g a) : f = g :=
   StarAlgHom.ext h
 
-/-- The category identity has its literal original values. -/
+/-- **Identity in the commutative C*-algebra category.** For a commutative unital complex C*-algebra `A`
+and `a ∈ A`, the identity morphism sends `a` to itself. -/
 theorem id_apply (A : CommCStarAlgCat.{u}) (a : A) : (𝟙 A : A ⟶ A) a = a := rfl
 
-/-- Category composition is the original algebra-map composition. -/
+/-- **Composition in the commutative C*-algebra category.** For commutative unital complex C*-algebras
+`A,B,C`, morphisms `f : A → B`, `g : B → C`, and `a ∈ A`, categorical composition evaluates to
+`g(f(a))`. -/
 theorem comp_apply {A B C : CommCStarAlgCat.{u}} (f : A ⟶ B) (g : B ⟶ C) (a : A) :
     (f ≫ g) a = g (f a) := rfl
 
-/-- The actual compact pointwise character space of the original algebra. -/
+/-- **Compact character space.** For a commutative unital complex C*-algebra `A`, its nonzero complex
+characters form a compact Hausdorff space with the topology of pointwise convergence. -/
 def characterSpaceObject (A : CommCStarAlgCat.{u}) : CompHaus.{u} :=
   CompHaus.of (characterSpace ℂ A)
 
-/-- The original character-space map as a morphism of compact Hausdorff spaces. -/
+/-- **Contravariant character-space map.** A unital complex star homomorphism `f : A → B` between
+commutative unital complex C*-algebras induces the continuous map from the character space of `B` to
+that of `A`, sending `χ` to `χ ∘ f`. -/
 def characterSpaceMap {A B : CommCStarAlgCat.{u}} (f : A ⟶ B) :
     characterSpaceObject B ⟶ characterSpaceObject A :=
   CompHausLike.ofHom (fun _ => True) (CharacterSpace.compContinuousMap f)
 
-/-- The actual contravariant pointwise-character functor on the original unital maps. -/
+/-- **Contravariant character-space functor.** The assignment of a commutative unital complex C*-algebra
+to its compact Hausdorff character space and of a unital star homomorphism to character
+precomposition is a contravariant functor. -/
 def characterSpaceFunctor : CommCStarAlgCat.{u} ⥤ CompHaus.{u}ᵒᵖ where
   obj A := op (characterSpaceObject A)
   map f := (characterSpaceMap f).op
@@ -106,11 +117,15 @@ def characterSpaceFunctor : CommCStarAlgCat.{u} ⥤ CompHaus.{u}ᵒᵖ where
     ext φ
     rfl
 
-/-- The functor has the same original weak character carrier. -/
+/-- **Carrier of the character-space functor.** For a commutative unital complex C*-algebra `A`, the
+underlying set of its character-space functor image is precisely the space of nonzero complex
+characters of `A`. -/
 theorem characterSpaceFunctor_obj_carrier (A : CommCStarAlgCat.{u}) :
     ↥(unop (characterSpaceFunctor.obj A)) = characterSpace ℂ A := rfl
 
-/-- The functor's map is literal precomposition with the original unital homomorphism. -/
+/-- **Evaluation of character precomposition.** For a unital star homomorphism `f : A → B` between
+commutative unital complex C*-algebras, a character `χ` of `B`, and `a ∈ A`, the induced character
+of `A` evaluates to `χ(f(a))`. -/
 theorem characterSpaceFunctor_map_apply {A B : CommCStarAlgCat.{u}}
     (f : A ⟶ B) (φ : characterSpace ℂ B) (a : A) :
     let χ : characterSpace ℂ A := (characterSpaceFunctor.map f).unop φ;

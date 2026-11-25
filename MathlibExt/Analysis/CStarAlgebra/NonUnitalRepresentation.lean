@@ -38,8 +38,10 @@ namespace MathlibExt.Analysis.CStarAlgebra.NonUnitalRepresentation
 
 universe u
 
-/-- Every nonunital C-star algebra has an actual isometric Hilbert representation
-in the same universe, obtained from its minimal C-star unitization. -/
+/-- **Isometric Hilbert representation of a nonunital C*-algebra.** Let `A` be a nonunital complex
+C*-algebra. There is a complete complex Hilbert space `H` and an injective nonunital complex star
+homomorphism `ρ : A → B(H)` such that `‖ρ(a)‖ = ‖a‖` for every `a ∈ A`. The Hilbert space may be
+chosen in the same universe as `A`. -/
 theorem exists_isometric_hilbertRepresentation (A : Type u) [NonUnitalCStarAlgebra A] :
     ∃ (H : Type u) (_hH1 : NormedAddCommGroup H)
       (_hH2 : InnerProductSpace ℂ H) (_hH3 : CompleteSpace H)
@@ -61,7 +63,9 @@ theorem exists_isometric_hilbertRepresentation (A : Type u) [NonUnitalCStarAlgeb
     change ‖π (a : Unitization ℂ A)‖ = ‖a‖
     rw [hπnorm, Unitization.norm_inr]
 
-/-- Actual same-universe faithful Hilbert data, with no redundant norm witness or model input. -/
+/-- **Faithful Hilbert representation.** Let `A` be a nonunital complex C*-algebra. This consists of a
+complete complex Hilbert space `H` in the universe of `A` and an injective nonunital complex star
+homomorphism `A → B(H)`. -/
 structure FaithfulHilbertRepresentationData (A : Type u) [NonUnitalCStarAlgebra A] where
   /-- The source-sized actual Hilbert carrier. -/
   space : Type u
@@ -79,7 +83,9 @@ structure FaithfulHilbertRepresentationData (A : Type u) [NonUnitalCStarAlgebra 
 attribute [instance] FaithfulHilbertRepresentationData.normed
   FaithfulHilbertRepresentationData.inner FaithfulHilbertRepresentationData.complete
 
-/-- The original proved nonunital GN construction supplies actual neutral Hilbert data. -/
+/-- **Existence of faithful Hilbert representations.** Let `A` be a nonunital complex C*-algebra. The
+collection of faithful representations of `A` on complete complex Hilbert spaces in its universe is
+nonempty. -/
 theorem faithfulHilbertRepresentationData_nonempty (A : Type u) [NonUnitalCStarAlgebra A] :
     Nonempty (FaithfulHilbertRepresentationData A) := by
   obtain ⟨H, hnorm, hinner, hcomplete, ρ, hρ, _⟩ := exists_isometric_hilbertRepresentation A
@@ -91,11 +97,15 @@ theorem faithfulHilbertRepresentationData_nonempty (A : Type u) [NonUnitalCStarA
     representation := ρ
     injective_representation := hρ }⟩
 
-/-- The one actual same-universe GN choice shared by source and Haar regular-model clients. -/
+/-- **Chosen faithful Hilbert representation.** Let `A` be a nonunital complex C*-algebra. This chooses
+a complete complex Hilbert space in the universe of `A` and a faithful nonunital complex star
+representation of `A` on it. -/
 noncomputable def faithfulHilbertRepresentationData (A : Type u) [NonUnitalCStarAlgebra A] :
     FaithfulHilbertRepresentationData A := Classical.choice (faithfulHilbertRepresentationData_nonempty A)
 
-/-- Faithfulness derives the original coefficient norm; no second norm field is stored. -/
+/-- **Norm of a faithful Hilbert representation.** Let `A` be a nonunital complex C*-algebra. For every
+faithful representation `ρ : A → B(H)` on a complete complex Hilbert space and `a ∈ A`, `‖ρ(a)‖ =
+‖a‖`. -/
 theorem FaithfulHilbertRepresentationData.norm_representation
     {A : Type u} [NonUnitalCStarAlgebra A] (D : FaithfulHilbertRepresentationData A) (a : A) :
     ‖D.representation a‖ = ‖a‖ :=

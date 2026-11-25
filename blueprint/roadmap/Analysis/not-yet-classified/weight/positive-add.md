@@ -1,3 +1,4 @@
-# Positive Add
+# Addition in the positive cone
 
-Addition of actual positive elements, using their original algebra sum.
+Let `A` be a nonunital complex C*-algebra with its canonical
+spectral order. For positive elements `a,b ∈ A`, their sum `a+b` is positive.

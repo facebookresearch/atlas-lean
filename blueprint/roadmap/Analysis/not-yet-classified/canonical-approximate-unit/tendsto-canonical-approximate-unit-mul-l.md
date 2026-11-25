@@ -1,3 +1,5 @@
-# Tendsto canonical Approximate Unit mul left
+# Approximate unit acts on the right
 
-The original canonical filter also approximates every fixed coefficient by right multiplication.
+Let `A` be a nonunital complex C*-algebra. For every fixed
+`x ∈ A`, `x a` tends to `x` in norm as `a` follows the canonical positive contractive
+approximate-unit filter.

@@ -1,5 +1,6 @@
 # Continuous Map Star Alg Equiv
 
-Finite matrices of continuous functions are canonically star-algebra
-equivalent to continuous functions valued in the same finite C-star matrix
-algebra. This also covers nonunital coefficients and empty indices/domains.
+Let `X` be a topological space, `ι` a finite index type and `A` a possibly nonunital complex
+C*-algebra. Using the spectral order on `A`, entrywise evaluation gives a complex star-algebra
+equivalence between `ι × ι` matrices of continuous functions `X → A` and continuous functions `X →
+CStarMatrix ι ι A`. The index type and the space may be empty.

@@ -49,8 +49,13 @@ variable {𝕜 : Type uK} [NormedField 𝕜]
   [DirectedSystem G (f · · ·)]
   (hNorm : ∀ i j (h : i ≤ j) (x : G i), ‖f i j h x‖ = ‖x‖)
 
-/-- The explicit normed-space dictionary over any normed field, using the
-existing group metric and the stock direct-limit module over the supplied maps. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Assume `I` is nonempty and directed. The transition homomorphisms form a
+compatible directed system. Every transition preserves norms exactly. The transition maps are
+`𝕜`-linear.
+
+The normed-space structure over any normed field, using the existing group metric and the
+direct-limit module over the supplied maps. -/
 @[instance_reducible]
 noncomputable def normedSpaceOfNormPreserving :
     letI : NormedAddCommGroup (_root_.DirectLimit G f) :=
@@ -69,8 +74,13 @@ noncomputable def normedSpaceOfNormPreserving :
 
 namespace Module
 
-/-- The actual coefficient map bundled as a linear isometry, using exactly the
-constructed direct-limit group and normed-space dictionaries. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Assume `I` is nonempty and directed. The transition homomorphisms form a
+compatible directed system. Every transition preserves norms exactly. The transition maps are
+`𝕜`-linear.
+
+The coefficient map bundled as a linear isometry, using exactly the constructed direct-limit
+group and normed-space structures. -/
 noncomputable def ofₗᵢ (i : I) :
     letI : NormedAddCommGroup (_root_.DirectLimit G f) :=
       DirectLimit.normedAddCommGroupOfNormPreserving f hNorm;
@@ -106,8 +116,12 @@ variable {𝕜 : Type uK} [NormedField 𝕜]
   [∀ i j (h : i ≤ j), LinearMapClass (T h) 𝕜 (G i) (G j)]
   (f : ∀ i j (h : i ≤ j), T h)
 
-/-- The actual linear transitions give the scalar norm formula for every
-value of the original representative norm net. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Specify a transition map for every ordered pair of indices. The transition
+maps are `𝕜`-linear.
+
+The linear transitions give the scalar norm formula for every value of the representative norm
+net. -/
 theorem stageTailNorm_smul (i : I) (c : 𝕜) (x : G i) :
     stageTailNorm f i (c • x) = (fun _ : I => ‖c‖) * stageTailNorm f i x := by
   classical
@@ -118,7 +132,12 @@ theorem stageTailNorm_smul (i : I) (c : 𝕜) (x : G i) :
 
 variable [IsDirectedOrder I] [Nonempty I]
 
-/-- The original finite real limsups satisfy the scalar norm bound. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Assume `I` is nonempty and directed. Specify a transition map for every
+ordered pair of indices. For each starting stage there is a nonnegative common operator-norm
+bound on a tail of its transition maps. The transition maps are `𝕜`-linear.
+
+The finite real limsups satisfy the scalar norm bound. -/
 theorem stageTailNorm_limsup_smul_le
     (hBound : IsEventuallyNormBounded f) (i : I) (c : 𝕜) (x : G i) :
     limsup (stageTailNorm f i (c • x)) atTop ≤
@@ -134,8 +153,13 @@ theorem stageTailNorm_limsup_smul_le
 
 variable [DirectedSystem G (f · · ·)]
 
-/-- The original raw direct-limit module becomes a normed space for the
-constructed limsup seminorm, using exactly its existing module laws. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Assume `I` is nonempty and directed. The transition homomorphisms form a
+compatible directed system. For each starting stage there is a nonnegative common operator-norm
+bound on a tail of its transition maps. The transition maps are `𝕜`-linear.
+
+The raw direct-limit module becomes a normed space for the constructed limsup seminorm, using
+exactly its existing module laws. -/
 @[instance_reducible]
 noncomputable def normedSpaceOfEventuallyBounded
     (hBound : IsEventuallyNormBounded f) :
@@ -154,8 +178,13 @@ noncomputable def normedSpaceOfEventuallyBounded
     ‖c‖ * limsup (stageTailNorm f i x) atTop
   exact stageTailNorm_limsup_smul_le f hBound i c x
 
-/-- The explicit normed-space dictionary on the actual zero-seminorm
-quotient, preserving its already constructed normed-group dictionary. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Assume `I` is nonempty and directed. The transition homomorphisms form a
+compatible directed system. For each starting stage there is a nonnegative common operator-norm
+bound on a tail of its transition maps. The transition maps are `𝕜`-linear.
+
+The normed-space structure on the zero-seminorm quotient, preserving its already constructed
+normed-group structure. -/
 @[instance_reducible]
 noncomputable def normedSpaceNormedLimit
     (hBound : IsEventuallyNormBounded f) :
@@ -172,8 +201,13 @@ noncomputable def normedSpaceNormedLimit
 
 namespace Module
 
-/-- The actual raw coefficient map is bounded for the original limsup
-seminorm by the genuine common map bound on a tail from its source stage. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Assume `I` is nonempty and directed. The transition homomorphisms form a
+compatible directed system. For each starting stage there is a nonnegative common operator-norm
+bound on a tail of its transition maps. The transition maps are `𝕜`-linear.
+
+The raw coefficient map is bounded for the limsup seminorm by the common map bound on a tail
+from its source stage. -/
 noncomputable def ofRawCLM (hBound : IsEventuallyNormBounded f) (i : I) :
     letI : SeminormedAddCommGroup (_root_.DirectLimit G f) :=
       seminormedAddCommGroupOfEventuallyBounded f hBound;
@@ -205,8 +239,13 @@ noncomputable def ofRawCLM (hBound : IsEventuallyNormBounded f) (i : I) :
   rw [stageTailNorm, dite_eq_left hij]
   exact hj hij x
 
-/-- The bounded raw map retains the exact original algebraic coefficient
-value under the explicitly induced raw seminorm topology. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Assume `I` is nonempty and directed. The transition homomorphisms form a
+compatible directed system. For each starting stage there is a nonnegative common operator-norm
+bound on a tail of its transition maps. The transition maps are `𝕜`-linear.
+
+The bounded raw map retains the exact algebraic coefficient value under the explicitly induced
+raw seminorm topology. -/
 theorem ofRawCLM_apply (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
     letI : SeminormedAddCommGroup (_root_.DirectLimit G f) :=
       seminormedAddCommGroupOfEventuallyBounded f hBound;
@@ -228,7 +267,12 @@ theorem ofRawCLM_apply (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
   simp only [ofRawCLM, LinearMap.mkContinuousOfExistsBound_apply]
   rfl
 
-/-- The genuine bounded stage map to the actual zero-seminorm quotient. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Assume `I` is nonempty and directed. The transition homomorphisms form a
+compatible directed system. For each starting stage there is a nonnegative common operator-norm
+bound on a tail of its transition maps. The transition maps are `𝕜`-linear.
+
+The bounded stage map to the zero-seminorm quotient. -/
 noncomputable def ofCLM (hBound : IsEventuallyNormBounded f) (i : I) :
     letI : NormedAddCommGroup (NormedLimit f hBound) := normedAddCommGroupNormedLimit f hBound;
     letI : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound;
@@ -245,7 +289,12 @@ noncomputable def ofCLM (hBound : IsEventuallyNormBounded f) (i : I) :
   letI : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound
   exact (SeparationQuotient.mkCLM 𝕜 (_root_.DirectLimit G f)).comp (ofRawCLM f hBound i)
 
-/-- The bounded stage map has the same genuine quotient coefficient value. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Assume `I` is nonempty and directed. The transition homomorphisms form a
+compatible directed system. For each starting stage there is a nonnegative common operator-norm
+bound on a tail of its transition maps. The transition maps are `𝕜`-linear.
+
+The bounded stage map has the same quotient coefficient value. -/
 theorem ofCLM_apply (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
     let : NormedAddCommGroup (NormedLimit f hBound) := normedAddCommGroupNormedLimit f hBound;
     let : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound;
@@ -264,7 +313,12 @@ theorem ofCLM_apply (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
   simp only [ofCLM, normedLimitMk]
   rfl
 
-/-- The actual bounded stages retain the original real limsup norm law. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed vector spaces over a
+normed field `𝕜`. Assume `I` is nonempty and directed. The transition homomorphisms form a
+compatible directed system. For each starting stage there is a nonnegative common operator-norm
+bound on a tail of its transition maps. The transition maps are `𝕜`-linear.
+
+The bounded stages retain the real limsup norm law. -/
 theorem ofCLM_norm (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
     let : NormedAddCommGroup (NormedLimit f hBound) := normedAddCommGroupNormedLimit f hBound;
     let : NormedSpace 𝕜 (NormedLimit f hBound) := normedSpaceNormedLimit (𝕜 := 𝕜) f hBound;

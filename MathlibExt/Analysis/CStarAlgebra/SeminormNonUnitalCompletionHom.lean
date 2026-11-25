@@ -44,7 +44,11 @@ variable {B : Type uB} [NonUnitalRing B] [Module ℂ B]
 variable {D : Type uD} [NonUnitalCStarAlgebra D]
 variable (p : CStarSeminorm B) (φ : B →⋆ₙₐ[ℂ] D) (hφ : ∀ x : B, ‖φ x‖ ≤ p x)
 
-/-- The original star hom as a bounded linear map in the computed source seminorm. -/
+/-- **Bounded linear map for a seminorm-bounded homomorphism.** Let `B` be a nonunital complex star
+algebra with scalar-compatible involution and let `p` be a C*-seminorm on `B`. Let `D` be a
+nonunital complex C*-algebra and `φ : B → D` a nonunital complex star homomorphism satisfying
+`‖φ(x)‖ ≤ p(x)` for every `x ∈ B`. For the source seminorm `p`, the map `φ` is a continuous
+complex-linear map from `B` to `D`. -/
 def sourceNonUnitalCompletionHomCLM :
     let _ : NonUnitalSeminormedRing B := p.sourceNonUnitalSeminormedRing
     let _ : NormedSpace ℂ B := p.sourceNonUnitalNormedSpace
@@ -60,14 +64,20 @@ def sourceNonUnitalCompletionHomCLM :
     change ‖φ x‖ ≤ 1 * p x
     simpa only [one_mul] using hφ x)
 
-/-- The bounded raw linear map retains every original star-hom value. -/
+/-- **Values of a seminorm-bounded linear map.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. Let `D` be a nonunital complex
+C*-algebra and `φ : B → D` a nonunital complex star homomorphism satisfying `‖φ(x)‖ ≤ p(x)` for
+every `x ∈ B`. The associated continuous linear map has value `φ(x)` at every `x ∈ B`. -/
 theorem sourceNonUnitalCompletionHomCLM_apply (x : B) :
     let _ : NonUnitalSeminormedRing B := p.sourceNonUnitalSeminormedRing
     let _ : NormedSpace ℂ B := p.sourceNonUnitalNormedSpace
     p.sourceNonUnitalCompletionHomCLM φ hφ x = φ x :=
   rfl
 
-/-- Lift and extend the same function through the stock separation and completion maps. -/
+/-- **Linear extension to a C*-seminorm completion.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. Let `D` be a nonunital complex
+C*-algebra and `φ : B → D` a nonunital complex star homomorphism satisfying `‖φ(x)‖ ≤ p(x)` for
+every `x ∈ B`. The continuous linear map extends from `B` to its separated completion. -/
 def nonUnitalCompletionHomCLM :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     p.NonUnitalCompletion →L[ℂ] D := by
@@ -79,7 +89,11 @@ def nonUnitalCompletionHomCLM :
     fun _ _ hxy => (hxy.map L.continuous).eq
   exact (SeparationQuotient.liftCLM L hL).fromCompletion
 
-/-- Every original canonical coefficient has the unchanged original star-hom value. -/
+/-- **Linear extension on source elements.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. Let `D` be a nonunital complex
+C*-algebra and `φ : B → D` a nonunital complex star homomorphism satisfying `‖φ(x)‖ ≤ p(x)` for
+every `x ∈ B`. For the canonical completion map `ι`, the extended continuous linear map satisfies
+`φ̄(ι(x)) = φ(x)` for every `x ∈ B`. -/
 theorem nonUnitalCompletionHomCLM_apply (x : B) :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     p.nonUnitalCompletionHomCLM φ hφ (p.toNonUnitalCompletion x) = φ x := by
@@ -94,7 +108,11 @@ theorem nonUnitalCompletionHomCLM_apply (x : B) :
   rw [ContinuousLinearMap.fromCompletion_apply_coe, SeparationQuotient.liftCLM_mk]
   rfl
 
-/-- The same completed function is an actual nonunital complex star-algebra homomorphism. -/
+/-- **Star-homomorphic extension to a completion.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. Let `D` be a nonunital complex
+C*-algebra and `φ : B → D` a nonunital complex star homomorphism satisfying `‖φ(x)‖ ≤ p(x)` for
+every `x ∈ B`. The extended function is a nonunital complex star homomorphism from the separated
+C*-completion of `B` to `D`. -/
 def fromNonUnitalCompletion :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     p.NonUnitalCompletion →⋆ₙₐ[ℂ] D := by
@@ -122,20 +140,31 @@ def fromNonUnitalCompletion :
     intro a
     rw [← StarHomClass.map_star p.toNonUnitalCompletion, hcore, hcore, StarHomClass.map_star φ]
 
-/-- The completed star hom retains the original value on every canonical source image. -/
+/-- **Star-homomorphic extension on source elements.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. Let `D` be a nonunital complex
+C*-algebra and `φ : B → D` a nonunital complex star homomorphism satisfying `‖φ(x)‖ ≤ p(x)` for
+every `x ∈ B`. The extended star homomorphism satisfies `φ̄(ι(x)) = φ(x)` for every `x ∈ B`. -/
 theorem fromNonUnitalCompletion_apply (x : B) :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     p.fromNonUnitalCompletion φ hφ (p.toNonUnitalCompletion x) = φ x := by
   let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
   exact p.nonUnitalCompletionHomCLM_apply φ hφ x
 
-/-- The constructed star and continuous linear homomorphisms have exactly the same values. -/
+/-- **Agreement of the completed star and linear maps.** Let `B` be a nonunital complex star algebra
+with scalar-compatible involution and let `p` be a C*-seminorm on `B`. Let `D` be a nonunital
+complex C*-algebra and `φ : B → D` a nonunital complex star homomorphism satisfying `‖φ(x)‖ ≤ p(x)`
+for every `x ∈ B`. For every element of the separated completion, its values under the extended star
+homomorphism and the extended continuous linear map agree. -/
 theorem fromNonUnitalCompletion_eq_clm (x : p.NonUnitalCompletion) :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     p.fromNonUnitalCompletion φ hφ x = p.nonUnitalCompletionHomCLM φ hφ x :=
   rfl
 
-/-- The actual completed star hom is continuous in the same completed norm topology. -/
+/-- **Continuity of the completed star homomorphism.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. Let `D` be a nonunital complex
+C*-algebra and `φ : B → D` a nonunital complex star homomorphism satisfying `‖φ(x)‖ ≤ p(x)` for
+every `x ∈ B`. The extended nonunital complex star homomorphism from the separated completion to `D`
+is norm-continuous. -/
 theorem continuous_fromNonUnitalCompletion :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     Continuous (p.fromNonUnitalCompletion φ hφ) := by

@@ -43,13 +43,20 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 attribute [local instance] PositiveContinuousLinearMap.stateUnitizationOrder
   PositiveContinuousLinearMap.stateUnitizationStarOrder
 
-/-- The original GNS coefficient image has its exact state-square norm. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `f : A → ℂ`
+be a positive continuous complex-linear functional of operator norm one.
+
+The GNS coefficient image has its exact state-square norm. -/
 theorem stateGNSMap_norm_sq (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1)
     (a : A) : ‖stateGNSMap f hf a‖ ^ 2 = (f (star a * a)).re := by
   exact (inner_self_eq_norm_sq (𝕜 := ℂ) (stateGNSMap f hf a)).symm.trans
     (congrArg Complex.re (stateGNSMap_inner f hf a a))
 
-/-- Distance to the literal unit class is computed from the original state. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `f : A → ℂ`
+be a positive continuous complex-linear functional of operator norm one. The specified
+coefficient `e` is self-adjoint.
+
+Distance to the unit class is computed from the state. -/
 theorem stateGNSMap_sub_vector_norm_sq (f : A →P[ℂ] ℂ)
     (hf : ‖f.toContinuousLinearMap‖ = 1) (e : A) (he : IsSelfAdjoint e) :
     ‖stateGNSMap f hf e - unitizationGNSVector f hf‖ ^ 2 =
@@ -61,7 +68,11 @@ theorem stateGNSMap_sub_vector_norm_sq (f : A →P[ℂ] ℂ)
     stateGNSMap_norm_sq, he.star_eq, hInner]
   simp only [one_pow, RCLike.re_eq_complex_re]
 
-/-- Positive contractions approach the unit class according to their actual state value. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `f : A → ℂ`
+be a positive continuous complex-linear functional of operator norm one, and let `e ∈ A` be
+positive with `‖e‖ ≤ 1`.
+
+Positive contractions approach the unit class according to their state value. -/
 theorem stateGNSMap_sub_vector_norm_sq_le (f : A →P[ℂ] ℂ)
     (hf : ‖f.toContinuousLinearMap‖ = 1) (e : A) (he : 0 ≤ e) (hen : ‖e‖ ≤ 1) :
     ‖stateGNSMap f hf e - unitizationGNSVector f hf‖ ^ 2 ≤ 1 - (f e).re := by
@@ -70,8 +81,11 @@ theorem stateGNSMap_sub_vector_norm_sq_le (f : A →P[ℂ] ℂ)
     (f.mono (CStarAlgebra.mul_self_le_of_nonneg_of_norm_le_one he hen)).1
   linarith
 
-/-- The general approximate unit, with no sigma-unitality assumption, converges
-to the literal unit vector in the original state GNS norm. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `f : A → ℂ`
+be a positive continuous complex-linear functional of operator norm one.
+
+The general approximate unit, with no sigma-unitality assumption, converges to the unit vector
+in the state GNS norm. -/
 theorem tendsto_stateGNSMap_approximateUnit (f : A →P[ℂ] ℂ)
     (hf : ‖f.toContinuousLinearMap‖ = 1) :
     Tendsto (stateGNSMap f hf) (CStarAlgebra.approximateUnit A)
@@ -107,7 +121,10 @@ theorem tendsto_stateGNSMap_approximateUnit (f : A →P[ℂ] ℂ)
     simpa only [hEq, Real.sqrt_zero] using h
   exact tendsto_iff_norm_sub_tendsto_zero.mpr hNorm
 
-/-- The given nonunital algebra itself has dense cyclic span at the literal unit vector. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `f : A → ℂ`
+be a positive continuous complex-linear functional of operator norm one.
+
+The given nonunital algebra itself has dense cyclic span at the unit vector. -/
 theorem dense_stateGNSRepresentation_span (f : A →P[ℂ] ℂ)
     (hf : ‖f.toContinuousLinearMap‖ = 1) :
     Dense (Submodule.span ℂ (Set.range fun a : A =>

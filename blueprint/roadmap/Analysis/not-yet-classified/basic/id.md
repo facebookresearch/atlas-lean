@@ -1,3 +1,4 @@
-# Id
+# Completely positive identity map
 
-The identity map is completely positive.
+For a nonunital complex C*-algebra `A` with a star-compatible
+partial order, the identity `a ↦ a` is a completely positive map from `A` to itself.

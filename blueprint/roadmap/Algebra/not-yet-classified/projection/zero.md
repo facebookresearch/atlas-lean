@@ -1,3 +1,4 @@
 # Zero
 
-The bundled zero projection, without installing a global `Zero` instance.
+Let `A` be a possibly nonunital, nonassociative semiring with an additive star involution. Its zero
+element is a star projection.

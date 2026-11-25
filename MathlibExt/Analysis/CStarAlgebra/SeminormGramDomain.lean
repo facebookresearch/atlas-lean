@@ -50,26 +50,42 @@ attribute [local instance] CStarSeminorm.nonUnitalCompletionCStarAlgebra
 variable (p : CStarSeminorm B) (H : Type uH)
   [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The actual original-source Gram span inside the computed essential Hilbert space. -/
+/-- **Hilbert Gram domain from the source algebra.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution, `p` a C*-seminorm on `B`, `H` a complete complex Hilbert space, and
+`ρ` a nonunital star representation of the separated C*-completion of `B` on `H`. Write `Eρ` for its
+closed essential subspace and `ι` for the completion map. The Gram domain is the complex-linear span
+inside `Eρ` of `{ρ(ι(f))ξ : f ∈ B, ξ ∈ Eρ}`, with the inherited inner product and norm. -/
 def rawHilbertGramDomain (ρ : p.NonUnitalCompletion →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
     Submodule ℂ ρ.essentialSpace :=
   Submodule.span ℂ (Set.range fun z : B × ρ.essentialSpace =>
     ρ.essentialRepresentation (p.toNonUnitalCompletion z.1) z.2)
 
-/-- An actual original-source operator value in its inherited-norm Gram domain. -/
+/-- **Generator of the Hilbert Gram domain.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution, `p` a C*-seminorm on `B`, `H` a complete complex Hilbert space, and
+`ρ` a nonunital star representation of the separated C*-completion of `B` on `H`. Write `Eρ` for its
+closed essential subspace and `ι` for the completion map. For `f ∈ B` and `ξ ∈ Eρ`, the vector
+`ρ(ι(f))ξ` defines a generator in the Gram domain. -/
 def rawHilbertGramGenerator (ρ : p.NonUnitalCompletion →⋆ₙₐ[ℂ] (H →L[ℂ] H))
     (f : B) (ξ : ρ.essentialSpace) : p.rawHilbertGramDomain H ρ :=
   ⟨ρ.essentialRepresentation (p.toNonUnitalCompletion f) ξ,
     Submodule.subset_span ⟨(f, ξ), rfl⟩⟩
 
-/-- The Gram generator retains exactly the original Hilbert operator value. -/
+/-- **Ambient vector of a Gram generator.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution, `p` a C*-seminorm on `B`, `H` a complete complex Hilbert space, and
+`ρ` a nonunital star representation of the separated C*-completion of `B` on `H`. Write `Eρ` for its
+closed essential subspace and `ι` for the completion map. Including the Gram generator for `f ∈ B`
+and `ξ ∈ Eρ` back into `H` gives `ρ(ι(f))ξ`. -/
 @[simp]
 theorem rawHilbertGramGenerator_apply_coe
     (ρ : p.NonUnitalCompletion →⋆ₙₐ[ℂ] (H →L[ℂ] H)) (f : B) (ξ : ρ.essentialSpace) :
     ((p.rawHilbertGramGenerator H ρ f ξ : ρ.essentialSpace) : H) =
       ρ (p.toNonUnitalCompletion f) ξ := rfl
 
-/-- The actual generator inner product is the original source star-product Gram form. -/
+/-- **Inner product of Gram generators.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution, `p` a C*-seminorm on `B`, `H` a complete complex Hilbert space, and
+`ρ` a nonunital star representation of the separated C*-completion of `B` on `H`. Write `Eρ` for its
+closed essential subspace and `ι` for the completion map. For `f,h ∈ B` and `ξ,η ∈ Eρ`, the inner
+product of the generators `ρ(ι(f))ξ` and `ρ(ι(h))η` equals `⟨ξ,ρ(ι(f* h))η⟩`. -/
 theorem rawHilbertGramGenerator_inner
     (ρ : p.NonUnitalCompletion →⋆ₙₐ[ℂ] (H →L[ℂ] H)) (f h : B)
     (ξ η : ρ.essentialSpace) :
@@ -90,7 +106,11 @@ theorem rawHilbertGramGenerator_inner
   rw [ContinuousLinearMap.star_eq_adjoint]
   exact (ContinuousLinearMap.adjoint_inner_right _ _ _).symm
 
-/-- Canonical source density and computed essential nondegeneracy make the raw Gram span dense. -/
+/-- **Density of the source Gram domain.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution, `p` a C*-seminorm on `B`, `H` a complete complex Hilbert space, and
+`ρ` a nonunital star representation of the separated C*-completion of `B` on `H`. Write `Eρ` for its
+closed essential subspace and `ι` for the completion map. The complex-linear span of the
+source-generated vectors is norm-dense in `Eρ`. -/
 theorem dense_rawHilbertGramDomain (ρ : p.NonUnitalCompletion →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
     Dense (p.rawHilbertGramDomain H ρ : Set ρ.essentialSpace) := by
   let D := p.rawHilbertGramDomain H ρ
@@ -118,7 +138,11 @@ theorem dense_rawHilbertGramDomain (ρ : p.NonUnitalCompletion →⋆ₙₐ[ℂ]
   rw [← hS]
   exact S.topologicalClosure_minimal hSD D.isClosed_topologicalClosure
 
-/-- The actual inherited-norm Gram inclusion is the dense linear map used for operator extensions. -/
+/-- **Dense range of the Gram-domain inclusion.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution, `p` a C*-seminorm on `B`, `H` a complete complex Hilbert space, and
+`ρ` a nonunital star representation of the separated C*-completion of `B` on `H`. Write `Eρ` for its
+closed essential subspace and `ι` for the completion map. The complex-linear inclusion of the source
+Gram domain into `Eρ` has dense range. -/
 theorem denseRange_rawHilbertGramDomain_subtype
     (ρ : p.NonUnitalCompletion →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
     DenseRange (p.rawHilbertGramDomain H ρ).subtype := by

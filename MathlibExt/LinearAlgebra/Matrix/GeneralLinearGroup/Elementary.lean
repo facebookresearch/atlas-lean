@@ -93,11 +93,11 @@ theorem reindexMulEquiv_elementary (e : n ≃ m) (i j : n) (hij : i ≠ j) (a : 
   have h_add := (reindexRingEquiv R e).map_add (1 : Matrix n n R) (Matrix.single i j a)
   have h_one := (reindexRingEquiv R e).map_one
   rw [coe_reindexRingEquiv] at h_add h_one
-  calc reindex e e (1 + Matrix.single i j a)
-      = reindex e e (1 : Matrix n n R) + reindex e e (Matrix.single i j a) := h_add
-    _ = 1 + reindex e e (Matrix.single i j a) := by rw [h_one]
+  calc Matrix.reindex e e (1 + Matrix.single i j a)
+      = Matrix.reindex e e (1 : Matrix n n R) + Matrix.reindex e e (Matrix.single i j a) := h_add
+    _ = 1 + Matrix.reindex e e (Matrix.single i j a) := by rw [h_one]
     _ = 1 + Matrix.single (e i) (e j) a := by
-        simp [reindex_apply, submatrix_single_equiv]
+        simp [Matrix.reindex_apply, submatrix_single_equiv]
 
 end Reindex
 

@@ -1,3 +1,5 @@
-# Choi Matrix single Kraus Linear Map
+# Choi matrix of a single-Kraus linear map
 
-Single-Kraus Choi matrix is the outer product of the vectorization.
+Let `n` be finite with decidable equality and let `m`
+be any index type. For `K : Matrix m n ℂ`, the Choi matrix of the complex-linear map `X ↦ K X Kᴴ` is
+the outer product `vec(K) vec(K)ᴴ`, indexed by `n × m`.

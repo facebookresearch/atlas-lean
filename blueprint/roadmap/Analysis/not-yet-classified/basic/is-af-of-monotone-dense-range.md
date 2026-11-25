@@ -1,4 +1,6 @@
-# Is AF of monotone dense range
+# AF algebras from increasing finite-dimensional ranges
 
-Increasing dense images of actual finite-dimensional stages are AF.
-The hypotheses are the raw stage-map properties of a sequential limit.
+Let `A` be a nonunital complex
+C*-algebra, let `Dₙ` be finite-dimensional nonunital complex C*-algebras, and let `fₙ : Dₙ → A` be
+nonunital star-algebra homomorphisms. If their ranges increase with `n ∈ ℕ` and their union is
+norm-dense in `A`, then `A` is approximately finite-dimensional.

@@ -1,4 +1,6 @@
-# Busby Hom
+# Busby homomorphisms
 
-A complex nonunital star-algebra homomorphism to the outer multiplier
-algebra, with an algebraic source and a genuine C-star coefficient.
+Let `A` be a nonunital, possibly nonassociative semiring with a
+distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra.

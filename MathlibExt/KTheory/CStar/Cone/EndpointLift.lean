@@ -36,7 +36,10 @@ universe u
 
 namespace CStarKTheory.Cone
 
-/-- Lift an element to the cone using the scalar cutoff `exp(-t)`. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The cone of each algebra is its
+supremum-norm algebra of continuous functions on the nonnegative reals which vanish at infinity.
+
+Lift an element to the cone using the scalar cutoff `exp(-t)`. -/
 def endpointLift
     {A : Type u} [NonUnitalCStarAlgebra A]
     (a : A) : Cone A where
@@ -79,7 +82,10 @@ theorem evalZero_endpointLift
     evalZero A (endpointLift a) = a := by
   simp
 
-/-- Endpoint evaluation on the cone is surjective. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. The cone of each algebra is its
+supremum-norm algebra of continuous functions on the nonnegative reals which vanish at infinity.
+
+Endpoint evaluation on the cone is surjective. -/
 theorem evalZero_surjective
     (A : Type u) [NonUnitalCStarAlgebra A] :
     Function.Surjective (evalZero A) := by

@@ -1,4 +1,6 @@
-# Coe mul normalized
+# Right-centralizer formula for coefficient multiplication
 
-Left coefficient multiplication in the multiplier inclusion's normal form.
-The named `coe_mul` equation remains available for explicit rewrites.
+Let `A` be a nonunital complex
+C*-algebra, let `M(A)` be its double-centralizer multiplier algebra, and let `ι : A → M(A)` be the
+coefficient embedding. For `a ∈ A` and `T ∈ M(A)`, multiplication `ι(a) T` is the embedded
+coefficient `ι(T.snd(a))`.

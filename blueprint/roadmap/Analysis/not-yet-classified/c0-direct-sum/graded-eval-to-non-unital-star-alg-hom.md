@@ -1,3 +1,6 @@
-# Graded Eval to Non Unital Star Alg Hom
+# Underlying homomorphism of graded c₀ evaluation
 
-The underlying homomorphism is exactly the ungraded coordinate map.
+Let `(Aᵢ)ᵢ∈I` be an arbitrary family of
+nonunital complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists
+of norm-vanishing sections with the supremum norm. Forgetting equivariance leaves the
+coordinate-evaluation nonunital star homomorphism of the c₀ sum.

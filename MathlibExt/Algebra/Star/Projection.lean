@@ -28,7 +28,9 @@ bundled subtype.
 
 universe u v w
 
-/-- An element bundled with the proof that it is a star projection. -/
+/-- Let `A` be a type with multiplication and a star operation. A bundled star projection is an element
+`p` satisfying `p*p = p` and `star p = p`.
+-/
 abbrev StarProjection (A : Type u) [Mul A] [Star A] :=
   {p : A // IsStarProjection p}
 
@@ -36,7 +38,9 @@ namespace StarProjection
 
 variable {A : Type u} {B : Type v} {C : Type w}
 
-/-- Construct a bundled star projection. -/
+/-- Let `A` be a type with multiplication and a star operation. An element satisfying `p*p = p` and
+`star p = p` defines a star projection.
+-/
 def mk [Mul A] [Star A] (p : A) (hp : IsStarProjection p) : StarProjection A :=
   ⟨p, hp⟩
 
@@ -59,7 +63,9 @@ theorem coe_injective [Mul A] [Star A] :
     Function.Injective (fun p : StarProjection A ↦ (p : A)) :=
   Subtype.coe_injective
 
-/-- The bundled zero projection, without installing a global `Zero` instance. -/
+/-- Let `A` be a possibly nonunital, nonassociative semiring with an additive star involution. Its zero
+element is a star projection.
+-/
 def zero (A : Type u) [NonUnitalNonAssocSemiring A] [StarAddMonoid A] :
     StarProjection A :=
   ⟨0, IsStarProjection.zero A⟩
@@ -69,7 +75,9 @@ theorem coe_zero (A : Type u) [NonUnitalNonAssocSemiring A] [StarAddMonoid A] :
     ((zero A : StarProjection A) : A) = 0 :=
   rfl
 
-/-- The bundled unit projection, without installing a global `One` instance. -/
+/-- Let `A` carry multiplication with a two-sided identity and a multiplication-reversing star
+involution. Its identity is a star projection.
+-/
 def one (A : Type u) [MulOneClass A] [StarMul A] : StarProjection A :=
   ⟨1, IsStarProjection.one A⟩
 
@@ -80,7 +88,10 @@ theorem coe_one (A : Type u) [MulOneClass A] [StarMul A] :
 
 /-! ## Homomorphic images -/
 
-/-- A nonunital star-algebra homomorphism maps bundled projections. -/
+/-- Let a monoid `R` act additively on possibly nonunital, nonassociative semirings `A` and `B` with
+star operations. A homomorphism preserving these structures sends each bundled star projection of
+`A` to one of `B`.
+-/
 def map
     {R : Type*} [Monoid R]
     [NonUnitalNonAssocSemiring A] [DistribMulAction R A] [Star A]
@@ -119,7 +130,10 @@ theorem map_comp
 
 /-! ## Murray--von Neumann equivalence -/
 
-/-- Murray--von Neumann equivalence of bundled star projections. -/
+/-- Let `A` be a semigroup with a multiplication-reversing star involution. Bundled star projections
+`p`, `q` are Murray--von Neumann equivalent if there exists `v ∈ A` with `p = star v * v` and `q = v
+* star v`.
+-/
 def MurrayVonNeumannEquivalent
     [Semigroup A] [StarMul A]
     (p q : StarProjection A) : Prop :=
@@ -178,8 +192,10 @@ theorem murrayVonNeumannEquivalent_equivalence
     fun {_ _} h ↦ murrayVonNeumannEquivalent_symm h,
     fun {_ _ _} h₁ h₂ ↦ murrayVonNeumannEquivalent_trans h₁ h₂⟩
 
-/-- Star-algebra homomorphisms preserve Murray--von Neumann equivalence, with
-the image of the original witness as witness. -/
+/-- Let a monoid `R` act additively on possibly nonunital semirings `A`, `B` with
+multiplication-reversing star involutions. A structure-preserving homomorphism `f : A →⋆ₙₐ[R] B`
+sends Murray--von Neumann equivalent projections to equivalent projections, with witness `f v`.
+-/
 theorem MurrayVonNeumannEquivalent.map
     {R : Type*} [Monoid R]
     [NonUnitalSemiring A] [DistribMulAction R A] [StarMul A]

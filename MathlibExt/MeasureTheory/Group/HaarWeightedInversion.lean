@@ -51,7 +51,11 @@ private theorem integral_mul_left_haar (F : G → E) (g : G) :
   rw [← he.integral_map, map_mul_left_eq_self]
 
 omit [CompleteSpace E] in
-/-- Individual right translations scale the integral by the adopted modular character. -/
+/-- Let `G` be a locally compact topological group with its Borel σ-algebra and a regular left Haar
+measure `μ`. The integrands take values in a normed real vector space `E`; the weight is the
+positive modular character.
+
+Individual right translations scale the integral by the adopted modular character. -/
 theorem integral_mul_right_modular (F : G → E) (g : G) :
     (∫ s, F (s * g) ∂μ) = (Measure.modularCharacter g : ℝ) • ∫ s, F s ∂μ := by
   have he : MeasurableEmbedding (fun s : G => s * g) :=
@@ -97,8 +101,13 @@ private theorem integral_modular_shift (F : G → E) (g : G) :
   have h := congrArg (fun x : E => (Measure.modularCharacter g : ℝ)⁻¹ • x) hscaled
   simpa only [smul_smul, inv_mul_cancel₀ hg, one_smul] using h
 
-/-- In the right-pushforward convention, multiplying an inverted compactly supported
-continuous integrand by the Haar modular character preserves its Bochner integral. -/
+/-- Let `G` be a locally compact topological group with its Borel σ-algebra and a regular left Haar
+measure `μ`. The integrands take values in a normed real vector space `E`; the weight is the
+positive modular character. For the inversion identity, the integrand is continuous and
+compactly supported. Assume the vector space `E` is complete.
+
+In the right-pushforward convention, multiplying an inverted compactly supported continuous
+integrand by the Haar modular character preserves its Bochner integral. -/
 theorem integral_modularCharacter_smul_inv_of_hasCompactSupport
     {F : G → E} (hFcont : Continuous F) (hFcomp : HasCompactSupport F) :
     (∫ s, (Measure.modularCharacter s : ℝ) • F s⁻¹ ∂μ) = ∫ s, F s ∂μ := by

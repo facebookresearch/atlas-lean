@@ -33,21 +33,28 @@ universe uA
 
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
-/-- Thin closed-star-ideal adapter for the algebraic left annihilator. -/
+/-- **Left annihilator modulo an ideal.** Let `A` be a nonunital complex C*-algebra, `I ⊆ A` a closed
+two-sided star ideal, and `D ⊆ A` a nonunital star subalgebra. The left relative annihilator is the
+nonunital subalgebra of elements `x` satisfying `x d ∈ I` for every `d ∈ D`. -/
 def leftAnnihilatorModulo
     (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) :
     NonUnitalSubalgebra ℂ A := by
   let _ : I.carrier.IsTwoSided := I.isTwoSided
   exact I.carrier.toNonUnitalSubalgebra.leftAnnihilatorModulo (D : Set A)
 
-/-- Thin closed-star-ideal adapter for the algebraic right annihilator. -/
+/-- **Right annihilator modulo an ideal.** Let `A` be a nonunital complex C*-algebra, `I ⊆ A` a closed
+two-sided star ideal, and `D ⊆ A` a nonunital star subalgebra. The right relative annihilator is the
+nonunital subalgebra of elements `x` satisfying `d x ∈ I` for every `d ∈ D`. -/
 def rightAnnihilatorModulo
     (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) :
     NonUnitalSubalgebra ℂ A := by
   let _ : I.carrier.IsTwoSided := I.isTwoSided
   exact I.carrier.toNonUnitalSubalgebra.rightAnnihilatorModulo (D : Set A)
 
-/-- Thin closed-star-ideal adapter for the algebraic star intersection. -/
+/-- **Two-sided annihilator modulo an ideal.** Let `A` be a nonunital complex C*-algebra, `I ⊆ A` a
+closed two-sided star ideal, and `D ⊆ A` a nonunital star subalgebra. The two-sided relative
+annihilator is the nonunital star subalgebra of elements `x` such that `x d ∈ I` and `d x ∈ I` for
+every `d ∈ D`. -/
 def annihilatorModulo
     (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) :
     NonUnitalStarSubalgebra ℂ A := by
@@ -74,7 +81,10 @@ theorem mem_rightAnnihilatorModulo_iff
   exact NonUnitalSubalgebra.mem_rightAnnihilatorModulo_iff
     I.carrier.toNonUnitalSubalgebra (D : Set A) x
 
-/-- Literal intersection characteristic, deliberately not a simp rule. -/
+/-- **Intersection description of the relative annihilator.** Let `A` be a nonunital complex C*-algebra,
+`I ⊆ A` a closed two-sided star ideal, and `D ⊆ A` a nonunital star subalgebra. An element belongs
+to the two-sided relative annihilator exactly when it belongs to both the left and right relative
+annihilators. -/
 theorem mem_annihilatorModulo_iff_sides
     (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) (x : A) :
     x ∈ I.annihilatorModulo D ↔
@@ -86,7 +96,9 @@ theorem mem_annihilatorModulo_iff_sides
       x ∈ I.carrier.toNonUnitalSubalgebra.rightAnnihilatorModulo (D : Set A)
   exact NonUnitalStarSubalgebra.mem_annihilatorModulo_iff_sides I.carrier D x
 
-/-- Fully expanded membership, chosen as the simp normal form. -/
+/-- **Membership in the relative annihilator.** Let `A` be a nonunital complex C*-algebra, `I ⊆ A` a
+closed two-sided star ideal, and `D ⊆ A` a nonunital star subalgebra. For `x ∈ A`, membership in the
+two-sided relative annihilator is equivalent to `x d ∈ I` and `d x ∈ I` for every `d ∈ D`. -/
 @[simp]
 theorem mem_annihilatorModulo_iff
     (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) (x : A) :
@@ -97,7 +109,9 @@ theorem mem_annihilatorModulo_iff
     (∀ d ∈ D, x * d ∈ I.carrier) ∧ ∀ d ∈ D, d * x ∈ I.carrier
   exact NonUnitalStarSubalgebra.mem_annihilatorModulo_iff I.carrier D x
 
-/-- The left relative annihilator is an ambient left ideal. -/
+/-- **Left multiplication preserves left relative annihilation.** Let `A` be a nonunital complex
+C*-algebra, `I ⊆ A` a closed two-sided star ideal, and `D ⊆ A` a nonunital star subalgebra. If `x d
+∈ I` for every `d ∈ D`, then `(a x)d ∈ I` for every `a ∈ A` and `d ∈ D`. -/
 theorem mul_mem_leftAnnihilatorModulo_left
     (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A)
     (a : A) {x : A} (hx : x ∈ I.leftAnnihilatorModulo D) :
@@ -110,7 +124,9 @@ theorem mul_mem_leftAnnihilatorModulo_left
   exact NonUnitalSubalgebra.mul_mem_leftAnnihilatorModulo_left
     I.carrier.toNonUnitalSubalgebra (D : Set A) a hx
 
-/-- The right relative annihilator is an ambient right ideal. -/
+/-- **Right multiplication preserves right relative annihilation.** Let `A` be a nonunital complex
+C*-algebra, `I ⊆ A` a closed two-sided star ideal, and `D ⊆ A` a nonunital star subalgebra. If `d x
+∈ I` for every `d ∈ D`, then `d(x a) ∈ I` for every `a ∈ A` and `d ∈ D`. -/
 theorem mul_mem_rightAnnihilatorModulo_right
     (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A)
     {x : A} (hx : x ∈ I.rightAnnihilatorModulo D) (a : A) :
@@ -123,8 +139,9 @@ theorem mul_mem_rightAnnihilatorModulo_right
   exact NonUnitalSubalgebra.mul_mem_rightAnnihilatorModulo_right
     I.carrier.toNonUnitalSubalgebra (D : Set A) hx a
 
-/-- Star exchanges left relative annihilation with right relative
-annihilation. -/
+/-- **Star exchanges left and right relative annihilators.** Let `A` be a nonunital complex C*-algebra,
+`I ⊆ A` a closed two-sided star ideal, and `D ⊆ A` a nonunital star subalgebra. An element `x*` lies
+in the right relative annihilator exactly when `x` lies in the left relative annihilator. -/
 theorem star_mem_rightAnnihilatorModulo_iff
     (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) (x : A) :
     star x ∈ I.rightAnnihilatorModulo D ↔
@@ -136,8 +153,9 @@ theorem star_mem_rightAnnihilatorModulo_iff
   exact NonUnitalStarSubalgebra.star_mem_rightAnnihilatorModulo_iff
     I.carrier D x
 
-/-- Star exchanges right relative annihilation with left relative
-annihilation. -/
+/-- **Star exchanges right and left relative annihilators.** Let `A` be a nonunital complex C*-algebra,
+`I ⊆ A` a closed two-sided star ideal, and `D ⊆ A` a nonunital star subalgebra. An element `x*` lies
+in the left relative annihilator exactly when `x` lies in the right relative annihilator. -/
 theorem star_mem_leftAnnihilatorModulo_iff
     (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) (x : A) :
     star x ∈ I.leftAnnihilatorModulo D ↔
@@ -149,7 +167,9 @@ theorem star_mem_leftAnnihilatorModulo_iff
   exact NonUnitalStarSubalgebra.star_mem_leftAnnihilatorModulo_iff
     I.carrier D x
 
-/-- Every element of the modulus ideal lies in its relative annihilator. -/
+/-- **The modulus ideal lies in its relative annihilator.** Let `A` be a nonunital complex C*-algebra,
+`I ⊆ A` a closed two-sided star ideal, and `D ⊆ A` a nonunital star subalgebra. Every `x ∈ I`
+belongs to the two-sided relative annihilator of `D` modulo `I`. -/
 theorem carrier_le_annihilatorModulo
     (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) :
     I.carrier ≤ I.annihilatorModulo D := by

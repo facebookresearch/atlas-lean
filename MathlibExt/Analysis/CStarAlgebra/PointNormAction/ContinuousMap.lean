@@ -35,8 +35,11 @@ namespace PointNormCStarAction
 variable {M : Type uM} {B : Type uB}
 variable [Monoid M] [TopologicalSpace M] [NonUnitalCStarAlgebra B]
 
-/-- Lift a point-norm coefficient action to a compact function algebra,
-without changing the function's parameter. -/
+/-- Let `M` be a monoid equipped with a topology, let `B` be a possibly nonunital complex C*-algebra
+with a specified point-norm continuous `M`-action, and let `X` be a compact topological space.
+
+Lift a point-norm coefficient action to a compact function algebra, without changing the
+function's parameter. -/
 def continuousMap (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     (α : PointNormCStarAction M B) : PointNormCStarAction M C(X, B) := by
   let liftHom (e : B ≃⋆ₐ[ℂ] B) : C(X, B) →⋆ₙₐ[ℂ] C(X, B) :=
@@ -95,15 +98,21 @@ def continuousMap (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     exact α.continuous_apply continuous_fst
       (f.continuous_toFun.comp continuous_snd)
 
-/-- The lifted action acts on coefficients pointwise. -/
+/-- Let `M` be a monoid equipped with a topology, let `B` be a possibly nonunital complex C*-algebra
+with a specified point-norm continuous `M`-action, and let `X` be a compact topological space.
+
+The lifted action acts on coefficients pointwise. -/
 @[simp]
 theorem continuousMap_apply (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     (α : PointNormCStarAction M B) (m : M) (f : C(X, B)) (x : X) :
     continuousMap X α m f x = α m (f x) :=
   rfl
 
-/-- Point evaluation intertwines the lifted and original coefficient actions.
-Its underlying nonunital star homomorphism is independent of the action. -/
+/-- Let `M` be a monoid equipped with a topology, let `B` be a possibly nonunital complex C*-algebra
+with a specified point-norm continuous `M`-action, and let `X` be a compact topological space.
+
+Point evaluation intertwines the lifted and coefficient actions. Its underlying nonunital star
+homomorphism is independent of the action. -/
 def continuousMapEvaluation {X : Type uX} [TopologicalSpace X] [CompactSpace X]
     (α : PointNormCStarAction M B) (x : X) : Hom (continuousMap X α) α where
   toNonUnitalStarAlgHom :=
@@ -117,7 +126,10 @@ def continuousMapEvaluation {X : Type uX} [TopologicalSpace X] [CompactSpace X]
     change continuousMap X α m f x = α m (f x)
     exact continuousMap_apply X α m f x
 
-/-- The equivariant evaluation is the ordinary coefficient evaluation. -/
+/-- Let `M` be a monoid equipped with a topology, let `B` be a possibly nonunital complex C*-algebra
+with a specified point-norm continuous `M`-action, and let `X` be a compact topological space.
+
+The equivariant evaluation is the ordinary coefficient evaluation. -/
 @[simp]
 theorem continuousMapEvaluation_apply {X : Type uX}
     [TopologicalSpace X] [CompactSpace X]

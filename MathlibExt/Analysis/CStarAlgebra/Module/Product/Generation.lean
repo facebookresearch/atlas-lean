@@ -41,8 +41,10 @@ variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace ℂ F]
   [SMul Bᵐᵒᵖ F] [CStarModule Bᵐᵒᵖ F] [CompleteSpace F]
 
-/-- A binary product of countably generated Hilbert modules is countably
-generated. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. If E and F are complete
+countably generated right Hilbert B-modules, their two-factor Hilbert-module product is
+countably generated. -/
 theorem prod
     (hE : CStarModule.IsCountablyGenerated (B := B) (E := E))
     (hF : CStarModule.IsCountablyGenerated (B := B) (E := F)) :

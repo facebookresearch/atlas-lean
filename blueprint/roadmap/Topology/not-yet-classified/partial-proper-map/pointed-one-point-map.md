@@ -1,3 +1,6 @@
 # Pointed One Point Map
 
-Actual continuous one-point maps preserving the original additional point.
+Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+continuous one-point maps preserving the additional point.

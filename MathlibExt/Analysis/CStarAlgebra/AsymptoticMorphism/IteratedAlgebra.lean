@@ -517,17 +517,5 @@ theorem alphaRepresentative_quotientMap (n : ℕ)
         (BoundedContinuousFunction.compNonUnitalStarAlgHom φ f) := by
   exact AsymptoticAlgebra.map_quotientMap φ f
 
-#print axioms map
-#print axioms map_id
-#print axioms map_zero
-#print axioms map_comp
-#print axioms stageHom
-#print axioms stageHom_apply
-#print axioms stageMapFrom
-#print axioms stageMapFrom_add
-#print axioms NonUnitalCStarAlgCat.iteratedAsymptoticAlgebraFunctor
-#print axioms NonUnitalCStarAlgCat.stageNatTrans
-#print axioms alphaRepresentative
-#print axioms alphaRepresentative_quotientMap
 
 end IteratedAsymptoticAlgebra

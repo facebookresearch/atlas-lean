@@ -78,8 +78,5 @@ theorem toHom_ofHom_constant (f : A →⋆ₙₐ[ℂ] B) :
   intro t
   rw [orbitBCF_apply, ofHom_apply, BoundedContinuousFunction.const_apply]
 
-#print axioms orbitBCF_postcomp
-#print axioms toHom_postcomp
-#print axioms toHom_ofHom_constant
 
 end AsymptoticMorphism

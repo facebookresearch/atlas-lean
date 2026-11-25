@@ -1,3 +1,6 @@
-# Norm mk le
+# Contractivity of the quotient projection
 
-The canonical quotient norm makes the projection norm-nonincreasing.
+Let `A` be a nonunital normed ring with a ring
+involution and a complex normed vector-space structure compatible with multiplication and star, and
+let `S ⊆ A` be a nonunital complex star subalgebra. For every `a ∈ A`, the quotient seminorm
+satisfies `‖[a]‖ ≤ ‖a‖`.

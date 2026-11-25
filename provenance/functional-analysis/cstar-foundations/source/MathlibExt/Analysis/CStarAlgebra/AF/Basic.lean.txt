@@ -1,0 +1,86 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Algebra.Star.NonUnitalSubalgebra
+public import Mathlib.Analysis.Normed.Module.FiniteDimension
+
+/-!
+# AF algebras by countable finite-dimensional exhaustions
+
+An AF algebra has a countable increasing sequence of actual closed,
+finite-dimensional star subalgebras with dense union. Their operations,
+norms and topologies are inherited from the given coefficient algebra.
+This is the countable exhaustion formulation of Murphy, Section 6.2.
+
+Finite-set approximation without separability is a broader condition; it
+is not substituted for the countable exhaustion predicate here. Images of
+finite-dimensional stages give an exhaustion even when the connecting
+maps are not injective.
+-/
+
+@[expose] public section
+
+open Set
+
+namespace CStarAlgebra
+
+universe u v
+
+/-- A closed finite-dimensional star subalgebra with its inherited norm. -/
+def IsFiniteDimensionalSubalgebra
+    {A : Type u} [NonUnitalCStarAlgebra A]
+    (B : NonUnitalStarSubalgebra ℂ A) : Prop :=
+  IsClosed (B : Set A) ∧ FiniteDimensional ℂ B
+
+/-- A countable finite-dimensional exhaustion in the original norm topology. -/
+def IsAF (A : Type u) [NonUnitalCStarAlgebra A] : Prop :=
+  ∃ stage : ℕ → NonUnitalStarSubalgebra ℂ A,
+    Monotone stage ∧
+      (∀ n, IsFiniteDimensionalSubalgebra (stage n)) ∧
+      closure (⋃ n, (stage n : Set A)) = Set.univ
+
+/-- A finite-dimensional stage has a closed finite-dimensional image under
+any nonunital star homomorphism, including the zero homomorphism. -/
+theorem isFiniteDimensionalSubalgebra_range
+    {D : Type v} [NonUnitalCStarAlgebra D] [FiniteDimensional ℂ D]
+    {A : Type u} [NonUnitalCStarAlgebra A] (f : D →⋆ₙₐ[ℂ] A) :
+    IsFiniteDimensionalSubalgebra f.range := by
+  let L : D →ₗ[ℂ] f.range :=
+    { toFun := fun d => ⟨f d, f.mem_range_self d⟩
+      map_add' := fun x y => Subtype.ext (map_add f x y)
+      map_smul' := fun c x => Subtype.ext (map_smul f c x) }
+  have hL : Function.Surjective L := by
+    rintro ⟨a, ha⟩
+    obtain ⟨d, hd⟩ := f.mem_range.mp ha
+    exact ⟨d, Subtype.ext hd⟩
+  letI : FiniteDimensional ℂ f.range := Module.Finite.of_surjective L hL
+  refine ⟨?_, inferInstance⟩
+  change IsClosed (f.range.toSubmodule : Set A)
+  exact Submodule.closed_of_finiteDimensional _
+
+/-- Increasing dense images of actual finite-dimensional stages are AF.
+The hypotheses are the raw stage-map properties of a sequential limit. -/
+theorem isAF_of_monotone_dense_range
+    {A : Type u} [NonUnitalCStarAlgebra A]
+    {D : ℕ → Type v} [∀ n, NonUnitalCStarAlgebra (D n)]
+    [∀ n, FiniteDimensional ℂ (D n)]
+    (f : ∀ n, D n →⋆ₙₐ[ℂ] A)
+    (hmono : Monotone fun n => (f n).range)
+    (hdense : Dense (⋃ n, Set.range (f n))) : IsAF A := by
+  refine ⟨fun n => (f n).range, hmono,
+    fun n => isFiniteDimensionalSubalgebra_range (f n), ?_⟩
+  simpa only [NonUnitalStarAlgHom.coe_range] using hdense.closure_eq
+
+/-- Finite-dimensional algebras are AF, with the constant identity system.
+No nontriviality condition excludes the zero algebra. -/
+theorem isAF_of_finiteDimensional
+    (A : Type u) [NonUnitalCStarAlgebra A] [FiniteDimensional ℂ A] : IsAF A := by
+  apply isAF_of_monotone_dense_range (D := fun _ => A)
+    (fun _ => NonUnitalStarAlgHom.id ℂ A) monotone_const
+  change Dense (⋃ _ : ℕ, Set.range (id : A → A))
+  simpa only [Set.range_id, Set.iUnion_const] using (dense_univ : Dense (Set.univ : Set A))
+
+end CStarAlgebra

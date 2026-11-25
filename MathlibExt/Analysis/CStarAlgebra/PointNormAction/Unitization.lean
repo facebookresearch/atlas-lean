@@ -40,7 +40,11 @@ variable {G : Type uG} {A : Type uA} {B : Type uB}
 variable [Monoid G] [TopologicalSpace G]
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- The point-norm action induced on the canonical unitization. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The point-norm action induced on the canonical unitization. -/
 noncomputable def unitizationAction (α : PointNormCStarAction G A) :
     PointNormCStarAction G (Unitization ℂ A) := by
   let actionAut (g : G) : Unitization ℂ A ≃⋆ₐ[ℂ] Unitization ℂ A :=
@@ -113,7 +117,11 @@ theorem unitizationAction_inr
       Unitization.inr (α g a) := by
   simp [unitizationAction_apply]
 
-/-- The canonical ideal inclusion as an equivariant homomorphism. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The canonical ideal inclusion as an equivariant homomorphism. -/
 def unitizationInclusion (α : PointNormCStarAction G A) :
     PointNormCStarAction.Hom α α.unitizationAction where
   toNonUnitalStarAlgHom := Unitization.inrNonUnitalStarAlgHom ℂ A
@@ -127,8 +135,12 @@ theorem unitizationInclusion_apply
     α.unitizationInclusion a = Unitization.inr a :=
   rfl
 
-/-- The scalar character is equivariant from the unitization action to the
-trivial action on the scalars. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The scalar character is equivariant from the unitization action to the trivial action on the
+scalars. -/
 def unitizationCharacter (α : PointNormCStarAction G A) :
     PointNormCStarAction.Hom α.unitizationAction
       (PointNormCStarAction.trivial G ℂ) where
@@ -156,7 +168,11 @@ namespace Hom
 
 variable {α : PointNormCStarAction G A} {β : PointNormCStarAction G B}
 
-/-- Coordinatewise unitization of an equivariant homomorphism. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` and `B` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+Coordinatewise unitization of an equivariant homomorphism. -/
 def unitizationMap (φ : PointNormCStarAction.Hom α β) :
     PointNormCStarAction.Hom α.unitizationAction β.unitizationAction where
   toNonUnitalStarAlgHom :=

@@ -57,13 +57,18 @@ variable {I : Type uI} {H : I → Type uH}
 variable [∀ i, NormedAddCommGroup (H i)] [∀ i, InnerProductSpace ℂ (H i)]
 variable [∀ i, CompleteSpace (H i)]
 
-/-- The original coordinate maps give the actual bounded operator on their canonical Hilbert sum. -/
+/-- **Operator on the Hilbert direct sum.** Let `A` be a nonunital complex C*-algebra and let `(Hᵢ)ᵢ∈I`
+be an arbitrary family of complete complex Hilbert spaces. Let `ρᵢ : A → B(Hᵢ)` be nonunital complex
+star homomorphisms. For `a ∈ A`, the bounded operator on `⨁₂ Hᵢ` sends `(xᵢ)` to `(ρᵢ(a)(xᵢ))`. -/
 def hilbertSumOperator (ρ : ∀ i, A →⋆ₙₐ[ℂ] (H i →L[ℂ] H i)) (a : A) :
     lp H 2 →L[ℂ] lp H 2 :=
   lp.mapCLM 2 (fun i => ρ i a) (K := ‖a‖) (norm_nonneg a)
     (fun i => NonUnitalStarAlgHom.norm_apply_le (ρ i) a)
 
-/-- Every sum coordinate retains the exact original operator value. -/
+/-- **Coordinates of the Hilbert-sum operator.** Let `A` be a nonunital complex C*-algebra and let
+`(Hᵢ)ᵢ∈I` be an arbitrary family of complete complex Hilbert spaces. Let `ρᵢ : A → B(Hᵢ)` be
+nonunital complex star homomorphisms. For `a ∈ A` and `x ∈ ⨁₂ Hᵢ`, its `i` coordinate is
+`ρᵢ(a)(xᵢ)`. -/
 @[simp]
 theorem hilbertSumOperator_apply (ρ : ∀ i, A →⋆ₙₐ[ℂ] (H i →L[ℂ] H i))
     (a : A) (x : lp H 2) (i : I) :
@@ -75,7 +80,10 @@ private theorem hilbertSumOperator_ext
     (h : ∀ (x : lp H 2) (i : I), T x i = S x i) : T = S :=
   ContinuousLinearMap.ext fun x => lp.ext (funext fun i => h x i)
 
-/-- The actual direct-sum nonunital star representation, constructed on the original canonical sum. -/
+/-- **Hilbert direct sum of representations.** Let `A` be a nonunital complex C*-algebra and let
+`(Hᵢ)ᵢ∈I` be an arbitrary family of complete complex Hilbert spaces. Let `ρᵢ : A → B(Hᵢ)` be
+nonunital complex star homomorphisms. The coordinatewise action defines a representation on the ℓ²
+Hilbert direct sum of the `Hᵢ`, with its Hilbert norm. -/
 def hilbertDirectSum (ρ : ∀ i, A →⋆ₙₐ[ℂ] (H i →L[ℂ] H i)) :
     A →⋆ₙₐ[ℂ] (lp H 2 →L[ℂ] lp H 2) where
   toFun := hilbertSumOperator ρ
@@ -113,7 +121,10 @@ def hilbertDirectSum (ρ : ∀ i, A →⋆ₙₐ[ℂ] (H i →L[ℂ] H i)) :
     rw [hstar]
     exact ContinuousLinearMap.adjoint_inner_left _ _ _
 
-/-- Every direct-sum representation coordinate keeps the original coefficient action. -/
+/-- **Coordinates of the Hilbert-sum representation.** Let `A` be a nonunital complex C*-algebra and let
+`(Hᵢ)ᵢ∈I` be an arbitrary family of complete complex Hilbert spaces. Let `ρᵢ : A → B(Hᵢ)` be
+nonunital complex star homomorphisms. For `a ∈ A`, `x ∈ ⨁₂ Hᵢ`, and `i ∈ I`, the direct-sum
+representation has coordinate `ρᵢ(a)(xᵢ)`. -/
 @[simp]
 theorem hilbertDirectSum_apply (ρ : ∀ i, A →⋆ₙₐ[ℂ] (H i →L[ℂ] H i))
     (a : A) (x : lp H 2) (i : I) :
@@ -130,7 +141,10 @@ variable {I : Type uI} {H : I → Type uH}
 variable [∀ i, NormedAddCommGroup (H i)] [∀ i, InnerProductSpace ℂ (H i)]
 variable [∀ i, CompleteSpace (H i)]
 
-/-- The unital direct-sum representation uses the shared nonunital coordinate construction. -/
+/-- **Hilbert direct sum of representations.** Let `A` be a unital complex C*-algebra and let `(Hᵢ)ᵢ∈I`
+be an arbitrary family of complete complex Hilbert spaces. Let `ρᵢ : A → B(Hᵢ)` be unital complex
+star homomorphisms. The coordinatewise action defines a representation on the ℓ² Hilbert direct sum
+of the `Hᵢ`, with its Hilbert norm. -/
 def hilbertDirectSum (ρ : ∀ i, A →⋆ₐ[ℂ] (H i →L[ℂ] H i)) :
     A →⋆ₐ[ℂ] (lp H 2 →L[ℂ] lp H 2) where
   __ := NonUnitalStarAlgHom.hilbertDirectSum (fun i => (ρ i).toNonUnitalStarAlgHom)
@@ -153,7 +167,10 @@ def hilbertDirectSum (ρ : ∀ i, A →⋆ₐ[ℂ] (H i →L[ℂ] H i)) :
     simp only [Algebra.algebraMap_eq_smul_one, smul_apply, one_apply_eq_self,
       lp.coeFn_smul, Pi.smul_apply]
 
-/-- Each coordinate of the unital sum retains the original unital representation action. -/
+/-- **Coordinates of the Hilbert-sum representation.** Let `A` be a unital complex C*-algebra and let
+`(Hᵢ)ᵢ∈I` be an arbitrary family of complete complex Hilbert spaces. Let `ρᵢ : A → B(Hᵢ)` be unital
+complex star homomorphisms. For `a ∈ A`, `x ∈ ⨁₂ Hᵢ`, and `i ∈ I`, the direct-sum representation has
+coordinate `ρᵢ(a)(xᵢ)`. -/
 @[simp]
 theorem hilbertDirectSum_apply (ρ : ∀ i, A →⋆ₐ[ℂ] (H i →L[ℂ] H i))
     (a : A) (x : lp H 2) (i : I) :

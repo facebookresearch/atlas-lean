@@ -1,3 +1,5 @@
-# Completion CStar Algebra
+# C*-structure on a seminorm completion
 
-The computed complete C-star dictionary on the same separated completion.
+**C*-structure on a seminorm completion.** Let `B` be a unital complex star algebra with
+scalar-compatible involution, and let `p` be a C*-seminorm on `B`. The separated completion for `p`
+is a unital complex C*-algebra with the extended multiplication, scalar action, and involution.

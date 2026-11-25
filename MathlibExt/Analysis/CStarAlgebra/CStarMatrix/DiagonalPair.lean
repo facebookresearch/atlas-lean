@@ -39,8 +39,12 @@ variable {C : Type uC} {Q : Type uQ}
 variable [NonUnitalNonAssocSemiring C] [DistribMulAction ℂ C] [Star C]
 variable [Semiring Q] [StarRing Q] [Algebra ℂ Q]
 
-/-- Literal two-entry diagonal pairing into the genuine matrix type copy.
-The source need not be unital and the target need not be commutative or normed. -/
+/-- Let `C` be a possibly nonunital, nonassociative semiring. Let `Q` be a semiring. `ℂ` acts on `C`
+preserving addition and zero. `C` has a star operation. The star on `Q` is an additive involution
+reversing products. `Q` has a complex algebra structure. For `phi` and `psi : C →⋆ₙₐ[ℂ] Q`. Literal
+two-entry diagonal pairing into the `CStarMatrix` representation. The source need not be unital and
+the target need not be commutative or normed.
+-/
 noncomputable def diagonalPair (phi psi : C →⋆ₙₐ[ℂ] Q) :
     C →⋆ₙₐ[ℂ] CStarMatrix (Fin 2) (Fin 2) Q := by
   let family : Fin 2 → (C →⋆ₙₐ[ℂ] Q) := fun i => if i = 0 then phi else psi
@@ -60,7 +64,11 @@ noncomputable def diagonalPair (phi psi : C →⋆ₙₐ[ℂ] Q) :
     (CStarMatrix.ofMatrixStarAlgEquiv (n := Fin 2) (A := Q)).toStarAlgHom.comp delta
   exact diagonalCopy.toNonUnitalStarAlgHom.comp piHom
 
-/-- Exact entries of the actual diagonal pairing, including both off-diagonal zeros. -/
+/-- Let `C` be a possibly nonunital, nonassociative semiring. Let `Q` be a semiring. `ℂ` acts on `C`
+preserving addition and zero. `C` has a star operation. The star on `Q` is an additive involution
+reversing products. `Q` has a complex algebra structure. For `phi` and `psi : C →⋆ₙₐ[ℂ] Q`, `a : C`
+and `i` and `j : Fin 2`. Exact entries of the diagonal pairing, including both off-diagonal zeros.
+-/
 theorem diagonalPair_apply (phi psi : C →⋆ₙₐ[ℂ] Q) (a : C) (i j : Fin 2) :
     diagonalPair phi psi a i j =
       if i = j then (if i = 0 then phi a else psi a) else 0 := by

@@ -42,7 +42,10 @@ noncomputable section
 
 universe u v
 
-/-- The existing nonunital completion factory is exactly the stock unital completion's nonunital parent. -/
+/-- Let `A` be a seminormed ring. The completion uses its additive uniformity and the canonical
+extended multiplication.
+
+The existing nonunital completion factory is exactly the unital completion's nonunital parent. -/
 theorem nonUnitalCompletionNormedRing_eq (A : Type u) [SeminormedRing A] :
     nonUnitalCompletionNormedRing A =
       (inferInstance : NonUnitalNormedRing (Completion A)) :=
@@ -52,29 +55,46 @@ section Continuous
 
 variable (A : Type u) [SeminormedRing A] [StarRing A] [ContinuousStar A]
 
-/-- The primary completed star ring reuses the existing weak hierarchy over the stock ring. -/
+/-- Let `A` be a seminormed ring with an involution satisfying the star-ring laws and continuous for
+its norm topology. Its completion carries the extended involution.
+
+The primary completed star ring reuses the existing weak hierarchy over the ring. -/
 @[instance_reducible]
 def completionStarRing : StarRing (Completion A) :=
   nonUnitalCompletionStarRing A
 
-/-- Both explicit factories have exactly the same original star-ring dictionary. -/
+/-- Let `A` be a seminormed ring with an involution satisfying the star-ring laws and continuous for
+its norm topology. Its completion carries the extended involution.
+
+Both factories have exactly the same star-ring structure. -/
 theorem completionStarRing_eq_nonUnital :
     completionStarRing A = nonUnitalCompletionStarRing A :=
   rfl
 
-/-- The shared actual involution agrees with source star on every dense coefficient. -/
+/-- Let `A` be a seminormed ring with an involution satisfying the star-ring laws and continuous for
+its norm topology. Its completion carries the extended involution.
+
+The shared involution agrees with source star on every dense coefficient. -/
 theorem completionStarRing_star_coe (a : A) :
     letI : StarRing (Completion A) := completionStarRing A
     star (a : Completion A) = ((star a : A) : Completion A) := by
   exact nonUnitalCompletionStarRing_star_coe A a
 
-/-- The shared completed involution is continuous for the original completion topology. -/
+/-- Let `A` be a seminormed ring with an involution satisfying the star-ring laws and continuous for
+its norm topology. Its completion carries the extended involution.
+
+The shared completed involution is continuous for the completion topology. -/
 theorem completionStarRing_continuousStar :
     letI : StarRing (Completion A) := completionStarRing A
     ContinuousStar (Completion A) := by
   exact nonUnitalCompletionStarRing_continuousStar A
 
-/-- The primary scalar law reuses the original completion action and only uniform source scalar maps. -/
+/-- Let `A` be a seminormed ring with an involution satisfying the star-ring laws and continuous for
+its norm topology. Its completion carries the extended involution. A scalar type `R` acts with
+uniformly continuous constant scalar maps, an involution, and compatibility of scalar action
+with the involutions.
+
+The primary scalar law reuses the completion action and only uniform source scalar maps. -/
 theorem completionStarModule {R : Type v}
     [Star R] [SMul R A] [UniformContinuousConstSMul R A] [StarModule R A] :
     letI : StarRing (Completion A) := completionStarRing A
@@ -87,19 +107,28 @@ section Compatibility
 
 variable (A : Type u) [NormedRing A] [StarRing A] [NormedStarGroup A]
 
-/-- Compatibility wrapper with the original normed-star signature and shared actual star value.
-Use completionStarRing when only continuous source star is available. -/
+/-- Let `A` be a normed ring with a star-ring involution which is isometric. Its completion has the
+extended norm and involution.
+
+Compatibility wrapper with the normed-star signature and shared star value. Use
+completionStarRing when only continuous source star is available. -/
 @[instance_reducible]
 def normedStarRing : StarRing (Completion A) :=
   completionStarRing A
 
-/-- The original named coefficient characteristic for the same shared completion star. -/
+/-- Let `A` be a normed ring with a star-ring involution which is isometric. Its completion has the
+extended norm and involution.
+
+The named coefficient characteristic for the same shared completion star. -/
 theorem normedStarRing_star_coe (a : A) :
     let _ : StarRing (Completion A) := normedStarRing A
     star (a : Completion A) = ((star a : A) : Completion A) := by
   exact completionStarRing_star_coe A a
 
-/-- Norm-star isometry alone needs the source normed-star hypothesis, on the stock completed norm. -/
+/-- Let `A` be a normed ring with a star-ring involution which is isometric. Its completion has the
+extended norm and involution.
+
+Norm-star isometry alone needs the source normed-star hypothesis, on the completed norm. -/
 theorem normedStarGroup :
     let _ : StarRing (Completion A) := normedStarRing A
     NormedStarGroup (Completion A) := by
@@ -115,8 +144,12 @@ theorem normedStarGroup :
 
 variable [NormedAlgebra ℂ A] [StarModule ℂ A]
 
-/-- Compatibility wrapper with the original complex normed-star signature and shared scalar law.
-Use completionStarModule for the continuous-star and general-scalar interface. -/
+/-- Let `A` be a normed ring with a star-ring involution which is isometric. Its completion has the
+extended norm and involution. For scalar compatibility, `A` is also a normed complex algebra
+with a compatible scalar involution.
+
+Compatibility wrapper with the complex normed-star signature and shared scalar law. Use
+completionStarModule for the continuous-star and general-scalar interface. -/
 theorem normedStarModule :
     let _ : StarRing (Completion A) := normedStarRing A
     StarModule ℂ (Completion A) := by

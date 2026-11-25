@@ -48,14 +48,30 @@ variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 attribute [local instance] CStarModule.ContinuousMap.rightAction
   CStarModule.ContinuousMap.cstarModule
 
-/-- The actual constant-family unital star hom on the original function-module End algebra. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures. Let X be a compact topological space, and equip
+C(X, B)ᵐᵒᵖ with a star-compatible partial order.
+
+Applying a fixed adjointable endomorphism of E pointwise defines a unital complex star
+homomorphism into the adjointable endomorphisms of C(X, E) over C(X, B).
+-/
 def constantEndomorphismMap : AdjointableOperator.End B E →⋆ₐ[ℂ]
     AdjointableOperator.End C(X, B) C(X, E) := by
   letI : CStarModule (C(X, B))ᵐᵒᵖ C(X, B) := CStarModule.Right.selfModule
   exact InternalTensorProduct.IsModel.mapLeftStarAlgHom
     (InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X)
 
-/-- The genuine tensor-model End map is the original pointwise bounded operator. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures. Let X be a compact topological space, and equip
+C(X, B)ᵐᵒᵖ with a star-compatible partial order.
+
+For an adjointable endomorphism T of E, the forward bounded map of its constant extension sends
+f ∈ C(X, E) to the function t ↦ T(f(t)).
+-/
 theorem constantEndomorphismMap_toContinuousLinearMap (T : AdjointableOperator.End B E) :
     (constantEndomorphismMap (B := B) (E := E) X T).toContinuousLinearMap =
       T.toContinuousLinearMap.compLeftContinuous ℂ X := by
@@ -73,7 +89,15 @@ theorem constantEndomorphismMap_toContinuousLinearMap (T : AdjointableOperator.E
   change T e <• b t = T (e <• b t)
   exact (T.map_right_smul e (b t)).symm
 
-/-- Every actual continuous vector is acted on by the same original operator at every point. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures. Let X be a compact topological space, and equip
+C(X, B)ᵐᵒᵖ with a star-compatible partial order.
+
+For an adjointable endomorphism T of E, f ∈ C(X, E) and t ∈ X, the constant extension satisfies
+(T_X f)(t) = T(f(t)).
+-/
 @[simp]
 theorem constantEndomorphismMap_apply (T : AdjointableOperator.End B E)
     (f : C(X, E)) (t : X) :
@@ -81,7 +105,15 @@ theorem constantEndomorphismMap_apply (T : AdjointableOperator.End B E)
   congrArg (fun L : C(X, E) →L[ℂ] C(X, E) => L f t)
     (constantEndomorphismMap_toContinuousLinearMap (B := B) (E := E) X T)
 
-/-- The existing canonical coefficient-change vector map is exactly the literal constant section. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures. Let X be a compact topological space, and equip
+C(X, B)ᵐᵒᵖ with a star-compatible partial order.
+
+For coefficient change B → C(X, B) by constant functions, the canonical vector map sends x ∈ E
+to the constant E-valued function with value x.
+-/
 theorem canonicalBaseChangeMap_eq_const (x : E) :
     InternalTensorProduct.IsModel.canonicalBaseChangeMap
         (InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X) x =
@@ -95,7 +127,15 @@ theorem canonicalBaseChangeMap_eq_const (x : E) :
   change y <• b = x
   exact h.symm
 
-/-- Constant extension carries the actual module rank-one to the rank-one of constant vectors. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures. Let X be a compact topological space, and equip
+C(X, B)ᵐᵒᵖ with a star-compatible partial order.
+
+The constant extension of the rank-one module operator determined by x, y ∈ E is the rank-one
+operator determined by their constant sections in C(X, E).
+-/
 theorem constantEndomorphismMap_rankOne (x y : E) :
     constantEndomorphismMap (B := B) (E := E) X (AdjointableOperator.rankOne (B := B) x y) =
       AdjointableOperator.rankOne (B := C(X, B))
@@ -107,7 +147,15 @@ theorem constantEndomorphismMap_rankOne (x y : E) :
     canonicalBaseChangeMap_eq_const (B := B) X y] at h
   exact h
 
-/-- True Hilbert-module compacts are preserved by the actual constant End hom. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures. Let X be a compact topological space, and equip
+C(X, B)ᵐᵒᵖ with a star-compatible partial order.
+
+If T is a compact module endomorphism of E, its constant extension is a compact module
+endomorphism of C(X, E).
+-/
 theorem constantEndomorphismMap_mem_compact {T : AdjointableOperator.End B E}
     (hT : T ∈ AdjointableOperator.compactSubmodule (B := B) (E := E) (F := E)) :
     constantEndomorphismMap (B := B) (E := E) X T ∈
@@ -116,8 +164,14 @@ theorem constantEndomorphismMap_mem_compact {T : AdjointableOperator.End B E}
   exact InternalTensorProduct.IsModel.mapLeftStarAlgHom_mem_compact_baseChange
     (InternalTensorProduct.continuousMap_isModel (B := B) (E := E) X) hT
 
-/-- Countable generation of the original module gives actual countable generation of
-its stock supremum-norm continuous-section module over continuous coefficients. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures. Let X be a compact topological space, and equip
+C(X, B)ᵐᵒᵖ with a star-compatible partial order.
+
+If E is countably generated over B, then C(X, E) is countably generated over C(X, B).
+-/
 theorem countablyGenerated
     (hE : CStarModule.IsCountablyGenerated (B := B) (E := E)) :
     CStarModule.IsCountablyGenerated (B := C(X, B)) (E := C(X, E)) := by

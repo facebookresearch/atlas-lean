@@ -1,3 +1,5 @@
 # Of Pre right smul
 
-The completed right action extends source-order right multiplication.
+Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completed
+right action extends right-action right multiplication.

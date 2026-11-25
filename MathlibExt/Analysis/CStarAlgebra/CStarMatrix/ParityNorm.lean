@@ -35,7 +35,9 @@ namespace CStarMatrix
 
 universe u
 
-/-- The actual block-to-parity row permutation, including the empty index. -/
+/-- For natural numbers `N` and `ε : Fin 2`. The block-to-parity row permutation, including the empty
+index.
+-/
 def parityRowPerm (N : ℕ) (ε : Fin 2) : Fin (2 * N) ≃ Fin (2 * N) where
   toFun i :=
     if h : i.val < N then
@@ -69,7 +71,9 @@ def parityRowPerm (N : ℕ) (ε : Fin 2) : Fin (2 * N) ≃ Fin (2 * N) where
     simp only [apply_dite, apply_ite]
     split_ifs <;> omega
 
-/-- The retained first block goes to the exact parity embedding. -/
+/-- For natural numbers `N`, `ε : Fin 2` and `i : Fin N`. The retained first block goes to the exact
+parity embedding.
+-/
 @[simp]
 theorem parityRowPerm_apply_castLE (N : ℕ) (ε : Fin 2) (i : Fin N) :
     parityRowPerm N ε (i.castLE (by omega : N ≤ 2 * N)) =
@@ -78,7 +82,10 @@ theorem parityRowPerm_apply_castLE (N : ℕ) (ε : Fin 2) (i : Fin N) :
   simp only [parityRowPerm, Equiv.coe_fn_mk, Fin.val_castLE,
     dite_eq_left i.is_lt, Fin.val_mk, parityRowEmbedding_val]
 
-/-- Actual parity row insertion is row-only reindexing of the actual zero padding. -/
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. For natural numbers `N`, `ε : Fin 2` and `X : CStarMatrix (Fin N) (Fin N) A`. Actual
+parity row insertion is row-only reindexing of the zero padding.
+-/
 theorem parityRowInsertLinear_eq_reindex
     {A : Type u} [NonUnitalRing A] [Module ℂ A] [StarAddMonoid A]
     (N : ℕ) (ε : Fin 2) (X : CStarMatrix (Fin N) (Fin N) A) :
@@ -107,7 +114,9 @@ theorem parityRowInsertLinear_eq_reindex
     else 0)
   split_ifs <;> first | rfl | (exfalso; omega)
 
-/-- Finite parity row insertion is an isometry for the computed spectral order. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. For natural numbers `N` and `ε : Fin 2`. Use the
+spectral order on `A`. Finite parity row insertion is an isometry for the computed spectral order.
+-/
 theorem isometry_parityRowInsertLinear
     {A : Type u} [NonUnitalCStarAlgebra A] (N : ℕ) (ε : Fin 2) :
     letI : PartialOrder A := CStarAlgebra.spectralOrder A;
@@ -135,7 +144,10 @@ theorem isometry_parityRowInsertLinear
   rw [hfun] at hcomp
   exact hcomp
 
-/-- Parity row insertion preserves the same operator norm, with no nonzero premise. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. For natural numbers `N` and `ε : Fin 2`. Use the
+spectral order on `A`. Parity row insertion preserves the same operator norm, with no nonzero
+premise.
+-/
 theorem norm_parityRowInsertLinear
     {A : Type u} [NonUnitalCStarAlgebra A] (N : ℕ) (ε : Fin 2) :
     letI : PartialOrder A := CStarAlgebra.spectralOrder A;
@@ -149,7 +161,9 @@ theorem norm_parityRowInsertLinear
   have hdist := (isometry_parityRowInsertLinear (A := A) N ε).dist_eq X 0
   simpa only [map_zero, dist_zero_right] using hdist
 
-/-- Sampling the finite parity rows does not increase the actual operator norm. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. For natural numbers `N` and `ε : Fin 2`. Use the
+spectral order on `A`. Sampling the finite parity rows does not increase the operator norm.
+-/
 theorem norm_parityRowCompressLinear
     {A : Type u} [NonUnitalCStarAlgebra A] (N : ℕ) (ε : Fin 2) :
     letI : PartialOrder A := CStarAlgebra.spectralOrder A;

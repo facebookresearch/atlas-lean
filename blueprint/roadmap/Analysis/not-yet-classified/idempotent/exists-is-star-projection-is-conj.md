@@ -1,5 +1,5 @@
-# Exists is Star Projection is Conj
+# Idempotents are conjugate to projections
 
-Every idempotent in a unital complex C-star algebra is conjugate to a
-star projection.  The projection has the same algebraic range, expressed by
-the two multiplication identities.
+For a unital complex C*-algebra `A` and an idempotent
+`e ∈ A`, there is a self-adjoint idempotent `p ∈ A` with `e p = p` and `p e = e`, such that `e` and
+`p` are conjugate by an invertible element of `A`.

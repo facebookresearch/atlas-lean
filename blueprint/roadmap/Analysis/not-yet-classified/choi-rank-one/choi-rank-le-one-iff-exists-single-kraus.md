@@ -1,4 +1,5 @@
-# Choi Rank le one iff exists single Kraus
+# Choi rank at most one
 
-A completely positive map has Choi rank at most one iff it is a single-Kraus map.
-This includes the zero map and holds for empty input/output types without `Nonempty`.
+For finite decidable `n,m`, a completely positive map `φ : Matrix n n ℂ
+→CP Matrix m m ℂ` has Choi rank at most one exactly when `φ(X) = K X Kᴴ` for some `K : Matrix m n
+ℂ`. This includes the zero map and empty input or output types.

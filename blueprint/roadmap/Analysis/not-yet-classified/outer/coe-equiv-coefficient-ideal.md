@@ -1,4 +1,6 @@
-# Coe Equiv Coefficient Ideal
+# Coefficient algebra and its multiplier ideal
 
-The coefficient algebra is canonically star-algebra equivalent to the
-coefficient ideal in its multiplier algebra.
+Let `A` be a nonunital complex C*-algebra, let
+`M(A)` be its double-centralizer multiplier algebra, and let `ι : A → M(A)` be the coefficient
+embedding. The embedding identifies `A` by a complex star-algebra equivalence with the closed ideal
+`ι(A) ⊆ M(A)`.

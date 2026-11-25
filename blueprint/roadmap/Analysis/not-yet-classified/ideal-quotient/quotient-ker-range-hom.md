@@ -1,4 +1,5 @@
-# Quotient Ker Range Hom
+# Homomorphism from the kernel quotient to the range
 
-The canonical map from the quotient by the bundled closed kernel to the
-bundled range.
+Let `A,B` be nonunital complex C*-algebras
+and `ρ : A → B` a nonunital complex star-algebra homomorphism. It induces the nonunital star
+homomorphism `A/ker(ρ) → range(ρ)` given by `[a] ↦ ρ(a)`.

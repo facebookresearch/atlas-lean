@@ -35,7 +35,10 @@ namespace MeasureTheory.Measure
 
 universe uG
 
-/-- The existing Haar modular character is continuous without countability assumptions. -/
+/-- Let `G` be a locally compact topological group. Its modular character takes values in the
+nonnegative real numbers with their usual topology.
+
+The existing Haar modular character is continuous without countability assumptions. -/
 theorem continuous_modularCharacter
     {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [LocallyCompactSpace G] :

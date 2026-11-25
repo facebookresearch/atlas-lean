@@ -1,4 +1,5 @@
-# Unital Prod Star Alg Equiv naturality
+# Naturality of the unitization product equivalence
 
-Naturality of the canonical product equivalence.  Under it, the
-unitization of a unital star homomorphism is the product map `(id, phi)`.
+For unital complex C*-algebras `A,B` and a
+unital complex star homomorphism `φ : A → B`, the unitized homomorphism corresponds, under the
+canonical equivalences with `ℂ × A` and `ℂ × B`, to the product map `(λ,a) ↦ (λ,φ(a))`.

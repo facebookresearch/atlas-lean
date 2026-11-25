@@ -1,4 +1,5 @@
 # Right Matrix Star Alg Hom surjective
 
-Every adjointable endomorphism of a finite standard module over a unital
-coefficient algebra is represented by its matrix of coordinate vectors.
+Let B be a unital complex C-star algebra and I a finite index type, possibly empty. Consider
+the finite standard right B-module. For unital B, every adjointable endomorphism of the finite
+standard module is the column action of its matrix of coefficients.

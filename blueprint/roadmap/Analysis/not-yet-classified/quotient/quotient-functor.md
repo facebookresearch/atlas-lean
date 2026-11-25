@@ -1,3 +1,6 @@
-# Quotient Functor
+# Quotient functor for C*-ideal pairs
 
-Send a pair to its canonical quotient and a morphism to the induced map.
+**Quotient functor for C*-ideal pairs.** A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. The assignment `(A,J) ↦
+A/J`, with the homomorphisms induced by ideal-preserving maps, defines a functor to nonunital
+complex C*-algebras.

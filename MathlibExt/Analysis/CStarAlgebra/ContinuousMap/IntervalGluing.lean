@@ -39,7 +39,10 @@ universe uB
 
 variable (B : Type uB) [NonUnitalCStarAlgebra B]
 
-/-- Literal nonunital evaluation at an interval point. -/
+/-- Let `B` be a possibly nonunital complex C*-algebra. The functions are continuous `B`-valued
+paths on the closed real interval `[0,1]`.
+
+nonunital evaluation at an interval point. -/
 def evalAt (s : unitInterval) : C(unitInterval, B) →⋆ₙₐ[ℂ] B where
   toFun f := f s
   map_zero' := rfl
@@ -53,7 +56,10 @@ theorem evalAt_apply (s : unitInterval) (f : C(unitInterval, B)) :
     evalAt B s f = f s := by
   rfl
 
-/-- Constant paths, without a unit in the coefficient algebra. -/
+/-- Let `B` be a possibly nonunital complex C*-algebra. The functions are continuous `B`-valued
+paths on the closed real interval `[0,1]`.
+
+Constant paths, without a unit in the coefficient algebra. -/
 def constantHom : B →⋆ₙₐ[ℂ] C(unitInterval, B) where
   toFun b := ContinuousMap.const unitInterval b
   map_zero' := by ext s; rfl
@@ -67,7 +73,10 @@ theorem constantHom_apply (b : B) (s : unitInterval) :
     constantHom B b s = b := by
   rfl
 
-/-- Precomposition by the actual interval reversal. -/
+/-- Let `B` be a possibly nonunital complex C*-algebra. The functions are continuous `B`-valued
+paths on the closed real interval `[0,1]`.
+
+Precomposition by the interval reversal. -/
 def reverseHom : C(unitInterval, B) →⋆ₙₐ[ℂ] C(unitInterval, B) where
   toFun f := f.comp ⟨unitInterval.symm, unitInterval.continuous_symm⟩
   map_zero' := by ext s; rfl
@@ -89,13 +98,19 @@ theorem reverseHom_one (f : C(unitInterval, B)) :
     reverseHom B f 1 = f 0 := by
   rw [reverseHom_apply, unitInterval.symm_one]
 
-/-- The actual closed matching-endpoint pullback, with its inherited norm. -/
+/-- Let `B` be a possibly nonunital complex C*-algebra. The paths take values in `B` on the closed
+interval `[0,1]`; a matching pair has equal meeting endpoints.
+
+The closed matching-endpoint pullback, with its inherited norm. -/
 abbrev MatchingPaths :=
   NonUnitalCStarPullback.Pullback (evalAt B 1) (evalAt B 0)
 
 variable {B}
 
-/-- Concatenate the two actual coordinates of a matching pair. -/
+/-- Let `B` be a possibly nonunital complex C*-algebra. The paths take values in `B` on the closed
+interval `[0,1]`; a matching pair has equal meeting endpoints.
+
+Concatenate the two coordinates of a matching pair. -/
 def glue (p : MatchingPaths B) : C(unitInterval, B) :=
   let first : Path (p.1.1 0) (p.1.1 1) :=
     { toContinuousMap := p.1.1
@@ -133,8 +148,11 @@ theorem glue_one (p : MatchingPaths B) : glue p 1 = p.1.2 1 := by
   dsimp only [glue]
   exact Path.target _
 
-/-- Half-interval gluing is a genuine nonunital star homomorphism.
-Its standard C-star contractivity is the required supremum-norm bound. -/
+/-- Let `B` be a possibly nonunital complex C*-algebra. The paths take values in `B` on the closed
+interval `[0,1]`; a matching pair has equal meeting endpoints.
+
+Half-interval gluing is a nonunital star homomorphism. Its standard C-star contractivity is the
+required supremum-norm bound. -/
 def glueHom : MatchingPaths B →⋆ₙₐ[ℂ] C(unitInterval, B) where
   toFun := glue
   map_zero' := by

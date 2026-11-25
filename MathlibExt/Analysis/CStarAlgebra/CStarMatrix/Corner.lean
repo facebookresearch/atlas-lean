@@ -28,8 +28,10 @@ namespace CStarMatrix
 
 universe u
 
-/-- The single diagonal corner selected by `i₀`, bundled as a nonunital
-complex star-algebra homomorphism. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `i₀ : ι`. The single diagonal corner selected by `i₀`, bundled as a nonunital complex
+star-algebra homomorphism.
+-/
 def cornerEmbedding
     {A : Type u} [NonUnitalCStarAlgebra A]
     {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -71,7 +73,10 @@ def cornerEmbedding
         exact h ⟨h'.2, h'.1⟩
       simp [CStarMatrix.star_apply, h, h']
 
-/-- Exact entry action of the selected diagonal corner. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Let `ι` be a finite index type with decidable
+equality. For `i₀ : ι`, `a : A` and `i` and `j : ι`. Exact entry action of the selected diagonal
+corner.
+-/
 @[simp]
 theorem cornerEmbedding_apply
     {A : Type u} [NonUnitalCStarAlgebra A]

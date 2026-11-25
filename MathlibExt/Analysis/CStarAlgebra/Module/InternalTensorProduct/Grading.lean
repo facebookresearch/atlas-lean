@@ -52,8 +52,17 @@ variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
   [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂] [CompleteSpace E₂]
 variable {γ₁ : CStarGrading B₁} {γ₂ : CStarGrading B₂}
 
-/-- The constructed grading on the literal completed internal tensor, with
-its existing radical norm, coefficient action and completed inner product. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂. Suppose B₁ and B₂ have
+involutive C*-algebra gradings γ₁ and γ₂, the modules have compatible gradings δ₁ and δ₂, and φ
+is equivariant from γ₁ to the induced operator grading on E₂.
+
+The completed internal tensor carries a compatible module grading whose generator acts on pure
+vectors by pure(x,y) ↦ pure(δ₁(x),δ₂(y)).
+-/
 def completedGrading
     (δ₁ : CStarModuleGrading γ₁ E₁) (δ₂ : CStarModuleGrading γ₂ E₂)
     (φ : CStarGrading.Hom γ₁ δ₂.operatorGrading) :
@@ -127,8 +136,16 @@ def completedGrading
         δ₁.generator.toLinearEquiv δ₂.generator.toLinearEquiv
         δ₁.generator_rightInner δ₂.generator_rightInner hφ }
 
-/-- The grading generator sends every literal pure tensor to the tensor of
-the factor generators. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂. Suppose B₁ and B₂ have
+involutive C*-algebra gradings γ₁ and γ₂, the modules have compatible gradings δ₁ and δ₂, and φ
+is equivariant from γ₁ to the induced operator grading on E₂.
+
+The generator of the completed grading sends completedPure(x,y) to completedPure(δ₁(x),δ₂(y)).
+-/
 @[simp]
 theorem completedGrading_generator_pure
     (δ₁ : CStarModuleGrading γ₁ E₁) (δ₂ : CStarModuleGrading γ₂ E₂)
@@ -183,8 +200,18 @@ section Model
 variable {X : Type uX} [NormedAddCommGroup X] [NormedSpace ℂ X]
   [SMul B₂ᵐᵒᵖ X] [CStarModule B₂ᵐᵒᵖ X] [CompleteSpace X]
 
-/-- Transport the actual completed grading to an existing full internal
-tensor model by its constructed unitary comparison. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂. Suppose B₁ and B₂ have
+involutive C*-algebra gradings γ₁ and γ₂, the modules have compatible gradings δ₁ and δ₂, and φ
+is equivariant from γ₁ to the induced operator grading on E₂. Let X be a complete normed right
+inner-product B₂-module with a compatible complex normed-space structure, and let pure : E₁ × E₂
+→ X satisfy the internal-tensor laws with dense pure span in X.
+
+The module X carries a compatible grading whose generator sends pure(x,y) to pure(δ₁(x),δ₂(y)).
+-/
 def modelGrading
     (δ₁ : CStarModuleGrading γ₁ E₁) (δ₂ : CStarModuleGrading γ₂ E₂)
     (φ : CStarGrading.Hom γ₁ δ₂.operatorGrading) (pure : E₁ → E₂ → X)
@@ -205,8 +232,18 @@ def modelGrading
   exact CStarModuleGrading.transport (completedGrading δ₁ δ₂ φ)
     (completedTensorModelUnitary φ.toNonUnitalStarAlgHom pure hX)
 
-/-- The transported grading has the same unsigned formula on every supplied
-pure vector. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂. Suppose B₁ and B₂ have
+involutive C*-algebra gradings γ₁ and γ₂, the modules have compatible gradings δ₁ and δ₂, and φ
+is equivariant from γ₁ to the induced operator grading on E₂. Let X be a complete normed right
+inner-product B₂-module with a compatible complex normed-space structure, and let pure : E₁ × E₂
+→ X satisfy the internal-tensor laws with dense pure span in X.
+
+The generator of the grading on X sends pure(x,y) to pure(δ₁(x),δ₂(y)).
+-/
 @[simp]
 theorem modelGrading_generator_pure
     (δ₁ : CStarModuleGrading γ₁ E₁) (δ₂ : CStarModuleGrading γ₂ E₂)

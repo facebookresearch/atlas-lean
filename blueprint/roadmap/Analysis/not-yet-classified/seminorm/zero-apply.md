@@ -1,3 +1,4 @@
-# Zero apply
+# Zero C*-seminorm
 
-The zero C-star seminorm has zero value on every original element.
+**Zero C*-seminorm.** Let `A` be a nonunital complex star algebra with scalar-compatible involution.
+The zero C*-seminorm on `A` has value zero at every `x ∈ A`.

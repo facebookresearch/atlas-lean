@@ -1,3 +1,5 @@
-# Scalar Suspension
+# Scalar suspension
 
-The actual C₀(R,C) scalar algebra in the chosen object universe.
+This is the nonunital complex C*-algebra `C₀(ℝ,ℂ)` of continuous
+complex-valued functions on the real line vanishing at infinity, represented in the chosen object
+universe with its supremum norm.

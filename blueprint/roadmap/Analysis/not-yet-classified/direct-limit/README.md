@@ -1,7 +1,7 @@
 # Direct Limit
 
 - [Direct Limit](positive-stage-directed-system.md)
-- [Direct Limit](cstar-ring-of-norm-preserving.md)
+- [C*-identity in an isometric directed limit](cstar-ring-of-norm-preserving.md)
 - [Add Group Norm Of Norm Preserving](add-group-norm-of-norm-preserving.md)
 - [Normed Add Comm Group Of Norm Preserving](normed-add-comm-group-of-norm-preserving.md)
 - [Normed Add Comm Group Of Norm Preserving norm mk](normed-add-comm-group-of-norm-preserving-2.md)

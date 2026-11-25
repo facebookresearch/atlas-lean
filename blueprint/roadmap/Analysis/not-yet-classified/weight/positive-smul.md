@@ -1,3 +1,5 @@
-# Positive Smul
+# Nonnegative scalar action on the positive cone
 
-Finite nonnegative-real scaling in the original algebra.
+Let `A` be a nonunital complex C*-algebra with
+its canonical spectral order. For a finite nonnegative real scalar `r` and a positive element `a ∈
+A`, the element `r a` is positive.

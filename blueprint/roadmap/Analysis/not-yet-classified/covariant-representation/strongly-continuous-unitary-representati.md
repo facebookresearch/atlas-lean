@@ -1,5 +1,7 @@
 # Strongly Continuous Unitary Representation
 
-A unitary representation whose orbit map is continuous at every vector.
+Let `G` be a group equipped with a topology and let `H` be a complete complex inner-product
+space.
 
-This is an explicit value, not an ambient `MulAction`.
+A unitary representation whose orbit map is continuous at every vector. This is an value, not an
+ambient `MulAction`.

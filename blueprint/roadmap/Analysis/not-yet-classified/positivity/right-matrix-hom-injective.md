@@ -1,4 +1,5 @@
 # Right Matrix Hom injective
 
-The existing right matrix representation is faithful, including for
-nonunital coefficients and an empty finite index.
+Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. For possibly nonunital B, the finite square-matrix column action is injective,
+including for an empty index type.

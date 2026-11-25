@@ -1,4 +1,6 @@
 # Left Regular surjective
 
-For a unital coefficient algebra, every adjointable self-module
-endomorphism is left multiplication.
+Let B be a unital complex C*-algebra whose opposite algebra has a star-compatible partial order.
+
+Every adjointable endomorphism of the right coefficient self-module B is left multiplication by
+an element of B.

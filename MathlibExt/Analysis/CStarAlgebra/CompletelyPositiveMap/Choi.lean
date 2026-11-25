@@ -43,11 +43,10 @@ namespace LinearMap
 
 variable {n m : Type*} [DecidableEq n]
 
-/-- Repository-convention Choi matrix for an arbitrary complex-linear map
-`Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ`.
-
-The `((i,a),(j,b))` entry is `Φ (Matrix.single i j 1) a b`. Requires only
-`[DecidableEq n]` for `Matrix.single`. -/
+/-- **Choi matrix of a complex-linear matrix map.** Let `n` be an index type with decidable equality,
+let `m` be any index type, and let `Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ`. Its Choi matrix is indexed
+by `n × m` and has entry `J(Φ) ((i,a),(j,b)) = Φ(Eᵢⱼ)(a,b)`, where `Eᵢⱼ` is the complex matrix unit.
+Neither index type is required to be finite for this definition. -/
 noncomputable def choiMatrix (Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) :
     Matrix (n × m) (n × m) ℂ :=
   fun ⟨i, a⟩ ⟨j, b⟩ => Φ (Matrix.single i j (1 : ℂ)) a b
@@ -57,17 +56,17 @@ theorem choiMatrix_apply (Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) (i j :
     choiMatrix Φ (i, a) (j, b) = Φ (Matrix.single i j (1 : ℂ)) a b :=
   rfl
 
-/-- Identity map convention regression: its Choi matrix is the
-matrix-unit delta `δ(a,i) δ(b,j)`, i.e. `1` iff `i = a ∧ j = b`. -/
+/-- **Choi matrix of the identity.** For an index type `n` with decidable equality, the identity
+complex-linear map on `Matrix n n ℂ` has Choi entry `J(id) ((i,a),(j,b)) = 1` when `i = a` and `j =
+b`, and zero otherwise. No finiteness assumption on `n` is needed. -/
 theorem choiMatrix_id :
     choiMatrix (LinearMap.id : Matrix n n ℂ →ₗ[ℂ] Matrix n n ℂ) =
       fun ⟨i, a⟩ ⟨j, b⟩ => if i = a ∧ j = b then (1 : ℂ) else 0 :=
   rfl
 
-/-- `choiMatrix` as a linear map on the space of linear maps.
-
-Requires only `[DecidableEq n]`, not `[Fintype n]`, for the matrix-unit
-`Matrix.single` API. -/
+/-- **Linearity of the Choi construction.** For an index type `n` with decidable equality and any index
+type `m`, sending a complex-linear map `Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ` to its Choi matrix defines
+a complex-linear map into `Matrix (n × m) (n × m) ℂ`. The entry convention is `Φ(Eᵢⱼ)(a,b)`. -/
 noncomputable def choiMatrixHom :
     (Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) →ₗ[ℂ] Matrix (n × m) (n × m) ℂ where
   toFun := choiMatrix
@@ -82,11 +81,10 @@ noncomputable def choiMatrixHom :
 
 variable [Fintype n]
 
-/-- Reconstruction from a Choi matrix by matrix-unit expansion.
-
-For `J : Matrix (n × m) (n × m) ℂ`, the associated linear map sends
-`X` to `∑ i j, X i j • (of fun a b => J (i,a) (j,b))`. This is the inverse of
-`LinearMap.choiMatrix` under the repository product ordering. -/
+/-- **Reconstruction of a linear map from its Choi matrix.** For a finite index type `n` with decidable
+equality, any index type `m`, and a complex matrix `J` indexed by `n × m`, reconstruction sends a
+complex square matrix `X` indexed by `n` to the matrix with entry `∑ i j, X(i,j) J((i,a),(j,b))`.
+This is inverse to the Choi construction. -/
 noncomputable def fromChoiMatrix (J : Matrix (n × m) (n × m) ℂ) :
     Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ :=
   Matrix.liftLinear ℂ (fun i j =>
@@ -94,7 +92,9 @@ noncomputable def fromChoiMatrix (J : Matrix (n × m) (n × m) ℂ) :
       map_add' := fun x y => by simp [add_smul]
       map_smul' := fun r x => by simp [smul_smul, mul_comm r x] })
 
-/-- Application to a matrix unit. -/
+/-- **Choi reconstruction on matrix units.** For finite decidable `n`, any `m`, a complex matrix `J`
+indexed by `n × m`, indices `i,j ∈ n`, and `c ∈ ℂ`, reconstruction sends `c Eᵢⱼ` to the matrix with
+`(a,b)` entry `c J((i,a),(j,b))`. -/
 theorem fromChoiMatrix_single (J : Matrix (n × m) (n × m) ℂ) (i j : n) (c : ℂ) :
     fromChoiMatrix J (Matrix.single i j c) = c • (Matrix.of fun a b => J (i, a) (j, b)) := by
   unfold fromChoiMatrix
@@ -115,20 +115,24 @@ theorem fromChoiMatrix_single_one_apply (J : Matrix (n × m) (n × m) ℂ) (i j 
   rw [fromChoiMatrix_single_one]
   rfl
 
-/-- Entry formula for the reconstruction. -/
+/-- **Entry formula for Choi reconstruction.** For finite decidable `n`, any `m`, `J : Matrix (n × m) (n
+× m) ℂ`, and `X : Matrix n n ℂ`, the reconstructed map has `(a,b)` entry `∑ i j, X(i,j)
+J((i,a),(j,b))`. -/
 theorem fromChoiMatrix_apply (J : Matrix (n × m) (n × m) ℂ) (X : Matrix n n ℂ) (a b : m) :
     fromChoiMatrix J X a b = ∑ i : n, ∑ j : n, X i j * J (i, a) (j, b) := by
   classical
   unfold fromChoiMatrix
   simp [Matrix.liftLinear_apply, Matrix.sum_apply, Matrix.of_apply, smul_eq_mul]
 
-/-- `J( fromChoi(J) ) = J` : Choi of reconstruction is the original matrix. -/
+/-- **Choi matrix after reconstruction.** For finite decidable `n`, any index type `m`, and a complex
+matrix `J` indexed by `n × m`, the Choi matrix of the reconstructed complex-linear map equals `J`. -/
 theorem choiMatrix_fromChoiMatrix (J : Matrix (n × m) (n × m) ℂ) :
     choiMatrix (fromChoiMatrix J) = J := by
   ext ⟨i, a⟩ ⟨j, b⟩
   simp [choiMatrix, fromChoiMatrix_single_one_apply]
 
-/-- `fromChoi( J(Φ) ) = Φ` : reconstruction of Choi is the original map. -/
+/-- **Reconstruction after the Choi construction.** For finite decidable `n`, any index type `m`, and a
+complex-linear map `Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ`, reconstructing from `J(Φ)` recovers `Φ`. -/
 theorem fromChoiMatrix_choiMatrix (Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) :
     fromChoiMatrix (choiMatrix Φ) = Φ := by
   classical
@@ -168,7 +172,9 @@ theorem fromChoiMatrix_choiMatrix (Φ : Matrix n n ℂ →ₗ[ℂ] Matrix m m �
           simp [Matrix.sum_apply]
     _ = (Φ X) a b := by rw [hΦ]
 
-/-- `fromChoiMatrix` as a linear map on Choi matrices. -/
+/-- **Linearity of Choi reconstruction.** For finite decidable `n` and any index type `m`,
+reconstruction is a complex-linear map from complex matrices indexed by `n × m` to complex-linear
+maps `Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ`. -/
 noncomputable def fromChoiMatrixHom :
     Matrix (n × m) (n × m) ℂ →ₗ[ℂ] (Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) where
   toFun := fromChoiMatrix
@@ -213,7 +219,10 @@ noncomputable def fromChoiMatrixHom :
       _ = r • fromChoiMatrix J (Matrix.single i j c) := by rw [← fromChoiMatrix_single]
       _ = (r • fromChoiMatrix J) (Matrix.single i j c) := by simp [LinearMap.smul_apply]
 
-/-- Linear equivalence between linear maps and Choi matrices. -/
+/-- **Linear equivalence between matrix maps and Choi matrices.** For finite decidable `n` and any index
+type `m`, the Choi construction gives a complex-linear equivalence between `Matrix n n ℂ →ₗ[ℂ]
+Matrix m m ℂ` and complex matrices indexed by `n × m`. Its inverse is matrix-unit reconstruction,
+with entry order `((i,a),(j,b))`. -/
 noncomputable def choiMatrixEquiv :
     (Matrix n n ℂ →ₗ[ℂ] Matrix m m ℂ) ≃ₗ[ℂ] Matrix (n × m) (n × m) ℂ :=
   LinearEquiv.ofLinearMap choiMatrixHom fromChoiMatrixHom
@@ -265,10 +274,9 @@ namespace CompletelyPositiveMap
 
 variable {n m : Type*} [Fintype n] [DecidableEq n] [Fintype m] [DecidableEq m]
 
-/-- Choi matrix of a completely positive map `φ : Matrix n n ℂ →CP Matrix m m ℂ`.
-
-Thin specialization of `LinearMap.choiMatrix` to the bundled CP type. The
-`((i,a),(j,b))` entry is `φ (Matrix.single i j 1) a b`. -/
+/-- **Choi matrix of a completely positive map.** For finite index types `n` and `m` with decidable
+equality and a completely positive map `φ : Matrix n n ℂ →CP Matrix m m ℂ`, its Choi matrix is
+indexed by `n × m` and has entry `J(φ) ((i,a),(j,b)) = φ(Eᵢⱼ)(a,b)`. -/
 noncomputable def choiMatrix (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
     Matrix (n × m) (n × m) ℂ :=
   LinearMap.choiMatrix φ.toLinearMap

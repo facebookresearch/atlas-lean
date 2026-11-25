@@ -1,3 +1,6 @@
 # To Zero At Infty Multiplier Hom apply
 
-The homomorphism retains the checked double centralizer, without a new action.
+Let `X` be an arbitrary topological space. Bounded continuous complex functions and complex
+continuous functions vanishing at infinity carry their supremum norms.
+
+The homomorphism retains the double centralizer, without a new action.

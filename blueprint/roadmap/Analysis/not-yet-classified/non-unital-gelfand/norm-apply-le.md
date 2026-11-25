@@ -1,3 +1,5 @@
-# Norm apply le
+# Norm bound on character evaluation
 
-Every nonunital character is bounded by the original algebra norm.
+Let `A` be a nonunital complex Banach algebra, and let
+`Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology. For every
+`χ ∈ Δ(A)` and `a ∈ A`, `|χ(a)| ≤ ‖a‖`.

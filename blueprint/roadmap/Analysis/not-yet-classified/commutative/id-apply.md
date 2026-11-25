@@ -1,3 +1,4 @@
-# Id apply
+# Identity in the commutative C*-algebra category
 
-The category identity has its literal original values.
+**Identity in the commutative C*-algebra category.** For a commutative unital complex C*-algebra `A`
+and `a ∈ A`, the identity morphism sends `a` to itself.

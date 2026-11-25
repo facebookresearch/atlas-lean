@@ -71,7 +71,9 @@ private def matrixPairStarAlgHom (n : Type*) [Fintype n] :
     rw [CStarMatrix.star_apply, CStarMatrix.star_apply, CStarMatrix.star_apply]
     rfl
 
-/-- Pair two CP maps with the same source into the canonical C-star product. -/
+/-- **Product of completely positive maps.** For nonunital complex C*-algebras `A,B,C` in spectral
+order, CP maps `f : A → B` and `g : A → C` define the CP map `a ↦ (f(a), g(a))` into `B × C`,
+equipped with its maximum C*-norm. -/
 noncomputable def prod (f : Canonical A B) (g : Canonical A C) :
     Canonical A (B × C) := by
   let _ : PartialOrder A := CStarAlgebra.spectralOrder A
@@ -124,8 +126,9 @@ theorem toLinearMap_prod (f : Canonical A B) (g : Canonical A C) :
     (prod f g).toLinearMap = LinearMap.prod f.toLinearMap g.toLinearMap := by
   rfl
 
-/-- Pairing two pointwise contractions is a pointwise contraction for the
-product maximum norm. -/
+/-- **Contractivity of a pair of CP maps.** For nonunital complex C*-algebras `A,B,C` in spectral order,
+suppose `f : A → B` and `g : A → C` are completely positive and satisfy `‖f(a)‖ ≤ ‖a‖` and `‖g(a)‖ ≤
+‖a‖` for every `a`. Then `a ↦ (f(a),g(a))` is contractive for the maximum norm on `B × C`. -/
 theorem norm_prod_apply_le (f : Canonical A B) (g : Canonical A C)
     (hf : ∀ a : A, ‖f a‖ ≤ ‖a‖) (hg : ∀ a : A, ‖g a‖ ≤ ‖a‖)
     (a : A) : ‖prod f g a‖ ≤ ‖a‖ := by

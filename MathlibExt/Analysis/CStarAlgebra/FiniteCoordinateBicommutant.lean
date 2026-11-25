@@ -40,7 +40,10 @@ universe u
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Literal finite amplification retains the raw original double-commutant membership. -/
+/-- **Bicommutant membership under finite amplification.** Let `H` be a complete complex Hilbert space,
+let `S ⊆ B(H)` be a unital complex star subalgebra, and let `T` belong to its bicommutant. For every
+`n ∈ ℕ`, the diagonal amplification of `T` to the Hilbert sum of `n` copies of `H` belongs to the
+bicommutant of the diagonally amplified algebra `S`. -/
 theorem finiteCoordinateStarAlgHom_mem_bicommutant (n : ℕ)
     (S : StarSubalgebra ℂ (H →L[ℂ] H)) (T : H →L[ℂ] H)
     (hT : T ∈ Set.centralizer (Set.centralizer (S : Set (H →L[ℂ] H)))) :

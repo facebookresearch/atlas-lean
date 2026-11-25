@@ -1,3 +1,4 @@
-# Norm projection Cut sub le
+# Scalar spectral-cutoff error
 
-The scalar cutoff error is controlled by the original idempotence defect.
+For every real number `x`, the cutoff `χ(x) = 0` for `x ≤ 1/2` and
+`χ(x) = 1` for `x > 1/2` satisfies `|χ(x)-x| ≤ 2 |x²-x|`.

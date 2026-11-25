@@ -51,8 +51,13 @@ variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
 variable {X : Type uX} [NormedAddCommGroup X] [NormedSpace ℂ X]
   [SMul B₂ᵐᵒᵖ X] [CStarModule B₂ᵐᵒᵖ X] [CompleteSpace X]
 
-/-- The computed natural left star homomorphism on a supplied complete
-internal-tensor model. The model unitary is constructed, not an extra input. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. Adjointable first-factor endomorphisms
+act on F by a unital complex star algebra homomorphism transported through the tensor
+comparison unitary. -/
 @[no_expose]
 def mapLeftStarAlgHom
     {φ : B₁ →⋆ₙₐ[ℂ] CStarModule.AdjointableOperator.End B₂ E₂}
@@ -72,7 +77,12 @@ def mapLeftStarAlgHom
   exact U.conjStarAlgHom.comp
     (CStarModule.InternalTensorProduct.completedLeftStarAlgHom (E₁ := E₁) φ)
 
-/-- The computed supplied-model homomorphism has the printed left pure action. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The transported first-factor operator
+sends T(x,y) to T(Lx,y). -/
 @[simp]
 theorem mapLeftStarAlgHom_pure
     {φ : B₁ →⋆ₙₐ[ℂ] CStarModule.AdjointableOperator.End B₂ E₂}
@@ -111,8 +121,11 @@ variable {E2 : Type uE2} [NormedAddCommGroup E2] [NormedSpace ℂ E2]
 variable {E3 : Type uE3} [NormedAddCommGroup E3] [NormedSpace ℂ E3]
   [SMul Bᵐᵒᵖ E3] [CStarModule Bᵐᵒᵖ E3] [CompleteSpace E3]
 
-/-- The supplied-model left map agrees with the existing canonical completed left map.
-This comparison preserves the original operator DATA when using the shared graded constructor. -/
+/-- Let D₂ and B be possibly nonunital complex C-star algebras, E₂ and E₃ complete right Hilbert
+modules over them, and ψ a nonunital star representation of D₂ by adjointable operators on E₃.
+For complete right Hilbert modules E₂ over D₂ and E₃ over B, a nonunital star representation ψ
+of D₂ on E₃ makes the universal-model first-factor action on the completed tensor agree with
+its canonical first-factor action. -/
 public theorem mapLeftStarAlgHom_completed
     (psi : D2 →⋆ₙₐ[ℂ] AdjointableOperator.End B E3) :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E2) psi) :=
