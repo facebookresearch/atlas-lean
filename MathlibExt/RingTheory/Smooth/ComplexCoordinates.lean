@@ -11,14 +11,10 @@ Portions of this file are adapted from:
 
 `Theorems/Thm_Algebra_exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehlerDifferential.lean`,
 `P2M/Sol/S_Algebra_exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehlerDifferential.lean`,
-`Theorems/Thm_Algebra_exists_isStandardEtale_mvPolynomial_localizationAway_of_smooth_of`
-`kaehlerDifferential.lean`,
-`P2M/Sol/S_Algebra_exists_isStandardEtale_mvPolynomial_localizationAway_of_smooth_of`
-`kaehlerDifferential.lean`,
-`Theorems/Thm_Algebra_IsStandardEtale_exists_forall_algHom_eval_map_eval_eq_zero_and_ext_and`
-`surj_and_repr_of_mvPolynomial.lean`,
-`P2M/Sol/S_Algebra_IsStandardEtale_exists_forall_algHom_eval_map_eval_eq_zero_and_ext_and_surj`
-`and_repr_of_mvPolynomial.lean`,
+`Theorems/Thm_Algebra_exists_isStandardEtale_mvPolynomial_localizationAway_of_smooth_of_kaehlerDifferential.lean`,
+`P2M/Sol/S_Algebra_exists_isStandardEtale_mvPolynomial_localizationAway_of_smooth_of_kaehlerDifferential.lean`,
+`Theorems/Thm_Algebra_IsStandardEtale_exists_forall_algHom_eval_map_eval_eq_zero_and_ext_and_surj_and_repr_of_mvPolynomial.lean`,
+`P2M/Sol/S_Algebra_IsStandardEtale_exists_forall_algHom_eval_map_eval_eq_zero_and_ext_and_surj_and_repr_of_mvPolynomial.lean`,
 `Theorems/Thm_Complex_exists_differentiableOn_forall_eval_map_eval_eq_zero_iff_eq_of_derivative_ne_zero_pi.lean`
 and
 `P2M/Sol/S_Complex_exists_differentiableOn_forall_eval_map_eval_eq_zero_iff_eq_of_derivative_ne_zero_pi.lean`
@@ -427,6 +423,27 @@ private theorem isStandardEtale_exists_algHom_data
     rw [map_mul, map_pow, hev, hev] at this
     exact this
 
+private theorem contDiff_eval {n : ℕ} (a : MvPolynomial (Fin n) ℂ) : ContDiff ℂ ⊤ (fun z : Fin n → ℂ
+  => MvPolynomial.eval z a) :=
+  (AnalyticOnNhd.eval_mvPolynomial a).contDiff
+
+private theorem contDiff_mapEval {n : ℕ} (q : Polynomial (MvPolynomial (Fin n) ℂ)) :
+    ContDiff ℂ ⊤ (fun p : (Fin n → ℂ) × ℂ => (q.map (MvPolynomial.eval p.1)).eval p.2) := by
+  induction q using Polynomial.induction_on' with
+  | add p q hp hq =>
+    have : (fun v : (Fin n → ℂ) × ℂ => ((p + q).map (MvPolynomial.eval v.1)).eval v.2) =
+        (fun v : (Fin n → ℂ) × ℂ => (p.map (MvPolynomial.eval v.1)).eval v.2) +
+          fun v : (Fin n → ℂ) × ℂ => (q.map (MvPolynomial.eval v.1)).eval v.2 := by
+      funext v; simp [Polynomial.map_add]
+    rw [this]; exact hp.add hq
+  | monomial m a =>
+    have : (fun v : (Fin n → ℂ) × ℂ => ((monomial m a).map (MvPolynomial.eval v.1)).eval v.2) =
+        fun v : (Fin n → ℂ) × ℂ => MvPolynomial.eval v.1 a * v.2 ^ m := by
+      funext v
+      rw [Polynomial.map_monomial, ← C_mul_X_pow_eq_monomial, eval_mul, eval_pow, eval_C, eval_X]
+    rw [this]
+    exact ((contDiff_eval a).comp contDiff_fst).mul (contDiff_snd.pow m)
+
 private theorem
   complex_exists_differentiableOn_forall_eval_map_eval_eq_zero_iff_eq_of_derivative_ne_zero_pi
 {n : ℕ} (F : Polynomial (MvPolynomial (Fin n) ℂ)) (z₀ : Fin n → ℂ) (w₀ : ℂ)
@@ -439,28 +456,8 @@ private theorem
       (∀ z ∈ Metric.ball z₀ r, ∀ w ∈ Metric.ball w₀ ρ, (F.map (MvPolynomial.eval z)).eval w = 0 → w
         = φ z) := by
   classical
-  have hev : ∀ a : MvPolynomial (Fin n) ℂ, ContDiff ℂ ⊤ (fun z : Fin n → ℂ => MvPolynomial.eval z a)
-    :=
-    fun a => (AnalyticOnNhd.eval_mvPolynomial a).contDiff
-  have hsm : ∀ q : Polynomial (MvPolynomial (Fin n) ℂ),
-      ContDiff ℂ ⊤ (fun p : (Fin n → ℂ) × ℂ => (q.map (MvPolynomial.eval p.1)).eval p.2) := by
-    intro q
-    induction q using Polynomial.induction_on' with
-    | add p q hp hq =>
-      have : (fun v : (Fin n → ℂ) × ℂ => ((p + q).map (MvPolynomial.eval v.1)).eval v.2) =
-          (fun v : (Fin n → ℂ) × ℂ => (p.map (MvPolynomial.eval v.1)).eval v.2) +
-            fun v : (Fin n → ℂ) × ℂ => (q.map (MvPolynomial.eval v.1)).eval v.2 := by
-        funext v; simp [Polynomial.map_add]
-      rw [this]; exact hp.add hq
-    | monomial m a =>
-      have : (fun v : (Fin n → ℂ) × ℂ => ((monomial m a).map (MvPolynomial.eval v.1)).eval v.2) =
-          fun v : (Fin n → ℂ) × ℂ => MvPolynomial.eval v.1 a * v.2 ^ m := by
-        funext v
-        rw [Polynomial.map_monomial, ← C_mul_X_pow_eq_monomial, eval_mul, eval_pow, eval_C, eval_X]
-      rw [this]
-      exact ((hev a).comp contDiff_fst).mul (contDiff_snd.pow m)
   set f : (Fin n → ℂ) × ℂ → ℂ := fun p => (F.map (MvPolynomial.eval p.1)).eval p.2 with hf
-  have hcd : ContDiffAt ℂ ⊤ f (z₀, w₀) := (hsm F).contDiffAt
+  have hcd : ContDiffAt ℂ ⊤ f (z₀, w₀) := (contDiff_mapEval F).contDiffAt
   have f00 : f (z₀, w₀) = 0 := h₀
   set c : ℂ := ((Polynomial.derivative F).map (MvPolynomial.eval z₀)).eval w₀ with hc
   have hderw : HasDerivAt (fun w : ℂ => f (z₀, w)) c w₀ := by
@@ -512,27 +509,6 @@ private theorem
     simp only [Set.mem_ofPred_eq] at h5
     rw [f00] at h5
     exact (h5.1 hw').symm
-
-private theorem contDiff_eval {n : ℕ} (a : MvPolynomial (Fin n) ℂ) : ContDiff ℂ ⊤ (fun z : Fin n → ℂ
-  => MvPolynomial.eval z a) :=
-  (AnalyticOnNhd.eval_mvPolynomial a).contDiff
-
-private theorem contDiff_mapEval {n : ℕ} (q : Polynomial (MvPolynomial (Fin n) ℂ)) :
-    ContDiff ℂ ⊤ (fun p : (Fin n → ℂ) × ℂ => (q.map (MvPolynomial.eval p.1)).eval p.2) := by
-  induction q using Polynomial.induction_on' with
-  | add p q hp hq =>
-    have : (fun v : (Fin n → ℂ) × ℂ => ((p + q).map (MvPolynomial.eval v.1)).eval v.2) =
-        (fun v : (Fin n → ℂ) × ℂ => (p.map (MvPolynomial.eval v.1)).eval v.2) +
-          fun v : (Fin n → ℂ) × ℂ => (q.map (MvPolynomial.eval v.1)).eval v.2 := by
-      funext v; simp [Polynomial.map_add]
-    rw [this]; exact hp.add hq
-  | monomial m a =>
-    have : (fun v : (Fin n → ℂ) × ℂ => ((monomial m a).map (MvPolynomial.eval v.1)).eval v.2) =
-        fun v : (Fin n → ℂ) × ℂ => MvPolynomial.eval v.1 a * v.2 ^ m := by
-      funext v
-      rw [Polynomial.map_monomial, ← C_mul_X_pow_eq_monomial, eval_mul, eval_pow, eval_C, eval_X]
-    rw [this]
-    exact ((contDiff_eval a).comp contDiff_fst).mul (contDiff_snd.pow m)
 
 private theorem differentiableOn_mapEval_comp {n : ℕ} (q : Polynomial (MvPolynomial (Fin n) ℂ)) {φ :
   (Fin n → ℂ) → ℂ}
