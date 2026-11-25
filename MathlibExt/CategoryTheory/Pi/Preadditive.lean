@@ -6,19 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
+
 module
 
 public import Mathlib.CategoryTheory.Pi.Basic
 public import Mathlib.CategoryTheory.Preadditive.Basic
 
 /-!
-# Preadditivity of the native category of indexed families
+# Preadditivity of indexed families
 
-Existing hom groups are assembled pointwise. Object, morphism and indexing
-universes remain independent, and the category is the native Pi category.
+The category of indexed families has pointwise hom groups. The
+index, object and morphism universes are independent.
 -/
 
 @[expose] public section

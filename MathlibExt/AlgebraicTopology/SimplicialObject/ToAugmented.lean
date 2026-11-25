@@ -6,6 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialObject.DataAugmented
@@ -213,9 +214,11 @@ namespace Augmented
 
 variable {C : Type u} [Category.{v} C]
 
-/-- Transport an augmented simplicial data object to a genuine augmented simplicial object.
-The left object is `Data.toSimplicialObject`, the point is unchanged, and the augmentation
-is the transported data morphism followed by the `constFunctorIso` comparison. -/
+/--
+Transport an augmented simplicial data object to a augmented simplicial object. The left object is
+`Data.toSimplicialObject`, the point is unchanged, and the augmentation is the transported data
+morphism followed by the `constFunctorIso` comparison.
+-/
 noncomputable def toSimplicialAugmented (A : Augmented C) :
     SimplicialObject.Augmented C where
   left := (drop.obj A).toSimplicialObject
@@ -345,8 +348,10 @@ theorem toSimplicialAugmented_left_σ (A : Augmented C) {n : ℕ}
       (drop.obj A).σ i :=
   toSimplicialObject_map_σ (drop.obj A) i
 
-/-- Functor `Data.Augmented C ⥤ SimplicialObject.Augmented C` transporting augmented data
-via `Data.toSimplicialFunctor` and the constant comparison `constFunctorIso`. -/
+/--
+Functor `Data.Augmented C ⥤ SimplicialObject.Augmented C` transporting augmented data
+via `Data.toSimplicialFunctor` and the constant comparison `constFunctorIso`.
+-/
 noncomputable def toSimplicialFunctor :
     Augmented C ⥤ SimplicialObject.Augmented C :=
   Comma.map (F₁ := Data.toSimplicialFunctor (C := C)) (F₂ := 𝟭 C)

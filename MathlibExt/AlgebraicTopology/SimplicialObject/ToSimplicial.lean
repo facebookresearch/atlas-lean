@@ -6,6 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+
 module
 
 public import MathlibExt.AlgebraicTopology.SimplicialObject.FromData
@@ -43,8 +44,10 @@ namespace Data
 variable {C : Type u} [Category.{v} C]
 variable {D : Type u'} [Category.{v'} D]
 
-/-- Transport `Data C` to a genuine simplicial object via the explicit canonical inverse
-`SimplexCategoryGenRel.fromSimplexCategory.op`. -/
+/--
+Transport `Data C` to a simplicial object via the explicit canonical inverse
+`SimplexCategoryGenRel.fromSimplexCategory.op`.
+-/
 noncomputable def toSimplicialObject (X : Data C) : SimplicialObject C :=
   SimplexCategoryGenRel.fromSimplexCategory.op ⋙ X.toGenRelFunctor
 
@@ -158,8 +161,10 @@ private theorem toGenRelFunctor_mapObj_map_σ_op (F : C ⥤ D) (X : Data C) {n :
   simp only [toGenRelFunctor_map_σ_op, mapObj_σ]
   rfl
 
-/-- Arbitrary GenRel morphism comparison for postcomposition, by generator
-induction using `Functor.map_comp`. -/
+/--
+Arbitrary GenRel morphism comparison for postcomposition, by generator
+induction using `Functor.map_comp`.
+-/
 private theorem toGenRelFunctor_mapObj_map_op (F : C ⥤ D) (X : Data C)
     {a b : SimplexCategoryGenRel} (f : a ⟶ b) :
     (mapObj F X).toGenRelFunctor.map f.op =
@@ -198,8 +203,10 @@ private theorem toGenRelFunctor_mapObj_map (F : C ⥤ D) (X : Data C)
   rw [h]
   exact toGenRelFunctor_mapObj_map_op F X f.unop
 
-/-- Simplicial comparison for postcomposition at an arbitrary simplex map,
-via the canonical inverse and `Functor.map_comp`. -/
+/--
+Simplicial comparison for postcomposition at an arbitrary simplex map,
+via the canonical inverse and `Functor.map_comp`.
+-/
 theorem toSimplicialObject_mapObj_map (F : C ⥤ D) (X : Data C)
     {Δ Δ' : SimplexCategoryᵒᵖ} (f : Δ ⟶ Δ') :
     (mapObj F X).toSimplicialObject.map f =
@@ -220,13 +227,15 @@ private theorem toSimplicialObject_mapObj_obj (F : C ⥤ D) (X : Data C)
     (X.toSimplicialObject ⋙ F).obj Δ = (mapObj F X).toSimplicialObject.obj Δ := by
   simp only [Functor.comp_obj, toSimplicialObject_obj, mapObj_obj]
 
-/-- Postcomposition comparison for the data-to-simplicial transport.
+/--
+Postcomposition comparison for the data-to-simplicial transport.
 
 Orientation `(X.toSimplicialObject ⋙ F) ≅ (mapObj F X).toSimplicialObject`.
 Both components are identity isomorphisms (`eqToHom` of the object equality);
 arbitrary-map naturality is the propositional commutation
 `toSimplicialObject_mapObj_map`, proved by GenRel generator induction with
-`Functor.map_comp` / `map_id`, not by definitional equality. -/
+`Functor.map_comp` / `map_id`, not by definitional equality.
+-/
 noncomputable def toSimplicialObject_mapObjIso (F : C ⥤ D) (X : Data C) :
     (X.toSimplicialObject ⋙ F) ≅ (mapObj F X).toSimplicialObject where
   hom :=
@@ -274,12 +283,14 @@ theorem toSimplicialObject_mapObjIso_inv_app_mk (F : C ⥤ D) (X : Data C) (n : 
   cases toSimplicialObject_mapObj_obj F X (op (SimplexCategory.mk n))
   rfl
 
-/-- Functor-level postcomposition comparison for the data-to-simplicial transport.
+/--
+Functor-level postcomposition comparison for the data-to-simplicial transport.
 
 Orientation `(toSimplicialFunctor ⋙ whiskering.obj F) ≅ (mapFunctor F ⋙ toSimplicialFunctor)`,
 consistent with the objectwise `toSimplicialObject_mapObjIso`. Object components reuse
 `toSimplicialObject_mapObjIso`; naturality in `X` follows from the established
-`toSimplicialFunctor_map_app` / `mapFunctor_map_app` computation. -/
+`toSimplicialFunctor_map_app` / `mapFunctor_map_app` computation.
+-/
 noncomputable def toSimplicialFunctor_mapFunctorIso (F : C ⥤ D) :
     (toSimplicialFunctor (C := C) ⋙ (SimplicialObject.whiskering C D).obj F) ≅
     (mapFunctor F ⋙ toSimplicialFunctor (C := D)) :=

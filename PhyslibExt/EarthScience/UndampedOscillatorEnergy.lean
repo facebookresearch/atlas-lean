@@ -52,7 +52,7 @@ namespace EarthScience
 
 /-- Energy of an undamped oscillator: `E t = (deriv x t) ^ 2 / 2 + ω₀ ^ 2 * (x t) ^ 2 / 2`.
 If `x` satisfies `x'' = -ω₀ ^ 2 * x` (as `HasDerivAt` data at `t`), then
-`E` has derivative `0` at `t`. -/
+`E` has derivative `0` at `t` (`deriv x` is `0` where `x` is not differentiable). -/
 theorem oscillator_energy_hasDerivAt {x : ℝ → ℝ} {ω₀ t : ℝ}
     (hx : HasDerivAt x (deriv x t) t)
     (hx' : HasDerivAt (deriv x) (-ω₀ ^ 2 * x t) t) :

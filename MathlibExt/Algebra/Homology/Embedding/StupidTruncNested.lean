@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -190,7 +187,8 @@ theorem stupidTruncMapOfRangeLE_ιStupidTrunc
     obtain ⟨j, hj⟩ := h ⟨i, hi⟩
     simp only [HomologicalComplex.comp_f,
       stupidTruncMapOfRangeLE_f K e₁ e₂ h hi hj,
-      ιStupidTrunc_f_eq K e₂ hj, ιStupidTrunc_f_eq K e₁ hi,
+      ιStupidTrunc_f K e₂ k, ιStupidTrunc_f K e₁ k,
+      stupidTruncι.f_eq K e₂ hj, stupidTruncι.f_eq K e₁ hi,
       Category.assoc, Iso.inv_hom_id, Category.comp_id]
   · have hzero := K.isZero_stupidTrunc_X e₁ k (by simpa using hk)
     exact hzero.eq_of_src _ _
@@ -235,7 +233,7 @@ theorem stupidTruncMap_stupidTruncMapOfRangeLE_naturality
     _ = stupidTruncMap φ e₁ ≫ L.ιStupidTrunc e₁ := by
       rw [stupidTruncMapOfRangeLE_ιStupidTrunc]
     _ = K.ιStupidTrunc e₁ ≫ φ :=
-      ιStupidTrunc_naturality φ e₁
+      stupidTruncMap_ιStupidTrunc_naturality e₁ φ
     _ = (K.stupidTruncMapOfRangeLE e₁ e₂ h ≫
           K.ιStupidTrunc e₂) ≫ φ := by
       rw [stupidTruncMapOfRangeLE_ιStupidTrunc]
@@ -243,7 +241,7 @@ theorem stupidTruncMap_stupidTruncMapOfRangeLE_naturality
           (K.ιStupidTrunc e₂ ≫ φ) := Category.assoc _ _ _
     _ = K.stupidTruncMapOfRangeLE e₁ e₂ h ≫
           (stupidTruncMap φ e₂ ≫ L.ιStupidTrunc e₂) := by
-      rw [ιStupidTrunc_naturality φ e₂]
+      rw [stupidTruncMap_ιStupidTrunc_naturality]
     _ = (K.stupidTruncMapOfRangeLE e₁ e₂ h ≫
           stupidTruncMap φ e₂) ≫ L.ιStupidTrunc e₂ :=
       (Category.assoc _ _ _).symm

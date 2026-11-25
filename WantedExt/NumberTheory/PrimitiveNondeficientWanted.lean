@@ -46,24 +46,13 @@ public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
 public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientRadical
 public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientTwoPowMulPrime
+public import MathlibExt.NumberTheory.OddTwoPrimeFactorsDeficient
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PrimitiveNondeficientWanted
-
-/-- **Odd numbers with two prime factors are deficient.** If $n$ is an odd natural number with
-exactly two distinct prime divisors, then $\sigma(n) < 2n$, where $\sigma(n)$ is the sum of the
-positive divisors of $n$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma
-(label `Classificationofprimitivenondeficientwhenkis2`), second
-part. -/
-theorem_wanted deficient_of_odd_card_primeFactors_eq_two
-    (n : ℕ) (hno : Odd n) (hk : n.primeFactors.card = 2) :
-    ∑ d ∈ Nat.divisors n, d < 2 * n
 
 /-- **Small component for odd primitive non-deficient numbers with three or four prime factors.**
 Let $n$ be an odd primitive non-deficient number with exactly $3$ or exactly $4$ distinct prime

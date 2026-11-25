@@ -6,22 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
+
 module
 
 public import Mathlib.Algebra.Category.ModuleCat.ChangeOfRings
 public import MathlibExt.LinearAlgebra.TensorProduct.Balanced
 
 /-!
-# The actual ground-linear balanced tensor functor on left modules
+# Balanced tensor functors on left modules
 
-Scalar restriction on the variable left module is native. The quotient and
-map are the existing ground-balanced span quotient and native `mapQ`.
-Functor laws and additivity are proved on pure balanced representatives.
-The acting ring is allowed to be noncommutative; no tensor-additivity,
-flatness, or chosen-coequalizer premise is used.
+The balanced tensor quotient defines a ground-linear functor in the left module. Its maps preserve
+the balancing relations and are additive; their values on pure tensors determine the functor laws.
+The acting ring may be noncommutative.
 -/
 
 @[expose] public section
@@ -40,20 +36,12 @@ variable (k : Type u) (R : Type v) (M : Type w)
   [CommRing k] [Ring R] [Algebra k R]
   [AddCommGroup M] [Module k M] [Module Rᵐᵒᵖ M]
 
-/-- Let `k` be a commutative ring, `R` a `k`-algebra with possibly noncommutative
-`R`, and `M` an additive commutative group with a `k`-module action and a
-right `R`-module action (a left `Rᵐᵒᵖ`-module action). For a left
-`R`-module `N`, the object is `TensorProduct.Balanced k R M N` as a `k`-module.
-The `k` action on `N` is restricted along `algebraMap k R`. -/
+/-- The variable left module keeps its acting-ring module and uses restriction for the ground module. -/
 abbrev obj (N : ModuleCat.{z} R) : ModuleCat.{max w z} k :=
   letI : Module k N.carrier := Module.compHom N.carrier (algebraMap k R)
   ModuleCat.of k (TensorProduct.Balanced k R M N.carrier)
 
-/-- Let `k` be a commutative ring, `R` a `k`-algebra with possibly noncommutative
-`R`, and `M` an additive commutative group with a `k`-module action and a
-right `R`-module action (a left `Rᵐᵒᵖ`-module action). A left `R`-linear
-map `g : N ⟶ N′` induces a `k`-linear map of the balanced tensors
-with fixed first factor `M`, sending the class of `(m, n)` to that of `(m, g n)`. -/
+/-- The quotient map induced by a left-module morphism. -/
 def map {N N' : ModuleCat.{z} R} (g : N ⟶ N') : obj k R M N ⟶ obj k R M N' := by
   letI : Module k N.carrier := Module.compHom N.carrier (algebraMap k R)
   letI : Module k N'.carrier := Module.compHom N'.carrier (algebraMap k R)
@@ -88,12 +76,7 @@ theorem map_mk {N N' : ModuleCat.{z} R} (g : N ⟶ N') (m : M) (n : N.carrier) :
       ((TensorProduct.map (LinearMap.id : M →ₗ[k] M) l) (m ⊗ₜ[k] n)) = _
   rfl
 
-/-- Let `k` be a commutative ring, `R` a `k`-algebra with possibly noncommutative
-`R`, and `M` an additive commutative group with a `k`-module action and a
-right `R`-module action (a left `Rᵐᵒᵖ`-module action). The functor from
-left `R`-modules to `k`-modules sends `N` to `TensorProduct.Balanced k R M N`
-and a morphism `g : N ⟶ N′` to the map induced by `(m, n) ↦ (m, g n)`.
-The `k` action on `N` is obtained by restriction of scalars. -/
+/-- The balanced tensor functor. -/
 def functor : ModuleCat.{z} R ⥤ ModuleCat.{max w z} k where
   obj := obj k R M
   map := map k R M
@@ -126,12 +109,7 @@ def functor : ModuleCat.{z} R ⥤ ModuleCat.{max w z} k where
       _ = _ := congrArg (fun y => (map k R M h).hom y)
         (map_mk k R M g m n).symm
 
-/-- Let `k` be a commutative ring, `R` a `k`-algebra with possibly noncommutative
-`R`, and `M` an additive commutative group with a `k`-module action and a
-right `R`-module action (a left `Rᵐᵒᵖ`-module action). The balanced
-tensor functor from left `R`-modules to `k`-modules preserves addition
-of morphisms: it takes the sum of two maps to the sum of their
-induced maps on the balanced tensors. -/
+/-- The balanced tensor functor is additive. -/
 theorem additive : (functor k R M : ModuleCat.{z} R ⥤ ModuleCat.{max w z} k).Additive where
   map_add := by
     intro N N' g h

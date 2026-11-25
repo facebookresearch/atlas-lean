@@ -44,7 +44,10 @@ structure TestScheme (X : FieldScheme k) where
   source : FieldScheme k
   map : source.scheme ⟶ X.scheme
 
-def cycleCoordinates (X : Scheme.{0}) [IsNoetherian X] :
+universe u in
+/-- The coordinates of an algebraic cycle on a Noetherian scheme (of any universe), as a
+finitely supported function. -/
+def cycleCoordinates (X : Scheme.{u}) [IsNoetherian X] :
     AlgebraicCycle X ℤ →ₗ[ℤ] (X →₀ ℤ) where
   toFun c := Finsupp.ofSupportFinite c c.finite_support
   map_add' a b := by ext x; rfl
