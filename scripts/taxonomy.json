@@ -12643,6 +12643,7 @@
   "MathlibExt/NumberTheory/ErdosProblem871": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Splitting sets with dense sumsets"},
   "MathlibExt/NumberTheory/ErdosProblem869": {"to": "Combinatorics/additive-combinatorics/additive-bases", "title": "Asymptotic additive bases"},
   "MathlibExt/NumberTheory/ErdosProblem845": {"to": "NumberTheory/additive-number-theory", "title": "Sums of numbers of the form 2^k 3^l"},
+  "MathlibExt/NumberTheory/ErdosProblem847": {"to": "Combinatorics/additive-combinatorics/progressions-dense-sets", "title": "Unions of progression-free sets"},
   "MathlibExt/NumberTheory/ErdosProblem690": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Density of integers by their k-th smallest prime factor"},
   "MathlibExt/NumberTheory/ErdosProblem818": {"to": "Combinatorics/additive-combinatorics/sumsets-inverse-theorems", "title": "Sum-product estimates for sets of small doubling"},
   "MathlibExt/NumberTheory/ErdosProblem729": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Integral factorial ratios"},
