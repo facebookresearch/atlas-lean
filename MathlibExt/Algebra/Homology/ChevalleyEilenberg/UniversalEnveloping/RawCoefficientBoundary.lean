@@ -37,7 +37,7 @@ open scoped ModuleCat.Algebra
 
 namespace ChevalleyEilenberg
 
-attribute [local implicit_reducible] coefficientComplex HomologicalComplex.homologyFunctor
+attribute [local implicit_reducible] coefficientComplex
 
 variable (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L]
 

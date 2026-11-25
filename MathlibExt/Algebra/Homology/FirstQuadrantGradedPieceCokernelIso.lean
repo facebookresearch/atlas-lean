@@ -242,37 +242,33 @@ noncomputable def horizontalFilteredTopInclusion (p q : ℕ) :
   horizontalFilteredTotalι K p (p + q)
     (horizontalFilteredTopIndex p q)
 
-private theorem singleHorizontalFiberProjectionInverse (q : ℕ)
-    (F : DownNatHorizontalFilteredFiber (0 + q) 0 → C) :
-    Sigma.π F (horizontalFilteredTopIndex 0 q) ≫
-      Sigma.ι F (horizontalFilteredTopIndex 0 q) = 𝟙 (∐ F) := by
-    apply Sigma.hom_ext
-    intro idx
-    have hidx : idx = horizontalFilteredTopIndex 0 q := by
-      obtain ⟨⟨⟨a, b⟩, hab⟩, ha⟩ := idx
-      change a + b = 0 + q at hab
-      change a ≤ 0 at ha
-      have ha0 : a = 0 := by omega
-      subst a
-      have hbq : b = q := by omega
-      subst b
-      apply Subtype.ext
-      apply Subtype.ext
-      rfl
-    subst idx
-    dsimp only [_root_.id]
-    rw [← Category.assoc, Sigma.ι_π]
-    simp only [dite_eq_left rfl, eqToHom_refl, Category.id_comp, Category.comp_id]
-
 /-- Filtration stage zero has only its top-column summand. -/
 noncomputable def horizontalFilteredTopProjectionZeroIso (q : ℕ) :
     horizontalFilteredTotalObj K 0 (0 + q) ≅ (K.X 0).X q where
   hom := horizontalFilteredTopProjection K 0 q
   inv := horizontalFilteredTopInclusion K 0 q
-  hom_inv_id :=
-    singleHorizontalFiberProjectionInverse q
-      (fun pq : DownNatHorizontalFilteredFiber (0 + q) 0 =>
-        (K.X pq.val.val.1).X pq.val.val.2)
+  hom_inv_id := by
+    have hFiber (F : DownNatHorizontalFilteredFiber (0 + q) 0 → C) :
+        Sigma.π F (horizontalFilteredTopIndex 0 q) ≫
+          Sigma.ι F (horizontalFilteredTopIndex 0 q) = 𝟙 (∐ F) := by
+      apply Sigma.hom_ext
+      intro idx
+      have hidx : idx = horizontalFilteredTopIndex 0 q := by
+        obtain ⟨⟨⟨a, b⟩, hab⟩, ha⟩ := idx
+        change a + b = 0 + q at hab
+        change a ≤ 0 at ha
+        have ha0 : a = 0 := by omega
+        subst a
+        have hbq : b = q := by omega
+        subst b
+        apply Subtype.ext
+        apply Subtype.ext
+        rfl
+      subst idx
+      rw [← Category.assoc, Sigma.ι_π]
+      simp only [dite_eq_left rfl, eqToHom_refl, Category.id_comp, Category.comp_id]
+    exact hFiber (fun pq : DownNatHorizontalFilteredFiber (0 + q) 0 =>
+      (K.X pq.val.val.1).X pq.val.val.2)
   inv_hom_id := by
     simpa [horizontalFilteredTopInclusion, horizontalFilteredTopIndex] using
       horizontalFilteredTopι_topProjection K 0 q
