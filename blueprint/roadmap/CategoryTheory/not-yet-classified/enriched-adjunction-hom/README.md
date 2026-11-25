@@ -1,0 +1,15 @@
+# Enriched Adjunction Hom
+
+- [Data](data.md)
+- [Forward](forward.md)
+- [Inverse](inverse.md)
+- [Forward point](forward-point.md)
+- [Inverse point](inverse-point.md)
+- [Forward inverse](forward-inverse.md)
+- [Inverse forward](inverse-forward.md)
+- [Hom Iso](hom-iso.md)
+- [Value Iso](value-iso.md)
+- [Forward eq](forward-eq.md)
+- [Inverse eq](inverse-eq.md)
+- [Hom Iso hom](hom-iso-hom.md)
+- [Hom Iso inv](hom-iso-inv.md)

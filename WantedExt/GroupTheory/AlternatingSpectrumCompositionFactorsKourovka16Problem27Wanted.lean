@@ -38,7 +38,7 @@ non-abelian factor (by Jordan-Hölder, the same as for one composition series).
 
 /-- **Spectrum of a group.** The spectrum $\omega(G)$ of a group $G$ is the set of natural numbers
 that are orders of elements of $G$, where an element of infinite order is assigned order $0$. -/
-def spectrum (G : Type*) [Group G] : Set ℕ :=
+noncomputable def spectrum (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- **Finite composition series.** Let $G$ be a group and $m$ a natural number. A sequence

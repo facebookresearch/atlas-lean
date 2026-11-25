@@ -42,7 +42,7 @@ namespace MathlibExt.Economics.IntertemporalChoice
 
 open MathlibExt.Economics.Finance
 
-/-- Eliminating the asset holding: a two-date consumption plan `c` is financed by
+/-- Eliminating the asset holding: for `1 + r ≠ 0`, a two-date consumption plan `c` is financed by
 some asset holding `a` (date-0 budget `c 0 + a = y 0`, date-1 budget
 `c 1 = (1 + r) a + y 1`) exactly when the present value of consumption equals the
 present value of income at the rate `r` (Atlas roadmap MA04.T01). -/
@@ -80,7 +80,8 @@ theorem exists_asset_iff_presentValue_eq {r : ℝ} {c y : ℕ → ℝ} (h1r : 1 
     rw [mul_add, mul_add, mul_div_cancel₀ (c 1) h1r, mul_div_cancel₀ (y 1) h1r] at hmul
     linear_combination hmul
 
-/-- The two-period present-value budget `c₀ + c₁ / (1 + r) = y₀ + y₁ / (1 + r)` is the
+/-- For `1 + r ≠ 0`, the two-period present-value budget `c₀ + c₁ / (1 + r) = y₀ + y₁ / (1 + r)`
+is the
 binding budget line `c₁ = secondPeriodConsumption r y₀ y₁ c₀` of MA04.T02. -/
 theorem presentValue_budget_iff {r y₀ y₁ c₀ c₁ : ℝ} (h1r : 1 + r ≠ 0) :
     c₀ + c₁ / (1 + r) = y₀ + y₁ / (1 + r) ↔ c₁ = secondPeriodConsumption r y₀ y₁ c₀ := by

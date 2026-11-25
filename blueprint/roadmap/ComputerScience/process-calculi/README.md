@@ -10,3 +10,4 @@ Algebraic models of concurrent processes: labelled transition systems and their 
 - [Observational congruence](observational-congruence/README.md)
 - [Finite-state CCS agents](finite-state-ccs-agents/README.md)
 - [π-calculus](calculus/README.md)
+- [Process algebra laws](process-algebra-laws/README.md)
