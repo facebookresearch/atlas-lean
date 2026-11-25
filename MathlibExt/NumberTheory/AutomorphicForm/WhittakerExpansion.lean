@@ -1127,7 +1127,7 @@ theorem innerSolution
 
   have hW_int : ∀ α : F, W α =
       ∫ x, h x * ψ (-(algebraMap F (AdeleRing (𝓞 F) F) α * x)) ∂ν := by
-    intro α; rfl
+    intro α; exact whittakerCoefficient_eq_integral F _ ψ φ α g
 
   have hG_coef : ∀ β : F,
       ∫ x, G x * ψ (-(algebraMap F (AdeleRing (𝓞 F) F) β * x)) ∂ν = W β :=

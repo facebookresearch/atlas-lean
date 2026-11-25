@@ -29,6 +29,7 @@ module
 
 public import MathlibExt.NumberTheory.AutomorphicForm.CarrierPins
 public import MathlibExt.NumberTheory.AutomorphicForm.ConstantTerm
+public import MathlibExt.NumberTheory.NumberField.AdelicFourier
 public import MathlibExt.NumberTheory.NumberField.GlobalAddChar
 
 @[expose] public section
@@ -42,26 +43,40 @@ namespace AutomorphicForm
 
 variable (F : Type*) [Field F] [NumberField F]
 
-/-- The `α`-th Whittaker coefficient of `φ` at `g`, integrated against the
-pinned measure on the adeles. -/
+/-- The `α`-th Whittaker coefficient of `φ` at `g`: the adelic Fourier integral of
+`x ↦ φ (unipotentGL2 x * g)` against the pinned measure on the adeles, evaluated at `α`. -/
 public def whittakerCoefficient (pins : CarrierPins F) (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ)
     (φ : AdelicGL2 (𝓞 F) F → ℂ) (α : F) (g : AdelicGL2 (𝓞 F) F) : ℂ :=
   letI := pins.nS
-  ∫ x, φ (unipotentGL2 x * g) * ψ (-(algebraMap F (AdeleRing (𝓞 F) F) α * x)) ∂pins.ν
+  NumberField.AdelicFourier.fourierIntegral ψ pins.ν (fun x => φ (unipotentGL2 x * g))
+    (algebraMap F (AdeleRing (𝓞 F) F) α)
 
-/-- Integrability of the Whittaker-coefficient integrand. -/
+/-- Integrability of the Whittaker-coefficient integrand, in the form that
+`NumberField.AdelicFourier.fourierIntegral` integrates. -/
 public def WhittakerCoefficientIntegrable (pins : CarrierPins F)
     (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (φ : AdelicGL2 (𝓞 F) F → ℂ) (α : F)
     (g : AdelicGL2 (𝓞 F) F) : Prop :=
   letI := pins.nS
   Integrable
-    (fun x => φ (unipotentGL2 x * g) * ψ (-(algebraMap F (AdeleRing (𝓞 F) F) α * x))) pins.ν
+    (fun x => ψ (-(x * algebraMap F (AdeleRing (𝓞 F) F) α)) * φ (unipotentGL2 x * g)) pins.ν
+
+public theorem whittakerCoefficient_eq_integral (pins : CarrierPins F)
+    (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (φ : AdelicGL2 (𝓞 F) F → ℂ) (α : F)
+    (g : AdelicGL2 (𝓞 F) F) :
+    whittakerCoefficient F pins ψ φ α g =
+      ∫ x, φ (unipotentGL2 x * g) * ψ (-(algebraMap F (AdeleRing (𝓞 F) F) α * x)) ∂pins.ν := by
+  letI := pins.nS
+  simp only [whittakerCoefficient, NumberField.AdelicFourier.fourierIntegral]
+  congr 1 with x
+  rw [mul_comm x]
+  exact mul_comm _ _
 
 @[simp] public theorem whittakerCoefficient_zero (pins : CarrierPins F)
     (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (α : F) (g : AdelicGL2 (𝓞 F) F) :
     whittakerCoefficient F pins ψ (fun _ => (0 : ℂ)) α g = 0 := by
   letI := pins.nS
-  simp only [whittakerCoefficient, zero_mul, integral_zero]
+  simp only [whittakerCoefficient, NumberField.AdelicFourier.fourierIntegral, mul_zero,
+    integral_zero]
 
 public theorem whittakerCoefficient_zero_eq_constantTerm (pins : CarrierPins F)
     (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (φ : AdelicGL2 (𝓞 F) F → ℂ)
@@ -69,8 +84,8 @@ public theorem whittakerCoefficient_zero_eq_constantTerm (pins : CarrierPins F)
     whittakerCoefficient F pins ψ φ 0 g
       = @constantTerm _ pins.nS _ _ pins.ν unipotentGL2 φ g := by
   letI := pins.nS
-  simp only [whittakerCoefficient, map_zero, zero_mul, neg_zero, AddChar.map_zero_eq_one,
-    mul_one]
+  simp only [whittakerCoefficient, NumberField.AdelicFourier.fourierIntegral, map_zero,
+    mul_zero, neg_zero, AddChar.map_zero_eq_one, one_mul]
   rfl
 
 end AutomorphicForm

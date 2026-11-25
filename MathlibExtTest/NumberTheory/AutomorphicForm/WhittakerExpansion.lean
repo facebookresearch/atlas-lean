@@ -70,6 +70,15 @@ example (F : Type) [Field F] [NumberField F]
       = @constantTerm _ pins.nS _ _ pins.ν unipotentGL2 φ g :=
   whittakerCoefficient_zero_eq_constantTerm F pins ψ φ g
 
+-- The Whittaker coefficient is the adelic Fourier integral of `x ↦ φ (unipotentGL2 x * g)`.
+example (F : Type) [Field F] [NumberField F]
+    (pins : CarrierPins F) (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ)
+    (φ : AdelicGL2 (𝓞 F) F → ℂ) (α : F) (g : AdelicGL2 (𝓞 F) F) :
+    whittakerCoefficient F pins ψ φ α g
+      = @NumberField.AdelicFourier.fourierIntegral _ _ pins.nS ψ pins.ν
+          (fun x => φ (unipotentGL2 x * g)) (algebraMap F (AdeleRing (𝓞 F) F) α) :=
+  rfl
+
 -- Cuspidality requires integrable constant-term integrands. A nonzero constant against
 -- Lebesgue measure on `ℝ` has vanishing constant terms, because the Bochner integral of a
 -- non-integrable function is zero, but it is not cuspidal; the zero function is cuspidal.
