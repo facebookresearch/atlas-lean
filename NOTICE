@@ -413,3 +413,350 @@ Files:
   MathlibExt/CategoryTheory/Monad/BarSimplicial.lean
   MathlibExt/CategoryTheory/Monad/Module.lean
   MathlibExt/CategoryTheory/Monad/MonoidalBar.lean
+
+
+Additional general homological-algebra source attributions
+----------------------------------------------------------
+
+Source snapshot: fairinternal/formal-math at 9a495da20622876d4a72852b4de7e0921e976bc0.
+The source authorship and license notices for the following modules and tests
+are reproduced below. This attribution does not change applicable license terms.
+
+Files:
+
+  MathlibExt/Algebra/Category/LieModuleCat/CoefficientULift.lean
+  MathlibExt/Algebra/Category/LieModuleCat/RightUniversalEnveloping.lean
+  MathlibExt/Algebra/Category/LieModuleCat/RightUniversalEnveloping/ULift.lean
+  MathlibExt/Algebra/Category/ModuleCat/AlgebraBarResolution.lean
+  MathlibExt/Algebra/Category/ModuleCat/AlgebraTensorAdjunction.lean
+  MathlibExt/Algebra/Category/ModuleCat/TorFlat.lean
+  MathlibExt/Algebra/Homology/CartanEilenberg/TensorSecondPage.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CoalgebraPrimitive.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CoefficientULiftTransport.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/Homology.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/HomologyCoalgebra.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/HomologyDiagonal.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/HomologyZero.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/LieNaturalityULift.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/Matrix.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/MatrixCoinvariants.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/MatrixHomologyCoalgebra.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/MatrixPositiveTail.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/PrimitiveCoordinates.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/PrimitiveFree.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/PrimitiveHomologyClasses.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/PrimitiveProjective.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/RightAdjointCoordinates.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/RightCoefficients.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/SupportedDifferential.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/BarComparison.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/NativeCoefficients.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/ProjectiveResolution.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/RawCoefficientBoundary.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/RawCoefficientHeightComparison.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/RawCoefficientHeightNaturality.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/RawCoefficientHomologyZero.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/RawCoefficientResolutionHeight.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/RawCoefficientTensorHeight.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/RawRightCoefficients.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/RightHomologyZero.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/TorNaturality.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping/TorZeroAt.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/UniverseHomologyCoalgebra.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyFilteredObjectFunctor.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyFiltrationFunctor.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyGradedComparison.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyGradedPositiveSquare.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyGradedPositiveStep.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyGradedZeroSquare.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantTotalMap.lean
+  MathlibExt/Algebra/Homology/GradedHomology/Koszul.lean
+  MathlibExt/Algebra/Homology/GradedHomology/Monoidal.lean
+  MathlibExt/Algebra/Homology/HomologyCoalgebra/Basic.lean
+  MathlibExt/Algebra/Homology/HomologyCoalgebra/Diagonal.lean
+  MathlibExt/Algebra/Homology/HomologyCoalgebra/NativeUnitComparison.lean
+  MathlibExt/Algebra/Homology/HomologyCoalgebra/Primitives.lean
+  MathlibExt/Algebra/Homology/Kunneth/Braiding.lean
+  MathlibExt/Algebra/Homology/Kunneth/Coherence.lean
+  MathlibExt/Algebra/Homology/Kunneth/Collapse.lean
+  MathlibExt/Algebra/Homology/Kunneth/Edge.lean
+  MathlibExt/Algebra/Homology/Kunneth/Graded.lean
+  MathlibExt/Algebra/Homology/Kunneth/Naturality.lean
+  MathlibExt/Algebra/Homology/Kunneth/SpectralSequence.lean
+  MathlibExt/Algebra/Homology/PartialTotalAdjacentCore.lean
+  MathlibExt/Algebra/Homology/PartialTotalConnectingDifferential.lean
+  MathlibExt/Algebra/Homology/PartialTotalConnectingHorizontal.lean
+  MathlibExt/Algebra/Homology/PartialTotalConvergence.lean
+  MathlibExt/Algebra/Homology/PartialTotalCoreInterval.lean
+  MathlibExt/Algebra/Homology/PartialTotalEdgeMaps.lean
+  MathlibExt/Algebra/Homology/PartialTotalFirstPage.lean
+  MathlibExt/Algebra/Homology/PartialTotalFirstPageDifferential.lean
+  MathlibExt/Algebra/Homology/PartialTotalHasSpectralSequence.lean
+  MathlibExt/Algebra/Homology/PartialTotalHorizontal.lean
+  MathlibExt/Algebra/Homology/PartialTotalHorizontalRow.lean
+  MathlibExt/Algebra/Homology/PartialTotalHorizontalRowCocycle.lean
+  MathlibExt/Algebra/Homology/PartialTotalNegativeVanishing.lean
+  MathlibExt/Algebra/Homology/PartialTotalSecondPageVerticalHomology.lean
+  MathlibExt/Algebra/Homology/PartialTotalStablePage.lean
+  MathlibExt/Algebra/Homology/PartialTotalStageZeroRowCoordinate.lean
+  MathlibExt/Algebra/Homology/PartialTotalStepVanishing.lean
+  MathlibExt/Algebra/Homology/PartialTotalSuccessorCochainSplitting.lean
+  MathlibExt/Algebra/Homology/PartialTotalTailFunctoriality.lean
+  MathlibExt/Algebra/Homology/PartialTotalTwoColumn.lean
+  MathlibExt/Algebra/Homology/PartialTotalTwoColumnZeroEdge.lean
+  MathlibExt/Algebra/Homology/SpectralObject/StableIntervalGraded.lean
+  MathlibExt/Algebra/Homology/SpectralSequence/TwoColumnHomological.lean
+  MathlibExt/Algebra/Homology/UniverseKunneth/Braiding.lean
+  MathlibExt/Algebra/Homology/UniverseKunneth/Coalgebra.lean
+  MathlibExt/Algebra/Homology/UniverseKunneth/Coherence.lean
+  MathlibExt/Algebra/Homology/UniverseKunneth/Field.lean
+  MathlibExt/Algebra/Homology/UniverseKunneth/Graded.lean
+  MathlibExt/Algebra/Homology/UniverseKunneth/ScalarPairing.lean
+  MathlibExt/Algebra/Homology/UniverseScalarComplexTensor.lean
+  MathlibExt/Algebra/Homology/UniverseScalarGradedTensor.lean
+  MathlibExt/Algebra/Homology/UniverseScalarHomology.lean
+  MathlibExt/Algebra/Lie/MatrixZeroExtension.lean
+  MathlibExt/Algebra/Lie/OfNonUnitalAssociative.lean
+  MathlibExt/Algebra/Lie/UniversalEnveloping/AssociatedGraded.lean
+  MathlibExt/Algebra/Lie/UniversalEnveloping/PBW/AssociatedGraded.lean
+  MathlibExt/Algebra/Lie/UniversalEnveloping/PBW/CompleteGradedCoordinates.lean
+  MathlibExt/Algebra/Lie/UniversalEnveloping/PBW/GradedCoordinates.lean
+  MathlibExt/Algebra/Lie/UniversalEnveloping/PBW/IntrinsicComparison.lean
+  MathlibExt/Algebra/Lie/UniversalEnveloping/PBW/MultiplicativeCoordinates.lean
+  MathlibExt/Algebra/Lie/UniversalEnveloping/PBW/Projective.lean
+  MathlibExt/Algebra/Lie/UniversalEnveloping/PBW/SymmetricComparison.lean
+  MathlibExt/CategoryTheory/GradedObject/Kernels.lean
+  MathlibExt/CategoryTheory/GradedObject/TensorAntidiagonal.lean
+  MathlibExt/CategoryTheory/NatTrans/PointwiseImage.lean
+  MathlibExt/LinearAlgebra/ExteriorAlgebra/CoalgebraMap.lean
+  MathlibExt/LinearAlgebra/ExteriorAlgebra/PrimitiveEquation.lean
+  MathlibExt/LinearAlgebra/ExteriorAlgebra/PrimitiveFree.lean
+  MathlibExt/LinearAlgebra/ExteriorAlgebra/PrimitiveProjective.lean
+  MathlibExt/LinearAlgebra/Filtration/Exactness.lean
+  MathlibExt/LinearAlgebra/Matrix/Stable.lean
+  MathlibExt/LinearAlgebra/Matrix/StableModule.lean
+  MathlibExt/LinearAlgebra/Matrix/StableModule/Truncate.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/RightActions.lean
+  MathlibExt/RingTheory/FilteredAlgebra/AssociatedGraded.lean
+  MathlibExt/RingTheory/FilteredAlgebra/AssociatedGradedMap.lean
+  MathlibExt/RingTheory/MvPolynomial/LeadingProduct.lean
+  MathlibExtTest/Algebra/Category/ModuleCat/TorFlat.lean
+  MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/AbelianPrimitiveHomology.lean
+  MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/ActualIndependentWorldHomologyCoalgebra.lean
+  MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/CharacteristicTwoPrimitive.lean
+  MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/CoefficientFunctor.lean
+  MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/Exterior.lean
+  MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/IndependentWorldDiagonal.lean
+  MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/PrimitiveHomologyNoninjective.lean
+  MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/UniversalEnveloping.lean
+  MathlibExtTest/Algebra/Homology/FirstQuadrantTotalQuasiIso.lean
+  MathlibExtTest/LinearAlgebra/Matrix/Stable.lean
+  MathlibExtTest/LinearAlgebra/Matrix/StableModule.lean
+  MathlibExtTest/LinearAlgebra/Matrix/StableModule/Truncate.lean
+
+/-
+Author: @toskua
+-/
+
+Snapshot files without a leading attribution block:
+
+  MathlibExt/Algebra/Category/ModuleCat/ExteriorPowerDirectLimit.lean
+  MathlibExt/Algebra/Category/ModuleCat/UliftRestriction.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrix.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrixComparison.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrixConnesWorkingHeight.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrixCyclic.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrixHeightComparison.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrixHeightCyclic.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrixHeightCyclicNaturality.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrixHeightNaturality.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrixModule.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrixNaturality.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CanonicalStableMatrixWorkingHeight.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CoalgebraWorkingHeightFunctor.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/CyclicBoundary.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/MatrixCyclicChainMap.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/MatrixCyclicDegreeMap.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/MatrixCyclicStabilization.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/MatrixCyclicStabilizationNaturality.lean
+  MathlibExt/Algebra/Homology/ChevalleyEilenberg/MatrixCyclicWorkingHeight.lean
+  MathlibExt/LinearAlgebra/TensorProduct/Balanced/ScalarChange.lean
+  MathlibExtTest/Algebra/Homology/ChevalleyEilenberg/CoefficientCohomologyZeroNonfree.lean
+
+Files:
+
+  MathlibExt/Algebra/Homology/ChainGradedPairingHomologyBraiding.lean
+
+/-
+Copyright (c) 2026 Avocado. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Avocado
+-/
+
+Files:
+
+  MathlibExt/Algebra/Homology/FirstQuadrantAbutmentImage.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantBottomRelativeHomology.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantBottomRelativeNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantBottomRelativeTotalNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCanonicalAbutmentCokernelNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCanonicalAbutmentCurrentImageNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCanonicalAbutmentGradedNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCanonicalAbutmentImageQuotientNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCanonicalAbutmentPreviousImageNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCollapse.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltration.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationFiniteComparison.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationFunctor.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationHomotopy.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationRestriction.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationRestrictionHomology.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationRestrictionNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationRestrictionTotal.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationSpectralHomotopy.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCompleteFiltrationSpectralNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantConvergence.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantCutoffTotal.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantDegreeTwo.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantEdge.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFilteredComplex.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFiltration.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFiltrationDiagram.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFiltrationMaps.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFiltrationNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPage.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageAdjacentCokernel.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageBoundaryComparison.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageBoundaryCycles.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageCoherentCokernelNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageCoherentXNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageCokernelSections.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageColumn.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageColumnNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageComparisonNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageCompleteBoundary.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageConnecting.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageConnectingCycles.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageDifferential.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageFiniteBoundary.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageHomologyTailNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageHorizontalCycles.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageMappingConeNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageMiddleSection.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageRowNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageSections.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantFirstPageZeroBoundary.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantGradedPiece.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantGradedPieceCokernel.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantGradedPieceCokernelIso.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantGradedPieceCokernelMap.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantGradedPieceMap.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantGradedPieceNaturalMap.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantGradedPieceSplitting.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyFiltration.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyFiltrationNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyGradedCurrentFunctoriality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyGradedFunctor.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyGradedMap.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyGradedPrevFunctoriality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantHomologyGradedUnifiedPrevFunctoriality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantLowestRow.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantSecondPage.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantSecondPageMap.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantSpectralComparison.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantSpectralObject.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantSpectralSequenceData.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantSpectralSequenceSupport.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantStablePage.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantStablePageCanonicalNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantStablePageGradedNaturality.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantTotal.lean
+  MathlibExt/Algebra/Homology/FirstQuadrantTotalLocalization.lean
+  MathlibExt/Algebra/Homology/SpectralObjectMapNaturality.lean
+  MathlibExt/CategoryTheory/Monad/AdjunctionBarContraction.lean
+  MathlibExtTest/Algebra/Homology/FirstQuadrantDegreeTwoTests.lean
+  MathlibExtTest/Algebra/Homology/FirstQuadrantLowestRowTests.lean
+
+-- Author: @toskua
+
+Files:
+
+  MathlibExt/Algebra/Homology/FirstQuadrantBicomplexTail.lean
+
+/-
+Author: @toskua
+Copyright (c) 2026 @junekim623, Muse. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: @junekim623, Muse, @toskua
+
+Bicomplex lift of the inner-tail cutoff short exact sequence.
+
+Lifts the inner-tail short complex to first-quadrant bicomplexes and proves it
+short exact degreewise.
+-/
+
+Files:
+
+  MathlibExt/Algebra/Homology/FirstQuadrantSecondPageNaturality.lean
+
+-- Author: @toskua, Avocado
+
+Files:
+
+  MathlibExt/Algebra/Homology/FirstQuadrantStageZeroRepresentative.lean
+  MathlibExt/Algebra/Homology/SpectralObject/ZeroColumnEdge.lean
+  MathlibExt/CategoryTheory/Monad/BarAdjunction.lean
+  MathlibExt/CategoryTheory/Monad/BarChange.lean
+  MathlibExt/CategoryTheory/Monad/BarEilenbergMoore.lean
+
+/-
+Author: @toskua, Avocado
+-/
+
+Files:
+
+  MathlibExt/Algebra/Homology/FirstQuadrantTail.lean
+
+/-
+Author: @toskua
+Copyright (c) 2026 @junekim623, Muse. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: @junekim623, Muse, @toskua
+
+Adjacent-tail natural inclusion for first-quadrant complexes.
+
+Built on MathlibExt's stupid-truncation map and inclusion APIs.
+-/
+
+Files:
+
+  MathlibExt/Algebra/Homology/FirstQuadrantTailQuotient.lean
+
+/-
+Author: @toskua
+Copyright (c) 2026 @junekim623, Muse. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: @junekim623, Muse, @toskua
+
+Inner-tail cutoff quotient short complex for first-quadrant complexes.
+
+This builds on the source-neutral adjacent-tail primitive.
+-/
+
+Independently authored finite and stable matrix Morita additions
+---------------------------------------------------------------
+
+The following authored originals are absent from the source snapshot above.
+Their original file identifiers and authorship are retained:
+
+  MathlibExt/Algebra/Homology/Hochschild/Matrix/Morita.lean
+    Original source SHA-256: 3969347af5a80055923b15f50ff69e32a8310aa2cb0bd89874003e098c2776e1
+  MathlibExt/Algebra/Homology/Hochschild/Matrix/StableMorita.lean
+    Original source SHA-256: 25ce251ac334a4ba759748bb5c8e5de655a96bdbf4172bf4bd78f55eb25f88df
+  MathlibExtTest/Algebra/Homology/Hochschild/Matrix/MoritaTests.lean
+    Original source SHA-256: 7914271316f06ddce575b62946d68ddf91a0d183978a5d50a9063c700507d325
+  MathlibExtTest/Algebra/Homology/Hochschild/Matrix/StableMoritaTests.lean
+    Original source SHA-256: a07e62d19e8f1e07f753d7ee7444652c75dddebaf1db896872ea5bb9bb276679
+
+Author: @toskua

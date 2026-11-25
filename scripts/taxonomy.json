@@ -18193,7 +18193,8 @@
   "MathlibExt/LinearAlgebra/TensorProduct/Balanced/ScalarChange": {"to": "CategoryTheory/homological-algebra/complexes-and-homology", "title": "Semilinear maps of the original balanced quotients"},
   "MathlibExt/RingTheory/FilteredAlgebra/AssociatedGraded": {"to": "CategoryTheory/homological-algebra/complexes-and-homology", "title": "The associated graded algebra of a natural-number filtration"},
   "MathlibExt/RingTheory/FilteredAlgebra/AssociatedGradedMap": {"to": "CategoryTheory/homological-algebra/complexes-and-homology", "title": "Actual maps of associated graded algebras"},
-  "MathlibExt/RingTheory/MvPolynomial/LeadingProduct": {"to": "CategoryTheory/homological-algebra/complexes-and-homology", "title": "Leading products at an actual polynomial degree bound"}
+  "MathlibExt/RingTheory/MvPolynomial/LeadingProduct": {"to": "CategoryTheory/homological-algebra/complexes-and-homology", "title": "Leading products at an actual polynomial degree bound"},
+  "MathlibExt/Algebra/Homology/Hochschild/Matrix/StableMorita": {"to": "CategoryTheory/homological-algebra/complexes-and-homology", "title": "Stable matrix invariance of Hochschild homology"}
  },
  "mathlib_exclusions": {
   "Mathlib/Algebra/AddTorsor": "Deprecated re-export of the corresponding torsor module",
