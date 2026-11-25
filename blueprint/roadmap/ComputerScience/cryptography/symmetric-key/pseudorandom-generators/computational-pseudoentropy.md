@@ -1,6 +1,6 @@
 # Computational pseudoentropy
 
-A distribution ensemble $X = (X_n)$ has *(HILL) pseudoentropy* at least $k(n)$ if there is an ensemble $Y = (Y_n)$ with entropy $H(Y_n) \ge k(n)$ (Shannon entropy, or min-entropy in the min-entropy variant) that is computationally indistinguishable from $X$. A *pseudoentropy generator* is a polynomial-time function $f$ such that $f(U_n)$ has pseudoentropy at least $n + e(n)$, more than the entropy of its input, witnessed by an efficiently samplable ensemble $Y$, where the gap satisfies $e(n) \ge 1/p(n)$ for some polynomial $p$.
+A distribution ensemble $X = (X_n)$ has *(HILL) pseudoentropy* at least $k(n)$ if there is an ensemble $Y = (Y_n)$ with entropy $H(Y_n) \ge k(n)$ (Shannon entropy, or min-entropy in the min-entropy variant) that is computationally indistinguishable from $X$. A *pseudoentropy generator* is a polynomial-time function $f$ such that $f(U_n)$ has pseudoentropy at least $n + e(n)$, more than the entropy of its input, where the gap satisfies $e(n) \ge 1/p(n)$ for some polynomial $p$.
 
 ## Depends on
 
