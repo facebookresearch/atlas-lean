@@ -11,5 +11,5 @@
 - [Linear combinations are square integrable](mem-lp-dot-product.md)
 - [Covariance of a linear combination with a function](covariance-dot-product-left.md)
 - [Covariance of two linear combinations](covariance-dot-product-dot-product.md)
-- [Zero covariance gives zero correlation](pearson-ratio-eq-zero-of-covariance-eq-z.md)
-- [Zero cross-covariance gives zero correlation for every linear score](pearson-ratio-linear-eq-zero-of-cross-co.md)
+- [Zero covariance gives zero Pearson quotient](pearson-ratio-eq-zero-of-covariance-eq-z.md)
+- [Zero cross-covariance gives zero Pearson quotient for every linear score](pearson-ratio-linear-eq-zero-of-cross-co.md)

@@ -35,8 +35,9 @@ correlation, standardized score, standardized upper-tail event, and difference o
   positive; `0` when either variance is zero).
 * `standardizedValue μ f`: `(f - μ[f]) / populationSD μ f` (standardized score when `μ` is a
   probability measure, `f` is square-integrable, and `Var[f; μ] > 0`).
-* `standardizedUpperEvent μ f z`: `{ω | μ[f] + z * populationSD μ f ≤ f ω}` (upper-tail event at
-  `z` standard deviations when `μ` is a probability measure and `f` is square-integrable).
+* `standardizedUpperEvent μ f z`: the threshold set `{ω | μ[f] + z * populationSD μ f ≤ f ω}`
+  (a measurable upper-tail event when `Measurable f`, with mean and standard deviation
+  interpretation when `μ` is a probability measure and `f` is square-integrable).
 * `conditionalMeanShift μ H s`: the totalized integral shift `(∫ ω, H ω ∂μ[|s]) - ∫ ω, H ω ∂μ`
   (the difference of population means when `μ` is a probability measure, `H` is integrable, and `s`
   is a measurable event of positive mass).
@@ -50,7 +51,7 @@ correlation, standardized score, standardized upper-tail event, and difference o
   moments and covariances of linear combinations `b ⬝ᵥ X` of a random vector.
 * `pearsonRatio_eq_zero_of_covariance_eq_zero`,
   `pearsonRatio_linear_eq_zero_of_crossCovariance_eq_zero`: zero covariance gives zero
-  correlation.
+  `pearsonRatio` quotient.
 -/
 
 @[expose] public section
@@ -78,9 +79,10 @@ its population standard deviation. -/
 noncomputable def standardizedValue {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (f : Ω → ℝ) (ω : Ω) : ℝ := (f ω - μ[f]) / populationSD μ f
 
-/-- The set `{ω | μ[f] + z * populationSD μ f ≤ f ω}`. When `μ` is a probability measure and `f`
-is square-integrable, this is the upper-tail event of outcomes whose score is at least `z`
-population standard deviations above the population mean. -/
+/-- The threshold set `{ω | μ[f] + z * populationSD μ f ≤ f ω}` (a measurable upper-tail event
+when `Measurable f`; `MemLp` alone gives only a.e. strong measurability). When `μ` is a
+probability measure and `f` is square-integrable, the threshold is `z` population standard
+deviations above the population mean. -/
 noncomputable def standardizedUpperEvent {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     (f : Ω → ℝ) (z : ℝ) : Set Ω := {ω | μ[f] + z * populationSD μ f ≤ f ω}
 
@@ -187,20 +189,24 @@ theorem covariance_dotProduct_dotProduct {n : ℕ} {Ω : Type*} [MeasurableSpace
   intro j _
   ring
 
-/-- **Zero covariance gives zero correlation.** Let `μ` be a probability measure on `Ω` and
-`f, g : Ω → ℝ` with `Var[f; μ] > 0`, `Var[g; μ] > 0` and `cov[f, g; μ] = 0`. Then
-`pearsonRatio μ f g = 0`. -/
+/-- **Zero covariance gives zero Pearson quotient.** Let `μ` be a probability measure on `Ω` and
+`f, g : Ω → ℝ` with `Var[f; μ] > 0`, `Var[g; μ] > 0` and `cov[f, g; μ] = 0`. Then the totalized
+quotient `pearsonRatio μ f g` equals `0` (this algebraic zero-quotient lemma requires only
+`cov[f, g; μ] = 0`, without square-integrability or measurability; when `f, g ∈ L²(μ)`, it
+interprets as zero Pearson correlation). -/
 theorem pearsonRatio_eq_zero_of_covariance_eq_zero {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {f g : Ω → ℝ}
     (_hf : 0 < Var[f; μ]) (_hg : 0 < Var[g; μ]) (hcov : cov[f, g; μ] = 0) :
     pearsonRatio μ f g = 0 := by
   simp [pearsonRatio, hcov]
 
-/-- **Zero cross-covariance gives zero correlation for every linear score.** Let `μ` be a
-probability measure on `Ω`, `X : Ω → ℝⁿ` a random vector with all coordinates in `L²(μ)` and
-positive definite covariance matrix `(cov[X_i, X_j; μ])`, and `H : Ω → ℝ` in `L²(μ)` with
-`Var[H; μ] > 0` and `cov[X_i, H; μ] = 0` for every `i`. Then for every nonzero `b ∈ ℝⁿ`,
-`pearsonRatio μ (b ⬝ᵥ X) H = 0`. -/
+/-- **Zero cross-covariance gives zero Pearson quotient for every linear score.** Let `μ` be a
+probability measure on `Ω`, `X : Ω → ℝⁿ` with all coordinates in `L²(μ)` and positive definite
+covariance matrix `(cov[X_i, X_j; μ])`, and `H : Ω → ℝ` in `L²(μ)` with `Var[H; μ] > 0` and
+`cov[X_i, H; μ] = 0` for every `i`. Then for every nonzero `b ∈ ℝⁿ`, the quotient
+`pearsonRatio μ (b ⬝ᵥ X) H` equals `0` (and equals the Pearson correlation of `b ⬝ᵥ X` and `H`
+since both scores lie in `L²(μ)` with positive variances; the proof itself uses only
+`cov[b ⬝ᵥ X, H; μ] = 0`). -/
 theorem pearsonRatio_linear_eq_zero_of_crossCovariance_eq_zero
     {n : ℕ} {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X : Ω → Fin n → ℝ} {H : Ω → ℝ} (_hX : ∀ i, MemLp (fun ω => X ω i) 2 μ)
