@@ -18,7 +18,8 @@ import Mathlib.Tactic.LinearCombination
 
 namespace MetaMathlibExt
 
--- The equation alone gives the quotient; retain the hypotheses of Lemma 7.
+-- The equation alone gives the quotient. Primality is not needed, even though the paper
+-- applies the result to odd primes.
 set_option linter.unusedVariables false in
 /-- **Odd solutions $p$ of $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$ satisfy
 $p + 1 \mid 2^b + 2$.** Let $k$ and $b$ be positive natural numbers and let $p$ be an odd natural
