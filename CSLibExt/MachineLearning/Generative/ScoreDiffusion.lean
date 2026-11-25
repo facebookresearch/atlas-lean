@@ -67,26 +67,31 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDim
 
 /-- Law at time `t` of the Ornstein–Uhlenbeck process `dX = -X dt + √2 dB` started from `q`: the
 law of `e^{-t} X₀ + √(1 - e^{-2t}) Z` with `X₀ ∼ q` and `Z` an independent standard Gaussian
-vector (Chen et al., arXiv:2209.11215v3, Section 2.1). -/
+vector (Chen et al., arXiv:2209.11215v3, Section 2.1). Only times `t ≥ 0` are meaningful: for
+`t < 0`, `1 - e^{-2t}` is negative and its `Real.sqrt` is `0`. -/
 noncomputable def ouMarginal (q : Measure E) (t : ℝ) : Measure E :=
   (q.prod (stdGaussian E)).map
     fun p => Real.exp (-t) • p.1 + Real.sqrt (1 - Real.exp (-2 * t)) • p.2
 
 /-- The score `∇ log ρ` of a density `ρ`, through Mathlib's `gradient` (`0` at points where
-`log ∘ ρ` is not differentiable). -/
+`log ∘ ρ` is not differentiable). The gradient is taken in the space variable, as in score
+matching; `MathlibExt.Probability.Statistics.VectorInference.score` is instead the gradient
+`∇_θ log p θ x` in the parameter of a statistical model. -/
 noncomputable def logDensityScore (ρ : E → ℝ) : E → E :=
   gradient fun x => Real.log (ρ x)
 
 /-- One step of the DDPM sampler with the score value frozen at the start of the step: the law
 of `e^h x + 2 (e^h - 1) σ x + √(e^{2h} - 1) ξ` for `x ∼ μ` and an independent standard Gaussian
 `ξ`, the closed-form solution of equation (2.8) of Chen et al. (arXiv:2209.11215v3) over one
-step. If the update map is not a.e.-measurable, `Measure.map` falls back to a Dirac mass. -/
+step. If the update map is not a.e.-measurable, `Measure.map` falls back to a Dirac mass. Only
+steps `h ≥ 0` are meaningful: for `h < 0`, `e^{2h} - 1` is negative and its `Real.sqrt` is `0`. -/
 noncomputable def ddpmStep (h : ℝ) (σ : E → E) (μ : Measure E) : Measure E :=
   (μ.prod (stdGaussian E)).map fun p =>
     Real.exp h • p.1 + (2 * (Real.exp h - 1)) • σ p.1 + Real.sqrt (Real.exp (2 * h) - 1) • p.2
 
 /-- Laws of the DDPM sampler with step `h` and `N` steps, started at the standard Gaussian; `s k`
-estimates the score at time `k h`, and step `j + 1` uses `s (N - j)`. -/
+estimates the score at time `k h`, and step `j + 1` uses `s (N - j)`. Only `j ≤ N` is meaningful:
+with natural subtraction, the steps after the `N`-th use `s 0`. -/
 noncomputable def ddpmLaw (h : ℝ) (s : ℕ → E → E) (N : ℕ) : ℕ → Measure E
   | 0 => stdGaussian E
   | j + 1 => ddpmStep h (s (N - j)) (ddpmLaw h s N j)
@@ -97,7 +102,7 @@ noncomputable def ddpmOutput (h : ℝ) (s : ℕ → E → E) (N : ℕ) : Measure
 
 /-- The forward process starts at the data law. -/
 @[simp]
-theorem ouMarginal_zero [BorelSpace E] (q : Measure E) : ouMarginal q 0 = q := by
+theorem ouMarginal_zero (q : Measure E) : ouMarginal q 0 = q := by
   simp [ouMarginal]
 
 /-- The standard Gaussian is stationary for the forward Ornstein–Uhlenbeck process. -/

@@ -31,14 +31,17 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.NullSingletonClass
 public import Mathlib.Order.Interval.Finset.Basic
 public import Mathlib.Topology.MetricSpace.Lipschitz
 public import MathlibExt.Probability.Distributions.GaussianDensity
+public import MathlibExt.Probability.Distributions.GaussianShift
 
 /-!
 # Tests for score-based diffusion models: forward process and DDPM sampler
 
 Closed-instance checks for `CSLibExt.MachineLearning.Generative.ScoreDiffusion` on concrete
-Euclidean spaces: the forward law at time zero, stationarity, probability measure inference,
-sampler index discipline, the Gaussian score and its Lipschitz constant, a sharp linear
-Lipschitz constant, the zero-dimensional case, and total variation distance from a Dirac law.
+Euclidean spaces: the forward law at time zero and from a point, stationarity, probability
+measure inference, one sampler step from a point, sampler index discipline (which estimate each
+step uses, and in which order), the Gaussian score and its Lipschitz constant, the score of
+`N(0, I/4)` and its Lipschitz constants, the zero-dimensional case, and total variation distance
+from a Dirac law.
 -/
 
 @[expose] public section
@@ -51,6 +54,22 @@ open MeasureTheory ProbabilityTheory Cslib.MachineLearning.ScoreDiffusion
 theorem ouMarginal_zero_dirac (x : EuclideanSpace ℝ (Fin 2)) :
     ouMarginal (Measure.dirac x) 0 = Measure.dirac x :=
   ouMarginal_zero (Measure.dirac x)
+
+/-- From a point `x`, the forward law at time `t ≥ 0` is `N(e^{-t} x, (1 - e^{-2t}) I)`
+(Chen et al., arXiv:2209.11215v3, Section 2.1). -/
+theorem ouMarginal_dirac (x : EuclideanSpace ℝ (Fin 2)) {t : ℝ} (ht : 0 ≤ t) :
+    ouMarginal (Measure.dirac x) t =
+      multivariateGaussian (Real.exp (-t) • x) ((1 - Real.exp (-2 * t)) • 1) := by
+  have h1 : 0 ≤ 1 - Real.exp (-2 * t) := sub_nonneg.mpr (Real.exp_le_one_iff.mpr (by linarith))
+  have hS : (1 - Real.exp (-2 * t)) • (1 : Matrix (Fin 2) (Fin 2) ℝ) =
+      Real.sqrt (1 - Real.exp (-2 * t)) ^ 2 • 1 := by
+    rw [Real.sq_sqrt h1]
+  have hc : Measurable fun p : EuclideanSpace ℝ (Fin 2) × EuclideanSpace ℝ (Fin 2) =>
+      Real.exp (-t) • p.1 + Real.sqrt (1 - Real.exp (-2 * t)) • p.2 := by
+    fun_prop
+  rw [hS, ← stdGaussian_map_const_add_smul, ouMarginal, Measure.dirac_prod,
+    Measure.map_map hc measurable_prodMk_left]
+  rfl
 
 /-- The standard Gaussian is stationary at time one on `EuclideanSpace ℝ (Fin 1)`. -/
 theorem ouMarginal_stdGaussian_one :
@@ -70,6 +89,27 @@ theorem ddpmStep_isProbability (h : ℝ)
     IsProbabilityMeasure (ddpmStep h σ μ) :=
   inferInstance
 
+/-- One sampler step from a point `x` with step `h ≥ 0` and a measurable estimate `σ` is the
+Gaussian law `N(e^h x + 2 (e^h - 1) σ x, (e^{2h} - 1) I)`, the closed-form solution of equation
+(2.8) of Chen et al. (arXiv:2209.11215v3) started at `x`. -/
+theorem ddpmStep_dirac (σ : EuclideanSpace ℝ (Fin 2) → EuclideanSpace ℝ (Fin 2))
+    (hσ : Measurable σ) (x : EuclideanSpace ℝ (Fin 2)) {h : ℝ} (hh : 0 ≤ h) :
+    ddpmStep h σ (Measure.dirac x) =
+      multivariateGaussian (Real.exp h • x + (2 * (Real.exp h - 1)) • σ x)
+        ((Real.exp (2 * h) - 1) • 1) := by
+  have h1 : 0 ≤ Real.exp (2 * h) - 1 := sub_nonneg.mpr (Real.one_le_exp (by linarith))
+  have hS : (Real.exp (2 * h) - 1) • (1 : Matrix (Fin 2) (Fin 2) ℝ) =
+      Real.sqrt (Real.exp (2 * h) - 1) ^ 2 • 1 := by
+    rw [Real.sq_sqrt h1]
+  have hc : Measurable fun p : EuclideanSpace ℝ (Fin 2) × EuclideanSpace ℝ (Fin 2) =>
+      Real.exp h • p.1 + (2 * (Real.exp h - 1)) • σ p.1 +
+        Real.sqrt (Real.exp (2 * h) - 1) • p.2 := by
+    fun_prop
+  rw [hS, ← stdGaussian_map_const_add_smul]
+  unfold ddpmStep
+  rw [Measure.dirac_prod, Measure.map_map hc measurable_prodMk_left]
+  rfl
+
 /-- The sampler output law is inferred as a probability law. -/
 theorem ddpmOutput_isProbability (h : ℝ)
     (s : ℕ → EuclideanSpace ℝ (Fin 1) → EuclideanSpace ℝ (Fin 1)) (N : ℕ) :
@@ -81,6 +121,14 @@ theorem ddpmOutput_one_check (h : ℝ)
     (s : ℕ → EuclideanSpace ℝ (Fin 1) → EuclideanSpace ℝ (Fin 1)) :
     ddpmOutput h s 1 = ddpmStep h (s 1) (stdGaussian (EuclideanSpace ℝ (Fin 1))) :=
   ddpmOutput_one h s
+
+/-- A two-step run uses the estimate `s 2` at time `2 h` in its first step and `s 1` in its last,
+as the source's reverse-time discretization requires. -/
+theorem ddpmOutput_two (h : ℝ)
+    (s : ℕ → EuclideanSpace ℝ (Fin 1) → EuclideanSpace ℝ (Fin 1)) :
+    ddpmOutput h s 2 =
+      ddpmStep h (s 1) (ddpmStep h (s 2) (stdGaussian (EuclideanSpace ℝ (Fin 1)))) :=
+  rfl
 
 /-- A two-step run is unchanged when only the estimate `s 0` is changed. -/
 theorem ddpmOutput_two_congr (h : ℝ)
@@ -147,7 +195,7 @@ theorem lipschitz_logDensityScore_gaussian :
   exact LipschitzWith.id.neg
 
 /-- Negated scaling by four is 4-Lipschitz on `EuclideanSpace ℝ (Fin 1)`. -/
-theorem lipschitz_neg_four_smul :
+private theorem lipschitz_neg_four_smul :
     LipschitzWith 4 (fun x : EuclideanSpace ℝ (Fin 1) => -(4 : ℝ) • x) := by
   refine LipschitzWith.of_dist_le_mul fun x y => ?_
   simp only [dist_eq_norm]
@@ -157,7 +205,7 @@ theorem lipschitz_neg_four_smul :
   norm_num
 
 /-- Negated scaling by four is not 1-Lipschitz on `EuclideanSpace ℝ (Fin 1)`. -/
-theorem not_lipschitz_neg_four_smul :
+private theorem not_lipschitz_neg_four_smul :
     ¬ LipschitzWith 1 (fun x : EuclideanSpace ℝ (Fin 1) => -(4 : ℝ) • x) := by
   intro hcon
   obtain ⟨a, b, hab⟩ := exists_pair_ne (EuclideanSpace ℝ (Fin 1))
@@ -168,6 +216,46 @@ theorem not_lipschitz_neg_four_smul :
     from (smul_sub _ _ _).symm, norm_smul, Real.norm_eq_abs] at hle
   norm_num at hle
   linarith
+
+/-- The score of the unnormalized density `x ↦ exp (-2 ‖x‖²)` of `N(0, I/4)` on
+`EuclideanSpace ℝ (Fin 1)` is `x ↦ -4 x`. -/
+theorem logDensityScore_exp_neg_two_mul_norm_sq :
+    logDensityScore (fun x : EuclideanSpace ℝ (Fin 1) => Real.exp (-2 * ‖x‖ ^ 2)) =
+      fun x => -(4 : ℝ) • x := by
+  have hgrad : ∀ x : EuclideanSpace ℝ (Fin 1),
+      HasGradientAt (fun y => Real.log (Real.exp (-2 * ‖y‖ ^ 2))) (-(4 : ℝ) • x) x := by
+    intro x
+    have hbase : HasFDerivAt (fun y : EuclideanSpace ℝ (Fin 1) => ‖y‖ ^ 2)
+        (2 • innerSL ℝ x) x :=
+      (hasStrictFDerivAt_norm_sq x).hasFDerivAt
+    have hmul := hbase.const_mul (-2 : ℝ)
+    have hderiv : (-2 : ℝ) • (2 • innerSL ℝ x)
+        = InnerProductSpace.toDual ℝ (EuclideanSpace ℝ (Fin 1)) (-(4 : ℝ) • x) := by
+      ext y
+      simp only [smul_apply, smul_eq_mul, innerSL_apply_apply,
+        InnerProductSpace.toDual_apply_apply, real_inner_smul_left]
+      ring
+    rw [hderiv] at hmul
+    simp only [Real.log_exp]
+    exact hasGradientAt_iff_hasFDerivAt.mpr hmul
+  unfold logDensityScore
+  exact gradient_eq hgrad
+
+/-- The score of `N(0, I/4)` is 4-Lipschitz: this law satisfies the Lipschitz-score assumption of
+the sampling guarantee with `L = 4`. -/
+theorem lipschitz_logDensityScore_exp_neg_two_mul_norm_sq :
+    LipschitzWith 4
+      (logDensityScore (fun x : EuclideanSpace ℝ (Fin 1) => Real.exp (-2 * ‖x‖ ^ 2))) := by
+  rw [logDensityScore_exp_neg_two_mul_norm_sq]
+  exact lipschitz_neg_four_smul
+
+/-- The score of `N(0, I/4)` is not 1-Lipschitz, so the assumption fails for this law with
+`L = 1`. -/
+theorem not_lipschitz_logDensityScore_exp_neg_two_mul_norm_sq :
+    ¬ LipschitzWith 1
+      (logDensityScore (fun x : EuclideanSpace ℝ (Fin 1) => Real.exp (-2 * ‖x‖ ^ 2))) := by
+  rw [logDensityScore_exp_neg_two_mul_norm_sq]
+  exact not_lipschitz_neg_four_smul
 
 /-- On `EuclideanSpace ℝ (Fin 0)` the sampler output agrees with any probability law. -/
 theorem tvDist_ddpmOutput_dim_zero (q : Measure (EuclideanSpace ℝ (Fin 0)))
