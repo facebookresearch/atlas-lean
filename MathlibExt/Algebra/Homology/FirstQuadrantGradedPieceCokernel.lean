@@ -145,24 +145,37 @@ theorem horizontalFirstPageFiltrationMap_succ_monoIso (p : ℕ) :
   let G : MonoOver T ⥤ ChainComplex C ℕ := MonoOver.forget T ⋙ Over.forget T
   let E : ChainComplex C ℕ ⥤ CochainComplex C ℤ :=
     ComplexShape.embeddingDownNat.extendFunctor C
+  let H : MonoOver T ⥤ CochainComplex C ℤ := G ⋙ E
   let f₁ : A ⟶ B := horizontalCompleteFilteredTotalMonoOverMap K
       (horizontalFirstPageIndex_le (p + 1)) ≫
     (horizontalCompleteFilteredTotalMonoOverUpperSuccIso K p).hom
   let f₂ : A ⟶ B := (horizontalCompleteFilteredTotalMonoOverLowerSuccIso K p).hom ≫
     (horizontalTotalFiltration K).toMonoOver.map (homOfLE (Nat.le_succ p))
   have hf : f₁ = f₂ := horizontalCompleteFilteredTotalMonoOverMap_succ K p
-  have hforget : G.map f₁ = G.map f₂ := congrArg G.map hf
-  calc
-    _ = E.map f₁.hom.left := by
-      dsimp only [E, f₁, horizontalFirstPageFiltrationMap,
-        horizontalCompleteFiltrationCochainDiagram,
-        horizontalCompleteTotalFiltration,
-        horizontalCompleteFiltrationCochainMonoUpperSuccIso]
-      rw [← Functor.map_comp]
-    _ = E.map f₂.hom.left := congrArg E.map hforget
-    _ = _ := by
-      dsimp only [E, f₂, horizontalCompleteFiltrationCochainMonoLowerSuccIso]
-      rw [Functor.map_comp]
+  have hmap :
+      H.map (horizontalCompleteFilteredTotalMonoOverMap K
+          (horizontalFirstPageIndex_le (p + 1))) ≫
+        H.map (horizontalCompleteFilteredTotalMonoOverUpperSuccIso K p).hom =
+      H.map (horizontalCompleteFilteredTotalMonoOverLowerSuccIso K p).hom ≫
+        H.map ((horizontalTotalFiltration K).toMonoOver.map
+          (homOfLE (Nat.le_succ p))) := by
+    calc
+      _ = H.map f₁ := (H.map_comp
+        (horizontalCompleteFilteredTotalMonoOverMap K
+          (horizontalFirstPageIndex_le (p + 1)))
+        (horizontalCompleteFilteredTotalMonoOverUpperSuccIso K p).hom).symm
+      _ = H.map f₂ := congrArg (fun f : A ⟶ B => H.map f) hf
+      _ = _ := H.map_comp
+        (horizontalCompleteFilteredTotalMonoOverLowerSuccIso K p).hom
+        ((horizontalTotalFiltration K).toMonoOver.map (homOfLE (Nat.le_succ p)))
+  simpa only [H, G, E, Functor.comp_map, Functor.comp_obj, Functor.mapIso_hom,
+    horizontalFirstPageFiltrationMap, horizontalCompleteFiltrationCochainDiagram,
+    horizontalCompleteFiltrationCochainMonoUpperSuccIso,
+    horizontalCompleteFiltrationCochainMonoLowerSuccIso,
+    horizontalCompleteTotalFiltration_diagram_map,
+    horizontalCompleteTotalFiltration_diagram_obj, horizontalCompleteFilteredTotalComplex,
+    horizontalCompleteFilteredTotalMap, MonoOver.forget, ObjectProperty.ι_obj,
+    ObjectProperty.ι_map, Over.forget_obj, Over.forget_map] using hmap
 
 end HomologicalComplex₂
 

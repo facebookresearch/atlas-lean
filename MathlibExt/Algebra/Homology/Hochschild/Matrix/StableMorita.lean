@@ -112,7 +112,8 @@ private theorem sum_truncate {N : Type*} [AddCommGroup N]
   intro i _
   simp only [Fin.val_castAdd, dite_eq_left i.is_lt]
 
-private theorem zeroExtend_left {r s : ℕ} (h : r ≤ s)
+/-- Top-left zero extension intertwines the native left matrix coefficient action. -/
+theorem zeroExtend_left {r s : ℕ} (h : r ≤ s)
     (B : Matrix (Fin r) (Fin r) A) (X : Matrix (Fin r) (Fin r) M) :
     Matrix.zeroExtend h B • Matrix.zeroExtend h X = Matrix.zeroExtend h (B • X) := by
   ext i l
@@ -138,7 +139,8 @@ private theorem zeroExtend_left {r s : ℕ} (h : r ≤ s)
     intro p _
     rw [Matrix.zeroExtend_of_row h B i p (Nat.le_of_not_gt hi), zero_smul]
 
-private theorem zeroExtend_right {r s : ℕ} (h : r ≤ s)
+/-- Top-left zero extension intertwines the native right matrix coefficient action. -/
+theorem zeroExtend_right {r s : ℕ} (h : r ≤ s)
     (B : Matrix (Fin r) (Fin r) A) (X : Matrix (Fin r) (Fin r) M) :
     op (Matrix.zeroExtend h B) • Matrix.zeroExtend h X = Matrix.zeroExtend h (op B • X) := by
   ext i l
@@ -192,7 +194,8 @@ theorem finiteTransitionAt_f_tprod {r s : ℕ} (h : r ≤ s) (n : ℕ)
       (fun B X => (zeroExtend_right (A := A) (M := M) (Nat.succ_le_succ h) B X).symm)
       n (ULift.up X) a)
 
-private theorem finiteTransitionAt_self (r : ℕ) :
+/-- A finite zero-extension transition at equal sizes is the identity. -/
+theorem finiteTransitionAt_self (r : ℕ) :
     finiteTransitionAt.{t} k A M (le_rfl : r ≤ r) =
       𝟙 (chainComplex k (Matrix (Fin (r + 1)) (Fin (r + 1)) A)
         (ULift.{max u v w t} (Matrix (Fin (r + 1)) (Fin (r + 1)) M))) := by
@@ -205,7 +208,8 @@ private theorem finiteTransitionAt_self (r : ℕ) :
   simp only [finiteTransitionAt_f_tprod, Matrix.zeroExtend_self,
     HomologicalComplex.id_f, ModuleCat.hom_id, LinearMap.id_apply]
 
-private theorem finiteTransitionAt_comp {r s q : ℕ} (h : r ≤ s) (h' : s ≤ q) :
+/-- Finite zero-extension transitions compose along the order on sizes. -/
+theorem finiteTransitionAt_comp {r s q : ℕ} (h : r ≤ s) (h' : s ≤ q) :
     finiteTransitionAt.{t} k A M h ≫ finiteTransitionAt.{t} k A M h' =
       finiteTransitionAt.{t} k A M (h.trans h') := by
   apply HomologicalComplex.Hom.ext
@@ -343,13 +347,15 @@ private def traceCoconeAt (G : J ⥤ ℕ) : Cocone (G ⋙ finiteDiagramAt.{t} k 
 /-- The colimit trace is induced by the actual finite trace maps. -/
 def stableTraceAt (G : J ⥤ ℕ) :
     stableComplexAt.{t} k A M G ⟶ chainComplex k A (ULift.{max u v w t} M) :=
-  colimit.desc _ (traceCoconeAt.{t} k A M G)
+  colimit.desc _
+    { pt := chainComplex k A (ULift.{max u v w t} M)
+      ι := Functor.whiskerLeft G (traceNatAt.{t} k A M) }
 
 @[reassoc]
 theorem ι_stableTraceAt (G : J ⥤ ℕ) (r : J) :
     colimit.ι (G ⋙ finiteDiagramAt.{t} k A M) r ≫ stableTraceAt.{t} k A M G =
-      traceChainMapAt.{t} k A M (Fin (G.obj r + 1)) :=
-  colimit.ι_desc _ _ r
+      traceChainMapAt.{t} k A M (Fin (G.obj r + 1)) := by
+  exact colimit.ι_desc (G ⋙ finiteDiagramAt.{t} k A M) (traceCoconeAt.{t} k A M G) r
 
 /-- A transformation of indexing functors induces the actual colimit transition map. -/
 def stableMapAt {G G' : J ⥤ ℕ} (τ : G ⟶ G') :
@@ -390,7 +396,9 @@ private theorem constantColimitIsoAt_inv_eq_ι (r : J) :
 /-- The stable corner is induced by the coherent zeroth finite corners. -/
 def stableCornerAt (G : J ⥤ ℕ) :
     chainComplex k A (ULift.{max u v w t} M) ⟶ stableComplexAt.{t} k A M G :=
-  (constantColimitIsoAt.{t} (J := J) k A M).inv ≫
+  (colimit.isoColimitCocone
+    ⟨constCocone J (chainComplex k A (ULift.{max u v w t} M)),
+      isColimitConstCocone J (chainComplex k A (ULift.{max u v w t} M))⟩).inv ≫
     colimMap (Functor.whiskerLeft G (cornerNatAt.{t} k A M))
 
 /-- The stable corner is the same actual corner through every finite stage. -/

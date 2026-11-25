@@ -46,7 +46,8 @@ variable (k : Type u) [CommRing k]
   [IsScalarTower k A M] [IsScalarTower k Aᵐᵒᵖ M]
   (ι : Type z) [Fintype ι] [DecidableEq ι]
 
-private theorem matrixUnitNormalization (b : ι) :
+/-- Matrix units at a fixed corner form a normalized frame. -/
+theorem matrixUnitNormalization (b : ι) :
     (∑ i : ι, Matrix.single i b (1 : A) * Matrix.single b i (1 : A)) = 1 := by
   simp only [Matrix.single_mul_single_same, one_mul]
   exact Matrix.sum_single_one
@@ -56,6 +57,7 @@ private theorem cornerLinear_eq_single {N : Type*} [AddCommGroup N] [Module k N]
   ext p q
   simp only [cornerLinear_apply, Matrix.single_apply,
     (eq_comm : b = p ↔ p = b), (eq_comm : b = q ↔ q = b), ite_and]
+  split_ifs <;> rfl
 
 private theorem matrixUnitAlgebraSandwich (b i j : ι) (a : Matrix ι ι A) :
     Matrix.single b i (1 : A) * a * Matrix.single j b (1 : A) =
@@ -73,8 +75,8 @@ private theorem matrixUnitCoefficientSandwich (b i j : ι) (X : Matrix ι ι M) 
     by_cases hq : q = b
     · subst q
       simp [Matrix.single_apply, ite_smul, apply_ite]
-    · simp [Matrix.single_apply, hq, hq.symm, ite_smul, apply_ite]
-  · simp [Matrix.single_apply, hp, hp.symm, ite_smul, apply_ite]
+    · simp [Matrix.single_apply, hq, Ne.symm hq, ite_smul, apply_ite]
+  · simp [Matrix.single_apply, hp, Ne.symm hp, ite_smul, apply_ite]
 
 /-- The corner chain map at an arbitrary common coefficient lift height. -/
 def cornerChainMapAt (b : ι) :
@@ -122,9 +124,31 @@ theorem cornerChainMapAt_down (b : ι) (n : ℕ)
     apply tensorPower_ext
     intro m a
     rcases m with ⟨m⟩
-    simp only [eS, eT, LinearMap.comp_apply, LinearEquiv.coe_coe]
-    rw [cornerChainMapAt_f_tprod, coefficientUnliftEquiv_tprod,
-      coefficientUnliftEquiv_tprod, cornerTensor_tmul_tprod]
+    let c : ULift.{max u v w z t} M ⊗[k] TensorPower k n A →ₗ[k]
+        ULift.{max u v w z t} (Matrix ι ι M) ⊗[k]
+          TensorPower k n (Matrix ι ι A) :=
+      ((cornerChainMapAt.{t} k A M ι b).f n).hom
+    change eT (c (ULift.up m ⊗ₜ[k] PiTensorProduct.tprod k a)) =
+      cornerTensor k ι b n (eS (ULift.up m ⊗ₜ[k] PiTensorProduct.tprod k a))
+    have hCorner : c (ULift.up m ⊗ₜ[k] PiTensorProduct.tprod k a) =
+        ULift.up (cornerLinear k ι b m) ⊗ₜ[k]
+          PiTensorProduct.tprod k (fun j => cornerLinear k ι b (a j)) :=
+      cornerChainMapAt_f_tprod.{t} k A M ι b n m a
+    have hSource : eS (ULift.up m ⊗ₜ[k] PiTensorProduct.tprod k a) =
+        m ⊗ₜ[k] PiTensorProduct.tprod k a :=
+      coefficientUnliftEquiv_tprod k A M n (ULift.up m) a
+    have hTarget : eT (ULift.up (cornerLinear k ι b m) ⊗ₜ[k]
+        PiTensorProduct.tprod k (fun j => cornerLinear k ι b (a j))) =
+        cornerLinear k ι b m ⊗ₜ[k]
+          PiTensorProduct.tprod k (fun j => cornerLinear k ι b (a j)) :=
+      coefficientUnliftEquiv_tprod k (Matrix ι ι A) (Matrix ι ι M) n
+        (ULift.up (cornerLinear k ι b m)) (fun j => cornerLinear k ι b (a j))
+    have hTensor : cornerTensor k ι b n (m ⊗ₜ[k] PiTensorProduct.tprod k a) =
+        cornerLinear k ι b m ⊗ₜ[k]
+          PiTensorProduct.tprod k (fun j => cornerLinear k ι b (a j)) :=
+      cornerTensor_tmul_tprod k ι b n m a
+    exact (congrArg eT hCorner).trans
+      (hTarget.trans (hTensor.symm.trans ((congrArg (cornerTensor k ι b n) hSource).symm)))
   exact LinearMap.congr_fun he x
 
 /-- The chosen corner followed by the finite trace is the identity at every height. -/
@@ -148,7 +172,8 @@ theorem cornerChainMapAt_comp_trace (b : ι) :
     coefficientUnliftEquiv_tprod, generalizedTrace_corner_tprod,
     coefficientUnliftEquiv_tprod]
 
-private theorem frameMap_eq_traceCorner (b : ι) :
+/-- The matrix-unit frame map is the chosen corner after the finite trace. -/
+theorem frameMap_eq_traceCorner (b : ι) :
     normalizedFrameChainMapAt.{t} k (Matrix ι ι A) (Matrix ι ι M) ι
       (fun i => Matrix.single i b (1 : A))
       (fun i => Matrix.single b i (1 : A)) (matrixUnitNormalization A ι b) =
@@ -186,7 +211,7 @@ private theorem frameMap_eq_traceCorner (b : ι) :
             cornerLinear k ι b (a j (γ j.succ) (γ (j.succ + 1)))) := by
       apply Finset.sum_congr rfl
       intro γ _
-      rw [matrixUnitCoefficientSandwich]
+      rw [matrixUnitCoefficientSandwich k A M ι b (γ 0) (γ 1) X]
       apply congrArg (fun q : TensorPower k n (Matrix ι ι A) =>
         cornerLinear k ι b (X (γ 0) (γ 1)) ⊗ₜ[k] q)
       apply congrArg (PiTensorProduct.tprod k)

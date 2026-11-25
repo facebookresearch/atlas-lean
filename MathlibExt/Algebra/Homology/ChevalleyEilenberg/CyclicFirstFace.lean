@@ -75,7 +75,7 @@ theorem cyclicFullTensor_projection (n : ℕ) (a : Fin (n + 1) → A) :
 
 /-- The original first product as a multilinear form on the complete input tuple. -/
 def cyclicFirstProductMultilinear (n : ℕ) :
-    MultilinearMap k (fun _ : Fin (n + 2) => A) ((Cλ k A).X n) :=
+    MultilinearMap (RingHom.id k) (fun _ : Fin (n + 2) => A) ((Cλ k A).X n) :=
   (ModuleCat.Algebra.Hochschild.Matrix.connesRepresentative k A n).compMultilinearMap
     ((ModuleCat.Algebra.Hochschild.NonUnital.regularFace k A n 0).hom.compMultilinearMap
       ((TensorPower.consEquiv k A (n + 1)).symm.toLinearMap.compMultilinearMap
@@ -85,7 +85,8 @@ def cyclicFirstProductMultilinear (n : ℕ) :
 tail. -/
 theorem cyclicFirstProduct_alternatization (n : ℕ) :
     (cyclicFirstProductMultilinear k A n).alternatization = cyclicTailProductUncurry k A n := by
-  let f : A →ₗ[k] A →ₗ[k] MultilinearMap k (fun _ : Fin n => A) ((Cλ k A).X n) :=
+  let f : A →ₗ[k] A →ₗ[k]
+      MultilinearMap (RingHom.id k) (fun _ : Fin n => A) ((Cλ k A).X n) :=
     { toFun := fun x => ((cyclicMultilinear k A n).curryLeft).comp (LinearMap.mul k A x)
       map_add' := by
         intro x y
@@ -98,7 +99,8 @@ theorem cyclicFirstProduct_alternatization (n : ℕ) :
         simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.mul_apply_apply,
           map_smul, LinearMap.smul_apply, RingHom.id_apply] }
   have hf : LinearMap.uncurryLeft
-      (((multilinearCurryLeftEquiv k (fun _ : Fin (n + 1) => A) ((Cλ k A).X n)).symm.toLinearMap).comp f) =
+      (((multilinearCurryLeftEquiv (RingHom.id k)
+        (fun _ : Fin (n + 1) => A) ((Cλ k A).X n)).symm.toLinearMap).comp f) =
       cyclicFirstProductMultilinear k A n := by
     apply MultilinearMap.ext
     intro a

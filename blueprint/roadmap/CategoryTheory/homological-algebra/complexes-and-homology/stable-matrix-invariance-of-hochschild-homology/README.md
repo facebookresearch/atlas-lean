@@ -1,8 +1,12 @@
 # Stable matrix invariance of Hochschild homology
 
 - [Generalized Trace zero Extend](generalized-trace-zero-extend.md)
+- [Zero Extend left](zero-extend-left.md)
+- [Zero Extend right](zero-extend-right.md)
 - [Finite Transition At](finite-transition-at.md)
 - [Finite Transition At f tprod](finite-transition-at-f-tprod.md)
+- [Finite Transition At self](finite-transition-at-self.md)
+- [Finite Transition At comp](finite-transition-at-comp.md)
 - [Finite Diagram At](finite-diagram-at.md)
 - [Finite Transition At comp trace](finite-transition-at-comp-trace.md)
 - [Corner comp finite Transition At](corner-comp-finite-transition-at.md)

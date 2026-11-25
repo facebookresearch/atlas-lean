@@ -212,7 +212,7 @@ def toFinsuppLinear : StableModule k A →ₗ[k] (ℕ × ℕ) →₀ A where
         Finsupp.smul_apply, Matrix.smul_apply, smul_zero]
 
 /-- The k-linear equivalence between stable matrices and finitely supported functions on `ℕ × ℕ`.
- -/
+-/
 def finsuppEquiv : StableModule k A ≃ₗ[k] (ℕ × ℕ) →₀ A :=
   { toFinsuppLinear k A,
     Equiv.ofBijective (toFinsupp k A)
