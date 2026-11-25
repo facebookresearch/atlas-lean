@@ -14,7 +14,11 @@ and every policy that is greedy with respect to $v$ is optimal.
 This node states a precise result. A good expansion adds a page for each of the following
 prerequisites and links it under the dependency sections below:
 
-- Statement prerequisite: History-dependent randomized policies and trajectory laws.
+- Statement prerequisite: Long-run average reward of a history-dependent policy in a finite MDP (the lim inf of the expected average reward over the first T steps), average-reward optimality, and strongly connected (communicating) MDPs.
+
+## Depends on
+
+- [History-dependent randomized policies and trajectory laws](history-dependent-randomized-policies-and-trajectory-laws.md)
 
 ## Proof depends on
 

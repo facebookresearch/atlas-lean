@@ -44,3 +44,5 @@
 - [Disequilibria sum to zero over the second-locus alleles](sum-linkage-diseq-snd.md)
 - [Multi-allelic linkage disequilibria after $t$ generations](linkage-diseq-iterate-2.md)
 - [Multi-allelic linkage disequilibria tend to zero](tendsto-linkage-diseq-iterate-2.md)
+
+- [Many-locus variance components and the covariance of relatives](many-locus-variance-components-and-covariance-of.md)

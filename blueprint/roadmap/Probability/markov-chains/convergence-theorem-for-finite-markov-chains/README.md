@@ -21,6 +21,8 @@
 - [Transition probabilities of the identity chain](prob-identity.md)
 - [Powers of the identity chain are the identity matrix](mat-pow-identity.md)
 - [The identity Markov chain is not ergodic](not-is-ergodic-identity.md)
+- [Existence of a stationary distribution](exists-stationary.md)
+- [A stationary vector is invariant under repeated transition](vec-mul-pow-eq-self.md)
 - [Doeblin's argument](tv-dist-pow-le-of-minorization.md)
 - [The convergence theorem](exists-tv-dist-pow-le.md)
 - [Convergence of matrix powers to the stationary distribution](tendsto-pow-apply.md)
@@ -28,3 +30,5 @@
 - [Stationary distribution of a primitive chain has full support](stationary-pos.md)
 
 - [Strong law for finite irreducible Markov chains, including periodic chains](strong-law-for-additive-functionals-of-finite-ir.md)
+
+- [Bridge between finite-chain encodings](bridge-between-finite-chain-encodings.md)

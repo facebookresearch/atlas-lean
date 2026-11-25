@@ -19,3 +19,4 @@ C-finite, P-recursive and MC-finite sequences, Binet formulas, Skolem–Mahler�
 - [Skolem–Mahler–Lech theorem](skolem-mahler-lech.md)
 
 - [The Skolem problem](the-skolem-problem.md)
+- [Skolem sets and universal Skolem sets](skolem-sets-and-universal-skolem-sets.md)

@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.AlternatingChooseSums
 public import MathlibExt.NumberTheory.HigherOrderHarmonic
 public import MathlibExt.NumberTheory.WolstenholmeBinomialCongruence
 public import MathlibExt.NumberTheory.WolstenholmeBinomialExtension
+public import MathlibExt.NumberTheory.WolstenholmeCongruenceEquivalence
 
 /-!
 # Extensions of Wolstenholme's theorem by binomial coefficients
@@ -295,21 +296,6 @@ public theorem_wanted ringChoose_mul_prime_sub_congr_pow_three (p k : ℕ) (n : 
     let X : ℚ := C (n * p) (k * p) - C n k -
       (k : ℚ) * (n - k) / 2 * C n k * (((2 * p).choose p : ℚ) - 2)
     X = 0 ∨ (C n 3 ≠ 0 ∧ 3 + padicValRat p (C n 3) ≤ padicValRat p X)
-
-/-- **Equivalent forms of Wolstenholme's congruence.** Let $p \ge 5$ be a prime and let $n$ and
-$k$ be natural numbers. Then the congruences $\binom{2p}{p} \equiv 2$, $\binom{np}{p} \equiv n$ and
-$\binom{np}{kp} \equiv \binom{n}{k}$ modulo $p^3$ are equivalent.
-
-By Wolstenholme's theorem all three hold for every such $p$.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Corollary 2
-(`integers-2026-A32-cor-2`). -/
-public theorem_wanted choose_two_mul_prime_congr_iff_pow_three (p n k : ℕ) (hp : p.Prime)
-    (hp5 : 5 ≤ p) :
-    ((p : ℤ) ^ 3 ∣ ((2 * p).choose p : ℤ) - 2 ↔ (p : ℤ) ^ 3 ∣ ((n * p).choose p : ℤ) - n) ∧
-      ((p : ℤ) ^ 3 ∣ ((n * p).choose p : ℤ) - n ↔
-        (p : ℤ) ^ 3 ∣ ((n * p).choose (k * p) : ℤ) - n.choose k)
 
 /-- **The congruence for $\binom{np}{kp}$ modulo $p^4$ via $\binom{2p}{p}$ and $\binom{3p}{p}$.**
 Let $p \ge 7$ be a prime, let $k$ be a natural number and let $n$ be an integer. For an integer
