@@ -19,6 +19,7 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Matrix.Mul
 import Mathlib.Basic.Complex.Basic
 import Mathlib.Basic.Complex.BigOperators
+public import Mathlib.NumberTheory.Zsqrtd.GaussianInt
 
 /-!
 # Path-sum expansion and denominator-scaled integrality
@@ -168,11 +169,10 @@ private theorem toComplex_mem_gaussian (g : QGate) (p : RatEnc × RatEnc) (hp : 
     field_simp
 
 /-- **Gate entries are Gaussian rationals over `gateDenom`:** every entry of
-`gateMatrix N g` is `(a + b i) / gateDenom g` for integers `a, b`. -/
+`gateMatrix N g` is a Gaussian integer divided by `gateDenom g`. -/
 theorem gateMatrix_entry_gaussian (N : ℕ) (g : QGate)
     (s t : Fin (2 ^ N)) :
-    ∃ a b : ℤ, gateMatrix N g s t =
-      ⟨(a : ℝ) / (gateDenom g : ℝ), (b : ℝ) / (gateDenom g : ℝ)⟩ := by
+    ∃ z : GaussianInt, gateMatrix N g s t = (z : ℂ) / ((gateDenom g : ℕ) : ℂ) := by
   unfold gateMatrix
   split_ifs with h
   · unfold matrixOfEntries
@@ -180,78 +180,84 @@ theorem gateMatrix_entry_gaussian (N : ℕ) (g : QGate)
       qIdx2 (qBit g.1 t.val, qBit g.2.1 t.val) with hidx
     by_cases hlen : idx < g.2.2.length
     · rw [List.getD_eq_getElem g.2.2 _ hlen]
-      exact toComplex_mem_gaussian g _ (List.getElem_mem hlen)
+      obtain ⟨a, b, hab⟩ := toComplex_mem_gaussian g _ (List.getElem_mem hlen)
+      refine ⟨⟨a, b⟩, ?_⟩
+      rw [hab, GaussianInt.toComplex_def₂]
+      apply Complex.ext
+      · simp
+      · simp
     · rw [List.getD_eq_default g.2.2 _ (Nat.le_of_not_gt hlen)]
-      refine ⟨0, 0, ?_⟩
+      refine ⟨⟨0, 0⟩, ?_⟩
       have hdef : toComplex ((false, 0, 1), (false, 0, 1)) = 0 := by
         unfold toComplex toRat
         simp
         rfl
-      rw [hdef]
-      simp only [Int.cast_zero, zero_div]
-      rfl
-  · refine ⟨0, 0, ?_⟩
-    simp only [Int.cast_zero, zero_div]
-    rfl
+      rw [hdef, GaussianInt.toComplex_def₂]
+      apply Complex.ext
+      · simp
+      · simp
+  · refine ⟨⟨0, 0⟩, ?_⟩
+    rw [GaussianInt.toComplex_def₂]
+    apply Complex.ext
+    · simp
+    · simp
 
 private theorem gateMatrix_mul_denom_gaussian (N : ℕ) (g : QGate)
     (s t : Fin (2 ^ N)) :
     ∃ a b : ℤ, gateMatrix N g s t * ((gateDenom g : ℕ) : ℂ) = ⟨(a : ℝ), (b : ℝ)⟩ := by
-  obtain ⟨a, b, hab⟩ := gateMatrix_entry_gaussian N g s t
-  refine ⟨a, b, ?_⟩
-  rw [hab]
-  have hD := gateDenom_pos g
-  have hDR : (0 : ℝ) < (gateDenom g : ℝ) := by exact_mod_cast hD
-  apply Complex.ext
-  · simp
-    field_simp
-  · simp
-    field_simp
-
+  obtain ⟨z, hz⟩ := gateMatrix_entry_gaussian N g s t
+  refine ⟨z.re, z.im, ?_⟩
+  rw [hz]
+  have hD : ((gateDenom g : ℕ) : ℂ) ≠ 0 := by
+    have hpos := gateDenom_pos g
+    exact_mod_cast ne_of_gt hpos
+  rw [div_mul_cancel₀ _ hD]
+  exact GaussianInt.toComplex_def₂ z
 /-- **Amplitudes clear denominators:** a path-sum amplitude times the
 product of the gate denominators is a Gaussian integer. -/
 theorem ampSum_mul_prod_gaussian (N : ℕ) (gs : List QGate)
     (s t : Fin (2 ^ N)) :
-    ∃ a b : ℤ, ampSum N gs s t *
-        ((gs.map gateDenom).prod : ℂ) = ⟨(a : ℝ), (b : ℝ)⟩ := by
+    ∃ z : GaussianInt, ampSum N gs s t *
+        ((gs.map gateDenom).prod : ℂ) = (z : ℂ) := by
   induction gs generalizing s t with
   | nil =>
     simp only [List.map_nil, List.prod_nil, Nat.cast_one, mul_one]
     simp only [ampSum]
     by_cases h : s = t
     · simp [h]
-      refine ⟨1, 0, ?_⟩
-      simp
+      refine ⟨⟨1, 0⟩, ?_⟩
+      simp [GaussianInt.toComplex_def₂]
       rfl
     · simp [h]
-      refine ⟨0, 0, ?_⟩
-      simp only [Int.cast_zero]
+      refine ⟨⟨0, 0⟩, ?_⟩
+      simp [GaussianInt.toComplex_def₂]
       rfl
   | cons g gs ih =>
     have hprod : ((g :: gs).map gateDenom).prod = gateDenom g * (gs.map gateDenom).prod := by
       simp
     simp only [ampSum]
-    have hIH : ∀ u, ∃ a b : ℤ, ampSum N gs s u * (((gs.map gateDenom).prod : ℕ) : ℂ) = ⟨(a : ℝ), (b : ℝ)⟩ :=
+    have hIH : ∀ u, ∃ z : GaussianInt, ampSum N gs s u * (((gs.map gateDenom).prod : ℕ) : ℂ) = (z : ℂ) :=
       fun u => ih s u
-    choose A1 B1 hA1 using hIH
+    choose Z1 hZ1 using hIH
     have hG : ∀ u, ∃ a b : ℤ, gateMatrix N g u t * (((gateDenom g : ℕ)) : ℂ) = ⟨(a : ℝ), (b : ℝ)⟩ :=
       fun u => gateMatrix_mul_denom_gaussian N g u t
     choose A2 B2 hA2 using hG
-    refine ⟨∑ u, (A1 u * A2 u - B1 u * B2 u), ∑ u, (A1 u * B2 u + B1 u * A2 u), ?_⟩
+    refine ⟨∑ u, (Z1 u * ⟨A2 u, B2 u⟩), ?_⟩
     rw [hprod, Nat.cast_mul, Finset.sum_mul]
     have hterm : ∀ u, (ampSum N gs s u * gateMatrix N g u t) * (((gateDenom g : ℕ) : ℂ) * (((gs.map gateDenom).prod : ℕ) : ℂ)) =
-        (⟨((A1 u * A2 u - B1 u * B2 u : ℤ) : ℝ), ((A1 u * B2 u + B1 u * A2 u : ℤ) : ℝ)⟩ : ℂ) := by
+        (((Z1 u * ⟨A2 u, B2 u⟩ : GaussianInt)) : ℂ) := by
       intro u
       have hring : (ampSum N gs s u * gateMatrix N g u t) * (((gateDenom g : ℕ) : ℂ) * (((gs.map gateDenom).prod : ℕ) : ℂ)) =
           (ampSum N gs s u * (((gs.map gateDenom).prod : ℕ) : ℂ)) * (gateMatrix N g u t * (((gateDenom g : ℕ)) : ℂ)) := by
         ring
-      rw [hring, hA1 u, hA2 u]
-      apply Complex.ext <;> simp
+      rw [hring, hZ1 u]
+      have hA2' : gateMatrix N g u t * (((gateDenom g : ℕ)) : ℂ) = (((⟨A2 u, B2 u⟩ : GaussianInt)) : ℂ) := by
+        rw [hA2 u, GaussianInt.toComplex_def₂]
+      rw [hA2', GaussianInt.toComplex_mul]
     have hsum : (∑ u, (ampSum N gs s u * gateMatrix N g u t) * (((gateDenom g : ℕ) : ℂ) * (((gs.map gateDenom).prod : ℕ) : ℂ))) =
-        ∑ u, (⟨((A1 u * A2 u - B1 u * B2 u : ℤ) : ℝ), ((A1 u * B2 u + B1 u * A2 u : ℤ) : ℝ)⟩ : ℂ) :=
+        ∑ u, ((((Z1 u * ⟨A2 u, B2 u⟩ : GaussianInt))) : ℂ) :=
       Finset.sum_congr rfl (fun u _ => hterm u)
-    rw [hsum]
-    apply Complex.ext <;> simp
+    rw [hsum, map_sum]
 
 private theorem qNumOf_lt_aux (x : List Bool) : qNumOf x < 2 ^ x.length := by
   induction x with
@@ -327,26 +333,26 @@ theorem acceptProb_scaled_nat {gs : List QGate} (x : List Bool) (a : ℕ)
       rw [hamp s]
       rw [← Complex.normSq_eq_conj_mul_self, Complex.ofReal_re]
     · simp [h]
-  have hG : ∀ s, ∃ p q : ℤ, ampSum (x.length + a) gs s t0 * (((gs.map gateDenom).prod : ℕ) : ℂ) = ⟨(p:ℝ),(q:ℝ)⟩ :=
+  have hG : ∀ s, ∃ z : GaussianInt, ampSum (x.length + a) gs s t0 * (((gs.map gateDenom).prod : ℕ) : ℂ) = (z : ℂ) :=
     fun s => ampSum_mul_prod_gaussian (x.length + a) gs s t0
-  choose A B hAB using hG
+  choose Z hZ using hG
   have hnorm : ∀ s, (((gs.map gateDenom).prod : ℝ)) ^ 2 * Complex.normSq (ampSum (x.length + a) gs s t0) =
-      (((A s ^ 2 + B s ^ 2 : ℤ)) : ℝ) := by
+      ((Z s).norm : ℝ) := by
     intro s
-    have hmul := congrArg Complex.normSq (hAB s)
-    simp only [Complex.normSq_mul, Complex.normSq_natCast, Complex.normSq_mk] at hmul
+    have hmul := congrArg Complex.normSq (hZ s)
+    simp only [Complex.normSq_mul, Complex.normSq_natCast, ← GaussianInt.intCast_real_norm] at hmul
     calc (((gs.map gateDenom).prod : ℝ)) ^ 2 * Complex.normSq (ampSum (x.length + a) gs s t0)
         = Complex.normSq (ampSum (x.length + a) gs s t0) * ((((gs.map gateDenom).prod : ℝ)) * (((gs.map gateDenom).prod : ℝ))) := by ring
-      _ = ((A s : ℝ)) * ((A s : ℝ)) + ((B s : ℝ)) * ((B s : ℝ)) := hmul
-      _ = (((A s ^ 2 + B s ^ 2 : ℤ)) : ℝ) := by push_cast; ring
+      _ = ((Z s).norm : ℝ) := hmul
   rw [hacc, Finset.mul_sum]
-  refine ⟨Finset.sum (Finset.univ.filter (fun s : Fin (2 ^ (x.length + a)) => qBit 0 s.val = 1)) (fun s => (A s ^ 2 + B s ^ 2).toNat), ?_⟩
+  refine ⟨Finset.sum (Finset.univ.filter (fun s : Fin (2 ^ (x.length + a)) => qBit 0 s.val = 1)) (fun s => (Z s).norm.natAbs), ?_⟩
   rw [Nat.cast_sum]
   apply Finset.sum_congr rfl
   intro s _
   rw [hnorm s]
-  have hnonneg : 0 ≤ A s ^ 2 + B s ^ 2 := by positivity
-  have htoNat : ((A s ^ 2 + B s ^ 2).toNat : ℤ) = A s ^ 2 + B s ^ 2 := Int.toNat_of_nonneg hnonneg
-  exact_mod_cast htoNat.symm
+  have hnonneg : 0 ≤ (Z s).norm := GaussianInt.norm_nonneg _
+  have htoNat : ((((Z s).norm.natAbs : ℕ) : ℤ)) = (Z s).norm := Int.natAbs_of_nonneg hnonneg
+  calc ((Z s).norm : ℝ) = ((((Z s).norm.natAbs : ℕ) : ℤ) : ℝ) := by rw [htoNat]
+    _ = ((((Z s).norm.natAbs : ℕ)) : ℝ) := by simp
 
 end Cslib.Complexity.Classes
