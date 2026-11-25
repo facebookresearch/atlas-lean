@@ -36,4 +36,10 @@ example {R : Type*} [CommSemiring R] (a b : R) :
   simpa only [h₁, h₂, sum_singleton] using
     fenceTilingSum_even a b (n := 4) (by decide) (by decide)
 
+-- Independent enumeration, with unequal weights and a board permitting two fences.
+example : noBifenceTilingSum (2 : ℕ) 3 0 = 1 := by decide
+example : noBifenceTilingSum (2 : ℕ) 3 1 = 4 := by decide
+example : noBifenceTilingSum (2 : ℕ) 3 2 = 48 := by decide
+example : noBifenceTilingSum (2 : ℕ) 3 3 = 244 := by decide
+
 end MetaMathlibExt

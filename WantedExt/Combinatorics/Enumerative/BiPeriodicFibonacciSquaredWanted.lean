@@ -159,18 +159,6 @@ theorem fenceTilingSum_one {R : Type*} [CommSemiring R] (a b : R) :
     fenceTilingSum a b 1 = a ^ 2 := by
   simp [fenceTilingSum, fenceTilings, fenceTilingWeight, filter_singleton, prod_range_succ, sq]
 
-/-- **Weighted count of bifence-free fence tilings.** Let $a$, $b$ be elements of a commutative
-semiring and $n \ge 0$. Two fences at positions $k$ and $k + 1$ form a bifence. The weighted number
-$C_n$ of tilings with no bifence is the sum of the weights, with half-square weights $a$ and $b$,
-of the fence tilings $F$ of the $n$-board with no bifence, that is, with $k + 1 \notin F$ for every
-$k \in F$.
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Lemma 3.15. -/
-def noBifenceTilingSum {R : Type*} [CommSemiring R] (a b : R) (n : ℕ) : R :=
-  ∑ F ∈ (fenceTilings n).filter (fun F => ∀ k ∈ F, k + 1 ∉ F), fenceTilingWeight a b n F
-
 /-- **Tilings of the empty board with no bifence.** For all elements $a$, $b$ of a commutative
 semiring, the weighted number $C_0$ of tilings of the $0$-board with no bifence, with half-square
 weights $a$ and $b$, equals $1$.
@@ -274,24 +262,6 @@ public theorem_wanted noFreeBifenceTilingSum_rec {K : Type*} [Field K] {a b : K}
     noFreeBifenceTilingSum a b n =
       (if Even n then b / a else a / b) * (a * b + 1) * noFreeBifenceTilingSum a b (n - 1) +
         a * b * noFreeBifenceTilingSum a b (n - 2)
-
-/-- **Closed formula for bifence-free fence tilings.** Let $a$, $b$ be nonzero elements of a field
-and let $\xi(n) = n \bmod 2$. For every natural number $n$, the weighted number $C_n$ of tilings of
-the $n$-board by half-squares and $(1/2, 1/2)$-fences with no bifence, with half-square weights
-$a$ and $b$, is
-$$
-C_n = \left(\frac{a}{b}\right)^{\xi(n)}
-\sum_{i=0}^{\lfloor 2n/3 \rfloor} \binom{2n-2i}{i} (ab)^{n-i}.
-$$
-
-Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
-Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
-Lemma 3.15 (`fq-2024-belaggoun01132024-lem-3.15`). -/
-public theorem_wanted noBifenceTilingSum_eq_sum_choose {K : Type*} [Field K] {a b : K}
-    (ha : a ≠ 0) (hb : b ≠ 0) (n : ℕ) :
-    noBifenceTilingSum a b n =
-      (a / b) ^ (n % 2) *
-        ∑ i ∈ range (2 * n / 3 + 1), ((2 * n - 2 * i).choose i : K) * (a * b) ^ (n - i)
 
 end
 
