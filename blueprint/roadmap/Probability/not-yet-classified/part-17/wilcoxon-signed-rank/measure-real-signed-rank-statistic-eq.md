@@ -7,4 +7,4 @@ every `t`, `P(W⁺ = t) = c_n(t) / 2ⁿ`.
 
 ## Sources
 
-- Wilcoxon (1945), with the continuous symmetric null as a generalization of its normal null.
+- F. Wilcoxon, "Individual comparisons by ranking methods", Biometrics Bull. 1 (1945) 80–83; the continuous symmetric null generalizes its normal null.

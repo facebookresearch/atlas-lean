@@ -60,8 +60,8 @@ measure and `D_1, …, D_n : Ω → ℝ` independent measurable random variables
 has no atoms and is symmetric about `0` (the law of `D_i` equals the law of `-D_i`). Then for
 every `t`, `P(W⁺ = t) = c_n(t) / 2ⁿ`.
 
-Sources: Wilcoxon (1945), with the continuous symmetric null as a generalization of its normal
-null. -/
+Sources: F. Wilcoxon, "Individual comparisons by ranking methods", Biometrics Bull. 1 (1945) 80–83;
+the continuous symmetric null generalizes its normal null. -/
 public theorem_wanted measureReal_signedRankStatistic_eq {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {n : ℕ} (D : Fin n → Ω → ℝ)
     (hD : ∀ i, Measurable (D i)) (hind : iIndepFun D μ) (hcont : ∀ i, NoAtoms (μ.map (D i)))
@@ -72,7 +72,8 @@ public theorem_wanted measureReal_signedRankStatistic_eq {Ω : Type*} [Measurabl
 `D_1, …, D_n : Ω → ℝ` independent measurable random variables, each Gaussian with mean `0` and
 variance `σ²`. Then for every `t`, `P(W⁺ = t) = c_n(t) / 2ⁿ`.
 
-Sources: Wilcoxon (1945). -/
+Sources: F. Wilcoxon, "Individual comparisons by ranking methods", Biometrics Bull. 1 (1945) 80–83.
+-/
 public theorem_wanted measureReal_signedRankStatistic_eq_of_gaussian {Ω : Type*}
     [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] {n : ℕ} (D : Fin n → Ω → ℝ)
     (hD : ∀ i, Measurable (D i)) (hind : iIndepFun D μ) (σsq : NNReal) (hσ : 0 < σsq)
@@ -84,7 +85,8 @@ public theorem_wanted measureReal_signedRankStatistic_eq_of_gaussian {Ω : Type*
 and is symmetric about its mean: `c_n(t) = c_n(n(n + 1)/2 - t)` for `t ≤ n(n + 1)/2`. Means and
 variances are taken over the subsets `S` of `{1, …, n}`, each with probability `1 / 2ⁿ`.
 
-Sources: Wilcoxon (1945); derived. -/
+Sources: F. Wilcoxon, "Individual comparisons by ranking methods", Biometrics Bull. 1 (1945) 80–83;
+the moments are derived. -/
 public theorem_wanted subsetSum_moments_symm (n : ℕ) :
     (∑ S : Finset (Fin n), ((∑ j ∈ S, ((j : ℕ) + 1) : ℕ) : ℝ)) / (2 : ℝ) ^ n = n * (n + 1) / 4 ∧
       (∑ S : Finset (Fin n), (((∑ j ∈ S, ((j : ℕ) + 1) : ℕ) : ℝ) - n * (n + 1) / 4) ^ 2) /
@@ -95,7 +97,8 @@ public theorem_wanted subsetSum_moments_symm (n : ℕ) :
 `P(W⁺ ≤ 24) = 676 / 32768 ≈ 0.0206`, inside the source's range `[0.019, 0.054]`; for `8` pairs,
 `∑_{t ≤ 3} c_8(t) = 5`, so `P(W⁺ ≤ 3) = 5 / 256`.
 
-Sources: Wilcoxon (1945), Table II and the worked examples. -/
+Sources: F. Wilcoxon, "Individual comparisons by ranking methods", Biometrics Bull. 1 (1945) 80–83,
+Table II and the worked examples. -/
 public theorem_wanted subsetSumCount_examples :
     ∑ t ∈ Finset.range 25, subsetSumCount 15 t = 676 ∧
       ∑ t ∈ Finset.range 4, subsetSumCount 8 t = 5

@@ -7,4 +7,4 @@ satisfy `p_{00.0} + p_{10.1} ≤ 1`, `p_{01.0} + p_{11.1} ≤ 1`, `p_{10.0} + p_
 
 ## Sources
 
-- Balke and Pearl (1997), p. 1173, (6).
+- A. Balke and J. Pearl, "Bounds on treatment effects from studies with imperfect compliance", J. Amer. Statist. Assoc. 92 (1997) 1171–1176, p. 1173, equation (6).

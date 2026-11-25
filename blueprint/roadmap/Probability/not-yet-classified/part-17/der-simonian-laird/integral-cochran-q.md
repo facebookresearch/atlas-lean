@@ -8,4 +8,4 @@ integrable, mean `0`, `Var δ_i = Δ²`, `Var e_i = v_i`, distinct deviations un
 
 ## Sources
 
-- DerSimonian and Laird (1986), p. 182 (the moment equation).
+- R. DerSimonian and N. Laird, "Meta-analysis in clinical trials", Control. Clin. Trials 7 (1986) 177–188, p. 182 (the moment equation).

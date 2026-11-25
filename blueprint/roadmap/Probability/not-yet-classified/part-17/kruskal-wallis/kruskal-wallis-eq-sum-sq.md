@@ -6,4 +6,4 @@
 
 ## Sources
 
-- Kruskal (1952), p. 526.
+- W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist. 23 (1952) 525–540, p. 526.

@@ -67,7 +67,8 @@ noncomputable def permAverage (f : Equiv.Perm (Fin N) → ℝ) : ℝ :=
 `C` samples, each of size `n_i ≥ 1`, and every ranking `σ`,
 `H = 12 / (N (N + 1)) ∑_i n_i (R_i / n_i - (N + 1)/2)²`.
 
-Sources: Kruskal (1952), p. 526. -/
+Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
+23 (1952) 525–540, p. 526. -/
 public theorem_wanted kruskalWallis_eq_sum_sq (g : Fin N → Fin C) (hN : 0 < N)
     (hn : ∀ i, 0 < sampleSize g i) (σ : Equiv.Perm (Fin N)) :
     kruskalWallis g σ = 12 / (N * (N + 1)) *
@@ -78,7 +79,9 @@ For an assignment `g` of `N ≥ 2` positions to `C` samples of sizes `n_i ≥ 1`
 law on rankings, `E R_i = n_i (N + 1)/2`, `Var R_i = n_i (N - n_i)(N + 1)/12`, and for `i ≠ j`,
 `Cov(R_i, R_j) = -n_i n_j (N + 1)/12`.
 
-Sources: Kruskal and Wallis (1952), Section 3; Kruskal (1952), p. 527. -/
+Sources: W. H. Kruskal and W. A. Wallis, "Use of ranks in one-criterion variance analysis", J. Amer.
+Statist. Assoc. 47 (1952) 583–621, Section 3; W. H. Kruskal, "A nonparametric test for the several
+sample problem", Ann. Math. Statist. 23 (1952) 525–540, p. 527. -/
 public theorem_wanted rankSum_moments (g : Fin N → Fin C) (hN : 2 ≤ N)
     (hn : ∀ i, 0 < sampleSize g i) :
     (∀ i, permAverage (fun σ => (rankSum g σ i : ℝ)) = sampleSize g i * (N + 1) / 2) ∧
@@ -94,7 +97,8 @@ public theorem_wanted rankSum_moments (g : Fin N → Fin C) (hN : 2 ≤ N)
 `E H = C - 1` and
 `Var H = 2 (C - 1) - 2 (3C² - 6C + N (2C² - 6C + 1)) / (5 N (N + 1)) - (6/5) ∑_i 1 / n_i`.
 
-Sources: Kruskal (1952), p. 526 and p. 535, (6.2)–(6.5). -/
+Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
+23 (1952) 525–540, p. 526 and p. 535, equations (6.2)–(6.5). -/
 public theorem_wanted kruskalWallis_mean_variance (g : Fin N → Fin C) (hN : 2 ≤ N)
     (hn : ∀ i, 0 < sampleSize g i) :
     permAverage (kruskalWallis g) = C - 1 ∧
@@ -106,7 +110,8 @@ public theorem_wanted kruskalWallis_mean_variance (g : Fin N → Fin C) (hN : 2 
 positions to `C` samples of sizes `n_i ≥ 1` and every ranking `σ`,
 `0 ≤ H ≤ (N³ - ∑ n_i³) / (N (N + 1))`, and some ranking attains the upper bound.
 
-Sources: Kruskal (1952), p. 535, (7.2); the lower bound is derived. -/
+Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
+23 (1952) 525–540, p. 535, equation (7.2); the lower bound is derived. -/
 public theorem_wanted kruskalWallis_bounds (g : Fin N → Fin C) (hN : 0 < N)
     (hn : ∀ i, 0 < sampleSize g i) :
     (∀ σ, 0 ≤ kruskalWallis g σ ∧
@@ -117,7 +122,8 @@ public theorem_wanted kruskalWallis_bounds (g : Fin N → Fin C) (hN : 0 < N)
 of sizes `n₀, n₁ ≥ 1` and every ranking `σ`,
 `H = 12 (R_0 - n_0 (N + 1)/2)² / ((N + 1) n_0 (N - n_0))`.
 
-Sources: Kruskal (1952), p. 526. -/
+Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
+23 (1952) 525–540, p. 526. -/
 public theorem_wanted kruskalWallis_two_samples (g : Fin N → Fin 2)
     (hn : ∀ i, 0 < sampleSize g i) (σ : Equiv.Perm (Fin N)) :
     kruskalWallis g σ = 12 * ((rankSum g σ 0 : ℝ) - sampleSize g 0 * (N + 1) / 2) ^ 2 /
@@ -136,7 +142,9 @@ ranks `k ↦ #{j | X_j < X_k}` form a permutation `σ` of `Fin N` whose Kruskal�
 `h` equals the number of permutations `σ` with `H(σ) = h`, divided by `N!`. (The ranks form a
 permutation almost surely, so this is the law of `H` of the sample ranks.)
 
-Sources: Kruskal and Wallis (1952), Section 1; Kruskal (1952), p. 525. -/
+Sources: W. H. Kruskal and W. A. Wallis, "Use of ranks in one-criterion variance analysis", J. Amer.
+Statist. Assoc. 47 (1952) 583–621, Section 1; W. H. Kruskal, "A nonparametric test for the several
+sample problem", Ann. Math. Statist. 23 (1952) 525–540, p. 525. -/
 public theorem_wanted kruskalWallis_distributionFree {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (X : Fin N → Ω → ℝ) (hX : ∀ k, Measurable (X k))
     (hind : iIndepFun X μ) (hid : ∀ k l, μ.map (X k) = μ.map (X l))
@@ -152,7 +160,8 @@ an assignment of `N_m` positions to `C` samples of sizes `n_i(m)`, with `N_m →
 statistic converges in distribution to the chi-square law with `C - 1` degrees of freedom: for
 every bounded continuous `f : ℝ → ℝ`, the null mean of `f(H)` tends to `∫ f dχ²_{C-1}`.
 
-Sources: Kruskal (1952), pp. 527–528, Section 4 (via the Wald–Wolfowitz permutation central limit
+Sources: W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist.
+23 (1952) 525–540, pp. 527–528, Section 4 (via the Wald–Wolfowitz permutation central limit
 theorem). -/
 public theorem_wanted tendsto_kruskalWallis_chiSquare (hC : 1 ≤ C) (Nm : ℕ → ℕ)
     (g : (m : ℕ) → Fin (Nm m) → Fin C) (ν : Fin C → ℝ) (hν : ∀ i, 0 < ν i)

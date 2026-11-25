@@ -92,7 +92,9 @@ Then for all `x₀, x₁`, with `P(z) = μ(Z = z)`,
 and
 `E[Y(x₁, M(x₁))] - E[Y(x₁, M(x₀))] = ∑_{z, m} E[Y | x₁, m, z] (P(m | x₁, z) - P(m | x₀, z)) P(z)`.
 
-Sources: Pearl (2001); VanderWeele and Vansteelandt (2009). -/
+Sources: J. Pearl, "Direct and indirect effects", Proc. 17th Conf. Uncertainty in Artificial
+Intelligence (2001) 411–420 (arXiv:1301.2300); T. J. VanderWeele and S. Vansteelandt, "Conceptual
+issues concerning mediation, interventions and composition", Stat. Interface 2 (2009) 457–468. -/
 public theorem_wanted mediation_formula (μ : Measure Ω) [IsProbabilityMeasure μ] (X : Ω → 𝒳)
     (Z : Ω → 𝒵) (Mpot : 𝒳 → Ω → ℳ) (Ypot : 𝒳 → ℳ → Ω → ℝ) (hX : Measurable X)
     (hZ : Measurable Z) (hM : ∀ x, Measurable (Mpot x)) (hY : ∀ x m, Measurable (Ypot x m))

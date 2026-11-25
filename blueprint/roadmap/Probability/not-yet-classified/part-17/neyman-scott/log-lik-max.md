@@ -8,4 +8,4 @@ is at most its value there, with equality only when `α = α̂` and `s = σ̂²`
 
 ## Sources
 
-- Neyman and Scott (1948); derived.
+- J. Neyman and E. L. Scott, "Consistent estimates based on partially consistent observations", Econometrica 16 (1948) 1–32; the characterization is derived.

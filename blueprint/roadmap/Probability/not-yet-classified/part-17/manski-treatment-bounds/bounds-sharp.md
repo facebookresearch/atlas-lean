@@ -9,4 +9,4 @@ ones (`Y₁' = Y₁` on `T` and `Y₀' = Y₀` on `Tᶜ`) and whose average trea
 
 ## Sources
 
-- Manski (1990).
+- C. F. Manski, "Nonparametric bounds on treatment effects", Am. Econ. Rev. 80(2) (1990) 319–323.

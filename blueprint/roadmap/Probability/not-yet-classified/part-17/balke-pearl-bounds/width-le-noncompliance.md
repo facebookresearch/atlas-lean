@@ -7,4 +7,4 @@ minus the lower bound (4) is at most `P(D = 1 | Z = 0) + P(D = 0 | Z = 1)
 
 ## Sources
 
-- Balke and Pearl (1997), p. 1173.
+- A. Balke and J. Pearl, "Bounds on treatment effects from studies with imperfect compliance", J. Amer. Statist. Assoc. 92 (1997) 1171–1176, p. 1173.

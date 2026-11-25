@@ -47,7 +47,8 @@ marked set `A` of size `n₁`, and let the second sample be a uniformly random s
 `n₂ ≤ N`. For every `k`, the proportion of `n₂`-subsets `S` with `#(S ∩ A) = k` is
 `hypergeometricReal N n₁ n₂ k = C(n₁, k) C(N - n₁, n₂ - k) / C(N, n₂)`.
 
-Sources: Chapman (1951). -/
+Sources: D. G. Chapman, "Some properties of the hypergeometric distribution with applications to
+zoological sample censuses", Univ. California Publ. Statist. 1 (1951) 131–160. -/
 public theorem_wanted card_filter_inter_eq {N n₁ n₂ : ℕ} (A : Finset (Fin N)) (hA : A.card = n₁)
     (hn₂ : n₂ ≤ N) (k : ℕ) :
     (((Finset.univ : Finset (Fin N)).powersetCard n₂).filter fun S => (S ∩ A).card = k).card /
@@ -57,7 +58,9 @@ public theorem_wanted card_filter_inter_eq {N n₁ n₂ : ℕ} (A : Finset (Fin 
 with `m` hypergeometric,
 `E[(n₁ + 1)(n₂ + 1)/(m + 1) - 1] = N - (N + 1) C(N - n₁, n₂ + 1) / C(N + 1, n₂ + 1)`.
 
-Sources: Chapman (1951); derived. -/
+Sources: D. G. Chapman, "Some properties of the hypergeometric distribution with applications to
+zoological sample censuses", Univ. California Publ. Statist. 1 (1951) 131–160; the closed form is
+derived. -/
 public theorem_wanted expectation_chapman {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤ N) (hn₂ : n₂ ≤ N) :
     ∑ k ∈ Finset.range (n₂ + 1), hypergeometricReal N n₁ n₂ k * chapman n₁ n₂ k =
       N - (N + 1) * ((N - n₁).choose (n₂ + 1) : ℝ) / ((N + 1).choose (n₂ + 1) : ℝ)
@@ -67,7 +70,9 @@ public theorem_wanted expectation_chapman {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤ 
 `E[(n₁ + 1)(n₂ + 1)/(m + 1) - 1] = N`, and if `n₁ + n₂ < N` then this expectation is strictly less
 than `N`.
 
-Sources: Chapman (1951); derived. -/
+Sources: D. G. Chapman, "Some properties of the hypergeometric distribution with applications to
+zoological sample censuses", Univ. California Publ. Statist. 1 (1951) 131–160; the closed form is
+derived. -/
 public theorem_wanted chapman_unbiased_iff {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤ N) (hn₂ : n₂ ≤ N) :
     (N ≤ n₁ + n₂ →
         ∑ k ∈ Finset.range (n₂ + 1), hypergeometricReal N n₁ n₂ k * chapman n₁ n₂ k = N) ∧
@@ -78,7 +83,8 @@ public theorem_wanted chapman_unbiased_iff {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤
 `n₂ ≤ N`, the probability `P(m = 0)` that the second sample contains no marked animal, where the
 Lincoln–Petersen estimate `n₁ n₂ / m` is infinite, is positive if and only if `n₁ + n₂ ≤ N`.
 
-Sources: Chapman (1951); derived. -/
+Sources: D. G. Chapman, "Some properties of the hypergeometric distribution with applications to
+zoological sample censuses", Univ. California Publ. Statist. 1 (1951) 131–160; derived. -/
 public theorem_wanted hypergeometricReal_zero_pos_iff {N n₁ n₂ : ℕ} (hn₁ : n₁ ≤ N)
     (hn₂ : n₂ ≤ N) :
     0 < hypergeometricReal N n₁ n₂ 0 ↔ n₁ + n₂ ≤ N

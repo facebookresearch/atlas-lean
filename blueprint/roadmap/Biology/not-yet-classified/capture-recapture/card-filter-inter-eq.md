@@ -7,4 +7,4 @@ marked set `A` of size `n₁`, and let the second sample be a uniformly random s
 
 ## Sources
 
-- Chapman (1951).
+- D. G. Chapman, "Some properties of the hypergeometric distribution with applications to zoological sample censuses", Univ. California Publ. Statist. 1 (1951) 131–160.

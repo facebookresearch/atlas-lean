@@ -6,4 +6,4 @@
 
 ## Sources
 
-- Wilcoxon (1945), Table II and the worked examples.
+- F. Wilcoxon, "Individual comparisons by ranking methods", Biometrics Bull. 1 (1945) 80–83, Table II and the worked examples.

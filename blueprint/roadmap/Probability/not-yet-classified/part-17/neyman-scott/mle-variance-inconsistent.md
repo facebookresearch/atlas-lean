@@ -8,4 +8,4 @@ surely as `n → ∞`.
 
 ## Sources
 
-- Koenker, lecture notes (expectation, stated there for general `T`); Neyman and Scott (1948); almost-sure limit derived.
+- R. Koenker, lecture notes "Incidental parameters and dynamic bias in panel data", for the expectation, stated there for general `T`; J. Neyman and E. L. Scott, "Consistent estimates based on partially consistent observations", Econometrica 16 (1948) 1–32; the almost-sure limit is derived.

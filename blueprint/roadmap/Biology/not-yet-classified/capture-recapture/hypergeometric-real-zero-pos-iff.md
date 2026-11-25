@@ -6,4 +6,4 @@ Lincoln–Petersen estimate `n₁ n₂ / m` is infinite, is positive if and only
 
 ## Sources
 
-- Chapman (1951); derived.
+- D. G. Chapman, "Some properties of the hypergeometric distribution with applications to zoological sample censuses", Univ. California Publ. Statist. 1 (1951) 131–160; derived.

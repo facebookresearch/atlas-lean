@@ -8,4 +8,4 @@ potential outcomes with values in `[0, 1]`. Then the average treatment effect
 
 ## Sources
 
-- Manski (1990).
+- C. F. Manski, "Nonparametric bounds on treatment effects", Am. Econ. Rev. 80(2) (1990) 319–323.

@@ -45,7 +45,9 @@ def fiellerSet (a b vaa vab vbb z : ℝ) : Set ℝ :=
 `V(θ) = v_aa - 2 θ v_ab + θ² v_bb > 0` and let `z > 0`. Then the probability that `θ` lies in
 Fieller's set computed from `(a, b)` equals the standard Gaussian probability of `[-z, z]`.
 
-Sources: Fieller (1954); Fieller (1940). -/
+Sources: E. C. Fieller, "Some problems in interval estimation", J. R. Statist. Soc. B 16 (1954)
+175–185; E. C. Fieller, "The biological standardization of insulin", Suppl. J. R. Statist. Soc. 7
+(1940) 1–64. -/
 public theorem_wanted measureReal_mem_fiellerSet {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (a b : Ω → ℝ) (hG : HasGaussianLaw (fun ω => (a ω, b ω)) μ)
     (vaa vab vbb θ z : ℝ) (hvaa : Var[a; μ] = vaa) (hvbb : Var[b; μ] = vbb)
@@ -59,7 +61,8 @@ public theorem_wanted measureReal_mem_fiellerSet {Ω : Type*} [MeasurableSpace �
 Fieller's set is a bounded closed interval `[l, u]` containing `a / b`. If `b² < z² v_bb`, it is
 either the whole real line or the complement of a bounded open interval `(l, u)` with `l < u`.
 
-Sources: Fieller (1954). -/
+Sources: E. C. Fieller, "Some problems in interval estimation", J. R. Statist. Soc. B 16 (1954)
+175–185. -/
 public theorem_wanted fiellerSet_shape (a b vaa vab vbb z : ℝ) (hvaa : 0 ≤ vaa) (hvbb : 0 ≤ vbb)
     (hpsd : vab ^ 2 ≤ vaa * vbb) (hz : 0 < z) :
     (z ^ 2 * vbb < b ^ 2 →

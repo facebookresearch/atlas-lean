@@ -10,4 +10,4 @@ permutation almost surely, so this is the law of `H` of the sample ranks.)
 
 ## Sources
 
-- Kruskal and Wallis (1952), Section 1; Kruskal (1952), p. 525.
+- W. H. Kruskal and W. A. Wallis, "Use of ranks in one-criterion variance analysis", J. Amer. Statist. Assoc. 47 (1952) 583–621, Section 1; W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist. 23 (1952) 525–540, p. 525.

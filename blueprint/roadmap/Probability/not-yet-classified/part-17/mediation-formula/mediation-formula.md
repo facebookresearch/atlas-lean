@@ -18,4 +18,4 @@ and
 
 ## Sources
 
-- Pearl (2001); VanderWeele and Vansteelandt (2009).
+- J. Pearl, "Direct and indirect effects", Proc. 17th Conf. Uncertainty in Artificial Intelligence (2001) 411–420 (arXiv:1301.2300); T. J. VanderWeele and S. Vansteelandt, "Conceptual issues concerning mediation, interventions and composition", Stat. Interface 2 (2009) 457–468.

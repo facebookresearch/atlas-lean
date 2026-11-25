@@ -7,4 +7,4 @@ either the whole real line or the complement of a bounded open interval `(l, u)`
 
 ## Sources
 
-- Fieller (1954).
+- E. C. Fieller, "Some problems in interval estimation", J. R. Statist. Soc. B 16 (1954) 175–185.

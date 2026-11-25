@@ -7,4 +7,4 @@ variances are taken over the subsets `S` of `{1, …, n}`, each with probability
 
 ## Sources
 
-- Wilcoxon (1945); derived.
+- F. Wilcoxon, "Individual comparisons by ranking methods", Biometrics Bull. 1 (1945) 80–83; the moments are derived.

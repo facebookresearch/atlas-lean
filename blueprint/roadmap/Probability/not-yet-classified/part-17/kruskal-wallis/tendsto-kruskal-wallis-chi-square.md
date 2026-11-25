@@ -8,4 +8,4 @@ every bounded continuous `f : ℝ → ℝ`, the null mean of `f(H)` tends to `�
 
 ## Sources
 
-- Kruskal (1952), pp. 527–528, Section 4 (via the Wald–Wolfowitz permutation central limit theorem).
+- W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist. 23 (1952) 525–540, pp. 527–528, Section 4 (via the Wald–Wolfowitz permutation central limit theorem).

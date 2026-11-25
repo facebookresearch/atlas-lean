@@ -8,4 +8,4 @@ upper bound (5).
 
 ## Sources
 
-- Balke and Pearl (1997), abstract ("the tightest possible") and p. 1172.
+- A. Balke and J. Pearl, "Bounds on treatment effects from studies with imperfect compliance", J. Amer. Statist. Assoc. 92 (1997) 1171–1176, abstract ("the tightest possible") and p. 1172.

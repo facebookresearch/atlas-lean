@@ -7,4 +7,4 @@ the random-effects pooled estimate is `ȳ` with `(∑ᵢ (s² + Δ²)⁻¹)⁻¹
 
 ## Sources
 
-- DerSimonian and Laird (1986), p. 183.
+- R. DerSimonian and N. Laird, "Meta-analysis in clinical trials", Control. Clin. Trials 7 (1986) 177–188, p. 183.

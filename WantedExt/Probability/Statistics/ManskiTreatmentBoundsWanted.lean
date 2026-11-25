@@ -52,7 +52,8 @@ potential outcomes with values in `[0, 1]`. Then the average treatment effect
 `∫ Y₁ dμ - ∫ Y₀ dμ` lies between `lowerBound` and `upperBound`, the width
 `upperBound - lowerBound` equals `1`, and `lowerBound ≤ 0 ≤ upperBound`.
 
-Source: Manski (1990). -/
+Sources: C. F. Manski, "Nonparametric bounds on treatment effects", Am. Econ. Rev. 80(2) (1990)
+319–323. -/
 public theorem_wanted bounds_sound (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Set Ω)
     (hT : MeasurableSet T) (Y₀ Y₁ : Ω → ℝ) (h₀ : Measurable Y₀) (h₁ : Measurable Y₁)
     (h₀01 : ∀ ω, 0 ≤ Y₀ ω ∧ Y₀ ω ≤ 1) (h₁01 : ∀ ω, 0 ≤ Y₁ ω ∧ Y₁ ω ≤ 1) :
@@ -68,7 +69,8 @@ ones (`Y₁' = Y₁` on `T` and `Y₀' = Y₀` on `Tᶜ`) and whose average trea
 `lowerBound μ T Y₀ Y₁`, and likewise a pair whose average treatment effect equals
 `upperBound μ T Y₀ Y₁`.
 
-Source: Manski (1990). -/
+Sources: C. F. Manski, "Nonparametric bounds on treatment effects", Am. Econ. Rev. 80(2) (1990)
+319–323. -/
 public theorem_wanted bounds_sharp (μ : Measure Ω) [IsProbabilityMeasure μ] (T : Set Ω)
     (hT : MeasurableSet T) (Y₀ Y₁ : Ω → ℝ) (h₀ : Measurable Y₀) (h₁ : Measurable Y₁)
     (h₀01 : ∀ ω, 0 ≤ Y₀ ω ∧ Y₀ ω ≤ 1) (h₁01 : ∀ ω, 0 ≤ Y₁ ω ∧ Y₁ ω ≤ 1) :

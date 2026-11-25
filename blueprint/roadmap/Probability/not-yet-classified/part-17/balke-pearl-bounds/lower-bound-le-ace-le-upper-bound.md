@@ -7,4 +7,4 @@ probabilities `p_{yd.z}`.
 
 ## Sources
 
-- Balke and Pearl (1997), p. 1173, (4) and (5).
+- A. Balke and J. Pearl, "Bounds on treatment effects from studies with imperfect compliance", J. Amer. Statist. Assoc. 92 (1997) 1171–1176, p. 1173, equations (4) and (5).

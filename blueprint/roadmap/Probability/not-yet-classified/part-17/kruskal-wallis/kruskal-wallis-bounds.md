@@ -6,4 +6,4 @@ positions to `C` samples of sizes `n_i ≥ 1` and every ranking `σ`,
 
 ## Sources
 
-- Kruskal (1952), p. 535, (7.2); the lower bound is derived.
+- W. H. Kruskal, "A nonparametric test for the several sample problem", Ann. Math. Statist. 23 (1952) 525–540, p. 535, equation (7.2); the lower bound is derived.

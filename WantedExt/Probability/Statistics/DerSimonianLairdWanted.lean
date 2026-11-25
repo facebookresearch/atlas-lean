@@ -81,7 +81,8 @@ probability measure, `k ≥ 2`, `v_i > 0` known sampling variances, `Δ² ≥ 0`
 integrable, mean `0`, `Var δ_i = Δ²`, `Var e_i = v_i`, distinct deviations uncorrelated). Then
 `S₁ - S₂ / S₁ > 0` and `E[cochranQ v y] = (k - 1) + Δ² (S₁ - S₂ / S₁)`, with `S_r = ∑ (v_i⁻¹)^r`.
 
-Sources: DerSimonian and Laird (1986), p. 182 (the moment equation). -/
+Sources: R. DerSimonian and N. Laird, "Meta-analysis in clinical trials", Control. Clin. Trials 7
+(1986) 177–188, p. 182 (the moment equation). -/
 public theorem_wanted integral_cochranQ {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (hk : 2 ≤ k) (v : Fin k → ℝ) (hv : ∀ i, 0 < v i) (Δsq m : ℝ)
     (hΔ : 0 ≤ Δsq) (δ e : Fin k → Ω → ℝ) (hmodel : RandomEffectsModel μ δ e v Δsq) :
@@ -94,7 +95,8 @@ of `integral_cochranQ` (probability measure `μ`, `k ≥ 2`, sampling variances 
 estimator `(Q - (k - 1)) / (S₁ - S₂ / S₁)` has expectation `Δ²`, the DerSimonian–Laird estimator
 `Δ̂²` is nonnegative, and `E Δ̂² ≥ Δ²`.
 
-Sources: DerSimonian and Laird (1986), p. 183. -/
+Sources: R. DerSimonian and N. Laird, "Meta-analysis in clinical trials", Control. Clin. Trials 7
+(1986) 177–188, p. 183. -/
 public theorem_wanted momentEstimator_unbiased_dlEstimator_bias {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (hk : 2 ≤ k) (v : Fin k → ℝ) (hv : ∀ i, 0 < v i)
     (Δsq m : ℝ) (hΔ : 0 ≤ Δsq) (δ e : Fin k → Ω → ℝ)
@@ -110,7 +112,8 @@ estimate `∑ᵢ ωᵢ yᵢ` with the inverse-variance weights `ω` of `v_i + Δ
 variance `(∑ᵢ (v_i + Δ²)⁻¹)⁻¹`, and every weighted average `∑ c_i y_i` with `∑ c_i = 1` has
 variance at least `(∑ᵢ (v_i + Δ²)⁻¹)⁻¹`.
 
-Sources: DerSimonian and Laird (1986), p. 183, (2)–(4). -/
+Sources: R. DerSimonian and N. Laird, "Meta-analysis in clinical trials", Control. Clin. Trials 7
+(1986) 177–188, p. 183, equations (2)–(4). -/
 public theorem_wanted pooledEstimate_optimal {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (hk : 2 ≤ k) (v : Fin k → ℝ) (hv : ∀ i, 0 < v i) (Δsq m : ℝ)
     (hΔ : 0 ≤ Δsq) (δ e : Fin k → Ω → ℝ) (hmodel : RandomEffectsModel μ δ e v Δsq)
@@ -125,7 +128,8 @@ sampling variance equal `s² > 0`. For real study estimates `y`, with `ȳ = ∑ 
 DerSimonian–Laird estimator is `max {0, ∑ (y_i - ȳ)² / (k - 1) - s²}`, and for every `Δ² ≥ 0`
 the random-effects pooled estimate is `ȳ` with `(∑ᵢ (s² + Δ²)⁻¹)⁻¹ = (s² + Δ²) / k`.
 
-Sources: DerSimonian and Laird (1986), p. 183. -/
+Sources: R. DerSimonian and N. Laird, "Meta-analysis in clinical trials", Control. Clin. Trials 7
+(1986) 177–188, p. 183. -/
 public theorem_wanted equal_variances (hk : 2 ≤ k) (s2 : ℝ) (hs2 : 0 < s2) (y : Fin k → ℝ)
     (Δsq : ℝ) (hΔ : 0 ≤ Δsq) :
     dlEstimator (fun _ : Fin k => s2) y =

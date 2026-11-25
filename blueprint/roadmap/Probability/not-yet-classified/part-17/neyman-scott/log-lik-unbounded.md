@@ -6,4 +6,4 @@ for every `M` there is `s > 0` with log-likelihood greater than `M`.
 
 ## Sources
 
-- Neyman and Scott (1948); derived.
+- J. Neyman and E. L. Scott, "Consistent estimates based on partially consistent observations", Econometrica 16 (1948) 1–32; derived.

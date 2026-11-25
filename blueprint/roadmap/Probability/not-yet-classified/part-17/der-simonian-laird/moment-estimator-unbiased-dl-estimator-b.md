@@ -8,4 +8,4 @@ estimator `(Q - (k - 1)) / (S₁ - S₂ / S₁)` has expectation `Δ²`, the Der
 
 ## Sources
 
-- DerSimonian and Laird (1986), p. 183.
+- R. DerSimonian and N. Laird, "Meta-analysis in clinical trials", Control. Clin. Trials 7 (1986) 177–188, p. 183.

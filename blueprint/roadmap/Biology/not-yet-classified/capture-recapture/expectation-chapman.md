@@ -6,4 +6,4 @@ with `m` hypergeometric,
 
 ## Sources
 
-- Chapman (1951); derived.
+- D. G. Chapman, "Some properties of the hypergeometric distribution with applications to zoological sample censuses", Univ. California Publ. Statist. 1 (1951) 131–160; the closed form is derived.

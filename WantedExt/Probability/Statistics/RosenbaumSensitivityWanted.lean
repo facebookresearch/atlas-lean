@@ -49,7 +49,9 @@ unobserved covariates `u₁, u₂ ∈ [0, 1]`, the probability `exp(γ u₁) / (
 that the first unit of a pair is treated lies in `[1 / (1 + Γ), Γ / (1 + Γ)]` with
 `Γ = exp γ`.
 
-Sources: Rosenbaum (1987); Rosenbaum (2002), §4.2. -/
+Sources: P. R. Rosenbaum, "Sensitivity analysis for certain permutation inferences in matched
+observational studies", Biometrika 74 (1987) 13–26; P. R. Rosenbaum, *Observational Studies*, 2nd
+ed., Springer (2002). -/
 public theorem_wanted treatmentProb_mem {γ u₁ u₂ : ℝ} (hγ : 0 ≤ γ) (hu₁ : 0 ≤ u₁) (hu₁' : u₁ ≤ 1)
     (hu₂ : 0 ≤ u₂) (hu₂' : u₂ ≤ 1) :
     1 / (1 + Real.exp γ) ≤ Real.exp (γ * u₁) / (Real.exp (γ * u₁) + Real.exp (γ * u₂)) ∧
@@ -62,7 +64,9 @@ probabilities `π_i`, `i < n`, of independent Bernoulli variables satisfy
 `P(Bin(n, 1 / (1 + Γ)) ≥ k) ≤ P(∑ᵢ Bᵢ ≥ k) ≤ P(Bin(n, Γ / (1 + Γ)) ≥ k)`, the binomial tails
 being the Poisson-binomial tails with constant success probabilities.
 
-Sources: Rosenbaum (1987); Rosenbaum (2002), §4.3. -/
+Sources: P. R. Rosenbaum, "Sensitivity analysis for certain permutation inferences in matched
+observational studies", Biometrika 74 (1987) 13–26; P. R. Rosenbaum, *Observational Studies*, 2nd
+ed., Springer (2002), §4.3. -/
 public theorem_wanted upperTail_bounds {n : ℕ} {Γ : ℝ} (hΓ : 1 ≤ Γ) (π : Fin n → ℝ)
     (hlo : ∀ i, 1 / (1 + Γ) ≤ π i) (hhi : ∀ i, π i ≤ Γ / (1 + Γ)) (k : ℕ) :
     bernoulliSumUpperTail (fun _ : Fin n => 1 / (1 + Γ)) k ≤ bernoulliSumUpperTail π k ∧

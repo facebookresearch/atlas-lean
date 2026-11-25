@@ -7,4 +7,4 @@ Gaussian of mean `α_i` (arbitrary reals) and variance `σ² > 0`. Then the diff
 
 ## Sources
 
-- Neyman and Scott (1948); derived.
+- J. Neyman and E. L. Scott, "Consistent estimates based on partially consistent observations", Econometrica 16 (1948) 1–32; derived.

@@ -8,4 +8,4 @@ Fieller's set computed from `(a, b)` equals the standard Gaussian probability of
 
 ## Sources
 
-- Fieller (1954); Fieller (1940).
+- E. C. Fieller, "Some problems in interval estimation", J. R. Statist. Soc. B 16 (1954) 175–185; E. C. Fieller, "The biological standardization of insulin", Suppl. J. R. Statist. Soc. 7 (1940) 1–64.

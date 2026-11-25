@@ -89,7 +89,8 @@ distribution `q` of the sixteen response types (`q ≥ 0` with total mass `1`), 
 effect lies between the lower bound (4) and the upper bound (5) computed from the induced observed
 probabilities `p_{yd.z}`.
 
-Sources: Balke and Pearl (1997), p. 1173, (4) and (5). -/
+Sources: A. Balke and J. Pearl, "Bounds on treatment effects from studies with imperfect
+compliance", J. Amer. Statist. Assoc. 92 (1997) 1171–1176, p. 1173, equations (4) and (5). -/
 public theorem_wanted lowerBound_le_ace_le_upperBound (q : ResponseType → ℝ)
     (hq : ∀ r, 0 ≤ q r) (hsum : ∑ r, q r = 1) :
     lowerBound (observed q) ≤ ace q ∧ ace q ≤ upperBound (observed q)
@@ -100,7 +101,9 @@ of the sixteen response types (`q ≥ 0` with total mass `1`), there are distrib
 `p_{yd.z}` as `q`, with `ACE(q_lo)` equal to the lower bound (4) and `ACE(q_hi)` equal to the
 upper bound (5).
 
-Sources: Balke and Pearl (1997), abstract ("the tightest possible") and p. 1172. -/
+Sources: A. Balke and J. Pearl, "Bounds on treatment effects from studies with imperfect
+compliance", J. Amer. Statist. Assoc. 92 (1997) 1171–1176, abstract ("the tightest possible") and p.
+1172. -/
 public theorem_wanted bounds_attained (q : ResponseType → ℝ) (hq : ∀ r, 0 ≤ q r)
     (hsum : ∑ r, q r = 1) :
     (∃ q' : ResponseType → ℝ, (∀ r, 0 ≤ q' r) ∧ ∑ r, q' r = 1 ∧ observed q' = observed q ∧
@@ -113,7 +116,8 @@ the sixteen response types (`q ≥ 0` with total mass `1`), the induced observed
 satisfy `p_{00.0} + p_{10.1} ≤ 1`, `p_{01.0} + p_{11.1} ≤ 1`, `p_{10.0} + p_{00.1} ≤ 1` and
 `p_{11.0} + p_{01.1} ≤ 1`.
 
-Sources: Balke and Pearl (1997), p. 1173, (6). -/
+Sources: A. Balke and J. Pearl, "Bounds on treatment effects from studies with imperfect
+compliance", J. Amer. Statist. Assoc. 92 (1997) 1171–1176, p. 1173, equation (6). -/
 public theorem_wanted instrumental_inequalities (q : ResponseType → ℝ) (hq : ∀ r, 0 ≤ q r)
     (hsum : ∑ r, q r = 1) :
     observed q false false false + observed q true false true ≤ 1 ∧
@@ -126,7 +130,8 @@ distribution `q` of the sixteen response types (`q ≥ 0` with total mass `1`), 
 minus the lower bound (4) is at most `P(D = 1 | Z = 0) + P(D = 0 | Z = 1)
 = p_{01.0} + p_{11.0} + p_{00.1} + p_{10.1}`.
 
-Sources: Balke and Pearl (1997), p. 1173. -/
+Sources: A. Balke and J. Pearl, "Bounds on treatment effects from studies with imperfect
+compliance", J. Amer. Statist. Assoc. 92 (1997) 1171–1176, p. 1173. -/
 public theorem_wanted width_le_noncompliance (q : ResponseType → ℝ) (hq : ∀ r, 0 ≤ q r)
     (hsum : ∑ r, q r = 1) :
     upperBound (observed q) - lowerBound (observed q) ≤

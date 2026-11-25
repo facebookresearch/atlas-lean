@@ -7,4 +7,4 @@ that the first unit of a pair is treated lies in `[1 / (1 + Γ), Γ / (1 + Γ)]`
 
 ## Sources
 
-- Rosenbaum (1987); Rosenbaum (2002), §4.2.
+- P. R. Rosenbaum, "Sensitivity analysis for certain permutation inferences in matched observational studies", Biometrika 74 (1987) 13–26; P. R. Rosenbaum, *Observational Studies*, 2nd ed., Springer (2002).

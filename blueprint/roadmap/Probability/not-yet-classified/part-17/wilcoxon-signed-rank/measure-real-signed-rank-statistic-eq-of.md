@@ -6,4 +6,4 @@ variance `σ²`. Then for every `t`, `P(W⁺ = t) = c_n(t) / 2ⁿ`.
 
 ## Sources
 
-- Wilcoxon (1945).
+- F. Wilcoxon, "Individual comparisons by ranking methods", Biometrics Bull. 1 (1945) 80–83.

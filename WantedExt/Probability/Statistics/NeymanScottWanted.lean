@@ -58,7 +58,8 @@ noncomputable def conditionalVariance {n : ℕ} (y : Fin n → Fin 2 → ℝ) : 
 `s = σ̂² = (1 / (4n)) ∑_i (y_{i1} - y_{i2})²`: for every `α` and every `s > 0` the log-likelihood
 is at most its value there, with equality only when `α = α̂` and `s = σ̂²`.
 
-Sources: Neyman and Scott (1948); derived. -/
+Sources: J. Neyman and E. L. Scott, "Consistent estimates based on partially consistent
+observations", Econometrica 16 (1948) 1–32; the characterization is derived. -/
 public theorem_wanted logLik_max {n : ℕ} (y : Fin n → Fin 2 → ℝ)
     (hd : 0 < ∑ i, (y i 0 - y i 1) ^ 2) (α : Fin n → ℝ) (s : ℝ) (hs : 0 < s) :
     logLik y α s ≤ logLik y (fun i => (y i 0 + y i 1) / 2) (mleVariance y) ∧
@@ -69,7 +70,8 @@ public theorem_wanted logLik_max {n : ℕ} (y : Fin n → Fin 2 → ℝ)
 `y i 0 = y i 1` for every `i`, the log-likelihood at `α_i = y i 0` is unbounded above over `s > 0`:
 for every `M` there is `s > 0` with log-likelihood greater than `M`.
 
-Sources: Neyman and Scott (1948); derived. -/
+Sources: J. Neyman and E. L. Scott, "Consistent estimates based on partially consistent
+observations", Econometrica 16 (1948) 1–32; derived. -/
 public theorem_wanted logLik_unbounded {n : ℕ} (hn : 0 < n) (y : Fin n → Fin 2 → ℝ)
     (heq : ∀ i, y i 0 = y i 1) (M : ℝ) :
     ∃ s : ℝ, 0 < s ∧ M < logLik y (fun i => y i 0) s
@@ -80,8 +82,10 @@ probability measure and `y i t`, `i ∈ ℕ`, `t ∈ {0, 1}`, independent real r
 estimate `σ̂²_n` from the first `n` pairs has expectation `σ² / 2`, and `σ̂²_n → σ² / 2` almost
 surely as `n → ∞`.
 
-Sources: Koenker, lecture notes (expectation, stated there for general `T`); Neyman and Scott
-(1948); almost-sure limit derived. -/
+Sources: R. Koenker, lecture notes "Incidental parameters and dynamic bias in panel data", for the
+expectation, stated there for general `T`; J. Neyman and E. L. Scott, "Consistent estimates based on
+partially consistent observations", Econometrica 16 (1948) 1–32; the almost-sure limit is derived.
+-/
 public theorem_wanted mleVariance_inconsistent {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (α : ℕ → ℝ) (σsq : ℝ≥0) (hσ : 0 < σsq) (y : ℕ → Fin 2 → Ω → ℝ)
     (hind : iIndepFun (fun p : ℕ × Fin 2 => y p.1 p.2) μ)
@@ -96,7 +100,8 @@ measure and `y i t`, `i ∈ ℕ`, `t ∈ {0, 1}`, independent real random variab
 Gaussian of mean `α_i` (arbitrary reals) and variance `σ² > 0`. Then the difference-based estimate
 `σ̃²_n = (1 / (2n)) ∑_{i < n} (y_{i1} - y_{i2})² = 2 σ̂²_n` converges to `σ²` almost surely.
 
-Sources: Neyman and Scott (1948); derived. -/
+Sources: J. Neyman and E. L. Scott, "Consistent estimates based on partially consistent
+observations", Econometrica 16 (1948) 1–32; derived. -/
 public theorem_wanted conditionalVariance_consistent {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (α : ℕ → ℝ) (σsq : ℝ≥0) (hσ : 0 < σsq)
     (y : ℕ → Fin 2 → Ω → ℝ) (hind : iIndepFun (fun p : ℕ × Fin 2 => y p.1 p.2) μ)
