@@ -31,3 +31,4 @@
 - [To Continuous Linear Map rank One](to-continuous-linear-map-rank-one.md)
 - [Of Continuous Linear Map rank One](of-continuous-linear-map-rank-one.md)
 - [Of Continuous Linear Map rank One mem finite Rank](of-continuous-linear-map-rank-one-mem-fi.md)
+- [Compact](map-lcompletion.md)

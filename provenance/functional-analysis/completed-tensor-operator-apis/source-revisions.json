@@ -1,0 +1,9 @@
+{
+  "source_revision": "2f44f63ac84e3c0c460a6efd103098ca3a3d2a76",
+  "documentation_revision": "c4319c9f6ccc5126de2d38df91d61d92c3749ba3",
+  "new_modules": 5,
+  "existing_module_refactors": 1,
+  "readable_source_snapshots": 6,
+  "existing_module_provenance_path": "provenance/functional-analysis/operator-measure-linear/files-02.jsonl",
+  "existing_module_prior_archive_retained": "provenance/functional-analysis/operator-measure-linear/source-snapshot/part-0002.jsonl"
+}

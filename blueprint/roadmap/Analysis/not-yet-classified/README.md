@@ -610,3 +610,7 @@ Topics added since this subject's fields were last revised.
 - [Trace Norm Scalar](trace-norm-scalar/README.md)
 - [Unit Coordinates](unit-coordinates/README.md)
 - [Unitization L1](unitization-l1/README.md)
+- [Bilinear Map](bilinear-map/README.md)
+- [Compact Map](compact-map/README.md)
+- [Operator Algebra](operator-algebra/README.md)
+- [Rank One](rank-one/README.md)
