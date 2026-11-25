@@ -162,7 +162,7 @@ private lemma isCompactSystem_closedCompactCylinders {ι : Type*} {α : ι → T
     intro i
     refine hTclosed.inter ?_
     rw [Set.dissipate_def]
-    exact isClosed_biInter fun j _ ↦ hCclosed j
+    exact isClosed_iInter fun j ↦ isClosed_iInter fun _ ↦ hCclosed j
   have hEcompact0 : IsCompact (Set.univ.pi K ∩ Set.dissipate C 0) :=
     hTcompact.of_isClosed_subset (hEclosed 0) Set.inter_subset_left
   obtain ⟨x, hx⟩ := IsCompact.nonempty_iInter_of_sequence_nonempty_isCompact_isClosed
@@ -263,15 +263,21 @@ private lemma IsSigmaSubadditive_of_compactSystem {α : Type*} {C : Set (Set α)
         _ < a := ENNReal.half_lt_self hane hatop
 
 /--
-If `P : ∀ J, Measure (∀ j ∈ J, α j)` is a projective family of probability measures on Polish
-Borel factors `α i`, then there exists `μ` on `∀ i, α i` with `IsProjectiveLimit μ P`, i.e. its
-finite projections are `P`. Source: A. N. Kolmogorov, Grundbegriffe der
+**Kolmogorov extension theorem.** Let $(\alpha_i)_{i \in \iota}$ be a family of Polish spaces, each
+with its Borel σ-algebra, indexed by an arbitrary type $\iota$. For each finite set
+$J \subseteq \iota$ let $P_J$ be a probability measure on $\prod_{j \in J} \alpha_j$, and suppose
+the family is projective: whenever $J \subseteq I$ are finite, the image of $P_I$ under the
+restriction map $\prod_{i \in I} \alpha_i \to \prod_{j \in J} \alpha_j$ is $P_J$. Then there is a
+measure $\mu$ on $\prod_{i \in \iota} \alpha_i$ whose image under the restriction map to
+$\prod_{j \in J} \alpha_j$ is $P_J$ for every finite $J \subseteq \iota$.
+
+Proves `Wanted` entry `kolmogorov_extension`.
+
+Source: A. N. Kolmogorov, Grundbegriffe der
 Wahrscheinlichkeitsrechnung, 1933; P. J. Daniell 1918 precursor; textbook in Kallenberg,
 Foundations of Modern Probability, 3rd ed. (Kolmogorov extension) and Tao, Introduction to Measure
 Theory Lean Polish Borel projective-limit version; full general version handles standard Borel
 factors.
-
-Proves `Wanted` entry `kolmogorov_extension`.
 -/
 theorem kolmogorov_extension
     {ι : Type*} {α : ι → Type*}

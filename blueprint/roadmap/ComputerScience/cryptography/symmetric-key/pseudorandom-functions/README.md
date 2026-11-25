@@ -5,6 +5,7 @@
 - [Real world of the PRF experiment](prf-real.md)
 - [Random world of the PRF experiment](prf-rand.md)
 - [PRF advantage](prf-advantage.md)
+- [Asymptotic PRF security relative to a class of distinguishers](prfsecure.md)
 
 ## The MAC from a PRF
 
@@ -33,3 +34,7 @@
 - [The encryption oracle depends only on the encryption randomness](run-enc-congr.md)
 - [The CPA reduction against a random function](prf-rand-cpa-reduction.md)
 - [CPA encryption from a PRF, concrete security](cpa-advantage-le.md)
+
+## Constructions from pseudorandom generators
+
+- [The GGM construction: pseudorandom generators give pseudorandom functions](the-ggm-construction-pseudorandom-generators.md)

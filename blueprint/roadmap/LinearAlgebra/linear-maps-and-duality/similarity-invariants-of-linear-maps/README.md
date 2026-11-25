@@ -1,5 +1,4 @@
 # Similarity invariants of linear maps
 
-- [Characteristic polynomial of an endomorphism of a free module of rank two](charpoly-of-finrank-eq-two.md)
-- [Trace and determinant are invariant under semiconjugacy](trace-eq-and-det-eq-of-semiconj.md)
-- [Kernel of the dual map has the same dimension as the kernel](finrank-ker-dual-map-eq-finrank-ker.md)
+- [Trace and determinant are similarity invariants](trace-and-determinant/README.md)
+- [Kernel of the dual map has the same dimension as the kernel](kernel-of-the-dual-map/README.md)

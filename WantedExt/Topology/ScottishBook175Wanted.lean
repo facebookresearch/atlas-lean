@@ -18,19 +18,25 @@ public import Mathlib.Topology.Homeomorph.Defs
 
 namespace MathlibExt.Topology.ScottishBook175Wanted
 
-/-- The Hilbert cube `Q`, as the countable product of closed unit intervals. -/
+/-- **The Hilbert cube.** The Hilbert cube $Q = [0,1]^{\mathbb{N}}$ is the product of countably
+many copies of the closed unit interval $[0,1]$, with the product topology. -/
 abbrev ScottishBookHilbertCube : Type := ℕ → ↥(Set.Icc (0 : ℝ) 1)
 
-/-- The curve shaped like the letter `T`: a vertical stem with a horizontal
-bar on top, with branch point `(0, 1)`. -/
+/-- **The letter T.** The letter-T curve is the subset
+$$T = \{(0, y) : 0 \le y \le 1\} \cup \{(x, 1) : -1 \le x \le 1\}$$
+of $\mathbb{R}^2$: a vertical stem with a horizontal bar on top, meeting at the branch point
+$(0, 1)$. -/
 abbrev ScottishBookLetterT : Set (ℝ × ℝ) :=
   {p | (p.1 = 0 ∧ p.2 ∈ Set.Icc (0 : ℝ) 1) ∨ (p.2 = 1 ∧ p.1 ∈ Set.Icc (-1 : ℝ) 1)}
 
 /--
-Borsuk's Problem 175 from the Scottish Book, both parts affirmative:
-(a) the Cartesian product of the Hilbert cube `Q` with the letter-`T`
-curve is homeomorphic to `Q`; (b) the product of an infinite sequence
-of copies of the letter-`T` curve is homeomorphic to `Q`. Source:
+**The Hilbert cube absorbs the letter T (Borsuk's Problem 175).** Let $Q = [0,1]^{\mathbb{N}}$ be
+the Hilbert cube and let $T \subset \mathbb{R}^2$ be the letter-T curve. Both parts of Borsuk's
+Problem 175 from the Scottish Book have affirmative answers: (a) the product $Q \times T$ is
+homeomorphic to $Q$, and (b) the product $T^{\mathbb{N}}$ of countably many copies of $T$ is
+homeomorphic to $Q$.
+
+Source:
 K. Borsuk, Problem 175 of the Scottish Book; positively solved by
 R. D. Anderson, as cited in Domoradzki-Stawiska-Zarichnyi, "90+ years of
 the Scottish Book" (arXiv:2603.27867), and in the commentary in

@@ -19,7 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Logic.Equiv.Fin.Rotate
 public import Mathlib.Order.CompletePartialOrder
-public import WantedExt.Combinatorics.TransitiveSubtournamentLogErdosProblem1216Wanted
+public import MathlibExt.Combinatorics.Digraph.TransitiveSubtournament
 public import WantedExt.GraphTheory.TournamentStrongConnectivityShared
 
 @[expose] public section

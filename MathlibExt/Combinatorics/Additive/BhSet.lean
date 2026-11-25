@@ -39,26 +39,31 @@ the head, so the theory applies to genuine semigroups.
 
 namespace AdditiveCombinatorics
 
-/-- Sum of the entries of a nonempty list, by folding `+` over the tail starting
-from the head. The `l ≠ []` hypothesis rules out the empty list; it is ignored
-by the computation, so it cannot affect the value
-(see `sumNE_proof_irrel`). -/
+/-- **Sum of a nonempty list.** For a nonempty list $(a_1, \dots, a_k)$ of elements of a type with
+an addition, its sum is obtained by adding the entries from left to right starting from the head:
+it is $a_1$ when $k = 1$, and $(\cdots((a_1 + a_2) + a_3) + \cdots) + a_k$ in general. No zero
+element is needed, and the proof that the list is nonempty does not affect the value. -/
 public def sumNE {G : Type*} [Add G] : (l : List G) → l ≠ [] → G
   | [], h => absurd rfl h
   | a :: t, _ => t.foldl (· + ·) a
 
-/-- `sumNE` does not depend on the nonemptiness proof, so that proof cannot
-alter the semantics of the sum. -/
+/-- **The sum of a nonempty list does not depend on the nonemptiness proof.** For every list $l$
+of elements of a type with an addition and any two proofs $e_1$ and $e_2$ that $l$ is nonempty,
+the sum of $l$ computed with $e_1$ equals the sum of $l$ computed with $e_2$. -/
 public theorem sumNE_proof_irrel {G : Type*} [Add G] (l : List G) (e₁ e₂ : l ≠ []) :
     sumNE l e₁ = sumNE l e₂ := by
   cases l with
   | nil => rfl
   | cons _ _ => rfl
 
-/-- `IsBhSet A h` states that `A` is a `B_h`-set: `A` is nonempty, `h` is
-positive, and any two length-`h` lists over `A` with equal nonempty sums are
-permutations of each other. Repeated summands are allowed, since the
-representatives are arbitrary lists. -/
+/-- **$B_h$-set.** Let $G$ be an additive commutative semigroup, $A \subseteq G$ and $h$ a natural
+number. $A$ is a $B_h$-set if $A$ is nonempty, $h \ge 1$, and whenever two sequences
+$(a_1, \dots, a_h)$ and $(b_1, \dots, b_h)$ of elements of $A$ satisfy
+$a_1 + \dots + a_h = b_1 + \dots + b_h$, the sequence $(b_1, \dots, b_h)$ is a rearrangement of
+$(a_1, \dots, a_h)$.
+
+Repeated summands are allowed: the entries of each sequence need not be distinct. No zero element
+is assumed. -/
 public def IsBhSet {G : Type*} [AddCommSemigroup G] (A : Set G) (h : ℕ) : Prop :=
   A.Nonempty ∧ 0 < h ∧
     ∀ (l₁ l₂ : List G),

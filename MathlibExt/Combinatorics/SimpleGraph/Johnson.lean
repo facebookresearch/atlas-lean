@@ -23,14 +23,17 @@ Adapted from
 
 namespace SimpleGraph
 
-/-- The Johnson graph `J(n, k)`: its vertices are the `k`-subsets of `Fin n`, and two
-vertices are adjacent when their intersection has cardinality `k - 1`. -/
+/-- **Johnson graph.** For natural numbers $n$ and $k$, the Johnson graph $J(n, k)$ has as
+vertices the $k$-element subsets of $\{0, 1, \dots, n-1\}$, and two vertices $s$ and $t$ are
+adjacent when $|s \cap t| + 1 = k$, that is, when $s$ and $t$ share exactly $k - 1$ elements. -/
 public def johnsonGraph (n k : ℕ) : SimpleGraph {s : Finset (Fin n) // s.card = k} where
   Adj s t := (s.val ∩ t.val).card + 1 = k
   symm.symm s t h := by simpa [Finset.inter_comm]
   loopless.irrefl := by simp +contextual
 
-/-- The adjacency relation of the Johnson graph. -/
+/-- **Adjacency in the Johnson graph.** For natural numbers $n$ and $k$ and $k$-element subsets
+$s$ and $t$ of $\{0, 1, \dots, n-1\}$, the vertices $s$ and $t$ of the Johnson graph $J(n, k)$
+are adjacent if and only if $|s \cap t| + 1 = k$. -/
 public theorem johnsonGraph_adj_iff (n k : ℕ)
     (s t : {s : Finset (Fin n) // s.card = k}) :
     (johnsonGraph n k).Adj s t ↔ (s.val ∩ t.val).card + 1 = k :=
