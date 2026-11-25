@@ -37,19 +37,6 @@ variable {C : Type u} [Category.{v} C] [Abelian C]
   (K : HomologicalComplex₂ C (ComplexShape.down ℕ)
     (ComplexShape.down ℕ))
 
-private theorem horizontalCompleteRelativeH_eq (d : ℤ) :
-    (horizontalCompleteFiltrationSpectralObject K).H d =
-      (horizontalCompleteFiltrationMappingConeFunctor K ⋙
-        HomotopyCategory.quotient C (ComplexShape.up ℤ)) ⋙
-          HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) d := by
-  have h : (horizontalCompleteFiltrationTriangulatedSpectralObject K).ω₁ ⋙
-      (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0).shift d =
-      (horizontalCompleteFiltrationMappingConeFunctor K ⋙
-        HomotopyCategory.quotient C (ComplexShape.up ℤ)) ⋙
-          HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) d := rfl
-  simpa only [horizontalCompleteFiltrationSpectralObject,
-    CategoryTheory.Triangulated.SpectralObject.mapHomologicalFunctor_H] using h
-
 /-- Unique map from the bottom filtration index to `i`. -/
 noncomputable abbrev horizontalBottomToStageMap (i : EInt) :
     (⊥ : EInt) ⟶ i := homOfLE bot_le
@@ -143,8 +130,9 @@ noncomputable def horizontalBottomRelativeHomologyStageIso
       (horizontalBottomToStageMap i))
   let g : M ⟶ (horizontalCompleteFiltrationCochainDiagram K).obj i :=
     horizontalBottomMappingConeToStage K i
-  let _ : QuasiIso g := horizontalBottomMappingConeToStage_quasiIso K i
-  rw [horizontalCompleteRelativeH_eq]
+  letI : QuasiIso g := horizontalBottomMappingConeToStage_quasiIso K i
+  simp only [horizontalCompleteFiltrationSpectralObject,
+    CategoryTheory.Triangulated.SpectralObject.mapHomologicalFunctor_H]
   change ((HomotopyCategory.homologyFunctor C
       (ComplexShape.up ℤ) (-(n : ℤ))).obj
         ((HomotopyCategory.quotient C (ComplexShape.up ℤ)).obj M)) ≅
@@ -228,7 +216,9 @@ theorem horizontalBottomRelativeHomologyStageIso_naturality
       ComplexShape.embeddingDownNat (by simp)).hom
   have hfac : (Q ⋙ Hq).map m ≫ aⱼ =
       aᵢ ≫ HomologicalComplex.homologyMap m (-(n : ℤ)) := by
-    simpa only [Functor.comp_map] using η.hom.naturality m
+    simpa only [aᵢ, aⱼ, Hc, Functor.comp_map,
+      HomologicalComplex.homologyFunctor_obj,
+      HomologicalComplex.homologyFunctor_map] using η.hom.naturality m
   have hdesc : m ≫ gⱼ = gᵢ ≫ t :=
     horizontalBottomMappingConeToStage_naturality K h
   have hdescH : HomologicalComplex.homologyMap m (-(n : ℤ)) ≫
@@ -245,7 +235,8 @@ theorem horizontalBottomRelativeHomologyStageIso_naturality
     exact HomologicalComplex.extendHomologyIso_hom_naturality
       (φ := s) (e := ComplexShape.embeddingDownNat)
       (j := n) (j' := -(n : ℤ)) (by simp)
-  rw [horizontalCompleteRelativeH_eq]
+  simp only [horizontalCompleteFiltrationSpectralObject,
+    CategoryTheory.Triangulated.SpectralObject.mapHomologicalFunctor_H]
   change (Q ⋙ Hq).map m ≫ aⱼ ≫
       HomologicalComplex.homologyMap gⱼ (-(n : ℤ)) ≫ eⱼ =
     (aᵢ ≫ HomologicalComplex.homologyMap gᵢ (-(n : ℤ)) ≫ eᵢ) ≫

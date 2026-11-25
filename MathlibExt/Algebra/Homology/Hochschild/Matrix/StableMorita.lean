@@ -602,6 +602,7 @@ theorem stableHomologyIsoAt_hom (G : J ⥤ ℕ) (n : ℕ) :
     change HomologicalComplex.homologyMap (colimit.ι K r) n ≫
       HomologicalComplex.homologyMap (stableTraceAt.{t} k A M G) n = _
     rw [← HomologicalComplex.homologyMap_comp, ι_stableTraceAt]
+    rfl
   exact hl.trans hr.symm
 
 /-- The inverse homology comparison is induced by the actual stable corner. -/

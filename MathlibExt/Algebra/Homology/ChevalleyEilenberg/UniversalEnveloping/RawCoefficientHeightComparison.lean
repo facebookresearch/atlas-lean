@@ -35,7 +35,7 @@ open scoped TensorProduct ModuleCat.Algebra
 
 namespace ChevalleyEilenberg
 
-attribute [local implicit_reducible] coefficientComplex coefficientComplexULift HomologicalComplex.homologyFunctor
+attribute [local implicit_reducible] coefficientComplex coefficientComplexULift
   rawLieCoefficientLiftAt
 
 variable (R : Type u) [CommRing R] (L : Type v) [LieRing L] [LieAlgebra R L]

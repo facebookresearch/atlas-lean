@@ -67,8 +67,7 @@ private theorem partialTotalHomologyFunctorShiftObj
     {D : Type*} [Category D] [Abelian D] (K : CochainComplex D ℤ) (i : ℤ) :
     ((HomologicalComplex.homologyFunctor D (ComplexShape.up ℤ) 0).shift i).obj K =
       K.homology i :=
-  (congrArg (fun G : CochainComplex D ℤ ⥤ D => G.obj K)
-    (CochainComplex.homologyFunctor_shift D i)).trans (by rfl)
+  rfl
 
 private def partialTotalShiftHomologyIso
     {D : Type*} [Category D] [Abelian D]
@@ -98,7 +97,8 @@ private theorem partialTotalShiftMapHomology
       HomologicalComplex.homologyMap z i ≫
         (partialTotalShiftHomologyIso L n i i' hi').hom := by
   simp only [Functor.shiftMap, partialTotalShiftHomologyIso, Iso.trans_hom, Iso.symm_hom,
-    eqToIso.hom, eqToIso.inv, CochainComplex.homologyFunctor_shift,
+    eqToIso.hom, eqToIso.inv, partialTotalHomologyFunctorShiftObj,
+    CochainComplex.homologyFunctor_shift,
     HomologicalComplex.homologyFunctor_obj, HomologicalComplex.homologyFunctor_map,
     eqToHom_refl, Category.id_comp, Category.comp_id]
 
@@ -136,7 +136,8 @@ private theorem partialTotalLiftCyclesShiftHomology
     K.liftCycles (f ≫ (K.shiftFunctorObjXIso n i i' (by omega)).hom) j' hj' hy ≫
       K.homologyπ i' ≫ eT.inv
   have hnative : f₀ = g₀ ≫ s.inv := by
-    simpa only [f₀, g₀, s, eS, eT, eqToIso.inv, CochainComplex.homologyFunctor_shift,
+    simpa only [f₀, g₀, s, eS, eT, eqToIso.inv, partialTotalHomologyFunctorShiftObj,
+      CochainComplex.homologyFunctor_shift,
       HomologicalComplex.homologyFunctor_obj, eqToHom_refl,
       Category.comp_id, Category.assoc] using
       CochainComplex.liftCycles_shift_homologyπ K f j hj hf i' hi' j' hj'
@@ -2237,7 +2238,7 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
           (hLeftCycles hy)
         rw [partialTotalSignedRowXHom] at hpost
         have hnormalized := hpost.trans (Category.comp_id _)
-        simpa only [Category.assoc, x] using hnormalized)
+        simpa only [Category.assoc, Category.comp_id, x] using hnormalized)
       (by
         dsimp only [b, k, i]
         rw [partialTotalSignedRowXHom]
@@ -2245,7 +2246,7 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
           (fun z => z ≫ eqToHom (HomologicalComplex₂.signedRow_X B p q)) hRightCycles
         rw [partialTotalSignedRowXHom] at hpost
         have hnormalized := hpost.trans (Category.comp_id _)
-        simpa only [Category.assoc] using hnormalized)
+        simpa only [Category.assoc, Category.comp_id] using hnormalized)
     simpa only [a, b, k, Category.assoc] using hout
   have hRightHomology :
       Kext.homologyπ nPlus ≫ eNatPlus.hom ≫
@@ -2539,9 +2540,10 @@ private theorem partialTotalFirstPageCoordinateComm
 /-- A fixed row of the first page is the signed horizontal complex of
 vertical homology objects. -/
 noncomputable def partialTotalFirstPageSignedVerticalHomologyIso (q : ℕ) :
-    ((B.partialTotalSpectralObject.spectralSequence core).page 1).restriction
-        (partialTotalFirstPageRowEmbedding q) ≅
-      B.signedVerticalHomologyComplex q := by
+    @CategoryTheory.Iso (ChainComplex C ℕ) inferInstance
+      (((B.partialTotalSpectralObject.spectralSequence core).page 1).restriction
+        (partialTotalFirstPageRowEmbedding q))
+      (B.signedVerticalHomologyComplex q) := by
   let P₁ : HomologicalComplex C
       (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩) :=
     (B.partialTotalSpectralObject.spectralSequence core).page 1
