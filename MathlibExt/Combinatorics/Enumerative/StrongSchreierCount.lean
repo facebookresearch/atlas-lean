@@ -18,6 +18,8 @@ import Mathlib.Data.List.Pairwise
 `strongSchreierCount_eq` counts the `ℓ`-strong Schreier sets with maximum `n` by the
 compositions of `n + ℓ` with parts greater than `ℓ`. For a composition with `k` parts,
 start at `ℓ * (k - 1)` and take successive steps of size `part - ℓ`. The endpoints form the set.
+The set has one element for each part, so `strongSchreierCardCount_eq` counts the sets with
+exactly `m` elements by the compositions with exactly `m` parts.
 -/
 
 set_option autoImplicit false
@@ -38,6 +40,20 @@ number of compositions of $u$ (ordered sequences of positive integers summing to
 whose parts are at least $v$. -/
 def compositionMinPartCount (u v : ℕ) : ℕ :=
   Fintype.card {c : Composition u // ∀ x ∈ c.blocks, v ≤ x}
+
+/-- **Number of strong Schreier sets of given size with maximum $n$.** For natural numbers $n$,
+$\ell$ and $m$, $|B_{n,\ell,m}|$ is the number of $\ell$-strong Schreier sets
+$B \subseteq \{1, \dots, n\}$ with $n \in B$ and exactly $m$ elements. -/
+def strongSchreierCardCount (n l m : ℕ) : ℕ :=
+  ((Finset.Icc 1 n).powerset.filter (fun B => n ∈ B ∧
+    B.card = m ∧ IsStrongSchreier l B)).card
+
+/-- **Compositions with exactly $s$ parts, each at least $v$.** For natural numbers $u$, $v$
+and $s$, $c(u, v, s)$ is the number of compositions of $u$ (ordered sequences of positive
+integers summing to $u$) into exactly $s$ parts, each at least $v$. -/
+def compositionMinPartExactCount (u v s : ℕ) : ℕ :=
+  Fintype.card {c : Composition u //
+    (∀ x ∈ c.blocks, v ≤ x) ∧ c.length = s}
 
 namespace strongSchreierCount_eq
 
@@ -135,6 +151,12 @@ private def toSet {n l : ℕ} (hn : 1 ≤ n) (c : parts n l) : family n l := by
     rw [hcard]
     omega
 
+-- The set has one element for each part of the composition.
+private theorem card_toSet {n l : ℕ} (hn : 1 ≤ n) (c : parts n l) :
+    (toSet hn c).val.card = c.val.length := by
+  have hs := (endpoints_spec (l * (c.val.length - 1)) c.property).1.tail.sortedLT
+  exact (List.toFinset_card_of_nodup hs.nodup).trans (length_endpoints _ _ _)
+
 private theorem toSet_bijective {n l : ℕ} (hn : 1 ≤ n) :
     Function.Bijective (toSet (l := l) hn) := by
   constructor
@@ -189,5 +211,37 @@ theorem strongSchreierCount_eq (n l : ℕ) (hn : 1 ≤ n) :
   unfold strongSchreierCount compositionMinPartCount
   rw [← Fintype.card_coe]
   exact Fintype.card_congr (Equiv.ofBijective _ (strongSchreierCount_eq.toSet_bijective hn)).symm
+
+/-- **Strong Schreier sets of given size and compositions.** For all integers $n \ge 1$ and
+$m \ge 1$ and every natural number $\ell$, the number of $\ell$-strong Schreier sets
+$B \subseteq \{1, \dots, n\}$ with $n \in B$ and exactly $m$ elements equals the number of
+compositions of $n + \ell$ into exactly $m$ parts, each at least $\ell + 1$.
+
+Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
+Sets, Partitions, and Compositions", Theorem 9. -/
+theorem strongSchreierCardCount_eq (m n l : ℕ) (hn : 1 ≤ n)
+    (hm : 1 ≤ m) :
+    strongSchreierCardCount n l m =
+      compositionMinPartExactCount (n + l) (l + 1) m := by
+  -- The hypothesis `hm` rules out `m = 0`.
+  obtain _ | m := m
+  · omega
+  -- The correspondence of `strongSchreierCount_eq` sends the compositions with `m + 1` parts to
+  -- the sets with `m + 1` elements.
+  calc strongSchreierCardCount n l (m + 1)
+      = Fintype.card {B : strongSchreierCount_eq.family n l // B.val.card = m + 1} := by
+        unfold strongSchreierCardCount
+        rw [← Fintype.card_coe]
+        exact Fintype.card_congr ((Equiv.subtypeEquivRight fun B => by
+          simp only [Finset.mem_filter]; tauto).trans
+          (Equiv.subtypeSubtypeEquivSubtypeInter (· ∈ strongSchreierCount_eq.family n l)
+            fun B : Finset ℕ => B.card = m + 1).symm)
+    _ = Fintype.card {c : strongSchreierCount_eq.parts n l // c.val.length = m + 1} :=
+        Fintype.card_congr ((Equiv.ofBijective _
+          (strongSchreierCount_eq.toSet_bijective (l := l) hn)).subtypeEquiv fun c => by
+            simp only [Equiv.ofBijective_apply, strongSchreierCount_eq.card_toSet]).symm
+    _ = compositionMinPartExactCount (n + l) (l + 1) (m + 1) :=
+        Fintype.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter _
+          fun c : Composition (n + l) => c.length = m + 1)
 
 end MathlibExt.Combinatorics.Enumerative.SchreierTypeSetsWanted

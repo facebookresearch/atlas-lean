@@ -106,13 +106,6 @@ def stronglySparseStrongCount (n l : ℕ) : ℕ :=
   ((Finset.Icc 1 n).powerset.filter (fun A => n ∈ A ∧
     IsStronglySparse A ∧ IsStrongSchreier l A)).card
 
-/-- **Number of strong Schreier sets of given size with maximum $n$.** For natural numbers $n$,
-$\ell$ and $m$, $|B_{n,\ell,m}|$ is the number of $\ell$-strong Schreier sets
-$B \subseteq \{1, \dots, n\}$ with $n \in B$ and exactly $m$ elements. -/
-def strongSchreierCardCount (n l m : ℕ) : ℕ :=
-  ((Finset.Icc 1 n).powerset.filter (fun B => n ∈ B ∧
-    B.card = m ∧ IsStrongSchreier l B)).card
-
 /-- **Partitions with all parts at least a given size.** For natural numbers $n$ and $\ell$,
 $|E_{n,\ell}|$ is the number of partitions of $n$ all of whose parts are at least $\ell$. -/
 def partitionMinPartCount (n l : ℕ) : ℕ :=
@@ -150,13 +143,6 @@ $\{2, \dots, \ell\}$ and none of whose parts is an even number greater than $2\e
 def partitionNoSmallNoEvenCount (n l : ℕ) : ℕ :=
   (Nat.Partition.restricted n
     (fun x => ¬ (2 ≤ x ∧ x ≤ l) ∧ (Even x → x ≤ 2 * l))).card
-
-/-- **Compositions with exactly $s$ parts, each at least $v$.** For natural numbers $u$, $v$
-and $s$, $c(u, v, s)$ is the number of compositions of $u$ (ordered sequences of positive
-integers summing to $u$) into exactly $s$ parts, each at least $v$. -/
-def compositionMinPartExactCount (u v s : ℕ) : ℕ :=
-  Fintype.card {c : Composition u //
-    (∀ x ∈ c.blocks, v ≤ x) ∧ c.length = s}
 
 /-- **Refined Schreier count.** For natural numbers $n$ and $\ell$, $|F_{n,\ell}|$ is the number of
 finite sets $A$ of natural numbers such that $n + 1 \in A$, every element of $A$ is at most
@@ -244,18 +230,6 @@ theorem_wanted stronglySparseStrongCount_eq_noSmallNoEven (n l : ℕ)
     (hn : 1 ≤ n) (hl : 1 ≤ l) :
     stronglySparseStrongCount n l =
       partitionNoSmallNoEvenCount (n - 1) l
-
-/-- **Strong Schreier sets of given size and compositions.** For all integers $n \ge 1$ and
-$m \ge 1$ and every natural number $\ell$, the number of $\ell$-strong Schreier sets
-$B \subseteq \{1, \dots, n\}$ with $n \in B$ and exactly $m$ elements equals the number of
-compositions of $n + \ell$ into exactly $m$ parts, each at least $\ell + 1$.
-
-Source: Kevin Beanland and Hùng Việt Chu, "On Schreier-Type
-Sets, Partitions, and Compositions", Theorem 9. -/
-theorem_wanted strongSchreierCardCount_eq (m n l : ℕ) (hn : 1 ≤ n)
-    (hm : 1 ≤ m) :
-    strongSchreierCardCount n l m =
-      compositionMinPartExactCount (n + l) (l + 1) m
 
 /-- **Refined Schreier sets with a given minimum and partitions with a given top gap.** Let
 $n$, $\ell$, $k$ and $q$ be natural numbers with $n \ge \ell + 1$, $k \ge 2$ and $q \ge 1$.
