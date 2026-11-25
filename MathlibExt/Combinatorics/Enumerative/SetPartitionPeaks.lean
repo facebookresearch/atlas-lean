@@ -25,15 +25,22 @@ import Mathlib.Data.Fintype.BigOperators
 @[expose] public section
 
 open scoped BigOperators
-private def tpRgf (n k : ℕ) : Finset (Fin n → Fin k) :=
+
+namespace MetaMathlibExt.symmetricPeaks_derivative_generatingFunction
+
+/-- **Partition words with a fixed number of blocks.** For natural numbers $n$ and $k$, the
+finite set $P_{n,k}$ consists of the length-$n$ words on $\{0,\ldots,k-1\}$ that use every
+letter and in which every letter smaller than $w_i$ occurs before position $i$. These words
+encode the partitions of an $n$-element set into $k$ blocks. -/
+def partitionWords (n k : ℕ) : Finset (Fin n → Fin k) :=
   Finset.univ.filter fun f : Fin n → Fin k =>
     Function.Surjective f ∧
     ∀ i : Fin n, ∀ m : Fin k,
       m.val < (f i).val → ∃ j : Fin n, j.val < i.val ∧ f j = m
 
-private lemma tp_N2 (n k : ℕ) (g : Fin n → Fin (k + 1)) (hg : g ∈ tpRgf n (k + 1))
-    (a : Fin (k + 1)) : Fin.snoc g a ∈ tpRgf (n+1) (k+1) := by
-  rw [tpRgf, Finset.mem_filter] at hg ⊢
+private lemma tp_N2 (n k : ℕ) (g : Fin n → Fin (k + 1)) (hg : g ∈ partitionWords n (k + 1))
+    (a : Fin (k + 1)) : Fin.snoc g a ∈ partitionWords (n+1) (k+1) := by
+  rw [partitionWords, Finset.mem_filter] at hg ⊢
   simp only [Finset.mem_univ, true_and] at hg ⊢
   obtain ⟨hsurj, hgrow⟩ := hg
   refine ⟨?_, ?_⟩
@@ -52,9 +59,9 @@ private lemma tp_N2 (n k : ℕ) (g : Fin n → Fin (k + 1)) (hg : g ∈ tpRgf n 
       obtain ⟨j, hjlt, hj⟩ := hgrow i m hm2
       exact ⟨j.castSucc, ⟨by rw [Fin.val_castSucc, Fin.val_castSucc]; exact hjlt,
         by rw [Fin.snoc_castSucc]; exact hj⟩⟩
-private lemma tp_N3 (n k : ℕ) (g : Fin n → Fin k) (hg : g ∈ tpRgf n k) :
-    Fin.snoc (Fin.castSucc ∘ g) (Fin.last k) ∈ tpRgf (n+1) (k+1) := by
-  rw [tpRgf, Finset.mem_filter] at hg ⊢
+private lemma tp_N3 (n k : ℕ) (g : Fin n → Fin k) (hg : g ∈ partitionWords n k) :
+    Fin.snoc (Fin.castSucc ∘ g) (Fin.last k) ∈ partitionWords (n+1) (k+1) := by
+  rw [partitionWords, Finset.mem_filter] at hg ⊢
   simp only [Finset.mem_univ, true_and] at hg ⊢
   obtain ⟨hsurj, hgrow⟩ := hg
   have hcast : ∀ m : Fin (k+1), m.val < k → ∃ m' : Fin k, m'.castSucc = m := by
@@ -90,11 +97,12 @@ private lemma tp_N3 (n k : ℕ) (g : Fin n → Fin k) (hg : g ∈ tpRgf n k) :
       obtain ⟨j, hjlt, hj⟩ := hgrow i m' hm'val
       exact ⟨j.castSucc, ⟨by rw [Fin.val_castSucc, Fin.val_castSucc]; exact hjlt,
         by rw [Fin.snoc_castSucc]; simp only [Function.comp]; rw [hj, hm']⟩⟩
-private lemma tp_N4 (n k : ℕ) (f : Fin (n + 1) → Fin (k + 1)) (hf : f ∈ tpRgf (n + 1) (k + 1)) :
-    Fin.init f ∈ tpRgf n (k+1) ∨
+private lemma tp_N4 (n k : ℕ) (f : Fin (n + 1) → Fin (k + 1))
+    (hf : f ∈ partitionWords (n + 1) (k + 1)) :
+    Fin.init f ∈ partitionWords n (k+1) ∨
       (f (Fin.last n) = Fin.last k ∧
-        ∃ g : Fin n → Fin k, g ∈ tpRgf n k ∧ Fin.init f = Fin.castSucc ∘ g) := by
-  rw [tpRgf, Finset.mem_filter] at hf
+        ∃ g : Fin n → Fin k, g ∈ partitionWords n k ∧ Fin.init f = Fin.castSucc ∘ g) := by
+  rw [partitionWords, Finset.mem_filter] at hf
   simp only [Finset.mem_univ, true_and] at hf
   obtain ⟨hfsurj, hfgrow⟩ := hf
   have hinit_grow : ∀ (i : Fin n) (m : Fin (k+1)),
@@ -119,7 +127,7 @@ private lemma tp_N4 (n k : ℕ) (f : Fin (n + 1) → Fin (k + 1)) (hf : f ∈ tp
       rw [hj']; exact hj
   by_cases hsurj : Function.Surjective (Fin.init f)
   · left
-    rw [tpRgf, Finset.mem_filter]
+    rw [partitionWords, Finset.mem_filter]
     simp only [Finset.mem_univ, true_and]
     exact ⟨hsurj, hinit_grow⟩
   · right
@@ -206,20 +214,27 @@ private lemma tp_N4 (n k : ℕ) (f : Fin (n + 1) → Fin (k + 1)) (hf : f ∈ tp
       have h2 : (g j).castSucc = m.castSucc := hcj ▸ hj
       exact Fin.castSucc_injective _ h2
     exact ⟨g, by
-      rw [tpRgf, Finset.mem_filter]; simp only [Finset.mem_univ, true_and]
+      rw [partitionWords, Finset.mem_filter]; simp only [Finset.mem_univ, true_and]
       exact ⟨hgsurj, hggrow⟩, hcomp⟩
 
-private lemma tp_N5 (n k : ℕ) (F : (Fin (n + 1) → Fin (k + 1)) → ℕ) :
-    ∑ f ∈ tpRgf (n+1) (k+1), F f
-      = (∑ g ∈ tpRgf n k, F (Fin.snoc (Fin.castSucc ∘ g) (Fin.last k)))
-        + ∑ g ∈ tpRgf n (k+1), ∑ a : Fin (k+1), F (Fin.snoc g a) := by
+/-- **Last-letter decomposition of a sum over partition words.** For natural numbers $n,k$,
+let $P_{n,k}$ be the surjective restricted-growth words of length $n$ on $k$ letters. For any
+natural-valued weight $F$ on length-$(n+1)$ words on $\{0,\ldots,k\}$,
+$$\sum_{w\in P_{n+1,k+1}} F(w) = \sum_{u\in P_{n,k}} F(uk)
+  + \sum_{u\in P_{n,k+1}} \sum_{a=0}^k F(ua),$$
+where $ua$ appends the letter $a$ to $u$. The first sum introduces the largest letter, and
+the second extends a prefix that already uses every letter. -/
+theorem sum_partitionWords_snoc (n k : ℕ) (F : (Fin (n + 1) → Fin (k + 1)) → ℕ) :
+    ∑ f ∈ partitionWords (n+1) (k+1), F f
+      = (∑ g ∈ partitionWords n k, F (Fin.snoc (Fin.castSucc ∘ g) (Fin.last k)))
+        + ∑ g ∈ partitionWords n (k+1), ∑ a : Fin (k+1), F (Fin.snoc g a) := by
   set φ : (Fin n → Fin k) → (Fin (n+1) → Fin (k+1)) :=
     fun g => Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ g) (Fin.last k) with hφ
   set ψ : (Fin n → Fin (k+1)) × Fin (k+1) → (Fin (n+1) → Fin (k+1)) :=
     fun p => Fin.snoc (α := fun _ => Fin (k+1)) p.1 p.2 with hψ
-  set S1 := (tpRgf n k).image φ with hS1
-  set S2 := ((tpRgf n (k+1)) ×ˢ Finset.univ).image ψ with hS2
-  have hφinj : ∀ g1 ∈ tpRgf n k, ∀ g2 ∈ tpRgf n k, φ g1 = φ g2 → g1 = g2 := by
+  set S1 := (partitionWords n k).image φ with hS1
+  set S2 := ((partitionWords n (k+1)) ×ˢ Finset.univ).image ψ with hS2
+  have hφinj : ∀ g1 ∈ partitionWords n k, ∀ g2 ∈ partitionWords n k, φ g1 = φ g2 → g1 = g2 := by
     intro g1 _ g2 _ h
     have hcon := congrArg Fin.init h
     simp only [hφ, Fin.init_snoc] at hcon
@@ -228,8 +243,8 @@ private lemma tp_N5 (n k : ℕ) (F : (Fin (n + 1) → Fin (k + 1)) → ℕ) :
     have hi := congrFun h2 i
     simp only [Function.comp_apply] at hi
     exact Fin.castSucc_injective _ hi
-  have hψinj : ∀ p1 ∈ (tpRgf n (k+1)) ×ˢ Finset.univ,
-      ∀ p2 ∈ (tpRgf n (k+1)) ×ˢ Finset.univ, ψ p1 = ψ p2 → p1 = p2 := by
+  have hψinj : ∀ p1 ∈ (partitionWords n (k+1)) ×ˢ Finset.univ,
+      ∀ p2 ∈ (partitionWords n (k+1)) ×ˢ Finset.univ, ψ p1 = ψ p2 → p1 = p2 := by
     intro ⟨g1, a1⟩ _ ⟨g2, a2⟩ _ h
     have hcon := congrArg Fin.init h
     simp only [hψ, Fin.init_snoc] at hcon
@@ -244,7 +259,7 @@ private lemma tp_N5 (n k : ℕ) (F : (Fin (n + 1) → Fin (k + 1)) → ℕ) :
     obtain ⟨g, hg, rfl⟩ := Finset.mem_image.mp hf1
     obtain ⟨⟨g', a⟩, hg'prod, h2⟩ := Finset.mem_image.mp hf2
     obtain ⟨hg', _⟩ := Finset.mem_product.mp hg'prod
-    rw [tpRgf, Finset.mem_filter] at hg'
+    rw [partitionWords, Finset.mem_filter] at hg'
     simp only [Finset.mem_univ, true_and] at hg'
     obtain ⟨hgsurj, _⟩ := hg'
     have hcon := congrArg Fin.init h2
@@ -257,7 +272,7 @@ private lemma tp_N5 (n k : ℕ) (F : (Fin (n + 1) → Fin (k + 1)) → ℕ) :
       rw [hci] at hi
       exact hi
     exact Fin.castSucc_ne_last _ hbad
-  have hunion : S1 ∪ S2 = tpRgf (n+1) (k+1) := by
+  have hunion : S1 ∪ S2 = partitionWords (n+1) (k+1) := by
     apply Finset.ext
     intro f
     constructor
@@ -287,19 +302,23 @@ private lemma tp_N5 (n k : ℕ) (F : (Fin (n + 1) → Fin (k + 1)) → ℕ) :
         simp only [hφ] at ⊢
         rw [← hcomp, ← hlast_eq]
         exact hself
-  have e1 : ∑ f ∈ S1, F f = ∑ g ∈ tpRgf n k, F (φ g) := by
+  have e1 : ∑ f ∈ S1, F f = ∑ g ∈ partitionWords n k, F (φ g) := by
     rw [hS1]
     exact Finset.sum_image (fun g1 hg1 g2 hg2 h => hφinj g1 hg1 g2 hg2 h)
   have e2 : ∑ f ∈ S2, F f
-      = ∑ g ∈ tpRgf n (k+1), ∑ a ∈ (Finset.univ : Finset (Fin (k+1))), F (ψ (g, a)) := by
+      = ∑ g ∈ partitionWords n (k+1), ∑ a ∈ (Finset.univ : Finset (Fin (k+1))), F (ψ (g, a)) := by
     rw [hS2]
     rw [Finset.sum_image (fun p1 hp1 p2 hp2 h => hψinj p1 hp1 p2 hp2 h)]
     exact Finset.sum_product _ _ _
-  calc ∑ f ∈ tpRgf (n+1) (k+1), F f = ∑ f ∈ S1 ∪ S2, F f := by rw [← hunion]
+  calc ∑ f ∈ partitionWords (n+1) (k+1), F f = ∑ f ∈ S1 ∪ S2, F f := by rw [← hunion]
     _ = (∑ f ∈ S1, F f) + ∑ f ∈ S2, F f := Finset.sum_union hdisj
-    _ = (∑ g ∈ tpRgf n k, F (Fin.snoc (Fin.castSucc ∘ g) (Fin.last k)))
-        + ∑ g ∈ tpRgf n (k+1), ∑ a : Fin (k+1), F (Fin.snoc g a) := by
+    _ = (∑ g ∈ partitionWords n k, F (Fin.snoc (Fin.castSucc ∘ g) (Fin.last k)))
+        + ∑ g ∈ partitionWords n (k+1), ∑ a : Fin (k+1), F (Fin.snoc g a) := by
       rw [e1, e2]
+
+end MetaMathlibExt.symmetricPeaks_derivative_generatingFunction
+
+open MetaMathlibExt.symmetricPeaks_derivative_generatingFunction
 
 private lemma tp_N1 (K v : ℕ) (h : v ≤ K) :
     ∑ a : Fin K, (if a.val < v then (1:ℕ) else 0) = v := by
@@ -428,64 +447,69 @@ private lemma tp_N13 (n k j : ℕ) :
   have e2 : n - (3 + t) = n - 2 - 1 - t := by omega
   rw [e1, e2]
 
-private lemma tp_N6 : ∀ (n k : ℕ), (tpRgf n k).card = Nat.stirlingSecond n k := by
-  intro n
-  induction n with
+namespace MetaMathlibExt.symmetricPeaks_derivative_generatingFunction
+
+/-- **Cardinality of the partition words.** For natural numbers $n,k$, the number of surjective
+restricted-growth words of length $n$ on $k$ letters is the Stirling number of the second kind
+$S(n,k)$. -/
+theorem card_partitionWords (n k : ℕ) : (partitionWords n k).card = Nat.stirlingSecond n k := by
+  induction n generalizing k with
   | zero =>
-    intro k
     cases k with
     | zero =>
-      have hkeep : ∀ f : Fin 0 → Fin 0, f ∈ tpRgf 0 0 := by
+      have hkeep : ∀ f : Fin 0 → Fin 0, f ∈ partitionWords 0 0 := by
         intro f
-        rw [tpRgf, Finset.mem_filter]
+        rw [partitionWords, Finset.mem_filter]
         simp only [Finset.mem_univ, true_and]
         refine ⟨?_, ?_⟩
         · intro b
           exact Fin.elim0 b
         · intro i
           exact Fin.elim0 i
-      have huniv : tpRgf 0 0 = Finset.univ := Finset.eq_univ_of_forall hkeep
+      have huniv : partitionWords 0 0 = Finset.univ := Finset.eq_univ_of_forall hkeep
       rw [huniv, Finset.card_univ, Nat.stirlingSecond_zero]
       simp
     | succ k =>
-      have hempty : tpRgf 0 (k+1) = ∅ := by
+      have hempty : partitionWords 0 (k+1) = ∅ := by
         rw [Finset.eq_empty_iff_forall_notMem]
         intro f hf
-        rw [tpRgf, Finset.mem_filter] at hf
+        rw [partitionWords, Finset.mem_filter] at hf
         obtain ⟨hsurj, _⟩ := hf.2
         obtain ⟨a, _⟩ := hsurj ⟨0, Nat.zero_lt_succ k⟩
         exact Fin.elim0 a
       rw [hempty, Finset.card_empty, Nat.stirlingSecond_zero_succ]
   | succ n ih =>
-    intro k
     cases k with
     | zero =>
-      have hempty : tpRgf (n+1) 0 = ∅ := by
+      have hempty : partitionWords (n+1) 0 = ∅ := by
         rw [Finset.eq_empty_iff_forall_notMem]
         intro f _
         exact Fin.elim0 (f ⟨0, Nat.zero_lt_succ n⟩)
       rw [hempty, Finset.card_empty, Nat.stirlingSecond_succ_zero]
     | succ k =>
-      have hcard : (tpRgf (n+1) (k+1)).card = ∑ _f ∈ tpRgf (n+1) (k+1), (1:ℕ) :=
+      have hcard : (partitionWords (n+1) (k+1)).card = ∑ _f ∈ partitionWords (n+1) (k+1), (1:ℕ) :=
         Finset.card_eq_sum_ones _
-      rw [hcard, tp_N5 n k (fun _ => 1)]
-      change (∑ _g ∈ tpRgf n k, (1:ℕ)) + (∑ _g ∈ tpRgf n (k+1), ∑ _a : Fin (k+1), (1:ℕ))
+      rw [hcard, sum_partitionWords_snoc n k (fun _ => 1)]
+      change (∑ _g ∈ partitionWords n k, (1 : ℕ)) +
+          (∑ _g ∈ partitionWords n (k+1), ∑ _a : Fin (k+1), (1 : ℕ))
         = Nat.stirlingSecond (n+1) (k+1)
-      have h1 : (∑ _g ∈ tpRgf n k, (1:ℕ)) = Nat.stirlingSecond n k := by
+      have h1 : (∑ _g ∈ partitionWords n k, (1:ℕ)) = Nat.stirlingSecond n k := by
         rw [← Finset.card_eq_sum_ones]
         exact ih k
       have h2 : ∀ _g : Fin n → Fin (k+1), (∑ _a : Fin (k+1), (1:ℕ)) = k + 1 := by
         intro _
         rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul, mul_one]
-      have houter : (∑ _g ∈ tpRgf n (k+1), ∑ _a : Fin (k+1), (1:ℕ))
-          = (tpRgf n (k+1)).card * (k + 1) := by
-        calc (∑ _g ∈ tpRgf n (k+1), ∑ _a : Fin (k+1), (1:ℕ))
-            = ∑ _g ∈ tpRgf n (k+1), (k + 1) :=
+      have houter : (∑ _g ∈ partitionWords n (k+1), ∑ _a : Fin (k+1), (1:ℕ))
+          = (partitionWords n (k+1)).card * (k + 1) := by
+        calc (∑ _g ∈ partitionWords n (k+1), ∑ _a : Fin (k+1), (1:ℕ))
+            = ∑ _g ∈ partitionWords n (k+1), (k + 1) :=
               Finset.sum_congr rfl (fun g _ => h2 g)
-          _ = (tpRgf n (k+1)).card * (k + 1) := by
+          _ = (partitionWords n (k+1)).card * (k + 1) := by
               rw [Finset.sum_const, smul_eq_mul]
       rw [h1, houter, ih (k+1), Nat.stirlingSecond_succ_succ]
       ring
+
+end MetaMathlibExt.symmetricPeaks_derivative_generatingFunction
 
 private def tpPeaks (n K : ℕ) (f : Fin n → Fin K) : ℕ :=
   (Finset.univ.filter (fun i : Fin n =>
@@ -496,7 +520,7 @@ private def tpPeaks (n K : ℕ) (f : Fin n → Fin K) : ℕ :=
         (f ⟨i.val + 1, h⟩).val < (f i).val
     else False)).card
 
-private def tpT (n k : ℕ) : ℕ := ∑ f ∈ tpRgf n k, tpPeaks n k f
+private def tpT (n k : ℕ) : ℕ := ∑ f ∈ partitionWords n k, tpPeaks n k f
 
 private def tpR (n k : ℕ) : ℕ :=
   Nat.choose k 2 * Nat.stirlingSecond (n - 1) k +
@@ -506,7 +530,7 @@ private def tpR (n k : ℕ) : ℕ :=
           j ^ (i - 3) * Nat.stirlingSecond (n - i) k
 
 private def tpA (n k : ℕ) : ℕ :=
-  ∑ g ∈ tpRgf (n+2) (k+1),
+  ∑ g ∈ partitionWords (n+2) (k+1),
     (if (g (Fin.castSucc (Fin.last n))).val < (g (Fin.last (n+1))).val
       then (g (Fin.last (n+1))).val else 0)
 
@@ -642,17 +666,17 @@ private lemma tp_peak_castSucc (n k : ℕ) (g : Fin n → Fin k) :
 
 private lemma tp_N8 (n k : ℕ) :
     tpT (n+3) (k+1) = tpT (n+2) k + (k+1) * tpT (n+2) (k+1) + tpA n k := by
-  have h5 := tp_N5 (n+2) k (fun f => tpPeaks ((n+2)+1) (k+1) f)
+  have h5 := sum_partitionWords_snoc (n+2) k (fun f => tpPeaks ((n+2)+1) (k+1) f)
   change tpT ((n+2)+1) (k+1) = tpT (n+2) k + (k+1) * tpT (n+2) (k+1) + tpA n k
   have hT : tpT ((n+2)+1) (k+1)
-      = ∑ f ∈ tpRgf ((n+2)+1) (k+1), tpPeaks ((n+2)+1) (k+1) f := rfl
+      = ∑ f ∈ partitionWords ((n+2)+1) (k+1), tpPeaks ((n+2)+1) (k+1) f := rfl
   rw [hT, h5]
-  have hnew : (∑ g ∈ tpRgf (n+2) k,
+  have hnew : (∑ g ∈ partitionWords (n+2) k,
         tpPeaks ((n+2)+1) (k+1) (Fin.snoc (Fin.castSucc ∘ g) (Fin.last k)))
       = tpT (n+2) k := by
-    change (∑ g ∈ tpRgf (n+2) k,
+    change (∑ g ∈ partitionWords (n+2) k,
         tpPeaks ((n+2)+1) (k+1) (Fin.snoc (Fin.castSucc ∘ g) (Fin.last k)))
-      = ∑ g ∈ tpRgf (n+2) k, tpPeaks (n+2) k g
+      = ∑ g ∈ partitionWords (n+2) k, tpPeaks (n+2) k g
     apply Finset.sum_congr rfl
     intro g hg
     have h7 := tp_N7 n (k+1) (Fin.castSucc ∘ g) (Fin.last k)
@@ -674,10 +698,10 @@ private lemma tp_N8 (n k : ℕ) :
         (Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ g) (Fin.last k))
       = tpPeaks (n+2) k g
     rw [h7, hcs, hnew0, add_zero]
-  have hold : (∑ g ∈ tpRgf (n+2) (k+1), ∑ a : Fin (k+1),
+  have hold : (∑ g ∈ partitionWords (n+2) (k+1), ∑ a : Fin (k+1),
         tpPeaks ((n+2)+1) (k+1) (Fin.snoc g a))
       = (k+1) * tpT (n+2) (k+1) + tpA n k := by
-    have hper : ∀ g ∈ tpRgf (n+2) (k+1),
+    have hper : ∀ g ∈ partitionWords (n+2) (k+1),
         (∑ a : Fin (k+1), tpPeaks ((n+2)+1) (k+1) (Fin.snoc g a))
         = (k+1) * tpPeaks (n+2) (k+1) g
           + (if (g (Fin.castSucc (Fin.last n))).val < (g (Fin.last (n+1))).val
@@ -720,16 +744,16 @@ private lemma tp_N8 (n k : ℕ) :
                   simp only [hc, false_and]
                   simp
                 rw [hL, ite_eq_right hc]
-    calc (∑ g ∈ tpRgf (n+2) (k+1), ∑ a : Fin (k+1),
+    calc (∑ g ∈ partitionWords (n+2) (k+1), ∑ a : Fin (k+1),
           tpPeaks ((n+2)+1) (k+1) (Fin.snoc g a))
-        = ∑ g ∈ tpRgf (n+2) (k+1), ((k+1) * tpPeaks (n+2) (k+1) g
+        = ∑ g ∈ partitionWords (n+2) (k+1), ((k+1) * tpPeaks (n+2) (k+1) g
           + (if (g (Fin.castSucc (Fin.last n))).val < (g (Fin.last (n+1))).val
               then (g (Fin.last (n+1))).val else 0)) :=
           Finset.sum_congr rfl (fun g hg => hper g hg)
       _ = (k+1) * tpT (n+2) (k+1) + tpA n k := by
           have hT2 : tpT (n+2) (k+1)
-              = ∑ g ∈ tpRgf (n+2) (k+1), tpPeaks (n+2) (k+1) g := rfl
-          have hA2 : tpA n k = ∑ g ∈ tpRgf (n+2) (k+1),
+              = ∑ g ∈ partitionWords (n+2) (k+1), tpPeaks (n+2) (k+1) g := rfl
+          have hA2 : tpA n k = ∑ g ∈ partitionWords (n+2) (k+1),
               (if (g (Fin.castSucc (Fin.last n))).val < (g (Fin.last (n+1))).val
                 then (g (Fin.last (n+1))).val else 0) := rfl
           rw [Finset.sum_add_distrib, hT2, hA2, ← Finset.mul_sum]
@@ -739,26 +763,26 @@ private lemma tp_N8 (n k : ℕ) :
 private lemma tp_N10 (n k : ℕ) :
     tpA n k = k * Nat.stirlingSecond (n+1) k
       + tpSq (k+1) * Nat.stirlingSecond n (k+1) := by
-  have hA : tpA n k = ∑ g ∈ tpRgf ((n+1)+1) (k+1),
+  have hA : tpA n k = ∑ g ∈ partitionWords ((n+1)+1) (k+1),
       (if (g (Fin.castSucc (Fin.last n))).val < (g (Fin.last (n+1))).val
         then (g (Fin.last (n+1))).val else 0) := rfl
-  have h5 : (∑ g ∈ tpRgf ((n+1)+1) (k+1),
+  have h5 : (∑ g ∈ partitionWords ((n+1)+1) (k+1),
         (if (g (Fin.castSucc (Fin.last n))).val < (g (Fin.last (n+1))).val
           then (g (Fin.last (n+1))).val else 0))
-      = (∑ h ∈ tpRgf (n+1) k,
+      = (∑ h ∈ partitionWords (n+1) k,
           (if ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h) (Fin.last k))
             (Fin.castSucc (Fin.last n))).val
             < ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h) (Fin.last k))
               (Fin.last (n+1))).val
           then ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h) (Fin.last k))
             (Fin.last (n+1))).val else 0))
-        + (∑ h ∈ tpRgf (n+1) (k+1), ∑ b : Fin (k+1),
+        + (∑ h ∈ partitionWords (n+1) (k+1), ∑ b : Fin (k+1),
           (if ((Fin.snoc (α := fun _ => Fin (k+1)) h b) (Fin.castSucc (Fin.last n))).val
             < ((Fin.snoc (α := fun _ => Fin (k+1)) h b) (Fin.last (n+1))).val
           then ((Fin.snoc (α := fun _ => Fin (k+1)) h b) (Fin.last (n+1))).val else 0)) :=
-    tp_N5 (n+1) k _
+    sum_partitionWords_snoc (n+1) k _
   rw [hA, h5]
-  have hnew : (∑ h ∈ tpRgf (n+1) k,
+  have hnew : (∑ h ∈ partitionWords (n+1) k,
         (if ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h) (Fin.last k))
           (Fin.castSucc (Fin.last n))).val
           < ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h) (Fin.last k))
@@ -766,7 +790,7 @@ private lemma tp_N10 (n k : ℕ) :
         then ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h) (Fin.last k))
           (Fin.last (n+1))).val else 0))
       = k * Nat.stirlingSecond (n+1) k := by
-    have hterm : ∀ h ∈ tpRgf (n+1) k,
+    have hterm : ∀ h ∈ partitionWords (n+1) k,
         (if ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h) (Fin.last k))
           (Fin.castSucc (Fin.last n))).val
           < ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h) (Fin.last k))
@@ -777,45 +801,45 @@ private lemma tp_N10 (n k : ℕ) :
       rw [Fin.snoc_castSucc, Fin.snoc_last]
       simp only [Function.comp_apply, Fin.val_castSucc, Fin.val_last]
       rw [ite_eq_left (h (Fin.last n)).isLt]
-    calc (∑ h ∈ tpRgf (n+1) k, (if ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h)
+    calc (∑ h ∈ partitionWords (n+1) k, (if ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h)
         (Fin.last k))
             (Fin.castSucc (Fin.last n))).val
             < ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h) (Fin.last k))
               (Fin.last (n+1))).val
           then ((Fin.snoc (α := fun _ => Fin (k+1)) (Fin.castSucc ∘ h) (Fin.last k))
             (Fin.last (n+1))).val else 0))
-        = ∑ _h ∈ tpRgf (n+1) k, k :=
+        = ∑ _h ∈ partitionWords (n+1) k, k :=
           Finset.sum_congr rfl (fun h hg => hterm h hg)
       _ = k * Nat.stirlingSecond (n+1) k := by
-          rw [Finset.sum_const, tp_N6, smul_eq_mul, mul_comm]
-  have hold : (∑ h ∈ tpRgf (n+1) (k+1), ∑ b : Fin (k+1),
+          rw [Finset.sum_const, card_partitionWords, smul_eq_mul, mul_comm]
+  have hold : (∑ h ∈ partitionWords (n+1) (k+1), ∑ b : Fin (k+1),
         (if ((Fin.snoc (α := fun _ => Fin (k+1)) h b)
           (Fin.castSucc (Fin.last n))).val
           < ((Fin.snoc (α := fun _ => Fin (k+1)) h b) (Fin.last (n+1))).val
         then ((Fin.snoc (α := fun _ => Fin (k+1)) h b)
           (Fin.last (n+1))).val else 0))
       = tpSq (k+1) * Nat.stirlingSecond n (k+1) := by
-    have hC : (∑ h ∈ tpRgf (n+1) (k+1), ∑ b : Fin (k+1),
+    have hC : (∑ h ∈ partitionWords (n+1) (k+1), ∑ b : Fin (k+1),
           (if ((Fin.snoc (α := fun _ => Fin (k+1)) h b)
             (Fin.castSucc (Fin.last n))).val
             < ((Fin.snoc (α := fun _ => Fin (k+1)) h b) (Fin.last (n+1))).val
           then ((Fin.snoc (α := fun _ => Fin (k+1)) h b)
             (Fin.last (n+1))).val else 0))
-        = (∑ h ∈ tpRgf (n+1) (k+1), ∑ b : Fin (k+1),
+        = (∑ h ∈ partitionWords (n+1) (k+1), ∑ b : Fin (k+1),
           (if (h (Fin.last n)).val < b.val then b.val else 0)) :=
       Finset.sum_congr rfl (fun h _ => Finset.sum_congr rfl (fun b _ => by
         rw [Fin.snoc_castSucc, Fin.snoc_last]))
-    have h5b : (∑ h ∈ tpRgf (n+1) (k+1), ∑ b : Fin (k+1),
+    have h5b : (∑ h ∈ partitionWords (n+1) (k+1), ∑ b : Fin (k+1),
           (if (h (Fin.last n)).val < b.val then b.val else 0))
-        = (∑ h'' ∈ tpRgf n k, ∑ b : Fin (k+1),
+        = (∑ h'' ∈ partitionWords n k, ∑ b : Fin (k+1),
             (if (((Fin.snoc (α := fun _ => Fin (k+1))
               (Fin.castSucc ∘ h'') (Fin.last k)) (Fin.last n))).val < b.val
             then b.val else 0))
-          + (∑ h'' ∈ tpRgf n (k+1), ∑ c : Fin (k+1), ∑ b : Fin (k+1),
+          + (∑ h'' ∈ partitionWords n (k+1), ∑ c : Fin (k+1), ∑ b : Fin (k+1),
             (if (((Fin.snoc (α := fun _ => Fin (k+1)) h'' c)
               (Fin.last n))).val < b.val then b.val else 0)) :=
-      tp_N5 n k _
-    have hnew0 : (∑ h'' ∈ tpRgf n k, ∑ b : Fin (k+1),
+      sum_partitionWords_snoc n k _
+    have hnew0 : (∑ h'' ∈ partitionWords n k, ∑ b : Fin (k+1),
           (if (((Fin.snoc (α := fun _ => Fin (k+1))
             (Fin.castSucc ∘ h'') (Fin.last k)) (Fin.last n))).val < b.val
           then b.val else 0)) = 0 := by
@@ -835,11 +859,11 @@ private lemma tp_N10 (n k : ℕ) :
         rw [ite_eq_right hneg]
       rw [Finset.sum_congr rfl (fun b _ => h0 b)]
       simp
-    have hold2 : (∑ h'' ∈ tpRgf n (k+1), ∑ c : Fin (k+1), ∑ b : Fin (k+1),
+    have hold2 : (∑ h'' ∈ partitionWords n (k+1), ∑ c : Fin (k+1), ∑ b : Fin (k+1),
           (if (((Fin.snoc (α := fun _ => Fin (k+1)) h'' c)
             (Fin.last n))).val < b.val then b.val else 0))
         = tpSq (k+1) * Nat.stirlingSecond n (k+1) := by
-      have hper2 : ∀ h'' ∈ tpRgf n (k+1),
+      have hper2 : ∀ h'' ∈ partitionWords n (k+1),
           (∑ c : Fin (k+1), ∑ b : Fin (k+1),
             (if (((Fin.snoc (α := fun _ => Fin (k+1)) h'' c)
               (Fin.last n))).val < b.val then b.val else 0))
@@ -856,13 +880,13 @@ private lemma tp_N10 (n k : ℕ) :
               intro b _
               rw [Fin.snoc_last]
           _ = tpSq (k+1) := tp_N9 k
-      calc (∑ h'' ∈ tpRgf n (k+1), ∑ c : Fin (k+1), ∑ b : Fin (k+1),
+      calc (∑ h'' ∈ partitionWords n (k+1), ∑ c : Fin (k+1), ∑ b : Fin (k+1),
             (if (((Fin.snoc (α := fun _ => Fin (k+1)) h'' c)
               (Fin.last n))).val < b.val then b.val else 0))
-          = ∑ _h'' ∈ tpRgf n (k+1), tpSq (k+1) :=
+          = ∑ _h'' ∈ partitionWords n (k+1), tpSq (k+1) :=
             Finset.sum_congr rfl (fun h'' hh => hper2 h'' hh)
         _ = tpSq (k+1) * Nat.stirlingSecond n (k+1) := by
-            rw [Finset.sum_const, tp_N6, smul_eq_mul]
+            rw [Finset.sum_const, card_partitionWords, smul_eq_mul]
             ring
     rw [hC, h5b, hnew0, hold2, zero_add]
   rw [hnew, hold]
@@ -930,7 +954,7 @@ private lemma tp_N14 (m k : ℕ) :
     ring
 
 private lemma tp_N15a (m k : ℕ) (hm : m ≤ 2) : tpT m k = 0 := by
-  change (∑ f ∈ tpRgf m k, tpPeaks m k f) = 0
+  change (∑ f ∈ partitionWords m k, tpPeaks m k f) = 0
   apply Finset.sum_eq_zero
   intro f _
   unfold tpPeaks
@@ -945,8 +969,8 @@ private lemma tp_N15a (m k : ℕ) (hm : m ≤ 2) : tpT m k = 0 := by
   · simp [h] at hd
 
 private lemma tp_N15b (m : ℕ) : tpT (m+1) 0 = 0 := by
-  change (∑ f ∈ tpRgf (m+1) 0, tpPeaks (m+1) 0 f) = 0
-  have hempty : tpRgf (m+1) 0 = ∅ := by
+  change (∑ f ∈ partitionWords (m+1) 0, tpPeaks (m+1) 0 f) = 0
+  have hempty : partitionWords (m+1) 0 = ∅ := by
     rw [Finset.eq_empty_iff_forall_notMem]
     intro f _
     exact Fin.elim0 (f ⟨0, Nat.zero_lt_succ m⟩)
