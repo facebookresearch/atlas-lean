@@ -1,0 +1,8 @@
+# Exact pair of maps and exact sequences of groups
+
+A sequence of groups and homomorphisms is exact at an interior term $G_i$ when the image of the incoming homomorphism equals the kernel of the outgoing one: $\operatorname{im}\varphi_{i-1} = \ker\varphi_i$. Mathlib defines this local test more generally, for two arbitrary maps: for sets $M$, $N$ and $P$, maps $f\colon M \to N$ and $g\colon N \to P$, and a distinguished element $1 \in P$, the pair $(f, g)$ is *exact* when, for every $y \in N$, $g(y) = 1$ if and only if $y$ lies in the image of $f$, that is, $\{y \in N : g(y) = 1\} = f(M)$. For group homomorphisms $\varphi_{i-1}\colon G_{i-1} \to G_i$ and $\varphi_i\colon G_i \to G_{i+1}$, with $1$ the identity of $G_{i+1}$, exactness of the pair $(\varphi_{i-1}, \varphi_i)$ says exactly that $\operatorname{im}\varphi_{i-1} = \ker\varphi_i$. A sequence of groups and homomorphisms indexed by consecutive integers, finite or infinite in either direction, is *exact* when each pair of consecutive homomorphisms is exact, that is, at every term with both an incoming and an outgoing homomorphism; no condition is imposed at an end term. For abelian groups written additively, the same test with $0$ in place of $1$ is the additive form of the definition.
+
+## Sources
+
+- David S. Dummit and Richard M. Foote, Abstract Algebra, 3rd ed., John Wiley & Sons, 2004.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for exact pairs of maps, with the multiplicative test g(y) = 1 and its additive form g(y) = 0: `Function.MulExact` and `Function.Exact`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/Algebra/Exact/Basic.lean#L34-L43.

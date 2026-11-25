@@ -31,3 +31,18 @@ example :
   rw [← (nonIntersectingWordPairs_card_eq_coeff 3 2 1 (by decide) (by decide)).1]
   exact_mod_cast (show ((univ : Finset ((Fin 2 → Fin 3) × (Fin 1 → Fin 3))).filter fun p =>
     Disjoint (univ.image p.1) (univ.image p.2)).card = 12 by decide)
+
+-- An empty alphabet admits no pair of words of positive length.
+example (n : ℕ) (hn : 1 ≤ n) :
+    ((univ : Finset ((Fin n → Fin 0) × (Fin n → Fin 0))).filter fun p =>
+      Disjoint (univ.image p.1) (univ.image p.2)).card = 0 := by
+  rw [nonIntersectingWordPairs_sameLength_card 0 n hn]
+  rfl
+
+-- At length two over three letters, the first word can use one or two letters.
+-- Direct enumeration counts twelve disjoint pairs in the first case and six in the second.
+example :
+    ∑ j ∈ Icc 1 (3 - 1), (Nat.choose 3 j) * j.factorial * Nat.stirlingSecond 2 j *
+      (3 - j) ^ 2 = 18 := by
+  rw [← nonIntersectingWordPairs_sameLength_card 3 2 (by decide)]
+  decide

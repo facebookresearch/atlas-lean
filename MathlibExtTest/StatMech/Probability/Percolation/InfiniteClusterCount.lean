@@ -11,13 +11,12 @@ module
 public import MathlibExt.Probability.Percolation.InfiniteClusterCount
 
 /-!
-# Tests for `MathlibExt.Probability.Percolation.BurtonKeane`
+# Tests for `MathlibExt.Probability.Percolation.InfiniteClusterCount`
 
 Tests `StatMech.Percolation.numInfiniteClusters_ae_const` (the number of infinite clusters is a.s.
 constant for a translation-ergodic probability measure; the Newman–Schulman step of Burton–Keane).
 Its hypothesis `IsErgodic` is proved for the Dirac mass at the all-open configuration of `ℤ^d`, and
-the theorem is applied at `d = 2`. The library does not prove ergodicity of the Bernoulli product
-measure, so the theorem cannot yet be applied to Bernoulli percolation. Also checks
+the theorem is applied at `d = 2`. The tests also check
 `numInfiniteClusters_shift` and `measurable_numInfiniteClusters`.
 -/
 
