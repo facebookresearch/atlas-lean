@@ -416,6 +416,7 @@ private lemma linearHomCochainPair_one_left_apply
             ιTensorObj (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) K
               0 q q (Nat.zero_add q) := by
     rw [hcoord, leftUnitor'_inv]
+    rfl
   have hcancel : (λ_ K).hom.f q ≫ (λ_ K).inv.f q =
       𝟙 (((𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) ⊗ K).X q) := by
     simpa only [HomologicalComplex.comp_f, HomologicalComplex.id_f] using
@@ -432,7 +433,8 @@ private lemma linearHomCochainPair_one_left_apply
     calc
       _ = ιTensorObj (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ)) K
           0 q q (Nat.zero_add q) := by
-        rw [Category.assoc, hcancel, Category.comp_id]
+        rw [Category.assoc, hcancel]
+        exact Category.comp_id _
       _ = _ := by
         rw [hinv]
         simp only [Category.assoc, Iso.hom_inv_id_assoc,
@@ -456,7 +458,8 @@ private lemma linearHomCochainPair_one_left_apply
       ι_mapBifunctorMap_assoc]
     by_cases hi : i = 0
     · subst i
-      have hj : j = q := by simpa only [Nat.zero_add] using h
+      have hs : 0 + j = q := h
+      have hj : j = q := (Nat.zero_add j).symm.trans hs
       subst j
       simp only [dite_eq_left, curriedTensor_obj_obj, curriedTensor_map_app,
         HomologicalComplex.id_f, curriedTensor_obj_map, whiskerLeft_id,
@@ -510,10 +513,10 @@ private lemma linearHomCochainPair_one_left_apply
         simpa only [HomologicalComplex.comp_f, HomologicalComplex.id_f,
           Category.assoc, Category.id_comp] using
           congrArg (fun f : K.X q ⟶ K.X q => f ≫ φ) hdegree
-  simpa only [linearHomCochainComplexFunctor_obj_X, linearHomCochainOne,
-    linearHomCochainGradedPairing_pair,
-    linearHomCochainPair_tmul, linearHomCochainComplex_XIsoOfEq_hom_apply,
-    linearHomPairingDesc, Category.assoc] using hcore
+  rw [linearHomCochainGradedPairing_pair]
+  erw [linearHomCochainPair_tmul]
+  erw [linearHomCochainComplex_XIsoOfEq_hom_apply]
+  simpa only [linearHomCochainOne, linearHomPairingDesc, Category.assoc] using hcore
 
 public theorem linearHomCochainPair_one_left (q : ℕ) :
     (linearHomCochainOneHom R K A ⊗ₘ
@@ -555,6 +558,7 @@ private lemma linearHomCochainPair_one_right_apply
             ιTensorObj K (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))
               p 0 p (Nat.add_zero p) := by
     rw [hcoord, rightUnitor'_inv]
+    rfl
   have hcancel : (ρ_ K).hom.f p ≫ (ρ_ K).inv.f p =
       𝟙 ((K ⊗ (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))).X p) := by
     simpa only [HomologicalComplex.comp_f, HomologicalComplex.id_f] using
@@ -571,7 +575,8 @@ private lemma linearHomCochainPair_one_right_apply
     calc
       _ = ιTensorObj K (𝟙_ (ChainComplex (ModuleCat.{u} R) ℕ))
           p 0 p (Nat.add_zero p) := by
-        rw [Category.assoc, hcancel, Category.comp_id]
+        rw [Category.assoc, hcancel]
+        exact Category.comp_id _
       _ = _ := by
         rw [hinv]
         simp only [Category.assoc, Iso.hom_inv_id_assoc,
@@ -620,7 +625,8 @@ private lemma linearHomCochainPair_one_right_apply
         intro hj
         subst j
         apply hi
-        simpa only [Nat.add_zero] using h
+        have hs : i + 0 = p := h
+        exact (Nat.add_zero i).symm.trans hs
       simp only [dite_eq_right hi]
       have hcounit : ComonObj.counit (X := K).f j = 0 :=
         (isZero_single_obj_X (ComplexShape.down ℕ) 0
@@ -655,10 +661,10 @@ private lemma linearHomCochainPair_one_right_apply
         simpa only [HomologicalComplex.comp_f, HomologicalComplex.id_f,
           Category.assoc, Category.id_comp] using
           congrArg (fun f : K.X p ⟶ K.X p => f ≫ φ) hdegree
-  simpa only [linearHomCochainComplexFunctor_obj_X, linearHomCochainOne,
-    linearHomCochainGradedPairing_pair,
-    linearHomCochainPair_tmul, linearHomCochainComplex_XIsoOfEq_hom_apply,
-    linearHomPairingDesc, Category.assoc] using hcore
+  rw [linearHomCochainGradedPairing_pair]
+  erw [linearHomCochainPair_tmul]
+  erw [linearHomCochainComplex_XIsoOfEq_hom_apply]
+  simpa only [linearHomCochainOne, linearHomPairingDesc, Category.assoc] using hcore
 
 private lemma linearHomCochainPair_one_right_smul
     (p : ℕ)

@@ -180,8 +180,11 @@ def IsSemistableCurve {k : Type u} [Field k]
     FieldInvariant E F i →
       (bundleDegree C.hom F s hF : ℚ) / s ≤ (bundleDegree C.hom E.module r E.bundle : ℚ) / r
 
-/-- Polystability is a genuine finite direct sum of stable same-slope fields;
-it does not assume existence of a harmonic metric. -/
+/-- Polystability of a twisted bundle $E$ of rank $r$ (a rank-$r$ vector bundle with a field
+$E \to E \otimes L$, for a line bundle $L$) on a smooth proper integral curve $C$ over a field: $E$
+is isomorphic, compatibly with the fields, to a finite direct sum of stable twisted bundles $F_i$
+whose ranks add up to $r$ and which all have the slope of $E$,
+$\deg F_i / \operatorname{rk} F_i = \deg E / r$. -/
 def IsPolystableCurve {k : Type u} [Field k]
     (C : Over (Spec (.of k))) [IsProperCurve C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [IsIntegral C.left] {L : C.left.Modules} {r : ℕ}
