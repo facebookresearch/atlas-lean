@@ -8,7 +8,7 @@ $w_{\mathrm{net}} = (h_3 - h_4) - (h_2 - h_1)$ and $q_{\mathrm{in}} = h_3 - h_2$
 
 $$\eta = \frac{(h_3 - h_4) - (h_2 - h_1)}{h_3 - h_2} .$$
 
-If the heat is received at temperatures at most $T_H$ and rejected at temperatures at least $T_C$, then $\eta \le 1 - T_C/T_H$.
+If $0 < T_C \le T_H$ are absolute temperatures, the heat is received at temperatures at most $T_H$ and rejected at temperatures at least $T_C$, and the cycle satisfies the Clausius inequality $q_{\mathrm{in}}/T_H - q_{\mathrm{out}}/T_C \le 0$ with $q_{\mathrm{out}} = h_4 - h_1$, then $\eta \le 1 - T_C/T_H$.
 
 ## Depends on
 

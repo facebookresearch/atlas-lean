@@ -2,7 +2,6 @@
 
 Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, Bernoulli's theorem, Stokes settling, and continuum models of traffic flow with their shocks. Rotating and stratified flows of the ocean and atmosphere, water waves and open-channel hydraulics are under Earth Science.
 
-- [Aircraft cruise performance](aircraft-cruise-performance/README.md)
 - [Bernoulli's theorem along a streamline](bernoulli-s-theorem-along-a-streamline/README.md)
 - [Blade-element momentum theory](blade-element-momentum-theory/README.md)
 - [Buoyancy and flotation of a prism](buoyancy-and-flotation-of-a-prism/README.md)
