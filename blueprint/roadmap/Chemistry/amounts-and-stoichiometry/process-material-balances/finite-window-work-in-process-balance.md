@@ -11,10 +11,6 @@ reworked, in which case nothing leaves as good output or scrap and the work in p
 throughput of a rework loop is a separate result. Unique batch identities alone do not imply the local conservation law.
 If the tracked species is produced or consumed, include its signed net production on the input side of this balance instead.
 
-## Depends on
-
-## Proof depends on
-
 ## Sources
 
 - J. B. Rawlings and J. G. Ekerdt, *Chemical Reactor Analysis and Design Fundamentals*, 2nd edition, paperback, seventh printing (November 2026), Nob Hill Publishing; freely distributed by the authors at <https://sites.engineering.ucsb.edu/~jbraw/chemreacfun/> (page numbers below are the printed ones): Section 4.3, Equation 4.36, the species balance with accumulation, flows and production (p. 127).
