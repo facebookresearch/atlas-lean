@@ -20,7 +20,7 @@ open Complex Real UpperHalfPlane
 open scoped Manifold MatrixGroups ModularForm
 
 /-- Source consumer with the original binders. -/
-theorem exactSource
+private theorem exactSource
     (N : ℕ) [NeZero N]
     (L : ℍ → PeriodPair) (hL : ∀ τ : ℍ, (L τ).ω₁ = (τ : ℂ) ∧ (L τ).ω₂ = 1)
     (W : (Fin 2 → ZMod N) → ℍ → ℂ)

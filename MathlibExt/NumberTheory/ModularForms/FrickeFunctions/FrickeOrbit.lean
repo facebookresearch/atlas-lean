@@ -189,14 +189,17 @@ private lemma hppT : ∀ τ : ℍ, (periodPairOfTau τ).ω₁ = (τ : ℂ) ∧ (
 
 private lemma coe_cuspDisc : ⇑CuspForm.discriminant = ModularForm.discriminant := rfl
 
-private lemma frickeF_eq (N : ℕ) (a : Fin 2 → ZMod N) :
-    frickeF N a = fun τ =>
+private lemma hW_wpNormZ (N : ℕ) : ∀ (v : Fin 2 → ZMod N) (τ : ℍ),
+    wpNormZ N v τ = ((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ *
+      PeriodPair.weierstrassP (periodPairOfTau τ)
+        ((((v 0).val : ℂ) * (τ : ℂ) + ((v 1).val : ℂ)) / (N : ℂ)) :=
+  fun _ _ => rfl
+
+private lemma hfricke_frickeF (N : ℕ) : ∀ (v : Fin 2 → ZMod N) (τ : ℍ),
+    frickeF N v τ =
       -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 *
-        (((2 * π * I) ^ 2)⁻¹ *
-          PeriodPair.weierstrassP (periodPairOfTau τ)
-            ((((a 0).val : ℂ) * (τ : ℂ) + ((a 1).val : ℂ)) / (N : ℂ))) := by
-  funext τ
-  simp only [frickeF, wpNormZ, wpNorm, wpTorsion]
+        wpNormZ N v τ :=
+  fun _ _ => rfl
 
 private theorem levelOne_holFn_eq_polynomial_j (m : ℕ) (h : ℍ → ℂ) (hol : MDiff h)
     (hinv : ∀ γ : SL(2, ℤ), h ∣[(0 : ℤ)] γ = h)
@@ -216,14 +219,15 @@ private theorem kPole_invariant_eq_polynomial_j_mem {K : IntermediateField ℚ �
   exact ⟨P, hcoefP, by simpa only [j] using heq⟩
 
 private theorem mdifferentiable_frickeF {N : ℕ} [NeZero N] (i : FrickeIdx N) :
-    MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (frickeF N i.1) := by
-  rw [frickeF_eq]
-  exact (ModularForm.frickeFunction_modularity_package N periodPairOfTau hppT).2.2.1 i.1 i.2
+    MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (frickeF N i.1) :=
+  ModularForm.mdifferentiable_frickeFunction N periodPairOfTau hppT _ (hW_wpNormZ N) _
+    (hfricke_frickeF N) i.2
 
 private theorem isBoundedAtImInfty_frickeF_mul_discriminant {N : ℕ} [NeZero N] (i : FrickeIdx N) :
     IsBoundedAtImInfty (frickeF N i.1 * ⇑CuspForm.discriminant) := by
-  rw [frickeF_eq, coe_cuspDisc]
-  exact (ModularForm.frickeFunction_modularity_package N periodPairOfTau hppT).2.2.2.1 i.1 i.2
+  rw [coe_cuspDisc]
+  exact ModularForm.isBoundedAtImInfty_frickeFunction_mul_discriminant N periodPairOfTau hppT _
+    (hW_wpNormZ N) _ (hfricke_frickeF N) i.2
 
 private lemma vecMulSL_mul (N : ℕ) (a : Fin 2 → ZMod N) (γ δ : SL(2, ℤ)) :
     vecMulSL N (vecMulSL N a γ) δ = vecMulSL N a (γ * δ) := by
@@ -259,17 +263,15 @@ private theorem frickeF_hperm {N : ℕ} [NeZero N] (γ : SL(2, ℤ)) :
     apply Subtype.ext
     simp only [vecMulSL_mul, inv_mul_cancel, vecMulSL_one]
   · intro i τ
-    have h1 := (ModularForm.frickeFunction_modularity_package N periodPairOfTau hppT).1 i.1 γ τ
-    rw [frickeF_eq, frickeF_eq]
-    exact h1
+    exact ModularForm.frickeFunction_smul N periodPairOfTau hppT _ (hW_wpNormZ N) _
+      (hfricke_frickeF N) i.1 γ τ
 
 private lemma smul_frickeF {N : ℕ} [NeZero N] (γ : SL(2, ℤ)) (a : Fin 2 → ZMod N) :
     γ • frickeF N a = frickeF N (vecMulSL N a γ⁻¹) := by
   funext τ
   rw [sl_smul_apply]
-  have h1 := (ModularForm.frickeFunction_modularity_package N periodPairOfTau hppT).1 a γ⁻¹ τ
-  rw [frickeF_eq, frickeF_eq]
-  exact h1
+  exact ModularForm.frickeFunction_smul N periodPairOfTau hppT _ (hW_wpNormZ N) _
+    (hfricke_frickeF N) a γ⁻¹ τ
 
 private lemma smul_j (γ : SL(2, ℤ)) : γ • j = j := by
   refine (sl_smul_eq_self_iff j).mpr (fun δ τ => ?_) γ
@@ -383,10 +385,10 @@ private lemma cuspFunction_const (N : ℕ) (c : ℂ) :
     refine Filter.Tendsto.congr' ?_ (tendsto_const_nhds :
       Filter.Tendsto (fun _ : ℂ => (c : ℂ)) (nhdsWithin (0 : ℂ) {(0 : ℂ)}ᶜ) (nhds (c : ℂ)))
     filter_upwards [self_mem_nhdsWithin] with q hq
-    exact (Function.Periodic.cuspFunction_eq_of_nonzero (N : ℝ)
+    exact (Function.Periodic.cuspFunction_eq_of_ne_zero (N : ℝ)
       ((fun _ : ℍ => (c : ℂ)) ∘ ofComplex) hq).symm
   · change Function.Periodic.cuspFunction N ((fun _ : ℍ => c) ∘ ofComplex) q = c
-    rw [Function.Periodic.cuspFunction_eq_of_nonzero _ _ hq]
+    rw [Function.Periodic.cuspFunction_eq_of_ne_zero _ _ hq]
     rfl
 
 private lemma NiceK.const {K : IntermediateField ℚ ℂ} {N : ℕ} [NeZero N] (c : ↥K) :
@@ -481,18 +483,20 @@ private lemma kPole_j (K : IntermediateField ℚ ℂ) [NeZero N] : KPole K N j :
 private lemma kPole_frickeF {K : IntermediateField ℚ ℂ} [NeZero N] (hK : kN N
     ≤ K) (i : FrickeIdx N) :
     KPole K N (frickeF N i.1) := by
-  have pkg := ModularForm.frickeFunction_modularity_package N periodPairOfTau hppT
   have hmd : MDiff (frickeF N i.1) := mdifferentiable_frickeF i
   refine ⟨hmd, 1, ?_, ?_, ?_⟩
-  · have hper := (pkg.2.2.2.2.1 i.1 i.2).1
-    rw [frickeF_eq, coe_cuspDisc]
+  · have hper := ModularForm.periodic_frickeFunction_mul_discriminant N periodPairOfTau hppT _
+      (hW_wpNormZ N) _ (hfricke_frickeF N) i.2
+    rw [coe_cuspDisc]
     simpa [pow_one] using hper
-  · have hbd := pkg.2.2.2.1 i.1 i.2
-    rw [frickeF_eq, coe_cuspDisc]
+  · have hbd := ModularForm.isBoundedAtImInfty_frickeFunction_mul_discriminant N periodPairOfTau
+      hppT _ (hW_wpNormZ N) _ (hfricke_frickeF N) i.2
+    rw [coe_cuspDisc]
     simpa [pow_one] using hbd
   · intro n
-    have hco := (pkg.2.2.2.2.1 i.1 i.2).2 n
-    rw [frickeF_eq, coe_cuspDisc]
+    have hco := ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_mem N periodPairOfTau
+      hppT _ (hW_wpNormZ N) _ (hfricke_frickeF N) i.2 n
+    rw [coe_cuspDisc]
     refine hK ?_
     simpa [pow_one, kN, zetaN] using hco
 

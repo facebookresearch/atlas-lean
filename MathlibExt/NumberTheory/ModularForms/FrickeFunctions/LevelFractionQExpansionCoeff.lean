@@ -1079,24 +1079,17 @@ public theorem _root_.ModularForm.exists_qExpansion_coeff_mem_of_mdifferentiable
       IsBoundedAtImInfty (G * ModularForm.discriminant ^ m) ∧
       ∀ n : ℕ, (UpperHalfPlane.qExpansion N (G * ModularForm.discriminant ^ m)).coeff n ∈ K := by
   subst hK
-  have hfeq : fricke = fun a τ => -(ModularForm.E₄ τ * ModularForm.E₆ τ /
-      ModularForm.discriminant τ) / 2592 *
-    (((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ *
-      PeriodPair.weierstrassP (L τ)
-        ((((a 0).val : ℂ) * (τ : ℂ) + ((a 1).val : ℂ)) / (N : ℂ))) := by
-    funext v τ; rw [hfricke v τ, hW v τ]
-  obtain ⟨h1, _h2, h3, h4, h5, _h6, _h7, h8⟩ :=
-    ModularForm.frickeFunction_modularity_package N L hL
-  have _h8 := h8
   refine Aux.exists_qExpansion_coeff_mem_of_mdifferentiable_levelFraction_of_deps
     N L hL W hW fricke hfricke jf hjf _ rfl ?_ ?_ ?_ hG P Q hPK hQK hQ0 hGQ hint
   · intro v hv
-    refine ⟨1, ?_, ?_, ?_⟩ <;> rw [pow_one, hfeq]
-    · exact (h5 v hv).1
-    · exact h4 v hv
-    · exact (h5 v hv).2
-  · rw [hfeq]; exact h3
-  · rw [hfeq]; exact fun v γ τ => h1 v γ τ
+    refine ⟨1, ?_, ?_, ?_⟩ <;> rw [pow_one]
+    · exact ModularForm.periodic_frickeFunction_mul_discriminant N L hL W hW fricke hfricke hv
+    · exact ModularForm.isBoundedAtImInfty_frickeFunction_mul_discriminant N L hL W hW fricke
+        hfricke hv
+    · exact ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_mem N L hL W hW fricke
+        hfricke hv
+  · exact fun v hv => ModularForm.mdifferentiable_frickeFunction N L hL W hW fricke hfricke hv
+  · exact fun v γ τ => ModularForm.frickeFunction_smul N L hL W hW fricke hfricke v γ τ
 
 end
 

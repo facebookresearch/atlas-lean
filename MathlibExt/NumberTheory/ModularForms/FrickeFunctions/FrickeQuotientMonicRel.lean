@@ -307,7 +307,7 @@ private lemma exists_qParam_pow_le [NeZero N] {Q : ℍ → ℂ} (hhol : MDiffere
     rw [Filter.Eventually, atImInfty_mem] at h1
     obtain ⟨A, hA⟩ := h1
     exact eq_zero_of_forall_im_ge hhol hA
-  · obtain ⟨r, u, hu, hu0, hfe⟩ := hg.exists_eventuallyEq_pow_smul_nonzero_iff.mpr h0
+  · obtain ⟨r, u, hu, hu0, hfe⟩ := hg.exists_eventuallyEq_pow_smul_ne_zero_iff.mpr h0
     have hpos : 0 < ‖u 0‖ / 2 := by positivity
     have hu_lb : ∀ᶠ z in 𝓝 (0 : ℂ), ‖u 0‖ / 2 ≤ ‖u z‖ := by
       have ht : Tendsto (fun z => ‖u z‖) (𝓝 0) (𝓝 ‖u 0‖) := hu.continuousAt.norm
@@ -1069,28 +1069,22 @@ public theorem _root_.ModularForm.exists_monicRel_j_K_of_mdifferentiable_frickeQ
         ∃ m : ℕ, IsBoundedAtImInfty (fricke v * ModularForm.discriminant ^ m)) :=
     ⟨(ModularForm.frickeFunction_orbit_package N L hL W hW fricke hfricke jf hjf).1,
       (ModularForm.frickeFunction_orbit_package N L hL W hW fricke hfricke jf hjf).2.1⟩
-  have hfeq : fricke = fun a τ =>
-      -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 *
-        (((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ *
-          PeriodPair.weierstrassP (L τ)
-            ((((a 0).val : ℂ) * (τ : ℂ) + ((a 1).val : ℂ)) / (N : ℂ))) := by
-    funext a τ; rw [hfricke, hW]
-  have hR4a := ModularForm.frickeFunction_modularity_package N L hL
-  dsimp only at hR4a
   have hR4c : ∀ (v : Fin 2 → ZMod N) (γ : Matrix.SpecialLinearGroup (Fin 2) ℤ) (τ : ℍ),
       fricke v (γ • τ) = fricke (Matrix.vecMul v
         ((Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod N)) γ :
           Matrix.SpecialLinearGroup (Fin 2) (ZMod N)) : Matrix (Fin 2) (Fin 2) (ZMod N))) τ := by
-    intro v γ τ; rw [hfeq]; exact hR4a.1 v γ τ
+    intro v γ τ; exact ModularForm.frickeFunction_smul N L hL W hW fricke hfricke v γ τ
   have hQrat : ∀ v : Fin 2 → ZMod N, v ≠ 0 →
       Function.Periodic ((fricke v * ModularForm.discriminant ^ 1) ∘
         UpperHalfPlane.ofComplex) N ∧
       IsBoundedAtImInfty (fricke v * ModularForm.discriminant ^ 1) ∧
       ∀ n : ℕ, (UpperHalfPlane.qExpansion N
         (fricke v * ModularForm.discriminant ^ 1)).coeff n ∈ K := by
-    intro v hv; rw [pow_one, hfeq, hK]
-    exact ⟨(hR4a.2.2.2.2.1 v hv).1, hR4a.2.2.2.1 v hv, (hR4a.2.2.2.2.1 v hv).2⟩
-  clear hR4a
+    intro v hv; rw [pow_one, hK]
+    exact ⟨ModularForm.periodic_frickeFunction_mul_discriminant N L hL W hW fricke hfricke hv,
+      ModularForm.isBoundedAtImInfty_frickeFunction_mul_discriminant N L hL W hW fricke hfricke hv,
+      ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_mem N L hL W hW fricke hfricke
+        hv⟩
   classical
   set gen : Option {v : Fin 2 → ZMod N // v ≠ 0} → ℍ → ℂ :=
     fun o => o.elim jf fun v => fricke v.1 with hgen

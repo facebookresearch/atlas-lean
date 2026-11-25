@@ -689,20 +689,9 @@ public theorem _root_.ModularForm.exists_monicRel_j_of_mdifferentiable_levelFrac
       funext fun τ => by rw [hjf τ]]
     exact heq
   · intro v hv
-    rw [show fricke v = fun τ : ℍ =>
-        -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 *
-          (((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ * PeriodPair.weierstrassP (L τ)
-            ((((v 0).val : ℂ) * (τ : ℂ) + ((v 1).val : ℂ)) / (N : ℂ))) from
-      funext fun τ => by rw [hfricke, hW]]
-    exact (ModularForm.frickeFunction_modularity_package N L hL).2.2.1 v hv
+    exact ModularForm.mdifferentiable_frickeFunction N L hL W hW fricke hfricke hv
   · intro v γ τ
-    have hfeq : ∀ w : Fin 2 → ZMod N, fricke w = fun τ : ℍ =>
-        -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 *
-          (((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ * PeriodPair.weierstrassP (L τ)
-            ((((w 0).val : ℂ) * (τ : ℂ) + ((w 1).val : ℂ)) / (N : ℂ))) :=
-      fun w => funext fun τ' => by rw [hfricke, hW]
-    rw [hfeq, hfeq]
-    exact (ModularForm.frickeFunction_modularity_package N L hL).1 v γ τ
+    exact ModularForm.frickeFunction_smul N L hL W hW fricke hfricke v γ τ
 
 end
 

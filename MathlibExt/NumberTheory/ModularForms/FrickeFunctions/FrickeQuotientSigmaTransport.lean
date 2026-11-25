@@ -202,45 +202,32 @@ private theorem ev_sum {ι : Type*} (t : (Fin 2 → ZMod N) → (Fin 2 →
     ev fricke jf K t ψ (∑ i ∈ S, R i) = ∑ i ∈ S, ev fricke jf K t ψ (R i) := by
   simp [ev, map_sum]
 
-include hW hfricke in
-private theorem fricke_eq : fricke = fun (a : Fin 2 → ZMod N) (τ : ℍ) =>
-    -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 *
-      (((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ *
-        PeriodPair.weierstrassP (L τ) ((((a 0).val : ℂ) * (τ : ℂ) + ((a 1).val : ℂ)) / (N : ℂ))) :=
-            by
-  funext a τ; rw [hfricke, hW]
-
 include hL hW hfricke in
 private theorem mdifferentiable_fricke {v : Fin 2 →
-    ZMod N} (hv : v ≠ 0) : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fricke v) := by
-  have pkg := ModularForm.frickeFunction_modularity_package N L hL
-  rw [← fricke_eq L W hW fricke hfricke] at pkg
-  exact pkg.2.2.1 v hv
+    ZMod N} (hv : v ≠ 0) : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fricke v) :=
+  ModularForm.mdifferentiable_frickeFunction N L hL W hW fricke hfricke hv
 
 include hL hW hfricke in
 private theorem isBoundedAtImInfty_fricke {v : Fin 2 →
-    ZMod N} (hv : v ≠ 0) : IsBoundedAtImInfty (fricke v * Δ) := by
-  have pkg := ModularForm.frickeFunction_modularity_package N L hL
-  rw [← fricke_eq L W hW fricke hfricke] at pkg
-  exact pkg.2.2.2.1 v hv
+    ZMod N} (hv : v ≠ 0) : IsBoundedAtImInfty (fricke v * Δ) :=
+  ModularForm.isBoundedAtImInfty_frickeFunction_mul_discriminant N L hL W hW fricke hfricke hv
 
 include hL hW hfricke hK in
 private theorem periodic_fricke {v : Fin 2 → ZMod N} (hv : v ≠ 0) :
     Periodic ((fricke v * Δ) ∘ ofComplex) N ∧ ∀ n : ℕ, (qExpansion N (fricke v * Δ)).coeff n ∈ K :=
         by
-  have pkg := ModularForm.frickeFunction_modularity_package N L hL
-  rw [← fricke_eq L W hW fricke hfricke] at pkg
   subst hK
-  exact pkg.2.2.2.2.1 v hv
+  exact ⟨ModularForm.periodic_frickeFunction_mul_discriminant N L hL W hW fricke hfricke hv,
+    ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_mem N L hL W hW fricke hfricke
+      hv⟩
 
 include hL hW hfricke hK hs hφ in
 private theorem coeff_fricke_ds {v : Fin 2 → ZMod N} (hv : v ≠ 0) (n : ℕ) (z : K)
     (hz : (z : ℂ) = (qExpansion N (fricke v * Δ)).coeff n) :
     (qExpansion N (fricke (ds s v) * Δ)).coeff n = φ z := by
-  have pkg := ModularForm.frickeFunction_modularity_package N L hL
-  rw [← fricke_eq L W hW fricke hfricke] at pkg
   subst hK
-  exact pkg.2.2.2.2.2.2.2 s hs φ hφ v hv n z hz
+  exact ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_sigmaTransport N L hL W hW
+    fricke hfricke hs φ hφ hv n z hz
 
 include hjf in
 private theorem mdifferentiable_jf : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) jf := by

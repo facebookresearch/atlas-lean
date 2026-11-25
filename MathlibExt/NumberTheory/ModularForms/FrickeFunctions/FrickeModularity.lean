@@ -41,9 +41,25 @@ This file proves the modularity properties of the Fricke functions of level `N`.
 2592 · (2πi)⁻² ℘_τ((v₀ τ + v₁) / N)`, where `℘_τ` is the Weierstrass function of the lattice
 `ℤτ + ℤ`.
 
-## Main statement
+## Main statements
 
-* `ModularForm.frickeFunction_modularity_package`
+Each result below takes `W` and `fricke` with `W v τ = (2πi)⁻² ℘_τ((v₀ τ + v₁) / N)` and
+`fricke v τ = -(E₄ τ E₆ τ / Δ τ) / 2592 · W v τ`, so `fricke v = f_v`.
+
+* `ModularForm.frickeFunction_smul`: `SL(2, ℤ)` acts by `f_v (γ • τ) = f_{v γ} τ`.
+* `ModularForm.frickeFunction_neg`: `f_{-v} = f_v`.
+* `ModularForm.mdifferentiable_frickeFunction`: `f_v` is holomorphic for `v ≠ 0`.
+* `ModularForm.isBoundedAtImInfty_frickeFunction_mul_discriminant`: `f_v Δ` is bounded at `i∞`.
+* `ModularForm.periodic_frickeFunction_mul_discriminant`: `f_v Δ` is `N`-periodic.
+* `ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_mem`: the q-coefficients of
+  `f_v Δ` lie in `ℚ(ζ_N)`.
+* `ModularForm.eq_or_eq_neg_of_frickeFunction_eq`: `f_v = f_w` forces `w = ± v`.
+* `ModularForm.frickeFunction_smul_of_mem_Gamma`: `f_v` is `Γ(N)`-invariant.
+* `ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_sigmaTransport`: an embedding
+  of `ℚ(ζ_N)` with `ζ_N ↦ ζ_N ^ s` maps the q-coefficients of `f_v Δ` to those of
+  `f_{(v₀, s v₁)} Δ`.
+* `ModularForm.frickeFunction_modularity_package`: all of the above in one statement, with
+  `f_v` written out.
 -/
 namespace FrickeFunctions.FrickeModularity
 
@@ -1036,6 +1052,169 @@ end R4aBridge
 end Aux
 open scoped FrickeFunctions.FrickeModularity.Aux
 
+section NamedResults
+
+open UpperHalfPlane hiding I
+open scoped UpperHalfPlane Manifold MatrixGroups ModularForm
+open Aux
+
+variable (N : ℕ) [NeZero N]
+    (L : ℍ → PeriodPair) (hL : ∀ τ : ℍ, (L τ).ω₁ = (τ : ℂ) ∧ (L τ).ω₂ = 1)
+    (W : (Fin 2 → ZMod N) → ℍ → ℂ)
+    (hW : ∀ (v : Fin 2 → ZMod N) (τ : ℍ), W v τ = ((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ *
+      PeriodPair.weierstrassP (L τ) ((((v 0).val : ℂ) * (τ : ℂ) + ((v 1).val : ℂ)) / (N : ℂ)))
+    (fricke : (Fin 2 → ZMod N) → ℍ → ℂ)
+    (hfricke : ∀ (v : Fin 2 → ZMod N) (τ : ℍ), fricke v τ =
+      -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 * W v τ)
+
+omit [NeZero N] in
+include hL hW hfricke in
+private theorem fricke_eq_frickeF : fricke = frickeF N := by
+  have hLpp : ∀ τ : ℍ, L τ = periodPairOfTau τ := fun τ =>
+    periodPair_ext' ((hL τ).1.trans (periodPairOfTau_ω₁ τ).symm)
+      ((hL τ).2.trans (periodPairOfTau_ω₂ τ).symm)
+  funext v τ
+  rw [hfricke, hW, hLpp τ]
+  with_unfolding_all rfl
+
+omit [NeZero N] in
+include hL hW hfricke in
+private theorem fricke_mul_discriminant_eq (v : Fin 2 → ZMod N) :
+    (fricke v * ModularForm.discriminant : ℍ → ℂ) =
+      (-(1 / 2592) : ℂ) • frickeH N (v 0).val (v 1).val := by
+  rw [fricke_eq_frickeF N L hL W hW fricke hfricke]
+  funext τ
+  simp only [Pi.mul_apply, Pi.smul_apply, smul_eq_mul]
+  rw [show ModularForm.discriminant τ = (⇑CuspForm.discriminant) τ from
+    (congrFun CuspForm.coe_discriminant τ).symm, frickeF_mul_discriminant]
+  ring
+
+include hL hW hfricke in
+public theorem _root_.ModularForm.frickeFunction_smul (v : Fin 2 → ZMod N) (γ : SL(2, ℤ))
+    (τ : ℍ) :
+    fricke v (γ • τ) =
+      fricke (Matrix.vecMul v ((γ : Matrix (Fin 2) (Fin 2) ℤ).map ((↑) : ℤ → ZMod N))) τ := by
+  rw [fricke_eq_frickeF N L hL W hW fricke hfricke]
+  exact frickeF_slash v γ τ
+
+include hL hW hfricke in
+public theorem _root_.ModularForm.frickeFunction_neg (v : Fin 2 → ZMod N) :
+    fricke (-v) = fricke v := by
+  rw [fricke_eq_frickeF N L hL W hW fricke hfricke]
+  funext τ
+  simp only [frickeF]
+  refine congrArg₂ (· * ·) rfl ?_
+  rw [wpNormZ_eq, wpNormZ_eq, weierstrassP_frickeTorsionPt_neg]
+
+include hL hW hfricke in
+public theorem _root_.ModularForm.mdifferentiable_frickeFunction {v : Fin 2 → ZMod N}
+    (hv : v ≠ 0) : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fricke v) := by
+  rw [fricke_eq_frickeF N L hL W hW fricke hfricke]
+  exact mdifferentiable_frickeF ⟨v, hv⟩
+
+include hL hW hfricke in
+public theorem _root_.ModularForm.isBoundedAtImInfty_frickeFunction_mul_discriminant
+    {v : Fin 2 → ZMod N} (hv : v ≠ 0) :
+    IsBoundedAtImInfty (fricke v * ModularForm.discriminant) := by
+  rw [fricke_eq_frickeF N L hL W hW fricke hfricke, ← CuspForm.coe_discriminant]
+  exact isBoundedAtImInfty_frickeF_mul_discriminant ⟨v, hv⟩
+
+include hL hW hfricke in
+public theorem _root_.ModularForm.periodic_frickeFunction_mul_discriminant
+    {v : Fin 2 → ZMod N} (hv : v ≠ 0) :
+    Function.Periodic ((fricke v * ModularForm.discriminant) ∘ ofComplex) N := by
+  obtain ⟨h1, h2, h0⟩ := frickeIdx_hyps (⟨v, hv⟩ : FrickeIdx N)
+  rw [fricke_mul_discriminant_eq N L hL W hW fricke hfricke]
+  intro x
+  have hx := periodic_frickeH h1 h2 h0 x
+  simp only [Function.comp_apply, Pi.smul_apply, smul_eq_mul] at hx ⊢
+  rw [hx]
+
+include hL hW hfricke in
+public theorem _root_.ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_mem
+    {v : Fin 2 → ZMod N} (hv : v ≠ 0) (n : ℕ) :
+    (qExpansion N (fricke v * ModularForm.discriminant)).coeff n ∈
+      IntermediateField.adjoin ℚ {cexp (2 * π * I / N)} := by
+  obtain ⟨h1, h2, h0⟩ := frickeIdx_hyps (⟨v, hv⟩ : FrickeIdx N)
+  rw [fricke_mul_discriminant_eq N L hL W hW fricke hfricke, qExpansion_smul
+      (analyticAt_cuspFunction_zero_of (mdifferentiable_frickeH h1 h2 h0)
+        (periodic_frickeH h1 h2 h0) (isBoundedAtImInfty_frickeH h1 h2 h0)),
+    PowerSeries.coeff_smul, smul_eq_mul]
+  refine mul_mem ?_ (qExpansion_frickeH_coeff_mem_kN h1 h2 h0 n)
+  show ((-(1 / 2592) : ℂ)) ∈ IntermediateField.adjoin ℚ {Complex.exp (2 * ↑Real.pi * Complex.I
+      / N)}
+  simp
+
+include hL hW hfricke in
+public theorem _root_.ModularForm.eq_or_eq_neg_of_frickeFunction_eq {v w : Fin 2 → ZMod N}
+    (hv : v ≠ 0) (hw : w ≠ 0) (h : fricke v = fricke w) : w = v ∨ w = -v := by
+  rw [fricke_eq_frickeF N L hL W hW fricke hfricke] at h
+  exact frickeF_eq_imp ⟨v, hv⟩ ⟨w, hw⟩ h
+
+include hL hW hfricke in
+public theorem _root_.ModularForm.frickeFunction_smul_of_mem_Gamma (v : Fin 2 → ZMod N)
+    {γ : SL(2, ℤ)} (hγ : γ ∈ CongruenceSubgroup.Gamma N) (τ : ℍ) :
+    fricke v (γ • τ) = fricke v τ := by
+  rw [fricke_eq_frickeF N L hL W hW fricke hfricke]
+  exact frickeF_invariant_Gamma v hγ τ
+
+include hL hW hfricke in
+public theorem _root_.ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_sigmaTransport
+    {s : ℕ} (hs : s.Coprime N)
+    (φ : ↑(IntermediateField.adjoin ℚ {cexp (2 * π * I / N)}) →+* ℂ)
+    (hφ : ∀ z : ↑(IntermediateField.adjoin ℚ {cexp (2 * π * I / N)}),
+      (z : ℂ) = cexp (2 * π * I / N) → φ z = cexp (2 * π * I / N) ^ s)
+    {v : Fin 2 → ZMod N} (hv : v ≠ 0) (n : ℕ)
+    (z : ↑(IntermediateField.adjoin ℚ {cexp (2 * π * I / N)}))
+    (hz : (z : ℂ) = (qExpansion N (fricke v * ModularForm.discriminant)).coeff n) :
+    (qExpansion N (fricke ![v 0, (s : ZMod N) * v 1] * ModularForm.discriminant)).coeff n =
+      φ z := by
+  obtain ⟨h1, h2, h0⟩ := frickeIdx_hyps (⟨v, hv⟩ : FrickeIdx N)
+  have hN : N ≠ 0 := NeZero.ne N
+  have h2' : s * (v 1).val % N < N := Nat.mod_lt _ (Nat.pos_of_ne_zero hN)
+  have h0' : (v 0).val ≠ 0 ∨ s * (v 1).val % N ≠ 0 := by
+    rcases h0 with h | h
+    · exact Or.inl h
+    · refine Or.inr fun hmod => h ?_
+      have hdvd0 : N ∣ s * (v 1).val := Nat.dvd_of_mod_eq_zero hmod
+      have hdvd : N ∣ (v 1).val :=
+        Nat.Coprime.dvd_of_dvd_mul_left (Nat.Coprime.symm hs) hdvd0
+      exact Nat.eq_zero_of_dvd_of_lt hdvd h2
+  have hval : ((s : ZMod N) * v 1).val = s * (v 1).val % N := by
+    rw [ZMod.val_mul, ZMod.val_natCast]
+    exact Nat.mod_mul_mod s (v 1).val N
+  have hφg : φ ⟨zetaN N, zetaN_mem_kN N⟩ = zetaN N ^ s :=
+    hφ ⟨zetaN N, zetaN_mem_kN N⟩ rfl
+  have hshA' : (fricke ![v 0, (s : ZMod N) * v 1] * ModularForm.discriminant : ℍ → ℂ) =
+      (-(1 / 2592) : ℂ) • frickeH N (v 0).val (s * (v 1).val % N) := by
+    rw [fricke_mul_discriminant_eq N L hL W hW fricke hfricke]
+    simp only [Matrix.cons_val_zero, Matrix.cons_val_one, hval]
+  have hanA := analyticAt_cuspFunction_zero_of (mdifferentiable_frickeH h1 h2 h0)
+    (periodic_frickeH h1 h2 h0) (isBoundedAtImInfty_frickeH h1 h2 h0)
+  have hanA' := analyticAt_cuspFunction_zero_of (mdifferentiable_frickeH h1 h2' h0')
+    (periodic_frickeH h1 h2' h0') (isBoundedAtImInfty_frickeH h1 h2' h0')
+  rw [fricke_mul_discriminant_eq N L hL W hW fricke hfricke, qExpansion_smul hanA,
+    PowerSeries.coeff_smul, smul_eq_mul] at hz
+  rw [hshA', qExpansion_smul hanA', PowerSeries.coeff_smul, smul_eq_mul]
+  have hmem := qExpansion_frickeH_coeff_mem_kN h1 h2 h0 n
+  have htr := qExpansion_frickeH_conj hs φ hφg h1 h2 h0 n
+    (⟨_, hmem⟩ : ↑(IntermediateField.adjoin ℚ {cexp (2 * π * I / N)})) rfl
+  have hzrel : z = ((-(1/2592) : ℚ) : ↑(IntermediateField.adjoin ℚ {cexp (2 * π * I / N)})) *
+      ⟨_, hmem⟩ := by
+    apply Subtype.coe_injective
+    change (z : ℂ) = ((-(1/2592) : ℚ) : ℂ) *
+      (qExpansion N (frickeH N (v 0).val (v 1).val)).coeff n
+    rw [hz]
+    push_cast
+    ring
+  have hφz : φ z = ((-(1/2592) : ℚ) : ℂ) * φ ⟨_, hmem⟩ := by
+    rw [hzrel, map_mul, map_ratCast]
+  rw [htr, hφz]
+  push_cast
+  rfl
+
+end NamedResults
+
 open UpperHalfPlane hiding I in
 open scoped UpperHalfPlane Manifold MatrixGroups ModularForm in
 open Aux in
@@ -1074,132 +1253,26 @@ public theorem _root_.ModularForm.frickeFunction_modularity_package (N : ℕ) [N
             (qExpansion N (f ![a 0,
                 (s : ZMod N) * a 1] * ModularForm.discriminant)).coeff n = φ z) := by
   intro f
-  have hLpp : ∀ τ : ℍ, L τ = periodPairOfTau τ := fun τ =>
-    periodPair_ext' ((hL τ).1.trans (periodPairOfTau_ω₁ τ).symm)
-      ((hL τ).2.trans (periodPairOfTau_ω₂ τ).symm)
-  have hfeq : ∀ (a : Fin 2 → ZMod N) (τ : ℍ), f a τ = frickeF N a τ := by
-    intro a τ
-    change -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 *
-      (((2 * ↑Real.pi * Complex.I) ^ 2)⁻¹ *
-        PeriodPair.weierstrassP (L τ) _) = _
-    rw [hLpp τ]
-    with_unfolding_all rfl
-  have hfeq' : ∀ a : Fin 2 → ZMod N, f a = frickeF N a := fun a => funext (hfeq a)
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · intro a γ τ
-    rw [hfeq, hfeq]
-    exact frickeF_slash a γ τ
-  · intro a
-    funext τ
-    rw [hfeq, hfeq]
-    show frickeF N (-a) τ = frickeF N a τ
-    simp only [frickeF]
-    refine congrArg₂ (· * ·) rfl ?_
-    rw [wpNormZ_eq, wpNormZ_eq, weierstrassP_frickeTorsionPt_neg]
-  · intro a ha
-    rw [hfeq' a]
-    exact mdifferentiable_frickeF ⟨a, ha⟩
-  · intro a ha
-    have hb := isBoundedAtImInfty_frickeF_mul_discriminant (⟨a, ha⟩ : FrickeIdx N)
-    have hsh : (f a * ModularForm.discriminant : ℍ → ℂ) =
-        frickeF N a * ⇑CuspForm.discriminant := by
-      funext τ
-      simp only [Pi.mul_apply, hfeq a τ]
-      rw [show ModularForm.discriminant τ = (⇑CuspForm.discriminant) τ from
-        (congrFun CuspForm.coe_discriminant τ).symm]
-    rw [hsh]
-    exact hb
-  · intro a ha
-    obtain ⟨h1, h2, h0⟩ := frickeIdx_hyps (⟨a, ha⟩ : FrickeIdx N)
-    have hshape : (f a * ModularForm.discriminant : ℍ → ℂ) =
-        (-(1 / 2592) : ℂ) • frickeH N (a 0).val (a 1).val := by
-      funext τ
-      simp only [Pi.mul_apply, Pi.smul_apply, smul_eq_mul, hfeq a τ]
-      rw [show ModularForm.discriminant τ = (⇑CuspForm.discriminant) τ from
-        (congrFun CuspForm.coe_discriminant τ).symm, frickeF_mul_discriminant]
-      ring
-    constructor
-    · rw [hshape]
-      intro x
-      have hx := periodic_frickeH h1 h2 h0 x
-      simp only [Function.comp_apply, Pi.smul_apply, smul_eq_mul] at hx ⊢
-      rw [hx]
-    · intro n
-      rw [hshape, qExpansion_smul (analyticAt_cuspFunction_zero_of
-          (mdifferentiable_frickeH h1 h2 h0) (periodic_frickeH h1 h2 h0)
-          (isBoundedAtImInfty_frickeH h1 h2 h0)), PowerSeries.coeff_smul, smul_eq_mul]
-      refine mul_mem ?_ (qExpansion_frickeH_coeff_mem_kN h1 h2 h0 n)
-      show ((-(1 / 2592) : ℂ)) ∈ IntermediateField.adjoin ℚ {Complex.exp (2 * ↑Real.pi * Complex.I
-          / N)}
-      simp
-  · intro a b ha hb hab
-    exact frickeF_eq_imp ⟨a, ha⟩ ⟨b, hb⟩ (by rw [← hfeq' a, ← hfeq' b]; exact hab)
-  · intro a γ hγ τ
-    rw [hfeq, hfeq]
-    exact frickeF_invariant_Gamma a hγ τ
-  · intro s hs φ hφ a ha n z hz
-    obtain ⟨h1, h2, h0⟩ := frickeIdx_hyps (⟨a, ha⟩ : FrickeIdx N)
-    have hN : N ≠ 0 := NeZero.ne N
-    have h2' : s * (a 1).val % N < N := Nat.mod_lt _ (Nat.pos_of_ne_zero hN)
-    have h0' : (a 0).val ≠ 0 ∨ s * (a 1).val % N ≠ 0 := by
-      rcases h0 with h | h
-      · exact Or.inl h
-      · refine Or.inr fun hmod => h ?_
-        have hdvd0 : N ∣ s * (a 1).val := Nat.dvd_of_mod_eq_zero hmod
-        have hdvd : N ∣ (a 1).val :=
-          Nat.Coprime.dvd_of_dvd_mul_left (Nat.Coprime.symm hs) hdvd0
-        exact Nat.eq_zero_of_dvd_of_lt hdvd h2
-    have hsu : IsUnit ((s : ZMod N)) := (ZMod.isUnit_iff_coprime s N).mpr hs
-    have ha' : (![a 0, (s : ZMod N) * a 1] : Fin 2 → ZMod N) ≠ 0 := by
-      intro h00
-      apply ha
-      have e0 : a 0 = 0 := by simpa using congrFun h00 0
-      have e1 : (s : ZMod N) * a 1 = 0 := by simpa using congrFun h00 1
-      have e1' : a 1 = 0 := (hsu.mul_right_eq_zero).mp e1
-      funext j
-      fin_cases j <;> simp [e0, e1']
-    have hval : ((s : ZMod N) * a 1).val = s * (a 1).val % N := by
-      rw [ZMod.val_mul, ZMod.val_natCast]
-      exact Nat.mod_mul_mod s (a 1).val N
-    have hφg : φ ⟨zetaN N, zetaN_mem_kN N⟩ = zetaN N ^ s :=
-      hφ ⟨zetaN N, zetaN_mem_kN N⟩ rfl
-    have hshA : (f a * ModularForm.discriminant : ℍ → ℂ) =
-        (-(1 / 2592) : ℂ) • frickeH N (a 0).val (a 1).val := by
-      funext τ
-      simp only [Pi.mul_apply, Pi.smul_apply, smul_eq_mul, hfeq a τ]
-      rw [show ModularForm.discriminant τ = (⇑CuspForm.discriminant) τ from
-        (congrFun CuspForm.coe_discriminant τ).symm, frickeF_mul_discriminant]
-      ring
-    have hshA' : (f ![a 0, (s : ZMod N) * a 1] * ModularForm.discriminant : ℍ → ℂ) =
-        (-(1 / 2592) : ℂ) • frickeH N (a 0).val (s * (a 1).val % N) := by
-      funext τ
-      simp only [Pi.mul_apply, Pi.smul_apply, smul_eq_mul, hfeq (![a 0, (s : ZMod N) * a 1]) τ]
-      rw [show ModularForm.discriminant τ = (⇑CuspForm.discriminant) τ from
-        (congrFun CuspForm.coe_discriminant τ).symm, frickeF_mul_discriminant]
-      simp only [Matrix.cons_val_zero, Matrix.cons_val_one, hval]
-      ring
-    have hanA := analyticAt_cuspFunction_zero_of (mdifferentiable_frickeH h1 h2 h0)
-      (periodic_frickeH h1 h2 h0) (isBoundedAtImInfty_frickeH h1 h2 h0)
-    have hanA' := analyticAt_cuspFunction_zero_of (mdifferentiable_frickeH h1 h2' h0')
-      (periodic_frickeH h1 h2' h0') (isBoundedAtImInfty_frickeH h1 h2' h0')
-    rw [hshA, qExpansion_smul hanA, PowerSeries.coeff_smul, smul_eq_mul] at hz
-    rw [hshA', qExpansion_smul hanA', PowerSeries.coeff_smul, smul_eq_mul]
-    have hmem := qExpansion_frickeH_coeff_mem_kN h1 h2 h0 n
-    have htr := qExpansion_frickeH_conj hs φ hφg h1 h2 h0 n
-      (⟨_, hmem⟩ : ↑(IntermediateField.adjoin ℚ {cexp (2 * π * I / N)})) rfl
-    have hzrel : z = ((-(1/2592) : ℚ) : ↑(IntermediateField.adjoin ℚ {cexp (2 * π * I / N)})) *
-        ⟨_, hmem⟩ := by
-      apply Subtype.coe_injective
-      change (z : ℂ) = ((-(1/2592) : ℚ) : ℂ) *
-        (qExpansion N (frickeH N (a 0).val (a 1).val)).coeff n
-      rw [hz]
-      push_cast
-      ring
-    have hφz : φ z = ((-(1/2592) : ℚ) : ℂ) * φ ⟨_, hmem⟩ := by
-      rw [hzrel, map_mul, map_ratCast]
-    rw [htr, hφz]
-    push_cast
-    rfl
+  let W : (Fin 2 → ZMod N) → ℍ → ℂ := fun a τ => ((2 * π * I) ^ 2)⁻¹ *
+    PeriodPair.weierstrassP (L τ) ((((a 0).val : ℂ) * (τ : ℂ) + ((a 1).val : ℂ)) / (N : ℂ))
+  have hW : ∀ (a : Fin 2 → ZMod N) (τ : ℍ), W a τ = ((2 * π * I) ^ 2)⁻¹ *
+      PeriodPair.weierstrassP (L τ) ((((a 0).val : ℂ) * (τ : ℂ) + ((a 1).val : ℂ)) / (N : ℂ)) :=
+    fun _ _ => rfl
+  have hf : ∀ (a : Fin 2 → ZMod N) (τ : ℍ), f a τ =
+      -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 * W a τ :=
+    fun _ _ => rfl
+  exact ⟨ModularForm.frickeFunction_smul N L hL W hW f hf,
+    ModularForm.frickeFunction_neg N L hL W hW f hf,
+    fun _ ha => ModularForm.mdifferentiable_frickeFunction N L hL W hW f hf ha,
+    fun _ ha =>
+      ModularForm.isBoundedAtImInfty_frickeFunction_mul_discriminant N L hL W hW f hf ha,
+    fun _ ha => ⟨ModularForm.periodic_frickeFunction_mul_discriminant N L hL W hW f hf ha,
+      ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_mem N L hL W hW f hf ha⟩,
+    fun _ _ ha hb => ModularForm.eq_or_eq_neg_of_frickeFunction_eq N L hL W hW f hf ha hb,
+    fun a _ hγ τ => ModularForm.frickeFunction_smul_of_mem_Gamma N L hL W hW f hf a hγ τ,
+    fun _ hs φ hφ _ ha n z hz =>
+      ModularForm.qExpansion_coeff_frickeFunction_mul_discriminant_sigmaTransport
+        N L hL W hW f hf hs φ hφ ha n z hz⟩
 
 end
 

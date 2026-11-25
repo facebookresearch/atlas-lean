@@ -277,20 +277,10 @@ private theorem ev_C (t : (Fin 2 → ZMod N) → (Fin 2 → ZMod N)) (ψ : K →
       Algebra.algebraMap_self,
     RingHom.id_apply]
 
-include hW hfricke in
-private theorem fricke_eq : fricke = fun (a : Fin 2 → ZMod N) (τ : ℍ) =>
-    -(ModularForm.E₄ τ * ModularForm.E₆ τ / ModularForm.discriminant τ) / 2592 *
-      (((2 * (Real.pi : ℂ) * Complex.I) ^ 2)⁻¹ *
-        PeriodPair.weierstrassP (L τ) ((((a 0).val : ℂ) * (τ : ℂ) + ((a 1).val : ℂ)) / (N : ℂ))) :=
-            by
-  funext a τ; rw [hfricke, hW]
-
 include hL hW hfricke in
 private theorem mdifferentiable_fricke {v : Fin 2 →
-    ZMod N} (hv : v ≠ 0) : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fricke v) := by
-  have pkg := ModularForm.frickeFunction_modularity_package N L hL
-  rw [← fricke_eq L W hW fricke hfricke] at pkg
-  exact pkg.2.2.1 v hv
+    ZMod N} (hv : v ≠ 0) : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) (fricke v) :=
+  ModularForm.mdifferentiable_frickeFunction N L hL W hW fricke hfricke hv
 
 include hjf in
 private theorem mdifferentiable_jf : MDifferentiable 𝓘(ℂ) 𝓘(ℂ) jf := by
@@ -415,10 +405,8 @@ private theorem cw_aeval {ι : Type} (g : ι → ℍ → ℂ) (R : MvPolynomial 
 
 include hL hW hfricke in
 private theorem fricke_smul (v : Fin 2 → ZMod N) (γ : SL(2,
-    ℤ)) (τ : ℍ) : fricke v (γ • τ) = fricke (vm γ v) τ := by
-  have pkg := ModularForm.frickeFunction_modularity_package N L hL
-  rw [← fricke_eq L W hW fricke hfricke] at pkg
-  exact pkg.1 v γ τ
+    ℤ)) (τ : ℍ) : fricke v (γ • τ) = fricke (vm γ v) τ :=
+  ModularForm.frickeFunction_smul N L hL W hW fricke hfricke v γ τ
 
 include hL hW hfricke hjf in
 private theorem cw_gen {t : (Fin 2 → ZMod N) → (Fin 2 → ZMod N)} {α α' : SL(2, ℤ)}
