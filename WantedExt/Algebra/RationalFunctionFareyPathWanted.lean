@@ -9,9 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.ContinuedFractions.ContinuantsRecurrence
-public import Mathlib.Algebra.ContinuedFractions.Translations
-public import Mathlib.FieldTheory.RatFunc.Basic
+public import MathlibExt.Algebra.ContinuedFractions.RationalFunctionFareyPath
 public import Mathlib.FieldTheory.RatFunc.Valuation
 public import Mathlib.Data.Set.Card
 public import Mathlib.Algebra.Field.ZMod
@@ -23,98 +21,6 @@ namespace MetaMathlibExt
 open Polynomial
 
 variable {F : Type*} [Field F]
-
-/-- **Finite continued fraction with polynomial partial quotients.** Let $F$ be a field, let
-$a_0, a_1, a_2, \ldots$ be polynomials in $F[X]$ and let $n \in \mathbb{N}$. The continued
-fraction $[a_0; a_1, \ldots, a_n]$ is the generalized continued fraction over the field $F(X)$ of
-rational functions with integral part $a_0$ and, for $1 \le i \le n$, an $i$th term with partial
-numerator $1$ and partial denominator $a_i$; it has no further terms. For $i \ge 0$ write $A_i$
-and $B_i$ for the numerator and denominator of its $i$th convergent $A_i / B_i$. Thus, with
-$A_{-1} = 1$ and $B_{-1} = 0$, we have $A_0 = a_0$, $B_0 = 1$, and $A_{i+1} = a_{i+1} A_i + A_{i-1}$
-and $B_{i+1} = a_{i+1} B_i + B_{i-1}$ for $0 \le i < n$.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Section 1. -/
-public noncomputable def polyContFract (a : ℕ → F[X]) (n : ℕ) :
-    GenContFract (RatFunc F) :=
-  ⟨algebraMap F[X] (RatFunc F) (a 0),
-    Stream'.Seq.ofList
-      ((List.range n).map fun i => ⟨1, algebraMap F[X] (RatFunc F) (a (i + 1))⟩)⟩
-
-/-- **Integral part of a polynomial continued fraction.** Let $F$ be a field, let $n \in \mathbb N$,
-and let $a_0, a_1, \dots, a_n \in F[X]$. The integral part (head term) of the continued fraction
-$[a_0, a_1, \dots, a_n]$ over $F(X)$ is $a_0$.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Section 1. -/
-public theorem polyContFract_h (a : ℕ → F[X]) (n : ℕ) :
-    (polyContFract a n).h = algebraMap F[X] (RatFunc F) (a 0) := rfl
-
-/-- **Terms of a polynomial continued fraction.** Let $F$ be a field, let $a_0, a_1, \ldots$ be
-polynomials in $F[X]$ and let $n \in \mathbb{N}$. For every $i \in \mathbb{N}$, the term of index
-$i$ (counting from $0$) of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ is the
-pair with partial numerator $1$ and partial denominator $a_{i+1}$ if $i < n$, and does not exist
-if $i \ge n$.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Section 1. -/
-public theorem polyContFract_s_get? (a : ℕ → F[X]) (n i : ℕ) :
-    (polyContFract a n).s.get? i =
-      if i < n then some ⟨1, algebraMap F[X] (RatFunc F) (a (i + 1))⟩ else none := by
-  simp [polyContFract, Stream'.Seq.ofList_get?, List.getElem?_map]
-  split_ifs <;> simp_all
-
-/-- **Zeroth convergent numerator of a polynomial continued fraction.** Let $F$ be a field,
-let $a_0, a_1, \ldots$ be polynomials in $F[X]$ and let $n \in \mathbb{N}$. The numerator $A_0$
-of the zeroth convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ is
-$a_0$.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Section 1. -/
-public theorem polyContFract_nums_zero (a : ℕ → F[X]) (n : ℕ) :
-    (polyContFract a n).nums 0 = algebraMap F[X] (RatFunc F) (a 0) := by
-  simp [GenContFract.zeroth_num_eq_h, polyContFract_h]
-
-/-- **Zeroth convergent denominator of a polynomial continued fraction.** Let $F$ be a field,
-let $a_0, a_1, \ldots$ be polynomials in $F[X]$ and let $n \in \mathbb{N}$. The denominator $B_0$
-of the zeroth convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ is $1$.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Section 1. -/
-public theorem polyContFract_dens_zero (a : ℕ → F[X]) (n : ℕ) :
-    (polyContFract a n).dens 0 = 1 := by
-  simp [GenContFract.zeroth_den_eq_one]
-
-/-- **First convergent numerator of a polynomial continued fraction.** Let $F$ be a field,
-let $a_0, a_1, \ldots$ be polynomials in $F[X]$ and let $n \ge 1$. The numerator $A_1$ of the
-first convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ is
-$a_1 a_0 + 1$.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Section 1. -/
-public theorem polyContFract_nums_one (a : ℕ → F[X]) {n : ℕ} (hn : 0 < n) :
-    (polyContFract a n).nums 1 = algebraMap F[X] (RatFunc F) (a 1 * a 0 + 1) := by
-  rw [GenContFract.first_num_eq (gp := ⟨1, algebraMap F[X] (RatFunc F) (a 1)⟩)
-    (by simp [polyContFract_s_get?, hn])]
-  simp [polyContFract_h]
-
-/-- **First convergent denominator of a polynomial continued fraction.** Let $F$ be a field,
-let $a_0, a_1, \ldots$ be polynomials in $F[X]$ and let $n \ge 1$. The denominator $B_1$ of the
-first convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ is $a_1$.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Section 1. -/
-public theorem polyContFract_dens_one (a : ℕ → F[X]) {n : ℕ} (hn : 0 < n) :
-    (polyContFract a n).dens 1 = algebraMap F[X] (RatFunc F) (a 1) := by
-  rw [GenContFract.first_den_eq (gp := ⟨1, algebraMap F[X] (RatFunc F) (a 1)⟩)
-    (by simp [polyContFract_s_get?, hn])]
 
 /-- **Convergents of a polynomial continued fraction form a Farey path.** Let $F$ be a field, let
 $n \in \mathbb N$, and let $a_0, a_1, \dots, a_n \in F[X]$ with $a_i$ nonconstant for
@@ -255,32 +161,6 @@ public theorem_wanted polyContFract_of_farey_path_det_neg_one_pow
     (∀ i, 1 ≤ i → i ≤ n → 0 < (a i).natDegree) ∧
       ∀ i ≤ n, (polyContFract a n).nums i = algebraMap F[X] (RatFunc F) (C ((-1) ^ i) * u i) ∧
         (polyContFract a n).dens i = algebraMap F[X] (RatFunc F) (C ((-1) ^ i) * v i)
-
-/-- **Farey paths of polynomials with all determinants 1.** Let $F$ be a field, let
-$n \in \mathbb{N}$, and let $u_i, v_i \in F[X]$ for $i \ge 0$. Suppose that $v_0 = 1$ and that
-for $1 \le i \le n$ we have $\deg v_{i-1} < \deg v_i$ and $u_i v_{i-1} - u_{i-1} v_i = 1$. Let
-$a_0, a_1, \ldots \in F[X]$ satisfy $a_0 = u_0$, $a_1 = v_1$ and
-$a_i = (-1)^{i+1} (u_i v_{i-2} - u_{i-2} v_i)$ for $2 \le i \le n$. Then $a_i$ is nonconstant
-for $1 \le i \le n$, and for every $i \le n$ the numerator $A_i$ and denominator $B_i$ of the
-$i$th convergent of the continued fraction $[a_0; a_1, \ldots, a_n]$ over $F(X)$ are
-$A_i = \varepsilon_i u_i$ and $B_i = \varepsilon_i v_i$, where $\varepsilon_i = 1$ if
-$i \equiv 0, 1 \pmod 4$ and $\varepsilon_i = -1$ if $i \equiv 2, 3 \pmod 4$.
-
-Source: Tuangrat Chaichana, Arlisa Janjing and Teeraphong Phongpattanacharoen,
-*An Interpretation of Continued Fractions and Farey Graphs in the Field of
-Rational Functions*, INTEGERS 26 (2026), Article A3, Corollary 3. -/
-public theorem_wanted polyContFract_of_farey_path_det_one
-    (u v : ℕ → F[X]) (n : ℕ) (hv0 : v 0 = 1)
-    (hdeg : ∀ i, 1 ≤ i → i ≤ n → (v (i - 1)).degree < (v i).degree)
-    (hdet : ∀ i, 1 ≤ i → i ≤ n → u i * v (i - 1) - u (i - 1) * v i = 1)
-    (a : ℕ → F[X]) (ha0 : a 0 = u 0) (ha1 : a 1 = v 1)
-    (ha : ∀ i, 2 ≤ i → i ≤ n →
-      a i = C ((-1) ^ (i + 1)) * (u i * v (i - 2) - u (i - 2) * v i)) :
-    (∀ i, 1 ≤ i → i ≤ n → 0 < (a i).natDegree) ∧
-      ∀ i ≤ n, (polyContFract a n).nums i = algebraMap F[X] (RatFunc F)
-          (C (if i % 4 = 0 ∨ i % 4 = 1 then 1 else -1) * u i) ∧
-        (polyContFract a n).dens i = algebraMap F[X] (RatFunc F)
-          (C (if i % 4 = 0 ∨ i % 4 = 1 then 1 else -1) * v i)
 
 /-- **Farey paths of polynomials with all determinants −1.** Let $F$ be a field, let
 $n \in \mathbb{N}$, and let $u_i, v_i \in F[X]$ for $i \ge 0$. Suppose that $v_0 = 1$ and that
