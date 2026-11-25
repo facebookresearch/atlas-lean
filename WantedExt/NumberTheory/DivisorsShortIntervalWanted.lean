@@ -16,6 +16,7 @@ public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.Algebra.BigOperators.PrefixSumReordering
 public import MathlibExt.NumberTheory.CohenLcmGcd
 public import MathlibExt.NumberTheory.DivisorsShortInterval
+public import MathlibExt.NumberTheory.DivisorsShortIntervalExistsShortIntervalDivisorCountLeOfWindowThetaSq
 
 namespace MetaMathlibExt
 
@@ -65,20 +66,6 @@ public theorem_wanted card_unsolvable_sq_add_primePow {p : ℕ} [Fact p.Prime] (
     let S : ℕ → ℕ := fun v => ((Finset.range (p ^ (v + 1))).filter fun x : ℕ =>
       ¬ ∃ y : ℤ, (x : ℤ) ^ 2 + (p : ℤ) ^ v * u ≡ y ^ 2 [ZMOD (p : ℤ) ^ (v + 1)]).card
     2 * (S 0 : ℤ) = p - legendreSym p (-u) ∧ S 1 = p ∧ ∀ v ≥ 2, S v = p * S (v - 2)
-
-/-- **Divisors in windows of length $n^{\theta^2 - \varepsilon}$.** For a natural number $n$ and
-real numbers $X$, $Y$, let $D_n(X, Y)$ be the number of divisors $d$ of $n$ with
-$X \le d \le X + Y$. There is an absolute constant $C$ such that for every integer $n \ge 1$ and
-all real numbers $\theta$, $\varepsilon$ with $0 < \theta < 1$ and $0 < \varepsilon < \theta^2$,
-$D_n(n^\theta, n^{\theta^2 - \varepsilon}) \le
-C \left(\theta(1 - \theta)/\varepsilon + 1/(\theta(1 - \theta))\right)$.
-
-Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
-Article A115, Proposition 1 (`integers-2026-A115-prop-1`). -/
-public theorem_wanted exists_shortIntervalDivisorCount_le_of_window_theta_sq :
-    ∃ C : ℝ, ∀ n : ℕ, 1 ≤ n → ∀ θ ε : ℝ, 0 < θ → θ < 1 → 0 < ε → ε < θ ^ 2 →
-      (shortIntervalDivisorCount n ((n : ℝ) ^ θ) ((n : ℝ) ^ (θ ^ 2 - ε)) : ℝ) ≤
-        C * (θ * (1 - θ) / ε + 1 / (θ * (1 - θ)))
 
 /-- **Letendre's bound for divisors in short intervals.** For a natural number $n$ and real numbers
 $X$, $Y$, let $D_n(X, Y)$ be the number of divisors $d$ of $n$ with $X \le d \le X + Y$, let
