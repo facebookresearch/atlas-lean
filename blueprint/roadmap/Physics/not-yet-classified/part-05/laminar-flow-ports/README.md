@@ -77,13 +77,7 @@
 - [Poiseuille pipe velocity is positive inside the pipe](pipe-poiseuille-velocity-pos-inside.md)
 - [Cylindrical Poiseuille flow solves Navier-Stokes](pipe-poiseuille-flow-witness.md)
 
-## P. The pipe cross-section and its flow rate
-
-- [Cross-section area](pipe-disk-measure-real.md)
-- [Hagen-Poiseuille flow rate](pipe-flow-rate-eq.md)
-
 ## Q. Reynolds number and the Darcy and Fanning factors
 
 - [Laminar Darcy factor](pipe-darcy-factor-eq.md)
 - [Fanning factor of laminar pipe flow](pipe-fanning-factor-eq.md)
-- [Laminar Darcy-Weisbach pressure drop in a pipe](pipe-friction-pressure-drop-eq.md)

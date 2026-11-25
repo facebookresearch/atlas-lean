@@ -91,7 +91,6 @@
 - [Inverse FFT after FFT at the positive root is the identity](ifft-fft-std-add-char-one.md)
 - [FFT after inverse FFT at the positive root is the identity](fft-ifft-std-add-char-one.md)
 - [Overlap-add block convolution with a finite FFT size](overlap-add-block-convolution-with-a-finite-fft/README.md)
-- [Support-bounded zero padding for cyclic convolution](support-bounded-zero-padding-for-cyclic-convolut/README.md)
 
 ## Related topics
 
