@@ -30,8 +30,6 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Monoidal
-public import Mathlib.Algebra.Category.ModuleCat.Presheaf.Sheafification
 public import Mathlib.AlgebraicGeometry.GammaSpecAdjunction
 public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 public import Mathlib.AlgebraicGeometry.Pullbacks
@@ -39,7 +37,10 @@ public import Mathlib.CategoryTheory.Limits.Shapes.Pullback.Pasting
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 public import Mathlib.RingTheory.Flat.FaithfullyFlat.Basic
+public import MathlibExt.AlgebraicGeometry.BundleTrace
+public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 public import MathlibExt.AlgebraicGeometry.RelativeGroupLaw
+public import MathlibExt.AlgebraicGeometry.SchemeModulesTensor
 
 @[expose] public section
 
@@ -48,65 +49,50 @@ noncomputable section
 /-!
 # Canonical polarization data on a relative group law
 
-A sheaf of modules is locally isomorphic to another on the base scheme when
-every point has a Zariski neighbourhood on which their pullbacks are
-isomorphic.  For a relative group law, the negation and addition morphisms,
-the Mumford bundle built from a sheaf and a chosen dual sheaf, its kernel
+Two sheaves of modules on a scheme over a base are locally isomorphic over
+the base when every point of the base has a Zariski neighbourhood over whose
+inverse image they are isomorphic.  For a relative group law, the negation
+and addition morphisms, the Mumford bundle `m^* L ⊗ p₁^* L^∨ ⊗ p₂^* L^∨`
+built from a sheaf `L` and its dual `L^∨ = 𝓗om(L, 𝒪)`, its kernel
 conditions, and Rosati compatibility with an action are defined directly
 from the group law on points.  Canonical polarization data packages an
-invertible sheaf that is symmetric, has kernel contained in the
-`2`-torsion, is fppf-locally a tensor product of a kernel-trivial sheaf
-with its negation pullback, has positive geometric global-section rank in
-every algebraically closed fibre, and is Rosati compatible.
+invertible sheaf that is symmetric, whose Mumford kernel is exactly the
+`2`-torsion, that after a faithfully flat extension of the base ring is a
+tensor product of a kernel-trivial sheaf with its negation pullback, that
+has positive geometric global-section rank in every algebraically closed
+fibre, and that is Rosati compatible.
+
+Line bundles, the structure sheaf and the tensor product are those of
+`CoherentCurveLinearSeries` and `SchemeModulesTensor`; the dual is the sheaf
+Hom `BundleTrace.homSheaf` into the structure sheaf.
 -/
 
 namespace MathlibExt.AlgebraicGeometry.QMCanonicalPol
 
-open CategoryTheory CategoryTheory.Limits CategoryTheory.MonoidalCategory
+open CategoryTheory CategoryTheory.Limits
 open _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+open MathlibExt.AlgebraicGeometry.SchemeModulesTensor
 
 universe u v
 
-/-- The structure sheaf as a sheaf of modules over itself. -/
-abbrev structureModule (X : Scheme.{u}) : X.Modules :=
-  SheafOfModules.unit X.ringCatSheaf
+/-- Two sheaves of modules on `X` are locally isomorphic over the base
+`g : X ⟶ Y` when every point of `Y` has an open neighbourhood `U` such that
+their restrictions to the inverse image `g ⁻¹ᵁ U` are isomorphic. -/
+def LocIsoOnBase {X Y : Scheme.{u}} (g : X ⟶ Y) (M M' : X.Modules) : Prop :=
+  ∀ y : Y, ∃ U : Y.Opens, y ∈ U ∧
+    Nonempty ((Scheme.Modules.pullback (g ⁻¹ᵁ U).ι).obj M ≅
+      (Scheme.Modules.pullback (g ⁻¹ᵁ U).ι).obj M')
 
-/-- Local triviality of rank one, on actual Zariski open subschemes. -/
-def IsLineBundle {X : Scheme.{u}} (L : X.Modules) : Prop :=
-  ∀ x : X, ∃ U : X.Opens, x ∈ U ∧
-    Nonempty ((Scheme.Modules.pullback U.ι).obj L ≅ structureModule U)
-
-/-- The structure sheaf is invertible: it is trivial on the whole scheme. -/
-theorem isLineBundle_structureModule (X : Scheme.{u}) :
-    IsLineBundle (structureModule X) := fun _ ↦
-  ⟨⊤, trivial,
-    ⟨((Scheme.Modules.restrictFunctorIsoPullback (⊤ : X.Opens).ι).app _).symm ≪≫
-      Scheme.Modules.restrictUnitIso (⊤ : X.Opens).ι⟩⟩
-
-/-- The tensor product of sheaves of modules: the sheafification of the
-tensor product of the underlying presheaves of modules. -/
-def moduleTensor (X : Scheme.{u}) (L M : X.Modules) : X.Modules :=
-  let P := PresheafOfModulesOfCommRing.{u} X.sheaf.obj
-  let U := SheafOfModules.forget X.ringCatSheaf
-  (PresheafOfModules.sheafification (𝟙 X.ringCatSheaf.obj)).obj
-    (PresheafOfModulesOfCommRing.Monoidal.tensorObj (U.obj L) (U.obj M))
-
-/-- Two sheaves of modules are locally isomorphic when every point has a
-Zariski neighbourhood on which their pullbacks are isomorphic. -/
-def LocIsoOnBase {X : Scheme.{u}} (M M' : X.Modules) : Prop :=
-  ∀ x : X, ∃ U : X.Opens, x ∈ U ∧
-    Nonempty ((Scheme.Modules.pullback U.ι).obj M ≅
-      (Scheme.Modules.pullback U.ι).obj M')
-
-/-- Every sheaf of modules is locally isomorphic to itself. -/
-theorem locIsoOnBase_refl {X : Scheme.{u}} (M : X.Modules) :
-    LocIsoOnBase M M :=
+/-- Every sheaf of modules is locally isomorphic to itself over the base. -/
+theorem locIsoOnBase_refl {X Y : Scheme.{u}} (g : X ⟶ Y) (M : X.Modules) :
+    LocIsoOnBase g M M :=
   fun _ ↦ ⟨⊤, trivial, ⟨Iso.refl _⟩⟩
 
-/-- Local isomorphism of sheaves of modules is symmetric. -/
-theorem locIsoOnBase_symm {X : Scheme.{u}} {M M' : X.Modules}
-    (h : LocIsoOnBase M M') : LocIsoOnBase M' M :=
-  fun x ↦ (h x).imp fun _ ⟨hx, ⟨e⟩⟩ ↦ ⟨hx, ⟨e.symm⟩⟩
+/-- Local isomorphism over the base is symmetric. -/
+theorem locIsoOnBase_symm {X Y : Scheme.{u}} {g : X ⟶ Y} {M M' : X.Modules}
+    (h : LocIsoOnBase g M M') : LocIsoOnBase g M' M :=
+  fun y ↦ (h y).imp fun _ ⟨hy, ⟨e⟩⟩ ↦ ⟨hy, ⟨e.symm⟩⟩
 
 variable {S : Type u} [CommRing S] {A : Scheme.{u}}
   {f : A ⟶ Spec (CommRingCat.of S)} (G : RelativeGroupLaw S f)
@@ -126,13 +112,17 @@ def addMor : pullback f f ⟶ A :=
 /-- Addition is a morphism over the first projection. -/
 theorem addMor_over : addMor G ≫ f = pullback.fst f f ≫ f := Over.w _
 
-/-- The Mumford bundle of a sheaf `L` with chosen dual sheaf `Ldual`. -/
-def mumfordBundle (L Ldual : A.Modules) : (pullback f f).Modules :=
+/-- The Mumford bundle `m^* L ⊗ p₁^* L^∨ ⊗ p₂^* L^∨` on `A ×_S A`, where
+`L^∨ = 𝓗om(L, 𝒪_A)` is the dual of `L`: the sheaf Hom from `L` into the
+structure sheaf. -/
+def mumfordBundle (L : A.Modules) : (pullback f f).Modules :=
   moduleTensor _
     ((Scheme.Modules.pullback (addMor G)).obj L)
     (moduleTensor _
-      ((Scheme.Modules.pullback (pullback.fst f f)).obj Ldual)
-      ((Scheme.Modules.pullback (pullback.snd f f)).obj Ldual))
+      ((Scheme.Modules.pullback (pullback.fst f f)).obj
+        (BundleTrace.homSheaf A L (structureModule A)))
+      ((Scheme.Modules.pullback (pullback.snd f f)).obj
+        (BundleTrace.homSheaf A L (structureModule A))))
 
 /-- Slicing a point of the group law into the Mumford bundle. -/
 def sliceAt {T : Scheme.{u}} {t : T ⟶ Spec (CommRingCat.of S)}
@@ -146,27 +136,33 @@ def sliceAt {T : Scheme.{u}} {t : T ⟶ Spec (CommRingCat.of S)}
             rw [hx])
 
 /-- A sheaf is symmetric when its negation pullback is locally isomorphic
-to it. -/
+to it over the base. -/
 def IsSymmetric (L : A.Modules) : Prop :=
-  LocIsoOnBase ((Scheme.Modules.pullback (negMor G)).obj L) L
+  LocIsoOnBase f ((Scheme.Modules.pullback (negMor G)).obj L) L
 
-/-- The kernel of the Mumford bundle is trivial. -/
-def KernelTrivial (L Ldual : A.Modules) : Prop :=
+/-- The kernel of the Mumford bundle is trivial: a point over an affine
+test scheme `Spec R` whose slice of the Mumford bundle is locally trivial
+over `Spec R` is the identity point. -/
+def KernelTrivial (L : A.Modules) : Prop :=
   ∀ (R : Type u) [CommRing R] (t : Spec (CommRingCat.of R) ⟶
       Spec (CommRingCat.of S)) (x : Over.mk t ⟶ Over.mk f),
-    LocIsoOnBase
-        ((Scheme.Modules.pullback (sliceAt x)).obj
-          (mumfordBundle G L Ldual))
+    LocIsoOnBase (pullback.snd f t)
+        ((Scheme.Modules.pullback (sliceAt x)).obj (mumfordBundle G L))
         (structureModule _) →
       x = G.one t
 
-/-- The kernel of the Mumford bundle consists of `2`-torsion points. -/
-def KernelIsTwoTorsion (L Ldual : A.Modules) : Prop :=
+/-- The kernel of the Mumford bundle is exactly the `2`-torsion: a point
+over an affine test scheme `Spec R` lies in the kernel, that is, its slice
+of the Mumford bundle is locally trivial over `Spec R`, if and only if it is
+killed by `2`.  This is the kernel of a sheaf of the canonical form
+`L₀ ⊗ (-1)^* L₀` with `L₀` principal: there
+`φ_L = φ_{L₀} + φ_{(-1)^* L₀} = 2 φ_{L₀}` with `φ_{L₀}` an isomorphism, so
+`ker φ_L = A[2]`. -/
+def KernelIsTwoTorsion (L : A.Modules) : Prop :=
   ∀ (R : Type u) [CommRing R] (t : Spec (CommRingCat.of R) ⟶
       Spec (CommRingCat.of S)) (x : Over.mk t ⟶ Over.mk f),
-    LocIsoOnBase
-        ((Scheme.Modules.pullback (sliceAt x)).obj
-          (mumfordBundle G L Ldual))
+    LocIsoOnBase (pullback.snd f t)
+        ((Scheme.Modules.pullback (sliceAt x)).obj (mumfordBundle G L))
         (structureModule _) ↔
       G.mul t x x = G.one t
 
@@ -194,18 +190,19 @@ def rosatiLiftRight {I : Type v} (act : I → (A ⟶ A))
         _ = pullback.snd f f ≫ f := pullback.condition)
 
 /-- Rosati compatibility of the Mumford bundle with an action and its
-involution. -/
-def RosatiCompatible (L Ldual : A.Modules) {I : Type v}
+involution: the two Rosati lifts pull the Mumford bundle back to sheaves
+that are locally isomorphic over the base. -/
+def RosatiCompatible (L : A.Modules) {I : Type v}
     (act : I → (A ⟶ A)) (act_over : ∀ b, act b ≫ f = f)
     (star : I → I) : Prop :=
   ∀ b : I,
-    LocIsoOnBase
+    LocIsoOnBase (pullback.fst f f ≫ f)
       ((Scheme.Modules.pullback
           (rosatiLiftLeft act act_over b)).obj
-        (mumfordBundle G L Ldual))
+        (mumfordBundle G L))
       ((Scheme.Modules.pullback
           (rosatiLiftRight act act_over star b)).obj
-        (mumfordBundle G L Ldual))
+        (mumfordBundle G L))
 
 /-- A point of a pulled-back group law, viewed as a point of the
 original group law after base change. -/
@@ -247,21 +244,24 @@ def geomFibreH0Finrank (G : RelativeGroupLaw S f) (L : A.Modules) (k : Type u) [
       (Limits.pullback.fst f
         (Spec.map (CommRingCat.ofHom sk)))).obj L, ⊤)
 
-/-- Canonical polarization data for a sheaf `L` with chosen dual `Ldual`:
-`L` is invertible and symmetric, its Mumford kernel is `2`-torsion,
-fppf-locally it is a kernel-trivial sheaf tensored with its negation
-pullback, its geometric global-section rank is positive, and it is
-Rosati compatible with the action. -/
+/-- Canonical polarization data for a sheaf `L`: `L` is invertible and
+symmetric, its Mumford kernel is exactly the `2`-torsion, after a faithfully
+flat extension of the base ring it is a kernel-trivial sheaf tensored with
+its negation pullback, its geometric global-section rank is positive, and it
+is Rosati compatible with the action. -/
 structure CanonicalPolarizationData {I : Type v} (act : I → (A ⟶ A))
     (act_over : ∀ b, act b ≫ f = f) (star : I → I)
-    (L Ldual : A.Modules) : Prop where
+    (L : A.Modules) : Prop where
   /-- The sheaf is invertible. -/
   isLineBundle : IsLineBundle L
   /-- The sheaf is symmetric. -/
   isSymmetric : IsSymmetric G L
-  /-- The Mumford kernel is contained in the `2`-torsion. -/
-  kernelIsTwoTorsion : KernelIsTwoTorsion G L Ldual
-  /-- Fppf-locally the sheaf has the canonical tensor form. -/
+  /-- The Mumford kernel is exactly the `2`-torsion. -/
+  kernelIsTwoTorsion : KernelIsTwoTorsion G L
+  /-- After a faithfully flat extension `S → S'` of the base ring (an fpqc
+  cover: finite presentation is not required), the sheaf has the canonical
+  tensor form `L₀ ⊗ (-1)^* L₀` with `L₀` invertible and kernel-trivial,
+  locally over `Spec S'`. -/
   locallyCanonicalForm :
     ∃ (S' : Type u) (_ : CommRing S') (_ : Algebra S S'),
       Module.FaithfullyFlat S S' ∧
@@ -279,11 +279,13 @@ structure CanonicalPolarizationData {I : Type v} (act : I → (A ⟶ A))
                   Spec.map (CommRingCat.ofHom (algebraMap S S')))
                 (baseChangePoint (algebraMap S S') P)
                 (baseChangePoint (algebraMap S S') Q)).left) →
-        ∃ (L₀ L₀dual :
+        ∃ L₀ :
             (pullback f
-              (Spec.map (CommRingCat.ofHom (algebraMap S S')))).Modules),
-          IsLineBundle L₀ ∧ KernelTrivial G' L₀ L₀dual ∧
+              (Spec.map (CommRingCat.ofHom (algebraMap S S')))).Modules,
+          IsLineBundle L₀ ∧ KernelTrivial G' L₀ ∧
           LocIsoOnBase
+            (pullback.snd f
+              (Spec.map (CommRingCat.ofHom (algebraMap S S'))))
             ((Scheme.Modules.pullback
               (pullback.fst f
                 (Spec.map (CommRingCat.ofHom (algebraMap S S'))))).obj L)
@@ -293,7 +295,7 @@ structure CanonicalPolarizationData {I : Type v} (act : I → (A ⟶ A))
   positiveRank : ∀ (k : Type u) [Field k] [IsAlgClosed k] (sk : S →+* k),
     0 < geomFibreH0Finrank G L k sk
   /-- The sheaf is Rosati compatible with the action. -/
-  rosatiCompatible : RosatiCompatible G L Ldual act act_over star
+  rosatiCompatible : RosatiCompatible G L act act_over star
 
 /-- The identity point always satisfies the `2`-torsion equation, so the
 right-hand side of the kernel condition is not vacuous. -/

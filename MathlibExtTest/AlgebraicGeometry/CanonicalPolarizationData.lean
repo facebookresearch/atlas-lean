@@ -14,6 +14,8 @@ public import MathlibExt.AlgebraicGeometry.CanonicalPolarizationData
 
 open CategoryTheory CategoryTheory.Limits
 open _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
+open MathlibExt.AlgebraicGeometry.SchemeModulesTensor
 open MathlibExt.AlgebraicGeometry.QMCanonicalPol
 
 universe u v
@@ -21,16 +23,16 @@ universe u v
 namespace CanonicalPolarizationDataTest
 
 /-- Consumer with the original binders: canonical polarization data gives
-an invertible symmetric sheaf whose Mumford kernel is `2`-torsion and
+an invertible symmetric sheaf whose Mumford kernel is the `2`-torsion and
 which is Rosati compatible. -/
 theorem exactSource {S : Type u} [CommRing S] {A : Scheme.{u}}
     {f : A ⟶ Spec (CommRingCat.of S)} (G : RelativeGroupLaw S f)
     {I : Type v} (act : I → (A ⟶ A)) (act_over : ∀ b, act b ≫ f = f)
-    (star : I → I) (L Ldual : A.Modules)
-    (h : CanonicalPolarizationData G act act_over star L Ldual) :
+    (star : I → I) (L : A.Modules)
+    (h : CanonicalPolarizationData G act act_over star L) :
     IsLineBundle L ∧ IsSymmetric G L ∧
-      KernelIsTwoTorsion G L Ldual ∧
-      RosatiCompatible G L Ldual act act_over star :=
+      KernelIsTwoTorsion G L ∧
+      RosatiCompatible G L act act_over star :=
   ⟨h.isLineBundle, h.isSymmetric, h.kernelIsTwoTorsion,
     h.rosatiCompatible⟩
 
@@ -38,11 +40,11 @@ theorem exactSource {S : Type u} [CommRing S] {A : Scheme.{u}}
 theorem exactSource_univ1 {S : Type 1} [CommRing S] {A : Scheme.{1}}
     {f : A ⟶ Spec (CommRingCat.of S)} (G : RelativeGroupLaw S f)
     {I : Type 1} (act : I → (A ⟶ A)) (act_over : ∀ b, act b ≫ f = f)
-    (star : I → I) (L Ldual : A.Modules)
-    (h : CanonicalPolarizationData G act act_over star L Ldual) :
+    (star : I → I) (L : A.Modules)
+    (h : CanonicalPolarizationData G act act_over star L) :
     IsLineBundle L ∧ IsSymmetric G L ∧
-      KernelIsTwoTorsion G L Ldual ∧
-      RosatiCompatible G L Ldual act act_over star :=
+      KernelIsTwoTorsion G L ∧
+      RosatiCompatible G L act act_over star :=
   ⟨h.isLineBundle, h.isSymmetric, h.kernelIsTwoTorsion,
     h.rosatiCompatible⟩
 
@@ -54,9 +56,50 @@ example {S : Type u} [CommRing S] {A : Scheme.{u}}
     G.mul t (G.one t) (G.one t) = G.one t ∧ negMor G ≫ f = f :=
   ⟨mul_one_one G t, negMor_over G⟩
 
-/-- Local isomorphism is reflexive and symmetric on an actual sheaf. -/
-example {X : Scheme.{u}} (M M' : X.Modules) (h : LocIsoOnBase M M') :
-    LocIsoOnBase M M ∧ LocIsoOnBase M' M :=
-  ⟨locIsoOnBase_refl M, locIsoOnBase_symm h⟩
+/-- The kernel condition is an equality with the `2`-torsion, not only a
+containment: the identity point lies in the Mumford kernel. -/
+example {S : Type u} [CommRing S] {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of S)} (G : RelativeGroupLaw S f)
+    (L : A.Modules) (h : KernelIsTwoTorsion G L) (R : Type u) [CommRing R]
+    (t : Spec (CommRingCat.of R) ⟶ Spec (CommRingCat.of S)) :
+    LocIsoOnBase (pullback.snd f t)
+      ((Scheme.Modules.pullback (sliceAt (G.one t))).obj (mumfordBundle G L))
+      (structureModule _) :=
+  (h R t (G.one t)).2 (mul_one_one G t)
+
+/-- The Mumford bundle is built from the dual `𝓗om(L, 𝒪_A)` of `L` itself,
+not from a separately chosen sheaf. -/
+example {S : Type u} [CommRing S] {A : Scheme.{u}}
+    {f : A ⟶ Spec (CommRingCat.of S)} (G : RelativeGroupLaw S f)
+    (L : A.Modules) :
+    mumfordBundle G L =
+      moduleTensor _ ((Scheme.Modules.pullback (addMor G)).obj L)
+        (moduleTensor _
+          ((Scheme.Modules.pullback (pullback.fst f f)).obj
+            (MathlibExt.AlgebraicGeometry.BundleTrace.homSheaf A L
+              (structureModule A)))
+          ((Scheme.Modules.pullback (pullback.snd f f)).obj
+            (MathlibExt.AlgebraicGeometry.BundleTrace.homSheaf A L
+              (structureModule A)))) :=
+  rfl
+
+/-- Local isomorphism over the base is reflexive and symmetric on an
+actual sheaf. -/
+example {X Y : Scheme.{u}} (g : X ⟶ Y) (M M' : X.Modules)
+    (h : LocIsoOnBase g M M') :
+    LocIsoOnBase g M M ∧ LocIsoOnBase g M' M :=
+  ⟨locIsoOnBase_refl g M, locIsoOnBase_symm h⟩
+
+/-- Local isomorphism is local on the base, not on the total scheme: over
+a field, whose spectrum is one point, it is an isomorphism over the whole
+inverse image of the base. -/
+example {k : Type u} [Field k] {X : Scheme.{u}}
+    (g : X ⟶ Spec (CommRingCat.of k)) (M M' : X.Modules)
+    (h : LocIsoOnBase g M M') :
+    Nonempty ((Scheme.Modules.pullback (g ⁻¹ᵁ ⊤).ι).obj M ≅
+      (Scheme.Modules.pullback (g ⁻¹ᵁ ⊤).ι).obj M') := by
+  obtain ⟨U, hU, e⟩ := h default
+  obtain rfl : U = ⊤ := eq_top_iff.mpr fun y _ ↦ Subsingleton.elim default y ▸ hU
+  exact e
 
 end CanonicalPolarizationDataTest
