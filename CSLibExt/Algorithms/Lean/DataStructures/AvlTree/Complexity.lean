@@ -100,7 +100,7 @@ public theorem fib_le_size_succ {t : Tree α} (hc : CacheCorrect t) (hb : Balanc
       Nat.fib (height t + 2) ≤ size t + 1 from this (height t) t rfl hc hb
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro t ht hc hb
     cases t with
     | empty => simp [size]

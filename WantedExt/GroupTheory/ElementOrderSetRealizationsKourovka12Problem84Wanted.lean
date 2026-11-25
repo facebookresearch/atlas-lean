@@ -36,7 +36,7 @@ many" is "for every `k`, at least `k` pairwise non-isomorphic".
 /-- **The spectrum of a group (Kourovka 12.84).** The spectrum of a group $G$ is the set
 $\{\operatorname{ord}(g) : g \in G\}$ of the orders of its elements, where an element of infinite
 order is counted as having order $0$. -/
-def elementOrders (G : Type*) [Group G] : Set ℕ :=
+noncomputable def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- **Syskin's question on groups with a given spectrum (Kourovka 12.84).** The proposition that

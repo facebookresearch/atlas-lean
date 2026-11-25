@@ -17,3 +17,4 @@
 - [Subject reduction](subject-reduction.md)
 - [Strong normalization of CCω](strong-normalization.md)
 - [Consistency of CCω](consistency.md)
+- [Consistency of the calculus of constructions from normalization](consistency-of-the-calculus-of-constructions.md)

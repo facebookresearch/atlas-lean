@@ -10,13 +10,20 @@ module
 
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Basic.Complex.Basic
+public import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Tactic.Ring
 import MathlibExt.NumberTheory.Recurrences.HoradamGeneralizedCatalanIdentity
 
 /-!
-# Weighted sums of even-indexed (a, b)-Fibonacci numbers
+# Weighted sums of (a, b)-Fibonacci numbers
 
 The generalized Catalan identity gives the recurrence for the product of consecutive
-(a, b)-Fibonacci numbers, which yields the weighted sum by induction.
+(a, b)-Fibonacci numbers, which yields the weighted even-index sum by induction.
+For the even and odd sums weighted by powers of `-b`, multiplying by the discriminant
+turns each summand into a difference of weighted Lucas numbers.
+At Pell parameters, both the even and odd alternating sums telescope.
+For the sum weighted by powers of `c`, adjoining the last term gives a first-order recurrence.
 -/
 
 @[expose] public section
@@ -169,5 +176,148 @@ theorem sum_neg_b_pow_fibAB_even_prod (a b : ℂ) (n : ℕ) :
         rw [ih, two_mul]
         simpa [Nat.one_add, mul_assoc, mul_comm, mul_left_comm] using
           (sub_eq_iff_eq_add.mp h).symm
+
+private theorem fibAB_succ_mul_discriminant (a b : ℂ) (k : ℕ) :
+    fibAB a b (k + 1) * (a ^ 2 + 4 * b) = lucasAB a b (k + 2) + b * lucasAB a b k := by
+  induction k using Nat.twoStepInduction with
+  | zero => simp [lucasAB, pow_two]; ring
+  | one => simp [fibAB, lucasAB]; ring
+  | more k ih₀ ih₁ =>
+    calc
+      _ = a * (fibAB a b (k + 2) * (a ^ 2 + 4 * b)) +
+          b * (fibAB a b (k + 1) * (a ^ 2 + 4 * b)) := by
+        rw [fibAB_add_two a b (k + 1)]
+        ring
+      _ = _ := by
+        rw [ih₁, ih₀, lucasAB_add_two a b (k + 2)]
+        rw [lucasAB_add_two a b k]
+        ring
+
+-- The terms telescope along indices of either parity, starting at k + 1.
+private theorem sum_fibAB_stride_two (a b : ℂ) (k n : ℕ) :
+    (∑ i ∈ Finset.range n, (-b) ^ (n - (i + 1)) * fibAB a b (2 * i + k + 1)) *
+      (a ^ 2 + 4 * b) = lucasAB a b (2 * n + k) - (-b) ^ n * lucasAB a b k := by
+  induction n generalizing k with
+  | zero => simp
+  | succ n ih =>
+    have shift (i : ℕ) : 2 * (i + 1) + k = 2 * i + (k + 2) := by omega
+    rw [Finset.sum_range_succ']
+    simp only [Nat.succ_sub_succ_eq_sub, shift, Nat.mul_zero, Nat.zero_add, Nat.sub_zero]
+    rw [add_mul, ih, mul_assoc, fibAB_succ_mul_discriminant, pow_succ]
+    ring
+
+/-- **Sums of (a, b)-Fibonacci numbers weighted by powers of -b, via Lucas numbers.** Let $a, b$
+be complex numbers with $\Delta = a^2 + 4b \ne 0$, and let $(F_n)$ and $(L_n)$ be the
+$(a, b)$-Fibonacci and $(a, b)$-Lucas numbers. Then for every integer $n \ge 0$,
+$$\sum_{i=0}^{n} (-b)^{n-i} F_{2i} = \frac{L_{2n+1} + (-1)^{n+1} a b^n}{\Delta}$$
+and
+$$\sum_{i=0}^{n} (-b)^{n-i} F_{2i+1} = \frac{L_{2n+2} + 2 (-1)^n b^{n+1}}{\Delta}.$$
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Theorem 10(a). -/
+theorem sum_neg_b_pow_fibAB_disc (a b : ℂ)
+    (hΔ : a ^ 2 + 4 * b ≠ 0) (n : ℕ) :
+    (∑ i ∈ Finset.range (n + 1), (-b) ^ (n - i) * fibAB a b (2 * i) =
+      (lucasAB a b (2 * n + 1) + (-1) ^ (n + 1) * a * b ^ n) /
+        (a ^ 2 + 4 * b)) ∧
+    (∑ i ∈ Finset.range (n + 1),
+        (-b) ^ (n - i) * fibAB a b (2 * i + 1) =
+      (lucasAB a b (2 * n + 2) + (-1) ^ n * 2 * b ^ (n + 1)) /
+        (a ^ 2 + 4 * b)) := by
+  constructor <;> apply (eq_div_iff hΔ).2
+  · rw [Finset.sum_range_succ']
+    simp only [fibAB_zero, mul_zero, add_zero, Nat.mul_succ]
+    rw [sum_fibAB_stride_two a b 1 n, lucasAB_one]
+    rw [neg_pow, pow_succ]
+    ring
+  · calc
+      _ = lucasAB a b (2 * n + 2) - (-b) ^ (n + 1) * lucasAB a b 0 := by
+        simpa only [Nat.succ_sub_succ_eq_sub, Nat.add_zero, Nat.mul_succ] using
+          sum_fibAB_stride_two a b 0 (n + 1)
+      _ = _ := by
+        rw [lucasAB_zero, neg_pow, pow_succ (-1 : ℂ)]
+        ring
+
+/-- **Alternating sums of Pell and Pell–Lucas numbers.** Let $(P_n)$ and $(Q_n)$ be the Pell
+and Pell–Lucas numbers, that is, the $(2, 1)$-Fibonacci and $(2, 1)$-Lucas numbers, viewed as
+complex numbers. Then for every integer $n \ge 0$,
+$$\sum_{i=0}^{n} (-1)^i P_{2i} = \frac{(-1)^n Q_{2n+1} - 2}{8}, \qquad
+\sum_{i=0}^{n} (-1)^i Q_{2i} = (-1)^n P_{2n+1} + 1,$$
+$$\sum_{i=0}^{n} (-1)^i P_{2i+1} = \frac{(-1)^n Q_{2n+2} + 2}{8}, \qquad
+\sum_{i=0}^{n} (-1)^i Q_{2i+1} = (-1)^n P_{2n+2}.$$
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Theorem 10(c). -/
+theorem sum_neg_one_pow_pell (n : ℕ) :
+    (∑ i ∈ Finset.range (n + 1), (-1 : ℂ) ^ i * fibAB 2 1 (2 * i) =
+      ((-1) ^ n * lucasAB 2 1 (2 * n + 1) - 2) / 8) ∧
+    (∑ i ∈ Finset.range (n + 1), (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i) =
+      (-1) ^ n * fibAB 2 1 (2 * n + 1) + 1) ∧
+    (∑ i ∈ Finset.range (n + 1),
+        (-1 : ℂ) ^ i * fibAB 2 1 (2 * i + 1) =
+      ((-1) ^ n * lucasAB 2 1 (2 * n + 2) + 2) / 8) ∧
+    (∑ i ∈ Finset.range (n + 1),
+        (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i + 1) =
+      (-1) ^ n * fibAB 2 1 (2 * n + 2)) := by
+  -- Each new summand splits into the two boundary terms of the other sequence.
+  have pell (k : ℕ) : fibAB 2 1 (k + 1) =
+      (lucasAB 2 1 (k + 2) + lucasAB 2 1 k) / 8 := by
+    apply (eq_div_iff (by norm_num)).2
+    simpa only [show (2 : ℂ) ^ 2 + 4 * 1 = 8 by norm_num, one_mul] using
+      fibAB_succ_mul_discriminant 2 1 k
+  have pellLucas (k : ℕ) : lucasAB 2 1 (k + 1) =
+      fibAB 2 1 (k + 2) + fibAB 2 1 k := by
+    induction k using Nat.twoStepInduction with
+    | zero => norm_num [fibAB, lucasAB]
+    | one => norm_num [fibAB, lucasAB]
+    | more k hk hk₁ =>
+      rw [lucasAB_add_two 2 1 (k + 1), hk₁, hk, fibAB_add_two 2 1 (k + 2),
+        fibAB_add_two 2 1 k]
+      ring
+  induction n with
+  | zero => norm_num [fibAB, lucasAB]
+  | succ n ih =>
+    obtain ⟨hPe, hQe, hPo, hQo⟩ := ih
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · rw [Finset.sum_range_succ, hPe, Nat.mul_succ, pell (2 * n + 1), pow_succ]
+      ring
+    · rw [Finset.sum_range_succ, hQe, Nat.mul_succ, pellLucas (2 * n + 1), pow_succ]
+      ring
+    · rw [Finset.sum_range_succ, hPo, Nat.mul_succ, pell (2 * n + 2), pow_succ]
+      ring
+    · rw [Finset.sum_range_succ, hQo, Nat.mul_succ, pellLucas (2 * n + 2), pow_succ]
+      ring
+
+-- The stated identity assumes c ≠ 0, although the induction also works at zero.
+set_option linter.unusedVariables false in
+/-- **Sums of (a, b)-Fibonacci numbers weighted by powers of c.** Let $a, b, c$ be complex
+numbers with $c \ne 0$ and $c^2 - ac - b \ne 0$, and let $(F_n)$ be the $(a, b)$-Fibonacci
+numbers. Then for every integer $n \ge 1$,
+$$\sum_{i=1}^{n} c^{n-i} F_i = \frac{c^{n+1} - c F_{n+1} - b F_n}{c^2 - ac - b}.$$
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Theorem 12. -/
+theorem sum_c_pow_fibAB (a b c : ℂ) (hc : c ≠ 0)
+    (hc2 : c ^ 2 - a * c - b ≠ 0) (n : ℕ) (hn : 1 ≤ n) :
+    ∑ i ∈ Finset.Icc 1 n, c ^ (n - i) * fibAB a b i =
+      (c ^ (n + 1) - c * fibAB a b (n + 1) - b * fibAB a b n) /
+        (c ^ 2 - a * c - b) := by
+  apply (eq_div_iff hc2).2
+  induction n, hn using Nat.le_induction with
+  | base => simp [fibAB, mul_comm]
+  | succ n hn ih =>
+    have hsum : ∑ i ∈ Finset.Icc 1 (n + 1), c ^ (n + 1 - i) * fibAB a b i =
+        c * (∑ i ∈ Finset.Icc 1 n, c ^ (n - i) * fibAB a b i) + fibAB a b (n + 1) := by
+      rw [Finset.sum_Icc_succ_top (hn.trans (Nat.le_succ n)), Nat.sub_self, pow_zero, one_mul,
+        Finset.mul_sum]
+      congr 1
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [Nat.succ_sub (Finset.mem_Icc.mp hi).2, pow_succ', mul_assoc]
+    rw [hsum, add_mul, mul_assoc, ih, fibAB_add_two, pow_succ c (n + 1)]
+    ring
 
 end MathlibExt.NumberTheory.Recurrences.ABFibonacciIdentitiesWanted

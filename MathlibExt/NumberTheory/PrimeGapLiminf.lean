@@ -13,6 +13,7 @@ public import MathlibExt.NumberTheory.PrimeGap
 public import Mathlib.Data.Nat.Prime.Nth
 public import Mathlib.Data.Nat.PrimeFin
 public import Mathlib.Order.Filter.Cofinite
+public import Mathlib.Order.ConditionallyCompleteLattice.WithTop
 public import Mathlib.Order.LiminfLimsup
 
 /-!
@@ -194,7 +195,7 @@ theorem primeGapLiminf_eq_two_iff :
   · intro h
     rw [← hset] at h
     have hup := (primeGapLiminf_le_iff_infinite 2).mpr
-      (h.of_image.mono fun n hn ↦ hn.le)
+      (h.of_image.mono (s := {n : ℕ | primeGap n = 2}) fun n hn ↦ hn.le)
     exact le_antisymm hup two_le_primeGapLiminf
 
 end MathlibExt.NumberTheory
