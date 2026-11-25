@@ -22,4 +22,4 @@ At the end, $\varphi$ has become a propositional formula over the original and f
 
 ## Sources
 
-- T. Willemse, *Algorithms for Model Checking (2IW55)*, Lecture 1 "The temporal logics CTL\$^*\$, CTL and LTL: syntax and semantics", Eindhoven University of Technology, 2008, <https://www.win.tue.nl/%7Etimw/teaching/amc/2008/week1.pdf>: CTL$^*$ syntax and semantics, and the existential and universal path quantifiers. The procedure assembles the abstraction lemma with an effective LTL model-checking procedure.
+- T. Willemse, *Algorithms for Model Checking (2IW55)*, Lecture 1 "The temporal logics CTL$^*$, CTL and LTL: syntax and semantics", Eindhoven University of Technology, 2008, <https://www.win.tue.nl/%7Etimw/teaching/amc/2008/week1.pdf>: CTL$^*$ syntax and semantics, and the existential and universal path quantifiers. The procedure assembles the abstraction lemma with an effective LTL model-checking procedure.

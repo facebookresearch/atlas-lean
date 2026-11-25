@@ -15,4 +15,4 @@ Let $M = \langle S, R, L\rangle$ be a Kripke structure over $AP$ with a total tr
 
 ## Sources
 
-- T. Willemse, *Algorithms for Model Checking (2IW55)*, Lecture 1 "The temporal logics CTL\$^*\$, CTL and LTL: syntax and semantics", Eindhoven University of Technology, 2008, <https://www.win.tue.nl/%7Etimw/teaching/amc/2008/week1.pdf>: the syntax of CTL$^*$ state and path formulas and their semantics on states and paths of a Kripke structure, on which the induction above is built.
+- T. Willemse, *Algorithms for Model Checking (2IW55)*, Lecture 1 "The temporal logics CTL$^*$, CTL and LTL: syntax and semantics", Eindhoven University of Technology, 2008, <https://www.win.tue.nl/%7Etimw/teaching/amc/2008/week1.pdf>: the syntax of CTL$^*$ state and path formulas and their semantics on states and paths of a Kripke structure, on which the induction above is built.

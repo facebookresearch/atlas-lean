@@ -8,9 +8,11 @@ Let $\sigma = a_1 \cdots a_m$ be a stream of tokens from $[n]$, with frequencies
 Afterwards, the estimate for a token $a$ is $\hat f_a = A[a]$ if $a$ has a counter, and $0$ otherwise.
 
 **Theorem.** In one pass and $O(k(\log m + \log n))$ bits of space, Misra–Gries computes estimates with
+
 $$
 f_a - \frac{m}{k} \le \hat f_a \le f_a \qquad \text{for every } a \in [n].
 $$
+
 In particular, every token with $f_a > m/k$ retains a counter, so a second pass that counts the at most $k - 1$ candidates exactly finds all such tokens.
 
 **Proof.** Every increment of $A[a]$ corresponds to an occurrence of $a$, which gives $\hat f_a \le f_a$. Count the third case, in which the token is not stored, as an increment of its own counter from $0$ to $1$ followed by a decrement. Then every decrement step lowers exactly $k$ counters by one, each by one occurrence. Since at most $m$ increments happen, there are at most $m/k$ decrement steps. So $a$ loses at most $m/k$ of its occurrences.
