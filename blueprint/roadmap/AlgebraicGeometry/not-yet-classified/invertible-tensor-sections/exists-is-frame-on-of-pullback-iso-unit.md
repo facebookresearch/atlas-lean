@@ -1,4 +1,4 @@
 # Frames from trivializations
 
-A trivialization of `M` over `U` gives a frame of `M` on
-`U`.
+If the pullback of `M` to an open `U` is isomorphic to the
+structure sheaf of `U`, then `M` has a section over `U` that is a frame on `U`.

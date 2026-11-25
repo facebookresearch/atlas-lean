@@ -1,3 +1,4 @@
 # Underlying sheaf of rings
 
-The sheaf of rings underlying a sheaf of commutative rings.
+For a presheaf of commutative rings `𝒪` whose underlying
+presheaf of rings is a sheaf (`h𝒪`), that sheaf of rings.

@@ -1,4 +1,5 @@
 # Morphisms inverted by sheafification
 
-Morphisms of presheaves of modules that become
-isomorphisms after sheafification.
+The morphisms of presheaves of `𝒪`-modules whose
+underlying morphism of presheaves of abelian groups lies in `J.W`, i.e. becomes an isomorphism
+after sheafification.
