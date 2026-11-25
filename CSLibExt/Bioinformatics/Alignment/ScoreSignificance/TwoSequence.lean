@@ -166,18 +166,21 @@ section Pathwise
 variable {β : Type*} (s : β → β → ℝ)
 
 /-- The scores `s(u_i, v_j), s(u_{i+1}, v_{j+1}), …` along the diagonal of the alignment grid that
-starts at position `i` of `u` and position `j` of `v`, up to the end of the shorter sequence. -/
+starts at position `i` of `u` and position `j` of `v`, until either word ends: there are
+`min (|u| - i) (|v| - j)` of them (truncated subtraction), none when `i ≥ |u|` or `j ≥ |v|`. -/
 def diagFrom (u v : List β) (i j : ℕ) : List ℝ := List.zipWith s (u.drop i) (v.drop j)
 
 /-- The scores along the diagonal with **offset** `d` (the cells `(i, j)` with `j - i = d`). It
 starts at `((-d)⁺, d⁺)`. -/
 def diag (u v : List β) (d : ℤ) : List ℝ := diagFrom s u v (-d).toNat d.toNat
 
-/-- The offsets `-(m - 1), …, n - 1` of the `m + n - 1` nonempty diagonals of an `m × n` grid
-(`m, n ≥ 1`). -/
+/-- The integers `d` with `-m < d < n`. For `m, n ≥ 1` these are the offsets `-(m - 1), …, n - 1`
+of the `m + n - 1` nonempty diagonals of an `m × n` grid; the set is defined for all `m`, `n` (for
+`m = 0` it is `1, …, n - 1`, although the grid has no cell). -/
 def offsets (m n : ℕ) : Finset ℤ := Ioo (-(m : ℤ)) n
 
-/-- The length `min (m - (-d)⁺) (n - d⁺)` of the diagonal with offset `d` in an `m × n` grid. -/
+/-- The length `min (m - (-d)⁺) (n - d⁺)` of the diagonal with offset `d` in an `m × n` grid, with
+truncated subtraction; it is `0` unless `-m < d < n`. -/
 def diagLen (m n : ℕ) (d : ℤ) : ℕ := min (m - (-d).toNat) (n - d.toNat)
 
 /-- The score of the **ungapped alignment** of `u` from position `i` with `v` from position `j`,
@@ -185,7 +188,7 @@ with **length bound** `ℓ`: `∑_{k < ℓ'} s(u_{i+k}, v_{j+k})` over the
 `ℓ' = min ℓ (min (|u| - i) (|v| - j))` pairs that exist. Windows running past the end of a
 sequence are truncated (`take`, `zipWith`), so `ℓ` bounds the alignment length rather than
 fixing it (`alignScore_eq_min`); for `i + ℓ ≤ |u|` and `j + ℓ ≤ |v|` it is the score of the two
-windows of length `ℓ`. -/
+windows of length `ℓ`. It is `0` when `ℓ' = 0`. -/
 def alignScore (u v : List β) (i j ℓ : ℕ) : ℝ :=
   (List.zipWith s ((u.drop i).take ℓ) ((v.drop j).take ℓ)).sum
 
@@ -219,7 +222,8 @@ theorem alignScore_eq_min (u v : List β) (i j ℓ : ℕ) :
   · rw [min_eq_left h]
   · rw [min_eq_right h, List.take_of_length_le h, List.take_of_length_le le_rfl]
 
-/-- Every ungapped alignment scores at most the maximum. -/
+/-- Every ungapped alignment scores at most the maximum (start positions `i ≤ |u|`, `j ≤ |v|` and
+length bound `ℓ ≤ |u|`). -/
 theorem alignScore_le_maxAlignScore (u v : List β) {i j ℓ : ℕ} (hi : i ≤ u.length)
     (hj : j ≤ v.length) (hℓ : ℓ ≤ u.length) : alignScore s u v i j ℓ ≤ maxAlignScore s u v :=
   le_sup' (fun c : ℕ × ℕ × ℕ => alignScore s u v c.1 c.2.1 c.2.2) (b := (i, j, ℓ))
@@ -243,8 +247,9 @@ theorem diagFrom_eq_drop_diag (u v : List β) (i j : ℕ) :
   rw [diag, drop_diagFrom]
   congr 1 <;> omega
 
-/-- **Every diagonal's maximal segment score is an ungapped alignment score**, so it is at most
-the maximal alignment score. -/
+/-- **No diagonal segment scores more than the maximal alignment score**: every diagonal's maximal
+segment score is the score of an ungapped alignment (or `0`), so it is at most the maximal
+alignment score. -/
 theorem maxSegScore_diag_le (u v : List β) (d : ℤ) :
     maxSegScore (diag s u v d) ≤ maxAlignScore s u v := by
   obtain ⟨w, hw, hsum⟩ := exists_infix_sum_eq_maxSegScore (diag s u v d)
@@ -335,22 +340,26 @@ section Model
 
 variable {β : Type*} [Fintype β]
 
-/-- Expectation of a functional `G` of an iid word of length `n` with letter law `p`. -/
+/-- Expectation of a functional `G` of an iid word of length `n` with letter law `p`, when `p` is a
+probability vector; for other real weights, the weighted sum `∑_w p(w₀) ⋯ p(w_{n-1}) G w`. -/
 noncomputable def wordExpect (p : β → ℝ) (n : ℕ) (G : List β → ℝ) : ℝ :=
   ∑ w : Fin n → β, bgLik p w * G (List.ofFn w)
 
 /-- **The two-sequence model.** `u` (length `m`, letter law `p`) and `v` (length `n`, letter law
 `q`) are independent iid words over the finite alphabet `β`; `twoExpect p q m n F` is the
-expectation of `F u v`. -/
+expectation of `F u v` when `p` and `q` are probability vectors, and the weighted double sum for
+other real weights. -/
 noncomputable def twoExpect (p q : β → ℝ) (m n : ℕ) (F : List β → List β → ℝ) : ℝ :=
   wordExpect p m fun u => wordExpect q n fun v => F u v
 
 open Classical in
-/-- The probability that the pair of words satisfies `P`. -/
+/-- The probability that the pair of words satisfies `P`, when `p` and `q` are probability
+vectors; for other real weights, the total weight of the pairs of words satisfying `P`. -/
 noncomputable def twoProb (p q : β → ℝ) (m n : ℕ) (P : List β → List β → Prop) : ℝ :=
   twoExpect p q m n fun u v => if P u v then 1 else 0
 
-/-- The law `(a, b) ↦ p a q b` of an aligned letter pair: one letter from each sequence. -/
+/-- The weight `(a, b) ↦ p a q b` on letter pairs: for probability vectors `p` and `q`, the law of
+an aligned letter pair, one letter from each sequence. -/
 def pairLaw (p q : β → ℝ) : β × β → ℝ := fun x => p x.1 * q x.2
 
 /-- The score `s a b` of an aligned letter pair. -/
@@ -360,7 +369,7 @@ theorem isDist_pairLaw {p q : β → ℝ} (hp : IsDist p) (hq : IsDist q) : IsDi
   ⟨fun x => mul_nonneg (hp.1 _) (hq.1 _), by
     simp only [pairLaw]; rw [Fintype.sum_prod_type]; simp [← mul_sum, hp.2, hq.2]⟩
 
-/-- With a common letter law `p`, the pair-score MGF is the Karlin–Altschul MGF
+/-- With the same real weights `p` on both letters, the pair-score MGF is the Karlin–Altschul MGF
 `∑ pₐ p_b e^{θ s(a, b)}` of `Cslib.Bioinformatics.Motifs.PWM.pairMGF`. -/
 theorem scoreMGF_pairLaw (p : β → ℝ) (s : β → β → ℝ) (θ : ℝ) :
     scoreMGF (pairLaw p p) (pairScore s) θ = pairMGF p s θ := by
@@ -434,7 +443,8 @@ theorem wordExpect_const (hp : IsDist p) (n : ℕ) (c : ℝ) : wordExpect p n (f
   | succ n ih => rw [wordExpect_succ]; simp only [ih, ← sum_mul, hp.2, one_mul]
 
 /-- A word of length `k + n` is a word of length `k` followed by an independent word of
-length `n`. -/
+length `n`. The identity holds for all real weights `p`; the independence reading needs a
+probability vector. -/
 theorem wordExpect_append (k n : ℕ) (G : List β → ℝ) :
     wordExpect p (k + n) G = wordExpect p k fun u => wordExpect p n fun v => G (u ++ v) := by
   induction k generalizing G with
@@ -443,7 +453,8 @@ theorem wordExpect_append (k n : ℕ) (G : List β → ℝ) :
       rw [Nat.add_right_comm, wordExpect_succ, wordExpect_succ]
       exact sum_congr rfl fun a _ => by rw [ih]; rfl
 
-/-- Splitting a word at position `k ≤ n` into two independent pieces. -/
+/-- Splitting a word at position `k ≤ n` into two independent pieces. The identity holds for all
+real weights `p`; the independence reading needs a probability vector. -/
 theorem wordExpect_take_drop {k n : ℕ} (hk : k ≤ n) (Φ : List β → List β → ℝ) :
     wordExpect p n (fun l => Φ (l.take k) (l.drop k)) =
       wordExpect p k fun u => wordExpect p (n - k) fun v => Φ u v := by
@@ -454,7 +465,7 @@ theorem wordExpect_take_drop {k n : ℕ} (hk : k ≤ n) (Φ : List β → List �
 
 variable {p} in
 /-- Dropping the first `k` letters of an iid word of length `n` leaves an iid word of length
-`n - k`. -/
+`n - k`, with truncated subtraction (for `k ≥ n` both sides are `G []`). -/
 theorem wordExpect_drop (hp : IsDist p) (k n : ℕ) (G : List β → ℝ) :
     wordExpect p n (fun l => G (l.drop k)) = wordExpect p (n - k) G := by
   rcases le_total k n with hk | hk
@@ -464,7 +475,7 @@ theorem wordExpect_drop (hp : IsDist p) (k n : ℕ) (G : List β → ℝ) :
         rw [List.drop_eq_nil_of_le (hl ▸ hk)],
       wordExpect_const hp]
 
-/-- The score expectation of `SingleSequence` is a word expectation. -/
+/-- The score expectation of `SingleSequence` is a word expectation (for all real weights `p`). -/
 theorem scoreExpect_eq_wordExpect (f : β → ℝ) (n : ℕ) (F : List ℝ → ℝ) :
     scoreExpect p f n F = wordExpect p n fun w => F (w.map f) := by
   simp [scoreExpect, wordExpect, List.map_ofFn]; rfl
@@ -776,8 +787,8 @@ theorem succ_mul_elemSymm_succ [DecidableEq ι] (D : Finset ι) (f : ι → ℝ)
     · rintro ⟨hT, hiT⟩; exact ⟨⟨hT, hiT⟩, (mem_powersetCard.1 hT).1 hiT⟩
     · rintro ⟨⟨hT, hiT⟩, -⟩; exact ⟨hT, hiT⟩
 
-/-- The Newton-type recursion error: `0 ≤ σ e_{k+1}(D) - (k + 2) e_{k+2}(D) ≤ μ σ e_k(D)` where
-`σ = ∑ f` and `μ` bounds every `f i`. -/
+/-- The Newton-type recursion error: for `f ≥ 0` on `D`,
+`0 ≤ σ e_{k+1}(D) - (k + 2) e_{k+2}(D) ≤ μ σ e_k(D)` where `σ = ∑ f` and `μ` bounds every `f i`. -/
 theorem elemSymm_recursion_bounds {D : Finset ι} {f : ι → ℝ} {μ : ℝ}
     (hf : ∀ i ∈ D, 0 ≤ f i) (hμ : ∀ i ∈ D, f i ≤ μ) (k : ℕ) :
     0 ≤ (∑ i ∈ D, f i) * elemSymm D f (k + 1) - (k + 2 : ℝ) * elemSymm D f (k + 2) ∧
@@ -920,20 +931,24 @@ noncomputable def exceedCount (u v : List β) : ℕ :=
   ((offsets m n).filter fun d => t < maxSegScore (diag s u v d)).card
 
 /-- The probability `p_d = P(M_d > t)` that diagonal `d` contains a segment scoring more
-than `t`. -/
+than `t`, when `p` and `q` are probability vectors (for other real weights, the total weight of
+that event). For `d` outside `offsets m n` the diagonal is empty; for probability vectors `p_d`
+is then `1` if `t < 0` and `0` otherwise. -/
 noncomputable def exceedProb (d : ℤ) : ℝ :=
   twoProb p q m n fun u v => t < maxSegScore (diag s u v d)
 
 /-- The `k`-th factorial (binomial) moment `S_k = E[C(W, k)]` of the number of exceeding
-diagonals; `exceedMoment_eq_sum`: it is `∑_{|T| = k} P(every diagonal in T exceeds t)`. -/
+diagonals when `p` and `q` are probability vectors (for other real weights, the weighted sum);
+`exceedMoment_eq_sum`: it is `∑_{|T| = k} P(every diagonal in T exceeds t)`. -/
 noncomputable def exceedMoment (k : ℕ) : ℝ :=
   twoExpect p q m n fun u v => ((exceedCount s m n t u v).choose k : ℝ)
 
 /-- **The `k`-th cross-diagonal dependence coefficient** `Δ_k = S_k - e_k(p)`: the excess of the
 `k`-th factorial moment of the number of exceeding diagonals over its value `e_k(p)` for
 independent diagonals with the same marginals. `crossDep_eq_sum`: it is the sum over `k`-sets
-`T` of diagonals of `P(⋂_{d ∈ T} {M_d > t}) - ∏_{d ∈ T} P(M_d > t)`. It vanishes for `k ≤ 1`
-(`crossDep_zero`, `crossDep_one`), and the terms of letter-disjoint pairs vanish
+`T` of diagonals of `P(⋂_{d ∈ T} {M_d > t}) - ∏_{d ∈ T} P(M_d > t)`. It vanishes for `k = 1`
+(`crossDep_one`) and, for probability vectors `p` and `q`, for `k = 0` (`crossDep_zero`); for
+probability vectors the terms of letter-disjoint pairs vanish
 (`twoProb_diag_and_diag_of_disjoint`); the diagonals are not independent in general, so for
 `k ≥ 2` nothing forces it to vanish (it does vanish for the degenerate zero score, `crossDep_s0`
 in the test file). -/
@@ -1055,16 +1070,17 @@ theorem exp_neg_mul_threshold {θ : ℝ} (hθ : θ ≠ 0) {y : ℝ} (hy : 0 < y)
 
 /-- **One-sequence tail input** for the maximal segment score `M_L` of `L` iid scores with law
 `(q, f)`: `P(M_L > t) = (K + o(1)) L e^{-θ t}` as `L → ∞` and `L e^{-θ t} → 0`, uniformly over
-thresholds `t ≤ η L` for some `η > 0`. This is the Iglehart (1972) / Karlin–Dembo (1992) tail in
-the form the two-sequence problem needs; it is a hypothesis here, not derived.
+thresholds `t ≤ η L` for some `η > 0` (`L₀`, `δ` and `η` may depend on `ε`). This is the
+Iglehart (1972) / Karlin–Dembo (1992) tail in the form the two-sequence problem needs; it is a
+hypothesis here, not derived. The probability reading needs `q` to be a probability vector.
 
-The cap `t ≤ η L` is necessary: scores are bounded, so `P(M_L > t) = 0` once `t` exceeds `L` times
-the largest score, and without the cap the relative-error bound would force `K = 0`. The classical
-asymptotic holds only below the slope of the walk under the tilted law, which a small `η`
-respects. The definition carries no nonlattice hypothesis. It is meant for the nondegenerate
+The cap `t ≤ η L` is necessary: scores are bounded, so `P(M_L > t) = 0` once `t` is at least `L`
+times `max 0 (max f)`, and without the cap the relative-error bound with `θ > 0` would force
+`K = 0`. The definition carries no nonlattice hypothesis. It is meant for the nondegenerate
 classical regime `K > 0` of nonlattice scores: for nondegenerate scores on a lattice `hℤ` the
 classical ratio `P(M_L > t) / (L e^{-θ t})` oscillates with the fractional part of `t / h`
-(compare `LatticeRenewalInput` in `GumbelTail`). It also holds in degenerate cases: the
+(compare `LatticeRenewalInput` in `GumbelTail`); for lattice scores and `θ > 0` it forces `K = 0`
+(`OneSequenceTail.eq_zero_of_lattice`). It also holds in degenerate cases: the
 lattice-valued zero score satisfies it with `K = 0` (`oneSequenceTail_s0` in the test file). -/
 def OneSequenceTail {γ : Type*} [Fintype γ] (q f : γ → ℝ) (θ K : ℝ) : Prop :=
   ∀ ε > 0, ∃ L₀ : ℕ, ∃ δ > 0, ∃ η > 0, ∀ L : ℕ, L₀ ≤ L → ∀ t : ℝ,
@@ -1122,7 +1138,7 @@ theorem abs_sum_exceedProb_sub_le (hp : IsDist p) (hq : IsDist q) {θ K ε : ℝ
   nlinarith
 
 /-- Under the growth condition `log n / m → 0`, the threshold `t_N = log (m n) / θ + x` is
-`o(m)`. -/
+`o(m)`, for every real `θ` (at `θ = 0`, `x / 0 = 0` makes `t_N = x`). -/
 theorem tendsto_threshold_div {θ : ℝ} {m n : ℕ → ℕ} (hm : Tendsto m atTop atTop)
     (hn : Tendsto n atTop atTop) (hlog : Tendsto (fun N => log (n N) / m N) atTop (𝓝 0))
     (x : ℝ) : Tendsto (fun N => (log (m N * n N) / θ + x) / m N) atTop (𝓝 0) := by
@@ -1254,7 +1270,9 @@ the intended regime is the classical nonlattice one with `K > 0`.
 
 Two independent iid sequences of lengths `m_N, n_N → ∞`, with `log n_N / m_N → 0` and
 `log m_N / n_N → 0`, letter laws `p, q`, are scored by `s`. Let `θ > 0` be the Karlin–Altschul root
-`E e^{θ s(A, B)} = 1` (unique in the usual regime, `existsUnique_karlinAltschul_root`) and `K` the
+`E e^{θ s(A, B)} = 1` (for a common letter law `p = q` with positive letter probabilities,
+negative mean score and a positive score it exists and is unique,
+`existsUnique_karlinAltschul_root`) and `K` the
 one-sequence constant of the pair-score walk (`OneSequenceTail`). If the cross-diagonal dependence
 coefficients vanish, `Δ_k(N) = crossDep … k → 0` for every `k`, then
 `P(M_{m,n} ≤ log (m n) / θ + x) → exp (-K e^{-θ x})`.
@@ -1264,9 +1282,8 @@ order sandwich `P(M ≤ t)` between partial sums of `S_k = e_k(p) + Δ_k`
 (`twoProb_maxAlignScore_le_le`, `le_twoProb_maxAlignScore_le`), and the marginals give
 `∑_d p_d → K e^{-θ x}` (`tendsto_sum_exceedProb`) and `max_d p_d → 0`, hence
 `e_k(p) → (K e^{-θ x})^k / k!` (`tendsto_elemSymm`). The limit takes `Δ_k → 0` as a hypothesis (it
-is the Poisson-approximation step of Dembo–Karlin–Zeitouni, not proved here; it can fail when
-their entropy condition fails); given the marginal limit it is equivalent to Poisson convergence
-of the factorial moments `S_k`. -/
+is the Poisson-approximation step of Dembo–Karlin–Zeitouni); given the marginal limit it is
+equivalent to Poisson convergence of the factorial moments `S_k`. -/
 theorem tendsto_twoProb_maxAlignScore_le (hp : IsDist p) (hq : IsDist q) {θ K : ℝ} (hθ : 0 < θ)
     (hroot : scoreMGF (pairLaw p q) (pairScore s) θ = 1)
     (htail : OneSequenceTail (pairLaw p q) (pairScore s) θ K) {m n : ℕ → ℕ}

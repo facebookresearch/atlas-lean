@@ -15,7 +15,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
-public import MathlibExt.NumberTheory.EvenPseudoprime
+public import MathlibExt.NumberTheory.EvenPseudoprimesInfinite
 
 @[expose] public section
 
@@ -24,20 +24,9 @@ namespace MathlibExt.NumberTheory.EvenPseudoprimesWanted
 /-!
 # Even pseudoprimes — wishlist
 
-This file states, without proving, Beeger's theorem that there are
-infinitely many even pseudoprimes and the Cheng–Kinlaw–Nguyen bounds for
-the sum of their reciprocals. The predicate and set are the shared
-definitions from `MathlibExt.NumberTheory.EvenPseudoprime`.
+This file states the Cheng–Kinlaw–Nguyen bounds for the sum of the reciprocals of even
+pseudoprimes. Beeger's theorem is proved in `MathlibExt.NumberTheory.EvenPseudoprimesInfinite`.
 -/
-
-/--
-**Beeger's theorem.** There are infinitely many even pseudoprimes.
-
-Source: N. G. W. H. Beeger, "On even numbers `m` dividing
-`2 ^ m - 2`," American Mathematical Monthly 58 (1951), 553–555.
--/
-public theorem_wanted evenPseudoprimes_infinite :
-    MathlibExt.NumberTheory.evenPseudoprimes.Infinite
 
 /--
 **Cheng–Kinlaw–Nguyen reciprocal-sum bounds.** The sum of the

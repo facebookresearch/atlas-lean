@@ -1,0 +1,15 @@
+# Integer DGRestriction
+
+- [Integers](integers.md)
+- [Integer Equiv](integer-equiv.md)
+- [Integer Scalars](integer-scalars.md)
+- [Integer Cochains](integer-cochains.md)
+- [Integer DG](integer-dg.md)
+- [Integer Composition](integer-composition.md)
+- [Integer Data](integer-data.md)
+- [Integer hom](integer-hom.md)
+- [Integer differential](integer-differential.md)
+- [Integer identity](integer-identity.md)
+- [Integer composition](integer-composition-2.md)
+- [Integer Map](integer-map.md)
+- [Integer Functor](integer-functor.md)

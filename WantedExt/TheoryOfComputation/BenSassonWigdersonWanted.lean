@@ -10,7 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import CSLibExt.Logics.Propositional.CNF.ResolutionWidth
+public import CSLibExt.Logics.Propositional.CNF.BenSassonWigderson
 
 /-!
 # Ben-Sasson–Wigderson: short resolution proofs are narrow
@@ -27,21 +27,14 @@ reduction) and random `3`-CNFs.
 
 Refutations, sizes and widths are those of `CSLibExt.Logics.Propositional.CNF.ResolutionWidth`
 (resolution with weakening, widths counting distinct literals).
+The tree-like bound is proved in `CSLibExt.Logics.Propositional.CNF.BenSassonWigderson`.
 -/
 
 @[expose] public section
 
 namespace MathlibExt.TheoryOfComputation.BenSassonWigdersonWanted
 
-open Cslib.Logic.PL Cslib.Logic.PL.CNF
-
-/-- **Ben-Sasson–Wigderson for tree-like resolution.** If a CNF formula `φ` has a tree-like
-refutation with `S` lines, then it has a resolution refutation of width at most
-`w(φ) + log₂ S`, stated as `2 ^ width ≤ 2 ^ w(φ) · S` (E. Ben-Sasson and A. Wigderson, J. ACM 48
-(2001), Theorem 3.3; equivalently Corollary 3.4, `S_T(φ) ≥ 2 ^ (w(φ ⊢ 0) - w(φ))`). -/
-public theorem_wanted tree_refutation_narrow (φ : CNF) (t : ResolutionTree φ []) :
-    ∃ π : List CNFClause, IsResolutionRefutation φ π ∧
-      2 ^ derivationWidth π ≤ 2 ^ φ.maxClauseWidth * t.proofSize
+open Cslib.Logic.LegacyPL Cslib.Logic.LegacyPL.CNF
 
 /-- **Ben-Sasson–Wigderson for general resolution.** There is an absolute constant `c` such
 that if a CNF formula `φ` in `n` variables has a resolution refutation with `S` lines, then it

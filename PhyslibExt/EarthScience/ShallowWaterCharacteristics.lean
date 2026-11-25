@@ -94,8 +94,8 @@ primitive form is `∂ₜ(h, u) + A ∂ₓ(h, u) = 0`. -/
 def shallowWaterPrimitiveMatrix (g h u : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![u, h; g, u]
 
-/-- Bridge to the primitive form. At a point `(t, x)` with slice
-partials `hₜ`, `hₓ`, `uₜ`, `uₓ`, the two primitive shallow-water
+/-- Bridge to the primitive form. At a point `(t, x)`, for any real `hₜ`, `hₓ`,
+`uₜ`, `uₓ` (in use, the slice partials there), the two primitive shallow-water
 equations, written exactly as in the conservative/primitive
 equivalence, hold if and only if the quasilinear system
 `∂ₜW + A ∂ₓW = 0` holds for `W = (h, u)` and the primitive coefficient

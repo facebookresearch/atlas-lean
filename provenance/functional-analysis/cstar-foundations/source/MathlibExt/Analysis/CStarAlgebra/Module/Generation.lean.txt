@@ -1,0 +1,54 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.Standard
+
+/-!
+# Generation and direct-sum models for right C-star modules
+
+This file defines countable generation by a right coefficient span and the
+characteristic interface for a completed countable Hilbert-module direct sum.
+The direct-sum interface is pinned by orthogonal coordinate inclusions and
+density, without selecting an arbitrary equivalence.
+-/
+
+@[expose] public section
+
+open Set
+open scoped RightActions
+
+namespace CStarModule
+
+universe uB uE uX
+
+variable {B : Type uB} {E : Type uE} {X : Type uX}
+variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
+variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
+variable [NormedAddCommGroup X] [NormedSpace ℂ X] [SMul Bᵐᵒᵖ X]
+
+/-- A right C-star module is countably generated when the complex span of
+all right coefficient multiples of one sequence is dense. -/
+def IsCountablyGenerated
+    [CStarModule Bᵐᵒᵖ E] [CompleteSpace E] : Prop :=
+  ∃ g : ℕ → E,
+    Dense (Submodule.span ℂ
+      (Set.range fun p : ℕ × B ↦ g p.1 <• p.2) : Set E)
+
+/-- Characteristic data for the completed countable direct sum of copies of
+`E`: coordinate inclusions preserve the right action, are pairwise
+orthogonal, and have dense span. -/
+def IsCountableDirectSumModel
+    [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
+    [CStarModule Bᵐᵒᵖ X] [CompleteSpace X]
+    (single : ℕ → E →L[ℂ] X) : Prop :=
+  (∀ (i : ℕ) (x : E) (b : B),
+    single i (x <• b) = single i x <• b) ∧
+  (∀ (i j : ℕ) (x y : E),
+    rightInner (B := B) (single i x) (single j y) =
+      if i = j then rightInner (B := B) x y else 0) ∧
+  Dense (Submodule.span ℂ
+    (Set.range fun p : ℕ × E ↦ single p.1 p.2) : Set X)
+
+end CStarModule
