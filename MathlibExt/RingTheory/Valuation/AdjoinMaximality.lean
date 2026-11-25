@@ -43,6 +43,7 @@ public import Mathlib.RingTheory.Valuation.ValuationSubring
 import Mathlib.RingTheory.DiscreteValuationRing.TFAE
 import Mathlib.RingTheory.Jacobson.Ring
 import Mathlib.RingTheory.Localization.Submodule
+import MathlibExt.RingTheory.Valuation.ValuationSubringNotField
 
 @[expose] public section
 
@@ -55,14 +56,13 @@ private theorem eq_or_eq_top_of_toSubring_le_of_isDiscreteValuationRing
   let B' : ValuationSubring K := ValuationSubring.ofLE A B h
   have hB' : (B' : ValuationSubring K).toSubring = B := rfl
   have hAB' : A ≤ B' := fun x hx => h hx
-
   set P : Ideal ↥A := A.idealOfLE B' hAB' with hP
   have hPB' : A.ofPrime P = B' := ValuationSubring.ofPrime_idealOfLE A B' hAB'
   by_cases hbot : P = ⊥
   · right
     rw [← hB', ← hPB']
     have : A.ofPrime P = ⊤ := by
-      haveI : (⊥ : Ideal ↥A).IsPrime := Ideal.isPrime_bot
+      have : (⊥ : Ideal ↥A).IsPrime := Ideal.isPrime_bot
       have e : A.ofPrime P = A.ofPrime ⊥ := by congr 1
       rw [e]; exact ValuationSubring.ofPrime_bot A
     rw [this]; rfl
@@ -77,6 +77,10 @@ private theorem eq_or_eq_top_of_toSubring_le_of_isDiscreteValuationRing
 
 
 
+-- The localization of `S` at `P` inside `F`: the fractions `s / t` with `t ∉ P`. For a `Subring`
+-- it equals Mathlib's `(LocalSubring.ofPrime S P).toSubring`; this version accepts any subring
+-- class (it is applied to `O[B]`) and its carrier is the fraction condition of the localization
+-- hypothesis of `Subring.isMaximal_of_liesOver_adjoin_of_forall_not_isMaximal_valuationSubring`.
 private def locSubring {F : Type*} [Field F] {σ : Type*} [SetLike σ F] [SubringClass σ F] (S : σ) (P
   : Ideal ↥S) [P.IsPrime] : Subring F where
   carrier := {x | ∃ s t : ↥S, t ∉ P ∧ x * (t : F) = (s : F)}
@@ -139,9 +143,9 @@ private theorem isNoetherianRing_of_presentation {F : Type*} [Field F] {σ : Typ
       map_mul' := fun _ _ => rfl
       map_zero' := rfl
       map_add' := fun _ _ => rfl }
-  letI : Algebra ↥B ↥V := φ.toAlgebra
+  let : Algebra ↥B ↥V := φ.toAlgebra
   have hφ : ∀ b : ↥B, ((algebraMap ↥B ↥V b : ↥V) : F) = b := fun _ => rfl
-  haveI : IsLocalization 𝔮.primeCompl ↥V :=
+  have : IsLocalization 𝔮.primeCompl ↥V :=
     { map_units := by
         rintro ⟨c, hc⟩
         have hc' : c ∉ 𝔮 := hc
@@ -152,7 +156,7 @@ private theorem isNoetherianRing_of_presentation {F : Type*} [Field F] {σ : Typ
         have hc0 : (c : F) ≠ 0 := by
           intro h0; apply hc'; have : c = 0 := Subtype.ext h0; rw [this]; exact zero_mem 𝔮
         exact isUnit_iff_exists_inv.mpr ⟨⟨_, hcinv⟩, Subtype.ext (by
-          show (c : F) * (c : F)⁻¹ = 1
+          change (c : F) * (c : F)⁻¹ = 1
           exact mul_inv_cancel₀ hc0)⟩
       surj := by
         intro v
@@ -166,35 +170,15 @@ private theorem isNoetherianRing_of_presentation {F : Type*} [Field F] {σ : Typ
         exact ⟨1, by rw [Subtype.ext h']⟩ }
   exact IsLocalization.isNoetherianRing 𝔮.primeCompl ↥V inferInstance
 
-private theorem eq_top_of_isField {F : Type*} [Field F] (V : ValuationSubring F) (h : IsField ↥V) :
-  V = ⊤ := by
-  letI := h.toField
-  ext x
-  refine ⟨fun _ => ValuationSubring.mem_top x, fun _ => ?_⟩
-  rcases V.mem_or_inv_mem x with hx | hx
-  · exact hx
-  · rcases eq_or_ne x 0 with h0 | h0
-    · rw [h0]; exact zero_mem V
-    · have hu : IsUnit (⟨x⁻¹, hx⟩ : ↥V) := by
-        apply isUnit_iff_ne_zero.mpr
-        intro h1; apply h0; have := congrArg (fun w : ↥V => (w : F)) h1; simpa using this
-      obtain ⟨w, hw⟩ := isUnit_iff_exists_inv.mp hu
-      have : (w : F) = x := by
-        have := congrArg (fun w : ↥V => (w : F)) hw
-        push_cast at this
-        rw [← mul_inv_cancel₀ (inv_ne_zero h0), inv_inv] at this
-        exact mul_left_cancel₀ (inv_ne_zero h0) this
-      rw [← this]; exact w.2
-
 private theorem isDVR_or_eq_top_of_presentation {F : Type*} [Field F] {σ : Type*} [SetLike σ F]
   [SubringClass σ F] (B : σ) [IsNoetherianRing ↥B]
     (𝔮 : Ideal ↥B) [𝔮.IsPrime] (V : ValuationSubring F)
     (hV : ∀ f : F, f ∈ V ↔ ∃ b c : ↥B, c ∉ 𝔮 ∧ f * (c : F) = (b : F)) :
     IsDiscreteValuationRing ↥V ∨ V = ⊤ := by
   by_cases hf : IsField ↥V
-  · exact Or.inr (eq_top_of_isField V hf)
-  · haveI hN : IsNoetherianRing ↥V := isNoetherianRing_of_presentation B 𝔮 V hV
-    haveI : ValuationRing ↥V := inferInstance
+  · exact Or.inr (not_ne_iff.mp fun hV => ValuationSubring.not_isField_of_ne_top F hV hf)
+  · have hN : IsNoetherianRing ↥V := isNoetherianRing_of_presentation B 𝔮 V hV
+    have : ValuationRing ↥V := inferInstance
     have htf := IsDiscreteValuationRing.TFAE (R := ↥V) hf
     exact Or.inl ((htf.out 1 2).mpr (inferInstance : ValuationRing ↥V))
 
@@ -227,11 +211,10 @@ private theorem blockB
     (hℜ : ∀ g : ↥O, g ∈ maximalIdeal ↥O ↔ algebraMap ↥O ↥(Algebra.adjoin ↥O (B : Set F)) g ∈ ℜ)
     (h𝔮 : ¬ (ℜ.comap (inclB O B)).IsMaximal) : False := by
   classical
-  haveI : Algebra.FiniteType A₀ ↥B := (Subalgebra.fg_iff_finiteType B).mp hBfg
-  haveI : IsNoetherianRing ↥B := Algebra.FiniteType.isNoetherianRing A₀ ↥B
+  have : Algebra.FiniteType A₀ ↥B := (Subalgebra.fg_iff_finiteType B).mp hBfg
+  have : IsNoetherianRing ↥B := Algebra.FiniteType.isNoetherianRing A₀ ↥B
   set 𝔮 : Ideal ↥B := ℜ.comap (inclB O B) with h𝔮def
-  haveI h𝔮p : 𝔮.IsPrime := Ideal.comap_isPrime _ ℜ
-
+  have h𝔮p : 𝔮.IsPrime := Ideal.comap_isPrime _ ℜ
   have hle : Ideal.map (algebraMap A₀ ↥B) (maximalIdeal A₀) ≤ 𝔮 := by
     rw [Ideal.map_le_iff_le_comap]
     intro a ha
@@ -240,7 +223,6 @@ private theorem blockB
     convert h1 using 1
     rfl
   obtain ⟨V, hV, hndom⟩ := hcomp 𝔮 h𝔮p hle h𝔮
-
   let R := locSubring (Algebra.adjoin ↥O (B : Set F)) ℜ
   have hR : ∀ f : F, f ∈ R ↔ ∃ s t : ↥(Algebra.adjoin ↥O (B : Set F)), t ∉ ℜ ∧ f * (t : F) = (s : F)
     := fun f => mem_locSubring _ ℜ f
@@ -251,14 +233,12 @@ private theorem blockB
   have hOS : ∀ x : F, x ∈ O → x ∈ (Algebra.adjoin ↥O (B : Set F)) := fun x hx => by
     have := Subalgebra.algebraMap_mem (Algebra.adjoin ↥O (B : Set F)) (⟨x, hx⟩ : ↥O); exact this
   have hOR : O ≤ R := fun x hx => le_locSubring (Algebra.adjoin ↥O (B : Set F)) ℜ x (hOS x hx)
-
   have hmR : ∀ g : ↥O, g ∈ maximalIdeal ↥O → (⟨(g : F), hOS g g.2⟩ : ↥(Algebra.adjoin ↥O (B : Set
     F))) ∈ ℜ := by
     intro g hg
     exact (hℜ g).mp hg
   rcases isDVR_or_eq_top_of_presentation B 𝔮 V hV with hDVR | hVtop
-  ·
-    haveI := hDVR
+  · have := hDVR
     rcases eq_or_eq_top_of_toSubring_le_of_isDiscreteValuationRing V R hVR with hRV | hRtop
     · apply hndom
       refine ⟨fun x hx => hRV ▸ hOR hx, fun g hg => ?_⟩
@@ -272,8 +252,7 @@ private theorem blockB
         have hinvR : (g : F)⁻¹ ∈ R := hVR hinv
         exact inv_not_mem_locSubring (Algebra.adjoin ↥O (B : Set F)) ℜ ⟨(g : F), hOS g g.2⟩ (hmR g
           hg) h0 hinvR
-    ·
-      have hℜbot : ℜ = ⊥ := eq_bot_of_locSubring_eq_top (Algebra.adjoin ↥O (B : Set F)) ℜ hRtop
+    · have hℜbot : ℜ = ⊥ := eq_bot_of_locSubring_eq_top (Algebra.adjoin ↥O (B : Set F)) ℜ hRtop
       have h𝔮bot : 𝔮 = ⊥ := by
         rw [h𝔮def, hℜbot, Ideal.comap_bot_of_injective]
         intro x y hxy; exact Subtype.ext (congrArg (fun w : ↥(Algebra.adjoin ↥O (B : Set F)) => (w :
@@ -301,8 +280,7 @@ private theorem blockB
       rw [hℜbot, Submodule.mem_bot] at this
       have hg0 : (g : F) = 0 := congrArg (fun w : ↥(Algebra.adjoin ↥O (B : Set F)) => (w : F)) this
       rw [hg0, ValuationSubring.mem_nonunits_iff, map_zero]; exact zero_lt_one
-  ·
-    apply hndom
+  · apply hndom
     refine ⟨fun x _ => hVtop ▸ ValuationSubring.mem_top x, fun g hg => ?_⟩
     by_contra hgn
     have h0 : (g : F) ≠ 0 := by
@@ -312,16 +290,18 @@ private theorem blockB
       h0 hinvR
 
 
-set_option maxHeartbeats 6400000 in
-set_option synthInstance.maxHeartbeats 800000 in
 /-- Maximality of a prime of `O[B]` lying over the maximal ideal of `O`.
 
-Let `A₀` be a discrete valuation ring with fraction field `F`, `O` a local
-Noetherian subring of `F` lying locally over `A₀`, and `B` a finitely
-generated `A₀`-subalgebra of `F`. Suppose every nonmaximal prime of `B`
-lying over the maximal ideal of `A₀` has its localization represented by a
-valuation subring of `F` that does not dominate `O`. Then every prime of
-`O[B]` whose contraction to `O` is the maximal ideal of `O` is maximal. -/
+Let `A₀` be a discrete valuation ring and `F` a field with an `A₀`-algebra structure. The
+structure map `A₀ → F` need not be injective (it may factor through the residue field of `A₀`),
+so `F` need not be the fraction field of `A₀`. Let `O` be a local Noetherian subring of `F` that
+contains the image of `A₀`, with the induced map `A₀ → O` sending the maximal ideal of `A₀` into
+the maximal ideal of `O`. Let `B` be a finitely generated `A₀`-subalgebra of `F`. Suppose that
+every prime `𝔮` of `B` that contains the image of the maximal ideal of `A₀` and is not maximal
+has its localization, the set of `f ∈ F` with `f * c = b` for some `b, c ∈ B` with `c ∉ 𝔮`, equal
+to a valuation subring of `F` that does not dominate `O`. Then every prime of `O[B]`, the
+`O`-subalgebra of `F` generated by `B`, whose contraction to `O` is the maximal ideal of `O` is
+maximal. -/
 public theorem Subring.isMaximal_of_liesOver_adjoin_of_forall_not_isMaximal_valuationSubring
     {F : Type*} [Field F]
     (A₀ : Type*) [CommRing A₀] [IsDomain A₀] [IsDiscreteValuationRing A₀] [Algebra A₀ F]
@@ -338,7 +318,6 @@ public theorem Subring.isMaximal_of_liesOver_adjoin_of_forall_not_isMaximal_valu
     (hℜ : ∀ g : ↥O, g ∈ maximalIdeal ↥O ↔ algebraMap ↥O ↥(Algebra.adjoin ↥O (B : Set F)) g ∈ ℜ) :
     ℜ.IsMaximal := by
   classical
-
   have hBS : ∀ b : ↥B, (b : F) ∈ Algebra.adjoin ↥O (B : Set F) := fun b => Algebra.subset_adjoin b.2
   let iB : ↥B →+* ↥(Algebra.adjoin ↥O (B : Set F)) :=
     { toFun := fun b => ⟨b, hBS b⟩
@@ -348,7 +327,7 @@ public theorem Subring.isMaximal_of_liesOver_adjoin_of_forall_not_isMaximal_valu
       map_add' := fun a b => Subtype.ext (by simp) }
   have hiB : ∀ b : ↥B, ((iB b : ↥(Algebra.adjoin ↥O (B : Set F))) : F) = b := fun b => rfl
   set 𝔮 : Ideal ↥B := ℜ.comap iB with h𝔮
-  haveI h𝔮p : 𝔮.IsPrime := Ideal.comap_isPrime iB ℜ
+  have h𝔮p : 𝔮.IsPrime := Ideal.comap_isPrime iB ℜ
   let c : A₀ →+* ↥O := (algebraMap A₀ F).codRestrict O hAO
   have hc : ∀ a : A₀, ((c a : ↥O) : F) = algebraMap A₀ F a := fun a => rfl
   have hconst : ∀ a : A₀, iB (algebraMap A₀ ↥B a) = algebraMap ↥O ↥(Algebra.adjoin ↥O (B : Set F))
@@ -359,63 +338,56 @@ public theorem Subring.isMaximal_of_liesOver_adjoin_of_forall_not_isMaximal_valu
   have h𝔪𝔮 : Ideal.map (algebraMap A₀ ↥B) (maximalIdeal A₀) ≤ 𝔮 := by
     rw [Ideal.map_le_iff_le_comap]
     intro a ha
-    show iB (algebraMap A₀ ↥B a) ∈ ℜ
+    change iB (algebraMap A₀ ↥B a) ∈ ℜ
     rw [hconst]
     exact (hℜ _).mp (hAOloc a ha)
   by_cases hmax : 𝔮.IsMaximal
-  ·
-
-    haveI : Algebra.FiniteType A₀ ↥B := (Subalgebra.fg_iff_finiteType B).mp hBfg
-    letI : Field (↥B ⧸ 𝔮) := Ideal.Quotient.field 𝔮
+  · have : Algebra.FiniteType A₀ ↥B := (Subalgebra.fg_iff_finiteType B).mp hBfg
+    let : Field (↥B ⧸ 𝔮) := Ideal.Quotient.field 𝔮
     let θ : A₀ ⧸ maximalIdeal A₀ →+* ↥B ⧸ 𝔮 :=
       Ideal.Quotient.lift (maximalIdeal A₀) ((Ideal.Quotient.mk 𝔮).comp (algebraMap A₀ ↥B)) (by
         intro a ha
         rw [RingHom.comp_apply, Ideal.Quotient.eq_zero_iff_mem]
         exact h𝔪𝔮 (Ideal.mem_map_of_mem _ ha))
-    letI algκ₀ : Algebra (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮) := θ.toAlgebra
-    letI : Field (A₀ ⧸ maximalIdeal A₀) := Ideal.Quotient.field _
-    haveI : IsScalarTower A₀ (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮) :=
+    let algκ₀ : Algebra (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮) := θ.toAlgebra
+    let : Field (A₀ ⧸ maximalIdeal A₀) := Ideal.Quotient.field _
+    have : IsScalarTower A₀ (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮) :=
       IsScalarTower.of_algebraMap_eq fun a => rfl
-    haveI : Algebra.FiniteType (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮) :=
+    have : Algebra.FiniteType (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮) :=
       Algebra.FiniteType.of_restrictScalars_finiteType A₀ (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮)
-    haveI : Module.Finite (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮) := finite_of_finite_type_of_isJacobsonRing
+    have : Module.Finite (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮) := finite_of_finite_type_of_isJacobsonRing
       _ _
-    haveI : Algebra.IsIntegral (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮) := Algebra.IsIntegral.of_finite _ _
-    haveI : Algebra.IsIntegral A₀ (A₀ ⧸ maximalIdeal A₀) :=
+    have : Algebra.IsIntegral (A₀ ⧸ maximalIdeal A₀) (↥B ⧸ 𝔮) := Algebra.IsIntegral.of_finite _ _
+    have : Algebra.IsIntegral A₀ (A₀ ⧸ maximalIdeal A₀) :=
       Algebra.IsIntegral.of_surjective (Algebra.ofId A₀ (A₀ ⧸ maximalIdeal A₀))
         Ideal.Quotient.mk_surjective
-    haveI hintB : Algebra.IsIntegral A₀ (↥B ⧸ 𝔮) := Algebra.IsIntegral.trans (A₀ ⧸ maximalIdeal A₀)
-
+    have hintB : Algebra.IsIntegral A₀ (↥B ⧸ 𝔮) := Algebra.IsIntegral.trans (A₀ ⧸ maximalIdeal A₀)
     let mkℜ := Ideal.Quotient.mk ℜ
     let φ : ↥O →+* ↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ := mkℜ.comp (algebraMap ↥O ↥(Algebra.adjoin
       ↥O (B : Set F)))
     have hφker : ∀ g : ↥O, g ∈ maximalIdeal ↥O → φ g = 0 := fun g hg => by
-      show mkℜ _ = 0; rw [Ideal.Quotient.eq_zero_iff_mem]; exact (hℜ g).mp hg
+      change mkℜ _ = 0; rw [Ideal.Quotient.eq_zero_iff_mem]; exact (hℜ g).mp hg
     let ψ : ResidueField ↥O →+* ↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ :=
       Ideal.Quotient.lift (maximalIdeal ↥O) φ hφker
-    letI algκ : Algebra (ResidueField ↥O) (↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ) :=
+    let algκ : Algebra (ResidueField ↥O) (↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ) :=
       @RingHom.toAlgebra (ResidueField ↥O) (↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ) _
         (Ideal.Quotient.commRing ℜ).toCommSemiring ψ
-
     have hint : ∀ z : ↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ, IsIntegral (ResidueField ↥O) z := by
       intro z
       obtain ⟨s, rfl⟩ := Ideal.Quotient.mk_surjective z
       obtain ⟨s, hs⟩ := s
-
       induction hs using Algebra.adjoin_induction with
       | mem x hx =>
-
         obtain ⟨P, hPm, hP⟩ := hintB.isIntegral (Ideal.Quotient.mk 𝔮 ⟨x, hx⟩)
         have hP𝔮 : Polynomial.eval₂ (algebraMap A₀ ↥B) ⟨x, hx⟩ P ∈ 𝔮 := by
           rw [← Ideal.Quotient.eq_zero_iff_mem, Polynomial.hom_eval₂]
           exact hP
-
         refine ⟨P.map ((IsLocalRing.residue ↥O).comp c), hPm.map _, ?_⟩
         rw [Polynomial.eval₂_map]
         have hcomp : (algebraMap (ResidueField ↥O) (↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ)).comp
             ((IsLocalRing.residue ↥O).comp c) = mkℜ.comp (iB.comp (algebraMap A₀ ↥B)) := by
           ext a
-          show ψ (IsLocalRing.residue ↥O (c a)) = mkℜ (iB (algebraMap A₀ ↥B a))
+          change ψ (IsLocalRing.residue ↥O (c a)) = mkℜ (iB (algebraMap A₀ ↥B a))
           rw [hconst]; rfl
         rw [hcomp]
         have : mkℜ (iB ⟨x, hx⟩) = Ideal.Quotient.mk ℜ ⟨x, Algebra.subset_adjoin hx⟩ := rfl
@@ -433,11 +405,10 @@ public theorem Subring.isMaximal_of_liesOver_adjoin_of_forall_not_isMaximal_valu
         have : Ideal.Quotient.mk ℜ ⟨x * y, Subalgebra.mul_mem _ hx hy⟩ =
             Ideal.Quotient.mk ℜ ⟨x, hx⟩ * Ideal.Quotient.mk ℜ ⟨y, hy⟩ := rfl
         rw [this]; exact ihx.mul ihy
-    haveI : Algebra.IsIntegral (ResidueField ↥O) (↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ) := ⟨hint⟩
-    haveI : IsDomain (↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ) := Ideal.Quotient.isDomain ℜ
+    have : Algebra.IsIntegral (ResidueField ↥O) (↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ) := ⟨hint⟩
+    have : IsDomain (↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ) := Ideal.Quotient.isDomain ℜ
     have hF := isField_of_isIntegral_of_isField' (R := ResidueField ↥O)
       (S := ↥(Algebra.adjoin ↥O (B : Set F)) ⧸ ℜ) (Field.toIsField (ResidueField ↥O))
     exact Ideal.Quotient.maximal_of_isField ℜ ⟨hF.exists_pair_ne, hF.mul_comm, hF.mul_inv_cancel⟩
-  ·
-    exfalso
+  · exfalso
     exact blockB A₀ O hAO hAOloc B hBfg hcomp ℜ hℜ (by exact hmax)
