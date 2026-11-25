@@ -3,5 +3,8 @@
 Topics added since this subject's fields were last revised.
 
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
+- [Local Level One](local-level-one/README.md)
 - [Projective Northcott](projective-northcott/README.md)
 - [Gross–Zagier–Kolyvagin, rank-one implication](rank-eq-one-of-simple-zero-l-series.md)
+- [Absolute Jacquet integral on the principal series of `GL₂(ℚ_p)`](absolute-jacquet-integral-lt-top-and-uni.md)
+- [Higher Units](higher-units-at.md)
