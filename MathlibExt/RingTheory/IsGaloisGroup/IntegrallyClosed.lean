@@ -34,24 +34,29 @@ public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Mathlib.RingTheory.IsGaloisGroup.Defs
 
 /-!
-# The fixed ring of a Galois group action is integrally closed
+# The invariant ring of a group action on an integrally closed domain
 
-If a group `G` acts on a domain `B` with fixed ring `A` (in the sense of
-`IsGaloisGroup G A B`) and `B` is integrally closed, then so is `A`: an
-element of the fraction field of `A` that is integral over `A` is integral
-over `B`, hence lies in `B`, is fixed by `G`, and therefore lies in `A`.
+If a group `G` acts on a domain `B` whose subring `A` is its invariant ring (the
+action commutes with `A`, and every element of `B` fixed by `G` comes from `A`,
+in the sense of `Algebra.IsInvariant A B G`) and `B` is integrally closed, then
+so is `A`: an element of the fraction field of `A` that is integral over `A` is
+integral over `B`, hence lies in `B`, is fixed by `G`, and therefore lies in
+`A`. The action need not be faithful; the case of a Galois group
+(`IsGaloisGroup G A B`) is a corollary.
 -/
 
 @[expose] public section
 
 open Polynomial
 
-/-- If `B` is integrally closed and `G` is a Galois group for `B / A`, then
-`A` is integrally closed. -/
-theorem IsGaloisGroup.isIntegrallyClosed_of_isIntegrallyClosed
+/-- Let a group `G` act on an integrally closed domain `B` containing the domain
+`A`, commuting with `A`, such that every element of `B` fixed by `G` comes from
+`A`. Then `A` is integrally closed. The action need not be faithful. -/
+theorem Algebra.IsInvariant.isIntegrallyClosed_of_isIntegrallyClosed
     (G : Type*) [Group G] {A B : Type*} [CommRing A] [IsDomain A] [CommRing B]
     [IsDomain B] [Algebra A B] [FaithfulSMul A B] [MulSemiringAction G B]
-    [IsGaloisGroup G A B] [IsIntegrallyClosed B] : IsIntegrallyClosed A := by
+    [SMulCommClass G A B] [Algebra.IsInvariant A B G] [IsIntegrallyClosed B] :
+    IsIntegrallyClosed A := by
   classical
   let K := FractionRing A
   let L := FractionRing B
@@ -91,3 +96,11 @@ theorem IsGaloisGroup.isIntegrallyClosed_of_isIntegrallyClosed
   refine ⟨a, ?_⟩
   have haa : a * a₂ = a₁ := hinj (by rw [map_mul, ha, hb'])
   rw [eq_div_iff hKa₂, ← map_mul, haa]
+
+/-- If `B` is integrally closed and `G` is a Galois group for `B / A`, then
+`A` is integrally closed. -/
+theorem IsGaloisGroup.isIntegrallyClosed_of_isIntegrallyClosed
+    (G : Type*) [Group G] {A B : Type*} [CommRing A] [IsDomain A] [CommRing B]
+    [IsDomain B] [Algebra A B] [FaithfulSMul A B] [MulSemiringAction G B]
+    [IsGaloisGroup G A B] [IsIntegrallyClosed B] : IsIntegrallyClosed A :=
+  Algebra.IsInvariant.isIntegrallyClosed_of_isIntegrallyClosed (B := B) G
