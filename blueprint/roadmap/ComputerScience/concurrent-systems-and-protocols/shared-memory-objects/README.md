@@ -17,3 +17,6 @@
 - [Valency arguments for consensus](valency-arguments-for-consensus.md)
 - [FIFO queues have consensus number two](fifo-queues-have-consensus-number-two.md)
 - [Registers have consensus number one](registers-have-consensus-number-one.md)
+- [Locality of linearizability](locality-of-linearizability.md)
+- [Separation in the wait-free hierarchy](separation-in-the-wait-free-hierarchy.md)
+- [Sampled registers and polling drivers](sampled-registers-and-polling-drivers/README.md)
