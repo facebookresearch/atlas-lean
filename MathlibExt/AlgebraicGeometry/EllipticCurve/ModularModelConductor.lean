@@ -35,63 +35,20 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
-public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
-public import MathlibExt.AlgebraicGeometry.EllipticCurve.PointCount
+public import MathlibExt.AlgebraicGeometry.EllipticCurve.ResidualModularity
 public import MathlibExt.NumberTheory.ModularForms.CuspFormConj
 
 @[expose] public section
 
 open UpperHalfPlane
 
-namespace CuspForm
-
-/-- A normalized eigenform of weight `2` on `Γ₀ N`: its first
-`q`-coefficient is `1` and its `q`-coefficients satisfy the Hecke
-recurrences at primes inside and outside the level. -/
-structure IsNormalizedEigenform {N : ℕ}
-    (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) : Prop where
-  /-- The first `q`-coefficient is `1`. -/
-  qCoeff_one : ModularFormClass.qCoeff f 1 = 1
-  /-- Multiplicativity of `q`-coefficients at coprime indices. -/
-  qCoeff_mul_of_coprime : ∀ m n : ℕ, m.Coprime n →
-    ModularFormClass.qCoeff f (m * n)
-      = ModularFormClass.qCoeff f m * ModularFormClass.qCoeff f n
-  /-- The Hecke recurrence at a prime outside the level. -/
-  qCoeff_prime_pow_of_not_dvd : ∀ p r : ℕ, p.Prime → ¬ p ∣ N →
-    ModularFormClass.qCoeff f (p ^ (r + 2))
-      = ModularFormClass.qCoeff f p * ModularFormClass.qCoeff f (p ^ (r + 1))
-        - p * ModularFormClass.qCoeff f (p ^ r)
-  /-- The Hecke recurrence at a prime dividing the level. -/
-  qCoeff_prime_pow_of_dvd : ∀ p r : ℕ, p.Prime → p ∣ N →
-    ModularFormClass.qCoeff f (p ^ (r + 2))
-      = ModularFormClass.qCoeff f p * ModularFormClass.qCoeff f (p ^ (r + 1))
-
-end CuspForm
-
 namespace WeierstrassCurve
-
-/-- Reduction of an integral Weierstrass curve modulo `p`. -/
-def reductionMod (W : WeierstrassCurve ℤ) (p : ℕ) : WeierstrassCurve (ZMod p) :=
-  W.map (Int.castRingHom (ZMod p))
-
-/-- The trace of Frobenius of the reduction of an integral Weierstrass
-curve modulo a prime `p`: the Frobenius trace `p + 1 - #W(𝔽_p)` of the
-reduction over the finite field `ZMod p`, where `#W(𝔽_p)` counts the
-nonsingular points of the reduction, including the point at infinity. -/
-noncomputable def apOfModel (W : WeierstrassCurve ℤ) (p : ℕ) [hp : Fact p.Prime] : ℤ :=
-  (W.reductionMod p).toAffine.frobeniusTrace
 
 theorem apOfModel_def (W : WeierstrassCurve ℤ) (p : ℕ) [Fact p.Prime] :
     W.apOfModel p = (W.reductionMod p).toAffine.frobeniusTrace := rfl
-
-/-- An integral Weierstrass curve has good reduction at `p` when `p`
-does not divide its discriminant. -/
-def IsGoodPrimeFor (W : WeierstrassCurve ℤ) (p : ℕ) : Prop :=
-  ¬ (p : ℤ) ∣ W.Δ
 
 /-- An integral Weierstrass curve is a modular model of level `N` when
 some normalized eigenform of weight `2` on `Γ₀ N` has `q`-coefficients
