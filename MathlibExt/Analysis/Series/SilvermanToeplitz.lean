@@ -171,10 +171,13 @@ private theorem aux_tsum_tendsto_zero (A : ℕ → ℕ → ℂ) (M : ℝ)
     _ < ε / 2 + ε / 2 := add_lt_add_of_lt_of_le hn1 htail_bound
     _ = ε := by ring
 
-/-- Silverman-Toeplitz theorem: an infinite summability matrix with uniformly
-bounded `l1` row norms, columns tending to `0`, and row sums tending to `1`
-is regular, i.e. maps every convergent sequence to a convergent transformed
-sequence with the same limit.
+/-- **Silverman–Toeplitz theorem (sufficiency).** Let $(a_{nk})_{n, k \ge 0}$ be an infinite
+matrix of complex numbers. Suppose that there is a real $C$ such that for every $n$ the series
+$\sum_k |a_{nk}|$ converges with sum at most $C$, that $a_{nk} \to 0$ as $n \to \infty$ for every
+$k$, and that $\sum_k a_{nk} \to 1$ as $n \to \infty$. Then for every sequence $(x_k)$ of complex
+numbers converging to $L$, the series $\sum_k a_{nk} x_k$ converges absolutely for every $n$, and
+$\sum_k a_{nk} x_k \to L$ as $n \to \infty$.
+
 Source: https://en.wikipedia.org/wiki/Silverman%E2%80%93Toeplitz_theorem
 (statement silverman-toeplitz-s1).
 Proves `Wanted` entry `silverman_toeplitz`.

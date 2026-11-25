@@ -38,13 +38,15 @@ namespace Real
 
 open Set
 
-/-- Upper bound on `log (1 - x)`: it lies below `-x`. -/
+/-- **Linear upper bound for $\log(1 - x)$.** For every real number $x$ with $1 - x > 0$,
+$\log(1 - x) \le -x$. -/
 theorem log_one_sub_le_neg (x : ℝ) (h1x : (0 : ℝ) < 1 - x) :
     Real.log (1 - x) ≤ -x := by
   have h := Real.log_le_sub_one_of_pos h1x
   linarith
 
-/-- Lower bound on `log (1 - x)` for `0 < x < 1 / 2`: it lies above `-x - x ^ 2`. -/
+/-- **Quadratic lower bound for $\log(1 - x)$.** For every real number $x$ with $0 < x < 1/2$,
+$-x - x^2 \le \log(1 - x)$. -/
 theorem neg_add_sq_le_log_one_sub (x : ℝ) (hx0 : 0 < x) (hx : x < 1 / 2) :
     -x - x ^ 2 ≤ Real.log (1 - x) := by
   have hD : Convex ℝ (Set.Icc (0 : ℝ) (1 / 2)) := convex_Icc 0 (1 / 2)
@@ -116,13 +118,15 @@ theorem neg_add_sq_le_log_one_sub (x : ℝ) (hx0 : 0 < x) (hx : x < 1 / 2) :
     simpa using h
   linarith
 
-/-- Two-sided bound on `log (1 - x)` for `0 < x < 1 / 2`. -/
+/-- **Two-sided bound for $\log(1 - x)$.** For every real number $x$ with $0 < x < 1/2$,
+$-x - x^2 \le \log(1 - x) \le -x$. -/
 theorem log_one_sub_bounds (x : ℝ) (hx0 : 0 < x) (hx : x < 1 / 2) :
     -x - x ^ 2 ≤ Real.log (1 - x) ∧ Real.log (1 - x) ≤ -x := by
   have h1x : (0 : ℝ) < 1 - x := by linarith
   exact ⟨neg_add_sq_le_log_one_sub x hx0 hx, log_one_sub_le_neg x h1x⟩
 
-/-- Upper bound on `exp (-x)` for `0 ≤ x`: it lies below `1 - x + x ^ 2`. -/
+/-- **Quadratic upper bound for $e^{-x}$.** For every real number $x \ge 0$,
+$e^{-x} \le 1 - x + x^2$. -/
 theorem exp_neg_le_one_sub_add_sq (x : ℝ) (hx : 0 ≤ x) :
     Real.exp (-x) ≤ 1 - x + x ^ 2 := by
   have hf_diff :

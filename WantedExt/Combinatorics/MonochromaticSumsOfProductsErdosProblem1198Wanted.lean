@@ -37,10 +37,12 @@ formal-conjectures statement `ErdosProblems/1198.lean` (equivalent; no code impo
 
 open Finset
 
-/-- Erdős Problem 1198: for every `2`-colouring of `ℕ` there is a strictly increasing sequence
-`0 < a₀ < a₁ < ⋯` such that all expressions `∑_{j<k} ∏_{i ∈ Sⱼ} aᵢ` over `k ≥ 1` pairwise
-disjoint nonempty finite index sets `S₀, …, S_{k-1}`, other than the single terms `aᵢ` (`k = 1`,
-`|S₀| = 1`), have the same colour. -/
+/-- **Erdős Problem 1198: monochromatic sums of products.** This is the statement that for every
+colouring $c : \mathbb{N} \to \{0, 1\}$ there are a strictly increasing sequence
+$0 < a_0 < a_1 < \cdots$ of natural numbers and a colour $\gamma \in \{0, 1\}$ such that
+$c\bigl(\sum_{j < k} \prod_{i \in S_j} a_i\bigr) = \gamma$ for every $k \ge 1$ and all pairwise
+disjoint nonempty finite sets $S_0, \dots, S_{k-1} \subseteq \mathbb{N}$, except when $k = 1$ and
+$S_0$ has exactly one element. -/
 def monochromaticSumsOfProducts : Prop :=
   ∀ c : ℕ → Fin 2, ∃ a : ℕ → ℕ, StrictMono a ∧ 0 < a 0 ∧ ∃ col : Fin 2,
     ∀ (k : ℕ) (S : Fin k → Finset ℕ), 0 < k → (∀ j, (S j).Nonempty) →
@@ -48,13 +50,22 @@ def monochromaticSumsOfProducts : Prop :=
         c (∑ j, ∏ i ∈ S j, a i) = col
 
 /--
-Resolved false: Smith (SIAM J. Discrete Math. 2001, abstract) constructed, for `m ≠ n`, a two-cell
-partition of `ℕ` in which no cell contains `SP_n(⟨x_t⟩) ∪ SP_m(⟨y_t⟩)` for any sequences, where
-`SP_m` is the set of sums `∏_{t ∈ F₁} x_t + ⋯ + ∏_{t ∈ F_m} x_t` over finite sets `F₁ < ⋯ < F_m`.
-With `x = y = a`, `m = 2` and `n = 3`, every such sum is a non-trivial expression of the problem (`k
-= 2` or `k = 3` disjoint index sets), so they cannot all have one colour. erdosproblems.com/1198
-attributes the counterexample to Smith (JCTA 1995) and lists the problem as disproved; Hindman's
-theorem is the case where every `Sⱼ` is a singleton. Source: T. F. Bloom, Erdős Problems, Problem
+**Smith's counterexample to Erdős Problem 1198.** There is a colouring
+$c : \mathbb{N} \to \{0, 1\}$ such that for every strictly increasing sequence
+$0 < a_0 < a_1 < \cdots$ of natural numbers, the numbers $\sum_{j < k} \prod_{i \in S_j} a_i$,
+taken over all $k \ge 1$ and all pairwise disjoint nonempty finite sets
+$S_0, \dots, S_{k-1} \subseteq \mathbb{N}$ other than those with $k = 1$ and $|S_0| = 1$, do not
+all have the same colour.
+
+Smith (SIAM J. Discrete Math. 2001) constructed, for $m \ne n$, a two-cell partition of
+$\mathbb{N}$ in which no cell contains $SP_n(x) \cup SP_m(y)$ for any sequences $x$ and $y$, where
+$SP_m(x)$ is the set of sums $\prod_{t \in F_1} x_t + \cdots + \prod_{t \in F_m} x_t$ over nonempty
+finite sets $F_1 < \cdots < F_m$ (here $F < F'$ means that every element of $F$ is less than every
+element of $F'$). Taking $x = y = a$, $m = 2$ and $n = 3$, every such sum is one of the numbers
+above, so they cannot all have one colour. Hindman's theorem is the case where every $S_j$ is a
+singleton.
+
+Source: T. F. Bloom, Erdős Problems, Problem
 #1198, https://www.erdosproblems.com/1198 (status DISPROVED); resolution: G. L. Smith, Partitions
 and (m and n) sums of products, J. Combin. Theory Ser. A 72 (1995), 77-94; G. L. Smith, Partitions
 and (m and n) sums of products - two cell partition, SIAM J. Discrete Math. 14 (2001), 356-369,

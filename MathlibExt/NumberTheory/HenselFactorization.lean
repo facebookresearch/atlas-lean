@@ -32,13 +32,15 @@ namespace Polynomial
 
 variable {A : Type*} [CommRing A]
 
-/-- Standard monic Hensel factor lifting, generic in the ideal.
+/-- **Hensel lifting of monic coprime factorizations.** Let $A$ be a commutative ring and $I$ an
+ideal of $A$ such that $A$ is $I$-adically complete, and let $f \in A[X]$ be monic. Suppose the
+reduction of $f$ modulo $I$ equals $\bar g \bar h$, where $\bar g, \bar h \in (A/I)[X]$ are monic
+and coprime (that is, $a \bar g + b \bar h = 1$ for some $a, b \in (A/I)[X]$). Then there exist
+monic $g, h \in A[X]$ with $f = gh$ whose reductions modulo $I$ are $\bar g$ and $\bar h$
+respectively.
 
-If `A` is `I`-adically complete and a monic polynomial `f` reduces modulo `I`
-to a product of monic coprime polynomials, the factorization lifts to `A`.
-The proof packages the residue factorization via the universal coprime
-factorization ring, lifts its structure map through `I`-adic completeness,
-and evaluates the universal factors over `A`. -/
+The proof packages the residue factorization via the universal coprime factorization ring, lifts
+its structure map through $I$-adic completeness, and evaluates the universal factors over $A$. -/
 theorem exists_monic_coprime_factorization_of_isAdicComplete
     (I : Ideal A) [IsAdicComplete I A]
     (f : A[X]) (hf : f.Monic)
@@ -136,11 +138,13 @@ theorem exists_monic_coprime_factorization_of_isAdicComplete
     exact ⟨f, 1, hf, monic_one, by simp, Subsingleton.elim _ _,
       Subsingleton.elim _ _⟩
 
-/-- Degree corollary of monic Hensel factor lifting.
-
-The lifted factors have the same degrees as the residue factors. The
-`Nontrivial (A ⧸ I)` hypothesis is sharp: over the trivial quotient every
-reduction equality is vacuous, so no degree conclusion can hold there. -/
+/-- **Hensel lifting of monic coprime factorizations, with degrees.** Let $A$ be a commutative
+ring and $I$ an ideal of $A$ such that $A$ is $I$-adically complete and $A/I$ is not the zero
+ring, and let $f \in A[X]$ be monic. Suppose the reduction of $f$ modulo $I$ equals
+$\bar g \bar h$, where $\bar g, \bar h \in (A/I)[X]$ are monic and coprime (that is,
+$a \bar g + b \bar h = 1$ for some $a, b \in (A/I)[X]$). Then there exist monic $g, h \in A[X]$
+with $f = gh$ whose reductions modulo $I$ are $\bar g$ and $\bar h$ respectively, and such that
+$\deg g = \deg \bar g$ and $\deg h = \deg \bar h$. -/
 theorem exists_monic_coprime_factorization_of_isAdicComplete_natDegree
     (I : Ideal A) [IsAdicComplete I A] [Nontrivial (A ⧸ I)]
     (f : A[X]) (hf : f.Monic)

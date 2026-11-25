@@ -4,7 +4,9 @@ Characteristic functions, probability generating functions and positive-definite
 
 - [Bochner's theorem](bochner-s-theorem/README.md)
 - [Lattice distributions](lattice-distributions/README.md)
-- [Probability generating functions](probability-generating-functions/README.md)
+- [Probability generating function](probability-generating-functions/README.md)
 - [Taylor bounds for characteristic functions](taylor-bounds-for-characteristic-functions/README.md)
-- [Cramér's decomposition theorem](cramer-decomposition.md)
-- [Lévy's continuity theorem](levy-continuity-of-char-fun.md)
+- [Lévy's continuity theorem](levy-continuity-theorem/README.md)
+- [Cramér's decomposition theorem](cramer-decomposition-theorem/README.md)
+- [Characteristic function of a sum of independent random variables](independence-and-characteristic-functions/README.md)
+- [Characteristic functions of finite measures](characteristic-functions-of-finite-measures/README.md)

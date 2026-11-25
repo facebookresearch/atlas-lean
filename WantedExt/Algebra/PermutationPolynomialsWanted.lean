@@ -29,6 +29,7 @@ public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.Algebra.ZModPermutationPolynomial
 
 set_option autoImplicit false
 
@@ -36,8 +37,9 @@ set_option autoImplicit false
 
 namespace MathlibExt.Algebra.PermutationPolynomialsWanted
 
-/-- Ding and Zieve's Lemma 1: for a prime `p` and positive `t`,
-`∑ a : ZMod p, a ^ t` is `-1` if `p - 1 ∣ t`, and `0` otherwise.
+/-- **Power sums over $\mathbb{Z}/p\mathbb{Z}$.** Let $p$ be a prime and $t$ a positive
+integer. Then $\sum_{a \in \mathbb{Z}/p\mathbb{Z}} a^t$ equals $-1$ if $p - 1$ divides $t$,
+and $0$ otherwise.
 
 Source: Zhiguo Ding and Michael E. Zieve, "Permutation
 Polynomials of the Form `∑_{n=1}^k h(n) X^n`", Lemma 1. -/
@@ -45,27 +47,12 @@ theorem_wanted sum_zmod_pow_eq_ite
     (p t : ℕ) [NeZero p] (hp : p.Prime) (ht : 0 < t) :
     (∑ a : ZMod p, a ^ t) = if (p - 1) ∣ t then -1 else 0
 
-/-- Ding and Zieve's Theorem 1 (the result quoted from the earlier
-paper): under the displayed congruences, the function
-`c ↦ ∑ n ∈ [1,k], n ^ t * c ^ n` permutes `ZMod p`.
-
-Source: Zhiguo Ding and Michael E. Zieve, "Permutation
-Polynomials of the Form `∑_{n=1}^k h(n) X^n`", Theorem 1. -/
-theorem_wanted bijective_sum_pow_mul_pow_zmod
-    (p k t : ℕ) (hp : p.Prime) (hpodd : p % 2 = 1)
-    (hk : 0 < k) (ht : 0 < t)
-    (hkcong : k % (p * (p - 1)) = 1)
-    (hcases : k % (p ^ 2) = 1 ∨ ¬(p - 1) ∣ t) :
-    Function.Bijective
-      (fun c : ZMod p =>
-        ∑ n ∈ Finset.Icc 1 k, (n : ZMod p) ^ t * c ^ n)
-
-/-- Ding and Zieve's Theorem 2: for `q = p ^ ℓ > 2` and
-`k % (p * (q - 1)) = 1`, the polynomial action
-`c ↦ ∑ n ∈ [1,k], h.eval n * c ^ n` is the identity on a finite
-field of cardinality `q` if and only if `h.eval 1 = 1` and either
-`k % p ^ 2 = 1` or
-`∑ j ∈ [1, h.natDegree / (p - 1)], h.coeff (j * (p - 1)) = 0`.
+/-- **When $\sum_{n=1}^k h(n) X^n$ induces the identity on $\mathbb{F}_q$.** Let $p$ be a
+prime, $\ell \ge 1$ and $q = p^\ell > 2$, and let $K$ be a finite field of characteristic
+$p$ with $q$ elements. Let $k$ be a positive integer with $k \equiv 1 \pmod{p(q-1)}$ and
+let $h \in K[X]$, with degree $d$ (taken to be $0$ when $h = 0$) and coefficient $h_i$ of
+$X^i$. Then $\sum_{n=1}^{k} h(n)\,c^n = c$ for every $c \in K$ if and only if $h(1) = 1$
+and either $k \equiv 1 \pmod{p^2}$ or $\sum_{j=1}^{\lfloor d/(p-1) \rfloor} h_{j(p-1)} = 0$.
 
 Source: Zhiguo Ding and Michael E. Zieve, "Permutation
 Polynomials of the Form `∑_{n=1}^k h(n) X^n`", Theorem 2. -/

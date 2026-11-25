@@ -1,0 +1,15 @@
+# Native KCorepresentability Models
+
+- [Full Stable Exact Functor Input](full-stable-exact-functor-input.md)
+- [Full Exact Presheaf Input](full-exact-presheaf-input.md)
+- [K Precomposition Spectrum](k-precomposition-spectrum.md)
+- [KPresheaf Source](kpresheaf-source.md)
+- [Core To Zero Fold](core-to-zero-fold.md)
+- [Object Class Spectrum](object-class-spectrum.md)
+- [Raw Yoneda To KSource](raw-yoneda-to-ksource.md)
+- [Raw KZero Diagram](raw-kzero-diagram.md)
+- [Reduced KFactor](reduced-kfactor.md)
+- [Reflected KFactor](reflected-kfactor.md)
+- [Restricted Yoneda End Evaluation](restricted-yoneda-end-evaluation.md)
+- [Canonical KComparison](canonical-kcomparison.md)
+- [KComparison Rectification](kcomparison-rectification.md)

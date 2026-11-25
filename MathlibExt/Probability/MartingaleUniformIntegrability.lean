@@ -140,12 +140,14 @@ private lemma eLpNorm_bound_of_L1_tendsto
       _ = ↑Ctail := by push_cast; rfl
       _ ≤ ↑(Cinit ⊔ Ctail) := ENNReal.coe_le_coe.mpr le_sup_right
 
-/-- **Submartingale convergence theorem.** For a submartingale `X` on a probability space, the
-following are equivalent:
-1. `X` is uniformly integrable.
-2. There exists an integrable `X_∞` such that `X_n → X_∞` almost surely and in `L¹` (in the
-   `∫ ‖X n - X_∞‖` sense).
-3. There exists an integrable `X_∞` such that `X_n → X_∞` in `L¹`. -/
+/-- **Equivalent conditions for uniform integrability of a submartingale.** Let $(\Omega, \mu)$ be
+a probability space with a filtration $(\mathcal{F}_n)_{n \in \mathbb{N}}$, and let
+$(X_n)_{n \in \mathbb{N}}$ be a real-valued submartingale with respect to $(\mathcal{F}_n)$ and
+$\mu$. The following are equivalent:
+1. $(X_n)$ is uniformly integrable.
+2. There is an integrable $X_\infty$ such that $X_n \to X_\infty$ almost surely and
+   $\int |X_n - X_\infty| \, d\mu \to 0$.
+3. There is an integrable $X_\infty$ such that $\int |X_n - X_\infty| \, d\mu \to 0$. -/
 theorem Submartingale.uniformIntegrable_tfae
     {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ]
@@ -162,11 +164,10 @@ theorem Submartingale.uniformIntegrable_tfae
     ] := by
   tfae_have 1 → 2 := by
     intro hUI
-    obtain ⟨R, hR⟩ := hUI.2
     have hmeas : ∀ n, AEStronglyMeasurable (X n) μ := hUI.aestronglyMeasurable
     set X_inf := ℱ.limitProcess X μ
     have hint_lim : Integrable X_inf μ :=
-      (Filtration.memLp_limitProcess_of_eLpNorm_bdd hmeas hR).integrable le_rfl
+      (Filtration.memLp_limitProcess_of_eLpNorm_bdd hmeas hUI.iSup_eLpNorm_lt).integrable le_rfl
     have hae := hsub.ae_tendsto_limitProcess_of_uniformIntegrable hUI
     have hL1 := hsub.tendsto_eLpNorm_one_limitProcess hUI
     exact ⟨X_inf, hint_lim, hae,
@@ -183,17 +184,21 @@ theorem Submartingale.uniformIntegrable_tfae
     have hint_sub : ∀ n, Integrable (X n - X_inf) μ := fun n =>
       (hsub.integrable n).sub hint
     have heLpNorm := tendsto_eLpNorm_of_tendsto_integral_norm_zero hint_sub hL1
+    obtain ⟨C, hC⟩ := eLpNorm_bound_of_L1_tendsto hMemLp_n hMemLp_inf heLpNorm
     exact ⟨unifIntegrable_of_tendsto_Lp le_rfl ENNReal.one_ne_top hMemLp_n hMemLp_inf heLpNorm,
-      eLpNorm_bound_of_L1_tendsto hMemLp_n hMemLp_inf heLpNorm⟩
+      (iSup_le hC).trans_lt ENNReal.coe_lt_top⟩
   tfae_finish
 
-/-- **Martingale convergence theorem.** For a martingale `X` on a probability space, the
-following are equivalent:
-1. `X` is uniformly integrable.
-2. There exists an integrable `X_∞` such that `X_n → X_∞` almost surely and in `L¹` (in the
-   `∫ ‖X n - X_∞‖` sense).
-3. There exists an integrable `X_∞` such that `X_n → X_∞` in `L¹`.
-4. There exists an integrable `X_∞` such that `X_n = E(X_∞ | ℱ_n)` almost surely for all `n`. -/
+/-- **Equivalent conditions for uniform integrability of a martingale.** Let $(\Omega, \mu)$ be a
+probability space with a filtration $(\mathcal{F}_n)_{n \in \mathbb{N}}$, and let
+$(X_n)_{n \in \mathbb{N}}$ be a real-valued martingale with respect to $(\mathcal{F}_n)$ and $\mu$.
+The following are equivalent:
+1. $(X_n)$ is uniformly integrable.
+2. There is an integrable $X_\infty$ such that $X_n \to X_\infty$ almost surely and
+   $\int |X_n - X_\infty| \, d\mu \to 0$.
+3. There is an integrable $X_\infty$ such that $\int |X_n - X_\infty| \, d\mu \to 0$.
+4. There is an integrable $X_\infty$ such that $X_n = \mathbb{E}[X_\infty \mid \mathcal{F}_n]$
+   almost surely for every $n$. -/
 theorem Martingale.uniformIntegrable_tfae
     {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ]
@@ -212,11 +217,10 @@ theorem Martingale.uniformIntegrable_tfae
   have hsub := hmart.submartingale
   tfae_have 1 → 2 := by
     intro hUI
-    obtain ⟨R, hR⟩ := hUI.2
     have hmeas : ∀ n, AEStronglyMeasurable (X n) μ := hUI.aestronglyMeasurable
     set X_inf := ℱ.limitProcess X μ
     have hint_lim : Integrable X_inf μ :=
-      (Filtration.memLp_limitProcess_of_eLpNorm_bdd hmeas hR).integrable le_rfl
+      (Filtration.memLp_limitProcess_of_eLpNorm_bdd hmeas hUI.iSup_eLpNorm_lt).integrable le_rfl
     have hae := hsub.ae_tendsto_limitProcess_of_uniformIntegrable hUI
     have hL1 := hsub.tendsto_eLpNorm_one_limitProcess hUI
     exact ⟨X_inf, hint_lim, hae,
