@@ -271,8 +271,32 @@ private theorem arm_cut_positive (w : ((Fin 9 × Fin 2) × (Fin 9 × Fin 2)) →
     exact hzero t hx
   · exact hdeg (x, t) hx0
 
-set_option maxHeartbeats 4200000 in
--- Expanding the concrete incidence lists for the degree equations and cuts requires extra budget.
+/-- Two positive even branch contact counts use at least four slots in total. If
+at most four slots are available, both branches have exactly two contacts. -/
+private theorem two_branch_contacts {a b : ℕ} (ha : 0 < a) (hb : 0 < b)
+    (haEven : a % 2 = 0) (hbEven : b % 2 = 0) (hab : a + b ≤ 4) : a = 2 ∧ b = 2 := by
+  constructor <;> omega
+
+/-- The possible distributions of a positive even count across two ports of
+capacity two, once the three saturated-port cases have been excluded. -/
+private theorem one_contact_per_port {a b : ℕ} (ha : a ≤ 2) (hb : b ≤ 2)
+    (hpos : 0 < a + b) (heven : (a + b) % 2 = 0)
+    (h20 : ¬(a = 2 ∧ b = 0)) (h02 : ¬(b = 2 ∧ a = 0)) (h22 : ¬(a = 2 ∧ b = 2)) :
+    a = 1 ∧ b = 1 := by
+  constructor <;> omega
+
+/-- At the shared vertex of the arm's pentagons, the two contacts leave no
+room for the rung unless both ports are saturated. -/
+private theorem one_contact_no_rung {a b r : ℕ} (ha : a + r ≤ 2) (hb : b + r ≤ 2)
+    (hpos : 0 < a + b) (heven : (a + b) % 2 = 0)
+    (h20 : ¬(a = 2 ∧ b = 0)) (h02 : ¬(b = 2 ∧ a = 0))
+    (hfull : ¬(a + r = 2 ∧ b + r = 2)) : a = 1 ∧ b = 1 ∧ r = 0 := by
+  have h22 : ¬(a = 2 ∧ b = 2) := by
+    rintro ⟨ha', hb'⟩
+    exact hfull ⟨by omega, by omega⟩
+  obtain ⟨h₁, h₂⟩ := one_contact_per_port (by omega) (by omega) hpos heven h20 h02 h22
+  exact ⟨h₁, h₂, by omega⟩
+
 /-- The arm cannot be covered without a contact at `b` (Figure 1, Lemma 2.1).
 
 The second pentagon forces exactly one edge at each copy of `x₃` toward the
@@ -299,36 +323,54 @@ theorem arm_impossible (w : ((Fin 9 × Fin 2) × (Fin 9 × Fin 2)) → ℕ)
   have h7₁ := hdeg (7, 1) (by decide)
   have h8₀ := hdeg (8, 0) (by decide)
   have h8₁ := hdeg (8, 1) (by decide)
-  simp [incidentWeight, armEdges, prismEdges] at h1₀ h1₁ h2₀ h2₁ h3₀ h3₁ h4₀ h4₁
-  simp [incidentWeight, armEdges, prismEdges] at h5₀ h5₁ h6₀ h6₁ h7₀ h7₁ h8₀ h8₁
+  simp only [incidentWeight, Fin.isValue, armEdges, prismEdges, List.flatMap_cons, List.flatMap_nil,
+    List.append_nil, List.cons_append, List.nil_append, List.map_cons, List.map_nil, Prod.mk.injEq,
+    one_ne_zero, and_true, or_true, ↓reduceIte, zero_ne_one, and_self, and_false, or_self,
+    Fin.reduceEq, or_false, List.sum_cons, List.sum_nil, add_zero, zero_add
+    ] at h1₀ h1₁ h2₀ h2₁ h3₀ h3₁ h4₀ h4₁
+  simp only [incidentWeight, Fin.isValue, armEdges, prismEdges, List.flatMap_cons, List.flatMap_nil,
+    List.append_nil, List.cons_append, List.nil_append, List.map_cons, List.map_nil, Prod.mk.injEq,
+    Fin.reduceEq, and_true, or_self, ↓reduceIte, zero_ne_one, and_self, or_true, and_false,
+    or_false, List.sum_cons, List.sum_nil, add_zero, zero_add, one_ne_zero
+    ] at h5₀ h5₁ h6₀ h6₁ h7₀ h7₁ h8₀ h8₁
   let c₀ := w ((3, 0), (5, 0)) + w ((3, 0), (8, 0))
   let c₁ := w ((3, 1), (5, 1)) + w ((3, 1), (8, 1))
   let r := w ((3, 0), (3, 1))
   have cPos := cut (columns [5, 6, 7, 8]) ⟨(5, 0), by decide⟩ (by simp [columns])
-  simp [exitWeight, armEdges, prismEdges, columns] at cPos
-  have cEven : (c₀ + c₁) % 2 = 0 := by omega
+  simp only [exitWeight, columns, Fin.isValue, List.mem_cons, List.not_mem_nil, or_false,
+    Finset.mem_filter, Finset.mem_univ, true_and, ne_eq, eq_iff_iff, ite_not, armEdges, prismEdges,
+    List.flatMap_cons, List.flatMap_nil, List.append_nil, List.cons_append, List.nil_append,
+    List.map_cons, List.map_nil, Fin.reduceEq, or_self, ↓reduceIte, iff_true, or_true,
+    List.sum_cons, List.sum_nil, add_zero, zero_add] at cPos
+  have cEven : (c₀ + c₁) % 2 = 0 := by
+    clear * - h5₀ h5₁ h6₀ h6₁ h7₀ h7₁ h8₀ h8₁
+    omega
   have cBoth : c₀ = 1 ∧ c₁ = 1 ∧ r = 0 := by
     have h0 (h : c₀ = 2) (h' : c₁ = 0) : False := by
       have hc := cut (insert (3, 0) (columns [5, 6, 7, 8])) ⟨(5, 0), by decide⟩
         (by simp [columns])
+      clear * - hc h h' h3₀
       simp [exitWeight, armEdges, prismEdges, columns] at hc
       omega
     have h1 (h : c₁ = 2) (h' : c₀ = 0) : False := by
       have hc := cut (insert (3, 1) (columns [5, 6, 7, 8])) ⟨(5, 0), by decide⟩
         (by simp [columns])
+      clear * - hc h h' h3₁
       simp [exitWeight, armEdges, prismEdges, columns] at hc
       omega
     have hFull (h : c₀ + r = 2) (h' : c₁ + r = 2) : False := by
       have hc := cut (columns [3, 5, 6, 7, 8]) ⟨(5, 0), by decide⟩ (by simp [columns])
+      clear * - hc h h' h3₀ h3₁
       simp [exitWeight, armEdges, prismEdges, columns] at hc
       omega
-    by_cases h0' : c₀ = 2 ∧ c₁ = 0
-    · exact (h0 h0'.1 h0'.2).elim
-    by_cases h1' : c₁ = 2 ∧ c₀ = 0
-    · exact (h1 h1'.1 h1'.2).elim
-    by_cases hf : c₀ + r = 2 ∧ c₁ + r = 2
-    · exact (hFull hf.1 hf.2).elim
-    exact ⟨by omega, by omega, by omega⟩
+    apply one_contact_no_rung (a := c₀) (b := c₁) (r := r) _ _ _ cEven
+      (fun h ↦ h0 h.1 h.2) (fun h ↦ h1 h.1 h.2) (fun h ↦ hFull h.1 h.2)
+    · clear * - h3₀
+      omega
+    · clear * - h3₁
+      omega
+    · clear * - cPos
+      omega
   obtain ⟨c₀one, c₁one, rZero⟩ := cBoth
   let a₀ := incidentWeight w armEdges (0, 0)
   let a₁ := incidentWeight w armEdges (0, 1)
@@ -339,12 +381,16 @@ theorem arm_impossible (w : ((Fin 9 × Fin 2) × (Fin 9 × Fin 2)) → ℕ)
   have aMax₀ : a₀ ≤ 2 := by
     have h1 := hsmall ((0, 0), (1, 0))
     have h4 := hsmall ((0, 0), (4, 0))
-    omega
+    rw [ea₀]
+    exact Nat.add_le_add h1 h4
   have aMax₁ : a₁ ≤ 2 := by
     have h1 := hsmall ((0, 1), (1, 1))
     have h4 := hsmall ((0, 1), (4, 1))
+    rw [ea₁]
+    exact Nat.add_le_add h1 h4
+  have aEven : (a₀ + a₁) % 2 = 0 := by
+    clear * - ea₀ ea₁ c₀one c₁one rZero h1₀ h1₁ h2₀ h2₁ h3₀ h3₁ h4₀ h4₁
     omega
-  have aEven : (a₀ + a₁) % 2 = 0 := by omega
   have aBoth : a₀ = 1 ∧ a₁ = 1 := by
     have ha₀ (h : a₀ = 2) (h' : a₁ = 0) : False := by
       have hc := cut (insert (0, 0) (columns [1, 2, 3, 4, 5, 6, 7, 8])) ⟨(1, 0), by decide⟩
@@ -353,6 +399,7 @@ theorem arm_impossible (w : ((Fin 9 × Fin 2) × (Fin 9 × Fin 2)) → ℕ)
           have ht0 : t = 0 := by simpa [columns] using ht
           subst t
           exact h)
+      clear * - hc h' ea₁
       simp [exitWeight, armEdges, prismEdges, columns] at hc
       omega
     have ha₁ (h : a₁ = 2) (h' : a₀ = 0) : False := by
@@ -362,6 +409,7 @@ theorem arm_impossible (w : ((Fin 9 × Fin 2) × (Fin 9 × Fin 2)) → ℕ)
           have ht1 : t = 1 := by simpa [columns] using ht
           subst t
           exact h)
+      clear * - hc h' ea₀
       simp [exitWeight, armEdges, prismEdges, columns] at hc
       omega
     have ha₂ (h : a₀ = 2) (h' : a₁ = 2) : False := by
@@ -374,14 +422,15 @@ theorem arm_impossible (w : ((Fin 9 × Fin 2) × (Fin 9 × Fin 2)) → ℕ)
       simp [exitWeight, armEdges, prismEdges, columns] at hc
     have aPos := cut (columns [1, 2, 3, 4, 5, 6, 7, 8]) ⟨(1, 0), by decide⟩
       (by simp [columns])
-    simp [exitWeight, armEdges, prismEdges, columns] at aPos
-    by_cases h0 : a₀ = 2 ∧ a₁ = 0
-    · exact (ha₀ h0.1 h0.2).elim
-    by_cases h1 : a₁ = 2 ∧ a₀ = 0
-    · exact (ha₁ h1.1 h1.2).elim
-    by_cases h2 : a₀ = 2 ∧ a₁ = 2
-    · exact (ha₂ h2.1 h2.2).elim
-    exact ⟨by omega, by omega⟩
+    simp only [exitWeight, columns, Fin.isValue, List.mem_cons, List.not_mem_nil, or_false,
+      Finset.mem_filter, Finset.mem_univ, true_and, ne_eq, eq_iff_iff, ite_not, armEdges,
+      prismEdges, List.flatMap_cons, List.flatMap_nil, List.append_nil, List.cons_append,
+      List.nil_append, List.map_cons, List.map_nil, zero_ne_one, Fin.reduceEq, or_self, iff_true,
+      ↓reduceIte, or_true, List.sum_cons, List.sum_nil, add_zero, zero_add] at aPos
+    apply one_contact_per_port aMax₀ aMax₁ _ aEven
+      (fun h ↦ ha₀ h.1 h.2) (fun h ↦ ha₁ h.1 h.2) (fun h ↦ ha₂ h.1 h.2)
+    clear * - aPos ea₀ ea₁
+    omega
   obtain ⟨a₀one, a₁one⟩ := aBoth
   let longA := w ((0, 0), (1, 0)) + w ((0, 1), (1, 1))
   let longX := w ((2, 0), (3, 0)) + w ((2, 1), (3, 1))
@@ -389,25 +438,44 @@ theorem arm_impossible (w : ((Fin 9 × Fin 2) × (Fin 9 × Fin 2)) → ℕ)
   let shortX := w ((3, 0), (4, 0)) + w ((3, 1), (4, 1))
   have longPos := cut (columns [1, 2]) ⟨(1, 0), by decide⟩ (by simp [columns])
   have shortPos := cut (columns [4]) ⟨(4, 0), by decide⟩ (by simp [columns])
-  simp [exitWeight, armEdges, prismEdges, columns] at longPos shortPos
-  have longEven : (longA + longX) % 2 = 0 := by omega
-  have shortEven : (shortA + shortX) % 2 = 0 := by omega
-  have longTwo : longA + longX = 2 := by omega
-  have shortTwo : shortA + shortX = 2 := by omega
+  simp only [exitWeight, columns, Fin.isValue, List.mem_cons, List.not_mem_nil, or_false,
+    Finset.mem_filter, Finset.mem_univ, true_and, ne_eq, eq_iff_iff, ite_not, armEdges, prismEdges,
+    List.flatMap_cons, List.flatMap_nil, List.append_nil, List.cons_append, List.nil_append,
+    List.map_cons, List.map_nil, zero_ne_one, Fin.reduceEq, or_self, iff_true, ↓reduceIte, or_true,
+    iff_false, not_true_eq_false, List.sum_cons, List.sum_nil, add_zero, zero_add
+    ] at longPos shortPos
+  have longEven : (longA + longX) % 2 = 0 := by
+    clear * - h1₀ h1₁ h2₀ h2₁
+    omega
+  have shortEven : (shortA + shortX) % 2 = 0 := by
+    clear * - h4₀ h4₁
+    omega
+  have atA : longA + shortA = 2 := by
+    clear * - ea₀ ea₁ a₀one a₁one
+    omega
+  have atX : longX + shortX = 2 := by
+    clear * - h3₀ h3₁ c₀one c₁one rZero
+    omega
+  obtain ⟨longTwo, shortTwo⟩ := two_branch_contacts
+    (a := longA + longX) (b := shortA + shortX)
+    (by clear * - longPos; omega) (by clear * - shortPos; omega)
+    longEven shortEven (by clear * - atA atX; omega)
   have longAone : longA = 1 := by
     have ha₀ (h : longA = 0) : False := by
       have hc := cut (columns [1, 2, 3, 5, 6, 7, 8]) ⟨(1, 0), by decide⟩ (by simp [columns])
+      clear * - hc h longTwo shortTwo atA
       simp [exitWeight, armEdges, prismEdges, columns] at hc
       omega
     have ha₂ (h : longA = 2) : False := by
       have hc := cut (columns [3, 4, 5, 6, 7, 8]) ⟨(3, 0), by decide⟩ (by simp [columns])
+      clear * - hc h longTwo atA
       simp [exitWeight, armEdges, prismEdges, columns] at hc
       omega
-    by_cases h0 : longA = 0
-    · exact (ha₀ h0).elim
-    by_cases h2 : longA = 2
-    · exact (ha₂ h2).elim
+    have h0 : longA ≠ 0 := ha₀
+    have h2 : longA ≠ 2 := ha₂
+    clear * - h0 h2 longTwo
     omega
+  clear * - longAone longTwo shortTwo atA h1₀ h1₁ h2₀ h2₁ h4₀ h4₁ ea₀ a₀one h3₀ c₀one rZero
   omega
 
 private theorem right_cut_positive (w : ((Fin 5 × Fin 2) × (Fin 5 × Fin 2)) → ℕ)
@@ -418,8 +486,6 @@ private theorem right_cut_positive (w : ((Fin 5 × Fin 2) × (Fin 5 × Fin 2)) �
   rintro ⟨x, t⟩ hx
   exact hdeg (x, t) (by rintro rfl; exact h0 t hx) (by rintro rfl; exact h4 t hx)
 
-set_option maxHeartbeats 500000 in
--- Normalize the explicit degree and exit-weight sums for each candidate cut.
 /-- The terminal block separates all ports that are available for outside edges.
 
 Each of the two interior branches has exactly two contacts. If both branches
@@ -443,28 +509,63 @@ theorem right_cut (w : ((Fin 5 × Fin 2) × (Fin 5 × Fin 2)) → ℕ)
   have h3₁ := hdeg (3, 1) (by decide) (by decide)
   have shortPos := cut (columns [1]) ⟨(1, 0), by decide⟩ (by simp [columns]) (by simp [columns])
   have longPos := cut (columns [2, 3]) ⟨(2, 0), by decide⟩ (by simp [columns]) (by simp [columns])
-  simp [incidentWeight, rightEdges, prismEdges] at h1₀ h1₁ h2₀ h2₁ h3₀ h3₁ hl hr
-  simp [exitWeight, rightEdges, prismEdges, columns] at shortPos longPos
+  simp only [incidentWeight, Fin.isValue, rightEdges, prismEdges, List.flatMap_cons,
+    List.flatMap_nil, List.append_nil, List.cons_append, List.nil_append, List.map_cons,
+    List.map_nil, Prod.mk.injEq, one_ne_zero, and_true, or_true, ↓reduceIte, zero_ne_one, and_self,
+    and_false, or_self, Fin.reduceEq, or_false, List.sum_cons, List.sum_nil, add_zero, zero_add
+    ] at h1₀ h1₁ h2₀ h2₁ h3₀ h3₁ hl hr
+  simp only [exitWeight, columns, Fin.isValue, List.mem_cons, List.not_mem_nil, or_false,
+    Finset.mem_filter, Finset.mem_univ, true_and, ne_eq, eq_iff_iff, ite_not, rightEdges,
+    prismEdges, List.flatMap_cons, List.flatMap_nil, List.append_nil, List.cons_append,
+    List.nil_append, List.map_cons, List.map_nil, zero_ne_one, iff_true, ↓reduceIte, Fin.reduceEq,
+    iff_false, not_true_eq_false, List.sum_cons, List.sum_nil, add_zero, or_self, or_true, zero_add
+    ] at shortPos longPos
   let shortLeft := w ((0, 0), (1, 0)) + w ((0, 1), (1, 1))
   let shortRight := w ((1, 0), (4, 0)) + w ((1, 1), (4, 1))
   let longLeft := w ((0, 0), (2, 0)) + w ((0, 1), (2, 1))
   let longRight := w ((3, 0), (4, 0)) + w ((3, 1), (4, 1))
-  have shortEven : (shortLeft + shortRight) % 2 = 0 := by omega
-  have longEven : (longLeft + longRight) % 2 = 0 := by omega
-  have shortTwo : shortLeft + shortRight = 2 := by omega
-  have longTwo : longLeft + longRight = 2 := by omega
+  have shortEven : (shortLeft + shortRight) % 2 = 0 := by
+    clear * - h1₀ h1₁
+    omega
+  have longEven : (longLeft + longRight) % 2 = 0 := by
+    clear * - h2₀ h2₁ h3₀ h3₁
+    omega
+  obtain ⟨shortTwo, longTwo⟩ := two_branch_contacts
+    (a := shortLeft + shortRight) (b := longLeft + longRight)
+    (by clear * - shortPos; omega) (by clear * - longPos; omega)
+    shortEven longEven (by clear * - hl hr; omega)
   by_cases h0 : shortLeft = 0
   · refine ⟨columns [0, 2, 3], ?_, by simp [columns], by simp [columns]⟩
+    clear * - h0 shortTwo longTwo hl hr
     simp [exitWeight, rightEdges, prismEdges, columns]
     omega
   by_cases h2 : shortLeft = 2
   · refine ⟨columns [0, 1], ?_, by simp [columns], by simp [columns]⟩
+    clear * - h2 shortTwo longTwo hl hr
     simp [exitWeight, rightEdges, prismEdges, columns]
     omega
-  have hLeftOne : shortLeft = 1 := by omega
+  have hLeftOne : shortLeft = 1 := by
+    clear * - h0 h2 shortTwo
+    omega
+  have hRightOne : shortRight = 1 := by
+    clear * - hLeftOne shortTwo
+    omega
+  have hLongLeftOne : longLeft = 1 := by
+    clear * - hl hr longTwo hLeftOne hRightOne
+    omega
+  have hLongRightOne : longRight = 1 := by
+    clear * - hLongLeftOne longTwo
+    omega
+  have switches : w ((0, 0), (1, 0)) + w ((1, 0), (4, 0)) = 1 := by
+    clear * - h1₀ h1₁ hLeftOne hRightOne
+    omega
+  have preserves : w ((0, 0), (2, 0)) = w ((3, 0), (4, 0)) := by
+    clear * - h2₀ h2₁ h3₀ h3₁ hLongLeftOne hLongRightOne
+    omega
   have hShared :
       incidentWeight w rightEdges (0, 0) = 2 ∨ incidentWeight w rightEdges (0, 1) = 2 ∨
       incidentWeight w rightEdges (4, 0) = 2 ∨ incidentWeight w rightEdges (4, 1) = 2 := by
+    clear * - hLeftOne hRightOne hLongLeftOne hLongRightOne switches preserves
     simp [incidentWeight, rightEdges, prismEdges]
     omega
   have eqL₀ : incidentWeight w rightEdges (0, 0) =
@@ -481,28 +582,32 @@ theorem right_cut (w : ((Fin 5 × Fin 2) × (Fin 5 × Fin 2)) → ℕ)
     simp [incidentWeight, rightEdges, prismEdges]
   rcases hShared with hL₀ | hL₁ | hR₀ | hR₁
   · refine ⟨{(0, 1)}, ?_, ?_, by simp⟩
-    · simp [exitWeight, rightEdges, prismEdges]
+    · clear * - hL₀ eqL₀ hl
+      simp [exitWeight, rightEdges, prismEdges]
       omega
     · intro t ht
       rcases fin2_cases t with rfl | rfl
       · exact (Nat.ne_of_lt ht hL₀).elim
       · decide
   · refine ⟨{(0, 0)}, ?_, ?_, by simp⟩
-    · simp [exitWeight, rightEdges, prismEdges]
+    · clear * - hL₁ eqL₁ hl
+      simp [exitWeight, rightEdges, prismEdges]
       omega
     · intro t ht
       rcases fin2_cases t with rfl | rfl
       · decide
       · exact (Nat.ne_of_lt ht hL₁).elim
   · refine ⟨insert (4, 0) (columns [0, 1, 2, 3]), ?_, by simp [columns], ?_⟩
-    · simp [exitWeight, rightEdges, prismEdges, columns]
+    · clear * - hR₀ eqR₀ hr
+      simp [exitWeight, rightEdges, prismEdges, columns]
       omega
     · intro t ht
       rcases fin2_cases t with rfl | rfl
       · exact (Nat.ne_of_lt ht hR₀).elim
       · decide
   · refine ⟨insert (4, 1) (columns [0, 1, 2, 3]), ?_, by simp [columns], ?_⟩
-    · simp [exitWeight, rightEdges, prismEdges, columns]
+    · clear * - hR₁ eqR₁ hr
+      simp [exitWeight, rightEdges, prismEdges, columns]
       omega
     · intro t ht
       rcases fin2_cases t with rfl | rfl
@@ -2688,8 +2793,8 @@ $3$-vertex-connected and straight-line planar whose prism $G \mathbin{\square} K
 Hamiltonian.
 
 Source: S. Špacapan, A counterexample to prism-hamiltonicity
-of 3-connected planar graphs, Journal of Combinatorial Theory, Series B 148 (2021), 46–52,
-https://arxiv.org/abs/1906.06683. Moved from
+of 3-connected planar graphs, Journal of Combinatorial Theory, Series B 146 (2021), 364–371,
+https://doi.org/10.1016/j.jctb.2020.09.012; arXiv version: https://arxiv.org/abs/1906.06683. Moved from
 `OpenConjectures/Combinatorics/PlanarGraphPrismHamiltonicity`.
 -/
 theorem conjecture_refuted : ¬ conjecture := by
