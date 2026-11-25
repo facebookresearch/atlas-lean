@@ -82,7 +82,10 @@ namespace Cslib.Decidability.TMRewriting
 
 open Turing Rewriting
 
-/-- The symbols of the rewriting system simulating a single-tape machine. -/
+/-- **Symbols of the rewriting system of a single-tape machine.** For a tape alphabet $\Gamma$ and
+a set of states $\Lambda$, the symbols of the rewriting system simulating a single-tape machine are
+a tape symbol $a$ for each $a \in \Gamma$, a state symbol $q$ for each $q \in \Lambda$, the left end
+marker $\vdash$, the right end marker $\dashv$ and the halting symbol $H$. -/
 inductive TMSym (Γ Λ : Type*) where
   /-- A tape symbol. -/
   | tape (a : Γ)
@@ -104,13 +107,18 @@ section Words
 
 variable {Γ Λ : Type*}
 
-/-- The state and halting symbols. -/
+/-- **Control symbols.** A symbol of the rewriting system simulating a single-tape Turing machine
+is a control symbol if it is a state symbol or the halting symbol $H$; tape symbols and the end
+markers $\vdash$ and $\dashv$ are not control symbols. -/
 def IsCtl : TMSym Γ Λ → Prop
   | state _ => True
   | halt => True
   | _ => False
 
-/-- A word with a single marked symbol is split at that symbol in only one way. -/
+/-- **Unique splitting at a marked letter.** Let $P$ be a property of the elements of a type
+$\alpha$, let $A$ and $B$ be lists over $\alpha$ none of whose elements satisfy $P$, and let
+$y \in \alpha$. If $C$ and $D$ are lists over $\alpha$ and $x \in \alpha$ satisfies $P$ with
+$C\,x\,D = A\,y\,B$ (concatenation), then $C = A$, $x = y$ and $D = B$. -/
 theorem eq_of_append_cons_eq {α : Type*} {P : α → Prop} {A B : List α} {y : α}
     (hA : ∀ s ∈ A, ¬P s) (hB : ∀ s ∈ B, ¬P s) :
     ∀ {C D : List α} {x : α}, P x → C ++ x :: D = A ++ y :: B → C = A ∧ x = y ∧ D = B := by
@@ -148,7 +156,10 @@ theorem notCtl_map_rend (L : List Γ) :
   · exact id
   · exact id
 
-/-- Splitting at the marked symbol of a rewrite site `u (p x s) v`. -/
+/-- **Splitting a rewrite site at its control symbol.** Let $A$, $B$, $u$, $v$, $p$, $s$ be words
+over the symbols of the rewriting system simulating a single-tape machine, and let $x$ and $y$ be
+symbols. If no symbol of $A$ or of $B$ is a control symbol (a state symbol or the halting symbol),
+$x$ is a control symbol, and $u\,p\,x\,s\,v = A\,y\,B$, then $u\,p = A$, $x = y$ and $s\,v = B$. -/
 theorem split_site {A B u v p s : List (TMSym Γ Λ)} {x y : TMSym Γ Λ}
     (hA : ∀ s ∈ A, ¬IsCtl s) (hB : ∀ s ∈ B, ¬IsCtl s) (hx : IsCtl x)
     (h : u ++ (p ++ x :: s) ++ v = A ++ y :: B) : u ++ p = A ∧ x = y ∧ s ++ v = B :=
@@ -197,18 +208,31 @@ variable {Γ Λ : Type*} [Inhabited Γ] [Inhabited Λ]
 
 /-! ### Spelling configurations -/
 
-/-- The word `⊢ L q h R ⊣` of a configuration; `Lw` is the left part in reading order. -/
+/-- **The word of a configuration.** For a state $q$, a tape symbol $h$ and words $L$, $R$ of
+tape symbols, the word of the configuration in state $q$ with head symbol $h$, left part $L$
+(in reading order, from left to right) and right part $R$ is $\vdash L\,q\,h\,R \dashv$, where
+$\vdash$ and $\dashv$ are the end markers. -/
 def spell (q : Λ) (Lw : List Γ) (h : Γ) (R : List Γ) : List (TMSym Γ Λ) :=
   lend :: (Lw.map tape ++ state q :: tape h :: (R.map tape ++ [rend]))
 
-/-- The target word `⊢ H ⊣`. -/
+/-- **The halting word.** The halting word is the word $\vdash H \dashv$ made of the left end
+marker, the halting symbol and the right end marker. It is the target word of the rewriting
+simulation of a single-tape machine. -/
 def haltWord : List (TMSym Γ Λ) := [lend, halt, rend]
 
-/-- `w` spells the configuration `c`. -/
+/-- **Words spelling a configuration.** A word $w$ spells a configuration $c$ of a single-tape
+Turing machine if there are a state $q$, a tape symbol $h$ and words $L$, $R$ of tape symbols
+such that $c$ is in state $q$, its head reads $h$, its tape reads $L$ immediately to the left of
+the head and $R$ immediately to the right of it, with blanks beyond, and
+$w = \vdash L\,q\,h\,R \dashv$. -/
 def Spells (w : List (TMSym Γ Λ)) (c : TM0.Cfg Γ Λ) : Prop :=
   ∃ q h Lw R, c = ⟨q, ⟨h, ListBlank.mk Lw.reverse, ListBlank.mk R⟩⟩ ∧ w = spell q Lw h R
 
-/-- The start word of the input `l`. -/
+/-- **The start word.** For an input $l$ of tape symbols, the start word is
+$\vdash q_0\, h\, R \dashv$, where $\vdash$ and $\dashv$ are the left and right end markers,
+$q_0$ is the default state, $h$ is the first symbol of $l$ (the default tape symbol if $l$ is
+empty) and $R$ is the rest of $l$. It spells the configuration in state $q_0$ with head symbol
+$h$, empty left part and right part $R$. -/
 def initWord (l : List Γ) : List (TMSym Γ Λ) := spell default [] l.headI l.tail
 
 theorem spells_init (l : List Γ) : Spells (initWord l) (TM0.init l : TM0.Cfg Γ Λ) := by
@@ -243,7 +267,14 @@ end Steps
 
 variable [Fintype Γ] [Fintype Λ] (M : TM0.Machine Γ Λ)
 
-/-- The rules for the state `q` reading `a`. -/
+/-- **The rules for one transition.** Let $M$ be a single-tape Turing machine with finitely many
+states and tape symbols, let $\sqcup$ be its blank symbol, and write $\vdash$, $\dashv$ for the end
+markers and $H$ for the halting symbol. The rules for a state $q$ reading a tape symbol $a$ are:
+the rule $q\,a \to H$ if $M$ has no transition from $q$ reading $a$; the rule
+$q\,a \to q'\,b$ if $M$ writes $b$ and enters $q'$; the rules
+$q\,a \dashv \to a\,q'\,\sqcup \dashv$ and, for every tape symbol $c$, $q\,a\,c \to a\,q'\,c$ if
+$M$ moves right and enters $q'$; and the rules ${\vdash}\,q\,a \to {\vdash}\,q'\,\sqcup\,a$ and,
+for every tape symbol $c$, $c\,q\,a \to q'\,c\,a$ if $M$ moves left and enters $q'$. -/
 noncomputable def rulesFor (q : Λ) (a : Γ) : List (Rule (TMSym Γ Λ)) :=
   match M q a with
   | none => [([state q, tape a], [halt])]
@@ -255,12 +286,19 @@ noncomputable def rulesFor (q : Λ) (a : Γ) : List (Rule (TMSym Γ Λ)) :=
       (Finset.univ : Finset Γ).toList.map fun c ↦
         ([tape c, state q, tape a], [state q', tape c, tape a])
 
-/-- The rules by which the halting symbol erases the tape. -/
+/-- **Erasing rules.** For a finite tape alphabet $\Gamma$, let $H$ be the halting symbol of the
+rewriting system simulating a single-tape machine with tape alphabet $\Gamma$. The erasing rules
+are the rewriting rules $c\,H \to H$ and $H\,c \to H$ for every tape symbol $c \in \Gamma$: the
+halting symbol deletes the tape symbol on either side of it. -/
 noncomputable def eraseRules : List (Rule (TMSym Γ Λ)) :=
   (Finset.univ : Finset Γ).toList.flatMap fun c ↦
     [([tape c, halt], [halt]), ([halt, tape c], [halt])]
 
-/-- The rewriting system simulating `M`. -/
+/-- **The rewriting system simulating a Turing machine.** Let $M$ be a single-tape Turing
+machine with finitely many states and tape symbols, and write $H$ for the halting symbol. The
+rewriting system simulating $M$ is the finite list of rules consisting of the rules for every
+state $q$ reading every tape symbol $a$, followed by the erasing rules $c\,H \to H$ and
+$H\,c \to H$ for every tape symbol $c$. -/
 noncomputable def rules : List (Rule (TMSym Γ Λ)) :=
   ((Finset.univ : Finset Λ).toList.flatMap fun q ↦
     (Finset.univ : Finset Γ).toList.flatMap fun a ↦ rulesFor M q a) ++ eraseRules
@@ -305,7 +343,18 @@ theorem mem_rules_erase_left (c : Γ) : ([tape c, halt], [halt]) ∈ rules M := 
 theorem mem_rules_erase_right (c : Γ) : ([halt, tape c], [halt]) ∈ rules M := by
   simp [rules, eraseRules]
 
-/-- The eight kinds of rules. -/
+/-- **The eight kinds of rules of the machine-simulating rewriting system.** Let $M$ be a
+single-tape Turing machine with a finite tape alphabet $\Gamma$, a default (blank) symbol
+$\beta \in \Gamma$ and finitely many states. The symbols are the tape symbols, the states, the end
+markers $\vdash$ and $\dashv$, and the halting symbol $H$. Every rule $l \to r$ of the rewriting
+system simulating $M$ has one of the following eight forms, where $q, q'$ are states and
+$a, b, c$ are tape symbols. Either $M$ has no transition in state $q$ reading $a$, and $l = q\,a$,
+$r = H$; or in state $q$ reading $a$ the machine $M$ goes to state $q'$ and writes $b$, and
+$l = q\,a$, $r = q'\,b$; or in state $q$ reading $a$ it goes to $q'$ and moves the head right, and
+either $l = q\,a \dashv$, $r = a\,q'\,\beta \dashv$ or $l = q\,a\,c$, $r = a\,q'\,c$; or in state
+$q$ reading $a$ it goes to $q'$ and moves the head left, and either $l = \vdash q\,a$,
+$r = \vdash q'\,\beta\,a$ or $l = c\,q\,a$, $r = q'\,c\,a$; or $l = c\,H$, $r = H$; or $l = H\,c$,
+$r = H$. -/
 theorem cases_of_mem_rules {l r : List (TMSym Γ Λ)} (h : (l, r) ∈ rules M) :
     (∃ q a, M q a = none ∧ l = [state q, tape a] ∧ r = [halt]) ∨
     (∃ q a q' b, M q a = some (q', .write b) ∧ l = [state q, tape a] ∧
@@ -364,7 +413,10 @@ section Forward
 
 variable {M}
 
-/-- **One machine step is one rewrite.** -/
+/-- **One machine step is one rewrite.** Let $M$ be a single-tape Turing machine with finitely
+many tape symbols and states. If the word $w$ spells the configuration $c$ and $M$ steps from
+$c$ to $c'$, then $w$ rewrites in one step of the rewriting system simulating $M$ to a word
+$w'$ that spells $c'$. -/
 theorem exists_step_of_spells {w : List (TMSym Γ Λ)} {c c' : TM0.Cfg Γ Λ} (hw : Spells w c)
     (hc : c' ∈ TM0.step M c) : ∃ w', Step (rules M) w w' ∧ Spells w' c' := by
   obtain ⟨q, h, Lw, R, rfl, rfl⟩ := hw
@@ -400,7 +452,11 @@ theorem exists_step_of_spells {w : List (TMSym Γ Λ)} {c c' : TM0.Cfg Γ Λ} (h
     refine ⟨spell q' Lw b R, ?_, ⟨q', b, Lw, R, rfl, rfl⟩⟩
     simpa [spell] using Step.mk (lend :: Lw.map tape) (R.map tape ++ [rend]) (mem_rules_write hM)
 
-/-- The halting symbol erases the tape. -/
+/-- **The halting symbol erases the tape.** Let $M$ be a single-tape Turing machine with finitely
+many states and tape symbols, and let $\vdash$, $\dashv$ be the end markers and $H$ the halting
+symbol of the rewriting system simulating $M$. For all words $X$ and $Y$ of tape symbols, the word
+$\vdash X\,H\,Y \dashv$ rewrites in zero or more steps of this rewriting system to the halting
+word $\vdash H \dashv$. -/
 theorem derives_erase (X Y : List Γ) :
     Derives (rules M) (lend :: (X.map tape ++ halt :: (Y.map tape ++ [rend]))) haltWord := by
   have hY : ∀ (P : List (TMSym Γ Λ)) (Y : List Γ),
@@ -420,7 +476,14 @@ theorem derives_erase (X Y : List Γ) :
       simpa using Step.mk (lend :: X.map tape) [rend] (mem_rules_erase_left (M := M) c)
   simpa using (hY (lend :: X.map tape) Y).trans (hX X)
 
-/-- A halted configuration rewrites to `⊢ H ⊣`. -/
+/-- **A halted configuration rewrites to the halting word.** Let $M$ be a single-tape Turing
+machine with finitely many states and tape symbols, and let $\vdash$, $\dashv$ be the end markers
+and $H$ the halting symbol of the rewriting system simulating $M$. Let $c$ be a configuration of
+$M$ at which $M$ has no next step, and let $w$ be a word that spells $c$: for some state $q$, tape
+symbol $h$ and lists $L$, $R$ of tape symbols, $c$ is in state $q$ with $h$ under the head, the
+tape left of the head reads $L$ from left to right and the tape right of the head reads $R$, up to
+blanks at the far ends, and $w = \vdash L\,q\,h\,R \dashv$. Then $w$ rewrites in zero or more steps
+of this rewriting system to the halting word $\vdash H \dashv$. -/
 theorem derives_of_spells_of_step_eq_none {w : List (TMSym Γ Λ)} {c : TM0.Cfg Γ Λ}
     (hw : Spells w c) (hc : TM0.step M c = none) : Derives (rules M) w haltWord := by
   obtain ⟨q, h, Lw, R, rfl, rfl⟩ := hw
@@ -447,7 +510,13 @@ end Forward
 
 section Backward
 
-/-- The invariant of words reachable from the start word `initWord l`. -/
+/-- **Invariant of the rewriting simulation of a single-tape machine.** Let $M$ be a single-tape
+machine with finitely many tape symbols and states, and $l$ an input. A word $w$ satisfies the
+invariant for $l$ when either $w$ spells a configuration that $M$ reaches from its initial
+configuration on $l$, or $M$ halts on $l$ and $w = \vdash X\, H\, Y \dashv$ for some words $X$
+and $Y$ of tape symbols, where $\vdash$ and $\dashv$ are the left and right end markers and $H$
+is the halting symbol. It serves as the invariant of the words reachable from the start word
+of $l$. -/
 def Inv (l : List Γ) (w : List (TMSym Γ Λ)) : Prop :=
   (∃ c, StateTransition.Reaches (TM0.step M) (TM0.init l) c ∧ Spells w c) ∨
     (TM0HaltsOn M l ∧ ∃ X Y : List Γ, w = lend :: (X.map tape ++ halt :: (Y.map tape ++ [rend])))
@@ -460,7 +529,16 @@ theorem tm0HaltsOn_of_reaches {l : List Γ} {c : TM0.Cfg Γ Λ}
     TM0HaltsOn M l :=
   Part.dom_iff_mem.mpr ⟨_, Part.mem_map _ (StateTransition.mem_eval.2 ⟨h, hc⟩)⟩
 
-/-- **Every rewrite preserves the invariant.** -/
+/-- **Every rewrite preserves the invariant of reachable words.** Let $M$ be a single-tape machine
+with finite tape alphabet and finite set of states, and let $l$ be an input word. Write $\vdash$
+and $\dashv$ for the left and right end markers and $H$ for the halting symbol. A word $w$
+satisfies the invariant for $M$ and $l$ when either $w$ spells a configuration that $M$ reaches from
+its initial configuration on $l$ (the configuration with state $q$, head symbol $h$, left part $L$
+and right part $R$, finite words of tape symbols read from left to right beyond which the tape is
+blank, is spelled ${\vdash}\,L\,q\,h\,R\,{\dashv}$), or $M$ halts on $l$ and
+$w = {\vdash}\,X\,H\,Y\,{\dashv}$ for words $X$ and $Y$ of tape symbols. If $w$ satisfies the
+invariant and rewrites in one step to $w'$ under the rules of $M$, then $w'$ satisfies the
+invariant. -/
 theorem Inv.step {l : List Γ} {w w' : List (TMSym Γ Λ)} (hw : Inv M l w)
     (hs : Step (rules M) w w') : Inv M l w' := by
   obtain ⟨u, v, hr⟩ := hs
@@ -599,7 +677,13 @@ theorem not_spells_haltWord (c : TM0.Cfg Γ Λ) : ¬Spells (haltWord : List (TMS
 
 end Backward
 
-/-- **A single-tape machine halts iff its start word rewrites to `⊢ H ⊣`.** -/
+/-- **A single-tape machine halts iff its start word rewrites to the halting word.** Let $M$ be a
+single-tape machine with finite tape alphabet and finite set of states, and write $\vdash$ and
+$\dashv$ for the left and right end markers and $H$ for the halting symbol. For every input word
+$l$, $M$ halts on $l$ if and only if the start word ${\vdash}\,q_0\,h\,R\,{\dashv}$ of $l$
+rewrites to the halting word ${\vdash}\,H\,{\dashv}$ in zero or more steps under the rules of $M$,
+where $q_0$ is the default state, $h$ is the first letter of $l$ (the blank if $l$ is empty) and
+$R$ is the rest of $l$. -/
 theorem tm0HaltsOn_iff_derives (l : List Γ) :
     TM0HaltsOn M l ↔ Derives (rules M) (initWord l) haltWord := by
   constructor
@@ -631,8 +715,12 @@ theorem primrec_initWord [Finite Γ] [Primcodable Γ] [Primcodable (TMSym Γ Λ)
   simp [initWord, spell]
 
 omit [Fintype Γ] [Fintype Λ] in
-/-- **Single-tape halting many-one reduces to string rewriting reachability**, with rules with
-nonempty sides. -/
+/-- **Single-tape halting many-one reduces to string rewriting reachability.** Let $M$ be a
+single-tape Turing machine with finitely many states and tape symbols. Then the set of inputs on
+which $M$ halts is many-one reducible to the set of instances $(R, x, y)$, where $R$ is a list of
+rules and $x$, $y$ are words over the symbols of the rewriting system simulating $M$, such that
+every rule of $R$ has a nonempty left side and a nonempty right side and $x$ rewrites to $y$ in
+zero or more steps of $R$. -/
 theorem manyOneReducible_tm0HaltsOn_sr [Finite Γ] [Finite Λ] [Primcodable Γ]
     [Primcodable (TMSym Γ Λ)] :
     ManyOneReducible (TM0HaltsOn M) fun I : List (Rule (TMSym Γ Λ)) × List (TMSym Γ Λ) ×
@@ -652,8 +740,11 @@ namespace Cslib.Decidability
 
 open Turing Rewriting TMRewriting
 
-/-- **Reachability for string rewriting is undecidable**, over a finite alphabet and for rules
-with nonempty sides. -/
+/-- **Reachability for string rewriting is undecidable.** There is a finite alphabet $\alpha$,
+with a primitive recursive coding of its letters by natural numbers, such that no multi-stack
+Turing machine decides, for a finite list $R$ of rewriting rules over $\alpha$ and words $x$ and
+$y$ over $\alpha$, whether every rule of $R$ has a nonempty left side and a nonempty right side
+and $x$ rewrites to $y$ in zero or more steps of $R$. -/
 theorem exists_not_tm2Decidable_sr :
     ∃ (α : Type) (_ : Fintype α) (_ : Primcodable α),
       ¬TM2Decidable fun I : List (Rule α) × List α × List α ↦ NonemptyRules I.1 ∧ SR I := by
@@ -669,7 +760,12 @@ theorem exists_not_tm2Decidable_sr :
   exact tm2Decidable_of_manyOneReducible
     (manyOneReducible_tm0HaltsOn_sr (MetaMathlibExt.TM0Restrict.restrict hS)) h
 
-/-- **MPCP is undecidable**, over a finite alphabet and on instances with nonempty words. -/
+/-- **MPCP is undecidable.** There is a finite alphabet $\alpha$, with a primitive recursive
+coding of its letters by natural numbers, such that no multi-stack Turing machine decides, for
+a finite list $P$ of dominoes over $\alpha$, whether every domino of $P$ has a nonempty top and
+a nonempty bottom and $P$ has a solution of the modified Post correspondence problem, that is,
+a nonempty sequence of dominoes of $P$, repetitions allowed, that starts with the first domino
+of $P$ and whose tops and bottoms concatenate to the same word. -/
 theorem exists_not_tm2Decidable_mpcp :
     ∃ (α : Type) (_ : Fintype α) (_ : Primcodable α),
       ¬TM2Decidable fun P : List (Post.Domino α) ↦ Post.NonemptyWords P ∧ Post.MPCP P := by
@@ -677,7 +773,11 @@ theorem exists_not_tm2Decidable_mpcp :
   exact ⟨Post.Sym α, inferInstance, inferInstance, fun hd ↦
     h (tm2Decidable_of_manyOneReducible manyOneReducible_sr_mpcp hd)⟩
 
-/-- **The Post correspondence problem is undecidable** over a finite alphabet. -/
+/-- **The Post correspondence problem is undecidable.** There is a finite alphabet $\alpha$, with
+a primitive recursive coding of its letters by natural numbers, such that no multi-stack Turing
+machine decides whether a finite list of dominoes over $\alpha$ has a solution, that is, a
+nonempty sequence of dominoes of the list, repetitions allowed, whose tops and bottoms
+concatenate to the same word. -/
 theorem exists_not_tm2Decidable_pcp :
     ∃ (α : Type) (_ : Fintype α) (_ : Primcodable α), ¬TM2Decidable (Post.PCP (α := α)) := by
   obtain ⟨α, _, _, h⟩ := exists_not_tm2Decidable_sr
@@ -694,7 +794,9 @@ open Turing Rewriting TMSym Relation
 
 variable {Γ Λ : Type*}
 
-/-- The state and halting symbols, as a Boolean test. -/
+/-- **Boolean test for control symbols.** The Boolean function on the symbols of the rewriting
+system simulating a single-tape Turing machine that is true on every state symbol and on the
+halting symbol $H$, and false on every tape symbol and on the end markers $\vdash$ and $\dashv$. -/
 def isCtlB : TMSym Γ Λ → Bool
   | state _ => true
   | halt => true
@@ -703,7 +805,9 @@ def isCtlB : TMSym Γ Λ → Bool
 theorem isCtlB_iff {x : TMSym Γ Λ} : isCtlB x = true ↔ IsCtl x := by
   cases x <;> simp [isCtlB, IsCtl]
 
-/-- The number of state and halting symbols in a word. -/
+/-- **Number of control symbols.** The number of control symbols of a word $w$ over the symbols of
+the rewriting system simulating a single-tape machine is the number of letters of $w$ that are
+states or the halting symbol $H$. -/
 def ctlCount (w : List (TMSym Γ Λ)) : ℕ := w.countP isCtlB
 
 theorem ctlCount_append (u v : List (TMSym Γ Λ)) :
@@ -713,7 +817,10 @@ theorem notCtl_of_ctlCount_eq_zero {w : List (TMSym Γ Λ)} (h : ctlCount w = 0)
     ∀ y ∈ w, ¬IsCtl y := fun y hy hc ↦
   (List.countP_eq_zero.mp h) y hy (isCtlB_iff.mpr hc)
 
-/-- A word with exactly one control symbol splits at it. -/
+/-- **A word with one control symbol splits at it.** If a word $w$ over the symbols of the
+rewriting system simulating a single-tape machine contains exactly one control symbol (a state
+symbol or the halting symbol), then $w = p\,x\,s$ for a control symbol $x$ and words $p$ and
+$s$ that contain no control symbol. -/
 theorem exists_split_of_ctlCount_eq_one :
     ∀ {w : List (TMSym Γ Λ)}, ctlCount w = 1 → ∃ pre x post, w = pre ++ x :: post ∧ IsCtl x ∧
       (∀ y ∈ pre, ¬IsCtl y) ∧ (∀ y ∈ post, ¬IsCtl y)
@@ -735,7 +842,16 @@ theorem exists_split_of_ctlCount_eq_one :
 
 variable [Inhabited Γ] [Inhabited Λ] [Fintype Γ] [Fintype Λ] (M : TM0.Machine Γ Λ)
 
-/-- The successor of a word `pre q post` under the rules for state `q`, if any. -/
+/-- **Rewriting at a state symbol.** Let $M$ be a single-tape Turing machine with finitely many
+states and tape symbols, and let $\sqcup$ be its blank symbol. For words $u$, $v$ and a state $q$,
+the successor of $u\,q\,v$ is defined as follows. If $v$ does not begin with a tape symbol, there
+is none. If $v = a\,v'$ for a tape symbol $a$: when $M$ has no transition from $q$ reading $a$,
+it is $u\,H\,v'$, where $H$ is the halting symbol; when $M$ writes $b$ and enters $q'$, it is
+$u\,q'\,b\,v'$; when $M$ moves right and enters $q'$, it is $u\,a\,q'\,\sqcup \dashv v''$ if
+$v' = {\dashv}\,v''$ for the right end marker $\dashv$, it is $u\,a\,q'\,c\,v''$ if
+$v' = c\,v''$ for a tape symbol $c$, and there is none otherwise; when $M$ moves left and enters
+$q'$, it is $u' \vdash q'\,\sqcup\,a\,v'$ if $u = u' \vdash$ for the left end marker $\vdash$, it
+is $u'\,q'\,c\,a\,v'$ if $u = u'\,c$ for a tape symbol $c$, and there is none otherwise. -/
 def nextState (pre : List (TMSym Γ Λ)) (q : Λ) : List (TMSym Γ Λ) → Option (List (TMSym Γ Λ))
   | tape a :: post' =>
     match M q a with
@@ -755,8 +871,13 @@ def nextState (pre : List (TMSym Γ Λ)) (q : Λ) : List (TMSym Γ Λ) → Optio
 
 variable {M}
 
-/-- **A rewrite at the control symbol.** At a state symbol the result is `nextState`; at the
-halting symbol it erases the letter on the left or the letter on the right. -/
+/-- **A rewrite at the control symbol.** Let $M$ be a single-tape machine with finite tape
+alphabet and finite set of states. Let $x$ be a control symbol (a state symbol or the halting
+symbol $H$) and let $u$ and $v$ be words that contain no control symbol. If $u\,x\,v$ rewrites in
+one step to $w'$ under the rules of $M$, then either $x$ is a state symbol $q$ and the successor of
+$u\,q\,v$ under the rules for $q$ is defined and equals $w'$, or $x = H$ and either $u = u'\,c$ for
+a word $u'$ and a tape symbol $c$ with $w' = u'\,H\,v$, or $v = c\,v'$ for a tape symbol $c$ and a
+word $v'$ with $w' = u\,H\,v'$. -/
 theorem step_result {pre post w' : List (TMSym Γ Λ)} {x : TMSym Γ Λ} (hx : IsCtl x)
     (hpre : ∀ y ∈ pre, ¬IsCtl y) (hpost : ∀ y ∈ post, ¬IsCtl y)
     (h : Step (rules M) (pre ++ x :: post) w') :
@@ -794,7 +915,10 @@ theorem step_result {pre post w' : List (TMSym Γ Λ)} {x : TMSym Γ Λ} (hx : I
       trivial hw.symm
     exact Or.inr ⟨rfl, Or.inr ⟨c₀, v, rfl, by simp⟩⟩
 
-/-- Every rewrite keeps the number of control symbols. -/
+/-- **Rewriting preserves the number of control symbols.** Let $M$ be a single-tape Turing
+machine with finitely many states and tape symbols, and call the states and the halting symbol
+$H$ control symbols. If a word $w$ rewrites to $w'$ in one step of the rewriting system simulating
+$M$, then $w$ and $w'$ contain the same number of control symbols. -/
 theorem ctlCount_eq_of_step {w w' : List (TMSym Γ Λ)} (h : Step (rules M) w w') :
     ctlCount w = ctlCount w' := by
   rcases h with @⟨l, r, u, v, hr⟩
@@ -805,8 +929,14 @@ theorem ctlCount_eq_of_step {w w' : List (TMSym Γ Λ)} (h : Step (rules M) w w'
       ⟨c₀, rfl, rfl⟩ | ⟨c₀, rfl, rfl⟩ <;> rfl
   simp only [ctlCount_append, hlr]
 
-/-- **Local confluence on words with one control symbol.** Rewriting at a state symbol is
-deterministic, and the two erasures at the halting symbol commute. -/
+/-- **Local confluence on words with one control symbol.** Let $M$ be a single-tape machine with
+finite tape alphabet and finite set of states, and let $w$ be a word over the symbols of its
+rewriting system that contains exactly one control symbol (a state symbol or the halting symbol).
+If $w$ rewrites in one step to $w_1$ and in one step to $w_2$ under the rules of $M$, then there is
+a word $d$ such that $w_1$ rewrites to $d$ in at most one step and $w_2$ rewrites to $d$ in zero or
+more steps.
+
+Rewriting at a state symbol is deterministic, and the two erasures at the halting symbol commute. -/
 theorem step_confluent {w w₁ w₂ : List (TMSym Γ Λ)} (hc : ctlCount w = 1)
     (h₁ : Step (rules M) w w₁) (h₂ : Step (rules M) w w₂) :
     ∃ d, ReflGen (Step (rules M)) w₁ d ∧ ReflTransGen (Step (rules M)) w₂ d := by
@@ -844,7 +974,9 @@ theorem step_confluent {w w₁ w₂ : List (TMSym Γ Λ)} (hc : ctlCount w = 1)
     obtain rfl := TMSym.tape.inj hc'
     exact heq rfl
 
-/-- The halting word `⊢ H ⊣` rewrites to nothing. -/
+/-- **The halting word is irreducible.** Let $M$ be a single-tape Turing machine with finitely
+many states and tape symbols. There is no word $w$ such that the halting word $\vdash H \dashv$
+rewrites to $w$ in one step of the rewriting system simulating $M$. -/
 theorem not_step_haltWord (w : List (TMSym Γ Λ)) : ¬Step (rules M) haltWord w := by
   intro h
   rcases step_result (pre := [lend]) (x := halt) (post := [rend]) trivial (by simp [IsCtl])
@@ -869,10 +1001,18 @@ theorem ctlCount_initWord (l : List Γ) : ctlCount (initWord l : List (TMSym Γ 
   rfl
 
 variable (M) in
-/-- A rewrite from a word with exactly one control symbol. -/
+/-- **Rewrites from words with one control symbol.** Let $M$ be a single-tape Turing machine with
+finitely many states and tape symbols, and call the states and the halting symbol $H$ control
+symbols. A word $w$ rewrites to $w'$ by a controlled step when $w$ contains exactly one control
+symbol and $w$ rewrites to $w'$ in one step of the rewriting system simulating $M$. -/
 def CtlStep (w w' : List (TMSym Γ Λ)) : Prop := ctlCount w = 1 ∧ Step (rules M) w w'
 
-/-- A Thue chain from a word with one control symbol consists of such rewrites. -/
+/-- **Thue equivalence from a word with one control symbol uses only controlled steps.** Let $M$ be
+a single-tape Turing machine with finitely many states and tape symbols, and call the states and
+the halting symbol $H$ control symbols. Suppose $w$ contains exactly one control symbol, and $w$
+and $w'$ are equivalent under the equivalence relation generated by one-step rewriting in the
+rewriting system simulating $M$. Then $w$ and $w'$ are equivalent under the equivalence relation
+generated by the one-step rewrites from words with exactly one control symbol. -/
 theorem eqvGen_ctlStep {w w' : List (TMSym Γ Λ)} (h : EqvGen (Step (rules M)) w w')
     (hw : ctlCount w = 1) : EqvGen (CtlStep M) w w' := by
   have key : ∀ {x y}, EqvGen (Step (rules M)) x y →
@@ -887,8 +1027,12 @@ theorem eqvGen_ctlStep {w w' : List (TMSym Γ Λ)} (h : EqvGen (Step (rules M)) 
       exact ⟨ih₁.1.trans ih₂.1, fun hx ↦ EqvGen.trans _ _ _ (ih₁.2 hx) (ih₂.2 (ih₁.1.mp hx))⟩
   exact (key h).2 hw
 
-/-- **The rewrites from words with one control symbol are confluent**, by Mathlib's
-Church–Rosser lemma from `step_confluent`. -/
+/-- **The rewrites from words with one control symbol are confluent.** Let $M$ be a single-tape
+Turing machine with finitely many states and tape symbols, and call the states and the halting
+symbol $H$ control symbols. Consider the relation in which a word $w$ with exactly one control
+symbol rewrites to $w'$ by one step of the rewriting system simulating $M$. This relation is
+confluent: if $w$ rewrites in zero or more such steps to both $w_1$ and $w_2$, then $w_1$ and
+$w_2$ both rewrite in zero or more such steps to a common word. -/
 theorem confluent_ctlStep : Confluent (CtlStep M) := by
   have hlift : ∀ {x y}, ctlCount x = 1 → ReflTransGen (Step (rules M)) x y →
       ReflTransGen (CtlStep M) x y := by
@@ -906,8 +1050,12 @@ theorem confluent_ctlStep : Confluent (CtlStep M) := by
   · exact ReflGen.refl
   · exact ReflGen.single ⟨by rw [← ctlCount_eq_of_step hxy, hx], hyd⟩
 
-/-- **A single-tape machine halts iff its start word is equivalent to `⊢ H ⊣`** under the Thue
-system of `rules M`. -/
+/-- **A single-tape machine halts iff its start word is Thue equivalent to the halting word.** Let
+$M$ be a single-tape Turing machine with finitely many states and tape symbols, write $\vdash$ and
+$\dashv$ for the left and right end markers and $H$ for the halting symbol, and let $l$ be an input
+word of tape symbols. Then $M$ halts on $l$ if and only if the start word of $l$ and the halting
+word ${\vdash}\,H\,{\dashv}$ are equivalent under the reflexive, symmetric and transitive closure
+of one-step rewriting by the rewriting system simulating $M$. -/
 theorem tm0HaltsOn_iff_eqvGen (l : List Γ) :
     TM0HaltsOn M l ↔ EqvGen (Step (rules M)) (initWord l) haltWord := by
   rw [tm0HaltsOn_iff_derives]
@@ -918,8 +1066,11 @@ theorem tm0HaltsOn_iff_eqvGen (l : List Γ) :
       (eqvGen_ctlStep h (ctlCount_initWord l)))
 
 variable (M) in
-/-- **Single-tape halting many-one reduces to the word problem of the fixed Thue system
-`rules M`.** -/
+/-- **Single-tape halting many-one reduces to the word problem of a fixed Thue system.** Let $M$
+be a single-tape Turing machine with finitely many states and tape symbols, and let $R_M$ be the
+rewriting system simulating $M$. Then the set of inputs on which $M$ halts is many-one reducible
+to the set of pairs $(x, y)$ of words over the symbols of $R_M$ that are equivalent under the
+reflexive, symmetric and transitive closure of one-step rewriting by $R_M$. -/
 theorem manyOneReducible_tm0HaltsOn_eqvGen [Primcodable Γ] [Primcodable (TMSym Γ Λ)] :
     ManyOneReducible (TM0HaltsOn M)
       fun p : List (TMSym Γ Λ) × List (TMSym Γ Λ) ↦ EqvGen (Step (rules M)) p.1 p.2 :=
@@ -932,8 +1083,11 @@ namespace Cslib.Decidability
 
 open Turing Rewriting TMRewriting Relation
 
-/-- **Some finite Thue system has an undecidable word problem** (Post, Markov): over a finite
-alphabet, a fixed finite list of rules `R` whose equivalence `x ~ y` is undecidable. -/
+/-- **Some finite Thue system has an undecidable word problem.** (Post, Markov) There are a
+finite alphabet $\alpha$, with a primitive recursive coding of its letters by natural numbers,
+and a finite list $R$ of rewriting rules over $\alpha$ such that no multi-stack Turing machine
+decides, for words $x$ and $y$ over $\alpha$, whether $x$ and $y$ are equivalent under the
+reflexive, symmetric and transitive closure of one-step rewriting by $R$. -/
 theorem exists_not_tm2Decidable_eqvGen :
     ∃ (α : Type) (_ : Fintype α) (_ : Primcodable α) (R : List (Rule α)),
       ¬TM2Decidable fun p : List α × List α ↦ EqvGen (Step R) p.1 p.2 := by
@@ -950,7 +1104,11 @@ theorem exists_not_tm2Decidable_eqvGen :
   exact tm2Decidable_of_manyOneReducible
     (manyOneReducible_tm0HaltsOn_eqvGen (MetaMathlibExt.TM0Restrict.restrict hS)) h
 
-/-- **The uniform word problem for Thue systems is undecidable**, over a finite alphabet. -/
+/-- **The uniform word problem for Thue systems is undecidable.** There is a finite alphabet
+$\alpha$, with a primitive recursive coding of its letters by natural numbers, such that no
+multi-stack Turing machine decides, for a finite list $R$ of rewriting rules over $\alpha$ and
+words $x$ and $y$ over $\alpha$, whether $x$ and $y$ are equivalent under the reflexive,
+symmetric and transitive closure of one-step rewriting by $R$. -/
 theorem exists_not_tm2Decidable_thueWP :
     ∃ (α : Type) (_ : Fintype α) (_ : Primcodable α), ¬TM2Decidable (ThueWP (α := α)) := by
   obtain ⟨α, _, _, R, h⟩ := exists_not_tm2Decidable_eqvGen

@@ -18,7 +18,7 @@ universe u
 
 /-- Consumer with the original binders: the type of a vertex is the
 parity of its distance from the base vertex. -/
-theorem exactSource {W : Type u} (𝒯 : SimpleGraph W) (w₀ w : W) :
+private theorem exactSource {W : Type u} (𝒯 : SimpleGraph W) (w₀ w : W) :
     vertexType 𝒯 w₀ w = (𝒯.dist w₀ w : ZMod 2) :=
   vertexType_apply 𝒯 w₀ w
 

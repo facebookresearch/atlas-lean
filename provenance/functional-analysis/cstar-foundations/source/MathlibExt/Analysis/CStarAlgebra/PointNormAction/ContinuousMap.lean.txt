@@ -1,0 +1,120 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.PointNormAction
+public import Mathlib.Analysis.CStarAlgebra.ContinuousMap
+
+/-!
+# Point-norm actions on compact function algebras
+
+A coefficient action lifts to the actual compact-domain continuous-function
+algebra. Point evaluation is an equivariant nonunital star homomorphism.
+The parameter space has no action, and no action typeclass is installed.
+-/
+
+@[expose] public section
+
+open scoped CStarAlgebra
+
+noncomputable section
+
+universe uM uX uB
+
+namespace PointNormCStarAction
+
+variable {M : Type uM} {B : Type uB}
+variable [Monoid M] [TopologicalSpace M] [NonUnitalCStarAlgebra B]
+
+/-- Lift a point-norm coefficient action to a compact function algebra,
+without changing the function's parameter. -/
+def continuousMap (X : Type uX) [TopologicalSpace X] [CompactSpace X]
+    (α : PointNormCStarAction M B) : PointNormCStarAction M C(X, B) := by
+  let liftHom (e : B ≃⋆ₐ[ℂ] B) : C(X, B) →⋆ₙₐ[ℂ] C(X, B) :=
+    { toFun := fun f =>
+        { toFun := fun x => e (f x)
+          continuous_toFun := (StarAlgEquiv.isometry e).continuous.comp f.continuous_toFun }
+      map_zero' := by
+        ext x
+        exact map_zero e
+      map_add' := fun f g => by
+        ext x
+        exact map_add e (f x) (g x)
+      map_mul' := fun f g => by
+        ext x
+        exact map_mul e (f x) (g x)
+      map_smul' := fun z f => by
+        ext x
+        exact map_smul e z (f x)
+      map_star' := fun f => by
+        ext x
+        exact map_star e (f x) }
+  let liftEquiv (e : B ≃⋆ₐ[ℂ] B) : C(X, B) ≃⋆ₐ[ℂ] C(X, B) :=
+    StarAlgEquiv.ofNonUnitalStarAlgHom (liftHom e) (liftHom e.symm)
+      (by
+        apply NonUnitalStarAlgHom.ext
+        intro f
+        ext x
+        change e.symm (e (f x)) = f x
+        exact e.symm_apply_apply (f x))
+      (by
+        apply NonUnitalStarAlgHom.ext
+        intro f
+        ext x
+        change e (e.symm (f x)) = f x
+        exact e.apply_symm_apply (f x))
+  refine
+    { toMonoidHom :=
+        { toFun := fun m => liftEquiv (α.aut m)
+          map_one' := ?_
+          map_mul' := ?_ }
+      continuous_orbit := ?_ }
+  · apply StarAlgEquiv.ext
+    intro f
+    ext x
+    change α 1 (f x) = f x
+    exact α.apply_one (f x)
+  · intro m n
+    apply StarAlgEquiv.ext
+    intro f
+    ext x
+    change α (m * n) (f x) = α m (α n (f x))
+    exact α.apply_mul m n (f x)
+  · intro f
+    refine ContinuousMap.continuous_of_continuous_uncurry _ ?_
+    change Continuous fun p : M × X => α p.1 (f p.2)
+    exact α.continuous_apply continuous_fst
+      (f.continuous_toFun.comp continuous_snd)
+
+/-- The lifted action acts on coefficients pointwise. -/
+@[simp]
+theorem continuousMap_apply (X : Type uX) [TopologicalSpace X] [CompactSpace X]
+    (α : PointNormCStarAction M B) (m : M) (f : C(X, B)) (x : X) :
+    continuousMap X α m f x = α m (f x) :=
+  rfl
+
+/-- Point evaluation intertwines the lifted and original coefficient actions.
+Its underlying nonunital star homomorphism is independent of the action. -/
+def continuousMapEvaluation {X : Type uX} [TopologicalSpace X] [CompactSpace X]
+    (α : PointNormCStarAction M B) (x : X) : Hom (continuousMap X α) α where
+  toNonUnitalStarAlgHom :=
+    { toFun := fun f => f x
+      map_zero' := rfl
+      map_add' := fun _ _ => rfl
+      map_mul' := fun _ _ => rfl
+      map_smul' := fun _ _ => rfl
+      map_star' := fun _ => rfl }
+  equivariant' := fun m f => by
+    change continuousMap X α m f x = α m (f x)
+    exact continuousMap_apply X α m f x
+
+/-- The equivariant evaluation is the ordinary coefficient evaluation. -/
+@[simp]
+theorem continuousMapEvaluation_apply {X : Type uX}
+    [TopologicalSpace X] [CompactSpace X]
+    (α : PointNormCStarAction M B) (x : X) (f : C(X, B)) :
+    continuousMapEvaluation α x f = f x :=
+  rfl
+
+end PointNormCStarAction

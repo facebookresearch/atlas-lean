@@ -40,12 +40,23 @@ open FirstOrder FirstOrder.Language
 
 variable {L : FirstOrder.Language} {α : Type*}
 
-/-- The function and relation symbols occurring in a term. -/
+/-- **Symbols of a term.** The set of symbols of a first-order language $L$ that occur in a
+term $t$ (with free variables and possibly bound variables), defined by recursion on $t$: a
+variable contributes no symbols, and $f(t_1, \dots, t_k)$ contributes the function symbol $f$
+together with the symbols of the terms $t_i$. The result lies in the set of all symbols of $L$,
+but only function symbols can occur in a term. -/
 def termSymbols {n : ℕ} : L.Term (α ⊕ Fin n) → Set L.Symbols
   | .var _ => ∅
   | .func f ts => {Sum.inl ⟨_, f⟩} ∪ ⋃ i, termSymbols (ts i)
 
-/-- The function and relation symbols occurring in a formula. -/
+/-- **Symbols of a formula.** The set of function and relation symbols of a first-order
+language $L$ that occur in a formula $\varphi$ (with free variables and possibly bound
+variables), defined by recursion on $\varphi$: falsum $\bot$ contributes no symbols, an
+equation $t_1 = t_2$ contributes the symbols of the terms $t_1$ and $t_2$, an atomic formula
+$R(t_1, \dots, t_k)$ contributes $R$ together with the symbols of the terms $t_i$, an
+implication $\varphi \to \psi$ contributes the symbols of $\varphi$ and of $\psi$, and
+$\forall x\, \varphi$ contributes the symbols of $\varphi$. Variables and the equality sign
+contribute nothing. -/
 def formulaSymbols {n : ℕ} : L.BoundedFormula α n → Set L.Symbols
   | .falsum => ∅
   | .equal t₁ t₂ => termSymbols t₁ ∪ termSymbols t₂

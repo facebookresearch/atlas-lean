@@ -35,8 +35,10 @@ universe u v
 
 variable {Symbol : Type u} {Carrier State : Type v}
 
-/-- A monoid morphism recognizes `L` through `accept` when membership of every word is exactly
-membership of its image in `accept`. -/
+/-- **Recognition of a language by a monoid morphism.** Let $L$ be a language over an alphabet
+$\Sigma$, let $\varphi : \Sigma^* \to M$ be a monoid morphism from the free monoid on $\Sigma$
+into a monoid $M$, and let $A \subseteq M$. Then $\varphi$ recognizes $L$ through $A$ when, for
+every word $w \in \Sigma^*$, $w \in L$ if and only if $\varphi(w) \in A$. -/
 def Recognizes [Monoid Carrier] (L : Language Symbol) (morphism : FreeMonoid Symbol →* Carrier)
     (accept : Set Carrier) : Prop :=
   ∀ x, FreeMonoid.toList x ∈ L ↔ morphism x ∈ accept
@@ -47,13 +49,19 @@ theorem Recognizes.mem_iff [Monoid Carrier] {L : Language Symbol}
     FreeMonoid.toList x ∈ L ↔ morphism x ∈ accept :=
   h x
 
-/-- The canonical syntactic morphism recognizes its language. -/
+/-- **The syntactic morphism recognizes its language.** For every language $L$ over an alphabet
+$\Sigma$, the syntactic morphism of $L$, from the free monoid $\Sigma^*$ to the syntactic monoid
+of $L$, recognizes $L$ through the accepting subset of the syntactic monoid, namely the set of
+syntactic classes of words in $L$. -/
 theorem recognizes_syntacticMorphism (L : Language Symbol) :
     Recognizes L (syntacticMorphism L) (syntacticAccept L) :=
   syntacticMorphism_mem_accept L
 
-/-- A recognizing morphism remains a recognizer after pulling its accepting set back along a
-factorization. -/
+/-- **Recognition pulls back along a factorization.** Let $L$ be a language over an
+alphabet $\Sigma$ and let $\varphi : \Sigma^* \to C$ be a monoid morphism from the free monoid
+$\Sigma^*$ that recognizes $L$ through a subset $A \subseteq C$. If $\varphi = f \circ \psi$ for
+monoid morphisms $\psi : \Sigma^* \to T$ and $f : T \to C$, then $\psi$ recognizes $L$ through the
+preimage $f^{-1}(A)$. -/
 theorem Recognizes.comp [Monoid Carrier] {Target : Type*} [Monoid Target]
     {L : Language Symbol} {morphism : FreeMonoid Symbol →* Carrier} {accept : Set Carrier}
     (h : Recognizes L morphism accept) (factor : Target →* Carrier)
@@ -64,7 +72,11 @@ theorem Recognizes.comp [Monoid Carrier] {Target : Type*} [Monoid Target]
   change morphism x ∈ accept ↔ factor (source x) ∈ accept
   rw [← MonoidHom.comp_apply, hfactor]
 
-/-- Equal images under a recognizing morphism cannot be distinguished by a two-sided context. -/
+/-- **Words with equal recognizer images are syntactically equivalent.** Let
+$\varphi : \Sigma^* \to M$ be a monoid morphism from the free monoid on an alphabet $\Sigma$ into
+a monoid $M$ that recognizes a language $L$ over $\Sigma$ through a set $A \subseteq M$. If two
+words $x, y \in \Sigma^*$ satisfy $\varphi(x) = \varphi(y)$, then $x$ and $y$ are syntactically
+equivalent for $L$: for all words $u, v \in \Sigma^*$, $uxv \in L$ if and only if $uyv \in L$. -/
 theorem syntacticRel_of_recognizer_eq [Monoid Carrier] {L : Language Symbol}
     {morphism : FreeMonoid Symbol →* Carrier} {accept : Set Carrier}
     (hrec : Recognizes L morphism accept) {x y : FreeMonoid Symbol}
@@ -74,16 +86,26 @@ theorem syntacticRel_of_recognizer_eq [Monoid Carrier] {L : Language Symbol}
   simp only [map_mul]
   rw [hxy]
 
-/-- The kernel of every recognizing morphism refines the syntactic congruence. -/
+/-- **Recognizer kernels refine the syntactic congruence.** If a monoid morphism $\varphi$ from the
+free monoid $\Sigma^*$ recognizes a language $L$ over $\Sigma$ through a subset $A$ of its
+codomain, then the kernel congruence of $\varphi$ is contained in the syntactic congruence of $L$:
+any words $x, y$ with $\varphi(x) = \varphi(y)$ are syntactically equivalent for $L$. -/
 theorem recognizer_ker_le_syntacticCon [Monoid Carrier] {L : Language Symbol}
     {morphism : FreeMonoid Symbol →* Carrier} {accept : Set Carrier}
     (hrec : Recognizes L morphism accept) : Con.ker morphism ≤ syntacticCon L := by
   intro x y hxy
   exact syntacticRel_of_recognizer_eq hrec hxy
 
-/-- The quotient by the kernel of a recognizing morphism maps canonically to the syntactic
-monoid.  This is the algebraic minimality map before identifying the kernel quotient with the
-image of the recognizer. -/
+/-- **Canonical map from a recognizer's kernel quotient to the syntactic monoid.** Let $L$ be a
+language over an alphabet $\Sigma$, let $\varphi : \Sigma^* \to M$ be a monoid morphism from the
+free monoid on $\Sigma$ into a monoid $M$, and let $A \subseteq M$ be such that $\varphi$
+recognizes $L$ through $A$. Since the kernel congruence of $\varphi$ (words $x, y$ with
+$\varphi(x) = \varphi(y)$) is contained in the syntactic congruence of $L$, there is a monoid
+morphism from the quotient of $\Sigma^*$ by the kernel of $\varphi$ to the syntactic monoid of
+$L$ sending the class of each word $w$ to the syntactic class of $w$.
+
+This is the algebraic minimality map before identifying the kernel quotient with the image of
+the recognizer. -/
 def recognizerQuotientToSyntactic [Monoid Carrier] {L : Language Symbol}
     (morphism : FreeMonoid Symbol →* Carrier) (accept : Set Carrier)
     (hrec : Recognizes L morphism accept) :
@@ -98,8 +120,11 @@ theorem recognizerQuotientToSyntactic_mk [Monoid Carrier] {L : Language Symbol}
       syntacticMorphism L x :=
   rfl
 
-/-- The canonical map from a recognizer's kernel quotient onto the syntactic monoid is
-surjective. -/
+/-- **The kernel quotient of a recognizer maps onto the syntactic monoid.** If a monoid morphism
+$\varphi$ from the free monoid $\Sigma^*$ recognizes a language $L$ over $\Sigma$ through a subset
+$A$ of its codomain, then the canonical monoid morphism from the quotient of $\Sigma^*$ by the
+kernel congruence of $\varphi$ to the syntactic monoid of $L$, which sends the class of a word
+$x$ to its syntactic class, is surjective. -/
 theorem recognizerQuotientToSyntactic_surjective [Monoid Carrier] {L : Language Symbol}
     (morphism : FreeMonoid Symbol →* Carrier) (accept : Set Carrier)
     (hrec : Recognizes L morphism accept) :
@@ -108,7 +133,12 @@ theorem recognizerQuotientToSyntactic_surjective [Monoid Carrier] {L : Language 
   obtain ⟨x, rfl⟩ := syntacticMorphism_surjective L q
   exact ⟨(Con.ker morphism).mk' x, recognizerQuotientToSyntactic_mk morphism accept hrec x⟩
 
-/-- The image of a recognizing morphism maps canonically onto the syntactic monoid. -/
+/-- **Map from a recognizer's image to the syntactic monoid.** Let $\varphi : \Sigma^* \to M$ be a
+monoid morphism from the free monoid $\Sigma^*$ that recognizes a language $L$ over $\Sigma$
+through a subset $A \subseteq M$. This is the monoid morphism from the image $\varphi(\Sigma^*)$
+to the syntactic monoid of $L$ that sends $\varphi(x)$ to the syntactic class of $x$ for every
+word $x$. It is well defined because words with the same image under $\varphi$ are syntactically
+equivalent for $L$. -/
 noncomputable def recognizerImageToSyntactic [Monoid Carrier] {L : Language Symbol}
     (morphism : FreeMonoid Symbol →* Carrier) (accept : Set Carrier)
     (hrec : Recognizes L morphism accept) :
@@ -132,7 +162,11 @@ theorem recognizerImageToSyntactic_image [Monoid Carrier] {L : Language Symbol}
   rw [hinv]
   exact recognizerQuotientToSyntactic_mk morphism accept hrec x
 
-/-- The image of any recognizing morphism surjects onto the syntactic monoid. -/
+/-- **The image of a recognizer maps onto the syntactic monoid.** Let $\varphi : \Sigma^* \to M$ be
+a monoid morphism from the free monoid $\Sigma^*$ that recognizes a language $L$ over $\Sigma$
+through a subset $A \subseteq M$. Then the canonical monoid morphism from the image
+$\varphi(\Sigma^*)$ to the syntactic monoid of $L$, which sends $\varphi(x)$ to the syntactic class
+of $x$, is surjective. -/
 theorem recognizerImageToSyntactic_surjective [Monoid Carrier] {L : Language Symbol}
     (morphism : FreeMonoid Symbol →* Carrier) (accept : Set Carrier)
     (hrec : Recognizes L morphism accept) :
@@ -142,7 +176,9 @@ theorem recognizerImageToSyntactic_surjective [Monoid Carrier] {L : Language Sym
   exact ⟨⟨morphism x, ⟨x, rfl⟩⟩,
     recognizerImageToSyntactic_image morphism accept hrec x⟩
 
-/-- If the carrier of a recognizing monoid is finite, then so is the syntactic monoid. -/
+/-- **Finite recognizers give finite syntactic monoids.** If a monoid morphism from the free monoid
+$\Sigma^*$ to a finite monoid $M$ recognizes a language $L$ over $\Sigma$ through some subset of
+$M$, then the syntactic monoid of $L$ is finite. -/
 theorem finite_syntacticMonoid_of_recognizer [Monoid Carrier] [Finite Carrier]
     {L : Language Symbol} (morphism : FreeMonoid Symbol →* Carrier) (accept : Set Carrier)
     (hrec : Recognizes L morphism accept) : Finite (SyntacticMonoid L) := by
@@ -150,7 +186,10 @@ theorem finite_syntacticMonoid_of_recognizer [Monoid Carrier] [Finite Carrier]
   exact Finite.of_surjective (recognizerImageToSyntactic morphism accept hrec)
     (recognizerImageToSyntactic_surjective morphism accept hrec)
 
-/-- Recognition can be stated using equality with the inverse image of the accepting set. -/
+/-- **Recognition as an inverse image.** Let $L$ be a language over an alphabet $\Sigma$, let
+$\varphi : \Sigma^* \to M$ be a monoid morphism from the free monoid on $\Sigma$ into a monoid
+$M$, and let $A \subseteq M$. Then $\varphi$ recognizes $L$ through $A$ if and only if the set
+of words of $\Sigma^*$ that belong to $L$ equals $\varphi^{-1}(A)$. -/
 theorem recognizes_iff_preimage [Monoid Carrier] (L : Language Symbol)
     (morphism : FreeMonoid Symbol →* Carrier) (accept : Set Carrier) :
     Recognizes L morphism accept ↔
@@ -162,7 +201,11 @@ theorem recognizes_iff_preimage [Monoid Carrier] (L : Language Symbol)
   · intro h x
     exact Set.ext_iff.mp h x
 
-/-- A recognizer is unchanged when its accepting subset agrees on the image of the morphism. -/
+/-- **Changing the accepting set off the image of a recognizer.** Let $\varphi : \Sigma^* \to M$ be
+a monoid morphism from the free monoid $\Sigma^*$ that recognizes a language $L$ over $\Sigma$
+through a subset $A_1 \subseteq M$. If $A_2 \subseteq M$ satisfies
+$\varphi(x) \in A_1 \iff \varphi(x) \in A_2$ for every word $x$, then $\varphi$ also recognizes $L$
+through $A_2$. -/
 theorem Recognizes.congr_accept [Monoid Carrier] {L : Language Symbol}
     {morphism : FreeMonoid Symbol →* Carrier} {accept₁ accept₂ : Set Carrier}
     (hrec : Recognizes L morphism accept₁)
@@ -173,9 +216,13 @@ theorem Recognizes.congr_accept [Monoid Carrier] {L : Language Symbol}
 
 /-! ## The canonical syntactic automaton -/
 
-/-- The DFA whose states are syntactic classes and whose transitions multiply by letter
-classes.  It is the direct automata-theoretic presentation of the canonical syntactic
-recognizer. -/
+/-- **The syntactic DFA.** Let $L$ be a language over an alphabet $\Sigma$. The syntactic DFA of
+$L$ has the syntactic monoid of $L$ as its set of states, the identity $1$ as start state, and
+the syntactic classes of the words of $L$ as accepting states; from a state $q$, reading a
+letter $a \in \Sigma$ leads to $q \cdot [a]$, where $[a]$ is the syntactic class of the
+one-letter word $a$.
+
+It is the direct automata-theoretic presentation of the canonical syntactic recognizer. -/
 def syntacticDFA (L : Language Symbol) : DFA Symbol (SyntacticMonoid L) where
   step q a := q * syntacticMorphism L (FreeMonoid.of a)
   start := 1
@@ -190,7 +237,10 @@ theorem syntacticDFA_step (L : Language Symbol) (q : SyntacticMonoid L) (a : Sym
     (syntacticDFA L).step q a = q * syntacticMorphism L (FreeMonoid.of a) :=
   rfl
 
-/-- Evaluation in the syntactic DFA is multiplication by the syntactic class of the input. -/
+/-- **Runs of the syntactic DFA.** Let $L$ be a language over an alphabet $\Sigma$. For every
+state $q$ of the syntactic DFA of $L$ (an element of the syntactic monoid of $L$) and every word
+$x \in \Sigma^*$, the state reached from $q$ by reading $x$ is $q \cdot [x]$, where $[x]$ is the
+image of $x$ under the syntactic morphism of $L$. -/
 theorem syntacticDFA_evalFrom (L : Language Symbol) (q : SyntacticMonoid L)
     (x : List Symbol) :
     (syntacticDFA L).evalFrom q x = q * syntacticMorphism L (FreeMonoid.ofList x) := by
@@ -205,19 +255,22 @@ theorem syntacticDFA_eval (L : Language Symbol) (x : List Symbol) :
     (syntacticDFA L).eval x = syntacticMorphism L (FreeMonoid.ofList x) := by
   rw [DFA.eval, syntacticDFA_evalFrom, syntacticDFA_start, one_mul]
 
-/-- The syntactic DFA accepts exactly the language from which it was constructed. -/
+/-- **The syntactic DFA accepts its language.** For every language $L$, the syntactic DFA of $L$
+accepts exactly $L$. -/
 theorem syntacticDFA_accepts (L : Language Symbol) : (syntacticDFA L).accepts = L := by
   ext x
   rw [DFA.mem_accepts, syntacticDFA_eval]
   exact syntacticMorphism_mem_accept L (FreeMonoid.ofList x)
 
-/-- Every state of the syntactic DFA is reachable. -/
+/-- **The syntactic DFA is accessible.** For every language $L$, every state of the syntactic DFA
+of $L$ is reachable: some word leads to it from the start state. -/
 theorem syntacticDFA_accessible (L : Language Symbol) : Accessible (syntacticDFA L) := by
   intro q
   obtain ⟨x, rfl⟩ := syntacticMorphism_surjective L q
   exact ⟨FreeMonoid.toList x, by simp⟩
 
-/-- A language with finite syntactic monoid is regular. -/
+/-- **Finite syntactic monoid implies regularity.** Every language whose syntactic monoid is
+finite is regular. -/
 theorem isRegular_of_finite_syntacticMonoid (L : Language Symbol)
     [Finite (SyntacticMonoid L)] : L.IsRegular := by
   classical
@@ -225,21 +278,31 @@ theorem isRegular_of_finite_syntacticMonoid (L : Language Symbol)
   rw [_root_.Language.isRegular_iff]
   exact ⟨SyntacticMonoid L, inferInstance, syntacticDFA L, syntacticDFA_accepts L⟩
 
-/-- Finiteness of the syntactic monoid is sufficient for a finite canonical recognizer, rather
-than merely for the existence of some finite DFA. -/
+/-- **The syntactic DFA of a language with finite syntactic monoid.** If the syntactic monoid of a
+language $L$ is finite, then the syntactic DFA of $L$ has finitely many states and accepts exactly
+$L$.
+
+This gives a specific finite recognizer, the syntactic DFA, rather than merely the existence of
+some finite DFA. -/
 theorem exists_finite_syntacticDFA (L : Language Symbol) [Finite (SyntacticMonoid L)] :
     ∃ _ : Fintype (SyntacticMonoid L), (syntacticDFA L).accepts = L := by
   classical
   exact ⟨Fintype.ofFinite _, syntacticDFA_accepts L⟩
 
-/-- The transition morphism recognizes the language accepted by its DFA, without requiring
-accessibility or state separation. -/
+/-- **The transition morphism of a DFA recognizes its language.** Let $M$ be a DFA over an
+alphabet $\Sigma$ with state set $Q$, start state $q_0$ and set of accepting states $F$. The
+transition morphism of $M$, from the free monoid $\Sigma^*$ to the monoid of state
+transformations of $Q$, recognizes the language accepted by $M$ through the set of
+transformations $f$ with $f(q_0) \in F$.
+
+No accessibility or state-separation hypothesis on $M$ is needed. -/
 theorem recognizes_transitionMorphism (M : DFA Symbol State) :
     Recognizes M.accepts (transitionMorphism M) {f | f M.start ∈ M.accept} := by
   intro x
   rfl
 
-/-- Every language recognized by a finite-state DFA has a finite syntactic monoid. -/
+/-- **Languages of finite automata have finite syntactic monoids.** Every language accepted by a
+DFA with finitely many states has a finite syntactic monoid. -/
 theorem finite_syntacticMonoid_of_finite_dfa (M : DFA Symbol State)
     [Finite State] : Finite (SyntacticMonoid M.accepts) := by
   classical

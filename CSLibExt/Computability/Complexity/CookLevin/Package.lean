@@ -72,7 +72,14 @@ section Drain
 variable {K : Type} [DecidableEq K] {Γ : K → Type} {Λ σ : Type} [Flag σ]
   {M : Λ → TM2.Stmt Γ Λ σ}
 
-/-- `xfer k []` empties stack `k` whatever it holds, in `|S k| + 1` steps. -/
+/-- **Draining a stack with the transfer loop.** Let $M$ be a TM2 machine whose state type
+carries a flag bit, and suppose that the statement of $M$ at label $\ell$ is the transfer loop
+that pops stack $k$ with no target stacks, returning to $\ell$ while the pop succeeds and going
+to label $\ell'$ once stack $k$ is empty. Then for every state $v$ and every stack assignment
+$S$, writing $S_k$ for the contents of stack $k$ under $S$ and $|S_k|$ for its length, in
+exactly $|S_k| + 1$ steps the machine goes from label $\ell$ with state $v$ and stacks $S$ to
+label $\ell'$ with the state that stores the flag bit false and the stacks of $S$ with stack
+$k$ replaced by the empty list, all other stacks unchanged. -/
 theorem xfer_drain {self next : Λ} {k : K} (hp : M self = xfer k [] self next) :
     ∀ (l : List (Γ k)) (v : σ) (S : ∀ k, List (Γ k)), S k = l →
       Run M (l.length + 1) ⟨some self, v, S⟩ ⟨some next, Flag.tag false, update S k []⟩ := by
@@ -94,17 +101,28 @@ theorem xfer_drain {self next : Λ} {k : K} (hp : M self = xfer k [] self next) 
       rw [update_idem] at key
       exact key.of_eq (by simp)
 
-/-- The drain program: stage `i < |ks|` empties `ks[i]`; stage `|ks|` resets the state and halts. -/
+/-- **The drain program.** Given a list $k_0, \dots, k_{m-1}$ of stacks, a type $\Lambda$ of
+labels and labels $\lambda : \mathbb{N} \to \Lambda$, stage $i$ of the drain program is as
+follows. For $i < m$ it pops stack $k_i$, recording in the state whether a symbol was popped, and
+jumps to $\lambda(i)$ if one was and to $\lambda(i + 1)$ if the stack was empty; repeated, this
+empties $k_i$. For $i \ge m$ it sets the state to store the flag bit false and halts. -/
 def drainS (ks : List K) (lab : ℕ → Λ) (i : ℕ) : TM2.Stmt Γ Λ σ :=
   match ks[i]? with
   | some k => xfer k [] (lab i) (lab (i + 1))
   | none => .load (fun _ => Flag.tag false) .halt
 
-/-- Steps of the drain. -/
+/-- **Drain step count.** For a list $k_1, \dots, k_m$ of stacks and contents $S$ assigning a
+list $S_k$ to each stack $k$, the drain step count is $1 + \sum_{i=1}^{m} (|S_{k_i}| + 1)$. -/
 def drainB (ks : List K) (S : ∀ k, List (Γ k)) : ℕ :=
   (ks.map fun k => (S k).length + 1).sum + 1
 
-/-- **The drain.** Empties every stack of `ks` and halts with state `tag false`. -/
+/-- **The drain.** Let $M$ be a multi-stack machine program with labels in a type $\Lambda$, let
+$k_0, \dots, k_{m-1}$ be a list of distinct stacks, and let $\lambda : \mathbb{N} \to \Lambda$ be
+labels such that for every $i \le m$ the instruction of $M$ at $\lambda(i)$ is stage $i$ of the
+drain program for this list and these labels. Then for every state $v$ and stack contents $S$,
+the machine runs in exactly $1 + \sum_{i < m} (|S_{k_i}| + 1)$ steps from label $\lambda(0)$,
+state $v$ and contents $S$ to the halted configuration whose state stores the flag bit false and
+whose contents are empty on each $k_i$ and equal to $S$ on every other stack. -/
 theorem drain_run :
     ∀ (ks : List K) (lab : ℕ → Λ), ks.Nodup → (∀ i ≤ ks.length, M (lab i) = drainS ks lab i) →
       ∀ (v : σ) (S : ∀ k, List (Γ k)),
@@ -144,26 +162,36 @@ end Drain
 
 section Glue
 
-/-- Labels of the composed machine: the full machine's, and the drain stages `0..n`. -/
+/-- **Labels of the composed machine.** For a type $\Lambda$ of labels and $n \in \mathbb{N}$, a
+label of the composed machine is either a label $l \in \Lambda$ of the original machine or a
+drain stage $i \in \{0, \dots, n\}$. -/
 inductive DL (Λ : Type) (n : ℕ)
   | f (l : Λ)
   | dr (i : Fin (n + 1))
   deriving DecidableEq, Fintype
 
-/-- Drain stage `j` (clamped to `n`). -/
+/-- **Drain-stage label.** For $n, j \in \mathbb{N}$, the label of the composed machine with
+drain stages $0, \dots, n$ that names drain stage $\min(j, n)$. -/
 def dlab {Λ : Type} (n j : ℕ) : DL Λ n := .dr ⟨min j n, by omega⟩
 
-/-- The identity stack embedding (pure relabelling). -/
+/-- **The identity stack embedding.** For a family of stack alphabets $\Gamma$ indexed by $K$,
+the identity stack embedding of $\Gamma$ into itself sends every stack to itself and identifies
+every alphabet with itself by the identity bijection: a pure relabelling. -/
 def idE {K : Type} (Γ : K → Type) : SEmb Γ Γ := ⟨id, injective_id, fun _ => Equiv.refl _⟩
 
-/-- Stacks emptied by the drain: every stack except the output. -/
+/-- **Stacks to drain.** The list of all stacks of the full machine other than its output
+stack, each appearing exactly once, in an unspecified order. These are the stacks that the drain
+empties before the composed machine halts. -/
 noncomputable def dks : List FK := (Finset.univ.erase (FK.h .out)).toList
 
 theorem mem_dks (q : FK) : q ∈ dks ↔ q ≠ FK.h .out := by simp [dks]
 
 theorem dks_nodup : dks.Nodup := Finset.nodup_toList _
 
-/-- After the drain only the output stack survives. -/
+/-- **Only the output stack survives the drain.** For any alphabets and any assignment $T$ of
+contents to the stacks of the full machine, the contents that are empty on every stack to drain
+and agree with $T$ elsewhere are the contents that agree with $T$ on the output stack and are
+empty on every other stack. -/
 theorem drained {Γ : FK → Type} (T : ∀ k, List (Γ k)) :
     (fun q => if q ∈ dks then [] else T q) = fun q => if q = FK.h .out then T q else [] := by
   funext q
@@ -173,8 +201,14 @@ theorem drained {Γ : FK → Type} (T : ∀ k, List (Γ k)) :
 
 variable {g r : ℕ} {Λ : Type} [DecidableEq Λ]
 
-/-- **The composed program**: the program `P` relabelled, except that its halting label `fin`
-jumps to the drain. -/
+/-- **The composed program.** Let $g, r \in \mathbb{N}$, let $P$ be a program with labels
+$\Lambda$ and Boolean state over the stacks of the full machine with alphabets $F\Gamma_{g,r}$,
+and let $\mathit{fin} \in \Lambda$. The composed program has as labels the labels of $P$ and the
+drain stages $0, \dots, n$, where $n$ is the number of stacks other than the output stack. At a
+label $\ell \ne \mathit{fin}$ it runs $P(\ell)$ with every jump target relabelled; at
+$\mathit{fin}$ it jumps to drain stage $0$; at drain stage $i < n$ it empties the $i$-th stack
+other than the output stack (in a fixed order) and moves to stage $i + 1$, and at stage $n$ it
+sets the state to false and halts. -/
 noncomputable def gprog (P : Λ → TM2.Stmt (FΓ g r) Λ Bool) (fin : Λ) :
     DL Λ dks.length → TM2.Stmt (FΓ g r) (DL Λ dks.length) Bool
   | .f l => if l = fin then .goto (fun _ => dlab _ 0) else mapS (idE _) DL.f (P l)
@@ -187,7 +221,16 @@ theorem embeds_g {P : Λ → TM2.Stmt (FΓ g r) Λ Bool} {fin : Λ} (hfin : P fi
   · exact Or.inr (hl ▸ hfin)
   · exact Or.inl (by simp only [gprog, ite_eq_right hl])
 
-/-- Composed run: `P`'s run to `fin`, one jump, the drain. -/
+/-- **Running a program, then the drain.** Let $g, r \in \mathbb{N}$, let $P$ be a program with
+labels $\Lambda$ and Boolean state over the stacks of the full machine with alphabets
+$F\Gamma_{g,r}$, and let $\mathit{fin}$ be a label with $P(\mathit{fin}) = \mathrm{halt}$.
+Suppose $P$ goes in at most $B$ steps from the configuration with label $\ell$, state $v$ and
+stacks $S$ to the configuration with label $\mathit{fin}$, state $v'$ and stacks $T$. Then the
+composed program of $P$ and $\mathit{fin}$ goes in at most $B + 1 + d(T)$ steps from label $\ell$
+(as a label of the composed program), state $v$ and stacks $S$ to the halted configuration with
+state false in which every stack other than the output stack is empty and the output stack is
+that of $T$. Here $d(T)$, the step count of the drain, is $1$ plus the sum of $|T_q| + 1$ over
+the stacks $q$ other than the output stack. -/
 theorem g_run_gen {P : Λ → TM2.Stmt (FΓ g r) Λ Bool} {fin : Λ} (hfin : P fin = .halt)
     {B : ℕ} {l : Λ} {v v' : Bool} {S T : ∀ k, List (FΓ g r k)}
     (h : RunLe P B ⟨some l, v, S⟩ ⟨some fin, v', T⟩) :
@@ -203,7 +246,11 @@ theorem g_run_gen {P : Λ → TM2.Stmt (FΓ g r) Λ Bool} {fin : Λ} (hfin : P f
     (fun i hi => by simp [gprog, dlab, min_eq_left hi]) v' T'
   exact (r1.trans (r2.le le_rfl)).trans (r3.le le_rfl)
 
-/-- Drain steps from a uniform height bound. -/
+/-- **Step bound for draining bounded stacks.** Let $g, r, h \in \mathbb{N}$ and let $T$ assign
+to every stack $k$ of the full machine (with alphabets $\Gamma_{g,r}$) a list $T_k$ of length at
+most $h$. Let $L$ be the number of stacks other than the output stack. Then the drain step count
+$1 + \sum_k (|T_k| + 1)$, summed over the stacks $k$ other than the output stack, is at most
+$L(h + 1) + 1$. -/
 theorem drainB_le {T : ∀ k, List (FΓ g r k)} {h : ℕ} (hT : ∀ k, (T k).length ≤ h) :
     drainB dks T ≤ dks.length * (h + 1) + 1 := by
   unfold drainB
@@ -227,7 +274,15 @@ variable {r : ℕ} {M : FinTM2} (E : Enc M)
 theorem fullProg_fin (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀)
     (sep : M.Γ M.k₀) (k : Polynomial ℕ) (c e : ℕ) : fullProg E Ys acc ι sep k c e (.h .fin) = .halt := rfl
 
-/-- **The reduction machine as a `FinTM2`**: the full machine followed by the drain. -/
+/-- **The reduction machine.** Fix $r \in \mathbb{N}$, a finite TM2 machine $M$ with an encoding
+$E$, a list $Y$ of input symbols of $M$, an output symbol $a$, a map $\iota$ from
+$\{0, \dots, r-1\}$ to input symbols, an input symbol $\mathit{sep}$, a polynomial $k$ with
+coefficients in $\mathbb{N}$ and $c, e \in \mathbb{N}$. The reduction machine is the finite TM2
+machine with the stacks and alphabets of the full machine, input on the raw-input stack and
+output on the output stack; its labels are those of the full machine together with the drain
+stages $0, \dots, n$, where $n$ is the number of stacks other than the output stack; it starts at
+the read-loop label with state false; and its program is the composed program of the full
+machine's program and its final label: the full machine, followed by the drain. -/
 noncomputable def gTM (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀)
     (sep : M.Γ M.k₀) (k : Polynomial ℕ) (c e : ℕ) : FinTM2 where
   K := FK
@@ -240,12 +295,24 @@ noncomputable def gTM (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r 
   initialState := false
   m := gprog (fullProg E Ys acc ι sep k c e) (.h .fin)
 
-/-- The emitted formula for raw input `s`. -/
+/-- **The formula emitted on a raw input.** Fix $r \in \mathbb{N}$, a finite TM2 machine $M$ with
+an encoding $E$, a list $Y$ of input symbols of $M$, an output symbol $a$, a map $\iota$ from
+$\{0, \dots, r-1\}$ to input symbols, an input symbol $\mathit{sep}$, a polynomial $k$ with
+coefficients in $\mathbb{N}$ and $c, e \in \mathbb{N}$. For a raw input $s$, a list over
+$\{0, \dots, r-1\}$, let $x$ be $s$ with each symbol mapped by $\iota$, followed by
+$\mathit{sep}$, let $m = |s| + 1 + k(|s|)$ and $T = (m + c)^e$. The emitted formula for $s$ is
+the bit-string encoding of the assembled Cook–Levin formula $\Phi_E(x, Y, a, m, T)$. -/
 noncomputable def phiOf (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀)
     (sep : M.Γ M.k₀) (k : Polynomial ℕ) (c e : ℕ) (s : List (Fin r)) : List Bool :=
   encodeCNF (Phi E (s.map ι ++ [sep]) Ys acc (mOf k s.length) (TOf k c e s.length))
 
-/-- Step bound of the composed machine (`D = depth` of the full machine, a constant). -/
+/-- **Step bound of the composed machine.** Fix the verifier data (an encoding $E$ of a stack
+machine $M$, a list $Y$ of input symbols, an output symbol $\mathrm{acc}$, a map $\iota$ into
+the input alphabet, a separator $\mathrm{sep}$, a polynomial $k$ and $c, e \in \mathbb{N}$) and an
+input length $n$. Let $B(n)$ be the step bound of the full machine on inputs of length $n$, let
+$D$ be the depth of the full machine (the most push, peek and pop operations on any path of one
+of its instructions), and let $L$ be the number of stacks other than the output stack. The step
+bound of the composed machine is $B(n) + 1 + (L(n + B(n) D + 1) + 1)$. -/
 noncomputable def gB (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀)
     (sep : M.Γ M.k₀) (k : Polynomial ℕ) (c e n : ℕ) : ℕ :=
   fullB E Ys k c e n + 1 +
@@ -275,8 +342,16 @@ theorem haltList_g (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r →
   · rfl
   · rfl
 
-/-- **The composed machine, raw input to `haltList`.** From `initList` on the raw input `s`, the
-reduction machine halts in exactly `haltList (phiOf s)` within `gB |s|` steps. No hypotheses. -/
+/-- **The reduction machine halts with the emitted formula.** Fix $r \in \mathbb{N}$, a finite TM2
+machine $M$ with an encoding $E$, a list $Y$ of input symbols of $M$, an output symbol $a$, a map
+$\iota$ from $\{0, \dots, r-1\}$ to input symbols, an input symbol $\mathit{sep}$, a polynomial
+$k$ with coefficients in $\mathbb{N}$ and $c, e \in \mathbb{N}$. For every raw input $s$, a list
+over $\{0, \dots, r-1\}$, the program of the reduction machine goes in at most $g_B(|s|)$ steps
+from the initial configuration on input $s$ to the halting configuration with output the emitted
+formula for $s$ (no label, the initial state, that formula on the output stack and every other
+stack empty), where $g_B$ is the step bound of the composed machine.
+
+No assumption on the verifier data is needed. -/
 theorem g_run (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀)
     (sep : M.Γ M.k₀) (k : Polynomial ℕ) (c e : ℕ) (s : List (Fin r)) :
     RunLe (gTM E Ys acc ι sep k c e).m (gB E Ys acc ι sep k c e s.length)
@@ -311,7 +386,12 @@ section Pkg
 
 open Cslib.Complexity.CookLevin.Situation Cslib.Complexity.CookLevin.Assembly
 
-/-- A bounded run from `initList` to `haltList` is a `TM2OutputsInTime` certificate. -/
+/-- **A bounded halting run certifies the output.** Let $M$ be a finite TM2 machine, $l$ a list
+over its input alphabet, $l'$ a list over its output alphabet and $B \in \mathbb{N}$. If the
+program of $M$ goes in at most $B$ steps from the initial configuration on input $l$ (its start
+label, its initial state, $l$ on the input stack and every other stack empty) to the halting
+configuration with output $l'$ (no label, the initial state, $l'$ on the output stack and every
+other stack empty), then $M$ outputs $l'$ on input $l$ within $B$ steps. -/
 noncomputable def outputsOfRunLe {tm : FinTM2} {l : List (tm.Γ tm.k₀)} {l' : List (tm.Γ tm.k₁)}
     {B : ℕ} (h : RunLe tm.m B (initList tm l) (haltList tm l')) :
     TM2OutputsInTime tm l (some l') B where
@@ -319,7 +399,11 @@ noncomputable def outputsOfRunLe {tm : FinTM2} {l : List (tm.Γ tm.k₀)} {l' : 
   evals_in_steps := (Classical.choose_spec h).2
   steps_le_m := (Classical.choose_spec h).1
 
-/-- `outputsOfRunLe` up to an equation on the output. -/
+/-- **A bounded halting run certifies the output, up to an equal output.** Let $M$ be a finite TM2
+machine, $l$ a list over its input alphabet, $l'$ and $l''$ lists over its output alphabet and
+$B \in \mathbb{N}$. If the program of $M$ goes in at most $B$ steps from the initial
+configuration on input $l$ to the halting configuration with output $l''$, and $l'' = l'$, then
+$M$ outputs $l'$ on input $l$ within $B$ steps. -/
 noncomputable def outputsOfRunLe' {tm : FinTM2} {l : List (tm.Γ tm.k₀)}
     {l' l'' : List (tm.Γ tm.k₁)} {B : ℕ} (h : RunLe tm.m B (initList tm l) (haltList tm l''))
     (he : l'' = l') : TM2OutputsInTime tm l (some l') B :=
@@ -336,7 +420,13 @@ theorem gB_poly (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.
   exact (hf.add (IsPoly.const 1)).add (((IsPoly.const L).mul
     ((IsPoly.id.add (hf.mul (IsPoly.const D))).add (IsPoly.const 1))).add (IsPoly.const 1))
 
-/-- **One polynomial** bounding the composed machine on every input. -/
+/-- **One polynomial bounds the reduction machine.** Fix $r \in \mathbb{N}$, a finite TM2 machine
+$M$ with an encoding $E$, a list $Y$ of input symbols of $M$, an output symbol $a$, a map $\iota$
+from $\{0, \dots, r-1\}$ to input symbols, an input symbol $\mathit{sep}$, a polynomial $k$ with
+coefficients in $\mathbb{N}$ and $c, e \in \mathbb{N}$. There is a polynomial $p$ with
+coefficients in $\mathbb{N}$ such that for every raw input $s$, a list over
+$\{0, \dots, r-1\}$, the reduction machine on input $s$ outputs the emitted formula for $s$
+within $p(|s|)$ steps. -/
 theorem g_outputs (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀)
     (sep : M.Γ M.k₀) (k : Polynomial ℕ) (c e : ℕ) :
     ∃ p : Polynomial ℕ, ∀ s : List (Fin r),
@@ -345,14 +435,33 @@ theorem g_outputs (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → 
   obtain ⟨p, hp⟩ := gB_poly E Ys acc ι sep k c e
   exact ⟨p, fun s => ⟨outputsOfRunLe ((g_run E Ys acc ι sep k c e s).mono (hp _).le)⟩⟩
 
-/-- The reduction function on encoded inputs: decode the raw symbols, emit `Phi`. -/
+/-- **The Cook–Levin reduction function.** Fix $r \in \mathbb{N}$, a finite TM2 machine $M$ with
+an encoding $E$, a list $Y$ of input symbols of $M$, an output symbol $\mathrm{acc}$ of $M$, a
+map $\iota$ from $\{0, \dots, r-1\}$ to input symbols of $M$, an input symbol $\mathit{sep}$ of
+$M$, a polynomial $k$ with coefficients in $\mathbb{N}$ and $c, e \in \mathbb{N}$. Let
+$\mathit{ea}$ encode the elements of a type $\alpha$ as lists over an alphabet $\Sigma$, and let
+$\mathit{eqv}$ be a bijection from $\{0, \dots, r-1\}$ to $\Sigma$. The reduction function sends
+$u \in \alpha$ to the emitted formula for the raw input $s$ obtained by applying
+$\mathit{eqv}^{-1}$ to each symbol of $\mathit{ea}(u)$: the dense encoding of the assembled
+Cook–Levin formula $\Phi_E(x, Y, \mathrm{acc}, m, T)$, where $x$ is $s$ with each symbol mapped
+by $\iota$, followed by $\mathit{sep}$, $m = |s| + 1 + k(|s|)$ and $T = (m + c)^e$. -/
 noncomputable def fR {α αΓ : Type} (ea : α → List αΓ) (eqv : Fin r ≃ αΓ)
     (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀) (sep : M.Γ M.k₀)
     (k : Polynomial ℕ) (c e : ℕ) (a : α) : List Bool :=
   phiOf E Ys acc ι sep k c e ((ea a).map eqv.invFun)
 
-/-- **The packaged reduction machine**: `TM2ComputableInPolyTime` from `ea` to the identity
-encoding of `List Bool`, computing `fR`. Still parametric in the verifier data. -/
+/-- **The reduction machine as a polynomial-time computation.** Fix $r \in \mathbb{N}$, a finite
+TM2 machine $M$ with an encoding $E$, a list $Y$ of input symbols of $M$, an output symbol $a$, a
+map $\iota$ from $\{0, \dots, r-1\}$ to input symbols, an input symbol $\mathit{sep}$, a
+polynomial $k$ with coefficients in $\mathbb{N}$ and $c, e \in \mathbb{N}$. Let $\mathit{ea}$
+encode the elements of a type $\alpha$ as lists over an alphabet $\Sigma$, and let $\mathit{eqv}$
+be a bijection from $\{0, \dots, r-1\}$ to $\Sigma$. This is a polynomial-time TM2 computation of
+the reduction function $f_R$, which sends $u \in \alpha$ to the emitted formula for the raw input
+obtained by applying $\mathit{eqv}^{-1}$ to each symbol of $\mathit{ea}(u)$, from the encoding
+$\mathit{ea}$ to the identity encoding of bit strings: the machine is the reduction machine, its
+input alphabet is identified with $\Sigma$ by $\mathit{eqv}$, its output alphabet with the
+Booleans by the identity, and its time bound is a polynomial $p$ with $p(n) = g_B(n)$ for all
+$n$, where $g_B$ is the step bound of the composed machine. -/
 noncomputable def gComp {α αΓ : Type} (ea : α → List αΓ) (eqv : Fin r ≃ αΓ)
     (Ys : List (M.Γ M.k₀)) (acc : M.Γ M.k₁) (ι : Fin r → M.Γ M.k₀) (sep : M.Γ M.k₀)
     (k : Polynomial ℕ) (c e : ℕ) :

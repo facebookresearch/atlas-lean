@@ -43,10 +43,13 @@ open MeasureTheory Filter
 
 namespace MathlibExt.Analysis.Distribution.SchwartzCommutantMulDerivWanted
 
-/-- Let $M:\mathcal{S}(\mathbb{R})\to\mathcal{S}(\mathbb{R})$ denote the map $(Mf)(x)=x f(x)$.
-Suppose $T:\mathcal{S}(\mathbb{R})\to\mathcal{S}(\mathbb{R})$ is a linear map (with no boundedness
-assumed) satisfying $TM=MT$ and $T\frac{d}{dx}=\frac{d}{dx}T$. Prove that there exists $c\in
-\mathbb{C}$ such that $Tf=cf$ for all $f\in \mathcal{S}(\mathbb{R})$.
+/-- **Linear maps on Schwartz space commuting with $x$ and $d/dx$ are scalars.** Let
+$\mathcal{S}(\mathbb{R})$ be the space of complex-valued Schwartz functions on $\mathbb{R}$, and
+let $M:\mathcal{S}(\mathbb{R})\to\mathcal{S}(\mathbb{R})$ be a $\mathbb{C}$-linear map with
+$(Mf)(x)=x f(x)$ for all $f\in\mathcal{S}(\mathbb{R})$ and $x\in\mathbb{R}$. If
+$T:\mathcal{S}(\mathbb{R})\to\mathcal{S}(\mathbb{R})$ is a $\mathbb{C}$-linear map (not assumed
+continuous) with $TM=MT$ and $T\frac{d}{dx}=\frac{d}{dx}T$, then there exists $c\in\mathbb{C}$
+such that $Tf=cf$ for all $f\in\mathcal{S}(\mathbb{R})$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theory; General
 theory of linear operators), `benchmark/level2/ma_proofbench_l2_54.lean` at

@@ -35,17 +35,33 @@ open scoped CslibStlc
 
 namespace Tm
 
-/-- Closed values: abstractions and numerals. -/
+/-- **Values of PCF.** A closed PCF term is a value when it is a $\lambda$-abstraction or the
+numeral $\mathsf{succ}^n\,\mathsf{zero}$ for some natural number $n$. -/
 inductive Value : {A : Ty} → Tm [] A → Prop
   | lam {A B : Ty} (body : Tm [A] B) : Value (.lam body)
   | numeral (n : Nat) : Value (numeral n)
 
-/-- Closed values of ground type are numerals. -/
+/-- **Closed values of ground type are numerals.** If a closed PCF term $v$ of the ground type of
+natural numbers is a value, then $v$ is the numeral $\mathsf{succ}^n\,\mathsf{zero}$ for some
+natural number $n$. -/
 theorem Value.eq_numeral {v : Tm [] .nat} (hv : v.Value) : ∃ n, v = Tm.numeral n := by
   cases hv with
   | numeral n => exact ⟨n, rfl⟩
 
-/-- Big-step call-by-name evaluation of closed terms. -/
+/-- **Big-step call-by-name evaluation of PCF.** Write $\underline{n}$ for the numeral
+$\mathsf{succ}^n\,\mathsf{zero}$. For closed PCF terms $t$ and $v$ of the same type,
+$t \Downarrow v$ ($t$ evaluates to $v$) is the least relation closed under the following rules,
+where all terms are closed and $n$ ranges over natural numbers.
+Every $\lambda$-abstraction evaluates to itself, and $\mathsf{zero} \Downarrow \mathsf{zero}$.
+If $t \Downarrow \underline{n}$, then $\mathsf{succ}\,t \Downarrow \underline{n+1}$.
+If $t \Downarrow \mathsf{zero}$, then $\mathsf{pred}\,t \Downarrow \mathsf{zero}$; if
+$t \Downarrow \underline{n+1}$, then $\mathsf{pred}\,t \Downarrow \underline{n}$.
+For the zero test, if $t \Downarrow \mathsf{zero}$ and $s_1 \Downarrow v$, then
+$\mathsf{ifz}\,t\,s_1\,s_2 \Downarrow v$; if $t \Downarrow \underline{n+1}$ and $s_2 \Downarrow v$,
+then $\mathsf{ifz}\,t\,s_1\,s_2 \Downarrow v$. If $f \Downarrow \lambda x.\,b$ and
+$b[a/x] \Downarrow v$, then $f\,a \Downarrow v$, where $b[a/x]$ substitutes the unevaluated
+argument $a$ for $x$ in $b$. If $t\,(\mathsf{fix}\,t) \Downarrow v$, then
+$\mathsf{fix}\,t \Downarrow v$. -/
 inductive Eval : {A : Ty} → Tm [] A → Tm [] A → Prop
   | lam {A B : Ty} {body : Tm [A] B} : Eval (.lam body) (.lam body)
   | zero : Eval .zero .zero
@@ -65,19 +81,23 @@ inductive Eval : {A : Ty} → Tm [] A → Tm [] A → Prop
 
 namespace Eval
 
-/-- Numerals evaluate to themselves. -/
+/-- **Numerals evaluate to themselves.** For every natural number $n$, the closed PCF numeral
+$\underline{n} = \mathsf{succ}^n\,\mathsf{zero}$ evaluates to itself under big-step call-by-name
+evaluation: $\underline{n} \Downarrow \underline{n}$. -/
 theorem numeral (n : Nat) : Eval (Tm.numeral n) (Tm.numeral n) := by
   induction n with
   | zero => exact .zero
   | succ n ih => exact .succ ih
 
-/-- Values evaluate to themselves. -/
+/-- **PCF values evaluate to themselves.** For every type $A$ and every closed PCF term $v$ of type
+$A$ that is a value, $v \Downarrow v$ under big-step call-by-name evaluation. -/
 theorem of_value {A : Ty} {v : Tm [] A} (hv : v.Value) : Eval v v := by
   cases hv with
   | lam => exact .lam
   | numeral n => exact numeral n
 
-/-- Evaluation results are values. -/
+/-- **PCF evaluation results are values.** For closed PCF terms $t$ and $v$ of the same type, if
+$t \Downarrow v$ under big-step call-by-name evaluation, then $v$ is a value. -/
 theorem value {A : Ty} {t v : Tm [] A} (h : Eval t v) : v.Value := by
   induction h with
   | lam => exact .lam _
@@ -90,7 +110,9 @@ theorem value {A : Ty} {t v : Tm [] A} (h : Eval t v) : v.Value := by
   | app _ _ _ ih => exact ih
   | fix _ ih => exact ih
 
-/-- Evaluation is deterministic. -/
+/-- **Determinism of PCF big-step evaluation.** For closed PCF terms $t$, $v$, $w$ of the same
+type, if $t \Downarrow v$ and $t \Downarrow w$ under big-step call-by-name evaluation, then
+$v = w$. -/
 theorem deterministic {A : Ty} {t v w : Tm [] A} (hv : Eval t v) (hw : Eval t w) : v = w := by
   induction hv with
   | lam => cases hw; rfl

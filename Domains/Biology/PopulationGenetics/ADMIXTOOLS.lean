@@ -658,7 +658,8 @@ weights of `T` are the affine combination `∑ k, w k • weight (S k)` of the
 sources' weights (`∑ k, w k = 1`), with no extra private-edge term, then the
 frequency of `T` is the same combination of the source frequencies,
 pointwise. This is the drift-model statement behind the global-ancestry
-bridge: such a `T` is a mixture node with zero private drift. -/
+bridge: for nonnegative coefficients such a `T` is a mixture node with zero
+private drift. -/
 theorem freq_eq_sum_of_weight_eq_sum {ι : Type*} [Fintype ι] {T : P} (S : ι → P) (w : ι → ℝ) (hw : ∑ k, w k = 1)
     (hT : M.weight T = ∑ k, w k • M.weight (S k)) (ω : Ω) :
     M.freq T ω = ∑ k, w k * M.freq (S k) ω := by
