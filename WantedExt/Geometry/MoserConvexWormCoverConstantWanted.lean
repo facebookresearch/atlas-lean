@@ -11,6 +11,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Geometry.MoserWormCover
 public import MathlibExt.Geometry.MoserWormCover.HalfDisk
+public import MathlibExt.Geometry.MoserWormCover.HalfSemidisk
 
 /-!
 # Moser's convex worm cover constant: literature requests
@@ -20,14 +21,13 @@ Wetzel's sector covers unit arcs (2021); Fässler and Orponen,
 Curve packing and modulus estimates (2018).
 
 The completed geometry is imported from its canonical upstream implementation.
-The 19 literature propositions and 19 private proof requests are not assumptions
-or proofs. Two conditional witness corollaries stay with their source claims.
+The 18 remaining literature propositions have corresponding proof requests.
+Two conditional witness corollaries stay with their source claims.
 There is no source-supplied exact-value conjecture. The PWW2007 polygonal-testing
 companion remains an explicit partial-scope gap.
 
-The claim that the disk of diameter one covers every unit arc (`halfDiskCovers`) and its proof
-(`halfDiskCovers_holds`) are in `MathlibExt.Geometry.MoserWormCover.HalfDisk`, which this module
-imports.
+The covering results for the disk and half-disk of diameter one are in the imported modules
+`MathlibExt.Geometry.MoserWormCover.HalfDisk` and `MathlibExt.Geometry.MoserWormCover.HalfSemidisk`.
 -/
 
 @[expose] public section
@@ -229,17 +229,6 @@ Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific i
 adaptation.
 -/
 def nonconvexStrictPositivity : Prop := 0 < nonconvexWormCoverConstant
-
-/-- **The half-disk of diameter one covers every unit arc (claim).** This proposition asserts
-that the closed half-disk $H = \{z \in \mathbb{C} : |z| \le 1/2,\ \operatorname{Im} z \ge 0\}$
-covers every unit arc: for every continuous curve $\gamma : [0, 1] \to \mathbb{C}$ of length
-exactly $1$ there are an angle $\theta \in \mathbb{R}$ and a translation $c \in \mathbb{C}$ such
-that $e^{i\theta}\gamma(t) + c \in H$ for every $t \in [0, 1]$.
-
-Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
-adaptation.
--/
-def halfSemidiskCovers : Prop := CoversEveryUnitArc halfSemidisk
 
 /-- **Wetzel's sector covering claim.** The proposition that the closed circular sector $S$ of
 radius $1$ and angle $30^\circ$ with apex $0$ and symmetric about the positive real axis, that is,
@@ -450,15 +439,6 @@ nonconvex worm cover constant is strictly positive.
 Source: Optimization Problems, constant 13a, closed claim `nonconvexStrictPositivity`.
 -/
 theorem_wanted nonconvexStrictPositivity_holds : nonconvexStrictPositivity
-
-/-- **The half-disk of diameter one covers every unit arc.** Let
-$H = \{z \in \mathbb{C} : |z| \le 1/2,\ \operatorname{Im} z \ge 0\}$. For every continuous curve
-$\gamma : [0, 1] \to \mathbb{C}$ of length exactly $1$ there are an angle $\theta \in \mathbb{R}$
-and a translation $c \in \mathbb{C}$ such that $e^{i\theta}\gamma(t) + c \in H$ for every
-$t \in [0, 1]$.
-
-Source: Optimization Problems, constant 13a, closed claim `halfSemidiskCovers`. -/
-theorem_wanted halfSemidiskCovers_holds : halfSemidiskCovers
 
 /-- **Wetzel's sector covers every unit arc.** Let $S$ be the closed circular sector of radius $1$
 and angle $30^\circ$ with apex $0$ and symmetric about the positive real axis, that is, the set of

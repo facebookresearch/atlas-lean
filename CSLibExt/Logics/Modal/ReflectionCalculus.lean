@@ -37,7 +37,7 @@ has a modality `ω`; the restriction is its `RC_S` with `S = ℕ`).
 * `worm`, `WormLt`: worms and the order `<₀`; `WormLt.replicate_zero_one`: every worm `0⋯0` lies
   below the worm `1`; `not_wormLt_zero_zero`: `<₀` is not reflexive on the worm `0`.
 
-Completeness for these models and the order type `ε₀` of worms are recorded in `WantedExt`.
+Kripke completeness is proved in `CSLibExt.Logics.Modal.ReflectionCalculusCompleteness`.
 -/
 
 namespace Cslib

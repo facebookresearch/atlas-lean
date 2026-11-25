@@ -15,3 +15,7 @@
 - [One generation of selection followed by mutation](step.md)
 - [Even powers of the trait times its fitness are uniformly bounded](pow-two-mul-fitness-le.md)
 - [One generation as a map on probability measures](step-pm.md)
+
+## Equilibrium results
+
+- [Equilibrium of the continuum-of-alleles model](stationary-law-of-the-continuum-of-alleles-model.md)

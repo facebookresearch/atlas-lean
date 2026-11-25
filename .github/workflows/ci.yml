@@ -270,7 +270,14 @@ jobs:
           done
           exit "$status"
 
+      # In a merge group, scripts/check.sh stops at its first failing check,
+      # so `build` reports the failure without waiting for the checks after
+      # it (the compiled audit takes minutes); the queue acts only on check
+      # conclusions. Pull requests and pushes run every check, so an author
+      # sees every failure in one run.
       - name: Build extension libraries
+        env:
+          ATLAS_CHECK_FAIL_FAST: ${{ github.event_name == 'merge_group' && '1' || '0' }}
         run: scripts/check.sh build
 
       - name: Check the bounded codec lesson

@@ -15,7 +15,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.ModEq
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
-public import MathlibExt.NumberTheory.PrimitiveDivisor
+public import MathlibExt.NumberTheory.Recurrences.FibonacciIntegerFactorial
 import Mathlib.Tactic.IntervalCases
 
 namespace MetaMathlibExt
@@ -45,22 +45,6 @@ F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Theorem 1
 public theorem_wanted factorial_mem_fibonacciIntegers_iff (n : ℕ) :
     (∃ u ∈ Subgroup.closure {u : ℚˣ | ∃ m : ℕ, 0 < m ∧ (u : ℚ) = Nat.fib m},
       (u : ℚ) = n.factorial) ↔ n ≤ 36
-
-/-- **Carmichael's congruence for primitive prime divisors of Fibonacci numbers.** Let $F_n$
-denote the $n$-th Fibonacci number. For every natural number $m > 12$, every primitive prime
-divisor $p$ of $F_m$ (a prime $p$ that divides $F_m$ but divides no $F_n$ with $0 < n < m$)
-satisfies $p \equiv \pm 1 \pmod{m}$, that is, $p \equiv 1 \pmod{m}$ or $p + 1 \equiv 0 \pmod{m}$.
-
-This is the congruence half of Carmichael's theorem; the existence of a primitive prime divisor
-of $F_m$ for $m > 12$ is a separate statement.
-
-Source: Florian Luca, *`F_4 F_5^6 F_7 F_8^4 F_9 F_{10}^2 F_{12}^5 F_{14} F_{15}^{-1}
-F_{18} F_{24} F_{30} = 36!`*, INTEGERS 24 (2024), Article A72, Theorem 2
-(Primitive Divisor Theorem, quoting R. D. Carmichael) (`integers-2024-A72-thm-2`). -/
-public theorem_wanted primitive_prime_dvd_fib_modEq_one_or_neg_one {m p : ℕ} (hm : 12 < m)
-    (hp : IntegerSequence.IsPrimitivePrimeDivisor (fun n => (Nat.fib n : ℤ)) m p) :
-    p ≡ 1 [MOD m] ∨ p + 1 ≡ 0 [MOD m]
-
 
 /-- **Entry point in the Fibonacci sequence.** The entry point (rank of apparition) $z(k)$ of a
 natural number $k$ is the least $m > 0$ such that $k$ divides the Fibonacci number $F_m$, and
