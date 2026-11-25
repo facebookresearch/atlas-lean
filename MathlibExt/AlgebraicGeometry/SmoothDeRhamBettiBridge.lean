@@ -79,10 +79,10 @@ def formPresheaf (p : ℕ) : (Opens M)ᵒᵖ ⥤ ModuleCat.{0} ℝ where
 def formSheaf (p : ℕ) : TopCat.Sheaf (ModuleCat.{0} ℝ) (TopCat.of M) :=
   (presheafToSheaf (Opens.grothendieckTopology M) (ModuleCat.{0} ℝ)).obj (formPresheaf n M p)
 
-/-- The laws of the displayed exterior derivative on smooth forms over every
-open set: smoothness, linearity, `d² = 0` and naturality under restriction. A
-hypothesis class; its instances are requested in
-`ManifoldDifferentialFormsWanted`. -/
+/-- The condition that the exterior derivative satisfies its laws on smooth real forms over every
+open set: for a smooth manifold $M$ modelled on $\mathbb{C}^{2n}$ (as a real vector space), the
+exterior derivative `exteriorDerivative` (computed in charts) of a smooth form is smooth, it is
+$\mathbb{R}$-linear, $d(d\alpha) = 0$, and it commutes with restriction to smaller open sets. -/
 class LocalExteriorTheory : Prop where
   smooth : ∀ (U : Opens M) p (alpha : LocalForms n M U p),
     IsSmooth ℝ (Ambient n) M (exteriorDerivative ℝ (Ambient n) M alpha.val)
