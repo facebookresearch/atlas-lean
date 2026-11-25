@@ -109,17 +109,6 @@ public theorem_wanted chuFamilyKLT_card_sub_six_add_four_mul {k l t : ℕ} (hk :
     ((chuFamilyKLT k l t - chuFamilyKLT k l t).filter
         fun d => 6 ≤ d ∧ d % 4 = 2).card = l * t + t
 
-/-- **Block starting points of the Chu family set.** Let $k$, $l$, $t$ be positive integers and
-let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
-$4 + (4k + 4)i + (4kl + 4l + 4)j \in A$ for all integers $i$, $j$ with $0 \le i \le l$ and
-$0 \le j \le t - 1$.
-
-Source: Manish Kumar, Mohan and Ram Krishna Pandey, *A Conjecture of Chu et al. and a New
-Family of MSTD Sets*, INTEGERS 24 (2024), Article A32, Lemma 6 (`integers-2024-A32-lem-6`). -/
-public theorem_wanted chuFamilyKLT_mem_block_starts {k l t : ℕ} (hk : 0 < k) (hl : 0 < l)
-    (ht : 0 < t) (i j : ℕ) (hi : i ≤ l) (hj : j < t) :
-    4 + (4 * k + 4) * (i : ℤ) + (4 * k * l + 4 * l + 4) * (j : ℤ) ∈ chuFamilyKLT k l t
-
 /-- **Size of the difference set of the Chu family set.** Let $k$, $l$, $t$ be positive integers
 and let $A \subseteq \mathbb{Z}$ be the Chu family set with parameters $k$, $l$, $t$. Then
 $|A - A| = 11 + 6klt + 8lt + 8t$.

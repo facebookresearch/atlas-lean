@@ -26,3 +26,23 @@ example (d : ℕ) : barryTriangleAux 0 (d + 2) 2 = 1 := by
 example : barryTriangleAux 0 6 4 = 67 := by
   rw [barryTriangleAux_eq_sum_antidiagonalTuple _ _ (by decide) (by decide)]
   decide
+
+-- At n = a = 2 the matrix is 1 × 1 and the exponent is zero.
+example : barryTriangleAux 0 2 2 = 1 := by
+  rw [barryTriangleAux_eq_matrix_pow _ _ (by decide) (by decide)]
+  decide
+
+-- The 1 × 1 matrix also gives one for a positive exponent.
+example : barryTriangleAux 0 7 2 = 1 := by
+  rw [barryTriangleAux_eq_matrix_pow _ _ (by decide) (by decide)]
+  decide
+
+-- At n = a = 4 the bottom-left entry requires two subdiagonal steps.
+example : barryTriangleAux 0 4 4 = 1 := by
+  rw [barryTriangleAux_eq_matrix_pow _ _ (by decide) (by decide)]
+  decide
+
+-- Away from the diagonal both kinds of steps contribute (Table 1).
+example : barryTriangleAux 0 6 4 = 67 := by
+  rw [barryTriangleAux_eq_matrix_pow _ _ (by decide) (by decide)]
+  decide

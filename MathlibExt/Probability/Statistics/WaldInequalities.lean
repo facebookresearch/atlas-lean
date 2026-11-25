@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.SequentialAnalysis
+public import MathlibExt.MeasureTheory.Measure.PiWithDensity
 public import Mathlib.Probability.Independence.Integration
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.MeasureTheory.Constructions.Pi
@@ -26,8 +27,11 @@ test*, equation (a2)):
 ## Main statements
 
 * `MeasureTheory.Measure.pi_eq_withDensity_rnDeriv`: the density of a finite product law.
-* `MeasureTheory.infinitePi_apply_eq_setLIntegral_prod_rnDeriv`: the likelihood-ratio change of
-  measure on the first `n` observations.
+* `MeasureTheory.infinitePi_apply_eq_setLIntegral_prod`,
+  `MeasureTheory.infinitePi_apply_eq_setLIntegral_prod_rnDeriv`: the change of measure on the first
+  `n` observations, for laws with densities and for the likelihood ratio.
+* `MeasureTheory.setLIntegral_infinitePi_coord`: the Markov property of i.i.d. coordinates.
+* `MeasureTheory.lintegral_enat_eq_tsum`: the tail-sum formula for a random time.
 * `MeasureTheory.sprt_acceptZero_le`, `MeasureTheory.sprt_acceptOne_ge`: Wald's inequalities.
 
 ## References
@@ -49,6 +53,16 @@ variable {X : Type*} [MeasurableSpace X]
 
 
 
+/-- The product of laws `Q i = P₀.withDensity (f i)` has density `x ↦ ∏ i, f i (x i)`. -/
+private theorem pi_eq_withDensity_prod {ι : Type*} [Fintype ι] (P₀ : Measure X)
+    [IsProbabilityMeasure P₀] (Q : ι → Measure X) [∀ i, IsProbabilityMeasure (Q i)]
+    (f : ι → X → ℝ≥0∞) (hf : ∀ i, Measurable (f i)) (hQ : ∀ i, Q i = P₀.withDensity (f i)) :
+    Measure.pi Q = (Measure.pi fun _ : ι => P₀).withDensity (fun x => ∏ i, f i (x i)) := by
+  have : ∀ i, SigmaFinite (P₀.withDensity (f i)) := fun i => by rw [← hQ i]; infer_instance
+  refine Measure.pi_eq fun s hs => ?_
+  rw [← Measure.pi_withDensity (μ := fun _ : ι => P₀) hf, Measure.pi_pi]
+  exact prod_congr rfl fun i _ => by rw [hQ i]
+
 /-- **Density of a finite product of absolutely continuous laws.** If `P₁ ≪ P₀` are probability
 measures on `X` and `ι` is finite, the product law `P₁^ι` has density
 `x ↦ ∏ i, (dP₁/dP₀)(x i)` with respect to `P₀^ι`: the likelihood ratio of `|ι|` independent
@@ -57,34 +71,37 @@ observations, as in the integrals of Wald's inequalities (Encyclopedia of Mathem
 theorem Measure.pi_eq_withDensity_rnDeriv {ι : Type*} [Fintype ι] (P₀ P₁ : Measure X)
     [IsProbabilityMeasure P₀] [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) :
     Measure.pi (fun _ : ι => P₁) =
-      (Measure.pi fun _ : ι => P₀).withDensity (fun x => ∏ i, P₁.rnDeriv P₀ (x i)) := by
-  classical
-  refine Measure.pi_eq fun s hs => ?_
-  have hsm : MeasurableSet (Set.univ.pi s) := MeasurableSet.univ_pi hs
-  rw [withDensity_apply _ hsm, ← lintegral_indicator hsm]
-  have hind : (Set.univ.pi s).indicator (fun x : ι → X => ∏ i, P₁.rnDeriv P₀ (x i)) =
-      fun x => ∏ i, (s i).indicator (P₁.rnDeriv P₀) (x i) := by
-    funext x
-    by_cases hx : x ∈ Set.univ.pi s
-    · rw [Set.indicator_of_mem hx]
-      refine prod_congr rfl fun i _ => ?_
-      rw [Set.indicator_of_mem (hx i (Set.mem_univ i))]
-    · rw [Set.indicator_of_notMem hx]
-      simp only [Set.mem_pi, Set.mem_univ, true_implies, not_forall] at hx
-      obtain ⟨i, hi⟩ := hx
-      exact (prod_eq_zero (mem_univ i) (Set.indicator_of_notMem hi _)).symm
-  rw [hind]
-  have hmeas : ∀ i, Measurable ((s i).indicator (P₁.rnDeriv P₀)) := fun i =>
-    (Measure.measurable_rnDeriv _ _).indicator (hs i)
-  rw [lintegral_prod_eq_prod_lintegral_of_indepFun univ
-    (fun i (x : ι → X) => (s i).indicator (P₁.rnDeriv P₀) (x i))
-    (iIndepFun_pi (μ := fun _ : ι => P₀) (X := fun i => (s i).indicator (P₁.rnDeriv P₀))
-      fun i => (hmeas i).aemeasurable)
-    (fun i => (hmeas i).comp (measurable_pi_apply i))]
-  refine prod_congr rfl fun i _ => ?_
-  rw [(measurePreserving_eval (fun _ : ι => P₀) i).lintegral_comp (hmeas i),
-    lintegral_indicator (hs i), Measure.setLIntegral_rnDeriv h₁₀]
+      (Measure.pi fun _ : ι => P₀).withDensity (fun x => ∏ i, P₁.rnDeriv P₀ (x i)) :=
+  pi_eq_withDensity_prod P₀ (fun _ => P₁) (fun _ => P₁.rnDeriv P₀)
+    (fun _ => Measure.measurable_rnDeriv _ _)
+    (fun _ => (Measure.withDensity_rnDeriv_eq P₁ P₀ h₁₀).symm)
 
+/-- **Change of measure on the first `n` observations, for laws with densities.** Let `P₀` be a
+probability measure on `X` and let each `Q i`, `i : ℕ`, be a probability measure on `X` with
+`Q i = P₀.withDensity (f i)` for a measurable density `f i : X → ℝ≥0∞`. If the event `A` depends
+only on the first `n` coordinates (it is measurable for `observationFiltration X n`), then
+`(Measure.infinitePi Q)(A) = ∫_A ∏_{i<n} f i (ω i) dP₀^ℕ`. For instance, the law of the
+observations with a change point, for `P₁ ≪ P₀`, has density `1` before the change and
+`dP₁/dP₀` after it. -/
+theorem infinitePi_apply_eq_setLIntegral_prod (P₀ : Measure X) [IsProbabilityMeasure P₀]
+    (Q : ℕ → Measure X) [∀ i, IsProbabilityMeasure (Q i)] (f : ℕ → X → ℝ≥0∞)
+    (hf : ∀ i, Measurable (f i)) (hQ : ∀ i, Q i = P₀.withDensity (f i)) (n : ℕ)
+    {A : Set (ℕ → X)} (hA : MeasurableSet[observationFiltration X n] A) :
+    Measure.infinitePi Q A =
+      ∫⁻ ω in A, ∏ i ∈ range n, f i (ω i) ∂Measure.infinitePi (fun _ : ℕ => P₀) := by
+  change MeasurableSet[MeasurableSpace.pi.comap (range n).restrict] A at hA
+  obtain ⟨B, hB, rfl⟩ := MeasurableSpace.measurableSet_comap.mp hA
+  have hr : Measurable ((range n).restrict : (ℕ → X) → ((range n) → X)) :=
+    Finset.measurable_restrict _
+  rw [← Measure.map_apply hr hB, Measure.infinitePi_map_restrict,
+    pi_eq_withDensity_prod P₀ (fun i : range n => Q i) (fun i => f i) (fun i => hf i)
+      (fun i => hQ i), withDensity_apply _ hB,
+    ← Measure.infinitePi_map_restrict (μ := fun _ : ℕ => P₀),
+    setLIntegral_map hB _ hr]
+  · refine setLIntegral_congr_fun (hr hB) fun ω _ => ?_
+    simp only [Finset.restrict]
+    exact Finset.prod_coe_sort (range n) (fun i => f i (ω i))
+  · exact Finset.measurable_prod _ fun i _ => (hf i).comp (measurable_pi_apply i)
 
 /-- **Likelihood-ratio change of measure on the first `n` observations.** If `P₁ ≪ P₀` and the
 event `A` depends only on the observations `X₁, …, Xₙ`, then
@@ -95,21 +112,108 @@ theorem infinitePi_apply_eq_setLIntegral_prod_rnDeriv (P₀ P₁ : Measure X) [I
     [IsProbabilityMeasure P₁] (h₁₀ : P₁ ≪ P₀) (n : ℕ) {A : Set (ℕ → X)}
     (hA : MeasurableSet[observationFiltration X n] A) :
     Measure.infinitePi (fun _ : ℕ => P₁) A =
-      ∫⁻ ω in A, ∏ i ∈ range n, P₁.rnDeriv P₀ (ω i) ∂Measure.infinitePi (fun _ : ℕ => P₀) := by
-  change MeasurableSet[MeasurableSpace.pi.comap (range n).restrict] A at hA
-  obtain ⟨B, hB, rfl⟩ := MeasurableSpace.measurableSet_comap.mp hA
-  have hr : Measurable ((range n).restrict : (ℕ → X) → ((range n) → X)) :=
-    Finset.measurable_restrict _
-  rw [← Measure.map_apply hr hB, Measure.infinitePi_map_restrict,
-    Measure.pi_eq_withDensity_rnDeriv P₀ P₁ h₁₀, withDensity_apply _ hB,
-    ← Measure.infinitePi_map_restrict (μ := fun _ : ℕ => P₀),
-    setLIntegral_map hB _ hr]
-  · refine setLIntegral_congr_fun (hr hB) fun ω _ => ?_
-    simp only [Finset.restrict]
-    exact Finset.prod_coe_sort (range n) (fun i => P₁.rnDeriv P₀ (ω i))
-  · exact Finset.measurable_prod _ fun i _ =>
-      (Measure.measurable_rnDeriv _ _).comp (measurable_pi_apply i)
+      ∫⁻ ω in A, ∏ i ∈ range n, P₁.rnDeriv P₀ (ω i) ∂Measure.infinitePi (fun _ : ℕ => P₀) :=
+  infinitePi_apply_eq_setLIntegral_prod P₀ (fun _ => P₁) (fun _ => P₁.rnDeriv P₀)
+    (fun _ => Measure.measurable_rnDeriv _ _)
+    (fun _ => (Measure.withDensity_rnDeriv_eq P₁ P₀ h₁₀).symm) n hA
 
+/-! ### Coordinates, stopping times and the Markov property -/
+
+theorem measurable_coord_observationFiltration {n i : ℕ} (hi : i < n) :
+    Measurable[observationFiltration X n] fun ω : ℕ → X => ω i := by
+  change Measurable[MeasurableSpace.pi.comap (range n).restrict] fun ω : ℕ → X => ω i
+  exact (@measurable_pi_apply (range n) (fun _ => X) (fun _ => inferInstance)
+    ⟨i, mem_range.2 hi⟩).comp (comap_measurable _)
+
+theorem setOfPred_natCast_add_one_le_eq {Ω : Type*} (T : Ω → WithTop ℕ) (n : ℕ) :
+    {ω | ((n + 1 : ℕ) : WithTop ℕ) ≤ T ω} = {ω | (n : WithTop ℕ) < T ω} := by
+  ext ω
+  change ((n + 1 : ℕ) : ℕ∞) ≤ (T ω : ℕ∞) ↔ (n : ℕ∞) < (T ω : ℕ∞)
+  rw [Nat.cast_add, Nat.cast_one]
+  exact ENat.add_one_le_iff (ENat.natCast_ne_top n)
+
+/-- **Markov property of i.i.d. coordinates.** Let `P₀` be a probability measure on `X`, let the
+event `F` and the function `u : (ℕ → X) → ℝ≥0∞` be measurable for `observationFiltration X n`
+(they depend only on the first `n` coordinates), and let `h : ℝ≥0∞ → X → ℝ≥0∞` be jointly
+measurable. Then `∫_F h (u ω) (ω n) dP₀^ℕ = ∫_F ∫ h (u ω) x dP₀(x) dP₀^ℕ`: the next coordinate
+`ω n` can be integrated out first. -/
+theorem setLIntegral_infinitePi_coord (P₀ : Measure X) [IsProbabilityMeasure P₀] (n : ℕ)
+    {F : Set (ℕ → X)} (hF : MeasurableSet[observationFiltration X n] F) {u : (ℕ → X) → ℝ≥0∞}
+    (hu : Measurable[observationFiltration X n] u) {h : ℝ≥0∞ → X → ℝ≥0∞}
+    (hh : Measurable (Function.uncurry h)) :
+    ∫⁻ ω in F, h (u ω) (ω n) ∂Measure.infinitePi (fun _ : ℕ => P₀) =
+      ∫⁻ ω in F, ∫⁻ x, h (u ω) x ∂P₀ ∂Measure.infinitePi (fun _ : ℕ => P₀) := by
+  classical
+  have hle : observationFiltration X n ≤ observationFiltration X (n + 1) :=
+    (observationFiltration X).mono (Nat.le_succ n)
+  have hFm : MeasurableSet F := (observationFiltration X).le n F hF
+  have hun : Measurable[observationFiltration X (n + 1)] u := hu.mono hle le_rfl
+  have hcoord : Measurable[observationFiltration X (n + 1)] fun ω : ℕ → X => ω n :=
+    measurable_coord_observationFiltration (Nat.lt_succ_self n)
+  set f : (ℕ → X) → ℝ≥0∞ := F.indicator fun ω => h (u ω) (ω n) with hf
+  set g : (ℕ → X) → ℝ≥0∞ := F.indicator fun ω => ∫⁻ x, h (u ω) x ∂P₀ with hg
+  have hfm : Measurable[observationFiltration X (n + 1)] f :=
+    (hh.comp (hun.prodMk hcoord)).indicator (hle F hF)
+  have hgm : Measurable[observationFiltration X n] g :=
+    (hh.lintegral_prod_right'.comp hu).indicator hF
+  have hFdep : ∀ x t, Function.update x n t ∈ F ↔ x ∈ F := by
+    intro x t
+    have hind : Measurable[observationFiltration X n] (F.indicator fun _ => (1 : ℝ≥0∞)) :=
+      Measurable.indicator measurable_const hF
+    have hdep := hind.dependsOn_of_piFinset
+    have := hdep (x := Function.update x n t) (y := x) fun i hi =>
+      Function.update_of_ne (mem_range.1 hi).ne _ _
+    by_cases hx : x ∈ F <;> by_cases hx' : Function.update x n t ∈ F <;> simp_all
+  have hudep : ∀ x t, u (Function.update x n t) = u x := fun x t =>
+    hu.dependsOn_of_piFinset fun i hi => Function.update_of_ne (mem_range.1 hi).ne _ _
+  obtain ⟨x₀⟩ : Nonempty (ℕ → X) := Measure.nonempty_of_neZero (Measure.infinitePi fun _ : ℕ => P₀)
+  rw [← lintegral_indicator hFm, ← lintegral_indicator hFm]
+  change ∫⁻ ω, f ω ∂_ = ∫⁻ ω, g ω ∂_
+  rw [lintegral_infinitePi_of_piFinset (fun _ : ℕ => P₀) (s := range (n + 1)) hfm x₀,
+    lintegral_infinitePi_of_piFinset (fun _ : ℕ => P₀) (s := range n) hgm x₀, range_add_one,
+    lmarginal_insert' _ (hfm.mono ((observationFiltration X).le _) le_rfl) notMem_range_self]
+  congr 1
+  funext x
+  simp only [hf, hg, Set.indicator, hFdep, hudep, Function.update_self]
+  split_ifs <;> simp
+
+private theorem enat_toENNReal_eq_tsum (k : ℕ∞) :
+    (k : ℝ≥0∞) = ∑' n : ℕ, if (n : ℕ∞) < k then 1 else 0 := by
+  induction k using ENat.recTopCoe with
+  | top =>
+    simp only [ENat.natCast_lt_top, ite_true, ENat.toENNReal_top]
+    exact (ENNReal.tsum_const_eq_top_of_ne_zero one_ne_zero).symm
+  | coe m =>
+    rw [tsum_eq_sum (s := range m)]
+    · rw [sum_congr rfl (g := fun _ => (1 : ℝ≥0∞)) fun n hn => by simp [mem_range.1 hn]]
+      simp
+    · intro n hn
+      simpa using hn
+
+/-- **Tail-sum formula for a random time.** For a measure `μ` on `Ω` and a random time
+`T : Ω → WithTop ℕ` such that every event `{n < T}` is measurable, the lower integral of `T`, read
+in `ℝ≥0∞` with `⊤ ↦ ∞`, is `∑_{n ≥ 0} μ {n < T}`. -/
+theorem lintegral_enat_eq_tsum {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+    {T : Ω → WithTop ℕ} (hT : ∀ n : ℕ, MeasurableSet {ω | (n : WithTop ℕ) < T ω}) :
+    ∫⁻ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) ∂μ = ∑' n : ℕ, μ {ω | (n : WithTop ℕ) < T ω} := by
+  have hpt : ∀ ω, ((show ℕ∞ from T ω) : ℝ≥0∞) =
+      ∑' n : ℕ, {ω | (n : WithTop ℕ) < T ω}.indicator 1 ω := by
+    intro ω
+    refine (enat_toENNReal_eq_tsum (T ω)).trans ?_
+    congr 1
+    funext n
+    simp only [Set.indicator, Set.mem_ofPred_eq, Pi.one_apply]
+    have hiff : ((n : ℕ∞) < (show ℕ∞ from T ω)) ↔ ((n : WithTop ℕ) < T ω) := Iff.rfl
+    by_cases hn : (n : WithTop ℕ) < T ω
+    · rw [ite_eq_left (hiff.2 hn), ite_eq_left hn]
+    · rw [ite_eq_right (mt hiff.1 hn), ite_eq_right hn]
+  simp_rw [hpt]
+  rw [lintegral_tsum fun n => (measurable_one.indicator (hT n)).aemeasurable]
+  congr 1
+  funext n
+  rw [lintegral_indicator_one (hT n)]
+
+/-! ### Wald's inequalities -/
 
 /-- **The cumulative log-likelihood ratio is adapted.** For probability laws, mutually
 absolutely continuous, `Λₙ` is measurable with respect to `σ(X₁, …, Xₙ)`, so the SPRT decides

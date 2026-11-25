@@ -4,6 +4,9 @@
 #   scripts/check.sh            run every check
 #   scripts/check.sh preflight  run deterministic repository checks
 #   scripts/check.sh build      build the Lean libraries
+#
+# Every check runs and every failure is reported, unless ATLAS_CHECK_FAIL_FAST=1:
+# then the script stops at the first failing check. CI sets it for merge groups.
 set -uo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -17,11 +20,19 @@ fi
 case "$scope" in
   all|preflight|build) ;;
   -h|--help)
-    sed -n '2,6p' "${BASH_SOURCE[0]}"
+    sed -n '2,9p' "${BASH_SOURCE[0]}"
     exit 0
     ;;
   *)
     echo "unknown check scope: $scope (expected preflight or build)" >&2
+    exit 2
+    ;;
+esac
+fail_fast="${ATLAS_CHECK_FAIL_FAST-0}"
+case "$fail_fast" in
+  0|1) ;;
+  *)
+    echo "ATLAS_CHECK_FAIL_FAST must be 0 or 1, not '${fail_fast}'" >&2
     exit 2
     ;;
 esac
@@ -31,7 +42,13 @@ run_check() {
   local label="$1"
   shift
   echo "==> $label"
-  "$@" || status=1
+  if ! "$@"; then
+    status=1
+    if [[ "$fail_fast" == 1 ]]; then
+      echo "Stopped at the first failing check, $label (ATLAS_CHECK_FAIL_FAST=1); the checks after it did not run." >&2
+      exit "$status"
+    fi
+  fi
 }
 
 check_structure() {
@@ -79,10 +96,13 @@ fi
 
 if [[ "$scope" == all || "$scope" == build ]]; then
   run_check "compiler diagnostics" scripts/check_diagnostics.sh
-  run_check "compiled environment policy" scripts/check_axioms.sh
-  # The compiled-policy audit imports modules in groups and splits a group on a name
-  # collision; this check imports every v2 module at once, as the wiki does.
+  # This check loads every module the compiled-policy audit checks into one environment,
+  # so that modules which do not load together fail the build. It needs the .olean files
+  # that the build above writes and nothing that the audit produces, so it runs first: the
+  # audit takes longer, and imports modules in groups, where a name that two modules
+  # declare can make it split a group, which only slows it down.
   run_check "declaration collisions" scripts/check_declaration_collisions.sh
+  run_check "compiled environment policy" scripts/check_axioms.sh
 fi
 
 exit "$status"

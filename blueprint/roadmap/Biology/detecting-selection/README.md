@@ -12,3 +12,5 @@ Statistical tests of neutrality and genome scans for selection based on polymorp
 - [Selective sweeps](selective-sweeps/README.md)
 - [Cross-population haplotype homozygosity](cross-population-haplotype-homozygosity/README.md)
 - [Tajima's D](tajima-s-d/README.md)
+
+- [Selection from allele-frequency time series](selection-from-allele-frequency-time-series/README.md)

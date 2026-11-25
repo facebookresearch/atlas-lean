@@ -36,3 +36,14 @@
 - [Reflecting a Wright–Fisher solution negates the selection coefficient](one-sub.md)
 - [Reflecting the frequency path leaves the absorption time unchanged](absorption-time-one-sub.md)
 - [Kimura's loss probability, process form](measure-real-loss.md)
+
+## Research directions
+
+- [Fixation probability in a population of changing size](fixation-probability-in-a-population-of-changing-size.md)
+
+- [Every solution of the time-changed neutral martingale problem is a time-changed Wright–Fisher diffusion](characterization-every-solution-of-the-time-chan.md)
+- [Deterministic clock change for martingale problems](deterministic-clock-change-for-martingale-proble.md)
+- [Doob h-transform: the Wright–Fisher diffusion conditioned on fixation](doob-h-transform-process-conditioned-on-fixation.md)
+- [Localized h-transform for a nonnegative harmonic function: conditioning on fixation](localized-h-transform-for-nonnegative-harmonic-h.md)
+- [Time-changed neutral diffusion under deterministic population-size change: construction and fixation](time-changed-neutral-diffusion-under-determinist.md)
+- [Time-inhomogeneous martingale problem](time-inhomogeneous-martingale-problem.md)

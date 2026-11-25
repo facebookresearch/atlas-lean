@@ -299,13 +299,23 @@ cat >"$FAKE_BIN/lake" <<'SH'
 printf '%s\n' "$*" >>"$FAKE_LAKE_LOG"
 if [[ "${1:-}" == "env" && "${2:-}" == "lean" ]]; then
   cp "${@: -1}" "$FAKE_LEAN_INPUT"
+elif [[ "${1:-}" == "env" && $# -gt 1 ]]; then
+  # Any other command runs in the workspace environment, whose Lean is the fake one.
+  shift
+  LEAN="$FAKE_BIN/fake-lean" exec "$@"
 fi
 printf '%s\n' "${FAKE_LAKE_OUTPUT:-Build completed successfully.}"
 exit "${FAKE_LAKE_STATUS:-0}"
 SH
-chmod +x "$FAKE_BIN/lake"
+cat >"$FAKE_BIN/fake-lean" <<'SH'
+#!/usr/bin/env bash
+printf 'lean %s\n' "$*" >>"$FAKE_LAKE_LOG"
+cp "${@: -1}" "$FAKE_LEAN_INPUT"
+exit "${FAKE_LAKE_STATUS:-0}"
+SH
+chmod +x "$FAKE_BIN/lake" "$FAKE_BIN/fake-lean"
 FAKE_LEAN_INPUT="$TMP_ROOT/lean-input.lean"
-export FAKE_LAKE_LOG FAKE_LEAN_INPUT
+export FAKE_BIN FAKE_LAKE_LOG FAKE_LEAN_INPUT
 
 if ! PATH="$FAKE_BIN:$PATH" "$REPO_ROOT/scripts/check_diagnostics.sh" \
   >"$TMP_ROOT/output.log" 2>&1; then
@@ -422,10 +432,10 @@ for policy in audit_compiled_modules.py check_axioms.lean audit_rebuilt_modules.
   cp "$TMP_ROOT/$policy" "$TMP_ROOT/repo/scripts/$policy"
 done
 
-# Declaration collisions: every tracked v2 module, and nothing else, is imported
-# into one environment; a module without its .olean, or a failing `git ls-files`,
-# fails before Lean runs; and the module list is the one the wiki's dependency dump
-# imports.
+# Declaration collisions: every tracked module of the audited libraries, and nothing
+# else, is imported into one environment; a module without its .olean, or a failing
+# `git ls-files`, fails before Lean runs; and the module list is the one the wiki's
+# dependency dump imports, extended to the libraries the compiled audit checks.
 reset_fixture
 cp "$REPO_ROOT/scripts/"{check_declaration_collisions.sh,list_v2_modules.sh} "$TMP_ROOT/repo/scripts/"
 for library in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest Domains DomainsTest WantedExt; do
@@ -439,8 +449,18 @@ git -C "$TMP_ROOT/repo" add CSLibExt CSLibExtTest MathlibExt MathlibExtTest Phys
 printf '%s\n' 'def accented : Nat := 1' >"$TMP_ROOT/repo/MathlibExt/Nested/Étale.lean"
 : >"$TMP_ROOT/repo/.lake/build/lib/lean/MathlibExt/Nested/Étale.olean"
 git -C "$TMP_ROOT/repo" add MathlibExt/Nested/Étale.lean
+# The compiled audit imports untracked sources too, so the check refuses to leave one out.
 printf '%s\n' 'def untracked : Nat := 1' >"$TMP_ROOT/repo/MathlibExt/Untracked.lean"
 : >"$FAKE_LAKE_LOG"
+if PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+  >"$TMP_ROOT/output.log" 2>&1; then
+  fail "collision check passed with an untracked audited source"
+fi
+grep -qF 'FAIL [declaration collisions]: MathlibExt/Untracked.lean is not tracked by Git, but the compiled audit reads it; add it, or remove it.' \
+  "$TMP_ROOT/output.log" ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "collision check reported an untracked source wrongly"; }
+[[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean without an untracked source"
+rm "$TMP_ROOT/repo/MathlibExt/Untracked.lean"
 if ! PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
   >"$TMP_ROOT/output.log" 2>&1; then
   cat "$TMP_ROOT/output.log" >&2
@@ -448,11 +468,139 @@ if ! PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions
 fi
 grep -Eqx 'env lean --run scripts/check_declaration_collisions\.lean .+' "$FAKE_LAKE_LOG" ||
   fail "collision check did not run its Lean checker"
-printf '%s\n' CSLibExt.Nested.Sentinel Domains.Nested.Sentinel MathlibExt.Nested.Sentinel \
-  MathlibExt.Nested.Étale PhyslibExt.Nested.Sentinel WantedExt.Nested.Sentinel |
+printf '%s\n' CSLibExt.Nested.Sentinel CSLibExtTest.Nested.Sentinel Domains.Nested.Sentinel \
+  DomainsTest.Nested.Sentinel MathlibExt.Nested.Sentinel MathlibExt.Nested.Étale \
+  MathlibExtTest.Nested.Sentinel PhyslibExt.Nested.Sentinel PhyslibExtTest.Nested.Sentinel \
+  WantedExt.Nested.Sentinel |
   LC_ALL=C sort >"$TMP_ROOT/expected-modules"
 LC_ALL=C sort "$FAKE_LEAN_INPUT" | diff -u "$TMP_ROOT/expected-modules" - >&2 ||
   fail "collision check imported the wrong modules"
+# Pathspec settings in the caller's environment do not change which sources are listed. An
+# index entry under a library name in another case would match only case-insensitively.
+blob="$(git -C "$TMP_ROOT/repo" hash-object -w MathlibExt/Nested/Sentinel.lean)"
+git -C "$TMP_ROOT/repo" update-index --add --cacheinfo "100644,$blob,mathlibext/Nested/Sentinel.lean"
+for setting in GIT_GLOB_PATHSPECS GIT_NOGLOB_PATHSPECS GIT_LITERAL_PATHSPECS GIT_ICASE_PATHSPECS; do
+  : >"$FAKE_LAKE_LOG"
+  env "$setting=1" PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+    >"$TMP_ROOT/output.log" 2>&1 ||
+    { cat "$TMP_ROOT/output.log" >&2; fail "collision check failed with $setting=1"; }
+  LC_ALL=C sort "$FAKE_LEAN_INPUT" | diff -u "$TMP_ROOT/expected-modules" - >&2 ||
+    fail "collision check listed the wrong modules with $setting=1"
+done
+git -C "$TMP_ROOT/repo" rm -q --cached mathlibext/Nested/Sentinel.lean
+# The module list is split at line feeds only: a path holding U+2028 stays one path, as the
+# audit reads it (Lean then rejects its name).
+separated="WantedExt/Nested/Line"$'\xe2\x80\xa8'"Separator"
+printf '%s\n' 'def separated : Nat := 1' >"$TMP_ROOT/repo/$separated.lean"
+: >"$TMP_ROOT/repo/.lake/build/lib/lean/$separated.olean"
+git -C "$TMP_ROOT/repo" add "$separated.lean"
+: >"$FAKE_LAKE_LOG"
+PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+  >"$TMP_ROOT/output.log" 2>&1 ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "collision check split a module path at U+2028"; }
+grep -qxF "${separated//\//.}" "$FAKE_LEAN_INPUT" ||
+  fail "collision check did not list a module whose path holds U+2028 as one line"
+git -C "$TMP_ROOT/repo" rm -q --cached "$separated.lean"
+rm "$TMP_ROOT/repo/$separated.lean" "$TMP_ROOT/repo/.lake/build/lib/lean/$separated.olean"
+# A passing check leaves no temporary file behind.
+mkdir -p "$TMP_ROOT/collision-tmp-pass"
+TMPDIR="$TMP_ROOT/collision-tmp-pass" PATH="$FAKE_BIN:$PATH" \
+  "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" >"$TMP_ROOT/output.log" 2>&1 ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "collision check failed with its own TMPDIR"; }
+# Other tools may write there too; the check's own files all start with `atlas-`.
+! compgen -G "$TMP_ROOT/collision-tmp-pass/atlas-*" >/dev/null ||
+  fail "a passing collision check left a temporary file behind"
+# A tracked source missing from the working tree is not imported by the audit either.
+mv "$TMP_ROOT/repo/WantedExt/Nested/Sentinel.lean" "$TMP_ROOT/Sentinel.lean"
+: >"$FAKE_LAKE_LOG"
+if PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+  >"$TMP_ROOT/output.log" 2>&1; then
+  fail "collision check passed without a tracked source"
+fi
+grep -qF "FAIL [declaration collisions]: WantedExt/Nested/Sentinel.lean is tracked by Git, but the compiled audit's walk of its libraries does not find it." \
+  "$TMP_ROOT/output.log" ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "collision check reported a missing source wrongly"; }
+[[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean without a tracked source"
+mv "$TMP_ROOT/Sentinel.lean" "$TMP_ROOT/repo/WantedExt/Nested/Sentinel.lean"
+# Nor is one under a symlinked directory, which the audit's walk does not enter.
+mv "$TMP_ROOT/repo/WantedExt/Nested" "$TMP_ROOT/repo/WantedExt/Linked"
+ln -s Linked "$TMP_ROOT/repo/WantedExt/Nested"
+: >"$FAKE_LAKE_LOG"
+if PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+  >"$TMP_ROOT/output.log" 2>&1; then
+  fail "collision check passed a source under a symlinked directory"
+fi
+grep -qF "FAIL [declaration collisions]: WantedExt/Nested/Sentinel.lean is tracked by Git, but the compiled audit's walk of its libraries does not find it." \
+  "$TMP_ROOT/output.log" ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "collision check reported a symlinked directory wrongly"; }
+[[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean with a symlinked directory"
+rm "$TMP_ROOT/repo/WantedExt/Nested"
+mv "$TMP_ROOT/repo/WantedExt/Linked" "$TMP_ROOT/repo/WantedExt/Nested"
+# A path with the flattened module name of a tracked source is a different module, both
+# beside that source and in its place.
+cp "$TMP_ROOT/repo/WantedExt/Nested/Sentinel.lean" "$TMP_ROOT/repo/WantedExt/Nested.Sentinel.lean"
+: >"$FAKE_LAKE_LOG"
+if PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+  >"$TMP_ROOT/output.log" 2>&1; then
+  fail "collision check passed a source beside one with its module name"
+fi
+grep -qF 'FAIL [declaration collisions]: WantedExt/Nested.Sentinel.lean is not tracked by Git' \
+  "$TMP_ROOT/output.log" ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "collision check reported a same-name source wrongly"; }
+[[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean with a same-name source"
+rm "$TMP_ROOT/repo/WantedExt/Nested/Sentinel.lean"
+: >"$FAKE_LAKE_LOG"
+if PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+  >"$TMP_ROOT/output.log" 2>&1; then
+  fail "collision check passed a renamed source"
+fi
+grep -qF 'FAIL [declaration collisions]: WantedExt/Nested.Sentinel.lean is not tracked by Git' \
+  "$TMP_ROOT/output.log" ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "collision check reported a renamed source wrongly"; }
+[[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean with a renamed source"
+mv "$TMP_ROOT/repo/WantedExt/Nested.Sentinel.lean" "$TMP_ROOT/repo/WantedExt/Nested/Sentinel.lean"
+# When its second temporary file cannot be made, the check leaves the first one behind
+# neither.
+FAKE_MKTEMP="$TMP_ROOT/fake-mktemp"
+mkdir -p "$FAKE_MKTEMP" "$TMP_ROOT/collision-tmp"
+printf '#!/usr/bin/env bash\ncase "$*" in *atlas-audited-libraries*) exit 1 ;; esac\nexec %q "$@"\n' \
+  "$(command -v mktemp)" >"$FAKE_MKTEMP/mktemp"
+chmod +x "$FAKE_MKTEMP/mktemp"
+: >"$FAKE_LAKE_LOG"
+if TMPDIR="$TMP_ROOT/collision-tmp" PATH="$FAKE_MKTEMP:$FAKE_BIN:$PATH" \
+  "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" >"$TMP_ROOT/output.log" 2>&1; then
+  fail "collision check passed without its temporary files"
+fi
+! compgen -G "$TMP_ROOT/collision-tmp/atlas-*" >/dev/null ||
+  fail "collision check left a temporary file behind"
+[[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean without its temporary files"
+# The audited libraries are read from the audit; a malformed list fails before Lean runs.
+cp "$TMP_ROOT/repo/scripts/audit_compiled_modules.py" "$TMP_ROOT/audit_compiled_modules.py"
+for roots in '()' "('MathlibExt\\nMathlibExtTest',)" "('MathlibExt', 'MathlibExt')" \
+  "('MathlibExt', 'Bad/Name')" "('MathlibExt', 1)"; do
+  cp "$TMP_ROOT/audit_compiled_modules.py" "$TMP_ROOT/repo/scripts/"
+  printf 'ROOTS = %s\n' "$roots" >>"$TMP_ROOT/repo/scripts/audit_compiled_modules.py"
+  : >"$FAKE_LAKE_LOG"
+  if PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+    >"$TMP_ROOT/output.log" 2>&1; then
+    fail "collision check accepted ROOTS = $roots"
+  fi
+  grep -q 'could not read the audited libraries' "$TMP_ROOT/output.log" ||
+    { cat "$TMP_ROOT/output.log" >&2; fail "collision check reported ROOTS = $roots wrongly"; }
+  [[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean with ROOTS = $roots"
+done
+# Other valid libraries are imported as given.
+cp "$TMP_ROOT/audit_compiled_modules.py" "$TMP_ROOT/repo/scripts/"
+printf '%s\n' "ROOTS = ('WantedExt', 'MathlibExt')" >>"$TMP_ROOT/repo/scripts/audit_compiled_modules.py"
+: >"$FAKE_LAKE_LOG"
+PATH="$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" \
+  >"$TMP_ROOT/output.log" 2>&1 ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "collision check failed on other audited libraries"; }
+printf '%s\n' MathlibExt.Nested.Sentinel MathlibExt.Nested.Étale WantedExt.Nested.Sentinel |
+  LC_ALL=C sort >"$TMP_ROOT/expected-modules"
+LC_ALL=C sort "$FAKE_LEAN_INPUT" | diff -u "$TMP_ROOT/expected-modules" - >&2 ||
+  fail "collision check ignored the audited libraries"
+cp "$TMP_ROOT/audit_compiled_modules.py" "$TMP_ROOT/repo/scripts/"
 if env PATH="$FAKE_BIN:$PATH" FAKE_LAKE_STATUS=1 \
   "$TMP_ROOT/repo/scripts/check_declaration_collisions.sh" >"$TMP_ROOT/output.log" 2>&1; then
   fail "collision check passed a failed Lean import"
@@ -481,7 +629,7 @@ if PATH="$FAKE_GIT:$FAKE_BIN:$PATH" "$TMP_ROOT/repo/scripts/check_declaration_co
   >"$TMP_ROOT/output.log" 2>&1; then
   fail "collision check passed a partial module list"
 fi
-grep -q 'could not list the compiled v2 modules' "$TMP_ROOT/output.log" ||
+grep -q 'could not list the compiled modules' "$TMP_ROOT/output.log" ||
   fail "collision check reported a failed module listing wrongly"
 [[ ! -s "$FAKE_LAKE_LOG" ]] || fail "collision check ran Lean on a partial module list"
 # The list fails, and leaves no list behind, on a missing .olean, and on a directory or
@@ -509,14 +657,101 @@ done
   { cat "$TMP_ROOT/output.log" >&2; fail "module list failed on valid modules"; }
 grep -qx 'MathlibExt.Nested.Étale' "$TMP_ROOT/repo/modules.txt" ||
   fail "module list dropped a non-ASCII module"
+# Without libraries, the list is the wiki's: the five v2 libraries, without the tests.
+printf '%s\n' CSLibExt.Nested.Sentinel Domains.Nested.Sentinel MathlibExt.Nested.Sentinel \
+  MathlibExt.Nested.Étale PhyslibExt.Nested.Sentinel WantedExt.Nested.Sentinel |
+  LC_ALL=C sort >"$TMP_ROOT/expected-modules"
+LC_ALL=C sort "$TMP_ROOT/repo/modules.txt" | diff -u "$TMP_ROOT/expected-modules" - >&2 ||
+  fail "module list does not default to the five v2 libraries"
+(cd "$TMP_ROOT/repo" && scripts/list_v2_modules.sh modules.txt DomainsTest WantedExt) \
+  >"$TMP_ROOT/output.log" 2>&1 ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "module list failed on named libraries"; }
+printf '%s\n' DomainsTest.Nested.Sentinel WantedExt.Nested.Sentinel |
+  diff -u - "$TMP_ROOT/repo/modules.txt" >&2 || fail "module list ignored the named libraries"
+for library in 'MathlibExt/Nested' '*' '' '-x'; do
+  if (cd "$TMP_ROOT/repo" && scripts/list_v2_modules.sh modules.txt "$library") \
+    >"$TMP_ROOT/output.log" 2>&1; then
+    fail "module list accepted the library name ${library@Q}"
+  fi
+  grep -qF "Not a library name: " "$TMP_ROOT/output.log" ||
+    { cat "$TMP_ROOT/output.log" >&2; fail "module list reported ${library@Q} wrongly"; }
+  [[ ! -e "$TMP_ROOT/repo/modules.txt" ]] || fail "failed module list left a list behind"
+done
+# A named library that is not a directory of its own fails instead of listing nothing.
+ln -s MathlibExt "$TMP_ROOT/repo/Linked"
+for library in NotALibrary Linked; do
+  if (cd "$TMP_ROOT/repo" && scripts/list_v2_modules.sh modules.txt MathlibExt "$library") \
+    >"$TMP_ROOT/output.log" 2>&1; then
+    fail "module list accepted the missing library $library"
+  fi
+  grep -qx "No library directory: $library" "$TMP_ROOT/output.log" ||
+    { cat "$TMP_ROOT/output.log" >&2; fail "module list reported $library wrongly"; }
+  [[ ! -e "$TMP_ROOT/repo/modules.txt" ]] || fail "failed module list left a list behind"
+done
+rm "$TMP_ROOT/repo/Linked"
 grep -qx '          scripts/list_v2_modules.sh v2-modules.txt' \
   "$REPO_ROOT/.github/workflows/blueprint-pages.yml" ||
   fail "wiki dump does not use the shared module list"
-grep -qx 'scripts/list_v2_modules.sh "$modules" || {' \
+grep -qx 'scripts/list_v2_modules.sh "$modules" "${libraries\[@\]}" || {' \
   "$REPO_ROOT/scripts/check_declaration_collisions.sh" ||
   fail "collision check does not use the shared module list"
 grep -qx '  run_check "declaration collisions" scripts/check_declaration_collisions.sh' \
   "$REPO_ROOT/scripts/check.sh" || fail "build checks do not run the collision check"
+
+# Build checks run diagnostics, then collisions, then the compiled audit, which takes
+# longer than the collision check. By default every check runs and every failure is
+# reported; with ATLAS_CHECK_FAIL_FAST=1, which CI sets for merge groups only, check.sh
+# stops at the first failing check.
+ORDER="$TMP_ROOT/build-order"
+rm -rf "$ORDER" && mkdir -p "$ORDER/scripts"
+cp "$REPO_ROOT/scripts/check.sh" "$ORDER/scripts/"
+for check in check_diagnostics check_declaration_collisions check_axioms; do
+  printf '#!/usr/bin/env bash\necho %s >>"$CHECK_LOG"\nexit "${FAIL_%s:-0}"\n' "$check" "$check" \
+    >"$ORDER/scripts/$check.sh"
+  chmod +x "$ORDER/scripts/$check.sh"
+done
+run_build_checks() {
+  : >"$TMP_ROOT/check-calls"
+  env -u ATLAS_CHECK_FAIL_FAST -u FAIL_check_diagnostics -u FAIL_check_declaration_collisions \
+    -u FAIL_check_axioms CHECK_LOG="$TMP_ROOT/check-calls" "$@" "$ORDER/scripts/check.sh" build \
+    >"$TMP_ROOT/output.log" 2>&1
+}
+expect_calls() {
+  printf '%s\n' "$@" | diff -u - "$TMP_ROOT/check-calls" >&2 ||
+    fail "build checks ran the wrong checks or in the wrong order"
+}
+run_build_checks || { cat "$TMP_ROOT/output.log" >&2; fail "build checks failed when every check passed"; }
+expect_calls check_diagnostics check_declaration_collisions check_axioms
+for failing in check_diagnostics check_declaration_collisions check_axioms; do
+  for mode in "" ATLAS_CHECK_FAIL_FAST=0; do
+    if run_build_checks ${mode:+"$mode"} "FAIL_$failing=1"; then
+      fail "build checks passed when $failing failed"
+    fi
+    expect_calls check_diagnostics check_declaration_collisions check_axioms
+  done
+done
+if run_build_checks ATLAS_CHECK_FAIL_FAST=1 FAIL_check_diagnostics=1; then
+  fail "fail-fast build checks passed when the diagnostics failed"
+fi
+expect_calls check_diagnostics
+if run_build_checks ATLAS_CHECK_FAIL_FAST=1 FAIL_check_declaration_collisions=1; then
+  fail "fail-fast build checks passed when the collision check failed"
+fi
+expect_calls check_diagnostics check_declaration_collisions
+grep -q 'Stopped at the first failing check, declaration collisions' "$TMP_ROOT/output.log" ||
+  fail "fail-fast build checks did not name the check they stopped at"
+run_build_checks ATLAS_CHECK_FAIL_FAST=1 ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "fail-fast build checks failed when every check passed"; }
+expect_calls check_diagnostics check_declaration_collisions check_axioms
+for value in true ""; do
+  fail_fast_status=0
+  run_build_checks "ATLAS_CHECK_FAIL_FAST=$value" || fail_fast_status=$?
+  [[ "$fail_fast_status" -eq 2 && ! -s "$TMP_ROOT/check-calls" ]] ||
+    fail "build checks accepted ATLAS_CHECK_FAIL_FAST='$value'"
+done
+grep -A2 -x '      - name: Build extension libraries' "$REPO_ROOT/.github/workflows/ci.yml" |
+  grep -qxF "          ATLAS_CHECK_FAIL_FAST: \${{ github.event_name == 'merge_group' && '1' || '0' }}" ||
+  fail "CI does not stop a merge group's build checks at the first failure"
 
 if grep -q 'github\.event\.pull_request\.draft' \
   "$REPO_ROOT/.github/workflows/ci.yml"; then
@@ -565,13 +800,16 @@ PYTHONPATH="$REPO_ROOT/scripts${PYTHONPATH:+:$PYTHONPATH}" \
   python3 -m unittest discover \
     -s "$REPO_ROOT/scripts/import_optimizer" -p 'test_*.py' -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_audit_parallel.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_references.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_public_reference_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_merge_queue_checks.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_ci_build_trims.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_bump_cache_workflow.py -v
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_next_task.py -v
 python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
 python3 "$REPO_ROOT/scripts/bump/test_bump_branch.py"
+python3 -m unittest discover -s "$REPO_ROOT/scripts/queue" -p 'test_*.py' -v
 
 echo "ok [scripts]: repository policy regression tests passed."

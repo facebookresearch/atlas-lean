@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.NielsenBound
 public import MathlibExt.NumberTheory.UnitarySpoofLehmer
 public import WantedExt.NumberTheory.SpoofLehmerFactorizationWanted
 
@@ -38,25 +39,6 @@ Article A100, Section 1 (definition of `φ̃*`). -/
 theorem spoofTotient_spoofOfBases (x : Multiset ℕ) :
     spoofTotient (spoofOfBases x) = (x.map fun a : ℕ => (a : ℤ) - 1).prod := by
   simp [spoofTotient, spoofOfBases, Multiset.map_map]
-
-/-- **Nielsen's bound.** Let $r$, $a$ and $b$ be natural numbers and let $x_1 \le \dots \le x_r$ be
-integers with every $x_j > 1$. If
-$\prod_{j=1}^{r} (1 - 1/x_j) \le a/b < \prod_{j=1}^{r-1} (1 - 1/x_j)$, then
-$a \prod_{j=1}^{r} x_j \le (a + 1)^{2^r} - (a + 1)^{2^{r-1}}$.
-
-The paper assumes $r$, $a$ and $b$ positive; this follows from the hypotheses, since the left-hand
-product is positive (so $a > 0$ and $b > 0$, reading $a/0$ as $0$) and both products equal $1$
-when $r = 0$.
-
-Source: Elchin Hasanalizade, *Some Remarks on a Paper of Molnar and Singh*, INTEGERS 26 (2026),
-Article A100, Lemma 1 (`integers-2026-A100-lem-1`), citing P. Nielsen, Math. Comp. 84 (2015),
-Lemma 1.4. -/
-public theorem_wanted nielsen_prod_one_sub_inv_bound (r a b : ℕ) (x : Fin r → ℕ)
-    (hmono : Monotone x) (hx : ∀ j, 1 < x j)
-    (hlow : ∏ j, (1 - 1 / (x j : ℚ)) ≤ (a : ℚ) / b)
-    (hup : (a : ℚ) / b <
-      ∏ j ∈ Finset.univ.filter (fun j : Fin r => j.val + 1 < r), (1 - 1 / (x j : ℚ))) :
-    a * ∏ j, x j ≤ (a + 1) ^ 2 ^ r - (a + 1) ^ 2 ^ (r - 1)
 
 /-- **Bound on unitary Lehmer factorizations.** Let $k$ be an integer and let $x_1, \dots, x_r$ be
 natural numbers. If the spoof factorization $x_1 \cdots x_r$ with every exponent $1$ is a spoof

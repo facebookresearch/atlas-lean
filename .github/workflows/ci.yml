@@ -98,12 +98,21 @@ jobs:
         with:
           persist-credentials: false
 
+      # A cold build of the libraries and their dependencies peaks at about
+      # 40 GB on this disk. Deleting unused SDKs takes one to three minutes, so
+      # do it only when less than 60 GiB is known to be free (the runner had
+      # 85 GB in November 2026).
       - name: Free disk space for Lean caches
         run: |
           set -euo pipefail
-          df -h /
-          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
-          df -h /
+          df -h / || true
+          # Unknown free space counts as too little: the second line of the
+          # report must be one decimal number.
+          free_kib="$(df --output=avail -k / | awk 'NR == 2 && NF == 1 && $1 ~ /^[0-9]+$/ { print $1 }')" || free_kib=""
+          if [[ -z "$free_kib" ]] || (( 10#$free_kib < 60 * 1024 * 1024 )); then
+            sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+            df -h / || true
+          fi
 
       - name: Add swap for cold Lean builds
         run: |
@@ -184,7 +193,46 @@ jobs:
             echo "ATLAS_AUDIT_RESTORED=$RUNNER_TEMP/restored-build.json" >> "$GITHUB_ENV"
           fi
 
+      # The native tests of the audit tools depend only on the runner image and on
+      # the files fingerprinted here: this workflow, which runs them, the pins,
+      # every tracked script except JSON data, and the modules
+      # test_compiled_audit_native.py builds. The fingerprint holds their modes
+      # and the bytes checked out, which the tests run. Pull requests and builds
+      # of main always run the tests, and a build of main that passes them saves
+      # the fingerprint in main's cache. A merge group with a saved fingerprint
+      # skips them. With no image version or no fingerprint, the tests run.
+      - name: Fingerprint the audit tools' inputs
+        id: audit-tools-inputs
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          [[ -n "${ImageVersion:-}" ]] || exit 0
+          specs=(
+            .github/workflows/ci.yml lean-toolchain lakefile.toml lake-manifest.json
+            scripts ':(exclude,glob)scripts/**/*.json' ':(exclude,glob)scripts/**/*.jsonl'
+            MathlibExt/AlgebraicGeometry/ProjHomExtBasicOpen.lean
+            MathlibExt/AlgebraicGeometry/SeparatedOpenCover.lean
+            MathlibExtTest/AlgebraicGeometry/ProjHomExtBasicOpen.lean
+            MathlibExtTest/AlgebraicGeometry/SeparatedOpenCover.lean
+          )
+          # Any failure leaves no fingerprint, so the tests run.
+          digest="$({
+            git ls-files --stage -z -- "${specs[@]}" || exit 1
+            git ls-files -z -- "${specs[@]}" | xargs -0 -r sha256sum --
+          } | sha256sum | cut -d ' ' -f 1)"
+          echo "key=audit-tools-tested-${RUNNER_OS}-${ImageVersion}-${digest}" >> "$GITHUB_OUTPUT"
+
+      - name: Look for a build of main that passed the audit tools' tests
+        id: audit-tools
+        if: github.event_name == 'merge_group' && steps.audit-tools-inputs.outputs.key != ''
+        continue-on-error: true
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/audit-tools-tested
+          key: ${{ steps.audit-tools-inputs.outputs.key }}
+
       - name: Test the declaration collision check
+        if: steps.audit-tools.outputs.cache-hit != 'true'
         run: python3 -m unittest discover -s scripts -p test_declaration_collisions_native.py -v
 
       # Each of these peaks at 13-15 GB when built alone. Lake builds several
@@ -194,7 +242,21 @@ jobs:
       # one fails, the full build is skipped: it would retry that module
       # alongside the others.
       - name: Test initialized compiled-audit isolation
+        if: steps.audit-tools.outputs.cache-hit != 'true'
         run: python3 -m unittest discover -s scripts -p test_compiled_audit_native.py -v
+
+      - name: Write the record of the audit tools' tests
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.audit-tools-inputs.outputs.key != ''
+        continue-on-error: true
+        run: printf '%s\n' "$GITHUB_SHA" > "$RUNNER_TEMP/audit-tools-tested"
+
+      - name: Save that a build of main passed the audit tools' tests
+        if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' && steps.audit-tools-inputs.outputs.key != ''
+        continue-on-error: true
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ runner.temp }}/audit-tools-tested
+          key: ${{ steps.audit-tools-inputs.outputs.key }}
 
       - name: Build memory-heavy modules one at a time
         run: |
@@ -208,7 +270,14 @@ jobs:
           done
           exit "$status"
 
+      # In a merge group, scripts/check.sh stops at its first failing check,
+      # so `build` reports the failure without waiting for the checks after
+      # it (the compiled audit takes minutes); the queue acts only on check
+      # conclusions. Pull requests and pushes run every check, so an author
+      # sees every failure in one run.
       - name: Build extension libraries
+        env:
+          ATLAS_CHECK_FAIL_FAST: ${{ github.event_name == 'merge_group' && '1' || '0' }}
         run: scripts/check.sh build
 
       - name: Check the bounded codec lesson

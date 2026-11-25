@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.GridLRamsey
+import Mathlib.Data.Nat.ModEq
 import Mathlib.Tactic.IntervalCases
 
 /-! # Tests for monochromatic L-shapes in grid colorings -/
@@ -48,3 +49,18 @@ example :
     <;> simp +decide at *
 
 end MetaMathlibExt.exists_mono_L_of_forced_blue_diagonal
+
+namespace MetaMathlibExt.exists_gridLRamseyProperty
+
+-- In a grid whose columns cycle through the k colors, each monochromatic L has k ∣ d.
+-- Thus even the least grid size supplied by the theorem must exceed k.
+open scoped Classical in
+example (k : ℕ) (hk : 0 < k) : k < Nat.find (exists_gridLRamseyProperty k hk) := by
+  have hn := (Nat.find_spec (exists_gridLRamseyProperty k hk)).2
+  let stripes (p : ℕ × ℕ) : Fin k := ⟨p.1 % k, Nat.mod_lt _ hk⟩
+  obtain ⟨x, y, d, hx, _, hd, hxd, _, hcolor, _⟩ := hn stripes
+  have hmod : x ≡ x + d [MOD k] := congrArg Fin.val hcolor
+  have hkd := Nat.le_of_dvd hd (Nat.left_modEq_add_iff.mp hmod)
+  omega
+
+end MetaMathlibExt.exists_gridLRamseyProperty

@@ -94,7 +94,8 @@ def fibrePermutationTopology : TopologicalSpace (∀ X, Equiv.Perm (F.obj X)) :=
   exact inferInstance
 
 /-- The topology on `Aut F` induced by the action on all fibres, each permutation group being
-discrete; for finite fibres the stabilizers of points form a basis of neighbourhoods of `1`. -/
+discrete; for finite fibres the finite intersections of stabilizers of points form a basis of
+neighbourhoods of `1`. -/
 @[instance_reducible]
 def fibreAutomorphismTopology : TopologicalSpace (Aut F) :=
   TopologicalSpace.induced (componentEmbedding F) (fibrePermutationTopology F)

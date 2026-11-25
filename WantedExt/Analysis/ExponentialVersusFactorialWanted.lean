@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.IterateRpow
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.MulLogUpperBound
 public import MathlibExt.Analysis.SpecialFunctions.Gamma.RpowLowerBound
 public import MathlibExt.Data.Nat.Factorial.Iterate
@@ -135,17 +136,6 @@ public theorem_wanted exists_iterate_Gamma_eq_iterate_rpow {z b x : ℝ} (hz : 1
       Tendsto (fun n : ℕ => (fun y : ℝ => b ^ y)^[((n : ℤ) + ℓ).toNat] L /
           ((Real.Gamma^[n] x - 1) * Real.log (Real.Gamma^[n] x - 1)))
         atTop (𝓝 (1 / Real.log b))
-
-/-- **Gamma of an iterated exponential exceeds the next iterate.** Let $b \ge e$ and, for
-$m \ge 0$, let $E_m(b, b)$ be the $m$-fold iterate of $x \mapsto b^x$ started at $b$, so that
-$E_0(b, b) = b$ and $E_{m+1}(b, b) = b^{E_m(b, b)}$. Then for every integer $n > 0$,
-$E_{n+1}(b, b) < \Gamma(E_n(b, b))$.
-
-Source: Karol Gryszka, *Exponential versus Factorial Revisited*, Journal of Integer
-Sequences 28 (2025), Article 25.2.8, Lemma 11 (`jis-2025-25.2.8-lem-11`). -/
-public theorem_wanted iterate_rpow_succ_lt_Gamma_iterate_rpow {b : ℝ} (hb : Real.exp 1 ≤ b)
-    {n : ℕ} (hn : 0 < n) :
-    (fun x : ℝ => b ^ x)^[n + 1] b < Real.Gamma ((fun x : ℝ => b ^ x)^[n] b)
 
 /-- **Tetrations as iterated Gamma values.** Let $z > 1$ be a real number with $\Gamma(z) = z$,
 and let $b > z$. Let $b \uparrow\uparrow n$ be the $n$-fold iterate of $y \mapsto b^y$ starting
