@@ -8,7 +8,9 @@ operations.
 
 For a set $X$ of program variables, two configurations are *$X$-equivalent* if their states agree on every entry of every array in $X$. Fix a set $X_i$ of
 public inputs and a set $X_o$ of publicly observable outputs. A program is *constant-time secure* (for $L$, $X_i$ and $X_o$) when every two complete executions
-that are initially $X_i$-equivalent and finally $X_o$-equivalent are indistinguishable.
+that are initially $X_i$-equivalent and finally $X_o$-equivalent are indistinguishable, and every two infinite executions that are initially $X_i$-equivalent
+have equal leakage, where the leakage of an infinite execution $c_1 c_2 \cdots$ is the infinite sequence $L(c_1) L(c_2) \cdots$ and two such sequences are
+equal when they agree at every position. The second clause keeps a program whose nontermination depends on secrets from being accepted vacuously.
 
 Unlike termination-insensitive noninterference, which requires $X_i$-equivalent executions to end $X_o$-equivalent, this policy requires equal leakage of
 all executions whose public inputs and outputs agree.

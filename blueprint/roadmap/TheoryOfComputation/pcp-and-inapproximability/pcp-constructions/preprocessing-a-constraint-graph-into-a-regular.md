@@ -1,7 +1,7 @@
 # Preprocessing a constraint graph into a regular expander
 
-Use constraint graphs and $\mathrm{UNSAT}(G) = \min_\sigma \mathrm{UNSAT}_\sigma(G)$ as in [assignment testers](assignment-testers.md); for a $d$-regular graph, $\lambda(G)$ is the second largest
-eigenvalue of its adjacency matrix, and the size of $G$ is its number of vertices and edges.
+Use constraint graphs and $\mathrm{UNSAT}(G) = \min_\sigma \mathrm{UNSAT}_\sigma(G)$ as in [assignment testers](assignment-testers.md); for a $d$-regular graph whose adjacency matrix has eigenvalues $d = \lambda_1 \ge \lambda_2 \ge \dots \ge \lambda_n$, $\lambda(G) = \max_{i \ge 2} |\lambda_i|$ is the
+largest absolute value of a nontrivial eigenvalue, as on [the amplification lemma for graph powering](../dinur-s-gap-amplification/dinur-s-amplification-lemma-for-graph-powering.md), and the size of $G$ is its number of vertices and edges.
 
 **Lemma (Dinur).** There are constants $0 < \lambda < d$ and $\beta_1 > 0$ such that every constraint graph $G$ can be transformed in polynomial time into a
 constraint graph $G' = \mathrm{prep}(G)$ with:
