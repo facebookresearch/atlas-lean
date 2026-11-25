@@ -1,5 +1,5 @@
-# Propagating Mode satisfies scalar Equations
+# The cosine mode solves the scalar equations iff ω² = c0² (β² + kc²)
 
-Sinusoidal profile and travelling cosine mode satisfy the
-scalar equations exactly under the dispersion relation
-`freq^2 = c0^2 (beta^2 + kc^2)`.
+For all reals `kc`, `β`, `ω` and `c0`: the profile `a(x) = sin(kc x)` satisfies the
+[profile equation](profile-equation.md) with `kc` and the mode `f(t, z) = cos(ω t − β z)` satisfies
+the [mode equation](mode-equation.md) with `c0` and `kc` if and only if `ω² = c0² (β² + kc²)`.

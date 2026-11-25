@@ -1,4 +1,6 @@
-# Ohmic Density
+# Ohmic current density on the faces
 
-The ohmic face density: conductivity times the outward-normal
-electric-field component, pointwise by the local Ohm law.
+For a conductivity `σ` and outward-normal electric-field components `E_f : ℝ² → ℝ` on the six faces
+`f = 0, …, 5`, the ohmic density on face `f` is `p ↦ σ E_f(p)`: the
+[local Ohm law](../ohm-s-law-for-a-uniform-conductor/ohm-current-density.md) `J = σE` applied
+pointwise. The definition takes any real `σ`; in the physical reading `σ ≥ 0`.

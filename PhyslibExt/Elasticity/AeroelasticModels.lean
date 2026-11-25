@@ -220,8 +220,8 @@ lemma effectiveStiffness_pos_iff {K q S e CLα : ℝ} (hc : 0 < S * e * CLα) :
   unfold effectiveStiffness divergencePressure
   rw [sub_pos, lt_div_iff₀ hc]
 
-/-- Below the divergence pressure the only twist balancing the moment with zero rigid
-angle is `θ = 0`. -/
+/-- For a positive aerodynamic factor `S * e * CLα > 0`, below the divergence pressure the only
+twist balancing the moment with zero rigid angle is `θ = 0`. -/
 lemma eq_zero_of_restoringMoment_eq_zero {K q S e CLα θ : ℝ} (hc : 0 < S * e * CLα)
     (hq : q < divergencePressure K S e CLα) (hθ : restoringMoment K q S e CLα 0 θ = 0) :
     θ = 0 := by
@@ -234,7 +234,8 @@ lemma eq_zero_of_restoringMoment_eq_zero {K q S e CLα θ : ℝ} (hc : 0 < S * e
   have heq' : effectiveStiffness K q S e CLα * θ = 0 := heq.symm
   exact (mul_eq_zero.mp heq').resolve_left hne
 
-/-- At the divergence pressure every twist balances the moment with zero rigid angle. -/
+/-- For a nonzero aerodynamic factor `S * e * CLα ≠ 0`, at the divergence pressure every twist
+balances the moment with zero rigid angle. -/
 lemma restoringMoment_divergencePressure {K S e CLα : ℝ} (hc : S * e * CLα ≠ 0)
     (θ : ℝ) : restoringMoment K (divergencePressure K S e CLα) S e CLα 0 θ = 0 := by
   have heq := restoringMoment_eq K (divergencePressure K S e CLα) S e CLα 0 θ
@@ -244,8 +245,9 @@ lemma restoringMoment_divergencePressure {K S e CLα : ℝ} (hc : S * e * CLα �
   rw [heq, hK]
   simp
 
-/-- Neutral displacement: the divergence pressure is positive and a nonzero twist
-balances the moment there with zero rigid angle. -/
+/-- Neutral displacement: for `K > 0` and a positive aerodynamic factor `S * e * CLα > 0`, the
+divergence pressure is positive and a nonzero twist balances the moment there with zero rigid
+angle. -/
 lemma exists_neutral_displacement {K S e CLα : ℝ} (hK : 0 < K) (hc : 0 < S * e * CLα) :
     0 < divergencePressure K S e CLα ∧
       ∃ θ : ℝ, θ ≠ 0 ∧ restoringMoment K (divergencePressure K S e CLα) S e CLα 0 θ = 0 := by
@@ -293,7 +295,8 @@ def circulatoryForce (q : ℝ) (z : Fin 2 → ℝ) : Fin 2 → ℝ :=
   q • (circulatoryJ *ᵥ z)
 
 /-- The residual `z'' + 2 z' + z - q J z` of the normalized circulatory model at time `t`; a
-solution makes it vanish at every `t`. -/
+solution makes it vanish at every `t`. Here `deriv` is `0` where the function is not
+differentiable. -/
 noncomputable def circulatoryResidual (q : ℝ) (z : ℝ → Fin 2 → ℝ) (t : ℝ) : Fin 2 → ℝ :=
   deriv (deriv z) t + (2 : ℝ) • deriv z t + z t - q • (circulatoryJ *ᵥ z t)
 
@@ -363,8 +366,8 @@ lemma loadedStiffness_dotProduct_self (q : ℝ) (v : Fin 2 → ℝ) :
     smul_zero, sub_zero]
 
 /-- For `q ≠ 0` the loaded stiffness `1 - q J` is not symmetric, hence not positive
-semidefinite in Mathlib's sense: the symmetric congruence diagonalization behind a
-mass-orthonormal modal basis does not apply to it. -/
+semidefinite in the sense that requires symmetry: the symmetric congruence diagonalization
+behind a mass-orthonormal modal basis does not apply to it. -/
 lemma loadedStiffness_not_isSymm {q : ℝ} (hq : q ≠ 0) :
     ¬ (1 - q • circulatoryJ).IsSymm ∧ ¬ (1 - q • circulatoryJ).PosSemidef := by
   have hentry : (1 - q • circulatoryJ) 0 1 = q ∧ (1 - q • circulatoryJ) 1 0 = -q := by

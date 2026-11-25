@@ -1,6 +1,5 @@
-# Eq algebraic Reconstruction of algebraic Equation
+# A solution of the algebraic equation is the reconstruction
 
-Any algebraic vector satisfying the algebraic equation is the
-reconstruction from the state and the forcing value. This is the
-reconstruction component of block elimination, applied with the
-algebraic equation written as `C *ᵥ x + D *ᵥ y = -g`.
+Let `n` and `m` be finite index sets, `C` a real `m × n` matrix and `D` an invertible real `m × m`
+matrix. If `x ∈ ℝⁿ`, `y ∈ ℝᵐ` and `g ∈ ℝᵐ` satisfy `C x + D y + g = 0`, then `y` is the
+[reconstruction](algebraic-reconstruction.md) `y = −D⁻¹ (C x + g)`.

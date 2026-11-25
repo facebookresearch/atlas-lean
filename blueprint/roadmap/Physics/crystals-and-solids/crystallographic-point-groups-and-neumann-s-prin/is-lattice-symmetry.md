@@ -1,7 +1,7 @@
-# Is Lattice Symmetry
+# Lattice symmetry: a matrix mapping a full-rank lattice onto itself
 
-A matrix is a lattice symmetry if it maps a full-rank lattice onto itself:
-for some invertible basis matrix `P`, the image of `basisLattice n P` under `R`
-is `basisLattice n P`. This is the defining property of the elements of a
-lattice's point group; `IsLatticeEndomorphism` only asks for a map into the
-lattice.
+For a natural number `n` and a real `n × n` matrix `R`, `R` is a lattice symmetry if there is a real
+`n × n` matrix `P` with `det P ≠ 0` such that the image of the [lattice](basis-lattice.md) `P ℤⁿ`
+under `v ↦ R v` is `P ℤⁿ` itself. Together with orthogonality, `Rᵀ R = 1`, this is the defining
+property of the elements of a lattice's point group; a
+[lattice endomorphism](is-lattice-endomorphism.md) need only map the lattice into itself.

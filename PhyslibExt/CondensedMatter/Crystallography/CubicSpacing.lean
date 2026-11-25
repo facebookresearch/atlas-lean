@@ -24,9 +24,10 @@ lattice reading of the expression needs a positive lattice parameter `a > 0`
 Textbooks identify `a / √(h ^ 2 + k ^ 2 + l ^ 2)` with the interplanar spacing
 `d_hkl` of the `(hkl)` planes of a simple cubic lattice with lattice parameter
 `a` (see References). Lattices, lattice planes, and reciprocal vectors are not
-formalized in this file, so that identification is not kernel-checked: the
-theorems below are algebraic identities about the expression, not
-crystallographic results. The Bravais-lattice API of this hierarchy is
+formalized in this file: the theorems below are statements about the expression,
+not crystallographic results. The identification itself is
+`Crystallography.BravaisLattice.spacing_simpleCubic` in `MillerIndices`. The
+Bravais-lattice API of this hierarchy is
 `PhyslibExt.CondensedMatter.Crystallography.BravaisLattice`.
 
 Reciprocal convention of the cited formula: with the physics normalization
@@ -92,7 +93,7 @@ theorem div_sqrt_sumSq_sq {a : ℝ} {h k l : ℤ}
   rw [div_pow, Real.sq_sqrt (le_of_lt hpos)]
 
 /-- The expression `a / √(h ^ 2 + k ^ 2 + l ^ 2)` is positive when `a > 0` and
-`h ^ 2 + k ^ 2 + l ^ 2 > 0`. -/
+`h ^ 2 + k ^ 2 + l ^ 2 > 0` (at `h = k = l = 0` it is `a / 0 = 0`, by `u / 0 = 0`). -/
 theorem div_sqrt_sumSq_pos {a : ℝ} (ha : 0 < a) {h k l : ℤ}
     (hpos : 0 < (h : ℝ) ^ 2 + (k : ℝ) ^ 2 + (l : ℝ) ^ 2) :
     0 < a / Real.sqrt ((h : ℝ) ^ 2 + (k : ℝ) ^ 2 + (l : ℝ) ^ 2) := by

@@ -1,6 +1,8 @@
-# Spectral decomposition
+# Spectral decomposition of a symmetric stress
 
-Spectral decomposition of a symmetric stress matrix, in Mathlib's
-`Matrix.IsHermitian.spectral_theorem` shape: conjugation of the diagonal eigenvalue matrix by
-the eigenvector unitary. For real symmetric matrices this is conjugation by an orthogonal
-matrix (`star` is trivial, so `ᴴ = ᵀ`).
+Let `σ` be a real [symmetric](is-symmetric-stress.md) `3 × 3` matrix, let `u₀, u₁, u₂` be the
+orthonormal basis of eigenvectors chosen by the spectral theorem, with eigenvalues `λ₀, λ₁, λ₂` (the
+[principal stresses](principal-stresses-real.md)), and let `U` be the matrix with columns
+`u₀, u₁, u₂`. Then `U` is orthogonal, `Uᵀ U = U Uᵀ = 1`, and `σ = U diag(λ₀, λ₁, λ₂) Uᵀ`, that is
+`σ = ∑_j λ_j u_j u_jᵀ`. The basis is a choice and is not unique: each `u_j` can be replaced by
+`-u_j`, and a repeated principal stress allows any orthonormal basis of its eigenspace.

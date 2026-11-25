@@ -1,3 +1,4 @@
-# Partial Time
+# Time partial derivative of a mode
 
-Time partial derivative `f_t(t, z)`.
+For `f : ℝ² → ℝ` (a mode `f(t, z)`) and reals `t` and `z`, `f_t(t, z)` is the derivative of
+`s ↦ f(s, z)` at `t`; it is `0` where that function is not differentiable at `t`.

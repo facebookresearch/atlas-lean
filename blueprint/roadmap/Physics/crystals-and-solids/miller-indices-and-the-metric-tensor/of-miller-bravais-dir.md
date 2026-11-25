@@ -1,3 +1,4 @@
-# Of Miller Bravais Dir
+# Conversion of Miller–Bravais directions to three indices
 
-Inverse Miller-Bravais direction conversion: `u = U - T`, `v = V - T`, `w = W`.
+For a rational four-index direction `(U, V, T, W) ∈ ℚ⁴`, the three-index direction is
+`(U - T, V - T, W)`.

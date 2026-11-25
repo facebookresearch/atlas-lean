@@ -1,3 +1,6 @@
-# Lattice ne m P m C
+# For sin β ≠ 0, primitive and base-centred monoclinic lattices differ
 
-Monoclinic P and C with the same parameters are different lattices (reference-only).
+For `a, b, c > 0` and an angle `β` with `sin β ≠ 0`, the
+[primitive monoclinic lattice](monoclinic-p.md) and the
+[base-centred monoclinic lattice](monoclinic-c.md) with these parameters have different
+[lattices](../bravais-lattices/lattice.md).

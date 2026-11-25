@@ -1,8 +1,16 @@
 # Taylor's theorem in several variables
 
-- [Segment Pullback](segment-pullback.md)
-- [Small Signal Remainder](small-signal-remainder.md)
-- [Small Signal remainder le of hessian bound](small-signal-remainder-le-of-hessian-bou.md)
-- [Small Signal remainder le of segment bound](small-signal-remainder-le-of-segment-bou.md)
-- [Small Signal quadratic attains factor](small-signal-quadratic-attains-factor.md)
-- [Small Signal quadratic attains bound](small-signal-quadratic-attains-bound.md)
+## The remainder of a linearization
+
+- [Restriction of a function to a segment](segment-pullback.md)
+- [Remainder of the linearization at an operating point](small-signal-remainder.md)
+
+## Remainder bounds
+
+- [Remainder bound from a second-derivative bound on a box](small-signal-remainder-le-of-hessian-bou.md)
+- [Remainder bound from a second-derivative bound along the segment](small-signal-remainder-le-of-segment-bou.md)
+
+## Sharpness of the factor one half
+
+- [For the square law the remainder at 0 is a²](small-signal-quadratic-attains-factor.md)
+- [The square law attains the remainder bound with M = 2](small-signal-quadratic-attains-bound.md)

@@ -1,74 +1,72 @@
 # Bravais lattices
 
-## A. Basis coordinates and the basis matrix
+## Basis coordinates and the basis matrix
 
-- [Cartesian Matrix](cartesian-matrix.md)
-- [Cartesian Matrix apply](cartesian-matrix-apply.md)
-- [Eq sum repr smul](eq-sum-repr-smul.md)
-- [Eq sum smul iff](eq-sum-smul-iff.md)
-- [Repr eq inv mul Vec repr](repr-eq-inv-mul-vec-repr.md)
-- [Cartesian Matrix eq mul](cartesian-matrix-eq-mul.md)
-- [Det cartesian Matrix eq det mul det](det-cartesian-matrix-eq-det-mul-det.md)
-- [Det cartesian Matrix ne zero iff](det-cartesian-matrix-ne-zero-iff.md)
-- [Volume parallelepiped](volume-parallelepiped.md)
+- [Basis matrix of three vectors](cartesian-matrix.md)
+- [Entries of the basis matrix](cartesian-matrix-apply.md)
+- [A vector is the combination of a basis with its coordinates](eq-sum-repr-smul.md)
+- [Coordinates in a basis exist and are unique](eq-sum-smul-iff.md)
+- [Change of basis transforms coordinates by the inverse matrix](repr-eq-inv-mul-vec-repr.md)
+- [Change of basis multiplies the basis matrix by P](cartesian-matrix-eq-mul.md)
+- [Change of basis multiplies the determinant by det P](det-cartesian-matrix-eq-det-mul-det.md)
+- [The basis matrix is nonsingular iff the vectors are independent](det-cartesian-matrix-ne-zero-iff.md)
+- [Volume of the parallelepiped spanned by three vectors](volume-parallelepiped.md)
 
-## B. Orbits of finite group actions
+## Orbits of finite group actions
 
-- [Sum card orbit eq card](sum-card-orbit-eq-card.md)
-- [Card orbit eq card group of stabilizer eq bot](card-orbit-eq-card-group-of-stabilizer-e.md)
+- [The orbit sizes of a group action on a finite set add up to its size](sum-card-orbit-eq-card.md)
+- [With trivial stabilizer, an orbit is as large as the finite group](card-orbit-eq-card-group-of-stabilizer-e.md)
 
-## C. Bravais lattices
+## Bravais lattices and their lattice vectors
 
-- [Mul Vec int Cast injective](mul-vec-int-cast-injective.md)
-- [Bravais Lattice](bravais-lattice.md)
-- [Primitive Vector](primitive-vector.md)
-- [Cartesian Matrix primitive Vector](cartesian-matrix-primitive-vector.md)
-- [Linear Independent primitive Vector](linear-independent-primitive-vector.md)
-- [Basis](basis.md)
-- [Coe basis](coe-basis.md)
-- [Lattice Vector](lattice-vector.md)
-- [Lattice Vector apply](lattice-vector-apply.md)
-- [Lattice Vector eq sum](lattice-vector-eq-sum.md)
-- [Repr lattice Vector](repr-lattice-vector.md)
-- [Lattice Vector injective](lattice-vector-injective.md)
-- [Lattice](lattice.md)
-- [Mem lattice iff](mem-lattice-iff.md)
-- [Coe lattice](coe-lattice.md)
+- [Bravais lattice given by a nonsingular basis matrix](bravais-lattice.md)
+- [Primitive vectors of a Bravais lattice](primitive-vector.md)
+- [The basis matrix of the primitive vectors is B](cartesian-matrix-primitive-vector.md)
+- [The primitive vectors are linearly independent](linear-independent-primitive-vector.md)
+- [Primitive basis of a Bravais lattice](basis.md)
+- [The primitive basis consists of the primitive vectors](coe-basis.md)
+- [Lattice vector of an integer cell index](lattice-vector.md)
+- [The lattice vector of n is B n](lattice-vector-apply.md)
+- [Lattice vectors and directions in terms of the primitive vectors](lattice-vector-eq-sum.md)
+- [The primitive coordinates of a lattice vector are its index](repr-lattice-vector.md)
+- [For det B ≠ 0, distinct integer vectors n give distinct vectors B n](lattice-vector-injective.md)
+- [Lattice of a Bravais lattice](lattice.md)
+- [The lattice consists of the vectors B n with n integral](mem-lattice-iff.md)
 
-## D. Crystals with a motif
+## Crystals with a motif
 
-- [Bravais Crystal](bravais-crystal.md)
-- [Position](position.md)
-- [Positions](positions.md)
-- [Lattice Vector add position](lattice-vector-add-position.md)
-- [Repr position](repr-position.md)
-- [Position injective iff](position-injective-iff.md)
-- [Exists Unique index](exists-unique-index.md)
+- [Crystal formed by a Bravais lattice and a finite motif](bravais-crystal.md)
+- [Position of an atom of a crystal](position.md)
+- [Set of atomic positions of a crystal](positions.md)
+- [Translating an atom by a lattice vector shifts its cell index](lattice-vector-add-position.md)
+- [Primitive coordinates of an atomic position](repr-position.md)
+- [Positions determine the atoms iff offsets differ modulo the lattice](position-injective-iff.md)
+- [With offsets distinct modulo the lattice, each atom has a unique index](exists-unique-index.md)
 
-## E. Unimodular relabeling and cell volume
+## Unimodular relabeling and cell volume
 
-- [Volume parallelepiped primitive Vector](volume-parallelepiped-primitive-vector.md)
-- [Volume fundamental Domain](volume-fundamental-domain.md)
-- [Relabel](relabel.md)
-- [Relabel basis Matrix](relabel-basis-matrix.md)
-- [To Matrix basis relabel](to-matrix-basis-relabel.md)
-- [Repr basis relabel](repr-basis-relabel.md)
-- [Abs det relabel](abs-det-relabel.md)
-- [Volume parallelepiped relabel](volume-parallelepiped-relabel.md)
-- [Lattice Vector relabel](lattice-vector-relabel.md)
-- [Lattice relabel](lattice-relabel.md)
-- [Relabel](relabel-2.md)
-- [Relabel to Bravais Lattice](relabel-to-bravais-lattice.md)
-- [Positions relabel](positions-relabel.md)
+- [The primitive cell has volume the absolute determinant](volume-parallelepiped-primitive-vector.md)
+- [The half-open fundamental cell has volume the absolute determinant](volume-fundamental-domain.md)
+- [Relabeling a Bravais lattice by a unimodular integer matrix](relabel.md)
+- [The relabeled basis matrix is B P](relabel-basis-matrix.md)
+- [The change of basis to the relabeled primitive basis is P](to-matrix-basis-relabel.md)
+- [Relabeling transforms primitive coordinates by P inverse](repr-basis-relabel.md)
+- [A unimodular relabeling preserves the absolute determinant](abs-det-relabel.md)
+- [A unimodular relabeling preserves the cell volume](volume-parallelepiped-relabel.md)
+- [Relabeled lattice vectors are old lattice vectors of P n](lattice-vector-relabel.md)
+- [A unimodular relabeling preserves the lattice](lattice-relabel.md)
+- [Relabeling the cells of a crystal](relabel-2.md)
+- [The lattice of a relabeled crystal is the relabeled lattice](relabel-to-bravais-lattice.md)
+- [Relabeling the cells of a crystal moves no atom](positions-relabel.md)
 
-## F. Sites of the Physlib crystal
+## Sites of the abstract crystal
 
-- [Physlib Crystal](physlib-crystal.md)
-- [Site Position](site-position.md)
-- [Site Position mk](site-position-mk.md)
-- [Vadd mk](vadd-mk.md)
-- [Site Position vadd](site-position-vadd.md)
-- [Range site Position](range-site-position.md)
-- [Site Position injective](site-position-injective.md)
-- [Site Equiv Positions](site-equiv-positions.md)
-- [Coe site Equiv Positions](coe-site-equiv-positions.md)
+- [Abstract crystal with integer translations and the motif as unit cell](physlib-crystal.md)
+- [Position of a site of the abstract crystal](site-position.md)
+- [A site sits at the position of the atom with the same index and label](site-position-mk.md)
+- [Translating a site by m shifts its cell index by m](vadd-mk.md)
+- [Translating a site translates its position by a lattice vector](site-position-vadd.md)
+- [The sites occupy exactly the atomic positions](range-site-position.md)
+- [With offsets distinct modulo the lattice, sites have distinct places](site-position-injective.md)
+- [Correspondence between sites and atomic positions](site-equiv-positions.md)
+- [The site correspondence sends a site to its position](coe-site-equiv-positions.md)

@@ -101,8 +101,8 @@ namespace PhyslibExt.Circuits.KronPortReduction
 open MathlibExt.LinearAlgebra.Matrix.SchurStrictPositivity
 open MathlibExt.LinearAlgebra.Matrix.SchurSourceEnergy
 
-/-- The full block system is equivalent to the reduced port equation
-together with interior reconstruction. -/
+/-- For invertible `D`, the full block system is equivalent to the reduced port equation together
+with interior reconstruction. -/
 theorem block_solution_iff_reduced {m p : Type*} [Fintype m] [Fintype p]
     [DecidableEq p] (A : Matrix m m ℝ) (B : Matrix m p ℝ)
     (D : Matrix p p ℝ) [Invertible D] (φP : m → ℝ) (φI : p → ℝ)
@@ -115,7 +115,7 @@ theorem block_solution_iff_reduced {m p : Type*} [Fintype m] [Fintype p]
     MathlibExt.LinearAlgebra.Matrix.BlockSolutionEquiv.elim_iff
       (A := A) (B := B) (C := Bᵀ) (D := D) (x := φP) (y := φI) (u := jP) (v := jI)
 
-/-- A full solution induces the reduced port injection equation. -/
+/-- For invertible `D`, a full solution induces the reduced port injection equation. -/
 lemma reduced_injection_of_full_solution {m p : Type*} [Fintype m]
     [Fintype p] [DecidableEq p] (A : Matrix m m ℝ)
     (B : Matrix m p ℝ) (D : Matrix p p ℝ) [Invertible D] (φP : m → ℝ)
@@ -124,7 +124,7 @@ lemma reduced_injection_of_full_solution {m p : Type*} [Fintype m]
     schurComplement A B D *ᵥ φP = jP - B *ᵥ (D⁻¹ *ᵥ jI) := by
   exact ((block_solution_iff_reduced A B D φP φI jP jI).mp ⟨hP, hI⟩).1
 
-/-- Reconstruction from a reduced solution solves the full system. -/
+/-- For invertible `D`, reconstruction from a reduced solution solves the full system. -/
 lemma full_solution_of_reduced {m p : Type*} [Fintype m] [Fintype p]
     [DecidableEq p] (A : Matrix m m ℝ) (B : Matrix m p ℝ)
     (D : Matrix p p ℝ) [Invertible D] (φP : m → ℝ) (jP : m → ℝ) (jI : p → ℝ)
@@ -160,7 +160,8 @@ lemma dissipation_reindex_invariant {m p α : Type*} [Fintype m] [Fintype p]
 
 /-- Relabeling the interior nodes by `e : q ≃ p`, which reindexes the
 columns of `B` and both indices of `D`, leaves the Schur complement
-unchanged. -/
+unchanged. The matrix inverse is `0` for a singular matrix, and the
+identity holds for every `D`. -/
 theorem schurComplement_reindex_interior {m p q : Type*} [Fintype m]
     [Fintype p] [Fintype q] [DecidableEq p] [DecidableEq q] (e : q ≃ p)
     (A : Matrix m m ℝ) (B : Matrix m p ℝ) (D : Matrix p p ℝ) :
@@ -175,7 +176,8 @@ nodes. Relabeling by `e : q ≃ p` reindexes `B`, `D` and the interior
 injection `jI`; the relabeled network has the same Schur complement,
 the same reduced port equation right-hand side, the relabeled
 reconstruction of the interior potentials, and the same retained
-interior source term. -/
+interior source term. The matrix inverse is `0` for a singular matrix,
+and the identities hold for every `D`. -/
 theorem kron_reduction_reindex_interior {m p q : Type*} [Fintype m]
     [Fintype p] [Fintype q] [DecidableEq p] [DecidableEq q] (e : q ≃ p)
     (A : Matrix m m ℝ) (B : Matrix m p ℝ) (D : Matrix p p ℝ)

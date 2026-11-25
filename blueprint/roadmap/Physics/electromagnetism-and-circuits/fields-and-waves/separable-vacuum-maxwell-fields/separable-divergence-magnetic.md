@@ -1,4 +1,5 @@
-# Separable divergence magnetic
+# The separable magnetic field is divergence-free
 
-Gauss's law for the separable magnetic field; it holds for
-every profile and mode.
+For all `a : ℝ → ℝ` and `f : ℝ² → ℝ`, the coordinate [divergence](space-divergence.md) of the
+[separable magnetic field](separable-magnetic-field.md) `B = (−a(x) f_z(t, z), 0, a'(x) f(t, z))` is
+`0` at every point; no smoothness is needed.

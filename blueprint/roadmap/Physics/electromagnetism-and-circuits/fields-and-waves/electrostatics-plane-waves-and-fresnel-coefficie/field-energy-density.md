@@ -1,3 +1,3 @@
-# Field Energy Density
+# Electric field energy density
 
-Field-energy density `u = eps / 2 * E ^ 2`.
+For reals `ε` (permittivity) and `E` (field), `u = ε / 2 · E²`. In the physical reading `ε > 0`.

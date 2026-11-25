@@ -1,5 +1,5 @@
-# Net Port Power adapter eq zero
+# The port variables of an ideal transformer carry no net power
 
-The adapter packages the headline: the port pair it returns from
-`V2` and `I1` has zero net instantaneous power against the entering
-currents `I1` (primary) and its own secondary current.
+For a real `n ≠ 0` and all real `V₂` and `I₁`, with `(V₁, I₂)` the
+[port variables of the ideal transformer](ideal-transformer-port.md), the
+[net instantaneous port power](net-port-power.md) `V₁ I₁ + V₂ I₂` is `0`.

@@ -1,5 +1,5 @@
-# Basis Lattice
+# Lattice of a basis matrix
 
-The lattice with basis matrix `P`: the integer combinations `P *ᵥ z`,
-`z : Fin n → ℤ`, of the columns of `P`. It has full rank when `P` is
-invertible.
+For a natural number `n` and a real `n × n` matrix `P`, the lattice of `P` is the set
+`P ℤⁿ = {P z : z ∈ ℤⁿ} ⊆ ℝⁿ` of integer combinations of the columns of `P`. The definition accepts
+every `P`; the lattice has full rank when `P` is invertible.

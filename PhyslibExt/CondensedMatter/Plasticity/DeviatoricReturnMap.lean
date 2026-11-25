@@ -115,7 +115,8 @@ example : (NormedAddCommGroup.toSeminormedAddCommGroup : SeminormedAddCommGroup 
 /-- Admissible deviatoric stresses: symmetric trace-free `3 × 3` matrices. -/
 def deviatoricStresses : Set 𝕄 := {σ | IsSymmetricStress σ ∧ σ.trace = 0}
 
-/-- Isotropic plastic strain increment `Δε_p = (σTrial - σ) / (2 μ)`, `μ` the shear modulus. -/
+/-- Isotropic plastic strain increment `Δε_p = (σTrial - σ) / (2 μ)`, `μ` the shear modulus; with
+`0⁻¹ = 0` it is `0` at `μ = 0`. -/
 noncomputable def plasticStrainIncrement (μ : ℝ) (σTrial σ : 𝕄) : 𝕄 :=
   (2 * μ)⁻¹ • (σTrial - σ)
 
@@ -252,7 +253,8 @@ private theorem sum_sub_sq_eq_norm (X Y : 𝕄) :
 /-! ## C. Stability and energy characterization -/
 
 /-- Firm nonexpansiveness of the deviatoric return with the isotropic `2 μ` scaling: for two
-trial stresses, the squared Frobenius distance between the returned deviators plus `(2 μ) ^ 2`
+trial stresses (arbitrary matrices; `K` nonempty, complete and convex, not necessarily of
+deviatoric stresses), the squared Frobenius distance between the returned deviators plus `(2 μ) ^ 2`
 times the squared Frobenius distance between the plastic strain increments is at most the squared
 Frobenius distance between the trial deviators. Physically `μ > 0`; the inequality holds for every
 real `μ` (for `μ = 0` the totalized increments vanish). -/

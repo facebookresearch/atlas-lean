@@ -1,4 +1,6 @@
-# Transpose mul smul cross Columns
+# For det B ≠ 0, the scaled cross-column matrix is 2π-dual to B
 
-For a nonsingular `B`, the matrix `(2π / det B) • crossColumns B` satisfies
-`Bᵀ * ((2π / det B) • crossColumns B) = 2π • 1`.
+Let `B` be a real `3 × 3` matrix with `det B ≠ 0` and `C` its
+[cross-column matrix](cross-columns.md). Then
+
+`Bᵀ ((2π / det B) C) = 2π · 1`.

@@ -1,7 +1,9 @@
-# Finite-cost Gaussian matched-filter test is Bayes optimal (headline)
+# The matched-filter test is Bayes optimal for two Gaussian laws
 
-For laws
-`N(s0, R)` (truth `0`) and `N(s1, R)` (truth `1`) with common positive definite covariance `R`,
-positive priors summing to one and costs with `C00 < C10`, `C11 < C01`, the matched-filter
-threshold rule is measurable and its deterministic decision kernel has original-cost Bayes risk
-at most that of every Markov decision kernel.
+Let `ι` be a finite index set, `s₀, s₁ ∈ ℝ^ι`, `R` a positive definite `ι × ι` matrix, priors
+`π₀, π₁ > 0` with `π₀ + π₁ = 1`, and costs with `C₀₀ < C₁₀` and `C₁₁ < C₀₁`; the truth `0` has law
+`N(s₀, R)` and the truth `1` has law `N(s₁, R)`. Then the
+[matched-filter rule](matched-filter-rule.md) is measurable, and its deterministic decision has
+Bayes risk `π₀ E₀[C(·, 0)] + π₁ E₁[C(·, 1)]` at most that of every randomised decision rule (Markov
+kernel from observations to decisions), where `E_j` is the expectation over the decision when the
+truth is `j`.

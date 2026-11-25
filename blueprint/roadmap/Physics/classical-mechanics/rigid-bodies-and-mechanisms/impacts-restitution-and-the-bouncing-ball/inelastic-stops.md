@@ -1,8 +1,12 @@
-# Termination for `e = 0`
+# For e = 0, the ball stops after the first impact
 
-For `g > 0` and `u₀ > 0` the first arc, with take-off speed
-`u₀`, is the only active arc, and it ends at the positive time `2 u₀ / g`, the first and only
-impact; as an active arc it is a ballistic flight that lands there with velocity `-u₀`
-(`bounce_arc`). The ball then rests on the floor: every later take-off speed and flight duration
-is `0`, so the elapsed time stays at `2 u₀ / g`; the later indices are rest, not further
-impacts.
+Let `g > 0` and `u₀ > 0`, and take `e = 0`. Then
+
+- the first arc is the only [active arc](is-active-arc.md);
+- the first contact time `S₁ = 2 u₀ / g` is positive;
+- for every `n`, the take-off speed and the flight duration of arc `n + 1` are `0`, and the elapsed
+  time after `n + 1` arcs is `2 u₀ / g`.
+
+As an active arc, the first arc is a ballistic flight that lands at `2 u₀ / g` with velocity `-u₀`
+([active arcs](bounce-arc.md)); the ball then rests on the floor, and the later indices are rest,
+not further impacts.

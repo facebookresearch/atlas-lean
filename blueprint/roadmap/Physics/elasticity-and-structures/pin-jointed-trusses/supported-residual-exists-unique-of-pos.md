@@ -1,9 +1,11 @@
-# Supported residual exists Unique of pos Def
+# Unique displacement and residual reaction for a full joint load
 
-Unique residual reaction vector: for positive-definite
-supported stiffness and a full joint load `g`, there is exactly one
-pair of a supported displacement `p.1` and a full joint-coordinate
-residual `p.2` with full balance `K *ᵥ (S *ᵥ p.1) = g + p.2` and
-vanishing supported projection `Sᵀ *ᵥ p.2 = 0`. The residual is the
-vector `K *ᵥ (S *ᵥ p.1) - g`; no expansion in a reaction basis and
-no uniqueness of such coefficients is stated.
+Let `J` (joints), `M` (members) and `F` (free coordinates) be finite sets, with joint positions
+`r_j` in the plane, member `e` joining joint `a_e` to joint `b_e`, a matrix `S` from the free
+coordinates to the joint displacement coordinates (two per joint), and member weights `k_e`. Let
+`K = (B S)ᵀ diag(k) (B S)` be the supported stiffness, with the
+[compatibility matrix](axial-compatibility.md) `B`. Suppose that `K` is positive definite. Then for
+every load `g` on all joint coordinates there is exactly one pair of a displacement `u` on the free
+coordinates and a residual `ρ` on all joint coordinates with `(Bᵀ diag(k) B) (S u) = g + ρ` and
+`Sᵀ ρ = 0`. The residual is the vector `(Bᵀ diag(k) B) (S u) - g`; no expansion in a basis of
+reactions is stated.

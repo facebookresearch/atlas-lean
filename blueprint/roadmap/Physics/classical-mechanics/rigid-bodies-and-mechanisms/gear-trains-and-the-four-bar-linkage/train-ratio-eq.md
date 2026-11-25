@@ -1,4 +1,6 @@
-# Train Ratio eq
+# The train ratio from the external meshes and the tooth counts
 
-The train ratio is `(-1) ^ (number of external meshes)` times the product of the upstream
-tooth counts `driverTeeth` over the product of the downstream tooth counts `drivenTeeth`.
+For a gear train of `n` [meshes](mesh.md), `n ≥ 0`, with upstream tooth counts `z_k` and
+downstream tooth counts `z'_k`, the [train ratio](train-ratio.md) is
+`R = (-1)^e (z₀ z₁ ⋯ z_{n-1}) / (z'₀ z'₁ ⋯ z'_{n-1})`, where `e` is the
+[number of external meshes](external-count.md).

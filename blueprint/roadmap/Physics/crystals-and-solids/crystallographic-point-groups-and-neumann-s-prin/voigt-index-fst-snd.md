@@ -1,3 +1,4 @@
-# Voigt Index fst snd
+# A Voigt index is recovered from its two axes
 
-Encoding the pair of a Voigt index gives the index back.
+For every Voigt index `I ∈ {1, …, 6}`, the [Voigt index](voigt-index.md) of the pair formed by its
+[first axis](voigt-fst.md) and its [second axis](voigt-snd.md) is `I`.

@@ -1,4 +1,4 @@
-# Mode Family
+# Four-parameter family of beam mode shapes
 
-The four-parameter family
-`c 0 * cos (β x) + c 1 * sin (β x) + c 2 * cosh (β x) + c 3 * sinh (β x)`.
+For a real `β`, coefficients `c = (c₀, c₁, c₂, c₃) ∈ ℝ⁴` and a real `x`,
+`W(x) = c₀ cos βx + c₁ sin βx + c₂ cosh βx + c₃ sinh βx`.

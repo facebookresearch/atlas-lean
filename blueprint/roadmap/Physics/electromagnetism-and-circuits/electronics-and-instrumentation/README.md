@@ -1,6 +1,8 @@
 # Electronics and instrumentation
 
-Electronic devices and measurement circuits: diodes, bipolar and MOS transistors, feedback amplifiers, logic levels, synchronizers and setup timing, photodetector shot noise, and digital-to-analog converters.
+Electronic devices and measurement circuits: diodes, bipolar and MOS transistors, feedback
+amplifiers, logic levels, synchronizers and setup timing, photodetector shot noise, and
+digital-to-analog converters.
 
 - [Digital-to-analog converters: level errors and settling](digital-to-analog-converters-level-errors-and-se/README.md)
 - [Ebers–Moll model of the bipolar transistor](ebers-moll-model-of-the-bipolar-transistor/README.md)

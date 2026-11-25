@@ -1,3 +1,4 @@
-# Reflect X cross fixture
+# Reflection example on the first two basis vectors
 
-On `e₁, e₂` the reflection gives `(P e₁) ⨯₃ (P e₂) = -e₃` but `P (e₁ ⨯₃ e₂) = e₃`.
+For the [reflection](reflect-x.md) `P = diag(-1, 1, 1)` and the standard basis vectors `e₁, e₂, e₃`,
+`(P e₁) × (P e₂) = -e₃` while `P (e₁ × e₂) = e₃`.

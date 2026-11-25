@@ -1,6 +1,6 @@
 # Fluid mechanics
 
-Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, Bernoulli's theorem, Stokes settling, laminar, compressible and turbulent flow, pipes and water hammer, airfoils and rotors, and continuum models of traffic flow with their shocks. Rotating and stratified flows of the ocean and atmosphere, water waves and open-channel hydraulics are under Earth Science.
+Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, Bernoulli's theorem, Stokes settling, and continuum models of traffic flow with their shocks. Rotating and stratified flows of the ocean and atmosphere, water waves and open-channel hydraulics are under Earth Science.
 
 - [Bernoulli flows and laminar Couette and Poiseuille flows](bernoulli-flows-and-laminar-couette-and-poiseuil/README.md)
 - [Bernoulli's theorem along a streamline](bernoulli-s-theorem-along-a-streamline/README.md)
@@ -22,3 +22,5 @@ Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, B
 - [Unsteady parallel shear flows](unsteady-parallel-shear-flows/README.md)
 - [Vehicle conservation, cumulative counts and exit times](vehicle-conservation-cumulative-counts-and-exit/README.md)
 - [Water hammer](water-hammer/README.md)
+- [Filtration and sedimentation](filtration-and-sedimentation/README.md)
+- [Flow in porous media](flow-in-porous-media/README.md)

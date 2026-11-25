@@ -196,7 +196,9 @@ open Dimension Units.EngineeringQuantities MathlibExt.Analysis.Calculus.ZeroFour
 
 /-- Fixed-fixed problem on `[0, L]` for rigidity `k` and distributed load `f`: `u` is `C²` on
 `[0, L]`, satisfies `-(k * u'') = f` on `[0, L]` with derivatives taken within `[0, L]`, and
-vanishes at both ends. -/
+vanishes at both ends. The model has `L > 0` and `k > 0`. For `L < 0` the interval is empty; for
+`L = 0` the second derivative within `{0}` is `0`, so the conditions reduce to `u 0 = 0` and
+`f 0 = 0`. -/
 def IsFixedFixedSolution (k L : ℝ) (f u : ℝ → ℝ) : Prop :=
   ContDiffOn ℝ 2 u (Set.Icc 0 L) ∧
     (∀ x ∈ Set.Icc (0 : ℝ) L, -(k * iteratedDerivWithin 2 u (Set.Icc 0 L) x) = f x) ∧
@@ -240,8 +242,8 @@ private lemma mapsTo_div_Icc {L : ℝ} (hL : 0 < L) :
   fun x hx => ⟨by have := hx.1; positivity, by
     rw [one_div, inv_mul_le_iff₀ hL, mul_one]; exact hx.2⟩
 
-/-- Scaling `x = L * ξ`: `u` solves the problem on `[0, L]` exactly when `ξ ↦ u (L * ξ)` solves
-the unit problem `-v'' = L ^ 2 / k * f (L * ξ)` on `[0, 1]`. -/
+/-- Scaling `x = L * ξ`, for `L > 0` and `k ≠ 0`: `u` solves the problem on `[0, L]` exactly when
+`ξ ↦ u (L * ξ)` solves the unit problem `-v'' = L ^ 2 / k * f (L * ξ)` on `[0, 1]`. -/
 lemma isFixedFixedSolution_scale {k L : ℝ} (hL : 0 < L) (hk : k ≠ 0) (f u : ℝ → ℝ) :
     IsFixedFixedSolution k L f u ↔
       IsFixedFixedSolution 1 1 (fun ξ => L ^ 2 / k * f (L * ξ)) (fun ξ => u (L * ξ)) := by
@@ -280,7 +282,7 @@ lemma isFixedFixedSolution_scale {k L : ℝ} (hL : 0 < L) (hk : k ≠ 0) (f u : 
     field_simp
     rw [one_div, inv_pow, mul_inv_cancel₀ (pow_ne_zero 2 hL0), one_mul]
 
-/-- Existence for a load continuous on `[0, L]`. -/
+/-- Existence for `L > 0`, `k > 0` and a load continuous on `[0, L]`. -/
 lemma exists_isFixedFixedSolution {k L : ℝ} {f : ℝ → ℝ} (hL : 0 < L) (hk : 0 < k)
     (hf : ContinuousOn f (Set.Icc 0 L)) : ∃ u : ℝ → ℝ, IsFixedFixedSolution k L f u := by
   have hL0 : L ≠ 0 := hL.ne'
@@ -300,7 +302,7 @@ lemma exists_isFixedFixedSolution {k L : ℝ} {f : ℝ → ℝ} (hL : 0 < L) (hk
   simp only [ContinuousMap.zero_apply, zero_mul, add_zero, ContinuousMap.coe_mk] at this
   rw [one_mul, this]
 
-/-- Uniqueness: two solutions agree on `[0, L]`. -/
+/-- Uniqueness for `k > 0`, with no condition on `L` or `f`: two solutions agree on `[0, L]`. -/
 lemma IsFixedFixedSolution.eqOn {k L : ℝ} {f u v : ℝ → ℝ} (hk : 0 < k)
     (hu : IsFixedFixedSolution k L f u) (hv : IsFixedFixedSolution k L f v) :
     Set.EqOn u v (Set.Icc 0 L) := by
@@ -332,12 +334,14 @@ lemma IsFixedFixedSolution.eqOn {k L : ℝ} {f u v : ℝ → ℝ} (hk : 0 < k)
 /-! ## B. Uniform axial load and uniform distributed torque -/
 
 /-- Axial displacement of a fixed-fixed bar under the uniform load `q`:
-`q * x * (L - x) / (2 * EA)`. -/
+`q * x * (L - x) / (2 * EA)`. The model has `L > 0` and `EA > 0`; with the convention that
+division by `0` gives `0`, the value is `0` when `EA = 0`. -/
 noncomputable def axialDisplacement (EA L q x : ℝ) : ℝ :=
   q * x * (L - x) / (2 * EA)
 
 /-- Twist angle of a fixed-fixed circular shaft under the uniform distributed torque `t`:
-`t * x * (L - x) / (2 * GJ)`. -/
+`t * x * (L - x) / (2 * GJ)`. The model has `L > 0` and `GJ > 0`; with the convention that
+division by `0` gives `0`, the value is `0` when `GJ = 0`. -/
 noncomputable def twistAngle (GJ L t x : ℝ) : ℝ :=
   t * x * (L - x) / (2 * GJ)
 
@@ -368,7 +372,7 @@ private lemma deriv_deriv_quad (a b x : ℝ) :
     deriv (deriv (fun x : ℝ => a * x + b * x ^ 2)) x = 2 * b := by
   rw [← iteratedDeriv_two_quad a b x, iteratedDeriv_succ, iteratedDeriv_one]
 
-/-- The uniform-load displacement solves the fixed-fixed bar problem. -/
+/-- For `L > 0` and `EA > 0`, the uniform-load displacement solves the fixed-fixed bar problem. -/
 lemma isFixedFixedSolution_axialDisplacement {EA L : ℝ} (hL : 0 < L) (hEA : 0 < EA) (q : ℝ) :
     IsFixedFixedSolution EA L (fun _ => q) (axialDisplacement EA L q) := by
   have axial_eq : axialDisplacement EA L q =
@@ -384,20 +388,20 @@ lemma isFixedFixedSolution_axialDisplacement {EA L : ℝ} (hL : 0 < L) (hEA : 0 
     iteratedDeriv_two_quad]
   field_simp
 
-/-- Every solution of the uniform-load bar problem is the displacement
+/-- For `L > 0` and `EA > 0`, every solution of the uniform-load bar problem is the displacement
 `q * x * (L - x) / (2 * EA)` on `[0, L]`. -/
 lemma IsFixedFixedSolution.eqOn_axialDisplacement {EA L q : ℝ} {u : ℝ → ℝ} (hL : 0 < L)
     (hEA : 0 < EA) (hu : IsFixedFixedSolution EA L (fun _ => q) u) :
     Set.EqOn u (axialDisplacement EA L q) (Set.Icc 0 L) := by
   exact hu.eqOn hEA (isFixedFixedSolution_axialDisplacement hL hEA q)
 
-/-- The same operator with `GJ` and the distributed torque `t`: the twist angle solves the
-fixed-fixed shaft problem. -/
+/-- The same operator with `GJ` and the distributed torque `t`: for `L > 0` and `GJ > 0` the twist
+angle solves the fixed-fixed shaft problem. -/
 lemma isFixedFixedSolution_twistAngle {GJ L : ℝ} (hL : 0 < L) (hGJ : 0 < GJ) (t : ℝ) :
     IsFixedFixedSolution GJ L (fun _ => t) (twistAngle GJ L t) := by
   exact isFixedFixedSolution_axialDisplacement hL hGJ t
 
-/-- Every solution of the uniform-torque shaft problem is the twist angle
+/-- For `L > 0` and `GJ > 0`, every solution of the uniform-torque shaft problem is the twist angle
 `t * x * (L - x) / (2 * GJ)` on `[0, L]`. -/
 lemma IsFixedFixedSolution.eqOn_twistAngle {GJ L t : ℝ} {φ : ℝ → ℝ} (hL : 0 < L)
     (hGJ : 0 < GJ) (hφ : IsFixedFixedSolution GJ L (fun _ => t) φ) :
@@ -421,8 +425,9 @@ lemma twistAngle_dimension :
   unfold forceDim
   decide
 
-/-- The scaled uniform-load displacement `ξ ↦ axialDisplacement EA L q (L * ξ)` is a classical
-solution of the unit Dirichlet problem `-v'' = L ^ 2 / EA * q` of the finite element module. -/
+/-- For `EA > 0` and any real `L` and `q`, the scaled uniform-load displacement
+`ξ ↦ axialDisplacement EA L q (L * ξ)` is a classical solution of the unit Dirichlet problem
+`-v'' = L ^ 2 / EA * q` of the finite element module. -/
 lemma isClassicalSolution_axialDisplacement_scaled {EA : ℝ} (hEA : 0 < EA) (L q : ℝ) :
     MathlibExt.Analysis.ODE.FiniteElement1D.IsClassicalSolution (fun _ => L ^ 2 / EA * q)
       (fun ξ => axialDisplacement EA L q (L * ξ)) := by
@@ -436,13 +441,15 @@ lemma isClassicalSolution_axialDisplacement_scaled {EA : ℝ} (hEA : 0 < EA) (L 
 
 /-! ## C. Boundary example -/
 
-/-- Fixed-free bar under the uniform load `q`: `q * x * (2 * L - x) / (2 * EA)`. -/
+/-- Fixed-free bar under the uniform load `q`: `q * x * (2 * L - x) / (2 * EA)`. With the
+convention that division by `0` gives `0`, the value is `0` when `EA = 0`. The model has `L > 0`
+and `EA > 0`. -/
 noncomputable def fixedFreeDisplacement (EA L q x : ℝ) : ℝ :=
   q * x * (2 * L - x) / (2 * EA)
 
-/-- A traction-free end is not a fixed-fixed problem: the fixed-free displacement satisfies the
-equation, the fixed end and the traction-free end `EA * u' L = 0`, but for `q ≠ 0` it is not a
-solution of the fixed-fixed problem. -/
+/-- A traction-free end is not a fixed-fixed problem: for `L > 0`, `EA > 0` and `q ≠ 0` the
+fixed-free displacement satisfies the equation, the fixed end and the traction-free end
+`EA * u' L = 0`, but it is not a solution of the fixed-fixed problem. -/
 lemma fixedFreeDisplacement_not_isFixedFixedSolution {EA L q : ℝ} (hL : 0 < L) (hEA : 0 < EA)
     (hq : q ≠ 0) :
     (∀ x : ℝ, -(EA * iteratedDeriv 2 (fixedFreeDisplacement EA L q) x) = q) ∧
@@ -471,14 +478,17 @@ lemma fixedFreeDisplacement_not_isFixedFixedSolution {EA L q : ℝ} (hL : 0 < L)
 /-! ## D. Clamped-free cantilever: the polynomial solution -/
 
 /-- Cantilever deflection under the uniform load `q` and the tip force `P`:
-`q * x ^ 2 * (6 * L ^ 2 - 4 * L * x + x ^ 2) / (24 * EI) + P * x ^ 2 * (3 * L - x) / (6 * EI)`. -/
+`q * x ^ 2 * (6 * L ^ 2 - 4 * L * x + x ^ 2) / (24 * EI) + P * x ^ 2 * (3 * L - x) / (6 * EI)`.
+With the convention that division by `0` gives `0`, the value is `0` when `EI = 0`. The model has
+`EI > 0` and `L > 0`. -/
 noncomputable def cantileverDeflection (EI L q P x : ℝ) : ℝ :=
   q * x ^ 2 * (6 * L ^ 2 - 4 * L * x + x ^ 2) / (24 * EI) +
     P * x ^ 2 * (3 * L - x) / (6 * EI)
 
 /-- The clamped-free cantilever problem on a beam of positive length `L`: `w` is `C⁴`,
 satisfies `EI * w'''' = q` on `(0, L)`, and meets the clamped conditions at `0` and the free-end
-moment and shear conditions at `L`. -/
+moment and shear conditions at `L`. No sign is required of `EI`; the model has `EI > 0`, which the
+existence and uniqueness results assume (for `EI = 0` the conditions force `q = 0` and `P = 0`). -/
 structure IsCantileverSolution (EI L q P : ℝ) (w : ℝ → ℝ) : Prop where
   span_pos : 0 < L
   contDiff : ContDiff ℝ 4 w
@@ -518,7 +528,7 @@ private lemma iteratedDeriv_cd (EI L q P : ℝ) (n : ℕ) (x : ℝ) :
   rw [iteratedDeriv_fun_add h1 h2, iteratedDeriv_fun_add h3 h4]
   simp only [iteratedDeriv_const_mul_field]
 
-/-- The polynomial satisfies `EI * w'''' = q` at every point. -/
+/-- For `EI ≠ 0` the polynomial satisfies `EI * w'''' = q` at every point. -/
 lemma cantileverDeflection_iteratedDeriv_four {EI : ℝ} (hEI : EI ≠ 0) (L q P x : ℝ) :
     EI * iteratedDeriv 4 (cantileverDeflection EI L q P) x = q := by
   rw [iteratedDeriv_cd]
@@ -549,7 +559,7 @@ lemma cantileverDeflection_moment_right (EI L q P : ℝ) :
   rw [e4, e3, e2]
   ring
 
-/-- Free end: the shear force balances the tip force. -/
+/-- Free end, for `EI ≠ 0`: the shear force balances the tip force. -/
 lemma cantileverDeflection_shear_right {EI : ℝ} (hEI : EI ≠ 0) (L q P : ℝ) :
     -(EI * iteratedDeriv 3 (cantileverDeflection EI L q P) L) = P := by
   rw [iteratedDeriv_cd]
@@ -557,7 +567,7 @@ lemma cantileverDeflection_shear_right {EI : ℝ} (hEI : EI ≠ 0) (L q P : ℝ)
   field_simp
   ring
 
-/-- Existence: for a positive span the polynomial solves the clamped-free problem. -/
+/-- Existence: for `EI > 0` and a positive span the polynomial solves the clamped-free problem. -/
 lemma isCantileverSolution_cantileverDeflection {EI L : ℝ} (hEI : 0 < EI) (hL : 0 < L)
     (q P : ℝ) : IsCantileverSolution EI L q P (cantileverDeflection EI L q P) := by
   exact ⟨hL, cd_contDiff EI L q P,
@@ -580,8 +590,8 @@ private lemma iteratedDeriv_cubic (c₀ c₁ c₂ c₃ x : ℝ) :
       iteratedDeriv_fun_id]
     ring
 
-/-- Uniqueness: every solution of the clamped-free problem agrees with the polynomial on
-`[0, L]`. -/
+/-- Uniqueness for `EI > 0`: every solution of the clamped-free problem agrees with the polynomial
+on `[0, L]`. -/
 lemma IsCantileverSolution.eqOn {EI L q P : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI)
     (hw : IsCantileverSolution EI L q P w) :
     Set.EqOn w (cantileverDeflection EI L q P) (Set.Icc 0 L) := by
@@ -656,8 +666,9 @@ lemma cantileverDeflection_load_zero (EI L P x : ℝ) :
   unfold cantileverDeflection
   ring
 
-/-- The clamped-clamped profile `1 - cos (2 π x / L)` meets both clamped conditions at `0`,
-but its free-end moment `EI * w'' L` is not zero, so it is not a cantilever solution. -/
+/-- For `EI > 0` and `L > 0`, the clamped-clamped profile `1 - cos (2 π x / L)` meets both clamped
+conditions at `0`, but its free-end moment `EI * w'' L` is not zero, so it is not a cantilever
+solution. -/
 lemma cosine_profile_fails_moment {EI L : ℝ} (hEI : 0 < EI) (hL : 0 < L) :
     (fun x : ℝ => 1 - Real.cos (2 * Real.pi * x / L)) 0 = 0 ∧
       deriv (fun x : ℝ => 1 - Real.cos (2 * Real.pi * x / L)) 0 = 0 ∧
@@ -694,17 +705,21 @@ lemma cosine_profile_fails_moment {EI L : ℝ} (hEI : 0 < EI) (hL : 0 < L) :
 /-- Fixed-traction problem on `[0, L]` for rigidity `k`, distributed load `f` and end force `P`:
 `u` is `C²` on `[0, L]`, satisfies `-(k * u'') = f` on `[0, L]` with derivatives taken within
 `[0, L]`, vanishes at the fixed end `x = 0`, and has end force `k * u' L = P` at `x = L`, where
-the outward normal is `+x` and tension is positive. -/
+the outward normal is `+x` and tension is positive. The model has `L > 0` and `k > 0`; for
+`L ≤ 0` the derivative within `[0, L]` at `L` is `0`, so the end condition reads `P = 0`. -/
 def IsFixedTractionSolution (k L P : ℝ) (f u : ℝ → ℝ) : Prop :=
   ContDiffOn ℝ 2 u (Set.Icc 0 L) ∧
     (∀ x ∈ Set.Icc (0 : ℝ) L, -(k * iteratedDerivWithin 2 u (Set.Icc 0 L) x) = f x) ∧
     u 0 = 0 ∧ k * derivWithin u (Set.Icc 0 L) L = P
 
-/-- The strain of the load path, `u' x = (P + ∫ y in x..L, f y) / k`. -/
+/-- The strain of the load path, `u' x = (P + ∫ y in x..L, f y) / k`. The integral is oriented
+and is `0` for a non-integrable integrand; with the convention that division by `0` gives `0`,
+the strain is `0` when `k = 0`. The model has `L > 0`, `k > 0` and `f` continuous on `[0, L]`. -/
 noncomputable def fixedTractionStrain (k L P : ℝ) (f : ℝ → ℝ) (x : ℝ) : ℝ :=
   (P + ∫ y in x..L, f y) / k
 
-/-- The displacement, the primitive of `fixedTractionStrain` from the fixed end `x = 0`. -/
+/-- The displacement, the primitive of `fixedTractionStrain` from the fixed end `x = 0`. The
+integral is oriented and is `0` for a non-integrable integrand; the value is `0` when `k = 0`. -/
 noncomputable def fixedTractionDisplacement (k L P : ℝ) (f : ℝ → ℝ) (x : ℝ) : ℝ :=
   ∫ y in (0 : ℝ)..x, fixedTractionStrain k L P f y
 
@@ -816,7 +831,8 @@ private lemma contDiffOn_two_fixedTractionDisplacement {k L P : ℝ} {f : ℝ �
   rw [contDiffOn_succ_iff_derivWithin hU]
   exact ⟨hdiff, by simp, hC1⟩
 
-/-- The constructed displacement has derivative `fixedTractionStrain` within `[0, L]`. -/
+/-- For `L > 0`, a load continuous on `[0, L]` and any `k`, the constructed displacement has
+derivative `fixedTractionStrain` within `[0, L]`. -/
 lemma derivWithin_fixedTractionDisplacement {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < L)
     (hf : ContinuousOn f (Set.Icc 0 L)) :
     ∀ x ∈ Set.Icc (0 : ℝ) L, derivWithin (fixedTractionDisplacement k L P f) (Set.Icc 0 L) x =
@@ -826,7 +842,8 @@ lemma derivWithin_fixedTractionDisplacement {k L P : ℝ} {f : ℝ → ℝ} (hL 
   have hU' : UniqueDiffWithinAt ℝ (Set.Icc 0 L) x := hU.uniqueDiffWithinAt hx
   exact (hasDerivWithinAt_fixedTractionDisplacement hL hf x hx).derivWithin hU'
 
-/-- The strain decreases at the rate of the load: `(u')' = -f / k` within `[0, L]`. -/
+/-- The strain decreases at the rate of the load: for `L > 0`, a load continuous on `[0, L]` and
+any `k` (both sides are `0` when `k = 0`), `(u')' = -f / k` within `[0, L]`. -/
 lemma derivWithin_fixedTractionStrain {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < L)
     (hf : ContinuousOn f (Set.Icc 0 L)) :
     ∀ x ∈ Set.Icc (0 : ℝ) L, derivWithin (fixedTractionStrain k L P f) (Set.Icc 0 L) x =
@@ -836,8 +853,8 @@ lemma derivWithin_fixedTractionStrain {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < 
   have hU' : UniqueDiffWithinAt ℝ (Set.Icc 0 L) x := hU.uniqueDiffWithinAt hx
   exact (hasDerivWithinAt_fixedTractionStrain hf x hx).derivWithin hU'
 
-/-- Existence: for a load continuous on `[0, L]` the constructed displacement solves the
-fixed-traction problem. -/
+/-- Existence: for `L > 0`, `k ≠ 0` and a load continuous on `[0, L]` the constructed displacement
+solves the fixed-traction problem. -/
 lemma isFixedTractionSolution_fixedTractionDisplacement {k L P : ℝ} {f : ℝ → ℝ} (hL : 0 < L)
     (hk : k ≠ 0) (hf : ContinuousOn f (Set.Icc 0 L)) :
     IsFixedTractionSolution k L P f (fixedTractionDisplacement k L P f) := by
@@ -1009,7 +1026,7 @@ lemma IsFixedTractionSolution.axialForce_eq {k L P : ℝ} {f u : ℝ → ℝ}
     rw [intervalIntegral.integral_same]
     simpa using hend
 
-/-- Every solution equals the constructed displacement on `[0, L]`. -/
+/-- For `k ≠ 0` and any `L`, every solution equals the constructed displacement on `[0, L]`. -/
 lemma IsFixedTractionSolution.eqOn_fixedTractionDisplacement {k L P : ℝ} {f u : ℝ → ℝ}
     (hk : k ≠ 0) (hu : IsFixedTractionSolution k L P f u) :
     Set.EqOn u (fixedTractionDisplacement k L P f) (Set.Icc 0 L) := by
@@ -1096,7 +1113,7 @@ lemma IsFixedTractionSolution.eqOn_fixedTractionDisplacement {k L P : ℝ} {f u 
       exact intervalIntegral.integral_same
     rw [hu0, hc0]
 
-/-- Uniqueness: two solutions agree on `[0, L]`. -/
+/-- Uniqueness for `k ≠ 0`: two solutions agree on `[0, L]`. -/
 lemma IsFixedTractionSolution.eqOn {k L P : ℝ} {f u v : ℝ → ℝ} (hk : k ≠ 0)
     (hu : IsFixedTractionSolution k L P f u) (hv : IsFixedTractionSolution k L P f v) :
     Set.EqOn u v (Set.Icc 0 L) := by
@@ -1108,7 +1125,7 @@ lemma IsFixedTractionSolution.eqOn {k L P : ℝ} {f u v : ℝ → ℝ} (hk : k �
   rw [hux, hvx]
 
 /-- Torsional port: a circular shaft fixed at `x = 0`, with distributed torque `t` and end torque
-`T` at `x = L`, is the same problem with `k = GJ`. Its twist equals
+`T` at `x = L`, is the same problem with `k = GJ`. For `GJ > 0` its twist equals
 `fixedTractionDisplacement GJ L T t` on `[0, L]` and its internal torque is
 `GJ * φ' x = T + ∫ y in x..L, t y`, by the bar lemmas; no second solver is used. -/
 lemma IsFixedTractionSolution.twist {GJ L T : ℝ} {t φ : ℝ → ℝ} (hGJ : 0 < GJ)
@@ -1123,7 +1140,7 @@ lemma IsFixedTractionSolution.twist {GJ L T : ℝ} {t φ : ℝ → ℝ} (hGJ : 0
 /-! ## H. Fixed-traction bar: uniform load -/
 
 /-- Uniform load `q`: the constructed displacement is the end-force term `P * x / k` plus the
-fixed-free displacement. -/
+fixed-free displacement, for all real inputs (both sides are `0` when `k = 0`). -/
 lemma fixedTractionDisplacement_const (k L P q x : ℝ) :
     fixedTractionDisplacement k L P (fun _ => q) x = P * x / k + fixedFreeDisplacement k L q x := by
   have hstrain : ∀ y : ℝ, fixedTractionStrain k L P (fun _ => q) y =
@@ -1171,8 +1188,9 @@ lemma fixedTractionDisplacement_const (k L P q x : ℝ) :
 
 /-! ## I. Boundary example: two free ends -/
 
-/-- Free-free problem on `[0, L]`: end force `P₀` at `x = 0`, where the outward normal is `-x` so
-the end force is `-(k * u' 0)`, and end force `P₁ = k * u' L` at `x = L`. -/
+/-- Free-free problem on `[0, L]`: both end forces are measured along `+x`. `P₀ = -(k * u' 0)` is
+the force applied at `x = 0`, where the outward normal is `-x`, so a tensile pull there gives
+`P₀ < 0`; `P₁ = k * u' L` is the force applied at `x = L`. The model has `L > 0` and `k > 0`. -/
 def IsFreeFreeSolution (k L P₀ P₁ : ℝ) (f u : ℝ → ℝ) : Prop :=
   ContDiffOn ℝ 2 u (Set.Icc 0 L) ∧
     (∀ x ∈ Set.Icc (0 : ℝ) L, -(k * iteratedDerivWithin 2 u (Set.Icc 0 L) x) = f x) ∧
@@ -1227,7 +1245,8 @@ private lemma continuousOn_f_of_freeFree {k L P₀ P₁ : ℝ} {f u : ℝ → �
     exact (heq x hx).symm
   exact hneg.congr hEq
 
-/-- Equilibrium of a free-free bar requires zero net load: `P₀ + P₁ + ∫₀ᴸ f = 0`. -/
+/-- Equilibrium of a free-free bar of length `L > 0` requires zero net load:
+`P₀ + P₁ + ∫₀ᴸ f = 0`, both end forces being measured along `+x`. -/
 lemma IsFreeFreeSolution.net_load {k L P₀ P₁ : ℝ} {f u : ℝ → ℝ} (hL : 0 < L)
     (hu : IsFreeFreeSolution k L P₀ P₁ f u) : P₀ + P₁ + ∫ x in (0 : ℝ)..L, f x = 0 := by
   have hU : UniqueDiffOn ℝ (Set.Icc 0 L) := uniqueDiffOn_Icc hL
@@ -1268,18 +1287,20 @@ open PhyslibExt.Mechanics.HarmonicMechanics (resultantForce)
 /-! ## J. Thin closed rectangular cell: wall resultants and torque -/
 
 /-- Midpoints of the four walls of the median rectangle `[-a/2, a/2] × [-b/2, b/2]` in the section
-plane `z = 0`, in counterclockwise order about `+z`: bottom, right, top, left. -/
+plane `z = 0`, in counterclockwise order about `+z`: bottom, right, top, left (for `a, b > 0`). -/
 noncomputable def cellWallMidpoint (a b : ℝ) : Fin 4 → Fin 3 → ℝ :=
   ![![0, -(b / 2), 0], ![a / 2, 0, 0], ![0, b / 2, 0], ![-(a / 2), 0, 0]]
 
 /-- Resultants of the uniform shear flow `q` on the four walls, in the order of
 `cellWallMidpoint`: on each straight wall the flow integrates to `q` times the wall length (`a` for
 the bottom and top walls, `b` for the right and left walls), directed along the wall in the
-counterclockwise sense about `+z` for `q > 0`, with line of action through the wall midpoint. -/
+counterclockwise sense about `+z` for `q > 0`, with line of action through the wall midpoint
+(for `a, b > 0`). -/
 noncomputable def cellWallForce (a b q : ℝ) : Fin 4 → Fin 3 → ℝ :=
   ![![q * a, 0, 0], ![0, q * b, 0], ![-(q * a), 0, 0], ![0, -(q * b), 0]]
 
-/-- Lengths of the four walls along the median line, in the order of `cellWallMidpoint`. -/
+/-- Lengths `a, b, a, b` of the four walls along the median line, in the order of
+`cellWallMidpoint` (for `a, b > 0`). -/
 def cellWallLength (a b : ℝ) : Fin 4 → ℝ :=
   ![a, b, a, b]
 
@@ -1291,7 +1312,7 @@ lemma resultantForce_cellWallForce (a b q : ℝ) : resultantForce (cellWallForce
   fin_cases i <;> simp
 
 /-- **Torque from the four wall resultants.** About every reference point `O`, the wall resultants
-(no free couples) have the moment `(0, 0, 2 a b q)`: the cell carries the torque
+(no free couples) have the moment `(0, 0, 2 a b q)`; for `a, b > 0` the cell carries the torque
 `T = 2 a b q = 2 A q` about the member axis `+z`, positive for counterclockwise shear flow. -/
 lemma momentAbout_cellWall (a b q : ℝ) (O : Fin 3 → ℝ) :
     momentAbout (cellWallMidpoint a b) (cellWallForce a b q) (fun _ => 0) O =
@@ -1306,17 +1327,21 @@ lemma momentAbout_cellWall (a b q : ℝ) (O : Fin 3 → ℝ) :
 
 /-- The stated thin-wall compatibility law of a single closed cell (the declared reduced model):
 the circulation of the wall shear strain `q / (G t)` around the median line,
-`∑ walls (q / (G t)) ℓ`, equals twice the enclosed area `a b` times the twist rate `θ'`. -/
+`∑ walls (q / (G t)) ℓ`, equals twice the enclosed area `a b` times the twist rate `θ'`. The
+model has `a, b, t, G > 0`; with the convention that division by `0` gives `0`, when `G * t = 0`
+the left side is `0` and the law reads `a * b * θ' = 0`. -/
 def IsClosedCellCompatible (a b t G q θ' : ℝ) : Prop :=
   ∑ i, q / (G * t) * cellWallLength a b i = 2 * (a * b) * θ'
 
-/-- Wall shear stress `τ = q / t` of the shear flow `q` in a wall of thickness `t`. -/
+/-- Wall shear stress `τ = q / t` of the shear flow `q` in a wall of thickness `t`. The model has
+`t > 0`; with the convention that division by `0` gives `0`, the value is `0` when `t = 0`. -/
 noncomputable def wallShearStress (q t : ℝ) : ℝ :=
   q / t
 
 /-- Torsion constant of the thin closed rectangular cell, `J = 4 A² t / S` with the enclosed area
 `A = a b` and the median perimeter `S = 2 (a + b)`: `J = 2 a² b² t / (a + b)`. `G J` is the
-effective torsional rigidity of the cell. -/
+effective torsional rigidity of the cell. The model has `a, b, t > 0`; the value is `0` when
+`t = 0`, and, division by `0` giving `0`, when `a + b = 0`. -/
 noncomputable def closedCellTorsionConstant (a b t : ℝ) : ℝ :=
   2 * a ^ 2 * b ^ 2 * t / (a + b)
 
@@ -1403,7 +1428,8 @@ open Mechanics.EulerBernoulli
 
 /-- The simply supported problem on a beam of positive length `L`: `w` is `C⁴`, satisfies
 `EI * w'''' = q` on `(0, L)`, and has zero deflection and zero curvature at both pins. The slopes
-at the pins are not constrained. -/
+at the pins are not constrained. No sign is required of `EI`; the model has `EI > 0`, which the
+existence and uniqueness results assume. -/
 structure IsSimplySupportedSolution (EI L q : ℝ) (w : ℝ → ℝ) : Prop where
   span_pos : 0 < L
   contDiff : ContDiff ℝ 4 w
@@ -1450,8 +1476,8 @@ private lemma iteratedDeriv_eq_of_eqOn {L : ℝ} (hL : 0 < L) {f g : ℝ → ℝ
     ← iteratedDerivWithin_eq_iteratedDeriv hU ((hg.of_le (by exact_mod_cast hk)).contDiffAt) hy]
   exact iteratedDerivWithin_congr h hy
 
-/-- Existence: for a positive span the uniform-load quartic solves the simply supported
-problem. -/
+/-- Existence: for `EI > 0` and a positive span the uniform-load quartic solves the simply
+supported problem. -/
 lemma isSimplySupportedSolution_uniformLoadDeflection {EI L : ℝ} (hEI : 0 < EI) (hL : 0 < L)
     (q : ℝ) : IsSimplySupportedSolution EI L q (uniformLoadDeflection q EI L) := by
   exact ⟨hL, uld_contDiff q EI L,
@@ -1460,8 +1486,8 @@ lemma isSimplySupportedSolution_uniformLoadDeflection {EI L : ℝ} (hEI : 0 < EI
     uniformLoadDeflection_secondDeriv_zero_left q EI L,
     uniformLoadDeflection_secondDeriv_zero_right q EI L⟩
 
-/-- Uniqueness: every solution of the simply supported problem agrees with the uniform-load
-quartic on `[0, L]`. -/
+/-- Uniqueness for `EI > 0`: every solution of the simply supported problem agrees with the
+uniform-load quartic on `[0, L]`. -/
 lemma IsSimplySupportedSolution.eqOn {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI)
     (hw : IsSimplySupportedSolution EI L q w) :
     Set.EqOn w (uniformLoadDeflection q EI L) (Set.Icc 0 L) := by
@@ -1546,8 +1572,8 @@ lemma isSimplySupportedSolution_iff {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0 < 
 
 /-! ## M. Simply supported beam: support reactions and slopes -/
 
-/-- Support reactions: every solution has the reaction `-(EI * w''' 0) = q * L / 2` at the left
-pin and `EI * w''' L = q * L / 2` at the right pin. -/
+/-- Support reactions, for `EI > 0`: every solution has the reaction `-(EI * w''' 0) = q * L / 2`
+at the left pin and `EI * w''' L = q * L / 2` at the right pin. -/
 lemma IsSimplySupportedSolution.reactions {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI)
     (hw : IsSimplySupportedSolution EI L q w) :
     -(EI * iteratedDeriv 3 w 0) = q * L / 2 ∧ EI * iteratedDeriv 3 w L = q * L / 2 := by
@@ -1565,8 +1591,8 @@ lemma IsSimplySupportedSolution.reactions {EI L q : ℝ} {w : ℝ → ℝ} (hEI 
   · field_simp
     ring
 
-/-- The pins do not constrain the slope: every solution has the slope `q * L ^ 3 / (24 * EI)` at
-the left pin and `-(q * L ^ 3 / (24 * EI))` at the right pin. -/
+/-- The pins do not constrain the slope: for `EI > 0` every solution has the slope
+`q * L ^ 3 / (24 * EI)` at the left pin and `-(q * L ^ 3 / (24 * EI))` at the right pin. -/
 lemma IsSimplySupportedSolution.slopes {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0 < EI)
     (hw : IsSimplySupportedSolution EI L q w) :
     deriv w 0 = q * L ^ 3 / (24 * EI) ∧ deriv w L = -(q * L ^ 3 / (24 * EI)) := by
@@ -1583,7 +1609,8 @@ lemma IsSimplySupportedSolution.slopes {EI L q : ℝ} {w : ℝ → ℝ} (hEI : 0
 /-! ## N. Simply supported beam: clamped slopes change the solution -/
 
 /-- Clamped-clamped deflection under the uniform load `q`: `q * x ^ 2 * (L - x) ^ 2 / (24 * EI)`.
--/
+With the convention that division by `0` gives `0`, the value is `0` when `EI = 0`. The model has
+`EI > 0` and `L > 0`. -/
 noncomputable def clampedClampedDeflection (EI L q x : ℝ) : ℝ :=
   q * x ^ 2 * (L - x) ^ 2 / (24 * EI)
 
@@ -1609,10 +1636,10 @@ private lemma iteratedDeriv_ccd (EI L q : ℝ) (n : ℕ) (x : ℝ) :
   rw [iteratedDeriv_fun_add h1 h2, iteratedDeriv_fun_add h3 h4]
   simp only [iteratedDeriv_const_mul_field]
 
-/-- Replacing the two moment conditions by clamped slopes changes the solution: for `q ≠ 0` the
-clamped-clamped polynomial satisfies the equation, both deflection conditions and both clamped
-slopes, but it is not a simply supported solution, and its midspan deflection
-`q * L ^ 4 / (384 * EI)` differs from the simply supported one. -/
+/-- Replacing the two moment conditions by clamped slopes changes the solution: for `EI > 0`,
+`L > 0` and `q ≠ 0` the clamped-clamped polynomial satisfies the equation, both deflection
+conditions and both clamped slopes, but it is not a simply supported solution, and its midspan
+deflection `q * L ^ 4 / (384 * EI)` differs from the simply supported one. -/
 lemma clampedSlopes_change_solution {EI L q : ℝ} (hEI : 0 < EI) (hL : 0 < L) (hq : q ≠ 0) :
     (∀ x, EI * iteratedDeriv 4 (clampedClampedDeflection EI L q) x = q) ∧
       clampedClampedDeflection EI L q 0 = 0 ∧ clampedClampedDeflection EI L q L = 0 ∧

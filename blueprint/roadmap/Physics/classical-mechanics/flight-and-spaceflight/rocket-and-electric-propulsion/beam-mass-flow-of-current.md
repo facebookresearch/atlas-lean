@@ -1,4 +1,4 @@
-# Mass flow from the current
+# Mass flow of a beam from its ion flow
 
-For a single charge state `q_i > 0`, a beam whose current is
-carried by `ṅ` ions per unit time, `I_b = ṅ q_i`, has the mass flow `I_b m_i / q_i = ṅ m_i`.
+For `q_i > 0`, a real `m_i` and a beam whose current is carried by `ṅ` ions per unit time,
+`I_b = ṅ q_i`, the [beam mass flow](beam-mass-flow.md) `ṁ = I_b m_i / q_i` equals `ṅ m_i`.

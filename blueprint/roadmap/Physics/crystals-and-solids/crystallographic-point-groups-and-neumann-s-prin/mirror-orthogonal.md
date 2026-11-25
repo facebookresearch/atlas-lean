@@ -1,3 +1,3 @@
-# Mirror orthogonal
+# The mirror is orthogonal
 
-`mirror` is orthogonal.
+The [mirror](mirror.md) `M` satisfies `Mᵀ M = 1`.

@@ -1,3 +1,5 @@
-# Symmetric is Hermitian
+# A real symmetric 3 × 3 stress matrix is Hermitian
 
-A real symmetric stress matrix is Hermitian (for real entries `star` is trivial).
+If a real `3 × 3` matrix `σ` is [symmetric](is-symmetric-stress.md), `σᵀ = σ`, then it is Hermitian:
+its conjugate transpose equals `σ`, since complex conjugation is trivial on real entries. So the
+spectral theorem for Hermitian matrices applies to `σ`.

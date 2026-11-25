@@ -1,3 +1,4 @@
-# Position
+# Position of an atom of a crystal
 
-The position `B *ᵥ n + u f` of motif atom `f` in the cell with integer index `n`.
+For a [crystal](bravais-crystal.md) with finite nonempty motif `F` (basis matrix `B`, offsets `u`),
+the position of atom `f ∈ F` in the cell with integer index `n ∈ ℤ³` is `B n + u_f`.

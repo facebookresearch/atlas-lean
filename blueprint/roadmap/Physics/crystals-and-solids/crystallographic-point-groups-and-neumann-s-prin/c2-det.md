@@ -1,3 +1,3 @@
-# C2 det
+# The half-turn has determinant 1
 
-`C2` has determinant one.
+The [half-turn](c2.md) `C₂` has `det C₂ = 1`.

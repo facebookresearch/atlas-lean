@@ -1,7 +1,6 @@
-# Theoretical Density Raw
+# Density expression n A / (V_c N_A)
 
-Raw density expression `n * A / (Vc * NA)`: `n` atoms per cell, molar mass
-`A`, cell volume `Vc`, Avogadro constant `NA`, on arbitrary reals `A`, `Vc` and
-`NA`. Lean's division is total, so this is `0` for `Vc = 0` or `NA = 0`; it is a
-density only for `0 < A`, `0 < Vc` and `0 < NA`, the domain that
-`theoreticalDensity` enforces.
+For `n ∈ ℕ` (atoms per conventional cell) and reals `A` (molar mass), `V_c` (cell volume) and `N_A`
+(Avogadro constant), `n A / (V_c N_A)`. With the convention `x / 0 = 0` it is `0` when `V_c = 0` or
+`N_A = 0`. It is a density only for `A, V_c, N_A > 0`, the domain of the
+[theoretical density](theoretical-density.md).

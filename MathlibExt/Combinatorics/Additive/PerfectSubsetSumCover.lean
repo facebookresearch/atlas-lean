@@ -12,6 +12,7 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 public import Mathlib.Algebra.BigOperators.Pi
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.ZMod.Basic
+public import Mathlib.Order.Interval.Finset.Fin
 public import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
@@ -163,6 +164,31 @@ end PerfectSubsetSumCover
 
 open PerfectSubsetSumCover
 
+-- Preserve the existing `DecidableEq` instance argument for legacy clients.
+set_option linter.unusedDecidableInType false in
+/-- **Odd combinations are closed under odd multiples.** Let $A$ be a finite subset of an abelian
+group $G$. If $g$ lies in the set $\mathcal{T}(A)$ of odd combinations of $A$, then
+$(2j+1)g \in \mathcal{T}(A)$ for every integer $j$.
+
+Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
+of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Theorem 15 (c)
+(`jis-2025-25.7.8-thm-15`). "Union of equivalence classes" is stated as closure under odd
+multiples (`0 ∈ 𝒯(A)` is `zero_mem_oddCombinations`). -/
+public theorem zsmul_mem_oddCombinations {G : Type*} [AddCommGroup G] [DecidableEq G]
+    (A : Finset G) {g : G} (hg : g ∈ oddCombinations A) (j : ℤ) :
+    (2 * j + 1) • g ∈ oddCombinations A := by
+  obtain ⟨c, hc, rfl⟩ := hg
+  have hj : Odd (2 * j + 1) := ⟨j, rfl⟩
+  refine ⟨fun x => (2 * j + 1) * c x, ?_, ?_⟩
+  · intro x hx
+    rcases hc x hx with hzero | hodd
+    · exact Or.inl (by simp [hzero])
+    · exact Or.inr (hj.mul hodd)
+  · change zsmulAddGroupHom (2 * j + 1) (∑ x ∈ A, c x • x) =
+      ∑ x ∈ A, ((2 * j + 1) * c x) • x
+    rw [map_sum]
+    exact Finset.sum_congr rfl fun x _ => (mul_zsmul x _ _).symm
+
 /-- **Adjoining an element doubles the multiplicity of a perfect cover.** Let $G$ be an abelian
 group and let $s = (s_1, \dots, s_k)$ be a perfect $m$-cover of $G$. For every $g \in G$, the
 family $(g, s_1, \dots, s_k)$ is a perfect $2m$-cover of $G$.
@@ -229,6 +255,96 @@ theorem isPerfectMCover_fst_snd {H K : Type*} [AddCommGroup H] [DecidableEq H]
     intro h _
     simpa only [coverCount, Finset.filter_filter, Prod.ext_iff, Prod.fst_sum, Prod.snd_sum,
       and_comm] using hs (h, k)
+
+/-- **Distinct subset sums from the odd-combination condition.** Let $G$ be an abelian group,
+and for a finite set $A \subseteq G$ write $\mathcal{T}(A)$ for the set of odd combinations of
+$A$. Let $x = (x_1, \dots, x_m)$ be a family in $G$ such that
+$x_i \notin \mathcal{T}(\{x_1, \dots, x_{i-1}\})$ for every $i$ (for $i = 1$ this says
+$x_1 \ne 0$, and for $i \ge 2$ it forces $x_i \ne 0$). Then $x$ covers every element of $G$ at
+most once, that is, all subset sums of $x$ are distinct; if moreover $|G| = 2^m$, then $x$ is a
+perfect $1$-cover of $G$.
+
+Source: John Greene and Clayton Higgins, *Maximal Subset Sums in a Group of Order a Power
+of 2*, Journal of Integer Sequences 28 (2025), Article 25.7.8, Lemma 16
+(`jis-2025-25.7.8-lem-16`). The paper's "nonzero" hypothesis is the `i = 1` case of `hx`;
+distinctness needs no finiteness, and "`m = n`" is `Nat.card G = 2 ^ m`. -/
+theorem coverCount_le_one_of_not_mem_oddCombinations {G : Type*}
+    [AddCommGroup G] [DecidableEq G] {m : ℕ} {x : Fin m → G}
+    (hx : ∀ i : Fin m, x i ∉ oddCombinations ((Finset.Iio i).image x)) :
+    (∀ g : G, coverCount x g ≤ 1) ∧ (Nat.card G = 2 ^ m → IsPerfectMCover 1 x) := by
+  have hinj : Function.Injective x := by
+    have hne {i j : Fin m} (hij : i < j) : x i ≠ x j := by
+      intro h
+      exact hx j (h ▸ mem_oddCombinations_of_mem
+        (Finset.mem_image_of_mem x (Finset.mem_Iio.mpr hij)))
+    intro i j h
+    exact le_antisymm (le_of_not_gt fun hji => hne hji h.symm)
+      (le_of_not_gt fun hij => hne hij h)
+  let subsetSum (s : Finset (Fin m)) : G := ∑ i ∈ s, x i
+  have hsum_inj : Function.Injective subsetSum := by
+    intro s t hsum
+    by_contra hne
+    let d := (s \ t) ∪ (t \ s)
+    have hd : d.Nonempty := by
+      rw [Finset.nonempty_iff_ne_empty]
+      intro he
+      obtain ⟨hst, hts⟩ := Finset.union_eq_empty.mp he
+      exact hne (Finset.Subset.antisymm (Finset.sdiff_eq_empty_iff_subset.mp hst)
+        (Finset.sdiff_eq_empty_iff_subset.mp hts))
+    let i := d.max' hd
+    have hbelow {j : Fin m} (hj : j ∈ d) (hji : j ≠ i) : j ∈ Finset.Iio i :=
+      Finset.mem_Iio.mpr (lt_of_le_of_ne (Finset.le_max' d j hj) hji)
+    -- Cancel the common summands, then isolate the greatest remaining index.
+    have hcancel : subsetSum (s \ t) = subsetSum (t \ s) := by
+      apply sub_eq_zero.mp
+      calc
+        _ = subsetSum s - subsetSum t := Finset.sum_sdiff_sub_sum_sdiff
+        _ = 0 := sub_eq_zero.mpr hsum
+    have hbad (a b : Finset (Fin m)) (hia : i ∈ a) (hib : i ∉ b)
+        (ha : a ⊆ d) (hb : b ⊆ d) (heq : subsetSum a = subsetSum b) : False := by
+      have ha' : a.erase i ⊆ Finset.Iio i := fun _ hj =>
+        hbelow (ha (Finset.mem_of_mem_erase hj)) (Finset.ne_of_mem_erase hj)
+      have hb' : b ⊆ Finset.Iio i := fun _ hj => hbelow (hb hj) fun h => hib (h ▸ hj)
+      -- The difference of the membership indicators gives coefficients in {0, 1, -1}.
+      let c (g : G) : ℤ := (if g ∈ b.image x then 1 else 0) -
+        (if g ∈ (a.erase i).image x then 1 else 0)
+      have hsumImage (u : Finset (Fin m)) (hu : u ⊆ Finset.Iio i) :
+          (∑ g ∈ (Finset.Iio i).image x, (if g ∈ u.image x then (1 : ℤ) else 0) • g) =
+            subsetSum u := by
+        simp only [ite_smul, one_zsmul, zero_zsmul]
+        rw [← Finset.sum_filter, Finset.filter_mem_eq_inter,
+          Finset.inter_eq_right.mpr (Finset.image_subset_image hu), Finset.sum_image hinj.injOn]
+      apply hx i
+      refine ⟨c, fun g _ => ?_, ?_⟩
+      · simp only [c]
+        split_ifs <;> decide
+      · simp only [c, sub_zsmul, ← sub_eq_add_neg, Finset.sum_sub_distrib,
+          hsumImage b hb', hsumImage (a.erase i) ha']
+        exact eq_sub_iff_add_eq.mpr ((add_comm _ _).trans
+          ((Finset.sum_erase_add _ _ hia).trans heq))
+    rcases Finset.mem_union.mp (Finset.max'_mem d hd) with hi | hi
+    · exact hbad (s \ t) (t \ s) hi (fun hj => (Finset.mem_sdiff.mp hi).2
+        (Finset.mem_sdiff.mp hj).1) Finset.subset_union_left Finset.subset_union_right hcancel
+    · exact hbad (t \ s) (s \ t) hi (fun hj => (Finset.mem_sdiff.mp hi).2
+        (Finset.mem_sdiff.mp hj).1) Finset.subset_union_right Finset.subset_union_left hcancel.symm
+  have hle (g : G) : coverCount x g ≤ 1 := by
+    rw [coverCount, Finset.card_le_one_iff]
+    intro s t hs ht
+    obtain ⟨-, hs⟩ := Finset.mem_filter.mp hs
+    obtain ⟨-, ht⟩ := Finset.mem_filter.mp ht
+    exact hsum_inj (hs.trans ht.symm)
+  refine ⟨hle, ?_⟩
+  intro hcard
+  have : Finite G := Nat.finite_of_card_ne_zero (hcard ▸ pow_ne_zero m (by decide))
+  let : Fintype G := Fintype.ofFinite G
+  have hcard' : Fintype.card (Finset (Fin m)) = Fintype.card G := by
+    rw [← Nat.card_eq_fintype_card (α := G), hcard, Fintype.card_finset, Fintype.card_fin]
+  have hsurj : Function.Surjective subsetSum :=
+    ((Fintype.bijective_iff_injective_and_card subsetSum).2 ⟨hsum_inj, hcard'⟩).2
+  intro g
+  obtain ⟨s, hs⟩ := hsurj g
+  refine le_antisymm (hle g) ?_
+  exact Finset.card_pos.mpr ⟨s, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hs⟩⟩
 
 end
 

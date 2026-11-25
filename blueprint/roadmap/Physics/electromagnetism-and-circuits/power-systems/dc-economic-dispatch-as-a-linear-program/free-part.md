@@ -1,4 +1,4 @@
-# Free Part
+# Free variables recovered from an LP point
 
-Free variables recovered from an LP point: positive part minus
-negative part.
+For an LP point `x = (x⁺, x⁻)` with `2 (n_G + n_N)` entries, the free part is `x⁺ - x⁻`, the
+positive part minus the negative part, a vector of `n_G + n_N` free variables `(p, θ)`.

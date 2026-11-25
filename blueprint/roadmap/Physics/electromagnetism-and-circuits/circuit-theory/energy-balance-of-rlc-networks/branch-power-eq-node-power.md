@@ -1,6 +1,10 @@
-# Branch power eq node power
+# Total branch power equals the power supplied at the nodes
 
-Tellegen / matrix power balance: under KVL `v = B^T phi` and
-KCL `B i = j`, total branch absorbed power `v ⬝ᵥ i` equals supplied
-node power `phi ⬝ᵥ j`. This is the `Fin`-indexed specialization of
-`PhyslibExt.Circuits.TellegenPowerBalance.branchPower_eq_nodePower`.
+Let `B` be any real matrix with `n_N` rows (nodes) and `n_B` columns (branches), `φ` and `j` real
+node potentials and node injections, and `v` and `i` real branch voltages and currents, with
+`v = Bᵀ φ` and `B i = j`. Then the total absorbed branch power equals the supplied node power:
+
+`v · i = φ · j`.
+
+This is the case of numbered nodes and branches of
+[Tellegen's theorem in matrix form](../tellegen-s-theorem-and-branch-power-balance/branch-power-eq-node-power.md).

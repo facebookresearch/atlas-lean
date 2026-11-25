@@ -95,6 +95,7 @@ end exists_trithoff_row_difference_eq
 
 open exists_trithoff_row_difference_eq
 
+set_option linter.unusedVariables false in
 /-- **Differences along a Trithoff row.** Let $T_0 = T_1 = 0$, $T_2 = 1$ and
 $T_{m+3} = T_{m+2} + T_{m+1} + T_m$ be the Tribonacci numbers, and for a finite word
 $w = (w_0, \dots, w_{\ell-1})$ of natural-number digits, listed from the least significant
@@ -114,7 +115,7 @@ Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Fact
 Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
 Proposition 8 (`jis-2025-25.5.4-prop-8`). -/
 public theorem exists_trithoff_row_difference_eq (a : List ℕ) (n : ℕ)
-    (_h : IsTribonacciRepr a n) :
+    (h : IsTribonacciRepr a n) :
     ∃ k : ℕ, (tribonacciValue (List.replicate (k + 1) 0 ++ a) : ℤ) -
         tribonacciValue (List.replicate k 0 ++ a) =
       tribonacciValue ((List.range (a.length + 1)).map fun i =>

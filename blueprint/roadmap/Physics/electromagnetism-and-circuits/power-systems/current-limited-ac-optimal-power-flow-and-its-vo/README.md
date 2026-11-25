@@ -1,62 +1,64 @@
 # Current-limited AC optimal power flow and its voltage lift
 
-- [Bus Admittance](bus-admittance.md)
-- [Voltage Lift](voltage-lift.md)
-- [Lifted Injection](lifted-injection.md)
-- [Pairing](pairing.md)
-- [Row Select](row-select.md)
-- [Active Coeff](active-coeff.md)
-- [Reactive Coeff](reactive-coeff.md)
-- [Voltage Coeff](voltage-coeff.md)
-- [Branch Current Coeff](branch-current-coeff.md)
-- [Current Limited OPF](current-limited-opf.md)
-- [Admittance](admittance.md)
-- [Ac Feasible](ac-feasible.md)
-- [Ac Cost](ac-cost.md)
-- [Sdp Feasible](sdp-feasible.md)
-- [Sdp Cost](sdp-cost.md)
+## Network matrices and the optimal power flow problem
 
-## B. The voltage lift
+- [Bus admittance matrix of a network](bus-admittance.md)
+- [Voltage lift of a complex voltage vector](voltage-lift.md)
+- [Lifted complex injection at a bus](lifted-injection.md)
+- [Real trace pairing of complex matrices](pairing.md)
+- [Matrix keeping one row of a square matrix](row-select.md)
+- [Coefficient matrix of the active power at a bus](active-coeff.md)
+- [Coefficient matrix of the reactive power at a bus](reactive-coeff.md)
+- [Coefficient matrix of the squared voltage magnitude at a bus](voltage-coeff.md)
+- [Coefficient matrix of the squared current on a branch](branch-current-coeff.md)
+- [Data of a current-limited AC optimal power flow problem](current-limited-opf.md)
+- [Bus admittance matrix of an optimal power flow instance](admittance.md)
+- [AC feasibility of a voltage vector](ac-feasible.md)
+- [Linear active-generation cost of a voltage vector](ac-cost.md)
+- [Feasibility for the semidefinite relaxation](sdp-feasible.md)
+- [Linear active-generation cost of a matrix in the relaxation](sdp-cost.md)
 
-- [Voltage Lift apply](voltage-lift-apply.md)
-- [Voltage Lift pos Semidef](voltage-lift-pos-semidef.md)
-- [Voltage Lift is Hermitian](voltage-lift-is-hermitian.md)
-- [Voltage Lift rank le one](voltage-lift-rank-le-one.md)
-- [Voltage Lift zero](voltage-lift-zero.md)
-- [Voltage Lift unit mul](voltage-lift-unit-mul.md)
+## The voltage lift
 
-## C. Injections through the bus admittance matrix
+- [Entries of the voltage lift](voltage-lift-apply.md)
+- [The voltage lift is positive semidefinite](voltage-lift-pos-semidef.md)
+- [The voltage lift is Hermitian](voltage-lift-is-hermitian.md)
+- [The voltage lift has rank at most one](voltage-lift-rank-le-one.md)
+- [The zero voltage vector lifts to the zero matrix](voltage-lift-zero.md)
+- [The voltage lift is unchanged by a common unit-modulus factor](voltage-lift-unit-mul.md)
 
-- [Bus Admittance mul Vec eq node Injection](bus-admittance-mul-vec-eq-node-injection.md)
-- [Node Complex Power eq lifted Injection](node-complex-power-eq-lifted-injection.md)
+## Injections through the bus admittance matrix
 
-## D. Hermitian coefficient matrices and real affine constraints
+- [The bus admittance matrix maps voltages to nodal current injections](bus-admittance-mul-vec-eq-node-injection.md)
+- [Bus complex power as a linear function of the voltage lift](node-complex-power-eq-lifted-injection.md)
 
-- [Is Linear Map pairing](is-linear-map-pairing.md)
-- [Active Coeff is Hermitian](active-coeff-is-hermitian.md)
-- [Reactive Coeff is Hermitian](reactive-coeff-is-hermitian.md)
-- [Voltage Coeff is Hermitian](voltage-coeff-is-hermitian.md)
-- [Branch Current Coeff is Hermitian](branch-current-coeff-is-hermitian.md)
-- [Re lifted Injection eq pairing](re-lifted-injection-eq-pairing.md)
-- [Im lifted Injection eq pairing](im-lifted-injection-eq-pairing.md)
-- [Pairing voltage Coeff](pairing-voltage-coeff.md)
+## Hermitian coefficient matrices and real affine constraints
 
-## E. Exactness on lifts
+- [The pairing with a fixed matrix is real-linear](is-linear-map-pairing.md)
+- [The active-power coefficient matrix is Hermitian](active-coeff-is-hermitian.md)
+- [The reactive-power coefficient matrix is Hermitian](reactive-coeff-is-hermitian.md)
+- [The voltage coefficient matrix is Hermitian](voltage-coeff-is-hermitian.md)
+- [The branch-current coefficient matrix is Hermitian](branch-current-coeff-is-hermitian.md)
+- [Real part of the lifted injection as a pairing, for Hermitian W](re-lifted-injection-eq-pairing.md)
+- [Imaginary part of the lifted injection as a pairing, for Hermitian W](im-lifted-injection-eq-pairing.md)
+- [The voltage pairing reads the real part of a diagonal entry](pairing-voltage-coeff.md)
 
-- [Pairing active Coeff voltage Lift](pairing-active-coeff-voltage-lift.md)
-- [Pairing reactive Coeff voltage Lift](pairing-reactive-coeff-voltage-lift.md)
-- [Pairing voltage Coeff voltage Lift](pairing-voltage-coeff-voltage-lift.md)
-- [Pairing branch Current Coeff voltage Lift](pairing-branch-current-coeff-voltage-lif.md)
+## Exactness on lifts
 
-## F. Feasibility, cost and the sound relaxation
+- [On a lift, the active pairing equals the active power at the bus](pairing-active-coeff-voltage-lift.md)
+- [On a lift, the reactive pairing equals the reactive power at the bus](pairing-reactive-coeff-voltage-lift.md)
+- [On a lift, the voltage pairing is the squared voltage magnitude](pairing-voltage-coeff-voltage-lift.md)
+- [On a lift, the branch-current pairing is the squared branch current](pairing-branch-current-coeff-voltage-lif.md)
 
-- [Ac Feasible iff sdp Feasible voltage Lift](ac-feasible-iff-sdp-feasible-voltage-lif.md)
-- [Sdp Cost voltage Lift](sdp-cost-voltage-lift.md)
-- [Current-limited AC lift](current-limited-aclift-sound.md)
-- [Current Limited ACLift spec](current-limited-aclift-spec.md)
+## Feasibility, cost and the sound relaxation
 
-## G. Two-bus validation
+- [A voltage vector is AC feasible exactly when its lift is SDP feasible](ac-feasible-iff-sdp-feasible-voltage-lif.md)
+- [The relaxation cost of a lift equals the AC cost](sdp-cost-voltage-lift.md)
+- [Soundness of the semidefinite relaxation](current-limited-aclift-sound.md)
+- [Combined properties of the voltage lift and the relaxation](current-limited-aclift-spec.md)
 
-- [Two Bus Example](two-bus-example.md)
-- [Two Bus rank One witness](two-bus-rank-one-witness.md)
-- [Two Bus rank Two relaxed not lift](two-bus-rank-two-relaxed-not-lift.md)
+## Two-bus example
+
+- [Two-bus test instance with one unit-conductance branch](two-bus-example.md)
+- [Two-bus example: a feasible voltage whose lift has the same cost 1/4](two-bus-rank-one-witness.md)
+- [Two-bus example: the identity is relaxation-feasible but not a lift](two-bus-rank-two-relaxed-not-lift.md)

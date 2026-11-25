@@ -17,4 +17,4 @@
 
 ## Poroelastic port-energy identity
 
-- [Discretized Biot consolidation](poroelastic-port-energy.md)
+- [Energy balance of the discretized Biot consolidation equations](poroelastic-port-energy.md)

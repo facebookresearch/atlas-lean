@@ -1,4 +1,4 @@
-# Current Phasor at zero
+# At the load plane the current is the amplitude difference over Z₀
 
-The current phasor at the load plane is the difference of the two
-wave amplitudes divided by the characteristic impedance.
+For all complex `A₊`, `A₋` and real `Z₀`, `β`, the [current phasor](current-phasor.md)
+`I(x) = (A₊ e^{−iβx} − A₋ e^{iβx}) / Z₀` at the load plane `x = 0` is `I(0) = (A₊ − A₋) / Z₀`.

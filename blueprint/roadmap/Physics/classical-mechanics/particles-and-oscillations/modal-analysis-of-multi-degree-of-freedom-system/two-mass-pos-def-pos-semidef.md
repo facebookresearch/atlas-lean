@@ -1,4 +1,6 @@
-# Two Mass pos Def pos Semidef
+# Two positive masses and a nonnegative spring give a modal problem
 
-Positive masses give the positive-definite mass matrix `M = diag(m₁, m₂)`, and a
-nonnegative spring gives a positive-semidefinite stiffness: the hypotheses of the modal basis.
+Let `m₁ > 0`, `m₂ > 0` and `k ≥ 0`. Then the mass matrix `M = diag(m₁, m₂)` is positive definite
+and the [two-mass stiffness matrix](stiffness-matrix-two-mass-weights.md)
+`K = k [[1, -1], [-1, 1]]` is positive semidefinite: the hypotheses of the
+[modal basis](exists-modal-basis.md).

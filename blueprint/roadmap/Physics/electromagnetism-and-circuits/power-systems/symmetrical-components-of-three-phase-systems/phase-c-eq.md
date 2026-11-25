@@ -1,3 +1,5 @@
-# Phase C eq
+# Phase c in terms of the sequence components
 
-Inversion, phase `c`: `Vc = V0 + α V1 + α² V2`.
+For all complex `V_a`, `V_b`, `V_c`, `V_c = V₀ + α V₁ + α² V₂`, where `V₀`, `V₁`, `V₂` are the
+[zero](zero-sequence.md), [positive](positive-sequence.md) and [negative](negative-sequence.md)
+sequence components of `(V_a, V_b, V_c)` and `α = e^(2πi/3)`.

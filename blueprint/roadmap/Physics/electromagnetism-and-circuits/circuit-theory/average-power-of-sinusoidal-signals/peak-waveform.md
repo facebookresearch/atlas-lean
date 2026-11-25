@@ -1,4 +1,5 @@
-# Peak Waveform
+# Sinusoidal waveform of a peak phasor
 
-The peak phasor waveform `Re (V * exp (i * ω * t))`: the leaf RMS
-formula with the `sqrt(2)` factor omitted.
+For a complex phasor `V` and real numbers `ω` and `t`, the peak waveform is `Re(V e^{i ω t})`: the
+[RMS waveform](rms-waveform.md) without the factor `√2`, so that for `ω ≠ 0` its maximum over `t` is
+`|V|`.

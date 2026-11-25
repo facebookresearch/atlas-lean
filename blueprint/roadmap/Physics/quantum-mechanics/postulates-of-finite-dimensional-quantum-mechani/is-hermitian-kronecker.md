@@ -1,4 +1,4 @@
-# Is Hermitian kronecker
+# The Kronecker product of Hermitian matrices is Hermitian
 
-The Kronecker product of two Hermitian matrices is Hermitian. The proof uses Mathlib's
-`Matrix.conjTranspose_kronecker`, `(A ⊗ₖ B)ᴴ = Aᴴ ⊗ₖ Bᴴ`.
+For a Hermitian complex `m × m` matrix `A` and a Hermitian complex `n × n` matrix `B`, the Kronecker
+product `A ⊗ B` is Hermitian.

@@ -1,3 +1,5 @@
-# Lattice ne t P t I
+# Primitive and body-centred tetragonal lattices differ
 
-Tetragonal P and I with the same parameters are different lattices (reference-only).
+For `a > 0` and `c > 0`, the [primitive tetragonal lattice](tetragonal-p.md) and the
+[body-centred tetragonal lattice](tetragonal-i.md) with these parameters have different
+[lattices](../bravais-lattices/lattice.md).

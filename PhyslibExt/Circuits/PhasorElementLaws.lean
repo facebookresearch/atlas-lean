@@ -158,8 +158,8 @@ lemma rmsWaveform_eq_iff {ω : ℝ} (hω : ω ≠ 0) (V W : ℂ) :
 
 /-! ### Element laws as phasor equations -/
 
-/-- **Resistor.** For sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`, Ohm's law
-`v = R i` at every time is equivalent to the phasor equation `V = R I`. -/
+/-- **Resistor.** For `R ≥ 0` and sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`,
+Ohm's law `v = R i` at every time is equivalent to the phasor equation `V = R I`. -/
 lemma resistor_law_iff_phasor (R : ℝ) (hR : 0 ≤ R) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
     (v i : ℝ → ℝ) (hv : ∀ t, v t = rmsWaveform V ω t) (hi : ∀ t, i t = rmsWaveform I ω t) :
     (∀ t, v t = R * i t) ↔ V = (R : ℂ) * I := by
@@ -177,7 +177,7 @@ lemma resistor_law_iff_phasor (R : ℝ) (hR : 0 ≤ R) {ω : ℝ} (hω : 0 < ω)
     rw [hv t, hi t, h]
     exact rmsWaveform_real_scale R I ω t
 
-/-- **Inductor.** For sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`, the law
+/-- **Inductor.** For `L > 0` and sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`, the law
 `v = L di/dt` at every time is equivalent to the phasor equation `V = i ω L I`. -/
 lemma inductor_law_iff_phasor (L : ℝ) (hL : 0 < L) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
     (v i : ℝ → ℝ) (hv : ∀ t, v t = rmsWaveform V ω t) (hi : ∀ t, i t = rmsWaveform I ω t) :
@@ -207,8 +207,8 @@ lemma inductor_law_iff_phasor (L : ℝ) (hL : 0 < L) {ω : ℝ} (hω : 0 < ω) (
   · intro h t
     rw [hv t, hder t, hscale t, h]
 
-/-- **Capacitor.** For sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`, the law
-`i = C dv/dt` at every time is equivalent to the phasor equation `I = i ω C V`. -/
+/-- **Capacitor.** For `C > 0` and sinusoidal `v`, `i` with RMS phasors `V`, `I` at `ω > 0`, the
+law `i = C dv/dt` at every time is equivalent to the phasor equation `I = i ω C V`. -/
 lemma capacitor_law_iff_phasor (C : ℝ) (hC : 0 < C) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
     (v i : ℝ → ℝ) (hv : ∀ t, v t = rmsWaveform V ω t) (hi : ∀ t, i t = rmsWaveform I ω t) :
     (∀ t, i t = C * deriv v t) ↔ I = Complex.I * (ω : ℂ) * (C : ℂ) * V := by
@@ -297,8 +297,8 @@ lemma capacitor_phasor_iff_impedance (C : ℝ) (hC : 0 < C) {ω : ℝ} (hω : 0 
 
 /-! ### Validation: quadrature, `R = 0`, and DC -/
 
-/-- Inductor quadrature: under `V = i ω L I` the voltage waveform is `ω L` times the current
-waveform advanced by a quarter period `π / (2 ω)`. -/
+/-- Inductor quadrature: for `L > 0` and `ω > 0`, under `V = i ω L I` the voltage waveform is `ω L`
+times the current waveform advanced by a quarter period `π / (2 ω)`. -/
 lemma inductor_voltage_leads_current (L : ℝ) (hL : 0 < L) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
     (h : V = Complex.I * (ω : ℂ) * (L : ℂ) * I) (t : ℝ) :
     rmsWaveform V ω t = ω * L * rmsWaveform I ω (t + Real.pi / (2 * ω)) := by
@@ -308,8 +308,8 @@ lemma inductor_voltage_leads_current (L : ℝ) (hL : 0 < L) {ω : ℝ} (hω : 0 
     ring
   rw [hV, rmsWaveform_mul_I_shift _ hω _, rmsWaveform_real_scale]
 
-/-- Capacitor quadrature: under `I = i ω C V` the current waveform is `ω C` times the voltage
-waveform advanced by a quarter period `π / (2 ω)`. -/
+/-- Capacitor quadrature: for `C > 0` and `ω > 0`, under `I = i ω C V` the current waveform is `ω C`
+times the voltage waveform advanced by a quarter period `π / (2 ω)`. -/
 lemma capacitor_current_leads_voltage (C : ℝ) (hC : 0 < C) {ω : ℝ} (hω : 0 < ω) (V I : ℂ)
     (h : I = Complex.I * (ω : ℂ) * (C : ℂ) * V) (t : ℝ) :
     rmsWaveform I ω t = ω * C * rmsWaveform V ω (t + Real.pi / (2 * ω)) := by
@@ -319,8 +319,9 @@ lemma capacitor_current_leads_voltage (C : ℝ) (hC : 0 < C) {ω : ℝ} (hω : 0
     ring
   rw [hI, rmsWaveform_mul_I_shift _ hω _, rmsWaveform_real_scale]
 
-/-- `R = 0` in the multiplicative equation: a short circuit `v = 0 * i` is equivalent to the
-zero voltage phasor. -/
+/-- `R = 0` in the multiplicative equation: for `ω > 0` and `v`, `i` equal at every time to the RMS
+waveforms of the phasors `V`, `I`, the short-circuit law `v = 0 * i` at every time is equivalent to
+the zero voltage phasor `V = 0`. -/
 lemma short_circuit_law_iff_phasor {ω : ℝ} (hω : 0 < ω) (V I : ℂ) (v i : ℝ → ℝ)
     (hv : ∀ t, v t = rmsWaveform V ω t) (hi : ∀ t, i t = rmsWaveform I ω t) :
     (∀ t, v t = 0 * i t) ↔ V = 0 := by

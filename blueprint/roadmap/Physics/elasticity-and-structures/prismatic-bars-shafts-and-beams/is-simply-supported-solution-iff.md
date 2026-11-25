@@ -1,4 +1,10 @@
-# Is Simply Supported Solution iff
+# Characterisation of the simply supported beam solutions
 
-Characterization: for `EI > 0` and `L > 0` the solutions of the simply supported problem are
-exactly the `C⁴` functions that agree with the uniform-load quartic on `[0, L]`.
+Let $EI > 0$ and $L > 0$, and let $q$ be real. A function $w \colon \mathbb{R} \to \mathbb{R}$
+solves the [simply supported problem](is-simply-supported-solution.md) if and only if $w$ is four
+times continuously differentiable on $\mathbb{R}$ and
+
+$$w(x) = \frac{q\, (L^3 x - 2L x^3 + x^4)}{24\, EI} \qquad \text{for every } x \in [0, L],$$
+
+that is, $w$ agrees on $[0, L]$ with the
+[uniform-load deflection](../euler-bernoulli-beam-under-uniform-load/uniform-load-deflection.md).

@@ -64,11 +64,13 @@ open MeasureTheory ProbabilityTheory
 open scoped NNReal
 
 /-- Mean photon-electron arrival rate `λ = η P / (h ν)` of an ideal detector with quantum
-efficiency `η`, optical power `P` and photon energy `h ν`. -/
+efficiency `η`, optical power `P` and photon energy `h ν`. With `x / 0 = 0` it is `0` when
+`h ν = 0`; physically `0 ≤ η ≤ 1`, `P ≥ 0` and `h, ν > 0`. -/
 noncomputable def photonArrivalRate (η P h ν : ℝ) : ℝ :=
   η * P / (h * ν)
 
-/-- Ideal responsivity `R = η |q| / (h ν)` (current per unit optical power). -/
+/-- Ideal responsivity `R = η |q| / (h ν)` (current per unit optical power). With `x / 0 = 0`
+it is `0` when `h ν = 0`. -/
 noncomputable def responsivity (η q h ν : ℝ) : ℝ :=
   η * |q| / (h * ν)
 
@@ -84,7 +86,8 @@ a window of positive length `T > 0`. For `T = 0` the value is `0` (`x / 0 = 0`),
 noncomputable def countCurrent (q T : ℝ) (n : ℕ) : ℝ :=
   |q| * (n : ℝ) / T
 
-/-- Under the leaf hypotheses the nonnegative Poisson mean is exactly `λ T`. -/
+/-- For `η ≥ 0`, `P ≥ 0`, `h > 0`, `ν > 0` and `T > 0`, the clamped Poisson mean is exactly
+`λ T`. -/
 lemma coe_photonCountMean (η P h ν T : ℝ) (hη0 : 0 ≤ η) (hP : 0 ≤ P) (hh : 0 < h)
     (hν : 0 < ν) (hT : 0 < T) :
     ((photonCountMean η P h ν T : ℝ≥0) : ℝ) = photonArrivalRate η P h ν * T := by
@@ -93,7 +96,8 @@ lemma coe_photonCountMean (η P h ν T : ℝ) (hη0 : 0 ≤ η) (hP : 0 ≤ P) (
   unfold photonArrivalRate
   positivity
 
-/-- `R P = |q| λ`: responsivity times power is the charge flux. -/
+/-- `R P = |q| λ`: responsivity times power is `|q|` times the photoelectron rate, for all real
+inputs; in the physical reading `0 ≤ η ≤ 1`, `P ≥ 0`, `h, ν > 0` it is the charge flux. -/
 lemma responsivity_mul_power_eq (η P q h ν : ℝ) :
     responsivity η q h ν * P = |q| * photonArrivalRate η P h ν := by
   unfold responsivity photonArrivalRate
@@ -201,9 +205,9 @@ private lemma variance_countCurrent_double_window_of_poissonVar (Ω : Type*) [Me
   have hTne : T ≠ 0 := ne_of_gt hT
   field_simp
 
-/-- **Mean detector current, Poisson mean discharged.** As
-`integral_countCurrent_eq_responsivity_mul_power_of_poissonMean`, with
-the Poisson mean supplied by the canonical
+/-- **Mean detector current.** For `0 ≤ η ≤ 1`, `P ≥ 0`, `h, ν > 0`, `q ≠ 0`, `T > 0` and
+a count `N` with law `Poisson(λ T)` under `μ` (which forces `μ` to be a probability measure),
+`E[|q| N / T] = R P`. The Poisson mean is
 `ProbabilityTheory.integral_natCast_poissonMeasure`. -/
 lemma integral_countCurrent_eq_responsivity_mul_power (Ω : Type*) [MeasurableSpace Ω]
     (μ : Measure Ω) (N : Ω → ℕ) (η P h ν q T : ℝ) (hη0 : 0 ≤ η) (hη1 : η ≤ 1)
@@ -214,9 +218,9 @@ lemma integral_countCurrent_eq_responsivity_mul_power (Ω : Type*) [MeasurableSp
     hη0 hη1 hP hh hν hq hT hN
     (fun r => ProbabilityTheory.integral_natCast_poissonMeasure r)
 
-/-- **Current variance, Poisson variance discharged.** As
-`variance_countCurrent_eq_sq_charge_mul_rate_div_of_poissonVar`, with
-the Poisson variance supplied by the canonical
+/-- **Current variance.** For `0 ≤ η ≤ 1`, `P ≥ 0`, `h, ν > 0`, `q ≠ 0`, `T > 0` and
+a count `N` with law `Poisson(λ T)` under `μ` (which forces `μ` to be a probability measure),
+`Var(|q| N / T) = q² λ / T`. The Poisson variance is
 `ProbabilityTheory.variance_natCast_poissonMeasure`. -/
 lemma variance_countCurrent_eq_sq_charge_mul_rate_div (Ω : Type*) [MeasurableSpace Ω]
     (μ : Measure Ω) (N : Ω → ℕ) (η P h ν q T : ℝ) (hη0 : 0 ≤ η) (hη1 : η ≤ 1)
@@ -227,10 +231,9 @@ lemma variance_countCurrent_eq_sq_charge_mul_rate_div (Ω : Type*) [MeasurableSp
     hη0 hη1 hP hh hν hq hT hN
     (fun r => ProbabilityTheory.variance_natCast_poissonMeasure r)
 
-/-- **Zero-efficiency moments, discharged.** With `η = 0` the detector
-counts nothing: mean and variance are zero. Poisson facts are the
-canonical `ProbabilityTheory.integral_natCast_poissonMeasure` and
-`ProbabilityTheory.variance_natCast_poissonMeasure`. -/
+/-- **Zero-efficiency moments.** For `P ≥ 0`, `h, ν > 0`, `q ≠ 0`, `T > 0` and `η = 0`, a
+count `N` with law `Poisson(0)` (the point mass at `0`) under `μ`: the detector counts nothing,
+and the current `|q| N / T` has mean and variance zero. -/
 lemma countCurrent_moments_eq_zero_of_efficiency_zero (Ω : Type*) [MeasurableSpace Ω]
     (μ : Measure Ω) (N : Ω → ℕ) (P h ν q T : ℝ) (hP : 0 ≤ P) (hh : 0 < h) (hν : 0 < ν)
     (hq : q ≠ 0) (hT : 0 < T)
@@ -241,8 +244,9 @@ lemma countCurrent_moments_eq_zero_of_efficiency_zero (Ω : Type*) [MeasurableSp
     (fun r => ProbabilityTheory.integral_natCast_poissonMeasure r)
     (fun r => ProbabilityTheory.variance_natCast_poissonMeasure r)
 
-/-- **Zero-power moments, discharged.** With `P = 0` the detector
-counts nothing: mean and variance are zero. -/
+/-- **Zero-power moments.** For `0 ≤ η ≤ 1`, `h, ν > 0`, `q ≠ 0`, `T > 0` and `P = 0`, a
+count `N` with law `Poisson(0)` (the point mass at `0`) under `μ`: the detector counts nothing,
+and the current `|q| N / T` has mean and variance zero. -/
 lemma countCurrent_moments_eq_zero_of_power_zero (Ω : Type*) [MeasurableSpace Ω]
     (μ : Measure Ω) (N : Ω → ℕ) (η h ν q T : ℝ) (hη0 : 0 ≤ η) (hη1 : η ≤ 1) (hh : 0 < h)
     (hν : 0 < ν) (hq : q ≠ 0) (hT : 0 < T)
@@ -253,7 +257,9 @@ lemma countCurrent_moments_eq_zero_of_power_zero (Ω : Type*) [MeasurableSpace �
     (fun r => ProbabilityTheory.integral_natCast_poissonMeasure r)
     (fun r => ProbabilityTheory.variance_natCast_poissonMeasure r)
 
-/-- **Doubling the window halves the variance, discharged.** -/
+/-- **Doubling the window halves the variance.** For `0 ≤ η ≤ 1`, `P ≥ 0`, `h, ν > 0`,
+`q ≠ 0`, `T > 0`, and counts `N₁ ∼ Poisson(λ T)`, `N₂ ∼ Poisson(λ · 2T)` under one measure `μ`
+(no independence assumed): `Var(|q| N₂ / (2T)) = Var(|q| N₁ / T) / 2`. -/
 lemma variance_countCurrent_double_window (Ω : Type*) [MeasurableSpace Ω]
     (μ : Measure Ω) (N₁ N₂ : Ω → ℕ) (η P h ν q T : ℝ) (hη0 : 0 ≤ η) (hη1 : η ≤ 1)
     (hP : 0 ≤ P) (hh : 0 < h) (hν : 0 < ν) (hq : q ≠ 0) (hT : 0 < T)

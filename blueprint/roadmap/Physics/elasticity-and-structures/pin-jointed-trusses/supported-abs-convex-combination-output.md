@@ -1,13 +1,10 @@
-# Supported abs convex Combination output le sup' abs
+# Absolute hull bound for the output of convex load combinations
 
-Absolute hull bound in fixed-output form: for positive-definite
-supported stiffness, vertex solutions `K *ᵥ (u i) = f i` on the
-table and a supported solution `K *ᵥ u₀` of the combined load,
-the absolute fixed output `|aout ⬝ᵥ u₀|` of the combined solution
-is at most the maximum absolute vertex output
-`s.sup' hs (fun i => |aout ⬝ᵥ (u i)|)`. Every solution is against
-the one stiffness, supports and reference configuration; the
-solutions are presupposed, and existence stays with the supported
-unique response. This is the absolute hull bound read through the
-identification of the retained response with the fixed output,
-over the signed hull bounds.
+Let `J` (joints), `M` (members) and `F` (free coordinates) be finite sets, with joint positions
+`r_j` in the plane, member `e` joining joint `a_e` to joint `b_e`, a matrix `S` from the free
+coordinates to the joint displacement coordinates (two per joint), and member weights `k_e`. Let
+`K = (B S)ᵀ diag(k) (B S)` be the supported stiffness, with the
+[compatibility matrix](axial-compatibility.md) `B`. Suppose that `K` is positive definite. Let
+`aout` be an output functional on the free coordinates. Let `s` be a nonempty finite set of load
+cases with loads `f_i` and coefficients `w_i ≥ 0` (`i ∈ s`) summing to `1`. If `K u_i = f_i` for
+every `i ∈ s` and `K u₀ = ∑_i w_i f_i`, then `|aout · u₀| ≤ max_i |aout · u_i|`.

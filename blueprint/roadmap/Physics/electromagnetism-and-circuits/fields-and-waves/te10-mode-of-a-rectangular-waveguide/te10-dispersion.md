@@ -1,3 +1,8 @@
-# Te10 Dispersion
+# TE10 dispersion relation
 
-The TE10 dispersion relation `ω^2 = c0^2 (kc^2 + β^2)`.
+For real `c₀`, `a`, `ω` and `β`, the TE10 dispersion relation is
+
+`ω² = c₀² (k_c² + β²)`,
+
+with the [cutoff wavenumber](../evanescent-te10-field-below-cutoff/cutoff-wavenumber.md) `k_c = π/a`. In the physical reading `c₀` is the
+speed of light, `ω` the frequency and `β` the propagation constant.

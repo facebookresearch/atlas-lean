@@ -1,3 +1,4 @@
-# Embedding
+# Inclusion of the domain of an operator
 
-The embedding of the domain of `T` into the function space `ℝ → ℂ`.
+For an [operator with domain](operator-with-domain.md) `(D, T)`, the inclusion of `D` into the
+functions `ℝ → ℂ`.

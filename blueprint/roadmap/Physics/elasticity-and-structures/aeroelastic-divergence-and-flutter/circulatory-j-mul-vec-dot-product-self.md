@@ -1,3 +1,3 @@
-# Circulatory J mul Vec dot Product self
+# The circulatory load does no work along the displacement
 
-The circulatory load does no work along the displacement itself: `(J v) ⬝ᵥ v = 0`.
+For every `v ∈ ℝ²`, the [circulatory load operator](circulatory-j.md) satisfies `(J v) · v = 0`.

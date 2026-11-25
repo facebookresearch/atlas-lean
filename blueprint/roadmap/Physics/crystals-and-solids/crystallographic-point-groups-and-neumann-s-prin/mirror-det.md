@@ -1,3 +1,3 @@
-# Mirror det
+# The mirror has determinant -1
 
-`mirror` has determinant `-1` (improper).
+The [mirror](mirror.md) `M` has `det M = -1`.

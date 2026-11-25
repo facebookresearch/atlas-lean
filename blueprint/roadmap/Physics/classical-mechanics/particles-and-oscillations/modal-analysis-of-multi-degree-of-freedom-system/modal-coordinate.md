@@ -1,5 +1,11 @@
-# Modal Coordinate
+# Response of one modal coordinate
 
-The response of the modal equation `q'' + μ q = 0` with `q (0) = q₀` and `q' (0) = v₀`:
-the oscillation `q₀ cos (√μ t) + v₀ / √μ sin (√μ t)` at the modal angular frequency `√μ` when
-`μ > 0`, and the rigid drift `q₀ + v₀ t` otherwise (meant for `μ = 0`).
+For real numbers `μ`, `q₀`, `v₀` and a time `t`, the modal response is
+
+- `q(t) = q₀ cos (√μ t) + (v₀ / √μ) sin (√μ t)` when `μ > 0`, an oscillation at the modal angular
+  frequency `√μ`;
+- `q(t) = q₀ + v₀ t` when `μ ≤ 0`, the rigid drift.
+
+It is meant for `μ ≥ 0`, where it solves `q'' + μ q = 0` with `q(0) = q₀` and `q'(0) = v₀`
+([solution](modal-coordinate-solves.md)); for `μ < 0` the drift formula solves that equation only
+when `q₀ = v₀ = 0`.

@@ -324,7 +324,8 @@ lemma normSq_reciprocalVector (Λ : BravaisLattice) (h : Fin 3 → ℤ) :
   ring
 
 /-- The interplanar spacing `d = 1 / ‖G_hkl‖`. For `h = 0` there is no family of planes and
-the value is Lean's `1 / 0 = 0`; the results about `d` below assume nonzero indices. -/
+the value is `0`, by the convention `1 / 0 = 0`; the results about `d` below assume nonzero
+indices. -/
 noncomputable def interplanarSpacing (Λ : BravaisLattice) (h : Fin 3 → ℤ) : ℝ :=
   1 / ‖reciprocalVector Λ h‖
 
@@ -492,7 +493,8 @@ lemma mem_latticePlane_iff (Λ : BravaisLattice) (h : Fin 3 → ℤ) (n : ℤ)
     x ∈ latticePlane Λ h n ↔ ∑ j, (h j : ℝ) * (Λ.basis.repr x) j = (n : ℝ) := by
   simp [latticePlane, Set.mem_ofPred_eq, inner_reciprocalVector_eq]
 
-/-- Shifting a point of the `n`-th plane by `G / ‖G‖²` reaches the `(n+1)`-st plane. -/
+/-- For `G_hkl ≠ 0` (equivalently `h ≠ 0`), shifting a point of the `n`-th plane by `G / ‖G‖²`
+reaches the `(n+1)`-st plane. -/
 lemma planeShift_mem (Λ : BravaisLattice) (h : Fin 3 → ℤ) (n : ℤ)
     (x : EuclideanSpace ℝ (Fin 3)) (hG : reciprocalVector Λ h ≠ 0)
     (hx : x ∈ latticePlane Λ h n) :
@@ -506,7 +508,7 @@ lemma planeShift_mem (Λ : BravaisLattice) (h : Fin 3 → ℤ) (n : ℤ)
   simp only [latticePlane, Set.mem_ofPred_eq] at hx ⊢
   rw [inner_add_right, hx, hGs, Int.cast_add, Int.cast_one]
 
-/-- The plane-to-plane shift has length `d`. -/
+/-- For `G_hkl ≠ 0` (equivalently `h ≠ 0`), the plane-to-plane shift has length `d`. -/
 lemma planeShift_norm (Λ : BravaisLattice) (h : Fin 3 → ℤ)
     (hG : reciprocalVector Λ h ≠ 0) :
     ‖(‖reciprocalVector Λ h‖ ^ 2)⁻¹ • reciprocalVector Λ h‖
@@ -518,8 +520,8 @@ lemma planeShift_norm (Λ : BravaisLattice) (h : Fin 3 → ℤ)
   rw [norm_smul, Real.norm_of_nonneg (le_of_lt (inv_pos.mpr (pow_pos hGpos 2))), hc]
   simp [interplanarSpacing, one_div]
 
-/-- The spacing `d` is a lower bound for the distance from a point of the plane `n = 0` to a
-point of the plane `n = 1`. -/
+/-- For `G_hkl ≠ 0` (equivalently `h ≠ 0`), the spacing `d` is a lower bound for the distance
+from a point of the plane `n = 0` to a point of the plane `n = 1`. -/
 lemma planeDist_ge (Λ : BravaisLattice) (h : Fin 3 → ℤ)
     (x y : EuclideanSpace ℝ (Fin 3)) (hG : reciprocalVector Λ h ≠ 0)
     (hx : x ∈ latticePlane Λ h 0) (hy : y ∈ latticePlane Λ h 1) :

@@ -1,4 +1,4 @@
 # Work of a conservative force
 
-- [Conservative force work eq potential decrease of has FDeriv At](conservative-force-work-eq-potential-dec.md)
-- [Conservative force work eq potential decrease](conservative-force-work-eq-potential-dec-2.md)
+- [Work of a conservative force equals the potential decrease](conservative-force-work-eq-potential-dec.md)
+- [Work of minus a gradient in a Hilbert space is the potential drop](conservative-force-work-eq-potential-dec-2.md)

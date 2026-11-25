@@ -1,92 +1,93 @@
 # Two-body orbits: vis-viva, impulses and the eccentricity vector
 
-- [Speed Sq](speed-sq.md)
-- [Radius](radius.md)
-- [Specific Energy](specific-energy.md)
-- [Semi Major Axis](semi-major-axis.md)
-- [Semi Major Axis pos](semi-major-axis-pos.md)
-- [Vis Viva](vis-viva.md)
-- [Semi Major Axis of specific Energy eq zero](semi-major-axis-of-specific-energy-eq-ze.md)
-- [Semi Major Axis of circular Speed](semi-major-axis-of-circular-speed.md)
-- [Semi Major Axis of circular](semi-major-axis-of-circular.md)
+## State energy and vis-viva
 
-## B. One tangential impulse
+- [Squared Euclidean speed of a velocity vector](speed-sq.md)
+- [Distance from the attracting center](radius.md)
+- [Specific energy of a relative two-body state](specific-energy.md)
+- [Energy-defined semi-major axis a = −μ / (2 E)](semi-major-axis.md)
+- [For μ > 0 and negative energy, the semi-major axis is positive](semi-major-axis-pos.md)
+- [Vis-viva equation for a state of negative energy](vis-viva.md)
+- [At zero energy the semi-major axis formula gives 0, not a length](semi-major-axis-of-specific-energy-eq-ze.md)
+- [For μ > 0, circular speed gives E = −μ / (2 r) and a = r](semi-major-axis-of-circular-speed.md)
+- [For μ > 0, a circular state has a = r and squared angular momentum μ r](semi-major-axis-of-circular.md)
 
-- [Tangential Impulse](tangential-impulse.md)
-- [Speed Sq tangential Impulse](speed-sq-tangential-impulse.md)
-- [Cross tangential Impulse](cross-tangential-impulse.md)
-- [Vis Viva tangential Impulse](vis-viva-tangential-impulse.md)
-- [Semi Major Axis tangential Impulse eq radius iff](semi-major-axis-tangential-impulse-eq-ra.md)
+## One tangential impulse
 
-## C. The circular-orbit premises
+- [Velocity after a tangential impulse](tangential-impulse.md)
+- [For nonzero v, the squared speed after the impulse is (speed + Δv)²](speed-sq-tangential-impulse.md)
+- [A tangential impulse multiplies x × v by one plus Δv over the speed](cross-tangential-impulse.md)
+- [Vis-viva after a tangential impulse, for v ≠ 0 and negative new energy](vis-viva-tangential-impulse.md)
+- [Tangential impulse at circular speed: a = r iff v is kept or reversed](semi-major-axis-tangential-impulse-eq-ra.md)
 
-- [Is Circular Orbit](is-circular-orbit.md)
-- [Not is Circular Orbit zero radius](not-is-circular-orbit-zero-radius.md)
+## Circular-orbit premises
 
-## D. Speed and period
+- [Premises of a circular orbit of radius R in the orbit plane](is-circular-orbit.md)
+- [No circular orbit has radius 0](not-is-circular-orbit-zero-radius.md)
 
-- [Norm vel sq](norm-vel-sq.md)
-- [Norm vel eq](norm-vel-eq.md)
-- [Period sq](period-sq.md)
+## Speed and period on a circular orbit
 
-## E. Units
+- [On a circular orbit the speed squared is μ / R and the speed √(μ / R)](norm-vel-sq.md)
+- [Kepler's third law for a circular orbit: T² = 4 π² R³ / μ](period-sq.md)
 
-- [Unit Change](unit-change.md)
-- [Not wrong time unit](not-wrong-time-unit.md)
-- [Speed period unit Change](speed-period-unit-change.md)
+## Change of units
 
-## F. Planar to spatial state
+- [Changes of units with positive factors preserve a circular orbit](unit-change.md)
+- [For s ≠ 1, scaling μ by l³ without 1 / s² gives no circular orbit](not-wrong-time-unit.md)
+- [For positive unit factors, circular speed scales by l / s, period by s](speed-period-unit-change.md)
 
-- [Planar To Body](planar-to-body.md)
-- [Spatial State](spatial-state.md)
-- [Dot Product spatial State](dot-product-spatial-state.md)
-- [Spatial State dot Product normal](spatial-state-dot-product-normal.md)
-- [Has Deriv At spatial State](has-deriv-at-spatial-state.md)
-- [Dot Product spatial State](dot-product-spatial-state-2.md)
-- [Has Deriv At spatial Velocity](has-deriv-at-spatial-velocity.md)
+## From the orbit plane to inertial components
 
-## G. The eccentricity vector and the energy identity
+- [Body components of a point of the orbit plane](planar-to-body.md)
+- [Inertial components of a planar state of the orbit-plane frame](spatial-state.md)
+- [The planar-to-spatial map preserves Euclidean length](dot-product-spatial-state.md)
+- [The spatial state is orthogonal to the plane normal Q e₃](spatial-state-dot-product-normal.md)
+- [The planar-to-spatial map commutes with time derivatives](has-deriv-at-spatial-state.md)
+- [The embedded circular orbit stays at distance R from the center](dot-product-spatial-state-2.md)
+- [The embedded circular orbit obeys the inverse-square law](has-deriv-at-spatial-velocity.md)
 
-- [Eccentricity Vector](eccentricity-vector.md)
-- [Eccentricity](eccentricity.md)
-- [Eccentricity sq](eccentricity-sq.md)
-- [Eccentricity lt one and semi Major Axis pos](eccentricity-lt-one-and-semi-major-axis.md)
+## The eccentricity vector and the energy identity
 
-## H. Undefined pericenter and node directions
+- [Eccentricity vector of a state](eccentricity-vector.md)
+- [Eccentricity, the length of the eccentricity vector](eccentricity.md)
+- [For μ > 0 and r > 0, the eccentricity satisfies e² = 1 + 2 E h² / μ²](eccentricity-sq.md)
+- [For μ > 0, E < 0 and h ≠ 0, the eccentricity is below 1 and a > 0](eccentricity-lt-one-and-semi-major-axis.md)
 
-- [Node Vector](node-vector.md)
-- [Eccentricity Vector eq zero iff](eccentricity-vector-eq-zero-iff.md)
-- [Eccentricity Vector of cross eq zero](eccentricity-vector-of-cross-eq-zero.md)
-- [Node Vector eq zero iff](node-vector-eq-zero-iff.md)
+## Undefined pericenter and node directions
 
-## I. Frame covariance
+- [Ascending-node vector n = k × h](node-vector.md)
+- [For μ > 0 and r > 0, e = 0 iff the state is circular](eccentricity-vector-eq-zero-iff.md)
+- [A radial state off the center has e = −x / r and eccentricity 1](eccentricity-vector-of-cross-eq-zero.md)
+- [The node vector vanishes iff h lies along the pole](node-vector-eq-zero-iff.md)
 
-- [Eccentricity Vector mul Vec](eccentricity-vector-mul-vec.md)
+## Frame covariance of the eccentricity vector
 
-## J. The planar Kepler arc premises
+- [A rotation of the state rotates the eccentricity vector](eccentricity-vector-mul-vec.md)
 
-- [Planar Path](planar-path.md)
-- [Is Planar Kepler Arc](is-planar-kepler-arc.md)
+## Planar Kepler-arc premises
 
-## K. Energy and angular momentum in the spatial plane
+- [Planar point of two real coordinate functions](planar-path.md)
+- [Premises of a planar Kepler arc on a time interval](is-planar-kepler-arc.md)
 
-- [Radius spatial State planar Path](radius-spatial-state-planar-path.md)
-- [Energy in the upstream normalization](two-mul-specific-energy-spatial-state.md)
-- [Energy transport](specific-energy-spatial-state-eq-of-ener.md)
-- [Angular momentum along the oriented normal](cross-spatial-state.md)
-- [Orientation is preserved](cross-spatial-state-dot-product-normal.md)
-- [Angular-momentum transport](cross-spatial-state-eq-of-angular-eq.md)
-- [A reflection reverses the orientation](cross-dot-product-normal-of-det-eq-neg-o.md)
+## Energy and angular momentum in the spatial plane
 
-## L. The spatial Kepler arc
+- [The spatial position Q (x, y, 0) is at distance √(x² + y²)](radius-spatial-state-planar-path.md)
+- [The planar energy is twice the specific energy of the spatial state](two-mul-specific-energy-spatial-state.md)
+- [Equal planar energies at two times give equal specific energies](specific-energy-spatial-state-eq-of-ener.md)
+- [For a rotation, X × V is x vy − y vx times the normal Q e₃](cross-spatial-state.md)
+- [For a rotation, the normal component of X × V is x vy − y vx](cross-spatial-state-dot-product-normal.md)
+- [Equal planar angular momenta at two times give equal X × V](cross-spatial-state-eq-of-angular-eq.md)
+- [An orthogonal map of determinant −1 reverses the normal component](cross-dot-product-normal-of-det-eq-neg-o.md)
 
-- [Radius spatial State pos](radius-spatial-state-pos.md)
-- [Has Deriv At spatial Position](has-deriv-at-spatial-position.md)
-- [The spatial Kepler equation](has-deriv-at-spatial-velocity-2.md)
+## The embedded Kepler arc
 
-## M. One equal-speed plane change
+- [The embedded Kepler arc stays away from the center](radius-spatial-state-pos.md)
+- [On the embedded Kepler arc the position has derivative the velocity](has-deriv-at-spatial-position.md)
+- [On the embedded Kepler arc the velocity obeys the inverse-square law](has-deriv-at-spatial-velocity-2.md)
 
-- [Impulse Magnitude](impulse-magnitude.md)
-- [Speed Sq sub of speed Sq eq](speed-sq-sub-of-speed-sq-eq.md)
-- [Sqrt two mul sq mul one sub cos](sqrt-two-mul-sq-mul-one-sub-cos.md)
-- [Impulse Magnitude plane Change](impulse-magnitude-plane-change.md)
+## One equal-speed plane change
+
+- [Magnitude of the impulse between two velocities](impulse-magnitude.md)
+- [Equal-speed chord: the squared velocity change is 2 s² (1 − cos i)](speed-sq-sub-of-speed-sq-eq.md)
+- [For s ≥ 0 and 0 ≤ i ≤ π, √(2 s² (1 − cos i)) = 2 s sin(i / 2)](sqrt-two-mul-sq-mul-one-sub-cos.md)
+- [Equal-speed plane change of transverse velocities costs 2 v sin(i / 2)](impulse-magnitude-plane-change.md)

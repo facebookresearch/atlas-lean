@@ -1,3 +1,4 @@
-# Conductivity nonneg
+# For nonnegative density and mobility the conductivity is nonnegative
 
-Conductivity is nonnegative for `n ≥ 0` and `mu ≥ 0`.
+For `n ≥ 0`, `μ ≥ 0` and every real `q`, the [conductivity](conductivity.md) `n |q| μ` is
+nonnegative.

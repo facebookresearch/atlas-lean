@@ -1,4 +1,4 @@
-# Clamped Clamped Mode midspan
+# For nonzero length the clamped–clamped mode equals 2 at midspan
 
-Nonzero midspan displacement: the clamped-clamped mode takes the
-value `2` at `x = L / 2`.
+For a real `L ≠ 0`, the [clamped–clamped mode](clamped-clamped-mode.md) `w(x) = 1 − cos(2πx / L)`
+satisfies `w(L / 2) = 2`.

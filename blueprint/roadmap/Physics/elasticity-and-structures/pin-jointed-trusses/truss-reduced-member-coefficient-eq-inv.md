@@ -1,17 +1,11 @@
-# Truss reduced member Coefficient eq inv mul Vec
+# Determinate truss member coefficients from statics
 
-Truss instance: for the supported compatibility matrix
-`axialCompatibility r a b * S` with free coordinates indexed by
-the members, square and invertible, member weights
-`k` and a supported solution `u`, the separation-form elastic
-coefficient vector (axial force divided by member length, the
-convention of `supported_virtualWork_iff`) is the reduced
-statics solution
-`((axialCompatibility r a b * S)ᵀ)⁻¹ *ᵥ f`, and it equilibrates
-the supported load in virtual work: internal work
-`s ⬝ᵥ ((axialCompatibility r a b * S) *ᵥ v)` equals external
-work `f ⬝ᵥ v` for every supported virtual displacement `v`.
-The virtual-work conjunct is the canonical
-supported virtual-work correspondence.
-Reactions at constrained joint coordinates are not addressed:
-`f` is the supported load in free coordinates.
+Let `J` (joints) and `M` (members) be finite sets, with joint positions `r_j` in the plane and
+member `e` joining joint `a_e` to joint `b_e`, and let `S` be a matrix from free coordinates indexed
+by the members to the joint displacement coordinates, such that `B S` is invertible, with the
+[compatibility matrix](axial-compatibility.md) `B`. Let `k` be member weights and `u` a solution of
+`(B S)ᵀ diag(k) (B S) u = f`, and let `s = diag(k) (B S u)` be the separation-form member
+coefficients (axial force divided by member length). Then `s = ((B S)ᵀ)⁻¹ f`, the reduced statics
+solution, and `s` balances the load in virtual work: `s · (B S v) = f · v` for every virtual
+displacement `v` on the free coordinates. The load `f` is on the free coordinates; reactions at
+constrained coordinates are not addressed.

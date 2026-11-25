@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 public import MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionMex
+public import MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionMexSum
 
 /-!
 # A minimal excludant over overpartitions (statements)
@@ -162,24 +163,6 @@ public theorem_wanted ingham_tauberian
         α / (2 * Real.sqrt Real.pi) * C ^ ((2 * β + 1) / 4) *
           (n : ℝ) ^ (-(2 * β + 3) / 4) *
           Real.exp (2 * Real.sqrt (C * n)))
-
-/--
-**The r-mex sum of overpartitions as a sum of overpartition counts.** Let $n$ and $r$ be
-natural numbers with $r \ge 1$, let $\overline{p}(m)$ be the number of overpartitions of $m$, let
-$T_k = k(k+1)/2$ be the $k$-th triangular number, and let $\sigma_r\overline{\mathrm{mex}}(n)$ be
-the sum over all overpartitions $\pi$ of $n$ of $\overline{\mathrm{mex}}_r(\pi)$, the least
-positive integer occurring fewer than $r$ times among the non-overlined parts of $\pi$. Then
-$$\sigma_r\overline{\mathrm{mex}}(n) = \sum_{k \ge 0,\; rT_k \le n} \overline{p}(n - rT_k).$$
-
-Source: Victor Manuel R. Aricheta, Judy Ann L. Donato, *A Minimal Excludant over Overpartitions*,
-Journal of Integer Sequences 27 (2024), Article 24.7.1, Proposition 10.
--/
-public theorem_wanted sigmaMexOverpartition_eq_sum_shifted_count
-    (n r : ℕ) (hr : 1 ≤ r) :
-    (∑ k ∈ (Finset.range (n + 1)).filter
-      (fun k => r * (k * (k + 1) / 2) ≤ n),
-      overpartitionCount (n - r * (k * (k + 1) / 2))) =
-      sigmaMexOverpartition r n
 
 /--
 **Eta-quotient congruence for sums of overpartition minimal excludants.** Let $r \ge 1$ and

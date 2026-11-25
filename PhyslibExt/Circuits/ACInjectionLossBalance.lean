@@ -119,14 +119,15 @@ namespace PhyslibExt.Circuits.ACInjectionLossBalance
 
 /-- Branch voltage drop: the signed sum of node voltages through the real
 incidence transpose, with each real incidence entry read as a complex
-scalar. New definition owned by this module. -/
+scalar; `B` may be any real matrix. New definition owned by this module. -/
 def branchDrop (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     (V : Fin nN → ℂ) (e : Fin nE) : ℂ :=
   ∑ v : Fin nN, (B v e : ℂ) * V v
 
 /-- Current injected at a node: the signed sum of incident branch currents
-`admittance * drop` plus the shunt current `shunt * voltage`. New
-definition owned by this module. -/
+`admittance * drop` plus the shunt current `shunt * voltage`; for a signed
+incidence matrix `B` it is the current leaving the node into its incident
+branches and its shunt. New definition owned by this module. -/
 def nodeInjection (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     (V : Fin nN → ℂ) (y : Fin nE → ℂ) (ys : Fin nN → ℂ) (v : Fin nN) : ℂ :=
   (∑ e : Fin nE, (B v e : ℂ) * (y e * branchDrop nN nE B V e)) + ys v * V v
@@ -148,7 +149,7 @@ existing `powerPerUnit` with phase voltage base `1` and phase current base
 quantity as `S`: a per-phase base for per-phase power such as
 `nodeComplexPower`, a three-phase base for three-phase power. Dividing by
 a positive real base scales the real and reactive parts by the same
-positive factor and does not rotate them. -/
+positive factor and does not rotate them. With `x / 0 = 0` it is `0` at `Sbase = 0`. -/
 noncomputable def perUnitComplexPower (S : ℂ) (Sbase : ℝ) : ℂ :=
   powerPerUnit 1 (Sbase / 3) S
 
@@ -312,8 +313,8 @@ lemma total_realPower_nonneg (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ)
     exact mul_nonneg (hys v) (Complex.normSq_nonneg _)
 
 /-- Purely reactive validation case: if every branch and shunt admittance
-has zero real part, the total supplied real power is zero, for resistive
-losses at the endpoints and the branches agree on zero. -/
+has zero real part, the total supplied real power is zero, since every
+branch and shunt loss term `Re y * |·|²` vanishes. -/
 lemma total_realPower_eq_zero_of_purely_reactive (nN nE : ℕ)
     (B : Matrix (Fin nN) (Fin nE) ℝ) (V : Fin nN → ℂ) (y : Fin nE → ℂ)
     (ys : Fin nN → ℂ) (hy : ∀ e : Fin nE, (y e).re = 0)
@@ -355,8 +356,8 @@ lemma perUnitComplexPower_threePhasePowerBase (S : ℂ) (Vb Ib : ℝ) :
   unfold perUnitComplexPower powerPerUnit
   rw [hb]
 
-/-- Three-phase power on the three-phase base and per-phase power on the
-per-phase base `Vb * Ib` have the same per-unit value. -/
+/-- `3 S` on the three-phase base and `S` on the per-phase base `Vb * Ib` have the same per-unit
+value: in balanced operation, three-phase power and per-phase power per unit agree. -/
 lemma perUnitComplexPower_three_mul_threePhasePowerBase (S : ℂ) (Vb Ib : ℝ) :
     perUnitComplexPower (3 * S) (threePhasePowerBase Vb Ib) =
       perUnitComplexPower S (Vb * Ib) := by

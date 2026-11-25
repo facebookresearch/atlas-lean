@@ -1,3 +1,4 @@
-# Summable flight Duration iff
+# For g, u₀ > 0 and e ≥ 0, the flight durations are summable iff e < 1
 
-The flight durations are summable exactly when `e < 1` (for `g > 0`, `u₀ > 0`, `e ≥ 0`).
+Let `g > 0`, `u₀ > 0` and `e ≥ 0`. The series of the [flight durations](flight-duration.md)
+`T_n = (2 u₀ / g) eⁿ` converges if and only if `e < 1`.

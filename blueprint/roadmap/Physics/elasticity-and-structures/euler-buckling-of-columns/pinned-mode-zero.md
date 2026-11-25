@@ -1,3 +1,3 @@
-# Pinned Mode zero
+# The pinned mode vanishes at x = 0
 
-The pinned mode vanishes at the left support.
+For every real `L`, the [pinned mode](pinned-mode.md) `w(x) = sin(πx / L)` satisfies `w(0) = 0`.

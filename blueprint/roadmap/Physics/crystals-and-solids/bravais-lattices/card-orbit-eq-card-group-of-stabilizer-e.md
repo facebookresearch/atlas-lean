@@ -1,4 +1,4 @@
-# Card orbit eq card group of stabilizer eq bot
+# With trivial stabilizer, an orbit is as large as the finite group
 
-Orbit–stabiliser for a point with trivial stabiliser: its orbit has as many points as the group.
-This instantiates Mathlib's `MulAction.card_orbit_mul_card_stabilizer_eq_card_group`.
+Let a finite group `G` act on a set `X`, and let `x ∈ X` have trivial stabilizer: only the identity
+fixes `x`. Then the orbit of `x` has exactly `|G|` elements.

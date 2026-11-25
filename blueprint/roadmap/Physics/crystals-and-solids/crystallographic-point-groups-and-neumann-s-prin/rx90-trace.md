@@ -1,3 +1,4 @@
-# Rx90 trace
+# The quarter-turn about the x-axis has trace 1
 
-`Rx90` has trace one.
+The [quarter-turn about the x-axis](rx90.md) `R_x` has `tr R_x = 1`, the value `1 + 2 cos θ` for
+`θ = 90°`.

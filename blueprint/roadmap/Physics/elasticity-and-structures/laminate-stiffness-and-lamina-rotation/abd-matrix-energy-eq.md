@@ -1,5 +1,12 @@
-# Abd Matrix energy eq
+# Ply decomposition of the laminate energy
 
-Ply decomposition of the block energy: for symmetric ply stiffnesses,
-`(ε⁰, κ)ᵀ [[A, B], [B, D]] (ε⁰, κ)` is the sum over plies of the midplane square
-`h i (ε⁰ + z̄ i κ)ᵀ Q̄ i (ε⁰ + z̄ i κ)` plus `h i³ κᵀ Q̄ i κ / 12`.
+For `n ∈ ℕ`, interfaces `z_0, …, z_n` (heights from the reference plane) and ply stiffnesses
+`Q̄_0, …, Q̄_{n−1}` (real `3 × 3` matrices in global axes, ply `i` occupying `[z_i, z_{i+1}]`), if
+every `Q̄_i` is symmetric, then for all `ε⁰, κ ∈ ℝ³` the energy of the
+[block stiffness matrix](abd-matrix.md) `[[A, B], [B, D]]` is
+
+`(ε⁰, κ) · ([[A, B], [B, D]] (ε⁰, κ)) = ∑_i (h_i E_i + (h_i³ / 12) κ · (Q̄_i κ))`,
+
+where `E_i = (ε⁰ + z̄_i κ) · (Q̄_i (ε⁰ + z̄_i κ))`, with the [ply thickness](ply-thickness.md)
+`h_i = z_{i+1} − z_i` and the [ply midplane](ply-midplane.md) `z̄_i = (z_i + z_{i+1}) / 2`. The
+interfaces need not increase.

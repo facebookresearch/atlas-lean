@@ -1,62 +1,62 @@
 # Restricted three-body problem and thrust-only rendezvous
 
-## A. The rotating frame, the primaries and the effective potential
+## The rotating frame, the primaries and the effective potential
 
-- [Rotating Frame](rotating-frame.md)
-- [Rotating To Inertial](rotating-to-inertial.md)
-- [Point Mass Pull](point-mass-pull.md)
-- [Primary Gravity](primary-gravity.md)
-- [Primary Dist One](primary-dist-one.md)
-- [Primary Dist Two](primary-dist-two.md)
-- [Effective Potential](effective-potential.md)
-- [Has Deriv At effective Potential fst](has-deriv-at-effective-potential-fst.md)
-- [Has Deriv At effective Potential snd](has-deriv-at-effective-potential-snd.md)
+- [Orientation of the frame rotating with the primaries](rotating-frame.md)
+- [Inertial coordinates of a point given in rotating coordinates](rotating-to-inertial.md)
+- [Gravitational acceleration toward a point mass](point-mass-pull.md)
+- [Gravitational field of the two primaries in the inertial frame](primary-gravity.md)
+- [Distance to the first primary](primary-dist-one.md)
+- [Distance to the second primary](primary-dist-two.md)
+- [Effective potential of the restricted three-body problem](effective-potential.md)
+- [Partial derivative of the effective potential in x off the primaries](has-deriv-at-effective-potential-fst.md)
+- [Partial derivative of the effective potential in y off the primaries](has-deriv-at-effective-potential-snd.md)
 
-## B.2. Derivation from the inertial field
+## The rotating equations from the inertial field
 
-- [Rotating equations](rotating-equations.md)
+- [Off the primaries, Newton's law gives the rotating equations](rotating-equations.md)
 
-## C. The triangular equilibria
+## The triangular equilibria and the motion of the primaries
 
-- [Triangular equilibrium](triangular-equilibrium.md)
-- [Triangular inertial orbit](triangular-inertial-orbit.md)
-- [Primaries two body](primaries-two-body.md)
+- [At the triangular points both partial derivatives of Ω vanish](triangular-equilibrium.md)
+- [Co-rotation at a triangular point solves Newton's equations](triangular-inertial-orbit.md)
+- [The co-rotating primaries solve their two-body equations](primaries-two-body.md)
 
-## D. The Jacobi function and the Coriolis power
+## The Jacobi function and the Coriolis power
 
-- [Jacobi Constant](jacobi-constant.md)
-- [The Coriolis power cancels](coriolis-power-eq-zero.md)
-- [Jacobi derivative](has-deriv-at-jacobi-constant.md)
+- [Jacobi function of a rotating-frame state](jacobi-constant.md)
+- [The Coriolis acceleration of an in-plane velocity has zero power](coriolis-power-eq-zero.md)
+- [Off the primaries, the Jacobi rate is minus twice the thrust power](has-deriv-at-jacobi-constant.md)
 
-## E. Conservation along unforced solutions
+## The Jacobi integral along unforced solutions
 
-- [The Jacobi integral](jacobi-constant-eq-of-rotating-equations.md)
-- [The Jacobi integral of an inertial solution](jacobi-constant-eq-of-newton.md)
+- [Unforced motion off the primaries keeps the Jacobi function constant](jacobi-constant-eq-of-rotating-equations.md)
+- [Newtonian motion off the primaries keeps the Jacobi function constant](jacobi-constant-eq-of-newton.md)
 
-## F. The forbidden region
+## The forbidden region
 
-- [Zero-velocity bound](jacobi-constant-le-two-effective-potenti.md)
-- [A forbidden point is not reached](not-reach-of-two-effective-potential-lt.md)
+- [Unforced motion off the primaries stays in the region 2 Ω ≥ C](jacobi-constant-le-two-effective-potenti.md)
+- [Unforced motion off the primaries never reaches a point with 2 Ω < C](not-reach-of-two-effective-potential-lt.md)
 
-## G. The prescribed burn
+## The prescribed burn
 
-- [Burn Mass](burn-mass.md)
-- [Burn Velocity](burn-velocity.md)
-- [Burn Position](burn-position.md)
-- [Target Position](target-position.md)
-- [Has Deriv At burn Mass](has-deriv-at-burn-mass.md)
-- [Burn Mass pos](burn-mass-pos.md)
-- [Has Deriv At burn Velocity](has-deriv-at-burn-velocity.md)
-- [Burn law](burn-law.md)
+- [Mass history of the normalized burn](burn-mass.md)
+- [Velocity history of the normalized burn](burn-velocity.md)
+- [Position history of the normalized burn](burn-position.md)
+- [Position of the target coasting at speed log 2](target-position.md)
+- [The burn mass has derivative −1 at every time](has-deriv-at-burn-mass.md)
+- [For 0 ≤ t ≤ 1 the burn mass is positive](burn-mass-pos.md)
+- [For t < 2 the burn velocity has derivative 1 / (2 − t)](has-deriv-at-burn-velocity.md)
+- [For 0 ≤ t ≤ 1 the burn obeys the variable-mass law with thrust 1](burn-law.md)
 
-## H. Velocity and position histories
+## Velocity and position histories
 
-- [Burn initial](burn-initial.md)
-- [Has Deriv At burn Position](has-deriv-at-burn-position.md)
-- [Burn Velocity increment](burn-velocity-increment.md)
-- [Burn Position sub eq integral](burn-position-sub-eq-integral.md)
+- [The burn starts from rest at the origin](burn-initial.md)
+- [For t < 2 the derivative of the burn position is the burn velocity](has-deriv-at-burn-position.md)
+- [Ideal rocket equation for the burn: the velocity gain is log 2](burn-velocity-increment.md)
+- [The burn displacement is the integral of the velocity](burn-position-sub-eq-integral.md)
 
-## I. The target and the rendezvous
+## The target and the rendezvous
 
-- [Has Deriv At target Position](has-deriv-at-target-position.md)
-- [Rendezvous](rendezvous.md)
+- [The target position has derivative log 2 at every time](has-deriv-at-target-position.md)
+- [At t = 1 vehicle and target have equal positions and velocities](rendezvous.md)

@@ -1,3 +1,5 @@
-# Global Stiffness
+# Global stiffness of a rotated lamina
 
-Global stiffness of the lamina whose material axes are at `θ`: `Q_global = T_eᵀ Q T_e`.
+For a real `3 × 3` matrix `Q` (the stiffness in material axes, in engineering components) and a real
+angle `θ` of the material axes, `Q_global(θ) = T_e(θ)ᵀ Q T_e(θ)`, with the
+[strain map](strain-map.md) `T_e(θ)`.

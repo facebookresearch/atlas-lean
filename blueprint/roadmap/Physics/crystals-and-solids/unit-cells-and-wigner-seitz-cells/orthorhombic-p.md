@@ -1,4 +1,5 @@
-# Orthorhombic P
+# Primitive orthorhombic lattice
 
-The primitive orthorhombic lattice with parameters `a, b, c > 0`: diagonal basis matrix
-`diag(a, b, c)`. Pearson symbol `oP`.
+For `a, b, c > 0`, the primitive orthorhombic lattice (Pearson symbol `oP`) is the
+[Bravais lattice](../bravais-lattices/bravais-lattice.md) whose primitive vectors (columns of the
+basis matrix) are `(a, 0, 0)`, `(0, b, 0)` and `(0, 0, c)`: the basis matrix is `diag(a, b, c)`.

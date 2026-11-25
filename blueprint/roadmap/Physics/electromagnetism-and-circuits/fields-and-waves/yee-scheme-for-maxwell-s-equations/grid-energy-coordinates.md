@@ -1,3 +1,4 @@
-# Grid Energy Coordinates
+# Energy coordinates of grid fields
 
-Grid energy coordinates `(sqrt ε₀ • E, -sqrt μ₀ • H)` of grid fields `(E, H)`.
+For free space with permittivity `ε₀ > 0` and permeability `μ₀ > 0` and grid fields `E, H ∈ ℝᴺ`, the
+pair `(√ε₀ E, −√μ₀ H)`.

@@ -1,11 +1,6 @@
-# Net Port Power flipped secondary current
+# With the wrong sign of the secondary current the power is 2 n V₂ I₁
 
-The entering-current sign is essential: keep `I2` the entering
-secondary current but give it the erroneous sign relation
-`I2 = n * I1` (the relation a leaving secondary current would
-satisfy), with `V1 = n * V2`. The entering-power sum
-`netPortPower (n * V2) I1 V2 (n * I1)` is then `2 * (n * V2 * I1)`,
-not zero in general: power conservation fails for the wrong
-entering sign. This lemma does not reinterpret `I2` as a leaving
-current; with a leaving current the entering-power formula itself
-would be `V1 * I1 - V2 * I2`, a different function.
+For all real `n`, `V₂` and `I₁`, if the entering secondary current is given the wrong sign,
+`I₂ = n I₁` (the relation a leaving current would satisfy), with `V₁ = n V₂`, then the
+[net instantaneous port power](net-port-power.md) `V₁ I₁ + V₂ I₂` equals `2 n V₂ I₁`. With a leaving
+secondary current the power would instead be `V₁ I₁ - V₂ I₂`, a different formula.

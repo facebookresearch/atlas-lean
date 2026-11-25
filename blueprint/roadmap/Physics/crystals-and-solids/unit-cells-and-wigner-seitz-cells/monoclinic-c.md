@@ -1,5 +1,6 @@
-# Monoclinic C
+# For sin β ≠ 0, the base-centred monoclinic lattice
 
-The base-centred monoclinic lattice with parameters `a, b, c > 0` and angle `β` with
-`sin β ≠ 0`, with primitive vectors `(a/2, -b/2, 0)`, `(a/2, b/2, 0)`,
-`(c cosβ, 0, c sinβ)`. Pearson symbol `mC`.
+For `a, b, c > 0` and an angle `β` with `sin β ≠ 0`, the base-centred monoclinic lattice (Pearson
+symbol `mC`) is the [Bravais lattice](../bravais-lattices/bravais-lattice.md) whose primitive
+vectors (columns of the basis matrix) are `(a/2, -b/2, 0)`, `(a/2, b/2, 0)` and
+`(c cos β, 0, c sin β)`.

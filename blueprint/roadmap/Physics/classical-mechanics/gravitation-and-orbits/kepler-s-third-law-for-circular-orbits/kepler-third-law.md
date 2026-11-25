@@ -1,5 +1,6 @@
-# Kepler third law
+# Kepler's third law T² = 4π²r³/(GM) for a circular orbit
 
-Kepler's third law for a stipulated circular orbit: `v ^ 2 = G * M / r`
-and `T = 2 * π * r / v` with `G, M, r, v > 0` imply
-`T ^ 2 = 4 * π ^ 2 * r ^ 3 / (G * M)`.
+Let $G$, $M$, $r$ and $v$ be positive with $v^2 = GM/r$ (the speed $v$ of a circular orbit of radius
+$r$ about a mass $M$, with gravitational constant $G$), and let $T = 2\pi r/v$ (its period). Then
+
+$$T^2 = \frac{4\pi^2 r^3}{GM}.$$

@@ -1,3 +1,3 @@
-# Deriv affine
+# Derivative of an affine function at zero
 
-Helper: derivative of an affine function at `0`.
+For all real `a` and `b`, the derivative of `t ↦ a t + b` at `t = 0` is `a`.

@@ -1,3 +1,4 @@
-# Ply Stress
+# Ply stress under the Kirchhoff strain
 
-In-plane stress at height `s` in a ply of stiffness `Q`: `σ = Q (ε⁰ + s κ)`.
+For a real `3 × 3` ply stiffness `Q`, a midplane strain `ε⁰ ∈ ℝ³`, a curvature `κ ∈ ℝ³` and a height
+`s`, `σ(s) = Q (ε⁰ + s κ)`: the in-plane stress under the Kirchhoff strain `ε⁰ + s κ`.

@@ -1,5 +1,6 @@
-# Principal Plane Shear bound
+# For s₃ ≤ s₁, the principal-plane shear is at most (s₁ - s₃)/2
 
-In-plane maximum shear bound: `|τ(θ)| ≤ (s₁ - s₃)/2` for `s₁ ≥ s₃`. This is the maximum
-over orientations within the 1-3 principal plane; the claim that the global 3D maximum shear is
-attained in that plane is a documented consequence (the 3D extremum argument), not proved here.
+For real `s₁, s₃` with `s₃ ≤ s₁` and every `θ`, the
+[principal-plane shear](principal-plane-shear.md) satisfies `|τ(θ)| ≤ (s₁ - s₃)/2`, where
+`τ(θ) = -(s₁ - s₃)/2 · sin 2θ`. The bound concerns the orientations within that plane only; it says
+nothing about faces outside it.

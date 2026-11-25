@@ -1,3 +1,4 @@
-# Neutral Mode dot Product self
+# The neutral trajectory has unit norm
 
-The neutral trajectory has constant Euclidean norm `1`: nonzero and not decaying.
+At every time `t`, the [neutral trajectory](neutral-mode.md) satisfies `z(t) · z(t) = 1`: its Euclidean
+norm is constantly `1`, nonzero and not decaying.

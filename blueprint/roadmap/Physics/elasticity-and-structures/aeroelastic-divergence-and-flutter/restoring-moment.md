@@ -1,4 +1,5 @@
-# Restoring Moment
+# Net restoring moment on a typical section
 
-Net restoring moment about the elastic axis: the elastic moment `K * θ` minus the
-aerodynamic moment. Static equilibrium is `restoringMoment K q S e CLα α₀ θ = 0`.
+For real numbers `K` (torsional spring stiffness), `q`, `S`, `e`, `C_Lα`, `α₀` and `θ`, the net
+restoring moment about the elastic axis is `K θ - q S e C_Lα (α₀ + θ)`: the elastic moment minus the
+[aerodynamic moment](aero-moment.md). Static equilibrium is the vanishing of this moment.

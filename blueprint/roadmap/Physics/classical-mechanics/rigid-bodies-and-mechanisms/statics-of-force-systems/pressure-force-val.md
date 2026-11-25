@@ -1,4 +1,4 @@
-# Pressure Force val
+# The pressure force has value −p A
 
-The coordinate of the pressure force is `-p A` on
-the input coordinates.
+For a pressure `p` and an area `A` with positive value, the value of the
+[pressure force](pressure-force.md) `-p A` is `-(p A)`, computed from the values of `p` and `A`.

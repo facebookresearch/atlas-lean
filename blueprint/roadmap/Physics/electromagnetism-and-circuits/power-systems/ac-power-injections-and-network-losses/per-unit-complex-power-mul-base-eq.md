@@ -1,5 +1,7 @@
-# Per Unit Complex Power mul base eq
+# For a positive base, per-unit power times the base is the power
 
-Recovery from per-unit on a positive real base: multiplying the per-unit
-value by the base, read as a complex number, returns the original complex
-power. Positivity gives the nonzero side condition the division needs.
+For a complex power $S$ and a real base $S_{\mathrm{base}} > 0$, the
+[per-unit power](per-unit-complex-power.md) times the base, read as a complex number, is $S$:
+$(S / S_{\mathrm{base}})\, S_{\mathrm{base}} = S$. Some condition is needed: at
+$S_{\mathrm{base}} = 0$ the per-unit power is $0$ by the convention $x / 0 = 0$, so the product is
+$0$. Any nonzero base would do; positivity is the physical case.

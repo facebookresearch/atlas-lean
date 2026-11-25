@@ -1,8 +1,12 @@
-# The component-Hessian remainder theorem, instantiated
+# Second-derivative bound on the remainder of the reduced field
 
-For `0 < r` and a deviation `δ`
-with every coordinate at most `r` in absolute value, the reused componentwise bound
-`Statistics.UncertaintyPropagation.jacobianRemainder_component_le_of_hessian`, applied on that box
-with the Hessian bounds above, gives `|jacobianRemainder reducedField 0 δ i| ≤ H i / 2 * ‖δ‖²` in
-the sup norm, `H = (6 r, 0, 0, r)`: the constants `3 r` and `r / 2` of components `0` and `3` are
-three times those of `longitudinalRemainder_bounds`.
+Let `r > 0`, and let `δ ∈ ℝ⁴` have every coordinate at most `r` in absolute value. Then the
+components of the [first-order remainder](jacobian-remainder-reduced-field.md)
+`f(0 + δ) − f(0) − Df(0) δ` of the [reduced field](reduced-field.md) at the trim are at most
+
+`3 r ‖δ‖²`, `0`, `0` and `(r / 2) ‖δ‖²`
+
+in absolute value, with `‖δ‖` the sup norm. This is the componentwise Taylor bound
+`(H_i / 2) ‖δ‖²` with the [second-derivative bounds](norm-fderiv-fderiv-reduced-field-le.md)
+`H = (6 r, 0, 0, r)` on the box of radius `r`. The constants `3 r` and `r / 2` are three times
+those of the [direct bounds](longitudinal-remainder-bounds.md).

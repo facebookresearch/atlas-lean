@@ -1,4 +1,4 @@
 # Kepler's third law for circular orbits
 
-- [Kepler third law](kepler-third-law.md)
-- [Kepler circular speed](kepler-circular-speed.md)
+- [Kepler's third law T² = 4π²r³/(GM) for a circular orbit](kepler-third-law.md)
+- [Circular-orbit speed v = √(GM/r)](kepler-circular-speed.md)

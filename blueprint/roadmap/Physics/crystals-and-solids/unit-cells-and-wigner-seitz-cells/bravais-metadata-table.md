@@ -1,6 +1,9 @@
-# Bravais Metadata Table
+# Metadata table of the fourteen Bravais lattice types
 
-Metadata of the 14 Bravais lattice types: Pearson symbols, crystal systems and centring
-types, indexed by `Fin 14`. The entries are pairwise distinct
-(`bravaisMetadataTable_injective`). The table records metadata only: it contains no basis
+The table lists fourteen [entries](bravais-entry.md), indexed by `0, …, 13`: `cP`, `cI`, `cF`
+(cubic: primitive, body-centred, face-centred), `tP`, `tI` (tetragonal: primitive, body-centred),
+`oP`, `oC`, `oI`, `oF` (orthorhombic: primitive, base-centred, body-centred, face-centred), `hP`
+(hexagonal, primitive), `hR` (trigonal, rhombohedral), `mP`, `mC` (monoclinic: primitive,
+base-centred) and `aP` (triclinic, primitive). The entries are
+[pairwise distinct](bravais-metadata-table-injective.md). The table holds metadata only, no basis
 matrices or lattices.

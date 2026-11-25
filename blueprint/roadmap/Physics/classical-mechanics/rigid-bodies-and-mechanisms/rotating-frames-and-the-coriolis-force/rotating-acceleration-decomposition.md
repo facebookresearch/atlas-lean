@@ -1,12 +1,17 @@
-# Rotating acceleration decomposition
+# Algebraic decomposition of the acceleration in a rotating frame
 
-Constant-rate rotating-frame acceleration decomposition (algebraic form,
-declared sign convention: inertial acceleration = rotating-frame derivative
-of the inertial velocity plus the transport correction `Ω × w`):
-`(a + Ω × v) + Ω × (v + Ω × r) = a + 2 • (Ω × v) + Ω × (Ω × r)`,
-where `a` is the rotating-frame acceleration, `v` the rotating-frame
-velocity, `r` the position, and `Ω × ·` is the Mathlib cross product `⨯₃`.
-The first term on the right is the rotating-frame acceleration, the
-second is Coriolis, the third centripetal (its negative is the
-centrifugal acceleration). The Euler term `Ω̇ × r` vanishes for constant
-`Ω` and does not appear.
+For all vectors `Ω`, `v`, `a` and `r` of `ℝ³`,
+
+`(a + Ω × v) + Ω × (v + Ω × r) = a + 2 (Ω × v) + Ω × (Ω × r)`,
+
+where `×` is the cross product of `ℝ³`, `x × y = (x₁ y₂ - x₂ y₁, x₂ y₀ - x₀ y₂, x₀ y₁ - x₁ y₀)` for
+components indexed `0, 1, 2`.
+
+In a frame rotating with constant angular velocity `Ω` about a fixed origin shared with the inertial
+frame, with position `r`, velocity `v` and acceleration `a` measured in the rotating frame, the left
+side is the inertial acceleration written as the rotating-frame derivative `a + Ω × v` of the
+inertial velocity `v + Ω × r` plus the transport term `Ω × (v + Ω × r)`. On the right, `2 (Ω × v)`
+is the Coriolis term and `Ω × (Ω × r)` the centripetal term, which points toward the rotation axis;
+its negative is the centrifugal acceleration of the rotating-frame equation of motion. The Euler
+term `Ω̇ × r` does not appear because `Ω` is constant. The identity itself is pure algebra and holds
+for all vectors.

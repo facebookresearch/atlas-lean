@@ -1,4 +1,4 @@
-# Induced Drag Factor
+# Induced-drag factor
 
-Induced-drag factor `b = 2 * k * W ^ 2 / (ρ * S)`: the drag due to lift in level flight at
-speed `V` is `b / V ^ 2`.
+For reals `W`, `ρ`, `S` and `k`, `b = 2 k W² / (ρ S)`: in level flight at speed `V` the drag due to
+lift is `b / V²`. With the convention `x / 0 = 0`, `b = 0` when `ρ S = 0`.

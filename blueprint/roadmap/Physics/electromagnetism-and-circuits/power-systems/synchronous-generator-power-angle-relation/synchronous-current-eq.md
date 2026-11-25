@@ -1,5 +1,4 @@
-# Synchronous Current eq
+# For positive reactance, the generator current in rectangular form
 
-Current in rectangular form: the sine component over the reactance in
-the real part, and the terminal-minus-cosine component over the reactance
-in the imaginary part.
+Let `X_s > 0` and `E`, `V`, `δ` real. The [generator current](synchronous-current.md)
+`I = (E e^(iδ) - V) / (i X_s)` equals `E sin δ / X_s + i (V - E cos δ) / X_s`.

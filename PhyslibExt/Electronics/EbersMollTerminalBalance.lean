@@ -18,34 +18,37 @@ public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 The Ebers-Moll model gives the collector, base and emitter
 currents of a bipolar transistor from forward and reverse
 saturation currents, current gains and the two junction
-voltages. The three terminal currents balance, each junction
-current is smooth with the stated derivative, the collector
-transconductance at zero collector-base voltage is the stated
-forward expression, the and in transport form the
-collector current is the forward transport current minus the
-reverse transport current. When the forward and reverse
-saturation currents satisfy the reciprocity relation
-`alphaF * IsF = alphaR * IsR`, both derive from one transport
-saturation current. At zero bias every terminal current
-vanishes; in forward-active operation (positive forward
-saturation and gain, zero reverse drive) the collector and
-emitter currents are positive.
+voltages. The three terminal currents balance; for `VT > 0`
+each terminal current has the stated derivative in each
+junction voltage, and the collector transconductance at zero
+base-collector voltage is `(Ic + alphaF * IsF) / VT`. When the
+forward and reverse saturation currents satisfy the reciprocity
+relation `alphaF * IsF = alphaR * IsR`, with `VT > 0` and
+nonzero gains, both derive from one transport saturation
+current `IS = alphaF * IsF`, and the collector and emitter
+currents take transport form in `IS` alone. At zero bias every
+terminal current vanishes; in forward-active operation
+(`Vbe > 0`, `Vbc < 0`, with `VT`, `IsF`, `IsR`, `alphaF` and
+`alphaR` positive) the collector and emitter currents are
+positive.
 
 ## ii. Key results
 
 - `terminal_current_balance`: collector plus base minus emitter
   current is zero.
 - `hasDerivAt_collectorCurrent_vbe` and the companion derivative
-  lemmas: each terminal current is smooth in each junction
-  voltage.
-- `collectorTransconductance_of_vbc_zero`: the forward-active
-  transconductance.
+  lemmas: for `VT > 0`, each terminal current has the stated
+  derivative in each junction voltage.
+- `collectorTransconductance_of_vbc_zero`: for `VT > 0`, the
+  transconductance at `Vbc = 0`, the edge of forward-active
+  operation.
 - `collectorCurrent_of_transportSaturation` and
   `emitterCurrent_of_transportSaturation`: with both saturation
   currents derived from one transport current `IS` (the physical
-  reciprocal parameterization), the terminal currents take
-  transport form. `reciprocal_parameterization` states the
-  equivalence with the relation `alphaF * IsF = alphaR * IsR`.
+  reciprocal parameterization) and nonzero gains, the collector
+  and emitter currents take transport form.
+  `reciprocal_parameterization` states the equivalence with the
+  relation `alphaF * IsF = alphaR * IsR`.
 
 ## iii. Table of contents
 
@@ -64,24 +67,28 @@ Principles*, fourth edition, McGraw-Hill, 2012: the Ebers-Moll model, terminal c
 
 namespace PhyslibExt.Electronics.EbersMollTerminalBalance
 
-/-- Forward (base-emitter) branch current `F = IsF * (exp (Vbe / VT) - 1)`. -/
+/-- Forward (base-emitter) branch current `F = IsF * (exp (Vbe / VT) - 1)`. With the convention
+`a / 0 = 0`, `VT = 0` gives `F = 0` for every `Vbe`; in the device `VT > 0` and `IsF > 0`. -/
 noncomputable def forwardBranchCurrent (IsF VT Vbe : ℝ) : ℝ :=
   IsF * (Real.exp (Vbe / VT) - 1)
 
-/-- Reverse (base-collector) branch current `R = IsR * (exp (Vbc / VT) - 1)`. -/
+/-- Reverse (base-collector) branch current `R = IsR * (exp (Vbc / VT) - 1)`. With the convention
+`a / 0 = 0`, `VT = 0` gives `R = 0` for every `Vbc`; in the device `VT > 0` and `IsR > 0`. -/
 noncomputable def reverseBranchCurrent (IsR VT Vbc : ℝ) : ℝ :=
   IsR * (Real.exp (Vbc / VT) - 1)
 
-/-- Collector current, positive into the collector: `Ic = alphaF * F - R`. -/
+/-- Collector current, positive into the collector: `Ic = alphaF * F - R`. With `a / 0 = 0`, it is
+`0` at `VT = 0`. -/
 noncomputable def collectorCurrent (IsF IsR alphaF VT Vbe Vbc : ℝ) : ℝ :=
   alphaF * forwardBranchCurrent IsF VT Vbe - reverseBranchCurrent IsR VT Vbc
 
-/-- Emitter current, positive out of the emitter: `Ie = F - alphaR * R`. -/
+/-- Emitter current, positive out of the emitter: `Ie = F - alphaR * R`. With `a / 0 = 0`, it is
+`0` at `VT = 0`. -/
 noncomputable def emitterCurrent (IsF IsR alphaR VT Vbe Vbc : ℝ) : ℝ :=
   forwardBranchCurrent IsF VT Vbe - alphaR * reverseBranchCurrent IsR VT Vbc
 
 /-- Base current, positive into the base, declared independently of `Ic` and `Ie`:
-`Ib = (1 - alphaF) * F + (1 - alphaR) * R`. -/
+`Ib = (1 - alphaF) * F + (1 - alphaR) * R`. With `a / 0 = 0`, it is `0` at `VT = 0`. -/
 noncomputable def baseCurrent (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) : ℝ :=
   (1 - alphaF) * forwardBranchCurrent IsF VT Vbe +
     (1 - alphaR) * reverseBranchCurrent IsR VT Vbc
@@ -178,7 +185,8 @@ lemma terminalCurrents_zero_bias (IsF IsR alphaF alphaR VT : ℝ) :
 
 /-! ### Small-signal derivatives (positive thermal voltage) -/
 
-/-- Transconductance `∂Ic/∂Vbe = alphaF * IsF / VT * exp (Vbe / VT)`. -/
+/-- For `VT > 0`, the transconductance `∂Ic/∂Vbe = alphaF * IsF / VT * exp (Vbe / VT)`, at fixed
+`Vbc`. -/
 lemma hasDerivAt_collectorCurrent_vbe (IsF IsR alphaF VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun x => collectorCurrent IsF IsR alphaF VT x Vbc)
       (alphaF * IsF / VT * Real.exp (Vbe / VT)) Vbe := by
@@ -190,7 +198,7 @@ lemma hasDerivAt_collectorCurrent_vbe (IsF IsR alphaF VT Vbe Vbc : ℝ) (_hVT : 
   rw [heq] at h
   exact h
 
-/-- `∂Ic/∂Vbc = -(IsR / VT) * exp (Vbc / VT)`. -/
+/-- For `VT > 0`, `∂Ic/∂Vbc = -(IsR / VT) * exp (Vbc / VT)` at fixed `Vbe`. -/
 lemma hasDerivAt_collectorCurrent_vbc (IsF IsR alphaF VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun y => collectorCurrent IsF IsR alphaF VT Vbe y)
       (-(IsR / VT) * Real.exp (Vbc / VT)) Vbc := by
@@ -201,7 +209,7 @@ lemma hasDerivAt_collectorCurrent_vbc (IsF IsR alphaF VT Vbe Vbc : ℝ) (_hVT : 
   rw [heq] at h
   exact h
 
-/-- `∂Ie/∂Vbe = IsF / VT * exp (Vbe / VT)`. -/
+/-- For `VT > 0`, `∂Ie/∂Vbe = IsF / VT * exp (Vbe / VT)` at fixed `Vbc`. -/
 lemma hasDerivAt_emitterCurrent_vbe (IsF IsR alphaR VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun x => emitterCurrent IsF IsR alphaR VT x Vbc)
       (IsF / VT * Real.exp (Vbe / VT)) Vbe := by
@@ -209,7 +217,7 @@ lemma hasDerivAt_emitterCurrent_vbe (IsF IsR alphaR VT Vbe Vbc : ℝ) (_hVT : 0 
   have h := hF.sub_const (alphaR * reverseBranchCurrent IsR VT Vbc)
   exact h
 
-/-- `∂Ie/∂Vbc = -(alphaR * IsR / VT) * exp (Vbc / VT)`. -/
+/-- For `VT > 0`, `∂Ie/∂Vbc = -(alphaR * IsR / VT) * exp (Vbc / VT)` at fixed `Vbe`. -/
 lemma hasDerivAt_emitterCurrent_vbc (IsF IsR alphaR VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun y => emitterCurrent IsF IsR alphaR VT Vbe y)
       (-(alphaR * IsR / VT) * Real.exp (Vbc / VT)) Vbc := by
@@ -221,7 +229,8 @@ lemma hasDerivAt_emitterCurrent_vbc (IsF IsR alphaR VT Vbe Vbc : ℝ) (_hVT : 0 
   rw [heq] at h
   exact h
 
-/-- Input conductance `∂Ib/∂Vbe = (1 - alphaF) * IsF / VT * exp (Vbe / VT)`. -/
+/-- For `VT > 0`, the input conductance `∂Ib/∂Vbe = (1 - alphaF) * IsF / VT * exp (Vbe / VT)`, at
+fixed `Vbc`. -/
 lemma hasDerivAt_baseCurrent_vbe (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun x => baseCurrent IsF IsR alphaF alphaR VT x Vbc)
       ((1 - alphaF) * IsF / VT * Real.exp (Vbe / VT)) Vbe := by
@@ -233,7 +242,7 @@ lemma hasDerivAt_baseCurrent_vbe (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) (_hVT 
   rw [heq] at h
   exact h
 
-/-- `∂Ib/∂Vbc = (1 - alphaR) * IsR / VT * exp (Vbc / VT)`. -/
+/-- For `VT > 0`, `∂Ib/∂Vbc = (1 - alphaR) * IsR / VT * exp (Vbc / VT)` at fixed `Vbe`. -/
 lemma hasDerivAt_baseCurrent_vbc (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun y => baseCurrent IsF IsR alphaF alphaR VT Vbe y)
       ((1 - alphaR) * IsR / VT * Real.exp (Vbc / VT)) Vbc := by
@@ -245,8 +254,9 @@ lemma hasDerivAt_baseCurrent_vbc (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) (_hVT 
   rw [heq] at h
   exact h
 
-/-- Exact transconductance in terms of terminal quantities, any region:
-`gm * VT = Ic + R + alphaF * IsF`. -/
+/-- Exact transconductance in terms of terminal quantities, any region: for `VT > 0`,
+`gm * VT = Ic + R + alphaF * IsF`, with `gm = alphaF * IsF / VT * exp (Vbe / VT)`. At `VT = 0`
+the left side would be `0` by `a / 0 = 0` while the right side is `alphaF * IsF`. -/
 lemma collectorTransconductance_mul_thermalVoltage (IsF IsR alphaF VT Vbe Vbc : ℝ)
     (hVT : 0 < VT) :
     alphaF * IsF / VT * Real.exp (Vbe / VT) * VT =
@@ -257,7 +267,7 @@ lemma collectorTransconductance_mul_thermalVoltage (IsF IsR alphaF VT Vbe Vbc : 
   field_simp
   ring
 
-/-- Forward-active boundary `Vbc = 0`: `gm = (Ic + alphaF * IsF) / VT` exactly
+/-- Forward-active boundary `Vbc = 0`, for `VT > 0`: `gm = (Ic + alphaF * IsF) / VT` exactly
 (the precise form of the textbook `gm ≈ Ic / VT`). -/
 lemma collectorTransconductance_of_vbc_zero (IsF IsR alphaF VT Vbe : ℝ) (hVT : 0 < VT) :
     alphaF * IsF / VT * Real.exp (Vbe / VT) =
@@ -270,8 +280,9 @@ lemma collectorTransconductance_of_vbc_zero (IsF IsR alphaF VT Vbe : ℝ) (hVT :
 
 /-! ### Bias-region examples -/
 
-/-- Forward active (`Vbe > 0`, `Vbc < 0`): collector and emitter currents are positive.
-(The base current's sign is not determined here: `R < 0` can dominate.) -/
+/-- Forward active (`Vbe > 0`, `Vbc < 0`), with `VT`, `IsF`, `IsR`, `alphaF` and `alphaR`
+positive: collector and emitter currents are positive. (The base current's sign is not determined
+here: `R < 0` can dominate, as at `alphaF = 1`, `alphaR < 1`.) -/
 lemma forwardActive_currents_pos (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) (hVT : 0 < VT)
     (hIsF : 0 < IsF) (hIsR : 0 < IsR) (hαF : 0 < alphaF) (hαR : 0 < alphaR)
     (hVbe : 0 < Vbe) (hVbc : Vbc < 0) :
@@ -293,7 +304,8 @@ lemma collector_eq_alphaF_mul_emitter_of_vbc_zero (IsF IsR alphaF alphaR VT Vbe 
   simp only [collectorCurrent, emitterCurrent, baseCurrent, hR]
   constructor <;> ring
 
-/-- Reverse active (`Vbe < 0`, `Vbc > 0`): collector and emitter currents are negative. -/
+/-- Reverse active (`Vbe < 0`, `Vbc > 0`), with `VT`, `IsF`, `IsR`, `alphaF` and `alphaR`
+positive: collector and emitter currents are negative. -/
 lemma reverseActive_currents_neg (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) (hVT : 0 < VT)
     (hIsF : 0 < IsF) (hIsR : 0 < IsR) (hαF : 0 < alphaF) (hαR : 0 < alphaR)
     (hVbe : Vbe < 0) (hVbc : 0 < Vbc) :
@@ -325,7 +337,8 @@ lemma collector_add_base_add_emitterOut_eq (IsF IsR alphaF alphaR VT Vbe Vbc : �
     reverseBranchCurrent]
   ring
 
-/-- The mis-signed KCL fails at every forward-active operating point. -/
+/-- The mis-signed KCL fails at every forward-active operating point (`Vbe > 0`, `Vbc < 0`) with
+`VT`, `IsF`, `IsR` and `alphaR` positive, for any `alphaF`: the sum is `2 * Ie > 0`. -/
 lemma collector_add_base_add_emitterOut_ne_zero_of_forwardActive
     (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) (hVT : 0 < VT) (hIsF : 0 < IsF) (hIsR : 0 < IsR)
     (hαR : 0 < alphaR) (hVbe : 0 < Vbe) (hVbc : Vbc < 0) :
@@ -343,14 +356,13 @@ lemma collector_add_base_add_emitterOut_ne_zero_of_forwardActive
 
 /-! ### Reciprocal parameterization -/
 
-/-- **Reciprocal parameterization.** When the branch saturation currents satisfy
-`alphaF * IsF = alphaR * IsR`, both derive from the single transport saturation
-current `IS = alphaF * IsF`: `IsF = IS / alphaF` and `IsR = IS / alphaR`. The
-collector and emitter-out currents then depend on `IsF`, `IsR` only through `IS`,
-in transport form. This is a parameterization equivalence: it does not derive
-reciprocity from device physics, it states what reciprocity means for the
-currents. The `_of_transportSaturation` lemmas below use the parameterization
-directly. -/
+/-- **Reciprocal parameterization.** For `VT > 0`, `alphaF ≠ 0` and `alphaR ≠ 0`, the branch
+saturation currents satisfy `alphaF * IsF = alphaR * IsR` if and only if both derive from the
+single transport saturation current `IS = alphaF * IsF`: `IsF = IS / alphaF` and
+`IsR = IS / alphaR`, with the collector and emitter-out currents in transport form. The
+currents then depend on `IsF`, `IsR` only through `IS`. This is a parameterization
+equivalence: it does not derive reciprocity from device physics, it states what reciprocity
+means for the currents. -/
 lemma reciprocal_parameterization (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
     (_hVT : 0 < VT) (hαF : alphaF ≠ 0) (hαR : alphaR ≠ 0) :
     alphaF * IsF = alphaR * IsR ↔
@@ -382,7 +394,8 @@ lemma reciprocal_parameterization (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
 
 /-- With both saturation currents derived from one transport current `IS`
 (`IsF = IS / alphaF`, `IsR = IS / alphaR`, the physical reciprocal
-parameterization), the collector current takes transport form in `IS` alone. -/
+parameterization), the collector current takes transport form in `IS` alone, for
+`alphaF ≠ 0`, `alphaR ≠ 0` and every real `VT` (at `VT = 0` both sides are `0`). -/
 lemma collectorCurrent_of_transportSaturation (IS alphaF alphaR VT Vbe Vbc : ℝ)
     (hαF : alphaF ≠ 0) (hαR : alphaR ≠ 0) :
     collectorCurrent (IS / alphaF) (IS / alphaR) alphaF VT Vbe Vbc =
@@ -392,8 +405,9 @@ lemma collectorCurrent_of_transportSaturation (IS alphaF alphaR VT Vbe Vbc : ℝ
   field_simp
   ring
 
-/-- With both saturation currents derived from one transport current `IS`, the
-emitter-out current takes transport form in `IS` alone. -/
+/-- With both saturation currents derived from one transport current `IS`
+(`IsF = IS / alphaF`, `IsR = IS / alphaR`), the emitter-out current takes transport form in `IS`
+alone, for `alphaF ≠ 0`, `alphaR ≠ 0` and every real `VT` (at `VT = 0` both sides are `0`). -/
 lemma emitterCurrent_of_transportSaturation (IS alphaF alphaR VT Vbe Vbc : ℝ)
     (hαF : alphaF ≠ 0) (hαR : alphaR ≠ 0) :
     emitterCurrent (IS / alphaF) (IS / alphaR) alphaR VT Vbe Vbc =
@@ -403,7 +417,8 @@ lemma emitterCurrent_of_transportSaturation (IS alphaF alphaR VT Vbe Vbc : ℝ)
   field_simp
   ring
 
-/-- Under reciprocity `alphaF * IsF = alphaR * IsR`, the collector current in transport form
+/-- Under reciprocity `alphaF * IsF = alphaR * IsR`, with `VT > 0` and `alphaR > 0`, the collector
+current in transport form
 `Ic = IS (e^{Vbe/VT} - e^{Vbc/VT}) - IS (1 - alphaR) / alphaR (e^{Vbc/VT} - 1)`,
 `IS = alphaF * IsF`. -/
 lemma collectorCurrent_transport_form (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
@@ -420,8 +435,10 @@ lemma collectorCurrent_transport_form (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
   field_simp
   ring
 
-/-- Under reciprocity, the emitter-out current in transport form
-`Ie = IS (e^{Vbe/VT} - e^{Vbc/VT}) + IS (1 - alphaF) / alphaF (e^{Vbe/VT} - 1)`. -/
+/-- Under reciprocity `alphaF * IsF = alphaR * IsR`, with `VT > 0` and `alphaF > 0`, the
+emitter-out current in transport form
+`Ie = IS (e^{Vbe/VT} - e^{Vbc/VT}) + IS (1 - alphaF) / alphaF (e^{Vbe/VT} - 1)`,
+`IS = alphaF * IsF`. -/
 lemma emitterCurrent_transport_form (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
     (_hVT : 0 < VT) (hαF : 0 < alphaF) (hrec : alphaF * IsF = alphaR * IsR) :
     emitterCurrent IsF IsR alphaR VT Vbe Vbc =

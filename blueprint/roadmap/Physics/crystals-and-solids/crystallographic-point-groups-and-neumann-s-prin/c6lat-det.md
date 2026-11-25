@@ -1,3 +1,4 @@
-# C6lat det
+# The hexagonal-basis six-fold rotation has determinant 1
 
-`C6lat` has determinant one.
+The [six-fold rotation in a hexagonal lattice basis](c6lat.md) `C₆ = [[1, -1], [1, 0]]` has
+`det C₆ = 1`.

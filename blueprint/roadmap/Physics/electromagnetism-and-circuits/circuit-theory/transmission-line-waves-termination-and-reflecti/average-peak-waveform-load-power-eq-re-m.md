@@ -1,5 +1,8 @@
-# Average peak Waveform load power eq re mul norm sq
+# Average load power of peak phasors from the load law
 
-Time-averaged load power for peak phasors from the load law: the
-average of the product of the peak voltage and current waveforms over
-any complete period is `(1 / 2) * (Re ZL * |I| ^ 2)`.
+Let `V`, `I` and `Z_L` be complex with `V = Z_L I`. Then the average over any complete period
+`[a, a + 2π/ω]`, for `ω > 0` and any real `a`, of the product of the
+[peak waveforms](../average-power-of-sinusoidal-signals/peak-waveform.md) `Re(V e^{iωt})` and
+`Re(I e^{iωt})` is
+
+`(1/2) Re Z_L |I|²`.

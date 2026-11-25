@@ -113,12 +113,13 @@ claimed.
 
 namespace BeamModes
 
-/-- The `k`-th simply supported beam mode in physical units:
-`w(x, t) = sin(kπx / L) * cos(ωt)` for `k ≥ 1`. -/
+/-- The `k`-th simply supported beam mode in physical units: `w(x, t) = sin(kπx / L) * cos(ωt)` for
+`k ≥ 1` (`0` everywhere when `L = 0`, by the convention `x / 0 = 0`). -/
 noncomputable def beamMode (k : ℕ+) (L ω x t : ℝ) : ℝ :=
   Real.sin ((k : ℝ) * Real.pi * x / L) * Real.cos (ω * t)
 
-/-- Modal frequency `ω_k = (kπ / L)^2 * √(EI / ρA)`. -/
+/-- Modal frequency `ω_k = (kπ / L)^2 * √(EI / ρA)`; with the conventions `x / 0 = 0` and `√x = 0`
+for `x < 0` it is `0` when `L = 0`, `ρA = 0` or `EI / ρA < 0`. -/
 noncomputable def beamFreq (EI ρA L : ℝ) (k : ℕ+) : ℝ :=
   ((k : ℝ) * Real.pi / L) ^ 2 * Real.sqrt (EI / ρA)
 
@@ -271,7 +272,7 @@ lemma beamMode_iteratedDeriv_two_time (k : ℕ+) (L ω x t : ℝ) :
   rw [hIter, h1]
   exact h2
 
-/-- Simply supported curvature conditions: `w_xx = 0` at both ends. -/
+/-- Simply supported curvature conditions: for `L ≠ 0`, `w_xx = 0` at both ends. -/
 lemma beamMode_curvature_zero (k : ℕ+) {L : ℝ} (hL : L ≠ 0) (ω t : ℝ) :
     iteratedDeriv 2 (fun y : ℝ => beamMode k L ω y t) 0 = 0 ∧
       iteratedDeriv 2 (fun y : ℝ => beamMode k L ω y t) L = 0 := by
@@ -287,8 +288,8 @@ lemma beamFreq_sq {EI ρA L : ℝ} (hEI : 0 < EI) (hρ : 0 < ρA) (k : ℕ+) :
   rw [mul_pow, Real.sq_sqrt (by positivity)]
   ring
 
-/-- The beam equation `ρA * w_tt + EI * w_xxxx = 0` for the mode at
-its modal frequency. -/
+/-- The beam equation `ρA * w_tt + EI * w_xxxx = 0` for the mode at its modal frequency, for
+`EI, ρA > 0` and `L ≠ 0`. -/
 theorem beamMode_beamEquation {EI ρA L : ℝ} (hEI : 0 < EI) (hρ : 0 < ρA)
     (hL : L ≠ 0) (k : ℕ+) (x t : ℝ) :
     ρA * iteratedDeriv 2 (fun s : ℝ => beamMode k L (beamFreq EI ρA L k) x s) t +
@@ -299,8 +300,9 @@ theorem beamMode_beamEquation {EI ρA L : ℝ} (hEI : 0 < EI) (hρ : 0 < ρA)
   field_simp
   ring
 
-/-- Beam energy of the mode at time `t`: the integral over `[0, L]` of
-`(ρA * w_t^2 + EI * w_xx^2) / 2`. -/
+/-- Beam energy of the mode at time `t`: the integral over `[0, L]` (an oriented interval integral)
+of `(ρA * w_t^2 + EI * w_xx^2) / 2`. It is `0` when `L = 0`. In the physical reading `L > 0`,
+`EI > 0` and `ρA > 0`; the definition allows all real values. -/
 noncomputable def beamModeEnergy (EI ρA L ω : ℝ) (k : ℕ+) (t : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..L,
     (ρA * deriv (fun s : ℝ => beamMode k L ω x s) t ^ 2 +
@@ -382,7 +384,7 @@ private lemma sin_sq_integral (k : ℕ+) {L : ℝ} (hL : 0 < L) :
     simp
   rw [hconst, hcos, sub_zero]
 
-/-- The mode energy evaluates to
+/-- For `L > 0`, the mode energy evaluates to
 `(L / 4) * (ρA * ω^2 * sin^2(ωt) + EI * (kπ / L)^4 * cos^2(ωt))`. -/
 lemma beamModeEnergy_eq {EI ρA L ω : ℝ} (hL : 0 < L) (k : ℕ+) (t : ℝ) :
     beamModeEnergy EI ρA L ω k t =
@@ -418,8 +420,8 @@ lemma beamModeEnergy_eq {EI ρA L ω : ℝ} (hL : 0 < L) (k : ℕ+) (t : ℝ) :
   rw [sin_sq_integral k hL]
   ring
 
-/-- Energy conservation at the modal frequency: the energy is the
-constant `(L / 4) * EI * (kπ / L)^4`. -/
+/-- Energy conservation at the modal frequency: for `EI, ρA, L > 0` the energy is the constant
+`(L / 4) * EI * (kπ / L)^4` at every time. -/
 theorem beamModeEnergy_conserved {EI ρA L : ℝ} (hEI : 0 < EI)
     (hρ : 0 < ρA) (hL : 0 < L) (k : ℕ+) (t : ℝ) :
     beamModeEnergy EI ρA L (beamFreq EI ρA L k) k t =
@@ -448,8 +450,8 @@ noncomputable def modeFamily (β : ℝ) (c : Fin 4 → ℝ) (x : ℝ) : ℝ :=
   c 0 * Real.cos (β * x) + c 1 * Real.sin (β * x) + c 2 * Real.cosh (β * x) +
     c 3 * Real.sinh (β * x)
 
-/-- The clamped-free boundary matrix at `z = β L`: for the family member with coefficients `c`
-its rows give `W 0`, `W' 0 / β`, `W'' L / β ^ 2` and `W''' L / β ^ 3`. -/
+/-- The clamped-free boundary matrix at `z = β L`: for `β ≠ 0` and the family member with
+coefficients `c`, its rows give `W 0`, `W' 0 / β`, `W'' L / β ^ 2` and `W''' L / β ^ 3`. -/
 noncomputable def clampedFreeMatrix (z : ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
   !![1, 0, 1, 0;
     0, 1, 0, 1;
@@ -458,7 +460,8 @@ noncomputable def clampedFreeMatrix (z : ℝ) : Matrix (Fin 4) (Fin 4) ℝ :=
 
 /-- The clamped-free conditions for a mode shape `W` of a beam of positive length `L`: zero
 deflection and slope at the clamp `x = 0`; zero curvature and zero third derivative at the free
-end `x = L` (zero bending moment and shear force for `EI > 0`). -/
+end `x = L` (zero bending moment and shear force for `EI > 0`). Derivatives are `0` where they
+do not exist. -/
 structure IsClampedFree (L : ℝ) (W : ℝ → ℝ) : Prop where
   span_pos : 0 < L
   zero_left : W 0 = 0
@@ -673,7 +676,8 @@ private lemma cantileverRoot_spec :
 lemma cantileverRoot_mem_Ioo : cantileverRoot ∈ Set.Ioo (Real.pi / 2) Real.pi := by
   exact cantileverRoot_spec.1
 
-/-- The least positive root is the only root in `(π / 2, π)`. -/
+/-- Every root in `(π / 2, π)` is the least positive root; since that root lies in `(π / 2, π)`
+(`cantileverRoot_mem_Ioo`), it is the only root there. -/
 lemma eq_cantileverRoot_of_mem_Ioo {z : ℝ} (hz : z ∈ Set.Ioo (Real.pi / 2) Real.pi)
     (h : cantileverChar z = 0) : z = cantileverRoot := by
   exact cantileverChar_strictAntiOn.injOn hz cantileverRoot_spec.1
@@ -682,7 +686,8 @@ lemma eq_cantileverRoot_of_mem_Ioo {z : ℝ} (hz : z ∈ Set.Ioo (Real.pi / 2) R
 /-! ### B.3. The mode and its frequency -/
 
 /-- The clamped-free mode of a beam of length `L` for a root `z`, with `β = z / L`:
-`(sin z + sinh z) (cos (β x) - cosh (β x)) - (cos z + cosh z) (sin (β x) - sinh (β x))`. -/
+`(sin z + sinh z) (cos (β x) - cosh (β x)) - (cos z + cosh z) (sin (β x) - sinh (β x))` (`0`
+everywhere when `L = 0`, by the convention `x / 0 = 0`). -/
 noncomputable def cantileverMode (L z x : ℝ) : ℝ :=
   (Real.sin z + Real.sinh z) * (Real.cos (z * x / L) - Real.cosh (z * x / L)) -
     (Real.cos z + Real.cosh z) * (Real.sin (z * x / L) - Real.sinh (z * x / L))
@@ -698,7 +703,7 @@ lemma cantileverMode_eq_modeFamily (L z : ℝ) :
   rw [show z / L * x = z * x / L by ring]
   ring
 
-/-- For a root `z` the mode meets the clamped-free conditions. -/
+/-- For `L > 0` and every real root `z` the mode meets the clamped-free conditions. -/
 lemma isClampedFree_cantileverMode {L z : ℝ} (hL : 0 < L) (hz : cantileverChar z = 0) :
     IsClampedFree L (cantileverMode L z) := by
   rw [cantileverMode_eq_modeFamily]
@@ -721,7 +726,7 @@ lemma isClampedFree_cantileverMode {L z : ℝ} (hL : 0 < L) (hz : cantileverChar
     simp [clampedFreeMatrix, Matrix.mulVec, dotProduct, Fin.sum_univ_four]
     linear_combination Real.sin_sq_add_cos_sq z + Real.cosh_sq_sub_sinh_sq z + 2 * hz
 
-/-- For a positive root the mode is nonzero: its tip deflection
+/-- For `L ≠ 0` and a positive root the mode is nonzero: its tip deflection
 `2 (sinh z cos z - sin z cosh z)` does not vanish. -/
 lemma cantileverMode_tip_ne_zero {L z : ℝ} (hL : L ≠ 0) (hz : 0 < z)
     (h : cantileverChar z = 0) : cantileverMode L z L ≠ 0 := by
@@ -741,7 +746,8 @@ lemma cantileverMode_tip_ne_zero {L z : ℝ} (hL : L ≠ 0) (hz : 0 < z)
   have : 0 < Real.sinh z ^ 4 := by positivity
   linarith
 
-/-- The natural frequency of the mode for the root `z`: `ω = (z / L) ^ 2 * √(EI / ρA)`. -/
+/-- The natural frequency of the mode for the root `z`: `ω = (z / L) ^ 2 * √(EI / ρA)` (`0` when
+`L = 0`, `ρA = 0` or `EI / ρA < 0`, by the conventions `x / 0 = 0` and `√x = 0` for `x < 0`). -/
 noncomputable def cantileverFreq (EI ρA L z : ℝ) : ℝ := (z / L) ^ 2 * Real.sqrt (EI / ρA)
 
 /-- The second derivative of `s ↦ cos (ω s)` is `-ω ^ 2 cos (ω t)`. -/
@@ -762,8 +768,8 @@ private lemma cantileverMode_iteratedDeriv_four (L z x : ℝ) :
     iteratedDeriv 4 (cantileverMode L z) x = (z / L) ^ 4 * cantileverMode L z x := by
   rw [cantileverMode_eq_modeFamily, modeFamily_iteratedDeriv_four]
 
-/-- At its natural frequency the mode solves the beam equation `ρA w_tt + EI w_xxxx = 0` for
-`w(x, t) = W(x) cos(ω t)`. -/
+/-- For `EI, ρA > 0`, at its natural frequency the mode solves the beam equation
+`ρA w_tt + EI w_xxxx = 0` for `w(x, t) = W(x) cos(ω t)`, for every real `z` (no root condition). -/
 lemma cantileverMode_beamEquation {EI ρA : ℝ} (hEI : 0 < EI) (hρ : 0 < ρA) (L z x t : ℝ) :
     ρA * iteratedDeriv 2
         (fun s : ℝ => cantileverMode L z x * Real.cos (cantileverFreq EI ρA L z * s)) t +
@@ -814,7 +820,7 @@ lemma cantileverFirstMode {EI ρA L : ℝ} (hEI : 0 < EI) (hρ : 0 < ρA) (hL : 
 
 /-! ### B.4. The old root bracket -/
 
-/-- The second root lies below `3 π / 2` and `(3 π / 2, 2 π)` contains no root, so the bracket
+/-- A root lies in `(π, 3 π / 2)` and `(3 π / 2, 2 π)` contains no root, so the bracket
 `((2 k - 1) π / 2, k π)` fails at `k = 2`. -/
 lemma secondRoot_lt_three_pi_div_two :
     (∃ z ∈ Set.Ioo Real.pi (3 * Real.pi / 2), cantileverChar z = 0) ∧

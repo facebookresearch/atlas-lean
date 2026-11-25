@@ -1,4 +1,4 @@
-# Real Power eq
+# Power–angle relation for the real power
 
-Real power angle formula: three times the voltage product times the
-sine of the load angle over the synchronous reactance.
+Let `E > 0`, `V > 0` and `X_s > 0`, and let `δ` be real. The [real power](real-power.md) delivered
+by the synchronous generator is `P = 3 V E sin δ / X_s`.

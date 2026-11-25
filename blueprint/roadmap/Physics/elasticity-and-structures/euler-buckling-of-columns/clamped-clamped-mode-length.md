@@ -1,3 +1,4 @@
-# Clamped Clamped Mode length
+# For nonzero length the clamped–clamped mode vanishes at x = L
 
-The clamped-clamped mode vanishes at the right support.
+For a real `L ≠ 0`, the [clamped–clamped mode](clamped-clamped-mode.md) `w(x) = 1 − cos(2πx / L)`
+satisfies `w(L) = 0`.

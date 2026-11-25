@@ -1,3 +1,3 @@
-# Sqrt2 bounds
+# Certified bounds 1.4142 < √2 < 1.4143
 
-Certified interval for `√2`, by squaring both sides.
+`1.4142 < √2 < 1.4143`.

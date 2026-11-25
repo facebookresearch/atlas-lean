@@ -1,22 +1,18 @@
 # Interatomic pair potentials
 
-## A. Lennard-Jones pair potential
+## Lennard-Jones pair potential
 
-- [Lennard Jones eq at min](lennard-jones-eq-at-min.md)
-- [Lennard Jones deriv at min](lennard-jones-deriv-at-min.md)
-- [Lennard Jones second deriv at min](lennard-jones-second-deriv-at-min.md)
+- [The Lennard-Jones potential at r₀ = 2^(1/6) σ equals −ε](lennard-jones-eq-at-min.md)
+- [The Lennard-Jones potential is stationary at 2^(1/6) σ](lennard-jones-deriv-at-min.md)
+- [Bond stiffness of the Lennard-Jones potential at equilibrium](lennard-jones-second-deriv-at-min.md)
 
-## B. One-dimensional Madelung constant
+## Bond modulus estimate
 
-- [Madelung one dim](madelung-one-dim.md)
+- [Elastic modulus estimated from the bond stiffness](bond-modulus-estimate.md)
+- [Bond modulus estimate of the Lennard-Jones potential](bond-modulus-estimate-lennard-jones.md)
 
-## C. Bond modulus estimate
+## Born–Landé lattice energy
 
-- [Bond Modulus Estimate](bond-modulus-estimate.md)
-- [Bond Modulus Estimate lennard Jones](bond-modulus-estimate-lennard-jones.md)
-
-## D. Born-Lande lattice energy
-
-- [Born Lande Energy](born-lande-energy.md)
-- [Born Lande Energy neg of pos](born-lande-energy-neg-of-pos.md)
-- [Born Lande Energy factor mem](born-lande-energy-factor-mem.md)
+- [Born–Landé lattice energy](born-lande-energy.md)
+- [For n > 1 and positive constants, the Born–Landé energy is negative](born-lande-energy-neg-of-pos.md)
+- [For n > 1, the Born–Landé factor lies strictly between 0 and 1](born-lande-energy-factor-mem.md)

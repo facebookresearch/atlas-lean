@@ -1,4 +1,6 @@
-# Stress Map mul Vec dot Product strain Map mul Vec
+# Work is invariant under the change to material axes
 
-Work invariance: the work of a global stress `s` on a global engineering strain `e` equals
-the work of their material components, `(T_s s) ⬝ (T_e e) = s ⬝ e`.
+For every real `θ` and all `s, e ∈ ℝ³` (global stress and engineering strain components),
+`(T_s(θ) s) · (T_e(θ) e) = s · e`, with the [stress map](stress-map.md) `T_s(θ)` and the
+[strain map](strain-map.md) `T_e(θ)`: the work of the material components equals the work of the
+global ones.

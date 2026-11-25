@@ -1,30 +1,32 @@
 # Telegrapher's equations and line energy
 
-- [Is Telegrapher Solution](is-telegrapher-solution.md)
-- [Energy Density](energy-density.md)
-- [Power Flux](power-flux.md)
-- [Dissipation Density](dissipation-density.md)
-- [Line Energy](line-energy.md)
-- [Local energy identity](energy-density-time-deriv-add-power-flux.md)
-- [Has Deriv At line Energy](has-deriv-at-line-energy.md)
-- [Finite-line integrated energy balance](line-energy-sub-eq-integral-endpoint-flu.md)
+## Line energy and its balance
+
+- [Solution of the telegrapher equations on a set](is-telegrapher-solution.md)
+- [Energy per unit length of a transmission line](energy-density.md)
+- [Power flux along a transmission line](power-flux.md)
+- [Dissipated power per unit length of a line](dissipation-density.md)
+- [Energy stored on a line segment](line-energy.md)
+- [Local energy identity of the telegrapher equations](energy-density-time-deriv-add-power-flux.md)
+- [Rate of change of the energy stored on a line segment](has-deriv-at-line-energy.md)
+- [Integrated energy balance of a finite line](line-energy-sub-eq-integral-endpoint-flu.md)
 
 ## Dissipation signs
 
-- [Dissipation Density nonneg](dissipation-density-nonneg.md)
-- [Line Energy sub le integral endpoint Flux](line-energy-sub-le-integral-endpoint-flu.md)
-- [Shunt Discharge is Telegrapher Solution](shunt-discharge-is-telegrapher-solution.md)
-- [Shunt Discharge line Energy strict Anti](shunt-discharge-line-energy-strict-anti.md)
+- [For R, G ≥ 0 the dissipation density is nonnegative](dissipation-density-nonneg.md)
+- [On a passive line the energy grows by at most the net inflow](line-energy-sub-le-integral-endpoint-flu.md)
+- [A uniform shunt discharge solves the telegrapher equations](shunt-discharge-is-telegrapher-solution.md)
+- [In a shunt discharge the stored line energy strictly decreases](shunt-discharge-line-energy-strict-anti.md)
 
 ## Lossless traveling wave
 
-- [Traveling Wave Voltage](traveling-wave-voltage.md)
-- [Traveling Wave Current](traveling-wave-current.md)
-- [Traveling Wave is Telegrapher Solution](traveling-wave-is-telegrapher-solution.md)
-- [Traveling Wave power Flux eq speed mul energy Density](traveling-wave-power-flux-eq-speed-mul-e.md)
-- [Traveling Wave electric eq magnetic](traveling-wave-electric-eq-magnetic.md)
+- [Voltage of a forward traveling wave](traveling-wave-voltage.md)
+- [Current of a forward traveling wave](traveling-wave-current.md)
+- [A forward traveling wave solves the lossless telegrapher equations](traveling-wave-is-telegrapher-solution.md)
+- [A traveling wave carries power at the wave speed times its energy](traveling-wave-power-flux-eq-speed-mul-e.md)
+- [A traveling wave has equal electric and magnetic energy densities](traveling-wave-electric-eq-magnetic.md)
 
-## Swapped endpoint sign
+## Swapped endpoint fluxes
 
-- [Ramp Wave is Telegrapher Solution](ramp-wave-is-telegrapher-solution.md)
-- [Swapped Endpoint Flux balance fails](swapped-endpoint-flux-balance-fails.md)
+- [The ramp v = i = x − t solves the lossless line with L = C = 1](ramp-wave-is-telegrapher-solution.md)
+- [With the endpoint fluxes swapped the energy balance fails](swapped-endpoint-flux-balance-fails.md)

@@ -99,7 +99,8 @@ by the impedance with real part `Rth + R2 / s` and reactance `Xeq`. It is
 written with the slip division cleared, as `Vth s / (Rth s + R2 + i Xeq s)`,
 so that no reciprocal of the slip appears: at nonzero slip it equals the
 quotient (`rotorCurrent_eq_div`), and at zero slip it is zero
-(`rotorCurrent_zero_slip`), the physical value at synchronous speed. -/
+(`rotorCurrent_zero_slip`), the physical value at synchronous speed. With the
+convention `z / 0 = 0` it is also zero where `Rth s + R2 = 0` and `Xeq s = 0`. -/
 noncomputable def rotorCurrent (Vth : ℂ) (Rth R2 Xeq s : ℝ) : ℂ :=
   Vth * (s : ℂ) / ((↑(Rth * s + R2) : ℂ) + (↑(Xeq * s) : ℂ) * Complex.I)
 
@@ -127,17 +128,20 @@ slip-divided rotor resistance. The physical statements about it assume
 nonzero slip; at zero slip the model current is zero
 (`rotorCurrent_zero_slip`), so the air-gap power of the model vanishes
 there, and a nonzero current paired with zero slip is not a state of the
-model. -/
+model. With the convention `x / 0 = 0` the formula is `0` at `s = 0` for every
+current. -/
 noncomputable def airGapPower (I2 : ℂ) (R2 s : ℝ) : ℝ :=
   3 * ‖I2‖ ^ 2 * (R2 / s)
 
-/-- Developed torque at synchronous mechanical speed `ws`. -/
+/-- Developed torque at synchronous mechanical speed `ws`: the air-gap power over
+`ws`. With the convention `x / 0 = 0` it is `0` when `ws = 0` or `s = 0`. -/
 noncomputable def developedTorque (I2 : ℂ) (R2 s ws : ℝ) : ℝ :=
   airGapPower I2 R2 s / ws
 
 /-- Squared norm of the rotor current, as the squared Thevenin voltage norm
-divided by the squared impedance magnitude. The proof rewrites the complex
-norm of the quotient through `Complex.normSq`. -/
+divided by the squared impedance magnitude, at nonzero slip. With the
+convention `x / 0 = 0` both sides are `0` when `Rth + R2 / s = 0` and `Xeq = 0`.
+The proof rewrites the complex norm of the quotient through `Complex.normSq`. -/
 lemma rotorCurrent_normSq (Vth : ℂ) (Rth R2 Xeq s : ℝ) (hs : s ≠ 0) :
     ‖rotorCurrent Vth Rth R2 Xeq s‖ ^ 2 =
       ‖Vth‖ ^ 2 / ((Rth + R2 / s) ^ 2 + Xeq ^ 2) := by
@@ -145,7 +149,7 @@ lemma rotorCurrent_normSq (Vth : ℂ) (Rth R2 Xeq s : ℝ) (hs : s ≠ 0) :
   rw [← Complex.normSq_eq_norm_sq (((↑(Rth + R2 / s) : ℂ) + (↑Xeq : ℂ) * Complex.I))]
   rw [Complex.normSq_add_mul_I]
 
-/-- Air-gap power in Thevenin quantities, before clearing the slip
+/-- At nonzero slip, the air-gap power in Thevenin quantities, before clearing the slip
 division. -/
 lemma airGapPower_eq (Vth : ℂ) (Rth R2 Xeq s : ℝ) (hs : s ≠ 0) :
     airGapPower (rotorCurrent Vth Rth R2 Xeq s) R2 s =
@@ -159,7 +163,8 @@ voltage `((R2 / s : ℝ) : ℂ) * I2` across the slip-divided rotor resistance,
 the canonical complex power
 `PhyslibExt.Circuits.BalancedThreePhase.complexPower` (RMS phasors, passive
 sign convention) has real part `(R2 / s) * ‖I2‖²`, and the three-phase
-air-gap power is three times that real part. -/
+air-gap power is three times that real part. At `s = 0` both sides are `0` by
+the convention `x / 0 = 0`. -/
 lemma airGapPower_eq_three_mul_re_complexPower (I2 : ℂ) (R2 s : ℝ) :
     airGapPower I2 R2 s =
       3 * (PhyslibExt.Circuits.BalancedThreePhase.complexPower
@@ -179,12 +184,14 @@ lemma airGapPower_eq_three_mul_re_complexPower (I2 : ℂ) (R2 s : ℝ) :
 
 /-- The rational torque curve in slip, obtained by clearing the slip
 division in the current formula. At zero slip its value is zero; the
-rational form, not a totalized reciprocal, supplies that value. -/
+rational form, not a totalized reciprocal, supplies that value. With the
+convention `x / 0 = 0` it is also zero where its denominator vanishes. -/
 noncomputable def torqueCurve (Vth : ℂ) (Rth R2 Xeq ws s : ℝ) : ℝ :=
   3 * ‖Vth‖ ^ 2 * R2 * s / (ws * ((Rth * s + R2) ^ 2 + (Xeq * s) ^ 2))
 
-/-- Torque formula on the motoring interval: air-gap power over synchronous
-speed equals the cleared rational function of slip. The proof clears the
+/-- Torque formula on the motoring interval, for `R2 > 0`, `ws > 0` and
+`Rth ≥ 0`: air-gap power over synchronous speed equals the cleared rational
+function of slip. The proof clears the
 slip division after rewriting `Rth + R2 / s` as `(Rth * s + R2) / s`, using
 positivity of the resulting denominators. -/
 theorem developedTorque_eq_torqueCurve (Vth : ℂ) (Rth R2 Xeq ws s : ℝ)
@@ -207,8 +214,8 @@ theorem developedTorque_eq_torqueCurve (Vth : ℂ) (Rth R2 Xeq ws s : ℝ)
   rw [airGapPower_eq Vth Rth R2 Xeq s hs0', hclear]
   field_simp
 
-/-- The rational curve agrees with its defining expression in `torqueCurve`
-on the motoring interval. -/
+/-- On the motoring interval, for `R2 > 0`, `ws > 0` and `Rth ≥ 0`, the rational
+torque curve equals the developed torque of the model current. -/
 lemma torqueCurve_eq_developedTorque (Vth : ℂ) (Rth R2 Xeq ws s : ℝ)
     (hR2 : 0 < R2) (hws : 0 < ws) (hRth : 0 ≤ Rth)
     (hs0 : 0 < s) (hs1 : s ≤ 1) :
@@ -218,14 +225,16 @@ lemma torqueCurve_eq_developedTorque (Vth : ℂ) (Rth R2 Xeq ws s : ℝ)
   unfold torqueCurve
   exact h.symm
 
-/-- Zero-slip value of the rational torque curve. -/
+/-- Zero-slip value of the rational torque curve (stated for `R2 > 0`,
+`ws > 0`, `Rth ≥ 0`). -/
 lemma torqueCurve_zero (Vth : ℂ) (Rth R2 Xeq ws : ℝ)
     (hR2 : 0 < R2) (hws : 0 < ws) (hRth : 0 ≤ Rth) :
     torqueCurve Vth Rth R2 Xeq ws 0 = 0 := by
   simp [torqueCurve]
 
-/-- Continuous extension to zero slip: the rational torque curve is
-continuous at zero and takes the value zero there. Continuity follows from
+/-- Continuous extension to zero slip, for `R2 > 0`, `ws > 0` and `Rth ≥ 0`:
+the rational torque curve is continuous at zero and takes the value zero
+there. Continuity follows from
 continuity of the numerator and denominator, with the denominator at zero
 slip reducing to `ws * R2 ^ 2`, which is nonzero. -/
 theorem torqueCurve_continuousAt_zero (Vth : ℂ) (Rth R2 Xeq ws : ℝ)
@@ -243,8 +252,8 @@ theorem torqueCurve_continuousAt_zero (Vth : ℂ) (Rth R2 Xeq ws : ℝ)
       exact ne_of_gt (mul_pos hws (pow_pos hR2 2))
   · exact torqueCurve_zero Vth Rth R2 Xeq ws hR2 hws hRth
 
-/-- Standstill validation case: at unit slip the torque is the rational
-curve evaluated at one. -/
+/-- Standstill validation case, for `R2 > 0`, `ws > 0` and `Rth ≥ 0`: at unit
+slip the torque is the rational curve evaluated at one. -/
 lemma torque_at_standstill (Vth : ℂ) (Rth R2 Xeq ws : ℝ)
     (hR2 : 0 < R2) (hws : 0 < ws) (hRth : 0 ≤ Rth) :
     developedTorque (rotorCurrent Vth Rth R2 Xeq 1) R2 1 ws =
@@ -266,7 +275,8 @@ noncomputable def rotorCopperLoss (I2 : ℂ) (R2 s : ℝ) : ℝ :=
 /-- Converted mechanical power: the air-gap power remaining after the
 rotor copper loss. It is defined as that difference; its expression as
 the fraction `1 - s` of the air-gap power is a theorem for nonzero
-slip, proved in `convertedPower_eq_torque_mul_rotorSpeed`. -/
+slip, proved in `powerSplit_of_ne_zero`. With the convention `x / 0 = 0` it is
+`-3 ‖I2‖² R2` at `s = 0`, where the model current is zero. -/
 noncomputable def convertedPower (I2 : ℂ) (R2 s : ℝ) : ℝ :=
   airGapPower I2 R2 s - rotorCopperLoss I2 R2 s
 
@@ -337,8 +347,9 @@ lemma rotorQuantities_zero_slip (Vth : ℂ) (Rth R2 Xeq ws : ℝ) :
   rw [rotorCurrent_zero_slip]
   simp [airGapPower, rotorCopperLoss, convertedPower, developedTorque, torqueCurve]
 
-/-- Headline result: on the motoring interval the torque equals the cleared
-rational curve, the curve extends continuously to zero at zero slip, and
+/-- Headline result: on the motoring interval, for `R2 > 0`, `ws > 0` and
+`Rth ≥ 0`, the torque equals the cleared rational curve, the curve extends
+continuously to zero at zero slip, and
 the air-gap power splits into converted power at the rotor speed and rotor
 copper loss. -/
 theorem inductionTorqueSlip_torque_andPowerBalance (Vth : ℂ) (Rth R2 Xeq ws s : ℝ)

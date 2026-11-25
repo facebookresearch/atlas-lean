@@ -1,3 +1,4 @@
-# Short Dipole Intensity on axis
+# The Hertzian-dipole intensity vanishes on the dipole axis
 
-Validation: null intensity on the dipole axis, `θ = 0` and `θ = π`.
+For every real `K`, the [Hertzian-dipole intensity](short-dipole-intensity.md) `U(θ) = K sin²θ`
+vanishes on the dipole axis: `U(0) = U(π) = 0`.

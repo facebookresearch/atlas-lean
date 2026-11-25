@@ -111,7 +111,7 @@ def castVec {ι : Type*} (v : ι → ℚ) : ι → ℝ :=
   fun i => (v i : ℝ)
 
 /-- Rational tail-positive incidence: `1` at the tail of a branch, `-1`
-at its head. -/
+at its head, `0` for a loop. -/
 def ratIncidence (nN nE : ℕ) (tail head : Fin nE → Fin nN) : Matrix (Fin nN) (Fin nE) ℚ :=
   fun v e => (if tail e = v then 1 else 0) - (if head e = v then 1 else 0)
 
@@ -194,8 +194,8 @@ def dualVector (nN nE nG : ℕ) (lam : Fin nN → ℚ) (ρ : ℚ) (μhi μlo : F
     (fun v => max (lam v) 0) (fun v => max (-lam v) 0))
     (fun _ : Fin 1 => max ρ 0)) (fun _ : Fin 1 => max (-ρ) 0)) μhi) μlo) ηhi) ηlo
 
-/-- Certified lower bound on the dispatch cost: demand revenue at the
-nodal prices plus the generator and flow bound terms,
+/-- Lower bound on the dispatch cost certified by an accepted certificate:
+demand revenue at the nodal prices plus the generator and flow bound terms,
 `d ⬝ lam + pmin ⬝ μlo - pmax ⬝ μhi + fmin ⬝ ηlo - fmax ⬝ ηhi`. -/
 def dualLowerBound (nN nE nG : ℕ) (d : Fin nN → ℚ) (pmin pmax : Fin nG → ℚ)
     (fmin fmax : Fin nE → ℚ) (lam : Fin nN → ℚ) (μhi μlo : Fin nG → ℚ)
@@ -589,7 +589,7 @@ lemma checks_eq_false_of_lt_gap (nN nE nG : ℕ) (tail head : Fin nE → Fin nN)
 
 /-- LP-level transfer: an accepted certificate makes the encoded cast
 witness a feasible point of the canonical real LP whose objective is
-within `ε` of every feasible real LP point. -/
+at least that of every feasible real LP point minus `ε`. -/
 lemma checks_lp_certificate (nN nE nG : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℚ) (gbus : Fin nG → Fin nN) (d : Fin nN → ℚ) (ref : Fin nN)
     (pmin pmax : Fin nG → ℚ) (fmin fmax : Fin nE → ℚ) (cost : Fin nG → ℚ)
@@ -637,7 +637,7 @@ lemma checks_lp_certificate (nN nE nG : ℕ) (tail head : Fin nE → Fin nN)
 primal dispatch is feasible for the cast data, that `dualLowerBound`
 bounds the cost of every feasible real dispatch, that the witness cost
 lies within `ε` above that bound, and hence that the witness cost is
-within `ε` of the cost of every feasible real dispatch. -/
+at most the cost of every feasible real dispatch plus `ε`. -/
 theorem dispatch_certificate_correct (nN nE nG : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℚ) (gbus : Fin nG → Fin nN) (d : Fin nN → ℚ) (ref : Fin nN)
     (pmin pmax : Fin nG → ℚ) (fmin fmax : Fin nE → ℚ) (cost : Fin nG → ℚ)

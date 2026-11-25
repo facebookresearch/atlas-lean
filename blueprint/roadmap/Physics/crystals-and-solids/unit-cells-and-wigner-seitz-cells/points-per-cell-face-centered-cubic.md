@@ -1,7 +1,14 @@
-# FCC has 4 lattice points per conventional cubic cell
+# The face-centred cubic lattice has 4 points per cubic cell
 
-**FCC has 4 lattice points per conventional cubic cell**, as a quotient count, by the general
-theorem. The conventional cell is the cube (basis matrix `a • 1`); the FCC primitive vectors are
-`(a/2) (0,1,1)`, `(a/2) (1,0,1)` and `(a/2) (1,1,0)`. The count 4 is the index of the cubic
-lattice in the FCC lattice, not the number of FCC points in the closed cube (its 8 corners alone
-are FCC points).
+For every `a > 0`, with the cube of the
+[simple cubic lattice](../reciprocal-lattices-and-brillouin-zones/simple-cubic.md) of side `a`
+(basis matrix `a · 1`) as conventional cell and the
+[face-centred cubic lattice](../reciprocal-lattices-and-brillouin-zones/face-centered-cubic.md) of
+the same cube (primitive vectors `(a/2)(0, 1, 1)`, `(a/2)(1, 0, 1)`, `(a/2)(1, 1, 0)`):
+
+- the [number of lattice points per cell](points-per-cell.md) is `4`;
+- the absolute determinants satisfy `|det B_sc| = 4 |det B_fcc|`;
+- their ratio is `|det B_sc| / |det B_fcc| = 4`.
+
+The count `4` is the index of the cubic lattice in the face-centred cubic lattice, not the number of
+its points in the closed cube, whose eight corners alone are lattice points.

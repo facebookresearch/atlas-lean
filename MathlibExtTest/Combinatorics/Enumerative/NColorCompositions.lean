@@ -69,4 +69,29 @@ example :
   refine ⟨?_, by decide⟩
   simpa [Finset.sum_range_succ] using trib_three_mul (k := 2)
 
+-- The first admissible values `n = 3, 4`, each with one summand.
+example :
+    (trib 3 + trib 1 = 2 * trib 2 ∧ trib 4 + trib 2 = 2 * trib 3) ∧
+      (trib 3 + trib 1 = 2 ∧ trib 4 + trib 2 = 4) := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_one] using trib_add_two_sub_three_mul (k := 1) (hk := le_rfl)
+
+-- At `n = 6, 7` each progression adds a second summand, three indices apart.
+example :
+    (trib 6 + trib 4 = 2 * (trib 5 + trib 2) ∧
+      trib 7 + trib 5 = 2 * (trib 6 + trib 3)) ∧
+      (trib 6 + trib 4 = 14 ∧ trib 7 + trib 5 = 26) := by
+  refine ⟨?_, by decide⟩
+  simpa [Finset.sum_range_succ] using trib_add_two_sub_three_mul (k := 2) (hk := by decide)
+
+-- The residue-two identity includes k = 0, with one summand.
+example : trib (3 * ((0 : ℕ) : ℤ) + 2) = 1 := by
+  rw [trib_three_mul_add_two (k := 0)]
+  decide
+
+-- Three pairs contribute to t(8): (t(7)+t(6)), (t(4)+t(3)), (t(1)+t(0)).
+example : trib (3 * ((2 : ℕ) : ℤ) + 2) = 37 := by
+  rw [trib_three_mul_add_two (k := 2)]
+  decide
+
 end MathlibExtTest.NColorCompositions

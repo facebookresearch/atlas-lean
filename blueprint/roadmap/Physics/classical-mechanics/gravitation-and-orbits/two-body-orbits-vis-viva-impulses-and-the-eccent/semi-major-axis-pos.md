@@ -1,3 +1,4 @@
-# Semi Major Axis pos
+# For μ > 0 and negative energy, the semi-major axis is positive
 
-`a > 0` follows from `μ > 0` and `E < 0`.
+For `μ > 0` and every state `(x, v)` whose [specific energy](specific-energy.md) `E` is negative,
+the [energy-defined semi-major axis](semi-major-axis.md) `a = −μ / (2 E)` is positive.

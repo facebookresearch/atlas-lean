@@ -1,50 +1,50 @@
 # Dual certificates for AC optimal power flow
 
-## A. The lifted problem in factored-certificate form
+## The relaxation in factored-certificate form
 
-- [Objective Matrix](objective-matrix.md)
-- [Objective Offset](objective-offset.md)
-- [Constraint Coeff](constraint-coeff.md)
-- [Constraint Bound](constraint-bound.md)
-- [Constraint Index](constraint-index.md)
-- [Lifted Coeff](lifted-coeff.md)
-- [Lifted Bound](lifted-bound.md)
+- [Objective matrix of the AC power flow relaxation](objective-matrix.md)
+- [Constant term of the relaxation objective](objective-offset.md)
+- [Coefficient matrices of the relaxation constraints](constraint-coeff.md)
+- [Right-hand sides of the relaxation constraints](constraint-bound.md)
+- [Enumeration of the relaxation constraints](constraint-index.md)
+- [Constraint coefficient matrices in enumerated order](lifted-coeff.md)
+- [Constraint right-hand sides in enumerated order](lifted-bound.md)
 
-## B. Dual certificates
+## Dual certificates
 
-- [ACDual Certificate](acdual-certificate.md)
-- [Nonneg](nonneg.md)
-- [Multiplier](multiplier.md)
-- [Lifted Multiplier](lifted-multiplier.md)
-- [Dual Slack](dual-slack.md)
-- [Certified Lower Bound](certified-lower-bound.md)
+- [Dual witness for the AC power flow relaxation](acdual-certificate.md)
+- [Sign check of an AC dual witness](nonneg.md)
+- [Multipliers of an AC dual witness by constraint](multiplier.md)
+- [Multipliers of an AC dual witness in enumerated order](lifted-multiplier.md)
+- [Dual slack matrix of an AC dual witness](dual-slack.md)
+- [Certified lower bound of an AC dual witness](certified-lower-bound.md)
 
-## C. Translation into the factored-certificate form
+## Translation into the factored-certificate form
 
-- [Objective Matrix is Hermitian](objective-matrix-is-hermitian.md)
-- [Lifted Coeff is Hermitian](lifted-coeff-is-hermitian.md)
-- [Sdp Cost eq objective](sdp-cost-eq-objective.md)
-- [Sdp Feasible iff lifted](sdp-feasible-iff-lifted.md)
-- [Lifted Multiplier nonneg](lifted-multiplier-nonneg.md)
-- [Dual Slack eq lifted](dual-slack-eq-lifted.md)
-- [Certified Lower Bound eq lifted](certified-lower-bound-eq-lifted.md)
+- [The objective matrix is Hermitian](objective-matrix-is-hermitian.md)
+- [Every constraint coefficient matrix is Hermitian](lifted-coeff-is-hermitian.md)
+- [The relaxation cost in terms of the objective matrix](sdp-cost-eq-objective.md)
+- [Relaxation feasibility in enumerated constraint form](sdp-feasible-iff-lifted.md)
+- [The sign check gives nonnegative enumerated multipliers](lifted-multiplier-nonneg.md)
+- [The dual slack in enumerated constraint form](dual-slack-eq-lifted.md)
+- [The certified bound in enumerated constraint form](certified-lower-bound-eq-lifted.md)
 
-## D. Soundness and optimality
+## Soundness and optimality
 
-- [Certified Lower Bound le sdp Cost](certified-lower-bound-le-sdp-cost.md)
-- [Certified Lower Bound le ac Cost](certified-lower-bound-le-ac-cost.md)
-- [Ac Optimal of ac Cost eq certified Lower Bound](ac-optimal-of-ac-cost-eq-certified-lower.md)
-- [AC voltage certificate](ac-voltage-certificate-correct.md)
+- [A checked AC dual witness bounds the relaxation cost](certified-lower-bound-le-sdp-cost.md)
+- [A checked AC dual witness bounds the AC cost](certified-lower-bound-le-ac-cost.md)
+- [An AC-feasible voltage attaining a checked witness's bound is optimal](ac-optimal-of-ac-cost-eq-certified-lower.md)
+- [Soundness of AC voltage dual certificates](ac-voltage-certificate-correct.md)
 
-## E. Two-bus validation
+## Two-bus example
 
-- [Two Bus Cert Example](two-bus-cert-example.md)
-- [Two Bus Certificate](two-bus-certificate.md)
-- [Two Bus Optimal Voltage](two-bus-optimal-voltage.md)
-- [Two Bus certificate exact](two-bus-certificate-exact.md)
-- [Two Bus global Optimum](two-bus-global-optimum.md)
-- [Two Bus Relaxed Point](two-bus-relaxed-point.md)
-- [Two Bus relaxed Point not lift](two-bus-relaxed-point-not-lift.md)
-- [Two Bus Stationary Voltage](two-bus-stationary-voltage.md)
-- [Two Bus Stationary Multipliers](two-bus-stationary-multipliers.md)
-- [Two Bus stationary Point not certificate](two-bus-stationary-point-not-certificate.md)
+- [Two-bus current-limited power flow example](two-bus-cert-example.md)
+- [Exact dual witness for the two-bus example](two-bus-certificate.md)
+- [The certified optimal voltage of the two-bus example](two-bus-optimal-voltage.md)
+- [The two-bus witness passes the checks with bound 3/2](two-bus-certificate-exact.md)
+- [The certified voltage is a global minimizer of the two-bus problem](two-bus-global-optimum.md)
+- [A relaxed point of the two-bus example](two-bus-relaxed-point.md)
+- [The two-bus relaxed point is feasible but not a voltage lift](two-bus-relaxed-point-not-lift.md)
+- [A stationary voltage of the two-bus example](two-bus-stationary-voltage.md)
+- [Stationarity multipliers at the two-bus stationary voltage](two-bus-stationary-multipliers.md)
+- [A stationary point with matching bound is not a certificate](two-bus-stationary-point-not-certificate.md)

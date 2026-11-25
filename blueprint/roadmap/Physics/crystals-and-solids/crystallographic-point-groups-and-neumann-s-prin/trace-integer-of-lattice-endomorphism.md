@@ -1,4 +1,5 @@
-# Trace integer of lattice Endomorphism
+# A lattice endomorphism has integer trace
 
-Trace integrality: a lattice endomorphism has integer trace, since the
-trace is invariant under conjugation.
+For every natural number `n` and every real `n × n` matrix `R` that is a
+[lattice endomorphism](is-lattice-endomorphism.md), the trace of `R` is an integer: conjugation
+`R = P M P⁻¹` does not change the trace, which is that of the integer matrix `M`.

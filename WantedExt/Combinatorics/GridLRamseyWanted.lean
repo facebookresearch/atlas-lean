@@ -9,35 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.GridLRamsey
+public import MathlibExt.Combinatorics.GridLRamseyThree772
+public import MathlibExt.Combinatorics.GridLRamseyThree1573
+public import MathlibExt.Combinatorics.GridLRamseyThree2593
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Grid Ramsey theorem for Ls.** Write $[n] = \{1, \dots, n\}$. For every positive integer
-$k$ there is a positive integer $n$ such that every coloring of the grid $[n] \times [n]$ with
-$k$ colors contains a monochromatic L: positive integers $x$, $y$, $d$ with $x + d \le n$ and
-$y + d \le n$ such that the points $(x, y)$, $(x + d, y)$ and $(x + d, y + d)$ all have the
-same color.
-
-Source: Isaac Mammel, William Smith, and Carl Yerger, *Ramsey Theory on the Integer
-Grid: The "L" Problem*, INTEGERS 25 (2025), Article A21, Theorem 1 (quoted there
-from earlier work). -/
-public theorem_wanted exists_gridLRamseyProperty (k : ℕ) (hk : 0 < k) :
-    ∃ n : ℕ, 0 < n ∧ GridLRamseyProperty k n
-
-/-- **Three-coloring the 2593 × 2593 grid forces a monochromatic L.** Write
-$[n] = \{1, \dots, n\}$. Every coloring of the grid $[2593] \times [2593]$ with $3$ colors contains
-a monochromatic L: positive integers $x$, $y$, $d$ with $x + d \le 2593$ and $y + d \le 2593$ such
-that the points $(x, y)$, $(x + d, y)$ and $(x + d, y + d)$ have the same color. Equivalently,
-the grid Ramsey number $R_3(L)$, the least $n$ for which every coloring of $[n] \times [n]$ with
-$3$ colors contains a monochromatic L, is at most $2593$.
-
-Source: Isaac Mammel, William Smith, and Carl Yerger, *Ramsey Theory on the Integer
-Grid: The "L" Problem*, INTEGERS 25 (2025), Article A21, Theorem 2 (quoted there from
-earlier work). -/
-public theorem_wanted gridLRamseyProperty_three_2593 : GridLRamseyProperty 3 2593
 
 /-- **Three-coloring the 1804 × 1804 grid forces a monochromatic L.** Write
 $[n] = \{1, \dots, n\}$. Every coloring of the grid $[1804] \times [1804]$ with $3$ colors contains
@@ -49,28 +27,6 @@ $3$ colors contains a monochromatic L, is at most $1804$.
 Source: Isaac Mammel, William Smith, and Carl Yerger, *Ramsey Theory on the Integer
 Grid: The "L" Problem*, INTEGERS 25 (2025), Article A21, Theorem 3. -/
 public theorem_wanted gridLRamseyProperty_three_1804 : GridLRamseyProperty 3 1804
-
-/-- **Three-coloring the 1573 × 1573 grid forces a monochromatic L.** Write
-$[n] = \{1, \dots, n\}$. Every coloring of the grid $[1573] \times [1573]$ with $3$ colors contains
-a monochromatic L: positive integers $x$, $y$, $d$ with $x + d \le 1573$ and $y + d \le 1573$ such
-that the points $(x, y)$, $(x + d, y)$ and $(x + d, y + d)$ have the same color. Equivalently,
-the grid Ramsey number $R_3(L)$, the least $n$ for which every coloring of $[n] \times [n]$ with
-$3$ colors contains a monochromatic L, is at most $1573$.
-
-Source: Isaac Mammel, William Smith, and Carl Yerger, *Ramsey Theory on the Integer
-Grid: The "L" Problem*, INTEGERS 25 (2025), Article A21, Theorem 4. -/
-public theorem_wanted gridLRamseyProperty_three_1573 : GridLRamseyProperty 3 1573
-
-/-- **Three-coloring the 772 × 772 grid forces a monochromatic L.** Write
-$[n] = \{1, \dots, n\}$. Every coloring of the grid $[772] \times [772]$ with $3$ colors contains
-a monochromatic L: positive integers $x$, $y$, $d$ with $x + d \le 772$ and $y + d \le 772$ such
-that the points $(x, y)$, $(x + d, y)$ and $(x + d, y + d)$ have the same color. Equivalently,
-the grid Ramsey number $R_3(L)$, the least $n$ for which every coloring of $[n] \times [n]$ with
-$3$ colors contains a monochromatic L, is at most $772$.
-
-Source: Isaac Mammel, William Smith, and Carl Yerger, *Ramsey Theory on the Integer
-Grid: The "L" Problem*, INTEGERS 25 (2025), Article A21, Theorem 5. -/
-public theorem_wanted gridLRamseyProperty_three_772 : GridLRamseyProperty 3 772
 
 /-- **Three-coloring the 493 × 493 grid forces a monochromatic L.** Write
 $[n] = \{1, \dots, n\}$. Every coloring of the grid $[493] \times [493]$ with $3$ colors contains

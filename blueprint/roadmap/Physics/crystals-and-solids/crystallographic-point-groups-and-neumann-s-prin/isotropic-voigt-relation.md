@@ -1,6 +1,6 @@
-# Isotropic Voigt relation
+# The isotropic Voigt matrix satisfies c₁₁ − c₁₂ = 2 c₄₄
 
-The isotropic family satisfies the extra relation
-`(c11 - c12) = 2 * c44`. Conversely, `relation_of_voigtRotate_Rz45` derives
-this relation for a cubic matrix from invariance under the `45°` rotation about
-`z`.
+For all real `λ` and `μ`, the entries of the [isotropic Voigt matrix](isotropic-voigt.md) `L`
+satisfy `L₁₁ - L₁₂ = 2 L₄₄`. Conversely, a cubic matrix with this relation is isotropic
+([converse](eq-isotropic-voigt-of-relation.md)), and invariance under the rotation by `45°` about
+`z` forces it ([derivation](relation-of-voigt-rotate-rz45.md)).

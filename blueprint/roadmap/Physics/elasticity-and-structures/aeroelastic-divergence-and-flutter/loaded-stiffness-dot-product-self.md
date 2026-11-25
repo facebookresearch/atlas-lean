@@ -1,3 +1,4 @@
-# Loaded Stiffness dot Product self
+# The loaded stiffness has the quadratic form of the identity
 
-The loaded stiffness `1 - q J` has the positive quadratic form `v ⬝ᵥ v` for every `q`.
+For every real `q` and every `v ∈ ℝ²`, the loaded stiffness `1 - q J`, with `J` the
+[circulatory load operator](circulatory-j.md), satisfies `v · ((1 - q J) v) = v · v`.

@@ -1,4 +1,7 @@
-# Scaled Buck Growth Rate
+# Growth-rate bound of the scaled buck dynamics
 
-Explicit growth rate `κ = max(Vref/(L Iref), Iref/(C Vref) + 1/(R C))`,
-the largest absolute row sum of `Ã`.
+For real numbers `L`, `C`, `R`, `Iref` and `Vref`, the growth-rate bound is
+`κ = max(Vref / (L Iref), Iref / (C Vref) + 1 / (R C))`, with `a / 0 = 0`. For positive `L`, `C`,
+`R`, `Iref` and `Vref` it is the largest absolute row sum of the
+[scaled state matrix](scaled-buck-matrix.md) and
+[bounds its operator norm](norm-scaled-buck-operator-le.md).

@@ -1,5 +1,6 @@
-# Log Strain
+# Logarithmic strain function
 
-The logarithmic helper `ln(1 + e)`, for every real `e`. Lean totalizes `Real.log`, so it
-also assigns values outside the physical domain, e.g. `logStrain (-1) = Real.log 0 = 0`; the
-physical true strain is `trueStrain`, which requires `-1 < e`.
+For every real `e`, the logarithmic strain is `log(1 + e)`. On the physical domain `e > -1` it is
+the [true strain](true-strain.md). Outside that domain the conventions `log 0 = 0` and
+`log y = log |y|` give the value `0` at `e = -1` and `log(-1 - e)` for `e < -1`; these values have
+no physical meaning.

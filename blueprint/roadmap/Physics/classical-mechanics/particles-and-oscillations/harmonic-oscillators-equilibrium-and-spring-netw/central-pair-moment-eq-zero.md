@@ -1,7 +1,10 @@
-# Central pair moment eq zero
+# A central equal-and-opposite force pair has zero planar moment
 
-Single central-pair zero moment (MC, no-body-couple model): one pair of
-forces, equal, opposite, and each a scalar multiple of the separation vector
-`q - p` (centrality hypothesis), has zero total 2D moment about any point
-`o`. Together with `moment2D_add` this is the single-pair case; the summed
-axial-member table form is `memberEndpoint_moment2D_eq_zero` below.
+For points `p, q, o ∈ ℝ²` and a real `c`, consider the force `c (q - p)` at `p` and the force
+`-c (q - p)` at `q`, an equal and opposite pair along the line through `p` and `q`. Their planar
+moments about `o`,
+
+`(p - o)₀ (c (q - p))₁ - (p - o)₁ (c (q - p))₀` and
+`(q - o)₀ (-c (q - p))₁ - (q - o)₁ (-c (q - p))₀`,
+
+sum to `0`. This holds for every real `c` and all points, `p = q` included.

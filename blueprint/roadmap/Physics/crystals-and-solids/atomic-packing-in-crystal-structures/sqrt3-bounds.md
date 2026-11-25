@@ -1,3 +1,3 @@
-# Sqrt3 bounds
+# Certified bounds 1.731 < √3 < 1.733
 
-Certified interval for `√3`, by squaring both sides.
+`1.731 < √3 < 1.733`.

@@ -195,9 +195,9 @@ def basisLattice (n : ℕ) (P : Matrix (Fin n) (Fin n) ℝ) : Set (Fin n → ℝ
 
 /-- A matrix is a lattice symmetry if it maps a full-rank lattice onto itself:
 for some invertible basis matrix `P`, the image of `basisLattice n P` under `R`
-is `basisLattice n P`. This is the defining property of the elements of a
-lattice's point group; `IsLatticeEndomorphism` only asks for a map into the
-lattice. -/
+is `basisLattice n P`. Together with orthogonality (`Rᵀ * R = 1`), this is the
+defining property of the elements of a lattice's point group;
+`IsLatticeEndomorphism` only asks for a map into the lattice. -/
 def IsLatticeSymmetry (n : ℕ) (R : Matrix (Fin n) (Fin n) ℝ) : Prop :=
   ∃ P : Matrix (Fin n) (Fin n) ℝ, IsUnit P.det ∧
     (fun v => R *ᵥ v) '' basisLattice n P = basisLattice n P
@@ -935,7 +935,7 @@ private lemma order_three_core (R : Matrix (Fin 3) (Fin 3) ℝ)
     exact hmin m hmpos hmlt ((hiff m).mpr hSm)
   exact order_two_core S hSorth hSdet htraceS n hpos hpowS hminS
 
-/-- Three-dimensional rotation trace formula: a proper rotation with axis `u`
+/-- Three-dimensional rotation trace formula: a proper rotation with unit axis `u`
 has trace `1 + 2 cos θ` for some angle `θ ∈ [0, π]`. -/
 lemma exists_angle_of_trace_three (R : Matrix (Fin 3) (Fin 3) ℝ)
     (horth1 : Rᵀ * R = 1) (_horth2 : R * Rᵀ = 1) (hdetR : R.det = 1)
@@ -960,7 +960,7 @@ lemma exists_angle_of_trace_three (R : Matrix (Fin 3) (Fin 3) ℝ)
   linarith [hcos]
 
 /-- The three-dimensional crystallographic restriction: a proper rotation with
-axis `u` and finite order `n` that is a lattice endomorphism, equivalently (as
+unit axis `u` and finite order `n` that is a lattice endomorphism, equivalently (as
 in `crystallographic_restriction_two`) a lattice symmetry, has
 `n ∈ {1, 2, 3, 4, 6}`. -/
 theorem crystallographic_restriction_three (R : Matrix (Fin 3) (Fin 3) ℝ)

@@ -1,8 +1,8 @@
-# Upper Box Load attains box Upper
+# The upper endpoint load attains the upper envelope
 
-Upper attainment: for nonnegative pattern capacities, the
-upper endpoint load lies in the box `0 ≤ f i ≤ cap i` and its
-response is the upper envelope value
-`∑ i, cap i * max (eta i) 0`, so the upper box bound is attained.
-Nonnegativity of the capacities is the feasibility premise for
-the endpoint load.
+Let `ι` be a finite set of load coordinates, `η` a fixed influence vector and `cap` a vector of
+pattern capacities, both indexed by `ι`, with `cap_i ≥ 0` for all `i`. The
+[upper endpoint load](upper-box-load.md) `f` lies in the box, `0 ≤ f_i ≤ cap_i` for all `i`, and its
+response `η · f` equals the upper envelope value `∑_i cap_i * max(η_i, 0)`, so the
+[upper envelope bound](dot-product-le-box-upper.md) is attained. The nonnegativity of the capacities
+makes the endpoint load feasible.

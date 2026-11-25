@@ -1,3 +1,4 @@
-# Plane Wave
+# Plane wave E0 cos(k x − ω t)
 
-Plane wave `E0 * cos (k * x - omega * t)` (declared model, Maxwell notation).
+For reals `E0` (amplitude), `k` (wavenumber), `ω` (angular frequency), `x` and `t`,
+`u(x, t) = E0 cos(k x − ω t)`, a declared monochromatic plane-wave model.

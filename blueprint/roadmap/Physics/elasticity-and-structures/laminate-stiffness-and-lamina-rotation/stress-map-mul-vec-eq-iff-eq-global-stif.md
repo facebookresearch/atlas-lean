@@ -1,5 +1,6 @@
-# Stress Map mul Vec eq iff eq global Stiffness
+# The global stiffness is the only one consistent with the material law
 
-`Q_global = T_eᵀ Q T_e` is the only global stiffness consistent with the material law: a
-matrix `Q_g` satisfies `T_s (Q_g e) = Q (T_e e)` for every global engineering strain `e` exactly
-when `Q_g = T_eᵀ Q T_e`.
+For all real `3 × 3` matrices `Q` and `Q_g` and every real `θ`: `T_s(θ) (Q_g e) = Q (T_e(θ) e)` for
+every `e ∈ ℝ³` if and only if `Q_g` is the [global stiffness](global-stiffness.md)
+`Q_global(θ) = T_e(θ)ᵀ Q T_e(θ)`, where `T_s` and `T_e` are the [stress](stress-map.md) and
+[strain](strain-map.md) maps.

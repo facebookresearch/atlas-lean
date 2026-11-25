@@ -1,4 +1,5 @@
-# Loaded Stiffness mul Vec eq zero iff
+# The loaded stiffness has trivial kernel for every load
 
-No static divergence at any `q`: the loaded stiffness has trivial kernel, so the static
-balance `(1 - q J) z = 0` has only `z = 0`.
+For every real `q` and every `v ∈ ℝ²`, `(1 - q J) v = 0` if and only if `v = 0`, with `J` the
+[circulatory load operator](circulatory-j.md): the static balance has only the zero solution, so there
+is no static divergence at any `q`.

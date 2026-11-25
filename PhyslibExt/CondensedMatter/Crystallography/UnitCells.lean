@@ -210,8 +210,10 @@ lemma volume_parallelepiped_eq_of_lattice_eq (Λ Λ' : BravaisLattice)
 /-! ## C. Sublattices and points per cell -/
 
 /-- `Λc` is a sublattice of `Λf` when its lattice is contained in that of `Λf`; its cell (the
-conventional cell) is then larger. Running example: the simple cubic lattice of side `a` is a
-sublattice of the face-centred cubic lattice with the same cube as conventional cell. -/
+conventional cell) is then at least as large, `N ≥ 1` times a primitive cell of `Λf` in volume
+(`pointsPerCell_eq_volume_ratio`), and equal to it when the lattices coincide. Running example: the
+simple cubic lattice of side `a` is a sublattice of the face-centred cubic lattice with the same
+cube as conventional cell. -/
 def IsSublatticeOf (Λc Λf : BravaisLattice) : Prop := Λc.lattice ≤ Λf.lattice
 
 /-- The closed conventional cell of `Λc`: its fundamental parallelepiped, the points with all
@@ -225,7 +227,8 @@ def conventionalCell (Λc : BravaisLattice) : Set (EuclideanSpace ℝ (Fin 3)) :
 cardinality of the quotient of the fine lattice by the coarse sublattice (the index). It is not
 the number of `Λf` points in the closed set `conventionalCell Λc`. Meaningful when
 `IsSublatticeOf Λc Λf`, in which case `pointsPerCell_eq_volume_ratio` shows it equals
-`V_conv / V_prim`. -/
+`V_conv / V_prim`. In general it is the index of `Λc.lattice ∩ Λf.lattice` in `Λf.lattice`, and
+it is `0` when that index is infinite (`Nat.card` of an infinite type is `0`). -/
 noncomputable def pointsPerCell (Λc Λf : BravaisLattice) : ℕ :=
   Nat.card (↥Λf.lattice ⧸ (Λc.lattice.comap Λf.lattice.subtype))
 

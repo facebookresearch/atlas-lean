@@ -1,6 +1,5 @@
-# Compression Positive Traction
+# Physical traction of a compression-positive stress
 
-Physical traction for a compression-positive stress. The
-existing `traction` is the tension-positive Cauchy map
-`σ *ᵥ v`; with compression-positive sign convention the physical
-traction is its negative, `-σ *ᵥ v`.
+For `n ∈ ℕ`, a real `n × n` matrix `σ`, read as a compression-positive stress, and `v ∈ ℝⁿ`, the
+physical traction on the face with normal `v` is `-(σ v)`, the negative of the tension-positive
+[traction](traction.md) `σ v`.

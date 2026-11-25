@@ -21,9 +21,7 @@ The Cartesian-basis eigenstates of the `d`-dimensional quantum harmonic oscillat
 orthonormal. Each `d`-dimensional eigenfunction is a product of one-dimensional
 eigenfunctions (upstream `eigenfunction_eq_prod_oneDim`), so the inner product splits
 (`Space.integral_prod_coord`) into one-dimensional inner products, each a Kronecker
-delta by the one-dimensional orthonormality result. This fills the
-`eigenstates_orthonormal` sorry in
-`Physlib.QuantumMechanics.HarmonicOscillator.Eigenstates`.
+delta by the one-dimensional orthonormality result.
 
 ## ii. Key results
 

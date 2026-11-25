@@ -1,4 +1,5 @@
-# Short Circuit reflection
+# Zero voltage at the load plane gives backward amplitude −A₊
 
-Short circuit: zero load voltage forces the backward amplitude to
-be the negated forward amplitude, with no excitation guard.
+For complex amplitudes `A₊` and `A₋` with `A₊ + A₋ = 0`, the load-plane voltage of the
+[voltage phasor](voltage-phasor.md), the backward amplitude is `A₋ = −A₊`. No excitation guard is
+needed.

@@ -1,6 +1,6 @@
-# Atomic Packing Factor Raw
+# Packing-factor expression n (4/3) π R³ / V_c
 
-Raw packing-factor expression `n * ((4/3) π R³) / Vc` for `n` atoms of
-radius `R` in a cell of volume `Vc`, on arbitrary reals `R` and `Vc`. Lean's
-division is total, so this is `0` for `Vc = 0`; it is a packing factor only for
-`0 < R` and `0 < Vc`, the domain that `atomicPackingFactor` enforces.
+For `n ∈ ℕ` (atoms per conventional cell) and reals `R` (atomic radius) and `V_c` (cell volume),
+`n (4/3) π R³ / V_c`. With the convention `x / 0 = 0` it is `0` when `V_c = 0`. It is a packing
+factor only for `R > 0` and `V_c > 0`, the domain of the
+[atomic packing factor](atomic-packing-factor.md).

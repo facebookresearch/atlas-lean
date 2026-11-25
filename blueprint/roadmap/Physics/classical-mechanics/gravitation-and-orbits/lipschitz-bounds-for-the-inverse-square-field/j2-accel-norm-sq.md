@@ -1,5 +1,8 @@
-# J2 Accel norm sq
+# Squared magnitude of the J2 acceleration
 
-Squared magnitude of the J2 acceleration: for `r ≠ 0`, writing
-`u = (r 2)^2 / ‖r‖^2`,
-`‖a‖^2 = (3 * J2 * μ * R^2 / (2 * ‖r‖^4))^2 * (5 * u^2 - 2 * u + 1)`.
+Let $\mu$, $R$ and $J_2$ be real and let $r = (x, y, z) \ne 0$ in three-dimensional Euclidean space,
+with $u = z^2/\|r\|^2$. The [J2 perturbing acceleration](j2-accel.md) satisfies
+
+$$\|a(r)\|^2 = \Bigl(\frac{3 J_2 \mu R^2}{2\|r\|^4}\Bigr)^2\,(5u^2 - 2u + 1).$$
+
+The identity holds for all real $\mu$, $R$ and $J_2$; in the physical reading $\mu > 0$ and $R > 0$.

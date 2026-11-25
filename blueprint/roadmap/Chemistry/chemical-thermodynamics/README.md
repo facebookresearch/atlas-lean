@@ -14,4 +14,5 @@ Equilibrium thermodynamics of gases and chemical systems: equations of state and
 - [Internal energy at constant heat capacity](internal-energy-at-constant-heat-capacity/README.md)
 - [Kinetic theory of gases](kinetic-theory-of-gases/README.md)
 - [Thermochemistry and Hess's law](thermochemistry-and-hess-s-law/README.md)
+- [Equilibrium-stage separations](equilibrium-stage-separations/README.md)
 - [Differential of the Gibbs energy](gibbs-energy-differential.md)

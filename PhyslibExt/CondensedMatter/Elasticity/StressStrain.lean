@@ -130,10 +130,11 @@ open scoped Matrix
 namespace Elasticity
 
 /-! ## A. Symmetric stress and traction -/
-/-- Cauchy stress symmetry as a model assumption (no body couples). -/
+/-- Cauchy stress symmetry `σᵀ = σ` as a model assumption (no body couples). -/
 def IsSymmetricStress {n : ℕ} (σ : Matrix (Fin n) (Fin n) ℝ) : Prop := σᵀ = σ
 
-/-- Traction vector on a face with normal `v`: `t = σ v`. -/
+/-- Traction vector on a face with normal `v`: `t = σ v`, for a tension-positive `σ`. It is
+defined for every `v`; the physical traction is the case of the unit outward normal. -/
 def traction {n : ℕ} (σ : Matrix (Fin n) (Fin n) ℝ) (v : Fin n → ℝ) : Fin n → ℝ :=
   σ *ᵥ v
 
@@ -149,7 +150,7 @@ lemma traction_linear {n : ℕ} (σ : Matrix (Fin n) (Fin n) ℝ) (a b : ℝ)
   simp only [traction, ← Matrix.mulVecLin_apply, map_add, map_smul]
 
 /-- Hydrostatic stress `σ = s • 1` has traction `s • v` on the face with normal `v`: the traction
-is along the normal, outward for `s > 0` (tension-positive). -/
+is along the normal, outward along an outward normal `v` for `s > 0` (tension-positive). -/
 lemma traction_smul_one {n : ℕ} (s : ℝ) (v : Fin n → ℝ) :
     traction (s • (1 : Matrix (Fin n) (Fin n) ℝ)) v = s • v := by
   rw [traction, Matrix.smul_mulVec, Matrix.one_mulVec]
@@ -231,8 +232,9 @@ lemma compressionPositiveTraction_compressionPositiveStress_neg {n : ℕ}
   rw [compressionPositiveTraction_compressionPositiveStress, traction_neg]
 
 /-- Hydrostatic pressure: the compression-positive physical
-traction of the converted stress `-p • 1` is the inward
-traction `-p • v`. -/
+traction of the tension-positive stress `-p • 1`, converted to
+the compression-positive stress `p • 1`, is the traction
+`-p • v`, inward for `p > 0` and an outward normal `v`. -/
 lemma compressionPositiveTraction_neg_smul_one {n : ℕ}
     (p : ℝ) (v : Fin n → ℝ) :
     compressionPositiveTraction (compressionPositiveStress
@@ -254,7 +256,9 @@ lemma symmetric_isHermitian (σ : Matrix (Fin 3) (Fin 3) ℝ)
   exact h2.symm
 
 /-- Principal stresses are real: the Mathlib eigenvalues of a symmetric matrix lie in its
-real spectrum. Uses `Matrix.IsHermitian.eigenvalues_mem_spectrum_real`. -/
+real spectrum. Uses `Matrix.IsHermitian.eigenvalues_mem_spectrum_real`. The eigenvalues are
+counted with multiplicity and indexed by `Fin 3` in an order fixed by a choice, not necessarily
+decreasing. -/
 lemma principalStresses_real (σ : Matrix (Fin 3) (Fin 3) ℝ)
     (h : IsSymmetricStress σ) (i : Fin 3) :
     (symmetric_isHermitian σ h).eigenvalues i ∈ spectrum ℝ σ :=
@@ -263,7 +267,7 @@ lemma principalStresses_real (σ : Matrix (Fin 3) (Fin 3) ℝ)
 /-- Spectral decomposition of a symmetric stress matrix, in Mathlib's
 `Matrix.IsHermitian.spectral_theorem` shape: conjugation of the diagonal eigenvalue matrix by
 the eigenvector unitary. For real symmetric matrices this is conjugation by an orthogonal
-matrix (`star` is trivial, so `ᴴ = ᵀ`). -/
+matrix (`star` is trivial, so `ᴴ = ᵀ`). The eigenvector basis is a choice and is not unique. -/
 lemma spectral_decomposition (σ : Matrix (Fin 3) (Fin 3) ℝ)
     (h : IsSymmetricStress σ) :
     σ = ((Unitary.conjStarAlgAut ℝ (Matrix (Fin 3) (Fin 3) ℝ))
@@ -271,7 +275,9 @@ lemma spectral_decomposition (σ : Matrix (Fin 3) (Fin 3) ℝ)
       (Matrix.diagonal (RCLike.ofReal ∘ (symmetric_isHermitian σ h).eigenvalues)) :=
   Matrix.IsHermitian.spectral_theorem (symmetric_isHermitian σ h)
 
-/-- The eigenvectors from Mathlib's spectral theorem diagonalize `σ`. -/
+/-- The eigenvectors from Mathlib's spectral theorem diagonalize `σ`: `σ uⱼ = λⱼ uⱼ`. Each `uⱼ` is a
+principal direction, not the only one (`-uⱼ` is another, and so is every unit vector in the
+eigenspace of a repeated eigenvalue). -/
 lemma principalDirection_eigen (σ : Matrix (Fin 3) (Fin 3) ℝ)
     (h : IsSymmetricStress σ) (j : Fin 3) :
     σ.mulVec ((symmetric_isHermitian σ h).eigenvectorBasis j).ofLp
@@ -387,7 +393,9 @@ lemma stress_split_orthogonal (σ : Matrix (Fin 3) (Fin 3) ℝ) :
 
 /-- 2D rotation matrix for the stress transformation. Convention: `R θ` rotates the coordinate
 axes by `θ` (equivalently the physical rotation by `-θ`); this is the convention for which the
-standard transformation formulas below hold with `σ₂' = R θ * σ₂ * (R θ)ᵀ`. -/
+standard transformation formulas below hold with `σ₂' = R θ * σ₂ * (R θ)ᵀ`. The matrix
+`!![cos θ, sin θ; -sin θ, cos θ]` is the transpose of the rotation `!![cos θ, -sin θ; sin θ, cos θ]`
+through `θ`; its rows are the unit vectors of the rotated axes. -/
 noncomputable def rotationMatrix2 (θ : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![Real.cos θ, Real.sin θ; -Real.sin θ, Real.cos θ]
 
@@ -409,7 +417,9 @@ lemma rotationMatrix2_mul_transpose (θ : ℝ) :
     simp [Matrix.mul_apply, Fin.sum_univ_two, Matrix.transpose_apply] <;>
     first | linear_combination Real.cos_sq_add_sin_sq θ | ring
 
-/-- 2D stress after rotating the axes by `θ`: `σ₂' = R θ * σ₂ * (R θ)ᵀ`. -/
+/-- 2D stress after rotating the axes by `θ`: `σ₂' = R θ * σ₂ * (R θ)ᵀ`, for every `σ₂`. The
+transformation formulas below take the symmetric form `!![σx, τ; τ, σy]`, with `θ` measured from
+the `x`-axis towards the `y`-axis. -/
 noncomputable def rotatedStress2 (σ₂ : Matrix (Fin 2) (Fin 2) ℝ) (θ : ℝ) :
     Matrix (Fin 2) (Fin 2) ℝ :=
   rotationMatrix2 θ * σ₂ * (rotationMatrix2 θ)ᵀ
@@ -477,9 +487,9 @@ lemma mohr_circle (σx σy τ θ : ℝ) :
 noncomputable def principalPlaneShear (s₁ s₃ θ : ℝ) : ℝ :=
   -(s₁ - s₃) / 2 * Real.sin (2 * θ)
 
-/-- In-plane maximum shear bound: `|τ(θ)| ≤ (s₁ - s₃)/2` for `s₁ ≥ s₃`. This is the maximum
-over orientations within the 1-3 principal plane; the claim that the global 3D maximum shear is
-attained in that plane is a documented consequence (the 3D extremum argument), not proved here. -/
+/-- In-plane shear bound: `|τ(θ)| ≤ (s₁ - s₃)/2` for `s₁ ≥ s₃`. This bounds the shear over
+orientations within the 1-3 principal plane; the bound is attained at `θ = π/4`
+(`principalPlaneShear_max`). -/
 lemma principalPlaneShear_bound (s₁ s₃ θ : ℝ) (hle : s₃ ≤ s₁) :
     |principalPlaneShear s₁ s₃ θ| ≤ (s₁ - s₃) / 2 := by
   have hneg : (-(s₁ - s₃) / 2 : ℝ) ≤ 0 := by linarith
@@ -492,7 +502,7 @@ lemma principalPlaneShear_bound (s₁ s₃ θ : ℝ) (hle : s₃ ≤ s₁) :
         mul_le_mul_of_nonneg_left (Real.abs_sin_le_one _) (abs_nonneg _)
     _ = (s₁ - s₃) / 2 := by rw [mul_one, habs]
 
-/-- The in-plane maximum shear is attained at `θ = π/4`. -/
+/-- For `s₃ ≤ s₁`, the in-plane maximum shear `(s₁ - s₃)/2` is attained at `θ = π/4`. -/
 lemma principalPlaneShear_max (s₁ s₃ : ℝ) (hle : s₃ ≤ s₁) :
     |principalPlaneShear s₁ s₃ (Real.pi / 4)| = (s₁ - s₃) / 2 := by
   have hneg : (-(s₁ - s₃) / 2 : ℝ) ≤ 0 := by linarith
@@ -505,7 +515,8 @@ lemma principalPlaneShear_max (s₁ s₃ : ℝ) (hle : s₃ ≤ s₁) :
 /-! ## D. Small strain, true strain, and true stress -/
 
 /-- Displacement gradient: the Jacobian matrix of `u` at `x`, entry `(i, j)` being the
-derivative of component `i` along coordinate direction `j`. -/
+derivative of component `i` along coordinate direction `j`. An entry is `0` where that derivative
+does not exist (the `deriv` convention). -/
 noncomputable def displacementGradient (u : (Fin 3 → ℝ) → (Fin 3 → ℝ))
     (x : Fin 3 → ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
   fun i j => deriv (fun t : ℝ => u (x + t • Pi.single j (1 : ℝ)) i) 0
@@ -623,7 +634,8 @@ lemma simpleShear_engineering (γ : ℝ) (x : Fin 3 → ℝ) :
 
 /-- The logarithmic helper `ln(1 + e)`, for every real `e`. Lean totalizes `Real.log`, so it
 also assigns values outside the physical domain, e.g. `logStrain (-1) = Real.log 0 = 0`; the
-physical true strain is `trueStrain`, which requires `-1 < e`. -/
+physical true strain is `trueStrain`, which requires `-1 < e`. For `e < -1`,
+`Real.log x = Real.log |x|` gives `logStrain e = Real.log (-1 - e)`. -/
 noncomputable def logStrain (e : ℝ) : ℝ := Real.log (1 + e)
 
 /-- True (logarithmic) strain `ε_true = ln(1 + e)`, defined only on the physical domain
@@ -674,10 +686,12 @@ lemma logStrain_lower (e : ℝ) (he : -1 < e) : e / (1 + e) ≤ logStrain e := b
   rw [hinv] at h
   linarith [h]
 
-/-- Engineering stress `s = F/A₀` (force over reference area). -/
+/-- Engineering stress `s = F/A₀` (force over reference area). With `x / 0 = 0` it is `0` when
+`A₀ = 0`; physically `A₀ > 0`. -/
 noncomputable def engStress (F A₀ : ℝ) : ℝ := F / A₀
 
-/-- True stress `σ = F/A` (force over current area). -/
+/-- True stress `σ = F/A` (force over current area). With `x / 0 = 0` it is `0` when `A = 0`;
+physically `A > 0`. -/
 noncomputable def trueStress (F A : ℝ) : ℝ := F / A
 
 /-- Volume constancy (uniaxial incompressibility) gives `σ_true = s(1+e)`. Volume constancy

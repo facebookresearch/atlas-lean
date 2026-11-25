@@ -1,3 +1,3 @@
-# Sqrt32 bounds
+# Certified bounds 1.224 < √(3/2) < 1.226
 
-Certified interval for `√(3/2)`, by squaring both sides.
+`1.224 < √(3/2) < 1.226`.

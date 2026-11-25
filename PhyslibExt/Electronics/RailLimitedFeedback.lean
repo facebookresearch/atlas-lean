@@ -61,25 +61,24 @@ point is `vmin`, and above the upper rail it is `vmax`.
 namespace PhyslibExt.Electronics.RailLimitedFeedback
 
 /-- The memoryless rail clamp with the closed endpoint convention:
-`max vmin (min vmax x)`. Values at or below `vmin` give `vmin`,
+`max vmin (min vmax x)`. For `vmin ≤ vmax`, values at or below `vmin` give `vmin`,
 values in the closed interval `[vmin, vmax]` are unchanged
-(endpoints included), values at or above `vmax` give `vmax`.
-Local to this leaf by design; see the header for why this is not a
-generic saturation definition. -/
+(endpoints included), values at or above `vmax` give `vmax`; for
+`vmin > vmax` every value gives `vmin`. -/
 noncomputable def railClamp (vmin vmax x : ℝ) : ℝ :=
   max vmin (min vmax x)
 
 /-- The rail-limited feedback map at input `vi`:
 `F(vo) = clamp(vmin, vmax, A * (vi - beta * vo))`. A fixed point
-`vo = F(vo)` is the leaf's operating point; no dynamics are modeled. -/
+`vo = F(vo)` is the amplifier's operating point; no dynamics are modeled. -/
 noncomputable def railLimitedMap (A beta vmin vmax vi vo : ℝ) : ℝ :=
   railClamp vmin vmax (A * (vi - beta * vo))
 
 /-- The linear (unclamped) candidate `A * vi / (1 + A * beta)`: under
 `0 < A` and `0 < beta` it is the unique solution of the unclamped
-equation `vo = A * (vi - beta * vo)` (see `linearCandidate_satisfies`
-and `fixedPoint_unique`). As a bare definition it carries no such
-claim for nonpositive gain or feedback. -/
+equation `vo = A * (vi - beta * vo)` (it solves it by `linearCandidate_satisfies`, and the
+equation is linear with coefficient `1 + A * beta ≠ 0`). As a bare definition it carries no such
+claim for nonpositive gain or feedback; with `x / 0 = 0` it is `0` when `1 + A * beta = 0`. -/
 noncomputable def linearCandidate (A beta vi : ℝ) : ℝ :=
   A * vi / (1 + A * beta)
 
@@ -90,7 +89,7 @@ lemma one_add_mul_pos (A beta : ℝ) (hA : 0 < A) (hbeta : 0 < beta) :
   have h : 0 < A * beta := mul_pos hA hbeta
   linarith
 
-/-- The clamp always lands in the closed rail interval. -/
+/-- For `vmin ≤ vmax`, the clamp always lands in the closed rail interval. -/
 lemma railClamp_mem_Icc (vmin vmax x : ℝ) (h : vmin ≤ vmax) :
     railClamp vmin vmax x ∈ Set.Icc vmin vmax := by
   refine Set.mem_Icc.mpr ⟨le_max_left _ _, ?_⟩
@@ -120,7 +119,7 @@ lemma railClamp_eq_vmax_of_le (vmin vmax x : ℝ) (h : vmin ≤ vmax)
   unfold railClamp
   rw [min_eq_left hx, max_eq_right h]
 
-/-- Any fixed point of the rail-limited map lies in the closed rail
+/-- For `vmin ≤ vmax`, any fixed point of the rail-limited map lies in the closed rail
 interval, because the clamp's range is that interval. -/
 lemma fixedPoint_mem_Icc (A beta vmin vmax vi vo : ℝ)
     (hrail : vmin ≤ vmax)
@@ -130,8 +129,8 @@ lemma fixedPoint_mem_Icc (A beta vmin vmax vi vo : ℝ)
   unfold railLimitedMap
   exact railClamp_mem_Icc _ _ _ hrail
 
-/-- The linear candidate indeed solves the unclamped equation; this
-is the L1 closed form restated at the point L2 needs it. -/
+/-- For `0 < A` and `0 < beta`, the linear candidate `c` indeed solves the unclamped
+equation `c = A * (vi - beta * c)`. -/
 lemma linearCandidate_satisfies (A beta vi : ℝ) (hA : 0 < A)
     (hbeta : 0 < beta) :
     linearCandidate A beta vi
@@ -158,10 +157,9 @@ private lemma railClamp_mono (vmin vmax x y : ℝ) (h : x ≤ y) :
   unfold railClamp
   exact max_le_max le_rfl (min_le_min le_rfl h)
 
-/-- Existence: the rail-limited map has at least one fixed point in
-the rails. The proof is an explicit three-regime case analysis on
-the position of the linear candidate relative to the rails, not a
-contraction argument. -/
+/-- Existence: for `0 < A`, `0 < beta` and `vmin < vmax`, the rail-limited map has at least one
+fixed point, which lies in the rails. The proof is an explicit three-regime case analysis on
+the position of the linear candidate relative to the rails, not a contraction argument. -/
 lemma exists_fixedPoint (A beta vmin vmax vi : ℝ) (hA : 0 < A)
     (hbeta : 0 < beta) (hrail : vmin < vmax) :
     ∃ vo : ℝ, vo = railLimitedMap A beta vmin vmax vi vo := by
@@ -192,11 +190,11 @@ lemma exists_fixedPoint (A beta vmin vmax vi : ℝ) (hA : 0 < A)
       rw [← hc]
       exact (railClamp_eq_self_of_mem vmin vmax _ hmem).symm
 
-/-- Uniqueness: the rail-limited map has at most one fixed point,
-because `vo ↦ F(vo) - vo` is strictly decreasing (the clamped
+/-- Uniqueness: for `0 < A`, `0 < beta` and `vmin < vmax`, the rail-limited map has at most
+one fixed point, because `vo ↦ F(vo) - vo` is strictly decreasing (the clamped
 amplified error is nonincreasing in `vo` while `-vo` is strictly
-decreasing). The sign of the feedback matters: this argument is not
-claimed for a sign-flipped law. -/
+decreasing). The sign of the feedback matters: for `beta < 0` there can be several fixed
+points (`A = 2`, `beta = -1`, `vi = 0` and rails `[-1, 1]` have both `0` and `1`). -/
 lemma fixedPoint_unique (A beta vmin vmax vi : ℝ) (hA : 0 < A)
     (hbeta : 0 < beta) (hrail : vmin < vmax) (vo vo' : ℝ)
     (h : vo = railLimitedMap A beta vmin vmax vi vo)
@@ -241,9 +239,9 @@ lemma existsUnique_fixedPoint (A beta vmin vmax vi : ℝ) (hA : 0 < A)
   obtain ⟨vo, h⟩ := exists_fixedPoint A beta vmin vmax vi hA hbeta hrail
   exact ⟨vo, h, fun y hy => fixedPoint_unique A beta vmin vmax vi hA hbeta hrail y vo hy h⟩
 
-/-- Linear-region characterization, forward direction: if the linear
-candidate lies in the closed rail interval (endpoints included, the
-exactly-on-rail case), then it is a fixed point, hence by uniqueness
+/-- Linear-region characterization, forward direction: for `0 < A`, `0 < beta` and
+`vmin < vmax`, if the linear candidate lies in the closed rail interval (endpoints included,
+the exactly-on-rail case), then it is a fixed point, hence by uniqueness
 it is the fixed point. -/
 lemma eq_linearCandidate_of_mem (A beta vmin vmax vi vo : ℝ)
     (hA : 0 < A) (hbeta : 0 < beta) (hrail : vmin < vmax)
@@ -258,7 +256,7 @@ lemma eq_linearCandidate_of_mem (A beta vmin vmax vi vo : ℝ)
     exact (railClamp_eq_self_of_mem vmin vmax _ hmem).symm
   exact fixedPoint_unique A beta vmin vmax vi hA hbeta hrail vo _ hfix hFc
 
-/-- Linear-region characterization, reverse direction: if a fixed
+/-- Linear-region characterization, reverse direction: for `vmin ≤ vmax`, if a fixed
 point equals the linear candidate, then that candidate lies in the
 closed rail interval (every fixed point lies in the rails). -/
 lemma linearCandidate_mem_of_eq (A beta vmin vmax vi vo : ℝ)
@@ -269,9 +267,9 @@ lemma linearCandidate_mem_of_eq (A beta vmin vmax vi vo : ℝ)
   rw [← heq]
   exact fixedPoint_mem_Icc A beta vmin vmax vi vo hrail hfix
 
-/-- The leaf's "equals the linear candidate iff" clause, packaged for
-an arbitrary fixed point `vo`: `vo` is the linear candidate exactly
-when the candidate lies in the closed rail interval. -/
+/-- The "equals the linear candidate iff" clause, packaged for
+an arbitrary fixed point `vo`, for `0 < A`, `0 < beta` and `vmin < vmax`: `vo` is the linear
+candidate exactly when the candidate lies in the closed rail interval. -/
 lemma fixedPoint_eq_linearCandidate_iff (A beta vmin vmax vi vo : ℝ)
     (hA : 0 < A) (hbeta : 0 < beta) (hrail : vmin < vmax)
     (hfix : vo = railLimitedMap A beta vmin vmax vi vo) :
@@ -283,8 +281,8 @@ lemma fixedPoint_eq_linearCandidate_iff (A beta vmin vmax vi vo : ℝ)
   · intro hmem
     exact eq_linearCandidate_of_mem A beta vmin vmax vi vo hA hbeta hrail hfix hmem
 
-/-- Lower saturation: if the linear candidate is strictly below the
-lower rail, the unique fixed point sits exactly on the lower rail. -/
+/-- Lower saturation: for `0 < A`, `0 < beta` and `vmin < vmax`, if the linear candidate is
+strictly below the lower rail, the unique fixed point sits exactly on the lower rail. -/
 lemma fixedPoint_eq_vmin_of_candidate_lt (A beta vmin vmax vi vo : ℝ)
     (hA : 0 < A) (hbeta : 0 < beta) (hrail : vmin < vmax)
     (hfix : vo = railLimitedMap A beta vmin vmax vi vo)
@@ -300,8 +298,8 @@ lemma fixedPoint_eq_vmin_of_candidate_lt (A beta vmin vmax vi vo : ℝ)
     exact (railClamp_eq_vmin_of_le vmin vmax _ harg).symm
   exact fixedPoint_unique A beta vmin vmax vi hA hbeta hrail vo vmin hfix hFv
 
-/-- Upper saturation: if the linear candidate is strictly above the
-upper rail, the unique fixed point sits exactly on the upper rail. -/
+/-- Upper saturation: for `0 < A`, `0 < beta` and `vmin < vmax`, if the linear candidate is
+strictly above the upper rail, the unique fixed point sits exactly on the upper rail. -/
 lemma fixedPoint_eq_vmax_of_vmax_lt_candidate
     (A beta vmin vmax vi vo : ℝ) (hA : 0 < A) (hbeta : 0 < beta)
     (hrail : vmin < vmax)

@@ -1,4 +1,5 @@
-# Burn Cost
+# Delta-v cost of a sequence of burns
 
-The scalar delta-v cost of the first `n` burns `Δv_k`: the sum `∑_{k < n} ‖Δv_k‖` of their
-nonnegative magnitudes, not the norm of their vector sum.
+For a seminormed additive commutative group `E`, burns `Δv : ℕ → E` and `n ∈ ℕ`, the scalar cost
+`∑_{k < n} ‖Δv_k‖` of the first `n` burns: the sum of their magnitudes, not the norm of their vector
+sum.

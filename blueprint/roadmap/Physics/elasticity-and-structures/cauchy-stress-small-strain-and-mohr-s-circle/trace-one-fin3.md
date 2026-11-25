@@ -1,3 +1,3 @@
-# Trace one fin3
+# The 3 × 3 identity matrix has trace 3
 
-Helper: the 3x3 identity has trace 3.
+The trace of the real `3 × 3` identity matrix is `3`.

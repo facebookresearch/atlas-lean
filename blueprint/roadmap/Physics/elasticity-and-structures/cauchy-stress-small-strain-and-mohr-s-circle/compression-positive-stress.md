@@ -1,5 +1,6 @@
-# Compression Positive Stress
+# Compression-positive form of a stress
 
-Compression-positive form of a tension-positive Cauchy
-stress: `σ_c = -σ_t`, on the same Euclidean reference space and
-with the same tensor and normal conventions.
+For `n ∈ ℕ` and a real `n × n` matrix `σ`, read as a tension-positive Cauchy stress, its
+compression-positive form is `-σ`: the same stress state written with the opposite sign convention,
+on the same space and with the same index and normal conventions. In the compression-positive form a
+positive normal stress is a compression.

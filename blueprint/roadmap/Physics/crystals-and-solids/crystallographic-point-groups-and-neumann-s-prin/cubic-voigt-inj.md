@@ -1,4 +1,4 @@
-# Cubic Voigt inj
+# The three cubic elastic constants are independent
 
-The three cubic constants are independent: the family is injective in
-`(c11, c12, c44)`.
+For real numbers `c₁₁, c₁₂, c₄₄, d₁₁, d₁₂, d₄₄`, if the [cubic Voigt matrices](cubic-voigt.md) of
+`(c₁₁, c₁₂, c₄₄)` and `(d₁₁, d₁₂, d₄₄)` are equal, then `c₁₁ = d₁₁`, `c₁₂ = d₁₂` and `c₄₄ = d₄₄`.

@@ -1,4 +1,5 @@
-# Integral deriv sq pos
+# If w(0) = 0 and w ≠ 0 somewhere, the slope energy is positive
 
-If the deflection is nonzero somewhere on `[0, L]`, the slope
-energy `∫ (w')^2` is strictly positive.
+Let `L > 0` and `w, w' : ℝ → ℝ` be such that `w` has derivative `w'(x)` at every `x ∈ [0, L]`, `w'`
+is continuous on `[0, L]`, `w(0) = 0`, and `w(x) ≠ 0` for some `x ∈ [0, L]`. Then
+`∫₀ᴸ w'(x)² dx > 0`.

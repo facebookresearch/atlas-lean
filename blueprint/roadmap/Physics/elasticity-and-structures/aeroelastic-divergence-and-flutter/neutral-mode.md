@@ -1,3 +1,3 @@
-# Neutral Mode
+# Neutral trajectory of the circulatory model
 
-The neutral trajectory `z(t) = (cos t, sin t)`.
+The trajectory `z(t) = (cos t, sin t)` in `ℝ²`, a [solution at `q = 2`](neutral-mode-solves.md).

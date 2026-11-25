@@ -1,5 +1,9 @@
-# Arrhenius log10
+# Arrhenius identity in base-10 logarithms
 
-Arrhenius log identity (base 10): the same statement as `arrhenius_log` divided by
-`Real.log 10`. On coordinates, `logRatio y y_ref hy hy_ref / Real.log 10` is
-`Real.logb 10 (y / y_ref)`, since `Real.logb b x = Real.log x / Real.log b`.
+Let `y`, `y_ref` and `A` be quantities of one dimension, `E` a molar energy, `R` a gas constant and
+`T` an absolute temperature, with `y`, `y_ref`, `A`, `R` and `T` positive and `E` of any sign, and
+suppose `y = A exp(−E / (R T))`. Then
+`log(y / y_ref) / log 10 = log(A / y_ref) / log 10 − E / (R T log 10)`, that is,
+`log₁₀(y / y_ref) = log₁₀(A / y_ref) − E / (R T log 10)`, with `log` the natural logarithm. The
+dimensions are carried by the types: logarithms are taken only of ratios of quantities of the same
+dimension, and `E / (R T)` is dimensionless.

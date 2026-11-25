@@ -84,17 +84,20 @@ namespace PhyslibExt.Electromagnetism.SeparableVacuumMaxwell
 
 /-! ## A. Partial derivatives and the scalar equations -/
 
-/-- Time partial derivative `f_t(t, z)`. -/
+/-- Time partial derivative `f_t(t, z)` (`0` where `s ↦ f s z` is not differentiable at `t`). -/
 noncomputable def partialTime (f : ℝ → ℝ → ℝ) (t z : ℝ) : ℝ := deriv (fun s => f s z) t
 
-/-- Guide-coordinate partial derivative `f_z(t, z)`. -/
+/-- Guide-coordinate partial derivative `f_z(t, z)` (`0` where `f t` is not differentiable at
+`z`). -/
 noncomputable def partialZ (f : ℝ → ℝ → ℝ) (t z : ℝ) : ℝ := deriv (f t) z
 
-/-- Profile equation `a''(x) = -kc^2 a(x)` for all `x`. -/
+/-- Profile equation `a''(x) = -kc^2 a(x)` for all `x`, each derivative being `0` where it does not
+exist. -/
 def profileEquation (a : ℝ → ℝ) (kc : ℝ) : Prop :=
   ∀ x : ℝ, deriv (deriv a) x = -(kc ^ 2) * a x
 
-/-- Mode equation `f_tt = c0^2 (f_zz - kc^2 f)` for all `t, z`. -/
+/-- Mode equation `f_tt = c0^2 (f_zz - kc^2 f)` for all `t, z`, each derivative being `0` where it
+does not exist. -/
 def modeEquation (c0 kc : ℝ) (f : ℝ → ℝ → ℝ) : Prop :=
   ∀ t z : ℝ, deriv (fun s => partialTime f s z) t =
     c0 ^ 2 * (deriv (fun w => partialZ f t w) z - kc ^ 2 * f t z)
@@ -107,26 +110,26 @@ noncomputable def separableElectricField (a : ℝ → ℝ) (f : ℝ → ℝ → 
     ℝ → ℝ → ℝ → ℝ → Fin 3 → ℝ :=
   fun t x _y z => ![0, -(a x * partialTime f t z), 0]
 
-/-- Separable magnetic field, as a function of time and three
-space coordinates. -/
+/-- Separable magnetic field `(-a(x) f_z(t, z), 0, a'(x) f(t, z))`, as a function of time and three
+space coordinates (`a'` is `0` where `a` is not differentiable). -/
 noncomputable def separableMagneticField (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ) :
     ℝ → ℝ → ℝ → ℝ → Fin 3 → ℝ :=
   fun t x _y z => ![-(a x * partialZ f t z), 0, deriv a x * f t z]
 
-/-- Divergence from one-variable derivatives in each space
-coordinate. -/
+/-- Divergence from one-variable derivatives in each space coordinate, each derivative being `0`
+where it does not exist. -/
 noncomputable def spaceDivergence (F : ℝ → ℝ → ℝ → ℝ → Fin 3 → ℝ) (t x y z : ℝ) : ℝ :=
   deriv (fun u => F t u y z 0) x + deriv (fun v => F t x v z 1) y +
     deriv (fun w => F t x y w 2) z
 
-/-- Curl from one-variable derivatives in each space
-coordinate. -/
+/-- Curl from one-variable derivatives in each space coordinate, each derivative being `0` where it
+does not exist. -/
 noncomputable def spaceCurl (F : ℝ → ℝ → ℝ → ℝ → Fin 3 → ℝ) (t x y z : ℝ) : Fin 3 → ℝ :=
   ![deriv (fun v => F t x v z 2) y - deriv (fun w => F t x y w 1) z,
     deriv (fun w => F t x y w 0) z - deriv (fun u => F t u y z 2) x,
     deriv (fun u => F t u y z 1) x - deriv (fun v => F t x v z 0) y]
 
-/-- One time-derivative component of a field. -/
+/-- One time-derivative component of a field (`0` where it does not exist). -/
 noncomputable def timeDerivativeComponent (F : ℝ → ℝ → ℝ → ℝ → Fin 3 → ℝ)
     (t x y z : ℝ) (i : Fin 3) : ℝ := deriv (fun s => F s x y z i) t
 
@@ -337,8 +340,8 @@ theorem separable_faraday (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ)
     simp [spaceCurl, timeDerivativeComponent, dE_y2, dE_z1, dE_x1, dE_y0, dE_z0, dE_x2,
       dB_t0, dB_t1, dB_t2, hmix]
 
-/-- Ampère's law for the separable fields; both scalar equations
-are used here. -/
+/-- Ampère's law for the separable fields: for `C^∞` `a` and `f` satisfying the profile and mode
+equations at speed `c`, `curl B = c⁻² ∂ₜ E`; both scalar equations are used here. -/
 theorem separable_ampere (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ) (kc : ℝ) (c : SpeedOfLight)
     (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f))
     (hprofile : profileEquation a kc) (hmode : modeEquation (c : ℝ) kc f) :
@@ -392,8 +395,9 @@ theorem separable_ampere (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ) (kc : ℝ) 
   · simp [spaceCurl, timeDerivativeComponent, dB_x1, dB_y0, dE_t2]
 
 
-/-- **Source-free vacuum Maxwell equations for the separable
-fields.** -/
+/-- **Source-free vacuum Maxwell equations for the separable fields.** For `C^∞` `a` and `f`
+satisfying the profile and mode equations at speed `c`, the separable fields satisfy the source-free
+vacuum Maxwell equations at speed `c`. -/
 theorem separableFields_sourceFreeVacuumMaxwell (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ) (kc : ℝ)
     (c : SpeedOfLight) (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f))
     (hprofile : profileEquation a kc) (hmode : modeEquation (c : ℝ) kc f) :
@@ -408,7 +412,10 @@ theorem separableFields_sourceFreeVacuumMaxwell (a : ℝ → ℝ) (f : ℝ → �
 
 /-- Source-free vacuum Maxwell equations at a speed of light `c`
 for fields on Physlib's `Time` and `Space`, stated with Physlib's
-`Space.div`, `Space.curl` and `Time.deriv`. -/
+`Space.div`, `Space.curl` and `Time.deriv`. These are built from total derivatives: a partial
+derivative of a component is `0` where that component is not differentiable as a function of
+position, even if the partial derivative exists, and `Time.deriv` of the field is `0` where the
+vector-valued field is not differentiable in time. -/
 def sourceFreeVacuumMaxwellFields (c : SpeedOfLight)
     (E B : Time → Space → EuclideanSpace ℝ (Fin 3)) : Prop :=
   ∀ (t : Time) (x : Space), Space.div (E t) x = 0 ∧ Space.div (B t) x = 0 ∧
@@ -483,8 +490,8 @@ lemma sourceFreeVacuumMaxwellFields_of_components (c : SpeedOfLight)
     rw [cB i, hamp, PiLp.smul_apply, smul_eq_mul, tE i]
     fin_cases i <;> rfl
 
-/-- The canonical electric field of the separable guide potential
-has the separable components. -/
+/-- For `C^∞` `a` and `f`, the canonical electric field of the separable guide potential has the
+separable components. -/
 lemma separableGuidePotential_electricField_apply (c : SpeedOfLight) (a : ℝ → ℝ)
     (f : ℝ → ℝ → ℝ) (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f))
     (s : Time) (q : Space) (i : Fin 3) :
@@ -493,8 +500,8 @@ lemma separableGuidePotential_electricField_apply (c : SpeedOfLight) (a : ℝ �
   rw [(separableGuidePotential_fields c a f ha hf).1 s q]
   fin_cases i <;> simp [separableElectricField, partialTime]
 
-/-- The canonical magnetic field of the separable guide potential
-has the separable components. -/
+/-- For `C^∞` `a` and `f`, the canonical magnetic field of the separable guide potential has the
+separable components. -/
 lemma separableGuidePotential_magneticField_apply (c : SpeedOfLight) (a : ℝ → ℝ)
     (f : ℝ → ℝ → ℝ) (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f))
     (s : Time) (q : Space) (i : Fin 3) :
@@ -533,10 +540,10 @@ theorem separableGuidePotential_sourceFreeVacuumMaxwellFields (c : SpeedOfLight)
 
 /-! ## E. Extremum form with free-space constants -/
 
-/-- **Extremum form with the free-space constants.** The canonical
-fields satisfy the source-free equations at the free-space speed
-of light, the separable potential is an extremum with zero
-current, and the potential and zero current are smooth. -/
+/-- **Extremum form with the free-space constants.** For `C^∞` `a` and `f` satisfying the profile
+and mode equations at the free-space speed of light, the canonical fields satisfy the source-free
+equations at that speed, the separable potential is an extremum with zero current, and the potential
+and zero current are smooth. -/
 theorem separableFields_isExtrema_withFreeSpace
     (𝓕 : FreeSpace) (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ) (kc : ℝ)
     (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f))
@@ -572,9 +579,9 @@ theorem separableFields_isExtrema_withFreeSpace
 
 /-! ## F. Failure of the mode equation and concrete modes -/
 
-/-- A dispersion mismatch at a point where `a` is nonzero breaks
-the source-free Maxwell equations: the Ampère residual is
-nonzero. -/
+/-- For `C^∞` `a` and `f` with `a` satisfying the profile equation, a failure of the mode equation
+at speed `c` at a point `(t, z)`, together with `a x ≠ 0`, breaks the source-free Maxwell equations:
+the Ampère residual is nonzero. -/
 theorem not_sourceFree_of_modeEquation_failure (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ) (kc : ℝ)
     (c : SpeedOfLight) (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f))
     (hprofile : profileEquation a kc) (t x z : ℝ) (hax : a x ≠ 0)
@@ -786,7 +793,8 @@ theorem propagatingMode_satisfies_scalarEquations (kc beta freq c0 : ℝ) :
     rw [deriv_partialTime_cos_mode, deriv_partialZ_cos_mode, hdisp]
     ring
 
-/-- Propagating instance of the source-free Maxwell result. -/
+/-- Propagating instance of the source-free Maxwell result, under the dispersion relation
+`freq^2 = c^2 (beta^2 + kc^2)`. -/
 theorem propagatingMode_sourceFreeVacuumMaxwell (kc beta freq : ℝ) (c : SpeedOfLight)
     (hdisp : freq ^ 2 = (c : ℝ) ^ 2 * (beta ^ 2 + kc ^ 2)) :
     sourceFreeVacuumMaxwell c
@@ -799,12 +807,10 @@ theorem propagatingMode_sourceFreeVacuumMaxwell (kc beta freq : ℝ) (c : SpeedO
       fun_prop
     exact hcd) hprof hmode
 
-/-- Sinusoidal profile and the exponential mode
-`cos (freq t) exp (-alpha z)` satisfy the mode equation exactly
-under `freq^2 = c0^2 (kc^2 - alpha^2)`. No sign is imposed on
-`alpha`: the mode is evanescent (decaying along the guide) exactly
-when `0 < alpha`, see `evanescentMode_decay`; `alpha = 0` gives a
-mode independent of `z` and `alpha < 0` a growing one. -/
+/-- The exponential mode `cos (freq t) exp (-alpha z)` satisfies the mode equation if and only if
+`freq^2 = c0^2 (kc^2 - alpha^2)` (the profile plays no role). No sign is imposed on `alpha`: the
+mode decays along the guide when `0 < alpha`, see `evanescentMode_decay`; `alpha = 0` gives a mode
+independent of `z` and `alpha < 0` a growing one. -/
 theorem evanescentMode_satisfies_modeEquation (kc alpha freq c0 : ℝ) :
     modeEquation c0 kc (fun t z => Real.cos (freq * t) * Real.exp (-alpha * z)) ↔
       freq ^ 2 = c0 ^ 2 * (kc ^ 2 - alpha ^ 2) := by
@@ -823,8 +829,8 @@ theorem evanescentMode_satisfies_modeEquation (kc alpha freq c0 : ℝ) :
     rw [deriv_partialTime_evanescent_mode, deriv_partialZ_evanescent_mode, hdisp]
     ring
 
-/-- Exponential-mode instance of the source-free Maxwell result.
-It holds for every real `alpha`; the mode is evanescent when
+/-- Exponential-mode instance of the source-free Maxwell result, under the dispersion relation
+`freq^2 = c^2 (kc^2 - alpha^2)`. It holds for every real `alpha`; the mode is evanescent when
 `0 < alpha`, see `evanescentMode_decay`. -/
 theorem evanescentMode_sourceFreeVacuumMaxwell (kc alpha freq : ℝ) (c : SpeedOfLight)
     (hdisp : freq ^ 2 = (c : ℝ) ^ 2 * (kc ^ 2 - alpha ^ 2)) :

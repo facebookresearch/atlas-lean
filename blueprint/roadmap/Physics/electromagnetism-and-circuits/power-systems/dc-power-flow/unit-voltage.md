@@ -1,3 +1,4 @@
-# Unit Voltage
+# Unit-magnitude voltage phasor of a node
 
-Unit-magnitude node voltage phasor `V v = exp(i * θ v)`.
+For real node phase angles `θ_v`, the unit-magnitude voltage phasor at node `v` is the complex
+number `V_v = exp(i θ_v)`, [of modulus `1`](norm-unit-voltage.md).

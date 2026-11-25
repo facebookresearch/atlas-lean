@@ -1,3 +1,3 @@
-# At Pct
+# Atomic percent of a component
 
-Atomic percent (elemental case): `100 * x i` for mole fractions `x`.
+For mole fractions `x : ι → ℝ` of the elements of a mixture, the vector `(100 x_i)_i`.

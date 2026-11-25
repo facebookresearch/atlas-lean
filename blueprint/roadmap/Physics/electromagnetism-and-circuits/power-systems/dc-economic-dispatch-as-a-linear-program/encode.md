@@ -1,4 +1,4 @@
-# Encode
+# LP point encoding a dispatch
 
-LP point encoding a dispatch: positive parts `max z 0` followed by
-negative parts `max (-z) 0` of the free vector `z = (pg, θ)`.
+For a generation `p` and angles `θ`, the encoded LP point is `(max(z, 0), max(-z, 0))`, the
+componentwise positive parts followed by the negative parts of the free vector `z = (p, θ)`.

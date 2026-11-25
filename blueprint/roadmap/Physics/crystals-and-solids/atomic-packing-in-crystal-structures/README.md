@@ -1,44 +1,42 @@
 # Atomic packing in crystal structures
 
-## Certified irrational bounds
+## Certified bounds on square roots
 
-- [Sqrt2 bounds](sqrt2-bounds.md)
-- [Sqrt3 bounds](sqrt3-bounds.md)
-- [Sqrt32 bounds](sqrt32-bounds.md)
+- [Certified bounds 1.4142 < √2 < 1.4143](sqrt2-bounds.md)
+- [Certified bounds 1.731 < √3 < 1.733](sqrt3-bounds.md)
+- [Certified bounds 1.224 < √(3/2) < 1.226](sqrt32-bounds.md)
 
-## A. Atomic packing factor
+## Atomic packing factor
 
-- [Atomic Packing Factor Raw](atomic-packing-factor-raw.md)
-- [Atomic Packing Factor](atomic-packing-factor.md)
-- [Atomic Packing Factor eq raw](atomic-packing-factor-eq-raw.md)
-- [Apf simple Cubic](apf-simple-cubic.md)
-- [Apf bcc](apf-bcc.md)
-- [Apf fcc](apf-fcc.md)
-- [Apf hcp](apf-hcp.md)
-- [Apf diamond](apf-diamond.md)
+- [Packing-factor expression n (4/3) π R³ / V_c](atomic-packing-factor-raw.md)
+- [Atomic packing factor](atomic-packing-factor.md)
+- [The atomic packing factor is the raw expression on its domain](atomic-packing-factor-eq-raw.md)
+- [Simple cubic packing factor π / 6](apf-simple-cubic.md)
+- [Body-centred cubic packing factor π √3 / 8](apf-bcc.md)
+- [Face-centred cubic packing factor π / (3√2)](apf-fcc.md)
+- [Hexagonal close-packed packing factor π / (3√2)](apf-hcp.md)
+- [Diamond cubic packing factor π √3 / 16](apf-diamond.md)
 
-## B. Theoretical density
+## Theoretical density
 
-- [Theoretical Density Raw](theoretical-density-raw.md)
-- [Theoretical Density](theoretical-density.md)
-- [Theoretical Density eq raw](theoretical-density-eq-raw.md)
-- [Theoretical Density Raw eq](theoretical-density-raw-eq.md)
-- [Angstrom cubed to cm cubed](angstrom-cubed-to-cm-cubed.md)
-- [Density mat c1](density-mat-c1.md)
-- [Density unit conversion](density-unit-conversion.md)
+- [Density expression n A / (V_c N_A)](theoretical-density-raw.md)
+- [Theoretical density of a crystal](theoretical-density.md)
+- [The theoretical density is the raw expression on its domain](theoretical-density-eq-raw.md)
+- [The density expression is n A / (V_c N_A)](theoretical-density-raw-eq.md)
+- [A cube of edge 4 Å has volume 64 × 10⁻²⁴ cm³](angstrom-cubed-to-cm-cubed.md)
+- [Density of a synthetic four-atom cubic cell](density-mat-c1.md)
+- [Converting a density from g/cm³ to kg/m³ multiplies it by 1000](density-unit-conversion.md)
 
-## C. Ideal HCP ratio and FCC interstitial holes
+## Ideal hexagonal close-packed ratio and interstitial holes
 
-- [Equilateral centroid sq](equilateral-centroid-sq.md)
-- [Equilateral centroid dist](equilateral-centroid-dist.md)
-- [Tetrahedron height](tetrahedron-height.md)
-- [Hcp ideal ratio](hcp-ideal-ratio.md)
-- [Fcc octahedral hole](fcc-octahedral-hole.md)
-- [Fcc tetrahedral hole](fcc-tetrahedral-hole.md)
+- [Squared centroid-to-vertex distance of an equilateral triangle](equilateral-centroid-sq.md)
+- [Centroid-to-vertex distance of an equilateral triangle](equilateral-centroid-dist.md)
+- [Height of a regular tetrahedron](tetrahedron-height.md)
+- [Ideal hexagonal close-packed ratio c / a = √(8/3)](hcp-ideal-ratio.md)
+- [Radius ratio of the face-centred cubic octahedral hole](fcc-octahedral-hole.md)
+- [Radius ratio of the face-centred cubic tetrahedral hole](fcc-tetrahedral-hole.md)
 
-## D. Radius-ratio values and empirical predictive use
+## Radius ratios from centre distances
 
-- [Radius Ratio eq two div sqrt three sub one](radius-ratio-eq-two-div-sqrt-three-sub-o.md)
-- [Radius Ratio eq sqrt three halves sub one](radius-ratio-eq-sqrt-three-halves-sub-on.md)
-- [Radius Ratio eq sqrt two sub one](radius-ratio-eq-sqrt-two-sub-one.md)
-- [Radius Ratio eq sqrt three sub one](radius-ratio-eq-sqrt-three-sub-one.md)
+- [Radius ratio 2/√3 − 1 from the centre distance 2R / √3](radius-ratio-eq-two-div-sqrt-three-sub-o.md)
+- [Radius ratio √3 − 1 from the centre distance √3 a / 2](radius-ratio-eq-sqrt-three-sub-one.md)

@@ -1,5 +1,7 @@
-# Compression Positive Traction neg smul one
+# Hydrostatic pressure p: traction map value p v, physical traction −p v
 
-Hydrostatic pressure: the compression-positive physical
-traction of the converted stress `-p • 1` is the inward
-traction `-p • v`.
+For every `p ∈ ℝ` and `v ∈ ℝⁿ`, the hydrostatic tension-positive stress `-p 1`, converted to its
+[compression-positive form](compression-positive-stress.md) `p 1`, has
+[compression-positive traction](compression-positive-traction.md) `-p v` on the face with normal
+`v`. For a pressure `p > 0` and an outward normal `v` this traction points inward. Equivalently, the
+tension-positive [traction](traction.md) map gives `p v` for the converted stress `p 1`.

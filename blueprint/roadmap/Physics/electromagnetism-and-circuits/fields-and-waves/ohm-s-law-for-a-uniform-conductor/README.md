@@ -1,25 +1,27 @@
 # Ohm's law for a uniform conductor
 
-- [Uniform Axial Field](uniform-axial-field.md)
-- [Ohm Current Density](ohm-current-density.md)
-- [Terminal Current](terminal-current.md)
-- [Conductance](conductance.md)
-- [Resistance](resistance.md)
+## The bar and its quantities
 
-## Headline
+- [Uniform axial field of a bar](uniform-axial-field.md)
+- [Local Ohm law for the current density](ohm-current-density.md)
+- [Terminal current through a cross-section](terminal-current.md)
+- [Conductance of a uniform bar](conductance.md)
+- [Resistance of a uniform bar](resistance.md)
 
-- [Uniform ohmic bar](terminal-current-eq-conductance-mul.md)
+## Terminal current of a uniform bar
 
-## Resistance, only for `σ > 0`
+- [Terminal current of a uniform ohmic bar is (σ A / ℓ) V](terminal-current-eq-conductance-mul.md)
 
-- [Voltage eq resistance mul terminal Current](voltage-eq-resistance-mul-terminal-curre.md)
-- [Conductance mul resistance](conductance-mul-resistance.md)
+## Resistance for positive conductivity
 
-## Validation
+- [For positive conductivity, V = R I](voltage-eq-resistance-mul-terminal-curre.md)
+- [For positive σ, A and ℓ, conductance times resistance is 1](conductance-mul-resistance.md)
+- [For positive σ, A and ℓ the resistance is positive](resistance-pos.md)
 
-- [Conductance zero left](conductance-zero-left.md)
-- [Terminal Current eq zero of conductivity eq zero](terminal-current-eq-zero-of-conductivity.md)
-- [Terminal Current reversed](terminal-current-reversed.md)
-- [Voltage mul terminal Current nonneg](voltage-mul-terminal-current-nonneg.md)
-- [Nonuniform Field constant Shortcut fails](nonuniform-field-constant-shortcut-fails.md)
-- [Resistance pos](resistance-pos.md)
+## Insulating bars, reversed terminals, power and a nonuniform field
+
+- [Zero conductivity gives zero conductance](conductance-zero-left.md)
+- [An insulating bar carries no terminal current](terminal-current-eq-zero-of-conductivity.md)
+- [Swapping the terminals reverses the terminal current](terminal-current-reversed.md)
+- [For nonnegative conductivity the absorbed power V I is nonnegative](voltage-mul-terminal-current-nonneg.md)
+- [A nonuniform field breaks the constant-field shortcut](nonuniform-field-constant-shortcut-fails.md)

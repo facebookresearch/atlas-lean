@@ -1,3 +1,4 @@
-# Has Deriv At deriv neutral Mode
+# Acceleration of the neutral trajectory
 
-Second derivative of the neutral trajectory: `z'' = (-cos t, -sin t)`.
+At every time `t`, the derivative of the [neutral trajectory](neutral-mode.md) has derivative
+`z''(t) = (-cos t, -sin t)`.

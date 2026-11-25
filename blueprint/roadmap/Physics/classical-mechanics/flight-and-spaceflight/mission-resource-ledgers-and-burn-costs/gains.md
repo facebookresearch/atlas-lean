@@ -1,3 +1,4 @@
-# Gains
+# Gains of a resource at a step
 
-Gains of resource `i` at step `k`: the positive part of its signed flow.
+For signed flows `flow : ι → ℕ → ℝ`, a resource `i` and a step `k`, the positive part
+`max(flow i k, 0)` of the flow, as a nonnegative real.

@@ -96,12 +96,11 @@ private lemma arrhenius_log_real {y y_ref A T R E : ℝ} (hy_ref : 0 < y_ref) (h
   ring
 
 /-- Arrhenius log identity (natural log): if a rate `y` follows the Arrhenius model
-`y = A * exp (-(E / (R * T)))`, written with the dimension-safe factor `expScaledEnergy E R T`,
-and `y, y_ref, A, R, T` are positive, then the log of `y / y_ref` is the log of the
-prefactor ratio `A / y_ref` minus `E / (R * T)`. The quantities `y`, `y_ref` and `A` share one
-dimension `d`, and `E`, `R`, `T` are a molar energy, a gas constant and an absolute temperature.
-Mathematical consequence (MC) of the stated model; no empirical parameter value is
-asserted. -/
+`y = A * exp (-(E / (R * T)))`, written with the dimension-safe factor `expScaledEnergy E R T`, and
+`y, y_ref, A, R, T` are positive, then the log of `y / y_ref` is the log of the prefactor ratio
+`A / y_ref` minus `E / (R * T)`. The quantities `y`, `y_ref` and `A` share one dimension `d`, and
+`E`, `R`, `T` are a molar energy, a gas constant and an absolute temperature. This is a mathematical
+consequence of the stated model; no empirical parameter value is asserted. -/
 lemma arrhenius_log {d : Dimension ISQDimensionBase} {y y_ref A : WithDim d ℝ}
     {E : WithDim molarEnergyDim ℝ} {R : WithDim gasConstantDim ℝ}
     {T : WithDim temperatureDim ℝ} (hy_ref : 0 < y_ref.val) (hA : 0 < A.val)
@@ -126,7 +125,8 @@ lemma arrhenius_log10 {d : Dimension ISQDimensionBase} {y y_ref A : WithDim d �
 
 /-! ## b. Composition percentages -/
 
-/-- Weight percent: `100 * Chemistry.Amounts.massFraction M x i`. -/
+/-- Weight percent: `100 * Chemistry.Amounts.massFraction M x i` (`0` for every component when
+`∑ j, x j * M j = 0`, by the convention `x / 0 = 0`). -/
 noncomputable def wtPct {ι : Type*} [Fintype ι] (M x : ι → ℝ) : ι → ℝ :=
   fun i => 100 * Chemistry.Amounts.massFraction M x i
 
@@ -134,12 +134,12 @@ noncomputable def wtPct {ι : Type*} [Fintype ι] (M x : ι → ℝ) : ι → �
 noncomputable def atPct {ι : Type*} (x : ι → ℝ) : ι → ℝ :=
   fun i => 100 * x i
 
-/-- wt%/at% conversion by the same mutually inverse maps scaled by 100:
-normalizing a positive 100-sum vector to the simplex, converting, and scaling
-back is the identity in both directions. Corollary of the canonical round trips
-`Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one` and
-`Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one` with
-the factor 100 carried through. -/
+/-- wt%/at% conversion by the same mutually inverse maps scaled by 100, for a nonempty finite set of
+components with positive molar masses: normalizing a positive 100-sum vector to the simplex,
+converting, and scaling back is the identity in both directions. Corollary of the canonical round
+trips `Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one` and
+`Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one` with the factor 100
+carried through. -/
 lemma wtPct_atPct {ι : Type*} [Fintype ι] [Nonempty ι] {M : ι → ℝ}
     (hM : ∀ i, 0 < M i) :
     (∀ {w : ι → ℝ}, (∀ i, 0 < w i) → ∑ i, w i = 100 →

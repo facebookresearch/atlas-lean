@@ -1,13 +1,10 @@
-# Truss reduced axial Force eq
+# Determinate truss axial forces from statics
 
-Physical axial forces from the separation-form
-coefficients: with the same data as
-`truss_reduced_memberCoefficient_eq_inv_mulVec`, the
-physical axial force vector `fun e => s e * L e` (member
-length times the separation-form coefficient
-`s = Matrix.diagonal k *ᵥ ((B S) *ᵥ u)`, tension positive)
-is the memberwise length rescaling of the reduced statics
-coefficient solution. In particular the physical forces,
-like the coefficients, do not depend on the axial
-weights `k` through anything but the common statics
-solution.
+Let `J` (joints) and `M` (members) be finite sets, with joint positions `r_j` in the plane and
+member `e` joining joint `a_e` to joint `b_e`, and let `S` be a matrix from free coordinates indexed
+by the members to the joint displacement coordinates, such that `B S` is invertible, with the
+[compatibility matrix](axial-compatibility.md) `B`. Let `k` be member weights and `u` a solution of
+`(B S)ᵀ diag(k) (B S) u = f`, and let `s = diag(k) (B S u)` be the separation-form member
+coefficients (axial force divided by member length). Then the physical axial forces `s_e L_e`
+(tension positive), `L_e` being the Euclidean length of member `e`, are `(((B S)ᵀ)⁻¹ f)_e L_e`: the
+reduced statics solution rescaled member by member by the length.

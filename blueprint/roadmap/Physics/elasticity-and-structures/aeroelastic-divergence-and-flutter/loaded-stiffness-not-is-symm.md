@@ -1,5 +1,6 @@
-# Loaded Stiffness not is Symm
+# For nonzero load the loaded stiffness is not symmetric
 
-For `q ≠ 0` the loaded stiffness `1 - q J` is not symmetric, hence not positive
-semidefinite in Mathlib's sense: the symmetric congruence diagonalization behind a
-mass-orthonormal modal basis does not apply to it.
+For every real `q ≠ 0`, the loaded stiffness `1 - q J`, with `J` the
+[circulatory load operator](circulatory-j.md), is not symmetric, and it is not positive semidefinite
+in the sense that requires symmetry: the symmetric diagonalisation behind a mass-orthonormal modal
+basis does not apply to it.

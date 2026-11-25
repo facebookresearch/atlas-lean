@@ -1,5 +1,6 @@
-# Motor Potentials
+# Node potentials of the DC motor loop
 
-Node potentials of the motor loop for terminal voltage `u`, resistance `R`, current `i`,
-back-EMF constant `ke` and speed `ω`: `u` at the supply terminal, `u - R i` at the internal node,
-`ke ω` at the back-EMF terminal (ground is `0`).
+For real numbers `u` (terminal voltage), `R` (armature resistance), `i` (armature current), `ke`
+(back-EMF constant) and `ω` (rotor speed), the node potentials of the
+[motor loop](motor-incidence.md) are `u` at node `0`, `u - R i` at node `1` and `ke ω` at node `2`,
+with ground at potential `0`.

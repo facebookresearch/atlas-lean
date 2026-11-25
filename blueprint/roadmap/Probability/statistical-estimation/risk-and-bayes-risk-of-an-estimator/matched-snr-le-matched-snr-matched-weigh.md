@@ -1,4 +1,5 @@
-# The matched weight maximizes the SNR
+# The matched weight maximises the signal-to-noise quotient
 
-For positive definite `R` and `s1 ≠ s0`, every
-nonzero weight has SNR for the difference `d = s1 - s0` at most that of `R⁻¹ d`.
+For a finite index set `ι`, a positive definite `ι × ι` matrix `R`, `s₀ ≠ s₁` in `ℝ^ι` and every
+nonzero weight `w`, with `d = s₁ - s₀`, the matched signal-to-noise quotient satisfies
+`(wᵀ d)² / (wᵀ R w) ≤ SNR(R⁻¹ d)`, the quotient at the matched weight.

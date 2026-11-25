@@ -1,13 +1,16 @@
 # Power of a muscle under Hill's law
 
-## A. The power maximum.
+## Velocity and power
 
-- [Muscle power maximum (Hill shortening hyperbola)](muscle-power-max.md)
+- [Shortening velocity under Hill's law](hill-velocity.md)
+- [Formula for the Hill shortening velocity](hill-velocity-eq.md)
+- [Mechanical power under Hill's law](hill-power.md)
+- [Mechanical power under Hill's law as an explicit fraction](muscle-power-formula.md)
 
-## B. Power and work.
+## Maximum power
 
-- [Hill Velocity](hill-velocity.md)
-- [Hill Power](hill-power.md)
-- [Hill Velocity eq](hill-velocity-eq.md)
-- [Mechanical power under the Hill law](muscle-power-formula.md)
-- [Work at constant force](muscle-work-constant.md)
+- [Hill's power is maximal at the interior force √(a(a + F₀)) − a](muscle-power-max.md)
+
+## Work at a constant force
+
+- [Work at a constant force under Hill's law](muscle-work-constant.md)

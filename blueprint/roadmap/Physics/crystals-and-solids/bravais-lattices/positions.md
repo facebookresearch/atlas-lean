@@ -1,3 +1,4 @@
-# Positions
+# Set of atomic positions of a crystal
 
-The atomic positions `{B *ᵥ n + u f | n : Fin 3 → ℤ, f : F}`.
+For a [crystal](bravais-crystal.md) with finite nonempty motif `F` (basis matrix `B`, offsets `u`),
+the set of atomic positions is `{B n + u_f : n ∈ ℤ³, f ∈ F}`.

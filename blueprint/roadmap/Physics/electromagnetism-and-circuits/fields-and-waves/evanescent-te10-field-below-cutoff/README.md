@@ -1,55 +1,55 @@
 # Evanescent TE10 field below cutoff
 
-## A. The evanescent TE10 field
+## The evanescent field
 
-- [Cutoff Wavenumber](cutoff-wavenumber.md)
-- [Te10 Profile](te10-profile.md)
-- [Decay Rate](decay-rate.md)
-- [Evanescent Mode](evanescent-mode.md)
-- [Evanescent Electric Field](evanescent-electric-field.md)
-- [Evanescent Magnetic Field](evanescent-magnetic-field.md)
-- [Field At Time](field-at-time.md)
+- [TE10 cutoff wavenumber of a guide of width a](cutoff-wavenumber.md)
+- [Transverse profile of the TE10 mode](te10-profile.md)
+- [Decay rate of the TE10 field below cutoff](decay-rate.md)
+- [Longitudinal factor of the evanescent TE10 field](evanescent-mode.md)
+- [Electric field of the evanescent TE10 mode](evanescent-electric-field.md)
+- [Magnetic field of the evanescent TE10 mode](evanescent-magnetic-field.md)
+- [A field frozen at a time, as a function of position](field-at-time.md)
 
-## C. The decay rate
+## The decay rate
 
-- [Decay Rate pos](decay-rate-pos.md)
-- [Decay Rate sq](decay-rate-sq.md)
-- [Decay Rate at cutoff](decay-rate-at-cutoff.md)
+- [Strictly below cutoff the decay rate is positive](decay-rate-pos.md)
+- [Strictly below cutoff the decay rate satisfies κ² = kc² − ω²/c²](decay-rate-sq.md)
+- [At the cutoff frequency the decay rate is zero](decay-rate-at-cutoff.md)
 
-## D. Scalar equations and regularity
+## Scalar equations and regularity
 
-- [Te10 Profile profile Equation](te10-profile-profile-equation.md)
-- [Cont Diff te10 Profile](cont-diff-te10-profile.md)
-- [Cont Diff evanescent Mode](cont-diff-evanescent-mode.md)
-- [Evanescent Mode mode Equation iff](evanescent-mode-mode-equation-iff.md)
-- [Evanescent Mode decay Rate mode Equation](evanescent-mode-decay-rate-mode-equation.md)
+- [The TE10 profile solves the profile equation at the cutoff wavenumber](te10-profile-profile-equation.md)
+- [The TE10 profile is infinitely differentiable](cont-diff-te10-profile.md)
+- [The evanescent longitudinal factor is jointly smooth in t and z](cont-diff-evanescent-mode.md)
+- [For E₀, ω ≠ 0 the mode equation holds exactly when ω² = c₀²kc² − c₀²κ²](evanescent-mode-mode-equation-iff.md)
+- [Below cutoff the factor with the decay rate solves the mode equation](evanescent-mode-decay-rate-mode-equation.md)
 
-## E. Field components
+## Field components
 
-- [Evanescent Electric Field apply](evanescent-electric-field-apply.md)
-- [Evanescent Magnetic Field apply](evanescent-magnetic-field-apply.md)
+- [Components of the evanescent electric field for ω ≠ 0](evanescent-electric-field-apply.md)
+- [Components of the evanescent magnetic field](evanescent-magnetic-field-apply.md)
 
-## F. Bulk equations
+## Source-free Maxwell equations
 
-- [Bulk theorem for the evanescent mode](evanescent-source-free-vacuum-maxwell.md)
-- [Not evanescent source Free Vacuum Maxwell of wrong rate](not-evanescent-source-free-vacuum-maxwel.md)
+- [Strictly below cutoff the evanescent fields solve vacuum Maxwell](evanescent-source-free-vacuum-maxwell.md)
+- [With a > 0 and E₀, ω ≠ 0, a wrong rate violates vacuum Maxwell](not-evanescent-source-free-vacuum-maxwel.md)
 
-## G. Side-wall traces
+## Side-wall conditions
 
-- [PEC traces](evanescent-rectangular-guide-pectraces.md)
+- [For a, b > 0 the evanescent fields satisfy the PEC wall conditions](evanescent-rectangular-guide-pectraces.md)
 
-## H. Nonvanishing
+## Nonvanishing
 
-- [Evanescent Electric Field center](evanescent-electric-field-center.md)
-- [Evanescent Electric Field ne zero](evanescent-electric-field-ne-zero.md)
+- [At x = a/2, t = z = 0 the evanescent field's y component is E₀](evanescent-electric-field-center.md)
+- [For a > 0, E₀ ≠ 0 and ω > 0 the evanescent electric field is not zero](evanescent-electric-field-ne-zero.md)
 
-## I. Decay toward positive `z`
+## Decay toward positive z
 
-- [Evanescent Fields eq exp smul](evanescent-fields-eq-exp-smul.md)
-- [Exponential decay on the half-guide](evanescent-fields-abs-le.md)
-- [Tendsto evanescent Fields at Top](tendsto-evanescent-fields-at-top.md)
-- [Not bdd Above evanescent Electric Field nonpos](not-bdd-above-evanescent-electric-field.md)
+- [The evanescent fields are e^−κz times their values at z = 0](evanescent-fields-eq-exp-smul.md)
+- [On z ≥ 0 the evanescent fields are bounded by multiples of e^−κz](evanescent-fields-abs-le.md)
+- [For κ > 0 every evanescent field component tends to zero as z → ∞](tendsto-evanescent-fields-at-top.md)
+- [For κ > 0 the evanescent field is unbounded toward negative z](not-bdd-above-evanescent-electric-field.md)
 
-## J. Main result
+## Combined statement
 
-- [Evanescent TE10 field below cutoff](te10-evanescent-correct.md)
+- [Properties of the evanescent TE10 field below cutoff](te10-evanescent-correct.md)

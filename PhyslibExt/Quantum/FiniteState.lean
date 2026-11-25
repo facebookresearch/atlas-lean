@@ -311,8 +311,8 @@ lemma const_one_mem_differentialHamiltonian_domain (V : ℝ → ℂ) :
 
 -/
 
-/-- Variational bound: if `A = U * diagonal d * Uᴴ` with `U` unitary and `d` real, then for every
-normalized state `ψ` the expectation value of `A` is at least the smallest entry
+/-- Variational bound: for `n ≥ 1`, if `A = U * diagonal d * Uᴴ` with `U` unitary and `d` real, then
+for every normalized state `ψ` the expectation value of `A` is at least the smallest entry
 `Finset.univ.inf' Finset.univ_nonempty d` of `d`. The decomposition is an explicit hypothesis; such
 an `A` is Hermitian (`Matrix.isHermitian_mul_mul_conjTranspose`), and Mathlib's spectral theorem
 provides the decomposition for every Hermitian matrix (`inf'_eigenvalues_le_expectationValue`). -/
@@ -353,8 +353,8 @@ lemma inf'_le_expectationValue {n : ℕ} [NeZero n] {A U : Matrix (Fin n) (Fin n
     _ ≤ ∑ i, d i * ‖φ i‖ ^ 2 := Finset.sum_le_sum fun i _ =>
         mul_le_mul_of_nonneg_right (Finset.inf'_le d (Finset.mem_univ i)) (sq_nonneg _)
 
-/-- For every Hermitian matrix `A` and normalized state `ψ`, the expectation value of `A` is at
-least the smallest eigenvalue of `A`. The spectral hypothesis of `inf'_le_expectationValue` is
+/-- For `n ≥ 1`, every Hermitian matrix `A` and normalized state `ψ`, the expectation value of `A`
+is at least the smallest eigenvalue of `A`. The spectral hypothesis of `inf'_le_expectationValue` is
 discharged by Mathlib's spectral theorem `Matrix.IsHermitian.spectral_theorem`. -/
 lemma inf'_eigenvalues_le_expectationValue {n : ℕ} [NeZero n] {A : Matrix (Fin n) (Fin n) ℂ}
     (hA : A.IsHermitian) {ψ : EuclideanSpace ℂ (Fin n)} (hψ : IsNormalized ψ) :

@@ -1,4 +1,6 @@
-# Simple Shear small Strain
+# Small-strain tensor of simple shear
 
-The full small-strain tensor of simple shear: `ε₀₁ = ε₁₀ = γ/2` and every other entry `0`.
-In particular it is traceless and vanishes at `γ = 0`.
+For every `γ ∈ ℝ` and every point `x ∈ ℝ³`, the [small strain](small-strain.md) of the
+[displacement gradient](displacement-gradient.md) of the [simple-shear field](simple-shear-field.md)
+at `x` is the matrix with `ε₀₁ = ε₁₀ = γ/2` and all other entries `0`. It is traceless, and it is
+zero for `γ = 0`.

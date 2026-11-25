@@ -1,9 +1,6 @@
-# Inv not affine on pos
+# The inverse is not affine on the positive reals
 
-Scope guard for unknown stiffness: the one-degree-of-freedom
-displacement at unit load as a function of a positive scalar
-stiffness `s`, namely `s⁻¹`, is not affine (in particular not linear)
-in `s`. A stiffness-parameter inverse problem therefore cannot reuse
-the fixed-stiffness linear observation matrix; it needs a separate
-nonlinear or local model. No varying-stiffness identifiability
-statement is made here.
+There are no real numbers `a` and `b` with `1 / s = a s + b` for every `s > 0`. In particular the
+displacement `1 / s` of a one-degree-of-freedom spring of stiffness `s` under a unit load is not an
+affine function of the stiffness, so an inverse problem for an unknown stiffness cannot use the
+linear observation matrix of a fixed stiffness.

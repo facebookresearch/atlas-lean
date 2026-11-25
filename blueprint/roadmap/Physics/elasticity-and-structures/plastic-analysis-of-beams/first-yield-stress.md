@@ -1,6 +1,7 @@
-# First Yield Stress
+# Elastic first-yield stress distribution
 
-Elastic first-yield stress at height `y` (locked definition): the linear
-distribution `σy * (2 * y / h)` through a section of height `h`, equal to
-`σy` at the outer fiber `y = h / 2` and to `-σy` at `y = -h / 2` when
-`h ≠ 0` (tension positive).
+For a yield stress `σy`, a section height `h` and a height `y` above the neutral axis (real
+numbers), the elastic first-yield stress is the linear distribution `σy * (2 * y / h)` (tension
+positive), equal to `σy` at the outer fibre `y = h / 2` and to `-σy` at `y = -h / 2` when `h ≠ 0`.
+With the convention `x / 0 = 0` it is identically `0` when `h = 0`. The physical reading is `h > 0`
+and `σy > 0`.

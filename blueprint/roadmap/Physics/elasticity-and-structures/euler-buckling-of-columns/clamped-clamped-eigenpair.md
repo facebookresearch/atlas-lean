@@ -1,9 +1,8 @@
-# Clamped Clamped eigenpair
+# Clamped–clamped buckling eigenpair at the load 4π² EI / L²
 
-The clamped-clamped Euler column eigenpair: for positive flexural
-rigidity `EI` and column length `L`, `w = 1 - cos (2πx / L)` at axial
-load `P = 4π²EI / L²` is a buckling eigenfunction of a fixed-fixed
-column (both ends clamped). The factor `4` against the pinned-pinned
-load `π²EI / L²` is the standard fixed-fixed Euler result (effective
-length `L / 2`); see the module references. One explicit eigenpair, not
-a lowest-mode or completeness claim.
+For `EI > 0` (flexural rigidity) and `L > 0`, the [clamped–clamped mode](clamped-clamped-mode.md)
+`w(x) = 1 − cos(2πx / L)` and the axial load `P = 4π² EI / L²` (compression positive) satisfy the
+Euler column equation `EI w'''' + P w'' = 0` at every `x` and the clamped conditions
+`w(0) = w(L) = 0`, `w'(0) = w'(L) = 0`. The load is four times the pinned–pinned Euler load
+`π² EI / L²` (effective length `L / 2`). This is one explicit eigenpair: it is not claimed to give
+the lowest buckling load or to belong to a complete set of modes.

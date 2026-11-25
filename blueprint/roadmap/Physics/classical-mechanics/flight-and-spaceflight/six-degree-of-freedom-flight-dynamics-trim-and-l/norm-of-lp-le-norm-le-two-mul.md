@@ -1,5 +1,7 @@
 # Sup and Euclidean norms of a state
 
-For `e : EuclideanSpace ℝ (Fin 4)` with coordinates
-`WithLp.ofLp e`, the sup norm and the Euclidean norm compare as `‖ofLp e‖ ≤ ‖e‖ ≤ 2 ‖ofLp e‖`,
+For every state `e ∈ ℝ⁴`, its sup norm `‖e‖_∞` and its Euclidean norm `‖e‖` compare as
+
+`‖e‖_∞ ≤ ‖e‖ ≤ 2 ‖e‖_∞`,
+
 the factor `2` being `√4`.

@@ -1,5 +1,7 @@
-# Physlib Crystal
+# Abstract crystal with integer translations and the motif as unit cell
 
-The stable Physlib crystal of a crystal with motif `F`: translation group `Fin 3 → ℤ` and unit
-cell `F`, so that a site is a cell index together with a motif label. Physlib's crystals carry no
-coordinates, so this crystal depends only on `F`.
+For a finite nonempty set `F` of motif labels, the abstract crystal with translation group `ℤ³` and
+unit cell `F` carries no coordinates: its sites are the pairs `(n, f)` of a cell index `n ∈ ℤ³` and
+a label `f ∈ F`, and a translation `m ∈ ℤ³` acts on the cell only, `m + (n, f) = (m + n, f)`. It
+depends only on `F`; a [crystal with motif](bravais-crystal.md) `F` places its sites at
+[positions](site-position.md).

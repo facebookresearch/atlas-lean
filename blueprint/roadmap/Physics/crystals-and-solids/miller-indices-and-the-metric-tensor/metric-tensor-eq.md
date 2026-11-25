@@ -1,3 +1,4 @@
-# Metric Tensor eq
+# The metric tensor is the Gram matrix Bᵀ B
 
-The metric tensor is the Gram matrix `G = Bᵀ * B` of the basis matrix.
+For every [Bravais lattice](../bravais-lattices/bravais-lattice.md) with basis matrix `B`, the
+[metric tensor](metric-tensor.md) is `G = Bᵀ B`.

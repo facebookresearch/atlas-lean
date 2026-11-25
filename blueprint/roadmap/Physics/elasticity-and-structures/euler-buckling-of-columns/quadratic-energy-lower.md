@@ -1,5 +1,6 @@
-# Quadratic energy lower
+# Lower bound on the quadratic energy of a pinned column
 
-Lower bound for the pinned-column quadratic energy
-`Q = EI * ∫ (w'')^2 - P * ∫ (w')^2`: it is at least
-`(π^2 * EI / L^2 - P) * ∫ (w')^2`.
+Let `EI > 0`, `L > 0` and functions `w, w', w'' : ℝ → ℝ` such that, at every `x ∈ [0, L]`, `w` has
+derivative `w'(x)` and `w'` has derivative `w''(x)`, with `w''` continuous on `[0, L]`, with
+`w(0) = w(L) = 0`. Then for every real axial load `P` (compression positive),
+`EI ∫₀ᴸ w''² − P ∫₀ᴸ w'² ≥ (π² EI / L² − P) ∫₀ᴸ w'²`.

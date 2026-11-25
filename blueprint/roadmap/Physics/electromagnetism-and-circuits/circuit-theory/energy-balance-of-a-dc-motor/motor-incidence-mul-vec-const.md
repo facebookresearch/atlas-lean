@@ -1,4 +1,4 @@
-# Motor Incidence mul Vec const
+# The same current in every branch satisfies Kirchhoff's current law
 
-KCL with zero node injection: the same current `i` flows in every branch of the loop, in
-particular in both the resistance and inductance branches.
+For every real `i`, the [incidence matrix](motor-incidence.md) `B` of the motor loop satisfies
+`B (i, i, i, i) = 0`: equal currents in the four branches give zero net current at every node.

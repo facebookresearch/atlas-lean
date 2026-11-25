@@ -1,3 +1,4 @@
-# Cont Diff evanescent Mode
+# The evanescent longitudinal factor is jointly smooth in t and z
 
-The evanescent mode is jointly smooth in time and guide coordinate.
+For all real `E₀`, `ω` and `κ`, the [longitudinal factor](evanescent-mode.md)
+`f(t, z) = -(E₀/ω) e^{-κz} sin(ωt)` is infinitely differentiable as a function of `(t, z)`.

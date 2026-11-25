@@ -1,3 +1,3 @@
-# C4 det
+# The quarter-turn has determinant 1
 
-`C4` has determinant one.
+The [quarter-turn](c4.md) `C₄` has `det C₄ = 1`.

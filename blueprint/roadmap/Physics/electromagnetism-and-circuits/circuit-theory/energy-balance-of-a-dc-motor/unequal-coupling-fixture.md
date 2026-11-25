@@ -1,6 +1,10 @@
-# Concrete `ke ≠ kt` fixture
+# Example of a DC motor with unequal motor constants
 
-`R = L = J = b = ke = 1`, `kt = 2`, constant `i = ω = 1`,
-`u = 2`, `τL = 1`: both motor equations hold at every `t` (first two conjuncts), `E` is constant
-so `E' = 0`, the reciprocal balance `u i - R i² - b ω² - τL ω` evaluates to `-1 ≠ 0`, and the
-headline right-hand side, with residual `(kt - ke) i ω = 1`, evaluates to `0`.
+Take `R = L = J = b = ke = 1`, `kt = 2`, constant `i = ω = 1`, `u = 2` and `τL = 1`. At every time
+`t`:
+
+- the armature equation `2 = 1 · 1 + 1 · 0 + 1 · 1` and the rotor equation
+  `1 · 0 = 2 · 1 - 1 · 1 - 1` hold, the derivatives of the constants being `0`;
+- the [stored energy](motor-energy.md) is constant, so its derivative is `0`;
+- the reciprocal balance `u i - R i² - b ω² - τL ω` equals `-1`;
+- adding the coupling residual `(kt - ke) i ω = 1` gives `0`, the derivative.

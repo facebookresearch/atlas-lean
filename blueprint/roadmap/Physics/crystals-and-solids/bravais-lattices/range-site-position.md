@@ -1,3 +1,5 @@
-# Range site Position
+# The sites occupy exactly the atomic positions
 
-The sites occupy exactly the atomic positions.
+For every [crystal](bravais-crystal.md) with finite nonempty motif `F`, the set of
+[site positions](site-position.md) of the [abstract crystal](physlib-crystal.md) is the set of
+[atomic positions](positions.md) `{B n + u_f : n ∈ ℤ³, f ∈ F}`.

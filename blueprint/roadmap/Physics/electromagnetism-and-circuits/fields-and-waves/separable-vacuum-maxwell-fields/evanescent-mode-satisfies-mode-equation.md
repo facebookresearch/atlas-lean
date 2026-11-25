@@ -1,8 +1,6 @@
-# Evanescent Mode satisfies mode Equation
+# The exponential mode solves the mode equation iff ω² = c0² (kc² − α²)
 
-Sinusoidal profile and the exponential mode
-`cos (freq t) exp (-alpha z)` satisfy the mode equation exactly
-under `freq^2 = c0^2 (kc^2 - alpha^2)`. No sign is imposed on
-`alpha`: the mode is evanescent (decaying along the guide) exactly
-when `0 < alpha`, see `evanescentMode_decay`; `alpha = 0` gives a
-mode independent of `z` and `alpha < 0` a growing one.
+For all reals `kc`, `α`, `ω` and `c0`, the mode `f(t, z) = cos(ω t) exp(−α z)` satisfies the
+[mode equation](mode-equation.md) with `c0` and `kc` if and only if `ω² = c0² (kc² − α²)`. No sign
+is imposed on `α`: the mode [decays along the guide](evanescent-mode-decay.md) for `α > 0`, does not
+depend on `z` for `α = 0` and grows for `α < 0`.

@@ -1,6 +1,6 @@
-# Axisymmetric Precession euler solve
+# For positive inertias, Euler's equations recover the precession
 
-The witness tests the Euler port of the torque-balance section: for positive inertias,
-`I = diag(I_⊥, I_⊥, I₃)` is positive definite, and the angular acceleration that
-`euler_solve_iff` determines without torque, `I⁻¹ (0 - ω_B × (I ω_B))`, is the witness's own
-`ω_B'`.
+For real numbers `I_⊥ > 0`, `I₃ > 0`, `A` and `ω₃`, the inertia `I = diag(I_⊥, I_⊥, I₃)` is
+positive definite, and at every time `t` the [precessing angular velocity](axisymmetric-precession.md)
+satisfies `ω_B'(t) = I⁻¹ (0 - ω_B(t) × (I ω_B(t)))`: the angular acceleration that
+[Euler's equations determine](euler-solve-iff.md) for zero torque.

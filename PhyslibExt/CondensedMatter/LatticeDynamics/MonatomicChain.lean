@@ -96,7 +96,8 @@ lemma chainNormalModeAngularFrequency_nonneg (K m : ℝ) (hm : 0 < m) (hK : 0 �
   unfold chainNormalModeAngularFrequency
   positivity
 
-/-- Chain-mode symmetry: mode `N - j` has the same angular frequency as mode `j`. -/
+/-- Chain-mode symmetry: for `j ≤ N`, mode `N - j` has the same angular frequency as mode `j`
+(`N - j` is truncated natural subtraction, so the condition is needed). -/
 lemma chainNormalModeAngularFrequency_symm (K m : ℝ) (hm : 0 < m) (hK : 0 ≤ K)
     {N : ℕ} [NeZero N] {j : ℕ} (hj : j ≤ N) :
     chainNormalModeAngularFrequency K m hm hK N (N - j) =

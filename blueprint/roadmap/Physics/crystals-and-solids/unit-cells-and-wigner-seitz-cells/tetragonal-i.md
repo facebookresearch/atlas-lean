@@ -1,4 +1,5 @@
-# Tetragonal I
+# Body-centred tetragonal lattice
 
-The body-centred tetragonal lattice with parameters `a, c > 0` and primitive vectors
-`(-a/2, a/2, c/2)`, `(a/2, -a/2, c/2)`, `(a/2, a/2, -c/2)`. Pearson symbol `tI`.
+For `a > 0` and `c > 0`, the body-centred tetragonal lattice (Pearson symbol `tI`) is the
+[Bravais lattice](../bravais-lattices/bravais-lattice.md) whose primitive vectors (columns of the
+basis matrix) are `(-a/2, a/2, c/2)`, `(a/2, -a/2, c/2)` and `(a/2, a/2, -c/2)`.

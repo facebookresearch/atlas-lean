@@ -1,6 +1,8 @@
 # Electromagnetic fields and waves
 
-Electrostatics, Maxwell's equations and electromagnetic waves: plane waves at interfaces and in conductors, the skin depth, separable vacuum fields and the modes of rectangular waveguides, the Yee scheme, dipole radiation and the Friis formula, charge conservation and Ohm's law in conductors.
+Electrostatics, Maxwell's equations and electromagnetic waves: plane waves at interfaces and in
+conductors, the skin depth, separable vacuum fields and the modes of rectangular waveguides, the Yee
+scheme, dipole radiation and the Friis formula, charge conservation and Ohm's law in conductors.
 
 - [Charge conservation through the faces of a box](charge-conservation-through-the-faces-of-a-box/README.md)
 - [Electrostatics, plane waves and Fresnel coefficients](electrostatics-plane-waves-and-fresnel-coefficie/README.md)

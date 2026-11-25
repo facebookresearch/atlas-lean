@@ -1,7 +1,15 @@
-# Ballistic Velocity of ode
+# Solutions of the entry equations follow the ballistic profile
 
-Derivation from the equations of motion: for `H ≠ 0`, `β > 0` and a downward path,
-`sin γ > 0`, if on the window `[t₀, t₁]`, `t₀ ≤ t₁`, the altitude and speed satisfy
-`h' = -v * sin γ` and `v' = -ρ(h) * v ^ 2 / (2 * β)` with entry state `h(t₀) = he`,
-`v(t₀) = ve`, then `v(t) = ballisticVelocity (h(t))` throughout the window. The proof does not use
-`t₀ ≤ t₁`; the hypothesis excludes the empty window, on which the statement says nothing.
+Let `H ≠ 0`, `β > 0` and `sin γ > 0`, a downward path, let `ρ₀`, `h_e` and `v_e` be real, and let
+`t₀ ≤ t₁`. Let `h` and `v` be real functions of time such that at every `t ∈ [t₀, t₁]`
+
+`h'(t) = −v(t) sin γ` and `v'(t) = −ρ(h(t)) v(t)² / (2 β)`,
+
+with `ρ(z) = ρ₀ exp(−z / H)` the [exponential density](exponential-density.md), and with entry
+state `h(t₀) = h_e` and `v(t₀) = v_e`. Then for every `t ∈ [t₀, t₁]`
+
+`v(t) = v_e exp(K (exp(−h_e / H) − exp(−h(t) / H)))`,
+
+the [finite-entry ballistic velocity profile](ballistic-velocity.md) at the altitude `h(t)`, with
+`K = ρ₀ H / (2 β sin γ)`. The equations of motion are those of a drag-dominated straight entry,
+gravity and lift neglected, assumed only on the nonempty window `[t₀, t₁]`.
