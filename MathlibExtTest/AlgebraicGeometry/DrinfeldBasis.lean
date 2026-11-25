@@ -53,8 +53,14 @@ unit ideal. -/
 theorem basisDivisor_zero : DrinfeldGlobal.basisDivisor G 0 P Q = ⊤ :=
   prodKerGraph_zero f _ _
 
-/-- Level zero is not a Drinfeld level, whatever the sections. -/
-theorem not_isDrinfeldBasis_zero : ¬ DrinfeldGlobal.IsDrinfeldBasis G 0 P Q :=
+/-- At level zero the source predicate `IsDrinfeldBasis` ignores the sections:
+it says that the torsion ideal is the unit ideal. -/
+theorem isDrinfeldBasis_zero_iff :
+    DrinfeldGlobal.IsDrinfeldBasis G 0 P Q ↔ DrinfeldGlobal.torsionIdeal G 0 = ⊤ := by
+  rw [DrinfeldGlobal.isDrinfeldBasis_iff, basisDivisor_zero, eq_comm]
+
+/-- Level zero is not a level of `IsValidDrinfeldBasis`, whatever the sections. -/
+theorem not_isValidDrinfeldBasis_zero : ¬ DrinfeldGlobal.IsValidDrinfeldBasis G 0 P Q :=
   fun h => Nat.lt_irrefl 0 h.level_pos
 
 /-- At level one the only index is `(0, 0)`, so the basis tuple is the unit
@@ -63,11 +69,11 @@ theorem basisTuple_one (i : Fin (1 * 1)) :
     DrinfeldGlobal.basisTuple G 1 P Q i = (G.one (𝟙 (Spec (CommRingCat.of R)))).left := by
   simp [DrinfeldGlobal.basisTuple, DrinfeldGlobal.linComb, G.one_mul]
 
-/-- At level one the divisor condition holds for every pair of sections:
-both sides are the ideal of the unit section. Only the torsion conditions
-of `IsDrinfeldBasis` rule out other pairs. -/
-theorem basisDivisor_one :
-    DrinfeldGlobal.basisDivisor G 1 P Q = DrinfeldGlobal.torsionIdeal G 1 := by
+/-- At level one the source predicate `IsDrinfeldBasis` holds for every pair
+of sections: the basis divisor and the torsion ideal are both the ideal of the
+unit section. -/
+theorem isDrinfeldBasis_one : DrinfeldGlobal.IsDrinfeldBasis G 1 P Q := by
+  rw [DrinfeldGlobal.isDrinfeldBasis_iff]
   set e := (G.one (𝟙 (Spec (CommRingCat.of R)))).left
   have hgraph : ∀ (x : Spec (CommRingCat.of R) ⟶ A) (hx : x ≫ f = 𝟙 _), x = e →
       (graphOver f x hx).ker = (e ≫ DrinfeldGlobal.toPullbackId (f := f)).ker := by
@@ -84,9 +90,10 @@ theorem basisDivisor_one :
     hgraph _ _ (basisTuple_one G P Q 0), DrinfeldGlobal.torsionIdeal, hfst, Category.assoc,
     Scheme.Hom.ker_comp_of_isIso (pullback.snd _ _)]
 
-/-- At level one the torsion conditions single out the unit pair. -/
-theorem isDrinfeldBasis_one_iff :
-    DrinfeldGlobal.IsDrinfeldBasis G 1 P Q ↔
+/-- At level one `IsValidDrinfeldBasis` holds exactly for the unit pair: its
+torsion conditions rule out every other pair. -/
+theorem isValidDrinfeldBasis_one_iff :
+    DrinfeldGlobal.IsValidDrinfeldBasis G 1 P Q ↔
       P = G.one (𝟙 (Spec (CommRingCat.of R))) ∧ Q = G.one (𝟙 (Spec (CommRingCat.of R))) := by
   constructor
   · intro h
@@ -95,7 +102,7 @@ theorem isDrinfeldBasis_one_iff :
     rw [RelativeGroupLaw.nsmul_one] at hP hQ
     exact ⟨hP, hQ⟩
   · rintro ⟨rfl, rfl⟩
-    exact ⟨Nat.one_pos, G.nsmul_one_point _ 1, G.nsmul_one_point _ 1, basisDivisor_one G _ _⟩
+    exact ⟨Nat.one_pos, G.nsmul_one_point _ 1, G.nsmul_one_point _ 1, isDrinfeldBasis_one G _ _⟩
 
 /-- At level two the combination of `a` copies of `P` and `b` copies of `Q`
 sits at index `2 * a + b`, so index `1` is `Q`. -/

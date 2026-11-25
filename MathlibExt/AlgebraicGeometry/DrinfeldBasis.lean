@@ -165,10 +165,24 @@ noncomputable def torsionIdeal (q : ℕ) :
   (pullback.fst (G.schemeNsmul q)
     (G.one (𝟙 (Spec (CommRingCat.of R)))).left ≫ toPullbackId (f := f)).ker
 
-/-- Two sections form a Drinfeld basis at level `q` when the level is
-positive, both sections are `q`-torsion, and their basis divisor is the
-torsion ideal. -/
-structure IsDrinfeldBasis (q : ℕ) (P Q : Section f) : Prop where
+/-- Two sections form a Drinfeld basis at level `q` when their basis
+divisor is the torsion ideal. This is the source predicate;
+`IsValidDrinfeldBasis` adds a positive level and `q`-torsion sections. -/
+def IsDrinfeldBasis (q : ℕ) (P Q : Section f) : Prop :=
+  DrinfeldGlobal.basisDivisor G q P Q = DrinfeldGlobal.torsionIdeal G q
+
+theorem isDrinfeldBasis_iff (q : ℕ) (P Q : Section f) :
+    DrinfeldGlobal.IsDrinfeldBasis G q P Q ↔
+      DrinfeldGlobal.basisDivisor G q P Q = DrinfeldGlobal.torsionIdeal G q :=
+  Iff.rfl
+
+/-- A Drinfeld basis at level `q` with the conditions of a Drinfeld level
+structure: the level is positive, both sections are `q`-torsion, and they
+satisfy the source predicate `IsDrinfeldBasis`. The extra conditions matter at
+small levels: at level one the basis tuple is the unit section alone, so
+`IsDrinfeldBasis` holds for every pair, while this predicate holds only for the
+unit pair. -/
+structure IsValidDrinfeldBasis (q : ℕ) (P Q : Section f) : Prop where
   /-- The level is positive. -/
   level_pos : 0 < q
   /-- The first section is `q`-torsion. -/
@@ -176,14 +190,14 @@ structure IsDrinfeldBasis (q : ℕ) (P Q : Section f) : Prop where
   /-- The second section is `q`-torsion. -/
   isTorsionPoint_snd : G.IsTorsionPoint (𝟙 (Spec (CommRingCat.of R))) q Q
   /-- The basis divisor is the torsion ideal. -/
-  basisDivisor_eq : DrinfeldGlobal.basisDivisor G q P Q = DrinfeldGlobal.torsionIdeal G q
+  isDrinfeldBasis : DrinfeldGlobal.IsDrinfeldBasis G q P Q
 
-theorem isDrinfeldBasis_iff (q : ℕ) (P Q : Section f) :
-    DrinfeldGlobal.IsDrinfeldBasis G q P Q ↔
+theorem isValidDrinfeldBasis_iff (q : ℕ) (P Q : Section f) :
+    DrinfeldGlobal.IsValidDrinfeldBasis G q P Q ↔
       0 < q ∧ G.IsTorsionPoint (𝟙 (Spec (CommRingCat.of R))) q P ∧
         G.IsTorsionPoint (𝟙 (Spec (CommRingCat.of R))) q Q ∧
-        DrinfeldGlobal.basisDivisor G q P Q = DrinfeldGlobal.torsionIdeal G q :=
-  ⟨fun h => ⟨h.level_pos, h.isTorsionPoint_fst, h.isTorsionPoint_snd, h.basisDivisor_eq⟩,
+        DrinfeldGlobal.IsDrinfeldBasis G q P Q :=
+  ⟨fun h => ⟨h.level_pos, h.isTorsionPoint_fst, h.isTorsionPoint_snd, h.isDrinfeldBasis⟩,
     fun ⟨hq, hP, hQ, h⟩ => ⟨hq, hP, hQ, h⟩⟩
 
 /-- The torsion subscheme is flat over the base whenever the scheme
