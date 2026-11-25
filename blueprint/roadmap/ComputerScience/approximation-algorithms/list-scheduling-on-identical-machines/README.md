@@ -35,3 +35,8 @@
 - [List scheduling schedules every job](list-schedule-is-schedule-of.md)
 - [Running time of list scheduling](list-schedule-time.md)
 - [Running time of LPT](lpt-time-le.md)
+
+## Rounded processing times
+
+- [Rounding processing times to ticks](rounding-processing-times-to-ticks.md)
+- [List scheduling with rounded processing times](list-scheduling-with-rounded-processing-times.md)

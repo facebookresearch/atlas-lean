@@ -62,7 +62,7 @@ feedback is claimed; `eps = 0` is handled without division by `eps`.
 namespace EarthScience
 
 
-/-- One-layer grey atmosphere: if `eps > 0`, the atmosphere equilibrium
+/-- One-layer grey atmosphere: if `sigma > 0` and `eps > 0`, the atmosphere equilibrium
 `2*eps*sigma*Ta^4 = eps*sigma*Ts^4` gives `Ta^4 = Ts^4 / 2`. -/
 theorem atmosphere_temperature {eps σ Ts Ta : ℝ} (hσ : 0 < σ) (heps : 0 < eps)
     (h : 2 * eps * σ * Ta ^ 4 = eps * σ * Ts ^ 4) :
@@ -73,9 +73,10 @@ theorem atmosphere_temperature {eps σ Ts Ta : ℝ} (hσ : 0 < σ) (heps : 0 < e
   have h3 : 2 * Ta ^ 4 = Ts ^ 4 := mul_left_cancel₀ hne h2
   linarith
 
-/-- One-layer grey atmosphere: surface/atmosphere balances yield
-`Ts^4 = Te^4 / (1 - eps/2)` for `eps ∈ [0,1]`. The top-of-atmosphere
-balance is `sigma*Te^4 = (1-eps)*sigma*Ts^4 + eps*sigma*Ta^4`. -/
+/-- One-layer grey atmosphere: for `sigma > 0` and `eps ∈ [0,1]`, the atmosphere
+balance `2*eps*sigma*Ta^4 = eps*sigma*Ts^4` and the top-of-atmosphere balance
+`sigma*Te^4 = (1-eps)*sigma*Ts^4 + eps*sigma*Ta^4` yield
+`Ts^4 = Te^4 / (1 - eps/2)`. -/
 theorem surface_temperature {eps σ Te Ts Ta : ℝ} (hσ : 0 < σ)
     (heps0 : 0 ≤ eps) (heps1 : eps ≤ 1)
     (hatm : 2 * eps * σ * Ta ^ 4 = eps * σ * Ts ^ 4)
@@ -100,8 +101,8 @@ theorem surface_temperature {eps σ Te Ts Ta : ℝ} (hσ : 0 < σ)
     rw [eq_div_iff hdenom]
     exact hTe.symm
 
-/-- Transparent limit `eps = 0`: the top-of-atmosphere balance gives equal
-fourth powers, `Ts^4 = Te^4`. Without sign hypotheses this does not give
+/-- Transparent limit `eps = 0`: for `sigma > 0`, the top-of-atmosphere balance gives
+equal fourth powers, `Ts^4 = Te^4`. Without sign hypotheses this does not give
 `Ts = Te` (`Ts = 1`, `Te = -1` also satisfy it). -/
 theorem transparent_limit {σ Te Ts Ta : ℝ} (hσ : 0 < σ)
     (htoa : σ * Te ^ 4 = (1 - (0 : ℝ)) * σ * Ts ^ 4 + (0 : ℝ) * σ * Ta ^ 4) :
@@ -119,7 +120,7 @@ lemma opaque_normalization {Te Ts : ℝ}
   norm_num at h
   linarith
 
-/-- Opaque limit `eps = 1`: the atmosphere balance and the
+/-- Opaque limit `eps = 1`: for `sigma > 0`, the atmosphere balance and the
 top-of-atmosphere balance give `Ts^4 = 2 * Te^4`. This is
 `surface_temperature` at `eps = 1`. -/
 theorem opaque_surface_temperature {σ Te Ts Ta : ℝ} (hσ : 0 < σ)

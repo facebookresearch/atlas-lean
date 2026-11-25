@@ -21,7 +21,7 @@ public import MathlibExt.RingTheory.RamificationInertia.KummerDvd
 
 @[expose] public section
 
-theorem exactSource
+private theorem exactSource
     {O : Type*} [CommRing O] [IsDomain O] [IsDiscreteValuationRing O]
     {R : Type*} [CommRing R] [IsDedekindDomain R] [Algebra O R]
     {E : Type*} [Field E] [Algebra R E] [IsFractionRing R E] [Algebra O E]
