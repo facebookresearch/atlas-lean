@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.CStarAlgebra.Matrix
-public import WantedExt.Analysis.WignerSemicircleWanted
+public import Mathlib.Probability.IdentDistrib
+public import MathlibExt.Probability.WignerOperatorNorm
 
 /-!
 # The operator norm of a random matrix
@@ -52,21 +52,6 @@ namespace MathlibExt.Probability.WignerOperatorNormWanted
 open MeasureTheory ProbabilityTheory Filter Real
 open scoped Topology
 open MathlibExt.Analysis.WignerSemicircleWanted.Analysis.WignerSemicircleProblem (wignerMatrix)
-
-/-- **Upper tail estimate for Wigner ensembles** (Tao, *Topics in Random Matrix Theory*,
-Corollary 2.3.6, real case). There are absolute constants `C, c > 0` such that, if the
-upper-triangular entries `X i j` (`i ≤ j`) of a real symmetric array are independent, have mean
-zero and are bounded by `1`, then the `n × n` Wigner matrix `M` satisfies
-`P(‖M‖ > A√n) ≤ C exp(-cAn)` for every `n` and every `A ≥ C`. -/
-public theorem_wanted wigner_opNorm_upper_tail :
-    ∃ C > 0, ∃ c > 0, ∀ (Ω : Type*) (_ : MeasurableSpace Ω) (P : Measure Ω),
-      IsProbabilityMeasure P → ∀ (X : ℕ → ℕ → Ω → ℝ),
-      (∀ i j, Measurable (X i j)) →
-      iIndepFun (fun ij : {p : ℕ × ℕ // p.1 ≤ p.2} => X ij.val.1 ij.val.2) P →
-      (∀ i j, i ≤ j → ∫ ω, X i j ω ∂P = 0) → (∀ i j, i ≤ j → ∀ ω, |X i j ω| ≤ 1) →
-      ∀ (n : ℕ) (A : ℝ), C ≤ A →
-        P.real {ω | A * √n < ‖Matrix.toEuclideanCLM (n := Fin n) (𝕜 := ℂ)
-          (wignerMatrix X n ω)‖} ≤ C * exp (-c * A * n)
 
 /-- **Concentration of the operator norm** (Tao, *Topics in Random Matrix Theory*,
 Proposition 2.3.10, real case). There are absolute constants `C, c > 0` such that, if the

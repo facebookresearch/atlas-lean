@@ -34,7 +34,11 @@ open MeasureTheory
 Proves the ergodic-case Birkhoff pointwise ergodic theorem for real integrable functions.
 -/
 
-/-- Hopf maximal ergodic theorem: the integral of `f` over the maximal set is nonnegative. -/
+/-- **Hopf maximal ergodic theorem.** Let $\mu$ be a finite measure on a measurable space $\alpha$,
+let $T : \alpha \to \alpha$ preserve $\mu$, and let $f : \alpha \to \mathbb{R}$ be measurable and
+$\mu$-integrable. For a natural number $n$ write $S_n f(x) = \sum_{k=0}^{n-1} f(T^k x)$. Then the
+integral of $f$ with respect to $\mu$ over the set of points $x \in \alpha$ such that
+$S_n f(x) > 0$ for some natural number $n$ is nonnegative. -/
 theorem maximal_ergodic
     {α : Type*} [MeasurableSpace α] {μ : Measure α} [IsFiniteMeasure μ]
     {T : α → α} (hT : MeasurePreserving T μ μ)
@@ -189,13 +193,19 @@ theorem maximal_ergodic
   rw [hunion] at hlim
   exact ge_of_tendsto hlim (Filter.Eventually.of_forall hper)
 
-/-- Maximal divergence set where some Birkhoff sum exceeds `n * q` for a rational `q > c`. -/
+/-- **Maximal divergence set.** Let $\alpha$ be a measurable space, $T : \alpha \to \alpha$ a map,
+$g : \alpha \to \mathbb{R}$ a function and $c$ a real number. The maximal divergence set of $T$,
+$g$ and $c$ is the set of points $x \in \alpha$ for which there is a rational number $q > c$ such
+that $n q < \sum_{k=0}^{n-1} g(T^k x)$ for infinitely many natural numbers $n$. -/
 noncomputable def DickSet {α : Type*} [MeasurableSpace α]
     (T : α → α) (g : α → ℝ) (c : ℝ) : Set α :=
   ⋃ (q : ℚ) (_ : c < (q : ℝ)), ⋂ (N : ℕ), ⋃ (n : ℕ) (_ : N ≤ n),
     {x | (n : ℝ) * (q : ℝ) < birkhoffSum T g n x}
 
-/-- The maximal divergence set is measurable. -/
+/-- **Measurability of the maximal divergence set.** Let $\mu$ be a measure on a measurable space
+$\alpha$, let $T : \alpha \to \alpha$ preserve $\mu$, and let $g : \alpha \to \mathbb{R}$ be
+measurable. Then for every real number $c$, the maximal divergence set of $T$, $g$ and $c$ is a
+measurable set. -/
 theorem dick_measurable
     {α : Type*} [MeasurableSpace α] {μ : Measure α}
     {T : α → α} (hT : MeasurePreserving T μ μ)
@@ -213,7 +223,11 @@ theorem dick_measurable
   intro j _
   exact hg.comp ((hT.iterate j).measurable)
 
-/-- Membership in the maximal divergence set, unfolded. -/
+/-- **Membership in the maximal divergence set.** Let $\alpha$ be a measurable space,
+$T : \alpha \to \alpha$ a map, $g : \alpha \to \mathbb{R}$ a function, $c$ a real number and
+$x \in \alpha$. Then $x$ lies in the maximal divergence set of $T$, $g$ and $c$ if and only if
+there is a rational number $q > c$ such that for every natural number $N$ there is a natural
+number $n \ge N$ with $n q < \sum_{k=0}^{n-1} g(T^k x)$. -/
 theorem dick_mem {α : Type*} [MeasurableSpace α]
     {T : α → α} {g : α → ℝ} {c : ℝ} {x : α} :
     x ∈ DickSet T g c ↔ ∃ q : ℚ, c < (q : ℝ) ∧
@@ -282,7 +296,9 @@ private theorem dick_bwd {α : Type*} [MeasurableSpace α]
   push_cast
   nlinarith [hn, hpos, hS]
 
-/-- The maximal divergence set is invariant under `T`. -/
+/-- **Invariance of the maximal divergence set.** Let $\alpha$ be a measurable space. For every map
+$T : \alpha \to \alpha$, every function $g : \alpha \to \mathbb{R}$ and every real number $c$, the
+preimage under $T$ of the maximal divergence set of $T$, $g$ and $c$ equals that set. -/
 theorem dick_inv {α : Type*} [MeasurableSpace α]
     {T : α → α} {g : α → ℝ} {c : ℝ} :
     T ⁻¹' DickSet T g c = DickSet T g c := by
@@ -294,7 +310,10 @@ private theorem dick_step_iff {α : Type*} [MeasurableSpace α]
     {T : α → α} {g : α → ℝ} {c : ℝ} {x : α} :
     (T x ∈ DickSet T g c) ↔ (x ∈ DickSet T g c) := ⟨dick_bwd, dick_fwd⟩
 
-/-- The maximal divergence set is invariant under iterates of `T`. -/
+/-- **Invariance of the maximal divergence set under iterates.** Let $\alpha$ be a measurable
+space, $T : \alpha \to \alpha$ a map, $g : \alpha \to \mathbb{R}$ a function and $c$ a real number.
+For every natural number $k$ and every $x \in \alpha$, the point $T^k x$ lies in the maximal
+divergence set of $T$, $g$ and $c$ if and only if $x$ does. -/
 theorem dick_iter {α : Type*} [MeasurableSpace α]
     {T : α → α} {g : α → ℝ} {c : ℝ} (k : ℕ) (x : α) :
     (T^[k] x ∈ DickSet T g c) ↔ (x ∈ DickSet T g c) := by
@@ -304,7 +323,12 @@ theorem dick_iter {α : Type*} [MeasurableSpace α]
     rw [Function.iterate_succ_apply]
     exact Iff.trans (ih (T x)) dick_step_iff
 
-/-- Birkhoff sums of the truncated function agree with shifted sums inside an invariant set. -/
+/-- **Birkhoff sums of a function cut off to an invariant set, inside the set.** Let $\alpha$ be a
+measurable space, $T : \alpha \to \alpha$ a map, $g : \alpha \to \mathbb{R}$ a function, $c$ a real
+number, and $D \subseteq \alpha$ a set such that for every natural number $k$ and every
+$x \in \alpha$, $T^k x \in D$ if and only if $x \in D$. Let $h : \alpha \to \mathbb{R}$ satisfy
+$h(y) = g(y) - c$ for $y \in D$ and $h(y) = 0$ for $y \notin D$. Then for every $x \in D$ and
+every natural number $n$, $\sum_{k=0}^{n-1} h(T^k x) = \sum_{k=0}^{n-1} g(T^k x) - n c$. -/
 theorem dick_sum_in {α : Type*} [MeasurableSpace α]
     {T : α → α} {g : α → ℝ} {c : ℝ}
     (D : Set α)
@@ -320,7 +344,12 @@ theorem dick_sum_in {α : Type*} [MeasurableSpace α]
   rw [Finset.sum_congr rfl hterm, Finset.sum_sub_distrib, Finset.sum_const,
     Finset.card_range, nsmul_eq_mul]
 
-/-- Birkhoff sums of the truncated function vanish outside an invariant set. -/
+/-- **Birkhoff sums of a function cut off to an invariant set, outside the set.** Let $\alpha$ be
+a measurable space, $T : \alpha \to \alpha$ a map, $g : \alpha \to \mathbb{R}$ a function, $c$ a
+real number, and $D \subseteq \alpha$ a set such that for every natural number $k$ and every
+$x \in \alpha$, $T^k x \in D$ if and only if $x \in D$. Let $h : \alpha \to \mathbb{R}$ satisfy
+$h(y) = g(y) - c$ for $y \in D$ and $h(y) = 0$ for $y \notin D$. Then for every $x \notin D$ and
+every natural number $n$, $\sum_{k=0}^{n-1} h(T^k x) = 0$. -/
 theorem dick_sum_out {α : Type*} [MeasurableSpace α]
     {T : α → α} {g : α → ℝ} {c : ℝ}
     (D : Set α)
@@ -498,13 +527,18 @@ private theorem birkhoff_measurable
     exact upper_of_not_mem hxU' hb
 
 /--
-If `μ` is a probability measure, `T` is ergodic measure-preserving, and `g : α → ℝ` is integrable,
-then `birkhoffAverage ℝ T g n x` converges for `μ`-a.e. `x` to `∫ y, g y ∂μ`. Source: G. D.
+**Birkhoff pointwise ergodic theorem (ergodic case).** Let $\mu$ be a probability measure on a
+measurable space $\alpha$, let $T : \alpha \to \alpha$ be ergodic with respect to $\mu$ (in
+particular $T$ preserves $\mu$), and let $g : \alpha \to \mathbb{R}$ be $\mu$-integrable. Then for
+$\mu$-almost every $x \in \alpha$, the Birkhoff averages $\frac{1}{n} \sum_{k=0}^{n-1} g(T^k x)$
+converge to $\int g \, d\mu$ as $n \to \infty$.
+
+Proves `Wanted` entry `birkhoff_pointwise_ergodic`.
+
+Source: G. D.
 Birkhoff, Proc. Natl. Acad. Sci. USA 17 (1931); Walters, Intro to Ergodic Theory; Lean states
 ergodic case for ℝ-valued integrable functions while general theorem gives conditional expectation
 onto invariant σ-algebra.
-
-Proves `Wanted` entry `birkhoff_pointwise_ergodic`.
 -/
 theorem birkhoff_pointwise_ergodic
     {α : Type*} [MeasurableSpace α] {μ : Measure α} [IsProbabilityMeasure μ]

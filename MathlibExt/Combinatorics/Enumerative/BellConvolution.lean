@@ -475,20 +475,20 @@ private lemma key (n p : ℕ) :
     rw [inner_rec n p, Nat.cast_add, Nat.cast_one, outer_rec n p, ih (n + 1), ih n]
 
 /--
-New double-sum formula for Bell numbers via Spivey's formula and Stirling
-numbers of the first kind.
+**Gould–Quaintance double-sum formula for Bell numbers.** Write $B_n$ for the $n$-th Bell
+number and $s(p, m) = (-1)^{p-m} {p \brack m}$ for the signed Stirling number of the first kind,
+where ${p \brack m}$ is the number of permutations of $p$ elements with exactly $m$ cycles. For all
+natural numbers $n$ and $p$, with the convention $0^0 = 1$,
+$$B_n = \sum_{k=0}^{n} (-p)^{n-k} \binom{n}{k} \sum_{m=0}^{p} B_{k+m}\, s(p, m).$$
+
+The source states the formula for $p \ge 1$; with $0^0 = 1$ it also holds for $p = 0$.
+
+Proves `Wanted` entry `bell_eq_signed_stirlingFirst_convolution`.
 
 Source: H. W. Gould and Jocelyn Quaintance, "Implications of Spivey's Bell
 Number Formula," Journal of Integer Sequences 11 (2008), Article 08.3.7,
 Theorem, equation (E:4), lines 177–182,
 https://cs.uwaterloo.ca/journals/JIS/VOL11/Gould/gould35.tex
-
-Mathlib's `Nat.stirlingFirst` is the unsigned Stirling number of the first
-kind, so `(-1)^(p-m) * stirlingFirst p m` is the signed `s(p,m)` of the
-source. The source states `p ≥ 1` and notes the `0^0 = 1` convention extends
-the formula to `p = 0`, matching Lean.
-
-Proves `Wanted` entry `bell_eq_signed_stirlingFirst_convolution`.
 -/
 theorem bell_eq_signed_stirlingFirst_convolution
     (n p : ℕ) :

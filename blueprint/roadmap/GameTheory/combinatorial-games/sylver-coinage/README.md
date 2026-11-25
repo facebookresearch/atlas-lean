@@ -11,7 +11,6 @@
 - [The largest legal move is an end](is-sylver-end-of-is-greatest.md)
 - [In an ender, every smaller move eliminates the largest legal move](sylver-ender-eliminates-largest-move.md)
 - [Enders with largest legal move above 1 are N-positions](is-sylver-nposition-of-ender.md)
-- [Two-generated numerical semigroups are symmetric](numerical-semigroup-two-generated-symmet.md)
 - [Pseudo-symmetric semigroups of multiplicity 4 and embedding dimension 3](numerical-semigroup-four-pseudo-symmetri.md)
 - [A canonical position is the minimal generating set of its semigroup](sylver-position-canonical-eq-minimal-gen.md)
 - [Even replies to 4 and an odd number at least 5 lose](is-sylver-nposition-four-odd-even.md)

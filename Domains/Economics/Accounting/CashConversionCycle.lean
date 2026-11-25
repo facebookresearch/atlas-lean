@@ -66,17 +66,18 @@ structure WorkingCapitalData where
 
 namespace WorkingCapitalData
 
-/-- Inventory turnover ratio `cost of goods sold / average inventory` (source eq. 19.5). -/
+/-- Inventory turnover ratio `cost of goods sold / average inventory` (source eq. 19.5). With the
+convention `x / 0 = 0`, it is `0` when the average inventory is `0`. -/
 noncomputable def inventoryTurnover (d : WorkingCapitalData) : ℝ :=
   d.costOfGoodsSold / d.inventory
 
-/-- Accounts receivable turnover `credit sales / average accounts receivable`
-(source eq. 19.8). -/
+/-- Accounts receivable turnover `credit sales / average accounts receivable` (source eq. 19.8).
+With the convention `x / 0 = 0`, it is `0` when average accounts receivable is `0`. -/
 noncomputable def receivablesTurnover (d : WorkingCapitalData) : ℝ :=
   d.creditSales / d.receivables
 
-/-- Accounts payable turnover `cost of goods sold / average accounts payable`
-(source eq. 19.11). -/
+/-- Accounts payable turnover `cost of goods sold / average accounts payable` (source eq. 19.11).
+With the convention `x / 0 = 0`, it is `0` when average accounts payable is `0`. -/
 noncomputable def payablesTurnover (d : WorkingCapitalData) : ℝ :=
   d.costOfGoodsSold / d.payables
 
@@ -86,12 +87,13 @@ noncomputable def inventoryConversionPeriod (d : WorkingCapitalData) : ℝ :=
   d.periodDays / d.inventoryTurnover
 
 /-- Receivables collection period (days sales outstanding, DSO)
-`periodDays / accounts receivable turnover` (source eq. 19.10). -/
+`periodDays / accounts receivable turnover` (source eq. 19.10). With the convention `x / 0 = 0`, it
+is `0` when the receivables turnover is `0`. -/
 noncomputable def receivablesCollectionPeriod (d : WorkingCapitalData) : ℝ :=
   d.periodDays / d.receivablesTurnover
 
 /-- Payables deferral period (days in payables, DPO) `periodDays / accounts payable turnover`
-(source eq. 19.13). -/
+(source eq. 19.13). With the convention `x / 0 = 0`, it is `0` when the payables turnover is `0`. -/
 noncomputable def payablesDeferralPeriod (d : WorkingCapitalData) : ℝ :=
   d.periodDays / d.payablesTurnover
 

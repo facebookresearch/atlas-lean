@@ -214,34 +214,11 @@ private theorem lucasNumber_dvd_fib_add_one_of_mod_four_eq_one (n : ℕ)
   rw [this] at hN5
   exact hN5
 
-private theorem lucasNumber_add_six (i : ℕ) :
-    lucasNumber (i + 6) = 8 * lucasNumber (i + 1) + 5 * lucasNumber i := by
-  have h2 : lucasNumber (i + 2) = lucasNumber (i + 1) + lucasNumber i := rfl
-  have h3 : lucasNumber (i + 3) = lucasNumber (i + 2) + lucasNumber (i + 1) := rfl
-  have h4 : lucasNumber (i + 4) = lucasNumber (i + 3) + lucasNumber (i + 2) := rfl
-  have h5 : lucasNumber (i + 5) = lucasNumber (i + 4) + lucasNumber (i + 3) := rfl
-  have h6 : lucasNumber (i + 6) = lucasNumber (i + 5) + lucasNumber (i + 4) := rfl
-  omega
-
-private theorem lucasNumber_six_mul_add (q r : ℕ) :
-    lucasNumber (6 * q + r) % 4 = lucasNumber r % 4 := by
-  induction q with
-  | zero => simp
-  | succ q ih =>
-    have : 6 * (q + 1) + r = (6 * q + r) + 6 := by omega
-    rw [this]
-    have h6 : ∀ i, lucasNumber (i + 6) % 4 = lucasNumber i % 4 := by
-      intro i
-      rw [lucasNumber_add_six i]
-      omega
-    rw [h6]
-    exact ih
-
 private theorem lucasNumber_mod_four_of_even_of_not_three_dvd (k : ℕ)
     (hke : Even k) (hk3 : ¬ 3 ∣ k) :
     lucasNumber k % 4 = 3 := by
   have hdecomp : k = 6 * (k / 6) + k % 6 := (Nat.div_add_mod k 6).symm
-  rw [hdecomp, lucasNumber_six_mul_add]
+  rw [hdecomp, lucasNumber_six_mul_add_mod_four]
   have hmod : k % 6 = 2 ∨ k % 6 = 4 := by
     obtain ⟨t, ht⟩ := hke
     have h1 : k % 2 = 0 := by omega
@@ -396,8 +373,11 @@ private theorem fib_two_mul_eq_sq_of_helpers (m x : ℕ) (hm : 0 < m)
     have h6 := cohn_twice_square_lucas m c hm hL
     right; exact h6
 
-/-- Cohn's square-Fibonacci classification (Keskin–Yosma Theorem 2.1, first
-claim): for `0 < n`, `Fₙ = x²` forces `n ∈ {1, 2, 12}`.
+/-- **Cohn's theorem on square Fibonacci numbers.** Let $F_n$ denote the Fibonacci numbers,
+with $F_0 = 0$, $F_1 = 1$ and $F_{n+2} = F_{n+1} + F_n$. If $n$ and $x$ are natural numbers
+with $n \ge 1$ and $F_n = x^2$, then $n \in \{1, 2, 12\}$.
+
+This is the first claim of Theorem 2.1 of Keskin and Yosma.
 
 Proves `Wanted` entry `cohn_square_fibonacci`.
 -/

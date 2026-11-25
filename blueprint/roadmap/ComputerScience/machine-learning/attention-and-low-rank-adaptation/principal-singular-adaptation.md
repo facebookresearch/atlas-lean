@@ -28,7 +28,7 @@ has $r$ rows.
 
 ## Informally uses
 
-- [Real singular value decomposition with nonincreasing singular values](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/exists-orthogonal-group-rectangular-diag.md):
+- [Real singular value decomposition with nonincreasing singular values](../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/singular-value-decomposition-theorem/exists-orthogonal-group-rectangular-diag.md):
   mathematical prerequisite, the existence of the ordered decomposition from which the
   initialisation is defined (its first $\min(m, n)$ columns give the economy form).
 - [Truncated singular value decomposition](../../../Probability/linear-models-multivariate/principal-component-analysis/trunc-svd.md):

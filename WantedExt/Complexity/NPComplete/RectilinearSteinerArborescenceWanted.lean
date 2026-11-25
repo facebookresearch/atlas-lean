@@ -16,7 +16,7 @@ Computing 35 (2006), 729-740, doi:10.1137/S0097539704371353.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Combinatorics.Quiver.Arborescence

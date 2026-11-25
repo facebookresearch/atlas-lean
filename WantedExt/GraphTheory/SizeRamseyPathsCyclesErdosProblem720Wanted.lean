@@ -21,6 +21,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
+public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Order.Filter.AtTopBot.Defs
 
 @[expose] public section

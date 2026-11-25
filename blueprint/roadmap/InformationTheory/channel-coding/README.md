@@ -7,3 +7,8 @@ rate below the mutual information.
 
 - [Shannon's channel coding theorem](shannon-s-channel-coding-theorem/README.md)
 - [Random coding bound and Gallager's exponent](random-coding-bound-and-gallager-s-exponent/README.md)
+
+- [Capacity of the binary deletion channel](capacity-of-the-binary-deletion-channel.md)
+- [Capacity region of the two-receiver broadcast channel](capacity-region-of-the-two-receiver-broadcast-channel.md)
+
+- [Two-user discrete memoryless multiple-access channel and its capacity region](two-user-discrete-memoryless-multiple-access-channel-and-its.md)

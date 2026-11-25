@@ -123,8 +123,9 @@ namespace ScoreBlockModel
 
 variable {M K : ℕ} {z : Fin M → Ω → ℝ}
 
-/-- **From scores to statistics.** A score-level model induces T161's `LDBlockModel` for the
-statistics `a z_j²`, with any `V` bounding their second moments `𝔼[(a z_j²)²]`. -/
+/-- **From scores to statistics.** For a probability measure, a score-level model induces the
+`LDBlockModel` of `LDScoreVariance` for the statistics `a z_j²`, with the same blocks and any `V`
+bounding their second moments `𝔼[(a z_j²)²]`. -/
 def toLDBlockModel [IsProbabilityMeasure μ] (S : ScoreBlockModel μ z K) (a : ℝ) {V : ℝ}
     (hV : ∀ j, ∫ ω, (a * z j ω ^ 2) ^ 2 ∂μ ≤ V) :
     LDBlockModel μ (fun j ω => a * z j ω ^ 2) K V where
@@ -183,10 +184,11 @@ theorem integral_chiSqStrat_le [IsProbabilityMeasure μ] (D : Model μ N M)
     linarith
   linarith
 
-/-- **The T161 LD-block model for LD-score regression, from fourth moments.** Under a
-score-level model for the scores `β̂_j` (`betaHatStrat`) with block size at most `K`, the
-kurtosis bound `𝔼[(χ²_j)²] ≤ κ₄ (𝔼 χ²_j)²`, LD scores at most `L`, `N ≤ λ M` and `N a ≤ A`, the
-statistics `χ²_j` (`chiSqStrat`) satisfy T161's `LDBlockModel` with
+/-- **The LD-block model for LD-score regression, from fourth moments.** For a probability measure,
+mean-zero effects and noise, a standardized genotype matrix, `N ≠ 0` and a stratification term `a`
+common to all markers: under a score-level model for the scores `β̂_j` (`betaHatStrat`) with block
+size at most `K`, the kurtosis bound `𝔼[(χ²_j)²] ≤ κ₄ (𝔼 χ²_j)²` with `κ₄ ≥ 0`, LD scores at most
+`L`, `N ≤ λ M` and `N a ≤ A`, the statistics `χ²_j` (`chiSqStrat`) satisfy `LDBlockModel` with
 `V = κ₄ (1 + λ L + A)²`. -/
 noncomputable def ldBlockModel_chiSqStrat [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hX : IsStandardized X)
@@ -204,7 +206,7 @@ noncomputable def ldBlockModel_chiSqStrat [IsProbabilityMeasure μ] (D : Model �
 /-! ### Variance bound and limit -/
 
 /-- **Variance bound for one design.** Under the hypotheses of `ldBlockModel_chiSqStrat`,
-`Var(ĥ²) ≤ (M / N)² · (K κ₄ (1 + λ L + A)² / S_ℓℓ)`. -/
+`Var(ĥ²) ≤ (M / N)² · (K κ₄ (1 + λ L + A)² / S_ℓℓ)`, with `x / 0 = 0`. -/
 theorem variance_olsH2Hat_le_of_fourthMoment [IsProbabilityMeasure μ] (D : Model μ N M)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hX : IsStandardized X)
     (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0) (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (s : ℝ)
@@ -218,11 +220,13 @@ theorem variance_olsH2Hat_le_of_fourthMoment [IsProbabilityMeasure μ] (D : Mode
   let B := ldBlockModel_chiSqStrat D X hN hX hβ hε s c ha S hκ₄ hkurt hL hNM hA
   variance_h2Hat_le (ldScore X) B.memLp B.sum_abs_covariance_le fun _ => rfl
 
-/-- **`Var(ĥ²) → 0` as `M → ∞` from fourth moments and bounded LD scores.** Along a family of
-designs with `M → ∞`, `κ M ≤ N ≤ λ M` (`κ > 0`), LD-score spread `S_ℓℓ ≥ c₀ M` (`c₀ > 0`),
-LD scores at most `L`, confounding `N a ≤ A`, and scores satisfying the score-level model with
-block size at most `K` and the kurtosis bound with constant `κ₄`, all uniform in the design,
-the variance of the unweighted LD-score regression estimator tends to `0`. -/
+/-- **`Var(ĥ²) → 0` as `M → ∞` from fourth moments and bounded LD scores.** For a probability
+measure, along a family of designs with `N ≠ 0`, standardized genotype matrices, mean-zero effects
+and noise, stratification terms common to the markers of each design, `M → ∞`, `κ M ≤ N ≤ λ M`
+(`κ > 0`), LD-score spread `S_ℓℓ ≥ c₀ M` (`c₀ > 0`), LD scores at most `L`, confounding `N a ≤ A`,
+and scores satisfying the score-level model with block size at most `K` and the kurtosis bound with
+constant `κ₄ ≥ 0`, all uniform in the design, the variance of the unweighted LD-score regression
+estimator tends to `0`. -/
 theorem tendsto_variance_olsH2Hat_of_fourthMoment [IsProbabilityMeasure μ] {ι : Type*}
     {l : Filter ι} {N M : ι → ℕ} (D : ∀ n, Model μ (N n) (M n))
     (X : ∀ n, Matrix (Fin (N n)) (Fin (M n)) ℝ) (hN : ∀ n, N n ≠ 0)
@@ -247,8 +251,8 @@ theorem tendsto_variance_olsH2Hat_of_fourthMoment [IsProbabilityMeasure μ] {ι 
 
 /-- **Consistency of LD-score regression from fourth moments and bounded LD scores.** Under the
 hypotheses of `tendsto_variance_olsH2Hat_of_fourthMoment`, with common heritability `h²` and at
-least one marker in every design, `ĥ² → h²` in probability. This is T147's
-`tendstoInMeasure_olsH2Hat` with its variance hypothesis discharged through T161. -/
+least one marker in every design, `ĥ² → h²` in probability. This is `tendstoInMeasure_olsH2Hat` with
+its variance hypothesis discharged through the LD-block model of `LDScoreVariance`. -/
 theorem tendstoInMeasure_olsH2Hat_of_fourthMoment [IsProbabilityMeasure μ] {ι : Type*}
     {l : Filter ι} {N M : ι → ℕ} (D : ∀ n, Model μ (N n) (M n))
     (X : ∀ n, Matrix (Fin (N n)) (Fin (M n)) ℝ) {h2 : ℝ} (hh2 : ∀ n, (D n).h2 = h2)

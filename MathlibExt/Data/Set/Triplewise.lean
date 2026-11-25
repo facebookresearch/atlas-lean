@@ -30,8 +30,9 @@ namespace Set
 variable {α : Type*} {r : α → α → α → Prop} {s t : Set α} {x y z : α}
 
 /--
-The ternary relation `r` holds triplewise on the set `s`
-if `r x y z` for all *distinct* `x y z ∈ s`.
+**Relation holding triplewise on a set.** Let $r$ be a ternary relation on a type $\alpha$ and let
+$s \subseteq \alpha$. The relation $r$ holds triplewise on $s$ if $r(x, y, z)$ holds for all
+pairwise distinct $x, y, z \in s$.
 -/
 protected def Triplewise (s : Set α) (r : α → α → α → Prop) : Prop :=
   ∀ ⦃x⦄, x ∈ s → ∀ ⦃y⦄, y ∈ s → ∀ ⦃z⦄, z ∈ s → x ≠ y → y ≠ z → x ≠ z → r x y z

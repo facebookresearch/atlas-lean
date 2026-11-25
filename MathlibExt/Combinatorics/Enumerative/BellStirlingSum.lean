@@ -103,7 +103,9 @@ private theorem stirlingSecond_succ_eq_sum_choose_mul (n j : ℕ) :
       rw [lhs_eq, rhs_eq, sum_eq, shift]
       ring
 
-/-- Bell numbers as Stirling-second-kind row sums: `Bₙ = ∑_{k=0}^n S(n, k)`.
+/-- **Bell numbers are row sums of Stirling numbers of the second kind.** For every
+natural number $n$, the Bell number $B_n$ equals $\sum_{k=0}^{n} S(n, k)$, where $S(n, k)$ is the
+Stirling number of the second kind.
 
 Source: Michael Z. Spivey, *A Generalized Recurrence for Bell Numbers*,
 Journal of Integer Sequences 11 (2008), Article 08.2.5, equation `Stir`,

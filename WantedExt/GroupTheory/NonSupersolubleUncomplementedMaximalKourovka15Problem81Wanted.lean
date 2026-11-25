@@ -36,16 +36,18 @@ subgroup strictly between `M` and `P`.
 
 open scoped Pointwise
 
-/-- `G` is supersoluble: it has a series `1 = H₀ ≤ ⋯ ≤ Hₙ = G` of normal subgroups of `G` with
-cyclic factors. -/
+/-- **Supersoluble group (Kourovka 15.81).** A group $G$ is supersoluble when it has a series
+$1 = H_0 \le H_1 \le \cdots \le H_n = G$ of subgroups, each normal in $G$, such that every factor
+$H_{i+1}/H_i$ is cyclic. -/
 def IsSupersoluble (G : Type*) [Group G] : Prop :=
   ∃ (n : ℕ) (H : Fin (n + 1) → Subgroup G), H 0 = ⊥ ∧ H (Fin.last n) = ⊤ ∧ (∀ i, (H i).Normal) ∧
     ∀ i : Fin n, H i.castSucc ≤ H i.succ ∧
       ∃ g ∈ H i.succ, ∀ x ∈ H i.succ, ∃ k : ℤ, x * (g ^ k)⁻¹ ∈ H i.castSucc
 
-/-- Kourovka 15.81 (A. N. Skiba): every finite non-supersoluble group `G` has a non-cyclic Sylow
-subgroup `P` with a maximal subgroup `M` that has no proper complement in `G`, i.e. no `K < G` with
-`M K = G` and `M ∩ K = 1`. -/
+/-- **Uncomplemented maximal subgroups of Sylow subgroups (Kourovka 15.81, Skiba).** The statement
+that every finite group $G$ that is not supersoluble has, for some prime $p$, a non-cyclic Sylow
+$p$-subgroup $P$ with a maximal subgroup $M$ of $P$ that has no proper complement in $G$, that is,
+there is no subgroup $K \ne G$ with $MK = G$ and $M \cap K = 1$. -/
 def nonSupersolubleHasUncomplementedSylowMaximal : Prop :=
   ∀ (G : Type) [Group G] [Finite G], ¬ IsSupersoluble G →
     ∃ p : ℕ, p.Prime ∧ ∃ P : Sylow p G, ¬ IsCyclic (P : Subgroup G) ∧
@@ -53,11 +55,17 @@ def nonSupersolubleHasUncomplementedSylowMaximal : Prop :=
         ¬ ∃ K : Subgroup G, K ≠ ⊤ ∧ (M : Set G) * (K : Set G) = Set.univ ∧ M ⊓ K = ⊥
 
 /--
-Resolved true: the Kourovka Archive answers 15.81 "Yes, it is" (Wang and Wei): every finite
-non-supersoluble group has a non-cyclic Sylow subgroup with a maximal subgroup that has no proper
-complement. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
-Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.81
-(A. N. Skiba); resolution: Wang Yanming and Wei Huaquan, Sci. China Ser. A 47 (2004), no. 1, 96-103,
+**Finite non-supersoluble groups have uncomplemented maximal subgroups of Sylow subgroups.** For
+every finite group $G$ that is not supersoluble, there are a prime $p$ and a non-cyclic Sylow
+$p$-subgroup $P$ of $G$ with a maximal subgroup $M$ of $P$ that has no proper complement in $G$:
+there is no subgroup $K \ne G$ with $MK = G$ and $M \cap K = 1$. This answers Kourovka
+Problem 15.81 in the affirmative.
+
+The Kourovka Archive answers 15.81 "Yes, it is" (Wang and Wei).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.81 (A. N.
+Skiba); resolution: Wang Yanming and Wei Huaquan, Sci. China Ser. A 47 (2004), no. 1, 96-103,
 Kourovka Archive, Problem 15.81 (answer: Yes, it is).
 -/
 public theorem_wanted nonSupersolubleHasUncomplementedSylowMaximal_holds :

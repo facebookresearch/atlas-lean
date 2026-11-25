@@ -188,7 +188,7 @@ private lemma supportedStiffnessF :
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [Matrix.mul_apply, Matrix.transpose_apply, Matrix.diagonal,
-      axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two] <;> norm_num
+      axialCompatibility, SF, Matrix.of_apply, Fin.sum_univ_two, -Matrix.transpose_of] <;> norm_num
 
 private lemma posDefBox :
     ((axialCompatibility rF ![0, 1] ![1, 2] * SF)ᵀ

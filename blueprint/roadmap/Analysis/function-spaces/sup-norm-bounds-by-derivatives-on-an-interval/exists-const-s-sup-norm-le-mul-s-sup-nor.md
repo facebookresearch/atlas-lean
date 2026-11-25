@@ -1,7 +1,6 @@
-# Sup norm on $(0,1)$ bounded by the derivative and the $L^1$ norm
+# Sup norm on $[0,1]$ bounded by the derivative and the $L^1$ norm
 
-For every
-$\varepsilon > 0$ there is a constant $C_\varepsilon > 0$ such that every function
+For every $\varepsilon > 0$ there is a constant $C_\varepsilon > 0$ such that every function
 $f : \mathbb{R} \to \mathbb{R}$ that is continuously differentiable on $[0,1]$ satisfies
 
 $$\sup_{x \in [0,1]} |f(x)| \le
