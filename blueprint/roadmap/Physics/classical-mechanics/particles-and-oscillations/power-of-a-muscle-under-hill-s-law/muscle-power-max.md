@@ -1,9 +1,11 @@
-# Muscle power maximum (Hill shortening hyperbola)
+# Hill's power is maximal at the interior force √(a(a + F₀)) − a
 
-For the
-shortening velocity law `v(F) = b * (F0 - F) / (F + a)` with
-`a, b, F0 > 0`, the power `P(F) = F * v(F)` on `[0, F0]` attains its
-maximum at the strictly interior point
-`Fstar = sqrt (a * (a + F0)) - a`, which satisfies
-`Fstar^2 + 2 * a * Fstar = a * F0`. This is the selected empirical
-shortening hyperbola only: no eccentric/lengthening claim.
+Let `a > 0`, `b > 0` and `F₀ > 0`, and let `F* = √(a (a + F₀)) - a`. Then:
+
+- `0 < F* < F₀`;
+- `F*² + 2 a F* = a F₀`;
+- for every `F ∈ [0, F₀]`, `F · b (F₀ - F) / (F + a) ≤ F* · b (F₀ - F*) / (F* + a)`.
+
+So the power `P(F) = F v(F)` of the Hill shortening hyperbola `v(F) = b (F₀ - F) / (F + a)`
+attains its maximum over `[0, F₀]` at the interior force `F*`. Only the shortening branch
+`F ∈ [0, F₀]` is concerned; nothing is stated about lengthening (eccentric) contractions.

@@ -1,4 +1,4 @@
-# Ideal Transformer Port snd
+# Entering secondary current of an ideal transformer
 
-The adapter's secondary current is `-(n * I1)`: the entering-current
-sign convention of the leaf.
+For all real `n`, `V₂` and `I₁`, the entering secondary current given by the
+[ideal transformer](ideal-transformer-port.md) is `I₂ = -n I₁`.

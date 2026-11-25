@@ -1,6 +1,6 @@
 # Elasticity and structural mechanics
 
-Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, Euler–Bernoulli beams and their vibration modes, trusses and frames, buckling, plasticity, laminates, contact and aeroelasticity, rigid footings on elastic foundations, and fracture under linear elastic fracture mechanics.
+Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, Euler–Bernoulli beams and their vibration modes, the stiffness method for beams and frames, trusses and their load envelopes, plastic collapse of beams, rigid footings on elastic foundations, and fracture under linear elastic fracture mechanics.
 
 - [Aeroelastic divergence and flutter](aeroelastic-divergence-and-flutter/README.md)
 - [Boussinesq point load on an elastic half-space](boussinesq-point-load-on-an-elastic-half-space/README.md)
@@ -20,3 +20,10 @@ Linear elasticity and the mechanics of structures: Cauchy stress, small strain a
 - [Vibration modes of Euler–Bernoulli beams](vibration-modes-of-euler-bernoulli-beams/README.md)
 - [Weak bar problem and virtual work](weak-bar-problem-and-virtual-work/README.md)
 - [Kern rule for eccentrically loaded footings](kern-condition-iff.md)
+- [Contact and tribology](contact-and-tribology/README.md)
+- [Plasticity](plasticity/README.md)
+- [Viscoelasticity](viscoelasticity/README.md)
+- [Beams and columns](beams-and-columns/README.md)
+- [Geotechnical limit analysis](geotechnical-limit-analysis/README.md)
+- [Plates and shells](plates-and-shells/README.md)
+- [Elasticity boundary-value problems](elasticity-boundary-value-problems/README.md)

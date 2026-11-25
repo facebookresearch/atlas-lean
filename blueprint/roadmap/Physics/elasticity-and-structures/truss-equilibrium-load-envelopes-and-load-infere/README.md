@@ -1,22 +1,33 @@
 # Truss equilibrium, load envelopes and load inference
 
-- [Upper Box Load](upper-box-load.md)
-- [Lower Box Load](lower-box-load.md)
-- [Dot Product le box Upper](dot-product-le-box-upper.md)
-- [Upper Box Load attains box Upper](upper-box-load-attains-box-upper.md)
-- [Box Lower le dot Product](box-lower-le-dot-product.md)
-- [Lower Box Load attains box Lower](lower-box-load-attains-box-lower.md)
-- [Supported unit Load Response le box Upper](supported-unit-load-response-le-box-uppe.md)
-- [Supported box Upper attained](supported-box-upper-attained.md)
-- [Supported box Lower le unit Load Response](supported-box-lower-le-unit-load-respons.md)
-- [Supported box Lower attained](supported-box-lower-attained.md)
-- [Reaction Matrix](reaction-matrix.md)
-- [Equilibrium Matrix](equilibrium-matrix.md)
-- [Square Equilibrium Matrix](square-equilibrium-matrix.md)
-- [Joint Balance](joint-balance.md)
-- [Reaction Matrix mul Vec apply](reaction-matrix-mul-vec-apply.md)
-- [Joint Balance iff mul Vec](joint-balance-iff-mul-vec.md)
-- [Joint Balance iff eq inv](joint-balance-iff-eq-inv.md)
-- [Joint Balance exists Unique](joint-balance-exists-unique.md)
-- [To Lp sensor eq to Euclidean Lin add offset](to-lp-sensor-eq-to-euclidean-lin-add-off.md)
-- [Cond Distrib load Parameter corrected Reading](cond-distrib-load-parameter-corrected-re.md)
+## Load envelopes over a box of pattern loads
+
+- [Upper endpoint load of a load box](upper-box-load.md)
+- [Lower endpoint load of a load box](lower-box-load.md)
+- [Upper envelope bound for loads in a box](dot-product-le-box-upper.md)
+- [The upper endpoint load attains the upper envelope](upper-box-load-attains-box-upper.md)
+- [Lower envelope bound for loads in a box](box-lower-le-dot-product.md)
+- [The lower endpoint load attains the lower envelope](lower-box-load-attains-box-lower.md)
+
+## Load envelopes of a supported truss
+
+- [Upper envelope bound for supported truss loads in a box](supported-unit-load-response-le-box-uppe.md)
+- [The upper envelope of supported truss loads is attained](supported-box-upper-attained.md)
+- [Lower envelope bound for supported truss loads in a box](supported-box-lower-le-unit-load-respons.md)
+- [The lower envelope of supported truss loads is attained](supported-box-lower-attained.md)
+
+## Method-of-joints equilibrium
+
+- [Support reaction matrix of a planar truss](reaction-matrix.md)
+- [Equilibrium matrix of a planar truss](equilibrium-matrix.md)
+- [Square equilibrium matrix of a planar truss](square-equilibrium-matrix.md)
+- [Method-of-joints balance of a planar truss](joint-balance.md)
+- [Action of the support reaction matrix](reaction-matrix-mul-vec-apply.md)
+- [Joint balance is the equilibrium matrix equation](joint-balance-iff-mul-vec.md)
+- [Joint balance with a nonsingular square equilibrium matrix](joint-balance-iff-eq-inv.md)
+- [A nonsingular square equilibrium matrix gives unique balancing forces](joint-balance-exists-unique.md)
+
+## Inference of load parameters from sensor readings
+
+- [Sensor reading of a truss under a parametrized load](to-lp-sensor-eq-to-euclidean-lin-add-off.md)
+- [Gaussian posterior of truss load parameters given sensor readings](cond-distrib-load-parameter-corrected-re.md)

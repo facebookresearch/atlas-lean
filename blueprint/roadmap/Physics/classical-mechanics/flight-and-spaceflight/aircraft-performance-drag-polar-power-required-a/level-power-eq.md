@@ -1,4 +1,6 @@
-# Level Power eq
+# The power required is a V³ + b / V
 
-The power required is `P(V) = a * V ^ 3 + b / V`. As an identity of the formulas it holds at
-every speed; at `V = 0` both sides are the meaningless value `0`.
+For all reals `W`, `ρ`, `S`, `CD0`, `k` and `V`, the [power required](level-power.md)
+`P(V) = D(V) V` equals `a V³ + b / V`, with `a = ρ S CD0 / 2` and `b = 2 k W² / (ρ S)` (the
+[parasite-drag](parasite-drag-factor.md) and [induced-drag](induced-drag-factor.md) factors). With
+the convention `x / 0 = 0`, both sides are `0` at `V = 0`, which is not a physical power.

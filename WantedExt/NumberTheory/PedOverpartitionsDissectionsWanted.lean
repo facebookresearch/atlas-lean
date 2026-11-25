@@ -11,7 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
-public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.EulerQuotientThreeDissection
 public import MathlibExt.NumberTheory.ModularForms.JacobiTheta.Ramanujan
 
 /-!
@@ -273,18 +273,6 @@ Even Parts Distinct*, INTEGERS 25 (2025), Article A69, Lemma 1, (7)
 (`integers-2025-A69-lem-1`). -/
 public theorem_wanted qEulerProduct_fourth_two_dissection :
     𝔣 1 ^ 4 * 𝔣 2 ^ 2 * 𝔣 4 ^ 2 * 𝔣 8 ^ 4 = 𝔣 4 ^ 12 - 4 * X * 𝔣 2 ^ 4 * 𝔣 8 ^ 8
-
-/-- **A 3-dissection of a quotient of Euler products.** In the ring of integer power series in
-$q$, let $f_k = \prod_{m \ge 1} (1 - q^{km})$ denote the Euler products. Then
-$f_1^2 f_6 f_9 f_{18} = f_2 f_6 f_9^3 - 2q f_2 f_3 f_{18}^3$. Since every $f_k$ with $k \ge 1$ has
-constant term $1$, this is the 3-dissection
-$f_1^2 / f_2 = f_9^2 / f_{18} - 2q f_3 f_{18}^2 / (f_6 f_9)$ with denominators cleared.
-
-Source: Harishkumar T, Shruthi Menezes, and M. S. Mahadeva Naika, *On [j, k]-Overpartitions with
-Even Parts Distinct*, INTEGERS 25 (2025), Article A69, Lemma 3, (11)
-(`integers-2025-A69-lem-3`). -/
-public theorem_wanted qEulerProduct_sq_div_three_dissection :
-    𝔣 1 ^ 2 * 𝔣 6 * 𝔣 9 * 𝔣 18 = 𝔣 2 * 𝔣 6 * 𝔣 9 ^ 3 - 2 * X * 𝔣 2 * 𝔣 3 * 𝔣 18 ^ 3
 
 /-- **Congruences modulo 32 for $\mathrm{ped}_{9,9}$.** For $k \ge 1$ let
 $f_k = \prod_{m \ge 1} (1 - q^{km})$, an integer power series in $q$, and let

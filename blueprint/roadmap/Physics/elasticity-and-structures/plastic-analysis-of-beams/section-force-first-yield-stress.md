@@ -1,7 +1,7 @@
-# Section Force first Yield Stress
+# The first-yield stress carries no axial force
 
-The elastic first-yield state carries no axial force: the linear
-distribution is odd in `y`, so its resultant over the symmetric section
-vanishes, consistent with pure bending about the mid-depth axis. Holds for
-all real `b`, `h`, `σy` (oriented integral); the physical reading is
-`0 < b`, `0 < h`, `0 < σy`.
+For all real `b`, `h` and `σy`, the [axial force](section-force.md) of the
+[first-yield stress](first-yield-stress.md) `σy * (2 * y / h)` over the section is
+`∫_{-h/2}^{h/2} b * σy * (2 * y / h) dy = 0`: the linear distribution is odd in `y`, consistent with
+pure bending about the mid-depth axis. The integral is oriented; the physical reading is `b > 0`,
+`h > 0` and `σy > 0`.

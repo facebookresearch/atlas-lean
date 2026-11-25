@@ -1,3 +1,3 @@
-# One add alpha add alpha sq
+# The cube roots of unity 1, α and α² sum to zero
 
-The cube roots of unity sum to zero: `1 + α + α² = 0`.
+For the [rotation operator](alpha.md) `α = e^(2πi/3)`, `1 + α + α² = 0`.

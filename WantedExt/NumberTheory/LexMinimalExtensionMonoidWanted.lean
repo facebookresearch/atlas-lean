@@ -133,23 +133,6 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_period_from_preperiod_bound
     (hk : k ∈ maxAverageIndices η m) :
     ∃ p, 0 < p ∧ ∀ j, k * (m * (m + 1) / 2) ≤ j → η (j + p) = η j
 
-/-- **Atoms are the unique basis of an atom-generated submonoid.** Let $\iota$ be a type and
-let $M$ be a submonoid of $\mathbb{N}^\iota$ under componentwise addition. Let $A$ be the set
-of atoms of $M$: the elements $a \in M$ with $a \ne 0$ such that $y = 0$ or $z = 0$ whenever
-$a = y + z$ with $y, z \in M$. If every element of $M$ is a finite sum of elements of $A$, then
-a set $B \subseteq \mathbb{N}^\iota$ is a basis of $M$ if and only if $B = A$; that is, $A$ is
-the unique basis of $M$.
-
-Source: Caalim and Tanaka, *Generalized Binomial Coefficients and the Monoid
-of Lexicographically Minimal Extensions*, INTEGERS 26 (2026), Article A113,
-Proposition 4 (`integers-2026-A113-prop-4`). -/
-public theorem_wanted isAddMonoidBasis_iff_eq_atoms {ι : Type*} (M : AddSubmonoid (ι → ℕ))
-    (hM : ∀ x ∈ M, x ∈ AddSubmonoid.closure
-      {a | a ∈ M ∧ a ≠ 0 ∧ ∀ y ∈ M, ∀ z ∈ M, a = y + z → y = 0 ∨ z = 0})
-    (B : Set (ι → ℕ)) :
-    IsAddMonoidBasis (M : Set (ι → ℕ)) B ↔
-      B = {a | a ∈ M ∧ a ≠ 0 ∧ ∀ y ∈ M, ∀ z ∈ M, a = y + z → y = 0 ∨ z = 0}
-
 /-- **Basis of the monoid of lex-minimal extensions.** Let $L$ be the set of lex-minimal
 extensions, viewed inside the sequences of nonnegative integers under componentwise addition.
 A set $B$ of sequences of nonnegative integers is a basis of $L$ if and only if $B$ is the set

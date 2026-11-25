@@ -1,4 +1,3 @@
-# Rms Waveform at zero
+# The RMS waveform at time zero
 
-At time zero the RMS waveform is `sqrt(2)` times the real part of
-the phasor.
+For every complex `V` and real `ω`, the [RMS waveform](rms-waveform.md) at `t = 0` is `√2 Re V`.

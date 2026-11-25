@@ -1,3 +1,4 @@
-# Zero Sequence
+# Zero-sequence component of three phase quantities
 
-Zero-sequence component `V0 = (Va + Vb + Vc) / 3`.
+For complex phase quantities `V_a`, `V_b`, `V_c`, the zero-sequence component is
+`V₀ = (V_a + V_b + V_c) / 3`.

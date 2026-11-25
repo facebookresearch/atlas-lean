@@ -1,3 +1,3 @@
-# Mean Pressure eq
+# The mean pressure is minus one third of the trace
 
-The mean pressure of a tension-positive stress is `p = -tr σ / 3`.
+For every real 3 × 3 matrix `σ`, the [mean pressure](mean-pressure.md) is `p(σ) = -tr σ / 3`.

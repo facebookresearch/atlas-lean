@@ -1,3 +1,3 @@
-# Peak Waveform at zero
+# The peak waveform at time zero
 
-At time zero the peak waveform is the real part of the phasor.
+For every complex `V` and real `ω`, the [peak waveform](peak-waveform.md) at `t = 0` is `Re V`.

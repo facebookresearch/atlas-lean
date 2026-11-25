@@ -1,3 +1,3 @@
-# Scale Height pos
+# The scale height is positive for positive Rs and T and nonzero g
 
-The scale height is positive for `Rs, T > 0` and nonzero gravity.
+For `Rs > 0`, `T > 0` and `g ≠ 0`, the [scale height](scale-height.md) `H = Rs T / |g|` is positive.

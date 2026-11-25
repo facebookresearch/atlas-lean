@@ -1,7 +1,7 @@
-# Uniform Beam Moment eq iterated Deriv
+# The moment as minus the stiffness times the second iterated derivative
 
-The bending moment in the canonical iterated-derivative
-form used by the `EulerBernoulliBeam` API:
-`M = -EI * iteratedDeriv 2 y`. This is the same function as
-`uniformBeamMoment`, whose definition uses nested `deriv`;
-the bridge lets clients move between the two encodings.
+For all real `w`, `EI`, `L` and `x`, the [bending moment](uniform-beam-moment.md)
+`M(x) = -EI * y''(x)`, defined through the derivative of the derivative of the
+[uniform-load deflection](uniform-load-deflection.md)
+`y(x) = w * (L ^ 3 * x - 2 * L * x ^ 3 + x ^ 4) / (24 * EI)`, equals `-EI` times the second iterated
+derivative of `y` at `x`: the two ways of writing `y''` agree.

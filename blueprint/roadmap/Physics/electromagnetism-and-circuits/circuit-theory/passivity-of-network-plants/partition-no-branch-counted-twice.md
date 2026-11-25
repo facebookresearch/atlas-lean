@@ -1,5 +1,4 @@
-# Partition no branch counted twice
+# A source branch of a plant is in no other class
 
-Exact accounting: the branch partition of a plant puts no branch in two
-classes, so no source branch is also counted as a resistor, inductor or
-capacitor branch.
+For every [network plant](network-plant.md) and every source branch `e ∈ S`, `e` is not a resistor,
+inductor or capacitor branch: the branch partition counts no branch twice.

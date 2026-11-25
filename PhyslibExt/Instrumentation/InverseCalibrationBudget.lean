@@ -146,7 +146,9 @@ private lemma inversePrediction_error_bad_event_measure_le {Ω : Type*}
 known-parameter bound: on the good event that the residual obeys
 `|e ω| ≤ E`, the recovered input `inversePrediction a b (y ω)` with
 `y ω = b * x ω + a + e ω` differs from `x ω` by at most `E / |b|`,
-so the bad event is contained in the residual bad event. -/
+so the bad event is contained in the residual bad event. The measure `μ` need not be a probability
+measure, the events need not be measurable (`μ` is applied as an outer measure), and the bound
+`ENNReal.ofReal p` is `max p 0`. -/
 lemma inversePrediction_error_event_measure_le {Ω : Type*}
     [MeasurableSpace Ω] (μ : MeasureTheory.Measure Ω)
     (a b E p : ℝ) (hb : b ≠ 0) (hE : 0 ≤ E) (x e : Ω → ℝ)

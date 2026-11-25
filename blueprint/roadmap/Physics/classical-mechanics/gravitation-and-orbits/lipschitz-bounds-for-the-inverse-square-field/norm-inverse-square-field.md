@@ -1,4 +1,5 @@
-# Norm inverse Square Field
+# For μ ≥ 0 the inverse-square field has magnitude μ/‖r‖²
 
-Away from the origin, the inverse-square field has magnitude
-`μ / ‖r‖^2`.
+Let $\mu \ge 0$ and let $r \ne 0$ be a point of a real inner product space. The
+[inverse-square field](inverse-square-field.md) $F(r) = (\mu/\|r\|^3)\,r$ has norm
+$\|F(r)\| = \mu/\|r\|^2$.

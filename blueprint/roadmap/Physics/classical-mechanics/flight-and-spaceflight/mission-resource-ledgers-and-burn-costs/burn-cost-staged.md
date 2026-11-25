@@ -1,7 +1,11 @@
-# Cost from actual stage masses
+# Delta-v cost of staged burns from their stage masses
 
-Burns `i ≤ n` on `[0, tb i]` with positive mass, the
-reduced law `m * v' = -ve * m'` at positive exhaust speed `ve i`, burned (not gained) mass, and
-jettisons between burns that only drop mass, each along a unit direction `u i`: the start and end
-masses are admissible, and the cost of the burn vectors `(v i (tb i) - v i 0) • u i` is the sum of
-the stage increments `ve i * log (m i 0 / m i (tb i))`.
+Let `n ∈ ℕ`, and for each burn `i ≤ n` let `tb_i ≥ 0`, let `m_i` and `v_i` have derivatives `m_i'`
+and `v_i'` at every `t ∈ [0, tb_i]`, with `m_i > 0` on `[0, tb_i]` and the reduced variable-mass law
+`m_i(t) v_i'(t) = −ve_i m_i'(t)` there, at an exhaust speed `ve_i > 0`, with burned (not gained)
+mass `m_i(tb_i) ≤ m_i(0)`; let the jettisons between burns only drop mass, `m_{i+1}(0) ≤ m_i(tb_i)`
+for `i < n`; and let `u_i` be unit vectors of a real normed space `E`, `‖u_i‖ = 1`. Then the start
+masses `m_i(0)` and end masses `m_i(tb_i)` are [admissible stage masses](admissible-stage-masses.md)
+for the `n + 1` burns, and the [delta-v cost](burn-cost.md) of the burn vectors
+`(v_i(tb_i) − v_i(0)) u_i` is `∑_{i=0}^{n} ve_i log(m_i(0) / m_i(tb_i))`, the sum of the
+[stage increments](stage-increment.md).

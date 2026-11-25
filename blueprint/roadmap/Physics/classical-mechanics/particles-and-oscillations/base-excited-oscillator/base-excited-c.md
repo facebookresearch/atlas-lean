@@ -1,3 +1,4 @@
-# Base Excited C
+# Output matrix of the base-excited oscillator
 
-Output matrix `!![1, 0]`: the output is the relative displacement `u`.
+The output matrix of the base-excited oscillator is the `1 × 2` real matrix `C = [1, 0]`: on the
+state `(u, u')` it returns the relative displacement `u`.

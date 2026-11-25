@@ -101,22 +101,26 @@ namespace PhyslibExt.Circuits.TheveninNortonPort
 open MathlibExt.LinearAlgebra.Matrix.SchurStrictPositivity
 
 /-- Thevenin (open-circuit) voltage `jEff / K` of the one-port law
-`K * V = jEff - I`. -/
+`K * V = jEff - I`. The intended domain is `K > 0`; with the convention `x / 0 = 0` it is `0`
+at `K = 0`. -/
 noncomputable def theveninVoltage (K jEff : ℝ) : ℝ :=
   jEff / K
 
-/-- Thevenin resistance `1 / K` of the one-port law. -/
+/-- Thevenin resistance `1 / K` of the one-port law. The intended domain is `K > 0`; with the
+convention `x / 0 = 0` it is `0` at `K = 0`. -/
 noncomputable def theveninResistance (K : ℝ) : ℝ :=
   1 / K
 
 /-- Port conductance of a one-port Kron reduction: the single entry of
-the Schur complement. -/
+the Schur complement `A - B D⁻¹ Bᵀ`. The intended domain is `D` invertible; since the inverse of a
+singular matrix is `0`, it is the entry of `A` when `D` is singular. -/
 noncomputable def kronPortConductance {p : Type*} [Fintype p] [DecidableEq p]
     (A : Matrix Unit Unit ℝ) (B : Matrix Unit p ℝ) (D : Matrix p p ℝ) : ℝ :=
   schurComplement A B D () ()
 
 /-- Effective injected current of a one-port Kron reduction: the port
-source `jS` corrected by the interior injection, `jS - (B D⁻¹ jI)`. -/
+source `jS` corrected by the interior injection, `jS - (B D⁻¹ jI)`. The intended domain is `D`
+invertible; since the inverse of a singular matrix is `0`, it is `jS` when `D` is singular. -/
 noncomputable def kronPortInjection {p : Type*} [Fintype p] [DecidableEq p]
     (B : Matrix Unit p ℝ) (D : Matrix p p ℝ) (jS : ℝ) (jI : p → ℝ) : ℝ :=
   jS - (B *ᵥ (D⁻¹ *ᵥ jI)) ()
@@ -153,7 +157,7 @@ theorem onePort_iff_norton (K jEff V I : ℝ) :
     K * V = jEff - I ↔ I = jEff - K * V := by
   constructor <;> intro h <;> linarith
 
-/-- Open circuit: with zero load current the port voltage is the
+/-- Open circuit: for `K > 0`, with zero load current the port voltage is the
 Thevenin voltage. -/
 lemma onePort_openCircuit (K jEff V : ℝ) (hK : 0 < K)
     (h : K * V = jEff - 0) :
@@ -163,9 +167,8 @@ lemma onePort_openCircuit (K jEff V : ℝ) (hK : 0 < K)
   field_simp
   linarith
 
-/-- Resistive load `V = RL * I` with `RL ≥ 0`: the port voltage is the
-divider `Vth * RL / (Rth + RL)` and the load current is
-`Vth / (Rth + RL)`. -/
+/-- Resistive load `V = RL * I` with `RL ≥ 0` on the one-port law with `K > 0`: the port voltage
+is the divider `Vth * RL / (Rth + RL)` and the load current is `Vth / (Rth + RL)`. -/
 theorem onePort_resistiveLoad (K jEff RL V I : ℝ) (hK : 0 < K) (hRL : 0 ≤ RL)
     (hlaw : K * V = jEff - I) (hload : V = RL * I) :
     V = theveninVoltage K jEff * RL / (theveninResistance K + RL) ∧
@@ -185,7 +188,7 @@ theorem onePort_resistiveLoad (K jEff RL V I : ℝ) (hK : 0 < K) (hRL : 0 ≤ RL
     rw [hring2, ← hload, hlaw]
     ring
 
-/-- Short circuit, the `RL = 0` case: zero port voltage and load
+/-- Short circuit, the `RL = 0` case: for `K > 0`, zero port voltage and load
 current equal to the Norton current `jEff`. -/
 lemma onePort_shortCircuit (K jEff V I : ℝ) (hK : 0 < K)
     (hlaw : K * V = jEff - I) (hload : V = 0 * I) :

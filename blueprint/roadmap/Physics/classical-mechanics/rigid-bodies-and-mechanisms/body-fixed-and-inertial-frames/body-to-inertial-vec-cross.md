@@ -1,4 +1,6 @@
-# Body To Inertial Vec cross
+# Proper rotations preserve the cross product
 
-Moments transfer between frames with the orientation: the inertial components of `a ⨯₃ b`
-are the cross product of the inertial components of `a` and `b`.
+For every orientation `R ∈ SO(3)` and all `a, b ∈ ℝ³`, `R (a × b) = (R a) × (R b)`: the
+[inertial components](body-to-inertial-vec.md) of a cross product, such as a moment, are the cross
+product of the inertial components. The hypothesis `det R = 1` matters: a
+[reflection reverses the cross product](reflect-x-cross.md).

@@ -1,4 +1,11 @@
-# Evanescent Electric Field
+# Electric field of the evanescent TE10 mode
 
-The evanescent electric field, the separable electric field of the TE10 profile and the
-evanescent mode.
+For a real guide width `a`, amplitude `E₀`, frequency `ω` and rate `κ`, the evanescent electric
+field is the
+[separable electric field](../separable-vacuum-maxwell-fields/separable-electric-field.md) of the
+[TE10 profile](te10-profile.md) `sin(k_c x)` and the [longitudinal factor](evanescent-mode.md) `f`:
+
+`E(t, x, y, z) = (0, -sin(k_c x) ∂f/∂t(t, z), 0)`.
+
+For `ω ≠ 0` it is `(0, E₀ sin(k_c x) e^{-κz} cos(ωt), 0)`
+([its components](evanescent-electric-field-apply.md)); for `ω = 0` it is `0`.

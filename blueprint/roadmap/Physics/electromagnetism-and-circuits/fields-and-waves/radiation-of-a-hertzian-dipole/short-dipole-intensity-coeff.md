@@ -1,8 +1,10 @@
-# Short Dipole Intensity Coeff
+# Intensity coefficient of a Hertzian dipole
 
-Intensity coefficient `K = η k² I_peak² l² / (32 π²)` of a
-Hertzian (infinitesimal) dipole element: a uniform-current
-element whose effective length equals its physical length `l`.
-This is not the finite short dipole with triangular current
-distribution, whose effective length is `l / 2` and whose
-coefficient is four times smaller.
+For real `η`, `k`, `I` and `l`, the intensity coefficient of a Hertzian dipole is
+
+`K = η k² I² l² / (32π²)`,
+
+with `η` the wave impedance of the medium, `k` the wavenumber, `I` the peak current amplitude and
+`l` the length of the element; physically `η, k, l > 0`. The element carries a uniform current, so
+its effective length is `l`. A short dipole with triangular current distribution has effective
+length `l/2` and a coefficient four times smaller; it is not this element.

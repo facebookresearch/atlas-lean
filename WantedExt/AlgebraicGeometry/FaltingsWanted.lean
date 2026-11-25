@@ -23,19 +23,21 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.AlgebraicGeometry.Faltings` — faltings (manifest `manifests/problems/faltings.toml`, rev 1, submitter Junyan Xu, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.AlgebraicGeometry.Faltings` —
+faltings (manifest `manifests/problems/faltings.toml`, rev 1, submitter Junyan Xu,
+status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.AlgebraicGeometry.FaltingsWanted` namespace. Mathematical
-statements are unchanged. Source:
+and placed the declarations in the `MathlibExt.AlgebraicGeometry.FaltingsWanted` namespace.
+Mathematical statements are unchanged. Source:
 -/
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.NumberTheory.FunctionField
+public import MathlibExt.AlgebraicGeometry.FunctionFieldPlaces
 public import Mathlib.AlgebraicGeometry.Scheme
 public import Mathlib.Topology.Algebra.RestrictedProduct.Basic
 
@@ -56,66 +58,7 @@ advanced development of the theory of function fields.
 
 namespace AlgebraicGeometry.Faltings
 
-section ValuationSubalgebra
-
-variable (R F : Type*) [CommSemiring R] [Field F] [Algebra R F]
-
-@[ext] structure ValuationSubalgebra extends Subalgebra R F, ValuationSubring F
-
-end ValuationSubalgebra
-
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
-
-class BundledFunctionField extends
-  Algebra (RatFunc K) F, IsScalarTower K (RatFunc K) F, FunctionField K F
-
-/-- **Place.** Let $F$ be a field and $K$ a field with $F$ a $K$-algebra. A place of $F/K$ is a
-valuation ring of $F$ containing $K$ and different from $F$: a $K$-subalgebra $\mathcal{O}$ of
-$F$ with $\mathcal{O} \neq F$ such that $z \in \mathcal{O}$ or $z^{-1} \in \mathcal{O}$ for
-every $z \in F$. See [Stichtenoth, Definition 1.1.4 and 1.1.8].
-
-Stichtenoth calls the maximal ideal of $\mathcal{O}$ the place, which determines $\mathcal{O}$,
-and also requires $\mathcal{O} \neq K$; that condition is omitted since it is automatic. -/
-@[ext] structure Place extends ValuationSubalgebra K F where
-  ne_top : toSubalgebra ≠ ⊤
-
-instance : SetLike (Place K F) F where
-  coe v := v.carrier
-  coe_injective _ _ := Place.ext
-
-instance : SMulMemClass (Place K F) K F where
-  smul_mem {v} r _ h := v.smul_mem h r
-
-instance : SubringClass (Place K F) F where
-  mul_mem {v} := v.mul_mem
-  one_mem {v} := v.one_mem
-  add_mem {v} := v.add_mem
-  zero_mem {v} := v.zero_mem
-  neg_mem {v} := v.toValuationSubring.neg_mem _
-
-variable (v : Place K F)
-
-instance : HasMemOrInvMem v where
-  mem_or_inv_mem := v.mem_or_inv_mem'
-
-instance : Algebra v F := inferInstanceAs (Algebra v.toSubalgebra F)
-instance : IsScalarTower K v F := inferInstanceAs (IsScalarTower K v.toSubalgebra F)
-instance : IsFractionRing v F := inferInstanceAs (IsFractionRing v.toValuationSubring F)
-instance : ValuationRing v := inferInstanceAs (ValuationRing v.toValuationSubring)
-
-variable {F}
-
-/- [Stichtenoth, Corollary 1.3.4] (finitely many poles). -/
-/-- **Finitely many poles.** Let $F$ be a function field over a field $K$, that is, a finite
-extension of the rational function field $K(t)$. For every $x \in F$, there are only finitely
-many places $P$ of $F/K$ whose valuation ring $\mathcal{O}_P$ does not contain $x$, that is,
-$x$ has only finitely many poles. See [Stichtenoth, Corollary 1.3.4].
-
-Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
-public theorem_wanted finite_setOf_place_notMem [BundledFunctionField K F] (x : F) :
-    {v : Place K F | x ∉ v}.Finite
-
-variable (F)
 
 open scoped RestrictedProduct
 
@@ -134,10 +77,6 @@ open RestrictedProduct
 
 variable {F}
 
-/- The principal adele associated to an element in the function field: the diagonal
-embedding, well defined by finiteness of poles (`finite_setOf_place_notMem` above). It is
-recorded as a hole because ordinary definitions cannot use a `theorem_wanted` in their
-bodies; its coordinate formula is `Adele.principal_apply` below. -/
 /-- **Principal adele map.** Let $F$ be a function field over a field $K$, that is, a finite
 extension of the rational function field $K(t)$. The principal adele map is a ring homomorphism
 from $F$ to the adele ring $\mathcal{A}_F$ of $F/K$. It is meant to be the diagonal embedding

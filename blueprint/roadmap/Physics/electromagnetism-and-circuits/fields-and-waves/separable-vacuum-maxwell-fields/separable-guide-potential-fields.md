@@ -1,5 +1,9 @@
-# Fields of the separable guide potential
+# Fields of the separable guide potential for smooth a and f
 
-For `C^∞` `a` and `f` and any speed of light
-`c`, the potential `A_y = a(x) f(t, z)`, `A_x = A_z = φ = 0` (with `t = x⁰ / c`) has
-`E = (0, -a f_t, 0)` and `B = (-a f_z, 0, a' f)`, and the potential is `C^∞`.
+Let `c > 0` be the speed of light, and let `a : ℝ → ℝ` and `f : ℝ × ℝ → ℝ` be infinitely
+differentiable. Then the [separable guide potential](separable-guide-potential.md), with `φ = 0` and
+vector potential `(0, a(x) f(t, z), 0)`, is infinitely differentiable on spacetime, and at every
+time `t` and position `(x, y, z)` its electric field `E = -∇φ - ∂A/∂t` and magnetic field
+`B = ∇ × A` are
+
+`E = (0, -a(x) ∂f/∂t(t, z), 0)` and `B = (-a(x) ∂f/∂z(t, z), 0, a'(x) f(t, z))`.

@@ -1,4 +1,9 @@
-# Exponential Density
+# Exponential atmospheric density
 
-Exponential density `ρ(h) = ρ0 * exp (-h / H)` with reference density `ρ0` at `h = 0` and
-scale height `H`, height `h` measured upward.
+For real numbers `ρ₀`, `H` and `h`, the exponential density at height `h` is
+
+`ρ(h) = ρ₀ exp(−h / H)`,
+
+with reference density `ρ₀` at `h = 0` and scale height `H`, the height `h` measured upward. In
+the physical reading `ρ₀ > 0` and `H > 0`. With the convention `x / 0 = 0`, at `H = 0` the density
+is the constant `ρ₀`.

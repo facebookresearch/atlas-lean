@@ -1,4 +1,4 @@
-# Kepler circular speed
+# Circular-orbit speed v = √(GM/r)
 
-Circular-orbit speed: from `v ^ 2 = G * M / r` and `v > 0`,
-`v = Real.sqrt (G * M / r)`.
+Let $G$, $M$, $r$ and $v$ be positive with $v^2 = GM/r$, the balance between gravity and the
+centripetal acceleration on a circular orbit of radius $r$ about a mass $M$. Then $v = \sqrt{GM/r}$.

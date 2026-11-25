@@ -1,9 +1,7 @@
-# Quartic end force identity
+# End forces of a uniformly loaded quartic from the stiffness matrix
 
-Uniform-load quartic end-force identity.
-
-For a quartic deflection field
-`y(x) = a + b*x + c*x^2 + d*x^3 + e*x^4` satisfying
-`EI * y'''' = w` on the element `[0, L]` (`EI > 0`, `L > 0`),
-the conjugate end-force vector is the stiffness action on the
-end data minus the uniform consistent load vector.
+Let `EI > 0` and `L > 0`, and let `y(x) = a + b x + c x² + d x³ + e x⁴` for all real `x` satisfy
+`EI y''''(x) = w` for every `x` in `[0, L]`. Then the [end forces](beam-end-forces.md) of `y` are
+`K` applied to its [end data](beam-end-data.md) minus the
+[consistent load vector](uniform-load-vector.md) of `w`, with the
+[beam stiffness matrix](beam-stiffness.md) `K`.

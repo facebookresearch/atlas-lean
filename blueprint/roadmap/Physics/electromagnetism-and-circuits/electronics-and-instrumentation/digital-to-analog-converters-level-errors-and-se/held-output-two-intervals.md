@@ -1,9 +1,15 @@
-# Held Output two Intervals
+# Settling across a change of held level at a junction
 
-Two holding intervals with a change of level at the junction:
-an output continuous on the whole span, obeying the first held
-equation on the first open interval and the second on the
-second, is given on the second interval by the settling output
-whose initial value is the first interval's endpoint value, for
-`tau > 0` and `tk < tk1 < tk2`. Continuity at the junction is
-the no-reset hypothesis.
+Let $\tau > 0$, $u_1$ and $u_2$ be real numbers and $t_0 < t_1 < t_2$, and let
+$y \colon \mathbb{R} \to \mathbb{R}$ be continuous on $[t_0, t_2]$ and differentiable at every point
+of $(t_0, t_1)$ and of $(t_1, t_2)$, with $\tau\, y' = u_1 - y$ on $(t_0, t_1)$ and
+$\tau\, y' = u_2 - y$ on $(t_1, t_2)$. Then for every $t \in [t_1, t_2]$
+
+$$y(t) = u_2 + (y_1 - u_2)\, e^{-(t - t_1)/\tau},$$
+
+where
+
+$$y_1 = u_1 + (y(t_0) - u_1)\, e^{-(t_1 - t_0)/\tau}$$
+
+is the endpoint value of the first interval: the second interval starts from it. Continuity at the
+junction $t_1$ is the no-reset hypothesis; no derivative is assumed there.

@@ -90,21 +90,6 @@ public theorem_wanted bishopsWhite_recurrence (m k : ℕ) :
         bishopsWhite m (k + 1) + ((m : ℤ) - k + ((m + 1) % 2 : ℕ)) * bishopsWhite m k ∧
       bishopsWhite m 0 = 1 ∧ bishopsWhite 0 (k + 1) = 0
 
-/-- **Recurrence for bishops on the black squares.** Let $R_K(m, k)$ be the number of
-nonattacking placements of $k$ bishops on the black squares $(i, j)$, with $i + j$ odd, of the
-board $\{1, \dots, m\}^2$, and let $\pi(m) \in \{0, 1\}$ be the remainder of $m$ modulo $2$.
-For $m, k \ge 1$,
-$$R_K(m, k) = R_K(m-1, k) + (m - k + 1 - \pi(m)) \, R_K(m-1, k-1)$$
-in the integers, and for every natural number $m$, $R_K(m, 0) = 1$ and $R_K(0, k) = 0$ for
-$k \ge 1$.
-
-Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
-Journal of Integer Sequences 28 (2025), Article 25.8.6, Theorem 4 (`jis-2025-25.8.6-thm-4`). -/
-public theorem_wanted bishopsBlack_recurrence (m k : ℕ) :
-    (bishopsBlack (m + 1) (k + 1) : ℤ) =
-        bishopsBlack m (k + 1) + ((m : ℤ) - k + 1 - ((m + 1) % 2 : ℕ)) * bishopsBlack m k ∧
-      bishopsBlack m 0 = 1 ∧ bishopsBlack 0 (k + 1) = 0
-
 /-- **Extended Stirling formula for bishops on white squares.** For all natural numbers $m$ and
 $k$, the number $R_W(m, k)$ of placements of $k$ nonattacking bishops on the white squares (those
 $(i, j)$ with $i + j$ even) of the $m \times m$ board $[1, m]^2$ satisfies
@@ -213,32 +198,6 @@ public theorem_wanted bishopsSquare_eq_quasi (m k : ℕ) :
             bishopColorQuasiCoeff (k - j) (d - i) ((m % 2 : ℕ) : ℂ)) * (m : ℂ) ^ d
 
 /-! ## The anassa -/
-
-/-- **Recurrence for anassas below the diagonal.** Let $A(m, k, p)$ be the number of
-nonattacking placements of $k$ anassas on the square board $\{1, \dots, m\}^2$ with exactly $p$
-of them strictly below the main diagonal, let ${n \brace j}$ be Knuth's extended Stirling
-numbers of the second kind, and let $\delta$ be the Kronecker delta. For $m \ge 1$, $k \ge 2$
-and $p \ge 1$,
-$$A(m, k, p) = A(m-1, k, p) + (m-k+1) A(m-1, k-1, p) + (m-p) A(m-1, k-1, p-1) +
-(m-p)(m-k+1) A(m-1, k-2, p-1)$$
-in the integers. Moreover, for all natural numbers $m$, $k$ and $p$,
-$A(0, k, p) = \delta_{k0} \delta_{p0}$, $A(m, 0, p) = \delta_{p0}$,
-$A(m, 1, p) = {m+1 \brace m} \delta_{p0} + {m \brace m-1} \delta_{p1}$ and
-$A(m, k, 0) = {m+1 \brace m-k+1}$.
-
-Source: Eder G. Santos, *Counting Nonattacking Chess Piece Placements: Bishops and Anassas*,
-Journal of Integer Sequences 28 (2025), Article 25.8.6, Theorem 11 (`jis-2025-25.8.6-thm-11`). -/
-public theorem_wanted anassasBelow_recurrence (m k p : ℕ) :
-    ((anassasBelow (m + 1) (k + 2) (p + 1) : ℤ) =
-        anassasBelow m (k + 2) (p + 1) + ((m : ℤ) - k) * anassasBelow m (k + 1) (p + 1) +
-          ((m : ℤ) - p) * anassasBelow m (k + 1) p +
-          ((m : ℤ) - p) * ((m : ℤ) - k) * anassasBelow m k p) ∧
-      anassasBelow 0 k p = (if k = 0 ∧ p = 0 then 1 else 0) ∧
-      anassasBelow m 0 p = (if p = 0 then 1 else 0) ∧
-      anassasBelow m 1 p =
-        (if p = 0 then Nat.stirlingSecond (m + 1) m else 0) +
-          (if p = 1 then extStirlingSecond m ((m : ℤ) - 1) else 0) ∧
-      anassasBelow m k 0 = extStirlingSecond (m + 1 : ℕ) ((m : ℤ) - k + 1)
 
 /-- **Sum formula for anassas below the diagonal.** Let $A(m, k, p)$ be the number of
 nonattacking placements of $k$ anassas on the square board $\{1, \dots, m\}^2$ with exactly $p$

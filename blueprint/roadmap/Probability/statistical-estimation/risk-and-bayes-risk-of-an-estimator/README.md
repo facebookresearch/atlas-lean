@@ -1,33 +1,32 @@
 # Risk and Bayes risk of an estimator
 
-- [Matched Statistic](matched-statistic.md)
-- [Matched Threshold](matched-threshold.md)
-- [Matched Filter Rule](matched-filter-rule.md)
+## Statistic, threshold and decision rule
 
-## B. The threshold rule on Gaussian densities
+- [Matched-filter statistic](matched-statistic.md)
+- [Threshold of the matched-filter test](matched-threshold.md)
+- [Matched-filter decision rule](matched-filter-rule.md)
 
-- [Decide 1 iff the matched statistic exceeds the threshold](binary-cost-rule-gaussian-eq-matched-fil.md)
+## Bayes optimality for two Gaussian laws
 
-## C. Bayes optimality
+- [The Bayes rule for two Gaussian laws is the matched-filter test](binary-cost-rule-gaussian-eq-matched-fil.md)
+- [The matched-filter test is Bayes optimal for two Gaussian laws](matched-filter-rule-minimizes-binary-cos.md)
 
-- [Finite-cost Gaussian matched-filter test is Bayes optimal (headline)](matched-filter-rule-minimizes-binary-cos.md)
+## The matched weight and the signal-to-noise quotient
 
-## D. The statistic and the matched-SNR direction
-
-- [The statistic is the whitened matched-filter output](matched-statistic-eq-dot-product-matched.md)
+- [The matched statistic is the output of the matched weight](matched-statistic-eq-dot-product-matched.md)
 - [The matched weight attains the whitened energy](matched-snr-matched-weight.md)
-- [The matched weight maximizes the SNR](matched-snr-le-matched-snr-matched-weigh.md)
-- [The matched-SNR direction](matched-snr-eq-matched-snr-matched-weigh.md)
+- [The matched weight maximises the signal-to-noise quotient](matched-snr-le-matched-snr-matched-weigh.md)
+- [The maximising weights are the nonzero multiples of the matched weight](matched-snr-eq-matched-snr-matched-weigh.md)
 
-## E. Equal means
+## Equal means
 
-- [Equal means give no SNR direction](matched-weight-eq-zero-iff.md)
-- [Equal means: a prior/cost-only decision](matched-filter-rule-of-eq.md)
+- [The matched weight vanishes exactly for equal means](matched-weight-eq-zero-iff.md)
+- [With equal means the matched-filter rule ignores the observation](matched-filter-rule-of-eq.md)
 
-## F. Validation
+## Examples
 
-- [`n = 1`, unequal means, priors and costs](matched-filter-rule-fin-one-example.md)
-- [Flipped cost index changes the threshold](matched-threshold-fin-one-flipped-ne.md)
-- [Flipped cost index is rejected by the fixture](matched-filter-rule-fin-one-flipped-exam.md)
-- [`n = 2`, non-diagonal covariance, all three branches](matched-filter-rule-fin-two-example.md)
-- [`n = 2`, equal means](matched-filter-rule-fin-two-equal-means.md)
+- [One-dimensional example of the matched-filter rule](matched-filter-rule-fin-one-example.md)
+- [Swapping the two error costs changes the threshold](matched-threshold-fin-one-flipped-ne.md)
+- [With swapped error costs the example decides differently](matched-filter-rule-fin-one-flipped-exam.md)
+- [Two-dimensional example of the matched-filter rule](matched-filter-rule-fin-two-example.md)
+- [Two-dimensional example with equal means](matched-filter-rule-fin-two-equal-means.md)

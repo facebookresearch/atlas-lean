@@ -1,6 +1,5 @@
-# Reduced stiffness exists Unique
+# Unique displacement of a determinate system with nonzero weights
 
-The supported solution exists and is unique: for square
-invertible `Bs` and nonvanishing axial weights `d`, every
-supported load `f` has exactly one supported displacement
-`u`.
+Let `n` be a finite set, `B_s` an `n × n` real matrix and `d` a vector of weights indexed by `n`. If
+`det B_s ≠ 0` and every weight is nonzero, `d_e ≠ 0`, then every load `f` has exactly one
+displacement `u` with `(B_sᵀ diag(d) B_s) u = f`.

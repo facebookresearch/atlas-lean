@@ -105,8 +105,9 @@ namespace PhyslibExt.Circuits.BoxTerminalFlux
 
 /-! ### A. Faces, flux, and the ohmic density -/
 
-/-- The outward flux through face `f`: the flux integral of the
-outward-normal current density over the face domain. -/
+/-- The outward flux through face `f`: the flux integral of the outward-normal current density over
+the face domain (Lebesgue measure; the integral is `0` when the density is not integrable on the
+domain). -/
 noncomputable def faceFlux (D : Fin 6 → Set (ℝ × ℝ))
     (density : Fin 6 → (ℝ × ℝ) → ℝ) (f : Fin 6) : ℝ :=
   PhyslibExt.Circuits.UniformOhmicBar.terminalCurrent (D f) (density f)
@@ -163,11 +164,10 @@ lemma endFaceCurrents_add_eq_neg_chargeRate_of_sideFaces_zero
 
 /-! ### C. Constant densities, through-flow, and witnesses -/
 
-/-- The flux of a constant density over a face is `volume.real (D f)`
-times the constant. Without finite measure both sides may be junk
-zeros (`volume.real` of an infinite measure is `0`, and so is the
-integral of a nonintegrable function); `faceFlux_of_const_of_measure_ne_top`
-adds finite area, integrability, and the area identity. -/
+/-- The flux of a constant density over a measurable face is `volume.real (D f)` times the constant.
+Without finite measure both sides may be junk zeros (`volume.real` of an infinite measure is `0`,
+and so is the integral of a nonintegrable function); `faceFlux_of_const_of_measure_ne_top` adds
+finite area, integrability, and the area identity. -/
 theorem faceFlux_of_const (D : Fin 6 → Set (ℝ × ℝ))
     (density : Fin 6 → (ℝ × ℝ) → ℝ) (f : Fin 6) (k : ℝ)
     (hD : MeasurableSet (D f)) (hk : ∀ p ∈ D f, density f p = k) :
@@ -178,9 +178,8 @@ theorem faceFlux_of_const (D : Fin 6 → Set (ℝ × ℝ))
   rw [integral_congr_ae hae, integral_const]
   simp only [Measure.real, Measure.restrict_apply_univ, smul_eq_mul]
 
-/-- For a face of finite area, a constant density is integrable over
-the face, `volume.real (D f)` is the face area, and the flux is that
-area times the constant. -/
+/-- For a measurable face of finite area, a constant density is integrable over the face,
+`volume.real (D f)` is the face area, and the flux is that area times the constant. -/
 theorem faceFlux_of_const_of_measure_ne_top (D : Fin 6 → Set (ℝ × ℝ))
     (density : Fin 6 → (ℝ × ℝ) → ℝ) (f : Fin 6) (k : ℝ)
     (hD : MeasurableSet (D f)) (hfin : volume (D f) ≠ ⊤)
@@ -191,11 +190,11 @@ theorem faceFlux_of_const_of_measure_ne_top (D : Fin 6 → Set (ℝ × ℝ))
   refine ⟨?_, ENNReal.ofReal_toReal hfin, faceFlux_of_const D density f k hD hk⟩
   exact (integrableOn_const hfin).congr_fun (fun p hp => (hk p hp).symm) hD
 
-/-- Uniform through-flow: with two end faces of equal finite area and
-constant normal densities `-c` on face `0` and `c` on face `1` (uniform
-flow in the positive axis direction), the end-face outward currents are
-opposite. Finite area makes both densities integrable and
-`volume.real` the face area, so both fluxes are genuine integrals. -/
+/-- Uniform through-flow: with two measurable end faces of equal finite area and constant normal
+densities `-c` on face `0` and `c` on face `1` (uniform flow with axial component `c`, in the
+positive axis direction when `c > 0`), the end-face outward currents are opposite. Finite area
+makes both densities integrable and `volume.real` the face area, so both fluxes are genuine
+integrals. -/
 lemma uniformThroughFlow_endFlux_opposite (D : Fin 6 → Set (ℝ × ℝ))
     (density : Fin 6 → (ℝ × ℝ) → ℝ) (c : ℝ)
     (hD0 : MeasurableSet (D 0)) (hD1 : MeasurableSet (D 1))
@@ -272,8 +271,9 @@ def boxNormalDensity (a b : Fin 3 → ℝ) (J : (Fin 3 → ℝ) → Fin 3 → �
     (f : Fin 6) (x : Fin 2 → ℝ) : ℝ :=
   faceSign f * J (boxFaceEmbed a b f x) (faceAxis f)
 
-/-- Outward flux of an ambient current density through face `f` of the
-box `Set.Icc a b`. -/
+/-- Outward flux of an ambient current density through face `f` of the box `Set.Icc a b`: the
+integral of the outward-normal density over the face rectangle, `0` when that density is not
+integrable there. -/
 noncomputable def boxOutwardFlux (a b : Fin 3 → ℝ) (J : (Fin 3 → ℝ) → Fin 3 → ℝ)
     (f : Fin 6) : ℝ :=
   ∫ x in boxFaceDomain a b f, boxNormalDensity a b J f x
@@ -289,9 +289,9 @@ lemma volume_boxFaceDomain_ne_top (a b : Fin 3 → ℝ) (f : Fin 6) :
     volume (boxFaceDomain a b f) ≠ ⊤ :=
   isCompact_Icc.measure_lt_top.ne
 
-/-- **Divergence theorem for the six faces.** The six outward face
-fluxes of a current density, continuous on the box and differentiable
-in its interior, sum to the integral of its divergence. -/
+/-- **Divergence theorem for the six faces.** For `a ≤ b`, the six outward face fluxes of a current
+density `J`, continuous on the box and with derivative `J'` at every interior point, sum to the
+integral of its divergence when that divergence is integrable on the box. -/
 theorem sum_boxOutwardFlux_eq_integral_divergence (a b : Fin 3 → ℝ) (hle : a ≤ b)
     (J : (Fin 3 → ℝ) → Fin 3 → ℝ) (J' : (Fin 3 → ℝ) → (Fin 3 → ℝ) →L[ℝ] Fin 3 → ℝ)
     (hc : ContinuousOn J (Set.Icc a b))
@@ -307,10 +307,10 @@ theorem sum_boxOutwardFlux_eq_integral_divergence (a b : Fin 3 → ℝ) (hle : a
   simp [integral_neg]
   ring
 
-/-- **Box charge continuity, derived.** If the current density and the
-charge-density rate `ρdot` obey the local continuity law
-`ρdot + div J = 0` on the box, the six outward fluxes satisfy
-`chargeContinuity` with rate the integral of `ρdot` over the box. -/
+/-- **Box charge continuity, derived.** For `a ≤ b`, `J` continuous on the box with derivative `J'`
+at every interior point and `ρdot` integrable on the box: if the current density and the
+charge-density rate `ρdot` obey the local continuity law `ρdot + div J = 0` on the box, the six
+outward fluxes satisfy `chargeContinuity` with rate the integral of `ρdot` over the box. -/
 theorem chargeContinuity_boxOutwardFlux (a b : Fin 3 → ℝ) (hle : a ≤ b)
     (J : (Fin 3 → ℝ) → Fin 3 → ℝ) (J' : (Fin 3 → ℝ) → (Fin 3 → ℝ) →L[ℝ] Fin 3 → ℝ)
     (hc : ContinuousOn J (Set.Icc a b))
@@ -326,14 +326,14 @@ theorem chargeContinuity_boxOutwardFlux (a b : Fin 3 → ℝ) (hle : a ≤ b)
   rw [sum_boxOutwardFlux_eq_integral_divergence a b hle J J' hc hd hi,
     setIntegral_congr_fun measurableSet_Icc heq, integral_neg]
 
-/-- Charge enclosed by the box `Set.Icc a b` at time `t`, for a
-time-dependent charge density `ρ`. -/
+/-- Charge enclosed by the box `Set.Icc a b` at time `t`, for a time-dependent charge density `ρ`
+(the integral is `0` when `ρ t` is not integrable on the box). -/
 noncomputable def enclosedCharge (a b : Fin 3 → ℝ) (ρ : ℝ → (Fin 3 → ℝ) → ℝ) (t : ℝ) : ℝ :=
   ∫ x in Set.Icc a b, ρ t x
 
-/-- The enclosed charge is differentiable in time, with derivative the
-integral of the charge-density rate, for a continuous density with a
-continuous time derivative. -/
+/-- The enclosed charge is differentiable in time, with derivative the integral of the
+charge-density rate, for `ρ` and `ρdot` jointly continuous in `(t, x)` with `ρdot t x` the time
+derivative of `ρ` at every `(t, x)`. -/
 theorem hasDerivAt_enclosedCharge (a b : Fin 3 → ℝ) (ρ ρdot : ℝ → (Fin 3 → ℝ) → ℝ)
     (hρ : Continuous (Function.uncurry ρ)) (hρdot : Continuous (Function.uncurry ρdot))
     (hderiv : ∀ s x, HasDerivAt (fun s => ρ s x) (ρdot s x) s) (t : ℝ) :
@@ -356,9 +356,10 @@ theorem hasDerivAt_enclosedCharge (a b : Fin 3 → ℝ) (ρ ρdot : ℝ → (Fin
     exact hC (s, x) ⟨hs, hx⟩
   · exact Filter.Eventually.of_forall fun x s _ => hderiv s x
 
-/-- **Enclosed-charge balance.** Under the local continuity law at time
-`t`, the enclosed charge changes at minus the total outward flux of the
-six faces. -/
+/-- **Enclosed-charge balance.** For `a ≤ b`, `ρ` and `ρdot` jointly continuous in `(t, x)` with
+`ρdot t x` the time derivative of `ρ` at every `(t, x)`, `J` continuous on the box with derivative
+`J'` at every interior point, and the local continuity law at time `t` on the box, the enclosed
+charge changes at minus the total outward flux of the six faces. -/
 theorem hasDerivAt_enclosedCharge_eq_neg_sum_boxOutwardFlux (a b : Fin 3 → ℝ)
     (hle : a ≤ b) (ρ ρdot : ℝ → (Fin 3 → ℝ) → ℝ)
     (hρ : Continuous (Function.uncurry ρ)) (hρdot : Continuous (Function.uncurry ρdot))
@@ -375,9 +376,10 @@ theorem hasDerivAt_enclosedCharge_eq_neg_sum_boxOutwardFlux (a b : Fin 3 → ℝ
   rw [h, neg_neg]
   exact hasDerivAt_enclosedCharge a b ρ ρdot hρ hρdot hderiv t
 
-/-- **Constant enclosed charge, derived.** If the charge enclosed by the
-box is constant in time and the local continuity law holds at time `t`,
-the six outward fluxes sum to zero. -/
+/-- **Constant enclosed charge, derived.** For `a ≤ b`, `ρ` and `ρdot` jointly continuous in
+`(t, x)` with `ρdot t x` the time derivative of `ρ` at every `(t, x)` and `J` continuous on the box
+with derivative `J'` at every interior point: if the charge enclosed by the box is constant in time
+and the local continuity law holds at time `t`, the six outward fluxes sum to zero. -/
 theorem sum_boxOutwardFlux_eq_zero_of_enclosedCharge_const (a b : Fin 3 → ℝ)
     (hle : a ≤ b) (ρ ρdot : ℝ → (Fin 3 → ℝ) → ℝ)
     (hρ : Continuous (Function.uncurry ρ)) (hρdot : Continuous (Function.uncurry ρdot))
@@ -418,13 +420,13 @@ lemma faceFlux_boxFaceSets (a b : Fin 3 → ℝ) (J : (Fin 3 → ℝ) → Fin 3 
     MeasurableEquiv.finTwoArrow.symm_apply_apply x
   simp only [hx]
 
-/-- **Box terminal flux balance.** Terminal outward currents identified
-with the six outward face fluxes of the box `Set.Icc a b` sum to minus
-the integral of the charge-density rate `ρdot` over the box, which is the
-enclosed-charge rate by `hasDerivAt_enclosedCharge`, under the local
-continuity law `ρdot + div J = 0`. The `chargeContinuity` premise of
-`sum_terminalCurrent_eq_neg_chargeRate` is discharged by the divergence
-theorem rather than assumed. -/
+/-- **Box terminal flux balance.** For `a ≤ b`, `J` continuous on the box with derivative `J'` at
+every interior point, `ρdot` integrable on the box and the local continuity law `ρdot + div J = 0`
+on the box, terminal outward currents identified with the six outward face fluxes of the box
+`Set.Icc a b` sum to minus the integral of `ρdot` over the box. That integral is the enclosed-charge
+rate when `ρdot` is the time derivative of a density as in `hasDerivAt_enclosedCharge`. The
+`chargeContinuity` premise of `sum_terminalCurrent_eq_neg_chargeRate` is discharged by the
+divergence theorem rather than assumed. -/
 theorem boxTerminalCurrents_sum_eq_neg_chargeRate (a b : Fin 3 → ℝ) (hle : a ≤ b)
     (J : (Fin 3 → ℝ) → Fin 3 → ℝ) (J' : (Fin 3 → ℝ) → (Fin 3 → ℝ) →L[ℝ] Fin 3 → ℝ)
     (hc : ContinuousOn J (Set.Icc a b))
@@ -440,10 +442,11 @@ theorem boxTerminalCurrents_sum_eq_neg_chargeRate (a b : Fin 3 → ℝ) (hle : a
   rw [hflux]
   exact chargeContinuity_boxOutwardFlux a b hle J J' hc hd ρdot hρdot hlocal
 
-/-- **Constant enclosed charge.** Terminal outward currents identified
-with the six outward face fluxes of the box sum to zero when the charge
-enclosed by the box is constant in time and the local continuity law
-holds at time `t`. -/
+/-- **Constant enclosed charge.** Terminal outward currents identified with the six outward face
+fluxes of the box sum to zero when `a ≤ b`, `ρ` and `ρdot` jointly continuous in `(t, x)` with
+`ρdot t x` the time derivative of `ρ` at every `(t, x)`, `J` continuous on the box with derivative
+`J'` at every interior point, the charge enclosed by the box is constant in time and the local
+continuity law holds at time `t`. -/
 theorem boxTerminalCurrents_sum_eq_zero_of_constantCharge (a b : Fin 3 → ℝ)
     (hle : a ≤ b) (ρ ρdot : ℝ → (Fin 3 → ℝ) → ℝ)
     (hρ : Continuous (Function.uncurry ρ)) (hρdot : Continuous (Function.uncurry ρdot))

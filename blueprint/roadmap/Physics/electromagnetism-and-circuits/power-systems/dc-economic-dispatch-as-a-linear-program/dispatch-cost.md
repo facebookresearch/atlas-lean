@@ -1,3 +1,4 @@
-# Dispatch Cost
+# Linear cost of a dispatch
 
-Linear dispatch cost `cost ⬝ᵥ pg`, to be minimized.
+For cost coefficients `c` and a generation `p` over finitely many generators, the dispatch cost is
+`c · p = Σ_g c_g p_g`, to be minimized.

@@ -155,7 +155,7 @@ private lemma diff_z {f : ℝ → ℝ → ℝ} (hf : ContDiff ℝ ∞ (Function.
     Differentiable ℝ (f t) :=
   (hf.differentiable (by simp)).comp ((differentiable_const t).prodMk differentiable_id)
 
-/-- `E = (0, -a f_t, 0)`. -/
+/-- `E = (0, -a f_t, 0)` at a time `t` where `s ↦ f s z` is differentiable. -/
 lemma electricField_separableGuidePotential (c : SpeedOfLight) (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ)
     (t : Time) (p : Space) {ft : ℝ} (hf : HasDerivAt (fun s => f s (p 2)) ft t.val) :
     (separableGuidePotential c a f).electricField c t p =
@@ -168,7 +168,7 @@ private lemma space_deriv_zero (μ : Fin 3) (p : Space) :
     Space.deriv μ (fun _ : Space => (0 : ℝ)) p = 0 := by
   simp [Space.deriv]
 
-/-- `B = (-a f_z, 0, a' f)`. -/
+/-- `B = (-a f_z, 0, a' f)` at a point where `a` is differentiable at `x` and `f t` at `z`. -/
 lemma magneticField_separableGuidePotential (c : SpeedOfLight) (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ)
     (t : Time) (p : Space) (ha : DifferentiableAt ℝ a (p 0))
     (hf : DifferentiableAt ℝ (f t.val) (p 2)) :
@@ -189,7 +189,8 @@ private noncomputable def ev : Lorentz.Vector 3 ≃L[ℝ] EuclideanSpace ℝ (Fi
 private noncomputable def stc (μ : Fin 1 ⊕ Fin 3) : SpaceTime →L[ℝ] ℝ :=
   (EuclideanSpace.proj μ).comp ev.toContinuousLinearMap
 
-/-- The potential is `C^∞` on spacetime (premise `hA` of Physlib's `IsExtrema` equivalences). -/
+/-- For `C^∞` `a` and `f`, the potential is `C^∞` on spacetime (premise `hA` of Physlib's
+`IsExtrema` equivalences). -/
 lemma contDiff_separableGuidePotential (c : SpeedOfLight) (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ)
     (ha : ContDiff ℝ ∞ a) (hf : ContDiff ℝ ∞ (Function.uncurry f)) :
     ContDiff ℝ ∞ (separableGuidePotential c a f) := by
@@ -278,8 +279,8 @@ lemma sinusoidal_reversed_curl_sign_fails (c : SpeedOfLight) :
   rw [sinusoidal_magneticField, deriv_wave_z] at this
   norm_num [h] at this
 
-/-- Skipping the time conversion (feeding the spacetime coordinate `x⁰` straight into `f`)
-rescales the electric field: `E_y = -c a(x) f_t(c t, z)`. -/
+/-- Skipping the time conversion (feeding the spacetime coordinate `x⁰` straight into `f`) rescales
+the electric field, for `C^∞` `f`: `E_y = -c a(x) f_t(c t, z)`. -/
 lemma unconvertedPotential_electricField (c : SpeedOfLight) (a : ℝ → ℝ) (f : ℝ → ℝ → ℝ)
     (hf : ContDiff ℝ ∞ (Function.uncurry f)) (t : Time) (p : Space) :
     (⟨fun x μ => if μ = Sum.inr 1 then a (x (Sum.inr 0)) * f (x (Sum.inl 0)) (x (Sum.inr 2))

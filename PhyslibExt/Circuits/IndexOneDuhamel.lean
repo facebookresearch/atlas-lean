@@ -123,11 +123,10 @@ lemma continuous_reducedForcingPath {n m : Type*} [Fintype n] [Fintype m] [Decid
 
 /-! ### B. Reduced state equation -/
 
-/-- **Reduced state.** The reduced state equation
-`x' = (A - B D⁻¹ C) x + (f t - B D⁻¹ g t)` has a unique global
-solution through `x₀` at time `t₀`, given by the
-variation-of-constants formula with the operator exponential of the
-reduced operator. -/
+/-- **Reduced state.** For invertible `D` and continuous `f`, `g`, the reduced state equation
+`x' = (A - B D⁻¹ C) x + (f t - B D⁻¹ g t)` has a unique global solution through `x₀` at time `t₀`,
+given by the variation-of-constants formula with the operator exponential of the reduced
+operator. -/
 theorem reducedState_existsUnique {n m : Type*} [Fintype n] [Fintype m] [DecidableEq n]
     [DecidableEq m] (A : Matrix n n ℝ) (B : Matrix n m ℝ) (C : Matrix m n ℝ)
     (D : Matrix m m ℝ) [Invertible D] (f : ℝ → n → ℝ) (g : ℝ → m → ℝ)

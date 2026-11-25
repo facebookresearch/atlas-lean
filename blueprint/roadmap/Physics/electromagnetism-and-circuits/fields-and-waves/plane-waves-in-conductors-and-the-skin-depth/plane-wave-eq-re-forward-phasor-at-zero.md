@@ -1,6 +1,10 @@
-# Plane Wave eq re forward phasor at zero sigma
+# At σ = 0 the plane wave is the real part of the forward phasor
 
-At zero conductivity, the real cosine plane wave with wavenumber
-the phase constant is the real part of the forward phasor of the
-declared convention, `exp (+i * omega * t) * exp (-gamma * x) * E0`
-with `gamma` the propagation constant.
+Let `ε > 0`, `μ > 0` and `ω > 0`. Let `β₀` and `γ₀` be the [phase constant](phase-constant.md) and
+the [propagation constant](propagation-constant.md) at `σ = 0`. For all real `E₀`, `x` and `t`, the
+[plane wave](../electrostatics-plane-waves-and-fresnel-coefficie/plane-wave.md) `E₀ cos(β₀x - ωt)`
+satisfies
+
+`E₀ cos(β₀x - ωt) = Re(e^{iωt} e^{-γ₀x} E₀)`,
+
+the real part of the forward phasor of the convention `e^{+iωt} e^{-γz}`.

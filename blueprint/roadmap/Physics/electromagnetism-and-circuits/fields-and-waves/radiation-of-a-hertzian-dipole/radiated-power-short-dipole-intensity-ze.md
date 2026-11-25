@@ -1,3 +1,4 @@
-# Radiated Power short Dipole Intensity zero
+# With K = 0 the radiated power is zero
 
-Validation, `K = 0`: zero radiated power.
+For `K = 0` the intensity `U(θ) = 0 · sin²θ` vanishes, and its [radiated power](radiated-power.md)
+is `0`.

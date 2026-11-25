@@ -1,9 +1,8 @@
-# Dual Vector
+# LP dual vector of a dispatch dual witness
 
-LP dual vector of a dispatch dual witness, in the row order of the
-canonical LP. The nodal prices `lam` are free multipliers of the balance
-`L_b * θ - Cgen * pg = -d`: their positive parts go to the first balance
-block and their negative parts to the second. The free reference
-multiplier `ρ` is split the same way over the two reference rows. The
-generator and flow bound multipliers `μhi, μlo, ηhi, ηlo` are passed
-unchanged, so a negative entry fails the checker's sign test.
+For rational nodal prices `λ`, a reference multiplier `ρ` and bound multipliers `μ_hi`, `μ_lo`
+(generators) and `η_hi`, `η_lo` (branches), the dual vector, in the row order of the linear program,
+is `(max(λ, 0), max(-λ, 0), max(ρ, 0), max(-ρ, 0), μ_hi, μ_lo, η_hi, η_lo)`. The free prices and
+reference multiplier are split into positive and negative parts over the two rows of each equality;
+the bound multipliers are passed unchanged, so a negative one fails the nonnegativity test of the
+checker.

@@ -1,3 +1,10 @@
-# Dispatch nonempty iff lp nonempty
+# The dispatch problem is feasible iff its linear program is
 
-The dispatch problem is feasible exactly when the canonical LP is.
+Consider a network with finitely many buses `v` and branches `e` (each with a tail and a head bus
+and a real susceptance `b_e`), finitely many generators `g` placed at buses, a demand `d`, a
+reference bus `r`, generator limits `p_min`, `p_max` and branch-flow limits `f_min`, `f_max`. Some
+[feasible dispatch](is-dispatch-feasible.md) exists if and only if some feasible point of the
+[dispatch linear program](lp-matrix.md): a vector `x ≥ 0` with `A x ≤ rhs` for the
+[constraint matrix](lp-matrix.md) `A` and the [right-hand side](lp-rhs.md) exists. No positivity of
+the susceptances and no ordering of the bounds is assumed; inconsistent data make both problems
+infeasible.

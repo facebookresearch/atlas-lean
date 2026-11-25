@@ -68,8 +68,9 @@ open Matrix MathlibExt.Combinatorics.Graph.ArcNetwork
 
 /-! ### A. Conductance as a weighted Laplacian -/
 
-/-- The nodal conductance stamped on the tail-positive incidence is
-the weighted Laplacian of the resistor arcs with weight `1 / R`. -/
+/-- The nodal conductance stamped on the tail-positive incidence is the weighted Laplacian of the
+resistor arcs with weight `1 / R`. With the convention `0⁻¹ = 0`, a branch of zero resistance
+contributes nothing on both sides. -/
 lemma nodalConductance_physicalIncidence_eq {nN nB : ℕ} (tail head : Fin nB → Fin nN)
     (Rset : Finset (Fin nB)) (Rval : Fin nB → ℝ) :
     nodalConductance (physicalIncidence tail head) Rset Rval =
@@ -113,8 +114,8 @@ theorem nodalConductance_grounded_posDef {nN nB : ℕ} (tail head : Fin nB → F
     (fun e : Rset => (Rval e)⁻¹) (fun e => (inv_pos.mpr (hR e.1 e.2)).le) ground
     fun v => (hconn.preconnected ground v).mono hle
 
-/-- The grounded nodal conductance matrix is invertible under the
-hypotheses of `nodalConductance_grounded_posDef`. -/
+/-- For positive resistances on the resistor branches and a connected resistor graph, the grounded
+nodal conductance matrix (the ground row and column removed) is invertible. -/
 lemma nodalConductance_grounded_isUnit {nN nB : ℕ} (tail head : Fin nB → Fin nN)
     (Rset : Finset (Fin nB)) (Rval : Fin nB → ℝ) (hR : ∀ e ∈ Rset, 0 < Rval e)
     (ground : Fin nN) (hconn : (resistorGraph tail head Rset).Connected) :

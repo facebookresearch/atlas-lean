@@ -1,4 +1,6 @@
-# Sinusoidal fields at point
+# Values of the sinusoidal fields at two points
 
-Nonzero derivatives at explicit points: at `t = 0`, `(x, y, z) = (π/2, 0, -π/6)` the
-fields are `E = (0, 2, 0)` and `B = (-3, 0, 0)`; at `t = 0` and the origin, `B_z = 1`.
+Let `c > 0` be the speed of light and `A` the
+[sinusoidal guide potential](sinusoidal-guide-potential.md), with vector potential
+`(0, sin x cos(2t - 3z), 0)` and scalar potential `0`. At time `0` and position `(π/2, 0, -π/6)` its
+fields are `E = (0, 2, 0)` and `B = (-3, 0, 0)`; at time `0` and the origin, `B_z = 1`.

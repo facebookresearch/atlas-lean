@@ -1,3 +1,4 @@
-# Ideal Transformer Port fst
+# Primary voltage of an ideal transformer
 
-The adapter's primary voltage is `n * V2`.
+For all real `n`, `V₂` and `I₁`, the primary voltage given by the
+[ideal transformer](ideal-transformer-port.md) is `V₁ = n V₂`.

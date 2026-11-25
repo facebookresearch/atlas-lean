@@ -1,5 +1,6 @@
-# Not exists satisfies Branch Equations of parallel source Values ne
+# Parallel voltage sources with different values have no solution
 
-Parallel voltage-source branches with the same incidence column
-and different source values have no branch solution at all:
-stamping does not create a solver for an inconsistent source set.
+For a real `n × m` matrix `B`, all element data, ground node, injections and node potentials, and
+two source branches `e₁, e₂ ∈ S` with equal columns of `B` and different source voltages
+`E_{e₁} ≠ E_{e₂}`, no branch voltages and currents satisfy the
+[branch equations](satisfies-branch-equations.md).

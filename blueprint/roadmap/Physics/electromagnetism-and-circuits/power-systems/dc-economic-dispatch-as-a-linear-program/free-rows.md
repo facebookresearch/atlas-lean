@@ -1,4 +1,5 @@
-# Free Rows
+# Constraint rows on the free variables
 
-One block of constraint rows on the free variables `(pg, θ)`, with
-generation coefficients `P` and angle coefficients `T`.
+For a block of `k` rows with generation coefficients `P` (a `k × n_G` matrix) and angle coefficients
+`T` (a `k × n_N` matrix), row `i` of the block is the row `(P_i, T_i)` acting on the free variables
+`(p, θ)`, generation first.

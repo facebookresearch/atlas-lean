@@ -105,7 +105,7 @@ namespace PhyslibExt.Circuits.PassiveLoadReflection
 open PhyslibExt.Circuits.LineWaveTermination
 open PhyslibExt.Circuits.RMSAveragePower
 
-/-- Power-balance identity:
+/-- Power-balance identity: for `ZL + Z0 ≠ 0`, with no sign condition on `Z0`,
 `1 - |Gamma| ^ 2 = 4 * Z0 * Re ZL / |ZL + Z0| ^ 2`. -/
 theorem one_sub_norm_sq_reflectionCoefficient (ZL : ℂ) (Z0 : ℝ)
     (hsum : ZL + (Z0 : ℂ) ≠ 0) :
@@ -139,13 +139,14 @@ theorem norm_reflection_le_one_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
   rw [hsq1, ← sub_nonneg, hid, le_div_iff₀ hD2, zero_mul,
     mul_nonneg_iff_of_pos_left h4Z0]
 
-/-- The passivity criterion stated with `reflectionCoefficient`. -/
+/-- The passivity criterion stated with `reflectionCoefficient`, for `Z0 > 0` and
+`ZL + Z0 ≠ 0`. -/
 theorem norm_reflectionCoefficient_le_one_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
     (hsum : ZL + (Z0 : ℂ) ≠ 0) :
     ‖reflectionCoefficient ZL Z0‖ ≤ 1 ↔ 0 ≤ ZL.re := by
   exact norm_reflection_le_one_iff ZL Z0 hZ0 hsum
 
-/-- Strict form: `|Gamma| < 1` if and only if `Re ZL > 0`. -/
+/-- Strict form: for `Z0 > 0` and `ZL + Z0 ≠ 0`, `|Gamma| < 1` if and only if `Re ZL > 0`. -/
 lemma norm_reflectionCoefficient_lt_one_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
     (hsum : ZL + (Z0 : ℂ) ≠ 0) :
     ‖reflectionCoefficient ZL Z0‖ < 1 ↔ 0 < ZL.re := by
@@ -159,7 +160,8 @@ lemma norm_reflectionCoefficient_lt_one_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
   rw [hsq1, ← sub_pos, hid, lt_div_iff₀ hD2, zero_mul,
     mul_pos_iff_of_pos_left h4Z0]
 
-/-- Lossless boundary: `|Gamma| = 1` if and only if `Re ZL = 0`. -/
+/-- Lossless boundary: for `Z0 > 0` and `ZL + Z0 ≠ 0`, `|Gamma| = 1` if and only if
+`Re ZL = 0`. -/
 lemma norm_reflectionCoefficient_eq_one_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
     (hsum : ZL + (Z0 : ℂ) ≠ 0) :
     ‖reflectionCoefficient ZL Z0‖ = 1 ↔ ZL.re = 0 := by
@@ -183,7 +185,7 @@ lemma norm_reflectionCoefficient_eq_one_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
   rw [← hsq1, ← hsub, hid, div_eq_zero_iff, mul_eq_zero]
   simp [ne_of_gt hD2, ne_of_gt h4Z0]
 
-/-- Active loads: `|Gamma| > 1` if and only if `Re ZL < 0`. -/
+/-- Active loads: for `Z0 > 0` and `ZL + Z0 ≠ 0`, `|Gamma| > 1` if and only if `Re ZL < 0`. -/
 lemma one_lt_norm_reflectionCoefficient_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
     (hsum : ZL + (Z0 : ℂ) ≠ 0) :
     1 < ‖reflectionCoefficient ZL Z0‖ ↔ ZL.re < 0 := by
@@ -203,7 +205,8 @@ lemma one_lt_norm_reflectionCoefficient_iff (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
 /-! ## B. Wave reflection and load power -/
 
 /-- Real part of the complex power at the load plane from the wave
-amplitudes: `Re (V * conj I) = (|Aplus| ^ 2 - |Aminus| ^ 2) / Z0`. This
+amplitudes, for `Z0 > 0`, `V = Aplus + Aminus` and `I = (Aplus - Aminus) / Z0`:
+`Re (V * conj I) = (|Aplus| ^ 2 - |Aminus| ^ 2) / Z0`. This
 is the time-averaged load power only for RMS phasors
 (`average_rmsWaveform_load_power_eq_incident_sub_reflected`); for peak
 phasors the average is half of it
@@ -252,7 +255,7 @@ theorem load_power_eq_re_mul_norm_sq (V I ZL : ℂ) (hload : V = ZL * I) :
   rw [hload, mul_assoc, hIc]
   simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
 
-/-- Time-averaged load power for RMS phasors: under the load-plane
+/-- Time-averaged load power for RMS phasors: for `omega > 0` and `Z0 > 0`, under the load-plane
 relations, the average of the product of the RMS voltage and current
 waveforms over any complete period is
 `(|Aplus| ^ 2 - |Aminus| ^ 2) / Z0`. -/
@@ -266,8 +269,8 @@ theorem average_rmsWaveform_load_power_eq_incident_sub_reflected
   rw [average_rmsWaveform_mul_rmsWaveform V I hω a]
   exact load_power_eq_incident_sub_reflected V I Aplus Aminus Z0 hZ0 hV hI
 
-/-- Time-averaged load power for peak phasors: under the load-plane
-relations, the average of the product of the peak voltage and current
+/-- Time-averaged load power for peak phasors: for `omega > 0` and `Z0 > 0`, under the
+load-plane relations, the average of the product of the peak voltage and current
 waveforms over any complete period is
 `(1 / 2) * ((|Aplus| ^ 2 - |Aminus| ^ 2) / Z0)`. -/
 theorem average_peakWaveform_load_power_eq_incident_sub_reflected
@@ -280,7 +283,7 @@ theorem average_peakWaveform_load_power_eq_incident_sub_reflected
   rw [average_peakWaveform_mul_peakWaveform V I hω a,
     load_power_eq_incident_sub_reflected V I Aplus Aminus Z0 hZ0 hV hI]
 
-/-- Time-averaged load power for RMS phasors from the load law: the
+/-- Time-averaged load power for RMS phasors from the load law: for `omega > 0`, the
 average of the product of the RMS voltage and current waveforms over
 any complete period is `Re ZL * |I| ^ 2`. -/
 theorem average_rmsWaveform_load_power_eq_re_mul_norm_sq
@@ -291,7 +294,7 @@ theorem average_rmsWaveform_load_power_eq_re_mul_norm_sq
   rw [average_rmsWaveform_mul_rmsWaveform V I hω a]
   exact load_power_eq_re_mul_norm_sq V I ZL hload
 
-/-- Time-averaged load power for peak phasors from the load law: the
+/-- Time-averaged load power for peak phasors from the load law: for `omega > 0`, the
 average of the product of the peak voltage and current waveforms over
 any complete period is `(1 / 2) * (Re ZL * |I| ^ 2)`. -/
 theorem average_peakWaveform_load_power_eq_re_mul_norm_sq
@@ -302,7 +305,7 @@ theorem average_peakWaveform_load_power_eq_re_mul_norm_sq
   rw [average_peakWaveform_mul_peakWaveform V I hω a,
     load_power_eq_re_mul_norm_sq V I ZL hload]
 
-/-- Wave form of the criterion: under the load-plane relations and a
+/-- Wave form of the criterion: for `Z0 > 0`, under the load-plane relations and a
 nonzero incident amplitude, the reflected amplitude is at most the
 incident amplitude if and only if `Re ZL >= 0`. These hypotheses already
 force `ZL + Z0 != 0` (`LineWaveTermination.load_sum_ne_zero`). -/
@@ -318,7 +321,7 @@ theorem norm_reflected_le_norm_incident_iff (V I Aplus Aminus ZL : ℂ) (Z0 : �
     norm_reflectionCoefficient_le_one_iff ZL Z0 hZ0 hsum]
 
 /-- The ratio criterion together with its wave-amplitude form under the
-load-plane relations and a nonzero incident amplitude. The guard
+load-plane relations and a nonzero incident amplitude, for `Z0 > 0` and `ZL + Z0 ≠ 0`. The guard
 `ZL + Z0 != 0` is needed only by the ratio form
 (`reflection_criterion_fails_at_excluded_load`); the wave form derives it. -/
 theorem passiveLoadReflection (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
@@ -335,7 +338,8 @@ theorem passiveLoadReflection (ZL : ℂ) (Z0 : ℝ) (hZ0 : 0 < Z0)
 /-! ## C. Resistive loads -/
 
 /-- Real reflection coefficient `(R - Z0) / (R + Z0)` of a resistive
-load `R`. -/
+load `R`. The intended domain is `Z0 > 0` and `R + Z0 ≠ 0`; with `x / 0 = 0` it is `0` at
+`R = -Z0`. -/
 noncomputable def resistiveReflection (R Z0 : ℝ) : ℝ :=
   (R - Z0) / (R + Z0)
 
@@ -345,7 +349,8 @@ lemma reflectionCoefficient_ofReal (R Z0 : ℝ) :
   simp only [reflectionCoefficient, resistiveReflection, Complex.ofReal_div, Complex.ofReal_sub,
     Complex.ofReal_add]
 
-/-- Resistive criterion: `|Gamma_R| <= 1` if and only if `R >= 0`. -/
+/-- Resistive criterion: for `Z0 > 0` and `R + Z0 ≠ 0`, `|Gamma_R| <= 1` if and only if
+`R >= 0`. -/
 theorem abs_resistiveReflection_le_one_iff (R Z0 : ℝ) (hZ0 : 0 < Z0)
     (hsum : R + Z0 ≠ 0) :
     |resistiveReflection R Z0| ≤ 1 ↔ 0 ≤ R := by
@@ -363,8 +368,8 @@ theorem abs_resistiveReflection_le_one_iff (R Z0 : ℝ) (hZ0 : 0 < Z0)
     have hnn : (0:ℝ) ≤ 4 * R * Z0 := by positivity
     linarith
 
-/-- Instantaneous real reflection at a resistive load: if at every time the
-load voltage is `vplus t + vminus t`, the load current is
+/-- Instantaneous real reflection at a resistive load: for `Z0 > 0` and `R + Z0 ≠ 0`, if at
+every time the load voltage is `vplus t + vminus t`, the load current is
 `(vplus t - vminus t) / Z0`, and `v t = R * i t`, then
 `vminus t = Gamma_R * vplus t` at every time. -/
 theorem instantaneous_resistive_reflection (R Z0 : ℝ) (hZ0 : 0 < Z0)
@@ -394,7 +399,7 @@ lemma reflectionCoefficient_matched (Z0 : ℝ) (hZ0 : 0 < Z0) :
   unfold reflectionCoefficient
   rw [div_eq_iff hsum, sub_self, zero_mul]
 
-/-- A short circuit (zero load) lies in the domain and reflects with a sign
+/-- For `Z0 > 0`, a short circuit (zero load) lies in the domain and reflects with a sign
 flip. -/
 lemma reflectionCoefficient_short (Z0 : ℝ) (hZ0 : 0 < Z0) :
     reflectionCoefficient 0 Z0 = -1 := by
@@ -402,7 +407,7 @@ lemma reflectionCoefficient_short (Z0 : ℝ) (hZ0 : 0 < Z0) :
   unfold reflectionCoefficient
   rw [zero_sub, zero_add, neg_div, div_self hZ0c]
 
-/-- A positive resistor gives `|Gamma_R| < 1`. -/
+/-- For `Z0 > 0`, a positive resistor gives `|Gamma_R| < 1`. -/
 lemma abs_resistiveReflection_lt_one_of_pos (R Z0 : ℝ) (hZ0 : 0 < Z0)
     (hR : 0 < R) :
     |resistiveReflection R Z0| < 1 := by
@@ -412,7 +417,7 @@ lemma abs_resistiveReflection_lt_one_of_pos (R Z0 : ℝ) (hZ0 : 0 < Z0)
   rw [abs_div, div_lt_one hpos, abs_of_pos (add_pos hR hZ0), abs_lt]
   constructor <;> linarith
 
-/-- A pure reactance `ZL = i * X` gives `|Gamma| = 1`; the denominator is
+/-- For `Z0 > 0`, a pure reactance `ZL = i * X` gives `|Gamma| = 1`; the denominator is
 automatically nonzero. -/
 lemma norm_reflectionCoefficient_pure_reactance (X Z0 : ℝ) (hZ0 : 0 < Z0) :
     ‖reflectionCoefficient (Complex.I * (X : ℂ)) Z0‖ = 1 := by
@@ -426,14 +431,14 @@ lemma norm_reflectionCoefficient_pure_reactance (X Z0 : ℝ) (hZ0 : 0 < Z0) :
     simp [Complex.mul_re, Complex.I_re, Complex.I_im]
   exact (norm_reflectionCoefficient_eq_one_iff (Complex.I * (X:ℂ)) Z0 hZ0 hsum).mpr him
 
-/-- A negative resistance `R < 0` with `R != -Z0` gives `|Gamma_R| > 1`. -/
+/-- For `Z0 > 0`, a negative resistance `R < 0` with `R != -Z0` gives `|Gamma_R| > 1`. -/
 lemma one_lt_abs_resistiveReflection_of_neg (R Z0 : ℝ) (hZ0 : 0 < Z0)
     (hR : R < 0) (hsum : R + Z0 ≠ 0) :
     1 < |resistiveReflection R Z0| := by
   exact not_le.mp
     (mt (abs_resistiveReflection_le_one_iff R Z0 hZ0 hsum).mp (not_le.mpr hR))
 
-/-- `ZL = -Z0` is outside the ratio domain: there the total division gives
+/-- For `Z0 > 0`, `ZL = -Z0` is outside the ratio domain: there the total division gives
 `Gamma = 0`, so the norm bound holds while `Re ZL < 0`, and the
 criterion fails without the denominator guard. -/
 lemma reflection_criterion_fails_at_excluded_load (Z0 : ℝ) (hZ0 : 0 < Z0) :

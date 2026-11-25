@@ -101,7 +101,8 @@ noncomputable def groundedLaplacian (nN nE : ℕ) (tail head : Fin nE → Fin nN
 
 /-- Grounded DC angles: solve the non-reference equations `L_b θ = p` with the reduced grounded
 matrix and reconstruct the reference angle `θ ref = 0`. The matrix inverse is Mathlib's
-`Matrix.inv`, which is the true inverse when the reduced matrix is invertible. -/
+`Matrix.inv`, which is the true inverse when the reduced matrix is invertible and the zero
+matrix otherwise, in which case every grounded angle is `0`. -/
 noncomputable def groundedAngles (nN nE : ℕ) (tail head : Fin nE → Fin nN)
     (b : Fin nE → ℝ) (ref : Fin nN) (p : Fin nN → ℝ) : Fin nN → ℝ :=
   fun v => if h : v = ref then 0 else

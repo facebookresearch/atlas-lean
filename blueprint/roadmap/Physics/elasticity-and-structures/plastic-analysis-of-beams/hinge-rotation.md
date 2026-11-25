@@ -1,5 +1,7 @@
-# Hinge Rotation
+# Hinge rotations of the fixed-ended beam mechanism
 
-Compatibility matrix of the three-hinge mechanism of a fixed-ended beam of span `L`: the
-sagging hinge rotations at the left end, mid-span and right end per unit central deflection,
-`-2 / L`, `4 / L` and `-2 / L` (rows: critical sections; column: central deflection).
+For a span `L` (a real number), the compatibility matrix of the three-hinge mechanism of a
+fixed-ended beam is the 3 × 1 matrix `B(L) = (-2 / L, 4 / L, -2 / L)ᵀ`: the sagging hinge rotations
+at the left end, at mid-span and at the right end per unit central deflection (rows: the critical
+sections; column: the central deflection). It is defined for every real `L`; with the convention
+`x / 0 = 0` it is the zero matrix at `L = 0`. The physical reading is `L > 0`.

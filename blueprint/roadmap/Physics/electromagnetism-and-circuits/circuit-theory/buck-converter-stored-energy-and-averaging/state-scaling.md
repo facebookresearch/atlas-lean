@@ -1,3 +1,3 @@
-# State Scaling
+# Scaling matrix of the buck state
 
-Declared state scaling `S = diag(Iref, Vref)`.
+For real numbers `Iref` and `Vref`, the state scaling is the diagonal matrix `S = diag(Iref, Vref)`.

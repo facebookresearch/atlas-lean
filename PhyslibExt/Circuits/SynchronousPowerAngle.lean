@@ -66,13 +66,16 @@ parts of `3 * V * conj I`, where the per-phase factor is the
 namespace PhyslibExt.Circuits.SynchronousPowerAngle
 
 /-- Generator current directed out toward the bus: the internal phasor at
-load angle minus the real terminal voltage, over the reactive impedance. -/
+load angle minus the real terminal voltage, over the reactive impedance.
+With the convention `z / 0 = 0` it is `0` when `Xs = 0`; the model has
+`E, V, Xs > 0`. -/
 noncomputable def synchronousCurrent (E V Xs delta : ℝ) : ℂ :=
   (((↑E : ℂ) * Complex.exp ((↑delta : ℂ) * Complex.I) - (↑V : ℂ)) /
     ((↑Xs : ℂ) * Complex.I))
 
 /-- Three-phase complex power at the terminals: three times the per-phase
-RMS complex power of the terminal voltage phasor and the current. -/
+RMS complex power of the terminal voltage phasor and the current. With the generator current
+directed out toward the bus, it is the power delivered to the bus. -/
 noncomputable def totalComplexPower (V : ℝ) (I : ℂ) : ℂ :=
   3 * PhyslibExt.Circuits.BalancedThreePhase.complexPower (↑V : ℂ) I
 
@@ -85,9 +88,9 @@ power. -/
 noncomputable def reactivePower (E V Xs delta : ℝ) : ℝ :=
   (totalComplexPower V (synchronousCurrent E V Xs delta)).im
 
-/-- Current in rectangular form: the sine component over the reactance in
-the real part, and the terminal-minus-cosine component over the reactance
-in the imaginary part. -/
+/-- Current in rectangular form, for `Xs > 0`: the sine component over the
+reactance in the real part, and the terminal-minus-cosine component over the
+reactance in the imaginary part. -/
 lemma synchronousCurrent_eq (E V Xs delta : ℝ) (hXs : 0 < Xs) :
     synchronousCurrent E V Xs delta =
       ((↑(E * Real.sin delta / Xs) : ℂ) +
@@ -109,8 +112,8 @@ lemma synchronousCurrent_eq (E V Xs delta : ℝ) (hXs : 0 < Xs) :
 
 /-! ## B. Power-angle formulas -/
 
-/-- Real power angle formula: three times the voltage product times the
-sine of the load angle over the synchronous reactance. -/
+/-- Real power angle formula, for `E, V, Xs > 0`: three times the voltage
+product times the sine of the load angle over the synchronous reactance. -/
 theorem realPower_eq (E V Xs delta : ℝ)
     (hE : 0 < E) (hV : 0 < V) (hXs : 0 < Xs) :
     realPower E V Xs delta = 3 * V * E * Real.sin delta / Xs := by
@@ -122,8 +125,9 @@ theorem realPower_eq (E V Xs delta : ℝ)
     Complex.I_re, Complex.I_im]
   ring
 
-/-- Reactive power angle formula: three times the terminal voltage times
-the cosine term minus the terminal voltage, over the reactance. -/
+/-- Reactive power angle formula, for `E, V, Xs > 0`: three times the
+terminal voltage times the cosine term minus the terminal voltage, over the
+reactance. -/
 theorem reactivePower_eq (E V Xs delta : ℝ)
     (hE : 0 < E) (hV : 0 < V) (hXs : 0 < Xs) :
     reactivePower E V Xs delta = 3 * V * (E * Real.cos delta - V) / Xs := by
@@ -135,8 +139,8 @@ theorem reactivePower_eq (E V Xs delta : ℝ)
     Complex.I_re, Complex.I_im]
   ring
 
-/-- Complex power in rectangular form: its real and imaginary parts are
-the two power angle formulas. -/
+/-- Complex power in rectangular form, for `E, V, Xs > 0`: its real and
+imaginary parts are the two power angle formulas. -/
 lemma totalComplexPower_eq (E V Xs delta : ℝ)
     (hE : 0 < E) (hV : 0 < V) (hXs : 0 < Xs) :
     (totalComplexPower V (synchronousCurrent E V Xs delta)).re =
@@ -146,9 +150,9 @@ lemma totalComplexPower_eq (E V Xs delta : ℝ)
   exact ⟨realPower_eq E V Xs delta hE hV hXs,
     reactivePower_eq E V Xs delta hE hV hXs⟩
 
-/-- Headline result: from the generator current model and the RMS complex
-power convention, the terminal real and reactive three-phase powers are
-the sine and cosine power angle formulas. -/
+/-- Headline result: for `E, V, Xs > 0`, from the generator current model and
+the RMS complex power convention, the terminal real and reactive three-phase
+powers are the sine and cosine power angle formulas. -/
 theorem synchronousGenerator_powerAngle (E V Xs delta : ℝ)
     (hE : 0 < E) (hV : 0 < V) (hXs : 0 < Xs) :
     (totalComplexPower V (synchronousCurrent E V Xs delta)).re =
@@ -165,8 +169,8 @@ theorem synchronousGenerator_powerAngle (E V Xs delta : ℝ)
 
 /-! ## C. Validation cases -/
 
-/-- Zero load angle validation case: no real power is transferred, and the
-reactive power is the zero-angle cosine formula. -/
+/-- Zero load angle validation case, for `E, V, Xs > 0`: no real power is
+transferred, and the reactive power is the zero-angle cosine formula. -/
 lemma power_at_zero_angle (E V Xs : ℝ)
     (hE : 0 < E) (hV : 0 < V) (hXs : 0 < Xs) :
     realPower E V Xs 0 = 0 ∧
@@ -177,8 +181,8 @@ lemma power_at_zero_angle (E V Xs : ℝ)
   · rw [reactivePower_eq E V Xs 0 hE hV hXs, Real.cos_zero]
     ring
 
-/-- Positive small angle validation case: for a load angle strictly
-between zero and pi, the real power is positive. -/
+/-- Positive angle validation case: for `E, V, Xs > 0` and a load angle
+strictly between zero and pi, the real power is positive. -/
 lemma realPower_pos_of_angle_pos (E V Xs delta : ℝ)
     (hE : 0 < E) (hV : 0 < V) (hXs : 0 < Xs)
     (hd0 : 0 < delta) (hdpi : delta < Real.pi) :

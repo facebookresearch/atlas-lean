@@ -1,15 +1,14 @@
 # Frequency, wavenumber and wavelength
 
-## A. Frequency and angular frequency
+## Frequency and angular frequency
 
-- [Angular Frequency](angular-frequency.md)
-- [Frequency](frequency.md)
-- [Frequency angular Frequency](frequency-angular-frequency.md)
-- [Angular Frequency frequency](angular-frequency-frequency.md)
+- [Angular frequency ω = 2πν of a frequency ν](angular-frequency.md)
+- [Frequency ν = ω/(2π) of an angular frequency ω](frequency.md)
+- [The frequency of the angular frequency 2πν is ν](frequency-angular-frequency.md)
+- [The angular frequency of the frequency ω/(2π) is ω](angular-frequency-frequency.md)
 
-## B. Wavenumber and wavelength
+## Wavenumber and wavelength
 
-- [Wavenumber](wavenumber.md)
-- [Wavelength](wavelength.md)
-- [Wavenumber wavelength](wavenumber-wavelength.md)
-- [Wavelength wavenumber](wavelength-wavenumber.md)
+- [Wavenumber k = 2π/λ of a wavelength λ](wavenumber.md)
+- [Wavelength λ = 2π/k of a wavenumber k](wavelength.md)
+- [Wavenumber and wavelength are inverse: 2π / (2π / x) = x for x ≠ 0](wavelength-wavenumber.md)

@@ -1,4 +1,9 @@
-# Inverse Prediction error le known params
+# Error bound for inverse prediction with exact parameters
 
-Known-calibration reduction: with exact parameters (`da = db = 0`), the
-bound of `inversePrediction_error_le` reduces to `E / |b|`.
+Let `a`, `x`, `e`, `y` and `E` be real numbers and `b ≠ 0`, with `y = b x + a + e`, `E ≥ 0` and
+`|e| ≤ E`. Then the [inverse prediction](inverse-prediction.md) `x̂ = (y − a) / b` satisfies
+
+`|(y − a) / b − x| ≤ E / |b|`.
+
+No bound on the input `x` is needed. It is the case `D_a = D_b = 0` of the
+[bound with perturbed parameters](inverse-prediction-error-le.md).

@@ -1,5 +1,6 @@
-# `n = 2`, equal means
+# Two-dimensional example with equal means
 
-`s0 = s1 = (1, 1)`, `R = [[2, 1], [1, 2]]`, `pi0 = 1/4`,
-`pi1 = 3/4`, `C00 = 0`, `C01 = 4`, `C10 = 2`, `C11 = 1`: `pi0 (C10 - C00) = 1/2 < 9/4 =
-pi1 (C01 - C11)`, so the rule decides `true` at every observation.
+Take `s₀ = s₁ = (1, 1)`, `R` with rows `(2, 1)` and `(1, 2)`, `π₀ = 1/4`, `π₁ = 3/4`, `C₀₀ = 0`,
+`C₀₁ = 4`, `C₁₀ = 2` and `C₁₁ = 1`. Since `π₀ (C₁₀ - C₀₀) = 1/2 < 9/4 = π₁ (C₀₁ - C₁₁)`, the
+[matched-filter rule](matched-filter-rule.md) decides `true` at every observation, for either tie
+decision.

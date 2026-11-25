@@ -1,3 +1,4 @@
-# Gauss 1d
+# For nonzero permittivity, E(L) − E(0) = ρ L / ε
 
-Discrete Gauss law in 1D: `E L - E 0 = rho * L / eps`.
+For `ε ≠ 0` and all real `ρ` and `L`, the [field](uniform-charge-field.md)
+`E(x) = ρ / (2ε) · (2x − L)` satisfies `E(L) − E(0) = ρ L / ε`, a one-dimensional Gauss law.

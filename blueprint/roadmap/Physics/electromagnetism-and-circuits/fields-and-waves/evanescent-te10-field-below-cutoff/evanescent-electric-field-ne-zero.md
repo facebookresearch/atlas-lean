@@ -1,3 +1,5 @@
-# Evanescent Electric Field ne zero
+# For a > 0, E₀ ≠ 0 and ω > 0 the evanescent electric field is not zero
 
-For a nonzero amplitude the evanescent electric field is not identically zero.
+Let `a > 0`, `E₀ ≠ 0`, `ω > 0` and `κ` real. Then the
+[evanescent electric field](evanescent-electric-field.md) is not identically zero, as a function of
+time and position.

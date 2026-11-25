@@ -1,4 +1,10 @@
-# Count Current
+# Window-averaged current from a photoelectron count
 
-Window-averaged current estimator `|q| n / T` for `n` counted electrons, a window average for
-a window of positive length `T > 0`. For `T = 0` the value is `0` (`x / 0 = 0`), not a current.
+For a real charge $q$, a real window length $T$ and a count $n \in \mathbb{N}$ of photoelectrons,
+the window-averaged current is
+
+$$\frac{|q|\, n}{T}.$$
+
+It is a current averaged over a window of positive length $T > 0$. With the convention
+$x / 0 = 0$, the value is $0$ for $T = 0$, which is not a current; for $T < 0$, $q \ne 0$ and
+$n \ge 1$ the formula is negative.

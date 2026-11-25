@@ -1,6 +1,7 @@
-# Intensity Level
+# Sound intensity level in decibels against a reference intensity
 
-Sound intensity level of intensity `I` against reference intensity
-`Iref`, in decibels: `10 * log10 (I / Iref)`. Physically meaningful only
-for positive `Iref` and `I` in the same unit; the totalized `Real.logb`
-value outside that domain (for example at `I = 0`) is not a level.
+For real `I_ref` and `I`, the sound intensity level of `I` against the reference intensity
+`I_ref` is `L = 10 log₁₀ (I / I_ref)` decibels, with `log₁₀` the base-10 logarithm; the reference
+is an argument, not a fixed value. Levels are meant for positive `I` and `I_ref` in the same unit.
+With the conventions `x / 0 = 0`, `log 0 = 0` and `log x = log |x|`, the value is `0` when `I = 0`
+or `I_ref = 0`, and `10 log₁₀ |I / I_ref|` when the ratio is negative.

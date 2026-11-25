@@ -1,6 +1,9 @@
-# Average rms Waveform load power eq incident sub reflected
+# Average load power of RMS phasors from the wave amplitudes
 
-Time-averaged load power for RMS phasors: under the load-plane
-relations, the average of the product of the RMS voltage and current
-waveforms over any complete period is
-`(|Aplus| ^ 2 - |Aminus| ^ 2) / Z0`.
+Let `Z₀ > 0` be real and let `V`, `I`, `A₊` and `A₋` be complex numbers with `V = A₊ + A₋` and
+`I = (A₊ − A₋) / Z₀`. Then the average over any complete period `[a, a + 2π/ω]`, for `ω > 0` and any
+real `a`, of the product of the
+[RMS waveforms](../average-power-of-sinusoidal-signals/rms-waveform.md) `√2 Re(V e^{iωt})` and
+`√2 Re(I e^{iωt})` is
+
+`(|A₊|² − |A₋|²) / Z₀`.

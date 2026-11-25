@@ -1,3 +1,4 @@
-# Energy Space Bound
+# Space bound in energy coordinates
 
-Space bound in energy coordinates: `max (sqrt ε₀ * MEx) (sqrt μ₀ * MHx)`.
+For free space with permittivity `ε₀ > 0` and permeability `μ₀ > 0` and reals `MEx` and `MHx`,
+`Mx = max(√ε₀ MEx, √μ₀ MHx)`.

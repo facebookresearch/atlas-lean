@@ -1,5 +1,5 @@
-# Not satisfies Stamping Hypotheses of resistance eq zero
+# A zero-resistance branch violates the stamping hypotheses
 
-A zero-resistance branch is outside the stamping hypotheses:
-it is excluded by the strict positivity clause, not filtered out
-of the network.
+For finitely many branches, all class sets and values, and a branch `e ∈ R` with `R_e = 0`, the
+[stamping hypotheses](satisfies-stamping-hypotheses.md) fail: a zero-resistance branch is excluded by
+the positivity condition, not removed from the network.

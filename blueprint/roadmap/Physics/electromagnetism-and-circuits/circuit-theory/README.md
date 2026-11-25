@@ -1,6 +1,8 @@
 # Circuit theory
 
-Lumped electrical networks: Tellegen's theorem and the energy balance of RLC networks, passivity, modified nodal analysis, Kron reduction and Thevenin–Norton equivalents, transformers, phasors and average power, transmission lines, DC motors and switching converters.
+Lumped electrical networks: Tellegen's theorem and the energy balance of RLC networks, passivity,
+modified nodal analysis, Kron reduction and Thevenin–Norton equivalents, transformers, phasors and
+average power, transmission lines, DC motors and switching converters.
 
 - [Average power of sinusoidal signals](average-power-of-sinusoidal-signals/README.md)
 - [Buck converter: stored energy and averaging](buck-converter-stored-energy-and-averaging/README.md)

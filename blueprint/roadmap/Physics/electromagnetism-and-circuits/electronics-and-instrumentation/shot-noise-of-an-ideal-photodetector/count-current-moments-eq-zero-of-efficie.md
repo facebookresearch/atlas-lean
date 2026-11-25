@@ -1,6 +1,9 @@
-# Zero-efficiency moments, discharged
+# At zero quantum efficiency the current has zero mean and variance
 
-With `η = 0` the detector
-counts nothing: mean and variance are zero. Poisson facts are the
-canonical `ProbabilityTheory.integral_natCast_poissonMeasure` and
-`ProbabilityTheory.variance_natCast_poissonMeasure`.
+Let $P \ge 0$, $h > 0$, $\nu > 0$, $q \ne 0$ and $T > 0$, and take the quantum efficiency
+$\eta = 0$, so that the [mean photoelectron rate](photon-arrival-rate.md) and the
+[count mean](photon-count-mean.md) are $0$. Let $N$ be an $\mathbb{N}$-valued random variable on
+a measure space $(\Omega, \mu)$ whose law under $\mu$ is the Poisson distribution with mean $0$,
+the point mass at $0$ ($N$ is $\mu$-almost everywhere measurable with that image measure, which
+forces $\mu$ to be a probability measure). Then the
+[window-averaged current](count-current.md) $|q| N / T$ has mean $0$ and variance $0$.

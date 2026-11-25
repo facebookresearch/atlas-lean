@@ -1,5 +1,5 @@
-# Admissible Stage Masses
+# Admissible stage masses of a sequence of burns
 
-Admissible stage masses of `n` burns: burn `k` starts at mass `m₀ k` and ends at mass `m₁ k`
-with `0 < m₁ k ≤ m₀ k` (positive, burning propellant), and between consecutive burns a jettison
-only drops mass, `m₀ (k + 1) ≤ m₁ k`.
+Start masses `m₀ : ℕ → ℝ` and end masses `m₁ : ℕ → ℝ` are admissible for `n` burns if
+`0 < m₁ k ≤ m₀ k` for every `k < n` (positive mass, burning propellant) and `m₀ (k + 1) ≤ m₁ k`
+whenever `k + 1 < n` (a jettison between burns only drops mass).

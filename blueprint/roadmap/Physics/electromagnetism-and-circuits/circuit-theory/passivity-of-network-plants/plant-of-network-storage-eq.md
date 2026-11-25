@@ -1,5 +1,7 @@
-# Plant Of Network storage eq
+# A plant built from network data has the network stored energy
 
-Representation preserves storage: the plant built from network data,
-along the trajectory built from network signals, has exactly the network
-stored energy at every time.
+For all network data with a [branch partition](../energy-balance-of-rlc-networks/is-branch-partition.md), all signals `φ`, `j`, `v`
+and `i`, and every time `t`, the [storage](plant-storage.md) of the
+[plant built from the data](plant-of-network.md) along the
+[trajectory built from the signals](trajectory-of-signals.md) is the
+[network stored energy](../energy-balance-of-rlc-networks/stored-energy.md) of `v(t)` and `i(t)`.

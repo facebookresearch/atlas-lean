@@ -1,4 +1,5 @@
-# Flipped cost index is rejected by the fixture
+# With swapped error costs the example decides differently
 
-At `y = 0` the transposed-cost rule
-decides `false`, while the correct rule (`matchedFilterRule_fin_one_example`) decides `true`.
+In the [one-dimensional example](matched-filter-rule-fin-one-example.md) with `C₀₁ = 2` and `C₁₀ = 4`
+swapped, the [matched-filter rule](matched-filter-rule.md) decides `false` at `y = 0` for either tie
+decision, while with the original costs it decides `true` there.

@@ -1,4 +1,5 @@
-# Total Complex Power neg current
+# Reversing the current direction negates the complex power
 
-Reversing the current convention negates both terminal powers: the
-complex power formed with the negated current is the negation.
+For every real `V` and complex `I`, the [three-phase complex power](total-complex-power.md)
+satisfies `S(V, -I) = -S(V, I)`: reversing the current convention negates both the real and the
+reactive power.

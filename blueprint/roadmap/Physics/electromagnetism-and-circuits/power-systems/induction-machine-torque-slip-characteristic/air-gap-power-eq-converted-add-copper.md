@@ -1,7 +1,4 @@
-# Air Gap Power eq converted add copper
+# The air-gap power is converted power plus copper loss
 
-Power split: air-gap power is converted power plus rotor copper loss,
-for any slip at which the air-gap power is formed. Expanding all three
-quantities gives the air-gap term `3 ‖I2‖² (R2 / s)` on the left and
-that same term, minus and plus the copper term `3 ‖I2‖² R2`, on the
-right.
+For every complex `I₂` and real `R₂` and `s`, the [air-gap power](air-gap-power.md) equals the
+[converted power](converted-power.md) plus the [rotor copper loss](rotor-copper-loss.md).

@@ -1,3 +1,4 @@
-# Phase Constant pos
+# The phase constant is positive for ε, μ, ω > 0 and σ ≥ 0
 
-The phase constant is strictly positive.
+Let `ε > 0`, `μ > 0`, `ω > 0` and `σ ≥ 0`. Then the [phase constant](phase-constant.md) `β`
+satisfies `β > 0`.

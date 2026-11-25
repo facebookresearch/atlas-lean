@@ -1,5 +1,4 @@
-# Constant Tangential Field not rectangular Guide PECTraces
+# The constant field E = (0, 1, 0) with B = 0 fails the traces
 
-Concrete failure: the constant field with electric component
-`E = (0, 1, 0)` and zero magnetic field does not satisfy the traces
-for any widths `a` and `b`.
+For all reals `a` and `b`, the constant electric field `E = (0, 1, 0)` with zero magnetic field does
+not satisfy the [PEC trace conditions](rectangular-guide-pectraces.md).

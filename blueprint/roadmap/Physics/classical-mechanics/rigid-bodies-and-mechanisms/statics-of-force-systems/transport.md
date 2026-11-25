@@ -1,4 +1,4 @@
-# Transport
+# Transport of a wrench to another reference point
 
-Transport of a wrench from the reference point `O` to the reference point `O'`: the force is
-kept and the moment gains `(O - O') ⨯₃ force`.
+For a [wrench](wrench.md) with force `R` and moment `M` and reference points `O, O' ∈ ℝ³`, the
+transported wrench has force `R` and moment `M + (O - O') × R`.

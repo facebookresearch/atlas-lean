@@ -115,12 +115,13 @@ noncomputable section
 
 namespace PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves
 
-/-- Electrostatic potential (SI) for uniform charge density `rho`, absolute
-permittivity `eps`, on `[0, L]`, with `φ 0 = φ L = 0`. -/
+/-- Electrostatic potential (SI) for uniform charge density `rho`, absolute permittivity `eps`, on
+`[0, L]`, with `φ 0 = φ L = 0`; with the convention `x / 0 = 0` it is `0` when `eps = 0`. -/
 noncomputable def uniformChargePotential (rho eps L : ℝ) (x : ℝ) : ℝ :=
   rho / (2 * eps) * x * (L - x)
 
-/-- Electric field `E = -φ'` for `uniformChargePotential`, as an explicit formula. -/
+/-- Electric field `E = -φ'` for `uniformChargePotential`, as an explicit formula; with the
+convention `x / 0 = 0` it is `0` when `eps = 0`. -/
 noncomputable def uniformChargeField (rho eps L : ℝ) (x : ℝ) : ℝ :=
   rho / (2 * eps) * (2 * x - L)
 
@@ -131,10 +132,12 @@ noncomputable def fieldEnergyDensity (eps E : ℝ) : ℝ := eps / 2 * E ^ 2
 noncomputable def planeWave (E0 k omega : ℝ) (x t : ℝ) : ℝ :=
   E0 * Real.cos (k * x - omega * t)
 
-/-- Normal-incidence amplitude reflection coefficient `(n1 - n2) / (n1 + n2)`. -/
+/-- Normal-incidence amplitude reflection coefficient `(n1 - n2) / (n1 + n2)` (`0` when
+`n1 + n2 = 0`, by the convention `x / 0 = 0`). -/
 noncomputable def fresnelR (n1 n2 : ℝ) : ℝ := (n1 - n2) / (n1 + n2)
 
-/-- Normal-incidence amplitude transmission coefficient `2 * n1 / (n1 + n2)`. -/
+/-- Normal-incidence amplitude transmission coefficient `2 * n1 / (n1 + n2)` (`0` when
+`n1 + n2 = 0`, by the convention `x / 0 = 0`). -/
 noncomputable def fresnelT (n1 n2 : ℝ) : ℝ := 2 * n1 / (n1 + n2)
 
 /-- Snell's law as a relation (phase-matching form). -/
@@ -145,7 +148,8 @@ This is not SI intensity: physical intensity additionally divides by the
 medium impedance. -/
 noncomputable def meanSquareAmplitude (E0 : ℝ) : ℝ := E0 ^ 2 / 2
 
-/-- Diffusion coefficient `D = mu * kB * T / |q|` (Einstein relation, solved for `D`). -/
+/-- Diffusion coefficient `D = mu * kB * T / |q|` (Einstein relation, solved for `D`); `0` when
+`q = 0`, by the convention `x / 0 = 0`. -/
 noncomputable def diffusionCoeff (mu kB T q : ℝ) : ℝ := mu * kB * T / |q|
 
 /-- Dilute independent-carrier conductivity `sigma = n * |q| * mu`. -/
@@ -165,7 +169,7 @@ lemma uniformChargePotential_L (rho eps L : ℝ) :
     uniformChargePotential rho eps L L = 0 := by
   simp [uniformChargePotential]
 
-/-- Discrete Poisson equation: the second difference of the potential is
+/-- Discrete Poisson equation: for `eps ≠ 0`, the second difference of the potential is
 `-(rho / eps) * h ^ 2`. -/
 lemma poisson_secondDifference {rho eps L x h : ℝ} (heps : eps ≠ 0) :
     uniformChargePotential rho eps L (x + h) - 2 * uniformChargePotential rho eps L x +
@@ -174,7 +178,7 @@ lemma poisson_secondDifference {rho eps L x h : ℝ} (heps : eps ≠ 0) :
   field_simp
   ring
 
-/-- Discrete Gauss law in 1D: `E L - E 0 = rho * L / eps`. -/
+/-- Discrete Gauss law in 1D: for `eps ≠ 0`, `E L - E 0 = rho * L / eps`. -/
 lemma gauss_1d {rho eps L : ℝ} (heps : eps ≠ 0) :
     uniformChargeField rho eps L L - uniformChargeField rho eps L 0 = rho * L / eps := by
   unfold uniformChargeField
@@ -213,8 +217,8 @@ lemma planeWave_secondDifference_time (E0 k omega x t tau : ℝ) :
     Real.cos_add (k * x - omega * t) (omega * tau)]
   ring
 
-/-- Discrete wave equation: with `omega = c * k`, the time second difference
-with step `h / c` equals the space second difference with step `h`. -/
+/-- Discrete wave equation: with `omega = c * k` and `c ≠ 0`, the time second difference with step
+`h / c` equals the space second difference with step `h`. -/
 lemma planeWave_discreteWaveEquation {E0 k omega c x t h : ℝ} (hc : c ≠ 0)
     (homega : omega = c * k) :
     planeWave E0 k omega x (t + h / c) - 2 * planeWave E0 k omega x t +
@@ -226,7 +230,8 @@ lemma planeWave_discreteWaveEquation {E0 k omega c x t h : ℝ} (hc : c ≠ 0)
     field_simp
   rw [planeWave_secondDifference_time, planeWave_secondDifference_space, hstep]
 
-/-- Lossless normal-incidence energy conservation: `R ^ 2 + (n2 / n1) * T ^ 2 = 1`. -/
+/-- Lossless normal-incidence energy conservation: for `n1, n2 > 0`,
+`R ^ 2 + (n2 / n1) * T ^ 2 = 1`. -/
 theorem fresnel_energy {n1 n2 : ℝ} (hn1 : 0 < n1) (hn2 : 0 < n2) :
     fresnelR n1 n2 ^ 2 + (n2 / n1) * fresnelT n1 n2 ^ 2 = 1 := by
   have hn1' : n1 ≠ 0 := hn1.ne'
@@ -250,7 +255,7 @@ lemma meanSquareAmplitude_smul (c E0 : ℝ) :
   unfold meanSquareAmplitude
   ring
 
-/-- Einstein relation in ratio form: `D / mu = kB * T / |q|`. -/
+/-- Einstein relation in ratio form: for `mu ≠ 0` and `q ≠ 0`, `D / mu = kB * T / |q|`. -/
 theorem einstein_ratio {mu kB T q : ℝ} (hmu : mu ≠ 0) (hq : q ≠ 0) :
     diffusionCoeff mu kB T q / mu = kB * T / |q| := by
   have habs : |q| ≠ 0 := abs_ne_zero.mpr hq

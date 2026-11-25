@@ -1,4 +1,5 @@
-# Body To Inertial Vec dot Product
+# Dot products are the same in body and inertial components
 
-Work-type scalars are frame independent: the dot product of two vectors, such as the work
-`F ⬝ᵥ d` of a force along a displacement, is the same in body and inertial components.
+For every orientation `R ∈ SO(3)` and all `a, b ∈ ℝ³`, `(R a) · (R b) = a · b`: work-type scalars,
+such as the work `F · d` of a force along a displacement, are the same in body and
+[inertial components](body-to-inertial-vec.md).

@@ -38,11 +38,11 @@ squared pair norm of the energy coordinates is twice the discrete electromagneti
 `h ∑ (ε₀ E² + μ₀ H²) / 2`. The generic leapfrog error theorem then bounds the normalized
 electromagnetic error by
 
-`sqrt ((1 + ρ) / (1 - ρ)) * (E₀ + T * sqrt L * (Mt * dt² + c * Mx * h²) / 6)`
+`sqrt ((1 + ρ) / (1 - ρ)) * (δ₀ + T * sqrt L * (Mt * dt² + c * Mx * h²) / 6)`
 
 for `n * dt ≤ T`, under the Courant bound `c * dt / h ≤ ρ < 1`, where
 `Mt = max (sqrt ε₀ * MEt) (sqrt μ₀ * MHt)` and `Mx = max (sqrt ε₀ * MEx) (sqrt μ₀ * MHx)` are
-built from the physical third-derivative bounds, `L = N * h`, and `E₀` is the normalized
+built from the physical third-derivative bounds, `L = N * h`, and `δ₀` is the normalized
 initial mismatch (the `H` sample sits at the half time `-dt / 2`). The Maxwell hypothesis is
 taken either in component form or as Physlib's extremum condition `IsExtrema 𝓕 0` of a
 smooth electromagnetic potential whose fields have the polarized components.
@@ -138,7 +138,8 @@ noncomputable def gridFieldEnergy {N : ℕ} (𝓕 : FreeSpace) (h : ℝ) (E H : 
   h * ∑ j, (𝓕.ε₀ * E j ^ 2 + 𝓕.μ₀ * H j ^ 2) / 2
 
 /-- One step of the physical periodic Yee update, returning `(E_new, H_new)`:
-`H_new = H - (dt / μ₀) D₋ E`, then `E_new = E - (dt / ε₀) D₊ H_new`. -/
+`H_new = H - (dt / μ₀) D₋ E`, then `E_new = E - (dt / ε₀) D₊ H_new`, with the periodic differences
+`D₊`, `D₋` (`0` when `h = 0`, by the convention `x / 0 = 0`). -/
 noncomputable def physicalYeeStep {N : ℕ} (𝓕 : FreeSpace) (h dt : ℝ) (E H : Fin N → ℝ) :
     (Fin N → ℝ) × (Fin N → ℝ) :=
   let HNew := H - (dt / 𝓕.μ₀) • dMinus h E
@@ -152,16 +153,18 @@ noncomputable def physicalYeeIterate {N : ℕ} (𝓕 : FreeSpace) (h dt : ℝ) (
       physicalYeeStep 𝓕 h dt (physicalYeeIterate 𝓕 h dt E0 H0 n).1
         (physicalYeeIterate 𝓕 h dt E0 H0 n).2
 
-/-- Normalized electromagnetic error at step `n`: the pair norm, in energy coordinates, of
-the difference between the staggered samples of `(E_y, H_z)` (the `H` sample at
-`n * dt - dt / 2`, `j * h - h / 2`) and the `n`-th physical Yee iterate. -/
+/-- Normalized electromagnetic error at step `n`: the pair norm, in energy coordinates, of the
+difference between the staggered samples of `(E_y, H_z)` (the `H` sample at `n * dt - dt / 2`,
+`j * h - h / 2`) and the `n`-th physical Yee iterate (pair norm `sqrt (h ∑ p_j ^ 2 + h ∑ q_j ^ 2)`,
+`0` when the radicand is negative). -/
 noncomputable def normalizedFieldError {N : ℕ} (𝓕 : FreeSpace) (Ey Hz : ℝ → ℝ → ℝ)
     (h dt : ℝ) (E0 H0 : Fin N → ℝ) (n : ℕ) : ℝ :=
   pairNorm h (Real.sqrt 𝓕.ε₀ • (sampledU Ey dt h n - (physicalYeeIterate 𝓕 h dt E0 H0 n).1))
     ((-Real.sqrt 𝓕.μ₀) • (sampledV Hz dt h n - (physicalYeeIterate 𝓕 h dt E0 H0 n).2))
 
-/-- Normalized initial mismatch between the staggered samples at step `0` (the `H` sample at
-the half time `-dt / 2`) and the initial grid fields. -/
+/-- Normalized initial mismatch between the staggered samples at step `0` (the `H` sample at the
+half time `-dt / 2`) and the initial grid fields (pair norm `sqrt (h ∑ p_j ^ 2 + h ∑ q_j ^ 2)`, `0`
+when the radicand is negative). -/
 noncomputable def normalizedInitialMismatch {N : ℕ} (𝓕 : FreeSpace) (Ey Hz : ℝ → ℝ → ℝ)
     (h dt : ℝ) (E0 H0 : Fin N → ℝ) : ℝ :=
   pairNorm h (Real.sqrt 𝓕.ε₀ • (sampledU Ey dt h 0 - E0))
@@ -169,8 +172,9 @@ noncomputable def normalizedInitialMismatch {N : ℕ} (𝓕 : FreeSpace) (Ey Hz 
 
 /-! ## C. Derivative bounds in energy coordinates -/
 
-/-- Third-derivative bounds of the physical fields: `MEt`, `MHt` on third time derivatives
-of `E_y`, `H_z`, and `MEx`, `MHx` on their third space derivatives. -/
+/-- Third-derivative bounds of the physical fields: `MEt`, `MHt` on third time derivatives of `E_y`,
+`H_z`, and `MEx`, `MHx` on their third space derivatives (iterated one-variable derivatives, each
+`0` where it does not exist). -/
 def hasFieldThirdDerivativeBounds (MEt MHt MEx MHx : ℝ) (Ey Hz : ℝ → ℝ → ℝ) : Prop :=
   (∀ t x : ℝ, |iteratedDeriv 3 (fun s => Ey s x) t| ≤ MEt) ∧
     (∀ t x : ℝ, |iteratedDeriv 3 (fun s => Hz s x) t| ≤ MHt) ∧
@@ -187,9 +191,9 @@ noncomputable def energySpaceBound (𝓕 : FreeSpace) (MEx MHx : ℝ) : ℝ :=
 
 /-! ## D. From Maxwell's equations to the normalized wave system -/
 
-/-- For the polarized configuration, the source-free vacuum Maxwell equations at the
-free-space speed of light are equivalent to the two component equations
-`∂ₜ E_y = -(1 / ε₀) ∂ₓ H_z` and `∂ₜ H_z = -(1 / μ₀) ∂ₓ E_y`. -/
+/-- For the polarized configuration, the source-free vacuum Maxwell equations at the free-space
+speed of light are equivalent to the two component equations `∂ₜ E_y = -(1 / ε₀) ∂ₓ H_z` and
+`∂ₜ H_z = -(1 / μ₀) ∂ₓ E_y` (one-variable derivatives, each `0` where it does not exist). -/
 theorem sourceFreeVacuumMaxwell_polarized_iff (𝓕 : FreeSpace) (Ey Hz : ℝ → ℝ → ℝ) :
     sourceFreeVacuumMaxwell 𝓕.c (polarizedElectricField Ey) (polarizedMagneticField 𝓕 Hz) ↔
       ∀ t x : ℝ, deriv (fun s => Ey s x) t = -(1 / 𝓕.ε₀) * deriv (fun y => Hz t y) x ∧
@@ -376,12 +380,14 @@ theorem polarizedVacuumMaxwell_isSmoothPeriodicSolution (𝓕 : FreeSpace)
 
 /-! ## G. The energy-coordinate error bound -/
 
-/-- **Periodic Yee error bound for the polarized vacuum Maxwell field.** On a periodic grid
-of `N` cells of width `h` with `L = N * h`, under the Courant bound `c * dt / h ≤ ρ < 1` at
-the free-space speed of light `c`, for every step `n` with `n * dt ≤ T`, the normalized
-electromagnetic error of the physical Yee iterates is at most
-`sqrt ((1 + ρ) / (1 - ρ)) * (E₀ + T * sqrt L * (Mt * dt ^ 2 + c * Mx * h ^ 2) / 6)`, with
-`E₀` the normalized initial mismatch and `Mt`, `Mx` the energy-coordinate bounds. -/
+/-- **Periodic Yee error bound for the polarized vacuum Maxwell field.** On a periodic grid of
+`N > 0` cells of width `h > 0` with `L = N * h` and time step `dt > 0`, under the Courant bound
+`c * dt / h ≤ ρ < 1` at the free-space speed of light `c`, for a polarized field satisfying the
+source-free vacuum Maxwell equations that is spatially periodic with period `L`, separately `C³` in
+`t` and in `x`, with the third-derivative bounds `MEt`, `MHt`, `MEx`, `MHx`: for every step `n` with
+`n * dt ≤ T`, the normalized electromagnetic error of the physical Yee iterates is at most
+`sqrt ((1 + ρ) / (1 - ρ)) * (δ₀ + T * sqrt L * (Mt * dt ^ 2 + c * Mx * h ^ 2) / 6)`, with `δ₀` the
+normalized initial mismatch and `Mt`, `Mx` the energy-coordinate bounds. -/
 theorem periodicYeeMaxwell_error_le {N : ℕ} (hN : 0 < N) (𝓕 : FreeSpace)
     (h dt L MEt MHt MEx MHx rho T : ℝ) (hh : 0 < h) (hdt : 0 < dt)
     (hL : L = (N : ℝ) * h) (hr : (𝓕.c : ℝ) * dt / h ≤ rho) (hrho : rho < 1)
@@ -428,8 +434,8 @@ theorem periodicYeeMaxwell_error_le {N : ℕ} (hN : 0 < N) (𝓕 : FreeSpace)
   rw [hErr, hMis]
   exact key
 
-/-- Exact staggered initialization of both fields (the `H` data at the half time
-`-dt / 2`) removes the mismatch term. -/
+/-- Under the hypotheses of `periodicYeeMaxwell_error_le`, exact staggered initialization of both
+fields (the `H` data at the half time `-dt / 2`) removes the mismatch term. -/
 theorem periodicYeeMaxwell_error_le_of_exact_init {N : ℕ} (hN : 0 < N) (𝓕 : FreeSpace)
     (h dt L MEt MHt MEx MHx rho T : ℝ) (hh : 0 < h) (hdt : 0 < dt)
     (hL : L = (N : ℝ) * h) (hr : (𝓕.c : ℝ) * dt / h ≤ rho) (hrho : rho < 1)

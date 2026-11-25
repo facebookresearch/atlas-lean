@@ -1,4 +1,6 @@
-# Body To Inertial
+# Inertial coordinates of a point given in body coordinates
 
-The inertial coordinates `x_I = o + R x_B` of the point with body coordinates `x_B`, for a
-body frame whose origin has inertial coordinates `o` and whose orientation is `R ∈ SO(3)`.
+For a point `o ∈ ℝ³`, the inertial coordinates of the origin of a body frame, an orientation
+`R ∈ SO(3)` (a real 3 × 3 matrix with `Rᵀ R = 1` and `det R = 1`) and body coordinates `x_B ∈ ℝ³`,
+the inertial coordinates of the point are `x_I = o + R x_B`. The columns of `R` are the body axes
+written in inertial components.

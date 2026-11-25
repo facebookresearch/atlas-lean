@@ -1,31 +1,30 @@
 # Induction machine torque–slip characteristic
 
-## A. Rotor current and air-gap power
+## Rotor current and air-gap power
 
-- [Rotor Current](rotor-current.md)
-- [Rotor Current eq div](rotor-current-eq-div.md)
-- [Rotor Current zero slip](rotor-current-zero-slip.md)
-- [Air Gap Power](air-gap-power.md)
-- [Developed Torque](developed-torque.md)
-- [Rotor Current norm Sq](rotor-current-norm-sq.md)
-- [Air Gap Power eq](air-gap-power-eq.md)
-- [Air Gap Power eq three mul re complex Power](air-gap-power-eq-three-mul-re-complex-po.md)
+- [Rotor current of the induction machine Thevenin model](rotor-current.md)
+- [At nonzero slip, the rotor current is a voltage over an impedance](rotor-current-eq-div.md)
+- [At zero slip the rotor current is zero](rotor-current-zero-slip.md)
+- [Air-gap power of the induction machine](air-gap-power.md)
+- [Developed torque of the induction machine](developed-torque.md)
+- [At nonzero slip, the squared rotor current magnitude](rotor-current-norm-sq.md)
+- [At nonzero slip, the air-gap power in Thevenin quantities](air-gap-power-eq.md)
+- [The air-gap power is three times a per-phase real power](air-gap-power-eq-three-mul-re-complex-po.md)
 
-## B. Torque curve and zero-slip limit
+## Torque curve and zero-slip limit
 
-- [Torque Curve](torque-curve.md)
-- [Developed Torque eq torque Curve](developed-torque-eq-torque-curve.md)
-- [Torque Curve eq developed Torque](torque-curve-eq-developed-torque.md)
-- [Torque Curve zero](torque-curve-zero.md)
-- [Torque Curve continuous At zero](torque-curve-continuous-at-zero.md)
-- [Torque at standstill](torque-at-standstill.md)
+- [Torque–slip curve of the induction machine](torque-curve.md)
+- [On the motoring range, the developed torque is the torque curve](developed-torque-eq-torque-curve.md)
+- [The torque curve vanishes at zero slip](torque-curve-zero.md)
+- [The torque curve is continuous at zero slip](torque-curve-continuous-at-zero.md)
+- [Developed torque at standstill](torque-at-standstill.md)
 
-## C. Converted power, copper loss, and power balance
+## Converted power, copper loss and power balance
 
-- [Rotor Copper Loss](rotor-copper-loss.md)
-- [Converted Power](converted-power.md)
-- [Air Gap Power eq converted add copper](air-gap-power-eq-converted-add-copper.md)
-- [Power Split of ne zero](power-split-of-ne-zero.md)
-- [Converted Power eq torque mul rotor Speed](converted-power-eq-torque-mul-rotor-spee.md)
-- [Rotor Quantities zero slip](rotor-quantities-zero-slip.md)
-- [Induction Torque Slip torque and Power Balance](induction-torque-slip-torque-and-power-b.md)
+- [Rotor copper loss of the induction machine](rotor-copper-loss.md)
+- [Converted mechanical power of the induction machine](converted-power.md)
+- [The air-gap power is converted power plus copper loss](air-gap-power-eq-converted-add-copper.md)
+- [At nonzero slip, the split of the air-gap power](power-split-of-ne-zero.md)
+- [On the motoring range, converted power is torque times rotor speed](converted-power-eq-torque-mul-rotor-spee.md)
+- [At zero slip the rotor current, powers and torque vanish](rotor-quantities-zero-slip.md)
+- [Torque–slip curve and power balance on the motoring range](induction-torque-slip-torque-and-power-b.md)

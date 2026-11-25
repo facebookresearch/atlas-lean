@@ -157,7 +157,8 @@ def buckBranchVoltage (s Vin v : ℝ) : Fin 4 → ℝ :=
 /-- Currents of the four network branches in the same order: source
 current opposite to the inductor current, inductor current,
 capacitor current, resistor current. The passive source sign is
-the negative entry. -/
+the negative entry. With `a / 0 = 0` the resistor current is `0`
+when `R = 0`; the intended domain is `R > 0`. -/
 noncomputable def buckBranchCurrent (R C : ℝ) (cur capDeriv volt : ℝ) :
     Fin 4 → ℝ :=
   ![-cur, cur, C * capDeriv, volt / R]
@@ -174,7 +175,8 @@ lemma buckStoredEnergy_nonneg (L C : ℝ) (hL : 0 ≤ L) (hC : 0 ≤ C)
 
 /-- Output-node current balance follows from the capacitor law
 alone: the capacitor current plus the resistor current equals the
-inductor current entering the output node. -/
+inductor current entering the output node. Here `deriv v t` is `0`
+where `v` is not differentiable, and `v t / R = 0` when `R = 0`. -/
 lemma outputNode_current_balance_of_capacitorLaw (C R : ℝ)
     (i v : ℝ → ℝ) (t : ℝ) (hClaw : C * deriv v t = i t - v t / R) :
     C * deriv v t + v t / R = i t := by
@@ -184,7 +186,7 @@ lemma outputNode_current_balance_of_capacitorLaw (C R : ℝ)
 the output node the capacitor and resistor branch currents sum to
 the inductor branch current, and at the input node the source and
 inductor branch currents cancel, under the capacitor law at that
-time. -/
+time (`deriv v t` is `0` where `v` is not differentiable). -/
 lemma buckEmbedding_current_balance (R C : ℝ) (i v : ℝ → ℝ) (t : ℝ)
     (hClaw : C * deriv v t = i t - v t / R) :
     buckBranchCurrent R C (i t) (deriv v t) (v t) 2 +

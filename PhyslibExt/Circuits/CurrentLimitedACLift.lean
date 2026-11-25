@@ -92,7 +92,9 @@ namespace PhyslibExt.Circuits.CurrentLimitedACLift
 open PhyslibExt.Circuits.ACInjectionLossBalance
 
 /-- Bus admittance matrix of the network: `∑ e, B a e * y e * B b e` plus the shunt
-admittance on the diagonal. -/
+admittance on the diagonal. Since `B` is real it is symmetric; it is Hermitian exactly when its
+entries are real. In the physical reading `B` is a signed incidence matrix and the admittances
+have nonnegative real parts; the definition allows any real `B` and complex admittances. -/
 def busAdmittance (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE) ℝ) (y : Fin nE → ℂ)
     (ys : Fin nN → ℂ) : Matrix (Fin nN) (Fin nN) ℂ :=
   fun a b => (∑ e : Fin nE, (B a e : ℂ) * y e * (B b e : ℂ)) + Matrix.diagonal ys a b
@@ -105,7 +107,9 @@ def voltageLift (n : ℕ) (V : Fin n → ℂ) : Matrix (Fin n) (Fin n) ℂ :=
 def liftedInjection (n : ℕ) (Y W : Matrix (Fin n) (Fin n) ℂ) (k : Fin n) : ℂ :=
   ∑ j : Fin n, conj (Y k j) * W k j
 
-/-- Real Frobenius pairing `Re (trace (A * W))`, the form of every lifted constraint. -/
+/-- Real trace pairing `Re (trace (A * W))`, the form of every lifted constraint. It is the real
+part of the Frobenius inner product of `Aᴴ` and `W`, hence of `A` and `W` when `A` is
+Hermitian. -/
 noncomputable def pairing (n : ℕ) (A W : Matrix (Fin n) (Fin n) ℂ) : ℝ :=
   (Matrix.trace (A * W)).re
 
@@ -136,7 +140,10 @@ noncomputable def branchCurrentCoeff (nN nE : ℕ) (B : Matrix (Fin nN) (Fin nE)
 
 /-- Data of a current-limited AC optimal power flow problem: one aggregate generator per
 bus with box limits, fixed demands, squared voltage-magnitude bounds, squared
-branch-current limits and a linear active-generation cost. -/
+branch-current limits and a linear active-generation cost. No condition relates the fields: a
+lower limit may exceed the upper one, and then no voltage vector is feasible. In the physical
+reading `incidence` is a signed incidence matrix, the admittances have nonnegative real parts,
+the limits are ordered and the squared-magnitude bounds are nonnegative. -/
 structure CurrentLimitedOPF (nN nE : ℕ) where
   /-- Real signed node-branch incidence matrix. -/
   incidence : Matrix (Fin nN) (Fin nE) ℝ
@@ -171,7 +178,10 @@ def CurrentLimitedOPF.admittance {nN nE : ℕ} (P : CurrentLimitedOPF nN nE) :
   busAdmittance nN nE P.incidence P.branchAdmittance P.shuntAdmittance
 
 /-- AC feasibility of a voltage vector: generation `S k + Sd k` within limits, squared
-voltage magnitudes within bounds, squared branch currents within limits. -/
+voltage magnitudes within bounds, squared branch currents within limits. Here
+`S k = V k * conj (I k)` is the complex power bus `k` supplies to the network, `I k` the current
+leaving bus `k` (root-mean-square phasors, no factor `1/2`), `Sd k` the demand, and the branch
+current is the branch admittance times the branch voltage drop. -/
 def acFeasible (nN nE : ℕ) (P : CurrentLimitedOPF nN nE) (V : Fin nN → ℂ) : Prop :=
   (∀ k : Fin nN,
     P.activeGenMin k ≤ (nodeComplexPower nN nE P.incidence V P.branchAdmittance
@@ -189,7 +199,8 @@ def acFeasible (nN nE : ℕ) (P : CurrentLimitedOPF nN nE) (V : Fin nN → ℂ) 
     Complex.normSq (P.branchAdmittance e * branchDrop nN nE P.incidence V e) ≤
       P.currentSqMax e)
 
-/-- Linear active-generation cost of a voltage vector. -/
+/-- Linear active-generation cost `∑ k, c k * (Re (S k) + Pd k)` of a voltage vector, where
+`S k` is the complex power bus `k` supplies to the network and `Pd k` the active demand. -/
 def acCost (nN nE : ℕ) (P : CurrentLimitedOPF nN nE) (V : Fin nN → ℂ) : ℝ :=
   ∑ k : Fin nN, P.costCoeff k *
     ((nodeComplexPower nN nE P.incidence V P.branchAdmittance P.shuntAdmittance k).re +
@@ -381,7 +392,8 @@ lemma im_liftedInjection_eq_pairing (n : ℕ) (Y W : Matrix (Fin n) (Fin n) ℂ)
     sum_row_eq_conj_liftedInjection n Y W hW k, smul_eq_mul]
   exact (re_div_two_I_sub_conj _).symm
 
-/-- The voltage pairing reads the real diagonal entry of `W`. -/
+/-- The voltage pairing reads the real part `Re (W k k)` of the diagonal entry; for Hermitian `W`
+that entry is real. -/
 lemma pairing_voltageCoeff (n : ℕ) (W : Matrix (Fin n) (Fin n) ℂ) (k : Fin n) :
     pairing n (voltageCoeff n k) W = (W k k).re := by
   simp [pairing, Matrix.trace, Matrix.mul_apply, voltageCoeff, ite_and, ite_mul]

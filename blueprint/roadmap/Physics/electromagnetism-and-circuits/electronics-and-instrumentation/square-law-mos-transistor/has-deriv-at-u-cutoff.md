@@ -1,3 +1,9 @@
-# Has Deriv At u cutoff
+# Below threshold the transconductance is zero
 
-Cutoff interior, gm: derivative in u is 0 for u < 0.
+For all real $\beta$ and $V_{DS}$ and every $u < 0$, the [square-law drain current](current.md)
+$I(\beta, u, V_{DS})$ ($0$ for $u \le 0$, the [triode formula](triode-current.md) for $u > 0$ and
+$V_{DS} \le u$, the [saturation formula](saturation-current.md) for $u > 0$ and $V_{DS} > u$) has
+derivative $0$ with respect to $u$ at $u$ ($V_{DS}$ fixed): the transconductance
+$g_m = \partial I / \partial u$ vanishes in the open cutoff region. Nothing is stated at $u = 0$. In
+the physical reading $\beta > 0$ is the device constant, $u = V_{GS} - V_{th}$ the gate overdrive
+and $V_{DS} \ge 0$ the drain–source voltage of a forward-biased nMOS transistor.

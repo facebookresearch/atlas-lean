@@ -1,11 +1,15 @@
-# Supported abs unit Load Response sum smul le sup' abs
+# Absolute hull bound for the unit-load response
 
-Absolute load hull for the retained response: for a nonempty
-scenario table with nonnegative coefficients summing to one, the
-absolute response of the combined load is at most the maximum
-absolute vertex response, at one fixed supported stiffness and
-output. Vertex responses may have either sign or be zero; the
-bound is the absolute consequence of the two signed hull bounds. The coefficients are supplied finite data;
-no design factor is introduced. Stiffness, supports and output are
-the same for every scenario and for the combined load, the response
-is the one fixed linear pairing, and no solve reading is used.
+Let `J` (joints), `M` (members) and `F` (free coordinates) be finite sets, with joint positions
+`r_j` in the plane, member `e` joining joint `a_e` to joint `b_e`, a matrix `S` from the free
+coordinates to the joint displacement coordinates (two per joint), and member weights `k_e`. Let
+`K = (B S)ᵀ diag(k) (B S)` be the supported stiffness, with the
+[compatibility matrix](axial-compatibility.md) `B`. Let `aout` be a fixed output functional on `F`,
+`η = K⁻¹ aout` its [influence vector](influence-vector.md) and `f ↦ η · f` its
+[unit-load response](unit-load-response.md). Let `s` be a nonempty finite set of load cases with
+loads `f_i` and coefficients `w_i ≥ 0` (`i ∈ s`) summing to `1`. Then the absolute response to the
+combined load `∑_i w_i f_i` is at most the largest absolute response `max_i |η · f_i|`; the
+responses of the load cases may have either sign. No positivity of the weights and no definiteness
+of `K` is assumed: the inverse of a singular matrix is the zero matrix by convention, so that
+`η = 0` and every response is `0` when `K` is singular. The physical reading is a positive definite
+`K`.

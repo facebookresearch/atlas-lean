@@ -1,51 +1,63 @@
 # Harmonic oscillators, equilibrium and spring networks
 
-## A. Harmonic oscillator energy, conservation, and explicit solution.
+## Harmonic oscillator energy and explicit solution
 
-- [Oscillator Energy](oscillator-energy.md)
-- [Has Deriv At oscillator Energy](has-deriv-at-oscillator-energy.md)
-- [Oscillator Energy const](oscillator-energy-const.md)
-- [Oscillator explicit solution](oscillator-explicit-solution.md)
+- [Energy of a one-dimensional harmonic oscillator](oscillator-energy.md)
+- [For m ≠ 0, the energy has zero derivative where x′ = v, v′ = −(k/m) x](has-deriv-at-oscillator-energy.md)
+- [For m ≠ 0, the energy is conserved along x′ = v, v′ = −(k/m) x](oscillator-energy-const.md)
+- [For m, k > 0, A cos(ωt) solves the oscillator with energy k A² / 2](oscillator-explicit-solution.md)
 
-## B. Resultant force, action-reaction, 2D moment, and discrete work.
+## Resultant force and action–reaction
 
-- [Resultant Force](resultant-force.md)
-- [Is Equilibrated](is-equilibrated.md)
-- [Is Equilibrated iff](is-equilibrated-iff.md)
-- [Sum pairwise antisymmetric eq zero](sum-pairwise-antisymmetric-eq-zero.md)
-- [Moment2 D](moment2-d.md)
-- [Moment2 D add](moment2-d-add.md)
-- [Central pair moment eq zero](central-pair-moment-eq-zero.md)
-- [Member Endpoint Position](member-endpoint-position.md)
-- [Member Endpoint Force](member-endpoint-force.md)
-- [Member Endpoint resultant Force eq zero](member-endpoint-resultant-force-eq-zero.md)
-- [Member Endpoint moment2 D eq zero](member-endpoint-moment2-d-eq-zero.md)
-- [Member Length](member-length.md)
-- [Member Length pos of ne](member-length-pos-of-ne.md)
-- [Axial Endpoint Force](axial-endpoint-force.md)
-- [Axial Endpoint Force eq member Endpoint Force](axial-endpoint-force-eq-member-endpoint.md)
-- [Axial Endpoint resultant Force eq zero of ne](axial-endpoint-resultant-force-eq-zero-o.md)
-- [Axial Endpoint moment2 D eq zero of ne](axial-endpoint-moment2-d-eq-zero-of-ne.md)
-- [Total Work](total-work.md)
-- [Total Work add](total-work-add.md)
-- [Moment2 D shift](moment2-d-shift.md)
-- [Resultant Force eq zero of moment2 D shift eq](resultant-force-eq-zero-of-moment2-d-shi.md)
-- [Moment2 D shift eq of is Equilibrated](moment2-d-shift-eq-of-is-equilibrated.md)
+- [Resultant of a finite family of forces](resultant-force.md)
+- [Equilibrated family of forces](is-equilibrated.md)
+- [A family is equilibrated exactly when its forces sum to zero](is-equilibrated-iff.md)
+- [Antisymmetric pair forces sum to zero](sum-pairwise-antisymmetric-eq-zero.md)
 
-## C. Finite spring networks, stiffness matrices, and normal modes.
+## Planar moments
 
-- [Spring Energy](spring-energy.md)
-- [Stiffness Matrix](stiffness-matrix.md)
-- [Stiffness Matrix apply diag](stiffness-matrix-apply-diag.md)
-- [Stiffness Matrix apply offdiag](stiffness-matrix-apply-offdiag.md)
-- [Spring Energy eq quad Form](spring-energy-eq-quad-form.md)
-- [Spring Energy nonneg](spring-energy-nonneg.md)
-- [Stiffness Matrix transpose](stiffness-matrix-transpose.md)
-- [Stiffness Matrix mul Vec one](stiffness-matrix-mul-vec-one.md)
-- [Stiffness Matrix free zero Mode](stiffness-matrix-free-zero-mode.md)
-- [Stiffness Matrix free not pos Def](stiffness-matrix-free-not-pos-def.md)
-- [Spring Energy free const](spring-energy-free-const.md)
-- [Stiffness Matrix fixed Ends row Nonzero](stiffness-matrix-fixed-ends-row-nonzero.md)
-- [Inner Product M](inner-product-m.md)
-- [Inner Product M eq zero of ne](inner-product-m-eq-zero-of-ne.md)
-- [Rayleigh nonneg](rayleigh-nonneg.md)
+- [Planar scalar moment of a family of forces](moment2-d.md)
+- [The planar moment is additive in the forces](moment2-d-add.md)
+- [A central equal-and-opposite force pair has zero planar moment](central-pair-moment-eq-zero.md)
+- [Shifting the moment point subtracts the moment of the resultant](moment2-d-shift.md)
+- [Equal moments about two unit shifts force a zero resultant](resultant-force-eq-zero-of-moment2-d-shi.md)
+- [For an equilibrated family, the moment does not depend on the point](moment2-d-shift-eq-of-is-equilibrated.md)
+
+## Axial-member tables
+
+- [Endpoint positions of an axial-member table](member-endpoint-position.md)
+- [Internal endpoint forces of an axial-member table](member-endpoint-force.md)
+- [Internal axial-member forces have zero resultant](member-endpoint-resultant-force-eq-zero.md)
+- [Internal axial-member forces have zero planar moment about every point](member-endpoint-moment2-d-eq-zero.md)
+- [Length of an axial member](member-length.md)
+- [A member with distinct endpoints has positive length](member-length-pos-of-ne.md)
+- [Endpoint forces of an axial-member table from axial forces](axial-endpoint-force.md)
+- [Axial-force endpoint forces as coefficient endpoint forces](axial-endpoint-force-eq-member-endpoint.md)
+- [Axial endpoint forces of a pin-jointed table have zero resultant](axial-endpoint-resultant-force-eq-zero-o.md)
+- [Axial endpoint forces of a pin-jointed table have zero planar moment](axial-endpoint-moment2-d-eq-zero-of-ne.md)
+
+## Discrete work
+
+- [Work of a force family under a common constant displacement](total-work.md)
+- [The work is additive in the force family](total-work-add.md)
+
+## Spring networks and stiffness matrices
+
+- [Energy of a finite spring network](spring-energy.md)
+- [Stiffness matrix of a finite spring network](stiffness-matrix.md)
+- [Diagonal entries of the stiffness matrix](stiffness-matrix-apply-diag.md)
+- [Off-diagonal entries of the stiffness matrix](stiffness-matrix-apply-offdiag.md)
+- [For reciprocal weights without self-springs, energy is half of uᵀKu](spring-energy-eq-quad-form.md)
+- [For nonnegative stiffnesses, the spring energy is nonnegative](spring-energy-nonneg.md)
+- [For reciprocal weights, the stiffness matrix is symmetric](stiffness-matrix-transpose.md)
+- [Without self-springs, the stiffness matrix maps the ones vector to w](stiffness-matrix-mul-vec-one.md)
+- [Without self-springs, rigid translation is a free network's zero mode](stiffness-matrix-free-zero-mode.md)
+- [Nonempty free networks without self-springs: K not positive definite](stiffness-matrix-free-not-pos-def.md)
+- [Constant displacements of a free network carry zero energy](spring-energy-free-const.md)
+- [Without self-springs, a wall-fixed node rules out the rigid zero mode](stiffness-matrix-fixed-ends-row-nonzero.md)
+
+## Normal modes
+
+- [Mass-weighted bilinear form](inner-product-m.md)
+- [Normal modes with distinct eigenvalues are mass-orthogonal](inner-product-m-eq-zero-of-ne.md)
+- [Spring stiffness with positive masses has nonnegative mode eigenvalues](rayleigh-nonneg.md)
