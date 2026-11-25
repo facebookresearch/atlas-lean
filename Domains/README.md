@@ -6,7 +6,7 @@ Use `Domains/<Subject>/` for a proved model whose definitions or hypotheses belo
 - [Economics, finance, and accounting](Economics/)
 - [Materials science: composition conventions](MaterialsScience/)
 - [Operations research: inventory and its applications](OperationsResearch/)
-- [Chemistry: aqueous equilibria and isotope patterns](Chemistry/)
+- [Chemistry: aqueous equilibria, isotope patterns and bioreactor balances](Chemistry/)
 - [Transport: accessibility](Transport/)
 - [Urban planning: demand and stock balance](Urban/)
 
