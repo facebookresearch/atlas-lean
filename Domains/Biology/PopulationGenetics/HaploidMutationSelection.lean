@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Topology.Instances.Real.Lemmas
+import Mathlib.Dynamics.FixedPoints.Topology
 import Mathlib.Topology.Algebra.Field
 import Mathlib.Topology.Order.MonotoneConvergence
 import Mathlib.Tactic.Linarith
@@ -164,12 +165,7 @@ private theorem haploidOrbit_fixed_of_tendsto {s u p l : ℝ}
     exact (continuousAt_id.mul continuousAt_const).div
       (continuousAt_const.sub ((continuousAt_const.sub continuousAt_id).mul continuousAt_const))
       hw.ne'
-  have hshift : Tendsto (fun n : ℕ ↦ (haploidStep s u)^[n + 1] p) atTop (𝓝 l) :=
-    hl.comp (tendsto_add_atTop_nat 1)
-  rw [show (fun n : ℕ ↦ (haploidStep s u)^[n + 1] p) =
-    (fun n : ℕ ↦ haploidStep s u ((haploidStep s u)^[n] p)) from
-    funext fun n ↦ Function.iterate_succ_apply' _ n _] at hshift
-  exact tendsto_nhds_unique (hc.tendsto.comp hl) hshift
+  exact isFixedPt_of_tendsto_iterate hl hc
 
 /-- In the two-allele haploid model with `0 < s ≤ 1` and `0 < u < 1`, selection followed by
 one-way mutation gives `step p = p * (1 - u) / w p`, where `w p = 1 - (1 - p) * s` is the

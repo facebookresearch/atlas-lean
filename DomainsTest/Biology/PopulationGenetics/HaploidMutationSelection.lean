@@ -43,7 +43,8 @@ example :
     step (1 / 2) (1 / 8) 0 = 0 ∧
     step (1 / 2) (1 / 8) (3 / 4) = 3 / 4 ∧
     (1 / 2 : ℝ) < step (1 / 2) (1 / 8) (1 / 2) ∧
-    Monotone (fun n : ℕ ↦ (step (1 / 2) (1 / 8))^[n] (1 / 2)) := by
+    Monotone (fun n : ℕ ↦ (step (1 / 2) (1 / 8))^[n] (1 / 2)) ∧
+    Tendsto (fun n : ℕ ↦ (step (1 / 2) (1 / 8))^[n] (1 / 2)) atTop (𝓝 (3 / 4)) := by
   obtain ⟨_, _, hfixed, _, _, hsign, hbalance, _⟩ := haploid_mutation_selection_balance
     (s := 1 / 2) (u := 1 / 8) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
   have hzero := (hfixed 0 (by norm_num [Set.mem_Icc])).2 (Or.inl ⟨by norm_num, rfl⟩)
@@ -51,7 +52,12 @@ example :
   have hhalf : (1 / 2 : ℝ) ∈ Ioc 0 1 := by norm_num [Set.mem_Ioc]
   have hinc := ((hsign (1 / 2) hhalf).1).2 (by norm_num)
   obtain ⟨_, _, _, _, horbit⟩ := hbalance (by norm_num)
-  exact ⟨hzero.2, hpos.2, hinc, (horbit (1 / 2) hhalf).2.1 (by norm_num)⟩
+  have h := horbit (1 / 2) hhalf
+  refine ⟨hzero.2, hpos.2, hinc, h.2.1 (by norm_num), ?_⟩
+  have he : (1 : ℝ) - (1 / 8) / (1 / 2) = 3 / 4 := by norm_num
+  have hlim : Tendsto (fun n : ℕ ↦ (step (1 / 2) (1 / 8))^[n] (1 / 2)) atTop
+      (𝓝 ((1 : ℝ) - (1 / 8) / (1 / 2))) := h.1
+  rwa [he] at hlim
 
 -- The all-wild-type start decreases to the interior equilibrium; its load equals the mutation rate.
 example :
