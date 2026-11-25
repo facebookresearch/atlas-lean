@@ -525,14 +525,9 @@ private lemma tsum_normFiber (s : ℝ) (n : ℕ) :
     simp only [ENNReal.ofReal_natCast, idealCount]
     norm_cast
 
-private lemma tsum_equiv' {α β : Type*} (e : α ≃ β) (f : β → ℝ≥0∞) :
-    ∑' a, f (e a) = ∑' b, f b := by
-  refine le_antisymm (ENNReal.tsum_comp_le_tsum_of_injective e.injective f) ?_
-  simpa using ENNReal.tsum_comp_le_tsum_of_injective e.symm.injective fun a => f (e a)
-
 private lemma idealSum_eq_tsum_zetaTerm (s : ℝ) :
     idealSum K s = ∑' n : ℕ, ENNReal.ofReal (zetaTerm K s n) := by
-  rw [idealSum, ← tsum_equiv' (normFiberEquiv K) (fun I => normRpow K s I.1),
+  rw [idealSum, ← (normFiberEquiv K).tsum_eq (fun I => normRpow K s I.1),
     ENNReal.tsum_sigma']
   exact tsum_congr fun n => tsum_normFiber K s n
 
@@ -591,16 +586,11 @@ private theorem natCard_primeNormFiber {ℓ : ℕ} (hℓ : ℓ.Prime) :
   · intro v; rfl
   · intro 𝔮; rfl
 
-private lemma tsum_reindex {α β : Type*} (e : α ≃ β) (f : β → ℝ≥0∞) :
-    ∑' a, f (e a) = ∑' b, f b := by
-  refine le_antisymm (ENNReal.tsum_comp_le_tsum_of_injective e.injective f) ?_
-  simpa using ENNReal.tsum_comp_le_tsum_of_injective e.symm.injective fun a => f (e a)
-
 private theorem tsum_degOne_eq (s : ℝ) :
     (∑' v : HeightOneSpectrum (𝓞 K),
         if (Ideal.absNorm v.asIdeal).Prime then normRpow K s v.asIdeal else 0)
       = ∑' ℓ : ℕ, (degOneCount K ℓ : ℝ≥0∞) * (ℓ : ℝ≥0∞) ^ (-s) := by
-  rw [← tsum_reindex (primeNormFiberEquiv K)
+  rw [← (primeNormFiberEquiv K).tsum_eq
     (fun v => if (Ideal.absNorm v.asIdeal).Prime then normRpow K s v.asIdeal else 0),
     ENNReal.tsum_sigma']
   refine tsum_congr fun ℓ => ?_
@@ -685,128 +675,20 @@ namespace FrobeniusDensity
 
 variable (K : Type*) [Field K] [NumberField K]
 
-lemma zetaTerm_nonneg_t (s : ℝ) (n : ℕ) : 0 ≤ zetaTerm K s n := by
-  unfold zetaTerm
-  split
-  · exact le_refl 0
-  · exact mul_nonneg (Nat.cast_nonneg _) (Real.rpow_nonneg (Nat.cast_nonneg _) _)
-
-private lemma tendsto_sum_idealCount_div_t :
-    Tendsto (fun n : ℕ => (∑ k ∈ Finset.Icc 1 n, (idealCount K k : ℝ)) / n) atTop
-      (𝓝 (dedekindZeta_residue K)) := by
-  simp only [idealCount]
-  refine ((Ideal.tendsto_norm_le_div_atTop₀ K).comp tendsto_natCast_atTop_atTop).congr fun n ↦ ?_
-  simp only [Function.comp_apply, Nat.cast_le, ← Nat.cast_sum]
-  congr
-  rw [← add_left_inj 1, ← card_norm_le_eq_card_norm_le_add_one,
-    show Finset.Icc 1 n = Finset.Ioc 0 n from Finset.Icc_succ_left_eq_Ioc _ _,
-    show 1 = Nat.card {I : Ideal (𝓞 K) // Ideal.absNorm I = 0} by
-      simp [Ideal.absNorm_eq_zero_iff],
-    Finset.sum_Ioc_add_eq_sum_Icc (n.zero_le),
-    ← Finset.card_preimage_eq_sum_card_image_eq (fun k _ ↦ Ideal.finite_setOfPred_absNorm_eq k)]
-  simp [Set.coe_eq_subtype]
-
-private lemma isBigO_sum_of_tendsto_div_t :
-    (fun n : ℕ => ∑ k ∈ Finset.Icc 1 n, (idealCount K k : ℝ))
-      =O[atTop] (fun n => (n : ℝ) ^ (1:ℝ)) := by
-  simp only [Real.rpow_one]
-  rw [isBigO_iff]
-
-  have hbdd : BddAbove (Set.range (fun n : ℕ =>
-      (∑ k ∈ Finset.Icc 1 n, (idealCount K k : ℝ)) / n)) :=
-    (tendsto_sum_idealCount_div_t K).bddAbove_range
-  obtain ⟨C, hC⟩ := hbdd
-  refine ⟨max C 0, ?_⟩
-  filter_upwards [eventually_ge_atTop 1] with n hn
-  have hn' : (0:ℝ) < n := by exact_mod_cast hn
-  rw [Real.norm_of_nonneg hn'.le,
-    Real.norm_of_nonneg (Finset.sum_nonneg fun _ _ => Nat.cast_nonneg _)]
-  calc ∑ k ∈ Finset.Icc 1 n, (idealCount K k : ℝ)
-      = ((∑ k ∈ Finset.Icc 1 n, (idealCount K k : ℝ)) / n) * n := by field_simp
-    _ ≤ C * n := mul_le_mul_of_nonneg_right (hC ⟨n, rfl⟩) hn'.le
-    _ ≤ max C 0 * n := mul_le_mul_of_nonneg_right (le_max_left _ _) hn'.le
-
-private lemma LSeriesSummable_idealCount_t {s : ℝ} (hs : 1 < s) :
-    LSeriesSummable (fun n => (idealCount K n : ℂ)) s := by
-  refine LSeriesSummable_of_sum_norm_bigO_and_nonneg (f := fun n => (idealCount K n : ℝ))
-    ?_ (fun n => Nat.cast_nonneg _) zero_le_one (by simpa using hs)
-  exact isBigO_sum_of_tendsto_div_t K
-
-private lemma term_eq_ofReal_zetaTerm_t (s : ℝ) (n : ℕ) :
-    LSeries.term (fun n => (idealCount K n : ℂ)) s n = (zetaTerm K s n : ℂ) := by
-  rcases eq_or_ne n 0 with rfl | hn
-  · simp [zetaTerm, LSeries.term_zero]
-  · rw [LSeries.term_of_ne_zero hn, zetaTerm, if_neg hn]
-    have hpos : (0:ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
-    rw [Complex.ofReal_mul, Complex.ofReal_natCast, Complex.ofReal_cpow hpos.le,
-      Complex.ofReal_neg, Complex.ofReal_natCast, Complex.cpow_neg, div_eq_mul_inv]
-
-private lemma summable_zetaTerm_t {s : ℝ} (hs : 1 < s) : Summable (zetaTerm K s) := by
-  have h : Summable fun n => ((zetaTerm K s n : ℝ) : ℂ) := by
-    refine (LSeriesSummable_idealCount_t K hs).congr fun n => ?_
-    exact term_eq_ofReal_zetaTerm_t K s n
-  exact Complex.summable_ofReal.mp h
-
-private def NormFiber_t (n : ℕ) : Type _ :=
-  {I : {I : Ideal (𝓞 K) // I ≠ ⊥} // Ideal.absNorm I.1 = n}
-
-private noncomputable def normFiberEquiv_t :
-    (Σ n : ℕ, NormFiber_t K n) ≃ {I : Ideal (𝓞 K) // I ≠ ⊥} where
-  toFun p := p.2.1
-  invFun I := ⟨Ideal.absNorm I.1, I, rfl⟩
-  left_inv p := by rcases p with ⟨n, I, rfl⟩; rfl
-  right_inv I := rfl
-
-private lemma tsum_normFiber_t (s : ℝ) (n : ℕ) :
-    ∑' I : NormFiber_t K n, normRpow K s I.1.1 = ENNReal.ofReal (zetaTerm K s n) := by
-  have hconst : ∀ I : NormFiber_t K n, normRpow K s I.1.1 = (n : ℝ≥0∞) ^ (-s) := fun I => by
-    rw [normRpow, I.2]
-  rw [tsum_congr hconst, ENNReal.tsum_const]
-  rcases eq_or_ne n 0 with rfl | hn
-  · have : IsEmpty (NormFiber_t K 0) := ⟨fun I => I.1.2 (Ideal.absNorm_eq_zero_iff.mp I.2)⟩
-    simp [zetaTerm, ENat.card_eq_coe_natCard]
-  · have hpos : (0:ℝ) < (n : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero hn
-    have hequiv : NormFiber_t K n ≃ {I : Ideal (𝓞 K) // Ideal.absNorm I = n} :=
-      { toFun := fun I => ⟨I.1.1, I.2⟩
-        invFun := fun I => ⟨⟨I.1, fun h => hn (by rw [← I.2, h, Ideal.absNorm_bot])⟩, I.2⟩
-        left_inv := fun I => rfl
-        right_inv := fun I => rfl }
-    have hfin : Finite {I : Ideal (𝓞 K) // Ideal.absNorm I = n} :=
-      (Ideal.finite_setOfPred_absNorm_eq n).to_subtype
-    have hfin' : Finite (NormFiber_t K n) := Finite.of_equiv _ hequiv.symm
-    rw [zetaTerm, if_neg hn, ENNReal.ofReal_mul (by positivity),
-      ← ENNReal.ofReal_rpow_of_pos hpos, ENat.card_eq_coe_natCard, Nat.card_congr hequiv]
-    simp only [ENNReal.ofReal_natCast, idealCount]
-    norm_cast
-
-private lemma tsum_equiv'_t {α β : Type*} (e : α ≃ β) (f : β → ℝ≥0∞) :
-    ∑' a, f (e a) = ∑' b, f b := by
-  refine le_antisymm (ENNReal.tsum_comp_le_tsum_of_injective e.injective f) ?_
-  simpa using ENNReal.tsum_comp_le_tsum_of_injective e.symm.injective fun a => f (e a)
-
-private lemma idealSum_eq_tsum_zetaTerm_t (s : ℝ) :
-    idealSum K s = ∑' n : ℕ, ENNReal.ofReal (zetaTerm K s n) := by
-  rw [idealSum, ← tsum_equiv'_t (normFiberEquiv_t K) (fun I => normRpow K s I.1),
-    ENNReal.tsum_sigma']
-  exact tsum_congr fun n => tsum_normFiber_t K s n
-
 private lemma dedekindZeta_eq_ofReal_tsum (s : ℝ) :
     dedekindZeta K s = ((∑' n, zetaTerm K s n : ℝ) : ℂ) := by
   rw [dedekindZeta, LSeries, Complex.ofReal_tsum]
-  exact tsum_congr fun n => term_eq_ofReal_zetaTerm_t K s n
+  exact tsum_congr fun n => term_eq_ofReal_zetaTerm K s n
 
 private lemma idealSum_toReal_eq {s : ℝ} (hs : 1 < s) :
     (idealSum K s).toReal = ∑' n, zetaTerm K s n := by
-  rw [idealSum_eq_tsum_zetaTerm_t,
-    ← ENNReal.ofReal_tsum_of_nonneg (zetaTerm_nonneg_t K s) (summable_zetaTerm_t K hs),
+  rw [idealSum_eq_tsum_zetaTerm,
+    ← ENNReal.ofReal_tsum_of_nonneg (zetaTerm_nonneg K s) (summable_zetaTerm K hs),
     ENNReal.toReal_ofReal]
-  exact tsum_nonneg (zetaTerm_nonneg_t K s)
+  exact tsum_nonneg (zetaTerm_nonneg K s)
 
-end FrobeniusDensity
-
-
-theorem FrobeniusDensity.tendsto_sub_one_mul_idealSum_test (K : Type*) [Field K] [NumberField K] :
-    Filter.Tendsto (fun s : ℝ => (s - 1) * (FrobeniusDensity.idealSum K s).toReal)
+private theorem tendsto_sub_one_mul_idealSum :
+    Filter.Tendsto (fun s : ℝ => (s - 1) * (idealSum K s).toReal)
       (nhdsWithin 1 (Set.Ioi 1)) (nhds (dedekindZeta_residue K)) := by
   rw [← Filter.tendsto_ofReal_iff]
   refine (tendsto_sub_one_mul_dedekindZeta_nhdsGT K).congr' ?_
@@ -816,6 +698,8 @@ theorem FrobeniusDensity.tendsto_sub_one_mul_idealSum_test (K : Type*) [Field K]
   push_cast
   ring
 
+end FrobeniusDensity
+
 
 
 open scoped ENNReal NNReal
@@ -823,11 +707,6 @@ open scoped ENNReal NNReal
 namespace FrobeniusDensity
 
 variable {K : Type*} [Field K] [NumberField K]
-
-private lemma tsum_equiv {α β : Type*} (e : α ≃ β) (f : β → ℝ≥0∞) :
-    ∑' a, f (e a) = ∑' b, f b := by
-  refine le_antisymm (ENNReal.tsum_comp_le_tsum_of_injective e.injective f) ?_
-  simpa using ENNReal.tsum_comp_le_tsum_of_injective e.symm.injective fun a => f (e a)
 
 section normRpow
 
@@ -981,7 +860,7 @@ lemma factoredSum_cons (v : HeightOneSpectrum (𝓞 K))
   have h1 : factoredSum K (T.cons v hv) s =
       ∑' p : ℕ × {I : Ideal (𝓞 K) // IsFactoredBy T I},
         normRpow K s ((consFactoredEquiv v hv p).1) :=
-    (tsum_equiv (consFactoredEquiv v hv) fun I => normRpow K s I.1).symm
+    ((consFactoredEquiv v hv).tsum_eq fun I => normRpow K s I.1).symm
   have h2 : ∀ p : ℕ × {I : Ideal (𝓞 K) // IsFactoredBy T I},
       normRpow K s ((consFactoredEquiv v hv p).1) =
         normRpow K s v.asIdeal ^ p.1 * normRpow K s p.2.1 := by
@@ -1044,14 +923,8 @@ end EulerProduct
 
 section Comparisons
 
-lemma primeSum_le_idealSum_p (s : ℝ) : primeSum K s ≤ idealSum K s := by
-  have hinj : Function.Injective
-      (fun v : HeightOneSpectrum (𝓞 K) => (⟨v.asIdeal, v.ne_bot⟩ : {I : Ideal (𝓞 K) // I ≠ ⊥})) :=
-    fun v w h => HeightOneSpectrum.ext (by simpa using congrArg Subtype.val h)
-  exact ENNReal.tsum_comp_le_tsum_of_injective hinj fun I => normRpow K s I.1
-
 lemma primeSqSum_le_idealSum_two {s : ℝ} (hs : 1 ≤ s) : primeSqSum K s ≤ idealSum K 2 := by
-  refine le_trans (ENNReal.tsum_le_tsum fun v => ?_) (primeSum_le_idealSum_p (K := K) 2)
+  refine le_trans (ENNReal.tsum_le_tsum fun v => ?_) (primeSum_le_idealSum K 2)
   have h1 : normRpow K s v.asIdeal ^ (2 : ℕ) = (Ideal.absNorm v.asIdeal : ℝ≥0∞) ^ (-s * 2) := by
     rw [normRpow, ← ENNReal.rpow_natCast _ 2, ← ENNReal.rpow_mul]
     norm_num
@@ -1079,7 +952,7 @@ lemma factoredSum_toReal_pos {T : Finset (HeightOneSpectrum (𝓞 K))} {s : ℝ}
   exact lt_top_iff_ne_top.mpr fun h => hfin (eq_top_iff.mpr (h ▸ factoredSum_le_idealSum T s))
 
 lemma primeSum_ne_top {s : ℝ} (hfin : idealSum K s ≠ ∞) : primeSum K s ≠ ∞ :=
-  fun h => hfin (eq_top_iff.mpr (h ▸ primeSum_le_idealSum_p s))
+  fun h => hfin (eq_top_iff.mpr (h ▸ primeSum_le_idealSum K s))
 
 lemma idealSum_toReal_pos {s : ℝ} (hfin : idealSum K s ≠ ∞) : 0 < (idealSum K s).toReal :=
   ENNReal.toReal_pos_iff.mpr
@@ -1251,7 +1124,7 @@ private lemma log_idealSum_add_log_isBigO :
       (fun _ => (1:ℝ)) := by
   have h1 : Tendsto (fun s : ℝ => Real.log ((s - 1) * (idealSum K s).toReal)) (𝓝[>] 1)
       (𝓝 (Real.log (dedekindZeta_residue K))) :=
-    (tendsto_sub_one_mul_idealSum_test K).log (dedekindZeta_residue_ne_zero K)
+    (tendsto_sub_one_mul_idealSum K).log (dedekindZeta_residue_ne_zero K)
   refine (h1.isBigO_one ℝ).congr' ?_ EventuallyEq.rfl
   filter_upwards [self_mem_nhdsWithin] with s hs
   rw [Set.mem_Ioi] at hs
@@ -1289,41 +1162,18 @@ open scoped ENNReal
 namespace FrobeniusDensity
 
 variable (K : Type*) [Field K] [NumberField K]
-variable {K}
-
-lemma one_le_cast_absNorm_d {I : Ideal (𝓞 K)} (hI : I ≠ ⊥) :
-    (1 : ℝ≥0∞) ≤ Ideal.absNorm I := by exact_mod_cast one_le_absNorm hI
-
-variable (K)
-
-private lemma primeSum_le_idealSum_d (s : ℝ) : primeSum K s ≤ idealSum K s := by
-  have hinj : Function.Injective
-      (fun v : HeightOneSpectrum (𝓞 K) =>
-        (⟨v.asIdeal, v.ne_bot⟩ : {I : Ideal (𝓞 K) // I ≠ ⊥})) :=
-    fun v w h => HeightOneSpectrum.ext (by simpa using congrArg Subtype.val h)
-  exact ENNReal.tsum_comp_le_tsum_of_injective hinj fun I => normRpow K s I.1
-
-private lemma primeSum_ne_top_d {s : ℝ} (hs : 1 < s) : primeSum K s ≠ ⊤ :=
-  ((primeSum_le_idealSum_d K s).trans_lt (idealSum_ne_top K hs).lt_top).ne
-
-private lemma degOneSum_ne_top_d (S₀ : Finset ℕ) {s : ℝ} (hs : 1 < s) :
-    degOneSum K S₀ s ≠ ⊤ := by
-  have h1 : degOneSum K S₀ s ≤ primeSum K s := by
-    rw [primeSum_eq_degOneSum_add K S₀ s, add_assoc]
-    exact self_le_add_right _ _
-  exact (h1.trans_lt (primeSum_ne_top_d K hs).lt_top).ne
 
 private lemma cutSum_ne_top (S₀ : Finset ℕ) {s : ℝ} (hs : 1 < s) : cutSum K S₀ s ≠ ⊤ := by
   have h1 : cutSum K S₀ s ≤ primeSum K s := by
     rw [primeSum_eq_degOneSum_add K S₀ s]
     exact le_add_self.trans (self_le_add_right _ _)
-  exact (h1.trans_lt (primeSum_ne_top_d K hs).lt_top).ne
+  exact (h1.trans_lt (primeSum_ne_top (idealSum_ne_top K hs)).lt_top).ne
 
 private lemma tailSum_ne_top {s : ℝ} (hs : 1 < s) : tailSum K s ≠ ⊤ := by
   have h1 : tailSum K s ≤ primeSum K s := by
     rw [primeSum_eq_degOneSum_add K ∅ s]
     exact le_add_self
-  exact (h1.trans_lt (primeSum_ne_top_d K hs).lt_top).ne
+  exact (h1.trans_lt (primeSum_ne_top (idealSum_ne_top K hs)).lt_top).ne
 
 private theorem tailConst_ne_top : tailConst ≠ ⊤ := by
   have hsummable : Summable (fun ℓ : ℕ => if ℓ.Prime then (((ℓ : ℝ) ^ 2)⁻¹) else 0) := by
@@ -1410,11 +1260,6 @@ private theorem natCard_ratBelowFiber_le {ℓ : ℕ} (hℓ : ℓ.Prime) :
   exact Ideal.card_primesOverFinset_le_finrank (S := 𝓞 K) (K := ℚ) (L := K)
     (p := ratPrimeIdeal ℓ) (ratPrimeIdeal_ne_bot hℓ)
 
-private lemma tsum_reindex' {α β : Type*} (e : α ≃ β) (f : β → ℝ≥0∞) :
-    ∑' a, f (e a) = ∑' b, f b := by
-  refine le_antisymm (ENNReal.tsum_comp_le_tsum_of_injective e.injective f) ?_
-  simpa using ENNReal.tsum_comp_le_tsum_of_injective e.symm.injective fun a => f (e a)
-
 private theorem tailSum_le {s : ℝ} (hs : 1 ≤ s) :
     tailSum K s ≤ (Module.finrank ℚ K : ℝ≥0∞) * tailConst := by
   have hpt : ∀ v : HeightOneSpectrum (𝓞 K),
@@ -1426,7 +1271,7 @@ private theorem tailSum_le {s : ℝ} (hs : 1 ≤ s) :
     · rw [if_neg hv]
       calc normRpow K s v.asIdeal
           ≤ normRpow K 1 v.asIdeal :=
-            ENNReal.rpow_le_rpow_of_exponent_le (one_le_cast_absNorm_d v.ne_bot)
+            ENNReal.rpow_le_rpow_of_exponent_le (one_le_cast_absNorm v.ne_bot)
               (neg_le_neg hs)
         _ = ((Ideal.absNorm v.asIdeal : ℝ≥0∞))⁻¹ := ENNReal.rpow_neg_one _
         _ ≤ ((ratBelow v : ℝ≥0∞) ^ 2)⁻¹ := by
@@ -1436,7 +1281,7 @@ private theorem tailSum_le {s : ℝ} (hs : 1 ≤ s) :
               _ ≤ (Ideal.absNorm v.asIdeal : ℝ≥0∞) :=
                   Nat.cast_le.mpr (sq_ratBelow_le_absNorm K v hv)
   refine le_trans (ENNReal.tsum_le_tsum hpt) ?_
-  rw [← tsum_reindex' (ratBelowFiberEquiv K) (fun v => ((ratBelow v : ℝ≥0∞) ^ 2)⁻¹),
+  rw [← (ratBelowFiberEquiv K).tsum_eq (fun v => ((ratBelow v : ℝ≥0∞) ^ 2)⁻¹),
     ENNReal.tsum_sigma']
   have hfib : ∀ ℓ : ℕ, ∀ v : RatBelowFiber K ℓ,
       ((ratBelow (ratBelowFiberEquiv K ⟨ℓ, v⟩) : ℝ≥0∞) ^ 2)⁻¹ = ((ℓ : ℝ≥0∞) ^ 2)⁻¹ := by
@@ -1491,13 +1336,6 @@ private theorem sum_degOneCount_ne_top (S₀ : Finset ℕ) :
   (ENNReal.sum_lt_top.mpr fun _ _ => ENNReal.natCast_lt_top _).ne
 
 omit [NumberField K] in
-private theorem toReal_term_d (S₀ : Finset ℕ) (s : ℝ) (ℓ : ℕ) :
-    ((if ℓ ∈ S₀ then 0 else (degOneCount K ℓ : ℝ≥0∞)) * (ℓ : ℝ≥0∞) ^ (-s)).toReal
-      = (if ℓ ∈ S₀ then 0 else (degOneCount K ℓ : ℝ)) * (ℓ : ℝ) ^ (-s) := by
-  rw [ENNReal.toReal_mul, apply_ite ENNReal.toReal, ENNReal.toReal_zero,
-    ENNReal.toReal_natCast, ← ENNReal.toReal_rpow, ENNReal.toReal_natCast]
-
-omit [NumberField K] in
 private theorem term_ne_top (S₀ : Finset ℕ) {s : ℝ} (hs : 0 < s) (ℓ : ℕ) :
     (if ℓ ∈ S₀ then 0 else (degOneCount K ℓ : ℝ≥0∞)) * (ℓ : ℝ≥0∞) ^ (-s) ≠ ⊤ := by
   rcases Nat.eq_zero_or_pos ℓ with rfl | hℓ
@@ -1512,7 +1350,7 @@ private theorem degOneSum_toReal_eq (S₀ : Finset ℕ) {s : ℝ} (hs : 0 < s) :
     (degOneSum K S₀ s).toReal
       = ∑' ℓ : ℕ, (if ℓ ∈ S₀ then 0 else (degOneCount K ℓ : ℝ)) * (ℓ : ℝ) ^ (-s) := by
   rw [degOneSum, ENNReal.tsum_toReal_eq (term_ne_top K S₀ hs)]
-  exact tsum_congr (toReal_term_d K S₀ s)
+  exact tsum_congr (toReal_term K S₀ s)
 
 private theorem tailSum_toReal_isBigO :
     (fun s : ℝ => (tailSum K s).toReal) =O[𝓝[>] 1] (fun _ => (1 : ℝ)) := by
@@ -1553,9 +1391,9 @@ theorem FrobeniusDensity.degOneSum_add_log_isBigO (K : Type*) [Field K] [NumberF
   rw [Set.mem_Ioi] at hs
   have hdecomp := congrArg ENNReal.toReal (primeSum_eq_degOneSum_add K S₀ s)
   rw [ENNReal.toReal_add
-      (ENNReal.add_ne_top.mpr ⟨degOneSum_ne_top_d K S₀ hs, cutSum_ne_top K S₀ hs⟩)
+      (ENNReal.add_ne_top.mpr ⟨degOneSum_ne_top K S₀ hs, cutSum_ne_top K S₀ hs⟩)
       (tailSum_ne_top K hs),
-    ENNReal.toReal_add (degOneSum_ne_top_d K S₀ hs) (cutSum_ne_top K S₀ hs)] at hdecomp
+    ENNReal.toReal_add (degOneSum_ne_top K S₀ hs) (cutSum_ne_top K S₀ hs)] at hdecomp
   show (primeSum K s).toReal + Real.log (s - 1) - (cutSum K S₀ s).toReal
       - (tailSum K s).toReal
     = (∑' ℓ : ℕ, (if ℓ ∈ S₀ then 0 else (degOneCount K ℓ : ℝ)) * (ℓ : ℝ) ^ (-s))
@@ -1692,6 +1530,7 @@ theorem card_stabilizer_conjAct_eq_card_centralizer (σ : G) :
     ConjAct.ofConjAct g ∈ Subgroup.centralizer ({σ} : Set G)
   rw [MulAction.mem_stabilizer_iff, Subgroup.mem_centralizer_singleton_iff, ConjAct.smul_def]
   rw [mul_inv_eq_iff_eq_mul]
+  exact Iff.rfl
 
 public theorem card_setOf_isConj_mul_card_centralizer (σ : G) :
     Nat.card {τ : G | IsConj σ τ} * Nat.card (Subgroup.centralizer ({σ} : Set G)) = Nat.card G := by
