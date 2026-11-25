@@ -31,4 +31,23 @@ example (x : ℂ) :
   rw [sum_choose_centralBinom_one_sub_pow_mul_pow]
   norm_num [sum_range_succ, Nat.choose]
 
+-- The even-index sum covers both parities of the upper index and the degree-zero boundary.
+example :
+    ∑ k ∈ range (0 / 2 + 1), (Nat.choose 0 (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
+      1 := by
+  rw [sum_choose_even_centralBinom_div_four_pow]
+  norm_num [Nat.choose]
+
+example :
+    ∑ k ∈ range (3 / 2 + 1), (Nat.choose 3 (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
+      5 / 2 := by
+  rw [sum_choose_even_centralBinom_div_four_pow]
+  norm_num [Nat.choose]
+
+example :
+    ∑ k ∈ range (4 / 2 + 1), (Nat.choose 4 (2 * k) : ℚ) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
+      35 / 8 := by
+  rw [sum_choose_even_centralBinom_div_four_pow]
+  norm_num [Nat.choose]
+
 end MetaMathlibExt
