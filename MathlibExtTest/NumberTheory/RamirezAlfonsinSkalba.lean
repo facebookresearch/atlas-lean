@@ -37,3 +37,19 @@ example : ((Finset.range 33).filter fun n =>
   refine (card_primes_ellNumericalSemigroup_eq (c := 3) (d := 7)
     (by decide) (by decide) (by decide) 1).trans ?_
   decide
+
+-- The gap 1 for generators 2 and 3 needs the negative shift in the normal form.
+example : ∃ x₀ < (3 : ℕ), ∃ y₀ < (2 : ℕ), (1 : ℤ) = -6 + 2 * x₀ + 3 * y₀ := by
+  have hgap : {p : ℕ × ℕ | 2 * p.1 + 3 * p.2 = 1} = ∅ := by
+    apply Set.eq_empty_iff_forall_notMem.mpr
+    rintro ⟨x, y⟩ (h : 2 * x + 3 * y = 1)
+    omega
+  exact exists_eq_of_ncard_twoGeneratorReps (c := 2) (d := 3)
+    (by decide) (by decide) (by decide) 1 0 (by simp [hgap])
+
+-- For two unit generators the bounded coefficients vanish, giving the count for every n.
+example (n : ℕ) : {p : ℕ × ℕ | p.1 + p.2 = n}.ncard = n + 1 := by
+  obtain ⟨x, hx, y, hy, h⟩ := exists_eq_of_ncard_twoGeneratorReps (c := 1) (d := 1)
+    (by decide) (by decide) (by decide) n _ rfl
+  simp only [one_mul, Nat.cast_one, mul_one] at h
+  omega

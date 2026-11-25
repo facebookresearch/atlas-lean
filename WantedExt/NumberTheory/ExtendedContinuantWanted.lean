@@ -90,18 +90,6 @@ public theorem_wanted extendedContinuant_euler (x : ℤ → ℤ) (h k ℓ m : �
       (k.negOnePow : ℤ) * extendedContinuant x (m - k - 2) (k + ℓ + h + 2) *
         extendedContinuant x (ℓ - 1) h
 
-/-- **Determinant identity for extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be an
-integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start index
-$b$. For every integer $n$,
-$$K_n(x)_0 K_{n-2}(x)_1 - K_{n-1}(x)_1 K_{n-1}(x)_0 = (-1)^{n+1}.$$
-
-Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
-INTEGERS 26 (2026), Article A73, Corollary 2. -/
-public theorem_wanted extendedContinuant_det (x : ℤ → ℤ) (n : ℤ) :
-    extendedContinuant x n 0 * extendedContinuant x (n - 2) 1 -
-        extendedContinuant x (n - 1) 1 * extendedContinuant x (n - 1) 0 =
-      ((n + 1).negOnePow : ℤ)
-
 /-- **Terms of a $1$-silent sequence.** Let $x, y, z : \mathbb{Z} \to \mathbb{Z}$ be bi-infinite
 integer sequences and write $K_a(x)_b$ for the extended continuant of order $a$ with start index
 $b$. Suppose that for every natural number $i$, $K_i(x)_0 = K_i(y)_0$,
