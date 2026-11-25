@@ -15,6 +15,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 public import Mathlib.Data.Nat.Choose.Central
+public import MathlibExt.Combinatorics.Enumerative.CentralBinomialReciprocalAntiderivative
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialReciprocalLinearMultisection
 public import MathlibExt.Combinatorics.Enumerative.CentralBinomialReciprocalMultisection
 
@@ -60,19 +61,6 @@ public theorem_wanted tsum_div_sq_mul_centralBinom_mul_eq_multisection {m : ℕ}
         ∑' n : ℕ, (Complex.exp (2 * Real.pi * Complex.I / m) ^ j * x ^ ((1 : ℂ) / m)) ^ (n + 1) /
           (((n + 1 : ℕ) : ℂ) ^ 2 * Nat.centralBinom (n + 1))
 
-/-- **Closed form of the reciprocal central binomial series.** For every real number $x$, let
-$$
-H(x) = \frac{4\sqrt{x}\,\arcsin(\sqrt{x}/2)}{(4 - x)\sqrt{4 - x}} + \frac{4}{4 - x}.
-$$
-The formula is meant for $0 \le x < 4$, where by the paper
-$H(x) = \sum_{n \ge 0} x^n / \binom{2n}{n}$.
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Section 2. -/
-noncomputable def centralBinomReciprocalH (x : ℝ) : ℝ :=
-  4 * √x * Real.arcsin (√x / 2) / ((4 - x) * √(4 - x)) + 4 / (4 - x)
-
 /-- **The closed form $H$ equals $1$ at $0$.** The function
 $H(x) = \frac{4\sqrt{x}\,\arcsin(\sqrt{x}/2)}{(4 - x)\sqrt{4 - x}} + \frac{4}{4 - x}$ of a real
 variable satisfies $H(0) = 1$.
@@ -82,74 +70,6 @@ Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 
 Section 2. -/
 theorem centralBinomReciprocalH_zero : centralBinomReciprocalH 0 = 1 := by
   norm_num [centralBinomReciprocalH]
-
-/-- **Coefficients of Zurita's Q-polynomials.** For natural numbers $l \ge 1$ and $k$, the rational
-number $q_k = q_{l,k}$ is given by $q_l = -4/l$, by $q_k = \frac{4k + 6}{k} q_{k+1}$ for
-$1 \le k < l$, by $q_0 = -12 q_1$, and by $q_k = 0$ for $k > l$. These are the coefficients of
-Zurita's polynomial $Q_l$. For $l = 0$ the definition gives $q_{0,k} = 0$ for every $k$.
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Definition 1. -/
-def arcsinAntiderivQCoeff (l k : ℕ) : ℚ :=
-  if l < k then 0
-  else if k = 0 then -12 * ((-4 / l) * ∏ i ∈ Finset.Ico 1 l, ((4 * i + 6 : ℚ) / i))
-  else (-4 / l) * ∏ i ∈ Finset.Ico k l, ((4 * i + 6 : ℚ) / i)
-
-/-- **Leading coefficient of a Q-polynomial.** For every natural number $l \ge 1$, the coefficient
-$q_l = q_{l,l}$ of $x^l$ in Zurita's polynomial $Q_l$ equals $-4/l$.
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Definition 1. -/
-theorem arcsinAntiderivQCoeff_self {l : ℕ} (hl : 1 ≤ l) : arcsinAntiderivQCoeff l l = -4 / l := by
-  simp [arcsinAntiderivQCoeff, show l ≠ 0 by omega]
-
-/-- **Recursion for the coefficients of a Q-polynomial.** Write $q_k = q_{l,k}$ for the coefficient
-of $x^k$ in Zurita's polynomial $Q_l$. For all natural numbers $k$ and $l$ with $1 \le k < l$,
-$$q_k = \frac{4k + 6}{k}\, q_{k+1}.$$
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Definition 1. -/
-theorem arcsinAntiderivQCoeff_of_lt {l k : ℕ} (hk : 1 ≤ k) (hkl : k < l) :
-    arcsinAntiderivQCoeff l k = (4 * k + 6) / k * arcsinAntiderivQCoeff l (k + 1) := by
-  simp only [arcsinAntiderivQCoeff, show ¬ l < k by omega, show ¬ l < k + 1 by omega,
-    show k ≠ 0 by omega, show k + 1 ≠ 0 by omega, ↓reduceIte,
-    Finset.prod_eq_prod_Ico_succ_bot hkl]
-  ring
-
-/-- **Constant coefficient of a Q-polynomial.** For every natural number $l \ge 1$, the constant
-coefficient $q_0$ and the coefficient $q_1$ of $x$ in Zurita's polynomial $Q_l$ satisfy
-$q_0 = -12 q_1$.
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Definition 1. -/
-theorem arcsinAntiderivQCoeff_zero {l : ℕ} (hl : 1 ≤ l) :
-    arcsinAntiderivQCoeff l 0 = -12 * arcsinAntiderivQCoeff l 1 := by
-  simp [arcsinAntiderivQCoeff, show ¬ l < 1 by omega]
-
-/-- **Zurita's Q-polynomials.** For a natural number $l \ge 1$, $Q_l$ is the polynomial with
-rational coefficients $Q_l(x) = \sum_{i=0}^{l} q_i x^i$, where $q_l = -4/l$,
-$q_i = \frac{4i + 6}{i} q_{i+1}$ for $1 \le i < l$, and $q_0 = -12 q_1$. For $l = 0$ it is the
-constant polynomial $Q_0 = 8$.
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Definition 1. -/
-noncomputable def arcsinAntiderivQ (l : ℕ) : ℚ[X] :=
-  if l = 0 then C 8 else ∑ k ∈ Finset.range (l + 1), C (arcsinAntiderivQCoeff l k) * X ^ k
-
-/-- **Zurita's arcsine antiderivative constants.** For a natural number $l \ge 1$, the rational
-constant $C_l$ is $C_l = -q_0/2$, where $q_0$ is the constant coefficient of Zurita's polynomial
-$Q_l$. For $l = 0$ it is $C_0 = -4$.
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Definition 1. -/
-def arcsinAntiderivC (l : ℕ) : ℚ :=
-  if l = 0 then -4 else -arcsinAntiderivQCoeff l 0 / 2
 
 /-- **The first two arcsine antiderivative constants.** Zurita's constants satisfy $C_1 = -24$
 and $C_2 = -120$, as in Table 1 of the paper.
@@ -205,33 +125,6 @@ Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 
 Definition 3. -/
 noncomputable def arcsinAntiderivS (l : ℕ) : ℚ[X] :=
   ∑ k ∈ Finset.range (l + 1), C (arcsinAntiderivSCoeff l k) * X ^ k
-
-/-- **Antiderivative of $x^l H(x)$.** Let $l \ge 1$, let $Q_l$ and $C_l$ be Zurita's polynomial and
-constant, and let $H$ be the closed form of the reciprocal central binomial series. Then there
-is a polynomial $P$ with rational coefficients such that $P(0) = 0$ and
-$2(4 - x) P'(x) = 8x^l - Q_l(x)$ as polynomials. Moreover, for every such $P$ and every real
-number $x$ with $0 < x < 4$, the real function
-$$
-F(y) = P(y) + C_l \arcsin(\sqrt{y}/2)^2 +
-\frac{\arcsin(\sqrt{y}/2)\,\sqrt{y}}{\sqrt{4 - y}}\, Q_l(y)
-$$
-has derivative $x^l H(x)$ at $x$.
-
-Such a $P$ is unique: it is the paper's polynomial $P_l$ (Definition 2), and $F$ is an
-antiderivative of $x^l H(x)$ on $0 < x < 4$.
-
-Source: Rimer Zurita, *Elementary Functions Associated with Series Involving Reciprocals of
-Central Binomial Coefficients*, Journal of Integer Sequences 27 (2024), Article 24.6.8,
-Lemma 5 (`jis-2024-24.6.8-lem-5`). -/
-public theorem_wanted hasDerivAt_arcsinAntiderivP_pow_mul_centralBinomReciprocalH {l : ℕ}
-    (hl : 1 ≤ l) :
-    (∃ P : ℚ[X], P.eval 0 = 0 ∧
-      2 * (C 4 - X) * derivative P = 8 * X ^ l - arcsinAntiderivQ l) ∧
-    ∀ P : ℚ[X], P.eval 0 = 0 → 2 * (C 4 - X) * derivative P = 8 * X ^ l - arcsinAntiderivQ l →
-      ∀ x : ℝ, 0 < x → x < 4 →
-        HasDerivAt (fun y : ℝ => aeval y P + (arcsinAntiderivC l : ℝ) * Real.arcsin (√y / 2) ^ 2 +
-            Real.arcsin (√y / 2) * √y / √(4 - y) * aeval y (arcsinAntiderivQ l))
-          (x ^ l * centralBinomReciprocalH x) x
 
 /-- **Antiderivative of $x^{l - 1/2} H(x)$.** Let $l \ge 0$, let $S_l$ be Zurita's polynomial, and
 let $H$ be the closed form of the reciprocal central binomial series. Then there is a polynomial
