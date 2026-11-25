@@ -1,0 +1,3 @@
+# PRECEDENCE CONSTRAINED SCHEDULING WITH DEADLINE 3 as a decision problem
+
+The decision problem PRECEDENCE CONSTRAINED SCHEDULING WITH DEADLINE 3 accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(l, m, P, D)$ (a list of natural numbers, a natural number, a list of pairs and a natural number), to an instance that is well-formed for PRECEDENCE CONSTRAINED SCHEDULING WITH DEADLINE 3 and feasible for PRECEDENCE CONSTRAINED SCHEDULING (a schedule with at most $m$ tasks running at once, respecting the precedence pairs and finishing by $D$). It rejects every bitstring that does not decode to such an instance.

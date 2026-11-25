@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
@@ -19,9 +16,9 @@ public import MathlibExt.AlgebraicTopology.SimplexCategory.GeneratorsRelations.D
 # Generators-and-relations equivalence
 
 This module completes the generators-and-relations presentation of `SimplexCategory`:
-canonical-object fullness and faithfulness assemble into the reusable equivalence
+canonical-object fullness and faithfulness assemble into the equivalence
 `SimplexCategoryGenRel ≌ SimplexCategory`, with the canonical-object inverse
-`fromSimplexCategory`. It is the reusable bridge from presented `Data` to genuine
+`fromSimplexCategory`. It is the bridge from presented `Data` to genuine
 simplicial objects. It reuses the `DeltaChain` / `P_σ` normal forms rather than
 defining a second simplex category.
 -/
@@ -44,9 +41,11 @@ end StandardSigmaProofIrrelevance
 
 section P_sigma_fixed
 
-/-- Fixed-endpoint corollary of `exists_normal_form_P_σ`: any `P_σ`
+/--
+Fixed-endpoint corollary of `exists_normal_form_P_σ`: any `P_σ`
 morphism between canonical objects is an admissible `standardσ` with no
-object transports in the statement. -/
+object transports in the statement.
+-/
 theorem exists_admissible_standardσ_of_P_σ {n m : ℕ}
     (f : mk n ⟶ mk m) (hf : P_σ f) :
     ∃ L : List ℕ, ∃ (h : m + L.length = n),
@@ -80,10 +79,12 @@ private lemma not_mem_of_le_isAdmissible {m : ℕ} {L : List ℕ}
   have hlt := mem_lt_of_mem_isAdmissible hL hm
   omega
 
-/-- Uniqueness of admissible `standardσ` lists from equality after
+/--
+Uniqueness of admissible `standardσ` lists from equality after
 `toSimplexCategory.map`. Uses `mem_isAdmissible_iff` and
 `simplicialEvalσ_of_isAdmissible` and handles values outside the common source
-bound explicitly. -/
+bound explicitly.
+-/
 theorem IsAdmissible.eq_of_toSimplexCategory_map_eq_standardσ {n m : ℕ}
     {L₁ L₂ : List ℕ} {h₁ : m + L₁.length = n} {h₂ : m + L₂.length = n}
     (hA₁ : IsAdmissible m L₁) (hA₂ : IsAdmissible m L₂)
@@ -164,13 +165,15 @@ end P_sigma_faithfulness
 
 section EpiLifting
 
-/-- Reusable epi-lifting to pure degeneracies for canonical simplex objects.
+/--
+Epi-lifting to pure degeneracies for canonical simplex objects.
 
 Uses `SimplexCategory.le_of_epi` for the length bound, `SimplexCategory.eq_id_of_epi`
 in the equal-length case, and `SimplexCategory.eq_σ_comp_of_not_injective` after
 showing non-injectivity via mono+epi ⇒ iso in the strict case. The residual map
 is epi by cancellation and the induction goes through on the strictly smaller source,
-prepending the corresponding `σ` in `GenRel` with `P_σ.comp_mem`. -/
+prepending the corresponding `σ` in `GenRel` with `P_σ.comp_mem`.
+-/
 theorem exists_preimage_of_epi {n m : ℕ} (θ : SimplexCategory.mk n ⟶ SimplexCategory.mk m)
     [Epi θ] :
     ∃ f : SimplexCategoryGenRel.mk n ⟶ SimplexCategoryGenRel.mk m,
@@ -229,14 +232,16 @@ end EpiLifting
 
 section MonoLifting
 
-/-- Reusable mono-lifting to admissible face chains for canonical simplex objects.
+/--
+Mono-lifting to admissible face chains for canonical simplex objects.
 
 Uses `SimplexCategory.le_of_mono` for the length bound, `SimplexCategory.eq_id_of_mono`
 in the equal-length case, and `SimplexCategory.eq_comp_δ_of_not_surjective` after showing
 non-surjectivity via epi+mono ⇒ iso in the strict case. The residual map is mono by
 cancellation and the induction goes through on the strictly smaller target, forming
 `DeltaChain.normalize (c.snoc i)` with `normalize_admissible`, `normalize_eval`,
-functoriality, and the recursive map equality. -/
+functoriality, and the recursive map equality.
+-/
 theorem exists_preimage_of_mono {n m : ℕ} (θ : SimplexCategory.mk n ⟶ SimplexCategory.mk m)
     [Mono θ] :
     ∃ c : DeltaChain n m, DeltaChain.Admissible c ∧
@@ -288,12 +293,14 @@ end MonoLifting
 
 section Fullness
 
-/-- Canonical-object fullness from the strong epi--mono factorization.
+/--
+Canonical-object fullness from the strong epi--mono factorization.
 
 Uses `factorThruImage`, `image.ι`, and `image.fac` in `SimplexCategory`,
 transports the image object to `mk (image θ).len` only at the outer boundary
 via `SimplexCategory.ext` and `eqToHom`, then reuses `exists_preimage_of_epi`
-and `exists_preimage_of_mono`. -/
+and `exists_preimage_of_mono`.
+-/
 theorem exists_preimage {n m : ℕ}
     (θ : SimplexCategory.mk n ⟶ SimplexCategory.mk m) :
     ∃ f : SimplexCategoryGenRel.mk n ⟶ SimplexCategoryGenRel.mk m,
@@ -351,10 +358,12 @@ end Fullness
 
 section CanonicalFactorization
 
-/-- Every morphism between canonical presented simplex objects factors as a pure degeneracy
+/--
+Every morphism between canonical presented simplex objects factors as a pure degeneracy
 followed by an admissible face-chain. Uses `exists_P_σ_P_δ_factorization` for the
 `P_σ / P_δ` split, reduces the intermediate object with dependent object induction
-`SimplexCategoryGenRel.rec`, and finishes with `DeltaChain.exists_admissible_chain_of_P_delta`. -/
+`SimplexCategoryGenRel.rec`, and finishes with `DeltaChain.exists_admissible_chain_of_P_delta`.
+-/
 theorem exists_canonical_P_sigma_deltaChain_factorization {n m : ℕ}
     (f : mk n ⟶ mk m) :
     ∃ k, ∃ (e : mk n ⟶ mk k), ∃ (c : DeltaChain k m),
@@ -376,14 +385,16 @@ end CanonicalFactorization
 
 section Faithfulness
 
-/-- Canonical-endpoint injectivity of `toSimplexCategory.map` via the
+/--
+Canonical-endpoint injectivity of `toSimplexCategory.map` via the
 `P_σ`-`DeltaChain` factorisation and simplex image uniqueness.
 Both factors become epi/mono after `toSimplexCategory.map` via
 `isSplitEpi_toSimplexCategory_map_of_P_σ`,
 `isSplitMono_toSimplexCategory_map_of_P_δ` and `DeltaChain.eval_mem_P_delta`.
 Their common image is compared with `SimplexCategory.image_eq`,
 `SimplexCategory.factorThruImage_eq` and `SimplexCategory.image_ι_eq`,
-with all `image θ = mk k` transports handled proof-irrelevantly. -/
+with all `image θ = mk k` transports handled proof-irrelevantly.
+-/
 theorem eq_of_toSimplexCategory_map_eq {n m : ℕ} {f g : mk n ⟶ mk m}
     (h : toSimplexCategory.map f = toSimplexCategory.map g) : f = g := by
   obtain ⟨k₁, e₁, c₁, he₁, hc₁, hf_eq⟩ :=
@@ -563,10 +574,12 @@ end Faithfulness
 
 section FullInstance
 
-/-- Fullness of `toSimplexCategory` for arbitrary presented objects,
+/--
+Fullness of `toSimplexCategory` for arbitrary presented objects,
 reduced to the canonical case via boundary `ext` transports.
 The inner construction stays canonical; only the outer boundary uses
-object equalities. -/
+object equalities.
+-/
 instance : Functor.Full toSimplexCategory where
   map_surjective := by
     intro X Y θ
@@ -581,8 +594,10 @@ end FullInstance
 
 section FaithfulInstance
 
-/-- Faithfulness of `toSimplexCategory` for arbitrary presented objects,
-reduced to the canonical case via object induction. -/
+/--
+Faithfulness of `toSimplexCategory` for arbitrary presented objects,
+reduced to the canonical case via object induction.
+-/
 instance : Functor.Faithful toSimplexCategory where
   map_injective := by
     intro X Y f g h
@@ -594,8 +609,10 @@ end FaithfulInstance
 
 section EssSurjInstance
 
-/-- Essential surjectivity of `toSimplexCategory`: every simplex is isomorphic to a
-canonical presented object via `SimplexCategory.ext`. -/
+/--
+Essential surjectivity of `toSimplexCategory`: every simplex is isomorphic to a
+canonical presented object via `SimplexCategory.ext`.
+-/
 instance : Functor.EssSurj toSimplexCategory where
   mem_essImage Y := by
     refine ⟨mk Y.len, ⟨?_⟩⟩
@@ -612,14 +629,16 @@ instance : Functor.IsEquivalence toSimplexCategory where
 
 end IsEquivalenceInstance
 
-/-- Reusable equivalence `SimplexCategoryGenRel ≌ SimplexCategory`. -/
+/-- Equivalence `SimplexCategoryGenRel ≌ SimplexCategory`. -/
 noncomputable def equivalence : SimplexCategoryGenRel ≌ SimplexCategory :=
   toSimplexCategory.asEquivalence
 
 section FromSimplexCategory
 
-/-- Canonical object equality `toSimplexCategory.obj (mk Δ.len) = Δ`. Both sides are
-definitionally `Δ` via `toSimplexCategory_obj_mk` and `mk_len`. -/
+/--
+Canonical object equality `toSimplexCategory.obj (mk Δ.len) = Δ`. Both sides are
+definitionally `Δ` via `toSimplexCategory_obj_mk` and `mk_len`.
+-/
 theorem toSimplexCategory_obj_mk_len (Δ : SimplexCategory) :
     toSimplexCategory.obj (mk Δ.len) = Δ :=
   rfl
@@ -639,12 +658,14 @@ lemma toSimplexCategory_objIso_inv (Δ : SimplexCategory) :
     (toSimplexCategory_objIso Δ).inv = eqToHom (toSimplexCategory_obj_mk_len Δ).symm :=
   rfl
 
-/-- Explicit inverse-direction functor with canonical objects definitionally visible.
+/--
+Explicit inverse-direction functor with canonical objects definitionally visible.
 Object is definitionally `mk Δ.len`. Morphism uses fullness via `preimage` after
 conjugating by the canonical equality at the boundary. Since the canonical
 equality is `rfl`, `eqToHom` is definitionally `𝟙` and the conjugation is trivial;
 we keep the `eqToHom` form to match the required interface. Functor laws follow
-from faithfulness via `map_injective`. -/
+from faithfulness via `map_injective`.
+-/
 noncomputable def fromSimplexCategory : SimplexCategory ⥤ SimplexCategoryGenRel where
   obj Δ := mk Δ.len
   map {X Y} f :=

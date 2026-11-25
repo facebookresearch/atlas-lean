@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua, Avocado
--/
 
 module
 
@@ -145,7 +142,7 @@ theorem toOpFunctor_map_σ (data : Data (C := C)) {n : ℕ} (i : Fin (n + 1)) :
       data.pathsFunctorOp.map ((Paths.of FreeSimplexQuiver).map (FreeSimplexQuiver.σ i)) := rfl
   rw [this, pathsFunctorOp_map_of_σ]
 
-/-- Genuine simplicial object `SimplexCategoryGenRelᵒᵖ ⥤ C` from `Data` via `toOpFunctor`. -/
+/-- Simplicial object `SimplexCategoryGenRelᵒᵖ ⥤ C` from `Data` via `toOpFunctor`. -/
 noncomputable def toGenRelFunctor (data : Data (C := C)) : SimplexCategoryGenRelᵒᵖ ⥤ C :=
   data.toOpFunctor.leftOp
 
@@ -250,8 +247,10 @@ theorem toGenRelFunctor_δ_comp_σ_succ (data : Data (C := C)) {n : ℕ}
   rw [toGenRelFunctor_map_σ_op, toGenRelFunctor_map_δ_op]
   exact data.δ_comp_σ_succ
 
-/-- A morphism of `Data C` is a family of maps in degree `n` commuting with
-all face and degeneracy maps. -/
+/--
+A morphism of `Data C` is a family of maps in degree `n` commuting with
+all face and degeneracy maps.
+-/
 structure Hom (X Y : Data C) where
   app : ∀ (n : ℕ), X.obj n ⟶ Y.obj n
   w_δ : ∀ {n : ℕ} (i : Fin (n + 2)), app (n + 1) ≫ Y.δ i = X.δ i ≫ app n
@@ -383,8 +382,10 @@ namespace Data
 
 variable {C : Type u} [Category.{v} C] {X Y : Data C}
 
-/-- Component family whose type is exactly `X.toGenRelFunctor.obj q ⟶ Y.toGenRelFunctor.obj q`,
-eliminating `q : SimplexCategoryGenRelᵒᵖ` to `op (mk n)` and returning `f.app n`. -/
+/--
+Component family whose type is exactly `X.toGenRelFunctor.obj q ⟶ Y.toGenRelFunctor.obj q`,
+eliminating `q : SimplexCategoryGenRelᵒᵖ` to `op (mk n)` and returning `f.app n`.
+-/
 def toGenRelNatTransApp (f : Hom X Y) (q : SimplexCategoryGenRelᵒᵖ) :
     X.toGenRelFunctor.obj q ⟶ Y.toGenRelFunctor.obj q :=
   match q with
@@ -419,8 +420,10 @@ theorem toGenRelNatTransApp_naturality_σ (f : Hom X Y) {n : ℕ} (i : Fin (n + 
   simp only [toGenRelFunctor_map_σ_op, toGenRelNatTransApp_op_mk]
   exact (f.w_σ i).symm
 
-/-- Correctly typed naturality predicate on `SimplexCategoryGenRel` morphisms.
-It keeps `toGenRelFunctor.obj` types, not raw `X.obj len`. -/
+/--
+Correctly typed naturality predicate on `SimplexCategoryGenRel` morphisms.
+It keeps `toGenRelFunctor.obj` types, not raw `X.obj len`.
+-/
 def genRelNatProp (f : Hom X Y) : MorphismProperty SimplexCategoryGenRel :=
   fun {a b} (h : a ⟶ b) =>
     X.toGenRelFunctor.map h.op ≫ toGenRelNatTransApp f (op a) =
@@ -540,8 +543,10 @@ theorem toGenRelNatTransApp_naturality (f : Hom X Y)
   rw [h_eq] at h
   exact h
 
-/-- The natural transformation induced by `f : Data.Hom X Y` on
-`SimplexCategoryGenRelᵒᵖ ⥤ C`. -/
+/--
+The natural transformation induced by `f : Data.Hom X Y` on
+`SimplexCategoryGenRelᵒᵖ ⥤ C`.
+-/
 noncomputable def toGenRelNatTrans (f : Hom X Y) :
     X.toGenRelFunctor ⟶ Y.toGenRelFunctor where
   app := toGenRelNatTransApp f

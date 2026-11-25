@@ -6,9 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
+
 module
 
 public import Mathlib.CategoryTheory.GradedObject
@@ -16,11 +14,10 @@ public import Mathlib.CategoryTheory.Adjunction.Limits
 public import Mathlib.CategoryTheory.Limits.FunctorCategory.Basic
 
 /-!
-# Evaluation of graded objects preserves limits and colimits
+# Evaluation of graded objects
 
-Evaluation is the existing equivalence with discrete diagrams followed by
-native functor-category evaluation. Only the corresponding shape of limits
-or colimits in the target category is required.
+Evaluation of a graded object preserves limits and colimits of each
+shape for which they exist in the coefficient category.
 -/
 
 @[expose] public section

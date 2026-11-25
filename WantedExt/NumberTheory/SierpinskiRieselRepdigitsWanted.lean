@@ -15,6 +15,7 @@ public import Mathlib.Algebra.GCDMonoid.Finset
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import MathlibExt.NumberTheory.PrimitiveDivisor
 public import MathlibExt.NumberTheory.RieselRepdigit101
+public import MathlibExt.NumberTheory.SierpinskiRepinteger18107
 
 /-!
 # Further results on Sierpiński and Riesel repdigits, repintegers and repstrings
@@ -54,17 +55,6 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.4 
 public theorem_wanted infinite_riesel_repintegers {k : ℕ} (hk : IsRieselNumber k)
     {S : Finset (ℕ × ℕ × ℕ)} (hS : IsRieselCoveringData k S) {b : ℕ} (hb : 2 ≤ b) :
     {t : ℕ | 1 ≤ t ∧ IsRieselNumber (repstring b k 0 t)}.Infinite
-
-/-- **Binary repintegers of 18107 that are Sierpiński numbers.** For every natural number
-$t \equiv 25 \pmod{56}$, the binary repinteger $18107_2^{(t)} = 18107\,(2^{15t} - 1)/(2^{15} - 1)$,
-whose binary expansion is that of $18107$ (fifteen binary digits) written $t$ times, is a
-Sierpiński number.
-
-Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
-Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.5
-(`integers-2026-A12-thm-3-5`). -/
-public theorem_wanted isSierpinskiNumber_repstring_18107 {t : ℕ} (ht : t ≡ 25 [MOD 56]) :
-    IsSierpinskiNumber (repstring 2 18107 0 t)
 
 /-- **Binary repintegers of 18107 that are Riesel numbers.** For every natural number
 $t \equiv 31 \pmod{56}$, the binary repinteger $18107_2^{(t)} = 18107\,(2^{15t} - 1)/(2^{15} - 1)$,

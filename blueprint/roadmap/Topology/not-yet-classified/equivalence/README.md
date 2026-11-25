@@ -1,17 +1,5 @@
 # Equivalence
 
-- [Exists admissible standardσ of P σ](exists-admissible-standard-of-p.md)
-- [Eq of to Simplex Category map eq standardσ](eq-of-to-simplex-category-map-eq-standar.md)
-- [Eq of to Simplex Category map eq of P sigma](eq-of-to-simplex-category-map-eq-of-p-si.md)
-- [Exists preimage of epi](exists-preimage-of-epi.md)
-- [Exists preimage of mono](exists-preimage-of-mono.md)
-- [Exists preimage](exists-preimage.md)
-- [Exists canonical P sigma delta Chain factorization](exists-canonical-p-sigma-delta-chain-fac.md)
-- [Eq of to Simplex Category map eq](eq-of-to-simplex-category-map-eq.md)
-- [Equivalence](equivalence.md)
-- [To Simplex Category obj mk len](to-simplex-category-obj-mk-len.md)
-- [To Simplex Category obj Iso](to-simplex-category-obj-iso.md)
-- [From Simplex Category](from-simplex-category.md)
 - [Family](family.md)
 - [Family is Small](family-is-small.md)
 - [Family rlp](family-rlp.md)
@@ -27,12 +15,18 @@
 - [Source Arrow Iso fields](source-arrow-iso-fields.md)
 - [Family map eq iso Closure](family-map-eq-iso-closure.md)
 - [Normalized Target iso Closure](normalized-target-iso-closure.md)
+
+## Same Cardinal
+
 - [Source locally Small](source-locally-small.md)
 - [Source has Pushouts](source-has-pushouts.md)
 - [Source has Coproducts](source-has-coproducts.md)
 - [Source has Iteration](source-has-iteration.md)
 - [Normalized Target eligible](normalized-target-eligible.md)
 - [Family eligible](family-eligible.md)
+
+## Model And Data
+
 - [Weak Property](weak-property.md)
 - [Cofibration Property](cofibration-property.md)
 - [Fibration Property](fibration-property.md)

@@ -47,10 +47,12 @@ def HasGenericRank {X : Scheme.{0}} (F : X.Modules) (r : ℕ) : Prop :=
   ∃ U : X.Opens, Dense (U : Set X) ∧
     IsVectorBundle ((Scheme.Modules.pullback U.ι).obj F) r
 
-/-- The polynomial is normalized by actual coherent cohomology. The ordinary
-existence theorem is source-covered; this datum chooses that implementation. The index `d` is
-the dimension of `X` and `H` is ample, so that the coefficient of degree `d - 1` used by
-`slope` is the actual slope term. -/
+/-- Hilbert polynomials on a scheme $X$ over $\mathbb{C}$ with respect to a line bundle $H$, in
+dimension $d$: $X$ is Noetherian of Krull dimension $d$, $H$ is ample, and each quasi-coherent sheaf
+of finite type $F$ on $X$ is assigned a polynomial $P_F \in \mathbb{Q}[t]$ with
+$P_F(n) = \sum_{i \le d} (-1)^i \dim_{\mathbb{C}} H^i(X, F \otimes H^{\otimes n})$ for all
+sufficiently large $n$; moreover, for every such $F$ and every $n \ge 0$, each
+$H^i(X, F \otimes H^{\otimes n})$ is finite-dimensional, and it vanishes for $i > d$. -/
 structure HilbertNumerics (X : ComplexScheme) (H : LineBundle X.left) (d : ℕ) where
   dimension : topologicalKrullDim X.left = d
   [noetherian : IsNoetherian X.left]

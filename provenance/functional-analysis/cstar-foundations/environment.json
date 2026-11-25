@@ -1,0 +1,13 @@
+{
+  "original_lean_toolchain": "leanprover/lean4:v4.35.0",
+  "original_mathlib": {
+    "repository": "https://github.com/leanprover-community/mathlib4",
+    "commit": "56a005855ea17e0b0958f73ec801ae140b0a1679"
+  },
+  "destination_lean_toolchain": "leanprover/lean4:v4.36.0",
+  "destination_mathlib": {
+    "repository": "https://github.com/leanprover-community/mathlib4",
+    "commit": "fc4f59e577feb1a4956671bc04ac18aaaf8cd842"
+  },
+  "snapshot_format": "UTF-8 byte-exact original MathlibExt source; .lean.txt is reference material."
+}
