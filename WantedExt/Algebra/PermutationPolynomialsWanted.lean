@@ -30,22 +30,13 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Algebra.ZModPermutationPolynomial
+public import MathlibExt.Algebra.ZModPowerSum
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.Algebra.PermutationPolynomialsWanted
-
-/-- **Power sums over $\mathbb{Z}/p\mathbb{Z}$.** Let $p$ be a prime and $t$ a positive
-integer. Then $\sum_{a \in \mathbb{Z}/p\mathbb{Z}} a^t$ equals $-1$ if $p - 1$ divides $t$,
-and $0$ otherwise.
-
-Source: Zhiguo Ding and Michael E. Zieve, "Permutation
-Polynomials of the Form `∑_{n=1}^k h(n) X^n`", Lemma 1. -/
-theorem_wanted sum_zmod_pow_eq_ite
-    (p t : ℕ) [NeZero p] (hp : p.Prime) (ht : 0 < t) :
-    (∑ a : ZMod p, a ^ t) = if (p - 1) ∣ t then -1 else 0
 
 /-- **When $\sum_{n=1}^k h(n) X^n$ induces the identity on $\mathbb{F}_q$.** Let $p$ be a
 prime, $\ell \ge 1$ and $q = p^\ell > 2$, and let $K$ be a finite field of characteristic
