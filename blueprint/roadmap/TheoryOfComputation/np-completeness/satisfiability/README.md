@@ -19,3 +19,5 @@ Variants of SAT and CSP: 3SAT and the SAT-to-3SAT reduction, bounded-occurrence,
 - [Not-all-equal 3-SAT](not-all-equal-3-sat/README.md)
 - [Polynomial equations over GF(2)](polynomial-equations-over-gf-2/README.md)
 - [Stable model existence](stable-model-existence/README.md)
+- [Satisfiability and constraint satisfaction variants](satisfiability-and-constraint-satisfaction-varia/README.md)
+- [Satisfiability variants](satisfiability-variants/README.md)
