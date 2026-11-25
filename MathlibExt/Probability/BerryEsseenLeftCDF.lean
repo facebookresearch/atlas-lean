@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.BerryEsseenModel
 import Mathlib.Tactic.Linarith
+import MathlibExt.Probability.Distributions.GaussianCdf
 
 /-! # Left and right CDF conventions for the Berry–Esseen error -/
 
@@ -55,16 +56,8 @@ theorem leftRightCDFErrorEquivalence_holds : leftRightCDFErrorEquivalence := by
   let : IsProbabilityMeasure ν := normalizedLaw_probability hμ n
   let F := cdf ν
   let γ := gaussianReal 0 1
-  let : NullSingletonClass γ := nullSingletonClass_gaussianReal (by simp : (1 : ℝ≥0) ≠ 0)
   let G := cdf γ
-  have hG : Continuous (G : ℝ → ℝ) := by
-    refine continuous_iff_continuousAt.2 fun x => G.mono.continuousAt_iff_leftLim_eq_rightLim.2 ?_
-    rw [G.rightLim_eq]
-    have hz : G.measure {x} = 0 := by
-      rw [show G.measure = γ from measure_cdf γ]
-      simp
-    rw [StieltjesFunction.measure_singleton, ENNReal.ofReal_eq_zero] at hz
-    exact le_antisymm (G.mono.leftLim_le le_rfl) (sub_nonpos.mp hz)
+  have hG : Continuous (G : ℝ → ℝ) := continuous_cdf_gaussianReal 0 one_ne_zero
   have hFnonneg (x : ℝ) : 0 ≤ leftLim (F : ℝ → ℝ) x :=
     ge_of_tendsto (F.mono.tendsto_leftLim x) (Eventually.of_forall (cdf_nonneg ν))
   have hIio (x : ℝ) : ν.real (Iio x) = leftLim (F : ℝ → ℝ) x := by
