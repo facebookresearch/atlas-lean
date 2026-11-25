@@ -237,7 +237,7 @@ theorem coeff_tateOriginX_neg_two (K : Type*) [CommRing K] :
     (tateOriginX K).coeff (-2) = 1 := by
   rw [tateOriginX, HahnSeries.coeff_add, HahnSeries.coeff_add,
     coeff_ofPowerSeries_of_neg _ (by norm_num), HahnSeries.coeff_single,
-    HahnSeries.coeff_single, if_pos rfl, if_neg (by norm_num), add_zero, add_zero]
+    HahnSeries.coeff_single, ite_eq_left rfl, ite_eq_right (by norm_num), add_zero, add_zero]
 
 theorem coeff_tateOriginX_of_lt (K : Type*) [CommRing K] {n : ℤ} (hn : n < -2) :
     (tateOriginX K).coeff n = 0 := by
@@ -245,14 +245,14 @@ theorem coeff_tateOriginX_of_lt (K : Type*) [CommRing K] {n : ℤ} (hn : n < -2)
   have h2 : n ≠ -1 := by omega
   rw [tateOriginX, HahnSeries.coeff_add, HahnSeries.coeff_add,
     coeff_ofPowerSeries_of_neg _ (by omega), HahnSeries.coeff_single,
-    HahnSeries.coeff_single, if_neg h1, if_neg h2, add_zero, add_zero]
+    HahnSeries.coeff_single, ite_eq_right h1, ite_eq_right h2, add_zero, add_zero]
 
 theorem coeff_tateOriginY_neg_three (K : Type*) [CommRing K] :
     (tateOriginY K).coeff (-3) = -1 := by
   rw [tateOriginY, HahnSeries.coeff_add, HahnSeries.coeff_add, HahnSeries.coeff_add,
     coeff_ofPowerSeries_of_neg _ (by norm_num), HahnSeries.coeff_single,
-    HahnSeries.coeff_single, HahnSeries.coeff_single, if_pos rfl,
-    if_neg (by norm_num), if_neg (by norm_num), add_zero, add_zero, add_zero]
+    HahnSeries.coeff_single, HahnSeries.coeff_single, ite_eq_left rfl,
+    ite_eq_right (by norm_num), ite_eq_right (by norm_num), add_zero, add_zero, add_zero]
 
 theorem coeff_tateOriginY_of_lt (K : Type*) [CommRing K] {n : ℤ} (hn : n < -3) :
     (tateOriginY K).coeff n = 0 := by
@@ -261,7 +261,7 @@ theorem coeff_tateOriginY_of_lt (K : Type*) [CommRing K] {n : ℤ} (hn : n < -3)
   have h3 : n ≠ -1 := by omega
   rw [tateOriginY, HahnSeries.coeff_add, HahnSeries.coeff_add, HahnSeries.coeff_add,
     coeff_ofPowerSeries_of_neg _ (by omega), HahnSeries.coeff_single,
-    HahnSeries.coeff_single, HahnSeries.coeff_single, if_neg h1, if_neg h2, if_neg h3,
-    add_zero, add_zero, add_zero]
+    HahnSeries.coeff_single, HahnSeries.coeff_single, ite_eq_right h1, ite_eq_right h2,
+    ite_eq_right h3, add_zero, add_zero, add_zero]
 
 end TateCurve
