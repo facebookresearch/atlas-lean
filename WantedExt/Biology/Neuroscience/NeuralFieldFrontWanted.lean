@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 /-
 # Ermentrout–McLeod: travelling fronts in a bistable neural field
 
-For the scalar neural field `u_t = -u + ∫ w(x - y) f(u(y, t)) dy` with a strictly positive,
+For the scalar neural field `u_t = -u + ∫ w(x - y) f(u(y, t)) dy` with a nonnegative,
 bounded, even, normalized spatial kernel `w` that is absolutely continuous with an integrable
 derivative, and a smooth increasing firing rate `f` such that `u = f(u)` has exactly
 three solutions `u₁ < u₂ < u₃`, the outer two stable (`f'(uᵢ) < 1`) and the middle one unstable
@@ -40,11 +40,11 @@ namespace WantedExt.Biology.Neuroscience.NeuralFieldFrontWanted
 
 open MeasureTheory Filter Topology
 
-/-- Standing hypotheses on the spatial kernel (Ermentrout and McLeod 1993): `w` is strictly
-positive, bounded, even and integrable with `∫ w = 1`, and absolutely continuous with an integrable
+/-- Standing hypotheses on the spatial kernel (Ermentrout and McLeod 1993): `w` is nonnegative,
+bounded, even and integrable with `∫ w = 1`, and absolutely continuous with an integrable
 derivative, written as `w x = w 0 + ∫_0^x w'` for an integrable `w'`. -/
 structure IsNeuralKernel (w : ℝ → ℝ) : Prop where
-  pos : ∀ x, 0 < w x
+  nonneg : ∀ x, 0 ≤ w x
   bounded : ∃ M, ∀ x, |w x| ≤ M
   even : ∀ x, w (-x) = w x
   integrable : Integrable w
@@ -75,7 +75,7 @@ def IsTravellingFront (w f : ℝ → ℝ) (u₁ u₃ c : ℝ) (U : ℝ → ℝ) 
       (-U (x - c * t) + ∫ y, w (x - y) * f (U (y - c * t))) t
 
 /-- **Existence and uniqueness of the bistable front** (Ermentrout and McLeod 1993). Let `w` be
-strictly positive, bounded, even and integrable with `∫ w = 1`, and absolutely continuous with an
+nonnegative, bounded, even and integrable with `∫ w = 1`, and absolutely continuous with an
 integrable derivative (`w x = w 0 + ∫_0^x w'`, `w'` integrable), and let `f`
 be `C¹` with `f' > 0` whose fixed points are exactly `u₁ < u₂ < u₃`, with `f'(u₁) < 1`,
 `f'(u₃) < 1`, `f'(u₂) > 1`. Then there are a speed `c` and a profile `U` of a travelling front

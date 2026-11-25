@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.PellNumberSequence
 public import MathlibExt.NumberTheory.Recurrences.FibonacciBrousseauSums
 public import MathlibExt.NumberTheory.Recurrences.KFibonacciBrousseauSums
+public import MathlibExt.NumberTheory.Recurrences.PellBrousseauOdd
 
 /-!
 # Brousseau sums of k-Fibonacci numbers
@@ -68,27 +69,6 @@ public theorem_wanted kFibonacci_brousseau_sum (k : ℤ) (hk : k ≠ 0) (n p : �
     (k : ℚ) * ∑ i ∈ Finset.range (n + 1), (i : ℚ) ^ p * lucasU ⟨k, -1, by decide⟩ i =
       brousseauCoeff k p n * lucasU ⟨k, -1, by decide⟩ (n + 1) +
         brousseauCoeff k p (n + 1) * lucasU ⟨k, -1, by decide⟩ n - brousseauCoeff k p 0
-
-/-- **Power-weighted Pell sums along odd multiples.** Let $P_n$ be the Pell numbers and $Q_n$ the
-Pell–Lucas numbers, the Lucas sequence $V(2, -1)$: $Q_0 = Q_1 = 2$ and
-$Q_{n+2} = 2 Q_{n+1} + Q_n$. Let $m$ be an odd natural number and write $k = Q_m$. Let
-$A_k^{(0)} = 1$ and
-$A_k^{(p)} = \frac{2}{k} \sum_{j=1}^{\lceil p/2 \rceil} \binom{p}{2j-1} A_k^{(p-2j+1)}$ for
-$p \ge 1$, and let $C_k^{(p)}(x) = \sum_{r=0}^{p} (-1)^r A_k^{(r)} \binom{p}{r} x^{p-r}$, with
-$0^0 = 1$. Then for all natural numbers $n$ and $p$,
-$$
-Q_m \sum_{i=1}^{n} i^p P_{mi} = C_k^{(p)}(n) P_{m(n+1)} + C_k^{(p)}(n+1) P_{mn} -
-C_k^{(p)}(0) P_m.
-$$
-
-Source: Prabha Sivaraman Nair and Rejikumar Karunakaran, *On k-Fibonacci Brousseau Sums*,
-Journal of Integer Sequences 27 (2024), Article 24.6.4, Corollary 10
-(`jis-2024-24.6.4-cor-10`). -/
-public theorem_wanted pell_brousseau_sum_mul_odd (m : ℕ) (hm : Odd m) (n p : ℕ) :
-    (lucasV ⟨2, -1, by decide⟩ m : ℚ) * ∑ i ∈ Finset.Icc 1 n, (i : ℚ) ^ p * pellNumber (m * i) =
-      brousseauCoeff (lucasV ⟨2, -1, by decide⟩ m) p n * pellNumber (m * (n + 1)) +
-        brousseauCoeff (lucasV ⟨2, -1, by decide⟩ m) p (n + 1) * pellNumber (m * n) -
-        brousseauCoeff (lucasV ⟨2, -1, by decide⟩ m) p 0 * pellNumber m
 
 /-- **Shifted power-weighted sums of k-Fibonacci numbers.** Let $k$ be a nonzero integer and let
 $F_{k,n}$ be the $k$-Fibonacci numbers, the Lucas sequence $U(k, -1)$: $F_{k,0} = 0$,

@@ -1,7 +1,7 @@
 # Existence and uniqueness of the bistable front
 
 **Existence and uniqueness of the bistable front** (Ermentrout and McLeod 1993). Let `w` be
-strictly positive, bounded, even and integrable with `∫ w = 1`, and absolutely continuous with an
+nonnegative, bounded, even and integrable with `∫ w = 1`, and absolutely continuous with an
 integrable derivative (`w x = w 0 + ∫_0^x w'`, `w'` integrable), and let `f`
 be `C¹` with `f' > 0` whose fixed points are exactly `u₁ < u₂ < u₃`, with `f'(u₁) < 1`,
 `f'(u₃) < 1`, `f'(u₂) > 1`. Then there are a speed `c` and a profile `U` of a travelling front
