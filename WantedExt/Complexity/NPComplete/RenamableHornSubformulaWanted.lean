@@ -20,7 +20,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Algorithms.SAT.Horn.Basic
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
@@ -28,7 +28,7 @@ public import MathlibExt.Computability.Complexity
 
 namespace MetaMathlibExt.Complexity.NPComplete.RenamableHornSubformula
 
-open Cslib.Logic.PL Cslib.Algorithms.SAT.Horn
+open Cslib.Logic.LegacyPL Cslib.Algorithms.SAT.Horn
 
 /-!
 # RENAMABLE HORN SUBFORMULA is NP-complete
@@ -42,8 +42,8 @@ Following Boros, a clause is a set of literals and a CNF is a family (a set) of 
 switching `u` and `ū` replaces every occurrence of `u` by `ū` and every occurrence of `ū` by
 `u`, and a Horn CNF has at most one positive literal in each clause
 (`Cslib.Algorithms.SAT.Horn.IsHorn`). Here `U = {0, …, n - 1}`, a literal is a pair
-`(variable, polarity)` (`Cslib.Logic.PL.CNF`), a clause is a duplicate-free list of at most `3`
-literals, and `C` is a list of clauses no two of which have the same set of literals. The subset
+`(variable, polarity)` (`Cslib.Logic.LegacyPL.CNF`), a clause is a duplicate-free list of at most
+`3` literals, and `C` is a list of clauses no two of which have the same set of literals. The subset
 `C'` is a sublist of `C`, so `C'.length = |C'|`. The switching set `S` is given by its indicator
 `S : ℕ → Bool`; its values at indices `≥ n` are irrelevant, since no literal uses them.
 

@@ -56,7 +56,8 @@ pressures, volumes, and temperatures is used throughout.
 
 namespace EarthScience
 
-/-- Exponent identity: with `cv = cp - R` and `γ = cp / cv`, `(γ - 1) / γ = R / cp`. -/
+/-- Exponent identity: for `0 < R < cp`, with `cv = cp - R` and `γ = cp / cv`,
+`(γ - 1) / γ = R / cp`. -/
 theorem poisson_exponent_identity {R cp : ℝ} (hR : 0 < R) (h : R < cp) :
     (cp / (cp - R) - 1) / (cp / (cp - R)) = R / cp := by
   have hcp : 0 < cp := lt_trans hR h
@@ -70,7 +71,8 @@ theorem poisson_exponent_identity {R cp : ℝ} (hR : 0 < R) (h : R < cp) :
 law `p * v = R * T` at two states and the adiabat `p₁ * v₁ ^ γ = p₂ * v₂ ^ γ`
 with `γ = cp / (cp - R)`, the temperature ratio is
 `T₂ = T₁ * (p₂ / p₁) ^ (R / cp)`. Here `v` is specific volume, `γ` a real
-exponent (`^` is real power), and all pressures, volumes, temperatures are positive. -/
+exponent (`^` is real power), the pressures, the volumes and `T₁` are positive,
+and `0 < R < cp`. -/
 theorem poisson_temperature_ratio {p₁ p₂ v₁ v₂ T₁ T₂ R cp γ : ℝ}
     (hp₁ : 0 < p₁) (hp₂ : 0 < p₂) (hv₁ : 0 < v₁) (hv₂ : 0 < v₂)
     (hT₁ : 0 < T₁) (hR : 0 < R) (h : R < cp) (hcp : 0 < cp)

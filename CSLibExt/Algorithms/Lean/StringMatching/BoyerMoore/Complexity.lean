@@ -174,8 +174,14 @@ private theorem preprocess_cast_time {σ m k : Nat} (p : Vector (Fin σ) m) (h :
   cases h
   rfl
 
-/-- Repeated-symbol inputs realize `m * (n - m + 1)` actual character tests.
-The formula also includes conversions, preprocessing and the other selected events. -/
+/-- **Exact Boyer–Moore cost when pattern and text repeat the same letter.** Let $x$ be a letter
+of the alphabet $\{0, \dots, \sigma - 1\}$, let $m$ and $n$ be natural numbers with
+$0 < m \le n$, and write $x^k$ for the word of $k$ copies of $x$. The cost of the Boyer–Moore
+matcher with pattern $x^m$ and text $x^n$ equals $m + n + P + (m + 4)(n - m + 1)$, where $P$ is
+the cost of the Boyer–Moore preprocessing of the pattern $x^m$.
+
+Of this cost, $m(n - m + 1)$ counts character tests: every alignment is a match and compares all
+$m$ pattern letters. -/
 public theorem boyerMooreMatches_time_replicate {σ : Nat} (x : Fin σ) (m n : Nat)
     (hm : 0 < m) (hlen : m ≤ n) :
     (boyerMooreMatches (List.replicate m x) (List.replicate n x)).time =
@@ -237,8 +243,15 @@ private theorem search_best_comparisons {σ m n : Nat} (p : Vector (Fin σ) m)
   have hdiv := Nat.div_eq_of_lt_le hcounts.1 hcounts.2.1
   exact ⟨hdiv.symm, hcounts.2.2.1.trans (congrArg (2 * ·) hdiv.symm), hcounts.2.2.2⟩
 
-/-- A repeated text symbol and a distinct repeated pattern prefix realize two tests
-per attempt and pattern-length shifts. Costs are the documented selected events. -/
+/-- **Exact Boyer–Moore cost when the pattern repeats one letter and ends in another, which alone
+makes up the text.** Let $a \ne b$ be letters of the alphabet $\{0, \dots, \sigma - 1\}$ and let
+$m$ and $n$ be natural numbers with $2 \le m \le n$. Write $a^{m-1}b$ for the word of $m - 1$
+copies of $a$ followed by one $b$, and $b^n$ for the word of $n$ copies of $b$. The cost of the
+Boyer–Moore matcher with pattern $a^{m-1}b$ and text $b^n$ equals
+$m + n + P + 4\lfloor n/m \rfloor$, where $P$ is the cost of the Boyer–Moore preprocessing of
+the pattern $a^{m-1}b$.
+
+On these inputs every alignment makes two character tests and is followed by a shift by $m$. -/
 public theorem boyerMooreMatches_time_replicate_append {σ : Nat} (a b : Fin σ)
     (m n : Nat) (hab : a ≠ b) (hm : 2 ≤ m) (hlen : m ≤ n) :
     (boyerMooreMatches (List.replicate (m - 1) a ++ [b]) (List.replicate n b)).time =

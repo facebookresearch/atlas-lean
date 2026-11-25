@@ -34,15 +34,17 @@ namespace Nat
 @[expose]
 public section
 
-/-- A natural number `n` is `k`-full if `n ≠ 0` and `p ^ k ∣ n` for every prime
-divisor `p` of `n`. The predicate is total in `k`; the cited source scope is
-`2 ≤ k`. -/
+/-- **$k$-full numbers.** Let $k$ be a natural number. A natural number $n$ is $k$-full if
+$n \ne 0$ and $p^k$ divides $n$ for every prime $p$ dividing $n$.
+
+The definition makes sense for every $k$; the source considers only $k \ge 2$. -/
 public def IsKFull (k n : ℕ) : Prop :=
   n ≠ 0 ∧ ∀ p : ℕ, p.Prime → p ∣ n → p ^ k ∣ n
 
-/-- The powerful (or `2`-full) part of `n`: the product of the exact prime
-powers in `n` whose exponents are at least two. It is defined to be `1` at
-`n = 0`. -/
+/-- **Powerful part of a natural number.** For a natural number $n \ge 1$ and a prime $p$, let
+$v_p(n)$ be the exponent of $p$ in $n$. The powerful (or $2$-full) part of $n$ is the product of
+the prime powers $p^{v_p(n)}$ over the primes $p$ dividing $n$ with $v_p(n) \ge 2$ (and $1$ if
+there are none). The powerful part of $0$ is defined to be $1$. -/
 public def powerfulPart (n : ℕ) : ℕ :=
   Finset.prod (n.primeFactors.filter (fun p => 2 ≤ n.factorization p))
     (fun p ↦ p ^ n.factorization p)
@@ -55,8 +57,10 @@ public def powerfulPart (n : ℕ) : ℕ :=
   unfold powerfulPart
   simp
 
-/-- Pointwise factorization of the powerful part: the exponent is kept when it
-is at least two and erased otherwise. -/
+/-- **Prime exponents of the powerful part.** For natural numbers $n$ and $p$, write $v_p(n)$ for
+the exponent of $p$ in the prime factorization of $n$ (it is $0$ when $p$ is not a prime factor
+of $n$). Then the exponent of $p$ in the powerful part of $n$ equals $v_p(n)$ if $v_p(n) \ge 2$,
+and $0$ otherwise. -/
 public theorem powerfulPart_factorization (n p : ℕ) :
     (powerfulPart n).factorization p =
       if 2 ≤ n.factorization p then n.factorization p else 0 := by
@@ -98,7 +102,8 @@ public theorem powerfulPart_factorization (n p : ℕ) :
       fun h => hp2 (Finset.mem_filter.mp h).2
     rw [if_neg hnotmem]
 
-/-- The powerful part divides the original number. -/
+/-- **The powerful part of $n$ divides $n$.** For every natural number $n$, the powerful part
+of $n$ divides $n$. -/
 public theorem powerfulPart_dvd (n : ℕ) : powerfulPart n ∣ n := by
   rcases eq_or_ne n 0 with rfl | hn
   · rw [powerfulPart_zero]
@@ -115,8 +120,9 @@ public theorem powerfulPart_dvd (n : ℕ) : powerfulPart n ∣ n := by
     · exact le_rfl
     · exact zero_le _
 
-/-- Factorization characterization: for `n ≠ 0`, `n` is `k`-full iff every prime
-divisor occurs with multiplicity at least `k`. -/
+/-- **Factorization criterion for $k$-full numbers.** Let $k$ and $n$ be natural numbers with
+$n \ne 0$, and write $v_p(n)$ for the exponent of a prime $p$ in the prime factorization of
+$n$. Then $n$ is $k$-full if and only if $k \le v_p(n)$ for every prime $p$ dividing $n$. -/
 public theorem isKFull_iff_factorization {k n : ℕ} (hn : n ≠ 0) :
     IsKFull k n ↔ ∀ p : ℕ, p.Prime → p ∣ n → k ≤ n.factorization p := by
   constructor
@@ -125,15 +131,20 @@ public theorem isKFull_iff_factorization {k n : ℕ} (hn : n ≠ 0) :
   · intro h
     exact ⟨hn, fun p hp hpn => (hp.pow_dvd_iff_le_factorization hn).mpr (h p hp hpn)⟩
 
-/-- Zero is never `k`-full: the source works with positive naturals. -/
+/-- **Zero is not $k$-full.** For every natural number $k$, the number $0$ is not $k$-full.
+
+The source works with positive integers. -/
 public theorem not_isKFull_zero (k : ℕ) : ¬ IsKFull k 0 := fun h => h.1 rfl
 
-/-- One is `k`-full vacuously: it is nonzero and has no prime divisors. -/
+/-- **One is $k$-full.** For every natural number $k$, the number $1$ is $k$-full: it is nonzero
+and has no prime divisors. -/
 public theorem isKFull_one (k : ℕ) : IsKFull k 1 :=
   ⟨one_ne_zero, fun _p hp hpn => absurd (Nat.dvd_one.mp hpn) hp.ne_one⟩
 
-/-- Explicit total extension at `k = 0`: every nonzero `n` is `0`-full since
-`p ^ 0 = 1`. This lies outside the source scope. -/
+/-- **The $0$-full numbers.** A natural number $n$ is $0$-full if and only if $n \ne 0$, since
+$p^0 = 1$ divides $n$ for every prime $p$.
+
+The source considers only $k$-full numbers with $k \ge 2$. -/
 public theorem isKFull_k_eq_zero {n : ℕ} : IsKFull 0 n ↔ n ≠ 0 := by
   constructor
   · exact fun h => h.1
@@ -142,26 +153,31 @@ public theorem isKFull_k_eq_zero {n : ℕ} : IsKFull 0 n ↔ n ≠ 0 := by
     rw [pow_zero]
     exact one_dvd n
 
-/-- Explicit total extension at `k = 1`: every nonzero `n` is `1`-full since
-`p ^ 1 = p`. This lies outside the source scope. -/
+/-- **The $1$-full numbers.** A natural number $n$ is $1$-full if and only if $n \ne 0$, since
+$p^1 = p$ divides $n$ for every prime $p$ dividing $n$.
+
+The source considers only $k$-full numbers with $k \ge 2$. -/
 public theorem isKFull_k_eq_one {n : ℕ} : IsKFull 1 n ↔ n ≠ 0 := by
   constructor
   · exact fun h => h.1
   · intro hn
     exact ⟨hn, fun _ _ hpn => by simpa using hpn⟩
 
-/-- Exponent monotonicity: `k`-full implies `j`-full for `j ≤ k`. -/
+/-- **Monotonicity of $k$-fullness in $k$.** Let $j \le k$ be natural numbers. Every $k$-full
+natural number is $j$-full. -/
 public theorem isKFull_mono {j k n : ℕ} (hjk : j ≤ k) (h : IsKFull k n) :
     IsKFull j n :=
   ⟨h.1, fun p hp hpn => (pow_dvd_pow p hjk).trans (h.2 p hp hpn)⟩
 
-/-- Source-facing consequence: for `2 ≤ k`, every `k`-full number is `2`-full. -/
+/-- **For $k \ge 2$, $k$-full numbers are $2$-full.** Let $k \ge 2$ be a natural number. Every
+$k$-full natural number is $2$-full. -/
 public theorem isKFull_of_two_le {k n : ℕ} (hk : 2 ≤ k) (h : IsKFull k n) :
     IsKFull 2 n :=
   isKFull_mono hk h
 
-/-- The `k = 2` specialization: `2`-full numbers are exactly the squarefull
-(also called powerful) numbers. No separate predicate is introduced. -/
+/-- **The $2$-full numbers.** A natural number $n$ is $2$-full if and only if $n \ne 0$ and $p^2$
+divides $n$ for every prime $p$ dividing $n$. These are the squarefull (also called powerful)
+numbers. -/
 public theorem isKFull_two {n : ℕ} :
     IsKFull 2 n ↔ n ≠ 0 ∧ ∀ p : ℕ, p.Prime → p ∣ n → p ^ 2 ∣ n :=
   Iff.rfl

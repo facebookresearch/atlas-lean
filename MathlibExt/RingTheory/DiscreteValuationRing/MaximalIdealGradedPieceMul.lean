@@ -64,19 +64,20 @@ namespace IsDiscreteValuationRing
 
 variable (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
 
-/-- Multiplication by a residue-field scalar on the `i`-th maximal-ideal graded
-piece, as a `κ`-linear endomorphism. This is new prerequisite support for the
-corrected ATLAS N261 filtered-trace route (whose graded-piece trace statement
-is proved below), not a source theorem. -/
+/-- **Multiplication by a residue class on a graded piece.** Let $R$ be a discrete valuation ring
+with maximal ideal $\mathfrak{m}$ and residue field $\kappa = R/\mathfrak{m}$. For $a \in \kappa$
+and $i \in \mathbb{N}$, this is the $\kappa$-linear endomorphism $x \mapsto a x$ of the graded
+piece $\mathfrak{m}^i/\mathfrak{m}^{i+1}$. -/
 noncomputable def residueFieldMulMaximalIdealGradedPiece
     (a : IsLocalRing.ResidueField R) (i : ℕ) :
     Module.End (IsLocalRing.ResidueField R) (MaximalIdealGradedPiece R i) :=
   LinearMap.lsmul _ _ a
 
-/-- Representative formula: multiplication by `residue x` acts on a quotient
-representative as the representative `R`-scalar action `x • ·`. This is the
-bridge from residue scalar multiplication to actual multiplication on the
-quotient. -/
+/-- **Multiplication by a residue class on representatives.** Let $R$ be a discrete valuation
+ring with maximal ideal $\mathfrak{m}$ and residue field $\kappa = R/\mathfrak{m}$. For $x \in R$,
+$i \in \mathbb{N}$ and $y \in \mathfrak{m}^i$, multiplication by the residue class
+$\bar{x} \in \kappa$ on $\mathfrak{m}^i/\mathfrak{m}^{i+1}$ sends the class of $y$ to the class
+of $x y$. -/
 @[simp]
 theorem residueFieldMulMaximalIdealGradedPiece_residue_mk
     (x : R) (i : ℕ) (y : ((IsLocalRing.maximalIdeal R) ^ i : Ideal R)) :
@@ -86,10 +87,16 @@ theorem residueFieldMulMaximalIdealGradedPiece_residue_mk
   simp only [residueFieldMulMaximalIdealGradedPiece, LinearMap.lsmul_apply]
   exact Module.Quotient.mk_smul_mk _ _ x y
 
-/-- Base-change conjugacy: after restricting scalars to a base field `K`, the
-graded-piece equivalence conjugates residue-field left multiplication to the
-graded-piece multiplication endomorphism. New prerequisite support for the
-corrected ATLAS N261 filtered-trace route, not a source theorem. -/
+/-- **The residue-field isomorphism intertwines multiplication.** Let $R$ be a discrete valuation
+ring with maximal ideal $\mathfrak{m}$ and residue field $\kappa = R/\mathfrak{m}$, let
+$i \in \mathbb{N}$, and let $e : \kappa \to \mathfrak{m}^i/\mathfrak{m}^{i+1}$ be the
+$\kappa$-linear isomorphism of the residue field with the graded piece. Let $K$ be a field, with
+a $K$-algebra structure on $\kappa$ and a $K$-module structure on
+$\mathfrak{m}^i/\mathfrak{m}^{i+1}$ such that $(c b) x = c (b x)$ for all $c \in K$,
+$b \in \kappa$ and $x \in \mathfrak{m}^i/\mathfrak{m}^{i+1}$. Then for every $a \in \kappa$,
+writing $\mu_a : \kappa \to \kappa$ for multiplication by $a$, the $K$-linear map
+$e \circ \mu_a \circ e^{-1}$ equals multiplication by $a$ on $\mathfrak{m}^i/\mathfrak{m}^{i+1}$,
+viewed as a $K$-linear map. -/
 theorem residueFieldLinearEquivMaximalIdealGradedPiece_conj_lmul
     {K : Type*} [Field K] [Algebra K (IsLocalRing.ResidueField R)]
     (i : ℕ) [Module K (MaximalIdealGradedPiece R i)]
@@ -105,10 +112,15 @@ theorem residueFieldLinearEquivMaximalIdealGradedPiece_conj_lmul
     residueFieldMulMaximalIdealGradedPiece, LinearMap.lsmul_apply]
   rw [← smul_eq_mul, map_smul, LinearEquiv.apply_symm_apply]
 
-/-- Graded-piece trace: after restricting scalars to a base field `K`, the
-linear trace of the graded-piece multiplication endomorphism equals the
-algebra trace of the residue scalar. New prerequisite support for the
-corrected ATLAS N261 filtered-trace route, not a source theorem. -/
+/-- **Trace of multiplication on a graded piece.** Let $R$ be a discrete valuation ring with
+maximal ideal $\mathfrak{m}$ and residue field $\kappa = R/\mathfrak{m}$, let $i \in \mathbb{N}$,
+and let $K$ be a field, with a $K$-algebra structure on $\kappa$ and a $K$-module structure on
+$\mathfrak{m}^i/\mathfrak{m}^{i+1}$ such that $(c b) x = c (b x)$ for all $c \in K$,
+$b \in \kappa$ and $x \in \mathfrak{m}^i/\mathfrak{m}^{i+1}$. Then for every $a \in \kappa$, the
+trace of multiplication by $a$ on $\mathfrak{m}^i/\mathfrak{m}^{i+1}$, as a $K$-linear map,
+equals the trace $\operatorname{Tr}_{\kappa/K}(a)$.
+
+Each trace is taken to be $0$ when the corresponding space is not finite-dimensional over $K$. -/
 theorem trace_residueFieldMulMaximalIdealGradedPiece
     {K : Type*} [Field K] [Algebra K (IsLocalRing.ResidueField R)]
     (i : ℕ) [Module K (MaximalIdealGradedPiece R i)]
