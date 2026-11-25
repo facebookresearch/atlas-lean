@@ -38,6 +38,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SimpleGraph.RamseyFiveFiveLowerBound
+public import MathlibExt.Combinatorics.SimpleGraph.RamseyThreeFive
 
 @[expose] public section
 
@@ -73,12 +74,6 @@ $R(5, 5)$ is at most $46$.
 Source: V. Angeltveit and B. D. McKay, *R(5,5) ≤ 46*, arXiv:2409.15709 (2024);
 listed in SqueezeBench `SqueezeBench/Problems/Ramsey/README.md`. -/
 public theorem_wanted graphRamsey_five_five_le_forty_six : graphRamsey 5 5 ≤ 46
-
-/-- **The value of $R(3, 5)$.** The classical Ramsey number $R(3, 5)$ equals $14$.
-
-Source: Greenwood and Gleason (1955), op. cit.; Radziszowski, DS1;
-OEIS A000791; listed in SqueezeBench `SqueezeBench/Problems/Ramsey3/README.md`. -/
-public theorem_wanted graphRamsey_three_five : graphRamsey 3 5 = 14
 
 /-- **The value of $R(3, 6)$.** The classical Ramsey number $R(3, 6)$ equals $18$.
 

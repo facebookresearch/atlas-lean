@@ -1,0 +1,13 @@
+# Polynomial equations over GF(2)
+
+- [Instances of ALGEBRAIC EQUATIONS OVER GF\[2\]](algebraic-equations-over-gf2-instance.md)
+- [Variable as a polynomial over GF(2)](var.md)
+- [Monomial of an index list](term.md)
+- [Polynomial of a term list](poly.md)
+- [Well-formed instances of ALGEBRAIC EQUATIONS OVER GF\[2\]](well-formed.md)
+- [Feasible instances of ALGEBRAIC EQUATIONS OVER GF\[2\]](algebraic-equations-over-gf2-feasible.md)
+- [ALGEBRAIC EQUATIONS OVER GF\[2\] as a decision problem](algebraic-equations-over-gf2-dec.md)
+- [ALGEBRAIC EQUATIONS OVER GF\[2\] is NP-complete](algebraic-equations-over-gf2-np-complete.md)
+- [Well-formed instances of QUADRATIC EQUATIONS OVER GF\[2\]](well-formed-2.md)
+- [QUADRATIC EQUATIONS OVER GF\[2\] as a decision problem](quadratic-equations-over-gf2-dec.md)
+- [QUADRATIC EQUATIONS OVER GF\[2\] is NP-complete](quadratic-equations-over-gf2-np-complete.md)
