@@ -293,7 +293,8 @@ private theorem exists_one_sub_smul_nonneg {A : Matrix ι ι ℝ} (hA : A.IsNons
       simp [Matrix.sub_apply]
       linarith
     · have := hZ i j hij
-      simp only [one_div, sub_apply, smul_apply, smul_eq_mul, sub_nonneg, one_apply_ne hij]
+      simp only [one_div, Matrix.sub_apply, Matrix.smul_apply, smul_eq_mul, sub_nonneg,
+        one_apply_ne hij]
       exact mul_nonpos_of_nonneg_of_nonpos (by positivity) this
   · let _ : NormedRing (Matrix ι ι ℂ) := Matrix.linftyOpNormedRing
     let _ : NormedAlgebra ℂ (Matrix ι ι ℂ) := Matrix.linftyOpNormedAlgebra

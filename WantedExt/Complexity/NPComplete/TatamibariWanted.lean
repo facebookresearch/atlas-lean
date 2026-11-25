@@ -17,7 +17,7 @@ NP-complete", 10th International Conference on Fun with Algorithms (FUN 2021), L
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Finset.Card

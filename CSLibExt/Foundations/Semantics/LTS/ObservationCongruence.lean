@@ -41,8 +41,12 @@ namespace LTS
 
 variable {State Label : Type*} [HasTau Label] (lts : LTS State Label)
 
-/-- A rooted weak transition contains one actual transition carrying the
-displayed label, surrounded by silent transitions. -/
+/-- **Rooted weak transition.** In a labelled transition system whose labels include a silent
+label $\tau$, there is a rooted weak transition from $s$ to $t$ with label $\mu$ when there are
+states $s_1$ and $s_2$ such that $s$ reaches $s_1$ by zero or more $\tau$-transitions,
+$s_1 \xrightarrow{\mu} s_2$ is a transition, and $s_2$ reaches $t$ by zero or more
+$\tau$-transitions. In particular, a rooted weak transition with label $\tau$ contains at least
+one actual $\tau$-transition. -/
 def RootedWeakStep (source : State) (label : Label) (target : State) : Prop :=
   ∃ before after,
     lts.τSTr source before ∧
@@ -51,13 +55,19 @@ def RootedWeakStep (source : State) (label : Label) (target : State) : Prop :=
 
 variable {lts}
 
-/-- Every strong transition is rooted weak. -/
+/-- **Transitions are rooted weak transitions.** In a labelled transition system with a silent
+label $\tau$, every transition $s \xrightarrow{\mu} t$ is a rooted weak transition from $s$ to $t$
+with label $\mu$. -/
 theorem rootedWeakStep_of_tr {source target : State} {label : Label}
     (hstep : lts.Tr source label target) :
     lts.RootedWeakStep source label target :=
   ⟨source, target, .refl, hstep, .refl⟩
 
-/-- Rooted weak transitions are weak transitions. -/
+/-- **Rooted weak transitions are weak transitions.** In a labelled transition system with a
+silent label $\tau$, every rooted weak transition from $s$ to $t$ with label $\mu$ is a weak
+transition from $s$ to $t$ with label $\mu$, where a weak transition with label $\mu$ is either
+the trivial step from a state to itself with label $\tau$, or a transition with label $\mu$
+preceded and followed by zero or more $\tau$-transitions. -/
 theorem RootedWeakStep.toSTr {source target : State} {label : Label}
     (hstep : lts.RootedWeakStep source label target) :
     lts.STr source label target := by
@@ -68,7 +78,10 @@ theorem RootedWeakStep.toSTr {source target : State} {label : Label}
       (hbefore.trans ((τSTr.of_tr hmiddle).trans hafter))
   · exact .tr hbefore hmiddle hafter
 
-/-- Silent preparation can be added to a rooted weak transition. -/
+/-- **Silent steps before a rooted weak transition.** In a labelled transition system with a
+silent label $\tau$, if $s$ reaches $m$ by zero or more $\tau$-transitions and there is a rooted
+weak transition from $m$ to $t$ with label $\mu$, then there is a rooted weak transition from $s$
+to $t$ with label $\mu$. -/
 theorem τSTr.rootedWeakStep_trans {source middle target : State}
     {label : Label}
     (hbefore : lts.τSTr source middle)
@@ -77,7 +90,10 @@ theorem τSTr.rootedWeakStep_trans {source middle target : State}
   obtain ⟨before, after, hprefix, hmiddle, hsuffix⟩ := hstep
   exact ⟨before, after, hbefore.trans hprefix, hmiddle, hsuffix⟩
 
-/-- Silent cleanup can be added to a rooted weak transition. -/
+/-- **Appending silent steps to a rooted weak transition.** In a labelled transition system with
+silent action $\tau$, if there is a rooted weak transition from $s$ to $m$ with label $a$, and $t$
+is reachable from $m$ by zero or more $\tau$-transitions, then there is a rooted weak transition
+from $s$ to $t$ with label $a$. -/
 theorem RootedWeakStep.trans_τSTr {source middle target : State}
     {label : Label}
     (hstep : lts.RootedWeakStep source label middle)
@@ -86,9 +102,15 @@ theorem RootedWeakStep.trans_τSTr {source middle target : State}
   obtain ⟨before, after, hprefix, hmiddle, hsuffix⟩ := hstep
   exact ⟨before, after, hprefix, hmiddle, hsuffix.trans hafter⟩
 
-/-- A rooted silent transition followed by a weak transition remains rooted.
-The initial rooted transition supplies the required actual silent step even
-when the following weak transition is reflexive. -/
+/-- **A rooted silent step followed by a weak transition is rooted.** In a labelled transition
+system with a silent label $\tau$, if there is a rooted weak transition from $s$ to $m$ with
+label $\tau$ and a weak transition from $m$ to $t$ with label $\mu$, then there is a rooted weak
+transition from $s$ to $t$ with label $\mu$. Here a weak transition with label $\mu$ is either
+the trivial step from a state to itself with label $\tau$, or a transition with label $\mu$
+preceded and followed by zero or more $\tau$-transitions.
+
+The initial rooted transition supplies the required actual silent step even when the following
+weak transition is reflexive. -/
 theorem RootedWeakStep.trans_sTr {source middle target : State}
     {label : Label}
     (hrooted : lts.RootedWeakStep source HasTau.τ middle)
@@ -103,8 +125,12 @@ theorem RootedWeakStep.trans_sTr {source middle target : State}
       (sTr_τSTr_iff lts).mp hrooted.toSTr
     exact ⟨before, after, hsource.trans hprefix, hmiddle, hsuffix⟩
 
-/-- Rooted observational congruence: initial transitions are matched by rooted
-weak transitions and their derivatives are weakly bisimilar. -/
+/-- **Rooted observation congruence.** In a labelled transition system with a silent label
+$\tau$, states $p$ and $q$ are rooted weakly bisimilar (observation congruent) when every
+transition $p \xrightarrow{\mu} p'$ is matched by a rooted weak transition from $q$ to some $q'$
+with label $\mu$ such that $p'$ and $q'$ are weakly bisimilar, and every transition
+$q \xrightarrow{\mu} q'$ is matched by a rooted weak transition from $p$ to some $p'$ with label
+$\mu$ such that $p'$ and $q'$ are weakly bisimilar. -/
 def RootedWeaklyBisimilar (left right : State) : Prop :=
   (∀ ⦃label left'⦄, lts.Tr left label left' →
     ∃ right', lts.RootedWeakStep right label right' ∧
@@ -131,8 +157,10 @@ theorem RootedWeaklyBisimilar.symm {left right : State}
     obtain ⟨right', hright', hnext⟩ := hcongr.1 hstep
     exact ⟨right', hright', HomWeakBisimilarity.eqv.symm hnext⟩
 
-/-- Rooted observational congruence matches rooted weak transitions while
-preserving weak bisimilarity of their derivatives. -/
+/-- **Observation congruence matches rooted weak transitions.** In a labelled transition system
+with a silent label $\tau$, if $p$ and $q$ are rooted weakly bisimilar and there is a rooted weak
+transition from $p$ to $p'$ with label $\mu$, then there is a state $q'$ with a rooted weak
+transition from $q$ to $q'$ with label $\mu$ such that $p'$ and $q'$ are weakly bisimilar. -/
 theorem RootedWeaklyBisimilar.match_rootedLeft {left right left' : State}
     {label : Label} (hcongr : lts.RootedWeaklyBisimilar left right)
     (hstep : lts.RootedWeakStep left label left') :
@@ -153,7 +181,9 @@ theorem RootedWeaklyBisimilar.match_rootedLeft {left right left' : State}
       hnext.sTr hremainder.toSTr
     exact ⟨right'', hright'.trans_sTr hright'', hfinal⟩
 
-/-- Rooted observational congruence is transitive. -/
+/-- **Transitivity of rooted observational congruence.** In a labelled transition system with
+silent action $\tau$, if $p$ is rooted observationally congruent to $q$ and $q$ is rooted
+observationally congruent to $r$, then $p$ is rooted observationally congruent to $r$. -/
 @[trans]
 theorem RootedWeaklyBisimilar.trans {left middle right : State}
     (hleft : lts.RootedWeaklyBisimilar left middle)
@@ -171,13 +201,16 @@ theorem RootedWeaklyBisimilar.trans {left middle right : State}
       HomWeakBisimilarity.eqv.trans (HomWeakBisimilarity.eqv.symm hleftNext)
         hrightNext⟩
 
-/-- Rooted observational congruence is an equivalence relation. -/
+/-- **Observation congruence is an equivalence relation.** In every labelled transition system
+with a silent label $\tau$, rooted weak bisimilarity (observation congruence) is reflexive,
+symmetric and transitive. -/
 theorem observationCongruent_equivalence :
     Equivalence (lts.RootedWeaklyBisimilar) :=
   ⟨observationCongruent_refl, RootedWeaklyBisimilar.symm,
     RootedWeaklyBisimilar.trans⟩
 
-/-- Strong bisimilarity implies observational congruence. -/
+/-- **Strong bisimilarity implies observation congruence.** In a labelled transition system with
+a silent label $\tau$, any two strongly bisimilar states are rooted weakly bisimilar. -/
 theorem observationCongruent_of_bisimilar {left right : State}
     (hbisim : HomBisimilarity lts left right) :
     lts.RootedWeaklyBisimilar left right := by
@@ -189,7 +222,8 @@ theorem observationCongruent_of_bisimilar {left right : State}
     obtain ⟨left', hleft, hnext⟩ := Bisimilarity.follow_snd hbisim hstep
     exact ⟨left', rootedWeakStep_of_tr hleft, HomBisimilarity.to_homWeakBisimilarity hnext⟩
 
-/-- Observational congruence is finer than weak bisimilarity. -/
+/-- **Observation congruence implies weak bisimilarity.** In a labelled transition system with
+a silent label $\tau$, any two rooted weakly bisimilar states are weakly bisimilar. -/
 theorem RootedWeaklyBisimilar.to_homWeakBisimilarity {left right : State}
     (hcongr : lts.RootedWeaklyBisimilar left right) :
     HomWeakBisimilarity lts left right := by

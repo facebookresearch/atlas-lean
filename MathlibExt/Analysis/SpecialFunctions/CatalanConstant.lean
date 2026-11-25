@@ -18,13 +18,14 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Real
 
 namespace Real
 
-/-- Catalan's constant, defined by its alternating reciprocal odd-square
-series `∑ n, (-1)^n / (2n+1)^2`. -/
+/-- **Catalan's constant.** Catalan's constant is the real number
+$G = \sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1)^2}$. -/
 noncomputable def catalanConstant : ℝ :=
   ∑' n : ℕ, (-1 : ℝ) ^ n / (2 * (n : ℝ) + 1) ^ 2
 
-/-- The defining series of Catalan's constant converges absolutely: its
-terms are bounded in norm by the convergent series `∑ n, 1 / (n + 1)^2`. -/
+/-- **The series for Catalan's constant converges absolutely.** The series
+$\sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1)^2}$ converges absolutely: its terms are bounded in
+absolute value by $\frac{1}{(n+1)^2}$, and $\sum_{n=0}^{\infty} \frac{1}{(n+1)^2}$ converges. -/
 theorem summable_catalanConstant_terms :
     Summable (fun n : ℕ => (-1 : ℝ) ^ n / (2 * (n : ℝ) + 1) ^ 2) := by
   refine Summable.of_norm_bounded
@@ -44,15 +45,15 @@ theorem summable_catalanConstant_terms :
     refine one_div_le_one_div_of_le (by positivity) ?_
     exact pow_le_pow_left₀ (by positivity) (by linarith) 2
 
-/-- Characteristic equation: Catalan's constant is the sum of its
-defining alternating series. Downstream users should rewrite with this
-lemma (or `Real.hasSum_catalanConstant`) instead of unfolding the
-definition. -/
+/-- **Catalan's constant as a series.** Catalan's constant $G$ equals
+$\sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1)^2}$. -/
 theorem catalanConstant_eq_tsum :
     catalanConstant = ∑' n : ℕ, (-1 : ℝ) ^ n / (2 * (n : ℝ) + 1) ^ 2 :=
   rfl
 
-/-- The defining series of Catalan's constant has it as its sum. -/
+/-- **The series for Catalan's constant converges to it.** The series
+$\sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1)^2}$ converges unconditionally, and its sum is Catalan's
+constant $G$. -/
 theorem hasSum_catalanConstant :
     HasSum (fun n : ℕ => (-1 : ℝ) ^ n / (2 * (n : ℝ) + 1) ^ 2)
       catalanConstant :=

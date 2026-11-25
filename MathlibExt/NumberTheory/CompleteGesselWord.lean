@@ -26,15 +26,18 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A complete Gessel word over `S = [n]`: a Gessel word in which the unbarred and
-barred occurrence counts agree for every letter. -/
+/-- **Complete Gessel words.** A word $w$ over the Gessel alphabet of $S = [n] = \{1, \dots, n\}$
+is a complete Gessel word when it is a Gessel word and, for every $m \in [n]$, the unbarred
+letter $m$ and the barred letter $\bar m$ occur the same number of times in $w$. -/
 def IsCompleteGesselWord (n : ℕ) (w : List (GesselAlphabet n)) : Prop :=
   IsGesselWord n w ∧
     ∀ i : Fin n,
       gesselUnbarredCount n w (i.val + 1) = gesselBarredCount n w (i.val + 1)
 
-/-- A word is complete exactly when it is a Gessel word and every letter has zero
-signed balance. -/
+/-- **Complete Gessel words are the Gessel words of zero balance.** A word $w$ over the Gessel
+alphabet of $[n] = \{1, \dots, n\}$ is a complete Gessel word if and only if it is a Gessel word
+and, for every $m \in [n]$, the signed balance of $m$ in $w$ (the number of occurrences of the
+unbarred letter $m$ minus the number of occurrences of the barred letter $\bar m$) is zero. -/
 theorem isCompleteGesselWord_iff_balance_eq_zero (n : ℕ) (w : List (GesselAlphabet n)) :
     IsCompleteGesselWord n w ↔
       IsGesselWord n w ∧ ∀ i : Fin n, gesselBalance n w (i.val + 1) = 0 := by

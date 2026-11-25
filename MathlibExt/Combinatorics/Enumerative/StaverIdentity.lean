@@ -22,17 +22,20 @@ public import Mathlib.Tactic.Ring
 
 namespace MetaMathlibExt
 
-/-- Sign split: `(-1)^(n-k) * (-1)^k = (-1)^n` for `k ≤ n`. -/
+/-- **Splitting a power of minus one.** For natural numbers $k \le n$, we have
+$(-1)^{n-k} \cdot (-1)^k = (-1)^n$ in $\mathbb{Q}$. -/
 theorem staver_sign_mul (n k : ℕ) (hk : k ≤ n) :
     (-1 : ℚ) ^ (n - k) * (-1 : ℚ) ^ k = (-1 : ℚ) ^ n := by
   rw [← pow_add, Nat.sub_add_cancel hk]
 
-/-- Square of a signed power is one. -/
+/-- **Squares of powers of minus one.** For every natural number $k$, we have
+$(-1)^k \cdot (-1)^k = 1$ in $\mathbb{Q}$. -/
 theorem staver_sign_sq (k : ℕ) : (-1 : ℚ) ^ k * (-1 : ℚ) ^ k = 1 := by
   rw [← pow_add]
   exact Even.neg_one_pow ⟨k, rfl⟩
 
-/-- For odd `n`, reflection flips the sign. -/
+/-- **Reflecting a power of minus one, odd case.** If $n$ is an odd natural number and
+$k \le n$ is a natural number, then $(-1)^{n-k} = -(-1)^k$ in $\mathbb{Q}$. -/
 theorem staver_sign_odd {n k : ℕ} (hodd : Odd n) (hk : k ≤ n) :
     (-1 : ℚ) ^ (n - k) = -(-1 : ℚ) ^ k := by
   have hmul := staver_sign_mul n k hk
@@ -44,7 +47,8 @@ theorem staver_sign_odd {n k : ℕ} (hodd : Odd n) (hk : k ≤ n) :
     _ = (-1 : ℚ) ^ n * (-1 : ℚ) ^ k := by rw [hmul]
     _ = -(-1 : ℚ) ^ k := by rw [he1, neg_one_mul]
 
-/-- For even `n`, reflection preserves the sign. -/
+/-- **Reflecting a power of minus one, even case.** If $n$ is an even natural number and
+$k \le n$ is a natural number, then $(-1)^{n-k} = (-1)^k$ in $\mathbb{Q}$. -/
 theorem staver_sign_even {n k : ℕ} (heven : Even n) (hk : k ≤ n) :
     (-1 : ℚ) ^ (n - k) = (-1 : ℚ) ^ k := by
   have hmul := staver_sign_mul n k hk
@@ -56,7 +60,9 @@ theorem staver_sign_even {n k : ℕ} (heven : Even n) (hk : k ≤ n) :
     _ = (-1 : ℚ) ^ n * (-1 : ℚ) ^ k := by rw [hmul]
     _ = (-1 : ℚ) ^ k := by rw [he1, one_mul]
 
-/-- Reflection `k ↦ n - k` preserves the unweighted reciprocal-binomial sum. -/
+/-- **Reflection of the alternating reciprocal binomial sum.** For every natural number $n$,
+$\sum_{k=0}^{n} (-1)^{n-k} \binom{n}{k}^{-1} = \sum_{k=0}^{n} (-1)^{k} \binom{n}{k}^{-1}$
+in $\mathbb{Q}$. -/
 theorem staver_reflect_zero (n : ℕ) :
     (∑ k ∈ Finset.range (n + 1),
       (-1 : ℚ) ^ (n - k) * ((Nat.choose n k : ℚ))⁻¹) =
@@ -72,7 +78,10 @@ theorem staver_reflect_zero (n : ℕ) :
   have e3 : Nat.choose n (n - k) = Nat.choose n k := Nat.choose_symm hkle
   rw [e1, e2, e3]
 
-/-- Reflection for the first-weighted sum, keeping the weight in `ℕ`. -/
+/-- **Reflection of the weighted alternating reciprocal binomial sum.** For every natural
+number $n$,
+$\sum_{k=0}^{n} (-1)^{n-k} \, k \binom{n}{k}^{-1} =
+\sum_{k=0}^{n} (-1)^{k} (n-k) \binom{n}{k}^{-1}$ in $\mathbb{Q}$. -/
 theorem staver_reflect_one (n : ℕ) :
     (∑ k ∈ Finset.range (n + 1),
       (-1 : ℚ) ^ (n - k) * (k : ℚ) * ((Nat.choose n k : ℚ))⁻¹) =
@@ -88,8 +97,10 @@ theorem staver_reflect_one (n : ℕ) :
   have e3 : Nat.choose n (n - k) = Nat.choose n k := Nat.choose_symm hkle
   rw [e1, e2, e3]
 
-/-- Staver's identity: for even `n`, `S¹ = (n/2) * S⁰`, and for odd `n`,
-`S⁰ = 0`, where `Sᵐ = ∑_{k=0}^n (-1)^{n-k} k^m C(n,k)⁻¹`.
+/-- **Staver's identity for alternating reciprocal binomial sums.** For a natural number $n$,
+let $S_0(n) = \sum_{k=0}^{n} (-1)^{n-k} \binom{n}{k}^{-1}$ and
+$S_1(n) = \sum_{k=0}^{n} (-1)^{n-k} \, k \binom{n}{k}^{-1}$, computed in $\mathbb{Q}$.
+If $n$ is even, then $S_1(n) = \frac{n}{2} S_0(n)$; if $n$ is odd, then $S_0(n) = 0$.
 
 Source: Renzo Sprugnoli, "Alternating Weighted Sums of Inverses of Binomial
 Coefficients," Journal of Integer Sequences 15 (2012), Article 12.6.3

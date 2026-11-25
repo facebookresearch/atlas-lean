@@ -19,8 +19,8 @@ public import Mathlib.Analysis.Matrix.Order
 Stresses and strains are real `3 × 3` matrices (no Voigt or Mandel
 vector), with tension-positive Cauchy stress. The metric is Mathlib's
 matrix inner product at the identity weight,
-`Matrix.toMatrixNormedAddCommGroup 1 Matrix.PosDef.one` and
-`Matrix.toMatrixInnerProductSpace 1 Matrix.PosDef.one.posSemidef`, so
+`Matrix.toMatrixNormedAddCommGroup (Fin 3) 1 Matrix.PosDef.one` and
+`Matrix.toMatrixInnerProductSpace (Fin 3) 1 Matrix.PosDef.one.posSemidef`, so
 `⟪A, B⟫_ℝ = ∑ i, ∑ j, A i j * B i j`: the full double contraction
 `A : B`, in which each off-diagonal shear pair of a symmetric tensor is
 counted twice. These Frobenius structures are scoped instances in the
@@ -63,12 +63,15 @@ and so violate the premise `K ⊆ deviatoricStresses`.
   nonexpansiveness of the return with the `2 μ` scaling.
 - `Plasticity.eq_projection_iff_energy_le`: the return is the
   closest point in the isotropic complementary-energy metric.
+- `Plasticity.deviatoric_return_maximum_plastic_work`: maximum plastic
+  work of the returned stress against every admissible comparison.
 
 ## iii. Table of contents
 
 - A. Frobenius carrier and admissibility
 - B. Return map
 - C. Stability and energy characterization
+- D. Plastic work
 
 ## iv. References
 
@@ -94,11 +97,11 @@ open Elasticity
 
 /-- Full Frobenius norm on `3 × 3` real matrices, `‖A‖ = √(A * 1 * Aᴴ).trace`. -/
 noncomputable scoped instance frobeniusNormedAddCommGroup : NormedAddCommGroup 𝕄 :=
-  Matrix.toMatrixNormedAddCommGroup 1 Matrix.PosDef.one
+  Matrix.toMatrixNormedAddCommGroup (Fin 3) 1 Matrix.PosDef.one
 
 /-- Full Frobenius inner product on `3 × 3` real matrices, `⟪A, B⟫ = (B * 1 * Aᴴ).trace`. -/
 noncomputable scoped instance frobeniusInnerProductSpace : InnerProductSpace ℝ 𝕄 :=
-  Matrix.toMatrixInnerProductSpace 1 Matrix.PosDef.one.posSemidef
+  Matrix.toMatrixInnerProductSpace (Fin 3) 1 Matrix.PosDef.one.posSemidef
 
 /-- Uniform structure of the Frobenius norm, preferred over the entrywise matrix uniformity. -/
 noncomputable scoped instance (priority := high) frobeniusUniformSpace : UniformSpace 𝕄 :=
@@ -106,7 +109,7 @@ noncomputable scoped instance (priority := high) frobeniusUniformSpace : Uniform
 
 /-- The Frobenius inner product space sits over the Frobenius normed group (instance check). -/
 example : (NormedAddCommGroup.toSeminormedAddCommGroup : SeminormedAddCommGroup 𝕄) =
-    Matrix.toMatrixSeminormedAddCommGroup 1 Matrix.PosDef.one.posSemidef :=
+    Matrix.toMatrixSeminormedAddCommGroup (Fin 3) 1 Matrix.PosDef.one.posSemidef :=
   rfl
 
 /-- Admissible deviatoric stresses: symmetric trace-free `3 × 3` matrices. -/
@@ -363,5 +366,73 @@ theorem eq_projection_iff_energy_le
         le_of_mul_le_mul_left hmw hC
       exact le_of_pow_le_pow_left₀ two_ne_zero (norm_nonneg _) hsq
     · exact ciInf_le hbdd ⟨s, hsK⟩
+
+/-! ## D. Plastic work -/
+
+private lemma inner_smul_one (c : ℝ) (B : 𝕄) : ⟪c • 1, B⟫_ℝ = c * B.trace := by
+  rw [frobenius_inner_eq_sum_mul]
+  simp only [Matrix.smul_apply, Matrix.one_apply, smul_eq_mul, mul_ite, mul_one, mul_zero,
+    ite_mul, zero_mul, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+  rw [← Finset.mul_sum]
+  congr 1
+
+/-- Maximum plastic work for the deviatoric return. For a trial stress `σTrial`, a shear modulus
+`μ > 0` and a fixed nonempty complete convex yield section `K` of symmetric trace-free stresses,
+let `σ := meanStress σTrial • 1 + convexProjection K (deviatoricStress σTrial)` be the returned
+stress and
+`Δε_p := (σTrial - σ) / (2 μ)` the isotropic plastic strain increment. Then every admissible
+stress `τ ∈ K` satisfies `(σ - τ) : Δε_p = ∑ i, ∑ j, (σ - τ) i j * Δε_p i j ≥ 0`: for
+every admissible comparison stress `τ ∈ K`, the returned stress `σ` (which itself need not
+lie in `K`, since it carries the trial mean stress) does at least as much plastic work on
+`Δε_p` as `τ`. The hydrostatic
+part of `σ` does no plastic work because `Δε_p` is trace-free, which uses `K ⊆ deviatoricStresses`
+(pressure insensitivity). No symmetry of `σTrial` is needed. -/
+theorem deviatoric_return_maximum_plastic_work
+    {μ : ℝ} (hμ : 0 < μ) {K : Set 𝕄} (hKne : K.Nonempty) (hKc : IsComplete K)
+    (hKv : Convex ℝ K) (hKdev : K ⊆ deviatoricStresses) (σTrial : 𝕄) :
+    ∀ τ ∈ K, 0 ≤ ∑ i, ∑ j,
+      (meanStress σTrial • 1 + convexProjection K (deviatoricStress σTrial) - τ) i j *
+        plasticStrainIncrement μ σTrial
+          (meanStress σTrial • 1 + convexProjection K (deviatoricStress σTrial))
+          i j := by
+  intro τ hτ
+  have hmemP : convexProjection K (deviatoricStress σTrial) ∈ K :=
+    convexProjection_mem hKne hKc hKv _
+  have hp0 : (convexProjection K (deviatoricStress σTrial)).trace = 0 := (hKdev hmemP).2
+  have hs0 : (deviatoricStress σTrial).trace = 0 := trace_deviatoric σTrial
+  have htr : (deviatoricStress σTrial -
+        convexProjection K (deviatoricStress σTrial)).trace = 0 := by
+    rw [Matrix.trace_sub, hs0, hp0, sub_zero]
+  have hsub : σTrial - (meanStress σTrial • 1 + convexProjection K (deviatoricStress σTrial))
+      = deviatoricStress σTrial - convexProjection K (deviatoricStress σTrial) := by
+    unfold deviatoricStress
+    abel
+  have hΔ : plasticStrainIncrement μ σTrial
+        (meanStress σTrial • 1 + convexProjection K (deviatoricStress σTrial))
+      = (2 * μ)⁻¹ • (deviatoricStress σTrial -
+        convexProjection K (deviatoricStress σTrial)) := by
+    unfold plasticStrainIncrement
+    rw [hsub]
+  have hsum : (∑ i, ∑ j, (meanStress σTrial • 1 +
+        convexProjection K (deviatoricStress σTrial) - τ) i j *
+        plasticStrainIncrement μ σTrial
+          (meanStress σTrial • 1 + convexProjection K (deviatoricStress σTrial)) i j)
+      = ⟪meanStress σTrial • 1 + convexProjection K (deviatoricStress σTrial) - τ,
+        plasticStrainIncrement μ σTrial
+          (meanStress σTrial • 1 + convexProjection K (deviatoricStress σTrial))⟫_ℝ :=
+    (frobenius_inner_eq_sum_mul _ _).symm
+  have hX : ⟪convexProjection K (deviatoricStress σTrial),
+        deviatoricStress σTrial - convexProjection K (deviatoricStress σTrial)⟫_ℝ
+      - ⟪τ, deviatoricStress σTrial - convexProjection K (deviatoricStress σTrial)⟫_ℝ
+      = -⟪deviatoricStress σTrial - convexProjection K (deviatoricStress σTrial),
+        τ - convexProjection K (deviatoricStress σTrial)⟫_ℝ := by
+    have hneg : convexProjection K (deviatoricStress σTrial) - τ
+        = -(τ - convexProjection K (deviatoricStress σTrial)) := by abel
+    rw [← inner_sub_left, hneg, inner_neg_left, real_inner_comm]
+  have hvar' := convexProjection_variational hKne hKc hKv (deviatoricStress σTrial) τ hτ
+  have hpos : (0 : ℝ) < (2 * μ)⁻¹ := inv_pos.mpr (by linarith)
+  rw [hsum, hΔ, inner_smul_right, inner_sub_left, inner_add_left, inner_smul_one, htr,
+    mul_zero, zero_add, hX]
+  exact mul_nonneg hpos.le (neg_nonneg.mpr hvar')
 
 end Plasticity
