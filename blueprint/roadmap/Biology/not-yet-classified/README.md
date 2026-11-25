@@ -3,10 +3,13 @@
 Topics added since this subject's fields were last revised.
 
 - [Bishop Cannings](bishop-cannings/README.md)
+- [Chao Lower Bound](chao-lower-bound/README.md)
 - [Cherry Distribution](cherry-distribution/README.md)
 - [Cohen Bet Hedging](cohen-bet-hedging/README.md)
+- [Cohen Kappa](cohen-kappa/README.md)
 - [General Markov Flattening](general-markov-flattening/README.md)
 - [General Markov Identifiability](general-markov-identifiability/README.md)
+- [Good Turing](good-turing/README.md)
 - [Hawk Dove](hawk-dove/README.md)
 - [Ideal Free Distribution](ideal-free-distribution/README.md)
 - [Marginal Value](marginal-value/README.md)
@@ -17,5 +20,6 @@ Topics added since this subject's fields were last revised.
 - [Rosenzweig Mac Arthur](rosenzweig-mac-arthur/README.md)
 - [Schaefer Gordon](schaefer-gordon/README.md)
 - [Smith Fretwell](smith-fretwell/README.md)
+- [Spearman Karber](spearman-karber/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [War Of Attrition](war-of-attrition/README.md)

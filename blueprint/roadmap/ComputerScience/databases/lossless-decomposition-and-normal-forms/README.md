@@ -34,3 +34,4 @@
 - [Synthesis](synthesize.md)
 - [Synthesis is dependency-preserving](synthesize-dependency-preserving.md)
 - [Synthesis is lossless](synthesize-lossless.md)
+- [Minimal covers and third normal form of 3NF synthesis](remaining-clauses-of-minimal-covers-and-3nf-synthesis.md)

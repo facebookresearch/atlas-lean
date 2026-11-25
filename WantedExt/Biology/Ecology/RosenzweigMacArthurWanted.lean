@@ -21,9 +21,11 @@ Theorem 1). Raising `K` past `K_H = a + 2λ` destabilizes the equilibrium: Rosen
 of enrichment.
 
 Recorded here: the three cases for solutions on `[0, ∞)` with positive initial densities. In
-case (iii) the limit cycle is stated as a nonconstant periodic solution whose orbit is the orbit
-of every nonconstant periodic solution and attracts every positive solution other than the
-equilibrium (orbital convergence, as distance to the orbit).
+case (iii), Cheng's Theorem 1 is stated as existence, uniqueness and stability of the limit
+cycle: a nonconstant periodic solution exists; every nonconstant periodic solution has its orbit;
+and the orbit is stable, in that every positive solution starting close enough to it approaches
+it (distance to the orbit tends to `0`). Global attraction of every positive solution other than
+the equilibrium is not claimed.
 
 Sources: K.-S. Cheng, "Uniqueness of a limit cycle for a predator-prey system", SIAM J. Math.
 Anal. 12 (1981) 541–548, doi:10.1137/0512047, Theorem 1 and §1; M. L. Rosenzweig, "Paradox of
@@ -116,11 +118,12 @@ Theorem 1): for positive parameters with `m > D₀` and `K > a + 2λ`,
 (1) the coexistence equilibrium `(λ, x*)` has both coordinates positive and is Lyapunov unstable:
 there is `ε > 0` such that for every `δ > 0` some solution on `[0, ∞)` with positive initial
 densities starts within `δ` of it and is at distance at least `ε` at some time `t ≥ 0`;
-(2) there is a nonconstant periodic solution `c` with positive coordinates and period `T > 0`
-(`c (t + T) = c t` for all `t ≥ 0`); every nonconstant periodic solution with positive initial
-densities has the same orbit `{c t | t ≥ 0}`; and every solution with positive initial densities
-other than the constant solution at `(λ, x*)` approaches this orbit: its distance to the orbit
-tends to `0`.
+(2) existence: there is a nonconstant periodic solution `c` with positive coordinates and period
+`T > 0` (`c (t + T) = c t` for all `t ≥ 0`, and `c t ≠ c 0` for some `t ≥ 0`); (3) uniqueness:
+every nonconstant periodic solution with positive initial densities has the same orbit
+`{c t | t ≥ 0}`; (4) stability: there is `δ > 0` such that every solution with positive initial
+densities whose initial point is within distance `δ` of this orbit approaches it, i.e. its
+distance to the orbit tends to `0`.
 
 Source: Cheng (1981), Theorem 1. -/
 public theorem_wanted unique_limit_cycle (hm : p.D₀ < p.m) (hK : p.a + 2 * p.lam < p.K) :
@@ -133,8 +136,8 @@ public theorem_wanted unique_limit_cycle (hm : p.D₀ < p.m) (hK : p.a + 2 * p.l
         (∀ w : ℝ → ℝ × ℝ, ∀ T' : ℝ, 0 < T' → p.IsSolution w → 0 < (w 0).1 → 0 < (w 0).2 →
           (∀ t, 0 ≤ t → w (t + T') = w t) → (∃ t, 0 ≤ t ∧ w t ≠ w 0) →
           w '' Set.Ici 0 = c '' Set.Ici 0) ∧
-        ∀ z : ℝ → ℝ × ℝ, p.IsSolution z → 0 < (z 0).1 → 0 < (z 0).2 →
-          z 0 ≠ p.coexistenceEq →
+        ∃ δ : ℝ, 0 < δ ∧ ∀ z : ℝ → ℝ × ℝ, p.IsSolution z → 0 < (z 0).1 → 0 < (z 0).2 →
+          infDist (z 0) (c '' Set.Ici 0) < δ →
           Tendsto (fun t => infDist (z t) (c '' Set.Ici 0)) atTop (𝓝 0)
 
 end Params
