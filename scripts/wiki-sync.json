@@ -108089,6 +108089,8 @@
 "UniformSpace.Completion.normedStarModule": "daa5add92879bea9",
 "UniformSpace.Completion.normedStarRing": "d7754328ff3e1802",
 "UniformSpace.Completion.normedStarRing_star_coe": "364a05e7f7adec9f",
+"UnitAddTorus.eq_volume_of_isAddLeftInvariant": "5d1bfcb895bbe123",
+"UnitAddTorus.map_eq_volume_of_isAddLeftInvariant": "8f35b743f55eac45",
 "Unitary.blockDiagonalTwo": "c0129ddd544beb9e",
 "Unitary.blockDiagonalTwo_apply": "9bcb11eaaac637ab",
 "Unitary.blockDiagonalTwo_conj_apply": "9b6026e78faaf98c",

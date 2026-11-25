@@ -218,3 +218,4 @@ Topics added since this subject's fields were last revised.
 - [Zero At Infty Flip](zero-at-infty-flip/README.md)
 - [Zero At Infty Open](zero-at-infty-open/README.md)
 - [Zero At Infty Reflection](zero-at-infty-reflection/README.md)
+- [Unit Add Torus Lift](unit-add-torus-lift/README.md)
