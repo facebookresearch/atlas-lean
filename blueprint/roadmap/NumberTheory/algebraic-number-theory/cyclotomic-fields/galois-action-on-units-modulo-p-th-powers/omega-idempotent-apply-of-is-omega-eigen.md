@@ -1,3 +1,3 @@
 # Omega Idempotent apply of is Omega Eigenvector
 
-The projector fixes every `ω ^ i` eigenvector.
+For a prime `p`, the projector `omegaIdempotent` fixes every `ω ^ i` eigenvector.

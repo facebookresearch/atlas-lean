@@ -1,3 +1,3 @@
 # Omega Idempotent comp self
 
-The projector is idempotent.
+For a prime `p`, the projector `omegaIdempotent` is idempotent.

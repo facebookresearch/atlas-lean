@@ -1,3 +1,3 @@
 # Omega Idempotent apply
 
-`omegaIdempotent` applied to a vector.
+For a prime `p`, `omegaIdempotent` applied to a vector.

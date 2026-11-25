@@ -1,3 +1,3 @@
 # Mem units Omega Eigenspace
 
-Membership in the omega eigenspace is the eigenvector condition.
+For a prime `p`, membership in `unitsOmegaEigenspace` is the eigenvector condition.

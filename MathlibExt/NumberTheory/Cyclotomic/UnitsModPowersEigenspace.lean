@@ -181,8 +181,9 @@ section Cyclotomic
 
 variable (K : Type*) [Field K] [NumberField K]
 
-/-- `(ZMod p)ˣ` acting on `𝓞 K` by ring automorphisms through Mathlib's
-`IsCyclotomicExtension.Rat.galEquivZMod : Gal(K / ℚ) ≃* (ZMod p)ˣ`. -/
+/-- For `p ≠ 0` and a `p`-th cyclotomic number field `K`, `(ZMod p)ˣ` acting on `𝓞 K` by ring
+automorphisms through Mathlib's `IsCyclotomicExtension.Rat.galEquivZMod : Gal(K / ℚ) ≃* (ZMod p)ˣ`.
+-/
 noncomputable def clRingAction [IsCyclotomicExtension {p} ℚ K] :
     (ZMod p)ˣ →* ((𝓞 K) ≃+* (𝓞 K)) :=
   (galRestrictRingAut ℤ ℚ K (𝓞 K)).comp
@@ -221,7 +222,8 @@ section UnitsGalAction
 
 variable (R : Type*) [CommRing R]
 
-/-- The endomorphism of `Rˣ` modulo `p`-th powers induced by a ring automorphism of `R`. -/
+/-- For a prime `p`, the endomorphism of `Rˣ` modulo `p`-th powers induced by a ring automorphism
+of `R`. -/
 noncomputable def unitsEnd (g : R ≃+* R) :
     Module.End (ZMod p) (ModN (Additive Rˣ) p) :=
   modNEnd p (MulEquiv.toAdditive (Units.mapEquiv g.toMulEquiv)).toAddMonoidHom
@@ -232,7 +234,7 @@ variable {R} in
       ModN.mkQ p (Additive.ofMul (Units.mapEquiv g.toMulEquiv u)) :=
   rfl
 
-/-- `unitsEnd` as a monoid hom from the ring automorphisms of `R`. -/
+/-- For a prime `p`, `unitsEnd` as a monoid hom from the ring automorphisms of `R`. -/
 noncomputable def unitsEndHom : (R ≃+* R) →* Module.End (ZMod p) (ModN (Additive Rˣ) p) where
   toFun := unitsEnd p R
   map_one' := by
@@ -254,13 +256,14 @@ noncomputable local instance instIsCycExt :
     IsCyclotomicExtension {p} ℚ (CyclotomicField p ℚ) :=
   inferInstance
 
-/-- `(ZMod p)ˣ` acting on the units of `𝓞 (ℚ(ζ_p))` modulo `p`-th powers. -/
+/-- For a prime `p`, `(ZMod p)ˣ` acting on the units of `𝓞 (ℚ(ζ_p))` modulo `p`-th powers. -/
 noncomputable def unitsGalAction :
     (ZMod p)ˣ →* Module.End (ZMod p)
       (ModN (Additive (𝓞 (CyclotomicField p ℚ))ˣ) p) :=
   (unitsEndHom p (𝓞 (CyclotomicField p ℚ))).comp (clRingAction p (CyclotomicField p ℚ))
 
-/-- The `ω ^ i` eigenspace of `unitsGalAction`. -/
+/-- For a prime `p`, the `ω ^ i` eigenspace of `unitsGalAction p` on the units of `𝓞 (ℚ(ζ_p))`
+modulo `p`-th powers. -/
 def unitsOmegaEigenspace (i : ℕ) :
     Submodule (ZMod p) (ModN (Additive (𝓞 (CyclotomicField p ℚ))ˣ) p) where
   carrier := {a | IsOmegaEigenvector (unitsGalAction p) i a}
@@ -285,7 +288,7 @@ section OmegaIdempotent
 variable {M : Type*} [AddCommGroup M] [Module (ZMod p) M]
   (ρ : (ZMod p)ˣ →* Module.End (ZMod p) M)
 
-/-- `omegaIdempotent` applied to a vector. -/
+/-- For a prime `p`, `omegaIdempotent` applied to a vector. -/
 theorem omegaIdempotent_apply (i : ℕ) (a : M) :
     omegaIdempotent p ρ i a =
       (Nat.card (ZMod p)ˣ : ZMod p)⁻¹ •
@@ -299,7 +302,7 @@ private lemma isUnit_natCast_card_units_zmod :
     Nat.cast_sub hp.one_le, Nat.cast_one, CharP.cast_eq_zero (ZMod p) p, zero_sub]
   exact (IsUnit.neg_iff 1).mpr isUnit_one
 
-/-- The projector fixes every `ω ^ i` eigenvector. -/
+/-- For a prime `p`, the projector `omegaIdempotent` fixes every `ω ^ i` eigenvector. -/
 theorem omegaIdempotent_apply_of_isOmegaEigenvector {i : ℕ} {a : M}
     (ha : IsOmegaEigenvector ρ i a) : omegaIdempotent p ρ i a = a := by
   rw [omegaIdempotent_apply]
@@ -310,7 +313,8 @@ theorem omegaIdempotent_apply_of_isOmegaEigenvector {i : ℕ} {a : M}
     ← Nat.cast_smul_eq_nsmul (ZMod p), smul_smul]
   rw [(isUnit_natCast_card_units_zmod p).inv_mul_cancel, one_smul]
 
-/-- The image of the projector consists of `ω ^ i` eigenvectors. -/
+/-- For a prime `p`, the image of the projector `omegaIdempotent` consists of `ω ^ i`
+eigenvectors. -/
 theorem isOmegaEigenvector_omegaIdempotent (i : ℕ) (a : M) :
     IsOmegaEigenvector ρ i (omegaIdempotent p ρ i a) := by
   intro d'
@@ -325,7 +329,7 @@ theorem isOmegaEigenvector_omegaIdempotent (i : ℕ) (a : M) :
   rw [mul_pow, mul_inv, ← mul_assoc,
     mul_inv_cancel₀ (pow_ne_zero i (Units.ne_zero d')), one_mul]
 
-/-- The projector is idempotent. -/
+/-- For a prime `p`, the projector `omegaIdempotent` is idempotent. -/
 theorem omegaIdempotent_comp_self (i : ℕ) :
     omegaIdempotent p ρ i ∘ₗ omegaIdempotent p ρ i = omegaIdempotent p ρ i :=
   LinearMap.ext fun a =>
@@ -333,13 +337,13 @@ theorem omegaIdempotent_comp_self (i : ℕ) :
 
 end OmegaIdempotent
 
-/-- The projector for the unit action lands in `unitsOmegaEigenspace`. -/
+/-- For a prime `p`, the projector for the unit action lands in `unitsOmegaEigenspace`. -/
 theorem omegaIdempotent_mem_unitsOmegaEigenspace (i : ℕ)
     (a : ModN (Additive (𝓞 (CyclotomicField p ℚ))ˣ) p) :
     omegaIdempotent p (unitsGalAction p) i a ∈ unitsOmegaEigenspace p i :=
   isOmegaEigenvector_omegaIdempotent p (unitsGalAction p) i a
 
-/-- Membership in the omega eigenspace is the eigenvector condition. -/
+/-- For a prime `p`, membership in `unitsOmegaEigenspace` is the eigenvector condition. -/
 theorem mem_unitsOmegaEigenspace {i : ℕ} {a : ModN (Additive (𝓞 (CyclotomicField p ℚ))ˣ) p} :
     a ∈ unitsOmegaEigenspace p i ↔
       Stickelberger.IsOmegaEigenvector (unitsGalAction p) i a :=
