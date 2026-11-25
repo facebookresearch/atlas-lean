@@ -206,9 +206,11 @@ def globalClosedPullback {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q
   limit.lift MX.closed.diagram
     ⟨globalClosedForms MY, (restrictedClosedCone f MY).π ≫ closedPullbackLift f MY MX⟩
 
-/-- The global closed-form pullback defined by the lift `ℓ`. Different lifts agree after inverting
-weak equivalences, and pullback is functorial there; these are requested in
-`WantedExt.AlgebraicGeometry.DerivedPullbackFunctorialityWanted`. -/
+/-- The global closed-form pullback along $f : X \to Y$ defined by `ℓ`, for any natural
+transformation `ℓ` from the replaced closed-form diagram of `MY`, reindexed along `f`, to that of
+`MX` (not necessarily a lift of the augmentations): the map
+`globalClosedForms MY ⟶ globalClosedForms MX` into the limit induced by the cone whose legs are the
+limit projections of `MY` at the reindexed families followed by `ℓ`. -/
 def globalClosedPullbackOf {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     {p : ℕ} {n : ℤ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
     {X Y : Prestack k} (f : X ⟶ Y)

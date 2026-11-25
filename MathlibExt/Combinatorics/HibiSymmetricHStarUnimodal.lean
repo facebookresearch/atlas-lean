@@ -26,7 +26,9 @@ This simplex occurs in Sam Payne, *Ehrhart series and lattice triangulations*, E
 with $(b,k,r)=(3,2,0)$. Translate by $f=(e_1+\cdots+e_6)/3$ and use the lattice basis
 $f,e_2+f,\ldots,e_6+f$ to obtain the vertices above. <https://arxiv.org/abs/math/0702052>
 
-## Record carried over from the retired `WantedExt/Combinatorics/HibiSymmetricHStarUnimodalOWR741Problem003Wanted.lean`
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/HibiSymmetricHStarUnimodalOWR741Problem003Wanted.lean`:
 
 Source: C. A. Athanasiadis, On the unimodality of h*-vectors, in Ehrhart Quasipolynomials: Algebra,
 Combinatorics, and Geometry, Oberwolfach Reports 1 (2004), no. 39, p. 2078, Conjecture 2, DOI

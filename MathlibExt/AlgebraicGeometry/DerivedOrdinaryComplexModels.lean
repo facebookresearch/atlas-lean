@@ -107,7 +107,10 @@ def vertexModule {N : ShuffleAlgebraFunctor k} {S : AffineScalarSystem N}
     RightModule k (coefficientCategory N (ordinaryAlgebras.obj A)) :=
   ((P.realization (ordinaryAlgebras.obj A)).obj (E.obj r.point)).obj
 
-/-- This module is literally the indicated value of the native vertex bimodule. -/
+/-- For a vertex $E$ of the underived moduli space over a commutative $k$-algebra $A$,
+`vertexModule r P A E` is the value at the chosen scalar-frame object `r.point` of the vertex
+bimodule of $E$ over the constant simplicial algebra on $A$
+(`vertexBimodule R P (ordinaryAlgebras.obj A) E`). -/
 theorem vertexModule_eq_bimodule {N : ShuffleAlgebraFunctor k} {S : AffineScalarSystem N}
     {R : DGFrame k (oppositeCategory (scalarCategory k))}
     (r : ScalarFramePoint R) (P : StrictPerfectSystem N S) (A : CommAlgCat.{u} k)

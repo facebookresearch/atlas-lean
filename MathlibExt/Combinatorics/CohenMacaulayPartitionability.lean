@@ -20,7 +20,9 @@ The three-copy complex of Duval, Goeckner, Klivans and Martin refutes the Stanle
 partitionability conjecture. We verify Reisner's criterion over the rationals by sparse column
 elimination and rule out facet intervals on the faces used in their combinatorial obstruction.
 
-## Record carried over from the retired `WantedExt/Combinatorics/CohenMacaulayPartitionabilityAMR156Problem0005Wanted.lean`
+## Record carried over from the retired wanted module
+
+From `WantedExt/Combinatorics/CohenMacaulayPartitionabilityAMR156Problem0005Wanted.lean`:
 
 Source: R. P. Stanley, Positivity Problems and Conjectures in Algebraic Combinatorics (1999),
 Problem 6 (Stanley–Garsia partitionability conjecture). UnsolvedMath record UM-00801179
