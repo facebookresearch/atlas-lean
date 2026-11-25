@@ -93,22 +93,6 @@ public theorem_wanted interior_stdCleanParallelogram_latticePoints {a n : ℕ} (
       (fun k : ℕ => (Int.fract ((k : ℝ) * (n - a) / n) + (k : ℝ) * a / n, (k : ℝ))) ''
         Set.Icc 1 (n - 1)
 
-/-- **The point reflection symmetry of $P_{a,n}$.** Let $a$ and $n$ be natural numbers with
-$1 \le a < n$ and $\gcd(a, n) = 1$, let $P_{a,n} \subseteq \mathbb{R}^2$ be the parallelogram
-with vertices $(0, 0)$, $(1, 0)$, $(a, n)$, $(a + 1, n)$, and let
-$S : \mathbb{R}^2 \to \mathbb{R}^2$ be $S(x, y) = (a + 1 - x, n - y)$. Then $S(P_{a,n}) = P_{a,n}$,
-and $S$ is an isometry of $\mathbb{R}^2$ for the maximum distance
-$d((x, y), (x', y')) = \max(|x - x'|, |y - y'|)$.
-
-Source: Gabriel Khan, Mizan R. Khan, Riaz R. Khan, and Peng Zhao, *A Geometric Relationship
-between Continued Fractions and Clean Lattice Parallelograms*, INTEGERS 26 (2026), Article A10,
-Lemma 4 (`integers-2026-A10-lem-4`). -/
-public theorem_wanted stdCleanParallelogram_symmetry {a n : ℕ} (ha : 1 ≤ a) (han : a < n)
-    (hcop : Nat.Coprime a n) :
-    (fun p : ℝ × ℝ => ((a + 1 : ℝ) - p.1, (n : ℝ) - p.2)) '' stdCleanParallelogram a n =
-        stdCleanParallelogram a n ∧
-      Isometry fun p : ℝ × ℝ => ((a + 1 : ℝ) - p.1, (n : ℝ) - p.2)
-
 /-- **The last partial quotient of $n/a$ is at least $2$.** Let $a$ and $n$ be natural numbers
 with $1 \le a < n$, and let $n/a = [q_0; q_1, \dots, q_m]$ be the regular continued fraction of
 $n/a$, where $q_0 = \lfloor n/a \rfloor$ and $m$ is the number of partial quotients after $q_0$
