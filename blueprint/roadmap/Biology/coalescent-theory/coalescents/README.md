@@ -27,3 +27,6 @@
 - [Merger rates of a coalescent with simultaneous multiple collisions](xi-coalescents-simultaneous-multiple-collisions.md)
 - [The Ξ-coalescent rate matrix on partitions of a finite sample](xi-coalescent-partition-valued-ctmc-and-restrict.md)
 - [The first n lookdown levels have Kingman's coalescent as genealogy](finite-level-lookdown-chain-and-its-embedded-lam.md)
+
+- [Conditional moment duality between the Λ-Wright–Fisher process and the Λ-coalescent](conditional-lambda-wright-fisher-lambda-coalesce.md)
+- [Infinite lookdown, de Finetti limit and the Λ-Fleming–Viot process](infinite-lookdown-de-finetti-limit-and-lambda-fl.md)

@@ -162,4 +162,25 @@ private theorem repeatedZero_no_geometric_expansion :
   have h1 := hc 1
   norm_num [Fin.sum_univ_succ] at h1
 
+/-! ### Annihilators of recurrence solutions -/
+
+open MetaMathlibExt Polynomial in
+-- At order zero the coefficient sum is empty and the characteristic polynomial is `1`.
+private theorem orderZero_annihilator (G : ℕ → ℚ)
+    (hG : (⟨0, Fin.elim0⟩ : LinearRecurrence ℚ).IsSolution G) :
+    AnnihilatesSeq (1 : ℚ[X]) G := by
+  simpa [LinearRecurrence.charPoly] using
+    annihilatesSeq_charPoly_of_isSolution ⟨0, Fin.elim0⟩ G hG
+
+open MetaMathlibExt Polynomial in
+-- The nonzero sequence `2^n` solves the order-one recurrence `G (n + 1) = 2 * G n`.
+private theorem powersOfTwo_annihilator :
+    AnnihilatesSeq (X - C 2 : ℚ[X]) (fun n => 2 ^ n) := by
+  let E : LinearRecurrence ℚ := ⟨1, fun _ => 2⟩
+  have hG : E.IsSolution (fun n => 2 ^ n) := by
+    intro n
+    simp [E, pow_succ']
+  simpa [E, LinearRecurrence.charPoly, ← X_pow_eq_monomial] using
+    annihilatesSeq_charPoly_of_isSolution E _ hG
+
 end MathlibExtTest.LinearRecurrenceClosedForm

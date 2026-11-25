@@ -76,3 +76,6 @@
 - [Möhle–Sagitov: genealogies converge to Kingman's in finite dimensions](tendsto-chain-fdd.md)
 
 - [Wright–Fisher as a Cannings model with clock N generations](wright-fisher-as-a-cannings-model-satisfying-moh.md)
+
+- [Path-level convergence of rescaled ancestral partition chains in Skorokhod space](path-level-convergence-of-rescaled-ancestral-par.md)
+- [Fast migration gives Kingman's coalescent with an effective population size](separation-of-time-scales-fast-migration-gives-k.md)

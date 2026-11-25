@@ -20,3 +20,12 @@
 - [Moment duality for the Wright-Fisher diffusion with two-way mutation](moment-duality-with-mutation-killed-absorbed-blo.md)
 
 - [Polynomial spectrum of the neutral Wright–Fisher generator with mutation](spectral-structure-of-l-0-theta-on-polynomials.md)
+
+- [C-tightness of rescaled Wright–Fisher chains with selection and mutation](c-tightness-of-rescaled-wf-chains-with-selection.md)
+- [Convergence to the stationary law of the Wright–Fisher diffusion with mutation](convergence-to-the-stationary-law-under-mutation.md)
+- [Existence of the Wright–Fisher diffusion with selection and mutation by an exponential tilt](existence-of-the-selection-mutation-wf-diffusion.md)
+- [Uniform generator convergence of the Wright–Fisher chain with selection and mutation](uniform-generator-convergence-with-selection-and.md)
+- [Unique strong solution of the Wright–Fisher stochastic differential equation](unique-strong-solution-of-the-wf-sde.md)
+- [Uniqueness for the selection–mutation martingale problem by an inverse tilt](uniqueness-for-the-selection-mutation-martingale.md)
+- [Wright–Fisher martingale-problem solutions are weak solutions of the equation](wf-martingale-problem-solutions-are-weak-sde-sol.md)
+- [Jacobi eigenbasis of the Wright–Fisher generator with mutation](jacobi-eigenbasis-with-mutation.md)

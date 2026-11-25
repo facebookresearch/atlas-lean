@@ -42,3 +42,9 @@
 - [Extension kernels for consistent laws of coalescent paths](extension-kernels-for-consistent-laws-of-coalesc.md)
 - [Kingman's coalescent on the natural numbers](kingman-coalescent-on-n-as-a-time-indexed-cadlag.md)
 - [Kingman's coalescent comes down from infinity](kingman-s-coalescent-comes-down-from-infinity.md)
+
+- [The genealogy of α-stable branching is a time-changed Beta-coalescent](alpha-stable-csbp-genealogy-is-a-time-changed-be.md)
+- [From the paintbox to the partitions of the coalescent](bridge-from-the-shared-paintbox-to-the-coalescen.md)
+- [Generator-level lumpability of the ancestral recombination graph to one locus](generator-level-lumpability-of-the-arg-to-each-l.md)
+- [The marginal genealogy at each locus of the ancestral recombination graph is Kingman's](marginal-genealogy-at-each-locus-of-the-arg-is-k.md)
+- [The paintbox representation for the partitions of Kingman's coalescent](paintbox-representation-transported-to-coalescen.md)

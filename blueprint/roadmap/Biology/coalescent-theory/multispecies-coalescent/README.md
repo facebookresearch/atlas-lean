@@ -113,3 +113,8 @@
 - [Clade of a ranked history](is-clade.md)
 - [Clade probability](random-joining-is-clade.md)
 - [Clade probability under random joining for at most five genes](random-joining-is-clade-of-le-five.md)
+
+- [The multispecies coalescent as a constructed process](msc-realization-gene-tree-probability-equals-the.md)
+- [Identifiability of networks under the network multispecies coalescent](network-coalescent-identifiability-questions-spe.md)
+- [Network multispecies coalescent: the gene-tree probability kernel of a fixed network](network-multispecies-coalescent-fixed-network-ge.md)
+- [One species-tree branch: exit law and merge order of the realized coalescent](one-species-tree-branch-exit-law-and-merge-order.md)
