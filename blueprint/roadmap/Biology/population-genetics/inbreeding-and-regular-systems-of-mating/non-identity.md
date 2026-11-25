@@ -2,8 +2,9 @@
 
 At a single autosomal locus, let $h_t$ be the common probability of non-identity by descent
 of the two copies within either individual, and $k_t$ the probability for independently
-drawn copies from the two siblings. For fair independent Mendelian transmissions without
-selection, the pair starts at $(h_0,k_0)$ and updates by
+drawn copies from the two individuals. The founding pair need not be siblings; each subsequent
+pair consists of full siblings. For fair independent Mendelian transmissions without selection,
+the pair starts at $(h_0,k_0)$ and updates by
 
 $$(h_{t+1}, k_{t+1}) = (k_t,\; h_t/4 + k_t/2).$$
 

@@ -14,7 +14,8 @@ pair. Both sequences remain in $[0, 1]$, and for $t \ge 1$
 $$h_t = k_{t-1}, \qquad k_t = \tfrac14 h_{t-1} + \tfrac12 k_{t-1},$$
 
 so $k_t = \tfrac12 k_{t-1} + \tfrac14 k_{t-2}$ for $t \ge 2$. With
-$\lambda_\pm = (1 \pm \sqrt 5)/4$, the roots of $\lambda^2 - \lambda/2 - 1/4 = 0$,
+$\lambda_\pm = (1 \pm \sqrt 5)/4$, the roots of $\lambda^2 - \lambda/2 - 1/4 = 0$, we have
+$|\lambda_-| < \lambda_+ < 1$ and
 
 $$k_t = A \lambda_+^t + B \lambda_-^t, \qquad A = \frac{k_1 - \lambda_- k_0}{\lambda_+ - \lambda_-}, \quad
 B = \frac{\lambda_+ k_0 - k_1}{\lambda_+ - \lambda_-}, \quad k_1 = \tfrac14 h_0 + \tfrac12 k_0 .$$
@@ -23,7 +24,10 @@ If $h_0, k_0 \ge 0$ are not both $0$, then $A > 0$, $k_t / \lambda_+^t \to A$ an
 $h_t / \lambda_+^t \to A / \lambda_+$; in particular the panmictic index $1 - F_t = h_t$ tends to $0$ at the
 asymptotic rate $\lambda_+ = (1 + \sqrt 5)/4 \approx 0.809$ per generation. The decrease need not be
 monotone from arbitrary founder values: $h_0 = 0$, $k_0 = 1$ gives $h_1 = 1$. When the founders are
-non-inbred and unrelated relative to the base population, $h_0 = k_0 = 1$.
+non-inbred and unrelated relative to the base population, $h_0 = k_0 = 1$. In the
+[finite pedigree model](pedigree-non-identity.md) with distinct founder copies, gene dropping gives
+this initial state and the same recurrence for both offspring. The argument conditions on fresh
+transmissions, not on independent ancestry of the two siblings.
 
 ## Sources
 

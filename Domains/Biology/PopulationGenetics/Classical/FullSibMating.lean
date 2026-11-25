@@ -8,10 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Domains.Biology.StatisticalGenetics.Kinship
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Topology.Instances.Real.Lemmas
-import Mathlib.Algebra.LinearRecurrence
 import Mathlib.Analysis.SpecificLimits.Basic
+import MathlibExt.NumberTheory.BinetClosedForm
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -32,7 +33,9 @@ unit square, without requiring every such pair to be realized by a pedigree.
 
 open Filter Topology
 
-namespace MathlibExt.Biology.PopulationGenetics.Classical.FullSibMating
+namespace Domains.Biology.PopulationGenetics.Classical.FullSibMating
+
+open MathlibExt.Biology.StatisticalGenetics.Kinship (Pedigree)
 
 /-- **Within- and between-individual non-identity under full-sib mating.** Starting from the
 founder probabilities `h₀` and `k₀`, return the pair `(h, k)` at generation `t`. The two copies
@@ -50,14 +53,73 @@ noncomputable def nonIdentity (h₀ k₀ : ℝ) : ℕ → ℝ × ℝ
     let (h, k) := nonIdentity h₀ k₀ t
     (k, (h / 2 + k) / 2)
 
-private noncomputable def betweenRecurrence : LinearRecurrence ℝ where
-  order := 2
-  coeffs := ![1 / 4, 1 / 2]
+private theorem sib_kinship_of_lt {n : ℕ} (P : Pedigree n) {x y : Fin n}
+    {p : Fin 2 → Fin n} (hxy : x < y) (hx : P.parents x = some p) (hy : P.parents y = some p) :
+    P.geneDropKinship x y =
+      ((P.geneDropKinship (p 0) (p 0) + P.geneDropKinship (p 0) (p 1)) +
+        (P.geneDropKinship (p 1) (p 0) + P.geneDropKinship (p 1) (p 1))) / 4 := by
+  have hparent (a : Fin 2) : P.geneDropKinship x (p a) =
+      (P.geneDropKinship (p a) (p 0) + P.geneDropKinship (p a) (p 1)) / 2 := by
+    rw [P.geneDropKinship_comm x (p a)]
+    exact P.geneDropKinship_of_parents_eq_some (P.parents_lt x p hx a).ne'
+      (fun h ↦ (not_lt_of_ge (P.parents_lt x p hx a).le) h.lt) hx
+  rw [P.geneDropKinship_of_parents_eq_some hxy.ne' (fun h ↦ (not_lt_of_ge hxy.le) h.lt) hy,
+    hparent, hparent]
+  ring
 
-private theorem isSolution_iff (u : ℕ → ℝ) :
-    betweenRecurrence.IsSolution u ↔ ∀ t, u (t + 2) = u (t + 1) / 2 + u t / 4 := by
-  change (∀ n, u (n + 2) = ∑ i : Fin 2, (![1 / 4, 1 / 2] : Fin 2 → ℝ) i * u (n + i)) ↔ _
-  simp [Fin.sum_univ_two, div_eq_mul_inv, add_comm, mul_comm]
+private theorem sib_kinship {n : ℕ} (P : Pedigree n) {x y : Fin n} {p : Fin 2 → Fin n}
+    (hxy : x ≠ y) (hx : P.parents x = some p) (hy : P.parents y = some p) :
+    P.geneDropKinship x y =
+      ((P.geneDropKinship (p 0) (p 0) + P.geneDropKinship (p 0) (p 1)) +
+        (P.geneDropKinship (p 1) (p 0) + P.geneDropKinship (p 1) (p 1))) / 4 := by
+  rcases lt_or_gt_of_ne hxy with h | h
+  · exact sib_kinship_of_lt P h hx hy
+  · rw [P.geneDropKinship_comm x y]
+    exact sib_kinship_of_lt P h hy hx
+
+/-- **Full-sib recurrence in a finite pedigree.** Let `pair t` name the two distinct individuals
+at generation `t`, up to generation `T`. The generation-zero pair are founders (not necessarily
+siblings), and both individuals at each subsequent generation have the preceding pair as their
+parents. Under the gene-dropping law, the within-individual and between-individual probabilities
+of non-identity by descent agree with the full-sib recurrence seeded at `(1, 1)`. The within-
+individual claim holds for both siblings. This does not require the two siblings' ancestries to
+be independent; it uses the fresh transmissions in the pedigree kinship recursion.
+
+Source: J. Felsenstein, *Theoretical Evolutionary Genetics*, December 2019,
+[§V.10](https://felsenst.github.io/pgbook/pgbook.pdf), pp. 234–235, equations (V-26) and (V-27).
+The finite pedigree convention makes all founder copies distinct. -/
+theorem pedigree_nonIdentity {n T : ℕ} (P : Pedigree n) (pair : ℕ → Fin 2 → Fin n)
+    (founders : ∀ a, P.parents (pair 0 a) = none)
+    (distinct : ∀ t ≤ T, pair t 0 ≠ pair t 1)
+    (parents : ∀ t < T, ∀ a, P.parents (pair (t + 1) a) = some (pair t))
+    (t : ℕ) (ht : t ≤ T) :
+    (∀ a, 1 - P.inbreeding (pair t a) = (nonIdentity 1 1 t).1) ∧
+      1 - P.geneDropKinship (pair t 0) (pair t 1) = (nonIdentity 1 1 t).2 := by
+  induction t with
+  | zero =>
+    refine ⟨fun a ↦ ?_, ?_⟩
+    · rw [P.inbreeding_of_parents_eq_none (founders a)]
+      simp [nonIdentity]
+    · have hnot : ¬ P.IsAncestor (pair 0 1) (pair 0 0) := by
+        intro h
+        cases h with
+        | single h => obtain ⟨p, hp, _⟩ := h; simp [founders] at hp
+        | tail _ h => obtain ⟨p, hp, _⟩ := h; simp [founders] at hp
+      rw [P.geneDropKinship_of_parents_eq_none (distinct 0 ht).symm hnot (founders 1)]
+      simp [nonIdentity]
+  | succ t ih =>
+    have hlt : t < T := ht
+    obtain ⟨hwithin, hbetween⟩ := ih hlt.le
+    refine ⟨fun a ↦ ?_, ?_⟩
+    · rw [P.inbreeding_of_parents_eq_some (parents t hlt a)]
+      exact hbetween
+    · set h := (nonIdentity 1 1 t).1
+      set k := (nonIdentity 1 1 t).2
+      change 1 - P.geneDropKinship (pair (t + 1) 0) (pair (t + 1) 1) = (h / 2 + k) / 2
+      rw [sib_kinship P (distinct (t + 1) ht) (parents t hlt 0) (parents t hlt 1),
+        P.geneDropKinship_self, P.geneDropKinship_self,
+        P.geneDropKinship_comm (pair t 1) (pair t 0)]
+      linarith [hwithin 0, hwithin 1, hbetween]
 
 /-- **Inbreeding under repeated full-sib mating.** The non-identity probabilities `h` and `k`
 remain in `[0, 1]` for any founder values in `[0, 1]`. They satisfy `h (t + 1) = k t` and
@@ -117,39 +179,24 @@ theorem nonIdentity_formula {h₀ k₀ : ℝ} (hh : h₀ ∈ Set.Icc (0 : ℝ) 1
   have hneg : lMinus < 0 := by dsimp [lMinus]; linarith
   have habs : |lMinus| < lPlus := by rw [abs_of_neg hneg]; dsimp [lMinus, lPlus]; linarith
   have hgap : 0 < lPlus - lMinus := sub_pos.mpr (hneg.trans hpos)
-  have hquadPlus : lPlus ^ 2 = lPlus / 2 + 1 / 4 := by dsimp [lPlus]; nlinarith
-  have hquadMinus : lMinus ^ 2 = lMinus / 2 + 1 / 4 := by dsimp [lMinus]; nlinarith
+  have hquadPlus : lPlus ^ 2 - lPlus / 2 - 1 / 4 = 0 := by dsimp [lPlus]; nlinarith
+  have hquadMinus : lMinus ^ 2 - lMinus / 2 - 1 / 4 = 0 := by dsimp [lMinus]; nlinarith
   have hk1 : k 1 = k₁ := by
     change k (0 + 1) = _
     rw [kstep, hzero, kzero]
-  let s : ℕ → ℝ := fun t ↦ A * lPlus ^ t + B * lMinus ^ t
-  have hsrec : betweenRecurrence.IsSolution s := (isSolution_iff s).2 fun t ↦ by
-    dsimp [s]
-    simp only [pow_add, pow_one, hquadPlus, hquadMinus]
+  have hclosed (t : ℕ) : k t = A * lPlus ^ t + B * lMinus ^ t := by
+    rw [MetaMathlibExt.binet_closed_form_second_order k (1 / 2) (-1 / 4) lPlus lMinus
+      (by linarith) (by linarith) (ne_of_gt (hneg.trans hpos)) (fun n ↦ by rw [krec]; ring) t,
+      hk1, kzero]
+    dsimp only [A, B]
     ring
-  have hclosed : ∀ t, k t = s t := by
-    apply congrFun ((betweenRecurrence.eq_iff_eqOn_range_order k s
-      ((isSolution_iff k).2 krec) hsrec).2 ?_)
-    intro t ht
-    have hcases : t = 0 ∨ t = 1 := by
-      have ht' : t < 2 := Finset.mem_range.mp ht
-      omega
-    rcases hcases with rfl | rfl
-    · simp only [s, kzero, pow_zero, mul_one]
-      dsimp only [A, B]
-      field_simp [hgap.ne']
-      ring
-    · simp only [s, hk1, pow_one]
-      dsimp only [A, B]
-      field_simp [hgap.ne']
-      ring
   have hk_limit : Tendsto k atTop (𝓝 0) := by
     have hp := tendsto_pow_atTop_nhds_zero_of_lt_one hpos.le hlt
     have hm := tendsto_pow_atTop_nhds_zero_iff.mpr (habs.trans hlt)
     simpa using (((hp.const_mul A).add (hm.const_mul B)).congr (fun t ↦ (hclosed t).symm))
   have hh_limit : Tendsto h atTop (𝓝 0) :=
     (tendsto_add_atTop_iff_nat 1).mp (hk_limit.congr fun t ↦ (hstep t).symm)
-  refine ⟨hbounds, fun t ↦ ⟨hstep t, kstep t⟩, krec, ⟨by linarith, by linarith⟩,
+  refine ⟨hbounds, fun t ↦ ⟨hstep t, kstep t⟩, krec, ⟨hquadPlus, hquadMinus⟩,
     ⟨hpos, hlt, habs⟩, hclosed, hh_limit, ?_⟩
   intro hnz
   have hA : 0 < A := by
@@ -170,11 +217,10 @@ theorem nonIdentity_formula {h₀ k₀ : ℝ} (hh : h₀ ∈ Set.Icc (0 : ℝ) 1
     apply hlim.congr
     intro t
     rw [hclosed, div_pow]
-    dsimp [s]
     field_simp [pow_ne_zero t hpos.ne']
   refine ⟨hA, hk_normalized, (tendsto_add_atTop_iff_nat 1).mp ?_⟩
   apply (hk_normalized.div_const lPlus).congr
   intro t
   rw [hstep, pow_succ, div_div]
 
-end MathlibExt.Biology.PopulationGenetics.Classical.FullSibMating
+end Domains.Biology.PopulationGenetics.Classical.FullSibMating

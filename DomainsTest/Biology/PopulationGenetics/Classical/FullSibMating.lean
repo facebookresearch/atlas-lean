@@ -9,11 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Domains.Biology.PopulationGenetics.Classical.FullSibMating
+import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum
 
 /-! # Regression tests for the full-sib non-identity recurrence -/
 
-namespace MathlibExt.Biology.PopulationGenetics.Classical.FullSibMating
+namespace Domains.Biology.PopulationGenetics.Classical.FullSibMating
 
 -- The non-inbred, unrelated starting pair gives the first steps of Figure 5.8.
 example : nonIdentity 1 1 0 = (1, 1) ∧ nonIdentity 1 1 1 = (1, 3 / 4) ∧
@@ -52,4 +53,42 @@ example :
   obtain ⟨_, _, hWithin⟩ := hAsymptotic (Or.inl one_ne_zero)
   simpa using hWithin
 
-end MathlibExt.Biology.PopulationGenetics.Classical.FullSibMating
+open MathlibExt.Biology.StatisticalGenetics.Kinship (Pedigree)
+
+-- Numbering generation one in reverse order exercises the symmetry of the sibling argument.
+private def samplePedigree : Pedigree 6 where
+  parents i := if i.val < 2 then none else if i.val < 4 then some ![0, 1] else some ![3, 2]
+  parents_lt i p hi j := by
+    split at hi
+    · contradiction
+    · rename_i hi₂
+      split at hi
+      · cases hi
+        fin_cases j
+        · change 0 < i.val; omega
+        · change 1 < i.val; omega
+      · cases hi
+        fin_cases j
+        · change 3 < i.val; omega
+        · change 2 < i.val; omega
+
+private def samplePair : ℕ → Fin 2 → Fin 6
+  | 0 => ![0, 1]
+  | 1 => ![3, 2]
+  | _ + 2 => ![4, 5]
+
+example : (∀ a, 1 - samplePedigree.inbreeding (samplePair 2 a) = 3 / 4) ∧
+    1 - samplePedigree.geneDropKinship (samplePair 2 0) (samplePair 2 1) = 5 / 8 := by
+  have founders (a : Fin 2) : samplePedigree.parents (samplePair 0 a) = none := by
+    fin_cases a <;> rfl
+  have distinct (t : ℕ) (ht : t ≤ 2) : samplePair t 0 ≠ samplePair t 1 := by
+    interval_cases t <;> decide
+  have parents (t : ℕ) (ht : t < 2) (a : Fin 2) :
+      samplePedigree.parents (samplePair (t + 1) a) = some (samplePair t) := by
+    interval_cases t <;> fin_cases a <;> rfl
+  have h := pedigree_nonIdentity samplePedigree samplePair founders distinct parents 2 le_rfl
+  have hValues : nonIdentity 1 1 2 = (3 / 4, 5 / 8) := by norm_num [nonIdentity]
+  rw [hValues] at h
+  exact h
+
+end Domains.Biology.PopulationGenetics.Classical.FullSibMating
