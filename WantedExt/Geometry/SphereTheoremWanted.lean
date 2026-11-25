@@ -35,7 +35,7 @@ statements are unchanged. Source: S. Brendle & R. Schoen, *Manifolds with 1/4-pi
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Geometry.MetricCompatibilityShared
+public import MathlibExt.Geometry.MetricCompatibilityShared
 public import Mathlib
 
 @[expose] public section

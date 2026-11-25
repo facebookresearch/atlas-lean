@@ -17,7 +17,7 @@ variables?
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.GroupTheory.QuasivarietyMaximalSubquasivarietiesKourovka14Problem25Wanted
+public import MathlibExt.GroupTheory.QuasivarietyMaximalSubquasivarietiesKourovka14Problem25
 
 @[expose] public section
 

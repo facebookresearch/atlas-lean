@@ -7,26 +7,41 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Shared metric-compatibility predicate
+Portions of this file are adapted from:
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+`LeanEval/Geometry/LeviCivita.lean` (leanprover/lean-eval, commit
+38361be884302c7edce1908c4aef8296eb2cb27e), problem `levi_civita_exists_unique` (manifest
+`manifests/problems/levi_civita_exists_unique.toml`, rev 1, submitted by Kim Morrison).
+Copyright 2026 Lean FRO, LLC.
+Authors: Kim Morrison
+Licensed under the Apache License, Version 2.0 (the "License"). You may obtain a copy at
+https://www.apache.org/licenses/LICENSE-2.0. The adapted portions are distributed on an "AS IS"
+basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+for the specific language governing permissions and limitations. lean-eval ships no NOTICE file.
 
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-This neutral helper module is shared by the Koszul formula, Levi-Civita, and sphere-theorem wanted entries. The definition is the trusted (non-hole) helper from leanprover/lean-eval at commit 38361be884302c7edce1908c4aef8296eb2cb27e, distributed under the Apache License, Version 2.0; unchanged apart from the namespace.
+The adapted portion is the definition `IsMetricCompatible`, the trusted (non-hole) helper of the
+lean-eval problems on the Levi-Civita connection, the Koszul formula and the sphere theorem (the
+module documentation of `LeanEval/Geometry/LeviCivita.lean` records that it adds this definition).
+ATLAS placed it, unchanged apart from the namespace, in the shared wanted module
+`WantedExt/Geometry/MetricCompatibilityShared.lean`, and moved it to this module when the
+Levi-Civita theorem that uses it was proved.
 -/
 module
 
 public import Mathlib.Geometry.Manifold.VectorBundle.CovariantDerivative.Basic
 public import Mathlib.Geometry.Manifold.VectorBundle.Riemannian
+
+/-!
+# Metric compatibility of covariant derivatives on the tangent bundle
+
+This file defines `IsMetricCompatible`: a covariant derivative on the tangent bundle of a
+Riemannian manifold is compatible with the metric when it satisfies the product rule
+`v ⟨Y, Z⟩ = ⟨∇_v Y, Z⟩ + ⟨Y, ∇_v Z⟩` for all smooth vector fields `Y` and `Z`.
+
+The definition is shared by the statements on the Koszul formula, the Levi-Civita connection
+and the sphere theorem. Mathlib's `CovariantDerivative.IsMetricCompatible` asks for the same
+identity for all vector fields that are differentiable at the point, so it implies this one.
+-/
 
 @[expose] public section
 

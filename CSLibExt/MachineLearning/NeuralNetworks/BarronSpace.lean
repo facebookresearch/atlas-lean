@@ -32,8 +32,7 @@ and is `∞` exactly when `f` has no representation with finite second moment.
 
 The only theorem proved here is the sanity check that a single neuron has Barron norm at most
 `|a| (‖b‖₁ + |c|)` (`barronNorm_neuron_le`), represented by a Dirac mass. The approximation
-theorems for the Barron space are recorded in
-`WantedExt.ComputerScience.MachineLearning.BarronApproximationWanted`.
+theorems for the Barron space are proved in `BarronApproximation` and `BarronInverseApproximation`.
 -/
 
 @[expose] public section

@@ -4,4 +4,5 @@
 - [Metric-compatible covariant derivative](is-metric-compatible.md)
 - [Koszul formula](koszul-formula.md)
 - [Agreement of covariant derivatives on smooth vector fields](same-on-smooth.md)
+- [Smoothness of the Levi-Civita connection](cont-mdiff-covariant-derivative-levi-civ.md)
 - [Fundamental theorem of Riemannian geometry (Levi-Civita)](levi-civita-exists-unique.md)

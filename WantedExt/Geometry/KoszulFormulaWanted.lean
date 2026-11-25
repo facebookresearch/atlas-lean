@@ -35,7 +35,7 @@ statements are unchanged. Source: J.-L. Koszul (course notes, 1950s); cf. do Car
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Geometry.MetricCompatibilityShared
+public import MathlibExt.Geometry.MetricCompatibilityShared
 public import Mathlib
 
 @[expose] public section

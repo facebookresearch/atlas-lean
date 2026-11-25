@@ -26,7 +26,7 @@ fails in some group fails in a countable subgroup, so the universe does not matt
 module
 
 public import WantedExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted
-public import WantedExt.GroupTheory.QuasivarietyMaximalSubquasivarietiesKourovka14Problem25Wanted
+public import MathlibExt.GroupTheory.QuasivarietyMaximalSubquasivarietiesKourovka14Problem25
 
 @[expose] public section
 
