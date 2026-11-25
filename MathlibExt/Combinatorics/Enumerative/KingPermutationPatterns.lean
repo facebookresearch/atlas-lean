@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Fin.VecNotation
-public import MathlibExt.Combinatorics.Enumerative.PermutationPattern
+public import MathlibExt.Combinatorics.Enumerative.PatternContainment
 import Mathlib.Data.Finset.Max
 import Mathlib.Order.Interval.Finset.Fin
 import Mathlib.Tactic.FinCases

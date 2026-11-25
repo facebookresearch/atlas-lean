@@ -8,12 +8,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.AlgebraicGeometry.CoefficientPerverseModels
+import MathlibExt.AlgebraicGeometry.RealCoefficientPerverseSheaves
 
 /-!
 # The coefficient-generic perverse theory and its rational and real forms
 
-The generic structure is unique, a real-coefficient (or rational) perverse theory provides it, and
-the resulting middle t-structure is the real (or rational) one.
+The generic structure is unique, the rational and real-coefficient theories are literally its cases
+`k = ℚ` and `k = A`, and the resulting middle t-structures agree.
 -/
 
 namespace MathlibExtTest.AlgebraicGeometry.CoefficientPerverseModels
@@ -24,6 +25,13 @@ open MathlibExt.AlgebraicGeometry.CoefficientPerverseModels
 variable (X : PerverseSheaves.ComplexScheme) [PerverseSheaves.IsComplexVariety X]
 
 example (k : Type) [Field k] : Subsingleton (CoefficientPerverseTheory k X) := inferInstance
+
+/-- The rational theory is the case `k = ℚ`. -/
+example : PerverseSheaves.PerverseSheafTheory X = CoefficientPerverseTheory ℚ X := rfl
+
+/-- The real-coefficient theory is the case `k = A`. -/
+example (A : Subfield ℝ) :
+    RealCoefficientPerverseSheaves.PerverseTheory A X = CoefficientPerverseTheory A X := rfl
 
 section Real
 

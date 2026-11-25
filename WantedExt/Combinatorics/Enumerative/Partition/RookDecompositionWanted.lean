@@ -27,7 +27,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
-public import MathlibExt.Combinatorics.Enumerative.Partition.RookDecomposition
+public import MathlibExt.Combinatorics.Enumerative.Partition.RookParityFive
+public import MathlibExt.Combinatorics.Enumerative.Partition.RookPeriodicity
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
 namespace MetaMathlibExt
@@ -113,16 +114,6 @@ public theorem_wanted maxRookPartitionCount_three_formula (m : ℕ) (a : Fin 3)
     (maxRookPartitionCount 3 (3 * m + (a : ℕ)) : ℤ) =
       6 * (m : ℤ) ^ 2 + ![-15, -11, -7] a * m + ![7, 2, -1] a
 
-/-- **Periodicity of $R_3(n)$ modulo $p$.** Let $R_3(n)$ be the number of partitions of $n$
-with max-rook number $3$. For all natural numbers $p \ge 2$ and $n > 9$,
-$R_3(n + 3p) \equiv R_3(n) \pmod{p}$.
-
-Source: N. Guru Sharan, *Rook Decomposition of the Partition Function*,
-Journal of Integer Sequences 29 (2026), Article 26.2.6, Theorem 6, second part
-(`jis-2026-26.2.6-thm-6`). -/
-public theorem_wanted maxRookPartitionCount_three_modEq (p n : ℕ) (hp : 2 ≤ p) (hn : 9 < n) :
-    maxRookPartitionCount 3 (n + 3 * p) ≡ maxRookPartitionCount 3 n [MOD p]
-
 /-- **Asymptotic growth of $R_3(n)$.** Let $R_3(n)$ be the number of partitions of $n$ with
 max-rook number $3$. Then $R_3(n) \sim \frac{2}{3} n^2$ as $n \to \infty$.
 
@@ -191,15 +182,5 @@ Journal of Integer Sequences 29 (2026), Article 26.2.6, Theorem 11
 (`jis-2026-26.2.6-thm-11`). -/
 public theorem_wanted maxRookPartitionCount_four_mod_two (n : ℕ) (hn : 16 < n) :
     maxRookPartitionCount 4 n % 2 = if n % 8 = 4 ∨ n % 8 = 6 then 0 else 1
-
-/-- **Parity of the number of partitions with max-rook number 5.** Let $R_5(n)$ be the number of
-partitions of $n$ with max-rook number $5$. For every natural number $n > 25$, $R_5(n)$ is even if
-$n \equiv 5 \pmod 8$ or $n \equiv 7 \pmod 8$, and odd otherwise.
-
-Source: N. Guru Sharan, *Rook Decomposition of the Partition Function*,
-Journal of Integer Sequences 29 (2026), Article 26.2.6, Theorem 13
-(`jis-2026-26.2.6-thm-13`). -/
-public theorem_wanted maxRookPartitionCount_five_mod_two (n : ℕ) (hn : 25 < n) :
-    maxRookPartitionCount 5 n % 2 = if n % 8 = 5 ∨ n % 8 = 7 then 0 else 1
 
 end MetaMathlibExt

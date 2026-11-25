@@ -52,7 +52,7 @@ public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Mathlib.Combinatorics.Enumerative.DyckWord
-public import MathlibExt.Combinatorics.Enumerative.PermutationPattern
+public import MathlibExt.Combinatorics.Enumerative.PatternContainment
 public import MathlibExt.Combinatorics.NoncrossingPartition.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import Mathlib.Algebra.Polynomial.Basic

@@ -2,7 +2,6 @@
 
 Classical, consecutive, mesh and signed patterns in permutations and in inversion and ascent sequences, pattern-avoidance counts, pattern-replacement classes, stack sorting, and king and separable permutations.
 
-- [Classical permutation-pattern containment](classical-permutation-pattern-containment/README.md)
 - [Cyclic-pattern-avoiding stack sorting](cyclic-pattern-avoiding-stack-sorting/README.md)
 - [Mesh patterns in permutations](mesh-patterns-in-permutations/README.md)
 - [Pattern avoidance in inversion sequences](pattern-avoidance-in-inversion-sequences/README.md)

@@ -57,9 +57,9 @@ namespace Mechanics.EulerBernoulli
 
 /-! ## A. The quartic witness and its boundary conditions -/
 
-/-- Downward-positive deflection of a simply supported Euler--Bernoulli
-beam of length `L`, bending stiffness `EI`, under uniform load `w`:
-`w * (L^3*x - 2*L*x^3 + x^4) / (24 * EI)`. -/
+/-- Downward-positive deflection of a simply supported Euler--Bernoulli beam of length `L`, bending
+stiffness `EI`, under uniform load `w`: `w * (L^3*x - 2*L*x^3 + x^4) / (24 * EI)`. With the
+convention `x / 0 = 0` it is identically `0` when `EI = 0`; physically `EI > 0`. -/
 noncomputable def uniformLoadDeflection (w EI L x : ℝ) : ℝ :=
   w * (L ^ 3 * x - 2 * L * x ^ 3 + x ^ 4) / (24 * EI)
 

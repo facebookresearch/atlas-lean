@@ -1,5 +1,6 @@
 # Permutations counted by odd-indexed Fibonacci numbers
 
+- [Classical pattern containment in a permutation](has-pattern.md)
 - [The pattern $321$](pat321.md)
 - [The pattern $231$](pat231.md)
 - [The permutation pattern $4123$](pat4123.md)
