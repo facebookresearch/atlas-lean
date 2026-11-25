@@ -55,12 +55,12 @@ public theorem D_ne_zero_of_forall_pow_ne
     (c : k) (hc : ∀ b : k, b ^ p ≠ c) :
     KaehlerDifferential.D (⊥ : Subfield k) k c ≠ 0 := by
   classical
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact p.Prime := ⟨hp⟩
   have hchark : CharP k p := by
     cases ‹ExpChar k p› with
     | zero => exact absurd hp Nat.not_prime_one
     | prime hprime => assumption
-  haveI := hchark
+  have := hchark
   set 𝒮 : Set (Set k) :=
     {F | (∃ F' : Subfield k, (F' : Set k) = F) ∧ (∀ y : k, y ^ p ∈ F) ∧ c ∉ F} with h𝒮
   set F₀ : Subfield k := (frobenius k p).fieldRange with hF₀
@@ -109,7 +109,7 @@ public theorem D_ne_zero_of_forall_pow_ne
     fun y => ⟨_, hmonic y, by rw [← aeval_def]; exact hpoly y⟩
   have hirr : ∀ y : k, y ∉ F → Irreducible (X ^ p - C (⟨y ^ p, hFpow y⟩ : F)) := by
     intro y hy
-    rw [X_pow_sub_C_irreducible_iff_of_prime hp]
+    rw [irreducible_X_pow_sub_C_iff_of_prime hp]
     intro b hb
     apply hy
     have hb' : ((b : F) : k) ^ p = y ^ p := by
@@ -137,7 +137,7 @@ public theorem D_ne_zero_of_forall_pow_ne
         have heq := hFmax.eq_of_subset hmem hle
         have : a ∈ (F : Set k) := by rw [heq]; exact mem_adjoin_simple_self F a
         exact ha this
-      haveI : FiniteDimensional F F⟮a⟯ := adjoin.finiteDimensional (hint a)
+      have : FiniteDimensional F F⟮a⟯ := adjoin.finiteDimensional (hint a)
       have hle : F⟮c⟯ ≤ F⟮a⟯ := adjoin_simple_le_iff.mpr hca
       have heq : F⟮c⟯ = F⟮a⟯ :=
         eq_of_le_of_finrank_eq hle (by rw [hdeg c hcF, hdeg a ha])
@@ -161,12 +161,12 @@ public theorem D_ne_zero_of_forall_pow_ne
       have hb : b ∈ (⊤ : Submodule k Ω[k⁄F]) := Submodule.mem_top
       rw [hbot, Submodule.mem_bot] at ha hb
       rw [ha, hb]
-    haveI : Algebra.FormallyUnramified F k := ⟨hsub⟩
+    have : Algebra.FormallyUnramified F k := ⟨hsub⟩
     have hfr : Module.finrank F k = p := by
       rw [← IntermediateField.finrank_top', ← htop, hdeg c hcF]
-    haveI : Module.Finite F k := Module.finite_of_finrank_pos (by rw [hfr]; exact hp.pos)
-    haveI : Algebra.EssFiniteType F k := inferInstance
-    haveI := Algebra.FormallyEtale.of_formallyUnramified_of_field F k
+    have : Module.Finite F k := Module.finite_of_finrank_pos (by rw [hfr]; exact hp.pos)
+    have : Algebra.EssFiniteType F k := inferInstance
+    have := Algebra.FormallyEtale.of_formallyUnramified_of_field F k
     have hsep : Algebra.IsSeparable F k :=
       (Algebra.FormallyEtale.iff_isSeparable F k).mp ‹_›
     have hcsep : IsSeparable F c := Algebra.IsSeparable.isSeparable F c
@@ -177,9 +177,9 @@ public theorem D_ne_zero_of_forall_pow_ne
     have h1 := natDegree_eq_zero_of_isUnit hcsep
     rw [natDegree_X_pow_sub_C] at h1
     exact hp.ne_zero h1
-  letI : Algebra (⊥ : Subfield k) F :=
+  let : Algebra (⊥ : Subfield k) F :=
     (Subfield.inclusion (bot_le : (⊥ : Subfield k) ≤ F)).toAlgebra
-  haveI : IsScalarTower (⊥ : Subfield k) F k :=
+  have : IsScalarTower (⊥ : Subfield k) F k :=
     IsScalarTower.of_algebraMap_eq (fun x => rfl)
   intro h0
   apply hDF

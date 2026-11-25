@@ -28,6 +28,6 @@ example {k : Type 1} [Field k] (p : ℕ) (hp : p.Prime) [ExpChar k p]
 -- over the prime subfield in characteristic `p`, since `D (b ^ p)` is a
 -- multiple of the characteristic.  Concretely, for `c = 0 = 0 ^ p` the
 -- conclusion would assert `D 0 ≠ 0`, which is false.
-example {k : Type*} [Field k] (p : ℕ) :
+example {k : Type*} [Field k] :
     ¬ (KaehlerDifferential.D (⊥ : Subfield k) k (0 : k) ≠ 0) := by
   simp
