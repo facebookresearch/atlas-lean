@@ -22,6 +22,7 @@ public import MathlibExt.NumberTheory.Digits.PalindromicTwoPowBinomialForm
 public import MathlibExt.NumberTheory.Digits.SmallBaseBinomialForm
 public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
 public import MathlibExt.NumberTheory.Digits.ThreeDigitPalindromeTwoPow
+public import MathlibExt.NumberTheory.Digits.TwoPowBinomialForm
 
 /-!
 # Minimum-base palindromic representations of powers of 2
@@ -94,16 +95,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Theorem 1
 (`integers-2024-A69-thm-1`), credited to K. Brown. -/
 public theorem_wanted minPalindromicBase_eq_pred (N : ℕ) (hN : 1 ≤ N)
     (h : minPalindromicBase N = N - 1) : N = 3 ∨ N = 4 ∨ N = 6 ∨ (6 < N ∧ N.Prime)
-
-/-- **Sufficient condition for a binomial form of a power of 2.** Let $n$, $x$, $k$ and $r$ be
-natural numbers with $k \ge 1$, $n = xk + r$ and $2^r\binom{k}{\lceil k/2 \rceil} < 2^x - 1$.
-Then $2^n$ has a base-$(2^x - 1)$ representation in binomial form.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 1
-(`integers-2024-A69-cor-1`). -/
-public theorem_wanted hasBinomialForm_two_pow (n x k r : ℕ) (hk : 1 ≤ k) (hn : n = x * k + r)
-    (h : 2 ^ r * k.choose ((k + 1) / 2) < 2 ^ x - 1) : HasBinomialForm (2 ^ x - 1) (2 ^ n)
 
 /-- **The Nagell–Ljunggren equation in natural numbers (Bugeaud–Mihăilescu).** Let $x, y, n, q$
 be natural numbers with $x \ge 2$, $y \ge 2$, $n \ge 3$ and $q \ge 2$ such that

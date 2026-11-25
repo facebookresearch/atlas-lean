@@ -15,6 +15,7 @@ public import Mathlib.Data.List.Palindrome
 public import Mathlib.Data.Nat.Digits.Lemmas
 public import MathlibExt.NumberTheory.DigitSumCongruenceCount
 public import MathlibExt.NumberTheory.FloorIdentities
+public import MathlibExt.NumberTheory.PalindromeAPCountOfDvdBase
 public import MathlibExt.NumberTheory.PalindromeCountClosedForm
 public import MathlibExt.NumberTheory.PalindromesArithmeticProgressions
 
@@ -72,46 +73,6 @@ Formulas for the Number of Palindromes in Certain Arithmetic Progressions*, Jour
 Sequences 27 (2024), Article 24.4.8, Definition 3. -/
 public theorem digitSumCongruenceCount_small : digitSumCongruenceCount 3 2 2 0 0 3 = 5 := by
   decide +kernel
-
-/-- **Palindromes in residue classes modulo a divisor of the base.** Let $b \ge 2$, $m \ge 1$ and
-$q \ge 1$ be natural numbers with $q \mid b$. Write $m = (a_k a_{k-1} \cdots a_0)_b$ in base $b$,
-with leading digit $a_k$. Write $A_b(m, q, r)$ for the number of base-$b$ palindromes $n$ with
-$1 \le n \le m$ and $n \equiv r \pmod q$, $C_b(m)$ for the palindromic half copy of $m$, and
-$[P]$ for $1$ if $P$ holds and $0$ otherwise. Put
-
-$$\alpha = \frac{b^{\lceil k/2 \rceil} + b^{\lfloor k/2 \rfloor} - 2}{b - 1}, \quad
-S = \sum_{i=1}^{\lfloor k/2 \rfloor} a_{k-i} b^{\lfloor k/2 \rfloor - i}, \quad
-\delta = [C_b(m) \le m].$$
-
-Then, as rational numbers,
-
-$$A_b(m, q, 0) = \left(\frac{b}{q} - 1\right) \alpha +
-\left\lfloor \frac{a_k - 1}{q} \right\rfloor b^{\lfloor k/2 \rfloor} +
-[a_k \equiv 0 \pmod q] (S + \delta),$$
-
-and for every natural number $r$ with $r \bmod q > 0$,
-
-$$A_b(m, q, r) = \frac{b \alpha}{q} +
-\left\lceil \frac{a_k - (r \bmod q)}{q} \right\rceil b^{\lfloor k/2 \rfloor} +
-[a_k \equiv r \pmod q] (S + \delta).$$
-
-Source: K. Onphaeng, T. Khemaratchatakumthorn, P. N. Phunphayap and P. Pongsriiam, *Exact
-Formulas for the Number of Palindromes in Certain Arithmetic Progressions*, Journal of Integer
-Sequences 27 (2024), Article 24.4.8, Theorem 7. -/
-public theorem_wanted palindromeAPCount_of_dvd_base {b m q : ℕ} (hb : 2 ≤ b) (hm : 1 ≤ m)
-    (hq : 1 ≤ q) (hqb : q ∣ b) :
-    let a : ℕ → ℕ := fun i => (Nat.digits b m).getD i 0
-    let k : ℕ := (Nat.digits b m).length - 1
-    let α : ℚ := ((b : ℚ) ^ ((k + 1) / 2) + (b : ℚ) ^ (k / 2) - 2) / ((b : ℚ) - 1)
-    let S : ℚ := ∑ i ∈ Finset.Icc 1 (k / 2), (a (k - i) : ℚ) * (b : ℚ) ^ (k / 2 - i)
-    let δ : ℚ := if palindromicHalfCopy b m ≤ m then 1 else 0
-    (palindromeAPCount b m q 0 : ℚ) =
-        ((b : ℚ) / q - 1) * α + (((a k - 1) / q : ℕ) : ℚ) * (b : ℚ) ^ (k / 2) +
-          (if a k ≡ 0 [MOD q] then 1 else 0) * (S + δ) ∧
-      ∀ r : ℕ, 0 < r % q →
-        (palindromeAPCount b m q r : ℚ) =
-          (b : ℚ) * α / q + (⌈((a k : ℚ) - ((r % q : ℕ) : ℚ)) / q⌉ : ℚ) * (b : ℚ) ^ (k / 2) +
-            (if a k ≡ r [MOD q] then 1 else 0) * (S + δ)
 
 /-- **Palindromes in residue classes modulo a divisor of the base minus one.** Let $b \ge 2$,
 $m \ge 1$ and $q \ge 1$ be natural numbers with $b \equiv 1 \pmod q$, and let $r$ be a natural

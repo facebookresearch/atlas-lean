@@ -18,6 +18,7 @@ public import Mathlib.Order.LiminfLimsup
 public import MathlibExt.Combinatorics.Enumerative.TotienomialCoefficient
 public import MathlibExt.NumberTheory.BinomidAverage
 public import MathlibExt.NumberTheory.BinomidPartialSum
+public import MathlibExt.NumberTheory.BinomidPrimeDivisibility
 public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
 public import MathlibExt.NumberTheory.PrimeDvdChoose
 
@@ -141,22 +142,6 @@ public theorem_wanted IsLexMinimalExtensionOf.exists_nomid_eq_one {η : ℕ → 
     (hn : m < n) :
     ∃ k, 1 ≤ k ∧ k < n ∧
       generalizedBinomialCoefficient (fun i => p ^ η (i - 1)) k (n - k) = 1
-
-/-- **Nomid coefficients of binomid indices that are not lex-minimal extensions.** Let
-$\mu = (e_1, e_2, \dots)$ be a binomid index such that for no $m$ is $\mu$ the lex-minimal
-extension of its first $m$ entries, and let $p$ be a prime. Write $f_i = p^{e_i}$ for $i \ge 1$
-and let $[n, k]_f = \frac{f_n f_{n-1} \cdots f_{n-k+1}}{f_k f_{k-1} \cdots f_1}$ be the
-$f$-nomid coefficient. Then there are infinitely many natural numbers $n$ such that for every $k$
-with $1 \le k < n$ the coefficient $[n, k]_f$ is an integer multiple of $p$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Corollary 2
-(`integers-2024-A53-cor-2`). -/
-public theorem_wanted infinite_setOf_prime_dvd_nomid_of_not_isLexMinimalExtension
-    {μ : ℕ → ℕ} (hμ : IsBinomidIndex μ) (hlex : ¬ IsLexMinimalExtension μ) {p : ℕ}
-    (hp : p.Prime) :
-    {n : ℕ | ∀ k, 1 ≤ k → k < n → ∃ z : ℤ,
-      generalizedBinomialCoefficient (fun i => p ^ μ (i - 1)) k (n - k) = (p : ℚ) * z}.Infinite
 
 /-- **The upper average of a binomid index is the supremum of its averages.** Let $\eta$ be a
 binomid index, let $s_i$ be the sum of its first $i$ entries, let $A_{i,0}(\eta) = s_i / i$ for
