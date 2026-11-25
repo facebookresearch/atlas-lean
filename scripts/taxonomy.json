@@ -13348,6 +13348,7 @@
   "MathlibExt/NumberTheory/SierpinskiRieselRepdigits": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sierpiński and Riesel numbers"},
   "MathlibExt/NumberTheory/SignedBinarySum": {"to": "NumberTheory/digits-numeration/numeration-automatic", "title": "Signed binary representations"},
   "MathlibExt/NumberTheory/SimsekNumber": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Simsek numbers"},
+  "MathlibExt/NumberTheory/SixAndEightNonzeroSquares": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "MathlibExt/NumberTheory/SizeChooseTwoPow": {"to": "NumberTheory/special-numbers/binomial-coefficients", "title": "Bit length of central binomial coefficients at powers of two"},
   "MathlibExt/NumberTheory/SlHurwitzNumbers": {"to": "NumberTheory/algebraic-number-theory/quadratic-fields", "title": "Class number congruences for imaginary quadratic fields"},
   "MathlibExt/NumberTheory/SmallHouse": {"to": "NumberTheory/heights-mahler-measure", "title": "Cyclotomic integers of small house"},

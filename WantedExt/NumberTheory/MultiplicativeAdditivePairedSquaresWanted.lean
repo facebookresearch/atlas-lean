@@ -15,6 +15,7 @@ public import MathlibExt.NumberTheory.MultiplicativeAdditiveEightSquares
 public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquares
 public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquaresRigidity
 public import MathlibExt.NumberTheory.MultiplicativeAdditiveThreePairedSquares
+public import MathlibExt.NumberTheory.SixAndEightNonzeroSquares
 
 namespace MetaMathlibExt
 
@@ -51,17 +52,6 @@ public theorem_wanted sum_nonzero_squares_iff_not_mem_exceptional (m n : ℕ) (h
           else if m = 5 then ({1, 2, 3, 4, 6, 7, 9, 10, 12, 15, 18, 33} : Set ℕ)
           else Set.Ico 1 m ∪
             {m + 1, m + 2, m + 4, m + 5, m + 7, m + 10, m + 13})
-
-/-- **Sums of six and of eight nonzero squares.** Every integer $n \ge 20$ is a sum of $6$
-squares of positive integers, and every integer $n \ge 22$ is a sum of $8$ squares of positive
-integers.
-
-Source: Jewel Mahajan, *Multiplicative Functions Additive on Partitions of 2k Nonzero
-Squares*, INTEGERS 26 (2026), Article A121, Corollary 1, as extracted inside the Lemma 1
-record (`integers-2026-A121-lem-1`). -/
-public theorem_wanted sum_six_and_eight_nonzero_squares :
-    (∀ n : ℕ, 20 ≤ n → ∃ a : Fin 6 → ℕ, (∀ i, a i ≠ 0) ∧ ∑ i, a i ^ 2 = n) ∧
-      ∀ n : ℕ, 22 ≤ n → ∃ a : Fin 8 → ℕ, (∀ i, a i ≠ 0) ∧ ∑ i, a i ^ 2 = n
 
 /-- **Multiplicative functions additive on six or eight paired squares and nonzero at $2$ are
 the identity.** Let $k \in \{3, 4\}$ and let $f$ be a complex-valued multiplicative function
