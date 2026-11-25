@@ -19,8 +19,9 @@ every ESS (a strict Nash equilibrium is an ESS), recorded in
 
 `Domains.Biology.Dynamics.ReplicatorStability` proves `IsESS.isNash` and the interior
 equalizer facts; parts (a), (c) and (d) are not on main. `WantedExt` may not import `Domains`,
-so the replicator field and the Nash predicates are restated with the same meaning as
-`Replicator.IsSolution` and `Replicator.IsNash`.
+and `MathlibExt` has no replicator API, so the simplex, the replicator field and the solution
+predicate are reused from `WantedExt.Biology.Ecology.BoundaryESSStabilityWanted`; only the Nash
+predicates (with the meaning of `Replicator.IsNash`) and Lyapunov stability are defined here.
 
 Sources: J. Hofbauer and K. Sigmund, "Evolutionary game dynamics", Bull. Amer. Math. Soc.
 (N.S.) 40 (2003) 479–519, §2.3, p. 482 (statement (a)–(d)), eq. (2), p. 481.
@@ -28,29 +29,16 @@ Sources: J. Hofbauer and K. Sigmund, "Evolutionary game dynamics", Bull. Amer. M
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Normed.Group.Constructions
-public import Mathlib.Data.Matrix.Mul
+public import WantedExt.Biology.Ecology.BoundaryESSStabilityWanted
 
 @[expose] public section
 
 namespace WantedExt.Biology.Ecology.EvolutionaryFolkTheoremWanted
 
 open Matrix Filter Topology
+open WantedExt.Biology.Ecology.BoundaryESSStabilityWanted
 
 variable {ι : Type*} [Fintype ι]
-
-/-- The simplex of mixed strategies `Δ = {x | ∀ i, 0 ≤ x i, ∑ i, x i = 1}`. -/
-def simplex (ι : Type*) [Fintype ι] : Set (ι → ℝ) :=
-  {x | (∀ i, 0 ≤ x i) ∧ ∑ i, x i = 1}
-
-/-- The **replicator vector field** `F(x)_i = x_i ((A x)_i - x · A x)`. -/
-def replicatorField (A : Matrix ι ι ℝ) (x : ι → ℝ) : ι → ℝ :=
-  fun i => x i * ((A *ᵥ x) i - x ⬝ᵥ A *ᵥ x)
-
-/-- `x` solves the replicator equation `ẋ = F(x)` of `A` for all times `t ≥ 0`. -/
-def IsReplicatorSolution (A : Matrix ι ι ℝ) (x : ℝ → ι → ℝ) : Prop :=
-  ∀ i t, 0 ≤ t → HasDerivAt (fun s => x s i) (replicatorField A (x t) i) t
 
 /-- `p` is a **symmetric Nash equilibrium** of `A`: `p ∈ Δ` and `q · A p ≤ p · A p` for every
 `q ∈ Δ`. -/

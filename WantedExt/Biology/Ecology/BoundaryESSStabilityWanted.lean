@@ -47,7 +47,7 @@ namespace WantedExt.Biology.Ecology.BoundaryESSStabilityWanted
 
 open Matrix Filter Topology
 
-variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+variable {ι : Type*} [Fintype ι]
 
 /-- The simplex of mixed strategies `Δ = {x | ∀ i, 0 ≤ x i, ∑ i, x i = 1}`. -/
 def simplex (ι : Type*) [Fintype ι] : Set (ι → ℝ) :=
@@ -94,7 +94,8 @@ def IsRegularESS (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
     ∀ x : ι → ℝ, x ≠ 0 → ∑ i, x i = 0 → (∀ i, p i = 0 → x i = 0) → x ⬝ᵥ A *ᵥ x < 0
 
 /-- The Jacobian matrix of the replicator vector field of `A` at `p`. -/
-noncomputable def replicatorJacobian (A : Matrix ι ι ℝ) (p : ι → ℝ) : Matrix ι ι ℝ :=
+noncomputable def replicatorJacobian [DecidableEq ι] (A : Matrix ι ι ℝ) (p : ι → ℝ) :
+    Matrix ι ι ℝ :=
   LinearMap.toMatrix' (fderiv ℝ (replicatorField A) p : (ι → ℝ) →ₗ[ℝ] (ι → ℝ))
 
 /-- **ESS ⇔ local superiority** (Hofbauer, Schuster and Sigmund 1979). For every payoff matrix
@@ -129,7 +130,7 @@ replicator field at `p` with an eigenvector `h ≠ 0` in the tangent space `∑ 
 `Re μ < 0`.
 
 Source: Taylor and Jonker (1978), §2 (regular ESS, p. 148), §3 Theorem (p. 150). -/
-public theorem_wanted IsRegularESS.re_lt_zero {A : Matrix ι ι ℝ} {p : ι → ℝ}
+public theorem_wanted IsRegularESS.re_lt_zero [DecidableEq ι] {A : Matrix ι ι ℝ} {p : ι → ℝ}
     (h : IsRegularESS A p) (μ : ℂ) (v : ι → ℂ) (hv : v ≠ 0) (hsum : ∑ i, v i = 0)
     (hμ : (replicatorJacobian A p).map (fun a : ℝ => (a : ℂ)) *ᵥ v = μ • v) : μ.re < 0
 

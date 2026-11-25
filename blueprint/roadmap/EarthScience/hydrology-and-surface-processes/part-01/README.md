@@ -14,3 +14,4 @@
 - [Hydraulic jump](hydraulic-jump/README.md)
 - [Streeter–Phelps oxygen deficit](streeter-phelps-oxygen-deficit/README.md)
 - [Steady diffusive hillslope](steady-diffusive-hillslope/README.md)
+- [Agricultural water and nutrient budgets](agricultural-water-and-nutrient-budgets/README.md)

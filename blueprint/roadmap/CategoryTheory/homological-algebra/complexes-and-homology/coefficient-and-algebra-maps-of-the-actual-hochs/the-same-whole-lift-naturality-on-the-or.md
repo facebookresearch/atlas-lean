@@ -1,0 +1,3 @@
+# The same whole-lift naturality on the original homology...
+
+The same whole-lift naturality on the original homology carriers.

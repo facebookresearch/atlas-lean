@@ -13,3 +13,5 @@ Mathematical theory of learning from data, including the probabilistic modelling
 - [Linear state-space sequence models](linear-state-space-sequence-models/README.md)
 - [Diffusion and flow-based generative models](diffusion-and-flow-generative-models/README.md)
 - [Generalization bounds and concentration](generalization-bounds-and-concentration/README.md)
+
+- [Algorithmic fairness](algorithmic-fairness/README.md)

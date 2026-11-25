@@ -120,16 +120,25 @@ public theorem_wanted equalizer_score {R S T P : ℝ} (hRP : R ≠ P) {p : Fin 4
     (hv : IsStationary (markovMatrix p q) v) (hD : pdDet p q 1 ≠ 0) :
     v ⬝ᵥ payoffY R S T P = ((1 - p 0) * P + p 3 * R) / ((1 - p 0) + p 3)
 
-/-- **In the Prisoner's Dilemma X can fix any score of Y in `[P, R]`** (Press and Dyson 2012).
-If `T > R > P > S`, then for every `σ ∈ [P, R]` there is a memory-one strategy `p` such that for
-every memory-one strategy `q` and every stationary distribution `v` of `M(p, q)` with
-`D(p, q, 1) ≠ 0`, `v · S_Y = σ`.
+/-- **In the Prisoner's Dilemma X can fix any score of Y in `[P, R]`** (Press and Dyson 2012,
+eqs. (8)–(9)). If `T > R > P > S`, then for every `σ ∈ [P, R]` (closed interval) there is a
+memory-one strategy `p` that is an equalizer for `σ`:
+`p₂ = (p₁ (T - P) - (1 + p₄)(T - R)) / (R - P)`, `p₃ = ((1 - p₁)(P - S) + p₄ (R - S)) / (R - P)`,
+`(1 - p₁) + p₄ ≠ 0` and
+`((1 - p₁) P + p₄ R) / ((1 - p₁) + p₄) = σ`; that is nondegenerate, in that some memory-one
+strategy `q` has `D(p, q, 1) ≠ 0`; and such that for every memory-one strategy `q` and every
+stationary distribution `v` of `M(p, q)` with `D(p, q, 1) ≠ 0`, `v · S_Y = σ`.
 
-Source: Press and Dyson (2012), "X unilaterally sets Y's score". -/
+Source: Press and Dyson (2012), "X unilaterally sets Y's score", eqs. (8)–(9). -/
 public theorem_wanted exists_strategy_fixing_score {R S T P : ℝ} (hTR : R < T) (hRP : P < R)
     (hPS : S < P) (σ : ℝ) (hσ : σ ∈ Icc P R) :
-    ∃ p : Fin 4 → ℝ, IsStrategy p ∧ ∀ q : Fin 4 → ℝ, IsStrategy q → ∀ v : Fin 4 → ℝ,
-      IsStationary (markovMatrix p q) v → pdDet p q 1 ≠ 0 → v ⬝ᵥ payoffY R S T P = σ
+    ∃ p : Fin 4 → ℝ, IsStrategy p ∧
+      p 1 = (p 0 * (T - P) - (1 + p 3) * (T - R)) / (R - P) ∧
+      p 2 = ((1 - p 0) * (P - S) + p 3 * (R - S)) / (R - P) ∧
+      (1 - p 0) + p 3 ≠ 0 ∧ ((1 - p 0) * P + p 3 * R) / ((1 - p 0) + p 3) = σ ∧
+      (∃ q : Fin 4 → ℝ, IsStrategy q ∧ pdDet p q 1 ≠ 0) ∧
+      ∀ q : Fin 4 → ℝ, IsStrategy q → ∀ v : Fin 4 → ℝ,
+        IsStationary (markovMatrix p q) v → pdDet p q 1 ≠ 0 → v ⬝ᵥ payoffY R S T P = σ
 
 /-- **X cannot fix her own score** (Press and Dyson 2012, eq. (10)). If `T > R > P > S` and a
 memory-one strategy `p` satisfies `p̃ = α S_X + γ 1` for reals `α, γ`, then `α = 0` and `p` is
