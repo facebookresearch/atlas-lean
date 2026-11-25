@@ -4,7 +4,6 @@ Every continuous map of a simplex (equivalently, of a closed ball, or of any non
 
 - [The Brouwer sets satisfy the KKM covering condition](exists-pos-weights-le.md)
 - [Brouwer's fixed-point theorem for the standard simplex](exists-fixed-point.md)
-- [Brouwer's theorem for the simplex, fixed-point form](exists-is-fixed-pt.md)
 - [Brouwer's fixed-point theorem for simplices with any finite vertex set](exists-fixed-point-of-finite.md)
 - [Probability vector from a function](of-fun.md)
 - [Continuity criterion for maps into a simplex](continuous-of-continuous-weights.md)

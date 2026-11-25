@@ -1,6 +1,6 @@
 # Fourier expansion of the three-term progression count
 
-Let $G$ be a finite abelian group; $\psi$ ranges over its characters, the homomorphisms $G \to \mathbb{C}^\times$, and $\mathbb{E}$ denotes an average over $G$. With the unnormalised discrete Fourier transform,
+Let $G$ be a finite abelian group; $\psi$ ranges over its characters, the homomorphisms $G \to \mathbb{C}^\times$, and $\mathbb{E}$ denotes an average over $G$. With the unnormalised [discrete Fourier transform](../../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-transform-on-finite-abelian-groups/dft-fun.md),
 
 $$|G|^3\,\Lambda_3(f_0, f_1, f_2) = \sum_{\psi} \hat f_0(\psi)\,\hat f_1(\psi^{-2})\,\hat f_2(\psi).$$
 

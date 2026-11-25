@@ -1,0 +1,3 @@
+# Toggle-invariant coordinates are open with probability one half
+
+Let $V$ be a finite set, $e$ an unordered pair of elements of $V$, and $\mu$ a real function on configurations (assignments of open/closed states to the unordered pairs of elements of $V$) with $\sum_\omega \mu(\omega) = 1$. If $\mu(\psi^{e,\mathrm{open}}) = \mu(\psi^{e,\mathrm{closed}})$ for every configuration $\psi$, where $\psi^{e,\mathrm{open}}$ and $\psi^{e,\mathrm{closed}}$ are $\psi$ with $e$ set open, resp. closed, then the [edge marginal](../fkg-inequality-and-monotonicity-of-random-cluste/edge-marg-prob.md) $\mu(e \text{ open})$ equals $1/2$.

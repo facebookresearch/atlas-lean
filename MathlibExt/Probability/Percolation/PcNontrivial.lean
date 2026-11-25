@@ -351,8 +351,9 @@ theorem le_pc_of_mem_subcriticalSet {p : ℝ≥0} (hp : p ∈ subcriticalSet d) 
     p ≤ pc d :=
   le_csSup subcriticalSet_bddAbove hp
 
-/-- `p_c(d) > 0` for bond percolation on `ℤ^d`, `d ≥ 1` (Hammersley 1957, by counting paths:
-`p_c(d) ≥ 1/(2d)`). -/
+/-- `p_c(d) > 0` for bond percolation on `ℤ^d`, `d ≥ 1` (Hammersley 1957, by counting paths;
+the proof uses `p = 1/(4d)`, and the explicit bound `p_c(d) ≥ 1/(2d)` is
+`StatMech.Percolation.one_div_two_mul_le_pc`). -/
 theorem pc_pos (hd : 0 < d) : 0 < pc d := by
   have hdpos : (0 : ℝ≥0) < d := by exact_mod_cast hd
   set p : ℝ≥0 := 1 / (4 * d) with hp_def
@@ -371,6 +372,30 @@ theorem pc_pos (hd : 0 < d) : 0 < pc d := by
 
 theorem pc_pos_of_two_le (hd : 2 ≤ d) : 0 < pc d :=
   pc_pos (by omega)
+
+/-- **Path-counting lower bound on the critical probability.** For bond percolation on `ℤ^d`,
+`d ≥ 1`, `p_c(d) ≥ 1/(2d)`: a self-avoiding path of length `n` from the origin is open with
+probability `p^n` and there are at most `(2d)^n` of them, so `θ(p) ≤ (2dp)^n → 0` for
+`p < 1/(2d)` (H. Duminil-Copin, *Introduction to Bernoulli percolation*, lecture notes, IHÉS,
+version of 7 October 2018, proof of Theorem 1.1). -/
+theorem one_div_two_mul_le_pc (hd : 0 < d) : 1 / (2 * (d : ℝ≥0)) ≤ pc d := by
+  have hdpos : (0 : ℝ≥0) < d := by exact_mod_cast hd
+  have hd1 : (1 : ℝ≥0) ≤ d := by exact_mod_cast hd
+  refine le_of_forall_lt_imp_le_of_dense fun q hq => ?_
+  have hsmall' : 2 * (d : ℝ≥0) * q < 1 := by
+    rwa [lt_div_iff₀ (by positivity), mul_comm] at hq
+  have hq1 : q ≤ 1 := by
+    have : q ≤ 2 * (d : ℝ≥0) * q := by
+      calc q = 1 * q := (one_mul q).symm
+        _ ≤ 2 * (d : ℝ≥0) * q := by gcongr; nlinarith [hd1]
+    exact (this.trans hsmall'.le)
+  have hsmall : ((2 * d : ℝ≥0) * q : ℝ) < 1 := by exact_mod_cast hsmall'
+  exact le_pc_of_mem_subcriticalSet (mem_subcriticalSet_of_lt hd q hq1 hsmall)
+
+/-- **The critical probability is at most one.** `p_c(d) ≤ 1`, since `p_c(d)` is the supremum of
+a set of densities in `[0, 1]`. -/
+theorem pc_le_one : pc d ≤ 1 :=
+  csSup_le' fun _ hq => hq.1
 
 end Percolation
 

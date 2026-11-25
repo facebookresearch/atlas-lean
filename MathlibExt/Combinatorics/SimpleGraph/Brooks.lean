@@ -1207,12 +1207,15 @@ private theorem nonempty_iso_cycleGraph_of_two_regular {V : Type*} [Fintype V]
   exact ⟨hiso.symm⟩
 
 /--
-A finite connected simple graph with maximum degree `Δ` is colorable with `Δ` colors unless it is
-a complete graph or an odd cycle.
-Source: R. L. Brooks, On colouring the nodes of a network, Proc. Camb. Philos. Soc. 37 (1941), DOI
-10.1017/S030500410002168X.
+**Brooks' theorem.** Let $G$ be a finite connected simple graph and let $\Delta$ be its maximum
+degree: every vertex of $G$ has degree at most $\Delta$ and some vertex has degree exactly $\Delta$.
+If $G$ is not complete and is not isomorphic to a cycle graph on an odd number of vertices, then $G$
+has a proper vertex coloring with $\Delta$ colors.
 
 Proves `Wanted` entry `brooks`.
+
+Source: R. L. Brooks, On colouring the nodes of a network, Proc. Camb. Philos. Soc. 37 (1941), DOI
+10.1017/S030500410002168X.
 -/
 theorem brooks {V : Type*} [Fintype V] (G : SimpleGraph V)
     [DecidableRel G.Adj] (Δ : ℕ) (hconn : G.Connected)

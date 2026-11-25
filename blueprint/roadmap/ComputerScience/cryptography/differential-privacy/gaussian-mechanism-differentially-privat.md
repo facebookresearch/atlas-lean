@@ -10,8 +10,8 @@ high-dimensional queries.
 ## Background
 
 - [Laplace and exponential mechanisms](../laplace-and-exponential-mechanisms/README.md): the pure-privacy mechanisms; the Gaussian mechanism trades the $\delta$ for $\ell_2$ calibration.
-- Multivariate normal distribution: the law of the noise, $N(0, \sigma^2 I_d)$.
-- Laplace distribution: the noise law of the pure-privacy mechanism it is compared with.
+- [Multivariate normal distribution](../../../Probability/distributions/continuous/multivariate-normal-distribution/README.md): the law of the noise, $N(0, \sigma^2 I_d)$.
+- [Laplace distribution](../../../Probability/distributions/continuous/laplace-distribution/README.md): the noise law of the pure-privacy mechanism it is compared with.
 
 ## Sources
 

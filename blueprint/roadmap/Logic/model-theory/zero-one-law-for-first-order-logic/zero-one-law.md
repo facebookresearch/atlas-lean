@@ -31,7 +31,7 @@ second-order logic, since the parity of the domain size is definable there.
   whose limit is taken.
 - [Gödel's completeness theorem](../../first-order-logic/g-del-s-completeness-theorem/README.md):
   the compactness argument behind the completeness of the theory of extension axioms.
-- Fagin's theorem:
+- [Fagin's theorem](../../../TheoryOfComputation/descriptive-complexity/fagin-s-theorem/README.md):
   existential second-order logic captures NP, and has no zero-one law.
 
 ## Sources

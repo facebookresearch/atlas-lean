@@ -34,23 +34,36 @@ namespace MetaMathlibExt
 
 local notation "𝔣" => qEulerProduct
 
-/-- The generating function `∑ a_c(n) qⁿ = 1/(f_1 f_2^{c-1})` of generalized cubic
-partitions (even parts in `c` colors), as an integer power series; meaningful for `c ≥ 1`.
+/-- **Generating function of generalized cubic partitions.** Let
+$f_k = \prod_{m \ge 1} (1 - q^{km})$ be the Euler products. For a natural number $c$, this is
+the integer power series $1/(f_1 f_2^{c-1})$ in $q$, the inverse of $f_1 f_2^{c-1}$ (whose
+constant term is $1$). For $c \ge 1$ its coefficient of $q^n$ is the number of partitions of
+$n$ whose even parts may each come in $c$ colors. For $c = 0$ the exponent $c - 1$ is
+truncated to $0$, so the series is then the inverse of $f_1$.
 
 Source: Russelle Guadalupe, *A Note on Congruences for Generalized Cubic Partitions Modulo
 Primes*, INTEGERS 25 (2025), Article A20, Section 1. -/
 public noncomputable def generalizedCubicPartitionSeries (c : ℕ) : ℤ⟦X⟧ :=
   invOfUnit (𝔣 1 * 𝔣 2 ^ (c - 1)) 1
 
-/-- `a_c(n)`, the number of generalized cubic partitions of `n` with even parts in `c`
-colors, defined as the `n`th coefficient of `1/(f_1 f_2^{c-1})`.
+/-- **Generalized cubic partition numbers.** Let $f_k = \prod_{m \ge 1} (1 - q^{km})$ be the
+Euler products. For natural numbers $c$ and $n$, $a_c(n)$ is the integer coefficient of $q^n$
+in the generating function of generalized cubic partitions, the power series
+$1/(f_1 f_2^{c-1})$. For $c \ge 1$ it is the number of partitions of $n$ whose even parts may
+each come in $c$ colors; $c = 1$ gives the partition numbers and $c = 2$ Chan's cubic
+partition numbers. For $c = 0$ the exponent $c - 1$ is truncated to $0$, so $a_0(n)$ is also
+the number of partitions of $n$.
 
 Source: Russelle Guadalupe, *A Note on Congruences for Generalized Cubic Partitions Modulo
 Primes*, INTEGERS 25 (2025), Article A20, Section 1. -/
 public noncomputable def generalizedCubicPartitionCount (c n : ℕ) : ℤ :=
   coeff n (generalizedCubicPartitionSeries c)
 
-/-- The defining identity `f_1 f_2^{c-1} ∑ a_c(n) qⁿ = 1`.
+/-- **Generating function identity for generalized cubic partition numbers.** Let
+$f_k = \prod_{m \ge 1} (1 - q^{km})$ be the Euler products and $a_c(n)$ the generalized cubic
+partition numbers. For every natural number $c$,
+$f_1 f_2^{c-1} \sum_{n \ge 0} a_c(n) q^n = 1$ as integer power series in $q$, where for
+$c = 0$ the exponent $c - 1$ is truncated to $0$.
 
 Source: Russelle Guadalupe, *A Note on Congruences for Generalized Cubic Partitions Modulo
 Primes*, INTEGERS 25 (2025), Article A20, Section 1. -/
@@ -65,7 +78,8 @@ public theorem generalizedCubicPartitionCount_generatingFunction (c : ℕ) :
       constantCoeff_qEulerProduct (by norm_num : 1 ≤ 2)]
   rw [hmk, generalizedCubicPartitionSeries, mul_invOfUnit _ _ hc]
 
-/-- `a_c(0) = 1`.
+/-- **Generalized cubic partitions of zero.** For every natural number $c$, the generalized
+cubic partition number $a_c(0)$ equals $1$.
 
 Source: Russelle Guadalupe, *A Note on Congruences for Generalized Cubic Partitions Modulo
 Primes*, INTEGERS 25 (2025), Article A20, Section 1. -/
@@ -77,8 +91,9 @@ public theorem generalizedCubicPartitionCount_zero (c : ℕ) :
     one_pow, one_mul, map_one] at h
   simpa using h
 
-/-- **Amdeberhan–Sellers–Singh congruences**: for all `n ≥ 0`,
-`a_3(7n + 4) ≡ 0 (mod 7)` and `a_5(11n + 10) ≡ 0 (mod 11)`.
+/-- **Amdeberhan–Sellers–Singh congruences.** For every natural number $n$, the generalized
+cubic partition numbers satisfy $a_3(7n + 4) \equiv 0 \pmod{7}$ and
+$a_5(11n + 10) \equiv 0 \pmod{11}$.
 
 Source: Russelle Guadalupe, *A Note on Congruences for Generalized Cubic Partitions Modulo
 Primes*, INTEGERS 25 (2025), Article A20, Theorem 1 (quoting Amdeberhan, Sellers, and
@@ -87,9 +102,13 @@ public theorem_wanted generalizedCubicPartitionCount_seven_eleven (n : ℕ) :
     (7 : ℤ) ∣ generalizedCubicPartitionCount 3 (7 * n + 4) ∧
       (11 : ℤ) ∣ generalizedCubicPartitionCount 5 (11 * n + 10)
 
-/-- For a prime `p ≡ 5, 7 (mod 8)` and `0 ≤ l ≤ p - 1` with `p ∣ 8l + 3`,
-`a_{p-4}(pn + l) ≡ 0 (mod p)` for all `n ≥ 0`. The bound `l ≤ p - 1` is dropped: a larger
-`l` reduces to `l mod p`, which satisfies the same divisibility.
+/-- **Generalized cubic partition congruences for primes $p \equiv 5, 7 \pmod 8$.** Let $a_c(n)$
+be the generalized cubic partition numbers, let $p$ be a prime with $p \equiv 5$ or
+$p \equiv 7 \pmod 8$, and let $l$ be a natural number with $p \mid 8l + 3$. Then
+$a_{p-4}(pn + l) \equiv 0 \pmod p$ for every natural number $n$.
+
+The source assumes $0 \le l \le p - 1$; the statement for a larger $l$ follows from the one for
+$l \bmod p$, which satisfies the same divisibility.
 
 Source: Russelle Guadalupe, *A Note on Congruences for Generalized Cubic Partitions Modulo
 Primes*, INTEGERS 25 (2025), Article A20, Theorem 2, Equation (9). -/
@@ -97,9 +116,12 @@ public theorem_wanted generalizedCubicPartitionCount_prime_five_seven_mod_eight 
     (hp : p.Prime) (hp8 : p % 8 = 5 ∨ p % 8 = 7) {l : ℕ} (hdvd : p ∣ 8 * l + 3) (n : ℕ) :
     (p : ℤ) ∣ generalizedCubicPartitionCount (p - 4) (p * n + l)
 
-/-- For a prime `p ≥ 7` with `p ≡ 3, 7 (mod 8)`,
-`a_{p-6}(pn + 13(p² - 1)/24) ≡ 0 (mod p)` for all `n ≥ 0` (`24 ∣ p² - 1`, so the shift is
-an exact natural-number quotient).
+/-- **Generalized cubic partition congruences modulo primes $p \ge 7$, $p \equiv 3, 7 \pmod 8$.**
+Let $a_c(n)$ be the generalized cubic partition numbers and let $p \ge 7$ be a prime with
+$p \equiv 3$ or $p \equiv 7 \pmod 8$. Then
+$a_{p-6}\bigl(pn + 13(p^2 - 1)/24\bigr) \equiv 0 \pmod p$ for every natural number $n$.
+
+Since $24 \mid p^2 - 1$, the shift $13(p^2 - 1)/24$ is a natural number.
 
 Source: Russelle Guadalupe, *A Note on Congruences for Generalized Cubic Partitions Modulo
 Primes*, INTEGERS 25 (2025), Article A20, Theorem 3, Equation (13). -/

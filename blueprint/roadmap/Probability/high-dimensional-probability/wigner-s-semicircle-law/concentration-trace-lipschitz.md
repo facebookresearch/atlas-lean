@@ -26,7 +26,7 @@ constant $c/N$ (tensorisation), and Herbst's argument (Lemma 2.3.3) gives the Ga
 
 ## Informally uses
 
-- Hoffman–Wielandt inequality for Hermitian matrices:
+- [Hoffman–Wielandt inequality for Hermitian matrices](../../../LinearAlgebra/positive-definite-matrices/hoffman-wielandt-inequality/hoffman-wielandt-hermitian.md):
   the Lipschitz bound for the spectral map.
 - [Logarithmic Sobolev inequality](../../concentration-inequalities/transport-cost-inequalities/README.md):
   the hypothesis and its tensorisation.

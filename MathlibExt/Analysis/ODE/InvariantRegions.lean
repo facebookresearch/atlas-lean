@@ -37,7 +37,7 @@ is a map `F : (ι → ℝ) → ι → ℝ`. Throughout, `x : ℝ → ι → ℝ`
   species has that species among its reactants: `N s j < 0 → 1 ≤ α j s` for all `s` and `j`.
   Then `F y i ≥ 0` whenever `y ≥ 0` and `y i = 0`. This *boundary-sign* property alone does not
   show that solutions stay in the nonnegative orthant. The networks of
-  `MathlibExt.Biology.Dynamics.ComplexBalanced` are a special case; see `massActionField`.
+  `Domains.Biology.Dynamics.ComplexBalanced` are a special case; see `massActionField`.
 - *Orthant invariance.* For a locally Lipschitz field with the boundary-sign property, Gronwall's
   inequality for `t ↦ ∑ i, min (x t i) 0 ^ 2` shows that a solution which is nonnegative at
   `t₀ ∈ I` stays nonnegative at all later times of `I`. Mass-action fields are smooth, hence

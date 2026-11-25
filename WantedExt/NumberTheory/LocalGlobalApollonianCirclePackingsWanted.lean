@@ -65,7 +65,10 @@ lemma GeneralLinearGroup.smul_def (X : GL (Fin 4) ℤ) (v : Fin 4 → ℤ) :
     X • v = X.1 *ᵥ v :=
   rfl
 
-/-- The action of the general linear group on primitive quadruples of integers. -/
+/-- **General linear group action on primitive vectors.** Call $v \in \mathbb{Z}^4$ primitive
+when the greatest common divisor of its four entries is $1$. For every
+$X \in \mathrm{GL}_4(\mathbb{Z})$ and every primitive $v$, the vector $Xv$ is primitive, so
+$\mathrm{GL}_4(\mathbb{Z})$ acts on the primitive vectors of $\mathbb{Z}^4$ by $v \mapsto Xv$. -/
 def GeneralLinearGroupAction : SubMulAction (GL (Fin 4) ℤ) (Fin 4 → ℤ) where
   carrier := { v | Finset.univ.gcd v = 1}
   smul_mem' X v hv := by
@@ -83,14 +86,20 @@ def GeneralLinearGroupAction : SubMulAction (GL (Fin 4) ℤ) (Fin 4 → ℤ) whe
       apply dvd_mul_of_dvd_left
       apply Finset.gcd_dvd hi
 
-/-- The matrix of the Descartes form `2 * (a ^ 2 + b ^ 2 + c ^ 2 + d ^ 2) - (a + b + c + d) ^ 2`. -/
+/-- **Descartes matrix.** The Descartes matrix is the $4 \times 4$ integer matrix $M$ with
+$M_{ii} = 1$ for every $i$ and $M_{ij} = -1$ for $i \ne j$. It is the matrix of the Descartes
+form: for $v = (a, b, c, d) \in \mathbb{Z}^4$ one has
+$v^{\mathsf T} M v = 2(a^2 + b^2 + c^2 + d^2) - (a + b + c + d)^2$. -/
 def DescartesMatrix : Matrix (Fin 4) (Fin 4) ℤ :=
   !![1, -1, -1, -1;
      -1, 1, -1, -1;
      -1, -1, 1, -1;
      -1, -1, -1, 1]
 
-/-- The group of matrices preserving the Descartes form. -/
+/-- **Descartes orthogonal group.** Let $M$ be the Descartes matrix. The Descartes orthogonal
+group is the subgroup of $\mathrm{GL}_4(\mathbb{Z})$ consisting of the matrices $X$ with
+$X^{\mathsf T} M X = M$, that is, the invertible integer matrices that preserve the Descartes
+form $2(a^2 + b^2 + c^2 + d^2) - (a + b + c + d)^2$. -/
 def DescartesOrthogonalGroup : Subgroup (GL (Fin 4) ℤ) where
   carrier := {X | star X * DescartesMatrix * X = DescartesMatrix}
   one_mem' := by simp
@@ -109,7 +118,10 @@ theorem descartes_iff {v : Fin 4 → ℤ} :
   simp [DescartesMatrix, vecMul_eq_sum, dotProduct, Fin.sum_univ_four]
   grind
 
-/-- The action of the Descartes orthogonal group on primitive Descartes quadruples. -/
+/-- **Descartes orthogonal group action.** Let $Q$ be the set of vectors
+$(a, b, c, d) \in \mathbb{Z}^4$ with $(a + b + c + d)^2 = 2(a^2 + b^2 + c^2 + d^2)$ and
+$\gcd(a, b, c, d) = 1$. For every matrix $X$ in the Descartes orthogonal group and every $v \in Q$,
+the vector $Xv$ lies in $Q$, so the Descartes orthogonal group acts on $Q$ by $v \mapsto Xv$. -/
 def DescartesOrthogonalGroupAction : SubMulAction DescartesOrthogonalGroup (Fin 4 → ℤ) where
   carrier := { v | (∑ i, v i) ^ 2 = 2 * ∑ i, v i ^ 2 ∧ Finset.univ.gcd v = 1}
   smul_mem' := by
@@ -121,7 +133,12 @@ def DescartesOrthogonalGroupAction : SubMulAction DescartesOrthogonalGroup (Fin 
     rwa [Subgroup.mk_smul, GeneralLinearGroup.smul_def,
       vecMul_mulVec, dotProduct_mulVec, vecMul_vecMul, hX]
 
-/-- An integral primitive Descartes quadruple, as defined in Section 1.1 of the paper. -/
+/-- **Integral primitive Descartes quadruple.** An integral primitive Descartes quadruple is a
+vector $(a, b, c, d) \in \mathbb{Z}^4$ such that $a + b + c + d > 0$, the Descartes equation
+$(a + b + c + d)^2 = 2(a^2 + b^2 + c^2 + d^2)$ holds, and $\gcd(a, b, c, d) = 1$.
+
+Source: S. Haag, C. Kertzer, J. Rickards, and K. E. Stange, `The local-global conjecture for
+Apollonian circle packings is false`, Annals of Math, 200 (2) 2024, Section 1.1. -/
 def integralPrimitiveDescartesQuadruple : Set (Fin 4 → ℤ) :=
   { v | ∑ i, v i > 0 ∧ (∑ i, v i) ^ 2 = 2 * ∑ i, v i ^ 2 ∧ Finset.univ.gcd v = 1}
 
@@ -135,44 +152,79 @@ instance (v : Fin 4 → ℤ) : Decidable (v ∈ integralPrimitiveDescartesQuadru
     (∑ i, v i > 0 ∧ (∑ i, v i) ^ 2 = 2 * ∑ i, v i ^ 2 ∧ Finset.univ.gcd v = 1)
     mem_integralPrimitiveDescartesQuadruple_iff
 
-/-- One of the generators of the Apollonian group; see the start of Section 3 of the paper. -/
+/-- **The Apollonian generator $S_1$.** $S_1$ is the element of $\mathrm{GL}_4(\mathbb{Z})$ given
+by the $4 \times 4$ integer matrix whose first row is $(-1, 2, 2, 2)$ and whose other rows are
+those of the identity matrix; it is its own inverse. Acting on column vectors, it sends
+$(a, b, c, d)$ to $(-a + 2b + 2c + 2d, b, c, d)$.
+
+It is one of the four generators of the Apollonian group defined at the start of Section 3 of
+Haag, Kertzer, Rickards and Stange. -/
 abbrev S₁ : GL (Fin 4) ℤ :=
   ⟨!![-1, 2, 2, 2; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, 1],
     !![-1, 2, 2, 2; 0, 1, 0, 0; 0, 0, 1, 0; 0, 0, 0, 1],
     by decide, by decide⟩
 
-/-- One of the generators of the Apollonian group; see the start of Section 3 of the paper. -/
+/-- **The Apollonian generator $S_2$.** $S_2$ is the element of $\mathrm{GL}_4(\mathbb{Z})$ given
+by the $4 \times 4$ integer matrix whose second row is $(2, -1, 2, 2)$ and whose other rows are
+those of the identity matrix; it is its own inverse. Acting on column vectors, it sends
+$(a, b, c, d)$ to $(a, 2a - b + 2c + 2d, c, d)$.
+
+It is one of the four generators of the Apollonian group defined at the start of Section 3 of
+Haag, Kertzer, Rickards and Stange. -/
 abbrev S₂ : GL (Fin 4) ℤ :=
   ⟨!![1, 0, 0, 0; 2, -1, 2, 2; 0, 0, 1, 0; 0, 0, 0, 1],
     !![1, 0, 0, 0; 2, -1, 2, 2; 0, 0, 1, 0; 0, 0, 0, 1],
     by decide, by decide⟩
 
-/-- One of the generators of the Apollonian group; see the start of Section 3 of the paper. -/
+/-- **The Apollonian generator $S_3$.** $S_3$ is the element of $\mathrm{GL}_4(\mathbb{Z})$ given
+by the $4 \times 4$ integer matrix whose third row is $(2, 2, -1, 2)$ and whose other rows are
+those of the identity matrix; it is its own inverse. Acting on column vectors, it sends
+$(a, b, c, d)$ to $(a, b, 2a + 2b - c + 2d, d)$.
+
+It is one of the four generators of the Apollonian group defined at the start of Section 3 of
+Haag, Kertzer, Rickards and Stange. -/
 abbrev S₃ : GL (Fin 4) ℤ :=
   ⟨!![1, 0, 0, 0; 0, 1, 0, 0; 2, 2, -1, 2; 0, 0, 0, 1],
     !![1, 0, 0, 0; 0, 1, 0, 0; 2, 2, -1, 2; 0, 0, 0, 1],
     by decide, by decide⟩
 
-/-- One of the generators of the Apollonian group; see the start of Section 3 of the paper. -/
+/-- **The Apollonian generator $S_4$.** $S_4$ is the element of $\mathrm{GL}_4(\mathbb{Z})$ given
+by the $4 \times 4$ integer matrix whose fourth row is $(2, 2, 2, -1)$ and whose other rows are
+those of the identity matrix; it is its own inverse. Acting on column vectors, it sends
+$(a, b, c, d)$ to $(a, b, c, 2a + 2b + 2c - d)$.
+
+It is one of the four generators of the Apollonian group defined at the start of Section 3 of
+Haag, Kertzer, Rickards and Stange. -/
 abbrev S₄ : GL (Fin 4) ℤ :=
   ⟨!![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 2, 2, 2, -1],
     !![1, 0, 0, 0; 0, 1, 0, 0; 0, 0, 1, 0; 2, 2, 2, -1],
     by decide, by decide⟩
 
-/-- The Apollonian group, as defined at the start of Section 3 of the paper. -/
+/-- **Apollonian group.** The Apollonian group is the subgroup of $\mathrm{GL}_4(\mathbb{Z})$
+generated by the four matrices $S_1, S_2, S_3, S_4$, where $S_i$ agrees with the $4 \times 4$
+identity matrix except in row $i$, which has entry $-1$ in column $i$ and entry $2$ in each of
+the other three columns.
+
+Source: S. Haag, C. Kertzer, J. Rickards, and K. E. Stange, `The local-global conjecture for
+Apollonian circle packings is false`, Annals of Math, 200 (2) 2024, start of Section 3. -/
 def ApollonianGroup : Subgroup (GL (Fin 4) ℤ) := Subgroup.closure {S₁, S₂, S₃, S₄}
 
 theorem apollonianGroup_le_descartesOrthogonalGroup :
     ApollonianGroup ≤ DescartesOrthogonalGroup := by
   simp +decide [ApollonianGroup, Set.insert_subset_iff]
 
-/-- The group of allowable transformations of integral primitive Descartes quadruples. -/
+/-- **The transformation group.** The transformation group is the subgroup of
+$\mathrm{GL}_4(\mathbb{Z})$ generated by the Apollonian group together with all $4 \times 4$
+permutation matrices. -/
 def TransformationGroup : Subgroup (GL (Fin 4) ℤ) :=
   ApollonianGroup ⊔ permMatrixHom.toHomUnits.range
 
 open scoped Pointwise
 
-/-- `TransformationGroup` stabilizes `integralPrimitiveDescartesQuadruple`. -/
+/-- **The transformation group preserves integral primitive Descartes quadruples.**
+For every $g$ in the transformation group, $g$ maps the set of integral primitive Descartes
+quadruples into itself: if $v \in \mathbb{Z}^4$ is an integral primitive Descartes quadruple,
+then so is $g v$. -/
 theorem transformationGroup_smul_integralPrimitiveDescartesQuadruple
     (g : GL (Fin 4) ℤ) (hg : g ∈ TransformationGroup) :
     g • integralPrimitiveDescartesQuadruple ⊆ integralPrimitiveDescartesQuadruple := by
@@ -207,7 +259,11 @@ theorem transformationGroup_smul_integralPrimitiveDescartesQuadruple
       rw [Int.abs_eq_normalize, Finset.normalize_gcd, ← hv3, Finset.dvd_gcd_iff]
       exact fun i hi ↦ (Finset.gcd_dvd (Finset.mem_univ (σ i))).trans (by simp)
 
-/-- The action of `TransformationGroup` on integral primitive Descartes quadruples. -/
+/-- **Action of the transformation group on integral primitive Descartes quadruples.** Each
+element $g$ of the transformation group sends an integral primitive Descartes quadruple $v$ to
+$g v$, by matrix–vector multiplication: this is the restriction of the action of the
+transformation group on $\mathbb{Z}^4$ to the set of integral primitive Descartes quadruples,
+which is closed under the action. -/
 def TransformationGroupAction : SubMulAction TransformationGroup (Fin 4 → ℤ) where
   carrier := integralPrimitiveDescartesQuadruple
   smul_mem' X v hv :=
@@ -216,36 +272,49 @@ def TransformationGroupAction : SubMulAction TransformationGroup (Fin 4 → ℤ)
 instance : MulAction TransformationGroup integralPrimitiveDescartesQuadruple :=
   TransformationGroupAction.mulAction
 
-/-- A `PrimitiveApollonianCirclePacking` is an orbit of integral primitive Descartes quadruples
-under the action of the transformation group. -/
+/-- **Primitive Apollonian circle packing.** A primitive Apollonian circle packing is an orbit of
+the transformation group acting on the set of integral primitive Descartes quadruples. -/
 def PrimitiveApollonianCirclePacking :=
   MulAction.orbitRel.Quotient TransformationGroup integralPrimitiveDescartesQuadruple
 
-/-- The curvature set of a primitive Apollonian circle packing. -/
+/-- **Curvature set.** Let $A$ be a primitive Apollonian circle packing, viewed as an orbit of
+integral primitive Descartes quadruples. The curvature set of $A$ is the set of all integers
+that occur as an entry of some quadruple in $A$. -/
 def curvatureSet (A : PrimitiveApollonianCirclePacking) : Set ℤ :=
   ⋃ v ∈ A.orbit, Set.range v.1
 
 /--
-Statement of Theorem 1.6:
+**A packing with no square curvatures.** Let $\mathcal{A}$ be the primitive Apollonian circle
+packing generated by the integral primitive Descartes quadruple $(-3, 5, 8, 8)$. For every
+integer $n$, $n^2$ does not belong to the curvature set of $\mathcal{A}$.
 
-The Apollonian circle packing `A` generated by `(−3, 5, 8, 8)` has no square curvatures.
 Source: S. Haag, C. Kertzer, J. Rickards, and K. E. Stange, `The local-global conjecture for Apollonian circle packings is false`, Annals of Math, 200 (2) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-200-2-LocalGlobalApollonianCirclePackings.lean Via leanprover/lean-eval@38361be, problem `annals_local_global_apollonian_circle_packings`.
 -/
 public theorem_wanted theorem_1_6 : ∀ n, n ^ 2 ∉ curvatureSet ⟦⟨![-3, 5, 8, 8], by decide⟩⟧
 
-/-- The positive curvatures missing in a primitive Apollonian circle packing,
-as defined in the start of Section 1.2 of the paper. -/
+/-- **Missing curvature set.** Let $A$ be a primitive Apollonian circle packing. The missing
+curvature set of $A$ is the set of positive integers $n$ that do not lie in the curvature set
+of $A$ but are congruent modulo $24$ to some element of the curvature set of $A$.
+
+Source: S. Haag, C. Kertzer, J. Rickards, and K. E. Stange, `The local-global conjecture for
+Apollonian circle packings is false`, Annals of Math, 200 (2) 2024, start of Section 1.2. -/
 def missingCurvatureSet (A : PrimitiveApollonianCirclePacking) : Set ℤ :=
   {n | n > 0 ∧ n ∉ curvatureSet A ∧ ∃ k ∈ curvatureSet A, k ≡ n [ZMOD 24]}
 
-/-- The number of missing curvatures up to `N` in a primitive Apollonian circle packing. -/
+/-- **Number of missing curvatures.** For a primitive Apollonian circle packing $A$ and a real
+number $N$, the number of missing curvatures of $A$ up to $N$ is the number of elements $n$ of
+the missing curvature set of $A$ with $n \le N$, regarded as a real number. -/
 noncomputable def missingCurvatures (A : PrimitiveApollonianCirclePacking) (N : ℝ) : ℝ :=
   (missingCurvatureSet A ∩ {x | x ≤ N}).ncard
 
 /--
-Statement of Theorem 1.3:
+**Infinitely many packings with many missing curvatures.** For a primitive Apollonian circle
+packing $\mathcal{A}$ and a real number $N$, let $M_{\mathcal{A}}(N)$ be the number of missing
+curvatures of $\mathcal{A}$ up to $N$. There are infinitely many primitive Apollonian circle
+packings $\mathcal{A}$ such that $\sqrt{N} = O(M_{\mathcal{A}}(N))$ as $N$ tends to infinity.
+In other words, for these packings the number of missing curvatures up to $N$ is
+$\Omega(\sqrt{N})$.
 
-There exist infinitely many `A` for which the number of missing curvatures up to `N` is `Ω(√N)`.
 Source: S. Haag, C. Kertzer, J. Rickards, and K. E. Stange, `The local-global conjecture for Apollonian circle packings is false`, Annals of Math, 200 (2) 2024. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2024-200-2-LocalGlobalApollonianCirclePackings.lean Via leanprover/lean-eval@38361be, problem `annals_local_global_apollonian_circle_packings`.
 -/
 public theorem_wanted theorem_1_3 : {A : PrimitiveApollonianCirclePacking |

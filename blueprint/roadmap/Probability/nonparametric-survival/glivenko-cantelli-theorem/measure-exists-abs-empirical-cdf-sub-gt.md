@@ -33,11 +33,11 @@ the proof of their Theorem 2.4 (arXiv:1604.04173v2, Appendix A.1).
 ## Sources
 
 - Pascal Massart, *The tight constant in the Dvoretzky–Kiefer–Wolfowitz inequality*, Ann. Probab. 18
-  (1990), no. 3, 1269–1283, DOI 10.1214/aop/1176990746, Theorem 1. As stated on p. 2 of Reeve (below), it gives the one-sided bound
+  (1990), no. 3, 1269–1283, DOI 10.1214/aop/1176990746, Theorem 1. As stated on p. 3 of Reeve (below), it gives the one-sided bound
   $P(\sup_x \sqrt N (F_N(x) - F(x)) > \lambda) \le e^{-2\lambda^2}$ for
   $\lambda \ge \min\{\sqrt{\log 2 / 2},\ 1.0841\, N^{-1/6}\}$. Massart's paper could not be
   consulted; the theorem number and statement are taken from Reeve.
-- Henry W. J. Reeve, *A short proof of the Dvoretzky–Kiefer–Wolfowitz–Massart inequality*, arXiv:2403.16651v1 (25 March 2024), p. 2 and Corollary 2. Corollary 2 is the one-sided bound $e^{-2\xi^2}$
+- Henry W. J. Reeve, *A short proof of the Dvoretzky–Kiefer–Wolfowitz–Massart inequality*, arXiv:2403.16651v1 (25 March 2024), p. 3 and Corollary 2. Corollary 2 is the one-sided bound $e^{-2\xi^2}$
   (indeed slightly smaller) for every $\xi \ge 0$, for independent $X_1, \dots, X_N$ with an
   arbitrary distribution function $F$. Reeve's paper is the source consulted.
 - Aryeh Dvoretzky, Jack Kiefer and Jacob Wolfowitz, *Asymptotic minimax character of the sample

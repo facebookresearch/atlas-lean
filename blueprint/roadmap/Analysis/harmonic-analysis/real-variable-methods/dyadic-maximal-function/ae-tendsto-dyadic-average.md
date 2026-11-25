@@ -14,7 +14,7 @@ The proof uses Vitali-family differentiation rather than a dyadic covering argum
 
 ## Background
 
-- Lebesgue differentiation along shrinking off-center intervals: a stronger real-valued statement, for locally integrable $f$ and any intervals $[a_n, b_n]$ of lengths tending to $0$ whose midpoints stay within twice their length of the point, again from Vitali-family differentiation.
+- [Lebesgue differentiation along shrinking off-center intervals](../../../../Probability/stochastic-calculus/it-integral/ae-tendsto-average-icc.md): a stronger real-valued statement, for locally integrable $f$ and any intervals $[a_n, b_n]$ of lengths tending to $0$ whose midpoints stay within twice their length of the point, again from Vitali-family differentiation.
 
 ## Sources
 

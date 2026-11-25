@@ -463,12 +463,6 @@ noncomputable def leftPoint {Ω : Type*} {mΩ : MeasurableSpace Ω} (F : Filtrat
   bound := C
   abs_coeff_le := fun _ _ ↦ hgC _
 
-private theorem time_le' {t : ℝ≥0} {n k : ℕ} (hk : k ≤ n) : t * k / n ≤ t := by
-  rcases Nat.eq_zero_or_pos n with hn | hn
-  · simp [hn]
-  · rw [div_le_iff₀ (by exact_mod_cast hn)]
-    exact mul_le_mul_of_nonneg_left (by exact_mod_cast hk) bot_le
-
 /-- The elementary Itô integral of `leftPoint` at time `t` is the left-point Itô sum
 `∑_{k < n} g(B (t k / n)) (B (t (k + 1) / n) - B (t k / n))`. -/
 theorem itoIntegral_leftPoint {Ω : Type*} {mΩ : MeasurableSpace Ω} (F : Filtration ℝ≥0 mΩ)
@@ -480,7 +474,7 @@ theorem itoIntegral_leftPoint {Ω : Type*} {mΩ : MeasurableSpace Ω} (F : Filtr
     (B (min (t * ((k + 1 : ℕ) : ℝ≥0) / n) t) ω - B (min (t * (k : ℕ) / n) t) ω)) n).trans ?_
   refine Finset.sum_congr rfl fun k hk ↦ ?_
   have hk' : k < n := Finset.mem_range.mp hk
-  rw [min_eq_left (time_le' hk'), min_eq_left (time_le' hk'.le)]
+  rw [min_eq_left (mul_natCast_div_le_self hk'), min_eq_left (mul_natCast_div_le_self hk'.le)]
   push_cast
   rfl
 

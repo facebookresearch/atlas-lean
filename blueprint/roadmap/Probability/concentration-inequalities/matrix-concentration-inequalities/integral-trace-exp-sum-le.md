@@ -8,7 +8,7 @@ In terms of the matrix cgfs $\Xi_{X}(\theta) = \log \mathbb{E}\, e^{\theta X}$ t
 
 ## Informally uses
 
-- Lieb's concavity theorem: the concavity used, through Jensen's inequality, for each summand.
+- [Lieb's concavity theorem](../../../LinearAlgebra/positive-definite-matrices/lieb-s-concavity-theorem/lieb-concavity.md): the concavity used, through Jensen's inequality, for each summand.
 
 ## Sources
 

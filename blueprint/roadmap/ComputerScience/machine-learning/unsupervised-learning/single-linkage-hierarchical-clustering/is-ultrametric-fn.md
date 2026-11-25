@@ -6,5 +6,5 @@ $u(x, z) \le \max(u(x, y), u(y, z))$ (Carlsson and Mémoli, JMLR 11 (2010), §2)
 
 ## Background
 
-- Ultrametric on taxa:
+- [Ultrametric on taxa](../../../../Biology/phylogenetics/splits-compatibility-ultrametrics-and-upgma/is-ultrametric.md):
   the same notion in phylogenetics.

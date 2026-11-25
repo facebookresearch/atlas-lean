@@ -8,8 +8,8 @@ $$
 $$
 
 This identifies two conventions for the total variation distance: the total variation norm
-$\|\mu - \nu\|$ and the supremum over events, which is the convention of Polyanskiy and Wu,
-$\mathrm{TV}(P, Q) = \tfrac12 \int |dP - dQ|$. On a finite set, $\tfrac12 \sum_y |\mu(y) - \nu(y)|$
+$\|\mu - \nu\|$ and the [supremum over events](../../../Probability/convergence-of-measures/total-variation-distance/total-variation-dist.md), which is the convention of Polyanskiy and Wu,
+$\mathrm{TV}(P, Q) = \tfrac12 \int |dP - dQ|$. On a finite set, the [total variation distance of functions](../../../Probability/markov-chains/mixing-times-of-markov-chains/tv-dist.md) $\tfrac12 \sum_y |\mu(y) - \nu(y)|$
 also equals $\mathrm{TV}$, half of the total variation norm.
 
 ## Sources

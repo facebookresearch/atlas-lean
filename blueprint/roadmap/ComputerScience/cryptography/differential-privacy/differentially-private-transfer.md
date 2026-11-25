@@ -19,8 +19,8 @@ $\mathcal{X}$ to $[0, 1]$.
 
 ## Background
 
-- Two-sided Hoeffding inequality for Bernoulli sums: the bound for a query fixed in advance, which the theorem extends to privately chosen queries at the cost of a larger constant in the sample size.
-- Uniform deviation for a finite class: the classical alternative, a union bound over a fixed class, which does not apply when the class is chosen adaptively.
+- [Two-sided Hoeffding inequality for Bernoulli sums](../../../Probability/concentration-inequalities/hoeffding-s-inequality/hoeffding-bernoulli-sum-abs-tail.md): the bound for a query fixed in advance, which the theorem extends to privately chosen queries at the cost of a larger constant in the sample size.
+- [Uniform deviation for a finite class](../../machine-learning/generalization-bounds-and-concentration/finite-class-uniform-deviation.md): the classical alternative, a union bound over a fixed class, which does not apply when the class is chosen adaptively.
 
 ## Sources
 

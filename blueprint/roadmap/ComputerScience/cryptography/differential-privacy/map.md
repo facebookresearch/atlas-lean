@@ -6,7 +6,7 @@ $S \subseteq \Omega'$ apply the definition to the preimage $T = f^{-1}(S)$.
 
 ## Background
 
-- Processing cannot increase information: the analogous monotonicity for mutual information.
+- [Processing cannot increase information](../../../InformationTheory/information-inequalities/data-processing-inequality/measure-mutual-information-map-le.md): the analogous monotonicity for mutual information.
 
 ## Sources
 

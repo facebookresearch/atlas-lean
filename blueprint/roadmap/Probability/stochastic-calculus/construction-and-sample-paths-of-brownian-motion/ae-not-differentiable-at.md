@@ -6,7 +6,7 @@ statement concerns the positive times $t > 0$.
 
 ## Background
 
-- The Weierstrass function is nowhere differentiable:
+- [The Weierstrass function is nowhere differentiable](../../../Analysis/real-functions/continuity-and-functional-equations/weierstrass-function/weierstrass-fun-nowhere-differentiable.md):
   a deterministic continuous nowhere differentiable function; Brownian paths give such functions
   almost surely.
 

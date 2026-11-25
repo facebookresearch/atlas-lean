@@ -27,3 +27,13 @@ example (f : CuspForm (CongruenceSubgroup.Gamma0 2) 2) :
     CuspForm.norm (↑(CongruenceSubgroup.Gamma 1) : Subgroup (GL (Fin 2) ℝ)) f = 0 ↔
       (f : ℍ → ℂ) = 0 :=
   CuspForm.norm_eq_zero_iff _ f
+
+/-- Source-shaped consumer: the original binder, in the original form. -/
+example (f : CuspForm (CongruenceSubgroup.Gamma0 2) 4) : f = 0 :=
+  ModularForm.S4_Gamma0_2_eq_zero f
+
+/-- Boundary: weight four is not covered by the weight-two statement; the
+same conclusion at a different weight needs the new theorem, and the
+zero form is the unique example. -/
+example : (0 : CuspForm (CongruenceSubgroup.Gamma0 2) 4) = 0 :=
+  ModularForm.S4_Gamma0_2_eq_zero 0

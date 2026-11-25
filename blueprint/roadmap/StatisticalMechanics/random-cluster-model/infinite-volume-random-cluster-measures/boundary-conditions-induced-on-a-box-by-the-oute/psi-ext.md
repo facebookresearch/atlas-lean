@@ -1,0 +1,3 @@
+# Gluing a box configuration into an outer configuration
+
+Let $d, n \in \mathbb{N}$, let $\Lambda_m = \{-m, \dots, m\}^d$ carry its nearest-neighbour edges (so $\Lambda_n \subseteq \Lambda_{n+1}$), and let $\psi$ be an assignment of open/closed states to the unordered pairs of vertices of $\Lambda_{n+1}$ (the outer configuration), and $\omega$ one for the unordered pairs of vertices of $\Lambda_n$. The glued configuration $\psi \oplus \omega$ on the unordered pairs of vertices of $\Lambda_{n+1}$ gives each pair with both elements in $\Lambda_n$ its state in $\omega$, and every other pair its state in $\psi$.

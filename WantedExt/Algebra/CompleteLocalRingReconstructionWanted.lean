@@ -25,9 +25,13 @@ namespace MathlibExt.Algebra.CompleteLocalRingReconstructionWanted
 
 /-! Source record `OWR-1453-004__30000671`. -/
 
-/-- [OWR-1453-004] Two complete local Noetherian rings with pairwise
-isomorphic finite quotients are isomorphic. Completeness is `I`-adic
-completeness at the maximal ideal. -/
+/-- **Complete local ring reconstruction conjecture.** The statement that any two commutative
+Noetherian local rings $A$ and $B$, with maximal ideals $\mathfrak m_A$ and $\mathfrak m_B$, that
+are complete and Hausdorff for the $\mathfrak m_A$-adic and $\mathfrak m_B$-adic topologies are
+isomorphic as rings whenever $A/\mathfrak m_A^r$ and $B/\mathfrak m_B^r$ are isomorphic as rings
+for every natural number $r$.
+
+Source: OWR-1453-004. -/
 def conjecture : Prop :=
   ∀ (A B : Type*) [CommRing A] [CommRing B] [IsLocalRing A] [IsLocalRing B]
     [IsNoetherianRing A] [IsNoetherianRing B]
@@ -38,11 +42,18 @@ def conjecture : Prop :=
     Nonempty (A ≃+* B)
 
 /--
-Resolved false: Van den Dries (Proc. AMS 136 (2008), 3435-3448) proves the answer is yes when
-the residue field is algebraic over its prime field and reports examples by Gabber showing the
-answer is no in general, refuting the unrestricted implication formalized here. Source: Lou van
-den Dries, Isomorphism of complete local noetherian rings and strong approximation, Proc. Amer.
-Math. Soc. 136 (2008), 3435-3448, https://doi.org/10.1090/S0002-9939-08-09401-X. Moved from
+**The complete local ring reconstruction conjecture is false.** There exist commutative
+Noetherian local rings $A$ and $B$, with maximal ideals $\mathfrak m_A$ and $\mathfrak m_B$, that
+are complete and Hausdorff for the $\mathfrak m_A$-adic and $\mathfrak m_B$-adic topologies, such
+that $A/\mathfrak m_A^r$ and $B/\mathfrak m_B^r$ are isomorphic as rings for every natural number
+$r$, but $A$ and $B$ are not isomorphic as rings.
+
+Van den Dries proves that such rings are isomorphic when the residue field is algebraic over its
+prime field, and reports examples by Gabber showing that the answer is no in general.
+
+Source: Lou van den Dries, Isomorphism of complete local noetherian rings and strong
+approximation, Proc. Amer. Math. Soc. 136 (2008), 3435-3448,
+https://doi.org/10.1090/S0002-9939-08-09401-X. Moved from
 `OpenConjectures/Algebra/CompleteLocalRingReconstruction`.
 -/
 public theorem_wanted conjecture_refuted : ¬ conjecture

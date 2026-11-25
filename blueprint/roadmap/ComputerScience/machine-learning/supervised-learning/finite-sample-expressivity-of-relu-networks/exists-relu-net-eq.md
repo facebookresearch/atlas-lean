@@ -10,7 +10,7 @@ Networks of this size can thus fit any labelling of the training sample, random 
 
 ## Background
 
-- Universal approximation theorem: background, the classical expressivity result for one-hidden-layer networks, uniform approximation on compact sets as the width grows, where this theorem gives exact interpolation of a finite sample with width $n$.
+- [Universal approximation theorem](../../../../Analysis/approximation-theory/universal-approximation.md): background, the classical expressivity result for one-hidden-layer networks, uniform approximation on compact sets as the width grows, where this theorem gives exact interpolation of a finite sample with width $n$.
 
 ## Sources
 

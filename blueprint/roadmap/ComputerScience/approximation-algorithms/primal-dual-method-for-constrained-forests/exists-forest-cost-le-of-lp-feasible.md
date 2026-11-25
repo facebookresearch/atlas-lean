@@ -17,7 +17,7 @@ $f$ with $f(V) = 0$.
 
 ## Background
 
-- Strong linear programming duality:
+- [Strong linear programming duality](../../../Geometry/convex-geometry/linear-programming/strong-linear-programming-duality.md):
   the analysis compares the forest with a feasible dual solution, whose value is at most the LP
   optimum; only this weak half of LP duality is used.
 

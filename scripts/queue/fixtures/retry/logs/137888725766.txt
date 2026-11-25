@@ -1,0 +1,22 @@
+2026-11-23T17:43:02.9224058Z Updating files:  99% (87177/88057)
+2026-11-23T17:43:02.9224722Z Updating files: 100% (88057/88057)
+2026-11-23T17:43:02.9224971Z Updating files: 100% (88057/88057), done.
+2026-11-23T17:43:03.0059362Z Switched to a new branch 'gh-readonly-queue/main/pr-6651-71e3543604ee5b688eade7de381c4c44412216a5'
+2026-11-23T17:43:03.0063732Z branch 'gh-readonly-queue/main/pr-6651-71e3543604ee5b688eade7de381c4c44412216a5' set up to track 'origin/gh-readonly-queue/main/pr-6651-71e3543604ee5b688eade7de381c4c44412216a5'.
+2026-11-23T17:43:03.0139224Z ##[endgroup]
+2026-11-23T17:43:03.2442766Z ==> repository structure
+2026-11-23T17:43:03.2444390Z ==> shell syntax
+2026-11-23T17:43:03.2559889Z ==> maintenance script regressions
+2026-11-23T17:43:37.8521182Z
+2026-11-23T17:43:37.8521403Z ======================================================================
+2026-11-23T17:43:37.8522371Z FAIL: test_the_committed_weights_name_subjects_and_fields_of_the_taxonomy (test_next_task.Priorities.test_the_committed_weights_name_subjects_and_fields_of_the_taxonomy)
+2026-11-23T17:43:37.8523754Z ----------------------------------------------------------------------
+2026-11-23T17:43:37.8524160Z Traceback (most recent call last):
+2026-11-23T17:43:37.8528941Z Ran 31 tests in 0.109s
+2026-11-23T17:43:37.8529108Z
+2026-11-23T17:43:37.8529208Z FAILED (failures=1)
+2026-11-23T17:43:37.8873857Z ==> library policy
+2026-11-23T17:43:37.9188824Z ok [build surface]: archived v1 is outside the root Lake build graph.
+2026-11-23T17:43:37.9600364Z ==> copyright headers
+2026-11-23T17:43:38.8167915Z ==> formal-math sync manifest
+2026-11-23T17:43:43.4225340Z ##[error]Process completed with exit code 1.

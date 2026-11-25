@@ -22,7 +22,7 @@ With application and abstraction transported along the isomorphism, $D_\infty$ i
 - [Continuous lattice](continuous-lattices/is-continuous-lattice.md): the class of lattices in the statement.
 - [Arbitrary pointwise suprema of Scott-continuous maps between complete lattices](scott-continuous-maps-and-least-fixed-points/scott-continuous-s-sup.md): $[D \to D]$ is again a complete lattice, so the iteration $D_{n+1} = [D_n \to D_n]$ stays among complete lattices.
 - [Scott's graph model](scott-s-graph-model/README.md): a simpler model, where $[P(\omega) \to P(\omega)]$ is only a retract of $P(\omega)$ and η fails.
-- Models of the untyped lambda calculus: the λ-calculus side.
+- [Models of the untyped lambda calculus](../../ComputerScience/programming-language-semantics/models-of-the-untyped-lambda-calculus/README.md): the λ-calculus side.
 
 ## Sources
 

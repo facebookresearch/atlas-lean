@@ -11,4 +11,4 @@ This is Coron, *Control and Nonlinearity* (AMS 2007), Definition 1.10, $C = \int
 ## Background
 
 - [One-parameter groups of matrices](../../ordinary-differential-equations/one-parameter-groups-of-matrices/README.md): the semigroup $s \mapsto e^{sA}$ that propagates the control's effect to the final time.
-- Positive-definite matrices: for $T \ge 0$ the Gramian is positive semidefinite, and for $T > 0$ it is positive definite exactly when the system is controllable on $[0, T]$.
+- [Positive-definite matrices](../../../LinearAlgebra/positive-definite-matrices/README.md): for $T \ge 0$ the Gramian is positive semidefinite, and for $T > 0$ it is positive definite exactly when the system is controllable on $[0, T]$.
