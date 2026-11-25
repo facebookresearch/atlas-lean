@@ -9,5 +9,7 @@ Let $\mu$ be a probability measure on the realizations $\omega$, $\rho$ a consta
 - almost surely, $\partial_t(\rho u_j) + \operatorname{div} \Phi_j(\rho, u, \sigma) = f_j$ at $(t, x)$ for every $j$.
 
 Then for each $j$, at $(t, x)$,
+
 $$\partial_t(\rho\, \mathbb{E}[u_j]) + \operatorname{div} \Phi_j(\rho, \mathbb{E}[u], \mathbb{E}[\sigma]) = \mathbb{E}[f_j] - \rho \operatorname{div}_i \operatorname{Cov}(u_j, u_i),$$
+
 where $\operatorname{Cov}(u_j, u_i) = \mathbb{E}[u'_j u'_i]$ is the Reynolds stress per unit density. No integrability of the body force $f$ is assumed.
