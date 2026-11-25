@@ -100,7 +100,12 @@ def weightSpace {A : Linearization (Torus k) X M} {T : TensorSections X M}
     (R : SectionCoaction X M A T) (w : ℤ) : Submodule k (Sections X M) :=
   LinearMap.ker (R.map - characterTensor w)
 
-/-- Source-covered finite-dimensional weight decomposition on the fixed kernels. -/
+/-- Finite weight decomposition of the global sections $H^0(X, M)$ under a coaction $R$ of
+$\mathbb{G}_m = \operatorname{Spec} k[t, t^{-1}]$, for a field $k$, a $k$-scheme $X$ with a
+$\mathbb{G}_m$-action and a module $M$ on $X$, where $R$ is normalized by a linearization $A$ of
+$M$ through the comparison $T$: $H^0(X, M)$ is finite-dimensional over $k$, only finitely many
+$w \in \mathbb{Z}$ have a nonzero weight space $\{s : R(s) = s \otimes t^w\}$, and the dimensions
+of these weight spaces add up to $\dim_k H^0(X, M)$. -/
 structure FiniteWeights {A : Linearization (Torus k) X M} {T : TensorSections X M}
     (R : SectionCoaction X M A T) where
   finiteSections : Module.Finite k (Sections X M)

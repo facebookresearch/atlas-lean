@@ -1,16 +1,24 @@
 # Finite Locally Free
 
+## Mathlib Ext
+
 - [Finite Locally Free Comm Affine Group Scheme Property](finite-locally-free-comm-affine-group-sc.md)
 - [Finite Locally Free Comm Affine Group Scheme Property iff](finite-locally-free-comm-affine-group-sc-2.md)
 - [Finite Locally Free Comm Affine Group Scheme Property inverse Image](finite-locally-free-comm-affine-group-sc-3.md)
 - [Finite Locally Free Comm Affine Group Scheme Cat](finite-locally-free-comm-affine-group-sc-4.md)
 - [Finite Locally Free Bicommutative Hopf Alg Cat Op Equiv Finite Locally Free Comm Affine Group Scheme Cat](finite-locally-free-bicommutative-hopf-a.md)
+
+## Finite Locally Free Bicommutative Hopf Alg Cat Op Equiv Finite Locally Free Comm Affine Group Scheme Cat
+
 - [Functor Comp Full SubcategoryιIso](functor-comp-full-subcategory-iso.md)
 - [Functor CompιIso](functor-comp-iso.md)
 - [Functor Obj Iso](functor-obj-iso.md)
 - [Functor Obj Iso hom hom hom](functor-obj-iso-hom-hom-hom.md)
 - [Inverse CompιIso](inverse-comp-iso.md)
 - [Right Op Inverse CompιIso](right-op-inverse-comp-iso.md)
+
+## Finite Locally Free Comm Affine Group Scheme Cat
+
 - [Cartier duality for finite locally free commutative affine group schemes over an arbitrary commutative base ring](cartier-duality.md)
 - [Cartier Duality functor](cartier-duality-functor.md)
 - [Cartier Dual Functor](cartier-dual-functor.md)
