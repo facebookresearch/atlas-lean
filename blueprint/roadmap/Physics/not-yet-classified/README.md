@@ -23,7 +23,6 @@ Topics added since this subject's fields were last revised.
 
 - [Declared Friis Link](part-03/declared-friis-link/README.md)
 - [Drying](part-03/drying/README.md)
-- [Engineering Loads](part-03/engineering-loads/README.md)
 - [Ensemble Momentum](part-03/ensemble-momentum/README.md)
 
 ## [Part 4 of 10](part-04/README.md)
@@ -35,7 +34,6 @@ Topics added since this subject's fields were last revised.
 - [Gaussian Matched Decision](part-04/gaussian-matched-decision/README.md)
 - [Heat Exchangers](part-04/heat-exchangers/README.md)
 - [Held DACSettling](part-04/held-dacsettling/README.md)
-- [Hermite Consistent Loads](part-04/hermite-consistent-loads/README.md)
 - [Humidity Ratio](part-04/humidity-ratio/README.md)
 - [Ideal Airfoil Models](part-04/ideal-airfoil-models/README.md)
 
