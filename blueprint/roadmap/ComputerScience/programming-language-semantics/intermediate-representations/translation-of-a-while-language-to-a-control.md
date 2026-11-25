@@ -10,6 +10,7 @@ Its small-step semantics acts on configurations (current node, store). A node wi
 
 The structural translation emits the graph backwards from a given successor node:
 - *Expressions.* An arithmetic or boolean expression becomes a chain of three-address instructions computing it into a fresh temporary.
+- *Skip.* $\mathbf{skip}$ emits no node: its translation is the given successor itself.
 - *Assignment.* $x := a$ becomes the chain for $a$ followed by $x := t$.
 - *Sequence.* $c_1; c_2$ translates $c_2$ first and uses its entry as the successor of $c_1$.
 - *Conditional.* $\mathbf{if}\ b$ evaluates $b$ and branches to the translations of the two arms, which share the successor.
@@ -24,7 +25,7 @@ The structural translation emits the graph backwards from a given successor node
 - a conditional evaluates its test and branches;
 - a loop unfolding passes through the head and its test.
 
-Steps that IMP takes without a matching CFG step, such as discarding $\mathbf{skip}$ in a sequence, strictly decrease the size of the command, so no infinite sequence of them exists. This is a forward simulation in the sense of [simulation diagrams](../compiler-correctness/simulation-diagrams-for-compiler-correctness.md): terminating executions map to terminating executions with related final states, and diverging executions to diverging ones. Both semantics are deterministic and the CFG never gets stuck before $\mathbf{return}$, so the forward simulation also gives the converse directions.
+A configuration whose command is $\mathbf{skip}$ is related to the successor node itself, since $\mathbf{skip}$ emits no node. Steps that IMP takes without a matching CFG step, such as discarding $\mathbf{skip}$ in a sequence, strictly decrease the size of the command, so no infinite sequence of them exists. This is a forward simulation in the sense of [simulation diagrams](../compiler-correctness/simulation-diagrams-for-compiler-correctness.md): terminating executions map to terminating executions with related final states, and diverging executions to diverging ones. Both semantics are deterministic and the CFG never gets stuck before $\mathbf{return}$, so the forward simulation also gives the converse directions.
 
 ## Depends on
 
