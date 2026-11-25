@@ -179,10 +179,10 @@ omit [SMulCommClass G K M]
 
 /-- The extension of an ambient semilinear automorphism to the fraction
 ring of `M`. -/
-def fracMap [IsDomain M] (s : AmbientSemilinearAut K G M) : FractionRing M ≃+* FractionRing M :=
+def fracMap (s : AmbientSemilinearAut K G M) : FractionRing M ≃+* FractionRing M :=
   IsFractionRing.ringEquivOfRingEquiv s.map
 
-theorem fracMap_algebraMap [IsDomain M] (s : AmbientSemilinearAut K G M) (m : M) :
+theorem fracMap_algebraMap (s : AmbientSemilinearAut K G M) (m : M) :
     s.fracMap (algebraMap M (FractionRing M) m) = algebraMap M (FractionRing M) (s.map m) :=
   IsFractionRing.ringEquivOfRingEquiv_algebraMap _ m
 
@@ -198,7 +198,7 @@ theorem fracMap_smul [IsDomain M] (s : AmbientSemilinearAut K G M) (g : G)
     IsFractionRing.ringEquivOfRingEquiv_comp (FractionRing M) (FractionRing M)
       (FractionRing M)] at hx
 
-theorem fracMap_algebraMap_const [IsDomain M] (s : AmbientSemilinearAut K G M) (c : K) :
+theorem fracMap_algebraMap_const (s : AmbientSemilinearAut K G M) (c : K) :
     s.fracMap (algebraMap K (FractionRing M) c) = algebraMap K (FractionRing M) (s.base c) := by
   rw [IsScalarTower.algebraMap_apply K M (FractionRing M), fracMap_algebraMap, s.map_algebraMap,
     ← IsScalarTower.algebraMap_apply]
@@ -410,9 +410,9 @@ theorem smul_mem_fixedPoints_of_mem_normalizer [IsDomain M] (Δ : Subgroup G) {g
   smul_mem_fixedPoints_of_forall_mem K G M g
     (fun d hd => (Subgroup.mem_normalizer_iff''.1 hg d).1 hd) hx
 
-/-- Transport of the `Δ`-fixed field to the `Δ'`-fixed field by conjugation
-with `g`, as a ring equivalence, when conjugation by `g` carries `Δ'`
-onto `Δ`. -/
+/-- Transport of the field fixed by `Δ` to the field fixed by `Δ'` by the action of `g`,
+as a ring equivalence. It requires conjugation by `g`, the map `d ↦ g * d * g⁻¹`, to carry
+`Δ` onto `Δ'`: `d ∈ Δ'` exactly when `g⁻¹ * d * g ∈ Δ`. -/
 def conjTransportRingEquiv [IsDomain M] (g : G) (Δ Δ' : Subgroup G)
     (h : ∀ d : G, d ∈ Δ' ↔ g⁻¹ * d * g ∈ Δ) :
     (FixedPoints.intermediateField Δ : IntermediateField K (FractionRing M)) ≃+*
@@ -436,8 +436,9 @@ theorem coe_conjTransportRingEquiv [IsDomain M] (g : G) (Δ Δ' : Subgroup G)
         FractionRing M) =
       g • (x : FractionRing M) := rfl
 
-/-- Transport of the `Δ`-fixed field to the `Δ'`-fixed field by conjugation
-with `g`, as a `K`-algebra equivalence. -/
+/-- Transport of the field fixed by `Δ` to the field fixed by `Δ'` by the action of `g`,
+as a `K`-algebra equivalence. It requires conjugation by `g`, the map `d ↦ g * d * g⁻¹`, to
+carry `Δ` onto `Δ'`: `d ∈ Δ'` exactly when `g⁻¹ * d * g ∈ Δ`. -/
 def conjTransport [IsDomain M] (g : G) (Δ Δ' : Subgroup G)
     (h : ∀ d : G, d ∈ Δ' ↔ g⁻¹ * d * g ∈ Δ) :
     (FixedPoints.intermediateField Δ : IntermediateField K (FractionRing M)) ≃ₐ[K]

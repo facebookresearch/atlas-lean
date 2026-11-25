@@ -222,9 +222,13 @@ theorem finite_stabilizer_dart (h : IsUniformTreeLattice G 𝒯) (d : 𝒯.Dart)
   have := h.finite_stabilizer d.fst
   exact Finite.of_injective _ (Subgroup.inclusion_injective (stabilizer_dart_le 𝒯 d))
 
+/-- The `Fintype` structure on the quotient vertex set of a uniform tree lattice, which is
+finite. -/
 @[reducible] def fintypeQuotVert (h : IsUniformTreeLattice G 𝒯) : Fintype (QuotVert G W) :=
   @Fintype.ofFinite _ h.finite_quotVert
 
+/-- The `Fintype` structure on the set of oriented quotient edges (dart orbits) of a
+uniform tree lattice, which is finite. -/
 @[reducible] def fintypeQuotEdge (h : IsUniformTreeLattice G 𝒯) : Fintype (QuotEdge G 𝒯) :=
   @Fintype.ofFinite _ h.finite_quotEdge
 
