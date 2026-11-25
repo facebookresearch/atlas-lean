@@ -32,6 +32,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.NumberTheory.Recurrences.JacobsthalOffsetIntegral
 public import MathlibExt.NumberTheory.Recurrences.KJacobsthal
 
 namespace MetaMathlibExt
@@ -199,22 +200,6 @@ public theorem_wanted jacobsthalLucas_mul_eq_integral (ℓ n : ℕ) :
     (lucasV (kJacobsthalParams 1) (ℓ * n) : ℝ) =
       1 / 2 ^ n * ∫ x in (-1 : ℝ)..1,
         (jL[1, ℓ] + 3 * (n + 1) * J[1, ℓ] * x) * (jL[1, ℓ] + 3 * J[1, ℓ] * x) ^ ((n : ℤ) - 1)
-
-/-- **Integral representation of Jacobsthal numbers with an offset.** Let $\ell$, $n$ and $r$ be
-natural numbers and let $J_n = U_n(1, -2)$ and $j_n = V_n(1, -2)$ be the Jacobsthal and
-Jacobsthal–Lucas numbers (the case $k = 1$). Then
-$$J_{\ell n + r} = \frac{1}{2^{n+1}} \int_{-1}^{1}
-(n J_\ell j_r + J_r j_\ell + 3(n+1) J_\ell J_r x) (j_\ell + 3 J_\ell x)^{n-1} \, dx.$$
-Here $n - 1$ is an integer exponent, so for $n = 0$ the power is a reciprocal.
-
-Source: Weerayuth Nilsrakoo and Achariya Nilsrakoo, *An Integral Representation of k-Jacobsthal and
-k-Jacobsthal-Lucas Numbers*, INTEGERS 25 (2025), Article A74,
-Corollary 4 (`integers-2025-A74-cor-4`). -/
-public theorem_wanted jacobsthal_mul_add_eq_integral (ℓ n r : ℕ) :
-    (lucasU (kJacobsthalParams 1) (ℓ * n + r) : ℝ) =
-      1 / 2 ^ (n + 1) * ∫ x in (-1 : ℝ)..1,
-        (n * J[1, ℓ] * jL[1, r] + J[1, r] * jL[1, ℓ] +
-            3 * (n + 1) * J[1, ℓ] * J[1, r] * x) * (jL[1, ℓ] + 3 * J[1, ℓ] * x) ^ ((n : ℤ) - 1)
 
 /-- **Integral representation of the Jacobsthal-Lucas numbers along arithmetic progressions.**
 Let $J_m = U_m(1, -2)$ be the Jacobsthal numbers and $j_m = V_m(1, -2)$ the Jacobsthal-Lucas
