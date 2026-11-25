@@ -43,9 +43,10 @@ example (L M : X.Modules) : X.Modules :=
 example (L M : X.Modules) : (Scheme.Modules.sheafify X).obj (L.val ⊗ M.val) ≅ L ⊗ M :=
   Scheme.Modules.tensorIsoSheafify L M
 
-/-- The sheafified presheaf tensor product is `SchemeModulesTensor.moduleTensor`. -/
+/-- The sheafified presheaf tensor product is `SchemeModulesTensor.moduleTensor`, and the named
+comparison `moduleTensorIso` is `tensorIsoSheafify`. -/
 example (L M : X.Modules) :
-    MathlibExt.AlgebraicGeometry.SchemeModulesTensor.moduleTensor X L M ≅ L ⊗ M :=
-  Scheme.Modules.tensorIsoSheafify L M
+    Scheme.Modules.moduleTensorIso L M = Scheme.Modules.tensorIsoSheafify L M :=
+  rfl
 
 end

@@ -31,6 +31,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.Algebra.Category.ModuleCat.Sheaf.Monoidal
+public import MathlibExt.AlgebraicGeometry.SchemeModulesTensor
 public import Mathlib.AlgebraicGeometry.Modules.Sheaf
 
 /-!
@@ -40,7 +41,9 @@ For a scheme `X`, the presheaves of modules `X.PresheafOfModules` and the sheave
 `X.Modules` are symmetric monoidal closed categories, with the structures of
 `MathlibExt.Algebra.Category.ModuleCat.Sheaf.Monoidal`. Sheafification
 `Scheme.Modules.sheafify X` is a monoidal functor, and `L ⊗ M` is the sheafified presheaf tensor
-product (`Scheme.Modules.tensorIsoSheafify`).
+product (`Scheme.Modules.tensorIsoSheafify`). In particular `L ⊗ M` is isomorphic to
+`SchemeModulesTensor.moduleTensor X L M`, the tensor product of the line-bundle interfaces
+(`Scheme.Modules.moduleTensorIso`).
 -/
 
 @[expose] public section
@@ -95,6 +98,14 @@ product. By definition the source is
 def Scheme.Modules.tensorIsoSheafify (L M : X.Modules) :
     (Scheme.Modules.sheafify X).obj (L.val ⊗ M.val) ≅ L ⊗ M :=
   SheafOfModules.tensorIsoSheafify X.sheaf.obj X.ringCatSheaf.property L M
+
+/-- **`moduleTensor` and the monoidal tensor product.** The sheaf tensor product
+`MathlibExt.AlgebraicGeometry.SchemeModulesTensor.moduleTensor X L M` of the line-bundle interfaces
+is isomorphic to `L ⊗ M` for the monoidal structure on `X.Modules`. Both sheafify the presheaf
+tensor product `L.val ⊗ M.val`; this is `Scheme.Modules.tensorIsoSheafify L M`. -/
+def Scheme.Modules.moduleTensorIso (L M : X.Modules) :
+    MathlibExt.AlgebraicGeometry.SchemeModulesTensor.moduleTensor X L M ≅ L ⊗ M :=
+  Scheme.Modules.tensorIsoSheafify L M
 
 end AlgebraicGeometry
 
