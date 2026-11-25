@@ -1,0 +1,298 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Approximation
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Basic
+public import Mathlib.LinearAlgebra.FiniteDimensional.Basic
+public import Mathlib.Algebra.Module.Submodule.Range
+public import Mathlib.Algebra.Module.Submodule.LinearMap
+
+/-!
+# Genuine completely positive contractive factorizations
+
+Two actual canonical CP maps and their contraction bounds factor through an
+externally fixed C-star algebra. The matrix specialization uses the existing
+C-star matrix algebra under explicit scalar spectral dictionaries. It admits
+zero dimensions, zero coefficients and nonunital source/target algebras.
+
+Approximation predicates quantify these genuine data. No approximation,
+nuclearity, matrix model, norm, unit, representation or class comparison is
+stored as an output field. Only the forward finite-linear-range argument is
+included; reverse and unital-normalization comparisons are separate work.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+namespace CompletelyPositiveMap
+
+universe uA uB uD
+
+/-- An actual pair of CP contractions through a fixed C-star algebra.
+All three universes and existing nonunital algebra structures are independent.
+The local order scopes include evaluation of the two maps in their bounds. -/
+structure ContractionFactorization
+    (A : Type uA) (B : Type uB) (D : Type uD)
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    [NonUnitalCStarAlgebra D] where
+  /-- The actual forward CP contraction from A to the intermediate algebra D. -/
+  toIntermediate : Canonical A D
+  /-- The actual return CP contraction from the intermediate algebra D to B. -/
+  fromIntermediate : Canonical D B
+  toIntermediate_contractive :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+    letI : PartialOrder D := CStarAlgebra.spectralOrder D
+    letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+    ∀ a : A, ‖toIntermediate a‖ ≤ ‖a‖
+  fromIntermediate_contractive :
+    letI : PartialOrder D := CStarAlgebra.spectralOrder D
+    letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+    letI : PartialOrder B := CStarAlgebra.spectralOrder B
+    letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+    ∀ d : D, ‖fromIntermediate d‖ ≤ ‖d‖
+
+namespace ContractionFactorization
+
+variable {A : Type uA} {B : Type uB} {D : Type uD}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+variable [NonUnitalCStarAlgebra D]
+
+/-- Equality compares the two actual maps; their bound proofs are irrelevant. -/
+@[ext]
+theorem ext {P Q : ContractionFactorization A B D}
+    (hTo : P.toIntermediate = Q.toIntermediate)
+    (hFrom : P.fromIntermediate = Q.fromIntermediate) : P = Q := by
+  cases P
+  cases Q
+  cases hTo
+  cases hFrom
+  rfl
+
+/-- The actual CP composite, using the existing CP composition API. -/
+def composite (P : ContractionFactorization A B D) : Canonical A B := by
+  letI : PartialOrder A := CStarAlgebra.spectralOrder A
+  letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  letI : PartialOrder D := CStarAlgebra.spectralOrder D
+  letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  letI : PartialOrder B := CStarAlgebra.spectralOrder B
+  letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  exact CompletelyPositiveMap.comp P.fromIntermediate P.toIntermediate
+
+/-- Evaluation keeps the correct forward-then-backward orientation. -/
+theorem composite_apply (P : ContractionFactorization A B D) (a : A) :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+    letI : PartialOrder D := CStarAlgebra.spectralOrder D
+    letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+    letI : PartialOrder B := CStarAlgebra.spectralOrder B
+    letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+    P.composite a = P.fromIntermediate (P.toIntermediate a) := by
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let : PartialOrder D := CStarAlgebra.spectralOrder D
+  let : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  let : PartialOrder B := CStarAlgebra.spectralOrder B
+  let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  exact CompletelyPositiveMap.comp_apply P.toIntermediate P.fromIntermediate a
+
+/-- Projection to the actual complex-linear composite. -/
+theorem composite_toLinearMap (P : ContractionFactorization A B D) :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+    letI : PartialOrder D := CStarAlgebra.spectralOrder D
+    letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+    letI : PartialOrder B := CStarAlgebra.spectralOrder B
+    letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+    P.composite.toLinearMap =
+      P.fromIntermediate.toLinearMap.comp P.toIntermediate.toLinearMap := by
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let : PartialOrder D := CStarAlgebra.spectralOrder D
+  let : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  let : PartialOrder B := CStarAlgebra.spectralOrder B
+  let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  exact CompletelyPositiveMap.toLinearMap_comp P.toIntermediate P.fromIntermediate
+
+/-- The composite inherits precisely the two supplied contraction bounds. -/
+theorem composite_contractive (P : ContractionFactorization A B D) :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+    letI : PartialOrder D := CStarAlgebra.spectralOrder D
+    letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+    letI : PartialOrder B := CStarAlgebra.spectralOrder B
+    letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+    ∀ a : A, ‖P.composite a‖ ≤ ‖a‖ := by
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let : PartialOrder D := CStarAlgebra.spectralOrder D
+  let : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  let : PartialOrder B := CStarAlgebra.spectralOrder B
+  let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  intro a
+  rw [composite_apply]
+  exact (P.fromIntermediate_contractive (P.toIntermediate a)).trans
+    (P.toIntermediate_contractive a)
+
+/-- Zero maps are genuine CP contractions without any unit requirement. -/
+def zero (A : Type uA) (B : Type uB) (D : Type uD)
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+    [NonUnitalCStarAlgebra D] : ContractionFactorization A B D := by
+  letI : PartialOrder A := CStarAlgebra.spectralOrder A
+  letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  letI : PartialOrder D := CStarAlgebra.spectralOrder D
+  letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  letI : PartialOrder B := CStarAlgebra.spectralOrder B
+  letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  refine ⟨CompletelyPositiveMapClass.toCompletelyPositiveLinearMap
+      (0 : A →⋆ₙₐ[ℂ] D),
+    CompletelyPositiveMapClass.toCompletelyPositiveLinearMap (0 : D →⋆ₙₐ[ℂ] B), ?_, ?_⟩
+  · intro a
+    change ‖(0 : D)‖ ≤ ‖a‖
+    simpa only [norm_zero] using norm_nonneg a
+  · intro d
+    change ‖(0 : B)‖ ≤ ‖d‖
+    simpa only [norm_zero] using norm_nonneg d
+
+/-- The zero factorization has its literal zero composite. -/
+theorem zero_composite_apply (a : A) :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+    letI : PartialOrder D := CStarAlgebra.spectralOrder D
+    letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+    letI : PartialOrder B := CStarAlgebra.spectralOrder B
+    letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+    (zero A B D).composite a = 0 := by
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let : PartialOrder D := CStarAlgebra.spectralOrder D
+  let : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  let : PartialOrder B := CStarAlgebra.spectralOrder B
+  let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  rfl
+
+/-- Every factorization through a zero algebra has zero composite. -/
+theorem composite_eq_zero_of_subsingleton [Subsingleton D]
+    (P : ContractionFactorization A B D) (a : A) :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+    letI : PartialOrder D := CStarAlgebra.spectralOrder D
+    letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+    letI : PartialOrder B := CStarAlgebra.spectralOrder B
+    letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+    P.composite a = 0 := by
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let : PartialOrder D := CStarAlgebra.spectralOrder D
+  let : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  let : PartialOrder B := CStarAlgebra.spectralOrder B
+  let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  rw [composite_apply, Subsingleton.elim (P.toIntermediate a) (0 : D)]
+  exact map_zero P.fromIntermediate
+
+/-- Approximation is a condition on the actual composite, never a stored
+desired output. Canonical orders are local in its evaluation scope. -/
+def ApproximatesOn (P : ContractionFactorization A B D)
+    (f : A → B) (F : Finset A) (ε : ℝ) : Prop :=
+  letI : PartialOrder A := CStarAlgebra.spectralOrder A
+  letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  letI : PartialOrder D := CStarAlgebra.spectralOrder D
+  letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  letI : PartialOrder B := CStarAlgebra.spectralOrder B
+  letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  ∀ a ∈ F, ‖P.composite a - f a‖ < ε
+
+/-- An actual finite-dimensional intermediate algebra gives finite linear
+range of the composite, without turning that range into a C-star algebra. -/
+theorem finiteDimensional_range_composite [FiniteDimensional ℂ D]
+    (P : ContractionFactorization A B D) :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+    letI : PartialOrder D := CStarAlgebra.spectralOrder D
+    letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+    letI : PartialOrder B := CStarAlgebra.spectralOrder B
+    letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+    FiniteDimensional ℂ (LinearMap.range P.composite.toLinearMap) := by
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let : PartialOrder D := CStarAlgebra.spectralOrder D
+  let : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  let : PartialOrder B := CStarAlgebra.spectralOrder B
+  let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  rw [composite_toLinearMap]
+  have hRange :=
+    LinearMap.range_comp_le_range P.toIntermediate.toLinearMap P.fromIntermediate.toLinearMap
+  let : FiniteDimensional ℂ (LinearMap.range P.fromIntermediate.toLinearMap) := inferInstance
+  exact FiniteDimensional.of_injective (Submodule.inclusion hRange)
+    (Submodule.inclusion_injective hRange)
+
+end ContractionFactorization
+
+/-- The actual finite complex C-star matrix specialization. The scalar
+spectral dictionaries stay in the result type, and the stock norm is retained.
+Natural size zero is legal and produces the genuine zero middle algebra. -/
+abbrev MatrixFactorization
+    (A : Type uA) (B : Type uB)
+    [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] (n : ℕ) :=
+  letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
+  letI : StarOrderedRing ℂ := CStarAlgebra.spectralOrderedRing ℂ
+  ContractionFactorization A B (CStarMatrix (Fin n) (Fin n) ℂ)
+
+variable {A : Type uA} {B : Type uB}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+
+/-- Positive-size matrix CPC factorizations approximate the function on
+every finite test set. Zero maps through M₁ are allowed even for zero A/B.
+No factorization is chosen from this existence predicate. -/
+def HasMatrixCPCApproximation (f : A → B) : Prop :=
+  letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
+  letI : StarOrderedRing ℂ := CStarAlgebra.spectralOrderedRing ℂ
+  ∀ (F : Finset A) (ε : ℝ), 0 < ε →
+    ∃ n : ℕ+, ∃ P : MatrixFactorization A B (n : ℕ), P.ApproximatesOn f F ε
+
+/-- Actual matrix factorizations supply literal finite-rank CPC witnesses.
+This is only the elementary forward implication, not nuclearity or an
+analytic reverse-factorization/unital-normalization theorem. -/
+theorem HasMatrixCPCApproximation.hasFiniteRankCPCApproximation
+    {f : A → B} (h : HasMatrixCPCApproximation f) :
+    HasFiniteRankCPCApproximation f := by
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let : PartialOrder B := CStarAlgebra.spectralOrder B
+  let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  let : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
+  let : StarOrderedRing ℂ := CStarAlgebra.spectralOrderedRing ℂ
+  change ∀ (F : Finset A) (ε : ℝ), 0 < ε →
+    ∃ phi : Canonical A B,
+      (∀ a : A, ‖phi a‖ ≤ ‖a‖) ∧
+      FiniteDimensional ℂ (LinearMap.range phi.toLinearMap) ∧
+      ∀ a ∈ F, ‖phi a - f a‖ < ε
+  intro F ε hε
+  obtain ⟨n, P, hP⟩ := h F ε hε
+  let D := CStarMatrix (Fin n) (Fin n) ℂ
+  let : PartialOrder D := CStarAlgebra.spectralOrder D
+  let : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  let : FiniteDimensional ℂ D :=
+    (CStarMatrix.ofMatrixₗ (R := ℂ) (m := Fin n) (n := Fin n) (A := ℂ)).finiteDimensional
+  refine ⟨P.composite, P.composite_contractive, P.finiteDimensional_range_composite, ?_⟩
+  exact hP
+
+end CompletelyPositiveMap
+
+namespace CStarAlgebra
+
+universe uA
+
+/-- Completely positive approximation through genuine finite matrices, with
+no source/target unit requirement. This definition does not assert the
+cross-norm, tensor or source-unital comparison theorems. -/
+def HasCPAP (A : Type uA) [NonUnitalCStarAlgebra A] : Prop :=
+  CompletelyPositiveMap.HasMatrixCPCApproximation (id : A → A)
+
+end CStarAlgebra

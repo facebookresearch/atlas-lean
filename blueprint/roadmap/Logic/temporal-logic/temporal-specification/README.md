@@ -5,3 +5,4 @@
 - [Common knowledge cannot be attained without guaranteed communication](common-knowledge-cannot-be-attained-without.md)
 - [Every hyperproperty is the intersection of a hypersafety and a hyperliveness property](every-hyperproperty-is-the-intersection-of-a.md)
 - [LTL translates into first-order logic of order](ltl-translates-into-first-order-logic-of-order.md)
+- [Hyperproperties, hypersafety and k-safety](hyperproperties-hypersafety-and-k-safety.md)
