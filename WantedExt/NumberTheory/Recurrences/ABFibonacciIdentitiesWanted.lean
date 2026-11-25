@@ -137,29 +137,6 @@ theorem_wanted sum_neg_one_pow_fib (n : ℕ) :
         (-1 : ℂ) ^ i * lucasAB 1 1 (2 * i + 1) =
       (-1) ^ n * fibAB 1 1 (2 * n + 2))
 
-/-- **Alternating sums of Pell and Pell–Lucas numbers.** Let $(P_n)$ and $(Q_n)$ be the Pell
-and Pell–Lucas numbers, that is, the $(2, 1)$-Fibonacci and $(2, 1)$-Lucas numbers, viewed as
-complex numbers. Then for every integer $n \ge 0$,
-$$\sum_{i=0}^{n} (-1)^i P_{2i} = \frac{(-1)^n Q_{2n+1} - 2}{8}, \qquad
-\sum_{i=0}^{n} (-1)^i Q_{2i} = (-1)^n P_{2n+1} + 1,$$
-$$\sum_{i=0}^{n} (-1)^i P_{2i+1} = \frac{(-1)^n Q_{2n+2} + 2}{8}, \qquad
-\sum_{i=0}^{n} (-1)^i Q_{2i+1} = (-1)^n P_{2n+2}.$$
-
-Source: Emil Daniel Schwab, "Fibonacci Numbers
-via Dirichlet Convolution and Lucas Numbers via
-Unitary Convolution", Theorem 10(c). -/
-theorem_wanted sum_neg_one_pow_pell (n : ℕ) :
-    (∑ i ∈ Finset.range (n + 1), (-1 : ℂ) ^ i * fibAB 2 1 (2 * i) =
-      ((-1) ^ n * lucasAB 2 1 (2 * n + 1) - 2) / 8) ∧
-    (∑ i ∈ Finset.range (n + 1), (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i) =
-      (-1) ^ n * fibAB 2 1 (2 * n + 1) + 1) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * fibAB 2 1 (2 * i + 1) =
-      ((-1) ^ n * lucasAB 2 1 (2 * n + 2) + 2) / 8) ∧
-    (∑ i ∈ Finset.range (n + 1),
-        (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i + 1) =
-      (-1) ^ n * fibAB 2 1 (2 * n + 2))
-
 /-- **Weighted alternating sums of Jacobsthal and Jacobsthal–Lucas numbers.** Let $(J_n)$ and
 $(j_n)$ be the Jacobsthal and Jacobsthal–Lucas numbers, that is, the $(1, 2)$-Fibonacci and
 $(1, 2)$-Lucas numbers, viewed as complex numbers. Then for every integer $n \ge 0$,

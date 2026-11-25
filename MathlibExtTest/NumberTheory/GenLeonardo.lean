@@ -75,4 +75,24 @@ example : ¬ ShiftIdentity 1 0 0 1 := by decide
 -- Without `n + 1 ≤ m + t`.
 example : ¬ ShiftIdentity 1 0 1 1 := by decide
 
+-- The first admissible pair gives difference indices one and zero, respectively.
+example (k : ℤ) :
+    (genLeonardo k 3 ^ 2 - genLeonardo k 1 ^ 2 =
+      (genLeonardo k 5 + k) * (genLeonardo k 1 + k) -
+        2 * k * (genLeonardo k 3 - genLeonardo k 1)) ∧
+    (genLeonardo k 3 ^ 2 + genLeonardo k 0 ^ 2 =
+      (genLeonardo k 4 + k) * (genLeonardo k 2 + k) -
+        2 * k * (genLeonardo k 3 + genLeonardo k 0) - 2 * k ^ 2) :=
+  genLeonardo_sq_sum_diff k 2 1 (by decide) (by decide)
+
+-- At k = 1, m = 3, n = 1, the corrected index gives 82 and the printed index gives 78.
+example :
+    genLeonardo 1 4 ^ 2 + genLeonardo 1 1 ^ 2 = 82 ∧
+    (genLeonardo 1 6 + 1) * (genLeonardo 1 2 + 1) -
+      2 * (genLeonardo 1 4 + genLeonardo 1 2) - 2 = 78 := by
+  constructor
+  · rw [(genLeonardo_sq_sum_diff 1 3 1 (by decide) (by decide)).2]
+    decide
+  · decide
+
 end MathlibExtTest.GenLeonardo

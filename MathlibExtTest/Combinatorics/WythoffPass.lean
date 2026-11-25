@@ -16,6 +16,10 @@ namespace MetaMathlibExt.WythoffPassTest
 
 open MetaMathlibExt
 
+-- At the origin the pass is unavailable, while the extra stone can still be taken.
+example : wythoffExtraMoveGrundy true 0 0 true = 0 ∧ wythoffExtraMoveGrundy false 0 0 true = 1 :=
+  ⟨wythoffPassGrundy_zero_zero true, wythoffPlusStoneGrundy_zero_zero_true⟩
+
 /-! ### The sets `B` and `C` -/
 
 -- `B` and `C` share exactly the positions `(4, 8)` and `(8, 4)`, so together they have
@@ -61,5 +65,18 @@ example : ¬∃ t, 1 ≤ t ∧ t ≤ 20 ∧ t ≤ 3 ∧ (20 - t, 3 - t) ∈ wyth
   rw [← (wythoffPass_moves_meet_setB_iff_setC 20 3 (Or.inl (by omega))).2.2]
   rintro ⟨t, -, -, ht, h⟩
   interval_cases t <;> revert h <;> decide
+
+-- At gap four, a diagonal move from (9, 5) reaches (8, 4) in both sets.
+example :
+    (∃ t, 1 ≤ t ∧ t ≤ 9 ∧ t ≤ 5 ∧ (9 - t, 5 - t) ∈ wythoffPassSetB) ∧
+    (∃ t, 1 ≤ t ∧ t ≤ 9 ∧ t ≤ 5 ∧ (9 - t, 5 - t) ∈ wythoffPassSetC) :=
+  (wythoffPass_moves_meet_setB_setC 9 5 (Or.inl (by decide))).2.2.1 (by decide) (by decide)
+
+-- At gap five, every legal diagonal move from (4, 9) misses both sets.
+example (t : ℕ) (ht : 1 ≤ t) (ht₄ : t ≤ 4) :
+    (4 - t, 9 - t) ∉ wythoffPassSetB ∧ (4 - t, 9 - t) ∉ wythoffPassSetC := by
+  obtain ⟨missB, missC⟩ :=
+    (wythoffPass_moves_meet_setB_setC 4 9 (Or.inr (by decide))).2.2.2 (Or.inr (by decide))
+  exact ⟨missB t ht ht₄ (by omega), missC t ht ht₄ (by omega)⟩
 
 end MetaMathlibExt.WythoffPassTest

@@ -1,0 +1,42 @@
+2026-11-23T17:48:35.6787600Z Note: This linter can be disabled with `set_option linter.unusedTactic false`
+2026-11-23T17:48:35.6849915Z Build completed successfully (6373 jobs).
+2026-11-23T17:48:37.0626846Z Build completed successfully (4155 jobs).
+2026-11-23T17:48:38.7634274Z Build completed successfully (6375 jobs).
+2026-11-23T17:48:38.8011998Z ##[group]Run scripts/check.sh build
+2026-11-23T17:48:38.8012296Z [36;1mscripts/check.sh build[0m
+2026-11-23T17:48:38.8029834Z shell: /usr/bin/bash -e {0}
+2026-11-23T17:48:38.8030064Z ##[endgroup]
+2026-11-23T17:48:38.8102585Z ==> compiler diagnostics
+2026-11-23T17:48:58.6275116Z
+2026-11-23T17:48:58.6275245Z import Mathlib.Basic.Real.Basic
+2026-11-23T17:48:58.8147297Z ✖ [12791/13011] Building MathlibExt.Probability.DyadicTruncation (2.8s)
+2026-11-23T17:48:58.8174781Z trace: .> LEAN_PATH=/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Cli/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/batteries/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Qq/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/aesop/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/proofwidgets/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/importGraph/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/plausible/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/mathlib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/cslib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Physlib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean /home/runner/.elan/toolchains/leanprover--lean4---v4.36.0/bin/lean /home/runner/work/atlas-lean/atlas-lean/MathlibExt/Probability/DyadicTruncation.lean -o /home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean/MathlibExt/Probability/DyadicTruncation.olean -i /home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean/MathlibExt/Probability/DyadicTruncation.ilean -c /home/runner/work/atlas-lean/atlas-lean/.lake/build/ir/MathlibExt/Probability/DyadicTruncation.c --setup /home/runner/work/atlas-lean/atlas-lean/.lake/build/ir/MathlibExt/Probability/DyadicTruncation.setup.json --json
+2026-11-23T17:48:58.8182831Z warning: MathlibExt/Probability/DyadicTruncation.lean:13:0: 'Mathlib.Data.Real.Basic' has been deprecated: please replace this import by
+2026-11-23T17:48:58.8299553Z
+2026-11-23T17:48:58.8299798Z Note: This linter can be disabled with `set_option linter.style.longLine false`
+2026-11-23T17:48:58.8300416Z error: MathlibExt/Probability/DyadicTruncation.lean:183:45: Type mismatch
+2026-11-23T17:48:58.8300891Z   this
+2026-11-23T17:48:58.8301114Z has type
+2026-11-23T17:48:59.6252606Z
+2026-11-23T17:48:59.6252849Z Note: This linter can be disabled with `set_option linter.unusedTactic false`
+2026-11-23T17:49:01.3306954Z ✖ [13323/13413] Building MathlibExt.Combinatorics.Enumerative.NColorCompositions (2.7s)
+2026-11-23T17:49:01.3385664Z trace: .> LEAN_PATH=/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Cli/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/batteries/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Qq/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/aesop/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/proofwidgets/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/importGraph/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/plausible/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/mathlib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/cslib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Physlib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean /home/runner/.elan/toolchains/leanprover--lean4---v4.36.0/bin/lean /home/runner/work/atlas-lean/atlas-lean/MathlibExt/Combinatorics/Enumerative/NColorCompositions.lean -o /home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean/MathlibExt/Combinatorics/Enumerative/NColorCompositions.olean -i /home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean/MathlibExt/Combinatorics/Enumerative/NColorCompositions.ilean -c /home/runner/work/atlas-lean/atlas-lean/.lake/build/ir/MathlibExt/Combinatorics/Enumerative/NColorCompositions.c --setup /home/runner/work/atlas-lean/atlas-lean/.lake/build/ir/MathlibExt/Combinatorics/Enumerative/NColorCompositions.setup.json --json
+2026-11-23T17:49:01.3396779Z error: MathlibExt/Combinatorics/Enumerative/NColorCompositions.lean:186:2: Invalid alternative name `h`: Expected `ind`
+2026-11-23T17:49:01.3487527Z error: MathlibExt/Combinatorics/Enumerative/NColorCompositions.lean:185:2: Alternative `ind` has not been provided
+2026-11-23T17:49:01.4337594Z ⚠ [13334/13447] Replayed MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionCongruence
+2026-11-23T17:49:01.4386866Z warning: MathlibExt/Combinatorics/Enumerative/Partition/OverpartitionCongruence.lean:1916:13: Variable name `hn` is not explicitly referenced.
+2026-11-23T17:50:20.0557693Z
+2026-11-23T17:50:20.0558763Z Note: The updated constant is in a different namespace. Dot notation may need to be changed (e.g., from `x.leftExactFunctor_iff` to `ObjectProperty.preservesFiniteLimits_iff x`).
+2026-11-23T17:50:26.5467130Z ✖ [27039/27496] Building MathlibExt.Analysis.MellinUniqueness (6.5s)
+2026-11-23T17:50:26.5477020Z trace: .> LEAN_PATH=/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Cli/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/batteries/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Qq/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/aesop/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/proofwidgets/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/importGraph/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/LeanSearchClient/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/plausible/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/mathlib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/cslib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/packages/Physlib/.lake/build/lib/lean:/home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean /home/runner/.elan/toolchains/leanprover--lean4---v4.36.0/bin/lean /home/runner/work/atlas-lean/atlas-lean/MathlibExt/Analysis/MellinUniqueness.lean -o /home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean/MathlibExt/Analysis/MellinUniqueness.olean -i /home/runner/work/atlas-lean/atlas-lean/.lake/build/lib/lean/MathlibExt/Analysis/MellinUniqueness.ilean -c /home/runner/work/atlas-lean/atlas-lean/.lake/build/ir/MathlibExt/Analysis/MellinUniqueness.c --setup /home/runner/work/atlas-lean/atlas-lean/.lake/build/ir/MathlibExt/Analysis/MellinUniqueness.setup.json --json
+2026-11-23T17:50:26.5514556Z error: MathlibExt/Analysis/MellinUniqueness.lean:130:16: failed to synthesize instance of type class
+2026-11-23T17:50:26.5515469Z   Star (Set C(C, ℂ))
+2026-11-23T17:50:26.5515988Z
+2026-11-23T17:50:26.5586558Z Hint: Type class instance resolution failures can be inspected with the `set_option trace.Meta.synthInstance true` command.
+2026-11-23T17:50:26.5626527Z error: MathlibExt/Analysis/MellinUniqueness.lean:133:37: failed to synthesize instance of type class
+2026-11-23T17:50:26.5636233Z   Star (Set C(C, ℂ))
+2026-11-23T17:50:26.5705967Z
+2026-11-23T18:04:50.8548191Z ==> compiled environment policy
+2026-11-23T18:04:54.6931707Z ==> declaration collisions
+2026-11-23T18:04:54.7768286Z ##[error]Process completed with exit code 1.
+2026-11-23T18:04:55.0116431Z Cleaning up orphan processes

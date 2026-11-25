@@ -15,6 +15,7 @@ public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.EvenOddCompositions
+public import MathlibExt.Combinatorics.Enumerative.SignedLargePartCompositions
 
 namespace MetaMathlibExt
 
@@ -38,20 +39,6 @@ public theorem_wanted sum_distincts_neg_one_pow_card (n : ℕ) :
         ∑ p ∈ Nat.Partition.distincts n, (-1 : ℤ) ^ p.parts.card = (-1) ^ j) ∧
       ((∀ j : ℕ, 2 * n ≠ j * (3 * j + 1) ∧ 2 * n ≠ j * (3 * j - 1)) →
         ∑ p ∈ Nat.Partition.distincts n, (-1 : ℤ) ^ p.parts.card = 0)
-
-/-- **Signed count of compositions with parts greater than one.** For every $n \ge 0$, among the
-compositions of $n + 1$ whose parts are all greater than $1$, the number with an odd number of
-parts minus the number with an even number of parts is $(-1)^j$ if $n = 3j + 1$ or $n = 3j + 2$
-for some $j \ge 0$, and $0$ otherwise.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 5
-(`jis-2024-24.6.5-thm-5`). -/
-public theorem_wanted compositionOddMinusEven_parts_gt_one (n : ℕ) :
-    (∀ j : ℕ, n = 3 * j + 1 ∨ n = 3 * j + 2 →
-        compositionOddMinusEven (n + 1) (fun c => ∀ a ∈ c.blocks, 1 < a) = (-1) ^ j) ∧
-      ((∀ j : ℕ, n ≠ 3 * j + 1 ∧ n ≠ 3 * j + 2) →
-        compositionOddMinusEven (n + 1) (fun c => ∀ a ∈ c.blocks, 1 < a) = 0)
 
 /-- **Signed count of compositions with parts at least $k$.** Let $k, n \ge 1$. Among the
 compositions of $n + k - 1$ whose parts are all at least $k$, the number with an odd number of
