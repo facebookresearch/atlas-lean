@@ -31,7 +31,7 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 public import Mathlib.NumberTheory.Height.NumberField
 import Mathlib.Algebra.Polynomial.FieldDivision
@@ -44,7 +44,7 @@ import MathlibExt.NumberTheory.Height.LogHeightAlgebraMap
 
 namespace AlgebraicCurve
 
-private theorem finiteDimensional_adjoin_range {ι : Type} [Fintype ι]
+private theorem finiteDimensional_adjoin_range {ι : Type*} [Finite ι]
     (x : ι → AlgebraicClosure ℚ) :
     FiniteDimensional ℚ (IntermediateField.adjoin ℚ (Set.range x)) :=
   IntermediateField.finiteDimensional_adjoin fun y _ =>
@@ -53,7 +53,7 @@ private theorem finiteDimensional_adjoin_range {ι : Type} [Fintype ι]
 /-- The absolute logarithmic height of a tuple of algebraic numbers: the
 logarithmic height of the tuple in the field it generates, normalised by
 the degree of that field over `ℚ`. -/
-public noncomputable def absLogHeight {ι : Type} [Fintype ι]
+public noncomputable def absLogHeight {ι : Type*} [Fintype ι]
     (x : ι → AlgebraicClosure ℚ) : ℝ :=
   haveI : FiniteDimensional ℚ (IntermediateField.adjoin ℚ (Set.range x)) :=
     IntermediateField.finiteDimensional_adjoin fun y _ =>
@@ -64,19 +64,19 @@ public noncomputable def absLogHeight {ι : Type} [Fintype ι]
       (⟨x i, IntermediateField.subset_adjoin ℚ (Set.range x) ⟨i, rfl⟩⟩ :
         IntermediateField.adjoin ℚ (Set.range x))
 
-private theorem absLogHeight_eq_of_mem {ι : Type} [Fintype ι]
+private theorem absLogHeight_eq_of_mem {ι : Type*} [Fintype ι]
     (x : ι → AlgebraicClosure ℚ) (L : IntermediateField ℚ (AlgebraicClosure ℚ))
     [NumberField L] (hx : ∀ i, x i ∈ L) :
     absLogHeight x
       = (Module.finrank ℚ L : ℝ)⁻¹ * Height.logHeight (fun i => (⟨x i, hx i⟩ : L)) := by
   classical
-  haveI : FiniteDimensional ℚ (IntermediateField.adjoin ℚ (Set.range x)) :=
+  have : FiniteDimensional ℚ (IntermediateField.adjoin ℚ (Set.range x)) :=
     finiteDimensional_adjoin_range x
-  haveI : NumberField (IntermediateField.adjoin ℚ (Set.range x)) := {}
-  haveI : NumberField L := {}
+  have : NumberField (IntermediateField.adjoin ℚ (Set.range x)) := {}
+  have : NumberField L := {}
   have hle : IntermediateField.adjoin ℚ (Set.range x) ≤ L :=
     IntermediateField.adjoin_le_iff.mpr (Set.range_subset_iff.mpr hx)
-  letI : Algebra (IntermediateField.adjoin ℚ (Set.range x)) L :=
+  let : Algebra (IntermediateField.adjoin ℚ (Set.range x)) L :=
     (IntermediateField.inclusion hle).toAlgebra
   have htup : (fun i => (⟨x i, hx i⟩ : L))
       = fun i => algebraMap (IntermediateField.adjoin ℚ (Set.range x)) L
@@ -101,11 +101,11 @@ private theorem absLogHeight_eq_of_mem {ι : Type} [Fintype ι]
 
 
 
-private theorem mwb1_absLogHeight_nonneg {ι : Type} [Fintype ι]
+private theorem mwb1_absLogHeight_nonneg {ι : Type*} [Fintype ι]
     (x : ι → AlgebraicClosure ℚ) : 0 ≤ absLogHeight x := by
-  haveI : FiniteDimensional ℚ (IntermediateField.adjoin ℚ (Set.range x)) :=
+  have : FiniteDimensional ℚ (IntermediateField.adjoin ℚ (Set.range x)) :=
     finiteDimensional_adjoin_range x
-  haveI : NumberField (IntermediateField.adjoin ℚ (Set.range x)) := {}
+  have : NumberField (IntermediateField.adjoin ℚ (Set.range x)) := {}
   unfold absLogHeight
   refine mul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _)) ?_
   exact Height.logHeight_nonneg (fun i =>
@@ -125,17 +125,6 @@ private lemma mwb1_iSup_coeff_eq_gaussNorm {M : Type*} [Field M] (v : AbsoluteVa
     · rw [hi, Polynomial.coeff_eq_zero_of_natDegree_lt (lt_of_le_of_lt hdeg hin)]
       simpa using Real.iSup_nonneg_of_nonnegHomClass v fun k : Fin (n + 1) ↦ f.coeff ↑k
 
-private lemma mwb1_gaussNorm_pow {M : Type*} [Field M] {v : AbsoluteValue M ℝ}
-    (hv : IsNonarchimedean (⇑v)) (f : Polynomial M) (m : ℕ) :
-    (f ^ m).gaussNorm v 1 = (f.gaussNorm v 1) ^ m := by
-  induction m with
-  | zero =>
-    simp only [pow_zero]
-    rw [show (1 : Polynomial M) = Polynomial.C 1 from (Polynomial.C_1).symm,
-      Polynomial.gaussNorm_C, map_one]
-  | succ k ih =>
-    rw [pow_succ, pow_succ, Polynomial.gaussNorm_mul (hna := hv) (hc := one_pos), ih]
-
 private lemma mwb1_gaussNorm_X_sub_C {M : Type*} [Field M] (v : AbsoluteValue M ℝ) (a : M) :
     (Polynomial.X - Polynomial.C a).gaussNorm v 1 = max (v a) 1 := by
   have hc0 : (Polynomial.X - Polynomial.C a).coeff 0 = -a := by simp
@@ -145,10 +134,10 @@ private lemma mwb1_gaussNorm_X_sub_C {M : Type*} [Field M] (v : AbsoluteValue M 
   rw [← mwb1_iSup_coeff_eq_gaussNorm v hdeg]
   refine le_antisymm (ciSup_le fun k ↦ ?_) ?_
   · fin_cases k
-    · show v ((Polynomial.X - Polynomial.C a).coeff 0) ≤ max (v a) 1
+    · change v ((Polynomial.X - Polynomial.C a).coeff 0) ≤ max (v a) 1
       rw [hc0, v.map_neg]
       exact le_max_left _ _
-    · show v ((Polynomial.X - Polynomial.C a).coeff 1) ≤ max (v a) 1
+    · change v ((Polynomial.X - Polynomial.C a).coeff 1) ≤ max (v a) 1
       rw [hc1, v.map_one]
       exact le_max_right _ _
   · have h0 : v ((Polynomial.X - Polynomial.C a).coeff ((0 : Fin 2) : ℕ)) = v a := by
@@ -170,80 +159,12 @@ private lemma mwb1_gaussNorm_prod {M : Type*} [Field M] {ι : Type*} {v : Absolu
     rw [show (1 : Polynomial M) = Polynomial.C 1 from (Polynomial.C_1).symm,
       Polynomial.gaussNorm_C, map_one]
   | insert a t ha ih =>
+    have := Polynomial.gaussNorm_isAbsoluteValue hv one_pos
     rw [Finset.prod_insert ha, Finset.prod_insert ha,
       Polynomial.gaussNorm_mul (hna := hv) (hc := one_pos),
-      mwb1_gaussNorm_pow hv, mwb1_gaussNorm_X_sub_C, ih]
-
-private lemma mwb1_mahlerMeasure_pow (f : Polynomial ℂ) (m : ℕ) :
-    (f ^ m).mahlerMeasure = f.mahlerMeasure ^ m := by
-  induction m with
-  | zero => simp [Polynomial.mahlerMeasure_one]
-  | succ k ih => rw [pow_succ, pow_succ, Polynomial.mahlerMeasure_mul, ih]
-
-private lemma mwb1_mahlerMeasure_prod {ι : Type*} (t : Finset ι) (f : ι → Polynomial ℂ) :
-    (∏ i ∈ t, f i).mahlerMeasure = ∏ i ∈ t, (f i).mahlerMeasure := by
-  classical
-  induction t using Finset.induction_on with
-  | empty => simp [Polynomial.mahlerMeasure_one]
-  | insert a t ha ih =>
-    rw [Finset.prod_insert ha, Finset.prod_insert ha, Polynomial.mahlerMeasure_mul, ih]
-
-private lemma mwb1_hfms_prod {M : Type*} [Field M] [NumberField M] {ι : Type*} (t : Finset ι)
-    (g : ι → NumberField.FinitePlace M → ℝ)
-    (hg : ∀ i ∈ t, Function.HasFiniteMulSupport (g i)) :
-    Function.HasFiniteMulSupport (fun v => ∏ i ∈ t, g i v) := by
-  classical
-  induction t using Finset.induction_on with
-  | empty =>
-    simp only [Finset.prod_empty]
-    exact Function.hasFiniteMulSupport_fun_one
-  | insert a t ha ih =>
-    have h1 := hg a (Finset.mem_insert_self a t)
-    have h2 := ih fun i hi => hg i (Finset.mem_insert_of_mem hi)
-    have : (fun v => ∏ i ∈ insert a t, g i v)
-        = fun v => g a v * ∏ i ∈ t, g i v := by
-      funext v
-      rw [Finset.prod_insert ha]
-    rw [this]
-    exact h1.mul h2
-
-private lemma mwb1_finset_finprod_swap {M : Type*} [Field M] [NumberField M] {ι : Type*}
-    (t : Finset ι) (g : ι → NumberField.FinitePlace M → ℝ)
-    (hg : ∀ i ∈ t, Function.HasFiniteMulSupport (g i)) :
-    ∏ i ∈ t, (∏ᶠ v, g i v) = ∏ᶠ v, ∏ i ∈ t, g i v := by
-  classical
-  induction t using Finset.induction_on with
-  | empty => simp
-  | insert a t ha ih =>
-    have h1 := hg a (Finset.mem_insert_self a t)
-    have h2 : ∀ i ∈ t, Function.HasFiniteMulSupport (g i) :=
-      fun i hi => hg i (Finset.mem_insert_of_mem hi)
-    rw [Finset.prod_insert ha, ih h2,
-      ← finprod_mul_distrib h1 (mwb1_hfms_prod t g h2)]
-    refine finprod_congr fun v => ?_
-    rw [Finset.prod_insert ha]
-
-private lemma mwb1_hfms_iSup {M : Type*} [Field M] [NumberField M] {ι : Type*} [Finite ι]
-    {x : ι → M} (hx : x ≠ 0) :
-    (fun v : NumberField.FinitePlace M ↦ ⨆ i, v (x i)).HasFiniteMulSupport := by
-  obtain ⟨i₀, hi₀⟩ : ∃ j, x j ≠ 0 := Function.ne_iff.mp hx
-  have : Nonempty ι := .intro i₀
-  have hne : Nonempty {j // x j ≠ 0} := ⟨⟨i₀, hi₀⟩⟩
-  have key : ∀ v : NumberField.FinitePlace M, (⨆ i, v (x i))
-      = ⨆ i : {j // x j ≠ 0}, v (x i.val) := by
-    intro v
-    refine le_antisymm (ciSup_le fun j ↦ ?_) (ciSup_le fun i ↦ Finite.le_ciSup_of_le i.val le_rfl)
-    rcases eq_or_ne (x j) 0 with h | h
-    · rw [h, map_zero]
-      exact Real.iSup_nonneg fun i ↦ apply_nonneg v _
-    · exact Finite.le_ciSup_of_le ⟨j, h⟩ le_rfl
-  have heq : (fun v : NumberField.FinitePlace M ↦ ⨆ i, v (x i)) =
-      fun v : NumberField.FinitePlace M ↦ ⨆ i : {j // x j ≠ 0}, v (x i.val) := funext key
-  rw [heq]
-  exact Function.HasFiniteMulSupport.iSup fun i ↦ NumberField.FinitePlace.hasFiniteMulSupport i.prop
+      IsAbsoluteValue.abv_pow (Polynomial.gaussNorm v 1), mwb1_gaussNorm_X_sub_C, ih]
 
 open Real in
-
 private lemma mwb1_arch_prod_le {M : Type*} [Field M] [NumberField M] {ι : Type*}
     (w : NumberField.InfinitePlace M) (t : Finset ι) (α : ι → M) (m : ι → ℕ) {n : ℕ}
     (hdegp : (∏ i ∈ t, (Polynomial.X - Polynomial.C (α i)) ^ m i).natDegree ≤ n) :
@@ -260,20 +181,19 @@ private lemma mwb1_arch_prod_le {M : Type*} [Field M] [NumberField M] {ι : Type
   have hPdeg : (p.map φ).natDegree ≤ n := by
     rw [Polynomial.natDegree_map_eq_of_injective φ.injective]
     exact hdegp
-
   have hmap : p.map φ = ∏ i ∈ t, (Polynomial.X - Polynomial.C (φ (α i))) ^ m i := by
     rw [hpdef, Polynomial.map_prod]
     refine Finset.prod_congr rfl fun i _ => ?_
     rw [Polynomial.map_pow, Polynomial.map_sub, Polynomial.map_X, Polynomial.map_C]
-
   have hM : (p.map φ).mahlerMeasure = ∏ i ∈ t, max (w (α i)) 1 ^ m i := by
-    rw [hmap, mwb1_mahlerMeasure_prod]
+    rw [hmap, Finset.prod_eq_multiset_prod, Polynomial.prod_mahlerMeasure_eq_mahlerMeasure_prod,
+      Multiset.map_map, ← Finset.prod_eq_multiset_prod]
     refine Finset.prod_congr rfl fun i _ => ?_
-    rw [mwb1_mahlerMeasure_pow, Polynomial.mahlerMeasure_X_sub_C,
-      w.norm_embedding_eq, max_comm]
-
+    rw [Function.comp_apply, ← Multiset.prod_replicate,
+      Polynomial.prod_mahlerMeasure_eq_mahlerMeasure_prod, Multiset.map_replicate,
+      Multiset.prod_replicate, Polynomial.mahlerMeasure_X_sub_C, w.norm_embedding_eq, max_comm]
   have hsup : (p.map φ).supNorm ≤ ⨆ k : Fin (n + 1), w (p.coeff k) := by
-    rw [Polynomial.supNorm_def', dif_pos (Polynomial.support_nonempty.mpr hP0)]
+    rw [Polynomial.supNorm_def', dite_eq_left (Polynomial.support_nonempty.mpr hP0)]
     refine Finset.sup'_le _ _ fun i hi ↦ ?_
     have hin : i < n + 1 :=
       Nat.lt_succ_of_le ((Polynomial.le_natDegree_of_mem_supp i hi).trans hPdeg)
@@ -283,7 +203,6 @@ private lemma mwb1_arch_prod_le {M : Type*} [Field M] [NumberField M] {ι : Type
           simpa [Function.comp_apply] using hcoe
       _ ≤ ⨆ k : Fin (n + 1), w (p.coeff ↑k) :=
           Finite.le_ciSup (fun k : Fin (n + 1) ↦ w (p.coeff ↑k)) ⟨i, hin⟩
-
   have hml : (p.map φ).mahlerMeasure ≤ Real.sqrt (n + 1) * (p.map φ).supNorm := by
     refine (Polynomial.mahlerMeasure_le_sqrt_natDegree_add_one_mul_supNorm _).trans ?_
     have hnn : ((p.map φ).natDegree : ℝ) + 1 ≤ (n : ℝ) + 1 := by
@@ -295,7 +214,6 @@ private lemma mwb1_arch_prod_le {M : Type*} [Field M] [NumberField M] {ι : Type
         mul_le_mul_of_nonneg_left hsup (Real.sqrt_nonneg _)
 
 open Real in
-
 private lemma mwb1_srh_mul {M : Type*} [Field M] [NumberField M] {ι : Type*}
     (t : Finset ι) (α : ι → M) (m : ι → ℕ) {n : ℕ}
     (hdeg : ∑ i ∈ t, m i ≤ n) :
@@ -318,28 +236,14 @@ private lemma mwb1_srh_mul {M : Type*} [Field M] [NumberField M] {ι : Type*}
   have htp : (fun k : Fin (n + 1) => p.coeff k) ≠ 0 := by
     refine Function.ne_iff.mpr ⟨⟨p.natDegree, Nat.lt_succ_of_le hdegp⟩, ?_⟩
     simp [hp.coeff_natDegree]
-
-  have hBsupp : ∀ i : ι, Function.HasFiniteMulSupport
-      (fun v : NumberField.FinitePlace M => max (v (α i)) 1 ^ m i) := by
+  have hmax : ∀ i : ι, Function.HasFiniteMulSupport
+      (fun v : NumberField.FinitePlace M => max (v (α i)) 1) := by
     intro i
-    refine Function.HasFiniteMulSupport.pow ?_ _
-    have hx : (fun k : Fin 2 => (![α i, 1] : Fin 2 → M) k) ≠ 0 := by
-      refine Function.ne_iff.mpr ⟨1, ?_⟩
-      simp
-    have h := mwb1_hfms_iSup (M := M) hx
-    have heq : (fun v : NumberField.FinitePlace M ↦ ⨆ k : Fin 2, v (![α i, 1] k))
-        = fun v : NumberField.FinitePlace M => max (v (α i)) 1 := by
-      funext v
-      refine le_antisymm (ciSup_le fun k => ?_) ?_
-      · fin_cases k
-        · simp
-        · simp
-      · rcases max_cases (v (α i)) 1 with ⟨hm, _⟩ | ⟨hm, _⟩ <;> rw [hm]
-        · exact Finite.le_ciSup_of_le (0 : Fin 2) (by simp)
-        · exact Finite.le_ciSup_of_le (1 : Fin 2) (by simp [map_one])
-    rw [← heq]
-    exact h
-
+    rcases eq_or_ne (α i) 0 with h | h
+    · simp only [h, map_zero, zero_le_one, max_eq_right]
+      exact Function.hasFiniteMulSupport_fun_one
+    · exact (NumberField.FinitePlace.hasFiniteMulSupport h).max
+        Function.hasFiniteMulSupport_fun_one
   have hroot : ∀ i ∈ t, Height.mulHeight₁ (α i) ^ m i
       = (∏ w : NumberField.InfinitePlace M, (max (w (α i)) 1 ^ m i) ^ w.mult) *
         ∏ᶠ v : NumberField.FinitePlace M, max (v (α i)) 1 ^ m i := by
@@ -349,24 +253,7 @@ private lemma mwb1_srh_mul {M : Type*} [Field M] [NumberField M] {ι : Type*}
     · rw [← Finset.prod_pow]
       refine Finset.prod_congr rfl fun w _ => ?_
       rw [← pow_mul, ← pow_mul, mul_comm (m i) w.mult]
-    · refine finprod_pow ?_ _
-      have hx : (fun k : Fin 2 => (![α i, 1] : Fin 2 → M) k) ≠ 0 := by
-        refine Function.ne_iff.mpr ⟨1, ?_⟩
-        simp
-      have h := mwb1_hfms_iSup (M := M) hx
-      have heq : (fun v : NumberField.FinitePlace M ↦ ⨆ k : Fin 2, v (![α i, 1] k))
-          = fun v : NumberField.FinitePlace M => max (v (α i)) 1 := by
-        funext v
-        refine le_antisymm (ciSup_le fun k => ?_) ?_
-        · fin_cases k
-          · simp
-          · simp
-        · rcases max_cases (v (α i)) 1 with ⟨hm, _⟩ | ⟨hm, _⟩ <;> rw [hm]
-          · exact Finite.le_ciSup_of_le (0 : Fin 2) (by simp)
-          · exact Finite.le_ciSup_of_le (1 : Fin 2) (by simp [map_one])
-      rw [← heq]
-      exact h
-
+    · exact finprod_pow (hmax i) _
   have hsplit : ∏ i ∈ t, Height.mulHeight₁ (α i) ^ m i
       = (∏ w : NumberField.InfinitePlace M, (∏ i ∈ t, max (w (α i)) 1 ^ m i) ^ w.mult) *
         ∏ᶠ v : NumberField.FinitePlace M, ∏ i ∈ t, max (v (α i)) 1 ^ m i := by
@@ -375,9 +262,8 @@ private lemma mwb1_srh_mul {M : Type*} [Field M] [NumberField M] {ι : Type*}
     · rw [Finset.prod_comm]
       refine Finset.prod_congr rfl fun w _ => ?_
       rw [← Finset.prod_pow]
-    · exact mwb1_finset_finprod_swap t _ fun i _ => hBsupp i
+    · exact prod_finprod_comm t _ fun i _ => (hmax i).pow _
   rw [hsplit]
-
   have hfin : (∏ᶠ v : NumberField.FinitePlace M, ∏ i ∈ t, max (v (α i)) 1 ^ m i)
       = ∏ᶠ v : NumberField.FinitePlace M, ⨆ k : Fin (n + 1), v (p.coeff k) := by
     refine finprod_congr fun v => ?_
@@ -398,7 +284,6 @@ private lemma mwb1_srh_mul {M : Type*} [Field M] [NumberField M] {ι : Type*}
           refine iSup_congr fun k => ?_
           rw [h3]
   rw [hfin]
-
   have harch : (∏ w : NumberField.InfinitePlace M, (∏ i ∈ t, max (w (α i)) 1 ^ m i) ^ w.mult)
       ≤ ∏ w : NumberField.InfinitePlace M,
           (Real.sqrt (n + 1) * ⨆ k : Fin (n + 1), w (p.coeff k)) ^ w.mult := by
@@ -428,7 +313,6 @@ private lemma mwb1_srh_mul {M : Type*} [Field M] [NumberField M] {ι : Type*}
         rw [← NumberField.mulHeight_eq htp]
 
 open Real in
-
 private theorem mwb1_srh_abs {ι : Type*} (t : Finset ι) (α : ι → AlgebraicClosure ℚ)
     (m : ι → ℕ) {n : ℕ} (hdeg : ∑ i ∈ t, m i ≤ n) :
     ∑ i ∈ t, (m i : ℝ) * absLogHeight ![α i, 1]
@@ -436,18 +320,16 @@ private theorem mwb1_srh_abs {ι : Type*} (t : Finset ι) (α : ι → Algebraic
           (∏ i ∈ t, (Polynomial.X - Polynomial.C (α i)) ^ m i).coeff k)
         + Real.log (Real.sqrt (n + 1)) := by
   classical
-
   set S : Set (AlgebraicClosure ℚ) := ↑(t.image α) with hS
-  haveI hfd : FiniteDimensional ℚ (IntermediateField.adjoin ℚ S) :=
+  have hfd : FiniteDimensional ℚ (IntermediateField.adjoin ℚ S) :=
     IntermediateField.finiteDimensional_adjoin fun z _ =>
       ((AlgebraicClosure.isAlgebraic ℚ).isAlgebraic z).isIntegral
   set M := IntermediateField.adjoin ℚ S with hM
-  haveI : NumberField M := {}
+  have : NumberField M := {}
   have hmem_α : ∀ i ∈ t, α i ∈ M := fun i hi =>
     IntermediateField.subset_adjoin ℚ S (by
       rw [hS]
       exact_mod_cast Finset.mem_image_of_mem α hi)
-
   set p' : Polynomial M := ∏ j ∈ t.attach, (Polynomial.X - Polynomial.C
     (⟨α j.val, hmem_α j.val j.property⟩ : M)) ^ m j.val with hp'def
   have hmap : Polynomial.map (algebraMap M (AlgebraicClosure ℚ)) p'
@@ -465,7 +347,6 @@ private theorem mwb1_srh_abs {ι : Type*} (t : Finset ι) (α : ι → Algebraic
   have hd1 : (1 : ℝ) ≤ (Module.finrank ℚ M : ℝ) := by
     exact_mod_cast Module.finrank_pos (R := ℚ) (M := M)
   have hd0 : (0 : ℝ) < (Module.finrank ℚ M : ℝ) := lt_of_lt_of_le zero_lt_one hd1
-
   have hcoeff_eq : absLogHeight (fun k : Fin (n + 1) =>
       (∏ i ∈ t, (Polynomial.X - Polynomial.C (α i)) ^ m i).coeff k)
       = (Module.finrank ℚ M : ℝ)⁻¹ * Height.logHeight fun k : Fin (n + 1) => p'.coeff k := by
@@ -473,11 +354,10 @@ private theorem mwb1_srh_abs {ι : Type*} (t : Finset ι) (α : ι → Algebraic
     congr 1
     refine congrArg _ (funext fun k => ?_)
     refine Subtype.ext ?_
-    show (∏ i ∈ t, (Polynomial.X - Polynomial.C (α i)) ^ m i).coeff k
+    change (∏ i ∈ t, (Polynomial.X - Polynomial.C (α i)) ^ m i).coeff k
       = ((p'.coeff k : M) : AlgebraicClosure ℚ)
     rw [← hmap, Polynomial.coeff_map]
     rfl
-
   have hroot_eq : ∀ i (hi : i ∈ t), absLogHeight ![α i, 1]
       = (Module.finrank ℚ M : ℝ)⁻¹ *
           Height.logHeight₁ (⟨α i, hmem_α i hi⟩ : M) := by
@@ -496,7 +376,6 @@ private theorem mwb1_srh_abs {ι : Type*} (t : Finset ι) (α : ι → Algebraic
       · rfl
       · exact Subtype.ext (by simp)
     rw [htup, ← Height.logHeight₁_eq_logHeight]
-
   have hsum : ∑ i ∈ t, (m i : ℝ) * absLogHeight ![α i, 1]
       = (Module.finrank ℚ M : ℝ)⁻¹ * ∑ j ∈ t.attach,
           (m j.val : ℝ) * Height.logHeight₁ (⟨α j.val, hmem_α j.val j.property⟩ : M) := by
@@ -504,7 +383,6 @@ private theorem mwb1_srh_abs {ι : Type*} (t : Finset ι) (α : ι → Algebraic
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [hroot_eq j.val j.property]
     ring
-
   have hdeg' : ∑ j ∈ t.attach, m j.val ≤ n := by
     rw [Finset.sum_attach t m]
     exact hdeg
@@ -542,7 +420,6 @@ private theorem mwb1_srh_abs {ι : Type*} (t : Finset ι) (α : ι → Algebraic
           + Height.logHeight fun k : Fin (n + 1) => p'.coeff k := by
           rw [Real.log_mul (by positivity) (Height.mulHeight_pos _).ne',
             Real.log_pow, Height.logHeight_eq_log_mulHeight]
-
   rw [hsum, hcoeff_eq]
   rw [NumberField.totalWeight_eq_finrank] at hlogsrh
   have h := mul_le_mul_of_nonneg_left hlogsrh (inv_nonneg.mpr hd0.le)
@@ -607,9 +484,9 @@ public theorem absLogHeight_pair_eq_absLogHeight₁ (z : AlgebraicClosure ℚ) :
     absLogHeight ![z, 1] = NumberField.absLogHeight₁ z := by
   classical
   have hz : IsIntegral ℚ z := ((AlgebraicClosure.isAlgebraic ℚ).isAlgebraic z).isIntegral
-  haveI : FiniteDimensional ℚ (IntermediateField.adjoin ℚ {z}) :=
+  have : FiniteDimensional ℚ (IntermediateField.adjoin ℚ {z}) :=
     IntermediateField.adjoin.finiteDimensional hz
-  haveI : NumberField (IntermediateField.adjoin ℚ {z}) := {}
+  have : NumberField (IntermediateField.adjoin ℚ {z}) := {}
   have hmem : ∀ i, ![z, (1 : AlgebraicClosure ℚ)] i ∈
       IntermediateField.adjoin ℚ {z} := by
     intro i
@@ -617,7 +494,7 @@ public theorem absLogHeight_pair_eq_absLogHeight₁ (z : AlgebraicClosure ℚ) :
     · exact IntermediateField.subset_adjoin ℚ {z} (Set.mem_singleton z)
     · exact one_mem _
   rw [absLogHeight_eq_of_mem ![z, 1] (IntermediateField.adjoin ℚ {z}) hmem,
-    NumberField.absLogHeight₁, NumberField.absMulHeight₁, dif_pos hz,
+    NumberField.absLogHeight₁, NumberField.absMulHeight₁, dite_eq_left hz,
     Real.log_rpow (Height.mulHeight₁_pos _),
     ← Height.logHeight₁_eq_log_mulHeight₁, Height.logHeight₁_eq_logHeight]
   congr 2
