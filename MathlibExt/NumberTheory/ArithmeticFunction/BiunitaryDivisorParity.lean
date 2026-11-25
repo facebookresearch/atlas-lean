@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisor
 public import Mathlib.Algebra.Ring.Parity
+public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Data.ZMod.Basic
 import MathlibExt.NumberTheory.ArithmeticFunction.UnitaryConvolution
@@ -219,6 +220,24 @@ private theorem sigmaBiunitary_mul_of_coprime {m n : ℕ} (hmn : m.Coprime n)
   · intro _ _
     rfl
 
+/-- The sum of biunitary divisors, bundled as a natural-valued arithmetic function. -/
+@[expose] public def sigmaBiunitaryArithmeticFunction : ArithmeticFunction ℕ :=
+  ⟨sigmaBiunitary, sigmaBiunitary_zero⟩
+
+@[simp] public theorem sigmaBiunitaryArithmeticFunction_apply (n : ℕ) :
+    sigmaBiunitaryArithmeticFunction n = sigmaBiunitary n := rfl
+
+/-- **Multiplicativity of the biunitary divisor sum.** The biunitary divisor sum satisfies
+$\sigma^{**}(1) = 1$. For coprime natural numbers $m$ and $n$, it satisfies
+$\sigma^{**}(mn) = \sigma^{**}(m)\sigma^{**}(n)$.
+
+Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
+Journal of Integer Sequences 28 (2025), Article 25.4.5, Section 2 (after Wall). -/
+public theorem isMultiplicative_sigmaBiunitaryArithmeticFunction :
+    sigmaBiunitaryArithmeticFunction.IsMultiplicative :=
+  ArithmeticFunction.IsMultiplicative.iff_ne_zero.mpr
+    ⟨sigmaBiunitary_one, fun hm hn hmn ↦ sigmaBiunitary_mul_of_coprime hmn hm hn⟩
+
 /-- **Divisibility of the biunitary divisor sum of an even number by a power of two.** For every
 positive even natural number $n$, writing $\omega(n)$ for the number of distinct prime factors of
 $n$, the power $2^{\omega(n) - 1}$ divides the biunitary divisor sum $\sigma^{**}(n)$.
@@ -227,15 +246,13 @@ Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Cert
 Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 2 (`jis-2025-25.4.5-lem-2`). -/
 public theorem two_pow_card_primeFactors_sub_one_dvd_sigmaBiunitary_of_even (n : ℕ)
     (hn : 0 < n) (he : Even n) : 2 ^ (n.primeFactors.card - 1) ∣ sigmaBiunitary n := by
-  let f : ArithmeticFunction ℕ := ⟨sigmaBiunitary, sigmaBiunitary_zero⟩
-  have hf : f.IsMultiplicative := ArithmeticFunction.IsMultiplicative.iff_ne_zero.mpr
-    ⟨sigmaBiunitary_one, fun hm hn hmn ↦ sigmaBiunitary_mul_of_coprime hmn hm hn⟩
   have hprod : sigmaBiunitary n = ∏ p ∈ n.primeFactors, sigmaBiunitary (p ^ n.factorization p) := by
     calc
-      sigmaBiunitary n = f (∏ p ∈ n.primeFactors, p ^ n.factorization p) := by
+      sigmaBiunitary n = sigmaBiunitaryArithmeticFunction (∏ p ∈ n.primeFactors,
+          p ^ n.factorization p) := by
         rw [← Nat.prod_primeFactors_pow_factorization hn.ne']
         rfl
-      _ = _ := hf.map_prod _ _ fun p hp q hq hpq ↦
+      _ = _ := isMultiplicative_sigmaBiunitaryArithmeticFunction.map_prod _ _ fun p hp q hq hpq ↦
         ((Nat.coprime_primes (Nat.prime_of_mem_primeFactors hp)
           (Nat.prime_of_mem_primeFactors hq)).mpr hpq).pow _ _
   have htwo := Nat.prime_two.mem_primeFactors (even_iff_two_dvd.mp he) hn.ne'

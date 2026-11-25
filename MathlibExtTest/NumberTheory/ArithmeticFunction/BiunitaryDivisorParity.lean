@@ -44,6 +44,12 @@ example : sigmaBiunitary 12 = 20 := by decide
 example : ¬ Odd (sigmaBiunitary 12) :=
   not_odd_sigmaBiunitary_of_three_dvd 12 (by decide) (by decide)
 
+-- A client can use the public multiplicativity theorem through the standard API.
+example : sigmaBiunitary (9 * 10) = sigmaBiunitary 9 * sigmaBiunitary 10 := by
+  simpa only [sigmaBiunitaryArithmeticFunction_apply] using
+    isMultiplicative_sigmaBiunitaryArithmeticFunction.map_mul_of_coprime
+      (by decide : Nat.Coprime 9 10)
+
 -- `90 = 2 * 3^2 * 5` has two distinct odd prime factors; the bound is sharp.
 example : 4 ∣ sigmaBiunitary 90 := by
   have hcard : (90 : ℕ).primeFactors.card = 3 := by
