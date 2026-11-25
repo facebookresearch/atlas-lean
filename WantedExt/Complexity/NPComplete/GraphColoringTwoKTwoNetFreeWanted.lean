@@ -22,7 +22,7 @@ doi:10.1002/jgt.22028, arXiv:1407.1482, Theorem 17 (Schindl's theorem).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.Hasse

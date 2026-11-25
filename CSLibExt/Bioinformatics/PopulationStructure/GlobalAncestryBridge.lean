@@ -31,7 +31,8 @@ variable {I J K : Type*} [Fintype K]
 `Q` and ancestral frequencies `F`, viewed for f-statistics over loci:
 individuals `i` (as `Sum.inl i`) have frequency `∑ k, Q i k * F k j` at locus
 `j`, and ancestral populations `k` (as `Sum.inr k`) have frequency `F k j`.
-No positivity or boundedness assumption is part of the definition. -/
+No positivity or boundedness assumption is part of the definition; in use, each `Q i` is a vector
+of nonnegative ancestry proportions summing to `1` and `0 ≤ F k j ≤ 1`. -/
 noncomputable def ancestryFreqOf (Q : I → K → ℝ) (F : K → J → ℝ) : I ⊕ K → J → ℝ
   | Sum.inl i => fun j => ∑ k, Q i k * F k j
   | Sum.inr k => F k
@@ -43,7 +44,9 @@ noncomputable def ancestryFreqOf (Q : I → K → ℝ) (F : K → J → ℝ) : I
     ancestryFreqOf Q F (Sum.inr k) = F k := rfl
 
 /-- Zero private drift for raw global-ancestry data: an individual's
-frequency is exactly the `Q i`-mixture of the ancestral frequencies. -/
+frequency is exactly the combination of the ancestral frequencies with
+coefficients `Q i k` (of any sign and sum; a mixture when they are
+nonnegative and sum to `1`). -/
 theorem ancestryFreqOf_inl_eq_sum (Q : I → K → ℝ) (F : K → J → ℝ) (i : I) (j : J) :
     ancestryFreqOf Q F (Sum.inl i) j = ∑ k, Q i k * ancestryFreqOf Q F (Sum.inr k) j := rfl
 

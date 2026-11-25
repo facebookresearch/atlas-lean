@@ -20,12 +20,13 @@ The optimum is at `0` in `EuclideanSpace ℝ (Fin n)`; the phenotype is a point 
 (at distance `‖a‖` from the optimum). A mutation of size `r` in a uniformly random
 direction is modelled through the Gaussian representation of the uniform
 distribution on the sphere: for `G` with the standard Gaussian law, the direction
-is `‖G‖⁻¹ • G` (which is `0` on the null event `G = 0`). The mutant is beneficial
-iff `⟪a, u⟫ < -r / 2` for the unit direction `u`; the beneficial probability
+is `‖G‖⁻¹ • G` (which is `0` on the event `G = 0`, null when `n ≥ 1`; in dimension `0`
+the only point is `0` and the beneficial probability is `0`). For `r > 0` the mutant is
+beneficial iff `⟪a, u⟫ < -r / 2` for the unit direction `u`; the beneficial probability
 depends only on `‖a‖`, is `1/2` below the one-dimensional cutoff `r < 2‖a‖`
-(and `0` beyond it), and in the large-dimension limit with
-`x = r √n / (2z)` held fixed (`z = ‖a‖`) tends to `1 - Φ(x)` for `Φ` the
-standard normal cdf (Fisher 1930; Orr 1998).
+(and `0` beyond it) when `r > 0` and `‖a‖ > 0`, and, for fixed `z = ‖a‖ > 0` and `x > 0`,
+in the large-dimension limit with `x = r √n / (2z)` held fixed tends to `1 - Φ(x)` for
+`Φ` the standard normal cdf (Fisher 1930; Orr 1998).
 
 ## Main results
 
@@ -55,14 +56,19 @@ namespace MathlibExt.Biology.PopulationGenetics.Classical.FisherGeometric
 variable {n : ℕ}
 
 /-- The random direction obtained from a Gaussian vector `G` by normalization
-(the Gaussian representation of a uniform direction on the unit sphere). -/
+(the Gaussian representation of a uniform direction on the unit sphere). For
+`G = 0` the convention `0⁻¹ = 0` makes it `0`, an event of probability `0`
+under the standard Gaussian law when `n ≥ 1`. -/
 noncomputable def gaussDirection (G : EuclideanSpace ℝ (Fin n)) :
     EuclideanSpace ℝ (Fin n) :=
   ‖G‖⁻¹ • G
 
 /-- The probability that a mutation of size `r` in a uniformly random direction
 (modelled by the Gaussian representation) moves the phenotype `a` strictly closer
-to the optimum at `0`. -/
+to the optimum at `0`. This reading needs `n ≥ 1`, where `G = 0` has probability `0`, and
+`r ≥ 0` (for `r < 0` the displacement has length `|r|` when `G ≠ 0`, so almost surely). In
+dimension `0` the space is `{0}`, `G = 0` surely, `gaussDirection G = 0` by the convention
+`0⁻¹ = 0`, the event is empty and the probability is `0`. -/
 noncomputable def beneficialProb (a : EuclideanSpace ℝ (Fin n)) (r : ℝ) : ℝ :=
   (stdGaussian (EuclideanSpace ℝ (Fin n))).real
     {G | ‖a + r • gaussDirection G‖ < ‖a‖}
@@ -78,7 +84,10 @@ theorem norm_add_smul_lt_iff_inner_lt {a u : EuclideanSpace ℝ (Fin n)} {r : �
     real_inner_smul_right, hu, Real.norm_eq_abs, abs_of_pos hr]
   constructor <;> intro h <;> nlinarith
 
-/-- The criterion in the `cos θ` form, with `z = ‖a‖` the distance to the optimum. -/
+/-- The criterion in the `cos θ` form: for a mutation size `r > 0`, a unit direction `u`
+(`‖u‖ = 1`) and `z = ‖a‖ > 0` the distance to the optimum, the mutant is closer to the optimum
+iff `⟪a, u⟫ / z < -r / (2 * z)`. Here `cos θ = ⟪a, u⟫ / z`, with `θ` the angle between `u` and
+the outward radial direction `a / z` (from the optimum to the phenotype). -/
 theorem norm_add_smul_lt_iff_div_lt {a u : EuclideanSpace ℝ (Fin n)} {r z : ℝ}
     (hr : 0 < r) (hz : 0 < z) (ha : ‖a‖ = z) (hu : ‖u‖ = 1) :
     ‖a + r • u‖ < ‖a‖ ↔ ⟪a, u⟫ / z < -r / (2 * z) := by
@@ -176,7 +185,7 @@ private theorem beneficialProb_eq_coord {m : ℕ} (i : Fin m) {a : EuclideanSpac
     rw [e1, neg_div, neg_lt_neg_iff, lt_div_iff₀ hGpos, hR]
     constructor <;> intro h <;> linarith
 
-/-- **One trait, exact value.** In dimension `1`, a mutation of size `r` at distance
+/-- **One trait, exact value.** In dimension `1`, a mutation of size `r > 0` at distance
 `‖a‖ > 0` from the optimum is beneficial with probability `1 / 2` if `r < 2‖a‖` and
 with probability `0` otherwise. -/
 theorem beneficialProb_one_dim {a : EuclideanSpace ℝ (Fin 1)} {r : ℝ}

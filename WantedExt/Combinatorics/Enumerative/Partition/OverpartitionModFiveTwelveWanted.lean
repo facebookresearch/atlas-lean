@@ -17,15 +17,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Theorem 1: for all `α, n ≥ 0`, the overpartition function `p̄` satisfies
-`p̄(3^{8α+7} (24n + 5)) ≡ p̄(3^{8α+7} (24n + 13)) ≡ 0 (mod 512)`. `p̄(m)` is the standard
-number of overpartitions of `m`, `Nat.card (Nat.Overpartition m)`. The record's flattened
-`38α+7` is read as the exponent `3^{8α+7}` and its `p` as `p̄`, the function in the title. The
-paper's proof works inside the progression `8n + 7` (from `p̄(8n + 7)` to `p̄(24n + 15)` and
-`p̄(24(3n + 2) + 15)`), which contains both arguments under this reading but not under the
-other parse `(24α + 7)(24n + 5)` (`35 ≡ 3 mod 8`; `p̄(35) ≡ 304 mod 512`). At `α = 0` the
-reading is checked exactly for `n ≤ 3`, while the neighbouring residues `24n + 1, 7, 17` and
-the smaller power `3^6` give nonzero residues mod 512.
+/-- **Liang's congruences modulo 512 for overpartitions.** For all natural numbers $\alpha$ and $n$,
+the number $\overline{p}(m)$ of overpartitions of $m$ satisfies
+$\overline{p}(3^{8\alpha+7}(24n+5)) \equiv 0 \pmod{512}$ and
+$\overline{p}(3^{8\alpha+7}(24n+13)) \equiv 0 \pmod{512}$.
 
 Source: Xue Liang, *Congruences Modulo 512 for the Overpartition Function*, INTEGERS 25 (2025),
 Article A76, Theorem 1 (`integers-2025-A76-thm-1`). -/
@@ -33,9 +28,14 @@ public theorem_wanted overpartition_three_pow_congr_zero_mod_512 (α n : ℕ) :
     512 ∣ Nat.card (Nat.Overpartition (3 ^ (8 * α + 7) * (24 * n + 5))) ∧
       512 ∣ Nat.card (Nat.Overpartition (3 ^ (8 * α + 7) * (24 * n + 13)))
 
-/-- Lemma 1, identity (10): For `‖q‖ < 1`, with `E(q^k) = (q^k; q^k)_∞`
-(`QPochhammer.qPochhammerInf (q ^ k) (q ^ k)`, written `E k`; `E 0 = 1` is unused),
-`E(q⁶)³ E(q⁹)⁶ / (E(q³)³ E(q¹⁸)³) = E(q⁶)⁸ E(q⁹) / (E(q³)⁴ E(q¹⁸)²) - q³ E(q¹⁸)⁶ / E(q⁹)³`.
+/-- **Eta-quotient identity in the powers $q^3$, $q^6$, $q^9$ and $q^{18}$.** Let $q$ be a complex
+number with $|q| < 1$, and for each integer $k \ge 1$ write $E_k = (q^k; q^k)_\infty$, the
+infinite q-Pochhammer symbol $\prod_{n=0}^{\infty} (1 - q^{k(n+1)})$. Then
+
+$$
+\frac{E_6^3 E_9^6}{E_3^3 E_{18}^3} =
+  \frac{E_6^8 E_9}{E_3^4 E_{18}^2} - q^3 \, \frac{E_{18}^6}{E_9^3}.
+$$
 
 Source: Xue Liang, *Congruences Modulo 512 for the Overpartition Function*, INTEGERS 25 (2025),
 Article A76, Lemma 1, identity (10) (`integers-2025-A76-lem-1`). Identity (9) of the same
@@ -47,10 +47,14 @@ public theorem_wanted eulerFunction_six_cube_nine_six_div_eq (q : ℂ) (hq : ‖
     E 6 ^ 3 * E 9 ^ 6 / (E 3 ^ 3 * E 18 ^ 3) =
       E 6 ^ 8 * E 9 / (E 3 ^ 4 * E 18 ^ 2) - q ^ 3 * (E 18 ^ 6 / E 9 ^ 3)
 
-/-- Lemma 1, identity (11): For `‖q‖ < 1`, with `E(q^k) = (q^k; q^k)_∞`
-(`QPochhammer.qPochhammerInf (q ^ k) (q ^ k)`, written `E k`; `E 0 = 1` is unused),
-`E(q) / E(q²)² = E(q³)² E(q⁹)³ / E(q⁶)⁶ - q E(q³)³ E(q¹⁸)³ / E(q⁶)⁷
-  + q² E(q³)⁴ E(q¹⁸)⁶ / (E(q⁶)⁸ E(q⁹)³)`.
+/-- **Three-dissection of $(q;q)_\infty / (q^2;q^2)_\infty^2$.** Let $q$ be a complex number
+with $|q| < 1$, and for each integer $k \ge 1$ write $E_k = (q^k; q^k)_\infty$, the infinite
+q-Pochhammer symbol $\prod_{n=0}^{\infty} (1 - q^{k(n+1)})$. Then
+
+$$
+\frac{E_1}{E_2^2} = \frac{E_3^2 E_9^3}{E_6^6} - q \, \frac{E_3^3 E_{18}^3}{E_6^7} +
+  q^2 \, \frac{E_3^4 E_{18}^6}{E_6^8 E_9^3}.
+$$
 
 Source: Xue Liang, *Congruences Modulo 512 for the Overpartition Function*, INTEGERS 25 (2025),
 Article A76, Lemma 1, identity (11) (`integers-2025-A76-lem-1`). -/

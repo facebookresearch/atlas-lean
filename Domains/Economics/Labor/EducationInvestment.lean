@@ -60,7 +60,8 @@ noncomputable def valueWithoutEducation (r : ℝ) (T : ℕ) (wN : ℕ → ℝ) :
   presentValue r T wN
 
 /-- Under the fixed model (horizon `T`, rate `r`, wage streams `wE`, `wN`, cost stream `c`),
-education is strictly preferred when its lifetime value exceeds the no-education value. -/
+education is strictly preferred when its lifetime value exceeds the no-education value. The model
+takes `-1 < r`; at `r = -1` the present values follow the convention of `presentValue`. -/
 def PrefersEducation (r : ℝ) (T : ℕ) (wE wN c : ℕ → ℝ) : Prop :=
   valueWithoutEducation r T wN < valueWithEducation r T wE c
 

@@ -194,11 +194,14 @@ namespace Chemistry.Quantum.OneDimensionalModels
 
 /-! ## Section A: particle in a box. -/
 
-/-- `n`-th particle-in-a-box eigenfunction (real-valued). -/
+/-- `n`-th particle-in-a-box eigenfunction (real-valued) for `n ≥ 1` and `L > 0`; for `n = 0` or
+`L ≤ 0` it is identically zero. -/
 noncomputable def boxFunction (n : ℕ) (L : ℝ) (x : ℝ) : ℝ :=
   Real.sqrt (2 / L) * Real.sin (↑n * Real.pi * x / L)
 
-/-- Box energy `n^2 h^2 / (8 m L^2)` with `h = 2πħ`. -/
+/-- Box energy `n^2 h^2 / (8 m L^2)` with `h = 2πħ`. It is defined for every real `m` and `L`:
+for `m = 0` or `L = 0` the convention `x / 0 = 0` makes it `0`. The intended domain is `m > 0`
+and `L > 0`. -/
 noncomputable def boxEnergy (n : ℕ) (L m ħ : ℝ) : ℝ :=
   (↑n ^ 2 * (2 * Real.pi * ħ) ^ 2) / (8 * m * L ^ 2)
 
@@ -296,8 +299,9 @@ private lemma box_deriv_second (n : ℕ) (L : ℝ) (x : ℝ) :
   have h := h0.deriv
   exact h.trans (by ring)
 
-/-- Free differential-expression identity: the sine extension `boxFunction n L` of the `n`-th
-box state to all of `ℝ` satisfies `-(ħ^2/2m) ψ'' = E_n ψ` at every real `x` (uses `deriv`
+/-- Free differential-expression identity: for `n ≥ 1`, `L > 0`, `m > 0`, the sine extension
+`boxFunction n L` of the `n`-th box state to all of `ℝ` satisfies `-(ħ^2/2m) ψ'' = E_n ψ` at
+every real `x` (uses `deriv`
 twice; Mathlib `HasDerivAt.deriv`). Outside `[0, L]` this is a property of the extension, not
 of the box Hamiltonian, whose states vanish there; `box_eigen_equation` is the eigen-equation
 on the interior. -/
@@ -313,13 +317,14 @@ lemma box_free_eigen_equation (n : ℕ) (L m ħ x : ℝ) (hn : 1 ≤ n) (hL : 0 
   ring
 
 /-- Pointwise eigen-equation for the box states on the interior `(0, L)`, where the box
-Hamiltonian is the free kinetic expression `H = -(ħ^2/2m) d^2/dx^2`: `H ψ_n = E_n ψ_n`. -/
+Hamiltonian is the free kinetic expression `H = -(ħ^2/2m) d^2/dx^2`: `H ψ_n = E_n ψ_n` for
+`n ≥ 1`, `L > 0`, `m > 0`. -/
 lemma box_eigen_equation (n : ℕ) (L m ħ : ℝ) (hn : 1 ≤ n) (hL : 0 < L) (hm : 0 < m) :
     ∀ x ∈ Set.Ioo 0 L, -(ħ ^ 2 / (2 * m)) * (deriv (deriv (boxFunction n L)) x)
       = boxEnergy n L m ħ * boxFunction n L x :=
   fun x _ => box_free_eigen_equation n L m ħ x hn hL hm
 
-/-- Dirichlet boundary at `0` (uses `Real.sin` of `0`). -/
+/-- Dirichlet boundary at `0` for `n ≥ 1`, `L > 0` (uses `Real.sin` of `0`). -/
 lemma box_dirichlet_zero (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     boxFunction n L 0 = 0 := by
   have hpt : boxFunction n L 0
@@ -328,7 +333,7 @@ lemma box_dirichlet_zero (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
   have harg : ↑n * Real.pi * 0 / L = 0 := by ring
   rw [harg, Real.sin_zero, mul_zero]
 
-/-- Dirichlet boundary at `L` (uses `Real.sin_nat_mul_pi`). -/
+/-- Dirichlet boundary at `L` for `n ≥ 1`, `L > 0` (uses `Real.sin_nat_mul_pi`). -/
 lemma box_dirichlet_right (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     boxFunction n L L = 0 := by
   have hpt : boxFunction n L L
@@ -369,7 +374,7 @@ private lemma contDiff_box (n : ℕ) (L : ℝ) :
     simpa only [smul_eq_mul] using hsin.const_smul (Real.sqrt (2 / L))
   exact hfin
 
-/-- Box states lie in the smooth Dirichlet carrier `BoxC2Dirichlet L`. -/
+/-- For `n ≥ 1`, `L > 0`, box states lie in the smooth Dirichlet carrier `BoxC2Dirichlet L`. -/
 lemma box_mem_BoxC2Dirichlet (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     boxFunction n L ∈ BoxC2Dirichlet L := by
   show ContDiff ℝ 2 (boxFunction n L)
@@ -383,7 +388,7 @@ private lemma continuous_inner (c L : ℝ) :
     Continuous (fun x : ℝ => c * x / L) := by
   fun_prop
 
-/-- Cosine interval integral at positive integer frequency: for `m ≥ 1`,
+/-- Cosine interval integral at positive integer frequency: for `m ≥ 1` and `L > 0`,
 `∫ x in 0..L, cos (m * π * x / L) = 0`, by the fundamental theorem of
 calculus (Mathlib `intervalIntegral.integral_eq_sub_of_hasDerivAt`) with
 antiderivative `(L / (m * π)) * sin (m * π * x / L)`. -/
@@ -420,7 +425,8 @@ lemma cos_integral_pos (m : ℕ) (L : ℝ) (hm : 1 ≤ m) (hL : 0 < L) :
   rw [hFTC, hargL, harg0, Real.sin_nat_mul_pi m, Real.sin_zero, mul_zero,
     sub_zero]
 
-/-- Diagonal orthonormality: `∫ x in 0..L, boxFunction n * boxFunction n = 1`,
+/-- Diagonal orthonormality for `n ≥ 1`, `L > 0`:
+`∫ x in 0..L, boxFunction n * boxFunction n = 1`,
 via `sin^2 = (1 - cos 2θ)/2` (Mathlib `Real.cos_two_mul`,
 `Real.sin_sq_add_cos_sq`) and `cos_integral_pos`. -/
 lemma box_orthonormality_diag (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
@@ -605,7 +611,7 @@ private lemma box_orthonormality_offdiag_lt (n k : ℕ) (L : ℝ) (hn : 1 ≤ n)
     rw [hcm, cos_integral_pos (n + k) L (by omega) hL, mul_zero]
   rw [hsub, e1, e2, sub_zero]
 
-/-- Off-diagonal orthonormality for `n ≠ k` (the `n > k` case follows from
+/-- Off-diagonal orthonormality for `n ≠ k`, `n, k ≥ 1`, `L > 0` (the `n > k` case follows from
 the `n < k` case by symmetry of the integrand). -/
 lemma box_orthonormality_offdiag (n k : ℕ) (L : ℝ) (hn : 1 ≤ n) (hk : 1 ≤ k)
     (hne : n ≠ k) (hL : 0 < L) :
@@ -619,7 +625,7 @@ lemma box_orthonormality_offdiag (n k : ℕ) (L : ℝ) (hn : 1 ≤ n) (hk : 1 �
     rw [hsym]
     exact box_orthonormality_offdiag_lt k n L hk hn hgt hL
 
-/-- Orthonormality on `(0, L)`: the integral is `1` if `n = k`, else `0`. -/
+/-- Orthonormality on `(0, L)` for `n, k ≥ 1`, `L > 0`: the integral is `1` if `n = k`, else `0`. -/
 lemma box_orthonormality (n k : ℕ) (L : ℝ) (hn : 1 ≤ n) (hk : 1 ≤ k)
     (hL : 0 < L) :
     ∫ x in (0:ℝ)..L, boxFunction n L x * boxFunction k L x
@@ -1407,12 +1413,14 @@ def SchwartzCarrier : Set (ℝ → ℂ) :=
   {f | ∃ s : SchwartzMap ℝ ℂ, ⇑s = f}
 
 /-- Annihilation function in `ħ = m = ω = 1` units:
-`a f = (x ↦ (x * f x + deriv f x) / √2)`. -/
+`a f = (x ↦ (x * f x + deriv f x) / √2)`, where `deriv f x` is `0` at every `x` where `f` is not
+differentiable. -/
 noncomputable def annFun (f : ℝ → ℂ) : ℝ → ℂ :=
   fun x => (↑x * f x + deriv f x) / ↑(Real.sqrt 2)
 
 /-- Creation function in `ħ = m = ω = 1` units:
-`a† f = (x ↦ (x * f x - deriv f x) / √2)`. -/
+`a† f = (x ↦ (x * f x - deriv f x) / √2)`, where `deriv f x` is `0` at every `x` where `f` is not
+differentiable. -/
 noncomputable def creFun (f : ℝ → ℂ) : ℝ → ℂ :=
   fun x => (↑x * f x - deriv f x) / ↑(Real.sqrt 2)
 
@@ -1544,8 +1552,10 @@ theorem annihilation_creation_commutator (f : SchwartzCarrier) :
   funext x
   exact ladder_commutator_pointwise_schwartz f f.2 x
 
-/-- Box position mean `⟨x⟩ = L / 2`, via `x * sin^2 = (x/L) - (x/L) cos 2θ`
-and interval integrals (the `x * cos` integral vanishes by FTC). -/
+/-- Box position mean `⟨x⟩ = ∫ x in 0..L, x * ψ_n x ^ 2 = L / 2` for `n ≥ 1`, `L > 0`, where
+`ψ_n ^ 2` is a probability density on `[0, L]` (`box_orthonormality_diag`), via
+`x * ψ_n x ^ 2 = x / L - (x / L) * cos (2 * n * π * x / L)` and interval integrals (the `x * cos`
+integral vanishes by FTC). -/
 lemma box_moment_x (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     ∫ x in (0:ℝ)..L, x * (boxFunction n L x) ^ 2 = L / 2 := by
   have hL' : L ≠ 0 := ne_of_gt hL
@@ -1723,8 +1733,9 @@ lemma box_moment_x (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     ring
   rw [hsub, eC, eK, sub_zero]
 
-/-- Box position second moment `⟨x^2⟩ = L^2 (1/3 - 1/(2n^2π^2))`, via
-`x^2 * sin^2 = (x^2/L) - (x^2/L) cos 2θ` and interval integrals. -/
+/-- Box position second moment `⟨x^2⟩ = ∫ x in 0..L, x ^ 2 * ψ_n x ^ 2 = L^2 (1/3 - 1/(2n^2π^2))`
+for `n ≥ 1`, `L > 0`, where `ψ_n ^ 2` is a probability density on `[0, L]`, via
+`x ^ 2 * ψ_n x ^ 2 = x ^ 2 / L - (x ^ 2 / L) * cos (2 * n * π * x / L)` and interval integrals. -/
 lemma box_moment_x2 (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     ∫ x in (0:ℝ)..L, x ^ 2 * (boxFunction n L x) ^ 2
       = L ^ 2 * (1 / 3 - 1 / (2 * ↑n ^ 2 * Real.pi ^ 2)) := by
@@ -1931,19 +1942,23 @@ measurement. -/
 noncomputable def polyeneLength (k : ℕ) (a : ℝ) : ℝ := (2 * ↑k + 1) * a
 
 /-- MODEL: HOMO-LUMO gap `ΔE = E(k+1) - E(k)` from `boxEnergy`
-(HOMO `n = k`, LUMO `n = k + 1` for `N = 2k` π-electrons). -/
+(HOMO `n = k`, LUMO `n = k + 1` for `N = 2k` π-electrons). It is defined for every real `m` and
+`L`: for `m = 0` or `L = 0` the convention `x / 0 = 0` makes both box energies, hence the gap,
+`0`. The intended domain is `m > 0` and `L > 0`. -/
 noncomputable def polyeneGap (k : ℕ) (L m ħ : ℝ) : ℝ :=
   boxEnergy (k + 1) L m ħ - boxEnergy k L m ħ
 
 /-- MODEL: absorption wavelength `h * c / ΔE` with `h = 2πħ`
-(`planckH`) and symbolic `c > 0`. -/
+(`planckH`) and a symbolic constant `c`. It is defined for every real `L`, `m`, `ħ` and `c`: when
+`ΔE = 0`, as for `ħ = 0`, `m = 0` or `L = 0`, the convention `x / 0 = 0` makes it `0`. The
+intended domain is `L, m, ħ, c > 0`, where `ΔE > 0`. -/
 noncomputable def polyeneWavelength (k : ℕ) (L m ħ c : ℝ) : ℝ :=
   planckH ħ * c / polyeneGap k L m ħ
 
 /-- MODEL estimate (free-electron + box, not a measurement or a theorem
 about real polyenes): closed form of the model wavelength,
 `wavelength = 8 * m * c * L^2 / (h * (2k+1))`, for `k ≥ 1` double
-bonds with `L = (2k+1) * a`. -/
+bonds with `L = (2k+1) * a`, where `a`, `m`, `ħ`, `c > 0`. -/
 lemma polyene_wavelength_closed_form (k : ℕ) (a m ħ c : ℝ) (hk : 1 ≤ k)
     (ha : 0 < a) (hm : 0 < m) (hħ : 0 < ħ) (hc : 0 < c) :
     polyeneWavelength k (polyeneLength k a) m ħ c

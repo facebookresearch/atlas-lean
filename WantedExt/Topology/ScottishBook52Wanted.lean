@@ -18,23 +18,24 @@ public import Mathlib.Topology.ContinuousMap.Basic
 
 namespace MathlibExt.Topology.ScottishBook52Wanted
 
-/-- `f`, a continuous function on the open interval `(0, 1)`, has a
-derivative at every point of `(0, 1)`: differentiability is tested on the
-extension of `f` to `ℝ` that is `0` outside `(0, 1)`, which agrees with `f`
-near every point of `(0, 1)`, so differentiability at such a point depends
-only on `f`. -/
+/-- **Functions differentiable at every point of $(0, 1)$.** A continuous function
+$f \colon (0, 1) \to \mathbb{R}$ has a derivative at every point if for every $x \in (0, 1)$ the
+function $\tilde f \colon \mathbb{R} \to \mathbb{R}$ equal to $f$ on $(0, 1)$ and to $0$ outside
+$(0, 1)$ is differentiable at $x$. Since $\tilde f$ agrees with $f$ near every point of $(0, 1)$,
+this depends only on $f$: it says that $f$ is differentiable at every point of $(0, 1)$. -/
 def HasDerivativeAtEveryPoint (f : C(↥(Set.Ioo (0 : ℝ) 1), ℝ)) : Prop :=
   ∀ x : ℝ, x ∈ Set.Ioo (0 : ℝ) 1 →
     DifferentiableAt ℝ (fun y => if h : y ∈ Set.Ioo (0 : ℝ) 1 then f ⟨y, h⟩ else 0) x
 
 /--
-Banach, Problem 52 of the Scottish Book. Original claim, to be shown: the
-class of functions that are continuous on the interval `(0, 1)` and have a
-derivative at every point does not form a Borel set in the space `C` of all
-continuous functions on `(0, 1)`. The typescript itself records that this
-class is not an `F_σ` set and that it is a `CA` (coanalytic) set, and that
-the problem was solved by Mazurkiewicz. Formalized here as the non-Borel
-claim, the problem's headline statement.
+**Everywhere differentiable functions do not form a Borel set.** In the space $C((0, 1))$ of
+continuous real functions on the open interval $(0, 1)$, with the compact-open topology (uniform
+convergence on compact subsets), the set of functions that have a derivative at every point of
+$(0, 1)$ is not a Borel set.
+
+This is Banach's Problem 52 of the Scottish Book. The typescript also records that this class is
+not an $F_\sigma$ set, that it is coanalytic, and that the problem was solved by Mazurkiewicz.
+
 Source: S. Banach, Problem 52 of the Scottish Book; solved by Mazurkiewicz,
 as recorded in typescript Ad 52; see the commentary in R. D. Mauldin (ed.),
 The Scottish Book, 2nd ed. (Birkhäuser, 2015).

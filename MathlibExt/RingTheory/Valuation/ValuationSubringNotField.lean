@@ -43,7 +43,7 @@ field inverse for that inverse would put the element back inside.
 
 /-- A valuation subring of a field, if it is not the whole field, is not
 a field. No discreteness or value-group hypothesis is needed. -/
-public theorem ValuationSubring.not_isField_of_ne_top {F : Type*} [Field F]
+public theorem ValuationSubring.not_isField_of_ne_top (F : Type*) [Field F]
     {A : ValuationSubring F} (hA : A ≠ ⊤) : ¬ IsField A := by
   intro hf
   apply hA

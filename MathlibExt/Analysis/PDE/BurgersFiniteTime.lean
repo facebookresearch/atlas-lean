@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.PDE.FiniteInverseColeHopf
+import MathlibExt.Analysis.PDE.BurgersExponentialGrowth
 public import MathlibExt.Analysis.PDE.BurgersUniqueness
 
 /-!
