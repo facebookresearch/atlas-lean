@@ -47,13 +47,11 @@ namespace Algebra.IsPushout
 private theorem slice_ext_and_exists_of_flat
     {B : Type u} {B₁ : Type v} {B' : Type w} {M : Type x} {N : Type y}
     [CommRing B] [CommRing B₁] [CommRing B'] [CommRing M] [CommRing N]
-    [Algebra B B₁] [Algebra B' B₁] [Algebra B B'] [Algebra B M]
+    [Algebra B B₁] [Algebra B B'] [Algebra B M]
     [Algebra B' N] [Algebra M N] [Algebra B N]
     [IsScalarTower B B' N] [IsScalarTower B M N]
     [Algebra.IsPushout B B' M N] [Module.Flat B M]
-    (_hπ : Function.Surjective (algebraMap B B₁))
     (p : Fin 3 → (B' →ₐ[B] B))
-    (_hp : ∀ (i : Fin 3) (x : B'), algebraMap B B₁ (p i x) = algebraMap B' B₁ x)
     (hinj : ∀ x y : B', (∀ i, p i x = p i y) → x = y)
     (hsurj : ∀ b : Fin 3 → B,
       (∀ i j, algebraMap B B₁ (b i) = algebraMap B B₁ (b j)) →
@@ -66,7 +64,7 @@ private theorem slice_ext_and_exists_of_flat
       (∀ i j, m i - m j ∈ (RingHom.ker (algebraMap B B₁)).map (algebraMap B M)) →
         ∃ n : N, ∀ i, e i n = m i) := by
   classical
-  haveI : Algebra.IsPushout B M B' N := Algebra.IsPushout.symm inferInstance
+  have : Algebra.IsPushout B M B' N := Algebra.IsPushout.symm inferInstance
   let E : M ⊗[B] B' ≃ₐ[M] N := Algebra.IsPushout.equiv B M B' N
   let Pl : B' →ₗ[B] (Fin 3 → B) := LinearMap.pi fun i => (p i).toLinearMap
   let Ψ : M ⊗[B] B' →ₗ[B] (Fin 3 → M) :=
@@ -128,7 +126,7 @@ private theorem slice_ext_and_exists_of_flat
 
 /-- Flat base change preserves triple gluing of algebra automorphisms.
 
-Given a pushout square with `M` flat over `B`, a surjective comparison map
+Given a pushout square with `M` flat over `B`, a comparison map
 to `B₁`, and three slices `e i` of `N` over `M` compatible with three slices
 `p i` of the base, every triple of automorphisms of `M` that is trivial
 modulo the kernel of `B → B₁` glues to a unique automorphism of `N` over
@@ -142,7 +140,6 @@ public theorem exists_algEquiv_slice_eq_of_flat
     [Algebra B' N] [Algebra M N] [Algebra B N]
     [IsScalarTower B B' N] [IsScalarTower B M N]
     [Algebra.IsPushout B B' M N] [Module.Flat B M]
-    (hπ : Function.Surjective (algebraMap B B₁))
     (p : Fin 3 → (B' →ₐ[B] B))
     (hp : ∀ (i : Fin 3) (x : B'), algebraMap B B₁ (p i x) = algebraMap B' B₁ x)
     (hinj : ∀ x y : B', (∀ i, p i x = p i y) → x = y)
@@ -163,7 +160,7 @@ public theorem exists_algEquiv_slice_eq_of_flat
   classical
   obtain ⟨hinjN, hsurjN⟩ := slice_ext_and_exists_of_flat
     (B := B) (B₁ := B₁) (B' := B') (M := M) (N := N)
-    hπ p hp hinj hsurj e heM heB
+    p hinj hsurj e heM heB
   let J : Ideal M := (RingHom.ker (algebraMap B B₁)).map (algebraMap B M)
   let J' : Ideal N := (RingHom.ker (algebraMap B' B₁)).map (algebraMap B' N)
   have hJt : ∀ (i : Fin 3) (m : M), m ∈ J → t i m ∈ J := by
@@ -189,7 +186,7 @@ public theorem exists_algEquiv_slice_eq_of_flat
     rw [← neg_sub]
     exact J.neg_mem h
   have hcong : ∀ (n : N) (i j : Fin 3), e i n - e j n ∈ J := by
-    haveI : Algebra.IsPushout B M B' N := Algebra.IsPushout.symm inferInstance
+    have : Algebra.IsPushout B M B' N := Algebra.IsPushout.symm inferInstance
     intro n i j
     obtain ⟨x, rfl⟩ := (Algebra.IsPushout.equiv B M B' N).surjective n
     induction x using TensorProduct.inductionOn with

@@ -16,15 +16,16 @@ open scoped TensorProduct
 
 universe u v w x y
 
-/-- Consumer with the original binders, all in one universe. -/
-theorem exactSource
+/-- Consumer with the original binders, all in one universe. The source's
+surjectivity hypothesis `_hπ` is kept but no longer needed. -/
+private theorem exactSource
     {B B₁ B' M N : Type u} [CommRing B] [CommRing B₁] [CommRing B']
     [CommRing M] [CommRing N]
     [Algebra B B₁] [Algebra B' B₁] [Algebra B B'] [Algebra B M]
     [Algebra B' N] [Algebra M N] [Algebra B N]
     [IsScalarTower B B' N] [IsScalarTower B M N]
     [Algebra.IsPushout B B' M N] [Module.Flat B M]
-    (hπ : Function.Surjective (algebraMap B B₁))
+    (_hπ : Function.Surjective (algebraMap B B₁))
     (p : Fin 3 → (B' →ₐ[B] B))
     (hp : ∀ (i : Fin 3) (x : B'), algebraMap B B₁ (p i x) = algebraMap B' B₁ x)
     (hinj : ∀ x y : B', (∀ i, p i x = p i y) → x = y)
@@ -46,10 +47,10 @@ theorem exactSource
         (∀ (i : Fin 3) (n : N), e i (σ' n) = t i (e i n)) →
           ∀ n : N, σ' n = σ n) :=
   Algebra.IsPushout.exists_algEquiv_slice_eq_of_flat
-    hπ p hp hinj hsurj e heM heB t ht
+    p hp hinj hsurj e heM heB t ht
 
-/-- Higher-universe consumer: the five rings may live in independent
-universes. -/
+/-- Higher-universe consumer with no surjectivity hypothesis on `B → B₁`: the
+five rings may live in independent universes. -/
 example
     {B : Type u} {B₁ : Type v} {B' : Type w} {M : Type x} {N : Type y}
     [CommRing B] [CommRing B₁] [CommRing B'] [CommRing M] [CommRing N]
@@ -57,7 +58,6 @@ example
     [Algebra B' N] [Algebra M N] [Algebra B N]
     [IsScalarTower B B' N] [IsScalarTower B M N]
     [Algebra.IsPushout B B' M N] [Module.Flat B M]
-    (hπ : Function.Surjective (algebraMap B B₁))
     (p : Fin 3 → (B' →ₐ[B] B))
     (hp : ∀ (i : Fin 3) (x : B'), algebraMap B B₁ (p i x) = algebraMap B' B₁ x)
     (hinj : ∀ x y : B', (∀ i, p i x = p i y) → x = y)
@@ -79,4 +79,25 @@ example
         (∀ (i : Fin 3) (n : N), e i (σ' n) = t i (e i n)) →
           ∀ n : N, σ' n = σ n) :=
   Algebra.IsPushout.exists_algEquiv_slice_eq_of_flat
-    hπ p hp hinj hsurj e heM heB t ht
+    p hp hinj hsurj e heM heB t ht
+
+/-- The comparison map need not be surjective: for an injective `algebraMap R S`,
+the trivial pushout square of `R` with identity slices meets every hypothesis,
+and the three identity automorphisms glue to the identity. -/
+private theorem exists_algEquiv_of_injective {R S : Type*} [CommRing R] [CommRing S]
+    [Algebra R S] (hRS : Function.Injective (algebraMap R S)) :
+    ∃ σ : R ≃ₐ[R] R, ∀ n, σ n = n := by
+  obtain ⟨σ, hσ, -, -⟩ := Algebra.IsPushout.exists_algEquiv_slice_eq_of_flat
+    (B₁ := S) (fun _ => AlgHom.id R R) (fun _ _ => rfl) (fun _ _ h => h 0)
+    (fun b hb => ⟨b 0, fun i => (hRS (hb i 0)).symm⟩) (fun _ => AlgHom.id R R)
+    (fun _ _ => rfl) (fun _ _ => rfl) (fun _ => AlgEquiv.refl) (fun _ m => by simp)
+  exact ⟨σ, hσ 0⟩
+
+/-- `ℤ → ℚ` is injective but not surjective, and the theorem applies to it. -/
+example : ¬ Function.Surjective (algebraMap ℤ ℚ) ∧ ∃ σ : ℤ ≃ₐ[ℤ] ℤ, ∀ n, σ n = n := by
+  refine ⟨fun h => ?_, exists_algEquiv_of_injective (algebraMap ℤ ℚ).injective_int⟩
+  obtain ⟨n, hn⟩ := h (1 / 2)
+  rw [eq_intCast] at hn
+  have h2 : ((2 * n : ℤ) : ℚ) = 1 := by push_cast; rw [hn]; norm_num
+  have : 2 * n = 1 := by exact_mod_cast h2
+  omega
