@@ -28,3 +28,9 @@ example (n : ℕ) (hn : 1 ≤ n) (hle : n ≤ 11) :
 example : ∀ n : ℕ, (ArithmeticFunction.id : ArithmeticFunction ℂ) n = n :=
   multiplicative_nonagonal_additive_eq_id _ isMultiplicative_id.natCast
     (fun a b _ _ _ _ ↦ Nat.cast_add a b)
+
+-- The step at powers of 2 for the same witness, for every `r`.
+example (r : ℕ) :
+    (ArithmeticFunction.id : ArithmeticFunction ℂ) (2 ^ r) = (2 ^ r : ℕ) :=
+  multiplicative_nonagonal_additive_two_pow _ isMultiplicative_id.natCast
+    (fun a b _ _ _ _ ↦ Nat.cast_add a b) r (fun _n _ ↦ rfl)

@@ -71,6 +71,51 @@ public structure IsHeightFunction (H : ℕ → ℕ) : Prop where
   prime_pos : ∀ p : ℕ, p.Prime → 1 ≤ H p
   finite_primes : ∀ n : ℕ, 1 ≤ n → {p : ℕ | p.Prime ∧ H p = n}.Finite
 
+/-- **Level construction for a height function.** Let $H$ be a height function and let $n \ge 1$,
+and for $k \ge 0$ write $\mathcal{H}_k = \{m \ge 1 : H(m) = k\}$. Then $\mathcal{H}_n$ is the union
+of two sets: the set of products $p m'$, where $p$ is a prime with $H(p) = \ell$ for some integer
+$\ell$ with $1 \le \ell \le \lfloor n/2 \rfloor$ and $m' \in \mathcal{H}_{n - \ell}$; and the set
+of primes $p$ with $H(p) = n$.
+
+Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
+and Inverse Growth*, INTEGERS 26 (2026), Article A116, Theorem 1 (`integers-2026-A116-thm-1`). -/
+public theorem heightLevel_eq_products_union_primes {H : ℕ → ℕ} (hH : IsHeightFunction H)
+    {n : ℕ} (hn : 1 ≤ n) :
+    {m : ℕ | 0 < m ∧ H m = n} =
+      {m : ℕ | ∃ ℓ, 1 ≤ ℓ ∧ ℓ ≤ n / 2 ∧ ∃ p m', p.Prime ∧ H p = ℓ ∧ 0 < m' ∧ H m' = n - ℓ ∧
+        m = p * m'} ∪ {p : ℕ | p.Prime ∧ H p = n} := by
+  ext m
+  constructor
+  · rintro ⟨hm, hmn⟩
+    by_cases hmprime : m.Prime
+    · exact Or.inr ⟨hmprime, hmn⟩
+    left
+    have hm₁ : m ≠ 1 := by
+      rintro rfl
+      rw [hH.additive.map_one] at hmn
+      omega
+    -- Choose a prime factor of least height. Its cofactor still has a prime factor.
+    obtain ⟨p, hpm, hmin⟩ := m.primeFactors.exists_min_image H
+      (Nat.nonempty_primeFactors.mpr (by omega))
+    obtain ⟨hp, ⟨k, rfl⟩, _⟩ := Nat.mem_primeFactors.mp hpm
+    have hkpos : 0 < k := Nat.pos_of_mul_pos_left hm
+    have hsmall : H p ≤ H k := by
+      have hk : k ≠ 1 := by
+        rintro rfl
+        exact hmprime (by simpa using hp)
+      obtain ⟨q, hq, hqk⟩ := Nat.exists_prime_and_dvd hk
+      refine (hmin q (hq.mem_primeFactors (dvd_mul_of_dvd_right hqk p) hm.ne')).trans ?_
+      obtain ⟨r, rfl⟩ := hqk
+      rw [hH.additive q r hq.pos (Nat.pos_of_mul_pos_left hkpos)]
+      exact Nat.le_add_right _ _
+    rw [hH.additive p k hp.pos hkpos] at hmn
+    exact ⟨H p, hH.prime_pos p hp, by omega, p, k, hp, rfl, hkpos, by omega, rfl⟩
+  · rintro (⟨ℓ, _, hℓ, p, k, hp, hpℓ, hk, hHk, rfl⟩ | ⟨hp, hpn⟩)
+    · refine ⟨Nat.mul_pos hp.pos hk, ?_⟩
+      rw [hH.additive p k hp.pos hk, hpℓ, hHk]
+      omega
+    · exact ⟨hp.pos, hpn⟩
+
 /-- **The $i$-th prime.** For a natural number $i \ge 1$, $p_i$ denotes the $i$-th prime in
 increasing order, so that $p_1 = 2$. For $i = 0$ the definition also gives $p_0 = 2$.
 

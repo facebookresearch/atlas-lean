@@ -32,20 +32,6 @@ namespace MetaMathlibExt
 
 open Filter
 
-/-- **Level construction for a height function.** Let $H$ be a height function and let $n \ge 1$,
-and for $k \ge 0$ write $\mathcal{H}_k = \{m \ge 1 : H(m) = k\}$. Then $\mathcal{H}_n$ is the union
-of two sets: the set of products $p m'$, where $p$ is a prime with $H(p) = \ell$ for some integer
-$\ell$ with $1 \le \ell \le \lfloor n/2 \rfloor$ and $m' \in \mathcal{H}_{n - \ell}$; and the set
-of primes $p$ with $H(p) = n$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Theorem 1 (`integers-2026-A116-thm-1`). -/
-public theorem_wanted heightLevel_eq_products_union_primes {H : ℕ → ℕ} (hH : IsHeightFunction H)
-    {n : ℕ} (hn : 1 ≤ n) :
-    {m : ℕ | 0 < m ∧ H m = n} =
-      {m : ℕ | ∃ ℓ, 1 ≤ ℓ ∧ ℓ ≤ n / 2 ∧ ∃ p m', p.Prime ∧ H p = ℓ ∧ 0 < m' ∧ H m' = n - ℓ ∧
-        m = p * m'} ∪ {p : ℕ | p.Prime ∧ H p = n}
-
 /-- **Height levels are counted by coloured partitions.** Let $H$ be a height function and, for
 $\ell \ge 1$, let $\pi_\ell$ be the number of primes $p$ with $H(p) = \ell$. For every $n \ge 0$,
 the number of positive integers $m$ with $H(m) = n$ equals the number of families
