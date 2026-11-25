@@ -10848,6 +10848,7 @@
   "MathlibExt/Combinatorics/Enumerative/PalapiesTriangularArrays": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Triangular recurrence arrays at negative indices"},
   "MathlibExt/Combinatorics/Enumerative/PalindromicCompositionsWithoutTwo": {"to": "Combinatorics/integer-compositions", "title": "Palindromic compositions"},
   "MathlibExt/Combinatorics/Enumerative/PalindromicNarayanaNumber": {"to": "Combinatorics/catalan-numbers-lattice-paths/catalan-numbers", "title": "Palindromic Narayana numbers"},
+  "MathlibExt/Combinatorics/Enumerative/ParityRestrictedCompositions": {"to": "Combinatorics/integer-compositions", "title": "Compositions with parity-restricted large parts"},
   "MathlibExt/Combinatorics/Enumerative/ParityWeightedBinomialSum": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Knuth's old sum"},
   "MathlibExt/Combinatorics/Enumerative/ParkingFunction": {"to": "Combinatorics/parking-functions", "title": "Parking functions"},
   "MathlibExt/Combinatorics/Enumerative/ParkingFunctionStatistics": {"to": "Combinatorics/parking-functions", "title": "Descents, peaks and valleys of parking functions"},
