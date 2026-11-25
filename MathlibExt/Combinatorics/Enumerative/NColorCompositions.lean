@@ -71,6 +71,14 @@ private theorem tribNat_add_three (n : ℕ) :
     tribNat (n + 3) = tribNat (n + 2) + tribNat (n + 1) + tribNat n :=
   rfl
 
+/-- The recurrence on integer indices at least three. -/
+private theorem trib_recurrence (n : ℤ) (hn : 3 ≤ n) :
+    trib n = trib (n - 1) + trib (n - 2) + trib (n - 3) := by
+  let j := (n - 3).toNat
+  rw [trib_eq_tribNat (m := j + 3) (by omega), trib_eq_tribNat (m := j + 2) (by omega),
+    trib_eq_tribNat (m := j + 1) (by omega), trib_eq_tribNat (m := j) (by omega)]
+  exact tribNat_add_three j
+
 /-- The identity for `tribNat`, with the sum indexed as `t(3(k - i) + 1)` for `i < k`. -/
 private theorem tribNat_add_two_sub_three_mul_add_two (k : ℕ) (hk : 1 ≤ k) :
     tribNat (3 * k + 2) + tribNat (3 * k) =
@@ -147,18 +155,40 @@ theorem trib_three_mul (k : ℕ) :
     rw [hrec, ih]
     ac_rfl
 
+/-- **Tribonacci partial-sum identity for $t(3k+1)$.** Let $t$ be the tribonacci numbers with
+$t(0) = 1$, $t(1) = 0$, $t(2) = 1$ and $t(n) = t(n-1) + t(n-2) + t(n-3)$ for $n \ge 3$,
+extended by $t(n) = 0$ for $n < 0$. For every natural number $k$,
+$$t(3k+1) = -1 + \sum_{i=0}^{k} \bigl(t(3k-3i) + t(3k-3i-1)\bigr).$$
+
+Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
+Two Consecutive Colors in `n`-Color Compositions",
+Theorem 8. -/
+theorem trib_three_mul_add_one (k : ℕ) :
+    trib (3 * (k : ℤ) + 1) = -1 +
+      ∑ i ∈ Finset.range (k + 1),
+        (trib (3 * (k : ℤ) + 1 - 3 * (i : ℤ) - 1) +
+          trib (3 * (k : ℤ) + 1 - 3 * (i : ℤ) - 2)) := by
+  -- An elementary recurrence proof: the first summand accounts for the step of length three.
+  induction k with
+  | zero =>
+    -- The only summand is `t(0) + t(-1) = 1`, which cancels the `-1`.
+    decide
+  | succ k ih =>
+    have hshift (i : ℕ) :
+        3 * ((k + 1 : ℕ) : ℤ) + 1 - 3 * ((i + 1 : ℕ) : ℤ) =
+          3 * (k : ℤ) + 1 - 3 * (i : ℤ) := by omega
+    rw [Finset.sum_range_succ']
+    simp only [hshift, Nat.cast_zero, mul_zero, sub_zero]
+    rw [trib_recurrence _ (by omega),
+      show 3 * ((k + 1 : ℕ) : ℤ) + 1 - 3 = 3 * (k : ℤ) + 1 by omega, ih]
+    ac_rfl
+
 /-- One step of length three for the sum `t(n) + t(n-2)`. -/
 private theorem trib_add_two_sub_step (n : ℤ) (hn : 5 ≤ n) :
     trib n + trib (n - 2) = 2 * trib (n - 1) + (trib (n - 3) + trib (n - 5)) := by
-  have hrec (m : ℤ) (hm : 3 ≤ m) :
-      trib m = trib (m - 1) + trib (m - 2) + trib (m - 3) := by
-    let j := (m - 3).toNat
-    rw [trib_eq_tribNat (m := j + 3) (by omega), trib_eq_tribNat (m := j + 2) (by omega),
-      trib_eq_tribNat (m := j + 1) (by omega), trib_eq_tribNat (m := j) (by omega)]
-    exact tribNat_add_three j
-  have h0 := hrec n (by omega)
-  have h1 := hrec (n - 1) (by omega)
-  have h2 := hrec (n - 2) (by omega)
+  have h0 := trib_recurrence n (by omega)
+  have h1 := trib_recurrence (n - 1) (by omega)
+  have h2 := trib_recurrence (n - 2) (by omega)
   rw [show n - 1 - 1 = n - 2 by omega, show n - 1 - 2 = n - 3 by omega,
     show n - 1 - 3 = n - 4 by omega] at h1
   rw [show n - 2 - 1 = n - 3 by omega, show n - 2 - 2 = n - 4 by omega,

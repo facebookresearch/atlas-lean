@@ -11,6 +11,7 @@
 - [Counter-machine execution is constant after halting](counter-exec-n-eq-of-halted.md)
 - [Output membership for counter machines](mem-counter-eval-of-halted.md)
 - [Counter-machine decidable predicates](counter-decidable.md)
+- [Two-counter machines are universal](two-counter-machines-are-universal.md)
 - [Evaluation results are halted outputs](mem-counter-eval-iff.md)
 - [Counter-machine decidability by bounded runs](counter-decidable-iff.md)
 - [Counter-machine configurations are CSLib URM configurations](equiv-urm.md)

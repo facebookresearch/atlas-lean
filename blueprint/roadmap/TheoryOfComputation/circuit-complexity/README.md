@@ -14,6 +14,7 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Williams: NEXP is not contained in ACC0](williams-nexp-not-in-acc0.md)
 - [Razborov: majority is not in AC0[mod 2]](razborov-majority-not-in-ac0-mod-two.md)
 - [Unbounded fan-in circuits](unbounded-fan-in-circuits/README.md)
+- [Constant depth circuit lower bounds](constant-depth-circuit-lower-bounds/README.md)
 - [Arrival times of a circuit with gate delays](arrival-times-of-a-circuit-with-gate-delays/README.md)
 - [Contamination delays and hold-time certificates](contamination-delays-and-hold-time-certificates/README.md)
 - [Exact arrival times under uniform gate delays](exact-arrival-times-under-uniform-gate-delays/README.md)

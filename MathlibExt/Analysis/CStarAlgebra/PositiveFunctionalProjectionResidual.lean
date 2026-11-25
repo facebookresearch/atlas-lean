@@ -1,0 +1,120 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.GelfandNaimarkSegal
+public import Mathlib.Analysis.CStarAlgebra.PositiveLinearMap
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Positive
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+public import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.Ring
+
+/-!
+# Positive-functional right-projection residuals in a unital C-star algebra
+
+The original residual norm bound uses only the actual unital C-star algebra,
+its lawful star order, a positive continuous complex-linear functional and
+an original star projection. Cauchy--Schwarz and the C-star norm identity
+give the pointwise estimate; the continuous-linear-map norm gives the
+full residual bound. There is no von Neumann algebra, normal membership,
+representation, supplied norm bound or model certificate in the inputs.
+
+The coefficient algebra has its own universe and may be the zero algebra.
+The target complex order is fixed locally to the canonical spectral order,
+matching the original functional convention without a global instance.
+The temporary standard complex order needed by stock Cauchy--Schwarz is
+related by the actual star-ordered-ring characterization.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace PositiveContinuousLinearMap
+
+noncomputable section
+
+universe uA
+
+/-- **Positive-functional residual after right projection.** Let `A` be a unital complex C*-algebra with
+a star-compatible partial order, let `ψ : A → ℂ` be a positive continuous complex-linear functional,
+and let `p ∈ A` be a self-adjoint idempotent. The operator norm of `a ↦ ψ(a) - ψ(a p)` is at most
+`√(‖ψ‖ ‖ψ(1-p)‖)`, with positivity on `ℂ` in spectral order. -/
+theorem rightProjection_residual_norm_le
+    {A : Type uA} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A] :
+    letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ;
+    ∀ (ψ : PositiveContinuousLinearMap ℂ A ℂ) (p : A), IsStarProjection p →
+      ‖ψ.toContinuousLinearMap -
+        ψ.toContinuousLinearMap.comp ((ContinuousLinearMap.mul ℂ A).flip p)‖ ≤
+        Real.sqrt (‖ψ.toContinuousLinearMap‖ * ‖ψ.toContinuousLinearMap (1 - p)‖) := by
+  let : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
+  intro ψ p hp
+  let φ : StrongDual ℂ A := ψ.toContinuousLinearMap
+  have horders (z w : ℂ) : @LE.le ℂ (CStarAlgebra.spectralOrder ℂ).toLE z w ↔
+      @LE.le ℂ Complex.partialOrder.toLE z w := by
+    have hspectral : @LE.le ℂ (CStarAlgebra.spectralOrder ℂ).toLE z w ↔
+        ∃ d, d ∈ AddSubmonoid.closure (Set.range fun t : ℂ => star t * t) ∧ w = z + d := by
+      let : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
+      let : LE ℂ := (CStarAlgebra.spectralOrder ℂ).toLE
+      let : StarOrderedRing ℂ := CStarAlgebra.spectralOrderedRing ℂ
+      exact StarOrderedRing.le_iff z w
+    have hstandard : @LE.le ℂ Complex.partialOrder.toLE z w ↔
+        ∃ d, d ∈ AddSubmonoid.closure (Set.range fun t : ℂ => star t * t) ∧ w = z + d := by
+      let : PartialOrder ℂ := Complex.partialOrder
+      let : LE ℂ := Complex.partialOrder.toLE
+      let : StarOrderedRing ℂ := RCLike.toStarOrderedRing
+      exact StarOrderedRing.le_iff z w
+    exact hspectral.trans hstandard.symm
+  have hmonotone (x y : A) (hxy : x ≤ y) :
+      @LE.le ℂ (CStarAlgebra.spectralOrder ℂ).toLE (φ x) (φ y) := ψ.monotone' hxy
+  let q : A := 1 - p
+  have hq : IsStarProjection q := hp.one_sub
+  have hbound (a : A) : ‖φ (a * q)‖ ≤ Real.sqrt (‖φ‖ * ‖φ q‖) * ‖a‖ := by
+    have hcs : ‖φ (a * q)‖ ^ 2 ≤ ‖φ (a * star a)‖ * ‖φ q‖ := by
+      let : PartialOrder ℂ := Complex.partialOrder
+      let : LE ℂ := Complex.partialOrder.toLE
+      let f : PositiveLinearMap ℂ A ℂ :=
+        { __ := φ.toLinearMap
+          monotone' := by
+            intro x y hxy
+            exact (horders (φ x) (φ y)).mp (hmonotone x y hxy) }
+      have hf (z : A) : f z = φ z := rfl
+      have h := PositiveLinearMap.norm_map_mul_star_sq_le f a q
+      simpa only [hf, hq.isSelfAdjoint.star_eq, hq.isIdempotentElem.eq] using h
+    have hnorm : ‖a * star a‖ = ‖a‖ ^ 2 := by
+      simpa only [star_star, norm_star, pow_two] using (CStarRing.norm_star_mul_self (x := star a))
+    have hvalue : ‖φ (a * star a)‖ ≤ ‖φ‖ * ‖a‖ ^ 2 := by
+      simpa only [hnorm] using φ.le_opNorm (a * star a)
+    have hsquare : ‖φ (a * q)‖ ^ 2 ≤ (‖φ‖ * ‖φ q‖) * ‖a‖ ^ 2 := by
+      calc
+        ‖φ (a * q)‖ ^ 2 ≤ ‖φ (a * star a)‖ * ‖φ q‖ := hcs
+        _ ≤ (‖φ‖ * ‖a‖ ^ 2) * ‖φ q‖ :=
+          mul_le_mul_of_nonneg_right hvalue (norm_nonneg _)
+        _ = (‖φ‖ * ‖φ q‖) * ‖a‖ ^ 2 := by ring
+    have h := Real.sqrt_le_sqrt hsquare
+    rw [Real.sqrt_sq (norm_nonneg _),
+      Real.sqrt_mul (mul_nonneg (norm_nonneg _) (norm_nonneg _)) _,
+      Real.sqrt_sq (norm_nonneg _)] at h
+    exact h
+  apply ContinuousLinearMap.opNorm_le_bound _ (Real.sqrt_nonneg _)
+  intro a
+  change ‖φ a - φ (a * p)‖ ≤ Real.sqrt (‖φ‖ * ‖φ q‖) * ‖a‖
+  have hresidual : φ a - φ (a * p) = φ (a * q) := by
+    change φ a - φ (a * p) = φ (a * (1 - p))
+    rw [mul_sub, mul_one, φ.map_sub]
+  rw [hresidual]
+  exact hbound a
+
+end
+
+end PositiveContinuousLinearMap

@@ -9,3 +9,5 @@
 - [Reachable init](reachable-init.md)
 - [Reachable states of Peterson’s algorithm are closed under steps](step-2.md)
 - [Mutual exclusion in Peterson's algorithm](mutual-exclusion.md)
+
+- [Peterson's algorithm on x86-TSO](peterson-s-algorithm-on-x86-tso.md)
