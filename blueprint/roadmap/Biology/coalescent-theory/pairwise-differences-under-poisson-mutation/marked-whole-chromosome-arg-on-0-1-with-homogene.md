@@ -15,10 +15,14 @@ General finite recombination measures, with atoms, are a separate target: [the c
 
 - [The ancestral line count with recombination is positive recurrent](../two-locus-coalescent/lineage-count-birth-death-chain-rho-0-positive-r.md)
 
+## Proof depends on
+
+- [A Markov kernel run on a Poisson clock is a pure-jump Markov process](../../../Probability/markov-chains/construction-of-markov-chains/uniformized-pure-jump-markov-process-on-a-polish.md)
+
 ## Expansion
 
 1. The state space is Polish: a countable union of finite-dimensional pieces.
-2. The construction on each localized level by uniformization of a pure-jump Markov process on a Polish state space, with its clock-event counts (a Lévy system), and the patching over $K$. No page states that uniformization result yet. It uses Ionescu-Tulcea trajectories and infinite product measures.
+2. The construction on each localized level by uniformization of a pure-jump Markov process on a Polish state space, with its clock-event counts (a Lévy system), and the patching over $K$.
 3. The number of lineages is exactly [the ancestral line count with recombination](../two-locus-coalescent/lineage-count-birth-death-chain-rho-0-positive-r.md) (coalescence at rate $\binom{k}{2}$, recombination at rate $\rho k/2$), which is positive recurrent for $\rho > 0$ and absorbed at $1$ for $\rho = 0$.
 4. The half-open cut convention.
 

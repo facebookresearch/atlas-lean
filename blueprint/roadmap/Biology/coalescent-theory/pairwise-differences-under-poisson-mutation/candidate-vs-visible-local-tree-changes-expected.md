@@ -14,11 +14,12 @@ A visible change is a breakpoint $b$ with $G_b \ne G_{b-}$. Pathwise, every visi
 
 ## Proof depends on
 
+- [A Markov kernel run on a Poisson clock is a pure-jump Markov process](../../../Probability/markov-chains/construction-of-markov-chains/uniformized-pure-jump-markov-process-on-a-polish.md)
 - [Finitely many breakpoints and a jointly measurable local-tree field](finitely-many-breakpoints-and-a-jointly-measurab.md)
 
 ## Expansion
 
-1. The expected count of candidates, from the clock-event count identity for a uniformized pure-jump Markov process on a Polish state space (a Lévy system), applied on the localized levels of the construction. No page states that identity yet.
+1. The expected count of candidates, from the clock-event count identity for a uniformized pure-jump Markov process on a Polish state space (a Lévy system), applied on the localized levels of the construction.
 2. The pathwise inequality and the explicit invisible event for $n = 2$.
 3. A check: for $n = 2$ the expected number of candidates in $[0, 1)$ is $\rho\, \mathbb{E}[T] = \rho$, where $T$ is the pair coalescence time.
 4. The statement uses the intensity $\rho\, dx$ only. General recombination measures are a separate target: [the continuum ARG with a general recombination measure](../two-locus-coalescent/continuum-arg-with-a-general-finite-recombinatio.md).

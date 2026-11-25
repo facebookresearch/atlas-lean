@@ -17,6 +17,7 @@ A single vertex is trivially absorbing and is excluded.
 
 ## Proof depends on
 
+- [Finite interacting particle systems: existence, graphical construction and voter duality](../../../Probability/markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/finite-interacting-particle-systems-graphical-co.md)
 - [Structured coalescent for n lineages with a general migration matrix](structured-coalescent-for-n-lineages-with-a-gene.md)
 
 ## Expansion
