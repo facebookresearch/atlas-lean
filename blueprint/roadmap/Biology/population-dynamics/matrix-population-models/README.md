@@ -1,3 +1,6 @@
 # Matrix population models
 
-- [Sensitivity of the population growth rate to matrix entries](eigenvalue-sensitivity-formula.md)
+- [Is Simple Eigenvalue](is-simple-eigenvalue.md)
+- [Caswell's sensitivity formula](eigenvalue-sensitivity.md)
+- [Elasticities sum to one](sum-elasticities.md)
+

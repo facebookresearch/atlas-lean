@@ -6,7 +6,6 @@ Differential-equation and matrix models of population growth, structure, species
 - [Coale–Lopez weak ergodicity of age structures](coale-lopez-weak-ergodicity-of-age-structures/README.md)
 - [Cole's paradox of semelparity and iteroparity](cole-s-paradox-of-semelparity-and-iteroparity/README.md)
 - [Eigen's quasispecies error threshold](eigen-s-quasispecies-error-threshold/README.md)
-- [Eigenvalue sensitivity and elasticities of matrix models](eigenvalue-sensitivity-and-elasticities-of-matri/README.md)
 - [Fisher's reproductive value](fisher-s-reproductive-value/README.md)
 - [Furstenberg–Kesten stochastic population growth rate](furstenberg-kesten-stochastic-population-growth/README.md)
 - [Hamilton's force of selection](hamilton-s-force-of-selection/README.md)

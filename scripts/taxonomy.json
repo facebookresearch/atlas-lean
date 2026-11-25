@@ -14972,7 +14972,7 @@
   "WantedExt/Biology/PopulationGenetics/Coalescent/VariableSFSWanted": {"to": "Biology/coalescent-theory", "title": "Site frequency spectrum under variable population size"},
   "WantedExt/Biology/Ecology/BevertonHoltCushingHensonWanted": {"to": "Biology/population-dynamics", "title": "Beverton–Holt dynamics and the Cushing–Henson theorem"},
   "WantedExt/Biology/Ecology/ColeParadoxWanted": {"to": "Biology/population-dynamics", "title": "Cole's paradox of semelparity and iteroparity"},
-  "WantedExt/Biology/Ecology/EigenvalueSensitivityWanted": {"to": "Biology/population-dynamics", "title": "Eigenvalue sensitivity and elasticities of matrix models"},
+  "WantedExt/Biology/Ecology/EigenvalueSensitivityWanted": {"to": "Biology/population-dynamics", "title": "Matrix population models"},
   "WantedExt/Biology/Ecology/FisherReproductiveValueWanted": {"to": "Biology/population-dynamics", "title": "Fisher's reproductive value"},
   "WantedExt/Biology/Ecology/FurstenbergKestenWanted": {"to": "Biology/population-dynamics", "title": "Furstenberg–Kesten stochastic population growth rate"},
   "WantedExt/Biology/Ecology/HamiltonForceOfSelectionWanted": {"to": "Biology/population-dynamics", "title": "Hamilton's force of selection"},

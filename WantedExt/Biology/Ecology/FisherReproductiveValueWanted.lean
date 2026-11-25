@@ -16,7 +16,8 @@ value `v(x) = (e^{rx} / l(x)) ∫_x^∞ e^{-ry} l(y) b(y) dy`. Then `v(0) = 1` a
 `v'(x) = (μ(x) + r) v(x) - b(x) v(0)`. If the density `n(x, t)` of individuals of age `x` at
 time `t` solves the McKendrick–von Foerster equation `∂_t n + ∂_x n = -μ n` with births
 `n(0, t) = ∫ b(x) n(x, t) dx`, the total reproductive value `V(t) = ∫ n(x, t) v(x) dx` satisfies
-`V(t) = V(0) e^{rt}` for every initial age distribution.
+`V(t) = V(0) e^{rt}` for every such solution `n` (satisfying continuity and the birth boundary
+condition `n(0, 0) = ∫ b(x) n(x, 0) dx`).
 
 The equation is used in characteristic form (`s ↦ n(x + s, t + s)` has derivative
 `-μ(x) n(x, t)` at `s = 0`), which needs only continuity of `n`. Since `v` vanishes after `ω`,
@@ -77,7 +78,8 @@ public theorem_wanted reproductiveValue_zero_and_hasDerivAt {l μ b : ℝ → �
 life-table assumptions `IsLifeTable l μ b ω r`, let `n(x, t)` be continuous on `[0, ∞) × [0, ∞)`,
 solve `∂_t n + ∂_x n = -μ n` in characteristic form, and satisfy the birth condition
 `n(0, t) = ∫_0^ω b(x) n(x, t) dx`. Then for every `t ≥ 0`,
-`∫_0^ω n(x, t) v(x) dx = e^{rt} ∫_0^ω n(x, 0) v(x) dx`, whatever the initial age distribution.
+`∫_0^ω n(x, t) v(x) dx = e^{rt} ∫_0^ω n(x, 0) v(x) dx` for every such solution `n` (note that
+continuity and the birth condition at `t = 0` require `n(0, 0) = ∫_0^ω b(x) n(x, 0) dx`).
 
 Source: Fisher (1930), ch. II, "Reproductive value", pp. 27–30. -/
 public theorem_wanted totalReproductiveValue_eq {l μ b : ℝ → ℝ} {ω r : ℝ}
