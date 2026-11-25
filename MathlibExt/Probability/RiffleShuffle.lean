@@ -227,12 +227,13 @@ private theorem sort_eq_iff_good (f : Fin (m + 1) → Fin a) :
     refine ⟨hmono (Fin.castSucc_lt_succ (i := i)).le, fun hD => ?_⟩
     rcases lt_or_eq_of_le (hmono (Fin.castSucc_lt_succ (i := i)).le) with h | h
     · exact h
-    · exact absurd (hstab _ _ (Fin.castSucc_lt_succ (i := i)) h) (lt_asymm hD)
+    · exact absurd hD (not_lt.2 (hstab (Fin.castSucc_lt_succ (i := i)).le h))
   · intro hg
     have hmono : Monotone (f ∘ σ) := Fin.monotone_iff_le_succ.mpr fun i => (hg i).1
-    refine ⟨hmono, fun i j hij heq => ?_⟩
+    refine ⟨hmono, ?_⟩
+    intro i j hij heq
     induction j using Fin.induction with
-    | zero => exact absurd hij (Fin.not_lt_zero i)
+    | zero => exact le_of_eq (congrArg σ (Fin.le_zero_iff.mp hij))
     | succ l ih =>
       have hstep : (f ∘ σ) l.castSucc = (f ∘ σ) l.succ → σ l.castSucc < σ l.succ := by
         intro he
@@ -240,14 +241,15 @@ private theorem sort_eq_iff_good (f : Fin (m + 1) → Fin a) :
         rcases lt_or_gt_of_ne (σ.injective.ne (Fin.castSucc_lt_succ (i := l)).ne) with h | h
         · exact h
         · exact absurd h hnd
-      rcases lt_or_eq_of_le (Fin.le_castSucc_iff.mpr hij) with h | h
-      · have heq' : (f ∘ σ) i = (f ∘ σ) l.succ := heq
-        have h1 : (f ∘ σ) i ≤ (f ∘ σ) l.castSucc := hmono h.le
+      rcases hij.lt_or_eq with h | h
+      · replace h := Fin.le_castSucc_iff.mpr h
+        have heq' : (f ∘ σ) i = (f ∘ σ) l.succ := heq
+        have h1 : (f ∘ σ) i ≤ (f ∘ σ) l.castSucc := hmono h
         have h2 : (f ∘ σ) l.castSucc ≤ (f ∘ σ) l.succ := hmono (Fin.castSucc_lt_succ (i := l)).le
         have he1 : (f ∘ σ) i = (f ∘ σ) l.castSucc := le_antisymm h1 (h2.trans heq'.symm.le)
-        exact (ih h he1).trans (hstep (he1.symm.trans heq'))
+        exact (ih h he1).trans (hstep (he1.symm.trans heq')).le
       · subst h
-        exact hstep heq
+        exact le_rfl
 
 private theorem card_sort_eq_succ :
     (univ.filter fun f : Fin (m + 1) → Fin a => Tuple.sort f = σ).card =

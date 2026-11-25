@@ -34,7 +34,13 @@ namespace Cslib.Algorithms.Lean.BreadthFirstSearch
 
 universe u
 
-/-- The existing BFS output together with the actual first-discovery predecessor table. -/
+/-- **Breadth-first search forest.** A breadth-first search forest on a vertex type $V$ consists
+of a breadth-first search result, namely a partial distance function from $V$ to the natural
+numbers and a list of vertices, together with a partial predecessor function from $V$ to $V$.
+For a search from a source vertex $s$, these are meant to give the distance from $s$ of each
+reachable vertex, the reachable vertices in first-discovery order, and the vertex from which
+each reachable vertex other than $s$ was first discovered, with $s$ and the unreachable vertices
+having no predecessor; the structure itself imposes none of these properties. -/
 public structure BFSForest (V : Type u) extends BFSResult V where
   /-- The source and unreachable vertices have no predecessor. -/
   predecessor : V → Option V
@@ -79,7 +85,16 @@ private structure ParentState (V : Type u) [BEq V] [Hashable V] where
   return ⟨([], (queue, (Std.HashMap.emptyWithCapacity 1).insert source 0)),
     Std.HashMap.emptyWithCapacity 1⟩
 
-/-- Run the existing FIFO BFS schedule with first-discovery parents and selected event costs. -/
+/-- **Breadth-first search with parent pointers.** Given a finite directed graph $G$ on a vertex
+type $V$, with ordered adjacency lists, and a source vertex $s$, this runs first-in-first-out
+breadth-first search from $s$ for $|V|$ rounds. The queue starts with $s$ at distance $0$. Each
+round tries to dequeue a vertex $u$; if it succeeds, it scans the neighbors of $u$ in
+adjacency-list order, and each neighbor not yet discovered gets distance one more than $u$,
+records $u$ as its parent and is enqueued. An already discovered vertex keeps its distance and
+parent. The result is the search forest: the distance of each discovered vertex, the vertices in
+the order they were dequeued, and the parent of each discovered vertex other than $s$. The cost
+counts one unit for each dequeue attempt, each check of an adjacency entry against the
+discovered set, each enqueue (including that of $s$) and each parent write. -/
 public def bfsWithParents {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (graph : DirectedAdjacency V) (source : V) : TimeM Nat (BFSForest V) := do
   let initial ← parentInitial source
@@ -108,9 +123,16 @@ public def bfsWithParents {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
                 ✓ let suffix := current :: suffix
                 followParents predecessor source fuel parent suffix
 
-/-- Follow saved parents, returning the endpoint-inclusive source-to-target list.
-Malformed tables are totalized by the visited-vertex count. Costs count source comparisons,
-parent reads and actual vertex cons operations, not IO printing latency. -/
+/-- **Path reconstruction from BFS parents.** Let $p$ be the predecessor function of a
+breadth-first search forest, let $n$ be the length of its discovery order, and let $s$ and $t$ be
+vertices. Starting from $v_k = t$, this walks back along $p$, setting $v_{i-1} = p(v_i)$,
+until it reaches a vertex $v_0$ that tests equal to $s$, and returns the list
+$v_0, v_1, \dots, v_k$. It returns no list if the walk meets a vertex that does not test equal to
+$s$ and has no predecessor, or if none of the first $n + 1$ vertices $t, p(t), \dots$ of the walk
+tests equal to $s$. The cost counts one unit for each test against $s$, each predecessor lookup
+and each vertex prepended to the list.
+
+The bound $n$ makes the walk terminate even when the predecessor table contains a cycle. -/
 public def BFSForest.pathTo? {V : Type u} [BEq V]
     (forest : BFSForest V) (source target : V) : TimeM Nat (Option (List V)) :=
   followParents forest.predecessor source forest.order.length target []

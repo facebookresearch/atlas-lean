@@ -17,7 +17,7 @@ with at least `F_k(N, ℓ)` `k`-term arithmetic progressions contains an `ℓ`-t
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.Combinatorics.ManyThreeTermProgressionsErdosProblem179
 
 @[expose] public section
 
@@ -34,35 +34,21 @@ of a nonempty set, and `F₃(N, ℓ) ≥ 1` (sets of powers of `2` have no `3`-t
 open-ended "find good upper bounds" is not formalized.
 -/
 
-open Filter Topology Asymptotics
-
-/-- `A` contains a `k`-term arithmetic progression `a, a + d, …, a + (k - 1) d` with `d ≥ 1`. -/
-def HasAP (A : Finset ℕ) (k : ℕ) : Prop :=
-  ∃ a d : ℕ, 0 < d ∧ ∀ i < k, a + i * d ∈ A
-
-/-- The number of `k`-term arithmetic progressions in `A`, `k ≥ 2`: pairs `(a, d)` with `d ≥ 1` and
-`a + i d ∈ A` for all `i < k` (such `a, d` are at most `max A`). -/
-def apCount (A : Finset ℕ) (k : ℕ) : ℕ :=
-  ((A ×ˢ Finset.Icc 1 (A.sup id)).filter (fun p => ∀ i < k, p.1 + i * p.2 ∈ A)).card
-
-/-- `F_k(N, ℓ)`: the least `m` such that every `N`-element set `A ⊆ ℕ` containing at least `m`
-`k`-term arithmetic progressions contains an `ℓ`-term arithmetic progression. -/
-noncomputable def apThreshold (k ℓ N : ℕ) : ℕ :=
-  sInf {m : ℕ | ∀ A : Finset ℕ, A.card = N → m ≤ apCount A k → HasAP A ℓ}
-
-/-- Erdős Problem 179, first question: `F₃(N, 4) = o(N²)`. -/
-def threeAPThresholdForFourAPLittleO : Prop :=
-  (fun N : ℕ => (apThreshold 3 4 N : ℝ)) =o[atTop] (fun N : ℕ => (N : ℝ) ^ 2)
-
-/-- Erdős Problem 179, second question: `log F₃(N, ℓ) / log N → 2` for every `ℓ > 3`. -/
-def threeAPThresholdExponentTwo : Prop :=
-  ∀ ℓ : ℕ, 3 < ℓ →
-    Tendsto (fun N : ℕ => Real.log (apThreshold 3 ℓ N) / Real.log N) atTop (𝓝 2)
-
 /--
-Resolved true: Fox and Pohoata bound `F_k(N, ℓ)` above by `(r_ℓ(N) / N)^{O(1)} N²`, with `r_ℓ(N)`
-the largest size of a subset of `{1, …, N}` without `ℓ`-term progressions, which is `o(N²)` by
-Szemerédi's theorem; erdosproblems.com/179 records `F_k(N, ℓ) ≤ N² / (log log N)^{C_ℓ}`. Source: T.
+**Erdős Problem 179: $F_3(N, 4) = o(N^2)$.** As $N \to \infty$ over the natural numbers,
+$F_3(N, 4) / N^2 \to 0$, that is, $F_3(N, 4) = o(N^2)$, where $F_3(N, 4)$ is the least natural
+number $m$ such that every $N$-element set $A \subseteq \mathbb{N}$ containing at least $m$
+three-term arithmetic progressions $a, a + d, a + 2d$ with $d \ge 1$ contains a $4$-term
+arithmetic progression.
+
+Write $F_k(N, \ell)$ for the same threshold with $k$-term progressions in place of three-term ones
+and $\ell$-term progressions in place of $4$-term ones. Fox and Pohoata bound $F_k(N, \ell)$ above
+by $(r_\ell(N) / N)^{O(1)} N^2$, where $r_\ell(N)$ is the largest size of a subset of
+$\{1, \dots, N\}$ without $\ell$-term progressions; since $r_\ell(N) = o(N)$ by Szemerédi's
+theorem, this bound is $o(N^2)$. erdosproblems.com/179 records
+$F_k(N, \ell) \le N^2 / (\log \log N)^{C_\ell}$ for a constant $C_\ell$ depending only on $\ell$.
+
+Source: T.
 F. Bloom, Erdős Problems, Problem #179, https://www.erdosproblems.com/179 (status PROVED);
 resolution: J. Fox and C. Pohoata, Sets without k-term progressions can have many shorter
 progressions, Random Structures Algorithms 58 (2021), 383-389, arXiv:1908.09905, main theorem: for
@@ -71,18 +57,5 @@ s-term progressions in an n-set with no k-term progression; erdosproblems.com/17
 (log log N)^{C_ℓ}, https://arxiv.org/abs/1908.09905.
 -/
 public theorem_wanted threeAPThresholdForFourAPLittleO_holds : threeAPThresholdForFourAPLittleO
-
-/--
-Resolved true: Fox and Pohoata prove `lim log f_{s,k}(n) / log n = 2` for all `k > s ≥ 3`, where
-`f_{s,k}(n)` is the largest number of `s`-term progressions in an `n`-element set with no `k`-term
-progression, so that `F_s(n, k) = f_{s,k}(n) + 1`; take `s = 3` and `k = ℓ`. Source: T. F. Bloom,
-Erdős Problems, Problem #179, https://www.erdosproblems.com/179 (status PROVED); resolution: J. Fox
-and C. Pohoata, Sets without k-term progressions can have many shorter progressions, Random
-Structures Algorithms 58 (2021), 383-389, arXiv:1908.09905, main theorem: for all k > s ≥ 3, log
-f_{s,k}(n) / log n → 2, where f_{s,k}(n) = F_s(n, k) - 1 is the largest number of s-term
-progressions in an n-set with no k-term progression; erdosproblems.com/179: F_k(N, ℓ) ≤ N² / (log
-log N)^{C_ℓ}, https://arxiv.org/abs/1908.09905.
--/
-public theorem_wanted threeAPThresholdExponentTwo_holds : threeAPThresholdExponentTwo
 
 end MathlibExt.Combinatorics.ManyThreeTermProgressionsErdosProblem179Wanted

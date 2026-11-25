@@ -42,13 +42,14 @@ namespace MathlibExt.Combinatorics.Enumerative
 @[expose]
 public section
 
-/-- Weighted count of `S`-restricted `f`-weighted compositions of `n` with `k` parts.
+/-- **Restricted weighted composition count.** Let $R$ be a commutative ring, $S$ a finite set
+of natural numbers and $f \colon \mathbb{N} \to R$ a weight function. For natural numbers $n$
+and $k$, $d_{S,f}(n, k)$ is the sum, over all $k$-tuples $(\pi_1, \dots, \pi_k)$ of natural
+numbers with every $\pi_i \in S$ and $\pi_1 + \dots + \pi_k = n$, of the weight
+$f(\pi_1) \cdots f(\pi_k)$.
 
-For a commutative ring `R`, a finite set `S` of nonnegative integers, and a weight
-function `f : ℕ → R`, this is the sum over all tuples with every part in `S` and
-total `n` of the product weight `∏ i, f (π i)`. Since every part of a composition
-of `n` is at most `n`, tuples are encoded over the finite type `Fin k → Fin (n + 1)`
-with parts coerced to `ℕ`. -/
+Since every part of a composition of $n$ is at most $n$, the tuples range over the finite set
+of maps from $\{0, \dots, k-1\}$ to $\{0, \dots, n\}$. -/
 noncomputable def sRestrictedWeightedCompositionCount {R : Type*} [CommRing R]
     (S : Finset ℕ) (f : ℕ → R) (n k : ℕ) : R := by
   classical
@@ -56,10 +57,13 @@ noncomputable def sRestrictedWeightedCompositionCount {R : Type*} [CommRing R]
     (fun π : Fin k → Fin (n + 1) => (∀ i, (π i : ℕ) ∈ S) ∧ ∑ i, (π i : ℕ) = n),
       ∏ i, f (π i)
 
-/-- Vandermonde-type convolution for `S`-restricted weighted compositions.
+/-- **Vandermonde convolution for restricted weighted compositions.** Let $R$ be a commutative
+ring, $S$ a finite set of natural numbers and $f \colon \mathbb{N} \to R$ a weight function, and
+write $d_{S,f}(n, k)$ for the weighted count of $S$-restricted $f$-weighted compositions of $n$
+with $k$ parts. Then for all natural numbers $n$, $k$ and $j$ with $j \le k$,
 
-For every `j` with `0 ≤ j ≤ k` (the lower bound is automatic for `j : ℕ`),
-`d_{S,f}(n, k) = ∑_{m = 0}^n d_{S,f}(m, j) * d_{S,f}(n - m, k - j)`. -/
+$$d_{S,f}(n, k) = \sum_{m=0}^{n} d_{S,f}(m, j) \, d_{S,f}(n - m, k - j).$$
+-/
 public theorem vandermondeTypeConvolutionForSRestrictedWeightedCompositions
     {R : Type*} [CommRing R]
     (S : Finset ℕ) (f : ℕ → R) (n k j : ℕ) (hj : j ≤ k) :

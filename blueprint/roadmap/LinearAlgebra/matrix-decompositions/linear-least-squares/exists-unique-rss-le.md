@@ -1,8 +1,7 @@
 # Existence and uniqueness of the least-squares solution
 
 If the columns of the real $m \times k$ matrix $X$ are linearly independent, then for every
-$y \in \mathbb{R}^m$ there is exactly one $\theta_0$ minimizing $\|y - X\theta\|_2^2$, namely
-$\theta_0 = R^{-1} Q^{\mathsf{T}} y$ for the reduced QR factorization $X = QR$.
+$y \in \mathbb{R}^m$ there is exactly one $\theta_0$ minimizing $\|y - X\theta\|_2^2$.
 
 ## Informally uses
 

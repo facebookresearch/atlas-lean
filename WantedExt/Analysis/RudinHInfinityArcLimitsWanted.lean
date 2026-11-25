@@ -57,7 +57,7 @@ def IsBoundedAnalytic (g : ℂ → ℂ) : Prop :=
   ∃ M : ℝ, ∀ z ∈ Metric.ball 0 1, ‖g z‖ ≤ M
 
 /-- Rotation of a set by angle `θ`. -/
-def rotateSet (γ : Set ℂ) (θ : ℝ) : Set ℂ :=
+noncomputable def rotateSet (γ : Set ℂ) (θ : ℝ) : Set ℂ :=
   (fun w => Complex.exp (θ * Complex.I) * w) '' γ
 
 /-- [AMR-022-5076] For every non-tangential arc at `1` there is a bounded

@@ -1,0 +1,18 @@
+# Native K0 Comparison Models
+
+- [Source Sphere](source-sphere.md)
+- [Stable Weak](stable-weak.md)
+- [Spectrum Ho](spectrum-ho.md)
+- [Spectrum Zero Map](spectrum-zero-map.md)
+- [Spectrum Group Source](spectrum-group-source.md)
+- [Spectrum Pi0](spectrum-pi0.md)
+- [Spectrum Pi0 Map](spectrum-pi0-map.md)
+- [Object Level Zero](object-level-zero.md)
+- [Object Sphere Map](object-sphere-map.md)
+- [Object Circle](object-circle.md)
+- [Spectrum Object Circle](spectrum-object-circle.md)
+- [Native Object Class](native-object-class.md)
+- [Object Cycle Map](object-cycle-map.md)
+- [K0 Relation Descent](k0-relation-descent.md)
+- [K0 Comparison](k0-comparison.md)
+- [K0 Comparison object Class](k0-comparison-object-class.md)

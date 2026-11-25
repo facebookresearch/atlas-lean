@@ -55,16 +55,18 @@ open MathlibExt.Analysis.Normed.Module
 variable {𝕜 E F : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
   [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
-/-- **Complete continuity of compact operators.** If `T` is compact and
-`u n → x` weakly, then `T (u n) → T x` in norm.
+/-- **Complete continuity of compact operators.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $E$ and $F$ be normed spaces over $\mathbb{K}$, and let $T : E \to F$ be a
+compact continuous linear operator. If a sequence $(u_n)$ in $E$ converges weakly to $x \in E$,
+that is, $f(u_n) \to f(x)$ for every continuous linear functional $f : E \to \mathbb{K}$, then
+$T u_n \to T x$ in norm.
 
-The proof is the standard subsequence argument: if `T (u n)` did not
-converge in norm to `T x`, some subsequence would stay `ε`-away; the
-sequence `u n` is norm-bounded by uniform boundedness, so compactness
-gives a further subsequence of `T (u n)` converging in norm to some `a`;
-but `T` preserves weak convergence, so `a = T x` by uniqueness of scalar
-limits and the fact that the dual separates points — contradicting the
-`ε`-separation. -/
+The proof is the standard subsequence argument: if $T u_n$ did not converge in norm to $T x$,
+some subsequence would stay $\varepsilon$-away from $T x$; the sequence $(u_n)$ is norm-bounded
+by uniform boundedness, so compactness gives a further subsequence of $(T u_n)$ converging in
+norm to some $a$; but $T$ preserves weak convergence, so $a = T x$ by uniqueness of scalar
+limits and the fact that the dual separates points, contradicting the
+$\varepsilon$-separation. -/
 theorem tendsto_apply_of_isCompactOperator_of_forall_tendsto {T : E →L[𝕜] F}
     (hT : IsCompactOperator (T : E → F)) {u : ℕ → E} {x : E}
     (h : ∀ f : StrongDual 𝕜 E, Tendsto (fun n => f (u n)) atTop (𝓝 (f x))) :
@@ -104,8 +106,11 @@ theorem tendsto_apply_of_isCompactOperator_of_forall_tendsto {T : E →L[𝕜] F
     simpa using hN N le_rfl
   linarith
 
-/-- **Weakly-null special case.** If `T` is compact and `u n → 0` weakly,
-then `T (u n) → 0` in norm. -/
+/-- **Compact operators send weakly null sequences to norm null sequences.** Let $\mathbb{K}$
+be $\mathbb{R}$ or $\mathbb{C}$, let $E$ and $F$ be normed spaces over $\mathbb{K}$, and let
+$T : E \to F$ be a compact continuous linear operator. If a sequence $(u_n)$ in $E$ converges
+weakly to $0$, that is, $f(u_n) \to 0$ for every continuous linear functional
+$f : E \to \mathbb{K}$, then $T u_n \to 0$ in norm. -/
 theorem tendsto_apply_of_isCompactOperator_of_tendsto_zero {T : E →L[𝕜] F}
     (hT : IsCompactOperator (T : E → F)) {u : ℕ → E}
     (h : ∀ f : StrongDual 𝕜 E, Tendsto (fun n => f (u n)) atTop (𝓝 0)) :
@@ -115,7 +120,10 @@ theorem tendsto_apply_of_isCompactOperator_of_tendsto_zero {T : E →L[𝕜] F}
   simpa using
     tendsto_apply_of_isCompactOperator_of_forall_tendsto hT h0
 
-/-- Complete continuity from a weak-space input to norm convergence in `F`. -/
+/-- **Complete continuity of compact operators, weak-topology form.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$, let $E$ and $F$ be normed spaces over $\mathbb{K}$, and let
+$T : E \to F$ be a compact continuous linear operator. If a sequence $(u_n)$ in $E$ converges
+to $x \in E$ in the weak topology of $E$, then $T u_n \to T x$ in norm. -/
 theorem tendsto_apply_of_isCompactOperator_of_tendsto_weakSpace
     {T : E →L[𝕜] F} (hT : IsCompactOperator (T : E → F)) {u : ℕ → E} {x : E}
     (h : Tendsto (fun n => toWeakSpace 𝕜 E (u n)) atTop (𝓝 (toWeakSpace 𝕜 E x))) :

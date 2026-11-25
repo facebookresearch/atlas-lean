@@ -930,29 +930,24 @@ private lemma umbral_C_mul (a : ℚ) (p : Polynomial ℚ) :
   rw [Polynomial.C_mul', map_smul, smul_eq_mul]
 
 /--
-Abel-Hurwitz-Bernoulli multinomial identity: for `2 ≤ m`,
-`x : Fin m → ℚ` and `r : Fin m`, summing over `l : Fin m → ℕ`
-with `∑ l = n`, the multinomial-weighted sum of `B_{l_r}(x_r + l_r)`
-times `∏_{j≠r} (x_j + l_j)^{l_j}` equals the single sum
-`∑_{l=0}^n C(n,l) ((m+l-2)!/(m-2)!) B_{n-l}(∑ x_i + n)`.
+**Abel–Hurwitz–Bernoulli multinomial identity.** Let $B_k(t)$ denote the $k$-th Bernoulli
+polynomial. Let $m \ge 2$ and $n$ be natural numbers, let $x_1, \dots, x_m$ be rational numbers,
+and let $r$ be an index with $1 \le r \le m$. Then
+$$\sum_{l} \binom{n}{l_1, \dots, l_m} B_{l_r}(x_r + l_r) \prod_{j \neq r} (x_j + l_j)^{l_j} =
+\sum_{k=0}^{n} \binom{n}{k} \frac{(m + k - 2)!}{(m - 2)!} B_{n-k}(x_1 + \dots + x_m + n),$$
+where the sum on the left runs over all $l = (l_1, \dots, l_m) \in \mathbb{N}^m$ with
+$l_1 + \dots + l_m = n$, and $\binom{n}{l_1, \dots, l_m}$ is the multinomial coefficient.
+
+The source states the identity for arbitrary real or complex parameters; this statement records
+its specialization to rational $x_1, \dots, x_m$.
+
+Proves `Wanted` entry `abel_hurwitz_bernoulli_multinomial`.
 
 Source: Claudio de J. Pita Ruiz V., "Carlitz-Type and Other Bernoulli
 Identities," Journal of Integer Sequences 19 (2016), Article 16.1.8,
 Proposition [Abel-Hurwitz-Bernoulli identity] (a), equation (5.16),
 lines 821–829,
 https://cs.uwaterloo.ca/journals/JIS/VOL19/Pita/pita23.tex
-
-The source states the identity for arbitrary real or complex parameters. This
-target intentionally records its rational specialization, using
-`Polynomial.eval`; the corresponding complex formulation would instead use
-`Polynomial.eval₂ (algebraMap ℚ ℂ)`.
-
-`B_k = Polynomial.bernoulli k` evaluated with `Polynomial.eval`;
-`C(n; l) = Nat.multinomial Finset.univ l`. Distinct from the same
-paper's equation (5.11) single-sum Abel-Bernoulli identity and from
-the Carlitz Bernoulli-number symmetry.
-
-Proves `Wanted` entry `abel_hurwitz_bernoulli_multinomial`.
 -/
 theorem abel_hurwitz_bernoulli_multinomial
     (m n : ℕ) (x : Fin m → ℚ) (r : Fin m) (hm : 2 ≤ m) :

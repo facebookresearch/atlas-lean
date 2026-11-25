@@ -43,19 +43,22 @@ namespace Cslib.Algorithms.Lean
 
 universe u
 
-/-- A sparse table over `α`: the underlying data together with its levels of interval
-minima, stored as arrays so that entry lookup is random access. The list-level function
-`level`, together with `List.min?` of slices of `data.toList`, is the specification.
-Arbitrary values of this type need not relate `data` and `levels` at all; the
-representation invariant `Valid` ties every stored level to `level data.toList`,
-`build` produces valid tables, and query correctness is stated for valid tables. -/
+/-- **Sparse table.** A sparse table over a type $\alpha$ consists of an array of elements of
+$\alpha$, called its data, and an array of arrays of elements of $\alpha$, called its levels.
+
+The intended meaning is that level $k$ stores the minima of the length-$2^k$ slices of the data;
+data and levels are stored as arrays so that entry lookup is random access. Arbitrary values need
+not relate data and levels at all; validity ties every stored level to this specification, tables
+produced by the construction are valid, and query correctness is stated for valid tables. -/
 structure SparseTable (α : Type u) where
   data : Array α
   levels : Array (Array α)
 
 namespace SparseTable
 
-/-- Minimum on `Option`, with `none` as the neutral element. -/
+/-- **Option minimum.** For a type $\alpha$ with a minimum operation, the option minimum extends
+$\min$ to optional values (elements of $\alpha$ or none): on two elements $a, b$ of $\alpha$ it
+returns $\min(a, b)$, and none is a neutral element on either side. -/
 def omin {α : Type u} [Min α] : Option α → Option α → Option α
   | none, b => b
   | some a, none => some a
@@ -79,7 +82,10 @@ theorem omin_assoc {α : Type u} [LinearOrder α] (a b c : Option α) :
     omin (omin a b) c = omin a (omin b c) := by
   cases a <;> cases b <;> cases c <;> simp [omin, min_assoc]
 
-/-- `omin` is idempotent; this is what lets overlapping query intervals double-count. -/
+/-- **Idempotence of the option minimum.** For every linearly ordered type $\alpha$ and every
+optional value $a$ (an element of $\alpha$ or none), the option minimum of $a$ with itself is $a$.
+
+This is what lets two overlapping query intervals count their overlap twice. -/
 theorem omin_self {α : Type u} [LinearOrder α] (a : Option α) : omin a a = a := by
   cases a <;> simp [omin]
 
@@ -159,8 +165,13 @@ private theorem rangeMin_overlap {α : Type u} [LinearOrder α] (P M S : List α
           rw [rangeMin_append, rangeMin_append]
 
 /--
-Level `k` of the sparse table over `a`: entry `i` is the minimum of the length-`2 ^ k`
-slice of `a` starting at `i`. Only starts whose interval fits in `a` get an entry.
+**Levels of a sparse table.** For a list $a$ over a type with a minimum operation $\min$, the
+levels of $a$ are defined recursively: level $0$ is $a$, and if level $k$ is
+$\ell = (\ell_0, \dots, \ell_{m-1})$, then level $k + 1$ is the list of the values
+$\min(\ell_i, \ell_{i+2^k})$ for $0 \le i < m - 2^k$ (empty when $m \le 2^k$).
+
+Over a linear order, element $i$ of level $k$ is the minimum of the $2^k$ consecutive elements
+of $a$ starting at index $i$, and only start indices whose interval fits in $a$ get an element.
 -/
 def level {α : Type u} [Min α] (a : List α) : Nat → List α
   | 0 => a
@@ -178,7 +189,9 @@ private theorem two_pow_succ (k : Nat) : (2 : Nat) ^ (k + 1) = 2 ^ k + 2 ^ k := 
   show 2 ^ k * 2 = 2 ^ k + 2 ^ k
   omega
 
-/-- Level `k` has one entry per start index whose length-`2 ^ k` interval fits. -/
+/-- **Length of a level.** For a list $a$ of length $n$ over a type with a minimum operation
+and a natural number $k$, level $k$ of $a$ has length $\max(n + 1 - 2^k, 0)$: one element for
+each start index $i$ with $i + 2^k \le n$. -/
 theorem level_length {α : Type u} [Min α] (a : List α) (k : Nat) :
     (level a k).length = a.length + 1 - 2 ^ k := by
   induction k with
@@ -243,14 +256,19 @@ private theorem getElem?_level_rangeMin {α : Type u} [LinearOrder α] (a : List
         hsplit, rangeMin_append, hx, hy]
       rfl
 
-/-- An in-range level entry is `List.min?` of its interval slice. -/
+/-- **Levels hold interval minima.** Let $a = (a_0, \dots, a_{n-1})$ be a list over a linearly
+ordered type, and let $k$ and $i$ be natural numbers with $i + 2^k \le n$. Then level $k$ of $a$
+has an element at index $i$, and it equals $\min(a_i, a_{i+1}, \dots, a_{i+2^k-1})$. -/
 theorem getElem?_level {α : Type u} [LinearOrder α] (a : List α) (k i : Nat)
     (h : i + 2 ^ k ≤ a.length) :
     (level a k)[i]? = ((a.drop i).take (2 ^ k)).min? := by
   rw [getElem?_level_rangeMin a k i h, rangeMin_eq_min?]
 
-/-- The next level built from `row`: entry `i` combines entries `i` and `i + 2 ^ k` of
-`row`. Computed once from the retained previous row during `build`. -/
+/-- **Next level of a sparse table row.** For a type with a minimum operation, an array
+$(r_0, \dots, r_{n-1})$ and a natural number $k$, the next level is the array of length
+$n - 2^k$ (empty when $2^k \ge n$) whose entry $i$ is $\min(r_i, r_{i + 2^k})$.
+
+The construction of a sparse table computes each level once from the previous one this way. -/
 def nextLevel {α : Type u} [Min α] (row : Array α) (k : Nat) : Array α :=
   Array.zipWith min row (row.extract (2 ^ k) row.size)
 
@@ -262,9 +280,11 @@ theorem toList_nextLevel {α : Type u} [Min α] (row : Array α) (k : Nat) :
   rw [nextLevel, Array.toList_zipWith, Array.toList_extract, List.extract_eq_take_drop,
     List.take_of_length_le (Nat.le_of_eq hlen)]
 
-/-- One step of the iterative construction: record the current row as the next level and
-compute the following row from it. The state is the current row together with the levels
-built so far. -/
+/-- **One step of the sparse-table construction.** Work over a type with a minimum operation
+$\min$. Given a pair $(r, L)$ of a current row $r$ (an array of length $|r|$) and an array $L$
+of the rows recorded so far, and a natural number $k$, the build step returns the pair
+$(r', L')$, where $L'$ is $L$ with $r$ appended at the end, and $r'$ is the array whose
+entry $i$ is $\min(r_i, r_{i+2^k})$ for each $i$ with $i + 2^k < |r|$. -/
 def buildStep {α : Type u} [Min α] (state : Array α × Array (Array α)) (k : Nat) :
     Array α × Array (Array α) :=
   (nextLevel state.1 k, state.2.push state.1)
@@ -289,10 +309,13 @@ private theorem build_fold_spec {α : Type u} [Min α] (a : List α) (t : Nat) :
       · show (nextLevel ((List.range t).foldl buildStep (a.toArray, #[])).1 t).toList = _
         rw [toList_nextLevel, ihRow, ← level_succ]
 
-/-- Builds the sparse table over `a` with `Nat.log2 a.length + 1` levels. Levels are
-built iteratively: a fold threads one retained row through `buildStep`, computing each
-level once from its predecessor, and stores the levels in an array. The input array is
-bound once (`data`) and shared between level zero and the `data` field. -/
+/-- **Building a sparse table.** For a list $a$ of length $n$ over a type with a minimum
+operation $\min$, the sparse table built from $a$ has data $a$ and
+$\lfloor \log_2 n \rfloor + 1$ stored rows, where $\lfloor \log_2 0 \rfloor$ is taken to be $0$.
+The rows are produced by iterating the build step for $k = 0, 1, \dots, \lfloor \log_2 n \rfloor$,
+starting from the current row $a$ and no recorded rows. So row $0$ is $a$, and entry $i$ of
+row $k + 1$ is $\min(x_i, x_{i+2^k})$, where $x$ is row $k$ and $i + 2^k$ is less than the
+length of $x$. Each row is computed once, from its predecessor. -/
 def build {α : Type u} [Min α] (a : List α) : SparseTable α :=
   let data := a.toArray
   let final := (List.range (Nat.log2 a.length + 1)).foldl buildStep (data, #[])
@@ -308,25 +331,38 @@ theorem build_levels_toList_map {α : Type u} [Min α] (a : List α) :
       (List.range (Nat.log2 a.length + 1)).map (level a) :=
   (build_fold_spec a (Nat.log2 a.length + 1)).1
 
-/-- The representation invariant: every stored level is exactly `level data.toList`,
-so a valid table's entries are the interval minima of its own data. Tables built by
-`build` are valid (`build_valid`); an arbitrary value such as `⟨#[1], #[#[99]]⟩` is
-not, and query correctness below is stated only for valid tables. -/
+/-- **Valid sparse table.** A sparse table over a type with a minimum operation, whose data is a
+list $a$ of length $n$, is valid when it has exactly $m + 1$ levels, where
+$m = \lfloor \log_2 n \rfloor$ for $n \ge 1$ and $m = 0$ for $n = 0$, and for each $k \le m$ its
+level $k$ is the list $L_k$ defined by $L_0 = a$ and, for $x = L_j$, $L_{j+1}$ is the list of
+length $|x| - 2^j$ (empty when $2^j \ge |x|$) whose entry $i$ is $\min(x_i, x_{i + 2^j})$. For a
+linear order, $L_k$ is the list of minima of the length-$2^k$ slices of $a$.
+
+Tables produced by the construction are valid, an arbitrary value such as data $(1)$ with the
+single level $(99)$ is not, and query correctness is stated only for valid tables. -/
 def Valid {α : Type u} [Min α] (t : SparseTable α) : Prop :=
   t.levels.toList.map Array.toList =
     (List.range (Nat.log2 t.data.toList.length + 1)).map (level t.data.toList)
 
-/-- Tables produced by `build` satisfy the representation invariant. -/
+/-- **Built sparse tables are valid.** For every list $a$ over a type with a minimum operation,
+the sparse table built from $a$ is valid: its stored rows are exactly the levels
+$0, 1, \dots, \lfloor \log_2 n \rfloor$ of $a$, in this order, where $n$ is the length of $a$
+and $\lfloor \log_2 0 \rfloor$ is taken to be $0$. -/
 theorem build_valid {α : Type u} [Min α] (a : List α) : (build a).Valid := by
   simp [Valid, build_levels_toList_map]
 
-/-- Entry `i` of level `k`, as an `Option`; `none` when out of range. Both indexes are
-array lookups. -/
+/-- **Sparse-table entries.** For a sparse table $t$ and natural numbers $k$ and $i$, the entry
+of $t$ at row $k$ and index $i$ is element $i$ of the $k$-th stored row of $t$ (both counted
+from $0$) when $t$ has a $k$-th row and that row has an element at index $i$; otherwise the
+entry is undefined. Both lookups are random-access array lookups. -/
 def entry {α : Type u} (t : SparseTable α) (k i : Nat) : Option α :=
   t.levels[k]?.bind (fun row => row[i]?)
 
-/-- In a valid table, entry `i` of level `k` is the corresponding entry of
-`level t.data.toList`. -/
+/-- **Rows of a valid sparse table are its levels.** Let $t$ be a valid sparse table over a type
+with a minimum operation, with data $d$ of length $n$, and let $k \le \lfloor \log_2 n \rfloor$,
+where $\lfloor \log_2 0 \rfloor$ is taken to be $0$. Then for every index $i$, the entry of $t$
+at row $k$ and index $i$ is defined exactly when level $k$ of $d$ has an element at index $i$,
+and in that case the two are equal. -/
 theorem entry_eq_of_valid {α : Type u} [Min α] {t : SparseTable α}
     (hValid : t.Valid) {k : Nat} (hk : k ≤ Nat.log2 t.data.toList.length)
     (i : Nat) :
@@ -369,15 +405,22 @@ private theorem entry_build_eq_rangeMin {α : Type u} [LinearOrder α] (a : List
     exact (Nat.le_log2 (by omega : a.length ≠ 0)).mpr h2
   rw [entry_build a hk i, getElem?_level_rangeMin a k i h]
 
-/-- A built table's in-range entry is `List.min?` of its interval slice. The
-interval-fit premise alone suffices: it implies `2 ^ k ≤ a.length`, hence the
-level bound `k ≤ Nat.log2 a.length`, which is derived internally. -/
+/-- **Entries of a built sparse table are interval minima.** Let $a = (a_0, \dots, a_{n-1})$ be
+a list over a linearly ordered type, and let $k$ and $i$ be natural numbers with
+$i + 2^k \le n$. Then the entry of the sparse table built from $a$ at row $k$ and index $i$ is
+defined and equals $\min(a_i, a_{i+1}, \dots, a_{i+2^k-1})$.
+
+No separate bound on $k$ is needed: $i + 2^k \le n$ already implies
+$k \le \lfloor \log_2 n \rfloor$. -/
 theorem entry_build_eq_min? {α : Type u} [LinearOrder α] (a : List α) (k i : Nat)
     (h : i + 2 ^ k ≤ a.length) :
     (build a).entry k i = ((a.drop i).take (2 ^ k)).min? := by
   rw [entry_build_eq_rangeMin a k i h, rangeMin_eq_min?]
 
-/-- A valid table's in-range entry is `List.min?` of its interval slice. -/
+/-- **Entries of a valid sparse table are interval minima.** Let $t$ be a valid sparse table
+over a linearly ordered type, with data $d = (d_0, \dots, d_{n-1})$, and let $k$ and $i$ be
+natural numbers with $i + 2^k \le n$. Then the entry of $t$ at row $k$ and index $i$ is
+defined and equals $\min(d_i, d_{i+1}, \dots, d_{i+2^k-1})$. -/
 theorem entry_eq_min?_of_valid {α : Type u} [LinearOrder α] {t : SparseTable α}
     (hValid : t.Valid) (k i : Nat) (h : i + 2 ^ k ≤ t.data.toList.length) :
     t.entry k i = ((t.data.toList.drop i).take (2 ^ k)).min? := by
@@ -388,8 +431,11 @@ theorem entry_eq_min?_of_valid {α : Type u} [LinearOrder α] {t : SparseTable �
   rw [entry_eq_of_valid hValid hk i, getElem?_level t.data.toList k i h]
 
 /--
-Range-minimum query over `[l, r)`: the minimum of the two length-`2 ^ k` entries starting
-at `l` and at `r - 2 ^ k`, where `k = Nat.log2 (r - l)`. Empty intervals give `none`.
+**Sparse table range-minimum query.** For a sparse table $t$ over a type with a minimum operation
+and natural numbers $l, r$, the query over $[l, r)$ returns none when $r \le l$. Otherwise, with
+$k = \lfloor \log_2 (r - l) \rfloor$, it returns the option minimum (the minimum, with none as a
+neutral element on either side) of the entries of $t$ at level $k$ and indices $l$ and $r - 2^k$,
+in this order, where an entry not stored in $t$ counts as none.
 -/
 def query {α : Type u} [Min α] (t : SparseTable α) (l r : Nat) : Option α :=
   if r ≤ l then none
@@ -436,9 +482,12 @@ private theorem query_rangeMin_of_valid {α : Type u} [LinearOrder α]
     rw [hsplit3, hsplit1, hsplit2]
     exact rangeMin_overlap _ _ _
 
-/-- A query on a valid table is `List.min?` of the corresponding list slice.
-Only the in-range premise `r ≤ t.data.toList.length` is needed: for reversed
-bounds `r ≤ l` both sides are `none`. -/
+/-- **Correctness of queries on valid sparse tables.** Let $t$ be a valid sparse table over a
+linearly ordered type whose data is the list $(a_0, \dots, a_{n-1})$, and let $l, r$ be natural
+numbers with $r \le n$. Then the range-minimum query over $[l, r)$ on $t$ returns the minimum of
+the slice $(a_l, \dots, a_{r-1})$ (none when $r \le l$, where the slice is empty).
+
+Only the premise $r \le n$ is needed: for reversed bounds $r \le l$ both sides are none. -/
 theorem query_eq_of_valid {α : Type u} [LinearOrder α] {t : SparseTable α}
     (hValid : t.Valid) {l r : Nat} (hr : r ≤ t.data.toList.length) :
     t.query l r = ((t.data.toList.drop l).take (r - l)).min? := by
@@ -450,8 +499,12 @@ private theorem query_build_all_rangeMin {α : Type u} [LinearOrder α] (a : Lis
     (r := a.length) (by simpa using Nat.le_refl a.length)
   simpa using h
 
-/-- A query on a built table is `List.min?` of the corresponding list slice,
-with no ordering premise on the bounds. -/
+/-- **Correctness of sparse table queries.** Let $a = (a_0, \dots, a_{n-1})$ be a list over a
+linearly ordered type and let $l, r$ be natural numbers with $r \le n$. Then the range-minimum
+query over $[l, r)$ on the sparse table built from $a$ returns the minimum of the slice
+$(a_l, \dots, a_{r-1})$ (none when $r \le l$, where the slice is empty).
+
+No ordering premise $l \le r$ is needed. -/
 theorem query_build {α : Type u} [LinearOrder α] (a : List α) {l r : Nat}
     (hr : r ≤ a.length) :
     (build a).query l r = ((a.drop l).take (r - l)).min? := by
@@ -459,7 +512,9 @@ theorem query_build {α : Type u} [LinearOrder α] (a : List α) {l r : Nat}
     (by simpa using hr)
   simpa using h
 
-/-- A query over the whole array is `List.min?` of the whole list. -/
+/-- **Whole-range sparse table query.** For every list $a$ of length $n$ over a linearly ordered
+type, the range-minimum query over $[0, n)$ on the sparse table built from $a$ returns the
+minimum of $a$ (none when $a$ is empty). -/
 theorem query_build_all {α : Type u} [LinearOrder α] (a : List α) :
     (build a).query 0 a.length = a.min? := by
   rw [query_build_all_rangeMin, rangeMin_eq_min?]
