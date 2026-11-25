@@ -4,12 +4,6 @@ All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
-`gaussian_calibration_tail_le` proves the standardized calibration tail estimate behind the
-same mechanism (Dwork and Roth (2014), Theorem A.1): under
-`2 * Real.log ((5 / 4) / δ) < c ^ 2` and `r ≤ ε / c`, where `r` is the standardized shift
-(sensitivity divided by the noise scale), the standard Gaussian mass above the privacy-loss
-threshold `ε / r - r / 2` is at most `δ`, including the trivial case `δ ≥ 1`.
-
 -/
 
 module
@@ -29,6 +23,15 @@ vector-valued query by calibrating independent Gaussian noise to its Euclidean s
 For neighboring means `a` and `b`, the proof bounds the density at mean `a` by the sum of
 `exp ε` times the density at mean `b` and `δ` times a third Gaussian density. The integral
 of the third density over any event is at most one.
+
+`gaussian_calibration_tail_le` proves the standardized calibration tail estimate behind the
+same mechanism (Dwork and Roth (2014), Theorem A.1): under
+`2 * Real.log ((5 / 4) / δ) < c ^ 2` and `r ≤ ε / c`, where `r` is the standardized shift
+(sensitivity divided by the noise scale), the standard Gaussian mass above the privacy-loss
+threshold `ε / r - r / 2` is at most `δ`, including the trivial case `δ ≥ 1`. The constant
+`5 / 4` is the source constant `1.25` inside the calibration hypothesis
+`2 * Real.log ((5 / 4) / δ) < c ^ 2`.
+
 -/
 
 @[expose] public section
