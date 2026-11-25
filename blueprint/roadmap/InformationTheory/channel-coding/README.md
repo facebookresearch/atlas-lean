@@ -5,6 +5,7 @@ random coding bound makes achievability quantitative: averaged over random codes
 probability is at most $(M - 1)^\rho e^{-N E_0(\rho, p)}$, and the exponent is positive at every
 rate below the mutual information.
 
+- [Gaussian MIMO channel](gaussian-mimo-channel/README.md)
 - [Shannon's channel coding theorem](shannon-s-channel-coding-theorem/README.md)
 - [Random coding bound and Gallager's exponent](random-coding-bound-and-gallager-s-exponent/README.md)
 
