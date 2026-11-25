@@ -1,7 +1,8 @@
 # Ideal mixer and nonselective splitter
 
-Let the streams of a steady process unit carry species flows in $\mathbb{R}^S_{\ge 0}$; the composition of a stream with positive
-total flow is its flow vector divided by its total.
+Let a steady process unit have finite sets of species, inlet streams, and outlet streams. Each stream carries species flows
+in $\mathbb{R}^S_{\ge 0}$, where $S$ is the species set. A stream with positive total flow has composition equal to its flow
+vector divided by its total.
 
 - **Mixer.** The outlet flow vector of a mixer is the sum of its inlet flow vectors. If the outlet total is positive, its
   composition is the convex combination of the compositions of the inlets with positive flow, weighted by their shares of the
@@ -10,10 +11,6 @@ total flow is its flow vector divided by its total.
   flow vector. The outlets add up to the inlet, and every outlet with positive flow has the composition of the inlet.
 
 The unit has no storage and no reaction. Equilibrium stages and other selective separators are not of this form.
-
-## Depends on
-
-## Proof depends on
 
 ## Sources
 
