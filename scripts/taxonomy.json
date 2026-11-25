@@ -12519,6 +12519,7 @@
   "MathlibExt/NumberTheory/ErdosStrausDivisorPatterns": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Erdős–Straus conjecture"},
   "MathlibExt/NumberTheory/ErdosStrausPrimeStructure": {"to": "NumberTheory/diophantine-equations/diophantine-tuples-egyptian", "title": "Erdős–Straus conjecture"},
   "MathlibExt/NumberTheory/EulerFermatPrimePower": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Euler–Fermat congruences modulo prime powers"},
+  "MathlibExt/NumberTheory/EulerLucasBinomialSum": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Bernoulli–Fibonacci and Euler–Lucas double sums"},
   "MathlibExt/NumberTheory/EulerPolynomialBinomialAverage": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Higher-order Euler polynomials"},
   "MathlibExt/NumberTheory/EulerPrime": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Odd perfect numbers"},
   "MathlibExt/NumberTheory/EvenPerfectNumbers": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Euclid–Euler theorem"},
