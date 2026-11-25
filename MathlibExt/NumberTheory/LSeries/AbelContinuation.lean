@@ -285,7 +285,7 @@ theorem tendsto_abelContinuation_Icc (f : ℕ → ℂ) {σ : ℝ} {s : ℂ}
         simp [neg_zero]
       rw [hfun]
       exact differentiableAt_const 1
-    · exact differentiableAt_id.ofReal_cpow_const ht0 (neg_ne_zero.mpr hs0)
+    · exact differentiableAt_id.ofReal_cpow_const (-s) ht0
   have hf_int : LocallyIntegrableOn
       (deriv fun x : ℝ => (x : ℂ) ^ (-s)) (Set.Ici 1) := by
     by_cases hs0 : s = 0
@@ -304,8 +304,8 @@ theorem tendsto_abelContinuation_Icc (f : ℕ → ℂ) {σ : ℝ} {s : ℂ}
       have heq : Set.EqOn (deriv fun x : ℝ => (x : ℂ) ^ (-s))
           (fun x : ℝ => -s * (x : ℂ) ^ (-s - 1)) (Set.Ici 1) := by
         intro x hx
-        exact Complex.deriv_ofReal_cpow_const
-          (ne_of_gt (zero_lt_one.trans_le hx)) (neg_ne_zero.mpr hs0)
+        exact Complex.deriv_ofReal_cpow_const (-s)
+          (ne_of_gt (zero_lt_one.trans_le hx))
       exact (hRHS.congr heq).locallyIntegrableOn measurableSet_Ici
   have hlim : Tendsto
       (fun n : ℕ => ((n : ℝ) : ℂ) ^ (-s) * ∑ k ∈ Finset.Icc 0 n, c k)
@@ -355,8 +355,8 @@ theorem tendsto_abelContinuation_Icc (f : ℕ → ℂ) {σ : ℝ} {s : ℂ}
         simp [neg_zero]
       rw [hfun]
       simp
-    · rw [Complex.deriv_ofReal_cpow_const (ne_of_gt (zero_lt_one.trans ht))
-        (neg_ne_zero.mpr hs0), show (-s - 1 : ℂ) = (-(s + 1)) by ring]
+    · rw [Complex.deriv_ofReal_cpow_const (-s) (ne_of_gt (zero_lt_one.trans ht)),
+        show (-s - 1 : ℂ) = (-(s + 1)) by ring]
       ring
   have hcongr : ∀ t ∈ Set.Ioi (1 : ℝ),
       -(deriv (fun x : ℝ => (x : ℂ) ^ (-s)) t *

@@ -79,7 +79,7 @@ example : ∃ p : ℝ[X], p ≠ 0 ∧ (∀ i < p.natDegree, p.coeff i ≤ p.coef
 example : ∃ p : ℝ[X], p ≠ 0 ∧ 0 ≤ p.coeff 0 ∧ ∃ z : ℂ, aeval z p = 0 ∧ 1 < ‖z‖ := by
   refine ⟨C 2 + X, ?_, by simp, -2, ?_, ?_⟩
   · intro h
-    simpa using congrArg (coeff · 1) h
+    simpa using congrArg (·.coeff 1) h
   · simp
   · simp
 

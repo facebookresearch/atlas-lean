@@ -261,7 +261,7 @@ index $i$, the array obtained by sifting up $a$ from $i$ is a permutation of $a$
 theorem siftUp_perm {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
     (siftUp a i).Perm a := by
   induction i using Nat.strong_induction_on generalizing a with
-  | h i ih =>
+  | ind i ih =>
     rw [siftUp]
     split
     · split
@@ -279,7 +279,7 @@ $a$. -/
 theorem siftDown_perm {α : Type u} [LinearOrder α] (a : Array α) (i : Nat) :
     (siftDown a i).Perm a := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a i with
-  | h n ih =>
+  | ind n ih =>
     rw [siftDown]
     split
     · exact Array.Perm.refl _
@@ -317,7 +317,7 @@ theorem HeapOrdered.root_le {α : Type u} [LinearOrder α] {a : Array α}
     (h : HeapOrdered a) (i : Nat) (hi : i < a.size) :
     a[0]'(by omega) ≤ a[i] := by
   induction i using Nat.strong_induction_on with
-  | h i ih =>
+  | ind i ih =>
     by_cases hzero : i = 0
     · subst i
       exact le_rfl
@@ -411,7 +411,7 @@ up $a$ from $i$ is heap ordered. -/
 theorem siftUp_ordered {α : Type u} [LinearOrder α] (a : Array α) (i : Nat)
     (h : SiftUpReady a i) : HeapOrdered (siftUp a i) := by
   induction i using Nat.strong_induction_on generalizing a with
-  | h i ih =>
+  | ind i ih =>
     rw [siftUp]
     split
     · split
@@ -530,7 +530,7 @@ entering $i$ ordered. Then the array obtained by sifting down $a$ from $i$ is he
 theorem siftDown_ordered {α : Type u} [LinearOrder α] (a : Array α) (i : Nat)
     (h : SiftDownReady a i) : HeapOrdered (siftDown a i) := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a i with
-  | h n ih =>
+  | ind n ih =>
     rw [siftDown]
     split
     · rename_i hchild

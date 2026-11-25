@@ -6,13 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`Batteries/Data/Array/Match.lean` (Batteries, commit `66e469188fe07963e5cf666c7d4433f45b8131c5`):
+Copyright (c) 2023 F. G. Dorais. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: F. G. Dorais
+-/
+
 module
 
-public import Batteries.Data.Array.Match
 public import Batteries.Data.List.Basic
 public import CSLibExt.Algorithms.Lean.StringMatching.Basic
 public import Cslib.Algorithms.Lean.TimeM
-import all Batteries.Data.Array.Match
 
 import Batteries.Data.List.Lemmas
 
@@ -27,10 +34,14 @@ array access, arithmetic, and control flow are free.
 
 `kmpSearch` is opaque to downstream modules; its timed construction and scan recursors are private.
 The kernel-checked semantic bridge uses transparent `List.dropInfix?`. No equality is claimed with
-the pinned opaque Batteries matcher, whose empty-pattern behavior also differs from this API.
+the Batteries matcher, whose empty-pattern behavior also differs from this API.
 The prefix-table representation and operations adapt `Array.PrefixTable`,
 `Array.PrefixTable.step`, `Array.PrefixTable.extend`, and `Array.mkPrefixTable` from Batteries
-revision `f2effa3d803fda822b1f97b806c47cf2adfbcbc2`.
+revision `f2effa3d803fda822b1f97b806c47cf2adfbcbc2`. Batteries v4.36.0 moved
+`Batteries.Data.Array.Match` to the separate package `fgdorais/batteries-kmp`, so these definitions,
+with the `Inhabited` instance and `Array.PrefixTable.size`, are copied below from Batteries revision
+`66e469188fe07963e5cf666c7d4433f45b8131c5` (Copyright (c) 2023 F. G. Dorais, Apache License,
+Version 2.0). Changes: explicit binders for `autoImplicit false`.
 
 ## References
 
@@ -38,6 +49,73 @@ revision `f2effa3d803fda822b1f97b806c47cf2adfbcbc2`.
   *SIAM Journal on Computing* 6(2), 323–350 (1977), DOI 10.1137/0206024.
 -/
 set_option autoImplicit false
+
+public section
+
+namespace Array
+
+universe u
+
+/-- Prefix table for the Knuth-Morris-Pratt matching algorithm
+
+  This is an array of the form `t = [(x₀,n₀), (x₁,n₁), (x₂, n₂), ...]` where for each `i`, `nᵢ` is
+  the length of the longest proper prefix of `xs = [x₀,x₁,...,xᵢ]` which is also a suffix of `xs`.
+-/
+structure PrefixTable (α : Type u) extends Array (α × Nat) where
+  /-- Validity condition to help with termination proofs -/
+  valid {i : Nat} : (h : i < toArray.size) → toArray[i].2 ≤ i
+
+variable {α : Type u}
+
+instance : Inhabited (PrefixTable α) where
+  default := ⟨#[], nofun⟩
+
+/-- Returns the size of the prefix table -/
+abbrev PrefixTable.size (t : PrefixTable α) := t.toArray.size
+
+/-- Transition function for the KMP matcher
+
+  Assuming we have an input `xs` with a suffix that matches the pattern prefix `t.pattern[:len]`
+  where `len : Fin (t.size+1)`. Then `xs.push x` has a suffix that matches the pattern prefix
+  `t.pattern[:t.step x len]`. If `len` is as large as possible then `t.step x len` will also be
+  as large as possible.
+-/
+def PrefixTable.step [BEq α] (t : PrefixTable α) (x : α) : Fin (t.size+1) → Fin (t.size+1)
+  | ⟨k, hk⟩ =>
+    let cont := fun () =>
+      match k with
+      | 0 => ⟨0, Nat.zero_lt_succ _⟩
+      | k + 1 =>
+        have h2 : k < t.size := Nat.lt_of_succ_lt_succ hk
+        let k' := t.toArray[k].2
+        have hk' : k' < k + 1 := Nat.lt_succ_of_le (t.valid h2)
+        step t x ⟨k', Nat.lt_trans hk' hk⟩
+    if hsz : k < t.size then
+      if x == t.toArray[k].1 then
+        ⟨k+1, Nat.succ_lt_succ hsz⟩
+      else cont ()
+    else cont ()
+termination_by k => k.val
+
+/-- Extend a prefix table by one element
+
+  If `t` is the prefix table for `xs` then `t.extend x` is the prefix table for `xs.push x`.
+-/
+def PrefixTable.extend [BEq α] (t : PrefixTable α) (x : α) : PrefixTable α where
+  toArray := t.toArray.push (x, t.step x ⟨t.size, Nat.lt_succ_self _⟩)
+  valid _ := by
+    rw [Array.getElem_push]
+    split
+    · exact t.valid ..
+    · next h => exact Nat.le_trans (Nat.lt_succ_iff.1 <| Fin.isLt ..) (Nat.not_lt.1 h)
+
+/-- Make prefix table from a pattern array -/
+def mkPrefixTable [BEq α] (xs : Array α) : PrefixTable α := xs.foldl (·.extend) default
+
+end Array
+
+end
+
 namespace Cslib.Algorithms.Lean.TimeM
 universe u
 variable {α : Type u}
@@ -121,7 +199,7 @@ private theorem ret_timedStep [BEq α] (table : Array.PrefixTable α) (x : α)
     (state : Fin (table.size + 1)) :
     (timedStep table x state).ret = table.step x state := by
   induction hstate : state.val using Nat.strong_induction_on generalizing state with
-  | h k ih =>
+  | ind k ih =>
       obtain ⟨state, hstateSize⟩ := state
       simp only at hstate
       subst k
@@ -271,7 +349,7 @@ private lemma step_spec_aux [BEq α] [LawfulBEq α]
       ∀ k, k ≤ pattern.length →
         (pattern.take k).IsSuffix (consumed ++ [x]) → k ≤ next.val := by
   induction hstate : state.val using Nat.strong_induction_on generalizing state consumed with
-  | h stateValue ih =>
+  | ind stateValue ih =>
       obtain ⟨state, hstateSize⟩ := state
       simp only at hstate
       subst stateValue
@@ -829,7 +907,7 @@ private theorem timedStep_time_add_ret_le [BEq α]
     (timedStep table x state).time +
         (timedStep table x state).ret.val ≤ state.val + 2 := by
   induction hstate : state.val using Nat.strong_induction_on generalizing state with
-  | h stateValue ih =>
+  | ind stateValue ih =>
       obtain ⟨state, hstateSize⟩ := state
       simp only at hstate
       subst stateValue

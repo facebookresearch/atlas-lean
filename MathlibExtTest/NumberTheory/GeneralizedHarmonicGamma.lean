@@ -77,3 +77,18 @@ example (n : ℕ) :
       rfl
   rw [← h, (generalizedHarmonic_eq_gamma_expectation 1 one_pos n).2]
   rfl
+
+-- A shift equal to the shape gives order zero, so the weighted sum counts its terms.
+example (s : ℝ) (hs : 0 < s) (n : ℕ) :
+    ∑ k ∈ Finset.range n, ((k + 1 : ℕ) : ℝ) ^ s *
+      ∫ x, Real.exp (-(k * x)) ∂gammaMeasure s 1 = n := by
+  rw [← generalizedHarmonic_sub_eq_gamma_expectation s hs s n]
+  simp [generalizedHarmonic]
+
+-- At shape one and degree two, the linear and quadratic Stirling terms have opposite signs.
+-- Only the last binomial coefficient survives, giving the Laplace transform at one.
+example : ∫ x, Real.exp (-x) ∂gammaMeasure 1 1 = 1 / 2 := by
+  have h := stirlingFirst_generalizedHarmonic_eq_gamma_expectation 1 1 one_pos 2
+  norm_num [Finset.sum_range_succ, Nat.stirlingFirst, Nat.factorial, Nat.choose,
+    generalizedHarmonic_succ, Real.rpow_neg_one] at h
+  linarith

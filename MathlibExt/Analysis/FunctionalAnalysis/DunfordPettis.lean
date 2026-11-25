@@ -675,9 +675,9 @@ private theorem dpc_exists_disjoint_of_small_sets
     exact (hs _).diff (hUmeas j)
   · intro a b hab
     rcases lt_or_gt_of_ne hab with h | h
-    · exact (Set.disjoint_left.mpr (fun x hxC hxU => hxC.2 hxU)).mono le_rfl
+    · exact (Set.disjoint_left.mpr (by exact fun x hxC hxU => hxC.2 hxU)).mono le_rfl
         (hsub a b h)
-    · exact ((Set.disjoint_left.mpr (fun x hxC hxU => hxC.2 hxU)).mono le_rfl
+    · exact ((Set.disjoint_left.mpr (by exact fun x hxC hxU => hxC.2 hxU)).mono le_rfl
         (hsub b a h)).symm
   · intro j
     have hle := hsmall j
@@ -1103,7 +1103,8 @@ private theorem dpc_uniformIntegrable_of_isCompact_closure_Lp
       rw [Lp.norm_def, ENNReal.ofReal_toReal hne]
     rw [← h1, ENNReal.ofNNReal_toNNReal]
     exact ENNReal.ofReal_le_ofReal (hnorm i)
-  refine ⟨?_, hbound⟩
+  obtain ⟨C, hC⟩ := hbound
+  refine ⟨?_, (iSup_le hC).trans_lt ENNReal.coe_lt_top⟩
   rw [unifIntegrable_iff']
   intro ε hε
   by_contra hnot

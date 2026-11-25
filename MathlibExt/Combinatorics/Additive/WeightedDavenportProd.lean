@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Order.Floor.Div
+public import Mathlib.Data.Nat.Prime.Defs
 public import MathlibExt.Combinatorics.Additive.WeightedDavenport
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Pi
@@ -18,10 +19,19 @@ import Mathlib.Data.List.OfFn
 import Mathlib.Data.ZMod.Basic
 
 /-!
-# Long weighted zero-sum free sequences in groups of rank two
+# Long weighted zero-sum free sequences in products of cyclic groups
 
-The sequence consists of two blocks of coordinate generators. In each block, the sum of
-the selected weights is strictly below the order of the generator.
+The main results construct long weighted zero-sum free sequences in the groups
+$\mathbb{Z}/n\mathbb{Z} \oplus \mathbb{Z}/kn\mathbb{Z}$ of rank two
+(`exists_weightedZeroSumFree_zmod_prod`) and in the abelian $p$-groups
+$\mathbb{Z}/p^{e_1}\mathbb{Z} \oplus \dots \oplus \mathbb{Z}/p^{e_r}\mathbb{Z}$
+(`exists_weightedZeroSumFree_pi_zmod_prime_pow`). The second one is a special case of a
+construction in every product
+$\mathbb{Z}/n_1\mathbb{Z} \oplus \dots \oplus \mathbb{Z}/n_r\mathbb{Z}$
+(`exists_weightedZeroSumFree_pi_zmod_prime_pow.exists_weightedZeroSumFree_pi_zmod`).
+
+Each sequence consists of blocks of coordinate generators. In each block, the sum of the
+selected weights is strictly below the order of the generator.
 -/
 
 namespace MetaMathlibExt
@@ -106,5 +116,90 @@ public theorem exists_weightedZeroSumFree_zmod_prod (m n k : ℕ) (hm : 2 ≤ m)
   obtain ⟨i, hi⟩ := hI
   exact (Nat.one_le_iff_ne_zero.mp (Finset.mem_Icc.mp (ha i hi)).1)
     (by simpa [w, hi] using hw0 i)
+
+namespace exists_weightedZeroSumFree_pi_zmod_prime_pow
+
+/-- **Long weighted zero-sum free sequences in finite products of cyclic groups.** Let $r$ and
+$\beta$ be natural numbers and let $n_1, \dots, n_r$ be natural numbers. Then there is a
+sequence $s$ over $\mathbb{Z}/n_1\mathbb{Z} \oplus \dots \oplus \mathbb{Z}/n_r\mathbb{Z}$ of
+length $\sum_{i=1}^{r} (\lceil n_i/\beta \rceil - 1)$ that is $\{1, \dots, \beta\}$-weighted
+zero-sum free: for every non-empty set $I$ of positions and all weights
+$a_i \in \{1, \dots, \beta\}$, the weighted sum $\sum_{i \in I} a_i s_i$ is non-zero. Here
+$\lceil n_i/\beta \rceil - 1$ is computed in $\mathbb{N}$, so it is $0$ when $n_i = 0$ or
+$\beta = 0$.
+
+The sequence consists of $\lceil n_i/\beta \rceil - 1$ copies of the $i$-th coordinate generator
+for each $i$. In a coordinate $i$ whose block meets $I$, the selected weights add up to a number
+between $1$ and $(\lceil n_i/\beta \rceil - 1)\beta < n_i$, so that coordinate of the weighted sum
+is non-zero. -/
+public theorem exists_weightedZeroSumFree_pi_zmod {r : ℕ} (n : Fin r → ℕ) (β : ℕ) :
+    ∃ s : List ((i : Fin r) → ZMod (n i)),
+      s.length = ∑ i, (n i ⌈/⌉ β - 1) ∧ IsWeightedZeroSumFree (Finset.Icc 1 β) s := by
+  set q : Fin r → ℕ := fun i => n i ⌈/⌉ β - 1
+  let σ : (Σ i : Fin r, Fin (q i)) ≃ Fin (∑ i, q i) := finSigmaFinEquiv
+  -- Position `k` carries the generator of the coordinate whose block contains `k`.
+  let f : Fin (∑ i, q i) → (i : Fin r) → ZMod (n i) := fun k j =>
+    if (σ.symm k).1 = j then 1 else 0
+  refine ⟨List.ofFn f, List.length_ofFn, ?_⟩
+  unfold IsWeightedZeroSumFree
+  simp only [List.get_ofFn]
+  generalize_proofs hlen
+  generalize (List.ofFn f).length = L at hlen ⊢
+  subst L
+  intro I hI a ha hsum
+  -- Extend the selected weights by zero, so that the sum runs over all positions.
+  let w (k : Fin (∑ i, q i)) : ℕ := if k ∈ I then a k else 0
+  have hw (k) : w k ≤ β := by
+    by_cases hk : k ∈ I
+    · simpa [w, hk] using (Finset.mem_Icc.mp (ha k hk)).2
+    · simp [w, hk]
+  have hz : ∑ k, w k • f k = 0 := by
+    simpa [w, ite_smul, Finset.sum_ite_mem_eq] using hsum
+  -- In the coordinate `j`, only the block of `j` contributes.
+  have hcoord (j : Fin r) : ∑ t : Fin (q j), (w (σ ⟨j, t⟩) : ZMod (n j)) = 0 := by
+    have h := congrFun hz j
+    rw [Finset.sum_apply, ← σ.sum_comp, Fintype.sum_sigma, Fintype.sum_eq_single j] at h
+    · simpa [f, nsmul_eq_mul] using h
+    · intro i hij
+      simp [f, hij]
+  -- Each block has fewer than `n j / β` positions, so its weights vanish.
+  have hblock (j : Fin r) (t : Fin (q j)) : w (σ ⟨j, t⟩) = 0 := by
+    have hqpos : 0 < n j ⌈/⌉ β - 1 := t.pos
+    have hβ : 0 < β := Nat.pos_of_ne_zero fun h0 => by simp [h0] at hqpos
+    have hlt : q j * β < n j := by
+      rw [Nat.mul_comm]
+      exact (gc_mul_ceilDiv hβ).lt_iff_lt.mp (by change n j ⌈/⌉ β - 1 < n j ⌈/⌉ β; omega)
+    exact exists_weightedZeroSumFree_zmod_prod.weights_eq_zero _ (fun t => hw _) hlt
+      (hcoord j) t
+  obtain ⟨k, hk⟩ := hI
+  have h0 : w k = 0 := by simpa using hblock (σ.symm k).1 (σ.symm k).2
+  exact (Nat.one_le_iff_ne_zero.mp (Finset.mem_Icc.mp (ha k hk)).1) (by simpa [w, hk] using h0)
+
+end exists_weightedZeroSumFree_pi_zmod_prime_pow
+
+-- `hp`, `hmono`, `hc` and `hce` are hypotheses of the source statement, kept for fidelity; the
+-- construction works for every weight bound.
+set_option linter.unusedVariables false in
+/-- **Long weighted zero-sum free sequences in abelian $p$-groups.** Let $p$ be a prime, let
+$r \ge 1$, let $e_1 \le e_2 \le \dots \le e_r$ be natural numbers and let
+$G = \mathbb{Z}/p^{e_1}\mathbb{Z} \oplus \dots \oplus \mathbb{Z}/p^{e_r}\mathbb{Z}$. Let $c$ be a
+natural number with $1 \le c \le e_1$ and put $\beta = \lceil p^{e_1}/(p^c - 1) \rceil - 1$. Then
+there is a sequence $s$ over $G$ of length $\sum_{i=1}^{r} (\lceil p^{e_i}/\beta \rceil - 1)$ that
+is $\{1, \dots, \beta\}$-weighted zero-sum free: for every non-empty set $I$ of positions and all
+weights $a_i \in \{1, \dots, \beta\}$, the weighted sum $\sum_{i \in I} a_i s_i$ is non-zero.
+
+In particular the $\{1, \dots, \beta\}$-weighted Davenport constant of $G$ is at least
+$1 + \sum_{i=1}^{r} (\lceil p^{e_i}/\beta \rceil - 1)$.
+
+Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
+Constants*, INTEGERS 26 (2026), Article A89, Lemma 3 (`integers-2026-A89-lem-3`). -/
+public theorem exists_weightedZeroSumFree_pi_zmod_prime_pow (p r c : ℕ)
+    (hp : p.Prime) (hr : 0 < r) (e : Fin r → ℕ) (hmono : Monotone e) (hc : 1 ≤ c)
+    (hce : c ≤ e ⟨0, hr⟩) :
+    ∃ s : List ((i : Fin r) → ZMod (p ^ e i)),
+      s.length = ∑ i, (p ^ e i ⌈/⌉ (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1) - 1) ∧
+        IsWeightedZeroSumFree (Finset.Icc 1 (p ^ e ⟨0, hr⟩ ⌈/⌉ (p ^ c - 1) - 1)) s :=
+  exists_weightedZeroSumFree_pi_zmod_prime_pow.exists_weightedZeroSumFree_pi_zmod
+    (fun i => p ^ e i) _
 
 end MetaMathlibExt

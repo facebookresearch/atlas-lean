@@ -44,7 +44,7 @@ every proposition over `Nat` atoms is satisfiable by the all-true valuation;
 
 set_option autoImplicit false
 
-namespace Cslib.Logic.PL.BDD
+namespace Cslib.Logic.LegacyPL.BDD
 
 /-! ### Restriction -/
 
@@ -291,4 +291,4 @@ theorem ofProposition_satPath (A : Proposition Nat) :
     (satPath_isSome_of_ne (isROBDD_ofProposition A).2 hne)
   exact ⟨p, hp, eval_ofProposition A _ ▸ eval_ofPath_satPath (isROBDD_ofProposition A).1 hp⟩
 
-end Cslib.Logic.PL.BDD
+end Cslib.Logic.LegacyPL.BDD

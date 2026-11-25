@@ -35,7 +35,7 @@ non-isomorphic finite groups with spectrum `Γ`", which avoids counting isomorph
 
 /-- **Spectrum of a group (Kourovka 13.63).** For a group $G$, the spectrum $\pi_e(G)$ is the set
 of orders of elements of $G$, where an element of infinite order counts as having order $0$. -/
-def elementOrders (G : Type*) [Group G] : Set ℕ :=
+noncomputable def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
 /-- **At most $k$ isomorphism types with spectrum $\Gamma$.** For a set $\Gamma$ of natural numbers

@@ -306,11 +306,12 @@ private lemma padic_prod (p : ℕ) (hp : p.Prime) (s : Finset ℕ) (f : ℕ → 
     (hf : ∀ x ∈ s, f x ≠ 0) :
     padicValNat p (∏ x ∈ s, f x) = ∑ x ∈ s, padicValNat p (f x) := by
   haveI : Fact p.Prime := ⟨hp⟩
+  simp only [Nat.padicValNat_def]
   induction s using Finset.induction with
   | empty => simp
   | insert a s has ih =>
     rw [Finset.prod_insert has, Finset.sum_insert has,
-      padicValNat.mul (hf _ (Finset.mem_insert_self _ _))
+      Nat.multiplicity_mul (hf _ (Finset.mem_insert_self _ _))
         (Finset.prod_ne_zero_iff.mpr (fun x hx => hf x (Finset.mem_insert_of_mem hx))),
       ih (fun x hx => hf x (Finset.mem_insert_of_mem hx))]
 
@@ -322,12 +323,12 @@ private lemma padic_eq_sum (p m E : ℕ) (hp : p.Prime) (hm : m ≠ 0)
   haveI : Fact p.Prime := ⟨hp⟩
   have hiff : ∀ e : ℕ, (1 ≤ e ∧ p ^ e ∣ m) ↔ e ∈ Finset.Icc 1 (padicValNat p m) := by
     intro e
-    rw [Finset.mem_Icc]
+    rw [Finset.mem_Icc, Nat.padicValNat_def]
     constructor
     · intro ⟨h1, hd⟩
-      exact ⟨h1, (padicValNat_dvd_iff_le hm).mp hd⟩
+      exact ⟨h1, (multiplicity_dvd_iff_le hm).mp hd⟩
     · intro ⟨h1, h2⟩
-      exact ⟨h1, (padicValNat_dvd_iff_le hm).mpr h2⟩
+      exact ⟨h1, (multiplicity_dvd_iff_le hm).mpr h2⟩
   have hsum : ∑ e ∈ Finset.range (E + 1), (if 1 ≤ e ∧ p ^ e ∣ m then (1 : ℕ) else 0)
       = ∑ e ∈ Finset.range (E + 1),
         (if e ∈ Finset.Icc 1 (padicValNat p m) then (1 : ℕ) else 0) := by
@@ -411,13 +412,14 @@ private lemma key_dvd (P Q : ℤ) (U : ℕ → ℤ)
       exact hpmem
     exact Nat.prime_of_mem_primeFactors hmem
   haveI : Fact p.Prime := ⟨hprime⟩
-  rw [Nat.factorization_def _ hprime, Nat.factorization_def _ hprime]
+  rw [Nat.factorization_def _ hprime, Nat.factorization_def _ hprime,
+    Nat.multiplicity_mul hVr (Finset.prod_ne_zero_iff.mpr hCf)]
+  simp only [← Nat.padicValNat_def]
   rw [padic_prod p hprime (Finset.range n) _ hBf,
-    padicValNat.mul hVr (Finset.prod_ne_zero_iff.mpr hCf),
     padic_prod p hprime (Finset.Icc (s + 1) (s + n - 1)) _ hCf]
   have hbound : ∀ m : ℕ, m ≠ 0 → m ≤ B + C → padicValNat p m ≤ B + C := by
     intro m hm0 hmE
-    have h1 : p ^ padicValNat p m ∣ m := pow_padicValNat_dvd
+    have h1 : p ^ padicValNat p m ∣ m := Nat.padicValNat_def ▸ pow_multiplicity_dvd p m
     have h2 : p ^ padicValNat p m ≤ m :=
       Nat.le_of_dvd (Nat.pos_of_ne_zero hm0) h1
     have h3 : padicValNat p m ≤ p ^ padicValNat p m := by

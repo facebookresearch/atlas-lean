@@ -12,6 +12,7 @@ public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Range
 import Mathlib.Data.Nat.Find
 public import Mathlib.Logic.Function.Iterate
+import Mathlib.Order.Iterate
 
 /-!
 # Prefix counts of generalized Hofstadter words
@@ -711,7 +712,7 @@ private theorem compare_images {k : ℕ} (hk : 2 ≤ k) (n : ℕ) :
   have hk₁ : 1 ≤ k := by omega
   have hs : 1 ≤ k + 1 := by omega
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     cases n with
     | zero => simp [image_zero]
     | succ m =>
@@ -808,6 +809,30 @@ theorem hofCount_one_succ_le {k : ℕ} (hk : 1 ≤ k) (n : ℕ) :
     have := count_partition (k + 1) n
     dsimp only [c] at hc
     omega
+
+open hofCount_one_succ_le in
+/-- **Iterates of $L_{k+1}$ lie below iterates of $L_k$.** Let $x_k[0]\,x_k[1] \cdots$ be the
+fixed point, beginning with $k$, of the substitution $\tau_k$ that sends $k$ to $k\,1$ and every
+other letter $i$ to $i + 1$, let $L_k(n)$ be the length of the word
+$\tau_k(x_k[0] \cdots x_k[n-1])$, and write $L_k^j$ for the $j$-fold iterate of $L_k$. For
+every $k \ge 1$, every $j \ge 0$ and every natural number $n$, $L_{k+1}^j(n) \le L_k^j(n)$.
+
+Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
+Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
+Corollary 21 (`jis-2026-26.3.3-cor-21`). -/
+theorem hofL_iterate_succ_le {k : ℕ} (hk : 1 ≤ k) (j : ℕ) :
+    (hofL (k + 1))^[j] ≤ (hofL k)^[j] := by
+  have hmono : Monotone (hofL (k + 1)) :=
+    (image_strictMono (k := k + 1) (j := 1) (by omega) (by omega)).monotone
+  apply hmono.iterate_le_of_le _ j
+  intro n
+  rcases eq_or_lt_of_le hk with rfl | hk'
+  · calc
+      hofL 2 n = n + hofCount 2 (· = 2) n := image_eq_add_count 2 n
+      _ ≤ n + n := Nat.add_le_add_left (List.countP_le_length.trans_eq (prefix_length 2 n)) _
+      _ = hofL 1 n := by
+        simpa [imageLength, hofL, prefix_length] using (image_last (k := 1) le_rfl n).symm
+  · exact (compare_images hk' n).1
 
 end
 

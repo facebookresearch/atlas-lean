@@ -14,6 +14,10 @@
 - [The block sizes follow Hoppe's urn](crp-map-block-sizes-eq-hoppe-law.md)
 - [The allelic partition of the Chinese restaurant process follows the Ewens sampling formula](crp-map-block-sizes.md)
 - [Expected number of tables](sum-crp-to-real-mul-card-parts.md)
+- [Bernoulli representation and central limit theorem for Ewens block counts](asymptotics-of-k-n-mean-theta-log-n-and-clt.md)
+- [First-allele frequency in an Ewens sample and its Beta limit](size-biased-allele-frequency-in-an-ewens-sample.md)
+- [Almost-sure l1 convergence of nested Ewens frequencies to GEM and PD](ranked-ewens-frequencies-converge-to-pd-theta.md)
+- [Expected counting measure of GEM and Poisson–Dirichlet masses](poisson-dirichlet-gem-limit-of-ewens-allele-freq.md)
 
 ## Related topics
 

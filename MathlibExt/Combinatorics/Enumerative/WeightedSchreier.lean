@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Order.Interval.Finset.Nat
@@ -125,6 +126,37 @@ public theorem weightedSchreierCount_one (l : ℕ) :
   rw [hfamily, card_insert_of_notMem, card_nonmaximalSets, Nat.add_comm 1 l]
   simp [nonmaximalSets]
 
+open Finset weightedSchreierCount_one in
+/-- **Weighted Schreier counts for $n < k$.** For all natural numbers $n < k$, the weighted
+Schreier count satisfies $a_{k,n} = F_{n+1}$, where $F_j$ is the $j$-th Fibonacci number
+($F_0 = 0$, $F_1 = 1$).
+
+This includes $n = 0$, where $a_{k,0} = 1 = F_1$; the source takes $n$ positive.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Proposition 3.5
+(`fq-2024-chu08302024rev-prop-3.5`). -/
+public theorem weightedSchreierCount_of_lt {k n : ℕ} (hnk : n < k) :
+    weightedSchreierCount k n = Nat.fib (n + 1) := by
+  rw [weightedSchreierCount, ← card_nonmaximalSets n, nonmaximalSets]
+  apply congrArg Finset.card
+  apply filter_congr
+  intro E hE
+  have hk : k ∉ E := fun h => hnk.not_ge (mem_Icc.mp (mem_powerset.mp hE h)).2
+  simp [filter_ne', hk]
+
+set_option linter.unusedVariables false in
+/-- **Weighted Schreier counts for $0 < m < k$.** For natural numbers $k \ge 2$ and $m$ with
+$0 < m < k$, the weighted Schreier count satisfies $a_{k,m} = F_{m+1}$, where $F_j$ is the
+$j$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$).
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Theorem 1.2, case `k ≥ 2`,
+`-k < ℓ < 0` (`fq-2024-chu08302024rev-thm-1.2`). -/
+public theorem weightedSchreierCount_of_pos_of_lt {k m : ℕ} (hk : 2 ≤ k) (hm : 0 < m)
+    (hmk : m < k) : weightedSchreierCount k m = Nat.fib (m + 1) :=
+  weightedSchreierCount_of_lt hmk
+
 /-- **Seeded partial sums.** Let $M$ be an additive commutative monoid, and let
 $s = (s_n)_{n \ge 0}$ (the seed sequence) and $a = (a_n)_{n \ge 0}$ be sequences in $M$. The
 seeded partial sums $t^s_{k,n}$, for $k, n \ge 0$, are defined by recursion on $k$:
@@ -160,6 +192,35 @@ public theorem seededPartialSums_succ_zero {M : Type*} [AddCommMonoid M] (s a : 
     (k : ℕ) : seededPartialSums s a (k + 1) 0 = s k := by
   simp [seededPartialSums]
 
+/-- **Effect of the seed on seeded partial sums.** Let $R$ be a commutative ring, let
+$a = (a_n)_{n \ge 0}$ and $b = (b_n)_{n \ge 0}$ be sequences in $R$, and write $t^b_{k,n}$ for
+the seeded partial sums of $a$ with seed sequence $b$ and $t^0_{k,n}$ for those with the zero
+seed sequence. Then for all $k, n \ge 0$,
+$t^b_{k,n} - t^0_{k,n} = \sum_{i<k} \binom{n}{i} b_{k-1-i}$, where the binomial coefficients
+are read as elements of $R$.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Lemma 3.2
+(`fq-2024-chu08302024rev-lem-3.2`). -/
+public theorem seededPartialSums_sub_zero {R : Type*} [CommRing R] (b a : ℕ → R)
+    (k n : ℕ) :
+    seededPartialSums b a k n - seededPartialSums 0 a k n =
+      ∑ i ∈ Finset.range k, (n.choose i : R) * b (k - 1 - i) := by
+  induction k generalizing n with
+  | zero => simp [seededPartialSums]
+  | succ k ih =>
+    induction n with
+    | zero => simp [seededPartialSums_succ_zero, Finset.sum_range_succ']
+    | succ n hn =>
+      have step (s : ℕ → R) : seededPartialSums s a (k + 1) (n + 1) =
+          seededPartialSums s a (k + 1) n + seededPartialSums s a k n := by
+        simp [seededPartialSums, Finset.sum_range_succ, add_assoc]
+      rw [step, step, add_sub_add_comm, hn, ih]
+      simp only [Finset.sum_range_succ' _ k, Nat.add_sub_cancel, Nat.sub_zero,
+        Nat.choose_zero_right, Nat.cast_one, one_mul, Nat.choose_succ_succ', Nat.cast_add,
+        add_mul, Finset.sum_add_distrib, Nat.sub_sub, Nat.add_comm 1]
+      ac_rfl
+
 /-- **The first iterated partial sum.** Let $M$ be an additive commutative monoid and let
 $(a_n)_{n \ge 0}$ be a sequence in $M$. For every $m \ge 0$, the $1$-fold iterated partial sum
 of $(a_n)$ at $m$ is the ordinary partial sum: $P^{(1)}((a_n)_{n \ge 0})(m) = \sum_{i<m} a_i$.
@@ -184,6 +245,49 @@ public theorem iteratedPartialSum_succ_succ {M : Type*} [AddCommMonoid M] (a : �
     iteratedPartialSum (k + 1) a (m + 1) =
       iteratedPartialSum (k + 1) a m + iteratedPartialSum k a m := by
   simp [iteratedPartialSum, seededPartialSums, Finset.sum_range_succ]
+
+/-- **Adding one to a sequence shifts its iterated partial sums by a binomial coefficient.**
+Let $R$ be a commutative ring, let $(a_n)_{n \ge 0}$ be a sequence in $R$, and let $k, m \ge 0$.
+Writing $P^{(k)}(x)(m)$ for the $k$-fold iterated partial sum of a sequence $x$ at $m$, we have
+$P^{(k)}((a_n + 1)_{n \ge 0})(m) - P^{(k)}((a_n)_{n \ge 0})(m) = \binom{m}{k}$, where
+$\binom{m}{k}$ is read as an element of $R$.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Lemma 3.3
+(`fq-2024-chu08302024rev-lem-3.3`). -/
+public theorem iteratedPartialSum_add_one_sub {R : Type*} [CommRing R] (a : ℕ → R)
+    (k m : ℕ) :
+    iteratedPartialSum k (fun n => a n + 1) m - iteratedPartialSum k a m = (m.choose k : R) := by
+  induction k generalizing m with
+  | zero => simp [iteratedPartialSum, seededPartialSums]
+  | succ k ih =>
+    induction m with
+    | zero => simp [iteratedPartialSum, seededPartialSums]
+    | succ m ihm =>
+      rw [iteratedPartialSum_succ_succ, iteratedPartialSum_succ_succ, add_sub_add_comm,
+        ihm, ih m, Nat.choose_succ_succ, Nat.cast_add]
+      exact add_comm _ _
+
+/-- **Iterated partial sums of shifted Fibonacci numbers.** Let $F_n$ denote the Fibonacci
+numbers, with $F_0 = 0$ and $F_1 = 1$, and write $P^{(k)}(x)(m)$ for the $k$-fold iterated
+partial sum of a sequence $x$ of natural numbers at $m$. Then for all $k, \ell \ge 0$,
+$P^{(k)}((F_{n+2})_{n \ge 0})(\ell) = P^{(k)}((F_n)_{n \ge 0})(\ell) +
+P^{(k)}((F_n)_{n \ge 0})(\ell + 1)$.
+
+Source: Hùng Việt Chu and Zachary Louis Vasseur, *Weighted Schreier-type Sets and the
+Fibonacci Sequence*, The Fibonacci Quarterly 62 (2024), no. 4, Lemma 3.4
+(`fq-2024-chu08302024rev-lem-3.4`). -/
+public theorem iteratedPartialSum_fib_add_two (k l : ℕ) :
+    iteratedPartialSum k (fun n => Nat.fib (n + 2)) l =
+      iteratedPartialSum k Nat.fib l + iteratedPartialSum k Nat.fib (l + 1) := by
+  unfold iteratedPartialSum
+  induction k generalizing l with
+  | zero => exact Nat.fib_add_two
+  | succ k ih =>
+    have hzero : seededPartialSums 0 Nat.fib k 0 = 0 := by
+      cases k <;> simp [seededPartialSums]
+    simp only [seededPartialSums, Pi.zero_apply, zero_add, ih, Finset.sum_add_distrib]
+    rw [Finset.sum_range_succ' (seededPartialSums 0 Nat.fib k) l, hzero, Nat.add_zero]
 
 end
 

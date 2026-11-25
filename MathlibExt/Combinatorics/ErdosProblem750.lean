@@ -109,7 +109,7 @@ private theorem antipodal_color {n : ℕ}
   change Metric.infDist x {y | c y = c x} = Metric.infDist (-x) {y | c y = c x} at he
   exact he.symm.trans (Metric.infDist_zero_of_mem (show c x = c x from rfl))
 
-private abbrev Sphere (n : ℕ) := Metric.sphere (0 : EuclideanSpace ℝ (Fin (n + 1))) 1
+private noncomputable abbrev Sphere (n : ℕ) := Metric.sphere (0 : EuclideanSpace ℝ (Fin (n + 1))) 1
 
 private noncomputable def cube {n : ℕ} (x : Sphere n) (i : Fin (n + 1)) : ℝ :=
   x.val i / ‖x.val.ofLp‖

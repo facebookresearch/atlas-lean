@@ -242,8 +242,8 @@ private theorem axialCompatibilityUnit_transpose_mulVec_apply_of
 /-! ## C. Supported quadratic form -/
 
 /-- Supported stiffness quadratic form (twice the linearized
-stored energy) is the member sum
-`∑ e, k e * ((B S *ᵥ u) e)^2`. -/
+stored energy, for positive weights) is the member sum
+`∑ e, k e * ((B S *ᵥ u) e)^2`, for all real weights `k`. -/
 theorem supported_quad_form_eq_sum {J M F : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -285,8 +285,8 @@ theorem supported_posSemidef {J M F : Type*} [Fintype J]
   rw [← htr]
   exact hD.conjTranspose_mul_mul_same _
 
-/-- Unit-direction transpose collects axial endpoint forces
-at each joint coordinate. -/
+/-- Unit-direction transpose collects axial endpoint forces at each joint coordinate. A zero-length
+member exerts no force (`0⁻¹ = 0`). -/
 theorem axialCompatibilityUnit_transpose_mulVec_apply
     {J M : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ) (j : J)
@@ -667,13 +667,13 @@ theorem supported_reciprocalWork {J M F : Type*} [Fintype J]
 /-! ## H. Load-parameter identifiability -/
 
 /-- Load-parameter observation matrix at fixed supported stiffness:
-`Cmat * K⁻¹ * Bload`, where `K` is the supported stiffness
-`(axialCompatibility r a b * S)ᵀ * Matrix.diagonal k *
-(axialCompatibility r a b * S)`. The truss data and weights `k` are
-fixed knowns; only the load parameters multiplied by `Bload` are
-unknown, so the parameter-to-observation map is linear. At a
-non-invertible `K` the inverse is the totalized matrix inverse and the
-physical reading needs positive definiteness, as in the theorems
+`Cmat * K⁻¹ * Bload`, where `K = (B S)ᵀ * Matrix.diagonal k * (B S)`
+is the supported stiffness, with `B S = axialCompatibility r a b * S`.
+The truss data and weights `k` are fixed knowns; only the load
+parameters multiplied by `Bload` are unknown, so the
+parameter-to-observation map is linear. At a non-invertible `K` the
+totalized matrix inverse is `0`, so the observation matrix is `0`;
+the physical reading needs positive definiteness, as in the theorems
 below. -/
 noncomputable def loadObservationMatrix {J M : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] {nf np nm : ℕ}
@@ -684,9 +684,10 @@ noncomputable def loadObservationMatrix {J M : Type*} [Fintype J]
     Matrix (Fin nm) (Fin np) ℝ :=
   Cmat * ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
       * (axialCompatibility r a b * S))⁻¹ * Bload
-/-- Forward observation at fixed supported stiffness: a supported
-displacement `u` solving the supported system at load `Bload *ᵥ θ`
-is observed as the linear observation matrix applied to `θ`.
+/-- Forward observation at fixed positive-definite supported
+stiffness: a supported displacement `u` solving the supported system
+at load `Bload *ᵥ θ` is observed as the linear observation matrix
+applied to `θ`.
 Uses the supported inverse characterization
 `supported_mulVec_eq_iff_inv_mulVec`. -/
 lemma loadObservation_eq_of_supported_eq {J M : Type*} [Fintype J]
@@ -796,12 +797,11 @@ lemma inv_not_affine_on_pos :
 
 /-! ## I. Unit-load response -/
 
-/-- Influence vector for the fixed output functional `aout`: the
-supported response to the generalized unit load `aout` itself,
-`K⁻¹ *ᵥ aout` for the supported stiffness `K`. This definition is the
-one inverse application of the section; the theorems below that read
-it as the unit-load solution carry the positive-definiteness (or
-positive-weight and trivial-kernel) premise explicitly. -/
+/-- Influence vector for the fixed output functional `aout`: the supported response to the
+generalized unit load `aout` itself, `K⁻¹ *ᵥ aout` for the supported stiffness `K`. This definition
+is the one inverse application of the section; the theorems below that read it as the unit-load
+solution carry the positive-definiteness (or positive-weight and trivial-kernel) premise explicitly.
+At a singular `K` the totalized inverse is `0`, and so is the influence vector. -/
 noncomputable def influenceVector {J M F : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
     [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -810,11 +810,10 @@ noncomputable def influenceVector {J M F : Type*} [Fintype J]
   ((axialCompatibility r a b * S)ᵀ * Matrix.diagonal k
     * (axialCompatibility r a b * S))⁻¹ *ᵥ aout
 
-/-- Unit-load response of the fixed output `aout` to the supported
-load `f`: the influence vector paired with the load,
-`eta ⬝ᵥ f`. As a function of `f` this is the retained linear response
-map; evaluating it needs no further inverse once the influence vector
-is formed. -/
+/-- Unit-load response of the fixed output `aout` to the supported load `f`: the influence vector
+paired with the load, `eta ⬝ᵥ f`. As a function of `f` this is the retained linear response map;
+evaluating it needs no further inverse once the influence vector is formed. At a singular supported
+stiffness the influence vector, and so every response, is `0`. -/
 noncomputable def unitLoadResponse {J M F : Type*} [Fintype J]
     [DecidableEq J] [Fintype M] [DecidableEq M] [Fintype F]
     [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -923,8 +922,9 @@ private theorem dotProduct_diag_mulVec {M : Type*} [Fintype M]
 /-- Unit-load identity in separation form: for positive-definite
 supported stiffness and a supported solution `K *ᵥ u = f`, the fixed
 output `aout ⬝ᵥ u` equals the unit-load separation-form coefficients
-paired with `(B S) *ᵥ u` (member length times elongation; the
-coefficients are axial force divided by member length).
+paired with `(B S) *ᵥ u` (member length times elongation; for a
+member of positive length the coefficients are axial force divided
+by member length).
 The vector `K⁻¹ *ᵥ aout` is the influence vector by definition. No
 inverse diagonal occurs, so no sign premise on the weights beyond
 the positive-definiteness certificate is used. -/
@@ -957,8 +957,8 @@ lemma supported_unitLoad_identity_separationForm {J M F : Type*}
 member weights and positive-definite certificate, a supported
 solution `K *ᵥ u = f` with separation-form coefficient vectors
 `N = Matrix.diagonal k *ᵥ ((B S) *ᵥ u)` and
-`n = Matrix.diagonal k *ᵥ ((B S) *ᵥ (K⁻¹ *ᵥ aout))` (axial force
-divided by member length) satisfies
+`n = Matrix.diagonal k *ᵥ ((B S) *ᵥ (K⁻¹ *ᵥ aout))` (for a member
+of positive length, axial force divided by member length) satisfies
 `aout ⬝ᵥ u = n ⬝ᵥ (D⁻¹ *ᵥ N)`, where `D⁻¹` is the pointwise inverse
 diagonal `Matrix.diagonal (fun e => (k e)⁻¹)` (generalized
 compliances for the separation-form weights — for physical weights
@@ -1062,13 +1062,13 @@ theorem supported_unitLoad_axialForce_identity {J M F : Type*}
 
 /-! ## J. Finite load hull -/
 
-/-- Finite superposition for the retained response map: with the
-output `aout` (hence the influence vector) fixed, the response to
-a finite combination of vertex loads is the same combination of
-the vertex responses, for arbitrary coefficients and an arbitrary
-scenario finset. This is linearity of the pairing in the load
-argument over a finite sum; no solve reading, sign condition, or
-normalization is used. -/
+/-- Finite superposition for the retained response map: with the output `aout` (hence the influence
+vector) fixed, the response to a finite combination of vertex loads is the same combination of the
+vertex responses, for arbitrary coefficients and an arbitrary scenario finset. This is linearity of
+the pairing in the load argument over a finite sum; no solve reading, sign condition, or
+normalization is used. No positivity of `k` or definiteness of the supported stiffness is assumed:
+its inverse is the totalized matrix inverse, zero for a singular stiffness, and then the influence
+vector and every response are `0`. -/
 lemma supported_unitLoadResponse_sum_smul {J M F ι : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -1080,12 +1080,12 @@ lemma supported_unitLoadResponse_sum_smul {J M F ι : Type*}
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [map_smul, smul_eq_mul]
 
-/-- Lower hull bound: for a nonempty scenario table with
-nonnegative coefficients summing to one, the minimum vertex
-response is at most the response of the combined load, all at the
-one fixed output and supported stiffness. The stiffness, supports
-and output do not change between scenarios; no solve reading is
-used. -/
+/-- Lower hull bound: for a nonempty scenario table with nonnegative coefficients summing to one,
+the minimum vertex response is at most the response of the combined load, all at the one fixed
+output and supported stiffness. The stiffness, supports and output do not change between scenarios;
+no solve reading is used. No positivity of `k` or definiteness of the supported stiffness is
+assumed: its inverse is the totalized matrix inverse, zero for a singular stiffness, and then the
+influence vector and every response are `0`. -/
 lemma supported_inf'_le_unitLoadResponse_sum_smul
     {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     [DecidableEq M] [Fintype F] [DecidableEq F]
@@ -1105,12 +1105,12 @@ lemma supported_inf'_le_unitLoadResponse_sum_smul
         intro i hi
         exact mul_le_mul_of_nonneg_left (Finset.inf'_le _ hi) (hw₀ i hi)
 
-/-- Upper hull bound: for a nonempty scenario table with
-nonnegative coefficients summing to one, the response of the
-combined load is at most the maximum vertex response, all at the
-one fixed output and supported stiffness. The stiffness, supports
-and output do not change between scenarios; no solve reading is
-used. -/
+/-- Upper hull bound: for a nonempty scenario table with nonnegative coefficients summing to one,
+the response of the combined load is at most the maximum vertex response, all at the one fixed
+output and supported stiffness. The stiffness, supports and output do not change between scenarios;
+no solve reading is used. No positivity of `k` or definiteness of the supported stiffness is
+assumed: its inverse is the totalized matrix inverse, zero for a singular stiffness, and then the
+influence vector and every response are `0`. -/
 lemma supported_unitLoadResponse_sum_smul_le_sup'
     {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     [DecidableEq M] [Fintype F] [DecidableEq F]
@@ -1131,14 +1131,13 @@ lemma supported_unitLoadResponse_sum_smul_le_sup'
     _ = s.sup' hs (fun i => unitLoadResponse r a b S k aout (f i)) := by
         rw [← Finset.sum_mul, hw₁, one_mul]
 
-/-- Finite load hull for the retained response: every convex
-combination of the vertex loads of a nonempty finite table
-(nonnegative coefficients summing to one) has its fixed-output
-response between the minimum and maximum vertex responses, at one
-fixed supported stiffness and output. The coefficients are supplied
-finite data; no design factor is introduced. Stiffness, supports
-and output are the same for every scenario and for the combined
-load. -/
+/-- Finite load hull for the retained response: every convex combination of the vertex loads of a
+nonempty finite table (nonnegative coefficients summing to one) has its fixed-output response
+between the minimum and maximum vertex responses, at one fixed supported stiffness and output. The
+coefficients are supplied finite data; no design factor is introduced. Stiffness, supports and
+output are the same for every scenario and for the combined load. No positivity of `k` or
+definiteness of the supported stiffness is assumed: its inverse is the totalized matrix inverse,
+zero for a singular stiffness, and then the influence vector and every response are `0`. -/
 theorem supported_unitLoadResponse_convexCombination_bounds
     {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     [DecidableEq M] [Fintype F] [DecidableEq F]
@@ -1154,11 +1153,11 @@ theorem supported_unitLoadResponse_convexCombination_bounds
   exact ⟨supported_inf'_le_unitLoadResponse_sum_smul r a b S k aout s hs w f hw₀ hw₁,
     supported_unitLoadResponse_sum_smul_le_sup' r a b S k aout s hs w f hw₀ hw₁⟩
 
-/-- Singleton table: a convex combination over one scenario is
-that scenario. The normalization over the singleton forces its
-coefficient to be one, so the combined load has the vertex
-response; the hull collapses to that value. No solve reading is
-used. -/
+/-- Singleton table: a convex combination over one scenario is that scenario. The normalization over
+the singleton forces its coefficient to be one, so the combined load has the vertex response; the
+hull collapses to that value. No solve reading is used. No positivity of `k` or definiteness of the
+supported stiffness is assumed: its inverse is the totalized matrix inverse, zero for a singular
+stiffness, and then the influence vector and every response are `0`. -/
 lemma supported_unitLoadResponse_singleton {J M F ι : Type*}
     [Fintype J] [DecidableEq J] [Fintype M] [DecidableEq M]
     [Fintype F] [DecidableEq F] (r : J → (Fin 2 → ℝ)) (a b : M → J)
@@ -1214,15 +1213,15 @@ theorem supported_unitLoadResponse_convexCombination_output_bounds
   rw [h0eq, hinf, hsup] at hmain
   exact hmain
 
-/-- Absolute load hull for the retained response: for a nonempty
-scenario table with nonnegative coefficients summing to one, the
-absolute response of the combined load is at most the maximum
-absolute vertex response, at one fixed supported stiffness and
-output. Vertex responses may have either sign or be zero; the
-bound is the absolute consequence of the two signed hull bounds. The coefficients are supplied finite data;
-no design factor is introduced. Stiffness, supports and output are
-the same for every scenario and for the combined load, the response
-is the one fixed linear pairing, and no solve reading is used. -/
+/-- Absolute load hull for the retained response: for a nonempty scenario table with nonnegative
+coefficients summing to one, the absolute response of the combined load is at most the maximum
+absolute vertex response, at one fixed supported stiffness and output. Vertex responses may have
+either sign or be zero; the bound is the absolute consequence of the two signed hull bounds. The
+coefficients are supplied finite data; no design factor is introduced. Stiffness, supports and
+output are the same for every scenario and for the combined load, the response is the one fixed
+linear pairing, and no solve reading is used. No positivity of `k` or definiteness of the supported
+stiffness is assumed: its inverse is the totalized matrix inverse, zero for a singular stiffness,
+and then the influence vector and every response are `0`. -/
 theorem supported_abs_unitLoadResponse_sum_smul_le_sup'_abs
     {J M F ι : Type*} [Fintype J] [DecidableEq J] [Fintype M]
     [DecidableEq M] [Fintype F] [DecidableEq F]
@@ -1336,7 +1335,8 @@ theorem reduced_memberForce_eq_inv_mulVec {n : Type*}
   exact (reduced_equilibrium_iff_eq_inv Bs hBs).mp
     (reduced_equilibrium_of_elastic Bs d hu)
 
-/-- Member forces are independent of the axial weights: two
+/-- Member forces are independent of the axial weights for a
+square invertible `Bs` (the statically determinate case): two
 axial diagonals and supported solutions for the same
 geometry, supports and load give the same elastic member-force
 vector. The displacements may differ; the forces do not. -/

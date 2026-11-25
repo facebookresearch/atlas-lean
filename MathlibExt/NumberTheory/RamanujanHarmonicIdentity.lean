@@ -67,7 +67,7 @@ theorem eq_lambda_mul_harmonic_of_sum_choose_sub_mul_eq
     ⟨K 1, fun r hr => sub_eq_zero.mp (h r hr)⟩
   intro r
   induction r using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro hn
     obtain rfl | hn := eq_or_lt_of_le hn
     · simp [D, harmonic]

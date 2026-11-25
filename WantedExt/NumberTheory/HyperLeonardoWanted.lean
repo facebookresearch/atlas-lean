@@ -11,7 +11,6 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.RingTheory.PowerSeries.WellKnown
 public import MathlibExt.NumberTheory.HyperLeonardo
 public import WantedExt.NumberTheory.GenLeonardoWanted
 
@@ -30,8 +29,6 @@ The hyper-Leonardo numbers are their iterated partial sums,
 namespace MetaMathlibExt
 
 @[expose] public section
-
-open PowerSeries
 
 /-- **Recurrences for the hyper-Leonardo numbers of orders zero, one and two.** The
 hyper-Leonardo numbers $Le^{(r)}_n$ satisfy $Le^{(0)}_0 = Le^{(0)}_1 = 1$, $Le^{(1)}_0 = 1$,
@@ -110,22 +107,6 @@ public theorem_wanted logConcave_convolution (x y : ℕ → ℝ) (hx : ∀ n, 0 
     (∑ k ∈ Finset.range j, x k * y (j - 1 - k)) *
         (∑ k ∈ Finset.range (j + 2), x k * y (j + 1 - k)) ≤
       (∑ k ∈ Finset.range (j + 1), x k * y (j - k)) ^ 2
-
-/-- **Generating function of the Leonardo numbers.** Let $Le_n$ be the Leonardo numbers
-($Le_0 = Le_1 = 1$ and $Le_{n+2} = Le_{n+1} + Le_n + 1$), and let
-$L(t) = \sum_{n \ge 0} Le_n t^n$ in the ring $\mathbb{Z}[[t]]$ of formal power series. Then
-$L(t)(1 - 2t + t^3) = 1 - t + t^2$ and $L(t)(1 - t - t^2)(1 - t) = 2(1 - t) - (1 - t - t^2)$.
-
-Equivalently, $L(t) = \frac{2}{1-t-t^2} - \frac{1}{1-t} = \frac{1-t+t^2}{1-2t+t^3}$; the
-identities above are this equality with the denominators cleared.
-
-Source: Elen Viviani Pereira Spreafico and Paula Maria Machado Cruz Catarino, *A Note on
-Hyper-Leonardo Numbers*, INTEGERS 26 (2026), Article A48, Corollary 2
-(`integers-2026-A48-cor-2`). -/
-public theorem_wanted leonardo_generatingFunction :
-    PowerSeries.mk (fun n => genLeonardo 1 n) * (1 - 2 * X + X ^ 3) = 1 - X + X ^ 2 ∧
-      PowerSeries.mk (fun n => genLeonardo 1 n) * ((1 - X - X ^ 2) * (1 - X)) =
-        2 * (1 - X) - (1 - X - X ^ 2)
 
 /-- **Hyper-Leonardo numbers in terms of hyper-Fibonacci numbers.** For all natural numbers $r$
 and $n$, the hyper-Leonardo number $\mathrm{Le}^{(r)}_n$ and the hyper-Fibonacci number

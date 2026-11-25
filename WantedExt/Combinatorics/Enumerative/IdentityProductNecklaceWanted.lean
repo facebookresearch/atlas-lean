@@ -15,6 +15,8 @@ public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Logic.Equiv.Fin.Rotate
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.RingTheory.Trace.Basic
+public import MathlibExt.Combinatorics.Enumerative.IdentityProductNecklacePiCyclic
+public import MathlibExt.Combinatorics.Enumerative.PeriodicTupleProductCount
 public import MathlibExt.Combinatorics.Enumerative.TotientWeightedDivisorSum
 public import MathlibExt.Data.Int.GCD
 
@@ -28,7 +30,12 @@ An `n`-tuple `x : Fin n → G` is identity-product if `x₁ x₂ ⋯ xₙ = 1`; 
 acts by rotation, here through powers of `finRotate n`, and the orbits are necklaces. The
 paper's `[G ÷ m]` is the number `#{a ∈ G | a^m = 1}`, and `[G ÷ K ÷ m] = #{a ∈ G | a^m ∈ K}`
 (Definitions 2.2 and 8.2 of the arXiv text). The main count (Theorem 5) is the existing
-`MetaMathlibExt.identity_product_necklace_count`.
+`MetaMathlibExt.identity_product_necklace_count`. The rotation orbits `tupleRotationOrbit` are
+defined in `MathlibExt.Combinatorics.Enumerative.TupleRotationOrbit`, and the count over a product
+of cyclic groups (Corollary 6) is proved in
+`MathlibExt.Combinatorics.Enumerative.IdentityProductNecklacePiCyclic`. The count of periodic
+tuples with product in a conjugation-closed set, `MetaMathlibExt.card_productIn_period`, is proved
+in `MathlibExt.Combinatorics.Enumerative.PeriodicTupleProductCount`.
 -/
 
 namespace MetaMathlibExt
@@ -36,80 +43,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open scoped ArithmeticFunction.Moebius
-
-/-- **Rotation orbit of a tuple.** Let $x = (x_0, \dots, x_{n-1})$ be a tuple of length $n$ with
-entries in a type $\alpha$, and let $\sigma$ be the cyclic rotation of $\{0, \dots, n-1\}$ that
-sends $i$ to $i + 1$ for $i < n - 1$ and sends $n - 1$ to $0$. The rotation orbit of $x$ is the
-set of tuples $x \circ \sigma^m$ for $m \in \mathbb{N}$, that is, of the cyclic shifts
-$(x_m, x_{m+1}, \dots, x_{m+n-1})$ of $x$, with indices taken modulo $n$.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Definition 2.3 (the action of `C_n` by
-rotation; necklaces are its orbits), used by Theorem 16 (`jis-2026-26.4.6-thm-16`). -/
-def tupleRotationOrbit {α : Type*} {n : ℕ} (x : Fin n → α) : Set (Fin n → α) :=
-  {y | ∃ m : ℕ, y = x ∘ ⇑((finRotate n) ^ m)}
-
-/-- **A tuple lies in its own rotation orbit.** Every tuple $x$ of length $n$ with entries in a
-type $\alpha$ belongs to the rotation orbit of $x$.
-
-Source: Grinberg and Mao, Journal of Integer Sequences 29 (2026), Article 26.4.6,
-Definition 2.3. -/
-theorem self_mem_tupleRotationOrbit {α : Type*} {n : ℕ} (x : Fin n → α) :
-    x ∈ tupleRotationOrbit x :=
-  ⟨0, by simp⟩
-
-/-- **One-step rotation stays in the rotation orbit.** For every tuple
-$x = (x_0, \dots, x_{n-1})$ with entries in a type $\alpha$, the tuple whose $i$-th entry is
-$x_{i+1}$, indices taken modulo $n$ (that is, $(x_1, \dots, x_{n-1}, x_0)$ when $n \ge 1$), lies in
-the rotation orbit of $x$.
-
-Source: Grinberg and Mao, Journal of Integer Sequences 29 (2026), Article 26.4.6,
-Definition 2.3. -/
-theorem comp_finRotate_mem_tupleRotationOrbit {α : Type*} {n : ℕ} (x : Fin n → α) :
-    x ∘ ⇑(finRotate n) ∈ tupleRotationOrbit x :=
-  ⟨1, by simp⟩
-
-/-- **Identity-product necklaces over a product of cyclic groups.** Let $k_1, \dots, k_m$ be
-positive integers and let $G = C_{k_1} \times \dots \times C_{k_m}$, where $C_k$ is the cyclic
-group $\mathbb{Z} / k\mathbb{Z}$ written multiplicatively. For $n \ge 1$, the number of rotation
-orbits of $n$-tuples $(x_1, \dots, x_n) \in G^n$ with $x_1 x_2 \cdots x_n = 1$ (identity-product
-$n$-necklaces) is
-$$\frac{1}{n} \sum_{d \mid n} \varphi(n/d) \prod_{i=1}^{m} \gcd(k_i, n/d)\, k_i^{d-1},$$
-where $\varphi$ is Euler's totient function.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Corollary 6
-(`jis-2026-26.4.6-cor-6`). -/
-public theorem_wanted identityProductNecklace_count_pi_cyclic (m : ℕ) (k : Fin m → ℕ)
-    [∀ i, NeZero (k i)] (n : ℕ) (hn : 0 < n) :
-    (Set.ncard {O : Set (Fin n → ∀ i, Multiplicative (ZMod (k i))) |
-        ∃ x, (List.ofFn x).prod = 1 ∧ O = tupleRotationOrbit x} : ℚ) =
-      (1 / n : ℚ) * ∑ d ∈ n.divisors, (Nat.totient (n / d) : ℚ) *
-        ∏ i, ((Nat.gcd (k i) (n / d) : ℚ) * (k i : ℚ) ^ (d - 1))
-
-/-- **Counting solutions of $x^b = 1$ in a cyclic group.** For natural numbers $a \ge 1$ and
-$b$, the cyclic group of order $a$ has exactly $\gcd(a, b)$ elements $x$ with $x^b = 1$.
-
-The paper takes $b$ positive; for $b = 0$ both sides equal $a$.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 12
-(`jis-2026-26.4.6-lem-12`). -/
-public theorem_wanted card_pow_eq_one_zmod (a b : ℕ) [NeZero a] :
-    Fintype.card {x : Multiplicative (ZMod a) // x ^ b = 1} = Nat.gcd a b
-
-/-- **Counting identity-product tuples with a given period.** Let $G$ be a finite group,
-$n \ge 1$ and $k$ a divisor of $n$. The number of tuples $x = (x_0, \dots, x_{n-1}) \in G^n$
-with $x_0 x_1 \cdots x_{n-1} = 1$ and $x_{i+k} = x_i$ for all $i$ (indices taken mod $n$) is
-$r_{n/k}(G) \, |G|^{k-1}$, where $r_m(G)$ is the number of $g \in G$ with $g^m = 1$.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 13, with `A_k` as defined in
-Section 5 of the arXiv text (`jis-2026-26.4.6-lem-13`). -/
-public theorem_wanted card_identityProduct_period (G : Type*) [Group G] [Fintype G]
-    [DecidableEq G] (n k : ℕ) (hn : 0 < n) (hk : k ∣ n) :
-    Set.ncard {x : Fin n → G | (List.ofFn x).prod = 1 ∧ x ∘ ⇑((finRotate n) ^ k) = x} =
-      Fintype.card {g : G // g ^ (n / k) = 1} * Fintype.card G ^ (k - 1)
 
 /-- **Splitting periodic identity-product tuples by smallest period.** Let $G$ be a finite
 group, $n$ a natural number and $k \ge 1$. Say that $x = (x_0, \dots, x_{n-1}) \in G^n$ has
@@ -206,20 +139,6 @@ public theorem_wanted productInNecklace_count (G : Type*) [Group G] [Fintype G] 
         O = tupleRotationOrbit x} : ℚ) =
       (1 / n : ℚ) * ∑ d ∈ n.divisors, (Nat.totient (n / d) : ℚ) *
         (Set.ncard {a : G | a ^ (n / d) ∈ K} : ℚ) * (Fintype.card G : ℚ) ^ (d - 1)
-
-/-- **Counting periodic tuples with product in a conjugation-closed set.** Let $G$ be a finite
-group, let $K \subseteq G$ satisfy $g c g^{-1} \in K$ for all $g \in G$ and $c \in K$, let
-$n \ge 1$ and let $k$ be a divisor of $n$. The number of tuples
-$x = (x_0, \dots, x_{n-1}) \in G^n$ with $x_0 x_1 \cdots x_{n-1} \in K$ and $x_{i+k} = x_i$ for
-all $i$ (indices taken mod $n$) is $\#\{a \in G : a^{n/k} \in K\} \cdot |G|^{k-1}$.
-
-Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
-Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 23
-(`jis-2026-26.4.6-lem-23`). -/
-public theorem_wanted card_productIn_period (G : Type*) [Group G] [Fintype G] (K : Set G)
-    (hK : ∀ g k, k ∈ K → g * k * g⁻¹ ∈ K) (n k : ℕ) (hn : 0 < n) (hk : k ∣ n) :
-    Set.ncard {x : Fin n → G | (List.ofFn x).prod ∈ K ∧ x ∘ ⇑((finRotate n) ^ k) = x} =
-      Set.ncard {a : G | a ^ (n / k) ∈ K} * Fintype.card G ^ (k - 1)
 
 /-- **Counting aperiodic necklaces with product in a conjugation-closed set.** Let $G$ be a
 finite group, let $K \subseteq G$ satisfy $g c g^{-1} \in K$ for all $g \in G$ and $c \in K$, and

@@ -52,4 +52,27 @@ theorem divisorProd_sq (n : ℕ) (hn : 0 < n) :
       exact Nat.mul_div_cancel' (by simpa [Nat.mem_divisors, hn.ne'] using hd)
     _ = _ := Finset.prod_const _
 
+/-- **Super-m-Zumkeller numbers $n \ge 2$ have at least three divisors.** If a natural number
+$n \ge 2$ is super-m-Zumkeller, then the number $\tau(n)$ of positive divisors of $n$ satisfies
+$\tau(n) \ge 3$.
+
+Source: Harish Patodia, "Super m-Zumkeller Numbers", Theorem 1. -/
+theorem three_le_card_divisors_of_isSuperMZumkeller (n : ℕ)
+    (hn : 2 ≤ n) (h : IsSuperMZumkeller n) :
+    3 ≤ n.divisors.card := by
+  have hnp : ¬ n.Prime := by
+    intro hp
+    have hT : divisorProd n = n := by simp [divisorProd, hp.divisors, hp.ne_one.symm]
+    obtain ⟨A, hA, hprod⟩ := h
+    rw [hT] at hA hprod
+    apply hp.prime.not_isSquare
+    refine ⟨∏ d ∈ A, d, ?_⟩
+    calc
+      n = ∏ d ∈ n.divisors, d := hT.symm
+      _ = _ := by rw [← Finset.prod_sdiff hA, ← hprod]
+  obtain ⟨d, hd, hd1, hdn⟩ := Nat.exists_dvd_of_not_prime hn hnp
+  have hn0 : n ≠ 0 := by omega
+  exact Finset.two_lt_card_iff.mpr ⟨d, 1, n, Nat.mem_divisors.mpr ⟨hd, hn0⟩,
+    Nat.one_mem_divisors.mpr hn0, Nat.mem_divisors_self n hn0, hd1, hdn, by omega⟩
+
 end MathlibExt.NumberTheory.SuperMZumkellerWanted

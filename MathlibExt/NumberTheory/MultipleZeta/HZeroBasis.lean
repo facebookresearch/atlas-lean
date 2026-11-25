@@ -235,7 +235,7 @@ private theorem zWord_surjective :
     refine ⟨⟨⟨(decAux (FreeMonoid.toList w) 0).sum,
       Composition.mk (decAux (FreeMonoid.toList w) 0) (fun {i} hi => hpos i hi) rfl⟩,
         Or.inl hadm⟩, ?_⟩
-    apply FreeMonoid.toList.injective
+    apply FreeMonoid.ext
     rw [toList_zWord]
     exact henc
 

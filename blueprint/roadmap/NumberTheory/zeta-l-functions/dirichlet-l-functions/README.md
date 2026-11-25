@@ -7,23 +7,24 @@ Dirichlet characters, conductors, primitive and quadratic characters, Dirichlet 
 - [Artin L-functions](artin-l-functions/README.md)
 - [Conductors and primitive Dirichlet characters](conductors-and-primitive-dirichlet-characters/README.md)
 - [Dedekind zeta function and polar density](dedekind-zeta-function-and-polar-density/README.md)
+- [Dirichlet series of arithmetic functions](dirichlet-series-of-arithmetic-functions/README.md)
 - [Moments of Dedekind zeta coefficients over sums of six squares](moments-of-dedekind-zeta-coefficients-over-sums/README.md)
 - [Perron's formula](perron-s-formula/README.md)
 - [Subconvexity bounds for Dirichlet L-functions](subconvexity-bounds-for-dirichlet-l-functions/README.md)
+- [Zeros of Dirichlet L-functions](zeros-of-dirichlet-l-functions/README.md)
 - [Meromorphic continuation of Hecke L-functions](hecke-l-function-meromorphic-continuation.md)
 - [Functional equation of Hecke L-functions](hecke-l-function-functional-equation.md)
 - [Non-vanishing of Hecke L-functions on the line Re s = 1](hecke-l-function-nonvanishing-on-re-one.md)
 - [Functional equation of the Dirichlet beta function](ramanujan-part1-ch7-entry18-bernoullidif.md)
+- [Dedekind zeta function of a quadratic field as $\zeta(s) L(s, \chi_D)$](dedekind-zeta-quadratic-field-factorization.md)
+- [Lerch's formula for the Hurwitz zeta function at $s = 0$](lerch-formula-hurwitz-zeta.md)
+- [The derivative at $s = 0$ of a Dirichlet $L$-function through the gamma function](dirichlet-l-derivative-at-zero-gamma.md)
 
 ## Zeros of Dirichlet L-functions
 
 - [Generalized Riemann hypothesis for Dirichlet L-functions, half-plane form](grh-dirichlet-half-plane.md)
 - [Generalized Riemann hypothesis for Dirichlet L-functions, critical-strip form](grh-dirichlet-critical-strip.md)
 - [Primitive Dirichlet L-functions have no zero of real part greater than 1/2](primitive-dirichlet-l-functions-zero-free-half-plane.md)
-- [Classical zero-free region for Dirichlet L-functions of a fixed modulus](dirichlet-l-function-zero-free-region-fixed-modulus.md)
-- [Siegel's theorem](siegel-theorem.md)
-- [Deuring–Heilbronn repulsion of zeros by an exceptional zero](deuring-heilbronn-repulsion.md)
-- [Log-free zero-density estimate for Dirichlet L-functions](log-free-zero-density-estimate.md)
 
 ## Explicit formulas
 

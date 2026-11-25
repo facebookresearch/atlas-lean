@@ -25,7 +25,7 @@ private lemma det_one_add_vecMulVec {n R : Type*} [Fintype n] [DecidableEq n] [C
     det (1 + vecMulVec u v) = 1 + v ⬝ᵥ u := by
   rw [show vecMulVec u v = replicateCol Unit u * replicateRow Unit v by
     ext i j
-    simp [vecMulVec, mul_apply, replicateCol, replicateRow]]
+    simp [vecMulVec, Matrix.mul_apply, replicateCol, replicateRow]]
   exact det_one_add_replicateCol_mul_replicateRow u v
 
 private lemma exists_det_add_smul_vecMulVec {n K : Type*}
@@ -81,7 +81,7 @@ private lemma exists_det_add_smul_vecMulVec {n K : Type*}
       change D + t • vecMulVec (Pi.single i (u i)) v =
         updateRow D i (D i + (t * u i) • v)
       ext j k
-      simp only [add_apply, smul_apply, vecMulVec_apply]
+      simp only [Matrix.add_apply, Matrix.smul_apply, vecMulVec_apply]
       by_cases hji : j = i
       · subst j
         rw [updateRow_self]

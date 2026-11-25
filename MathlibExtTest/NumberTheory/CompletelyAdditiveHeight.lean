@@ -28,6 +28,18 @@ example : nthPrimeOne 6 - 2 * 6 = 1 := by
     Nat.nth_lt_of_lt_count (by decide : 5 < Nat.count Nat.Prime 14)
   omega
 
+-- At the prime-square endpoint, 2 divides two terms and 4 contributes once more.
+example {H : ℕ → ℕ} (hH : IsCompletelyAdditiveNat H) :
+    ∑ m ∈ Finset.Icc 1 4, H m = 3 * H 2 + H 3 := by
+  rw [sum_height_eq_sum_prime_powers hH (by decide),
+    show (Finset.Iic 4).filter Nat.Prime = {2, 3} by decide,
+    Finset.sum_pair (by decide)]
+  rw [show (Finset.Icc 1 4).filter (fun a => 2 ^ a ≤ 4) = {1, 2} by decide,
+    show (Finset.Icc 1 4).filter (fun a => 3 ^ a ≤ 4) = {1} by decide,
+    Finset.sum_pair (by decide), Finset.sum_singleton]
+  simp
+  omega
+
 -- The one-based prime labels used as weights apply to every prime in the sequence.
 example (i : ℕ) : canonicalSeqHeight (fun _ => 1) (nthPrimeOne (i + 1)) = i + 1 := by
   simp only [canonicalSeqHeight, nthPrimeOne, Nat.add_sub_cancel,

@@ -180,16 +180,6 @@ theorem_wanted qInc_eq (n : ℕ) (i j : Fin n) :
       if i = j then catalan i.val * catalan (n - i.val)
       else 0
 
-/-- **Number of ballot paths.** For natural numbers $k \le \ell$, the number of lattice paths
-from $(0,0)$ to $(k, \ell)$ with unit up and right steps that stay on or above the line $y = x$
-is $\frac{\ell - k + 1}{\ell + 1} \binom{k + \ell}{k}$.
-
-Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
-Parking Functions", Lemma 21. -/
-theorem_wanted card_ballotPath (k ℓ : ℕ) (h : k ≤ ℓ) :
-    (Nat.card (BallotPath k ℓ) : ℚ) =
-      ((ℓ - k + 1 : ℚ) / (ℓ + 1)) * Nat.choose (k + ℓ) k
-
 /-- **Decreasing lucky-car counts (Lemma 22).** Number the cars and spots $0, \dots, n-1$, and let
 $q^{\mathrm{dec}}_n(i, j)$ be the number of weakly decreasing parking functions of length $n$ in
 which car $i$ prefers spot $j$ and is lucky. For all $i, j \in \{0, \dots, n-1\}$, if $i + j < n$
