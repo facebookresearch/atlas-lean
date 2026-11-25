@@ -73,12 +73,14 @@ read as an interventional law (P14 fn. 18, p. 17, and p. 18). Throughout, it is 
 
 ## Natural indirect effect convention
 
-`nie` is P01 Definition 7: `NIE(x, x*; Y) = E(Y_{x*, Z_x}) - E(Y_{x*})`. Atlas
-`LinearMediation.MediationModel.naturalIndirectEffect x₀ x₁ = Y_{x₁} - Y_{x₁, M_{x₀}}` is the
-`TE - NDE` convention (P14 fn. 13), equal to `-NIE(x₀, x₁; Y)` by P01 eq. (23). The two agree
-only in additive models (both `a b (x₁ - x₀)`), not with treatment-mediator interaction. The
-agreement with `LinearMediation` is a sanity check in `MediationFormulaTests`, in the additive
-case only, with an interaction model as negative control.
+`nie` is P01 Definition 7: `nie ... x x*` is `NIE(x, x*; Y) = E(Y_{x*, Z_x}) - E(Y_{x*})`.
+Atlas `LinearMediation.MediationModel.naturalIndirectEffect x₀ x₁ = Y_{x₁} - Y_{x₁, M_{x₀}}`
+is the `TE - NDE` convention (P14 fn. 13): by P01 eq. (23) it equals `-nie ... x₀ x₁` in every
+model (note the sign and argument order). It equals the reversed call `nie ... x₁ x₀` (both
+`a b (x₁ - x₀)`, while `nie ... x₀ x₁` is `a b (x₀ - x₁)`) only in additive models, not with
+treatment-mediator interaction. The agreement with `LinearMediation` is a sanity check in
+`MediationFormulaTests` (`nie_toFiniteSCM`, the reversed call `nie ... x₁ x₀`), in the
+additive case only, with an interaction model as negative control.
 
 ## Scope
 
@@ -185,7 +187,8 @@ noncomputable def nde (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex �
 
 /-- **Average natural indirect effect** `NIE(x, x*; Y) = E(Y_{x*, Z_x}) - E(Y_{x*})` (P01,
 Definition 7, eq. (20)). This is not the `TE - NDE` convention of
-`LinearMediation.MediationModel.naturalIndirectEffect`; the two agree only in additive models
+`LinearMediation.MediationModel.naturalIndirectEffect x₀ x₁`, which equals `-nie ... x₀ x₁`
+in every model and agrees with the reversed call `nie ... x₁ x₀` only in additive models
 (module docstring). -/
 noncomputable def nie (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (t m y : Fin n) (g : α → ℝ) (x xstar : α) : ℝ :=
