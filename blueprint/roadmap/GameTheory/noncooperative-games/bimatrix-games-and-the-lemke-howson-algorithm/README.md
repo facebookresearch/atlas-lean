@@ -11,6 +11,7 @@ A bimatrix game is a two-player game given by a payoff matrix for each player. T
 
 - [Correctness of support enumeration for bimatrix games](correctness-of-support-enumeration-for-bimatrix-games.md)
 - [Abstract labeled-vertex graph for complementary pivoting](abstract-labeled-vertex-graph-for-complementary-pivoting.md)
+- [Classification of Nash equilibria of 2×2 games](equilibria-of-two-by-two-games.md)
 
 ## Related topics
 
