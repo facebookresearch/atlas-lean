@@ -2,6 +2,7 @@
 
 Topics added since this subject's fields were last revised.
 
+- [Deformation Ring Hecke](deformation-ring-hecke/README.md)
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
 - [Hecke Algebra](hecke-algebra/README.md)
 - [Hecke Local](hecke-local/README.md)
