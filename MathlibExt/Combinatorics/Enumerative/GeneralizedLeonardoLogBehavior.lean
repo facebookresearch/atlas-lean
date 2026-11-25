@@ -11,6 +11,7 @@ module
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.NumberTheory.GenLeonardo
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -25,6 +26,8 @@ that subtracts nonnegative multiples of the earlier terms.
 
 For a positive sequence with successive ratios `x n = z (n + 1) / z n`, the reciprocals
 are log-balanced exactly when `x n` decreases and `(n + 1) * x n` increases.
+For positive integer parameters, the generalized Leonardo partial sums are log-concave from
+index two on.
 -/
 
 namespace MetaMathlibExt
@@ -212,5 +215,56 @@ public theorem inv_logBalanced_of_recurrence_of_initial (c₁ c₂ : ℝ) (hc₂
   obtain ⟨k, rfl⟩ := Nat.exists_eq_add_of_le hn
   rw [Nat.add_right_comm n₀ 1 k]
   exact (balanced_iff_ratios (n₀ + k) (hpos _) (hpos _) (hpos _)).mpr (tail k).1
+
+/-- **Log-concavity of partial sums of generalized Leonardo numbers.** Let $k \ge 1$ be an
+integer, let $L_{k,n}$ be the generalized Leonardo numbers, and let
+$R_n = \sum_{i=0}^{n} L_{k,i}$. Then $R_{n-1} R_{n+1} \le R_n^2$ for every integer $n \ge 2$.
+
+The inequality fails at $n = 1$: there $R_0 = 1$, $R_1 = 2$ and $R_2 = k + 4$, so
+$R_1^2 - R_0 R_2 = -k < 0$. The paper states it for every $n \ge 1$, although its identity
+$R_n^2 - R_{n-1} R_{n+1} = (k+1)^2 (F_n + (-1)^n) + k(k+1)(n F_n - 2 F_{n+1}) + k^2$, with
+$F_n$ the Fibonacci numbers, gives the same value $-k$ at $n = 1$.
+
+Source: Feng-Zhen Zhao, *The Log-Behavior of Some Sequences Related to the
+Generalized Leonardo Numbers*, INTEGERS 24 (2024), Article A82, Theorem 2
+(`integers-2024-A82-thm-2`). -/
+public theorem genLeonardo_partialSum_logConcave (k : ℕ) (hk : 1 ≤ k) (n : ℕ)
+    (hn : 2 ≤ n) :
+    (∑ i ∈ Finset.range n, genLeonardo k i) * (∑ i ∈ Finset.range (n + 2), genLeonardo k i) ≤
+      (∑ i ∈ Finset.range (n + 1), genLeonardo k i) ^ 2 := by
+  let L := genLeonardo (k : ℤ)
+  let S (i : ℕ) := ∑ j ∈ Finset.range i, L j
+  have recurrence (i : ℕ) : L (i + 2) = L (i + 1) + L i + k := rfl
+  have add_term (i : ℕ) : S (i + 1) = S i + L i := Finset.sum_range_succ ..
+  have hk' : 0 < (k : ℤ) := by exact_mod_cast hk
+  have nonneg (i : ℕ) : 0 ≤ L i := by
+    induction i using Nat.twoStepInduction with
+    | zero | one => exact zero_le_one
+    | more i h₀ h₁ => rw [recurrence]; omega
+  have bound (i : ℕ) : S i ≤ L (i + 1) := by
+    induction i with
+    | zero => simp [S, L, genLeonardo]
+    | succ i ih => rw [add_term, recurrence]; omega
+  -- Expand S (i + 1) ^ 2 - S i * S (i + 2) and cancel the square of S i.
+  let D (i : ℕ) := L i ^ 2 - S i * (L (i + 1) - L i)
+  have step (i : ℕ) : D (i + 2) = D i + (L i + k) * (L (i + 1) + k - S i) := by
+    dsimp only [D]
+    rw [add_term (i + 1), add_term i, recurrence (i + 1), recurrence i]
+    ring
+  have gap (i : ℕ) : 0 ≤ D (i + 2) := by
+    induction i using Nat.twoStepInduction with
+    | zero | one =>
+      norm_num [D, S, L, Finset.sum_range_succ, genLeonardo]
+      nlinarith [sq_nonneg (k : ℤ)]
+    | more i h₀ _ =>
+      rw [step (i + 2)]
+      have h := bound (i + 2)
+      exact add_nonneg h₀ (mul_nonneg (add_nonneg (nonneg _) hk'.le) (by omega))
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 2 := ⟨n - 2, by omega⟩
+  change S (m + 2) * S (m + 2 + 2) ≤ S (m + 2 + 1) ^ 2
+  rw [add_term (m + 2 + 1), add_term (m + 2)]
+  have h := gap m
+  dsimp only [D] at h
+  nlinarith only [h]
 
 end MetaMathlibExt

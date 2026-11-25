@@ -13,10 +13,6 @@ These bounds increase to $1 + \sqrt{2}$, which gives Kunisky's
 all strictly below $1 + \sqrt{2}$, so they do not show that the Komlós constant in some fixed
 dimension reaches $1 + \sqrt{2}$.
 
-## Depends on
-
-- [Kunisky's lower bounds in the dimensions $2^k$ (statement)](kunisky-infinitely-many-dimensions-lower.md)
-
 ## Sources
 
 - Dmitriy Kunisky, *The discrepancy of unsatisfiable matrices and a lower bound for the Komlós conjecture constant*, SIAM J. Discrete Math. 37(2) (2023), 586–603, arXiv:2111.02974, Theorem 1.1.

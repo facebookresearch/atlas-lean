@@ -11,11 +11,13 @@ module
 public import Mathlib.Algebra.Field.Rat
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Logic.Function.Iterate
+public import MathlibExt.NumberTheory.GibonacciNumber
 import Mathlib.Data.Int.Fib.Lemmas
 import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.NormNum.IsSquare
 import Mathlib.Tactic.Ring
 
 /-!
@@ -23,6 +25,7 @@ import Mathlib.Tactic.Ring
 
 At the ratio of consecutive Fibonacci numbers, Cassini's identity reduces the denominator
 of the generating function to a sign divided by the square of a Fibonacci number.
+At $-G_{n+1}/G_n$, the generating function also takes an integer value whenever $G_n \ne 0$.
 -/
 
 namespace MetaMathlibExt
@@ -189,6 +192,49 @@ public theorem isGibonacciGood_fib_div (a b : ℤ) (n : ℕ) :
   · rw [gibonacciGeneratingValue, hden, div_div_eq_mul_div, div_eq_mul_inv, ← inv_pow, inv_neg_one]
     push_cast
     field_simp [hq]
+
+/-- **Two standard families of good values.** Let $a$ and $b$ be integers and let $(G_n)_{n \ge 0}$
+be the Gibonacci sequence with $G_0 = a$ and $G_1 = b$. For every natural number $n$, the ratio
+$F_n / F_{n+1}$ of consecutive Fibonacci numbers is good for $(a, b)$, and if $G_n \ne 0$, then
+$-G_{n+1} / G_n$ is good for $(a, b)$.
+
+The source indexes both families by all integers ($n \ne -1$ for the first).
+
+Source: Knapp, *Fibonacci Generating Functions*, Journal of Integer
+Sequences 27 (2024), Article 24.3.1, Corollary 2
+(`jis-2024-24.3.1-cor-2`). -/
+public theorem isGibonacciGood_standard_values (a b : ℤ) :
+    (∀ n : ℕ, IsGibonacciGood a b ((Nat.fib n : ℚ) / (Nat.fib (n + 1) : ℚ))) ∧
+    (∀ n : ℕ, gibonacciNumber a b n ≠ 0 →
+      IsGibonacciGood a b
+        (-(gibonacciNumber a b (n + 1) : ℚ) / (gibonacciNumber a b n : ℚ))) := by
+  refine ⟨isGibonacciGood_fib_div a b, ?_⟩
+  let G := gibonacciNumber a b
+  have hrec (n : ℕ) : G (n + 2) = G (n + 1) + G n := rfl
+  -- Express the seeds in the current pair by reversing each recurrence step.
+  have seeds (n : ℕ) : ∃ u v : ℤ, a = u * G n + v * G (n + 1) ∧
+      b = v * G n + (u + v) * G (n + 1) := by
+    induction n with
+    | zero => exact ⟨1, 0, by simp [G, gibonacciNumber], by simp [G, gibonacciNumber]⟩
+    | succ n ih =>
+      obtain ⟨u, v, ha, hb⟩ := ih
+      refine ⟨v - u, u, ?_, ?_⟩
+      · rw [ha, hrec n]
+        ring
+      · rw [hb, hrec n]
+        ring
+  have den (x : ℚ) : 1 - x - x ^ 2 ≠ 0 := by
+    intro h
+    exact (by norm_num : ¬ IsSquare (5 : ℚ)) ⟨2 * x + 1, by linear_combination 4 * h⟩
+  intro n hn
+  obtain ⟨u, v, ha, hb⟩ := seeds n
+  have hn' : (G n : ℚ) ≠ 0 := by exact_mod_cast hn
+  change IsGibonacciGood a b (-(G (n + 1) : ℚ) / G n)
+  refine ⟨den _, u * G n, ?_⟩
+  rw [gibonacciGeneratingValue, div_eq_iff (den _), ha, hb]
+  push_cast
+  field_simp [hn']
+  ring
 
 /-- One step along a two-sided sequence with the Fibonacci recurrence:
 `(H_n, H_{n+1}) ↦ (H_{n+1}, H_n + H_{n+1})`.

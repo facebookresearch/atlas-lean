@@ -158,6 +158,44 @@ theorem integral_tmrca (hn : 1 ≤ n) : μ[K.tmrca] = 2 * (1 - 1 / (n : ℝ)) :=
   rw [ integral_finsetSum _ (fun k hk => K.integrable_T hk),
     sum_congr rfl (fun k hk => K.integral_T hk), sum_inv_choose_two hn]
 
+/-- The Laplace transform of an exponential law: `E[exp(-c T)] = b / (b + c)` for `T ~ Exp(b)`. -/
+private lemma integral_exp_neg_mul_expMeasure {b c : ℝ} (hb : 0 < b) (hc : 0 ≤ c) :
+    ∫ x, Real.exp (-(c * x)) ∂expMeasure b = b / (b + c) := by
+  have h := integral_pow_mul_exp_neg_mul_gammaMeasure one_pos hb (by linarith) 0
+  simp only [pow_zero, one_mul, Nat.cast_zero, add_zero, Real.rpow_one, ascPochhammer_zero,
+    Polynomial.eval_one] at h
+  exact h
+
+/-- **Laplace transform of the time to the most recent common ancestor**: for `s ≥ 0`,
+`E[exp(-s * T_MRCA)] = ∏_{k=2}^{n} (k.choose 2) / (k.choose 2 + s)`, the product of the
+epochwise exponential transforms, by independence of the holding times. -/
+theorem integral_exp_neg_mul_tmrca {s : ℝ} (hs : 0 ≤ s) :
+    ∫ ω, Real.exp (-(s * K.tmrca ω)) ∂μ =
+      ∏ k ∈ Icc 2 n, ((k.choose 2 : ℕ) : ℝ) / ((k.choose 2 : ℕ) + s) := by
+  have hfac : ∀ k : Icc 2 n, ∫ ω, Real.exp (-s * K.T k ω) ∂μ =
+      (((k : ℕ).choose 2 : ℕ) : ℝ) / ((((k : ℕ).choose 2 : ℕ) : ℝ) + s) := by
+    intro k
+    have hb := choose_two_pos k.2
+    have h := (K.hasLaw k k.2).integral_comp (f := fun x => Real.exp (-s * x))
+      (by fun_prop)
+    simp only [Function.comp_def] at h
+    rw [h]
+    simp_rw [neg_mul]
+    rw [integral_exp_neg_mul_expMeasure hb hs]
+  have hmeas : ∀ k : Icc 2 n, AEMeasurable (K.T k) μ := fun k => (K.hasLaw k k.2).aemeasurable
+  have hprod := K.indep.integral_fun_prod_comp hmeas
+    (f := fun (_ : Icc 2 n) (x : ℝ) => Real.exp (-s * x)) fun _ => by fun_prop
+  have hL : ∀ ω, Real.exp (-(s * K.tmrca ω)) =
+      ∏ k : Icc 2 n, Real.exp (-s * K.T k ω) := by
+    intro ω
+    rw [← Real.exp_sum, tmrca, mul_sum, ← sum_neg_distrib, ← sum_coe_sort (Icc 2 n)]
+    congr 1
+    exact sum_congr rfl fun k _ => by ring
+  simp_rw [hL]
+  rw [hprod]
+  simp_rw [hfac]
+  rw [prod_coe_sort (Icc 2 n) (fun k : ℕ => ((k.choose 2 : ℕ) : ℝ) / ((k.choose 2 : ℕ) + s))]
+
 /-- The total branch length is integrable. -/
 theorem integrable_totalLength : Integrable K.totalLength μ :=
   integrable_finsetSum _ (fun _ hk => (K.integrable_T hk).const_mul _)

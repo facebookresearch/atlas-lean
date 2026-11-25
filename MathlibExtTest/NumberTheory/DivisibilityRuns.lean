@@ -48,6 +48,15 @@ example :
     gibonacciNumber 1 0 (2 - 3) ≠ gibonacciNumber 1 0 2 - 2 * gibonacciNumber 1 0 (2 - 2) := by
   decide
 
+-- Zero divides zero, but a run cannot start with a zero divisor.
+example (y b c : ℤ) : ¬ IsDivRunUpTo 0 y 0 b c 1 := by
+  simp [(isDivRunUpTo_small 0 y 0 b c).1]
+
+-- For these signed seeds the first two divisibility checks hold, even with a zero dividend.
+example (c : ℤ) : IsDivRunUpTo (-2) 5 0 10 c 3 ↔ 3 ∣ c := by
+  rw [(isDivRunUpTo_small (-2) 5 0 10 c).2.2]
+  norm_num
+
 -- A zero third term ends the run even when the corresponding Tribonacci term is zero.
 example : IsDivRunUpTo 2 (-2) 4 (-4) 0 2 := by decide
 example : ¬ IsDivRunUpTo 2 (-2) 4 (-4) 0 3 := by decide

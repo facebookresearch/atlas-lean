@@ -24,8 +24,8 @@ both directions, commuting with the given map.
 
 Closure under projection over the reals (Tarski--Seidenberg) is proved in the
 TauCeti source by cylindrical algebraic decomposition but is not ported: the
-lemmas below that need it take `[HasSemialgebraicProjections ℝ]`, and the real
-instance is a separate wanted statement. Neither a CAD nor a family
+lemmas below that need it take `[HasSemialgebraicProjections ℝ]`, and the
+real instance is a separate wanted statement. Neither a CAD nor a family
 homeomorphism is assumed by the set or map definitions.
 
 Sources: R. M. Hardt, *Semi-Algebraic Local-Triviality in Semi-Algebraic

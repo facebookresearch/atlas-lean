@@ -15,9 +15,10 @@ import MathlibExt.AlgebraicGeometry.NonarchimedeanCartierModels
 Two central components of a vertical model whose valuations restrict to the same valuation of
 `K(X)` and give the parameter the same order agree on every polynomial in the parameter: their
 valuations are the same Gauss extension, so the model value is a function of the base valuation.
-A valuation without discrepancy charts has chart supremum `⊥`, which is why entropy and valuative
-semistability use only valuations with charts. The model polarization is a line bundle, and
-Monge--Ampère masses are only formed for semipositive models.
+A valuation without discrepancy charts has chart supremum `⊥`, which is why entropy uses only
+component valuations with charts; valuative semistability (`DVRGradedSectionFamilies`) is stated
+with divisorial valuations and their intrinsic log discrepancies, and needs no charts. The model
+polarization is a line bundle, and Monge--Ampère masses are only formed for semipositive models.
 -/
 
 open _root_.AlgebraicGeometry

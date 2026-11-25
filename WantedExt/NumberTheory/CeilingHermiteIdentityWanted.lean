@@ -10,7 +10,9 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.InclExclLikeSumBounds
+public import MathlibExt.NumberTheory.InclExclLikeSumRelations
 public import MathlibExt.NumberTheory.TverbergSumPeriodic
+public import MathlibExt.Algebra.Order.Floor.HalfShift
 
 /-!
 # Inclusion-exclusion-like sums with floor, ceiling and nearest-integer functions (statements)
@@ -34,32 +36,6 @@ quotient `m / 2`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Relations and periodicity of the inclusion-exclusion-like sums.** Let $n \ge 2$ and write
-$g_1$, $g_2$, $g_3$, $g_4$ for the inclusion-exclusion-like sums $g^{(F)}$ with $F$ the floor
-function $\lfloor y \rfloor$, the ceiling function $\lceil y \rceil$, the nearest-integer function
-$\lfloor y + 1/2 \rfloor$ (ties rounded up) and $\lceil y - 1/2 \rceil$ (ties rounded down),
-respectively. For every $x = (x_1, \dots, x_n) \in \mathbb{R}^n$:
-(i) $g_3(x) = g_1(x) - g_1(x_1, \dots, x_n, 1/2)$;
-(ii) $g_4(x) = g_2(x) - g_2(x_1, \dots, x_n, -1/2)$;
-(iii) for each $j \in \{1, 2, 3, 4\}$, each index $i$ and each integer $q$, adding $q$ to $x_i$
-does not change $g_j(x)$.
-
-Parts (i) and (ii) also hold for $n < 2$; part (iii) fails for $n = 1$, where
-$g_1(x) = \lfloor x \rfloor$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Lemma 1. -/
-public theorem_wanted inclExclLikeSum_relations_and_periodic {n : ℕ} (hn : 2 ≤ n)
-    (x : Fin n → ℝ) :
-    inclExclLikeSum round x =
-        inclExclLikeSum Int.floor x - inclExclLikeSum Int.floor (Fin.snoc x (1 / 2 : ℝ)) ∧
-      inclExclLikeSum (fun y : ℝ => ⌈y - 1 / 2⌉) x =
-        inclExclLikeSum Int.ceil x - inclExclLikeSum Int.ceil (Fin.snoc x (-1 / 2 : ℝ)) ∧
-      ∀ F ∈ ({Int.floor, Int.ceil, round, fun y : ℝ => ⌈y - 1 / 2⌉} : Set (ℝ → ℤ)),
-        ∀ (i : Fin n) (q : ℤ),
-        inclExclLikeSum F (Function.update x i (x i + q)) = inclExclLikeSum F x
 
 /-- **Tverberg's sum in terms of the inclusion-exclusion-like sum.** Let $F$ be one of
 $\lfloor \cdot \rfloor$, $\lceil \cdot \rceil$, $r^+(y) = \lfloor y + 1/2 \rfloor$ and
@@ -159,17 +135,6 @@ public theorem_wanted tverbergPartialSum_vanish_and_periodic {ℓ : ℕ} (hℓ :
           ∀ (K : ℕ) (i : Fin ℓ) (q : ℤ),
             ∑ k ∈ Finset.Icc 1 K, tverbergSum F (Function.update a i (a i + q * m)) m k =
               ∑ k ∈ Finset.Icc 1 K, tverbergSum F a m k
-
-/-- **Floor and ceiling of a quotient plus one half.** For every integer $q$ and every positive
-integer $m$, $\lfloor q/m + 1/2 \rfloor = \lfloor (q + \lfloor m/2 \rfloor)/m \rfloor$ and
-$\lceil q/m + 1/2 \rceil = \lceil (q + \lceil m/2 \rceil)/m \rceil$.
-
-Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
-*Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer
-Functions*, INTEGERS 25 (2025), Article A45, Lemma 8. -/
-public theorem_wanted floor_ceil_div_add_half (q : ℤ) (m : ℕ) (hm : 0 < m) :
-    ⌊(q : ℝ) / m + 1 / 2⌋ = ⌊((q + (m / 2 : ℕ) : ℤ) : ℝ) / m⌋ ∧
-      ⌈(q : ℝ) / m + 1 / 2⌉ = ⌈((q + ((m + 1) / 2 : ℕ) : ℤ) : ℝ) / m⌉
 
 /-- **Extrema of the ceiling inclusion-exclusion-like sum.** Let $n \ge 2$ and let $g_2$ be the
 inclusion-exclusion-like sum $g^{(F)}$ in $n$ real variables with $F$ the ceiling function. Then

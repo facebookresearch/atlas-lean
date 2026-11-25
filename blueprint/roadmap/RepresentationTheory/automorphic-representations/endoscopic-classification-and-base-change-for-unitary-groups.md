@@ -53,6 +53,8 @@ and $U_{E/F}(N)$ the quasi-split unitary group in $N$ variables.
   definite unitary groups or from the local–global compatibility in the endoscopic classification; any
   stronger statement identifying all local components needs its own source.
 
+## Expansion
+
 A good expansion has pages for the global parameters and their localizations, the local and global
 packets and the sign character, the classification for quasi-split unitary groups, the weak base change,
 and the classification and base change for inner forms, with the conditional status of each statement
@@ -60,12 +62,27 @@ recorded; the base change for definite unitary groups should also be checked aga
 "Changement de base CM et séries discrètes", in *On the Stabilization of the Trace Formula*, International
 Press, 2011, with locators.
 
+A good expansion also writes out these steps of its own proof:
+
+- the identification of the Asai $L$-function with the pole, $\mathrm{Asai}^\eta$ with $\eta = (-1)^{N-1}\kappa$ (Mok, Theorem 2.5.4 (a), p. 36, and Remark 2.5.6), for the parity: the simple pole of the product alone determines neither.
+- for the quasi-split groups, Mok's comparison of the stabilized trace formula of $U_{E/F}(N)$ with the stabilized twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_N$, and the analysis of the parity that it gives; the classification is conditional on the stabilizations it compares.
+- for inner forms, the comparison of the untwisted trace formula of the inner twist with Mok's results (KMSW, Theorem* 1.7.1, p. 89, and Chapter 5, Theorem 5.0.5, pp. 205–206), which holds under the two local hypotheses at every place and the stabilization of that trace formula.
+
 ## Depends on
 
 - [Automorphic forms, cusp forms and automorphic representations](automorphic-forms-on-reductive-groups/automorphic-forms-and-automorphic-representations.md), for automorphic and cuspidal automorphic representations
 - [Jacquet–Shalika classification of automorphic representations of GLₙ](automorphic-representations-of-gl-n/jacquet-shalika-classification.md), for isobaric sums of cuspidal representations of general linear groups
 - [Discreteness of the cuspidal spectrum](automorphic-forms-on-reductive-groups/discreteness-of-the-cuspidal-spectrum.md), for the cuspidal part of the discrete spectrum (the residual part is described through Eisenstein series)
 - [Eisenstein series and their meromorphic continuation](automorphic-forms-on-reductive-groups/eisenstein-series.md), for the residual spectrum
+
+## Proof depends on
+
+- [Jacquet–Shalika classification of automorphic representations of GLₙ](automorphic-representations-of-gl-n/jacquet-shalika-classification.md), for the bijection between the parameters $\psi$ and the families of Satake parameters they determine, which with Mœglin–Waldspurger's theorem Mok uses to separate the global parameters (Mok, Example 4.3.1, (4.3.5))
+- [Rankin–Selberg L-functions for GLₙ × GLₘ](automorphic-representations-of-gl-n/rankin-selberg-l-functions-for-gl-n.md), for the simple pole at $s = 1$ of the Rankin–Selberg $L$-function of a conjugate self-dual cuspidal representation and its contragredient, the product of its two Asai $L$-functions (Mok, (2.5.9), pp. 35–36), which underlies the parity of these representations
+- [Asai L-functions at s = 1](automorphic-representations-of-gl-n/asai-l-functions-at-s-equal-one.md), for the non-vanishing at $s = 1$ of both Asai $L$-functions (Shahidi, as Mok cites it, p. 36), by which exactly one of them has a pole there, a simple one, for the parity
+- [Mœglin–Waldspurger classification of the discrete spectrum of GLₙ](automorphic-representations-of-gl-n/moeglin-waldspurger-classification-of-the-discrete-spectrum.md), for Mœglin–Waldspurger's classification of the discrete spectrum of $\mathrm{GL}_N$ by the blocks attached to a unitary cuspidal $\mu$ and a length $d \ge 1$, cuspidal for $d = 1$ and residual for $d > 1$ (KMSW, (1.3.2)–(1.3.3), p. 64)
+- [Stabilization of the trace formulas for unitary groups and their twisted comparison group](stabilization-of-trace-formulas-for-unitary-groups.md), for the stabilizations that Mok's comparison and that of Kaletha, Mínguez, Shin and White rest on: of the twisted trace formula of $\mathrm{R}_{E/F}\mathrm{GL}_N$ (Mok's Hypothesis 4.2.1) and of the trace formulas of $U_{E/F}(N)$ and of its inner twists, with the transfer and the standard and weighted fundamental lemmas
+- [Local classification and the local intertwining relation for inner forms of unitary groups](../reductive-groups-over-local-fields/local-classification-and-intertwining-relation-for-unitary-groups.md), for the local classification and the local intertwining relation at every place, the two hypotheses of Kaletha, Mínguez, Shin and White's Theorem 5.0.5 for inner forms
 
 ## Sources
 

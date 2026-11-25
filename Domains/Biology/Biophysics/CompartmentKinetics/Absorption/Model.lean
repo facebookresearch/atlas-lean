@@ -35,18 +35,23 @@ open Real
 
 namespace MathlibExt.Biology.Biophysics.CompartmentKinetics.Absorption.Model
 
-/-- The administered depot amount `D * exp (-ka * t)`. -/
+/-- The administered depot amount `D * exp (-ka * t)`, defined for all real inputs; the intended
+domain is `D ≥ 0`, `ka > 0` and `t ≥ 0`. -/
 noncomputable def depotAmount (D ka t : ℝ) : ℝ := D * Real.exp (-ka * t)
 
-/-- The central amount for distinct rates. -/
+/-- The central amount for distinct rates. With the convention `x / 0 = 0` it is `0` when `ka = k`,
+where the equal-rate formula `centralAmountEqual` applies. The intended domain is `ka ≠ k` with
+`0 ≤ F ≤ 1`, `D ≥ 0`, `ka > 0`, `k ≥ 0` and `t ≥ 0`. -/
 noncomputable def centralAmount (F D ka k t : ℝ) : ℝ :=
   F * D * ka * (Real.exp (-k * t) - Real.exp (-ka * t)) / (ka - k)
 
-/-- The central amount for equal rates. -/
+/-- The central amount for equal rates, defined for all real inputs; the intended domain is
+`0 ≤ F ≤ 1`, `D ≥ 0`, `ka > 0` and `t ≥ 0`. -/
 noncomputable def centralAmountEqual (F D ka t : ℝ) : ℝ :=
   F * D * ka * t * Real.exp (-ka * t)
 
-/-- **Depot derivative.** The depot decays at rate `ka`. -/
+/-- **Depot derivative.** For all real `D`, `ka` and `t`, the depot amount has derivative
+`-ka * depotAmount D ka t` at `t`; for `ka > 0` the depot decays at rate `ka`. -/
 theorem depot_hasDerivAt (D ka t : ℝ) :
     HasDerivAt (depotAmount D ka) (-ka * depotAmount D ka t) t := by
   have hlin : HasDerivAt (fun t => -ka * t) (-ka * 1) t :=
@@ -140,8 +145,8 @@ theorem central_deriv_equal {F D ka t : ℝ} :
       F * ka * depotAmount D ka t - ka * centralAmountEqual F D ka t :=
   central_hasDerivAt_equal.deriv
 
-/-- **Distinct-rate nonnegativity.** For admissible parameters
-and `t ≥ 0`, the central amount is nonnegative. -/
+/-- **Distinct-rate nonnegativity.** For `F ≥ 0`, `D ≥ 0`, `ka > 0`, `k ≥ 0` with `ka ≠ k`, and
+`t ≥ 0`, the central amount is nonnegative. -/
 theorem central_nonneg {F D ka k t : ℝ} (hF : 0 ≤ F) (hD : 0 ≤ D)
     (hka : 0 < ka) (hk : 0 ≤ k) (ht : 0 ≤ t) (h : ka ≠ k) :
     0 ≤ centralAmount F D ka k t := by
@@ -150,8 +155,8 @@ theorem central_nonneg {F D ka k t : ℝ} (hF : 0 ≤ F) (hD : 0 ≤ D)
   exact MathlibExt.Biology.Biophysics.CompartmentKinetics.DecayExpansion.decay_expansion_nonneg
     hC hka.le hk ht h
 
-/-- **Equal-rate nonnegativity.** For admissible parameters and
-`t ≥ 0`, the equal-rate central amount is nonnegative. -/
+/-- **Equal-rate nonnegativity.** For `F ≥ 0`, `D ≥ 0`, `ka ≥ 0` and `t ≥ 0`, the equal-rate central
+amount is nonnegative. -/
 theorem centralEqual_nonneg {F D ka t : ℝ} (hF : 0 ≤ F) (hD : 0 ≤ D)
     (hka : 0 ≤ ka) (ht : 0 ≤ t) :
     0 ≤ centralAmountEqual F D ka t := by
@@ -167,9 +172,9 @@ lemma depotAmount_eq_amount (D ka t : ℝ) :
   rw [MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_bolus]
   rfl
 
-/-- The canonical central amount: the relaxation solution with
-elimination rate `k` and input `F * ka * Ag`, for all rates
-without a distinct-rate side condition. -/
+/-- The canonical central amount: the relaxation solution with elimination rate `k` and input
+`F * ka * Ag`, for all rates without a distinct-rate side condition (an oriented integral for
+`t < 0`). The intended domain is `0 ≤ F ≤ 1`, `D ≥ 0`, `ka > 0`, `k ≥ 0` and `t ≥ 0`. -/
 noncomputable def centralAmountCanonical (F D ka k t : ℝ) : ℝ :=
   MathlibExt.Biology.Dynamics.FeedForwardLoop.relaxation k
     (fun s => F * ka * depotAmount D ka s) 0 t

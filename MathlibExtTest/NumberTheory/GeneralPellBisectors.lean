@@ -9,7 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.GeneralPellBisectors
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Nat.Prime.Int
+import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.NormNum.RealSqrt
 
 namespace MetaMathlibExt
@@ -36,6 +38,17 @@ example (x y : ℤ) (h : x ^ 2 = 5 * y ^ 2) : Even x ∧ Even y :=
 example : ((0 : ℝ) - (-3)) ^ 2 * ((3 / 4) ^ 2 + 1) =
     (3 / 4 - (-3)) ^ 2 * (0 ^ 2 + 1) := by
   apply bisector_slope_equation 0 (3 / 4) (-3) <;> norm_num
+
+-- The Pell points (1, 1) and (1/7, 5/7) admit both the slope 1/2 and its negative reciprocal.
+example (c : ℚ) (hc : c ∈ ({1 / 2, -2} : Set ℚ)) :
+    ∃ u v : ℚ, 1 ^ 2 - 2 * u ^ 2 = -1 ∧ (1 / 7) ^ 2 - 2 * v ^ 2 = -1 ∧
+      ((u + v ≠ 0 ∧ c = (1 * v + u * (1 / 7)) / (u + v)) ∨
+        (1 * v + u * (1 / 7) ≠ 0 ∧ c = -(u + v) / (1 * v + u * (1 / 7)))) := by
+  apply bisector_equation_rat_solution_negPell 2 (by decide) Int.prime_two.squarefree
+      1 (1 / 7) c (by norm_num) _ ⟨1, by norm_num⟩ ⟨5 / 7, by norm_num⟩
+  rcases hc with rfl | rfl <;> norm_num
+
+#print axioms bisector_equation_rat_solution_negPell
 
 -- The Pell solutions (1, 1) and (7, 5) give bisector slopes 2 and -1/2.
 example : ∀ c ∈ ({2, -1 / 2} : Set ℚ),
@@ -78,5 +91,43 @@ example : IsCoprime (1 : ℤ) (3 * 1) ∧ (1 : ℤ) ^ 2 - 3 * 1 ^ 2 = -2 ∧
     rcases (by omega : x % 3 = 0 ∨ x % 3 = 1 ∨ x % 3 = 2) with ht | ht | ht <;>
       simp [pow_two, Int.mul_emod, ht]
   omega
+
+-- The factors `1 + √3` and `4 + √3` have norms `-2` and `13`. Their product is `7 + 5√3`.
+example : IsCoprime (7 : ℤ) (3 * 5) ∧ |(⟨7, 5⟩ : ℤ√3).norm| = 26 := by
+  let a : Fin 2 → ℤ√3 := ![⟨1, 1⟩, ⟨4, 1⟩]
+  have h := strictlyPrimitive_prod 3 (by decide)
+    (Int.prime_ofNat_iff.mpr Nat.prime_three).squarefree ![2, 13] (by decide) (by decide)
+    (fun _ ↦ 1) a (by decide) (by decide)
+  rw [Fin.prod_univ_two, Fin.prod_univ_two] at h
+  exact h
+
+-- The empty family gives the strictly primitive unit of norm one.
+example (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) (a : Fin 0 → ℤ√d) :
+    IsCoprime (∏ i, a i).re (d * (∏ i, a i).im) ∧ |(∏ i, a i).norm| = 1 := by
+  simpa using strictlyPrimitive_prod d hd hsq Fin.elim0 (fun i ↦ i.elim0) (fun i ↦ i.elim0)
+    Fin.elim0 a (fun i ↦ i.elim0) (fun i ↦ i.elim0)
+
+#print axioms strictlyPrimitive_prod
+
+-- The comparison of the negative Pell sequences holds for every index, for
+-- `d = 2` with fundamental solution `(1, 1)`.
+example (n : ℕ) : negPellG 2 n ≤ negPellF 2 n :=
+  (negPellG_le_negPellF 2 (by norm_num) ⟨1, 1, by norm_num⟩ n).1
+
+-- At `n = 0` the inequality is strict: `g_0 = 0` while `f_0 = 1`.
+example : ¬(negPellF 2 0 = negPellG 2 0) := by
+  intro h
+  have hiff := (negPellG_le_negPellF 2 (by norm_num) ⟨1, 1, by norm_num⟩ 0).2.mp h
+  omega
+
+-- The equality case `d = 2`, `n = 1`: both coordinates are `1`.
+example : negPellF 2 1 = negPellG 2 1 :=
+  (negPellG_le_negPellF 2 (by norm_num) ⟨1, 1, by norm_num⟩ 1).2.mpr ⟨rfl, rfl⟩
+
+-- Another value of `d`: `x^2 - 5 y^2 = -1` has solution `(2, 1)`.
+example (n : ℕ) : negPellG 5 n ≤ negPellF 5 n :=
+  (negPellG_le_negPellF 5 (by norm_num) ⟨2, 1, by norm_num⟩ n).1
+
+#print axioms negPellG_le_negPellF
 
 end MetaMathlibExt

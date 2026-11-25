@@ -19,3 +19,4 @@ Places, adeles and ideles, ray class groups, Artin map, Hilbert class fields, Ne
 - [Existence theorem](existence-theorem/README.md)
 - [Hasse norm theorem for cyclic extensions](hasse-norm-theorem.md)
 - [Chebotarev density theorem](chebotarev-density-theorem.md)
+- [Adelic points of reductive groups: the norm-one subgroup and maximal compact subgroups](adelic-points-of-reductive-groups.md)

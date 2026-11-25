@@ -48,6 +48,8 @@ the normalized ones of the [adelic norm](adeles-and-ideles/adelic-norm.md), with
   translates) on the Siegel set; this is the form used for the theta integrals of unitary
   groups and for the decay of their cusp forms.
 
+## Expansion
+
 A good expansion has pages for the definition of Siegel sets, the covering theorem, the finiteness
 (Siegel) property of Siegel sets, the compactness criterion and finite volume, the finiteness of class
 numbers and of conjugacy classes of parabolic subgroups, the properties of heights,
@@ -58,10 +60,26 @@ Harish-Chandra, "Arithmetic subgroups of algebraic groups", Ann. of Math. 75 (19
 A. Borel's monograph *Introduction aux groupes arithmétiques*, Hermann, 1969, with locators, besides the
 sources below.
 
+It also writes out these steps of its own proof:
+
+- the classical proof of reduction theory, as distinct from its statement on this page: the covering of $\mathrm{GL}_n(\mathbb{R})$ by the $\mathrm{GL}_n(\mathbb{Z})$-translates of a Siegel set (Minkowski, Siegel), its transfer to $G$ through a faithful representation (Borel and Harish-Chandra), and the assembly over the finite adeles from finitely many classes, with the archimedean Iwasawa decomposition and the local decompositions above, for the covering and the finiteness statements.
+
 ## Depends on
 
 - [Adelic norm](adeles-and-ideles/adelic-norm.md), for the normalized absolute values of the completions
 - [Product formula for principal ideles](adeles-and-ideles/adelic-norm-principal-embedding.md), for the product formula on $k^\times$
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the minimal and standard parabolic $k$-subgroups, Levi decompositions and simple roots
+- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the decomposition $G(k_v) = P_0(k_v) K_v$ at the finite places, through which $H_P$ is defined
+- [Iwasawa and Langlands decompositions of real reductive groups](../../../RepresentationTheory/reductive-groups-over-local-fields/representations-of-real-reductive-groups/iwasawa-and-langlands-decompositions.md), for the Iwasawa decomposition of the real points at the archimedean places, also used to define $H_P$
+
+## Proof depends on
+
+- [Dirichlet's unit theorem: the logarithmic image of the units is a full lattice](../discriminants-ramification/dirichlet-unit-theorem.md), for the archimedean factor in the compactness of the norm-one idele classes, the case of $\mathrm{GL}_1$
+- [Compactness of the local integral units](adeles-and-ideles/is-compact-local-integral-unit-subgroup.md), for the compact product of the local unit groups at the finite places, the other factor in that case
+- [Minkowski's bound: every ideal class of a number field contains an integral ideal of small norm](../number-fields-embeddings/minkowski-bound.md), for a representative of small norm in each ideal class
+- [Bound on the number of ideals of bounded norm, floor form](../discriminants-ramification/counting-ideals-of-bounded-norm/card-nonzero-abs-norm-le-real.md), for the finiteness of the ideals of bounded norm, so that with Minkowski's bound the class group of $k$ is finite: the class number for the standard maximal compact subgroup of $\mathrm{GL}_1$; an arbitrary compact open subgroup gives a finite refinement
+- [Compactness of the completed ring of integers](adeles-and-ideles/is-compact-adic-completion-integers.md), for the compactness of the balls of the height, together with one finite set of places for the whole ball: the local factors of the height are at least $1$ at the finite places and take values in $q_v^{\mathbb{Z}}$, so on a ball they exceed $1$ only at places of norm bounded in terms of the radius, finitely many by the counting of ideals above, and the ball is a closed subset of a product of compact sets
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the rational parabolic subgroups, their finitely many $G(k)$-conjugacy classes (one for each standard parabolic subgroup) and the rational Bruhat decomposition
 
 ## Sources
 
