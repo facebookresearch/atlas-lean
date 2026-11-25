@@ -53415,6 +53415,7 @@
     "MathlibExt.Biology.PopulationGenetics.DistributionOfFitnessEffects.poissonLogLik_le_profile": "c983be152d76f2d4",
     "MathlibExt.Biology.PopulationGenetics.DistributionOfFitnessEffects.score_eq_zero_of_isMaxOn": "52f3ddbd04ae620d",
     "MathlibExt.Biology.PopulationGenetics.DistributionOfFitnessEffects.variance_id_gammaDFE": "b0bbf58e5b8fd9d0",
+    "MathlibExt.Biology.PopulationGenetics.EffectivePopulationSizeSeparateSexes.effective_population_size_separate_sexes": "956a29fd39d620a6",
     "MathlibExt.Biology.PopulationGenetics.Ewens.condUpperPValue": "68922772caae6857",
     "MathlibExt.Biology.PopulationGenetics.Ewens.cycleTypeWeight": "cc93acfb815d0022",
     "MathlibExt.Biology.PopulationGenetics.Ewens.cycleTypeWeight_pos": "a396bd68294593fe",
