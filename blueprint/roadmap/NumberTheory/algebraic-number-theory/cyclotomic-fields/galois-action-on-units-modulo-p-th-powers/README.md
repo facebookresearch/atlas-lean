@@ -17,3 +17,5 @@
 - [Omega Idempotent comp self](omega-idempotent-comp-self.md)
 - [Omega Idempotent mem units Omega Eigenspace](omega-idempotent-mem-units-omega-eigensp.md)
 - [Mem units Omega Eigenspace](mem-units-omega-eigenspace.md)
+- [Units Omega Eigenspace Finrank](finrank-units-omega-eigenspace-two.md)
+- [Cyclotomic Unit Omega Two](omega-idempotent-two-cyclo-unit-two-ne-z.md)
