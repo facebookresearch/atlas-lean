@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.FieldTheory.IntermediateField.AdjoinAlgHomTranscendental
+import Mathlib.FieldTheory.RatFunc.IntermediateField
 
 @[expose] public section
 
@@ -41,8 +42,62 @@ example
   IntermediateField.exists_algHom_adjoin_apply_eq_of_isAlgebraic_of_transcendental
     K G h1 hmul θ hθ hlin F hF x₀ hx₀G hx₀ halg
 
--- Boundary: an algebra map out of `F` is determined on `G` by the theorem;
--- at `1`, which lies in every such `G`, it must agree with `θ 1 = 1`.
-example {K L' : Type*} [Field K] [Field L'] [Algebra K L']
-    (Θ : K →ₐ[K] L') : Θ 1 = 1 :=
-  map_one Θ
+namespace AdjoinAlgHomTranscendentalTest
+
+open RatFunc
+
+variable (K : Type*) [Field K]
+
+-- A concrete instance in `K⟮X⟯`: `G` is the powers of `X`, whose span `K[X]` is not a field,
+-- `θ` is squaring, which is multiplicative but not additive, and `x₀ = X`.
+private noncomputable abbrev G : Set (RatFunc K) := Set.range ((X : RatFunc K) ^ ·)
+
+private noncomputable abbrev F : IntermediateField K (RatFunc K) := IntermediateField.adjoin K (G K)
+
+private theorem one_mem_G : (1 : RatFunc K) ∈ G K := ⟨0, pow_zero _⟩
+
+private theorem mul_mem_G : ∀ x ∈ G K, ∀ y ∈ G K, x * y ∈ G K := by
+  rintro _ ⟨m, rfl⟩ _ ⟨n, rfl⟩
+  exact ⟨m + n, pow_add _ m n⟩
+
+private theorem X_mem_G : (X : RatFunc K) ∈ G K := ⟨1, pow_one _⟩
+
+private noncomputable abbrev x₀ : F K := ⟨X, IntermediateField.subset_adjoin K _ (X_mem_G K)⟩
+
+-- On the powers of `X`, squaring agrees with the substitution `X ↦ X ^ 2`, an algebra map, so
+-- it preserves their linear relations.
+private theorem sq_linearRelations (c : RatFunc K →₀ K)
+    (hc : (↑c.support : Set (RatFunc K)) ⊆ G K) (h : (c.sum fun x r => r • x) = 0) :
+    (c.sum fun x r => r • x ^ 2) = 0 := by
+  let φ : RatFunc K →ₐ[K] RatFunc K := (IntermediateField.val _).comp
+    (algEquivOfTranscendental _ ((transcendental_X (K := K)).pow two_pos)).toAlgHom
+  have hφ : ∀ x ∈ G K, φ x = x ^ 2 := by
+    rintro _ ⟨n, rfl⟩
+    simp [φ, ← pow_mul, mul_comm]
+  calc (c.sum fun x r => r • x ^ 2) = c.sum fun x r => r • φ x :=
+        Finsupp.sum_congr fun x hx => by rw [hφ x (hc (Finset.mem_coe.mpr hx))]
+    _ = φ (c.sum fun x r => r • x) := by rw [map_finsuppSum]; simp only [map_smul]
+    _ = 0 := by rw [h, map_zero]
+
+-- `X` generates `F K`, so `F K` is algebraic over `K(x₀)`.
+private theorem isAlgebraic_adjoin_x₀ :
+    Algebra.IsAlgebraic (IntermediateField.adjoin K ({x₀ K} : Set (F K))) (F K) := by
+  refine ⟨fun y => ?_⟩
+  have hy : y ∈ IntermediateField.adjoin K ({x₀ K} : Set (F K)) := by
+    rw [← IntermediateField.mem_lift, IntermediateField.lift_adjoin_simple]
+    change y.1 ∈ IntermediateField.adjoin K {(X : RatFunc K)}
+    rw [RatFunc.adjoin_X]
+    exact IntermediateField.mem_top
+  exact isAlgebraic_algebraMap (⟨y, hy⟩ : IntermediateField.adjoin K ({x₀ K} : Set (F K)))
+
+-- Boundary, with every hypothesis of the theorem proved: the algebra map it returns agrees
+-- with `θ` at `1`, which lies in every admissible `G`, and sends the generator `X` to `X ^ 2`.
+example : ∃ Θ : F K →ₐ[K] RatFunc K, Θ 1 = 1 ^ 2 ∧ Θ (x₀ K) = X ^ 2 := by
+  obtain ⟨Θ, hΘ⟩ :=
+    IntermediateField.exists_algHom_adjoin_apply_eq_of_isAlgebraic_of_transcendental K (G K)
+      (one_mem_G K) (mul_mem_G K) (· ^ 2) (fun x _ y _ => mul_pow x y 2)
+      (sq_linearRelations K) (F K) rfl (x₀ K) (X_mem_G K)
+      ((transcendental_X (K := K)).pow two_pos) (isAlgebraic_adjoin_x₀ K)
+  exact ⟨Θ, hΘ 1 (one_mem_G K), hΘ (x₀ K) (X_mem_G K)⟩
+
+end AdjoinAlgHomTranscendentalTest
