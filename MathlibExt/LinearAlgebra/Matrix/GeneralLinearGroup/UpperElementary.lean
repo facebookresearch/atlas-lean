@@ -162,7 +162,7 @@ variable {R : Type*} [Ring R]
 omit [Fintype ι] [Fintype κ] in
 omit [Fintype ι] [Fintype κ] in
 private theorem reindex_single_orderIso (e : ι ≃o κ) (i j : ι) (a : R) :
-    reindex e.toEquiv e.toEquiv (Matrix.single i j a) = Matrix.single (e i) (e j) a := by
+    Matrix.reindex e.toEquiv e.toEquiv (Matrix.single i j a) = Matrix.single (e i) (e j) a := by
   ext x y
   simp only [Matrix.reindex_apply, Matrix.submatrix_apply, Matrix.single_apply]
   have h_iff : (i = e.symm x ∧ j = e.symm y) ↔ (e i = x ∧ e j = y) := by
@@ -211,10 +211,10 @@ theorem reindexMulEquiv_mem_upperElementarySubgroup (e : ι ≃o κ) {g : GL ι 
         (1 : Matrix ι ι R) (Matrix.single i j a)
       have h_one := (reindexRingEquiv R e.toEquiv).map_one
       simp only [coe_reindexRingEquiv] at h_add h_one
-      calc reindex e.toEquiv e.toEquiv (1 + Matrix.single i j a)
-          = reindex e.toEquiv e.toEquiv (1 : Matrix ι ι R) +
-            reindex e.toEquiv e.toEquiv (Matrix.single i j a) := h_add
-        _ = 1 + reindex e.toEquiv e.toEquiv (Matrix.single i j a) := by rw [h_one]
+      calc Matrix.reindex e.toEquiv e.toEquiv (1 + Matrix.single i j a)
+          = Matrix.reindex e.toEquiv e.toEquiv (1 : Matrix ι ι R) +
+            Matrix.reindex e.toEquiv e.toEquiv (Matrix.single i j a) := h_add
+        _ = 1 + Matrix.reindex e.toEquiv e.toEquiv (Matrix.single i j a) := by rw [h_one]
         _ = 1 + Matrix.single (e i) (e j) a := by rw [reindex_single_orderIso e i j a]
     have h_mem : reindexMulEquiv (A := R) e.toEquiv
         (Matrix.GeneralLinearGroup.elementary i j (ne_of_lt hij) a) ∈
@@ -302,10 +302,10 @@ theorem reindexMulEquiv_elementary (e : ι ≃o κ) (i j : ι) (hij : i < j) (a 
     (1 : Matrix ι ι R) (Matrix.single i j a)
   have h_one := (reindexRingEquiv R e.toEquiv).map_one
   simp only [coe_reindexRingEquiv] at h_add h_one
-  calc reindex e.toEquiv e.toEquiv (1 + Matrix.single i j a)
-      = reindex e.toEquiv e.toEquiv (1 : Matrix ι ι R) +
-        reindex e.toEquiv e.toEquiv (Matrix.single i j a) := h_add
-    _ = 1 + reindex e.toEquiv e.toEquiv (Matrix.single i j a) := by rw [h_one]
+  calc Matrix.reindex e.toEquiv e.toEquiv (1 + Matrix.single i j a)
+      = Matrix.reindex e.toEquiv e.toEquiv (1 : Matrix ι ι R) +
+        Matrix.reindex e.toEquiv e.toEquiv (Matrix.single i j a) := h_add
+    _ = 1 + Matrix.reindex e.toEquiv e.toEquiv (Matrix.single i j a) := by rw [h_one]
     _ = 1 + Matrix.single (e i) (e j) a := by
         rw [Matrix.GeneralLinearGroup.reindex_single_orderIso e i j a]
 
@@ -329,8 +329,8 @@ theorem reindexMulEquiv_comp_hom {M : Type*} [DecidableEq M] [Fintype M] [Linear
     MulEquiv.coe_toMonoidHom]
   apply Units.ext
   simp only [Matrix.GeneralLinearGroup.coe_reindexMulEquiv]
-  change reindex (e₁.trans e₂).toEquiv (e₁.trans e₂).toEquiv (↑(↑g : GL ι R) : Matrix ι ι R) =
-    reindex e₂.toEquiv e₂.toEquiv (reindex e₁.toEquiv e₁.toEquiv (↑(↑g : GL ι R) : Matrix ι ι R))
+  change Matrix.reindex (e₁.trans e₂).toEquiv (e₁.trans e₂).toEquiv (↑(↑g : GL ι R) : Matrix ι ι R) =
+    Matrix.reindex e₂.toEquiv e₂.toEquiv (Matrix.reindex e₁.toEquiv e₁.toEquiv (↑(↑g : GL ι R) : Matrix ι ι R))
   have h_equiv : (e₁.trans e₂).toEquiv = e₁.toEquiv.trans e₂.toEquiv := rfl
   rw [h_equiv]
   rw [← Matrix.reindex_trans]
