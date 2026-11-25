@@ -207,16 +207,6 @@ public theorem_wanted lip_univ_comp {f g : ↥(Set.univ : Set ℤ) → ℤ}
     (hf : f ∈ lipSubring Set.univ) (hg : g ∈ lipSubring Set.univ) :
     (fun x => f ⟨g x, Set.mem_univ _⟩) ∈ lipSubring Set.univ
 
-/-- **$\mathrm{LIP}(\mathbb{Z})$ is closed under the discrete derivative.** If $f$ lies in
-$\mathrm{LIP}(\mathbb{Z})$, the ring of locally integer polynomial functions
-$\mathbb{Z} \to \mathbb{Z}$, then so does the function $x \mapsto f(x) - f(x - 1)$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Theorem 5 (`integers-2025-A41-thm-5`). -/
-public theorem_wanted lip_univ_sub_shift {f : ↥(Set.univ : Set ℤ) → ℤ}
-    (hf : f ∈ lipSubring Set.univ) :
-    (fun x => f x - f ⟨(x : ℤ) - 1, Set.mem_univ _⟩) ∈ lipSubring Set.univ
-
 /-- **Non-polynomial LIP functions on the integers that are small on an infinite set.** Let
 $\tau : \mathbb{N} \to \mathbb{R}$ with $\tau(n) \to +\infty$ as $n \to \infty$. Write
 $\mathrm{LIP}(\mathbb{Z})$ for the ring of locally integer polynomial functions on $\mathbb{Z}$:
