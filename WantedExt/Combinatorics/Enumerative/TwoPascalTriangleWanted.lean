@@ -21,6 +21,7 @@ public import MathlibExt.Combinatorics.Enumerative.TrinomialAlternatingColumn
 public import MathlibExt.Combinatorics.Enumerative.TrinomialBinomialTransform
 public import MathlibExt.Combinatorics.Enumerative.TrinomialConvolution
 public import MathlibExt.Combinatorics.Enumerative.TrinomialEvenAlternating
+public import MathlibExt.Combinatorics.Enumerative.TrinomialInverseTransform
 public import MathlibExt.Combinatorics.Enumerative.TrinomialUpperHalf
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
@@ -431,34 +432,6 @@ public theorem_wanted sum_trinomialCoefficient_add_sub_eq_tribonacci (n : ℕ) :
       (tribonacci (2 * (n + 1)) : ℚ) / 2 + (trinomialCoefficient n n : ℚ) / 2 +
         (∑ k ∈ Finset.range n, (trinomialCoefficient k k : ℚ) *
           ((tribonacci (2 * (n - k)) : ℚ) + tribonacci (2 * (n - 1 - k)))) / 2
-
-/-- **Recovering even coefficients from the 2-Pascal transform.** Write $[t^m]F$ for the
-coefficient of $t^m$ in a power series $F$. Let $S$, $Q$, $R$ be power series over $\mathbb{Q}$
-with $S^2 = 4 - 3t^2$, $S(0) = 2$, $2Q^2 = 2 - t^2 - tS$, $Q(0) = 1$, $R^2 = 1 - t + t^2$ and
-$R(0) = 1$, and put
-
-$$\alpha = \frac{-2(2Q + t^2 S - t)}{Q(3t^4 + 2tS - t^2 - 4)}, \qquad
-\beta = \frac{t(t + S)}{2(1 - t^2)}.$$
-
-For a power series $f$ over $\mathbb{Q}$ let $g(t) = \alpha(t)\,f(\beta(t))$. Then for every
-$n \in \mathbb{N}$,
-
-$$[t^{2n}]\,f = [t^{2n}]\,\frac{(2 - t)(1 - t)^{2n}}{2(1 - t + t^2)}\,g\!\left(\frac{t}{R}\right).$$
-
-Here $S$, $Q$, $R$ are the square roots $\sqrt{4 - 3t^2}$, $\sqrt{(2 - t^2 - tS)/2}$ and
-$\sqrt{1 - t + t^2}$, and $\alpha$, $\beta$ are the series of the paper's Theorem 6.
-
-Source: Yassine Otmani, *The 2-Pascal Triangle and a Related Riordan Array*, Journal of
-Integer Sequences 28 (2025), Article 25.3.5, Corollary 49 (`jis-2025-25.3.5-cor-49`). -/
-public theorem_wanted coeff_two_mul_eq_inverse_trinomial_transform (S Q R : PowerSeries ℚ)
-    (hS : S ^ 2 = 4 - 3 * X ^ 2) (hS0 : constantCoeff S = 2)
-    (hQ : 2 * Q ^ 2 = 2 - X ^ 2 - X * S) (hQ0 : constantCoeff Q = 1)
-    (hR : R ^ 2 = 1 - X + X ^ 2) (hR0 : constantCoeff R = 1) (f : PowerSeries ℚ) (n : ℕ) :
-    let α := -2 * (2 * Q + X ^ 2 * S - X) * (Q * (3 * X ^ 4 + 2 * X * S - X ^ 2 - 4))⁻¹
-    let β := X * (X + S) * (2 * (1 - X ^ 2))⁻¹
-    let g := α * f.subst β
-    coeff (2 * n) f = coeff (2 * n) ((2 - X) * (1 - X) ^ (2 * n) * (2 * (1 - X + X ^ 2))⁻¹ *
-      g.subst (X * R⁻¹))
 
 end
 
