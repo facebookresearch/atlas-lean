@@ -36,6 +36,22 @@ public import MathlibExt.AlgebraicGeometry.EllipticCurve.Supersingular
 public import MathlibExt.NumberTheory.ArithmeticFunction.DedekindPsi
 import Mathlib.AlgebraicGeometry.EllipticCurve.NormalForms
 
+/-!
+# Supersingular `j`-invariants, short Weierstrass models and the Eichler mass
+
+This file defines the supersingular `j`-invariants in characteristic `p` (`ModularCurve.ssJSet`,
+through `WeierstrassCurve.Affine.IsSupersingular`), lists the supersingular `j`-invariants and
+polynomials in characteristics `2`, `3`, `5`, `7`, `11` and `13`, and defines the automorphism
+weights, the short Weierstrass models with their affine point counts, the Eichler mass and the
+supersingular count formula.
+
+Scope: every declaration that reads `ZMod p` as the field with `p` elements takes
+`[Fact p.Prime]`. These declarations are defined for the prime fields `ZMod p` only; prime-power
+fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope (`ZMod (p ^ n)` is not a field for
+`n > 1`). The levels `N` of `nuTwo`, `nuThree`, `eichlerMass` and `ssCountFormula` are arbitrary
+natural numbers, with `ZMod N` read as a ring.
+-/
+
 @[expose] public section
 
 attribute [local instance] Classical.propDecidable
@@ -48,44 +64,52 @@ public noncomputable def nuTwo (N : ℕ) : ℕ := Nat.card {x : ZMod N // x ^ 2 
 /-- The number of roots of `x ^ 2 + x + 1` in `ZMod N`. -/
 public noncomputable def nuThree (N : ℕ) : ℕ := Nat.card {x : ZMod N // x ^ 2 + x + 1 = 0}
 
-/-- The Eichler mass `(q - 1) * ψ(N) / 12` as a rational number, where `ψ` is the Dedekind psi
-function `ArithmeticFunction.dedekindPsi`. -/
-public noncomputable def eichlerMass (N q : ℕ) : ℚ :=
-  ((q : ℚ) - 1) * (ArithmeticFunction.dedekindPsi N : ℚ) / 12
+/-- The Eichler mass `(p - 1) * ψ(N) / 12` of level `N` in prime characteristic `p`, where `ψ` is
+the Dedekind psi function `ArithmeticFunction.dedekindPsi`. For a level `N ≥ 1` not divisible by
+`p`, Eichler's mass formula says that the supersingular points of `X₀(N)` over an algebraic
+closure of `ZMod p`, each weighted by `2 / |Aut|`, have total mass `eichlerMass N p`; this file
+does not prove it. Defined for prime `p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`,
+are out of scope. -/
+public noncomputable def eichlerMass (N p : ℕ) [Fact p.Prime] : ℚ :=
+  ((p : ℚ) - 1) * (ArithmeticFunction.dedekindPsi N : ℚ) / 12
 
-/-- The supersingular count formula built from the Eichler mass and the
-`ν₂`, `ν₃` corrections. -/
-public noncomputable def ssCountFormula (N q : ℕ) : ℚ :=
-  eichlerMass N q + (2 - (nuTwo q : ℚ)) * (nuTwo N : ℚ) / 4
-    + (2 - (nuThree q : ℚ)) * (nuThree N : ℚ) / 3
+/-- The supersingular count formula of level `N` in prime characteristic `p`: the Eichler mass plus
+the `ν₂`, `ν₃` corrections, with `nuTwo` and `nuThree` evaluated at the level `N` and in the prime
+field `ZMod p`. For a level `N ≥ 1` not divisible by `p` it is the number of supersingular points of
+`X₀(N)` over an algebraic closure of `ZMod p`; this file does not prove it. Defined for prime
+fields `ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope. -/
+public noncomputable def ssCountFormula (N p : ℕ) [Fact p.Prime] : ℚ :=
+  eichlerMass N p + (2 - (nuTwo p : ℚ)) * (nuTwo N : ℚ) / 4
+    + (2 - (nuThree p : ℚ)) * (nuThree N : ℚ) / 3
 
-public theorem eichlerMass_one (q : ℕ) : eichlerMass 1 q = ((q : ℚ) - 1) / 12 := by
+public theorem eichlerMass_one (p : ℕ) [Fact p.Prime] : eichlerMass 1 p = ((p : ℚ) - 1) / 12 := by
   simp [eichlerMass]
 
-public theorem ssCountFormula_eq (N q : ℕ) :
-    ssCountFormula N q = eichlerMass N q + (2 - (nuTwo q : ℚ)) * (nuTwo N : ℚ) / 4
-      + (2 - (nuThree q : ℚ)) * (nuThree N : ℚ) / 3 :=
+public theorem ssCountFormula_eq (N p : ℕ) [Fact p.Prime] :
+    ssCountFormula N p = eichlerMass N p + (2 - (nuTwo p : ℚ)) * (nuTwo N : ℚ) / 4
+      + (2 - (nuThree p : ℚ)) * (nuThree N : ℚ) / 3 :=
   rfl
 
-/-- The automorphism weight of a supersingular `j`-invariant in prime characteristic `q`: half the
-order of the automorphism group of an elliptic curve `E` over an algebraic closure of `ZMod q`
+/-- The automorphism weight of a supersingular `j`-invariant in prime characteristic `p`: half the
+order of the automorphism group of an elliptic curve `E` over an algebraic closure of `ZMod p`
 with `j`-invariant `j`, that is, the order of `Aut E / {±1}`. It is `12` in characteristic `2` at
 `j = 0` (`|Aut E| = 24`), `6` in characteristic `3` at `j = 0` (`|Aut E| = 12`), `3` at `j = 0`
 (`|Aut E| = 6`) and `2` at `j = 1728` (`|Aut E| = 4`) in characteristic greater than `3`, and `1`
-otherwise (`|Aut E| = 2`). So `1 / autWeight q j` is the normalized weight `2 / |Aut E|`, and in
-this normalization the Eichler mass formula reads `∑ 1 / autWeight q j = eichlerMass 1 q`, the sum
+otherwise (`|Aut E| = 2`). So `1 / autWeight p j` is the normalized weight `2 / |Aut E|`, and in
+this normalization the Eichler mass formula reads `∑ 1 / autWeight p j = eichlerMass 1 p`, the sum
 running over the supersingular `j`. This file computes neither the automorphism groups nor the
-mass formula. -/
-public def autWeight (q : ℕ) (j : ZMod q) : ℕ :=
-  if q = 2 then (if j = 0 then 12 else 1)
-  else if q = 3 then (if j = 0 then 6 else 1)
+mass formula. Defined for prime fields `ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`,
+`n > 1`, are out of scope. -/
+public def autWeight (p : ℕ) [Fact p.Prime] (j : ZMod p) : ℕ :=
+  if p = 2 then (if j = 0 then 12 else 1)
+  else if p = 3 then (if j = 0 then 6 else 1)
   else if j = 0 then 3 else if j = 1728 then 2 else 1
 
 public theorem autWeight_two_zero : autWeight 2 0 = 12 := by simp [autWeight]
 public theorem autWeight_three_zero : autWeight 3 0 = 6 := by simp [autWeight]
 
-public theorem autWeight_of_ne {q : ℕ} (h2 : q ≠ 2) (h3 : q ≠ 3) {j : ZMod q}
-    (h0 : j ≠ 0) (h1728 : j ≠ 1728) : autWeight q j = 1 := by
+public theorem autWeight_of_ne {p : ℕ} [Fact p.Prime] (h2 : p ≠ 2) (h3 : p ≠ 3) {j : ZMod p}
+    (h0 : j ≠ 0) (h1728 : j ≠ 1728) : autWeight p j = 1 := by
   simp [autWeight, h2, h3, h0, h1728]
 
 /-- The supersingular `j`-invariants in characteristic `2`. -/
@@ -130,31 +154,34 @@ public theorem ssPolyEleven_monic : ssPolyEleven.Monic := by
   exact Polynomial.monic_prod_of_monic _ _ fun a _ => Polynomial.monic_X_sub_C a
 
 /-- The coefficient `A` of the short Weierstrass equation `y ^ 2 = x ^ 3 + A * x + B` of the
-model curve `ssModel q j` attached to `j : ZMod q`, with `B = ssModelB q j`. -/
-public def ssModelA (q : ℕ) [NeZero q] (j : ZMod q) : ZMod q :=
+model curve `ssModel p j` attached to `j : ZMod p`, with `B = ssModelB p j`. Defined for prime
+fields `ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope. -/
+public def ssModelA (p : ℕ) [Fact p.Prime] (j : ZMod p) : ZMod p :=
   if j = 0 then 0 else if j = 1728 then 1 else 3 * j * (1728 - j)
 
 /-- The coefficient `B` of the short Weierstrass equation `y ^ 2 = x ^ 3 + A * x + B` of the
-model curve `ssModel q j` attached to `j : ZMod q`, with `A = ssModelA q j`. -/
-public def ssModelB (q : ℕ) [NeZero q] (j : ZMod q) : ZMod q :=
+model curve `ssModel p j` attached to `j : ZMod p`, with `A = ssModelA p j`. Defined for prime
+fields `ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope. -/
+public def ssModelB (p : ℕ) [Fact p.Prime] (j : ZMod p) : ZMod p :=
   if j = 0 then 1 else if j = 1728 then 0 else 2 * j * (1728 - j) ^ 2
 
-public theorem ssModelA_zero (q : ℕ) [NeZero q] : ssModelA q 0 = 0 := by simp [ssModelA]
-public theorem ssModelB_zero (q : ℕ) [NeZero q] : ssModelB q 0 = 1 := by simp [ssModelB]
+public theorem ssModelA_zero (p : ℕ) [Fact p.Prime] : ssModelA p 0 = 0 := by simp [ssModelA]
+public theorem ssModelB_zero (p : ℕ) [Fact p.Prime] : ssModelB p 0 = 1 := by simp [ssModelB]
 
-/-- The short Weierstrass curve `y ^ 2 = x ^ 3 + ssModelA q j * x + ssModelB q j` attached to
-`j : ZMod q`. For a prime `q > 3` it is an elliptic curve with `j`-invariant `j` (`ssModel_j`).
-It is not a model in characteristic `2` or `3`, where its discriminant vanishes for every `j`: in
-characteristic `2` the discriminant of every short Weierstrass equation does, and in
-characteristic `3` the coefficient `ssModelA 3 j` is `0`. In every characteristic,
-`WeierstrassCurve.ofJ j` is an elliptic curve with `j`-invariant `j`. -/
-public def ssModel (q : ℕ) [NeZero q] (j : ZMod q) : WeierstrassCurve (ZMod q) :=
-  ⟨0, 0, 0, ssModelA q j, ssModelB q j⟩
+/-- The short Weierstrass curve `y ^ 2 = x ^ 3 + ssModelA p j * x + ssModelB p j` over the prime
+field `ZMod p` attached to `j : ZMod p`. For `p > 3` it is an elliptic curve with `j`-invariant `j`
+(`ssModel_j`). It is not a model in characteristic `2` or `3`, where its discriminant vanishes
+for every `j`: in characteristic `2` the discriminant of every short Weierstrass equation does,
+and in characteristic `3` the coefficient `ssModelA 3 j` is `0`. In every characteristic,
+`WeierstrassCurve.ofJ j` is an elliptic curve with `j`-invariant `j`. Defined for prime fields
+`ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope. -/
+public def ssModel (p : ℕ) [Fact p.Prime] (j : ZMod p) : WeierstrassCurve (ZMod p) :=
+  ⟨0, 0, 0, ssModelA p j, ssModelB p j⟩
 
-private theorem two_ne_zero_and_three_ne_zero (q : ℕ) [Fact (3 < q)] :
-    (2 : ZMod q) ≠ 0 ∧ (3 : ZMod q) ≠ 0 := by
-  have hq : 3 < q := Fact.out
-  have key (n : ℕ) (hn : n ≠ 0) (hnq : n ≤ 3) : (n : ZMod q) ≠ 0 := by
+private theorem two_ne_zero_and_three_ne_zero (p : ℕ) [Fact (3 < p)] :
+    (2 : ZMod p) ≠ 0 ∧ (3 : ZMod p) ≠ 0 := by
+  have hp : 3 < p := Fact.out
+  have key (n : ℕ) (hn : n ≠ 0) (hnp : n ≤ 3) : (n : ZMod p) ≠ 0 := by
     rw [Ne, ZMod.natCast_eq_zero_iff]
     intro h
     have := Nat.le_of_dvd (Nat.pos_of_ne_zero hn) h
@@ -162,52 +189,54 @@ private theorem two_ne_zero_and_three_ne_zero (q : ℕ) [Fact (3 < q)] :
   exact ⟨by exact_mod_cast key 2 (by norm_num) (by norm_num),
     by exact_mod_cast key 3 (by norm_num) (by norm_num)⟩
 
-public instance (q : ℕ) [Fact q.Prime] [Fact (3 < q)] (j : ZMod q) :
-    (ssModel q j).IsElliptic := by
-  have : (ssModel q j).IsShortNF := ⟨rfl, rfl, rfl⟩
-  obtain ⟨h2, h3⟩ := two_ne_zero_and_three_ne_zero q
+public instance (p : ℕ) [Fact p.Prime] [Fact (3 < p)] (j : ZMod p) :
+    (ssModel p j).IsElliptic := by
+  have : (ssModel p j).IsShortNF := ⟨rfl, rfl, rfl⟩
+  obtain ⟨h2, h3⟩ := two_ne_zero_and_three_ne_zero p
   refine ⟨isUnit_iff_ne_zero.mpr ?_⟩
   rw [WeierstrassCurve.Δ_of_isShortNF]
   simp only [ssModel, ssModelA, ssModelB]
   split_ifs with h0 h1728
-  · have e : (-16 * (4 * 0 ^ 3 + 27 * 1 ^ 2) : ZMod q) = -(2 ^ 4 * 3 ^ 3) := by ring
+  · have e : (-16 * (4 * 0 ^ 3 + 27 * 1 ^ 2) : ZMod p) = -(2 ^ 4 * 3 ^ 3) := by ring
     rw [e]
     exact neg_ne_zero.mpr (mul_ne_zero (pow_ne_zero _ h2) (pow_ne_zero _ h3))
-  · have e : (-16 * (4 * 1 ^ 3 + 27 * 0 ^ 2) : ZMod q) = -(2 ^ 6) := by ring
+  · have e : (-16 * (4 * 1 ^ 3 + 27 * 0 ^ 2) : ZMod p) = -(2 ^ 6) := by ring
     rw [e]
     exact neg_ne_zero.mpr (pow_ne_zero _ h2)
-  · have e : (-16 * (4 * (3 * j * (1728 - j)) ^ 3 + 27 * (2 * j * (1728 - j) ^ 2) ^ 2) : ZMod q) =
+  · have e : (-16 * (4 * (3 * j * (1728 - j)) ^ 3 + 27 * (2 * j * (1728 - j) ^ 2) ^ 2) : ZMod p) =
         -(2 ^ 12 * 3 ^ 6) * j ^ 2 * (1728 - j) ^ 3 := by ring
     rw [e]
     refine mul_ne_zero (mul_ne_zero ?_ (pow_ne_zero _ h0)) (pow_ne_zero _ ?_)
     · exact neg_ne_zero.mpr (mul_ne_zero (pow_ne_zero _ h2) (pow_ne_zero _ h3))
     · exact sub_ne_zero.mpr (Ne.symm h1728)
 
-public theorem ssModel_j (q : ℕ) [Fact q.Prime] [Fact (3 < q)] (j : ZMod q) :
-    (ssModel q j).j = j := by
-  have : (ssModel q j).IsShortNF := ⟨rfl, rfl, rfl⟩
-  obtain ⟨h2, h3⟩ := two_ne_zero_and_three_ne_zero q
+public theorem ssModel_j (p : ℕ) [Fact p.Prime] [Fact (3 < p)] (j : ZMod p) :
+    (ssModel p j).j = j := by
+  have : (ssModel p j).IsShortNF := ⟨rfl, rfl, rfl⟩
+  obtain ⟨h2, h3⟩ := two_ne_zero_and_three_ne_zero p
   rw [WeierstrassCurve.j_of_isShortNF]
   simp only [ssModel, ssModelA, ssModelB]
   split_ifs with h0 h1728
   · subst h0
     simp
   · subst h1728
-    have e : (4 * 1 ^ 3 + 27 * 0 ^ 2 : ZMod q) = 2 ^ 2 := by ring
+    have e : (4 * 1 ^ 3 + 27 * 0 ^ 2 : ZMod p) = 2 ^ 2 := by ring
     rw [e, div_eq_iff (pow_ne_zero _ h2)]
     ring
-  · have e : (4 * (3 * j * (1728 - j)) ^ 3 + 27 * (2 * j * (1728 - j) ^ 2) ^ 2 : ZMod q) =
+  · have e : (4 * (3 * j * (1728 - j)) ^ 3 + 27 * (2 * j * (1728 - j) ^ 2) ^ 2 : ZMod p) =
         2 ^ 8 * 3 ^ 6 * j ^ 2 * (1728 - j) ^ 3 := by ring
     rw [e, div_eq_iff (mul_ne_zero (mul_ne_zero (mul_ne_zero (pow_ne_zero _ h2)
       (pow_ne_zero _ h3)) (pow_ne_zero _ h0)) (pow_ne_zero _ (sub_ne_zero.mpr (Ne.symm h1728))))]
     ring
 
-/-- The number of affine points on `y ^ 2 = x ^ 3 + A * x + B` over `ZMod q`. -/
-public def affinePointCount (q : ℕ) [NeZero q] (A B : ZMod q) : ℕ :=
-  (Finset.univ.filter fun p : ZMod q × ZMod q => p.2 ^ 2 = p.1 ^ 3 + A * p.1 + B).card
+/-- The number of affine points on `y ^ 2 = x ^ 3 + A * x + B` over the prime field `ZMod p`.
+Defined for prime fields `ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are
+out of scope. -/
+public def affinePointCount (p : ℕ) [Fact p.Prime] (A B : ZMod p) : ℕ :=
+  (Finset.univ.filter fun P : ZMod p × ZMod p => P.2 ^ 2 = P.1 ^ 3 + A * P.1 + B).card
 
-public theorem affinePointCount_le (q : ℕ) [NeZero q] (A B : ZMod q) :
-    affinePointCount q A B ≤ q ^ 2 := by
+public theorem affinePointCount_le (p : ℕ) [Fact p.Prime] (A B : ZMod p) :
+    affinePointCount p A B ≤ p ^ 2 := by
   refine (Finset.card_filter_le _ _).trans_eq ?_
   simp [pow_two]
 

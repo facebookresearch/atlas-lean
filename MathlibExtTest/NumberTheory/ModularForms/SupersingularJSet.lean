@@ -16,6 +16,15 @@ namespace ModularCurve
 
 open WeierstrassCurve
 
+private instance : Fact (Nat.Prime 5) := ⟨by norm_num⟩
+private instance : Fact (3 < 5) := ⟨by norm_num⟩
+private instance : Fact (Nat.Prime 7) := ⟨by norm_num⟩
+private instance : Fact (3 < 7) := ⟨by norm_num⟩
+private instance : Fact (Nat.Prime 11) := ⟨by norm_num⟩
+private instance : Fact (3 < 11) := ⟨by norm_num⟩
+private instance : Fact (Nat.Prime 13) := ⟨by norm_num⟩
+private instance : Fact (3 < 13) := ⟨by norm_num⟩
+
 section Locus
 
 attribute [local instance] Classical.decEq
@@ -93,15 +102,34 @@ private theorem ssJSet_two :
 
 end Locus
 
-/-- Consumer with the source's binders. -/
-example (N q : ℕ) :
-    eichlerMass N q = ((q : ℚ) - 1) * (ArithmeticFunction.dedekindPsi N : ℚ) / 12 :=
+/-- Consumer with the source's binders, at a prime characteristic `p`. -/
+example (N p : ℕ) [Fact p.Prime] :
+    eichlerMass N p = ((p : ℚ) - 1) * (ArithmeticFunction.dedekindPsi N : ℚ) / 12 :=
   rfl
 
-example (N q : ℕ) :
-    ssCountFormula N q = eichlerMass N q + (2 - (nuTwo q : ℚ)) * (nuTwo N : ℚ) / 4
-      + (2 - (nuThree q : ℚ)) * (nuThree N : ℚ) / 3 :=
-  ssCountFormula_eq N q
+example (N p : ℕ) [Fact p.Prime] :
+    ssCountFormula N p = eichlerMass N p + (2 - (nuTwo p : ℚ)) * (nuTwo N : ℚ) / 4
+      + (2 - (nuThree p : ℚ)) * (nuThree N : ℚ) / 3 :=
+  ssCountFormula_eq N p
+
+/-! The prime-power field `𝔽_4` is out of scope: `ZMod 4` is not a field, and the declarations
+that read `ZMod p` as the field with `p` elements need `Fact (Nat.Prime p)`. -/
+
+example : True := by
+  fail_if_success have := ssCountFormula 1 4
+  trivial
+
+example : True := by
+  fail_if_success have := eichlerMass 1 4
+  trivial
+
+example : True := by
+  fail_if_success have := autWeight 4 0
+  trivial
+
+example : True := by
+  fail_if_success have := ssModel 4 0
+  trivial
 
 example : eichlerMass 1 13 = 1 := by norm_num [eichlerMass_one]
 
@@ -196,15 +224,6 @@ example : ssSetEleven.card = 2 := card_ssSetEleven
 example : ssPolyEleven.Monic := ssPolyEleven_monic
 example : ssModelA 5 0 = 0 := ssModelA_zero 5
 example : ssModelB 5 0 = 1 := ssModelB_zero 5
-
-private instance : Fact (Nat.Prime 5) := ⟨by norm_num⟩
-private instance : Fact (3 < 5) := ⟨by norm_num⟩
-private instance : Fact (Nat.Prime 7) := ⟨by norm_num⟩
-private instance : Fact (3 < 7) := ⟨by norm_num⟩
-private instance : Fact (Nat.Prime 11) := ⟨by norm_num⟩
-private instance : Fact (3 < 11) := ⟨by norm_num⟩
-private instance : Fact (Nat.Prime 13) := ⟨by norm_num⟩
-private instance : Fact (3 < 13) := ⟨by norm_num⟩
 
 /-! For a prime `q > 3` the models of the listed supersingular `j` are elliptic curves with that
 `j`-invariant. -/
