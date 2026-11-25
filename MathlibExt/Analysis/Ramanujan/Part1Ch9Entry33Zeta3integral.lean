@@ -392,8 +392,14 @@ private lemma harmonic_cast (n : ℕ) :
   intro k _
   rw [Rat.cast_inv, Rat.cast_natCast]
 
-/-- `ramanujan_part1_ch9_entry33_zeta3integral` without the hypothesis `0 < n`; the statement also
-  holds at `n = 0`. -/
+/-- **Ramanujan's integrals of $\cos^n x \sin nx$ for every $n \ge 0$.** Let $n$ be a natural
+number and let $H_n = \sum_{k=1}^{n} 1/k$ be the $n$-th harmonic number. Then
+$x \cos^n x \sin(nx)$ and $\cos^n x \sin(nx)$ are integrable on $[0, \pi/2]$,
+$\int_0^{\pi/2} x \cos^n x \sin(nx)\,dx = \frac{\pi}{2^{n+2}} H_n$ and
+$\int_0^{\pi/2} \cos^n x \sin(nx)\,dx = \frac{1}{2^{n+1}} \sum_{k=1}^{n} \frac{2^k}{k}$.
+
+This is Entry 33 without the hypothesis $n > 0$: at $n = 0$ both sides of each identity are $0$.
+-/
 theorem ramanujan_part1_ch9_entry33_zeta3integral_general (n : ℕ) :
     IntervalIntegrable (chapter9Entry33WeightedIntegrand n) volume 0
         (Real.pi / 2) ∧
@@ -492,7 +498,13 @@ theorem ramanujan_part1_ch9_entry33_zeta3integral_general (n : ℕ) :
     ring
 
 set_option linter.unusedVariables false in
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
+/-- **Ramanujan's integrals of $\cos^n x \sin nx$ (Entry 33).** Let $n$ be a positive integer and
+let $H_n = \sum_{k=1}^{n} 1/k$ be the $n$-th harmonic number. Then $x \cos^n x \sin(nx)$ and
+$\cos^n x \sin(nx)$ are integrable on $[0, \pi/2]$,
+$\int_0^{\pi/2} x \cos^n x \sin(nx)\,dx = \frac{\pi}{2^{n+2}} H_n$ and
+$\int_0^{\pi/2} \cos^n x \sin(nx)\,dx = \frac{1}{2^{n+1}} \sum_{k=1}^{n} \frac{2^k}{k}$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 9.
 Proves `Wanted` entry `ramanujan_part1_ch9_entry33_zeta3integral`.
 -/
 theorem ramanujan_part1_ch9_entry33_zeta3integral (n : ℕ) (hn : 0 < n) :

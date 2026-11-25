@@ -7,3 +7,4 @@ Normed, Banach and topological vector spaces: duality, weak topologies, geometry
 - [Classical sequence spaces](sequence-spaces/README.md)
 - [Polynomials on Banach spaces](polynomials-on-banach-spaces/README.md)
 - [Symmetric hulls of nowhere dense convex sets](symmetric-hulls-of-nowhere-dense-convex-sets/README.md)
+- [Normed spaces](normed-spaces/README.md)

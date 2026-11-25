@@ -46,21 +46,33 @@ variable {A M N ι : Type*} [CommRing A] [AddCommGroup M] [Module A M]
 variable [DecidableEq ι] [Finite ι]
 variable (B : M →ₗ[A] N →ₗ[A] A) [B.IsPerfPair]
 
-/-- The canonical left dual basis of `b` with respect to the perfect pairing
-`B`: transport the ordinary dual basis `b.dualBasis` along the inverse of
-the pairing equivalence `B.toPerfPair`. -/
+/-- **Dual basis with respect to a perfect pairing.** Let $A$ be a commutative ring, let $M$
+and $N$ be $A$-modules, and let $B : M \times N \to A$ be a perfect pairing, that is, an
+$A$-bilinear map such that $x \mapsto B(x, \cdot)$ is a linear isomorphism $M \to N^*$ and
+$y \mapsto B(\cdot, y)$ is a linear isomorphism $N \to M^*$. Let $b = (b_i)_{i \in \iota}$ be
+a basis of $N$ indexed by a finite type $\iota$, and let $(b_i^*)_{i \in \iota}$ be its dual
+basis of $N^*$, where $b_i^*(b_j)$ is $1$ if $j = i$ and $0$ otherwise. The dual basis of $b$
+with respect to $B$ is the basis of $M$ whose $i$-th vector is the image of $b_i^*$ under the
+inverse of the isomorphism $M \to N^*$, $x \mapsto B(x, \cdot)$. -/
 noncomputable def dualBasis (b : Basis ι A N) : Basis ι A M :=
   b.dualBasis.map B.toPerfPair.symm
 
-/-- Evaluation formula for the canonical left dual basis. -/
+/-- **Evaluation of the dual basis.** Let $A$ be a commutative ring, let $M$ and $N$ be
+$A$-modules, let $B : M \times N \to A$ be a perfect pairing, and let $b = (b_i)_{i \in \iota}$
+be a basis of $N$ indexed by a finite type $\iota$. Write $(b_i^\vee)_{i \in \iota}$ for the
+dual basis of $b$ with respect to $B$, a basis of $M$. Then for all $i, j \in \iota$, the value
+$B(b_i^\vee, b_j)$ equals $1$ if $j = i$ and $0$ otherwise. -/
 @[simp]
 theorem dualBasis_apply (b : Basis ι A N) (i j : ι) :
     B (dualBasis B b i) (b j) = if j = i then 1 else 0 := by
   rw [dualBasis, Basis.map_apply, ← LinearMap.toPerfPair_apply,
     LinearEquiv.apply_symm_apply, Basis.dualBasis_apply_self]
 
-/-- Uniqueness: any basis satisfying the dual evaluation formula against
-`b` coincides with the canonical left dual basis. -/
+/-- **Uniqueness of the dual basis.** Let $A$ be a commutative ring, let $M$ and $N$ be
+$A$-modules, let $B : M \times N \to A$ be a perfect pairing, and let $b = (b_i)_{i \in \iota}$
+be a basis of $N$ indexed by a finite type $\iota$. If $b' = (b'_i)_{i \in \iota}$ is a basis
+of $M$ such that for all $i, j \in \iota$ the value $B(b'_i, b_j)$ equals $1$ if $j = i$ and
+$0$ otherwise, then $b'$ is the dual basis of $b$ with respect to $B$. -/
 theorem eq_dualBasis_of (b : Basis ι A N) (b' : Basis ι A M)
     (h : ∀ i j, B (b' i) (b j) = if j = i then 1 else 0) :
     b' = dualBasis B b := by
@@ -74,12 +86,20 @@ theorem eq_dualBasis_of (b : Basis ι A N) (b' : Basis ι A M)
     _ = B.toPerfPair.symm (b.dualBasis i) := by rw [key]
     _ = dualBasis B b i := by simp only [dualBasis, Basis.map_apply]
 
-/-- Existence of a basis of `M` dual to `b` with respect to `B`. -/
+/-- **Existence of a dual basis for a perfect pairing.** Let $A$ be a commutative ring, let $M$
+and $N$ be $A$-modules, let $B : M \times N \to A$ be a perfect pairing, and let
+$b = (b_i)_{i \in \iota}$ be a basis of $N$ indexed by a finite type $\iota$. Then there is a
+basis $(b'_i)_{i \in \iota}$ of $M$ such that for all $i, j \in \iota$ the value $B(b'_i, b_j)$
+equals $1$ if $j = i$ and $0$ otherwise. -/
 theorem exists_dualBasis (b : Basis ι A N) :
     ∃ b' : Basis ι A M, ∀ i j, B (b' i) (b j) = if j = i then 1 else 0 :=
   ⟨dualBasis B b, fun i j => dualBasis_apply B b i j⟩
 
-/-- Unique existence of a basis of `M` dual to `b` with respect to `B`. -/
+/-- **Existence and uniqueness of the dual basis for a perfect pairing.** Let $A$ be a
+commutative ring, let $M$ and $N$ be $A$-modules, let $B : M \times N \to A$ be a perfect
+pairing, and let $b = (b_i)_{i \in \iota}$ be a basis of $N$ indexed by a finite type $\iota$.
+Then there is exactly one basis $(b'_i)_{i \in \iota}$ of $M$ such that for all
+$i, j \in \iota$ the value $B(b'_i, b_j)$ equals $1$ if $j = i$ and $0$ otherwise. -/
 theorem existsUnique_dualBasis (b : Basis ι A N) :
     ∃! b' : Basis ι A M, ∀ i j, B (b' i) (b j) = if j = i then 1 else 0 := by
   refine ⟨dualBasis B b, fun i j => dualBasis_apply B b i j, fun b' hb' => ?_⟩
