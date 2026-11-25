@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.RingTheory.DiscreteValuationRing.UnramifiedLifts
+import Mathlib.Algebra.Field.ZMod
+import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
 
 @[expose] public section
 
@@ -124,3 +126,42 @@ example : (Polynomial.evalRingHom (0 : ℤ)) ≠ Polynomial.evalRingHom (1 : ℤ
   intro h
   have := congrArg (fun φ : Polynomial ℤ →+* ℤ => φ Polynomial.X) h
   simp at this
+
+section QuotientCharPFrobenius
+
+open Polynomial
+
+local notation "𝕂" => AlgebraicClosure (ZMod 2)
+
+/-- `Ideal.charP_quotient_and_forall_exists_pow_eq` on a concrete quotient: `𝕂[X] ⧸ (X)` for the
+algebraic closure `𝕂` of `ZMod 2`. A monic polynomial over `𝕂[X]` of positive degree has a root
+modulo `X`, because its reduction modulo `X` has a root in `𝕂`. -/
+example : CharP (𝕂[X] ⧸ Ideal.span {(X : 𝕂[X])}) 2 ∧
+    ∀ a : 𝕂[X] ⧸ Ideal.span {(X : 𝕂[X])}, ∃ b, b ^ 2 = a := by
+  refine Ideal.charP_quotient_and_forall_exists_pow_eq ?_ ?_ fun P hP hdeg => ?_
+  · rw [Ne, Ideal.span_singleton_eq_top]
+    exact not_isUnit_X
+  · rw [CharP.cast_eq_zero]
+    exact Ideal.zero_mem _
+  · obtain ⟨c, hc⟩ := IsAlgClosed.exists_root (P.map (evalRingHom 0))
+      (natDegree_pos_iff_degree_pos.mp (by rwa [hP.natDegree_map])).ne'
+    refine ⟨C c, ?_⟩
+    rw [Ideal.mem_span_singleton, X_dvd_iff, coeff_zero_eq_eval_zero, ← coe_evalRingHom,
+      ← eval₂_hom, coe_evalRingHom, eval_C, ← eval_map]
+    exact hc
+
+/-- The root hypothesis of `Ideal.charP_quotient_and_forall_exists_pow_eq` cannot be dropped: in
+`(ZMod 2)[X] ⧸ ⊥` the ideal is proper and contains `2`, but the class of `X` is not a square. -/
+example : (⊥ : Ideal (ZMod 2)[X]) ≠ ⊤ ∧ ((2 : ℕ) : (ZMod 2)[X]) ∈ (⊥ : Ideal (ZMod 2)[X]) ∧
+    ¬ ∀ a : (ZMod 2)[X] ⧸ (⊥ : Ideal (ZMod 2)[X]), ∃ b, b ^ 2 = a := by
+  refine ⟨bot_ne_top, ?_, fun h => ?_⟩
+  · rw [Ideal.mem_bot]
+    exact CharP.cast_eq_zero _ 2
+  · obtain ⟨b, hb⟩ := h (Ideal.Quotient.mk _ X)
+    obtain ⟨c, rfl⟩ := Ideal.Quotient.mk_surjective b
+    rw [← map_pow, Ideal.Quotient.eq, Ideal.mem_bot, sub_eq_zero] at hb
+    have := congrArg natDegree hb
+    rw [natDegree_pow, natDegree_X] at this
+    omega
+
+end QuotientCharPFrobenius
