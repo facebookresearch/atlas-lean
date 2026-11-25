@@ -21,6 +21,8 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 - [Sturm separation theorem](sturm-separation.md)
 
 - [Stability of linear systems](stability-of-linear-systems/README.md)
+- [Variation of constants on a compact interval](variation-of-constants-on-a-compact-interval.md)
+- [Forward invariance of compact sublevel sets and LaSalle's principle for differential equations](forward-invariance-of-compact-sublevel-sets-and-lasalle-s-principle.md)
 
 ## Logistic traveling-wave profiles
 

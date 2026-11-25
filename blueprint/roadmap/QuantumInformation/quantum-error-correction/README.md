@@ -11,3 +11,4 @@ The topics follow the order of Preskill's lecture notes (Chapter 7): the Knillâ€
 - [Dimension of a stabilizer code](finrank-stabilizer-code.md)
 
 - [Error recursion for concatenated fault-tolerant codes](error-recursion-for-concatenated-fault-tolerant-codes.md)
+- [Stabilizer codes: correctability criterion and distance](stabilizer-codes-correctability-criterion-and-distance.md)

@@ -16,3 +16,7 @@ Relational algebra, functional dependencies, normal forms and lossless decomposi
 - [Dependencies and the chase](dependencies-and-the-chase/README.md)
 - [Query-language expressiveness](query-language-expressiveness/README.md)
 - [Top-k query processing](top-k-query-processing/README.md)
+- [Conjunctive queries](conjunctive-queries/README.md)
+- [Ranked retrieval](ranking-and-retrieval-evaluation/README.md)
+- [Stream processing](stream-processing/README.md)
+- [Concurrency control and recovery](concurrency-control-and-recovery/README.md)
