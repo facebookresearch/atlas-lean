@@ -10,6 +10,8 @@ for every $j$ with $1 \le j \le n - 1$. Then there is an $m \le n$ such that $(a
 increasing on $\{0, \dots, m\}$, and either $(a_j)$ is strictly decreasing on $\{m, \dots, n\}$,
 or $m < n$, $a_m = a_{m+1}$ and $(a_j)$ is strictly decreasing on $\{m + 1, \dots, n\}$.
 
+This is the unimodality conclusion of Benoumhani’s corollary.
+
 ## Sources
 
 - Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*, INTEGERS 24 (2024), Article A54, Corollary 1.

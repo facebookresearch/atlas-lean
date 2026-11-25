@@ -28,26 +28,36 @@ open scoped Pointwise
 /-! Source record `C3d`, file SHA-256
 `115fbd7c1cb17caa8e865a1dd2850589c09e102659247ffece53ad3824ec01cb`. -/
 
-/-- A real exponent is admissible when it bounds the doubling constant by the corresponding
-difference constant raised to that exponent for every nonempty finite integer set. -/
+/-- **Admissible exponents for sums and differences.** A real number $\theta$ is an admissible
+exponent when every nonempty finite set $A$ of integers satisfies
+$|A+A|/|A| \le (|A-A|/|A|)^{\theta}$, where $A+A$ and $A-A$ are the sumset and the difference
+set of $A$. -/
 def IsAdmissibleExponent (θ : ℝ) : Prop :=
   ∀ A : Finset ℤ, A.Nonempty →
     ((A + A).card : ℝ) / (A.card : ℝ) ≤
       Real.rpow (((A - A).card : ℝ) / (A.card : ℝ)) θ
 
-/-- The single-set sum-difference exponent `C₃d`, using the source's equivalent
-least-admissible-exponent formulation over finite integer sets. -/
+/-- **The single-set sum-difference exponent.** The single-set sum-difference exponent $C_{3d}$ is
+the infimum of the admissible exponents, that is, of the set of real numbers $\theta$ such that
+$|A+A|/|A| \le (|A-A|/|A|)^{\theta}$ for every nonempty finite set $A$ of integers, where $A+A$
+and $A-A$ are the sumset and the difference set of $A$.
+
+This is the source's equivalent formulation of $C_{3d}$ as a least admissible exponent, over
+finite sets of integers. -/
 noncomputable def singleSetSumDifferenceExponent : ℝ :=
   sInf {θ : ℝ | IsAdmissibleExponent θ}
 
-/-- The resolved exact value `C₃d = 2` stated in the frozen source. -/
+/-- **The proposition that the single-set sum-difference exponent equals 2.** This is the
+statement that the single-set sum-difference exponent $C_{3d}$ is equal to $2$. -/
 def singleSetSumDifferenceExponent_eq_two : Prop :=
   singleSetSumDifferenceExponent = 2
 
-/--
-Resolved true: The frozen optimization-problems source states that the problem is solved by Lin
-and Li and that the single-set sum-difference exponent C3d equals 2; the known constructions
-approach but do not attain the value. Source: Haowei Lin and Shanda Li, Settling the optimal
+/-- **The single-set sum-difference exponent equals 2.** The single-set sum-difference exponent
+$C_{3d}$ is equal to $2$.
+
+Known constructions approach this value but do not attain it.
+
+Source: Haowei Lin and Shanda Li, Settling the optimal
 exponent relating sumsets and difference sets, arXiv:2607.27199v1 (2026),
 https://arxiv.org/abs/2607.27199v1. Moved from
 `OpenConjectures/Combinatorics/SingleSetSumDifferenceExponent`.

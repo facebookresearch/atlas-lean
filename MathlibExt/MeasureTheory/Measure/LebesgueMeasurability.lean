@@ -63,7 +63,7 @@ theorem NullMeasurableSet.exists_isOpen_measure_sdiff_le [μ.OuterRegular] [Sigm
   have hε2 : ε / 2 ≠ 0 := by simpa using hε
   obtain ⟨T, hTE, hT, hTae⟩ := hE.exists_measurable_subset_ae_eq
   have hnull : μ (E \ T) = 0 := by
-    rw [← ae_le_set]; exact hTae.symm.le
+    rw [← ae_le_set]; exact hTae.symm.subset
   -- The measurable kernel, piece by piece over a spanning sequence, with errors `ε' n`.
   obtain ⟨ε', hε'pos, hε'sum⟩ := ENNReal.exists_pos_sum_of_countable hε2 ℕ
   have hpiece : ∀ n, ∃ U, T ∩ spanningSets μ n ⊆ U ∧ IsOpen U ∧

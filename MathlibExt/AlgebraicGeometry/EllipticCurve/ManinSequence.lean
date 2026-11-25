@@ -23,8 +23,9 @@ This file contains the elementary arithmetic at the end of Manin's proof of the 
 
 namespace Int
 
-/-- A two-sided integer sequence with constant second difference two is the expected monic
-quadratic once its values at `0` and `-1` are known. -/
+/-- **Integer sequences with constant second difference two.** Let $d : \mathbb{Z} \to \mathbb{Z}$
+satisfy $d(n-1) + d(n+1) = 2d(n) + 2$ for every integer $n$, and let $q, N$ be integers with
+$d(0) = q$ and $d(-1) = N$. Then $d(n) = n^2 + (q + 1 - N)n + q$ for every integer $n$. -/
 theorem eq_quadratic_of_recurrence (d : ℤ → ℤ) (q N : ℤ)
     (hrec : ∀ n, d (n - 1) + d (n + 1) = 2 * d n + 2)
     (hzero : d 0 = q) (hnegOne : d (-1) = N) (n : ℤ) :
@@ -54,8 +55,9 @@ theorem eq_quadratic_of_recurrence (d : ℤ → ℤ) (q N : ℤ)
       linarith
   exact (hpair n).1
 
-/-- An integral monic quadratic that is nonnegative at every integer and does not vanish at two
-consecutive integers has nonpositive discriminant. -/
+/-- **Discriminant bound for a nonnegative integral quadratic without adjacent zeros.** Let
+$a, q \in \mathbb{Z}$. If $n^2 + an + q \ge 0$ for every integer $n$ and there is no integer $n$
+with $n^2 + an + q = 0$ and $(n+1)^2 + a(n+1) + q = 0$, then $a^2 \le 4q$. -/
 theorem sq_le_four_mul_of_quadratic_nonnegative {a q : ℤ}
     (hnonneg : ∀ n : ℤ, 0 ≤ n ^ 2 + a * n + q)
     (hnotTwoZeros : ∀ n : ℤ,
@@ -85,7 +87,13 @@ end Int
 
 namespace MathlibExt.AlgebraicGeometry.EllipticCurve
 
-/-- The four properties of the polynomial-degree sequence used in Manin's proof. -/
+/-- **Manin degree data.** For natural numbers $q$ and $N$, Manin degree data for $q$ and $N$ is
+a sequence $d : \mathbb{Z} \to \mathbb{N}$ such that $d(0) = q$, $d(-1) = N$,
+$d(n-1) + d(n+1) = 2d(n) + 2$ for every integer $n$, and there is no integer $n$ with
+$d(n) = d(n+1) = 0$.
+
+These are the properties of the polynomial-degree sequence used in Manin's proof of the Hasse
+bound. -/
 structure ManinDegreeData (q N : ℕ) where
   /-- The numerator degree attached to the point indexed by an integer. -/
   d : ℤ → ℕ
@@ -100,8 +108,10 @@ structure ManinDegreeData (q N : ℕ) where
 
 namespace ManinDegreeData
 
-/-- Build Manin degree data from its nonnegative quadratic formula, provided consecutive integer
-values do not both vanish. -/
+/-- **Manin degree data from a quadratic.** Let $q$ and $N$ be natural numbers and put
+$a = q + 1 - N \in \mathbb{Z}$. Suppose $n^2 + an + q \ge 0$ for every integer $n$, and there is
+no integer $n$ at which both $n^2 + an + q$ and $(n+1)^2 + a(n+1) + q$ vanish. Then the sequence
+$d(n) = n^2 + an + q$ is Manin degree data for $q$ and $N$. -/
 def ofQuadratic (q N : ℕ) (a : ℤ) (ha : a = (q : ℤ) + 1 - (N : ℤ))
     (hnonneg : ∀ n, 0 ≤ n ^ 2 + a * n + q)
     (hnoAdjacent : ∀ n, n ^ 2 + a * n + q = 0 →
@@ -130,7 +140,8 @@ def ofQuadratic (q N : ℕ) (a : ℤ) (ha : a = (q : ℤ) + 1 - (N : ℤ))
     · exact le_antisymm (Int.toNat_eq_zero.mp hn) (hnonneg n)
     · exact le_antisymm (Int.toNat_eq_zero.mp hn1) (hnonneg (n + 1))
 
-/-- Manin degree data implies the integral squared form of the Hasse bound. -/
+/-- **Hasse bound from Manin degree data.** Let $q$ and $N$ be natural numbers. If there is
+Manin degree data for $q$ and $N$, then $(q + 1 - N)^2 \le 4q$, computed in the integers. -/
 theorem hasse_bound {q N : ℕ} (data : ManinDegreeData q N) :
     (((q : ℤ) + 1 - (N : ℤ)) ^ 2 ≤ 4 * (q : ℤ)) := by
   let dInt : ℤ → ℤ := fun n ↦ data.d n

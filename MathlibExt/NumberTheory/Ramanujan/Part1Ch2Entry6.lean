@@ -29,15 +29,18 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch2
 
 namespace Entry6
 
-/-- `A n k = 3 ^ k * n + (3 ^ k - 1) / 2`, the sequence with `A n 0 = n` and
-`A n (k + 1) = 3 * A n k + 1`. -/
+/-- **The tripling sequence of Ramanujan's Entry 6.** For natural numbers $n$ and $k$, let
+$A(n, k) = 3^k n + (3^k - 1)/2$, a natural number. It is the sequence with $A(n, 0) = n$ and
+$A(n, k + 1) = 3A(n, k) + 1$. -/
 def A (n k : ℕ) : ℕ := 3 ^ k * n + (3 ^ k - 1) / 2
 
-/-- The starting value `A n 0 = n`. -/
+/-- **Starting value of the tripling sequence.** For every natural number $n$, the tripling
+sequence $A(n, k)$ of Entry 6 satisfies $A(n, 0) = n$. -/
 @[simp]
 theorem A_zero (n : ℕ) : A n 0 = n := by simp [A]
 
-/-- The recurrence `A n (k + 1) = 3 * A n k + 1`. -/
+/-- **Recurrence of the tripling sequence.** For all natural numbers $n$ and $k$, the tripling
+sequence $A(n, k)$ of Entry 6 satisfies $A(n, k + 1) = 3A(n, k) + 1$. -/
 theorem A_succ (n k : ℕ) : A n (k + 1) = 3 * A n k + 1 := by
   unfold A
   have hodd : Odd (3 ^ k) := Odd.pow (by decide)
@@ -49,7 +52,8 @@ theorem A_succ (n k : ℕ) : A n (k + 1) = 3 * A n k + 1 := by
   rw [h1, h2]
   ring
 
-/-- `A n k` never drops below its starting value `n`. -/
+/-- **The tripling sequence never drops below its starting value.** For all natural numbers
+$n$ and $k$, the tripling sequence $A(n, k)$ of Entry 6 satisfies $n \le A(n, k)$. -/
 theorem A_ge (n k : ℕ) : n ≤ A n k := by
   induction k with
   | zero => rw [A_zero]
@@ -323,7 +327,14 @@ private lemma aux (n m : ℕ) :
     rw [hrange]
     linarith
 
-/-- `ramanujan_part1_ch2_entry6` without the hypothesis `0 < r`; for `r = 0` both sides are `0`.
+/-- **Ramanujan's harmonic sum identity (Entry 6, general form).** For all natural numbers $n$
+and $r$, the following identity holds in $\mathbb{Q}$:
+$$
+\sum_{j=n+1}^{A(n, r)} \frac{1}{j} = r + 2 \sum_{k=0}^{r-1} (r - k)
+\sum_{j=a_k}^{A(n, k)} \frac{1}{(3j)^3 - 3j},
+$$
+where $A(n, k)$ is the tripling sequence of Entry 6, $a_0 = 1$ and $a_k = A(n, k - 1) + 1$ for
+$k \ge 1$, and a sum over an empty range is $0$. For $r = 0$ both sides are $0$.
 -/
 theorem ramanujan_part1_ch2_entry6_general (n r : ℕ) :
     ∑ j ∈ Finset.Icc (n + 1) (A n r), (1 : ℚ) / ((j : ℕ) : ℚ)
@@ -405,7 +416,17 @@ theorem ramanujan_part1_ch2_entry6_general (n r : ℕ) :
     linarith [hgoal]
 
 set_option linter.unusedVariables false in
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
+/-- **Ramanujan's harmonic sum identity (Entry 6).** For all natural numbers $n$ and $r$ with
+$r > 0$, the following identity holds in $\mathbb{Q}$:
+$$
+\sum_{j=n+1}^{A(n, r)} \frac{1}{j} = r + 2 \sum_{k=0}^{r-1} (r - k)
+\sum_{j=a_k}^{A(n, k)} \frac{1}{(3j)^3 - 3j},
+$$
+where $A(n, k)$ is the tripling sequence of Entry 6 (with $A(n, 0) = n$ and
+$A(n, k + 1) = 3A(n, k) + 1$), $a_0 = 1$ and $a_k = A(n, k - 1) + 1$ for $k \ge 1$, and a sum
+over an empty range is $0$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I (Springer, 1985), Chapter 2, Entry
     6, printed p. 33 / PDF p. 43.
 Proves `Wanted` entry `ramanujan_part1_ch2_entry6`. It follows from
 `ramanujan_part1_ch2_entry6_general`; the hypothesis `hr` is unused and keeps the source's shape.

@@ -1,0 +1,15 @@
+# Monoidal Preadditive
+
+- [Neg whisker Right](neg-whisker-right.md)
+- [Whisker Left neg](whisker-left-neg.md)
+- [Sub whisker Right](sub-whisker-right.md)
+- [Whisker Left sub](whisker-left-sub.md)
+- [Nsmul whisker Right](nsmul-whisker-right.md)
+- [Whisker Left nsmul](whisker-left-nsmul.md)
+- [Nsmul id tensor eq zero of left](nsmul-id-tensor-eq-zero-of-left.md)
+- [Nsmul id tensor eq zero of right](nsmul-id-tensor-eq-zero-of-right.md)
+- [Zsmul whisker Right](zsmul-whisker-right.md)
+- [Whisker Left zsmul](whisker-left-zsmul.md)
+- [Zsmul tensor Hom](zsmul-tensor-hom.md)
+- [Tensor Hom zsmul](tensor-hom-zsmul.md)
+- [Monoidal Linear Int](monoidal-linear-int.md)

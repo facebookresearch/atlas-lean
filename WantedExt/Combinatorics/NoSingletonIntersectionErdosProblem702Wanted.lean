@@ -36,19 +36,28 @@ statement `ErdosProblems/702.lean` (formal-conjectures also proves `erdos_702.va
 for k = 4, n = 5; no code imported).
 -/
 
-/-- Erdős Problem 702, in Frankl's form: for every `k ≥ 4` and every sufficiently large `n`, a
-family of more than `C(n - 2, k - 2)` `k`-element subsets of `{1, …, n}` contains two sets
-meeting in exactly one element. -/
+/-- **Erdős Problem 702 on singleton intersections.** For every $k \ge 4$ and every sufficiently
+large $n$ (depending on $k$), every family of more than $\binom{n-2}{k-2}$ subsets of
+$\{1, \dots, n\}$, each with exactly $k$ elements, contains two sets $A$ and $B$ with
+$|A \cap B| = 1$.
+
+This is Frankl's form of the problem of Erdős and Sós; without the hypothesis that $n$ is large
+the statement fails, for instance for $k = 4$ and $n = 5$. -/
 def noSingletonIntersectionBound : Prop :=
   ∀ k : ℕ, 4 ≤ k → ∀ᶠ n : ℕ in Filter.atTop, ∀ F : Finset (Finset (Fin n)),
     (∀ A ∈ F, A.card = k) → (n - 2).choose (k - 2) < F.card →
       ∃ A ∈ F, ∃ B ∈ F, (A ∩ B).card = 1
 
 /--
-Resolved true: Frankl proved that for `k ≥ 4` and `n` sufficiently large every `k`-uniform family on
-`n` points with no two members meeting in exactly one point has at most `C(n - 2, k - 2)` members
-(Katona had the case `k = 4`); the hypothesis that `n` is large is needed (`k = 4`, `n = 5`).
-erdosproblems.com/702 lists the problem as proved. Source: T. F. Bloom, Erdős Problems, Problem
+**Frankl's theorem on families with no singleton intersection.** For every $k \ge 4$ and every
+sufficiently large $n$ (depending on $k$), every family of more than $\binom{n-2}{k-2}$ subsets of
+$\{1, \dots, n\}$, each with exactly $k$ elements, contains two sets $A$ and $B$ with
+$|A \cap B| = 1$.
+
+This resolves Erdős Problem 702 of Erdős and Sós; Katona had the case $k = 4$. The hypothesis that
+$n$ is large is needed ($k = 4$, $n = 5$).
+
+Source: T. F. Bloom, Erdős Problems, Problem
 #702, https://www.erdosproblems.com/702 (status PROVED); resolution: P. Frankl, On families of
 finite sets no two of which intersect in a singleton, Bull. Austral. Math. Soc. 17 (1977), 125-134,
 P. Keevash, D. Mubayi and R. M. Wilson, Set systems with no singleton intersection, abstract:
