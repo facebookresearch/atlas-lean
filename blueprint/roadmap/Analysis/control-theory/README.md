@@ -19,6 +19,7 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Advisory and handoff criteria for human-in-the-loop controllers](advisory-handoff-contract-criteria.md)
 - [Human-in-the-loop controller model](human-in-the-loop-controller-model.md)
 - [Conditional correctness of prescient advisories (safety case)](conditional-correctness-of-prescient-advisories.md)
+- [Optimal, robust and adaptive control](optimal-robust-and-adaptive-control/README.md)
 
 ## Single-input single-output linear systems
 
