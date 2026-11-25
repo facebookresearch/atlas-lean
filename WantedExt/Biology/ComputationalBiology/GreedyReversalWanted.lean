@@ -16,8 +16,9 @@ breakpoints. A strip is a maximal run of positions without breakpoints; a strip 
 values decrease, where a single element is a decreasing strip unless it is `π_0` or `π_{n+1}`.
 `OPT(π)` is the least number of reversals that sort `π`.
 
-The greedy algorithm repeatedly chooses a reversal removing the most breakpoints, preferring,
-among those, one whose result has a decreasing strip.
+The greedy algorithm repeatedly chooses a reversal removing the most breakpoints, resolving ties
+among reversals that remove one breakpoint in favour of reversals that leave a decreasing strip
+(Fig. 2).
 
 **Theorem 1** (Kececioglu–Sankoff 1995). The greedy algorithm sorts every permutation `π` with
 at most `φ(π)` reversals.
@@ -60,12 +61,6 @@ def identity (n : ℕ) : List ℤ :=
 def framed (n : ℕ) (π : List ℤ) : List ℤ :=
   0 :: π ++ [Int.ofNat (n + 1)]
 
-/-- The values `x` and `y` differ by one. -/
-def IsAdj (x y : ℤ) : Prop :=
-  (y - x).natAbs = 1
-
-instance (x y : ℤ) : Decidable (IsAdj x y) := by unfold IsAdj; infer_instance
-
 /-- A reversal of an unsigned permutation of `1, …, n`, in zero-based positions: `i < j < n`, so
 the block has at least two elements (a one-element reversal changes nothing). -/
 def IsReversal (n : ℕ) (r : ℕ × ℕ) : Prop :=
@@ -76,22 +71,25 @@ def removal (n : ℕ) (π : List ℤ) (r : ℕ × ℕ) : ℤ :=
   (ubreaks n π : ℤ) - ubreaks n (revBlock π r.1 r.2)
 
 /-- `π` has a decreasing strip: some framed position `1 ≤ t ≤ n` is a strip of a single element
-(breakpoints on both sides), or has `π_{t+1} + 1 = π_t` (it lies in a decreasing strip of length
-at least two). -/
+(breakpoints on both sides, `isGap = 1`), or has `π_{t+1} + 1 = π_t` (it lies in a decreasing
+strip of length at least two). -/
 def HasDecreasingStrip (n : ℕ) (π : List ℤ) : Prop :=
   ∃ t, 1 ≤ t ∧ t ≤ n ∧
-    ((¬ IsAdj ((framed n π).getD (t - 1) 0) ((framed n π).getD t 0) ∧
-        ¬ IsAdj ((framed n π).getD t 0) ((framed n π).getD (t + 1) 0)) ∨
+    ((isGap ((framed n π).getD (t - 1) 0) ((framed n π).getD t 0) = 1 ∧
+        isGap ((framed n π).getD t 0) ((framed n π).getD (t + 1) 0) = 1) ∨
       (framed n π).getD (t + 1) 0 + 1 = (framed n π).getD t 0)
 
-/-- `r` is a greedy choice at `π`: a reversal removing the most breakpoints among all reversals,
-whose result has a decreasing strip whenever some reversal removing equally many breakpoints
-leaves a decreasing strip. -/
+/-- `r` is a greedy choice at `π` (Kececioglu–Sankoff, Fig. 2): a reversal removing the most
+breakpoints among all reversals, resolving ties among reversals that remove one breakpoint in
+favour of reversals that leave a decreasing strip: if `r` removes exactly one breakpoint and some
+reversal removing exactly one breakpoint leaves a decreasing strip, then so does `r`. Ties among
+reversals removing two (or at most zero) breakpoints are unrestricted. -/
 def IsGreedyChoice (n : ℕ) (π : List ℤ) (r : ℕ × ℕ) : Prop :=
   IsReversal n r ∧ (∀ r', IsReversal n r' → removal n π r' ≤ removal n π r) ∧
-    ((∃ r', IsReversal n r' ∧ removal n π r' = removal n π r ∧
-      HasDecreasingStrip n (revBlock π r'.1 r'.2)) →
-        HasDecreasingStrip n (revBlock π r.1 r.2))
+    (removal n π r = 1 →
+      (∃ r', IsReversal n r' ∧ removal n π r' = 1 ∧
+        HasDecreasingStrip n (revBlock π r'.1 r'.2)) →
+      HasDecreasingStrip n (revBlock π r.1 r.2))
 
 /-- A greedy run from `π`: a sequence of reversals, each a greedy choice at a permutation that is
 not the identity. -/
