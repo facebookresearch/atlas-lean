@@ -6,17 +6,17 @@ a(u, w) + b(w, p) = f(w) \quad \forall w \in V, \qquad b(u, q) = g(q) \quad \for
 $$
 
 **Theorem (Babuška–Brezzi).** The problem is well posed for all $f$ and $g$ if and only if both of the following hold.
-1. $a$ satisfies the inf-sup conditions on the kernel:
+1. $a$ satisfies the inf-sup conditions on the kernel: there is $\alpha > 0$ such that
 $$
-\inf_{v \in \ker B \setminus \{0\}}\,\sup_{w \in \ker B \setminus \{0\}} \frac{a(v, w)}{\|v\|\,\|w\|} =: \alpha > 0,
+\sup_{w \in \ker B \setminus \{0\}} \frac{a(v, w)}{\|w\|} \ge \alpha\,\|v\| \quad \text{for every } v \in \ker B \setminus \{0\},
 $$
 and if $w \in \ker B$ has $a(v, w) = 0$ for all $v \in \ker B$, then $w = 0$.
-2. $b$ satisfies the inf-sup condition
+2. $b$ satisfies the inf-sup condition: there is $\beta > 0$ such that
 $$
-\inf_{q \in Q \setminus \{0\}}\,\sup_{v \in V \setminus \{0\}} \frac{b(v, q)}{\|v\|\,\|q\|} =: \beta > 0.
+\sup_{v \in V \setminus \{0\}} \frac{b(v, q)}{\|v\|} \ge \beta\,\|q\| \quad \text{for every } q \in Q \setminus \{0\}.
 $$
 
-In that case,
+In that case, for any such constants $\alpha$ and $\beta$,
 $$
 \|u\| \le \frac{1}{\alpha}\|f\| + \frac{1}{\beta}\Bigl(1 + \frac{\|a\|}{\alpha}\Bigr)\|g\|, \qquad
 \|p\| \le \frac{1}{\beta}\Bigl(1 + \frac{\|a\|}{\alpha}\Bigr)\|f\| + \frac{\|a\|}{\beta^2}\Bigl(1 + \frac{\|a\|}{\alpha}\Bigr)\|g\|.

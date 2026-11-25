@@ -2,7 +2,7 @@
 
 Let $(\tau, q, x)$ be an execution of a hybrid automaton $H$, so that each continuous segment satisfies $x_i(t) \in \mathrm{Dom}(q_i)$ for $t \in [\tau_i, \tau'_i)$.
 
-1. **Closed domains.** If $\mathrm{Dom}(q_i)$ is closed and $\tau_i < \tau'_i$, then $x_i(\tau'_i) \in \mathrm{Dom}(q_i)$: the segment satisfies the domain condition on the whole closed interval $[\tau_i, \tau'_i]$.
+1. **Closed domains.** If $\mathrm{Dom}(q_i)$ is closed, $\tau_i < \tau'_i$ and the interval $I_i = [\tau_i, \tau'_i]$ is closed, that is, $I_i$ is not a half-open final interval $[\tau_N, \tau'_N)$, then $x_i(\tau'_i) \in \mathrm{Dom}(q_i)$: the segment satisfies the domain condition on the whole closed interval $[\tau_i, \tau'_i]$.
 2. **Zero-length segments.** If $\tau_i = \tau'_i$, the half-open condition is vacuous, and the closed condition $x_i(\tau_i) \in \mathrm{Dom}(q_i)$ can fail even for a closed domain: a reset may land outside $\mathrm{Dom}(q_{i+1})$ provided another discrete transition follows at the same instant.
 3. **Open domains.** Without closedness, part 1 fails: for one mode with $f = 1$, $\mathrm{Dom} = \{x < 1\}$, a self-loop with guard $\{1\}$ and reset $\{0\}$, and $\mathrm{Init} = \{(q, 0)\}$, the segment $x_0(t) = t$ on $[0, 1]$ is part of an execution, and $x_0(1) = 1 \notin \mathrm{Dom}$.
 

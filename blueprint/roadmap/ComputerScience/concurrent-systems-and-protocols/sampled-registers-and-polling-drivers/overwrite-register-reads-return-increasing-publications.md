@@ -2,8 +2,8 @@
 
 Consider the overwrite-newest single-slot sampled register with values in a set $V$: its state is either empty, $\bot$, or a pair
 $(n, v)$ of a publication number and a value; the $k$-th $\mathsf{Publish}(v)$ sets the state to $(k, v)$, whatever it was, and
-an atomic $\mathsf{Read}$ returns the state and empties it. A read is successful when it returns a pair. Then for every finite sequence of
-$\mathsf{Publish}$ and $\mathsf{Read}$ events:
+an atomic $\mathsf{Read}$ returns the state and empties it. A read is successful when it returns a pair. Then, starting from the empty register $\bot$,
+for every finite sequence of $\mathsf{Publish}$ and $\mathsf{Read}$ events:
 
 1. a successful read that returns $(n, v)$ returns exactly the value of the $n$-th publication;
 2. the publication numbers returned by successive successful reads are strictly increasing, so no publication is returned twice;

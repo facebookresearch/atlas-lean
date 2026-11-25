@@ -18,7 +18,7 @@ such that $q(0) = q_0$ and $\dot q^+(0) = v_0$, $M(q)\,\frac{D\dot q}{Dt} = f(t;
 
 **Theorem (Ballard).**
 1. Under these hypotheses, if $\phi_\alpha$, $M$ and $f$ are analytic in their arguments, then for every admissible initial condition the problem has a unique maximal solution.
-2. If, in addition, $f$ is globally Lipschitz in $(q, \dot q)$, this solution exists on the whole horizon $[0, T]$.
+2. The maximal solution is defined on a subinterval of $[0, T]$ starting at $0$ that cannot be extended. It need not reach $T$, because the solution can blow up in finite time.
 3. The analyticity assumption cannot be weakened to smoothness. There are $C^\infty$ forcings for which a single particle with one constraint has several solutions.
 4. The solution need not depend continuously on the initial data when a multiple impact occurs, meaning that several constraints are active at once. It does depend continuously when every multiple impact is between constraints that are orthogonal for the metric $M^{-1}(q)$, under Moreau's law.
 
@@ -32,6 +32,7 @@ This page becomes ready once these prerequisites are stated:
 
 - Measure-differential formulation of unilateral dynamics: trajectories with velocity of bounded variation, reaction measures and contact conditions (statement prerequisite; not yet stated).
 - Moreau's impact law and the admissibility, no-friction and energy requirements on impact laws (statement prerequisite; not yet stated).
+- Growth and completeness conditions on $f$ and $M$, such as a global Lipschitz bound on $f$ together with uniform bounds on $M$, under which the maximal solution is defined on all of $[0, T]$ (statement prerequisite; not yet stated).
 - Proof of parts 1–2 by local analytic uniqueness and continuation (proof prerequisite; not yet stated).
 
 ## Sources
