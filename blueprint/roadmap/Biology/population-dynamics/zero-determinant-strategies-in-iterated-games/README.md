@@ -12,5 +12,5 @@
 - [Press–Dyson determinant lemma](dot-product-eq-div-pd-det.md)
 - [Zero-determinant strategies](zero-determinant-linear-relation.md)
 - [X sets Y's score: equalizer strategies](equalizer-score.md)
-- [In the Prisoner's Dilemma X can fix any score of Y in `(P, R)`](exists-strategy-fixing-score.md)
+- [In the Prisoner's Dilemma X can fix any score `P ≤ σ ≤ R` of Y](exists-strategy-fixing-score.md)
 - [X cannot fix her own score](own-score-singular.md)

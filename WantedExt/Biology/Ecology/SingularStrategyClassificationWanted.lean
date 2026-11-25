@@ -61,22 +61,22 @@ structure IsSingular (s : ℝ → ℝ → ℝ) (xs : ℝ) : Prop where
   gradient_eq_zero : fitnessGradient s xs = 0
 
 /-- **Diagonal identity and the derivative of the fitness gradient** (Geritz et al. 1998,
-eqs. (5)–(6)). For an invasion fitness `s` with singular strategy `x*` (`s` is `C²`,
-`s x x = 0`, `D(x*) = 0`): `s_xx + 2 s_xy + s_yy = 0` at `(x*, x*)`, and `D` has derivative
-`s_xy + s_yy` at `x*`.
+eq. (7)). For an invasion fitness `s` with singular strategy `x*` (`s` is `C²`, `s x x = 0`,
+`D(x*) = 0`): `s_xx + 2 s_xy + s_yy = 0` at `(x*, x*)`, and `D` has derivative `s_xy + s_yy` at
+`x*`.
 
-Source: Geritz et al. (1998), eqs. (5)–(6). -/
+Source: Geritz et al. (1998), eq. (7). -/
 public theorem_wanted diagonal_identity_and_hasDerivAt {s : ℝ → ℝ → ℝ} {xs : ℝ}
     (h : IsSingular s xs) :
     sxx s xs xs + 2 * sxy s xs xs + syy s xs xs = 0 ∧
       HasDerivAt (fitnessGradient s) (sxy s xs xs + syy s xs xs) xs
 
-/-- **Convergence stability** (Eshel 1983; Geritz et al. 1998, eq. (6)). For an invasion
+/-- **Convergence stability** (Eshel 1983; Geritz et al. 1998, eq. (8)). For an invasion
 fitness `s` with singular strategy `x*`: `s_xy + s_yy < 0` iff `s_yy < s_xx` (all at
 `(x*, x*)`), and if `s_xy + s_yy < 0` then there is `δ > 0` such that every resident `x` with
 `0 < |x - x*| < δ` has fitness gradient pointing towards `x*`: `(x* - x) D(x) > 0`.
 
-Sources: Eshel (1983); Geritz et al. (1998), eq. (6). -/
+Sources: Eshel (1983); Geritz et al. (1998), eq. (8). -/
 public theorem_wanted convergenceStable_iff_and_gradient {s : ℝ → ℝ → ℝ} {xs : ℝ}
     (h : IsSingular s xs) :
     (sxy s xs xs + syy s xs xs < 0 ↔ syy s xs xs < sxx s xs xs) ∧
@@ -93,22 +93,22 @@ public theorem_wanted isLocalESS_iff {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : I
     (syy s xs xs < 0 → ∃ δ > 0, ∀ y, 0 < |y - xs| → |y - xs| < δ → s xs y < 0) ∧
       (0 < syy s xs xs → ∃ δ > 0, ∀ y, 0 < |y - xs| → |y - xs| < δ → 0 < s xs y)
 
-/-- **Invasion potential** (Geritz et al. 1998, eq. (7)). For an invasion fitness `s` with
+/-- **Invasion potential** (Geritz et al. 1998, eq. (9)). For an invasion fitness `s` with
 singular strategy `x*`: if `s_xx > 0` at `(x*, x*)`, there is `δ > 0` such that `x*` invades
 every resident `x` with `0 < |x - x*| < δ`: `s x x* > 0`.
 
-Source: Geritz et al. (1998), eq. (7). -/
+Source: Geritz et al. (1998), eq. (9). -/
 public theorem_wanted invades_nearby_residents {s : ℝ → ℝ → ℝ} {xs : ℝ}
     (h : IsSingular s xs) (hxx : 0 < sxx s xs xs) :
     ∃ δ > 0, ∀ x, 0 < |x - xs| → |x - xs| < δ → 0 < s x xs
 
-/-- **Mutual invasibility** (Geritz et al. 1998, eq. (8)). For an invasion fitness `s` with
+/-- **Mutual invasibility** (Geritz et al. 1998, eq. (11)). For an invasion fitness `s` with
 singular strategy `x*`: if `s_xx + s_yy > 0` at `(x*, x*)`, there is `δ > 0` such that for
 every `h` with `0 < h < δ` the strategies `x* - h` and `x* + h` invade each other; if
 `s_xx + s_yy < 0`, there is `δ > 0` such that no two distinct strategies within `δ` of `x*`
 invade each other.
 
-Source: Geritz et al. (1998), eq. (8). -/
+Source: Geritz et al. (1998), eq. (11). -/
 public theorem_wanted mutual_invasibility {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s xs) :
     (0 < sxx s xs xs + syy s xs xs → ∃ δ > 0, ∀ e, 0 < e → e < δ →
         0 < s (xs - e) (xs + e) ∧ 0 < s (xs + e) (xs - e)) ∧

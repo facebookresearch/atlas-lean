@@ -1,7 +1,7 @@
-# In the Prisoner's Dilemma X can fix any score of Y in `(P, R)`
+# In the Prisoner's Dilemma X can fix any score `P ≤ σ ≤ R` of Y
 
-**In the Prisoner's Dilemma X can fix any score of Y in `[P, R]`** (Press and Dyson 2012,
-eqs. (8)–(9)). If `T > R > P > S`, then for every `σ ∈ [P, R]` (closed interval) there is a
+**In the Prisoner's Dilemma X can fix any score `P ≤ σ ≤ R` of Y** (Press and Dyson 2012,
+eqs. (8)–(9)). If `T > R > P > S`, then for every `σ` with `P ≤ σ ≤ R` there is a
 memory-one strategy `p` that is an equalizer for `σ`:
 `p₂ = (p₁ (T - P) - (1 + p₄)(T - R)) / (R - P)`, `p₃ = ((1 - p₁)(P - S) + p₄ (R - S)) / (R - P)`,
 `(1 - p₁) + p₄ ≠ 0` and

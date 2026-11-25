@@ -74,18 +74,19 @@ fitness `r` in a well-mixed population of size `N`. -/
 noncomputable def moranFixation (r : ℝ) (N : ℕ) : ℝ :=
   (1 - r⁻¹) / (1 - r⁻¹ ^ N)
 
-/-- **Isothermal theorem, "if" direction** (Lieberman, Hauert and Nowak 2005). Let `r > 0`,
-`r ≠ 1`, and let `W` be a real `N × N` matrix with nonnegative entries, every row sum `1`
-(stochastic) and every column sum `1` (all temperatures `T_j = 1`: doubly stochastic), that is
-irreducible (for all `i, j` some power `W^k` has `(W^k)_{ij} > 0`). Then for every `φ` solving
+/-- **Isothermal theorem, "if" direction** (Lieberman, Hauert and Nowak 2005). Let `N > 0`,
+`r > 0`, `r ≠ 1`, and let `W` be a real `N × N` matrix with nonnegative entries, every row sum
+`1` (stochastic) and every column sum `1` (all temperatures `T_j = 1`: doubly stochastic), that
+is irreducible (for all `i, j` some power `W^k` has `(W^k)_{ij} > 0`). Then for every `φ` solving
 the absorption equations of the Moran process on `W` with fitness `r`, the fixation probability
 of a single mutant at a uniformly random vertex, `(∑_v φ {v}) / N`, equals
 `(1 - 1/r) / (1 - 1/r^N)`.
 
 Sources: Lieberman, Hauert and Nowak (2005), p. 313; Keller and Uğurlu, arXiv:2403.12598. -/
-public theorem_wanted average_fixation_eq_moranFixation (r : ℝ) (hr : 0 < r) (hr1 : r ≠ 1)
-    (W : Matrix (Fin N) (Fin N) ℝ) (hW : ∀ i j, 0 ≤ W i j) (hrow : ∀ i, ∑ j, W i j = 1)
-    (hcol : ∀ j, ∑ i, W i j = 1) (hirr : ∀ i j, ∃ k : ℕ, 0 < (W ^ k) i j)
+public theorem_wanted average_fixation_eq_moranFixation (hN : 0 < N) (r : ℝ) (hr : 0 < r)
+    (hr1 : r ≠ 1) (W : Matrix (Fin N) (Fin N) ℝ) (hW : ∀ i j, 0 ≤ W i j)
+    (hrow : ∀ i, ∑ j, W i j = 1) (hcol : ∀ j, ∑ i, W i j = 1)
+    (hirr : ∀ i j, ∃ k : ℕ, 0 < (W ^ k) i j)
     (φ : Finset (Fin N) → ℝ) (hφ : IsFixationFunction r W φ) :
     (∑ v, φ {v}) / N = moranFixation r N
 
