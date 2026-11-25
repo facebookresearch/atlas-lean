@@ -57,7 +57,11 @@ section
 
 local instance : SMulCommClass (Matrix (Fin 2) (Fin 2) ℤ)
     (Matrix (Fin 2) (Fin 2) ℤ)ᵐᵒᵖ (ULift.{2} (Matrix (Fin 2) (Fin 2) ℤ)) :=
-  ⟨fun a b x => ULift.ext (smul_comm a b x.down)⟩
+  ⟨fun a b x => by
+    apply ULift.ext
+    change a * (x.down * MulOpposite.unop b) =
+      (a * x.down) * MulOpposite.unop b
+    exact (mul_assoc a x.down (MulOpposite.unop b)).symm⟩
 
 /-- The coefficient carrier and common lift can both lie above a noncommutative algebra. -/
 example (n : ℕ) :
