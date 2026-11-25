@@ -37,6 +37,7 @@ public import Mathlib.NumberTheory.ModularForms.Basic
 public import Mathlib.NumberTheory.NumberField.AdeleRing
 public import MathlibExt.NumberTheory.NumberField.AdelicGL2LocalFiniteness
 public import MathlibExt.NumberTheory.NumberField.HeckeCharacter
+public import MathlibExt.NumberTheory.NumberField.AdelicLevel
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
@@ -53,32 +54,10 @@ namespace NumberField.AdelicLevel
 variable (R : Type*) [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K]
   [Algebra R K] [IsFractionRing R K]
 
-/-- The archimedean component of an adelic `GL(2)` element. -/
-def glArch : GL (Fin 2) (AdeleRing R K) →* GL (Fin 2) (InfiniteAdeleRing K) :=
-  Matrix.GeneralLinearGroup.map (adeleArch R K)
-
-/-- The finite component of an adelic `GL(2)` element. -/
-def glFin : GL (Fin 2) (AdeleRing R K) →* GL (Fin 2) (FiniteAdeleRing R K) :=
-  Matrix.GeneralLinearGroup.map (adeleFin R K)
-
-@[simp] theorem glArch_apply (g : GL (Fin 2) (AdeleRing R K)) (i j : Fin 2) :
-    (glArch R K g : Matrix (Fin 2) (Fin 2) (InfiniteAdeleRing K)) i j =
-      ((g : Matrix (Fin 2) (Fin 2) (AdeleRing R K)) i j).1 := rfl
-
-@[simp] theorem glFin_apply (g : GL (Fin 2) (AdeleRing R K)) (i j : Fin 2) :
-    (glFin R K g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) i j =
-      ((g : Matrix (Fin 2) (Fin 2) (AdeleRing R K)) i j).2 := rfl
-
 /-- The component of an archimedean `GL(2)` element at one infinite place. -/
 def archComponent (w : InfinitePlace K) :
     GL (Fin 2) (InfiniteAdeleRing K) →* GL (Fin 2) w.Completion :=
   Matrix.GeneralLinearGroup.map (archEval K w)
-
-/-- The bound on valuations imposed by an ideal at one height-one prime. -/
-def idealBound (N : Ideal R) (v : HeightOneSpectrum R) :
-    WithZero (Multiplicative ℤ) :=
-  if N = ⊥ then 0
-  else WithZero.exp (-((Associates.mk v.asIdeal).count (Associates.mk N).factors : ℤ))
 
 theorem idealBound_of_ne_bot {N : Ideal R} (hN : N ≠ ⊥) (v : HeightOneSpectrum R) :
     idealBound R N v =
@@ -95,140 +74,6 @@ theorem idealBound_le_one (N : Ideal R) (v : HeightOneSpectrum R) :
 /-- The integral finite adeles: those integral at every finite place. -/
 def integralFiniteAdeles : Set (FiniteAdeleRing R K) :=
   {x | ∀ v : HeightOneSpectrum R, x v ∈ v.adicCompletionIntegers K}
-
-/-- The finite adeles whose valuation is bounded by `idealBound R N` at
-every finite place. -/
-def idealBall (N : Ideal R) : Set (FiniteAdeleRing R K) :=
-  {x | ∀ v : HeightOneSpectrum R, Valued.v (x v) ≤ idealBound R N v}
-
-variable {R K}
-
-theorem zero_mem_idealBall (N : Ideal R) :
-    (0 : FiniteAdeleRing R K) ∈ idealBall R K N :=
-  fun v => by
-    have h : (0 : FiniteAdeleRing R K) v = 0 := rfl
-    rw [h, map_zero]
-    exact zero_le
-
-theorem add_mem_integralFiniteAdeles {x y : FiniteAdeleRing R K}
-    (hx : x ∈ integralFiniteAdeles R K) (hy : y ∈ integralFiniteAdeles R K) :
-    x + y ∈ integralFiniteAdeles R K :=
-  fun v => add_mem (hx v) (hy v)
-
-theorem mul_mem_integralFiniteAdeles {x y : FiniteAdeleRing R K}
-    (hx : x ∈ integralFiniteAdeles R K) (hy : y ∈ integralFiniteAdeles R K) :
-    x * y ∈ integralFiniteAdeles R K :=
-  fun v => mul_mem (hx v) (hy v)
-
-theorem valued_apply_le_one {x : FiniteAdeleRing R K}
-    (hx : x ∈ integralFiniteAdeles R K) (v : HeightOneSpectrum R) :
-    Valued.v (x v) ≤ 1 :=
-  (HeightOneSpectrum.mem_adicCompletionIntegers _ _ _).mp (hx v)
-
-theorem add_mem_idealBall {N : Ideal R} {x y : FiniteAdeleRing R K}
-    (hx : x ∈ idealBall R K N) (hy : y ∈ idealBall R K N) :
-    x + y ∈ idealBall R K N :=
-  fun v => (Valuation.map_add _ _ _).trans (max_le (hx v) (hy v))
-
-theorem mul_mem_idealBall_left {N : Ideal R} {x y : FiniteAdeleRing R K}
-    (hx : x ∈ integralFiniteAdeles R K) (hy : y ∈ idealBall R K N) :
-    x * y ∈ idealBall R K N := fun v => by
-  change Valued.v (x v * y v) ≤ idealBound R N v
-  rw [map_mul]
-  calc Valued.v (x v) * Valued.v (y v) ≤ 1 * idealBound R N v :=
-        mul_le_mul' (valued_apply_le_one hx v) (hy v)
-    _ = idealBound R N v := one_mul _
-
-theorem mul_mem_idealBall_right {N : Ideal R} {x y : FiniteAdeleRing R K}
-    (hx : x ∈ idealBall R K N) (hy : y ∈ integralFiniteAdeles R K) :
-    x * y ∈ idealBall R K N := by
-  rw [mul_comm]; exact mul_mem_idealBall_left hy hx
-
-/-- Matrices integral everywhere with lower-left entry in the ideal ball. -/
-structure IsLevelZeroMatrix (R : Type*) [CommRing R] [IsDedekindDomain R]
-    (K : Type*) [Field K] [Algebra R K] [IsFractionRing R K] (N : Ideal R)
-    (m : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) : Prop where
-  integral : ∀ i j, m i j ∈ integralFiniteAdeles R K
-  lowerLeft : m 1 0 ∈ idealBall R K N
-
-/-- Level-one matrices: level-zero matrices whose lower-right entry is
-congruent to `1` modulo the ideal ball. -/
-structure IsLevelOneMatrix (R : Type*) [CommRing R] [IsDedekindDomain R]
-    (K : Type*) [Field K] [Algebra R K] [IsFractionRing R K] (N : Ideal R)
-    (m : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) : Prop
-    extends IsLevelZeroMatrix R K N m where
-  lowerRight : m 1 1 - 1 ∈ idealBall R K N
-
-namespace IsLevelZeroMatrix
-
-variable {N : Ideal R}
-
-protected theorem one : IsLevelZeroMatrix R K N 1 where
-  integral i j := by
-    rw [Matrix.one_apply]
-    split_ifs
-    · exact fun _ => one_mem _
-    · exact fun _ => zero_mem _
-  lowerLeft := by
-    rw [Matrix.one_apply_ne (by decide : (1 : Fin 2) ≠ 0)]; exact zero_mem_idealBall N
-
-protected theorem mul {m m' : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)}
-    (hm : IsLevelZeroMatrix R K N m) (hm' : IsLevelZeroMatrix R K N m') :
-    IsLevelZeroMatrix R K N (m * m') where
-  integral i j := by
-    rw [Matrix.mul_apply, Fin.sum_univ_two]
-    exact add_mem_integralFiniteAdeles
-      (mul_mem_integralFiniteAdeles (hm.integral i 0) (hm'.integral 0 j))
-      (mul_mem_integralFiniteAdeles (hm.integral i 1) (hm'.integral 1 j))
-  lowerLeft := by
-    rw [Matrix.mul_apply, Fin.sum_univ_two]
-    exact add_mem_idealBall (mul_mem_idealBall_right hm.lowerLeft (hm'.integral 0 0))
-      (mul_mem_idealBall_left (hm.integral 1 1) hm'.lowerLeft)
-
-end IsLevelZeroMatrix
-
-namespace IsLevelOneMatrix
-
-variable {N : Ideal R}
-
-protected theorem one : IsLevelOneMatrix R K N 1 where
-  toIsLevelZeroMatrix := .one
-  lowerRight := by
-    rw [Matrix.one_apply_eq, sub_self]; exact zero_mem_idealBall N
-
-protected theorem mul {m m' : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)}
-    (hm : IsLevelOneMatrix R K N m) (hm' : IsLevelOneMatrix R K N m') :
-    IsLevelOneMatrix R K N (m * m') where
-  toIsLevelZeroMatrix := hm.toIsLevelZeroMatrix.mul hm'.toIsLevelZeroMatrix
-  lowerRight := by
-    have h : (m * m') 1 1 - 1 =
-        m 1 0 * m' 0 1 + ((m 1 1 - 1) * m' 1 1 + (m' 1 1 - 1)) := by
-      rw [Matrix.mul_apply, Fin.sum_univ_two]; ring
-    rw [h]
-    exact add_mem_idealBall (mul_mem_idealBall_right hm.lowerLeft (hm'.integral 0 1))
-      (add_mem_idealBall (mul_mem_idealBall_right hm.lowerRight (hm'.integral 1 1))
-        hm'.lowerRight)
-
-end IsLevelOneMatrix
-
-variable (R K) (N : Ideal R)
-
-/-- The finite level-one subgroup of `GL(2)` over the finite adeles. -/
-def finiteLevelOne (R : Type*) [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K]
-    [Algebra R K] [IsFractionRing R K] (N : Ideal R) :
-    Subgroup (GL (Fin 2) (FiniteAdeleRing R K)) where
-  carrier := {g | IsLevelOneMatrix R K N (g : Matrix (Fin 2) (Fin 2) _)
-    ∧ IsLevelOneMatrix R K N ((g⁻¹ : GL (Fin 2) (FiniteAdeleRing R K)) : Matrix _ _ _)}
-  one_mem' := ⟨by rw [Units.val_one]; exact .one,
-    by rw [inv_one, Units.val_one]; exact .one⟩
-  mul_mem' ha hb := ⟨by rw [Units.val_mul]; exact ha.1.mul hb.1,
-    by rw [mul_inv_rev, Units.val_mul]; exact hb.2.mul ha.2⟩
-  inv_mem' ha := ⟨ha.2, by rw [inv_inv]; exact ha.1⟩
-
-theorem mem_finiteLevelOne_iff {g : GL (Fin 2) (FiniteAdeleRing R K)} :
-    g ∈ finiteLevelOne R K N ↔ IsLevelOneMatrix R K N (g : Matrix _ _ _)
-      ∧ IsLevelOneMatrix R K N ((g⁻¹ : GL (Fin 2) (FiniteAdeleRing R K)) : Matrix _ _ _) :=
-  Iff.rfl
 
 /-- Matrices over the finite adeles with trivial archimedean part. -/
 def finMat (g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) :
