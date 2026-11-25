@@ -7,26 +7,26 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# The Mantel–Haenszel summary chi-square and summary relative risk
+# The Mantel–Haenszel summary chi-square and summary odds ratio
 
 For `K` strata, stratum `k` is a 2 × 2 table with cells `A_k, B_k` (exposed, unexposed cases),
 `C_k, D_k` (exposed, unexposed controls), margins `N₁ = A + B`, `N₂ = C + D`, `M₁ = A + C`,
-`M₂ = B + D` and total `T`. With all margins fixed and relative risk one, `A_k` has the
-hypergeometric law with mean `E(A) = N₁ M₁ / T` and variance
-`V(A) = N₁ N₂ M₁ M₂ / (T² (T - 1))`. These moments are already proved in
+`M₂ = B + D` and total `T`. With all margins fixed, under the null hypothesis of no association
+between exposure and disease, `A_k` has the hypergeometric law with mean `E(A) = N₁ M₁ / T` and
+variance `V(A) = N₁ N₂ M₁ M₂ / (T² (T - 1))`. These moments are already proved in
 `MathlibExt.Probability.Distributions.Hypergeometric` (`sum_mul_hypergeometricReal` and
-`sum_sq_sub_mean_mul_hypergeometricReal`, with population `T`, `M₁` marked items and `N₁`
-draws). The conditional hypergeometric law given the margins is the two-class case of
+`sum_sq_sub_mean_mul_hypergeometricReal`, with population `T`, `M₁` marked items and `N₁` draws).
+The conditional hypergeometric law given the margins is the two-class case of
 `measureReal_caseCount_genotypeTotal` in
 `Domains.Biology.StatisticalGenetics.AssociationTests.CochranArmitageFixedMargin`.
 
-Recorded here are the remaining identities of Mantel and Haenszel: `A - E(A) = (A D - B C) / T`
-and the single-table corrected chi-square; the summary statistic
-`(∑ A - ∑ E(A))² / ∑ V(A)`; and the summary relative risk
-`R = ∑ (A D / T) / ∑ (B C / T)`, a weighted average of the stratum odds ratios with weights
-`B C / T`, equal to the common odds ratio when the strata share one, and equal to `1` exactly when
-`∑ A = ∑ E(A)`. Consistency of `R` under sparse-stratum or large-stratum asymptotics is a later
-result and is not stated here.
+Recorded here are the remaining identities of Mantel and Haenszel: `A - E(A) = (A D - B C) / T` and
+the single-table corrected chi-square; the summary statistic `(∑ A - ∑ E(A))² / ∑ V(A)`; and the
+summary odds ratio `R = ∑ (A D / T) / ∑ (B C / T)` (which Mantel and Haenszel call the summary
+relative risk, since the odds ratio approximates the relative risk for a rare disease), a weighted
+average of the stratum odds ratios with weights `B C / T`, equal to the common odds ratio when the
+strata share one, and equal to `1` exactly when `∑ A = ∑ E(A)`. Consistency of `R` under
+sparse-stratum or large-stratum asymptotics is a later result and is not stated here.
 
 Sources: N. Mantel and W. Haenszel, "Statistical aspects of the analysis of data from
 retrospective studies of disease", J. Natl. Cancer Inst. 22 (1959) 719–748, pp. 734–736.
@@ -55,10 +55,12 @@ noncomputable def countVariance (A B C D : ℝ) : ℝ :=
   (A + B) * (C + D) * (A + C) * (B + D) /
     ((A + B + C + D) ^ 2 * (A + B + C + D - 1))
 
-/-- The Mantel–Haenszel summary relative risk `R = ∑_k (A_k D_k / T_k) / ∑_k (B_k C_k / T_k)`. It is
-meaningful when every total `T_k` and the denominator `∑_k B_k C_k / T_k` are positive; a zero
-denominator gives `0` by Lean's convention `x / 0 = 0`. -/
-noncomputable def summaryRelativeRisk {K : ℕ} (A B C D : Fin K → ℝ) : ℝ :=
+/-- The Mantel–Haenszel summary odds ratio `R = ∑_k (A_k D_k / T_k) / ∑_k (B_k C_k / T_k)`, a
+cross-product estimator of a common odds ratio (not a risk ratio: for one table with
+`(A, B, C, D) = (4, 2, 1, 3)` it is `6`, while the risk ratio is `2`). It is meaningful when every
+total `T_k` and the denominator `∑_k B_k C_k / T_k` are positive; a zero denominator gives `0` by
+Lean's convention `x / 0 = 0`. -/
+noncomputable def summaryOddsRatio {K : ℕ} (A B C D : Fin K → ℝ) : ℝ :=
   (∑ k, A k * D k / (A k + B k + C k + D k)) / ∑ k, B k * C k / (A k + B k + C k + D k)
 
 /-- The Mantel–Haenszel summary chi-square `(∑_k A_k - ∑_k E(A_k))² / ∑_k V(A_k)`, without the
@@ -93,9 +95,9 @@ public theorem_wanted correctedChiSquare_eq {A B C D : ℝ} (hN₁ : 0 < A + B) 
 `∑_k w_k (A_k D_k / (B_k C_k)) / ∑_k w_k` with weights `w_k = B_k C_k / T_k`.
 
 Source: Mantel and Haenszel (1959), p. 736. -/
-public theorem_wanted summaryRelativeRisk_eq_weighted {K : ℕ} (hK : 0 < K) (A B C D : Fin K → ℝ)
+public theorem_wanted summaryOddsRatio_eq_weighted {K : ℕ} (hK : 0 < K) (A B C D : Fin K → ℝ)
     (hT : ∀ k, 0 < A k + B k + C k + D k) (hBC : ∀ k, 0 < B k * C k) :
-    summaryRelativeRisk A B C D =
+    summaryOddsRatio A B C D =
       (∑ k, B k * C k / (A k + B k + C k + D k) * (A k * D k / (B k * C k))) /
         ∑ k, B k * C k / (A k + B k + C k + D k)
 
@@ -104,20 +106,20 @@ real cells and positive totals `T_k`, if every stratum has `A_k D_k = ψ B_k C_k
 `∑_k B_k C_k / T_k > 0`, then `R = ψ`.
 
 Source: Mantel and Haenszel (1959), p. 736. -/
-public theorem_wanted summaryRelativeRisk_eq_of_common {K : ℕ} (A B C D : Fin K → ℝ) (ψ : ℝ)
+public theorem_wanted summaryOddsRatio_eq_of_common {K : ℕ} (A B C D : Fin K → ℝ) (ψ : ℝ)
     (hT : ∀ k, 0 < A k + B k + C k + D k) (hψ : ∀ k, A k * D k = ψ * (B k * C k))
     (hpos : 0 < ∑ k, B k * C k / (A k + B k + C k + D k)) :
-    summaryRelativeRisk A B C D = ψ
+    summaryOddsRatio A B C D = ψ
 
 /-- **`R = 1` exactly when observed equals expected** (Mantel and Haenszel 1959, p. 736). For `K`
 strata with real cells, positive totals `T_k` and `∑_k B_k C_k / T_k > 0`, `R = 1` if and only
 if `∑_k A_k = ∑_k E(A_k)`.
 
 Source: Mantel and Haenszel (1959), p. 736. -/
-public theorem_wanted summaryRelativeRisk_eq_one_iff {K : ℕ} (A B C D : Fin K → ℝ)
+public theorem_wanted summaryOddsRatio_eq_one_iff {K : ℕ} (A B C D : Fin K → ℝ)
     (hT : ∀ k, 0 < A k + B k + C k + D k)
     (hpos : 0 < ∑ k, B k * C k / (A k + B k + C k + D k)) :
-    summaryRelativeRisk A B C D = 1 ↔
+    summaryOddsRatio A B C D = 1 ↔
       ∑ k, A k = ∑ k, expectedCount (A k) (B k) (C k) (D k)
 
 /-- **The summary chi-square vanishes exactly when `R = 1`** (Mantel and Haenszel 1959,
@@ -129,6 +131,6 @@ public theorem_wanted summaryChiSquare_eq_zero_iff {K : ℕ} (A B C D : Fin K �
     (hT : ∀ k, 0 < A k + B k + C k + D k)
     (hpos : 0 < ∑ k, B k * C k / (A k + B k + C k + D k))
     (hV : 0 < ∑ k, countVariance (A k) (B k) (C k) (D k)) :
-    summaryChiSquare A B C D = 0 ↔ summaryRelativeRisk A B C D = 1
+    summaryChiSquare A B C D = 0 ↔ summaryOddsRatio A B C D = 1
 
 end WantedExt.Biology.StatisticalGenetics.MantelHaenszelWanted

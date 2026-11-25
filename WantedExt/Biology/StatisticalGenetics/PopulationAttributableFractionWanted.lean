@@ -9,9 +9,13 @@ LICENSE file in the root directory of this source tree.
 /-
 # The population attributable fraction: Levin and Miettinen formulas
 
-The population attributable fraction is the proportion of cases that would not have occurred had
-the exposure been absent, `PAF = 1 - P(Y(0) = 1) / P(Y = 1)`. Take finitely many strata `z` with
-`P(z) > 0`, exposure probabilities `e(z) = P(E = 1 | z)` and potential risks
+The population attributable fraction is the net proportional change in population risk had the
+exposure been absent, `PAF = (P(Y = 1) - P(Y(0) = 1)) / P(Y = 1) = 1 - P(Y(0) = 1) / P(Y = 1)`;
+without confounding this is `(P(Y = 1) - P(Y = 1 | E = 0)) / P(Y = 1)`. It is negative when the
+exposure is protective. Reading it as the fraction of observed cases that the exposure caused (and
+that removing it would prevent) needs the further assumption that the exposure prevents disease in
+no one (monotonicity: no protective effect at the individual level). Take finitely many strata `z`
+with `P(z) > 0`, exposure probabilities `e(z) = P(E = 1 | z)` and potential risks
 `r₀(z) = P(Y(0) = 1 | z)`, `r₁(z) = P(Y(1) = 1 | z)`, with consistency and exchangeability within
 strata, so that `P(Y = 1 | E = e, z) = r_e(z)`.
 
@@ -61,8 +65,9 @@ def observedRisk (pz e r₀ r₁ : 𝒵 → ℝ) : ℝ :=
   ∑ z, pz z * (e z * r₁ z + (1 - e z) * r₀ z)
 
 /-- The causal attributable fraction `1 - P(Y(0) = 1) / P(Y = 1)`, with
-`P(Y(0) = 1) = ∑_z P(z) r₀(z)`. It is meaningful when `P(Y = 1) > 0`; if `P(Y = 1) = 0`, Lean's
-convention `x / 0 = 0` makes the quotient `0` and the value `1`. -/
+`P(Y(0) = 1) = ∑_z P(z) r₀(z)`: the net proportional change in population risk had the exposure been
+absent (negative when the exposure is protective). It is meaningful when `P(Y = 1) > 0`; if
+`P(Y = 1) = 0`, Lean's convention `x / 0 = 0` makes the quotient `0` and the value `1`. -/
 noncomputable def causalPAF (pz e r₀ r₁ : 𝒵 → ℝ) : ℝ :=
   1 - (∑ z, pz z * r₀ z) / observedRisk pz e r₀ r₁
 
