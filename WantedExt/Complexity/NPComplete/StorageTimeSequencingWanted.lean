@@ -22,7 +22,7 @@ NP-Completeness*, W. H. Freeman (1979), problem [GT43] DIRECTED OPTIMAL LINEAR A
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Logic.Relation

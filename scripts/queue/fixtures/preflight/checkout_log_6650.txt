@@ -1,0 +1,15 @@
+2026-11-23T16:06:28.8991455Z
+2026-11-23T16:06:28.8991649Z If you want to create a new branch to retain commits you create, you may
+2026-11-23T16:06:28.8992351Z do so (now or later) by using -c with the switch command. Example:
+2026-11-23T16:06:28.8992669Z
+2026-11-23T16:06:28.8992791Z   git switch -c <new-branch-name>
+2026-11-23T16:06:28.8993002Z
+2026-11-23T16:06:28.8993118Z Or undo this operation with:
+2026-11-23T16:06:28.8993478Z
+2026-11-23T16:06:28.8993584Z   git switch -
+2026-11-23T16:06:28.8993725Z
+2026-11-23T16:06:28.8994008Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-23T16:06:28.8994378Z
+2026-11-23T16:06:28.8994815Z HEAD is now at 0a22bce71 Merge 1eb2325e6be4eda8208113075c8c73fe487672b9 into 5c77d5224cebd12e0808329f65611358b2a85d9a
+2026-11-23T16:06:28.9062844Z ##[endgroup]
+2026-11-23T16:06:28.9102735Z [command]/usr/bin/git log -1 --format=%H

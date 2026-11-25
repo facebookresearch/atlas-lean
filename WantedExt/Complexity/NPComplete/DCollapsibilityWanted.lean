@@ -16,7 +16,7 @@ Computer Science 2010, Article 3, doi:10.4086/cjtcs.2010.003 (Theorem 1.1(ii)).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Logic.Relation
 public import MathlibExt.Computability.BinaryNatEncoding

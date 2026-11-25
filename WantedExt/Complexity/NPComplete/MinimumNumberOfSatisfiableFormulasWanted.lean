@@ -20,7 +20,7 @@ Journal on Discrete Mathematics 7 (1994), 275-283, doi:10.1137/S0895480191220836
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
@@ -44,8 +44,8 @@ Kohli, Krishnamurti, and Mirchandani (1994) prove strongly NP-hard already for c
 most two literals.
 
 A 3CNF formula is a conjunction of clauses of at most three literals each. The variables are
-`0, …, n - 1`; formulas use the repository's `Cslib.Logic.PL.CNF` (a clause is a list of
-literals `(variable, polarity)`) with its semantics `Cslib.Logic.PL.CNF.Satisfies`. The
+`0, …, n - 1`; formulas use the repository's `Cslib.Logic.LegacyPL.CNF` (a clause is a list of
+literals `(variable, polarity)`) with its semantics `Cslib.Logic.LegacyPL.CNF.Satisfies`. The
 formulas form a list, so a formula listed twice counts twice.
 
 Encoding: the instance is decoded from a bitstring with the repository's
@@ -60,7 +60,7 @@ reduction from every language in `NP`
 -/
 
 /-- An instance: the number `n` of variables, the formulas in order, and the bound `K`. -/
-abbrev MinimumNumberOfSatisfiableFormulasInstance := ℕ × List Cslib.Logic.PL.CNF × ℕ
+abbrev MinimumNumberOfSatisfiableFormulasInstance := ℕ × List Cslib.Logic.LegacyPL.CNF × ℕ
 
 /-- Well-formedness of an instance: every clause of every formula has at most 3 literals, all
 over variables below `n`. -/
@@ -73,7 +73,7 @@ def MinimumNumberOfSatisfiableFormulasFeasible
     (i : MinimumNumberOfSatisfiableFormulasInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
     (Finset.univ.filter fun j : Fin i.2.1.length =>
-      Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) (i.2.1.get j)).card ≤ i.2.2
+      Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) (i.2.1.get j)).card ≤ i.2.2
 
 open Classical in
 /-- MINIMUM NUMBER OF SATISFIABLE FORMULAS as a decision problem over bitstrings. -/

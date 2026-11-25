@@ -1,0 +1,3 @@
+# Equivalence
+
+Equivalence `SimplexCategoryGenRel ≌ SimplexCategory`.

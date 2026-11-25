@@ -16,9 +16,10 @@ namespace MetaMathlibExt
 
 open scoped BigOperators
 
-/-- Practical number predicate (concept `jis_term_8ed6008fc4e01e1cc05ff7f6`, source
-lines 94–98): a positive `n` such that every positive `m ≤ n` is a sum of
-distinct positive divisors of `n`. -/
+/-- **Practical number.** A natural number $n$ is practical if $n > 0$ and every integer $m$ with
+$1 \le m \le n$ is the sum of a set of distinct positive divisors of $n$.
+
+Source: concept `jis_term_8ed6008fc4e01e1cc05ff7f6`, source lines 94–98. -/
 public def IsPracticalNumber (n : ℕ) : Prop :=
   0 < n ∧ ∀ m, 1 ≤ m → m ≤ n →
     ∃ s : Finset ℕ, s ⊆ n.divisors ∧ ∑ x ∈ s, x = m

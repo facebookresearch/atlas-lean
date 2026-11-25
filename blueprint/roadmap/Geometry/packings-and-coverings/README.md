@@ -2,6 +2,7 @@
 
 Optimal arrangements of congruent bodies in space and the smallest sets or fewest translates needed to cover given families of shapes.
 
+- [Crystal packing and interstitial holes](crystal-packing-and-interstitial-holes/README.md)
 - [Goodman–Goodman circle covering theorem](goodman-goodman-circle-covering-theorem/README.md)
 - [Hadwiger covering and illumination problem](hadwiger-covering-and-illumination-problem/README.md)
 - [Kepler conjecture](kepler-conjecture/README.md)

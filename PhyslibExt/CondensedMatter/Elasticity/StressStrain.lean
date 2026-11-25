@@ -600,7 +600,8 @@ lemma simpleShear_smallStrain (γ : ℝ) (x : Fin 3 → ℝ) :
   unfold smallStrain
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [Matrix.smul_apply, Matrix.add_apply, Matrix.transpose_apply] <;> ring
+    simp [Matrix.smul_apply, Matrix.add_apply, Matrix.transpose_apply, -Matrix.transpose_of] <;>
+    ring
 
 /-- Simple shear produces tensor shear `ε₀₁ = γ/2`, i.e. engineering shear `γ`. -/
 lemma simpleShear_strain (γ : ℝ) (x : Fin 3 → ℝ) :

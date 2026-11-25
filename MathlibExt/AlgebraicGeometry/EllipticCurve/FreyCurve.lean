@@ -10,10 +10,13 @@ LICENSE file in the root directory of this source tree.
 Portions of this file are adapted from:
 
 `Theorems/Thm_FreyPackage_frey_isSemistableModel.lean`,
+`Theorems/Thm_FreyCurve_isPeuRamifieeAt_odd_of_integralForm.lean`,
 `Definitions/Def_FLTPrelim_FreyPackage.lean`,
-`Definitions/Def_FLTPrelim_Modularity.lean`
+`Definitions/Def_FLTPrelim_Modularity.lean`,
+`Definitions/Def_WeierstrassCurve_PeuRamifiee.lean`
 and
-`P2M/Sol/S_FreyPackage_frey_isSemistableModel.lean`
+`P2M/Sol/S_FreyPackage_frey_isSemistableModel.lean`,
+`P2M/Sol/S_FreyCurve_isPeuRamifieeAt_odd_of_integralForm.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -34,6 +37,7 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Data.ZMod.Basic
+public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
 import Mathlib.Algebra.EuclideanDomain.Int
 import Mathlib.Algebra.GCDMonoid.Nat
@@ -52,6 +56,11 @@ open WeierstrassCurve
 its discriminant, the prime does not divide `c₄`. -/
 def WeierstrassCurve.IsSemistableModel (W : WeierstrassCurve ℤ) : Prop :=
   ∀ p : ℕ, p.Prime → (p : ℤ) ∣ W.Δ → ¬ (p : ℤ) ∣ W.c₄
+
+/-- A Weierstrass curve over `ℚ` is *peu ramifiée* at `ℓ` with respect to
+`p` when `p` divides the `ℓ`-adic valuation of its discriminant. -/
+def WeierstrassCurve.IsPeuRamifieeAt (W : WeierstrassCurve ℚ) (p ℓ : ℕ) : Prop :=
+  (p : ℤ) ∣ padicValRat ℓ W.Δ
 
 /-- The numerical data of a Frey curve: nonzero integers `a`, `b`, `c` and a
 prime `p ≥ 5` with `a ^ p + b ^ p = c ^ p`, `gcd a b = 1`, `a ≡ 3 [ZMOD 4]`
@@ -230,6 +239,50 @@ private theorem dvd_abc_of_dvd_freyCurveInt_Δ (P : FreyPackage) {q : ℕ} (hq :
   exact hqZ.dvd_of_dvd_pow (n := 2 * P.p)
     (freyCurveInt_Δ_mul P ▸ hdvd.mul_right (2 ^ 8))
 
+private theorem freyCurveInt_Δ_ne_zero (P : FreyPackage) :
+    (freyCurveInt P).Δ ≠ 0 := by
+  intro h
+  have hmul := freyCurveInt_Δ_mul P
+  rw [h, zero_mul] at hmul
+  exact pow_ne_zero _ P.habc0 hmul.symm
+
+private theorem padicValInt_freyCurveInt_Δ (P : FreyPackage) {q : ℕ}
+    (hq : q.Prime) (hq2 : q ≠ 2) :
+    padicValInt q (freyCurveInt P).Δ =
+      2 * P.p * padicValInt q (P.a * P.b * P.c) := by
+  haveI : Fact q.Prime := ⟨hq⟩
+  have hqZ : Prime (q : ℤ) := Nat.prime_iff_prime_int.mp hq
+  have hq28 : ¬ (q : ℤ) ∣ 2 ^ 8 := by
+    intro h
+    have h2 : (q : ℤ) ∣ 2 := hqZ.dvd_of_dvd_pow h
+    have h2' : q ∣ 2 := by exact_mod_cast h2
+    exact hq2 ((Nat.prime_dvd_prime_iff_eq hq Nat.prime_two).mp h2')
+  have hmul : padicValInt q ((freyCurveInt P).Δ * 2 ^ 8) =
+      padicValInt q (freyCurveInt P).Δ := by
+    rw [padicValInt.mul (freyCurveInt_Δ_ne_zero P) (by norm_num),
+      padicValInt.eq_zero_of_not_dvd hq28, add_zero]
+  rw [← hmul, freyCurveInt_Δ_mul]
+  simp only [padicValInt, Int.natAbs_pow]
+  exact padicValNat.pow _ _
+
+private theorem p_dvd_padicValInt_freyCurveInt_discr (P : FreyPackage) {q : ℕ}
+    (hq : q.Prime) (hq2 : q ≠ 2) :
+    P.p ∣ padicValInt q (freyCurveInt P).Δ :=
+  ⟨2 * padicValInt q (P.a * P.b * P.c), by
+    rw [padicValInt_freyCurveInt_Δ P hq hq2]; ring⟩
+
+private theorem freyCurve_Δ_eq_cast (P : FreyPackage) :
+    P.freyCurve.Δ = (P.freyCurveInt.Δ : ℚ) := by
+  rw [← freyCurveInt_map, WeierstrassCurve.map_Δ]
+  rfl
+
+private theorem p_dvd_padicValRat_freyCurve_discr (P : FreyPackage) {q : ℕ}
+    (hq : q.Prime) (hq2 : q ≠ 2) :
+    (P.p : ℤ) ∣ padicValRat q P.freyCurve.Δ := by
+  rw [freyCurve_Δ_eq_cast, padicValRat.of_int]
+  exact Int.natCast_dvd_natCast.mpr
+    (p_dvd_padicValInt_freyCurveInt_discr P hq hq2)
+
 /-- The Frey curve over `ℤ` is a semistable model: at every prime dividing
 its discriminant, the prime does not divide `c₄`. -/
 public theorem frey_isSemistableModel (P : FreyPackage) :
@@ -240,3 +293,16 @@ public theorem frey_isSemistableModel (P : FreyPackage) :
     (dvd_abc_of_dvd_freyCurveInt_Δ P hq hdvdΔ)
 
 end FreyPackage
+
+namespace FreyCurve
+
+/-- For every odd prime `q`, the rational Frey curve attached to a Frey
+package is peu ramifiée at `q` with respect to its exponent `p`: `p`
+divides the `q`-adic valuation of the discriminant, since over `ℤ` that
+valuation is `2 * p` times the valuation of `a * b * c`. -/
+public theorem isPeuRamifieeAt_odd_of_integralForm (P : FreyPackage)
+    {q : ℕ} [Fact q.Prime] (hq2 : q ≠ 2) :
+    P.freyCurve.IsPeuRamifieeAt P.p q :=
+  FreyPackage.p_dvd_padicValRat_freyCurve_discr P Fact.out hq2
+
+end FreyCurve

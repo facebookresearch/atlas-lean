@@ -45,7 +45,16 @@ namespace RegularSubstitution
 
 variable {T T' : Type*} {σ : Type*} (M : DFA T σ) {τ : T → Type*} (N : ∀ a, DFA T' (τ a))
 
-/-- The ε-NFA: states of `M`, and states `(q, ⟨a, p⟩)` of the copy of `N a` entered from `q`. -/
+/-- **The ε-NFA for a substitution.** Let $M$ be a DFA over $T$ with states $\sigma$, and for each
+letter $a \in T$ let $N_a$ be a DFA over $T'$ with states $\tau_a$. This ε-NFA over $T'$ has as
+states the states $q$ of $M$ and the triples $(q, a, p)$ with $q$ a state of $M$, $a \in T$ and
+$p$ a state of $N_a$, read as the state $p$ of the copy of $N_a$ entered from $q$. A state $q$ of
+$M$ has an ε-move to $(q, a, s_a)$ for every $a \in T$, where $s_a$ is the start state of $N_a$,
+and no letter moves. A state $(q, a, p)$ moves on a letter $b$ to $(q, a, \delta_a(p, b))$, where
+$\delta_a$ is the transition function of $N_a$, and has an ε-move, to the state $\delta_M(q, a)$
+of $M$, exactly when $p$ is an accepting state of $N_a$; here $\delta_M$ is the transition
+function of $M$. The start state is the start state of $M$, and the accepting states are the
+accepting states of $M$. -/
 def εnfa : εNFA T' (σ ⊕ (σ × Σ a, τ a)) where
   step
     | .inl q, none => {s | ∃ a, s = .inr (q, ⟨a, (N a).start⟩)}
@@ -60,14 +69,23 @@ theorem reduceOption_map_some (l : List T') : (l.map some).reduceOption = l := b
   | nil => rfl
   | cons b l ih => rw [List.map_cons, List.reduceOption_cons_of_some, ih]
 
-/-- Inside a copy of `N a`, reading `y` runs `N a`. -/
+/-- **Paths inside one copy of a letter automaton.** Let $M$ be a DFA over $T$, and for each
+letter $a \in T$ let $N_a$ be a DFA over $T'$. For every state $q$ of $M$, letter $a \in T$,
+state $p$ of $N_a$ and word $y$ over $T'$, the ε-NFA built from $M$ and the $N_a$ has a path
+reading the letters of $y$, with no ε-moves, from the state $p$ of the copy of $N_a$ entered from
+$q$ to the state of the same copy that $N_a$ reaches from $p$ on $y$. -/
 theorem isPath_run (q : σ) (a : T) (p : τ a) (y : List T') :
     (εnfa M N).IsPath (.inr (q, ⟨a, p⟩)) (.inr (q, ⟨a, (N a).evalFrom p y⟩)) (y.map some) := by
   induction y generalizing p with
   | nil => exact .nil _
   | cons b y ih => exact .cons _ _ _ _ _ rfl (ih _)
 
-/-- The labels of the detour through `N a` reading `y`. -/
+/-- **Detour labels.** For a word $y = b_1 \cdots b_n$ over $T'$, the detour labels of $y$ are
+the sequence of ε-NFA labels $\varepsilon, b_1, \ldots, b_n, \varepsilon$: an ε-move, the letters
+of $y$ in order, and a final ε-move.
+
+They label the detour that the substitution ε-NFA takes through a copy of the automaton for one
+letter. -/
 def detour (y : List T') : List (Option T') :=
   none :: (y.map some ++ [none])
 
@@ -97,8 +115,17 @@ theorem isPath_word (w : List T) :
       exact ⟨detour y₁ ++ x, by rw [List.reduceOption_append, reduceOption_detour, hx],
         (εNFA.isPath_append _).2 ⟨_, isPath_detour M N q a hy₁, hpath⟩⟩
 
-/-- **Soundness of the paths**: a path from the start state reads a word of the substitution
-image of a word of `M`, followed by part of a word of the current copy of `N a`. -/
+/-- **Soundness of the paths of the substitution ε-NFA.** Let $M$ be a DFA over $T$ with start
+state $q_0$, and for each letter $a \in T$ let $N_a$ be a DFA over $T'$, with accepted language
+$L(N_a)$; for a word $w = a_1 \cdots a_n$ over $T$ write $L_w = L(N_{a_1}) \cdots L(N_{a_n})$,
+which is $\{\varepsilon\}$ when $w$ is empty. Let $x$ be a sequence of labels, each a letter of
+$T'$ or $\varepsilon$, let $\bar x$ be the word over $T'$ obtained from $x$ by deleting the
+$\varepsilon$'s, and suppose the ε-NFA built from $M$ and the $N_a$ has a path reading $x$ from
+the state $q_0$ of $M$ to a state $u$. If $u$ is a state $q$ of $M$, then there is a word $w$
+over $T$ such that $M$ reaches $q$ from $q_0$ on $w$ and $\bar x \in L_w$. If $u$ is the state
+$p$ of the copy of $N_a$ entered from the state $q$ of $M$, then there are a word $w$ over $T$
+such that $M$ reaches $q$ from $q_0$ on $w$, a word $y_1 \in L_w$ and a word $y_2$ over $T'$
+such that $\bar x = y_1 y_2$ and $N_a$ reaches $p$ from its start state on $y_2$. -/
 theorem exists_of_isPath (x : List (Option T')) :
     ∀ u, (εnfa M N).IsPath (.inl M.start) u x →
       (∀ q, u = .inl q →
@@ -164,8 +191,10 @@ theorem accepts_εnfa : (εnfa M N).accepts =
 
 end RegularSubstitution
 
-/-- **Substitution of regular languages into a regular language over a finite alphabet gives a
-regular language.** -/
+/-- **Regular languages are closed under substitution over a finite alphabet.** Let $T$ be a
+finite alphabet and $T'$ any alphabet. If $L$ is a regular language over $T$ and $s(a)$ is a
+regular language over $T'$ for every letter $a \in T$, then the substitution of $s$ into $L$ is a
+regular language over $T'$. -/
 theorem IsRegular.substitution {T T' : Type*} [Finite T] {L : Language T} (hL : L.IsRegular)
     {s : T → Language T'} (hs : ∀ a, (s a).IsRegular) :
     (Cslib.Language.substitution L s).IsRegular := by

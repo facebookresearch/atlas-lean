@@ -298,7 +298,11 @@ private theorem execute_count_choose [AddCommMonoid R] [LinearOrder R]
   exact candidate_sum_choose_three n
 
 
-/-- The coupled execution charges exactly one tick for each candidate. -/
+/-- **Exact running time of the optimal BST procedure.** Let $R$ be a linearly ordered additive
+commutative monoid in which addition is monotone. For every natural number $n$ and all
+$p_0, \dots, p_{n-1}, q_0, \dots, q_n \in R$, the running time of the optimal binary search tree
+procedure on these weights, which is the number of candidate roots it examines, equals
+$\binom{n+2}{3}$. -/
 public theorem optimalBST_time [AddCommMonoid R] [LinearOrder R]
     [IsOrderedAddMonoid R] :
     ∀ (n : Nat) (p : Vector R n) (q : Vector R (n + 1)),
@@ -314,7 +318,11 @@ private theorem six_mul_choose_three (n : Nat) :
     _ = n * (n + 1) * (n + 2) := by
       simp [Nat.descFactorial, show n + 2 - 1 = n + 1 by omega, Nat.mul_assoc]
 
-/-- Cubic lower and upper bounds for the selected candidate-event metric. -/
+/-- **Cubic running time of the optimal BST procedure.** Let $R$ be a linearly ordered additive
+commutative monoid in which addition is monotone. For every natural number $n$ and all
+$p_0, \dots, p_{n-1}, q_0, \dots, q_n \in R$, the running time $T$ of the optimal binary search
+tree procedure on these weights, which is the number of candidate roots it examines, satisfies
+$n^3 \le 6T$ and $T \le n^3$. -/
 public theorem optimalBST_time_bounds [AddCommMonoid R] [LinearOrder R]
     [IsOrderedAddMonoid R] :
     ∀ (n : Nat) (p : Vector R n) (q : Vector R (n + 1)),

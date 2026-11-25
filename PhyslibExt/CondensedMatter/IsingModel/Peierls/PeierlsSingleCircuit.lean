@@ -392,6 +392,7 @@ lemma exists_single_dualCircuit_of_connected {K : Set (Site 2)} (hK : K.Finite)
 
 /-! ## D. Example: the triangle -/
 
+@[deprecated SimpleGraph.connected_top +typeChanged (since := "2026-11-12")]
 lemma triangle_connected : (completeGraph (Fin 3)).Connected := SimpleGraph.connected_top
 
 lemma triangle_even_degree (v : Fin 3) : Even ((completeGraph (Fin 3)).degree v) := by
@@ -403,7 +404,7 @@ lemma triangle_eulerian :
       p.IsTrail ∧ (∀ e ∈ (completeGraph (Fin 3)).edgeFinset, e ∈ p.edges) ∧
         p.length = (completeGraph (Fin 3)).edgeFinset.card :=
   EulerianExistence.exists_closed_eulerian_length (completeGraph (Fin 3))
-    triangle_connected triangle_even_degree 0
+    SimpleGraph.connected_top triangle_even_degree 0
 
 lemma triangle_edge_card : (completeGraph (Fin 3)).edgeFinset.card = 3 := by decide
 
