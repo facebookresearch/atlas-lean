@@ -6,3 +6,4 @@
 - [Encoding two-counter machines in full F-sub subtyping](encoding-two-counter-machines-in-full-f-sub.md)
 - [Subtyping in full F-sub is undecidable](subtyping-in-full-f-sub-is-undecidable.md)
 - [Iso-recursive types: safety without normalization](iso-recursive-types-safety-without-normalization.md)
+- [Soundness of algorithmic conversion for dependent type theory](soundness-of-algorithmic-conversion-for.md)
