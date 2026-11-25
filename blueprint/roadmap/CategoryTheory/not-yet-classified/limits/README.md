@@ -31,3 +31,7 @@
 - [Is Zero prod iff](is-zero-prod-iff.md)
 - [Is Pushout prod iff](is-pushout-prod-iff.md)
 - [Is Pullback prod iff](is-pullback-prod-iff.md)
+- [Of is Pushout](of-is-pushout.md)
+- [Of le](of-le.md)
+- [Coproducts coproducts le](coproducts-coproducts-le.md)
+- [Coproducts pushouts le](coproducts-pushouts-le.md)

@@ -1,0 +1,41 @@
+# Existence of Stage-grid lifts for Quillen simplices
+
+## Quillen Simplex Span Presentation
+
+- [Admissible Mono Flag](admissible-mono-flag.md)
+- [Filtration Stage](filtration-stage.md)
+- [Tail Kernel apex succ](tail-kernel-apex-succ.md)
+- [Filtration map left zero right zero heq](filtration-map-left-zero-right-zero-heq.md)
+- [Filtration map left succ heq](filtration-map-left-succ-heq.md)
+- [Filtration map right succ heq](filtration-map-right-succ-heq.md)
+- [Filtration map right succ general heq](filtration-map-right-succ-general-heq.md)
+- [Filtration map left right heq](filtration-map-left-right-heq.md)
+- [Filtration map adjacent apex heq](filtration-map-adjacent-apex-heq.md)
+- [Filtration Stage Vertex Iso Cast](filtration-stage-vertex-iso-cast.md)
+- [Filtration Stage Vertex Iso Last](filtration-stage-vertex-iso-last.md)
+- [Filtration Stage Vertex Iso](filtration-stage-vertex-iso.md)
+- [Adjacent Tail Quotient Data](adjacent-tail-quotient-data.md)
+- [Adjacent Tail Quotient Data](adjacent-tail-quotient-data-2.md)
+- [Filtration Stage Adjacent Apex Iso Of Step](filtration-stage-adjacent-apex-iso-of-st.md)
+- [Filtration Stage Adjacent Apex Iso Last](filtration-stage-adjacent-apex-iso-last.md)
+- [Filtration Stage Adjacent Apex Iso](filtration-stage-adjacent-apex-iso.md)
+- [Filtration Stage Adjacent Span To QOf Step](filtration-stage-adjacent-span-to-qof-st.md)
+- [Filtration Stage Adjacent Span Iso Of Step](filtration-stage-adjacent-span-iso-of-st.md)
+- [Filtration Stage Shell Span To Q](filtration-stage-shell-span-to-q.md)
+- [Filtration Stage Shell Span To Q mk Hom](filtration-stage-shell-span-to-q-mk-hom.md)
+- [Filtration Stage Shell Span To Q adjacent l heq](filtration-stage-shell-span-to-q-adjacen.md)
+- [Filtration Stage Shell Span To Q adjacent r heq](filtration-stage-shell-span-to-q-adjacen-2.md)
+- [Filtration Stage Shell Span To QIso Of Step](filtration-stage-shell-span-to-qiso-of-s.md)
+- [Filtration Stage Shell Span Iso Of Step](filtration-stage-shell-span-iso-of-step.md)
+- [Filtration Stage Shell Span Iso Last](filtration-stage-shell-span-iso-last.md)
+- [Filtration Stage Shell Span Iso Adjacent](filtration-stage-shell-span-iso-adjacent.md)
+- [Filtration Stage Shell Span To Q adjacent mk Hom](filtration-stage-shell-span-to-q-adjacen-3.md)
+- [Filtration Stage Agreement Iso](filtration-stage-agreement-iso.md)
+- [Filtration Stage Shell Span To Q mk Hom eq map](filtration-stage-shell-span-to-q-mk-hom-2.md)
+- [Filtration Stage Shell Span iso interval Span nonempty](filtration-stage-shell-span-iso-interval.md)
+- [Filtration Stage Grid Lift](filtration-stage-grid-lift.md)
+
+## Algebraic KTheory
+
+- [Quillen Stage Grid Lift exists](quillen-stage-grid-lift-exists.md)
+- [Quillen Stage Grid QProjection ess Surj](quillen-stage-grid-qprojection-ess-surj.md)

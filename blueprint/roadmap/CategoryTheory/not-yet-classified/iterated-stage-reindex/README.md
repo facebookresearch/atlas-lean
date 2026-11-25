@@ -1,0 +1,15 @@
+# Iterated Stage Reindex
+
+- [Stage Simplex Tuple](stage-simplex-tuple.md)
+- [Stage Tuple Degrees](stage-tuple-degrees.md)
+- [Stage Tuple Degrees succ](stage-tuple-degrees-succ.md)
+- [Stage At Tuple](stage-at-tuple.md)
+- [Reindex Iterated Stage](reindex-iterated-stage.md)
+- [Reindex Iterated Stage is Waldhausen Exact](reindex-iterated-stage-is-waldhausen-exa.md)
+- [Reindex Iterated Stage zero](reindex-iterated-stage-zero.md)
+- [Reindex Iterated Stage succ](reindex-iterated-stage-succ.md)
+- [Reindex Iterated Stage succ obj](reindex-iterated-stage-succ-obj.md)
+- [Reindex Iterated Stage succ map](reindex-iterated-stage-succ-map.md)
+- [Reindex Iterated Stage id](reindex-iterated-stage-id.md)
+- [Reindex Iterated Stage comp](reindex-iterated-stage-comp.md)
+- [Map Iterated Stage reindex](map-iterated-stage-reindex.md)

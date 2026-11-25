@@ -1,0 +1,43 @@
+# Span presentations and edgewise filtrations for Quillen simplices
+
+## Algebraic KTheory
+
+- [Quillen Simplex Span Presentation](quillen-simplex-span-presentation.md)
+
+## Quillen Simplex Span Presentation
+
+- [Nonempty](nonempty.md)
+- [Interval Span From Nat](interval-span-from-nat.md)
+- [Interval Span](interval-span.md)
+- [Interval Span adjacent](interval-span-adjacent.md)
+- [Interval Span of gap](interval-span-of-gap.md)
+- [Interval Span From Nat mk Hom](interval-span-from-nat-mk-hom.md)
+- [Interval Span mk Hom](interval-span-mk-hom.md)
+- [Tail Span](tail-span.md)
+- [Tail Span From Nat](tail-span-from-nat.md)
+- [Tail Span From Nat step](tail-span-from-nat-step.md)
+- [Adjacent Kernel Presentation](adjacent-kernel-presentation.md)
+- [Tail Composite Base Change](tail-composite-base-change.md)
+- [Tail Composite Base Change comp l](tail-composite-base-change-comp-l.md)
+- [Transport Kernel Presentation Source](transport-kernel-presentation-source.md)
+- [Tail Kernel Presentation From Nat](tail-kernel-presentation-from-nat.md)
+- [Tail Kernel Presentation](tail-kernel-presentation.md)
+- [Tail Kernel Succ From Nat](tail-kernel-succ-from-nat.md)
+- [Tail Kernel Succ From Nat admissible](tail-kernel-succ-from-nat-admissible.md)
+- [Tail Apex Succ From Nat](tail-apex-succ-from-nat.md)
+- [Tail Apex Succ From Nat admissible](tail-apex-succ-from-nat-admissible.md)
+- [Right Tail Object](right-tail-object.md)
+- [Right Tail Succ From Nat](right-tail-succ-from-nat.md)
+- [Right Tail Succ From Nat admissible](right-tail-succ-from-nat-admissible.md)
+- [Filtration Object](filtration-object.md)
+- [Filtration Object left](filtration-object-left.md)
+- [Filtration Object left last](filtration-object-left-last.md)
+- [Filtration Object right](filtration-object-right.md)
+- [Is Admissible Mono eq To Hom comp comp eq To Hom](is-admissible-mono-eq-to-hom-comp-comp-e.md)
+- [Quillen Simplex Filtration Step](quillen-simplex-filtration-step.md)
+- [Filtration Step](filtration-step.md)
+- [Quillen Simplex Span Filtration](quillen-simplex-span-filtration.md)
+- [Filtration](filtration.md)
+- [Filtration chain obj left](filtration-chain-obj-left.md)
+- [Filtration chain obj left last](filtration-chain-obj-left-last.md)
+- [Filtration chain obj right](filtration-chain-obj-right.md)

@@ -10,3 +10,4 @@
 - [Kernel comp mem](kernel-comp-mem.md)
 - [Of Full Subcategory](of-full-subcategory.md)
 - [Of Full Subcategory is Admissible Exact iff](of-full-subcategory-is-admissible-exact.md)
+- [Full Subcategory](is-cardinal-presentable-of.md)

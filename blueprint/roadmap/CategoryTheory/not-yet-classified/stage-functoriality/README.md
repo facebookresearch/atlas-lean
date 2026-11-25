@@ -1,0 +1,15 @@
+# Stage Functoriality
+
+- [Is Stage postcomp](is-stage-postcomp.md)
+- [Map Stage](map-stage.md)
+- [Map Stage obj](map-stage-obj.md)
+- [Map Stage map](map-stage-map.md)
+- [Stage Weak of map Stage](stage-weak-of-map-stage.md)
+- [Map Stage Weak](map-stage-weak.md)
+- [Map Stage Weak inclusion](map-stage-weak-inclusion.md)
+- [Map Stage reindex](map-stage-reindex.md)
+- [Map Stage Weak reindex](map-stage-weak-reindex.md)
+- [Map Stage id](map-stage-id.md)
+- [Map Stage comp](map-stage-comp.md)
+- [Map Stage Weak id](map-stage-weak-id.md)
+- [Map Stage Weak comp](map-stage-weak-comp.md)

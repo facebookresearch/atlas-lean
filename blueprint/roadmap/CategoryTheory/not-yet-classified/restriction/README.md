@@ -6,3 +6,4 @@
 - [Restriction](restriction.md)
 - [Restriction obj](restriction-obj.md)
 - [Restriction full Map](restriction-full-map.md)
+- [Restriction](functor-category-le-inverse-image-whiske.md)
