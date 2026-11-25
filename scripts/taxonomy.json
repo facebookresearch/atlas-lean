@@ -11745,6 +11745,7 @@
   "MathlibExt/FieldTheory/Finite/OrderedPartitionCongruence": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Finite/PermutationPolynomial": {"to": "FieldTheory/finite-fields", "title": "Permutation polynomials"},
   "MathlibExt/FieldTheory/Finite/PrimitivePolynomial": {"to": "FieldTheory/finite-fields", "title": "Primitive polynomials over finite fields"},
+  "MathlibExt/FieldTheory/Galois/AbelRuffini": {"to": "FieldTheory/galois-theory", "title": "Solvability by radicals"},
   "MathlibExt/FieldTheory/Galois/Abelian": {"to": "FieldTheory/galois-theory", "title": "Intermediate fields of abelian extensions"},
   "MathlibExt/FieldTheory/Galois/AdditiveHilbert90": {"to": "FieldTheory/galois-theory", "title": "Additive Hilbert's theorem 90"},
   "MathlibExt/FieldTheory/Galois/GaloisGroupOverReal": {"to": "FieldTheory/galois-theory", "title": "Galois extensions of the real numbers"},
