@@ -37,6 +37,19 @@ public import Mathlib.RingTheory.HopfAlgebra.Convolution
 public import Mathlib.RingTheory.HopfAlgebra.Quotient
 import MathlibExt.Algebra.Algebra.HopfAlgebra.ComulAntipode
 
+/-!
+# Hopf kernels of bialgebra maps
+
+For a map `π : A →ₐc[R] B` of commutative bialgebras, `hopfKer π` is the subalgebra of
+coinvariants of the coaction `(id ⊗ π) ∘ Δ : A → A ⊗[R] B`, and `IsHopfGalois π` says that the
+canonical map `A ⊗[R] A → A ⊗[R] B` becomes bijective after quotienting by the balancing
+relations over `hopfKer π`. When `A` is a cocommutative Hopf algebra and `A`, `B` and
+`hopfKer π` are flat over `R`, the Hopf kernel is a cocommutative Hopf subalgebra of `A`.
+
+Factor maps between quotients by Hopf ideals are bialgebra maps, and algebra maps out of a
+quotient `H ⧸ I` by any ideal correspond to the algebra maps out of `H` that vanish on `I`.
+-/
+
 @[expose] public section
 
 open scoped TensorProduct Coalgebra
@@ -49,6 +62,8 @@ universe u v w
 variable {R : Type u} [CommRing R] {A : Type v} [CommRing A] [Bialgebra R A] {B : Type w} [CommRing
   B] [Bialgebra R B]
 
+/-- **Coaction of a bialgebra map.** The right coaction of `B` on `A` induced by a bialgebra map
+`π : A → B`: the algebra map `(id ⊗ π) ∘ Δ : A → A ⊗[R] B`. -/
 noncomputable def coaction (π : A →ₐc[R] B) : A →ₐ[R] A ⊗[R] B :=
   (Algebra.TensorProduct.map (AlgHom.id R A) (π : A →ₐ[R] B)).comp (Bialgebra.comulAlgHom R A)
 
@@ -56,6 +71,9 @@ theorem coaction_apply (π : A →ₐc[R] B) (a : A) :
     coaction π a = Algebra.TensorProduct.map (AlgHom.id R A) (π : A →ₐ[R] B) (Coalgebra.comul (R :=
       R) a) := rfl
 
+/-- **Hopf kernel.** The Hopf kernel of a bialgebra map `π : A → B`: the subalgebra of
+coinvariants of the coaction, that is, of the elements `a : A` with `coaction π a = a ⊗ 1` (the
+equalizer of `coaction π` and `a ↦ a ⊗ 1`). -/
 noncomputable def hopfKer (π : A →ₐc[R] B) : Subalgebra R A :=
   AlgHom.equalizer (coaction π) (Algebra.TensorProduct.includeLeft : A →ₐ[R] A ⊗[R] B)
 
@@ -65,6 +83,8 @@ theorem mem_hopfKer_iff (π : A →ₐc[R] B) (a : A) : a ∈ hopfKer π ↔ coa
 theorem coaction_eq_of_mem (π : A →ₐc[R] B) {a : A} (h : a ∈ hopfKer π) : coaction π a = a ⊗ₜ[R] 1
   := h
 
+/-- **Canonical algebra map.** The canonical map of a bialgebra map `π : A → B`: the algebra map
+`A ⊗[R] A → A ⊗[R] B` sending `a ⊗ a'` to `(a ⊗ 1) * coaction π a'`. -/
 noncomputable def canAlgHom (π : A →ₐc[R] B) : A ⊗[R] A →ₐ[R] A ⊗[R] B :=
   Algebra.TensorProduct.lift (Algebra.TensorProduct.includeLeft : A →ₐ[R] A ⊗[R] B) (coaction π)
     (fun _ _ => Commute.all _ _)
@@ -73,6 +93,8 @@ noncomputable def canAlgHom (π : A →ₐc[R] B) : A ⊗[R] A →ₐ[R] A ⊗[R
     canAlgHom π (a ⊗ₜ[R] a') = (a ⊗ₜ[R] (1 : B)) * coaction π a' :=
   Algebra.TensorProduct.lift_tmul _ _ _ a a'
 
+/-- **Canonical map.** The canonical map `a ⊗ a' ↦ (a ⊗ 1) * coaction π a'` of a bialgebra map
+`π : A → B`, as an `R`-linear map `A ⊗[R] A → A ⊗[R] B`. -/
 noncomputable def canMap (π : A →ₐc[R] B) : A ⊗[R] A →ₗ[R] A ⊗[R] B := (canAlgHom π).toLinearMap
 
 theorem canMap_apply (π : A →ₐc[R] B) (z : A ⊗[R] A) : canMap π z = canAlgHom π z := rfl
@@ -93,6 +115,10 @@ theorem canMap_tmul_one (π : A →ₐc[R] B) (a : A) : canMap π (a ⊗ₜ[R] 1
 theorem canMap_one_tmul (π : A →ₐc[R] B) (a : A) : canMap π (1 ⊗ₜ[R] a) = coaction π a := by
   rw [canMap_tmul, ← Algebra.TensorProduct.one_def, one_mul]
 
+/-- **Balancing relations.** The balancing relations of a bialgebra map `π : A → B`: the elements
+`(a * h) ⊗ a' - a ⊗ (h * a')` of `A ⊗[R] A` with `a a' : A` and `h` in the Hopf kernel of `π`.
+Their `R`-span is the kernel of the projection of `A ⊗[R] A` onto the tensor product of `A` with
+itself over `hopfKer π`. -/
 def balancingRelations (π : A →ₐc[R] B) : Set (A ⊗[R] A) :=
   {x | ∃ (a h a' : A), h ∈ hopfKer π ∧ x = (a * h) ⊗ₜ[R] a' - a ⊗ₜ[R] (h * a')}
 
@@ -106,6 +132,11 @@ theorem canMap_eq_zero_of_mem_span (π : A →ₐc[R] B) {z : A ⊗[R] A}
   | add x y _ _ hx hy => rw [map_add, hx, hy, add_zero]
   | smul r x _ hx => rw [map_smul, hx, smul_zero]
 
+/-- **Hopf–Galois bialgebra maps.** A bialgebra map `π : A → B` is Hopf–Galois when its canonical
+map becomes bijective after quotienting by the balancing relations: `canMap π` is surjective, and
+its kernel, which always contains the `R`-span of the balancing relations, is contained in that
+span. Equivalently, `canMap π` induces a bijection from the tensor product of `A` with itself over
+`hopfKer π` onto `A ⊗[R] B`; the condition is stated without forming that tensor product. -/
 def IsHopfGalois (π : A →ₐc[R] B) : Prop :=
   Function.Surjective (canMap π) ∧ ∀ z, canMap π z = 0 → z ∈ Submodule.span R (balancingRelations π)
 
@@ -212,6 +243,8 @@ theorem antipode_mem [Coalgebra.IsCocomm R A] {a : A} (ha : a ∈ hopfKer π) :
   rw [h1, map_toLinearMap_id_comul, coaction_eq_of_mem π ha]
   simp
 
+/-- **Coaction minus the inclusion.** The `R`-linear map `a ↦ coaction π a - a ⊗ 1`, whose kernel
+is the Hopf kernel of `π`. -/
 noncomputable def rhoSub : A →ₗ[R] A ⊗[R] B :=
   (coaction π).toLinearMap - (Algebra.TensorProduct.includeLeft : A →ₐ[R] A ⊗[R] B).toLinearMap
 
@@ -311,6 +344,8 @@ section Structure
 variable {R : Type u} [CommRing R] {A : Type v} [CommRing A] [HopfAlgebra R A]
 variable {B : Type w} [CommRing B] [HopfAlgebra R B] (π : A →ₐc[R] B)
 
+/-- **Linear inclusion of the Hopf kernel.** The inclusion of the Hopf kernel of `π` into `A`, as an
+`R`-linear map. -/
 noncomputable abbrev valL : ↥(hopfKer π) →ₗ[R] A := (hopfKer π).val.toLinearMap
 
 @[simp] theorem valL_apply (s : ↥(hopfKer π)) : valL π s = (s : A) := rfl
@@ -322,9 +357,13 @@ theorem exact_valL_rhoSub : Function.Exact (valL π) (rhoSub π) := by
   · intro ha; exact ⟨⟨a, ha⟩, rfl⟩
   · rintro ⟨s, rfl⟩; exact s.2
 
+/-- **Tensor square of the Hopf-kernel inclusion.** The tensor square
+`hopfKer π ⊗[R] hopfKer π → A ⊗[R] A` of the inclusion of the Hopf kernel, as an algebra map. -/
 noncomputable def ι₂A : ↥(hopfKer π) ⊗[R] ↥(hopfKer π) →ₐ[R] A ⊗[R] A :=
   Algebra.TensorProduct.map (hopfKer π).val (hopfKer π).val
 
+/-- **Linear tensor square of the Hopf-kernel inclusion.** The tensor square of the inclusion of
+the Hopf kernel, as an `R`-linear map. -/
 noncomputable def ι₂ : ↥(hopfKer π) ⊗[R] ↥(hopfKer π) →ₗ[R] A ⊗[R] A := (ι₂A π).toLinearMap
 
 theorem ι₂_eq_map : ι₂ π = TensorProduct.map (valL π) (valL π) :=
@@ -339,6 +378,7 @@ theorem ι₂_one : ι₂ π 1 = 1 := map_one (ι₂A π)
 
 variable [Module.Flat R A] [Module.Flat R B] [Module.Flat R ↥(hopfKer π)]
 
+omit [Module.Flat R B] in
 theorem ι₂_injective : Function.Injective (ι₂ π) := by
   have h1 : Function.Injective ((valL π).lTensor ↥(hopfKer π)) :=
     Module.Flat.lTensor_preserves_injective_linearMap _ Subtype.val_injective
@@ -347,12 +387,17 @@ theorem ι₂_injective : Function.Injective (ι₂ π) := by
   rw [ι₂_eq_map, ← LinearMap.rTensor_comp_lTensor]
   exact h2.comp h1
 
+/-- **Triple tensor power of the Hopf-kernel inclusion.** The map
+`hopfKer π ⊗[R] (hopfKer π ⊗[R] hopfKer π) → A ⊗[R] (A ⊗[R] A)` induced by the inclusion of the
+Hopf kernel, as an `R`-linear map. -/
 noncomputable def ι₃ : ↥(hopfKer π) ⊗[R] (↥(hopfKer π) ⊗[R] ↥(hopfKer π)) →ₗ[R] A ⊗[R] (A ⊗[R] A) :=
   TensorProduct.map (valL π) (ι₂ π)
 
+omit [Module.Flat R A] [Module.Flat R B] [Module.Flat R ↥(hopfKer π)] in
 @[simp] theorem ι₃_tmul (s : ↥(hopfKer π)) (z : ↥(hopfKer π) ⊗[R] ↥(hopfKer π)) :
     ι₃ π (s ⊗ₜ[R] z) = (s : A) ⊗ₜ[R] ι₂ π z := rfl
 
+omit [Module.Flat R B] in
 theorem ι₃_injective : Function.Injective (ι₃ π) := by
   have h1 : Function.Injective ((ι₂ π).lTensor ↥(hopfKer π)) :=
     Module.Flat.lTensor_preserves_injective_linearMap _ (ι₂_injective π)
@@ -381,6 +426,9 @@ theorem comul_coe_mem_range (s : ↥(hopfKer π)) :
   refine ⟨w2, ?_⟩
   rw [ι₂_eq_map, ← LinearMap.rTensor_comp_lTensor, LinearMap.comp_apply, hw2', hw]
 
+/-- **Comultiplication of the Hopf kernel.** The comultiplication of `A` restricted to
+`hopfKer π`, which lands in `hopfKer π ⊗[R] hopfKer π` when `A` is cocommutative and `A`, `B` and
+`hopfKer π` are flat over `R`. -/
 noncomputable def comulK : ↥(hopfKer π) →ₗ[R] ↥(hopfKer π) ⊗[R] ↥(hopfKer π) :=
   (LinearEquiv.ofInjective (ι₂ π) (ι₂_injective π)).symm.toLinearMap
     ∘ₗ ((Coalgebra.comul (R := R) (A := A)) ∘ₗ valL π).codRestrict (LinearMap.range (ι₂ π))
@@ -392,11 +440,14 @@ noncomputable def comulK : ↥(hopfKer π) →ₗ[R] ↥(hopfKer π) ⊗[R] ↥(
     (((Coalgebra.comul (R := R) (A := A)) ∘ₗ valL π).codRestrict _ (comul_coe_mem_range π) s)
   exact h
 
+/-- **Counit of the Hopf kernel.** The counit of `A` restricted to `hopfKer π`. -/
 noncomputable def counitK : ↥(hopfKer π) →ₗ[R] R := Coalgebra.counit ∘ₗ valL π
 
+omit [Module.Flat R A] [Module.Flat R B] [Module.Flat R ↥(hopfKer π)] [Coalgebra.IsCocomm R A] in
 @[simp] theorem counitK_apply (s : ↥(hopfKer π)) : counitK π s = Coalgebra.counit (R := R) (s : A)
   := rfl
 
+omit [Module.Flat R A] [Module.Flat R B] [Module.Flat R ↥(hopfKer π)] [Coalgebra.IsCocomm R A] in
 theorem rTensor_counitK (z : ↥(hopfKer π) ⊗[R] ↥(hopfKer π)) :
     (valL π).lTensor R ((counitK π).rTensor ↥(hopfKer π) z)
       = (Coalgebra.counit (R := R) (A := A)).rTensor A (ι₂ π z) := by
@@ -404,6 +455,7 @@ theorem rTensor_counitK (z : ↥(hopfKer π) ⊗[R] ↥(hopfKer π)) :
   | add x y hx hy => simp only [map_add, hx, hy]
   | tmul x y => simp
 
+omit [Module.Flat R A] [Module.Flat R B] [Module.Flat R ↥(hopfKer π)] [Coalgebra.IsCocomm R A] in
 theorem lTensor_counitK (z : ↥(hopfKer π) ⊗[R] ↥(hopfKer π)) :
     (valL π).rTensor R ((counitK π).lTensor ↥(hopfKer π) z)
       = (Coalgebra.counit (R := R) (A := A)).lTensor A (ι₂ π z) := by
@@ -486,14 +538,18 @@ noncomputable instance instBialgebra : Bialgebra R ↥(hopfKer π) where
       Coalgebra.comul (R := R) b)
     rw [ι₂_mul, ι₂_comul, ι₂_comul, ι₂_comul, Subalgebra.coe_mul, Bialgebra.comul_mul]
 
+/-- **Antipode of the Hopf kernel.** The antipode of `A` restricted to `hopfKer π`, which it
+preserves when `A` is cocommutative. -/
 noncomputable def antipodeK : ↥(hopfKer π) →ₗ[R] ↥(hopfKer π) where
   toFun s := ⟨antipode R (s : A), antipode_mem π s.2⟩
   map_add' s t := by ext; simp
   map_smul' r s := by ext; simp
 
+omit [Module.Flat R A] [Module.Flat R B] [Module.Flat R ↥(hopfKer π)] in
 @[simp] theorem coe_antipodeK (s : ↥(hopfKer π)) : ((antipodeK π s : ↥(hopfKer π)) : A) = antipode
   R (s : A) := rfl
 
+omit [Module.Flat R A] [Module.Flat R B] [Module.Flat R ↥(hopfKer π)] in
 theorem val_mul'_rTensor_antipodeK (z : ↥(hopfKer π) ⊗[R] ↥(hopfKer π)) :
     ((LinearMap.mul' R ↥(hopfKer π) ((antipodeK π).rTensor _ z) : ↥(hopfKer π)) : A)
       = LinearMap.mul' R A ((antipode R (A := A)).rTensor A (ι₂ π z)) := by
@@ -501,6 +557,7 @@ theorem val_mul'_rTensor_antipodeK (z : ↥(hopfKer π) ⊗[R] ↥(hopfKer π)) 
   | add x y hx hy => simp only [map_add, Subalgebra.coe_add, hx, hy]
   | tmul x y => simp
 
+omit [Module.Flat R A] [Module.Flat R B] [Module.Flat R ↥(hopfKer π)] in
 theorem val_mul'_lTensor_antipodeK (z : ↥(hopfKer π) ⊗[R] ↥(hopfKer π)) :
     ((LinearMap.mul' R ↥(hopfKer π) ((antipodeK π).lTensor _ z) : ↥(hopfKer π)) : A)
       = LinearMap.mul' R A ((antipode R (A := A)).lTensor A (ι₂ π z)) := by
@@ -522,6 +579,7 @@ noncomputable instance instHopfAlgebra : HopfAlgebra R ↥(hopfKer π) where
 @[simp] theorem coe_antipode (s : ↥(hopfKer π)) : ((antipode R s : ↥(hopfKer π)) : A) = antipode R
   (s : A) := rfl
 
+omit [Module.Flat R A] [Module.Flat R B] [Module.Flat R ↥(hopfKer π)] [Coalgebra.IsCocomm R A] in
 theorem ι₂_comm (z : ↥(hopfKer π) ⊗[R] ↥(hopfKer π)) :
     ι₂ π (TensorProduct.comm R _ _ z) = TensorProduct.comm R A A (ι₂ π z) := by
   rw [ι₂_eq_map, TensorProduct.map_comm]
@@ -532,6 +590,8 @@ instance instIsCocomm : Coalgebra.IsCocomm R ↥(hopfKer π) where
     apply ι₂_injective π
     rw [LinearMap.comp_apply, LinearEquiv.coe_coe, ι₂_comm, ι₂_comul, Coalgebra.comm_comul]
 
+/-- **Inclusion of the Hopf kernel.** The inclusion of the Hopf kernel of `π` into `A`, as a
+bialgebra map. -/
 noncomputable def hopfKerVal : ↥(hopfKer π) →ₐc[R] A :=
   { (hopfKer π).val with
     map_smul' := fun r x => by simp
@@ -554,7 +614,8 @@ section HopfIdealQuotientMaps
 
 variable {R : Type*} [CommRing R] {H : Type*} [CommRing H] [HopfAlgebra R H]
 
-/-- The factor map between quotients by Hopf ideals, as a bialgebra hom. -/
+/-- **Factor maps between Hopf quotients.** The factor map between quotients by Hopf ideals, as a
+bialgebra hom. -/
 def quotientFactorBialgHom {I J : Ideal H} [I.IsHopfIdeal R] [J.IsHopfIdeal R]
     (hIJ : I ≤ J) : H ⧸ I →ₐc[R] H ⧸ J :=
   BialgHom.ofAlgHom (Ideal.Quotient.factorₐ R hIJ)
@@ -596,10 +657,16 @@ theorem quotientFactorBialgHom_comp {I J : Ideal H} [I.IsHopfIdeal R] [J.IsHopfI
       Bialgebra.Quotient.mkBialgHom (R := R) J := by
   ext x; rfl
 
-variable {A : Type*} [CommRing A] [Algebra R A]
+end HopfIdealQuotientMaps
 
-/-- Algebra maps out of a quotient by a Hopf ideal, as maps vanishing on the ideal. -/
-def quotientPointsEquiv (I : Ideal H) [I.IsHopfIdeal R] :
+section QuotientPoints
+
+variable {R : Type*} [CommRing R] {H : Type*} [CommRing H] [Algebra R H]
+  {A : Type*} [CommRing A] [Algebra R A]
+
+/-- **Algebra maps out of a quotient.** Algebra maps out of a quotient `H ⧸ I` by an ideal, as the
+algebra maps out of `H` that vanish on `I`. -/
+def quotientPointsEquiv (I : Ideal H) :
     (H ⧸ I →ₐ[R] A) ≃ {f : H →ₐ[R] A // ∀ x ∈ I, f x = 0} where
   toFun g := ⟨g.comp (Ideal.Quotient.mkₐ R I), fun x hx => by
     rw [AlgHom.comp_apply, Ideal.Quotient.mkₐ_eq_mk,
@@ -608,6 +675,6 @@ def quotientPointsEquiv (I : Ideal H) [I.IsHopfIdeal R] :
   left_inv g := Ideal.Quotient.algHom_ext R (Ideal.Quotient.liftₐ_comp I _ _)
   right_inv f := Subtype.ext (Ideal.Quotient.liftₐ_comp I f.1 f.2)
 
-end HopfIdealQuotientMaps
+end QuotientPoints
 
 end HopfAlgebra
