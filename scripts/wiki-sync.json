@@ -397,6 +397,8 @@
 "AlgebraicGeometry.IsVariety": "5a61d53f623a3cce",
 "AlgebraicGeometry.IsVariety.isVariety_iff": "2e2015d0db3f5c08",
 "AlgebraicGeometry.IsVariety.quasiSeparated": "dbff5c5c3b9cb6da",
+"AlgebraicGeometry.RelativeGroupLaw.endDegree_nsmulEnd_one": "e365912a2aad7abd",
+"AlgebraicGeometry.RelativeGroupLaw.nsmulEnd_one": "f0c1375e6d0f8cec",
 "AlgebraicGeometry.Scheme.BirationalMap": "58bd4c078e61970f",
 "AlgebraicGeometry.Scheme.BirationalMap.IsOver": "e63938290c56b61b",
 "AlgebraicGeometry.Scheme.BirationalMap.refl": "a7cbd74542b34554",

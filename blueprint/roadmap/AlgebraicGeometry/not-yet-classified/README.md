@@ -9,3 +9,4 @@ Topics added since this subject's fields were last revised.
 - [Projectivity of complex projective space](is-projective-projective-space.md)
 - [Integral Operational Chow](integral-operational-chow/README.md)
 - [Nilp Points Factor](nilp-points-factor/README.md)
+- [Relative Group Law End Degree Nsmul](relative-group-law-end-degree-nsmul/README.md)
