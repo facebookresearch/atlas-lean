@@ -15,7 +15,7 @@ public import MathlibExt.NumberTheory.AutomorphicForm.WhittakerExpansion
 open IsDedekindDomain NumberField AutomorphicForm
 
 /-- The Whittaker expansion with the original binders. -/
-theorem exactSource
+private theorem exactSource
     (F : Type) [Field F] [NumberField F]
     (D : Set (AdelicGL2 (𝓞 F) F))
     (U : Ideal (𝓞 F) → Subgroup (AdelicGL2 (𝓞 F) F))
