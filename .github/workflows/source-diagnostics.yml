@@ -13,7 +13,29 @@ permissions:
   contents: read
 
 jobs:
+  # Experiment only: a stand-in for a change classifier that says this pull
+  # request does not need the job below.
+  changes:
+    name: decide which checks to run (experiment)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      lean: ${{ steps.decide.outputs.lean }}
+    steps:
+      - name: Decide
+        id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [[ "$EVENT" == pull_request ]]; then
+            echo "lean=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "lean=true" >> "$GITHUB_OUTPUT"
+          fi
+
   source-diagnostics:
+    needs: changes
+    if: ${{ !cancelled() && needs.changes.outputs.lean != 'false' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
