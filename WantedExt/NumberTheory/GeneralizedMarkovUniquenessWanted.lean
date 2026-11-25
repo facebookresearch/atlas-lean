@@ -844,21 +844,6 @@ public theorem_wanted genCohnTree_neg_snd_eq (k : ℕ) (w : List Bool)
       (genCohnTree k (-k) w).2.1 0 1 = (genMarkovTree k w).2.1 ∧
       (genCohnTree k (-k) w).2.1 1 1 = (3 + 3 * k) * ((genMarkovTree k w).2.1 : ℤ) - u - k
 
-/-- **The characteristic number solves $x^2 + kx + 1 \equiv 0 \pmod{m_t}$.** Let
-$k \in \mathbb{N}$, let $w$ be a finite sequence of left and right moves, let $(r, t, s)$ be
-the vertex of the Farey tree at $w$, and let $(m_r, m_t, m_s)$ be the vertex of the
-$k$-generalized Markov tree $\mathrm{MT}(k)$ at $w$. Write $t = n/d$. If $0 < n < d$ and $u$
-is a characteristic number of $(m_r, m_t, m_s)$, then $m_t$ divides $u^2 + ku + 1$, that is,
-$u^2 + ku + 1 \equiv 0 \pmod{m_t}$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 4.7. -/
-public theorem_wanted genMarkovCharNumber_sq_add (k : ℕ) (w : List Bool)
-    (ht : 0 < (fareyTree w).2.1.1) (ht1 : (fareyTree w).2.1.1 < (fareyTree w).2.1.2) (u : ℕ)
-    (hu : IsGenMarkovCharNumber (genMarkovTree k w).1 (genMarkovTree k w).2.1
-      (genMarkovTree k w).2.2 u) :
-    (genMarkovTree k w).2.1 ∣ u ^ 2 + k * u + 1
-
 /-- **The characteristic number is less than $m_t/2 - k$.** Let $k \in \mathbb{N}$, let $w$ be a
 finite sequence of left and right moves, let $(r, t, s)$ be the vertex of the Farey tree at $w$,
 and let $(m_r, m_t, m_s)$ be the vertex of the $k$-generalized Markov tree $\mathrm{MT}(k)$ at

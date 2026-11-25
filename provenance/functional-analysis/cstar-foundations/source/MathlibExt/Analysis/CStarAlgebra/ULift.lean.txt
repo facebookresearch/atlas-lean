@@ -1,0 +1,82 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.Classes
+public import Mathlib.Algebra.Star.StarAlgHom
+
+/-!
+# Plain C-star structure on the stock universe lift
+
+The existing ULift norm, ring and complex module are unchanged.
+These computed dictionaries are not registered as global instances.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+universe u v
+
+namespace NonUnitalCStarAlgebra
+
+/-- A genuine C-star dictionary on the stock lifted carrier. -/
+def ulift (A : Type u) [NonUnitalCStarAlgebra A] :
+    NonUnitalCStarAlgebra (ULift.{v} A) where
+  star x := ULift.up (star x.down)
+  star_involutive x := by
+    apply ULift.ext
+    exact star_star x.down
+  star_add x y := by
+    apply ULift.ext
+    exact star_add x.down y.down
+  star_mul x y := by
+    apply ULift.ext
+    exact star_mul x.down y.down
+  star_smul c x := by
+    apply ULift.ext
+    exact star_smul c x.down
+  smul_comm c x y := by
+    apply ULift.ext
+    exact smul_comm c x.down y.down
+  norm_mul_self_le x := by
+    change ‖x.down‖ * ‖x.down‖ ≤ ‖star x.down * x.down‖
+    exact (CStarRing.norm_star_mul_self (x := x.down)).symm.le
+
+/-- The literal up/down equivalence, with the computed lifted dictionary. -/
+def uliftStarAlgEquiv (A : Type u) [NonUnitalCStarAlgebra A] :
+    letI : NonUnitalCStarAlgebra (ULift.{v} A) := ulift A;
+    A ≃⋆ₐ[ℂ] ULift.{v} A := by
+  letI : NonUnitalCStarAlgebra (ULift.{v} A) := ulift A
+  let upHom : A →⋆ₙₐ[ℂ] ULift.{v} A :=
+    { toFun := ULift.up
+      map_zero' := rfl
+      map_add' := fun _ _ => rfl
+      map_mul' := fun _ _ => rfl
+      map_smul' := fun _ _ => rfl
+      map_star' := fun _ => rfl }
+  let downHom : ULift.{v} A →⋆ₙₐ[ℂ] A :=
+    { toFun := ULift.down
+      map_zero' := rfl
+      map_add' := fun _ _ => rfl
+      map_mul' := fun _ _ => rfl
+      map_smul' := fun _ _ => rfl
+      map_star' := fun _ => rfl }
+  exact StarAlgEquiv.ofNonUnitalStarAlgHom upHom downHom
+    (by ext x; rfl) (by ext x; rfl)
+
+@[simp]
+theorem uliftStarAlgEquiv_apply (A : Type u) [NonUnitalCStarAlgebra A] (a : A) :
+    letI : NonUnitalCStarAlgebra (ULift.{v} A) := ulift A;
+    uliftStarAlgEquiv A a = ULift.up a := by
+  rfl
+
+@[simp]
+theorem uliftStarAlgEquiv_symm_apply (A : Type u) [NonUnitalCStarAlgebra A]
+    (a : ULift.{v} A) :
+    letI : NonUnitalCStarAlgebra (ULift.{v} A) := ulift A;
+    (uliftStarAlgEquiv A).symm a = a.down := by
+  rfl
+
+end NonUnitalCStarAlgebra

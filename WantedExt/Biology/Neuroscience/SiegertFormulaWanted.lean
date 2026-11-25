@@ -29,6 +29,7 @@ Siegert formula", arXiv:1501.04032.
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Probability.Process.HittingTime
 public import MathlibExt.Probability.OrnsteinUhlenbeck
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
@@ -54,14 +55,21 @@ noncomputable def siegertTime (τ μ σ V₀ θ : ℝ) : ℝ :=
 noncomputable def voltage (τ μ V₀ : ℝ) (X : ℝ≥0 → Ω → ℝ) (t : ℝ≥0) (ω : Ω) : ℝ :=
   μ + (V₀ - μ) * exp (-(t : ℝ) / τ) + X t ω
 
-/-- The **firing time**: the first `t ≥ 0` with `V(t) ≥ θ` (`0` if there is none). -/
-noncomputable def firingTime (τ μ V₀ θ : ℝ) (X : ℝ≥0 → Ω → ℝ) (ω : Ω) : ℝ≥0 :=
-  sInf {t : ℝ≥0 | θ ≤ voltage τ μ V₀ X t ω}
+/-- The **firing time**: the first `t ≥ 0` with `V(t) ≥ θ`, as Mathlib's `hittingAfter` with
+values in `WithTop ℝ≥0` (`⊤` if the neuron never fires). -/
+noncomputable def firingTime (τ μ V₀ θ : ℝ) (X : ℝ≥0 → Ω → ℝ) : Ω → WithTop ℝ≥0 :=
+  hittingAfter (voltage τ μ V₀ X) (Set.Ici θ) 0
+
+/-- The finite value of the firing time as a real number (`untopD 0`: `0` on the event that the
+neuron never fires). -/
+noncomputable def firingTimeValue (τ μ V₀ θ : ℝ) (X : ℝ≥0 → Ω → ℝ) (ω : Ω) : ℝ :=
+  (WithTop.untopD (0 : ℝ≥0) (firingTime τ μ V₀ θ X ω) : ℝ≥0)
 
 /-- **Siegert formula** (Siegert 1951). Let `P` be a probability measure, `τ > 0`, `σ > 0`,
 `V₀ < θ`, and let `X` be an Ornstein–Uhlenbeck process started at `0` with rate `1/τ` and noise
 amplitude `σ / √τ` under `P`, every path of which is continuous. Then the firing time of
-`V(t) = μ + (V₀ - μ) e^{-t/τ} + X(t)` at threshold `θ` is integrable and its mean is
+`V(t) = μ + (V₀ - μ) e^{-t/τ} + X(t)` at threshold `θ` (with values in `WithTop ℝ≥0`) is finite
+almost surely, its finite value `firingTimeValue` is integrable, and its mean is
 `τ √π ∫_{(V₀-μ)/σ}^{(θ-μ)/σ} e^{u²} (1 + erf u) du`.
 
 Sources: Siegert (1951); arXiv:1501.04032. -/
@@ -69,7 +77,8 @@ public theorem_wanted integral_firingTime (P : Measure Ω) [IsProbabilityMeasure
     (τ μ σ V₀ θ : ℝ) (hτ : 0 < τ) (hσ : 0 < σ) (hV₀ : V₀ < θ) (X : ℝ≥0 → Ω → ℝ)
     (hX : IsOrnsteinUhlenbeckFromZero (1 / τ) (σ / √τ) X P)
     (hcont : ∀ ω, Continuous fun t => X t ω) :
-    Integrable (fun ω => (firingTime τ μ V₀ θ X ω : ℝ)) P ∧
-      ∫ ω, (firingTime τ μ V₀ θ X ω : ℝ) ∂P = siegertTime τ μ σ V₀ θ
+    (∀ᵐ ω ∂P, firingTime τ μ V₀ θ X ω ≠ ⊤) ∧
+      Integrable (firingTimeValue τ μ V₀ θ X) P ∧
+      ∫ ω, firingTimeValue τ μ V₀ θ X ω ∂P = siegertTime τ μ σ V₀ θ
 
 end WantedExt.Biology.Neuroscience.SiegertFormulaWanted

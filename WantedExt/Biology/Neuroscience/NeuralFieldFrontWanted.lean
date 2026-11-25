@@ -9,20 +9,20 @@ LICENSE file in the root directory of this source tree.
 /-
 # Ermentrout–McLeod: travelling fronts in a bistable neural field
 
-For the scalar neural field `u_t = -u + ∫ w(x - y) f(u(y, t)) dy` with a nonnegative,
-bounded, even, normalized spatial kernel `w` that is absolutely continuous with an integrable
-derivative, and a smooth increasing firing rate `f` such that `u = f(u)` has exactly
-three solutions `u₁ < u₂ < u₃`, the outer two stable (`f'(uᵢ) < 1`) and the middle one unstable
-(`f'(u₂) > 1`), Ermentrout and McLeod (1993) proved that there is a monotone travelling front
-`u(x, t) = U(x - ct)` connecting the two stable states, unique up to translation, with a unique
-speed `c`, whose sign is the sign of `∫_{u₁}^{u₃} (f(u) - u) du`.
+For the scalar neural field `u_t = -u + ∫ w(x - y) f(u(y, t)) dy` with a nonnegative, bounded, even,
+normalized spatial kernel `w` that is absolutely continuous with an integrable derivative, and a
+smooth firing rate `f` that is increasing on `[u₁, u₃]`, where `u = f(u)` has exactly the three
+solutions `u₁ < u₂ < u₃` in `[u₁, u₃]`, with the two endpoints stable (`f'(uᵢ) < 1`), Ermentrout and
+McLeod (1993) proved that there is a monotone travelling front `u(x, t) = U(x - ct)` connecting the
+two stable states, unique up to translation, with a unique speed `c`, whose sign is the sign of
+`∫_{u₁}^{u₃} (f(u) - u) du`.
 
 Conventions fixed here: the profile `U` is nonincreasing with `U(-∞) = u₃` and `U(+∞) = u₁`, so
 `c > 0` means the upper state invades the lower one. The firing rate is assumed continuously
-differentiable with `f' > 0`. In the source the response to past input is a general temporal
-kernel with a finite first moment; this module is its specialization to the exponential kernel,
-which gives the equation above. This is the bistable front problem, not the monostable Fisher–KPP
-speed result of `Domains.Biology.Dynamics.FisherKPP`.
+differentiable, with `f' > 0` on `[u₁, u₃]`. In the source the response to past input is a general
+temporal kernel with a finite first moment; this module is its specialization to the exponential
+kernel, which gives the equation above. This is the bistable front problem, not the monostable
+Fisher–KPP speed result of `Domains.Biology.Dynamics.FisherKPP`.
 
 Sources: G. B. Ermentrout and J. B. McLeod, "Existence and uniqueness of travelling waves for a
 neural network", Proc. Roy. Soc. Edinburgh Sect. A 123 (1993) 461–478.
@@ -51,19 +51,20 @@ structure IsNeuralKernel (w : ℝ → ℝ) : Prop where
   integral_eq_one : ∫ x, w x = 1
   absolutelyContinuous : ∃ w' : ℝ → ℝ, Integrable w' ∧ ∀ x, w x = w 0 + ∫ y in (0 : ℝ)..x, w' y
 
-/-- Standing hypotheses on the firing rate: `f` is `C¹` with `f' > 0`, and `u = f(u)` has exactly
-the three solutions `u₁ < u₂ < u₃`, with `f'(u₁) < 1`, `f'(u₃) < 1` and `f'(u₂) > 1`. -/
+/-- Standing hypotheses on the firing rate (Ermentrout and McLeod 1993): `f` is `C¹`, and on the
+state interval `[u₁, u₃]` it has `f' > 0` and exactly the three fixed points `u₁ < u₂ < u₃`, with
+the endpoints stable: `f'(u₁) < 1` and `f'(u₃) < 1`. Nothing is assumed about `f'(u₂)` or about
+fixed points outside `[u₁, u₃]`. -/
 structure IsBistable (f : ℝ → ℝ) (u₁ u₂ u₃ : ℝ) : Prop where
   contDiff : ContDiff ℝ 1 f
-  deriv_pos : ∀ u, 0 < deriv f u
+  deriv_pos : ∀ u ∈ Set.Icc u₁ u₃, 0 < deriv f u
   lt₁₂ : u₁ < u₂
   lt₂₃ : u₂ < u₃
   fixed₁ : f u₁ = u₁
   fixed₂ : f u₂ = u₂
   fixed₃ : f u₃ = u₃
-  fixed_only : ∀ u, f u = u → u = u₁ ∨ u = u₂ ∨ u = u₃
+  fixed_only : ∀ u ∈ Set.Icc u₁ u₃, f u = u → u = u₁ ∨ u = u₂ ∨ u = u₃
   stable₁ : deriv f u₁ < 1
-  unstable₂ : 1 < deriv f u₂
   stable₃ : deriv f u₃ < 1
 
 /-- `U` is the profile of a **travelling front** with speed `c` from `u₃` to `u₁`: `U` is
@@ -76,11 +77,11 @@ def IsTravellingFront (w f : ℝ → ℝ) (u₁ u₃ c : ℝ) (U : ℝ → ℝ) 
 
 /-- **Existence and uniqueness of the bistable front** (Ermentrout and McLeod 1993). Let `w` be
 nonnegative, bounded, even and integrable with `∫ w = 1`, and absolutely continuous with an
-integrable derivative (`w x = w 0 + ∫_0^x w'`, `w'` integrable), and let `f`
-be `C¹` with `f' > 0` whose fixed points are exactly `u₁ < u₂ < u₃`, with `f'(u₁) < 1`,
-`f'(u₃) < 1`, `f'(u₂) > 1`. Then there are a speed `c` and a profile `U` of a travelling front
-from `u₃` to `u₁`; every travelling front from `u₃` to `u₁`, with speed `c'` and profile `U'`, has
-`c' = c` and `U' = U(· + ξ)` for some `ξ`; and `c > 0 ↔ ∫_{u₁}^{u₃} (f(u) - u) du > 0` and
+integrable derivative (`w x = w 0 + ∫_0^x w'`, `w'` integrable), and let `f` be `C¹` with `f' > 0`
+on `[u₁, u₃]` and with exactly the fixed points `u₁ < u₂ < u₃` in `[u₁, u₃]`, where `f'(u₁) < 1` and
+`f'(u₃) < 1`. Then there are a speed `c` and a profile `U` of a travelling front from `u₃` to `u₁`;
+every travelling front from `u₃` to `u₁`, with speed `c'` and profile `U'`, has `c' = c` and
+`U' = U(· + ξ)` for some `ξ`; and `c > 0 ↔ ∫_{u₁}^{u₃} (f(u) - u) du > 0` and
 `c = 0 ↔ ∫_{u₁}^{u₃} (f(u) - u) du = 0`.
 
 Source: Ermentrout and McLeod (1993). -/
