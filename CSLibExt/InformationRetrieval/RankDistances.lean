@@ -31,6 +31,7 @@ public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Int.Order.Basic
 public import Mathlib.Order.Interval.Finset.Fin
+public import MathlibExt.Combinatorics.Enumerative.PermutationInversions
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Tactic.Ring
@@ -56,13 +57,13 @@ instance discordantDecidable {n : ℕ} (σ τ : Equiv.Perm (Fin n)) (i j : Fin n
 /-- Kendall's tau distance: the number of unordered pairs of distinct
 items whose relative order differs between `σ` and `τ`, counted here as
 pairs `(i, j)` with `i < j` in the index order. -/
-noncomputable def kendallTau {n : ℕ} (σ τ : Equiv.Perm (Fin n)) : ℕ :=
+def kendallTau {n : ℕ} (σ τ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter (fun p : Fin n × Fin n => p.1 < p.2 ∧ Discordant σ τ p.1 p.2)).card
 
 /-- Spearman's footrule: the `L1` distance `∑ i, |σ i - τ i|` between
 the two rankings, with ranks read through `Fin.val` and the absolute
 difference taken in `ℤ`. -/
-noncomputable def spearmanFootrule {n : ℕ} (σ τ : Equiv.Perm (Fin n)) : ℕ :=
+def spearmanFootrule {n : ℕ} (σ τ : Equiv.Perm (Fin n)) : ℕ :=
   ∑ i, Int.natAbs ((σ i).val - (τ i).val : ℤ)
 
 /-- No pair is discordant between a ranking and itself. -/
@@ -406,14 +407,10 @@ theorem discordant_one_of_lt {n : ℕ} (π : Equiv.Perm (Fin n)) {i j : Fin n}
   · intro h
     exact Or.inr ⟨h, hij⟩
 
-/-- Inversion count of `π`: pairs `i < j` with `π j < π i`. -/
-def inversionCount {n : ℕ} (π : Equiv.Perm (Fin n)) : ℕ :=
-  (Finset.univ.filter (fun p : Fin n × Fin n => p.1 < p.2 ∧ π p.2 < π p.1)).card
-
 /-- Kendall's tau against the identity is the inversion count. -/
 theorem kendallTau_one_eq {n : ℕ} (π : Equiv.Perm (Fin n)) :
-    kendallTau π 1 = inversionCount π := by
-  unfold kendallTau inversionCount
+    kendallTau π 1 = MetaMathlibExt.permInversionCount π := by
+  unfold kendallTau MetaMathlibExt.permInversionCount MetaMathlibExt.permInversions
   congr 1
   ext p
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
@@ -589,27 +586,27 @@ theorem fiber_snd_card {n : ℕ} (π : Equiv.Perm (Fin n)) (b : Fin n) :
 
 /-- Summing `R` over all positions gives the inversion count. -/
 theorem sum_rightCount_eq {n : ℕ} (π : Equiv.Perm (Fin n)) :
-    ∑ j, rightCount π j = inversionCount π := by
+    ∑ j, rightCount π j = MetaMathlibExt.permInversionCount π := by
   have hmaps : Set.MapsTo Prod.fst
       ((↑(Finset.univ.filter
         (fun p : Fin n × Fin n => p.1 < p.2 ∧ π p.2 < π p.1)) : Set (Fin n × Fin n)))
       ((↑(Finset.univ : Finset (Fin n)) : Set (Fin n))) :=
     fun x _ => Finset.mem_coe.mpr (Finset.mem_univ _)
   have hfib := Finset.card_eq_sum_card_fiberwise hmaps
-  unfold inversionCount
+  unfold MetaMathlibExt.permInversionCount MetaMathlibExt.permInversions
   rw [hfib]
   exact Finset.sum_congr rfl (fun b _ => (fiber_fst_card π b).symm)
 
 /-- Summing `L` over all positions gives the inversion count. -/
 theorem sum_leftCount_eq {n : ℕ} (π : Equiv.Perm (Fin n)) :
-    ∑ j, leftCount π j = inversionCount π := by
+    ∑ j, leftCount π j = MetaMathlibExt.permInversionCount π := by
   have hmaps : Set.MapsTo Prod.snd
       ((↑(Finset.univ.filter
         (fun p : Fin n × Fin n => p.1 < p.2 ∧ π p.2 < π p.1)) : Set (Fin n × Fin n)))
       ((↑(Finset.univ : Finset (Fin n)) : Set (Fin n))) :=
     fun x _ => Finset.mem_coe.mpr (Finset.mem_univ _)
   have hfib := Finset.card_eq_sum_card_fiberwise hmaps
-  unfold inversionCount
+  unfold MetaMathlibExt.permInversionCount MetaMathlibExt.permInversions
   rw [hfib]
   exact Finset.sum_congr rfl (fun b _ => (fiber_snd_card π b).symm)
 
@@ -621,7 +618,7 @@ theorem upper_bound_one {n : ℕ} (π : Equiv.Perm (Fin n)) :
       ∑ i, (leftCount π i + rightCount π i) :=
     Finset.sum_le_sum (fun i (_ : i ∈ Finset.univ) => natAbs_disp_le π i)
   have hLR : (∑ i, (leftCount π i + rightCount π i)) =
-      inversionCount π + inversionCount π := by
+      MetaMathlibExt.permInversionCount π + MetaMathlibExt.permInversionCount π := by
     rw [Finset.sum_add_distrib, sum_leftCount_eq, sum_rightCount_eq]
   omega
 
@@ -739,12 +736,12 @@ theorem lower_bound_one {n : ℕ} (π : Equiv.Perm (Fin n)) :
     simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hq ⊢
     rintro ⟨-, -, hle⟩
     exact absurd hle (not_le_of_gt hq.2.2)
-  have hinv : inversionCount π =
+  have hinv : MetaMathlibExt.permInversionCount π =
       (Finset.univ.filter
         (fun p : Fin n × Fin n => p.1 < p.2 ∧ π p.2 < π p.1 ∧ π p.2 < p.1)).card +
       (Finset.univ.filter
         (fun p : Fin n × Fin n => p.1 < p.2 ∧ π p.2 < π p.1 ∧ p.1 ≤ π p.2)).card := by
-    unfold inversionCount
+    unfold MetaMathlibExt.permInversionCount MetaMathlibExt.permInversions
     rw [hunion, Finset.card_union_of_disjoint hdisj]
   have hsumA : (Finset.univ.filter
         (fun p : Fin n × Fin n => p.1 < p.2 ∧ π p.2 < π p.1 ∧ π p.2 < p.1)).card ≤
