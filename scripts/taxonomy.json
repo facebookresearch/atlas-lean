@@ -12627,6 +12627,7 @@
   "MathlibExt/NumberTheory/FermatQuotient": {"to": "NumberTheory/congruences/congruences-modular-arithmetic", "title": "Fermat quotients"},
   "MathlibExt/NumberTheory/FermatResiduePeriod": {"to": "NumberTheory/primes-primality/special-primes", "title": "Fermat numbers"},
   "MathlibExt/NumberTheory/FermatSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Dold and realizable sequences"},
+  "MathlibExt/NumberTheory/FibonacciCompanionCompositionSum": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Toeplitz–Hessenberg determinants of recurrences"},
   "MathlibExt/NumberTheory/FibonacciFactorialSeries": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci series for π²"},
   "MathlibExt/NumberTheory/FibonacciDivGoldenRatio": {"to": "Combinatorics/ramsey-theory/van-der-waerden-theorems", "title": "Accessible sets and diffsequences"},
   "MathlibExt/NumberTheory/FibonacciGeneratingFunctions": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Integer values of recurrence generating functions"},
