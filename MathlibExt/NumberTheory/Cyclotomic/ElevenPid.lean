@@ -113,7 +113,6 @@ private theorem isPrincipal_of_liesOver_twentythree (P : Ideal (𝓞 K)) [hP : P
     [hP23 : P.LiesOver (span {(23 : ℤ)})] : Submodule.IsPrincipal P := by
   have hζ := hK.zeta_spec
   set z : 𝓞 K := hζ.toInteger with hz
-
   have hrel : z ^ 10 + z ^ 9 + z ^ 8 + z ^ 7 + z ^ 6 + z ^ 5 + z ^ 4 + z ^ 3 + z ^ 2 + z
       + 1 = 0 := by
     have h := hζ.geom_sum_eq_zero (by norm_num : 1 < 11)
@@ -123,7 +122,6 @@ private theorem isPrincipal_of_liesOver_twentythree (P : Ideal (𝓞 K)) [hP : P
     refine (map_eq_zero_iff (algebraMap (𝓞 K) K) (RingOfIntegers.coe_injective)).mp ?_
     simp only [map_add, map_pow, map_one, hzK]
     linear_combination h
-
   let pb := hζ.integralPowerBasis
   have hgen : pb.gen = z := by rw [hz]; exact hζ.integralPowerBasis_gen
   have hmin : minpoly ℤ pb.gen = cyclotomic 11 ℤ := by
@@ -136,17 +134,15 @@ private theorem isPrincipal_of_liesOver_twentythree (P : Ideal (𝓞 K)) [hP : P
     decide
   let f23 : 𝓞 K →ₐ[ℤ] ZMod 23 := pb.lift 4 h4
   have hφz : f23 z = 4 := by rw [← hgen]; exact pb.lift_gen 4 h4
-
   set P₀ : Ideal (𝓞 K) := RingHom.ker f23.toRingHom with hP₀
-  haveI hP₀prime : P₀.IsPrime := RingHom.ker_isPrime _
-  haveI hP₀over : P₀.LiesOver (span {(23 : ℤ)}) := by
+  have hP₀prime : P₀.IsPrime := RingHom.ker_isPrime _
+  have hP₀over : P₀.LiesOver (span {(23 : ℤ)}) := by
     refine ⟨?_⟩
     rw [Ideal.under_def, hP₀, RingHom.comap_ker]
     have : f23.toRingHom.comp (algebraMap ℤ (𝓞 K)) = Int.castRingHom (ZMod 23) :=
       RingHom.ext_int _ _
     rw [this, ZMod.ker_intCastRingHom]
     rfl
-
   set α : 𝓞 K := z ^ 3 + z + 1 with hα
   set β : 𝓞 K := -15 * z ^ 9 - 6 * z ^ 8 - 16 * z ^ 7 - 10 * z ^ 6 - 9 * z ^ 5 - 5 * z ^ 4
     - 12 * z ^ 3 - 17 * z ^ 2 - 14 * z - 2 with hβ
@@ -156,7 +152,6 @@ private theorem isPrincipal_of_liesOver_twentythree (P : Ideal (𝓞 K)) [hP : P
     rw [hα, hβ]; linear_combination (-15 * z ^ 2 + 9 * z - 25) * hrel
   have hαγ : α * γ = z - 4 := by
     rw [hα, hγ]; linear_combination (3 * z ^ 2 - 2 * z + 5) * hrel
-
   have hP₀eq : P₀ = span {α} := by
     apply le_antisymm
     · intro x hx
@@ -168,7 +163,6 @@ private theorem isPrincipal_of_liesOver_twentythree (P : Ideal (𝓞 K)) [hP : P
         simpa using this
       rw [e4, ZMod.intCast_zmod_eq_zero_iff_dvd] at hx0
       obtain ⟨m, hm⟩ := hx0
-
       obtain ⟨q, hq⟩ := X_sub_C_dvd_sub_C_eval (p := b) (a := (4 : ℤ))
       have hb : b = (X - C 4) * q + C (b.eval 4) := by rw [← hq]; ring
       have ex : aeval pb.gen b = (z - 4) * aeval z q + ((b.eval 4 : ℤ) : 𝓞 K) := by
@@ -180,25 +174,24 @@ private theorem isPrincipal_of_liesOver_twentythree (P : Ideal (𝓞 K)) [hP : P
       push_cast
       linear_combination (aeval z q) * hαγ + (m : 𝓞 K) * hαβ
     · rw [span_le, Set.singleton_subset_iff]
-      show f23 α = 0
+      change f23 α = 0
       rw [hα]
       simp only [map_add, map_pow, map_one, hφz]
       decide
-
-  haveI : IsGalois ℚ K := IsCyclotomicExtension.isGalois {(11 : ℕ)} ℚ K
+  have : IsGalois ℚ K := IsCyclotomicExtension.isGalois {(11 : ℕ)} ℚ K
   obtain ⟨σ, hσ⟩ := Ideal.exists_smul_eq_of_isGaloisGroup (span {(23 : ℤ)}) P₀ P Gal(K/ℚ)
   refine ⟨⟨σ • α, ?_⟩⟩
   rw [← hσ, hP₀eq, Ideal.submodule_span_eq, Ideal.smul_closure, Set.smul_set_singleton]
 
 variable (K) in
-
-theorem eleven_pid_aux : IsPrincipalIdealRing (𝓞 K) := by
-  refine RingOfIntegers.isPrincipalIdealRing_of_isPrincipal_of_pow_le_of_mem_primesOver_of_mem_Icc
+private theorem eleven_pid_aux : IsPrincipalIdealRing (𝓞 K) := by
+  open NumberField.RingOfIntegers in
+  refine isPrincipalIdealRing_of_isPrincipal_of_pow_le_of_mem_primesOver_of_mem_Icc
     (fun p hple hp P hPmem hle ↦ ?_)
   rw [m11] at hple hle
-  haveI : Fact p.Prime := ⟨hp⟩
-  haveI : P.IsPrime := hPmem.1
-  haveI : P.LiesOver (span {(p : ℤ)}) := hPmem.2
+  have : Fact p.Prime := ⟨hp⟩
+  have : P.IsPrime := hPmem.1
+  have : P.LiesOver (span {(p : ℤ)}) := hPmem.2
   by_cases h11 : p = 11
   · subst h11
     exact ⟨⟨hK.zeta_spec.toInteger - 1, by
