@@ -5,13 +5,13 @@ For a multisite post-translational modification system of the class considered b
 ## Expansion
 
 1. The model: modforms, enzyme mechanisms in the source's class, mass-action steady states and the projectivized variety of modform concentrations.
-2. The linear framework: steady states of each enzyme's action as a Laplacian on a labelled graph, solved by the matrix-tree theorem (see the [Markov chain tree theorem](../../../Biology/systems-biology/stochastic-mass-action-metabolic-control-and-flu/tree-weight-vec-mul-eq-zero.md)).
+2. The linear framework: steady states of each enzyme's action as a Laplacian on a labelled graph, solved by the matrix-tree theorem (see the [Markov chain tree theorem](../../stochastic-mass-action-metabolic-control-and-flu/tree-weight-vec-mul-eq-zero.md)).
 3. The rational parameterisation and its domain of definition.
 4. Consequences for multistability (the number of steady states can grow with the number of sites), as separate statements.
 
 ## Proof depends on
 
-- [Markov chain tree theorem](../../../Biology/systems-biology/stochastic-mass-action-metabolic-control-and-flu/tree-weight-vec-mul-eq-zero.md)
+- [Markov chain tree theorem](../../stochastic-mass-action-metabolic-control-and-flu/tree-weight-vec-mul-eq-zero.md)
 
 ## Sources
 

@@ -7,7 +7,7 @@ For the mass action model $\Sigma(\kappa, C)$ of the $n$-site sequential distrib
 1. The model: the $n$-site cycle, its mass action equations and the three conservation laws.
 2. The reduction of positive steady states to positive roots of a one-variable polynomial of degree $2n + 1$, and the count giving at most $2n - 1$ (proof of Theorem 3).
 3. The lower bound (Theorem 1) by perturbation of a polynomial with prescribed roots, and the regime bounds (Theorems 4 and 5).
-4. Whether the bound $2n - 1$ is attained for every $n$ is the question of [maximal multistationarity of multisite phosphorylation](../../../Biology/systems-biology/maximal-multistationarity-of-multisite-phosphorylation.md).
+4. Whether the bound $2n - 1$ is attained for every $n$ is the question of [maximal multistationarity of multisite phosphorylation](../../maximal-multistationarity-of-multisite-phosphorylation.md).
 
 ## Sources
 

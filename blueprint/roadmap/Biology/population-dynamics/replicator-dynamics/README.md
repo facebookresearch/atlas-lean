@@ -26,3 +26,4 @@
 - [Permanence of replicator equations by average Lyapunov functions](permanence-criterion-via-average-lyapunov-functions-hofbauer-1981-jans.md)
 - [Rock–paper–scissors replicator dynamics and the sign of det A](rock-paper-scissors-replicator-trichotomy-by-the-sign-of-det-a-zeeman.md)
 - [The folk theorem of evolutionary game dynamics](folk-theorem-of-evolutionary-game-dynamics.md)
+- [Evolutionarily stable strategies](evolutionarily-stable-strategies/README.md)

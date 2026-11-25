@@ -30,5 +30,3 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 - [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
 - [Exactness of the SSA path law](exactness-of-the-ssa-path-law.md)
 - [Total-variation error of a finite-precision SSA step](total-variation-error-of-a-finite-precision-ssa-step.md)
-- [Multisite phosphorylation](multisite-phosphorylation/README.md)
-- [Kinetic proofreading](kinetic-proofreading/README.md)

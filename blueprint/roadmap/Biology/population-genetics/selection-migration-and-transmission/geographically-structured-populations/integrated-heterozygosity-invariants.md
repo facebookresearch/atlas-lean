@@ -1,6 +1,6 @@
 # Invariance of integrated heterozygosity under geographical structure
 
-In the neutral structured diffusion with conservative migration and census weights $w_i = \kappa_i/K$, let $H(x) = \sum_iw_ix_i(1 - x_i)$ be the census-weighted local heterozygosity (one half of the mean probability that two genes drawn from the same deme differ), $\bar x = \sum_iw_ix_i$ the total frequency, and $\tau$ the absorption time. For every continuous $g$ on $[0, 1]$,
+In the neutral structured diffusion with conservative migration, a connected migration graph (the rate matrix $Q = (q_{ij})$ irreducible, so that the process is absorbed at a monomorphic state almost surely) and census weights $w_i = \kappa_i/K$, let $H(x) = \sum_iw_ix_i(1 - x_i)$ be the census-weighted local heterozygosity (one half of the mean probability that two genes drawn from the same deme differ), $\bar x = \sum_iw_ix_i$ the total frequency, and $\tau$ the absorption time. For every continuous $g$ on $[0, 1]$,
 
 $$E_x\int_0^\tau g(\bar x(t))\,H(x(t))\,dt = 2K\int_0^1\min(p, y)\bigl(1 - \max(p, y)\bigr)g(y)\,dy, \qquad p = \bar x(0).$$
 

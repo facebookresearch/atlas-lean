@@ -59,7 +59,7 @@
 ## Effect measures and mediation
 
 - [Collapsibility of effect measures without confounding](collapsibility-odds-ratio-non-collapsibility-without-confounding.md)
-- [Natural direct and indirect effects: decomposition and identification by adjustment](natural-direct-and-indirect-effects-mediation-formula.md)
+- [Natural direct and indirect effects: decomposition of the total effect](natural-direct-and-indirect-effects-mediation-formula.md)
 
 ## Truncated endpoints at a horizon
 

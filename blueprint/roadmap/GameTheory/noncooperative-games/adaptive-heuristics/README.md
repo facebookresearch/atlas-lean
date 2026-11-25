@@ -24,3 +24,4 @@ Adaptive heuristics are simple, myopic rules of behaviour for repeated games tha
 - [No-regret dynamics](../no-regret-dynamics/README.md): unconditional regrets, Hannan consistency and coarse correlated equilibria.
 - [Hedge algorithm](../../../ComputerScience/machine-learning/online-learning-and-boosting/hedge-algorithm/README.md): a Hannan-consistent (no external regret) algorithm, an alternative to unconditional regret matching.
 - [Nash's theorem](../nash-s-theorem/README.md): the equilibria that uncoupled dynamics cannot guarantee to reach.
+- [Press–Dyson zero-determinant strategies](press-dyson-zero-determinant-strategies-enforce-linear-payoff-relation.md)

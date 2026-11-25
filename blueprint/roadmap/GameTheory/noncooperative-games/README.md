@@ -25,8 +25,6 @@ Every finite game has a mixed equilibrium ([Nash's theorem](nash-s-theorem/READM
 - [Polynomial-time verification of (approximate) equilibria](polynomial-time-verification-of-equilibria.md)
 - [Optimal mixed strategy to commit to (two-player normal form)](optimal-mixed-strategy-to-commit-to.md)
 - [Commitment is worth at least any Nash equilibrium](commitment-is-worth-at-least-any-nash-equilibrium.md)
-- [Evolutionarily stable strategies](evolutionarily-stable-strategies/README.md)
-- [Press–Dyson zero-determinant strategies](press-dyson-zero-determinant-strategies-enforce-linear-payoff-relation.md)
 
 ## Related topics
 

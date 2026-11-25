@@ -7,7 +7,7 @@ For a mass action system with $m$ complexes and complex-to-species rate matrix $
 1. The model: mass action systems, the matrix $\Sigma$, the steady-state ideal and toric steady states.
 2. Conditions 3.1, 3.4 and 3.6 with their linear-algebra data, and Lemma 3.5 for checking Condition 3.4.
 3. The criterion (Theorem 3.8) and the monomial parametrization (Theorem 3.11).
-4. The application to the $n$-site phosphorylation system (Theorem 4.3), with its explicit parametrization; compare [rational parameterisation of multisite modification steady states](../../../Biology/systems-biology/multisite-phosphorylation/rational-parameterisation-theorem-for-multisite-ptm-systems.md).
+4. The application to the $n$-site phosphorylation system (Theorem 4.3), with its explicit parametrization; compare [rational parameterisation of multisite modification steady states](multisite-phosphorylation/rational-parameterisation-theorem-for-multisite-ptm-systems.md).
 
 ## Sources
 

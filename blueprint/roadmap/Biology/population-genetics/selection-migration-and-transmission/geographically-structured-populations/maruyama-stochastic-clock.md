@@ -1,6 +1,6 @@
 # A random clock for the total allele frequency in a structured population
 
-In the neutral structured diffusion with conservative migration and census weights $w_i = \kappa_i/K$ (generator as in the invariance of fixation probabilities with $\alpha = 0$), the total frequency $\bar x = \sum_iw_ix_i$ is a continuous martingale whose quadratic variation grows at rate $H(x)/K$, where $H(x) = \sum_iw_ix_i(1 - x_i)$. By concavity of $y \mapsto y(1 - y)$, $H(x) \le \bar x(1 - \bar x)$, with equality exactly when all demes have the same frequency. Define the nondecreasing random clock
+In the neutral structured diffusion with conservative migration, a connected migration graph (the rate matrix $Q = (q_{ij})$ irreducible, as in the invariance of fixation probabilities) and census weights $w_i = \kappa_i/K$ (generator as in the invariance of fixation probabilities with $\alpha = 0$), the total frequency $\bar x = \sum_iw_ix_i$ is a continuous martingale whose quadratic variation grows at rate $H(x)/K$, where $H(x) = \sum_iw_ix_i(1 - x_i)$. By concavity of $y \mapsto y(1 - y)$, $H(x) \le \bar x(1 - \bar x)$, with equality exactly when all demes have the same frequency. Define the nondecreasing random clock
 
 $$A(t) = \int_0^{t \wedge \tau}\frac{H(x(s))}{\bar x(s)(1 - \bar x(s))}\,ds \le t \wedge \tau,$$
 
