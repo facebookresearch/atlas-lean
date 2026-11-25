@@ -87,8 +87,9 @@ variable {P Q : RelativePair (k := k)} {W0 : SingularTarget P Q}
   {Z : RubberVirtualClassModels.Point D K}
   (V : LiSourceQualifiedVirtualModels.VirtualData N.parentModel D K M.finiteType Z)
 
-/-- The actual cochain projection cone(derivative)[-1] to the original total source.
-The minus cancels Mathlib's left-shift sign, so this is the literal cone first projection. -/
+/-- The projection $\operatorname{cone}(d)[-1] \to E$, where $d : E \to B$ is the derivative of
+`N`, from its total complex $E$ to the base complex $B$: in degree $n$ it is the projection of
+$\operatorname{cone}(d)[-1]^n = E^n \oplus B^{n-1}$ onto $E^n$, with no sign. -/
 def centralProjection : LiCentralSourceModels.centralComplex W S beta M N.derivative ⟶
     N.total.native.global :=
   -Cocycle.homOf ((CochainComplex.mappingCone.fst N.derivative.map).leftShift (-1) 0 (by omega))

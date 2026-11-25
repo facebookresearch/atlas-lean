@@ -1,6 +1,5 @@
 # Prime Point
 
-Codimension-one points: in Mathlib's specialization order on a scheme
-(`x ≤ y` when `x` lies in the closure of `y`, so the generic point is the top),
-`Order.coheight x` is the codimension of `x`. This is the convention of
-`AlgebraicGeometry.AlgebraicCycle.IsWeilDivisor` and of `Scheme.ord`.
+The codimension-one points of $V$: the points $x$ with $\operatorname{coheight}(x) = 1$ in the
+specialization order ($x \le y$ when $x$ lies in the closure of $y$, so the generic point is the
+top), in which the coheight of a point is its codimension.

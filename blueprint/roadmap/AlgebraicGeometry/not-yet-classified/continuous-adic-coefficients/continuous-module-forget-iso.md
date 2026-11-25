@@ -1,4 +1,5 @@
 # Continuous Module Forget Iso
 
-Forgetting the module structure gives Mathlib's presheaf of continuous maps, which is an fpqc
-sheaf.
+The identity isomorphism between the presheaf of `R`-modules `U ↦ C(U, M)` on schemes,
+composed with the forgetful functor to types, and the presheaf of continuous maps `U ↦ C(U, M)`
+(`continuousMapPresheaf M`).

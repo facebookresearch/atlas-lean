@@ -1,4 +1,6 @@
 # Field Geometric Class
 
-Every cocycle has an actual geometric Ext class inside the normalized provider.
-This is computed from its Čech roof, rather than being a separately supplied class map.
+The class in $H^2_{\mathrm{et}}(\operatorname{Spec} K, \mathbb{G}_m)$ of a continuous
+two-cocycle $c$ of the absolute Galois group of $K$ with values in $(K^{\mathrm{sep}})^\times$:
+the Čech class of the realization of $c$ on a finite Galois covering of $\operatorname{Spec} K$
+that `B` assigns to $c$.

@@ -1,0 +1,3 @@
+# UNIT-TIME PARALLEL BATCHING WITH CHAINS, TOTAL TARDINESS as a decision problem
+
+The decision problem UNIT-TIME PARALLEL BATCHING WITH CHAINS, TOTAL TARDINESS accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of pairs of a unit-task tardiness instance with precedence and a natural number, to an instance that is well-formed and feasible for UNIT-TIME PARALLEL BATCHING WITH CHAINS, TOTAL TARDINESS. It rejects every bitstring that does not decode to such an instance.

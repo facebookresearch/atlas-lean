@@ -81,9 +81,12 @@ def primitiveValue (F : FrobeniusLayer K E) (π : Kˣ)
 
 end Layers
 
-/-- Actual unramified cyclic source layers of a specified positive degree.
-The provider requests construct these in the same separable closure, so the
-Frobenius normalization has explicit source instances at every degree. -/
+/-- An unramified cyclic extension of degree `n` of a nonarchimedean local field `K`, inside its
+separable closure: an intermediate field `E` of `K^sep / K`, finite and Galois over `K`, with a
+valuative relation and a topology making it a nonarchimedean local field that valuatively extends
+`K`; a Frobenius layer on `E` (`FrobeniusLayer`: `E / K` is unramified, with an arithmetic
+Frobenius and an isomorphism of `Gal(E/K)` with `ℤ/[E:K]` sending Frobenius to `1`); and the
+equality `[E : K] = n`. -/
 structure UnramifiedLayerData (n : ℕ) where
   E : IntermediateField K (SeparableClosure K)
   [finite : FiniteDimensional K E]

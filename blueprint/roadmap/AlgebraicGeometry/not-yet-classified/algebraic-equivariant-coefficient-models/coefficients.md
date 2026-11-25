@@ -1,4 +1,4 @@
 # Coefficients
 
-The localized coefficients `ℚ[X, X⁻¹]`; Mathlib's `LaurentPolynomial.isLocalization` makes
-them the localization of `ℚ[X]` at `X`.
+The coefficient ring `ℚ[X, X⁻¹]` of Laurent polynomials over `ℚ`: the localization of `ℚ[X]`
+obtained by inverting `X` (`LaurentPolynomial.isLocalization`).

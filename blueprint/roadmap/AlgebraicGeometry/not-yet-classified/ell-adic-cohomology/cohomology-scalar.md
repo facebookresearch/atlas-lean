@@ -1,4 +1,5 @@
 # Cohomology Scalar
 
-The canonical scalar action induced by `Sheaf.H.map` on
-Mathlib's carrier.
+The additive endomorphism of `H^n(X, ℤ_ℓ)` (`X.EllAdicCohomology ℓ n`) induced on
+degree-`n` sheaf cohomology by multiplication by `a` on the universe-lifted coefficient sheaf
+(`liftedScalar`).

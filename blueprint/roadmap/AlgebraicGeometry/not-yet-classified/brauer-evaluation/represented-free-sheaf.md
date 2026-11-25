@@ -1,4 +1,5 @@
 # Represented Free Sheaf
 
-The free abelian sheaf on the actual represented scheme functor.
-This is Mathlib's `H'` construction with the necessary universe lift.
+The functor sending a scheme $X$ to the free abelian sheaf $\mathbb{Z}[h_X]$ on the big étale
+site of schemes: the sheafification of the presheaf $T \mapsto \mathbb{Z}[\mathrm{Hom}(T, X)]$ of
+free abelian groups on the morphisms $T \to X$.

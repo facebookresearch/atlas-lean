@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.MonochromaticLinearEquations.Recolouring
+public import MathlibExt.Combinatorics.MonochromaticLinearEquations.OneTwo
 
 /-!
 # Uncommon linear equations over the integers
@@ -49,13 +49,5 @@ public theorem_wanted isUncommonOverIntegers_of_not_hasCancelingPartition (m : �
     (hsign : ∃ i j, a i < 0 ∧ 0 < a j) (hcan : ¬ HasCancelingPartition a) (r : ℕ)
     (hr : 2 ≤ r) :
     IsUncommonOverIntegers a r
-
-/-- **Uncommonness of $x + 2y - z - 2w = 0$ over the integers.** For every $r \ge 2$,
-the equation $x + 2y - z - 2w = 0$ is $r$-uncommon over the integers.
-
-Source: Laurence P. Wijaya, *On Monochromatic Solutions of Linear Equations Using at Least
-Three Colors*, INTEGERS 25 (2025), Article A88, Corollary 2 (`integers-2025-A88-cor-2`). -/
-public theorem_wanted isUncommonOverIntegers_one_two_neg_one_neg_two (r : ℕ) (hr : 2 ≤ r) :
-    IsUncommonOverIntegers (![1, 2, -1, -2] : Fin 4 → ℤ) r
 
 end MetaMathlibExt
