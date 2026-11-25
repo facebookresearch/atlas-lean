@@ -86864,6 +86864,7 @@
 "Polynomial.tsum_mul_eval_eq_zpow_mul_eval_of_recurrence": "094f049879e85b3f",
 "Polynomial.unique_irreducible_separable_expand_eq": "ac7817ab8d6255d0",
 "PositiveLinearMap.exists_gns_cyclic_vector": "9da5d2af9a4a12f5",
+"PowerSeries.binomialSeries_subst_mul": "d71b7031fcd4135c",
 "PowerSeries.isAdicComplete_quotient_span_X_sub_C_of_irreducible": "5da5f0f5d9902503",
 "PowerSeries.isDiscreteValuationRing_quotient_span_X_sub_C_pow_of_irreducible": "0e370dfb0e0d4d29",
 "PowerSeries.isRegularLocalRing_powerSeries": "132051ec5c7dbfba",

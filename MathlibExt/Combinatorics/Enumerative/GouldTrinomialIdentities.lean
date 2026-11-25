@@ -11,9 +11,9 @@ module
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RingTheory.PowerSeries.Binomial
 public import Mathlib.RingTheory.PowerSeries.Substitution
-import Mathlib.Algebra.Polynomial.Roots
 import Mathlib.Tactic.Ring
 import MathlibExt.Combinatorics.Enumerative.RiordanArraySum
+import MathlibExt.RingTheory.PowerSeries.BinomialSubstitution
 
 /-!
 # Gould-type binomial and trinomial identities
@@ -25,60 +25,6 @@ namespace MetaMathlibExt
 
 private noncomputable def binomialSubst (a : PowerSeries ℂ) (x : ℂ) : PowerSeries ℂ :=
   (binomialSeries ℂ x).subst a
-
--- For fixed degree, the coefficients after substitution are polynomials in the exponent.
-private noncomputable def exponentPolynomial (a : PowerSeries ℂ) (n : ℕ) : Polynomial ℂ :=
-  ∑ k ∈ Finset.range (n + 1),
-    Polynomial.C ((k.factorial : ℂ)⁻¹ * coeff n (a ^ k)) * descPochhammer ℂ k
-
-private theorem eval_exponentPolynomial (a : PowerSeries ℂ) (ha : constantCoeff a = 0)
-    (n : ℕ) (x : ℂ) : (exponentPolynomial a n).eval x = coeff n (binomialSubst a x) := by
-  rw [binomialSubst, coeff_subst' (HasSubst.of_constantCoeff_zero' ha),
-    finsum_eq_sum_of_support_subset _ (s := Finset.range (n + 1))]
-  · simp only [exponentPolynomial, Polynomial.eval_finsetSum, Polynomial.eval_mul,
-      Polynomial.eval_C, binomialSeries_coeff, smul_eq_mul, mul_one]
-    refine Finset.sum_congr rfl fun k _ ↦ ?_
-    have hp : (descPochhammer ℂ k).eval x = (descPochhammer ℤ k).smeval x := by
-      rw [← descPochhammer_map (Int.castRingHom ℂ), Polynomial.eval_map,
-        ← Polynomial.eval₂_smulOneHom_eq_smeval ℤ,
-        show Int.castRingHom ℂ = RingHom.smulOneHom from Subsingleton.elim _ _]
-    rw [hp, Ring.choose_eq_smul, smul_eq_mul]
-    ring
-  · intro k hk
-    by_contra hkr
-    have hnk : n < k := by simpa [Finset.mem_range] using hkr
-    apply hk
-    change coeff k (binomialSeries ℂ x) • coeff n (a ^ k) = 0
-    rw [coeff_of_lt_order n ((by exact_mod_cast hnk : (n : ℕ∞) < k).trans_le
-      (le_order_pow_of_constantCoeff_eq_zero k ha)), smul_zero]
-
-private theorem binomialSubst_mul (a b : PowerSeries ℂ) (ha : constantCoeff a = 0)
-    (hb : constantCoeff b = 0) (x : ℂ) :
-    binomialSubst a x * binomialSubst b x = binomialSubst (a + b + a * b) x := by
-  have hab : constantCoeff (a + b + a * b) = 0 := by simp [ha, hb]
-  have natSubst (d : PowerSeries ℂ) (hd : constantCoeff d = 0) (m : ℕ) :
-      binomialSubst d (m : ℂ) = (1 + d) ^ m := by
-    have h := HasSubst.of_constantCoeff_zero' hd
-    rw [binomialSubst, binomialSeries_nat, subst_pow h, ← coe_substAlgHom h, map_add, map_one,
-      substAlgHom_X h]
-  ext n
-  let p : Polynomial ℂ := ∑ ij ∈ Finset.antidiagonal n,
-    exponentPolynomial a ij.1 * exponentPolynomial b ij.2
-  let q := exponentPolynomial (a + b + a * b) n
-  have hp (z : ℂ) : p.eval z = coeff n (binomialSubst a z * binomialSubst b z) := by
-    simp only [p, Polynomial.eval_finsetSum, Polynomial.eval_mul, coeff_mul,
-      eval_exponentPolynomial a ha, eval_exponentPolynomial b hb]
-  have hq (z : ℂ) : q.eval z = coeff n (binomialSubst (a + b + a * b) z) :=
-    eval_exponentPolynomial _ hab n z
-  have hpq : p = q := by
-    apply Polynomial.eq_of_infinite_eval_eq
-    refine (Set.infinite_range_of_injective (Nat.cast_injective (R := ℂ))).mono ?_
-    rintro _ ⟨m, rfl⟩
-    change p.eval (m : ℂ) = q.eval (m : ℂ)
-    rw [hp, hq, natSubst a ha, natSubst b hb, natSubst _ hab, ← mul_pow]
-    congr 2
-    ring
-  rw [← hp, ← hq, hpq]
 
 private theorem coeff_mul_subst_cube (f g : PowerSeries ℂ) (n : ℕ) :
     coeff n (f * g.subst (X ^ 3 : PowerSeries ℂ)) =
@@ -113,7 +59,9 @@ private theorem gouldSeries (x y : ℂ) :
   have hA₃ : binomialSubst A x = binomialSeries ℂ (3 * x) := by
     have e : A = X + X + X * X + X + (X + X + X * X) * X := by dsimp [A]; ring
     have e₃ : (3 : ℂ) * x = (x + x) + x := by ring
-    rw [e, ← binomialSubst_mul _ _ hXX hX, ← binomialSubst_mul _ _ hX hX, hB, e₃,
+    rw [e]
+    simp only [binomialSubst] at hB ⊢
+    rw [← binomialSeries_subst_mul _ _ hXX hX, ← binomialSeries_subst_mul _ _ hX hX, hB, e₃,
       binomialSeries_add, binomialSeries_add]
   have hcancel : (1 + X : PowerSeries ℂ) ^ 2 * binomialSeries ℂ (-2 : ℂ) = 1 := by
     rw [← binomialSeries_nat (R := ℂ) (d := 2), ← binomialSeries_add]
@@ -124,7 +72,9 @@ private theorem gouldSeries (x y : ℂ) :
           ((1 + X) ^ 2 * binomialSeries ℂ (-2 : ℂ)) := by dsimp [A, H]; ring
       _ = X ^ 3 := by rw [hcancel, mul_one]; dsimp [A]; simp only [map_neg, map_ofNat]; ring
   change _ = _ * binomialSubst H x
-  rw [← hfactor, ← binomialSubst_mul _ _ hA hH, hA₃, ← mul_assoc, ← binomialSeries_add]
+  rw [← hfactor]
+  simp only [binomialSubst] at hA₃ ⊢
+  rw [← binomialSeries_subst_mul _ _ hA hH, hA₃, ← mul_assoc, ← binomialSeries_add]
   simp
 
 private theorem signedTrinomialSeries (x : ℂ) :
@@ -144,11 +94,13 @@ private theorem signedTrinomialSeries (x : ℂ) :
     rw [binomialSubst, subst_comp_subst_apply hN hS, hneg]
     rfl
   change binomialSubst T (-x) * _ = _
-  rw [hrescale, hsubst, ← hfactor, ← binomialSubst_mul _ _ hT (by simp), ← mul_assoc]
-  have hinv : binomialSubst T (-x) * binomialSubst T x = 1 := by
+  rw [hrescale, hsubst, ← hfactor]
+  simp only [binomialSubst] at ⊢
+  rw [← binomialSeries_subst_mul _ _ hT (by simp), ← mul_assoc]
+  have hinv : (binomialSeries ℂ (-x)).subst T * (binomialSeries ℂ x).subst T = 1 := by
     have h := HasSubst.of_constantCoeff_zero' hT
-    rw [binomialSubst, binomialSubst, ← subst_mul h, ← binomialSeries_add, neg_add_cancel,
-      binomialSeries_zero, ← coe_substAlgHom h, map_one]
+    rw [← subst_mul h, ← binomialSeries_add, neg_add_cancel, binomialSeries_zero,
+      ← coe_substAlgHom h, map_one]
   rw [hinv, one_mul]
 
 private theorem coeff_gouldSeries_right (x y : ℂ) (n : ℕ) :
