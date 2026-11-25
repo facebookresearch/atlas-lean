@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Matroid.ChowRing
+public import MathlibExt.Combinatorics.Matroid.MixedDegrees
 public import WantedExt.Combinatorics.MatroidReducedCharacteristicPolynomialWanted
 public import Mathlib.Combinatorics.Matroid.Rank.ENat
 public import Mathlib.Combinatorics.Matroid.Loop
@@ -33,7 +33,6 @@ with the Hodge–Riemann relations in degree at most one this gives the log-conc
 namespace MathlibExt.Combinatorics.MatroidHodgeTheoryWanted
 
 open MathlibExt.Combinatorics.Matroid.Chow
-open MathlibExt.Combinatorics.MatroidReducedCharacteristicPolynomialWanted
 
 /-- **The degree map of a matroid** (Adiprasito, Huh and Katz, *Hodge theory for combinatorial
 geometries*, Ann. of Math. 188 (2018), Definition 5.9 and Proposition 5.10). For a finite
@@ -68,15 +67,5 @@ theorem_wanted hodgeRiemann {α : Type*} (M : _root_.Matroid α) [M.Finite] [M.L
     (ha : a ∈ gradedPiece M q) (ha0 : a ≠ 0)
     (hker : ellClass M c * (ellClass M c ^ (r - 2 * q) * a) = 0) :
     0 < (-1) ^ q * deg (a * (ellClass M c ^ (r - 2 * q) * a))
-
-/-- **Reduced characteristic polynomial coefficients as mixed degrees** (Adiprasito, Huh and
-Katz, *Hodge theory for combinatorial geometries*, Ann. of Math. 188 (2018), Proposition 9.5).
-For a finite loopless matroid `M` of rank `r + 1`, its degree map `deg`, any element `i` of the
-ground set and every `k ≤ r`, `μ_k(M) = deg(α_M^{r-k} β_M^k)`, where `α_M` and `β_M` are the
-classes of `∑_{i ∈ F} x_F` and `∑_{i ∉ F} x_F`. -/
-theorem_wanted reducedCharPolyCoeff_eq_deg {α : Type*} (M : _root_.Matroid α) [M.Finite]
-    [M.Loopless] (r : ℕ) (hr : M.eRank = r + 1) (deg : ChowRing M →ₗ[ℝ] ℝ)
-    (hdeg : IsDegreeMap M r deg) (i : α) (hi : i ∈ M.E) (k : ℕ) (hk : k ≤ r) :
-    (reducedCharPolyCoeff M k : ℝ) = deg (alphaClass M i ^ (r - k) * betaClass M i ^ k)
 
 end MathlibExt.Combinatorics.MatroidHodgeTheoryWanted

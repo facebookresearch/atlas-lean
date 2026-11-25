@@ -25,6 +25,7 @@ Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path 
 - [Undirected Hamiltonian cycle](undirected-hamiltonian-cycle/README.md)
 - [Undirected Hamiltonian path](undirected-hamiltonian-path/README.md)
 - [Vertex-disjoint paths in digraphs](vertex-disjoint-paths-in-digraphs/README.md)
+- [Fixed-point-free graph involutions](fixed-point-free-graph-involutions/README.md)
 - [Defective concentrators](defective-concentrators/README.md)
 - [Graph spanners](graph-spanners/README.md)
 - [Minimum broadcast time](minimum-broadcast-time/README.md)

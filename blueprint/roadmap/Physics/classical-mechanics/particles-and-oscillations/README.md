@@ -13,3 +13,5 @@ Newtonian dynamics of particles and lumped systems: kinetic energy, power and th
 - [Power of a muscle under Hill's law](power-of-a-muscle-under-hill-s-law/README.md)
 - [Random response of a first-order mechanical system](random-response-of-a-first-order-mechanical-syst/README.md)
 - [Work of a conservative force](work-of-a-conservative-force/README.md)
+
+- [Stationary covariance of a randomly forced mass–spring–damper](stationary-covariance-of-a-randomly-forced-mass-spring-damper.md)
