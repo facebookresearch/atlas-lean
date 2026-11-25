@@ -447,7 +447,7 @@ private theorem exists_path_of_activeIn {A Z : Finset (Fin n)} {p : List (Fin n)
     ∃ q, b.IsPath x y q ∧ b.ActiveIn A Z q := by
   classical
   induction hlen : p.length using Nat.strong_induction_on generalizing p with
-  | h l ih =>
+  | ind l ih =>
     by_cases hn : p.Nodup
     · exact ⟨p, ⟨hn, hp.1, hx, hy⟩, hp⟩
     · have hrepeated : ∃ i j : ℕ, ∃ hi : i < p.length, ∃ hj : j < p.length,

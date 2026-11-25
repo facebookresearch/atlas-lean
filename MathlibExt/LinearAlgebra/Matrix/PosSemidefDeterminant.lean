@@ -55,6 +55,8 @@ bounds themselves are in neither.
   iff `A` is a nonnegative scalar matrix.
 * `Matrix.PosSemidef.trace_mul_nonneg_re` : `0 ≤ ((A * B).trace).re`
   for `A` and `B` positive semidefinite.
+* `Matrix.PosSemidef.det_le_pow_trace_div_card` :
+  `A.det ≤ (A.trace / n) ^ n` for real `A` over an arbitrary finite index type.
 -/
 
 @[expose] public section
@@ -99,8 +101,10 @@ private theorem PosSemidef.sqrt_mul_sqrt (hA : A.PosSemidef) :
     CFC.sqrt A * CFC.sqrt A = A :=
   CFC.sqrt_mul_sqrt_self A (ha := hA.nonneg)
 
-/-- **Hadamard's inequality for positive semidefinite matrices**: the
-determinant is at most the product of the diagonal entries. -/
+/-- **Hadamard's inequality for positive semidefinite matrices.** Let $A$ be a positive
+semidefinite complex $n \times n$ matrix. Then the real part of the determinant of $A$ is at most
+the product of the real parts of its diagonal entries:
+$\operatorname{Re} \det A \le \prod_{i=1}^{n} \operatorname{Re} A_{ii}$. -/
 theorem PosSemidef.det_re_le_prod_diag_re (hA : A.PosSemidef) :
     (A.det).re ≤ ∏ i, (A i i).re := by
   set S := CFC.sqrt A with hSdef
@@ -144,9 +148,11 @@ theorem PosSemidef.det_re_le_prod_diag_re (hA : A.PosSemidef) :
   rw [← hA_re, hprod] at hsq
   exact hsq
 
-/-- **AM–GM inequality for the determinant of a positive semidefinite
-matrix**: the geometric mean of the eigenvalues is at most the
-arithmetic mean, i.e. `(det A) ^ (1 / n) ≤ (tr A) / n`. -/
+/-- **AM–GM inequality for the determinant of a positive semidefinite matrix.** Let $n \ge 1$
+and let $A$ be a positive semidefinite complex $n \times n$ matrix. Then
+$(\operatorname{Re} \det A)^{1/n} \le \operatorname{Re}(\operatorname{tr} A)/n$.
+
+This is the arithmetic–geometric mean inequality for the eigenvalues of $A$. -/
 theorem PosSemidef.geomMean_det_le_trace_div (hA : A.PosSemidef) (hn : 0 < n) :
     (A.det).re ^ ((n : ℝ)⁻¹) ≤ (A.trace).re / (n : ℝ) := by
   have hsum_pos : (0 : ℝ) < ∑ _i : Fin n, (1 : ℝ) := by
@@ -162,8 +168,9 @@ theorem PosSemidef.geomMean_det_le_trace_div (hA : A.PosSemidef) (hn : 0 < n) :
   rw [hsum] at h
   exact h
 
-/-- **AM–GM inequality for the determinant of a positive semidefinite
-matrix, power form**: `det A ≤ ((tr A) / n) ^ n`. -/
+/-- **AM–GM inequality for the determinant of a positive semidefinite matrix, power form.**
+Let $n \ge 1$ and let $A$ be a positive semidefinite complex $n \times n$ matrix. Then
+$\operatorname{Re} \det A \le (\operatorname{Re}(\operatorname{tr} A)/n)^n$. -/
 theorem PosSemidef.det_re_le_pow_trace_div (hA : A.PosSemidef) (hn : 0 < n) :
     (A.det).re ≤ ((A.trace).re / (n : ℝ)) ^ n := by
   have h := hA.geomMean_det_le_trace_div hn
@@ -172,8 +179,10 @@ theorem PosSemidef.det_re_le_pow_trace_div (hA : A.PosSemidef) (hn : 0 < n) :
   rwa [Real.rpow_inv_natCast_pow hA.det_re_nonneg
     (Nat.pos_iff_ne_zero.mp hn)] at hpow
 
-/-- **Equality in the AM–GM bound for the determinant** holds iff `A`
-is a nonnegative scalar matrix. -/
+/-- **Equality in the AM–GM bound for the determinant.** Let $n \ge 1$ and let $A$ be a positive
+semidefinite complex $n \times n$ matrix. Then $(\operatorname{Re} \det A)^{1/n} =
+\operatorname{Re}(\operatorname{tr} A)/n$ if and only if $A = cI$ for some real number $c \ge 0$,
+where $I$ is the $n \times n$ identity matrix. -/
 theorem PosSemidef.amgm_eq_iff (hA : A.PosSemidef) (hn : 0 < n) :
     (A.det).re ^ ((n : ℝ)⁻¹) = (A.trace).re / (n : ℝ) ↔
       ∃ c : ℝ, 0 ≤ c ∧ A = (c : ℂ) • (1 : Matrix (Fin n) (Fin n) ℂ) := by
@@ -234,8 +243,9 @@ theorem PosSemidef.amgm_eq_iff (hA : A.PosSemidef) (hn : 0 < n) :
     rw [hdet, htr, Real.pow_rpow_inv_natCast hc hn0]
     exact (mul_div_cancel_right₀ c hn').symm
 
-/-- The trace of a product of positive semidefinite matrices is
-nonnegative. -/
+/-- **The trace of a product of positive semidefinite matrices has nonnegative real part.** Let
+$A$ and $B$ be positive semidefinite complex $n \times n$ matrices. Then the real part of the
+trace of $AB$ is nonnegative: $\operatorname{Re} \operatorname{tr}(AB) \ge 0$. -/
 theorem PosSemidef.trace_mul_nonneg_re (hA : A.PosSemidef) (hB : B.PosSemidef) :
     0 ≤ ((A * B).trace).re := by
   set C := CFC.sqrt A with hCdef
@@ -348,5 +358,37 @@ theorem PosSemidef.det_le_prod_diag {ι : Type*} [Fintype ι] [DecidableEq ι]
   simp only [hCdiag] at hmirror
   rw [hBdet, hBdiag] at hmirror
   exact hmirror
+
+/-- **AM–GM inequality for real positive semidefinite matrices over an arbitrary finite
+index type**: `det A ≤ ((tr A) / n) ^ n`. -/
+theorem PosSemidef.det_le_pow_trace_div_card {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {A : Matrix ι ι ℝ} (hA : A.PosSemidef) (hd : 0 < Fintype.card ι) :
+    A.det ≤ (A.trace / (Fintype.card ι : ℝ)) ^ Fintype.card ι := by
+  have hH := hA.isHermitian
+  rw [hH.det_eq_prod_eigenvalues, hH.trace_eq_sum_eigenvalues]
+  change ∏ i, hH.eigenvalues i ≤
+    ((∑ i, hH.eigenvalues i) / (Fintype.card ι : ℝ)) ^ Fintype.card ι
+  have hnn : ∀ i ∈ (Finset.univ : Finset ι), 0 ≤ hH.eigenvalues i :=
+    fun i _ => hA.eigenvalues_nonneg i
+  have hsum1 : 0 < ∑ i ∈ (Finset.univ : Finset ι), (1 : ℝ) := by
+    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, mul_one]
+    exact_mod_cast hd
+  have hgeom := Real.geom_mean_le_arith_mean (Finset.univ : Finset ι)
+    (fun _ => (1 : ℝ)) hH.eigenvalues (fun i _ => zero_le_one) hsum1 hnn
+  simp only [Real.rpow_one, one_mul, Finset.sum_const, Finset.card_univ,
+    nsmul_eq_mul, mul_one] at hgeom
+  have hprod_nn : 0 ≤ ∏ i, hH.eigenvalues i :=
+    Finset.prod_nonneg (fun i _ => hA.eigenvalues_nonneg i)
+  have hcard_ne : (Fintype.card ι : ℝ) ≠ 0 := by exact_mod_cast ne_of_gt hd
+  have hround :
+      ((∏ i, hH.eigenvalues i) ^ ((Fintype.card ι : ℝ))⁻¹) ^ Fintype.card ι =
+        ∏ i, hH.eigenvalues i := by
+    rw [← Real.rpow_natCast, ← Real.rpow_mul hprod_nn, inv_mul_cancel₀ hcard_ne,
+      Real.rpow_one]
+  calc ∏ i, hH.eigenvalues i
+      = (((∏ i, hH.eigenvalues i) ^ ((Fintype.card ι : ℝ))⁻¹)) ^ Fintype.card ι :=
+        hround.symm
+    _ ≤ ((∑ i, hH.eigenvalues i) / (Fintype.card ι : ℝ)) ^ Fintype.card ι :=
+        pow_le_pow_left₀ (Real.rpow_nonneg hprod_nn _) hgeom _
 
 end Matrix

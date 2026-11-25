@@ -30,6 +30,18 @@ example (p : ℝ) (hp : p ≠ 1) : neutralGreen p p = 2 := by
   have : 1 - p ≠ 0 := sub_ne_zero.2 (Ne.symm hp)
   simp [neutralGreen, this]
 
+/-- The neutral Green function is the generic two-solution Green kernel below `p`. -/
+example : neutralGreen (1 / 2) (1 / 4) =
+    GreenKernel.kernel (fun x => 1 / (1 - x)) (fun x => 1 / x)
+      (fun p => 2 * (1 - p)) (1 / 4) (1 / 2) :=
+  neutralGreen_eq_greenKernel ⟨by norm_num, by norm_num⟩ ⟨by norm_num, by norm_num⟩
+
+/-- The neutral Green function is the generic two-solution Green kernel above `p`. -/
+example : neutralGreen (1 / 2) (3 / 4) =
+    GreenKernel.kernel (fun x => 1 / (1 - x)) (fun x => 1 / x)
+      (fun p => 2 * (1 - p)) (3 / 4) (1 / 2) :=
+  neutralGreen_eq_greenKernel ⟨by norm_num, by norm_num⟩ ⟨by norm_num, by norm_num⟩
+
 /-- An absent allele (`p = 0`) spends no time in the interior. -/
 example (g : ℝ → ℝ) : ∫ x in (0 : ℝ)..1, neutralGreen 0 x * g x = 0 :=
   integral_neutralGreen_left g

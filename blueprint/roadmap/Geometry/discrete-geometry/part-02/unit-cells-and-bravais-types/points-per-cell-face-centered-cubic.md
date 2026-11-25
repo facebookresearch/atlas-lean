@@ -1,0 +1,3 @@
+# Face-centered cubic has four points per cubic cell
+
+For $a > 0$, let $sc$, $fcc$ and $bcc$ be the simple cubic lattice (primitive vectors $a e_j$), the face-centered cubic lattice (primitive vectors $\tfrac a2(0,1,1)$, $\tfrac a2(1,0,1)$, $\tfrac a2(1,1,0)$) and the body-centered cubic lattice (primitive vectors $\tfrac a2(-1,1,1)$, $\tfrac a2(1,-1,1)$, $\tfrac a2(1,1,-1)$). For Bravais lattices $\Lambda_c, \Lambda_f$, the number of points per cell is the index of $L(\Lambda_c) \cap L(\Lambda_f)$ in $L(\Lambda_f)$, the cardinality of the quotient group (not the number of lattice points in a closed cell). The number of points of $fcc$ per cell of $sc$ is $4$, and $|\det B_{sc}| = 4\,|\det B_{fcc}|$, so $|\det B_{sc}|/|\det B_{fcc}| = 4$.

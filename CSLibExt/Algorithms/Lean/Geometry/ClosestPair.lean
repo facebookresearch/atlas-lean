@@ -55,14 +55,24 @@ universe u
 
 variable {𝕜 : Type u} [Field 𝕜] [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜]
 
-/-- Squared Euclidean distance. -/
+/-- **Squared distance in the plane.** Let $K$ be a linearly ordered field. The squared distance
+between points $p = (p_1, p_2)$ and $q = (q_1, q_2)$ of $K^2$ is $(p_1 - q_1)^2 + (p_2 - q_2)^2$. -/
 def dist2 (p q : 𝕜 × 𝕜) : 𝕜 := (p.1 - q.1) ^ 2 + (p.2 - q.2) ^ 2
 
-/-- `δ` is the least squared distance between two entries of `ps` at different positions. -/
+/-- **Least pairwise squared distance.** Let $K$ be a linearly ordered field, and write
+$d(p, q) = (p_1 - q_1)^2 + (p_2 - q_2)^2$ for the squared distance between points
+$p = (p_1, p_2)$ and $q = (q_1, q_2)$ of $K^2$. For a list $c_1, \dots, c_n$ of points of $K^2$,
+an element $\delta$ of $K$ is the least pairwise squared distance of the list when
+$\delta = d(c_i, c_j)$ for some $i < j$ and $\delta \le d(c_i, c_j)$ for all $i < j$. -/
 def IsMinPairDist2 (ps : List (𝕜 × 𝕜)) (δ : 𝕜) : Prop :=
   (∃ p q, [p, q] <+ ps ∧ dist2 p q = δ) ∧ ∀ p q, [p, q] <+ ps → δ ≤ dist2 p q
 
-/-- The least squared distance from `p` to a point of `qs`, one unit per point. -/
+/-- **Least squared distance from a point to a list.** Let $K$ be a linearly ordered field, and
+write $d(p, q) = (p_1 - q_1)^2 + (p_2 - q_2)^2$ for the squared distance between points
+$p = (p_1, p_2)$ and $q = (q_1, q_2)$ of $K^2$. For a point $p$ and a list $c_1, \dots, c_m$ of
+points of $K^2$, the least squared distance from $p$ to the list is no value if $m = 0$ and
+$\min_{1 \le k \le m} d(p, c_k)$ otherwise. Computing it is charged one unit of cost per point of
+the list, $m$ units in total. -/
 def minDistFrom (p : 𝕜 × 𝕜) : List (𝕜 × 𝕜) → TimeM ℕ (Option 𝕜)
   | [] => pure none
   | q :: qs => do
@@ -70,7 +80,12 @@ def minDistFrom (p : 𝕜 × 𝕜) : List (𝕜 × 𝕜) → TimeM ℕ (Option �
       let r ← minDistFrom p qs
       pure (omin (some (dist2 p q)) r)
 
-/-- The brute-force answer: every pair is compared. -/
+/-- **Brute-force closest pair.** Let $K$ be a field with a linear order, and write
+$d(p, q) = (x - x')^2 + (y - y')^2$ for the squared distance between points $p = (x, y)$ and
+$q = (x', y')$ of $K^2$. On a list $c_1, \dots, c_n$ of points in $K^2$, the brute-force scan
+returns no value if $n < 2$, and otherwise returns $\min_{i < j} d(c_i, c_j)$: for each $i$ it
+computes the least squared distance from $c_i$ to the later points $c_{i+1}, \dots, c_n$, and
+takes the least of these minima. It is charged one unit of cost per squared distance computed. -/
 def bruteMin : List (𝕜 × 𝕜) → TimeM ℕ (Option 𝕜)
   | [] => pure none
   | p :: ps => do
@@ -78,8 +93,14 @@ def bruteMin : List (𝕜 × 𝕜) → TimeM ℕ (Option 𝕜)
       let b ← bruteMin ps
       pure (omin a b)
 
-/-- Distances from `p` to the following strip points, stopping at the first whose squared `y`
-gap reaches `δ`. -/
+/-- **Strip scan from a point.** Let $K$ be a linearly ordered field, and write
+$d(p, q) = (p_1 - q_1)^2 + (p_2 - q_2)^2$ for the squared distance between points
+$p = (p_1, p_2)$ and $q = (q_1, q_2)$ of $K^2$. Let $\delta \in K$, let $p = (p_1, p_2)$ be a
+point of $K^2$ and $c_1, \dots, c_m$ a list of points $c_l = (x_l, y_l)$ of $K^2$, and let
+$k \le m$ be largest such that $(y_l - p_2)^2 < \delta$ for all $1 \le l \le k$. The scan from $p$
+with threshold $\delta$ returns no value if $k = 0$ and $\min_{1 \le l \le k} d(p, c_l)$
+otherwise. It is charged one unit of cost per point $c_1, \dots, c_k$: it stops at the first
+point whose squared vertical gap to $p$ is at least $\delta$, without computing its distance. -/
 def scanFrom (δ : 𝕜) (p : 𝕜 × 𝕜) : List (𝕜 × 𝕜) → TimeM ℕ (Option 𝕜)
   | [] => pure none
   | q :: qs =>
@@ -89,7 +110,11 @@ def scanFrom (δ : 𝕜) (p : 𝕜 × 𝕜) : List (𝕜 × 𝕜) → TimeM ℕ 
         pure (omin (some (dist2 p q)) r)
       else pure none
 
-/-- The strip loop over the strip sorted by `y`. -/
+/-- **Closest-pair strip scan.** Let $K$ be a linearly ordered field, $\delta \in K$ and
+$c_1, \dots, c_n$ a list of points of $K^2$. For each $i$, the strip scan runs the strip scan from
+$c_i$ with threshold $\delta$ on the later points $c_{i+1}, \dots, c_n$. It returns the least of
+the values these scans return, or no value if none of them returns a value, and its cost is the
+sum of their costs. -/
 def stripScan (δ : 𝕜) : List (𝕜 × 𝕜) → TimeM ℕ (Option 𝕜)
   | [] => pure none
   | p :: ps => do
@@ -97,7 +122,17 @@ def stripScan (δ : 𝕜) : List (𝕜 × 𝕜) → TimeM ℕ (Option 𝕜)
       let b ← stripScan δ ps
       pure (omin a b)
 
-/-- The recursion on a list sorted by `x`. -/
+/-- **Closest-pair recursion.** Let $K$ be a linearly ordered field and $c_1, \dots, c_n$ a list
+of points $c_i = (x_i, y_i)$ of $K^2$. If $n \le 3$, the recursion returns the brute-force scan of
+the list. Otherwise let $m = \lfloor n/2 \rfloor$, and run the recursion on $c_1, \dots, c_m$ and
+on $c_{m+1}, \dots, c_n$. If neither call returns a value, it returns no value. Otherwise let
+$\delta$ be the least of the returned values, let $T$ be the list of the points $c_i$ with
+$(x_i - x_m)^2 < \delta$ in their original order, sorted by second coordinate with a stable merge
+sort, and run the strip scan with threshold $\delta$ on $T$. The recursion returns
+$\min(\delta, s)$ if the strip scan returns a value $s$, and $\delta$ otherwise. In the base case
+its cost is that of the brute-force scan; otherwise it is the sum of the costs of the two
+recursive calls and of the strip scan when it is run, and splitting, filtering and sorting are
+free. -/
 def closestRec (xs : List (𝕜 × 𝕜)) : TimeM ℕ (Option 𝕜) :=
   if _h : xs.length ≤ 3 then bruteMin xs
   else do
@@ -118,14 +153,23 @@ decreasing_by
   all_goals simp only [List.length_take, List.length_drop]
   all_goals omega
 
-/-- CLRS `CLOSEST-PAIR` (squared distance): sort by `x`, then divide and conquer. -/
+/-- **Divide-and-conquer closest pair.** Let $K$ be a field with a linear order. Given a list of
+points in $K^2$, the closest-pair algorithm sorts the points by first coordinate (merge sort, at
+no cost) and runs the closest-pair recursion on the sorted list. It returns a squared distance or
+no value, and is charged one unit of cost per squared distance computed.
+
+This is CLRS `CLOSEST-PAIR` (Section 33.4), with distances compared squared. -/
 def closestPair (ps : List (𝕜 × 𝕜)) : TimeM ℕ (Option 𝕜) :=
   closestRec (ps.mergeSort fun a b => a.1 ≤ b.1)
 
 /-! ## Answers -/
 
-/-- `r` is the answer for `ps`: any value it holds is attained by two entries at different
-positions, and every such pair is bounded below by it. -/
+/-- **Closest-pair answer.** Let $K$ be a linearly ordered field, and write
+$d(p, q) = (p_1 - q_1)^2 + (p_2 - q_2)^2$ for the squared distance between points
+$p = (p_1, p_2)$ and $q = (q_1, q_2)$ of $K^2$. For a list $c_1, \dots, c_n$ of points of $K^2$,
+an optional value $r$ (an element of $K$ or no value) is an answer for the list when every value
+$\delta$ that $r$ holds equals $d(c_i, c_j)$ for some $i < j$, and when for all $i < j$, $r$ holds
+a value $\delta$ with $\delta \le d(c_i, c_j)$. -/
 structure IsAnswer (ps : List (𝕜 × 𝕜)) (r : Option 𝕜) : Prop where
   attained : ∀ δ, r = some δ → ∃ p q, [p, q] <+ ps ∧ dist2 p q = δ
   lower : ∀ p q, [p, q] <+ ps → ∃ δ, r = some δ ∧ δ ≤ dist2 p q
@@ -231,6 +275,12 @@ theorem IsAnswer.isMinPairDist2 {ps : List (𝕜 × 𝕜)} {δ : 𝕜} (h : IsAn
 
 /-! ## Brute force -/
 
+/-- **The nearest-point scan returns the least squared distance.** Let $K$ be a linearly ordered
+field, write $d(u, v) = (x - x')^2 + (y - y')^2$ for the squared distance between points
+$u = (x, y)$ and $v = (x', y')$ of $K^2$, let $p \in K^2$, and let $qs$ be a list of points in
+$K^2$. If the scan for the least squared distance from $p$ to the entries of $qs$ returns a value
+$\delta$, then $\delta = d(p, q)$ for some entry $q$ of $qs$. For every entry $q$ of $qs$, the
+scan returns a value $\delta$ with $\delta \le d(p, q)$. -/
 theorem minDistFrom_spec (p : 𝕜 × 𝕜) (qs : List (𝕜 × 𝕜)) :
     (∀ δ, (minDistFrom p qs).ret = some δ → ∃ q ∈ qs, dist2 p q = δ) ∧
       ∀ q ∈ qs, ∃ δ, (minDistFrom p qs).ret = some δ ∧ δ ≤ dist2 p q := by
@@ -323,7 +373,13 @@ theorem stripScan_attained (δ : 𝕜) (ys : List (𝕜 × 𝕜)) (d : 𝕜)
       · obtain ⟨a, b, hab, hd⟩ := ih h
         exact ⟨a, b, hab.cons p, hd⟩
 
-/-- On a strip sorted by `y`, every pair whose squared `y` gap is below `δ` is compared. -/
+/-- **The strip scan bounds every pair with a small vertical gap.** Let $K$ be a linearly ordered
+field, write $d(p, q) = (x - x')^2 + (y - y')^2$ for the squared distance between points
+$p = (x, y)$ and $q = (x', y')$ of $K^2$, and let $\delta \in K$. Let $ys$ be a list of points in
+$K^2$ sorted by second coordinate: whenever an entry precedes another, its second coordinate is at
+most the other's. If $a = (a_1, a_2)$ and $b = (b_1, b_2)$ are entries of $ys$ at positions $i < j$
+respectively and $(b_2 - a_2)^2 < \delta$, then the strip scan with threshold $\delta$ on $ys$
+returns a value $e$ with $e \le d(a, b)$. -/
 theorem stripScan_lower (δ : 𝕜) (ys : List (𝕜 × 𝕜)) (hs : ys.Pairwise fun a b => a.2 ≤ b.2)
     (a b : 𝕜 × 𝕜) (hab : [a, b] <+ ys) (hgap : (b.2 - a.2) ^ 2 < δ) :
     ∃ d, (stripScan δ ys).ret = some d ∧ d ≤ dist2 a b := by
@@ -338,6 +394,13 @@ theorem stripScan_lower (δ : 𝕜) (ys : List (𝕜 × 𝕜)) (hs : ys.Pairwise
 
 /-! ## Divide and conquer -/
 
+/-- **The closest-pair recursion is correct on lists sorted by first coordinate.** Let $K$ be a
+linearly ordered field, write $d(u, v) = (x - x')^2 + (y - y')^2$ for the squared distance between
+points $u = (x, y)$ and $v = (x', y')$ of $K^2$, and let $xs$ be a list of points in $K^2$ sorted
+by first coordinate: whenever an entry precedes another, its first coordinate is at most the
+other's. If the closest-pair recursion returns a value $\delta$ on $xs$, then $\delta = d(p, q)$
+for some entries $p$, $q$ of $xs$ at different positions. For any two entries $p$, $q$ of $xs$ at
+different positions, the recursion returns a value $\delta$ with $\delta \le d(p, q)$. -/
 theorem closestRec_isAnswer (xs : List (𝕜 × 𝕜)) (hs : xs.Pairwise fun a b => a.1 ≤ b.1) :
     IsAnswer xs (closestRec xs).ret := by
   induction h : xs.length using Nat.strong_induction_on generalizing xs with
@@ -459,6 +522,12 @@ theorem closestRec_isAnswer (xs : List (𝕜 × 𝕜)) (hs : xs.Pairwise fun a b
 
 /-! ## Correctness -/
 
+/-- **The closest-pair algorithm returns the answer.** Let $K$ be a linearly ordered field, write
+$d(p, q) = (x - x')^2 + (y - y')^2$ for the squared distance between points $p = (x, y)$ and
+$q = (x', y')$ of $K^2$, and let $ps$ be a list of points in $K^2$. If the divide-and-conquer
+closest-pair algorithm returns a value $\delta$ on $ps$, then $\delta = d(p, q)$ for some entries
+$p$, $q$ of $ps$ at different positions. For any two entries $p$, $q$ of $ps$ at different
+positions, the algorithm returns a value $\delta$ with $\delta \le d(p, q)$. -/
 theorem closestPair_isAnswer (ps : List (𝕜 × 𝕜)) : IsAnswer ps (closestPair ps).ret := by
   have hsorted : (ps.mergeSort fun a b => decide (a.1 ≤ b.1)).Pairwise fun a b => a.1 ≤ b.1 :=
     (List.pairwise_mergeSort (le := fun a b => decide (a.1 ≤ b.1))
@@ -466,8 +535,13 @@ theorem closestPair_isAnswer (ps : List (𝕜 × 𝕜)) : IsAnswer ps (closestPa
       (fun a b => by simpa using le_total a.1 b.1) ps).imp (fun h => by simpa using h)
   exact (closestRec_isAnswer _ hsorted).perm (List.mergeSort_perm _ _)
 
-/-- CLRS Section 33.4: on two or more points, the divide-and-conquer algorithm returns the least
-squared distance between two of them. -/
+/-- **Correctness of divide-and-conquer closest pair.** Let $K$ be a linearly ordered field and let
+$ps$ be a list of at least two points in $K^2$. Then the divide-and-conquer closest-pair algorithm
+returns a value $\delta$, and $\delta$ is the least squared distance between two entries of $ps$
+at different positions: some two entries at different positions have squared distance $\delta$,
+and any two entries at different positions have squared distance at least $\delta$.
+
+This is the correctness of CLRS Section 33.4, with distances compared squared. -/
 theorem closestPair_spec (ps : List (𝕜 × 𝕜)) (hps : 2 ≤ ps.length) :
     ∃ δ, (closestPair ps).ret = some δ ∧ IsMinPairDist2 ps δ := by
   have h := closestPair_isAnswer ps
@@ -476,7 +550,9 @@ theorem closestPair_spec (ps : List (𝕜 × 𝕜)) (hps : 2 ≤ ps.length) :
       obtain ⟨δ, hδ, -⟩ := h.lower a b (by simp)
       exact ⟨δ, hδ, (hδ ▸ h).isMinPairDist2⟩
 
-/-- Fewer than two points have no pair. -/
+/-- **The closest-pair algorithm returns no value exactly on fewer than two points.** Let $K$ be a
+linearly ordered field. For every list of points in $K^2$, the divide-and-conquer closest-pair
+algorithm returns no value if and only if the list has fewer than two entries. -/
 theorem closestPair_eq_none_iff (ps : List (𝕜 × 𝕜)) :
     (closestPair ps).ret = none ↔ ps.length < 2 := by
   constructor
@@ -494,7 +570,9 @@ theorem closestPair_eq_none_iff (ps : List (𝕜 × 𝕜)) :
         simp at this
         omega
 
-/-- Divide and conquer agrees with the brute-force scan. -/
+/-- **Divide and conquer agrees with brute force.** Let $K$ be a linearly ordered field. For every
+list of points in $K^2$, the divide-and-conquer closest-pair algorithm returns the same value as
+the brute-force scan (their costs may differ). -/
 theorem closestPair_eq_bruteMin (ps : List (𝕜 × 𝕜)) :
     (closestPair ps).ret = (bruteMin ps).ret :=
   (closestPair_isAnswer ps).unique (bruteMin_isAnswer ps)
@@ -511,7 +589,10 @@ theorem minDistFrom_time (p : 𝕜 × 𝕜) (qs : List (𝕜 × 𝕜)) :
       omega
 
 omit [IsStrictOrderedRing 𝕜] in
-/-- The brute force computes all `n (n - 1) / 2` distances. -/
+/-- **Cost of the brute-force closest-pair scan.** Let $K$ be a field with a linear order and let
+$ps$ be a list of $n$ points in $K^2$. Counting one unit of cost per squared distance computed,
+twice the cost of the brute-force scan on $ps$ equals $n(n-1)$; that is, the scan computes exactly
+$n(n-1)/2$ squared distances. -/
 theorem bruteMin_time (ps : List (𝕜 × 𝕜)) :
     2 * (bruteMin ps).time = ps.length * (ps.length - 1) := by
   induction ps with

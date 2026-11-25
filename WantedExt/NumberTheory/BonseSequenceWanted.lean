@@ -28,11 +28,9 @@ and the paper's `a_{n+1}` is `a n`.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.Data.Nat.Nth
-public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Topology.Algebra.Order.LiminfLimsup
+public import MathlibExt.NumberTheory.BonseSequence
 
 set_option autoImplicit false
 
@@ -42,22 +40,14 @@ namespace MathlibExt.NumberTheory.BonseWanted
 
 open Filter Topology
 
-/-- The `m`-th prime, 1-based (`primeNth 1 = 2`); junk
-value `Nat.nth Nat.Prime 0 = 2` at `m = 0` is unused. -/
-noncomputable def primeNth (m : ℕ) : ℕ := Nat.nth Nat.Prime (m - 1)
+/-- **A sufficient condition for a Bonse sequence.** Let $a_0 < a_1 < a_2 < \cdots$ be a strictly
+increasing sequence of positive integers and write $A_n = a_0 a_1 \cdots a_{n-1}$ for the product
+of its first $n$ terms. If there is a real number $c > 2$ such that $\log A_n / \log a_n > c$ for
+all sufficiently large $n$, then $a$ is a Bonse sequence.
 
-/-- Bonse sequence in the paper's sense: eventually
-`∏_{k < n} p_{a_k} > p_{a_n}²` (0-based indexing, see the
-module docstring). -/
-def IsBonseSeq (a : ℕ → ℕ) : Prop :=
-  ∀ᶠ n in atTop, (primeNth (a n) : ℝ) ^ 2 <
-    ∏ k ∈ Finset.range n, (primeNth (a k) : ℝ)
-
-/-- **Theorem 1**: if
-`liminf (log Aₙ / log a_{n+1}) > 2` (stated with a finite
-margin, which also covers the paper's `+∞` case: some
-`c > 2` is eventually below the quotient), then `a` is
-a Bonse sequence.
+The hypothesis is equivalent to $\liminf_n \log A_n / \log a_n > 2$, an infinite limit inferior
+included. In the paper's 1-based indexing it reads $\liminf \log A_n / \log a_{n+1} > 2$ with
+$A_n = a_1 \cdots a_n$.
 
 Source: Diego Marques, "Bonse's Inequality along
 Subsequences of Primes", Theorem 1. -/
@@ -67,23 +57,5 @@ theorem_wanted isBonseSeq_of_liminf_gt (a : ℕ → ℕ)
       c < Real.log (∏ k ∈ Finset.range n, (a k : ℝ)) /
         Real.log (a n)) :
     IsBonseSeq a
-
-/-- **Theorem 2**: if
-`(n log log aₙ) / log a_{n+1} → 0` and
-`liminf (log Aₙ / log a_{n+1}) < 2` (stated as: the
-quotient is frequently below some `c < 2`), then `a` is
-not a Bonse sequence.
-
-Source: Diego Marques, "Bonse's Inequality along
-Subsequences of Primes", Theorem 2. -/
-theorem_wanted not_isBonseSeq_of_liminf_lt (a : ℕ → ℕ)
-    (hmono : StrictMono a) (hpos : ∀ n, 1 ≤ a n)
-    (hreg : Tendsto (fun n : ℕ =>
-      ((n : ℝ) + 1) * Real.log (Real.log (a n)) /
-        Real.log (a (n + 1))) atTop (𝓝 0))
-    (hlim : ∃ c : ℝ, c < 2 ∧ ∃ᶠ n in atTop,
-      Real.log (∏ k ∈ Finset.range n, (a k : ℝ)) /
-        Real.log (a n) < c) :
-    ¬ IsBonseSeq a
 
 end MathlibExt.NumberTheory.BonseWanted

@@ -33,7 +33,8 @@ namespace Cslib.Language
 
 variable {Symbol : Type*}
 
-/-- A language containing a single word is regular. -/
+/-- **Single-word languages are regular.** For every word $w$ over any alphabet, the language
+whose only word is $w$ is regular. -/
 @[simp]
 theorem IsRegular.singleton_word (w : List Symbol) : ({w} : Language Symbol).IsRegular := by
   induction w with
@@ -55,7 +56,7 @@ theorem IsRegular.singleton_word (w : List Symbol) : ({w} : Language Symbol).IsR
     rw [h]
     exact IsRegular.mul (IsRegular.char a) ih
 
-/-- Every finite language is regular. -/
+/-- **Finite languages are regular.** Every finite language over any alphabet is regular. -/
 theorem IsRegular.of_finite {l : Language Symbol} (h : Set.Finite l) : l.IsRegular := by
   refine Set.Finite.induction_on l h ?_ ?_
   · change (0 : Language Symbol).IsRegular
@@ -64,7 +65,8 @@ theorem IsRegular.of_finite {l : Language Symbol} (h : Set.Finite l) : l.IsRegul
     rw [Set.insert_eq]
     exact IsRegular.add (IsRegular.singleton_word a) ih
 
-/-- Over a finite alphabet, a language whose words all have length at most `n` is regular. -/
+/-- **Languages of bounded word length are regular.** Over a finite alphabet, if every word of a
+language $L$ has length at most $n$, for some natural number $n$, then $L$ is regular. -/
 theorem IsRegular.of_length_le [Finite Symbol] {l : Language Symbol} (n : ℕ)
     (h : ∀ w ∈ l, w.length ≤ n) : l.IsRegular := by
   apply IsRegular.of_finite

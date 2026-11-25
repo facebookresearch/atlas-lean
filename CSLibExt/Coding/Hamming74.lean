@@ -50,16 +50,23 @@ namespace Cslib.CodingTheory.Hamming74
 
 open Matrix LinearCode
 
-/-- The generator matrix. Row `k` encodes message bit `k`: it sets that bit's position
-(`3, 5, 6, 7`) and the parity bits whose positions occur in its binary expansion. -/
+/-- **Generator matrix of the Hamming (7,4) code.** $G$ is the $4 \times 7$ matrix over
+$\mathbb{F}_2$, with columns indexed by the positions $1, \dots, 7$, whose $k$-th row encodes the
+$k$-th message bit: if $p$ is the $k$-th of the message positions $3, 5, 6, 7$, the row has
+entry $1$ at position $p$ and at each of the parity positions $1, 2, 4$ that occurs in the
+binary expansion of $p$, and entry $0$ elsewhere.
+
+Explicitly, its rows are $1110000$, $1001100$, $0101010$ and $1101001$. -/
 def G : Matrix (Fin 4) (Fin 7) (ZMod 2) :=
   !![1, 1, 1, 0, 0, 0, 0;
      1, 0, 0, 1, 1, 0, 0;
      0, 1, 0, 1, 0, 1, 0;
      1, 1, 0, 1, 0, 0, 1]
 
-/-- The parity-check matrix. The column for position `p` (index `p - 1`) is the binary expansion
-of `p`, least significant bit first. -/
+/-- **Parity-check matrix of the Hamming (7,4) code.** $H$ is the $3 \times 7$ matrix over
+$\mathbb{F}_2$, with columns indexed by the positions $1, \dots, 7$, whose column at position $p$
+is the binary expansion of $p$, least significant bit first: its entry in row $i$, for
+$i = 0, 1, 2$, is the $i$-th binary digit of $p$. -/
 def H : Matrix (Fin 3) (Fin 7) (ZMod 2) :=
   !![1, 0, 1, 0, 1, 0, 1;
      0, 1, 1, 0, 0, 1, 1;
@@ -68,20 +75,29 @@ def H : Matrix (Fin 3) (Fin 7) (ZMod 2) :=
 theorem H_apply (i : Fin 3) (j : Fin 7) : H i j = if (j.val + 1).testBit i then 1 else 0 := by
   fin_cases i <;> fin_cases j <;> rfl
 
-/-- The Hamming code. -/
+/-- **The Hamming (7,4) code.** Let $H$ be the $3 \times 7$ matrix over $\mathbb{F}_2$ whose
+column $j$, for $j = 1, \dots, 7$, is the binary expansion of $j$, least significant bit first.
+The Hamming code is the binary linear code of length $7$ with parity-check matrix $H$: the words
+$c \in \mathbb{F}_2^7$ with $Hc = 0$. -/
 def code : LinearCode (ZMod 2) (Fin 7) := ofParityCheck H
 
-/-- The encoder. -/
+/-- **Encoder of the Hamming code.** Let $G$ be the $4 \times 7$ generator matrix over
+$\mathbb{F}_2$ with rows $(1,1,1,0,0,0,0)$, $(1,0,0,1,1,0,0)$, $(0,1,0,1,0,1,0)$ and
+$(1,1,0,1,0,0,1)$. A message $m \in \mathbb{F}_2^4$ is encoded as the word
+$mG \in \mathbb{F}_2^7$, the combination of the rows of $G$ with coefficients $m$. -/
 def encode (m : Fin 4 → ZMod 2) : Fin 7 → ZMod 2 := LinearCode.encode G m
 
-/-- The message bits of a word: positions `3, 5, 6, 7`. -/
+/-- **Message bits of a word.** The message of a word $y = (y_1, \dots, y_7) \in \mathbb{F}_2^7$ is
+$(y_3, y_5, y_6, y_7) \in \mathbb{F}_2^4$, its bits at the positions that are not powers of two. -/
 def message (y : Fin 7 → ZMod 2) : Fin 4 → ZMod 2 := ![y 2, y 4, y 5, y 6]
 
 theorem message_encode (m : Fin 4 → ZMod 2) : message (encode m) = m := by
   revert m
   decide +kernel
 
-/-- The position (`0, …, 6`) that a nonzero syndrome names, read as a binary number. -/
+/-- **Error position of a syndrome.** For a syndrome $s = (s_0, s_1, s_2) \in \mathbb{F}_2^3$,
+read its entries as bits of the number $p = s_0 + 2s_1 + 4s_2 \in \{0, \dots, 7\}$. If $p = 0$
+there is no error position; otherwise the error position is $p - 1 \in \{0, \dots, 6\}$. -/
 def errorPos (s : Fin 3 → ZMod 2) : Option (Fin 7) :=
   let p := (s 0).val + 2 * (s 1).val + 4 * (s 2).val
   have hp : p - 1 < 7 := by
@@ -91,24 +107,43 @@ def errorPos (s : Fin 3 → ZMod 2) : Option (Fin 7) :=
     omega
   if p = 0 then none else some ⟨p - 1, hp⟩
 
-/-- The decoder's syndrome table: flip the bit the syndrome names. -/
+/-- **Syndrome table of the Hamming (7,4) code.** Number the positions of a word in
+$\mathbb{F}_2^7$ as $1, \dots, 7$. For a syndrome $s = (s_0, s_1, s_2) \in \mathbb{F}_2^3$,
+read each $s_i$ as $0$ or $1$ and let $p = s_0 + 2 s_1 + 4 s_2$. The table sends $s$ to the zero
+word if $p = 0$, and otherwise to the word whose only nonzero entry is a $1$ at position $p$.
+
+The Hamming decoder subtracts from a received word the table entry of its syndrome; over
+$\mathbb{F}_2$ this flips the bit at the position the syndrome names. -/
 def table (s : Fin 3 → ZMod 2) : Fin 7 → ZMod 2 :=
   match errorPos s with
   | none => 0
   | some p => Pi.single p 1
 
-/-- The **decoder**: compute the syndrome and flip the bit it names. -/
+/-- **Syndrome decoder of the Hamming code.** Let $H$ be the $3 \times 7$ parity-check matrix of
+the Hamming code over $\mathbb{F}_2$, whose column $j$, for $j = 1, \dots, 7$, is the binary
+expansion of $j$, least significant bit first. Given a word $y \in \mathbb{F}_2^7$, compute its
+syndrome $s = (s_0, s_1, s_2) = Hy \in \mathbb{F}_2^3$. If $s = 0$, return $y$. Otherwise read
+the entries of $s$ as bits of the number $p = s_0 + 2s_1 + 4s_2 \in \{1, \dots, 7\}$ and return
+$y$ with its $p$-th bit flipped, counting positions from $1$. -/
 def decode (y : Fin 7 → ZMod 2) : Fin 7 → ZMod 2 := y - table (syndrome H y)
 
 theorem decode_eq_syndromeDecode : decode = syndromeDecode H table := rfl
 
-/-- The syndrome of a single flipped bit names its position. -/
+/-- **The syndrome of a single-bit error locates it.** Let $H$ be the parity-check matrix of the
+Hamming (7,4) code, and index the coordinates of words in $\mathbb{F}_2^7$ by $0, \dots, 6$, so
+that index $i$ is position $i + 1$. For each index $i$, let $e_i \in \mathbb{F}_2^7$ be the word
+with entry $1$ at index $i$ and $0$ elsewhere. Then the error position of the syndrome $He_i$ is
+defined and equals $i$. -/
 theorem errorPos_syndrome_single (i : Fin 7) :
     errorPos (syndrome H (Pi.single i 1)) = some i := by
   revert i
   decide +kernel
 
-/-- The table is a correct syndrome table for one error. -/
+/-- **The Hamming decoder's syndrome table is correct.** Let $H$ be the parity-check matrix of the
+Hamming (7,4) code and $T$ the syndrome table of its decoder. Then $T$ is a correct syndrome
+table up to radius $1$ for $H$: for every word $e \in \mathbb{F}_2^7$ of Hamming weight at most
+$1$, the word $T(He)$ has Hamming weight at most $1$ and the same syndrome as $e$, that is,
+$H \, T(He) = He$. -/
 theorem isSyndromeTable_table : IsSyndromeTable H 1 table := by
   intro e he
   have key : ∀ e : Fin 7 → ZMod 2, hammingNorm e ≤ 1 →
@@ -119,6 +154,10 @@ theorem isSyndromeTable_table : IsSyndromeTable H 1 table := by
 
 /-! ### The code -/
 
+/-- **The generator matrix is orthogonal to the parity-check matrix.** Let $G$ be the generator
+matrix and $H$ the parity-check matrix of the Hamming (7,4) code over $\mathbb{F}_2$. Then
+$G H^{\mathsf{T}} = 0$, the $4 \times 3$ zero matrix: every row of $G$ is orthogonal to every
+row of $H$, so every row of $G$ satisfies the parity checks given by $H$. -/
 theorem G_mul_H_transpose : G * Hᵀ = 0 := by decide +kernel
 
 theorem encode_injective : Function.Injective encode := by
@@ -138,7 +177,10 @@ theorem rank_H : H.rank = 3 := by
   rw [← finrank_ofGenerator, ofGenerator, LinearMap.finrank_range_of_inj hinj,
     Module.finrank_fintype_fun_eq_card, Fintype.card_fin]
 
-/-- `G` generates the code with parity checks `H`. -/
+/-- **The Hamming generator matrix generates the Hamming code.** The code generated by the
+generator matrix $G$, that is, the set of words $mG$ for $m \in \mathbb{F}_2^4$, equals the
+Hamming (7,4) code, the set of words $c \in \mathbb{F}_2^7$ with $Hc = 0$ for the parity-check
+matrix $H$. -/
 theorem ofGenerator_G_eq_code : ofGenerator G = code :=
   ofGenerator_eq_ofParityCheck_iff.mpr ⟨G_mul_H_transpose, by rw [rank_G, rank_H]; rfl⟩
 
@@ -148,7 +190,9 @@ theorem encode_mem_code (m : Fin 4 → ZMod 2) : encode m ∈ code :=
 theorem finrank_code : Module.finrank (ZMod 2) code = 4 := by
   rw [← ofGenerator_G_eq_code, finrank_ofGenerator, rank_G]
 
-/-- Every nonzero codeword has weight at least 3. -/
+/-- **The Hamming (7,4) code has minimum weight at least 3.** Every nonzero codeword of the
+Hamming (7,4) code over $\mathbb{F}_2$ has at least $3$ nonzero coordinates; that is, the minimum
+weight of the code is at least $3$. -/
 theorem three_le_minWeight_code : 3 ≤ code.minWeight := by
   rw [le_minWeight_iff]
   intro c hc hne
@@ -156,7 +200,8 @@ theorem three_le_minWeight_code : 3 ≤ code.minWeight := by
     decide +kernel
   exact_mod_cast key c hc hne
 
-/-- The minimum distance of the Hamming code is 3. -/
+/-- **Minimum distance of the Hamming (7,4) code.** The minimum distance of the Hamming (7,4)
+code is $3$. -/
 theorem minDist_code : code.minDist = 3 := by
   refine le_antisymm ?_ (minDist_eq_minWeight code ▸ three_le_minWeight_code)
   have h1 : encode ![1, 0, 0, 0] ∈ code := encode_mem_code _
@@ -168,12 +213,16 @@ theorem minDist_code : code.minDist = 3 := by
 
 /-! ### Decoding -/
 
-/-- **The decoder corrects every error of weight at most 1** in every codeword. -/
+/-- **The decoder corrects every error of weight at most 1.** For every codeword $c$ of the
+Hamming code and every word $e \in \mathbb{F}_2^7$ of Hamming weight at most $1$, decoding
+$c + e$ returns $c$. -/
 theorem decode_add {c e : Fin 7 → ZMod 2} (hc : c ∈ code) (he : hammingNorm e ≤ 1) :
     decode (c + e) = c :=
   syndromeDecode_add_of_minDist_eq (d := 3) minDist_code isSyndromeTable_table hc he
 
-/-- **Every single-bit error is corrected**, and the message is recovered. -/
+/-- **Every single-bit error is corrected.** For every message $m \in \mathbb{F}_2^4$ and every
+position $i$ among the $7$, flipping bit $i$ of the encoding of $m$ and then decoding returns
+the encoding of $m$. -/
 theorem decode_encode_add_single (m : Fin 4 → ZMod 2) (i : Fin 7) :
     decode (encode m + Pi.single i 1) = encode m :=
   decode_add (encode_mem_code m) (by
@@ -190,12 +239,14 @@ theorem decode_encode (m : Fin 4 → ZMod 2) : decode (encode m) = encode m := b
 
 /-! ### The code is perfect -/
 
-/-- The decoder always outputs a codeword. -/
+/-- **The decoder always outputs a codeword.** For every word $y \in \mathbb{F}_2^7$, the
+decoding of $y$ belongs to the Hamming code. -/
 theorem decode_mem_code (y : Fin 7 → ZMod 2) : decode y ∈ code := by
   have key : ∀ y : Fin 7 → ZMod 2, syndrome H (decode y) = 0 := by decide +kernel
   exact key y
 
-/-- The decoder changes at most one bit. -/
+/-- **The Hamming decoder changes at most one bit.** Let $D$ be the Hamming (7,4) decoder. For
+every word $y \in \mathbb{F}_2^7$, the Hamming distance between $y$ and $D(y)$ is at most $1$. -/
 theorem hammingDist_decode_le_one (y : Fin 7 → ZMod 2) : hammingDist y (decode y) ≤ 1 := by
   revert y
   decide +kernel
@@ -214,7 +265,12 @@ theorem existsUnique_hammingDist_le_one (y : Fin 7 → ZMod 2) :
   have := hammingDist_decode_le_one y
   omega
 
-/-- The decoder returns a nearest codeword. -/
+/-- **No codeword is closer than the Hamming decoder's output.** Let $D$ be the Hamming (7,4)
+decoder and $C \subseteq \mathbb{F}_2^7$ the Hamming code. For every word $y \in \mathbb{F}_2^7$
+and every codeword $c \in C$, the Hamming distance between $y$ and $D(y)$ is at most the
+Hamming distance between $y$ and $c$.
+
+Since $D(y)$ is itself a codeword, the decoder returns a nearest codeword. -/
 theorem hammingDist_decode_le (y : Fin 7 → ZMod 2) {c : Fin 7 → ZMod 2} (hc : c ∈ code) :
     hammingDist y (decode y) ≤ hammingDist y c := by
   have h1 := hammingDist_decode_le_one y
@@ -227,16 +283,23 @@ theorem hammingDist_decode_le (y : Fin 7 → ZMod 2) {c : Fin 7 → ZMod 2} (hc 
   rw [hammingDist_comm c y] at htri
   omega
 
-/-- The Hamming bound for one error, from the general bound for linear codes
-(`pow_finrank_mul_sum_le_of_lt_minDist`, which rests on MathlibExt's sphere-packing bound). -/
+/-- **Hamming bound for the Hamming (7,4) code.** Let $k$ be the dimension of the Hamming (7,4)
+code over $\mathbb{F}_2$. Then $2^k \cdot \sum_{i=0}^{1} \binom{7}{i} (2 - 1)^i \le 2^7$.
+
+This is the Hamming bound for codes correcting one error, obtained from the general Hamming
+bound for linear codes, which applies because the minimum distance $3$ exceeds $2$. -/
 theorem pow_finrank_mul_sum_le :
     Fintype.card (ZMod 2) ^ Module.finrank (ZMod 2) code *
         ∑ i ∈ Finset.range (1 + 1), (7 : ℕ).choose i * (Fintype.card (ZMod 2) - 1) ^ i ≤
       Fintype.card (ZMod 2) ^ 7 :=
   pow_finrank_mul_sum_le_of_lt_minDist (by rw [minDist_code]; norm_num)
 
-/-- **The Hamming bound is attained**: the inequality `pow_finrank_mul_sum_le` is an equality,
-`2^4 · (1 + 7) = 2^7`, so the radius-1 balls around the codewords fill the space. -/
+/-- **The Hamming bound is attained.** Let $k$ be the dimension of the Hamming (7,4) code over
+$\mathbb{F}_2$. Then $2^k \cdot \sum_{i=0}^{1} \binom{7}{i} (2 - 1)^i = 2^7$: the Hamming bound
+for one error holds with equality.
+
+Since $k = 4$, this reads $2^4 \cdot (1 + 7) = 2^7$, so the radius-$1$ Hamming balls around the
+codewords fill $\mathbb{F}_2^7$. -/
 theorem pow_finrank_mul_sum_eq :
     Fintype.card (ZMod 2) ^ Module.finrank (ZMod 2) code *
         ∑ i ∈ Finset.range (1 + 1), (7 : ℕ).choose i * (Fintype.card (ZMod 2) - 1) ^ i =

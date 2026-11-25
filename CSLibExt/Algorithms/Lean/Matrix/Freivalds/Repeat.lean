@@ -34,7 +34,11 @@ open Cslib.Algorithms.Lean
   let current ← freivaldsTrial A B C r
   pure (accepted && current)
 
-/-- Run every supplied trial in order, including trials after a rejection. -/
+/-- **Repeated Freivalds test on fixed seeds.** Given $n \times n$ matrices $A$, $B$, $C$ over
+$\mathbb{Z}/2$ and seeds $r_0, \dots, r_{k-1} \in (\mathbb{Z}/2)^n$, run the Freivalds trial on
+$A$, $B$, $C$ with each seed $r_0, \dots, r_{k-1}$ in order, including the trials after a
+rejection, and return the conjunction of their results (true when $k = 0$). The arithmetic cost
+of the run is the sum of the costs of the $k$ trials. -/
 public def freivaldsRepeat {n k : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n)
     (history : Fin k → Fin n → ZMod 2) : TimeM (Nat × Nat) Bool :=
@@ -64,7 +68,10 @@ private theorem repeatFold_time {n : Nat}
     apply Prod.ext <;>
       simp only [Prod.fst_add, Prod.snd_add, List.length_cons] <;> ring
 
-/-- All repetitions contribute their actual trial arithmetic counts. -/
+/-- **Cost of the repeated Freivalds test on fixed seeds.** For $n \times n$ matrices $A$, $B$,
+$C$ over $\mathbb{Z}/2$ and seeds $r_0, \dots, r_{k-1} \in (\mathbb{Z}/2)^n$, the repeated
+Freivalds test on these seeds performs exactly $3kn^2$ scalar multiplications and $3kn^2$ scalar
+additions. -/
 theorem freivaldsRepeat_time {n k : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n)
     (history : Fin k → Fin n → ZMod 2) :
@@ -72,7 +79,10 @@ theorem freivaldsRepeat_time {n k : Nat}
   simpa only [freivaldsRepeat, List.length_ofFn] using
     repeatFold_time A B C (List.ofFn history) true
 
-/-- The repeated executor accepts exactly when every supplied trial accepts. -/
+/-- **Acceptance of the repeated Freivalds test on fixed seeds.** For $n \times n$ matrices
+$A$, $B$, $C$ over $\mathbb{Z}/2$ and seeds $r_0, \dots, r_{k-1} \in (\mathbb{Z}/2)^n$, the
+repeated Freivalds test on these seeds accepts if and only if, for every $i < k$, the Freivalds
+trial on $A$, $B$, $C$ with seed $r_i$ accepts. -/
 theorem freivaldsRepeat_accept_iff {n k : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n)
     (history : Fin k → Fin n → ZMod 2) :
@@ -90,7 +100,10 @@ theorem freivaldsRepeat_accept_iff {n k : Nat}
   rw [freivaldsRepeat, returned]
   simp [List.all_eq_true, List.forall_mem_ofFn_iff]
 
-/-- Every supplied trial accepts a correct product, including empty histories. -/
+/-- **Completeness of the repeated Freivalds test on fixed seeds.** Let $A$, $B$, $C$ be
+$n \times n$ matrices over $\mathbb{Z}/2$ with $AB = C$. Then for every $k$, including $k = 0$,
+and all seeds $r_0, \dots, r_{k-1} \in (\mathbb{Z}/2)^n$, the repeated Freivalds test on these
+seeds accepts. -/
 theorem freivaldsRepeat_complete {n k : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n)
     (correct : freivaldsMatrix A * freivaldsMatrix B = freivaldsMatrix C)
@@ -100,7 +113,9 @@ theorem freivaldsRepeat_complete {n k : Nat}
   intro i
   exact freivaldsTrial_complete A B C correct (history i)
 
-/-- Zero trials accept every supplied product and perform no arithmetic. -/
+/-- **Repeated Freivalds test with no trials.** For $n \times n$ matrices $A$, $B$, $C$ over
+$\mathbb{Z}/2$, the repeated Freivalds test on the empty list of seeds ($k = 0$) accepts and
+performs no scalar multiplications or additions. -/
 theorem freivaldsRepeat_zero {n : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) n) n)
     (history : Fin 0 → Fin n → ZMod 2) :
@@ -112,7 +127,9 @@ theorem freivaldsRepeat_zero {n : Nat}
   · change (freivaldsRepeat A B C history).time = (0, 0)
     simpa using freivaldsRepeat_time A B C history
 
-/-- Empty matrices accept every history and perform no arithmetic. -/
+/-- **Repeated Freivalds test on empty matrices.** For $0 \times 0$ matrices $A$, $B$, $C$ over
+$\mathbb{Z}/2$ and any number $k$ of seeds (each the empty vector), the repeated Freivalds test
+accepts and performs no scalar multiplications or additions. -/
 theorem freivaldsRepeat_empty {k : Nat}
     (A B C : _root_.Vector (_root_.Vector (ZMod 2) 0) 0)
     (history : Fin k → Fin 0 → ZMod 2) :

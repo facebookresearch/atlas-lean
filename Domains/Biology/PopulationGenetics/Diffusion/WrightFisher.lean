@@ -55,6 +55,8 @@ the stationary forward / Fokker–Planck equation):
 
 * `generator`, `kimuraFixation`, `meanAbsorptionTime`, `wrightDensity`: the objects above.
 * `kimuraFixation_zero_right`, `kimuraFixation_one_right`, `kimuraFixation_neutral`.
+* `kimuraSlope_pos`, `strictMono_kimuraFixation`: the slope constant is positive, so
+  Kimura's fixation probability is strictly increasing in the initial frequency.
 * `generator_kimuraFixation`: `L_σ u = 0` for Kimura's formula.
 * `eq_kimuraFixation_of_generator_eq_zero`, `eq_kimuraFixation_of_contDiffOn`: uniqueness of
   the solution of the fixation boundary-value problem.
@@ -149,6 +151,17 @@ theorem kimuraSlope_ne_zero (σ : ℝ) : kimuraSlope σ ≠ 0 := by
   · exact one_ne_zero
   · exact div_ne_zero (mul_ne_zero two_ne_zero h) (one_sub_exp_ne_zero h)
 
+/-- The slope constant of Kimura's formula is positive. -/
+theorem kimuraSlope_pos (σ : ℝ) : 0 < kimuraSlope σ := by
+  unfold kimuraSlope
+  split_ifs with h
+  · exact one_pos
+  rcases lt_or_gt_of_ne h with hσ | hσ
+  · have : 1 < exp (-2 * σ) := one_lt_exp_iff.2 (by linarith)
+    exact div_pos_of_neg_of_neg (by linarith) (by linarith)
+  · have : exp (-2 * σ) < 1 := exp_lt_one_iff.2 (by linarith)
+    exact div_pos (by linarith) (by linarith)
+
 /-- `fun y => exp (c * y)` has derivative `exp (c * x) * c` at `x`. -/
 theorem hasDerivAt_exp_mul (c x : ℝ) :
     HasDerivAt (fun y => exp (c * y)) (exp (c * x) * c) x := by
@@ -177,6 +190,12 @@ theorem continuous_kimuraFixation (σ : ℝ) : Continuous (kimuraFixation σ) :=
 theorem deriv_kimuraFixation (σ : ℝ) :
     deriv (kimuraFixation σ) = fun y => kimuraSlope σ * exp (-2 * σ * y) :=
   funext fun y => (hasDerivAt_kimuraFixation σ y).deriv
+
+/-- Kimura's formula `x ↦ u_σ(x)` is strictly increasing on all of `ℝ`; only its values for
+`x ∈ [0, 1]` are fixation probabilities (`u_σ(1) = 1`, so `u_σ(x) > 1` for `x > 1`). -/
+theorem strictMono_kimuraFixation (σ : ℝ) : StrictMono (kimuraFixation σ) :=
+  strictMono_of_hasDerivAt_pos (hasDerivAt_kimuraFixation σ) fun _ =>
+    mul_pos (kimuraSlope_pos σ) (exp_pos _)
 
 /-- **Kimura (1962).** The fixation probability solves the backward equation
 `x (1 - x) / 2 · u'' + σ x (1 - x) · u' = 0` (everywhere). -/
@@ -292,8 +311,9 @@ theorem kimuraFixation_one_half : kimuraFixation 1 (1 / 2) = 1 / (1 + exp (-1)) 
     div_eq_div_iff hd1 hd2]
   ring
 
-/-- `α ↦ u_α(x)` is continuous at the neutral point `α = 0`, where its value is `x`;
-so the explicit neutral branch is the continuous extension. -/
+/-- `α ↦ u_α(x)` is continuous at the neutral point `α = 0`, where its value is `x`, for every
+real `x`; so the neutral value is the continuous extension of the quotient formula on `α ≠ 0`
+(the quotient itself would be `0 / 0` at `α = 0`). A fixation probability for `x ∈ [0, 1]`. -/
 theorem continuousAt_kimuraFixation_zero (x : ℝ) :
     ContinuousAt (fun α => kimuraFixation α x) 0 := by
   have hf : HasDerivAt (fun α : ℝ => 1 - exp (-2 * α * x)) (2 * x) 0 := by
@@ -317,7 +337,8 @@ theorem continuousAt_kimuraFixation_zero (x : ℝ) :
   exact mul_div_mul_left _ _ (inv_ne_zero hα')
 
 /-- Source bridge (Kimura 1962, `N_e = N`): with `α = 2Ns`, `u_α(p) = (1 - e^{-4Nsp}) / (1 - e^{-4Ns})`
-whenever `Ns ≠ 0`. -/
+whenever `Ns ≠ 0`, for all real `N`, `s`, `p`; a fixation probability for `p ∈ [0, 1]`, with the
+population-size reading for `N > 0`. -/
 theorem kimuraFixation_two_mul_mul (N s p : ℝ) (hNs : N * s ≠ 0) :
     kimuraFixation (2 * N * s) p = (1 - exp (-(4 * N * s * p))) / (1 - exp (-(4 * N * s))) := by
   have h : 2 * N * s ≠ 0 := by rw [mul_assoc]; exact mul_ne_zero two_ne_zero hNs
