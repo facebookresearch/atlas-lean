@@ -10,3 +10,5 @@
 - [Stockmeyer: approximate counting of #P functions in BPP^NP](stockmeyer-approximate-counting.md)
 - [Toda's theorem: PH is contained in $\mathsf{P}^{\#\mathsf{P}}$](toda.md)
 - [Counting and the polynomial hierarchy](counting-and-the-polynomial-hierarchy/README.md)
+- [Randomized reduction from the polynomial hierarchy to parity satisfiability](randomized-reduction-from-ph-to-parity-sat.md)
+- [Modulus amplification for parity satisfiability](modulus-amplification-for-parity-sat.md)
