@@ -33,15 +33,20 @@ def smallEtaleLongSequenceFunctor (X : Scheme.{u}) (n : ℕ) :
 def SmallEtaleLongSequenceComponents (X : Scheme.{u}) (n : ℕ)
     {S T : ShortExactSequence (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w})}
     (α : S ⟶ T) : Prop :=
+  let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
+  let A := AddCommGrpCat.{max u w}
+  let _ : HasExt.{max u w} C := smallEtaleHasExt.{u, w} X
+  let H₀ : C ⥤ A := Sheaf.H.functorH.{max u w, max u w, u, u + 1} X.smallEtaleTopology n
+  let H₁ : C ⥤ A := Sheaf.H.functorH.{max u w, max u w, u, u + 1} X.smallEtaleTopology (n + 1)
   let m : smallEtaleLongSequence.{u, w} S.property n ⟶
       smallEtaleLongSequence.{u, w} T.property n :=
     (smallEtaleLongSequenceFunctor.{u, w} X n).map α
-  m.app 0 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₁ n) ∧
-  m.app 1 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₂ n) ∧
-  m.app 2 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₃ n) ∧
-  m.app 3 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₁ (n + 1)) ∧
-  m.app 4 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₂ (n + 1)) ∧
-  m.app 5 = AddCommGrpCat.ofHom (Sheaf.H.map.{max u w, max u w, u, u + 1} α.hom.τ₃ (n + 1))
+  m.app 0 = H₀.map α.hom.τ₁ ∧
+  m.app 1 = H₀.map α.hom.τ₂ ∧
+  m.app 2 = H₀.map α.hom.τ₃ ∧
+  m.app 3 = H₁.map α.hom.τ₁ ∧
+  m.app 4 = H₁.map α.hom.τ₂ ∧
+  m.app 5 = H₁.map α.hom.τ₃
 
 /-- The stock sequence morphism has those same literal six components. -/
 theorem smallEtaleLongSequenceFunctor_components (X : Scheme.{u}) (n : ℕ)

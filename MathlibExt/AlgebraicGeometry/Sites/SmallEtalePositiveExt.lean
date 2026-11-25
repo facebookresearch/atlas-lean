@@ -155,6 +155,15 @@ end AlgebraicGeometry.Scheme.DerivedSections.Reuse
 namespace AlgebraicGeometry.Scheme.DerivedSections.Reuse
 variable (X : Scheme.{u})
 
+private instance originalComparisonHasExt :
+    HasExt.{max u w} (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :=
+  smallEtaleHasExt.{u, w} X
+
+private instance originalComparisonDerivedCategory :
+    HasDerivedCategory.{(max u w) + 1}
+      (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :=
+  HasDerivedCategory.standard _
+
 private theorem originalComparison_extMk
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ)
     (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X (n + 1))
@@ -318,21 +327,15 @@ private theorem canonicalPositivePacket
   let π : S.g.hom.ker →+ S.g.hom.ker ⧸ S.abToCycles.range :=
     QuotientAddGroup.mk' S.abToCycles.range
   let p : S.g.hom.ker →+ Sheaf.H.{max u w, max u w, u, u + 1} Q (n + 1) :=
-    g.toAddMonoidHom.comp π
-  change Function.Surjective p ∧ S.abToCycles.range = p.ker ∧
-    (∀ z : S.g.hom.ker, e (p z) = positiveCycleClass.{u, w} X Q n z) ∧
-    ∀ (f : integralSheaf.{u, w} X ⟶ R.cocomplex.X (n + 1))
-      (hf : f ≫ R.cocomplex.d (n + 1) (n + 2) = 0),
-      ∃ z : S.g.hom.ker, z.val = integralHomSections.{u, w} X _ f ∧
-        p z = R.extMk f (n + 2) rfl hf
+    canonicalPositiveCycleMap.{u, w} X Q n
   have hSurj : Function.Surjective p :=
     g.surjective.comp (QuotientAddGroup.mk'_surjective S.abToCycles.range)
   have hKer : p.ker = S.abToCycles.range :=
     (AddMonoidHom.ker_comp_of_injective π g.toAddMonoidHom g.injective).trans
       (QuotientAddGroup.ker_mk' S.abToCycles.range)
   have hClass (z : S.g.hom.ker) : e (p z) = positiveCycleClass.{u, w} X Q n z := by
-    change e (e.symm (d.hom (π z))) = _
-    exact (e.apply_symm_apply _).trans (positiveQuotientDerivedIso_class.{u, w} X Q n z)
+    have hp : e (p z) = d.hom (π z) := e.apply_symm_apply _
+    exact hp.trans (positiveQuotientDerivedIso_class.{u, w} X Q n z)
   refine ⟨hSurj, hKer.symm, hClass, ?_⟩
   intro f hf
   have hcycle : G.map (R.cocomplex.d (n + 1) (n + 2))
