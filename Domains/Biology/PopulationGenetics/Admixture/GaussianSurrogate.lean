@@ -61,7 +61,7 @@ theorem driftCov_apply (w : P → E → ℝ) (len : E → ℝ≥0) (X Y : P) :
   ring
 
 omit [Fintype P] [DecidableEq P] in
-/-- The TreeMix covariance is positive semidefinite. -/
+/-- For finitely many populations, the TreeMix covariance is positive semidefinite. -/
 theorem posSemidef_driftCov [Finite P] (w : P → E → ℝ) (len : E → ℝ≥0) :
     (driftCov w len).PosSemidef := by
   have hd : (diagonal fun e => (len e : ℝ)).PosSemidef :=
@@ -70,7 +70,8 @@ theorem posSemidef_driftCov [Finite P] (w : P → E → ℝ) (len : E → ℝ≥
     hd.mul_mul_conjTranspose_same (Matrix.of w)
 
 /-- The Gaussian drift surrogate (TreeMix): the law `N(m 1, W diag(len) Wᵀ)` of the vector of
-population allele frequencies, on `EuclideanSpace ℝ P`. -/
+population allele frequencies, on `EuclideanSpace ℝ P`. It is a probability measure, degenerate
+when the covariance is singular: with all lengths `0` it is the Dirac mass at `m 1`. -/
 noncomputable def gaussianSurrogate (m : ℝ) (w : P → E → ℝ) (len : E → ℝ≥0) :
     Measure (EuclideanSpace ℝ P) :=
   multivariateGaussian (WithLp.toLp 2 fun _ => m) (driftCov w len)
@@ -137,7 +138,8 @@ theorem f4_gaussianSurrogate (m : ℝ) (w : P → E → ℝ) {len : E → ℝ≥
   ring
 
 /-- The surrogate has the same f-statistics as every drift model with the same weights and
-lengths: `f4` agrees, whatever the probability space and increment laws of the drift model. -/
+lengths: `f4` agrees, whatever the measure (not necessarily a probability measure) and the
+increment laws of the drift model. -/
 theorem f4_gaussianSurrogate_eq {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     (M : DriftModel μ E P) (m : ℝ) (A B C D : P) :
     f4 (gaussianSurrogate m M.weight (fun e => ⟨M.len e, M.len_nonneg e⟩)) coordFreq A B C D =
@@ -160,7 +162,7 @@ theorem f3_gaussianSurrogate_eq {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Me
       f3 μ M.freq C A B := by
   rw [f3_eq_f4, f3_eq_f4, f4_gaussianSurrogate_eq]
 
-/-- The surrogate does not preserve the frequency simplex: if `Σ_XX > 0`, the frequency of `X` is
+/-- The surrogate does not keep frequencies in `[0, 1]`: if `Σ_XX > 0`, the frequency of `X` is
 negative with positive probability, whatever the root mean `m`. -/
 theorem gaussianSurrogate_coord_neg_pos (m : ℝ) (w : P → E → ℝ) {len : E → ℝ≥0} {X : P} (hX : 0 < driftCov w len X X) :
     0 < gaussianSurrogate m w len {x | x X < 0} := by
@@ -179,7 +181,8 @@ theorem gaussianSurrogate_coord_not_mem_Icc_pos (m : ℝ) (w : P → E → ℝ) 
     (measure_mono fun _ hx h => absurd h.1 (not_le.mpr hx))
 
 /-- Zero-variance endpoint: if `Σ_XX = 0`, the frequency of `X` is the root mean `m` almost
-surely, so the hypothesis `Σ_XX > 0` above cannot be dropped. -/
+surely. So for `m ≥ 0` it is negative with probability `0`, and the hypothesis `Σ_XX > 0` of
+`gaussianSurrogate_coord_neg_pos` cannot be dropped. -/
 theorem gaussianSurrogate_coord_ae_eq (m : ℝ) (w : P → E → ℝ) {len : E → ℝ≥0} {X : P} (hX : driftCov w len X X = 0) :
     ∀ᵐ x ∂(gaussianSurrogate m w len), x X = m := by
   have hmap := (mp_eval m w len X).map_eq

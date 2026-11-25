@@ -228,7 +228,7 @@ theorem isAlgebraic_adjoin_roots (n : ℕ) :
         ↥(Algebra.adjoin ℂ (Set.range (root n)))) :
       Polynomial (Algebra.adjoin ℂ (Set.range (root n)))), ?_, ?_⟩
   · intro hzero
-    have hcoeff := congrArg (Polynomial.coeff · 1) hzero
+    have hcoeff := congrArg (fun q => q.coeff 1) hzero
     simp only [Polynomial.coeff_sub, Polynomial.coeff_C_mul, Polynomial.coeff_X_one, mul_one, Polynomial.coeff_C,
       if_neg (by norm_num : (1 : ℕ) ≠ 0), sub_zero, Polynomial.coeff_zero] at hcoeff
     exact hqimg (congrArg Subtype.val hcoeff)

@@ -145,8 +145,8 @@ theorem sum_classCount {M : ℕ} (v : Fin M → ι) : ∑ i, classCount v i = M 
   rw [← card_eq_sum_card_fiberwise (fun j _ ↦ mem_univ (v j))]
   simp
 
-/-- **Counting vectors with prescribed class counts**: there are `M! / ∏ mᵢ!` vectors
-`Fin M → ι` whose class counts are `m`, stated without division. -/
+/-- **Counting vectors with prescribed class counts**: for counts `m` with `∑ m = M`, there are
+`M! / ∏ mᵢ!` vectors `Fin M → ι` whose class counts are `m`, stated without division. -/
 theorem card_classCount_eq_mul_prod_factorial (M : ℕ) (m : ι → ℕ) (hm : ∑ i, m i = M) :
     #{v : Fin M → ι | classCount v = m} * ∏ i, (m i)! = M ! := by
   induction M generalizing m with
@@ -224,9 +224,10 @@ theorem classCount_append {R S : ℕ} (x : Fin R → ι) (y : Fin S → ι) :
   simp only [classCount, card_filter, Fin.sum_univ_add, Fin.append_left, Fin.append_right,
     Pi.add_apply]
 
-/-- **Two-sample counting identity.** Among the vectors `z : Fin (R + S) → ι` with class counts
-`n`, those whose first `R` coordinates have class counts `r` (with `∑ r = R`) make up the
-fraction `∏ᵢ C(nᵢ, rᵢ) / C(R + S, R)`; stated without division. -/
+/-- **Two-sample counting identity.** Among the vectors `z : Fin (R + S) → ι` with class counts `n`,
+those whose first `R` coordinates have class counts `r` (with `∑ r = R`) make up the fraction
+`∏ᵢ C(nᵢ, rᵢ) / C(R + S, R)`; stated without division, so it also holds when no vector has class
+counts `n` (that is, when `∑ n ≠ R + S`). -/
 theorem card_caseCount_mul_choose (R S : ℕ) (r n : ι → ℕ) (hr : ∑ i, r i = R) :
     #{z : Fin (R + S) → ι | classCount (fun j ↦ z (Fin.castAdd S j)) = r ∧ classCount z = n} *
         (R + S).choose R =
@@ -328,9 +329,11 @@ theorem card_caseCount_mul_choose (R S : ℕ) (r n : ι → ℕ) (hr : ∑ i, r 
             ((∏ i, (r i)!) * ∏ i, (s i)!) := by
         rw [mul_right_comm, hchoose, mul_comm, hN]
 
-/-- The **multivariate hypergeometric** mass function: drawing `R` balls without replacement from
-an urn with `nᵢ` balls of colour `i` gives the colour counts `r` with probability
-`∏ᵢ C(nᵢ, rᵢ) / C(∑ᵢ nᵢ, R)` when `∑ᵢ rᵢ = R` (and `0` otherwise). -/
+/-- The **multivariate hypergeometric** mass function: drawing `R` balls without replacement from an
+urn with `nᵢ` balls of colour `i` gives the colour counts `r` with probability
+`∏ᵢ C(nᵢ, rᵢ) / C(∑ᵢ nᵢ, R)` when `∑ᵢ rᵢ = R` (and `0` otherwise). Since `C(a, b) = 0` for `b > a`,
+the value is `0` when some `rᵢ > nᵢ`, in particular when `R > ∑ᵢ nᵢ` (where also `x / 0 = 0`); the
+probability reading is for `∑ᵢ rᵢ = R ≤ ∑ᵢ nᵢ`. -/
 noncomputable def mvHypergeometricReal (R : ℕ) (n r : ι → ℕ) : ℝ :=
   if ∑ i, r i = R then (∏ i, ((n i).choose (r i) : ℝ)) / ((∑ i, n i).choose R : ℝ) else 0
 
@@ -356,8 +359,8 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 `R` cases; subject `k` has genotype class `g k`. -/
 def caseCount (R : ℕ) (g : ℕ → ι) (i : ι) : ℕ := #{k ∈ range R | g k = i}
 
-/-- The number of controls with genotype class `i` in a design whose subjects `R, …, N - 1` are
-the `N - R` controls. -/
+/-- The number of controls with genotype class `i` in a design whose subjects `R, …, N - 1` are the
+`N - R` controls; it is `0` when `N ≤ R`. -/
 def controlCount (R N : ℕ) (g : ℕ → ι) (i : ι) : ℕ := #{k ∈ Ico R N | g k = i}
 
 /-- The genotype margin: the number of subjects `k < N` (cases and controls together) with
@@ -372,7 +375,7 @@ theorem card_filter_range_eq_classCount (M : ℕ) (g : ℕ → ι) (i : ι) :
   exact (Fin.sum_univ_eq_sum_range (fun k ↦ if g k = i then 1 else 0) M).symm
 
 omit [Fintype ι] in
-/-- The genotype margin is the sum of the case and control counts. -/
+/-- The genotype margin is the sum of the case and control counts, for `R ≤ N`. -/
 theorem caseCount_add_controlCount {R N : ℕ} (hRN : R ≤ N) (g : ℕ → ι) (i : ι) :
     caseCount R g i + controlCount R N g i = genotypeTotal N g i := by
   simp only [caseCount, controlCount, genotypeTotal, card_filter]
@@ -523,13 +526,16 @@ open MathlibExt.Biology.StatisticalGenetics.GenomicPrediction
 open MathlibExt.Biology.StatisticalGenetics.CochranArmitage (score)
 
 /-- The **Cochran–Armitage trend statistic of a fixed-margin design**: subjects `0, …, R - 1` are
-the cases and `R, …, N - 1` the controls, subject `k` has genotype class `g k ∈ {0, 1, 2}`, and
-the statistic is `GenomicPrediction.ArmitageTrend.trendStat` of the resulting `2 × 3` table. -/
+the cases and `R, …, N - 1` the controls, subject `k` has genotype class `g k ∈ {0, 1, 2}`, and the
+statistic is `GenomicPrediction.ArmitageTrend.trendStat` of the resulting `2 × 3` table. With
+`x / 0 = 0` it is `0` when `R = 0`, when `R ≥ N` (no controls) and when all subjects of the table
+are in one genotype class; the intended domain is `0 < R < N`. -/
 noncomputable def fmStat (R N : ℕ) (g : ℕ → Fin 3) : ℝ :=
   ArmitageTrend.trendStat (fun i ↦ (caseCount R g i : ℝ)) (fun i ↦ (controlCount R N g i : ℝ))
 
-/-- The contrast weight of subject `k`: `N - R` for a case (`k < R`), `-R` for a control. The
-trend numerator is `U = ∑_{k < N} weight k · score (g k)`. -/
+/-- The contrast weight of subject `k`: `N - R` for a case (`k < R`), `-R` for a control (and for
+every `k ≥ R`, including `k ≥ N`). For `R ≤ N` the trend numerator is
+`U = ∑_{k < N} weight k · score (g k)`. -/
 noncomputable def fmWeight (R N k : ℕ) : ℝ := if k < R then (N : ℝ) - R else -(R : ℝ)
 
 /-- The weight of a case. -/
@@ -551,8 +557,8 @@ private theorem sum_mul_card_filter {ι : Type*} [Fintype ι] [DecidableEq ι] (
 /-- **The fixed-margin statistic as a normalized contrast.** For `R ≤ N` and any centring `μ` and
 scale `v > 0`, with `B = √(R (N - R) N v)`,
 `fmStat R N g = (U / B)² / ((N ∑ x² - (∑ x)²) / (N² v))`, where `x k = score (g k)` and
-`U = ∑_{k < N} fmWeight R N k · (x k - μ)` is the trend numerator. Degenerate designs
-(`R = 0` or `R = N`) and tables with zero score variance give `0` on both sides. -/
+`U = ∑_{k < N} fmWeight R N k · (x k - μ)` is the trend numerator. Degenerate designs (`R = 0` or
+`R = N`) and tables with zero score variance give `0` on both sides, by `x / 0 = 0`. -/
 theorem fmStat_eq (R N : ℕ) (hRN : R ≤ N) (g : ℕ → Fin 3) (μ v : ℝ) (hv : 0 < v) :
     fmStat R N g =
       ((∑ k ∈ range N, fmWeight R N k * (score (g k) - μ)) /
@@ -664,8 +670,9 @@ section ConditionalStatisticLaw
 
 open MathlibExt.Biology.StatisticalGenetics.GenomicPrediction
 
-/-- Given the case counts `r` and the genotype margin `n`, the fixed-margin statistic is the
-trend statistic of the table with cases `r` and controls `n - r`. -/
+/-- Given the case counts `r` and the genotype margin `n`, the fixed-margin statistic is the trend
+statistic of the table with cases `r` and controls `n - r`; the natural subtraction does not
+truncate, since `r i ≤ n i`. -/
 theorem fmStat_eq_of_counts {R S : ℕ} {g : ℕ → Fin 3} {r n : Fin 3 → ℕ}
     (hr : caseCount R g = r) (hn : genotypeTotal (R + S) g = n) :
     fmStat R (R + S) g =

@@ -17,7 +17,7 @@ Prefix Reversals is NP-hard, by a reduction from 3-SAT); preprint arXiv:1111.043
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

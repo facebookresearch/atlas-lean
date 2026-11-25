@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Ring.Int.Parity
 public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Logic.Function.Iterate
+public import MathlibExt.NumberTheory.Digits.NegativeBaseDigitSquareCongruence
 
 /-!
 # Negative base happy numbers
@@ -30,35 +31,6 @@ finite set `T` is `(2, b)`-good if for each `u ∈ U_{2,b}` there are `n, k ≥ 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Truncated digit-square sum in a negative base.** For an integer $b$, define $T_b(f, a)$ for a
-natural number $f$ and an integer $a$ by recursion on $f$: $T_b(0, a) = 0$, $T_b(f + 1, 0) = 0$,
-and for $a \ne 0$, $T_b(f + 1, a) = r^2 + T_b(f, (a - r)/b)$, where $r = a \bmod b$ is the
-remainder of $a$ on division by $b$, with $0 \le r < |b|$ (for $b = 0$ one takes $r = a$ and
-$(a - r)/b = 0$). For $b \le -2$, $T_b(f, a)$ is thus the sum of the squares of the first $f$
-base-$b$ digits of $a$, counted from the least significant one.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-def negBaseSqDigitSumAux (b : ℤ) : ℕ → ℤ → ℤ
-  | 0, _ => 0
-  | fuel + 1, a =>
-      if a = 0 then 0 else (a % b) ^ 2 + negBaseSqDigitSumAux b fuel ((a - a % b) / b)
-
-/-- **Sum of squared digits in a negative base.** Let $b \le -2$ be an integer. Every integer $a$
-has an expansion $a = \sum_{i=0}^{n} a_i b^i$ with digits $0 \le a_i \le |b| - 1$, unique up to
-leading zero digits, and $S_{2,b}(a) = \sum_{i=0}^{n} a_i^2$ is the sum of the squares of these
-digits. The digits are produced from the least significant one by taking $a_0 = a \bmod b$ and
-passing to $(a - a_0)/b$, until $0$ is reached.
-
-The definition is made for every integer $b$, by running this digit extraction for at most
-$2|a| + 2$ steps; for $b \le -2$ this suffices, since the quantity $2a$ (for $a \ge 0$) or
-$2|a| + 1$ (for $a < 0$) strictly decreases at each step.
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Section 2. -/
-def negBaseSqDigitSum (b a : ℤ) : ℤ :=
-  negBaseSqDigitSumAux b (2 * a.natAbs + 2) a
 
 /-- **The digit-square sum of zero.** For every integer $b$, the base-$b$ digit-square sum $S_{2,b}$
 satisfies $S_{2,b}(0) = 0$.
@@ -231,21 +203,6 @@ Quarterly 62 (2024), Article 62-2/grundman11162023, Lemma 2.2. -/
 public theorem_wanted exists_iterate_negBaseSqDigitSum_lt (b : ℤ) (hb : b ≤ -7) (A : Finset ℤ)
     (hA : ∀ a ∈ A, 0 < a) :
     ∃ k : ℕ, 0 < k ∧ ∀ a ∈ A, (negBaseSqDigitSum b)^[k] a < 2 * b ^ 2
-
-/-- **A congruence for the negative-base digit-square map.** Let $b \le -12$ be an even integer,
-let $S_{2,b}$ be the map sending an integer to the sum of the squares of its base-$b$ digits, and
-let $v$ be an integer with $0 < v < 2b^2$. Then there are integers $w$ and $c$ with
-$0 \le w < v$ and $0 \le c \le |b| - 2$ such that
-$$S_{2,b}\bigl((|b| - 1)b + v - w - 1\bigr) -
-S_{2,b}\bigl((|b| - 1)b^2 + |b| - 1 - w\bigr) + 5 + 2c \equiv 0 \pmod{|b| + 1}.$$
-
-Source: Helen G. Grundman, *Closing an Open Problem on Negative Base Happy Numbers*, The Fibonacci
-Quarterly 62 (2024), Article 62-2/grundman11162023, Lemma 3.1. -/
-public theorem_wanted exists_negBaseSqDigitSum_congr (b : ℤ) (hb : b ≤ -12) (heven : Even b)
-    (v : ℤ) (hv0 : 0 < v) (hv : v < 2 * b ^ 2) :
-    ∃ w c : ℤ, 0 ≤ w ∧ w < v ∧ 0 ≤ c ∧ c ≤ |b| - 2 ∧
-      negBaseSqDigitSum b ((|b| - 1) * b + v - w - 1) -
-          negBaseSqDigitSum b ((|b| - 1) * b ^ 2 + |b| - 1 - w) + 5 + 2 * c ≡ 0 [ZMOD |b| + 1]
 
 /-- **Even bases at most $-4$ make every finite set of positive integers good.** Let $b \le -4$
 be an even integer. Then every finite set of positive integers is $(2, b)$-good.

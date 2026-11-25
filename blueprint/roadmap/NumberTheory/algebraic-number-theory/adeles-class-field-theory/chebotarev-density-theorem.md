@@ -28,7 +28,17 @@ Theorem VIII.7.1, which supplies that non-vanishing.
 Corollary VIII.7.3 is the abelian case: by the Reciprocity Law (Theorem V.3.5) the Artin map identifies
 $\mathrm{Gal}(L/K)$ with such a quotient $I^{\mathfrak{m}} / H$ and sends an unramified prime to its
 Frobenius element, so each element of $\mathrm{Gal}(L/K)$ is the Frobenius of a set of primes of
-density $1 / [L : K]$. Theorem VIII.7.4 reduces the general case to the cyclic extension $L$ of the
+density $1 / [L : K]$. This identification uses three properties of the global Artin map of $L/K$.
+It sends a uniformizer at an unramified place to the Frobenius element, so on the idèles whose components
+are $1$ at a finite set $S$ of places, containing the infinite and the ramified ones, it is the Artin map on
+ideals ([the global Artin map at unramified places](reciprocity-law/artin-map-at-unramified-places.md)). It
+is [trivial on the principal idèles](reciprocity-law/artin-map-trivial-on-principal-ideles.md), so, being
+continuous, it kills the principal ideal of every $\alpha \in K^\times$ close enough to $1$ at the finite
+places of $S$ and positive at the real ones: the Artin map on ideals is trivial on $i(K_{\mathfrak{m},1})$
+for a suitable modulus $\mathfrak{m}$. And the Artin map on ideals is
+[surjective](cohomology-of-idele-classes/frobenius-elements-generate.md), so its kernel $H$ is a congruence
+subgroup with $I^{\mathfrak{m}} / H \cong \mathrm{Gal}(L/K)$.
+Theorem VIII.7.4 reduces the general case to the cyclic extension $L$ of the
 fixed field $M$ of an element $\sigma$ of the class $C$, applying the abelian case to $L/M$ and
 counting primes of $M$ of degree one over $K$.
 
@@ -44,7 +54,7 @@ $L$-functions differ from those of
 by finitely many Euler factors, which do not vanish at $s = 1$; the analytic
 [non-vanishing on the line Re s = 1](../../zeta-l-functions/dirichlet-l-functions/hecke-l-function-nonvanishing-on-re-one.md)
 then gives $L(1, \chi) \neq 0$ directly, without the Existence Theorem. The edges below follow this
-second route, with the Reciprocity Law for the abelian case.
+second route, with these three properties of the global Artin map for the abelian case.
 
 ## Depends on
 
@@ -54,7 +64,9 @@ second route, with the Reciprocity Law for the abelian case.
 
 - [Meromorphic continuation of Hecke L-functions](../../zeta-l-functions/dirichlet-l-functions/hecke-l-function-meromorphic-continuation.md)
 - [Non-vanishing of Hecke L-functions on the line Re s = 1](../../zeta-l-functions/dirichlet-l-functions/hecke-l-function-nonvanishing-on-re-one.md)
-- [Global Artin reciprocity](global-artin-reciprocity.md)
+- [The global Artin map at unramified places](reciprocity-law/artin-map-at-unramified-places.md), for the Frobenius compatibility, through which the global Artin map restricts to the Artin map on ideals
+- [The global Artin map is trivial on principal idèles](reciprocity-law/artin-map-trivial-on-principal-ideles.md), which with its continuity makes the Artin map on ideals trivial on a group $i(K_{\mathfrak{m},1})$
+- [Frobenius elements generate the Galois group of a solvable extension](cohomology-of-idele-classes/frobenius-elements-generate.md), for the surjectivity of the Artin map on ideals of an abelian extension (its part 3)
 
 ## Sources
 

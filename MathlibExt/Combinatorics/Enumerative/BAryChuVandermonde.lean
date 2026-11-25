@@ -181,7 +181,7 @@ theorem bAryBinomialCoefficient_chu_vandermonde (b m n r : ℕ) (hb : 2 ≤ b)
       ← Finset.prod_mul_distrib]
     refine Finset.prod_congr rfl fun l _ => ?_
     rw [bary_digit_add b l m n hb (fun j _ => hcarry j) (hcarry l), pow_add]
-  have hc := congrArg (Polynomial.coeff · r) hP
+  have hc := congrArg (·.coeff r) hP
   simp only [Polynomial.coeff_mul, Finset.Nat.sum_antidiagonal_eq_sum_range_succ_mk,
     bary_gf_coeff] at hc
   exact hc

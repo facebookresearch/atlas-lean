@@ -16,7 +16,7 @@ Completeness* (1979), MINIMUM ONES 3-SAT.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Logics.Propositional.CNF.Semantics
@@ -46,7 +46,7 @@ reduction from every language in `NP`
 $(n, \varphi, K)$ of a natural number $n$ (the number of variables), a CNF formula $\varphi$ and a
 natural number $K$ (the bound). No condition is placed on $\varphi$ here; clauses of exactly three
 literals are required separately, by well-formedness. -/
-abbrev MinOnesThreeSatInstance := ℕ × Cslib.Logic.PL.CNF × ℕ
+abbrev MinOnesThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF × ℕ
 
 /-- **Well-formed MINIMUM ONES 3-SAT instances.** A triple $(n, \varphi, K)$ of a natural number
 $n$, a CNF formula $\varphi$ and a natural number $K$ is well formed when every clause of $\varphi$
@@ -62,7 +62,7 @@ satisfies $\varphi$ and sets at most $K$ of the variables $0, \dots, n-1$ to tru
 def MinOnesThreeSatFeasible
     (i : MinOnesThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    (Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2.1) ∧
+    (Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2.1) ∧
     (assign.filter (fun b => b)).length ≤ i.2.2
 
 open Classical in

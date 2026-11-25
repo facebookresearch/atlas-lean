@@ -41,18 +41,17 @@ the normalization of `MathlibExt.Biology.Dynamics.FisherKPP.IsFront` (`0 < U < 1
   strict front, so it inherits the speed bound, the nonpositive-speed exclusion, and
   the subcritical oscillation statement with its exact complex characteristic roots.
 
-## Existence is a hypothesis
+## Existence enters as a hypothesis
 
 The existence half (Kolmogorov–Petrovsky–Piskunov 1937: a strictly decreasing front exists at
-every speed `c ≥ 2 √(r D)`) is the statement of the wanted theorem
-`MathlibExt.Biology.Dynamics.FisherKPP.exists_isFront_of_le` in
-`WantedExt/Biology/Dynamics/FisherKPPWanted.lean`, proved in a separate development. The
-classification theorems take it as the explicit hypothesis
+every speed `c ≥ 2 √(r D)`) is `MathlibExt.Biology.Dynamics.FisherKPP.exists_isFront_of_le`,
+proved in `Domains.Biology.Dynamics.FisherKPPExistence`. The classification theorems take it as
+the explicit hypothesis
 
   `hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U`,
 
 which is that theorem with `hD` and `hr` fixed; it is discharged by
-`fun c hc => exists_isFront_of_le hD hr hc` once that theorem is available.
+`fun c hc => exists_isFront_of_le hD hr hc`.
 
 ## References
 
@@ -154,7 +153,7 @@ theorem not_isFront_of_lt {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D) (hr : 
     have := pow_lt_pow_left₀ hc h0.le two_ne_zero
     nlinarith
 
-/-- Every front speed is at least the minimal speed `2 √(r D)`. -/
+/-- For `D, r > 0`, every front speed is at least the minimal speed `2 √(r D)`. -/
 theorem two_mul_sqrt_le_of_isFront {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D) (hr : 0 < r)
     (h : IsFront D r c U U') : 2 * √(r * D) ≤ c :=
   not_lt.1 fun hc => not_isFront_of_lt hD hr hc h
@@ -174,21 +173,21 @@ theorem strictAnti_azWave {D r C : ℝ} (hD : 0 < D) (hr : 0 < r) (hC : 0 < C) :
   unfold azWave
   exact pow_lt_pow_left₀ ((inv_lt_inv₀ (hx.trans hlt) hx).2 hlt) (by positivity) two_ne_zero
 
-/-- The Ablowitz–Zeppetella speed is a front speed, witnessed by a strictly decreasing front;
-this needs no existence hypothesis. -/
+/-- For `D, r > 0`, the Ablowitz–Zeppetella speed is a front speed, witnessed by a strictly
+decreasing front; this needs no existence hypothesis. -/
 theorem azSpeed_mem_frontSpeeds {D r : ℝ} (hD : 0 < D) (hr : 0 < r) :
     azSpeed D r ∈ {c | ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U} :=
   ⟨azWave D r 1, azWaveDeriv D r 1, isFront_azWave hD hr one_pos,
     strictAnti_azWave hD hr one_pos⟩
 
-/-- Front speeds lie in `[2 √(r D), ∞)`, unconditionally. -/
+/-- For `D, r > 0`, front speeds lie in `[2 √(r D), ∞)`, without the existence hypothesis `hKPP`. -/
 theorem frontSpeeds_subset_Ici {D r : ℝ} (hD : 0 < D) (hr : 0 < r) :
     {c | ∃ U U' : ℝ → ℝ, IsFront D r c U U'} ⊆ Set.Ici (2 * √(r * D)) := fun _ ⟨_, _, h⟩ =>
   two_mul_sqrt_le_of_isFront hD hr h
 
-/-- **Classification of Fisher–KPP front speeds**: given the KPP existence theorem `hKPP`
-(fronts, strictly decreasing, at every speed `c ≥ 2 √(r D)`), a front of speed `c` exists iff
-`2 √(r D) ≤ c`, for every real `c`. -/
+/-- **Classification of Fisher–KPP front speeds**: for `D, r > 0` and given the KPP existence
+theorem `hKPP` (fronts, strictly decreasing, at every speed `c ≥ 2 √(r D)`), a front of speed `c`
+exists iff `2 √(r D) ≤ c`, for every real `c`. -/
 theorem exists_isFront_iff {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
     (hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U)
     (c : ℝ) : (∃ U U' : ℝ → ℝ, IsFront D r c U U') ↔ 2 * √(r * D) ≤ c := by
@@ -196,20 +195,20 @@ theorem exists_isFront_iff {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
   obtain ⟨U, U', h, -⟩ := hKPP c hc
   exact ⟨U, U', h⟩
 
-/-- **Classification, strictly monotone fronts**: given `hKPP`, a strictly decreasing front of
-speed `c` exists iff `2 √(r D) ≤ c`. -/
+/-- **Classification, strictly monotone fronts**: for `D, r > 0` and given `hKPP`, a strictly
+decreasing front of speed `c` exists iff `2 √(r D) ≤ c`. -/
 theorem exists_isFront_strictAnti_iff {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
     (hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U)
     (c : ℝ) : (∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U) ↔ 2 * √(r * D) ≤ c :=
   ⟨fun ⟨_, _, h, _⟩ => two_mul_sqrt_le_of_isFront hD hr h, hKPP c⟩
 
-/-- **The set of front speeds is `[2 √(r D), ∞)`**, given `hKPP`. -/
+/-- **The set of front speeds is `[2 √(r D), ∞)`**, for `D, r > 0` and given `hKPP`. -/
 theorem frontSpeeds_eq_Ici {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
     (hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U) :
     {c | ∃ U U' : ℝ → ℝ, IsFront D r c U U'} = Set.Ici (2 * √(r * D)) :=
   Set.ext fun c => exists_isFront_iff hD hr hKPP c
 
-/-- **`2 √(r D)` is the minimal front speed**, given `hKPP`. -/
+/-- **`2 √(r D)` is the minimal front speed**, for `D, r > 0` and given `hKPP`. -/
 theorem isLeast_frontSpeeds {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
     (hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U) :
     IsLeast {c | ∃ U U' : ℝ → ℝ, IsFront D r c U U'} (2 * √(r * D)) := by
@@ -223,9 +222,9 @@ def IsClosedFront (D r c : ℝ) (U U' : ℝ → ℝ) : Prop :=
   IsWaveProfile D r c U U' ∧ (∀ z, 0 ≤ U z ∧ U z ≤ 1) ∧ Tendsto U atBot (𝓝 1) ∧
     Tendsto U atTop (𝓝 0)
 
-/-- Uniqueness at an equilibrium for the profile ODE: a profile bounded by `2`
-in absolute value that agrees with the equilibrium state `(e, 0)`, `e ∈ {0, 1}`,
-at one point is the constant equilibrium `U ≡ e`. -/
+/-- Uniqueness at an equilibrium for the profile ODE: for `D > 0`, a profile bounded by `2` in
+absolute value that agrees with the equilibrium state `(e, 0)`, `e ∈ {0, 1}`, at one point is the
+constant equilibrium `U ≡ e`. -/
 theorem eq_const_of_isWaveProfile_of_apply_eq {D r c e : ℝ} {U U' : ℝ → ℝ}
     (hD : 0 < D) (he : e = 0 ∨ e = 1) (hU : IsWaveProfile D r c U U')
     (hbound : ∀ z, |U z| ≤ 2) {z₀ : ℝ} (h0 : U z₀ = e) (h0' : U' z₀ = 0) :
@@ -331,8 +330,8 @@ theorem eq_const_of_isWaveProfile_of_apply_eq {D r c e : ℝ} {U U' : ℝ → �
   have h2 : U' z = 0 := congrArg Prod.snd hfz
   exact ⟨sub_eq_zero.mp h1, h2⟩
 
-/-- **A closed front is a strict front.** The values `0` and `1` cannot be
-attained at any finite point. -/
+/-- **A closed front is a strict front** for `D > 0`: the values `0` and `1` cannot be attained at
+any finite point. -/
 theorem isFront_of_isClosedFront {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D)
     (h : IsClosedFront D r c U U') : IsFront D r c U U' := by
   obtain ⟨hprof, h01, hbot, htop⟩ := h
@@ -363,19 +362,19 @@ theorem isFront_of_isClosedFront {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D)
     rw [hU1] at htop
     exact one_ne_zero (tendsto_nhds_unique htop tendsto_const_nhds).symm
 
-/-- **Positivity forces `c ≥ 2 √(r D)`, closed-interval form.** Every closed
-front speed is at least the minimal speed. -/
+/-- **Positivity forces `c ≥ 2 √(r D)`, closed-interval form.** For `D, r > 0`, every closed front
+speed is at least the minimal speed. -/
 theorem two_mul_sqrt_le_of_isClosedFront {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D)
     (hr : 0 < r) (h : IsClosedFront D r c U U') : 2 * √(r * D) ≤ c :=
   two_mul_sqrt_le_of_isFront hD hr (isFront_of_isClosedFront hD h)
 
-/-- **No closed front of nonpositive speed** (the energy argument). -/
+/-- **No closed front of nonpositive speed** for `D, r > 0` and `c ≤ 0` (the energy argument). -/
 theorem not_isClosedFront_of_nonpos {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D)
     (hr : 0 < r) (hc : c ≤ 0) : ¬ IsClosedFront D r c U U' := fun h =>
   not_tendsto_of_nonpos hD hr hc h.1 h.2.2.1 h.2.2.2
 
-/-- **Oscillation below the minimal speed.** If `c² < 4 r D`, a wave profile
-tending to `0` at `+∞` takes a nonpositive value arbitrarily far out. -/
+/-- **Oscillation below the minimal speed.** For `D, r > 0` and `c² < 4 r D`, a wave profile tending
+to `0` at `+∞` takes a nonpositive value arbitrarily far out. -/
 theorem exists_le_forall_of_sq_lt {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D)
     (hr : 0 < r) (hc : c ^ 2 < 4 * r * D) (hU : IsWaveProfile D r c U U')
     (hlim : Tendsto U atTop (𝓝 0)) : ∀ Z : ℝ, ∃ z ≥ Z, U z ≤ 0 := by
@@ -385,9 +384,9 @@ theorem exists_le_forall_of_sq_lt {D r c : ℝ} {U U' : ℝ → ℝ} (hD : 0 < D
   obtain ⟨z, hz, hzU⟩ := h Z
   exact ⟨z, hz, le_of_not_gt hzU⟩
 
-/-- **Linearization roots at `U = 0`.** When `c² < 4 r D`, the characteristic
-polynomial `D w² + c w + r` of the linearized profile equation has exactly the
-two complex roots `(-c ± i √(4 r D - c²)) / (2 D)`. -/
+/-- **Linearization roots at `U = 0`.** For `D, r > 0` and `c² < 4 r D`, the characteristic
+polynomial `D w² + c w + r` of the linearized profile equation has exactly the two complex roots
+`(-c ± i √(4 r D - c²)) / (2 D)`. -/
 theorem charRoot_iff_of_sq_lt {D r c : ℝ} (hD : 0 < D) (hr : 0 < r)
     (hc : c ^ 2 < 4 * r * D) (w : ℂ) :
     (D : ℂ) * w ^ 2 + (c : ℂ) * w + (r : ℂ) = 0 ↔
@@ -407,8 +406,8 @@ theorem charRoot_iff_of_sq_lt {D r c : ℝ} (hD : 0 < D) (hr : 0 < r)
   rw [hfact]
   simp [hD0, sub_eq_zero]
 
-/-- Non-vacuity: the Ablowitz–Zeppetella front is a closed front, and the bound
-is respected by its speed. -/
+/-- Non-vacuity: for `D, r, C > 0` the Ablowitz–Zeppetella front is a closed front of speed
+`azSpeed D r`. -/
 theorem isClosedFront_azWave {D r C : ℝ} (hD : 0 < D) (hr : 0 < r) (hC : 0 < C) :
     IsClosedFront D r (azSpeed D r) (azWave D r C) (azWaveDeriv D r C) := by
   have h := isFront_azWave hD hr hC
@@ -419,8 +418,8 @@ theorem isClosedFront_of_isFront {D r c : ℝ} {U U' : ℝ → ℝ}
     (h : IsFront D r c U U') : IsClosedFront D r c U U' :=
   ⟨h.1, fun z => ⟨(h.2.1 z).1.le, (h.2.1 z).2.le⟩, h.2.2.1, h.2.2.2⟩
 
-/-- **Closed-front speeds are exactly `[2 √(r D), ∞)`**: a closed front of
-speed `c` exists iff `2 √(r D) ≤ c`, given `hKPP`. -/
+/-- **Closed-front speeds are exactly `[2 √(r D), ∞)`**: a closed front of speed `c` exists iff
+`2 √(r D) ≤ c`, for `D, r > 0` and given `hKPP`. -/
 theorem exists_isClosedFront_iff {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
     (hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U)
     (c : ℝ) : (∃ U U' : ℝ → ℝ, IsClosedFront D r c U U') ↔ 2 * √(r * D) ≤ c := by
@@ -428,13 +427,13 @@ theorem exists_isClosedFront_iff {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
   obtain ⟨U, U', h, -⟩ := hKPP c hc
   exact ⟨U, U', isClosedFront_of_isFront h⟩
 
-/-- **The set of closed-front speeds is `[2 √(r D), ∞)`**, given `hKPP`. -/
+/-- **The set of closed-front speeds is `[2 √(r D), ∞)`**, for `D, r > 0` and given `hKPP`. -/
 theorem closedFrontSpeeds_eq_Ici {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
     (hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U) :
     {c | ∃ U U' : ℝ → ℝ, IsClosedFront D r c U U'} = Set.Ici (2 * √(r * D)) :=
   Set.ext fun c => exists_isClosedFront_iff hD hr hKPP c
 
-/-- **`2 √(r D)` is the minimal closed-front speed**, given `hKPP`. -/
+/-- **`2 √(r D)` is the minimal closed-front speed**, for `D, r > 0` and given `hKPP`. -/
 theorem isLeast_closedFrontSpeeds {D r : ℝ} (hD : 0 < D) (hr : 0 < r)
     (hKPP : ∀ c, 2 * √(r * D) ≤ c → ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U) :
     IsLeast {c | ∃ U U' : ℝ → ℝ, IsClosedFront D r c U U'} (2 * √(r * D)) := by

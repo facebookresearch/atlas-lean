@@ -1,0 +1,3 @@
+# Treap deletion preserves key order
+
+Let the keys come from a linearly ordered type and let $t$ be a treap tree that is ordered by key (at every node each key of the left subtree is less than the node's key and the node's key is less than each key of the right subtree); no heap condition on priorities is assumed. Then for every key $k$, the tree obtained from $t$ by erasing $k$ (split the tree at $k$, drop any entry stored at $k$, and merge the part below $k$ with the part above $k$, guided by priority) is again ordered by key.

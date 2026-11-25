@@ -1,0 +1,17 @@
+# Free Adjunction Source
+
+- [Transported](transported.md)
+- [Migrated](migrated.md)
+- [Comparison](comparison.md)
+- [Native Iso](native-iso.md)
+- [Operator Iso](operator-iso.md)
+- [Transported eq](transported-eq.md)
+- [Migrated eq](migrated-eq.md)
+- [Comparison eq](comparison-eq.md)
+- [Operator Iso eq](operator-iso-eq.md)
+- [Native Iso hom app](native-iso-hom-app.md)
+- [Native Iso inv app](native-iso-inv-app.md)
+- [Operator Iso inv app](operator-iso-inv-app.md)
+- [Comparison hom Equiv](comparison-hom-equiv.md)
+- [Transported hom Equiv](transported-hom-equiv.md)
+- [Point](point.md)

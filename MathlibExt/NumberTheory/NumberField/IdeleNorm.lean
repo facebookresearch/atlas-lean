@@ -191,7 +191,9 @@ public theorem adelicNorm_principalEmbedding (x : Kˣ) :
     rw [infinitePrincipalEmbedding_apply, Units.coe_map]
     change ‖algebraMap K w.Completion (x : K)‖ ^ w.mult = w (x : K) ^ w.mult
     have hco : algebraMap K w.Completion ((x : K)) =
-        ((WithAbs.equiv w.1).symm ((x : K)) : w.Completion) := rfl
+        ((WithAbs.equiv w.1).symm ((x : K)) : w.Completion) := by
+      rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+        Algebra.algebraMap_self_apply, WithAbs.equiv_symm_apply]
     rw [hco, NumberField.InfinitePlace.Completion.norm_coe]
     simp
   have hpt : ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 K),

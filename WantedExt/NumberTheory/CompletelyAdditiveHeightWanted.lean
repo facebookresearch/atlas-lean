@@ -145,23 +145,6 @@ public theorem_wanted nthPrimeOne_rosser_schoenfeld :
       (k : ℝ) * (Real.log k + Real.log (Real.log k) - 1) ≤ nthPrimeOne k ∧
         (nthPrimeOne k : ℝ) ≤ k * (Real.log k + Real.log (Real.log k))
 
-/-- **Prime-power decomposition of summatory heights.** Let $H : \mathbb{N} \to \mathbb{N}$ be
-completely additive on the positive integers, and let $x \ge 2$ be a natural number. Then
-$$\sum_{m=1}^{x} H(m) = \sum_{p \le x} \sum_{\alpha \ge 1,\ p^\alpha \le x} H(p)
-\left\lfloor \frac{x}{p^\alpha} \right\rfloor,$$
-where $p$ runs over the primes $p \le x$.
-
-The paper states this for real $x \ge 2$; both sides depend on $x$ only through $\lfloor x \rfloor$.
-
-Source: Hartosh Singh Bal, *Completely Additive Height Functions: Profile Laws, Matula Bounds,
-and Inverse Growth*, INTEGERS 26 (2026), Article A116, Proposition 7
-(`integers-2026-A116-prop-7`), Equation (6). -/
-public theorem_wanted sum_height_eq_sum_prime_powers {H : ℕ → ℕ} (hH : IsCompletelyAdditiveNat H)
-    {x : ℕ} (hx : 2 ≤ x) :
-    ∑ m ∈ Finset.Icc 1 x, H m =
-      ∑ p ∈ (Finset.Iic x).filter Nat.Prime,
-        ∑ α ∈ (Finset.Icc 1 x).filter (fun α => p ^ α ≤ x), H p * (x / p ^ α)
-
 /-- **Prime reduction for summatory heights.** Let $H : \mathbb{N} \to \mathbb{N}$ be completely
 additive on the positive integers, and for real $x$ let $F(x) = \sum_{1 \le m \le x} H(m)$. Then
 there is a real constant $C$ such that for every real $x \ge 2$,

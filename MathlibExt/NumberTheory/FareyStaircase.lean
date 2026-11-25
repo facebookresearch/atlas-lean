@@ -8,7 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Slope
 import Mathlib.Analysis.SumIntegralComparisons
 
 /-!
@@ -16,6 +20,7 @@ import Mathlib.Analysis.SumIntegralComparisons
 
 The Farey staircase averages the lower rational approximations of a real number.
 Harmonic blocks in its zoomed form can be compared with the integral of the reciprocal.
+The dilation derivative of a differentiable function at `x` is `x * f' - f x`.
 -/
 
 namespace MetaMathlibExt
@@ -140,6 +145,22 @@ public theorem tendsto_harmonic_block_sub_integral {a b : ℕ → ℕ} (hab : �
     apply add_le_add_right
     rw [← Finset.Ico_add_one_add_one_eq_Ioc, ← Finset.sum_Ico_add']
     exact hn.sum_le_integral_Ico (hab n)
+
+/-- **Dilation derivative of a differentiable function.** Let $f : \mathbb{R} \to \mathbb{R}$ have
+derivative $f'$ at the point $x \in \mathbb{R}$. Then the quotient
+$(\lambda^{-1} f(\lambda x) - f(x))/(\lambda - 1)$ tends to $x f' - f(x)$ as $\lambda \to 1$ with
+$\lambda \ne 1$; that is, the dilation derivative of $f$ at $x$ exists and equals $x f' - f(x)$.
+
+Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
+(2024), Article A37, Proposition 12 (`integers-2024-A37-prop-12`); dilation derivative as defined
+before it. -/
+public theorem tendsto_dilation_quotient {f : ℝ → ℝ} {f' x : ℝ} (hf : HasDerivAt f f' x) :
+    Filter.Tendsto (fun l : ℝ => (l⁻¹ * f (l * x) - f x) / (l - 1)) (nhdsWithin 1 {1}ᶜ)
+      (nhds (x * f' - f x)) := by
+  have hcomp : HasDerivAt (fun l : ℝ => f (l * x)) (f' * x) 1 :=
+    hf.comp_of_eq 1 (hasDerivAt_mul_const x) (one_mul x).symm
+  simpa [slope_fun_def_field, div_eq_inv_mul, mul_comm f' x] using
+    (hcomp.fun_div (hasDerivAt_id' 1) one_ne_zero).tendsto_slope
 
 end
 

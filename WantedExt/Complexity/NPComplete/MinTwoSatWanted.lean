@@ -17,7 +17,7 @@ Completeness* (1979), MINIMUM 2-SATISFIABILITY; R. Kohli, R. Krishnamurti, and P
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Logics.Propositional.CNF.Semantics
@@ -47,7 +47,7 @@ reduction from every language in `NP`
 $(n, \varphi, K)$ of a natural number $n$ (the number of variables), a CNF formula $\varphi$ and a
 natural number $K$ (the bound). No condition is placed on $\varphi$ here; clauses of at most two
 literals are required separately, by well-formedness. -/
-abbrev MinTwoSatInstance := ℕ × Cslib.Logic.PL.CNF × ℕ
+abbrev MinTwoSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF × ℕ
 
 /-- **Well-formed MINIMUM 2-SATISFIABILITY instances.** A triple $(n, \varphi, K)$ of a natural
 number $n$, a CNF formula $\varphi$ and a natural number $K$ is well formed when every clause of
@@ -65,7 +65,7 @@ def MinTwoSatFeasible
   ∃ assign : List Bool, assign.length = i.1 ∧
     ∃ S : Finset ℕ, S ⊆ Finset.range i.2.1.length ∧ S.card ≤ i.2.2 ∧
       ∀ j < i.2.1.length,
-        Cslib.Logic.PL.CNFClause.Satisfies (fun x => assign.getD x false)
+        Cslib.Logic.LegacyPL.CNFClause.Satisfies (fun x => assign.getD x false)
           (i.2.1.getD j []) ↔ j ∈ S
 
 open Classical in

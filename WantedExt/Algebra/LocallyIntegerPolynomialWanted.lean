@@ -15,6 +15,7 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.RingTheory.Ideal.Span
 public import MathlibExt.Algebra.Polynomial.FactorialEvalBound
 public import MathlibExt.Algebra.Polynomial.LocallyIntegerPolynomial
+public import MathlibExt.Algebra.Polynomial.LowDegreeInterpolant
 public import MathlibExt.Data.Nat.ProgressionIntersection
 
 /-!
@@ -52,17 +53,6 @@ Article A41, Lemma 1 (`integers-2025-A41-lem-1`). -/
 public theorem_wanted polynomialToLIP_injective {U : Set ℤ} (hU : U.Infinite) :
     Function.Injective (polynomialToLIP U)
 
-/-- **Integrality of low-degree interpolants.** Let $X \subseteq \mathbb{Z}$ be finite, let
-$q \in \mathbb{Q}[x]$ have degree less than $|X|$, and let $p \in \mathbb{Z}[x]$ satisfy
-$q(x) = p(x)$ for all $x \in X$. Then $q$ has integer coefficients, that is, $q$ is the image in
-$\mathbb{Q}[x]$ of a polynomial in $\mathbb{Z}[x]$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 2 (`integers-2025-A41-lem-2`). -/
-public theorem_wanted mem_lifts_of_degree_lt_of_eval_eq (X : Finset ℤ) (q : ℚ[X])
-    (hq : q.degree < X.card) (p : ℤ[X]) (h : ∀ x ∈ X, q.eval (x : ℚ) = ((p.eval x : ℤ) : ℚ)) :
-    q ∈ Polynomial.lifts (Int.castRingHom ℚ)
-
 /-- **Locally integer polynomial functions agreeing on an infinite subset are equal.** Let
 $U \subseteq V \subseteq \mathbb{Z}$ with $U$ infinite, and let $f, g : V \to \mathbb{Z}$ lie in
 the ring $\mathrm{LIP}(V)$ of locally integer polynomial functions on $V$. If $f(x) = g(x)$ for
@@ -73,15 +63,6 @@ Article A41, Corollary 1 (`integers-2025-A41-cor-1`). -/
 public theorem_wanted lip_restrict_injective {U V : Set ℤ} (hU : U.Infinite) (hUV : U ⊆ V)
     {f g : V → ℤ} (hf : f ∈ lipSubring V) (hg : g ∈ lipSubring V)
     (h : f ∘ Set.inclusion hUV = g ∘ Set.inclusion hUV) : f = g
-
-/-- **Locally integer polynomial functions on an infinite set form a domain.** For every infinite
-$U \subseteq \mathbb{Z}$, the ring $\mathrm{LIP}(U)$ of locally integer polynomial functions
-$U \to \mathbb{Z}$ is an integral domain.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Lemma 4 (`integers-2025-A41-lem-4`). -/
-public theorem_wanted lipSubring_isDomain {U : Set ℤ} (hU : U.Infinite) :
-    IsDomain (lipSubring U)
 
 /-- **Units of $\mathrm{LIP}(U)$.** For every infinite set $U \subseteq \mathbb{Z}$, the only
 units of the ring $\mathrm{LIP}(U)$ of locally integer polynomial functions on $U$ are the
@@ -225,16 +206,6 @@ Article A41, Theorem 5 (`integers-2025-A41-thm-5`). -/
 public theorem_wanted lip_univ_comp {f g : ↥(Set.univ : Set ℤ) → ℤ}
     (hf : f ∈ lipSubring Set.univ) (hg : g ∈ lipSubring Set.univ) :
     (fun x => f ⟨g x, Set.mem_univ _⟩) ∈ lipSubring Set.univ
-
-/-- **$\mathrm{LIP}(\mathbb{Z})$ is closed under the discrete derivative.** If $f$ lies in
-$\mathrm{LIP}(\mathbb{Z})$, the ring of locally integer polynomial functions
-$\mathbb{Z} \to \mathbb{Z}$, then so does the function $x \mapsto f(x) - f(x - 1)$.
-
-Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
-Article A41, Theorem 5 (`integers-2025-A41-thm-5`). -/
-public theorem_wanted lip_univ_sub_shift {f : ↥(Set.univ : Set ℤ) → ℤ}
-    (hf : f ∈ lipSubring Set.univ) :
-    (fun x => f x - f ⟨(x : ℤ) - 1, Set.mem_univ _⟩) ∈ lipSubring Set.univ
 
 /-- **Non-polynomial LIP functions on the integers that are small on an infinite set.** Let
 $\tau : \mathbb{N} \to \mathbb{R}$ with $\tau(n) \to +\infty$ as $n \to \infty$. Write

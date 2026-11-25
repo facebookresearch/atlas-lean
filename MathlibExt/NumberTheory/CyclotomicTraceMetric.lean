@@ -11,6 +11,7 @@ module
 public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 public import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Algebra.Order.Chebyshev
+import Mathlib.Analysis.Normed.Lp.PiLp
 import Mathlib.RingTheory.Trace.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -22,6 +23,7 @@ The squared trace norm sums the squares of the traces of an element times the no
 powers of a chosen primitive root of unity. For prime conductor, each shift singles out
 the coefficient with complementary exponent. Summing these squared traces gives the
 coordinate formula of Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*.
+The trace coordinates define a norm on the cyclotomic field over the rationals.
 -/
 
 namespace MetaMathlibExt
@@ -153,6 +155,46 @@ theorem cyclotomicTraceDist_comm (α β : K) :
     cyclotomicTraceDist p α β = cyclotomicTraceDist p β α := by
   rw [cyclotomicTraceDist, cyclotomicTraceDist, ← neg_sub, cyclotomicTraceNorm,
     cyclotomicTraceNorm, cyclotomicTraceNormSq_neg]
+
+/-- **Galois invariance of the trace metric.** Let $p$ be a prime and let $K$ be a $p$-th
+cyclotomic extension of $\mathbb{Q}$. For every $\mathbb{Q}$-algebra automorphism $\sigma$ of $K$
+and all $\alpha, \beta \in K$, the trace distance satisfies
+$d(\sigma \alpha, \sigma \beta) = d(\alpha, \beta)$.
+
+Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
+INTEGERS 25 (2025), Article A10, Proposition 1 (`integers-2025-A10-prop-1`). -/
+theorem cyclotomicTraceDist_algEquiv (hp : p.Prime)
+    (σ : K ≃ₐ[ℚ] K) (α β : K) :
+    cyclotomicTraceDist p (σ α) (σ β) = cyclotomicTraceDist p α β := by
+  let f (u : K) := Algebra.trace ℚ K ((σ α - σ β) * u) ^ 2
+  -- The powers with exponents from 1 to p - 1 enumerate all primitive p-th roots.
+  have sum_powers {ω : K} (hω : IsPrimitiveRoot ω p) :
+      (∑ j ∈ Finset.Icc 1 (p - 1), f (ω ^ j)) = ∑ u ∈ primitiveRoots p K, f u := by
+    apply Finset.sum_bij (fun j _ => ω ^ j)
+    · intro j hj
+      obtain ⟨hj₁, hj₂⟩ := Finset.mem_Icc.mp hj
+      exact (mem_primitiveRoots hp.pos).mpr
+        (hω.pow_of_coprime j (Nat.coprime_of_lt_prime (by omega) (by omega) hp).symm)
+    · intro i hi j hj hij
+      simp only [Finset.mem_Icc] at hi hj
+      exact hω.pow_inj (by omega) (by omega) hij
+    · intro u hu
+      obtain ⟨j, hj, hc, rfl⟩ :=
+        hω.isPrimitiveRoot_iff.mp (isPrimitiveRoot_of_mem_primitiveRoots hu)
+      have hj₀ : j ≠ 0 := by
+        rintro rfl
+        exact hp.ne_one (by simpa using hc)
+      exact ⟨j, Finset.mem_Icc.mpr ⟨by omega, by omega⟩, rfl⟩
+    · intro j _
+      rfl
+  apply congrArg (fun q : ℚ => √(q : ℝ))
+  have hζ := zeta_spec p ℚ K
+  calc
+    _ = ∑ j ∈ Finset.Icc 1 (p - 1), f (σ (zeta p ℚ K) ^ j) :=
+      (sum_powers hζ).trans (sum_powers (hζ.map_of_injective σ.injective)).symm
+    _ = _ := by
+      simp only [f, ← map_sub, ← map_pow, ← map_mul, Algebra.trace_eq_of_algEquiv,
+        cyclotomicTraceNormSq]
 
 /-- **The zero coefficient vector gives the zero lattice point.** Let $p \ge 1$ be a natural
 number and let $K$ be a field generated over $\mathbb{Q}$ by a primitive $p$-th root of unity, with
@@ -306,6 +348,67 @@ theorem cyclotomicTraceNormSq_eq_and_ge (hp : p.Prime) (a : Fin (p - 1) → ℚ)
     simpa only [Finset.card_univ, Fintype.card_fin, Nat.cast_sub hp.one_le, Nat.cast_one, S]
       using (sq_sum_le_card_mul_sum_sq (s := Finset.univ) (f := a))
   nlinarith only [mul_le_mul_of_nonneg_left hCS (show 0 ≤ (p : ℚ) + 1 by positivity)]
+
+namespace cyclotomicTraceNorm_isNorm
+
+private theorem eq_zero_of_trace_powers_eq_zero (hp : p.Prime) (α : K)
+    (h : ∀ j ∈ Finset.Icc 1 (p - 1), Algebra.trace ℚ K (α * zeta p ℚ K ^ j) = 0) :
+    α = 0 := by
+  have hζ := zeta_spec p ℚ K
+  let b := hζ.powerBasis ℚ
+  have hdim : b.dim = p - 1 := by
+    rw [← b.finrank, IsCyclotomicExtension.finrank K (Polynomial.cyclotomic.irreducible_rat hp.pos),
+      Nat.totient_prime hp]
+  -- Shifting the usual power basis by one power gives exactly the tested exponents.
+  have hform : Algebra.traceForm ℚ K (α * zeta p ℚ K) = 0 := by
+    apply b.basis.ext
+    intro i
+    have hi : i.val + 1 ∈ Finset.Icc 1 (p - 1) := by
+      have := i.isLt
+      exact Finset.mem_Icc.mpr ⟨by omega, by omega⟩
+    rw [LinearMap.zero_apply, Algebra.traceForm_apply, b.basis_eq_pow,
+      IsPrimitiveRoot.powerBasis_gen, mul_assoc, ← pow_succ']
+    exact h _ hi
+  have := IsCyclotomicExtension.finiteDimensional {p} ℚ K
+  have hz := (traceForm_nondegenerate ℚ K).1 _ (LinearMap.congr_fun hform)
+  exact (mul_eq_zero.mp hz).resolve_right (hζ.ne_zero hp.ne_zero)
+
+end cyclotomicTraceNorm_isNorm
+
+/-- **The trace norm is a norm.** Let $p$ be a prime and let $K$ be a $p$-th cyclotomic extension
+of $\mathbb{Q}$, viewed as a $\mathbb{Q}$-vector space. The trace norm $\lVert \cdot \rVert$ on $K$
+is a norm: for all $\alpha, \beta \in K$ and $q \in \mathbb{Q}$, we have
+$\lVert \alpha \rVert = 0$ if and only if $\alpha = 0$,
+$\lVert \alpha + \beta \rVert \le \lVert \alpha \rVert + \lVert \beta \rVert$, and
+$\lVert q \alpha \rVert = |q| \, \lVert \alpha \rVert$.
+
+Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
+INTEGERS 25 (2025), Article A10, Theorem 2 (`integers-2025-A10-thm-2`). -/
+theorem cyclotomicTraceNorm_isNorm (hp : p.Prime) :
+    (∀ α : K, cyclotomicTraceNorm p α = 0 ↔ α = 0) ∧
+    (∀ α β : K,
+      cyclotomicTraceNorm p (α + β) ≤ cyclotomicTraceNorm p α + cyclotomicTraceNorm p β) ∧
+    ∀ (q : ℚ) (α : K), cyclotomicTraceNorm p (q • α) = |(q : ℝ)| * cyclotomicTraceNorm p α := by
+  let J := ↥(Finset.Icc 1 (p - 1))
+  let T : K →ₗ[ℚ] PiLp 2 (fun _ : J => ℚ) :=
+    (WithLp.linearEquiv 2 ℚ _).symm.toLinearMap.comp
+      (LinearMap.pi fun j : J => (Algebra.traceForm ℚ K).flip (zeta p ℚ K ^ (j : ℕ)))
+  have hnorm (α : K) : cyclotomicTraceNorm p α = ‖T α‖ := by
+    rw [PiLp.norm_eq_of_L2]
+    change √(cyclotomicTraceNormSq p α : ℝ) =
+      √(∑ j : J, |(Algebra.trace ℚ K (α * zeta p ℚ K ^ (j : ℕ)) : ℝ)| ^ 2)
+    simp only [sq_abs, cyclotomicTraceNormSq, Rat.cast_sum, Rat.cast_pow]
+    rw [← Finset.sum_coe_sort]
+  refine ⟨fun α => ⟨fun hα => ?_, ?_⟩, fun α β => ?_, fun q α => ?_⟩
+  · have hz : T α = 0 := norm_eq_zero.mp ((hnorm α).symm.trans hα)
+    apply cyclotomicTraceNorm_isNorm.eq_zero_of_trace_powers_eq_zero hp α
+    intro j hj
+    exact congrArg (fun v : PiLp 2 (fun _ : J => ℚ) => v.ofLp ⟨j, hj⟩) hz
+  · rintro rfl
+    simp [cyclotomicTraceNorm]
+  · simpa only [hnorm, map_add] using norm_add_le (T α) (T β)
+  · rw [hnorm, hnorm, map_smul, norm_smul]
+    rfl
 
 end
 

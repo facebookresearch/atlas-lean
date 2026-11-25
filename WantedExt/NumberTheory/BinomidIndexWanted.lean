@@ -16,33 +16,14 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.LiminfLimsup
 public import MathlibExt.Combinatorics.Enumerative.TotienomialCoefficient
-public import MathlibExt.NumberTheory.BinomidIndex
+public import MathlibExt.NumberTheory.BinomidAverage
+public import MathlibExt.NumberTheory.BinomidPartialSum
 public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
 public import MathlibExt.NumberTheory.PrimeDvdChoose
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Partial-sum characterization of binomid indices.** Let $\eta = (e_1, e_2, \dots)$ be a
-sequence of nonnegative integers with partial sums $s_n = e_1 + \dots + e_n$ (so $s_0 = 0$).
-Then $\eta$ is a binomid index if and only if $s_{n-k} + s_k \le s_n$ for all $k$ and $n$ with
-$1 \le k < n$. Moreover, for every $m$, if $\eta$ is the lex-minimal extension of its first $m$
-entries, then for every $n > m$
-$$s_n = \max_{1 \le k < n} (s_{n-k} + s_k),$$
-where the maximum over the empty range (for $n = 1$) is taken to be $0$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 1
-(`integers-2024-A53-lem-1`). -/
-public theorem_wanted isBinomidIndex_iff_partialSum (η : ℕ → ℕ) :
-    (IsBinomidIndex η ↔ ∀ k n : ℕ, 1 ≤ k → k < n →
-      ∑ i ∈ Finset.range (n - k), η i + ∑ i ∈ Finset.range k, η i
-        ≤ ∑ i ∈ Finset.range n, η i) ∧
-    ∀ m : ℕ, IsLexMinimalExtensionOf η m → ∀ n : ℕ, m < n →
-      ∑ i ∈ Finset.range n, η i
-        = (Finset.Ico 1 n).sup fun k =>
-            ∑ i ∈ Finset.range (n - k), η i + ∑ i ∈ Finset.range k, η i
 
 /-- **Monotone finite binomid indices extend periodically.** Let $m \ge 1$ and let
 $e_1 \le e_2 \le \cdots \le e_m$ be nonnegative integers. Then the periodic sequence
@@ -176,23 +157,6 @@ public theorem_wanted infinite_setOf_prime_dvd_nomid_of_not_isLexMinimalExtensio
     (hp : p.Prime) :
     {n : ℕ | ∀ k, 1 ≤ k → k < n → ∃ z : ℤ,
       generalizedBinomialCoefficient (fun i => p ^ μ (i - 1)) k (n - k) = (p : ℚ) * z}.Infinite
-
-/-- **Averages of a binomid index.** Let $\eta = (e_1, e_2, \dots)$ be a binomid index, write
-$s_n = e_1 + \dots + e_n$, and for $i \ge 1$ and $l \ge 0$ let $A_{i,l} = (s_{i+l} - s_l)/i$
-be the average of $e_{l+1}, \dots, e_{l+i}$. Then for all $i, l \ge 1$: $A_{i,l} \ge A_{i,0}$;
-$A_{ki,0} \ge A_{i,0}$ for every $k \ge 1$; and
-$A_{i+l,0} = \frac{i}{i+l} A_{i,l} + \frac{l}{l+i} A_{l,0}$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 2
-(`integers-2024-A53-lem-2`). -/
-public theorem_wanted IsBinomidIndex.binomidAverage_props {η : ℕ → ℕ} (hη : IsBinomidIndex η)
-    {i l : ℕ} (hi : 1 ≤ i) (hl : 1 ≤ l) :
-    binomidAverage η i ≤ ((∑ j ∈ Finset.Ico l (i + l), η j : ℕ) : ℚ) / i ∧
-      (∀ k, 1 ≤ k → binomidAverage η i ≤ binomidAverage η (k * i)) ∧
-      binomidAverage η (i + l) =
-        (i : ℚ) / (i + l) * (((∑ j ∈ Finset.Ico l (i + l), η j : ℕ) : ℚ) / i) +
-          (l : ℚ) / (l + i) * binomidAverage η l
 
 /-- **The upper average of a binomid index is the supremum of its averages.** Let $\eta$ be a
 binomid index, let $s_i$ be the sum of its first $i$ entries, let $A_{i,0}(\eta) = s_i / i$ for

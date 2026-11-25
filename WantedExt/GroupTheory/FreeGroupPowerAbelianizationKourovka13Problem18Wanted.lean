@@ -42,7 +42,7 @@ abelianization of the unrestricted (Cartesian) product $F_n^{\mathbb{N}}$ of cou
 of the free group $F_n$ of rank $n$ is torsion-free: none of its nontrivial elements has finite
 order. -/
 def cartesianPowerAbelianizationTorsionFree : Prop :=
-  ∀ n : ℕ, 2 ≤ n → ∀ g : Abelianization (ℕ → FreeGroup (Fin n)), g ≠ 1 → ¬ IsOfFinOrder g
+  ∀ n : ℕ, 2 ≤ n → ∀ g : Group.Abelianization (ℕ → FreeGroup (Fin n)), g ≠ 1 → ¬ IsOfFinOrder g
 
 /--
 **Abelianized Cartesian powers of free groups can have torsion.** For some integer $n \ge 2$, the

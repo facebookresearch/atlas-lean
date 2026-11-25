@@ -12,3 +12,4 @@
 - [Contracted localizations of an ideal: the maximal and prime intersections agree](i-inf-comap-map-localization-maximal-eq.md)
 - [The image of an ideal in the fraction field is the intersection of its localizations at maximal ideals](eq-i-inf-localized-at-maximal.md)
 - [The image of an ideal in the fraction field is the intersection of its localizations at prime ideals](eq-i-inf-localized-at-prime.md)
+- [Prime ideals of a localization correspond to the prime ideals disjoint from the inverted set](localization-prime-correspondence.md)

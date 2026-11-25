@@ -71,7 +71,8 @@ private theorem singular_velocity_smooth :
 
 private theorem singular_potential_smooth :
     ContDiffOn ℝ 1 (Function.uncurry singularPotential) (Ioi 0 ×ˢ Ioo (-4) 4) :=
-  contDiffOn_snd.mul ((contDiffOn_fst.inv (fun _ hp => ne_of_gt hp.1)).pow 2)
+  contDiffOn_snd.mul ((contDiffOn_fst.inv
+    (fun p (hp : p ∈ Ioi (0 : ℝ) ×ˢ Ioo (-4 : ℝ) 4) => ne_of_gt hp.1)).pow 2)
 
 private theorem singular_burgers (t x : ℝ) (ht : 0 < t) :
     deriv (fun s => singularVelocity s x) t +

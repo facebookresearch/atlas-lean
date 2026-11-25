@@ -13,3 +13,5 @@ The rotation matrices are the matrices of the special orthogonal group $\mathrm{
 ## Statements
 
 - [Real planar rotation matrices](real-planar-rotation-matrices.md)
+- [Identities of planar rotation matrices](rotation-matrix-identities.md): composition, transpose and inverse, determinant and norm, and the complex form
+- [Block-diagonal rotation matrices](block-diagonal-rotations.md): orthogonality and the relative-position identity

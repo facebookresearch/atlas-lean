@@ -83,13 +83,13 @@ theorem su2_conj_to_diag (A : ↥(Matrix.specialUnitaryGroup (Fin 2) ℂ)) :
       simp only [Matrix.specialUnitaryGroup, Submonoid.mem_inf, MonoidHom.mem_mker]
       refine ⟨⟨?_, ?_⟩, ?_⟩
       · ext i j; fin_cases i <;> fin_cases j <;>
-        simp [D_val, z, mul_apply, star, conjTranspose, Fin.sum_univ_two, Matrix.map]
+        simp [D_val, z, Matrix.mul_apply, star, conjTranspose, Fin.sum_univ_two, Matrix.map]
         · exact hz'
         · left; rfl
         · left; rfl
         · exact hz
       · ext i j; fin_cases i <;> fin_cases j <;>
-        simp [D_val, z, mul_apply, star, conjTranspose, Fin.sum_univ_two, Matrix.map]
+        simp [D_val, z, Matrix.mul_apply, star, conjTranspose, Fin.sum_univ_two, Matrix.map]
         · exact hz
         · right; rfl
         · right; rfl
@@ -120,13 +120,13 @@ theorem su2_conj_to_diag (A : ↥(Matrix.specialUnitaryGroup (Fin 2) ℂ)) :
         rw [Complex.mul_conj, Complex.mul_conj]; exact_mod_cast hP_norm
       refine ⟨⟨?_, ?_⟩, ?_⟩
       · ext i j; fin_cases i <;> fin_cases j <;>
-        simp [P_val, mul_apply, star, conjTranspose, Fin.sum_univ_two, Matrix.map] <;>
+        simp [P_val, Matrix.mul_apply, star, conjTranspose, Fin.sum_univ_two, Matrix.map] <;>
         (apply Complex.ext <;>
           simp [Complex.mul_re, Complex.mul_im, Complex.conj_re, Complex.conj_im] at hpq ⊢ <;>
           nlinarith [congr_arg Complex.re hpq, congr_arg Complex.im hpq,
                     Complex.normSq_apply p1, Complex.normSq_apply p2])
       · ext i j; fin_cases i <;> fin_cases j <;>
-        simp [P_val, mul_apply, star, conjTranspose, Fin.sum_univ_two, Matrix.map] <;>
+        simp [P_val, Matrix.mul_apply, star, conjTranspose, Fin.sum_univ_two, Matrix.map] <;>
         (apply Complex.ext <;>
           simp [Complex.mul_re, Complex.mul_im, Complex.conj_re, Complex.conj_im] at hpq ⊢ <;>
           nlinarith [congr_arg Complex.re hpq, congr_arg Complex.im hpq,
@@ -162,7 +162,7 @@ theorem su2_conj_to_diag (A : ↥(Matrix.specialUnitaryGroup (Fin 2) ℂ)) :
         !![p1, p2; -(starRingEnd ℂ) p2, (starRingEnd ℂ) p1] *
           !![z, 0; 0, (starRingEnd ℂ) z]
       ext i j; fin_cases i <;> fin_cases j <;>
-      simp only [mul_apply, Fin.sum_univ_two, of_apply, cons_val_zero, cons_val_one] <;>
+      simp only [Matrix.mul_apply, Fin.sum_univ_two, of_apply, cons_val_zero, cons_val_one] <;>
       (apply Complex.ext <;>
         simp [p1, p2, z, Complex.mul_re, Complex.mul_im, Complex.conj_re,
           Complex.conj_im] <;>

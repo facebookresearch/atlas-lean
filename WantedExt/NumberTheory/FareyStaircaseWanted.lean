@@ -18,7 +18,6 @@ The Farey staircase `A_n(x) = (1/n) Σ_{k=1}^n ⌊kx⌋/k` averages the lower ra
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.NumberTheory.FareyStaircase
 
@@ -106,18 +105,6 @@ Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases
 public theorem_wanted fareyStaircase_sub_mem_Icc {n : ℕ} (hn : 2 ≤ n) (x : ℝ) :
     0 ≤ fareyStaircase n x - fareyStaircase (n - 1) x ∧
       fareyStaircase n x - fareyStaircase (n - 1) x ≤ Real.log n / (n * (n - 1))
-
-/-- **Dilation derivative of a differentiable function.** Let $f : \mathbb{R} \to \mathbb{R}$ have
-derivative $f'$ at the point $x \in \mathbb{R}$. Then the quotient
-$(\lambda^{-1} f(\lambda x) - f(x))/(\lambda - 1)$ tends to $x f' - f(x)$ as $\lambda \to 1$ with
-$\lambda \ne 1$; that is, the dilation derivative of $f$ at $x$ exists and equals $x f' - f(x)$.
-
-Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24
-(2024), Article A37, Proposition 12 (`integers-2024-A37-prop-12`); dilation derivative as defined
-before it. -/
-public theorem_wanted tendsto_dilation_quotient {f : ℝ → ℝ} {f' x : ℝ} (hf : HasDerivAt f f' x) :
-    Filter.Tendsto (fun l : ℝ => (l⁻¹ * f (l * x) - f x) / (l - 1)) (nhdsWithin 1 {1}ᶜ)
-      (nhds (x * f' - f x))
 
 end
 

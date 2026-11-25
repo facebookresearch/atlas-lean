@@ -8,7 +8,24 @@ Use CW approximation of pairs, the fact that weak homotopy equivalences induce h
 
 ## Expansion
 
-A good expansion of this node links each prerequisite of its statement and proof: CW approximation of pairs; CW pairs are good pairs; the comparison of the homotopy groups of a connected CW pair with those of its quotient; Five lemma; the homology of a good pair and of its quotient; Long exact sequence of a pair; Long exact sequence of homotopy groups of a pair; Naturality of the Hurewicz map; Hurewicz theorem; weak homotopy equivalences induce isomorphisms in homology; n-connected pair (X, A); Relative homology groups H\_n(X, A) of a pair of spaces; Relative homotopy group π\_n(X, A, x\_0), n ≥ 1; the relative Hurewicz map; simply connected spaces.
+A good expansion of this node links each prerequisite of its statement and proof: CW approximation of pairs; CW pairs are good pairs; Five lemma; simply connected spaces.
+
+## Depends on
+
+- [n-connected pair of spaces](../higher-homotopy-groups/n-connected-pair.md)
+- [Relative singular homology of a pair of spaces](../singular-homology/relative-homology.md)
+- [Relative homotopy groups of a pair of spaces](../higher-homotopy-groups/relative-homotopy-group.md)
+- [Relative Hurewicz map](relative-hurewicz-map.md)
+
+## Proof depends on
+
+- [Homotopy groups of a connected CW pair and of its quotient](../higher-homotopy-groups/cw-pair-quotient-homotopy-isomorphism.md)
+- [The homology of a good pair is the reduced homology of its quotient](../singular-homology/good-pair-quotient-homology.md)
+- [Long exact sequence of a pair in singular homology](../singular-homology/homology-long-exact-sequence-pair.md)
+- [Long exact sequence of homotopy groups of a pair](../higher-homotopy-groups/homotopy-les-pair.md)
+- [Naturality of the Hurewicz maps](hurewicz-map-naturality.md)
+- [Hurewicz theorem for (n−1)-connected spaces, n ≥ 2](hurewicz-theorem.md)
+- [A weak homotopy equivalence induces isomorphisms on singular homology with any coefficients](../singular-homology/weak-equivalence-homology-isomorphism.md)
 
 ## Sources
 

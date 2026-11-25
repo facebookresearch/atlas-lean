@@ -32,6 +32,7 @@ public import Mathlib.RingTheory.Valuation.Discrete.Basic
 public import Mathlib.RingTheory.Valuation.Discrete.IsDiscreteValuationRing
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 public import Mathlib.Data.Finsupp.SMul
+public import MathlibExt.AlgebraicGeometry.Curve.DivisorClassGroup
 import Mathlib.Algebra.BigOperators.Finsupp.Basic
 import Mathlib.Algebra.Module.Torsion.Basic
 import Mathlib.Algebra.Ring.Subring.Pointwise
@@ -47,226 +48,18 @@ namespace AlgebraicCurve
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
-public structure Place where
-
-  toValuationSubring : ValuationSubring F
-
-  algebraMap_mem' : ∀ a : K, algebraMap K F a ∈ toValuationSubring
-
-  ne_top' : toValuationSubring ≠ ⊤
-
-  isPrincipalIdealRing' : IsPrincipalIdealRing toValuationSubring
-
-private theorem _root_.ValuationSubring.not_isField_of_ne_top
-    {A : ValuationSubring F} (hA : A ≠ ⊤) :
-    ¬IsField A := by
-  intro hf
-  apply hA
-  refine SetLike.ext fun x => ⟨fun _ => ValuationSubring.mem_top x, fun _ => ?_⟩
-  by_cases hx : x ∈ A
-  · exact hx
-  ·
-
-    exfalso
-    have hx0 : x ≠ 0 := fun h => hx (h ▸ A.zero_mem)
-    have hxi : x⁻¹ ∈ A := (A.mem_or_inv_mem x).resolve_left hx
-    have hxi0 : (⟨x⁻¹, hxi⟩ : A) ≠ 0 := by
-      simp only [ne_eq, Subtype.ext_iff]
-      exact inv_ne_zero hx0
-    obtain ⟨b, hb⟩ := hf.mul_inv_cancel hxi0
-    have hb' : x⁻¹ * (b : F) = 1 := by
-      have h := congrArg (Subtype.val) hb
-      simpa using h
-    have hbx : (b : F) = x := by
-      field_simp at hb'
-      exact hb'
-    exact hx (hbx ▸ b.2)
-
 namespace Place
 
-variable {K F}
-
-public theorem toValuationSubring_injective :
-    Function.Injective (toValuationSubring (K := K) (F := F)) := by
-  rintro ⟨a, _, _, _⟩ ⟨b, _, _, _⟩ (rfl : a = b)
-  rfl
-
-@[ext]
-public theorem ext {v w : Place K F} (h : v.toValuationSubring = w.toValuationSubring) : v = w :=
-  toValuationSubring_injective h
-
-variable (v : Place K F)
-
-public instance : IsPrincipalIdealRing v.toValuationSubring := v.isPrincipalIdealRing'
-
-public instance : IsDiscreteValuationRing v.toValuationSubring where
-  not_a_field' := by
-    rw [ne_eq, ← IsLocalRing.isField_iff_maximalIdeal_eq]
-    exact ValuationSubring.not_isField_of_ne_top F v.ne_top'
-
-public instance : Algebra K v.toValuationSubring :=
-  ((algebraMap K F).codRestrict v.toValuationSubring.toSubring v.algebraMap_mem').toAlgebra
-
-@[simp]
-public theorem coe_algebraMap (a : K) :
-    (algebraMap K v.toValuationSubring a : F) = algebraMap K F a := rfl
-
-public instance : IsScalarTower K v.toValuationSubring F :=
-  IsScalarTower.of_algebraMap_eq fun a => (v.coe_algebraMap a).symm
-
-public abbrev ResidueField : Type _ := IsLocalRing.ResidueField v.toValuationSubring
-
-public def deg : ℕ := Module.finrank K v.ResidueField
+variable {K F} (v : Place K F)
 
 public class FiniteResidue : Prop where
   finite : Module.Finite K v.ResidueField
 
-public def heightOneSpectrum : HeightOneSpectrum v.toValuationSubring :=
-  IsDiscreteValuationRing.maximalIdeal _
-
-@[simp]
-public theorem heightOneSpectrum_asIdeal :
-    v.heightOneSpectrum.asIdeal = IsLocalRing.maximalIdeal v.toValuationSubring := rfl
-
-public def adicValuation : Valuation F ℤᵐ⁰ := v.heightOneSpectrum.valuation F
-
-public theorem adicValuation_ne_zero {f : F} (hf : f ≠ 0) : v.adicValuation f ≠ 0 :=
-  (Valuation.ne_zero_iff _).mpr hf
-
-public theorem adicValuation_coe (a : v.toValuationSubring) :
-    v.adicValuation (a : F) = v.heightOneSpectrum.intValuation a := by
-  simpa [adicValuation] using v.heightOneSpectrum.valuation_of_algebraMap (K := F) a
-
-public theorem adicValuation_coe_eq_one_iff (a : v.toValuationSubring) :
-    v.adicValuation (a : F) = 1 ↔ IsUnit a := by
-  rw [v.adicValuation_coe, HeightOneSpectrum.intValuation_eq_one_iff, heightOneSpectrum_asIdeal,
-    IsLocalRing.mem_maximalIdeal, mem_nonunits_iff, not_not]
-
-public theorem adicValuation_coe_irreducible {π : v.toValuationSubring} (hπ : Irreducible π) :
-    v.adicValuation (π : F) = exp (-1 : ℤ) := by
-  rw [v.adicValuation_coe]
-  exact HeightOneSpectrum.intValuation_singleton _ hπ.ne_zero
-    (by rw [heightOneSpectrum_asIdeal, hπ.maximalIdeal_eq])
-
-public def ord (f : F) : ℤ := -(WithZero.log (v.adicValuation f))
-
-@[simp]
-public theorem ord_zero : v.ord (0 : F) = 0 := by simp [ord]
-
-@[simp]
-public theorem ord_one : v.ord (1 : F) = 0 := by simp [ord]
-
-public theorem ord_mul {f g : F} (hf : f ≠ 0) (hg : g ≠ 0) :
-    v.ord (f * g) = v.ord f + v.ord g := by
-  simp only [ord, map_mul]
-  rw [WithZero.log_mul (v.adicValuation_ne_zero hf) (v.adicValuation_ne_zero hg)]
-  ring
-
-public theorem ord_inv (f : F) : v.ord f⁻¹ = -v.ord f := by
-  rcases eq_or_ne f 0 with rfl | hf
-  · simp
-  · simp only [ord, map_inv₀, WithZero.log_inv, neg_neg]
-
-public theorem ord_coe_unit (u : v.toValuationSubringˣ) :
-    v.ord ((u : v.toValuationSubring) : F) = 0 := by
-  simp [ord, (v.adicValuation_coe_eq_one_iff _).mpr u.isUnit]
-
-public theorem ord_coe_irreducible {π : v.toValuationSubring} (hπ : Irreducible π) :
-    v.ord (π : F) = 1 := by
-  simp [ord, v.adicValuation_coe_irreducible hπ]
-
-public theorem ord_zpow (f : F) (n : ℤ) : v.ord (f ^ n) = n * v.ord f := by
-  simp only [ord, map_zpow₀, WithZero.log_zpow, smul_eq_mul]
-  ring
-
-public theorem ord_unit_smul_zpow (u : v.toValuationSubringˣ) {π : v.toValuationSubring}
-    (hπ : Irreducible π) (n : ℤ) :
-    v.ord (((u : v.toValuationSubring) : F) * ((π : F) ^ n)) = n := by
-  have hπF : (π : F) ≠ 0 := by
-    simpa [ne_eq, ZeroMemClass.coe_eq_zero] using hπ.ne_zero
-  have hu : ((u : v.toValuationSubring) : F) ≠ 0 := by
-    simp [ne_eq, ZeroMemClass.coe_eq_zero]
-  rw [v.ord_mul hu (zpow_ne_zero n hπF), v.ord_coe_unit u, zero_add,
-    v.ord_zpow _ _, v.ord_coe_irreducible hπ, mul_one]
-
-public theorem exists_unit_mul_zpow {f : F} (hf : f ≠ 0) {π : v.toValuationSubring}
-    (hπ : Irreducible π) :
-    ∃ u : v.toValuationSubringˣ,
-      f = ((u : v.toValuationSubring) : F) * ((π : F) ^ (v.ord f)) := by
-  obtain ⟨n, u, hu⟩ :=
-    IsDiscreteValuationRing.exists_units_eq_smul_zpow_of_irreducible (K := F) hπ hf
-  rw [Units.smul_def, Algebra.smul_def] at hu
-  have hcoe : algebraMap v.toValuationSubring F (u : v.toValuationSubring)
-      = ((u : v.toValuationSubring) : F) := rfl
-  have hcoe' : algebraMap v.toValuationSubring F π = (π : F) := rfl
-  rw [hcoe, hcoe'] at hu
-  have hn : v.ord f = n := by rw [hu]; exact v.ord_unit_smul_zpow u hπ n
-  exact ⟨u, by rw [hn, hu]⟩
-
 end Place
-
-public abbrev Divisor : Type _ := Place K F →₀ ℤ
-
-namespace Divisor
-
-variable {K F}
-
-public def degree : Divisor K F →+ ℤ :=
-  Finsupp.liftAddHom fun v => AddMonoidHom.mulRight (v.deg : ℤ)
-
-@[simp]
-public theorem degree_single (v : Place K F) (n : ℤ) :
-    degree (Finsupp.single v n) = n * v.deg := by
-  simp [degree]
-
-public def degZero : AddSubgroup (Divisor K F) := degree.ker
-
-public theorem mem_degZero {D : Divisor K F} : D ∈ degZero (K := K) (F := F) ↔ degree D = 0 :=
-  Iff.rfl
-
-public def IsPrincipal (D : Divisor K F) : Prop := ∃ f : F, f ≠ 0 ∧ ∀ v : Place K F, D v = v.ord f
-
-public def principal : AddSubgroup (Divisor K F) where
-  carrier := {D | IsPrincipal D}
-  zero_mem' := ⟨1, one_ne_zero, fun v => by simp⟩
-  add_mem' := by
-    rintro D E ⟨f, hf, hD⟩ ⟨g, hg, hE⟩
-    exact ⟨f * g, mul_ne_zero hf hg, fun v => by
-      rw [Finsupp.add_apply, hD v, hE v, v.ord_mul hf hg]⟩
-  neg_mem' := by
-    rintro D ⟨f, hf, hD⟩
-    exact ⟨f⁻¹, inv_ne_zero hf, fun v => by
-      rw [Finsupp.neg_apply, hD v, v.ord_inv]⟩
-
-public theorem mem_principal {D : Divisor K F} :
-    D ∈ principal (K := K) (F := F) ↔ IsPrincipal D := Iff.rfl
-
-end Divisor
-
-public class HasPrincipalDivisors : Prop where
-  exists_divisor : ∀ f : F, f ≠ 0 → ∃ D : Divisor K F,
-    (∀ v : Place K F, D v = v.ord f) ∧ Divisor.degree D = 0
-
-public abbrev Pic : Type _ := Divisor K F ⧸ Divisor.principal (K := K) (F := F)
-
-public abbrev Pic0 : Type _ :=
-  Divisor.degZero (K := K) (F := F) ⧸
-    (Divisor.principal (K := K) (F := F)).addSubgroupOf (Divisor.degZero (K := K) (F := F))
 
 namespace Pic0
 
 variable {K F}
-
-public def mk (D : Divisor.degZero (K := K) (F := F)) : Pic0 K F := QuotientAddGroup.mk D
-
-public theorem mk_surjective : Function.Surjective (mk (K := K) (F := F)) :=
-  QuotientAddGroup.mk_surjective
-
-@[simp]
-public theorem mk_add (D E : Divisor.degZero (K := K) (F := F)) : mk (D + E) = mk D + mk E := rfl
-
-@[simp]
-public theorem mk_zero : mk (0 : Divisor.degZero (K := K) (F := F)) = 0 := rfl
 
 variable (K F) in
 
@@ -475,40 +268,5 @@ public instance : DistribMulAction (F ≃ₐ[K] F) (Pic0 K F) where
     exact congrArg mk (map_add _ _ _)
 
 end Pic0
-
-namespace Place
-
-variable {K F}
-variable {R : Type*} [CommRing R] [IsDedekindDomain R] [Algebra R F] [IsFractionRing R F]
-
-open IsDedekindDomain.HeightOneSpectrum in
-
-public theorem isPrincipalIdealRing_valuationSubring (w : HeightOneSpectrum R) :
-    IsPrincipalIdealRing ((w.valuation F).valuationSubring) := by
-  rw [show (w.valuation F).valuationSubring = valuationSubringAtPrime F w from
-    (valuationSubringAtPrime_eq_valuationSubring (K := F) w).symm]
-
-  infer_instance
-
-open IsDedekindDomain.HeightOneSpectrum in
-
-public def ofHeightOneSpectrum [Algebra K R] [IsScalarTower K R F] (w : HeightOneSpectrum R) :
-    Place K F where
-  toValuationSubring := (w.valuation F).valuationSubring
-  algebraMap_mem' := fun a => by
-    rw [Valuation.mem_valuationSubring_iff, IsScalarTower.algebraMap_apply K R F]
-    exact w.valuation_le_one (algebraMap K R a)
-  ne_top' := by
-    simp only [ne_eq, Valuation.valuationSubring_eq_top_iff, not_not]
-    infer_instance
-  isPrincipalIdealRing' := isPrincipalIdealRing_valuationSubring w
-
-@[simp]
-public theorem ofHeightOneSpectrum_toValuationSubring [Algebra K R] [IsScalarTower K R F]
-    (w : HeightOneSpectrum R) :
-    (ofHeightOneSpectrum (K := K) w).toValuationSubring = (w.valuation F).valuationSubring :=
-  rfl
-
-end Place
 
 end AlgebraicCurve

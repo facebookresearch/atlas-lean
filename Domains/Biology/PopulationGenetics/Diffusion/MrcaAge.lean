@@ -128,13 +128,16 @@ open MathlibExt.Biology.PopulationGenetics.Diffusion
 `a₁(x) = 2 - x + 2 (1 - x) log (1 - x) / x`. It solves `generator 0 w x = w x / x` on
 `(0, 1)` (`pattersonAux1_ode`; this is his Equation A2, `x² (1 - x) / 2 * w'' = w`,
 divided by `x`), tends to `0` at `x = 0` and equals `1` at `x = 1` (Equations A5,
-A6). At `x = 0` the Lean value is the totalized `2`, not the limit. -/
+A6). At `x = 0` the Lean value is the totalized `2` (from `u / 0 = 0`), not the limit; at `x = 1`
+the term `(1 - x) log (1 - x)` is `0` (with `log 0 = 0`). For `x > 1` the logarithm is
+`log (x - 1)` (`log u = log |u|`). -/
 noncomputable def pattersonAux1 (x : ℝ) : ℝ :=
   2 - x + 2 * ((1 - x) * log (1 - x) / x)
 
 /-- Patterson's second Appendix solution `a₂` (Equation A4): `a₂(x) = (1 - x) / x`.
 It solves `generator 0 w x = w x / x` on `(0, 1)` (`pattersonAux2_ode`, his
-Equation A2 divided by `x`) and vanishes at `x = 1` (Equation A8). -/
+Equation A2 divided by `x`) and vanishes at `x = 1` (Equation A8). With `x / 0 = 0`,
+`a₂(0) = 0`. -/
 noncomputable def pattersonAux2 (x : ℝ) : ℝ :=
   (1 - x) / x
 
@@ -149,10 +152,12 @@ and for `x > y`,
 
 In the diffusion reading (not formalized here), `G_C(x, y) = ∫₀^∞ C(x, y; t) dt` for
 the killed transition density `C` of his Equation 4, with `y` the present-day
-frequency and `x` the frequency backward in time. The branches are
-`2 a₁(x) / y²` and `2 a₁(y) a₂(x) / ((1 - y) y)` (`killedGreen_eq_aux_left`,
-`killedGreen_eq_aux_right`). The formula is meaningful for `x, y ∈ (0, 1)`; outside
-that range Lean's totalized division takes over. -/
+frequency and `x` the frequency backward in time. For `x ≠ 0` and `y ≠ 0` the branches are
+`2 a₁(x) / y²` and, if also `y ≠ 1`, `2 a₁(y) a₂(x) / ((1 - y) y)` (`killedGreen_eq_aux_left`,
+`killedGreen_eq_aux_right`); at `x = 0 < y` the formula gives `0`, whereas `2 a₁(0) / y² = 4 / y²`.
+The formula is meaningful for `x, y ∈ (0, 1)`; outside that range Lean's totalized division takes
+over: with `u / 0 = 0` the value is `0` when `x = 0`, when `y = 0` and when `x > y = 1`, and
+logarithms are taken with `log 0 = 0` and `log u = log |u|` for negative `u`. -/
 noncomputable def killedGreen (x y : ℝ) : ℝ :=
   if x ≤ y then -2 * (x ^ 2 + 2 * x * log (1 - x) - 2 * x - 2 * log (1 - x)) / (y ^ 2 * x)
   else 2 * (1 - x) * (2 * y - y ^ 2 + 2 * log (1 - y) - 2 * y * log (1 - y)) /
@@ -164,7 +169,8 @@ noncomputable def killedGreen (x y : ℝ) : ℝ :=
 integral `∫₁ˣ (log t) / (1 - t) dt`; `pattersonDilog_eq_integral` proves that the
 two agree on `(0, 1)`. This is his sign and normalization convention:
 `dilog 1 = 0`, derivative `log x / (1 - x)` on `(0, 1)`. In classical notation
-`pattersonDilog x = Li₂(1 - x)` (Maple's `dilog`). -/
+`pattersonDilog x = Li₂(1 - x)` for `0 ≤ x ≤ 2` (Maple's `dilog`), where the series converges; for
+`x < 0` and `x > 2` it is not summable and the value is `0`, not a continuation of `Li₂`. -/
 noncomputable def pattersonDilog (x : ℝ) : ℝ :=
   Real.li2PowerSeries (1 - x)
 
@@ -177,15 +183,17 @@ known to be new (nonancestral) and now at frequency `y`:
 Meaningful for `y ∈ (0, 1)`. At `y = 1` the Lean value is `2π² / 3 - 4`: the last
 term `2 log 1 / (1 - 1)` evaluates to `0` by totalized division, so the value at `1`
 is an artifact, `2` more than the limit `2 (π² - 9) / 3` of
-`tendsto_meanMrcaNew_one`. The identity `meanMrcaNew_eq_integral` derives this
-formula from Theorem 4. -/
+`tendsto_meanMrcaNew_one`. At `y = 0` the value is `-4` (with `log 0 = 0`), and for `y < 0` the
+logarithm is `log |y|`. The identity `meanMrcaNew_eq_integral` derives this formula from
+Theorem 4. -/
 noncomputable def meanMrcaNew (y : ℝ) : ℝ :=
   -4 + 2 * log y + (2 * π ^ 2 - 12 * pattersonDilog y) / (3 * y) + 2 * log y / (1 - y)
 
 /-- Patterson's `M₂(y)` (Equation 17): in the diffusion reading, the expected MRCA
 age of two copies of an old (ancestral) allele now at frequency `y`,
 `M₂(y) = 1 - (1 - y) M₁(y) / y`. Meaningful for `y ∈ (0, 1)`; at `y = 1` the Lean
-value is `1`, since the `1 - y` factor annihilates the (totalized) `M₁` value. -/
+value is `1`, since the `1 - y` factor annihilates the (totalized) `M₁` value; at `y = 0` it is
+also `1` (`x / 0 = 0`). -/
 noncomputable def meanMrcaOld (y : ℝ) : ℝ :=
   1 - (1 - y) * meanMrcaNew y / y
 
@@ -193,7 +201,8 @@ noncomputable def meanMrcaOld (y : ℝ) : ℝ :=
 `f ↦ (x (1 - x) f(x) / 2)'' - f(x) / x`. In his Theorem 7, iterating this step `n`
 times from `f₀ = f` and evaluating at the present frequency `y` gives the `n`-th
 `t`-derivative at `t = 0` of `F(y, f; t) = ∫₀¹ f(x) C(x, y; t) dx`; that theorem
-needs the killed density `C` and is not formalized here. -/
+needs the killed density `C` and is not formalized here. Derivatives that do not exist are taken
+to be `0`, and `f 0 / 0 = 0`. -/
 noncomputable def pattersonTaylorStep (f : ℝ → ℝ) (x : ℝ) : ℝ :=
   deriv (deriv fun x => x * (1 - x) * f x / 2) x - f x / x
 
@@ -316,7 +325,7 @@ theorem pattersonAux1_ode {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
   ring
 
 /-- Patterson's Equation A6: `a₁(1) = 1`. At `x = 1` the Lean computation uses
-`(1 - x) * log (1 - x) = 0 * log 0 = 0`; `tendsto_pattersonAux1_nhdsLT_one` shows
+`(1 - x) * log (1 - x) = 0 * log 0 = 0` (with `log 0 = 0`); `tendsto_pattersonAux1_nhdsLT_one` shows
 the value is also the limit from below. -/
 theorem pattersonAux1_one : pattersonAux1 1 = 1 := by
   norm_num [pattersonAux1]
@@ -325,7 +334,8 @@ theorem pattersonAux1_one : pattersonAux1 1 = 1 := by
 theorem pattersonAux2_one : pattersonAux2 1 = 0 := by
   norm_num [pattersonAux2]
 
-/-- The `x ≤ y` branch of Theorem 4 in terms of `a₁`: `G_C(x, y) = 2 a₁(x) / y²`. -/
+/-- The `x ≤ y` branch of Theorem 4 in terms of `a₁`: for `x ≤ y` with `x ≠ 0` and `y ≠ 0`,
+`G_C(x, y) = 2 a₁(x) / y²`. -/
 theorem killedGreen_eq_aux_left {x y : ℝ} (hxy : x ≤ y) (hx : x ≠ 0) (hy : y ≠ 0) :
     killedGreen x y = (2 / y ^ 2) * pattersonAux1 x := by
   unfold killedGreen pattersonAux1
@@ -333,8 +343,8 @@ theorem killedGreen_eq_aux_left {x y : ℝ} (hxy : x ≤ y) (hx : x ≠ 0) (hy :
   field_simp
   ring
 
-/-- The `y < x` branch of Theorem 4 in terms of `a₁, a₂`:
-`G_C(x, y) = (2 a₁(y) / ((1 - y) y)) a₂(x)`. -/
+/-- The `y < x` branch of Theorem 4 in terms of `a₁, a₂`: for `y < x` with `x ≠ 0`, `y ≠ 0` and
+`y ≠ 1`, `G_C(x, y) = (2 a₁(y) / ((1 - y) y)) a₂(x)`. -/
 theorem killedGreen_eq_aux_right {x y : ℝ} (hxy : y < x) (hx : x ≠ 0) (hy0 : y ≠ 0)
     (hy1 : y ≠ 1) :
     killedGreen x y = (2 * pattersonAux1 y / ((1 - y) * y)) * pattersonAux2 x := by
@@ -461,7 +471,8 @@ theorem killedGreen_ode_gt {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (hy : y ∈ 
   have h1y : (1 : ℝ) - y ≠ 0 := (sub_pos.mpr hy.2).ne'
   field_simp
 
-/-- Left derivative of `G_C(·, y)` at the diagonal `x = y`. -/
+/-- Left derivative of `G_C(·, y)` at the diagonal `x = y`, for `y ∈ (0, 1)`:
+`(2 / y²) (-1 - 2 (log (1 - y) + y) / y²)`. -/
 theorem hasDerivWithinAt_killedGreen_Iic {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) :
     HasDerivWithinAt (fun x => killedGreen x y)
       ((2 / y ^ 2) * (-1 - 2 * (log (1 - y) + y) / y ^ 2)) (Iic y) y := by
@@ -470,7 +481,8 @@ theorem hasDerivWithinAt_killedGreen_Iic {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) 
   exact hbr.congr_of_eventuallyEq_of_mem (killedGreen_eventuallyEq_aux_left hy)
     (mem_Iic.mpr le_rfl)
 
-/-- Right derivative of `G_C(·, y)` at the diagonal `x = y`. -/
+/-- Right derivative of `G_C(·, y)` at the diagonal `x = y`, for `y ∈ (0, 1)`:
+`-2 a₁(y) / ((1 - y) y³)`. -/
 theorem hasDerivWithinAt_killedGreen_Ici {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) :
     HasDerivWithinAt (fun x => killedGreen x y)
       ((2 * pattersonAux1 y / ((1 - y) * y)) * (-1 / y ^ 2)) (Ici y) y := by
@@ -479,8 +491,8 @@ theorem hasDerivWithinAt_killedGreen_Ici {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) 
   exact hbr.congr_of_eventuallyEq_of_mem (killedGreen_eventuallyEq_aux_right hy)
     (mem_Ici.mpr le_rfl)
 
-/-- The derivative jump of `G_C(·, y)` at the diagonal: right derivative minus left
-derivative is `-2 / (y (1 - y))`, the unit-source condition for the Green's function
+/-- The derivative jump of `G_C(·, y)` at the diagonal, for `y ∈ (0, 1)`: right derivative minus
+left derivative is `-2 / (y (1 - y))`, the unit-source condition for the Green's function
 of Patterson's Equation 4. -/
 theorem killedGreen_deriv_jump {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) :
     derivWithin (fun x => killedGreen x y) (Ici y) y -
@@ -720,7 +732,8 @@ theorem meanMrca_mixture {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) :
   ring
 
 /-- **Limit of `M₁` at frequency `1`** (Patterson p. 1094, item 6):
-`M₁(y) → 2 (π² - 9) / 3` as `y → 1⁻`. -/
+`M₁(y) → 2 (π² - 9) / 3` as `y → 1⁻`. The value `meanMrcaNew 1 = 2π² / 3 - 4`, from `x / 0 = 0`,
+differs from this limit. -/
 theorem tendsto_meanMrcaNew_one :
     Tendsto meanMrcaNew (𝓝[<] (1 : ℝ)) (𝓝 (2 * (π ^ 2 - 9) / 3)) := by
   have hlog : Tendsto (fun y => log y) (𝓝[<] (1 : ℝ)) (𝓝 0) := by
@@ -758,9 +771,9 @@ private theorem hasDerivAt_one_div {x : ℝ} (hx : x ≠ 0) :
   ring
 
 /-- **The one-step computation behind Corollary 3** (Patterson p. 1100): Patterson's
-Taylor step (Theorem 7) sends `f₀(x) = y / x²`, the input for a new allele, to `0`.
-Hence every higher Taylor coefficient at `t = 0` vanishes in his Corollary 3; the
-density conclusion there needs the killed density `C` and is not stated here. -/
+Taylor step (Theorem 7) sends `f₀(x) = y / x²`, the input for a new allele, to `0` on `(0, 1)`,
+for every real `y`. Hence every higher Taylor coefficient at `t = 0` vanishes in his Corollary 3;
+the density conclusion there needs the killed density `C` and is not stated here. -/
 theorem pattersonTaylorStep_new {y x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     pattersonTaylorStep (fun x => y / x ^ 2) x = 0 := by
   have h1 : ∀ z ∈ Ioo (0 : ℝ) 1,
@@ -784,8 +797,8 @@ theorem pattersonTaylorStep_new {y x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
 
 /-- **The one-step computation behind Corollary 4** (Patterson p. 1100): the Taylor
 step sends `f₀(x) = y (1 - y) / (x² (1 - x))`, the input at unknown ancestry, to
-`-f₀`. Iterating gives `fₙ = (-1)ⁿ f₀` in his Corollary 4; the density conclusion
-there needs the killed density `C` and is not stated here. -/
+`-f₀` on `(0, 1)`, for every real `y`. Iterating gives `fₙ = (-1)ⁿ f₀` in his Corollary 4; the
+density conclusion there needs the killed density `C` and is not stated here. -/
 theorem pattersonTaylorStep_unknown {y x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     pattersonTaylorStep (fun x => y * (1 - y) / (x ^ 2 * (1 - x))) x =
       -(y * (1 - y) / (x ^ 2 * (1 - x))) := by
@@ -1024,7 +1037,8 @@ private theorem aux1PosAux_le {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) :
     rw [Real.norm_of_nonneg (by positivity)]
     gcongr
   have hmvt := (convex_Icc (0 : ℝ) x).norm_image_sub_le_of_norm_hasDerivWithin_le
-    (fun t ht => (hasDerivAt_aux1PosAux (ne_of_lt (ht.2.trans_lt hx.2))).hasDerivWithinAt)
+    (fun t (ht : t ∈ Icc (0 : ℝ) x) =>
+      (hasDerivAt_aux1PosAux (ne_of_lt (ht.2.trans_lt hx.2))).hasDerivWithinAt)
     hbound ⟨le_rfl, hx.1.le⟩ ⟨hx.1.le, le_rfl⟩
   have hφ0 : (0 : ℝ) * (2 - 0) / (2 * (1 - 0)) + log (1 - (0 : ℝ)) = 0 := by
     simp
@@ -1105,10 +1119,10 @@ theorem killedGreen_pos {x y : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) (hy : y ∈ Ioo
     · change 0 < (1 - x) / x
       exact div_pos (sub_pos.mpr hx.2) hx.1
 
-/-- The boundary ratio in the integrated form of Patterson's Equation 14:
+/-- The boundary ratio in the integrated form of Patterson's Equation 14: for `y ∈ (0, 1)`,
 `G_C(1 - ε, y) / (2ε) → a₁(y) / ((1 - y) y)` as `ε → 0⁺`, the contribution of an
-allele that was fixed, since `G_C(1 - ε, y) = (2 a₁(y) / ((1 - y) y)) a₂(1 - ε)`
-and `a₂(1 - ε) = ε / (1 - ε)`. -/
+allele that was fixed, since for `0 < ε < 1 - y` (so that `1 - ε > y` lies on the upper branch)
+`G_C(1 - ε, y) = (2 a₁(y) / ((1 - y) y)) a₂(1 - ε)` and `a₂(1 - ε) = ε / (1 - ε)`. -/
 theorem tendsto_killedGreen_one_sub_div {y : ℝ} (hy : y ∈ Ioo (0 : ℝ) 1) :
     Tendsto (fun ε => killedGreen (1 - ε) y / (2 * ε)) (𝓝[>] (0 : ℝ))
       (𝓝 (pattersonAux1 y / ((1 - y) * y))) := by
