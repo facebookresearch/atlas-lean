@@ -79,7 +79,8 @@ holds when `X` is independent of `Z`). If `r(1, z) - r(0, z) = δ` for both `z`,
 `m 1 - m 0 = δ`; if `r(1, z) = ρ r(0, z)` for both `z`, then `m 1 = ρ m 0`.
 
 Source: Greenland, Robins and Pearl (1999), pp. 37–38, Table 1. -/
-public theorem_wanted riskDifference_riskRatio_collapse (q : ℝ) (r : Bool → Bool → ℝ) (δ ρ : ℝ) :
+public theorem_wanted riskDifference_riskRatio_collapse (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1)
+    (r : Bool → Bool → ℝ) (δ ρ : ℝ) :
     ((∀ z, r true z - r false z = δ) →
         (q * r true true + (1 - q) * r true false) -
           (q * r false true + (1 - q) * r false false) = δ) ∧
