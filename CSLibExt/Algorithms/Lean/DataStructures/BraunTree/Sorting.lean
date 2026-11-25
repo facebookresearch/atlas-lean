@@ -366,7 +366,7 @@ def tSiftDown : BraunTree α → α → BraunTree α → ℕ
   | .Node .Leaf _x₁ _r₁, _a, .Leaf => 1
   | .Node (.Node _l₁ _x₁ _r₁) _x₂ _r₂, _a, .Leaf => 1
 termination_by l _ r => size l + size r
-decreasing_by all_goals simp only [size]; all_goals omega
+decreasing_by all_goals simp only [size]; omega
 
 omit [DecidableLT α] [DecidableEq α] in
 /-- AFP lemma `t_sift_down_height`. -/
@@ -416,11 +416,11 @@ theorem siftDown_height {l : BraunTree α} {x : α} {r : BraunTree α}
   | case2 x₀ a_sub x_elem hle =>
       simp only [siftDown]
       split_ifs
-      all_goals simp [height]
+      simp [height]
   | case3 x₀ a_sub x_elem hle =>
       simp only [siftDown]
       split_ifs
-      all_goals simp [height]
+      simp [height]
   | case4 l₁ x₁ r₁ x₂ r₂ a_elem hle =>
       exfalso
       rw [braun_node] at hb
@@ -551,7 +551,7 @@ def merge : BraunTree α → BraunTree α → BraunTree α
       if a₁ ≤ a₂ then BraunTree.Node (merge l₁ r₁) a₁ (BraunTree.Node l₂ a₂ r₂)
       else BraunTree.Node (BraunTree.Node l₁ a₁ r₁) a₂ (merge l₂ r₂)
 termination_by l r => size l + size r
-decreasing_by all_goals simp only [size]; all_goals omega
+decreasing_by all_goals simp only [size]; omega
 
 omit [DecidableLT α] [DecidableEq α] in
 /-- AFP lemma `merge_size`. -/
@@ -812,7 +812,7 @@ def tMerge : BraunTree α → BraunTree α → ℕ
   | .Node l₁ a₁ r₁, .Node l₂ a₂ r₂ =>
       if a₁ ≤ a₂ then 1 + tMerge l₁ r₁ else 1 + tMerge l₂ r₂
 termination_by l r => size l + size r
-decreasing_by all_goals simp only [size]; all_goals omega
+decreasing_by all_goals simp only [size]; omega
 
 /-- Isabelle's `t_list_of_A`, well-founded on `size t`. -/
 def tListOfA : BraunTree α → ℕ
