@@ -29,7 +29,7 @@ power function. The reversed range is proved in the imported module.
 
 @[expose] public section
 
-open scoped ComplexOrder MatrixOrder
+open scoped ComplexOrder
 
 namespace MathlibExt.LinearAlgebra.Matrix.ArakiLiebThirringWanted
 
@@ -48,6 +48,8 @@ theorem araki_lieb_thirring {A B : Matrix n n ℂ} (hA : A.PosSemidef) (hB : B.P
       RCLike.re (cfc (· ^ q : ℝ → ℝ)
         (cfc (· ^ (r / 2) : ℝ → ℝ) A * cfc (· ^ r : ℝ → ℝ) B *
           cfc (· ^ (r / 2) : ℝ → ℝ) A)).trace := by
+  -- The matrix order is needed only by the proof, so the statement is elaborated without it.
+  open scoped MatrixOrder in
   have hr₀ : 0 < r := zero_lt_one.trans_le hr
   -- Apply the reversed range to the powered matrices with exponents r⁻¹ and r * q.
   have h := araki_lieb_thirring_of_le_one (A := A ^ r) (B := B ^ r)
