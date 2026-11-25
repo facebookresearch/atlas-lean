@@ -20,7 +20,10 @@ of a power of a real `2 × 2` matrix in terms of its
 trace and determinant; both parities were verified
 exactly over random rational matrices for `m ≤ 5`.
 Lemma 3 is the Beta integral
-`∫₀¹ x^r (1 - x)^r dx = 1 / ((2r + 1) * C(2r, r))`.
+`∫₀¹ x^r (1 - x)^r dx = 1 / ((2r + 1) * C(2r, r))`,
+proved as `intervalIntegral.integral_pow_one_sub_pow` in
+`MathlibExt.Analysis.SpecialFunctions.Gamma.BetaPowerProduct`
+and re-exported here.
 
 Lemmas 1 and 2 decompose `S(n, k) = 1^k + ⋯ + n^k`
 into traces of `diag(i, 2s + 1 - i)`, `s = ⌊n/2⌋`;
@@ -39,6 +42,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.BetaPowerProduct
 
 set_option autoImplicit false
 
