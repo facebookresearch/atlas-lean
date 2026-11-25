@@ -11,9 +11,10 @@ module
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.Partition.PeakGeneratingFunction
 public import MathlibExt.Combinatorics.Enumerative.SymmetricPeaksCompositions
-import all MathlibExt.Combinatorics.Enumerative.SetPartitionPeaks
+import MathlibExt.Combinatorics.Enumerative.SetPartitionPeaks
 import Mathlib.Data.List.OfFn
 import Mathlib.Algebra.BigOperators.Intervals
+import Mathlib.Order.Interval.Finset.Fin
 import Mathlib.Tactic.Ring
 
 /-!
@@ -27,18 +28,17 @@ open Finset PowerSeries
 
 namespace MetaMathlibExt.symmetricPeaks_derivative_generatingFunction
 
--- The last-letter decomposition and Stirling cardinality for these words are
--- already proved in SetPartitionPeaks (tp_N5 and tp_N6).
 private lemma words_eq (n k : ℕ) :
-    tpRgf n k = univ.filter (fun w : Fin n → Fin k => IsSurjectiveRestrictedGrowthString w) := by
+    partitionWords n k =
+      univ.filter (fun w : Fin n → Fin k => IsSurjectiveRestrictedGrowthString w) := by
   ext w
-  simp [tpRgf, IsSurjectiveRestrictedGrowthString]
+  simp [partitionWords, IsSurjectiveRestrictedGrowthString]
 
 private def labels {n k : ℕ} (w : Fin n → Fin k) : List ℕ := List.ofFn fun i => (w i).val
 
 private def peaks {n k : ℕ} (w : Fin n → Fin k) : ℕ := symmetricPeakCount (labels w)
 
-private def total (n k : ℕ) : ℕ := ∑ w ∈ tpRgf n k, peaks w
+private def total (n k : ℕ) : ℕ := ∑ w ∈ partitionWords n k, peaks w
 
 private lemma labels_succ {n k : ℕ} (w : Fin (n + 1) → Fin k) :
     labels w = labels (Fin.init w) ++ [(w (Fin.last n)).val] := by
@@ -86,27 +86,30 @@ private lemma peaks_old {n k : ℕ} (w : Fin (n + 2) → Fin k) :
 -- penultimate letter of a word ending in a rise.
 private lemma total_step (n k : ℕ) :
     total (n + 3) (k + 1) = total (n + 2) k + (k + 1) * total (n + 2) (k + 1) +
-      ∑ w ∈ tpRgf (n + 2) (k + 1), rise w := by
+      ∑ w ∈ partitionWords (n + 2) (k + 1), rise w := by
   unfold total
-  rw [tp_N5]
+  rw [sum_partitionWords_snoc]
   simp_rw [peaks_new, peaks_old, sum_add_distrib, ← mul_sum, Nat.add_assoc]
 
 private lemma increasing_pairs (k : ℕ) :
     ∑ a : Fin k, ∑ b : Fin k, (if a < b then 1 else 0 : ℕ) = k.choose 2 := by
   rw [sum_comm]
   calc
-    _ = ∑ b : Fin k, b.val := sum_congr rfl fun b _ => tp_N1 k b.val b.isLt.le
+    _ = ∑ b : Fin k, b.val := by
+      apply sum_congr rfl
+      intro b _
+      simp only [sum_boole, filter_gt_eq_Iio, Fin.card_Iio, Nat.cast_id]
     _ = _ := by rw [Fin.sum_univ_eq_sum_range (fun i => i), sum_range_id, Nat.choose_two_right]
 
 -- The new maximum always completes a rise after a nonempty prefix. For two old
 -- letters at the end, each increasing pair is possible over every valid prefix.
 private lemma sum_rise (n k : ℕ) :
-    ∑ w ∈ tpRgf (n + 2) (k + 1), rise w =
-      (tpRgf (n + 1) k).card + (tpRgf n (k + 1)).card * (k + 1).choose 2 := by
-  rw [tp_N5 (n + 1)]
+    ∑ w ∈ partitionWords (n + 2) (k + 1), rise w =
+      (partitionWords (n + 1) k).card + (partitionWords n (k + 1)).card * (k + 1).choose 2 := by
+  rw [sum_partitionWords_snoc (n + 1)]
   simp only [rise, Fin.snoc_castSucc, Fin.snoc_last, Function.comp_apply,
     Fin.castSucc_lt_last, ite_true, sum_const, smul_eq_mul, mul_one]
-  rw [tp_N5 n]
+  rw [sum_partitionWords_snoc n]
   simp only [Fin.snoc_last, not_lt_of_ge (Fin.le_last _), ite_false, sum_const_zero,
     zero_add, increasing_pairs, sum_const, smul_eq_mul]
 
@@ -136,7 +139,7 @@ private lemma total_small (n k : ℕ) (hk : k ≤ 1) : total n k = 0 := by
   omega
 
 private noncomputable def counts (k : ℕ) : ℤ⟦X⟧ :=
-  PowerSeries.mk fun n => ((tpRgf n k).card : ℤ)
+  PowerSeries.mk fun n => ((partitionWords n k).card : ℤ)
 
 private noncomputable def totals (k : ℕ) : ℤ⟦X⟧ := PowerSeries.mk fun n => (total n k : ℤ)
 
@@ -144,9 +147,9 @@ private lemma counts_step (k : ℕ) :
     counts (k + 1) = X * counts k + X * ((↑(k + 1) : ℤ⟦X⟧) * counts (k + 1)) := by
   ext n
   cases n with
-  | zero => simp [counts, tp_N6]
+  | zero => simp [counts, card_partitionWords]
   | succ n =>
-    simp only [map_add, coeff_succ_X_mul, coeff_natCast_mul, counts, coeff_mk, tp_N6]
+    simp only [map_add, coeff_succ_X_mul, coeff_natCast_mul, counts, coeff_mk, card_partitionWords]
     rw [Nat.stirlingSecond_succ_succ]
     push_cast
     ring
@@ -159,7 +162,7 @@ private lemma totals_step (k : ℕ) :
   match n with
   | 0 | 1 | 2 =>
     simp only [map_add, coeff_zero_X_mul, coeff_succ_X_mul, coeff_natCast_mul,
-      totals, counts, coeff_mk, tp_N6]
+      totals, counts, coeff_mk, card_partitionWords]
     simp [total_short]
   | n + 3 =>
     simp only [map_add, coeff_succ_X_mul, coeff_natCast_mul, totals, counts, coeff_mk]
