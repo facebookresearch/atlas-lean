@@ -29,8 +29,10 @@ Then every subsequential limit in law $X$ of $(X^N)$ has continuous paths and so
 A full proof page must establish:
 
 - For each $(f,Af)\in\mathcal G$, the [Dynkin martingale of the chain](../markov-and-strong-markov-properties/dynkin-martingale-of-a-discrete-time-markov-chai.md) gives, for $0\le t_1<\cdots<t_r\le s\le t\le T$ and bounded continuous $H$,
-$$\mathbb E\Bigl[\Bigl(f(X^N_t)-f(X^N_s)-\int_s^tA_Nf(X^N_u)\,du\Bigr)H(X^N_{t_1},\ldots,X^N_{t_r})\Bigr]\to0,$$
-the error from the grid being at most $2\sup|A_Nf|/M_N$.
+
+    $$\mathbb E\Bigl[\Bigl(f(X^N_t)-f(X^N_s)-\int_s^tA_Nf(X^N_u)\,du\Bigr)H(X^N_{t_1},\ldots,X^N_{t_r})\Bigr]\to0,$$
+
+    the error from the grid being at most $2\sup|A_Nf|/M_N$.
 - Replacing $A_Nf$ by $Af$ by hypothesis 1, and passing to the limit along the subsequence: continuity of the limit paths makes the evaluation and time-integral functionals continuous at the limit.
 - A monotone-class argument from the cylinder functions $H$ to the natural filtration, and the extension from $\mathcal G$ to all of $A$ by the countable core lemma.
 - Application to Wright–Fisher chains with selection, which constructs a solution of the selection Wright–Fisher martingale problem (compare the [existence of the selection-mutation Wright–Fisher diffusion](../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/existence-of-the-selection-mutation-wf-diffusion.md)).
