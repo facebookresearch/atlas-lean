@@ -7,3 +7,4 @@
 - [The product of ψ and the Jacobian is a divergence](psi-mul-jacobian-eq-div.md)
 - [Energy-density rate is a divergence under the QG equation](energy-flux-divergence-of-qg.md)
 - [The Jacobian vanishes when both x-derivatives vanish](jacobian-eq-zero-of-x-derivs-eq-zero.md)
+- [Energy and enstrophy conservation in a quasigeostrophic channel](energy-and-enstrophy-conservation-in-a-quasigeostrophic-channel.md)

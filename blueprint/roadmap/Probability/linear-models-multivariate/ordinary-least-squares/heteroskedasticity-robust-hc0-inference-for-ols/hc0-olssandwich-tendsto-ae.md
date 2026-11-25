@@ -1,0 +1,3 @@
+# Almost sure consistency of the OLS HC0 sandwich
+
+Let $(x_i, u_i)$ be i.i.d. pairs on a probability space with $x_i \in \mathbb R^k$ ($k$ nonempty), and $y_i = x_i^\top\beta + u_i$. Suppose $\mathbb E\|x_0\|^4 < \infty$, $\mathbb E[\|x_0\|^2u_0^2] < \infty$, $\mathbb E[u_0x_0] = 0$, and the population Gram matrix $Q = \mathbb E[x_0x_0^\top]$ is invertible. Let $\Omega = \mathbb E[u_0^2x_0x_0^\top]$. Then almost surely the HC0 sandwich $\hat Q_n^{-1}\hat\Omega_n\hat Q_n^{-\top}$, with $\hat Q_n$ the sample Gram matrix and $\hat\Omega_n$ the meat built from the OLS residuals $y_i - x_i^\top\hat\beta_n$, converges to $Q^{-1}\Omega Q^{-\top}$.

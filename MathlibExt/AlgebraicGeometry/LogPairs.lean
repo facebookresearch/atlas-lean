@@ -85,10 +85,9 @@ attribute [instance] NormalVariety.integral NormalVariety.noetherian
 
 variable {k : Type u} [Field k] {n : ℕ}
 
-/-- Codimension-one points: in Mathlib's specialization order on a scheme
-(`x ≤ y` when `x` lies in the closure of `y`, so the generic point is the top),
-`Order.coheight x` is the codimension of `x`. This is the convention of
-`AlgebraicGeometry.AlgebraicCycle.IsWeilDivisor` and of `Scheme.ord`. -/
+/-- The codimension-one points of $V$: the points $x$ with $\operatorname{coheight}(x) = 1$ in the
+specialization order ($x \le y$ when $x$ lies in the closure of $y$, so the generic point is the
+top), in which the coheight of a point is its codimension. -/
 abbrev PrimePoint (V : NormalVariety k n) := {x : V.X.left // coheight x = 1}
 abbrev IntegerWeil (V : NormalVariety k n) := PrimePoint V →₀ ℤ
 abbrev RealWeil (V : NormalVariety k n) := PrimePoint V →₀ ℝ
@@ -337,8 +336,10 @@ def pulledCombinationCoefficient {P : LogPair k n} (M : BirationalModel P)
     (D : CartierCombination P.variety) (p : PrimePoint M.variety) : ℝ :=
   ∑ i, D.coefficients i * (pulledCartierCoefficient M (D.components i) p : ℝ)
 
-/-- The log discrepancy is the actual canonical order minus pulled
-adjoint order, plus one. No discrepancy values are supplied as fields. -/
+/-- The log discrepancy of a prime divisor $p$ on a birational model `M` of the log pair $P$: one
+plus the coefficient at $p$ of the canonical divisor of the model (the divisor of the pulled-back
+rational top form in `M.data.canonical`), minus the coefficient at $p$ of the pullback of the
+adjoint Cartier combination of $P$, which represents $K + \Delta$. -/
 def logDiscrepancy {P : LogPair k n} (M : BirationalModel P) (p : PrimePoint M.variety) : ℝ :=
   1 + (canonicalDivisor M.data.canonical p : ℝ) - pulledCombinationCoefficient M P.adjoint p
 

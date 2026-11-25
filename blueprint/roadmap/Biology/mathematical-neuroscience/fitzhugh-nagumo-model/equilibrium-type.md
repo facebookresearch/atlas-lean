@@ -1,7 +1,8 @@
 # Linearization type of a FitzHugh–Nagumo equilibrium
 
 For real `b`, `ε` and `v`, the type is the trace–determinant classification of the
-[Jacobian](jacobian.md) at voltage `v`, with `τ = 1 - v² - ε b` and `Δ = ε (1 - b + b v²)`:
+[Jacobian](jacobian.md) at voltage `v`, with the [trace](jac-trace.md) `τ = 1 - v² - ε b` and the
+[determinant](jac-det.md) `Δ = ε (1 - b + b v²)`:
 
 - saddle if `Δ < 0`;
 - degenerate if `Δ = 0`;
