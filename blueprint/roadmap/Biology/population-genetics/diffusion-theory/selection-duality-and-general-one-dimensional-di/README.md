@@ -49,6 +49,7 @@
 - [Dirichlet condition of the Green's function at zero](integral-green-function-zero-left.md)
 - [Dirichlet condition of the Green's function at one](integral-green-function-one-left.md)
 - [Uniqueness of the Green integral solution of L u = −g](eq-integral-green-function-of-diffusion.md)
+- [Regular coefficients with natural analytic boundary tests](regularity-hypotheses-do-not-imply-accessibility.md)
 
 ## Genic selection and dominance
 
@@ -74,3 +75,14 @@
 - [Backward equation for the neutral conditional fixation time](generator-mul-neutral-fixation-time.md)
 - [Neutral conditional fixation time of a new mutation](tendsto-neutral-fixation-time-zero.md)
 - [Neutral mean absorption time from the conditional times](mul-neutral-fixation-time-add-mul-neutra.md)
+
+- [Type of the common ancestor under selection and mutation](common-ancestor-type-distribution.md)
+- [The ancestral selection graph line count as a non-explosive chain](realized-asg-line-counting-process-countable-ctm.md)
+- [Selection duality for every solution of the Wright–Fisher martingale problem](process-level-selection-duality-with-the-asg-lin.md)
+- [Positive recurrence and convergence of the ancestral selection graph line count](asg-line-count-positive-recurrence-and-convergen.md)
+- [Fixation probability via the ancestral selection graph line count](fixation-probability-from-the-asg.md)
+
+- [Accessible endpoints give almost sure exit with finite mean exit time](finite-accessibility-integrals-at-both-endpoints.md)
+- [Green function, occupation times and mean exit times of a one-dimensional diffusion](green-function-occupation-times-and-mean-exit-ti.md)
+- [Hitting probabilities equal scale ratios when both endpoints are accessible](hitting-probabilities-equal-scale-ratios-under-a.md)
+- [Scale function and exit probabilities for one-dimensional diffusions (process level)](scale-function-and-exit-probabilities-for-one-di.md)

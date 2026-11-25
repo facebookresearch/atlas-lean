@@ -19,3 +19,4 @@
 - [The f4-ratio sister condition is equivalent to a vanishing f4](f4-sister-iff-f4-eq-zero.md)
 - [No edge separating both pairs gives the f4-ratio sister condition](f4-sister-of-disjoint.md)
 - [Disjoint lineage differences give the f4-ratio sister condition](f4-sister-of-lineage-disjoint.md)
+- [Ghost admixture: a nonzero f4, a positive f3 and a biased f4 ratio](ghost-unsampled-admixture-detectability-and-f4-r.md)

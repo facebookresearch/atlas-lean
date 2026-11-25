@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Algebra.PowerSeries.BinomialConvolutionCubicDenominator
+public import MathlibExt.Algebra.PowerSeries.BinomialConvolutionLucas
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import Mathlib.RingTheory.PowerSeries.Substitution
 public import MathlibExt.LinearAlgebra.OrthogonalDescent
@@ -85,54 +87,6 @@ public theorem_wanted binomialProduct_rational_general {K : Type*} [Field K] [Ch
       binomialProduct A B * ((∏ i, (1 - C (α i) * X)) ^ (S.natDegree + 1 - n) *
         (∏ j, (1 - C (β j) * X)) ^ (R.natDegree + 1 - m) *
         ∏ i, ∏ j, (1 - C (α i + β j) * X)) = (T : PowerSeries K)
-
-/-- **Binomial square of the Lucas generating function.** Let $K$ be a field of characteristic
-$0$, let $a, b \in K$, and let $g(x) = \sum_{n \ge 0} G_n x^n$ be a power series over $K$ with
-$g(x)(1 - ax - bx^2) = 2 - ax$. Then
-
-$$g \odot g = \frac{2}{1 - ax} + g(2x),$$
-
-where $\odot$ is the binomial product, and
-$\sum_{k=0}^{n} \binom{n}{k} G_k G_{n-k} = 2a^n + 2^n G_n$ for every $n \ge 0$.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 11 (`jis-2024-24.1.3-thm-11`). -/
-public theorem_wanted binomialProduct_lucasV_generatingFunction {K : Type*} [Field K]
-    [CharZero K] (a b : K) (g : PowerSeries K)
-    (hg : g * (1 - C a * X - C b * X ^ 2) = 2 - C a * X) :
-    binomialProduct g g = 2 * (1 - C a * X)⁻¹ + PowerSeries.rescale 2 g ∧
-      ∀ n : ℕ, ∑ k ∈ Finset.range (n + 1),
-          (n.choose k : K) * PowerSeries.coeff k g * PowerSeries.coeff (n - k) g =
-        2 * a ^ n + 2 ^ n * PowerSeries.coeff n g
-
-/-- **Binomial products of series with a cubic denominator.** Let $K$ be a field of characteristic
-$0$, let $A, B, C \in K$ with $C \ne 0$, and let $D(x) = 1 + Ax + Bx^2 + Cx^3$. Suppose that
-$D(x) = \prod_{i=1}^{3} (1 - \alpha_i x)$ with $\alpha_1, \alpha_2, \alpha_3 \in K$ and that
-$2\alpha_i \ne \alpha_j + \alpha_k$ whenever $i, j, k \in \{1, 2, 3\}$ are not all equal. Let $r$
-and $s$ be power series over $K$ such that $r D$ and $s D$ are polynomials of degree less than $3$.
-Then there are polynomials $u$, $v$ over $K$ of degree at most $2$ such that
-
-$$r \odot s = \frac{u(x)}{D(2x)} + \frac{1}{1 + Ax} \odot \frac{v(x)}{D(-x)},$$
-
-where $\odot$ is the binomial product.
-
-The second term uses the factor $1/(1 + Ax)$; with $1/(1 - Ax)$ in its place the statement already
-fails for the tribonacci series $x/(1 - x - x^2 - x^3)$, where $A = -1$.
-
-Source: Ira M. Gessel and Ishan Kar, *Binomial Convolutions for Rational Power Series*,
-Journal of Integer Sequences 27 (2024), Article 24.1.3, Theorem 12 (`jis-2024-24.1.3-thm-12`). -/
-public theorem_wanted binomialProduct_cubic_denominator {K : Type*} [Field K] [CharZero K]
-    (A B C' : K) (hC : C' ≠ 0) (α : Fin 3 → K)
-    (hD : 1 + C A * X + C B * X ^ 2 + C C' * X ^ 3 = ∏ i, (1 - C (α i) * X))
-    (hα : ∀ i j k, ¬(i = j ∧ j = k) → 2 * α i ≠ α j + α k)
-    (r s : PowerSeries K) (pr ps : Polynomial K) (hpr : pr.degree < 3) (hps : ps.degree < 3)
-    (hr : r * (1 + C A * X + C B * X ^ 2 + C C' * X ^ 3) = (pr : PowerSeries K))
-    (hs : s * (1 + C A * X + C B * X ^ 2 + C C' * X ^ 3) = (ps : PowerSeries K)) :
-    ∃ u v : Polynomial K, u.natDegree ≤ 2 ∧ v.natDegree ≤ 2 ∧
-      binomialProduct r s =
-        (u : PowerSeries K) * (1 + C (2 * A) * X + C (4 * B) * X ^ 2 + C (8 * C') * X ^ 3)⁻¹ +
-          binomialProduct (1 + C A * X)⁻¹
-            ((v : PowerSeries K) * (1 - C A * X + C B * X ^ 2 - C C' * X ^ 3)⁻¹)
 
 /-- **Resultant identity for pairwise products.** Let $K$ be a field of characteristic $0$, let
 $m, n \ge 0$ be integers, and let $\alpha_1, \dots, \alpha_m$ and $\beta_1, \dots, \beta_n$ be

@@ -1,0 +1,209 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Topology.ContinuousMap.ZeroAtInfty
+public import Mathlib.Topology.Compactness.Compact
+public import Mathlib.Analysis.Normed.Operator.LinearIsometry
+
+/-!
+# A mixed C₀ / bounded-continuous coordinate transpose
+
+The literal transpose sends `C₀(X, T →ᵇ B)` to `T →ᵇ C₀(X, B)`.
+Compactness of the insert-zero range gives continuity in the whole C₀ supremum
+pseudometric. Both the time bound and the isometry are derived from the stock
+supremum metrics. There is no inverse for arbitrary bounded time families.
+
+The linear-isometry interface reuses this one map and the existing stock
+seminormed-module instances. No completeness or C-star structure is required.
+-/
+
+@[expose] public section
+
+open Filter Set
+open scoped Topology ZeroAtInfty BoundedContinuousFunction
+
+universe uX uT uB uR
+
+namespace ZeroAtInftyContinuousMap
+
+variable {X : Type uX} {T : Type uT} {B : Type uB}
+variable [TopologicalSpace X] [TopologicalSpace T]
+
+section PseudoMetric
+
+variable [PseudoMetricSpace B] [Zero B]
+
+/-- Let `X` and `T` be topological spaces and let `B` be a pseudometric space with zero. The
+iterated bounded and vanishing-at-infinity function spaces use their canonical supremum metrics.
+
+Transpose a vanishing-at-infinity family of bounded continuous functions. -/
+noncomputable def flipToBCF (G : C₀(X, T →ᵇ B)) : T →ᵇ C₀(X, B) := by
+  let slice : T → C₀(X, B) := fun t =>
+    { toContinuousMap :=
+        (BoundedContinuousFunction.comp
+          (fun F : T →ᵇ B => F t)
+          (BoundedContinuousFunction.lipschitz_eval_const t)
+          G.toBCF).toContinuousMap
+      zero_at_infty' := by
+        change Tendsto ((fun F : T →ᵇ B => F t) ∘ (G : X → T →ᵇ B))
+          (cocompact X) (𝓝 (0 : B))
+        simpa only [BoundedContinuousFunction.coe_zero, Pi.zero_apply] using
+          ((BoundedContinuousFunction.lipschitz_eval_const t).continuous.tendsto
+            (0 : T →ᵇ B)).comp (zero_at_infty G) }
+  have hslice_apply (t : T) (x : X) : slice t x = G x t := rfl
+  have hcontinuous : Continuous slice := by
+    refine continuous_iff_continuousAt.2 fun t0 => Metric.continuousAt_iff'.2 ?_
+    intro ε hε
+    have hK : IsCompact (insert (0 : T →ᵇ B) (range G)) :=
+      (zero_at_infty G).isCompact_insert_range_of_cocompact (map_continuous G)
+    have hfirst : Continuous (fun p : T × (T →ᵇ B) => p.2 p.1) :=
+      (continuous_snd : Continuous (fun p : T × (T →ᵇ B) => p.2)).eval continuous_fst
+    have hsecond : Continuous (fun p : T × (T →ᵇ B) => p.2 t0) :=
+      (continuous_snd : Continuous (fun p : T × (T →ᵇ B) => p.2)).eval_const t0
+    have hdist : Continuous
+        (fun p : T × (T →ᵇ B) => dist (p.2 p.1) (p.2 t0)) :=
+      hfirst.dist hsecond
+    have hnear :
+        ∀ᶠ t in 𝓝 t0, ∀ F ∈ insert (0 : T →ᵇ B) (range G),
+          dist (F t) (F t0) < ε / 2 :=
+      hK.eventually_forall_of_forall_eventually fun F _ => by
+        have hzero : Tendsto
+            (fun p : T × (T →ᵇ B) => dist (p.2 p.1) (p.2 t0))
+            (𝓝 (t0, F)) (𝓝 0) := by
+          simpa only [Prod.fst, Prod.snd, dist_self] using hdist.tendsto (t0, F)
+        exact hzero.eventually (Iio_mem_nhds (half_pos hε))
+    filter_upwards [hnear] with t ht
+    have hsup : dist (slice t) (slice t0) ≤ ε / 2 := by
+      rw [← dist_toBCF_eq_dist]
+      refine (BoundedContinuousFunction.dist_le (half_pos hε).le).2 ?_
+      intro x
+      change dist (slice t x) (slice t0 x) ≤ ε / 2
+      rw [hslice_apply, hslice_apply]
+      exact (ht (G x) (mem_insert_of_mem 0 (mem_range_self x))).le
+    exact hsup.trans_lt (half_lt_self hε)
+  have hbound (t : T) : dist (slice t) 0 ≤ dist G 0 := by
+    rw [← dist_toBCF_eq_dist]
+    refine (BoundedContinuousFunction.dist_le dist_nonneg).2 ?_
+    intro x
+    change dist (slice t x) (0 : B) ≤ dist G 0
+    rw [hslice_apply]
+    calc
+      dist (G x t) 0 = dist (G x t) ((0 : T →ᵇ B) t) := rfl
+      _ ≤ dist (G x) (0 : T →ᵇ B) :=
+        BoundedContinuousFunction.dist_coe_le_dist t
+      _ = dist (G.toBCF x) ((0 : C₀(X, T →ᵇ B)).toBCF x) := rfl
+      _ ≤ dist G.toBCF (0 : C₀(X, T →ᵇ B)).toBCF :=
+        BoundedContinuousFunction.dist_coe_le_dist x
+      _ = dist G 0 := dist_toBCF_eq_dist
+  exact
+    { toFun := slice
+      continuous_toFun := hcontinuous
+      map_bounded' := ⟨dist G 0 + dist G 0, fun t u =>
+        (dist_triangle (slice t) 0 (slice u)).trans
+          (add_le_add (hbound t) (by
+            rw [dist_comm (0 : C₀(X, B)) (slice u)]
+            exact hbound u))⟩ }
+
+@[simp]
+theorem flipToBCF_apply (G : C₀(X, T →ᵇ B)) (t : T) (x : X) :
+    flipToBCF G t x = G x t :=
+  rfl
+
+/-- Let `X` and `T` be topological spaces and let `B` be a pseudometric space with zero. The
+iterated bounded and vanishing-at-infinity function spaces use their canonical supremum metrics.
+
+The transpose is injective even when the coefficient space is only pseudometric. -/
+theorem flipToBCF_injective :
+    Function.Injective (flipToBCF : C₀(X, T →ᵇ B) → T →ᵇ C₀(X, B)) := by
+  intro G H h
+  apply ZeroAtInftyContinuousMap.ext
+  intro x
+  apply BoundedContinuousFunction.ext
+  intro t
+  simpa only [flipToBCF_apply] using congrArg (fun F : T →ᵇ C₀(X, B) => F t x) h
+
+/-- Let `X` and `T` be topological spaces and let `B` be a pseudometric space with zero. The
+iterated bounded and vanishing-at-infinity function spaces use their canonical supremum metrics.
+
+The transpose preserves the full supremum pseudometric, including empty domains. -/
+theorem isometry_flipToBCF :
+    Isometry (flipToBCF : C₀(X, T →ᵇ B) → T →ᵇ C₀(X, B)) := by
+  refine Isometry.of_dist_eq fun G H => le_antisymm ?_ ?_
+  · refine (BoundedContinuousFunction.dist_le dist_nonneg).2 ?_
+    intro t
+    rw [← dist_toBCF_eq_dist]
+    refine (BoundedContinuousFunction.dist_le dist_nonneg).2 ?_
+    intro x
+    change dist (flipToBCF G t x) (flipToBCF H t x) ≤ dist G H
+    rw [flipToBCF_apply, flipToBCF_apply]
+    calc
+      dist (G x t) (H x t) ≤ dist (G x) (H x) :=
+        BoundedContinuousFunction.dist_coe_le_dist t
+      _ = dist (G.toBCF x) (H.toBCF x) := rfl
+      _ ≤ dist G.toBCF H.toBCF :=
+        BoundedContinuousFunction.dist_coe_le_dist x
+      _ = dist G H := dist_toBCF_eq_dist
+  · rw [← dist_toBCF_eq_dist]
+    refine (BoundedContinuousFunction.dist_le dist_nonneg).2 ?_
+    intro x
+    refine (BoundedContinuousFunction.dist_le dist_nonneg).2 ?_
+    intro t
+    calc
+      dist (G x t) (H x t) =
+          dist (flipToBCF G t x) (flipToBCF H t x) := by
+            rw [flipToBCF_apply, flipToBCF_apply]
+      _ ≤ dist (flipToBCF G t).toBCF (flipToBCF H t).toBCF :=
+        BoundedContinuousFunction.dist_coe_le_dist x
+      _ = dist (flipToBCF G t) (flipToBCF H t) := dist_toBCF_eq_dist
+      _ ≤ dist (flipToBCF G) (flipToBCF H) :=
+        BoundedContinuousFunction.dist_coe_le_dist t
+
+end PseudoMetric
+
+section Linear
+
+variable (R : Type uR) [NormedField R]
+variable [SeminormedAddCommGroup B] [NormedSpace R B]
+
+/-- Let `X` and `T` be topological spaces, let `R` be a normed field, and let `B` be a seminormed
+`R`-vector space. The iterated bounded and vanishing-at-infinity function spaces use their
+canonical supremum seminorms.
+
+The same transpose as a linear isometry on the seminormed-module structures. -/
+noncomputable def flipToBCFLinearIsometry :
+    C₀(X, T →ᵇ B) →ₗᵢ[R] (T →ᵇ C₀(X, B)) where
+  toFun := flipToBCF
+  map_add' G H := by
+    ext t x
+    simp only [flipToBCF_apply, add_apply, BoundedContinuousFunction.add_apply]
+  map_smul' r G := by
+    ext t x
+    simp only [flipToBCF_apply, smul_apply, BoundedContinuousFunction.smul_apply,
+      RingHom.id_apply]
+  norm_map' G := by
+    change ‖flipToBCF G‖ = ‖G‖
+    have hzero : flipToBCF (0 : C₀(X, T →ᵇ B)) = 0 := by
+      ext t x
+      rfl
+    simpa only [hzero, dist_zero_right] using
+      (isometry_flipToBCF (X := X) (T := T) (B := B)).dist_eq G 0
+
+@[simp]
+theorem flipToBCFLinearIsometry_apply (G : C₀(X, T →ᵇ B)) (t : T) (x : X) :
+    flipToBCFLinearIsometry R G t x = G x t := by
+  change flipToBCF G t x = G x t
+  exact flipToBCF_apply G t x
+
+end Linear
+
+end ZeroAtInftyContinuousMap
