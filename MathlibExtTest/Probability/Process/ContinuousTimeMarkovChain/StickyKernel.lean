@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.StickyKernel
-public import MathlibExt.Biology.Phylogenetics.SubstitutionModels
 
 /-!
 # Tests for the sticky (equal-input) kernel
@@ -17,9 +16,7 @@ public import MathlibExt.Biology.Phylogenetics.SubstitutionModels
 Non-vacuity witness: `π = (1/2, 1/3, 1/6)` on three states with persistence `1/2` gives a
 row-stochastic, `π`-reversible kernel. Explicit entries, the composition law at concrete
 values, the boundary persistences `0` and `1`, and a persistence outside `[0, 1]` (`c = 2`) with
-a negative entry documenting the domain. The F81 model of `SubstitutionModels` is the
-equal-input generator on four bases (with `∑ π = 1`), so its transition function is the sticky
-kernel. The two-state ancestry covariance at `α = 1/2`, `r = 0`.
+a negative entry documenting the domain. The two-state examples exercise indicator covariance and the transition function.
 -/
 
 @[expose] public section
@@ -62,22 +59,6 @@ example : stickyKernel π3 2 0 1 = -1 / 3 := by norm_num [stickyKernel_apply, π
 -- The equal-input generator is a rate matrix.
 example : IsRateMatrix (equalInputRate π3 2) :=
   isRateMatrix_equalInputRate π3_nonneg π3_sum (by norm_num)
-
-open MathlibExt.Biology.Phylogenetics.SubstitutionModels in
-/-- F81 (Felsenstein 1981) on four bases is the equal-input generator with rate `1`. -/
-theorem f81Rate_eq_equalInputRate {π : Fin 4 → ℝ} (hπ : ∑ i, π i = 1) :
-    f81Rate π = equalInputRate π 1 := by
-  ext i j
-  by_cases h : i = j
-  · subst h
-    simp [f81Rate, gtrRate, equalInputRate, hπ]
-  · simp [f81Rate, gtrRate, equalInputRate, h]
-
-open MathlibExt.Biology.Phylogenetics.SubstitutionModels in
--- Hence the F81 transition function is the sticky kernel with persistence `e^{-t}`.
-example {π : Fin 4 → ℝ} (hπ : ∑ i, π i = 1) (t : ℝ) :
-    ctmcTransition (f81Rate π) t = stickyKernel π (Real.exp (-t)) := by
-  rw [f81Rate_eq_equalInputRate hπ, ctmcTransition_equalInputRate hπ, one_mul]
 
 -- Two-state ancestry covariance at `α = 1/2` and no recombination: `1/4`.
 example : (∑ i, ∑ j, ![1 / 2, 1 - 1 / 2] i * stickyKernel ![1 / 2, 1 - 1 / 2] ((1 - 0) ^ 3) i j *

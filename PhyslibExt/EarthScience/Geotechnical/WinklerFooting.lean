@@ -57,12 +57,13 @@ noncomputable def footingResultantForce (ks a b B : ℝ) : ℝ :=
   ∫ x in (-B / 2)..(B / 2), ks * (a + b * x)
 
 /-- Moment about the center, per unit out-of-plane length, of the same
-affine contact pressure; positive when pressure rises toward `+x`, in
+affine contact pressure; for `B > 0`, positive when pressure rises toward `+x`, in
 F·L/L = F. Same regime and conventions as `footingResultantForce`. -/
 noncomputable def footingResultantMoment (ks a b B : ℝ) : ℝ :=
   ∫ x in (-B / 2)..(B / 2), x * (ks * (a + b * x))
 
-/-- The resultant force is `ks * B * a`: the antisymmetric part cancels. -/
+/-- The resultant force is `ks * B * a` for all real inputs, the integral being oriented
+when `B < 0`: the antisymmetric part cancels. -/
 theorem footingResultantForce_eq (ks a b B : ℝ) :
     footingResultantForce ks a b B = ks * B * a := by
   unfold footingResultantForce
@@ -78,7 +79,8 @@ theorem footingResultantForce_eq (ks a b B : ℝ) :
     smul_eq_mul]
   ring
 
-/-- The resultant moment is `ks * B ^ 3 * b / 12`. -/
+/-- The resultant moment is `ks * B ^ 3 * b / 12` for all real inputs, the integral being
+oriented when `B < 0`. -/
 theorem footingResultantMoment_eq (ks a b B : ℝ) :
     footingResultantMoment ks a b B = ks * B ^ 3 * b / 12 := by
   unfold footingResultantMoment

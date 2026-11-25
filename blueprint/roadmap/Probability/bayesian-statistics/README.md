@@ -10,3 +10,7 @@ Bayesian inference and nonparametric priors: the Dirichlet process and stick-bre
 - [Function-space MCMC](function-space-mcmc/README.md)
 - [Ensemble Kalman inversion](ensemble-kalman-inversion/README.md)
 - [Empirical Bayes and Tweedie's formula](empirical-bayes-and-tweedie-s-formula/README.md)
+- [Gamma–Poisson counts and empirical-Bayes shrinkage](gamma-poisson-counts-and-empirical-bayes-shrinka/README.md)
+
+- [The posterior predictive distribution](posterior-predictive-distribution.md)
+- [Bayesian filtering equations](bayesian-filtering-equations.md)

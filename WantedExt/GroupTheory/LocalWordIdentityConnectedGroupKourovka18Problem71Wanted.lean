@@ -36,19 +36,26 @@ only weakens the claim, so its refutation is the stronger statement, and the res
 Hausdorff.
 -/
 
-/-- Kourovka 18.71 (N. Aronszajn; J. Mycielski): if a word `W(x, y)` (an element of the free group
-on `x`, `y`) takes the value `1` on a nonempty open subset of `G × G`, where `G` is a connected
-Hausdorff topological group, then `W(x, y) = 1` for all `x, y ∈ G`. -/
+/-- **Local word identities in connected groups (Kourovka 18.71).** The statement that for every
+connected Hausdorff topological group $G$ and every word $W(x, y)$ in the free group on two
+generators $x$, $y$, if $W(a, b) = 1$ for all $(a, b)$ in some nonempty open subset of $G \times G$,
+then $W(a, b) = 1$ for all $a, b \in G$.
+
+The problem is posed for connected topological groups; here they are also taken to be Hausdorff,
+which weakens the statement. -/
 def localWordIdentityHoldsGlobally : Prop :=
   ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [T2Space G],
     ConnectedSpace G → ∀ (W : FreeGroup (Fin 2)) (U : Set (G × G)), IsOpen U → U.Nonempty →
       (∀ p ∈ U, FreeGroup.lift ![p.1, p.2] W = 1) → ∀ x y : G, FreeGroup.lift ![x, y] W = 1
 
 /--
-Resolved false: the Kourovka Notebook (21st issue) answers 18.71 "No, not necessarily"
-(Reznichenko-Zyabrev, 2024): for odd `n` there is a connected Hausdorff topological group in which
-`xⁿ = 1` holds on a neighbourhood `U` of the identity but not everywhere, so the word `W(x, y) = xⁿ`
-is `1` on the nonempty open set `U × G`. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
+**Local word identities need not hold globally in connected groups.** There are a connected
+Hausdorff topological group $G$, a word $W(x, y)$ in the free group on two generators $x$, $y$ and
+a nonempty open subset $U$ of $G \times G$ such that $W(a, b) = 1$ for all $(a, b) \in U$ but
+$W(a, b) \ne 1$ for some $a, b \in G$. This answers Kourovka Notebook Problem 18.71 in the
+negative.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
 Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem
 18.71 (J. Mycielski); resolution: I. N. Zyabrev and E. A. Reznichenko, On identities in connected
 topological groups, preprint, arXiv:2406.05203 (2024), abstract: a connected (indeed path-connected)

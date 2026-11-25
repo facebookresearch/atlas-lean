@@ -126,8 +126,8 @@ namespace PhyslibExt.Mechanics.HarmonicMechanics
 noncomputable def oscillatorEnergy (m k x v : ℝ) : ℝ :=
   (1 / 2) * m * v ^ 2 + (1 / 2) * k * x ^ 2
 
-/-- Energy derivative (MC): if at time `t` the position has derivative `v t` and the velocity
-has derivative `-(k / m) * x t` (Newton's equation in divided form, MOD), then the oscillator
+/-- Energy derivative: for `m ≠ 0`, if at time `t` the position has derivative `v t` and the
+velocity has derivative `-(k / m) * x t` (Newton's equation in divided form), then the oscillator
 energy has derivative `0` at `t`. `oscillatorEnergy_const` turns this into conservation. -/
 lemma hasDerivAt_oscillatorEnergy (m k : ℝ) (x v : ℝ → ℝ) (t : ℝ)
     (hm : m ≠ 0)
@@ -154,8 +154,8 @@ lemma hasDerivAt_oscillatorEnergy (m k : ℝ) (x v : ℝ → ℝ) (t : ℝ)
   rw [hfg, hder] at hsum
   exact hsum
 
-/-- Energy conservation (MC): along a solution of `x' = v`, `v' = -(k / m) * x` at all times
-(MOD), the oscillator energy takes the same value at any two times. -/
+/-- Energy conservation: for `m ≠ 0`, along a solution of `x' = v`, `v' = -(k / m) * x` at
+all times, the oscillator energy takes the same value at any two times. -/
 lemma oscillatorEnergy_const (m k : ℝ) (x v : ℝ → ℝ) (hm : m ≠ 0)
     (hx : ∀ t, HasDerivAt x (v t) t)
     (hv : ∀ t, HasDerivAt v (-(k / m) * x t) t) (t₁ t₂ : ℝ) :
@@ -165,7 +165,7 @@ lemma oscillatorEnergy_const (m k : ℝ) (x v : ℝ → ℝ) (hm : m ≠ 0)
   exact is_const_of_deriv_eq_zero (fun t => (hE t).differentiableAt) (fun t => (hE t).deriv)
     t₁ t₂
 
-/-- Explicit solution (MC): for positive mass and stiffness, with
+/-- Explicit solution: for positive mass and stiffness, with
 `ω = Real.sqrt (k / m)`, the cosine/sine pair satisfies Newton's divided
 equation and carries the constant energy `(1 / 2) * k * A ^ 2`. -/
 lemma oscillator_explicit_solution (m k A ω t : ℝ) (hm : 0 < m) (hk : 0 < k)
@@ -228,7 +228,7 @@ lemma isEquilibrated_iff {ρ ι : Type*} [Fintype ρ] (F : ρ → (ι → ℝ)) 
     IsEquilibrated F ↔ ∑ r, F r = 0 := by
   simp only [IsEquilibrated, resultantForce]
 
-/-- Action-reaction cancellation (MC): pair forces on a finite type,
+/-- Action-reaction cancellation: pair forces on a finite type,
 antisymmetric under pair swap with `F (j, i) = -F (i, j)`, sum to zero.
 Stated for real-valued pair forces: over a general additive group the claim
 is false (diagonal terms are only 2-torsion), so the vector case follows by
@@ -254,7 +254,7 @@ noncomputable def moment2D {ρ : Type*} [Fintype ρ] (r F : ρ → (Fin 2 → �
     ℝ :=
   ∑ i, (r i 0 * F i 1 - r i 1 * F i 0)
 
-/-- Linearity (MC): the moment of a sum of force families is the sum of the
+/-- Linearity: the moment of a sum of force families is the sum of the
 moments. -/
 lemma moment2D_add {ρ : Type*} [Fintype ρ] (r F G : ρ → (Fin 2 → ℝ)) :
     moment2D r (fun i => F i + G i) = moment2D r F + moment2D r G := by
@@ -265,7 +265,7 @@ lemma moment2D_add {ρ : Type*} [Fintype ρ] (r F G : ρ → (Fin 2 → ℝ)) :
   simp only [Pi.add_apply]
   ring
 
-/-- Single central-pair zero moment (MC, no-body-couple model): one pair of
+/-- Single central-pair zero moment (no-body-couple model): one pair of
 forces, equal, opposite, and each a scalar multiple of the separation vector
 `q - p` (centrality hypothesis), has zero total 2D moment about any point
 `o`. Together with `moment2D_add` this is the single-pair case; the summed
@@ -376,7 +376,8 @@ noncomputable def axialEndpointForce {J M : Type*}
 
 /-- Physical-to-canonical bridge: the axial-force endpoint
 family is the coefficient endpoint family with coefficient
-`c e = N e / memberLength r a b e`. -/
+`c e = N e / memberLength r a b e`; with the convention `u / 0 = 0` a member with coincident
+endpoints has `c e = 0`. -/
 lemma axialEndpointForce_eq_memberEndpointForce {J M : Type*}
     (r : J → (Fin 2 → ℝ)) (a b : M → J) (N : M → ℝ) :
     axialEndpointForce r a b N
@@ -419,7 +420,7 @@ noncomputable def totalWork {ρ ι : Type*} [Fintype ρ] [Fintype ι]
     (F : ρ → (ι → ℝ)) (d : ι → ℝ) : ℝ :=
   ∑ r, ∑ i, F r i * d i
 
-/-- Work distribution (MC): the work of a sum of force families is the sum
+/-- Work distribution: the work of a sum of force families is the sum
 of the works. -/
 lemma totalWork_add {ρ ι : Type*} [Fintype ρ] [Fintype ι]
     (F G : ρ → (ι → ℝ)) (d : ι → ℝ) :
@@ -516,8 +517,9 @@ lemma stiffnessMatrix_apply_offdiag {ι : Type*} [Fintype ι] [DecidableEq ι]
   unfold stiffnessMatrix
   simp [h]
 
-/-- Energy-quadratic-form identity (MC): the spring energy equals `(1 / 2)`
-times the stiffness quadratic form. -/
+/-- Energy-quadratic-form identity: for reciprocal weights without self-springs
+(`k i j = k j i`, `k i i = 0`), the spring energy equals `(1 / 2)` times the stiffness quadratic
+form. -/
 lemma springEnergy_eq_quadForm {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (u : ι → ℝ)
     (hksymm : ∀ i j, k i j = k j i)
@@ -597,7 +599,7 @@ lemma springEnergy_eq_quadForm {ι : Type*} [Fintype ι] [DecidableEq ι]
   intro i _
   ring
 
-/-- Energy nonnegativity (MC): the spring energy is nonnegative for
+/-- Energy nonnegativity: the spring energy is nonnegative for
 nonnegative stiffnesses. -/
 lemma springEnergy_nonneg {ι : Type*} [Fintype ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (u : ι → ℝ)
@@ -618,7 +620,7 @@ lemma springEnergy_nonneg {ι : Type*} [Fintype ι]
     apply mul_nonneg (hw i)
     exact sq_nonneg _
 
-/-- Symmetry (MC): the stiffness matrix is symmetric for symmetric pair
+/-- Symmetry: the stiffness matrix is symmetric for symmetric pair
 stiffness, stated as transpose equality. -/
 lemma stiffnessMatrix_transpose {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ)
@@ -632,8 +634,8 @@ lemma stiffnessMatrix_transpose {ι : Type*} [Fintype ι] [DecidableEq ι]
   · rw [stiffnessMatrix_apply_offdiag (Ne.symm h),
       stiffnessMatrix_apply_offdiag h, hksymm j i]
 
-/-- Row-sum identity (MC): the stiffness matrix applied to the all-ones
-vector recovers the wall stiffnesses. -/
+/-- Row-sum identity: without self-springs (`k i i = 0`), the stiffness matrix applied to
+the all-ones vector recovers the wall stiffnesses. -/
 lemma stiffnessMatrix_mulVec_one {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (hkii : ∀ i, k i i = 0) :
     stiffnessMatrix k w *ᵥ (fun _ => (1 : ℝ)) = w := by
@@ -657,17 +659,17 @@ lemma stiffnessMatrix_mulVec_one {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [hcongr, Finset.sum_sub_distrib, hite]
   ring
 
-/-- Rigid-translation kernel identity (MC, free network only): with `w = 0` the
-stiffness matrix sends the all-ones vector to `0`. On an empty node type that
-vector is itself `0` and the identity is trivial; see
+/-- Rigid-translation kernel identity (free network only): without self-springs
+(`k i i = 0`) and with `w = 0` the stiffness matrix sends the all-ones vector to `0`. On an
+empty node type that vector is itself `0` and the identity is trivial; see
 `stiffnessMatrix_free_not_posDef` for the nonempty case. -/
 lemma stiffnessMatrix_free_zeroMode {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (hkii : ∀ i, k i i = 0) :
     stiffnessMatrix k 0 *ᵥ (fun _ => (1 : ℝ)) = 0 := by
   rw [stiffnessMatrix_mulVec_one k 0 hkii]
 
-/-- The stiffness matrix of a free network is not positive definite (MC): on a
-nonempty node type the all-ones vector is nonzero and, by
+/-- The stiffness matrix of a free network without self-springs (`k i i = 0`) is not positive
+definite: on a nonempty node type the all-ones vector is nonzero and, by
 `stiffnessMatrix_free_zeroMode`, in its kernel. `[Nonempty ι]` cannot be
 dropped: on an empty node type every matrix is positive definite, vacuously. -/
 lemma stiffnessMatrix_free_not_posDef {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -699,8 +701,9 @@ lemma springEnergy_free_const {ι : Type*} [Fintype ι]
   rw [hpair, hwall]
   simp
 
-/-- Fixed-end networks have no rigid-translation zero mode (MC): at any node
-with positive wall stiffness, the all-ones vector is not in the kernel. -/
+/-- Fixed-end networks have no rigid-translation zero mode: without self-springs
+(`k i i = 0`), at any node with positive wall stiffness, the all-ones vector is not in the
+kernel. -/
 lemma stiffnessMatrix_fixedEnds_rowNonzero {ι : Type*} [Fintype ι]
     [DecidableEq ι] (k : ι → ι → ℝ) (w : ι → ℝ) (i : ι)
     (hkii : ∀ i, k i i = 0) (hw : 0 < w i) :
@@ -715,7 +718,7 @@ noncomputable def innerProductM {ι : Type*} [Fintype ι] (m : ι → ℝ)
     (v w : ι → ℝ) : ℝ :=
   ∑ i, m i * v i * w i
 
-/-- Distinct normal modes are mass-orthogonal (MC): generalized eigenvectors
+/-- Modes with distinct eigenvalues are mass-orthogonal: generalized eigenvectors
 of a symmetric stiffness for distinct eigenvalues are orthogonal in
 `innerProductM`. -/
 lemma innerProductM_eq_zero_of_ne {ι : Type*} [Fintype ι]
@@ -748,10 +751,10 @@ lemma innerProductM_eq_zero_of_ne {ι : Type*} [Fintype ι]
   have hne' : ω2 - μ2 ≠ 0 := sub_ne_zero.mpr hne
   exact (mul_eq_zero.mp hIP).resolve_left hne'
 
-/-- Rayleigh nonnegativity (MC, spring stiffness only): a generalized
-eigenvalue of a spring stiffness matrix with positive masses is nonnegative
-for nonzero modes. This is NOT claimed for an arbitrary symmetric `K`; it is
-false in general. -/
+/-- Rayleigh nonnegativity (spring stiffness only): a generalized
+eigenvalue of a spring stiffness matrix (reciprocal nonnegative weights without self-springs,
+nonnegative wall stiffnesses) with positive masses is nonnegative for nonzero modes. This is
+NOT claimed for an arbitrary symmetric `K`; it is false in general. -/
 lemma rayleigh_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) (m v : ι → ℝ) (lam : ℝ)
     (hksymm : ∀ i j, k i j = k j i)

@@ -15,11 +15,11 @@ public import Mathlib.Data.Set.Card
 
 namespace MetaMathlibExt
 
-/-- Factor complexity of an infinite word `w` over a finite alphabet:
-the complexity function `p_w(n)`, the number of distinct contiguous factors
-of `w` of length `n`, where a length-`n` factor starting at `i` is
-`fun j : Fin n => w (i + j)`. The image set collapses repeated occurrences,
-so `Set.ncard` of the range counts distinct factors rather than occurrences.
+/-- **Factor complexity of an infinite word.** Let $w = w_0 w_1 w_2 \cdots$ be an infinite word
+over a finite alphabet $A$. For $n \ge 0$ and a position $i \ge 0$, the factor of $w$ of length
+$n$ at position $i$ is the word $w_i w_{i+1} \cdots w_{i+n-1}$. The factor complexity $p_w(n)$ is
+the number of distinct factors of $w$ of length $n$, each word being counted once however often it
+occurs in $w$.
 
 Source: Fabien Durand, Julien Leroy, and Gwenaël Richomme, *Do the
 Properties of an S-adic Representation Determine Factor Complexity?*,
@@ -30,7 +30,9 @@ noncomputable def wordFactorComplexity {A : Type*} [Finite A]
     (w : ℕ → A) (n : ℕ) : ℕ :=
   Set.ncard (InfiniteWord.factorSet w n)
 
-/-- Boundary value: there is exactly one length-`0` factor. -/
+/-- **Factor complexity at length zero.** For every infinite word $w$ over a finite alphabet,
+the factor complexity of $w$ at length $0$ equals $1$, that is, $p_w(0) = 1$: the empty word is
+the only factor of $w$ of length $0$. -/
 theorem wordFactorComplexity_zero {A : Type*} [Finite A]
     (w : ℕ → A) : wordFactorComplexity w 0 = 1 := by
   unfold wordFactorComplexity InfiniteWord.factorSet

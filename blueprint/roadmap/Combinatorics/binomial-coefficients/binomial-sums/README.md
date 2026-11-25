@@ -17,6 +17,7 @@ Evaluations and bounds of sums of products of binomial coefficients: Chu–Vande
 - [A binomial double sum equal to a power of two minus a Fibonacci number](binomial-double-sum-eq-pow-sub-fib.md)
 - [Alternating binomial sums of partial sums](alternating-binomial-partial-sum.md)
 - [Catalan–Larcombe–French numbers](catalan-larcombe-french-number.md)
+- [Closed form of the Alzer–Richards binomial sum for even $m$](sum-choose-mul-choose-div-choose-of-even.md)
 - [Generalized hockey stick identity of Lynch and Weselcouch](sum-choose-two-mul-add.md)
 - [Strehl's identity for the Franel numbers](strehl-franel-binomial-identity.md)
 - [Terminating Chu–Vandermonde specialization](chu-vandermonde-terminating-specializati.md)

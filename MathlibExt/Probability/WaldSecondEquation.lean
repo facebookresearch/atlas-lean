@@ -242,11 +242,12 @@ private theorem waldSecond_min_eq_sum_indicator {Ω : Type*} {T : Ω → ℕ}
       rw [hmin1, hmin2]
       simp only [ite_eq_right h, add_zero]
 
-/-- **Wald's second equation.** Let `Xᵢ` be identically distributed real random
-variables with `E[X₀] = 0` and `E[X₀²] < ∞`, let `ℱ` be a filtration, and let
-`T` be a stopping time for `ℱ` with `E[T] < ∞`. Assume each `Xₖ` is independent
-of `ℱₖ`, and `Xₖ` is `ℱ_{k+1}`-measurable. Then
-`E[(∑_{i < T} Xᵢ)²] = E[X₀²] · E[T]`. -/
+/-- **Wald's second equation.** Let $(\Omega, \mathbb{P})$ be a probability space with a filtration
+$(\mathcal{F}_k)_{k \ge 0}$, and let $X_0, X_1, \dots$ be identically distributed real random
+variables with $\mathbb{E}|X_0| < \infty$, $\mathbb{E}[X_0] = 0$ and $\mathbb{E}[X_0^2] < \infty$.
+Let $T$ be an $\mathbb{N}$-valued stopping time for $(\mathcal{F}_k)$ with $\mathbb{E}[T] < \infty$.
+Suppose each $X_k$ is independent of $\mathcal{F}_k$ and is $\mathcal{F}_{k+1}$-measurable. Then
+$\mathbb{E}\big[\big(\sum_{i < T} X_i\big)^2\big] = \mathbb{E}[X_0^2] \cdot \mathbb{E}[T]$. -/
 public theorem wald_second_equation
     {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X : ℕ → Ω → ℝ}
