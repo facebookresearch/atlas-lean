@@ -51,6 +51,8 @@ private lemma density_eq_ofReal_rpow {y : ℝ} (hy : 0 < y) :
     show (-2 : ℝ) = -((2 : ℕ) : ℝ) by norm_num, Real.rpow_neg hy.le, Real.rpow_natCast,
     one_div, inv_pow]
 
+namespace UpperHalfPlane
+
 /-- The hyperbolic density integrated over a vertical ray. -/
 public theorem setLIntegral_Ici_density {c : ℝ} (hc : 0 < c) :
     ∫⁻ y in Set.Ici c, (((1 / ‖y‖₊) ^ 2 : ℝ≥0) : ℝ≥0∞) = ENNReal.ofReal c⁻¹ := by
@@ -64,6 +66,8 @@ public theorem setLIntegral_Ici_density {c : ℝ} (hc : 0 < c) :
         (fun y hy => Real.rpow_nonneg (le_of_lt (hc.trans hy)) _)))]
   rw [integral_Ioi_rpow_of_lt (by norm_num) hc]
   norm_num [Real.rpow_neg_one]
+
+end UpperHalfPlane
 
 private lemma arcsin_one_half : Real.arcsin (1 / 2) = Real.pi / 6 := by
   rw [← Real.sin_pi_div_six]
@@ -98,6 +102,8 @@ public theorem integral_inv_sqrt_one_sub_sq :
   rw [Real.arcsin_neg, arcsin_one_half]
   ring
 
+namespace ModularGroup
+
 /-- The lower boundary of the standard fundamental domain, as a graph. -/
 public def lowerArc (x : ℝ) : ℝ := Real.sqrt (1 - x ^ 2)
 
@@ -124,6 +130,8 @@ public theorem mem_fundamentalRegion {p : ℝ × ℝ} :
   Iff.rfl
 
 public theorem measurableSet_fundamentalRegion : MeasurableSet fundamentalRegion := by
+  change MeasurableSet ({p : ℝ × ℝ | p.1 ∈ Set.Icc (-(1 / 2) : ℝ) (1 / 2)} ∩
+    {p : ℝ × ℝ | lowerArc p.1 ≤ p.2})
   apply MeasurableSet.inter
   · exact measurable_fst measurableSet_Icc
   · apply measurableSet_le _ measurable_snd
@@ -263,3 +271,5 @@ public theorem residue_mul_volume_fd :
 public theorem volume_fd_toReal_eq :
     ((volume 𝒟).toReal : ℂ) = (Real.pi : ℂ) / 3 := by
   rw [volume_fd_toReal]; push_cast; ring
+
+end ModularGroup
