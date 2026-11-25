@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Group.End
+public import MathlibExt.GroupTheory.FiniteStateTreeAutomorphism
 public import Mathlib.GroupTheory.Coprod.Basic
 
 import Mathlib.Basic.Finite.Prod
@@ -45,30 +45,6 @@ the resolution. The free product is `Monoid.Coprod G H`.
 @[expose] public section
 
 namespace MathlibExt.GroupTheory.FiniteStateFreeProductKourovka16Problem85Wanted
-
-/-- **Automorphisms of the regular rooted tree (Kourovka 16.85).** Let $d$ be a natural number and
-let $X^*$ be the set of finite words over the alphabet $X = \{0, \dots, d-1\}$, the vertices of the
-$d$-regular rooted tree. A permutation $f$ of $X^*$ is a tree automorphism when, for all words $u$
-and $v$, the word $f(u)$ has the same length $|u|$ as $u$ and the first $|u|$ letters of $f(uv)$
-form the word $f(u)$, where $uv$ denotes concatenation. -/
-def IsTreeAut {d : ℕ} (f : Equiv.Perm (List (Fin d))) : Prop :=
-  ∀ u v : List (Fin d), (f u).length = u.length ∧ (f (u ++ v)).take u.length = f u
-
-/-- **Section of a permutation of the tree at a vertex (Kourovka 16.85).** For a natural number
-$d$, let $X^*$ be the set of finite words over $X = \{0, \dots, d-1\}$, let $f$ be a permutation of
-$X^*$ and let $u \in X^*$, of length $|u|$. The section (state) of $f$ at $u$ is the map
-$X^* \to X^*$ sending a word $w$ to the word obtained from $f(uw)$ by deleting its first $|u|$
-letters (all of them if it has fewer), where $uw$ denotes concatenation. -/
-def treeSection {d : ℕ} (f : Equiv.Perm (List (Fin d))) (u : List (Fin d)) :
-    List (Fin d) → List (Fin d) :=
-  fun w => (f (u ++ w)).drop u.length
-
-/-- **Finite-state automorphisms of the regular rooted tree (Kourovka 16.85).** For a natural
-number $d$, let $X^*$ be the set of finite words over $X = \{0, \dots, d-1\}$. A permutation $f$
-of $X^*$ is a finite-state automorphism when it is an automorphism of the $d$-regular rooted tree
-and its sections at the vertices $u \in X^*$ form a finite set of maps $X^* \to X^*$. -/
-def IsFiniteStateAut {d : ℕ} (f : Equiv.Perm (List (Fin d))) : Prop :=
-  IsTreeAut f ∧ (Set.range (treeSection f)).Finite
 
 /-- **Faithful actions by finite-state tree automorphisms.** A group $G$ acts faithfully on a
 regular rooted tree by finite-state automorphisms when there are a natural number $d \ge 2$ and an
@@ -290,19 +266,10 @@ private theorem run_finite {A X Y : Type} [DecidableEq Y] (e : View A X Y) {base
   funext w
   simp only [sectionAt, run_append, ← run_length e base base u, List.drop_left]
 
-private theorem finite_comp {A : Type} {f h : List A → List A} (hf : FiniteTreeMap f)
-    (hh : FiniteTreeMap h) : FiniteTreeMap (f ∘ h) := by
-  constructor
-  · constructor
-    · intro u; simp [hf.1.length_eq, hh.1.length_eq]
-    · intro u v
-      rw [hf.1.section_comp hh.1]
-      change f (h (u ++ v)) = _
-      rw [hh.1.append_eq, hf.1.append_eq]
-      rfl
-  · apply (hf.2.image2 (· ∘ ·) hh.2).subset
-    rintro _ ⟨u, rfl⟩
-    exact ⟨_, ⟨h u, rfl⟩, _, ⟨u, rfl⟩, (hf.1.section_comp hh.1 u).symm⟩
+private theorem FiniteTreeMap.isFiniteStateAut {d : ℕ} {f : Equiv.Perm (List (Fin d))}
+    (hf : FiniteTreeMap f) : IsFiniteStateAut f := by
+  refine ⟨fun u v => ⟨hf.1.length_eq u, ?_⟩, hf.2⟩
+  rw [hf.1.append_eq, ← hf.1.length_eq u, List.take_left]
 
 -- On a test word both tracks initially coincide. In the dormant state such words are fixed.
 private def diagonal {A X Y : Type} (e : View A X Y) (a : A) : Prop :=
@@ -503,13 +470,6 @@ theorem finiteStateFreeProduct_holds : finiteStateFreeProduct := by
   have th j := TreeMap.ofAut (hhs j).1
   let act := lift (factorAction e f tf) (factorAction (opposite e) h th)
   have hact := faithful_lift e f h tf th hf hh
-  have finite (w : Monoid.Coprod G H) : FiniteTreeMap (act w) := by
-    induction w using induction_on with
-    | inl g => exact run_finite e (hfs g).2
-    | inr j => exact run_finite (opposite e) (hhs j).2
-    | mul u v hu hv =>
-      rw [map_mul]
-      exact finite_comp hu hv
   refine ⟨_, act.toHomPerm, ?_, ?_, ?_⟩
   · let x : Fin d := ⟨0, by omega⟩
     let y : Fin k := ⟨0, by omega⟩
@@ -519,9 +479,16 @@ theorem finiteStateFreeProduct_holds : finiteStateFreeProduct := by
     funext w
     exact Equiv.congr_fun huv w
   · intro w
-    obtain ⟨ht, hs⟩ := finite w
-    refine ⟨fun u v => ⟨ht.length_eq u, ?_⟩, hs⟩
-    change ((act w) (u ++ v)).take u.length = (act w) u
-    rw [ht.append_eq, ← ht.length_eq u, List.take_left]
+    apply (FiniteStateTree.mem_finiteStateAutomorphisms_iff _).mp
+    induction w using induction_on with
+    | inl g =>
+      exact (FiniteStateTree.mem_finiteStateAutomorphisms_iff _).mpr
+        (FiniteTreeMap.isFiniteStateAut (run_finite e (hfs g).2))
+    | inr j =>
+      exact (FiniteStateTree.mem_finiteStateAutomorphisms_iff _).mpr
+        (FiniteTreeMap.isFiniteStateAut (run_finite (opposite e) (hhs j).2))
+    | mul u v hu hv =>
+      rw [map_mul]
+      exact Subgroup.mul_mem _ hu hv
 
 end MathlibExt.GroupTheory.FiniteStateFreeProductKourovka16Problem85Wanted
