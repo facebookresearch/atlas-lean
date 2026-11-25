@@ -32,7 +32,9 @@ public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Int.Order.Basic
 public import Mathlib.Order.Interval.Finset.Fin
 public import MathlibExt.Combinatorics.Enumerative.PermutationInversions
+public import MathlibExt.GameTheory.SocialChoice.VotingRules
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Int.NatAbs
 import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Tactic.Ring
 
@@ -56,7 +58,9 @@ instance discordantDecidable {n : ℕ} (σ τ : Equiv.Perm (Fin n)) (i j : Fin n
 
 /-- Kendall's tau distance: the number of unordered pairs of distinct
 items whose relative order differs between `σ` and `τ`, counted here as
-pairs `(i, j)` with `i < j` in the index order. -/
+pairs `(i, j)` with `i < j` in the index order; this agrees with the
+social-choice Kendall tau of the induced orders
+(`kendallTau_eq_kendallTau_orderOfPerm`). -/
 def kendallTau {n : ℕ} (σ τ : Equiv.Perm (Fin n)) : ℕ :=
   (Finset.univ.filter (fun p : Fin n × Fin n => p.1 < p.2 ∧ Discordant σ τ p.1 p.2)).card
 
@@ -566,7 +570,7 @@ theorem fiber_snd_card {n : ℕ} (π : Equiv.Perm (Fin n)) (b : Fin n) :
     simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
     constructor
     · rintro ⟨p, ⟨⟨⟨hlt1, hlt2⟩, heq⟩, hfst⟩⟩
-      rw [heq, hfst] at hlt1 hlt2
+      rw [heq, hsnd] at hlt1 hlt2
       exact ⟨hlt1, hlt2⟩
     · rintro ⟨hlt1, hlt2⟩
       exact ⟨(k, b), ⟨⟨⟨hlt1, hlt2⟩, rfl⟩, rfl⟩⟩
@@ -781,5 +785,87 @@ theorem spearmanFootrule_le_two_mul_kendallTau {n : ℕ} (σ τ : Equiv.Perm (Fi
     spearmanFootrule σ τ ≤ 2 * kendallTau σ τ := by
   rw [spearmanFootrule_relabel, kendallTau_relabel]
   exact upper_bound_one _
+
+/-- The strict total order on items induced by a ranking `σ` read as
+item-to-rank: `i` precedes `j` exactly when `σ i < σ j`. -/
+def orderOfPerm {n : ℕ} (σ : Equiv.Perm (Fin n)) :
+    MathlibExt.Order.StrictTotalOrder (Fin n) where
+  lt := fun i j => σ i < σ j
+  irrefl := fun i => lt_irrefl (σ i)
+  trans := fun {a b c} h1 h2 => lt_trans h1 h2
+  total := fun {a b} h => by
+    have hne : σ a ≠ σ b := fun e => h (σ.injective e)
+    rcases lt_or_gt_of_ne hne with hlt | hgt
+    · exact Or.inl hlt
+    · exact Or.inr hgt
+
+/-- The permutation Kendall tau is the social-choice Kendall tau of the
+induced orders: each discordant unordered pair contributes exactly one
+ordered disagreement. -/
+theorem kendallTau_eq_kendallTau_orderOfPerm {n : ℕ} (σ τ : Equiv.Perm (Fin n)) :
+    kendallTau σ τ =
+      MathlibExt.GameTheory.SocialChoice.kendallTau (orderOfPerm σ) (orderOfPerm τ) := by
+  have hlt : ∀ (π : Equiv.Perm (Fin n)) (a b : Fin n),
+      (orderOfPerm π).lt a b ↔ π a < π b := fun π a b => Iff.rfl
+  unfold MathlibExt.GameTheory.SocialChoice.kendallTau
+  simp only [hlt]
+  have huniv : (Finset.univ ×ˢ Finset.univ : Finset (Fin n × Fin n)) = Finset.univ := by
+    ext q
+    simp
+  rw [huniv]
+  have hswap : Finset.image Prod.swap
+        (Finset.univ.filter
+          (fun p : Fin n × Fin n => σ p.1 < σ p.2 ∧ τ p.2 < τ p.1)) =
+        Finset.univ.filter
+          (fun p : Fin n × Fin n => σ p.2 < σ p.1 ∧ τ p.1 < τ p.2) := by
+    ext q
+    simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
+    constructor
+    · rintro ⟨p, hdp, rfl⟩
+      exact hdp
+    · rintro hdp
+      exact ⟨Prod.swap q, hdp, rfl⟩
+  have hinj : Function.Injective (Prod.swap : Fin n × Fin n → Fin n × Fin n) := by
+    apply Function.Involutive.injective
+    intro p
+    rfl
+  have hcard : (Finset.univ.filter
+        (fun p : Fin n × Fin n => σ p.1 < σ p.2 ∧ τ p.2 < τ p.1)).card =
+      (Finset.univ.filter
+        (fun p : Fin n × Fin n => σ p.2 < σ p.1 ∧ τ p.1 < τ p.2)).card := by
+    have h := Finset.card_image_of_injective
+      (Finset.univ.filter
+        (fun p : Fin n × Fin n => σ p.1 < σ p.2 ∧ τ p.2 < τ p.1)) hinj
+    rw [hswap] at h
+    exact h.symm
+  have hunion : Finset.univ.filter (fun p : Fin n × Fin n => Discordant σ τ p.1 p.2) =
+      Finset.univ.filter
+        (fun p : Fin n × Fin n => σ p.1 < σ p.2 ∧ τ p.2 < τ p.1) ∪
+      Finset.univ.filter
+        (fun p : Fin n × Fin n => σ p.2 < σ p.1 ∧ τ p.1 < τ p.2) := by
+    ext q
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union]
+    constructor
+    · intro hd
+      unfold Discordant at hd
+      exact hd
+    · rintro (hd | hd)
+      · unfold Discordant
+        exact Or.inl hd
+      · unfold Discordant
+        exact Or.inr hd
+  have hdisj : Disjoint
+      (Finset.univ.filter
+        (fun p : Fin n × Fin n => σ p.1 < σ p.2 ∧ τ p.2 < τ p.1))
+      (Finset.univ.filter
+        (fun p : Fin n × Fin n => σ p.2 < σ p.1 ∧ τ p.1 < τ p.2)) := by
+    rw [Finset.disjoint_left]
+    intro q hq
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hq ⊢
+    rintro ⟨hlt, -⟩
+    exact absurd (lt_trans hq.1 hlt) (lt_irrefl _)
+  have h2 := card_filter_discordant_all σ τ
+  rw [hunion, Finset.card_union_of_disjoint hdisj] at h2
+  omega
 
 end MetaMathlibExt
