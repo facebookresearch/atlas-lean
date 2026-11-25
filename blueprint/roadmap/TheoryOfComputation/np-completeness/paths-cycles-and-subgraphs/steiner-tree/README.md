@@ -9,5 +9,5 @@
 
 ## Related topics
 
-- Primal–dual method for constrained forests: Steiner trees and Steiner
+- [Primal–dual method for constrained forests](../../../../ComputerScience/approximation-algorithms/primal-dual-method-for-constrained-forests/README.md): Steiner trees and Steiner
   forests are proper constrained forest problems, approximable within $2 - 2/|A|$.

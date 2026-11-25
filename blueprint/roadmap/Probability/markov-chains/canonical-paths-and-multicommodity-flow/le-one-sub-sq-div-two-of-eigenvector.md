@@ -4,4 +4,4 @@ Let $P$ be a stochastic matrix, reversible with respect to a probability vector 
 
 ## Background
 
-- Cheeger's inequality, hard direction: the analogous inequality for weighted graphs. Sinclair identifies a reversible chain with the graph whose edge $\{u,v\}$ has weight $\pi(u)P(u,v)$ and describes $\Phi$ as a weighted version of its edge expansion.
+- [Cheeger's inequality, hard direction](../../../GraphTheory/algebraic-graph-theory/part-02/conductance-and-cheeger-s-inequality/exists-threshold-cut-le-sqrt.md): the analogous inequality for weighted graphs. Sinclair identifies a reversible chain with the graph whose edge $\{u,v\}$ has weight $\pi(u)P(u,v)$ and describes $\Phi$ as a weighted version of its edge expansion.

@@ -1,0 +1,3 @@
+# Free rotation residue for a box pair
+
+For $d, N \in \mathbb{N}$, an unordered pair $e'$ of vertices of $\Lambda_N = \{-N, \dots, N\}^d$, and $t \in \mathbb{R}$, the free rotation residue holds when for every $m \in \mathbb{N}$ and every edge $e$ of $\Lambda_m$, $\theta^0_e(\sigma(t)) = \theta^0_{e'}(\sigma(t))$; here $\theta^0_e(p)$ is the [free edge density](free-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the free infinite-volume random-cluster measure on $\mathbb{Z}^d$, a chosen subsequential weak limit of the free box measures) and $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md).

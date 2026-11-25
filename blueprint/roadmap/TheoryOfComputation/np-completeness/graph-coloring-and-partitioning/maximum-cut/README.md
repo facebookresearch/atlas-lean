@@ -8,6 +8,6 @@
 
 ## Related topics
 
-- Goemans–Williamson MAX-CUT algorithm: since the problem is NP-complete,
+- [Goemans–Williamson MAX-CUT algorithm](../../../../ComputerScience/approximation-algorithms/goemans-williamson-max-cut-algorithm/README.md): since the problem is NP-complete,
   one approximates it; semidefinite relaxation and random-hyperplane rounding give a cut of
   expected weight at least $0.87856$ times the optimum for nonnegative weights.

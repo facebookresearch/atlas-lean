@@ -37,34 +37,62 @@ are formalized (Schoen's upper bound, Green's superpolynomial lower bound); the 
 'reasonable bounds' is not.
 -/
 
-/-- The colouring `c` (`true` red, `false` blue) has an `ℓ`-term arithmetic progression of colour
-`b` inside `{1, …, N}`. -/
+/-- **Monochromatic arithmetic progressions in an initial interval.** Let $c$ be a red/blue
+colouring of the natural numbers, given as a map to the Booleans ($\mathrm{true}$ is red,
+$\mathrm{false}$ is blue), let $b$ be a colour and let $\ell$ and $N$ be natural numbers. Then $c$
+has an $\ell$-term arithmetic progression of colour $b$ inside $\{1, \dots, N\}$ if there are
+natural numbers $a$ and $d > 0$ such that for every $i < \ell$ we have $1 \le a + id \le N$ and
+$c(a + id) = b$. -/
 def HasMonoAP (c : ℕ → Bool) (b : Bool) (ℓ N : ℕ) : Prop :=
   ∃ a d : ℕ, 0 < d ∧ ∀ i < ℓ, 1 ≤ a + i * d ∧ a + i * d ≤ N ∧ c (a + i * d) = b
 
-/-- `{1, …, N}` forces `W(3, k)`: every red/blue colouring of `{1, …, N}` has a red `3`-term or a
-blue `k`-term arithmetic progression, i.e. `W(3, k) ≤ N`. -/
+/-- **Intervals forcing the van der Waerden number $W(3, k)$.** For natural numbers $N$ and $k$,
+the interval $\{1, \dots, N\}$ forces $W(3, k)$ if every red/blue colouring of the natural numbers
+has, inside $\{1, \dots, N\}$, a red $3$-term arithmetic progression or a blue $k$-term arithmetic
+progression (progressions have common difference $d > 0$). Equivalently $W(3, k) \le N$, where the
+van der Waerden number $W(3, k)$ is the least $n$ such that every red/blue colouring of
+$\{1, \dots, n\}$ has a red $3$-term or a blue $k$-term arithmetic progression. -/
 def ForcesThreeK (N k : ℕ) : Prop :=
   ∀ c : ℕ → Bool, HasMonoAP c true 3 N ∨ HasMonoAP c false k N
 
-/-- Erdős Problem 721, upper bound: there is a constant `c < 1` with `W(3, k) < exp(k^c)` for all
-large `k`, i.e. some `N < exp(k^c)` forces `W(3, k)`. -/
+/-- **Subexponential upper bound for $W(3, k)$ (statement).** Write $W(3, k)$ for the van der
+Waerden number: the least $n$ such that every red/blue colouring of $\{1, \dots, n\}$ has a red
+$3$-term or a blue $k$-term arithmetic progression (progressions have common difference
+$d > 0$). Say that $N$ forces $W(3, k)$ if every red/blue colouring of $\{1, \dots, N\}$ has a red
+$3$-term or a blue $k$-term arithmetic progression. This is the proposition that there is a real
+constant $c < 1$ such that for all sufficiently large natural numbers $k$ some natural number
+$N < \exp(k^c)$ forces $W(3, k)$. Equivalently, $W(3, k) < \exp(k^c)$ for all large $k$. -/
 def vanDerWaerdenThreeSubexponential : Prop :=
   ∃ c : ℝ, c < 1 ∧ ∀ᶠ k : ℕ in Filter.atTop,
     ∃ N : ℕ, (N : ℝ) < Real.exp ((k : ℝ) ^ c) ∧ ForcesThreeK N k
 
-/-- Erdős Problem 721, lower bound (Green's superpolynomial bound): there is `c > 0` with
-`W(3, k) ≥ exp(c (log k)^{4/3} / (log log k)^{1/3})` for all large `k`, i.e. no `N` below this
-value forces `W(3, k)`. -/
+/-- **Green's superpolynomial lower bound for $W(3, k)$ (statement).** Write $W(3, k)$ for the van
+der Waerden number: the least $n$ such that every red/blue colouring of $\{1, \dots, n\}$ has a
+red $3$-term or a blue $k$-term arithmetic progression (progressions have common difference
+$d > 0$). Say that $N$ forces $W(3, k)$ if every red/blue colouring of $\{1, \dots, N\}$ has a red
+$3$-term or a blue $k$-term arithmetic progression. This is the proposition that there is a real
+constant $c > 0$ such that for all sufficiently large natural numbers $k$, no natural number
+$N < \exp\bigl(c (\log k)^{4/3} / (\log \log k)^{1/3}\bigr)$ forces $W(3, k)$. Equivalently,
+$W(3, k) \ge \exp\bigl(c (\log k)^{4/3} / (\log \log k)^{1/3}\bigr)$ for all large $k$. -/
 def vanDerWaerdenThreeSuperpolynomial : Prop :=
   ∃ c : ℝ, 0 < c ∧ ∀ᶠ k : ℕ in Filter.atTop, ∀ N : ℕ,
     (N : ℝ) < Real.exp (c * Real.log k ^ ((4 : ℝ) / 3) / Real.log (Real.log k) ^ ((1 : ℝ) / 3)) →
       ¬ ForcesThreeK N k
 
 /--
-Resolved true: Schoen proved `W(3, k) ≤ exp(O(k^{1-c}))` for an absolute constant `c > 0`, so `W(3,
-k) < exp(k^{c'})` for some `c' < 1` and all large `k`; erdosproblems.com/721 records Schoen as the
-first to show this (the best known bound is now `exp(O((log k)^9))`, via Bloom-Sisask). Source: T.
+**Schoen's subexponential upper bound for $W(3, k)$.** Write $W(3, k)$ for the van der Waerden
+number: the least $n$ such that every red/blue colouring of $\{1, \dots, n\}$ has a red $3$-term
+or a blue $k$-term arithmetic progression (progressions have common difference $d > 0$). Say that
+$N$ forces $W(3, k)$ if every red/blue colouring of $\{1, \dots, N\}$ has a red $3$-term or a
+blue $k$-term arithmetic progression. There is a real constant $c < 1$ such that for all
+sufficiently large natural numbers $k$ some natural number $N < \exp(k^c)$ forces $W(3, k)$.
+Equivalently, $W(3, k) < \exp(k^c)$ for all large $k$.
+
+Schoen proved $W(3, k) \le \exp(O(k^{1-\delta}))$ for an absolute constant $\delta > 0$, which gives
+this statement; erdosproblems.com/721 records Schoen as the first to show it. The best known bound
+is now $\exp(O((\log k)^9))$, via Bloom and Sisask.
+
+Source: T.
 F. Bloom, Erdős Problems, Problem #721, https://www.erdosproblems.com/721 (status SOLVED);
 resolution: T. Schoen, A subexponential upper bound for van der Waerden numbers W(3, k), Electron.
 J. Combin. 28 (2021), Paper 2.34; B. Green, New lower bounds for van der Waerden numbers, Forum
@@ -77,10 +105,20 @@ https://www.combinatorics.org/ojs/index.php/eljc/article/view/v28i2p34.
 public theorem_wanted vanDerWaerdenThreeSubexponential_holds : vanDerWaerdenThreeSubexponential
 
 /--
-Resolved true: Green proved `W(3, k) ≥ exp(c (log k)^{4/3} / (log log k)^{1/3})` for some `c > 0` (a
-red-blue colouring of `[N]` with no blue `3`-term progression and no long red progression),
-disproving Graham's guess `W(3, k) ≪ k²`; Hunter improved this to `exp(c (log k)² / log log k)`
-(erdosproblems.com/721). Source: T. F. Bloom, Erdős Problems, Problem #721,
+**Green's superpolynomial lower bound for $W(3, k)$.** Write $W(3, k)$ for the van der Waerden
+number: the least $n$ such that every red/blue colouring of $\{1, \dots, n\}$ has a red $3$-term
+or a blue $k$-term arithmetic progression (progressions have common difference $d > 0$). Say that
+$N$ forces $W(3, k)$ if every red/blue colouring of $\{1, \dots, N\}$ has a red $3$-term or a
+blue $k$-term arithmetic progression. There is a real constant $c > 0$ such that for all
+sufficiently large natural numbers $k$, no natural number
+$N < \exp\bigl(c (\log k)^{4/3} / (\log \log k)^{1/3}\bigr)$ forces $W(3, k)$. Equivalently,
+$W(3, k) \ge \exp\bigl(c (\log k)^{4/3} / (\log \log k)^{1/3}\bigr)$ for all large $k$.
+
+Green's colouring has no $3$-term progression in one colour and no long progression in the other;
+it disproves Graham's guess $W(3, k) \ll k^2$. Hunter improved the bound to
+$\exp(c (\log k)^2 / \log \log k)$ (erdosproblems.com/721).
+
+Source: T. F. Bloom, Erdős Problems, Problem #721,
 https://www.erdosproblems.com/721 (status SOLVED); resolution: T. Schoen, A subexponential upper
 bound for van der Waerden numbers W(3, k), Electron. J. Combin. 28 (2021), Paper 2.34; B. Green, New
 lower bounds for van der Waerden numbers, Forum Math. Pi 10 (2022), e18, Schoen's abstract: N ≤

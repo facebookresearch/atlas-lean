@@ -10,7 +10,7 @@ Griffiths and Ghahramani (2011, Equation 12, rewritten as in Equation 13) give i
 
 ## Informally uses
 
-- The beta-binomial distribution: integrating $\pi_k^{m_k} (1 - \pi_k)^{N - m_k}$ against $\mathrm{Beta}(\alpha/K, 1)$ gives the probability of one column, the step from which the paper derives the closed form (Griffiths and Ghahramani 2011, Equation 10).
+- [The beta-binomial distribution](../../../ComputerScience/machine-learning/bayesian-inference-and-sampling/conjugate-priors/binomial-kernel-comp-beta-measure.md): integrating $\pi_k^{m_k} (1 - \pi_k)^{N - m_k}$ against $\mathrm{Beta}(\alpha/K, 1)$ gives the probability of one column, the step from which the paper derives the closed form (Griffiths and Ghahramani 2011, Equation 10).
 
 ## Sources
 

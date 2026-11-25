@@ -13,5 +13,5 @@ A matching is maximum exactly when it admits no augmenting path (Berge, 1957). H
 
 ## Related topics
 
-- Maximum bipartite matching: the augmenting-path and Hopcroft–Karp algorithms in bipartite graphs, proved correct with the $2\lfloor\sqrt{b}\rfloor + 2$ phase bound.
+- [Maximum bipartite matching](../../../ComputerScience/graph-algorithms/spanning-trees-flows-matchings/maximum-bipartite-matching/README.md): the augmenting-path and Hopcroft–Karp algorithms in bipartite graphs, proved correct with the $2\lfloor\sqrt{b}\rfloor + 2$ phase bound.
 - [Matching in general graphs](../../../TheoryOfComputation/polynomial-time-problems/matching-in-general-graphs/README.md): Edmonds' blossom algorithm finds augmenting paths in nonbipartite graphs in polynomial time.

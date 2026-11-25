@@ -4,10 +4,10 @@ Let $(\Omega, \mu)$ be a probability space and let
 $X_{ij} : \Omega \to \mathbb{R}$, for $i, j \in \mathbb{N}$, be measurable functions. Suppose that
 the family $(X_{ij})_{i \le j}$ is mutually independent, that all $X_{ij}$ with $i \le j$ have the
 same distribution, and that for $i \le j$ both $X_{ij}$ and $X_{ij}^2$ are integrable with
-$\mathbb{E}[X_{ij}] = 0$ and $\mathbb{E}[X_{ij}^2] = 1$. For $n \in \mathbb{N}$ and
-$\omega \in \Omega$, let $W_n(\omega)$ be the Wigner matrix of $X$ and let $L_n(\omega)$ be the
-image of its empirical spectral measure under $x \mapsto x / \sqrt{n}$ (for $n \ge 1$, the
-empirical spectral measure of $W_n(\omega) / \sqrt{n}$). Then for $\mu$-almost every $\omega$,
+$\mathbb{E}[X_{ij}] = 0$ and $\mathbb{E}[X_{ij}^2] = 1$. For $n \ge 1$ and
+$\omega \in \Omega$, let $W_n(\omega)$ be the $n \times n$ Wigner matrix of $X$ and let
+$L_n(\omega)$ be the image of its empirical spectral measure under $x \mapsto x / \sqrt{n}$, that
+is, the empirical spectral measure of $W_n(\omega) / \sqrt{n}$. Then for $\mu$-almost every $\omega$,
 every bounded continuous function $f : \mathbb{R} \to \mathbb{R}$ satisfies
 
 $$\int f \, dL_n(\omega) \to \int f \, d\sigma \quad (n \to \infty),$$
@@ -27,10 +27,10 @@ where $\sigma$ is the semicircle distribution.
 - [Talagrand's concentration inequality around a median](../../concentration-inequalities/talagrand-s-concentration-inequality/talagrand-concentration-median.md):
   background; concentration of the linear statistics $\frac{1}{n}\operatorname{tr} f(W_n/\sqrt{n})$
   upgrades convergence in expectation to almost sure convergence.
-- Hoffman–Wielandt inequality for Hermitian matrices:
+- [Hoffman–Wielandt inequality for Hermitian matrices](../../../LinearAlgebra/positive-definite-matrices/hoffman-wielandt-inequality/hoffman-wielandt-hermitian.md):
   background; it bounds how far the empirical spectral distribution moves under a perturbation of
   small Frobenius norm, which is how truncation reduces the theorem to bounded entries.
-- Lipschitz linear statistics of Hermitian spectra are stable:
+- [Lipschitz linear statistics of Hermitian spectra are stable](../../../LinearAlgebra/positive-definite-matrices/hoffman-wielandt-inequality/abs-sum-sub-sum-le-of-lipschitz-with.md):
   background; the form of that bound used for linear statistics $\frac{1}{n}\sum_i f(\lambda_i)$.
 - [Expected moments of a Wigner matrix converge to the semicircle moments](tendsto-expected-moment-wigner-matrix-re.md):
   background; the first half of the moment method under moments of all orders (Anderson, Guionnet

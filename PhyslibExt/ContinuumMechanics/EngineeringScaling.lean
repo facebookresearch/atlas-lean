@@ -7,14 +7,27 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import PhyslibExt.Units.EngineeringQuantities
 
+import Mathlib.Analysis.Calculus.ContDiff.Deriv
+import Mathlib.Analysis.Calculus.ContDiff.Operations
+import Mathlib.Analysis.Calculus.Deriv.CompMul
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.NormNum
+import PhyslibExt.EarthScience.AdvectionDiffusionNondimensional
+
 /-!
-# Engineering dimensionless groups
+# Engineering scaling: dimensionless groups and scaled transport fields
 
 The Reynolds, Prandtl, Nusselt, Rayleigh, Mach, Froude and Biot numbers, each written once over
 typed ISQ quantities, with their dimension identities and their invariance under every change
-of unit scale.
+of unit scale; and the actual derivatives of a scaled transport field, supplied to the
+nondimensional advection-diffusion equation.
 
 ## i. Overview
 
@@ -57,6 +70,20 @@ Non-goals: these are dimensional identities only. No similarity law, no transfer
 empirical correlation between flows, no Buckingham π theorem (whose counting form lives in
 `PhyslibExt.Chemistry.QuantityCalculus`), and no empirical adequacy or system safety claim.
 
+Scaled transport fields (section H): for characteristic length `L`, speed `U` and
+concentration `C0`, the physical field of the scaled representation is
+`c(t, x) = C0 * ĉ(U t / L, x / L)`. When `ĉ` is jointly `C²` on `ℝ × ℝ` (curried, `ĉ t̂ x̂`),
+`c_t = C0 (U / L) ĉ_t̂`, `c_x = (C0 / L) ĉ_x̂` and `c_xx = (C0 / L²) ĉ_x̂x̂` hold as actual
+derivatives at corresponding points, which are the hypotheses
+`EarthScience.advection_diffusion_nondimensional` takes. The equation
+`c_t + U c_x = D c_xx` on the strip `t > 0`, `x ∈ (a, b)` then gives
+`ĉ_t̂ + ĉ_x̂ = (1 / Pe) ĉ_x̂x̂`, `Pe = U L / D`, on `t̂ > 0`, `x̂ ∈ (a / L, b / L)`, and initial
+data on `[a, b]` and Dirichlet data for `t ≥ 0` move to `[a / L, b / L]` and `t̂ ≥ 0`. The
+physical equation is a model input, `L, U, D, C0 > 0` where the equation or the data are
+transported, and `U = 0` admits no `L / U` time scale. The derivative identities need only the
+regularity of `ĉ`: at `L = 0` both sides vanish through Lean's `x / 0 = 0`, a degenerate case
+with no physical content.
+
 ## ii. Key results
 
 - `velocityDim_exponent`, `accelerationDim_exponent`, `massDensityDim_exponent`,
@@ -77,6 +104,15 @@ empirical correlation between flows, no Buckingham π theorem (whose counting fo
   `gasConstantDim_div_molarMassDim`, `molarPrandtl_not_unitInvariant` : a molar heat capacity
   is not mass-specific, and inserting it unconverted gives a monomial of molar-mass dimension
   that changes with the unit scale.
+- `hasDerivAt_scaledField_time`, `hasDerivAt_scaledField_space`,
+  `hasDerivAt_deriv_scaledField_space`, `iteratedDeriv_two_scaledField_space` : the actual
+  derivatives of a scaled field.
+- `scaledField_advection_diffusion`, `scaledField_advection_diffusion_on` : the nondimensional
+  advection-diffusion equation, pointwise and on the transformed strip.
+- `scaledField_initial_iff`, `scaledField_dirichlet_iff` : initial and Dirichlet data on the
+  scaled domain.
+- `not_exists_scaledField_of_U_eq_zero`, `scaledField_zero_hides_mismatch` : `U = 0` has no
+  `L / U` time scale, and the zero field cannot detect a wrong derivative factor.
 
 ## iii. Table of contents
 
@@ -87,6 +123,7 @@ empirical correlation between flows, no Buckingham π theorem (whose counting fo
 - E. Unit invariance
 - F. Fixtures in two unit scales
 - G. A molar heat capacity in the Prandtl number
+- H. Actual derivatives of a scaled transport field
 
 ## iv. References
 
@@ -98,6 +135,10 @@ empirical correlation between flows, no Buckingham π theorem (whose counting fo
 - `Physlib.Units.ParametricUnits` (`UnitScale.dimScale`),
   `PhyslibExt.Units.QuantityDimensions` (`dimScale_mul`, `dimScale_pos`) and
   `PhyslibExt.Units.EngineeringQuantities` (`powerDim`, `siScale`, `mmScale`).
+- J. D. Logan, *Applied Mathematics*, Wiley, ch. 1: scaling and nondimensionalization.
+- `EarthScience.advection_diffusion_nondimensional`
+  (`PhyslibExt.EarthScience.AdvectionDiffusionNondimensional`); `iteratedDeriv_comp_const_mul`
+  and `HasDerivAt.comp` (Mathlib).
 -/
 
 @[expose] public section
@@ -722,5 +763,263 @@ lemma molarPrandtl_not_unitInvariant :
   rw [dimScale_si_kmol_dynamicViscosityDim, dimScale_si_kmol_gasConstantDim,
     dimScale_si_kmol_thermalConductivityDim]
   norm_num
+
+/-! ## H. Actual derivatives of a scaled transport field
+
+The physical field of the scaled representation is `c(t, x) = C0 * ĉ(U t / L, x / L)` for a
+jointly `C²` field `ĉ`. Its time, first-space and second-space derivatives are proved as
+actual derivatives and supplied to `EarthScience.advection_diffusion_nondimensional`, and
+initial and Dirichlet data are transported to the scaled domain. -/
+
+/-- Physical field of the scaled representation, `c(t, x) = C0 * ĉ(U t / L, x / L)`. -/
+noncomputable def scaledField (L U C0 : ℝ) (chat : ℝ → ℝ → ℝ) (t x : ℝ) : ℝ :=
+  C0 * chat (U * t / L) (x / L)
+
+/-- Time derivative: `c_t(t, x) = C0 (U / L) ĉ_t̂(U t / L, x / L)` as an actual derivative. -/
+lemma hasDerivAt_scaledField_time {chat : ℝ → ℝ → ℝ} (hc : ContDiff ℝ 2 (Function.uncurry chat))
+    (L U C0 t x : ℝ) :
+    HasDerivAt (fun t => scaledField L U C0 chat t x)
+      (C0 * (U / L) * deriv (fun s => chat s (x / L)) (U * t / L)) t := by
+  have hinner : ContDiff ℝ 2 (fun s : ℝ => (s, x / L)) :=
+    contDiff_id.prodMk contDiff_const
+  have hF : ContDiff ℝ 2 (fun s => chat s (x / L)) := hc.fun_comp hinner
+  have hF' : HasDerivAt (fun s => chat s (x / L))
+      (deriv (fun s => chat s (x / L)) (U * t / L)) (U * t / L) :=
+    (hF.differentiable (by norm_num)).differentiableAt.hasDerivAt
+  have hg : HasDerivAt (fun t => U * t / L) (U / L) t := by
+    have h := ((hasDerivAt_id t).const_mul U).div_const L
+    simpa using h
+  have h := (hF'.comp t hg).const_mul C0
+  simp only [Function.comp_def] at h
+  have hval : C0 * (deriv (fun s => chat s (x / L)) (U * t / L) * (U / L))
+      = C0 * (U / L) * deriv (fun s => chat s (x / L)) (U * t / L) := by ring
+  rw [hval] at h
+  exact h
+
+/-- First space derivative: `c_x(t, x) = (C0 / L) ĉ_x̂(U t / L, x / L)`. -/
+lemma hasDerivAt_scaledField_space {chat : ℝ → ℝ → ℝ} (hc : ContDiff ℝ 2 (Function.uncurry chat))
+    (L U C0 t x : ℝ) :
+    HasDerivAt (fun x => scaledField L U C0 chat t x)
+      (C0 / L * deriv (fun y => chat (U * t / L) y) (x / L)) x := by
+  have hinner : ContDiff ℝ 2 (fun y : ℝ => (U * t / L, y)) :=
+    contDiff_const.prodMk contDiff_id
+  have hF : ContDiff ℝ 2 (fun y => chat (U * t / L) y) := hc.fun_comp hinner
+  have hF' : HasDerivAt (fun y => chat (U * t / L) y)
+      (deriv (fun y => chat (U * t / L) y) (x / L)) (x / L) :=
+    (hF.differentiable (by norm_num)).differentiableAt.hasDerivAt
+  have hg : HasDerivAt (fun x => x / L) (1 / L) x := by
+    have h := (hasDerivAt_id x).div_const L
+    simpa using h
+  have h := (hF'.comp x hg).const_mul C0
+  simp only [Function.comp_def] at h
+  have hval : C0 * (deriv (fun y => chat (U * t / L) y) (x / L) * (1 / L))
+      = C0 / L * deriv (fun y => chat (U * t / L) y) (x / L) := by ring
+  rw [hval] at h
+  exact h
+
+/-- Second space derivative as an actual derivative of `c_x`:
+`c_xx(t, x) = (C0 / L²) ĉ_x̂x̂(U t / L, x / L)`. -/
+lemma hasDerivAt_deriv_scaledField_space {chat : ℝ → ℝ → ℝ}
+    (hc : ContDiff ℝ 2 (Function.uncurry chat)) (L U C0 t x : ℝ) :
+    HasDerivAt (fun x => deriv (fun x => scaledField L U C0 chat t x) x)
+      (C0 / L ^ 2 * iteratedDeriv 2 (fun y => chat (U * t / L) y) (x / L)) x := by
+  have hg : ContDiff ℝ 2 (chat (U * t / L)) := hc.comp (contDiff_prodMk_right (U * t / L))
+  have hcomp : ContDiff ℝ 2 (fun x => chat (U * t / L) (L⁻¹ * x)) :=
+    hg.comp (contDiff_const.mul contDiff_id)
+  have hfeq : (fun x => scaledField L U C0 chat t x)
+      = fun x => C0 * chat (U * t / L) (L⁻¹ * x) := by
+    funext x'
+    rw [scaledField, div_eq_inv_mul x' L]
+  have hval : iteratedDeriv 2 (fun x => scaledField L U C0 chat t x) x
+      = C0 / L ^ 2 * iteratedDeriv 2 (fun y => chat (U * t / L) y) (x / L) := by
+    calc iteratedDeriv 2 (fun x => scaledField L U C0 chat t x) x
+        = iteratedDeriv 2 (fun x => C0 * chat (U * t / L) (L⁻¹ * x)) x := by rw [hfeq]
+      _ = C0 * iteratedDeriv 2 (fun x => chat (U * t / L) (L⁻¹ * x)) x :=
+          iteratedDeriv_const_mul C0 hcomp.contDiffAt
+      _ = C0 * (L⁻¹ ^ 2 * iteratedDeriv 2 (chat (U * t / L)) (L⁻¹ * x)) := by
+          rw [iteratedDeriv_comp_const_mul hg L⁻¹]
+      _ = C0 / L ^ 2 * iteratedDeriv 2 (fun y => chat (U * t / L) y) (x / L) := by
+          rw [div_eq_inv_mul x L]
+          ring
+  have hf : ContDiff ℝ 2 (fun x => scaledField L U C0 chat t x) := by
+    rw [hfeq]
+    exact contDiff_const.mul hcomp
+  have hd : Differentiable ℝ (deriv (fun x => scaledField L U C0 chat t x)) := by
+    have := hf.differentiable_iteratedDeriv 1 (by norm_num)
+    rwa [iteratedDeriv_one] at this
+  have h2 : deriv (deriv (fun x => scaledField L U C0 chat t x)) x
+      = iteratedDeriv 2 (fun x => scaledField L U C0 chat t x) x := by
+    rw [iteratedDeriv_succ, iteratedDeriv_one]
+  exact (hd x).hasDerivAt.congr_deriv (h2.trans hval)
+
+/-- The same second derivative in `iteratedDeriv` form, the scaling of
+`iteratedDeriv_comp_const_mul`. -/
+lemma iteratedDeriv_two_scaledField_space {chat : ℝ → ℝ → ℝ}
+    (hc : ContDiff ℝ 2 (Function.uncurry chat)) (L U C0 t x : ℝ) :
+    iteratedDeriv 2 (fun x => scaledField L U C0 chat t x) x
+      = C0 / L ^ 2 * iteratedDeriv 2 (fun y => chat (U * t / L) y) (x / L) := by
+  have hg : ContDiff ℝ 2 (chat (U * t / L)) := hc.comp (contDiff_prodMk_right (U * t / L))
+  have hcomp : ContDiff ℝ 2 (fun x => chat (U * t / L) (L⁻¹ * x)) :=
+    hg.comp (contDiff_const.mul contDiff_id)
+  calc iteratedDeriv 2 (fun x => scaledField L U C0 chat t x) x
+      = iteratedDeriv 2 (fun x => C0 * chat (U * t / L) (L⁻¹ * x)) x := by
+        congr 1
+        funext x'
+        rw [scaledField, div_eq_inv_mul x' L]
+    _ = C0 * iteratedDeriv 2 (fun x => chat (U * t / L) (L⁻¹ * x)) x :=
+        iteratedDeriv_const_mul C0 hcomp.contDiffAt
+    _ = C0 * (L⁻¹ ^ 2 * iteratedDeriv 2 (chat (U * t / L)) (L⁻¹ * x)) := by
+        rw [iteratedDeriv_comp_const_mul hg L⁻¹]
+    _ = C0 / L ^ 2 * iteratedDeriv 2 (fun y => chat (U * t / L) y) (x / L) := by
+        rw [div_eq_inv_mul x L]
+        ring
+
+/-! ### The nondimensional equation -/
+
+/-- If the physical field satisfies `c_t + U c_x = D c_xx` at `(t, x)`, the scaled field
+satisfies `ĉ_t̂ + ĉ_x̂ = (1 / Pe) ĉ_x̂x̂` at `(U t / L, x / L)`, `Pe = U L / D`: the derivative
+identities supplied to `EarthScience.advection_diffusion_nondimensional`. -/
+lemma scaledField_advection_diffusion {L U D C0 : ℝ} (hL : 0 < L) (hU : 0 < U) (hD : 0 < D)
+    (hC0 : 0 < C0) {chat : ℝ → ℝ → ℝ} (hc : ContDiff ℝ 2 (Function.uncurry chat)) (t x : ℝ)
+    (hPDE : deriv (fun t => scaledField L U C0 chat t x) t
+        + U * deriv (fun x => scaledField L U C0 chat t x) x
+      = D * iteratedDeriv 2 (fun x => scaledField L U C0 chat t x) x) :
+    deriv (fun s => chat s (x / L)) (U * t / L) + deriv (fun y => chat (U * t / L) y) (x / L)
+      = 1 / (U * L / D) * iteratedDeriv 2 (fun y => chat (U * t / L) y) (x / L) := by
+  have ht := (hasDerivAt_scaledField_time hc L U C0 t x).deriv
+  have hx := (hasDerivAt_scaledField_space hc L U C0 t x).deriv
+  have hxx := iteratedDeriv_two_scaledField_space hc L U C0 t x
+  exact EarthScience.advection_diffusion_nondimensional hL hU hD hC0 ht hx hxx hPDE
+
+/-- The equation on the strip `t > 0`, `x ∈ (a, b)` gives the nondimensional equation on the
+transformed strip `t̂ > 0`, `x̂ ∈ (a / L, b / L)`. -/
+lemma scaledField_advection_diffusion_on {L U D C0 a b : ℝ} (hL : 0 < L) (hU : 0 < U)
+    (hD : 0 < D) (hC0 : 0 < C0) {chat : ℝ → ℝ → ℝ} (hc : ContDiff ℝ 2 (Function.uncurry chat))
+    (hPDE : ∀ t ∈ Set.Ioi (0 : ℝ), ∀ x ∈ Set.Ioo a b,
+      deriv (fun t => scaledField L U C0 chat t x) t
+          + U * deriv (fun x => scaledField L U C0 chat t x) x
+        = D * iteratedDeriv 2 (fun x => scaledField L U C0 chat t x) x) :
+    ∀ τ ∈ Set.Ioi (0 : ℝ), ∀ ξ ∈ Set.Ioo (a / L) (b / L),
+      deriv (fun s => chat s ξ) τ + deriv (fun y => chat τ y) ξ
+        = 1 / (U * L / D) * iteratedDeriv 2 (fun y => chat τ y) ξ := by
+  intro τ hτ ξ hξ
+  rw [Set.mem_Ioi] at hτ
+  rw [Set.mem_Ioo] at hξ
+  obtain ⟨hξ1, hξ2⟩ := hξ
+  have hL' : L ≠ 0 := ne_of_gt hL
+  have hU' : U ≠ 0 := ne_of_gt hU
+  have htmem : L * τ / U ∈ Set.Ioi (0 : ℝ) := by
+    rw [Set.mem_Ioi]
+    exact div_pos (mul_pos hL hτ) hU
+  have hxmem : L * ξ ∈ Set.Ioo a b := by
+    rw [Set.mem_Ioo]
+    refine ⟨?_, ?_⟩
+    · rw [div_lt_iff₀ hL] at hξ1
+      rwa [mul_comm ξ L] at hξ1
+    · rw [lt_div_iff₀ hL] at hξ2
+      rwa [mul_comm ξ L] at hξ2
+  have h := scaledField_advection_diffusion hL hU hD hC0 hc (L * τ / U) (L * ξ)
+    (hPDE _ htmem _ hxmem)
+  have e1 : U * (L * τ / U) / L = τ := by field_simp
+  have e2 : L * ξ / L = ξ := mul_div_cancel_left₀ _ hL'
+  rw [e1, e2] at h
+  exact h
+
+/-! ### Initial and boundary data -/
+
+/-- Initial data: `c(0, x) = c₀(x)` on `[a, b]` iff `ĉ(0, x̂) = c₀(L x̂) / C0` on
+`[a / L, b / L]`. -/
+lemma scaledField_initial_iff {L C0 : ℝ} (hL : 0 < L) (hC0 : C0 ≠ 0) (U : ℝ)
+    (chat : ℝ → ℝ → ℝ) (c₀ : ℝ → ℝ) (a b : ℝ) :
+    (∀ x ∈ Set.Icc a b, scaledField L U C0 chat 0 x = c₀ x) ↔
+      ∀ ξ ∈ Set.Icc (a / L) (b / L), chat 0 ξ = c₀ (L * ξ) / C0 := by
+  have hL' : L ≠ 0 := ne_of_gt hL
+  constructor
+  · intro h ξ hξ
+    rw [Set.mem_Icc] at hξ
+    obtain ⟨hξ1, hξ2⟩ := hξ
+    have hxmem : L * ξ ∈ Set.Icc a b := by
+      rw [Set.mem_Icc]
+      refine ⟨?_, ?_⟩
+      · rw [div_le_iff₀ hL] at hξ1
+        rwa [mul_comm ξ L] at hξ1
+      · rw [le_div_iff₀ hL] at hξ2
+        rwa [mul_comm ξ L] at hξ2
+    have h0 := h (L * ξ) hxmem
+    simp only [scaledField] at h0
+    rw [mul_zero, zero_div, mul_div_cancel_left₀ _ hL'] at h0
+    rw [eq_div_iff hC0, mul_comm (chat 0 ξ) C0]
+    exact h0
+  · intro h x hx
+    rw [Set.mem_Icc] at hx
+    obtain ⟨hx1, hx2⟩ := hx
+    have hξmem : x / L ∈ Set.Icc (a / L) (b / L) := by
+      rw [Set.mem_Icc]
+      exact ⟨div_le_div_of_nonneg_right hx1 hL.le, div_le_div_of_nonneg_right hx2 hL.le⟩
+    have h0 := h (x / L) hξmem
+    simp only [scaledField]
+    rw [mul_zero, zero_div, h0]
+    have e : L * (x / L) = x := by
+      rw [mul_comm L (x / L)]
+      exact div_mul_cancel₀ _ hL'
+    rw [e]
+    field_simp
+
+/-- Dirichlet data at a boundary point `x = a`: `c(t, a) = g(t)` for `t ≥ 0` iff
+`ĉ(t̂, a / L) = g(L t̂ / U) / C0` for `t̂ ≥ 0`. Apply it at each end of `[a, b]`. -/
+lemma scaledField_dirichlet_iff {L U C0 : ℝ} (hL : 0 < L) (hU : 0 < U) (hC0 : C0 ≠ 0)
+    (chat : ℝ → ℝ → ℝ) (g : ℝ → ℝ) (a : ℝ) :
+    (∀ t ∈ Set.Ici (0 : ℝ), scaledField L U C0 chat t a = g t) ↔
+      ∀ τ ∈ Set.Ici (0 : ℝ), chat τ (a / L) = g (L * τ / U) / C0 := by
+  have hL' : L ≠ 0 := ne_of_gt hL
+  have hU' : U ≠ 0 := ne_of_gt hU
+  constructor
+  · intro h τ hτ
+    rw [Set.mem_Ici] at hτ
+    have htmem : L * τ / U ∈ Set.Ici (0 : ℝ) := by
+      rw [Set.mem_Ici]
+      exact div_nonneg (mul_nonneg hL.le hτ) hU.le
+    have h0 := h (L * τ / U) htmem
+    simp only [scaledField] at h0
+    have e1 : U * (L * τ / U) / L = τ := by field_simp
+    rw [e1] at h0
+    rw [eq_div_iff hC0, mul_comm (chat τ (a / L)) C0]
+    exact h0
+  · intro h t ht
+    rw [Set.mem_Ici] at ht
+    have hτmem : U * t / L ∈ Set.Ici (0 : ℝ) := by
+      rw [Set.mem_Ici]
+      exact div_nonneg (mul_nonneg hU.le ht) hL.le
+    have h0 := h (U * t / L) hτmem
+    simp only [scaledField]
+    rw [h0]
+    have e2 : L * (U * t / L) / U = t := by field_simp
+    rw [e2]
+    field_simp
+
+/-- `U = 0` admits no `L / U` time scale: the scaled time `0 * t / L` is constant, so no scaled
+representation reaches the time-dependent field `c(t, x) = t`. -/
+lemma not_exists_scaledField_of_U_eq_zero (L C0 : ℝ) :
+    ¬ ∃ chat : ℝ → ℝ → ℝ, ∀ t x : ℝ, scaledField L 0 C0 chat t x = t := by
+  rintro ⟨chat, h⟩
+  have h1 := h 0 0
+  have h2 := h 1 0
+  simp only [scaledField, zero_mul, zero_div] at h1 h2
+  rw [h1] at h2
+  exact zero_ne_one h2
+
+/-! ### A zero field hides a wrong derivative factor -/
+
+/-- The zero field hides the same error: for `ĉ = 0` the wrong factor `C0 / L` also gives a
+true equation, so the zero field is not an admissible sole fixture. -/
+lemma scaledField_zero_hides_mismatch (L U C0 t x : ℝ) :
+    iteratedDeriv 2 (fun x => scaledField L U C0 (fun _ _ => 0) t x) x
+      = C0 / L * iteratedDeriv 2 (fun y => (fun _ _ : ℝ => (0 : ℝ)) (U * t / L) y) (x / L) := by
+  have hLHS : (fun x => scaledField L U C0 (fun _ _ => 0) t x) = fun _ => (0 : ℝ) := by
+    funext x
+    simp [scaledField]
+  have hRHS : (fun y => (fun _ _ : ℝ => (0 : ℝ)) (U * t / L) y) = fun _ => (0 : ℝ) := rfl
+  rw [hLHS, hRHS]
+  simp
 
 end EngineeringScaling

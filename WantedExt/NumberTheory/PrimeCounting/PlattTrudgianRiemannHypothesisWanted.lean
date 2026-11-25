@@ -32,7 +32,9 @@ Theorem `bank`, TeX line 62, arXiv:2004.09765,
 <https://arxiv.org/html/2004.09765>.
 -/
 
-/-- Every zeta zero with `0 < Im ρ ≤ 3000175332800` is on the critical line. -/
+/-- **Platt–Trudgian verification of the Riemann hypothesis to height $3 \cdot 10^{12}$.** Every
+zero $\rho$ of the Riemann zeta function with $0 < \operatorname{Im} \rho \le 3000175332800$
+satisfies $\operatorname{Re} \rho = 1/2$. -/
 public theorem_wanted platt_trudgian_rh_to_height (ρ : ℂ)
     (hzero : riemannZeta ρ = 0) (hpos : 0 < ρ.im)
     (hlt : ρ.im ≤ 3000175332800) :

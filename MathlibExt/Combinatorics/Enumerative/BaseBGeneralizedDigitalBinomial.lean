@@ -134,30 +134,28 @@ private theorem digit_ofSum (b N : ℕ) (t : ℕ → ℕ) (hb : 2 ≤ b)
         exact ht (j + 1) (Finset.mem_range.mpr (by omega))
       exact ih (fun j => t (j + 1)) ht' k hkmem
 
-private theorem tuple_digit_le (b N n : ℕ)
-    (x_ : (i : Fin N) → Fin (n / b ^ i.val % b + 1)) (i : ℕ) (hi : i < N) :
-    (x_ ⟨i, hi⟩).val ≤ n / b ^ i % b :=
-  Nat.le_of_lt_succ (x_ ⟨i, hi⟩).isLt
-
 private theorem tuple_digit_lt (b N n : ℕ) (hb : 2 ≤ b)
     (x_ : (i : Fin N) → Fin (n / b ^ i.val % b + 1)) (i : ℕ) (hi : i < N) :
     (x_ ⟨i, hi⟩).val < b := by
   have hbpos : 0 < b := by omega
-  exact lt_of_le_of_lt (tuple_digit_le b N n x_ i hi) (Nat.mod_lt _ hbpos)
+  exact lt_of_le_of_lt (Fin.is_le (x_ ⟨i, hi⟩)) (Nat.mod_lt _ hbpos)
 
-/-- Base-`b` generalized digital binomial theorem.
+/-- **Base-$b$ generalized digital binomial theorem.** Let $b \ge 2$, let $N$ and $n$ be natural
+numbers with $n < b^N$, and let $x$ and $y$ be real numbers. For a natural number $m$ write
+$m_i = \lfloor m / b^i \rfloor \bmod b$ for its $i$-th base-$b$ digit, and write
+$z^{\overline{j}} = z(z+1)\cdots(z+j-1)$ for the rising factorial. Then
+$$\prod_{i=0}^{N-1} \frac{(x+y)^{\overline{n_i}}}{n_i!} = \sum_{m} \left(\prod_{i=0}^{N-1}
+\frac{x^{\overline{m_i}}}{m_i!}\right) \left(\prod_{i=0}^{N-1}
+\frac{y^{\overline{(n-m)_i}}}{(n-m)_i!}\right),$$
+where the sum runs over the natural numbers $m \le n$ with $m_i \le n_i$ for every $i < N$.
+
+Proves `Wanted` entry `base_b_generalized_digital_binomial_theorem`.
 
 Source: Hieu D. Nguyen, "A Generalization of the Digital Binomial
 Theorem," Journal of Integer Sequences 18 (2015), Article 15.5.7,
 Theorem (label th:digital-binomial-theorem-non-binary),
 equation (eq:digital-binomial-theorem-non-binary), lines 122–127,
 https://cs.uwaterloo.ca/journals/JIS/VOL18/Nguyen/nguyen6.tex
-
-The generalized binomial coefficients are rising factorials over
-factorials; base-`b` digits are `n / b^i % b`, and the digital-dominance
-sum is the `Finset.filter` over `m ≤ n`.
-
-Proves `Wanted` entry `base_b_generalized_digital_binomial_theorem`.
 -/
 theorem base_b_generalized_digital_binomial_theorem
     (b N n : ℕ) (x y : ℝ) (hb : 2 ≤ b) (hn : n < b ^ N) :
@@ -236,7 +234,7 @@ theorem base_b_generalized_digital_binomial_theorem
       intro i hi
       have hiN : i < N := Finset.mem_range.mp hi
       rw [dite_eq_left hiN]
-      exact tuple_digit_le b N n x_ i hiN
+      exact Fin.is_le (x_ ⟨i, hiN⟩)
     have he_lt : ∀ i ∈ Finset.range N,
         (if h : i < N then (x_ ⟨i, h⟩).val else 0) < b := by
       intro i hi
@@ -339,7 +337,7 @@ theorem base_b_generalized_digital_binomial_theorem
       intro i hi
       have hiN : i < N := Finset.mem_range.mp hi
       rw [dite_eq_left hiN]
-      exact tuple_digit_le b N n x_ i hiN
+      exact Fin.is_le (x_ ⟨i, hiN⟩)
     have he_lt : ∀ i ∈ Finset.range N,
         (if h : i < N then (x_ ⟨i, h⟩).val else 0) < b := by
       intro i hi

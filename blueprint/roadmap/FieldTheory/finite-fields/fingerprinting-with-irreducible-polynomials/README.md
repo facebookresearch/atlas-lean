@@ -12,7 +12,7 @@ $(2^k - 2)/k$ irreducible polynomials of prime degree $k$ to choose from.
 
 ## Related topics
 
-- Rabin–Karp algorithm: string matching with fingerprints modulo an integer, here in
+- [Rabin–Karp algorithm](../../../ComputerScience/string-algorithms/rabin-karp-algorithm/README.md): string matching with fingerprints modulo an integer, here in
   the deterministic form that checks every fingerprint match, so it needs no error bound.
 - [Searching for irreducible polynomials over GF(2)](../searching-for-irreducible-polynomials-over-gf-2/README.md):
   a deterministic way to find one modulus of each degree, where Rabin draws a random one.

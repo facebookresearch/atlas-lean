@@ -7,12 +7,12 @@ the other three columns.
 
 ## Background
 
-- The Apollonian flips are orthogonal reflections:
+- [The Apollonian flips are orthogonal reflections](../../../Geometry/euclidean-geometry/circles-and-conics/apollonian-group/apollonian-flip-eq-reflection.md):
   each $S_i$ is the reflection of the Descartes form along a basis vector, so this group is a reflection group.
 
 ## Related topics
 
-- Apollonian orbit:
+- [Apollonian orbit](../../../Geometry/euclidean-geometry/circles-and-conics/apollonian-group/apollonian-orbit.md):
   the orbit of a quadruple under the four flips, for quadruples over any commutative ring.
 
 ## Sources

@@ -1,5 +1,4 @@
 site_name: "ATLAS"
-repo_url: "https://github.com/facebookresearch/atlas-lean"
 
 # `autoform render` writes this directory from blueprint/. The vault stays the
 # source of truth; everything here is regenerated.
@@ -7,14 +6,23 @@ docs_dir: site-src
 site_dir: site
 use_directory_urls: false
 # blueprint/migrations/ holds the records of the pinned-bump tooling
-# (scripts/bump/), not wiki pages, so the site leaves them out.
+# (scripts/bump/), not wiki pages, so the site leaves them out. Only the
+# top-level folder: a topic the taxonomy names "Migrations" keeps its pages.
 exclude_docs: |
-  migrations/
+  /migrations/
 
 hooks:
   # Material eagerly builds its search index in every browser tab. Keep one
   # title-only record per page so the index of the ~9,000-page site stays bounded.
   - hooks/title_only_search.py
+  # A page that only says where an old explorer URL moved is a bare redirect,
+  # and every page loses the indentation the theme writes.
+  - hooks/trim_pages.py
+  # Each card's folder page shows the card, and every address the card move
+  # ledger retired keeps leading to its page (docs/cards.md#reading), with the
+  # ledger check's receipt of the commit being built. Without card data of that
+  # commit, it shows no card but still keeps those addresses.
+  - hooks/card_pages.py
 
 # The nav is not listed here. `autoform render` writes it to SUMMARY.md from
 # the vault's own page order, which mkdocs-literate-nav reads, so a project's
@@ -29,17 +37,10 @@ theme:
   font:
     text: Plus Jakarta Sans
     code: JetBrains Mono
-  icon:
-    repo: fontawesome/brands/github
+  # Readers with JavaScript browse with the explorer, which hides the theme's
+  # header, sidebars and footer. For everyone else, theme/partials/nav.html
+  # lists Home, the sections above the page, its siblings and its entries.
   features:
-    # Book and Graph sit across the top; the sidebar shows the open tab.
-    - navigation.tabs
-    - navigation.tabs.sticky
-    # The chapter tree stays visible, which is what makes a blueprint readable
-    # as a book rather than as a pile of pages.
-    - navigation.sections
-    - navigation.prune
-    - navigation.indexes
     - navigation.top
     - toc.follow
     - search.suggest

@@ -1,0 +1,3 @@
+# Wired-graph isomorphism for a pulled-back configuration
+
+Let $G$ and $H$ be simple graphs on finite sets $V$ and $W$, and let $\sigma : V \to W$ be a bijection with $x \sim_G y \iff \sigma(x) \sim_H \sigma(y)$ for all $x, y$, and let $\partial_V \subseteq V$, $\partial_W \subseteq W$ with $x \in \partial_V \iff \sigma(x) \in \partial_W$. For every configuration $\omega$ on $W$, $\sigma$ is a graph isomorphism from the wired graph of $(G, \partial_V)$ for $\omega^\sigma$ onto the wired graph of $(H, \partial_W)$ for $\omega$, where the wired graph consists of the open edges together with all pairs of distinct boundary vertices and $\omega^\sigma$ is the [pulled-back configuration](re-cfg-iso.md) on $V$, $\omega^\sigma(e) = \omega(\sigma(e))$.

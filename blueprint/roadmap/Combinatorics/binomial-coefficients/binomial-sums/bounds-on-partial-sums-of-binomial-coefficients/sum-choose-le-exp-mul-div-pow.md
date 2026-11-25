@@ -14,7 +14,7 @@ Combined with the Sauer–Shelah lemma, it bounds the number of labellings of $n
 
 ## Background
 
-- Rademacher complexity of a VC class, explicit rate: the learning-theory application, the rate $\sqrt{2 d \log(e n / d) / n}$.
+- [Rademacher complexity of a VC class, explicit rate](../../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/rademacher-complexity/rademacher-complexity-sign-patterns-le-v.md): the learning-theory application, the rate $\sqrt{2 d \log(e n / d) / n}$.
 
 ## Sources
 

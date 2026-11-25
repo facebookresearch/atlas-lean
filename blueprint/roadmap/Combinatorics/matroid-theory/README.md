@@ -19,7 +19,7 @@ degree one.
 
 ## Related topics
 
-- Greedy algorithms and matroids:
+- [Greedy algorithms and matroids](../../ComputerScience/greedy-algorithms-and-matroids/README.md):
   matroids as the structures on which the greedy algorithm is optimal.
 - [Stable polynomials](../../Algebra/zeros-of-polynomials/stable-polynomials/README.md): the
   homogeneous stable polynomials with nonnegative coefficients are Lorentzian.

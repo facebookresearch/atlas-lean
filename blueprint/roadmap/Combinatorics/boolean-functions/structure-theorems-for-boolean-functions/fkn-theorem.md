@@ -16,6 +16,6 @@ improves it to $\delta/4 + O(\delta^2 \log(2/\delta))$. The hypothesis $n \ge 1$
 
 ## Informally uses
 
-- Bonami Lemma:
+- [Bonami Lemma](../../../Probability/concentration-inequalities/bonami-beckner-hypercontractivity/bonami-lemma.md):
   the proof in Section 9.1 applies Theorem 9.7, an anticoncentration bound for low-degree
   polynomials derived from the Bonami Lemma, to $\ell^2$ where $\ell = f^{=1}$.

@@ -12,7 +12,7 @@ statement, the atoms.
 
 ## Informally uses
 
-- Möbius algebra product:
+- [Möbius algebra product](../../../Combinatorics/partially-ordered-sets/m-bius-algebras-and-flag-vectors/moebius-algebra-mul.md):
   Stanley's proof expands $\prod_{t \in X} (\hat 1 - t)$ in the Möbius algebra $A(L, K)$ by
   Theorem 3.9.2.
 

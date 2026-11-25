@@ -31,6 +31,7 @@
 - [Unit vectors give points of the numerical range](inner-mem-numerical-range.md)
 - [Toeplitz–Hausdorff theorem without completeness](toeplitz-hausdorff-general.md)
 - [Toeplitz–Hausdorff theorem](toeplitz-hausdorff.md)
+- [Lower bound from the numerical range, conjugate form](inf-dist-conj-numerical-range-mul-norm-l.md)
 - [Conjugate shifts off the closed numerical range are invertible](is-unit-of-not-mem-closure-numerical-ran.md)
 - [Conjugates of spectral values lie in the closed numerical range](conj-mem-closure-numerical-range-of-mem.md)
 - [The spectrum lies in the conjugate of the closed numerical range](spectrum-subset-star-image-closure-numer.md)

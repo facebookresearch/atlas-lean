@@ -1,0 +1,3 @@
+# Free unit-edge marginals converge to the free density
+
+Let $d \in \mathbb{N}$, $\pm e_j$ a signed coordinate vector, and $0 < p < 1$. With $R = \lfloor\sqrt n\rfloor$, let $a_n$ be the probability that the unit edge $\{0, \pm e_j\}$ is open under the [random-cluster probability](../random-cluster-measures-on-finite-graphs/fk-prob.md) on $\Lambda_R$ at $(p, 2)$ when $R \ge 1$, and $a_n = 0$ when $R = 0$. Then $a_n \to \theta^0_{\{0, \pm e_j\}}(p)$, where $\theta^0_e(p)$ is the [free edge density](free-edge-density.md) of $e$ at $q = 2$ (the probability that $e$ is open under the free infinite-volume random-cluster measure on $\mathbb{Z}^d$, a chosen subsequential weak limit of the free box measures).

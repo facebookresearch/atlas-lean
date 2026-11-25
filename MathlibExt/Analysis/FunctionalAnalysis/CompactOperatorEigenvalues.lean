@@ -54,11 +54,15 @@ without self-adjointness, inner-product structure, or completeness.
 variable {𝕜 : Type*} [RCLike 𝕜]
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 
-/-- An eigenvector for one eigenvalue is never in the span of eigenvectors
-for earlier, distinct eigenvalues. This is the non-orthogonal replacement
-for the eigenspace-orthogonality used in the self-adjoint case: it follows
-from the fact that the eigenspaces of a linear operator form an independent
-family (`Module.End.eigenspaces_iSupIndep`). -/
+/-- **Eigenvectors for distinct eigenvalues are not in the span of earlier ones.** Let $E$ be a
+normed space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a bounded linear operator
+on $E$, let $(\lambda_n)_{n \in \mathbb{N}}$ be pairwise distinct scalars in $\mathbb{K}$, and let
+$(u_n)_{n \in \mathbb{N}}$ be nonzero vectors in $E$ with $T u_n = \lambda_n u_n$ for every $n$.
+Then for every $n$, the vector $u_n$ does not lie in the linear span of $\{u_i : i < n\}$.
+
+This is the non-orthogonal replacement for the orthogonality of eigenspaces used in the
+self-adjoint case: it follows from the fact that the eigenspaces of a linear operator form an
+independent family. -/
 theorem eigenvector_not_mem_span_prefix {T : E →L[𝕜] E} {lam : ℕ → 𝕜}
     (hinj : Function.Injective lam) {u : ℕ → E}
     (hu : ∀ n, T (u n) = lam n • u n) (hu_ne : ∀ n, u n ≠ 0) (n : ℕ) :
@@ -78,12 +82,15 @@ theorem eigenvector_not_mem_span_prefix {T : E →L[𝕜] E} {lam : ℕ → 𝕜
   exact hu_ne n (Submodule.disjoint_def.mp hdisj (u n)
     (Module.End.mem_eigenspace_iff.mpr (hu n)) (hle hmem))
 
-/-- If `y` lies in the span of the first `n + 1` eigenvectors, then
-`T y - lam n • y` lies in the span of the first `n`: on the span of the
-first `n + 1` eigenvectors, `T` acts as `lam n` modulo the span of the
-first `n`. The proof is induction on the span, using that each generator
-`u i` with `i < n` contributes `(lam i - lam n) • u i` and the generator
-`u n` contributes `0`. -/
+/-- **An operator acts as a scalar on a span of eigenvectors modulo a smaller span.** Let $E$ be a
+normed space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a bounded linear operator
+on $E$, let $(\lambda_n)_{n \in \mathbb{N}}$ in $\mathbb{K}$ and $(u_n)_{n \in \mathbb{N}}$ in $E$
+satisfy $T u_n = \lambda_n u_n$ for every $n$, and for each $n$ let $V_n$ be the linear span of
+$\{u_i : i < n\}$. Then for every $n$ and every $y \in V_{n+1}$, we have
+$T y - \lambda_n y \in V_n$.
+
+The proof is induction on the span: each generator $u_i$ with $i < n$ contributes
+$(\lambda_i - \lambda_n) u_i$ and the generator $u_n$ contributes $0$. -/
 theorem sub_mem_span_prefix {T : E →L[𝕜] E} {lam : ℕ → 𝕜} {u : ℕ → E}
     (hu : ∀ n, T (u n) = lam n • u n) {n : ℕ} {y : E}
     (hy : y ∈ Submodule.span 𝕜 (u '' Set.Iio (n + 1))) :
@@ -110,9 +117,11 @@ theorem sub_mem_span_prefix {T : E →L[𝕜] E} {lam : ℕ → 𝕜} {u : ℕ �
       rw [map_smul, smul_comm (lam n) a x, ← smul_sub]
       exact Submodule.smul_mem _ _ hx
 
-/-- `T` preserves the span of the first `n + 1` eigenvectors: each
-generator is an eigenvector, so `T` sends it to a scalar multiple of
-itself. -/
+/-- **Invariance of spans of eigenvectors.** Let $E$ be a normed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a bounded linear operator on $E$, and let
+$(\lambda_n)_{n \in \mathbb{N}}$ in $\mathbb{K}$ and $(u_n)_{n \in \mathbb{N}}$ in $E$ satisfy
+$T u_n = \lambda_n u_n$ for every $n$. Then for every $n$ and every $y$ in the linear span of
+$\{u_i : i \le n\}$, the vector $T y$ also lies in that span. -/
 theorem map_mem_span_prefix {T : E →L[𝕜] E} {lam : ℕ → 𝕜} {u : ℕ → E}
     (hu : ∀ n, T (u n) = lam n • u n) {n : ℕ} {y : E}
     (hy : y ∈ Submodule.span 𝕜 (u '' Set.Iio (n + 1))) :
@@ -132,14 +141,15 @@ theorem map_mem_span_prefix {T : E →L[𝕜] E} {lam : ℕ → 𝕜} {u : ℕ �
       rw [map_smul]
       exact Submodule.smul_mem _ _ hx
 
-/-- **Riesz separation for eigenvector spans.** Given a family `u` whose
-`n`-th term is never in the span of the earlier terms, for each `n` there
-is a unit vector `y` in the span of the first `n + 1` terms that stays at
-distance at least `1 / 2` from the span of the first `n` terms. This is
-Riesz's lemma for the closed subspace spanned by the first `n` terms,
-proved directly from the distance `d > 0` of `u n` to that subspace:
-one takes `y` to be the normalization of `u n - z` for a `z` in the
-subspace almost realizing the distance. -/
+/-- **Riesz separation for nested spans.** Let $E$ be a normed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $(u_n)_{n \in \mathbb{N}}$ be vectors in $E$, and
+for each $n$ let $V_n$ be the linear span of $\{u_i : i < n\}$. Suppose $u_n \notin V_n$ for
+every $n$. Then for every $n$ there is a vector $y \in V_{n+1}$ with $\|y\| = 1$ and
+$\|y - z\| \ge 1/2$ for every $z \in V_n$.
+
+This is Riesz's lemma for the finite-dimensional, hence closed, subspace $V_n$: one takes $y$ to be
+the normalization of $u_n - z$ for a $z \in V_n$ almost realizing the distance $d > 0$ from
+$u_n$ to $V_n$. -/
 theorem exists_unit_vector_far {u : ℕ → E}
     (hnotmem : ∀ n, u n ∉ Submodule.span 𝕜 (u '' Set.Iio n)) (n : ℕ) :
     ∃ y : E, ‖y‖ = 1 ∧ y ∈ Submodule.span 𝕜 (u '' Set.Iio (n + 1)) ∧
@@ -193,14 +203,15 @@ theorem exists_unit_vector_far {u : ℕ → E}
           rw [ge_iff_le, ← div_eq_inv_mul, le_div_iff₀ ha_norm_pos]
           linarith [ha_norm_lt]
 
-/-- **Finiteness of eigenvalues bounded away from zero.** For a compact
-operator `T` and any `ε > 0`, the set of eigenvalues `μ` of `T` with
-`ε ≤ ‖μ‖` is finite. If it were infinite, distinct eigenvalues
-`lam n` would give, via `exists_unit_vector_far`,
-unit vectors `y n` whose images `T (y n)` stay `ε / 2`-separated
-(because `T (y m) - T (y n)` is `lam m • y m` modulo the span of the
-first `m` eigenvectors, and `y m` is at distance `≥ 1 / 2` from that
-span), contradicting compactness of `T`. -/
+/-- **Finiteness of eigenvalues of a compact operator bounded away from zero.** Let $E$ be a normed
+space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T$ be a compact bounded linear operator
+on $E$, and let $\varepsilon > 0$ be real. Then the set of eigenvalues $\mu \in \mathbb{K}$ of $T$
+with $|\mu| \ge \varepsilon$ is finite.
+
+If it were infinite, distinct eigenvalues $\lambda_n$ with eigenvectors $u_n$ would give, by Riesz
+separation for the spans of the $u_n$, unit vectors $y_n$ whose images $T y_n$ are pairwise at
+distance at least $\varepsilon / 2$, contradicting compactness of $T$. No self-adjointness, inner
+product or completeness is needed. -/
 theorem finite_eigenvalues_of_ge {T : E →L[𝕜] E}
     (hc : IsCompactOperator (T : E → E)) {ε : ℝ} (hε : 0 < ε) :
     Set.Finite {μ : 𝕜 | Module.End.HasEigenvalue (T.toLinearMap) μ ∧ ε ≤ ‖μ‖} := by
@@ -273,12 +284,14 @@ theorem finite_eigenvalues_of_ge {T : E →L[𝕜] E}
     exact hsep (φ (N + 1)) (φ N) (hmono (Nat.lt_succ_self N))
   linarith
 
-/-- **Eigenvalues of a compact operator tend to zero along any injective
-sequence.** If `lam` is an injective sequence of eigenvalues of a compact
-operator `T`, then `lam n → 0`. Otherwise some `ε > 0` would be exceeded
-by `‖lam n‖` for unboundedly many `n`, giving an infinite set of
-eigenvalues bounded away from zero, contradicting
-`finite_eigenvalues_of_ge`. -/
+/-- **Eigenvalues of a compact operator tend to zero along any injective sequence.** Let $E$ be a
+normed space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$ and let $T$ be a compact bounded linear
+operator on $E$. If $(\lambda_n)_{n \in \mathbb{N}}$ is a sequence of pairwise distinct eigenvalues
+of $T$, then $\lambda_n \to 0$ as $n \to \infty$.
+
+Otherwise some $\varepsilon > 0$ would satisfy $|\lambda_n| \ge \varepsilon$ for infinitely many
+$n$, giving infinitely many eigenvalues of modulus at least $\varepsilon$, which contradicts the
+finiteness of eigenvalues of a compact operator bounded away from zero. -/
 theorem tendsto_eigenvalue_of_injective {T : E →L[𝕜] E}
     (hc : IsCompactOperator (T : E → E)) {lam : ℕ → 𝕜}
     (hinj : Function.Injective lam)

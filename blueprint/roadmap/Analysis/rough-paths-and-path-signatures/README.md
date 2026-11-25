@@ -16,7 +16,7 @@ Signatures of paths and controlled differential equations: iterated integrals of
   Riemann–Stieltjes integrals.
 - [Ordinary differential equations](../ordinary-differential-equations/README.md): controlled
   equations driven by $X_t = t$ are ordinary differential equations.
-- Residual networks as discretised flows:
+- [Residual networks as discretised flows](../../ComputerScience/machine-learning/supervised-learning/residual-networks-as-discretised-flows/README.md):
   a residual network is an Euler scheme for a differential equation in depth; driving that
   equation by a data stream instead of by time gives a controlled differential equation, whose
   response is a function of the stream's signature.

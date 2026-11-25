@@ -12,7 +12,7 @@ For the number $Y$ of triangles in $G(n, p)$ with $p = n^{\varepsilon - 1}$, $0 
 
 - [Azuma's inequality](../azuma-inequality.md): the bound in terms of maximal effects that Kim and Vu recall as their Theorem 1.1 and improve upon.
 - [McDiarmid's bounded-differences inequality](../mcdiarmid-s-inequality/mcdiarmid-one-sided-finite-iid.md): the worst-case-effect inequality that this theorem replaces by average effects.
-- Law of a random subset with independent elements: the product-Bernoulli model of the variables $t_i$.
+- [Law of a random subset with independent elements](../../../Combinatorics/probabilistic-combinatorics/janson-s-inequalities/random-subset-law.md): the product-Bernoulli model of the variables $t_i$.
 
 ## Sources
 

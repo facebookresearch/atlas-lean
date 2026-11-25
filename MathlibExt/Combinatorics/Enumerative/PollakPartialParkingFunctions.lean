@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Finset.Card
+public import Mathlib.Data.Finset.Max
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
 import Mathlib.Data.ZMod.Basic
@@ -276,8 +277,10 @@ private theorem parkEmpty_translate (s t : ℕ) (g : Fin s → ZMod (t + 1)) (hs
 
 
 
-/-- First free spot at or after `a` in the linear lot, if any. -/
-private noncomputable def linFirstFree (t : ℕ) (occ : Finset (Fin t)) (a : ℕ) :
+/-- **First free cell at or after a hash address.** In a table of cells `0, …, t - 1` whose
+occupied cells form `occ`, the least free cell `k` with `a ≤ k`, or `none` when every cell from
+`a` to `t - 1` is occupied (the overflow case of linear probing without wrap-around). -/
+noncomputable def linFirstFree (t : ℕ) (occ : Finset (Fin t)) (a : ℕ) :
     Option (Fin t) :=
   if h : (Finset.univ.filter (fun k : Fin t => a ≤ k.val ∧ k ∉ occ)).Nonempty then
     some ((Finset.univ.filter (fun k : Fin t => a ≤ k.val ∧ k ∉ occ)).min' h)
@@ -321,9 +324,12 @@ private theorem linFirstFree_none (t : ℕ) (occ : Finset (Fin t)) (a : ℕ)
     apply h
     exact ⟨y, Finset.mem_filter.mpr ⟨Finset.mem_univ y, hy1, hycon⟩⟩
 
-/-- Occupied spots after the first `n` cars park in the linear lot, if all
-succeeded. Carries the cardinality invariant; `none` on failure. -/
-private noncomputable def linOccAux (s t : ℕ) (f : Fin s → Fin t) :
+/-- **Occupied cells after linear probing without wrap-around.** For a hash sequence
+`f : Fin s → Fin t`, the set of cells occupied after the items `0, …, n - 1` have been inserted in
+order, each into the first free cell at or after its hash address (`linFirstFree`), together with
+the bound `card ≤ n`; `none` as soon as some item finds no free cell (overflow). Items with index
+`≥ s` do not exist, so the set stops changing after step `s`. -/
+noncomputable def linOccAux (s t : ℕ) (f : Fin s → Fin t) :
     (n : ℕ) → Option { occ : Finset (Fin t) // occ.card ≤ n }
   | 0 => some ⟨∅, by simp⟩
   | n + 1 =>
@@ -340,8 +346,11 @@ private noncomputable def linOccAux (s t : ℕ) (f : Fin s → Fin t) :
         | none => none
       else some ⟨occ.val, le_trans occ.property (Nat.le_succ n)⟩
 
-/-- Successful parking of all cars. -/
-private def LinSuccess (s t : ℕ) (f : Fin s → Fin t) : Prop :=
+/-- **Linear probing without overflow.** The hash sequence `f : Fin s → Fin t` places all `s`
+items in a table of `t` cells by linear probing without wrap-around (equivalently, all `s` cars
+park on a one-way street of `t` spots): no item runs past the last cell. These are the
+non-overflow sequences counted in Lemma 1 of Knuth's 1963 note on open addressing. -/
+def LinSuccess (s t : ℕ) (f : Fin s → Fin t) : Prop :=
   (linOccAux s t f s).isSome
 
 private theorem linOccAux_zero (s t : ℕ) (f : Fin s → Fin t) :
@@ -401,7 +410,7 @@ private theorem linOccAux_some_of_succ (s t : ℕ) (f : Fin s → Fin t) (n : �
 private theorem linOccAux_none_of_le (s t : ℕ) (f : Fin s → Fin t) (m k : ℕ)
     (hle : m ≤ k) (hm : linOccAux s t f m = none) :
     linOccAux s t f k = none :=
-  Nat.le_induction (P := fun n _ => linOccAux s t f n = none) hm
+  Nat.le_induction (motive := fun n _ => linOccAux s t f n = none) hm
     (fun n _ ih => linOccAux_succ_failed s t f n ih) k hle
 
 private theorem linOccAux_some_of_le (s t : ℕ) (f : Fin s → Fin t) (m : ℕ)
@@ -447,7 +456,7 @@ private theorem linOcc_val_subset (s t : ℕ) (f : Fin s → Fin t) (a b : ℕ)
         linOccAux s t f n = some on → oa.val ⊆ on.val := by
     intro n
     exact Nat.le_induction
-      (P := fun n _ => n ≤ b →
+      (motive := fun n _ => n ≤ b →
         ∀ (on : { occ : Finset (Fin t) // occ.card ≤ n }),
           linOccAux s t f n = some on → oa.val ⊆ on.val)
       (fun hnb on hon => by
@@ -613,7 +622,7 @@ private theorem linOcc_val_subset_of_some (s t : ℕ) (f : Fin s → Fin t) (a b
     (ha : linOccAux s t f a = some oa) (hb : linOccAux s t f b = some ob)
     (hab : a ≤ b) (hbs : b ≤ s) : oa.val ⊆ ob.val := by
   exact Nat.le_induction
-    (P := fun m _ => m ≤ b →
+    (motive := fun m _ => m ≤ b →
       ∀ om : { occ : Finset (Fin t) // occ.card ≤ m },
         linOccAux s t f m = some om → oa.val ⊆ om.val)
     (fun _ om hom => by
@@ -1285,25 +1294,35 @@ private theorem card_circle_fibers (s t : ℕ) (hst : s ≤ t) :
   rw [hsum, Finset.sum_const, Finset.card_univ, ZMod.card, smul_eq_mul]
 
 
-/-- Pollak's circle trick for partial parking functions: for positive `s ≤ t`,
-the number of preference lists `f : Fin s → Fin t` satisfying the standard
-successful-parking threshold characterization (for every zero-based spot `k`,
-at most `t - k` cars prefer a spot at or after `k`) is
-`(t + 1 - s) * (t + 1) ^ (s - 1)`.
+/-- **Linear probing succeeds exactly on partial parking functions.** For `s ≤ t`, a hash
+sequence `f : Fin s → Fin t` places all `s` items by linear probing without wrap-around in a table
+of `t` cells if and only if `f` is a partial parking function: for every cell `k`, at most `t - k`
+items have hash address `≥ k`.
 
-Provenance (independently verified):
+The forward direction counts the cells at or after `k` that the items hashing there must fill; the
+converse is the cluster argument. Both are the two halves of the bijection used for Pollak's count
+below (`pollak_partial_parking_functions_card`). -/
+theorem linSuccess_iff_isPartialParkingFunction (s t : ℕ) (f : Fin s → Fin t) (hst : s ≤ t) :
+    LinSuccess s t f ↔ IsPartialParkingFunction s t f :=
+  ⟨linSuccess_imp_threshold s t f, fun h => threshold_imp_linSuccess s t f h hst⟩
 
-- Steve Butler, Kimberly Hadaway, Victoria Lenius, Preston Martens, and
-  Marshall Moats, “Lucky Cars and Lucky Spots in Parking Functions”,
-  Journal of Integer Sequences 29 (2026), Article 26.1.1.
-- Source URL: https://cs.uwaterloo.ca/journals/JIS/VOL29/Hadaway/had3.tex
-- Proposition at source lines 330–332.
-- Full source SHA-256:
-  d166e7759bfd986aebf8bd5632479d9f5e4f11b28f5250ed1e5290851a8d6139
-- Normalized no-final-newline proposition-span SHA-256:
-  58e90130ad683625acf4a657d5bbbf145f2700065e2991cfd7084425783cc1fe
+/-- **Number of partial parking functions.** Let $s$ and $t$ be natural numbers with
+$0 < s \le t$. A partial parking function with $s$ cars and $t$ spots is a map
+$f : \{0, \dots, s - 1\} \to \{0, \dots, t - 1\}$ such that for every spot
+$k \in \{0, \dots, t - 1\}$ at most $t - k$ cars $i$ have $f(i) \ge k$. The number of partial
+parking functions with $s$ cars and $t$ spots is $(t + 1 - s)(t + 1)^{s - 1}$.
+
+The proof is Pollak's circle argument.
 
 Proves `Wanted` entry `pollak_partial_parking_functions_card`.
+
+Source: Steve Butler, Kimberly Hadaway, Victoria Lenius, Preston Martens, and Marshall Moats,
+“Lucky Cars and Lucky Spots in Parking Functions”, Journal of Integer Sequences 29 (2026),
+Article 26.1.1, proposition at lines 330–332 of
+https://cs.uwaterloo.ca/journals/JIS/VOL29/Hadaway/had3.tex (independently verified; full source
+SHA-256 d166e7759bfd986aebf8bd5632479d9f5e4f11b28f5250ed1e5290851a8d6139, normalized
+no-final-newline proposition-span SHA-256
+58e90130ad683625acf4a657d5bbbf145f2700065e2991cfd7084425783cc1fe).
 -/
 theorem pollak_partial_parking_functions_card
     (s t : ℕ) (hs : 0 < s) (hst : s ≤ t) :

@@ -1,0 +1,3 @@
+# Boundary clique gives the wired random-cluster measure
+
+Let $G = (V, E)$ be a finite simple graph and $\partial \subseteq V$ a set of boundary vertices, and $p, q \in \mathbb{R}$. For every assignment $\omega$ of open/closed states to the unordered pairs of vertices, the [random-cluster probability with boundary wiring](bc-prob.md) given by the boundary clique $K_\partial$ (the graph on $V$ whose edges are all pairs of distinct vertices of $\partial$) equals the [wired random-cluster probability](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-fk-prob.md) $\phi^w_{G,\partial,p,q}(\omega)$.

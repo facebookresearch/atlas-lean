@@ -29,7 +29,7 @@ who proved bounds of this kind for the Lasso and the Dantzig selector together.
 ## Related topics
 
 - [Exact recovery by basis pursuit](../exact-recovery-by-basis-pursuit/README.md)
-- Least squares, ridge and lasso regression
+- [Least squares, ridge and lasso regression](../../../ComputerScience/machine-learning/supervised-learning/least-squares-ridge-and-lasso-regression/README.md)
 - [Sub-exponential variables and Bernstein's inequality](../../concentration-inequalities/sub-exponential-variables-and-bernstein-s-inequa/README.md)
 - [Gauss–Markov covariance minimality](../gauss-markov-covariance-minimality.md)
 - [Sparse recovery under the restricted isometry property](../../../Analysis/approximation-theory/sparse-recovery-under-the-restricted-isometry-pr/README.md): the compressed-sensing condition on the design; restricted isometry with $\delta_{2s} < \sqrt2 - 1$ implies the restricted nullspace property, and stable recovery bounds of the same form as the Lasso bounds.
