@@ -14,6 +14,33 @@ import MathlibExt.Combinatorics.AccessibleSets
 
 /-! # Tests for accessible sets and diffsequences -/
 
+namespace MetaMathlibExt.accessible_of_colored_subset_diffsequences
+
+-- Shifting the odds by one gives the positive even gaps. Any two-coloring admits
+-- arbitrarily long monochromatic sequences with these gaps.
+example : IsRAccessible 2 (Set.range fun n : ℕ => 2 * n + 2) := by
+  let D := Set.range fun n : ℕ => 2 * n + 1
+  have hshift : {e : ℕ | ∃ d ∈ D, e = d + 1} = Set.range (fun n : ℕ => 2 * n + 2) := by
+    ext e
+    constructor
+    · rintro ⟨_, ⟨n, rfl⟩, rfl⟩
+      exact ⟨n, rfl⟩
+    · rintro ⟨n, rfl⟩
+      exact ⟨_, ⟨n, rfl⟩, rfl⟩
+  rw [← hshift]
+  apply accessible_of_colored_subset_diffsequences 1 2 (by decide) D
+  · rintro _ ⟨n, rfl⟩
+    exact Nat.succ_pos _
+  · intro χ k _
+    let x (i : Fin k) : {n : ℕ+ // (n : ℕ) ∈ D} :=
+      ⟨⟨2 * (i : ℕ) + 1, Nat.succ_pos _⟩, i, rfl⟩
+    refine ⟨x, fun _ _ => Subsingleton.elim (α := Fin 1) .., ?_⟩
+    intro i hi
+    refine ⟨2, ⟨1, ⟨0, rfl⟩, rfl⟩, ?_⟩
+    simp [x, Nat.mul_add]
+
+end MetaMathlibExt.accessible_of_colored_subset_diffsequences
+
 namespace MetaMathlibExt.two_accessible_of_internal_diffsequences
 
 -- Consecutive powers of two have gaps that are themselves powers of two.
