@@ -1275,15 +1275,20 @@ class GraphSyncWorkflowTests(unittest.TestCase):
                 self.assertIn("\n    Ext.edited (Algebra/edited.md)\n", summary)
         # What the errors name is the change's to fix, by hand: the summary shows them alone, with no command that
         # would write the sync's output.
-        errors = '{"in_step": false, "errors": ["blueprint/links/Algebra.jsonl:3 links Ext.gone", "two\\n```"]}'
-        result, summary, _ = self.run_check(1, errors, changed="")
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("::warning title=Graph sync::This change's Lean leaves links or markers behind", result.stdout)
-        self.assertIn("\n    blueprint/links/Algebra.jsonl:3 links Ext.gone\n    two\n    ```\n", summary)
-        self.assertIn("A Lean pull request runs no sync", summary)
-        self.assertNotIn("In step: no", summary)
-        self.assertNotIn("error: a link", summary)
-        self.assertNotIn("merge-base", summary)
+        errors = ('{"in_step": false, "errors": ["blueprint/links/Algebra.jsonl:3 links Ext.gone", "two\\n```"], '
+                  '"changed": ["Ext.edited (Algebra/edited.md)"]}')
+        for event in ("pull_request", "merge_group"):
+            with self.subTest(event=event):
+                result, summary, _ = self.run_check(1, errors, changed="", event=event)
+                self.assertEqual(result.returncode, 1)
+                self.assertIn("::warning title=Graph sync::This change's Lean leaves links or markers behind",
+                              result.stdout)
+                self.assertIn("\n    blueprint/links/Algebra.jsonl:3 links Ext.gone\n    two\n    ```\n", summary)
+                self.assertIn("A Lean pull request runs no sync", summary)
+                self.assertIn("\n    Ext.edited (Algebra/edited.md)\n", summary)
+                self.assertNotIn("In step: no", summary)
+                self.assertNotIn("error: a link", summary)
+                self.assertNotIn("merge-base", summary)
         # A graph pull request, which changes other graph files (the links' defaults or a page count), or a change git
         # cannot read, is held to the sync.
         for changed in ("blueprint/links/Algebra.jsonl scripts/taxonomy.json", "blueprint/links/_defaults.json",

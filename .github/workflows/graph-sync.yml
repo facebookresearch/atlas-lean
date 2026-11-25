@@ -147,8 +147,9 @@ jobs:
               echo "request runs no sync. The log has the check's full report."
             elif [[ "$failed" == no && "$status" -ne 0 && "$graph" == no ]]; then
               echo "This change's Lean leaves links or markers behind. A Lean pull request runs no sync: fix in it"
-              echo "only what these errors name (CONTRIBUTING.md, Say how a pull request touches the graph). The"
-              echo "next graph-sync batch writes its pages."
+              echo "only what these errors name, by relinking or updating rows; a page whose own declaration goes with"
+              echo "no successor is a graph pull request's (CONTRIBUTING.md, Say how a pull request touches the"
+              echo "graph). The next graph-sync batch writes its pages."
               echo
               { jq -r '.errors // [] | .[]' build/graph-sync.json || true; } | shown 60000
             else

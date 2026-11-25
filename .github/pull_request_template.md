@@ -7,8 +7,9 @@ One `Graph:` line, as CONTRIBUTING.md asks: the article ids (`af_…`) of the
 pages this pull request proves, fixes or extends, plus `new` when it adds
 declarations that get pages (the next graph-sync batch writes them for a Lean
 pull request), or `none` when it changes nothing the graph shows. A new module
-may say where it goes on a `Place: <module> -> <field>` line. Name each ready
-task it takes on a `Tasks: af_…` line.
+may say where it goes on a `Place: <module> -> <field>` line, outside this
+comment; one in a folder that is no subject needs one to get pages. Name each
+ready task it takes on a `Tasks: af_…` line.
 -->
 Graph:
 

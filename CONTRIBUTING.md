@@ -179,11 +179,12 @@ A pull request changes the Lean or the graph:
 - **Placement:** a new module may say where it goes on a `Place:` line.
   Otherwise the batch gives it the place of the module whose declarations it
   takes, or leaves it in its subject's `not-yet-classified/` folder for an
-  editor to place; a module in a folder that is no subject gets no pages until
-  it is placed.
+  editor to place. A module in a folder that is no subject gets pages from a
+  `Place:` line in its own pull request; placed later, it needs a sync over the
+  whole project to get them.
 
-A **graph-sync batch** is the graph pull request `scripts/graph_batch.py`
-makes on a fresh `main`, one at a time, every one or two hours: a maintainer,
+A **graph-sync batch** is the pull request `scripts/graph_batch.py` makes on
+a fresh `main`, one at a time, every one or two hours: a maintainer,
 or an agent a maintainer runs, makes it, and someone else reviews it. When no
 batch has merged for several hours, any maintainer may make one. The site is
 built once a day, so it is at most about one batch behind the Lean. Pull
@@ -235,12 +236,17 @@ under [Maintaining articles](docs/BLUEPRINT.md#maintaining-articles). It is
   Place: MathlibExt/Algebra/Ring/Idempotents -> Algebra/rings-and-fields
   ```
 
-  Give one to each new module that takes no placed module's declarations when
-  you know its field, and always to a module in a folder that is no subject,
-  one that neither the taxonomy nor `generate_wiki.LIBRARIES` maps to one: it
-  gets no pages without one. The batch reads the line once the pull request has
-  merged ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)); leave
-  `scripts/taxonomy.json` as it is.
+  Write it as a plain line of the description: the batch reads no line in a
+  fenced code block or an HTML comment. A topic is one line of at most 160
+  characters with none of ``<>[]{}|`\@#`` and no address (`://`). Give a line
+  to each new module that takes no placed module's declarations when you know
+  its field, and always to a module in a folder that is no subject, one that
+  neither the taxonomy nor `generate_wiki.LIBRARIES` maps to one: it gets no
+  pages without one. The batch reads the line once the pull request has merged
+  ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)), and leaves out,
+  with a note, one for a module whose pages are already outside the topic it
+  names: moving them is a graph pull request's. Leave `scripts/taxonomy.json`
+  as it is.
 - **A renamed, moved or removed declaration keeps its pages.** In the same pull
   request, point each link to it at its successor, keeping every article id. A
   link that is only a reference may instead be removed: the page keeps its own
@@ -439,20 +445,22 @@ A graph PR changes the ATLAS wiki; its content follows the
 [graph rules](docs/BLUEPRINT.md#graph-rules). Two kinds of wiki change don't
 make a pull request one: a Lean pull request's edits for the declarations it
 renames, moves or removes (links, `held` markers, `duplicates` entries and
-Mathlib-credited rows,
-[Say how a pull request touches the graph](#say-how-a-pull-request-touches-the-graph)),
-which `check the graph` and `graph sync` check, and a graph-sync batch, which
+Mathlib-credited rows; see [Say how a pull request touches the
+graph](#say-how-a-pull-request-touches-the-graph)),
+whose links `check the graph` checks and whose markers and entries
+`graph sync` reports, and a graph-sync batch, which
 `scripts/graph_batch.py verify` shows to be exactly what the tools write for
 what `main` merged ([Graph-sync batches](docs/BLUEPRINT.md#graph-sync-batches)).
 Neither needs an issue, or a code owner's approval unless GitHub requires one;
 Codex still reviews them, and a batch's reviewer runs `verify` on its exact
-head. Unlinking a page's own declaration with no successor is not one of them. When a graph PR's only
-wiki changes are what `scripts/sync_wiki.py declarations` writes for its own
-declarations, as the `graph sync` check reports, it needs no issue for them,
-and they need no code owner's approval unless GitHub requires one; Codex still
-reviews them. Any other code-owned file the pull request changes, the sync's
-own code included, still needs a code owner's approval. Any other wiki change,
-a new place in `scripts/taxonomy.json` included, makes it a graph PR in full.
+head. Unlinking a page's own declaration with no successor is not one of them.
+When a graph PR's only wiki changes are what `scripts/sync_wiki.py
+declarations` writes for its own declarations, as the `graph sync` check
+reports, it needs no issue for them, and they need no code owner's approval
+unless GitHub requires one; Codex still reviews them. Any other code-owned file
+the pull request changes, the sync's own code included, still needs a code
+owner's approval. Any other wiki change, a new place in `scripts/taxonomy.json`
+included, makes it a graph PR in full.
 
 - **Keep it under 3,000 changed files and name its issue** (`Closes #…` or
   `Part of #…`); a pull request whose only wiki changes are the sync's, as

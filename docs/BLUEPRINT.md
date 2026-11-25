@@ -164,7 +164,7 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   ([Cards](#cards)). A Lean pull request that moves a module's declarations to
   a new module leaves this to the next
   [graph-sync batch](#graph-sync-batches), which gives the new module their
-  place when they keep their names, or to a `Place:` line.
+  place when they keep their names.
 
 ### Library navigation
 
@@ -478,9 +478,11 @@ over the whole project.
 
 A link the changes leave naming a declaration the Lean no longer has, and a
 held marker they leave unusable, are errors, and the run then writes nothing:
-relink the row to the declaration's successor and keep its article id, or
-remove the link and keep the page as a planned page ([Writing
-pages](#writing-pages)). So is a row the build refuses ([Mathlib-credited
+relink the row to the declaration's successor and keep its article id, or, in
+a graph pull request, remove the link and keep the page as a planned page
+([Writing pages](#writing-pages)); a Lean pull request leaves a page whose own
+declaration goes with no successor to a graph pull request
+([Say how a pull request touches the graph](../CONTRIBUTING.md#say-how-a-pull-request-touches-the-graph)). So is a row the build refuses ([Mathlib-credited
 pages](#mathlib-credited-pages)) that the changes add, as is a symbolic link
 among the files the run reads (the wiki, the Lean libraries, the baseline and
 the other graph files, the site configuration), since a read or write through
