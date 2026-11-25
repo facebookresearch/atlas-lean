@@ -6,3 +6,11 @@ at least two to the power of its rank, so ranks and parent chains are at most th
 of the number of nodes.
 
 - [Array union-find structures built by the public operations](reachable.md)
+- [Component](component.md)
+- [Mem component](mem-component.md)
+- [Empty](empty.md)
+- [Two pow rank le card component](two-pow-rank-le-card-component.md)
+- [Rank root D le log2](rank-root-d-le-log2.md)
+- [Rank add le rank iterate](rank-add-le-rank-iterate.md)
+- [Exists first iterate root D le rank](exists-first-iterate-root-d-le-rank.md)
+- [Exists first iterate root D le log2](exists-first-iterate-root-d-le-log2.md)

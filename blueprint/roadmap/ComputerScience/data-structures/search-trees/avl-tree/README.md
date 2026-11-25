@@ -45,6 +45,7 @@
 - [AVL insertion preserves the search-tree order](ordered-insert.md)
 - [Correctness of AVL search](contains-eq-true-iff.md)
 - [Valid AVL tree](valid.md)
+- [Valid empty](valid-empty.md)
 - [AVL insertion preserves validity](valid-insert.md)
 - [AVL trees built from a list have correct cached heights](cache-correct-from-list.md)
 - [AVL trees built from a list are balanced](balanced-from-list.md)

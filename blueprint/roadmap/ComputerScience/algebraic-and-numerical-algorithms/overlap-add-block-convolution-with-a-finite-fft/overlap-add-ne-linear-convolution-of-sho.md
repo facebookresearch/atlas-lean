@@ -1,0 +1,3 @@
+# Overlap Add ne linear Convolution of short fft
+
+For block length `L ≥ 1`, kernel length `M ≥ 1`, a signal holding a full first block (`L ≤ N`) and a positive FFT size `Q < L + M - 1`, some signal and kernel make overlap-add differ from the linear convolution. Two mechanisms are covered. When `Q < L` or `Q < M`, zero extension to length `Q` keeps only the first `Q` entries of a block or of the kernel, so input is discarded before the cyclic convolution and no coefficient need wrap (for example `N = L = 2`, `M = Q = 1`). When `L ≤ Q` and `M ≤ Q` the failure is circular aliasing, as in `overlapAdd_aliases_of_short_fft`.

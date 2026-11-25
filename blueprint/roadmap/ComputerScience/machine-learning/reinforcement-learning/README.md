@@ -7,6 +7,8 @@ Theory of reinforcement learning in finite discounted Markov decision processes,
 - [Simulation lemma](simulation-lemma/README.md)
 - [Greedy policies of approximate values](greedy-policies-of-approximate-values/README.md)
 - [Approximate policy iteration](approximate-policy-iteration/README.md)
+- [Finite-horizon Bellman problems](finite-horizon-bellman-problems/README.md)
+- [Finite-horizon optimality with terminal values](finite-horizon-optimality-with-terminal-values/README.md)
 - [Natural policy gradient](natural-policy-gradient/README.md)
 - [Policy gradients for softmax policies](policy-gradients-for-softmax-policies/README.md)
 - [Linear quadratic regulator](linear-quadratic-regulator/README.md)

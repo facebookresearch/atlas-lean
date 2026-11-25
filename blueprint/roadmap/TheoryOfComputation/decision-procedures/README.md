@@ -5,6 +5,7 @@ Algorithms deciding questions about finite automata, regular expressions and con
 - [Encodings of context-free grammars](encodings-of-context-free-grammars/README.md)
 - [Primitive recursive list operations](primitive-recursive-list-operations/README.md)
 - [Emptiness of context-free grammars](emptiness-of-context-free-grammars/README.md)
+- [Checking LRAT unsatisfiability certificates for CNF formulas](checking-lrat-unsatisfiability-certificates-for/README.md)
 - [Computable reduction of context-free grammars](computable-reduction-of-context-free-grammars/README.md)
 - [Encoded finite automata](encoded-finite-automata/README.md)
 - [Decision procedures for finite automata](decision-procedures-for-finite-automata/README.md)
