@@ -84,9 +84,24 @@ abbrev FormalCoordinates (f : A ⟶ Spec (CommRingCat.of B)) (g : ℕ) : Type 1 
   ∀ (B' : Type) [CommRing B'] [Algebra B B'], (Fin g → B') →
     SchemeHomOver (Spec.map (CommRingCat.ofHom (algebraMap B B'))) f
 
+/-- A point with values in `B'` is infinitesimal along an ideal `J` of
+`B'` if its reduction modulo `J` is the identity point. -/
+def IsInfinitesimal (L : RelativeGroupLaw B f) {B' : Type} [CommRing B']
+    [Algebra B B'] (J : Ideal B')
+    (P : SchemeHomOver (Spec.map (CommRingCat.ofHom (algebraMap B B'))) f) :
+    Prop :=
+  CerednikDrinfeld.QM.compPt
+      (Spec.map (CommRingCat.ofHom (Ideal.Quotient.mkₐ B J).toRingHom))
+      (by
+        rw [← Spec.map_comp, ← CommRingCat.ofHom_comp, AlgHom.toRingHom_eq_coe,
+          AlgHom.comp_algebraMap]) P =
+    L.one (Spec.map (CommRingCat.ofHom (algebraMap B (B' ⧸ J))))
+
 /-- Coordinates are formal coordinates for a formal group if they are
-natural in the nilpotent point and compatible with the formal group
-law. -/
+natural in the nilpotent point and if, on each ideal `J` with
+`J ^ (n + 1) = ⊥`, they map the points with coordinates in `J`
+bijectively onto the points infinitesimal along `J` and carry the
+truncated formal group law to the group law. -/
 def IsFormalCoordinates (L : RelativeGroupLaw B f) {g : ℕ}
     (F : MvFormalGroup g B) (θ : FormalCoordinates f g) : Prop :=
   (∀ (B' : Type) [CommRing B'] [Algebra B B'] (B'' : Type) [CommRing B'']
@@ -101,6 +116,11 @@ def IsFormalCoordinates (L : RelativeGroupLaw B f) {g : ℕ}
           exact φ.commutes x) (θ B' s)) ∧
   (∀ (B' : Type) [CommRing B'] [Algebra B B'] (J : Ideal B') (n : ℕ),
       J ^ (n + 1) = ⊥ →
+      (∀ s : Fin g → B', (∀ i, s i ∈ J) → L.IsInfinitesimal J (θ B' s)) ∧
+      (∀ s t : Fin g → B', (∀ i, s i ∈ J) → (∀ i, t i ∈ J) →
+        θ B' s = θ B' t → s = t) ∧
+      (∀ P : SchemeHomOver (Spec.map (CommRingCat.ofHom (algebraMap B B'))) f,
+        L.IsInfinitesimal J P → ∃ s : Fin g → B', (∀ i, s i ∈ J) ∧ θ B' s = P) ∧
       (∀ s t : Fin g → B', (∀ i, s i ∈ J) → (∀ i, t i ∈ J) →
         θ B' (F.nilMul n s t) =
           L.mul (Spec.map (CommRingCat.ofHom (algebraMap B B'))) (θ B' s)
