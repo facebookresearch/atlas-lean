@@ -619,6 +619,87 @@ public theorem fibonacci_arch_tops (n k : ℕ) (hn : 1 ≤ n) :
       rw [hX, htop] <;> dsimp only [t, s, a] <;> push_cast <;> ring
   · refine ⟨pY, pYL, pYR, ?_, ?_⟩ <;> ext <;> dsimp only [t, s, Y] <;> ring
 
+/-- **The Fibonacci arches.** Let $F_j$ be the Fibonacci numbers with $F_0 = F_1 = 1$ and
+$F_{j+2} = F_{j+1} + F_j$. Call a pair $(a, b)$ of natural numbers a P-position when the Euclid
+P-position test returns true at $(a, b)$, read it as the vertex $a/b$ of the Calkin–Wilf tree, and
+let $s(a/b) = a/(a+b)$ be its son and $d(a/b) = (a+b)/b$ its daughter; write $s^k$ and $d^k$ for
+the $k$-fold iterates. Let $n \ge 1$ and $k \ge 0$, and let $V = F_{2n-1}/F_{2n-2}$. Then $V$ is a
+P-position, its son's daughter $d(s(V))$ is $F_{2n+1}/F_{2n}$, and its daughter's son $s(d(V))$
+is $F_{2n}/(F_{2n} + F_{2n-2})$. The vertex $L = d(s^k((F_{2n+1} - F_{2n})/F_{2n}))$ is a
+P-position whose numerator is $F_{2n+1} + kF_{2n-1}$ and whose denominator is
+$F_{2n+1} + (k-1)F_{2n-1}$, and the vertex $R = s(d^k(F_{2n}/F_{2n-2}))$ is the P-position
+$(F_{2n} + kF_{2n-2})/(F_{2n} + (k+1)F_{2n-2})$.
+
+Here $L$ and $R$ are level $k$ (level $0$ the top) of the left and right branches of the arch
+topped by $d(s(V))$ and $s(d(V))$.
+
+Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
+of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Proposition 5.2. -/
+public theorem fibonacci_arch_positions (n k : ℕ) (hn : 1 ≤ n) :
+    let F : ℕ → ℕ := fun j => Nat.fib (j + 1)
+    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
+    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
+    let V := (F (2 * n - 1), F (2 * n - 2))
+    let L := t (s^[k] (F (2 * n + 1) - F (2 * n), F (2 * n)))
+    let R := s (t^[k] (F (2 * n), F (2 * n - 2)))
+    euclidPPosition V.1 V.2 = true ∧ t (s V) = (F (2 * n + 1), F (2 * n)) ∧
+      s (t V) = (F (2 * n), F (2 * n) + F (2 * n - 2)) ∧
+      ((L.1 : ℤ) = F (2 * n + 1) + k * F (2 * n - 1) ∧
+        (L.2 : ℤ) = F (2 * n + 1) + (k - 1) * F (2 * n - 1) ∧ euclidPPosition L.1 L.2 = true) ∧
+      (R = (F (2 * n) + k * F (2 * n - 2), F (2 * n) + (k + 1) * F (2 * n - 2)) ∧
+        euclidPPosition R.1 R.2 = true) := by
+  obtain ⟨i, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+  intro F s t V L R
+  let a := V.1
+  let b := V.2
+  let c := F (2 * (i + 1))
+  let d := F (2 * (i + 1) + 1)
+  have ha : a = Nat.fib (2 * i + 2) := congrArg Nat.fib (by omega)
+  have hb : b = Nat.fib (2 * i + 1) := congrArg Nat.fib (by omega)
+  have hc : c = a + b := by
+    rw [ha, hb, Nat.add_comm]
+    exact Nat.fib_add_two (n := 2 * i + 1)
+  have hd : d = a + c := by
+    rw [ha]
+    exact Nat.fib_add_two (n := 2 * i + 2)
+  have ha₀ : 0 < a := ha ▸ Nat.fib_pos.mpr (by omega)
+  have hb₀ : 0 < b := hb ▸ Nat.fib_pos.mpr (by omega)
+  have hp : euclidPPosition a b = true := ha ▸ hb ▸ fibonacci_arch_tops.fib_pair i
+  -- Specialize the general branch formulas to the two Fibonacci arch tops.
+  obtain ⟨⟨hL₁, hL₂⟩, hR₁, hR₂⟩ :=
+    arch_branch_levels d c c (c + b) k (by omega) (by omega) (by omega) (by omega)
+  simp only [Nat.add_sub_cancel_left] at hR₁ hR₂
+  change (L.1 : ℤ) = _ at hL₁
+  change (L.2 : ℤ) = _ at hL₂
+  change (R.1 : ℤ) = _ at hR₁
+  change (R.2 : ℤ) = _ at hR₂
+  have hL : L = (d + k * a, c + k * a) := by
+    apply Prod.ext <;> apply Nat.cast_injective (R := ℤ)
+    · rw [hL₁, hd]; push_cast; ring
+    · rw [hL₂, hd]; push_cast; ring
+  have hR : R = (c + k * b, c + (k + 1) * b) := by
+    apply Prod.ext <;> apply Nat.cast_injective (R := ℤ)
+    · rw [hR₁]; push_cast; ring
+    · rw [hR₂]; push_cast; ring
+  rw [hL, hR]
+  refine ⟨hp, ?_, ?_, ⟨by push_cast; rfl, ?_, ?_⟩, rfl, ?_⟩
+  · change (a + (a + b), a + b) = (d, c)
+    rw [hd, hc]
+  · change (a + b, (a + b) + b) = (c, c + b)
+    rw [hc]
+  · change ((c + k * a : ℕ) : ℤ) = d + (k - 1) * a
+    rw [hd]
+    push_cast
+    ring
+  · change euclidPPosition (d + k * a) (c + k * a) = true
+    simpa only [hd, hc, Nat.add_one_mul, add_assoc, add_comm, add_left_comm] using
+      fibonacci_arch_tops.left_branch a b k ha₀ hb₀ hp
+  · change euclidPPosition (c + k * b) (c + (k + 1) * b) = true
+    rw [euclidPPosition_aunt_xor_cousin.swap]
+    have hp' := (euclidPPosition_aunt_xor_cousin.swap b a).trans hp
+    simpa only [hc, Nat.add_one_mul, add_assoc, add_comm, add_left_comm] using
+      fibonacci_arch_tops.left_branch b a k hb₀ ha₀ hp'
+
 end
 
 end MetaMathlibExt

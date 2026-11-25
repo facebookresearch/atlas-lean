@@ -16,6 +16,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.LucasnomialSum
 public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.LucasTriangularSqSubSq
 public import MathlibExt.NumberTheory.PellNumberSequence
 
 /-!
@@ -58,19 +59,6 @@ public theorem_wanted lucasTriangular_identities (P : LucasParameters) (φ φ' :
         (φ ^ n + φ' ^ n) / lucasBracket P 2 * lucasBracket P n ^ 2) ∧
     (∀ n : ℕ, lucasnomial P (n + 1) 2 =
       ∑ k ∈ Finset.Icc 1 n, P.t ^ (n - k) * lucasBracket P k ^ 2)
-
-/-- **Weighted difference of consecutive squared Lucas triangular numbers.** Let $(s, t)$ be
-nondegenerate Lucas parameters, with Lucas brackets $\{n\}_{s,t}$ and Lucasnomial coefficients
-$\binom{n}{k}_{s,t}$. For every natural number $n$,
-$$\binom{n+2}{2}_{s,t}^{2} - t^2 \binom{n+1}{2}_{s,t}^{2} =
-\frac{\{n+2\}_{s,t} + t \{n\}_{s,t}}{s} \{n+1\}_{s,t}^{3}.$$
-
-Source: Ronald Orozco López, *Simplicial d-Polytopic Numbers Defined on Lucas Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.6, Theorem 4
-(`jis-2025-25.5.6-thm-4`). -/
-public theorem_wanted lucasTriangular_sq_sub_sq (P : LucasParameters) (n : ℕ) :
-    lucasnomial P (n + 2) 2 ^ 2 - P.t ^ 2 * lucasnomial P (n + 1) 2 ^ 2 =
-      (lucasBracket P (n + 2) + P.t * lucasBracket P n) / P.s * lucasBracket P (n + 1) ^ 3
 
 /-- **Weighted sum of cubes of Lucas brackets.** Let $(s, t)$ be nondegenerate Lucas parameters,
 with Lucas brackets $\{n\}_{s,t}$ and Lucasnomial coefficients $\binom{n}{k}_{s,t}$. For every

@@ -96,3 +96,16 @@ example (c d k : ℕ) (hc : 0 < c) (hcd : c < d) :
   intro s t
   rw [h₁, h₂]
   ring
+
+-- At the first arch top the integer coefficient in the left denominator is −1.
+example : euclidPPosition 1 1 = true ∧ (2 : ℤ) = 3 + (0 - 1) * 1 ∧
+    euclidPPosition 3 2 = true ∧ euclidPPosition 2 3 = true := by
+  obtain ⟨hV, _, _, ⟨_, hden, hL⟩, _, hR⟩ := fibonacci_arch_positions 1 0 (by decide)
+  exact ⟨hV, hden, hL, hR⟩
+
+-- At every level of the right branch below 8/5 the denominator exceeds the numerator by five.
+example (k : ℕ) : euclidPPosition (13 + k * 5) (13 + k * 5 + 5) = true := by
+  obtain ⟨_, _, _, _, hR, hP⟩ := fibonacci_arch_positions 3 k (by decide)
+  rw [hR] at hP
+  change euclidPPosition (13 + k * 5) (13 + (k + 1) * 5) = true at hP
+  simpa only [Nat.add_one_mul, Nat.add_assoc] using hP

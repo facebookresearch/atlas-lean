@@ -10,6 +10,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Complexity.Algebraic.DualMatrixMultiplicationBounds
+public import CSLibExt.Complexity.Algebraic.RectangularNaiveCircuit
 public import Mathlib.Algebra.CharP.Basic
 
 /-!
@@ -76,15 +77,6 @@ $\alpha(F) > 0.321334$.
 Source: C15b/WXXZ2024 introduction, the best displayed lower bound is strict. -/
 theorem_wanted williamsXuXuZhou2024StrictLower :
     ∀ (F : Type u) [Field F], ENNReal.ofReal ((321334 : ℝ) / 1000000) < dualCircuitExponent F
-
-/-- **Naive bound for rectangular matrix multiplication.** For every field $F$ and every real
-$k \ge 0$, the rectangular matrix multiplication exponent of the arithmetic-circuit model at
-aspect $k$ is at most $2 + k$.
-
-Source: CLLZ rectangular naive upper bound; a general finite circuit construction is missing. -/
-theorem_wanted rectangularNaiveUpper :
-    ∀ (F : Type u) [Field F] (k : ℝ), 0 ≤ k →
-      rectangularCircuitExponent F k ≤ ENNReal.ofReal (2 + k)
 
 /-- **Circuit size and tensor rank give the same rectangular exponent.** For every infinite field
 $F$ and every real $k \ge 0$, the rectangular matrix multiplication exponent at aspect $k$ defined

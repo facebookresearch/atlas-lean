@@ -18,7 +18,7 @@ that (a) `dim F' - dim F = j + 2` and (b) the bottom elements `F` form a subcomp
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Combinatorics.RationalSimplicialHomologyShared
+public import MathlibExt.Combinatorics.RationalSimplicialHomology
 
 @[expose] public section
 
@@ -32,7 +32,7 @@ Problem 5 (interval decompositions of complexes with acyclic links). UnsolvedMat
 Written with `k = j + 2 ≥ 1` (Doolittle–Goeckner's "`k`-fold acyclic": the link of every face with
 fewer than `k` vertices is acyclic); `j = -1` is Stanley's theorem on acyclic complexes. Complexes,
 links and acyclicity over `ℚ` (all reduced rational Betti numbers zero) are those of
-`WantedExt/Combinatorics/RationalSimplicialHomologyShared.lean`. A decomposition is a family `B` of
+`MathlibExt/Combinatorics/RationalSimplicialHomology.lean`. A decomposition is a family `B` of
 bottoms closed under subsets with tops `top F ∈ K`, `|top F| = |F| + k`, every face in exactly one
 interval. Doolittle–Goeckner work over an arbitrary field; acyclicity over any field implies
 acyclicity over `ℚ` (universal coefficients), so their counterexample applies.

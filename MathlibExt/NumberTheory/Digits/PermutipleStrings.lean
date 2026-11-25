@@ -181,6 +181,50 @@ public theorem isPermutipleString_inputs_isUnion_motherGraphCycles (n b : ℕ) (
     simpa only [Equiv.symm_apply_apply] using
       Equiv.Perm.perm_symm_on_of_perm_on_finite forward start
 
+/-- **Edges of a permutiple's graph lie on cycles of the mother graph.** Let $n \ge 1$, $b$ and $k$
+be natural numbers, let $\sigma$ be a permutation of $\{0, \dots, k\}$ and let
+$(d_k, \dots, d_0)_b$ be an $(n, b, \sigma)$-permutiple, that is, $d_i < b$ for all $i$ and
+$(d_k, \dots, d_0)_b = n \cdot (d_{\sigma(k)}, \dots, d_{\sigma(0)})_b$. Its graph has the edges
+$(d_i, d_{\sigma(i)})$ for $0 \le i \le k$. Then for every $0 \le j \le k$, the pair
+$(d_j, d_{\sigma(j)})$ is an edge of the $(n, b)$-mother graph, and $d_j$ is reachable from
+$d_{\sigma(j)}$ along edges of the graph of the permutiple (in zero steps when they are equal),
+so the edge $(d_j, d_{\sigma(j)})$ lies on a directed cycle of that graph.
+
+Source: Benjamin V. Holt, *A Multigraph Characterization of Permutiple Strings*,
+INTEGERS 25 (2025), Article A111, Theorem 4 (`integers-2025-A111-thm-4`), quoting Holt,
+*Finding Permutiples of a Known Base and Multiplier*. -/
+public theorem permutiple_graph_isUnion_motherGraphCycles (n b : ℕ) (hn : 1 ≤ n) {k : ℕ}
+    (d : Fin (k + 1) → ℕ) (σ : Equiv.Perm (Fin (k + 1))) (hp : IsPermutiple n b d σ)
+    (j : Fin (k + 1)) :
+    IsMotherGraphEdge n b (d j) (d (σ j)) ∧
+      Relation.ReflTransGen (fun u v => ∃ i, d i = u ∧ d (σ i) = v) (d (σ j)) (d j) := by
+  have hedge : IsMotherGraphEdge n b (d j) (d (σ j)) := by
+    refine ⟨hp.1 j, hp.1 (σ j), ?_⟩
+    by_cases hb : 2 ≤ b
+    · -- For `2 ≤ b`, the residue bound is the conjugated case of the proved residue
+      -- condition, with the trivial permutation.
+      have h := permutiple_basePerm_residue_le n b hn hb d σ 1 σ hp (by simpa using hp) j
+      simpa using h
+    · -- For `b = 0` there is no digit, and for `b = 1` every digit is `0`.
+      have hb' : b = 0 ∨ b = 1 := by omega
+      rcases hb' with rfl | rfl
+      · exact absurd (hp.1 j) (Nat.not_lt_zero _)
+      · have h1 : d j = 0 := Nat.lt_one_iff.mp (hp.1 j)
+        have h2 : d (σ j) = 0 := Nat.lt_one_iff.mp (hp.1 (σ j))
+        have hn' : (1 : ℤ) ≤ n := by exact_mod_cast hn
+        rw [h1, h2]
+        simp
+        omega
+  refine ⟨hedge, ?_⟩
+  -- Positions reachable from `d (σ j)` are closed under `σ`, hence under `σ⁻¹`.
+  let reachable (i : Fin (k + 1)) :=
+    Relation.ReflTransGen (fun u v => ∃ i, d i = u ∧ d (σ i) = v) (d (σ j)) (d i)
+  have forward (i : Fin (k + 1)) (hi : reachable i) : reachable (σ i) :=
+    hi.tail ⟨i, rfl, rfl⟩
+  have start : reachable (σ j) := .refl
+  simpa only [Equiv.symm_apply_apply] using
+    Equiv.Perm.perm_symm_on_of_perm_on_finite forward start
+
 /-- **The permutiple string of $87912 = 4 \cdot 21978$.** The string of inputs
 $(2, 8)(1, 7)(9, 9)(7, 1)(8, 2)$ is a $(4, 10)$-permutiple string. It is produced by the
 $(4, 10)$-permutiple $87912 = 4 \cdot 21978$, whose multiplication reverses the digits.

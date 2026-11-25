@@ -323,18 +323,6 @@ public theorem_wanted cube_pebbling_threshold_bounds (ε : ℝ) (hε : 0 < ε) (
       t =O[Filter.atTop]
         fun d : ℕ => (2 : ℝ) ^ d / Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d)) ^ (1 - ε)
 
-/-- **Threshold for good sequences in $\mathbb{Z}_2^d$.** Write $\lg = \log_2$. Let $t$ be a
-threshold function, in $d$, for the probability that a uniformly random sequence of $s$ elements
-of $\mathbb{Z}_2^d$ is good, and write $n = 2^d$. Then for every $\varepsilon > 0$,
-$t(d) = O\left(n / (\lg \lg n)^{1-\varepsilon}\right)$ as $d \to \infty$.
-
-Source: Neal Bushaw and Glenn Hurlbert, *Thresholds for Zero-Sums with Small Cross Numbers in
-Abelian Groups*, INTEGERS 24 (2024), Article A93, Theorem 11 (`integers-2024-A93-thm-11`). -/
-public theorem_wanted zmod_two_pi_good_threshold_isBigO (ε : ℝ) (hε : 0 < ε) (t : ℕ → ℝ)
-    (ht : IsThresholdFunction (fun d s => goodSequenceProb (Fin d → ZMod 2) s) t) :
-    t =O[Filter.atTop]
-      fun d : ℕ => (2 : ℝ) ^ d / Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d)) ^ (1 - ε)
-
 end
 
 end MetaMathlibExt

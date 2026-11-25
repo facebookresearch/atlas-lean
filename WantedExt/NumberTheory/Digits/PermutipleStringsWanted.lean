@@ -41,24 +41,6 @@ public theorem_wanted permutiple_edge_residue_le (n b : ℕ) (hn : 1 ≤ n) {k :
     (j : Fin (k + 1)) :
     ((d j : ℤ) + ((b : ℤ) - n) * d (σ j)) % b ≤ (n : ℤ) - 1
 
-/-- **Edges of a permutiple's graph lie on cycles of the mother graph.** Let $n \ge 1$, $b$ and $k$
-be natural numbers, let $\sigma$ be a permutation of $\{0, \dots, k\}$ and let
-$(d_k, \dots, d_0)_b$ be an $(n, b, \sigma)$-permutiple, that is, $d_i < b$ for all $i$ and
-$(d_k, \dots, d_0)_b = n \cdot (d_{\sigma(k)}, \dots, d_{\sigma(0)})_b$. Its graph has the edges
-$(d_i, d_{\sigma(i)})$ for $0 \le i \le k$. Then for every $0 \le j \le k$, the pair
-$(d_j, d_{\sigma(j)})$ is an edge of the $(n, b)$-mother graph, and $d_j$ is reachable from
-$d_{\sigma(j)}$ along edges of the graph of the permutiple (in zero steps when they are equal),
-so the edge $(d_j, d_{\sigma(j)})$ lies on a directed cycle of that graph.
-
-Source: Benjamin V. Holt, *A Multigraph Characterization of Permutiple Strings*,
-INTEGERS 25 (2025), Article A111, Theorem 4 (`integers-2025-A111-thm-4`), quoting Holt,
-*Finding Permutiples of a Known Base and Multiplier*. -/
-public theorem_wanted permutiple_graph_isUnion_motherGraphCycles (n b : ℕ) (hn : 1 ≤ n) {k : ℕ}
-    (d : Fin (k + 1) → ℕ) (σ : Equiv.Perm (Fin (k + 1))) (hp : IsPermutiple n b d σ)
-    (j : Fin (k + 1)) :
-    IsMotherGraphEdge n b (d j) (d (σ j)) ∧
-      Relation.ReflTransGen (fun u v => ∃ i, d i = u ∧ d (σ i) = v) (d (σ j)) (d j)
-
 /-- **Every mother-graph edge induces a carry transition.** Let $n$ and $b$ be natural
 numbers. If $(d_1, d_2)$ is an edge of the $(n, b)$-mother graph, then there are natural
 numbers $c_1$ and $c_2$ with $c_1 \le n - 1$ and $c_2 \le n - 1$ such that

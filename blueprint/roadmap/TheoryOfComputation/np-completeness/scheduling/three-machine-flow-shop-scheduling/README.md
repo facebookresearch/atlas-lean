@@ -4,4 +4,6 @@
 - [Well-formed flow-shop instances](well-formed.md)
 - [Feasible flow-shop schedules](flow-shop-feasible.md)
 - [The 3-machine flow shop scheduling decision problem](flow-shop-dec.md)
+- [A polynomial-time verifier for three-machine flow-shop scheduling](a-polynomial-time-verifier-for-three-machine-flo/README.md)
 - [3-MACHINE FLOW SHOP SCHEDULING is NP-complete](flow-shop-np-complete.md)
+- [Hardness](flow-shop-hard.md)

@@ -39,6 +39,28 @@ example : IsMotherGraphEdge 4 10 9 9 ∧
   isPermutipleString_inputs_isUnion_motherGraphCycles 4 10 (by decide) (by decide)
     isPermutipleString_87912 (9, 9) (by decide)
 
+-- The edge (2, 8) of the graph of 87912 returns from 8 to 2 along the edge (8, 2).
+example : IsMotherGraphEdge 4 10 2 8 ∧
+    Relation.ReflTransGen (fun u v => ∃ i, ![2, 1, 9, 7, 8] i = u ∧
+      ![2, 1, 9, 7, 8] (Fin.revPerm i) = v) 8 2 :=
+  permutiple_graph_isUnion_motherGraphCycles 4 10 (by decide) ![2, 1, 9, 7, 8]
+    Fin.revPerm isPermutiple_87912 0
+
+-- The middle digit of 87912 contributes a loop, whose return path has length zero.
+example : IsMotherGraphEdge 4 10 9 9 ∧
+    Relation.ReflTransGen (fun u v => ∃ i, ![2, 1, 9, 7, 8] i = u ∧
+      ![2, 1, 9, 7, 8] (Fin.revPerm i) = v) 9 9 :=
+  permutiple_graph_isUnion_motherGraphCycles 4 10 (by decide) ![2, 1, 9, 7, 8]
+    Fin.revPerm isPermutiple_87912 2
+
+-- In base one every digit is zero, so the only graph edge is the loop at zero.
+example : IsMotherGraphEdge 1 1 0 0 ∧
+    Relation.ReflTransGen (fun u v => ∃ i : Fin 1, (fun _ => 0) i = u ∧
+      (fun _ => 0) ((1 : Equiv.Perm (Fin 1)) i) = v) 0 0 := by
+  have hp : IsPermutiple 1 1 (fun _ : Fin 1 => 0) 1 :=
+    ⟨fun _ => Nat.zero_lt_one, by decide⟩
+  exact permutiple_graph_isUnion_motherGraphCycles 1 1 (by decide) (fun _ => 0) 1 hp 0
+
 -- The maximal incoming carry cancels a negative digit difference, leaving zero outgoing carry.
 example : IsHoeySloaneStep 4 5 3 0 (3, 0) :=
   isHoeySloaneStep_hoeySloaneTransition 4 5 (by decide) (by decide) (3, 0) (by decide)

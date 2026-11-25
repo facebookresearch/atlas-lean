@@ -15,6 +15,7 @@ public import Mathlib.Data.ZMod.Defs
 public import Mathlib.GroupTheory.OrderOfElement
 import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 import Mathlib.Data.Finset.SymmDiff
+import Mathlib.Data.Fintype.CardEmbedding
 import Mathlib.GroupTheory.SpecificGroups.Cyclic
 
 /-!
@@ -327,6 +328,490 @@ theorem zmod_thirtyFive_pow_good_threshold_le (t : ℕ → ℝ)
   apply Real.one_le_exp_iff.mpr
   change 0 ≤ _ - 2 / 3 * Real.logb 2 x + 0
   linarith
+
+namespace zmod_two_pi_good_threshold_isBigO
+
+variable {d : ℕ}
+
+private lemma two_nsmul_zmod2 {x : Fin d → ZMod 2} : (2 : ℕ) • x = 0 := by
+  funext j
+  have h : ∀ y : ZMod 2, (2 : ℕ) • y = 0 := by decide
+  simpa using h (x j)
+
+private lemma add_self_zmod2 {x : Fin d → ZMod 2} : x + x = 0 := by
+  rw [← two_nsmul]
+  exact two_nsmul_zmod2
+
+private lemma neg_eq_self_zmod2 {x : Fin d → ZMod 2} : -x = x := by
+  exact (eq_neg_of_add_eq_zero_left add_self_zmod2).symm
+
+private lemma addOrderOf_eq {x : Fin d → ZMod 2} (hx : x ≠ 0) : addOrderOf x = 2 := by
+  have hdvd : addOrderOf x ∣ 2 :=
+    addOrderOf_dvd_iff_nsmul_eq_zero.mpr two_nsmul_zmod2
+  rcases (Nat.dvd_prime Nat.prime_two).mp hdvd with h | h
+  · exact absurd (AddMonoid.addOrderOf_eq_one_iff.mp h) hx
+  · exact h
+
+private lemma good_of_zero {s : ℕ} {g : Fin s → Fin d → ZMod 2} {i : Fin s} (hi : g i = 0) :
+    IsGoodSequence g := by
+  refine ⟨{i}, Finset.singleton_nonempty i, ?_, ?_⟩
+  · simp [hi]
+  · simp [hi]
+
+private lemma good_of_repeat {s : ℕ} {g : Fin s → Fin d → ZMod 2} {i j : Fin s} (hij : i ≠ j)
+    (h : g i = g j) : IsGoodSequence g := by
+  by_cases hi : g i = 0
+  · exact good_of_zero hi
+  · refine ⟨{i, j}, ?_, ?_, ?_⟩
+    · exact Finset.insert_nonempty _ _
+    · rw [Finset.sum_pair hij, h, add_self_zmod2]
+    · rw [Finset.sum_pair hij, addOrderOf_eq hi, addOrderOf_eq (by rwa [h] at hi)]
+      norm_num
+
+private lemma good_iff {s : ℕ} {g : Fin s → Fin d → ZMod 2} :
+    IsGoodSequence g ↔ (∃ i, g i = 0) ∨ ∃ i j, i ≠ j ∧ g i = g j := by
+  constructor
+  · intro hgood
+    by_contra hcon
+    have hzero : ∀ i, g i ≠ 0 := fun i hi => hcon (Or.inl ⟨i, hi⟩)
+    have hrep : ∀ i j, i ≠ j → g i ≠ g j := fun i j hij h => hcon (Or.inr ⟨i, j, hij, h⟩)
+    have hinj : Function.Injective g := by
+      intro i j hij
+      by_contra hne
+      exact hrep i j hne hij
+    obtain ⟨S, hSne, hsum, hcross⟩ := hgood
+    have hterm : ∀ i ∈ S, (1 : ℚ) / addOrderOf (g i) = 1 / 2 := by
+      intro i _
+      rw [addOrderOf_eq (hzero i)]
+      norm_num
+    have hsumq : ∑ i ∈ S, (1 : ℚ) / addOrderOf (g i) = (S.card : ℚ) / 2 := by
+      rw [Finset.sum_congr rfl hterm, Finset.sum_const, nsmul_eq_mul]
+      ring
+    rw [hsumq] at hcross
+    have hcard : S.card ≤ 2 := by
+      by_contra hc
+      push Not at hc
+      have : (2 : ℚ) < S.card := by exact_mod_cast hc
+      linarith
+    have hpos : 0 < S.card := Finset.card_pos.mpr hSne
+    rcases (by omega : S.card = 1 ∨ S.card = 2) with h1 | h2
+    · obtain ⟨i, hi⟩ := Finset.card_eq_one.mp h1
+      rw [hi, Finset.sum_singleton] at hsum
+      exact hzero i hsum
+    · obtain ⟨a, b, hab, hS⟩ := Finset.card_eq_two.mp h2
+      rw [hS, Finset.sum_pair hab] at hsum
+      have hab' : g a = g b := by
+        have h1 : g a = -g b := eq_neg_of_add_eq_zero_left hsum
+        rw [h1, neg_eq_self_zmod2]
+      exact (hinj.ne hab) hab'
+  · rintro (⟨i, hi⟩ | ⟨i, j, hij, h⟩)
+    · exact good_of_zero hi
+    · exact good_of_repeat hij h
+
+private lemma descFactorial_eq_prod_range (n s : ℕ) :
+    n.descFactorial s = ∏ i ∈ Finset.range s, (n - i) := by
+  induction s with
+  | zero => simp
+  | succ k ih =>
+    rw [Nat.descFactorial_succ, ih, Finset.prod_range_succ, mul_comm]
+
+private lemma descFactorial_div_le {n s : ℕ} (hsn : s ≤ n) (hsq : 2 * n ≤ s ^ 2)
+    (hn : 2 ≤ n) :
+    ((n.descFactorial s : ℝ)) ≤ 3 / 4 * (n : ℝ) ^ s := by
+  have hnR : (0 : ℝ) < n := by exact_mod_cast (lt_of_lt_of_le (by norm_num) hn)
+  rw [descFactorial_eq_prod_range]
+  have hcast : ((∏ i ∈ Finset.range s, (n - i) : ℕ) : ℝ) =
+      ∏ i ∈ Finset.range s, ((n : ℝ) - i) := by
+    rw [Nat.cast_prod]
+    apply Finset.prod_congr rfl
+    intro i hi
+    have hi' : i ≤ n := le_trans (Nat.le_of_lt (Finset.mem_range.mp hi)) hsn
+    rw [Nat.cast_sub hi']
+  have hprod : (∏ i ∈ Finset.range s, (((n : ℝ) - i) / n)) =
+      (∏ i ∈ Finset.range s, ((n : ℝ) - i)) / (n : ℝ) ^ s := by
+    rw [Finset.prod_div_distrib]
+    simp [Finset.prod_const]
+  have hle : ∏ i ∈ Finset.range s, (((n : ℝ) - i) / n) ≤ 3 / 4 := by
+    set m := s / 2 with hm_def
+    set k := s - m with hk_def
+    have hmk : m + k = s := by omega
+    have hf0 : ∀ i, i < s → (0 : ℝ) ≤ ((n : ℝ) - i) / n := by
+      intro i hi
+      apply div_nonneg _ hnR.le
+      have : (i : ℝ) ≤ n := by
+        have hi' : i ≤ n := le_trans (Nat.le_of_lt hi) hsn
+        exact_mod_cast hi'
+      linarith
+    have hf1 : ∀ i, i < s → ((n : ℝ) - i) / n ≤ 1 := by
+      intro i _
+      rw [div_le_one hnR]
+      have : (0 : ℝ) ≤ i := Nat.cast_nonneg i
+      linarith
+    have hsplit : (∏ i ∈ Finset.range s, (((n : ℝ) - i) / n)) =
+        (∏ i ∈ Finset.range m, (((n : ℝ) - i) / n)) *
+          ∏ i ∈ Finset.range k, (((n : ℝ) - ((m + i : ℕ) : ℝ)) / n) := by
+      conv_lhs => rw [← hmk]
+      exact Finset.prod_range_add (fun i => (((n : ℝ) - (i : ℝ)) / n)) m k
+    set a := (m : ℝ) / n with ha_def
+    set q := 1 - a with hq_def
+    have ha0 : 0 ≤ a := div_nonneg (Nat.cast_nonneg m) hnR.le
+    have ha1 : a ≤ 1 := by
+      rw [ha_def, div_le_one hnR]
+      have : m ≤ n := le_trans (Nat.div_le_self s 2) hsn
+      exact_mod_cast this
+    have hq0 : 0 ≤ q := by linarith
+    have hprod1 : (∏ i ∈ Finset.range m, (((n : ℝ) - i) / n)) ≤ 1 := by
+      apply Finset.prod_le_one₀
+      · intro i hi
+        exact hf0 i (lt_of_lt_of_le (Finset.mem_range.mp hi) (by omega : m ≤ s))
+      · intro i hi
+        exact hf1 i (lt_of_lt_of_le (Finset.mem_range.mp hi) (by omega : m ≤ s))
+    have hbound : ∀ i ∈ Finset.range k, (((n : ℝ) - ((m + i : ℕ) : ℝ)) / n) ≤ q := by
+      intro i hi
+      have hi' : m + i ≤ n := by
+        have hlt : m + i < s := by
+          have h1 : i < k := Finset.mem_range.mp hi
+          omega
+        exact le_of_lt (lt_of_lt_of_le hlt hsn)
+      have hnum : (n : ℝ) - ((m + i : ℕ) : ℝ) ≤ (n : ℝ) - m := by
+        rw [Nat.cast_add]
+        have h0 : (0 : ℝ) ≤ i := Nat.cast_nonneg i
+        linarith
+      calc ((n : ℝ) - ((m + i : ℕ) : ℝ)) / n ≤ ((n : ℝ) - m) / n :=
+            div_le_div_of_nonneg_right hnum hnR.le
+        _ = q := by
+            rw [hq_def, ha_def, sub_div, div_self hnR.ne']
+    have hprod2 : (∏ i ∈ Finset.range k, (((n : ℝ) - ((m + i : ℕ) : ℝ)) / n)) ≤ q ^ k := by
+      calc (∏ i ∈ Finset.range k, (((n : ℝ) - ((m + i : ℕ) : ℝ)) / n))
+          ≤ ∏ _i ∈ Finset.range k, q := by
+            apply Finset.prod_le_prod₀
+            · intro i hi
+              exact hf0 (m + i) (by
+                have h1 : i < k := Finset.mem_range.mp hi
+                omega)
+            · intro i hi
+              exact hbound i hi
+        _ = q ^ k := by rw [Finset.prod_const, Finset.card_range]
+    have hkmR : (n : ℝ) ≤ 3 * (k : ℝ) * (m : ℝ) := by
+      have hsqR : (2 : ℝ) * n ≤ (s : ℝ) ^ 2 := by exact_mod_cast hsq
+      have hmr : s = 2 * m + s % 2 := by omega
+      have hkr : k = m + s % 2 := by omega
+      have hr1 : s % 2 ≤ 1 := by have h := Nat.mod_lt s (by norm_num : 0 < 2); omega
+      have hm1 : 1 ≤ m := by
+        have hs2 : 2 ≤ s := by
+          by_contra hc
+          push Not at hc
+          have hle : s ^ 2 ≤ 1 := by
+            calc s ^ 2 ≤ 1 ^ 2 := Nat.pow_le_pow_left (by omega) 2
+              _ = 1 := by norm_num
+          omega
+        omega
+      have hrR : ((s % 2 : ℕ) : ℝ) ≤ 1 := by exact_mod_cast hr1
+      have hmR : (1 : ℝ) ≤ m := by exact_mod_cast hm1
+      have hsR : (s : ℝ) = 2 * m + ((s % 2 : ℕ) : ℝ) := by
+        have h := hmr
+        exact_mod_cast h
+      have hkR : (k : ℝ) = m + ((s % 2 : ℕ) : ℝ) := by
+        have h := hkr
+        exact_mod_cast h
+      nlinarith [hsqR, hsR, hkR, hrR, hmR,
+        mul_nonneg (show (0:ℝ) ≤ m by linarith)
+          (show (0:ℝ) ≤ ((s % 2 : ℕ) : ℝ) by positivity)]
+    have hka : (1 : ℝ) / 3 ≤ (k : ℝ) * a := by
+      calc (1 : ℝ) / 3 ≤ ((k : ℝ) * (m : ℝ)) / n :=
+            (le_div_iff₀ hnR).mpr (by linarith [hkmR])
+        _ = (k : ℝ) * a := by rw [ha_def, mul_div_assoc]
+    have hbern : 1 + (k : ℝ) * a ≤ (1 + a) ^ k :=
+      one_add_mul_le_pow (by linarith) k
+    have hprod1q : q ^ k * (1 + a) ^ k ≤ 1 := by
+      rw [← mul_pow]
+      have hqa : q * (1 + a) = 1 - a ^ 2 := by rw [hq_def]; ring
+      rw [hqa]
+      apply pow_le_one₀
+      · nlinarith [ha0, ha1]
+      · nlinarith [ha0, ha1]
+    have hqle : q ^ k ≤ 1 / (1 + (k : ℝ) * a) := by
+      rw [le_div_iff₀ (by linarith [hka] : (0:ℝ) < 1 + (k:ℝ)*a)]
+      calc q ^ k * (1 + (k : ℝ) * a) ≤ q ^ k * (1 + a) ^ k :=
+            mul_le_mul_of_nonneg_left hbern (pow_nonneg hq0 k)
+        _ ≤ 1 := hprod1q
+    have hfin : (1 : ℝ) / (1 + (k : ℝ) * a) ≤ 3 / 4 := by
+      rw [div_le_iff₀ (by linarith [hka] : (0:ℝ) < 1 + (k:ℝ)*a)]
+      linarith [hka]
+    rw [hsplit]
+    calc (∏ i ∈ Finset.range m, (((n : ℝ) - i) / n)) *
+          ∏ i ∈ Finset.range k, (((n : ℝ) - ((m + i : ℕ) : ℝ)) / n)
+        ≤ 1 * q ^ k := by
+          apply mul_le_mul hprod1 hprod2
+          · apply Finset.prod_nonneg
+            intro i hi
+            exact hf0 (m + i) (by
+              have h1 : i < k := Finset.mem_range.mp hi
+              omega)
+          · norm_num
+      _ ≤ 3 / 4 := by
+          rw [one_mul]
+          exact le_trans hqle hfin
+  rw [hcast]
+  have hEq : (∏ i ∈ Finset.range s, ((n : ℝ) - i)) =
+      (∏ i ∈ Finset.range s, (((n : ℝ) - i) / n)) * (n : ℝ) ^ s := by
+    rw [hprod, div_mul_cancel₀ _ (pow_ne_zero _ hnR.ne')]
+  rw [hEq]
+  exact mul_le_mul_of_nonneg_right hle (pow_nonneg hnR.le s)
+
+open Classical in
+private lemma card_bad_le {d s : ℕ} :
+    (Finset.univ.filter fun g : Fin s → Fin d → ZMod 2 => ¬ IsGoodSequence g).card ≤
+      (2 ^ d).descFactorial s := by
+  classical
+  have hinj : ∀ g : Fin s → Fin d → ZMod 2, ¬ IsGoodSequence g → Function.Injective g := by
+    intro g hg i j hij
+    by_contra hne
+    exact hg (good_iff.mpr (Or.inr ⟨i, j, hne, hij⟩))
+  have hcard : Fintype.card {g : Fin s → Fin d → ZMod 2 // ¬ IsGoodSequence g} =
+      (Finset.univ.filter fun g : Fin s → Fin d → ZMod 2 => ¬ IsGoodSequence g).card := by
+    rw [Fintype.card_subtype]
+  have hEq : Fintype.card (Fin s ↪ (Fin d → ZMod 2)) = (2 ^ d).descFactorial s := by
+    rw [Fintype.card_embedding_eq, Fintype.card_fin]
+    simp
+  have hinj' : Function.Injective (fun g : {g // ¬ IsGoodSequence g} =>
+      (⟨g.1, hinj g.1 g.2⟩ : Fin s ↪ (Fin d → ZMod 2))) := by
+    intro ⟨g1, h1⟩ ⟨g2, h2⟩ h
+    apply Subtype.ext
+    funext i
+    have hi := congrFun (congrArg DFunLike.coe h) i
+    exact hi
+  rw [← hcard]
+  exact le_trans (Fintype.card_le_of_injective _ hinj') (le_of_eq hEq)
+
+open Classical in
+private lemma quarter_le_good_prob {d s : ℕ} (hsn : s ≤ 2 ^ d) (hsq : 2 * (2 ^ d) ≤ s ^ 2)
+    (hn : 2 ≤ 2 ^ d) :
+    (1 : ℝ) / 4 ≤ goodSequenceProb (Fin d → ZMod 2) s := by
+  classical
+  have hbad := card_bad_le (d := d) (s := s)
+  have hdesc := descFactorial_div_le hsn hsq hn
+  have hsum : (Finset.univ.filter fun g : Fin s → Fin d → ZMod 2 => IsGoodSequence g).card +
+      (Finset.univ.filter fun g : Fin s → Fin d → ZMod 2 => ¬ IsGoodSequence g).card =
+      (2 ^ d) ^ s := by
+    rw [Finset.card_filter_add_card_filter_not]
+    simp
+  have hprob : goodSequenceProb (Fin d → ZMod 2) s =
+      ((Finset.univ.filter fun g : Fin s → Fin d → ZMod 2 => IsGoodSequence g).card : ℝ) /
+        ((2 ^ d : ℕ) : ℝ) ^ s := by
+    simp [goodSequenceProb, Set.ncard_eq_toFinset_card', Set.toFinset_ofPred]
+  have hnR : (0 : ℝ) < (2 ^ d : ℕ) := by exact_mod_cast (lt_of_lt_of_le (by norm_num) hn)
+  have hpowR : (0 : ℝ) < ((2 ^ d : ℕ) : ℝ) ^ s := pow_pos hnR s
+  rw [hprob, le_div_iff₀ hpowR]
+  have hbadR : ((Finset.univ.filter fun g : Fin s → Fin d → ZMod 2 =>
+      ¬ IsGoodSequence g).card : ℝ) ≤ 3 / 4 * ((2 ^ d : ℕ) : ℝ) ^ s := by
+    have h1 : ((Finset.univ.filter fun g : Fin s → Fin d → ZMod 2 =>
+        ¬ IsGoodSequence g).card : ℝ) ≤ ((2 ^ d).descFactorial s : ℝ) := by
+      exact_mod_cast hbad
+    exact le_trans h1 hdesc
+  have hsumR : ((Finset.univ.filter fun g : Fin s → Fin d → ZMod 2 => IsGoodSequence g).card : ℝ) +
+      ((Finset.univ.filter fun g : Fin s → Fin d → ZMod 2 => ¬ IsGoodSequence g).card : ℝ) =
+      ((2 ^ d : ℕ) : ℝ) ^ s := by
+    have h := hsum
+    exact_mod_cast h
+  linarith [hbadR, hsumR, hpowR]
+
+private lemma logb_two_pow (d : ℕ) : Real.logb 2 ((2 : ℝ) ^ d) = (d : ℝ) := by
+  rw [Real.logb_pow, Real.logb_self_eq_one (by norm_num : (1:ℝ) < 2), mul_one]
+
+private lemma denom_le {d : ℕ} (ε : ℝ) (hε : 0 < ε) (hd : 2 ≤ d) :
+    (Real.logb 2 (d : ℝ)) ^ (1 - ε) ≤ 3 * (d : ℝ) := by
+  have hdR : (2 : ℝ) ≤ d := by exact_mod_cast hd
+  have hdpos : (0 : ℝ) < d := by linarith
+  have hL1 : (1 : ℝ) ≤ Real.logb 2 (d : ℝ) := by
+    have h := Real.logb_le_logb_of_le (by norm_num : (1:ℝ) < 2) (by norm_num : (0:ℝ) < 2) hdR
+    rwa [Real.logb_self_eq_one (by norm_num : (1:ℝ) < 2)] at h
+  have hLd : Real.logb 2 (d : ℝ) ≤ (d : ℝ) := by
+    rw [Real.logb_le_iff_le_rpow (by norm_num : (1:ℝ) < 2) (hdpos)]
+    have h : (d : ℝ) ≤ (2 : ℝ) ^ d := by
+      have h' : d ≤ 2 ^ d := Nat.lt_two_pow_self.le
+      exact_mod_cast h'
+    have h2 : (2 : ℝ) ^ (d : ℝ) = (2 : ℝ) ^ d := by
+      rw [Real.rpow_natCast]
+    rw [h2]
+    exact h
+  have hr : (1 : ℝ) - ε < 1 := by linarith
+  by_cases hneg : (1 : ℝ) - ε ≤ 0
+  · have h1 : (Real.logb 2 (d : ℝ)) ^ (1 - ε) ≤ 1 :=
+      Real.rpow_le_one_of_one_le_of_nonpos hL1 hneg
+    linarith [h1, hdR]
+  · push Not at hneg
+    have h2 : (Real.logb 2 (d : ℝ)) ^ (1 - ε) ≤ Real.logb 2 (d : ℝ) := by
+      have h := Real.rpow_le_rpow_of_exponent_le hL1 (show (1:ℝ) - ε ≤ 1 by linarith)
+      rwa [Real.rpow_one] at h
+    linarith [h2, hLd, hdR]
+
+private lemma one_le_logb_two_of_two_le {d : ℕ} (hd : 2 ≤ d) :
+    (1 : ℝ) ≤ Real.logb 2 (d : ℝ) := by
+  have hdR : (2 : ℝ) ≤ d := by exact_mod_cast hd
+  have h := Real.logb_le_logb_of_le (by norm_num : (1:ℝ) < 2) (by norm_num : (0:ℝ) < 2) hdR
+  rwa [Real.logb_self_eq_one (by norm_num : (1:ℝ) < 2)] at h
+
+private lemma two_pow_eq_exp (k : ℕ) : (2 : ℝ) ^ k = Real.exp ((k : ℝ) * Real.log 2) := by
+  rw [← Real.rpow_natCast, Real.rpow_def_of_pos (by norm_num : (0:ℝ) < 2)]
+  congr 1
+  ring
+
+private lemma s_isLittleO (ε : ℝ) (hε : 0 < ε) :
+    (fun d : ℕ => ((2 ^ (d / 2 + 1) : ℕ) : ℝ)) =o[Filter.atTop]
+      (fun d : ℕ => (2 : ℝ) ^ d /
+        (Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d))) ^ (1 - ε)) := by
+  have hlog2 : (0 : ℝ) < Real.log 2 := Real.log_pos (by norm_num)
+  set b := Real.log 2 / 2 with hb_def
+  have hb : 0 < b := by positivity
+  have hpoly : (fun d : ℕ => (d : ℝ)) =o[Filter.atTop]
+      (fun d : ℕ => Real.exp (b * (d : ℝ))) := by
+    have h := (isLittleO_rpow_exp_pos_mul_atTop (1 : ℝ) hb).comp_tendsto
+      (tendsto_natCast_atTop_atTop (R := ℝ))
+    simpa only [Real.rpow_one, Function.comp_def] using h
+  apply Asymptotics.IsLittleO.of_bound
+  intro c hc
+  have hc6 : (0 : ℝ) < c / 6 := by linarith
+  have hbound := (Asymptotics.isLittleO_iff.mp hpoly) hc6
+  filter_upwards [hbound, Filter.eventually_ge_atTop 2] with d hd1 hd2
+  have hdR : (2 : ℝ) ≤ d := by exact_mod_cast hd2
+  have hdpos : (0 : ℝ) < d := by linarith
+  have hlogd : Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d)) = Real.logb 2 (d : ℝ) := by
+    rw [logb_two_pow]
+  have hL1 : (1 : ℝ) ≤ Real.logb 2 (d : ℝ) := one_le_logb_two_of_two_le hd2
+  have hLpos : (0 : ℝ) < Real.logb 2 (d : ℝ) := by linarith
+  have hdenomPos : (0 : ℝ) < (Real.logb 2 (d : ℝ)) ^ (1 - ε) :=
+    Real.rpow_pos_of_pos hLpos _
+  have hdenom := denom_le ε hε hd2
+  have hgpos : (0 : ℝ) < (2 : ℝ) ^ d /
+      (Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d))) ^ (1 - ε) := by
+    rw [hlogd]
+    exact div_pos (pow_pos (by norm_num) d) hdenomPos
+  have hd1' : (d : ℝ) ≤ (c / 6) * Real.exp (b * (d : ℝ)) := by
+    have h := hd1
+    rw [Real.norm_eq_abs, abs_of_nonneg (show (0:ℝ) ≤ (d:ℝ) by positivity),
+      Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)] at h
+    exact h
+  have h6 : 6 * (d : ℝ) ≤ c * Real.exp (b * (d : ℝ)) := by
+    calc 6 * (d : ℝ) ≤ 6 * ((c / 6) * Real.exp (b * (d : ℝ))) :=
+          mul_le_mul_of_nonneg_left hd1' (by norm_num)
+      _ = c * Real.exp (b * (d : ℝ)) := by ring
+  set E := Real.exp (b * (d : ℝ)) with hE_def
+  have hEpos : (0 : ℝ) < E := Real.exp_pos _
+  have he : ((d / 2 + 1 : ℕ) : ℝ) ≤ (d : ℝ) / 2 + 1 := by
+    have h2n : 2 * (d / 2) ≤ d := Nat.mul_div_le d 2
+    have h2 : (2 : ℝ) * ((d / 2 : ℕ) : ℝ) ≤ (d : ℝ) := by exact_mod_cast h2n
+    push_cast
+    linarith
+  have hsE : ((2 ^ (d / 2 + 1) : ℕ) : ℝ) ≤ 2 * E := by
+    have hcast : ((2 ^ (d / 2 + 1) : ℕ) : ℝ) = (2 : ℝ) ^ (d / 2 + 1) := by
+      push_cast
+      ring
+    rw [hcast, two_pow_eq_exp]
+    have hle : ((d / 2 + 1 : ℕ) : ℝ) * Real.log 2 ≤ b * (d : ℝ) + Real.log 2 := by
+      have hmul := mul_le_mul_of_nonneg_right he hlog2.le
+      have hEq : ((d : ℝ) / 2 + 1) * Real.log 2 = b * (d : ℝ) + Real.log 2 := by
+        rw [hb_def]
+        ring
+      linarith
+    calc Real.exp (((d / 2 + 1 : ℕ) : ℝ) * Real.log 2)
+        ≤ Real.exp (b * (d : ℝ) + Real.log 2) := Real.exp_le_exp.mpr hle
+      _ = 2 * E := by rw [Real.exp_add, Real.exp_log (by norm_num : (0:ℝ) < 2)]; ring
+  have hpowd : (2 : ℝ) ^ d = E ^ 2 := by
+    rw [two_pow_eq_exp]
+    have hEq : (d : ℝ) * Real.log 2 = 2 * (b * (d : ℝ)) := by
+      rw [hb_def]
+      ring
+    rw [hEq]
+    have hE2 : Real.exp (2 * (b * (d : ℝ))) = E ^ 2 := by
+      rw [show (2 : ℝ) = ((2 : ℕ) : ℝ) by norm_num, Real.exp_nat_mul]
+    exact hE2
+  rw [Real.norm_of_nonneg (by positivity : (0:ℝ) ≤ ((2 ^ (d / 2 + 1) : ℕ) : ℝ)),
+    Real.norm_eq_abs, abs_of_pos hgpos]
+  calc ((2 ^ (d / 2 + 1) : ℕ) : ℝ) ≤ 2 * E := hsE
+    _ ≤ c * (E ^ 2 / (3 * (d : ℝ))) := by
+        rw [← mul_div_assoc, le_div_iff₀ (show (0:ℝ) < 3 * (d:ℝ) by positivity)]
+        have hmul : 6 * (d : ℝ) * E ≤ c * E * E :=
+          mul_le_mul_of_nonneg_right h6 hEpos.le
+        calc (2 * E) * (3 * (d : ℝ)) = 6 * (d : ℝ) * E := by ring
+          _ ≤ c * E * E := hmul
+          _ = c * E ^ 2 := by ring
+    _ ≤ c * ((2 : ℝ) ^ d / (Real.logb 2 (d : ℝ)) ^ (1 - ε)) := by
+        apply mul_le_mul_of_nonneg_left _ hc.le
+        rw [hpowd]
+        exact div_le_div_of_nonneg_left (sq_nonneg E) hdenomPos hdenom
+    _ = c * ((2 : ℝ) ^ d /
+        (Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d))) ^ (1 - ε)) := by
+        rw [hlogd, hpowd]
+
+end zmod_two_pi_good_threshold_isBigO
+
+/-- **Threshold for good sequences in $\mathbb{Z}_2^d$.** Write $\lg = \log_2$. Let $t$ be a
+threshold function, in $d$, for the probability that a uniformly random sequence of $s$ elements
+of $\mathbb{Z}_2^d$ is good, and write $n = 2^d$. Then for every $\varepsilon > 0$,
+$t(d) = O\left(n / (\lg \lg n)^{1-\varepsilon}\right)$ as $d \to \infty$.
+
+Source: Neal Bushaw and Glenn Hurlbert, *Thresholds for Zero-Sums with Small Cross Numbers in
+Abelian Groups*, INTEGERS 24 (2024), Article A93, Theorem 11 (`integers-2024-A93-thm-11`). -/
+theorem zmod_two_pi_good_threshold_isBigO (ε : ℝ) (hε : 0 < ε) (t : ℕ → ℝ)
+    (ht : IsThresholdFunction (fun d s => goodSequenceProb (Fin d → ZMod 2) s) t) :
+    t =O[Filter.atTop]
+      fun d : ℕ => (2 : ℝ) ^ d / Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d)) ^ (1 - ε) := by
+  have hprob : ∀ᶠ d in Filter.atTop,
+      (1 : ℝ) / 4 ≤ goodSequenceProb (Fin d → ZMod 2) (2 ^ (d / 2 + 1)) := by
+    filter_upwards [Filter.eventually_ge_atTop 4] with d hd
+    apply zmod_two_pi_good_threshold_isBigO.quarter_le_good_prob
+    · apply Nat.pow_le_pow_right (by norm_num : 1 ≤ 2)
+      omega
+    · have h2e : d + 1 ≤ 2 * (d / 2 + 1) := by omega
+      calc 2 * (2 ^ d) = 2 ^ (d + 1) := by rw [pow_succ]; ring
+        _ ≤ 2 ^ (2 * (d / 2 + 1)) := Nat.pow_le_pow_right (by norm_num) h2e
+        _ = (2 ^ (d / 2 + 1)) ^ 2 := by
+            rw [show 2 * (d / 2 + 1) = (d / 2 + 1) * 2 by omega, pow_mul]
+    · calc (2 : ℕ) = 2 ^ 1 := by norm_num
+        _ ≤ 2 ^ d := Nat.pow_le_pow_right (by norm_num) (by omega)
+  have hgpos : ∀ᶠ d in Filter.atTop,
+      (0 : ℝ) < (2 : ℝ) ^ d /
+        (Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d))) ^ (1 - ε) := by
+    filter_upwards [Filter.eventually_ge_atTop 2] with d hd
+    rw [zmod_two_pi_good_threshold_isBigO.logb_two_pow]
+    apply div_pos (pow_pos (by norm_num) d)
+    apply Real.rpow_pos_of_pos
+    have hL1 : (1 : ℝ) ≤ Real.logb 2 (d : ℝ) :=
+      zmod_two_pi_good_threshold_isBigO.one_le_logb_two_of_two_le hd
+    linarith
+  have hsO := zmod_two_pi_good_threshold_isBigO.s_isLittleO ε hε
+  let f : ℕ → ℕ := fun d =>
+    if (2 : ℝ) ^ d / (Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d))) ^ (1 - ε) < t d
+      then 2 ^ (d / 2 + 1) else 0
+  have hfO : (fun d : ℕ => ((f d : ℕ) : ℝ)) =o[Filter.atTop] t := by
+    apply Asymptotics.IsLittleO.of_bound
+    intro c hc
+    filter_upwards [(Asymptotics.isLittleO_iff.mp hsO) hc, ht.1, hgpos] with d hd1 hd2 hd3
+    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity : (0 : ℝ) ≤ ((2 ^ (d / 2 + 1) : ℕ) : ℝ)),
+      Real.norm_eq_abs, abs_of_pos hd3] at hd1
+    by_cases h : (2 : ℝ) ^ d / (Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d))) ^ (1 - ε) < t d
+    · simp only [f, ite_eq_left h]
+      rw [Real.norm_eq_abs, abs_of_nonneg (by positivity : (0 : ℝ) ≤ ((2 ^ (d / 2 + 1) : ℕ) : ℝ)),
+        Real.norm_eq_abs, abs_of_pos hd2]
+      exact le_trans hd1 (mul_le_mul_of_nonneg_left h.le hc.le)
+    · simp only [f, ite_eq_right h, Nat.cast_zero, Real.norm_eq_abs, abs_zero]
+      exact mul_nonneg hc.le (abs_nonneg _)
+  have hlim := (ht.2 f).2 hfO
+  have hle : ∀ᶠ d in Filter.atTop,
+      t d ≤ (2 : ℝ) ^ d / (Real.logb 2 (Real.logb 2 ((2 : ℝ) ^ d))) ^ (1 - ε) := by
+    filter_upwards [hlim.eventually_lt_const (show (0 : ℝ) < 1 / 4 by norm_num),
+      hprob] with d hlt hleprob
+    by_contra hcon
+    push Not at hcon
+    have hfEq : f d = 2 ^ (d / 2 + 1) := by simp only [f, ite_eq_left hcon]
+    have hlt' : goodSequenceProb (Fin d → ZMod 2) (2 ^ (d / 2 + 1)) < 1 / 4 := by
+      simpa only [hfEq] using hlt
+    exact (not_lt_of_ge hleprob) hlt'
+  apply Asymptotics.IsBigO.of_bound 1
+  filter_upwards [hle, ht.1, hgpos] with d hd1 hd2 hd3
+  rw [Real.norm_eq_abs, abs_of_nonneg hd2.le, Real.norm_eq_abs, abs_of_pos hd3, one_mul]
+  exact hd1
 
 end
 

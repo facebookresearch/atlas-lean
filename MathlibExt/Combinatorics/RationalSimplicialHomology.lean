@@ -6,18 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# Rational reduced homology of finite abstract simplicial complexes
-
-Shared helper for the UnsolvedMath entries on Stanley's Positivity Problems 5 and 6
-(`WantedExt/Combinatorics/AcyclicLinksIntervalDecompositionAMR156Problem0004Wanted.lean` and
-`WantedExt/Combinatorics/CohenMacaulayPartitionabilityAMR156Problem0005Wanted.lean`), so both speak
-about the same complexes, links and Betti numbers.
--/
 module
 
 public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Mathlib.Data.Finset.Lattice.Fold
+
+/-!
+# Reduced rational homology of finite simplicial complexes
+
+The augmented boundary matrices give the reduced Betti numbers of a finite simplicial complex
+and of its face links. Faces with `k` vertices are in degree `k - 1`.
+-/
 
 @[expose] public section
 
