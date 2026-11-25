@@ -1,0 +1,105 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable
+public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
+
+/-!
+# Mixed finite matrix-square inner identity
+
+This is the genuine two-family identity for an operator-valued matrix square.
+The two vector families need not coincide. The row-vector formula is purely
+algebraic: no positivity, completeness, Cauchy–Schwarz or norm premise is used.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open scoped BigOperators
+
+namespace CStarModule.InternalTensorProduct
+
+universe uB uE uI
+
+variable {B : Type uB} [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
+variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
+variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
+
+/-- Let B be a possibly nonunital complex C-star algebra and E a normed right C-star module over
+B. For a finite index type I, an I-by-I matrix R of adjointable endomorphisms of E, and two
+I-indexed vector families, the mixed Gram pairing for R-adjoint R equals the pairing of the
+two transformed row families. -/
+theorem matrix_star_mul_mixed_inner {I : Type uI} [Fintype I]
+    (R : CStarMatrix I I (AdjointableOperator.End B E)) (u v : I → E) :
+    (∑ i, ∑ j, rightInner (B := B) (u i) ((star R * R) i j (v j))) =
+      ∑ k, rightInner (B := B) (∑ i, R k i (u i)) (∑ j, R k j (v j)) := by
+  have hEval (A : I → AdjointableOperator.End B E) (w : E) :
+      (∑ k, A k) w = ∑ k, A k w := by
+    let ev : AdjointableOperator.End B E →+ E :=
+      { toFun := fun S => S w
+        map_zero' := AdjointableOperator.zero_apply w
+        map_add' := fun S T => AdjointableOperator.add_apply S T w }
+    exact map_sum ev A Finset.univ
+  have hRight (w : E) (a : I → E) :
+      rightInner (B := B) w (∑ j, a j) =
+        ∑ j, rightInner (B := B) w (a j) := by
+    let H : E →+ B :=
+      { toFun := fun e => rightInner (B := B) w e
+        map_zero' := rightInner_zero_right w
+        map_add' := fun e f => rightInner_add_right w e f }
+    exact map_sum H a Finset.univ
+  have hLeft (a : I → E) (w : E) :
+      rightInner (B := B) (∑ i, a i) w =
+        ∑ i, rightInner (B := B) (a i) w := by
+    let H : E →+ B :=
+      { toFun := fun e => rightInner (B := B) e w
+        map_zero' := rightInner_zero_left w
+        map_add' := fun e f => rightInner_add_left e f w }
+    exact map_sum H a Finset.univ
+  calc
+    _ = ∑ i, ∑ j, ∑ k,
+        rightInner (B := B) (u i) ((star (R k i) * R k j) (v j)) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      apply Finset.sum_congr rfl
+      intro j hj
+      simp only [CStarMatrix.mul_apply, CStarMatrix.star_apply, hEval, hRight]
+    _ = ∑ i, ∑ j, ∑ k,
+        rightInner (B := B) (R k i (u i)) (R k j (v j)) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      apply Finset.sum_congr rfl
+      intro j hj
+      apply Finset.sum_congr rfl
+      intro k hk
+      rw [AdjointableOperator.mul_apply, AdjointableOperator.star_apply]
+      exact ((R k i).adjoint_inner (u i) (R k j (v j))).symm
+    _ = ∑ i, ∑ k, ∑ j,
+        rightInner (B := B) (R k i (u i)) (R k j (v j)) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      exact Finset.sum_comm
+    _ = ∑ k, ∑ i, ∑ j,
+        rightInner (B := B) (R k i (u i)) (R k j (v j)) :=
+      Finset.sum_comm
+    _ = ∑ k, rightInner (B := B)
+        (∑ i, R k i (u i)) (∑ j, R k j (v j)) := by
+      apply Finset.sum_congr rfl
+      intro k hk
+      simp only [hLeft, hRight]
+
+end CStarModule.InternalTensorProduct

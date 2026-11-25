@@ -1,0 +1,138 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.InnerProductSpace.OperatorBidual
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
+public import Mathlib.Analysis.CStarAlgebra.Hom
+
+/-!
+# Coefficient functionals of C-star algebra representations
+
+For a representation `rho : A →⋆ₐ[ℂ] B(H)` and vectors `g h : H`, this file packages the
+coefficient `a ↦ ⟪h, rho(a)g⟫` as a bounded functional on `A`.  The construction reuses the
+weak-operator coefficient functional on `B(H)` and records its sesquilinearity, norm estimate, and
+invariance under unitary intertwiners.
+-/
+
+public section
+
+open scoped InnerProductSpace
+
+namespace MathlibExt.Analysis.CStarAlgebra
+
+open MathlibExt.Analysis.InnerProductSpace
+
+noncomputable section
+
+universe u v w
+
+variable {A : Type u} [CStarAlgebra A]
+variable {H : Type v} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+private noncomputable def representationContinuousLinearMap
+    (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) : A →L[ℂ] (H →L[ℂ] H) :=
+  rho.toLinearMap.mkContinuous 1 fun a ↦ by
+    change ‖rho a‖ ≤ 1 * ‖a‖
+    simpa only [one_mul] using NonUnitalStarAlgHom.norm_apply_le rho a
+
+@[simp]
+private theorem representationContinuousLinearMap_apply
+    (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (a : A) :
+    representationContinuousLinearMap rho a = rho a :=
+  rfl
+
+/-- **Coefficient functional of a C*-representation.** Let `A` be a unital complex C*-algebra, `H` a
+complete complex Hilbert space, and `ρ : A → B(H)` a unital complex star representation. For vectors
+`g,h ∈ H`, the formula `a ↦ ⟨h,ρ(a)g⟩` defines a continuous complex-linear functional on `A`, with
+inner product linear in its second slot. -/
+noncomputable def representationCoefficient
+    (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (g h : H) : StrongDual ℂ A :=
+  (operatorCoefficient g h).comp (representationContinuousLinearMap rho)
+
+@[simp]
+theorem representationCoefficient_apply
+    (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (g h : H) (a : A) :
+    representationCoefficient rho g h a = ⟪h, (rho a) g⟫_ℂ := by
+  simp [representationCoefficient, representationContinuousLinearMap_apply]
+
+@[simp]
+theorem representationCoefficient_add_left
+    (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (g₁ g₂ h : H) :
+    representationCoefficient rho (g₁ + g₂) h =
+      representationCoefficient rho g₁ h + representationCoefficient rho g₂ h := by
+  ext a
+  simp [representationCoefficient_apply, inner_add_right]
+
+@[simp]
+theorem representationCoefficient_smul_left
+    (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (c : ℂ) (g h : H) :
+    representationCoefficient rho (c • g) h = c • representationCoefficient rho g h := by
+  ext a
+  simp [representationCoefficient_apply, inner_smul_right]
+
+@[simp]
+theorem representationCoefficient_add_right
+    (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (g h₁ h₂ : H) :
+    representationCoefficient rho g (h₁ + h₂) =
+      representationCoefficient rho g h₁ + representationCoefficient rho g h₂ := by
+  ext a
+  simp [representationCoefficient_apply, inner_add_left]
+
+@[simp]
+theorem representationCoefficient_smul_right
+    (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (c : ℂ) (g h : H) :
+    representationCoefficient rho g (c • h) =
+      star c • representationCoefficient rho g h := by
+  ext a
+  simp [representationCoefficient_apply, inner_smul_left]
+
+/-- **Norm of a representation coefficient.** Let `A` be a unital complex C*-algebra, `H` a complete
+complex Hilbert space, and `ρ : A → B(H)` a unital complex star representation. For `g,h ∈ H`, the
+continuous functional `a ↦ ⟨h,ρ(a)g⟩` has operator norm at most `‖g‖ ‖h‖`. -/
+theorem norm_representationCoefficient_le
+    (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (g h : H) :
+    ‖representationCoefficient rho g h‖ ≤ ‖g‖ * ‖h‖ := by
+  apply ContinuousLinearMap.opNorm_le_bound _ (mul_nonneg (norm_nonneg g) (norm_nonneg h))
+  intro a
+  calc
+    ‖representationCoefficient rho g h a‖ = ‖⟪h, (rho a) g⟫_ℂ‖ := by
+      rw [representationCoefficient_apply]
+    _ ≤ ‖h‖ * ‖(rho a) g‖ := norm_inner_le_norm _ _
+    _ ≤ ‖h‖ * (‖rho a‖ * ‖g‖) :=
+      mul_le_mul_of_nonneg_left ((rho a).le_opNorm g) (norm_nonneg h)
+    _ ≤ ‖h‖ * (‖a‖ * ‖g‖) := by
+      gcongr
+      exact NonUnitalStarAlgHom.norm_apply_le rho a
+    _ = (‖g‖ * ‖h‖) * ‖a‖ := by ring
+
+variable {K : Type w} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
+
+/-- **Coefficients under a unitary intertwiner.** Let `A` be a unital complex C*-algebra, let `H,K` be
+complete complex Hilbert spaces, and let `ρ : A → B(H)`, `σ : A → B(K)` be unital star
+representations. If a complex-linear isometric equivalence `U : H → K` satisfies `U(ρ(a)x) =
+σ(a)(Ux)` for every `a,x`, then `⟨Uh,σ(a)Ug⟩ = ⟨h,ρ(a)g⟩` as continuous functionals of `a`. -/
+theorem representationCoefficient_unitaryIntertwiner
+    (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H))
+    (sigma : A →⋆ₐ[ℂ] (K →L[ℂ] K))
+    (U : H ≃ₗᵢ[ℂ] K)
+    (hU : ∀ (a : A) (x : H), U ((rho a) x) = (sigma a) (U x))
+    (g h : H) :
+    representationCoefficient sigma (U g) (U h) =
+      representationCoefficient rho g h := by
+  ext a
+  rw [representationCoefficient_apply, representationCoefficient_apply, ← hU a g]
+  exact U.inner_map_map h ((rho a) g)
+
+end
+
+end MathlibExt.Analysis.CStarAlgebra
