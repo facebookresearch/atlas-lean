@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Economics.Finance.BinomialOptimalStopping
+public import MathlibExt.Probability.OptimalStopping.FiniteBinomialTree
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Rat.Cast.Order
 

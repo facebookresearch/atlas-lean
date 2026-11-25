@@ -1,0 +1,74 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.IdealQuotient
+
+/-!
+# Actual images of closed star ideals under surjective homomorphisms
+
+The carrier is the stock algebraic image. Closedness follows from the
+actual restricted C-star homomorphism, not an assumed closed-image field.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+universe u v
+
+namespace ClosedStarIdeal
+
+variable {A : Type u} {B : Type v}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+
+/-- The actual closed two-sided image of an ideal under a surjective star map. -/
+def mapOfSurjective (f : A →⋆ₙₐ[ℂ] B) (hf : Function.Surjective f)
+    (I : ClosedStarIdeal A) : ClosedStarIdeal B where
+  carrier := NonUnitalStarSubalgebra.map f I.carrier
+  isTwoSided := by
+    constructor
+    · intro b y hy
+      obtain ⟨c, rfl⟩ := hf b
+      obtain ⟨a, ha, rfl⟩ := NonUnitalStarSubalgebra.mem_map.mp hy
+      exact NonUnitalStarSubalgebra.mem_map.mpr
+        ⟨c * a, I.isTwoSided.mul_mem_left c ha, map_mul f c a⟩
+    · intro y hy b
+      obtain ⟨c, rfl⟩ := hf b
+      obtain ⟨a, ha, rfl⟩ := NonUnitalStarSubalgebra.mem_map.mp hy
+      exact NonUnitalStarSubalgebra.mem_map.mpr
+        ⟨a * c, I.isTwoSided.mul_mem_right ha c, map_mul f a c⟩
+  isClosed := by
+    let : NonUnitalCStarAlgebra I.carrier :=
+      NonUnitalStarSubalgebra.nonUnitalCStarAlgebra I.carrier
+        (h_closed := I.isClosed)
+    let restriction : I.carrier →⋆ₙₐ[ℂ] B :=
+      f.comp (NonUnitalStarSubalgebraClass.subtype I.carrier)
+    have hcarrier :
+        (NonUnitalStarSubalgebra.map f I.carrier : Set B) =
+          Set.range restriction := by
+      ext b
+      constructor
+      · intro hb
+        obtain ⟨a, ha, hab⟩ := NonUnitalStarSubalgebra.mem_map.mp hb
+        exact ⟨⟨a, ha⟩, hab⟩
+      · rintro ⟨a, ha⟩
+        exact NonUnitalStarSubalgebra.mem_map.mpr ⟨a, a.property, ha⟩
+    rw [hcarrier]
+    exact NonUnitalStarAlgHom.isClosed_range restriction
+
+@[simp]
+theorem mem_mapOfSurjective (f : A →⋆ₙₐ[ℂ] B) (hf : Function.Surjective f)
+    (I : ClosedStarIdeal A) (b : B) :
+    b ∈ mapOfSurjective f hf I ↔ ∃ a ∈ I, f a = b :=
+  NonUnitalStarSubalgebra.mem_map
+
+/-- Image membership gives the literal ideal-preservation port. -/
+theorem mapsTo_mapOfSurjective (f : A →⋆ₙₐ[ℂ] B) (hf : Function.Surjective f)
+    (I : ClosedStarIdeal A) :
+    Set.MapsTo f I (mapOfSurjective f hf I) := by
+  intro a ha
+  exact (mem_mapOfSurjective f hf I (f a)).2 ⟨a, ha, rfl⟩
+
+end ClosedStarIdeal

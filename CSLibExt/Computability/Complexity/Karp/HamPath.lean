@@ -47,7 +47,7 @@ machine and NP membership are separate components.
 
 namespace Cslib.Complexity.Karp
 
-open Cslib.CookLevin Cslib.Logic.PL
+open Cslib.CookLevin Cslib.Logic.LegacyPL
 
 /-- **Hamiltonian paths.** Let $E$ be a list of pairs of natural numbers, viewed as the digraph
 on $0, \dots, n - 1$ whose arcs are the pairs in $E$ with both ends below $n$. A list $p$ is a

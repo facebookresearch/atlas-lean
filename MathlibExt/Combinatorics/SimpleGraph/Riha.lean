@@ -150,12 +150,15 @@ private theorem Walk.mem_componentVerts_of_adj {V : Type*} {G : SimpleGraph V} {
   have hadj : (G.induce c.outside).Adj v' w' := hvw
   exact ⟨w', K.mem_supp_of_adj_mem_supp hv' hadj, rfl⟩
 
-/-- A vertex on a closed walk is bound to the walk when every neighbor also lies on it. -/
+/-- **Bound vertices of a closed walk.** Let $c$ be a closed walk in a simple graph $G$. A vertex
+$y$ is bound to $c$ when $y$ lies on $c$ and every neighbor of $y$ in $G$ lies on $c$. -/
 public def Walk.IsBoundVertex {V : Type*} {G : SimpleGraph V} {x : V}
     (c : G.Walk x x) (y : V) : Prop :=
   y ∈ c.support ∧ ∀ ⦃z⦄, G.Adj y z → z ∈ c.support
 
-/-- A vertex is bound to a closed walk exactly when it and all its neighbors lie on the walk. -/
+/-- **Characterization of bound vertices.** Let $c$ be a closed walk in a simple graph $G$. A
+vertex $y$ is bound to $c$ if and only if $y$ lies on $c$ and every neighbor of $y$ in $G$ lies
+on $c$. -/
 public theorem Walk.isBoundVertex_iff {V : Type*} {G : SimpleGraph V} {x : V}
     (c : G.Walk x x) (y : V) :
     c.IsBoundVertex y ↔ y ∈ c.support ∧ ∀ ⦃z⦄, G.Adj y z → z ∈ c.support :=
@@ -562,8 +565,9 @@ private theorem IsVertexConnected.exists_bound_or_smaller_component
     intro hdL
     exact (c'.componentVerts_subset_outside L hdL) hdc'
 
-/-- In a finite 2-vertex-connected graph, every prescribed vertex lies on a cycle with a
-different vertex whose neighbors all lie on the cycle. -/
+/-- **Říha's cycle lemma.** Let $G$ be a finite $2$-vertex-connected simple graph. Then for
+every vertex $x$ of $G$ there is a cycle $c$ through $x$ and a vertex $y \ne x$ that is bound
+to $c$: $y$ lies on $c$ and every neighbor of $y$ in $G$ lies on $c$. -/
 public theorem IsVertexConnected.exists_cycle_bound_vertex
     {V : Type*} [Fintype V] {G : SimpleGraph V} (hG : G.IsVertexConnected 2) (x : V) :
     ∃ c : G.Walk x x, c.IsCycle ∧ ∃ y, y ≠ x ∧ c.IsBoundVertex y := by

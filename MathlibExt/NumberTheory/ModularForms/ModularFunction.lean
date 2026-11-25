@@ -25,14 +25,19 @@ open scoped UpperHalfPlane MatrixGroups
 
 namespace ModularFunction
 
-/-- A function on `ℍ` is meromorphic if it extends to a function
-meromorphic on the upper half-plane viewed as a subset of `ℂ`. -/
+/-- **Meromorphy on the upper half-plane.** A function $f \colon \mathbb{H} \to \mathbb{C}$ on
+the upper half-plane is meromorphic when there is a function $g \colon \mathbb{C} \to \mathbb{C}$
+that is meromorphic on the open set $\{z \in \mathbb{C} : \operatorname{Im} z > 0\}$ and
+satisfies $g(\tau) = f(\tau)$ for every $\tau \in \mathbb{H}$. -/
 def IsMeromorphicOnH (f : ℍ → ℂ) : Prop :=
   ∃ g : ℂ → ℂ, MeromorphicOn g UpperHalfPlane.upperHalfPlaneSet ∧
     ∀ τ : ℍ, g (τ : ℂ) = f τ
 
-/-- A function on `ℍ` is invariant under `Γ` if it is constant on
-each `Γ`-orbit for the Möbius action. -/
+/-- **Invariance under a subgroup of the modular group.** Let $\Gamma$ be a subgroup of
+$\mathrm{SL}(2, \mathbb{Z})$. A function $f \colon \mathbb{H} \to \mathbb{C}$ on the upper
+half-plane is invariant under $\Gamma$ when $f(\gamma \cdot \tau) = f(\tau)$ for every
+$\gamma \in \Gamma$ and every $\tau \in \mathbb{H}$, where $\gamma$ acts on $\mathbb{H}$ by
+Möbius transformations. -/
 def IsInvariantUnder (f : ℍ → ℂ) (Γ : Subgroup SL(2, ℤ)) : Prop :=
   ∀ (γ : SL(2, ℤ)), γ ∈ Γ → ∀ τ : ℍ, f (γ • τ) = f τ
 
@@ -40,9 +45,11 @@ end ModularFunction
 
 open ModularFunction
 
-/-- A modular function for `Γ`: meromorphic on `ℍ`, invariant under
-`Γ`, and meromorphic at the cusps. No congruence hypothesis is
-assumed on `Γ`. -/
+/-- **Modular functions.** Let $\Gamma$ be a subgroup of $\mathrm{SL}(2, \mathbb{Z})$. A function
+$f \colon \mathbb{H} \to \mathbb{C}$ on the upper half-plane is a modular function for $\Gamma$
+when it is meromorphic on $\mathbb{H}$, invariant under $\Gamma$, and meromorphic at the cusps.
+
+No congruence hypothesis is assumed on $\Gamma$. -/
 structure IsModularFunction (f : ℍ → ℂ) (Γ : Subgroup SL(2, ℤ)) : Prop where
   meromorphicOnH : IsMeromorphicOnH f
   invariant : IsInvariantUnder f Γ

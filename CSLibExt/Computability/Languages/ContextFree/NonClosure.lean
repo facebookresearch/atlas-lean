@@ -43,7 +43,9 @@ private theorem flatten_replicate_singleton {α : Type*} (a : α) :
       flatten_replicate_singleton a k, List.replicate_succ]
     rfl
 
-/-- The star of a singleton language is the set of constant words. -/
+/-- **The Kleene star of a one-letter word.** For a letter $a$ of an alphabet, a word $w$ belongs
+to the Kleene star of the language $\{a\}$ whose only word is the one-letter word $a$ if and only
+if $w = a^k$ for some $k \in \mathbb{N}$. -/
 theorem mem_kstar_singleton {α : Type*} {a : α} {w : List α} :
     w ∈ KStar.kstar ({[a]} : Language α) ↔
       ∃ k, w = List.replicate k a := by
@@ -71,11 +73,14 @@ theorem mem_kstar_singleton {α : Type*} {a : α} {w : List α} :
     rw [this]
     exact rfl
 
-/-- The language of words `a^n b^n`. -/
+/-- **The language $a^n b^n$.** For letters $a$ and $b$ of an alphabet, this is the language of the
+words $a^n b^n$ for $n \in \mathbb{N}$: $n$ copies of $a$ followed by $n$ copies of $b$. -/
 def eqPowLang {α : Type*} (a b : α) : Language α :=
   {w | ∃ n, w = List.replicate n a ++ List.replicate n b}
 
-/-- The grammar `S → a S b | ε` for `a^n b^n`. -/
+/-- **The grammar $S \to aSb \mid \varepsilon$.** For letters $a$ and $b$ of an alphabet with
+decidable equality, this is the context-free grammar with a single nonterminal $S$, which is its
+start symbol, and the two rules $S \to aSb$ and $S \to \varepsilon$. -/
 def eqPowGrammar {α : Type*} [DecidableEq α] (a b : α) :
     ContextFreeGrammar α where
   NT := Unit
@@ -93,7 +98,10 @@ private theorem mem_eqPowGrammar_rules {α : Type*} [DecidableEq α]
   · exact Finset.mem_insert_self _ _
   · exact Finset.mem_insert_of_mem (Finset.mem_singleton_self _)
 
-/-- The grammar `S → a S b | ε` generates `a^n b^n`. -/
+/-- **The grammar $S \to aSb \mid \varepsilon$ generates $a^n b^n$.** For letters $a$ and $b$ of an
+alphabet with decidable equality, the language of the context-free grammar with a single
+nonterminal $S$, its start symbol, and the two rules $S \to aSb$ and $S \to \varepsilon$ is the
+language of the words $a^n b^n$ for $n \in \mathbb{N}$. -/
 theorem eqPowGrammar_language {α : Type*} [DecidableEq α] (a b : α) :
     (eqPowGrammar a b).language = eqPowLang a b := by
   apply le_antisymm
@@ -161,14 +169,16 @@ theorem eqPowGrammar_language {α : Type*} [DecidableEq α] (a b : α) :
         exact yields_of_rule (mem_eqPowGrammar_rules a b).1 hform
     exact mem_language_iff_yields.mpr (hy n)
 
-/-- The language `a^n b^n` is context-free. -/
+/-- **The language $a^n b^n$ is context-free.** For any alphabet and any letters $a$ and $b$ of it,
+the language of the words $a^n b^n$ for $n \in \mathbb{N}$ is context-free. -/
 theorem eqPowLang_isContextFree {α : Type*} (a b : α) :
     (eqPowLang a b).IsContextFree := by
   classical
   exact ⟨eqPowGrammar a b, eqPowGrammar_language a b⟩
 
-/-- The language of words `a^n b^n c^n` over the alphabet `Fin 3`
-(with `0, 1, 2` for `a, b, c`). -/
+/-- **The language $a^n b^n c^n$.** Over the three-letter alphabet $\{a, b, c\}$ (the letters
+$0, 1, 2$), this is the language of the words $a^n b^n c^n$ for $n \in \mathbb{N}$: $n$ copies of
+$a$, then $n$ copies of $b$, then $n$ copies of $c$. -/
 def anbncnLang : Language (Fin 3) :=
   {w | ∃ n, w = List.replicate n 0 ++ List.replicate n 1 ++
     List.replicate n 2}
@@ -247,10 +257,13 @@ private theorem not_both_mem_factor_of_get {n : ℕ}
   · rw [hgj] at h; exact absurd h (by decide)
   · omega
 
-/-- The language `a^n b^n c^n` is not context-free, by the pumping
-lemma: pumping `a^n b^n c^n` down would keep the three letter counts
-equal, so the pumped factor has equal counts of all letters, but a
-short factor misses `a` or `c`, forcing the factor to be empty. -/
+/-- **The language $a^n b^n c^n$ is not context-free.** Over the three-letter alphabet $\{a, b, c\}$
+(the letters $0, 1, 2$), the language of the words $a^n b^n c^n$ for $n \in \mathbb{N}$ is not
+context-free.
+
+Proof idea: by the pumping lemma, pumping $a^n b^n c^n$ down would keep the three letter counts
+equal, so the pumped factor has equal counts of all letters, but a short factor misses $a$ or $c$,
+forcing the factor to be empty. -/
 theorem anbncnLang_not_isContextFree : ¬ anbncnLang.IsContextFree := by
   intro hCF
   obtain ⟨n, -, hpump⟩ := IsContextFree.pumping hCF
@@ -368,15 +381,19 @@ private theorem inter_eq_anbncn :
           List.replicate n 1 ++ List.replicate n 2, ⟨n, rfl⟩,
           by rw [List.append_assoc]⟩
 
-/-- Context-free languages are not closed under intersection. -/
+/-- **Context-free languages are not closed under intersection.** There are context-free languages
+$L$ and $M$ over the three-letter alphabet $\{0, 1, 2\}$ whose intersection $L \cap M$ is not
+context-free. -/
 theorem exists_isContextFree_inf_not_isContextFree :
     ∃ L M : Language (Fin 3), L.IsContextFree ∧ M.IsContextFree ∧
       ¬ (L ⊓ M).IsContextFree :=
   ⟨_, _, anbncStar_isContextFree, aStarbncn_isContextFree,
     fun h => anbncnLang_not_isContextFree (inter_eq_anbncn ▸ h)⟩
 
-/-- Context-free languages are not closed under complement: closure
-under complement and union would give closure under intersection. -/
+/-- **Context-free languages are not closed under complement.** There is a context-free language
+$L$ over the three-letter alphabet $\{0, 1, 2\}$ whose complement is not context-free.
+
+Closure under complement and union would give closure under intersection. -/
 theorem exists_isContextFree_compl_not_isContextFree :
     ∃ L : Language (Fin 3), L.IsContextFree ∧
       ¬ (Lᶜ).IsContextFree := by
@@ -403,8 +420,9 @@ theorem exists_isContextFree_compl_not_isContextFree :
       (hcon _ aStarbncn_isContextFree)
   exact anbncnLang_not_isContextFree (hDM ▸ hcon _ hsum)
 
-/-- It is not the case that every pair of context-free languages has
-context-free intersection. -/
+/-- **Intersections of context-free languages need not be context-free.** Over the three-letter
+alphabet $\{0, 1, 2\}$, it is not the case that for all context-free languages $L$ and $M$ the
+intersection $L \cap M$ is context-free. -/
 theorem not_forall_isContextFree_inf :
     ¬ ∀ L M : Language (Fin 3), L.IsContextFree → M.IsContextFree →
       (L ⊓ M).IsContextFree := by
@@ -413,8 +431,9 @@ theorem not_forall_isContextFree_inf :
     exists_isContextFree_inf_not_isContextFree
   exact hnot (h L M hL hM)
 
-/-- It is not the case that the complement of every context-free
-language is context-free. -/
+/-- **Complements of context-free languages need not be context-free.** It is not the case that
+for every context-free language $L$ over the three-letter alphabet $\{0, 1, 2\}$, the complement
+of $L$ is context-free. -/
 theorem not_forall_isContextFree_compl :
     ¬ ∀ L : Language (Fin 3), L.IsContextFree →
       (Lᶜ).IsContextFree := by

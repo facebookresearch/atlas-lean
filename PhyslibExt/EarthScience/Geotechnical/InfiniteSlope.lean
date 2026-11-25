@@ -91,7 +91,7 @@ noncomputable def infiniteSlopeNormalStress (gamma z beta : ℝ) : ℝ :=
 noncomputable def infiniteSlopeDrivingStress (gamma z beta : ℝ) : ℝ :=
   gamma * z * Real.sin beta * Real.cos beta
 
-/-- The normal component of slab weight per slip-plane area is the
+/-- The normal component of slab weight per slip-plane area `A > 0` is the
 normal stress. -/
 theorem infiniteSlopeNormalStress_eq {A gamma z beta : ℝ} (hA : 0 < A) :
     gamma * infiniteSlopeSlabVolume A z beta * Real.cos beta / A
@@ -100,7 +100,7 @@ theorem infiniteSlopeNormalStress_eq {A gamma z beta : ℝ} (hA : 0 < A) :
   unfold infiniteSlopeSlabVolume infiniteSlopeNormalStress
   field_simp
 
-/-- The downslope component of slab weight per slip-plane area is the
+/-- The downslope component of slab weight per slip-plane area `A > 0` is the
 driving shear stress. -/
 theorem infiniteSlopeDrivingStress_eq {A gamma z beta : ℝ} (hA : 0 < A) :
     gamma * infiniteSlopeSlabVolume A z beta * Real.sin beta / A
@@ -135,18 +135,21 @@ compression-positive effective normal stress `σn - u` (Biot
 coefficient one, slip-plane pore pressure `u`) times
 `tan phi`, for friction angle `phi`. `Real.tan` and the safety
 ratio below use totalized real division; the admission theorems
-assume a genuine slope, where the driving stress is positive. -/
+assume a genuine slope, where the driving stress is positive.
+With the convention `x / 0 = 0`, `tan phi = 0` where `cos phi = 0`,
+so the resisting stress is then `c`. -/
 noncomputable def infiniteSlopeResistingStress (c phi gamma z beta u : ℝ) :
     ℝ :=
   c + (infiniteSlopeNormalStress gamma z beta - u) * Real.tan phi
 
 /-- Safety ratio `tauR / tau_d` of a resisting shear stress
-against the slab driving stress (totalized division). -/
+against the slab driving stress (totalized division: with the
+convention `x / 0 = 0`, it is `0` when `tau_d = 0`). -/
 noncomputable def infiniteSlopeSafetyRatio (tauR gamma z beta : ℝ) : ℝ :=
   tauR / infiniteSlopeDrivingStress gamma z beta
 
 /-- Denominator sign: the driving stress is positive on a
-genuine slope. -/
+genuine slope (`0 < gamma`, `0 < z`, `0 < beta < π / 2`). -/
 theorem infiniteSlopeDrivingStress_pos {gamma z beta : ℝ}
     (hgamma : 0 < gamma) (hz : 0 < z) (hbeta0 : 0 < beta)
     (hbeta : beta < Real.pi / 2) :
@@ -159,7 +162,8 @@ theorem infiniteSlopeDrivingStress_pos {gamma z beta : ℝ}
     Real.cos_pos_of_mem_Ioo ⟨by linarith, hbeta⟩
   exact mul_pos (mul_pos (mul_pos hgamma hz) hsin) hcos
 
-/-- Main result: `tau_d > 0`, and
+/-- Main result: on a genuine slope (`0 < gamma`, `0 < z`,
+`0 < beta < π / 2`), `tau_d > 0`, and
 `tauR / tau_d ≥ 1 ↔ tauR ≥ tau_d`. -/
 theorem infiniteSlopeSafetyRatio_admission {tauR gamma z beta : ℝ}
     (hgamma : 0 < gamma) (hz : 0 < z) (hbeta0 : 0 < beta)
@@ -173,7 +177,9 @@ theorem infiniteSlopeSafetyRatio_admission {tauR gamma z beta : ℝ}
   unfold infiniteSlopeSafetyRatio
   exact one_le_div₀ hpos
 
-/-- The admission for the Mohr–Coulomb resisting stress. -/
+/-- The admission for the Mohr–Coulomb resisting stress: on a genuine slope (`0 < gamma`, `0 < z`,
+`0 < beta < π / 2`), the safety ratio is at least one exactly when the resisting stress is at least
+the driving stress. Here `tan phi = 0` where `cos phi = 0`, by the convention `x / 0 = 0`. -/
 theorem infiniteSlope_mohrCoulomb_admission {c phi gamma z beta u : ℝ}
     (hgamma : 0 < gamma) (hz : 0 < z) (hbeta0 : 0 < beta)
     (hbeta : beta < Real.pi / 2) :
@@ -196,10 +202,9 @@ theorem effectiveNormalStress_eq {m : ℕ} (σc : Matrix (Fin m) (Fin m) ℝ)
 
 /-! ## C. Pore-pressure monotonicity -/
 
-/-- Two safety ratios differ by the change in effective normal
-stress times `tan phi` over the driving stress:
-`F u₁ - F u₂ = (u₂ - u₁) * tan phi / τd`. An algebraic identity
-of the totalized definitions for all real inputs, not a
+/-- Two safety ratios differ by the change in effective normal stress times `tan phi` over the
+driving stress: `F u₁ - F u₂ = (u₂ - u₁) * tan phi / τd`. An algebraic identity for all real inputs,
+including `τd = 0` or `cos phi = 0`, with the convention `x / 0 = 0` on both sides; not a
 monotonicity claim. -/
 lemma infiniteSlopeSafetyRatio_porePressure_sub
     (c phi gamma z beta u₁ u₂ : ℝ) :
@@ -215,14 +220,14 @@ lemma infiniteSlopeSafetyRatio_porePressure_sub
   ring
 
 /-- Raising the pore pressure within the contact domain
-`0 ≤ u ≤ σn` cannot raise the safety ratio of an admissible
-slab with `0 ≤ phi < π / 2`. Nothing is claimed for
+`0 ≤ u ≤ σn` cannot raise the safety ratio of a slab on a
+genuine slope (`0 < gamma`, `0 < z`, `0 < beta < π / 2`) with
+`0 ≤ phi < π / 2`. Nothing is claimed for
 `u > σn` (tensile effective stress; no tension cutoff) or
 `u < 0` (suction). The cohesion `c` is unrestricted (it
-cancels in the difference; physically `c ≥ 0`). The bound
-`phi < π / 2` is needed because `tan` is totalized at
-`π / 2`, and the slab premises because the ratio is
-totalized to `0` at `τd = 0`. -/
+cancels in the difference; physically `c ≥ 0`). The premises
+give `tan phi ≥ 0` and `τd > 0`; for `π / 2 < phi < π`, where
+`tan phi < 0`, the ratio increases with `u`. -/
 theorem infiniteSlopeSafetyRatio_antitoneOn_porePressure
     {c phi gamma z beta : ℝ}
     (hgamma : 0 < gamma) (hz : 0 < z) (hbeta0 : 0 < beta)
@@ -255,7 +260,8 @@ theorem infiniteSlopeSafetyRatio_antitoneOn_porePressure
     exact hle
   exact sub_nonpos.mp hle'
 
-/-- With positive friction `0 < phi < π / 2` the decrease is
+/-- With positive friction `0 < phi < π / 2`, on a genuine slope
+(`0 < gamma`, `0 < z`, `0 < beta < π / 2`), the decrease is
 strict: for `0 ≤ u₁ < u₂ ≤ σn` the ratio at `u₂` is strictly
 below the ratio at `u₁`. -/
 theorem infiniteSlopeSafetyRatio_strictAntiOn_porePressure
@@ -289,10 +295,9 @@ theorem infiniteSlopeSafetyRatio_strictAntiOn_porePressure
     exact hlt
   exact sub_neg.mp hlt'
 
-/-- Without friction the pore pressure drops out: at
-`phi = 0` the ratio is `c / τd` on the whole contact domain,
-for all data, by `tan 0 = 0` (`c / τd` is the genuine ratio
-only on a genuine slope, where `τd > 0`). -/
+/-- Without friction the pore pressure drops out: at `phi = 0` the ratio is `c / τd` on the whole
+contact domain, for all data, by `tan 0 = 0` (`c / τd` is the genuine ratio only on a genuine slope,
+where `τd > 0`). Where `τd = 0` both sides are `0`, by the convention `x / 0 = 0`. -/
 lemma infiniteSlopeSafetyRatio_eqOn_porePressure_of_phi_eq_zero
     {c gamma z beta : ℝ} :
     Set.EqOn
@@ -309,7 +314,8 @@ lemma infiniteSlopeSafetyRatio_eqOn_porePressure_of_phi_eq_zero
   unfold infiniteSlopeSafetyRatio infiniteSlopeResistingStress
   simp [Real.tan_zero]
 
-/-- Main result: for an admissible slab and
+/-- Main result: for a slab on a genuine slope (`0 < gamma`,
+`0 < z`, `0 < beta < π / 2`) and
 `0 ≤ phi < π / 2`, the safety ratio is antitone in the pore
 pressure on `[0, σn]`, strictly antitone there exactly when
 `0 < phi`, and constant (`c / τd`) there when `phi = 0`. The

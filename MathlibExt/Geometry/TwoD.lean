@@ -55,13 +55,13 @@ variable [NormedAddCommGroup V] [InnerProductSpace ℝ V] [MetricSpace P] [Norme
 
 variable [Module.Oriented ℝ V (Fin 2)] [Fact (Module.finrank ℝ V = 2)] {p : Fin n → P}
 
-/-- We say a subset `A` of points in the plane is non-trilinear
-if it contains no three points that lie on the same line. -/
+/-- **Sets with no three collinear points.** A set $A$ of points in the plane is non-trilinear
+if no three distinct points of $A$ lie on a common line. -/
 def NonTrilinear (A : Set P) : Prop :=
   A.Triplewise (fun x y z ↦ ¬ Collinear ℝ {x, y, z})
 
-/-- We say a subset `S` of points is non-collinear for $n$ points
-if it contains no $n$ points that lie on the same line. -/
+/-- **Sets with no $n$ collinear points.** A set $S$ of points in a Euclidean affine space has no
+$n$ collinear points if no subset of $S$ consisting of exactly $n$ points is collinear. -/
 def NonCollinearFor (n : ℕ) (S : Set P) : Prop :=
   ∀ (A : Set P), A ⊆ S → A.Finite → A.ncard = n → ¬ Collinear ℝ A
 
@@ -71,13 +71,18 @@ lemma NonCollinearFor.subset {n : ℕ} {S T : Set P} (h : S ⊆ T) (hS : NonColl
   intro A hA hFin hCard
   exact hS A (hA.trans h) hFin hCard
 
-/-- The set `P` contains a convex `n`-gon.
-See also `IsConvexPolygon`. -/
+/-- **Sets containing a convex $n$-gon.** A set $P \subseteq \mathbb{R}^2$ contains a convex
+$n$-gon if there is a set $S \subseteq P$ of exactly $n$ points that is convex independent: no
+point of $S$ lies in the convex hull of the other points of $S$. -/
 def HasConvexNGon (n : ℕ) (P : Set ℝ²) : Prop :=
   ∃ S : Finset ℝ², S.card = n ∧ ↑S ⊆ P ∧
     ConvexIndependent ℝ (fun x : (↑S : Set ℝ²) => (x : ℝ²))
 
-/-- The statement that a sequence of points form a counter-clockwise convex polygon. -/
+/-- **Counterclockwise convex polygons.** Let $P$ be an oriented two-dimensional Euclidean affine
+space. Points $p_0, \dots, p_{n-1} \in P$ form a counterclockwise convex polygon if for all
+indices $i < j < k$ the oriented angle $\measuredangle p_i p_j p_k$ at $p_j$ has sign $-1$, that
+is, $p_i, p_j, p_k$ are not collinear and lie in counterclockwise order with respect to the
+orientation of $P$. Every list of at most two points qualifies. -/
 def IsCcwConvexPolygon (p : Fin n → P) : Prop :=
   ∀ ⦃i j k⦄, i < j → j < k → (∡ (p i) (p j) (p k)).sign = -1
 
@@ -144,11 +149,19 @@ theorem isCcwConvexPolygon_four (A B C D : P) :
       (∡ A B C).sign = -1 ∧ (∡ B C D).sign = -1 ∧ (∡ C D A).sign = -1 ∧ (∡ D A B).sign = -1 :=
   isCcwConvexPolygon_four'
 
-/-- The statement that a sequence of points form a convex polygon. -/
+/-- **Convex polygons.** Points $p_0, \dots, p_{n-1}$ of an oriented two-dimensional Euclidean
+affine space form a convex polygon if one of the lists $p_0, p_1, \dots, p_{n-1}$ and
+$p_0, p_{n-1}, p_{n-2}, \dots, p_1$ is a counterclockwise convex polygon: for any three of its
+entries $q, r, s$, in the order in which they occur in that list, the oriented angle
+$\measuredangle q r s$ at $r$ has sign $-1$. Thus for $n \ge 3$ the points are the vertices of a
+strictly convex polygon, listed counterclockwise or clockwise starting from $p_0$; every list of
+at most two points qualifies. -/
 def IsConvexPolygon {n : ℕ} (p : Fin n → P) : Prop :=
   IsCcwConvexPolygon p ∨ IsCcwConvexPolygon fun i => p (-i)
 
-/-- Three affine independent points always form a convex polygon. -/
+/-- **Affinely independent triples are convex polygons.** If three points $A, B, C$ of an oriented
+two-dimensional Euclidean affine space are affinely independent, then $A, B, C$ form a convex
+polygon. -/
 theorem isConvexPolygon_three_of_affineIndependent {A B C : P}
     (hABC : AffineIndependent ℝ ![A, B, C]) : IsConvexPolygon ![A, B, C] := by
   rw [← oangle_ne_zero_and_ne_pi_iff_affineIndependent, ← Real.Angle.sign_ne_zero_iff] at hABC
@@ -185,9 +198,13 @@ theorem isConvexPolygon_triangle (t : Affine.Triangle ℝ P) : IsConvexPolygon t
   rw [this, isConvexPolygon_three_iff_affineIndependent, ← this]
   exact t.independent
 
-/-- The signed oriented area of the triangle with vertices `a b c`: half the value of the
-positive orientation area form on the edge vectors. It negates when two vertices are
-swapped, and may be negative for clockwise ordering. -/
+/-- **Oriented triangle area.** Let $\omega$ be the area form of the given orientation of the
+Euclidean plane, so that $\omega(u, v)$ is the signed area of the parallelogram spanned by the
+vectors $u$ and $v$. For points $a$, $b$, $c$ of the plane, the oriented area of the triangle
+with vertices $a$, $b$, $c$ is the real number $\omega(a - c, b - c) / 2$.
+
+It changes sign when two vertices are swapped, and it is positive when $a$, $b$, $c$ are in
+counterclockwise order and negative when they are in clockwise order. -/
 noncomputable def orientedTriangleArea (a b c : P) : ℝ :=
   positiveOrientation.areaForm (a -ᵥ c) (b -ᵥ c) / 2
 
@@ -204,33 +221,41 @@ lemma orientedTriangleArea_eq_det (a b c : ℝ²) :
     simp [Matrix.det_fin_two, Matrix.det_fin_three, Module.Basis.toMatrix, this]
   ring
 
-/-- Let $x_1,\ldots,x_n\in \mathbb{R}^2$ and let $R(x_i)=\#\{ \lvert x_j-x_i\rvert : j\neq i\}$,
-where the points are ordered such that
-$$R(x_1)\leq \cdots \leq R(x_n).$$
-Let $g(n)$ be the maximum number of distinct values the $R(x_i)$ can take. -/
+/-- **Maximum number of distinct distance counts.** For a finite set $X \subseteq \mathbb{R}^2$
+and a point $x \in X$, let $R_X(x)$ be the number of distinct distances $\lvert y - x \rvert$
+from $x$ to the points $y \in X$ other than $x$. For $n \in \mathbb{N}$, $g(n)$ is the maximum,
+over all sets $X \subseteq \mathbb{R}^2$ of exactly $n$ points, of the number of distinct values
+among the numbers $R_X(x)$ with $x \in X$. -/
 noncomputable def maximalDistinctDistancesFrom (n : ℕ) : ℕ :=
   sSup {#(X.image (distinctDistancesFrom X)) | (X : Finset ℝ²) (_ : #X = n)}
 
-/-- A collection $x_1, \dots, x_n\in\mathbb{R}^2$ is in _general position_
-if no three are collinear and no four lie on a circle.
-
-Stated for `Set ℝ²` so that infinite collections are covered; a `Finset` argument coerces. -/
+/-- **Points in general position.** A set $X \subseteq \mathbb{R}^2$, finite or infinite, is in
+_general position_ if no three distinct points of $X$ are collinear and no four distinct points
+of $X$ lie on a common circle. -/
 def InGeneralPosition (X : Set ℝ²) : Prop :=
   NonTrilinear X ∧ ∀ T ⊆ X, T.ncard = 4 → ¬Cospherical T
 
-/-- `a b c` are the vertices of a right-angled triangle: the three vertices are pairwise
-distinct and the (unoriented) angle at one of the three vertices equals `π / 2`. The
-distinctness hypothesis rules out degenerate triples, whose angles can coincide with `π / 2`. -/
+/-- **Right-angled triangles.** Points $a, b, c$ of a Euclidean affine space are the vertices of a
+right-angled triangle if they are pairwise distinct and the unoriented angle at one of the three
+vertices equals $\pi / 2$: $\angle bac = \pi / 2$, $\angle abc = \pi / 2$ or
+$\angle bca = \pi / 2$.
+
+The distinctness hypothesis rules out degenerate triples, whose angles can coincide with
+$\pi / 2$. -/
 def IsRightAngled (a b c : P) : Prop :=
   a ≠ b ∧ a ≠ c ∧ b ≠ c ∧
     (∠ b a c = π / 2 ∨ ∠ a b c = π / 2 ∨ ∠ b c a = π / 2)
 
 /--
-`a b c d` are the vertices, in counter-clockwise order, of an isosceles trapezoid: they are in
-strictly convex position, the side `ab` is parallel to the side `cd` (the two bases), and the
-diagonals `ac` and `bd` have equal length. One pair of parallel sides together with equal
-diagonals is the classical characterization of an isosceles trapezoid; in particular it rules
-out non-rectangular parallelograms.
+**Isosceles trapezoids.** Points $a, b, c, d \in \mathbb{R}^2$ are the vertices, in
+counterclockwise order, of an isosceles trapezoid if they are in strictly convex position and
+listed counterclockwise (for any three of them $p, q, r$, in the order in which they occur in the
+list $a, b, c, d$, the oriented angle $\measuredangle p q r$ at $q$ has sign $-1$), the line
+through $a$ and $b$ is parallel to the line through $c$ and $d$ (the two bases), and the
+diagonals have equal length: $\operatorname{dist}(a, c) = \operatorname{dist}(b, d)$.
+
+One pair of parallel sides together with equal diagonals is the classical characterization of an
+isosceles trapezoid; in particular it rules out non-rectangular parallelograms.
 -/
 def IsIsoscelesTrapezoid (a b c d : ℝ²) : Prop :=
   IsCcwConvexPolygon ![a, b, c, d] ∧
@@ -245,7 +270,9 @@ def IsIsosceles {α : Type*} [Dist α] (p q r : α) : Prop :=
 nonrec def Set.IsIsosceles {α : Type*} [Dist α] (A : Set α) :=
   Nonempty A ∧ A.Triplewise (IsIsosceles · · ·)
 
-/-- A set is isosceles-free if no three distinct points in it form an isosceles triangle. -/
+/-- **Isosceles-free sets.** A set $A$ in a space with a distance function $d$ is isosceles-free if
+there are no three distinct points $x, y, z \in A$ such that two of the distances $d(x, y)$,
+$d(y, z)$, $d(z, x)$ are equal. -/
 def Set.IsIsoscelesFree {α : Type*} [Dist α] (A : Set α) : Prop :=
   A.Triplewise fun x y z ↦ ¬ _root_.IsIsosceles x y z
 
