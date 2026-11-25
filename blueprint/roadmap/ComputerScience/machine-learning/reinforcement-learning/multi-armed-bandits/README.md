@@ -19,5 +19,4 @@
 - [Canonical bandit model](canonical-bandit-model/README.md)
 - [Pull-count bound for UCB1](pull-count-bound-for-ucb1.md)
 - [Minimax regret lower bound for Gaussian bandits](minimax-regret-lower-bound-for-gaussian-bandits.md)
-- [Stochastic linear bandits and LinUCB regret](stochastic-linear-bandits-and-linucb-regret.md)
-- [Elliptical potential lemma](elliptical-potential-lemma.md)
+- [Linear bandits](linear-bandits/README.md)

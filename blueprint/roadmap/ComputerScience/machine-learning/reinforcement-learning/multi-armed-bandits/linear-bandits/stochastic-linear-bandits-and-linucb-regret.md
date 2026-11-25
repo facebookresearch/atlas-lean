@@ -3,6 +3,10 @@
 This node covers the stochastic linear bandit model, the confidence ellipsoid of regularized least squares
 and the regret of LinUCB; the elliptical potential bounds used in the regret proof are results of their own.
 
+## Proof depends on
+
+- [Elliptical potential lemma](elliptical-potential-lemma.md)
+
 ## Expansion
 
 A sound expansion has separate pages for:
