@@ -70,19 +70,20 @@ noncomputable def horizontalNaturalSuccCochainEvalIso (p q : ℕ) :
     ((horizontalFilteredTotalComplex K (p + 1)).extendXIso e hn).symm
   let e₂ : S.X₃ ≅ T.X₃ := (horizontalDirectColumnCochainXIso K (p + 1) q).symm
   refine ShortComplex.isoMk e₀ e₁ e₂ ?_ ?_
-  · change e₀.hom ≫
-        (HomologicalComplex.extendMap
-          (horizontalFilteredTotalComplexMap K (Nat.le_succ p)) e).f n = S.f ≫ e₁.hom
-    rw [HomologicalComplex.extendMap_f _ _ hn]
-    dsimp only [e₀, e₁, S, horizontalFilteredSuccShortComplex]
-    simp only [Iso.symm_hom, Category.assoc, Iso.inv_hom_id_assoc]
-    rfl
-  · change e₁.hom ≫ horizontalNaturalDirectColumnProjection K (p + 1) n = S.g ≫ e₂.hom
-    dsimp only [n]
-    rw [horizontalNaturalDirectColumnProjection_eq_component K (p + 1) q]
-    dsimp only [e₁, e₂, S, horizontalFilteredSuccShortComplex,
-      horizontalNaturalDirectColumnProjectionComponent]
-    simp
+  · have hmap : T.f = e₀.inv ≫ S.f ≫ e₁.hom := by
+      change (HomologicalComplex.extendMap
+        (horizontalFilteredTotalComplexMap K (Nat.le_succ p)) e).f n = _
+      rw [HomologicalComplex.extendMap_f _ _ hn]
+      rfl
+    exact (congrArg (fun f : T.X₁ ⟶ T.X₂ => e₀.hom ≫ f) hmap).trans
+      (e₀.hom_inv_id_assoc (S.f ≫ e₁.hom))
+  · have hprojection : T.g = e₁.inv ≫ S.g ≫ e₂.hom := by
+      change horizontalNaturalDirectColumnProjection K (p + 1) n = _
+      dsimp only [n]
+      rw [horizontalNaturalDirectColumnProjection_eq_component K (p + 1) q]
+      rfl
+    exact (congrArg (fun g : T.X₂ ⟶ T.X₃ => e₁.hom ≫ g) hprojection).trans
+      (e₁.hom_inv_id_assoc (S.g ≫ e₂.hom))
 
 omit [HasZeroObject C] in
 /-- Before the new horizontal column appears, consecutive filtration stages
@@ -122,14 +123,25 @@ theorem horizontalNaturalSuccCochainMap_f_isIso_of_lt
         ComplexShape.embeddingDownNat).f (-(n : ℤ)))
     rw [HomologicalComplex.extendMap_f _ _
       (i := n) (i' := -(n : ℤ)) (by simp)]
-    let _ := hmap
+    let e₀ : ((horizontalFilteredTotalComplex K p).extend
+        ComplexShape.embeddingDownNat).X (-(n : ℤ)) ≅
+          (horizontalFilteredTotalComplex K p).X n :=
+      (horizontalFilteredTotalComplex K p).extendXIso
+        ComplexShape.embeddingDownNat (by simp)
+    let e₁ : ((horizontalFilteredTotalComplex K (p + 1)).extend
+        ComplexShape.embeddingDownNat).X (-(n : ℤ)) ≅
+          (horizontalFilteredTotalComplex K (p + 1)).X n :=
+      (horizontalFilteredTotalComplex K (p + 1)).extendXIso
+        ComplexShape.embeddingDownNat (by simp)
     change IsIso
-      (((horizontalFilteredTotalComplex K p).extendXIso
-          ComplexShape.embeddingDownNat (by simp)).hom ≫
-        horizontalFilteredTotalMap K (Nat.le_succ p) n ≫
-        ((horizontalFilteredTotalComplex K (p + 1)).extendXIso
-          ComplexShape.embeddingDownNat (by simp)).inv)
-    infer_instance
+      (e₀.hom ≫ horizontalFilteredTotalMap K (Nat.le_succ p) n ≫ e₁.inv)
+    exact IsIso.comp_isIso'
+      (f := e₀.hom)
+      (h := horizontalFilteredTotalMap K (Nat.le_succ p) n ≫ e₁.inv)
+      e₀.isIso_hom
+      (IsIso.comp_isIso'
+        (f := horizontalFilteredTotalMap K (Nat.le_succ p) n) (h := e₁.inv)
+        hmap e₁.isIso_inv)
   · have hipos : 0 < i := by lia
     have hsource : IsZero
         (((horizontalFilteredTotalComplex K p).extend
@@ -179,53 +191,47 @@ noncomputable def horizontalFirstPageDirectColumnShortComplex (p : ℕ) :
 natural consecutive-stage short complex. -/
 noncomputable def horizontalFirstPageSuccShortComplexIso (p : ℕ) :
     horizontalFirstPageDirectColumnShortComplex K (p + 1) ≅
-      horizontalNaturalSuccCochainShortComplex K p :=
-  ShortComplex.isoMk
-    (horizontalCompleteFiltrationCochainMonoLowerSuccIso K p ≪≫
-      horizontalNaturalStageCochainIso K p)
-    (horizontalCompleteFiltrationCochainMonoUpperSuccIso K p ≪≫
-      horizontalNaturalStageCochainIso K (p + 1))
-    (Iso.refl _)
-    (by
-      dsimp [horizontalFirstPageDirectColumnShortComplex,
-        horizontalNaturalSuccCochainShortComplex]
-      calc
-        ((horizontalCompleteFiltrationCochainMonoLowerSuccIso K p).hom ≫
-              (horizontalNaturalStageCochainIso K p).hom) ≫
-            (ComplexShape.embeddingDownNat.extendFunctor C).map
-              (horizontalFilteredTotalComplexMap K (Nat.le_succ p)) =
-          (horizontalCompleteFiltrationCochainMonoLowerSuccIso K p).hom ≫
-            ((horizontalNaturalStageCochainIso K p).hom ≫
-              (ComplexShape.embeddingDownNat.extendFunctor C).map
-                (horizontalFilteredTotalComplexMap K (Nat.le_succ p))) :=
-          Category.assoc _ _ _
-        _ = (horizontalCompleteFiltrationCochainMonoLowerSuccIso K p).hom ≫
-            ((ComplexShape.embeddingDownNat.extendFunctor C).map
-                ((horizontalTotalFiltration K).toMonoOver.map
-                  (homOfLE (Nat.le_succ p))).hom.left ≫
-              (horizontalNaturalStageCochainIso K (p + 1)).hom) := by
-          rw [horizontalNaturalStageCochainIso_naturality K (Nat.le_succ p)]
-        _ = ((horizontalCompleteFiltrationCochainMonoLowerSuccIso K p).hom ≫
-              (ComplexShape.embeddingDownNat.extendFunctor C).map
-                ((horizontalTotalFiltration K).toMonoOver.map
-                  (homOfLE (Nat.le_succ p))).hom.left) ≫
-            (horizontalNaturalStageCochainIso K (p + 1)).hom :=
-          (Category.assoc _ _ _).symm
-        _ = (horizontalFirstPageFiltrationMap K (p + 1) ≫
-              (horizontalCompleteFiltrationCochainMonoUpperSuccIso K p).hom) ≫
-            (horizontalNaturalStageCochainIso K (p + 1)).hom := by
-          rw [horizontalFirstPageFiltrationMap_succ_monoIso K p]
-        _ = horizontalFirstPageFiltrationMap K (p + 1) ≫
-            ((horizontalCompleteFiltrationCochainMonoUpperSuccIso K p).hom ≫
-              (horizontalNaturalStageCochainIso K (p + 1)).hom) :=
-          Category.assoc _ _ _)
-    (by
-      dsimp [horizontalFirstPageDirectColumnShortComplex,
-        horizontalNaturalSuccCochainShortComplex,
-        horizontalCompleteDirectColumnProjectionMap,
-        horizontalCompleteSuccDirectColumnProjectionMap,
+      horizontalNaturalSuccCochainShortComplex K p := by
+  let S : ShortComplex (CochainComplex C ℤ) :=
+    horizontalFirstPageDirectColumnShortComplex K (p + 1)
+  let T : ShortComplex (CochainComplex C ℤ) := horizontalNaturalSuccCochainShortComplex K p
+  let F : ChainComplex C ℕ ⥤ CochainComplex C ℤ :=
+    ComplexShape.embeddingDownNat.extendFunctor C
+  let A : CochainComplex C ℤ :=
+    F.obj (((horizontalTotalFiltration K).toMonoOver.obj p).obj.left)
+  let B : CochainComplex C ℤ :=
+    F.obj (((horizontalTotalFiltration K).toMonoOver.obj (p + 1)).obj.left)
+  let eL : S.X₁ ≅ A := horizontalCompleteFiltrationCochainMonoLowerSuccIso K p
+  let eU : S.X₂ ≅ B := horizontalCompleteFiltrationCochainMonoUpperSuccIso K p
+  let sL : A ≅ T.X₁ := horizontalNaturalStageCochainIso K p
+  let sU : B ≅ T.X₂ := horizontalNaturalStageCochainIso K (p + 1)
+  let e₀ : S.X₁ ≅ T.X₁ := eL ≪≫ sL
+  let e₁ : S.X₂ ≅ T.X₂ := eU ≪≫ sU
+  let e₂ : S.X₃ ≅ T.X₃ := Iso.refl _
+  let a : A ⟶ B := F.map
+    ((horizontalTotalFiltration K).toMonoOver.map (homOfLE (Nat.le_succ p))).hom.left
+  have hnatural : a ≫ sU.hom = sL.hom ≫ T.f :=
+    horizontalNaturalStageCochainIso_naturality K (Nat.le_succ p)
+  have hmono : S.f ≫ eU.hom = eL.hom ≫ a :=
+    horizontalFirstPageFiltrationMap_succ_monoIso K p
+  refine ShortComplex.isoMk e₀ e₁ e₂ ?_ ?_
+  · change (eL.hom ≫ sL.hom) ≫ T.f = S.f ≫ (eU.hom ≫ sU.hom)
+    calc
+      (eL.hom ≫ sL.hom) ≫ T.f = eL.hom ≫ (sL.hom ≫ T.f) :=
+        Category.assoc _ _ _
+      _ = eL.hom ≫ (a ≫ sU.hom) :=
+        congrArg (fun f : A ⟶ T.X₂ => eL.hom ≫ f) hnatural.symm
+      _ = (eL.hom ≫ a) ≫ sU.hom := (Category.assoc _ _ _).symm
+      _ = (S.f ≫ eU.hom) ≫ sU.hom :=
+        congrArg (fun f : S.X₁ ⟶ B => f ≫ sU.hom) hmono.symm
+      _ = S.f ≫ (eU.hom ≫ sU.hom) := Category.assoc _ _ _
+  · change (eU.hom ≫ sU.hom) ≫
+        horizontalNaturalDirectColumnProjectionMap K (p + 1) =
+      horizontalCompleteDirectColumnProjectionMap K (p + 1) ≫ 𝟙 _
+    dsimp only [horizontalCompleteDirectColumnProjectionMap,
+      horizontalCompleteSuccDirectColumnProjectionMap,
       horizontalMonoStageDirectColumnProjectionMap]
-      simp)
+    simp only [Category.assoc, Category.comp_id]
 
 /-- Inclusion of the top-column summand into its horizontal filtration
 stage. -/
@@ -256,12 +262,15 @@ noncomputable def horizontalFilteredTopProjectionZeroIso (q : ℕ) :
       apply Subtype.ext
       rfl
     subst idx
-    rw [← Category.assoc, Sigma.ι_π, dite_eq_left rfl]
-    dsimp [horizontalFilteredTopIndex]
-    change _ = _ ≫ 𝟙 (∐ fun pq :
-      DownNatHorizontalFilteredFiber (0 + q) 0 =>
-        (K.X pq.val.val.1).X pq.val.val.2)
-    rw [Category.comp_id, Category.id_comp]
+    let F : DownNatHorizontalFilteredFiber (0 + q) 0 → C :=
+      fun pq => (K.X pq.val.val.1).X pq.val.val.2
+    let t : DownNatHorizontalFilteredFiber (0 + q) 0 := horizontalFilteredTopIndex 0 q
+    have hπ : Sigma.ι F t ≫ Sigma.π F t = 𝟙 (F t) := by
+      simpa only [dite_eq_left rfl, eqToHom_refl] using (Sigma.ι_π F t t)
+    have h : (Sigma.ι F t ≫ Sigma.π F t) ≫ Sigma.ι F t =
+        Sigma.ι F t ≫ 𝟙 (∐ F) := by
+      rw [hπ, Category.id_comp, Category.comp_id]
+    simpa only [F, t, id, horizontalFilteredTotalObj, Category.assoc] using h
   inv_hom_id := by
     simpa [horizontalFilteredTopInclusion, horizontalFilteredTopIndex] using
       horizontalFilteredTopι_topProjection K 0 q
@@ -279,9 +288,13 @@ theorem horizontalCompleteDirectColumnProjectionMap_zero_f_isIso_of_degree
   let q' := horizontalColumnDegree 0 (-(0 : ℤ) - (q : ℤ))
   have htop : IsIso (horizontalFilteredTopProjection K 0 q') :=
     (horizontalFilteredTopProjectionZeroIso K q').isIso_hom
+  let e₂ := horizontalDirectColumnCochainXIso K 0 q'
+  have hcomp : IsIso (horizontalFilteredTopProjection K 0 q' ≫ e₂.inv) :=
+    IsIso.comp_isIso'
+      (f := horizontalFilteredTopProjection K 0 q') (h := e₂.inv)
+      htop e₂.isIso_inv
   dsimp [horizontalDirectColumnProjectionComponent]
-  simp only [isIso_comp_left_iff, isIso_comp_right_iff]
-  exact htop
+  simpa only [e₂, isIso_comp_left_iff, isIso_comp_right_iff] using hcomp
 
 /-- The zeroth complete filtration stage projects isomorphically onto the
 zeroth direct column. -/
