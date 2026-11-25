@@ -7,4 +7,4 @@ derivative `(∑_{x=a+1}^N e^{-rx} l_x m_x) / T` there.
 
 ## Sources
 
-- Hamilton (1966), eq. (8); Baudisch (2005), eq. (3).
+- Hamilton (1966), eq. (8); Baudisch (2005), eq. (4a).

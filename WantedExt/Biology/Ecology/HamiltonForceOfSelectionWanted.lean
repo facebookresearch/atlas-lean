@@ -20,7 +20,7 @@ finite, as in Hamilton's life tables.
 
 Sources: W. D. Hamilton, "The moulding of senescence by natural selection", J. Theor. Biol. 12
 (1966) 12–45, eq. (8); A. Baudisch, "Hamilton's indicators of the force of selection", Proc.
-Natl. Acad. Sci. USA 102 (2005) 8263–8268, eqs. (1)–(4a); J. H. Jones, "Notes on Hamilton
+Natl. Acad. Sci. USA 102 (2005) 8263–8268, eqs. (4a) and (9); J. H. Jones, "Notes on Hamilton
 (1966)", Stanford lecture notes.
 -/
 module
@@ -62,7 +62,7 @@ some `m_x > 0` for `1 ≤ x ≤ N`, and `r` a root of the Euler–Lotka equation
 the equation after shifting `ln p_a` by `u` exists near `u = 0`, equals `r` at `0`, and has
 derivative `(∑_{x=a+1}^N e^{-rx} l_x m_x) / T` there.
 
-Sources: Hamilton (1966), eq. (8); Baudisch (2005), eq. (3). -/
+Sources: Hamilton (1966), eq. (8); Baudisch (2005), eq. (4a). -/
 public theorem_wanted hasDerivAt_root_log_survival (N : ℕ) (p m : ℕ → ℝ)
     (hp : ∀ a, 0 < p a) (hm : ∀ x, 0 ≤ m x) (hrep : ∃ x ∈ Icc 1 N, 0 < m x) (r : ℝ)
     (hr : lotkaSum N p m r = 1) (a : ℕ) :
@@ -74,7 +74,7 @@ for all `x`, some `m_x > 0` with `1 ≤ x ≤ N`, and `r` solving the discrete E
 `lotkaSum N p m r = 1`, for an age `1 ≤ a ≤ N` the root `R(ε)` after changing `m_a` to `m_a + ε`
 exists near `ε = 0`, equals `r` at `0`, and has derivative `e^{-ra} l_a / T` there.
 
-Sources: Hamilton (1966); Baudisch (2005), eq. (4a). -/
+Sources: Hamilton (1966); Baudisch (2005), eq. (9). -/
 public theorem_wanted hasDerivAt_root_fecundity (N : ℕ) (p m : ℕ → ℝ)
     (hp : ∀ a, 0 < p a) (hm : ∀ x, 0 ≤ m x) (hrep : ∃ x ∈ Icc 1 N, 0 < m x) (r : ℝ)
     (hr : lotkaSum N p m r = 1) (a : ℕ) (ha : a ∈ Icc 1 N) :

@@ -7,4 +7,4 @@ exists near `ε = 0`, equals `r` at `0`, and has derivative `e^{-ra} l_a / T` th
 
 ## Sources
 
-- Hamilton (1966); Baudisch (2005), eq. (4a).
+- Hamilton (1966); Baudisch (2005), eq. (9).
