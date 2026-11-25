@@ -55,9 +55,10 @@ For a congruence subgroup `Gamma0 N`, a representation `ρ` of `Gamma0 N` on a
 module `V`, and a positive integer `ℓ`, the coefficient Hecke operator sends a
 cocycle `z` for `ρ` to a new cocycle by averaging, over the cosets of an
 upper-triangular subgroup, the values of `z` at conjugate elements, twisted by
-an intertwining endomorphism.  Modulo coboundaries, this operator for a
-product `m = ℓ * ℓ'` of coprime factors is the composite of the operators for
-`ℓ` and for `ℓ'`.
+an intertwining endomorphism.  For a prime `ℓ` dividing neither `N` nor `ℓ'`
+and `m = ℓ * ℓ'`, the composite of the operators for `ℓ'` and then `ℓ`, twisted
+by intertwining endomorphisms `a'` and `a`, agrees modulo coboundaries with the
+operator for `m` twisted by `a ∘ₗ a'`.
 
 Cocycles and coboundaries are Mathlib's `groupCohomology.cocycles₁` and
 `groupCohomology.coboundaries₁` of `Rep.of ρ`, and the parabolic classes form a
@@ -1172,7 +1173,7 @@ end Main
 
 end R2CompTT
 
-/-- Coprime Hecke composition on coefficient cocycles holds modulo
+/-- Hecke composition at a prime on coefficient cocycles, modulo
 coboundaries: for prime `ℓ` not dividing `N` or `ℓ'`, and `m = ℓ * ℓ'`, the
 composite of the coefficient Hecke operators at `ℓ'` and then at `ℓ`, twisted
 by intertwining endomorphisms `a'` and `a`, differs from the coefficient
