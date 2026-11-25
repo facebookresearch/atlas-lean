@@ -212,10 +212,11 @@ variable [T2Space X] [(Bimod.forget (B := KY X) (KY X)).Additive]
   (Boundary : ProperSource ℂ (boundaryInclusion (enhancedSpace (TopCat.of X))))
   (Projection : InverseSource ℂ (baseProjection (TopCat.of X)))
 
-/-- The enhanced quotient functor has a left adjoint, the functor `L^E` of D'Agnolo--Kashiwara
-(arXiv:1311.2374v2, §4). The reconstruction map uses only this adjunction and its counit. As in
-D'Agnolo--Kashiwara, `X` is a good space: a Hausdorff, second-countable complex manifold of
-dimension `n`; these hypotheses are explicit binders of the request. -/
+/-- The enhanced quotient functor, from the bounded derived category of ind-sheaves of
+$\mathbb{C}$-vector spaces on $X \times \overline{\mathbb{R}}$ (as bimodules over the unit) to
+enhanced ind-sheaves on $X$, has a left adjoint, the functor `L^E` of D'Agnolo--Kashiwara
+(arXiv:1311.2374v2, §4). As in D'Agnolo--Kashiwara, $X$ is a good space: a Hausdorff,
+second-countable complex manifold of dimension $n$. -/
 theorem_wanted coefficient_enhanced_quotient_left_adjoint [T2Space X] [SecondCountableTopology X]
     [IsManifold 𝓘(ℂ, TemperedDistributionSectionModels.ComplexCoordinates n) ∞ X] :
   (coefficientEnhancedQ X CoefficientExact CoefficientBounded Boundary Projection).IsRightAdjoint
@@ -320,12 +321,15 @@ variable [LocallyCompactSpace X] [SecondCountableTopology X]
   [∀ (U : Opens X) (W : Over U),
     (((Opens.grothendieckTopology X).over U).over W).WEqualsLocallyBijective AddCommGrpCat.{0}]
 
-/-- For a bounded holonomic M, the ringed-mate reconstruction map built from the computed O^E is an
-isomorphism (the ringed form of DK Theorem 9.5.3). The map is formed with the left adjoint of the
-quotient and the internal Hom supplied by the requests above, and with the right adjoint of the
-β-pullback. The existence of that right adjoint (the statement of
-`ordinary_beta_pull_right_adjoint`) is the first conjunct, so nothing is assumed: the second
-conjunct holds for it (by proof irrelevance, for any proof of it). -/
+/-- For a bounded holonomic object $M$ of the derived category of $\mathcal{D}_X$-modules whose
+enhanced solution complex is bounded (`BoundedSolution`): the $\beta$-pullback of
+$\mathcal{D}$-modules has a right adjoint (the statement of `ordinary_beta_pull_right_adjoint`),
+and, for this right adjoint, the reconstruction map of $M$ built from the enhanced ind-sheaf
+$\mathcal{O}^E_X$ of tempered holomorphic functions is an isomorphism (the ringed form of
+D'Agnolo--Kashiwara, Theorem 9.5.3). The reconstruction map is formed with the left adjoint of the
+enhanced quotient functor (`coefficient_enhanced_quotient_left_adjoint`), the internal Hom right
+adjoint to tensoring with a bounded coefficient complex (`bounded_coefficient_tensor_closed`) and
+the right adjoint of the $\beta$-pullback. -/
 theorem_wanted actual_holonomic_reconstruction_isIso
     (hHolonomic : HolonomicCharacteristicSupportModels.IsBoundedHolonomic n X M) :
   (originalOrdinaryBetaPull n X Real IX Graph Geometry Ordinary Normalize BetaExact).IsLeftAdjoint ∧
