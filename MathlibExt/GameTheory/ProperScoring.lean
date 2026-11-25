@@ -10,6 +10,7 @@ module
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.GameTheory.Regret
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Algebra.BigOperators.Ring.Finset
@@ -27,8 +28,9 @@ type, following Roughgarden, Scoring Rules and Peer Prediction, 2016.
 Clause map (specification clause to declaration and back):
 
 - P1 (scoring rule, expected score, proper, strictly proper):
-  `IsSimplex`, `ScoringRule`, `expectedScore`, `IsProper`,
-  `IsStrictlyProper`.
+  `ScoringRule`, `expectedScore`, `IsProper`, `IsStrictlyProper`;
+  beliefs and reports range over the probability simplex
+  `MathlibExt.GameTheory.Regret.IsSimplex`.
 - P2 (quadratic rule is strictly proper, Proposition 1.3):
   `quadraticRule`, `quadraticRule_isStrictlyProper`.
 - P3 (log-score disjunction, Proposition 1.5, real statement):
@@ -48,10 +50,7 @@ set_option autoImplicit false
 namespace MathlibExt.GameTheory.ProperScoring
 
 open scoped BigOperators
-
-/-- P1: the probability simplex on `X`: nonnegative weights summing to one. -/
-def IsSimplex (X : Type*) [Fintype X] (q : X → ℝ) : Prop :=
-  (∀ i, 0 ≤ q i) ∧ ∑ i, q i = 1
+open MathlibExt.GameTheory.Regret (IsSimplex isSimplex_iff)
 
 /-- P1: a scoring rule maps a reported distribution and an outcome to a score. -/
 abbrev ScoringRule (X : Type*) : Type _ := (X → ℝ) → X → ℝ
@@ -62,15 +61,13 @@ noncomputable def expectedScore (X : Type*) [Fintype X]
   ∑ i, p i * S q i
 
 /-- P1: properness; truthful reporting maximizes the expected score. -/
-def IsProper (X : Type*) [Fintype X] [DecidableEq X]
-    (S : ScoringRule X) : Prop :=
-  ∀ p q, IsSimplex X p → IsSimplex X q →
+def IsProper (X : Type*) [Fintype X] (S : ScoringRule X) : Prop :=
+  ∀ p q, IsSimplex p → IsSimplex q →
     expectedScore X S p q ≤ expectedScore X S p p
 
 /-- P1: strict properness; truthful reporting is the unique maximizer. -/
-def IsStrictlyProper (X : Type*) [Fintype X] [DecidableEq X]
-    (S : ScoringRule X) : Prop :=
-  IsProper X S ∧ ∀ p q, IsSimplex X p → IsSimplex X q →
+def IsStrictlyProper (X : Type*) [Fintype X] (S : ScoringRule X) : Prop :=
+  IsProper X S ∧ ∀ p q, IsSimplex p → IsSimplex q →
     expectedScore X S p q = expectedScore X S p p → q = p
 
 /-- P2: the quadratic scoring rule in form (2) of the source. -/
@@ -78,11 +75,11 @@ noncomputable def quadraticRule (X : Type*) [Fintype X] : ScoringRule X :=
   fun q i => q i - (1 / 2) * ∑ j, q j ^ 2
 
 /-- P2: the quadratic rule is strictly proper (Proposition 1.3). -/
-theorem quadraticRule_isStrictlyProper (X : Type*) [Fintype X]
-    [DecidableEq X] : IsStrictlyProper X (quadraticRule X) := by
+theorem quadraticRule_isStrictlyProper (X : Type*) [Fintype X] :
+    IsStrictlyProper X (quadraticRule X) := by
   constructor
   · intro p q hp _hq
-    obtain ⟨-, hp_sum⟩ := hp
+    obtain ⟨-, hp_sum⟩ := (isSimplex_iff p).mp hp
     have hEq : ∀ r : X → ℝ, (∑ i, p i * (r i - (1 / 2) * ∑ j, r j ^ 2))
         = (∑ i, p i * r i) - (1 / 2) * ∑ j, r j ^ 2 := by
       intro r
@@ -105,7 +102,7 @@ theorem quadraticRule_isStrictlyProper (X : Type*) [Fintype X]
     simp only [← pow_two]
     linarith [hSum, hNonneg]
   · intro p q hp _hq heq
-    obtain ⟨-, hp_sum⟩ := hp
+    obtain ⟨-, hp_sum⟩ := (isSimplex_iff p).mp hp
     have hEq : ∀ r : X → ℝ, (∑ i, p i * (r i - (1 / 2) * ∑ j, r j ^ 2))
         = (∑ i, p i * r i) - (1 / 2) * ∑ j, r j ^ 2 := by
       intro r
@@ -135,7 +132,7 @@ theorem quadraticRule_isStrictlyProper (X : Type*) [Fintype X]
 
 /-- P3: log-score disjunction; support violation or strict log-score gap. -/
 theorem logScore_disjunction (X : Type*) [Fintype X]
-    (p q : X → ℝ) (hp : IsSimplex X p) (hq : IsSimplex X q)
+    (p q : X → ℝ) (hp : IsSimplex p) (hq : IsSimplex q)
     (hne : q ≠ p) :
     (∃ i, 0 < p i ∧ q i = 0) ∨
       ∑ i, p i * Real.log (q i) < ∑ i, p i * Real.log (p i) := by
@@ -144,8 +141,8 @@ theorem logScore_disjunction (X : Type*) [Fintype X]
   · exact Or.inl hsupp
   · right
     push Not at hsupp
-    obtain ⟨hp0, hpsum⟩ := hp
-    obtain ⟨hq0, hqsum⟩ := hq
+    obtain ⟨hp0, hpsum⟩ := (isSimplex_iff p).mp hp
+    obtain ⟨hq0, hqsum⟩ := (isSimplex_iff q).mp hq
     have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
     have hple1 : ∀ a, p a ≤ 1 := fun a => by
       calc p a ≤ ∑ i, p i :=
@@ -284,8 +281,8 @@ theorem logScore_disjunction (X : Type*) [Fintype X]
 
 /-- P3 corollary: with full support on `q`, the log-score gap is strict. -/
 theorem logScore_lt_of_fullSupport (X : Type*) [Fintype X]
-    (p q : X → ℝ) (hp : IsSimplex X p)
-    (hq : IsSimplex X q) (hne : q ≠ p)
+    (p q : X → ℝ) (hp : IsSimplex p)
+    (hq : IsSimplex q) (hne : q ≠ p)
     (hsupp : ∀ i, 0 < q i) :
     ∑ i, p i * Real.log (q i) < ∑ i, p i * Real.log (p i) := by
   rcases logScore_disjunction X p q hp hq hne with ⟨i, _, hqi⟩ | hgap
@@ -306,13 +303,13 @@ theorem logRule_notStrictlyProper :
         (fun _ => 1 / 2) <
       expectedScore (Fin 2) (logRule (Fin 2)) (fun _ => 1 / 2)
         (fun i => if i = 0 then 1 else 0) := by
-  have hp : IsSimplex (Fin 2) (fun _ => 1 / 2) := by
-    constructor
+  have hp : IsSimplex (fun _ : Fin 2 => (1 / 2 : ℝ)) := by
+    refine (isSimplex_iff _).mpr ⟨?_, ?_⟩
     · intro _
       norm_num
     · norm_num [Fin.sum_univ_two]
-  have hq : IsSimplex (Fin 2) (fun i => if i = 0 then 1 else 0) := by
-    constructor
+  have hq : IsSimplex (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) := by
+    refine (isSimplex_iff _).mpr ⟨?_, ?_⟩
     · rw [Fin.forall_fin_two]
       constructor <;> norm_num
     · norm_num [Fin.sum_univ_two]
@@ -359,13 +356,14 @@ theorem linearRule_notProper :
       expectedScore (Fin 2) (linearRule (Fin 2))
         (fun i => if i = 0 then 3 / 4 else 1 / 4)
         (fun i => if i = 0 then 1 else 0) := by
-  have hp : IsSimplex (Fin 2) (fun i => if i = 0 then 3 / 4 else 1 / 4) := by
-    constructor
+  have hp : IsSimplex
+      (fun i : Fin 2 => if i = 0 then (3 / 4 : ℝ) else 1 / 4) := by
+    refine (isSimplex_iff _).mpr ⟨?_, ?_⟩
     · rw [Fin.forall_fin_two]
       constructor <;> norm_num
     · norm_num [Fin.sum_univ_two]
-  have hq : IsSimplex (Fin 2) (fun i => if i = 0 then 1 else 0) := by
-    constructor
+  have hq : IsSimplex (fun i : Fin 2 => if i = 0 then (1 : ℝ) else 0) := by
+    refine (isSimplex_iff _).mpr ⟨?_, ?_⟩
     · rw [Fin.forall_fin_two]
       constructor <;> norm_num
     · norm_num [Fin.sum_univ_two]

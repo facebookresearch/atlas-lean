@@ -20,6 +20,8 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 Binary checks for the quadratic rule gap (P2/P5), the log-score
 disjunction at a full-support pair and a support-violation pair (P3/P5),
 the real log-rule witness (P3n/P5) and the linear-rule witness (P4/P5).
+Two further checks apply the quadratic rule's strict properness on a finite
+type with no decidable equality, and to `Convexity.StdSimplex` weights (P1/P2).
 -/
 
 set_option autoImplicit false
@@ -125,5 +127,18 @@ theorem logRule_binary_gap :
     norm_num
   rw [hpp, hpq]
   exact hneg
+
+-- The quadratic rule is strictly proper on every finite outcome type, with no
+-- decidable equality on the outcomes in scope.
+example (X : Type*) [Fintype X] : IsStrictlyProper X (quadraticRule X) :=
+  quadraticRule_isStrictlyProper X
+
+-- Beliefs and reports may be the weights of `Convexity.StdSimplex` points.
+example (X : Type*) [Fintype X] (p q : Convexity.StdSimplex ℝ X) :
+    expectedScore X (quadraticRule X) p.weights q.weights ≤
+      expectedScore X (quadraticRule X) p.weights p.weights :=
+  (quadraticRule_isStrictlyProper X).1 _ _
+    (MathlibExt.GameTheory.Regret.isSimplex_weights p)
+    (MathlibExt.GameTheory.Regret.isSimplex_weights q)
 
 end MathlibExtTest.GameTheory.ProperScoring
