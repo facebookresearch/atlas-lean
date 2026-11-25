@@ -63,20 +63,21 @@ removed and the names restated in Mathlib style. The localization step reuses
 
 module
 
-public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
-public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
+import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
+import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import Mathlib.Algebra.MvPolynomial.PDeriv
-public import Mathlib.Combinatorics.Quiver.ReflQuiver
-public import Mathlib.LinearAlgebra.CliffordAlgebra.Contraction
-public import Mathlib.LinearAlgebra.Dual.BaseChange
-public import Mathlib.LinearAlgebra.ExteriorPower.Basis
-public import Mathlib.Order.CompletePartialOrder
+import Mathlib.Combinatorics.Quiver.ReflQuiver
+import Mathlib.LinearAlgebra.CliffordAlgebra.Contraction
+import Mathlib.LinearAlgebra.Dual.BaseChange
+import Mathlib.LinearAlgebra.ExteriorPower.Basis
+import Mathlib.Order.CompletePartialOrder
 public import Mathlib.RingTheory.Discriminant
-public import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
-public import Mathlib.RingTheory.MvPowerSeries.Basic
-public import Mathlib.RingTheory.Regular.RegularSequence
-public import Mathlib.Tactic.Continuity
+import Mathlib.RingTheory.MvPolynomial.IrreducibleQuadratic
+import Mathlib.RingTheory.MvPowerSeries.Basic
+import Mathlib.RingTheory.Regular.RegularSequence
+import Mathlib.Tactic.Continuity
 import Mathlib.Algebra.Homology.HomologicalComplexAbelian
+import MathlibExt.LinearAlgebra.ExteriorPower.Contraction
 import MathlibExt.RingTheory.MvPowerSeries.ArtinianLocalization
 import Mathlib.Algebra.Homology.HomologySequence
 import Mathlib.Algebra.Module.StablyFree.Basic
@@ -110,14 +111,13 @@ import Mathlib.Tactic.ReduceModChar
 import Mathlib.Topology.Sheaves.Presheaf
 import Std.Tactic.BVDecide.Normalize.Prop
 
-@[expose] public section
-
 /-!
 # Discriminant and Jacobian determinant for a square presentation
 
-For a finite free algebra given by a square polynomial presentation, the
-discriminant of a basis is associated to the norm of the Jacobian
-determinant of the presenting equations.
+Let `R` be a Noetherian domain and `A` a finite free `R`-algebra presented as
+`R[X₁, …, Xₘ] ⧸ (f₁, …, fₘ)`. Then the discriminant of any basis of `A` is
+associated to the norm of the image of the Jacobian determinant
+`det (∂fᵢ/∂Xⱼ)` of the presenting equations.
 -/
 
 namespace JacobianSquarePresentation.KoszulColon
@@ -405,7 +405,6 @@ variable {w : L → P} {O : Type v'} [AddCommGroup O] [Module P O]
 
 variable (x M y N) in
 structure HMap where
-
   toLinearMap : (Finset I → M) →ₗ[P] (Finset J → N)
   map_Z : ∀ p, Z x M p ≤ (Z y N p).comap toLinearMap
   map_B : ∀ p, B x M p ≤ (B y N p).comap toLinearMap
@@ -472,7 +471,6 @@ open scoped JacobianSquarePresentation.KoszulColon.Koszul.HMap
 
 variable (x M y N) in
 structure ChainMap where
-
   toLinearMap : (Finset I → M) →ₗ[P] (Finset J → N)
   comm : toLinearMap ∘ₗ d x M = d y N ∘ₗ toLinearMap
   map_C : ∀ p, C (P := P) (I := I) M p ≤ (C (P := P) (I := J) N p).comap toLinearMap
@@ -1646,11 +1644,11 @@ private theorem sum_homog (m : Finset I → M) : ∑ p ∈ Finset.range (Fintype
   · intro p _ hp; exact ite_eq_right (Ne.symm hp)
   · intro h; exact absurd (Finset.mem_range.mpr (Nat.lt_succ_of_le (Finset.card_le_univ T))) h
 
-omit [LinearOrder I] [LinearOrder J] [Fintype J] in
-
-private theorem map_coneTw (f : (Finset I → M) →ₗ[P] (Finset J → N))
+omit [LinearOrder I] [LinearOrder J] [Fintype J] [Fintype I] in
+private theorem map_coneTw [Finite I] (f : (Finset I → M) →ₗ[P] (Finset J → N))
     (hf : ∀ p, C (P := P) (I := I) M p ≤ (C (P := P) (I := J) N p).comap f) (m : Finset I → M) :
     f (coneTw t M m) = coneTw t N (f m) := by
+  have := Fintype.ofFinite I
   conv_lhs => rw [← sum_homog (P := P) M m]
   conv_rhs => rw [← sum_homog (P := P) M m]
   rw [map_sum, map_sum, map_sum, map_sum]
@@ -2070,6 +2068,7 @@ private theorem reindex_mapH_bijective {K L : Type} [LinearOrder K] [Fintype K] 
     (p : ℕ) : Function.Bijective ((reindex N e c).toHMap.mapH p) :=
   (reindexH N e c p).symm.bijective
 
+omit [Fintype U] in
 private theorem peel_mapH_bijective_step (hIH : ∀ q, Function.Bijective
     ((peel y (shorten x e) M).mapH q)) (p : ℕ) : Function.Bijective ((peel y x M).mapH p) := by
   have key : ((reindex (ModSpan y M) e x).toHMap.comp (peel y x M).toHMap).toLinearMap =
@@ -2271,56 +2270,19 @@ section Exterior
 
 variable {R : Type u'} [CommRing R] {M : Type v'} [AddCommGroup M] [Module R M]
 
-private theorem removeNth_succ_eq_cons {α : Type*} {n : ℕ} (k : Fin (n + 1))
-    (v : Fin (n + 2) → α) : Fin.removeNth k.succ v = Fin.cons (v 0)
-    (Fin.removeNth k (Fin.tail v)) := by
-  ext j
-  refine Fin.cases ?_ (fun j => ?_) j
-  · simp [Fin.removeNth_apply]
-  · simp [Fin.removeNth_apply, Fin.tail]
-
-private theorem contractLeft_ιMulti_succ (d : Module.Dual R M) :
-    ∀ {n : ℕ} (v : Fin (n + 1) → M),
-      contractLeft (Q := (0 : QuadraticForm R M)) d (ιMulti R (n + 1) v) =
-        ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (v k)) • ιMulti R n (Fin.removeNth k v)
-  | 0, v => by
-    rw [ιMulti_succ_apply, ExteriorAlgebra.ι, contractLeft_ι_mul, ιMulti_zero_apply,
-      contractLeft_one, mul_zero, sub_zero, Fin.sum_univ_one]
-    simp
-  | n + 1, v => by
-    rw [ιMulti_succ_apply, ExteriorAlgebra.ι, contractLeft_ι_mul,
-        contractLeft_ιMulti_succ d (Matrix.vecTail v)]
-    conv_rhs => rw [Fin.sum_univ_succ]
-    rw [Fin.val_zero, pow_zero, one_mul, Fin.removeNth_zero,
-        show Fin.tail v = Matrix.vecTail v from rfl,
-      sub_eq_add_neg, Finset.mul_sum, ← Finset.sum_neg_distrib]
-    congr 1
-    refine Finset.sum_congr rfl fun k _ => ?_
-    rw [removeNth_succ_eq_cons, ιMulti_succ_apply, Fin.cons_zero,
-      show Matrix.vecTail (Fin.cons (v 0) (Fin.removeNth k (Fin.tail v)) : Fin (n + 1) → M) =
-        Fin.removeNth k (Matrix.vecTail v) from Fin.tail_cons _ _,
-      mul_smul_comm, ← neg_smul, Fin.val_succ, pow_succ]
-    congr 1
-    rw [show Matrix.vecTail v k = v k.succ from rfl]
-    ring
+private theorem contractLeft_ιMulti_succ (d : Module.Dual R M) {n : ℕ} (v : Fin (n + 1) → M) :
+    contractLeft (Q := (0 : QuadraticForm R M)) d (ιMulti R (n + 1) v) =
+      ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (v k)) • ιMulti R n (Fin.removeNth k v) := by
+  rw [ExteriorAlgebra.contractLeft_ιMulti R M d n v]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [mul_smul]
+  rfl
 
 private theorem contractLeft_ιMulti_of_forall_eq_zero (d : Module.Dual R M) {n : ℕ} (v : Fin n → M)
     (hv : ∀ i, d (v i) = 0) : contractLeft (Q := (0 : QuadraticForm R M)) d (ιMulti R n v) = 0 := by
   cases n with
   | zero => rw [ιMulti_zero_apply, contractLeft_one]
   | succ n => rw [contractLeft_ιMulti_succ]; simp [hv]
-
-theorem contractLeft_mem_exteriorPower (d : Module.Dual R M) {n : ℕ} {x : ExteriorAlgebra R M}
-    (hx : x ∈ ⋀[R]^(n + 1) M) : contractLeft (Q := (0 : QuadraticForm R M)) d x ∈ ⋀[R]^n M := by
-  rw [← ιMulti_span_fixedDegree] at hx
-  induction hx using Submodule.span_induction with
-  | mem y hy =>
-    obtain ⟨v, rfl⟩ := hy
-    rw [contractLeft_ιMulti_succ]
-    exact Submodule.sum_mem _ fun k _ => Submodule.smul_mem _ _ (ιMulti_range R n ⟨_, rfl⟩)
-  | zero => rw [map_zero]; exact Submodule.zero_mem _
-  | add y z _ _ hy hz => rw [map_add]; exact Submodule.add_mem _ hy hz
-  | smul r y _ hy => rw [map_smul]; exact Submodule.smul_mem _ r hy
 
 private theorem contractLeft_eq_zero_of_mem_exteriorPower_zero (d : Module.Dual R M) {x :
     ExteriorAlgebra R
@@ -2333,28 +2295,15 @@ private theorem contractLeft_eq_zero_of_mem_exteriorPower_zero (d : Module.Dual 
   | add y z _ _ hy hz => rw [map_add, hy, hz, add_zero]
   | smul r y _ hy => rw [map_smul, hy, smul_zero]
 
-noncomputable def koszulD (d : Module.Dual R M) (n : ℕ) : ⋀[R]^(n + 1) M →ₗ[R] ⋀[R]^n M :=
-  ((contractLeft (Q := (0 : QuadraticForm R M)) d).domRestrict (⋀[R]^(n + 1) M)).codRestrict _
-    fun x => contractLeft_mem_exteriorPower d x.2
-
-private theorem koszulD_apply_coe (d : Module.Dual R M) (n : ℕ) (x : ⋀[R]^(n + 1) M) :
-    (koszulD d n x : ExteriorAlgebra R M) = contractLeft (Q := (0 : QuadraticForm R M)) d x := rfl
-
-private theorem koszulD_comp_koszulD (d : Module.Dual R M)
-    (n : ℕ) : koszulD d n ∘ₗ koszulD d (n + 1) = 0 := by
-  refine LinearMap.ext fun x => Subtype.ext ?_
-  rw [LinearMap.comp_apply, koszulD_apply_coe, koszulD_apply_coe, LinearMap.zero_apply,
-    ZeroMemClass.coe_zero]
-  exact contractLeft_contractLeft d _
-
-private theorem koszulD_ιMulti (d : Module.Dual R M) {n : ℕ} (v : Fin (n + 1) → M) :
-    koszulD d n (exteriorPower.ιMulti R (n + 1) v) =
+private theorem contractLeft_apply_ιMulti_removeNth (d : Module.Dual R M) {n : ℕ}
+    (v : Fin (n + 1) → M) :
+    exteriorPower.contractLeft R M d n (exteriorPower.ιMulti R (n + 1) v) =
       ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (v k)) •
           exteriorPower.ιMulti R n (Fin.removeNth k v) := by
-  apply Subtype.ext
-  simp only [koszulD_apply_coe, exteriorPower.ιMulti_apply_coe, contractLeft_ιMulti_succ]
-  rw [AddSubmonoidClass.coe_finsetSum]
-  simp
+  rw [exteriorPower.contractLeft_apply_ιMulti]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [mul_smul]
+  rfl
 
 variable {I : Type} [LinearOrder I] {n : ℕ}
 
@@ -2399,11 +2348,12 @@ private theorem card_filter_lt_ofFinEmbEquiv_symm (s : Set.powersetCard I n) (k 
     ext j; simp [(ofFinEmbEquiv.symm s).lt_iff_lt]
   rw [this, Fin.card_Iio]
 
-private theorem koszulD_basis (b : Module.Basis I R M) (d : Module.Dual R M)
-    (s : Set.powersetCard I (n + 1)) : koszulD d n (b.exteriorPower (n + 1) s) =
+private theorem contractLeft_basis (b : Module.Basis I R M) (d : Module.Dual R M)
+    (s : Set.powersetCard I (n + 1)) :
+    exteriorPower.contractLeft R M d n (b.exteriorPower (n + 1) s) =
       ∑ k : Fin (n + 1), ((-1 : R) ^ (k : ℕ) * d (b (ofFinEmbEquiv.symm s k))) •
         b.exteriorPower n (eraseNth s k) := by
-  rw [exteriorPower.basis_apply, exteriorPower.ιMulti_family, koszulD_ιMulti]
+  rw [exteriorPower.basis_apply, exteriorPower.ιMulti_family, contractLeft_apply_ιMulti_removeNth]
   refine Finset.sum_congr rfl fun k _ => ?_
   rw [exteriorPower.basis_apply, exteriorPower.ιMulti_family, Function.comp_apply,
     coe_ofFinEmbEquiv_symm_eraseNth]
@@ -2589,13 +2539,12 @@ set_option synthInstance.maxHeartbeats 200000 in
 -- Instance search through these linear-equivalence coercions is slow.
 private theorem toExterior_d (x : I → P) {p : ℕ} (m : Finset I → P)
     (hm : m ∈ C (P := P) (I := I) P (p + 1)) : toExterior P I p ⟨d x P m, d_mem_C x P hm⟩ =
-    koszulD (dualVec x) p (toExterior P I (p + 1) ⟨m,
-        hm⟩) := by
+    exteriorPower.contractLeft _ _ (dualVec x) p (toExterior P I (p + 1) ⟨m, hm⟩) := by
   rw [← LinearEquiv.eq_symm_apply]
   apply Subtype.ext
   change d x P m = _
   rw [toExterior_apply, map_sum, map_sum]
-  simp only [map_smul, koszulD_basis, dualVec_basisFun, map_sum, toExterior_symm_basis,
+  simp only [map_smul, contractLeft_basis, dualVec_basisFun, map_sum, toExterior_symm_basis,
       Submodule.coe_sum,
     Submodule.coe_smul]
   conv_lhs => rw [eq_sum_single hm, map_sum]
@@ -2610,8 +2559,8 @@ private theorem coe_toExterior_d (x : I → P) {p : ℕ} (m : Finset I → P) (h
   rw [toExterior_d]; rfl
 
 private theorem d_toExterior_symm (x : I → P) {p : ℕ} (ω : ⋀[P]^(p + 1) (I → P)) :
-    d x P ((toExterior P I (p + 1)).symm ω) = (toExterior P I p).symm (koszulD (dualVec x) p ω) :=
-        by
+    d x P ((toExterior P I (p + 1)).symm ω) =
+      (toExterior P I p).symm (exteriorPower.contractLeft _ _ (dualVec x) p ω) := by
   have h := toExterior_d x ((toExterior P I (p + 1)).symm ω) ((toExterior P I (p + 1)).symm ω).2
   rw [Subtype.coe_eta, LinearEquiv.apply_symm_apply, ← LinearEquiv.eq_symm_apply] at h
   exact congrArg Subtype.val h
@@ -2626,11 +2575,11 @@ section Cycle
 variable {P : Type u} [CommRing P]
 
 omit [CommRing P] in
-private theorem concat_inl {J I : Type} [LinearOrder J] [Fintype J] [LinearOrder I] [Fintype I]
+private theorem concat_inl {J I : Type} [LinearOrder J] [LinearOrder I]
     (f : J → P) (x : I → P) (j : J) : concat f x (toLex (Sum.inl j)) = f j := rfl
 
 omit [CommRing P] in
-private theorem concat_inr {J I : Type} [LinearOrder J] [Fintype J] [LinearOrder I] [Fintype I]
+private theorem concat_inr {J I : Type} [LinearOrder J] [LinearOrder I]
     (f : J → P) (x : I → P) (i : I) : concat f x (toLex (Sum.inr i)) = x i := rfl
 
 variable {n : ℕ}
@@ -2698,7 +2647,7 @@ theorem d_tateChain (f x : Fin n → P) (g : Matrix (Fin n) (Fin n) P)
     exact Finset.sum_eq_zero fun i _ => isEmptyElim (ofLex i : Fin 0 ⊕ Fin 0)
   | succ n =>
     rw [tateChain, d_toExterior_symm]
-    have : koszulD (dualVec (concat f x)) n (tateCycle g) = 0 :=
+    have : exteriorPower.contractLeft _ _ (dualVec (concat f x)) n (tateCycle g) = 0 :=
       Subtype.ext (contractLeft_tateCycle f x g hf)
     rw [this, map_zero]
     rfl
@@ -3245,8 +3194,9 @@ private theorem mem_span_X_pow_iff (S : Finset σ) (N : σ → ℕ) (h : MvPower
     have := add_mem h2 h1
     rwa [sub_add_cancel] at this
 
-private theorem mem_span_range_X_iff [Fintype σ] (h : MvPowerSeries σ R) :
+private theorem mem_span_range_X_iff [Finite σ] (h : MvPowerSeries σ R) :
     h ∈ Ideal.span (Set.range (X : σ → MvPowerSeries σ R)) ↔ constantCoeff h = 0 := by
+  have := Fintype.ofFinite σ
   have hset : Set.range (X : σ → MvPowerSeries σ R) =
       (fun i => (X i : MvPowerSeries σ R) ^ (fun _ => 1) i) ''
           (↑(Finset.univ : Finset σ) : Set σ) := by
@@ -3516,12 +3466,9 @@ end JacobianSquarePresentation.BijectiveCompr2
 
 namespace JacobianSquarePresentation.ArtinianQuotientPow
 
-set_option autoImplicit false
-
 open scoped TensorProduct
 
-namespace Ws23
-namespace CB4b
+section
 
 private theorem main (A : Type*) [CommRing A] [IsArtinianRing A] (𝔫 : Ideal A) [h𝔫 : 𝔫.IsMaximal]
     (N : ℕ) (hN : (Ideal.jacobson (⊥ : Ideal A)) ^ N = ⊥) :
@@ -3588,18 +3535,16 @@ private theorem main (A : Type*) [CommRing A] [IsArtinianRing A] (𝔫 : Ideal A
       simpa using hmem
   exact ⟨(Ideal.quotientEquivAlgOfEq A hker.symm).trans (Ideal.quotientKerAlgEquivOfSurjective hf)⟩
 
-end Ws23.CB4b
+end
 
 private theorem solution
     (A : Type*) [CommRing A] [IsArtinianRing A] (𝔫 : Ideal A) [𝔫.IsMaximal]
     (N : ℕ) (hN : (Ideal.jacobson (⊥ : Ideal A)) ^ N = ⊥) :
     Nonempty ((A ⧸ 𝔫 ^ N) ≃ₐ[A] Localization.AtPrime 𝔫) :=
-  Ws23.CB4b.main A 𝔫 N hN
+  main A 𝔫 N hN
 end JacobianSquarePresentation.ArtinianQuotientPow
 
 namespace JacobianSquarePresentation.BijectiveBaseChange
-
-set_option autoImplicit false
 
 open scoped TensorProduct
 
@@ -3652,8 +3597,6 @@ private theorem solution
 end JacobianSquarePresentation.BijectiveBaseChange
 
 namespace JacobianSquarePresentation.BezoutianField
-
-set_option autoImplicit false
 
 open scoped TensorProduct
 
@@ -3798,12 +3741,7 @@ private lemma key (φ : Module.Dual R (Q f)) (φ' : Module.Dual S (Q (fS f S)))
       = iota f S (Algebra.TensorProduct.lid R (Q f) (LinearMap.rTensor (Q f) φ
         (Algebra.TensorProduct.map (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
           (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f))) z))) := by
-  induction z using TensorProduct.induction_on with
-  | zero =>
-    rw [map_zero (psi S), map_zero (Algebra.TensorProduct.map _ _), LinearMap.map_zero,
-        map_zero (Algebra.TensorProduct.lid _ _),
-      map_zero (Algebra.TensorProduct.map _ _), LinearMap.map_zero,
-          map_zero (Algebra.TensorProduct.lid _ _), map_zero (iota f S)]
+  induction z using TensorProduct.inductionOn with
   | add x y hx hy => simp only [map_add, hx, hy]
   | tmul p q =>
     simp [h]
@@ -3908,12 +3846,9 @@ end JacobianSquarePresentation.BezoutianField
 
 namespace JacobianSquarePresentation.BezoutianTmul
 
-set_option autoImplicit false
-
 open scoped TensorProduct
 
-namespace Ws47
-namespace DLB
+section
 
 private theorem adjugate_mulVec_mulVec {n : Type*} [Fintype n] [DecidableEq n] {S : Type*}
     [CommRing S] (A : Matrix n n S) (v : n → S) : A.adjugate.mulVec (A.mulVec v) = A.det • v := by
@@ -3963,7 +3898,7 @@ private theorem balanced_of_adjoin {R A : Type*} [CommRing R] [CommRing A] [Alge
     rw [e1, e2, mul_assoc, hy, ← mul_assoc, mul_comm (x ⊗ₜ[R] (1 : A)), mul_assoc, hx, ← mul_assoc,
       mul_comm ((1 : A) ⊗ₜ[R] y) ((1 : A) ⊗ₜ[R] x)]
 
-end Ws47.DLB
+end
 
 private theorem solution
     (R : Type*) [CommRing R] {m : ℕ} (f : Fin m → MvPolynomial (Fin m) R)
@@ -3978,7 +3913,7 @@ private theorem solution
         Algebra.TensorProduct.map (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
           (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f))) (Matrix.det (Matrix.of a)) := by
   classical
-  refine Ws47.DLB.balanced_of_adjoin _
+  refine balanced_of_adjoin _
     (Set.range fun j : Fin m => (Ideal.Quotient.mk (Ideal.span (Set.range f)) (MvPolynomial.X j)))
     ?_ ?_ s
   · rw [eq_top_iff]
@@ -3995,7 +3930,7 @@ private theorem solution
     rw [hrange, ← AlgHom.map_adjoin]
     exact ⟨p, hp, rfl⟩
   · rintro _ ⟨j, rfl⟩
-    have h := Ws47.DLB.map_det_mul_map_eq_zero
+    have h := map_det_mul_map_eq_zero
       (Algebra.TensorProduct.map (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
           (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f))))
       MvPolynomial.X f a ha (fun i => ?_) j
@@ -4011,13 +3946,11 @@ end JacobianSquarePresentation.BezoutianTmul
 
 namespace JacobianSquarePresentation.BezoutianAlgClosed
 
-set_option autoImplicit false
-
 open scoped TensorProduct
 
 universe u
 
-private theorem Ws47.DLB.lid_rTensor_comp_mulLeft
+private theorem _root_.JacobianSquarePresentation.lid_rTensor_comp_mulLeft
     (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
     (Δ : A ⊗[R] A) (hbal : ∀ s : A, (s ⊗ₜ[R] (1 : A)) * Δ = ((1 : A) ⊗ₜ[R] s) * Δ)
     (φ : Module.Dual R A) (s : A) :
@@ -4026,33 +3959,28 @@ private theorem Ws47.DLB.lid_rTensor_comp_mulLeft
   have h2 : ∀ z : A ⊗[R] A, LinearMap.rTensor A (LinearMap.mulLeft R s) z = (s ⊗ₜ[R] (1 : A)) *
       z := by
     intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
+    induction z using TensorProduct.inductionOn with
     | tmul x y => simp [Algebra.TensorProduct.tmul_mul_tmul]
     | add x y hx hy => simp only [map_add, mul_add, hx, hy]
   have h3 : ∀ z : A ⊗[R] A, ((1 : A) ⊗ₜ[R] s) * z = LinearMap.lTensor A (LinearMap.mulLeft R s)
       z := by
     intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
+    induction z using TensorProduct.inductionOn with
     | tmul x y => simp [Algebra.TensorProduct.tmul_mul_tmul]
     | add x y hx hy => simp only [map_add, mul_add, hx, hy]
   have h4 : ∀ w : R ⊗[R] A, Algebra.TensorProduct.lid R A
       (LinearMap.lTensor R (LinearMap.mulLeft R s) w) = s * Algebra.TensorProduct.lid R A w := by
     intro w
-    induction w using TensorProduct.induction_on with
-    | zero => simp
+    induction w using TensorProduct.inductionOn with
     | tmul r x => simp [Algebra.TensorProduct.lid_tmul]
     | add x y hx hy => simp only [map_add, mul_add, hx, hy]
-
   have h5 : LinearMap.rTensor A φ (LinearMap.lTensor A (LinearMap.mulLeft R s) Δ) =
       LinearMap.lTensor R (LinearMap.mulLeft R s) (LinearMap.rTensor A φ Δ) := by
     rw [← LinearMap.comp_apply, LinearMap.rTensor_comp_lTensor, ← LinearMap.lTensor_comp_rTensor,
         LinearMap.comp_apply]
   rw [LinearMap.rTensor_comp, LinearMap.comp_apply, h2, hbal, h3, h5, h4]
 
-namespace Ws47
-namespace CB3
+section
 
 variable {K : Type u} [Field K]
 
@@ -4071,15 +3999,14 @@ private theorem thetaₗ_apply (φ : Module.Dual K A) : thetaₗ (K := K) Δ φ 
 private theorem apply_thetaₗ (ε : A →ₗ[K] K) (φ : Module.Dual K A) :
     ε (thetaₗ (K := K) Δ φ) = φ (Algebra.TensorProduct.rid K K A (LinearMap.lTensor A ε Δ)) := by
   rw [thetaₗ_apply]
-  induction Δ using TensorProduct.induction_on with
-  | zero => simp
+  induction Δ using TensorProduct.inductionOn with
   | tmul x y => simp [Algebra.TensorProduct.lid_tmul, Algebra.TensorProduct.rid_tmul, mul_comm]
   | add x y hx hy => simp only [map_add, hx, hy]
 
 private theorem thetaₗ_comp_mulLeft (hbal : ∀ s : A, (s ⊗ₜ[K] (1 : A)) * Δ = ((1 : A) ⊗ₜ[K] s) * Δ)
     (φ : Module.Dual K A) (s : A) : thetaₗ (K := K) Δ (φ.comp (LinearMap.mulLeft K s)) = s * thetaₗ
         (K := K) Δ φ :=
-  Ws47.DLB.lid_rTensor_comp_mulLeft K A Δ hbal φ s
+  lid_rTensor_comp_mulLeft K A Δ hbal φ s
 
 private theorem bijective_thetaₗ_of_injective [FiniteDimensional K A]
     (hinj : Function.Injective (thetaₗ (K := K) Δ)) : Function.Bijective (thetaₗ (K := K) Δ) := by
@@ -4099,8 +4026,7 @@ private theorem injective_thetaₗ_of_forall_factor
   have hsurj := hcrt.2
   choose e he using fun i => hsurj (Pi.single i 1)
   have hπe : ∀ i j, Ideal.Quotient.mk (𝔫 j ^ N) (e i) =
-      Pi.single (M := fun j => A ⧸ 𝔫 j ^ N) i 1 j := fun i j => by
-    have := congrArg (fun v => v j) (he i); (simp [hπ] at this; exact this)
+      Pi.single (M := fun j => A ⧸ 𝔫 j ^ N) i 1 j := fun i j => congrFun (he i) j
   have hsum : ∑ i, e i = 1 := by
     apply hcrt.1
     rw [map_sum, map_one]
@@ -4281,8 +4207,7 @@ private theorem eval_thetaₗ_Δb (ξ : Fin m → K) (hI : ∀ a ∈ Ideal.span 
         (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g))) z)) =
       Ideal.Quotient.mk (Ideal.span (Set.range g)) (evR ξ z) := by
     intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp only [map_zero]
+    induction z using TensorProduct.inductionOn with
     | tmul p p' =>
       rw [Algebra.TensorProduct.map_tmul, LinearMap.lTensor_tmul, Algebra.TensorProduct.rid_tmul,
           evR_tmul, map_mul,
@@ -4533,21 +4458,21 @@ private theorem bijective_thetaₗ_Δb [IsAlgClosed K] : Function.Bijective
     (thetaₗ (K := K) (Δb g b)) := by
   classical
   have : IsArtinianRing A := IsArtinianRing.of_finite K _
-  obtain ⟨N, hN0⟩ := IsArtinianRing.isNilpotent_jacobson_bot (R := A)
-  have hN : (Ideal.jacobson (⊥ : Ideal A)) ^ N = ⊥ := hN0.trans Submodule.zero_eq_bot
+  obtain ⟨N, hN0⟩ := IsArtinianRing.isNilpotent_jacobson A
+  have hN : (Ideal.jacobson (⊥ : Ideal A)) ^ N = ⊥ := by
+    rw [Ideal.jacobson_bot]
+    exact hN0.trans Submodule.zero_eq_bot
   have hfinι : Finite ↥{I : Ideal A | I.IsMaximal} := (IsArtinianRing.setOfPred_isMaximal_finite
       _).to_subtype
   have := Fintype.ofFinite ↥{I : Ideal A | I.IsMaximal}
   have hbal : ∀ s : A, (s ⊗ₜ[K] (1 : A)) * Δb g b = ((1 : A) ⊗ₜ[K] s) * Δb g b :=
     fun s => JacobianSquarePresentation.BezoutianTmul.solution K g b hb s
-
   have hcop : Pairwise (Function.onFun IsCoprime fun i :
       ↥{I : Ideal A | I.IsMaximal} => i.1 ^ N) := by
     intro i j hij
     have : (i.1).IsMaximal := i.2
     have : (j.1).IsMaximal := j.2
     exact (Ideal.isCoprime_of_isMaximal (fun h => hij (Subtype.ext h))).pow
-
   have hinf : (⨅ i : ↥{I : Ideal A | I.IsMaximal}, i.1 ^ N) = ⊥ := by
     refine le_bot_iff.mp ((iInf_le_prod_of_pairwise_isCoprime' _ hcop).trans ?_)
     rw [Finset.prod_pow, ← hN]
@@ -4557,7 +4482,6 @@ private theorem bijective_thetaₗ_Δb [IsAlgClosed K] : Function.Bijective
     exact le_sInf fun J hJ => Finset.inf_le (Finset.mem_univ (⟨J,
         hJ.2⟩ : ↥{I : Ideal A | I.IsMaximal}))
   have hcrt := crt_bijective (fun i : ↥{I : Ideal A | I.IsMaximal} => i.1 ^ N) hcop hinf
-
   refine bijective_thetaₗ_of_injective _ (injective_thetaₗ_of_forall_factor (K := K) (Δb g b) hbal
     (ι := ↥{I : Ideal A | I.IsMaximal}) (fun i => i.1) N hcrt ?_)
   rintro ⟨𝔫, h𝔫max⟩ χ hχ hθ
@@ -4567,7 +4491,7 @@ private theorem bijective_thetaₗ_Δb [IsAlgClosed K] : Function.Bijective
 
 end Local
 
-end Ws47.CB3
+end
 
 private theorem solution
     (K : Type*) [Field K] [IsAlgClosed K] {m : ℕ} (g : Fin m → MvPolynomial (Fin m) K)
@@ -4582,14 +4506,14 @@ private theorem solution
               (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
                   (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
             (Matrix.det (Matrix.of b))))) := by
-  have key := Ws47.CB3.bijective_thetaₗ_Δb g b hb
+  have key := bijective_thetaₗ_Δb g b hb
   have hfun : (fun φ : Module.Dual K (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g)) =>
       TensorProduct.lid K (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g))
         (LinearMap.rTensor (MvPolynomial (Fin m) K ⧸ Ideal.span (Set.range g)) φ
           (Algebra.TensorProduct.map
               (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
                   (Ideal.Quotient.mkₐ K (Ideal.span (Set.range g)))
-            (Matrix.det (Matrix.of b))))) = ⇑(Ws47.CB3.thetaₗ (K := K) (Ws47.CB3.Δb g b)) := by
+            (Matrix.det (Matrix.of b))))) = ⇑(thetaₗ (K := K) (Δb g b)) := by
     funext φ
     rfl
   rw [hfun]
@@ -4597,8 +4521,6 @@ private theorem solution
 end JacobianSquarePresentation.BezoutianAlgClosed
 
 namespace JacobianSquarePresentation.BezoutianSquare
-
-set_option autoImplicit false
 
 open scoped TensorProduct
 
@@ -4622,12 +4544,9 @@ end JacobianSquarePresentation.BezoutianSquare
 
 namespace JacobianSquarePresentation.TmulSubSum
 
-set_option autoImplicit false
-
 open scoped TensorProduct
 
-namespace Ws23
-namespace CoreA1
+section
 
 open scoped TensorProduct
 open MvPolynomial
@@ -4667,24 +4586,21 @@ private theorem main (R : Type*) [CommRing R] {m : ℕ} (g : MvPolynomial (Fin m
       ring
     · simp only [ite_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
-end Ws23.CoreA1
+end
 
 private theorem solution
     (R : Type*) [CommRing R] {m : ℕ} (g : MvPolynomial (Fin m) R) :
     ∃ a : Fin m → MvPolynomial (Fin m) R ⊗[R] MvPolynomial (Fin m) R,
       g ⊗ₜ[R] (1 : MvPolynomial (Fin m) R) - (1 : MvPolynomial (Fin m) R) ⊗ₜ[R] g =
         ∑ j, a j * (MvPolynomial.X j ⊗ₜ[R] 1 - 1 ⊗ₜ[R] MvPolynomial.X j) :=
-  Ws23.CoreA1.main R g
+  main R g
 end JacobianSquarePresentation.TmulSubSum
 
 namespace JacobianSquarePresentation.LmulPderiv
 
-set_option autoImplicit false
-
 open scoped TensorProduct
 
-namespace Ws23
-namespace CoreA2
+section
 
 open scoped TensorProduct
 open MvPolynomial
@@ -4707,8 +4623,7 @@ private theorem contract_mul_X_sub (j k : Fin m) (w : MvPolynomial (Fin m) R ⊗
     (Fin m) R) : contract R j (w * (X k ⊗ₜ[R] 1 - 1 ⊗ₜ[R] X k)) =
       -(if k = j then Algebra.TensorProduct.lmul' R w else 0) := by
   classical
-  induction w using TensorProduct.induction_on with
-  | zero => simp
+  induction w using TensorProduct.inductionOn with
   | tmul u v =>
     rw [mul_sub, Algebra.TensorProduct.tmul_mul_tmul, Algebra.TensorProduct.tmul_mul_tmul, mul_one,
         mul_one,
@@ -4738,7 +4653,7 @@ private theorem main (g : MvPolynomial (Fin m) R)
   rw [Finset.sum_ite_eq' Finset.univ j, ite_eq_left (Finset.mem_univ j)] at h
   exact h.symm
 
-end Ws23.CoreA2
+end
 
 private theorem solution
     (R : Type*) [CommRing R] {m : ℕ} (g : MvPolynomial (Fin m) R)
@@ -4746,12 +4661,10 @@ private theorem solution
     (ha : g ⊗ₜ[R] (1 : MvPolynomial (Fin m) R) - (1 : MvPolynomial (Fin m) R) ⊗ₜ[R] g =
         ∑ j, a j * (MvPolynomial.X j ⊗ₜ[R] 1 - 1 ⊗ₜ[R] MvPolynomial.X j)) (j : Fin m) :
     Algebra.TensorProduct.lmul' R (a j) = MvPolynomial.pderiv j g :=
-  Ws23.CoreA2.main R g a ha j
+  main R g a ha j
 end JacobianSquarePresentation.LmulPderiv
 
 namespace JacobianSquarePresentation.LmulBezoutian
-
-set_option autoImplicit false
 
 open scoped TensorProduct
 
@@ -4792,12 +4705,9 @@ end JacobianSquarePresentation.LmulBezoutian
 
 namespace JacobianSquarePresentation.TraceDualLmul
 
-set_option autoImplicit false
-
 open scoped TensorProduct
 
-namespace Ws23
-namespace CoreD
+section
 
 open Module
 open scoped TensorProduct
@@ -4858,59 +4768,21 @@ private theorem main [Module.Finite R A] [Module.Free R A]
   rw [LinearMap.mul'_apply]
   ring
 
-end Ws23.CoreD
+end
 
 private theorem solution
     (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A] [Module.Finite R A]
         [Module.Free R A]
     (τ : Module.Dual R A) (Δ : A ⊗[R] A)
     (hbal : ∀ s : A, (s ⊗ₜ[R] (1 : A)) * Δ = ((1 : A) ⊗ₜ[R] s) * Δ)
-    (hbij : Function.Bijective (fun φ : Module.Dual R A => TensorProduct.lid R A
-        (LinearMap.rTensor A φ Δ)))
     (hτ : TensorProduct.lid R A (LinearMap.rTensor A τ Δ) = 1) (x : A) :
     Algebra.trace R A x = τ (LinearMap.mul' R A Δ * x) :=
-  Ws23.CoreD.main R A τ Δ hbal hτ x
+  main R A τ Δ hbal hτ x
 end JacobianSquarePresentation.TraceDualLmul
 
 namespace JacobianSquarePresentation.DualJacobian
 
-set_option autoImplicit false
-
 open scoped TensorProduct
-
-private theorem Ws47.DLB.lid_rTensor_comp_mulLeft
-    (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
-    (Δ : A ⊗[R] A) (hbal : ∀ s : A, (s ⊗ₜ[R] (1 : A)) * Δ = ((1 : A) ⊗ₜ[R] s) * Δ)
-    (φ : Module.Dual R A) (s : A) :
-    Algebra.TensorProduct.lid R A (LinearMap.rTensor A (φ.comp (LinearMap.mulLeft R s)) Δ) =
-      s * Algebra.TensorProduct.lid R A (LinearMap.rTensor A φ Δ) := by
-  have h2 : ∀ z : A ⊗[R] A, LinearMap.rTensor A (LinearMap.mulLeft R s) z = (s ⊗ₜ[R] (1 : A)) *
-      z := by
-    intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul x y => simp [Algebra.TensorProduct.tmul_mul_tmul]
-    | add x y hx hy => simp only [map_add, mul_add, hx, hy]
-  have h3 : ∀ z : A ⊗[R] A, ((1 : A) ⊗ₜ[R] s) * z = LinearMap.lTensor A (LinearMap.mulLeft R s)
-      z := by
-    intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul x y => simp [Algebra.TensorProduct.tmul_mul_tmul]
-    | add x y hx hy => simp only [map_add, mul_add, hx, hy]
-  have h4 : ∀ w : R ⊗[R] A, Algebra.TensorProduct.lid R A
-      (LinearMap.lTensor R (LinearMap.mulLeft R s) w) = s * Algebra.TensorProduct.lid R A w := by
-    intro w
-    induction w using TensorProduct.induction_on with
-    | zero => simp
-    | tmul r x => simp [Algebra.TensorProduct.lid_tmul, mul_smul_comm]
-    | add x y hx hy => simp only [map_add, mul_add, hx, hy]
-
-  have h5 : LinearMap.rTensor A φ (LinearMap.lTensor A (LinearMap.mulLeft R s) Δ) =
-      LinearMap.lTensor R (LinearMap.mulLeft R s) (LinearMap.rTensor A φ Δ) := by
-    rw [← LinearMap.comp_apply, LinearMap.rTensor_comp_lTensor, ← LinearMap.lTensor_comp_rTensor,
-        LinearMap.comp_apply]
-  rw [LinearMap.rTensor_comp, LinearMap.comp_apply, h2, hbal, h3, h5, h4]
 
 private theorem solution
     (R : Type*) [CommRing R] {m : ℕ} (f : Fin m → MvPolynomial (Fin m) R)
@@ -4924,9 +4796,7 @@ private theorem solution
           τ (Ideal.Quotient.mk (Ideal.span (Set.range f))
               (Matrix.det (Matrix.of fun i j => MvPolynomial.pderiv j (f i))) * a) := by
   classical
-
   choose a ha using fun i => JacobianSquarePresentation.TmulSubSum.solution R (f i)
-
   let A := MvPolynomial (Fin m) R ⧸ Ideal.span (Set.range f)
   let Δ : A ⊗[R] A := Algebra.TensorProduct.map (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f)))
       (Ideal.Quotient.mkₐ R (Ideal.span (Set.range f))) (Matrix.det (Matrix.of a))
@@ -4935,8 +4805,7 @@ private theorem solution
   have hbal : ∀ s : A, (s ⊗ₜ[R] (1 : A)) * Δ = ((1 : A) ⊗ₜ[R] s) * Δ :=
     fun s => JacobianSquarePresentation.BezoutianTmul.solution R f a ha s
   have hlin : ∀ (φ : Module.Dual R A) (s : A), θ (φ.comp (LinearMap.mulLeft R s)) = s * θ φ :=
-    fun φ s => Ws47.DLB.lid_rTensor_comp_mulLeft R A Δ hbal φ s
-
+    fun φ s => lid_rTensor_comp_mulLeft R A Δ hbal φ s
   obtain ⟨τ, hτ⟩ := hθ.2 1
   refine ⟨τ, ⟨?_, ?_⟩, ?_⟩
   · intro s s' hss'
@@ -4950,26 +4819,20 @@ private theorem solution
   · intro x
     have hmul : ∀ z : A ⊗[R] A, LinearMap.mul' R A z = Algebra.TensorProduct.lmul' (S := A) R z :=
         fun z => by
-      induction z using TensorProduct.induction_on with
-      | zero => simp
+      induction z using TensorProduct.inductionOn with
       | tmul u v => simp
       | add u v hu hv => simp only [map_add, hu, hv]
-    rw [JacobianSquarePresentation.TraceDualLmul.solution R A τ Δ hbal hθ hτ x, hmul,
+    rw [JacobianSquarePresentation.TraceDualLmul.solution R A τ Δ hbal hτ x, hmul,
       JacobianSquarePresentation.LmulBezoutian.solution R f a ha]
 end JacobianSquarePresentation.DualJacobian
 
 namespace JacobianSquarePresentation.DetDualNorm
 
-set_option autoImplicit false
-
 open scoped TensorProduct
 
-namespace Ws23
-namespace DLB
+section
 
 open Module
-
-section DLB3
 
 variable (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -4994,30 +4857,23 @@ private theorem main3 (b : Basis ι R A) (τ : Dual R A) (c : A) :
   rw [of_dual_mul_mul_eq R A b τ c, Matrix.det_mul, Matrix.det_transpose,
       Algebra.norm_eq_matrix_det b]
 
-end DLB3
-
-end Ws23.DLB
+end
 
 private theorem solution
     (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
     {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι R A) (τ : Module.Dual R A) (c : A) :
     (Matrix.of fun i j => τ (c * b i * b j)).det = Algebra.norm R c *
         (Matrix.of fun i j => τ (b i * b j)).det :=
-  Ws23.DLB.main3 R A b τ c
+  main3 R A b τ c
 end JacobianSquarePresentation.DetDualNorm
 
 namespace JacobianSquarePresentation.IsUnitDetDual
 
-set_option autoImplicit false
-
 open scoped TensorProduct
 
-namespace Ws23
-namespace DLB
+section
 
 open Module
-
-section DLB4
 
 variable (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -5047,21 +4903,17 @@ private theorem main4 (b : Basis ι R A) (τ : Dual R A)
   have h := LinearEquiv.isUnit_det e b b.dualBasis
   rwa [hmat, Matrix.det_transpose] at h
 
-end DLB4
-
-end Ws23.DLB
+end
 
 private theorem solution
     (R : Type*) [CommRing R] (A : Type*) [CommRing A] [Algebra R A]
     {ι : Type*} [Fintype ι] [DecidableEq ι] (b : Module.Basis ι R A) (τ : Module.Dual R A)
     (hτ : Function.Bijective (fun a : A => τ.comp (LinearMap.mulLeft R a))) :
     IsUnit (Matrix.of fun i j => τ (b i * b j)).det :=
-  Ws23.DLB.main4 R A b τ hτ
+  main4 R A b τ hτ
 end JacobianSquarePresentation.IsUnitDetDual
 
 namespace JacobianSquarePresentation.Assembly
-
-set_option autoImplicit false
 
 open scoped TensorProduct
 
@@ -5103,9 +4955,10 @@ private theorem solution
   exact (associated_mul_unit_right (Algebra.norm R J) u u.isUnit).symm
 end JacobianSquarePresentation.Assembly
 
-/-- For a finite free algebra with a square polynomial presentation, the
-discriminant of a basis is associated to the norm of the Jacobian
-determinant. -/
+/-- Let `R` be a Noetherian domain and `A` a finite free `R`-algebra presented as
+`R[X₁, …, Xₘ] ⧸ (f₁, …, fₘ)` by `e`. Then the discriminant of any basis of `A` is
+associated to the norm of the image under `e` of the Jacobian determinant
+`det (∂fᵢ/∂Xⱼ)`. -/
 public theorem Algebra.associated_discr_norm_jacobianDet_of_square_presentation
     {R : Type*} [CommRing R] [IsDomain R] [IsNoetherianRing R] {A : Type*} [CommRing A]
     [Algebra R A] [Module.Free R A] [Module.Finite R A]
