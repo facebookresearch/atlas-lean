@@ -82,10 +82,19 @@ example : phaseVolume (1 / 4) 8 S2 0 = 1 / 2 ∧
 
 -- The velocity rewrite lemmas themselves.
 example : (2 : ℝ) * superficialFlux (2 * 3) 2 = 2 * 3 := by
-  exact volumetricFlow_eq 3 2 (by norm_num)
+  exact volumetricFlow_eq_mul 3 2 (by norm_num)
 
 example : EarthScience.poreVelocity 3 (1 / 2) * (1 / 2) = 3 := by
   exact EarthScience.poreVelocity_mul (by norm_num)
+
+-- The general flux law serves any flow `Q`, which the special case for
+-- flows written as `A * u` cannot match.
+example (Q A : ℝ) (hA : A ≠ 0) : A * superficialFlux Q A = Q := by
+  fail_if_success exact volumetricFlow_eq_mul _ A hA
+  exact volumetricFlow_eq Q A hA
+
+example : (2 : ℝ) * superficialFlux 3 2 = 3 := by
+  exact volumetricFlow_eq 3 2 (by norm_num)
 
 -- Signed weights summing to one still satisfy the algebraic sum
 -- identity, but they are not saturations: the first phase volume is
@@ -107,6 +116,11 @@ example : EarthScience.poreVelocity 3 0 = 0 ∧
   exact ⟨h0, by rw [h0]; norm_num⟩
 
 example : superficialFlux 3 0 = 0 := by
+  simp [superficialFlux]
+
+-- At zero area the totalized flux gives zero flow, so the flux law needs
+-- `A ≠ 0`.
+example : ¬ ((0 : ℝ) * superficialFlux 3 0 = 3) := by
   simp [superficialFlux]
 
 end Engineering.Resource.PorousStorage.Tests

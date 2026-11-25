@@ -24,17 +24,23 @@ Storage bookkeeping for a rigid porous medium with bulk volume `V_bulk`,
 porosity `phi`, phase saturations `S` over a finite phase type and phase
 densities `rho`. The pore volume is `phi * V_bulk`, phase `i` occupies
 `phi * V_bulk * S i` and carries mass `phi * V_bulk * S i * rho i`.
-Superficial (Darcy) flux and volumetric flow are defined here; pore
-velocity itself is the imported `EarthScience.poreVelocity`, kept distinct
-from the superficial flux.
+The superficial (Darcy) flux `u = Q / A` of a volumetric flow `Q` through
+bulk area `A` is defined here, with the volumetric-flow law `Q = A * u`
+for any flow and nonzero area; pore velocity itself is the imported
+`EarthScience.poreVelocity`, kept distinct from the superficial flux.
 
 ## ii. Key results
 
-- `PorousStorage.sum_phaseVolume_eq`: admissible saturations (nonnegative,
-  summing to one) fill the pore volume, each between zero and the pore
-  volume.
+- `PorousStorage.sum_phaseVolume_eq`: for weights summing to one, the
+  phase volumes add up to the pore volume.
+- `PorousStorage.phaseVolume_nonneg` and
+  `PorousStorage.phaseVolume_le_poreVolume`: for nonnegative porosity and
+  bulk volume and admissible saturations (nonnegative, summing to one),
+  each phase volume lies between zero and the pore volume.
 - `PorousStorage.sum_poreInventory`: the total phase mass factors as
   `phi * V_bulk * (sum of S i * rho i)`.
+- `PorousStorage.volumetricFlow_eq`: area times the superficial flux of
+  any flow `Q` through a nonzero area recovers `Q`.
 - `EarthScience.poreVelocity_mul` (imported): pore velocity rescales the
   superficial flux by the porosity.
 
@@ -69,7 +75,7 @@ def phaseVolume {ι : Type*} (phi V_bulk : ℝ) (S : ι → ℝ) (i : ι) : ℝ 
 def poreInventory {ι : Type*} (phi V_bulk : ℝ) (S rho : ι → ℝ) (i : ι) : ℝ :=
   phi * V_bulk * S i * rho i
 
-/-- Phase masses are pore volumes times densities. -/
+/-- Phase masses are phase volumes times densities. -/
 lemma poreInventory_eq {ι : Type*} (phi V_bulk : ℝ) (S rho : ι → ℝ) (i : ι) :
     poreInventory phi V_bulk S rho i = phaseVolume phi V_bulk S i * rho i := by
   rfl
@@ -112,7 +118,9 @@ lemma saturation_le_one {ι : Type*} [Fintype ι] {S : ι → ℝ}
   calc S i ≤ ∑ j, S j := Finset.single_le_sum (fun j _ => hS0 j) (Finset.mem_univ i)
     _ = 1 := hS
 
-/-- Each admissible phase volume lies between zero and the pore volume. -/
+/-- Each admissible phase volume is at most the pore volume:
+`phi * V_bulk * S_i ≤ phi * V_bulk`. The matching lower bound is
+`phaseVolume_nonneg`. -/
 lemma phaseVolume_le_poreVolume {ι : Type*} [Fintype ι] {phi V_bulk : ℝ}
     (hphi : 0 ≤ phi) (hV : 0 ≤ V_bulk) {S : ι → ℝ} (hS0 : ∀ i, 0 ≤ S i)
     (hS : ∑ i, S i = 1) (i : ι) :
@@ -141,10 +149,17 @@ carry `A ≠ 0`. -/
 noncomputable def superficialFlux (Q A : ℝ) : ℝ :=
   Q / A
 
-/-- Volumetric flow from superficial flux and area: `Q = A * u`. -/
-lemma volumetricFlow_eq (u A : ℝ) (hA : A ≠ 0) :
-    A * superficialFlux (A * u) A = A * u := by
+/-- Volumetric flow from superficial flux and area: `Q = A * u` with
+`u = superficialFlux Q A`, for any volumetric flow `Q` and nonzero area
+`A`. -/
+lemma volumetricFlow_eq (Q A : ℝ) (hA : A ≠ 0) :
+    A * superficialFlux Q A = Q := by
   unfold superficialFlux
-  rw [mul_div_cancel_left₀ _ hA]
+  exact mul_div_cancel₀ Q hA
+
+/-- The special case of `volumetricFlow_eq` for a flow written as `A * u`. -/
+lemma volumetricFlow_eq_mul (u A : ℝ) (hA : A ≠ 0) :
+    A * superficialFlux (A * u) A = A * u :=
+  volumetricFlow_eq (A * u) A hA
 
 end Engineering.Resource.PorousStorage
