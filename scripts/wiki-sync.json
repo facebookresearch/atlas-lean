@@ -49923,7 +49923,7 @@
 "MathlibExt.Geometry.SpherePackingDensityFourWanted.finiteRadiusDensity": "eee116052370918d",
 "MathlibExt.Geometry.SpherePackingDensityFourWanted.finiteRadiusDensity_le_one": "728c7ad288dcdf00",
 "MathlibExt.Geometry.SpherePackingDensityFourWanted.lowerBound_dLOV2014": "9b7205b448bc3a0c",
-"MathlibExt.Geometry.SpherePackingDensityFourWanted.lowerBound_dLOV2014_wanted": "d90d5da0ed4b6bf3",
+"MathlibExt.Geometry.SpherePackingDensityFourWanted.lowerBound_dLOV2014_wanted": "15fbb69b88262d21",
 "MathlibExt.Geometry.SpherePackingDensityFourWanted.lowerBound_trivial": "9bd925271e54750c",
 "MathlibExt.Geometry.SpherePackingDensityFourWanted.lowerBound_trivial_proved": "59ca5c1b9a688977",
 "MathlibExt.Geometry.SpherePackingDensityFourWanted.observationVolume_ne_top": "469aedb40186f280",

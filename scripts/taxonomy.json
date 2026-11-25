@@ -11908,6 +11908,7 @@
   "MathlibExt/Geometry/Polytope/MomentCurve": {"to": "Combinatorics/polytopes-simplicial-complexes", "title": "Cyclic polytopes"},
   "MathlibExt/Geometry/RichDistances": {"to": "Geometry/discrete-geometry", "title": "Distinct and unit distances"},
   "MathlibExt/Geometry/SpherePackingDensityFour": {"to": "Geometry/packings-and-coverings", "title": "Sphere packing in four dimensions"},
+  "MathlibExt/Geometry/SpherePackingDensityFourLowerBound": {"to": "Geometry/packings-and-coverings", "title": "Sphere packing in four dimensions"},
   "MathlibExt/Geometry/Spherical/SphericalLawOfCosines": {"to": "Geometry/euclidean-geometry/solid-and-spherical", "title": "Spherical law of cosines"},
   "MathlibExt/Geometry/SteinerRatio": {"to": "Geometry/discrete-geometry", "title": "Steiner ratio"},
   "MathlibExt/Geometry/TwoD": {"to": "Geometry/discrete-geometry", "title": "Convex and general position of point sets"},

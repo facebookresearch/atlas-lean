@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Geometry.SpherePackingDensityFour
+public import MathlibExt.Geometry.SpherePackingDensityFourLowerBound
 
 @[expose] public section
 
@@ -37,8 +37,8 @@ optimized value finite. No optimum-attainment assertion is made.
 The three displayed upper decimals and the displayed lower decimal are
 approximations to the exact converted expressions, not extra exact bounds.
 The primary tables call their center-density numbers bounds. Their numerical
-certificates have not been replayed here. The four deep bound statements and
-periodic approximation are `theorem_wanted` goals, not proofs or axioms.
+certificates have not been replayed here. The three upper bounds and periodic
+approximation are `theorem_wanted` goals.
 The catalogue states no open exact-value conjecture, so this is a WantedExt
 entry, not an OpenConjectures entry.
 -/
@@ -92,15 +92,6 @@ converted exactly; displayed `0.644421…` is only an approximation. -/
 def upperBound_dLOV2014 : Prop :=
   spherePackingDensity4 ≤ ENNReal.ofReal ((Real.pi ^ 2 / 2) * ((130587 : ℝ) / 1000000))
 
-/-- **Statement of the lower bound for sphere packing in dimension four.** The proposition that
-the sphere packing density $\Delta_4$ of $\mathbb{R}^4$, the supremum of the upper densities of
-all packings of congruent balls in $\mathbb{R}^4$, satisfies $\frac{\pi^2}{16} \le \Delta_4$.
-
-Source: dLOV2014 Table 1, center-density lower bound `0.12500 = 1/8`,
-converted exactly to `π²/16`; `0.616850` is only an approximation. -/
-def lowerBound_dLOV2014 : Prop :=
-  ENNReal.ofReal (Real.pi ^ 2 / 16) ≤ spherePackingDensity4
-
 /-- **Rogers upper bound for sphere packing in dimension four.** The sphere packing density
 $\Delta_4$ of $\mathbb{R}^4$, the supremum of the upper densities of all packings of congruent
 balls in $\mathbb{R}^4$, satisfies $\Delta_4 \le \frac{\pi^2}{2} \cdot \frac{13127}{100000}$.
@@ -122,13 +113,6 @@ $\Delta_4 \le \frac{\pi^2}{2} \cdot \frac{130587}{1000000}$.
 
 Source: dLOV2014 Table 1. Known literature bound; no Lean proof supplied. -/
 theorem_wanted upperBound_dLOV2014_wanted : upperBound_dLOV2014
-
-/-- **Lower bound for sphere packing in dimension four.** The sphere packing density $\Delta_4$
-of $\mathbb{R}^4$, the supremum of the upper densities of all packings of congruent balls in
-$\mathbb{R}^4$, satisfies $\frac{\pi^2}{16} \le \Delta_4$.
-
-Source: dLOV2014 Table 1. Known literature bound; no Lean proof supplied. -/
-theorem_wanted lowerBound_dLOV2014_wanted : lowerBound_dLOV2014
 
 /-- **Periodic packings approach the optimal density in dimension four.** For a packing $Q$ of
 congruent balls in $\mathbb{R}^4$, let its upper density $\overline{\delta}(Q)$ be the limit
