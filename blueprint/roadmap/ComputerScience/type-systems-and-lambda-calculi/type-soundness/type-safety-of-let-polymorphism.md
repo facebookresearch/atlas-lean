@@ -7,14 +7,15 @@ schemes to the constants and must agree with their reduction rules $\xrightarrow
 1. each $\delta$-reduction preserves typing, and
 2. every well-typed application $c\, v_1 \cdots v_k$ of a constant to values is either reducible or a value.
 
-If all constants are pure, or every program satisfies the *value restriction* (each $\mathbf{let}\ z = t_1\ \mathbf{in}\ t_2$ has $t_1$ a value), then:
+If all constants are pure, that is, their reduction rules neither read nor update a store, then:
 
 - **Subject reduction.** Reduction preserves well-typedness: a well-typed program reduces only to a well-typed program at the same type.
 - **Progress.** A well-typed program is either reducible or a value.
 - **Type soundness.** Well-typed programs do not go wrong: no well-typed program reduces to a stuck configuration.
 
-Both properties hold with well-typedness defined by the Damas–Milner typing judgment. With mutable references the value restriction is
-needed: without it, $\mathbf{let}\ r = \mathrm{ref}\,(\lambda z.\, z)$ receives the scheme $\forall X.\, \mathrm{ref}\,(X \to X)$, and a program can store an integer
+Both properties hold with well-typedness defined by the Damas–Milner typing judgment. Mutable references are outside this statement: their soundness
+needs a store typing, preservation up to an extension of the store typing, and the *value restriction* (each $\mathbf{let}\ z = t_1\ \mathbf{in}\ t_2$ has $t_1$ a value).
+Without the restriction, $\mathbf{let}\ r = \mathrm{ref}\,(\lambda z.\, z)$ receives the scheme $\forall X.\, \mathrm{ref}\,(X \to X)$, and a program can store an integer
 function in $r$ and read it back at type $\mathrm{bool} \to \mathrm{bool}$.
 
 ## Depends on
