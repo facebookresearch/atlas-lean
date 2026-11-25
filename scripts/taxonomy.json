@@ -12859,6 +12859,7 @@
   "MathlibExt/NumberTheory/LucasnomialSum": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Lucas-polytopic numbers"},
   "MathlibExt/NumberTheory/MahlerPopkenComplexity": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
   "MathlibExt/NumberTheory/MahlerPopkenComplexity/BinaryUpperBound": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Integer complexity"},
+  "MathlibExt/NumberTheory/MallowsRepresentation": {"to": "NumberTheory/continued-fractions-expansions", "title": "Mallows representation of irrational numbers"},
   "MathlibExt/NumberTheory/MelhamGibonacci": {"to": "NumberTheory/linear-recurrences/second-order-sequences", "title": "Gibonacci numbers"},
   "MathlibExt/NumberTheory/MersenneEtaCondition": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
   "MathlibExt/NumberTheory/MersenneOmega": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
