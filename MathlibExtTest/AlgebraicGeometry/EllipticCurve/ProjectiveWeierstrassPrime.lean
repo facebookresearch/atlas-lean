@@ -45,9 +45,9 @@ example :
     (⟨0, 0, 1, 0, 0⟩ : WeierstrassCurve ℚ).toProjective.polynomial.totalDegree = 3 :=
   totalDegree_polynomial _
 
-/-- Boundary example: primality needs the domain hypothesis in general;
-over `ℚ` the two explicit curves below have different evaluations, so
-their polynomials differ. -/
+/-- Boundary example: the polynomial depends on the curve. Over `ℚ` the two
+explicit curves below take the values `2` and `1` at `![0, 1, 1]`, so their
+polynomials differ. -/
 example :
     (⟨0, 0, 1, 0, 0⟩ : WeierstrassCurve ℚ).toProjective.polynomial ≠
       (⟨0, 0, 0, 1, 0⟩ : WeierstrassCurve ℚ).toProjective.polynomial := by
