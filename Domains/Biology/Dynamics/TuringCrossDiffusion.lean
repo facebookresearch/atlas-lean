@@ -43,17 +43,18 @@ while `tr (J - k² D) = tr J - k² tr D`. For a diagonal `D` this is `TuringPatt
 such as `[[0, -1], [1, 0]]` (eigenvalues `± i`); normal parabolicity needs `0 < tr D`.
 
 The off-diagonal terms of `D` enter `b` through `-J₀₁ D₁₀ - J₁₀ D₀₁`, and this is what makes
-cross-diffusion qualitatively different: with diagonal diffusion a self-limiting system
-(`J₀₀ ≤ 0`, `J₁₁ ≤ 0`) can never be destabilized (`not_exists_isUnstableMode_of_nonpos`), but
-chemotactic cross-diffusion destabilizes it. For Keller–Segel with logistic growth,
+cross-diffusion qualitatively different: with diagonal diffusion `d_u, d_v ≥ 0` a stable
+(`tr J < 0 < det J`) self-limiting system (`J₀₀ ≤ 0`, `J₁₁ ≤ 0`) can never be destabilized
+(`not_exists_isUnstableMode_of_nonpos`), but chemotactic cross-diffusion can destabilize it. For
+Keller–Segel with logistic growth (`r, β, d_u, d_v > 0`),
 `f = r u (1 - u)`, `g = α u - β v`, at `(1, α / β)` one has `J = [[-r, 0], [α, -β]]`, so no
 diagonal diffusion produces a pattern, while chemotaxis does iff
 `2 √(d_u d_v r β) < α χ - r d_v - β d_u` (`kellerSegel_turing_iff`,
-`kellerSegel_crossDiffusionDriven`). For the minimal model (`r = 0`) at any density `u₀`,
-mode `k ≠ 0` is unstable iff `d_u d_v k² < α χ u₀ - β d_u`
+`kellerSegel_crossDiffusionDriven`). For the minimal model (`r = 0`, `β > 0`, `d_u, d_v ≥ 0`) at
+any density `u₀`, mode `k ≠ 0` is unstable iff `d_u d_v k² < α χ u₀ - β d_u`
 (`minimalKellerSegel_isCrossUnstableMode_iff`), the classical chemotactic instability
-condition `α χ u₀ > β d_u` in its long-wave limit; on `[0, L]` with Neumann conditions this reads
-`d_u d_v (π / L)² < α χ u₀ - β d_u`.
+condition `α χ u₀ > β d_u` in its long-wave limit; on `[0, L]` (`L > 0`) with Neumann conditions
+some mode `n ≥ 1` is unstable iff `d_u d_v (π / L)² < α χ u₀ - β d_u`.
 
 Rates, diffusion coefficients and the sensitivity `χ` are dimensionless. Only the *linear*
 analysis is formalized: the linearization principle (that linear instability implies nonlinear
@@ -136,12 +137,12 @@ def crossBandDiscriminant (J D : Matrix (Fin 2) (Fin 2) ℝ) : ℝ :=
   crossCoeff J D ^ 2 - 4 * D.det * J.det
 
 /-- Lower end `(b - √Δ) / (2 det D)` of the unstable band of squared wavenumbers (meaningful for
-`0 < det D` and `0 < Δ`). -/
+`0 < det D` and `0 < Δ`; `√Δ = 0` for `Δ < 0`, and the quotient is `0` when `det D = 0`). -/
 noncomputable def crossBandLower (J D : Matrix (Fin 2) (Fin 2) ℝ) : ℝ :=
   (crossCoeff J D - Real.sqrt (crossBandDiscriminant J D)) / (2 * D.det)
 
 /-- Upper end `(b + √Δ) / (2 det D)` of the unstable band of squared wavenumbers (meaningful for
-`0 < det D` and `0 < Δ`). -/
+`0 < det D` and `0 < Δ`; `√Δ = 0` for `Δ < 0`, and the quotient is `0` when `det D = 0`). -/
 noncomputable def crossBandUpper (J D : Matrix (Fin 2) (Fin 2) ℝ) : ℝ :=
   (crossCoeff J D + Real.sqrt (crossBandDiscriminant J D)) / (2 * D.det)
 
@@ -190,9 +191,9 @@ theorem crossDispersionDet_diffusionMatrix (J : Matrix (Fin 2) (Fin 2) ℝ) (du 
     Matrix.det_fin_two]
   simp
 
-/-! The next three derivative lemmas are copied from `TuringPatterns.lean`, where they are
-private (`fourierMode_hasDerivAt_space`, `fourierMode_hasDerivAt_space_second`,
-`fourierMode_hasDerivAt_time`). Delete these copies once those lemmas are public. -/
+/-! The next three derivative lemmas repeat private lemmas of `TuringPatterns.lean`
+(`fourierMode_hasDerivAt_space`, `fourierMode_hasDerivAt_space_second`,
+`fourierMode_hasDerivAt_time`). -/
 
 /-- The `x`-derivative of the Fourier mode: `-k e^{μ t} sin(k x) v` (copy of a private lemma of
 `TuringPatterns.lean`). -/
@@ -460,7 +461,8 @@ capacity scaled to `1`) and production `α u` and decay `β v` of the chemoattra
 def kellerSegelKinetics (r α β : ℝ) (x : Fin 2 → ℝ) : Fin 2 → ℝ :=
   ![r * x 0 * (1 - x 0), α * x 0 - β * x 1]
 
-/-- The homogeneous steady state `(1, α / β)` of the Keller–Segel kinetics (for `β ≠ 0`). -/
+/-- The homogeneous steady state `(1, α / β)` of the Keller–Segel kinetics (for `β ≠ 0`; with
+`α / 0 = 0` it is `(1, 0)` when `β = 0`). -/
 noncomputable def kellerSegelSteadyState (α β : ℝ) : Fin 2 → ℝ :=
   ![1, α / β]
 
@@ -503,7 +505,8 @@ theorem kellerSegel_steadyState (r α : ℝ) {β : ℝ} (hβ : β ≠ 0) :
     ring
 
 /-- The Jacobian matrix of the Keller–Segel kinetics at `(1, α / β)` is
-`kellerSegelJacobian r α β`. -/
+`kellerSegelJacobian r α β`. This holds for all real inputs; for `β = 0` the state is `(1, 0)`
+(`α / 0 = 0`). -/
 theorem jacobianMatrix_kellerSegel (r α β : ℝ) :
     MetaMathlibExt.jacobianMatrix (kellerSegelKinetics r α β) (kellerSegelSteadyState α β) =
       kellerSegelJacobian r α β := by
@@ -595,7 +598,7 @@ theorem minimalKellerSegel_steadyState (α : ℝ) {β : ℝ} (hβ : β ≠ 0) (u
     ring
 
 /-- The minimal Keller–Segel kinetics are linear, so their Jacobian is
-`kellerSegelJacobian 0 α β` at every state, in particular at each steady state
+`kellerSegelJacobian 0 α β` at every state, in particular, for `β ≠ 0`, at each steady state
 `(u₀, α u₀ / β)`. -/
 theorem jacobianMatrix_minimalKellerSegel (α β : ℝ) (x : Fin 2 → ℝ) :
     MetaMathlibExt.jacobianMatrix (kellerSegelKinetics 0 α β) x = kellerSegelJacobian 0 α β := by
@@ -645,8 +648,8 @@ theorem minimalKellerSegel_isCrossUnstableMode_iff {α β du dv χ u₀ k : ℝ}
   · intro h
     exact mul_neg_of_pos_of_neg hk2 (by linarith)
 
-/-- In the minimal Keller–Segel model the homogeneous mode is not unstable (it is neutral:
-`det J = 0`, mass conservation). -/
+/-- For `β > 0`, in the minimal Keller–Segel model the homogeneous mode is not unstable (it is
+neutral: `det J = 0`, mass conservation). -/
 theorem minimalKellerSegel_not_isCrossUnstableMode_zero {α β : ℝ} (hβ : 0 < β)
     (D : Matrix (Fin 2) (Fin 2) ℝ) :
     ¬ IsCrossUnstableMode (kellerSegelJacobian 0 α β) D 0 := by

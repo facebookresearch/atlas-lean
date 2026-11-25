@@ -67,17 +67,24 @@ variable [IsLocalHom (algebraMap A B)] [IsLocalHom (algebraMap A C)]
 
 namespace DVRResidue
 
-/-- The map from algebra homomorphisms of finite local DVR extensions to their induced
-residue-field algebra homomorphisms is bijective when the source is etale and the target is
-Henselian. -/
+/-- **Algebra maps from an étale DVR extension into a Henselian one match residue-field maps.**
+Let $A$, $B$, $C$ be discrete valuation rings, with $B$ and $C$ finite $A$-algebras whose structure
+maps are local homomorphisms, $B$ étale over $A$, and $C$ a Henselian local ring. Write
+$\kappa(R)$ for the residue field of a local ring $R$. Then sending an $A$-algebra homomorphism
+$B \to C$ to the $\kappa(A)$-algebra homomorphism $\kappa(B) \to \kappa(C)$ it induces is a
+bijection. -/
 theorem residueFieldMapAlgHom_bijective
     [Algebra.Etale A B] [HenselianLocalRing C] :
     Function.Bijective
       (residueFieldMapAlgHom (A := A) (B := B) (C := C)) :=
   ⟨residueFieldMapAlgHom_injective, residueFieldMapAlgHom_surjective⟩
 
-/-- An isomorphism of residue fields between finite etale Henselian local DVR extensions lifts to
-an algebra isomorphism, compatibly in both directions. -/
+/-- **Lifting residue-field isomorphisms between Henselian étale DVR extensions.** Let $A$, $B$,
+$C$ be discrete valuation rings, with $B$ and $C$ finite $A$-algebras whose structure maps are local
+homomorphisms, both étale over $A$ and both Henselian local rings. Write $\kappa(R)$ for the
+residue field of a local ring $R$. Then every $\kappa(A)$-algebra isomorphism
+$e \colon \kappa(B) \to \kappa(C)$ lifts to an $A$-algebra isomorphism $e' \colon B \to C$: the
+map that $e'$ induces on residue fields is $e$, and the map that $e'^{-1}$ induces is $e^{-1}$. -/
 theorem exists_algEquiv_lift_residueField
     [Algebra.Etale A B] [Algebra.Etale A C]
     [HenselianLocalRing B] [HenselianLocalRing C]

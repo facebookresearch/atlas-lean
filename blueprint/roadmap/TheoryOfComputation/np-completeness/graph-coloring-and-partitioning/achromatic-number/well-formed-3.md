@@ -1,0 +1,3 @@
+# Well-formed ACHROMATIC NUMBER OF INTERVAL GRAPHS instances
+
+An instance $(n, E, K)$ is well-formed for ACHROMATIC NUMBER OF INTERVAL GRAPHS when it is a well-formed instance $(n, E, K)$ of ACHROMATIC NUMBER (the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$), the graph on the vertices $0, \dots, n-1$ in which $u$ and $v$ are adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$ is an interval graph, and $K > 0$. Here the graph is an interval graph when there are real numbers $l_v \le r_v$ for each vertex $v$ such that two distinct vertices $u, v$ are adjacent exactly when the closed intervals $[l_u, r_u]$ and $[l_v, r_v]$ intersect.

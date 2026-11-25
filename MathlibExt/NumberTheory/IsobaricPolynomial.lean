@@ -26,18 +26,24 @@ namespace MetaMathlibExt
 
 open scoped BigOperators
 
-/-- Weighted isobaric sum `∑ j, (j + 1) * d j` of an exponent vector.
+/-- **Isobaric weight of an exponent vector.** For a natural number $k$ and an exponent vector
+$\alpha = (\alpha_1, \dots, \alpha_k) \in \mathbb{N}^k$, the isobaric weight of $\alpha$ is
+$\sum_{j=1}^k j \alpha_j$.
 
-This is the condition `∑_{j=1}^k j α_j = n` from the source, with `Fin k`
-indices shifted by one. Source statement: `jis_975c9f8263707d64d52bd0a3`. -/
+The source's condition on the monomials of an isobaric polynomial of degree $n$ is that this
+weight equals $n$.
+
+Source: statement `jis_975c9f8263707d64d52bd0a3`. -/
 abbrev isobaricWeight {k : ℕ} (d : Fin k →₀ ℕ) : ℕ :=
   Finsupp.weight (fun j : Fin k ↦ j.val + 1) d
 
-/-- An isobaric polynomial of isobaric degree `n`: a polynomial over `ℤ` in
-`k` variables that is weighted homogeneous for the source weights `j + 1`.
-This is a source-facing specialization of Mathlib's standard
-`MvPolynomial.IsWeightedHomogeneous` predicate. Source statement:
-`jis_975c9f8263707d64d52bd0a3`. -/
+/-- **Isobaric polynomial.** Let $k$ and $n$ be natural numbers. A polynomial
+$P \in \mathbb{Z}[t_1, \dots, t_k]$ is isobaric of degree $n$ if every monomial
+$t_1^{\alpha_1} \cdots t_k^{\alpha_k}$ occurring in $P$ with nonzero coefficient satisfies
+$\sum_{j=1}^k j \alpha_j = n$; that is, $P$ is weighted homogeneous of degree $n$ when the
+variable $t_j$ has weight $j$. In particular, the zero polynomial is isobaric of every degree.
+
+Source: statement `jis_975c9f8263707d64d52bd0a3`. -/
 abbrev IsIsobaric {k : ℕ} (n : ℕ) (P : MvPolynomial (Fin k) ℤ) : Prop :=
   MvPolynomial.IsWeightedHomogeneous (fun j : Fin k ↦ j.val + 1) P n
 

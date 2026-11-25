@@ -22,10 +22,10 @@ Journal of Integer Sequences 26 (2023),
 [`currie16.tex`](https://cs.uwaterloo.ca/journals/JIS/VOL26/Currie/currie16.tex).
 -/
 
-/-- A word is an overlap if it has the form `x y x y x` for a nonempty word `x`.
+/-- **Overlaps in words.** A finite word $o$ over an alphabet $\alpha$ is an overlap if
+$o = xyxyx$ for some finite words $x$ and $y$ over $\alpha$ with $x$ nonempty; $y$ may be empty.
 
-Allowing `x` to have arbitrary positive length is essential: restricting it to one letter
-does not faithfully state the source definition. -/
+Here $x$ may have any positive length, not only length one. -/
 public def IsWordOverlap {α : Type*} (o : List α) : Prop :=
   ∃ x y : List α, x ≠ [] ∧ o = x ++ y ++ x ++ y ++ x
 

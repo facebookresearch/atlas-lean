@@ -32,7 +32,7 @@ private def kakBowtie (c a u₁ u₂ : ℝ) : Set (ℝ × ℝ) :=
 private noncomputable def kakSlope (N k : ℕ) : ℝ := -1 + 2 * (k : ℝ) / (N : ℝ)
 
 /-- Finite bowtie approximation: a finite set plus `N` consecutive bowties. -/
-private def kakBowtieApprox (F : Set (ℝ × ℝ)) (N : ℕ) (x : ℕ → ℝ) (a : ℝ) :
+private noncomputable def kakBowtieApprox (F : Set (ℝ × ℝ)) (N : ℕ) (x : ℕ → ℝ) (a : ℝ) :
     Set (ℝ × ℝ) :=
   F ∪ ⋃ k ∈ (Finset.range N : Set ℕ),
     kakBowtie (x k + kakSlope N k * a) a (kakSlope N k) (kakSlope N (k + 1))
@@ -371,7 +371,7 @@ private theorem kak_isClosed_kakeyaFamily : IsClosed kakFamily := by
         (Q : Set (ℝ × ℝ)) ⊆ Set.univ ×ˢ Set.Icc (0 : ℝ) 1} :=
       TopologicalSpace.NonemptyCompacts.isClosed_subsets_of_isClosed
         (isClosed_univ.prod isClosed_Icc)
-    exact closure_minimal (fun Q hQ => hQ.1) hclosed hP
+    exact closure_minimal (fun Q (hQ : Q ∈ kakFamily) => hQ.1) hclosed hP
   refine ⟨hPstrip, fun u hu => ?_⟩
   have hQ : ∀ n : ℕ, ∃ Qn : TopologicalSpace.NonemptyCompacts (ℝ × ℝ),
       Qn ∈ kakFamily ∧ dist Qn P < 1 / ((n : ℝ) + 1) := by
@@ -1020,16 +1020,21 @@ direction.
 -/
 
 /--
-There exists a measurable compact `K ⊆ EuclideanSpace ℝ (Fin 2)` with `volume K = 0` such that
-every unit vector `v` has a translate `a + [0, 1]·v ⊆ K`. Source: A. S. Besicovitch, Math. Z. 27
-(1928) 312–320 and S. Kakeya, Tohoku Rep. 6 (1917); Perron-tree gives compact measure-zero Kakeya
-set; Lean states compact Lebesgue-null oriented version in ℝ² with segments `a+t•v`, `t∈[0, 1]`.
+**Besicovitch's Kakeya set of measure zero.** There is a compact set $K \subseteq \mathbb{R}^2$
+of Lebesgue measure zero that contains a unit segment in every direction: $K$ is measurable,
+and for every unit vector $v \in \mathbb{R}^2$ there is a point $a \in \mathbb{R}^2$ with
+$a + t v \in K$ for all $t \in [0, 1]$.
 
 The proof here follows T. W. Körner, "Besicovitch via Baire", Studia Math. 158 (2003): a
 Baire-category argument in the Hausdorff metric space of compact sets, not a Perron-tree
 construction.
 
 Proves `Wanted` entry `besicovitch_kakeya_compact_measure_zero`.
+
+Source: A. S. Besicovitch, Math. Z. 27
+(1928) 312–320 and S. Kakeya, Tohoku Rep. 6 (1917); Perron-tree gives compact measure-zero Kakeya
+set; Lean states compact Lebesgue-null oriented version in ℝ² with segments `a+t•v`,
+`t∈[0, 1]`.
 -/
 public theorem besicovitch_kakeya_compact_measure_zero
     [MeasurableSpace (EuclideanSpace ℝ (Fin 2))]
