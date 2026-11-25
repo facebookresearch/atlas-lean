@@ -232,8 +232,16 @@ private structure ZState (n : Nat) where
     pure s.table
 termination_by n - i
 
-/-- Compute all maximal-prefix lengths using Gusfield's Z-box algorithm.
-The first entry is the input length. Cost counts outer visits and actual comparisons. -/
+/-- **Z-algorithm.** Given a word $s = s_0 \dots s_{n-1}$ over a type $\alpha$ with a Boolean
+equality test, Gusfield's Z-box algorithm returns an array $Z$ of $n$ natural numbers with
+$Z_0 = n$. It visits $i = 1, \dots, n - 1$ in turn, keeping a box $[\ell, r)$, initially empty,
+that is the rightmost match of a prefix of $s$ found so far. If $\ell \le i < r$ and
+$Z_{i - \ell} < r - i$, it sets $Z_i = Z_{i - \ell}$. Otherwise it finds $Z_i$ by comparing
+symbols directly, starting at offset $r - i$ if $i < r$ and at offset $0$ if not, and if
+$Z_i > 0$ the box becomes $[i, i + Z_i)$. When the equality test is lawful, $Z_i$ is the length
+of the longest common prefix of $s$ and its suffix $s_i \dots s_{n-1}$. The cost counts one unit
+for each visited position $i \ge 1$ and one unit for each symbol comparison; on the empty word the
+result is empty with cost $0$. -/
 public def computeZ {α : Type u} [BEq α] {n : Nat}
     (input : Vector α n) : TimeM Nat (Vector Nat n) :=
   if h : 0 < n then
@@ -406,7 +414,11 @@ private theorem zScan_zero {α : Type u} [BEq α] {n : Nat}
   · simp only [TimeM.ret_pure]
 termination_by n - i
 
-/-- The source's undefined first entry is completed with the full input length. -/
+/-- **The first Z-value is the word length.** Let $\alpha$ be a type with a Boolean equality
+test. For every nonempty word of length $n$ over $\alpha$, the Z-array $Z$ computed by the
+Z-algorithm has $Z_0 = n$.
+
+Gusfield leaves this entry undefined; this convention completes it. -/
 public theorem computeZ_zero {α : Type u} [BEq α] {n : Nat}
     (input : Vector α n) (h : 0 < n) : (computeZ input).ret[0] = n := by
   rw [computeZ, dite_eq_left h]
@@ -435,8 +447,11 @@ private theorem computeZ_isZ {α : Type u} [BEq α] [LawfulBEq α] {n : Nat}
     rw [computeZ, dite_eq_left hn]
     exact zScan_processed input 1 _ (by omega) hs i (by omega) i.isLt
 
-/-- Every returned entry is the maximal common-prefix length of its suffix.
-The explicit suffix-length bound rules out equality caused by `List.take` truncation. -/
+/-- **Z-values are longest common prefix lengths.** Let $\alpha$ be a type with a lawful Boolean
+equality test, let $s = s_0 \dots s_{n-1}$ be a word over $\alpha$, and let $Z$ be the Z-array
+computed by the Z-algorithm on $s$. For every position $i < n$ and every natural number $q$,
+$q \le Z_i$ holds if and only if $q \le n - i$ and $s_k = s_{i+k}$ for all $k < q$. Hence $Z_i$ is
+the length of the longest common prefix of $s$ and its suffix $s_i \dots s_{n-1}$. -/
 public theorem computeZ_prefix_iff {α : Type u} [BEq α] [LawfulBEq α] {n : Nat}
     (input : Vector α n) (i : Fin n) (q : Nat) :
     q ≤ (computeZ input).ret[i.val] ↔ q ≤ n - i.val ∧
@@ -484,7 +499,9 @@ private theorem zScan_bounds {α : Type u} [BEq α] {n : Nat}
     exact hs
 termination_by n - i
 
-/-- Every suffix value is bounded even when the executable comparator is not lawful. -/
+/-- **Z-values are at most the suffix length.** Let $\alpha$ be a type with a Boolean equality
+test, not necessarily lawful, and let $s$ be a word of length $n$ over $\alpha$. For every position
+$i < n$, the entry at $i$ of the Z-array computed by the Z-algorithm on $s$ is at most $n - i$. -/
 public theorem computeZ_getElem_le {α : Type u} [BEq α] {n : Nat}
     (input : Vector α n) (i : Fin n) : (computeZ input).ret[i.val] ≤ n - i.val := by
   have hn : 0 < n := by have := i.isLt; omega
@@ -623,7 +640,10 @@ private theorem zScan_time_le {α : Type u} [BEq α] {n : Nat}
     omega
 termination_by n - i
 
-/-- In the declared event model, the algorithm uses at most three events per positive index. -/
+/-- **Linear upper bound for the Z-algorithm.** Let $\alpha$ be a type with a Boolean equality
+test, not necessarily lawful. On every word of length $n$ over $\alpha$, the Z-algorithm has cost
+at most $3(n - 1)$, read as $0$ when $n = 0$, where the cost counts one unit for each visited
+position $i \ge 1$ and one unit for each symbol comparison. -/
 public theorem computeZ_time_le {α : Type u} [BEq α] {n : Nat}
     (input : Vector α n) : (computeZ input).time ≤ 3 * (n - 1) := by
   rw [computeZ]
@@ -657,7 +677,10 @@ private theorem zScan_time_ge {α : Type u} [BEq α] {n : Nat}
     omega
 termination_by n - i
 
-/-- Every positive-index visit contributes one event, even a zero-comparison copy. -/
+/-- **Linear lower bound for the Z-algorithm.** Let $\alpha$ be a type with a Boolean equality
+test, not necessarily lawful. On every word of length $n$ over $\alpha$, the Z-algorithm has cost
+at least $n - 1$, where the cost counts one unit for each visited position $i \ge 1$ and one unit
+for each symbol comparison. -/
 public theorem computeZ_time_ge {α : Type u} [BEq α] {n : Nat}
     (input : Vector α n) : n - 1 ≤ (computeZ input).time := by
   rw [computeZ]
@@ -676,7 +699,9 @@ private theorem isZ_replicate_value {α : Type u} {n : Nat} (a : α)
     simp only [Vector.toList_replicate, List.take_replicate, List.drop_replicate,
       Nat.min_self, Nat.min_eq_left (Nat.sub_le n i)]
 
-/-- Repeated-symbol input returns the whole remaining suffix at every position. -/
+/-- **Z-array of a repeated symbol.** Let $\alpha$ be a type with a lawful Boolean equality
+test, let $a \in \alpha$ and $n \in \mathbb{N}$. The Z-array computed by the Z-algorithm on the word
+$a^n$ has entry $n - i$ at every position $i < n$. -/
 public theorem computeZ_replicate {α : Type u} [BEq α] [LawfulBEq α]
     (a : α) (n : Nat) :
     (computeZ (Vector.replicate n a)).ret = Vector.ofFn (fun i : Fin n => n - i.val) := by
@@ -759,7 +784,11 @@ private theorem zScan_replicate_full {α : Type u} [BEq α] [LawfulBEq α]
     omega
 termination_by n - i
 
-/-- Repeated-symbol input executes exactly `n - 1` comparisons as well as its outer visits. -/
+/-- **Z-algorithm cost on a repeated symbol.** Let $\alpha$ be a type with a lawful Boolean
+equality test, let $a \in \alpha$ and $n \in \mathbb{N}$. The Z-algorithm run on the word $a^n$ has
+cost exactly $2(n - 1)$, read as $0$ when $n = 0$, where the cost counts one unit for each visited
+position $i \ge 1$ and one unit for each symbol comparison. Thus it makes $n - 1$ visits and
+$n - 1$ comparisons. -/
 public theorem computeZ_replicate_time {α : Type u} [BEq α] [LawfulBEq α]
     (a : α) (n : Nat) : (computeZ (Vector.replicate n a)).time = 2 * (n - 1) := by
   by_cases h2 : 1 < n
@@ -922,8 +951,11 @@ private theorem zScan_push_full {α : Type u} [BEq α] [LawfulBEq α]
     omega
 termination_by n + 1 - i
 
-/-- A repeated prefix followed by a distinct final symbol preserves every explicit failure.
-For total input length `N = n + 1`, this is `3 * N - 4` events. -/
+/-- **Z-algorithm cost on a repeated symbol followed by a distinct one.** Let $\alpha$ be a type
+with a lawful Boolean equality test and let $a \ne b$ be elements of $\alpha$. For every $n \ge 1$,
+the Z-algorithm run on the word $a^n b$ has cost exactly $3n - 1$, where the cost counts one unit
+for each visited position $i \ge 1$ and one unit for each symbol comparison. In terms of the
+input length $N = n + 1$, this is $3N - 4$. -/
 public theorem computeZ_replicate_push_time {α : Type u} [BEq α] [LawfulBEq α]
     (a b : α) (hab : a ≠ b) (n : Nat) (hn : 0 < n) :
     (computeZ ((Vector.replicate n a).push b)).time = 3 * n - 1 := by

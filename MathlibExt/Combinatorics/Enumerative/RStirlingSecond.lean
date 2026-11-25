@@ -27,8 +27,11 @@ namespace MetaMathlibExt
 
 open Finset
 
-/-- Broder's r-Stirling number of the second kind `{n \brace m}_r`: `0` unless `r ≤ m` and
-`r ≤ n`, and otherwise `∑_i C(n-r,i) {n-r-i \brace m-r} r^i`.
+/-- **r-Stirling numbers of the second kind.** For natural numbers $n$, $m$ and $r$, Broder's
+r-Stirling number of the second kind ${n \brace m}_r$ is $0$ unless $r \le m$ and $r \le n$, and
+otherwise
+$${n \brace m}_r = \sum_{i=0}^{n-r} \binom{n-r}{i} {n-r-i \brace m-r} r^i,$$
+where ${a \brace b}$ denotes the Stirling number of the second kind (and $0^0 = 1$).
 
 Source: A. Z. Broder, *The r-Stirling numbers*, Discrete Mathematics 49 (1984), 241-259;
 Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving Central
@@ -39,7 +42,10 @@ def rStirlingSecond (n m r : ℕ) : ℕ :=
     ∑ i ∈ range (n - r + 1), (n - r).choose i * Nat.stirlingSecond (n - r - i) (m - r) * r ^ i
   else 0
 
-/-- The shifted finite-sum form `{n+r \brace m+r}_r = ∑_{i ≤ n} C(n,i) {n-i \brace m} r^i`.
+/-- **Finite-sum formula for r-Stirling numbers of the second kind.** For all natural numbers
+$n$, $m$ and $r$, the r-Stirling number of the second kind ${n+r \brace m+r}_r$ satisfies
+$${n+r \brace m+r}_r = \sum_{i=0}^{n} \binom{n}{i} {n-i \brace m} r^i,$$
+where ${a \brace b}$ denotes the Stirling number of the second kind (and $0^0 = 1$).
 
 Source: A. Z. Broder, *The r-Stirling numbers*, Discrete Mathematics 49 (1984), 241-259. -/
 theorem rStirlingSecond_add_add (n m r : ℕ) :
@@ -47,7 +53,8 @@ theorem rStirlingSecond_add_add (n m r : ℕ) :
       ∑ i ∈ range (n + 1), n.choose i * Nat.stirlingSecond (n - i) m * r ^ i := by
   simp [rStirlingSecond]
 
-/-- `{n \brace m}_r = 0` when `m < r` or `n < r`.
+/-- **Vanishing of r-Stirling numbers of the second kind.** For natural numbers $n$, $m$ and
+$r$ with $m < r$ or $n < r$, the r-Stirling number of the second kind ${n \brace m}_r$ is $0$.
 
 Source: A. Z. Broder, *The r-Stirling numbers*, Discrete Mathematics 49 (1984), 241-259. -/
 theorem rStirlingSecond_eq_zero {n m r : ℕ} (h : m < r ∨ n < r) : rStirlingSecond n m r = 0 := by
@@ -55,7 +62,9 @@ theorem rStirlingSecond_eq_zero {n m r : ℕ} (h : m < r ∨ n < r) : rStirlingS
   intro h'
   omega
 
-/-- `{n \brace m}_0` is the Stirling number `{n \brace m}`.
+/-- **r-Stirling numbers of the second kind for r = 0.** For all natural numbers $n$ and $m$,
+the r-Stirling number of the second kind ${n \brace m}_0$ equals the Stirling number of the
+second kind ${n \brace m}$.
 
 Source: A. Z. Broder, *The r-Stirling numbers*, Discrete Mathematics 49 (1984), 241-259. -/
 theorem rStirlingSecond_zero_right (n m : ℕ) : rStirlingSecond n m 0 = Nat.stirlingSecond n m := by
@@ -67,7 +76,9 @@ theorem rStirlingSecond_zero_right (n m : ℕ) : rStirlingSecond n m 0 = Nat.sti
     simp [hi]
   · simp
 
-/-- `{n+r \brace r}_r = r^n`.
+/-- **r-Stirling numbers of the second kind with exactly r blocks.** For all natural numbers $n$
+and $r$, the r-Stirling number of the second kind ${n+r \brace r}_r$ equals $r^n$ (with
+$0^0 = 1$).
 
 Source: Kunle Adegoke and Robert Frontczak, *Three Classes of Combinatorial Sums Involving
 Central Binomial Coefficients and Harmonic Numbers*, INTEGERS 26 (2026), Article A109,
@@ -83,8 +94,10 @@ theorem rStirlingSecond_add_self (n r : ℕ) : rStirlingSecond (n + r) r r = r ^
     simp
   · simp
 
-/-- Bridge to the real-parameter generalized Stirling numbers:
-`{n+r \brace m+r}_r = generalizedStirlingSecond n m r`.
+/-- **r-Stirling numbers as generalized Stirling numbers.** For all natural numbers $n$, $m$
+and $r$, the r-Stirling number of the second kind ${n+r \brace m+r}_r$, viewed as a real number,
+equals the generalized Stirling number of the second kind of $n$ and $m$ (after Carlitz and
+Broder) at the real parameter $x = r$.
 
 Source: A. Z. Broder, *The r-Stirling numbers*, Discrete Mathematics 49 (1984), 241-259. -/
 theorem rStirlingSecond_add_add_eq_generalizedStirlingSecond (n m r : ℕ) :

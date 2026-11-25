@@ -30,13 +30,17 @@ namespace MetaMathlibExt
 
 -- Logic 340: Subset mod finite
 
-/-- a⊆_* b if a/ b is finite -/
+/-- **Inclusion modulo finite.** For subsets $a$ and $b$ of a set $\alpha$, $a \subseteq^* b$
+($a$ is almost contained in $b$) if the difference $a \setminus b$ is finite. -/
 def SubsetModFinite {α : Type*} (a b : Set α) : Prop := (a \ b).Finite
 
 -- Logic 355: P-ideal
 
-/-- I is a P-ideal of countable sets on α: an ideal of countable sets containing all the
-finite ones and σ-directed modulo finite.
+/-- **P-ideal of countable sets.** A family $I$ of subsets of a set $\alpha$ is a P-ideal of
+countable sets if every member of $I$ is countable, every subset of a member of $I$ is in $I$,
+every finite subset of $\alpha$ is in $I$, $I$ is closed under binary unions, and for every
+sequence $(a_n)_{n \in \mathbb{N}}$ of members of $I$ there is $b \in I$ with $a_n \subseteq^* b$
+(that is, $a_n \setminus b$ is finite) for every $n$.
 -/
 structure IsPIdeal {α : Type*} (I : Set (Set α)) : Prop where
   countable : ∀ a ∈ I, a.Countable
@@ -47,7 +51,9 @@ structure IsPIdeal {α : Type*} (I : Set (Set α)) : Prop where
 
 -- Logic 356: Is Orthogonal To
 
-/-- X is orthonogonal to I if X∩ i is finite for all i∈ I -/
+/-- **Orthogonality to a family of sets.** Let $I$ be a family of subsets of a set $\alpha$. A
+set $X \subseteq \alpha$ is orthogonal to $I$ if $X \cap a$ is finite for every $a \in I$.
+-/
 def IsOrthogonalTo {α : Type*} (I : Set (Set α)) (X : Set α) : Prop :=
   ∀ a ∈ I, (X ∩ a).Finite
 

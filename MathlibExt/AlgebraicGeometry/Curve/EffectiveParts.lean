@@ -54,7 +54,10 @@ theorem divZeros_nonneg (D : CurveDivisor C) : 0 ≤ divZeros D :=
 theorem divPoles_nonneg (D : CurveDivisor C) : 0 ≤ divPoles D :=
   negPart_nonneg D
 
-/-- Subtracting the pole part from the zero part recovers the divisor. -/
+/-- **A divisor is its zero part minus its pole part.** For every set of points $C$ and every
+divisor $D$ on $C$, let $D^+$ be its zero part, with coefficient $\max(D(P), 0)$ at each point
+$P$, and $D^-$ its pole part, with coefficient $\max(-D(P), 0)$ at each point $P$. Then
+$D^+ - D^- = D$. -/
 @[simp]
 theorem divZeros_sub_divPoles (D : CurveDivisor C) :
     divZeros D - divPoles D = D := by

@@ -20,7 +20,7 @@ public import Mathlib.Topology.Order.Real
 # Graphons, the cut distance and convergent graph sequences
 
 Following the convention of the repository's finitely forcible graphons
-(`IsGraphon` in `WantedExt.Combinatorics.FinitelyForcibleOptimumOWR4212Problem011Wanted`), a graphon
+(`IsGraphon` in `MathlibExt.Combinatorics.FinitelyForcibleGraphons`), a graphon
 is represented by a function `W : ℝ → ℝ → ℝ` of which only the values on `[0, 1]²` matter.
 
 * `graphonHomDensity F W` is `t(F, W) = ∫_{[0,1]^k} ∏_{ij ∈ E(F)} W(xᵢ, xⱼ) dx`

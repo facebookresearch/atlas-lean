@@ -1,0 +1,15 @@
+# Stable Infinity Interval Insertion
+
+- [Prepend Lengths](prepend-lengths.md)
+- [Interval Slice](interval-slice.md)
+- [Insertion Ordinals](insertion-ordinals.md)
+- [Old Ordinals](old-ordinals.md)
+- [Zero Diagram](zero-diagram.md)
+- [Multi Gap Inclusion](multi-gap-inclusion.md)
+- [Constant Zero Map](constant-zero-map.md)
+- [Interval Insertion](interval-insertion.md)
+- [Restrict](restrict.md)
+- [Inserted Simplex](inserted-simplex.md)
+- [Multi SPointing](multi-spointing.md)
+- [Pointed Diagonal](pointed-diagonal.md)
+- [Circle Insertion](circle-insertion.md)

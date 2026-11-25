@@ -540,20 +540,19 @@ private lemma andrews_prod_factor (q r : ℂ) (k i : ℕ) (hq0 : q ≠ 0) (hr0 :
   rw [f1, f3, f2, mul_right_comm]
 
 /--
-Andrews' equivalent form of Jacobi's triple product identity: for `‖q‖ < 1`
-and `0 < i ≤ k`, the bilateral series
-`∑' n : ℤ, (-1) ^ n * q ^ ((2k+1) * n * (n+1) / 2 - i * n)` equals the stated
-triple Euler product. The source equation does not restate the `0 < i ≤ k`
-hypotheses alongside it; they are needed (at `i = 0` the product side has a
-zero factor while the series side does not vanish).
+**Andrews' form of the Jacobi triple product identity.** Let $q$ be a complex number with
+$|q| < 1$, and let $k$ and $i$ be natural numbers with $0 < i \le k$. Then
+$$\sum_{n \in \mathbb{Z}} (-1)^n q^{(2k+1)n(n+1)/2 - in} =
+\prod_{n=0}^{\infty} \left(1 - q^{(2k+1)(n+1)}\right) \left(1 - q^{(2k+1)n + i}\right)
+\left(1 - q^{(2k+1)(n+1) - i}\right).$$
+
+Proves `Wanted` entry `andrews_jacobi_triple_product`.
 
 Source: Aritram Dhar, Avi Mukhopadhyay, and Rishabh Sarma, "Generalization of
 the Extended Minimal Excludant of Andrews and Newman," Journal of Integer
 Sequences 26 (2023), Article 23.3.7, Theorem (Andrews, An98 p. 22, label
 JTP1), lines 459–462,
 https://cs.uwaterloo.ca/journals/JIS/VOL26/Sarma/sarma5.tex
-
-Proves `Wanted` entry `andrews_jacobi_triple_product`.
 -/
 theorem andrews_jacobi_triple_product
     (q : ℂ) (k i : ℕ) (hi_pos : 0 < i) (hi_le : i ≤ k) (hq : ‖q‖ < 1) :
@@ -593,7 +592,11 @@ theorem andrews_jacobi_triple_product
             (1 - q ^ ((2 * (k : ℤ) + 1) * (n : ℤ) + (i : ℤ))) *
             (1 - q ^ ((2 * (k : ℤ) + 1) * ((n : ℤ) + 1) - (i : ℤ)))) := hprod
 
-/-- The bilateral series in `andrews_jacobi_triple_product` is summable. -/
+/-- **Convergence of the series in Andrews' triple product identity.** Let $q$ be a complex
+number with $|q| < 1$, and let $k$ and $i$ be natural numbers with $i \le k$. Then the bilateral
+series
+$$\sum_{n \in \mathbb{Z}} (-1)^n q^{(2k+1)n(n+1)/2 - in}$$
+is summable over $\mathbb{Z}$. -/
 theorem andrews_jacobi_triple_product_summable
     (q : ℂ) (k i : ℕ) (hi_le : i ≤ k) (hq : ‖q‖ < 1) :
     Summable (fun n : ℤ => (-1 : ℂ) ^ n *
@@ -606,7 +609,13 @@ theorem andrews_jacobi_triple_product_summable
     summable_neg_side q k i hi_le hq
   exact Summable.of_nat_of_neg h1 h2
 
-/-- The Euler product in `andrews_jacobi_triple_product` is multipliable. -/
+/-- **Convergence of the product in Andrews' triple product identity.** Let $q$ be a complex
+number with $|q| < 1$, and let $k$ and $i$ be natural numbers with $0 < i \le k$. Then the infinite
+product
+$$\prod_{n=0}^{\infty} \left(1 - q^{(2k+1)(n+1)}\right) \left(1 - q^{(2k+1)n + i}\right)
+\left(1 - q^{(2k+1)(n+1) - i}\right)$$
+is multipliable: its products over finite sets of indices converge in $\mathbb{C}$
+(unconditional convergence, where the limit is not required to be nonzero). -/
 theorem andrews_jacobi_triple_product_multipliable
     (q : ℂ) (k i : ℕ) (hi_pos : 0 < i) (hi_le : i ≤ k) (hq : ‖q‖ < 1) :
     Multipliable (fun n : ℕ => (1 - q ^ ((2 * (k : ℤ) + 1) * ((n : ℤ) + 1))) *

@@ -35,23 +35,38 @@ subgroup join. Modularity is the modular law `A ≤ C → (A ⊔ B) ⊓ C = A �
 `A`, `B`, `C`, with the lattice operations of the subgroup lattice.
 -/
 
-/-- `H` is a centralizer in `G`: `H = C_G(X)` for some subset `X ⊆ G`. -/
+/-- **Centralizer subgroups.** A subgroup $H$ of a group $G$ is a centralizer if $H = C_G(X)$ for
+some subset $X \subseteq G$, where $C_G(X)$ is the subgroup of elements of $G$ that commute with
+every element of $X$. -/
 def IsCentralizer {G : Type*} [Group G] (H : Subgroup G) : Prop :=
   ∃ X : Set G, H = Subgroup.centralizer X
 
-/-- Kourovka 11.4 (V. A. Antonov): if the centralizers of a group `G` form a sublattice of the
-subgroup lattice (they are always closed under `⊓`; here also under `⊔`), then this lattice of
-centralizers is modular. -/
+/-- **Modularity of centralizer sublattices (Kourovka 11.4).** Call a subgroup of a group $G$ a
+centralizer if it equals $C_G(X)$ for some subset $X \subseteq G$. This is the proposition that for
+every group $G$ in which the join (in the subgroup lattice) of any two centralizers is again a
+centralizer, any three centralizers $A$, $B$, $C$ of $G$ with $A \le C$ satisfy the modular law
+$(A \sqcup B) \sqcap C = A \sqcup (B \sqcap C)$, where $\sqcup$ and $\sqcap$ are the join and meet
+in the subgroup lattice of $G$.
+
+Centralizers are always closed under intersection, so the hypothesis says that they form a
+sublattice of the subgroup lattice. The question is due to V. A. Antonov. -/
 def centralizerSublatticeModular : Prop :=
   ∀ (G : Type) [Group G],
     (∀ A B : Subgroup G, IsCentralizer A → IsCentralizer B → IsCentralizer (A ⊔ B)) →
     ∀ A B C : Subgroup G, IsCentralizer A → IsCentralizer B → IsCentralizer C → A ≤ C →
       (A ⊔ B) ⊓ C = A ⊔ (B ⊓ C)
 
-/--
-Resolved false: the Kourovka Archive answers 11.4 "No, not always" (Obraztsov): some group has its
-centralizers closed under the subgroup join while the modular law fails for three of them (for
-finite groups the answer is yes). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems
+/-- **Lattices of centralizers need not be modular (Kourovka 11.4).** Call a subgroup of a group
+$G$ a centralizer if it equals $C_G(X)$ for some subset $X \subseteq G$. Modularity of centralizer
+sublattices fails: there is a group $G$ in which the join (in the subgroup lattice) of any two
+centralizers is again a centralizer, but which has centralizers $A$, $B$, $C$ with $A \le C$ and
+$(A \sqcup B) \sqcap C \ne A \sqcup (B \sqcap C)$, where $\sqcup$ and $\sqcap$ are the join and meet
+in the subgroup lattice of $G$.
+
+The Kourovka Archive answers 11.4 "No, not always" (Obraztsov); for finite groups the answer is
+yes.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems
 in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved
 Problems, Problem 11.4 (V. A. Antonov); resolution: V. N. Obraztsov, J. Algebra 199, no. 1 (1998),
 337-343, Kourovka Archive, Problem 11.4: "No, not always", https://arxiv.org/abs/1401.0300v49.

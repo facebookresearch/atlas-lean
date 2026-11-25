@@ -9,16 +9,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
+public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 import Mathlib.Algebra.BigOperators.Group.Finset.Powerset
 import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Topology.Instances.Rat
 import Mathlib.Algebra.Order.Interval.Finset.SuccPred
 import Mathlib.Combinatorics.Enumerative.Partition.Glaisher
-import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.RingTheory.PowerSeries.PiTopology
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
-import MathlibExt.Combinatorics.Enumerative.GaussianBinomial
 
 @[expose] public section
 
@@ -1642,11 +1642,15 @@ private theorem rrDvd_theta_mul_sub (r n : ℕ) (hr : r ≤ n) (U V : PowerSerie
   rw [hdecomp]
   exact dvd_add t1 t2
 
-/-- Truncation of the finite RR identity. -/
-private theorem rrTrunc_RR (n : ℕ) :
-    (PowerSeries.X : PowerSeries ℚ) ^ (n + 1)
-      ∣ rrP n * (∑ k ∈ Finset.range (n + 1),
-        (PowerSeries.X : PowerSeries ℚ) ^ (k ^ 2) * rrIp k) - rrT n := by
+open Finset PowerSeries in
+/-- The first Rogers–Ramanujan series, truncated at index `n` and multiplied by the finite
+q-Pochhammer symbol, agrees with the partial theta sum through degree `n`. -/
+public theorem rrTrunc_RR (n : ℕ) :
+    (X : PowerSeries ℚ) ^ (n + 1) ∣
+      qPochFin X n * (∑ j ∈ range (n + 1), X ^ (j ^ 2) * (qPochFin X j)⁻¹) -
+      ∑ r ∈ range (n + 1), if r = 0 then 1 else
+        (-1) ^ r * (X ^ (5 * r.choose 2 + 2 * r) + X ^ (5 * r.choose 2 + 3 * r)) := by
+  change _ ∣ rrP n * (∑ j ∈ range (n + 1), X ^ (j ^ 2) * rrIp j) - rrT n
   have hFin := rrFinite_identity n
   simp only [rrT]
   have hPS : rrP n * (∑ k ∈ Finset.range (n + 1),
@@ -2624,24 +2628,19 @@ private theorem rrE_constantCoeff (n : ℕ) :
     rw [hX, sub_zero]
   · simp only [hg, ↓reduceIte, map_one]
 
-/-- Rogers–Ramanujan identity (first form): for every `n`, the number of partitions
-of `n` with pairwise gap at least two between distinct parts equals the number of
-partitions of `n` all of whose parts are congruent to `1` or `4` modulo `5`.
+/-- **Rogers–Ramanujan identity (first form).** For every natural number $n$, the number of
+partitions of $n$ into distinct parts, any two of which differ by at least $2$, equals the number
+of partitions of $n$ all of whose parts are congruent to $1$ or $4$ modulo $5$.
 
-The left side counts `p : Nat.Partition n` with `p.parts.Nodup` and
-`a + 2 ≤ b` whenever `a < b` are parts of `p` (nodup forbids the repeated
-equal parts that the gap condition alone would allow). The right side counts
-`p : Nat.Partition n` with every part satisfying `m % 5 = 1 ∨ m % 5 = 4`.
+Proves `Wanted` entry `rogers_ramanujan_difference_two_vs_one_four`.
 
-Provenance: George E. Andrews and David Newman, "The Minimal Excludant in
+Source: George E. Andrews and David Newman, "The Minimal Excludant in
 Integer Partitions," Journal of Integer Sequences 23 (2020), Article 20.2.3,
 quoted Rogers–Ramanujan theorem at lines 173–178.
 Public TeX URL:
 `https://cs.uwaterloo.ca/journals/JIS/VOL23/Andrews/andrews5.tex`
 Retrieved TeX SHA-256:
-`9f5fc80c212b5dc9cb8d7bcbc905d717f1aa9673ad7ada690f3eca3065c308c9`
-
-Proves `Wanted` entry `rogers_ramanujan_difference_two_vs_one_four`. -/
+`9f5fc80c212b5dc9cb8d7bcbc905d717f1aa9673ad7ada690f3eca3065c308c9` -/
 public theorem rogers_ramanujan_difference_two_vs_one_four (n : ℕ) :
     (Finset.univ.filter (fun p : Nat.Partition n =>
       p.parts.Nodup ∧ ∀ a ∈ p.parts, ∀ b ∈ p.parts, a < b → a + 2 ≤ b)).card =

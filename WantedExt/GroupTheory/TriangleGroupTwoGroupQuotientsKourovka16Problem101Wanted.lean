@@ -33,22 +33,33 @@ pairwise non-isomorphic. A `2`-group is a group all of whose elements have `2`-p
 (`IsPGroup 2`). The group is Mathlib's `PresentedGroup` on two generators.
 -/
 
-/-- The group `⟨x, y | x² = y⁴ = (x y)⁸ = 1⟩`. -/
+/-- **The (2, 4, 8) triangle group.** The $(2, 4, 8)$ triangle group is the group with
+presentation $\langle x, y \mid x^2 = y^4 = (xy)^8 = 1 \rangle$. -/
 abbrev wiegoldGroup : Type :=
   PresentedGroup ({FreeGroup.of 0 ^ 2, FreeGroup.of 1 ^ 4, (FreeGroup.of 0 * FreeGroup.of 1) ^ 8} :
     Set (FreeGroup (Fin 2)))
 
-/-- Kourovka 16.101 (J. Wiegold): there are uncountably many pairwise non-isomorphic infinite
-`2`-groups that are quotients of `⟨x, y | x² = y⁴ = (x y)⁸ = 1⟩`. -/
+/-- **Wiegold's question on 2-group quotients of the (2, 4, 8) triangle group (Kourovka 16.101).**
+The statement that there are an uncountable index set $I$ and normal subgroups $N_i$ of
+$\Gamma = \langle x, y \mid x^2 = y^4 = (xy)^8 = 1 \rangle$, for $i \in I$, such that every
+quotient $\Gamma / N_i$ is an infinite $2$-group (a group in which every element has order a
+power of $2$), and $\Gamma / N_i \cong \Gamma / N_j$ only when $i = j$. -/
 def uncountablyManyInfiniteTwoGroupQuotients : Prop :=
   ∃ (ι : Type) (_ : Uncountable ι) (N : ι → Subgroup wiegoldGroup) (_ : ∀ i, (N i).Normal),
     (∀ i, Infinite (wiegoldGroup ⧸ N i) ∧ IsPGroup 2 (wiegoldGroup ⧸ N i)) ∧
       ∀ i j, Nonempty ((wiegoldGroup ⧸ N i) ≃* (wiegoldGroup ⧸ N j)) → i = j
 
 /--
-Resolved true: the Kourovka Archive answers 16.101 "Yes, there do" (Grigorchuk; Minasyan, Olshanskii
-and Sonkin): uncountably many pairwise non-isomorphic infinite `2`-groups are quotients of `⟨x, y |
-x² = y⁴ = (xy)⁸ = 1⟩`. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+**Uncountably many infinite 2-group quotients of the (2, 4, 8) triangle group (Kourovka 16.101).**
+Let $\Gamma = \langle x, y \mid x^2 = y^4 = (xy)^8 = 1 \rangle$. There are an uncountable index set
+$I$ and normal subgroups $N_i$ of $\Gamma$, for $i \in I$, such that every quotient $\Gamma / N_i$
+is an infinite $2$-group (a group in which every element has order a power of $2$), and
+$\Gamma / N_i \cong \Gamma / N_j$ only when $i = j$. So Wiegold's question has a positive answer.
+
+The Kourovka Archive answers 16.101 "Yes, there do" (Grigorchuk; Minasyan, Olshanskii and
+Sonkin).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
 Problem 16.101 (J. Wiegold); resolution: R. I. Grigorchuk, Algebra Discrete Math. 2009, no. 4,
 78-96; A. Minasyan, A. Yu. Olshanskii and D. Sonkin, Periodic quotients of hyperbolic and large

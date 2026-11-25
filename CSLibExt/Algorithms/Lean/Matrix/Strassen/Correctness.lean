@@ -104,8 +104,12 @@ private lemma run_matrix {R : Type u} [NonUnitalNonAssocRing R] (k : Nat)
       blockMap_matrix, ih, zero_matrix, zero_add]
     exact seven_blocks _ _ _ _ _ _ _ _ _ _ _ _
 
-/-- Strassen accumulation returns the saved matrix `C` plus the canonical
-Matrix product `A * B`, preserving multiplication operand order. -/
+/-- **Correctness of Strassen's matrix accumulator.** Let $R$ be a non-unital, non-associative
+ring. For every $k \ge 0$ and all $2^k \times 2^k$ matrices $A$, $B$, $C$ over $R$, the matrix
+returned by Strassen's accumulator on $A$, $B$, $C$ equals $C + AB$, where $AB$ is the usual
+matrix product, $(AB)_{ij} = \sum_t A_{it} B_{tj}$.
+
+Multiplication in $R$ need not be commutative or associative. -/
 public theorem strassenMatrixAccumulate_ret {R : Type u} [NonUnitalNonAssocRing R]
     (k : Nat) (A B C : Vector (Vector R (2 ^ k)) (2 ^ k)) :
     (Matrix.of fun i j => ((strassenMatrixAccumulate k A B C).ret.get i).get j) =
@@ -113,8 +117,10 @@ public theorem strassenMatrixAccumulate_ret {R : Type u} [NonUnitalNonAssocRing 
         (Matrix.of fun i j => (A.get i).get j) * (Matrix.of fun i j => (B.get i).get j) := by
   exact run_matrix k A B C
 
-/-- Every Strassen output entry is its saved `C` entry plus the finite row-column
-product sum, with the left factor drawn from `A` and the right factor from `B`. -/
+/-- **Entries of Strassen's matrix accumulator.** Let $R$ be a non-unital, non-associative ring.
+For every $k \ge 0$, all $2^k \times 2^k$ matrices $A$, $B$, $C$ over $R$ and all indices
+$i, j$, the $(i, j)$ entry of the matrix returned by Strassen's accumulator on $A$, $B$, $C$ is
+$C_{ij} + \sum_{t} A_{it} B_{tj}$, the sum running over all $2^k$ indices $t$. -/
 public theorem strassenMatrixAccumulate_apply {R : Type u} [NonUnitalNonAssocRing R]
     (k : Nat) (A B C : Vector (Vector R (2 ^ k)) (2 ^ k)) (i j : Fin (2 ^ k)) :
     ((strassenMatrixAccumulate k A B C).ret.get i).get j =

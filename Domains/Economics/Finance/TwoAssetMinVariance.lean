@@ -38,18 +38,19 @@ Atlas roadmap target FI06.T01.
 
 namespace MathlibExt.Probability.Finance.TwoAssetMinVariance
 
-/-- Variance of the two-asset portfolio with weight `w` on `R₁` and `1 - w`
-on `R₂` (source clause: "portfolio return `w R₁ + (1 - w) R₂`"). The budget
-constraint is built in (`w + (1 - w) = 1`); short sales are allowed: `w`
-ranges over all of `ℝ`. -/
+/-- Variance of the two-asset portfolio with weight `w` on `R₁` and `1 - w` on `R₂` (source clause:
+"portfolio return `w R₁ + (1 - w) R₂`"). The budget constraint is built in (`w + (1 - w) = 1`);
+short sales are allowed: `w` ranges over all of `ℝ`. By convention the integral of a non-integrable
+function is `0`, and an infinite variance is `0`. -/
 noncomputable def twoAssetVariance {Ω : Type*} [MeasurableSpace Ω]
     (μ : MeasureTheory.Measure Ω) (R₁ R₂ : Ω → ℝ) (w : ℝ) : ℝ :=
   ProbabilityTheory.variance (fun ω => w * R₁ ω + (1 - w) * R₂ ω) μ
 
 /-- The unconstrained (in `w ∈ ℝ`, with the budget constraint built into the
 `(w, 1 - w)` parametrization) two-asset minimum-variance weight
-`(σ₂² - σ₁₂) / Var(R₁ - R₂)` (source clause: "w* = (σ₂² - σ₁₂) / Var(R₁-R₂)").
-The denominator is `Var(R₁ - R₂) = σ₁² - 2σ₁₂ + σ₂²`. -/
+`(σ₂² - σ₁₂) / Var(R₁ - R₂)` (source clause: "w* = (σ₂² - σ₁₂) / Var(R₁-R₂)"),
+which is `0` when `Var(R₁ - R₂) = 0` (`x / 0 = 0`). For square-integrable returns under a
+finite measure the denominator is `Var(R₁ - R₂) = σ₁² - 2σ₁₂ + σ₂²`. -/
 noncomputable def minVarianceWeight {Ω : Type*} [MeasurableSpace Ω]
     (μ : MeasureTheory.Measure Ω) (R₁ R₂ : Ω → ℝ) : ℝ :=
   (ProbabilityTheory.variance R₂ μ - ProbabilityTheory.covariance R₁ R₂ μ) /
@@ -77,7 +78,8 @@ private theorem twoAssetVariance_quad {Ω : Type*} [MeasurableSpace Ω]
     ProbabilityTheory.covariance_const_mul_right]
   ring
 
-/-- **The unconstrained two-asset minimum-variance weight.** When
+/-- **The unconstrained two-asset minimum-variance weight.** For square-integrable returns
+under a finite measure, when
 `Var(R₁ - R₂) > 0`, the weight `w* = (σ₂² - σ₁₂) / Var(R₁ - R₂)` globally
 minimizes the two-asset portfolio variance (Atlas roadmap FI06.T01). The
 budget constraint is built into the `(w, 1 - w)` parametrization; no

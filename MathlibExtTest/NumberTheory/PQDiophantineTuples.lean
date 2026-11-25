@@ -18,4 +18,11 @@ example : ¬(1 * 8 + 1 ∣ 3 * 8 + 1) :=
 
 #print axioms not_mul_add_one_dvd_mul_add_one
 
+/-- The descending tuple gives negative differences. For the entry `4`, the difference
+`9 - 21` reduces by a gcd of `3`. For the entry `0`, all three differences vanish. -/
+example : (5 : ℤ) ∣ 10 ∧ (4 : ℤ) ∣ 4 ∧ (2 : ℤ) ∣ 2 ∧ (0 : ℤ) ∣ 0 :=
+  dvd_gcd_sub_div_gcd 5 4 2 0
+
+#print axioms dvd_gcd_sub_div_gcd
+
 end MetaMathlibExt
