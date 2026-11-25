@@ -24,7 +24,7 @@ example : HasPrincipalDivisors K F := inferInstance
 
 example (v : Place K F) : v.FiniteResidue := inferInstance
 
-example (v : Place K F) : Module.Finite K v.ResidueField := IsCurveOver.finite_residueField v
+example (v : Place K F) : Module.Finite K v.ResidueField := IsCurveOver.finiteResidueField v
 
 example : Module.Free F Ω[F⁄K] := inferInstance
 

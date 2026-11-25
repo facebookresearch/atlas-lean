@@ -179,7 +179,7 @@ end Place
 private theorem ell_le_ell_sub_single_add_deg [IsCurveOver K F] (D : Divisor K F) (P : Place K F) :
     ell D ≤ ell (D - Finsupp.single P 1) + P.deg := by
   classical
-  have : Module.Finite K P.ResidueField := IsCurveOver.finite_residueField P
+  have : Module.Finite K P.ResidueField := IsCurveOver.finiteResidueField P
   set E : Divisor K F := D - Finsupp.single P 1 with hE
   have hEP : E P = D P - 1 := by rw [hE, Finsupp.sub_apply, Finsupp.single_eq_same]
   have hEv : ∀ v, v ≠ P → E v = D v := by
@@ -256,6 +256,7 @@ private theorem ell_le_ell_sub_single_add_deg [IsCurveOver K F] (D : Divisor K F
           rw [hordmul hf0]; omega
   have hkerfin : finrank K (LinearMap.ker φ) = ell E := by
     rw [hker, LinearEquiv.finrank_eq (Submodule.comapSubtypeEquivOfLe hsub)]
+    rfl
   have hquot : finrank K (LSpace D ⧸ LinearMap.ker φ) ≤ P.deg := by
     rw [LinearEquiv.finrank_eq φ.quotKerEquivRange]
     exact Submodule.finrank_le (LinearMap.range φ)
@@ -269,7 +270,7 @@ private theorem ell_le_ell_sub_single_add_deg [IsCurveOver K F] (D : Divisor K F
     omega
 
 private theorem one_le_deg [IsCurveOver K F] (P : Place K F) : 1 ≤ P.deg := by
-  have : Module.Finite K P.ResidueField := IsCurveOver.finite_residueField P
+  have : Module.Finite K P.ResidueField := IsCurveOver.finiteResidueField P
   exact Module.finrank_pos
 
 private theorem ell_le_degree_add_ellZero [IsCurveOver K F] {D : Divisor K F}
@@ -576,7 +577,7 @@ private theorem finrank_adeleBdd_quotient_single [IsCurveOver K F] (D : Divisor 
       finrank K
           (adeleBdd D ⧸ (adeleBdd (D - Finsupp.single P 1)).comap (adeleBdd D).subtype)
         = P.deg := by
-  have := IsCurveOver.finite_residueField (K := K) P
+  have := IsCurveOver.finiteResidueField (K := K) P
   exact ⟨Module.Finite.equiv (adeleBddQuotSingleEquivResidueField D P).symm,
     (adeleBddQuotSingleEquivResidueField D P).finrank_eq⟩
 
