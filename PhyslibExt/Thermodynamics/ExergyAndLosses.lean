@@ -9,6 +9,8 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Analysis.Numerical.Certified
+public import PhyslibExt.HeatTransfer.HeatExchangers
 public import PhyslibExt.Thermodynamics.GasCycles
 public import PhyslibExt.Thermodynamics.ProcessPorts
 
@@ -19,7 +21,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
-# Exergy and losses: exergy destruction and nonideal Brayton losses
+# Exergy and losses: exergy destruction, nonideal Brayton losses, regeneration and property tables
 
 ## i. Overview
 
@@ -84,6 +86,57 @@ Model inputs and scope of section C: the efficiencies are given constants, not d
 physics; the gas is cold-air standard (constant `cp`); the heat exchangers have no pressure loss
 and there is no regeneration. No empirical adequacy or vehicle or system safety claim.
 
+Regeneration (section D). A regenerator preheats the compressed stream of the nonideal loop with
+the turbine exhaust before the combustor. It is the counterflow exchanger of
+`HeatTransfer.HeatExchangers` with the exhaust as the hot stream, entering at `T₄`, and the
+compressed stream as the cold stream, entering at `T₂`. Both carry the cycle's mass flow `ṁ` at
+the same `cp`, so both capacity rates are `ṁ cp`: per unit mass flow both are `cp`, the
+capacity-rate ratio is `Cr = 1`, `UA` is the conductance per unit mass flow and `NTU = UA / cp`.
+The effectiveness is the equal-capacity branch `ε = NTU / (1 + NTU) = UA / (cp + UA)` of
+`HeatTransfer.HeatExchangers.counterflowEffectiveness`, with `0 ≤ ε < 1`; the general formula's
+`0 / 0` never enters.
+
+Heat flows from the exhaust into the compressed stream only if the exhaust is hotter, so the
+regenerator ports are defined by cases. When `T₂ < T₄`, the compressed stream leaves the
+regenerator at `T₅ = T₂ + ε (T₄ - T₂)` and the exhaust at `T₆ = T₄ - ε (T₄ - T₂)`, and the
+recovered heat is the effectiveness contract `Q_reg = ε Cmin (T₄ - T₂)` with `Cmin = cp`; every
+counterflow solution between the ports has exactly these outlets. When `T₄ ≤ T₂`, equality
+included, the regenerator is bypassed: `T₅ = T₂`, `T₆ = T₄` and `Q_reg = 0`. Connected against
+the gradient, `T₄ < T₂`, an exchanger with `UA > 0` would reverse the heat flow, cooling the
+compressed stream and heating the exhaust.
+
+On both branches the heat lost by the exhaust equals the heat gained by the compressed stream,
+`cp (T₄ - T₆) = cp (T₅ - T₂) = Q_reg`; the external heat demand `Qin_reg = cp (T₃ - T₅)` is `Qin`
+less `Q_reg`; and the net work is unchanged, `Wnet = Qin_reg - cp (T₆ - T₁)`. For `cp > 0` and
+`UA ≥ 0` the recovered heat is never negative and is positive exactly when `T₂ < T₄` and
+`UA > 0`, so the external heat demand falls exactly then; on the physical ranges it stays
+positive when the loop without regenerator has positive heat input. No efficiency benefit is
+asserted for a backward temperature gradient: in the bypass the work-to-heat ratio is that of
+section C. Model inputs and scope of section D: the counterflow model of `HeatExchangers`
+(constant capacity rates and conductance, no phase change, axial conduction, pressure loss or
+heat leak) on the loop of section C.
+
+Property tables (section E). The port enthalpies can also come from a supplied property table
+instead of the cold-air model `h = cp T`. A `PropertyTable` lists nodes `(Tₖ, hₖ)` as exact
+rationals (K, J/kg) with strictly increasing positive temperatures and carries a supplied
+interpolation-error envelope, written `ε ≥ 0` in section E (it is not the regenerator
+effectiveness of section D). At an in-range temperature the table interpolates linearly between
+the bracketing nodes, and `PropertyTable.lookup` returns the rational interval `[q - ε, q + ε]`
+(`RatInterval` of `MathlibExt.Analysis.Numerical.Certified`) around the interpolant `q`; outside
+the table range it returns no value, so nothing is extrapolated. The declared property model is
+any `h` within `ε` of the interpolant wherever the table interpolates
+(`PropertyTable.WithinEnvelope`), a model input to be justified for the chosen model; no theorem
+derives it or infers or certifies the tabulated data. Under it every certified port value
+encloses `h`, and interval differences enclose the heat added `h(T₃) - h(T₂)`, the heat rejected
+`h(T₄) - h(T₁)` and the net work `(h(T₃) - h(T₄)) - (h(T₂) - h(T₁))` of the declared model.
+
+The enclosures carry the property error alone: each port interval has width `2 ε`, the heat
+enclosures `4 ε` and the work enclosure `8 ε`. The port temperatures are exact inputs, so no
+solver error enters, and the conclusions concern the declared model, not the physical fluid; a
+separately declared solver error and physical-model error widen an enclosure only through their
+own bounds. For the cold-air model at the section C port states the enclosures contain the heats
+and the net work of section C. No empirical adequacy or vehicle or system safety claim.
+
 ## ii. Key results
 
 - `ExergyAndLosses.exergyDestroyed_eq_add`: the decomposition of `Ẋ_dest` for every dead state.
@@ -111,6 +164,39 @@ and there is no regeneration. No empirical adequacy or vehicle or system safety 
   efficiency rises with each component efficiency.
 - `ExergyAndLosses.braytonLossyEfficiency_le_braytonEfficiency`: on positive heat input
   `η ≤ 1 - 1 / a`, with equality exactly at `ηc = ηt = 1`.
+- `ExergyAndLosses.braytonRegen_effectiveness`: the regenerator has `Cr = 1`, `NTU = UA / cp` and
+  `ε = UA / (cp + UA) ∈ [0, 1)`.
+- `ExergyAndLosses.braytonRegen_of_lt`, `ExergyAndLosses.braytonRegen_bypass`: the ports when the
+  exhaust is hotter, and the bypass otherwise, with the work-to-heat ratio of section C.
+- `ExergyAndLosses.braytonRegen_heat_balance`: `cp (T₄ - T₆) = Q_reg`, `Qin_reg = Qin - Q_reg` and
+  `Wnet = Qin_reg - cp (T₆ - T₁)`.
+- `ExergyAndLosses.braytonRegenHeat_nonneg`, `ExergyAndLosses.braytonRegenHeat_pos_iff`: no
+  negative recovery; positive recovery exactly for `T₂ < T₄` and `UA > 0`.
+- `ExergyAndLosses.braytonRegenHeatIn_le_braytonLossyHeatIn`,
+  `ExergyAndLosses.braytonRegenHeatIn_pos`: the external heat demand falls exactly then and stays
+  positive.
+- `ExergyAndLosses.braytonRegen_temp_order`: `T₂ ≤ T₅ < T₄` and `T₂ < T₆ ≤ T₄` when `T₂ < T₄`.
+- `ExergyAndLosses.braytonRegen_of_isCounterflowSolution`,
+  `ExergyAndLosses.braytonRegen_reversal_of_isCounterflowSolution`: every counterflow solution
+  between the ports realizes `T₅` and `T₆`; connected against the gradient it would reverse the
+  heat flow.
+- `ExergyAndLosses.PropertyTable.lookup_encloses`: under the envelope a certified port value
+  encloses the declared property model.
+- `ExergyAndLosses.PropertyTable.lookup_eq_none_iff`: no certified value exactly outside the
+  table range.
+- `ExergyAndLosses.PropertyTable.width_of_lookup_eq_some`,
+  `ExergyAndLosses.PropertyTable.InRange.pos`: each port interval has width `2 ε`; in-range
+  temperatures are positive.
+- `ExergyAndLosses.PropertyTable.heatInEnclosure_encloses`,
+  `ExergyAndLosses.PropertyTable.heatOutEnclosure_encloses`,
+  `ExergyAndLosses.PropertyTable.netWorkEnclosure_encloses`: the composed heat and work enclosures
+  include the declared model, with widths `4 ε`, `4 ε` and `8 ε`.
+- `ExergyAndLosses.PropertyTable.portEnclosures_eq_none_iff`: no composed value when a port
+  temperature is outside the table.
+- `ExergyAndLosses.encloses_sub_ofCenter_of_errors`: solver and physical-model errors enter as
+  separate declared bounds.
+- `ExergyAndLosses.braytonLossy_encloses`: for the cold-air model at the section C ports the
+  enclosures contain the section C heats and net work.
 
 ## iii. Table of contents
 
@@ -121,6 +207,14 @@ and there is no regeneration. No empirical adequacy or vehicle or system safety 
   - C.2. Work and heat
   - C.3. The positive-work threshold
   - C.4. Monotonicity in the component efficiencies
+- D. Regeneration without heat-flow reversal
+  - D.1. Regenerator ports
+  - D.2. No heat-flow reversal
+  - D.3. The counterflow exchanger between the ports
+- E. Property-table enclosure at the cycle port
+  - E.1. Tables, lookups and the supplied envelope
+  - E.2. Port enclosures
+  - E.3. Property error kept apart
 
 ## iv. References
 
@@ -136,6 +230,19 @@ and there is no regeneration. No empirical adequacy or vehicle or system safety 
 - Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering Approach*, McGraw-Hill, ch. 9:
   the Brayton cycle, deviation of actual gas-turbine cycles from idealized ones, and the back
   work ratio `r_bw = w_comp,in / w_turb,out`.
+- Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering Approach*, McGraw-Hill, ch. 9:
+  the Brayton cycle with regeneration, `q_regen = h₅ - h₂`, the regenerator effectiveness
+  `ε = (h₅ - h₂) / (h₄ - h₂)`, and regeneration only when the turbine exhaust is hotter than the
+  compressed air, since otherwise heat flows the other way.
+- F. P. Incropera, D. P. DeWitt, T. L. Bergman and A. S. Lavine, *Fundamentals of Heat and Mass
+  Transfer*, 6th ed., Wiley (2007), Section 11.4: `q = ε Cmin (Th,i - Tc,i)` and the counterflow
+  effectiveness `ε = NTU / (1 + NTU)` at `Cr = 1`.
+- R. L. Burden and J. D. Faires, *Numerical Analysis*, 10th ed., Cengage Learning, 2016, ch. 3:
+  linear and piecewise-linear interpolation and the interpolation error.
+- W. Tucker, *Validated Numerics: A Short Introduction to Rigorous Computations*, Princeton
+  University Press, 2011: interval enclosures and interval arithmetic.
+- Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering Approach*, McGraw-Hill, ch. 3
+  and 7: property tables with linear interpolation, and ideal-gas enthalpy tables of air.
 -/
 
 @[expose] public section
@@ -706,5 +813,543 @@ lemma braytonLossyEfficiency_le_braytonEfficiency {cp R rp T₁ T₃ ηc ηt : �
       rw [hdiff]
       simp
     linarith
+
+/-! ## D. Regeneration without heat-flow reversal -/
+
+open HeatTransfer.HeatExchangers
+
+/-! ### D.1. Regenerator ports -/
+
+/-- Temperature `T₅` of the compressed stream leaving the regenerator, the combustor inlet. The
+regenerator is a counterflow exchanger with the turbine exhaust as the hot stream (inlet `T₄`)
+and the compressed stream as the cold stream (inlet `T₂`), both at the capacity rate `cp` per unit
+mass flow, and conductance `UA` per unit mass flow. When the exhaust is hotter, `T₂ < T₄`, the
+compressed stream leaves at `T₂ + ε (T₄ - T₂)` with the counterflow effectiveness
+`ε = counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp)`; otherwise the
+regenerator is bypassed and `T₅ = T₂`. Physical domain `cp > 0` and `UA ≥ 0`. -/
+noncomputable def braytonRegenPreheatTemp (T₁ T₃ rp R cp ηc ηt UA : ℝ) : ℝ :=
+  if braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt then
+    braytonLossyCompressedTemp T₁ rp R cp ηc +
+      counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) *
+        (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc)
+  else braytonLossyCompressedTemp T₁ rp R cp ηc
+
+/-- Temperature `T₆` of the exhaust leaving the regenerator: `T₄ - ε (T₄ - T₂)` when the exhaust
+is hotter than the compressed stream, `T₂ < T₄`, and `T₄` in the bypass otherwise. -/
+noncomputable def braytonRegenExhaustTemp (T₁ T₃ rp R cp ηc ηt UA : ℝ) : ℝ :=
+  if braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt then
+    braytonLossyExpandedTemp T₃ rp R cp ηt -
+      counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) *
+        (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc)
+  else braytonLossyExpandedTemp T₃ rp R cp ηt
+
+/-- Heat recovered per unit mass by the regenerator, the heat gained by the compressed stream,
+`Q_reg = cp (T₅ - T₂)`. -/
+noncomputable def braytonRegenHeat (T₁ T₃ rp R cp ηc ηt UA : ℝ) : ℝ :=
+  cp * (braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA -
+    braytonLossyCompressedTemp T₁ rp R cp ηc)
+
+/-- External heat demand per unit mass of the regenerated loop, the heat added on the isobaric leg
+from the regenerator outlet to the turbine inlet, `Qin_reg = cp (T₃ - T₅)`. -/
+noncomputable def braytonRegenHeatIn (T₁ T₃ rp R cp ηc ηt UA : ℝ) : ℝ :=
+  cp * (T₃ - braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA)
+
+/-- **The regenerator runs at equal capacity rates.** For `cp > 0` and `UA ≥ 0` the regenerator
+streams have `Cr = 1` and `NTU = UA / cp`, so the counterflow effectiveness is its equal-capacity
+branch `ε = UA / (cp + UA)`, not the general formula's `0 / 0`, and `0 ≤ ε < 1`. -/
+lemma braytonRegen_effectiveness {cp UA : ℝ} (hcp : 0 < cp) (hUA : 0 ≤ UA) :
+    capacityRatio cp cp = 1 ∧ transferUnits UA cp cp = UA / cp ∧
+      counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) = UA / (cp + UA) ∧
+      0 ≤ counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) ∧
+      counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) < 1 := by
+  have hcp0 : cp ≠ 0 := hcp.ne'
+  have hsum : 0 < cp + UA := by linarith
+  have hsum0 : cp + UA ≠ 0 := hsum.ne'
+  have hdom := capacityRatio_domain hcp hcp hUA
+  have hCr : capacityRatio cp cp = 1 := hdom.2.2.1.mpr rfl
+  have hN : transferUnits UA cp cp = UA / cp := by
+    unfold transferUnits
+    rw [min_self]
+  have hE : counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) =
+      UA / (cp + UA) := by
+    rw [hCr, hN]
+    unfold counterflowEffectiveness
+    rw [ite_eq_left rfl]
+    field_simp
+  refine ⟨hCr, hN, hE, (counterflowEffectiveness_bounds hdom.2.2.2 hdom.2.1).1, ?_⟩
+  rw [hE, div_lt_one hsum]
+  linarith
+
+/-- **An exhaust hotter than the compressed stream feeds the exchanger.** For every real
+parameter with `T₂ < T₄`: `T₅ = T₂ + ε (T₄ - T₂)`, `T₆ = T₄ - ε (T₄ - T₂)`, and the recovered heat
+is the effectiveness contract `Q_reg = ε Cmin (T₄ - T₂)` with `Cmin = min cp cp`. -/
+lemma braytonRegen_of_lt {cp R rp T₁ T₃ ηc ηt UA : ℝ}
+    (hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt) :
+    braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA = braytonLossyCompressedTemp T₁ rp R cp ηc +
+        counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) *
+          (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc) ∧
+      braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA = braytonLossyExpandedTemp T₃ rp R cp ηt -
+        counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) *
+          (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc) ∧
+      braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA =
+        counterflowEffectiveness (transferUnits UA cp cp) (capacityRatio cp cp) * min cp cp *
+          (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc) := by
+  refine ⟨ite_eq_left hT, ite_eq_left hT, ?_⟩
+  rw [braytonRegenHeat, braytonRegenPreheatTemp, ite_eq_left hT, min_self]
+  ring
+
+/-- **Otherwise the regenerator is bypassed.** For every real parameter with `T₄ ≤ T₂`, equality
+included, both streams pass unchanged, `T₅ = T₂` and `T₆ = T₄`; no heat is recovered, the external
+heat demand is the heat input `Qin` of section C, and the work-to-heat ratio is that of section C:
+no efficiency benefit for a backward temperature gradient. -/
+lemma braytonRegen_bypass {cp R rp T₁ T₃ ηc ηt UA : ℝ}
+    (hT : braytonLossyExpandedTemp T₃ rp R cp ηt ≤ braytonLossyCompressedTemp T₁ rp R cp ηc) :
+    braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA = braytonLossyCompressedTemp T₁ rp R cp ηc ∧
+      braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA = braytonLossyExpandedTemp T₃ rp R cp ηt ∧
+      braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA = 0 ∧
+      braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA = braytonLossyHeatIn T₁ T₃ rp R cp ηc ∧
+      braytonLossyNetWork T₁ T₃ rp R cp ηc ηt / braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA =
+        braytonLossyEfficiency T₁ T₃ rp R cp ηc ηt := by
+  have hnot := not_lt.mpr hT
+  have h5 : braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA =
+      braytonLossyCompressedTemp T₁ rp R cp ηc := ite_eq_right hnot
+  have hQin : braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA =
+      braytonLossyHeatIn T₁ T₃ rp R cp ηc := by
+    rw [braytonRegenHeatIn, h5, braytonLossyHeatIn]
+  refine ⟨h5, ite_eq_right hnot, ?_, hQin, ?_⟩
+  · rw [braytonRegenHeat, h5, sub_self, mul_zero]
+  · rw [hQin, braytonLossyEfficiency]
+
+/-- **Heat balance of the regenerated loop.** For every real parameter, on both branches: the heat
+lost by the exhaust equals the heat gained by the compressed stream, `cp (T₄ - T₆) = Q_reg`; the
+external heat demand is the heat input of section C less that heat, `Qin_reg = Qin - Q_reg`; and
+the net work is unchanged, `Wnet = Qin_reg - cp (T₆ - T₁)`. -/
+lemma braytonRegen_heat_balance (T₁ T₃ rp R cp ηc ηt UA : ℝ) :
+    cp * (braytonLossyExpandedTemp T₃ rp R cp ηt -
+        braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA) =
+        braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA ∧
+      braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA =
+        braytonLossyHeatIn T₁ T₃ rp R cp ηc - braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA ∧
+      braytonLossyNetWork T₁ T₃ rp R cp ηc ηt = braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA -
+        cp * (braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA - T₁) := by
+  simp only [braytonRegenHeat, braytonRegenHeatIn, braytonRegenPreheatTemp,
+    braytonRegenExhaustTemp, braytonLossyHeatIn, braytonLossyNetWork]
+  split_ifs <;> exact ⟨by ring, by ring, by ring⟩
+
+/-! ### D.2. No heat-flow reversal -/
+
+/-- **No negative heat recovery.** For `cp > 0` and `UA ≥ 0`, whatever the order of `T₂` and
+`T₄`, the recovered heat is nonnegative: an exhaust that is not hotter is bypassed instead of
+taking heat from the compressed stream. -/
+lemma braytonRegenHeat_nonneg {cp R rp T₁ T₃ ηc ηt UA : ℝ} (hcp : 0 < cp) (hUA : 0 ≤ UA) :
+    0 ≤ braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA := by
+  by_cases hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt
+  · rw [(braytonRegen_of_lt (UA := UA) hT).2.2, min_self]
+    exact mul_nonneg (mul_nonneg (braytonRegen_effectiveness hcp hUA).2.2.2.1 hcp.le)
+      (sub_nonneg.mpr hT.le)
+  · exact le_of_eq (braytonRegen_bypass (UA := UA) (not_lt.mp hT)).2.2.1.symm
+
+/-- **Heat is recovered exactly from a hotter exhaust.** For `cp > 0` and `UA ≥ 0`, `Q_reg > 0` if
+and only if `T₂ < T₄` and `UA > 0`; at equal temperatures nothing is recovered. -/
+lemma braytonRegenHeat_pos_iff {cp R rp T₁ T₃ ηc ηt UA : ℝ} (hcp : 0 < cp) (hUA : 0 ≤ UA) :
+    0 < braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA ↔
+      braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt ∧
+        0 < UA := by
+  obtain ⟨-, -, hE, -, -⟩ := braytonRegen_effectiveness hcp hUA
+  by_cases hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt
+  · rw [(braytonRegen_of_lt (UA := UA) hT).2.2, min_self, hE]
+    have hd := sub_pos.mpr hT
+    have hsum : 0 < cp + UA := by linarith
+    refine ⟨fun h => ⟨hT, ?_⟩, fun h => mul_pos (mul_pos (div_pos h.2 hsum) hcp) hd⟩
+    rcases hUA.lt_or_eq with hpos | h0
+    · exact hpos
+    · rw [← h0, zero_div, zero_mul, zero_mul] at h
+      exact absurd h (lt_irrefl 0)
+  · rw [(braytonRegen_bypass (UA := UA) (not_lt.mp hT)).2.2.1]
+    exact ⟨fun h => absurd h (lt_irrefl 0), fun h => absurd h.1 hT⟩
+
+/-- **The external heat demand falls exactly when heat is recovered.** For `cp > 0` and `UA ≥ 0`,
+`Qin_reg ≤ Qin`, with `Qin_reg < Qin` if and only if `T₂ < T₄` and `UA > 0`. -/
+lemma braytonRegenHeatIn_le_braytonLossyHeatIn {cp R rp T₁ T₃ ηc ηt UA : ℝ} (hcp : 0 < cp)
+    (hUA : 0 ≤ UA) :
+    braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA ≤ braytonLossyHeatIn T₁ T₃ rp R cp ηc ∧
+      (braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA < braytonLossyHeatIn T₁ T₃ rp R cp ηc ↔
+        braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt ∧
+          0 < UA) := by
+  have hbal := (braytonRegen_heat_balance T₁ T₃ rp R cp ηc ηt UA).2.1
+  have hnn : 0 ≤ braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA := braytonRegenHeat_nonneg hcp hUA
+  have hpos : 0 < braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA ↔
+      braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt ∧
+        0 < UA := braytonRegenHeat_pos_iff hcp hUA
+  rw [hbal, ← hpos]
+  exact ⟨sub_le_self _ hnn, sub_lt_self_iff _⟩
+
+/-- **Heat flows only from the exhaust to the compressed stream.** For `cp > 0`, `UA ≥ 0` and
+`T₂ < T₄`, the compressed stream is never cooled and stays below the exhaust inlet,
+`T₂ ≤ T₅ < T₄`, and the exhaust is never heated and stays above the compressed-stream inlet,
+`T₂ < T₆ ≤ T₄`. No order
+between `T₅` and `T₆` is asserted: a counterflow temperature cross `T₆ < T₅` is allowed. -/
+lemma braytonRegen_temp_order {cp R rp T₁ T₃ ηc ηt UA : ℝ} (hcp : 0 < cp) (hUA : 0 ≤ UA)
+    (hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt) :
+    braytonLossyCompressedTemp T₁ rp R cp ηc ≤ braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA ∧
+      braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA < braytonLossyExpandedTemp T₃ rp R cp ηt ∧
+      braytonLossyCompressedTemp T₁ rp R cp ηc < braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA ∧
+      braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA ≤ braytonLossyExpandedTemp T₃ rp R cp ηt := by
+  obtain ⟨h5, h6, -⟩ := braytonRegen_of_lt (UA := UA) hT
+  obtain ⟨-, -, -, hE0, hE1⟩ := braytonRegen_effectiveness hcp hUA
+  have hd := sub_pos.mpr hT
+  have h1 := mul_nonneg hE0 hd.le
+  have h2 := mul_lt_mul_of_pos_right hE1 hd
+  rw [h5, h6]
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> linarith
+
+/-- **The regenerated loop still takes heat from outside.** For `0 < R < cp`, `rp > 1`, `T₃ > 0`,
+`ηt > 0`, `UA ≥ 0` and positive heat input of section C, `T₂ < T₃`, the regenerator never brings
+the compressed stream up to the turbine inlet: `Qin_reg > 0`. -/
+lemma braytonRegenHeatIn_pos {cp R rp T₁ T₃ ηc ηt UA : ℝ} (hR : 0 < R) (hRcp : R < cp)
+    (hrp : 1 < rp) (hT₃ : 0 < T₃) (hηt : 0 < ηt) (hUA : 0 ≤ UA)
+    (hQ : braytonLossyCompressedTemp T₁ rp R cp ηc < T₃) :
+    0 < braytonRegenHeatIn T₁ T₃ rp R cp ηc ηt UA := by
+  have hcp : 0 < cp := lt_trans hR hRcp
+  rw [braytonRegenHeatIn]
+  refine mul_pos hcp (sub_pos.mpr ?_)
+  by_cases hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt
+  · have ha1 := one_lt_braytonTempRatio hR hRcp hrp
+    have ha : 0 < braytonTempRatio rp R cp := lt_trans zero_lt_one ha1
+    have hc : 0 < 1 - 1 / braytonTempRatio rp R cp := sub_pos.mpr ((div_lt_one ha).mpr ha1)
+    have h4 : braytonLossyExpandedTemp T₃ rp R cp ηt < T₃ := by
+      have h := mul_pos (mul_pos hηt hT₃) hc
+      simp only [braytonLossyExpandedTemp]
+      linarith
+    exact lt_trans (braytonRegen_temp_order hcp hUA hT).2.1 h4
+  · rw [(braytonRegen_bypass (UA := UA) (not_lt.mp hT)).1]
+    exact hQ
+
+/-! ### D.3. The counterflow exchanger between the ports -/
+
+/-- **The ports are the outlets of every counterflow solution.** For `cp > 0`, `UA ≥ 0`, `L > 0`
+and `T₂ < T₄`, let `(Th, Tc)` solve the counterflow equations with the exhaust as the hot stream
+(inlet `T₄` at `x = 0`) and the compressed stream as the cold stream (inlet `T₂` at `x = L`), both
+at capacity rate `cp` per unit mass flow, with conductance `UA / L` per unit length. Its cold
+outlet is `T₅`, its hot outlet is `T₆`, and the heat gained by the compressed stream equals the
+heat lost by the exhaust: `cp (Tc 0 - T₂) = cp (T₄ - Th L) = Q_reg`. -/
+lemma braytonRegen_of_isCounterflowSolution {cp R rp T₁ T₃ ηc ηt UA L : ℝ} {Th Tc : ℝ → ℝ}
+    (hcp : 0 < cp) (hUA : 0 ≤ UA) (hL : 0 < L)
+    (hT : braytonLossyCompressedTemp T₁ rp R cp ηc < braytonLossyExpandedTemp T₃ rp R cp ηt)
+    (h : IsCounterflowSolution cp cp (UA / L) L (braytonLossyExpandedTemp T₃ rp R cp ηt)
+      (braytonLossyCompressedTemp T₁ rp R cp ηc) Th Tc) :
+    Tc 0 = braytonRegenPreheatTemp T₁ T₃ rp R cp ηc ηt UA ∧
+      Th L = braytonRegenExhaustTemp T₁ T₃ rp R cp ηc ηt UA ∧
+      cp * (Tc 0 - braytonLossyCompressedTemp T₁ rp R cp ηc) =
+        braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA ∧
+      cp * (braytonLossyExpandedTemp T₃ rp R cp ηt - Th L) =
+        braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA := by
+  obtain ⟨hhot, hcold⟩ := h.heat_eq_effectiveness hcp hcp hUA hL
+  obtain ⟨h5, h6, hQ⟩ := braytonRegen_of_lt (UA := UA) hT
+  rw [min_self] at hhot hcold hQ
+  have hcp0 : cp ≠ 0 := hcp.ne'
+  refine ⟨?_, ?_, hcold.trans hQ.symm, hhot.trans hQ.symm⟩
+  · rw [h5]
+    exact mul_left_cancel₀ hcp0 (by linear_combination hcold)
+  · rw [h6]
+    exact mul_left_cancel₀ hcp0 (by linear_combination -hhot)
+
+/-- **Against the gradient the exchanger would reverse the heat flow.** For `cp > 0`, `UA > 0`,
+`L > 0` and an exhaust colder than the compressed stream, `T₄ < T₂`, a counterflow solution
+connected as above would cool the compressed stream, `Tc 0 < T₂`, and heat the exhaust,
+`T₄ < Th L`: negative heat recovery. The regenerator ports bypass instead, with `Q_reg = 0`. -/
+lemma braytonRegen_reversal_of_isCounterflowSolution {cp R rp T₁ T₃ ηc ηt UA L : ℝ}
+    {Th Tc : ℝ → ℝ} (hcp : 0 < cp) (hUA : 0 < UA) (hL : 0 < L)
+    (hT : braytonLossyExpandedTemp T₃ rp R cp ηt < braytonLossyCompressedTemp T₁ rp R cp ηc)
+    (h : IsCounterflowSolution cp cp (UA / L) L (braytonLossyExpandedTemp T₃ rp R cp ηt)
+      (braytonLossyCompressedTemp T₁ rp R cp ηc) Th Tc) :
+    Tc 0 < braytonLossyCompressedTemp T₁ rp R cp ηc ∧
+      braytonLossyExpandedTemp T₃ rp R cp ηt < Th L ∧
+      braytonRegenHeat T₁ T₃ rp R cp ηc ηt UA = 0 := by
+  obtain ⟨hhot, hcold⟩ := h.heat_eq_effectiveness hcp hcp hUA.le hL
+  obtain ⟨-, -, hE, -, -⟩ := braytonRegen_effectiveness hcp hUA.le
+  rw [min_self, hE] at hhot hcold
+  have hneg : UA / (cp + UA) * cp *
+      (braytonLossyExpandedTemp T₃ rp R cp ηt - braytonLossyCompressedTemp T₁ rp R cp ηc) < 0 :=
+    mul_neg_of_pos_of_neg (mul_pos (div_pos hUA (by linarith)) hcp) (sub_neg.mpr hT)
+  refine ⟨?_, ?_, (braytonRegen_bypass (UA := UA) hT.le).2.2.1⟩
+  · by_contra hge
+    have := mul_nonneg hcp.le (sub_nonneg.mpr (not_lt.mp hge))
+    linarith
+  · by_contra hge
+    have := mul_nonneg hcp.le (sub_nonneg.mpr (not_lt.mp hge))
+    linarith
+
+/-! ## E. Property-table enclosure at the cycle port -/
+
+open MathlibExt.Analysis.Numerical.Certified
+
+/-! ### E.1. Tables, lookups and the supplied envelope -/
+
+/-- A property table of specific enthalpy against absolute temperature: nodes `(Tₖ, hₖ)`, exact
+rationals in K and J/kg, with strictly increasing positive temperatures (a monotone table), and a
+supplied interpolation-error envelope `ε ≥ 0`. The entries are supplied data; no theorem infers
+or certifies them. -/
+structure PropertyTable where
+  /-- The tabulated nodes `(Tₖ, hₖ)`. -/
+  nodes : List (ℚ × ℚ)
+  /-- The temperatures strictly increase along the table. -/
+  sorted : nodes.Pairwise fun a b => a.1 < b.1
+  /-- The tabulated temperatures are absolute, hence positive. -/
+  temp_pos : ∀ n ∈ nodes, 0 < n.1
+  /-- The supplied interpolation-error envelope `ε`. -/
+  envelope : ℚ
+  /-- The envelope is a nonnegative bound. -/
+  envelope_nonneg : 0 ≤ envelope
+
+/-- Piecewise-linear interpolation through a node list at `T`: the first segment `[Tₖ, Tₖ₊₁]`
+that contains `T` gives `hₖ + (hₖ₊₁ - hₖ) (T - Tₖ) / (Tₖ₊₁ - Tₖ)`, a single node gives its value
+at its own temperature, and otherwise there is no value. On the nodes of a `PropertyTable` every
+segment has positive width, so the division is never by zero. -/
+def tableInterp : List (ℚ × ℚ) → ℚ → Option ℚ
+  | [], _ => none
+  | [a], T => if T = a.1 then some a.2 else none
+  | a :: b :: rest, T =>
+    if a.1 ≤ T ∧ T ≤ b.1 then some (a.2 + (b.2 - a.2) * (T - a.1) / (b.1 - a.1))
+    else tableInterp (b :: rest) T
+
+namespace PropertyTable
+
+/-- `tab.InRange T`: the temperature `T` lies between two tabulated temperatures, that is, in the
+table range from the first to the last node. -/
+def InRange (tab : PropertyTable) (T : ℚ) : Prop :=
+  ∃ a ∈ tab.nodes, ∃ b ∈ tab.nodes, a.1 ≤ T ∧ T ≤ b.1
+
+/-- Certified enthalpy at `T`: the interpolant `q` widened by the envelope to the rational
+interval `[q - ε, q + ε]` (`RatInterval.ofCenter`), or `none` where the table does not
+interpolate. -/
+def lookup (tab : PropertyTable) (T : ℚ) : Option RatInterval :=
+  (tableInterp tab.nodes T).map fun q => RatInterval.ofCenter q tab.envelope
+
+/-- `tab.WithinEnvelope h`: wherever the table interpolates, the declared property model `h`
+(J/kg against K) lies within the supplied envelope of the interpolant, `|h T - q| ≤ ε`. A model
+input, to be justified for the chosen model (for example from a bound on `h''` and the rounding
+of the entries); no theorem derives it from the data. -/
+def WithinEnvelope (tab : PropertyTable) (h : ℝ → ℝ) : Prop :=
+  ∀ T q, tableInterp tab.nodes T = some q → |h T - q| ≤ tab.envelope
+
+/-- Certified heat added per unit mass on the isobaric leg `2 → 3`, `h(T₃) - h(T₂)`: the
+interval difference of the two port values, or `none` if either port temperature is outside the
+table. -/
+def heatInEnclosure (tab : PropertyTable) (T₂ T₃ : ℚ) : Option RatInterval :=
+  match tab.lookup T₂, tab.lookup T₃ with
+  | some I₂, some I₃ => some (I₃.sub I₂)
+  | _, _ => none
+
+/-- Certified heat rejected per unit mass on the closing isobaric leg `4 → 1`, `h(T₄) - h(T₁)`,
+or `none` if either port temperature is outside the table. -/
+def heatOutEnclosure (tab : PropertyTable) (T₁ T₄ : ℚ) : Option RatInterval :=
+  match tab.lookup T₁, tab.lookup T₄ with
+  | some I₁, some I₄ => some (I₄.sub I₁)
+  | _, _ => none
+
+/-- Certified net work output per unit mass (engineering sign): the turbine interval
+`h(T₃) - h(T₄)` minus the compressor interval `h(T₂) - h(T₁)`, or `none` if any of the four port
+temperatures is outside the table. -/
+def netWorkEnclosure (tab : PropertyTable) (T₁ T₂ T₃ T₄ : ℚ) : Option RatInterval :=
+  match tab.lookup T₁, tab.lookup T₂, tab.lookup T₃, tab.lookup T₄ with
+  | some I₁, some I₂, some I₃, some I₄ => some ((I₃.sub I₄).sub (I₂.sub I₁))
+  | _, _, _, _ => none
+
+/-- On a strictly increasing node list the interpolant exists exactly between two node
+temperatures. -/
+private lemma tableInterp_isSome_iff : ∀ {l : List (ℚ × ℚ)} {T : ℚ},
+    l.Pairwise (fun a b => a.1 < b.1) →
+      ((tableInterp l T).isSome ↔ ∃ a ∈ l, ∃ b ∈ l, a.1 ≤ T ∧ T ≤ b.1)
+  | [], _, _ => by simp [tableInterp]
+  | [a], T, _ => by
+    simp only [tableInterp, List.mem_singleton, exists_eq_left]
+    by_cases hT : T = a.1
+    · subst hT
+      simp
+    · simp only [hT, ↓reduceIte, Option.isSome_none, Bool.false_eq_true, false_iff, not_and,
+        not_le]
+      intro h1
+      exact lt_of_le_of_ne h1 fun h => hT h.symm
+  | a :: b :: rest, T, hl => by
+    have hab : a.1 < b.1 := (List.pairwise_cons.1 hl).1 b (by simp)
+    have hmin : ∀ x ∈ a :: b :: rest, a.1 ≤ x.1 := by
+      intro x hx
+      rcases List.mem_cons.1 hx with rfl | hx
+      · exact le_rfl
+      · exact le_of_lt ((List.pairwise_cons.1 hl).1 x hx)
+    have ih := tableInterp_isSome_iff (l := b :: rest) (T := T) (List.pairwise_cons.1 hl).2
+    simp only [tableInterp]
+    by_cases hs : a.1 ≤ T ∧ T ≤ b.1
+    · simp only [hs, and_self, ↓reduceIte, Option.isSome_some, true_iff]
+      exact ⟨a, by simp, b, by simp, hs.1, hs.2⟩
+    · simp only [hs, ↓reduceIte]
+      rw [ih]
+      constructor
+      · rintro ⟨x, hx, y, hy, hxT, hTy⟩
+        exact ⟨x, List.mem_cons_of_mem _ hx, y, List.mem_cons_of_mem _ hy, hxT, hTy⟩
+      · rintro ⟨x, hx, y, hy, hxT, hTy⟩
+        have hbT : b.1 < T := by
+          by_contra hbT
+          exact hs ⟨le_trans (hmin x hx) hxT, le_of_not_gt hbT⟩
+        refine ⟨b, by simp, y, ?_, le_of_lt hbT, hTy⟩
+        rcases List.mem_cons.1 hy with rfl | hy
+        · exact absurd (lt_of_lt_of_le (lt_trans hab hbT) hTy) (lt_irrefl _)
+        · exact hy
+
+/-- A certified value is the interpolant widened by the envelope. -/
+private lemma lookup_eq_some {tab : PropertyTable} {T : ℚ} {I : RatInterval}
+    (hI : tab.lookup T = some I) :
+    ∃ q, tableInterp tab.nodes T = some q ∧ I = RatInterval.ofCenter q tab.envelope := by
+  unfold lookup at hI
+  cases hq : tableInterp tab.nodes T with
+  | none => simp [hq] at hI
+  | some q =>
+    rw [hq] at hI
+    exact ⟨q, rfl, (Option.some.inj hI).symm⟩
+
+/-- Interval subtraction adds the widths. -/
+private lemma width_sub (I J : RatInterval) : (I.sub J).width = I.width + J.width := by
+  simp only [RatInterval.width, RatInterval.sub_lower, RatInterval.sub_upper]
+  ring
+
+/-- **Pointwise enclosure.** If the declared model `h` lies within the table's envelope, every
+certified value encloses it: `tab.lookup T = some I` gives `h T ∈ I`. -/
+lemma lookup_encloses {tab : PropertyTable} {h : ℝ → ℝ} {T : ℚ} {I : RatInterval}
+    (htab : tab.WithinEnvelope h) (hI : tab.lookup T = some I) : I.Encloses (h T) := by
+  obtain ⟨q, hq, rfl⟩ := lookup_eq_some hI
+  exact RatInterval.encloses_ofCenter (htab T q hq)
+
+/-- **No extrapolation.** The table returns no certified value exactly at the temperatures
+outside its range: `tab.lookup T = none` if and only if `T` is not between two tabulated
+temperatures. -/
+lemma lookup_eq_none_iff {tab : PropertyTable} {T : ℚ} :
+    tab.lookup T = none ↔ ¬ tab.InRange T := by
+  have h := tableInterp_isSome_iff (T := T) tab.sorted
+  unfold lookup InRange
+  rw [Option.map_eq_none_iff, ← h, Option.not_isSome_iff_eq_none]
+
+/-- Each certified port value carries exactly the supplied property error: its width is
+`2 ε`. -/
+lemma width_of_lookup_eq_some {tab : PropertyTable} {T : ℚ} {I : RatInterval}
+    (hI : tab.lookup T = some I) : I.width = 2 * tab.envelope := by
+  obtain ⟨q, -, rfl⟩ := lookup_eq_some hI
+  simp only [RatInterval.width, RatInterval.ofCenter_lower, RatInterval.ofCenter_upper]
+  ring
+
+/-- A temperature in the table range is a positive absolute temperature. -/
+lemma InRange.pos {tab : PropertyTable} {T : ℚ} (hT : tab.InRange T) : 0 < T := by
+  obtain ⟨a, ha, -, -, haT, -⟩ := hT
+  exact lt_of_lt_of_le (tab.temp_pos a ha) haT
+
+/-! ### E.2. Port enclosures -/
+
+/-- **Heat added.** If the declared model `h` lies within the table's envelope, the certified
+heat added encloses `h(T₃) - h(T₂)` and has width `4 ε`. -/
+lemma heatInEnclosure_encloses {tab : PropertyTable} {h : ℝ → ℝ} {T₂ T₃ : ℚ} {J : RatInterval}
+    (htab : tab.WithinEnvelope h) (hJ : tab.heatInEnclosure T₂ T₃ = some J) :
+    J.Encloses (h T₃ - h T₂) ∧ J.width = 4 * tab.envelope := by
+  unfold heatInEnclosure at hJ
+  rcases h₂ : tab.lookup T₂ with _ | I₂ <;> rcases h₃ : tab.lookup T₃ with _ | I₃ <;>
+    simp only [h₂, h₃, reduceCtorEq, Option.some.injEq] at hJ
+  subst hJ
+  refine ⟨(lookup_encloses htab h₃).sub (lookup_encloses htab h₂), ?_⟩
+  rw [width_sub, width_of_lookup_eq_some h₃, width_of_lookup_eq_some h₂]
+  ring
+
+/-- **Heat rejected.** If the declared model `h` lies within the table's envelope, the certified
+heat rejected encloses `h(T₄) - h(T₁)` and has width `4 ε`. -/
+lemma heatOutEnclosure_encloses {tab : PropertyTable} {h : ℝ → ℝ} {T₁ T₄ : ℚ} {J : RatInterval}
+    (htab : tab.WithinEnvelope h) (hJ : tab.heatOutEnclosure T₁ T₄ = some J) :
+    J.Encloses (h T₄ - h T₁) ∧ J.width = 4 * tab.envelope := by
+  unfold heatOutEnclosure at hJ
+  rcases h₁ : tab.lookup T₁ with _ | I₁ <;> rcases h₄ : tab.lookup T₄ with _ | I₄ <;>
+    simp only [h₁, h₄, reduceCtorEq, Option.some.injEq] at hJ
+  subst hJ
+  refine ⟨(lookup_encloses htab h₄).sub (lookup_encloses htab h₁), ?_⟩
+  rw [width_sub, width_of_lookup_eq_some h₄, width_of_lookup_eq_some h₁]
+  ring
+
+/-- **Net work.** If the declared model `h` lies within the table's envelope, the certified net
+work encloses `(h(T₃) - h(T₄)) - (h(T₂) - h(T₁))` and has width `8 ε`. -/
+lemma netWorkEnclosure_encloses {tab : PropertyTable} {h : ℝ → ℝ} {T₁ T₂ T₃ T₄ : ℚ}
+    {J : RatInterval} (htab : tab.WithinEnvelope h)
+    (hJ : tab.netWorkEnclosure T₁ T₂ T₃ T₄ = some J) :
+    J.Encloses ((h T₃ - h T₄) - (h T₂ - h T₁)) ∧ J.width = 8 * tab.envelope := by
+  unfold netWorkEnclosure at hJ
+  rcases h₁ : tab.lookup T₁ with _ | I₁ <;> rcases h₂ : tab.lookup T₂ with _ | I₂ <;>
+    rcases h₃ : tab.lookup T₃ with _ | I₃ <;> rcases h₄ : tab.lookup T₄ with _ | I₄ <;>
+    simp only [h₁, h₂, h₃, h₄, reduceCtorEq, Option.some.injEq] at hJ
+  subst hJ
+  refine ⟨((lookup_encloses htab h₃).sub (lookup_encloses htab h₄)).sub
+    ((lookup_encloses htab h₂).sub (lookup_encloses htab h₁)), ?_⟩
+  rw [width_sub, width_sub, width_sub, width_of_lookup_eq_some h₁, width_of_lookup_eq_some h₂,
+    width_of_lookup_eq_some h₃, width_of_lookup_eq_some h₄]
+  ring
+
+/-- **No extrapolation at the ports.** A composed heat or work value is missing exactly when one
+of its port temperatures is outside the table range. -/
+lemma portEnclosures_eq_none_iff {tab : PropertyTable} {T₁ T₂ T₃ T₄ : ℚ} :
+    (tab.heatInEnclosure T₂ T₃ = none ↔ ¬ tab.InRange T₂ ∨ ¬ tab.InRange T₃) ∧
+      (tab.heatOutEnclosure T₁ T₄ = none ↔ ¬ tab.InRange T₁ ∨ ¬ tab.InRange T₄) ∧
+      (tab.netWorkEnclosure T₁ T₂ T₃ T₄ = none ↔
+        ¬ tab.InRange T₁ ∨ ¬ tab.InRange T₂ ∨ ¬ tab.InRange T₃ ∨ ¬ tab.InRange T₄) := by
+  simp only [← lookup_eq_none_iff]
+  refine ⟨?_, ?_, ?_⟩
+  · unfold heatInEnclosure
+    cases tab.lookup T₂ <;> cases tab.lookup T₃ <;> simp
+  · unfold heatOutEnclosure
+    cases tab.lookup T₁ <;> cases tab.lookup T₄ <;> simp
+  · unfold netWorkEnclosure
+    cases tab.lookup T₁ <;> cases tab.lookup T₂ <;> cases tab.lookup T₃ <;>
+      cases tab.lookup T₄ <;> simp
+
+end PropertyTable
+
+/-! ### E.3. Property error kept apart -/
+
+/-- **Property error kept apart.** Let `J` enclose the declared-model value `x` at the computed
+port temperatures (property error only), let the same model at the exact port states give `x'`,
+with solver error `|x' - x| ≤ δs`, and let the physical value `y` differ from `x'` by the
+physical-model error `|y - x'| ≤ δm`. Then `y` lies in `J` widened by `δs + δm`: each error enters
+through its own declared bound, and neither is absorbed into the table envelope. -/
+lemma encloses_sub_ofCenter_of_errors {J : RatInterval} {x x' y : ℝ} {δs δm : ℚ}
+    (hJ : J.Encloses x) (hs : |x' - x| ≤ δs) (hm : |y - x'| ≤ δm) :
+    (J.sub (RatInterval.ofCenter 0 (δs + δm))).Encloses y := by
+  simp only [RatInterval.encloses_iff] at hJ ⊢
+  simp only [RatInterval.sub_lower, RatInterval.sub_upper, RatInterval.ofCenter_lower,
+    RatInterval.ofCenter_upper] at ⊢
+  push_cast at ⊢
+  obtain ⟨hs1, hs2⟩ := abs_le.1 hs
+  obtain ⟨hm1, hm2⟩ := abs_le.1 hm
+  constructor <;> linarith
+
+/-- **The section C loop inside the table enclosures.** Take the cold-air declared model
+`h T = cp T` of section C, a table whose envelope holds for it, and rational port temperatures
+equal to the section C states, `T₂ = braytonLossyCompressedTemp T₁ rp R cp ηc` and
+`T₄ = braytonLossyExpandedTemp T₃ rp R cp ηt`. Then the certified heat added, heat rejected and
+net work enclose `braytonLossyHeatIn`, `braytonLossyHeatOut` and `braytonLossyNetWork`. -/
+lemma braytonLossy_encloses {tab : PropertyTable} {cp rp R ηc ηt : ℝ} {T₁ T₂ T₃ T₄ : ℚ}
+    {J₁ J₂ J₃ : RatInterval} (htab : tab.WithinEnvelope fun T => cp * T)
+    (hT₂ : (T₂ : ℝ) = braytonLossyCompressedTemp T₁ rp R cp ηc)
+    (hT₄ : (T₄ : ℝ) = braytonLossyExpandedTemp T₃ rp R cp ηt)
+    (hin : tab.heatInEnclosure T₂ T₃ = some J₁) (hout : tab.heatOutEnclosure T₁ T₄ = some J₂)
+    (hw : tab.netWorkEnclosure T₁ T₂ T₃ T₄ = some J₃) :
+    J₁.Encloses (braytonLossyHeatIn T₁ T₃ rp R cp ηc) ∧
+      J₂.Encloses (braytonLossyHeatOut T₁ T₃ rp R cp ηt) ∧
+      J₃.Encloses (braytonLossyNetWork T₁ T₃ rp R cp ηc ηt) := by
+  obtain ⟨h1, -⟩ := PropertyTable.heatInEnclosure_encloses htab hin
+  obtain ⟨h2, -⟩ := PropertyTable.heatOutEnclosure_encloses htab hout
+  obtain ⟨h3, -⟩ := PropertyTable.netWorkEnclosure_encloses htab hw
+  refine ⟨?_, ?_, ?_⟩
+  · convert h1 using 1
+    simp only [braytonLossyHeatIn, ← hT₂]
+    ring
+  · convert h2 using 1
+    simp only [braytonLossyHeatOut, ← hT₄]
+    ring
+  · convert h3 using 1
+    simp only [braytonLossyNetWork, ← hT₂, ← hT₄]
+    ring
 
 end ExergyAndLosses

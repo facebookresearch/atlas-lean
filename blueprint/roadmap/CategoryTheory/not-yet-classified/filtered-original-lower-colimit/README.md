@@ -1,0 +1,17 @@
+# Filtered Original Lower Colimit
+
+- [Union](union.md)
+- [Whole Carrier](whole-carrier.md)
+- [Stage Carrier](stage-carrier.md)
+- [Stage Order Iso](stage-order-iso.md)
+- [Stage Functor](stage-functor.md)
+- [Whole Diagram](whole-diagram.md)
+- [Stage Cocone](stage-cocone.md)
+- [Legs](legs.md)
+- [Legs natural](legs-natural.md)
+- [Legs step](legs-step.md)
+- [Stage cover](stage-cover.md)
+- [Pieces Is Colimit](pieces-is-colimit.md)
+- [Whole leg](whole-leg.md)
+- [Whole Cocone Iso](whole-cocone-iso.md)
+- [Whole Is Colimit](whole-is-colimit.md)

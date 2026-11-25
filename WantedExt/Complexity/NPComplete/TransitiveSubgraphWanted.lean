@@ -20,7 +20,7 @@ SIAM Journal on Computing 10 (1981), 297-309, doi:10.1137/0210021.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.Digraph.Basic

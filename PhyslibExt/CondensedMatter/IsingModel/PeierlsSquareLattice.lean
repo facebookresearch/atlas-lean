@@ -23,7 +23,8 @@ Given a plus-boundary configuration on `Λ_n` with the origin minus, fill in the
 cluster of the origin: take the complement of the exterior component of its complement. The filled
 cluster is finite, connected and hole-free, its contour is a contour event of the configuration, and
 its boundary is face-connected and meets the positive axis. This proves `OuterContourWinding` for
-every `n`.
+every `n`. The contour of the filled cluster is a single simple dual cycle through an anchor on the
+positive axis, which also proves `OuterContourMap` for every `n`.
 
 Hence, on `ℤ²`, for `β` large the plus box measure gives the origin probability at most `2 ×
 peierlsBound 2 β < 1/2` of being minus, uniformly in `n` (Peierls 1936; Griffiths 1964).
@@ -37,6 +38,8 @@ the uniform bound `P⁺_{Λ_n}(σ_0 = -) ≤ c(β) < 1/2`, proved on `ℤ²` as
 
 - `StatMech.Ising.spinCompatibleFill` : filling in the holes of a set
 - `StatMech.Ising.spinCompatibleFill_outerContourWinding` : the winding hypothesis holds
+- `StatMech.Ising.spinCompatibleFill_outerContourMap` : the outer contour map exists
+- `StatMech.Ising.peierls_probOriginMinus_le_twoPeierlsBound` : the Peierls bound in every box
 - `StatMech.Ising.peierls_probOriginMinus_le_uniform` : the uniform Peierls bound on `ℤ²`
 - `StatMech.Ising.peierls_long_range_order_spinCompatibleFill` : plus and minus box measures differ
   for large `β`
@@ -443,6 +446,87 @@ lemma outerContourWinding_of_outerContourFill (n : ℕ) (h : OuterContourFill n)
 
 lemma spinCompatibleFill_outerContourWinding (n : ℕ) : OuterContourWinding n :=
   outerContourWinding_of_outerContourFill n (spinCompatibleFill_outerContourFill n)
+
+/-- **The outer contour map exists.** For every `n`, `OuterContourMap n` holds. The witnessing
+interior assignment sends a closed walk to the connected cluster in `Λ_n` through the origin whose
+crossing bonds it traces, when there is one (it is then unique), and to `∅` otherwise. Each
+plus-boundary configuration on `Λ_n` with the origin minus is sent to a simple cycle through the
+whole contour of its filled minus cluster, based at a site `(j, 0)` with `j` less than the contour
+length, and the interior of that cycle is the filled cluster. -/
+lemma spinCompatibleFill_outerContourMap (n : ℕ) : OuterContourMap n := by
+  classical
+  refine ⟨fun u γ => if h : ∃ K ∈ connClusterFamily (d := 2) n,
+      dualWalkContour ⟨u, γ⟩ = crossEdges (↑K : Set (Site 2)) (bondFinsetTouch 2 n)
+    then h.choose else ∅, fun τ ho => ?_⟩
+  -- The filled minus cluster of the origin.
+  set K := spinCompatibleFillFinset τ ho with hKdef
+  obtain ⟨hbox, hKconn, hev⟩ := spinCompatibleFillFinset_core τ ho
+  let M := minusCluster (glue (plusField 2) τ) (origin 2)
+  have hMbox : M ⊆ box 2 n := minusCluster_glue_plus_subset_box τ ho
+  have hKF : (↑K : Set (Site 2)) = spinCompatibleFill M n := coe_spinCompatibleFillFinset τ ho
+  have hroot : ∀ z ∈ spinCompatibleFill M n,
+      (latticeOn (spinCompatibleFill M n)).Reachable (origin 2) z :=
+    spinCompatibleFill_connected_from hMbox fun z hz =>
+      pcc_walk_transfer (Classical.choice hz) (origin_mem_minusCluster (origin 2))
+  have hin : ∀ a b : Site 2, a ∈ (↑K : Set (Site 2)) → b ∈ (↑K : Set (Site 2)) →
+      (latticeMinusBarrier (↑K : Set (Site 2))).Reachable a b := by
+    rw [hKF]
+    intro a b ha hb
+    exact ((hroot a ha).symm.trans (hroot b hb)).mono (latticeOn_le_latticeMinusBarrier _)
+  have hout : ∀ a b : Site 2, a ∉ (↑K : Set (Site 2)) → b ∉ (↑K : Set (Site 2)) →
+      (latticeMinusBarrier (↑K : Set (Site 2))).Reachable a b := by
+    rw [hKF]
+    intro a b ha hb
+    exact (spinCompatibleFill_compl_reachable (S := M) (n := n) ha hb).mono
+      (latticeOn_compl_le_latticeMinusBarrier _)
+  have hbeacon : beacon 2 n ∉ (↑K : Set (Site 2)) := by
+    rw [hKF]
+    simp [spinCompatibleFill, outerExteriorComponent]
+  -- An anchor on the positive axis that lies on the contour.
+  have hsupp : (faceBoundaryGraph (↑K : Set (Site 2))).support ⊆
+      (phb_boundarySupport (↑K : Set (Site 2)) K.finite_toSet : Set (Site 2)) := fun f hf => by
+    simpa using hf
+  obtain ⟨j, hj, hax⟩ := axisAnchor_of_faceBoundaryConnected hbox hKconn hsupp
+    (spinCompatibleFillFinset_faceBoundaryConnected τ ho)
+  have hf₀ : axisVertex 2 j ∈ (faceBoundaryGraph (↑K : Set (Site 2))).support := by
+    simpa using hax
+  -- A simple cycle through the whole contour, based at the anchor.
+  obtain ⟨c, hcyc, hcov⟩ := exists_isCycle_faceBoundaryGraph_of_connected_complement
+    (↑K : Set (Site 2)) K.finite_toSet hKconn.1 hbeacon hin hout hf₀
+  have hlen := circuit_length_eq_contourLen hbox c hcyc.isTrail hcov
+  have hdec := circuit_decode_eq_contour hbox c hcov
+  -- The interior of that cycle is the filled cluster.
+  have hKfam : K ∈ connClusterFamily (d := 2) n := by
+    refine pcc_mem_connClusterFamily.mpr ⟨?_, hKconn⟩
+    rw [clusterFamily, Finset.mem_powerset]
+    intro z hz
+    rw [mem_boxFinset]
+    exact hbox hz
+  have hex : ∃ K' ∈ connClusterFamily (d := 2) n,
+      dualWalkContour ⟨axisVertex 2 j, c.mapLe (faceBoundaryGraph_le (↑K : Set (Site 2)))⟩ =
+        crossEdges (↑K' : Set (Site 2)) (bondFinsetTouch 2 n) := ⟨K, hKfam, hdec⟩
+  have hint : hex.choose = K :=
+    connBoxCluster_crossEdges_injOn hex.choose_spec.1 hKfam (hex.choose_spec.2.symm.trans hdec)
+  refine ⟨contourLen (↑K : Set (Site 2)) (bondFinsetTouch 2 n), axisVertex 2 j,
+    c.mapLe (faceBoundaryGraph_le (↑K : Set (Site 2))), ?_, hlen,
+    hcyc.mapLe (faceBoundaryGraph_le (↑K : Set (Site 2))), ?_⟩
+  · rw [axisVertex_two_natCast, anchorFinset, Finset.mem_union]
+    left
+    rw [Finset.mem_image]
+    exact ⟨j, Finset.mem_range.mpr hj, rfl⟩
+  · dsimp only
+    rw [dite_eq_left hex, hint]
+    exact ⟨hbox, rfl, hev⟩
+
+/-- **Peierls bound in every box.** If `peierlsRatio 2 β < 1`, then for every `n` the probability
+that the origin is minus under the zero-field plus-boundary measure on `Λ_n`, with the bonds
+touching `Λ_n`, is at most `twoPeierlsBound 2 β`. This is `poc_probOriginMinus_le_two_peierls` with
+its hypothesis discharged by `spinCompatibleFill_outerContourMap`;
+`peierls_probOriginMinus_le_uniform` gives the same bound for every `β` beyond some `β₀`, together
+with `twoPeierlsBound 2 β < 1 / 2`. -/
+lemma peierls_probOriginMinus_le_twoPeierlsBound (n : ℕ) (β : ℝ) (hx : peierlsRatio 2 β < 1) :
+    probOriginMinus (plusField 2) n (bondFinsetTouch 2 n) β 0 ≤ twoPeierlsBound 2 β :=
+  poc_probOriginMinus_le_two_peierls n β hx (spinCompatibleFill_outerContourMap n)
 
 lemma peierls_long_range_order_of_outerFill
     (hFill : ∀ n : ℕ, OuterContourFill n) :

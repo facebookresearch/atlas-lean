@@ -30,19 +30,20 @@ namespace MathlibExt.LinearAlgebra.Matrix.PolarDecompositionGLWanted
 variable {n : Type*} [Fintype n] [DecidableEq n]
 
 /--
-Polar decomposition in `GL(n, ℝ)`: every invertible real matrix is uniquely the product of an
-orthogonal matrix and a positive-definite symmetric matrix.
+**Polar decomposition of invertible real matrices.** Let $A$ be a real square matrix with rows
+and columns indexed by a finite set, and suppose $\det A \ne 0$. Then there are an orthogonal
+matrix $O$ and a positive-definite symmetric matrix $S$ with $A = OS$, and they are unique: if
+$O'$ is orthogonal, $S'$ is positive-definite symmetric and $A = O'S'$, then $O' = O$ and
+$S' = S$.
+
+Proof: take $S$ to be the positive-definite square root of $A^{\mathsf{T}} A$ and $O = AS^{-1}$,
+the construction in Wikipedia, "Polar decomposition".
+
+Proves `Wanted` entry `polar_decomposition_gl_real`.
 
 Sources: Mathlib `docs/undergrad.yaml`, Bilinear and Quadratic Forms Over a Vector Space /
 Endomorphisms / polar decompositions in GL(n, ℝ); R. A. Horn and C. R. Johnson, Matrix Analysis,
 2nd ed., Cambridge University Press (2013), Theorem 7.3.1.
-
-Proves `Wanted` entry `polar_decomposition_gl_real`.
-
-Proof: Specialize `Matrix.exists_unique_unitaryGroup_posDef_of_isUnit_det` to `ℝ`, where the
-unitary group is the orthogonal group, and unbundle its unitary witness. The generic proof takes
-`P` to be the CFC square root of `Aᴴ * A` and `U = A * P⁻¹`, the construction in Wikipedia,
-"Polar decomposition".
 -/
 theorem polar_decomposition_gl_real (A : Matrix n n ℝ) (hA : IsUnit A.det) :
     ∃ O S : Matrix n n ℝ,
@@ -57,18 +58,19 @@ theorem polar_decomposition_gl_real (A : Matrix n n ℝ) (hA : IsUnit A.det) :
   exact ⟨congrArg Subtype.val hO, hS⟩
 
 /--
-Polar decomposition in `GL(n, ℂ)`: every invertible complex matrix is uniquely the product of
-a unitary matrix and a positive-definite Hermitian matrix.
+**Polar decomposition of invertible complex matrices.** Let $A$ be a complex square matrix with
+rows and columns indexed by a finite set, and suppose $\det A \ne 0$. Then there are a unitary
+matrix $U$ and a positive-definite Hermitian matrix $P$ with $A = UP$, and they are unique: if
+$U'$ is unitary, $P'$ is positive-definite Hermitian and $A = U'P'$, then $U' = U$ and $P' = P$.
+
+Proof: take $P$ to be the positive-definite square root of $A^* A$ and $U = AP^{-1}$, the
+construction in Wikipedia, "Polar decomposition".
+
+Proves `Wanted` entry `polar_decomposition_gl_complex`.
 
 Sources: Mathlib `docs/undergrad.yaml`, Bilinear and Quadratic Forms Over a Vector Space /
 Endomorphisms / polar decompositions in GL(n, ℂ); R. A. Horn and C. R. Johnson, Matrix Analysis,
 2nd ed., Cambridge University Press (2013), Theorem 7.3.1.
-
-Proves `Wanted` entry `polar_decomposition_gl_complex`.
-
-Proof: Specialize `Matrix.exists_unique_unitaryGroup_posDef_of_isUnit_det` to `ℂ` and unbundle
-its unitary witness. The generic proof takes `P` to be the CFC square root of `Aᴴ * A` and
-`U = A * P⁻¹`, the construction in Wikipedia, "Polar decomposition".
 -/
 theorem polar_decomposition_gl_complex (A : Matrix n n ℂ) (hA : IsUnit A.det) :
     ∃ U P : Matrix n n ℂ,

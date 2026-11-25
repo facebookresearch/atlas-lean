@@ -291,7 +291,7 @@ theorem median_trick {r : ℕ} (hr : Odd r) {Ω : Type*} [MeasurableSpace Ω]
     have hb : ∀ᵐ ω ∂P, (fun ω => ({x : ℝ | ε < |x - μ|}.indicator (1 : ℝ → ℝ)) (X i ω)) ω
         ∈ Set.Icc (0:ℝ) 1 := hYIcc i
     have h := hasSubgaussianMGF_of_mem_Icc (a := (0:ℝ)) (b := (1:ℝ)) hm hb
-    have hparam : ((nnnorm ((1:ℝ) - 0) / 2)^2 : NNReal) = 1/4 := by simp; norm_num
+    have hparam : ((‖(1:ℝ) - 0‖₊ / 2)^2 : NNReal) = 1/4 := by simp; norm_num
     rw [hparam] at h
     exact h
   have hε4 : (0:ℝ) ≤ (r:ℝ)/4 := by
