@@ -1,0 +1,3 @@
+# Identity maps give the identity chain map at every...
+
+Identity maps give the identity chain map at every canonical lift height.

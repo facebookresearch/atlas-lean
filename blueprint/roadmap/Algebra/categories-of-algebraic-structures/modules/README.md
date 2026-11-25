@@ -1,0 +1,24 @@
+# Categories of modules
+
+Categories of modules and finitely generated modules over a ring: abelian and monoidal structure, change of rings, injective and projective objects, Ext over a ring, and topological modules. Presheaves and sheaves of modules have their own subfield.
+
+- [Balanced tensor functors on left modules](balanced-tensor-functors-on-left-modules/README.md)
+- [Coherence of the native module universe lift](coherence-of-the-native-module-universe-lift/README.md)
+- [Composition of induction functors](composition-of-induction-functors/README.md)
+- [Degree-zero homology of module complexes as a range quotient](degree-zero-homology-of-module-complexes-as-a-ra/README.md)
+- [Extension into coextended modules](extension-into-coextended-modules/README.md)
+- [Identity and associativity of induction](identity-and-associativity-of-induction/README.md)
+- [Identity induction](identity-induction/README.md)
+- [Induction along associative ring homomorphisms](induction-along-associative-ring-homomorphisms/README.md)
+- [Induction and restriction of scalars](induction-and-restriction-of-scalars/README.md)
+- [Module direct limits as categorical colimits](module-direct-limits-as-categorical-colimits/README.md)
+- [Naturality of balanced tensor maps under change of scalars](naturality-of-balanced-tensor-maps-under-change/README.md)
+- [Outer scalar actions on balanced tensor functors](outer-scalar-actions-on-balanced-tensor-functors/README.md)
+- [Relative injectivity of coextended modules](relative-injectivity-of-coextended-modules/README.md)
+- [Relative projectivity of induced modules](relative-projectivity-of-induced-modules/README.md)
+- [Scalar-split lifting from induced modules](scalar-split-lifting-from-induced-modules/README.md)
+- [Tensor products of modules in independent universes](tensor-products-of-modules-in-independent-univer/README.md)
+- [Tensoring augmented complexes of flat modules](tensoring-augmented-complexes-of-flat-modules/README.md)
+- [The actual tensor monad on right modules](the-actual-tensor-monad-on-right-modules/README.md)
+- [ULift comparisons for induced modules](ulift-comparisons-for-induced-modules/README.md)
+- [Universe lifts preserve module preorder colimits](ulift-direct-limit-cocone-is-colimit.md)
