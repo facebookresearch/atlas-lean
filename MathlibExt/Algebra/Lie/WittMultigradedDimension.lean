@@ -290,7 +290,7 @@ private theorem wittLongestLyndonPrefix_isLyndon_of_lt {α : Type*} [LinearOrder
     (hlt : w < wittLongestLyndonSuffix w hw) :
     WittSuffixLyndon (wittLongestLyndonPrefix w hw) := by
   induction hn : w.length using Nat.strong_induction_on generalizing w with
-  | h n ih =>
+  | ind n ih =>
       let u := wittLongestLyndonPrefix w hw
       let v := wittLongestLyndonSuffix w hw
       have huv : w = u ++ v := wittLongestLyndon_append w hw
@@ -389,7 +389,7 @@ private theorem wittLyndonBracket_isMonomial (K : Type) [Field K] {r : ℕ}
     (w : List (Fin r)) (hw : IsLyndonWord w) :
     IsFreeLieMonomial K (wittWordContent w) (wittLyndonBracket K w hw) := by
   induction hn : w.length using Nat.strong_induction_on generalizing w with
-  | h n ih =>
+  | ind n ih =>
       rw [wittLyndonBracket]
       split_ifs with hlen
       · obtain ⟨i, rfl⟩ := List.length_eq_one_iff.mp hlen
@@ -620,7 +620,7 @@ private theorem wittAssocLift_lyndonBracket_triangular (K : Type) [Field K] {r :
     (w : List (Fin r)) (hw : IsLyndonWord w) :
     WittTriangular K w (wittAssocLift K (wittLyndonBracket K w hw)) := by
   induction hn : w.length using Nat.strong_induction_on generalizing w with
-  | h n ih =>
+  | ind n ih =>
       rw [wittLyndonBracket]
       split_ifs with hlen
       · obtain ⟨i, rfl⟩ := List.length_eq_one_iff.mp hlen
@@ -685,7 +685,7 @@ private theorem wittWordSpanGT_repr_eq_zero (K : Type) [Field K] {r : ℕ}
       rw [wittAssocWord, Module.Basis.repr_self]
       apply Finsupp.single_eq_of_ne
       intro heq
-      have hqz : q = z := FreeMonoid.ofList.injective heq
+      have hqz : q = z := FreeMonoid.ofList.inj heq
       exact hq (hqz ▸ hz.2)
   | zero => simp
   | add x y _ _ hx hy => simp [map_add, hx, hy]
@@ -707,7 +707,7 @@ private theorem wittTriangular_repr_eq_zero_of_lt (K : Type) [Field K] {r : ℕ}
     (not_lt_of_ge hqw.le) hx
   rw [map_sub, Finsupp.sub_apply] at hzero
   have hne : FreeMonoid.ofList q ≠ FreeMonoid.ofList w := by
-    exact fun heq => hqw.ne (FreeMonoid.ofList.injective heq)
+    exact fun heq => hqw.ne (FreeMonoid.ofList.inj heq)
   rw [wittAssocWord, Module.Basis.repr_self, Finsupp.single_eq_of_ne hne, sub_zero] at hzero
   exact hzero
 
@@ -775,7 +775,7 @@ private theorem wittExists_lyndonSuffix_le {α : Type*} [LinearOrder α]
     (w : List α) (hw : w ≠ []) :
     ∃ a s, s ≠ [] ∧ IsLyndonWord s ∧ w = a ++ s ∧ s ≤ w := by
   induction hn : w.length using Nat.strong_induction_on generalizing w with
-  | h n ih =>
+  | ind n ih =>
       by_cases hwL : IsLyndonWord w
       · exact ⟨[], w, hw, hwL, by simp, le_rfl⟩
       · have hnS : ¬WittSuffixLyndon w := by
@@ -1054,7 +1054,7 @@ private theorem wittOrderedBracket_mem_spanFrom_aux (K : Type) [Field K] {r : �
     ⁅wittLyndonBracket K u hu, wittLyndonBracket K v hv⁆ ∈
       wittLyndonSpanFrom K (wittWordContent (u ++ v)) (u ++ v) := by
   induction n using Nat.strong_induction_on generalizing u v with
-  | h n ih =>
+  | ind n ih =>
       let p0 : WittLyndonPair r n := ⟨(u, v), hu, hv, huv, hlen⟩
       have hall : ∀ p : WittLyndonPair r n,
           ⁅wittLyndonBracket K p.1.1 p.2.1,
@@ -1341,7 +1341,10 @@ private theorem wittMultihomogeneousComponent_eq_span (K : Type) [Field K] {r : 
     rw [← hdegree]
     exact wittLyndonBracket_isMonomial K w hw
 
-/-- Witt's formula for the dimension of a multihomogeneous component of a free Lie algebra. -/
+/-- **Dimension of a multihomogeneous component of a free Lie algebra.** Let $K$ be a field and
+let $n_1, \dots, n_r$ be natural numbers with $n_1 + \dots + n_r > 0$. Then the multihomogeneous
+component of multidegree $(n_1, \dots, n_r)$ of the free Lie algebra over $K$ on $r$ generators
+has dimension over $K$ equal to Witt's multigraded value $M(n_1, \dots, n_r)$. -/
 theorem finrank_freeLieMultihomogeneousComponent
     (K : Type) [Field K] {r : ℕ} (degree : Fin r → ℕ)
     (hdegree : 0 < ∑ i, degree i) :
@@ -1352,21 +1355,20 @@ theorem finrank_freeLieMultihomogeneousComponent
   exact card_lyndonWordsOfContent_eq_wittMultigradedValue degree hdegree
 
 set_option linter.unusedVariables false in
-/-- Witt's multigraded dimension formula for free Lie algebras: the
-multihomogeneous component of multidegree `(n_1, ..., n_r)` of the free Lie
-algebra has dimension `M(n_1, ..., n_r)`. The component is imported from
-`MathlibExt.Algebra.Lie.FreeLieMultihomogeneousComponent` and the value `M`
-from `MathlibExt.Algebra.Lie.WittMultigradedValue`.
+/-- **Witt's multigraded dimension formula.** Let $K$ be a field, let $r > 0$, and let
+$n_1, \dots, n_r$ be natural numbers with $n_1 + \dots + n_r > 0$. Then the multihomogeneous
+component of multidegree $(n_1, \dots, n_r)$ of the free Lie algebra over $K$ on $r$ generators
+has dimension over $K$ equal to Witt's multigraded value $M(n_1, \dots, n_r)$.
+
+Proof: The Lyndon-word basis identifies the component with the Lyndon words of
+the prescribed content, which are counted by Möbius inversion.
+
+Proves `Wanted` entry `witt_multigraded_dimension_formula`.
 
 Source: Pieter Moree, *Convoluted Convolved Fibonacci Numbers*, Journal of
 Integer Sequences 7 (2004), Article 04.2.2, Witt's formula paragraph,
 lines 621–628,
 <https://cs.uwaterloo.ca/journals/JIS/VOL7/Moree/moree12.tex>.
-
-Proves `Wanted` entry `witt_multigraded_dimension_formula`.
-
-Proof: The Lyndon-word basis identifies the component with the Lyndon words of
-the prescribed content, which are counted by Möbius inversion.
 -/
 @[nolint unusedArguments] -- `hr` keeps the stated hypothesis of the formula
 theorem witt_multigraded_dimension_formula

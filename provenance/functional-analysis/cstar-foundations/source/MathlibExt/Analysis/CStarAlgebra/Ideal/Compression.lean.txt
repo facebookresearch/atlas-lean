@@ -1,0 +1,136 @@
+/-
+Author: @toskua
+-/
+
+module
+
+public import MathlibExt.Algebra.Star.Compression
+public import MathlibExt.Analysis.CStarAlgebra.IdealQuotient
+
+/-!
+# Projection compression modulo a closed star ideal
+
+An essentially self-adjoint idempotent commuting with a represented algebra
+modulo an ideal gives an actual star-algebra homomorphism into the quotient.
+The representation's source algebra is algebraic and possibly nonunital.
+Exact ambient projections are a special case, not a restriction of the
+essentially-projection carrier used in Fredholm and extension constructions.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open scoped NonUnitalStarSubalgebra.Quotient
+
+namespace ClosedStarIdeal
+
+universe uA uD
+
+variable {A : Type uA} {D : Type uD}
+variable [NonUnitalNonAssocSemiring A] [DistribMulAction ℂ A] [Star A]
+variable [NonUnitalCStarAlgebra D]
+
+/-- Literal representation and essentially-projection data modulo an ideal.
+The quotient homomorphism is constructed from these defining defects. -/
+structure CompressionPair (A : Type uA) (D : Type uD)
+    [NonUnitalNonAssocSemiring A] [DistribMulAction ℂ A] [Star A]
+    [NonUnitalCStarAlgebra D] (I : ClosedStarIdeal D) where
+  /-- The possibly nonunital source representation. -/
+  representation : A →⋆ₙₐ[ℂ] D
+  /-- The ambient element whose class is a projection. -/
+  projection : D
+  /-- Its square defect belongs to the ideal. -/
+  square_mem : projection * projection - projection ∈ I
+  /-- Its adjoint defect belongs to the ideal. -/
+  adjoint_mem : star projection - projection ∈ I
+  /-- It commutes with the representation modulo the ideal. -/
+  commutator_mem : ∀ a : A,
+    projection * representation a - representation a * projection ∈ I
+
+namespace CompressionPair
+
+variable {I : ClosedStarIdeal D}
+
+/-- The ambient element becomes an actual star projection in the quotient. -/
+theorem quotient_isStarProjection (P : CompressionPair A D I) :
+    let _ : I.carrier.IsTwoSided := I.isTwoSided
+    IsStarProjection (I.quotientMap P.projection) := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  apply isStarProjection_iff'.2
+  constructor
+  · have h := (I.quotientMap_eq_zero_iff
+      (P.projection * P.projection - P.projection)).2 P.square_mem
+    rw [map_sub, map_mul, sub_eq_zero] at h
+    exact h
+  · have h := (I.quotientMap_eq_zero_iff
+      (star P.projection - P.projection)).2 P.adjoint_mem
+    rw [map_sub, map_star, sub_eq_zero] at h
+    exact h
+
+/-- The quotient projection commutes with every represented coefficient. -/
+theorem quotient_commute (P : CompressionPair A D I) (a : A) :
+    let _ : I.carrier.IsTwoSided := I.isTwoSided
+    Commute (I.quotientMap P.projection)
+      ((I.quotientMap.comp P.representation) a) := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  have h := (I.quotientMap_eq_zero_iff
+    (P.projection * P.representation a -
+      P.representation a * P.projection)).2 (P.commutator_mem a)
+  rw [map_sub, map_mul, map_mul, sub_eq_zero] at h
+  exact h
+
+/-- The quotient representation obtained by projection compression. -/
+def quotientHom (P : CompressionPair A D I) :
+    let _ : I.carrier.IsTwoSided := I.isTwoSided
+    A →⋆ₙₐ[ℂ] I.Quotient := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  exact NonUnitalStarAlgHom.compress
+    (I.quotientMap.comp P.representation)
+    (I.quotientMap P.projection)
+    P.quotient_isStarProjection P.quotient_commute
+
+/-- The constructed map is the literal quotient of two-sided compression. -/
+theorem quotientHom_apply (P : CompressionPair A D I) (a : A) :
+    let _ : I.carrier.IsTwoSided := I.isTwoSided
+    P.quotientHom a =
+      I.quotientMap (P.projection * P.representation a * P.projection) := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  rw [quotientHom, NonUnitalStarAlgHom.compress_apply_eq_mul_mul]
+  rw [map_mul, map_mul]
+  rfl
+
+/-- An exact ambient projection with ideal-relative commutators provides the
+same essentially-projection data. -/
+def ofProjection (I : ClosedStarIdeal D) (rho : A →⋆ₙₐ[ℂ] D) (p : D)
+    (hp : IsStarProjection p)
+    (hcomm : ∀ a : A, p * rho a - rho a * p ∈ I) :
+    CompressionPair A D I where
+  representation := rho
+  projection := p
+  square_mem := by
+    rw [hp.isIdempotentElem.eq, sub_self]
+    exact I.carrier.zero_mem
+  adjoint_mem := by
+    rw [hp.isSelfAdjoint.star_eq, sub_self]
+    exact I.carrier.zero_mem
+  commutator_mem := hcomm
+
+/-- The exact-projection constructor retains its source representation. -/
+@[simp]
+theorem ofProjection_representation (I : ClosedStarIdeal D)
+    (rho : A →⋆ₙₐ[ℂ] D) (p : D) (hp : IsStarProjection p)
+    (hcomm : ∀ a : A, p * rho a - rho a * p ∈ I) :
+    (ofProjection I rho p hp hcomm).representation = rho :=
+  rfl
+
+/-- The exact-projection constructor retains its ambient projection. -/
+@[simp]
+theorem ofProjection_projection (I : ClosedStarIdeal D)
+    (rho : A →⋆ₙₐ[ℂ] D) (p : D) (hp : IsStarProjection p)
+    (hcomm : ∀ a : A, p * rho a - rho a * p ∈ I) :
+    (ofProjection I rho p hp hcomm).projection = p :=
+  rfl
+
+end CompressionPair
+end ClosedStarIdeal

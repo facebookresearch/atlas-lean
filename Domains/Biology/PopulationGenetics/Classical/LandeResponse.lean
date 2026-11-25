@@ -62,7 +62,11 @@ variable {ι Ω : Type*} [Fintype ι] [DecidableEq ι] {mΩ : MeasurableSpace Ω
 /-- The shift of the mean of a trait vector `X` caused by fitness weights `W (Z ω)` on the phenotype
 `Z`, measured from the pre-selection mean: `𝔼[W(Z) X] / 𝔼[W(Z)] - 𝔼[X]`. With `X = Z` it is the
 selection differential `S`; with `X = A` (breeding values) and faithful additive transmission it
-is the response `Δz̄`. If `𝔼[W(Z)] = 0` it is a junk value (excluded by the theorems). -/
+is the response `Δz̄`. Each `𝔼` is an integral against the measure `P`, an ordinary mean when
+`P` is a probability measure and the integrand is integrable; the fitness-weighted reading
+needs `X i` and `W(Z) X i` integrable. Two conventions, not expectations, make the shift total:
+`x / 0 = 0`, so it is `-𝔼[X]` when `𝔼[W(Z)] = 0` (excluded by the theorems), and the integral
+of a non-integrable function is set to `0`. -/
 noncomputable def selectedShift (W : (ι → ℝ) → ℝ) (Z X : Ω → ι → ℝ) (P : Measure Ω) : ι → ℝ :=
   fun i => (∫ ω, W (Z ω) * X ω i ∂P) / (∫ ω, W (Z ω) ∂P) - ∫ ω, X ω i ∂P
 
@@ -226,10 +230,11 @@ theorem breeding_response_univariate_of_var {A Z : Ω → ℝ} {Va Vp : ℝ} {W 
 
 
 open MathlibExt.Biology.StatisticalGenetics.SelectionGradient in
-/-- **Cross-covariance gradient form** `Δz̄ = G ∇_μ log w̄(μ)` for bounded measurable
-fitness: if moreover the law of `Z` is `N(μ, P)`, then with Atlas's mean fitness
-`meanFitnessMV W P` (as a function of the trait mean), the response is the cross-covariance
-`G` applied to the gradient of its logarithm at `μ`. -/
+/-- **Cross-covariance gradient form** `Δz̄ = G ∇_μ log w̄(μ)`: let `(A, Z)` be jointly Gaussian
+with cross-covariance `Cov(A_i, Z_j) = G_ij`, let the law of `Z` be `N(μ, P)` with `P` positive
+definite, and let the fitness be bounded, measurable and nonnegative with positive mean fitness
+at `μ`. Then with Atlas's mean fitness `meanFitnessMV W P` (as a function of the trait mean), the
+response is the cross-covariance `G` applied to the gradient of its logarithm at `μ`. -/
 theorem selectedShift_breeding_eq_gradient {A Z : Ω → ι → ℝ} {G Pm : Matrix ι ι ℝ}
     {W : EuclideanSpace ℝ ι → ℝ} {μ : EuclideanSpace ℝ ι}
     (hAZ : HasGaussianLaw (fun ω => (A ω, Z ω)) P)

@@ -15,18 +15,23 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Ramanujan's master theorem (statement id `ramanujan-master-s1`).
+/-- **Ramanujan's master theorem.** Let $a$ and $b$ be real numbers with $0 < a < b$, and let
+$s$ be a complex number with $a < \operatorname{Re} s < b$. Let $\varphi$ be a function from
+$\mathbb{C}$ to $\mathbb{C}$ that is analytic on the half-plane $\operatorname{Re} z > -b$, and
+suppose there are real constants $C > 0$ and $P < \pi$ such that
+$|\varphi(u + iv)| \le C e^{P|v|}$ for all real $u$ and $v$ with $u > -b$. Let $F$ be a function
+from $\mathbb{R}$ to $\mathbb{C}$ such that for every real $x > 0$ the series
+$\sum_{k=0}^{\infty} \varphi(k)\,(-x)^k / k!$ converges unconditionally to $F(x)$, and suppose
+that $x \mapsto x^{s-1} F(x)$ is Lebesgue integrable on $(0, \infty)$, where
+$x^{s-1} = e^{(s-1)\log x}$. Then
+
+$$\int_0^\infty x^{s-1} F(x)\,dx = \Gamma(s)\,\varphi(-s).$$
+
+This is a specialization of the theorem: the growth bound on $\varphi$ is uniform in
+$\operatorname{Re} z$, and integrability of $x^{s-1} F(x)$ is assumed rather than derived.
 
 Source: https://en.wikipedia.org/wiki/Ramanujan%27s_master_theorem
-(Raw: `int_0^infty x^{s-1} sum_k phi(k)(-x)^k/k! dx = Gamma(s) phi(-s)`.)
-
-This specialization assumes `0 < a < b`, `a < re(s) < b`, analyticity of `φ`
-on the half-plane `re(z) > -b`, and a uniform vertical exponential bound with
-rate strictly below `π`.  For positive real `x`, `F x` is normalized by the
-exponential generating series `sum φ(k) * (-x)^k / k!`; the displayed
-integrability hypothesis supplies convergence of its Lebesgue Mellin integral
-over `(0, ∞)`.  Complex powers use Mathlib's principal-log normalization.  Under
-these hypotheses the integral equals `Gamma(s) * φ(-s)`. -/
+(Raw: `int_0^infty x^{s-1} sum_k phi(k)(-x)^k/k! dx = Gamma(s) phi(-s)`.) -/
 theorem_wanted Ramanujan_master_theorem
     (φ : ℂ → ℂ) (F : ℝ → ℂ) (a b : ℝ) (s : ℂ)
     (ha : 0 < a) (hab : a < b)

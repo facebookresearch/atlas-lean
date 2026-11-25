@@ -47,7 +47,7 @@ theorem infinite_upper_obstruction :
     dsimp [ν]
     by_cases hz : μ A = 0
     · simp [hz]
-    · rw [ENNReal.top_mul hz]
+    · rw [smul_apply, smul_eq_mul, ENNReal.top_mul hz]
       exact le_top
   · simp [μ, Measure.real]
   · simp [ν, μ, Measure.real]
