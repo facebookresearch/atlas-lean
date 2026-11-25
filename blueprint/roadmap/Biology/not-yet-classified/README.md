@@ -13,6 +13,7 @@ Topics added since this subject's fields were last revised.
 - [Hawk Dove](hawk-dove/README.md)
 - [Ideal Free Distribution](ideal-free-distribution/README.md)
 - [Marginal Value](marginal-value/README.md)
+- [Nicholson Bailey](nicholson-bailey/README.md)
 - [No Common Mechanism Parsimony](no-common-mechanism-parsimony/README.md)
 - [Phylogenetic Tree Space](phylogenetic-tree-space/README.md)
 - [Rock Paper Scissors](rock-paper-scissors/README.md)

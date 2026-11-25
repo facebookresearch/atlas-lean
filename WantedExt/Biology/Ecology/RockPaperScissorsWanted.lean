@@ -21,6 +21,9 @@ Here `det A = b₁ b₂ b₃ - a₁ a₂ a₃`.
 
 Recorded here: the four equivalences, the closed orbits for `det A = 0`, and convergence to the
 heteroclinic cycle for `det A < 0`, for solutions on `[0, ∞)` starting in the interior of `S₃`.
+Solutions are those of the library's replicator equation
+`MathlibExt.Biology.Dynamics.Replicator.IsSolution` (`Domains.Biology.Dynamics.Replicator`) with
+the linear fitness `y ↦ A y`.
 Asymptotic stability is relative to the simplex; global stability means Lyapunov stability plus
 convergence of every interior solution. Zeeman (1980) and Hofbauer–Sigmund (1998, §7.7) were not
 read; the statement follows Hofbauer and Sigmund (2003).
@@ -33,6 +36,7 @@ doi:10.1090/S0273-0979-03-00988-1, Theorem 2.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.Dynamics.Replicator
 public import Mathlib.Analysis.Calculus.Deriv.Pi
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.Data.Matrix.Mul
@@ -43,20 +47,12 @@ public import Mathlib.Topology.Algebra.Module.FiniteDimension
 namespace WantedExt.Biology.Ecology.RockPaperScissorsWanted
 
 open Filter Topology Matrix
+open MathlibExt.Biology.Dynamics
 
 /-- The rock–paper–scissors payoff matrix `[[0, -a₂, b₃], [b₁, 0, -a₃], [-a₁, b₂, 0]]` with
 losses `aᵢ` and wins `bᵢ` (indices `0, 1, 2` for strategies `1, 2, 3`). -/
 def rpsMatrix (a b : Fin 3 → ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
   !![0, -a 1, b 2; b 0, 0, -a 2; -a 0, b 1, 0]
-
-/-- `x` solves the **replicator equation** `xᵢ' = xᵢ ((A x)ᵢ - ∑ⱼ xⱼ (A x)ⱼ)` on `[0, ∞)`,
-coordinatewise. This is the condition of the library's replicator-equation predicate
-`MathlibExt.Biology.Dynamics.Replicator.IsSolution` (in
-`Domains.Biology.Dynamics.Replicator`) for the linear fitness `fun z => A *ᵥ z`, whose mean
-fitness is `∑ⱼ xⱼ (A x)ⱼ`; it is restated here because `WantedExt` may not import `Domains`. -/
-def IsSolution (A : Matrix (Fin 3) (Fin 3) ℝ) (x : ℝ → Fin 3 → ℝ) : Prop :=
-  ∀ i t, 0 ≤ t →
-    HasDerivAt (fun s => x s i) (x t i * ((A *ᵥ x t) i - ∑ j, x t j * (A *ᵥ x t) j)) t
 
 /-- `z` is in the **interior of the simplex** `S₃`: every `zᵢ > 0` and `∑ zᵢ = 1`. -/
 def InInterior (z : Fin 3 → ℝ) : Prop := (∀ i, 0 < z i) ∧ ∑ i, z i = 1
@@ -74,20 +70,22 @@ def IsInteriorRestPoint (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : P
 `δ > 0` such that every solution on `[0, ∞)` with `x(0)` in the simplex and `‖x(0) - z‖ < δ` has
 `‖x(t) - z‖ < ε` for every `t ≥ 0`. -/
 def IsLyapunovStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
-  ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → Fin 3 → ℝ, IsSolution A x →
-    (∀ i, 0 ≤ x 0 i) → ∑ i, x 0 i = 1 → ‖x 0 - z‖ < δ → ∀ t : ℝ, 0 ≤ t → ‖x t - z‖ < ε
+  ∀ ε : ℝ, 0 < ε → ∃ δ : ℝ, 0 < δ ∧ ∀ x : ℝ → Fin 3 → ℝ,
+    Replicator.IsSolution (fun y => A *ᵥ y) x → (∀ i, 0 ≤ x 0 i) → ∑ i, x 0 i = 1 →
+      ‖x 0 - z‖ < δ → ∀ t : ℝ, 0 ≤ t → ‖x t - z‖ < ε
 
 /-- `z` is **asymptotically stable**: Lyapunov stable, and there is `δ₀ > 0` such that every
 solution on `[0, ∞)` with `x(0)` in the simplex and `‖x(0) - z‖ < δ₀` converges to `z`. -/
 def IsAsymptoticallyStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
-  IsLyapunovStable A z ∧ ∃ δ₀ : ℝ, 0 < δ₀ ∧ ∀ x : ℝ → Fin 3 → ℝ, IsSolution A x →
-    (∀ i, 0 ≤ x 0 i) → ∑ i, x 0 i = 1 → ‖x 0 - z‖ < δ₀ → Tendsto x atTop (𝓝 z)
+  IsLyapunovStable A z ∧ ∃ δ₀ : ℝ, 0 < δ₀ ∧ ∀ x : ℝ → Fin 3 → ℝ,
+    Replicator.IsSolution (fun y => A *ᵥ y) x → (∀ i, 0 ≤ x 0 i) → ∑ i, x 0 i = 1 →
+      ‖x 0 - z‖ < δ₀ → Tendsto x atTop (𝓝 z)
 
 /-- `z` is **globally stable**: Lyapunov stable, and every solution on `[0, ∞)` with `x(0)` in the
 interior of `S₃` converges to `z`. -/
 def IsGloballyStable (A : Matrix (Fin 3) (Fin 3) ℝ) (z : Fin 3 → ℝ) : Prop :=
-  IsLyapunovStable A z ∧ ∀ x : ℝ → Fin 3 → ℝ, IsSolution A x → InInterior (x 0) →
-    Tendsto x atTop (𝓝 z)
+  IsLyapunovStable A z ∧ ∀ x : ℝ → Fin 3 → ℝ,
+    Replicator.IsSolution (fun y => A *ᵥ y) x → InInterior (x 0) → Tendsto x atTop (𝓝 z)
 
 /-- **Unique interior rest point** (Hofbauer and Sigmund 2003, §3): for losses `aᵢ > 0` and wins
 `bᵢ > 0`, the rock–paper–scissors replicator equation has exactly one rest point in the interior
@@ -117,7 +115,7 @@ periodic: there is `T > 0` with `x(t + T) = x(t)` for every `t ≥ 0`.
 Sources: Zeeman (1980); Hofbauer and Sigmund (2003), Theorem 2. -/
 public theorem_wanted periodic_of_det_eq_zero (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i)
     (hb : ∀ i, 0 < b i) (hdet : (rpsMatrix a b).det = 0) (x : ℝ → Fin 3 → ℝ)
-    (hx : IsSolution (rpsMatrix a b) x) (hx₀ : InInterior (x 0)) :
+    (hx : Replicator.IsSolution (fun y => rpsMatrix a b *ᵥ y) x) (hx₀ : InInterior (x 0)) :
     ∃ T : ℝ, 0 < T ∧ ∀ t : ℝ, 0 ≤ t → x (t + T) = x t
 
 /-- **Convergence to the heteroclinic cycle when `det A < 0`** (Hofbauer and Sigmund 2003,
@@ -130,7 +128,8 @@ Sources: Zeeman (1980); Hofbauer and Sigmund (2003), Theorem 2. -/
 public theorem_wanted omegaLimit_heteroclinic_of_det_neg (a b : Fin 3 → ℝ) (ha : ∀ i, 0 < a i)
     (hb : ∀ i, 0 < b i) (hdet : (rpsMatrix a b).det < 0) (z : Fin 3 → ℝ)
     (hz : IsInteriorRestPoint (rpsMatrix a b) z) (x : ℝ → Fin 3 → ℝ)
-    (hx : IsSolution (rpsMatrix a b) x) (hx₀ : InInterior (x 0)) (hne : x 0 ≠ z) :
+    (hx : Replicator.IsSolution (fun y => rpsMatrix a b *ᵥ y) x) (hx₀ : InInterior (x 0))
+    (hne : x 0 ≠ z) :
     Tendsto (fun t => ∏ i, x t i) atTop (𝓝 0) ∧
       ∀ q, InBoundary q → MapClusterPt q atTop x
 

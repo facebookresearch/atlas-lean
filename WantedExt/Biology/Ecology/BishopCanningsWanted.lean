@@ -24,8 +24,9 @@ payoffs on the support, strictly lower payoffs off it) satisfying this condition
 Recorded here: (a), (b), Haigh's necessary condition and the regular-ESS converse. The
 primaries of Bishop and Cannings (1976) and Haigh (1975) are paywalled and were not read; the
 statements follow Haigh's 1974 appendix, Taylor and Jonker (1978) and the Encyclopedia of
-Mathematics entry by C. Cannings. That an ESS is a Nash equilibrium is proved on main
-(`IsESS.isNash` in `Domains.Biology.Dynamics.ReplicatorStability`).
+Mathematics entry by C. Cannings. The ESS predicate is the library's
+`MathlibExt.Biology.Dynamics.Replicator.IsESS` (`Domains.Biology.Dynamics.ReplicatorStability`),
+for which an ESS is a Nash equilibrium (`IsESS.isNash`).
 
 Sources: D. T. Bishop and C. Cannings, "Models of animal conflict", Adv. Appl. Probab. 8 (1976)
 616–621; D. T. Bishop and C. Cannings, "A generalized war of attrition", J. Theor. Biol. 70
@@ -37,6 +38,7 @@ Math. Biosci. 40 (1978) 145–156.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.Dynamics.ReplicatorStability
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Algebra.BigOperators.Fin
@@ -46,19 +48,11 @@ public import Mathlib.Algebra.BigOperators.Fin
 namespace WantedExt.Biology.Ecology.BishopCanningsWanted
 
 open Matrix
+open MathlibExt.Biology.Dynamics.Replicator (IsESS)
 
-/-- `p` is a **mixed strategy**: every `pᵢ ≥ 0` and `∑ pᵢ = 1`. -/
+/-- `p` is a **mixed strategy**: every `pᵢ ≥ 0` and `∑ pᵢ = 1` (the same conjunction as in the
+library's `IsESS`). -/
 def IsMixed {ι : Type*} [Fintype ι] (p : ι → ℝ) : Prop := (∀ i, 0 ≤ p i) ∧ ∑ i, p i = 1
-
-/-- `p` is an **evolutionarily stable strategy** of the matrix game `A` (Maynard Smith): `p` is
-mixed and for every mixed `q ≠ p`, either `qᵀ A p < pᵀ A p`, or `qᵀ A p = pᵀ A p` and
-`qᵀ A q < pᵀ A q`. This is definitionally the library's predicate
-`MathlibExt.Biology.Dynamics.Replicator.IsESS` (in `Domains.Biology.Dynamics.ReplicatorStability`),
-restated here because `WantedExt` may not import `Domains`. -/
-def IsESS {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
-  IsMixed p ∧ ∀ q, IsMixed q → q ≠ p →
-    q ⬝ᵥ (A *ᵥ p) < p ⬝ᵥ (A *ᵥ p) ∨
-      (q ⬝ᵥ (A *ᵥ p) = p ⬝ᵥ (A *ᵥ p) ∧ q ⬝ᵥ (A *ᵥ q) < p ⬝ᵥ (A *ᵥ q))
 
 /-- **Equal payoffs on the support** (Haigh 1974; Bishop and Cannings): let `A` be a real square
 matrix indexed by a finite type and `p` an ESS. Then every pure strategy `i` with `pᵢ > 0` earns

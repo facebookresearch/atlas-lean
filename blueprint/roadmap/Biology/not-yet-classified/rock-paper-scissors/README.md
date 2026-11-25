@@ -1,7 +1,6 @@
 # Rock Paper Scissors
 
 - [Rps Matrix](rps-matrix.md)
-- [Is Solution](is-solution.md)
 - [In Interior](in-interior.md)
 - [In Boundary](in-boundary.md)
 - [Is Interior Rest Point](is-interior-rest-point.md)
