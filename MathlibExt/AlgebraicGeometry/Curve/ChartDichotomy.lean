@@ -121,7 +121,7 @@ theorem hasValueAt_inv {f : F} {a : K} (hf : v.HasValueAt f a) (ha : a ≠ 0) :
     rintro rfl
     have h0 : v.HasValueAt (0 : F) 0 := by
       change (0 : F) - algebraMap K F 0 ∈ v.toValuationSubring.nonunits
-      simpa using (v.algebraMap_mem_nonunits_iff 0).mpr rfl
+      simp
     exact ha (v.hasValueAt_unique hf h0)
   have hfu : f ∉ v.toValuationSubring.nonunits := fun hfn =>
     ha (v.hasValueAt_unique hf (by

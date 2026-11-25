@@ -42,13 +42,13 @@ example {j : F} (hj : j ∉ v.toValuationSubring) :
     (j⁻¹ - algebraMap K F (0 : K)) ∈ v.toValuationSubring.nonunits := by
   have hnu : j⁻¹ ∈ v.toValuationSubring.nonunits :=
     (ValuationSubring.mem_nonunits_iff_or _).mpr (Or.inr (by simpa using hj))
-  simp only [map_zero, sub_zero] 
+  simp only [map_zero, sub_zero]
   exact hnu
 
 -- A constant element takes its own value in the left chart.
 example (c : K) :
     v.HasValueAt (algebraMap K F c) c := by
   change algebraMap K F c - algebraMap K F c ∈ v.toValuationSubring.nonunits
-  simpa using (v.algebraMap_mem_nonunits_iff 0).mpr rfl
+  simp
 
 end AlgebraicCurve
