@@ -1,0 +1,18 @@
+# Polarity in restricted graph classes
+
+- [Well-formed instances of MONOPOLARITY OF TRIANGLE-FREE GRAPHS](monopolarity-triangle-free-well-formed.md)
+- [Feasible instances of MONOPOLARITY OF TRIANGLE-FREE GRAPHS](monopolarity-triangle-free-feasible.md)
+- [MONOPOLARITY OF TRIANGLE-FREE GRAPHS as a decision problem](monopolarity-triangle-free-dec.md)
+- [MONOPOLARITY OF TRIANGLE-FREE GRAPHS is NP-complete](monopolarity-triangle-free-np-complete.md)
+- [Well-formed instances of POLARITY OF CLAW-FREE GRAPHS](polarity-claw-free-well-formed.md)
+- [POLARITY OF CLAW-FREE GRAPHS as a decision problem](polarity-claw-free-dec.md)
+- [POLARITY OF CLAW-FREE GRAPHS is NP-complete](polarity-claw-free-np-complete.md)
+- [Polar graphs](polarity-triangle-free-is-polar.md)
+- [Well-formed instances of POLARITY OF TRIANGLE-FREE GRAPHS](polarity-triangle-free-well-formed.md)
+- [Feasible instances of POLARITY OF TRIANGLE-FREE GRAPHS](polarity-triangle-free-feasible.md)
+- [POLARITY OF TRIANGLE-FREE GRAPHS as a decision problem](polarity-triangle-free-dec.md)
+- [POLARITY OF TRIANGLE-FREE GRAPHS is NP-complete](polarity-triangle-free-np-complete.md)
+- [Well-formed instances of POLARITY OF (2K₂, C₅)-FREE GRAPHS](polarity-two-ktwo-cfive-free-well-formed.md)
+- [Feasible instances of POLARITY OF (2K₂, C₅)-FREE GRAPHS](polarity-two-ktwo-cfive-free-feasible.md)
+- [POLARITY OF (2K₂, C₅)-FREE GRAPHS as a decision problem](polarity-two-ktwo-cfive-free-dec.md)
+- [POLARITY OF (2K₂, C₅)-FREE GRAPHS is NP-complete](polarity-two-ktwo-cfive-free-np-complete.md)
