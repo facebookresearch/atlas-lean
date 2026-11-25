@@ -31,20 +31,30 @@ open scoped ZeroAtInfty
 namespace ZeroAtInftyContinuousMap
 universe u
 
-/-- Choose the actual cutoff from the support-bearing singleton construction. -/
+/-- Let `X` be a regular locally compact topological space and let `x ∈ X`. The cutoff is
+complex-valued and continuous, with compact support.
+
+Choose the cutoff from the support-bearing singleton construction. -/
 noncomputable def pointCutoff
     {X : Type u} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpace X]
     (x : X) : C₀(X, ℂ) :=
   Classical.choose (exists_compact_one_on_of_regularSpace (K := ({x} : Set X)) isCompact_singleton)
 
-/-- Compact support belongs to the same chosen pointCutoff, rather than a different existence witness. -/
+/-- Let `X` be a regular locally compact topological space and let `x ∈ X`. The cutoff is
+complex-valued and continuous, with compact support.
+
+Compact support belongs to the same chosen pointCutoff, rather than a different existence
+witness. -/
 theorem pointCutoff_hasCompactSupport
     {X : Type u} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpace X]
     (x : X) : HasCompactSupport (pointCutoff x) :=
   (Classical.choose_spec
     (exists_compact_one_on_of_regularSpace (K := ({x} : Set X)) isCompact_singleton)).1
 
-/-- The chosen cutoff has its literal value one at the specified point. -/
+/-- Let `X` be a regular locally compact topological space and let `x ∈ X`. The cutoff is
+complex-valued and continuous, with compact support.
+
+The chosen cutoff has its value one at the specified point. -/
 @[simp]
 theorem pointCutoff_apply
     {X : Type u} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpace X]
@@ -53,21 +63,30 @@ theorem pointCutoff_apply
     (exists_compact_one_on_of_regularSpace (K := ({x} : Set X)) isCompact_singleton)).2.1
   simpa only [pointCutoff, Pi.one_apply] using h (Set.mem_singleton x)
 
-/-- The chosen cutoff obeys the proved bound for the existing C0 norm. -/
+/-- Let `X` be a regular locally compact topological space and let `x ∈ X`. The cutoff is
+complex-valued and continuous, with compact support.
+
+The chosen cutoff obeys the proved bound for the existing C0 norm. -/
 theorem norm_pointCutoff_le
     {X : Type u} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpace X]
     (x : X) : ‖pointCutoff x‖ ≤ 1 :=
   (Classical.choose_spec
     (exists_compact_one_on_of_regularSpace (K := ({x} : Set X)) isCompact_singleton)).2.2.1
 
-/-- Every pointwise bound is for that same support-bearing chosen cutoff. -/
+/-- Let `X` be a regular locally compact topological space and let `x ∈ X`. The cutoff is
+complex-valued and continuous, with compact support.
+
+Every pointwise bound is for that same support-bearing chosen cutoff. -/
 theorem pointCutoff_norm_apply_le
     {X : Type u} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpace X]
     (x y : X) : ‖pointCutoff x y‖ ≤ 1 :=
   (Classical.choose_spec
     (exists_compact_one_on_of_regularSpace (K := ({x} : Set X)) isCompact_singleton)).2.2.2 y
 
-/-- The original quantitative point-cutoff existence result keeps its RegularSpace-only scope. -/
+/-- Let `X` be a regular locally compact topological space and let `x ∈ X`. The cutoff is
+complex-valued and continuous, with compact support.
+
+The quantitative point-cutoff existence result keeps its RegularSpace-only scope. -/
 theorem exists_point_cutoff
     {X : Type u} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpace X]
     (x : X) : ∃ φ : C₀(X, ℂ), φ x = 1 ∧ ‖φ‖ ≤ 1 :=

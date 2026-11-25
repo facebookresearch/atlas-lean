@@ -30,8 +30,9 @@ noncomputable section
 
 universe u v
 
-/-- Entrywise mapping of a finite square matrix by a nonunital ring
-homomorphism. -/
+/-- Let `A` be a possibly nonunital ring. Let `B` be a possibly nonunital ring. For natural numbers `n`
+and `phi : A →ₙ+* B`. Entrywise mapping of a finite square matrix by a nonunital ring homomorphism.
+-/
 def nonUnitalRingHomMap
     (n : ℕ) {A : Type u} {B : Type v}
     [NonUnitalRing A] [NonUnitalRing B]
@@ -55,8 +56,9 @@ theorem nonUnitalRingHomMap_apply
     nonUnitalRingHomMap n phi M i j = phi (M i j) :=
   rfl
 
-/-- The single diagonal corner selected by `i₀`, over an arbitrary
-nonunital ring. -/
+/-- Let `A` be a possibly nonunital ring. For natural numbers `n` and `i₀ : Fin n`. The single diagonal
+corner selected by `i₀`, over an arbitrary nonunital ring.
+-/
 def ringCornerEmbedding
     {A : Type u} [NonUnitalRing A]
     {n : ℕ} (i₀ : Fin n) :

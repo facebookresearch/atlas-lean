@@ -50,8 +50,12 @@ variable {gammaD : CStarGrading D} {gammaB : CStarGrading B}
 attribute [local instance] CStarModule.ContinuousMap.rightAction
   CStarModule.ContinuousMap.cstarModule
 
-/-- The computed pointwise representation is graded for the original
-pointwise coefficient and module generators. -/
+/-- **Pointwise graded representation on sections.** Let `X` be a compact topological space, let `D,B`
+be graded nonunital complex C*-algebras, and let `E` be a complete compatibly graded right Hilbert
+`B`-module. Assume star-compatible opposite orders on `B` and `C(X,B)`, and let `ρ : D → End*(E)` be
+a graded star representation into adjointable endomorphisms. The formula `(ρ_X(a)f)(t) =
+ρ(a(t))(f(t))` defines a graded star representation of `C(X,D)` on the complete right Hilbert
+`C(X,B)`-module `C(X,E)`. -/
 def continuousCoefficientGradedRepresentation
     (delta : CStarModuleGrading gammaB E)
     (rho : CStarGrading.Hom gammaD delta.operatorGrading) :
@@ -98,7 +102,12 @@ def continuousCoefficientGradedRepresentation
         hgamma, hview, operatorGrading_generatorAut, operatorGenerator_apply,
         continuousMap_generator_apply] using hx
 
-/-- Forgetting the grading gives the computed ordinary pointwise map. -/
+/-- **Underlying pointwise section representation.** Let `X` be a compact topological space, let `D,B`
+be graded nonunital complex C*-algebras, and let `E` be a complete compatibly graded right Hilbert
+`B`-module. Assume star-compatible opposite orders on `B` and `C(X,B)`, and let `ρ : D → End*(E)` be
+a graded star representation into adjointable endomorphisms. Forgetting grading equivariance gives
+the pointwise nonunital star representation of continuous `D`-valued coefficients on continuous
+`E`-valued sections. -/
 @[simp]
 theorem continuousCoefficientGradedRepresentation_toNonUnitalStarAlgHom
     (delta : CStarModuleGrading gammaB E)
@@ -107,7 +116,11 @@ theorem continuousCoefficientGradedRepresentation_toNonUnitalStarAlgHom
       CStarModule.AdjointableOperator.continuousCoefficientRepresentation X
         rho.toNonUnitalStarAlgHom := rfl
 
-/-- Every graded section representation acts by the original evaluated coefficient. -/
+/-- **Evaluation of a pointwise graded representation.** Let `X` be a compact topological space, let
+`D,B` be graded nonunital complex C*-algebras, and let `E` be a complete compatibly graded right
+Hilbert `B`-module. Assume star-compatible opposite orders on `B` and `C(X,B)`, and let `ρ : D →
+End*(E)` be a graded star representation into adjointable endomorphisms. For `a ∈ C(X,D)`, `f ∈
+C(X,E)`, and `t ∈ X`, the represented section has value `ρ(a(t))(f(t))`. -/
 @[simp]
 theorem continuousCoefficientGradedRepresentation_apply
     (delta : CStarModuleGrading gammaB E)
@@ -117,7 +130,12 @@ theorem continuousCoefficientGradedRepresentation_apply
   CStarModule.AdjointableOperator.continuousCoefficientRepresentation_apply X
     rho.toNonUnitalStarAlgHom a f t
 
-/-- Constant left coefficients recover the existing constant graded End action. -/
+/-- **Constant coefficients in the graded section representation.** Let `X` be a compact topological
+space, let `D,B` be graded nonunital complex C*-algebras, and let `E` be a complete compatibly
+graded right Hilbert `B`-module. Assume star-compatible opposite orders on `B` and `C(X,B)`, and let
+`ρ : D → End*(E)` be a graded star representation into adjointable endomorphisms. For `a ∈ D`
+regarded as a constant section, the pointwise representation is the constant extension of the
+operator `ρ(a)` on `E`. -/
 theorem continuousCoefficientGradedRepresentation_const
     (delta : CStarModuleGrading gammaB E)
     (rho : CStarGrading.Hom gammaD delta.operatorGrading) (a : D) :

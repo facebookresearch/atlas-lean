@@ -38,12 +38,18 @@ variable (A : Type uA) [NonUnitalCStarAlgebra A]
 
 attribute [local instance] universalStateOrder universalStateStarOrder universalStateOperatorCStar
 
-/-- The original universal coefficient-range span, on the actual all-state Hilbert sum. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The universal coefficient-range span, on the all-state Hilbert sum. -/
 def universalStateCoefficientSpan : Submodule ℂ (UniversalStateGNSpace A) :=
   Submodule.span ℂ (Set.range fun p : A × UniversalStateGNSpace A =>
     universalStateGNSRepresentation A p.1 p.2)
 
-/-- The actual universal representation is nondegenerate by its original state cyclic spans. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. Its normalized states are positive
+complex-linear functionals whose associated continuous linear functional has operator norm one.
+
+The universal representation is nondegenerate by its state cyclic spans. -/
 theorem dense_universalStateCoefficientSpan :
     Dense (universalStateCoefficientSpan A : Set (UniversalStateGNSpace A)) := by
   classical

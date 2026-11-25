@@ -39,7 +39,9 @@ namespace CStarModule.Right
 
 universe uB uι
 
-/-- The finite standard right Hilbert module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The finite standard right module has the coefficient-valued sum inner product. The
+finite standard right Hilbert module. -/
 abbrev FiniteStandard
     (B : Type uB) (ι : Type uι) : Type (max uB uι) :=
   WithCStarModule Bᵐᵒᵖ (ι → B)
@@ -49,8 +51,10 @@ section Finite
 variable {B : Type uB} {ι : Type uι} [Fintype ι]
 variable [NonUnitalCStarAlgebra B]
 
-/-- Canonical spectral order on the opposite coefficient algebra for the
-finite standard module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The finite standard right module has the coefficient-valued sum inner product. The
+opposite coefficient algebra has the C-star-positive order determined by its self-adjoint
+spectrum. -/
 local instance spectralOrderBop : PartialOrder Bᵐᵒᵖ :=
   CStarAlgebra.spectralOrder _
 local instance : @StarOrderedRing Bᵐᵒᵖ _ spectralOrderBop _ :=
@@ -93,15 +97,18 @@ theorem finite_norm_apply_le_norm (x : FiniteStandard B ι) (i : ι) :
   WithCStarModule.norm_apply_le_norm x i
 
 omit [Fintype ι] in
-/-- The finite standard-module right action is coordinatewise source-order
-multiplication. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. On coefficient
+families B to the power I, right multiplication is coordinatewise. The finite standard-module
+right action is coordinatewise right-action multiplication. -/
 @[simp]
 theorem finite_right_smul_apply (x : FiniteStandard B ι) (b : B) (i : ι) :
     (x <• b) i = x i * b := by
   change (x i) <• b = x i * b
   exact CStarModule.Right.right_smul_self (x i) b
 
-/-- Coordinate evaluation on a finite standard module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The finite standard right module has the coefficient-valued sum inner product.
+Coordinate evaluation on a finite standard module. -/
 def finiteCoord (i : ι) : FiniteStandard B ι →L[ℂ] B := by
   let f : FiniteStandard B ι →ₗ[ℂ] B :=
     { toFun := fun x ↦ x i
@@ -111,7 +118,9 @@ def finiteCoord (i : ι) : FiniteStandard B ι →L[ℂ] B := by
     change ‖x i‖ ≤ 1 * ‖x‖
     simpa only [one_mul] using finite_norm_apply_le_norm x i
 
-/-- Insert one coefficient into a finite standard module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The finite standard right module has the coefficient-valued sum inner product. Insert
+one coefficient into a finite standard module. -/
 noncomputable def finiteSingle (i : ι) : B →L[ℂ] FiniteStandard B ι := by
   classical
   let f : B →ₗ[ℂ] FiniteStandard B ι :=
@@ -145,8 +154,9 @@ theorem finiteCoord_apply (i : ι) (x : FiniteStandard B ι) :
   change x i = x i
   rfl
 
-/-- The selected coordinate of a finite coefficient single is its
-coefficient. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The finite standard right module has the coefficient-valued sum inner product. The
+selected coordinate of a finite coefficient single is its coefficient. -/
 @[simp]
 theorem finiteCoord_single_self (i : ι) (b : B) :
     finiteCoord i (finiteSingle i b) = b := by
@@ -155,7 +165,9 @@ theorem finiteCoord_single_self (i : ι) (b : B) :
     (Classical.decEq ι) i b) i = b
   simp
 
-/-- Every other coordinate of a finite coefficient single vanishes. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The finite standard right module has the coefficient-valued sum inner product. Every
+other coordinate of a finite coefficient single vanishes. -/
 @[simp]
 theorem finiteCoord_single_ne {i j : ι} (h : j ≠ i) (b : B) :
     finiteCoord j (finiteSingle i b) = 0 := by
@@ -164,8 +176,9 @@ theorem finiteCoord_single_ne {i j : ι} (h : j ≠ i) (b : B) :
     (Classical.decEq ι) i b) j = 0
   simp [h]
 
-/-- Finite coefficient singles intertwine source-order right
-multiplication. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The finite standard right module has the coefficient-valued sum inner product. Finite
+coefficient singles intertwine right-action right multiplication. -/
 @[simp]
 theorem finiteSingle_right_smul (i : ι) (b c : B) :
     finiteSingle i b <• c = finiteSingle i (b * c) := by
@@ -189,8 +202,9 @@ theorem finiteSingle_right_smul (i : ι) (b c : B) :
         (finiteCoord_single_ne (B := B) hji (b * c))
     rw [hb, hbc, zero_mul]
 
-/-- Finite coefficient singles reconstruct every finite standard-module
-vector. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The finite standard right module has the coefficient-valued sum inner product. Finite
+coefficient singles reconstruct every finite standard-module vector. -/
 theorem finite_sum_single (x : FiniteStandard B ι) :
     ∑ i, finiteSingle i (x i) = x := by
   classical
@@ -198,8 +212,9 @@ theorem finite_sum_single (x : FiniteStandard B ι) :
   change ∑ i, Pi.single i (x i) = fun i ↦ x i
   exact Finset.univ_sum_single (fun i ↦ x i)
 
-/-- The norm on a finite standard module is bounded by the sum of its
-coordinate norms. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The finite standard right module has the coefficient-valued sum inner product. The norm
+on a finite standard module is bounded by the sum of its coordinate norms. -/
 theorem finite_norm_le_sum (x : FiniteStandard B ι) :
     ‖x‖ ≤ ∑ i, ‖x i‖ := by
   classical
@@ -218,7 +233,10 @@ theorem finite_norm_le_sum (x : FiniteStandard B ι) :
 
 end Finite
 
-/-- The algebraic finite-support standard pre-Hilbert module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The algebraic finite-
+support standard pre-Hilbert module. -/
 @[nolint unusedArguments]
 def StandardPre
     (B : Type uB) (ι : Type uι)
@@ -230,13 +248,19 @@ namespace StandardPre
 variable {B : Type uB} {ι : Type uι}
 variable [NonUnitalCStarAlgebra B]
 
-/-- The canonical equivalence with finitely supported coefficient families. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The canonical equivalence
+with finitely supported coefficient families. -/
 def toFinsupp : StandardPre B ι ≃ (ι →₀ B) := Equiv.refl _
 
 instance : AddCommGroup (StandardPre B ι) :=
   Equiv.addCommGroup (toFinsupp (B := B) (ι := ι))
 
-/-- The additive equivalence underlying `toFinsupp`. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The additive equivalence
+underlying toFinsupp. -/
 def toFinsuppAddEquiv : StandardPre B ι ≃+ (ι →₀ B) where
   toEquiv := toFinsupp
   map_add' _ _ := rfl
@@ -244,7 +268,10 @@ def toFinsuppAddEquiv : StandardPre B ι ≃+ (ι →₀ B) where
 instance : Module ℂ (StandardPre B ι) :=
   (toFinsuppAddEquiv (B := B) (ι := ι)).module ℂ
 
-/-- The complex-linear equivalence underlying `toFinsupp`. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The complex-linear
+equivalence underlying toFinsupp. -/
 def toFinsuppLinearEquiv : StandardPre B ι ≃ₗ[ℂ] (ι →₀ B) where
   toAddEquiv := toFinsuppAddEquiv
   map_smul' _ _ := rfl
@@ -274,15 +301,19 @@ theorem coe_op_smul (b : Bᵐᵒᵖ) (x : StandardPre B ι) (i : ι) :
     (b • x) i = b • x i := by
   exact DFunLike.congr_fun (toFinsupp_op_smul b x) i
 
-/-- Canonical spectral order on the opposite coefficient algebra for the
-finite-support inner product. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The opposite coefficient
+algebra has the C-star-positive order determined by its self-adjoint spectrum. -/
 local instance spectralOrderBop : PartialOrder Bᵐᵒᵖ :=
   CStarAlgebra.spectralOrder _
 local instance : @StarOrderedRing Bᵐᵒᵖ _ spectralOrderBop _ :=
   CStarAlgebra.spectralOrderedRing _
 
-/-- The opposite-coefficient inner product of finite-support families, summed over
-the first family's support. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The opposite-coefficient
+inner product of finite-support families, summed over the first family's support. -/
 def innerOp (x y : StandardPre B ι) : Bᵐᵒᵖ :=
   (toFinsupp x).sum fun i xi ↦ inner Bᵐᵒᵖ xi (y i)
 
@@ -415,7 +446,10 @@ theorem norm_coord_le (x : StandardPre B ι) (i : ι) : ‖x i‖ ≤ ‖x‖ :=
         (CStarModule.inner_self_nonneg (A := Bᵐᵒᵖ) (x := x i))
     _ = ‖x‖ ^ 2 := (CStarModule.norm_sq_eq (A := Bᵐᵒᵖ) (x := x)).symm
 
-/-- Coordinate evaluation on the finite-support premodule. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. Coordinate evaluation on
+the finite-support premodule. -/
 def coord (i : ι) : StandardPre B ι →L[ℂ] B := by
   let f : StandardPre B ι →ₗ[ℂ] B :=
     { toFun := fun x ↦ x i
@@ -425,7 +459,10 @@ def coord (i : ι) : StandardPre B ι →L[ℂ] B := by
     change ‖x i‖ ≤ 1 * ‖x‖
     simpa only [one_mul] using norm_coord_le x i
 
-/-- A vector supported at one coordinate has the coefficient norm. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. A vector supported at one
+coordinate has the coefficient norm. -/
 theorem norm_single (i : ι) (b : B) :
     ‖(toFinsupp.symm (Finsupp.single i b) : StandardPre B ι)‖ = ‖b‖ := by
   rw [← sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)]
@@ -436,7 +473,10 @@ theorem norm_single (i : ι) (b : B) :
     (toFinsupp.symm (Finsupp.single i b))‖ = ‖inner Bᵐᵒᵖ b b‖
   simp [innerOp]
 
-/-- Insert one coefficient at a selected coordinate. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. Insert one coefficient at
+a selected coordinate. -/
 def single (i : ι) : B →L[ℂ] StandardPre B ι := by
   let f : B →ₗ[ℂ] StandardPre B ι :=
     { toFun := fun b ↦ toFinsupp.symm (Finsupp.single i b)
@@ -463,7 +503,10 @@ theorem single_apply (i : ι) (b : B) :
   change toFinsupp.symm (Finsupp.single i b) = _
   rfl
 
-/-- The right inner product of two coefficient singles at the same index. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The right inner product
+of two coefficient singles at the same index. -/
 @[simp↓]
 theorem rightInner_single (i : ι) (b c : B) :
     CStarModule.rightInner (B := B) (single i b) (single i c) = star b * c := by
@@ -471,7 +514,10 @@ theorem rightInner_single (i : ι) (b c : B) :
   rw [single_apply, single_apply, rightInner_apply]
   simp
 
-/-- Coefficient singles intertwine source-order right multiplication. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. Coefficient singles
+intertwine right-action right multiplication. -/
 @[simp↓]
 theorem single_right_smul (i : ι) (b c : B) :
     single i b <• c = single i (b * c) := by
@@ -480,15 +526,20 @@ theorem single_right_smul (i : ι) (b c : B) :
     Equiv.apply_symm_apply, Equiv.apply_symm_apply,
     Finsupp.smul_single, CStarModule.Right.right_smul_self]
 
-/-- Coefficient singles at distinct indices are orthogonal. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. Coefficient singles at
+distinct indices are orthogonal. -/
 @[simp↓]
 theorem rightInner_single_ne {i j : ι} (h : i ≠ j) (b c : B) :
     CStarModule.rightInner (B := B) (single i b) (single j c) = 0 := by
   classical
   simp [rightInner_apply, single_apply, h]
 
-/-- The coefficient singles over the support reconstruct a finite-support
-vector. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The coefficient singles
+over the support reconstruct a finite-support vector. -/
 theorem sum_single_support (x : StandardPre B ι) :
     ∑ i ∈ (toFinsupp x).support, single i (x i) = x := by
   classical
@@ -496,7 +547,10 @@ theorem sum_single_support (x : StandardPre B ι) :
   change ∑ i ∈ (toFinsupp x).support, Finsupp.single i (x i) = toFinsupp x
   exact Finsupp.sum_single (toFinsupp x)
 
-/-- Finite-support right multiplication satisfies the canonical norm bound. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The norm of xb is at most
+the norm of x times the norm of b. -/
 theorem norm_right_smul_le (x : StandardPre B ι) (b : B) :
     ‖x <• b‖ ≤ ‖x‖ * ‖b‖ :=
   CStarModule.norm_right_smul_le x b
@@ -535,7 +589,10 @@ private theorem norm_filter_le [DecidableEq ι]
     CStarModule.norm_sq_eq (A := Bᵐᵒᵖ)]
   exact CStarAlgebra.norm_le_norm_of_le_of_nonneg hinner (innerOp_self_nonneg y)
 
-/-- Restriction to a finite coordinate set on the finite-support premodule. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. Restriction to a finite
+coordinate set on the finite-support premodule. -/
 noncomputable def truncate (s : Finset ι) :
     StandardPre B ι →L[ℂ] StandardPre B ι := by
   classical
@@ -558,7 +615,10 @@ noncomputable def truncate (s : Finset ι) :
     change ‖toFinsupp.symm ((toFinsupp x).filter (· ∈ s))‖ ≤ 1 * ‖x‖
     simpa only [one_mul] using norm_filter_le s x
 
-/-- Premodule truncation keeps exactly the selected coordinates. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. Premodule truncation
+keeps exactly the selected coordinates. -/
 @[simp↓]
 theorem truncate_apply [DecidableEq ι]
     (s : Finset ι) (x : StandardPre B ι) (i : ι) :
@@ -579,8 +639,10 @@ theorem truncate_apply [DecidableEq ι]
     rw [Finsupp.filter_apply]
     simp only [hi, ↓reduceIte]
 
-/-- The underlying finitely supported family of a truncation is its filtered
-family. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The underlying finitely
+supported family of a truncation is its filtered family. -/
 @[simp]
 theorem toFinsupp_truncate [DecidableEq ι] (s : Finset ι)
     (x : StandardPre B ι) :
@@ -589,8 +651,10 @@ theorem toFinsupp_truncate [DecidableEq ι] (s : Finset ι)
   change truncate s x i = _
   rw [truncate_apply, Finsupp.filter_apply]
 
-/-- Truncation fixes a finite-support vector once the truncation set contains
-its support. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. Truncation fixes a
+finite-support vector once the truncation set contains its support. -/
 theorem truncate_eq_self_of_support_subset (s : Finset ι)
     (x : StandardPre B ι) (h : (toFinsupp x).support ⊆ s) :
     truncate s x = x := by
@@ -603,7 +667,10 @@ theorem truncate_eq_self_of_support_subset (s : Finset ι)
   · rfl
   · exact (Finsupp.notMem_support_iff.mp (fun his ↦ hi (h his))).symm
 
-/-- A premodule truncation is the finite sum of its coefficient singles. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. A premodule truncation is
+the finite sum of its coefficient singles. -/
 theorem truncate_eq_sum_single (s : Finset ι) (x : StandardPre B ι) :
     truncate s x = ∑ i ∈ s, single i (x i) := by
   classical
@@ -632,8 +699,10 @@ theorem truncate_eq_sum_single (s : Finset ι) (x : StandardPre B ι) :
       subst i
       exact hj hi).symm
 
-/-- The right inner product of two premodule truncations is the corresponding
-finite coordinate sum. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. The right inner product
+of two premodule truncations is the corresponding finite coordinate sum. -/
 theorem rightInner_truncate (s : Finset ι) (x y : StandardPre B ι) :
     CStarModule.rightInner (B := B) (truncate s x) (truncate s y) =
       ∑ i ∈ s, star (x i) * y i := by
@@ -651,7 +720,10 @@ theorem rightInner_truncate (s : Finset ι) (x y : StandardPre B ι) :
   change star (truncate s x i) * truncate s y i = _
   simp only [truncate_apply, hi, ↓reduceIte]
 
-/-- Premodule truncation commutes with the opposite-algebra right action. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. Premodule truncation
+commutes with the opposite-algebra right action. -/
 @[simp]
 theorem truncate_op_smul (s : Finset ι) (b : Bᵐᵒᵖ) (x : StandardPre B ι) :
     truncate s (b • x) = b • truncate s x := by
@@ -661,12 +733,18 @@ theorem truncate_op_smul (s : Finset ι) (b : Bᵐᵒᵖ) (x : StandardPre B ι)
   simp only [truncate_apply, coe_op_smul]
   split <;> simp_all
 
-/-- Premodule truncation commutes with source-order right multiplication. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. Premodule truncation
+commutes with right-action right multiplication. -/
 theorem truncate_right_smul (s : Finset ι) (x : StandardPre B ι) (b : B) :
     truncate s (x <• b) = truncate s x <• b :=
   truncate_op_smul s (MulOpposite.op b) x
 
-/-- Premodule truncation is contractive. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard
+premodule consists of finitely supported B-valued families, with inner product given by the
+finite sum of conjugated first coordinates times second coordinates. Premodule truncation is
+contractive. -/
 theorem norm_truncate_le (s : Finset ι) (x : StandardPre B ι) :
     ‖truncate s x‖ ≤ ‖x‖ := by
   classical
@@ -678,14 +756,17 @@ end StandardPre
 
 /-! ## The completed standard module -/
 
-/-- The standard right Hilbert C-star module is the uniform completion of
-the algebraic finite-support module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The standard
+right Hilbert C-star module is the uniform completion of the algebraic finite-support module. -/
 def Standard
     (B : Type uB) (ι : Type uι)
     [NonUnitalCStarAlgebra B] : Type (max uB uι) :=
   UniformSpace.Completion (StandardPre B ι)
 
-/-- The countably indexed standard right Hilbert C-star module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The countably
+indexed standard right Hilbert C-star module. -/
 abbrev H (B : Type uB) [NonUnitalCStarAlgebra B] := Standard B ℕ
 
 namespace Standard
@@ -705,23 +786,30 @@ instance : CompleteSpace (Standard B ι) := by
   change CompleteSpace (UniformSpace.Completion (StandardPre B ι))
   infer_instance
 
-/-- Canonical spectral order on the opposite coefficient algebra for the
-completed standard module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The opposite
+coefficient algebra has the C-star-positive order determined by its self-adjoint spectrum. -/
 local instance spectralOrderBop : PartialOrder Bᵐᵒᵖ :=
   CStarAlgebra.spectralOrder _
 local instance : @StarOrderedRing Bᵐᵒᵖ _ spectralOrderBop _ :=
   CStarAlgebra.spectralOrderedRing _
 
-/-- The canonical isometric inclusion of finite-support vectors. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The canonical
+isometric inclusion of finite-support vectors. -/
 def ofPre : StandardPre B ι →ₗᵢ[ℂ] Standard B ι :=
   UniformSpace.Completion.toComplₗᵢ
 
-/-- Finite-support vectors have dense range in the standard module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Finite-support
+vectors have dense range in the standard module. -/
 theorem denseRange_ofPre :
     DenseRange (ofPre : StandardPre B ι → Standard B ι) :=
   UniformSpace.Completion.denseRange_coe
 
-/-- Right multiplication by a fixed coefficient on finite-support vectors. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Right
+multiplication by a fixed coefficient on finite-support vectors. -/
 def rightMulPre (b : B) :
     StandardPre B ι →L[ℂ] StandardPre B ι :=
   (CStarModule.rightSMulCLM (B := B)).flip b
@@ -739,7 +827,9 @@ instance : UniformContinuousConstSMul Bᵐᵒᵖ (Standard B ι) := by
     (UniformSpace.Completion (StandardPre B ι))
   infer_instance
 
-/-- The completed right action extends the finite-support action. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completed
+right action extends the finite-support action. -/
 @[simp]
 theorem ofPre_op_smul (b : Bᵐᵒᵖ) (x : StandardPre B ι) :
     ofPre (b • x) = b • (ofPre x : Standard B ι) := by
@@ -747,16 +837,22 @@ theorem ofPre_op_smul (b : Bᵐᵒᵖ) (x : StandardPre B ι) :
     b • (↑x : UniformSpace.Completion (StandardPre B ι))
   exact UniformSpace.Completion.coe_smul b x
 
-/-- The completed right action extends source-order right multiplication. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completed
+right action extends right-action right multiplication. -/
 theorem ofPre_right_smul (x : StandardPre B ι) (b : B) :
     ofPre (x <• b) = (ofPre x : Standard B ι) <• b :=
   ofPre_op_smul (MulOpposite.op b) x
 
-/-- Coordinate evaluation on the completed standard module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Coordinate
+evaluation on the completed standard module. -/
 def coord (i : ι) : Standard B ι →L[ℂ] B :=
   (StandardPre.coord (B := B) i).fromCompletion
 
-/-- Coordinate evaluation agrees with the finite-support inclusion. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Coordinate
+evaluation agrees with the finite-support inclusion. -/
 @[simp]
 theorem coord_ofPre (i : ι) (x : StandardPre B ι) :
     coord i (ofPre x) = x i := by
@@ -765,7 +861,9 @@ theorem coord_ofPre (i : ι) (x : StandardPre B ι) :
   rw [ContinuousLinearMap.fromCompletion_apply_coe]
   exact StandardPre.coord_apply i x
 
-/-- Every completed coordinate is contractive. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Every completed
+coordinate is contractive. -/
 theorem norm_coord_le (x : Standard B ι) (i : ι) :
     ‖coord i x‖ ≤ ‖x‖ := by
   refine UniformSpace.Completion.induction_on x
@@ -776,9 +874,10 @@ theorem norm_coord_le (x : Standard B ι) (i : ι) :
   rw [coord_ofPre, (ofPre (B := B) (ι := ι)).norm_map]
   exact StandardPre.norm_coord_le x i
 
-/-- The two-stage continuous extension of the finite-support inner product.
-The linear variable is completed first, followed by the conjugate-linear
-variable. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The two-stage
+continuous extension of the finite-support inner product. The linear variable is completed
+first, followed by the conjugate-linear variable. -/
 noncomputable def innerOp :
     Standard B ι →L⋆[ℂ] Standard B ι →L[ℂ] Bᵐᵒᵖ := by
   change UniformSpace.Completion (StandardPre B ι) →L⋆[ℂ]
@@ -786,8 +885,9 @@ noncomputable def innerOp :
   exact ((((CStarModule.innerSL
     (A := Bᵐᵒᵖ) (E := StandardPre B ι)).flip).fromCompletion).flip).fromCompletion
 
-/-- The completed inner product agrees with the finite-support inner product
-on the dense canonical image. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completed
+inner product agrees with the finite-support inner product on the dense canonical image. -/
 @[simp]
 theorem innerOp_ofPre_ofPre (x y : StandardPre B ι) :
     innerOp (ofPre x) (ofPre y) = StandardPre.innerOp x y := by
@@ -804,14 +904,18 @@ theorem innerOp_ofPre_ofPre (x y : StandardPre B ι) :
   rw [ContinuousLinearMap.fromCompletion_apply_coe]
   rfl
 
-/-- The completed inner product is jointly continuous. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completed
+inner product is jointly continuous. -/
 @[continuity, fun_prop]
 theorem continuous_innerOp :
     Continuous fun p : Standard B ι × Standard B ι ↦ innerOp p.1 p.2 := by
   unfold innerOp
   fun_prop
 
-/-- The completed inner product is conjugate symmetric. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completed
+inner product is conjugate symmetric. -/
 theorem innerOp_star (x y : Standard B ι) :
     star (innerOp x y) = innerOp y x := by
   refine UniformSpace.Completion.induction_on x (isClosed_eq (by fun_prop) (by fun_prop)) ?_
@@ -822,7 +926,9 @@ theorem innerOp_star (x y : Standard B ι) :
   rw [innerOp_ofPre_ofPre, innerOp_ofPre_ofPre]
   exact StandardPre.star_innerOp x y
 
-/-- The completed diagonal inner product is positive. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completed
+diagonal inner product is positive. -/
 theorem innerOp_self_nonneg (x : Standard B ι) : 0 ≤ innerOp x x := by
   refine UniformSpace.Completion.induction_on x (isClosed_le (by fun_prop) (by fun_prop)) ?_
   intro x
@@ -830,7 +936,9 @@ theorem innerOp_self_nonneg (x : Standard B ι) : 0 ≤ innerOp x x := by
   rw [innerOp_ofPre_ofPre]
   exact StandardPre.innerOp_self_nonneg x
 
-/-- The completion norm is recovered from the completed inner product. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completion
+norm is recovered from the completed inner product. -/
 theorem norm_eq_sqrt_norm_innerOp_self (x : Standard B ι) :
     ‖x‖ = √‖innerOp x x‖ := by
   refine UniformSpace.Completion.induction_on x (isClosed_eq (by fun_prop) (by fun_prop)) ?_
@@ -840,7 +948,9 @@ theorem norm_eq_sqrt_norm_innerOp_self (x : Standard B ι) :
   exact (ofPre (B := B) (ι := ι)).norm_map x ▸
     (CStarModule.norm_eq_sqrt_norm_inner_self (A := Bᵐᵒᵖ) x)
 
-/-- The completed diagonal inner product vanishes exactly at zero. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completed
+diagonal inner product vanishes exactly at zero. -/
 theorem innerOp_self_eq_zero (x : Standard B ι) : innerOp x x = 0 ↔ x = 0 := by
   constructor
   · intro h
@@ -849,8 +959,9 @@ theorem innerOp_self_eq_zero (x : Standard B ι) : innerOp x x = 0 ↔ x = 0 := 
   · rintro rfl
     simp [innerOp]
 
-/-- The completed inner product is compatible with the right coefficient
-action in its second variable. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completed
+inner product is compatible with the right coefficient action in its second variable. -/
 theorem innerOp_op_smul_right (a : Bᵐᵒᵖ) (x y : Standard B ι) :
     innerOp x (a • y) = a * innerOp x y := by
   have hleft : Continuous fun p : Standard B ι × Standard B ι ↦
@@ -894,14 +1005,16 @@ noncomputable instance : CStarModule Bᵐᵒᵖ (Standard B ι) where
     intro x
     exact norm_eq_sqrt_norm_innerOp_self x
 
-/-- The bundled C-star-module inner product is the two-stage completion of
-the finite-support inner product. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The bundled
+C-star-module inner product is the two-stage completion of the finite-support inner product. -/
 @[simp]
 theorem inner_eq_innerOp (x y : Standard B ι) : inner Bᵐᵒᵖ x y = innerOp x y :=
   rfl
 
-/-- The completed inner product agrees with the finite-support right inner
-product on the dense canonical image. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The completed
+inner product agrees with the finite-support right inner product on the dense canonical image. -/
 @[simp]
 theorem rightInner_ofPre_ofPre (x y : StandardPre B ι) :
     CStarModule.rightInner (B := B) (ofPre x) (ofPre y) =
@@ -911,8 +1024,9 @@ theorem rightInner_ofPre_ofPre (x y : StandardPre B ι) :
     MulOpposite.unop (StandardPre.innerOp x y)
   rw [innerOp_ofPre_ofPre]
 
-/-- Completed coordinate evaluation intertwines the opposite-algebra
-coefficient action. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Completed
+coordinate evaluation intertwines the opposite-algebra coefficient action. -/
 @[simp]
 theorem coord_op_smul (i : ι) (b : Bᵐᵒᵖ) (x : Standard B ι) :
     coord i (b • x) = b • coord i x := by
@@ -926,20 +1040,25 @@ theorem coord_op_smul (i : ι) (b : Bᵐᵒᵖ) (x : Standard B ι) :
   rw [← ofPre_op_smul, coord_ofPre, coord_ofPre]
   exact StandardPre.coe_op_smul b x i
 
-/-- Completed coordinate evaluation intertwines source-order right
-multiplication. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Completed
+coordinate evaluation intertwines right-action right multiplication. -/
 theorem coord_right_smul (i : ι) (x : Standard B ι) (b : B) :
     coord i (x <• b) = coord i x * b := by
   rw [coord_op_smul]
   exact CStarModule.Right.right_smul_self (coord i x) b
 
-/-- Restriction to a finite coordinate set on the completed standard module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Restriction to
+a finite coordinate set on the completed standard module. -/
 noncomputable def truncate (s : Finset ι) : Standard B ι →L[ℂ] Standard B ι := by
   change UniformSpace.Completion (StandardPre B ι) →L[ℂ]
     UniformSpace.Completion (StandardPre B ι)
   exact (StandardPre.truncate (B := B) s).completion
 
-/-- Completed truncation extends finite-support truncation. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Completed
+truncation extends finite-support truncation. -/
 @[simp]
 theorem truncate_ofPre (s : Finset ι) (x : StandardPre B ι) :
     truncate s (ofPre x) = ofPre (StandardPre.truncate s x) := by
@@ -948,7 +1067,9 @@ theorem truncate_ofPre (s : Finset ι) (x : StandardPre B ι) :
     (↑(StandardPre.truncate s x) : UniformSpace.Completion (StandardPre B ι))
   exact ContinuousLinearMap.completion_apply_coe _ _
 
-/-- Completed truncation keeps exactly the selected coordinates. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Completed
+truncation keeps exactly the selected coordinates. -/
 @[simp]
 theorem coord_truncate [DecidableEq ι]
     (s : Finset ι) (x : Standard B ι) (i : ι) :
@@ -971,7 +1092,9 @@ theorem coord_truncate [DecidableEq ι]
     rw [truncate_ofPre, coord_ofPre, StandardPre.truncate_apply]
     simp only [hi, ↓reduceIte]
 
-/-- Completed truncation commutes with the opposite-algebra right action. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Completed
+truncation commutes with the opposite-algebra right action. -/
 @[simp]
 theorem truncate_op_smul (s : Finset ι) (b : Bᵐᵒᵖ) (x : Standard B ι) :
     truncate s (b • x) = b • truncate s x := by
@@ -985,12 +1108,16 @@ theorem truncate_op_smul (s : Finset ι) (b : Bᵐᵒᵖ) (x : Standard B ι) :
   rw [← ofPre_op_smul, truncate_ofPre, truncate_ofPre,
     StandardPre.truncate_op_smul, ofPre_op_smul]
 
-/-- Completed truncation commutes with source-order right multiplication. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Completed
+truncation commutes with right-action right multiplication. -/
 theorem truncate_right_smul (s : Finset ι) (x : Standard B ι) (b : B) :
     truncate s (x <• b) = truncate s x <• b :=
   truncate_op_smul s (MulOpposite.op b) x
 
-/-- Completed truncation is contractive. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Completed
+truncation is contractive. -/
 theorem norm_truncate_le (s : Finset ι) (x : Standard B ι) :
     ‖truncate s x‖ ≤ ‖x‖ := by
   refine UniformSpace.Completion.induction_on x
@@ -1001,7 +1128,9 @@ theorem norm_truncate_le (s : Finset ι) (x : Standard B ι) :
     (ofPre (B := B) (ι := ι)).norm_map]
   exact StandardPre.norm_truncate_le s x
 
-/-- Finite-coordinate truncations converge to every standard-module vector. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Finite-
+coordinate truncations converge to every standard-module vector. -/
 theorem tendsto_truncate (x : Standard B ι) :
     Tendsto (fun s : Finset ι ↦ truncate s x) atTop (𝓝 x) := by
   rw [Metric.tendsto_nhds]
@@ -1029,8 +1158,9 @@ private theorem continuous_rightInner :
       CStarModule.rightInner (B := B) p.1 p.2 :=
   MulOpposite.continuous_unop.comp CStarModule.continuous_inner
 
-/-- The right inner product of two completed truncations is the corresponding
-finite coordinate sum. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The right inner
+product of two completed truncations is the corresponding finite coordinate sum. -/
 theorem rightInner_truncate (s : Finset ι) (x y : Standard B ι) :
     CStarModule.rightInner (B := B) (truncate s x) (truncate s y) =
       ∑ i ∈ s, star (coord i x) * coord i y := by
@@ -1054,59 +1184,74 @@ theorem rightInner_truncate (s : Finset ι) (x y : Standard B ι) :
     StandardPre.rightInner_truncate]
   simp only [coord_ofPre]
 
-/-- Insert one coefficient at a selected coordinate of the standard module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Insert one
+coefficient at a selected coordinate of the standard module. -/
 def single (i : ι) : B →L[ℂ] Standard B ι :=
   (ofPre (B := B) (ι := ι)).toContinuousLinearMap.comp
     (StandardPre.single (B := B) i)
 
-/-- A completed single is represented by the corresponding finite-support vector. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. A completed
+single is represented by the corresponding finite-support vector. -/
 theorem single_apply (i : ι) (b : B) :
     single i b = ofPre (StandardPre.single i b) :=
   rfl
 
-/-- The selected coordinate of a coefficient single is its coefficient. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The selected
+coordinate of a coefficient single is its coefficient. -/
 @[simp]
 theorem coord_single_self (i : ι) (b : B) : coord i (single i b) = b := by
   rw [single_apply, coord_ofPre, StandardPre.single_apply]
   exact Finsupp.single_eq_same
 
-/-- Every other coordinate of a coefficient single vanishes. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Every other
+coordinate of a coefficient single vanishes. -/
 @[simp]
 theorem coord_single_ne {i j : ι} (h : j ≠ i) (b : B) :
     coord j (single i b) = 0 := by
   rw [single_apply, coord_ofPre, StandardPre.single_apply]
   exact Finsupp.single_eq_of_ne h
 
-/-- The right inner product of two completed coefficient singles at the same
-index. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The right inner
+product of two completed coefficient singles at the same index. -/
 @[simp]
 theorem rightInner_single (i : ι) (b c : B) :
     CStarModule.rightInner (B := B) (single i b) (single i c) = star b * c := by
   rw [single_apply, single_apply, rightInner_ofPre_ofPre,
     StandardPre.rightInner_single]
 
-/-- Completed coefficient singles intertwine source-order right
-multiplication. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Completed
+coefficient singles intertwine right-action right multiplication. -/
 @[simp]
 theorem single_right_smul (i : ι) (b c : B) :
     single i b <• c = single i (b * c) := by
   rw [single_apply, ← ofPre_right_smul,
     StandardPre.single_right_smul, single_apply]
 
-/-- A completed coefficient single has the norm of its coefficient. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. A completed
+coefficient single has the norm of its coefficient. -/
 theorem norm_single (i : ι) (b : B) : ‖single i b‖ = ‖b‖ := by
   rw [single_apply, (ofPre (B := B) (ι := ι)).norm_map,
     StandardPre.single_apply, StandardPre.norm_single]
 
-/-- Completed coefficient singles at distinct indices are orthogonal. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Completed
+coefficient singles at distinct indices are orthogonal. -/
 @[simp]
 theorem rightInner_single_ne {i j : ι} (h : i ≠ j) (b c : B) :
     CStarModule.rightInner (B := B) (single i b) (single j c) = 0 := by
   rw [single_apply, single_apply, rightInner_ofPre_ofPre,
     StandardPre.rightInner_single_ne h]
 
-/-- The complex span of all coefficient singles is dense in the standard
-module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The complex
+span of all coefficient singles is dense in the standard module. -/
 theorem dense_span_single :
     Dense (Submodule.span ℂ
       (Set.range fun p : ι × B ↦ single p.1 p.2) : Set (Standard B ι)) := by
@@ -1122,7 +1267,9 @@ theorem dense_span_single :
   exact Submodule.sum_mem _ fun i _ ↦
     Submodule.subset_span (Set.mem_range_self (i, x i))
 
-/-- A completed truncation is the finite sum of its coordinate singles. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. A completed
+truncation is the finite sum of its coordinate singles. -/
 theorem truncate_eq_sum_single (s : Finset ι) (x : Standard B ι) :
     truncate s x = ∑ i ∈ s, single i (coord i x) := by
   have hleft : Continuous fun x : Standard B ι ↦ truncate s x :=
@@ -1138,14 +1285,18 @@ theorem truncate_eq_sum_single (s : Finset ι) (x : Standard B ι) :
   rw [truncate_ofPre, StandardPre.truncate_eq_sum_single]
   simp only [coord_ofPre, single_apply, map_sum]
 
-/-- The coordinate singles of a standard-module vector sum to that vector. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The coordinate
+singles of a standard-module vector sum to that vector. -/
 theorem hasSum_single_coord (x : Standard B ι) :
     HasSum (fun i ↦ single i (coord i x)) x := by
   change Tendsto (fun s : Finset ι ↦ ∑ i ∈ s, single i (coord i x))
     atTop (𝓝 x)
   simpa only [← truncate_eq_sum_single] using tendsto_truncate x
 
-/-- Standard-module vectors are determined by their coordinates. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Standard-module
+vectors are determined by their coordinates. -/
 @[ext]
 theorem coord_ext {x y : Standard B ι}
     (h : ∀ i, coord i x = coord i y) : x = y := by
@@ -1155,7 +1306,9 @@ theorem coord_ext {x y : Standard B ι}
   apply (hasSum_single_coord x).unique
   simpa only [hf] using hasSum_single_coord y
 
-/-- The coordinate cross terms sum to the right inner product. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The coordinate
+cross terms sum to the right inner product. -/
 theorem hasSum_coord_star_mul_coord (x y : Standard B ι) :
     HasSum (fun i ↦ star (coord i x) * coord i y)
       (CStarModule.rightInner (B := B) x y) := by
@@ -1182,25 +1335,33 @@ theorem hasSum_coord_star_mul_coord (x y : Standard B ι) :
       atTop (𝓝 (CStarModule.rightInner (B := B) x y))
   exact hinner
 
-/-- Coordinate cross terms are summable. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Coordinate
+cross terms are summable. -/
 theorem summable_coord_star_mul_coord (x y : Standard B ι) :
     Summable (fun i ↦ star (coord i x) * coord i y) :=
   (hasSum_coord_star_mul_coord x y).summable
 
-/-- The right inner product is the sum of the coordinate cross terms. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The right inner
+product is the sum of the coordinate cross terms. -/
 theorem rightInner_eq_tsum_coord (x y : Standard B ι) :
     CStarModule.rightInner (B := B) x y =
       ∑' i, star (coord i x) * coord i y :=
   (hasSum_coord_star_mul_coord x y).tsum_eq.symm
 
-/-- The squared norm is the norm of the diagonal coordinate sum. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The squared
+norm is the norm of the diagonal coordinate sum. -/
 theorem norm_sq_eq_norm_tsum_coord (x : Standard B ι) :
     ‖x‖ ^ 2 = ‖∑' i, star (coord i x) * coord i x‖ := by
   rw [← CStarModule.norm_rightInner_self (B := B) x,
     rightInner_eq_tsum_coord]
 
-/-- A coefficient family is square summable when its positive diagonal series
-is summable in the coefficient algebra. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. A coefficient
+family is square summable when its positive diagonal series is summable in the coefficient
+algebra. -/
 def IsSquareSummable (a : ι → B) : Prop :=
   Summable (fun i ↦ star (a i) * a i)
 
@@ -1306,8 +1467,9 @@ private theorem exists_coord_eq_of_isSquareSummable {a : ι → B}
     tendsto_const_nhds.congr' (Filter.EventuallyEq.symm hevent)
   exact tendsto_nhds_unique hcoord haLim
 
-/-- A square-summable coefficient family is represented by a unique standard-
-module vector. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. A square-
+summable coefficient family is represented by a unique standard-module vector. -/
 theorem exists_standard_of_isSquareSummable {a : ι → B}
     (ha : IsSquareSummable a) :
     ∃! x : Standard B ι, ∀ i, coord i x = a i := by
@@ -1316,14 +1478,16 @@ theorem exists_standard_of_isSquareSummable {a : ι → B}
   intro y hy
   exact coord_ext fun i ↦ (hy i).trans (hx i).symm
 
-/-- The standard-module vector represented by a square-summable coefficient
-family. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The standard-
+module vector represented by a square-summable coefficient family. -/
 noncomputable def ofSquareSummable
     (a : {a : ι → B // IsSquareSummable a}) : Standard B ι :=
   Classical.choose (exists_standard_of_isSquareSummable a.property)
 
-/-- The chosen vector represented by a square-summable family has the given
-coordinates. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The chosen
+vector represented by a square-summable family has the given coordinates. -/
 @[simp]
 theorem coord_ofSquareSummable
     (a : {a : ι → B // IsSquareSummable a}) (i : ι) :
@@ -1331,13 +1495,17 @@ theorem coord_ofSquareSummable
   (Classical.choose_spec
     (exists_standard_of_isSquareSummable a.property)).1 i
 
-/-- The coordinate family of every standard-module vector is square
-summable. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The coordinate
+family of every standard-module vector is square summable. -/
 theorem isSquareSummable_coord (x : Standard B ι) :
     IsSquareSummable (fun i ↦ coord i x) :=
   summable_coord_star_mul_coord x x
 
-/-- The instance-free coefficient-family view of the standard module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. Coordinate
+evaluation identifies the standard module with the coefficient families whose series of
+conjugate-coordinate products with themselves is summable in B. -/
 noncomputable def summableSequenceEquiv :
     Standard B ι ≃ {a : ι → B // IsSquareSummable a} where
   toFun x := ⟨fun i ↦ coord i x, isSquareSummable_coord x⟩
@@ -1349,20 +1517,26 @@ noncomputable def summableSequenceEquiv :
     (y := x) fun i ↦ coord_ofSquareSummable _ i
   right_inv a := Subtype.ext <| funext fun i ↦ coord_ofSquareSummable a i
 
-/-- The forward square-summable view is coordinate evaluation. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The forward
+square-summable view is coordinate evaluation. -/
 @[simp]
 theorem summableSequenceEquiv_apply_coord (x : Standard B ι) (i : ι) :
     (summableSequenceEquiv (B := B) (ι := ι) x).1 i = coord i x :=
   rfl
 
-/-- The inverse square-summable view has the prescribed coordinates. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The inverse
+square-summable view has the prescribed coordinates. -/
 @[simp]
 theorem coord_summableSequenceEquiv_symm
     (a : {a : ι → B // IsSquareSummable a}) (i : ι) :
     coord i ((summableSequenceEquiv (B := B) (ι := ι)).symm a) = a.1 i :=
   coord_ofSquareSummable a i
 
-/-- The square-summable view preserves addition pointwise. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The square-
+summable view preserves addition pointwise. -/
 theorem summableSequenceEquiv_add (x y : Standard B ι) :
     (summableSequenceEquiv (B := B) (ι := ι) (x + y)).1 =
       fun i ↦ (summableSequenceEquiv (B := B) (ι := ι) x).1 i +
@@ -1370,32 +1544,36 @@ theorem summableSequenceEquiv_add (x y : Standard B ι) :
   funext i
   simp [summableSequenceEquiv_apply_coord]
 
-/-- The square-summable view preserves complex scalar multiplication
-pointwise. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The square-
+summable view preserves complex scalar multiplication pointwise. -/
 theorem summableSequenceEquiv_smul (c : ℂ) (x : Standard B ι) :
     (summableSequenceEquiv (B := B) (ι := ι) (c • x)).1 =
       fun i ↦ c • (summableSequenceEquiv (B := B) (ι := ι) x).1 i := by
   funext i
   simp [summableSequenceEquiv_apply_coord]
 
-/-- The square-summable view preserves the opposite-algebra right action
-pointwise. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The square-
+summable view preserves the opposite-algebra right action pointwise. -/
 theorem summableSequenceEquiv_op_smul (b : Bᵐᵒᵖ) (x : Standard B ι) :
     (summableSequenceEquiv (B := B) (ι := ι) (b • x)).1 =
       fun i ↦ b • (summableSequenceEquiv (B := B) (ι := ι) x).1 i := by
   funext i
   simp [summableSequenceEquiv_apply_coord]
 
-/-- The square-summable view preserves source-order right multiplication
-pointwise. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The square-
+summable view preserves right-action right multiplication pointwise. -/
 theorem summableSequenceEquiv_right_smul (x : Standard B ι) (b : B) :
     (summableSequenceEquiv (B := B) (ι := ι) (x <• b)).1 =
       fun i ↦ (summableSequenceEquiv (B := B) (ι := ι) x).1 i * b := by
   funext i
   simp [summableSequenceEquiv_apply_coord]
 
-/-- The right inner product is the coordinate cross sum in the square-
-summable view. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The right inner
+product is the coordinate cross sum in the square-summable view. -/
 theorem summableSequenceEquiv_rightInner (x y : Standard B ι) :
     CStarModule.rightInner (B := B) x y =
       ∑' i, star ((summableSequenceEquiv (B := B) (ι := ι) x).1 i) *
@@ -1403,7 +1581,9 @@ theorem summableSequenceEquiv_rightInner (x y : Standard B ι) :
   simpa only [summableSequenceEquiv_apply_coord] using
     rightInner_eq_tsum_coord x y
 
-/-- The squared norm is the diagonal sum norm in the square-summable view. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The squared
+norm is the diagonal sum norm in the square-summable view. -/
 theorem summableSequenceEquiv_norm_sq (x : Standard B ι) :
     ‖x‖ ^ 2 = ‖∑' i,
       star ((summableSequenceEquiv (B := B) (ι := ι) x).1 i) *
@@ -1411,8 +1591,9 @@ theorem summableSequenceEquiv_norm_sq (x : Standard B ι) :
   simpa only [summableSequenceEquiv_apply_coord] using
     norm_sq_eq_norm_tsum_coord x
 
-/-- The norm is the square root of the diagonal sum norm in the square-
-summable view. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The norm is the
+square root of the diagonal sum norm in the square-summable view. -/
 theorem summableSequenceEquiv_norm (x : Standard B ι) :
     ‖x‖ = √‖∑' i,
       star ((summableSequenceEquiv (B := B) (ι := ι) x).1 i) *
@@ -1423,22 +1604,30 @@ theorem summableSequenceEquiv_norm (x : Standard B ι) :
   change ‖CStarModule.rightInner (B := B) x x‖ = _
   rw [summableSequenceEquiv_rightInner]
 
-/-- A standard module with a chosen coordinate is full. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. A standard
+module with a chosen coordinate is full. -/
 theorem isFull_of_index (i : ι) : CStarModule.IsFull B (Standard B ι) := by
   apply CStarModule.isFull_of_innerPreserving
     (fun b : B ↦ single i b) (hE := CStarModule.isFull_self (B := B))
   intro b c
   exact rightInner_single i b c
 
-/-- A standard module over a nonempty index type is full. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. A standard
+module over a nonempty index type is full. -/
 theorem isFull_of_nonempty [Nonempty ι] : CStarModule.IsFull B (Standard B ι) :=
   isFull_of_index (Classical.choice (inferInstance : Nonempty ι))
 
-/-- The standard countably indexed module is full. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The standard
+countably indexed module is full. -/
 theorem isFull_H : CStarModule.IsFull B (Standard B ℕ) :=
   isFull_of_nonempty
 
-/-- A standard module over an empty index type is a subsingleton. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. A standard
+module over an empty index type is a subsingleton. -/
 theorem subsingleton_of_isEmpty [IsEmpty ι] : Subsingleton (Standard B ι) := by
   constructor
   intro x y
@@ -1471,14 +1660,17 @@ theorem subsingleton_of_isEmpty [IsEmpty ι] : Subsingleton (Standard B ι) := b
 noncomputable instance [IsEmpty ι] : Subsingleton (Standard B ι) :=
   subsingleton_of_isEmpty
 
-/-- The support ideal of an empty-index standard module is bottom. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The support
+ideal of an empty-index standard module is bottom. -/
 theorem supportIdeal_eq_bot_of_isEmpty [IsEmpty ι] :
     CStarModule.supportIdeal B (Standard B ι) = ClosedStarIdeal.bot B := by
   apply CStarModule.supportIdeal_eq_bot_iff_subsingleton.mpr
   exact subsingleton_of_isEmpty
 
-/-- Fullness of a standard module is equivalent to a nonempty coordinate set,
-apart from the degenerate coefficient algebra. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The standard
+module is full exactly when I is nonempty or B consists only of zero. -/
 theorem isFull_iff_nonempty_or_subsingleton :
     CStarModule.IsFull B (Standard B ι) ↔ Nonempty ι ∨ Subsingleton B := by
   constructor
@@ -1499,8 +1691,10 @@ section FiniteComparison
 
 variable [Fintype ι]
 
-/-- Coefficient evaluation identifies the finite-support premodule with the
-finite standard module when the index type is finite. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. Coefficient evaluation identifies the finite-support premodule with the finite
+standard module when the index type is finite. -/
 noncomputable def preFiniteLinearEquiv :
     StandardPre B ι ≃ₗ[ℂ] FiniteStandard B ι :=
   (StandardPre.toFinsuppLinearEquiv (B := B) (ι := ι)).trans
@@ -1517,7 +1711,9 @@ theorem preFiniteLinearEquiv_symm_apply (x : FiniteStandard B ι) (i : ι) :
     (preFiniteLinearEquiv (B := B) (ι := ι)).symm x i = x i :=
   rfl
 
-/-- The algebraic finite comparison is isometric. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. The algebraic finite comparison is isometric. -/
 theorem norm_preFiniteLinearEquiv (x : StandardPre B ι) :
     ‖preFiniteLinearEquiv x‖ = ‖x‖ := by
   rw [finite_norm, StandardPre.norm_apply]
@@ -1558,8 +1754,10 @@ private theorem finiteLinearIsometryEquiv_symm_apply (x : FiniteStandard B ι) :
   exact LinearEquiv.extendOfIsometry_symm_eq _ _ _ _ _
     (finiteComparison_norm (B := B) (ι := ι)) x
 
-/-- The canonical continuous linear equivalence between the completed and
-finite standard modules for a finite index type. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. For finite I, coefficient evaluation gives an isometric complex-linear equivalence
+between the completed standard module and the finite standard module. -/
 -- Exposed definitions cannot depend on private declarations, so this public
 -- body repeats the private isometry's constructor while the characteristic
 -- proofs below use the private name.
@@ -1572,22 +1770,28 @@ noncomputable def finiteEquiv :
     (fun x ↦ (norm_preFiniteLinearEquiv x).trans
       ((ofPre (B := B) (ι := ι)).norm_map x).symm)).toContinuousLinearEquiv
 
-/-- The finite comparison preserves norms. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. The finite comparison preserves norms. -/
 @[simp]
 theorem norm_finiteEquiv (x : Standard B ι) :
     ‖(finiteEquiv (B := B) (ι := ι)) x‖ = ‖x‖ := by
   change ‖finiteLinearIsometryEquiv (B := B) (ι := ι) x‖ = ‖x‖
   exact (finiteLinearIsometryEquiv (B := B) (ι := ι)).norm_map x
 
-/-- The finite comparison extends the algebraic coefficient equivalence. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. The finite comparison extends the algebraic coefficient equivalence. -/
 @[simp]
 theorem finiteEquiv_ofPre (x : StandardPre B ι) :
     (finiteEquiv (B := B) (ι := ι)) (ofPre x) = preFiniteLinearEquiv x := by
   change finiteLinearIsometryEquiv (B := B) (ι := ι) (ofPre x) = _
   exact finiteLinearIsometryEquiv_ofPre (B := B) (ι := ι) x
 
-/-- The inverse finite comparison sends a finite vector to its canonical
-finite-support representative. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. The inverse finite comparison sends a finite vector to its canonical finite-support
+representative. -/
 @[simp]
 theorem finiteEquiv_symm_apply (x : FiniteStandard B ι) :
     (finiteEquiv (B := B) (ι := ι)).symm x =
@@ -1597,7 +1801,9 @@ theorem finiteEquiv_symm_apply (x : FiniteStandard B ι) :
       ((preFiniteLinearEquiv (B := B) (ι := ι)).symm x)
   exact finiteLinearIsometryEquiv_symm_apply (B := B) (ι := ι) x
 
-/-- The finite comparison is pinned by completed coordinates. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. The finite comparison is pinned by completed coordinates. -/
 @[simp]
 theorem finiteEquiv_apply_coord (x : Standard B ι) (i : ι) :
     (finiteEquiv (B := B) (ι := ι)) x i = coord i x := by
@@ -1610,7 +1816,9 @@ theorem finiteEquiv_apply_coord (x : Standard B ι) (i : ι) :
   change (finiteEquiv (B := B) (ι := ι)) (ofPre x) i = coord i (ofPre x)
   rw [finiteEquiv_ofPre, preFiniteLinearEquiv_apply, coord_ofPre]
 
-/-- Coordinates also pin the inverse finite comparison. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. Coordinates also pin the inverse finite comparison. -/
 theorem finiteEquiv_symm_coord (x : FiniteStandard B ι) (i : ι) :
     coord i ((finiteEquiv (B := B) (ι := ι)).symm x) = x i := by
   have h := finiteEquiv_apply_coord
@@ -1621,7 +1829,9 @@ theorem finiteEquiv_symm_coord (x : FiniteStandard B ι) (i : ι) :
           ((finiteEquiv (B := B) (ι := ι)).symm x) i := h.symm
     _ = x i := congrFun ((finiteEquiv (B := B) (ι := ι)).apply_symm_apply x) i
 
-/-- The finite comparison preserves the canonical opposite-algebra action. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. The finite comparison preserves the canonical opposite-algebra action. -/
 @[simp]
 theorem finiteEquiv_op_smul (a : Bᵐᵒᵖ) (x : Standard B ι) :
     (finiteEquiv (B := B) (ι := ι)) (a • x) =
@@ -1631,13 +1841,17 @@ theorem finiteEquiv_op_smul (a : Bᵐᵒᵖ) (x : Standard B ι) :
   change a • coord i x = a • ((finiteEquiv (B := B) (ι := ι)) x) i
   rw [finiteEquiv_apply_coord]
 
-/-- The finite comparison preserves source-order right multiplication. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. The finite comparison preserves right-action right multiplication. -/
 theorem finiteEquiv_right_smul (x : Standard B ι) (b : B) :
     (finiteEquiv (B := B) (ι := ι)) (x <• b) =
       (finiteEquiv (B := B) (ι := ι)) x <• b := by
   exact finiteEquiv_op_smul (MulOpposite.op b) x
 
-/-- The finite comparison preserves the C-star-module inner product. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. The finite comparison preserves the C-star-module inner product. -/
 theorem finiteEquiv_inner (x y : Standard B ι) :
     inner Bᵐᵒᵖ ((finiteEquiv (B := B) (ι := ι)) x)
       ((finiteEquiv (B := B) (ι := ι)) y) = inner Bᵐᵒᵖ x y := by
@@ -1663,7 +1877,9 @@ theorem finiteEquiv_inner (x y : Standard B ι) :
   rw [Finsupp.sum_fintype _ _ (by intro; simp)]
   rfl
 
-/-- The finite comparison preserves the source-order right inner product. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. The standard right Hilbert B-module is the completion of the finite-support coefficient
+families. The finite comparison preserves the right-action right inner product. -/
 theorem finiteEquiv_rightInner (x y : Standard B ι) :
     CStarModule.rightInner (B := B) ((finiteEquiv (B := B) (ι := ι)) x)
       ((finiteEquiv (B := B) (ι := ι)) y) =
@@ -1680,29 +1896,38 @@ section Unital
 
 variable {B : Type uB} {ι : Type uι} [CStarAlgebra B]
 
-/-- Canonical opposite-coefficient spectral order for the unital
-coordinate-vector statements. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. The opposite
+coefficient algebra has the C-star-positive order determined by its self-adjoint spectrum. -/
 local instance spectralOrderBopUnital : PartialOrder Bᵐᵒᵖ :=
   CStarAlgebra.spectralOrder _
 local instance : @StarOrderedRing Bᵐᵒᵖ _ spectralOrderBopUnital _ :=
   CStarAlgebra.spectralOrderedRing _
 
-/-- The canonical coordinate vector in the standard module. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. The canonical
+coordinate vector in the standard module. -/
 def basisVector (i : ι) : Standard B ι := single i 1
 
-/-- The selected coordinate of its canonical coordinate vector is one. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. The selected coordinate
+of its canonical coordinate vector is one. -/
 @[simp]
 theorem coord_basisVector_self (i : ι) :
     coord i (basisVector (B := B) i) = 1 := by
   simp [basisVector]
 
-/-- Every other coordinate of a canonical coordinate vector vanishes. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. Every other coordinate
+of a canonical coordinate vector vanishes. -/
 @[simp]
 theorem coord_basisVector_ne {i j : ι} (h : j ≠ i) :
     coord j (basisVector (B := B) i) = 0 := by
   simp [basisVector, h]
 
-/-- A canonical coordinate vector has right inner square one. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. A canonical coordinate
+vector has right inner square one. -/
 @[simp]
 theorem rightInner_basisVector_self (i : ι) :
     CStarModule.rightInner (B := B) (basisVector (B := B) i)
@@ -1710,7 +1935,9 @@ theorem rightInner_basisVector_self (i : ι) :
   rw [basisVector, rightInner_single]
   simp
 
-/-- Distinct canonical coordinate vectors are orthogonal. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. Distinct canonical
+coordinate vectors are orthogonal. -/
 @[simp]
 theorem rightInner_basisVector_ne {i j : ι} (h : i ≠ j) :
     CStarModule.rightInner (B := B) (basisVector (B := B) i)
@@ -1718,26 +1945,33 @@ theorem rightInner_basisVector_ne {i j : ι} (h : i ≠ j) :
   simpa [basisVector] using
     rightInner_single_ne (B := B) (ι := ι) h (1 : B) (1 : B)
 
-/-- A canonical coordinate vector has the norm of the coefficient unit. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. A canonical coordinate
+vector has the norm of the coefficient unit. -/
 theorem norm_basisVector (i : ι) :
     ‖basisVector (B := B) i‖ = ‖(1 : B)‖ := by
   change ‖single i (1 : B)‖ = ‖(1 : B)‖
   exact norm_single i 1
 
-/-- Over a nontrivial unital coefficient algebra, canonical coordinate vectors
-have norm one. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. If B is nontrivial,
+each coordinate vector obtained by inserting its unit has norm one. -/
 @[simp]
 theorem norm_basisVector_eq_one [Nontrivial B] (i : ι) :
     ‖basisVector (B := B) i‖ = 1 := by
   rw [norm_basisVector, CStarRing.norm_one]
 
-/-- Right multiplying a canonical coordinate vector inserts that coefficient. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. Right multiplying a
+canonical coordinate vector inserts that coefficient. -/
 @[simp]
 theorem basisVector_right_smul (i : ι) (b : B) :
     basisVector (B := B) i <• b = single i b := by
   simp [basisVector]
 
-/-- Canonical coordinate vectors reconstruct every finite-support vector. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. Canonical coordinate
+vectors reconstruct every finite-support vector. -/
 theorem sum_basisVector_right_smul_support (x : StandardPre B ι) :
     ∑ i ∈ (StandardPre.toFinsupp x).support,
       basisVector (B := B) i <• x i = ofPre x := by
@@ -1751,8 +1985,9 @@ theorem sum_basisVector_right_smul_support (x : StandardPre B ι) :
       simp only [single_apply, map_sum]
     _ = ofPre x := by rw [StandardPre.sum_single_support]
 
-/-- For a finite index type, canonical coordinate vectors reconstruct every
-completed vector exactly. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. For a finite index
+type, canonical coordinate vectors reconstruct every completed vector exactly. -/
 theorem sum_basisVector_right_smul [Fintype ι] (x : Standard B ι) :
     ∑ i, basisVector (B := B) i <• coord i x = x := by
   classical
@@ -1766,14 +2001,16 @@ theorem sum_basisVector_right_smul [Fintype ι] (x : Standard B ι) :
     simp [hij]
   · simp
 
-/-- The complex span of all coefficient multiples of canonical coordinate
-vectors. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. The complex span of all
+coefficient multiples of canonical coordinate vectors. -/
 def basisVectorRightSpan : Submodule ℂ (Standard B ι) :=
   Submodule.span ℂ (Set.range fun p : ι × B ↦
     basisVector (B := B) p.1 <• p.2)
 
-/-- The right-generated coordinate span is invariant under coefficient
-multiplication. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. The right-generated
+coordinate span is invariant under coefficient multiplication. -/
 theorem basisVectorRightSpan_right_smul {x : Standard B ι}
     (hx : x ∈ basisVectorRightSpan (B := B) (ι := ι)) (b : B) :
     x <• b ∈ basisVectorRightSpan (B := B) (ι := ι) := by
@@ -1795,7 +2032,9 @@ theorem basisVectorRightSpan_right_smul {x : Standard B ι}
     rw [CStarModule.smul_right_smul]
     exact Submodule.smul_mem _ c hy
 
-/-- The right-generated coordinate span is dense in the standard module. -/
+/-- Let B be a unital complex C-star algebra and I any index type. The standard right Hilbert
+B-module is the completion of the finite-support coefficient families. The right-generated
+coordinate span is dense in the standard module. -/
 theorem dense_basisVectorRightSpan :
     Dense (basisVectorRightSpan (B := B) (ι := ι) : Set (Standard B ι)) := by
   refine (denseRange_ofPre (B := B) (ι := ι)).mono ?_
@@ -1814,15 +2053,18 @@ section FiniteFullness
 variable {B : Type uB} {ι : Type uι} [Fintype ι]
 variable [NonUnitalCStarAlgebra B]
 
-/-- Canonical opposite-coefficient spectral order for finite
-standard-module fullness comparisons. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. Consider the finite standard right B-module with its coefficient-valued sum inner
+product. The opposite coefficient algebra has the C-star-positive order determined by its
+self-adjoint spectrum. -/
 local instance spectralOrderBopFiniteFullness : PartialOrder Bᵐᵒᵖ :=
   CStarAlgebra.spectralOrder _
 local instance : @StarOrderedRing Bᵐᵒᵖ _ spectralOrderBopFiniteFullness _ :=
   CStarAlgebra.spectralOrderedRing _
 
-/-- The right inner product of two finite coefficient singles at the same
-index. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. Consider the finite standard right B-module with its coefficient-valued sum inner
+product. The right inner product of two finite coefficient singles at the same index. -/
 @[simp↓]
 theorem finite_rightInner_single (i : ι) (b c : B) :
     CStarModule.rightInner (B := B) (finiteSingle i b) (finiteSingle i c) =
@@ -1843,18 +2085,24 @@ private theorem isFull_standard_iff_finite :
     (Standard.finiteEquiv (B := B) (ι := ι)).surjective
     (Standard.finiteEquiv_rightInner (B := B) (ι := ι))
 
-/-- A finite standard module with a chosen coordinate is full. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. Consider the finite standard right B-module with its coefficient-valued sum inner
+product. A finite standard module with a chosen coordinate is full. -/
 theorem finite_isFull_of_index (i : ι) :
     CStarModule.IsFull B (FiniteStandard B ι) :=
   isFull_standard_iff_finite.mp (Standard.isFull_of_index i)
 
-/-- A finite standard module over a nonempty index type is full. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. Consider the finite standard right B-module with its coefficient-valued sum inner
+product. A finite standard module over a nonempty index type is full. -/
 theorem finite_isFull_of_nonempty [Nonempty ι] :
     CStarModule.IsFull B (FiniteStandard B ι) :=
   isFull_standard_iff_finite.mp Standard.isFull_of_nonempty
 
 omit [Fintype ι] [NonUnitalCStarAlgebra B] in
-/-- A finite standard module over an empty index type is a subsingleton. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. Consider the finite standard right B-module with its coefficient-valued sum inner
+product. A finite standard module over an empty index type is a subsingleton. -/
 theorem finite_subsingleton_of_isEmpty [IsEmpty ι] :
     Subsingleton (FiniteStandard B ι) := by
   constructor
@@ -1863,14 +2111,18 @@ theorem finite_subsingleton_of_isEmpty [IsEmpty ι] :
   funext i
   exact isEmptyElim i
 
-/-- The support ideal of an empty-index finite standard module is bottom. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. Consider the finite standard right B-module with its coefficient-valued sum inner
+product. The support ideal of an empty-index finite standard module is bottom. -/
 theorem finite_supportIdeal_eq_bot_of_isEmpty [IsEmpty ι] :
     CStarModule.supportIdeal B (FiniteStandard B ι) = ClosedStarIdeal.bot B := by
   apply CStarModule.supportIdeal_eq_bot_iff_subsingleton.mpr
   exact finite_subsingleton_of_isEmpty
 
-/-- Fullness of a finite standard module is equivalent to a nonempty
-coordinate set, apart from the degenerate coefficient algebra. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. Consider the finite standard right B-module with its coefficient-valued sum inner
+product. The finite standard module is full exactly when I is nonempty or B consists only of
+zero. -/
 theorem finite_isFull_iff_nonempty_or_subsingleton :
     CStarModule.IsFull B (FiniteStandard B ι) ↔
       Nonempty ι ∨ Subsingleton B :=

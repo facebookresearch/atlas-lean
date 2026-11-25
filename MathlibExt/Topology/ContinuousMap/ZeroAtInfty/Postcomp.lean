@@ -42,7 +42,10 @@ section Basic
 variable [TopologicalSpace A] [TopologicalSpace B] [Zero A] [Zero B]
 variable {F : Type uF} [FunLike F X A] [ZeroAtInftyContinuousMapClass F X A]
 
-/-- Postcomposition by a continuous zero-preserving coefficient map. -/
+/-- Let `X` be a topological space and let `A` and `B` be topological types with zero. Specify a
+continuous map `g : A → B` with `g(0)=0`, and a continuous input function vanishing at infinity.
+
+Postcomposition by a continuous zero-preserving coefficient map. -/
 def postcomp (g : C(A, B)) (hg0 : g 0 = 0) (f : F) : C₀(X, B) where
   toFun x := g (f x)
   continuous_toFun := (map_continuous g).comp (map_continuous f)
@@ -70,7 +73,11 @@ theorem postcomp_id (f : C₀(X, A)) :
   rw [postcomp_apply]
   rfl
 
-/-- Zero-preserving coefficient composition agrees with successive postcomposition. -/
+/-- Let `X` be a topological space and let `A` and `B` be topological types with zero. Specify a
+continuous map `g : A → B` with `g(0)=0`, and a continuous input function vanishing at infinity.
+A second continuous zero-preserving map has target `C`, another topological type with zero.
+
+Zero-preserving coefficient composition agrees with successive postcomposition. -/
 theorem postcomp_comp {C : Type uC} [TopologicalSpace C] [Zero C]
     (h : C(B, C)) (hh0 : h 0 = 0) (g : C(A, B)) (hg0 : g 0 = 0) (f : F) :
     postcomp h hh0 (postcomp g hg0 f) =
@@ -84,8 +91,12 @@ section Metric
 
 variable [PseudoMetricSpace A] [PseudoMetricSpace B] [Zero A] [Zero B]
 
-/-- Postcomposition by a fixed continuous zero-preserving coefficient map is continuous
-for the supremum metrics. -/
+/-- Let `X` be a topological space and let `A` and `B` be topological types with zero. Specify a
+continuous map `g : A → B` with `g(0)=0`, and a continuous input function vanishing at infinity.
+Assume `A` and `B` are pseudometric spaces.
+
+Postcomposition by a fixed continuous zero-preserving coefficient map is continuous for the
+supremum metrics. -/
 theorem continuous_postcomp (g : C(A, B)) (hg0 : g 0 = 0) :
     Continuous (postcomp g hg0 : C₀(X, A) → C₀(X, B)) := by
   refine continuous_iff_continuousAt.2 fun f => Metric.continuousAt_iff.2 ?_

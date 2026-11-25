@@ -39,8 +39,9 @@ open scoped InnerProduct
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   [CompleteSpace H]
 
-/-- Compact continuous linear endomorphisms of a complex Hilbert space are
-closed under the operator adjoint. -/
+/-- **Adjoints preserve compact operators.** Let `H` be a complete complex Hilbert space. Its Calkin
+algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the quotient
+C*-norm. If a bounded operator on `H` is compact, its adjoint is compact. -/
 theorem compactEndomorphismIdeal_star_closed {T : H →L[ℂ] H}
     (hT : T ∈ compactEndomorphismIdeal (𝕜 := ℂ) (E := H)) :
     star T ∈ compactEndomorphismIdeal (𝕜 := ℂ) (E := H) := by
@@ -48,8 +49,9 @@ theorem compactEndomorphismIdeal_star_closed {T : H →L[ℂ] H}
   rw [ContinuousLinearMap.star_eq_adjoint]
   exact hT.adjoint
 
-/-- The compact endomorphisms, bundled as the canonical closed two-sided star
-ideal of the bounded operators on a complex Hilbert space. -/
+/-- **Compact operators as a closed star ideal.** Let `H` be a complete complex Hilbert space. Its
+Calkin algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the
+quotient C*-norm. The compact operators form a closed two-sided star ideal of `B(H)`. -/
 def compactEndomorphismClosedStarIdeal : ClosedStarIdeal (H →L[ℂ] H) where
   carrier :=
     { compactEndomorphismIdeal (𝕜 := ℂ) (E := H) with
@@ -76,8 +78,10 @@ theorem compactEndomorphismClosedStarIdeal_toSubmodule :
 
 namespace CalkinAlgebra
 
-/-- The closed-star-ideal quotient carrier is definitionally the existing
-Banach-space Calkin algebra. -/
+/-- **Closed-ideal description of the Calkin carrier.** Let `H` be a complete complex Hilbert space. Its
+Calkin algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the
+quotient C*-norm. The Calkin carrier equals the quotient by the closed star ideal of compact
+endomorphisms. -/
 theorem eq_compactEndomorphismClosedStarIdeal_quotient :
     CalkinAlgebra ℂ H =
       (compactEndomorphismClosedStarIdeal (H := H)).Quotient :=
@@ -98,54 +102,73 @@ noncomputable instance instCStarAlgebra : CStarAlgebra (CalkinAlgebra ℂ H) := 
       toNormedAlgebra := CalkinAlgebra.instNormedAlgebra
       toStarModule := hCStar.toStarModule }
 
-/-- Taking the star of an operator class is represented by taking the
-operator adjoint before quotienting. -/
+/-- **Adjoint of an operator class.** Let `H` be a complete complex Hilbert space. Its Calkin algebra is
+the quotient `B(H)/K(H)` of bounded operators by compact operators, with the quotient C*-norm. For
+every bounded operator `T`, the class of `T*` equals the involution of the class of `T`. -/
 @[simp]
 theorem classMap_star (T : H →L[ℂ] H) :
     classMap (𝕜 := ℂ) (E := H) (star T) =
       star (classMap (𝕜 := ℂ) (E := H) T) :=
   rfl
 
-/-- The continuous unital star-algebra projection onto the Calkin algebra. -/
+/-- **Unital star projection to the Calkin algebra.** Let `H` be a complete complex Hilbert space. Its
+Calkin algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the
+quotient C*-norm. The quotient projection `T ↦ [T]` is a continuous unital complex star-algebra
+homomorphism. -/
 def classStarMap : (H →L[ℂ] H) →⋆ₐ[ℂ] CalkinAlgebra ℂ H where
   toAlgHom := (classMap (𝕜 := ℂ) (E := H)).toAlgHom
   map_star' := classMap_star
 
-/-- Explicit representative conversion, kept out of simp so class-map and
-compactness laws normalize at the bundled map rather than raw quotient constructors. -/
+/-- **Representative formula for the star class map.** Let `H` be a complete complex Hilbert space. Its
+Calkin algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the
+quotient C*-norm. For each bounded operator `T`, the star class map is its vector-space quotient
+class `[T]` modulo compact operators. -/
 theorem classStarMap_apply (T : H →L[ℂ] H) :
     classStarMap (H := H) T = Submodule.Quotient.mk T :=
   rfl
 
-/-- The star class map agrees pointwise with the existing continuous unital
-algebra class map. -/
+/-- **Agreement of the Calkin class maps.** Let `H` be a complete complex Hilbert space. Its Calkin
+algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the quotient
+C*-norm. The star-algebra class map evaluates at every bounded operator `T` to the same quotient
+class as the continuous algebra class map. -/
 theorem classStarMap_apply_eq_classMap (T : H →L[ℂ] H) :
     classStarMap (H := H) T = classMap (𝕜 := ℂ) (E := H) T :=
   rfl
 
-/-- Agreement of the two class maps as functions. -/
+/-- **Equality of the Calkin class-map functions.** Let `H` be a complete complex Hilbert space. Its
+Calkin algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the
+quotient C*-norm. The functions underlying the star-algebra class map and the continuous algebra
+class map from `B(H)` to the Calkin algebra agree. -/
 theorem coe_classStarMap_eq_classMap :
     (classStarMap (H := H) : (H →L[ℂ] H) → CalkinAlgebra ℂ H) =
       classMap (𝕜 := ℂ) (E := H) :=
   rfl
 
-/-- The star class map is continuous. -/
+/-- **Continuity of the Calkin star projection.** Let `H` be a complete complex Hilbert space. Its
+Calkin algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the
+quotient C*-norm. The star-algebra quotient projection from `B(H)` to its Calkin algebra is
+norm-continuous. -/
 theorem classStarMap_continuous : Continuous (classStarMap (H := H)) :=
   (classMap (𝕜 := ℂ) (E := H)).continuous
 
-/-- The star class map is onto. -/
+/-- **Surjectivity of the Calkin star projection.** Let `H` be a complete complex Hilbert space. Its
+Calkin algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the
+quotient C*-norm. Every Calkin element is the class of a bounded operator on `H`. -/
 theorem classStarMap_surjective :
     Function.Surjective (classStarMap (H := H)) :=
   classMap_surjective
 
-/-- An operator has zero class under the star class map exactly when it is
-compact. -/
+/-- **Zero class characterizes compactness.** Let `H` be a complete complex Hilbert space. Its Calkin
+algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the quotient
+C*-norm. A bounded operator has zero Calkin class exactly when it is compact. -/
 @[simp]
 theorem classStarMap_eq_zero_iff (T : H →L[ℂ] H) :
     classStarMap (H := H) T = 0 ↔ IsCompactOperator T :=
   classMap_eq_zero_iff T
 
-/-- The class of an adjoint is the adjoint of the class. -/
+/-- **The Calkin star map preserves adjoints.** Let `H` be a complete complex Hilbert space. Its Calkin
+algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the quotient
+C*-norm. For every bounded operator `T`, the star class map sends `T*` to `[T]*`. -/
 @[simp]
 theorem classStarMap_star (T : H →L[ℂ] H) :
     classStarMap (H := H) (star T) = star (classStarMap (H := H) T) :=

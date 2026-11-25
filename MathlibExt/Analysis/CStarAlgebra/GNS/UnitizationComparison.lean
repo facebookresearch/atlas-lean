@@ -42,8 +42,11 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
 attribute [local instance] stateUnitizationOrder stateUnitizationStarOrder
 
-/-- The actual original-algebra coefficient image has dense range, not
-merely dense linear span, since it is itself a linear image. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `f : A → ℂ`
+be a positive continuous complex-linear functional of operator norm one.
+
+The original-algebra coefficient image has dense range, not merely dense linear span, since it
+is itself a linear image. -/
 theorem denseRange_stateGNSMap (f : A →P[ℂ] ℂ)
     (hf : ‖f.toContinuousLinearMap‖ = 1) : DenseRange (stateGNSMap f hf) := by
   have hd := dense_stateGNSRepresentation_span f hf
@@ -71,18 +74,26 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 attribute [local instance] PositiveContinuousLinearMap.stateUnitizationOrder
   PositiveContinuousLinearMap.stateUnitizationStarOrder
 
-/-- The original coefficient map into its own stock GNS completion. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional.
+
+The coefficient map into its own GNS completion. -/
 def toGNS (tau : A →ₚ[ℂ] ℂ) : A →ₗ[ℂ] tau.GNS :=
   (Completion.toComplL : tau.PreGNS →L[ℂ] tau.GNS).toLinearMap.comp
     tau.toPreGNS.toLinearMap
 
-/-- The coefficient map retains the literal pre-GNS representative. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional.
+
+The coefficient map retains the pre-GNS representative. -/
 @[simp]
 theorem toGNS_apply (tau : A →ₚ[ℂ] ℂ) (a : A) :
     tau.toGNS a = (tau.toPreGNS a : tau.GNS) := rfl
 
-/-- Every original pre-GNS representative comes from an actual coefficient,
-so the original coefficient map has dense range. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional.
+
+Every pre-GNS representative comes from an coefficient, so the coefficient map has dense range. -/
 theorem denseRange_toGNS (tau : A →ₚ[ℂ] ℂ) : DenseRange tau.toGNS := by
   have hd : Dense (Set.range fun x : tau.PreGNS => (x : tau.GNS)) :=
     Completion.denseRange_coe
@@ -91,13 +102,19 @@ theorem denseRange_toGNS (tau : A →ₚ[ℂ] ℂ) : DenseRange tau.toGNS := by
   refine ⟨tau.ofPreGNS x, ?_⟩
   simp only [toGNS_apply, tau.toPreGNS_ofPreGNS]
 
-/-- The original coefficient image has the given functional's actual Gram form. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional.
+
+The coefficient image has the given functional's Gram form. -/
 theorem toGNS_inner (tau : A →ₚ[ℂ] ℂ) (a b : A) :
     inner ℂ (tau.toGNS a) (tau.toGNS b) = tau (star a * b) := by
   rw [toGNS_apply, toGNS_apply, Completion.inner_coe, tau.preGNS_inner_def,
     tau.ofPreGNS_toPreGNS, tau.ofPreGNS_toPreGNS]
 
-/-- The stock representation acts on the literal original coefficient classes. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional.
+
+The representation acts on the coefficient classes. -/
 theorem gnsNonUnitalStarAlgHom_toGNS (tau : A →ₚ[ℂ] ℂ) (a b : A) :
     tau.gnsNonUnitalStarAlgHom a (tau.toGNS b) = tau.toGNS (a * b) := by
   rw [toGNS_apply, tau.gnsNonUnitalStarAlgHom_apply_coe]
@@ -106,7 +123,11 @@ theorem gnsNonUnitalStarAlgHom_toGNS (tau : A →ₚ[ℂ] ℂ) (a b : A) :
 variable (tau : A →ₚ[ℂ] ℂ)
   (htau : ‖(PositiveContinuousLinearMap.ofClass tau : A →P[ℂ] ℂ).toContinuousLinearMap‖ = 1)
 
-/-- Both actual coefficient images have the same original state GNS norm. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional. Assume its associated continuous linear functional has
+operator norm one.
+
+Both coefficient images have the same state GNS norm. -/
 theorem stateGNSMap_norm_toGNS (a : A) :
     ‖stateGNSMap (PositiveContinuousLinearMap.ofClass tau) htau a‖ = ‖tau.toGNS a‖ := by
   have hU : inner ℂ
@@ -117,8 +138,12 @@ theorem stateGNSMap_norm_toGNS (a : A) :
   rw [norm_eq_sqrt_re_inner (𝕜 := ℂ), norm_eq_sqrt_re_inner (𝕜 := ℂ),
     hU, tau.toGNS_inner]
 
-/-- The identity on the original algebra extends to the actual unitary
-comparison of its original GNS completion and the unitized-state GNS space. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional. Assume its associated continuous linear functional has
+operator norm one.
+
+The identity on the algebra extends to the unitary comparison of its GNS completion and the
+unitized-state GNS space. -/
 def gnsUnitizationEquiv : tau.GNS ≃ₗᵢ[ℂ]
     unitizationGNS (PositiveContinuousLinearMap.ofClass tau) htau :=
   (LinearEquiv.refl ℂ A).extendOfIsometry tau.toGNS
@@ -129,15 +154,22 @@ def gnsUnitizationEquiv : tau.GNS ≃ₗᵢ[ℂ]
       rw [LinearEquiv.refl_apply]
       exact stateGNSMap_norm_toGNS tau htau a)
 
-/-- The comparison sends every original coefficient class to its actual
-unitized-state coefficient image. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional. Assume its associated continuous linear functional has
+operator norm one.
+
+The comparison sends every coefficient class to its unitized-state coefficient image. -/
 theorem gnsUnitizationEquiv_toGNS (a : A) :
     gnsUnitizationEquiv tau htau (tau.toGNS a) =
       stateGNSMap (PositiveContinuousLinearMap.ofClass tau) htau a := by
   rw [gnsUnitizationEquiv, LinearEquiv.extendOfIsometry_eq]
   rfl
 
-/-- The actual comparison intertwines every original coefficient action. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional. Assume its associated continuous linear functional has
+operator norm one.
+
+The comparison intertwines every coefficient action. -/
 theorem gnsUnitizationEquiv_intertwines (a : A) (x : tau.GNS) :
     gnsUnitizationEquiv tau htau (tau.gnsNonUnitalStarAlgHom a x) =
       stateGNSRepresentation (PositiveContinuousLinearMap.ofClass tau) htau a

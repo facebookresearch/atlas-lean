@@ -39,7 +39,9 @@ variable {A : Type uA} {B : Type uB} {C : Type uC} {D : Type uD}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C] [NonUnitalCStarAlgebra D]
 
-/-- Point-norm homotopy through nonunital star-algebra homomorphisms. -/
+/-- **Point-norm homotopy of star homomorphisms.** Let `A,B` be nonunital complex C*-algebras. Two
+nonunital complex star homomorphisms `φ,ψ : A → B` are homotopic when a path of such homomorphisms
+joins them and is norm-continuous at every fixed element of `A`. -/
 def Homotopic (φ ψ : A →⋆ₙₐ[ℂ] B) : Prop :=
   ∃ F : A →⋆ₙₐ[ℂ] C(unitInterval, B),
     (∀ a, F a 0 = φ a) ∧ ∀ a, F a 1 = ψ a
@@ -77,7 +79,8 @@ private theorem coefficientPath_apply
     coefficientPath F h0 h1 a t = F a t :=
   rfl
 
-/-- Every homomorphism is homotopic to itself. -/
+/-- **Reflexivity of point-norm homotopy.** Let `A,B` be nonunital complex C*-algebras. Every nonunital
+complex star homomorphism `A → B` is point-norm homotopic to itself. -/
 theorem refl (φ : A →⋆ₙₐ[ℂ] B) : φ.Homotopic φ :=
   ⟨constantPathHom φ, fun _ ↦ rfl, fun _ ↦ rfl⟩
 
@@ -107,7 +110,8 @@ private def reversePathHom
     rw [map_star F a]
     rfl
 
-/-- Homotopy is symmetric. -/
+/-- **Symmetry of point-norm homotopy.** Let `A,B` be nonunital complex C*-algebras. If `φ,ψ : A → B`
+are point-norm homotopic nonunital complex star homomorphisms, then `ψ` is homotopic to `φ`. -/
 theorem symm {φ ψ : A →⋆ₙₐ[ℂ] B} (h : φ.Homotopic ψ) :
     ψ.Homotopic φ := by
   obtain ⟨F, h0, h1⟩ := h
@@ -158,7 +162,9 @@ private noncomputable def transPathHom
       rw [map_star K a]
       rfl
 
-/-- Homotopy is transitive. -/
+/-- **Transitivity of point-norm homotopy.** Let `A,B` be nonunital complex C*-algebras. For nonunital
+complex star homomorphisms `φ,ψ,χ : A → B`, homotopies from `φ` to `ψ` and from `ψ` to `χ` give a
+homotopy from `φ` to `χ`. -/
 theorem trans {φ ψ χ : A →⋆ₙₐ[ℂ] B}
     (hφψ : φ.Homotopic ψ) (hψχ : ψ.Homotopic χ) : φ.Homotopic χ := by
   obtain ⟨F, hF0, hF1⟩ := hφψ
@@ -171,7 +177,10 @@ theorem trans {φ ψ χ : A →⋆ₙₐ[ℂ] B}
     exact Path.target
       ((coefficientPath F hF0 hF1 a).trans (coefficientPath K hK0 hK1 a))
 
-/-- Precomposition preserves homotopy. -/
+/-- **Precomposition preserves point-norm homotopy.** Let `A,B,C` be nonunital complex C*-algebras and
+all maps below be nonunital complex star homomorphisms. If `φ,ψ : A → B` are point-norm homotopic
+and `η : C → A` is a nonunital complex star homomorphism, then `φ ∘ η` and `ψ ∘ η` are point-norm
+homotopic. -/
 theorem precomp {φ ψ : A →⋆ₙₐ[ℂ] B} (h : φ.Homotopic ψ)
     (η : C →⋆ₙₐ[ℂ] A) : (φ.comp η).Homotopic (ψ.comp η) := by
   obtain ⟨F, h0, h1⟩ := h
@@ -181,7 +190,10 @@ theorem precomp {φ ψ : A →⋆ₙₐ[ℂ] B} (h : φ.Homotopic ψ)
   · intro c
     exact h1 (η c)
 
-/-- Postcomposition preserves homotopy. -/
+/-- **Postcomposition preserves point-norm homotopy.** Let `A,B,C` be nonunital complex C*-algebras and
+all maps below be nonunital complex star homomorphisms. If `φ,ψ : A → B` are point-norm homotopic
+and `η : B → C` is a nonunital complex star homomorphism, then `η ∘ φ` and `η ∘ ψ` are point-norm
+homotopic. -/
 theorem postcomp {φ ψ : A →⋆ₙₐ[ℂ] B} (h : φ.Homotopic ψ)
     (η : B →⋆ₙₐ[ℂ] C) : (η.comp φ).Homotopic (η.comp ψ) := by
   obtain ⟨F, h0, h1⟩ := h
@@ -193,14 +205,19 @@ theorem postcomp {φ ψ : A →⋆ₙₐ[ℂ] B} (h : φ.Homotopic ψ)
     simpa only [NonUnitalStarAlgHom.comp_apply, ContinuousMap.compNonUnitalStarAlgHom_apply]
       using congrArg (fun b : B => η b) (h1 a)
 
-/-- Composition in both variables preserves homotopy. -/
+/-- **Composition preserves point-norm homotopy.** Let `A,B,C` be nonunital complex C*-algebras and all
+maps below be nonunital complex star homomorphisms. If `φ₀,φ₁ : A → B` are point-norm homotopic and
+`ψ₀,ψ₁ : B → C` are point-norm homotopic, their composites `ψ₀ ∘ φ₀` and `ψ₁ ∘ φ₁` are point-norm
+homotopic. -/
 theorem comp
     {φ0 φ1 : A →⋆ₙₐ[ℂ] B} {ψ0 ψ1 : B →⋆ₙₐ[ℂ] C}
     (hφ : φ0.Homotopic φ1) (hψ : ψ0.Homotopic ψ1) :
     (ψ0.comp φ0).Homotopic (ψ1.comp φ1) :=
   (hφ.postcomp ψ0).trans (hψ.precomp φ1)
 
-/-- Point-norm homotopy is an equivalence relation. -/
+/-- **Point-norm homotopy is an equivalence relation.** Let `A,B` be nonunital complex C*-algebras.
+Point-norm homotopy is an equivalence relation on the nonunital complex star homomorphisms from `A`
+to `B`. -/
 theorem equivalence (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
     Equivalence (Homotopic :
@@ -218,8 +235,9 @@ end NonUnitalStarAlgHom
 
 namespace ContinuousMap
 
-/-- Evaluation at the two endpoints of the unit interval gives point-norm
-homotopic nonunital star homomorphisms. -/
+/-- **Endpoint evaluations are point-norm homotopic.** For a nonunital complex C*-algebra `A`,
+evaluation at `0` and evaluation at `1` are point-norm homotopic nonunital complex star
+homomorphisms from `C([0,1],A)` to `A`. -/
 theorem evalZero_homotopic_evalOne
     (A : Type uA) [NonUnitalCStarAlgebra A] :
     (evalNonUnitalStarAlgHom (A := A) (0 : unitInterval)).Homotopic

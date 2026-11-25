@@ -41,15 +41,14 @@ namespace CompletelyPositiveMap
 
 variable {n m : Type*} [Fintype n] [Fintype m] [DecidableEq n] [DecidableEq m]
 
-/-- The Choi rank of a completely positive map `φ : Matrix n n ℂ →CP Matrix m m ℂ`.
-
-In the repository input × output convention
-`J(φ) ((i,a),(j,b)) = φ (Matrix.single i j 1) a b` indexed by `n × m`,
-`choiRank φ` is the rank of the Choi matrix `J(φ)`. -/
+/-- **Choi rank.** For finite decidable index types `n` and `m` and a completely positive map `φ :
+Matrix n n ℂ →CP Matrix m m ℂ`, its Choi rank is the complex rank of `J(φ)`, with input-output index
+order `n × m`. -/
 noncomputable def choiRank (φ : Matrix n n ℂ →CP Matrix m m ℂ) : ℕ :=
   (choiMatrix φ).rank
 
-/-- An empty `Fin 0` Kraus family has Choi rank zero. -/
+/-- **Choi rank of the empty Kraus family.** For finite decidable matrix index types `n` and `m`, any
+family `K : Fin 0 → Matrix m n ℂ` defines the zero completely positive map, whose Choi rank is zero. -/
 @[simp]
 theorem choiRank_kraus_fin_zero (K : Fin 0 → Matrix m n ℂ) :
     choiRank (kraus K) = 0 := by
@@ -75,8 +74,9 @@ private theorem choiMatrix_kraus_eq_vecMatrix_mul_conjTranspose (K : r → Matri
   simp only [krausVecMatrix, Matrix.mul_apply, Matrix.sum_apply, Matrix.vecMulVec_apply,
     Matrix.vec, Matrix.of_apply, Matrix.conjTranspose_apply, Pi.star_apply]
 
-/-- The Choi rank of a finite Kraus map is at most the cardinality of the Kraus
-family. -/
+/-- **Choi-rank bound by Kraus-family size.** For finite decidable matrix index types `n,m`, a finite
+index type `r`, and `K : r → Matrix m n ℂ`, the completely positive map `X ↦ ∑ i, Kᵢ X Kᵢᴴ` has Choi
+rank at most `|r|`. -/
 theorem choiRank_kraus_le_card (K : r → Matrix m n ℂ) :
     choiRank (kraus K) ≤ Fintype.card r := by
   rw [choiRank, choiMatrix_kraus_eq_vecMatrix_mul_conjTranspose K]
@@ -104,8 +104,9 @@ private theorem choiMatrix_kraus_eq_choiMatrix_kraus_support (K : r → Matrix m
     simp [hKi]
   rw [← hsplit, h0, add_zero]
 
-/-- The Choi rank of a finite Kraus map is at most the number of nonzero
-Kraus operators. -/
+/-- **Choi-rank bound by nonzero Kraus operators.** For finite decidable matrix index types `n,m` and a
+finite family `K : r → Matrix m n ℂ`, the Choi rank of `kraus K` is at most the number of indices
+`i` with `Kᵢ ≠ 0`. -/
 theorem choiRank_kraus_le_natCard_support (K : r → Matrix m n ℂ) :
     choiRank (kraus K) ≤ Nat.card {i // K i ≠ 0} := by
   classical
@@ -257,9 +258,9 @@ namespace CompletelyPositiveMap
 
 variable {n m : Type*} [Fintype n] [Fintype m] [DecidableEq n] [DecidableEq m]
 
-/-- Every completely positive map `φ : Matrix n n ℂ →CP Matrix m m ℂ` admits a
-Kraus representation indexed by `Fin (choiRank φ)`. This covers the case
-`choiRank φ = 0`, empty input and output types, and the zero map. -/
+/-- **Kraus representation of minimal size.** Every completely positive map `φ : Matrix n n ℂ →CP Matrix
+m m ℂ`, for finite decidable `n,m`, has a Kraus family `K : Fin (choiRank φ) → Matrix m n ℂ` with `φ
+= kraus K`. Choi rank zero gives an empty family; empty input or output types are allowed. -/
 theorem exists_kraus_choiRank (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
     ∃ (K : Fin (choiRank φ) → Matrix m n ℂ), φ = kraus K := by
   classical
@@ -297,8 +298,9 @@ theorem exists_kraus_choiRank (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
 
 variable {r : Type*} [Fintype r]
 
-/-- The Choi rank of a finite Kraus family equals the `finrank` of the span of
-its vectorized operators. -/
+/-- **Choi rank as the dimension of the Kraus span.** For finite decidable matrix index types `n,m` and
+a finite family `K : r → Matrix m n ℂ`, the Choi rank of `kraus K` equals the complex dimension of
+the span of the vectorized matrices `vec(Kᵢ)`. -/
 theorem choiRank_kraus_eq_finrank_span_vec (K : r → Matrix m n ℂ) :
     choiRank (kraus K) =
       Module.finrank ℂ (Submodule.span ℂ (Set.range (fun i => Matrix.vec (K i)))) := by
@@ -322,8 +324,9 @@ theorem choiRank_kraus_eq_finrank_span_vec (K : r → Matrix m n ℂ) :
     _ = Module.finrank ℂ (Submodule.span ℂ (Set.range (fun i => Matrix.vec (K i)))) := by
       rw [h_range]
 
-/-- The vectorized Kraus operators are linearly independent if and only if
-the Choi rank equals the cardinality of the Kraus family. -/
+/-- **Independence of Kraus operators and Choi rank.** For finite decidable matrix index types `n,m` and
+a finite family `K : r → Matrix m n ℂ`, the vectorized operators `vec(Kᵢ)` are complex-linearly
+independent exactly when the Choi rank of `kraus K` equals `|r|`. -/
 theorem linearIndependent_vec_iff_choiRank_kraus_eq_card (K : r → Matrix m n ℂ) :
     LinearIndependent ℂ (fun i => Matrix.vec (K i)) ↔
       choiRank (kraus K) = Fintype.card r := by
@@ -341,8 +344,10 @@ theorem linearIndependent_vec_iff_choiRank_kraus_eq_card (K : r → Matrix m n �
     _ ↔ choiRank (kraus K) = Fintype.card r := by
       rw [h_span]
 
-/-- Every completely positive map `φ` admits a Kraus representation indexed by
-`Fin (choiRank φ)` whose vectorized operators are linearly independent. -/
+/-- **Independent minimal Kraus family.** For finite decidable `n,m`, every completely positive map `φ :
+Matrix n n ℂ →CP Matrix m m ℂ` has a representation `φ = kraus K` indexed by `Fin (choiRank φ)`
+whose vectorized matrices are complex-linearly independent. Rank zero and empty matrix index types
+are included. -/
 theorem exists_kraus_choiRank_linearIndependent
     (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
     ∃ (K : Fin (choiRank φ) → Matrix m n ℂ),

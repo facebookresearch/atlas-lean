@@ -34,7 +34,10 @@ variable {R : Type uR} {A : Type uA}
 variable [CommSemiring R] [NonUnitalSemiring A] [Module R A]
 variable [IsScalarTower R A A] [SMulCommClass R A A]
 
-/-- Elements `x` such that `x * d` lies in `I` for every `d` in `D`. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `(r • a) * b = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. The left relative annihilator consists of `x` such that `x*d ∈ I` for every `d ∈ D`.
+-/
 def leftAnnihilatorModulo
     (I : NonUnitalSubalgebra R A) [I.IsTwoSided] (D : Set A) :
     NonUnitalSubalgebra R A where
@@ -56,7 +59,10 @@ def leftAnnihilatorModulo
     rw [smul_mul_assoc]
     exact I.smul_mem r (hx d hd)
 
-/-- Elements `x` such that `d * x` lies in `I` for every `d` in `D`. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `a * (r • b) = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. The right relative annihilator consists of `x` such that `d*x ∈ I` for every `d ∈ D`.
+-/
 def rightAnnihilatorModulo
     (I : NonUnitalSubalgebra R A) [I.IsTwoSided] (D : Set A) :
     NonUnitalSubalgebra R A where
@@ -95,7 +101,11 @@ theorem mem_rightAnnihilatorModulo_iff
   Iff.rfl
 
 omit [SMulCommClass R A A] in
-/-- The left relative annihilator is an ambient left ideal. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `(r • a) * b = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. If `x` belongs to the left relative annihilator, then `a*x` belongs to it for every
+`a ∈ A`.
+-/
 theorem mul_mem_leftAnnihilatorModulo_left
     (I : NonUnitalSubalgebra R A) [I.IsTwoSided]
     (D : Set A) (a : A) {x : A} (hx : x ∈ I.leftAnnihilatorModulo D) :
@@ -107,7 +117,11 @@ theorem mul_mem_leftAnnihilatorModulo_left
     ((mem_leftAnnihilatorModulo_iff I D x).1 hx d hd)
 
 omit [IsScalarTower R A A] in
-/-- The right relative annihilator is an ambient right ideal. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `a * (r • b) = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. If `x` belongs to the right relative annihilator, then `x*a` belongs to it for every
+`a ∈ A`.
+-/
 theorem mul_mem_rightAnnihilatorModulo_right
     (I : NonUnitalSubalgebra R A) [I.IsTwoSided]
     (D : Set A) {x : A} (hx : x ∈ I.rightAnnihilatorModulo D) (a : A) :
@@ -119,7 +133,10 @@ theorem mul_mem_rightAnnihilatorModulo_right
     ((mem_rightAnnihilatorModulo_iff I D x).1 hx d hd) a
 
 omit [SMulCommClass R A A] in
-/-- The two-sided modulus lies in every left relative annihilator. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `(r • a) * b = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. Every element of `I` belongs to the left relative annihilator of `D` modulo `I`.
+-/
 theorem le_leftAnnihilatorModulo
     (I : NonUnitalSubalgebra R A) [I.IsTwoSided] (D : Set A) :
     I ≤ I.leftAnnihilatorModulo D := by
@@ -129,7 +146,10 @@ theorem le_leftAnnihilatorModulo
   exact IsTwoSided.mul_mem_right hx d
 
 omit [IsScalarTower R A A] in
-/-- The two-sided modulus lies in every right relative annihilator. -/
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `a * (r • b) = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. Every element of `I` belongs to the right relative annihilator of `D` modulo `I`.
+-/
 theorem le_rightAnnihilatorModulo
     (I : NonUnitalSubalgebra R A) [I.IsTwoSided] (D : Set A) :
     I ≤ I.rightAnnihilatorModulo D := by

@@ -51,7 +51,10 @@ private theorem representationContinuousLinearMap_apply
     representationContinuousLinearMap rho a = rho a :=
   rfl
 
-/-- The coefficient functional `a ↦ ⟪h, rho(a)g⟫` of a C-star algebra representation. -/
+/-- **Coefficient functional of a C*-representation.** Let `A` be a unital complex C*-algebra, `H` a
+complete complex Hilbert space, and `ρ : A → B(H)` a unital complex star representation. For vectors
+`g,h ∈ H`, the formula `a ↦ ⟨h,ρ(a)g⟩` defines a continuous complex-linear functional on `A`, with
+inner product linear in its second slot. -/
 noncomputable def representationCoefficient
     (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (g h : H) : StrongDual ℂ A :=
   (operatorCoefficient g h).comp (representationContinuousLinearMap rho)
@@ -93,7 +96,9 @@ theorem representationCoefficient_smul_right
   ext a
   simp [representationCoefficient_apply, inner_smul_left]
 
-/-- The norm of a representation coefficient is bounded by the product of the vector norms. -/
+/-- **Norm of a representation coefficient.** Let `A` be a unital complex C*-algebra, `H` a complete
+complex Hilbert space, and `ρ : A → B(H)` a unital complex star representation. For `g,h ∈ H`, the
+continuous functional `a ↦ ⟨h,ρ(a)g⟩` has operator norm at most `‖g‖ ‖h‖`. -/
 theorem norm_representationCoefficient_le
     (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (g h : H) :
     ‖representationCoefficient rho g h‖ ≤ ‖g‖ * ‖h‖ := by
@@ -112,8 +117,10 @@ theorem norm_representationCoefficient_le
 
 variable {K : Type w} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
-/-- Coefficient functionals are invariant under a unitary intertwiner.  The intertwining
-orientation is `U (rho(a)x) = sigma(a)(U x)`. -/
+/-- **Coefficients under a unitary intertwiner.** Let `A` be a unital complex C*-algebra, let `H,K` be
+complete complex Hilbert spaces, and let `ρ : A → B(H)`, `σ : A → B(K)` be unital star
+representations. If a complex-linear isometric equivalence `U : H → K` satisfies `U(ρ(a)x) =
+σ(a)(Ux)` for every `a,x`, then `⟨Uh,σ(a)Ug⟩ = ⟨h,ρ(a)g⟩` as continuous functionals of `a`. -/
 theorem representationCoefficient_unitaryIntertwiner
     (rho : A →⋆ₐ[ℂ] (H →L[ℂ] H))
     (sigma : A →⋆ₐ[ℂ] (K →L[ℂ] K))

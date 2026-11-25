@@ -29,7 +29,8 @@ universe u
 
 open CategoryTheory
 
-/-- Actual complex C-star algebras, without a coefficient identity requirement. -/
+/-- **Category of nonunital C*-algebras.** Its objects are nonunital complex C*-algebras and its
+morphisms are nonunital complex star-algebra homomorphisms. -/
 structure NonUnitalCStarAlgCat : Type (u + 1) where
   /-- The underlying type of this nonunital complex C-star algebra. -/
   carrier : Type u
@@ -42,7 +43,8 @@ namespace NonUnitalCStarAlgCat
 instance instCoeSort : CoeSort NonUnitalCStarAlgCat.{u} (Type u) :=
   ⟨carrier⟩
 
-/-- Bundle an existing algebra without choosing any replacement dictionary. -/
+/-- **C*-algebra as a categorical object.** A nonunital complex C*-algebra `A` gives an object with the
+same carrier, norm, involution, and complex algebra structure. -/
 abbrev of (A : Type u) [NonUnitalCStarAlgebra A] : NonUnitalCStarAlgCat.{u} :=
   ⟨A⟩
 
@@ -72,12 +74,15 @@ instance concreteCategory :
   id_apply _a := rfl
   comp_apply _f _g _a := rfl
 
-/-- Use an actual star homomorphism as a category morphism. -/
+/-- **Star homomorphism as a categorical morphism.** For nonunital complex C*-algebras `A,B`, a
+nonunital complex star-algebra homomorphism `f : A → B` is a morphism between their associated
+objects. -/
 abbrev ofHom {A B : Type u} [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
     (f : A →⋆ₙₐ[ℂ] B) : of A ⟶ of B :=
   f
 
-/-- Recover the same actual homomorphism from a category morphism. -/
+/-- **Star homomorphism of a categorical morphism.** A morphism between objects `A,B` in the category of
+nonunital complex C*-algebras is its nonunital complex star-algebra homomorphism `A → B`. -/
 abbrev hom {A B : NonUnitalCStarAlgCat.{u}} (f : A ⟶ B) : A →⋆ₙₐ[ℂ] B :=
   f
 

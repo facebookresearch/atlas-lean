@@ -34,15 +34,20 @@ universe u
 
 variable {R : Type u} {l m n l' m' n' : Type*}
 
-/-- Finite scalar-coordinate Kronecker multiplication, in the actual
-C-star matrix type copy. -/
+/-- Let `R` be a complex module. Let `l` be an index type. Let `m` be an index type. Let `l'` be an
+index type. Let `m'` be an index type. For `S : CStarMatrix l m ℂ` and `M : CStarMatrix l' m' R`.
+Finite scalar-coordinate Kronecker multiplication, in the C-star `CStarMatrix` representation.
+-/
 def scalarKronecker [AddCommMonoid R] [Module ℂ R]
     (S : CStarMatrix l m ℂ) (M : CStarMatrix l' m' R) :
     CStarMatrix (l × l') (m × m') R :=
   ofMatrix (Matrix.kroneckerMapBilinear (LinearMap.lsmul ℂ R)
     (ofMatrix.symm S) (ofMatrix.symm M))
 
-/-- Literal scalar-coordinate entries. -/
+/-- Let `R` be a complex module. Let `l` be an index type. Let `m` be an index type. Let `l'` be an
+index type. Let `m'` be an index type. For `S : CStarMatrix l m ℂ`, `M : CStarMatrix l' m' R`, `i :
+l × l'` and `j : m × m'`. Literal scalar-coordinate entries.
+-/
 @[simp]
 theorem scalarKronecker_apply [AddCommMonoid R] [Module ℂ R]
     (S : CStarMatrix l m ℂ) (M : CStarMatrix l' m' R)
@@ -50,8 +55,13 @@ theorem scalarKronecker_apply [AddCommMonoid R] [Module ℂ R]
     scalarKronecker S M i j = S i.1 j.1 • M i.2 j.2 :=
   rfl
 
-/-- Scalar-coordinate Kronecker multiplication preserves actual matrix
-products without commutative coefficient-ring hypotheses. -/
+/-- Let `R` be a possibly nonunital, nonassociative semiring. Let `l` be an index type. Let `m` be a
+finite index type. Let `n` be an index type. Let `l'` be an index type. Let `m'` be a finite index
+type. Let `n'` be an index type. `R` has a complex module structure. The `ℂ`-scalar action on `R` is
+compatible with multiplication on both sides. For `S : CStarMatrix l m ℂ`, `T : CStarMatrix m n ℂ`,
+`M : CStarMatrix l' m' R` and `N : CStarMatrix m' n' R`. Scalar-coordinate Kronecker multiplication
+preserves matrix products without commutative coefficient-ring hypotheses.
+-/
 theorem scalarKronecker_mul
     [NonUnitalNonAssocSemiring R] [Module ℂ R]
     [IsScalarTower ℂ R R] [SMulCommClass ℂ R R]
@@ -73,7 +83,10 @@ theorem scalarKronecker_mul
   simp only [scalarKronecker, ofMatrix_symm_mul, of_mul_of]
   exact congrArg ofMatrix h
 
-/-- Flatten the product index with the existing finite-product reindex. -/
+/-- Let `R` be a complex module and let `m`, `n` be natural numbers. For a complex `m × m` matrix `S`
+and an `R`-valued `n × n` matrix `M`, scalar-coordinate Kronecker multiplication followed by the
+finite-product reindex gives an `R`-valued `m*n × m*n` CStarMatrix.
+-/
 def scalarKroneckerFin [AddCommMonoid R] [Module ℂ R]
     {m n : ℕ}
     (S : CStarMatrix (Fin m) (Fin m) ℂ)
@@ -81,7 +94,10 @@ def scalarKroneckerFin [AddCommMonoid R] [Module ℂ R]
     CStarMatrix (Fin (m * n)) (Fin (m * n)) R :=
   reindexₗ ℂ R finProdFinEquiv finProdFinEquiv (scalarKronecker S M)
 
-/-- The flattened matrix has the literal finite-product coordinates. -/
+/-- Let `R` be a complex module. For natural numbers `m` and `n`, `S : CStarMatrix (Fin m) (Fin m) ℂ`,
+`M : CStarMatrix (Fin n) (Fin n) R` and `i` and `j : Fin (m * n)`. The flattened matrix has the
+finite-product coordinates.
+-/
 @[simp]
 theorem scalarKroneckerFin_apply [AddCommMonoid R] [Module ℂ R]
     {m n : ℕ}
@@ -93,7 +109,9 @@ theorem scalarKroneckerFin_apply [AddCommMonoid R] [Module ℂ R]
         M (finProdFinEquiv.symm i).2 (finProdFinEquiv.symm j).2 := by
   rw [scalarKroneckerFin, reindexₗ_apply_entry, scalarKronecker_apply]
 
-/-- Zero in the coefficient-matrix slot gives zero, including empty indices. -/
+/-- Let `R` be a complex module. For natural numbers `m` and `n` and `S : CStarMatrix (Fin m) (Fin m)
+ℂ`. Zero in the coefficient-matrix slot gives zero, including empty indices.
+-/
 @[simp]
 theorem scalarKroneckerFin_zero_right [AddCommMonoid R] [Module ℂ R]
     {m n : ℕ} (S : CStarMatrix (Fin m) (Fin m) ℂ) :
@@ -102,7 +120,9 @@ theorem scalarKroneckerFin_zero_right [AddCommMonoid R] [Module ℂ R]
   intro i j
   simp only [scalarKroneckerFin_apply, CStarMatrix.zero_apply, smul_zero]
 
-/-- Zero in the scalar-matrix slot gives zero. -/
+/-- Let `R` be a complex module. For natural numbers `m` and `n` and `M : CStarMatrix (Fin n) (Fin n)
+R`. Zero in the scalar-matrix slot gives zero.
+-/
 @[simp]
 theorem scalarKroneckerFin_zero_left [AddCommMonoid R] [Module ℂ R]
     {m n : ℕ} (M : CStarMatrix (Fin n) (Fin n) R) :
@@ -111,7 +131,9 @@ theorem scalarKroneckerFin_zero_left [AddCommMonoid R] [Module ℂ R]
   intro i j
   simp only [scalarKroneckerFin_apply, CStarMatrix.zero_apply, zero_smul]
 
-/-- Addition in the coefficient-matrix slot. -/
+/-- Let `R` be a complex module. For natural numbers `m` and `n`, `S : CStarMatrix (Fin m) (Fin m) ℂ`
+and `M` and `N : CStarMatrix (Fin n) (Fin n) R`. Addition in the coefficient-matrix slot.
+-/
 theorem scalarKroneckerFin_add_right [AddCommMonoid R] [Module ℂ R]
     {m n : ℕ} (S : CStarMatrix (Fin m) (Fin m) ℂ)
     (M N : CStarMatrix (Fin n) (Fin n) R) :
@@ -121,7 +143,9 @@ theorem scalarKroneckerFin_add_right [AddCommMonoid R] [Module ℂ R]
   intro i j
   simp only [scalarKroneckerFin_apply, CStarMatrix.add_apply, smul_add]
 
-/-- Addition in the scalar-matrix slot. -/
+/-- Let `R` be a complex module. For natural numbers `m` and `n`, `S` and `T : CStarMatrix (Fin m) (Fin
+m) ℂ` and `M : CStarMatrix (Fin n) (Fin n) R`. Addition in the scalar-matrix slot.
+-/
 theorem scalarKroneckerFin_add_left [AddCommMonoid R] [Module ℂ R]
     {m n : ℕ} (S T : CStarMatrix (Fin m) (Fin m) ℂ)
     (M : CStarMatrix (Fin n) (Fin n) R) :
@@ -131,7 +155,9 @@ theorem scalarKroneckerFin_add_left [AddCommMonoid R] [Module ℂ R]
   intro i j
   simp only [scalarKroneckerFin_apply, CStarMatrix.add_apply, add_smul]
 
-/-- Subtraction in the coefficient-matrix slot. -/
+/-- Let `R` be a complex module. For natural numbers `m` and `n`, `S : CStarMatrix (Fin m) (Fin m) ℂ`
+and `M` and `N : CStarMatrix (Fin n) (Fin n) R`. Subtraction in the coefficient-matrix slot.
+-/
 theorem scalarKroneckerFin_sub_right [AddCommGroup R] [Module ℂ R]
     {m n : ℕ} (S : CStarMatrix (Fin m) (Fin m) ℂ)
     (M N : CStarMatrix (Fin n) (Fin n) R) :
@@ -141,7 +167,9 @@ theorem scalarKroneckerFin_sub_right [AddCommGroup R] [Module ℂ R]
   intro i j
   simp only [scalarKroneckerFin_apply, CStarMatrix.sub_apply, smul_sub]
 
-/-- Subtraction in the scalar-matrix slot. -/
+/-- Let `R` be a complex module. For natural numbers `m` and `n`, `S` and `T : CStarMatrix (Fin m) (Fin
+m) ℂ` and `M : CStarMatrix (Fin n) (Fin n) R`. Subtraction in the scalar-matrix slot.
+-/
 theorem scalarKroneckerFin_sub_left [AddCommGroup R] [Module ℂ R]
     {m n : ℕ} (S T : CStarMatrix (Fin m) (Fin m) ℂ)
     (M : CStarMatrix (Fin n) (Fin n) R) :
@@ -151,7 +179,11 @@ theorem scalarKroneckerFin_sub_left [AddCommGroup R] [Module ℂ R]
   intro i j
   simp only [scalarKroneckerFin_apply, CStarMatrix.sub_apply, sub_smul]
 
-/-- Multiplication after the actual finite-product reindex. -/
+/-- Let `R` be a possibly nonunital, nonassociative semiring. `R` has a complex module structure. The
+`ℂ`-scalar action on `R` is compatible with multiplication on both sides. For natural numbers `m`
+and `n`, `S` and `T : CStarMatrix (Fin m) (Fin m) ℂ` and `M` and `N : CStarMatrix (Fin n) (Fin n)
+R`. Multiplication after the finite-product reindex.
+-/
 theorem scalarKroneckerFin_mul
     [NonUnitalNonAssocSemiring R] [Module ℂ R]
     [IsScalarTower ℂ R R] [SMulCommClass ℂ R R]
@@ -171,7 +203,10 @@ theorem scalarKroneckerFin_mul
   simpa only [scalarKroneckerFin_apply, scalarKronecker_apply,
     Equiv.symm_apply_apply] using h
 
-/-- Star after the finite-product reindex uses the actual scalar-star action. -/
+/-- Let `R` be a complex module. `R` has a star operation. The star on `R` conjugates the complex scalar
+action. For natural numbers `m` and `n`, `S : CStarMatrix (Fin m) (Fin m) ℂ` and `M : CStarMatrix
+(Fin n) (Fin n) R`. Star after the finite-product reindex uses the scalar-star action.
+-/
 theorem scalarKroneckerFin_star
     [AddCommMonoid R] [Module ℂ R] [Star R] [StarModule ℂ R]
     {m n : ℕ} (S : CStarMatrix (Fin m) (Fin m) ℂ)
@@ -182,8 +217,13 @@ theorem scalarKroneckerFin_star
   intro i j
   simp only [CStarMatrix.star_apply, scalarKroneckerFin_apply, star_smul]
 
-/-- Pointwise coefficient homomorphisms commute with the finite scalar
-action. This is a matrix characteristic law, not Bott group naturality. -/
+/-- Let `R` be a possibly nonunital, nonassociative semiring. Let `T` be a possibly nonunital,
+nonassociative semiring. `R` has a complex module structure. `R` has a star operation. `T` has a
+complex module structure. `T` has a star operation. For `f : R →⋆ₙₐ[ℂ] T`, natural numbers `m` and
+`n`, `S : CStarMatrix (Fin m) (Fin m) ℂ` and `M : CStarMatrix (Fin n) (Fin n) R`. Pointwise
+coefficient homomorphisms commute with the finite scalar action. This is a matrix characteristic
+law, not Bott group naturality.
+-/
 theorem scalarKroneckerFin_map
     {T : Type*}
     [NonUnitalNonAssocSemiring R] [Module ℂ R] [Star R]

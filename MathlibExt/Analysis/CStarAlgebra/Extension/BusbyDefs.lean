@@ -33,8 +33,10 @@ namespace CStarExtension
 
 universe uA uB
 
-/-- A complex nonunital star-algebra homomorphism to the outer multiplier
-algebra, with an algebraic source and a genuine C-star coefficient. -/
+/-- **Busby homomorphisms.** Let `A` be a nonunital, possibly nonassociative semiring with a
+distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. -/
 abbrev BusbyHom (A : Type uA) (B : Type uB)
     [NonUnitalNonAssocSemiring A] [DistribMulAction ℂ A] [StarAddMonoid A]
     [NonUnitalCStarAlgebra B] :=
@@ -49,7 +51,9 @@ noncomputable local instance outerCStarAlgebra :
     CStarAlgebra (OuterMultiplier B) :=
   outerMultiplierCStarAlgebra B
 
-/-- A Busby map from `A` to the outer multiplier algebra of `B`. -/
+/-- **Busby map of C*-algebras.** For nonunital complex C*-algebras `A,B`, this is a nonunital complex
+star homomorphism from `A` to the outer multiplier algebra `M(B)/B`, equipped with its quotient
+C*-norm. -/
 abbrev BusbyMap :=
   BusbyHom A B
 

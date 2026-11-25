@@ -38,8 +38,11 @@ universe uA uD
 variable {A : Type uA} {D : Type uD}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra D]
 
-/-- Compose a supplied CPC section of a closed-ideal quotient with an actual
-CPC map. The witness is the existing CP composition, not a chosen lift. -/
+/-- **Lifting a CP contraction through a CP section.** Let `A,D` be nonunital complex C*-algebras and
+`J` a closed two-sided star ideal of `D`, all with spectral orders. If the quotient map `D → D/J`
+has a completely positive contractive section `s : D/J → D`, then every completely positive
+contraction `ψ : A → D/J` has a completely positive contractive lift `φ : A → D` satisfying `q(φ(a))
+= ψ(a)`. The lift is `s ∘ ψ`. -/
 theorem exists_quotientLift_of_section (J : ClosedStarIdeal D) :
     letI : J.carrier.IsTwoSided := J.isTwoSided
     letI : NonUnitalCStarAlgebra J.Quotient := J.quotientCStarAlgebra

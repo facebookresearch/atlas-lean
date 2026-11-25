@@ -71,9 +71,11 @@ private theorem continuous_apply_of_continuous_orbit_of_dist_eq
     _ < ε / 2 + ε / 2 := add_lt_add hxs hgs
     _ = ε := add_halves ε
 
-/-- A unitary representation whose orbit map is continuous at every vector.
+/-- Let `G` be a group equipped with a topology and let `H` be a complete complex inner-product
+space.
 
-This is an explicit value, not an ambient `MulAction`. -/
+A unitary representation whose orbit map is continuous at every vector. This is an value, not an
+ambient `MulAction`. -/
 structure StronglyContinuousUnitaryRepresentation
     (G : Type uG) (H : Type uH)
     [Group G] [TopologicalSpace G]
@@ -90,8 +92,11 @@ variable {G : Type uG} {H : Type uH}
 variable [Group G] [TopologicalSpace G]
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- Two strongly continuous unitary representations are equal when their
-underlying monoid homomorphisms are equal. -/
+/-- Let `G` be a group equipped with a topology and let `H` be a complete complex inner-product
+space.
+
+Two strongly continuous unitary representations are equal when their underlying monoid
+homomorphisms are equal. -/
 @[ext]
 theorem ext {ρ σ : StronglyContinuousUnitaryRepresentation G H}
     (h : ρ.toMonoidHom = σ.toMonoidHom) : ρ = σ := by
@@ -151,8 +156,12 @@ theorem inner_apply_apply (ρ : StronglyContinuousUnitaryRepresentation G H)
         ((ρ g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) y⟫_ℂ = ⟪x, y⟫_ℂ :=
   Unitary.inner_map_map (ρ g) x y
 
-/-- Strong orbit continuity and unitarity imply continuity when both the group
-element and vector vary. -/
+/-- Let `G` be a group equipped with a topology and let `H` be a complete complex inner-product
+space. Let `X` be a topological parameter space. The group or monoid parameter and the
+coefficient or vector parameter are continuous functions on `X`.
+
+Strong orbit continuity and unitarity imply continuity when both the group element and vector
+vary. -/
 theorem continuous_apply
     {X : Type uX} [TopologicalSpace X]
     (ρ : StronglyContinuousUnitaryRepresentation G H)
@@ -163,13 +172,19 @@ theorem continuous_apply
     (fun g x ↦ ((ρ g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x)
     ρ.continuous_orbit ρ.dist_apply hg hx
 
-/-- Joint continuity of a strongly continuous unitary representation. -/
+/-- Let `G` be a group equipped with a topology and let `H` be a complete complex inner-product
+space.
+
+Joint continuity of a strongly continuous unitary representation. -/
 theorem continuous_action (ρ : StronglyContinuousUnitaryRepresentation G H) :
     Continuous fun p : G × H ↦
       ((ρ p.1 : unitary (H →L[ℂ] H)) : H →L[ℂ] H) p.2 :=
   ρ.continuous_apply continuous_fst continuous_snd
 
-/-- The trivial strongly continuous unitary representation. -/
+/-- Let `G` be a group equipped with a topology and let `H` be a complete complex inner-product
+space.
+
+The trivial strongly continuous unitary representation. -/
 def trivial (G : Type uG) (H : Type uH)
     [Group G] [TopologicalSpace G]
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] :
@@ -184,8 +199,12 @@ theorem trivial_apply (g : G) (x : H) :
 
 end StronglyContinuousUnitaryRepresentation
 
-/-- A covariant representation of a point-norm C-star action, with covariance
-oriented as `U_g * π(a) * U_g⁺ = π(α_g(a))`. -/
+/-- Let `G` be a group equipped with a topology and let `H` be a complete complex inner-product
+space. Let `A` be a possibly nonunital complex C*-algebra and specify a point-norm continuous
+action `α` of `G` on `A`.
+
+A covariant representation of a point-norm C-star action, with covariance oriented as `U_g *
+π(a) * U_g⁺ = π(α_g(a))`. -/
 structure CovariantRepresentation
     {G : Type uG} {A : Type uA}
     [Group G] [TopologicalSpace G] [NonUnitalCStarAlgebra A]
@@ -208,8 +227,11 @@ variable [Group G] [TopologicalSpace G] [NonUnitalCStarAlgebra A]
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable {α : PointNormCStarAction G A}
 
-/-- Covariant representations are determined by their algebra and group
-components. -/
+/-- Let `G` be a group equipped with a topology and let `H` be a complete complex inner-product
+space. Let `A` be a possibly nonunital complex C*-algebra and specify a point-norm continuous
+action `α` of `G` on `A`.
+
+Covariant representations are determined by their algebra and group components. -/
 @[ext]
 theorem ext {π ρ : CovariantRepresentation α H}
     (halgebra : π.algebra = ρ.algebra) (hgroup : π.group = ρ.group) : π = ρ := by

@@ -46,8 +46,15 @@ variable [NormedAddCommGroup X] [NormedSpace ℂ X] [SMul B₂ᵐᵒᵖ X]
   [CStarModule B₂ᵐᵒᵖ X] [CompleteSpace X]
 variable {g : B₁ →⋆ₙₐ[ℂ] B₂} {pure : E → B₂ → X}
 
-/-- Base change preserves countable generation for the given tensor model,
-even when the target coefficient algebra is not countably generated. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E and X be complete normed right inner-product modules over B₁ and
+B₂, respectively, with compatible complex normed-space structures. Let g : B₁ → B₂ be a
+nonunital complex star homomorphism, and suppose pure : E × B₂ → X satisfies the internal-tensor
+laws for the left multiplication representation induced by g and has dense complex-linear span.
+
+If E is countably generated over B₁, then X is countably generated over B₂.
+-/
 theorem countablyGenerated_baseChange
     (hX : CStarModule.InternalTensorProduct.IsModel
       ((CStarModule.AdjointableOperator.leftRegular (B := B₂)).comp g) pure)

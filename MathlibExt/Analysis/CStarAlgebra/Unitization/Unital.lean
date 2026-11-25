@@ -31,8 +31,9 @@ noncomputable section
 
 universe u v
 
-/-- The canonical star algebra homomorphism from a unital algebra's
-unitization to the scalar/algebra product. -/
+/-- **Product map from a unital algebra unitization.** Let `A` be a unital complex C*-algebra. The map
+`(λ,a) ↦ (λ, λ 1_A + a)` is a unital complex star homomorphism from the complex unitization of `A`
+to `ℂ × A`. -/
 def unitalProdStarAlgHom
     (A : Type u) [CStarAlgebra A] :
     Unitization ℂ A →⋆ₐ[ℂ] ℂ × A where
@@ -54,8 +55,8 @@ theorem unitalProdStarAlgHom_apply
   change Unitization.unitalProdAlgHom ℂ A x = _
   exact Unitization.unitalProdAlgHom_apply ℂ A x
 
-/-- The canonical star-algebra equivalence from the unitization of a unital
-complex C-star algebra to the product of the scalars and the algebra. -/
+/-- **Product equivalence for a unital algebra unitization.** Let `A` be a unital complex C*-algebra.
+The complex unitization of `A` is star-algebra equivalent to `ℂ × A` by `(λ,a) ↦ (λ, λ 1_A + a)`. -/
 noncomputable def unitalProdStarAlgEquiv
     (A : Type u) [CStarAlgebra A] :
     Unitization ℂ A ≃⋆ₐ[ℂ] ℂ × A :=
@@ -63,7 +64,8 @@ noncomputable def unitalProdStarAlgEquiv
     change unitalProdStarAlgHom A (star x) = star (unitalProdStarAlgHom A x)
     exact map_star _ x
 
-/-- Exact forward action of the canonical product equivalence. -/
+/-- **Forward formula for the unitization product equivalence.** Let `A` be a unital complex C*-algebra.
+The product equivalence sends an element `(λ,a)` of the unitization to `(λ, λ 1_A + a)`. -/
 @[simp]
 theorem unitalProdStarAlgEquiv_apply
     (A : Type u) [CStarAlgebra A] (x : Unitization ℂ A) :
@@ -72,7 +74,8 @@ theorem unitalProdStarAlgEquiv_apply
   change Unitization.unitalProdAlgEquiv ℂ A x = _
   exact Unitization.unitalProdAlgEquiv_apply ℂ A x
 
-/-- Exact inverse action of the canonical product equivalence. -/
+/-- **Inverse formula for the unitization product equivalence.** Let `A` be a unital complex C*-algebra.
+The inverse product equivalence sends `(λ,b) ∈ ℂ × A` to `(λ, b - λ 1_A)` in the unitization. -/
 @[simp]
 theorem unitalProdStarAlgEquiv_symm_apply
     (A : Type u) [CStarAlgebra A] (x : ℂ × A) :
@@ -82,8 +85,9 @@ theorem unitalProdStarAlgEquiv_symm_apply
   change (Unitization.unitalProdAlgEquiv ℂ A).symm x = _
   exact Unitization.unitalProdAlgEquiv_symm_apply ℂ A x
 
-/-- Naturality of the canonical product equivalence.  Under it, the
-unitization of a unital star homomorphism is the product map `(id, phi)`. -/
+/-- **Naturality of the unitization product equivalence.** For unital complex C*-algebras `A,B` and a
+unital complex star homomorphism `φ : A → B`, the unitized homomorphism corresponds, under the
+canonical equivalences with `ℂ × A` and `ℂ × B`, to the product map `(λ,a) ↦ (λ,φ(a))`. -/
 theorem unitalProdStarAlgEquiv_naturality
     {A : Type u} {B : Type v}
     [CStarAlgebra A] [CStarAlgebra B]

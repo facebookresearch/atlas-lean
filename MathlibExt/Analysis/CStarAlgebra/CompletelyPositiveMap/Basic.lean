@@ -32,7 +32,8 @@ variable {A₁ A₂ A₃ A₄ : Type*}
 
 open CStarMatrix
 
-/-- The identity map is completely positive. -/
+/-- **Completely positive identity map.** For a nonunital complex C*-algebra `A` with a star-compatible
+partial order, the identity `a ↦ a` is a completely positive map from `A` to itself. -/
 def id (A : Type*) [NonUnitalCStarAlgebra A] [PartialOrder A] [StarOrderedRing A] :
     A →CP A where
   toLinearMap := LinearMap.id
@@ -53,7 +54,9 @@ theorem toLinearMap_id (A : Type*) [NonUnitalCStarAlgebra A] [PartialOrder A] [S
     (id A : A →CP A).toLinearMap = LinearMap.id :=
   rfl
 
-/-- Composition of completely positive maps is completely positive. -/
+/-- **Composition of completely positive maps.** For nonunital complex C*-algebras `A₁`, `A₂`, and `A₃`
+with star-compatible partial orders, completely positive maps `φ : A₁ → A₂` and `ψ : A₂ → A₃` have
+the completely positive composite `a ↦ ψ(φ(a))`. -/
 def comp (ψ : A₂ →CP A₃) (φ : A₁ →CP A₂) : A₁ →CP A₃ where
   toLinearMap := ψ.toLinearMap.comp φ.toLinearMap
   map_cstarMatrix_nonneg' k M hM := by

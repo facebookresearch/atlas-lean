@@ -45,7 +45,10 @@ private noncomputable def operatorCoefficientBilin :
     (ContinuousLinearMap.compL ℂ (H →L[ℂ] H) H ℂ)
     (innerSL ℂ) (ContinuousLinearMap.apply ℂ H)
 
-/-- The weak-operator coefficient functional `T ↦ ⟪h, T g⟫_ℂ`. -/
+/-- Let `H` be a complex normed inner-product space. The operator space is `H →L[ℂ] H`, and its
+continuous dual and double dual have their operator norms.
+
+The weak-operator coefficient functional `T ↦ ⟪h, T g⟫_ℂ`. -/
 @[no_expose]
 noncomputable def operatorCoefficient (g h : H) : StrongDual ℂ (H →L[ℂ] H) :=
   operatorCoefficientBilin h g
@@ -77,8 +80,10 @@ theorem operatorCoefficient_smul_right (c : ℂ) (g h : H) :
     operatorCoefficient g (c • h) = star c • operatorCoefficient g h := by
   simp [operatorCoefficient]
 
-/-- The norm of a coefficient functional is bounded by the product of the
-norms of its two vectors. -/
+/-- Let `H` be a complex normed inner-product space. The operator space is `H →L[ℂ] H`, and its
+continuous dual and double dual have their operator norms.
+
+The norm of a coefficient functional is bounded by the product of the norms of its two vectors. -/
 theorem norm_operatorCoefficient_le (g h : H) :
     ‖operatorCoefficient g h‖ ≤ ‖g‖ * ‖h‖ := by
   apply ContinuousLinearMap.opNorm_le_bound _ (mul_nonneg (norm_nonneg g) (norm_nonneg h))
@@ -120,8 +125,11 @@ local instance operatorDoubleDualNormedSpace :
   ContinuousLinearMap.toNormedSpace
     (E := StrongDual ℂ (H →L[ℂ] H)) (F := ℂ) (σ₁₂ := RingHom.id ℂ)
 
-/-- The canonical operator norm on the double strong dual of `B(H)`, exposed
-without installing a global instance on the nested dual carrier. -/
+/-- Let `H` be a complex normed inner-product space. The operator space is `H →L[ℂ] H`, and its
+continuous dual and double dual have their operator norms.
+
+The canonical operator norm on the double strong dual of `B(H)`, exposed without installing a
+global instance on the nested dual carrier. -/
 noncomputable def operatorDoubleDualOpNorm
     (Φ : StrongDual ℂ (StrongDual ℂ (H →L[ℂ] H))) : ℝ :=
   ContinuousLinearMap.opNorm (E := StrongDual ℂ (H →L[ℂ] H)) (F := ℂ)
@@ -209,8 +217,11 @@ private theorem operatorBidualRetractionLinear_apply
     operatorBidualRetractionLinear Φ = operatorBidualRetractionAux Φ :=
   rfl
 
-/-- The canonical contraction from the bidual of `B(H)` onto `B(H)`,
-characterized by weak-operator coefficients. -/
+/-- Let `H` be a complex normed inner-product space. The operator space is `H →L[ℂ] H`, and its
+continuous dual and double dual have their operator norms. Assume `H` is complete.
+
+The canonical contraction from the bidual of `B(H)` onto `B(H)`, characterized by weak-operator
+coefficients. -/
 @[no_expose]
 noncomputable def operatorBidualRetraction :
     StrongDual ℂ (StrongDual ℂ (H →L[ℂ] H)) →L[ℂ] (H →L[ℂ] H) :=
@@ -219,7 +230,10 @@ noncomputable def operatorBidualRetraction :
       operatorDoubleDualOpNorm_eq_norm] using
       norm_operatorBidualRetractionAux_le (H := H) Φ
 
-/-- Characteristic coefficient identity for the operator-bidual retraction. -/
+/-- Let `H` be a complex normed inner-product space. The operator space is `H →L[ℂ] H`, and its
+continuous dual and double dual have their operator norms. Assume `H` is complete.
+
+Characteristic coefficient identity for the operator-bidual retraction. -/
 @[simp]
 theorem operatorBidualRetraction_inner
     (Φ : StrongDual ℂ (StrongDual ℂ (H →L[ℂ] H))) (g h : H) :
@@ -228,7 +242,10 @@ theorem operatorBidualRetraction_inner
     operatorBidualRetractionLinear_apply, operatorDoubleDualOpNorm_eq_norm] using
     operatorBidualRetractionAux_inner Φ g h
 
-/-- Pointwise contraction of the operator-bidual retraction. -/
+/-- Let `H` be a complex normed inner-product space. The operator space is `H →L[ℂ] H`, and its
+continuous dual and double dual have their operator norms. Assume `H` is complete.
+
+Pointwise contraction of the operator-bidual retraction. -/
 theorem norm_operatorBidualRetraction_apply_le
     (Φ : StrongDual ℂ (StrongDual ℂ (H →L[ℂ] H))) :
     ‖operatorBidualRetraction Φ‖ ≤ operatorDoubleDualOpNorm Φ := by
@@ -236,14 +253,20 @@ theorem norm_operatorBidualRetraction_apply_le
     operatorBidualRetractionLinear_apply] using
     norm_operatorBidualRetractionAux_le Φ
 
-/-- The canonical operator norm of the operator-bidual retraction, exposed
-without installing a global norm instance on the nested dual carrier. -/
+/-- Let `H` be a complex normed inner-product space. The operator space is `H →L[ℂ] H`, and its
+continuous dual and double dual have their operator norms. Assume `H` is complete.
+
+The canonical operator norm of the operator-bidual retraction, exposed without installing a
+global norm instance on the nested dual carrier. -/
 @[no_expose]
 noncomputable def operatorBidualRetractionOpNorm (H : Type u)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] : ℝ :=
   ‖operatorBidualRetraction (H := H)‖
 
-/-- The operator norm of the canonical retraction is at most one. -/
+/-- Let `H` be a complex normed inner-product space. The operator space is `H →L[ℂ] H`, and its
+continuous dual and double dual have their operator norms. Assume `H` is complete.
+
+The operator norm of the canonical retraction is at most one. -/
 theorem operatorBidualRetractionOpNorm_le :
     operatorBidualRetractionOpNorm H ≤ 1 :=
   LinearMap.mkContinuous_norm_le (operatorBidualRetractionLinear (H := H)) zero_le_one fun Φ => by
@@ -251,7 +274,10 @@ theorem operatorBidualRetractionOpNorm_le :
       operatorDoubleDualOpNorm_eq_norm] using
       norm_operatorBidualRetractionAux_le (H := H) Φ
 
-/-- The canonical map is a left inverse to the inclusion into the double dual. -/
+/-- Let `H` be a complex normed inner-product space. The operator space is `H →L[ℂ] H`, and its
+continuous dual and double dual have their operator norms. Assume `H` is complete.
+
+The canonical map is a left inverse to the inclusion into the double dual. -/
 @[simp]
 theorem operatorBidualRetraction_inclusionInDoubleDual (T : H →L[ℂ] H) :
     operatorBidualRetraction

@@ -91,7 +91,11 @@ private theorem prodMap_snd
   simpa only [WithCStarModule.equiv_snd] using
     congrArg Prod.snd (prodMap_equiv_apply T S x)
 
-/-- Block-diagonal products preserve a common homogeneous degree. -/
+/-- **Homogeneous block-diagonal module operators.** Let `B` be a graded nonunital complex C*-algebra
+with a star-compatible order on its opposite algebra, and let `E,F,E′,F′` be complete right Hilbert
+`B`-modules with compatible gradings. If adjointable operators `T : E → E′` and `S : F → F′` both
+have degree `n`, their block-diagonal map `(x,y) ↦ (Tx,Sy)` from `E ⊕ F` to `E′ ⊕ F′` has degree
+`n`. -/
 theorem prodMap_isHomogeneousOperator
     (deltaE : CStarModuleGrading gammaB E)
     (deltaF : CStarModuleGrading gammaB F)
@@ -124,8 +128,11 @@ theorem prodMap_isHomogeneousOperator
     rw [prodMap_snd, prod_generator_snd]
     exact hS x.2
 
-/-- The block-diagonal map from the product of two endomorphism algebras to
-the endomorphism algebra of the module product, with its induced grading. -/
+/-- **Graded block-diagonal endomorphism homomorphism.** Let `B` be a graded nonunital complex
+C*-algebra with a star-compatible order on its opposite algebra, and let `E,F` be compatibly graded
+complete right Hilbert `B`-modules. The block-diagonal map from `End*(E) × End*(F)` into `End*(E ⊕
+F)` is a star homomorphism equivariant for their induced gradings, where `End*` denotes adjointable
+endomorphisms. -/
 def prodEndHom
     (deltaE : CStarModuleGrading gammaB E)
     (deltaF : CStarModuleGrading gammaB F) :
@@ -212,7 +219,10 @@ theorem prodEndHom_apply
       CStarModule.AdjointableOperator.prodMap T S :=
   rfl
 
-/-- Pair two graded representations on a binary module product. -/
+/-- **Product of graded module representations.** Let `A,B` be graded nonunital complex C*-algebras,
+with a star-compatible order on `Bᵐᵒᵖ`, and let `E,F` be compatibly graded complete right Hilbert
+`B`-modules. Graded star representations `φ : A → End*(E)` and `ψ : A → End*(F)` define the graded
+block-diagonal representation `a ↦ φ(a) ⊕ ψ(a)` on the Hilbert-module direct sum `E ⊕ F`. -/
 def prodRepresentation
     (deltaE : CStarModuleGrading gammaB E)
     (deltaF : CStarModuleGrading gammaB F)

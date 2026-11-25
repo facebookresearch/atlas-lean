@@ -42,10 +42,10 @@ variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra D]
 variable [PartialOrder A] [StarOrderedRing A]
 variable [PartialOrder D] [StarOrderedRing D]
 
-/-- Restrict the codomain of a completely positive map to a closed nonunital
-star-subalgebra containing its range.  The source and ambient orders are the
-caller's lawful orders; the restricted codomain uses its canonical spectral
-order. -/
+/-- **Closed codomain restriction of a CP map.** Let `A,D` be nonunital complex C*-algebras with
+star-compatible partial orders, let `φ : A →CP D`, and let `S` be a closed nonunital star subalgebra
+of `D` containing every value of `φ`. The map has codomain `S` and sends `a` to `φ(a)`, with the
+spectral order and inherited C*-norm on `S`. -/
 noncomputable def codRestrict (phi : A →CP D)
     (S : NonUnitalStarSubalgebra ℂ D) [IsClosed (S : Set D)]
     (hmem : ∀ a : A, phi a ∈ S) :
@@ -84,7 +84,10 @@ noncomputable def codRestrict (phi : A →CP D)
           hMatrixInclusion).mp
         simpa only [map_zero] using hImageNonneg }
 
-/-- Codomain restriction has the original ambient value after inclusion. -/
+/-- **Evaluation of closed codomain restriction.** Let `A,D` be nonunital complex C*-algebras with
+star-compatible partial orders, let `φ : A →CP D`, and let `S` be a closed nonunital star subalgebra
+of `D` containing every value of `φ`. Including the restricted value back into `D` gives `φ(a)` for
+every `a ∈ A`. -/
 @[simp]
 theorem codRestrict_apply (phi : A →CP D)
     (S : NonUnitalStarSubalgebra ℂ D) [IsClosed (S : Set D)]
@@ -92,7 +95,10 @@ theorem codRestrict_apply (phi : A →CP D)
     ((codRestrict phi S hmem a : S) : D) = phi a :=
   rfl
 
-/-- Codomain restriction uses the inherited subtype norm. -/
+/-- **Norm under closed codomain restriction.** Let `A,D` be nonunital complex C*-algebras with
+star-compatible partial orders, let `φ : A →CP D`, and let `S` be a closed nonunital star subalgebra
+of `D` containing every value of `φ`. For every `a ∈ A`, the norm of the restricted value equals
+`‖φ(a)‖`. -/
 @[simp]
 theorem norm_codRestrict_apply (phi : A →CP D)
     (S : NonUnitalStarSubalgebra ℂ D) [IsClosed (S : Set D)]
@@ -100,7 +106,10 @@ theorem norm_codRestrict_apply (phi : A →CP D)
     ‖codRestrict phi S hmem a‖ = ‖phi a‖ :=
   rfl
 
-/-- Pointwise norm contraction is preserved by closed codomain restriction. -/
+/-- **Contraction under closed codomain restriction.** Let `A,D` be nonunital complex C*-algebras with
+star-compatible partial orders, let `φ : A →CP D`, and let `S` be a closed nonunital star subalgebra
+of `D` containing every value of `φ`. If `‖φ(a)‖ ≤ ‖a‖` for every `a ∈ A`, the restricted map
+satisfies the same inequality. -/
 theorem norm_codRestrict_apply_le (phi : A →CP D)
     (S : NonUnitalStarSubalgebra ℂ D) [IsClosed (S : Set D)]
     (hmem : ∀ a : A, phi a ∈ S)
@@ -114,8 +123,10 @@ namespace Canonical
 variable {A : Type uA} {D : Type uD}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra D]
 
-/-- Canonical-order adapter for closed codomain restriction, used by literal
-CP-contractive asymptotic families. -/
+/-- **Canonical-order closed codomain restriction.** Let `A,D` be nonunital complex C*-algebras in their
+spectral orders, let `φ : A →CP D`, and let `S` be a closed nonunital star subalgebra of `D`
+containing the range of `φ`. It sends `a` to `φ(a)` as an element of `S` and is completely positive
+for the spectral order of `S`. -/
 noncomputable def codRestrictClosed (phi : CompletelyPositiveMap.Canonical A D)
     (S : NonUnitalStarSubalgebra ℂ D) [IsClosed (S : Set D)]
     (hmem : ∀ a : A, phi a ∈ S) :
@@ -130,7 +141,10 @@ noncomputable def codRestrictClosed (phi : CompletelyPositiveMap.Canonical A D)
   change A →CP S
   exact CompletelyPositiveMap.codRestrict phi S hmem
 
-/-- The canonical adapter has the original ambient value after inclusion. -/
+/-- **Evaluation of canonical closed codomain restriction.** Let `A,D` be nonunital complex C*-algebras
+in their spectral orders, let `φ : A →CP D`, and let `S` be a closed nonunital star subalgebra of
+`D` containing the range of `φ`. The restricted value, included back into `D`, equals `φ(a)` for
+every `a ∈ A`. -/
 @[simp]
 theorem codRestrictClosed_apply (phi : CompletelyPositiveMap.Canonical A D)
     (S : NonUnitalStarSubalgebra ℂ D) [IsClosed (S : Set D)]
@@ -138,7 +152,9 @@ theorem codRestrictClosed_apply (phi : CompletelyPositiveMap.Canonical A D)
     ((codRestrictClosed phi S hmem a : S) : D) = phi a :=
   rfl
 
-/-- The canonical adapter retains the inherited subtype norm. -/
+/-- **Norm of canonical closed codomain restriction.** Let `A,D` be nonunital complex C*-algebras in
+their spectral orders, let `φ : A →CP D`, and let `S` be a closed nonunital star subalgebra of `D`
+containing the range of `φ`. The norm of the restricted value at every `a ∈ A` is `‖φ(a)‖`. -/
 @[simp]
 theorem norm_codRestrictClosed_apply (phi : CompletelyPositiveMap.Canonical A D)
     (S : NonUnitalStarSubalgebra ℂ D) [IsClosed (S : Set D)]
@@ -146,7 +162,10 @@ theorem norm_codRestrictClosed_apply (phi : CompletelyPositiveMap.Canonical A D)
     ‖codRestrictClosed phi S hmem a‖ = ‖phi a‖ :=
   rfl
 
-/-- The canonical adapter preserves pointwise contraction. -/
+/-- **Canonical closed restriction preserves contraction.** Let `A,D` be nonunital complex C*-algebras
+in their spectral orders, let `φ : A →CP D`, and let `S` be a closed nonunital star subalgebra of
+`D` containing the range of `φ`. If `‖φ(a)‖ ≤ ‖a‖` for every `a ∈ A`, the restricted map has the
+same pointwise bound. -/
 theorem norm_codRestrictClosed_apply_le
     (phi : CompletelyPositiveMap.Canonical A D)
     (S : NonUnitalStarSubalgebra ℂ D) [IsClosed (S : Set D)]

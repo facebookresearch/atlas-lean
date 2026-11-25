@@ -39,8 +39,10 @@ variable {B : Type uB} [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
 
-/-- A square operator matrix has its mixed Gram value on the two actual row
-families. This includes the self-square case but does not assume it. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a normed right C-star module over
+B. For a finite index type I, an I-by-I matrix R of adjointable endomorphisms of E, and two
+I-indexed vector families, the mixed Gram pairing for R-adjoint R equals the pairing of the
+two transformed row families. -/
 theorem matrix_star_mul_mixed_inner {I : Type uI} [Fintype I]
     (R : CStarMatrix I I (AdjointableOperator.End B E)) (u v : I → E) :
     (∑ i, ∑ j, rightInner (B := B) (u i) ((star R * R) i j (v j))) =

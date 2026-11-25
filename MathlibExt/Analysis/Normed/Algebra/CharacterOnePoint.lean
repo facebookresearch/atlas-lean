@@ -44,18 +44,28 @@ universe uA uB
 
 variable {A : Type uA} [NonUnitalNormedRing A] [NormedSpace ℂ A]
 
-/-- The canonical compactification carrier is exactly existing weak characters union the actual zero. -/
+/-- **Character space with zero.** Let `A` be a nonunital normed ring with a complex normed vector-space
+structure. Write `Δ(A)` for its nonzero continuous complex characters, in the topology of pointwise
+convergence. This is the subspace `Δ(A) ∪ {0}` of the pointwise-topologized continuous dual of `A`. -/
 abbrev characterSpaceWithZero (A : Type uA) [NonUnitalNormedRing A] [NormedSpace ℂ A] :=
   characterSpace ℂ A ∪ ({0} : Set (WeakDual ℂ A))
 
-/-- The distinguished point is the original zero functional. -/
+/-- **Zero character point.** Let `A` be a nonunital normed ring with a complex normed vector-space
+structure. Write `Δ(A)` for its nonzero continuous complex characters, in the topology of pointwise
+convergence. The distinguished point of `Δ(A) ∪ {0}` is the zero functional. -/
 def zeroCharacter : characterSpaceWithZero A := ⟨0, Or.inr rfl⟩
 
-/-- The actual original character inclusion into its union with zero. -/
+/-- **Inclusion of nonzero characters.** Let `A` be a nonunital normed ring with a complex normed
+vector-space structure. Write `Δ(A)` for its nonzero continuous complex characters, in the topology
+of pointwise convergence. The inclusion `Δ(A) → Δ(A) ∪ {0}` sends each nonzero character to the same
+continuous functional. -/
 def characterWithZeroEmbedding (φ : characterSpace ℂ A) : characterSpaceWithZero A :=
   ⟨φ, Or.inl φ.property⟩
 
-/-- The original inclusion retains the same pointwise topology. -/
+/-- **Topological embedding of the character space.** Let `A` be a nonunital normed ring with a complex
+normed vector-space structure. Write `Δ(A)` for its nonzero continuous complex characters, in the
+topology of pointwise convergence. The inclusion of `Δ(A)` into `Δ(A) ∪ {0}` is a topological
+embedding for the pointwise topologies. -/
 theorem characterWithZeroEmbedding_isEmbedding :
     IsEmbedding (characterWithZeroEmbedding (A := A)) :=
   (IsEmbedding.of_comp_iff
@@ -64,7 +74,10 @@ theorem characterWithZeroEmbedding_isEmbedding :
     (show IsEmbedding ((Subtype.val : characterSpaceWithZero A → WeakDual ℂ A) ∘
         characterWithZeroEmbedding) from IsEmbedding.subtypeVal)
 
-/-- Its range is exactly the complement of the actual zero point. -/
+/-- **Range of the nonzero-character inclusion.** Let `A` be a nonunital normed ring with a complex
+normed vector-space structure. Write `Δ(A)` for its nonzero continuous complex characters, in the
+topology of pointwise convergence. The range of the inclusion is exactly the complement of the zero
+functional in `Δ(A) ∪ {0}`. -/
 theorem characterWithZeroEmbedding_range :
     Set.range (characterWithZeroEmbedding (A := A)) =
       ({zeroCharacter} : Set (characterSpaceWithZero A))ᶜ := by
@@ -91,23 +104,34 @@ variable [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [CompleteSpace A]
 instance characterSpaceWithZero_compactSpace : CompactSpace (characterSpaceWithZero A) :=
   isCompact_iff_compactSpace.mp (CharacterSpace.union_zero_isCompact (A := A))
 
-/-- The strict actual one-point homeomorphism, built on the original character carrier. -/
+/-- **One-point compactification of the character space.** Let `A` be a nonunital complex Banach algebra
+and let `Δ(A)` be its nonzero continuous character space with pointwise topology. The one-point
+compactification of `Δ(A)` is homeomorphic to `Δ(A) ∪ {0}` in the pointwise-topologized continuous
+dual. -/
 def onePointCharacterSpaceHomeomorph :
     OnePoint (characterSpace ℂ A) ≃ₜ characterSpaceWithZero A :=
   OnePoint.equivOfIsEmbeddingOfRangeEq zeroCharacter characterWithZeroEmbedding
     characterWithZeroEmbedding_isEmbedding characterWithZeroEmbedding_range
 
-/-- The additional point has the original zero-functional value. -/
+/-- **Infinity corresponds to the zero character.** Let `A` be a nonunital complex Banach algebra and
+let `Δ(A)` be its nonzero continuous character space with pointwise topology. The canonical
+homeomorphism from the one-point compactification of `Δ(A)` to `Δ(A) ∪ {0}` sends infinity to the
+zero functional. -/
 @[simp]
 theorem onePointCharacterSpaceHomeomorph_infty :
     onePointCharacterSpaceHomeomorph (A := A) ∞ = zeroCharacter := rfl
 
-/-- Every original character keeps its exact inclusion value. -/
+/-- **Finite points in the character compactification.** Let `A` be a nonunital complex Banach algebra
+and let `Δ(A)` be its nonzero continuous character space with pointwise topology. The canonical
+compactification homeomorphism sends each character `χ ∈ Δ(A)` to the same nonzero functional in
+`Δ(A) ∪ {0}`. -/
 @[simp]
 theorem onePointCharacterSpaceHomeomorph_coe (φ : characterSpace ℂ A) :
     onePointCharacterSpaceHomeomorph φ = characterWithZeroEmbedding φ := rfl
 
-/-- The inverse sends the same actual zero point to infinity. -/
+/-- **Zero corresponds to infinity.** Let `A` be a nonunital complex Banach algebra and let `Δ(A)` be
+its nonzero continuous character space with pointwise topology. The inverse canonical homeomorphism
+from `Δ(A) ∪ {0}` to its one-point character compactification sends the zero functional to infinity. -/
 @[simp]
 theorem onePointCharacterSpaceHomeomorph_symm_zero :
     (onePointCharacterSpaceHomeomorph (A := A)).symm zeroCharacter = ∞ := by
@@ -120,7 +144,10 @@ section Precomposition
 
 variable {B : Type uB} [NonUnitalNormedRing B] [NormedSpace ℂ B]
 
-/-- Literal continuous precomposition on the actual character/zero union. -/
+/-- **Continuous precomposition of characters with zero.** Let `A,B` be nonunital normed rings with
+complex normed vector-space structures, and let `f : A → B` be a continuous nonunital complex
+algebra homomorphism. Precomposition `χ ↦ χ ∘ f` defines a continuous map `Δ(B) ∪ {0} → Δ(A) ∪ {0}`
+in pointwise topology, allowing a nonzero character to become zero. -/
 def characterWithZeroPrecomposition (f : A →ₙₐ[ℂ] B) (hf : Continuous f) :
     C(characterSpaceWithZero B, characterSpaceWithZero A) := by
   let fL : A →L[ℂ] B := ContinuousLinearMap.mk (LinearMap.ofClass f) hf
@@ -142,7 +169,9 @@ def characterWithZeroPrecomposition (f : A →ₙₐ[ℂ] B) (hf : Continuous f)
     change Continuous (fun φ : characterSpaceWithZero B => (φ : WeakDual ℂ B) (f a))
     exact (WeakDual.eval_continuous (f a)).comp continuous_subtype_val
 
-/-- The actual precomposition preserves the original zero point. -/
+/-- **Precomposition preserves the zero character.** Let `A,B` be nonunital normed rings with complex
+normed vector-space structures, and let `f : A → B` be a continuous nonunital complex algebra
+homomorphism. Precomposition sends the zero character of `B` to the zero character of `A`. -/
 @[simp]
 theorem characterWithZeroPrecomposition_zero (f : A →ₙₐ[ℂ] B) (hf : Continuous f) :
     characterWithZeroPrecomposition f hf zeroCharacter = zeroCharacter := by
@@ -151,7 +180,9 @@ theorem characterWithZeroPrecomposition_zero (f : A →ₙₐ[ℂ] B) (hf : Cont
   intro a
   rfl
 
-/-- Its values are precisely the original functional applied to the original homomorphism. -/
+/-- **Evaluation of character precomposition.** Let `A,B` be nonunital normed rings with complex normed
+vector-space structures, and let `f : A → B` be a continuous nonunital complex algebra homomorphism.
+For `χ ∈ Δ(B) ∪ {0}` and `a ∈ A`, the precomposed functional has value `χ(f(a))`. -/
 @[simp]
 theorem characterWithZeroPrecomposition_apply (f : A →ₙₐ[ℂ] B) (hf : Continuous f)
     (φ : characterSpaceWithZero B) (a : A) :
@@ -165,7 +196,10 @@ variable {B : Type uB} [NonUnitalNormedRing B] [NormedSpace ℂ B]
 variable [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [CompleteSpace A]
 variable [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] [CompleteSpace B]
 
-/-- The literal basepoint-preserving character map on the original one-point compactifications. -/
+/-- **Precomposition on one-point character compactifications.** Let `A,B` be nonunital complex Banach
+algebras and `f : A → B` a continuous nonunital complex algebra homomorphism. Precomposition defines
+a continuous map from the one-point compactification of `Δ(B)` to that of `Δ(A)`, using infinity for
+the zero character. -/
 def onePointCharacterPrecomposition (f : A →ₙₐ[ℂ] B) (hf : Continuous f) :
     C(OnePoint (characterSpace ℂ B), OnePoint (characterSpace ℂ A)) where
   toFun p := (onePointCharacterSpaceHomeomorph (A := A)).symm
@@ -174,7 +208,9 @@ def onePointCharacterPrecomposition (f : A →ₙₐ[ℂ] B) (hf : Continuous f)
     ((characterWithZeroPrecomposition f hf).continuous.comp
       (onePointCharacterSpaceHomeomorph (A := B)).continuous)
 
-/-- Every nonunital map preserves infinity in this actual compactification. -/
+/-- **Character precomposition fixes infinity.** Let `A,B` be nonunital complex Banach algebras and `f :
+A → B` a continuous nonunital complex algebra homomorphism. The map on one-point character
+compactifications induced by `f` sends infinity to infinity. -/
 @[simp]
 theorem onePointCharacterPrecomposition_infty (f : A →ₙₐ[ℂ] B) (hf : Continuous f) :
     onePointCharacterPrecomposition f hf ∞ = ∞ := by

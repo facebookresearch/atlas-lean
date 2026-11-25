@@ -38,7 +38,10 @@ open scoped OnePoint
 
 universe uX uY uZ
 
-/-- Actual continuous one-point maps preserving the original additional point. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+continuous one-point maps preserving the additional point. -/
 structure PointedOnePointMap (X : Type uX) (Y : Type uY)
     [TopologicalSpace X] [TopologicalSpace Y] where
   /-- The original continuous extension. -/
@@ -50,7 +53,10 @@ namespace OnePoint
 
 variable {X : Type uX} [TopologicalSpace X]
 
-/-- The actual finite part, with the original inclusion, has the same topology as X. -/
+/-- Let `X` be a topological space. The finite part of the one-point extension is the complement of
+infinity.
+
+The finite part, with the inclusion, has the same topology as X. -/
 def finitePartHomeomorph {X : Type uX} [TopologicalSpace X] :
     X ≃ₜ {p : OnePoint X // p ∈ (({∞} : Set (OnePoint X))ᶜ)} :=
   OnePoint.isOpenEmbedding_coe.isEmbedding.toHomeomorph.trans
@@ -60,7 +66,10 @@ end OnePoint
 
 namespace PointedOnePointMap
 
-/-- Equality of the original continuous extensions determines a pointed one-point map completely. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+Equality of the continuous extensions determines a pointed one-point map completely. -/
 @[ext]
 theorem ext {X : Type uX} {Y : Type uY} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : PointedOnePointMap X Y} (h : f.extension = g.extension) : f = g := by
@@ -69,7 +78,10 @@ theorem ext {X : Type uX} {Y : Type uY} [TopologicalSpace X] [TopologicalSpace Y
   cases h
   rfl
 
-/-- Pointwise equality of the actual extensions is ordinary pointed-map extensionality. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+Pointwise equality of the extensions is ordinary pointed-map extensionality. -/
 theorem ext_apply {X : Type uX} {Y : Type uY} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : PointedOnePointMap X Y} (h : ∀ x, f.extension x = g.extension x) : f = g :=
   ext (ContinuousMap.ext h)
@@ -77,23 +89,38 @@ theorem ext_apply {X : Type uX} {Y : Type uY} [TopologicalSpace X] [TopologicalS
 variable {X : Type uX} {Y : Type uY} {Z : Type uZ}
 variable [TopologicalSpace X] [TopologicalSpace Y] [TopologicalSpace Z]
 
-/-- The original identity extension is pointed. -/
+/-- Let `X` be a topological space. The pointed map is continuous on the one-point extensions and
+preserves infinity.
+
+The identity extension is pointed. -/
 def id (X : Type uX) [TopologicalSpace X] : PointedOnePointMap X X :=
   ⟨ContinuousMap.id (OnePoint X), rfl⟩
 
-/-- Pointed composition is the same ordinary continuous-map composition. -/
+/-- Let `X`, `Y`, `Z` be topological spaces. The pointed map is continuous on the one-point
+extensions and preserves infinity.
+
+Pointed composition is the same ordinary continuous-map composition. -/
 def comp (g : PointedOnePointMap Y Z) (f : PointedOnePointMap X Y) : PointedOnePointMap X Z :=
   ⟨g.extension.comp f.extension, by change g.extension (f.extension ∞) = ∞; rw [f.map_infty, g.map_infty]⟩
 
-/-- The actual open domain consists precisely of the original points with finite image. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+The open domain consists precisely of the points with finite image. -/
 def domain (f : PointedOnePointMap X Y) : Set X :=
   ((↑) : X → OnePoint X) ⁻¹' (f.extension ⁻¹' ({∞} : Set (OnePoint Y))ᶜ)
 
-/-- This actual domain is open in the original X. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+This domain is open in the X. -/
 theorem domain_isOpen (f : PointedOnePointMap X Y) : IsOpen f.domain :=
   (OnePoint.isClosed_infty.isOpen_compl.preimage f.extension.continuous).preimage OnePoint.continuous_coe
 
-/-- The whole finite-value preimage contains no additional source point. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+The whole finite-value preimage contains no additional source point. -/
 theorem finitePreimage_subset_range (f : PointedOnePointMap X Y) :
     f.extension ⁻¹' ({∞} : Set (OnePoint Y))ᶜ ⊆ Set.range ((↑) : X → OnePoint X) := by
   intro p hp
@@ -103,12 +130,18 @@ theorem finitePreimage_subset_range (f : PointedOnePointMap X Y) :
   subst p
   exact hp f.map_infty
 
-/-- The original finite-value domain is the finite preimage with the same subspace topology. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+The finite-value domain is the finite preimage with the same subspace topology. -/
 def domainHomeomorph (f : PointedOnePointMap X Y) :
     f.domain ≃ₜ (f.extension ⁻¹' ({∞} : Set (OnePoint Y))ᶜ) :=
   OnePoint.isOpenEmbedding_coe.isEmbedding.homeomorphOfSubsetRange f.finitePreimage_subset_range
 
-/-- The actual original finite restriction, built from the existing preimage and finite-part factories. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+The finite restriction, built from the existing preimage and finite-part factories. -/
 def partialMap (f : PointedOnePointMap X Y) : C(f.domain, Y) where
   toFun x := (OnePoint.finitePartHomeomorph (X := Y)).symm
     (f.extension.restrictPreimage ({∞} : Set (OnePoint Y))ᶜ (f.domainHomeomorph x))
@@ -116,7 +149,10 @@ def partialMap (f : PointedOnePointMap X Y) : C(f.domain, Y) where
     ((f.extension.restrictPreimage ({∞} : Set (OnePoint Y))ᶜ).continuous.comp
       f.domainHomeomorph.continuous)
 
-/-- Its finite values are exactly those of the original continuous extension. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+Its finite values are exactly those of the continuous extension. -/
 theorem partialMap_coe (f : PointedOnePointMap X Y) (x : f.domain) :
     (f.partialMap x : OnePoint Y) = f.extension (x : X) := by
   let q : {p : OnePoint Y // p ∈ (({∞} : Set (OnePoint Y))ᶜ)} :=
@@ -126,7 +162,10 @@ theorem partialMap_coe (f : PointedOnePointMap X Y) (x : f.domain) :
     f.extension (x : X)
   exact congrArg Subtype.val h
 
-/-- Every original point outside the actual domain maps to infinity. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity.
+
+Every point outside the domain maps to infinity. -/
 theorem outside_domain (f : PointedOnePointMap X Y) (x : X) (hx : x ∉ f.domain) :
     f.extension x = ∞ := by
   change ¬ f.extension (x : OnePoint X) ≠ ∞ at hx
@@ -136,7 +175,10 @@ section Proper
 
 variable [LocallyCompactSpace Y] [T2Space Y]
 
-/-- The actual original finite restriction is proper; no properness certificate is an input. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Assume `Y` is locally compact and Hausdorff.
+
+The restriction to the finite open domain is a proper continuous map. -/
 theorem partialMap_isProperMap (f : PointedOnePointMap X Y) : IsProperMap f.partialMap := by
   have hproper : IsProperMap f.extension := f.extension.continuous.isProperMap
   have hrestricted := hproper.restrictPreimage ({∞} : Set (OnePoint Y))ᶜ
@@ -155,12 +197,18 @@ namespace PointedOnePointMap
 variable {X : Type uX} {Y : Type uY}
 variable [TopologicalSpace X] [TopologicalSpace Y]
 
-/-- The actual finite map, extended by infinity off its supplied domain and at infinity. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Specify a subset `U ⊆ X` and a continuous map `g : U → Y`.
+
+The finite map, extended by infinity off its supplied domain and at infinity. -/
 def openProperExtensionFun (U : Set X) (g : C(U, Y)) : OnePoint X → OnePoint Y := by
   classical
   exact fun p => p.elim ∞ (fun x => if hx : x ∈ U then (g ⟨x, hx⟩ : OnePoint Y) else ∞)
 
-/-- A finite target subset pulls back to the original open-domain map's finite preimage. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Specify a subset `U ⊆ X` and a continuous map `g : U → Y`.
+
+A finite target subset pulls back to the open-domain map's finite preimage. -/
 theorem openProperExtensionFun_preimage (U : Set X) (g : C(U, Y))
     (s : Set (OnePoint Y)) (hs : ∞ ∉ s) :
     openProperExtensionFun U g ⁻¹' s =
@@ -192,7 +240,11 @@ theorem openProperExtensionFun_preimage (U : Set X) (g : C(U, Y))
         simpa only [openProperExtensionFun, OnePoint.elim_some, dite_eq_left u.property, Subtype.eta]
           using hu
 
-/-- Proper compact preimages and an open domain make the infinity extension continuous. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Assume `X` is Hausdorff. Specify an open subset `U ⊆ X` and a proper
+continuous map `g : U → Y`.
+
+Proper compact preimages and an open domain make the infinity extension continuous. -/
 theorem openProperExtensionFun_continuous [T2Space X]
     (U : Set X) (hU : IsOpen U) (g : C(U, Y)) (hg : IsProperMap g) :
     Continuous (openProperExtensionFun U g) := by
@@ -216,27 +268,43 @@ theorem openProperExtensionFun_continuous [T2Space X]
     rw [openProperExtensionFun_preimage U g s hinfty]
     exact OnePoint.isClosed_image_coe.mpr ⟨himage.isClosed, himage⟩
 
-/-- Extend the actual proper map on an open subset by infinity outside that subset. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Assume `X` is Hausdorff. Specify an open subset `U ⊆ X` and a proper
+continuous map `g : U → Y`.
+
+Extend the proper map on an open subset by infinity outside that subset. -/
 def ofOpenProperMap [T2Space X] (U : Set X) (hU : IsOpen U)
     (g : C(U, Y)) (hg : IsProperMap g) : PointedOnePointMap X Y where
   extension := ⟨openProperExtensionFun U g, openProperExtensionFun_continuous U hU g hg⟩
   map_infty := rfl
 
-/-- The extension retains every finite value on the original open domain. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Assume `X` is Hausdorff. Specify an open subset `U ⊆ X` and a proper
+continuous map `g : U → Y`.
+
+The extension retains every finite value on the open domain. -/
 theorem ofOpenProperMap_extension_coe [T2Space X] (U : Set X) (hU : IsOpen U)
     (g : C(U, Y)) (hg : IsProperMap g) (x : U) :
     (ofOpenProperMap U hU g hg).extension (x : X) = (g x : OnePoint Y) := by
   change openProperExtensionFun U g ((x : X) : OnePoint X) = (g x : OnePoint Y)
   simp only [openProperExtensionFun, OnePoint.elim_some, dite_eq_left x.property, Subtype.eta]
 
-/-- Every original point outside the supplied open domain is sent to infinity. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Assume `X` is Hausdorff. Specify an open subset `U ⊆ X` and a proper
+continuous map `g : U → Y`.
+
+Every point outside the supplied open domain is sent to infinity. -/
 theorem ofOpenProperMap_extension_of_notMem [T2Space X] (U : Set X) (hU : IsOpen U)
     (g : C(U, Y)) (hg : IsProperMap g) (x : X) (hx : x ∉ U) :
     (ofOpenProperMap U hU g hg).extension x = ∞ := by
   change openProperExtensionFun U g (x : OnePoint X) = ∞
   simp only [openProperExtensionFun, OnePoint.elim_some, dite_eq_right hx]
 
-/-- Recover the exact original open subset from the extension's finite-value locus. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Assume `X` is Hausdorff. Specify an open subset `U ⊆ X` and a proper
+continuous map `g : U → Y`.
+
+Recover the exact open subset from the extension's finite-value locus. -/
 theorem domain_ofOpenProperMap [T2Space X] (U : Set X) (hU : IsOpen U)
     (g : C(U, Y)) (hg : IsProperMap g) :
     (ofOpenProperMap U hU g hg).domain = U := by
@@ -244,7 +312,11 @@ theorem domain_ofOpenProperMap [T2Space X] (U : Set X) (hU : IsOpen U)
   by_cases hx : x ∈ U <;>
     simp [domain, ofOpenProperMap, openProperExtensionFun, hx]
 
-/-- Recover the original map after transporting along the exact domain equality. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Assume `X` is Hausdorff. Specify an open subset `U ⊆ X` and a proper
+continuous map `g : U → Y`.
+
+Recover the map after transporting along the exact domain equality. -/
 theorem partialMap_ofOpenProperMap [T2Space X] (U : Set X) (hU : IsOpen U)
     (g : C(U, Y)) (hg : IsProperMap g) :
     (ofOpenProperMap U hU g hg).partialMap.comp
@@ -257,7 +329,10 @@ theorem partialMap_ofOpenProperMap [T2Space X] (U : Set X) (hU : IsOpen U)
   change (ofOpenProperMap U hU g hg).extension (x : X) = (g x : OnePoint Y)
   exact ofOpenProperMap_extension_coe U hU g hg x
 
-/-- Reconstruct each pointed map from its actual open proper restriction. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Assume `X` is Hausdorff. Assume `Y` is locally compact and Hausdorff.
+
+Reconstruct each pointed map from its open proper restriction. -/
 theorem ofOpenProperMap_partialMap [T2Space X] [LocallyCompactSpace Y] [T2Space Y]
     (f : PointedOnePointMap X Y) :
     ofOpenProperMap f.domain f.domain_isOpen f.partialMap f.partialMap_isProperMap = f := by
@@ -274,7 +349,12 @@ theorem ofOpenProperMap_partialMap [T2Space X] [LocallyCompactSpace Y] [T2Space 
           f.partialMap_isProperMap x hx]
         exact (f.outside_domain x hx).symm
 
-/-- Exact domain and finite values uniquely determine the pointed extension. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Assume `X` is Hausdorff. Specify an open subset `U ⊆ X` and a proper
+continuous map `g : U → Y`. The compared pointed map has finite domain `U` and agrees with `g`
+at every point of `U`.
+
+Exact domain and finite values uniquely determine the pointed extension. -/
 theorem ofOpenProperMap_unique [T2Space X] (U : Set X) (hU : IsOpen U)
     (g : C(U, Y)) (hg : IsProperMap g) (f : PointedOnePointMap X Y)
     (hdom : f.domain = U) (hvalue : ∀ x : U, (g x : OnePoint Y) = f.extension (x : X)) :
@@ -290,7 +370,11 @@ theorem ofOpenProperMap_unique [T2Space X] (U : Set X) (hU : IsOpen U)
       · have hfx : x ∉ f.domain := by simpa only [hdom] using hx
         rw [f.outside_domain x hfx, ofOpenProperMap_extension_of_notMem U hU g hg x hx]
 
-/-- Every proper continuous open-domain map has its unique actual pointed extension. -/
+/-- Let `X`, `Y` be topological spaces. The pointed map is continuous on the one-point extensions
+and preserves infinity. Assume `X` is Hausdorff. Specify an open subset `U ⊆ X` and a proper
+continuous map `g : U → Y`.
+
+Every proper continuous open-domain map has its unique pointed extension. -/
 theorem existsUnique_ofOpenProperMap [T2Space X] (U : Set X) (hU : IsOpen U)
     (g : C(U, Y)) (hg : IsProperMap g) :
     ∃! f : PointedOnePointMap X Y, f.domain = U ∧

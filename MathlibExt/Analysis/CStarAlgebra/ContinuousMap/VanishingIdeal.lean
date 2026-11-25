@@ -86,7 +86,9 @@ private def vanishingSubalgebra (X : Type uX) [TopologicalSpace X]
     rintro f ⟨f, rfl⟩
     exact ⟨star f, rfl⟩
 
-/-- The actual closed two-sided C0 ideal inside the stock BCF algebra. -/
+/-- Let `X` be a topological space. Let `B` be a possibly nonunital complex C*-algebra.
+
+The closed two-sided C0 ideal inside the BCF algebra. -/
 @[no_expose]
 def vanishingIdeal (X : Type uX) [TopologicalSpace X]
     (B : Type uB) [NonUnitalCStarAlgebra B] : ClosedStarIdeal (X →ᵇ B) where
@@ -107,7 +109,9 @@ def vanishingIdeal (X : Type uX) [TopologicalSpace X]
           zero_at_infty' := tendsto_zero_mul_bounded f (zero_at_infty f) a }
       exact ⟨g, rfl⟩
 
-/-- Membership is precisely the actual cocompact vanishing property. -/
+/-- Let `X` be a topological space. Let `B` be a possibly nonunital complex C*-algebra.
+
+Membership is precisely the cocompact vanishing property. -/
 theorem mem_vanishingIdeal_iff (f : X →ᵇ B) :
     f ∈ vanishingIdeal X B ↔ Tendsto f (cocompact X) (nhds 0) := by
   constructor
@@ -119,20 +123,26 @@ theorem mem_vanishingIdeal_iff (f : X →ᵇ B) :
         zero_at_infty' := hf }
     exact ⟨g, rfl⟩
 
-/-- The set carrier is the literal image of C0, not an abstract ideal model. -/
+/-- Let `X` be a topological space. Let `B` be a possibly nonunital complex C*-algebra.
+
+The set carrier is the image of C0, not an abstract ideal model. -/
 theorem vanishingIdeal_carrier (X : Type uX) [TopologicalSpace X]
     (B : Type uB) [NonUnitalCStarAlgebra B] :
     (vanishingIdeal X B : Set (X →ᵇ B)) =
       Set.range (ZeroAtInftyContinuousMap.toBCF : C₀(X, B) → X →ᵇ B) := by
   rfl
 
-/-- The stock C0 inclusion lands in the constructed ideal. -/
+/-- Let `X` be a topological space. Let `B` be a possibly nonunital complex C*-algebra.
+
+The C0 inclusion lands in the constructed ideal. -/
 theorem toBCF_mem_vanishingIdeal (f : C₀(X, B)) :
     f.toBCF ∈ vanishingIdeal X B :=
   (mem_vanishingIdeal_iff f.toBCF).2 (zero_at_infty f)
 
-/-- Coefficient postcomposition carries the actual vanishing ideal into the
-target vanishing ideal for every topological domain, including the empty one. -/
+/-- Let `X` be a topological space. Let `A`, `C` be possibly nonunital complex C*-algebras.
+
+Coefficient postcomposition carries the vanishing ideal into the target vanishing ideal for
+every topological domain, including the empty one. -/
 theorem compNonUnitalStarAlgHom_mapsTo_vanishingIdeal
     {A : Type uA} {C : Type uC}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra C]

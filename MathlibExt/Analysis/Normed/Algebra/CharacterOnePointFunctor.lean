@@ -43,7 +43,9 @@ variable [NonUnitalNormedRing A] [NormedSpace ℂ A]
 variable [NonUnitalNormedRing B] [NormedSpace ℂ B]
 variable [NonUnitalNormedRing C] [NormedSpace ℂ C]
 
-/-- Identity precomposition is the original identity on actual weak characters with zero. -/
+/-- **Identity precomposition on characters with zero.** For a nonunital normed ring `A` with a complex
+normed vector-space structure, precomposition with its identity algebra homomorphism is the identity
+continuous map of `Δ(A) ∪ {0}` in pointwise topology. -/
 theorem characterWithZeroPrecomposition_id :
     characterWithZeroPrecomposition (NonUnitalAlgHom.id ℂ A) continuous_id =
       ContinuousMap.id (characterSpaceWithZero A) := by
@@ -52,7 +54,10 @@ theorem characterWithZeroPrecomposition_id :
   intro a
   rfl
 
-/-- The actual precomposition reverses the original nonunital algebra-map composition. -/
+/-- **Character precomposition reverses composition.** For nonunital normed rings `A,B,C` with complex
+normed vector-space structures and continuous nonunital complex algebra homomorphisms `f : A → B`,
+`g : B → C`, precomposition with `g ∘ f` on characters with zero equals precomposition with `g`
+followed by precomposition with `f`. -/
 theorem characterWithZeroPrecomposition_comp
     (f : A →ₙₐ[ℂ] B) (g : B →ₙₐ[ℂ] C) (hf : Continuous f) (hg : Continuous g) :
     characterWithZeroPrecomposition (g.comp f) (hg.comp hf) =
@@ -68,12 +73,16 @@ variable [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [CompleteSpace A]
 variable [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] [CompleteSpace B]
 variable [IsScalarTower ℂ C C] [SMulCommClass ℂ C C] [CompleteSpace C]
 
-/-- The actual original pointed character map, with its proved distinguished-point value. -/
+/-- **Pointed map of character compactifications.** A continuous nonunital complex algebra homomorphism
+`f : A → B` between nonunital complex Banach algebras induces a continuous map from the one-point
+character compactification of `B` to that of `A` which fixes infinity. -/
 def pointedCharacterMap (f : A →ₙₐ[ℂ] B) (hf : Continuous f) :
     PointedOnePointMap (characterSpace ℂ B) (characterSpace ℂ A) :=
   ⟨onePointCharacterPrecomposition f hf, onePointCharacterPrecomposition_infty f hf⟩
 
-/-- Identity is preserved by the same actual one-point map. -/
+/-- **Identity map of a character compactification.** For a nonunital complex Banach algebra `A`,
+precomposition with the identity homomorphism is the identity continuous map of the one-point
+compactification of its nonzero character space. -/
 theorem onePointCharacterPrecomposition_id :
     onePointCharacterPrecomposition (NonUnitalAlgHom.id ℂ A) continuous_id =
       ContinuousMap.id (OnePoint (characterSpace ℂ A)) := by
@@ -85,7 +94,9 @@ theorem onePointCharacterPrecomposition_id :
   rw [characterWithZeroPrecomposition_id]
   exact (onePointCharacterSpaceHomeomorph (A := A)).symm_apply_apply p
 
-/-- The actual one-point character maps reverse the original composition without any model field. -/
+/-- **Composition on one-point character compactifications.** For nonunital complex Banach algebras
+`A,B,C` and continuous nonunital complex algebra homomorphisms `f : A → B`, `g : B → C`, the
+compactified character map of `g ∘ f` is the character map of `g` followed by that of `f`. -/
 theorem onePointCharacterPrecomposition_comp
     (f : A →ₙₐ[ℂ] B) (g : B →ₙₐ[ℂ] C) (hf : Continuous f) (hg : Continuous g) :
     onePointCharacterPrecomposition (g.comp f) (hg.comp hf) =

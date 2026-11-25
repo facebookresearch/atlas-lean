@@ -32,8 +32,10 @@ namespace IsStarProjection
 
 variable {D : Type*} [Ring D] [StarRing D] {p u : D}
 
-/-- The sum of a unitary on a projection corner and the identity on its
-complement is unitary, provided the projection and unitary commute. -/
+/-- Let `D` be a unital star ring, `p` a star projection and `u` a unitary commuting with `p`. The
+element `p*u + (1-p)`, acting by `u` on the projection corner and by the identity on its complement,
+is unitary.
+-/
 theorem mul_add_one_sub_mem_unitary (hp : IsStarProjection p)
     (hu : u ∈ unitary D) (hcomm : Commute p u) :
     p * u + (1 - p) ∈ unitary D := by
@@ -70,7 +72,9 @@ theorem mul_add_one_sub_mem_unitary (hp : IsStarProjection p)
       hp.one_sub.isIdempotentElem.eq]
     noncomm_ring
 
-/-- The literal two-sided Fredholm-pair compression formula is unitary. -/
+/-- Let `D` be a unital star ring, `p` a star projection and `u` a unitary commuting with `p`. The
+two-sided compression formula `p*u*p + 1-p` is unitary.
+-/
 theorem mul_mul_add_one_sub_mem_unitary (hp : IsStarProjection p)
     (hu : u ∈ unitary D) (hcomm : Commute p u) :
     p * u * p + 1 - p ∈ unitary D := by

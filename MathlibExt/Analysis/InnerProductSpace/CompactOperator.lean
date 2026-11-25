@@ -42,9 +42,13 @@ variable {E : Type uE} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
   [CompleteSpace F]
 
-/-- A compact map between Hilbert spaces can be approximated by a map that
-factors through a finite-dimensional orthogonal projection. Both the
-approximant and its adjoint have finite range. -/
+/-- Let `𝕜` be a real or complex scalar field and let both `E` and `F` be complete inner-product
+spaces over `𝕜`. The operator is continuous and `𝕜`-linear from `E` to `F`. The approximation
+error `ε` is strictly positive.
+
+A compact map between Hilbert spaces can be approximated by a map that factors through a
+finite-dimensional orthogonal projection. Both the approximant and its adjoint have finite
+range. -/
 theorem IsCompactOperator.exists_projectionFactor_hasFiniteRange_adjoint_norm_sub_lt
     {K : E →L[𝕜] F} (hK : IsCompactOperator K) {ε : ℝ} (hε : 0 < ε) :
     ∃ (U : Submodule 𝕜 F) (hU : FiniteDimensional 𝕜 U),
@@ -126,8 +130,11 @@ theorem IsCompactOperator.exists_projectionFactor_hasFiniteRange_adjoint_norm_su
   exact ⟨A, hAeq, hAfinite, hAadjointFinite,
     hApprox.trans_lt (half_lt_self hε)⟩
 
-/-- The adjoint of a compact continuous linear map between complete real or
-complex Hilbert spaces is compact. -/
+/-- Let `𝕜` be a real or complex scalar field and let both `E` and `F` be complete inner-product
+spaces over `𝕜`. The operator is continuous and `𝕜`-linear from `E` to `F`.
+
+The adjoint of a compact continuous linear map between complete real or complex Hilbert spaces
+is compact. -/
 theorem IsCompactOperator.adjoint {K : E →L[𝕜] F}
     (hK : IsCompactOperator K) :
     IsCompactOperator (ContinuousLinearMap.adjoint K) := by

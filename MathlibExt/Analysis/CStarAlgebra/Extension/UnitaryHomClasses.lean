@@ -39,7 +39,11 @@ variable [NonUnitalCStarAlgebra P]
 
 attribute [local instance] CStarExtension.outerCStarAlgebra
 
-/-- Weak unitary conjugacy of the actual Busby homomorphisms is reflexive. -/
+/-- **Reflexivity of weak Busby equivalence.** Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. Weak unitary equivalence, defined by unitary conjugation in
+`M(B)/B`, is reflexive. -/
 theorem weakly_unitary_equivalent_refl (tau : BusbyHom C P) :
     WeaklyUnitaryEquivalent tau tau := by
   let _ : CStarAlgebra (OuterMultiplier P) := outerMultiplierCStarAlgebra P
@@ -48,7 +52,11 @@ theorem weakly_unitary_equivalent_refl (tau : BusbyHom C P) :
   change tau a = (1 : OuterMultiplier P) * tau a * star (1 : OuterMultiplier P)
   rw [star_one, one_mul, mul_one]
 
-/-- The inverse weak conjugating unitary is its star, with no unitary-lift premise. -/
+/-- **Symmetry of weak Busby equivalence.** Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. Weak unitary equivalence of two Busby homomorphisms holds in
+either order. -/
 theorem weakly_unitary_equivalent_symm
     {tau₁ tau₂ : BusbyHom C P} (h : WeaklyUnitaryEquivalent tau₁ tau₂) :
     WeaklyUnitaryEquivalent tau₂ tau₁ := by
@@ -70,7 +78,11 @@ theorem weakly_unitary_equivalent_symm
         star ((star v : unitary (OuterMultiplier P)) : OuterMultiplier P) := by
       rw [Unitary.conjStarAlgAut_apply]
 
-/-- Weak conjugations compose in the order v*u, valid for noncommutative targets. -/
+/-- **Transitivity of weak Busby equivalence.** Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. Two consecutive weak unitary equivalences of Busby
+homomorphisms imply a weak unitary equivalence of the first and third. -/
 theorem weakly_unitary_equivalent_trans
     {tau₁ tau₂ tau₃ : BusbyHom C P}
     (h₁₂ : WeaklyUnitaryEquivalent tau₁ tau₂)
@@ -96,7 +108,11 @@ theorem weakly_unitary_equivalent_trans
         star ((v * u : unitary (OuterMultiplier P)) : OuterMultiplier P) := by
       rw [Unitary.conjStarAlgAut_apply]
 
-/-- The plain weak-conjugacy setoid on the existing homomorphism carrier. -/
+/-- **Equivalence relation of weak Busby conjugacy.** Let `A` be a nonunital, possibly nonassociative
+semiring with a distributive complex scalar action and an additive star operation, and let `B` be a
+nonunital complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A →
+M(B)/B`, where `M(B)` is the multiplier algebra. Weak unitary equivalence is an equivalence relation
+on the set of Busby homomorphisms. -/
 @[instance_reducible]
 noncomputable def weakUnitaryHomSetoid (C : Type uC) (P : Type uP)
     [NonUnitalNonAssocSemiring C] [DistribMulAction ℂ C] [StarAddMonoid C]
@@ -105,7 +121,11 @@ noncomputable def weakUnitaryHomSetoid (C : Type uC) (P : Type uP)
   iseqv := ⟨weakly_unitary_equivalent_refl,
     weakly_unitary_equivalent_symm, weakly_unitary_equivalent_trans⟩
 
-/-- Actual unitary classes of Busby homomorphisms, without stable summands or a sum packet. -/
+/-- **Weak unitary classes of Busby homomorphisms.** Let `A` be a nonunital, possibly nonassociative
+semiring with a distributive complex scalar action and an additive star operation, and let `B` be a
+nonunital complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A →
+M(B)/B`, where `M(B)` is the multiplier algebra. This is the quotient of all Busby homomorphisms by
+unitary conjugacy in the outer multiplier algebra. -/
 abbrev UnitaryHomClasses (C : Type uC) (P : Type uP)
     [NonUnitalNonAssocSemiring C] [DistribMulAction ℂ C] [StarAddMonoid C]
     [NonUnitalCStarAlgebra P] :=
@@ -113,29 +133,47 @@ abbrev UnitaryHomClasses (C : Type uC) (P : Type uP)
 
 namespace UnitaryHomClasses
 
-/-- The class of the supplied actual homomorphism. -/
+/-- **Class of a Busby homomorphism.** Let `A` be a nonunital, possibly nonassociative semiring with a
+distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. Each Busby homomorphism determines its class modulo unitary
+conjugacy in `M(B)/B`. -/
 noncomputable def mk (tau : BusbyHom C P) : UnitaryHomClasses C P :=
   Quotient.mk (weakUnitaryHomSetoid C P) tau
 
-/-- Equality of representatives means exactly the original weak unitary conjugacy. -/
+/-- **Equality of weak unitary Busby classes.** Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. Two homomorphisms have the same class exactly when they are
+conjugate by a unitary of `M(B)/B`. -/
 theorem mk_eq_mk_iff (tau₁ tau₂ : BusbyHom C P) :
     mk tau₁ = mk tau₂ ↔ WeaklyUnitaryEquivalent tau₁ tau₂ :=
   ⟨fun h => Quotient.exact h, fun h => Quotient.sound h⟩
 
-/-- A class contains a representative with a genuine multiplier-valued star-hom lift.
-This does not assert raw liftability of every representative in the weak class. -/
+/-- **Liftable representative of a Busby class.** Let `A` be a nonunital, possibly nonassociative
+semiring with a distributive complex scalar action and an additive star operation, and let `B` be a
+nonunital complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A →
+M(B)/B`, where `M(B)` is the multiplier algebra. A weak unitary class has this property when at
+least one of its Busby homomorphisms lifts to a nonunital complex star homomorphism into `M(B)`. -/
 def HasLiftableRepresentative (x : UnitaryHomClasses C P) : Prop :=
   ∃ tau : BusbyHom C P, mk tau = x ∧ IsTrivial tau
 
-/-- The class of the actual zero map contains its literal zero multiplier lift. -/
+/-- **Liftability of the zero Busby class.** Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. The class of the zero homomorphism contains a representative
+lifting to the zero homomorphism into `M(B)`. -/
 theorem zero_hasLiftableRepresentative :
     HasLiftableRepresentative (mk (0 : BusbyHom C P)) :=
   ⟨0, rfl, zero_is_trivial⟩
 
 end UnitaryHomClasses
 
-/-- A genuine multiplier-unitary conjugation transports an actual lift.
-No lift of an arbitrary corona unitary is postulated. -/
+/-- **Strong Busby conjugacy preserves liftability.** Let `A` be a nonunital, possibly nonassociative
+semiring with a distributive complex scalar action and an additive star operation, and let `B` be a
+nonunital complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A →
+M(B)/B`, where `M(B)` is the multiplier algebra. If `τ₁` lifts to `M(B)` and `τ₂` is strongly
+unitarily equivalent to `τ₁`, then `τ₂` also lifts to `M(B)`. -/
 theorem isTrivial_of_strongly_unitary_equivalent
     {tau₁ tau₂ : BusbyHom C P} (h : StronglyUnitaryEquivalent tau₁ tau₂)
     (hLift : IsTrivial tau₁) : IsTrivial tau₂ := by

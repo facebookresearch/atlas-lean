@@ -40,8 +40,12 @@ universe uH
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   [CompleteSpace H]
 
-/-- Under the inverse bounded-operator/multiplier equivalence, the comap of
-the actual compact ideal is exactly the actual coefficient ideal. -/
+/-- Let `H` be an arbitrary complete complex inner-product space, possibly the zero space. Its
+compact endomorphisms form the closed ideal in the bounded operator algebra, with the inherited
+operator norm; multipliers are bounded double centralizers of that ideal.
+
+Under the inverse bounded-operator/multiplier equivalence, the comap of the compact ideal is
+exactly the coefficient ideal. -/
 theorem compactMultiplierEquiv_symm_comap :
     let J := compactEndomorphismClosedStarIdeal (H := H);
     let _ : NonUnitalCStarAlgebra J.carrier := J.carrierCStarAlgebra;
@@ -76,8 +80,12 @@ theorem compactMultiplierEquiv_symm_comap :
     rw [← ha, hInvCoeff]
     exact a.property
 
-/-- The outer multiplier quotient of the actual compact ideal is
-star-algebra equivalent to the existing Calkin algebra on the same quotient norms. -/
+/-- Let `H` be an arbitrary complete complex inner-product space, possibly the zero space. Its
+compact endomorphisms form the closed ideal in the bounded operator algebra, with the inherited
+operator norm; multipliers are bounded double centralizers of that ideal.
+
+The outer multiplier quotient of the compact ideal is star-algebra equivalent to the existing
+Calkin algebra on the same quotient norms. -/
 noncomputable def compactOuterMultiplierEquiv :
     let J := compactEndomorphismClosedStarIdeal (H := H);
     let _ : NonUnitalCStarAlgebra J.carrier := J.carrierCStarAlgebra;
@@ -103,8 +111,11 @@ noncomputable def compactOuterMultiplierEquiv :
   change C.Quotient ≃⋆ₐ[ℂ] J.Quotient
   exact qEq.trans qComap
 
-/-- A multiplier's outer class is sent to the Calkin class of its actual
-recovered bounded operator. -/
+/-- Let `H` be an arbitrary complete complex inner-product space, possibly the zero space. Its
+compact endomorphisms form the closed ideal in the bounded operator algebra, with the inherited
+operator norm; multipliers are bounded double centralizers of that ideal.
+
+A multiplier's outer class is sent to the Calkin class of its recovered bounded operator. -/
 theorem compactOuterMultiplierEquiv_outerQuotientMap :
     let J := compactEndomorphismClosedStarIdeal (H := H);
     let _ : NonUnitalCStarAlgebra J.carrier := J.carrierCStarAlgebra;
@@ -140,8 +151,11 @@ theorem compactOuterMultiplierEquiv_outerQuotientMap :
     _ = J.quotientMap (e.symm m) :=
       NonUnitalStarSubalgebra.quotientEquivComap_mk e.symm J.carrier m
 
-/-- A bounded operator's Calkin class is sent back to the outer class of
-its actual universal multiplier. -/
+/-- Let `H` be an arbitrary complete complex inner-product space, possibly the zero space. Its
+compact endomorphisms form the closed ideal in the bounded operator algebra, with the inherited
+operator norm; multipliers are bounded double centralizers of that ideal.
+
+A bounded operator's Calkin class is sent back to the outer class of its universal multiplier. -/
 theorem compactOuterMultiplierEquiv_symm_classStarMap :
     let J := compactEndomorphismClosedStarIdeal (H := H);
     let _ : NonUnitalCStarAlgebra J.carrier := J.carrierCStarAlgebra;

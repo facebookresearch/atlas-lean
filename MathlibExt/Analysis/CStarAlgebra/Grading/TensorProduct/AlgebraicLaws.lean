@@ -92,12 +92,18 @@ private theorem homogeneous_induction
         simpa only [map_add] using hadd (ofTensor γA γB z) (ofTensor γA γB w) hz hw
   simpa only [ofTensor_toTensor] using hTensor x.toTensor
 
-/-- The signed bilinear multiplication distributes in its second variable. -/
+/-- **Right distributivity of graded tensor multiplication.** Let `A,B` be graded nonunital complex
+C*-algebras. On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗
+d) = (-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For all tensors `x,y,z`, `x(y+z) = x y + x z`. -/
 theorem mul_add (x y z : AlgebraicTensorProduct γA γB) :
     x * (y + z) = x * y + x * z :=
   (mulMap γA γB x).map_add y z
 
-/-- The signed bilinear multiplication distributes in its first variable. -/
+/-- **Left distributivity of graded tensor multiplication.** Let `A,B` be graded nonunital complex
+C*-algebras. On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗
+d) = (-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For all tensors `x,y,z`, `(x+y)z = x z + y z`. -/
 theorem add_mul (x y z : AlgebraicTensorProduct γA γB) :
     (x + y) * z = x * z + y * z := by
   change mulMap γA γB (x + y) z = mulMap γA γB x z + mulMap γA γB y z
@@ -105,18 +111,27 @@ theorem add_mul (x y z : AlgebraicTensorProduct γA γB) :
     congrArg (fun L : AlgebraicTensorProduct γA γB →ₗ[ℂ]
       AlgebraicTensorProduct γA γB => L z) ((mulMap γA γB).map_add x y)
 
-/-- The signed multiplication sends a zero second factor to zero. -/
+/-- **Right multiplication by zero in the graded tensor.** Let `A,B` be graded nonunital complex
+C*-algebras. On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗
+d) = (-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For every tensor `x`, `x 0 = 0`. -/
 theorem mul_zero (x : AlgebraicTensorProduct γA γB) : x * 0 = 0 :=
   (mulMap γA γB x).map_zero
 
-/-- The signed multiplication sends a zero first factor to zero. -/
+/-- **Left multiplication by zero in the graded tensor.** Let `A,B` be graded nonunital complex
+C*-algebras. On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗
+d) = (-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For every tensor `x`, `0 x = 0`. -/
 theorem zero_mul (x : AlgebraicTensorProduct γA γB) : 0 * x = 0 := by
   change mulMap γA γB 0 x = 0
   simpa only [LinearMap.zero_apply] using
     congrArg (fun L : AlgebraicTensorProduct γA γB →ₗ[ℂ]
       AlgebraicTensorProduct γA γB => L x) (mulMap γA γB).map_zero
 
-/-- The signed multiplication is complex linear in its first variable. -/
+/-- **Complex linearity of the first graded product factor.** Let `A,B` be graded nonunital complex
+C*-algebras. On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗
+d) = (-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For every `c ∈ ℂ` and tensors `x,y`, `(c x)y = c(x y)`. -/
 theorem smul_mul (c : ℂ) (x y : AlgebraicTensorProduct γA γB) :
     (c • x) * y = c • (x * y) := by
   change mulMap γA γB (c • x) y = c • mulMap γA γB x y
@@ -124,17 +139,27 @@ theorem smul_mul (c : ℂ) (x y : AlgebraicTensorProduct γA γB) :
     congrArg (fun L : AlgebraicTensorProduct γA γB →ₗ[ℂ]
       AlgebraicTensorProduct γA γB => L y) ((mulMap γA γB).map_smul c x)
 
-/-- The signed multiplication is complex linear in its second variable. -/
+/-- **Complex linearity of the second graded product factor.** Let `A,B` be graded nonunital complex
+C*-algebras. On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗
+d) = (-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For every `c ∈ ℂ` and tensors `x,y`, `x(c y) = c(x y)`. -/
 theorem mul_smul (c : ℂ) (x y : AlgebraicTensorProduct γA γB) :
     x * (c • y) = c • (x * y) :=
   (mulMap γA γB x).map_smul c y
 
-/-- The signed star is additive on every raw tensor. -/
+/-- **Additivity of graded tensor star.** Let `A,B` be graded nonunital complex C*-algebras. On their
+complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗ d) = (-1)^(|b||c|) a c
+⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors, extended by the finite
+parity decomposition. For every pair of tensors `x,y`, `(x+y)* = x* + y*`. -/
 theorem star_add (x y : AlgebraicTensorProduct γA γB) :
     star (x + y) = star x + star y :=
   (starMap γA γB).map_add x y
 
-/-- The signed star conjugates the complex scalar on every raw tensor. -/
+/-- **Conjugate-linearity of graded tensor star.** Let `A,B` be graded nonunital complex C*-algebras. On
+their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗ d) =
+(-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For every `c ∈ ℂ` and tensor `x`, `(c x)* =
+conjugate(c) x*`. -/
 theorem star_smul (c : ℂ) (x : AlgebraicTensorProduct γA γB) :
     star (c • x) = star c • star x :=
   (starMap γA γB).map_smulₛₗ c x
@@ -161,7 +186,10 @@ private theorem associativity_tmul (a c e : A) (b d f : B)
     smul_smul, hsign]
   simp only [_root_.mul_assoc]
 
-/-- The signed multiplication is associative on all raw tensors. -/
+/-- **Associativity of graded tensor multiplication.** Let `A,B` be graded nonunital complex
+C*-algebras. On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗
+d) = (-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For all tensors `x,y,z`, `(x y)z = x(y z)`. -/
 theorem mul_assoc (x y z : AlgebraicTensorProduct γA γB) :
     (x * y) * z = x * (y * z) := by
   refine homogeneous_induction γA γB
@@ -201,7 +229,10 @@ private theorem involution_tmul (a : A) (b : B)
       (γA.star_mem_part ha) (γB.star_mem_part hb),
     smul_smul, degreeSign_sq, one_smul, star_star, star_star]
 
-/-- The signed star is involutive on the full raw tensor carrier. -/
+/-- **Involution law of graded tensor star.** Let `A,B` be graded nonunital complex C*-algebras. On
+their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗ d) =
+(-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For every tensor `x`, `(x*)* = x`. -/
 theorem star_involutive :
     Function.Involutive (star : AlgebraicTensorProduct γA γB →
       AlgebraicTensorProduct γA γB) := by
@@ -240,7 +271,10 @@ private theorem star_product_tmul (a c : A) (b d : B)
     smul_smul, smul_smul, hsign]
   simp only [_root_.mul_assoc]
 
-/-- The signed star reverses every product. -/
+/-- **Product reversal by graded tensor star.** Let `A,B` be graded nonunital complex C*-algebras. On
+their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗ d) =
+(-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For all tensors `x,y`, `(x y)* = y* x*`. -/
 theorem star_mul (x y : AlgebraicTensorProduct γA γB) :
     star (x * y) = star y * star x := by
   refine homogeneous_induction γA γB (fun x => star (x * y) = star y * star x) ?_ ?_ x
@@ -293,7 +327,11 @@ private theorem generator_mul_tmul (a c : A) (b d : B)
       (γB.generatorAut b) (γB.generatorAut d)
       (generator_mem_part γB hb) (generator_mem_part γA hc)]
 
-/-- The factor generator preserves every signed tensor product. -/
+/-- **The factor generator preserves the graded product.** Let `A,B` be graded nonunital complex
+C*-algebras. On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗
+d) = (-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. The factorwise grading generator satisfies `G(x y) =
+G(x) G(y)` for all tensors. -/
 theorem generator_mul (x y : AlgebraicTensorProduct γA γB) :
     generator γA γB (x * y) = generator γA γB x * generator γA γB y := by
   refine homogeneous_induction γA γB
@@ -318,7 +356,11 @@ private theorem generator_star_tmul (a : A) (b : B)
     star_tmul_of_mem γA γB (γA.generatorAut a) (γB.generatorAut b)
       (generator_mem_part γA ha) (generator_mem_part γB hb)]
 
-/-- The factor generator preserves the signed tensor star. -/
+/-- **The factor generator preserves graded star.** Let `A,B` be graded nonunital complex C*-algebras.
+On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗ d) =
+(-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. The factorwise grading generator satisfies `G(x*) =
+G(x)*` for every tensor. -/
 theorem generator_star (x : AlgebraicTensorProduct γA γB) :
     generator γA γB (star x) = star (generator γA γB x) := by
   refine homogeneous_induction γA γB
@@ -328,8 +370,11 @@ theorem generator_star (x : AlgebraicTensorProduct γA γB) :
   · intro m n a b ha hb
     exact generator_star_tmul γA γB a b ha hb
 
-/-- The actual factor generator is a nonunital star-algebra automorphism
-of the fixed signed tensor ring. -/
+/-- **Star automorphism of the graded algebraic tensor.** Let `A,B` be graded nonunital complex
+C*-algebras. On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗
+d) = (-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. The factorwise degree-one generator is a complex
+star-algebra automorphism of the nonunital signed tensor algebra. -/
 def generatorStarAlgEquiv : AlgebraicTensorProduct γA γB ≃⋆ₐ[ℂ]
     AlgebraicTensorProduct γA γB :=
   { (generator γA γB).toEquiv with
@@ -342,8 +387,12 @@ def generatorStarAlgEquiv : AlgebraicTensorProduct γA γB ≃⋆ₐ[ℂ]
 theorem generatorStarAlgEquiv_apply (x : AlgebraicTensorProduct γA γB) :
     generatorStarAlgEquiv γA γB x = generator γA γB x := rfl
 
-/-- The grading group acts by the actual nonunital star-algebra
-automorphisms, with the fixed factor generator in degree one. -/
+/-- **Parity action by star-algebra automorphisms.** Let `A,B` be graded nonunital complex C*-algebras.
+On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗ d) =
+(-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. The identity and the factorwise generator define a
+group homomorphism from `ℤ/2ℤ` into the complex star-algebra automorphisms of the signed tensor
+algebra. -/
 def gradingActionHom : Multiplicative (ZMod 2) →*
     (AlgebraicTensorProduct γA γB ≃⋆ₐ[ℂ] AlgebraicTensorProduct γA γB) := by
   let action (n : ZMod 2) : AlgebraicTensorProduct γA γB ≃⋆ₐ[ℂ]
@@ -368,8 +417,12 @@ def gradingActionHom : Multiplicative (ZMod 2) →*
         change action (m.toAdd + n.toAdd) x = action m.toAdd (action n.toAdd x)
         simp only [hAction, gradingAction_add] }
 
-/-- The star-algebra action has the original computed linear action on
-every tensor, so its pure and involution characteristics are retained. -/
+/-- **Values of the algebraic star grading action.** Let `A,B` be graded nonunital complex C*-algebras.
+On their complex algebraic tensor product, use the Koszul multiplication `(a ⊗ b)(c ⊗ d) =
+(-1)^(|b||c|) a c ⊗ b d` and star `(a ⊗ b)* = (-1)^(|a||b|) a* ⊗ b*` on homogeneous factors,
+extended by the finite parity decomposition. For each degree `n` and tensor `x`, the star-algebra
+action agrees with the factorwise linear parity action: identity for degree zero, factorwise
+generator for degree one. -/
 @[simp]
 theorem gradingActionHom_apply (n : ZMod 2) (x : AlgebraicTensorProduct γA γB) :
     gradingActionHom γA γB (Multiplicative.ofAdd n) x = gradingAction γA γB n x := by

@@ -46,8 +46,10 @@ variable {I : Type uI} [Fintype I]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
 
-/-- A finite family gives the actual column map b -> sum_i x_i b_i,
-with coefficient-inner coordinates as its computed adjoint. -/
+/-- Let B be a possibly nonunital complex C-star algebra, E a normed right C-star module over B,
+and I a finite index type, possibly empty. For a finite vector family x indexed by I, the
+column map sends a coefficient family b to the sum of x(i)b(i); its adjoint sends a vector e
+to the family of inner products of x(i) with e. -/
 @[no_expose]
 def finiteColumn (x : I → E) :
     AdjointableOperator B (CStarModule.Right.FiniteStandard B I) E := by
@@ -151,22 +153,27 @@ def finiteColumn (x : I → E) :
             intro i hi
             rw [hRval] }
 
-/-- A column evaluates to the literal finite sum of coefficient actions. -/
+/-- Let B be a possibly nonunital complex C-star algebra, E a normed right C-star module over B,
+and I a finite index type, possibly empty. The column value at a coefficient vector b is the
+finite sum of x(i)b(i). -/
 @[simp]
 theorem finiteColumn_apply (x : I → E)
     (b : CStarModule.Right.FiniteStandard B I) :
     finiteColumn (B := B) x b = ∑ i, x i <• b i := by
   rfl
 
-/-- The actual adjoint has coefficient-inner coordinates. -/
+/-- Let B be a possibly nonunital complex C-star algebra, E a normed right C-star module over B,
+and I a finite index type, possibly empty. The i-th coordinate of the adjoint column map is
+the B-valued inner product of x(i) with the input vector. -/
 @[simp]
 theorem finiteColumn_adjoint_apply (x : I → E) (e : E) (i : I) :
     (finiteColumn (B := B) x).adjoint e i =
       CStarModule.rightInner (B := B) (x i) e := by
   rfl
 
-/-- The existing matrix representation sends the actual Gram matrix to
-the column's actual adjoint composite. -/
+/-- Let B be a possibly nonunital complex C-star algebra, E a normed right C-star module over B,
+and I a finite index type, possibly empty. The matrix representation of the Gram matrix of x
+is the adjoint column map composed with the column map. -/
 theorem rightMatrixHom_gram (x : I → E) :
     rightMatrixHom
         (CStarMatrix.ofMatrix fun i j =>
@@ -203,8 +210,9 @@ theorem rightMatrixHom_gram (x : I → E) :
           (M := fun k j => CStarModule.rightInner (B := B) (x k) (x j)) (i := i)) j)
     _ = CStarModule.rightInner (B := B) (x i) (∑ j, x j <• b j) := hsum
 
-/-- A finite right Hilbert-module Gram matrix is positive in the canonical
-C-star matrix order. No matrix positivity is assumed. -/
+/-- Let B be a possibly nonunital complex C-star algebra, E a normed right C-star module over B,
+and I a finite index type, possibly empty. If E is complete, the coefficient Gram matrix of
+any finite vector family in E is nonnegative in the C-star matrix order. -/
 theorem gramMatrix_nonneg [CompleteSpace E] (x : I → E) :
     (letI : PartialOrder B := CStarAlgebra.spectralOrder B
      letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B

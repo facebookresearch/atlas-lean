@@ -43,7 +43,10 @@ section PseudoMetric
 
 variable [PseudoMetricSpace B] [Zero B]
 
-/-- Transpose a vanishing-at-infinity family of bounded continuous functions. -/
+/-- Let `X` and `T` be topological spaces and let `B` be a pseudometric space with zero. The
+iterated bounded and vanishing-at-infinity function spaces use their canonical supremum metrics.
+
+Transpose a vanishing-at-infinity family of bounded continuous functions. -/
 noncomputable def flipToBCF (G : C₀(X, T →ᵇ B)) : T →ᵇ C₀(X, B) := by
   let slice : T → C₀(X, B) := fun t =>
     { toContinuousMap :=
@@ -116,7 +119,10 @@ theorem flipToBCF_apply (G : C₀(X, T →ᵇ B)) (t : T) (x : X) :
     flipToBCF G t x = G x t :=
   rfl
 
-/-- The transpose is injective even when the coefficient space is only pseudometric. -/
+/-- Let `X` and `T` be topological spaces and let `B` be a pseudometric space with zero. The
+iterated bounded and vanishing-at-infinity function spaces use their canonical supremum metrics.
+
+The transpose is injective even when the coefficient space is only pseudometric. -/
 theorem flipToBCF_injective :
     Function.Injective (flipToBCF : C₀(X, T →ᵇ B) → T →ᵇ C₀(X, B)) := by
   intro G H h
@@ -126,7 +132,10 @@ theorem flipToBCF_injective :
   intro t
   simpa only [flipToBCF_apply] using congrArg (fun F : T →ᵇ C₀(X, B) => F t x) h
 
-/-- The transpose preserves the full supremum pseudometric, including empty domains. -/
+/-- Let `X` and `T` be topological spaces and let `B` be a pseudometric space with zero. The
+iterated bounded and vanishing-at-infinity function spaces use their canonical supremum metrics.
+
+The transpose preserves the full supremum pseudometric, including empty domains. -/
 theorem isometry_flipToBCF :
     Isometry (flipToBCF : C₀(X, T →ᵇ B) → T →ᵇ C₀(X, B)) := by
   refine Isometry.of_dist_eq fun G H => le_antisymm ?_ ?_
@@ -166,7 +175,11 @@ section Linear
 variable (R : Type uR) [NormedField R]
 variable [SeminormedAddCommGroup B] [NormedSpace R B]
 
-/-- The same transpose as a linear isometry on the stock seminormed-module structures. -/
+/-- Let `X` and `T` be topological spaces, let `R` be a normed field, and let `B` be a seminormed
+`R`-vector space. The iterated bounded and vanishing-at-infinity function spaces use their
+canonical supremum seminorms.
+
+The same transpose as a linear isometry on the seminormed-module structures. -/
 noncomputable def flipToBCFLinearIsometry :
     C₀(X, T →ᵇ B) →ₗᵢ[R] (T →ᵇ C₀(X, B)) where
   toFun := flipToBCF

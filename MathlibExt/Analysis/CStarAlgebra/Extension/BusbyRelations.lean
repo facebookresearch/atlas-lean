@@ -46,26 +46,40 @@ variable [NonUnitalCStarAlgebra B]
 
 attribute [local instance] CStarExtension.outerCStarAlgebra
 
-/-- Strong unitary equivalence is conjugacy through the outer quotient by an
-actual multiplier unitary. -/
+/-- **Strong unitary equivalence of Busby maps.** Let `A` be a nonunital, possibly nonassociative
+semiring with a distributive complex scalar action and an additive star operation, and let `B` be a
+nonunital complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A →
+M(B)/B`, where `M(B)` is the multiplier algebra. Two such homomorphisms are strongly unitarily
+equivalent when one is obtained from the other by conjugation by the image in `M(B)/B` of a unitary
+of `M(B)`. -/
 def StronglyUnitaryEquivalent (tau₁ tau₂ : BusbyHom A B) : Prop :=
   ∃ u : unitary 𝓜(ℂ, B), ∀ a : A,
     tau₂ a = outerQuotientMap (u : 𝓜(ℂ, B)) * tau₁ a *
       star (outerQuotientMap (u : 𝓜(ℂ, B)))
 
-/-- Weak unitary equivalence permits an actual unitary in the outer
-multiplier algebra itself. -/
+/-- **Weak unitary equivalence of Busby maps.** Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. Two such homomorphisms are weakly unitarily equivalent when
+one is obtained from the other by conjugation by a unitary of `M(B)/B`. -/
 def WeaklyUnitaryEquivalent (tau₁ tau₂ : BusbyHom A B) : Prop :=
   ∃ v : unitary (OuterMultiplier B), ∀ a : A,
     tau₂ a = (v : OuterMultiplier B) * tau₁ a * star (v : OuterMultiplier B)
 
-/-- A Busby homomorphism is trivial when it has an actual multiplier-valued
-star-homomorphic lift through the canonical outer quotient. -/
+/-- **Trivial Busby homomorphism.** Let `A` be a nonunital, possibly nonassociative semiring with a
+distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. It is trivial when it lifts to a nonunital complex star
+homomorphism `A → M(B)` through the quotient `M(B) → M(B)/B`. -/
 def IsTrivial (tau : BusbyHom A B) : Prop :=
   ∃ rho : A →⋆ₙₐ[ℂ] 𝓜(ℂ, B),
     (outerQuotientMap (A := B)).toNonUnitalStarAlgHom.comp rho = tau
 
-/-- Strong unitary equivalence is reflexive. -/
+/-- **Reflexivity of strong Busby equivalence.** Let `A` be a nonunital, possibly nonassociative
+semiring with a distributive complex scalar action and an additive star operation, and let `B` be a
+nonunital complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A →
+M(B)/B`, where `M(B)` is the multiplier algebra. Strong unitary equivalence, defined by
+multiplier-unitary conjugation, is reflexive. -/
 theorem strongly_unitary_equivalent_refl
     (tau : BusbyHom A B) :
     StronglyUnitaryEquivalent tau tau := by
@@ -76,7 +90,11 @@ theorem strongly_unitary_equivalent_refl
     star (outerQuotientMap (1 : 𝓜(ℂ, B)))
   rw [map_one, star_one, one_mul, mul_one]
 
-/-- Strong unitary equivalence is symmetric. -/
+/-- **Symmetry of strong Busby equivalence.** Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. If two Busby homomorphisms are strongly unitarily
+equivalent, they are strongly unitarily equivalent in the opposite order. -/
 theorem strongly_unitary_equivalent_symm
     {tau₁ tau₂ : BusbyHom A B}
     (h : StronglyUnitaryEquivalent tau₁ tau₂) :
@@ -105,7 +123,12 @@ theorem strongly_unitary_equivalent_symm
       simp only [Unitary.conjStarAlgAut_apply, qU, Unitary.coe_star,
         Unitary.coe_map, StarMonoidHom.ofClass_coe, map_star]
 
-/-- Strong unitary equivalence is transitive. -/
+/-- **Transitivity of strong Busby equivalence.** Let `A` be a nonunital, possibly nonassociative
+semiring with a distributive complex scalar action and an additive star operation, and let `B` be a
+nonunital complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A →
+M(B)/B`, where `M(B)` is the multiplier algebra. If the first and second Busby homomorphisms are
+strongly unitarily equivalent, and the second and third are strongly unitarily equivalent, so are
+the first and third. -/
 theorem strongly_unitary_equivalent_trans
     {tau₁ tau₂ tau₃ : BusbyHom A B}
     (h₁₂ : StronglyUnitaryEquivalent tau₁ tau₂)
@@ -143,7 +166,11 @@ theorem strongly_unitary_equivalent_trans
           StarMonoidHom.ofClass_coe, map_mul q]
       rw [Unitary.conjStarAlgAut_apply, hProduct]
 
-/-- The zero Busby homomorphism has the literal zero multiplier lift. -/
+/-- **Zero Busby homomorphism is trivial.** Let `A` be a nonunital, possibly nonassociative semiring
+with a distributive complex scalar action and an additive star operation, and let `B` be a nonunital
+complex C*-algebra. A Busby homomorphism is a complex nonunital star homomorphism `A → M(B)/B`,
+where `M(B)` is the multiplier algebra. The zero Busby homomorphism lifts to the zero homomorphism
+into `M(B)`. -/
 theorem zero_is_trivial : IsTrivial (0 : BusbyHom A B) := by
   refine ⟨0, ?_⟩
   apply NonUnitalStarAlgHom.ext

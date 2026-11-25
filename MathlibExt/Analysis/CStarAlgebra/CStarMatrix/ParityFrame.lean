@@ -32,8 +32,10 @@ namespace CStarMatrix
 
 universe u
 
-/-- Sampling inserted parity rows recovers the padded original for matching
-parities and is zero for distinct parities. -/
+/-- Let `A` be a complex module. For natural numbers `N`, `ε` and `δ : Fin 2` and `X : CStarMatrix (Fin
+N) (Fin N) A`. Sampling inserted parity rows recovers the padded for matching parities and is zero
+for distinct parities.
+-/
 theorem parityRowCompressLinear_insert
     {A : Type u} [AddCommMonoid A] [Module ℂ A]
     (N : ℕ) (ε δ : Fin 2) (X : CStarMatrix (Fin N) (Fin N) A) :
@@ -97,7 +99,9 @@ theorem parityRowCompressLinear_insert
     · rw [dite_eq_left hout, dite_eq_right hin]
     · rw [dite_eq_right hout]
 
-/-- Reinsert the two sampled parities to obtain the exact padded source matrix. -/
+/-- Let `A` be a complex module. For natural numbers `N` and `X : CStarMatrix (Fin N) (Fin N) A`.
+Reinsert the two sampled parities to obtain the exact padded source matrix.
+-/
 theorem parityRowInsertLinear_compress_partition
     {A : Type u} [AddCommMonoid A] [Module ℂ A]
     (N : ℕ) (X : CStarMatrix (Fin N) (Fin N) A) :

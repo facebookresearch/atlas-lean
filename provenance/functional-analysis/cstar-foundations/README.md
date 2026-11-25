@@ -5,6 +5,8 @@ The `source/MathlibExt/` tree contains byte-for-byte immutable snapshots of the
 Lean text without alteration. It is reference material rather than an active
 Lean module. The original copyright and author notices are retained.
 
+The snapshots are pinned at repository commit `c519e5eeea98c14c419dc6981e5062ebdbb398a8`.
+
 The `files-*.jsonl` records give the original library path, original SHA-256,
 Git blob identifier and snapshot path, together with the exported file hash
 and an array of adaptation descriptions. The committed snapshot bytes make

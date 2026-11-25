@@ -51,8 +51,9 @@ section Composition
 variable {B : Type uB} [NonUnitalRing B] [Module ℂ B]
 variable [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] [StarRing B] [StarModule ℂ B]
 
-/-- Composition of an actual C-star seminorm with a nonunital star-algebra
-homomorphism. The target needs no norm, topology, unit or completion. -/
+/-- **Pullback of a C*-seminorm.** Let `A,B` be nonunital complex star algebras with scalar-compatible
+involutions. For a C*-seminorm `p` on `B` and a nonunital complex star homomorphism `φ : A → B`, the
+function `x ↦ p(φ(x))` is a C*-seminorm on `A`. -/
 def comp (p : CStarSeminorm B) (φ : A →⋆ₙₐ[ℂ] B) : CStarSeminorm A := by
   let f : A →ₗ[ℂ] B :=
     { toFun := φ
@@ -76,7 +77,9 @@ def comp (p : CStarSeminorm B) (φ : A →⋆ₙₐ[ℂ] B) : CStarSeminorm A :=
     rw [map_mul, StarHomClass.map_star φ x]
     exact p.map_star_mul_self (φ x)
 
-/-- Composition retains exactly the original seminorm of each original image. -/
+/-- **Evaluation of a pulled-back C*-seminorm.** Let `A,B` be nonunital complex star algebras with
+scalar-compatible involutions. For a C*-seminorm `p` on `B`, a nonunital complex star homomorphism
+`φ : A → B`, and `x ∈ A`, the pulled-back seminorm has value `p(φ(x))`. -/
 @[simp]
 theorem comp_apply (p : CStarSeminorm B) (φ : A →⋆ₙₐ[ℂ] B) (x : A) :
     p.comp φ x = p (φ x) :=
@@ -86,8 +89,10 @@ end Composition
 
 variable {B : Type uB} [NonUnitalNormedRing B] [NormedSpace ℂ B] [StarRing B] [CStarRing B]
 
-/-- The actual target norm pulled back along the given nonunital star-algebra map.
-The target may be incomplete; every complex C-star algebra supplies these parents. -/
+/-- **Pullback of a C*-norm.** Let `A` be a nonunital complex star algebra with scalar-compatible
+involution, let `B` be a nonunital normed ring satisfying the C*-identity and carrying a complex
+normed vector-space structure, and let `φ : A → B` be a nonunital complex star homomorphism.
+Completeness of `B` is not required. The function `x ↦ ‖φ(x)‖` is a C*-seminorm on `A`. -/
 def ofNonUnitalStarAlgHom (φ : A →⋆ₙₐ[ℂ] B) : CStarSeminorm A := by
   let f : A →ₗ[ℂ] B :=
     { toFun := φ
@@ -109,7 +114,11 @@ def ofNonUnitalStarAlgHom (φ : A →⋆ₙₐ[ℂ] B) : CStarSeminorm A := by
     change ‖φ (star x * x)‖ = ‖φ x‖ ^ 2
     rw [map_mul, StarHomClass.map_star φ x, CStarRing.norm_star_mul_self, pow_two]
 
-/-- Every pullback value is the norm of the original homomorphism image. -/
+/-- **Value of a pulled-back C*-norm.** Let `A` be a nonunital complex star algebra with
+scalar-compatible involution, let `B` be a nonunital normed ring satisfying the C*-identity and
+carrying a complex normed vector-space structure, and let `φ : A → B` be a nonunital complex star
+homomorphism. Completeness of `B` is not required. For every `x ∈ A`, the pulled-back C*-seminorm
+equals `‖φ(x)‖`. -/
 @[simp]
 theorem ofNonUnitalStarAlgHom_apply (φ : A →⋆ₙₐ[ℂ] B) (x : A) :
     ofNonUnitalStarAlgHom φ x = ‖φ x‖ :=

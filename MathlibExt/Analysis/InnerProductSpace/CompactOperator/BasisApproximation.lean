@@ -43,8 +43,12 @@ variable {E : Type uE} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E]
 variable {F : Type uF} [NormedAddCommGroup F] [InnerProductSpace 𝕜 F]
 variable {ι : Type uι} {κ : Type uκ}
 
-/-- A finite stock Hilbert-basis projection is the sum of its original rank-one projections.
-The scalar is any RCLike field; empty sets and arbitrary basis index types are included. -/
+/-- Let `𝕜` be a real or complex scalar field and let `E` be a normed inner-product space over `𝕜`
+with a specified Hilbert basis. The projected coordinate set is finite. The Hilbert-basis index
+types are arbitrary, and coordinate truncations are indexed by their finite subsets.
+
+A finite Hilbert-basis projection is the sum of its rank-one projections. The scalar is any
+RCLike field; empty sets and arbitrary basis index types are included. -/
 public theorem proj_eq_sum_rankOne (b : HilbertBasis ι 𝕜 E) (s : Finset ι) :
     b.toUnconditionalSchauderBasis.proj s =
       ∑ i ∈ s, InnerProductSpace.rankOne 𝕜 (b i) (b i) := by
@@ -69,8 +73,13 @@ private theorem rankOne_sub_norm_le (x x' : F) (y y' : E) :
 
 variable [CompleteSpace E]
 
-/-- Every stock finite Hilbert-basis projection is contractive and self-adjoint.
-The original adjoint type uses the ambient completeness instance. -/
+/-- Let `𝕜` be a real or complex scalar field and let `E` be a normed inner-product space over `𝕜`
+with a specified Hilbert basis. The projected coordinate set is finite. Assume `E` is complete.
+The Hilbert-basis index types are arbitrary, and coordinate truncations are indexed by their
+finite subsets.
+
+Every finite Hilbert-basis projection is contractive and self-adjoint. The adjoint type uses the
+ambient completeness instance. -/
 public theorem proj_bounds (b : HilbertBasis ι 𝕜 E) (s : Finset ι) :
     ‖b.toUnconditionalSchauderBasis.proj s‖ ≤ 1 ∧
       (b.toUnconditionalSchauderBasis.proj s).adjoint =
@@ -98,9 +107,14 @@ public theorem proj_bounds (b : HilbertBasis ι 𝕜 E) (s : Finset ι) :
 variable [CompleteSpace F]
 
 omit [CompleteSpace E] [CompleteSpace F] in
-/-- Finite projections in two independent Hilbert bases contract the original operator norm.
-Completeness is obtained from each actual Hilbert basis; no ambient completeness hypothesis
-or compactness of the bounded operator is needed. -/
+/-- Let `𝕜` be a real or complex scalar field and let `E` and `F` be normed inner-product spaces
+over `𝕜`, equipped with the specified Hilbert bases. The coordinate subsets are finite. The
+Hilbert-basis index types are arbitrary, and coordinate truncations are indexed by their finite
+subsets.
+
+Finite projections in two independent Hilbert bases contract the operator norm. Completeness is
+obtained from each Hilbert basis; no ambient completeness hypothesis or compactness of the
+bounded operator is needed. -/
 public theorem norm_sandwich_le
     (bE : HilbertBasis ι 𝕜 E) (bF : HilbertBasis κ 𝕜 F)
     (T : E →L[𝕜] F) (s : Finset ι) (t : Finset κ) :
@@ -244,12 +258,16 @@ private theorem tendsto_sandwich_of_mem_finiteRankSubmodule
 @[expose] public section
 
 omit [CompleteSpace E] [CompleteSpace F] in
-/-- For independent Hilbert bases, their actual finite-span projections
-sandwich a compact map to itself in the original operator norm. Both index
-types are arbitrary; no separability, nonzero-space or approximation-property
-assumption is needed. Completeness is derived from the supplied basis
-representations; callers need no separate completeness instances.
-The existing stock basis projections are reused. -/
+/-- Let `𝕜` be a real or complex scalar field and let `E` and `F` be normed inner-product spaces
+over `𝕜`, equipped with the specified Hilbert bases. The coordinate subsets are finite. Assume
+the continuous linear map `T : E →L[𝕜] F` is compact. The Hilbert-basis index types are
+arbitrary, and coordinate truncations are indexed by their finite subsets.
+
+For independent Hilbert bases, their finite-span projections sandwich a compact map to itself in
+the operator norm. Both index types are arbitrary; no separability, nonzero-space or
+approximation-property assumption is needed. Completeness is derived from the supplied basis
+representations; callers need no separate completeness instances. The existing basis projections
+are reused. -/
 theorem tendsto_compact_sandwich
     (bE : HilbertBasis ι 𝕜 E) (bF : HilbertBasis κ 𝕜 F)
     {T : E →L[𝕜] F} (hT : IsCompactOperator T) :

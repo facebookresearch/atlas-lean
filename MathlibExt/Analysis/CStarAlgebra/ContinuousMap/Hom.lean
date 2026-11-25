@@ -35,8 +35,9 @@ namespace ContinuousMap
 
 universe uX uA uB uC
 
-/-- Evaluation of continuous functions at a point as a nonunital complex star
-algebra homomorphism. -/
+/-- Let `X` be a topological space and let `A` be a possibly nonunital complex C*-algebra.
+
+Evaluation of continuous functions at a point as a nonunital complex star algebra homomorphism. -/
 def evalNonUnitalStarAlgHom
     {X : Type uX} [TopologicalSpace X]
     {A : Type uA} [NonUnitalCStarAlgebra A] (x : X) :
@@ -61,7 +62,9 @@ variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C]
 
-/-- Pointwise coefficient postcomposition by a genuine nonunital star hom. -/
+/-- Let `X` be a topological space and let `A` and `B` be possibly nonunital complex C*-algebras.
+
+Pointwise coefficient postcomposition by a nonunital star hom. -/
 def compNonUnitalStarAlgHom (g : A →⋆ₙₐ[ℂ] B) :
     C(X, A) →⋆ₙₐ[ℂ] C(X, B) where
   toFun f := ⟨fun x => g (f x),

@@ -65,30 +65,48 @@ variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 open CStarModule.InternalTensorProduct
 
-/-- The actual evaluation followed by the coefficient self-module action. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `t ∈ Ω`. Point evaluation acts on the coefficient self-module `B`.
+
+The evaluation followed by the coefficient self-module action. -/
 def coefficientAction (t : Ω) :
     C(Ω, B) →⋆ₙₐ[ℂ] AdjointableOperator.End B B :=
   (AdjointableOperator.leftRegular (B := B)).comp
     (_root_.ContinuousMap.evalNonUnitalStarAlgHom (A := B) t)
 
 omit [CompactSpace Ω] in
-/-- Evaluation acts on the original coefficient algebra by literal multiplication. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `t ∈ Ω`. Point evaluation acts on the coefficient self-module `B`.
+
+Evaluation acts on the coefficient algebra by multiplication. -/
 @[simp]
 theorem coefficientAction_apply (t : Ω) (f : C(Ω, B)) (b : B) :
     coefficientAction (B := B) t f b = f t * b := by
   rfl
 
-/-- The evaluated coefficient action really takes values in module compacts. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `t ∈ Ω`. Point evaluation acts on the coefficient self-module `B`.
+
+The evaluated coefficient action really takes values in module compacts. -/
 def coefficientCompactAction (t : Ω) :
     C(Ω, B) →⋆ₙₐ[ℂ] AdjointableOperator.CompactEnd B B :=
   (AdjointableOperator.leftRegularCompact (B := B)).comp
     (_root_.ContinuousMap.evalNonUnitalStarAlgHom (A := B) t)
 
-/-- The fibre is the actual completed balanced evaluation tensor of E. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The fibre is the completed balanced evaluation tensor of E. -/
 abbrev Carrier (t : Ω) :=
   CompletedTensor (E₁ := E) (coefficientAction (B := B) t)
 
-/-- The canonical quotient/completion normed group of the actual fibre. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The completed evaluation fibre carries the quotient/completion norm of the balanced tensor
+product. -/
 @[instance_reducible]
 def normedAddCommGroup (t : Ω) : NormedAddCommGroup (Carrier (B := B) (E := E) t) := by
   letI : NormedAddCommGroup (RadicalTensor (E₁ := E) (coefficientAction (B := B) t)) :=
@@ -97,7 +115,11 @@ def normedAddCommGroup (t : Ω) : NormedAddCommGroup (Carrier (B := B) (E := E) 
 
 attribute [local instance] CStarModule.ContinuousMap.EvaluationFiber.normedAddCommGroup
 
-/-- The original completed complex-space dictionary of the actual fibre. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The completed evaluation fibre is a normed complex vector space for that norm. -/
 @[instance_reducible]
 def normedSpace (t : Ω) : NormedSpace ℂ (Carrier (B := B) (E := E) t) := by
   letI : NormedAddCommGroup (RadicalTensor (E₁ := E) (coefficientAction (B := B) t)) :=
@@ -108,7 +130,11 @@ def normedSpace (t : Ω) : NormedSpace ℂ (Carrier (B := B) (E := E) t) := by
 
 attribute [local instance] CStarModule.ContinuousMap.EvaluationFiber.normedSpace
 
-/-- The existing completed right coefficient action, locally activated. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The completed evaluation fibre carries its natural right action of `B`. -/
 @[instance_reducible]
 def rightAction (t : Ω) : SMul Bᵐᵒᵖ (Carrier (B := B) (E := E) t) := by
   letI : NormedAddCommGroup (RadicalTensor (E₁ := E) (coefficientAction (B := B) t)) :=
@@ -121,7 +147,12 @@ def rightAction (t : Ω) : SMul Bᵐᵒᵖ (Carrier (B := B) (E := E) t) := by
 
 attribute [local instance] CStarModule.ContinuousMap.EvaluationFiber.rightAction
 
-/-- The actual completed Hilbert-module record, on the preceding dictionaries. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The evaluation fibre is a normed right C*-module over `B`, with the balanced tensor inner
+product. -/
 @[instance_reducible]
 def cstarModule (t : Ω) : CStarModule Bᵐᵒᵖ (Carrier (B := B) (E := E) t) := by
   letI : NormedAddCommGroup (RadicalTensor (E₁ := E) (coefficientAction (B := B) t)) :=
@@ -134,7 +165,11 @@ def cstarModule (t : Ω) : CStarModule Bᵐᵒᵖ (Carrier (B := B) (E := E) t) 
 
 attribute [local instance] CStarModule.ContinuousMap.EvaluationFiber.cstarModule
 
-/-- The pure map uses the original two quotients and completion inclusion. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The pure map uses the two quotients and completion inclusion. -/
 def pure (t : Ω) (x : E) (b : B) : Carrier (B := B) (E := E) t := by
   letI : NormedAddCommGroup (RadicalTensor (E₁ := E) (coefficientAction (B := B) t)) :=
     radicalTensorNormedAddCommGroup (coefficientAction (B := B) t)
@@ -142,7 +177,12 @@ def pure (t : Ω) (x : E) (b : B) : Carrier (B := B) (E := E) t := by
     radicalTensorNormedSpace (coefficientAction (B := B) t)
   exact completedPure (coefficientAction (B := B) t) x b
 
-/-- The full ordinary model laws are proved by the actual backend. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The completed evaluation tensor has the internal tensor-product universal structure for the
+source module and the evaluated coefficient self-module. -/
 theorem isModel (t : Ω) : IsModel (coefficientAction (B := B) t) (pure (B := B) (E := E) t) := by
   let _ : NormedAddCommGroup (RadicalTensor (E₁ := E) (coefficientAction (B := B) t)) :=
     radicalTensorNormedAddCommGroup (coefficientAction (B := B) t)
@@ -152,22 +192,38 @@ theorem isModel (t : Ω) : IsModel (coefficientAction (B := B) t) (pure (B := B)
     radicalRightAction (coefficientAction (B := B) t)
   exact completed_isModel (coefficientAction (B := B) t)
 
-/-- The canonical vector evaluation into an arbitrary completed module fibre. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The canonical vector evaluation into an arbitrary completed module fibre. -/
 def evaluation (t : Ω) : E →L[ℂ] Carrier (B := B) (E := E) t :=
   IsModel.canonicalBaseChangeMap (isModel (B := B) (E := E) t)
 
-/-- Original inner products evaluate literally at the chosen point. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+inner products evaluate literally at the chosen point. -/
 @[simp]
 theorem evaluation_inner (t : Ω) (x y : E) :
     CStarModule.rightInner (B := B) (evaluation (B := B) (E := E) t x) (evaluation (B := B) (E := E) t y) =
       (CStarModule.rightInner (B := C(Ω, B)) x y) t :=
   IsModel.canonicalBaseChangeMap_inner (isModel (B := B) (E := E) t) x y
 
-/-- The canonical evaluation is contractive in the original module norm. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The canonical evaluation is contractive in the module norm. -/
 theorem norm_evaluation_le (t : Ω) (x : E) : ‖evaluation (B := B) (E := E) t x‖ ≤ ‖x‖ :=
   IsModel.norm_canonicalBaseChangeMap_le (isModel (B := B) (E := E) t) x
 
-/-- The kernel is exactly the actual null space of the evaluated inner square. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The kernel is exactly the null space of the evaluated inner square. -/
 theorem evaluation_eq_zero_iff (t : Ω) (x : E) :
     evaluation (B := B) (E := E) t x = 0 ↔ (CStarModule.rightInner (B := C(Ω, B)) x x) t = 0 := by
   rw [← evaluation_inner t x x]
@@ -179,51 +235,83 @@ theorem evaluation_eq_zero_iff (t : Ω) (x : E) :
     apply MulOpposite.unop_injective
     simpa only [CStarModule.rightInner, MulOpposite.unop_zero] using h
 
-/-- Right coefficients change by the actual point evaluation. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+Right coefficients change by the point evaluation. -/
 @[simp]
 theorem evaluation_right_smul (t : Ω) (x : E) (f : C(Ω, B)) :
     evaluation (B := B) (E := E) t (x <• f) = evaluation (B := B) (E := E) t x <• f t :=
   IsModel.canonicalBaseChangeMap_right_smul (isModel (B := B) (E := E) t) x f
 
-/-- Pure tensors are literal right multiples of the evaluated vector. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+Pure tensors are right multiples of the evaluated vector. -/
 theorem evaluation_pure (t : Ω) (x : E) (b : B) :
     evaluation (B := B) (E := E) t x <• b = pure (B := B) (E := E) t x b :=
   IsModel.canonicalBaseChangeMap_pure (isModel (B := B) (E := E) t) x b
 
-/-- Point evaluation is surjective on the coefficient algebra, so the
-canonical vector image is dense in the actual completed fibre. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+Point evaluation is surjective on the coefficient algebra, so the canonical vector image is
+dense in the completed fibre. -/
 theorem evaluation_denseRange (t : Ω) : DenseRange (evaluation (B := B) (E := E) t) := by
   apply IsModel.canonicalBaseChangeMap_denseRange_of_surjective (isModel (B := B) (E := E) t)
   intro b
   exact ⟨_root_.ContinuousMap.const Ω b, rfl⟩
 
-/-- Adjointable endomorphisms descend through the actual balanced completion. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+Adjointable endomorphisms descend through the balanced completion. -/
 def endomorphismMap (t : Ω) :
     AdjointableOperator.End C(Ω, B) E →⋆ₐ[ℂ]
       AdjointableOperator.End B (Carrier (B := B) (E := E) t) :=
   IsModel.mapLeftStarAlgHom (isModel (B := B) (E := E) t)
 
-/-- The descended operator has the original action on every canonical image. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The descended operator has the action on every canonical image. -/
 @[simp]
 theorem endomorphismMap_evaluation (t : Ω)
     (T : AdjointableOperator.End C(Ω, B) E) (x : E) :
     endomorphismMap (B := B) (E := E) t T (evaluation (B := B) (E := E) t x) = evaluation (B := B) (E := E) t (T x) :=
   IsModel.mapLeftStarAlgHom_canonicalBaseChangeMap (isModel (B := B) (E := E) t) T x
 
-/-- The same computed operator retains every actual pure-tensor value. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The same computed operator retains every pure-tensor value. -/
 @[simp]
 theorem endomorphismMap_pure (t : Ω)
     (T : AdjointableOperator.End C(Ω, B) E) (x : E) (b : B) :
     endomorphismMap (B := B) (E := E) t T (pure (B := B) (E := E) t x b) = pure (B := B) (E := E) t (T x) b :=
   IsModel.mapLeftStarAlgHom_pure (isModel (B := B) (E := E) t) T x b
 
-/-- Module compacts descend through the genuine coefficient self-action. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+Module compacts descend through the coefficient self-action. -/
 def compactMap (t : Ω) :
     AdjointableOperator.CompactEnd C(Ω, B) E →⋆ₙₐ[ℂ]
       AdjointableOperator.CompactEnd B (Carrier (B := B) (E := E) t) :=
   IsModel.baseChangeCompactHom (isModel (B := B) (E := E) t)
 
-/-- The literal rank-one image pins the compact map to the original vectors. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`.
+
+The rank-one image pins the compact map to the vectors. -/
 @[simp]
 theorem compactMap_rankOne (t : Ω) (x y : E) :
     (compactMap (B := B) (E := E) t ⟨AdjointableOperator.rankOne (B := C(Ω, B)) x y,
@@ -232,8 +320,12 @@ theorem compactMap_rankOne (t : Ω) (x y : E) :
       AdjointableOperator.rankOne (B := B) (evaluation (B := B) (E := E) t x) (evaluation (B := B) (E := E) t y) :=
   IsModel.mapLeftStarAlgHom_rankOne_baseChange (isModel (B := B) (E := E) t) x y
 
-/-- Reuse the strict generation theorem; B need not be sigma-unital or
-countably generated as a module over itself. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`. Assume that `E` is countably generated as a module over
+`C(Ω,B)`.
+
+The evaluation fibre is countably generated as a right module over `B`. -/
 theorem countablyGenerated (t : Ω)
     (hE : CStarModule.IsCountablyGenerated (B := C(Ω, B)) (E := E)) :
     CStarModule.IsCountablyGenerated (B := B) (E := Carrier (B := B) (E := E) t) :=
@@ -241,7 +333,10 @@ theorem countablyGenerated (t : Ω)
 
 /-! ## Computed coefficient and endpoint gradings -/
 
-/-- The original left coefficient action is graded for the computed self-module. -/
+/-- Let `B` be a possibly nonunital complex C*-algebra with a specified C*-grading. Its right
+coefficient self-module carries the induced grading.
+
+The left coefficient action is graded for the computed self-module. -/
 def gradedLeftRegular (γ : CStarGrading B) :
     CStarGrading.Hom γ (CStarModuleGrading.self γ).operatorGrading where
   toNonUnitalStarAlgHom := AdjointableOperator.leftRegular (B := B)
@@ -270,29 +365,47 @@ def gradedLeftRegular (γ : CStarGrading B) :
         AdjointableOperator.leftRegular_apply]
       rw [map_mul, γ.generator_apply_generator]
 
-/-- Point evaluation composed with the actual graded coefficient self-action. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `t ∈ Ω`. Point evaluation acts on the coefficient self-module `B`. A specified C*-grading of
+`B` is retained.
+
+Point evaluation composed with the graded coefficient self-action. -/
 def gradedCoefficientAction (γ : CStarGrading B) (t : Ω) :
     CStarGrading.Hom (PointNormCStarAction.continuousMap Ω γ)
       (CStarModuleGrading.self γ).operatorGrading :=
   CStarGrading.Hom.comp (gradedLeftRegular γ)
     (PointNormCStarAction.continuousMapEvaluation γ t)
 
-/-- The graded representation has exactly the same ordinary evaluation action. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `t ∈ Ω`. Point evaluation acts on the coefficient self-module `B`. A specified C*-grading of
+`B` is retained.
+
+The graded representation has exactly the same ordinary evaluation action. -/
 @[simp]
 theorem gradedCoefficientAction_toNonUnitalStarAlgHom
     (γ : CStarGrading B) (t : Ω) :
     (gradedCoefficientAction γ t).toNonUnitalStarAlgHom = coefficientAction (B := B) t := by
   rfl
 
-/-- The fibre grading is computed on the same original completed tensor.
-The input module E may have genuinely varying point fibres. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`. Specify a C*-grading on `B` and a compatible grading on
+`E`.
+
+The evaluation fibre carries the grading induced by the specified source and coefficient
+gradings. -/
 def grading (γ : CStarGrading B)
     (δ : CStarModuleGrading (PointNormCStarAction.continuousMap Ω γ) E)
     (t : Ω) : CStarModuleGrading γ (Carrier (B := B) (E := E) t) :=
   CStarModule.InternalTensorProduct.Grading.modelGrading δ (CStarModuleGrading.self γ)
     (gradedCoefficientAction γ t) (pure (B := B) (E := E) t) (isModel (B := B) (E := E) t)
 
-/-- Every actual pure vector has the unsigned factor-generator formula. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`. Specify a C*-grading on `B` and a compatible grading on
+`E`.
+
+Every pure vector has the unsigned factor-generator formula. -/
 @[simp]
 theorem grading_generator_pure (γ : CStarGrading B)
     (δ : CStarModuleGrading (PointNormCStarAction.continuousMap Ω γ) E)
@@ -312,7 +425,12 @@ theorem grading_generator_pure (γ : CStarGrading B)
   rw [CStarModuleGrading.self_generator_apply] at hp
   exact hp
 
-/-- The canonical vector evaluation intertwines the actual module gradings. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`. Specify a C*-grading on `B` and a compatible grading on
+`E`.
+
+The canonical vector evaluation intertwines the module gradings. -/
 @[simp]
 theorem grading_evaluation (γ : CStarGrading B)
     (δ : CStarModuleGrading (PointNormCStarAction.continuousMap Ω γ) E)
@@ -336,8 +454,13 @@ theorem grading_evaluation (γ : CStarGrading B)
     _ = pure (B := B) (E := E) t (δ.generator y) (γ.generatorAut (a t)) := by
       simp only [CStarGrading.generatorAut_apply, PointNormCStarAction.continuousMap_apply]
 
-/-- The computed End map is genuinely graded; no graded output representation
-is supplied in advance or selected from a Source theorem. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`. Specify a C*-grading on `B` and a compatible grading on
+`E`.
+
+Graded adjointable source endomorphisms induce graded adjointable endomorphisms of the
+evaluation fibre. -/
 def gradedEndomorphismMap (γ : CStarGrading B)
     (δ : CStarModuleGrading (PointNormCStarAction.continuousMap Ω γ) E)
     (t : Ω) :
@@ -348,7 +471,12 @@ def gradedEndomorphismMap (γ : CStarGrading B)
       simpa only [CStarModuleGrading.self_generator_apply] using
         grading_generator_pure γ δ t x b)
 
-/-- Forgetting the grading recovers the same computed ordinary End map. -/
+/-- Let `Ω` be a compact topological space, let `B` be a possibly nonunital complex C*-algebra, and
+let `E` be a complete normed right C*-module over `C(Ω,B)`, with its compatible complex
+normed-space structure. Fix `t ∈ Ω`. Specify a C*-grading on `B` and a compatible grading on
+`E`.
+
+Forgetting the grading recovers the same computed ordinary End map. -/
 @[simp]
 theorem gradedEndomorphismMap_toNonUnitalStarAlgHom (γ : CStarGrading B)
     (δ : CStarModuleGrading (PointNormCStarAction.continuousMap Ω γ) E)

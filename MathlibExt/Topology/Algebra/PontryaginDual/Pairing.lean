@@ -39,7 +39,10 @@ namespace PontryaginDual
 
 universe uG
 
-/-- The same complex circle value is an actual scalar unitary. -/
+/-- The complex unit circle and scalar unitary group carry their usual subspace topologies and
+multiplication.
+
+The same complex circle value is an scalar unitary. -/
 def circleUnitaryHom : Circle →* unitary ℂ where
   toFun z := ⟨Circle.coeHom z, by
     apply Unitary.mem_iff_star_mul_self.mpr
@@ -56,29 +59,44 @@ def circleUnitaryHom : Circle →* unitary ℂ where
     apply Subtype.ext
     exact Circle.coe_mul z w
 
-/-- The unitary character has exactly its original scalar circle value. -/
+/-- The complex unit circle and scalar unitary group carry their usual subspace topologies and
+multiplication.
+
+The unitary character has exactly its scalar circle value. -/
 @[simp]
 theorem circleUnitaryHom_coe (z : Circle) : (circleUnitaryHom z : ℂ) = (z : ℂ) := rfl
 
-/-- The original circle-to-unitary value map is continuous in the original subspace topologies. -/
+/-- The complex unit circle and scalar unitary group carry their usual subspace topologies and
+multiplication.
+
+The circle-to-unitary value map is continuous in the subspace topologies. -/
 theorem continuous_circleUnitaryHom : Continuous circleUnitaryHom := by
   change Continuous (fun z : Circle => (⟨(z : ℂ), (circleUnitaryHom z).property⟩ : unitary ℂ))
   exact continuous_subtype_val.subtype_mk _
 
 variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-/-- An actual Pontryagin character as a scalar unitary group homomorphism. -/
+/-- Let `G` be a group equipped with a topology making its group operations continuous. A Pontryagin
+character is a continuous homomorphism from `G` to the complex unit circle.
+
+An Pontryagin character as a scalar unitary group homomorphism. -/
 def unitaryCharacter (chi : PontryaginDual G) : G →* unitary ℂ :=
   circleUnitaryHom.comp (MonoidHom.ofClass chi)
 
 omit [IsTopologicalGroup G] in
-/-- The scalar value of the unitary character is the original compact-open pairing. -/
+/-- Let `G` be a group equipped with a topology. A Pontryagin character is a continuous homomorphism
+from `G` to the complex unit circle.
+
+The scalar value of the unitary character is the compact-open pairing. -/
 @[simp]
 theorem unitaryCharacter_coe (chi : PontryaginDual G) (g : G) :
     (unitaryCharacter chi g : ℂ) = (chi g : ℂ) := rfl
 
 omit [IsTopologicalGroup G] in
-/-- The actual scalar unitary character is continuous, without an extra continuity certificate. -/
+/-- Let `G` be a group equipped with a topology. A Pontryagin character is a continuous homomorphism
+from `G` to the complex unit circle.
+
+The associated scalar unitary character is continuous. -/
 theorem continuous_unitaryCharacter (chi : PontryaginDual G) : Continuous (unitaryCharacter chi) :=
   continuous_circleUnitaryHom.comp (map_continuous chi)
 

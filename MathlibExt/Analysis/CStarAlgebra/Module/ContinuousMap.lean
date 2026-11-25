@@ -45,7 +45,14 @@ variable {B : Type uB} [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
 
-/-- The pointwise right coefficient action, without registering an instance. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a normed
+right inner-product module over B, with compatible complex normed-space structures. Let X be a
+topological space.
+
+Continuous B-valued functions act on continuous E-valued functions on the right by pointwise
+coefficient multiplication.
+-/
 @[instance_reducible]
 def rightAction (X : Type uX) [TopologicalSpace X] :
     SMul (C(X, B))ᵐᵒᵖ C(X, E) where
@@ -55,7 +62,13 @@ def rightAction (X : Type uX) [TopologicalSpace X] :
         (_root_.CStarModule.continuous_right_smul (B := B) (E := E)).comp
           (f.continuous.prodMk (MulOpposite.unop b).continuous) }
 
-/-- The computed action is pointwise right multiplication. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a normed
+right inner-product module over B, with compatible complex normed-space structures. Let X be a
+topological space.
+
+For f ∈ C(X, E), b ∈ C(X, B) and t ∈ X, the pointwise right action satisfies (fb)(t) = f(t)b(t).
+-/
 @[simp]
 theorem right_smul_apply (X : Type uX) [TopologicalSpace X]
     (f : C(X, E)) (b : C(X, B)) (t : X) :
@@ -63,8 +76,15 @@ theorem right_smul_apply (X : Type uX) [TopologicalSpace X]
      (f <• b) t = f t <• b t) :=
   rfl
 
-/-- The pointwise C-star module on the stock supremum norm.
-The input and target coefficient orders are retained, not replaced. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a normed right inner-product module over B, with
+compatible complex normed-space structures. Let X be a compact topological space. Equip C(X,
+B)ᵐᵒᵖ with a star-compatible partial order.
+
+The space C(X, E) is a right inner-product C*-module over C(X, B), with the supremum norm,
+pointwise coefficient action and pointwise inner product.
+-/
 @[instance_reducible]
 def cstarModule (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     [StarOrderedRing Bᵐᵒᵖ]
@@ -205,7 +225,14 @@ def cstarModule (X : Type uX) [TopologicalSpace X] [CompactSpace X]
             _ = ‖f‖ ^ 2 := congrArg (fun r : ℝ => r ^ 2) (hnorm f)
         rw [hnormGram, Real.sqrt_sq_eq_abs, abs_of_nonneg (norm_nonneg f)] }
 
-/-- Evaluation of the computed module inner product is pointwise. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a normed right inner-product module over B, with
+compatible complex normed-space structures. Let X be a compact topological space. Equip C(X,
+B)ᵐᵒᵖ with a star-compatible partial order.
+
+For f, g ∈ C(X, E) and t ∈ X, the coefficient-valued function ⟨f, g⟩ evaluates to ⟨f(t), g(t)⟩.
+-/
 @[simp]
 theorem rightInner_apply (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     [StarOrderedRing Bᵐᵒᵖ]

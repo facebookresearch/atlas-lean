@@ -42,9 +42,9 @@ namespace CompletelyPositiveMap
 
 universe uA uB uD
 
-/-- An actual pair of CP contractions through a fixed C-star algebra.
-All three universes and existing nonunital algebra structures are independent.
-The local order scopes include evaluation of the two maps in their bounds. -/
+/-- **Completely positive contraction factorization.** For nonunital complex C*-algebras `A,B,D` in
+their spectral orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β
+: D →CP B`. Its composite is the map `a ↦ β(α(a))`. -/
 structure ContractionFactorization
     (A : Type uA) (B : Type uB) (D : Type uD)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -72,7 +72,9 @@ variable {A : Type uA} {B : Type uB} {D : Type uD}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra D]
 
-/-- Equality compares the two actual maps; their bound proofs are irrelevant. -/
+/-- **Equality of CP contraction factorizations.** For nonunital complex C*-algebras `A,B,D` in their
+spectral orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β : D
+→CP B`. Two such factorizations are equal if their maps `α` and `β` agree. -/
 @[ext]
 theorem ext {P Q : ContractionFactorization A B D}
     (hTo : P.toIntermediate = Q.toIntermediate)
@@ -83,7 +85,9 @@ theorem ext {P Q : ContractionFactorization A B D}
   cases hFrom
   rfl
 
-/-- The actual CP composite, using the existing CP composition API. -/
+/-- **Composite of CP contractions.** For nonunital complex C*-algebras `A,B,D` in their spectral
+orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β : D →CP B`.
+Their composite `β ∘ α : A →CP B` is completely positive. -/
 def composite (P : ContractionFactorization A B D) : Canonical A B := by
   letI : PartialOrder A := CStarAlgebra.spectralOrder A
   letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
@@ -93,7 +97,9 @@ def composite (P : ContractionFactorization A B D) : Canonical A B := by
   letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   exact CompletelyPositiveMap.comp P.fromIntermediate P.toIntermediate
 
-/-- Evaluation keeps the correct forward-then-backward orientation. -/
+/-- **Evaluation of a CP factorization.** For nonunital complex C*-algebras `A,B,D` in their spectral
+orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β : D →CP B`. At
+every `a ∈ A`, the composite equals `β(α(a))`. -/
 theorem composite_apply (P : ContractionFactorization A B D) (a : A) :
     letI : PartialOrder A := CStarAlgebra.spectralOrder A
     letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
@@ -110,7 +116,10 @@ theorem composite_apply (P : ContractionFactorization A B D) (a : A) :
   let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   exact CompletelyPositiveMap.comp_apply P.toIntermediate P.fromIntermediate a
 
-/-- Projection to the actual complex-linear composite. -/
+/-- **Underlying linear composite of a CP factorization.** For nonunital complex C*-algebras `A,B,D` in
+their spectral orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β
+: D →CP B`. The underlying complex-linear map is the composite of the underlying linear maps of `α`
+and `β`, in that order. -/
 theorem composite_toLinearMap (P : ContractionFactorization A B D) :
     letI : PartialOrder A := CStarAlgebra.spectralOrder A
     letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
@@ -128,7 +137,9 @@ theorem composite_toLinearMap (P : ContractionFactorization A B D) :
   let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   exact CompletelyPositiveMap.toLinearMap_comp P.toIntermediate P.fromIntermediate
 
-/-- The composite inherits precisely the two supplied contraction bounds. -/
+/-- **A CP factorization is contractive.** For nonunital complex C*-algebras `A,B,D` in their spectral
+orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β : D →CP B`. For
+every `a ∈ A`, `‖β(α(a))‖ ≤ ‖a‖`. -/
 theorem composite_contractive (P : ContractionFactorization A B D) :
     letI : PartialOrder A := CStarAlgebra.spectralOrder A
     letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
@@ -148,7 +159,9 @@ theorem composite_contractive (P : ContractionFactorization A B D) :
   exact (P.fromIntermediate_contractive (P.toIntermediate a)).trans
     (P.toIntermediate_contractive a)
 
-/-- Zero maps are genuine CP contractions without any unit requirement. -/
+/-- **Zero CP contraction factorization.** For nonunital complex C*-algebras `A,B,D` in their spectral
+orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β : D →CP B`.
+Choosing both maps to be zero gives a factorization through `D`, without any unit assumption. -/
 def zero (A : Type uA) (B : Type uB) (D : Type uD)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
     [NonUnitalCStarAlgebra D] : ContractionFactorization A B D := by
@@ -168,7 +181,9 @@ def zero (A : Type uA) (B : Type uB) (D : Type uD)
     change ‖(0 : B)‖ ≤ ‖d‖
     simpa only [norm_zero] using norm_nonneg d
 
-/-- The zero factorization has its literal zero composite. -/
+/-- **Composite of the zero CP factorization.** For nonunital complex C*-algebras `A,B,D` in their
+spectral orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β : D
+→CP B`. When both maps are zero, the composite evaluates to zero at every `a ∈ A`. -/
 theorem zero_composite_apply (a : A) :
     letI : PartialOrder A := CStarAlgebra.spectralOrder A
     letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
@@ -185,7 +200,9 @@ theorem zero_composite_apply (a : A) :
   let : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   rfl
 
-/-- Every factorization through a zero algebra has zero composite. -/
+/-- **Factorization through the zero algebra.** For nonunital complex C*-algebras `A,B,D` in their
+spectral orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β : D
+→CP B`. If `D` consists only of zero, the composite is zero at every point of `A`. -/
 theorem composite_eq_zero_of_subsingleton [Subsingleton D]
     (P : ContractionFactorization A B D) (a : A) :
     letI : PartialOrder A := CStarAlgebra.spectralOrder A
@@ -204,8 +221,10 @@ theorem composite_eq_zero_of_subsingleton [Subsingleton D]
   rw [composite_apply, Subsingleton.elim (P.toIntermediate a) (0 : D)]
   exact map_zero P.fromIntermediate
 
-/-- Approximation is a condition on the actual composite, never a stored
-desired output. Canonical orders are local in its evaluation scope. -/
+/-- **Finite-set approximation by a CP factorization.** For nonunital complex C*-algebras `A,B,D` in
+their spectral orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β
+: D →CP B`. For a function `f : A → B`, a finite subset `F ⊆ A`, and a real number `ε`, this means
+`‖β(α(a)) - f(a)‖ < ε` for every `a ∈ F`. -/
 def ApproximatesOn (P : ContractionFactorization A B D)
     (f : A → B) (F : Finset A) (ε : ℝ) : Prop :=
   letI : PartialOrder A := CStarAlgebra.spectralOrder A
@@ -216,8 +235,10 @@ def ApproximatesOn (P : ContractionFactorization A B D)
   letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
   ∀ a ∈ F, ‖P.composite a - f a‖ < ε
 
-/-- An actual finite-dimensional intermediate algebra gives finite linear
-range of the composite, without turning that range into a C-star algebra. -/
+/-- **Finite rank of a CP factorization.** For nonunital complex C*-algebras `A,B,D` in their spectral
+orders, a CP contraction factorization consists of contractions `α : A →CP D` and `β : D →CP B`. If
+the intermediate algebra `D` is finite-dimensional over `ℂ`, the complex-linear range of the
+composite is finite-dimensional. -/
 theorem finiteDimensional_range_composite [FiniteDimensional ℂ D]
     (P : ContractionFactorization A B D) :
     letI : PartialOrder A := CStarAlgebra.spectralOrder A
@@ -242,9 +263,10 @@ theorem finiteDimensional_range_composite [FiniteDimensional ℂ D]
 
 end ContractionFactorization
 
-/-- The actual finite complex C-star matrix specialization. The scalar
-spectral dictionaries stay in the result type, and the stock norm is retained.
-Natural size zero is legal and produces the genuine zero middle algebra. -/
+/-- **Matrix CP contraction factorization.** For nonunital complex C*-algebras `A,B` and `n ∈ ℕ`, this
+is a pair of completely positive contractions from `A` to the complex `n × n` C*-matrix algebra and
+from that matrix algebra to `B`, all in their spectral orders. Size zero gives the zero intermediate
+algebra. -/
 abbrev MatrixFactorization
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] (n : ℕ) :=
@@ -255,18 +277,20 @@ abbrev MatrixFactorization
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- Positive-size matrix CPC factorizations approximate the function on
-every finite test set. Zero maps through M₁ are allowed even for zero A/B.
-No factorization is chosen from this existence predicate. -/
+/-- **Approximation through finite matrix algebras.** For nonunital complex C*-algebras `A,B`, a
+function `f : A → B` has this property when, for every finite `F ⊆ A` and `ε > 0`, there is a
+positive integer `n` and completely positive contractions `α : A → Mₙ(ℂ)` and `β : Mₙ(ℂ) → B` with
+`‖β(α(a)) - f(a)‖ < ε` for every `a ∈ F`. -/
 def HasMatrixCPCApproximation (f : A → B) : Prop :=
   letI : PartialOrder ℂ := CStarAlgebra.spectralOrder ℂ
   letI : StarOrderedRing ℂ := CStarAlgebra.spectralOrderedRing ℂ
   ∀ (F : Finset A) (ε : ℝ), 0 < ε →
     ∃ n : ℕ+, ∃ P : MatrixFactorization A B (n : ℕ), P.ApproximatesOn f F ε
 
-/-- Actual matrix factorizations supply literal finite-rank CPC witnesses.
-This is only the elementary forward implication, not nuclearity or an
-analytic reverse-factorization/unital-normalization theorem. -/
+/-- **Matrix approximation implies finite-rank CP approximation.** For nonunital complex C*-algebras
+`A,B`, if `f : A → B` is approximable on every finite set through finite complex matrix algebras by
+completely positive contractions, then it is approximable on every finite set by finite-rank
+completely positive contractions. -/
 theorem HasMatrixCPCApproximation.hasFiniteRankCPCApproximation
     {f : A → B} (h : HasMatrixCPCApproximation f) :
     HasFiniteRankCPCApproximation f := by
@@ -297,9 +321,10 @@ namespace CStarAlgebra
 
 universe uA
 
-/-- Completely positive approximation through genuine finite matrices, with
-no source/target unit requirement. This definition does not assert the
-cross-norm, tensor or source-unital comparison theorems. -/
+/-- **Completely positive approximation property.** A nonunital complex C*-algebra `A` has CPAP when its
+identity is approximable on every finite subset in norm by composites of completely positive
+contractions `A → Mₙ(ℂ) → A`, with `n > 0`. Equivalently, every finite set and every positive
+tolerance admit such a matrix factorization. -/
 def HasCPAP (A : Type uA) [NonUnitalCStarAlgebra A] : Prop :=
   CompletelyPositiveMap.HasMatrixCPCApproximation (id : A → A)
 

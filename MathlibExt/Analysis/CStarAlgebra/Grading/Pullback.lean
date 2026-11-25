@@ -45,7 +45,10 @@ variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable {γA : CStarGrading A} {γB : CStarGrading B} {γC : CStarGrading C}
 variable (φ : Hom γA γC) (ψ : Hom γB γC)
 
-/-- The defining pullback equation is preserved by the product generator. -/
+/-- **Invariance of a graded pullback.** Let `A,B,C` be graded nonunital complex C*-algebras with
+actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms.
+Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. The
+product grading generator sends every pair in `P` to another pair in `P`. -/
 theorem pullback_generator_invariant (p : A × B)
     (hp : p ∈ NonUnitalCStarPullback.Pullback
       φ.toNonUnitalStarAlgHom ψ.toNonUnitalStarAlgHom) :
@@ -60,7 +63,10 @@ theorem pullback_generator_invariant (p : A × B)
     _ = γC.generatorAut (ψ p.2) := congrArg γC.generatorAut hp
     _ = ψ (γB.generatorAut p.2) := (Hom.equivariant ψ 1 p.2).symm
 
-/-- The product grading restricted to the same closed pullback carrier. -/
+/-- **Grading of a C*-pullback.** Let `A,B,C` be graded nonunital complex C*-algebras with actions
+`γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms. Their
+closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. The
+coordinatewise action of `γ_A,γ_B` restricts to a `ℤ/2ℤ` grading of `P`. -/
 def pullback : CStarGrading
     (NonUnitalCStarPullback.Pullback φ.toNonUnitalStarAlgHom
       ψ.toNonUnitalStarAlgHom) := by
@@ -71,7 +77,10 @@ def pullback : CStarGrading
     (NonUnitalCStarPullback.Pullback φ.toNonUnitalStarAlgHom
       ψ.toNonUnitalStarAlgHom) (pullback_generator_invariant φ ψ)
 
-/-- The first graded projection, using the existing product and inclusion maps. -/
+/-- **First projection of a graded pullback.** Let `A,B,C` be graded nonunital complex C*-algebras with
+actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms.
+Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. The first
+projection `P → A` is an equivariant nonunital complex star homomorphism. -/
 def pullbackFst : Hom (pullback φ ψ) γA := by
   let _ : IsClosed (NonUnitalCStarPullback.Pullback
       φ.toNonUnitalStarAlgHom ψ.toNonUnitalStarAlgHom : Set (A × B)) :=
@@ -81,7 +90,10 @@ def pullbackFst : Hom (pullback φ ψ) γA := by
       (NonUnitalCStarPullback.Pullback φ.toNonUnitalStarAlgHom
         ψ.toNonUnitalStarAlgHom) (pullback_generator_invariant φ ψ))
 
-/-- The second graded projection, using the existing product and inclusion maps. -/
+/-- **Second projection of a graded pullback.** Let `A,B,C` be graded nonunital complex C*-algebras with
+actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms.
+Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. The second
+projection `P → B` is an equivariant nonunital complex star homomorphism. -/
 def pullbackSnd : Hom (pullback φ ψ) γB := by
   let _ : IsClosed (NonUnitalCStarPullback.Pullback
       φ.toNonUnitalStarAlgHom ψ.toNonUnitalStarAlgHom : Set (A × B)) :=
@@ -91,33 +103,48 @@ def pullbackSnd : Hom (pullback φ ψ) γB := by
       (NonUnitalCStarPullback.Pullback φ.toNonUnitalStarAlgHom
         ψ.toNonUnitalStarAlgHom) (pullback_generator_invariant φ ψ))
 
-/-- The first graded projection is the literal first coordinate. -/
+/-- **First coordinate of a graded pullback projection.** Let `A,B,C` be graded nonunital complex
+C*-algebras with actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital
+star homomorphisms. Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product
+C*-norm. For `(a,b) ∈ P`, the first graded projection evaluates to `a`. -/
 @[simp]
 theorem pullbackFst_apply
     (p : NonUnitalCStarPullback.Pullback φ.toNonUnitalStarAlgHom
       ψ.toNonUnitalStarAlgHom) : pullbackFst φ ψ p = p.1.1 := rfl
 
-/-- The second graded projection is the literal second coordinate. -/
+/-- **Second coordinate of a graded pullback projection.** Let `A,B,C` be graded nonunital complex
+C*-algebras with actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital
+star homomorphisms. Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product
+C*-norm. For `(a,b) ∈ P`, the second graded projection evaluates to `b`. -/
 @[simp]
 theorem pullbackSnd_apply
     (p : NonUnitalCStarPullback.Pullback φ.toNonUnitalStarAlgHom
       ψ.toNonUnitalStarAlgHom) : pullbackSnd φ ψ p = p.1.2 := rfl
 
-/-- The first graded projection keeps the original pullback homomorphism. -/
+/-- **Underlying first pullback projection.** Let `A,B,C` be graded nonunital complex C*-algebras with
+actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms.
+Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. Forgetting
+grading equivariance gives the first-coordinate star homomorphism of the ungraded pullback. -/
 @[simp]
 theorem pullbackFst_toNonUnitalStarAlgHom :
     (pullbackFst φ ψ).toNonUnitalStarAlgHom =
       NonUnitalCStarPullback.fstHom φ.toNonUnitalStarAlgHom
         ψ.toNonUnitalStarAlgHom := rfl
 
-/-- The second graded projection keeps the original pullback homomorphism. -/
+/-- **Underlying second pullback projection.** Let `A,B,C` be graded nonunital complex C*-algebras with
+actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms.
+Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. Forgetting
+grading equivariance gives the second-coordinate star homomorphism of the ungraded pullback. -/
 @[simp]
 theorem pullbackSnd_toNonUnitalStarAlgHom :
     (pullbackSnd φ ψ).toNonUnitalStarAlgHom =
       NonUnitalCStarPullback.sndHom φ.toNonUnitalStarAlgHom
         ψ.toNonUnitalStarAlgHom := rfl
 
-/-- Every degree acts by the two coefficient actions on the same pair. -/
+/-- **Coordinates of each pullback grading degree.** Let `A,B,C` be graded nonunital complex C*-algebras
+with actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star
+homomorphisms. Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product
+C*-norm. For every `n ∈ ℤ/2ℤ`, the grading sends `(a,b) ∈ P` to `(γ_A(n)a,γ_B(n)b)`. -/
 theorem pullback_aut_coe (n : ZMod 2)
     (p : NonUnitalCStarPullback.Pullback φ.toNonUnitalStarAlgHom
       ψ.toNonUnitalStarAlgHom) :
@@ -130,7 +157,10 @@ theorem pullback_aut_coe (n : ZMod 2)
   · simpa only [pullbackFst_apply] using Hom.equivariant (pullbackFst φ ψ) n p
   · simpa only [pullbackSnd_apply] using Hom.equivariant (pullbackSnd φ ψ) n p
 
-/-- The generating involution has the actual coordinatewise value. -/
+/-- **Coordinates of the pullback generator.** Let `A,B,C` be graded nonunital complex C*-algebras with
+actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms.
+Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. The
+degree-one generator of `P` is the pair of degree-one generators of `A` and `B`. -/
 @[simp]
 theorem pullback_generator_coe
     (p : NonUnitalCStarPullback.Pullback φ.toNonUnitalStarAlgHom
@@ -141,7 +171,11 @@ theorem pullback_generator_coe
       (γA.generatorAut p.1.1, γB.generatorAut p.1.2) :=
   pullback_aut_coe φ ψ 1 p
 
-/-- A pullback element has degree `n` exactly when both coordinates do. -/
+/-- **Homogeneous parts of a pullback.** Let `A,B,C` be graded nonunital complex C*-algebras with
+actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms.
+Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. A pair
+`(a,b) ∈ P` has degree `n` exactly when both `a` and `b` have degree `n` in their respective
+algebras. -/
 theorem mem_pullback_part_iff (n : ZMod 2)
     (p : NonUnitalCStarPullback.Pullback φ.toNonUnitalStarAlgHom
       ψ.toNonUnitalStarAlgHom) :
@@ -154,7 +188,10 @@ theorem mem_pullback_part_iff (n : ZMod 2)
       ψ.toNonUnitalStarAlgHom) (pullback_generator_invariant φ ψ) n p).trans
     (mem_prod_part_iff γA γB n (p : A × B))
 
-/-- The graded projections satisfy the original cospan condition. -/
+/-- **Compatibility of graded pullback projections.** Let `A,B,C` be graded nonunital complex
+C*-algebras with actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital
+star homomorphisms. Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product
+C*-norm. The first graded projection followed by `φ` equals the second followed by `ψ`. -/
 theorem pullback_condition :
     Hom.comp φ (pullbackFst φ ψ) = Hom.comp ψ (pullbackSnd φ ψ) := by
   apply PointNormCStarAction.Hom.ext
@@ -166,7 +203,12 @@ section UniversalProperty
 
 variable {X : Type uX} [NonUnitalCStarAlgebra X] {γX : CStarGrading X}
 
-/-- The graded lift retains the existing lift of the same compatible square. -/
+/-- **Universal graded pullback lift.** Let `A,B,C` be graded nonunital complex C*-algebras with actions
+`γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms. Their
+closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. Let `X` be
+another graded nonunital complex C*-algebra and let `u : X → A`, `v : X → B` be equivariant
+nonunital star homomorphisms with `φ ∘ u = ψ ∘ v`. The map `x ↦ (u(x),v(x))` is an equivariant
+nonunital star homomorphism `X → P`. -/
 def pullbackLift (u : Hom γX γA) (v : Hom γX γB)
     (h : φ.toNonUnitalStarAlgHom.comp u.toNonUnitalStarAlgHom =
       ψ.toNonUnitalStarAlgHom.comp v.toNonUnitalStarAlgHom) :
@@ -188,7 +230,12 @@ def pullbackLift (u : Hom γX γA) (v : Hom γX γB)
     rw [pullback_aut_coe]
     exact Prod.ext (Hom.equivariant u n.toAdd x) (Hom.equivariant v n.toAdd x)
 
-/-- The underlying graded lift is the original ungraded universal map. -/
+/-- **Ungraded homomorphism of a graded pullback lift.** Let `A,B,C` be graded nonunital complex
+C*-algebras with actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital
+star homomorphisms. Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product
+C*-norm. Let `X` be another graded nonunital complex C*-algebra and let `u : X → A`, `v : X → B` be
+equivariant nonunital star homomorphisms with `φ ∘ u = ψ ∘ v`. Forgetting equivariance gives the
+usual universal star homomorphism `x ↦ (u(x),v(x))` into the ungraded pullback. -/
 @[simp]
 theorem pullbackLift_toNonUnitalStarAlgHom (u : Hom γX γA) (v : Hom γX γB)
     (h : φ.toNonUnitalStarAlgHom.comp u.toNonUnitalStarAlgHom =
@@ -198,7 +245,12 @@ theorem pullbackLift_toNonUnitalStarAlgHom (u : Hom γX γA) (v : Hom γX γB)
         ψ.toNonUnitalStarAlgHom u.toNonUnitalStarAlgHom
         v.toNonUnitalStarAlgHom h := rfl
 
-/-- The graded lift has the same literal pair of coordinate values. -/
+/-- **Coordinate values of a graded pullback lift.** Let `A,B,C` be graded nonunital complex C*-algebras
+with actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star
+homomorphisms. Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product
+C*-norm. Let `X` be another graded nonunital complex C*-algebra and let `u : X → A`, `v : X → B` be
+equivariant nonunital star homomorphisms with `φ ∘ u = ψ ∘ v`. At every `x ∈ X`, the lift has
+ambient pair `(u(x),v(x))`. -/
 @[simp]
 theorem pullbackLift_coe_apply (u : Hom γX γA) (v : Hom γX γB)
     (h : φ.toNonUnitalStarAlgHom.comp u.toNonUnitalStarAlgHom =
@@ -207,7 +259,12 @@ theorem pullbackLift_coe_apply (u : Hom γX γA) (v : Hom γX γB)
         NonUnitalCStarPullback.Pullback φ.toNonUnitalStarAlgHom
           ψ.toNonUnitalStarAlgHom) : A × B) = (u x, v x) := rfl
 
-/-- First projection of the graded lift is the prescribed first map. -/
+/-- **First projection of the graded lift.** Let `A,B,C` be graded nonunital complex C*-algebras with
+actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms.
+Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. Let `X` be
+another graded nonunital complex C*-algebra and let `u : X → A`, `v : X → B` be equivariant
+nonunital star homomorphisms with `φ ∘ u = ψ ∘ v`. The lift followed by the first graded projection
+equals `u`. -/
 @[simp]
 theorem pullbackFst_comp_lift (u : Hom γX γA) (v : Hom γX γB)
     (h : φ.toNonUnitalStarAlgHom.comp u.toNonUnitalStarAlgHom =
@@ -217,7 +274,12 @@ theorem pullbackFst_comp_lift (u : Hom γX γA) (v : Hom γX γB)
   intro x
   rfl
 
-/-- Second projection of the graded lift is the prescribed second map. -/
+/-- **Second projection of the graded lift.** Let `A,B,C` be graded nonunital complex C*-algebras with
+actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms.
+Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. Let `X` be
+another graded nonunital complex C*-algebra and let `u : X → A`, `v : X → B` be equivariant
+nonunital star homomorphisms with `φ ∘ u = ψ ∘ v`. The lift followed by the second graded projection
+equals `v`. -/
 @[simp]
 theorem pullbackSnd_comp_lift (u : Hom γX γA) (v : Hom γX γB)
     (h : φ.toNonUnitalStarAlgHom.comp u.toNonUnitalStarAlgHom =
@@ -227,7 +289,11 @@ theorem pullbackSnd_comp_lift (u : Hom γX γA) (v : Hom γX γB)
   intro x
   rfl
 
-/-- Graded maps into the pullback are determined by their two projections. -/
+/-- **Extensionality of graded pullback homomorphisms.** Let `A,B,C` be graded nonunital complex
+C*-algebras with actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital
+star homomorphisms. Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product
+C*-norm. For another graded nonunital complex C*-algebra `X`, two equivariant star homomorphisms `X
+→ P` are equal if both their coordinate projections agree. -/
 theorem pullback_hom_ext (k l : Hom γX (pullback φ ψ))
     (hfst : Hom.comp (pullbackFst φ ψ) k = Hom.comp (pullbackFst φ ψ) l)
     (hsnd : Hom.comp (pullbackSnd φ ψ) k = Hom.comp (pullbackSnd φ ψ) l) : k = l := by
@@ -237,7 +303,12 @@ theorem pullback_hom_ext (k l : Hom γX (pullback φ ψ))
     (congrArg (fun θ : Hom γX γB => θ.toNonUnitalStarAlgHom) hsnd)
   exact PointNormCStarAction.Hom.ext (fun x => DFunLike.congr_fun hraw x)
 
-/-- The existing universal lift is unique also among genuine graded maps. -/
+/-- **Uniqueness of a graded pullback lift.** Let `A,B,C` be graded nonunital complex C*-algebras with
+actions `γ_A,γ_B,γ_C`, and let `φ : A → C`, `ψ : B → C` be equivariant nonunital star homomorphisms.
+Their closed pullback is `P = {(a,b) : φ(a) = ψ(b)}`, with the inherited product C*-norm. Let `X` be
+another graded nonunital complex C*-algebra and let `u : X → A`, `v : X → B` be equivariant
+nonunital star homomorphisms with `φ ∘ u = ψ ∘ v`. Any equivariant star homomorphism `X → P` whose
+projections are `u` and `v` equals the universal lift. -/
 theorem pullbackLift_unique (u : Hom γX γA) (v : Hom γX γB)
     (h : φ.toNonUnitalStarAlgHom.comp u.toNonUnitalStarAlgHom =
       ψ.toNonUnitalStarAlgHom.comp v.toNonUnitalStarAlgHom)

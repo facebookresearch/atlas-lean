@@ -55,7 +55,13 @@ variable [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
 variable [NormedAddCommGroup G] [NormedSpace ℂ G] [SMul Bᵐᵒᵖ G]
   [CStarModule Bᵐᵒᵖ G]
 
-/-- The forward continuous linear map underlying a rank-one module operator. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For x ∈ F and y ∈ E, the rank-one module operator is the bounded complex-linear map z ↦ x⟨y, z⟩
+from E to F.
+-/
 def rankOneCLM (x : F) (y : E) : E →L[ℂ] F :=
   LinearMap.mkContinuous
     { toFun := fun z ↦ x <• rightInner (B := B) y z
@@ -83,7 +89,13 @@ theorem rankOneCLM_apply (x : F) (y z : E) :
     rankOneCLM (B := B) x y z = x <• rightInner (B := B) y z :=
   rfl
 
-/-- The canonical rank-one adjointable operator. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For x ∈ F and y ∈ E, the rank-one module map z ↦ x⟨y, z⟩ is adjointable; its adjoint is w ↦ y⟨x,
+w⟩.
+-/
 def rankOne (x : F) (y : E) : AdjointableOperator B E F :=
   ofAdjointPair
     (rankOneCLM (B := B) x y)
@@ -156,15 +168,32 @@ theorem rankOne_comp (x : F) (y : E)
       congrArg star (T.adjoint_inner z y)
   rw [hinner]
 
-/-- The set of rank-one maps between two right C-star modules. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The rank-one module operators E → F are the maps z ↦ x⟨y, z⟩ as x ∈ F and y ∈ E vary.
+-/
 def rankOneSet : Set (AdjointableOperator B E F) :=
   Set.range fun p : F × E ↦ rankOne p.1 p.2
 
-/-- Finite-rank module maps are the complex span of rank-one maps. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The finite-rank module operators E → F form the complex-linear span of the rank-one module
+operators.
+-/
 def finiteRankSubmodule : Submodule ℂ (AdjointableOperator B E F) :=
   Submodule.span ℂ (rankOneSet (B := B) (E := E) (F := F))
 
-/-- Compact module maps are the operator-norm closure of finite-rank maps. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The compact module operators E → F form the operator-norm closure of the complex span of the
+rank-one module operators.
+-/
 def compactSubmodule : Submodule ℂ (AdjointableOperator B E F) :=
   (finiteRankSubmodule (B := B) (E := E) (F := F)).topologicalClosure
 
@@ -173,8 +202,12 @@ theorem rankOne_mem_finiteRank (x : F) (y : E) :
       finiteRankSubmodule (B := B) (E := E) (F := F) :=
   Submodule.subset_span ⟨(x, y), rfl⟩
 
-/-- Postcomposition by an adjointable operator preserves finite-rank module
-maps. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E, F and G be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For adjointable S : F → G and finite-rank module T : E → F, the composite S ∘ T is finite-rank.
+-/
 theorem comp_mem_finiteRank_right (S : AdjointableOperator B F G)
     {T : AdjointableOperator B E F}
     (hT : T ∈ finiteRankSubmodule (B := B) (E := E) (F := F)) :
@@ -207,8 +240,12 @@ theorem comp_mem_finiteRank_right (S : AdjointableOperator B F G)
     simpa only [map_smul] using
       (Submodule.smul_mem _ c hT)
 
-/-- Precomposition by an adjointable operator preserves finite-rank module
-maps when the left factor is finite-rank. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E, F and G be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For finite-rank module S : F → G and adjointable T : E → F, the composite S ∘ T is finite-rank.
+-/
 theorem comp_mem_finiteRank_left {S : AdjointableOperator B F G}
     (hS : S ∈ finiteRankSubmodule (B := B) (E := F) (F := G))
     (T : AdjointableOperator B E F) :
@@ -242,8 +279,12 @@ theorem comp_mem_finiteRank_left {S : AdjointableOperator B F G}
     simpa only [map_smul] using
       (Submodule.smul_mem _ c hS)
 
-/-- Taking adjoints exchanges the source and target finite-rank module
-submodules. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E and F be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+The adjoint of a finite-rank module map E → F is a finite-rank module map F → E.
+-/
 theorem adjointOperator_mem_finiteRank {T : AdjointableOperator B E F}
     (hT : T ∈ finiteRankSubmodule (B := B) (E := E) (F := F)) :
     T.adjointOperator ∈
@@ -275,8 +316,12 @@ theorem rankOne_mem_compact (x : F) (y : E) :
       compactSubmodule (B := B) (E := E) (F := F) :=
   finiteRank_le_compact (rankOne_mem_finiteRank x y)
 
-/-- Postcomposition by an adjointable operator preserves compact module
-maps. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E, F and G be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For adjointable S : F → G and compact module T : E → F, the composite S ∘ T is compact.
+-/
 theorem comp_mem_compact_right (S : AdjointableOperator B F G)
     {T : AdjointableOperator B E F}
     (hT : T ∈ compactSubmodule (B := B) (E := E) (F := F)) :
@@ -291,8 +336,12 @@ theorem comp_mem_compact_right (S : AdjointableOperator B F G)
     (postcompCLM (B := B) (E := E) S).continuous hT
     (fun _ h ↦ comp_mem_finiteRank_right S h)
 
-/-- Precomposition by an adjointable operator preserves compact module maps
-when the left factor is compact. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E, F and G be
+normed right inner-product modules over B, with compatible complex normed-space structures.
+
+For compact module S : F → G and adjointable T : E → F, the composite S ∘ T is compact.
+-/
 theorem comp_mem_compact_left {S : AdjointableOperator B F G}
     (hS : S ∈ compactSubmodule (B := B) (E := F) (F := G))
     (T : AdjointableOperator B E F) :
@@ -307,8 +356,13 @@ theorem comp_mem_compact_left {S : AdjointableOperator B F G}
     (precompCLM (B := B) (G := G) T).continuous hS
     (fun _ h ↦ comp_mem_finiteRank_left h T)
 
-/-- Taking adjoints exchanges the source and target compact module
-submodules. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E and F be normed right inner-product modules over B, with
+compatible complex normed-space structures.
+
+The adjoint of a compact module map E → F is a compact module map F → E.
+-/
 theorem adjointOperator_mem_compact [StarOrderedRing Bᵐᵒᵖ]
     {T : AdjointableOperator B E F}
     (hT : T ∈ compactSubmodule (B := B) (E := E) (F := F)) :
@@ -329,7 +383,13 @@ theorem isClosed_compactSubmodule :
       Set (AdjointableOperator B E F)) :=
   (finiteRankSubmodule (B := B) (E := E) (F := F)).isClosed_topologicalClosure
 
-/-- Finite-rank endomorphisms, bundled as a nonunital star subalgebra. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a normed
+right inner-product module over B, with compatible complex normed-space structures.
+
+The finite-rank module endomorphisms of E form a nonunital complex star subalgebra of the
+adjointable endomorphisms.
+-/
 noncomputable def finiteRankStarSubalgebra :
     NonUnitalStarSubalgebra ℂ (End B E) where
   carrier := finiteRankSubmodule (B := B) (E := E) (F := E)
@@ -357,7 +417,14 @@ theorem finiteRankStarSubalgebra_toSubmodule :
       finiteRankSubmodule (B := B) (E := E) (F := E) :=
   rfl
 
-/-- Compact endomorphisms, bundled as a nonunital star subalgebra. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a normed right inner-product module over B, with
+compatible complex normed-space structures.
+
+The compact module endomorphisms of E form a nonunital complex star subalgebra of the
+adjointable endomorphisms.
+-/
 noncomputable def compactStarSubalgebra [StarOrderedRing Bᵐᵒᵖ] :
     NonUnitalStarSubalgebra ℂ (End B E) where
   carrier := compactSubmodule (B := B) (E := E) (F := E)
@@ -389,9 +456,14 @@ instance compactStarSubalgebra_isClosed [StarOrderedRing Bᵐᵒᵖ] :
     IsClosed (compactStarSubalgebra (B := B) (E := E) : Set (End B E)) :=
   isClosed_compactSubmodule
 
-/-- The carrier of compact endomorphisms of a right C-star module.
-Completeness of the module is needed for its nonunital C-star-algebra
-structure, not for this carrier. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a normed right inner-product module over B, with
+compatible complex normed-space structures.
+
+The compact endomorphisms of E are the adjointable endomorphisms lying in the operator-norm
+closure of the rank-one span.
+-/
 abbrev CompactEnd (B : Type uB) (E : Type uE)
     [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
     [StarOrderedRing Bᵐᵒᵖ]
@@ -399,8 +471,14 @@ abbrev CompactEnd (B : Type uB) (E : Type uE)
     [CStarModule Bᵐᵒᵖ E] :=
   compactStarSubalgebra (B := B) (E := E)
 
-/-- Compact endomorphisms form a closed two-sided star ideal in the
-adjointable endomorphism C-star algebra. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures.
+
+The compact endomorphisms of E form a closed two-sided star ideal in the C*-algebra of
+adjointable endomorphisms.
+-/
 noncomputable def compactClosedStarIdeal [StarOrderedRing Bᵐᵒᵖ]
     [CompleteSpace E] :
     ClosedStarIdeal (End B E) where
@@ -432,8 +510,13 @@ variable [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
 /-- The canonical right self-module dictionary for the coefficient algebra. -/
 local instance : CStarModule Bᵐᵒᵖ B := CStarModule.Right.selfModule
 
-/-- Left multiplication as an adjointable endomorphism of the coefficient
-self module. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra has a star-compatible
+partial order.
+
+On the coefficient self-module B, with right multiplication and inner product ⟨x, y⟩ = star(x)y,
+left multiplication by b ∈ B is adjointable, with adjoint left multiplication by star(b).
+-/
 def leftMul (b : B) : End B B where
   toContinuousLinearMap := ContinuousLinearMap.mul ℂ B b
   adjoint := ContinuousLinearMap.mul ℂ B (star b)
@@ -451,7 +534,13 @@ theorem leftMul_adjointOperator (b : B) :
   ext x
   rfl
 
-/-- The left regular representation on the coefficient self module. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra has a star-compatible
+partial order.
+
+On the right coefficient self-module B with inner product ⟨x, y⟩ = star(x)y, left multiplication
+defines a nonunital complex star homomorphism from B to its adjointable endomorphisms.
+-/
 def leftRegular : B →⋆ₙₐ[ℂ] End B B where
   toFun := leftMul (B := B)
   map_zero' := by
@@ -476,8 +565,12 @@ theorem leftRegular_apply (b x : B) :
     leftRegular (B := B) b x = b * x :=
   rfl
 
-/-- The left regular representation is faithful, without a unitality
-hypothesis. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra has a star-compatible
+partial order.
+
+The left multiplication representation of B on its right coefficient self-module is injective.
+-/
 theorem leftRegular_injective :
     Function.Injective (leftRegular (B := B)) := by
   intro b c hbc
@@ -488,15 +581,26 @@ theorem leftRegular_injective :
     rw [sub_mul, happ, sub_self]
   exact sub_eq_zero.mp (mul_star_self_eq_zero.mp hzero)
 
-/-- On the coefficient self module, a rank-one map is left multiplication
-by `x * star y`. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra has a star-compatible
+partial order.
+
+On the right coefficient self-module B, the rank-one operator determined by x and y is left
+multiplication by x star(y).
+-/
 theorem rankOne_self_eq_leftMul (x y : B) :
     rankOne (B := B) x y = leftMul (B := B) (x * star y) := by
   ext z
   simp [CStarModule.Right.rightInner_self,
     mul_assoc]
 
-/-- Every left multiplier of the coefficient self module is compact. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra has a star-compatible
+partial order.
+
+Left multiplication by every b ∈ B is a compact endomorphism of the right coefficient
+self-module B.
+-/
 theorem leftMul_mem_compact (b : B) :
     leftMul (B := B) b ∈
       compactSubmodule (B := B) (E := B) (F := B) := by
@@ -565,8 +669,13 @@ private theorem compact_le_leftRegularRange :
   (finiteRankSubmodule (B := B) (E := B) (F := B)).topologicalClosure_minimal
     finiteRank_le_leftRegularRange isClosed_leftRegularRange
 
-/-- The left regular representation, with codomain restricted to the compact
-endomorphisms of the coefficient self module. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra has a star-compatible
+partial order.
+
+Left multiplication gives a nonunital complex star homomorphism from B to the compact
+endomorphisms of its right coefficient self-module.
+-/
 noncomputable def leftRegularCompact :
     B →⋆ₙₐ[ℂ] compactStarSubalgebra (B := B) (E := B) :=
   NonUnitalStarAlgHom.codRestrict (leftRegular (B := B))
@@ -575,8 +684,13 @@ noncomputable def leftRegularCompact :
         compactSubmodule (B := B) (E := B) (F := B)
       exact leftMul_mem_compact b
 
-/-- The canonical left regular representation identifies the coefficient
-algebra bijectively with its compact self-module endomorphisms. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra has a star-compatible
+partial order.
+
+Left multiplication gives a bijection from B onto the compact endomorphisms of its right
+coefficient self-module.
+-/
 theorem leftRegularCompact_bijective :
     Function.Bijective (leftRegularCompact (B := B)) := by
   constructor
@@ -596,8 +710,12 @@ variable [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
 /-- The canonical right self-module dictionary for the unital coefficient algebra. -/
 local instance : CStarModule Bᵐᵒᵖ B := CStarModule.Right.selfModule
 
-/-- For a unital coefficient algebra, every adjointable self-module
-endomorphism is left multiplication. -/
+/--
+Let B be a unital complex C*-algebra whose opposite algebra has a star-compatible partial order.
+
+Every adjointable endomorphism of the right coefficient self-module B is left multiplication by
+an element of B.
+-/
 theorem leftRegular_surjective :
     Function.Surjective (leftRegular (B := B)) := by
   intro T
@@ -607,8 +725,12 @@ theorem leftRegular_surjective :
   simpa [CStarModule.Right.right_smul_self] using
     (T.map_right_smul (1 : B) x).symm
 
-/-- For a unital coefficient algebra, the left regular representation is a
-bijection onto all adjointable self-module endomorphisms. -/
+/--
+Let B be a unital complex C*-algebra whose opposite algebra has a star-compatible partial order.
+
+Left multiplication is a bijection from B onto all adjointable endomorphisms of its right
+coefficient self-module.
+-/
 theorem leftRegular_bijective :
     Function.Bijective (leftRegular (B := B)) :=
   ⟨leftRegular_injective, leftRegular_surjective⟩

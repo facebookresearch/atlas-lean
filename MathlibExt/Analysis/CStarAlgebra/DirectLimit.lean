@@ -40,8 +40,10 @@ variable {I : Type uI} [Preorder I] [IsDirectedOrder I] [Nonempty I]
   [DirectedSystem G (f · · ·)]
   (hNorm : ∀ i j (h : i ≤ j) (x : G i), ‖f i j h x‖ = ‖x‖)
 
-/-- The existing stock involution satisfies the C-star law under the same
-constructed normed-ring dictionary whenever the genuine stage rings do. -/
+/-- **C*-identity in an isometric directed limit.** Let `I` be a nonempty directed preorder and
+`(Gᵢ,fᵢⱼ)` a directed system of nonunital normed rings with ring involutions satisfying the
+C*-identity. If each connecting ring homomorphism preserves both the involution and the norm, the
+algebraic direct limit, with its induced norm and involution, also satisfies the C*-identity. -/
 theorem cstar_ring_of_norm_preserving
     [∀ i, StarRing (G i)]
     [∀ i j (h : i ≤ j), StarHomClass (T h) (G i) (G j)]

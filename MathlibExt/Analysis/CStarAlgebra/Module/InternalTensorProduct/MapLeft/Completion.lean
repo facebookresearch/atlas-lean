@@ -47,8 +47,11 @@ variable {F₁ : Type uF₁} [NormedAddCommGroup F₁] [NormedSpace ℂ F₁]
 variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
   [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂] [CompleteSpace E₂]
 
-/-- The actual radical CLM followed by the target inclusion and extended to
-the source's stock completion. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F₁ be a complete right Hilbert B₁-module and L an adjointable operator from E₁ to F₁.
+The first-factor operator extends to a bounded complex-linear map between the completed
+internal tensor products. -/
 def completedLeftCLM
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) :
@@ -73,7 +76,11 @@ def completedLeftCLM
     RadicalTensor (E₁ := F₁) φ →L[ℂ] CompletedTensor (E₁ := F₁) φ).comp
       (radicalLeftCLM φ L)).fromCompletion
 
-/-- Canonical quotient images have the actual computed completed image. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F₁ be a complete right Hilbert B₁-module and L an adjointable operator from E₁ to F₁.
+On a radical-quotient vector, this extension is the completed image of the induced first-
+factor map. -/
 @[simp]
 theorem completedLeftCLM_coe
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -100,7 +107,11 @@ theorem completedLeftCLM_coe
     ContinuousLinearMap.comp_apply, UniformSpace.Completion.coe_toComplL,
     radicalLeftCLM_apply]
 
-/-- Every balanced representative has the literal completed left value. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F₁ be a complete right Hilbert B₁-module and L an adjointable operator from E₁ to F₁.
+On a balanced algebraic tensor, this extension applies L to the first factor before passing to
+the completed quotient. -/
 @[simp]
 theorem completedLeftCLM_fromBalanced
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -126,7 +137,11 @@ theorem completedLeftCLM_fromBalanced
   rw [completedFromBalanced_apply, completedFromBalanced_apply,
     completedLeftCLM_coe, radicalLeftMap_mkQ]
 
-/-- The actual completed map retains the proved input-operator norm estimate. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F₁ be a complete right Hilbert B₁-module and L an adjointable operator from E₁ to F₁.
+The norm of the image of a completed tensor z is at most the operator norm of L times the norm
+of z. -/
 theorem completedLeftCLM_norm_apply_le
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) (z : CompletedTensor (E₁ := E₁) φ) :
@@ -154,8 +169,11 @@ theorem completedLeftCLM_norm_apply_le
   simpa only [completedLeftCLM_coe, UniformSpace.Completion.norm_coe] using
     radicalLeftMap_norm_le φ L q
 
-/-- The two actual completion extensions are paired by the completed inner,
-proved on dense canonical images and extended by joint continuity. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F₁ be a complete right Hilbert B₁-module and L an adjointable operator from E₁ to F₁.
+The maps induced by L and its adjoint satisfy the coefficient-valued inner-product adjoint
+identity on the completed tensor products. -/
 theorem completedLeftCLM_inner_adjoint
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁)
@@ -213,8 +231,11 @@ theorem completedLeftCLM_inner_adjoint
     completedFromBalanced_inner, completedFromBalanced_inner]
   exact balancedLeftMap_inner_adjoint φ L q v
 
-/-- The computed completed CLM and its genuine computed adjoint form the
-actual rectangular adjointable operator. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F₁ be a complete right Hilbert B₁-module and L an adjointable operator from E₁ to F₁.
+Applying L in the first factor defines an adjointable operator between the completed internal
+tensor products, with the operator induced by the adjoint of L as its adjoint. -/
 def completedLeftOperator
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) :
@@ -252,7 +273,10 @@ def completedLeftOperator
           (completedLeftCLM φ L) (completedLeftCLM φ L.adjointOperator)).mpr
             (completedLeftCLM_inner_adjoint φ L) }
 
-/-- The actual completed operator has Blackadar's literal first-factor pure value. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F₁ be a complete right Hilbert B₁-module and L an adjointable operator from E₁ to F₁.
+The induced operator sends the pure tensor of x and y to the pure tensor of Lx and y. -/
 @[simp]
 theorem completedLeftOperator_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -286,7 +310,10 @@ theorem completedLeftOperator_pure
   rw [completedPure_apply, completedPure_apply,
     completedLeftCLM_coe, radicalLeftMap_pure]
 
-/-- The actual stored adjoint has the reverse first-factor pure formula. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F₁ be a complete right Hilbert B₁-module and L an adjointable operator from E₁ to F₁.
+Its adjoint sends the pure tensor of x and y to the pure tensor of L-adjoint x and y. -/
 @[simp]
 theorem completedLeftOperator_adjoint_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -322,7 +349,10 @@ theorem completedLeftOperator_adjoint_pure
   rw [completedPure_apply, completedPure_apply, completedLeftCLM_coe,
     radicalLeftMap_pure, AdjointableOperator.adjointOperator_apply]
 
-/-- The actual completed operator is norm-bounded by the actual given operator. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F₁ be a complete right Hilbert B₁-module and L an adjointable operator from E₁ to F₁.
+The operator norm of the induced first-factor operator is at most the operator norm of L. -/
 theorem completedLeftOperator_norm_le
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) :

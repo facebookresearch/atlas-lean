@@ -37,7 +37,8 @@ open scoped CStarAlgebra
 
 namespace CStarAlgebra
 
-/-- The zero-preserving spectral cutoff at one half. -/
+/-- **Spectral cutoff at one half.** This real-valued function is zero for `x ≤ 1/2` and one for `x >
+1/2`. In particular, it fixes zero. -/
 def projectionCut (x : ℝ) : ℝ := if x ≤ 1 / 2 then 0 else 1
 
 @[simp]
@@ -50,7 +51,8 @@ theorem projectionCut_mul_self (x : ℝ) :
   unfold projectionCut
   split_ifs <;> norm_num
 
-/-- The scalar cutoff error is controlled by the original idempotence defect. -/
+/-- **Scalar spectral-cutoff error.** For every real number `x`, the cutoff `χ(x) = 0` for `x ≤ 1/2` and
+`χ(x) = 1` for `x > 1/2` satisfies `|χ(x)-x| ≤ 2 |x²-x|`. -/
 theorem norm_projectionCut_sub_le (x : ℝ) :
     ‖projectionCut x - x‖ ≤ 2 * ‖x * x - x‖ := by
   by_cases hhalf : x ≤ 1 / 2
@@ -122,7 +124,10 @@ private theorem projectionCut_continuousOn_quasispectrum (a : A) (ha : IsSelfAdj
   intro h
   exact half_not_mem_quasispectrum a ha hdef (h ▸ hx)
 
-/-- The original nonunital spectral-cutoff value. -/
+/-- **Nonunital spectral-cutoff value.** For a nonunital complex C*-algebra `A` and `a ∈ A`, this is the
+value at `a` of nonunital continuous functional calculus for the real cutoff that is zero at and
+below `1/2` and one above `1/2`. When `a` is self-adjoint and `‖a²-a‖ < 1/4`, the cutoff is
+continuous on its quasispectrum and gives a projection. -/
 def correctedProjectionValue (a : A) : A := cfcₙ projectionCut a
 
 theorem correctedProjectionValue_isStarProjection (a : A) (ha : IsSelfAdjoint a)
@@ -156,7 +161,9 @@ theorem norm_correctedProjectionValue_sub_le (a : A) (ha : IsSelfAdjoint a)
         (by norm_num)
     _ = 2 * ‖a * a - a‖ := by rw [cfc_defect a ha]
 
-/-- Actual projection DATA, with its proof constructed from the original defect. -/
+/-- **Correcting a nearly idempotent self-adjoint element.** In a nonunital complex C*-algebra `A`, a
+self-adjoint `a` with `‖a²-a‖ < 1/4` gives a self-adjoint idempotent by applying the zero-preserving
+spectral cutoff at `1/2` through nonunital continuous functional calculus. -/
 def correctedProjection (a : A) (ha : IsSelfAdjoint a)
     (hdef : ‖a * a - a‖ < 1 / 4) : StarProjection A :=
   ⟨correctedProjectionValue a, correctedProjectionValue_isStarProjection a ha hdef⟩

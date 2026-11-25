@@ -34,7 +34,10 @@ universe uG
 
 variable (G : Type uG) [Monoid G] [TopologicalSpace G] [LocallyCompactSpace G]
 
-/-- The canonical continuous homomorphism is evaluation on the actual character group. -/
+/-- Let `G` be a monoid equipped with a locally compact topology. Its Pontryagin characters take
+values in the complex unit circle and carry the compact-open topology.
+
+The canonical continuous homomorphism is evaluation on the character group. -/
 def evaluation : G →ₜ* PontryaginDual (PontryaginDual G) where
   toFun g :=
     { toFun := fun χ : PontryaginDual G => χ g
@@ -61,7 +64,10 @@ def evaluation : G →ₜ* PontryaginDual (PontryaginDual G) where
     exact (continuous_eval : Continuous (fun p : C(G, Circle) × G => p.1 p.2)).comp
       (hforget.prodMk continuous_fst)
 
-/-- The canonical bidual homomorphism retains the literal character pairing. -/
+/-- Let `G` be a monoid equipped with a locally compact topology. Its Pontryagin characters take
+values in the complex unit circle and carry the compact-open topology.
+
+The canonical bidual homomorphism retains the character pairing. -/
 @[simp]
 theorem evaluation_apply (g : G) (χ : PontryaginDual G) :
     evaluation G g χ = χ g :=

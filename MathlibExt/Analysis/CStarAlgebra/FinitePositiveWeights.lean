@@ -54,7 +54,10 @@ private def sqrtColumn (c : I → A) : WithCStarModule A (I → A) :=
 private def productColumn (c d : I → A) : WithCStarModule A (I → A) :=
   (WithCStarModule.equiv A (I → A)).symm fun i => CFC.sqrt (c i) * d i
 
-/-- Stock C-star-module Cauchy-Schwarz bounds every finite positive sqrt sandwich. -/
+/-- **Norm bound for a finite positive sandwich sum.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order, let `I` be finite, and let `c,d : I → A`. If each `cᵢ ≥ 0`, `M ≥ 0`,
+and `‖dᵢ‖ ≤ M` for all `i`, then `‖∑ i, √cᵢ dᵢ √cᵢ‖ ≤ ‖∑ i, cᵢ‖ M`, where square roots are defined
+by continuous functional calculus. -/
 theorem norm_sum_sqrt_sandwich_le (c d : I → A) (M : ℝ) (hM : 0 ≤ M)
     (hc : ∀ i, 0 ≤ c i) (hd : ∀ i, ‖d i‖ ≤ M) :
     ‖∑ i, CFC.sqrt (c i) * d i * CFC.sqrt (c i)‖ ≤ ‖∑ i, c i‖ * M := by
@@ -113,7 +116,9 @@ theorem norm_sum_sqrt_sandwich_le (c d : I → A) (M : ℝ) (hM : 0 ≤ M)
       _ = (‖∑ i, c i‖ * M) ^ 2 := by ring
   exact (pow_le_pow_iff_left₀ (norm_nonneg _) (mul_nonneg (norm_nonneg _) hM) (by decide)).mp hsq
 
-/-- Commuting positive coefficients give the original finite weighted norm bound. -/
+/-- **Norm bound for commuting positive weights.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `c,d : I → A` be indexed by a finite type. If `cᵢ ≥ 0`, `M ≥
+0`, `‖dᵢ‖ ≤ M`, and `cᵢ dᵢ = dᵢ cᵢ` for every `i`, then `‖∑ i, cᵢ dᵢ‖ ≤ ‖∑ i, cᵢ‖ M`. -/
 theorem norm_sum_commuting_positive_mul_le (c d : I → A) (M : ℝ) (hM : 0 ≤ M)
     (hc : ∀ i, 0 ≤ c i) (hd : ∀ i, ‖d i‖ ≤ M) (hcomm : ∀ i, Commute (c i) (d i)) :
     ‖∑ i, c i * d i‖ ≤ ‖∑ i, c i‖ * M := by

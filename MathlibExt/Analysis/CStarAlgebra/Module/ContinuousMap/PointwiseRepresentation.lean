@@ -49,8 +49,14 @@ variable {B : Type uB} [NonUnitalCStarAlgebra B]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
 
-/-- The original coefficient representation evaluated on a fixed vector,
-as a bounded complex linear map. Its bound is derived from contractivity. -/
+/--
+Let D and B be possibly nonunital complex C*-algebras, with a star-compatible partial order on
+Bᵐᵒᵖ. Let E be a normed right inner-product B-module with a compatible complex normed-space
+structure, and let ρ be a nonunital complex star representation of D by adjointable
+endomorphisms of E.
+
+For x ∈ E, the map a ↦ ρ(a)x is bounded and complex-linear from D to E.
+-/
 def coefficientVectorCLM (rho : D →⋆ₙₐ[ℂ] End B E) (x : E) : D →L[ℂ] E := by
   let L : D →ₗ[ℂ] E :=
     { toFun := fun a => rho a x
@@ -68,13 +74,28 @@ def coefficientVectorCLM (rho : D →⋆ₙₐ[ℂ] End B E) (x : E) : D →L[�
         (norm_nonUnitalStarAlgHom_apply_le rho a) (norm_nonneg x)
       _ = ‖x‖ * ‖a‖ := mul_comm _ _
 
-/-- Evaluation of the derived bounded vector map is the original action. -/
+/--
+Let D and B be possibly nonunital complex C*-algebras, with a star-compatible partial order on
+Bᵐᵒᵖ. Let E be a normed right inner-product B-module with a compatible complex normed-space
+structure, and let ρ be a nonunital complex star representation of D by adjointable
+endomorphisms of E.
+
+For x ∈ E and a ∈ D, the bounded vector map associated to x evaluates to ρ(a)x.
+-/
 @[simp]
 theorem coefficientVectorCLM_apply (rho : D →⋆ₙₐ[ℂ] End B E) (x : E) (a : D) :
     coefficientVectorCLM rho x a = rho a x := rfl
 
-/-- A continuous coefficient path acts on the actual supremum-norm section
-module by evaluating that same coefficient at the same parameter. -/
+/--
+Let D and B be possibly nonunital complex C*-algebras, with a star-compatible partial order on
+Bᵐᵒᵖ. Let E be a normed right inner-product B-module with a compatible complex normed-space
+structure, and let ρ be a nonunital complex star representation of D by adjointable
+endomorphisms of E. Let X be a compact topological space and equip C(X, B)ᵐᵒᵖ with a
+star-compatible partial order.
+
+Pointwise evaluation defines a nonunital complex star representation of C(X, D) on the right
+C(X, B)-module C(X, E).
+-/
 def continuousCoefficientRepresentation
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ]
@@ -92,7 +113,16 @@ def continuousCoefficientRepresentation
     (fun t => rho.comp (_root_.ContinuousMap.evalNonUnitalStarAlgHom t))
     (fun a x => (coefficientVectorCLM rho x).continuous.comp a.continuous)
 
-/-- The section representation has its literal pointwise coefficient value. -/
+/--
+Let D and B be possibly nonunital complex C*-algebras, with a star-compatible partial order on
+Bᵐᵒᵖ. Let E be a normed right inner-product B-module with a compatible complex normed-space
+structure, and let ρ be a nonunital complex star representation of D by adjointable
+endomorphisms of E. Let X be a compact topological space and equip C(X, B)ᵐᵒᵖ with a
+star-compatible partial order.
+
+For a ∈ C(X, D), f ∈ C(X, E) and t ∈ X, the induced representation satisfies (ρ_X(a)f)(t) =
+ρ(a(t))(f(t)).
+-/
 @[simp]
 theorem continuousCoefficientRepresentation_apply
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]
@@ -111,8 +141,16 @@ theorem continuousCoefficientRepresentation_apply
     (fun s => rho.comp (_root_.ContinuousMap.evalNonUnitalStarAlgHom s))
     (fun b x => (coefficientVectorCLM rho x).continuous.comp b.continuous) a f t
 
-/-- On constant coefficients, the computed map is the existing actual
-constant End map. Both sides act on the same section module dictionaries. -/
+/--
+Let D and B be possibly nonunital complex C*-algebras, with a star-compatible partial order on
+Bᵐᵒᵖ. Let E be a normed right inner-product B-module with a compatible complex normed-space
+structure, and let ρ be a nonunital complex star representation of D by adjointable
+endomorphisms of E. Let X be a compact topological space and equip C(X, B)ᵐᵒᵖ with a
+star-compatible partial order.
+
+If E is complete, the action of a constant coefficient a ∈ D is the constant extension of the
+adjointable endomorphism ρ(a).
+-/
 theorem continuousCoefficientRepresentation_const
     (X : Type uX) [TopologicalSpace X] [CompactSpace X]
     [PartialOrder (C(X, B))ᵐᵒᵖ] [StarOrderedRing (C(X, B))ᵐᵒᵖ]

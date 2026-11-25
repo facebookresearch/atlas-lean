@@ -50,14 +50,30 @@ variable {E₁ : Type uE₁} [NormedAddCommGroup E₁] [NormedSpace ℂ E₁]
 variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
   [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂] [CompleteSpace E₂]
 
-/-- The stock completion under the actual quotient's constructed normed group. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The completed internal tensor is the norm completion of the balanced algebraic tensor after
+quotienting by the radical of its coefficient-valued Gram form.
+-/
 abbrev CompletedTensor
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :=
   letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
     radicalTensorNormedAddCommGroup φ
   UniformSpace.Completion (RadicalTensor (E₁ := E₁) φ)
 
-/-- The genuine radical quotient map followed by the stock complex-linear inclusion. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The canonical complex-linear map from the balanced algebraic tensor to the completed internal
+tensor first quotients by the Gram radical and then takes the completion image.
+-/
 def completedFromBalanced
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
@@ -74,7 +90,15 @@ def completedFromBalanced
       UniformSpace.Completion (RadicalTensor (E₁ := E₁) φ)).toLinearMap.comp
         (radicalSpace (E₁ := E₁) φ).mkQ
 
-/-- The canonical linear map displays the actual quotient representative. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For a balanced tensor z, its canonical completed image is the completion image of its class
+modulo the Gram radical.
+-/
 theorem completedFromBalanced_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z : BalancedTensor (E₁ := E₁) φ) :
@@ -96,7 +120,15 @@ theorem completedFromBalanced_apply
   exact congrFun (UniformSpace.Completion.coe_toComplₗᵢ
     (𝕜 := ℂ) (E := RadicalTensor (E₁ := E₁) φ)) ((radicalSpace φ).mkQ z)
 
-/-- The literal pure tensor through balancing, the radical and completion. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The completed pure vector associated to x ∈ E₁ and y ∈ E₂ is the canonical completed image of
+the balanced tensor x ⊗φ y.
+-/
 def completedPure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
     E₁ → E₂ → CompletedTensor (E₁ := E₁) φ := by
@@ -106,7 +138,15 @@ def completedPure
     radicalTensorNormedSpace φ
   exact fun x y => completedFromBalanced φ (balancedPure φ x y)
 
-/-- A pure tensor is the canonical image of the actual algebraic pure tensor. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For x ∈ E₁ and y ∈ E₂, the completed pure vector is the completion image of the radical-quotient
+class of x ⊗φ y.
+-/
 theorem completedPure_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (x : E₁) (y : E₂) :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
@@ -121,8 +161,15 @@ theorem completedPure_apply
   change completedFromBalanced φ (balancedPure φ x y) = _
   exact completedFromBalanced_apply φ (balancedPure φ x y)
 
-/-- The completed module uses the same constructed quotient input and STOCK norm/actions.
-This is locally activatable data, not a globally registered instance. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The completed internal tensor is a right inner-product C*-module over B₂ for the Gram-form norm,
+extended right action and completed inner product.
+-/
 @[instance_reducible]
 def completedCStarModule
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
@@ -142,7 +189,14 @@ def completedCStarModule
   exact CStarModule.completionCStarModule
     (A := B₂ᵐᵒᵖ) (E := RadicalTensor (E₁ := E₁) φ)
 
-/-- Completion extends the genuine descended quotient coefficient operator. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The canonical map from balanced tensors into the completion respects the right B₂-action.
+-/
 theorem completedFromBalanced_right_smul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z : BalancedTensor (E₁ := E₁) φ) (b : B₂) :
@@ -176,7 +230,15 @@ theorem completedFromBalanced_right_smul
         (A := B₂ᵐᵒᵖ) (E := RadicalTensor (E₁ := E₁) φ)
         (MulOpposite.op b) ((radicalSpace φ).mkQ z)
 
-/-- Both canonical completion images retain the ORIGINAL balanced inner form. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The inner product of two canonical completed images is the Gram form of their balanced algebraic
+representatives.
+-/
 theorem completedFromBalanced_inner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z w : BalancedTensor (E₁ := E₁) φ) :
@@ -225,7 +287,15 @@ theorem completedFromBalanced_inner
             ((radicalSpace φ).mkQ z) ((radicalSpace φ).mkQ w))
     _ = balancedInner φ z w := radicalInner_mkQ_mkQ φ z w
 
-/-- The completed pure map is additive in its first vector. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For x, x′ ∈ E₁ and y ∈ E₂, the completed pure map satisfies pure(x+x′,y) = pure(x,y) +
+pure(x′,y).
+-/
 @[simp]
 theorem completedPure_add_left
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -239,7 +309,15 @@ theorem completedPure_add_left
     radicalTensorNormedSpace φ
   simp only [completedPure, balancedPure_add_left, map_add]
 
-/-- The completed pure map is additive in its second vector. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For x ∈ E₁ and y, y′ ∈ E₂, the completed pure map satisfies pure(x,y+y′) = pure(x,y) +
+pure(x,y′).
+-/
 @[simp]
 theorem completedPure_add_right
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -253,7 +331,14 @@ theorem completedPure_add_right
     radicalTensorNormedSpace φ
   simp only [completedPure, balancedPure_add_right, map_add]
 
-/-- Complex linearity in the first vector uses the SAME stock complex module. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For c ∈ ℂ, x ∈ E₁ and y ∈ E₂, the completed pure map satisfies pure(cx,y) = c pure(x,y).
+-/
 @[simp]
 theorem completedPure_smul_left
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -269,7 +354,14 @@ theorem completedPure_smul_left
     radicalTensorNormedSpace φ
   simp only [completedPure, balancedPure_smul_left, map_smul]
 
-/-- Complex linearity in the second vector uses the SAME stock complex module. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For c ∈ ℂ, x ∈ E₁ and y ∈ E₂, the completed pure map satisfies pure(x,cy) = c pure(x,y).
+-/
 @[simp]
 theorem completedPure_smul_right
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -285,7 +377,14 @@ theorem completedPure_smul_right
     radicalTensorNormedSpace φ
   simp only [completedPure, balancedPure_smul_right, map_smul]
 
-/-- Nonunital balancing passes through the actual quotient and inclusion. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For x ∈ E₁, b ∈ B₁ and y ∈ E₂, completed pure vectors satisfy pure(xb,y) = pure(x,φ(b)y).
+-/
 @[simp]
 theorem completedPure_balance
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -297,7 +396,14 @@ theorem completedPure_balance
     radicalTensorNormedSpace φ
   simp only [completedPure, balancedPure_balance]
 
-/-- The completed pure tensor has the real right second-coefficient action. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For x ∈ E₁, y ∈ E₂ and b ∈ B₂, completed pure vectors satisfy pure(x,yb) = pure(x,y)b.
+-/
 theorem completedPure_right_smul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (x : E₁) (y : E₂) (b : B₂) :
@@ -315,7 +421,15 @@ theorem completedPure_right_smul
   simpa only [completedPure, balancedRightSMul_pure] using
     completedFromBalanced_right_smul φ (balancedPure φ x y) b
 
-/-- Blackadar's exact pure-tensor inner formula, with its printed first-slot order. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For x, y ∈ E₁ and u, v ∈ E₂, the completed inner product satisfies ⟨pure(x,u),pure(y,v)⟩ =
+⟨u,φ(⟨x,y⟩)v⟩.
+-/
 theorem rightInner_completedPure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (x y : E₁) (u v : E₂) :
@@ -338,7 +452,15 @@ theorem rightInner_completedPure
   simpa only [completedPure, balancedInner_pure_pure] using
     completedFromBalanced_inner φ (balancedPure φ x u) (balancedPure φ y v)
 
-/-- Finite Gram sums retain the same formula, including empty finite index types. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For arbitrary finite index sets I and J, the inner product of ∑ᵢ pure(xᵢ,uᵢ) and ∑ⱼ pure(yⱼ,vⱼ)
+is ∑ᵢ ∑ⱼ ⟨uᵢ,φ(⟨xᵢ,yⱼ⟩)vⱼ⟩, including empty index sets.
+-/
 theorem rightInner_sum_completedPure_sum_completedPure
     {I : Type uI} {J : Type uJ} [Fintype I] [Fintype J]
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -369,7 +491,14 @@ theorem rightInner_sum_completedPure_sum_completedPure
     simp only [completedPure, map_sum]
   rw [hx, hy, completedFromBalanced_inner, balancedInner_sum_pure_sum_pure]
 
-/-- Pure tensors are dense because they span the algebraic quotient and completion is dense. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The completed pure vectors have dense complex-linear span in the completed internal tensor.
+-/
 theorem completedPure_dense_span
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=
@@ -407,8 +536,15 @@ theorem completedPure_dense_span
     exact hz
   exact Dense.mono himage UniformSpace.Completion.denseRange_coe
 
-/-- All eight original model clauses for the ACTUAL quotient/completion construction.
-There is no output IsModel, norm, module or completeness premise. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The completed pure map satisfies all defining internal-tensor linearity, balancing,
+right-action, inner-product and dense-span properties.
+-/
 theorem completed_isModel
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
     letI : NormedAddCommGroup (RadicalTensor (E₁ := E₁) φ) :=

@@ -39,8 +39,10 @@ universe uA uM uN
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable {m : Type uM} {n : Type uN} [Fintype m] [Fintype n]
 
-/-- Actual matrix DATA in one original stage approximates every ambient matrix.
-Empty matrix indices and the zero algebra are included. -/
+/-- **Matrix approximation in a dense increasing family.** Let `A` be a nonunital complex C*-algebra and
+let `Aₖ ⊆ A`, for `k ∈ ℕ`, be increasing closed nonunital star subalgebras with norm-dense union.
+For finite index types `m,n`, every `M ∈ Mₘ,ₙ(A)` and `ε > 0` admit a matrix in one `Mₘ,ₙ(Aₖ)` whose
+image is within `ε` of `M` in the C*-matrix norm. Empty indices and the zero algebra are included. -/
 theorem exists_stage_matrix_near
     (stage : ℕ → NonUnitalStarSubalgebra ℂ A)
     [∀ k, IsClosed (stage k : Set A)]

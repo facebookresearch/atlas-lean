@@ -37,8 +37,10 @@ variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C]
 
-/-- The pullback of two nonunital C-star algebra homomorphisms, as their
-literal equalizer inside the product algebra. -/
+/-- **Pullback of nonunital C*-homomorphisms.** Let `A,B,C` be nonunital complex C*-algebras and `f : A
+→ C`, `g : B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) =
+g(b)}`, with the inherited maximum norm. This equalizer is the pullback carrier inside the product
+algebra. -/
 abbrev Pullback (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :=
   NonUnitalStarAlgHom.equalizer
     (f.comp (NonUnitalStarAlgHom.fst ℂ A B))
@@ -49,7 +51,9 @@ theorem mem_pullback (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) (p 
     p ∈ Pullback f g ↔ f p.1 = g p.2 :=
   Iff.rfl
 
-/-- The pullback is closed as an equalizer of continuous homomorphisms. -/
+/-- **Closedness of a C*-pullback.** Let `A,B,C` be nonunital complex C*-algebras and `f : A → C`, `g :
+B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) = g(b)}`, with
+the inherited maximum norm. The pullback is closed in the norm topology of `A × B`. -/
 theorem isClosed_pullback (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :
     IsClosed (Pullback f g : Set (A × B)) := by
   change IsClosed {p : A × B | f p.1 = g p.2}
@@ -65,7 +69,10 @@ noncomputable instance instNonUnitalCStarAlgebra
   let _ : IsClosed (Pullback f g : Set (A × B)) := isClosed_pullback f g
   exact NonUnitalStarSubalgebra.nonUnitalCStarAlgebra (Pullback f g)
 
-/-- Construct a pullback element from a compatible pair. -/
+/-- **Element of a C*-pullback.** Let `A,B,C` be nonunital complex C*-algebras and `f : A → C`, `g : B →
+C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) = g(b)}`, with the
+inherited maximum norm. Any `a ∈ A`, `b ∈ B` satisfying `f(a) = g(b)` define the pullback element
+`(a,b)`. -/
 def mk (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     (a : A) (b : B) (h : f a = g b) : Pullback f g :=
   ⟨(a, b), h⟩
@@ -76,11 +83,17 @@ theorem coe_mk (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     ((mk f g a b h : Pullback f g) : A × B) = (a, b) :=
   rfl
 
-/-- First coordinate of a pullback element. -/
+/-- **First coordinate of a C*-pullback.** Let `A,B,C` be nonunital complex C*-algebras and `f : A → C`,
+`g : B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) = g(b)}`,
+with the inherited maximum norm. The first-coordinate function sends a pullback element `(a,b)` to
+`a ∈ A`. -/
 def fst (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) (p : Pullback f g) : A :=
   p.1.1
 
-/-- Second coordinate of a pullback element. -/
+/-- **Second coordinate of a C*-pullback.** Let `A,B,C` be nonunital complex C*-algebras and `f : A →
+C`, `g : B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) =
+g(b)}`, with the inherited maximum norm. The second-coordinate function sends a pullback element
+`(a,b)` to `b ∈ B`. -/
 def snd (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) (p : Pullback f g) : B :=
   p.1.2
 
@@ -101,7 +114,10 @@ theorem ext (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
   apply Subtype.ext
   exact Prod.ext hfst hsnd
 
-/-- First coordinate projection from the pullback. -/
+/-- **First pullback projection.** Let `A,B,C` be nonunital complex C*-algebras and `f : A → C`, `g : B
+→ C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) = g(b)}`, with
+the inherited maximum norm. First-coordinate evaluation is a nonunital complex star homomorphism
+from the pullback to `A`. -/
 def fstHom (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :
     Pullback f g →⋆ₙₐ[ℂ] A where
   toFun := fst f g
@@ -111,7 +127,10 @@ def fstHom (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :
   map_mul' _ _ := rfl
   map_star' _ := rfl
 
-/-- Second coordinate projection from the pullback. -/
+/-- **Second pullback projection.** Let `A,B,C` be nonunital complex C*-algebras and `f : A → C`, `g : B
+→ C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) = g(b)}`, with
+the inherited maximum norm. Second-coordinate evaluation is a nonunital complex star homomorphism
+from the pullback to `B`. -/
 def sndHom (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :
     Pullback f g →⋆ₙₐ[ℂ] B where
   toFun := snd f g
@@ -139,7 +158,10 @@ theorem continuous_sndHom (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C
     Continuous (sndHom f g) :=
   map_continuous (sndHom f g)
 
-/-- The two pullback projections satisfy the defining equalizer equation. -/
+/-- **Compatibility of the pullback projections.** Let `A,B,C` be nonunital complex C*-algebras and `f :
+A → C`, `g : B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) =
+g(b)}`, with the inherited maximum norm. For every pullback element `p`, applying `f` to its first
+projection equals applying `g` to its second projection. -/
 @[simp]
 theorem condition (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     (p : Pullback f g) : f (fstHom f g p) = g (sndHom f g p) :=
@@ -154,7 +176,11 @@ theorem condition_hom (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :
 
 variable {X : Type uX} [NonUnitalCStarAlgebra X]
 
-/-- Universal lift of a compatible pair of nonunital star homomorphisms. -/
+/-- **Universal star homomorphism into a pullback.** Let `A,B,C` be nonunital complex C*-algebras and `f
+: A → C`, `g : B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a)
+= g(b)}`, with the inherited maximum norm. For another nonunital complex C*-algebra `X` and star
+homomorphisms `u : X → A`, `v : X → B` with `f ∘ u = g ∘ v`, the map `x ↦ (u(x),v(x))` is a
+nonunital complex star homomorphism into the pullback. -/
 def lift (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     (u : X →⋆ₙₐ[ℂ] A) (v : X →⋆ₙₐ[ℂ] B)
     (h : f.comp u = g.comp v) : X →⋆ₙₐ[ℂ] Pullback f g :=
@@ -185,7 +211,10 @@ theorem sndHom_comp_lift (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
   ext x
   rfl
 
-/-- A map into the pullback is uniquely determined by its two projections. -/
+/-- **Uniqueness from pullback coordinates.** Let `A,B,C` be nonunital complex C*-algebras and `f : A →
+C`, `g : B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) =
+g(b)}`, with the inherited maximum norm. For another nonunital complex C*-algebra `X`, two nonunital
+star homomorphisms from `X` to the pullback are equal if their first and second projections agree. -/
 theorem hom_ext (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     (k l : X →⋆ₙₐ[ℂ] Pullback f g)
     (hfst : (fstHom f g).comp k = (fstHom f g).comp l)
@@ -196,7 +225,11 @@ theorem hom_ext (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
   · exact DFunLike.congr_fun hfst x
   · exact DFunLike.congr_fun hsnd x
 
-/-- The universal lift is the unique map with the prescribed projections. -/
+/-- **Uniqueness of the universal pullback map.** Let `A,B,C` be nonunital complex C*-algebras and `f :
+A → C`, `g : B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) =
+g(b)}`, with the inherited maximum norm. For another nonunital complex C*-algebra `X`, a compatible
+pair `u : X → A`, `v : X → B` of nonunital star homomorphisms has exactly one pullback homomorphism
+with projections `u,v`. -/
 theorem lift_unique (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
     (u : X →⋆ₙₐ[ℂ] A) (v : X →⋆ₙₐ[ℂ] B)
     (h : f.comp u = g.comp v) (k : X →⋆ₙₐ[ℂ] Pullback f g)
@@ -208,7 +241,10 @@ theorem lift_unique (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C)
 
 /-! ## Split cospans -/
 
-/-- The common value map from a pullback to the target of its defining cospan. -/
+/-- **Common value homomorphism of a pullback.** Let `A,B,C` be nonunital complex C*-algebras and `f : A
+→ C`, `g : B → C` nonunital complex star homomorphisms. Their pullback is `{(a,b) ∈ A × B : f(a) =
+g(b)}`, with the inherited maximum norm. The common-value map `(a,b) ↦ f(a) = g(b)` is a nonunital
+complex star homomorphism from the pullback to `C`. -/
 def commonMap (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] C) :
     Pullback f g →⋆ₙₐ[ℂ] C :=
   f.comp (fstHom f g)
@@ -223,7 +259,10 @@ theorem commonMap_eq_right (f : A →⋆ₙₐ[ℂ] C) (g : B →⋆ₙₐ[ℂ] 
   ext p
   exact condition f g p
 
-/-- Diagonal inclusion associated to sections of both retractions. -/
+/-- **Diagonal section into a pullback.** Let `A,B,C` be nonunital complex C*-algebras and let `r_A : A
+→ C`, `r_B : B → C`, `i_A : C → A`, `i_B : C → B` be nonunital complex star homomorphisms with `r_A
+∘ i_A = id` and `r_B ∘ i_B = id`. The map `c ↦ (i_A(c), i_B(c))` is a nonunital star homomorphism
+from `C` to the pullback of `r_A` and `r_B`. -/
 def diagonal (rA : A →⋆ₙₐ[ℂ] C) (rB : B →⋆ₙₐ[ℂ] C)
     (iA : C →⋆ₙₐ[ℂ] A) (iB : C →⋆ₙₐ[ℂ] B)
     (hA : rA.comp iA = NonUnitalStarAlgHom.id ℂ C)
