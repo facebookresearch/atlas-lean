@@ -1,0 +1,164 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua, Avocado
+-/
+
+module
+
+public import MathlibExt.Algebra.Homology.ExactSequence
+public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
+import Mathlib.CategoryTheory.Abelian.Refinements
+
+/-!
+# A short exact complex extracted from five exact terms
+
+An exact composable sequence with five objects canonically yields the short
+exact complex from the cokernel of its first arrow, through its middle object,
+to the kernel of its last arrow.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option warningAsError true
+
+noncomputable section
+
+open CategoryTheory.Limits
+
+namespace CategoryTheory.ComposableArrows
+
+universe v u
+
+variable {C : Type u} [Category.{v} C] [Abelian C]
+
+/-- The canonical short complex extracted from an exact five-object
+sequence. -/
+noncomputable def exactSequenceFourShortComplex
+    (S : ComposableArrows C 4) (hS : S.Exact) : ShortComplex C :=
+  ShortComplex.mk
+    (cokernel.desc (S.map' 0 1) (S.map' 1 2)
+      (hS.toIsComplex.zero 0))
+    (kernel.lift (S.map' 3 4) (S.map' 2 3)
+      (hS.toIsComplex.zero 2))
+    (by
+      apply (cancel_epi (cokernel.π (S.map' 0 1))).1
+      apply (cancel_mono (kernel.ι (S.map' 3 4))).1
+      simpa only [Category.assoc, cokernel.π_desc_assoc, kernel.lift_ι,
+        comp_zero, zero_comp] using hS.toIsComplex.zero 1)
+
+@[simp]
+theorem exactSequenceFourShortComplex_X₁
+    (S : ComposableArrows C 4) (hS : S.Exact) :
+    (exactSequenceFourShortComplex S hS).X₁ =
+      cokernel (S.map' 0 1) :=
+  rfl
+
+@[simp]
+theorem exactSequenceFourShortComplex_X₂
+    (S : ComposableArrows C 4) (hS : S.Exact) :
+    (exactSequenceFourShortComplex S hS).X₂ =
+      S.obj ⟨2, by omega⟩ :=
+  rfl
+
+@[simp]
+theorem exactSequenceFourShortComplex_X₃
+    (S : ComposableArrows C 4) (hS : S.Exact) :
+    (exactSequenceFourShortComplex S hS).X₃ =
+      kernel (S.map' 3 4) :=
+  rfl
+
+@[simp]
+theorem exactSequenceFourShortComplex_f
+    (S : ComposableArrows C 4) (hS : S.Exact) :
+    (exactSequenceFourShortComplex S hS).f =
+      cokernel.desc (S.map' 0 1) (S.map' 1 2)
+        (hS.toIsComplex.zero 0) :=
+  rfl
+
+@[simp]
+theorem exactSequenceFourShortComplex_g
+    (S : ComposableArrows C 4) (hS : S.Exact) :
+    (exactSequenceFourShortComplex S hS).g =
+      kernel.lift (S.map' 3 4) (S.map' 2 3)
+        (hS.toIsComplex.zero 2) :=
+  rfl
+
+/-- The first extracted map is induced by the second arrow of the original
+sequence. -/
+@[reassoc (attr := simp)]
+theorem exactSequenceFourShortComplex_π_f
+    (S : ComposableArrows C 4) (hS : S.Exact) :
+    cokernel.π (S.map' 0 1) ≫
+        (exactSequenceFourShortComplex S hS).f =
+      S.map' 1 2 := by
+  unfold exactSequenceFourShortComplex
+  apply cokernel.π_desc
+
+/-- The last extracted map factors the third arrow of the original sequence
+through the kernel of the fourth. -/
+@[reassoc (attr := simp)]
+theorem exactSequenceFourShortComplex_g_ι
+    (S : ComposableArrows C 4) (hS : S.Exact) :
+    (exactSequenceFourShortComplex S hS).g ≫
+        kernel.ι (S.map' 3 4) =
+      S.map' 2 3 := by
+  unfold exactSequenceFourShortComplex
+  apply kernel.lift_ι
+
+/-- The short complex extracted from five exact terms is short exact. -/
+theorem exactSequenceFourShortComplex_shortExact
+    (S : ComposableArrows C 4) (hS : S.Exact) :
+    (exactSequenceFourShortComplex S hS).ShortExact := by
+  let f := cokernel.desc (S.map' 0 1) (S.map' 1 2)
+    (hS.toIsComplex.zero 0)
+  let g := kernel.lift (S.map' 3 4) (S.map' 2 3)
+    (hS.toIsComplex.zero 2)
+  have hfg : f ≫ g = 0 := by
+    apply (cancel_epi (cokernel.π (S.map' 0 1))).1
+    apply (cancel_mono (kernel.ι (S.map' 3 4))).1
+    simpa only [f, g, Category.assoc, cokernel.π_desc_assoc, kernel.lift_ι,
+      comp_zero, zero_comp] using hS.toIsComplex.zero 1
+  let T := ShortComplex.mk f g hfg
+  change T.ShortExact
+  have hT : T.Exact := by
+    rw [ShortComplex.exact_iff_exact_up_to_refinements]
+    intro Z y hy
+    have hy23 : y ≫ S.map' 2 3 = 0 := by
+      change y ≫ g = 0 at hy
+      calc
+        y ≫ S.map' 2 3 = y ≫ (g ≫ kernel.ι (S.map' 3 4)) := by
+          dsimp only [g]
+          rw [kernel.lift_ι]
+        _ = (y ≫ g) ≫ kernel.ι (S.map' 3 4) := by
+          rw [Category.assoc]
+        _ = 0 := by rw [hy, zero_comp]
+    obtain ⟨Z', p, hp, x, hx⟩ :=
+      (hS.exact' 1 2 3).exact_up_to_refinements y hy23
+    change p ≫ y = x ≫ S.map' 1 2 at hx
+    refine ⟨Z', p, hp, x ≫ cokernel.π (S.map' 0 1), ?_⟩
+    calc
+      p ≫ y = x ≫ S.map' 1 2 := hx
+      _ = x ≫ (cokernel.π (S.map' 0 1) ≫ f) := by
+        dsimp only [f]
+        rw [cokernel.π_desc]
+      _ = (x ≫ cokernel.π (S.map' 0 1)) ≫ f := by
+        rw [Category.assoc]
+  have hmono : Mono T.f := by
+    change Mono f
+    exact (hS.exact 0).mono_cokernelDesc
+  have hepi : Epi T.g := by
+    change Epi g
+    exact (hS.exact 2).epi_kernelLift
+  exact ShortComplex.ShortExact.mk' hT hmono hepi
+
+end CategoryTheory.ComposableArrows
+
+end

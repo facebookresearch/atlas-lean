@@ -11,6 +11,7 @@ module
 
 public import Mathlib.Algebra.Homology.HomologicalComplexAbelian
 public import Mathlib.Algebra.Homology.HomotopyCategory.ShortExact
+public import MathlibExt.Algebra.Homology.HomotopyCofiberMappingCone
 public import MathlibExt.Algebra.Homology.HomotopyCofiberReindex
 public import MathlibExt.Algebra.Homology.ChainToCochainHomology
 import MathlibExt.Algebra.Homology.ShortComplex.MiddleQuasiIso
@@ -68,39 +69,13 @@ namespace HomologicalComplex.homotopyCofiber
 
 variable {C : Type u} [Category.{v} C] [Abelian C]
 
-private lemma mapArrowHom_eq_mappingCone_map
-    {F G F' G' : CochainComplex C ℤ}
-    {φ : F ⟶ G} {ψ : F' ⟶ G'}
-    (a : Arrow.mk φ ⟶ Arrow.mk ψ) :
-    mapArrowHom φ ψ (fun j ↦ ⟨j - 1, by simp⟩) a =
-      CochainComplex.mappingCone.map φ ψ a.left a.right a.w.symm := by
-  ext n
-  apply CochainComplex.mappingCone.ext_from φ (n + 1) n rfl
-  · change inlX φ (n + 1) n rfl ≫
-        (mapArrowHom φ ψ (fun j ↦ ⟨j - 1, by simp⟩) a).f n =
-      (CochainComplex.mappingCone.inl φ).v (n + 1) n (by simp) ≫
-        (CochainComplex.mappingCone.map φ ψ a.left a.right a.w.symm).f n
-    rw [inlX_mapArrowHom (fun j ↦ ⟨j - 1, by simp⟩) a (n + 1) n rfl]
-    rw [CochainComplex.mappingCone.map]
-    rw [CochainComplex.mappingCone.inl_v_desc_f]
-    simp [CochainComplex.mappingCone.inl]
-    rfl
-  · change inrX φ n ≫
-        (mapArrowHom φ ψ (fun j ↦ ⟨j - 1, by simp⟩) a).f n =
-      (CochainComplex.mappingCone.inr φ).f n ≫
-        (CochainComplex.mappingCone.map φ ψ a.left a.right a.w.symm).f n
-    rw [inrX_mapArrowHom (fun j ↦ ⟨j - 1, by simp⟩) a n]
-    rw [CochainComplex.mappingCone.map]
-    rw [CochainComplex.mappingCone.inr_f_desc_f]
-    rfl
-
 private theorem quasiIso_mapArrowHom_up
     {F G F' G' : CochainComplex C ℤ}
     {φ : F ⟶ G} {ψ : F' ⟶ G'}
     (a : Arrow.mk φ ⟶ Arrow.mk ψ)
     (ha : QuasiIso a.left) (hb : QuasiIso a.right) :
     QuasiIso (mapArrowHom φ ψ (fun j ↦ ⟨j - 1, by simp⟩) a) := by
-  rw [mapArrowHom_eq_mappingCone_map a]
+  rw [mapArrowHom_eq_mappingCone_map (fun j ↦ ⟨j - 1, by simp⟩) a]
   exact CochainComplex.mappingCone.quasiIso_map
     φ ψ a.left a.right a.w.symm ha hb
 
