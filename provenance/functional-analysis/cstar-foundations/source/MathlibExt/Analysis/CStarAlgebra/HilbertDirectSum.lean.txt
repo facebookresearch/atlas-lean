@@ -1,0 +1,158 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import Mathlib.Analysis.InnerProductSpace.l2Space
+public import Mathlib.Analysis.Normed.Lp.lpHolder
+public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
+public import Mathlib.Analysis.CStarAlgebra.Spectrum
+
+/-!
+# The actual Hilbert sum of C-star representations
+
+Every coordinate is an original nonunital star homomorphism on its original
+complete complex Hilbert space. The bounded diagonal operator is the stock
+lp.mapCLM on the same actual lp H2 carrier; its uniform coefficient bound
+comes from the existing C-star map norm bound. The original map laws and
+adjoint identity construct the actual direct-sum representation.
+
+This strict constructor is needed by the original cyclic/zero-complement
+decomposition and normal multiplication-operator statements. No chosen
+diagonal operator, model, uniform-bound certificate, countability, unit,
+nonzero or nondegeneracy premise is added. Empty indices and zero Hilbert
+spaces retain their actual canonical sums and maps.
+
+The coordinate construction and adjoint proof adapt the implementations by
+@toskua and Avocado in
+`FormalizedTextbooks.ConwayFunctionalAnalysis.Chapter08.Section05.RepresentationDirectSum`
+and the private `repOp` / `repHom` specialization in
+`MathlibExt.Analysis.CStarAlgebra.Landmark`. Their author credit is retained.
+The shared nonunital core supports the original unital source through the
+unital adapter below, whose only additional laws are preservation of one and
+of the scalar algebra map. Both variants keep the same actual lp H2 carrier.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open scoped InnerProductSpace
+
+namespace NonUnitalStarAlgHom
+
+universe uA uI uH
+
+variable {A : Type uA} [NonUnitalCStarAlgebra A]
+variable {I : Type uI} {H : I → Type uH}
+variable [∀ i, NormedAddCommGroup (H i)] [∀ i, InnerProductSpace ℂ (H i)]
+variable [∀ i, CompleteSpace (H i)]
+
+/-- The original coordinate maps give the actual bounded operator on their canonical Hilbert sum. -/
+def hilbertSumOperator (ρ : ∀ i, A →⋆ₙₐ[ℂ] (H i →L[ℂ] H i)) (a : A) :
+    lp H 2 →L[ℂ] lp H 2 :=
+  lp.mapCLM 2 (fun i => ρ i a) (K := ‖a‖) (norm_nonneg a)
+    (fun i => NonUnitalStarAlgHom.norm_apply_le (ρ i) a)
+
+/-- Every sum coordinate retains the exact original operator value. -/
+@[simp]
+theorem hilbertSumOperator_apply (ρ : ∀ i, A →⋆ₙₐ[ℂ] (H i →L[ℂ] H i))
+    (a : A) (x : lp H 2) (i : I) :
+    hilbertSumOperator ρ a x i = ρ i a (x i) := rfl
+
+omit [∀ i, CompleteSpace (H i)] in
+private theorem hilbertSumOperator_ext
+    (T S : lp H 2 →L[ℂ] lp H 2)
+    (h : ∀ (x : lp H 2) (i : I), T x i = S x i) : T = S :=
+  ContinuousLinearMap.ext fun x => lp.ext (funext fun i => h x i)
+
+/-- The actual direct-sum nonunital star representation, constructed on the original canonical sum. -/
+def hilbertDirectSum (ρ : ∀ i, A →⋆ₙₐ[ℂ] (H i →L[ℂ] H i)) :
+    A →⋆ₙₐ[ℂ] (lp H 2 →L[ℂ] lp H 2) where
+  toFun := hilbertSumOperator ρ
+  map_zero' := by
+    apply hilbertSumOperator_ext
+    intro x i
+    simp [hilbertSumOperator_apply]
+  map_add' := by
+    intro a b
+    apply hilbertSumOperator_ext
+    intro x i
+    simp [hilbertSumOperator_apply]
+  map_mul' := by
+    intro a b
+    apply hilbertSumOperator_ext
+    intro x i
+    simp [hilbertSumOperator_apply]
+  map_smul' := by
+    intro c a
+    apply hilbertSumOperator_ext
+    intro x i
+    simp [hilbertSumOperator_apply]
+  map_star' := by
+    intro a
+    change hilbertSumOperator ρ (star a) = star (hilbertSumOperator ρ a)
+    rw [ContinuousLinearMap.star_eq_adjoint]
+    refine (ContinuousLinearMap.eq_adjoint_iff _ _).mpr ?_
+    intro x y
+    rw [lp.inner_eq_tsum, lp.inner_eq_tsum]
+    refine tsum_congr fun i => ?_
+    rw [hilbertSumOperator_apply, hilbertSumOperator_apply]
+    have hstar : ρ i (star a) = ContinuousLinearMap.adjoint (ρ i a) := by
+      rw [← ContinuousLinearMap.star_eq_adjoint]
+      exact map_star (ρ i) a
+    rw [hstar]
+    exact ContinuousLinearMap.adjoint_inner_left _ _ _
+
+/-- Every direct-sum representation coordinate keeps the original coefficient action. -/
+@[simp]
+theorem hilbertDirectSum_apply (ρ : ∀ i, A →⋆ₙₐ[ℂ] (H i →L[ℂ] H i))
+    (a : A) (x : lp H 2) (i : I) :
+    hilbertDirectSum ρ a x i = ρ i a (x i) := rfl
+
+end NonUnitalStarAlgHom
+
+namespace StarAlgHom
+
+universe uA uI uH
+
+variable {A : Type uA} [CStarAlgebra A]
+variable {I : Type uI} {H : I → Type uH}
+variable [∀ i, NormedAddCommGroup (H i)] [∀ i, InnerProductSpace ℂ (H i)]
+variable [∀ i, CompleteSpace (H i)]
+
+/-- The unital direct-sum representation uses the shared nonunital coordinate construction. -/
+def hilbertDirectSum (ρ : ∀ i, A →⋆ₐ[ℂ] (H i →L[ℂ] H i)) :
+    A →⋆ₐ[ℂ] (lp H 2 →L[ℂ] lp H 2) where
+  __ := NonUnitalStarAlgHom.hilbertDirectSum (fun i => (ρ i).toNonUnitalStarAlgHom)
+  map_one' := by
+    apply ContinuousLinearMap.ext
+    intro x
+    apply lp.ext
+    funext i
+    change ρ i (1 : A) (x i) = x i
+    rw [map_one, one_apply_eq_self]
+  commutes' := by
+    intro c
+    apply ContinuousLinearMap.ext
+    intro x
+    apply lp.ext
+    funext i
+    change ρ i (algebraMap ℂ A c) (x i) =
+      (algebraMap ℂ (lp H 2 →L[ℂ] lp H 2) c x) i
+    rw [AlgHomClass.commutes (ρ i) c]
+    simp only [Algebra.algebraMap_eq_smul_one, smul_apply, one_apply_eq_self,
+      lp.coeFn_smul, Pi.smul_apply]
+
+/-- Each coordinate of the unital sum retains the original unital representation action. -/
+@[simp]
+theorem hilbertDirectSum_apply (ρ : ∀ i, A →⋆ₐ[ℂ] (H i →L[ℂ] H i))
+    (a : A) (x : lp H 2) (i : I) :
+    hilbertDirectSum ρ a x i = ρ i a (x i) := rfl
+
+end StarAlgHom
+
+end
