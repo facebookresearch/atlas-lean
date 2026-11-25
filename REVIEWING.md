@@ -78,6 +78,12 @@ Check that each added or changed module is in the correct top-level library.
   encodings or thin wrappers.
 - Check imports, namespaces, argument order, implicit parameters, simp behavior,
   typeclass inference, and proof dependence on unstable implementation details.
+- Check every dependency declaration you suggest against the pinned versions
+  (`lean-toolchain`, `lake-manifest.json`), never ask an author to switch to a
+  deprecated alias, and leave out a rename you cannot check. In
+  `@[deprecated] alias old := new`, `old` is the deprecated name. For example,
+  pinned Mathlib renamed `enorm` to `eNorm`: `eLpNorm_one_eq_lintegral_eNorm`
+  is current and `eLpNorm_one_eq_lintegral_enorm` is its deprecated alias.
 - Credit primary mathematical sources and copied or closely adapted
   formalizations.
 
