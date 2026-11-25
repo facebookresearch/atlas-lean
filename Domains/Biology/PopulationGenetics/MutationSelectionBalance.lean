@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.RingTheory.Polynomial.Bernstein
 public import Mathlib.Order.Filter.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
@@ -323,5 +324,131 @@ theorem le_div_of_diploidStep_eq {s t U q : ℝ} (hs0 : 0 < s) (hs1 : s ≤ 1) (
   have : s * q ≤ U := le_of_mul_le_mul_right hge hsq
   rw [le_div_iff₀ hs0]
   linarith
+
+/-! ### The completely recessive case -/
+
+/-- Mutation–selection balance for a recessive allele in an infinite, randomly mating diploid
+population with nonoverlapping generations. The newborn frequencies are in Hardy–Weinberg
+proportions, the viabilities of `AA`, `Aa`, and `aa` are `1`, `1`, and `1 - s`, and mutation
+from `A` to `a` occurs at rate `u` after selection, with no back mutation.
+
+For wild-type frequency `p ∈ [0, 1]`, `diploidStep 0 s u (1 - p)` updates the mutant
+frequency. It models a generation only when mean fitness is positive
+(`s < 1` or `0 < p`), and then the next wild-type frequency is
+`p * (1 - u) / (1 - s * (1 - p)^2)`. Fixed points are `p = 0` when `s < 1`, and the
+solutions of `s * (1 - p)^2 = u` in the unit interval. If `u < s` the unique interior
+fixed point has mutant frequency `√(u / s)`, mean fitness `1 - u`, and load `u`. If `s ≤ u`,
+only `p = 0` is fixed.
+
+See J. Felsenstein, *Theoretical Evolutionary Genetics* (December 2019), § III.6,
+equations (III-19)–(III-24), pp. 149–150. -/
+theorem recessive_mutation_selection_balance {s u : ℝ}
+    (hs₀ : 0 < s) (hs₁ : s ≤ 1) (hu₀ : 0 < u) (hu₁ : u < 1) :
+    let IsFixed (p : ℝ) :=
+      0 < meanFitness 0 s (1 - p) ∧ diploidStep 0 s u (1 - p) = 1 - p
+    (∀ p ∈ Set.Icc (0 : ℝ) 1,
+      meanFitness 0 s (1 - p) = 1 - s * (1 - p) ^ 2 ∧
+      (0 < meanFitness 0 s (1 - p) ↔ s < 1 ∨ 0 < p) ∧
+      (0 < meanFitness 0 s (1 - p) →
+        1 - diploidStep 0 s u (1 - p) = p * (1 - u) / (1 - s * (1 - p) ^ 2)) ∧
+      (IsFixed p ↔ (p = 0 ∧ s < 1) ∨ s * (1 - p) ^ 2 = u)) ∧
+    (u < s →
+      let pₑ := 1 - Real.sqrt (u / s)
+      pₑ ∈ Set.Ioo (0 : ℝ) 1 ∧ IsFixed pₑ ∧
+      (∀ p ∈ Set.Ioo (0 : ℝ) 1, IsFixed p → p = pₑ) ∧
+      meanFitness 0 s (1 - pₑ) = 1 - u ∧ 1 - meanFitness 0 s (1 - pₑ) = u) ∧
+    (s ≤ u → ∀ p ∈ Set.Icc (0 : ℝ) 1, IsFixed p ↔ p = 0) := by
+  dsimp only
+  have hmean (p : ℝ) : meanFitness 0 s (1 - p) = 1 - s * (1 - p) ^ 2 := by
+    unfold meanFitness
+    ring
+  have hpos (p : ℝ) (hp : p ∈ Set.Icc (0 : ℝ) 1) :
+      0 < meanFitness 0 s (1 - p) ↔ s < 1 ∨ 0 < p := by
+    constructor
+    · intro hw
+      by_cases h : p = 0
+      · left
+        rw [hmean, h, sub_zero, one_pow, mul_one] at hw
+        linarith
+      · exact Or.inr (lt_of_le_of_ne hp.1 (Ne.symm h))
+    · rintro (h | h)
+      · have hq : (1 - p) ^ 2 ≤ 1 :=
+          pow_le_one₀ (sub_nonneg.mpr hp.2) (by linarith [hp.1])
+        have hs := mul_le_mul_of_nonneg_left hq hs₀.le
+        rw [hmean]
+        linarith
+      · exact meanFitness_pos zero_le_one hs₁ (sub_nonneg.mpr hp.2) (by linarith)
+  have hstep (p : ℝ) (hw : 0 < meanFitness 0 s (1 - p)) :
+      1 - diploidStep 0 s u (1 - p) = p * (1 - u) / (1 - s * (1 - p) ^ 2) := by
+    have hden : 1 - s * (1 - p) ^ 2 ≠ 0 := by rw [← hmean]; exact hw.ne'
+    unfold diploidStep selected
+    rw [hmean]
+    apply (eq_div_iff hden).mpr
+    rw [sub_mul, add_mul, mul_assoc (1 - u), div_mul_cancel₀ _ hden]
+    ring
+  have hfixed (p : ℝ) (hp : p ∈ Set.Icc (0 : ℝ) 1) :
+      (0 < meanFitness 0 s (1 - p) ∧ diploidStep 0 s u (1 - p) = 1 - p) ↔
+        (p = 0 ∧ s < 1) ∨ s * (1 - p) ^ 2 = u := by
+    constructor
+    · rintro ⟨hw, hfix⟩
+      by_cases h : p = 0
+      · exact Or.inl ⟨h, ((hpos p hp).mp hw).resolve_right (by simp [h])⟩
+      · right
+        have hnext := hstep p hw
+        rw [hfix, sub_sub_cancel] at hnext
+        have hden : 1 - s * (1 - p) ^ 2 ≠ 0 := by rw [← hmean]; exact hw.ne'
+        have hcross := (eq_div_iff hden).mp hnext
+        have heq := mul_left_cancel₀ h hcross
+        linarith only [heq]
+    · intro h
+      have hw : 0 < meanFitness 0 s (1 - p) := by
+        rcases h with ⟨_, hs⟩ | hb
+        · exact (hpos p hp).mpr (Or.inl hs)
+        · rw [hmean, hb]
+          exact sub_pos.mpr hu₁
+      refine ⟨hw, ?_⟩
+      have hnext : 1 - diploidStep 0 s u (1 - p) = p := by
+        rw [hstep p hw]
+        rcases h with ⟨rfl, _⟩ | hb
+        · simp
+        · rw [hb]
+          exact (div_eq_iff (sub_pos.mpr hu₁).ne').mpr rfl
+      linarith only [hnext]
+  refine ⟨fun p hp => ⟨hmean p, hpos p hp, hstep p, hfixed p hp⟩, ?_, ?_⟩
+  · intro hus
+    let q := Real.sqrt (u / s)
+    have hq₀ : 0 < q := Real.sqrt_pos.mpr (div_pos hu₀ hs₀)
+    have hq₁ : q < 1 := by
+      have hdiv : u / s < 1 := (div_lt_iff₀ hs₀).mpr (by simpa only [one_mul] using hus)
+      exact (Real.sqrt_lt' zero_lt_one).mpr (by simpa only [one_pow] using hdiv)
+    have hp : 1 - q ∈ Set.Ioo (0 : ℝ) 1 := ⟨by linarith, by linarith⟩
+    have hb : s * (1 - (1 - q)) ^ 2 = u := by
+      rw [sub_sub_cancel]
+      change s * Real.sqrt (u / s) ^ 2 = u
+      rw [Real.sq_sqrt (div_nonneg hu₀.le hs₀.le), mul_div_cancel₀ u hs₀.ne']
+    have he := (hfixed (1 - q) ⟨hp.1.le, hp.2.le⟩).mpr (Or.inr hb)
+    have hf : meanFitness 0 s (1 - (1 - q)) = 1 - u := by rw [hmean, hb]
+    refine ⟨hp, he, ?_, hf, by rw [hf]; ring⟩
+    intro p hp' hfp
+    rcases (hfixed p ⟨hp'.1.le, hp'.2.le⟩).mp hfp with ⟨hz, _⟩ | h
+    · exact (hp'.1.ne' hz).elim
+    · have hsq : (1 - p) ^ 2 = u / s := (eq_div_iff hs₀.ne').mpr (by rw [mul_comm, h])
+      have hq : q = 1 - p := by
+        change Real.sqrt (u / s) = 1 - p
+        rw [← hsq, Real.sqrt_sq (sub_nonneg.mpr hp'.2.le)]
+      linarith only [hq]
+  · intro hsu p hp
+    rw [hfixed p hp]
+    constructor
+    · rintro (⟨h, _⟩ | hb)
+      · exact h
+      · by_contra h
+        have hp₀ : 0 < p := lt_of_le_of_ne hp.1 (Ne.symm h)
+        have hq : (1 - p) ^ 2 < 1 := by
+          simpa only [one_pow] using
+            (sq_lt_sq₀ (sub_nonneg.mpr hp.2) zero_le_one).mpr (show 1 - p < 1 by linarith)
+        have hs := mul_lt_mul_of_pos_left hq hs₀
+        linarith
+    · exact fun h => Or.inl ⟨h, hsu.trans_lt hu₁⟩
 
 end MathlibExt.Biology.PopulationGenetics.MutationSelectionBalance
