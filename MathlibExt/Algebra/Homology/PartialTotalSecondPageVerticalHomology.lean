@@ -58,6 +58,11 @@ variable (B : HomologicalComplex₂ C (ComplexShape.down ℕ)
 local notation "core" =>
   CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat
 
+private theorem partialTotalIsoInvHomEnd
+    {D : Type*} [Category D] {A B X : D} (a : A ⟶ B) (e : X ≅ B) :
+    (a ≫ e.inv) ≫ e.hom = a := by
+  rw [Category.assoc, Iso.inv_hom_id, Category.comp_id]
+
 private theorem partialTotalHomologyFunctorShiftObj
     {D : Type*} [Category D] [Abelian D] (K : CochainComplex D ℤ) (i : ℤ) :
     ((HomologicalComplex.homologyFunctor D (ComplexShape.up ℤ) 0).shift i).obj K =
@@ -93,7 +98,7 @@ private theorem partialTotalShiftMapHomology
       HomologicalComplex.homologyMap z i ≫
         (partialTotalShiftHomologyIso L n i i' hi').hom := by
   simp only [Functor.shiftMap, partialTotalShiftHomologyIso, Iso.trans_hom, Iso.symm_hom,
-    eqToIso_hom, eqToIso_inv, CochainComplex.homologyFunctor_shift,
+    eqToIso.hom, eqToIso.inv, CochainComplex.homologyFunctor_shift,
     HomologicalComplex.homologyFunctor_obj, HomologicalComplex.homologyFunctor_map,
     eqToHom_refl, Category.id_comp, Category.comp_id]
 
@@ -131,30 +136,56 @@ private theorem partialTotalLiftCyclesShiftHomology
     K.liftCycles (f ≫ (K.shiftFunctorObjXIso n i i' (by omega)).hom) j' hj' hy ≫
       K.homologyπ i' ≫ eT.inv
   have hnative : f₀ = g₀ ≫ s.inv := by
-    simpa only [f₀, g₀, s, eS, eT, CochainComplex.homologyFunctor_shift,
-      HomologicalComplex.homologyFunctor_obj, eqToIso_refl, Iso.refl_inv,
-      Category.comp_id] using
+    simpa only [f₀, g₀, s, eS, eT, eqToIso.inv, CochainComplex.homologyFunctor_shift,
+      HomologicalComplex.homologyFunctor_obj, eqToHom_refl,
+      Category.comp_id, Category.assoc] using
       CochainComplex.liftCycles_shift_homologyπ K f j hj hf i' hi' j' hj'
   have htransport := partialTotalIsoTransportEq s eS eT hnative
   change f₀ ≫ eS.hom = (g₀ ≫ eT.hom) ≫ E.inv at htransport
+  have hS :
+      f₀ ≫ eS.hom = (K⟦n⟧).liftCycles f j hj hf ≫ (K⟦n⟧).homologyπ i := by
+    simpa only [f₀, Category.assoc] using
+      partialTotalIsoInvHomEnd
+        ((K⟦n⟧).liftCycles f j hj hf ≫ (K⟦n⟧).homologyπ i) eS
+  have hT :
+      g₀ ≫ eT.hom =
+        K.liftCycles (f ≫ (K.shiftFunctorObjXIso n i i' (by omega)).hom) j' hj' hy ≫
+          K.homologyπ i' := by
+    simpa only [g₀, Category.assoc] using
+      partialTotalIsoInvHomEnd
+        (K.liftCycles (f ≫ (K.shiftFunctorObjXIso n i i' (by omega)).hom) j' hj' hy ≫
+          K.homologyπ i') eT
   have hnormalized :
       (K⟦n⟧).liftCycles f j hj hf ≫ (K⟦n⟧).homologyπ i =
         (K.liftCycles (f ≫ (K.shiftFunctorObjXIso n i i' (by omega)).hom) j' hj' hy ≫
-          K.homologyπ i') ≫ E.inv := by
-    simpa only [f₀, g₀, Category.assoc, Iso.inv_hom_id_assoc] using htransport
+          K.homologyπ i') ≫ E.inv :=
+    hS.symm.trans (htransport.trans
+      (congrArg (fun t : A ⟶ K.homology i' => t ≫ E.inv) hT))
+  have hfinal :
+      ((K⟦n⟧).liftCycles f j hj hf ≫ (K⟦n⟧).homologyπ i) ≫ E.hom =
+        K.liftCycles (f ≫ (K.shiftFunctorObjXIso n i i' (by omega)).hom) j' hj' hy ≫
+          K.homologyπ i' :=
+    (congrArg (fun t : A ⟶ (K⟦n⟧).homology i => t ≫ E.hom) hnormalized).trans
+      (partialTotalIsoInvHomEnd
+        (K.liftCycles (f ≫ (K.shiftFunctorObjXIso n i i' (by omega)).hom) j' hj' hy ≫
+          K.homologyπ i') E)
   refine ⟨hy, ?_⟩
-  simpa only [E, Category.assoc, Iso.inv_hom_id_assoc, Category.comp_id] using
-    congrArg (fun t : A ⟶ (K⟦n⟧).homology i => t ≫ E.hom) hnormalized
+  simpa only [E, Category.assoc] using hfinal
 
 private theorem partialTotalCycleCoordinateComm
-    {D : Type*} [Category D] [Preadditive D] [Linear ℤ D]
+    {D : Type*} [Category D] [Preadditive D]
     {A L M Z : D} (s : ℤˣ) {u v : A ⟶ Z} (hc : u = s • v)
     (a : A ⟶ L) (b : A ⟶ M) (f : M ⟶ L) (i : L ⟶ Z) [Mono i]
     (ha : a ≫ i = u) (hb : b ≫ f ≫ i = v) : a = s • (b ≫ f) := by
-  apply (cancel_mono i).1
-  rw [Linear.units_smul_comp]
   have hb' : (b ≫ f) ≫ i = v := (Category.assoc _ _ _).trans hb
-  exact ha.trans (hc.trans (congrArg (fun t => s • t) hb'.symm))
+  apply (cancel_mono i).1
+  calc
+    a ≫ i = u := ha
+    _ = s • v := hc
+    _ = s • ((b ≫ f) ≫ i) :=
+      congrArg (fun t : A ⟶ Z => s • t) hb'.symm
+    _ = (s • (b ≫ f)) ≫ i :=
+      (Linear.units_smul_comp s (b ≫ f) i).symm
 
 private theorem partialTotalSignedRowXHom (p q : ℕ) :
     eqToHom (HomologicalComplex₂.signedRow_X B p q) = 𝟙 ((B.X p).X q) := by
@@ -2200,16 +2231,21 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
       ((ComplexShape.down ℕ).ε q) hComponent a b k i
       (by
         dsimp only [a, i]
-        simpa only [Category.assoc, x,
-          partialTotalSignedRowXHom, Category.comp_id] using
-          congrArg (fun z => z ≫ eqToHom (HomologicalComplex₂.signedRow_X B p q))
-            (hLeftCycles hy))
+        rw [partialTotalSignedRowXHom]
+        have hpost := congrArg
+          (fun z => z ≫ eqToHom (HomologicalComplex₂.signedRow_X B p q))
+          (hLeftCycles hy)
+        rw [partialTotalSignedRowXHom] at hpost
+        have hnormalized := hpost.trans (Category.comp_id _)
+        simpa only [Category.assoc, x] using hnormalized)
       (by
         dsimp only [b, k, i]
-        simpa only [Category.assoc,
-          partialTotalSignedRowXHom, Category.comp_id] using
-          congrArg (fun z => z ≫ eqToHom (HomologicalComplex₂.signedRow_X B p q))
-            hRightCycles)
+        rw [partialTotalSignedRowXHom]
+        have hpost := congrArg
+          (fun z => z ≫ eqToHom (HomologicalComplex₂.signedRow_X B p q)) hRightCycles
+        rw [partialTotalSignedRowXHom] at hpost
+        have hnormalized := hpost.trans (Category.comp_id _)
+        simpa only [Category.assoc] using hnormalized)
     simpa only [a, b, k, Category.assoc] using hout
   have hRightHomology :
       Kext.homologyπ nPlus ≫ eNatPlus.hom ≫
@@ -2483,7 +2519,7 @@ private theorem partialTotalFirstPageCoordinateComm
     (f : ∀ p, Y (p + 1) ⟶ Y p)
     (hpage : ∀ p, P.d (p + 1, q) (p, q) = (e (p + 1)).hom ≫ f p ≫ (e p).inv)
     (hrow : ∀ p, f p ≫ (r p).hom = (r (p + 1)).hom ≫ L.d (p + 1) p) :
-    ∀ i j (hij : (ComplexShape.down ℕ).Rel i j),
+    ∀ i j (_hij : (ComplexShape.down ℕ).Rel i j),
       (e i ≪≫ r i).hom ≫ L.d i j =
         (P.restriction (partialTotalFirstPageRowEmbedding q)).d i j ≫ (e j ≪≫ r j).hom := by
   intro i j hij
@@ -2513,13 +2549,16 @@ noncomputable def partialTotalFirstPageSignedVerticalHomologyIso (q : ℕ) :
   let Y : ℕ → C := fun p => (B.totalRow p).homology (p + q)
   let e : ∀ p, P₁.X (p, q) ≅ Y p :=
     fun p => B.partialTotalSpectralSequenceFirstPageRowIso p q
-  let r : ∀ p, Y p ≅ L.X p := fun p => B.totalRowHomologyIso p q
+  have hLX : ∀ p, L.X p = (B.X p).homology q :=
+    fun p => B.signedVerticalHomologyComplex_X p q
+  let r : ∀ p, Y p ≅ L.X p := fun p =>
+    Eq.mpr (congrArg (fun Z : C => Y p ≅ Z) (hLX p)) (B.totalRowHomologyIso p q)
   let f : ∀ p, Y (p + 1) ⟶ Y p := fun p => B.partialTotalHorizontalRowHomology p q
   have hpage : ∀ p, P₁.d (p + 1, q) (p, q) = (e (p + 1)).hom ≫ f p ≫ (e p).inv :=
     fun p => B.partialTotalSpectralSequenceFirstPage_d_eq p q
   have hrow : ∀ p, f p ≫ (r p).hom = (r (p + 1)).hom ≫ L.d (p + 1) p :=
     fun p => B.partialTotalHorizontalRowHomology_totalRowHomologyIso p q
-  have hcomm : ∀ i j (hij : (ComplexShape.down ℕ).Rel i j),
+  have hcomm : ∀ i j (_hij : (ComplexShape.down ℕ).Rel i j),
       (e i ≪≫ r i).hom ≫ L.d i j =
         (P₁.restriction (partialTotalFirstPageRowEmbedding q)).d i j ≫ (e j ≪≫ r j).hom := by
     exact partialTotalFirstPageCoordinateComm P₁ L q Y e r f hpage hrow

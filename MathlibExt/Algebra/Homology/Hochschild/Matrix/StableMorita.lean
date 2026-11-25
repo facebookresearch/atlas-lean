@@ -598,8 +598,10 @@ theorem stableHomologyIsoAt_hom (G : J ⥤ ℕ) (n : ℕ) :
       (HomologicalComplex.homologyColimitIso (C := ModuleCat.{max u v w t} k) K n).inv ≫
       HomologicalComplex.homologyMap (stableTraceAt.{t} k A M G) n =
       HomologicalComplex.homologyMap (traceChainMapAt.{t} k A M (Fin (G.obj r + 1))) n := by
-    rw [← Category.assoc, HomologicalComplex.ι_comp_homologyColimitIso_inv,
-      ← HomologicalComplex.homologyMap_comp, ι_stableTraceAt]
+    rw [← Category.assoc, HomologicalComplex.ι_comp_homologyColimitIso_inv]
+    change HomologicalComplex.homologyMap (colimit.ι K r) n ≫
+      HomologicalComplex.homologyMap (stableTraceAt.{t} k A M G) n = _
+    rw [← HomologicalComplex.homologyMap_comp, ι_stableTraceAt]
   exact hl.trans hr.symm
 
 /-- The inverse homology comparison is induced by the actual stable corner. -/
