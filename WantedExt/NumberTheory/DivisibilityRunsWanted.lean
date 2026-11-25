@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.NumberTheory.DivisibilityRuns
+public import MathlibExt.NumberTheory.GeneralizedTribonacciBasis
 
 namespace MetaMathlibExt
 
@@ -29,44 +30,6 @@ Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 1
 (`integers-2026-A122-prop-1`). -/
 public theorem_wanted gibonacciNumber_eq_fib (x y : ℤ) (n : ℕ) (hn : 1 ≤ n) :
     gibonacciNumber x y n = (Nat.fib (n - 1) : ℤ) * x + (Nat.fib n : ℤ) * y
-
-/-- **Basis sequences for generalized Tribonacci sequences.** There are integer sequences
-$(u_n)_{n \ge 0}$, $(v_n)_{n \ge 0}$ and $(w_n)_{n \ge 0}$, each satisfying the Tribonacci
-recurrence $s_{n+3} = s_{n+2} + s_{n+1} + s_n$ for all $n \ge 0$, with initial values
-$(u_0, u_1, u_2) = (1, 0, 0)$, $(v_0, v_1, v_2) = (0, 1, 0)$ and $(w_0, w_1, w_2) = (0, 0, 1)$,
-such that for all integers $a, b, c$ and every $n \ge 0$ the $n$-th term of the generalized
-Tribonacci sequence with initial values $a, b, c$ equals $u_n a + v_n b + w_n c$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 2
-(`integers-2026-A122-prop-2`). -/
-public theorem_wanted exists_generalizedTribonacci_basis :
-    ∃ u v w : ℕ → ℤ,
-      (∀ n, u (n + 3) = u (n + 2) + u (n + 1) + u n) ∧
-      (∀ n, v (n + 3) = v (n + 2) + v (n + 1) + v n) ∧
-      (∀ n, w (n + 3) = w (n + 2) + w (n + 1) + w n) ∧
-      u 0 = 1 ∧ u 1 = 0 ∧ u 2 = 0 ∧
-      v 0 = 0 ∧ v 1 = 1 ∧ v 2 = 0 ∧
-      w 0 = 0 ∧ w 1 = 0 ∧ w 2 = 1 ∧
-      ∀ a b c : ℤ, ∀ n : ℕ,
-        generalizedTribonacci a b c n = u n * a + v n * b + w n * c
-
-/-- **Divisibility runs of length one, two and three.** For integers $x, y, a, b, c$, let $(P_n)$
-be the Gibonacci sequence with $P_0 = x$, $P_1 = y$ and $(Q_n)$ the generalized Tribonacci sequence
-with $Q_0 = a$, $Q_1 = b$, $Q_2 = c$, and say $(x, y; a, b, c)$ has a divisibility run of length at
-least $L$ when $P_i \ne 0$ and $P_i \mid Q_i$ for every $i < L$. Then there is a run of length at
-least $1$ if and only if $x \ne 0$ and $x \mid a$; a run of length at least $2$ if and only if
-$x \ne 0$, $x \mid a$, $y \ne 0$ and $y \mid b$; and a run of length at least $3$ if and only if
-$x \ne 0$, $x \mid a$, $y \ne 0$, $y \mid b$, $x + y \ne 0$ and $x + y \mid c$.
-
-Source: Smirnov, *Finite Divisibility Runs Between Generalized Fibonacci and
-Tribonacci Sequences*, INTEGERS 26 (2026), Article A122, Proposition 3
-(`integers-2026-A122-prop-3`). -/
-public theorem_wanted isDivRunUpTo_small (x y a b c : ℤ) :
-    (IsDivRunUpTo x y a b c 1 ↔ x ≠ 0 ∧ x ∣ a) ∧
-    (IsDivRunUpTo x y a b c 2 ↔ (x ≠ 0 ∧ x ∣ a) ∧ y ≠ 0 ∧ y ∣ b) ∧
-    (IsDivRunUpTo x y a b c 3 ↔
-      (x ≠ 0 ∧ x ∣ a) ∧ (y ≠ 0 ∧ y ∣ b) ∧ x + y ≠ 0 ∧ x + y ∣ c)
 
 /-- **Divisibility by a Gibonacci sequence forces a Tribonacci sequence to vanish.** Let
 $x, y, a, b, c$ be integers, let $(P_n)_{n \ge 0}$ be the Gibonacci sequence with $P_0 = x$ and

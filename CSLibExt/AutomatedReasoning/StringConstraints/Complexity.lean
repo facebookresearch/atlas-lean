@@ -58,7 +58,7 @@ set_option autoImplicit false
 
 namespace Cslib.AutomatedReasoning.StringConstraints
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 
 /-- SAT as string constraints: each clause is a disjunction of word
 equations `x = [b]`, one per literal. -/

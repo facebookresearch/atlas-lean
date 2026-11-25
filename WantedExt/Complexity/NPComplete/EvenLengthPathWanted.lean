@@ -18,7 +18,7 @@ Networks 14 (1984), 507-513, doi:10.1002/net.3230140403.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Cslib.Foundations.Data.List.IsChainFromTo
 public import Mathlib.Algebra.Group.Nat.Even
 public import Mathlib.Combinatorics.Digraph.Basic

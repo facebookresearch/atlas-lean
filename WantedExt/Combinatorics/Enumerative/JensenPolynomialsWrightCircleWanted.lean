@@ -11,9 +11,9 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 public import Mathlib.Algebra.Polynomial.Roots
-public import Mathlib.Analysis.SpecialFunctions.Gamma.Digamma
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
+public import MathlibExt.Analysis.SpecialFunctions.Gamma.TwistedDigamma
 
 /-! # Jensen polynomials of coefficients from Wright's circle method
 
@@ -47,23 +47,6 @@ public theorem_wanted integral_exp_div_one_sub_exp_sub_eq_log_Gamma {N : ℝ} (h
           (1 / 2 - 1 / N) * Real.exp (-x) / x) =
       Real.log (Real.Gamma (1 / N)) + (1 / 2 - 1 / N) * Real.log (1 / N) -
         1 / 2 * Real.log (2 * Real.pi)
-
-/-- **A twisted sum of digamma values.** Let $p$ and $k$ be natural numbers with $1 \le k < p$,
-and let $\psi = \Gamma'/\Gamma$ be the digamma function. Then
-$$
-\sum_{\alpha=1}^{p} e^{2\pi i k \alpha / p} \, \psi\left( \frac{\alpha}{p} \right) =
-p \operatorname{Log}\left( 1 - e^{2\pi i k / p} \right),
-$$
-where $\operatorname{Log}$ is the principal branch of the complex logarithm.
-
-Source: Jashan Bal, Fern Haraldson, Joshua Males and Ian Thompson, *Jensen Polynomials Associated
-with Wright's Circle Method: Hyperbolicity and Turán Inequalities*, INTEGERS 25 (2025),
-Article A36, Lemma 3 (`integers-2025-A36-lem-3`). -/
-public theorem_wanted sum_exp_mul_digamma_div_eq_mul_log_one_sub {p k : ℕ} (hk : 1 ≤ k)
-    (hkp : k < p) :
-    ∑ α ∈ Finset.Icc 1 p,
-        Complex.exp (2 * Real.pi * Complex.I * k * α / p) * Complex.digamma (α / p) =
-      p * Complex.log (1 - Complex.exp (2 * Real.pi * Complex.I * k / p))
 
 /-- **Hyperbolicity of Jensen polynomials from a log-ratio expansion.** Let $\alpha$, $A$ and
 $\delta$ be sequences of positive real numbers indexed by $n \in \mathbb{N}$ with

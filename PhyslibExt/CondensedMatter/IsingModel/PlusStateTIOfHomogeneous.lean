@@ -279,7 +279,7 @@ lemma iti_decayFun_add (μ : ℕ → ProbabilityMeasure (ConfigSpace (Site d)))
 lemma iti_decayFun_smul (μ : ℕ → ProbabilityMeasure (ConfigSpace (Site d)))
     (g : Multiplicative (Site d)) (c : ℝ) (f : ConfigSpace (Site d) →ᵇ ℝ) (n : ℕ) :
     pstc_decayFun μ g (c • f) n = c * pstc_decayFun μ g f n := by
-  simp only [pstc_decayFun, BoundedContinuousFunction.coe_smul, smul_eq_mul]
+  simp only [pstc_decayFun, BoundedContinuousFunction.coe_smul, Pi.smul_apply, smul_eq_mul]
   rw [integral_const_mul, integral_const_mul]; ring
 
 lemma iti_decayFun_zero (μ : ℕ → ProbabilityMeasure (ConfigSpace (Site d)))

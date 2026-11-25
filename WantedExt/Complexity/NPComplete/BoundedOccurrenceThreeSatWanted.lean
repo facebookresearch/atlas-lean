@@ -17,7 +17,7 @@ satisfiability problem" (1984).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Logics.Propositional.CNF.Semantics
@@ -46,7 +46,7 @@ reduction from every language in `NP`
 
 /-- **Bounded-occurrence 3-SAT instances.** A bounded-occurrence 3-SAT instance is a pair
 $(n, \varphi)$ of a natural number $n$, the number of variables, and a CNF formula $\varphi$. -/
-abbrev BoundedOccurrenceThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev BoundedOccurrenceThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- **Well-formed bounded-occurrence 3-SAT instances.** A bounded-occurrence 3-SAT instance
 $(n, \varphi)$ is well formed when every clause of $\varphi$ is a list of exactly three literals,
@@ -64,7 +64,7 @@ variable $x \ge n$ to false. -/
 def BoundedOccurrenceThreeSatFeasible
     (i : BoundedOccurrenceThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2
+    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
 
 open Classical in
 /-- **3-SAT with bounded occurrences as a decision problem.** The decision problem 3-SAT WITH

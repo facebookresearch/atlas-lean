@@ -1,0 +1,3 @@
+# Orthorhombic lattices of types oP and oI are different
+
+For $a, b, c > 0$, the orthorhombic lattices are oP with basis matrix $\operatorname{diag}(a, b, c)$; oC with primitive vectors $(\tfrac a2, -\tfrac b2, 0)$, $(\tfrac a2, \tfrac b2, 0)$, $(0, 0, c)$; oI with primitive vectors $(-\tfrac a2, \tfrac b2, \tfrac c2)$, $(\tfrac a2, -\tfrac b2, \tfrac c2)$, $(\tfrac a2, \tfrac b2, -\tfrac c2)$; and oF with primitive vectors $(0, \tfrac b2, \tfrac c2)$, $(\tfrac a2, 0, \tfrac c2)$, $(\tfrac a2, \tfrac b2, 0)$. Then the oP and oI lattices with these parameters have different sets of lattice points.
