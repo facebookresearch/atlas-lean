@@ -1,4 +1,4 @@
-# Units Mod Powers Eigenspace
+# Galois action on units modulo p-th powers
 
 - [Map Non Zero](map-non-zero.md)
 - [Gal Restrict Ring Aut](gal-restrict-ring-aut.md)

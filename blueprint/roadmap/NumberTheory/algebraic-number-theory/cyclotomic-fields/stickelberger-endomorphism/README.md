@@ -1,4 +1,4 @@
-# Stickelberger
+# Stickelberger endomorphism
 
 - [Exponent Set](exponent-set.md)
 - [Eigenvalue Scalar](eigenvalue-scalar.md)

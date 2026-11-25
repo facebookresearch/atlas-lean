@@ -45,11 +45,11 @@ import Mathlib.FieldTheory.Finite.Basic
 # The Stickelberger endomorphism
 
 For a prime `p` and a `ZMod p`-module `A` with an action `ρ` of `(ZMod p)ˣ`, this file
-defines the endomorphism `stickelbergerEnd ρ = ∑ ρ (c⁻¹)` over the exponents
-`0 < c < p / 2` and the `ω ^ i` eigenvector condition `IsOmegaEigenvector`. On Mathlib's
-quotient `ModN M p = M / pM` of an abelian group it adds the endomorphism `modNEnd` induced by an
-endomorphism of `M`, and the endomorphism `clEnd` of the class group modulo `p`-th powers
-induced by a ring automorphism of a domain.
+defines the endomorphism `stickelbergerEnd ρ = ∑ ρ (c⁻¹)` of `A`, summed over the exponents `c`
+with `0 < c` and `2 * c < p`, and the `ω ^ i` eigenvector condition `IsOmegaEigenvector`. On
+Mathlib's quotient `ModN M p = M / pM` of an abelian group it adds the endomorphism `modNEnd`
+induced by an endomorphism of `M`, and the endomorphism `clEnd` of the class group modulo
+`p`-th powers induced by a ring automorphism of a domain.
 
 ## Main results
 
@@ -82,7 +82,7 @@ def exponentSet (p : ℕ) : Finset ℕ :=
   simp only [exponentSet, Finset.mem_filter, Finset.mem_range]
   exact ⟨fun h => h.2, fun h => ⟨by omega, h⟩⟩
 
-/-- The sum of the Stickelberger exponents; see
+/-- The sum of the Stickelberger exponents `c` with `0 < c` and `2 * c < p`; see
 `stickelbergerEnd_apply_of_isOmegaEigenvector_sub_two` for its role as an eigenvalue. -/
 def eigenvalueScalar (p : ℕ) : ℕ := ∑ c ∈ exponentSet p, c
 
@@ -104,17 +104,20 @@ noncomputable def expUnit [Fact p.Prime] {c : ℕ} (hc : c ∈ exponentSet p) : 
 
 variable {A : Type*} [AddCommGroup A] [Module (ZMod p) A]
 
-/-- The Stickelberger endomorphism `∑ c, ρ (c⁻¹)` over the Stickelberger exponents. -/
+/-- For a prime `p` and an action `ρ` of `(ZMod p)ˣ` on a `ZMod p`-module `A`, the Stickelberger
+endomorphism `∑ ρ (c⁻¹)` of `A`, summed over the exponents `c` with `0 < c` and `2 * c < p`. -/
 noncomputable def stickelbergerEnd [Fact p.Prime] (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) :
     Module.End (ZMod p) A :=
   ∑ c ∈ (exponentSet p).attach, ρ (expUnit c.2)⁻¹
 
-/-- `a` lies in the `ω ^ i` eigenspace: each unit `d` acts on it as `d ^ i`. -/
+/-- For an action `ρ` of `(ZMod p)ˣ` on a `ZMod p`-module, `a` lies in the `ω ^ i` eigenspace:
+each unit `d` acts on it as `d ^ i`. -/
 def IsOmegaEigenvector (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) (i : ℕ) (a : A) : Prop :=
   ∀ d : (ZMod p)ˣ, ρ d a = ((d : ZMod p) ^ i) • a
 
-/-- On an `ω ^ i` eigenvector, the Stickelberger endomorphism acts as the scalar
-`∑ c⁻¹ ^ i` over the Stickelberger exponents. -/
+/-- For a prime `p` and an action `ρ` of `(ZMod p)ˣ` on a `ZMod p`-module, the Stickelberger
+endomorphism acts on an `ω ^ i` eigenvector as the scalar `∑ c⁻¹ ^ i` in `ZMod p`, summed over
+the exponents `c` with `0 < c` and `2 * c < p`. -/
 theorem stickelbergerEnd_apply_of_isOmegaEigenvector [Fact p.Prime]
     {ρ : (ZMod p)ˣ →* Module.End (ZMod p) A} {i : ℕ} {a : A}
     (ha : IsOmegaEigenvector ρ i a) :
@@ -125,8 +128,9 @@ theorem stickelbergerEnd_apply_of_isOmegaEigenvector [Fact p.Prime]
   refine Finset.sum_congr rfl fun c _ => ?_
   rw [ha, Units.val_inv_eq_inv_val, coe_expUnit]
 
-/-- On an `ω ^ (p - 2)` eigenvector, the Stickelberger endomorphism acts as
-`eigenvalueScalar p`, since `c⁻¹ ^ (p - 2) = c` in `ZMod p` by Fermat's little theorem. -/
+/-- For a prime `p` and an action `ρ` of `(ZMod p)ˣ` on a `ZMod p`-module, the Stickelberger
+endomorphism acts on an `ω ^ (p - 2)` eigenvector as `eigenvalueScalar p`, since
+`c⁻¹ ^ (p - 2) = c` in `ZMod p` by Fermat's little theorem. -/
 theorem stickelbergerEnd_apply_of_isOmegaEigenvector_sub_two [Fact p.Prime]
     {ρ : (ZMod p)ˣ →* Module.End (ZMod p) A} {a : A}
     (ha : IsOmegaEigenvector ρ (p - 2) a) :
