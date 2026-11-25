@@ -19,6 +19,7 @@ public import Mathlib.RingTheory.UniqueFactorizationDomain.Moebius
 public import MathlibExt.NumberTheory.FunctionField.KappaPowMoebius
 public import MathlibExt.NumberTheory.FunctionField.MonicConvolution
 public import MathlibExt.NumberTheory.FunctionField.MonicCount
+public import MathlibExt.NumberTheory.FunctionField.MonicMoebiusDivisors
 
 /-!
 # Dirichlet convolutions over `𝔽_q[T]`
@@ -83,25 +84,6 @@ public theorem_wanted monicDirichletConv_mul_of_completelyMultiplicative {F : Ty
       ∑ᶠ ℓ ∈ {ℓ : F[X] | ℓ.Monic ∧ ℓ ∣ f ∧ ℓ ∣ g},
         (moebius ℓ : ℂ) * α ℓ * β ℓ * monicDirichletConv α β (f /ₘ ℓ) *
           monicDirichletConv α β (g /ₘ ℓ)
-
-/-- **Möbius sum over the monic divisors of a polynomial over a finite field.** Let $F$ be a finite
-field with $q$ elements and let $\mu$ be the Möbius function of $F[T]$. For every monic
-$f \in F[T]$,
-
-$$\sum_{g \text{ monic},\ g \mid f} \frac{\mu(g)}{q^{\deg g}} =
-\prod_{P \text{ monic irreducible},\ P \mid f} \left(1 - \frac{1}{q^{\deg P}}\right).$$
-
-The right side is $\Phi(f) / q^{\deg f}$, where $\Phi$ is Euler's totient function on $F[T]$.
-
-Source: Habib Jaber and Matilde Lalín, *Dirichlet Convolutions and Divisor Problems over B-Free
-Polynomials over Function Fields*, INTEGERS 26 (2026), Article A80, Lemma 6
-(`integers-2026-A80-lem-6`); `Φ` as defined after Theorem 3. -/
-public theorem_wanted monic_sum_moebius_div_norm {F : Type*} [Field F] [Fintype F] {f : F[X]}
-    (hf : f.Monic) :
-    ∑ᶠ g ∈ {g : F[X] | g.Monic ∧ g ∣ f},
-        (moebius g : ℝ) / (Fintype.card F : ℝ) ^ g.natDegree =
-      ∏ᶠ P ∈ {P : F[X] | P.Monic ∧ Irreducible P ∧ P ∣ f},
-        (1 - 1 / (Fintype.card F : ℝ) ^ P.natDegree)
 
 /-- **Degree-weighted Möbius sum over the monic divisors of a polynomial over a finite field.** Let
 $F$ be a finite field with $q$ elements and let $\mu$ be the Möbius function of $F[T]$. For every
