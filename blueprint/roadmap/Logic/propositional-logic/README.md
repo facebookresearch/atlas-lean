@@ -22,3 +22,6 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 - [Definite programs, models and the immediate-consequence operator](definite-programs-models-and-the-immediate-consequence-operator.md)
 - [Finite-ground positive program to DATA Datalog/Horn correspondence](finite-ground-positive-program-to-data-datalog-horn-correspo.md)
 - [Basic properties of stable models](basic-properties-of-stable-models.md)
+
+- [Proof certificates](proof-certificates/README.md)
+- [SAT solving](sat-solving/README.md)
