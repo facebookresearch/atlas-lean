@@ -879,7 +879,7 @@
      {"slug": "electronics-and-instrumentation", "title": "Electronics and instrumentation", "description": "Electronic devices and measurement circuits: diodes, bipolar and MOS transistors, feedback amplifiers, logic levels, synchronizers and setup timing, photodetector shot noise, and digital-to-analog converters."}
     ]},
     {"slug": "quantum-mechanics", "title": "Quantum mechanics", "description": "Nonrelativistic quantum mechanics: states, observables and the Born rule in finite dimensions, unitary evolution, and exactly solvable models such as the particle in a box and the harmonic oscillator. Quantum chemistry is under Chemistry and quantum information under Quantum Information.", "msc": ["81P16", "81Q05", "81Q10"], "subfields": []},
-    {"slug": "crystals-and-solids", "title": "Crystals and solids", "description": "Geometry and physics of crystalline solids: Bravais lattices, unit cells, Miller indices, reciprocal lattices and Brillouin zones, crystallographic point groups and Neumann's principle, structure factors, atomic packing, interatomic potentials and lattice vibrations. Lattice spin models are under Statistical Mechanics, and the interplanar spacing of cubic lattices is under X-ray diffraction in Chemistry.", "msc": ["82D25", "20H15", "74E15", "52C07"], "subfields": []},
+    {"slug": "crystals-and-solids", "title": "Crystals and solids", "description": "Interatomic pair potentials of crystalline solids: the Lennard-Jones potential at its minimum, the bond modulus estimate and the Born–Landé lattice energy. Bravais lattices, unit cells, Miller indices, metric tensors and reciprocal lattices are under Discrete geometry in Geometry, crystallographic point groups under Euclidean geometry, crystal packing under Packings and coverings, structure factors under Harmonic analysis in Analysis, and lattice vibrations under Elasticity and structural mechanics. Lattice spin models are under Statistical Mechanics.", "msc": ["82D25", "20H15", "74E15", "52C07"], "subfields": []},
     {"slug": "thermodynamics-and-heat-transfer", "title": "Engineering thermodynamics and heat transfer", "description": "Thermodynamic states and balances of engineering systems, power and refrigeration cycles, exergy, and conduction, convection and radiation heat transfer.", "msc": ["80A05", "80A10", "80A19", "80A20", "80A21"], "subfields": []}
    ]
   },
@@ -16591,7 +16591,7 @@
   "PhyslibExt/EarthScience/UniformSpherePotential": {"to": "Physics/classical-mechanics/gravitation-and-orbits", "title": "Potential of a uniform sphere"},
   "PhyslibExt/Elasticity/AeroelasticModels": {"to": "Physics/elasticity-and-structures", "title": "Aeroelastic divergence and flutter"},
   "PhyslibExt/Elasticity/BeamModes": {"to": "Physics/elasticity-and-structures", "title": "Vibration modes of Euler–Bernoulli beams"},
-  "PhyslibExt/Elasticity/ColumnBuckling": {"to": "Physics/elasticity-and-structures", "title": "Euler buckling of columns"},
+  "PhyslibExt/Elasticity/ColumnBuckling": {"to": "Physics/elasticity-and-structures", "title": "Beams and columns"},
   "PhyslibExt/Elasticity/ContactAndLubrication": {"to": "Physics/elasticity-and-structures", "title": "Contact and tribology"},
   "PhyslibExt/Elasticity/LaminateModels": {"to": "Physics/elasticity-and-structures", "title": "Laminate stiffness and lamina rotation"},
   "PhyslibExt/Elasticity/PrismaticMembers": {"to": "Physics/elasticity-and-structures", "title": "Prismatic bars, shafts and beams"},

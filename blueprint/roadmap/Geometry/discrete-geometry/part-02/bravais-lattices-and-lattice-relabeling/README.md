@@ -66,3 +66,9 @@
 - [Distinct sites occupy distinct positions](site-position-injective.md)
 - [Sites correspond to atomic positions](site-equiv-positions.md)
 - [The site correspondence sends a site to its position](coe-site-equiv-positions.md)
+
+## G. Basis coordinates and orbit counts
+
+- [A vector is the combination of a basis with its coordinates](eq-sum-repr-smul.md)
+- [The orbit sizes of a group action on a finite set add up to its size](sum-card-orbit-eq-card.md)
+- [With trivial stabilizer, an orbit is as large as the finite group](card-orbit-eq-card-group-of-stabilizer-e.md)

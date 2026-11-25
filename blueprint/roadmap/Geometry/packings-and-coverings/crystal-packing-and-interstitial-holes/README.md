@@ -36,3 +36,9 @@
 - [Tetrahedral radius ratio](radius-ratio-eq-sqrt-three-halves-sub-on.md)
 - [Octahedral radius ratio](radius-ratio-eq-sqrt-two-sub-one.md)
 - [Radius ratio √3 − 1 from the centre distance √3 a / 2](radius-ratio-eq-sqrt-three-sub-one.md)
+
+## E. Certified bounds on square roots
+
+- [Certified bounds 1.4142 < √2 < 1.4143](sqrt2-bounds.md)
+- [Certified bounds 1.731 < √3 < 1.733](sqrt3-bounds.md)
+- [Certified bounds 1.224 < √(3/2) < 1.226](sqrt32-bounds.md)

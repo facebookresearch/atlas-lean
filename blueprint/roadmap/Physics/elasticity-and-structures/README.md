@@ -5,7 +5,6 @@ Linear elasticity and the mechanics of structures: Cauchy stress, small strain a
 - [Aeroelastic divergence and flutter](aeroelastic-divergence-and-flutter/README.md)
 - [Boussinesq point load on an elastic half-space](boussinesq-point-load-on-an-elastic-half-space/README.md)
 - [Cauchy stress, small strain and Mohr's circle](cauchy-stress-small-strain-and-mohr-s-circle/README.md)
-- [Euler buckling of columns](euler-buckling-of-columns/README.md)
 - [Euler–Bernoulli beam under uniform load](euler-bernoulli-beam-under-uniform-load/README.md)
 - [Isotropic elastic energy](isotropic-elastic-energy/README.md)
 - [Laminate stiffness and lamina rotation](laminate-stiffness-and-lamina-rotation/README.md)

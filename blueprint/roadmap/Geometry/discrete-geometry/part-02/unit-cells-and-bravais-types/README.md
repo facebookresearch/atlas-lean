@@ -56,3 +56,12 @@
 - [Orthorhombic lattices of types oP and oF are different](lattice-ne-o-p-o-f.md)
 - [Cubic lattices of types body-centered cubic and face-centered cubic are different](lattice-ne-c-i-c-f.md)
 - [Monoclinic lattices of types mP and mC are different](lattice-ne-m-p-m-c.md)
+
+## G. Bravais metadata and the lattice index map
+
+- [Additive map from integer indices to lattice points](lattice-hom.md)
+- [The seven crystal systems](crystal-system.md)
+- [Centring types of Bravais lattices](centring-type.md)
+- [Entry of the Bravais lattice metadata table](bravais-entry.md)
+- [Metadata table of the fourteen Bravais lattice types](bravais-metadata-table.md)
+- [The fourteen Bravais metadata entries are distinct](bravais-metadata-table-injective.md)
