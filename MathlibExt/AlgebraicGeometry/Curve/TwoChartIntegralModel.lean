@@ -28,12 +28,9 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.AlgebraicGeometry.Limits
-public import Mathlib.AlgebraicGeometry.Morphisms.Proper
-public import Mathlib.AlgebraicGeometry.Morphisms.Smooth
-public import Mathlib.Algebra.Polynomial.Lifts
-public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 public import Mathlib.RingTheory.Localization.Integral
-public import Mathlib.RingTheory.Polynomial.ScaleRoots
+import Mathlib.Algebra.Polynomial.Lifts
+import Mathlib.RingTheory.Polynomial.ScaleRoots
 
 @[expose] public section
 
@@ -53,20 +50,12 @@ variable {F} in
 public theorem j_ne_zero : j ≠ 0 := Fact.out
 
 /-- The integral closure of `R[S]` in `F`, as the chart algebra of a two-chart model. -/
-public def chartAlg (S : Set F) : Subalgebra R F where
-  carrier := {x | IsIntegral (Algebra.adjoin R S) x}
-  mul_mem' ha hb := ha.mul hb
-  one_mem' := isIntegral_one
-  add_mem' ha hb := ha.add hb
-  zero_mem' := isIntegral_zero
-  algebraMap_mem' a := by
-    have : IsIntegral (Algebra.adjoin R S)
-        (algebraMap (Algebra.adjoin R S) F (algebraMap R (Algebra.adjoin R S) a)) :=
-      isIntegral_algebraMap
-    simpa [← IsScalarTower.algebraMap_apply] using this
+public abbrev chartAlg (S : Set F) : Subalgebra R F :=
+  (integralClosure (Algebra.adjoin R S) F).restrictScalars R
 
 public theorem mem_chartAlg_iff {S : Set F} {x : F} :
-    x ∈ chartAlg R F S ↔ IsIntegral (Algebra.adjoin R S) x := Iff.rfl
+    x ∈ chartAlg R F S ↔ IsIntegral (Algebra.adjoin R S) x :=
+  (Subalgebra.mem_restrictScalars R).trans (mem_integralClosure_iff _ _)
 
 public theorem adjoin_le_chartAlg (S : Set F) :
     Algebra.adjoin R S ≤ chartAlg R F S := fun x hx => by
@@ -202,7 +191,7 @@ public theorem isUnit_inclInf_jInvChartInf : IsUnit (inclInf R F j (jInvChartInf
 public theorem isLocalization_away_inclFin :
     letI := (inclFin R F j).toRingHom.toAlgebra
     IsLocalization.Away (jChartFin R F j) (chartAlgMid R F j) := by
-  letI := (inclFin R F j).toRingHom.toAlgebra
+  let := (inclFin R F j).toRingHom.toAlgebra
   refine (isLocalization_iff _ _).mpr ⟨?_, ?_, ?_⟩
   · rintro ⟨_, n, rfl⟩
     rw [RingHom.algebraMap_toAlgebra, map_pow]
@@ -225,7 +214,7 @@ public theorem isLocalization_away_inclFin :
 public theorem isLocalization_away_inclInf :
     letI := (inclInf R F j).toRingHom.toAlgebra
     IsLocalization.Away (jInvChartInf R F j) (chartAlgMid R F j) := by
-  letI := (inclInf R F j).toRingHom.toAlgebra
+  let := (inclInf R F j).toRingHom.toAlgebra
   refine (isLocalization_iff _ _).mpr ⟨?_, ?_, ?_⟩
   · rintro ⟨_, n, rfl⟩
     rw [RingHom.algebraMap_toAlgebra, map_pow]
@@ -257,13 +246,13 @@ public abbrev fInf : XMid R F j ⟶ XInf R F j :=
   Spec.map (CommRingCat.ofHom (inclInf R F j).toRingHom)
 
 instance isOpenImmersion_fFin : IsOpenImmersion (fFin R F j) := by
-  letI := (inclFin R F j).toRingHom.toAlgebra
-  haveI := isLocalization_away_inclFin R F j
+  let := (inclFin R F j).toRingHom.toAlgebra
+  have := isLocalization_away_inclFin R F j
   exact IsOpenImmersion.of_isLocalization (jChartFin R F j)
 
 instance isOpenImmersion_fInf : IsOpenImmersion (fInf R F j) := by
-  letI := (inclInf R F j).toRingHom.toAlgebra
-  haveI := isLocalization_away_inclInf R F j
+  let := (inclInf R F j).toRingHom.toAlgebra
+  have := isLocalization_away_inclInf R F j
   exact IsOpenImmersion.of_isLocalization (jInvChartInf R F j)
 
 /-- The scheme obtained by gluing the two affine charts along their overlap. -/
@@ -370,18 +359,23 @@ public theorem baseChangeι_toBase (S : Type u) [CommRing S] [Algebra R S] :
       baseChangeToBase R F j S ≫ Spec.map (CommRingCat.ofHom (algebraMap R S)) :=
   pullback.condition
 
-public abbrev fibre (I : Ideal R) : Scheme.{u} := baseChange R F j (R ⧸ I)
+/-- The reduction of the model modulo an ideal `I` of `R`: its base change along the quotient map
+`R → R ⧸ I`, which lies over the closed subscheme `V(I)` of `Spec R`. When `I` is maximal, `R ⧸ I`
+is the residue field at the closed point `I` and this is the fibre over that point; in general it
+is not a fibre over a point (for `I = ⊥` it is the whole model, up to isomorphism). -/
+public abbrev reduction (I : Ideal R) : Scheme.{u} := baseChange R F j (R ⧸ I)
 
-public abbrev fibreι (I : Ideal R) : fibre R F j I ⟶ AlgebraicCurve.TwoChartIntegralModel R F j :=
+public abbrev reductionι (I : Ideal R) :
+    reduction R F j I ⟶ AlgebraicCurve.TwoChartIntegralModel R F j :=
   baseChangeι R F j (R ⧸ I)
 
-public abbrev fibreToBase (I : Ideal R) : fibre R F j I ⟶ Spec (CommRingCat.of (R ⧸ I)) :=
+public abbrev reductionToBase (I : Ideal R) : reduction R F j I ⟶ Spec (CommRingCat.of (R ⧸ I)) :=
   baseChangeToBase R F j (R ⧸ I)
 
 @[reassoc]
-public theorem fibreι_toBase (I : Ideal R) :
-    fibreι R F j I ≫ toBase R F j =
-      fibreToBase R F j I ≫ Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk I)) :=
+public theorem reductionι_toBase (I : Ideal R) :
+    reductionι R F j I ≫ toBase R F j =
+      reductionToBase R F j I ≫ Spec.map (CommRingCat.ofHom (Ideal.Quotient.mk I)) :=
   pullback.condition
 
 section BaseChange
