@@ -76,7 +76,13 @@ sublanguage construction works with a finite set of symbols (`symbolsOf F`). -/
 
 open Classical in
 omit [DecidableEq α] in
-/-- The symbols occurring in a term, as a finite set of `L.Symbols`. Source: D. van Dalen,
+/-- **Finite set of symbols of a term.** The finite set of symbols occurring in a term $t$ of a
+first-order language $L$, a finite subset of the function and relation symbols of $L$, is
+defined by recursion on $t$: it is empty when $t$ is a variable, and when
+$t = f(t_0, \dots, t_{l-1})$ for an $l$-ary function symbol $f$ it consists of $f$ together with
+the symbols occurring in each of $t_0, \dots, t_{l-1}$.
+
+Source: D. van Dalen,
 *Logic and Structure*, 5th ed., Springer 2013, §3.1 (the finite set of symbols occurring in a
 finite derivation). -/
 noncomputable def termSymbolFinset : L.Term α → Finset L.Symbols
@@ -85,7 +91,11 @@ noncomputable def termSymbolFinset : L.Term α → Finset L.Symbols
       insert (Sum.inl ⟨_, f⟩) (Finset.univ.biUnion fun i => termSymbolFinset (ts i))
 
 omit [DecidableEq α] in
-/-- The head function symbol of a function application occurs in the term. Source: D. van
+/-- **The head function symbol of a term occurs in it.** Let $L$ be a first-order language, $f$
+an $l$-ary function symbol of $L$, and $t_1, \dots, t_l$ $L$-terms with variables in $\alpha$.
+Then $f$ belongs to the finite set of symbols occurring in the term $f(t_1, \dots, t_l)$.
+
+Source: D. van
 Dalen, *Logic and Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem mem_termSymbolFinset_func {l : ℕ} {f : L.Functions l} {ts : Fin l → L.Term α} :
     (Sum.inl ⟨l, f⟩ : L.Symbols) ∈ termSymbolFinset (Term.func f ts) := by
@@ -93,7 +103,13 @@ theorem mem_termSymbolFinset_func {l : ℕ} {f : L.Functions l} {ts : Fin l → 
   exact Finset.mem_insert_self _ _
 
 omit [DecidableEq α] in
-/-- The symbols of an argument term occur in the application. Source: D. van Dalen, *Logic
+/-- **Symbols of an argument of a function application.** Let $f$ be an $l$-ary function symbol
+of a first-order language $L$ and let $t_0, \dots, t_{l-1}$ be terms of $L$ in variables from
+$\alpha$. For every $i < l$, every symbol occurring in $t_i$ occurs in the term
+$f(t_0, \dots, t_{l-1})$: the finite set of symbols of $t_i$ is contained in that of
+$f(t_0, \dots, t_{l-1})$.
+
+Source: D. van Dalen, *Logic
 and Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem termSymbolFinset_func_subset {l : ℕ} {f : L.Functions l} {ts : Fin l → L.Term α}
     {i : Fin l} : termSymbolFinset (ts i) ⊆ termSymbolFinset (Term.func f ts) := by
@@ -104,7 +120,14 @@ theorem termSymbolFinset_func_subset {l : ℕ} {f : L.Functions l} {ts : Fin l �
 
 open Classical in
 omit [DecidableEq α] in
-/-- The symbols occurring in a bounded formula, as a finite set of `L.Symbols`. Source:
+/-- **Finite set of symbols of a formula.** The finite set of function and relation symbols
+occurring in a bounded formula of a first-order language $L$, defined by recursion on the
+formula: $\bot$ has no symbols; an equation $t_1 = t_2$ has the function symbols of $t_1$ and
+$t_2$; an atomic formula $R(t_1, \dots, t_l)$ has $R$ together with the function symbols of
+$t_1, \dots, t_l$; an implication $\varphi \to \psi$ has the symbols of $\varphi$ and of $\psi$;
+and $\forall \varphi$ has the symbols of $\varphi$.
+
+Source:
 D. van Dalen, *Logic and Structure*, 5th ed., Springer 2013, §3.1. -/
 noncomputable def formulaSymbolFinset {n : ℕ} : L.BoundedFormula α n → Finset L.Symbols
   | .falsum => ∅
@@ -114,7 +137,12 @@ noncomputable def formulaSymbolFinset {n : ℕ} : L.BoundedFormula α n → Fins
   | .all φ => formulaSymbolFinset φ
 
 omit [DecidableEq α] in
-/-- The symbols of the sides of an equality occur in the equality formula. Source: D. van
+/-- **Symbols of the left side of an equation.** Let $L$ be a first-order language and let $t_1$,
+$t_2$ be terms of $L$ in free variables from $\alpha$ and $n$ bound variables. Every symbol
+occurring in $t_1$ occurs in the atomic formula $t_1 = t_2$, viewed as a formula with $n$ bound
+variables: the finite set of symbols of $t_1$ is contained in that of $t_1 = t_2$.
+
+Source: D. van
 Dalen, *Logic and Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem termSymbolFinset_equal_subset_left {n : ℕ} {t₁ t₂ : L.Term (α ⊕ Fin n)} :
     termSymbolFinset t₁ ⊆ formulaSymbolFinset (.equal t₁ t₂ : L.BoundedFormula α n) := by
@@ -124,7 +152,12 @@ theorem termSymbolFinset_equal_subset_left {n : ℕ} {t₁ t₂ : L.Term (α ⊕
   exact Or.inl hy
 
 omit [DecidableEq α] in
-/-- The symbols of the sides of an equality occur in the equality formula. Source: D. van
+/-- **Symbols of the right side of an equation.** Let $L$ be a first-order language and let
+$t_1$, $t_2$ be terms of $L$ in free variables from $\alpha$ and $n$ bound variables. Every symbol
+occurring in $t_2$ occurs in the atomic formula $t_1 = t_2$, viewed as a formula with $n$ bound
+variables: the finite set of symbols of $t_2$ is contained in that of $t_1 = t_2$.
+
+Source: D. van
 Dalen, *Logic and Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem termSymbolFinset_equal_subset_right {n : ℕ} {t₁ t₂ : L.Term (α ⊕ Fin n)} :
     termSymbolFinset t₂ ⊆ formulaSymbolFinset (.equal t₁ t₂ : L.BoundedFormula α n) := by
@@ -134,7 +167,12 @@ theorem termSymbolFinset_equal_subset_right {n : ℕ} {t₁ t₂ : L.Term (α �
   exact Or.inr hy
 
 omit [DecidableEq α] in
-/-- The head relation symbol of an atomic formula occurs in it. Source: D. van Dalen, *Logic
+/-- **The relation symbol of an atomic formula occurs in it.** Let $L$ be a first-order
+language, $R$ an $l$-ary relation symbol of $L$, and $t_1, \dots, t_l$ $L$-terms with free
+variables in $\alpha$ and $n$ bound variables. Then $R$ belongs to the finite set of symbols
+occurring in the atomic bounded formula $R(t_1, \dots, t_l)$.
+
+Source: D. van Dalen, *Logic
 and Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem mem_formulaSymbolFinset_rel {n l : ℕ} {R : L.Relations l}
     {ts : Fin l → L.Term (α ⊕ Fin n)} :
@@ -143,7 +181,13 @@ theorem mem_formulaSymbolFinset_rel {n l : ℕ} {R : L.Relations l}
   exact Finset.mem_insert_self _ _
 
 omit [DecidableEq α] in
-/-- The symbols of an argument term occur in the atomic formula. Source: D. van Dalen,
+/-- **Symbols of an argument of a relational atomic formula.** Let $R$ be an $l$-ary relation
+symbol of a first-order language $L$ and let $t_0, \dots, t_{l-1}$ be terms of $L$ in free
+variables from $\alpha$ and $n$ bound variables. For every $i < l$, every symbol occurring in
+$t_i$ occurs in the atomic formula $R(t_0, \dots, t_{l-1})$, viewed as a formula with $n$ bound
+variables: the finite set of symbols of $t_i$ is contained in that of $R(t_0, \dots, t_{l-1})$.
+
+Source: D. van Dalen,
 *Logic and Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem termSymbolFinset_rel_subset {n l : ℕ} {R : L.Relations l}
     {ts : Fin l → L.Term (α ⊕ Fin n)} {i : Fin l} :
@@ -154,7 +198,11 @@ theorem termSymbolFinset_rel_subset {n l : ℕ} {R : L.Relations l}
   exact Or.inr ⟨i, hy⟩
 
 omit [DecidableEq α] in
-/-- The symbols of the antecedent occur in the implication. Source: D. van Dalen, *Logic and
+/-- **Symbols of the antecedent occur in an implication.** For bounded formulas $\varphi$ and
+$\psi$ of a first-order language $L$ with free variables in $\alpha$ and $n$ bound variables,
+every symbol occurring in $\varphi$ occurs in $\varphi \to \psi$.
+
+Source: D. van Dalen, *Logic and
 Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem formulaSymbolFinset_imp_subset_left {n : ℕ} {φ ψ : L.BoundedFormula α n} :
     formulaSymbolFinset φ ⊆ formulaSymbolFinset (φ.imp ψ) := by
@@ -164,7 +212,11 @@ theorem formulaSymbolFinset_imp_subset_left {n : ℕ} {φ ψ : L.BoundedFormula 
   exact Or.inl hy
 
 omit [DecidableEq α] in
-/-- The symbols of the consequent occur in the implication. Source: D. van Dalen, *Logic and
+/-- **Symbols of the consequent occur in an implication.** For bounded formulas $\varphi$ and
+$\psi$ of a first-order language $L$ with free variables in $\alpha$ and $n$ bound variables,
+every symbol occurring in $\psi$ occurs in $\varphi \to \psi$.
+
+Source: D. van Dalen, *Logic and
 Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem formulaSymbolFinset_imp_subset_right {n : ℕ} {φ ψ : L.BoundedFormula α n} :
     formulaSymbolFinset ψ ⊆ formulaSymbolFinset (φ.imp ψ) := by
@@ -176,39 +228,72 @@ theorem formulaSymbolFinset_imp_subset_right {n : ℕ} {φ ψ : L.BoundedFormula
 /-! ### The finite-symbol sublanguage -/
 
 open Classical in
-/-- The symbols occurring in some formula of a finite set `F`. Source: D. van Dalen, *Logic
+/-- **Symbols of a finite set of formulas.** For a finite set $F$ of first-order formulas of a
+language $L$ with free variables indexed by $\mathbb{N}$, the symbols of $F$ are the finite set
+of function and relation symbols of $L$ that occur in some formula of $F$, that is, the union over
+$\psi \in F$ of the finite sets of symbols occurring in $\psi$.
+
+Source: D. van Dalen, *Logic
 and Structure*, 5th ed., Springer 2013, §3.1. -/
 noncomputable def symbolsOf (F : Finset (L.Formula ℕ)) : Finset L.Symbols :=
   F.biUnion fun ψ => formulaSymbolFinset ψ
 
 omit [DecidableEq α] in
-/-- A symbol occurring in a member of `F` occurs in `symbolsOf F`. Source: D. van Dalen,
+/-- **A symbol of a member of a set of formulas is a symbol of the set.** Let $L$ be a first-order
+language, $F$ a finite set of $L$-formulas with free variables in $\mathbb{N}$, and $\psi \in F$.
+Every symbol occurring in $\psi$ belongs to the finite set of symbols occurring in some formula
+of $F$.
+
+Source: D. van Dalen,
 *Logic and Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem mem_symbolsOf {F : Finset (L.Formula ℕ)} {ψ : L.Formula ℕ} {s : L.Symbols}
     (hψ : ψ ∈ F) (hs : s ∈ formulaSymbolFinset ψ) : s ∈ symbolsOf F := by
   classical
   exact Finset.mem_biUnion.mpr ⟨ψ, hψ, hs⟩
 
-/-- The sublanguage of `L` on the symbols occurring in the finite set `F`. Source:
+/-- **Sublanguage of a finite set of formulas.** For a finite set $F$ of formulas of a
+first-order language $L$ with free variables in $\mathbb{N}$, the sublanguage of $L$ on the
+symbols occurring in $F$ has as its $n$-ary function symbols the $n$-ary function symbols of
+$L$ that occur in some formula of $F$, and as its $n$-ary relation symbols the $n$-ary
+relation symbols of $L$ that occur in some formula of $F$.
+
+Source:
 H.-D. Ebbinghaus, J. Flum, and W. Thomas, *Mathematical Logic*, 2nd ed., Springer 1994,
 Chapter V (the sublanguage generated by a finite set of formulas). -/
 def subLanguage (F : Finset (L.Formula ℕ)) : Language.{u, v} where
   Functions n := {f : L.Functions n // (Sum.inl ⟨n, f⟩ : L.Symbols) ∈ symbolsOf F}
   Relations n := {r : L.Relations n // (Sum.inr ⟨n, r⟩ : L.Symbols) ∈ symbolsOf F}
 
-/-- The inclusion of the finite-symbol sublanguage. Source: H.-D. Ebbinghaus, J. Flum, and
+/-- **Inclusion of the sublanguage of a finite set of formulas.** Let $L$ be a first-order
+language. For a finite set $F$ of formulas of $L$ with free variables in $\mathbb{N}$, this is
+the language homomorphism from the sublanguage of $L$ on the symbols occurring in $F$ into $L$
+that sends each function symbol and each relation symbol to itself.
+
+Source: H.-D. Ebbinghaus, J. Flum, and
 W. Thomas, *Mathematical Logic*, 2nd ed., Springer 1994, Chapter V. -/
 def subLanguageIncl (F : Finset (L.Formula ℕ)) : subLanguage F →ᴸ L :=
   ⟨fun _ f => f.1, fun _ r => r.1⟩
 
-/-- The inclusion of the finite-symbol sublanguage is injective. Source: H.-D. Ebbinghaus,
+/-- **The inclusion of the sublanguage of a finite set of formulas is injective.** Let $L$ be a
+first-order language. For every finite set $F$ of formulas of $L$ with free variables in
+$\mathbb{N}$, the inclusion into $L$ of the sublanguage of $L$ on the symbols occurring in $F$
+is injective on function symbols and on relation symbols.
+
+Source: H.-D. Ebbinghaus,
 J. Flum, and W. Thomas, *Mathematical Logic*, 2nd ed., Springer 1994, Chapter V. -/
 theorem subLanguageIncl_injective (F : Finset (L.Formula ℕ)) :
     (subLanguageIncl F).Injective :=
   ⟨fun {_n} {f g} h => Subtype.ext (show f.1 = g.1 from h),
     fun {_n} {r s} h => Subtype.ext (show r.1 = s.1 from h)⟩
 
-/-- Every term whose symbols lie in `F` is the image of a term of the sublanguage. Source:
+/-- **Terms lift to the finite-symbol sublanguage.** Let $F$ be a finite set of formulas of a
+first-order language $L$ with free variables in $\mathbb{N}$, and let $L_F$ be the sublanguage of
+$L$ on the symbols occurring in $F$, with inclusion $\iota : L_F \to L$. Every term $t$ of $L$
+whose variables are drawn from $\mathbb{N}$ and from $n$ bound variables, each of whose symbols
+occurs in some formula of $F$, is the image under $\iota$ of a term of $L_F$ with variables drawn
+from the same set.
+
+Source:
 H.-D. Ebbinghaus, J. Flum, and W. Thomas, *Mathematical Logic*, 2nd ed., Springer 1994,
 Chapter V. -/
 theorem exists_term_preimage {F : Finset (L.Formula ℕ)} {n : ℕ}
@@ -228,8 +313,14 @@ theorem exists_term_preimage {F : Finset (L.Formula ℕ)} {n : ℕ}
     funext i
     exact ht₀ i
 
-/-- Every bounded formula whose symbols lie in `F` is the image of a formula of the
-sublanguage. Source: H.-D. Ebbinghaus, J. Flum, and W. Thomas, *Mathematical Logic*, 2nd ed.,
+/-- **Bounded formulas lift to the finite-symbol sublanguage.** Let $F$ be a finite set of
+formulas of a first-order language $L$ with free variables in $\mathbb{N}$, and let $L_F$ be the
+sublanguage of $L$ on the symbols occurring in $F$, with inclusion $\iota : L_F \to L$. Every
+bounded formula $\varphi$ of $L$ with free variables in $\mathbb{N}$ and $n$ bound variables, each
+of whose symbols occurs in some formula of $F$, is the image under $\iota$ of a bounded formula
+of $L_F$ with free variables in $\mathbb{N}$ and $n$ bound variables.
+
+Source: H.-D. Ebbinghaus, J. Flum, and W. Thomas, *Mathematical Logic*, 2nd ed.,
 Springer 1994, Chapter V. -/
 theorem exists_boundedFormula_preimage {F : Finset (L.Formula ℕ)} {n : ℕ}
     {φ : L.BoundedFormula ℕ n} (hφ : formulaSymbolFinset φ ⊆ symbolsOf F) :
@@ -265,7 +356,14 @@ theorem exists_boundedFormula_preimage {F : Finset (L.Formula ℕ)} {n : ℕ}
 /-! ### Derivations survive language homomorphisms -/
 
 omit [DecidableEq α] in
-/-- `LHom.onTerm` commutes with `Term.relabel`. Source: D. van Dalen, *Logic and Structure*,
+/-- **Language homomorphisms commute with renaming variables.** Let $h \colon L \to L'$ be a
+homomorphism of first-order languages, and for an $L$-term $u$ write $h(u)$ for the $L'$-term
+obtained by replacing every function symbol by its image under $h$. Let $t$ be an $L$-term with
+variables in $\alpha$ and $g \colon \alpha \to \beta$ a map. Then $h$ applied to the term
+obtained from $t$ by renaming each variable $a$ to $g(a)$ equals the term obtained from $h(t)$
+by the same renaming.
+
+Source: D. van Dalen, *Logic and Structure*,
 5th ed., Springer 2013, §3.1 (derivations depend only on the shape of a formula, not on the
 names of its symbols). -/
 theorem onTerm_relabel {L' : Language.{u, v}} (ϕ : L →ᴸ L') {β : Type w} {t : L.Term α}
@@ -278,7 +376,15 @@ theorem onTerm_relabel {L' : Language.{u, v}} (ϕ : L →ᴸ L') {β : Type w} {
     funext i
     exact ih i
 
-/-- `LHom.onTerm` commutes with `Term.subst`. Source: D. van Dalen, *Logic and
+/-- **Language homomorphisms commute with substitution in terms.** Let $h \colon L \to L'$ be a
+homomorphism of first-order languages, and for an $L$-term $u$ write $h(u)$ for the $L'$-term
+obtained by replacing every function symbol by its image under $h$. Let $s$ be an $L$-term with
+variables in $\beta$ and $g$ a map assigning to each $b \in \beta$ an $L$-term $g(b)$ with
+variables in $\gamma$. Then $h$ applied to the term obtained from $s$ by substituting $g(b)$ for
+each variable $b$ equals the term obtained from $h(s)$ by substituting $h(g(b))$ for each
+variable $b$.
+
+Source: D. van Dalen, *Logic and
 Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem onTerm_subst {L' : Language.{u, v}} (ϕ : L →ᴸ L') {β γ : Type w}
     {s : L.Term β} {g : β → L.Term γ} :
@@ -291,7 +397,13 @@ theorem onTerm_subst {L' : Language.{u, v}} (ϕ : L →ᴸ L') {β γ : Type w}
     funext i
     exact ih i
 
-/-- Substitution into a term depends only on the values of the substitution. Source:
+/-- **Term substitution depends only on the values of the substitution.** Let $L$ be a
+first-order language, let $s$ be a term of $L$ with variables in a type $\beta$, and let $g$ and
+$g'$ assign to each variable in $\beta$ a term of $L$ with variables in a type $\gamma$. If
+$g(a) = g'(a)$ for every $a \in \beta$, then substituting $g$ into $s$ gives the same term as
+substituting $g'$ into $s$.
+
+Source:
 D. van Dalen, *Logic and Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem subst_congr {β γ : Type w} {s : L.Term β} {g g' : β → L.Term γ}
     (h : ∀ a, g a = g' a) : s.subst g = s.subst g' := by
@@ -304,7 +416,15 @@ theorem subst_congr {β γ : Type w} {s : L.Term β} {g g' : β → L.Term γ}
     exact ih i
 
 omit [DecidableEq α] in
-/-- `LHom.onTerm` commutes with instantiation of the outermost bound variable. Source:
+/-- **Language homomorphisms commute with instantiation in terms.** Let $h \colon L \to L'$ be a
+homomorphism of first-order languages, and for an $L$-term $u$ write $h(u)$ for the $L'$-term
+obtained by replacing every function symbol by its image under $h$. Let $t$ be an $L$-term with
+free variables in $\alpha$ and $s$ an $L$-term with free variables in $\alpha$ and $m + 1$
+bound variables. Then $h$ applied to the instantiation of $t$ for the outermost bound variable
+(the one with index $0$) of $s$ equals the instantiation of $h(t)$ for the outermost bound
+variable of $h(s)$.
+
+Source:
 D. van Dalen, *Logic and Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem onTerm_instantiateTerm {L' : Language.{u, v}} (ϕ : L →ᴸ L') {m : ℕ}
     {t : L.Term α} {s : L.Term (α ⊕ Fin (m + 1))} :
@@ -323,7 +443,15 @@ theorem onTerm_instantiateTerm {L' : Language.{u, v}} (ϕ : L →ᴸ L') {m : �
     · rfl
 
 omit [DecidableEq α] in
-/-- `LHom.onBoundedFormula` commutes with instantiation. Source: D. van Dalen, *Logic and
+/-- **Language homomorphisms commute with instantiation in formulas.** Let $h \colon L \to L'$ be
+a homomorphism of first-order languages. For an $L$-term or bounded $L$-formula $x$, write $h(x)$
+for the term or bounded formula of $L'$ obtained by replacing every symbol by its image under
+$h$. Let $t$ be an $L$-term with free variables in $\alpha$ and $\varphi$ a bounded $L$-formula
+with free variables in $\alpha$ and $m + 1$ bound variables. Then $h$ applied to the
+instantiation of $t$ for the outermost bound variable (the one with index $0$) of $\varphi$
+equals the instantiation of $h(t)$ for the outermost bound variable of $h(\varphi)$.
+
+Source: D. van Dalen, *Logic and
 Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem onBoundedFormula_instantiate {L' : Language.{u, v}} (ϕ : L →ᴸ L') {t : L.Term α} :
     ∀ {m : ℕ} (φ : L.BoundedFormula α (m + 1)),
@@ -345,7 +473,12 @@ theorem onBoundedFormula_instantiate {L' : Language.{u, v}} (ϕ : L →ᴸ L') {
       have ih := onBoundedFormula_instantiate (ϕ := ϕ) (t := t) (φ := φ)
       simp only [instantiate_all, LHom.onBoundedFormula, ih]
 
-/-- `LHom.onFormula` preserves the free variables. Source: D. van Dalen, *Logic and
+/-- **Language homomorphisms preserve the free variables of a term.** Let $\phi : L \to L'$ be a
+homomorphism of first-order languages and let $t$ be a term of $L$ in free variables from
+$\alpha$ and $n$ bound variables. The finite set of free variables from $\alpha$ occurring in the
+image $\phi(t)$ of $t$ under $\phi$ equals the finite set of those occurring in $t$.
+
+Source: D. van Dalen, *Logic and
 Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem varFinsetLeft_onTerm {L' : Language.{u, v}} (ϕ : L →ᴸ L') {n : ℕ}
     {t : L.Term (α ⊕ Fin n)} : (ϕ.onTerm t).varFinsetLeft = t.varFinsetLeft := by
@@ -357,7 +490,12 @@ theorem varFinsetLeft_onTerm {L' : Language.{u, v}} (ϕ : L →ᴸ L') {n : ℕ}
   | func f ts ih =>
     simp only [LHom.onTerm, Term.varFinsetLeft, ih]
 
-/-- `LHom.onBoundedFormula` preserves the free variables. Source: D. van Dalen, *Logic and
+/-- **Language homomorphisms preserve free variables.** Let $h : L \to L'$ be a homomorphism of
+first-order languages, and let $\varphi$ be a bounded formula of $L$ with free variables in
+$\alpha$ and $n$ bound variables. The formula of $L'$ obtained from $\varphi$ by replacing each
+symbol by its image under $h$ has the same free variables as $\varphi$.
+
+Source: D. van Dalen, *Logic and
 Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem freeVarFinset_onBoundedFormula {L' : Language.{u, v}} (ϕ : L →ᴸ L') {n : ℕ}
     {φ : L.BoundedFormula α n} :
@@ -376,7 +514,13 @@ theorem freeVarFinset_onBoundedFormula {L' : Language.{u, v}} (ϕ : L →ᴸ L')
     simp only [LHom.onBoundedFormula, BoundedFormula.freeVarFinset, ih]
 
 omit [DecidableEq α] in
-/-- `LHom.onFormula` commutes with equality of terms. Source: D. van Dalen, *Logic and
+/-- **Language homomorphisms preserve equations.** Let $h \colon L \to L'$ be a homomorphism of
+first-order languages. For an $L$-term or $L$-formula $x$, write $h(x)$ for the term or formula
+of $L'$ obtained by replacing every symbol by its image under $h$. If $s$ and $t$ are $L$-terms
+with free variables in $\alpha$, then $h$ applied to the formula $s = t$ is the formula
+$h(s) = h(t)$.
+
+Source: D. van Dalen, *Logic and
 Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem onFormula_equal {L' : Language.{u, v}} (ϕ : L →ᴸ L') {s t : L.Term α} :
     ϕ.onFormula (s.equal t) = (ϕ.onTerm s).equal (ϕ.onTerm t) := by
@@ -385,8 +529,17 @@ theorem onFormula_equal {L' : Language.{u, v}} (ϕ : L →ᴸ L') {s t : L.Term 
   rw [onTerm_relabel, onTerm_relabel]
   rfl
 
-/-- **Derivations survive language homomorphisms.** Mapping every symbol along an `LHom`
-sends derivations to derivations: the calculus never inspects a symbol. Source: D. van
+/-- **Derivations survive language homomorphisms.** Let $h : L \to L'$ be a homomorphism of
+first-order languages, and write $h(\varphi)$ for the formula of $L'$ obtained from a formula
+$\varphi$ of $L$ by replacing each symbol by its image under $h$. Let $\Gamma$ be a finite list of
+formulas of $L$ with free variables in $\alpha$, and let $\varphi$ be a formula of $L$ with free
+variables in $\alpha$. If $\Gamma \vdash \varphi$ in natural deduction, then
+$h(\Gamma) \vdash h(\varphi)$, where $h(\Gamma)$ is the list of the images of the members of
+$\Gamma$.
+
+The calculus never inspects a symbol.
+
+Source: D. van
 Dalen, *Logic and Structure*, 5th ed., Springer 2013, §3.1. -/
 theorem Derivable.mapLHom {L' : Language.{u, v}} (ϕ : L →ᴸ L')
     {Γ : List (L.Formula α)} {φ : L.Formula α} (h : Derivable Γ φ) :
@@ -421,14 +574,26 @@ theorem Derivable.mapLHom {L' : Language.{u, v}} (ϕ : L →ᴸ L')
 
 /-! ### Finite satisfiability -/
 
-/-- The preimage of a finite set `F` in the finite-symbol sublanguage, as a set of
-formulas. Source: H.-D. Ebbinghaus, J. Flum, and W. Thomas, *Mathematical Logic*, 2nd ed.,
+/-- **Preimage of a finite set of formulas in its sublanguage.** Let $L$ be a first-order
+language. For a finite set $F$ of formulas of $L$ with free variables in $\mathbb{N}$, this is
+the set of those formulas $\psi_0$ of the sublanguage of $L$ on the symbols occurring in $F$,
+with free variables in $\mathbb{N}$, whose image under the inclusion of that sublanguage into
+$L$ belongs to $F$.
+
+Source: H.-D. Ebbinghaus, J. Flum, and W. Thomas, *Mathematical Logic*, 2nd ed.,
 Springer 1994, Chapter V. -/
 def subLanguagePreimage (F : Finset (L.Formula ℕ)) : Set ((subLanguage F).Formula ℕ) :=
   {ψ₀ | (subLanguageIncl F).onFormula ψ₀ ∈ F}
 
-/-- Consistency transfers to the finite-symbol sublanguage: a refutation of the preimage
-maps along the inclusion to a refutation of `F`. Source: H.-D. Ebbinghaus, J. Flum, and
+/-- **Consistency passes to the finite-symbol sublanguage.** Let $F$ be a finite set of formulas
+of a first-order language $L$ with free variables in $\mathbb{N}$, and let $L_F$ be the
+sublanguage of $L$ on the symbols occurring in $F$, with inclusion $\iota : L_F \to L$. If $F$ is
+consistent, then so is the preimage of $F$ in $L_F$: the set of formulas $\psi_0$ of $L_F$ with
+free variables in $\mathbb{N}$ whose image $\iota(\psi_0)$ under the inclusion belongs to $F$.
+
+A refutation of the preimage maps along the inclusion to a refutation of $F$.
+
+Source: H.-D. Ebbinghaus, J. Flum, and
 W. Thomas, *Mathematical Logic*, 2nd ed., Springer 1994, Chapter V. -/
 theorem consistent_subLanguagePreimage {F : Finset (L.Formula ℕ)}
     (hF : Consistent (F : Set (L.Formula ℕ))) : Consistent (subLanguagePreimage F) := by
@@ -442,13 +607,24 @@ theorem consistent_subLanguagePreimage {F : Finset (L.Formula ℕ)}
   obtain ⟨ψ₀, hψ₀, rfl⟩ := List.mem_map.mp hψ
   exact hΓ ψ₀ hψ₀
 
-/-- The map from sublanguage symbols to ambient symbols. Source: H.-D. Ebbinghaus, J. Flum,
+/-- **Symbols of the sublanguage of a finite set of formulas as symbols of the language.** Let
+$L$ be a first-order language. For a finite set $F$ of formulas of $L$ with free variables in
+$\mathbb{N}$, this map sends each function symbol (respectively relation symbol) of the
+sublanguage of $L$ on the symbols occurring in $F$ to the same function symbol (respectively
+relation symbol) of $L$, with the same arity.
+
+Source: H.-D. Ebbinghaus, J. Flum,
 and W. Thomas, *Mathematical Logic*, 2nd ed., Springer 1994, Chapter V. -/
 def subLanguageSymbolsTo (F : Finset (L.Formula ℕ)) : (subLanguage F).Symbols → L.Symbols
   | Sum.inl ⟨l, f⟩ => Sum.inl ⟨l, f.1⟩
   | Sum.inr ⟨l, r⟩ => Sum.inr ⟨l, r.1⟩
 
-/-- Sublanguage symbols map into the symbols of `F`. Source: H.-D. Ebbinghaus, J. Flum, and
+/-- **Symbols of a generated sublanguage occur in the generating formulas.** Let $L$ be a
+first-order language and $F$ a finite set of $L$-formulas with free variables in $\mathbb{N}$. The
+map from the symbols of the sublanguage of $L$ on the symbols occurring in $F$ to the symbols of
+$L$ sends every symbol of that sublanguage to a symbol occurring in some formula of $F$.
+
+Source: H.-D. Ebbinghaus, J. Flum, and
 W. Thomas, *Mathematical Logic*, 2nd ed., Springer 1994, Chapter V. -/
 theorem mem_subLanguageSymbolsTo (F : Finset (L.Formula ℕ)) (s : (subLanguage F).Symbols) :
     subLanguageSymbolsTo F s ∈ symbolsOf F := by
@@ -460,7 +636,12 @@ theorem mem_subLanguageSymbolsTo (F : Finset (L.Formula ℕ)) (s : (subLanguage 
     obtain ⟨l, r⟩ := s
     exact r.2
 
-/-- The map from sublanguage symbols to ambient symbols is injective. Source: H.-D.
+/-- **The symbol map of the sublanguage of a finite set of formulas is injective.** Let $L$ be
+a first-order language. For every finite set $F$ of formulas of $L$ with free variables in
+$\mathbb{N}$, the map sending each symbol of the sublanguage of $L$ on the symbols occurring in
+$F$ to the same symbol of $L$ is injective.
+
+Source: H.-D.
 Ebbinghaus, J. Flum, and W. Thomas, *Mathematical Logic*, 2nd ed., Springer 1994,
 Chapter V. -/
 theorem subLanguageSymbolsTo_injective (F : Finset (L.Formula ℕ)) :
@@ -486,7 +667,13 @@ theorem subLanguageSymbolsTo_injective (F : Finset (L.Formula ℕ)) :
       obtain ⟨rfl, hf⟩ := h
       exact congrArg Sum.inr (congrArg (Sigma.mk l) (Subtype.ext (eq_of_heq hf)))
 
-/-- The embedding of sublanguage symbols into the finite set of symbols of `F`. Source:
+/-- **Symbols of the sublanguage as symbols occurring in a finite set of formulas.** Let $L$ be
+a first-order language. For a finite set $F$ of formulas of $L$ with free variables in
+$\mathbb{N}$, this map sends each symbol of the sublanguage of $L$ on the symbols occurring in
+$F$ to the same symbol of $L$, regarded as an element of the finite set of symbols occurring in
+$F$.
+
+Source:
 H.-D. Ebbinghaus, J. Flum, and W. Thomas, *Mathematical Logic*, 2nd ed., Springer 1994,
 Chapter V. -/
 def symEmbed (F : Finset (L.Formula ℕ)) (s : (subLanguage F).Symbols) :
@@ -503,9 +690,16 @@ noncomputable instance finite_subLanguageSymbols (F : Finset (L.Formula ℕ)) :
   intro s s' h
   exact subLanguageSymbolsTo_injective F (by simpa [symEmbed] using h)
 
-/-- **Finite satisfiability.** A finite consistent set of formulas has a model: pass to
-the finite-symbol sublanguage, apply the countable Henkin theorem, and expand the
-structure along the inclusion. Source: H.-D. Ebbinghaus, J. Flum, and W. Thomas,
+/-- **Finite satisfiability.** Let $L$ be a first-order language, with no countability hypothesis
+on its symbols. Every finite consistent set $F$ of formulas of $L$ with free variables in
+$\mathbb{N}$ is satisfiable: there are a nonempty $L$-structure $M$, in the universe of the
+function symbols of $L$, and an assignment $v : \mathbb{N} \to M$ under which every formula of $F$
+holds.
+
+The proof passes to the sublanguage on the finitely many symbols occurring in $F$, applies the
+countable Henkin theorem there, and expands the resulting structure along the inclusion.
+
+Source: H.-D. Ebbinghaus, J. Flum, and W. Thomas,
 *Mathematical Logic*, 2nd ed., Springer 1994, Chapter V. -/
 theorem exists_model_of_consistent_finset {F : Finset (L.Formula ℕ)}
     (hF : Consistent (F : Set (L.Formula ℕ))) :
@@ -533,9 +727,13 @@ theorem exists_model_of_consistent_finset {F : Finset (L.Formula ℕ)}
 
 /-! ### Model existence and completeness for arbitrary languages -/
 
-/-- **Model existence for arbitrary languages.** Every consistent set of formulas over
-`ℕ` is satisfiable, with no countability hypothesis on the language. The model lives in
-`Type (max u v)`, the universe of Mathlib's compactness theorem. Source: L. Henkin, *The
+/-- **Model existence for arbitrary languages.** Let $L$ be a first-order language, with no
+countability hypothesis on its symbols. Every consistent set $S$ of formulas of $L$ with free
+variables in $\mathbb{N}$ is satisfiable: there are a nonempty $L$-structure $M$, in the larger of
+the universes of the function symbols and the relation symbols of $L$, and an assignment
+$v : \mathbb{N} \to M$ under which every formula of $S$ holds.
+
+Source: L. Henkin, *The
 completeness of the first-order functional calculus*, J. Symbolic Logic 14, 1949, 159-166;
 H.-D. Ebbinghaus, J. Flum, and W. Thomas, *Mathematical Logic*, 2nd ed., Springer 1994,
 Chapter V. -/
@@ -587,9 +785,14 @@ theorem exists_model_of_consistent_general {S : Set (L.Formula ℕ)} (hS : Consi
   rw [Formula.realize_equivSentence] at hreal
   exact hreal
 
-/-- **Strong completeness for arbitrary languages.** If every structure and assignment
-satisfying `S` satisfy `φ`, then `S` proves `φ` — with no countability hypothesis on the
-language. Source: L. Henkin, *The completeness of the first-order functional calculus*,
+/-- **Strong completeness for arbitrary languages.** Let $L$ be a first-order language whose
+function symbols live in universe $u$ and relation symbols in universe $v$, with no restriction
+on the number of symbols. Let $S$ be a set of formulas of $L$ and $\varphi$ a formula of $L$,
+all with free variables in $\mathbb{N}$. If for every $L$-structure $M$ with carrier in
+universe $\max(u, v)$ and every assignment $e : \mathbb{N} \to M$ under which all formulas of
+$S$ hold, $\varphi$ also holds under $e$, then $\varphi$ is provable from $S$.
+
+Source: L. Henkin, *The completeness of the first-order functional calculus*,
 J. Symbolic Logic 14, 1949, 159-166. -/
 theorem provable_of_entails_general {S : Set (L.Formula ℕ)} {φ : L.Formula ℕ}
     (h : ∀ (M : Type (max u v)) [L.Structure M] (v : ℕ → M),
@@ -600,9 +803,14 @@ theorem provable_of_entails_general {S : Set (L.Formula ℕ)} {φ : L.Formula �
   exact Formula.realize_not.mp (hM _ (Set.mem_insert _ _))
     (h M v fun ψ hψ ↦ hM ψ (Set.mem_insert_of_mem _ hψ))
 
-/-- **Completeness for arbitrary languages.** If a formula over `ℕ` holds in every model
-of a Mathlib theory `T` (in the universe `max u v`), it is provable from the sentences of
-`T` — with no countability hypothesis on the language. Source: L. Henkin, *The
+/-- **Completeness for arbitrary languages.** Let $L$ be a first-order language whose function
+symbols live in universe $u$ and relation symbols in universe $v$, with no restriction on the
+number of symbols. Let $T$ be a theory of $L$ and $\varphi$ a formula of $L$ with free
+variables in $\mathbb{N}$. If $\varphi$ holds under every assignment of the variables in every
+nonempty model of $T$ whose carrier lies in universe $\max(u, v)$, then $\varphi$ is provable
+from the sentences of $T$, viewed as formulas over $\mathbb{N}$.
+
+Source: L. Henkin, *The
 completeness of the first-order functional calculus*, J. Symbolic Logic 14, 1949, 159-166. -/
 theorem provable_of_models_general {T : L.Theory} {φ : L.Formula ℕ} (h : T ⊨ᵇ φ) :
     Provable (Formula.relabel Empty.elim '' T) φ := by
@@ -616,8 +824,17 @@ theorem provable_of_models_general {T : L.Theory} {φ : L.Formula ℕ} (h : T �
   haveI hne : Nonempty M := ⟨v 0⟩
   exact Formula.realize_not.mp (hM _ (Set.mem_insert _ _)) (h.realize_formula M)
 
-/-- **Soundness and completeness for arbitrary languages**: provability from the sentences
-of `T` is semantic consequence, with no countability hypothesis on the language. Source:
+/-- **Soundness and completeness for arbitrary languages.** Let $L$ be a first-order language,
+with no countability hypothesis, $T$ a theory of $L$ (a set of sentences), and $\varphi$ an
+$L$-formula with free variables in $\mathbb{N}$. Then $\varphi$ is provable from the sentences of
+$T$, each regarded as a formula with free variables in $\mathbb{N}$, if and only if $\varphi$
+holds in every nonempty model of $T$ under every assignment of elements of the model to the
+variables in $\mathbb{N}$.
+
+The models range over types in the universe $\max(u, v)$, where $u$ and $v$ are the universe
+levels of the function and relation symbols of $L$.
+
+Source:
 L. Henkin, *The completeness of the first-order functional calculus*, J. Symbolic Logic 14,
 1949, 159-166. -/
 theorem provable_iff_models_general {T : L.Theory} {φ : L.Formula ℕ} :

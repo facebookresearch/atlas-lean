@@ -50,7 +50,9 @@ private theorem motzkinTri_trinomialCoefficient_self_eq_sum_range (n : ℕ) :
   rw [Nat.sub_sub_self hkn]
   exact Nat.mul_comm _ _
 
-/-- The central trinomial coefficient as a Catalan-free binomial sum. -/
+/-- **Central trinomial coefficients as a binomial sum.** For every natural number $n$, the
+coefficient of $X^n$ in $(1 + X + X^2)^n$ equals
+$\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \binom{2k}{k}$. -/
 public theorem trinomialCoefficient_self_eq_sum (n : ℕ) :
     trinomialCoefficient n n =
       ∑ k ∈ Finset.range (n / 2 + 1), n.choose (2 * k) * (2 * k).choose k := by
@@ -158,23 +160,24 @@ private theorem motzkinTri_motzkin_eq_sum_range_of_le
     rw [Nat.choose_eq_zero_of_lt (by omega : n < 2 * k), Nat.zero_mul]
 
 /--
-The Motzkin numbers `M` (Catalan-weighted binomial sums) and the canonical
-central trinomial coefficients are linked by
-`T (n + 1) = T n + 2 * n * M (n - 1)` for `n ≥ 1`. The source attributes the
-recurrence to Barcucci, Pinzani, and Sprugnoli, "The Motzkin family" (its
-reference PUMA).
+**Recurrence linking central trinomial coefficients and Motzkin numbers.** For $n \in \mathbb{N}$
+let $T_n$ be the central trinomial coefficient, the coefficient of $X^n$ in $(1 + X + X^2)^n$.
+Let $M : \mathbb{N} \to \mathbb{N}$ be any function with
+$M_n = \sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} C_k$ for every $n$, where $C_k$ is the
+$k$-th Catalan number (these sums are the Motzkin numbers). Then for every $n \ge 1$,
+$T_{n+1} = T_n + 2n \, M_{n-1}$.
+
+The source attributes the recurrence to Barcucci, Pinzani, and Sprugnoli, "The Motzkin family",
+and proves it with hybrid-polynomial operator calculus; the proof here instead uses the binomial
+sum for $T_n$ and an elementary termwise binomial identity.
+
+Proves `Wanted` entry `motzkin_central_trinomial_recurrence`.
 
 Source: P. Blasiak, G. Dattoli, A. Horzela, K. A. Penson, and K. Zhukovsky,
 "Motzkin Numbers, Central Trinomial Coefficients and Hybrid Polynomials,"
 Journal of Integer Sequences 11 (2008), Article 08.1.1, Theorem (equation
 eq34), lines 459–464,
 https://cs.uwaterloo.ca/journals/JIS/VOL11/Penson/penson131.tex
-
-Proves `Wanted` entry `motzkin_central_trinomial_recurrence`.
-
-Proof: Equation eq1 of Blasiak et al. supplies the central trinomial sum and eq34 supplies the
-recurrence. The source uses hybrid-polynomial operator calculus for eq34; here an elementary
-termwise binomial identity gives the recurrence.
 -/
 public theorem motzkin_central_trinomial_recurrence
     (M : ℕ → ℕ)

@@ -23,11 +23,21 @@ namespace MetaMathlibExt
 -/
 
 /--
-The local Edgeworth expansion of the Ewens sampling occupancy probability mass
-function `P(K_n(θ) = k) = θ^k [n,k] / θ^{(n)}`, uniformly over the parameter
-on compact subsets of the positive reals and over all values in its support:
-`(log n)^{(r+1)/2} sup_k |PMF − Gaussian × ∑_{j≤r} H_j/(θ log n)^{j/2}| → 0`,
-stated in ε–N form with the coefficient functions `H` existentially bound.
+**Local Edgeworth expansion for the Ewens distribution.** Let $r \ge 0$ be an integer and let
+$L \subseteq (0, \infty)$ be compact. For $\theta > 0$ and integers $n \ge 2$ and $1 \le k \le n$,
+let $s(n, k)$ be the unsigned Stirling number of the first kind (the number of permutations of
+$n$ elements with exactly $k$ cycles), let
+$p_n(k; \theta) = \theta^k s(n, k) / (\theta (\theta + 1) \cdots (\theta + n - 1))$ be the
+probability that an Ewens permutation with parameter $\theta$ has exactly $k$ cycles, and let
+$x_n(k; \theta) = (k - \theta \log n) / \sqrt{\theta \log n}$. Then there are functions
+$H_0, H_1, \dots : \mathbb{R} \times \mathbb{R} \to \mathbb{R}$ such that for every
+$\varepsilon > 0$ there is an $N \ge 2$ with the following property: for all $n \ge N$, all
+$\theta \in L$ and all integers $1 \le k \le n$, writing $x = x_n(k; \theta)$,
+$$(\log n)^{(r+1)/2} \left| p_n(k; \theta) - \frac{e^{-x^2/2}}{\sqrt{2 \pi \theta \log n}}
+\sum_{j=0}^{r} \frac{H_j(x, \theta)}{(\theta \log n)^{j/2}} \right| < \varepsilon.$$
+
+The functions $H_j$ are bound existentially and may depend on both $r$ and $L$; nothing requires
+them to be polynomials.
 
 Source: Zakhar Kabluchko, Alexander Marynych, and Henning Sulzbach, "Mode and
 Edgeworth Expansion for the Ewens Distribution and the Stirling Numbers,"

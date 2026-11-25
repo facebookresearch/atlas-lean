@@ -72,7 +72,10 @@ private theorem length_le_of_mem_toChunks_go {α : Type u} (n : Nat) (xs : List 
         simp only [beq_iff_eq] at h
         omega
 
-/-- Every group produced with positive capacity has at most that many elements. -/
+/-- **Chunks of a list have length at most the chunk size.** Let $n > 0$ and let $L$ be a list.
+Split $L$ from left to right into consecutive chunks of size $n$: elements go into the current
+chunk until it holds $n$ elements, then a new chunk is started. Every chunk produced has at most
+$n$ elements. -/
 theorem length_le_of_mem_toChunks {α : Type u} (n : Nat) (xs : List α)
     (hn : 0 < n) (chunk : List α) (hchunk : chunk ∈ toChunks n xs) :
     chunk.length ≤ n := by

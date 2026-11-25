@@ -50,7 +50,9 @@ open scoped ENNReal
 
 variable {n N : ℕ}
 
-/-- The probability vectors in `Fin (n + 1) → ℝ`: the parameter space of the categorical model. -/
+/-- **Probability vectors.** For $n \in \mathbb{N}$, the probability vectors are the
+$\theta \in \mathbb{R}^{n+1}$ with $\theta_i \ge 0$ for every $i$ and $\sum_i \theta_i = 1$; they
+form the parameter space of the categorical model. -/
 def probVectors (n : ℕ) : Set (Fin (n + 1) → ℝ) := {θ | (∀ i, 0 ≤ θ i) ∧ ∑ i, θ i = 1}
 
 theorem measurableSet_probVectors (n : ℕ) : MeasurableSet (probVectors n) := by
@@ -76,8 +78,13 @@ private theorem sum_smul_dirac_univ {𝓨 : Type*} [Fintype 𝓨] [MeasurableSpa
   simp
 
 open scoped Classical in
-/-- **The categorical likelihood**: one draw of a label `i` with probability `θ i`. A parameter
-outside the probability vectors (a null set under a Dirichlet prior) draws label `0`. -/
+/-- **The categorical likelihood.** For $n \in \mathbb{N}$, the categorical likelihood is the
+kernel from parameters $\theta \in \mathbb{R}^{n+1}$ to labels $\{0, \dots, n\}$ that sends a
+probability vector $\theta$ (all $\theta_i \ge 0$ and $\sum_i \theta_i = 1$) to the law of one
+label drawn with probability $\theta_i$ for label $i$, and sends every other $\theta$ to the
+point mass at label $0$.
+
+Parameters outside the probability vectors form a null set under a Dirichlet prior. -/
 noncomputable def categoricalKernel (n : ℕ) : Kernel (Fin (n + 1) → ℝ) (Fin (n + 1)) :=
   Kernel.piecewise (measurableSet_probVectors n)
     ⟨fun θ ↦ ∑ i, ENNReal.ofReal (θ i) • Measure.dirac i,
@@ -87,7 +94,9 @@ noncomputable def categoricalKernel (n : ℕ) : Kernel (Fin (n + 1) → ℝ) (Fi
           (ENNReal.measurable_ofReal.comp (measurable_pi_apply i)).mul_const _⟩
     (Kernel.const _ (Measure.dirac 0))
 
-/-- The likelihood `∏ₘ θ (s m)` of a sequence `s` of `N` labels. -/
+/-- **Likelihood of a label sequence.** For $\theta \in \mathbb{R}^{n+1}$ and a sequence
+$s = (s_0, \dots, s_{N-1})$ of labels in $\{0, \dots, n\}$, the likelihood of $s$ is the
+extended nonnegative real $\prod_{m < N} \theta_{s_m}^+$, where $x^+ = \max(x, 0)$. -/
 noncomputable def seqLikelihood (θ : Fin (n + 1) → ℝ) (s : Fin N → Fin (n + 1)) : ℝ≥0∞ :=
   ∏ m, ENNReal.ofReal (θ (s m))
 
@@ -96,7 +105,12 @@ theorem measurable_seqLikelihood (s : Fin N → Fin (n + 1)) :
   Finset.measurable_prod _ fun _ _ ↦ ENNReal.measurable_ofReal.comp (measurable_pi_apply _)
 
 open scoped Classical in
-/-- **The multinomial sampling model**: `N` independent draws from the categorical law `θ`. -/
+/-- **The multinomial sampling model.** For $n, N \in \mathbb{N}$, the multinomial sampling
+model is the kernel from parameters $\theta \in \mathbb{R}^{n+1}$ to sequences
+$s = (s_0, \dots, s_{N-1})$ of $N$ labels in $\{0, \dots, n\}$ that sends a probability vector
+$\theta$ (all $\theta_i \ge 0$ and $\sum_i \theta_i = 1$) to the law of $N$ independent draws
+from $\theta$, which gives $s$ probability $\prod_{m < N} \theta_{s_m}$, and sends every other
+$\theta$ to the point mass at the all-zero sequence. -/
 noncomputable def categoricalSeqKernel (n N : ℕ) :
     Kernel (Fin (n + 1) → ℝ) (Fin N → Fin (n + 1)) :=
   Kernel.piecewise (measurableSet_probVectors n)
@@ -141,7 +155,8 @@ theorem categoricalSeqKernel_apply {θ : Fin (n + 1) → ℝ} (hθ : θ ∈ prob
   simp only [categoricalSeqKernel, Kernel.piecewise_apply, hθ, ↓reduceIte]
   exact sum_smul_dirac_singleton _ s
 
-/-- The number of times each label occurs in the sequence `s`. -/
+/-- **Label counts.** For a sequence $s = (s_0, \dots, s_{N-1})$ of labels in $\{0, \dots, n\}$
+and a label $i$, the count $n_i(s)$ is the number of positions $m < N$ with $s_m = i$. -/
 def counts (s : Fin N → Fin (n + 1)) (i : Fin (n + 1)) : ℕ :=
   (Finset.univ.filter fun m ↦ s m = i).card
 
@@ -150,7 +165,11 @@ theorem sum_counts (s : Fin N → Fin (n + 1)) : ∑ i, counts s i = N := by
   rw [← Finset.card_eq_sum_card_fiberwise (fun m _ ↦ Finset.mem_univ (s m)), Finset.card_univ,
     Fintype.card_fin]
 
-/-- The likelihood of a sequence depends only on its counts: `∏ₘ θ (s m) = ∏ᵢ θᵢ ^ (counts s i)`. -/
+/-- **The sequence likelihood depends only on the label counts.** For every
+$\theta \in \mathbb{R}^{n+1}$ and every sequence $s$ of $N$ labels in $\{0, \dots, n\}$ with
+label counts $n_i(s)$, the likelihood $\prod_{m < N} \theta_{s_m}^+$ of $s$ equals
+$\prod_{i = 0}^{n} (\theta_i^+)^{n_i(s)}$ as extended nonnegative reals, where
+$x^+ = \max(x, 0)$. -/
 theorem seqLikelihood_eq_prod_pow (θ : Fin (n + 1) → ℝ) (s : Fin N → Fin (n + 1)) :
     seqLikelihood θ s = ∏ i, ENNReal.ofReal (θ i) ^ counts s i := by
   classical
@@ -167,8 +186,12 @@ theorem ae_mem_probVectors (α : Fin (n + 1) → ℝ) :
   filter_upwards [ae_dirichletMeasure α] with θ hθ
   exact ⟨fun i ↦ (hθ.1 i).le, hθ.2⟩
 
-/-- The evidence-weighted prior: `Dir(α)` weighted by the likelihood of `s` is
-`B(α + counts s) / B(α) · Dir(α + counts s)`. -/
+/-- **Evidence-weighted Dirichlet prior.** Let $\alpha \in \mathbb{R}^{n+1}$ with $\alpha_i > 0$
+for every $i$, and let $s$ be a sequence of $N$ labels in $\{0, \dots, n\}$ with label counts
+$n_i(s)$. The Dirichlet distribution $\mathrm{Dir}(\alpha)$ weighted by the density
+$\theta \mapsto P_\theta(s)$, the probability of $s$ under the multinomial sampling model with
+parameter $\theta$, equals $B(\alpha + n(s)) / B(\alpha)$ times $\mathrm{Dir}(\alpha + n(s))$,
+where $B$ is the multivariate Beta function and $\alpha + n(s)$ has entries $\alpha_i + n_i(s)$. -/
 theorem withDensity_categoricalSeqKernel (hα : ∀ i, 0 < α i) (s : Fin N → Fin (n + 1)) :
     (dirichletMeasure α).withDensity (fun θ ↦ categoricalSeqKernel n N θ {s}) =
       ENNReal.ofReal (multiBeta (fun i ↦ α i + counts s i) / multiBeta α) •
@@ -178,8 +201,11 @@ theorem withDensity_categoricalSeqKernel (hα : ∀ i, 0 < α i) (s : Fin N → 
   filter_upwards [ae_mem_probVectors α] with θ hθ
   rw [categoricalSeqKernel_apply hθ, seqLikelihood_eq_prod_pow]
 
-/-- **Dirichlet–multinomial conjugacy.** After observing the labels `s`, the posterior of a
-`Dir(α)` prior is `Dir(α + counts s)`. -/
+/-- **Dirichlet–multinomial conjugacy.** Let $\alpha \in \mathbb{R}^{n+1}$ with $\alpha_i > 0$
+for every $i$, and let $s$ be a sequence of $N$ labels in $\{0, \dots, n\}$ with label counts
+$n_i(s)$. Under the multinomial sampling model with the Dirichlet prior $\mathrm{Dir}(\alpha)$,
+the posterior distribution of the parameter after observing $s$ is the Dirichlet distribution
+with parameters $\alpha_i + n_i(s)$. -/
 theorem posterior_categoricalSeqKernel_dirichletMeasure (hα : ∀ i, 0 < α i)
     (s : Fin N → Fin (n + 1)) :
     haveI := isProbabilityMeasure_dirichletMeasure hα
@@ -201,7 +227,11 @@ theorem posterior_categoricalSeqKernel_dirichletMeasure (hα : ∀ i, 0 < α i)
     hev, smul_smul, ENNReal.inv_mul_cancel (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top,
     one_smul]
 
-/-- The predictive probability of label `i` under `Dir(α)` is its mean `αᵢ / ∑ α`. -/
+/-- **Prior predictive of the Dirichlet–categorical model.** Let $\alpha \in \mathbb{R}^{n+1}$
+with $\alpha_i > 0$ for every $i$. Drawing a parameter $\theta$ from the Dirichlet
+distribution $\mathrm{Dir}(\alpha)$ and then one label from the categorical likelihood with
+parameter $\theta$ gives the label $i \in \{0, \dots, n\}$ with probability
+$\alpha_i / \sum_j \alpha_j$, which is the mean of $\theta_i$ under $\mathrm{Dir}(\alpha)$. -/
 theorem categoricalKernel_comp_dirichletMeasure (hα : ∀ i, 0 < α i) (i : Fin (n + 1)) :
     (categoricalKernel n ∘ₘ dirichletMeasure α) {i} = ENNReal.ofReal (α i / ∑ j, α j) := by
   rw [comp_apply_singleton, ← lintegral_dirichletMeasure_apply hα i]
@@ -209,8 +239,14 @@ theorem categoricalKernel_comp_dirichletMeasure (hα : ∀ i, 0 < α i) (i : Fin
   filter_upwards [ae_mem_probVectors α] with θ hθ
   rw [categoricalKernel_apply hθ]
 
-/-- **Posterior predictive** (the Dirichlet–multinomial analogue of Laplace's rule): after `N`
-labels with counts `nᵢ`, the next label is `i` with probability `(αᵢ + nᵢ) / (∑ α + N)`. -/
+/-- **Posterior predictive of the Dirichlet–multinomial model.** Let $\alpha \in \mathbb{R}^{n+1}$
+with $\alpha_i > 0$ for every $i$, and let $s$ be a sequence of $N$ labels in $\{0, \dots, n\}$
+with label counts $n_i(s)$. Under the multinomial sampling model with the Dirichlet prior
+$\mathrm{Dir}(\alpha)$, drawing a parameter from the posterior after observing $s$ and then one
+label from the categorical likelihood gives the label $i$ with probability
+$(\alpha_i + n_i(s)) / (\sum_j \alpha_j + N)$.
+
+This is the Dirichlet–multinomial analogue of Laplace's rule of succession. -/
 theorem posterior_predictive_dirichletMeasure (hα : ∀ i, 0 < α i) (s : Fin N → Fin (n + 1))
     (i : Fin (n + 1)) :
     haveI := isProbabilityMeasure_dirichletMeasure hα

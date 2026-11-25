@@ -29,7 +29,8 @@ open scoped DirectSum
 
 namespace AddCommGroup
 
-/-- The torsion subgroup of a finitely generated abelian group is finitely generated. -/
+/-- **Torsion subgroup of a finitely generated abelian group is finitely generated.** If $A$ is a
+finitely generated abelian group, then its torsion subgroup is finitely generated. -/
 public theorem fg_torsion (A : Type*) [AddCommGroup A] [AddGroup.FG A] :
     AddGroup.FG (torsion A) := by
   let : Module.Finite ℤ A := Module.Finite.iff_addGroup_fg.mpr inferInstance
@@ -38,7 +39,8 @@ public theorem fg_torsion (A : Type*) [AddCommGroup A] [AddGroup.FG A] :
   rw [AddGroup.fg_iff_addSubgroup_fg, ← Submodule.torsion_int]
   exact (Submodule.fg_iff_addSubgroup_fg _).mp hfg
 
-/-- The torsion subgroup of a finitely generated abelian group is finite. -/
+/-- **Torsion subgroup of a finitely generated abelian group is finite.** If $A$ is a finitely
+generated abelian group, then its torsion subgroup is finite. -/
 public theorem finite_torsion_of_fg (A : Type*) [AddCommGroup A] [AddGroup.FG A] :
     Finite (torsion A) := by
   let : AddGroup.FG (torsion A) := fg_torsion A
@@ -49,8 +51,10 @@ public theorem finite_torsion_of_fg (A : Type*) [AddCommGroup A] [AddGroup.FG A]
   exact isOfFinAddOrder_iff_nsmul_eq_zero.mpr
     ⟨n, hn, Subtype.ext (by simpa using hnx)⟩
 
-/-- The torsion subgroup of a finitely generated abelian group is a finite direct sum
-of finite cyclic groups. This retains the archived statement's positive moduli. -/
+/-- **Torsion subgroup of a finitely generated abelian group as a sum of cyclic groups.** If $A$
+is a finitely generated abelian group, then there exist a natural number $n$ and positive
+integers $d_1, \dots, d_n$ such that the torsion subgroup of $A$ is isomorphic to the direct sum
+$\mathbb{Z}/d_1\mathbb{Z} \oplus \cdots \oplus \mathbb{Z}/d_n\mathbb{Z}$ of finite cyclic groups. -/
 public theorem torsion_equiv_directSum_zmod_of_fg (A : Type*) [AddCommGroup A]
     [AddGroup.FG A] :
     ∃ (n : ℕ) (d : Fin n → ℕ) (_ : ∀ i, 0 < d i),

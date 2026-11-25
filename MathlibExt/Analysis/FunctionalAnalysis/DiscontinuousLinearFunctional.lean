@@ -49,9 +49,9 @@ Mathlib has the finite-dimensional direction
 linear functional from infinite-dimensionality.
 -/
 
-/-- **A discontinuous linear functional on an infinite-dimensional normed space.**
-If `E` is not finite-dimensional over `𝕜 = ℝ, ℂ`, then there exists a linear
-functional `f : E →ₗ[𝕜] 𝕜` that is not continuous. -/
+/-- **A discontinuous linear functional on an infinite-dimensional normed space.** Let $E$ be a
+normed space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. If $E$ is not finite-dimensional,
+then there exists a linear functional $f \colon E \to \mathbb{K}$ that is not continuous. -/
 theorem exists_discontinuous_linearMap_of_not_finiteDimensional
     {𝕜 : Type*} [RCLike 𝕜]
     {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
@@ -119,10 +119,9 @@ theorem exists_discontinuous_linearMap_of_not_finiteDimensional
   rw [hx_norm, mul_one, hfx, norm_natCast] at hle
   exact absurd hle (not_le_of_gt hn)
 
-/-- **Every linear functional is continuous if and only if the space is
-finite-dimensional.** The forward direction is the contrapositive of
-`exists_discontinuous_linearMap_of_not_finiteDimensional`; the reverse
-direction is Mathlib's `LinearMap.continuous_of_finiteDimensional`. -/
+/-- **Every linear functional is continuous if and only if the space is finite-dimensional.**
+Let $E$ be a normed space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. Every linear
+functional $f \colon E \to \mathbb{K}$ is continuous if and only if $E$ is finite-dimensional. -/
 theorem forall_linearMap_continuous_iff_finiteDimensional
     {𝕜 : Type*} [RCLike 𝕜]
     {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] :
@@ -135,9 +134,10 @@ theorem forall_linearMap_continuous_iff_finiteDimensional
   · intro hfd f
     exact LinearMap.continuous_of_finiteDimensional f
 
-/-- **The algebraic dual is strictly larger than the topological dual** on an
-infinite-dimensional normed space: there is a linear functional that is not
-given by any bounded (continuous) linear functional. -/
+/-- **The algebraic dual is strictly larger than the topological dual.** Let $E$ be a normed
+space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. If $E$ is not finite-dimensional, then
+there is a linear functional $f \colon E \to \mathbb{K}$ that differs from every continuous
+linear functional $g \colon E \to \mathbb{K}$. -/
 theorem exists_linearMap_not_continuousLinearMap
     {𝕜 : Type*} [RCLike 𝕜]
     {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]

@@ -82,10 +82,9 @@ theorem finiteDimensional_of_countable_basis {𝕜 : Type*} [RCLike 𝕜]
   exact FiniteDimensional.of_surjective (⊤ : Submodule 𝕜 E).subtype
     (fun x => ⟨⟨x, Submodule.mem_top⟩, rfl⟩)
 
-/-- **An infinite-dimensional Banach space has no countable Hamel basis.**
-Contrapositive of `finiteDimensional_of_countable_basis`: if `E` is not
-finite-dimensional, then the index type of any Hamel basis of `E` is not
-countable. -/
+/-- **An infinite-dimensional Banach space has no countable Hamel basis.** Let $E$ be a complete
+normed space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$. If $E$ is not finite-dimensional,
+then no Hamel basis of $E$ is indexed by a countable set. -/
 theorem not_countable_basis_of_not_finiteDimensional {𝕜 : Type*} [RCLike 𝕜]
     {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] [CompleteSpace E]
     (hE : ¬ FiniteDimensional 𝕜 E) {ι : Type*} (b : Module.Basis ι 𝕜 E) :
