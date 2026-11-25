@@ -11,8 +11,8 @@ module
 public import CSLibExt.Crypto.Privacy.Basic
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import MathlibExt.Probability.Distributions.GaussianTail
-public import Mathlib.Analysis.Real.Pi.Bounds
 import Mathlib.Analysis.Complex.ExponentialBounds
+import Mathlib.Analysis.Real.Pi.Bounds
 import MathlibExt.MeasureTheory.Measure.PiWithDensity
 
 /-!
@@ -25,11 +25,11 @@ For neighboring means `a` and `b`, the proof bounds the density at mean `a` by t
 of the third density over any event is at most one.
 
 `gaussian_calibration_tail_le` proves the standardized calibration tail estimate behind the
-same mechanism (Dwork and Roth (2014), Theorem A.1): under
-`2 * Real.log ((5 / 4) / δ) < c ^ 2` and `r ≤ ε / c`, where `r` is the standardized shift
-(sensitivity divided by the noise scale), the standard Gaussian mass above the privacy-loss
-threshold `ε / r - r / 2` is at most `δ`, including the trivial case `δ ≥ 1`. The constant
-`5 / 4` is the source constant `1.25` inside the calibration hypothesis
+same mechanism (Dwork and Roth (2014), Theorem A.1): for `0 < ε < 1`, `0 < δ`, `0 < c` and
+`0 < r`, under `2 * Real.log ((5 / 4) / δ) < c ^ 2` and `r ≤ ε / c`, where `r` is the
+standardized shift (sensitivity divided by the noise scale), the standard Gaussian mass above
+the privacy-loss threshold `ε / r - r / 2` is at most `δ`, including the trivial case `δ ≥ 1`.
+The constant `5 / 4` is the source constant `1.25` inside the calibration hypothesis
 `2 * Real.log ((5 / 4) / δ) < c ^ 2`.
 
 -/
@@ -401,12 +401,12 @@ private lemma thresh_lo {ε c : ℝ} (hε₁ : ε < 1) (hc₀ : 0 < c)
     div_pos hpos (by linarith [hc₀])
   linarith [heq, hq]
 
-/-- **Gaussian calibration tail estimate** (Dwork and Roth, *The Algorithmic Foundations of
-Differential Privacy* (2014), Theorem A.1, in standardized form). Under the calibration
-hypothesis `2 * Real.log ((5 / 4) / δ) < c ^ 2` and `r ≤ ε / c`, where `r` is the standardized
-shift (sensitivity divided by the Gaussian noise scale) and `c` is the calibration constant, the
-standard Gaussian mass above the privacy-loss threshold `ε / r - r / 2` is at most `δ`. The case
-`δ ≥ 1` follows by a trivial branch. -/
+/-- **Gaussian calibration tail estimate** (Dwork and Roth, _The Algorithmic Foundations of
+Differential Privacy_ (2014), Theorem A.1, in standardized form). For `0 < ε < 1`, `0 < δ`,
+`0 < c` and `0 < r`, under the calibration hypothesis `2 * Real.log ((5 / 4) / δ) < c ^ 2` and
+`r ≤ ε / c`, where `r` is the standardized shift (sensitivity divided by the Gaussian noise
+scale) and `c` is the calibration constant, the standard Gaussian mass above the privacy-loss
+threshold `ε / r - r / 2` is at most `δ`. The case `δ ≥ 1` follows by a trivial branch. -/
 theorem gaussian_calibration_tail_le {ε δ c r : ℝ} (hε₀ : 0 < ε) (hε₁ : ε < 1)
     (hδ : 0 < δ) (hc₀ : 0 < c) (hc : 2 * Real.log ((5 / 4) / δ) < c ^ 2) (hr₀ : 0 < r)
     (hr : r ≤ ε / c) :

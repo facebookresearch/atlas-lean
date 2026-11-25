@@ -13521,6 +13521,7 @@
   "MathlibExt/Probability/Distributions/GaussianDensity": {"to": "Probability/distributions/continuous", "title": "Multivariate normal distribution"},
   "MathlibExt/Probability/Distributions/GaussianL2Limit": {"to": "Probability/distributions/continuous", "title": "Closure of Gaussian laws under L² limits"},
   "MathlibExt/Probability/Distributions/GaussianMLE": {"to": "Probability/linear-models-multivariate", "title": "Gaussian maximum likelihood"},
+  "MathlibExt/Probability/Distributions/GaussianTail": {"to": "Probability/distributions/continuous", "title": "Normal distribution on the real line"},
   "MathlibExt/Probability/Distributions/Hypergeometric": {"to": "Probability/distributions/discrete", "title": "Hypergeometric distribution"},
   "MathlibExt/Probability/Distributions/Laplace": {"to": "Probability/distributions/continuous", "title": "Laplace distribution"},
   "MathlibExt/Probability/Distributions/LogNormal": {"to": "Probability/distributions/continuous", "title": "Log-normal distribution"},
