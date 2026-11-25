@@ -1184,3 +1184,7 @@ Topics added since this subject's fields were last revised.
 - [Witt Loop Groups](witt-loop-groups/README.md)
 - [Witt Loop Ind Geometry](witt-loop-ind-geometry/README.md)
 - [Witt Quotient Action Models](witt-quotient-action-models/README.md)
+- [Exists Eq Pullback Snd Comp](exists-eq-pullback-snd-comp-of-is-proper.md)
+- [Chow Datum](chow-datum/README.md)
+- [Crossing Resolution Proper](crossing-resolution-proper/README.md)
+- [Segre](segre/README.md)

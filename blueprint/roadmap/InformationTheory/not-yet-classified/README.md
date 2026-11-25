@@ -12,4 +12,5 @@ Topics added since this subject's fields were last revised.
 
 ## [Part 2 of 2](part-02/README.md)
 
-- [Pinsker PMF](part-02/pinsker-pmf.md)
+- [Unreflected Serial CRC](part-02/unreflected-serial-crc/README.md)
+- [Pinsker's inequality for finite probability mass functions](part-02/pinsker-pmf.md)
