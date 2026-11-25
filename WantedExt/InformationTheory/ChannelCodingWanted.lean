@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.InformationTheory.ConditionalMutualInformation
+public import MathlibExt.InformationTheory.ChannelCodingStrongConverse
 public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
@@ -30,10 +30,10 @@ The coding theorem as Polyanskiy and Wu state it has three parts: every rate bel
 achievable with vanishing maximal error, every rate above capacity forces the average error to one
 (strong converse), and Fano's inequality bounds every code at every blocklength (weak converse).
 Achievability is proved, by Gallager's random coding bound, as
-`MathlibExt.InformationTheory.ChannelCodingAchievability.channelCoding_achievability`. The two
-converses below are not proved here. The book's codes may be randomised and their decoders may
-output an erasure; the two converses below are stated for deterministic erasure-free codes only,
-which makes them weaker than the book's.
+`MathlibExt.InformationTheory.ChannelCodingAchievability.channelCoding_achievability`. The strong
+converse is proved in `MathlibExt.InformationTheory.ChannelCodingStrongConverse`. The book's codes
+may be randomised and their decoders may output an erasure. Both converse statements specialize to
+deterministic erasure-free codes.
 
 ## References
 
@@ -49,20 +49,6 @@ namespace MathlibExt.InformationTheory.ChannelCodingWanted
 @[expose] public section
 
 open MeasureTheory _root_.InformationTheory
-
-/-- **Strong converse** (Wolfowitz). For a discrete memoryless channel `W` on finite alphabets,
-every rate `R > C(W)` and every `ε < 1`, for all large blocklengths `n` every code with
-`M ≥ 2^{nR}` codewords has average error probability greater than `ε`.
-Source: Y. Polyanskiy and Y. Wu, Information Theory: From Coding to Learning (Cambridge
-University Press, 2025), Theorem 22.1 (`C_ε = C` for `0 < ε < 1`, finite alphabets);
-J. Wolfowitz (1957). -/
-public theorem_wanted channelCoding_strong_converse {α β : Type*} [Fintype α] [Nonempty α]
-    [Fintype β] [MeasurableSpace β] [DiscreteMeasurableSpace β] (W : α → PMF β) {R : ℝ}
-    (hR : (⨆ p : PMF α, finiteMutualInformation (p.bind fun a => (W a).map (Prod.mk a))) < R)
-    {ε : ℝ} (hε : ε < 1) :
-    ∀ᶠ n in Filter.atTop, ∀ (M : ℕ) (f : Fin M → Fin n → α) (g : (Fin n → β) → Fin M),
-      (2 : ℝ) ^ ((n : ℝ) * R) ≤ M →
-        ε < (∑ m, (Measure.pi fun i => (W (f m i)).toMeasure).real {y | g y ≠ m}) / M
 
 /-- **Weak converse** (Fano). For a discrete memoryless channel `W` on finite alphabets, every
 code with `M ≥ 1` codewords of length `n` and average error probability `Pₑ` satisfies

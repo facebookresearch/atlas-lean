@@ -18,6 +18,8 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Strang's lemma](strang-s-lemma/README.md)
 - [Trust-region methods](trust-region-methods/README.md)
 - [Upwind scheme](upwind-scheme/README.md)
+- [Finite-volume schemes for transport](finite-volume-schemes-for-transport/README.md)
+- [Operator splitting](operator-splitting/README.md)
 
 ## Related topics
 
