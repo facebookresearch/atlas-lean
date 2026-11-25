@@ -10,8 +10,14 @@ module
 
 public import MathlibExt.Analysis.SpecialFunctions.Log.GuzmanSanchezLuca
 public import MathlibExt.Combinatorics.Enumerative.PellLucasNumber
+public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
+public import Mathlib.NumberTheory.Real.Irrational
+import Mathlib.Algebra.ContinuedFractions.Computation.Approximations
+import Mathlib.Algebra.ContinuedFractions.Computation.TerminatesIffRat
 import Mathlib.Algebra.Field.GeomSum
 import Mathlib.Analysis.Convex.SpecificFunctions.Basic
+import Mathlib.NumberTheory.DiophantineApproximation.ContinuedFractions
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # `k`-Pell–Lucas numbers close to a power of 2: proved lemmas
@@ -27,6 +33,9 @@ are in `WantedExt.NumberTheory.KPellLucasCloseToPowerOfTwoWanted`.
 * `lt_two_rpow_mul_mul_log_rpow_of_one_lt` (Lemma 7) applies the Guzmán Sánchez–Luca bound
   to `x > 1`.
 * `kPellLucas_close_two_pow_exponent_bounds` bounds the exponent of a nearby power of two.
+* `lt_abs_sub_div_of_max_partialQuotient` (Lemma 5 (ii)) gives a lower bound for
+  `|τ - y / x|` in terms of the largest partial quotient of `τ` up to the first convergent
+  denominator exceeding `M`, for `0 < x < M`.
 
 ## Proof of Lemma 6
 
@@ -265,6 +274,165 @@ public theorem kPellLucas_close_two_pow_exponent_bounds (k n m : ℕ) (hk : 2 �
         norm_num [mul_comm]
     have := (Real.rpow_lt_rpow_left_iff (by norm_num : (1 : ℝ) < 2)).mp hpow
     linarith
+
+namespace lt_abs_sub_div_of_max_partialQuotient
+
+open GenContFract
+open GenContFract (of)
+
+private theorem dens_monotone (x : ℝ) : Monotone (of x).dens :=
+  monotone_nat_of_le_succ fun _ ↦ of_den_mono
+
+private theorem den_pos (x : ℝ) (n : ℕ) : 0 < (of x).dens n :=
+  calc
+    0 < (of x).dens 0 := by simp
+    _ ≤ (of x).dens n := dens_monotone x (Nat.zero_le n)
+
+/-- The cross product with an integer pair satisfies the integral continuant recurrence. -/
+private theorem exists_int_cross {x : ℝ} (hinf : ∀ i, ¬(of x).TerminatedAt i) (p q : ℤ)
+    (n : ℕ) : ∃ z : ℤ, (z : ℝ) = p * ((of x).contsAux n).b - q * ((of x).contsAux n).a := by
+  induction n using Nat.twoStepInduction with
+  | zero => exact ⟨-q, by simp⟩
+  | one => exact ⟨p - q * ⌊x⌋, by simp [of_h_eq_floor]⟩
+  | more n ih₀ ih₁ =>
+    obtain ⟨u, hu⟩ := ih₀
+    obtain ⟨v, hv⟩ := ih₁
+    obtain ⟨gp, hgp⟩ := Option.ne_none_iff_exists'.mp (hinf n)
+    obtain ⟨h₁, b, hb⟩ := of_partNum_eq_one_and_exists_int_partDen_eq hgp
+    refine ⟨b * v + u, ?_⟩
+    rw [Int.cast_add, Int.cast_mul, hu, hv, contsAux_recurrence hgp rfl rfl, hb, h₁]
+    dsimp
+    ring
+
+/-- The determinant with the next convergent shows that even an unreduced representation
+of a convergent has denominator at least the continuant denominator. -/
+private theorem den_le_of_convs_eq {x : ℝ} (hinf : ∀ i, ¬(of x).TerminatedAt i) {n : ℕ}
+    {p q : ℤ} (hq : 0 < (q : ℝ)) (heq : (of x).convs n = (p : ℝ) / q) :
+    (of x).dens n ≤ q := by
+  let g := of x
+  have hcross := (div_eq_div_iff (den_pos x n).ne' hq.ne').mp heq
+  obtain ⟨z, hz⟩ := exists_int_cross hinf p q (n + 2)
+  change (z : ℝ) = p * g.dens (n + 1) - q * g.nums (n + 1) at hz
+  have hdet := (SimpContFract.of x).determinant (hinf n)
+  change g.nums n * g.dens (n + 1) - g.dens n * g.nums (n + 1) = _ at hdet
+  have hscale : z * g.dens n = q * (-1 : ℝ) ^ (n + 1) := by
+    linear_combination g.dens n * hz + q * hdet - g.dens (n + 1) * hcross
+  have habs : |(z : ℝ)| * g.dens n = q := by
+    simpa [abs_mul, abs_pow, abs_of_pos hq, abs_of_pos (den_pos x n), g]
+      using congrArg abs hscale
+  have hz₀ : z ≠ 0 := by
+    rintro rfl
+    exact hq.ne (by simpa using habs)
+  have hz₁ : (1 : ℝ) ≤ |(z : ℝ)| := by exact_mod_cast Int.one_le_abs hz₀
+  rw [← habs]
+  simpa using mul_le_mul_of_nonneg_right hz₁ (den_pos x n).le
+
+/-- The next complete quotient is strictly below its integer part plus one. The preceding
+denominator contributes at most one more copy of the current denominator. -/
+private theorem convergent_lower_bound {x A : ℝ} {n : ℕ} (hinf : ¬(of x).TerminatedAt n)
+    (ha : ∀ b : ℝ, (of x).partDens.get? n = some b → b ≤ A) :
+    1 / ((A + 2) * (of x).dens n ^ 2) < |x - (of x).convs n| := by
+  obtain ⟨next, hnext⟩ := Option.ne_none_iff_exists'.mp
+    (mt of_terminatedAt_n_iff_succ_nth_intFractPair_stream_eq_none.mpr hinf)
+  obtain ⟨s, hs, hs₀, rfl⟩ := IntFractPair.succ_nth_stream_eq_some_iff.mp hnext
+  have hdigit := partDen_eq_s_b (get?_of_eq_some_of_succ_get?_intFractPair_stream hnext)
+  have ht : s.fr⁻¹ < A + 1 :=
+    (Int.lt_floor_add_one _).trans_le (add_le_add_left (ha _ hdigit) 1)
+  let D := (of x).dens n
+  let P := ((of x).contsAux n).b
+  have hD : 0 < D := den_pos x n
+  have hP : 0 ≤ P := zero_le_of_contsAux_b
+  have hPD : P ≤ D := by
+    cases n with
+    | zero => simp [P, D]
+    | succ k => exact of_den_mono
+  have hfr : 0 < s.fr := (IntFractPair.nth_stream_fr_nonneg hs).lt_of_ne' hs₀
+  have herr : x - (of x).convs n = (-1) ^ n / (D * (s.fr⁻¹ * D + P)) := by
+    simpa only [hs₀, ite_false, D, P, den_eq_conts_b, nth_cont_eq_succ_nth_contAux] using
+      sub_convs_eq hs
+  rw [herr, abs_div, abs_neg_one_pow, abs_of_pos (by positivity)]
+  apply one_div_lt_one_div_of_lt (by positivity)
+  calc
+    D * (s.fr⁻¹ * D + P) < D * ((A + 1) * D + D) :=
+      mul_lt_mul_of_pos_left (add_lt_add_of_lt_of_le (mul_lt_mul_of_pos_right ht hD) hPD) hD
+    _ = (A + 2) * D ^ 2 := by ring
+
+end lt_abs_sub_div_of_max_partialQuotient
+
+set_option linter.unusedVariables false in
+/-- **Continued-fraction lower bound for rational approximations.** Let $\tau$ be an irrational real
+number with simple continued fraction expansion $[a_0; a_1, a_2, \ldots]$, so that
+$a_0 = \lfloor \tau \rfloor$, and let $q_0, q_1, \ldots$ be the denominators of its convergents. Let
+$M > 0$ be a real number, let $N$ be the least positive integer with $q_N > M$, and put
+$a(M) = \max \{a_k : 0 \le k \le N\}$. Then
+
+$$\left|\tau - \frac{y}{x}\right| > \frac{1}{(a(M) + 2)\, x^2}$$
+
+for all integers $x$ and $y$ with $0 < x < M$.
+
+Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
+a Power of 2*, INTEGERS 25 (2025), Article A67, Lemma 5 (`integers-2025-A67-lem-5`). -/
+public theorem lt_abs_sub_div_of_max_partialQuotient (τ : ℝ) (hτ : Irrational τ) (M : ℝ)
+    (hM : 0 < M) (N : ℕ) (hN : 0 < N) (hqN : M < (GenContFract.of τ).dens N)
+    (hNmin : ∀ j, 0 < j → j < N → (GenContFract.of τ).dens j ≤ M) (a : ℕ → ℝ)
+    (ha₀ : a 0 = (GenContFract.of τ).h)
+    (ha : ∀ j, (GenContFract.of τ).partDens.get? j = some (a (j + 1))) (x y : ℤ) (hx : 0 < x)
+    (hxM : (x : ℝ) < M) :
+    1 / (((Finset.range (N + 1)).sup' Finset.nonempty_range_add_one a + 2) * (x : ℝ) ^ 2) <
+      |τ - y / x| := by
+  let A : ℝ := (Finset.range (N + 1)).sup' Finset.nonempty_range_add_one a
+  have hinf (i : ℕ) : ¬(GenContFract.of τ).TerminatedAt i := by
+    intro hi
+    obtain ⟨r, hr⟩ := GenContFract.exists_rat_eq_of_terminates ⟨i, hi⟩
+    exact hτ ⟨r, hr.symm⟩
+  have hx' : 0 < (x : ℝ) := by exact_mod_cast hx
+  have hA1 : 1 ≤ A := by
+    have hmem : 1 ∈ Finset.range (N + 1) := Finset.mem_range.mpr (by omega)
+    have hle : a 1 ≤ A := Finset.le_sup' a hmem
+    have h1 : 1 ≤ a 1 := by
+      have hget := ha 0
+      exact GenContFract.of_one_le_get?_partDen hget
+    exact h1.trans hle
+  have hpart_le (n : ℕ) (hn : n < N) (b : ℝ)
+      (hb : (GenContFract.of τ).partDens.get? n = some b) : b ≤ A := by
+    have hget := ha n
+    rw [hb] at hget
+    have hb_eq : b = a (n + 1) := Option.some_inj.mp hget
+    rw [hb_eq]
+    exact Finset.le_sup' a (Finset.mem_range.mpr (by omega))
+  by_contra! h
+  let r := Rat.divInt y x
+  have hr : (r : ℝ) = (y : ℝ) / x := by simp [r, Rat.divInt_eq_div]
+  have hrq : (r.den : ℝ) ≤ x := by
+    exact_mod_cast Int.le_of_dvd hx (Rat.den_dvd y x)
+  have hdenpos : 0 < (r.den : ℝ) := by exact_mod_cast r.den_pos
+  have hsmall : |τ - r| < 1 / (2 * (r.den : ℝ) ^ 2) := by
+    rw [hr]
+    refine h.trans_lt (one_div_lt_one_div_of_lt (mul_pos (by norm_num) (pow_pos hdenpos 2)) ?_)
+    calc
+      2 * (r.den : ℝ) ^ 2 ≤ 2 * (x : ℝ) ^ 2 := by gcongr
+      _ < (A + 2) * (x : ℝ) ^ 2 := mul_lt_mul_of_pos_right (by linarith) (by positivity)
+  obtain ⟨n, heq⟩ := Real.exists_convs_eq_rat hsmall
+  rw [hr] at heq
+  have hD := lt_abs_sub_div_of_max_partialQuotient.den_le_of_convs_eq hinf hx' heq
+  have hn : n < N := by
+    by_contra! hlt
+    exact (not_le_of_gt (lt_trans hxM hqN))
+      ((lt_abs_sub_div_of_max_partialQuotient.dens_monotone τ hlt).trans hD)
+  have hbound :=
+    lt_abs_sub_div_of_max_partialQuotient.convergent_lower_bound (hinf n) (hpart_le n hn)
+  rw [heq] at hbound
+  have hle : 1 / ((A + 2) * (x : ℝ) ^ 2) ≤
+      1 / ((A + 2) * (GenContFract.of τ).dens n ^ 2) := by
+    apply one_div_le_one_div_of_le
+      (mul_pos (by linarith)
+        (pow_pos (lt_abs_sub_div_of_max_partialQuotient.den_pos τ n) 2))
+    exact mul_le_mul_of_nonneg_left
+      (pow_le_pow_left₀ (lt_abs_sub_div_of_max_partialQuotient.den_pos τ n).le hD 2)
+      (by linarith)
+  have hAeq : A = (Finset.range (N + 1)).sup' Finset.nonempty_range_add_one a := rfl
+  rw [hAeq] at hle
+  linarith [hbound, h, hle]
 
 end
 
