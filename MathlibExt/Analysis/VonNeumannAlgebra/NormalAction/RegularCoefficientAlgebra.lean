@@ -170,7 +170,7 @@ theorem regularCoefficient_covariance (α : NormalAction G M) (g : G) (x : M) :
   have hinner := StronglyContinuousUnitaryRepresentation.haarLeftRegular_ae_eq G μ H g⁻¹ ξ
   have hpres : MeasurePreserving (fun s : G => g⁻¹ * s) μ μ := measurePreserving_smul g⁻¹ μ
   have hquasi : QuasiMeasurePreserving (fun s : G => g⁻¹ * s) μ μ :=
-    ⟨hpres.measurable, by rw [hpres.map_eq]⟩
+    hpres.quasiMeasurePreserving
   have hcoefficient' := hquasi.ae_eq_comp hcoefficient
   have hinner' := hquasi.ae_eq_comp hinner
   filter_upwards [houter, hcoefficient', hinner', regularCoefficient_ae_eq μ α (α g x) ξ]

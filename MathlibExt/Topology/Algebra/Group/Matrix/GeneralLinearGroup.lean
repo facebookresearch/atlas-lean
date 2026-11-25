@@ -59,7 +59,7 @@ def prodContinuousMulEquiv :
     GL ι (R × S) ≃ₜ* GL ι R × GL ι S := by
   let matrixEquiv :
       Matrix ι ι (R × S) ≃ₜ* Matrix ι ι R × Matrix ι ι S :=
-    { __ := (Matrix.prodRingEquiv (R := R) (S := S) ι).toMulEquiv
+    { __ := (Matrix.prodRingEquiv ι R S).toMulEquiv
       continuous_toFun := by
         change Continuous fun M : Matrix ι ι (R × S) =>
           (M.map (RingHom.fst R S), M.map (RingHom.snd R S))

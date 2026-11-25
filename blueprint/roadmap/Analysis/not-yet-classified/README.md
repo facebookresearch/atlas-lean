@@ -3,6 +3,7 @@
 Topics added since this subject's fields were last revised.
 
 - [Idempotent Range](idempotent-range/README.md)
+- [Interval Expressions](interval-expressions/README.md)
 - [Stage Equivalence](exists-later-stage-murray-von-neumann-eq.md)
 - [Stage Matrix](exists-stage-matrix-near.md)
 - [Stage Projection](exists-stage-projection-near.md)

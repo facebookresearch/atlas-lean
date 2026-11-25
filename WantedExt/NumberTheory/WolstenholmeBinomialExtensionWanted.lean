@@ -40,21 +40,6 @@ open Polynomial
 
 @[expose] public section
 
-/-- **Coefficients of $(x + 1)^{jp} (x^p + 1)^{n-j}$.** Let $n$, $j$ and $k$ be natural numbers and
-$p$ a positive integer, and let $d = \max(n - j, 0)$. Then the coefficient of $x^{kp}$ in the
-polynomial $(x + 1)^{jp} (x^p + 1)^{d}$ is
-$$\sum_{s=0}^{\min(j, k)} \binom{jp}{sp} \binom{d}{k - s}.$$
-
-The source takes $p$ prime; here $p$ is any positive integer.
-
-Source: Walid Kehila, *An Extension of Wolstenholme's Theorem by Binomial
-Coefficients*, INTEGERS 26 (2026), Article A32, Lemma 2
-(`integers-2026-A32-lem-2`). -/
-public theorem_wanted coeff_add_one_pow_mul_X_pow_add_one_pow (p n j k : ℕ) (hp : 0 < p) :
-    ((X + 1 : ℕ[X]) ^ (j * p) * (X ^ p + 1) ^ (n - j)).coeff (k * p) =
-      ∑ s ∈ Finset.range (j + 1),
-        if s ≤ k then (j * p).choose (s * p) * (n - j).choose (k - s) else 0
-
 /-- **Congruences for $\binom{tp}{p}$ modulo $p^5$, $p^6$ and $p^7$.** Let $p \ge 11$ be a prime
 and $t$ a natural number. Write $H_{p-1}^{(r)} = \sum_{j=1}^{p-1} 1/j^r$ for the harmonic number of
 order $r$ and $H_{p-1}(1, 1) = \sum_{1 \le i < j \le p-1} 1/(ij)$. For rational numbers $x$, $y$

@@ -89,7 +89,7 @@ theorem ultraweakOrderClosedTopology (M : VonNeumannAlgebra H) :
     have h := (hright.sub hleft).star
     convert h using 1
     funext p
-    simp only [f, ψ, Function.comp_apply, Pi.sub_apply, map_sub]
+    simp only [f, ψ, Pi.star_apply, Pi.sub_apply, Function.comp_def, map_sub]
   let t : Set (Ultraweak M × Ultraweak M) :=
     ⋂ ξ : H, {p | Complex.ofReal (f ξ p).re = f ξ p ∧ 0 ≤ (f ξ p).re}
   have hreal (ξ : H) : Continuous (fun p : Ultraweak M × Ultraweak M => (f ξ p).re) :=
