@@ -54,3 +54,14 @@ example : ((nondecreasingDyckWords 3).filter fun p =>
 
 -- Semilength five is the first term determined by the homogeneous recurrence.
 example : nondecreasingDyckSubwordTotal [U, D, U] 5 = 46 := by decide +kernel
+
+-- The empty path and semilength two contribute no DDU; UUDDUD gives the first occurrence.
+example : nondecreasingDyckSubwordTotal [D, D, U] 0 = 0 := by decide +kernel
+
+example : nondecreasingDyckSubwordTotal [D, D, U] 2 = 0 := by decide +kernel
+
+example : nondecreasingDyckSubwordTotal [D, D, U] 3 = 1 := by decide +kernel
+
+-- At semilength five, one path already has two occurrences (as counted by the marking series).
+example : ((nondecreasingDyckWords 5).filter fun p =>
+    dyckSubwordCount [D, D, U] p.val.toList = 2).card = 1 := by decide +kernel

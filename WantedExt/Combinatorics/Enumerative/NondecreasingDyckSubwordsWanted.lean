@@ -138,26 +138,6 @@ public theorem_wanted nondecreasingDyck_subword_DUD :
       5 * (nondecreasingDyckSubwordTotal [D, U, D] n : ℤ) =
         (5 * (n : ℤ) + 1) * (Nat.fib (2 * n) : ℤ) - 2 * (n : ℤ) * (lucasNumber (2 * n) : ℤ)
 
-/-- **The subword $DDU$ in non-decreasing Dyck paths.** Let $F_{DDU}(x, y)$ and $D_{DDU}(x)$ be
-the bivariate and univariate generating functions of the subword $DDU$ in non-decreasing Dyck
-paths, let $d_{DDU}(n)$ be the total number of occurrences of $DDU$ over all non-decreasing Dyck
-paths of semilength $n$, and let $F_n$ and $L_n$ denote the Fibonacci and Lucas numbers. Then
-$$(1 - 3x + x^2(2 - y)) F_{DDU}(x, y) = (1 - x) x$$
-in $\mathbb{Z}[y][[x]]$,
-$$(1 - 3x + x^2)^2 D_{DDU}(x) = (1 - x) x^3$$
-in $\mathbb{Z}[[x]]$, and for every $n \ge 3$,
-$$10 d_{DDU}(n) = (10n - 13) F_{2n} + (-4n + 5) L_{2n}.$$
-
-Source: Flórez, Junes, Montoya, and Ramírez, *Counting Subwords in Non-Decreasing
-Dyck Paths*, Journal of Integer Sequences 28 (2025), Article 25.1.6, Theorem 9
-(`jis-2025-25.1.6-thm-9`). -/
-public theorem_wanted nondecreasingDyck_subword_DDU :
-    (1 - 3 * 𝒙 + 𝒙 ^ 2 * (2 - 𝒚)) * nondecreasingDyckSubwordBivariateGF [D, D, U] = (1 - 𝒙) * 𝒙 ∧
-    ((1 - 3 * 𝒛 + 𝒛 ^ 2) ^ 2) * nondecreasingDyckSubwordTotalGF [D, D, U] = (1 - 𝒛) * 𝒛 ^ 3 ∧
-    ∀ n : ℕ, 3 ≤ n →
-      10 * (nondecreasingDyckSubwordTotal [D, D, U] n : ℤ) =
-        (10 * (n : ℤ) - 13) * (Nat.fib (2 * n) : ℤ) + (-4 * (n : ℤ) + 5) * (lucasNumber (2 * n) : ℤ)
-
 /-- **The subword $DDD$ in non-decreasing Dyck paths.** Let $F_{DDD}(x, y)$ and $D_{DDD}(x)$ be
 the bivariate and univariate generating functions of the subword $DDD$ in non-decreasing Dyck
 paths, let $d_{DDD}(n)$ be the total number of occurrences of $DDD$ over all non-decreasing Dyck
