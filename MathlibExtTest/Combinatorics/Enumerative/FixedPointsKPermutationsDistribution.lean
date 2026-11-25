@@ -15,6 +15,17 @@ namespace MathlibExtTest.Combinatorics.Enumerative.FixedPointsKPermutationsDistr
 
 open MetaMathlibExt
 
+-- The empty set has no permutations with a positive cycle count.
+example {k : ℕ} (hk : 1 ≤ k) :
+    ∑ j ∈ Finset.range (k + 1), j * kPermFixedPointCount 0 k j = 0 := by
+  simpa only [zero_mul] using sum_mul_kPermFixedPointCount (n := 0) hk
+
+-- The two-cycle permutations of four points have eight fixed points in total.
+example : ∑ j ∈ Finset.range 3, j * kPermFixedPointCount 4 2 j = 8 := by
+  have h := sum_mul_kPermFixedPointCount (n := 4) (k := 2) (hk := by decide)
+  norm_num [Nat.stirlingFirst] at h
+  exact h
+
 -- At the minimum allowed cycle count, the identity on two points has zero variance.
 example : (∑ j ∈ Finset.range 3, (j : ℚ) ^ 2 * kPermFixedPointCount 2 2 j) - 2 ^ 2 = 0 := by
   have h := kPermFixedPoint_variance (n := 2) (k := 2) (hk := by decide) (hkn := by decide)
