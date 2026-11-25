@@ -36,6 +36,7 @@ import Mathlib.LinearAlgebra.Determinant
 import Mathlib.LinearAlgebra.Dimension.Constructions
 import Mathlib.LinearAlgebra.Dimension.Finite
 import Mathlib.RingTheory.Ideal.Operations
+import Mathlib.RingTheory.LocalRing.RingHom.Basic
 
 /-!
 # Freeness from a balanced perfect pairing and a saturated torsion submodule
@@ -85,23 +86,6 @@ private theorem pairing_apply_x₀ (C : T →ₗ[𝒪] T →ₗ[𝒪] 𝒪)
   have h := hC t 1 x₀
   rw [mul_one] at h
   rw [h, mul_eq_smul_of_mem_annihilator πT hx₀ t, map_smul, smul_eq_mul]
-
-private theorem isUnit_of_isUnit_map [IsDomain 𝒪] [IsLocalRing T] {t : T} (ht : IsUnit (πT t)) :
-    IsUnit t := by
-  by_contra h
-  have hmem : t ∈ IsLocalRing.maximalIdeal T :=
-    (IsLocalRing.mem_maximalIdeal t).mpr (mem_nonunits_iff.mpr h)
-  obtain ⟨b, hb⟩ := ht.exists_right_inv
-  have hker : RingHom.ker πT ≤ IsLocalRing.maximalIdeal T :=
-    IsLocalRing.le_maximalIdeal (RingHom.ker_ne_top πT)
-  have h1 : t * algebraMap 𝒪 T b - 1 ∈ RingHom.ker πT := by
-    rw [RingHom.mem_ker, map_sub, map_mul, AlgHom.commutes, Algebra.algebraMap_self_apply, map_one,
-      hb, sub_self]
-  have h2 : t * algebraMap 𝒪 T b ∈ IsLocalRing.maximalIdeal T := Ideal.mul_mem_right _ _ hmem
-  have h3 : (1 : T) ∈ IsLocalRing.maximalIdeal T := by
-    have := Submodule.sub_mem _ h2 (hker h1)
-    rwa [sub_sub_cancel] at this
-  exact (IsLocalRing.maximalIdeal.isMaximal T).ne_top ((Ideal.eq_top_iff_one _).mpr h3)
 
 section F1
 
@@ -344,10 +328,9 @@ private theorem core [IsDomain 𝒪] [IsPrincipalIdealRing 𝒪] [IsLocalRing T]
     rw [hGbar, Matrix.det_smul]
     exact (hcinv'.pow _).mul hΓunit
   have hdetG : IsUnit Gm.det := by
-    refine isUnit_of_isUnit_map πT ?_
-    have := RingHom.map_det (πT : T →+* 𝒪) Gm
-    rw [RingHom.coe_coe] at this
-    rw [this]
+    have := IsLocalHom.of_surjective (πT : T →+* 𝒪) (πT_surjective πT)
+    refine IsUnit.of_map (πT : T →+* 𝒪) _ ?_
+    rw [RingHom.map_det]
     exact hdetbar
   let Gequiv : (Fin d → T) ≃ₗ[T] (Fin d → T) :=
     LinearEquiv.ofIsUnitDet (f := G) (v := Pi.basisFun T (Fin d)) (v' := Pi.basisFun T (Fin d))

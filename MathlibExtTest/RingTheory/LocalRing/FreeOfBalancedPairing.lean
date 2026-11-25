@@ -6,6 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+The exact-source consumer reproduces the theorem type from
+`Theorems/Thm_Module_free_of_torsionBySet_eq_annihilator_smul.lean`
+in https://github.com/anthropics/fermats-last-theorem at commit
+6e837e75355538c7f80bab5b956861e86c4eacc2.
+Copyright (c) 2026 Anthropic, PBC. Licensed under the Apache License, Version 2.0.
+The upstream NOTICE also credits Mathlib and its respective authors under Apache 2.0.
+-/
+
 module
 
 public import MathlibExt.RingTheory.LocalRing.FreeOfBalancedPairing
@@ -46,3 +55,31 @@ example
     (hsat : Submodule.torsionBySet T M ↑(RingHom.ker πT) = (RingHom.ker πT).annihilator • ⊤) :
     Module.Free T M :=
   Module.free_of_torsionBySet_eq_annihilator_smul πT hη C hC hCb M B hB hBb hrank hsat
+
+/-- Over `ℚ`, the identity augmentation has kernel `⊥`. -/
+private theorem ker_algHom_id_rat : RingHom.ker (AlgHom.id ℚ ℚ) = ⊥ :=
+  (RingHom.injective_iff_ker_eq_bot _).mp Function.injective_id
+
+/-- Multiplication is a perfect pairing on `ℚ`. -/
+private theorem bijective_mul_rat : Function.Bijective (LinearMap.mul ℚ ℚ) :=
+  ⟨fun a b h => by simpa using LinearMap.congr_fun h 1,
+    fun f => ⟨f 1, LinearMap.ext_ring (by simp)⟩⟩
+
+/-- Every element of `ℚ` is killed by the kernel `⊥` of the identity augmentation. -/
+private theorem torsionBySet_ker_algHom_id_rat :
+    Submodule.torsionBySet ℚ ℚ ↑(RingHom.ker (AlgHom.id ℚ ℚ)) = ⊤ := by
+  rw [ker_algHom_id_rat]
+  ext m
+  simp
+
+/-- The hypotheses hold together: `𝒪 = T = M = ℚ`, with the identity augmentation and
+multiplication as both pairings, satisfies every one of them. -/
+example : Module.Free ℚ ℚ :=
+  Module.free_of_torsionBySet_eq_annihilator_smul (AlgHom.id ℚ ℚ)
+    (by rw [ker_algHom_id_rat, Submodule.annihilator_bot, Ideal.map_top]; exact top_ne_bot)
+    (LinearMap.mul ℚ ℚ) (fun s t u => by simp only [LinearMap.mul_apply']; ring)
+    bijective_mul_rat ℚ (LinearMap.mul ℚ ℚ)
+    (fun t m n => by simp only [smul_eq_mul, LinearMap.mul_apply']; ring) bijective_mul_rat
+    (by rw [torsionBySet_ker_algHom_id_rat, finrank_top, Module.finrank_self, one_mul])
+    (by rw [torsionBySet_ker_algHom_id_rat, ker_algHom_id_rat, Submodule.annihilator_bot,
+      Submodule.top_smul])
