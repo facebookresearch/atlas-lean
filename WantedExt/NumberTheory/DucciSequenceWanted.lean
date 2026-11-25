@@ -40,23 +40,13 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.DucciSequence
+public import MathlibExt.NumberTheory.DucciCoefficientReduction
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.DucciWanted
-
-/-- **Binomial coefficients $\binom{p^k - 1}{j}$ modulo $p$.** Let $p$ be a prime, let $k \ge 1$,
-and let $j$ be an integer with $0 \le j \le p^k - 1$. Then
-$\binom{p^k - 1}{j} \equiv (-1)^j \pmod{p}$.
-
-Source: Mark L. Lewis and Shannon M. Tefft, "The Maximum
-Length for Ducci Sequences on `ℤ_m^n` when `n` is Even",
-Lemma 1. -/
-theorem_wanted choose_prime_pow_sub_one_mod (p k j : ℕ)
-    (hp : p.Prime) (hk : 1 ≤ k) (hj : j ≤ p ^ k - 1) :
-    ((Nat.choose (p ^ k - 1) j : ℤ) : ZMod p) = (-1) ^ j
 
 /-- **Vanishing of Ducci coefficients modulo $p$.** For integers $N \ge 1$, $r \ge 0$ and $s \ge 1$
 write $a^{(N)}_{r,s} = \sum_{0 \le j \le r,\ j \equiv s - 1 \ (\mathrm{mod}\ N)} \binom{r}{j}$ for
@@ -73,22 +63,6 @@ theorem_wanted ducciCoeff_vanish_mod (p k n1 c s : ℕ)
     (hs1 : 1 ≤ s) (hs2 : s ≤ p ^ k * n1)
     (hs : ¬ ∃ b : ℕ, b < n1 ∧ s = b * p ^ k + 1) :
     ((ducciCoeff (p ^ k * n1) (c * p ^ k) s : ℤ) : ZMod p) = 0
-
-/-- **Reduction of Ducci coefficients modulo $p$.** For integers $N \ge 1$, $r \ge 0$ and $s \ge 1$
-write $a^{(N)}_{r,s} = \sum_{0 \le j \le r,\ j \equiv s - 1 \ (\mathrm{mod}\ N)} \binom{r}{j}$ for
-the Ducci coefficients of length $N$. Let $p$ be a prime, let $k \ge 0$ and $n_1 \ge 2$ be
-integers, and let $n = p^k n_1$. Then for every integer $c \ge 1$ and every integer $b$ with
-$0 \le b < n_1$,
-$a^{(n)}_{c p^k,\, b p^k + 1} \equiv a^{(n_1)}_{c,\, b + 1} \pmod{p}$.
-
-Source: Mark L. Lewis and Shannon M. Tefft, "The Maximum
-Length for Ducci Sequences on `ℤ_m^n` when `n` is Even",
-Lemma 4. -/
-theorem_wanted ducciCoeff_reduce_mod (p k n1 c b : ℕ)
-    (hp : p.Prime) (hn1 : 2 ≤ n1) (hc : 1 ≤ c) (hb : b < n1) :
-    ((ducciCoeff (p ^ k * n1) (c * p ^ k) (b * p ^ k + 1) : ℤ) :
-      ZMod p) =
-      ((ducciCoeff n1 c (b + 1) : ℤ) : ZMod p)
 
 /-- **Ducci predecessor criterion for even length.** Let $m \ge 0$ be an integer, let $n \ge 2$ be
 even, and write $\mathbb{Z}_m = \mathbb{Z}/m\mathbb{Z}$ (so $\mathbb{Z}_0 = \mathbb{Z}$). A tuple

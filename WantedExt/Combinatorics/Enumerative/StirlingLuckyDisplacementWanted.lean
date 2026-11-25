@@ -258,44 +258,6 @@ Proposition 4.4 (`jis-2024-24.6.7-prop-35`). -/
 public theorem_wanted isAdmissibleLuckySet_one_pred_two_mul_sub_two_iff (n : ℕ) (hn : 4 ≤ n) :
     IsAdmissibleLuckySet n {1, n - 1, 2 * n - 2} ↔ Even n
 
-/-- **Total displacement of a Stirling permutation is invariant under rearrangement.** Let
-$w = w_1 \cdots w_{2n}$ be a Stirling permutation of order $n$ and let $\sigma$ be a permutation
-of $\{1, \dots, 2n\}$. Read words of length $2n$ as parking functions, and let $d(v)$ denote the
-total displacement of a word $v$, the sum of the displacements of its cars. Then the rearranged
-word $w \circ \sigma = w_{\sigma(1)} \cdots w_{\sigma(2n)}$ satisfies $d(w \circ \sigma) = d(w)$.
-
-The rearranged word $w \circ \sigma$ need not be a Stirling permutation.
-
-Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
-Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
-Lemma 5.2 (`jis-2024-24.6.7-lem-37`), quoting Elder, Harris, Kretschmann, and
-Martínez Mori, Lemma 3.1. -/
-public theorem_wanted stirlingTotalDisplacement_comp_perm (n : ℕ) (w : Fin (2 * n) → ℕ)
-    (hw : IsStirlingPermutation n w) (σ : Equiv.Perm (Fin (2 * n))) :
-    stirlingTotalDisplacement (w ∘ σ) = stirlingTotalDisplacement w
-
-/-- **Total displacement of a Stirling permutation.** Let $w = w_1 \cdots w_{2n}$ be a Stirling
-permutation of order $n$, read as a parking function of length $2n$. Then the total displacement
-of $w$, the sum $d(1) + \dots + d(2n)$ of the displacements of its cars, is $n^2$.
-
-Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
-Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
-Corollary 5.3 (`jis-2024-24.6.7-cor-38`). -/
-public theorem_wanted stirlingTotalDisplacement_eq (n : ℕ) (w : Fin (2 * n) → ℕ)
-    (hw : IsStirlingPermutation n w) : stirlingTotalDisplacement w = n ^ 2
-
-/-- **Number of cars with zero displacement.** Let $n \ge 1$ and let $w$ be a Stirling
-permutation of order $n$, read as a parking function of length $2n$. The number of cars
-$i \in \{1, \dots, 2n\}$ with displacement $d(i) = 0$ is at least $1$ and at most $n$.
-
-Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
-Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
-Corollary 5.6 (`jis-2024-24.6.7-cor-41`). -/
-public theorem_wanted stirling_card_zero_displacement (n : ℕ) (hn : 1 ≤ n) (w : Fin (2 * n) → ℕ)
-    (hw : IsStirlingPermutation n w) :
-    1 ≤ (Finset.univ.filter fun i => stirlingDisplacement w i = 0).card ∧
-      (Finset.univ.filter fun i => stirlingDisplacement w i = 0).card ≤ n
-
 /-- **Unlucky cars of an extremely lucky Stirling permutation.** Let $w = w_1 \cdots w_{2n}$ be a
 Stirling permutation of order $n$ that is extremely lucky, that is, its set $\mathrm{Lucky}(w)$
 of lucky cars has exactly $n$ elements, and let $1 \le i \le n$. If car $j$ is unlucky and

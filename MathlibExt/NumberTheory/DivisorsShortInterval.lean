@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Basic.Real.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Divisors
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -19,7 +19,8 @@ import Mathlib.Tactic.Ring
 
 Letendre's saving exponent is the largest cutoff for which a quadratic in the interval
 parameter stays nonnegative. Reflecting the interval interchanges its two endpoints, so
-it suffices to locate the sharp cutoff for `θ ≤ 1 / 2`.
+it suffices to locate the sharp cutoff for `θ ≤ 1 / 2`. Shrinking the cutoff gives a
+uniform lower bound for the quadratic in `exists_alpha_with_margin`.
 -/
 
 namespace MetaMathlibExt
@@ -46,6 +47,71 @@ Article A115, Section 1 (definition of `D_n(X, Y)`). -/
 public theorem shortIntervalDivisorCount_le_card_divisors (n : ℕ) (X Y : ℝ) :
     shortIntervalDivisorCount n X Y ≤ n.divisors.card :=
   Finset.card_filter_le _ _
+
+-- Preserve the hypotheses of Proposition 4; the construction only needs ε ≤ θ.
+set_option linter.unusedVariables false in
+/-- **Arbitrarily large integers with a divisor in a short window.** Let $\theta$ and $\varepsilon$
+be real numbers with $0 < \theta < 1$ and $0 < \varepsilon < \theta$. Then for every natural
+number $N$ there is a natural number $n \ge N$ with at least one divisor $d$ satisfying
+$n^\theta \le d \le n^\theta + n^{\theta - \varepsilon}$.
+
+This is the nontrivial form of the statement that a constant bounding the number of such divisors
+for all $n \ge 1$ is at least $1$; that weaker statement already follows from $n = 1$.
+
+Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
+Article A115, Proposition 4 (`integers-2026-A115-prop-4`). -/
+public theorem exists_large_shortIntervalDivisorCount_pos {θ ε : ℝ} (hθ₀ : 0 < θ)
+    (hθ₁ : θ < 1) (hε₀ : 0 < ε) (hε : ε < θ) :
+    ∀ N : ℕ, ∃ n ≥ N, 1 ≤ shortIntervalDivisorCount n ((n : ℝ) ^ θ) ((n : ℝ) ^ (θ - ε)) := by
+  intro N
+  let m := max 1 N
+  have hm : 1 ≤ m := le_max_left ..
+  have hm₁ : 1 ≤ (m : ℝ) := by exact_mod_cast hm
+  have hm₀ : 0 ≤ (m : ℝ) := Nat.cast_nonneg m
+  have hsub : 0 < 1 - θ := sub_pos.mpr hθ₁
+  -- Round up the real solution of x = (x * m)^θ.
+  let x := (m : ℝ) ^ (θ / (1 - θ))
+  let d := ⌈x⌉₊
+  let n := d * m
+  have hx : 1 ≤ x := Real.one_le_rpow hm₁ (div_nonneg hθ₀.le hsub.le)
+  have hx₀ : 0 < x := zero_lt_one.trans_le hx
+  have hxd : x ≤ (d : ℝ) := Nat.le_ceil x
+  have hd₁ : 1 ≤ (d : ℝ) := hx.trans hxd
+  have hd : 1 ≤ d := by exact_mod_cast hd₁
+  have hn : m ≤ n := by simpa only [one_mul] using Nat.mul_le_mul_right m hd
+  have hn₁ : 1 ≤ n := hm.trans hn
+  have hn₀ : n ≠ 0 := (zero_lt_one.trans_le hn₁).ne'
+  have hxpow : x ^ (1 - θ) = (m : ℝ) ^ θ := by
+    dsimp only [x]
+    rw [← Real.rpow_mul hm₀, div_mul_cancel₀ _ hsub.ne']
+  have hsum : θ + (1 - θ) = 1 := by ring
+  have hpow : (n : ℝ) ^ θ = (d : ℝ) ^ θ * (m : ℝ) ^ θ := by
+    dsimp only [n]
+    rw [Nat.cast_mul, Real.mul_rpow (Nat.cast_nonneg d) hm₀]
+  have hlo : x ≤ (n : ℝ) ^ θ := by
+    calc
+      x = x ^ θ * (m : ℝ) ^ θ := by
+        rw [← hxpow, ← Real.rpow_add hx₀, hsum, Real.rpow_one]
+      _ ≤ (d : ℝ) ^ θ * (m : ℝ) ^ θ :=
+        mul_le_mul_of_nonneg_right (Real.rpow_le_rpow hx₀.le hxd hθ₀.le)
+          (Real.rpow_nonneg hm₀ _)
+      _ = _ := hpow.symm
+  have hhi : (n : ℝ) ^ θ ≤ (d : ℝ) := by
+    rw [hpow]
+    calc
+      (d : ℝ) ^ θ * (m : ℝ) ^ θ ≤ (d : ℝ) ^ θ * (d : ℝ) ^ (1 - θ) := by
+        rw [← hxpow]
+        exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow hx₀.le hxd hsub.le)
+          (Real.rpow_nonneg (Nat.cast_nonneg d) _)
+      _ = (d : ℝ) := by
+        rw [← Real.rpow_add (zero_lt_one.trans_le hd₁), hsum, Real.rpow_one]
+  have hw : 1 ≤ (n : ℝ) ^ (θ - ε) :=
+    Real.one_le_rpow (by exact_mod_cast hn₁) (sub_nonneg.mpr hε.le)
+  refine ⟨n, (le_max_right 1 N).trans hn, ?_⟩
+  unfold shortIntervalDivisorCount
+  exact Finset.card_pos.mpr ⟨d, Finset.mem_filter.mpr
+    ⟨Nat.mem_divisors.mpr ⟨dvd_mul_right d m, hn₀⟩, hhi,
+      (Nat.ceil_lt_add_one hx₀.le).le.trans (add_le_add hlo hw)⟩⟩
 
 /-- **Letendre's saving exponent.** For real numbers $\theta$ and $\eta$, Letendre's saving
 exponent $\xi(\theta, \eta)$ is defined as follows. If $\eta \le \theta^2$, then
@@ -196,5 +262,92 @@ public theorem isGreatest_letendreXi {θ η : ℝ} (h₁ : θ ^ 2 ≤ η) (h₂ 
   · have href := isGreatest_small (θ := 1 - θ) (η := 1 - 2 * θ + η)
       (by nlinarith) (by linarith) (by linarith)
     rwa [admissible_reflect, letendreXi_reflect hθ] at href
+
+namespace exists_alpha_with_margin
+
+/-- With the relative position `p` fixed, the improvement from shrinking the interval
+has a uniform lower bound coming from the two endpoint values `θ ^ 2` and `(1 - θ) ^ 2`. -/
+private theorem margin_le_weight {θ p α β : ℝ} (hθ : 0 ≤ θ) (hθ₁ : θ ≤ 1)
+    (hp : 0 ≤ p) (hp₁ : p ≤ 1) (hαβ : 0 < α * β) (hαβ₁ : α * β ≤ 1) :
+    (θ * (1 - θ)) ^ 2 ≤ (θ - p) ^ 2 / (α * β) + p * (1 - p) := by
+  have hprod := mul_nonneg hθ (sub_nonneg.mpr hθ₁)
+  have hleft := pow_le_pow_left₀ hprod
+    (mul_le_of_le_one_right hθ (show 1 - θ ≤ 1 by linarith)) 2
+  have hright := pow_le_pow_left₀ hprod
+    (mul_le_of_le_one_left (sub_nonneg.mpr hθ₁) hθ₁) 2
+  -- (θ - p)² + p(1 - p) is the weighted average of θ² and (1 - θ)².
+  nlinarith only [mul_nonneg (sub_nonneg.mpr hp₁) (sub_nonneg.mpr hleft),
+    mul_nonneg hp (sub_nonneg.mpr hright), le_div_self (sq_nonneg (θ - p)) hαβ hαβ₁]
+
+/-- Compare the quadratic at the same relative position in intervals of lengths `1 - α`
+and `1 - β`. -/
+private theorem rescale {θ η δ α β : ℝ} (hθ : 0 ≤ θ) (hθ₁ : θ ≤ 1)
+    (hδ : 0 ≤ δ) (hα : 0 < α) (hβ : 0 < β) (hβ₁ : β ≤ 1) (hratio : 1 + δ ≤ β / α)
+    (hbase : ∀ t : ℝ, 0 ≤ t → t ≤ 1 - β →
+      0 ≤ ((θ - t) / β) ^ 2 - (η - t) / β)
+    {t : ℝ} (ht : 0 ≤ t) (ht₁ : t ≤ 1 - α) :
+    (θ * (1 - θ)) ^ 2 * δ ≤ ((θ - t) / α) ^ 2 - (η - t) / α := by
+  obtain ⟨p, hp, hp₁, rfl⟩ : ∃ p : ℝ, 0 ≤ p ∧ p ≤ 1 ∧ t = (1 - α) * p := by
+    rcases ht.eq_or_lt with rfl | htpos
+    · exact ⟨0, le_rfl, zero_le_one, by simp⟩
+    · have h := htpos.trans_le ht₁
+      exact ⟨t / (1 - α), div_nonneg ht h.le, (div_le_one h).2 ht₁,
+        (mul_div_cancel₀ t h.ne').symm⟩
+  let s := (1 - β) * p
+  have hs := hbase s (mul_nonneg (sub_nonneg.mpr hβ₁) hp)
+    (mul_le_of_le_one_right (sub_nonneg.mpr hβ₁) hp₁)
+  have hw := margin_le_weight hθ hθ₁ hp hp₁ (mul_pos hα hβ)
+    ((mul_le_of_le_one_left hβ.le (by linarith)).trans hβ₁)
+  calc
+    (θ * (1 - θ)) ^ 2 * δ ≤
+        ((θ - p) ^ 2 / (α * β) + p * (1 - p)) * (β / α - 1) :=
+      mul_le_mul hw (by linarith) hδ ((sq_nonneg _).trans hw)
+    _ ≤ _ + (β / α) * (((θ - s) / β) ^ 2 - (η - s) / β) :=
+      le_add_of_nonneg_right (mul_nonneg (div_nonneg hβ.le hα.le) hs)
+    _ = _ := by dsimp [s]; field_simp; ring
+
+end exists_alpha_with_margin
+
+open exists_alpha_with_margin in
+/-- **Exponents with a margin in Letendre's inequality.** Let $\xi(\theta, \eta)$ denote Letendre's
+saving exponent, and let $\theta$, $\eta$ and $\delta$ be real numbers with $0 \le \delta \le 1$,
+$\eta < \theta < 1$ and $0 < \theta^2 - (\theta(1 - \theta))^2 \delta \le \eta$. Then there is a
+real number $A > 0$ with $\xi(\theta, \eta) - \delta \le A \le \xi(\theta, \eta)$ such that
+$((\theta - t)/\alpha)^2 - (\eta - t)/\alpha \ge (\theta(1 - \theta))^2 \delta$ for all real
+numbers $\alpha$ and $t$ with $0 < \alpha \le A$ and $0 \le t \le 1 - \alpha$.
+
+Source: Patrick Letendre, *Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026),
+Article A115, Proposition 3 (`integers-2026-A115-prop-3`). -/
+public theorem exists_alpha_with_margin {θ η δ : ℝ}
+    (h₀ : 0 < θ ^ 2 - (θ * (1 - θ)) ^ 2 * δ) (h₁ : θ ^ 2 - (θ * (1 - θ)) ^ 2 * δ ≤ η)
+    (h₂ : η < θ) (h₃ : θ < 1) (hδ₀ : 0 ≤ δ) (hδ₁ : δ ≤ 1) :
+    ∃ A : ℝ, 0 < A ∧ letendreXi θ η - δ ≤ A ∧ A ≤ letendreXi θ η ∧
+      ∀ α : ℝ, 0 < α → α ≤ A → ∀ t : ℝ, 0 ≤ t → t ≤ 1 - α →
+        (θ * (1 - θ)) ^ 2 * δ ≤ ((θ - t) / α) ^ 2 - (η - t) / α := by
+  have hθ : 0 < θ := (h₀.trans_le h₁).trans h₂
+  have hsq : θ ^ 2 < θ := by nlinarith only [mul_pos hθ (sub_pos.mpr h₃)]
+  -- Raising η to θ² below the threshold preserves the cutoff and decreases the quadratic.
+  have hξ : letendreXi θ (max η (θ ^ 2)) = letendreXi θ η := by
+    rcases le_total η (θ ^ 2) with h | h
+    · rw [max_eq_right h, letendreXi_of_le_sq le_rfl, letendreXi_of_le_sq h]
+    · rw [max_eq_left h]
+  have hcut := (isGreatest_letendreXi (le_max_right η (θ ^ 2)) (max_lt h₂ hsq)).1
+  rw [hξ] at hcut
+  obtain ⟨hβ, hβ₁, hquad⟩ := hcut
+  let β := letendreXi θ η
+  have hd : 0 < 1 + δ := by linarith
+  have hhalf : β / 2 ≤ β / (1 + δ) :=
+    div_le_div_of_nonneg_left hβ.le hd (by linarith only [hδ₁])
+  refine ⟨β / (1 + δ), (half_pos hβ).trans_le hhalf, (le_div_iff₀ hd).2 ?_,
+    div_le_self hβ.le (by linarith), ?_⟩
+  · dsimp only [β]
+    nlinarith only [mul_nonneg hδ₀ (sub_nonneg.mpr hβ₁), sq_nonneg δ]
+  · intro α hα hαA t ht ht₁
+    apply rescale hθ.le h₃.le hδ₀ hα hβ hβ₁ _ _ ht ht₁
+    · exact (le_div_iff₀ hα).2 (by simpa only [mul_comm] using (le_div_iff₀ hd).1 hαA)
+    · intro s hs hs₁
+      have h := hquad β hβ le_rfl s hs hs₁
+      exact h.trans (sub_le_sub_left
+        (div_le_div_of_nonneg_right (sub_le_sub_right (le_max_left ..) _) hβ.le) _)
 
 end MetaMathlibExt

@@ -58,8 +58,10 @@ private theorem betaMeasure_compl_Icc (α : ℝ) : betaMeasure (2 - α) α (Icc 
   rw [setLIntegral_congr_fun measurableSet_Icc.compl hz]
   simp
 
-/-- Pushing Atlas's `betaLambda α` back to `ℝ` gives Mathlib's `Beta(2 - α, α)`: the clamp
-`projIcc` is the identity on `[0, 1]`, which carries the whole Beta law. -/
+/-- Pushing `betaLambda α` back to `ℝ` gives `betaMeasure (2 - α) α` for every real `α`: the
+clamp `projIcc` is the identity on `[0, 1]`, which carries the whole measure. Its density
+`x^{1-α} (1 - x)^{α-1} / B(2 - α, α)` on `(0, 1)` is read with `1 / 0 = 0` and with negative
+values as `0`; it is the `Beta(2 - α, α)` law for `0 < α < 2`. -/
 theorem map_val_betaLambda (α : ℝ) :
     (BetaCoalescent.betaLambda α).map ((↑) : I → ℝ) = betaMeasure (2 - α) α := by
   rw [BetaCoalescent.betaLambda,
@@ -365,7 +367,8 @@ theorem tendsto_psi_div_rpow_of_map_val_eq_betaMeasure {α : ℝ} (hα1 : 1 < α
     rw [e]; linarith
 
 /-- **Beta-coalescent asymptotic** (Berestycki–Berestycki–Limic, eq. (10)): for
-`1 < α < 2`, `ψ(q) / q ^ α → (Γ(α) α (α - 1))⁻¹` for `BetaCoalescent.betaLambda α`. -/
+`1 < α < 2`, `ψ(q) / q ^ α → (Γ(α) α (α - 1))⁻¹` for `BetaCoalescent.betaLambda α`. The
+finiteness instance always holds, as `betaLambda α` is a probability measure for `0 < α < 2`. -/
 theorem tendsto_psi_div_rpow_betaLambda {α : ℝ} (hα1 : 1 < α) (hα2 : α < 2)
     [IsFiniteMeasure (BetaCoalescent.betaLambda α)] :
     Tendsto (fun q => psi (BetaCoalescent.betaLambda α) q / q ^ α) atTop

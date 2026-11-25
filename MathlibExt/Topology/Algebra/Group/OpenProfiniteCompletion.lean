@@ -105,7 +105,7 @@ theorem etaFn_continuous (G : Type u) [Group G] [TopologicalSpace G]
   intro H
   apply Continuous.mk
   intro s _hs
-  let s' : Set (G ⧸ H.1.toSubgroup) := fun x ↦ s x
+  let s' : Set (G ⧸ H.1.toSubgroup) := {x | x ∈ s}
   change IsOpen ((QuotientGroup.mk' H.1.toSubgroup) ⁻¹' s')
   rw [← (Set.biUnion_preimage_singleton (QuotientGroup.mk' H.1.toSubgroup) s')]
   refine isOpen_iUnion (fun i ↦ isOpen_iUnion (fun _ ↦ ?_))

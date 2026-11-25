@@ -176,12 +176,12 @@ theorem hadamard_mul_self (n : ℕ) : hadamard n * hadamard n = 1 := by
   have hst := add_eq_zero_iff_eq s t
   calc (hadamard n * hadamard n) s t
       = hadamardScale n * hadamardScale n * ∑ x, signOfBit (bitDot (s + t) x) := by
-        simp only [mul_apply, hadamard_apply, mul_sum]
+        simp only [Matrix.mul_apply, hadamard_apply, mul_sum]
         refine sum_congr rfl fun x _ => ?_
         rw [bitDot_add_left, signOfBit_add, bitDot_comm x t]
         ring
     _ = (1 : Matrix _ _ ℂ) s t := by
-        rw [sum_signOfBit_bitDot, hadamardScale_mul_self, one_apply]
+        rw [sum_signOfBit_bitDot, hadamardScale_mul_self, Matrix.one_apply]
         by_cases h : s = t
         · subst h
           simp [add_eq_zero_iff_eq]
@@ -212,7 +212,8 @@ theorem isHadamard_sylvesterSignMatrix (n : ℕ) : (sylvesterSignMatrix n).IsHad
     ext s t
     have : (sylvesterSignMatrix n * (sylvesterSignMatrix n)ᴴ) s t =
         ∑ x, signOfBit (bitDot (s + t) x) := by
-      simp only [mul_apply, conjTranspose_apply, sylvesterSignMatrix, of_apply, star_signOfBit]
+      simp only [Matrix.mul_apply, conjTranspose_apply, sylvesterSignMatrix, of_apply,
+        star_signOfBit]
       refine sum_congr rfl fun x _ => ?_
       rw [bitDot_add_left, signOfBit_add]
     rw [this, sum_signOfBit_bitDot]

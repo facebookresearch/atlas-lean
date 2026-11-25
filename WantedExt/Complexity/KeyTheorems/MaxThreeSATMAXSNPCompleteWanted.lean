@@ -18,7 +18,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Computability.BinaryNatEncoding
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Classes
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 
@@ -70,7 +70,8 @@ padding an assignment with trailing false bits, or padding an assignment of leng
 $|u|$ with arbitrary trailing bits, does not change its value as long as its length stays at
 most $|x|$. -/
 def max3SATVal (x : List Bool) (a : List Bool) : ℚ :=
-  match MetaMathlibExt.BitstringEncoding.bitDecode (α := List Bool × Cslib.Logic.PL.CNF) x with
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := List Bool × Cslib.Logic.LegacyPL.CNF) x with
   | some (u, φ) =>
     if a.length ≤ x.length ∧
         (∀ clause ∈ φ, ∀ l ∈ clause, l.1 < u.length) ∧

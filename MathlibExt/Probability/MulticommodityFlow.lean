@@ -267,10 +267,10 @@ theorem pow_detailedBalance {π : S → ℝ} {P : Matrix S S ℝ}
   | zero =>
     by_cases h : x = y
     · subst h; rfl
-    · simp [one_apply, h, Ne.symm h]
+    · simp [h, Ne.symm h]
   | succ n ih =>
-    rw [show (P ^ (n + 1)) x y = ∑ z, (P ^ n) x z * P z y by rw [pow_succ, mul_apply],
-      show (P ^ (n + 1)) y x = ∑ z, P y z * (P ^ n) z x by rw [pow_succ', mul_apply],
+    rw [show (P ^ (n + 1)) x y = ∑ z, (P ^ n) x z * P z y by rw [pow_succ, Matrix.mul_apply],
+      show (P ^ (n + 1)) y x = ∑ z, P y z * (P ^ n) z x by rw [pow_succ', Matrix.mul_apply],
       Finset.mul_sum, Finset.mul_sum]
     refine Finset.sum_congr rfl fun z _ => ?_
     calc π x * ((P ^ n) x z * P z y) = (π x * (P ^ n) x z) * P z y := by ring
@@ -353,7 +353,7 @@ theorem div_eight_le_pow_apply {π : S → ℝ} (hπ : ∀ x, 0 < π x) (hπ1 : 
     _ ≤ ∑ z, (P ^ (t - τ)) x z * (P ^ τ) z y :=
         Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _)
           fun z _ _ => mul_nonneg (hnn _ _ _) (hnn _ _ _)
-    _ = (P ^ t) x y := by rw [← mul_apply, ← pow_add, ← hsplit]
+    _ = (P ^ t) x y := by rw [← Matrix.mul_apply, ← pow_add, ← hsplit]
 
 /-- **Sinclair's Lemma 7 from a single mixing time.** If `P` is stochastic and reversible with
 respect to a probability vector `π > 0` and `1/4`-mixed at time `τ` (`MarkovMixing.IsMixedAt`),

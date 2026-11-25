@@ -1,5 +1,7 @@
 # A* search algorithm
 
+A* search: on finite directed graphs with natural edge weights, admissible and consistent heuristics and the optimality of A* with a consistent heuristic; on deterministic search problems with finite branching and step costs bounded below by a positive constant, A* tree search under an admissible heuristic, A* graph search with a consistent heuristic or with reopening, and iterative-deepening A* for positive integer step costs.
+
 - [Consistent heuristic](consistent.md)
 - [Admissible heuristic](admissible.md)
 - [Reduced weight](reduced-weight.md)
@@ -15,3 +17,6 @@
 - [A\*'s predecessor paths are simple and realize its path weights](a-star-path-to-spec.md)
 - [A\*'s predecessor edges are tight](a-star-predecessor-spec.md)
 - [Cost of A\*](a-star-time.md)
+- [A* graph search: consistency, monotone f and reopening](a-graph-search-consistency-monotone-f-and-reopening.md)
+- [A* tree search is optimal under an admissible heuristic](a-tree-search-is-optimal-under-an-admissible-heuristic.md)
+- [IDA* optimality](ida-optimality.md)
