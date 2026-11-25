@@ -18,6 +18,10 @@ A fixed finite carrier cannot be isomorphic to its double and have an edge. In c
 a constant sequence on one edge jointly satisfies the retained convex-limit hypotheses.
 The existing edge-restricted box convergence theorem is instantiated in dimension one;
 this is not convergence of the raw, uncentered partition function.
+
+Densities as one-sided derivatives are required on the edges of the box only: over every pair of
+`Λ₁ ⊆ ℤ`, loops included, no function satisfies them, while on its edges the limit of the
+centered box free energies does.
 -/
 
 open SimpleGraph Filter Topology
@@ -112,5 +116,73 @@ run_cmd do
       `StatMech.FK.bpv_PerVolumeFreeEnergyData] do
     if env.contains name then
       throwError m!"Ambient normalizer still exported as physical free energy: {name}"
+
+/-! ### Edge densities as one-sided derivatives -/
+
+-- The condition is the pair of genuine-edge conditions of `FKUniqPerEdge`.
+example (d N : ℕ) (g : ℝ → ℝ) :
+    fpd_IVDensityIsOneSidedDeriv d N g ↔
+      fpe2_GenuineWiredIsRightDeriv d N g ∧ fpe2_GenuineFreeIsLeftDeriv d N g :=
+  Iff.rfl
+
+-- Over every pair of `Λ₁ ⊆ ℤ`, loops included, the free half would be unsatisfiable: at
+-- `t = log(1/3)`, so `p = 1/4`, the loop at `0` has free density `1/2`, while the edge `{0, 1}`
+-- has free density at most its wired density, which is at most `p`.
+example (g : ℝ → ℝ) :
+    ¬ ∀ e : Sym2 (boxVerts 1 1),
+      freeEdgeDensity 1 2 (edgeIncl 1 1 e) (fsc_logistic (Real.log (1 / 3))) =
+        pressureLeftDeriv g (Real.log (1 / 3)) := by
+  intro h
+  have hp : (0 : ℝ) < 1 / 4 := by norm_num
+  have hp1 : (1 / 4 : ℝ) < 1 := by norm_num
+  have hlogistic : fsc_logistic (Real.log (1 / 3)) = 1 / 4 := by
+    rw [fsc_logistic, Real.exp_log (by norm_num : (0 : ℝ) < 1 / 3)]
+    norm_num
+  rw [hlogistic] at h
+  let z : boxVerts 1 1 := ⟨0, ocs_zero_mem_box 1 1⟩
+  have hloop := fpe2_free_density_nonEdge 1 s(z, z) (by simp [SimpleGraph.mem_edgeFinset]) hp hp1
+  let e := ocs_unitEdge 1 1 le_rfl (0, true)
+  have he : e ∈ (boxGraph 1 1).edgeFinset := ocs_unitEdge1_mem_edgeFinset 1 (0, true)
+  have hfinite := dfi_wired_per_edge_ge 1 1 le_rfl e hp hp1
+  rw [← ocs_unitEdge_eq_innerEdgeLE 1 1 le_rfl (0, true)] at hfinite
+  have hbound : freeEdgeDensity 1 2 (edgeIncl 1 1 e) (1 / 4) ≤ 1 / 4 := by
+    refine (freeEdgeDensity_q2_le_wiredEdgeDensity 1 1 e hp hp1).trans (hfinite.trans ?_)
+    rw [fuc_edgeMargProb_eq_eventMassProb]
+    refine (wiredFkProb_le_fkProbOne_increasing (boxGraph 1 1) (boxBoundary 1 1)
+      hp hp1 (by norm_num : (1 : ℝ) ≤ 2) (boxEdgeOpenEvent_isIncreasing 1 1 e)).trans_eq ?_
+    simp only [dfi_indicator_boxEdgeOpenEvent]
+    simpa using fkProbOne_cylinder (boxGraph 1 1) hp hp1 {e} (Finset.singleton_subset_iff.mpr he)
+  rw [h e, ← h s(z, z), hloop] at hbound
+  norm_num at hbound
+
+-- On the edges of `Λ₁ ⊆ ℤ`, the limit of the centered box free energies satisfies the condition.
+private lemma oneSidedDeriv_witness :
+    ∃ g : ℝ → ℝ, ConvexOn ℝ Set.univ g ∧ fpd_IVDensityIsOneSidedDeriv 1 1 g := by
+  have hbox (n : ℕ) (hn : 1 ≤ n) : 0 < (boxGraph 1 n).edgeFinset.card :=
+    ecz_box_edge_pos 1 le_rfl hn
+  obtain ⟨g, hlim, hg, _⟩ := ecz_centeredConvergence le_rfl hbox fun t =>
+    ecz_blockOscillation_of_perEdgeDensity t (ecz_perEdgeDensityConverges le_rfl t hbox)
+  have hfree := ecz_genuineFreeCollapse_n1 le_rfl 1 hbox
+  exact ⟨g, hg, ecz_genuineWiredIsRightDeriv_n1 le_rfl 1 hbox hg hlim hfree
+      (ecz_genuineWiredCollapse_n1 le_rfl 1 hbox),
+    ecz_genuineFreeIsLeftDeriv_n1 1 hbox hg hlim hfree⟩
+
+-- The box has an edge, so the condition is not vacuous there.
+example : (boxGraph 1 1).edgeFinset.Nonempty ∧
+    ∃ g : ℝ → ℝ, ConvexOn ℝ Set.univ g ∧ fpd_IVDensityIsOneSidedDeriv 1 1 g :=
+  ⟨⟨_, ocs_unitEdge1_mem_edgeFinset 1 (0, true)⟩, oneSidedDeriv_witness⟩
+
+-- Its consequences apply to that witness: the free-energy hypothesis for an edge, and
+-- uniqueness off a countable set.
+example : fsc_FreeEnergyData 1 1 (ocs_unitEdge 1 1 le_rfl (0, true)) := by
+  obtain ⟨g, hg, hres⟩ := oneSidedDeriv_witness
+  exact fpd_densityDeriv_imp_fsc 1 1 hg hres _ (ocs_unitEdge1_mem_edgeFinset 1 (0, true))
+
+example (eb : Sym2 (boxVerts 1 1)) :
+    {t : ℝ | ∃ A : Set (ConfigSpace (Sym2 (boxVerts 1 1))), IsIncreasing A ∧
+        eventMassProb (fuc_freeMass 1 1 t) A
+          ≠ eventMassProb (fuc_wiredMass 1 1 t) A}.Countable := by
+  obtain ⟨g, hg, hres⟩ := oneSidedDeriv_witness
+  exact fpd_fk_uniqueness 1 1 eb hg hres
 
 end PhyslibExtTest.StatisticalMechanics.RandomCluster.FKPressureDeriv
