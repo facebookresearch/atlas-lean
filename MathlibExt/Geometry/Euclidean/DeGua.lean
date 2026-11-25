@@ -16,13 +16,17 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- De Gua's theorem (statement `degua-s1`): a trirectangular tetrahedron with legs `u`,
-  `v`, `w` (mutually orthogonal edges from one vertex, via inner-product zeros) satisfies
-  Area(hypotenuse face)^2 = Area1^2 + Area2^2 + Area3^2. The right-face areas are
-  half-products of leg norms; the hypotenuse-face area is the genuine 2D triangular area
-  via the Gram determinant (Lagrange identity for half the cross-product norm), not a
-  vacuous 3D volume. Source: https://en.wikipedia.org/wiki/De_Gua%27s_theorem
-Proves `Wanted` entry `deGua`.
+/-- **De Gua's theorem.** Let $u, v, w \in \mathbb{R}^3$ be pairwise orthogonal vectors, so that
+the tetrahedron with vertices $0, u, v, w$ has a right angle between any two of the edges at $0$.
+Write $|x|$ for the Euclidean norm and $\langle x, y \rangle$ for the inner product. Let
+$A_{uv}, A_{uw}, A_{vw}, A$ be real numbers with $A_{uv} = |u||v|/2$, $A_{uw} = |u||w|/2$,
+$A_{vw} = |v||w|/2$ (the areas of the three right-angled faces) and
+$(2A)^2 = |u - v|^2 |u - w|^2 - \langle u - v, u - w \rangle^2$, so that $A$ is, up to sign, the
+area of the face with vertices $u, v, w$. Then $A^2 = A_{uv}^2 + A_{uw}^2 + A_{vw}^2$.
+
+Proves `Wanted` entry `deGua` (statement `degua-s1`).
+
+Source: https://en.wikipedia.org/wiki/De_Gua%27s_theorem
 -/
 theorem deGua : ∀ (u v w : EuclideanSpace ℝ (Fin 3)),
   ⟪u, v⟫_ℝ = 0 →

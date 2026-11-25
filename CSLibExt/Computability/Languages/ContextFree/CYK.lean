@@ -93,9 +93,12 @@ theorem yields_pair_iff {B C : g.NT} {w : List T} :
   · rintro ⟨w₁, w₂, rfl, h₁, h₂⟩
     exact Yields.append (u := [.nonterminal B]) (v := [.nonterminal C]) h₁ h₂
 
-/-- Under Chomsky normal form, a nonterminal occurring in a production output has no empty
-production: such a production would have the initial nonterminal on the left, which then occurs
-in an output while an empty production exists. -/
+/-- **Nonterminals in outputs have no empty production.** Let $g$ be a context-free grammar in
+Chomsky normal form. If a nonterminal $B$ occurs in the output of some production of $g$, then
+$g$ has no production $B \to \varepsilon$.
+
+Such a production would have the initial nonterminal on the left, which then occurs in an output
+while an empty production exists. -/
 theorem no_empty_rule_of_mem_output (hg : IsChomskyNormalForm g) {r : ContextFreeRule T g.NT}
     (hr : r ∈ g.rules) {B : g.NT} (hB : Symbol.nonterminal B ∈ r.output) :
     ¬ ∃ r' ∈ g.rules, r'.input = B ∧ r'.output = [] := by
@@ -111,8 +114,9 @@ theorem no_empty_rule_of_mem_output (hg : IsChomskyNormalForm g) {r : ContextFre
   · exact h r hr (hBinit ▸ hB)
   · exact h r' hr' hout
 
-/-- Under Chomsky normal form, every symbol of a form yielding the empty word is a nonterminal
-with an empty production. -/
+/-- **Forms yielding the empty word under Chomsky normal form.** If $g$ is in Chomsky normal form,
+then every symbol of a sentential form that yields the empty word is a nonterminal $B$ for which
+$g$ has a production $B \to \varepsilon$. -/
 theorem empty_rule_of_yields_nil (hg : IsChomskyNormalForm g) {u : List (Symbol T g.NT)}
     {w : List T} (h : Yields g u w) (hw : w = []) :
     ∀ s ∈ u, ∃ B, s = .nonterminal B ∧ ∃ r ∈ g.rules, r.input = B ∧ r.output = [] := by
@@ -138,9 +142,11 @@ theorem empty_rule_of_yields_nil (hg : IsChomskyNormalForm g) {u : List (Symbol 
         · exact ⟨r, hr, rfl, hnil⟩
       · exact ihrest hw₂ s hs
 
-/-- **Shape of yields under Chomsky normal form.** A nonterminal yields a nonempty word exactly
-through a production `A → a` with `w = [a]`, or a production `A → B C` with `B` and `C`
-yielding the two nonempty parts of a split of `w`. -/
+/-- **Shape of yields under Chomsky normal form.** Let $g$ be a context-free grammar in Chomsky
+normal form, $A$ a nonterminal and $w$ a nonempty word. Then $A$ yields $w$ if and only if $g$
+has a production $A \to a$ with $a$ a terminal and $w = a$, or a production $A \to BC$ with
+nonterminals $B$ and $C$ and nonempty words $w_1$ and $w_2$ such that $w = w_1 w_2$, $B$ yields
+$w_1$ and $C$ yields $w_2$. -/
 theorem yields_nonterminal_iff_of_ne_nil (hg : IsChomskyNormalForm g) {A : g.NT} {w : List T}
     (hw : w ≠ []) :
     Yields g [.nonterminal A] w ↔ ∃ r ∈ g.rules, r.input = A ∧
@@ -187,9 +193,12 @@ theorem yields_nonterminal_iff_of_ne_nil (hg : IsChomskyNormalForm g) {A : g.NT}
 
 variable [DecidableEq T] [DecidableEq g.NT]
 
-/-- Whether a production output fits `w`, given the cells `f` of shorter words: `[a]` fits
-`[a]`, and `[B, C]` fits when some split of `w` into nonempty parts has `B` in the cell of the
-first part and `C` in the cell of the second. -/
+/-- **When a production output fits a word.** Let $f$ assign a cell (a finite set of nonterminals)
+to every word. A production output fits a word $w$ with respect to $f$ exactly in two cases: the
+output is a single terminal $a$ and $w$ is the one-letter word $a$; or the output is a pair of
+nonterminals $B C$ and there is some $i$ with $0 < i < |w|$ such that $B$ lies in the cell of the
+first $i$ letters of $w$ and $C$ lies in the cell of the remaining letters. No other output fits
+any word. -/
 def cykFits (f : List T → Finset g.NT) (w : List T) : List (Symbol T g.NT) → Bool
   | [.terminal a] => decide (w = [a])
   | [.nonterminal B, .nonterminal C] =>
@@ -198,8 +207,9 @@ def cykFits (f : List T → Finset g.NT) (w : List T) : List (Symbol T g.NT) →
   | _ => false
 
 variable (g) in
-/-- The cell of `w` given the cells `f` of its parts: the left-hand sides of the productions
-whose outputs fit `w`. -/
+/-- **The CYK cell built from given cells.** Given an assignment $f$ of a cell (a finite set of
+nonterminals of $g$) to every word, the cell of a word $w$ built from $f$ is the set of left-hand
+sides of those productions of $g$ whose outputs fit $w$ with respect to $f$. -/
 def cykCellFrom (f : List T → Finset g.NT) (w : List T) : Finset g.NT :=
   (g.rules.filter fun r => cykFits f w r.output = true).image ContextFreeRule.input
 
@@ -208,9 +218,12 @@ theorem cykFits_pair_iff {f : List T → Finset g.NT} {w : List T} {B C : g.NT} 
       ∃ i < w.length, 0 < i ∧ B ∈ f (w.take i) ∧ C ∈ f (w.drop i) := by
   simp [cykFits, List.any_eq_true, and_assoc]
 
-/-- **The CYK step.** If the cells `f` are correct on the two parts of every split of a nonempty
-word `w` into nonempty parts, the cell built from them holds exactly the nonterminals yielding
-`w`. -/
+/-- **The CYK step.** Let $g$ be a context-free grammar in Chomsky normal form, let $f$ assign to
+each word over the terminals a finite set of nonterminals, and let $w$ be a nonempty word. For
+$0 < i < |w|$ write $u_i$ for the prefix of $w$ of length $i$ and $v_i$ for the remaining suffix,
+so that $w = u_i v_i$. Suppose that for every such $i$ and every nonterminal $B$, $B \in f(u_i)$
+if and only if $B$ yields $u_i$, and $B \in f(v_i)$ if and only if $B$ yields $v_i$. Then a
+nonterminal $A$ lies in the CYK cell of $w$ built from $f$ if and only if $A$ yields $w$. -/
 theorem mem_cykCellFrom_iff (hg : IsChomskyNormalForm g) {f : List T → Finset g.NT}
     {w : List T} (hw : w ≠ [])
     (hf : ∀ i, 0 < i → i < w.length → ∀ B,
@@ -255,14 +268,16 @@ theorem mem_cykCellFrom_iff (hg : IsChomskyNormalForm g) {f : List T → Finset 
         exact h hC
 
 variable (g) in
-/-- The CYK recurrence run to depth `n`, without sharing: the cell of `w` from the depth-`n - 1`
-cells of its parts. -/
+/-- **The unshared CYK recurrence.** The depth-$n$ CYK cell of a word $w$ is defined by recursion
+on $n$: at depth $0$ every cell is empty, and the depth-$(n + 1)$ cell of $w$ is the CYK cell of
+$w$ built from the depth-$n$ cells of all words. Cells are recomputed without sharing. -/
 def cykCell : ℕ → List T → Finset g.NT
   | 0, _ => ∅
   | n + 1, w => cykCellFrom g (cykCell n) w
 
-/-- **Correctness of the recurrence.** For a nonempty word and a depth at least its length, the
-cell holds exactly the nonterminals that yield the word. -/
+/-- **Correctness of the CYK recurrence.** Let $g$ be a context-free grammar in Chomsky normal
+form. For every natural number $n$, every nonterminal $A$ and every nonempty word $w$ of length
+at most $n$, $A$ lies in the depth-$n$ CYK cell of $w$ if and only if $A$ yields $w$. -/
 theorem mem_cykCell_iff (hg : IsChomskyNormalForm g) :
     ∀ (n : ℕ) {A : g.NT} {w : List T}, w ≠ [] → w.length ≤ n →
       (A ∈ cykCell g n w ↔ Yields g [.nonterminal A] w) := by
@@ -284,13 +299,19 @@ theorem mem_cykCell_iff (hg : IsChomskyNormalForm g) :
 
 /-! ## The table -/
 
-/-- The cell recorded for `u` in a table of words and cells (the first entry for `u`). -/
+/-- **Looking up a word in a CYK table.** In a table listing pairs of a word and a cell, the cell
+recorded for a word $u$ is the cell of the first entry whose word is $u$, or the empty set if no
+entry has word $u$. -/
 def cykLookup (tbl : List (List T × Finset g.NT)) (u : List T) : Finset g.NT :=
   ((tbl.find? fun e => e.1 = u).map Prod.snd).getD ∅
 
 variable (g) in
-/-- The CYK table of `w` up to length `l`: one entry for each factor of `w` of length `1, …, l`,
-each cell computed from the entries of the shorter factors. -/
+/-- **The CYK table.** The CYK table of a word $w$ up to length $l$ is a list of pairs of a word
+and a cell, defined by recursion on $l$. Up to length $0$ it is empty. The table up to length
+$l + 1$ is the table $t$ up to length $l$ followed by one entry for each position $i$ (counted
+from $0$) with $i + l + 1 \le |w|$, in increasing order of $i$: the factor $u$ of $w$ of length
+$l + 1$ starting at position $i$, together with the CYK cell of $u$ built from the cells recorded
+in $t$. -/
 def cykTable (w : List T) : ℕ → List (List T × Finset g.NT)
   | 0 => []
   | l + 1 =>
@@ -299,7 +320,9 @@ def cykTable (w : List T) : ℕ → List (List T × Finset g.NT)
         let u := (w.drop i).take (l + 1)
         (u, cykCellFrom g (cykLookup tbl) u)
 
-/-- All recorded cells are correct. -/
+/-- **Correct CYK tables.** A table listing pairs $(u, X)$ of a word $u$ and a set $X$ of
+nonterminals of $g$ is correct when, for every entry $(u, X)$ with $u$ nonempty, $X$ consists
+exactly of the nonterminals $B$ such that the one-symbol form $B$ yields $u$. -/
 def CykTableCorrect (tbl : List (List T × Finset g.NT)) : Prop :=
   ∀ e ∈ tbl, e.1 ≠ [] → ∀ B, B ∈ e.2 ↔ Yields g [.nonterminal B] e.1
 
@@ -318,8 +341,10 @@ theorem mem_cykLookup_iff {tbl : List (List T × Finset g.NT)} (htbl : CykTableC
   rw [cykLookup, he', Option.map_some, Option.getD_some, ← hkey']
   exact htbl e' hmem (hkey' ▸ hu) B
 
-/-- **Correctness of the table**: its cells are correct, and it records every factor of `w` of
-length `1, …, l`. -/
+/-- **Correctness of the CYK table.** Let $g$ be a context-free grammar in Chomsky normal form and
+$w$ a word. For every $l$, the CYK table of $w$ up to length $l$ is correct, and for all $j$ and
+$m$ with $0 < m \le l$ and $j + m \le |w|$, some entry of the table has as its word the factor of
+$w$ of length $m$ starting at position $j$ (positions counted from $0$). -/
 theorem cykTable_spec (hg : IsChomskyNormalForm g) (w : List T) :
     ∀ l, CykTableCorrect (cykTable g w l) ∧
       ∀ j m, 0 < m → m ≤ l → j + m ≤ w.length →
@@ -377,13 +402,17 @@ theorem cykTable_spec (hg : IsChomskyNormalForm g) (w : List T) :
           exact List.mem_append_right _ (List.mem_map.2 ⟨j, List.mem_range.2 (by omega), rfl⟩)
 
 variable (g) in
-/-- **The CYK recognizer.** The empty word is accepted when there is a production `S → ε`; a
-nonempty word when the initial nonterminal is in its cell of the CYK table. -/
+/-- **The CYK recognizer.** Let $g$ be a context-free grammar with initial nonterminal $S$. The
+CYK recognizer accepts the empty word exactly when $g$ has a production $S \to \varepsilon$, and
+accepts a nonempty word $w$ exactly when $S$ lies in the cell recorded for $w$ in the CYK table of
+$w$ up to length $|w|$. -/
 def cykAccepts (w : List T) : Bool :=
   if w = [] then decide (∃ r ∈ g.rules, r.input = g.initial ∧ r.output = [])
   else decide (g.initial ∈ cykLookup (cykTable g w w.length) w)
 
-/-- **Correctness of the CYK recognizer** for grammars in Chomsky normal form. -/
+/-- **Correctness of the CYK recognizer.** Let $g$ be a context-free grammar in Chomsky normal
+form. For every word $w$ over the terminals of $g$, the CYK recognizer accepts $w$ if and only if
+$w$ belongs to the language of $g$. -/
 theorem cykAccepts_iff (hg : IsChomskyNormalForm g) {w : List T} :
     cykAccepts g w = true ↔ w ∈ g.language := by
   rw [mem_language_iff_yields, cykAccepts]

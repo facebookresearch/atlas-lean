@@ -56,14 +56,17 @@ namespace EarthScience
 /-- Effective conductivity for flow parallel to the layering:
 the thickness-weighted arithmetic mean of layer conductivities.
 Outside a nonempty family of positive thicknesses this is only
-Lean's totalized quotient. -/
+the totalized quotient: with the convention `x / 0 = 0`, it is
+`0` when the total thickness is `0`. -/
 noncomputable def parallelEffectiveConductivity {n : ℕ}
     (L K : ℕ → ℝ) : ℝ :=
   (∑ i ∈ Finset.range n, L i * K i) / (∑ i ∈ Finset.range n, L i)
 
 /-- Effective conductivity for flow in series across the
 layering: total thickness over summed layer resistances (the
-same formula as the layered-series package). -/
+same formula as the layered-series package). With the convention
+`x / 0 = 0`, a zero-conductivity layer contributes `0` to the
+summed resistance, and the value is `0` when that sum is `0`. -/
 noncomputable def seriesEffectiveConductivity {n : ℕ}
     (L K : ℕ → ℝ) : ℝ :=
   (∑ i ∈ Finset.range n, L i) / (∑ i ∈ Finset.range n, L i / K i)

@@ -41,9 +41,10 @@ value of money. Atlas roadmap target FI03.T02.
 
 namespace MathlibExt.Economics.Finance
 
-/-- Price of the cash-flow stream `c` paid at the dates `t ∈ s`, at a common
-per-period yield `r`: the FI01 present value under the constant-rate discount
-factors (source clause: "`P(r) = Σ_t c_t (1 + r)⁻ᵗ`"). -/
+/-- Price of the cash-flow stream `c` paid at the dates `t ∈ s`, at a common per-period yield `r`:
+the FI01 present value under the constant-rate discount factors (source clause:
+"`P(r) = Σ_t c_t (1 + r)⁻ᵗ`"). It is defined for every real `r`, with the convention `0⁻¹ = 0` at
+`r = -1`. -/
 noncomputable def cashFlowPrice (c : ℕ → ℝ) (s : Finset ℕ) (r : ℝ) : ℝ :=
   presentValue (discountFactor r) s c
 

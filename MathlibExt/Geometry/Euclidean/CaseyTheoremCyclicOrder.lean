@@ -97,8 +97,16 @@ private theorem trig_aux {a b c : ℝ} :
   rw [e3] at p2
   linear_combination (p1 + p2 - p3) / 2
 
-/-- Core of `MetaMathlibExt.casey_theorem_cyclic_order` without the positivity
-and disjointness side conditions, which the proof does not need. -/
+/-- **Core identity behind Casey's theorem in cyclic order.** In the Euclidean plane, write
+$d(p, q)$ for the distance between points $p$ and $q$. Let $O, c_1, c_2, c_3, c_4$ be points and
+$R, r_1, r_2, r_3, r_4$ real numbers with $r_i < R$ and $d(c_i, O) + r_i = R$ for each $i$.
+Suppose $c_i - O = d(c_i, O)(\cos\theta_i, \sin\theta_i)$ for real numbers
+$\theta_1 < \theta_2 < \theta_3 < \theta_4 < \theta_1 + 2\pi$. For each pair $(i, j)$ among
+$(1, 2), (2, 3), (3, 4), (4, 1), (1, 3), (2, 4)$ let $t_{ij} > 0$ satisfy
+$t_{ij}^2 = d(c_i, c_j)^2 - (r_i - r_j)^2$. Then $t_{12} t_{34} + t_{23} t_{41} = t_{13} t_{24}$.
+
+Compared with Casey's theorem for four circles in arbitrary cyclic order, neither $R$ nor the
+$r_i$ need be positive and the circles need not be pairwise disjoint. -/
 theorem casey_theorem_cyclic_order_core {O c1 c2 c3 c4 : EuclideanSpace ℝ (Fin 2)}
     {R r1 r2 r3 r4 t12 t23 t34 t41 t13 t24 θ1 θ2 θ3 θ4 : ℝ}
     (hlt1 : r1 < R) (hlt2 : r2 < R) (hlt3 : r3 < R) (hlt4 : r4 < R)
@@ -212,15 +220,24 @@ theorem casey_theorem_cyclic_order_core {O c1 c2 c3 c4 : EuclideanSpace ℝ (Fin
   linear_combination 4 * √(R - r1) * √(R - r2) * √(R - r3) * √(R - r4) * htrig
 
 set_option linter.unusedVariables false in
-/-- Casey's theorem for four circles in genuine cyclic order: circles with centers `c1`, `c2`,
-`c3`, `c4` and radii `r1`, `r2`, `r3`, `r4` tangent internally to a fixed outer circle with
-center `O` and radius `R`, whose centers lie in directions `θ1 < θ2 < θ3 < θ4 < θ1 + 2π` from
-`O`, with pairwise outer common tangent lengths `t12`, `t23`, `t34`, `t41`, `t13`, `t24`
-satisfying `t12 * t34 + t23 * t41 = t13 * t24`. Unlike `MetaMathlibExt.casey_theorem`, a
-consecutive angular gap may be at least `π`.
-See https://en.wikipedia.org/wiki/Casey%27s_theorem.
+/-- **Casey's theorem for four circles in arbitrary cyclic order.** In the Euclidean plane, write
+$d(p, q)$ for the distance between points $p$ and $q$. Let $O$ be a point and $R > 0$, and let
+$c_1, c_2, c_3, c_4$ be points and $r_1, r_2, r_3, r_4$ real numbers with $0 < r_i < R$ and
+$d(c_i, O) + r_i = R$ for each $i$, so that the circle with center $c_i$ and radius $r_i$ is
+internally tangent to the circle with center $O$ and radius $R$. Suppose any two of the four
+inner circles are disjoint, that is $r_i + r_j < d(c_i, c_j)$ for $i \ne j$, and that
+$c_i - O = d(c_i, O)(\cos\theta_i, \sin\theta_i)$ for real numbers
+$\theta_1 < \theta_2 < \theta_3 < \theta_4 < \theta_1 + 2\pi$. For each pair $(i, j)$ among
+$(1, 2), (2, 3), (3, 4), (4, 1), (1, 3), (2, 4)$ let $t_{ij} > 0$ satisfy
+$t_{ij}^2 = d(c_i, c_j)^2 - (r_i - r_j)^2$, so that $t_{ij}$ is the length of an outer common
+tangent. Then $t_{12} t_{34} + t_{23} t_{41} = t_{13} t_{24}$.
+
+Unlike the version of Casey's theorem that requires each consecutive pair of centers to make a
+positive oriented angle at $O$, a gap between consecutive directions may be at least $\pi$.
 
 Proves `Wanted` entry `casey_theorem_cyclic_order`.
+
+Source: https://en.wikipedia.org/wiki/Casey%27s_theorem
 -/
 theorem casey_theorem_cyclic_order {O c1 c2 c3 c4 : EuclideanSpace ℝ (Fin 2)}
     {R r1 r2 r3 r4 t12 t23 t34 t41 t13 t24 θ1 θ2 θ3 θ4 : ℝ}

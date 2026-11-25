@@ -22,18 +22,20 @@ import Mathlib.Tactic.Ring.RingNF
 namespace MetaMathlibExt
 
 /--
-Harmonic-weighted binomial interchange identity: the `1/k`-weighted partial
-binomial transforms sum to the full-length transform with `1/k` weights.
+**Binomial interchange identity with harmonic weights.** Let $K$ be a field of
+characteristic zero. For every natural number $n$ and every sequence $a : \mathbb{N} \to K$,
+$$\sum_{k=1}^{n} \frac{1}{k} \sum_{j=1}^{k} \binom{k}{j} a_j =
+\sum_{k=1}^{n} \binom{n}{k} \frac{a_k}{k}.$$
+
+The source notes a generalization in Boyadzhiev, attributed to 't Woord. The statement
+generalizes the source's real or complex sequences to any field of characteristic zero.
+
+Proves `Wanted` entry `binomial_harmonic_interchange_identity`.
 
 Source: Necdet Batır and Anthony Sofo, "A Unified Treatment of Certain
 Classes of Combinatorial Identities," Journal of Integer Sequences 24 (2021),
 Article 21.3.2, Lemma A (label LemmaA), lines 150–156,
 https://cs.uwaterloo.ca/journals/JIS/VOL24/Batir/batir7.tex
-
-The source notes a generalization in Boyadzhiev, attributed to 't Woord. The
-Lean statement generalizes the source's real-or-complex sequences to any
-field of characteristic zero.
-Proves `Wanted` entry `binomial_harmonic_interchange_identity`.
 -/
 theorem binomial_harmonic_interchange_identity {K : Type*} [Field K] [CharZero K]
     (n : ℕ) (a : ℕ → K) :
