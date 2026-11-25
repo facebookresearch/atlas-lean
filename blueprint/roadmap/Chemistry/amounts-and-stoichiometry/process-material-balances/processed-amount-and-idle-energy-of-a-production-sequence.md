@@ -13,9 +13,8 @@ $P \ge P_{\mathrm{idle}} \ge 0$ on the intervals with $r_k = 0$ and $P \ge 0$ el
 $\int_0^T P\,dt \ge P_{\mathrm{idle}}$ times the total idle time, even when nothing is produced. Constitutive models of machining,
 forming or additive processes, and tool life, are outside this result.
 
-## Depends on
-
-## Proof depends on
+The formalization imposes the power inequalities on the open subintervals. Power values at the
+finitely many partition points do not affect the energy integral.
 
 ## Sources
 
