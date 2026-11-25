@@ -16288,7 +16288,6 @@
   "WantedExt/NumberTheory/AlmostPrimeIndexWanted": {"to": "NumberTheory/distribution-of-primes/sieve-methods", "title": "Almost primes of almost prime index"},
   "WantedExt/NumberTheory/AlternatingSeriesContinuedFractionWanted": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of alternating series"},
   "WantedExt/NumberTheory/AmicableWanted": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Average and divisibility of the divisor sum"},
-  "WantedExt/NumberTheory/ArithmeticFunction/ArithmeticFunctionPerpendicularityWanted": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Antimultiplicative arithmetic functions"},
   "WantedExt/NumberTheory/ArithmeticFunction/BiunitaryTriperfectWanted": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Biunitary triperfect numbers"},
   "WantedExt/NumberTheory/ArithmeticFunction/ConsecutiveSquareSumsAdditiveUniquenessWanted": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Additive uniqueness of multiplicative functions"},
   "WantedExt/NumberTheory/ArithmeticFunction/ExplicitMertensBoundWanted": {"to": "NumberTheory/arithmetic-functions/multiplicative-functions", "title": "Explicit bounds for Möbius sums"},

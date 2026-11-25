@@ -49,4 +49,21 @@ example (gh : ArithmeticFunction ℝ × ArithmeticFunction ℝ)
   exact (hunique gh hgh).trans
     (hunique (↑ζ, atOneAndSix) ⟨hz, atOneAndSix_antimultiplicative, rfl⟩).symm
 
+-- A multiplicative function splits with antimultiplicative part `1`, the paper's `δ`.
+example (gh : ArithmeticFunction ℝ × ArithmeticFunction ℝ)
+    (hgh : gh.1.IsMultiplicative ∧ IsAntimultiplicative gh.2 ∧ gh.1 * gh.2 = ↑ζ) :
+    gh = (↑ζ, 1) := by
+  have hz : (↑ζ : ArithmeticFunction ℝ).IsMultiplicative := isMultiplicative_zeta.natCast
+  obtain ⟨_, _, hunique⟩ := existsUnique_multiplicative_mul_antimultiplicative _ hz.map_one
+  exact (hunique gh hgh).trans (hunique (↑ζ, 1) ⟨hz, isAntimultiplicative_one, mul_one _⟩).symm
+
+-- An antimultiplicative function splits with multiplicative part `1`.
+example (gh : ArithmeticFunction ℝ × ArithmeticFunction ℝ)
+    (hgh : gh.1.IsMultiplicative ∧ IsAntimultiplicative gh.2 ∧ gh.1 * gh.2 = atOneAndSix) :
+    gh = (1, atOneAndSix) := by
+  obtain ⟨_, _, hunique⟩ :=
+    existsUnique_multiplicative_mul_antimultiplicative _ atOneAndSix_antimultiplicative.1
+  exact (hunique gh hgh).trans (hunique (1, atOneAndSix)
+    ⟨isMultiplicative_one, atOneAndSix_antimultiplicative, one_mul _⟩).symm
+
 end MetaMathlibExt.ArithmeticFunctionPerpendicularityTest

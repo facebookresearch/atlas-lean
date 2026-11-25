@@ -72,7 +72,23 @@ private theorem isAntimultiplicative_iff_rearickLog {f : ArithmeticFunction ℝ}
       Real.log_pos (by exact_mod_cast Nat.one_lt_pow hk.ne' hp.one_lt)
     exact (mul_eq_zero.mp hm).resolve_right hpos.ne'
 
-private theorem unique_factorization (f : ArithmeticFunction ℝ) (hf : f 1 = 1) :
+end dirichletRealPower_multiplicative_antimultiplicative_subspaces
+
+open dirichletRealPower_multiplicative_antimultiplicative_subspaces
+
+/-- **Unique splitting into multiplicative and antimultiplicative parts.** Every real
+arithmetical function $f$ with $f(1) = 1$ can be written in exactly one way as a Dirichlet
+convolution $f = g * h$ of a multiplicative real arithmetical function $g$ and an
+antimultiplicative real arithmetical function $h$.
+
+In the source, writing $U_1$, $U_M$ and $U_A$ for the real arithmetical functions $f$ with
+$f(1) = 1$, the multiplicative ones and the antimultiplicative ones, this is written
+$U_1 = U_M \oplus U_A$.
+
+Source: Pentti Haukkanen and Timo Tossavainen, *Some Perpendicularities of Arithmetical
+Functions*, INTEGERS 25 (2025), Article A33, Proposition 2 (`integers-2025-A33-prop-2`). -/
+public theorem existsUnique_multiplicative_mul_antimultiplicative
+    (f : ArithmeticFunction ℝ) (hf : f 1 = 1) :
     ∃! gh : ArithmeticFunction ℝ × ArithmeticFunction ℝ,
       gh.1.IsMultiplicative ∧ IsAntimultiplicative gh.2 ∧ gh.1 * gh.2 = f := by
   -- The multiplicative factor is determined by the prime-power values of f.
@@ -112,10 +128,6 @@ private theorem unique_factorization (f : ArithmeticFunction ℝ) (hf : f 1 = 1)
   subst g'
   exact Prod.ext rfl (u.isUnit.mul_left_cancel (heq.trans hprod.symm))
 
-end dirichletRealPower_multiplicative_antimultiplicative_subspaces
-
-open dirichletRealPower_multiplicative_antimultiplicative_subspaces
-
 /-- **Real powers preserve multiplicativity and antimultiplicativity.** Let $L$ denote the
 Rearick logarithm. Let $f$ and $F$ be real arithmetical functions with $f(1) = F(1) = 1$, and let
 $\alpha$ be a real number with $L(F) = \alpha L(f)$. If $f$ is multiplicative, then $F$ is
@@ -137,7 +149,7 @@ public theorem dirichletRealPower_multiplicative_antimultiplicative_subspaces :
       ∀ f : ArithmeticFunction ℝ, f 1 = 1 →
         ∃! gh : ArithmeticFunction ℝ × ArithmeticFunction ℝ,
           gh.1.IsMultiplicative ∧ IsAntimultiplicative gh.2 ∧ gh.1 * gh.2 = f := by
-  refine ⟨?_, unique_factorization⟩
+  refine ⟨?_, existsUnique_multiplicative_mul_antimultiplicative⟩
   intro f F α hf hF hscale
   have hfpos : 0 < f 1 := by simp [hf]
   have hFpos : 0 < F 1 := by simp [hF]
