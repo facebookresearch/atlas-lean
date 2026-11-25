@@ -15,7 +15,7 @@ public import MathlibExt.Algebra.Polynomial.BranchNearRoot
 open Polynomial
 
 -- Exact-source consumer, with the original binders.
-theorem exactSource {n w : ℕ} (F : Polynomial (Polynomial ℂ)) (hF : F.natDegree ≤ n)
+private theorem exactSource {n w : ℕ} (F : Polynomial (Polynomial ℂ)) (hF : F.natDegree ≤ n)
     (hwt : ∀ k j : ℕ, w * (n - k) < j → (F.coeff k).coeff j = 0) (c : ℂ) (hc : c ≠ 0)
     (hlead : F.coeff n = C c) (P : Fin n → Polynomial ℂ)
     (hP : ∀ i, (P i).natDegree ≤ w)

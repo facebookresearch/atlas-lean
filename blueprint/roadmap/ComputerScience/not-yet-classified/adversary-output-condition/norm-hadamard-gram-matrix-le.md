@@ -1,0 +1,3 @@
+# Operator-norm adversary output condition
+
+Let $f: X \to \{0, 1\}$ on a finite set and let unit vectors $\psi_x$ in a complex inner product space decompose as $\psi_x = u_0(x) + u_1(x)$ with $\langle u_0(x), u_1(y)\rangle = 0$ for all $x, y$. Let $0 \le \varepsilon \le 1/2$ with $\lVert u_{1 - f(x)}(x)\rVert^2 \le \varepsilon$ for every $x$. Then every real symmetric $\Gamma$ with $\Gamma_{xy} = 0$ when $f(x) = f(y)$ satisfies $\lVert \Gamma \circ G\rVert \le 2\sqrt{\varepsilon(1 - \varepsilon)}\,\lVert\Gamma\rVert$ in operator norm, where $G_{xy} = \langle \psi_x, \psi_y\rangle$ and $\circ$ is the entrywise product.

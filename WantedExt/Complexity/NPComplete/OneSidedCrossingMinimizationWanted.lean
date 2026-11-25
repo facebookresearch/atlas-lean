@@ -18,7 +18,7 @@ Graph Drawing (GD 2001), LNCS 2265 (2002), 115-123, doi:10.1007/3-540-45848-4_10
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

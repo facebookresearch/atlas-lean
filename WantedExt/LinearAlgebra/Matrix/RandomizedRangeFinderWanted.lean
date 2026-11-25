@@ -9,10 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.InnerProductSpace.Projection.Basic
-public import Mathlib.Analysis.InnerProductSpace.SingularValues
-public import Mathlib.Analysis.Normed.Module.FiniteDimension
-public import Mathlib.Probability.Distributions.Gaussian.Real
+public import MathlibExt.LinearAlgebra.Matrix.RandomizedRangeFinder
 
 /-!
 # The randomized range finder (wanted)
@@ -31,7 +28,7 @@ Here the singular values are Mathlib's `LinearMap.singularValues` of the operato
 Martinsson and Tropp's `σⱼ` is `singularValues (j - 1)`), the notion used by the Eckart–Young
 pages. The Gaussian test matrix is the coordinate map of the product of standard Gaussian laws on
 `Fin n × Fin (k + p)`.
-The proofs are deferred.
+The Frobenius bound is proved in the imported range-finder module.
 -/
 
 @[expose] public section
@@ -41,41 +38,6 @@ open MeasureTheory ProbabilityTheory
 namespace MathlibExt.LinearAlgebra.Matrix.RandomizedRangeFinderWanted
 
 variable {m n : ℕ}
-
-/-- **Range-finder residual.** The residual `(I - P_Y) A` of the randomized range finder with
-sample matrix `Y = AΩ`, as an operator from `ℝⁿ` to `ℝᵐ` (Halko, Martinsson and Tropp, SIAM Rev.
-53 (2011), §1.5 and §9.1). -/
-noncomputable def residual {ℓ : ℕ} (A : Matrix (Fin m) (Fin n) ℝ)
-    (Ω : Matrix (Fin n) (Fin ℓ) ℝ) : EuclideanSpace ℝ (Fin n) →L[ℝ] EuclideanSpace ℝ (Fin m) :=
-  (ContinuousLinearMap.id ℝ _ -
-      (LinearMap.range (Matrix.toEuclideanLin (A * Ω))).starProjection).comp
-    (LinearMap.toContinuousLinearMap (Matrix.toEuclideanLin A))
-
-/-- **Frobenius error of the range finder.** The Frobenius norm
-`‖(I - P_Y) A‖_F = (∑ⱼ ‖(I - P_Y) A eⱼ‖²)^{1/2}` of the range-finder residual (Halko, Martinsson
-and Tropp, SIAM Rev. 53 (2011), §10.2). -/
-noncomputable def residualFrobenius {ℓ : ℕ} (A : Matrix (Fin m) (Fin n) ℝ)
-    (Ω : Matrix (Fin n) (Fin ℓ) ℝ) : ℝ :=
-  Real.sqrt (∑ j, ‖residual A Ω (EuclideanSpace.single j 1)‖ ^ 2)
-
-/-- **Standard Gaussian test matrix.** The law of an `n × ℓ` standard Gaussian matrix:
-independent `N(0, 1)` entries, as a measure on the entry functions `Fin n × Fin ℓ → ℝ`
-(Halko, Martinsson and Tropp, SIAM Rev. 53 (2011), §4.1 and §10). -/
-noncomputable def gaussianMatrixLaw (n ℓ : ℕ) : Measure (Fin n × Fin ℓ → ℝ) :=
-  Measure.pi fun _ => gaussianReal 0 1
-
-/-- **Average Frobenius error of the randomized range finder** (N. Halko, P.-G. Martinsson and
-J. A. Tropp, *Finding structure with randomness*, SIAM Rev. 53 (2011), arXiv:0909.4061,
-Theorem 10.5). Let `A` be a real `m × n` matrix with singular values `σ₁ ≥ σ₂ ≥ …`, choose a
-target rank `k ≥ 2` and an oversampling parameter `p ≥ 2` with `k + p ≤ min(m, n)`, and let `Ω`
-be an `n × (k + p)` standard Gaussian matrix. Then
-`E ‖(I - P_{AΩ}) A‖_F ≤ (1 + k / (p - 1))^{1/2} (∑_{j>k} σⱼ²)^{1/2}`; with `σ` 0-indexed as
-`LinearMap.singularValues`, the sum runs over indices `k ≤ j < n`. -/
-theorem_wanted integral_residualFrobenius_le {k p : ℕ} (hk : 2 ≤ k) (hp : 2 ≤ p)
-    (hkp : k + p ≤ min m n) (A : Matrix (Fin m) (Fin n) ℝ) :
-    ∫ ω, residualFrobenius A (Matrix.of fun i j => ω (i, j)) ∂(gaussianMatrixLaw n (k + p)) ≤
-      Real.sqrt (1 + k / (p - 1 : ℝ)) *
-        Real.sqrt (∑ j ∈ Finset.Ico k n, (Matrix.toEuclideanLin A).singularValues j ^ 2)
 
 /-- **Average spectral error of the randomized range finder** (N. Halko, P.-G. Martinsson and
 J. A. Tropp, *Finding structure with randomness*, SIAM Rev. 53 (2011), arXiv:0909.4061,

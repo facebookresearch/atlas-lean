@@ -17,7 +17,7 @@ open IsLocalRing Polynomial
 universe u
 
 -- Exact-source consumer, with the original binders.
-theorem exactSource
+private theorem exactSource
     {W : Type u} [CommRing W] [IsDomain W] [IsDiscreteValuationRing W]
     [IsAdicComplete (IsLocalRing.maximalIdeal W) W]
     (O : Type u) [CommRing O] [IsDomain O] [Algebra W O] [Module.Free W O]

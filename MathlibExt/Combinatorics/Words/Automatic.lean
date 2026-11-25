@@ -31,7 +31,9 @@ module, so automata users do not need the Christol/algebra dependency
 closure.
 -/
 
-/-- One-dimensional `k`-kernel of a sequence.
+/-- **The $k$-kernel of a sequence.** For a natural number $k$ and a sequence $a$ indexed by
+$\mathbb{N}$, the $k$-kernel of $a$ is the set of all sequences $n \mapsto a(k^e n + r)$ with
+$e, r \in \mathbb{N}$ and $r < k^e$.
 
 Source: Adamczewski--Bell, arXiv:1205.4091v1, lines 1105--1129.
 The finite-kernel representation: the kernel is the set of all subsequence
@@ -42,7 +44,8 @@ corresponding decimated subsequence. -/
 public def kKernel (k : ℕ) {Δ : Type*} (a : ℕ → Δ) : Set (ℕ → Δ) :=
   {b | ∃ e : ℕ, ∃ r : ℕ, r < k ^ e ∧ b = fun n => a (k ^ e * n + r)}
 
-/-- `k`-automaticity of a sequence via the Eilenberg finite-kernel characterization.
+/-- **$k$-automatic sequence (finite-kernel definition).** For a natural number $k$, a sequence
+$a$ indexed by $\mathbb{N}$ is $k$-automatic when $k \ge 2$ and the $k$-kernel of $a$ is finite.
 
 Sources: Adamczewski--Bell, arXiv:1205.4091v1, lines 160--195 for the
 finite-automaton (DFAO) definition, and lines 1105--1129 for Eilenberg's
@@ -56,7 +59,9 @@ section ChrKernel
 
 variable {Δ : Type*}
 
-/-- The `(p ^ r)`-kernel is contained in the `p`-kernel. -/
+/-- **The $p^r$-kernel lies in the $p$-kernel.** For all natural numbers $p$ and $r$ and every
+sequence $a$ indexed by $\mathbb{N}$, the $p^r$-kernel of $a$ is contained in the $p$-kernel of
+$a$. -/
 theorem chr_qkernel_subset {p r : ℕ} (a : ℕ → Δ) :
     kKernel (p ^ r) a ⊆ kKernel p a := by
   intro b hb
@@ -70,7 +75,9 @@ private def chr_emb (p r : ℕ) (a : ℕ → Δ)
     (x : ↥(kKernel (p ^ r) a) × (Σ _s : Fin r, Fin (p ^ _s.val))) (n : ℕ) : Δ :=
   (x.1 : ℕ → Δ) (p ^ (x.2.1.val) * n + x.2.2.val)
 
-/-- If the `(p ^ r)`-kernel is finite then so is the `p`-kernel. -/
+/-- **Finiteness of the $p$-kernel from the $p^r$-kernel.** Let $p$ and $r$ be positive natural
+numbers and let $a$ be a sequence indexed by $\mathbb{N}$. If the $p^r$-kernel of $a$ is finite,
+then the $p$-kernel of $a$ is finite. -/
 theorem chr_pkernel_finite {p r : ℕ} (hr : 0 < r) (hp : 0 < p)
     (a : ℕ → Δ) [Finite ↥(kKernel (p ^ r) a)] :
     Finite ↥(kKernel p a) := by
@@ -99,7 +106,9 @@ theorem chr_pkernel_finite {p r : ℕ} (hr : 0 < r) (hp : 0 < p)
   rw [heq]
   rfl
 
-/-- The `q`-kernel is stable under `n ↦ b (q * n + j)` for `j < q`. -/
+/-- **The $q$-kernel is closed under decimation.** Let $q$ be a natural number and let $a$ be a
+sequence indexed by $\mathbb{N}$. If $b$ belongs to the $q$-kernel of $a$ and $j < q$, then the
+sequence $n \mapsto b(qn + j)$ also belongs to the $q$-kernel of $a$. -/
 theorem chr_kernel_lam_mem {q : ℕ} {a b : ℕ → Δ}
     (hb : b ∈ kKernel q a) {j : ℕ} (hj : j < q) :
     (fun n => b (q * n + j)) ∈ kKernel q a := by
@@ -116,7 +125,8 @@ theorem chr_kernel_lam_mem {q : ℕ} {a b : ℕ → Δ}
     rw [pow_succ]
     ring
 
-/-- Every sequence is in its own `q`-kernel. -/
+/-- **A sequence lies in its own kernel.** For every natural number $q$, every sequence $a$
+indexed by $\mathbb{N}$ belongs to its own $q$-kernel. -/
 theorem chr_self_mem_kernel {q : ℕ} (a : ℕ → Δ) :
     a ∈ kKernel q a := by
   refine ⟨0, 0, by simp, ?_⟩
@@ -259,7 +269,12 @@ private theorem chr_fold_val {k : ℕ} {a : ℕ → B}
       show k * (k ^ ds.length * n + baseWordValueLSD ds) + d.val
         = k ^ ds.length * k * n + (d.val + k * baseWordValueLSD ds) from by ring]
 
-/-- Eilenberg's equivalence: finite kernel iff DFAO-computable. -/
+/-- **Eilenberg's theorem: finite kernel iff automatic.** Let $k$ be a natural number and let
+$a$ be a sequence indexed by $\mathbb{N}$ with values in a finite type $B$. Then $k \ge 2$ and the
+$k$-kernel of $a$ is finite (that is, $a$ is $k$-automatic in the finite-kernel sense) if and only
+if $k \ge 2$ and some deterministic finite automaton with output, reading base-$k$ digits least
+significant first, outputs $a(n)$ on every word of base-$k$ digits whose value is $n$, for every
+$n \in \mathbb{N}$ (that is, $a$ is a $k$-automatic sequence in the automaton sense). -/
 public theorem isKAutomatic_iff_isKAutomaticSequence {B : Type} [Fintype B]
     (k : ℕ) (a : ℕ → B) :
     IsKAutomatic k a ↔ IsKAutomaticSequence k a := by
