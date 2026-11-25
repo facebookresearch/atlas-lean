@@ -1393,7 +1393,7 @@ lemma homZeroSourceCohomologyIso_hom (P : ChainComplex C ℤ) (Q : CochainComple
   exact (homZeroSourceCohomologyIso_apply P Q n hZero hProj z p).trans
     (homZeroSourceCohomologyComparison_apply P Q n hZero z p).symm
 
-/-- The canonical comparison is an isomorphism under precisely projectivity of the source terms. -/
+/-- The canonical comparison is an isomorphism when every source term is projective. -/
 lemma isIso_homZeroSourceCohomologyComparison (P : ChainComplex C ℤ)
     (Q : CochainComplex C ℤ) (n : ℤ) (hZero : ∀ i j : ℤ, P.d i j = 0)
     (hProj : ∀ p : ℤ, Projective (P.X p)) :
