@@ -2198,6 +2198,7 @@
   "CSLibExt/MachineLearning/Sequence/KalmanFilter": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Kalman filter"},
   "CSLibExt/MachineLearning/Sequence/PosteriorDecoding": {"to": "ComputerScience/machine-learning/probabilistic-graphical-models", "title": "Hidden Markov models"},
   "CSLibExt/MachineLearning/SufficientInputSubsets": {"to": "ComputerScience/machine-learning/supervised-learning", "title": "Sufficient input subsets"},
+  "CSLibExt/MachineLearning/UCB1": {"to": "ComputerScience/machine-learning/reinforcement-learning", "title": "Multi-armed bandits"},
   "CSLibExt/MachineLearning/Variational/MeanField": {"to": "ComputerScience/machine-learning/bayesian-inference-and-sampling", "title": "Mean-field variational inference"},
   "CSLibExt/MachineLearning/Variational/MeanFieldFixedPoint": {"to": "ComputerScience/machine-learning/bayesian-inference-and-sampling", "title": "Mean-field variational inference"},
   "CSLibExt/MachineLearning/WeightedMajority": {"to": "ComputerScience/machine-learning/online-learning-and-boosting", "title": "Weighted majority algorithm"},
