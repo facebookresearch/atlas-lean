@@ -948,11 +948,15 @@ variable (p : ℕ) [hp : Fact p.Prime]
 
 private theorem cycloGalEquiv_symm_apply_zeta (K : Type*) [Field K] [NumberField K]
     [IsCyclotomicExtension {p} ℚ K] (t : (ZMod p)ˣ) :
-    (cycloGalEquiv p K).symm t (zeta p ℚ K) = zeta p ℚ K ^ (t : ZMod p).val := by
+    (IsCyclotomicExtension.Rat.galEquivZMod p K).symm t (zeta p ℚ K) =
+      zeta p ℚ K ^ (t : ZMod p).val := by
   have : NeZero p := ⟨hp.out.ne_zero⟩
-  have h1 := (zeta_spec p ℚ K).autToPow_spec ℚ ((cycloGalEquiv p K).symm t)
-  have h2 : ((zeta_spec p ℚ K).autToPow ℚ ((cycloGalEquiv p K).symm t) : (ZMod p)ˣ) = t :=
-    (MulEquiv.apply_symm_apply (cycloGalEquiv p K) t : _)
+  have h1 :=
+    (zeta_spec p ℚ K).autToPow_spec ℚ ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm t)
+  have h2 :
+      ((zeta_spec p ℚ K).autToPow ℚ ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm t) :
+        (ZMod p)ˣ) = t :=
+    (MulEquiv.apply_symm_apply (IsCyclotomicExtension.Rat.galEquivZMod p K) t : _)
   rw [← h1, h2]
 
 section KplusFrame
@@ -972,7 +976,7 @@ private theorem exists_involution :
     ∃ τ₀ : (CyclotomicField p ℚ) ≃ₐ[Kplus] (CyclotomicField p ℚ), τ₀ ≠ 1 ∧
       (∀ σ : (CyclotomicField p ℚ) ≃ₐ[Kplus] (CyclotomicField p ℚ), σ = 1 ∨ σ = τ₀) ∧
       ∀ x : CyclotomicField p ℚ,
-        τ₀ x = (cycloGalEquiv p (CyclotomicField p ℚ)).symm (-1) x := by
+        τ₀ x = (IsCyclotomicExtension.Rat.galEquivZMod p (CyclotomicField p ℚ)).symm (-1) x := by
   classical
   have hcard : Fintype.card ((CyclotomicField p ℚ) ≃ₐ[Kplus] (CyclotomicField p ℚ)) = 2 := by
     rw [← Nat.card_eq_fintype_card, IsGalois.card_aut_eq_finrank, hKplus]
@@ -997,10 +1001,11 @@ private theorem exists_involution :
     apply hτ₀
     ext x
     rw [← hτx, h, AlgEquiv.one_apply, AlgEquiv.one_apply]
-  set e : (ZMod p)ˣ := cycloGalEquiv p (CyclotomicField p ℚ) τ with he
+  set e : (ZMod p)ˣ := IsCyclotomicExtension.Rat.galEquivZMod p (CyclotomicField p ℚ) τ with he
   have hesq : e * e = 1 := by rw [he, ← map_mul, hτsq, map_one]
   have hene : e ≠ 1 := fun h =>
-    hτne ((cycloGalEquiv p (CyclotomicField p ℚ)).injective (by rw [← he, h, map_one]))
+    hτne ((IsCyclotomicExtension.Rat.galEquivZMod p (CyclotomicField p ℚ)).injective
+      (by rw [← he, h, map_one]))
   have he1 : e = -1 := by
     have h2 : (e : ZMod p) * e = 1 := by rw [← Units.val_mul, hesq, Units.val_one]
     rcases mul_self_eq_one_iff.mp h2 with h | h
@@ -1013,7 +1018,7 @@ private theorem exists_involution :
     rw [huniv, Finset.mem_insert, Finset.mem_singleton] at this
     exact this
   refine ⟨τ₀, hτ₀, hall, fun x => ?_⟩
-  have hτeq : τ = (cycloGalEquiv p (CyclotomicField p ℚ)).symm (-1) := by
+  have hτeq : τ = (IsCyclotomicExtension.Rat.galEquivZMod p (CyclotomicField p ℚ)).symm (-1) := by
     rw [← he1, he, MulEquiv.symm_apply_apply]
   rw [← hτx, hτeq]
 
@@ -1088,12 +1093,13 @@ variable (p : ℕ) [hp : Fact p.Prime]
 private lemma algebraMap_clRingAction (K : Type*) [Field K] [NumberField K]
     [IsCyclotomicExtension {p} ℚ K]
     (d : (ZMod p)ˣ) (x : 𝓞 K) :
-    algebraMap (𝓞 K) K (clRingAction p K d x) = (cycloGalEquiv p K).symm d (algebraMap (𝓞 K) K x) :=
-  algebraMap_galRestrict_apply ℤ ((cycloGalEquiv p K).symm d) x
+    algebraMap (𝓞 K) K (clRingAction p K d x) =
+      (IsCyclotomicExtension.Rat.galEquivZMod p K).symm d (algebraMap (𝓞 K) K x) :=
+  algebraMap_galRestrict_apply ℤ ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm d) x
 
 private lemma cycloGalEquiv_symm_neg_one_zeta (K : Type*) [Field K] [NumberField K]
     [IsCyclotomicExtension {p} ℚ K] :
-    (cycloGalEquiv p K).symm (-1) (zeta p ℚ K) = (zeta p ℚ K)⁻¹ := by
+    (IsCyclotomicExtension.Rat.galEquivZMod p K).symm (-1) (zeta p ℚ K) = (zeta p ℚ K)⁻¹ := by
   have : NeZero p := ⟨hp.out.ne_zero⟩
   rw [cycloGalEquiv_symm_apply_zeta]
   apply eq_inv_of_mul_eq_one_left
@@ -3471,13 +3477,13 @@ private theorem engine_out (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p)
       exact h20 (by simpa using (inv_eq_zero.mp h))
     · exact ht₀0 h
   · have hσtK : Function.Surjective
-        ((cycloGalEquiv p (CyclotomicField p ℚ)).symm.toMonoidHom :
+        ((IsCyclotomicExtension.Rat.galEquivZMod p (CyclotomicField p ℚ)).symm.toMonoidHom :
           (ZMod p)ˣ →* (CyclotomicField p ℚ ≃ₐ[ℚ] CyclotomicField p ℚ)) :=
-      (cycloGalEquiv p (CyclotomicField p ℚ)).symm.surjective
+      (IsCyclotomicExtension.Rat.galEquivZMod p (CyclotomicField p ℚ)).symm.surjective
     have hcommK : ∀ (d : (ZMod p)ˣ) (x : 𝓞 Kplus),
         algebraMap (𝓞 Kplus) (𝓞 (CyclotomicField p ℚ)) (Δact d x)
           = galRestrict ℤ ℚ (CyclotomicField p ℚ) (𝓞 (CyclotomicField p ℚ))
-              ((cycloGalEquiv p (CyclotomicField p ℚ)).symm.toMonoidHom d)
+              ((IsCyclotomicExtension.Rat.galEquivZMod p (CyclotomicField p ℚ)).symm.toMonoidHom d)
               (algebraMap (𝓞 Kplus) (𝓞 (CyclotomicField p ℚ)) x) := by
       intro d x
       have h1 := DFunLike.congr_fun (hΔact d) x
@@ -3554,7 +3560,8 @@ private theorem engine_out (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p)
         ((s : ZMod ℓ)).val _ hC6 hres𝔓
     obtain ⟨d₀, hd₀⟩ :=
       ThaineAux.exists_eq_map_of_natCast_mem (K := CyclotomicField p ℚ) (F := Kplus)
-        (Δact := Δact) (σt := (cycloGalEquiv p (CyclotomicField p ℚ)).symm.toMonoidHom)
+        (Δact := Δact)
+        (σt := (IsCyclotomicExtension.Rat.galEquivZMod p (CyclotomicField p ℚ)).symm.toMonoidHom)
         hσtK hcommK ℓ 𝔏 𝔔 hℓ𝔏 hℓ𝔔
     have hψQker : ∀ x ∈ 𝔔, ψL.comp ((Δact d₀⁻¹ : 𝓞 Kplus ≃+* 𝓞 Kplus) :
         𝓞 Kplus →+* 𝓞 Kplus) x = 0 := by
@@ -3622,9 +3629,9 @@ open scoped ThaineReduce
 namespace Stickelberger
 
 open ThaineAssembly in
-/-- **Thaine's relation** in the totally real subfield of `ℚ(ζ_p)`, `p ≥ 5`: given a degree-one
-prime `𝔏` of `K⁺` above `ℓ ≠ p` and a unit `δ` of `K⁺` in the `ω²`-eigenspace modulo `p`-th
-powers whose residue modulo `𝔏` is not a `p`-th power, some nonzero `t : ZMod p` makes
+/-- **Thaine's relation** in the totally real subfield of `ℚ(ζ_p)`, for a prime `p ≥ 5`: given a
+degree-one prime `𝔏` of `K⁺` above `ℓ ≠ p` and a unit `δ` of `K⁺` in the `ω²`-eigenspace modulo
+`p`-th powers whose residue modulo `𝔏` is not a `p`-th power, some nonzero `t : ZMod p` makes
 `∏_d (d • 𝔏) ^ (t d⁻²)` principal up to a `p`-th power of an ideal. -/
 public theorem thaine_relation_plusField (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p)
     (Kplus : Type*) [Field Kplus] [NumberField Kplus] [IsTotallyReal Kplus]

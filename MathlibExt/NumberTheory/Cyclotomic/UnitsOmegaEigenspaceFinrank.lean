@@ -144,18 +144,15 @@ attribute [local instance] neZero_p
 
 variable (K : Type*) [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
 
-private theorem cycloGalEquiv_eq_galEquivZMod :
-    cycloGalEquiv p K = IsCyclotomicExtension.Rat.galEquivZMod p K := rfl
-
 private theorem cycloGalEquiv_symm_apply_of_pow_eq (d : (ZMod p)ˣ) {x : K} (hx : x ^ p = 1) :
-    (cycloGalEquiv p K).symm d x = x ^ (d : ZMod p).val := by
+    (IsCyclotomicExtension.Rat.galEquivZMod p K).symm d x = x ^ (d : ZMod p).val := by
   have := IsCyclotomicExtension.Rat.galEquivZMod_apply_of_pow_eq p K
-    ((cycloGalEquiv p K).symm d) hx
-  rwa [cycloGalEquiv_eq_galEquivZMod, MulEquiv.apply_symm_apply] at this
+    ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm d) hx
+  rwa [MulEquiv.apply_symm_apply] at this
 
 private theorem clRingAction_eq :
     clRingAction p K = (Stickelberger.galRestrictRingAut ℤ ℚ K (𝓞 K)).comp
-      (cycloGalEquiv p K).symm.toMonoidHom := rfl
+      (IsCyclotomicExtension.Rat.galEquivZMod p K).symm.toMonoidHom := rfl
 
 set_option backward.isDefEq.respectTransparency false in
 
@@ -164,7 +161,7 @@ private theorem clRingAction_apply_of_pow_eq (d : (ZMod p)ˣ) {x : 𝓞 K} (hx :
   have hxK : (x : K) ^ p = 1 := by exact_mod_cast congrArg ((↑) : 𝓞 K → K) hx
   apply FaithfulSMul.algebraMap_injective (𝓞 K) K
   rw [show clRingAction p K d x =
-        galRestrict ℤ ℚ K (𝓞 K) ((cycloGalEquiv p K).symm d) x from rfl,
+        galRestrict ℤ ℚ K (𝓞 K) ((IsCyclotomicExtension.Rat.galEquivZMod p K).symm d) x from rfl,
     algebraMap_galRestrict_apply, map_pow]
   exact cycloGalEquiv_symm_apply_of_pow_eq p K d hxK
 
@@ -1032,7 +1029,7 @@ open scoped W2Units
 
 namespace Stickelberger
 
-/-- For `p ≥ 5`, the `ω²`-eigenspace of the units of `𝓞 (ℚ(ζ_p))` modulo `p`-th powers
+/-- For a prime `p ≥ 5`, the `ω²`-eigenspace of the units of `𝓞 (ℚ(ζ_p))` modulo `p`-th powers
 is one-dimensional over `ZMod p`. -/
 public theorem finrank_unitsOmegaEigenspace_two (p : ℕ) [Fact p.Prime] (hp5 : 5 ≤ p) :
     Module.finrank (ZMod p) (unitsOmegaEigenspace p 2) = 1 :=
