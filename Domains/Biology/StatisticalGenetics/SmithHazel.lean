@@ -110,9 +110,12 @@ noncomputable def Model.beta {n : ℕ} {Ω : Type*} [MeasurableSpace Ω] {μ : M
 noncomputable def Model.heritability {n : ℕ} {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     (M : Model n Ω μ) (i : Fin n) : ℝ := M.geneticCov i i / M.phenotypicCov i i
 
-/-- The genetic gain from truncation selection on the index `I_b` at standardized threshold `z`:
-the mean of `H` among the outcomes whose index is at least `z` index standard deviations above
-its mean, minus the population mean of `H`. -/
+/-- The totalized truncation-selection shift
+`conditionalMeanShift μ M.aggregate (standardizedUpperEvent μ (M.index b) z)`, i.e., the integral
+of `H` under the normalized conditional measure on `{ω | μ[I_b] + z * σ_{I_b} ≤ I_b ω}` minus the
+unnormalized integral `∫ H dμ`. When `μ` is a probability measure, `H` is integrable, and the
+standardized upper event is measurable with positive mass, this equals the genetic gain: the mean
+of `H` among selected outcomes minus the population mean of `H`. -/
 noncomputable def Model.gain {n : ℕ} {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     (M : Model n Ω μ) (b : Fin n → ℝ) (z : ℝ) : ℝ :=
   conditionalMeanShift μ M.aggregate (standardizedUpperEvent μ (M.index b) z)
