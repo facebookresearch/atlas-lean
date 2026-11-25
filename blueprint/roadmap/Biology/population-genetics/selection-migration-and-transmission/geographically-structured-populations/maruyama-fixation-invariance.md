@@ -2,7 +2,7 @@
 
 In the structured diffusion with generator $Lf = \sum_i\frac{x_i(1 - x_i)}{2\kappa_i}\partial_i^2f + \sum_i\bigl[\sum_{j \ne i}q_{ij}(x_j - x_i) + \alpha x_i(1 - x_i)\bigr]\partial_if$, assume that migration is conservative, that is, the census weights $w_i = \kappa_i/K$, $K = \sum_k\kappa_k$, satisfy $w^TQ = 0$, equivalently $\sum_{i \ne j}\kappa_iq_{ij} = \kappa_j\sum_{k \ne j}q_{jk}$ for every deme $j$, that selection is genic with the same scaled coefficient $\alpha$ in every deme, and that the migration graph is connected. Then the probability that the allele fixes is the panmictic formula for a population of $K$ times the reference size,
 
-$$u(\bar x) = \frac{1 - e^{-2\alpha K\bar x}}{1 - e^{-2\alpha K}}, \qquad \bar x = \sum_iw_ix_i,$$
+$$u(\bar x) = \begin{cases}\dfrac{1 - e^{-2\alpha K\bar x}}{1 - e^{-2\alpha K}}, & \alpha \ne 0,\\[1ex] \bar x, & \alpha = 0,\end{cases} \qquad \bar x = \sum_iw_ix_i,$$
 
 whatever the migration rates.
 
@@ -10,7 +10,7 @@ Proof. Let $H(x) = \sum_iw_ix_i(1 - x_i)$. Migration does not change $\bar x$, s
 
 $$Lf = f\Bigl(-2\alpha K\cdot\alpha H + \tfrac12(2\alpha K)^2\frac{H}{K}\Bigr) = 0,$$
 
-so $e^{-2\alpha K\bar x(t)}$ is a bounded martingale, and optional stopping at the absorption time gives $u$. The argument uses that the drift of $\bar x$ is a constant multiple of its quadratic-variation rate; this compatibility holds under the three assumptions above. Cherry and Wakeley (2003, abstract) find for Wright's island model with genic selection that the fixation probability is unaffected by subdivision, because the equivalent panmictic population has a larger effective size and a smaller effective selection coefficient with unchanged product; Whitlock (2003, abstract) notes that earlier results of this kind assume that every deme contributes to the next generation in exact proportion to its size and that alleles are additive.
+so for $\alpha \ne 0$, $e^{-2\alpha K\bar x(t)}$ is a bounded martingale, and optional stopping at the absorption time gives $u$. For $\alpha = 0$ the drift of $\bar x$ vanishes, so $\bar x(t)$ is itself a bounded martingale and optional stopping gives $u(\bar x) = \bar x$. The argument uses that the drift of $\bar x$ is a constant multiple of its quadratic-variation rate; this compatibility holds under the three assumptions above. Cherry and Wakeley (2003, abstract) find for Wright's island model with genic selection that the fixation probability is unaffected by subdivision, because the equivalent panmictic population has a larger effective size and a smaller effective selection coefficient with unchanged product; Whitlock (2003, abstract) notes that earlier results of this kind assume that every deme contributes to the next generation in exact proportion to its size and that alleles are additive.
 
 ## Depends on
 
@@ -22,7 +22,7 @@ so $e^{-2\alpha K\bar x(t)}$ is a bounded martingale, and optional stopping at t
 1. The structured diffusion with genic selection, conservative migration and local resampling.
 2. The drift $\alpha H$ and the quadratic-variation rate $H/K$ of $\bar x$ under census weights.
 3. The martingale $e^{-2\alpha K\bar x(t)}$ and the fixation probability by optional stopping.
-4. The neutral case $\alpha \to 0$, which recovers $u(\bar x) = \bar x$.
+4. The neutral case $\alpha = 0$, where $\bar x(t)$ is a martingale and $u(\bar x) = \bar x$, which is also the limit of the selected formula as $\alpha \to 0$.
 
 ## Sources
 
