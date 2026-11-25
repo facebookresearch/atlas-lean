@@ -1,6 +1,6 @@
 # Eisenberg–Gale convex program for linear Fisher markets
 
-A *linear Fisher market* has a set $B$ of buyers and a set $A$ of divisible goods, each available in one unit. Buyer $i$ has money $e_i > 0$ and linear utility $u_i(x) = \sum_j u_{ij} x_{ij}$, where $u_{ij} \ge 0$. Prices $p \ge 0$ and an allocation $x \ge 0$ with $\sum_i x_{ij} \le 1$ form a *market equilibrium* if:
+A *linear Fisher market* has a finite nonempty set $B$ of buyers and a finite nonempty set $A$ of divisible goods, each available in one unit. Buyer $i$ has money $e_i > 0$ and linear utility $u_i(x) = \sum_j u_{ij} x_{ij}$, where $u_{ij} \ge 0$. Prices $p \ge 0$ and an allocation $x \ge 0$ with $\sum_i x_{ij} \le 1$ form a *market equilibrium* if:
 1. every good with $p_j > 0$ is fully sold;
 2. each buyer receives only goods maximizing $u_{ij}/p_j$;
 3. each buyer spends all her money, $\sum_j p_j x_{ij} = e_i$.
@@ -16,7 +16,7 @@ $$
 2. Conversely, every equilibrium allocation is an optimal solution. Hence the set of equilibrium allocations is convex.
 3. Equilibrium utilities and equilibrium prices are unique.
 
-**Proof.** The program is feasible with finite optimum, because every buyer values some good. Its Karush–Kuhn–Tucker conditions read:
+**Proof.** The program is feasible with finite optimum, because every buyer values some good. Write it as minimizing the convex function $-\sum_i e_i \log u_i$ over the convex domain where every $u_i > 0$. The point $x_{ij} = 1/(2|B|)$ satisfies every constraint $\sum_i x_{ij} \le 1$ strictly and has $u_i > 0$ for every buyer, so Slater's condition holds and optimal Lagrange multipliers $p$ exist. At an optimum the Karush–Kuhn–Tucker conditions read:
 - $p_j \ge 0$, and $p_j > 0$ implies that good $j$ is fully sold;
 - $p_j \ge e_i u_{ij}/u_i$ for all $i, j$, with equality when $x_{ij} > 0$.
 
@@ -25,6 +25,11 @@ Equality gives $p_j x_{ij} = e_i u_{ij} x_{ij}/u_i$, and summing over $j$ gives 
 For part 2, an equilibrium $(p, x)$ satisfies these conditions, because all prices are positive and $u_i/e_i$ equals buyer $i$'s maximal bang per buck $\max_j u_{ij}/p_j$. The KKT conditions are sufficient for a concave program, so $x$ is optimal.
 
 For part 3, $\log$ is strictly concave, so all optimal solutions have the same utilities $u_i$. Every good is bought by some buyer, so the equality condition then determines $p_j$.
+
+## Proof depends on
+
+- [Slater's theorem, multiplier form](../../../Analysis/convex-analysis-and-variations/lagrange-duality/exists-multiplier-of-slater.md)
+- [Sufficiency of the KKT conditions for convex problems](../../../Analysis/convex-analysis-and-variations/lagrange-duality/kkt-sufficient.md)
 
 ## Sources
 

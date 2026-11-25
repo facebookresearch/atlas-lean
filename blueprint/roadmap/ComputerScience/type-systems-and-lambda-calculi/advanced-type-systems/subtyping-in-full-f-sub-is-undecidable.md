@@ -12,6 +12,7 @@ With the rowing machines, the encoding $F$ and the closed types $\sigma_w$ of
 ## Depends on
 
 - [Encoding two-counter machines in full F-sub subtyping](encoding-two-counter-machines-in-full-f-sub.md)
+- [Two-counter machines are universal](../../../TheoryOfComputation/equivalence-of-models/counter-machines/two-counter-machines-are-universal.md)
 
 ## Proof depends on
 
