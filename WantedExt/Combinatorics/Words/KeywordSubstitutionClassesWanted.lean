@@ -73,28 +73,6 @@ public theorem_wanted keywordEquiv_append_iff {m n n' : ℕ} (a : Fin (m + 1) �
     (KeywordEquiv a u v ↔ KeywordEquiv a (Fin.append u w) (Fin.append v w)) ∧
       (KeywordEquiv a u v ↔ KeywordEquiv a (Fin.append w u) (Fin.append w v))
 
-/-- **Parity of the smallest index in a non-commuting list.** Let $a$ be a binary keyword of
-length $m + 1$, let $n$ and $i$ be natural numbers with $i < n$, and for each index $k$ let
-$\varphi_k$ be the simple map of $a$ at letter $k$ on binary words of length $n$. Let
-$l = [j_1, \dots, j_r]$ be a list of indices that are all greater than $i$, and let
-$\varphi_l = \varphi_{j_r} \circ \dots \circ \varphi_{j_1}$ be the map that applies
-$\varphi_{j_1}$ first. Suppose that $\varphi_i \circ \varphi_l \ne \varphi_l \circ \varphi_i$
-as maps on words of length $n$, and that the list $[i, j_1, \dots, j_r, i]$, applied from left
-to right, acts completely on some word of length $n$ (each map in turn changes the word). Then
-every entry $j$ of $l$ with $j \le j'$ for all entries $j'$ of $l$ occurs an even number of
-times in $l$.
-
-Source: Erik Bates, Blan Morrison, Mason Rogers, Arianna Serafini and Anav Sood,
-*A New Combinatorial Interpretation of Partial Sums of m-Step Fibonacci Numbers*,
-Journal of Integer Sequences 28 (2025), Article 25.6.6, Lemma 8
-(`jis-2025-25.6.6-lem-8`). -/
-public theorem_wanted even_count_min_of_keywordActsCompletely {m n : ℕ}
-    (a : Fin (m + 1) → Bool) (i : ℕ) (hi : i < n) (l : List ℕ) (hl : ∀ j ∈ l, i < j)
-    (hcomm : (fun u : Fin n → Bool => keywordSimpleMap a i (keywordListApply a l u)) ≠
-      fun u => keywordListApply a l (keywordSimpleMap a i u))
-    (hacts : ∃ x : Fin n → Bool, KeywordActsCompletely a (i :: (l ++ [i])) x) :
-    ∀ j ∈ l, (∀ j' ∈ l, j ≤ j') → Even (l.count j)
-
 /-- **Keywords with equally many singleton classes.** Let $a$ and $b$ be binary keywords of
 length $m + 1$. The relations $\sim_a$ and $\sim_b$ have the same number of one-element
 equivalence classes on binary words of length $n$ for every $n \ge 0$ if and only if, for every

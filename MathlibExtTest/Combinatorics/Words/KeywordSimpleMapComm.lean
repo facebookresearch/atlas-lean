@@ -51,4 +51,16 @@ example {m n : ℕ} (a : Fin (m + 1) → Bool) (i : ℕ) (hm : 1 ≤ m) (hn : i 
   rw [Ne, keywordSimpleMap_comm_iff a i (i + m) (by omega) (by omega), hfirst, hlast]
   cases a 0 <;> cases a (Fin.last m) <;> simp
 
+-- With keyword 00, the first inner move flips letter 1, the move at 3 leaves it alone,
+-- and the second move at 1 restores it. The final outer move can then act.
+private abbrev pairKeyword := ![false, false]
+private abbrev parityWord := ![false, false, true, false, false]
+
+example : KeywordActsCompletely pairKeyword [0, 1, 3, 1, 0] parityWord := by
+  simp [KeywordActsCompletely, keywordSimpleMap, KeywordApplicable, Fin.forall_fin_succ, funext_iff]
+
+-- With only one move at 1, the last outer move is not applicable (its window reads 10).
+example : ¬ KeywordApplicable pairKeyword 0 (keywordListApply pairKeyword [0, 1, 3] parityWord) := by
+  simp [keywordListApply, keywordSimpleMap, KeywordApplicable, Fin.forall_fin_succ]
+
 end MetaMathlibExt.keywordSimpleMap_comm_iff
