@@ -25,6 +25,7 @@ Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path 
 - [Undirected Hamiltonian cycle](undirected-hamiltonian-cycle/README.md)
 - [Undirected Hamiltonian path](undirected-hamiltonian-path/README.md)
 - [Vertex-disjoint paths in digraphs](vertex-disjoint-paths-in-digraphs/README.md)
+- [Fixed-point-free graph involutions](fixed-point-free-graph-involutions/README.md)
 - [HAMILTONIAN PATH on k-regular graphs (fixed k ≥ 3) is NP-complete](hamiltonian-path-on-k-regular-graphs-fixed-k-3-i/README.md)
 - [NUMERICAL TAXONOMY is NP-complete](numerical-taxonomy-is-np-complete/README.md)
 - [ODD HOLE THROUGH A GIVEN VERTEX is NP-complete](odd-hole-through-a-given-vertex-is-np-complete/README.md)

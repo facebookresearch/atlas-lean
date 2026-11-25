@@ -14,3 +14,4 @@ Complexity-theoretic foundations of cryptography and derandomization: one-way fu
 - [Cryptography](../../ComputerScience/cryptography/README.md): the constructions built on these
   foundations: pseudorandom functions, semantically secure encryption (Goldwasser–Micali) and
   zero-knowledge proofs.
+- [Derandomization](derandomization/README.md)
