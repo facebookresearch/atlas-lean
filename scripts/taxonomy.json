@@ -12853,6 +12853,7 @@
   "MathlibExt/NumberTheory/NicolNumber": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Nicol numbers"},
   "MathlibExt/NumberTheory/NicomacheanAdjoinedProgression": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
   "MathlibExt/NumberTheory/NicomacheanTranslations": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
+  "MathlibExt/NumberTheory/NicomachusConvergents": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
   "MathlibExt/NumberTheory/NicomachusGeneralization": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
   "MathlibExt/NumberTheory/NielsenBound": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/NineRegularPartitionIteration": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Regular partitions and a generalized tau function"},
