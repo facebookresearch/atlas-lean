@@ -44,12 +44,7 @@ $m \equiv 1 \pmod 4$, then $f \equiv X^2 + X + (m - 1)/4 \pmod 2$, which is $X (
 irreducible $X^2 + X + 1$ when $m \equiv 5 \pmod 8$. These are the cases $\left(\frac{D}{2}\right) = 0$, $1$ and $-1$ of the
 Kronecker symbol at two, which is $0$ for even $D$, $1$ for $D \equiv \pm 1 \pmod 8$ and $-1$ for $D \equiv \pm 3 \pmod 8$.
 
-## Depends on
-
-- [Kronecker symbol](../../congruences/power-residues-reciprocity/kronecker-symbol-and-quadratic-characters/kronecker-sym.md)
-- [Absolute norm of an ideal](../../../RingTheory/dedekind-domains/ideal-absolute-norm.md), for the norms of the prime ideals
-
-## Proof depends on
+## Informally uses
 
 - [Integrality via the coefficients of the minimal polynomial](../../../FieldTheory/extensions-and-closure/minimal-polynomials-and-integrality/is-integral-iff-coeff-mem-range.md), for the ring of integers $\mathbb{Z}[\omega]$
 - [Conductor ideal of the whole algebra](../../../RingTheory/dedekind-domains/conductor-ideal/conductor-ideal-top.md), for the conductor of $\mathbb{Z}[\omega] = \mathcal{O}_K$, which makes the Kummer–Dedekind theorem apply to every $p$
