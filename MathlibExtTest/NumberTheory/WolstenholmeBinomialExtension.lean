@@ -41,3 +41,17 @@ example : Ring.choose (-2 : ℤ) 3 = -4 := by
   have h := (ringChoose_neg_mul_mul_eq 1 2 3 (by decide) (by decide)).1
   norm_num [Nat.choose] at h
   exact_mod_cast h
+
+open Polynomial
+
+-- At composite p, the two factors contribute 1 and 70 to the coefficient of X^4.
+example : (((X + 1 : ℕ[X]) ^ 8 * (X ^ 4 + 1)).coeff 4) = 71 := by
+  have h := coeff_add_one_pow_mul_X_pow_add_one_pow 4 3 2 1 (by decide)
+  norm_num [Finset.sum_range_succ, Nat.choose] at h
+  exact h
+
+-- With n < j, the second factor has exponent zero, also when p = 1.
+example : ((X + 1 : ℕ[X]) ^ 2).coeff 1 = 2 := by
+  have h := coeff_add_one_pow_mul_X_pow_add_one_pow 1 1 2 1 (by decide)
+  norm_num [Finset.sum_range_succ, Nat.choose] at h
+  exact h

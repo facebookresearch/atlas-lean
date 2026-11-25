@@ -171,6 +171,22 @@ example : (idealPeriodWord 6).drop ((idealPeriodWord 6).length - 3) =
     [[2, 1, 1], [2, 2], [2, 2]] := by
   decide
 
+-- The formula starts at the first word. At index zero the placeholder word is empty.
+example : (idealPeriodWord 1).flatten.length = 5 := by
+  have h := idealPeriodWord_flatten_length (n := 1) (by decide)
+  norm_num at h
+  exact_mod_cast h
+
+example : ((idealPeriodWord 0).flatten.length : ℤ) ≠ 2 ^ (0 + 1 : ℕ) - (-1) ^ (0 : ℕ) := by
+  decide
+
+-- Across two consecutive indices the parity corrections cancel.
+example {n : ℕ} (hn : 1 ≤ n) :
+    ((idealPeriodWord n).flatten.length : ℤ) + (idealPeriodWord (n + 1)).flatten.length =
+      3 * 2 ^ (n + 1) := by
+  rw [idealPeriodWord_flatten_length hn, idealPeriodWord_flatten_length (by omega)]
+  ring
+
 -- Test section: block counts computed directly from the recursion, beyond the explicit words.
 -- `d_6` has `2^5 = 32` blocks `2, 2` and `(2^6 - 1)/3 = 21` blocks `2, 1, 1`; `d_7` has `64` and
 -- `(2^7 + 1)/3 = 43`.

@@ -77,7 +77,7 @@ theorem_wanted chevalley
     (C : CycleMap D P) (T : CharacteristicClassTheory D P)
     (_samePurity : ∀ (X : ComplexScheme) [IsComplexVariety X] (d : ℕ)
       [SmoothOfRelativeDimension d X.hom] [IsProper X.hom]
-      (hX : DeCataldoMiglioriniDecompositionWanted.IsProjectiveOverC X),
+      (hX : ProjectiveSpace.IsProjective X),
       C.purity X d hX = T.family.iso X d)
     {n : ℕ} (F : FlagSchemeModel n (fullShape n))
     (S : ∀ w : Equiv.Perm (Fin n), SchubertIdealModel F w false)

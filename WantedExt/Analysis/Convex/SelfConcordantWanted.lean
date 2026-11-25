@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Analysis.Convex.DikinEllipsoid
 public import MathlibExt.Analysis.Convex.SelfConcordant
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 
@@ -27,14 +28,7 @@ open MathlibExt.Analysis.Convex.SelfConcordant
 
 namespace WantedExt.Analysis.Convex.SelfConcordantWanted
 
-/-- **The open unit Dikin ellipsoid lies in the domain.** If `F` is self-concordant on `Q` and
-`x ∈ Q`, then every `y` with `|y - x|_x < 1`, i.e. `D²F(x)[y - x, y - x] < 1`, lies in `Q`.
-This is item I of Section 2.2 of A. Nemirovski, *Interior Point Polynomial Time Methods in Convex
-Programming*, lecture notes (2004) ("the open unit Dikin ellipsoid `W₁(x)` is contained in
-`Q`"). -/
-theorem_wanted mem_of_dikin_lt_one {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] {F : E → ℝ} {Q : Set E} (hF : IsSelfConcordant F Q) {x y : E}
-    (hx : x ∈ Q) (hy : iteratedDeriv 2 (fun t : ℝ => F (x + t • (y - x))) 0 < 1) : y ∈ Q
+export MathlibExt.Analysis.Convex.SelfConcordant (mem_of_dikin_lt_one)
 
 /-- **Bounds on a self-concordant function in the Dikin ellipsoid.** If `F` is self-concordant on
 `Q`, `x ∈ Q` and `r = |h|_x < 1`, then with `ρ(s) = -log (1 - s) - s`,
