@@ -233,7 +233,7 @@ theorem reindexedDiagCommutatorUnit_mem (k : ℕ) (R : Type*) [Ring R]
 theorem coe_reindexedDiagCommutatorUnit (k : ℕ) (R : Type*) [Ring R]
     (g h : GL (Fin k) R) :
     (↑(reindexedDiagCommutatorUnit k R g h) : Matrix (Fin (k + k)) (Fin (k + k)) R) =
-      reindex (finSumFinEquiv (m := k) (n := k)) (finSumFinEquiv (m := k) (n := k))
+      Matrix.reindex (finSumFinEquiv (m := k) (n := k)) (finSumFinEquiv (m := k) (n := k))
         (fromBlocks (↑(⁅g, h⁆ : GL (Fin k) R) : Matrix (Fin k) (Fin k) R) 0 0 1) := by
   simp only [reindexedDiagCommutatorUnit, coe_reindexMulEquiv, coe_blockDiagonalOne]
 
