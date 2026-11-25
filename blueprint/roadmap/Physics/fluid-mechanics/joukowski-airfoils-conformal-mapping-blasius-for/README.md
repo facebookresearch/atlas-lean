@@ -1,4 +1,4 @@
-# Ideal flow past airfoils: Joukowski map, Blasius force and lift
+# Joukowski airfoils: conformal mapping, Blasius force and lift
 
 ## The Joukowski map, its far-field branch and the Kutta circulation
 

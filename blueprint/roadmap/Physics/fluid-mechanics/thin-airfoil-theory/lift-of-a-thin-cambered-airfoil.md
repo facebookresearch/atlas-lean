@@ -9,6 +9,10 @@ $$c_l = 2\pi(\alpha - \alpha_{L=0}), \qquad \alpha_{L=0} = -\frac1\pi\int_0^\pi 
 
 In particular the lift slope is $2\pi$ per radian and a symmetric airfoil has $\alpha_{L=0} = 0$.
 
+## Proof depends on
+
+- [Blasius force iρUΓ e^(−iα) from a far-field expansion of the velocity](../joukowski-airfoils-conformal-mapping-blasius-for/blasius-force-eq.md)
+
 ## Expansion
 
 A good expansion states the linearized boundary problem, solves the integral equation for the vortex strength in its Fourier

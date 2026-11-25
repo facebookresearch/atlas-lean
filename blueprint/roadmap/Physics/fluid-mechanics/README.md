@@ -11,7 +11,7 @@ Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, B
 - [Friction losses in pipes and ducts](friction-losses-in-pipes-and-ducts/README.md)
 - [Greenshields fundamental diagram](greenshields-fundamental-diagram/README.md)
 - [Hydrostatic pressure in a fluid column](hydrostatic-pressure-in-a-fluid-column/README.md)
-- [Ideal flow past airfoils: Joukowski map, Blasius force and lift](ideal-flow-past-airfoils-joukowski-map-blasius-f/README.md)
+- [Joukowski airfoils: conformal mapping, Blasius force and lift](joukowski-airfoils-conformal-mapping-blasius-for/README.md)
 - [Laminar boundary layers](laminar-boundary-layers/README.md)
 - [Oblique shock waves](oblique-shock-waves/README.md)
 - [Pipe-flow networks](pipe-flow-networks/README.md)

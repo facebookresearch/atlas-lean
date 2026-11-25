@@ -17037,7 +17037,7 @@
   "PhyslibExt/FluidDynamics/EnsembleMomentum": {"to": "Physics/fluid-mechanics", "title": "Reynolds stresses and the mean momentum equation"},
   "PhyslibExt/FluidDynamics/Hydraulics/PipeNetwork": {"to": "Physics/fluid-mechanics", "title": "Pipe-flow networks"},
   "PhyslibExt/FluidDynamics/Hydraulics/WaterHammer": {"to": "Physics/fluid-mechanics", "title": "Water hammer"},
-  "PhyslibExt/FluidDynamics/IdealAirfoilModels": {"to": "Physics/fluid-mechanics", "title": "Ideal flow past airfoils: Joukowski map, Blasius force and lift"},
+  "PhyslibExt/FluidDynamics/IdealAirfoilModels": {"to": "Physics/fluid-mechanics", "title": "Joukowski airfoils: conformal mapping, Blasius force and lift"},
   "PhyslibExt/FluidDynamics/LaminarFlowPorts": {"to": "Physics/fluid-mechanics", "title": "Bernoulli flows and laminar Couette and Poiseuille flows"},
   "PhyslibExt/FluidDynamics/PerfectGasPorts": {"to": "Physics/fluid-mechanics", "title": "Compressible flow of a perfect gas"},
   "PhyslibExt/FluidDynamics/PipeFrictionPorts": {"to": "Physics/fluid-mechanics", "title": "Friction losses in pipes and ducts"},
