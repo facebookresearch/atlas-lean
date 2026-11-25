@@ -698,6 +698,61 @@ grep -qx 'scripts/list_v2_modules.sh "$modules" "${libraries\[@\]}" || {' \
 grep -qx '  run_check "declaration collisions" scripts/check_declaration_collisions.sh' \
   "$REPO_ROOT/scripts/check.sh" || fail "build checks do not run the collision check"
 
+# Build checks run diagnostics, then collisions, then the compiled audit, which takes
+# longer than the collision check. By default every check runs and every failure is
+# reported; with ATLAS_CHECK_FAIL_FAST=1, which CI sets for merge groups only, check.sh
+# stops at the first failing check.
+ORDER="$TMP_ROOT/build-order"
+rm -rf "$ORDER" && mkdir -p "$ORDER/scripts"
+cp "$REPO_ROOT/scripts/check.sh" "$ORDER/scripts/"
+for check in check_diagnostics check_declaration_collisions check_axioms; do
+  printf '#!/usr/bin/env bash\necho %s >>"$CHECK_LOG"\nexit "${FAIL_%s:-0}"\n' "$check" "$check" \
+    >"$ORDER/scripts/$check.sh"
+  chmod +x "$ORDER/scripts/$check.sh"
+done
+run_build_checks() {
+  : >"$TMP_ROOT/check-calls"
+  env -u ATLAS_CHECK_FAIL_FAST -u FAIL_check_diagnostics -u FAIL_check_declaration_collisions \
+    -u FAIL_check_axioms CHECK_LOG="$TMP_ROOT/check-calls" "$@" "$ORDER/scripts/check.sh" build \
+    >"$TMP_ROOT/output.log" 2>&1
+}
+expect_calls() {
+  printf '%s\n' "$@" | diff -u - "$TMP_ROOT/check-calls" >&2 ||
+    fail "build checks ran the wrong checks or in the wrong order"
+}
+run_build_checks || { cat "$TMP_ROOT/output.log" >&2; fail "build checks failed when every check passed"; }
+expect_calls check_diagnostics check_declaration_collisions check_axioms
+for failing in check_diagnostics check_declaration_collisions check_axioms; do
+  for mode in "" ATLAS_CHECK_FAIL_FAST=0; do
+    if run_build_checks ${mode:+"$mode"} "FAIL_$failing=1"; then
+      fail "build checks passed when $failing failed"
+    fi
+    expect_calls check_diagnostics check_declaration_collisions check_axioms
+  done
+done
+if run_build_checks ATLAS_CHECK_FAIL_FAST=1 FAIL_check_diagnostics=1; then
+  fail "fail-fast build checks passed when the diagnostics failed"
+fi
+expect_calls check_diagnostics
+if run_build_checks ATLAS_CHECK_FAIL_FAST=1 FAIL_check_declaration_collisions=1; then
+  fail "fail-fast build checks passed when the collision check failed"
+fi
+expect_calls check_diagnostics check_declaration_collisions
+grep -q 'Stopped at the first failing check, declaration collisions' "$TMP_ROOT/output.log" ||
+  fail "fail-fast build checks did not name the check they stopped at"
+run_build_checks ATLAS_CHECK_FAIL_FAST=1 ||
+  { cat "$TMP_ROOT/output.log" >&2; fail "fail-fast build checks failed when every check passed"; }
+expect_calls check_diagnostics check_declaration_collisions check_axioms
+for value in true ""; do
+  fail_fast_status=0
+  run_build_checks "ATLAS_CHECK_FAIL_FAST=$value" || fail_fast_status=$?
+  [[ "$fail_fast_status" -eq 2 && ! -s "$TMP_ROOT/check-calls" ]] ||
+    fail "build checks accepted ATLAS_CHECK_FAIL_FAST='$value'"
+done
+grep -A2 -x '      - name: Build extension libraries' "$REPO_ROOT/.github/workflows/ci.yml" |
+  grep -qxF "          ATLAS_CHECK_FAIL_FAST: \${{ github.event_name == 'merge_group' && '1' || '0' }}" ||
+  fail "CI does not stop a merge group's build checks at the first failure"
+
 if grep -q 'github\.event\.pull_request\.draft' \
   "$REPO_ROOT/.github/workflows/ci.yml"; then
   fail "CI build excludes draft pull requests"
@@ -755,5 +810,6 @@ python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_bump_cache_workflow
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_next_task.py -v
 python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
 python3 "$REPO_ROOT/scripts/bump/test_bump_branch.py"
+python3 -m unittest discover -s "$REPO_ROOT/scripts/queue" -p 'test_*.py' -v
 
 echo "ok [scripts]: repository policy regression tests passed."

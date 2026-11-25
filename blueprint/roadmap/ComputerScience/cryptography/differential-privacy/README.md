@@ -42,3 +42,8 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [Total variation distance](../../../Probability/convergence-of-measures/total-variation-distance/README.md): for a symmetric neighbouring relation and probability measures, $(0, \delta)$-differential privacy says exactly that the output laws on neighbouring databases are at total variation distance at most $\delta$ (Dwork and Roth 2014, Section 3.5.1, statistical distance).
 - [Data-processing inequality](../../../InformationTheory/information-inequalities/data-processing-inequality/README.md): the information-theoretic counterpart of post-processing; processing an output cannot make two inputs easier to distinguish.
 - [Generalization bounds and concentration](../../machine-learning/generalization-bounds-and-concentration/README.md): differential privacy of an adaptive analyst gives generalization for adaptively chosen queries (Dwork, Feldman, Hardt, Pitassi, Reingold and Roth 2015), where union bounds over a fixed class do not apply.
+- [Blatant non-privacy and distortion of subset-sum mechanisms](blatant-non-privacy-and-distortion-of-subset.md)
+- [Dinur–Nissim reconstruction attack](dinurnissim-reconstruction-attack.md)
+- [Packing lower bound for pure differential privacy](packing-lower-bound-for-pure-differential.md)
+- [Rényi differential privacy of the Gaussian mechanism](renyi-differential-privacy-of-the-gaussian.md)
+- [Fingerprinting codes](fingerprinting-codes.md)

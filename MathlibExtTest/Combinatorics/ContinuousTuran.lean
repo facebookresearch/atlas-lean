@@ -46,6 +46,28 @@ example (P : Set (ℝ × ℝ)) {m : ℝ} (hm : m ≤ 0) : opx m P = 0 := by
 
 end MetaMathlibExt.opx_mono_left
 
+namespace MetaMathlibExt.osat_singleton_and_opx_singleton
+
+-- The point can lie outside the square.
+example : osat 1 {(2, 3)} = 0 ∧ opx 1 {(2, 3)} = 0 :=
+  osat_singleton_and_opx_singleton 1 (2, 3)
+
+-- Even in an empty ambient square, the empty set witnesses saturation for a singleton.
+example (p : ℝ × ℝ) : IsOpxSaturating (-1) {p} ∅ := by
+  refine ⟨isOpen_empty, empty_subset _, ?_, ?_⟩
+  · rintro ⟨_, _, _, _, h⟩
+    exact h p (mem_singleton p)
+  · intro S _ hS hne
+    obtain ⟨q, hq⟩ := empty_ssubset.mp hne
+    have := (hS hq).1.1.trans (hS hq).1.2
+    norm_num at this
+
+-- The empty pattern has no saturating set and uses the empty-infimum convention.
+example (n : ℝ) : osat n ∅ = 0 := by
+  simp [osat, IsOpxSaturating, pointSetContainsPattern_empty]
+
+end MetaMathlibExt.osat_singleton_and_opx_singleton
+
 namespace MetaMathlibExt.opxD_add_lt
 
 -- At the first admissible dimension the coefficient is 8 for n = 2 and ε = 1.
@@ -90,6 +112,25 @@ example : opxD 1 3 {0, fun _ => 4} = opxD 1 2 {0, fun _ => 4} + 1 := by
   norm_num
 
 end MetaMathlibExt.opxD_add_lt
+
+namespace MetaMathlibExt.opxD_mono_of_containsPatternD
+
+-- Doubling the gap from four to eight preserves the lower bound from the open interval (0, 2).
+example : 2 ≤ opxD 1 2 {0, fun _ => 8} := by
+  refine (opxD_add_lt.opxD_interval (r := 2) (by norm_num) (by norm_num)).ge.trans ?_
+  apply opxD_mono_of_containsPatternD
+  refine ⟨fun _ x => 2 * x, ?_, ?_⟩
+  · intro i p hp q hq hlt
+    linarith
+  · rintro p (rfl | rfl)
+    · left
+      funext i
+      norm_num
+    · right
+      funext i
+      norm_num
+
+end MetaMathlibExt.opxD_mono_of_containsPatternD
 
 namespace MetaMathlibExt.opxD_plus_stack_isTheta
 

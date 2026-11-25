@@ -34,4 +34,21 @@ example : (∑ k ∈ Finset.range (2 + 1), (trinomialCoefficient 2 k : ℤ) * (2
   norm_num [Polynomial.coeff_add, Polynomial.coeff_one, Polynomial.coeff_X,
     Polynomial.coeff_X_pow]
 
+-- The alternating transform includes both endpoints, and the zero row is allowed.
+example : (∑ k ∈ Finset.Icc 0 (2 * 0), (trinomialCoefficient 0 k : ℤ) * k.choose 0 *
+    (-1) ^ k) = 1 := by
+  rw [sum_trinomialCoefficient_mul_choose_alternating]
+  norm_num [trinomialCoefficient_zero_zero]
+
+-- Here the two signed terms are -1 and 2.
+example : (∑ k ∈ Finset.Icc 1 (2 * 1), (trinomialCoefficient 1 k : ℤ) * k.choose 1 *
+    (-1) ^ k) = 1 := by
+  rw [sum_trinomialCoefficient_mul_choose_alternating]
+  norm_num [trinomialCoefficient_one_one]
+
+-- The conclusion still holds above the last column, where the sum is empty.
+example : (trinomialCoefficient 1 3 : ℤ) = 0 := by
+  rw [← sum_trinomialCoefficient_mul_choose_alternating]
+  simp
+
 end MetaMathlibExt

@@ -55,7 +55,7 @@ structure Contraction {k : Type u} [Field k]
   [integral : IsIntegral target.left]
   [properTarget : IsProper target.hom]
   normal : IsNormalIntegral target.left
-  projectiveTarget : IsProjectiveVariety target
+  projectiveTarget : ProjectiveSpace.IsProjective target
   map : X ⟶ target
   [proper : IsProper map.left]
   [connected : GeometricallyConnected map.left]
@@ -134,7 +134,7 @@ structure Flip {k : Type u} [Field k]
   [properSource : IsProper source.hom]
   [noetherianSource : IsNoetherian source.left]
   normal : IsNormalIntegral source.left
-  projectiveSource : IsProjectiveVariety source
+  projectiveSource : ProjectiveSpace.IsProjective source
   map : source ⟶ C.target
   [proper : IsProper map.left]
   unit : IsIso (structureUnit map.left)

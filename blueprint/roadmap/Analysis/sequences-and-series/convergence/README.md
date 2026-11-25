@@ -9,6 +9,7 @@ Convergence tests (root test, rearrangement theorem, Stolz–Cesàro), normal an
 - [Riemann rearrangement theorem](riemann-rearrangement-theorem/README.md)
 - [Root test](root-test/README.md)
 - [Convergence of an alternating weighted series in the plane](exists-tendsto-sum-inv-sq-smul-alternati.md)
+- [Kronecker's lemma](tendsto-sum-range-mul-div-of-tendsto.md)
 - [Monotone functions on a closed interval with a continuous pointwise limit converge uniformly](monotone-and-tendsto-uniformly-of-monoto.md)
 - [Power series agreeing at $1/2, 1/3, 1/4, \dots$ have equal coefficients](coeff-eq-of-tsum-eq-on-inv-nat-add-two.md)
 - [Stolz–Cesàro theorem](stolz-cesaro.md)

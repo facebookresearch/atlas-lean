@@ -1,0 +1,278 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Grading
+public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.ZeroAtInftyFlip
+public import MathlibExt.Analysis.CStarAlgebra.ContinuousMap.ZeroAtInftyOpen
+
+import Mathlib.Tactic.FinCases
+
+/-!
+# Coefficientwise gradings of zero-at-infinity functions
+
+The grading is computed on Mathlib's existing `C₀(X, A)` carrier by
+postcomposing with the coefficient grading generator. Its norm, completeness,
+star and scalar actions remain the stock structures. The domain is an arbitrary
+topological space: no local compactness, separation or nonemptiness is needed.
+
+Evaluation, coefficient postcomposition and cocompact precomposition retain
+their existing nonunital star-algebra homomorphisms. No ambient grading instance
+or source-specific cone carrier is introduced.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+
+noncomputable section
+
+open scoped CStarAlgebra ZeroAtInfty
+
+namespace CStarGrading
+
+universe uX uY uZ uA uB uC
+
+section Grading
+
+variable (X : Type uX) [TopologicalSpace X]
+variable {A : Type uA} [NonUnitalCStarAlgebra A] (γ : CStarGrading A)
+
+/-- The coefficientwise grading on the existing zero-at-infinity algebra. -/
+def zeroAtInfty : CStarGrading C₀(X, A) :=
+  ofInvolution
+    (ZeroAtInftyContinuousMap.postcompStarAlgEquiv X γ.generatorAut)
+    (by
+      intro f
+      apply ZeroAtInftyContinuousMap.ext
+      intro x
+      change γ.generatorAut (γ.generatorAut (f x)) = f x
+      exact γ.generator_involutive (f x))
+
+/-- The computed generator is the existing coefficient postcomposition map. -/
+@[simp]
+theorem zeroAtInfty_generatorAut :
+    (zeroAtInfty X γ).generatorAut =
+      ZeroAtInftyContinuousMap.postcompStarAlgEquiv X γ.generatorAut :=
+  ofInvolution_generatorAut _ _
+
+/-- The generator acts pointwise by the coefficient generator. -/
+@[simp]
+theorem zeroAtInfty_generator_apply (f : C₀(X, A)) (x : X) :
+    (zeroAtInfty X γ).generatorAut f x = γ.generatorAut (f x) := by
+  rw [zeroAtInfty_generatorAut]
+  rfl
+
+/-- Every degree of the action, not only its generator, acts pointwise. -/
+theorem zeroAtInfty_aut_apply (n : ZMod 2) (f : C₀(X, A)) (x : X) :
+    PointNormCStarAddAction.aut (zeroAtInfty X γ) n f x =
+      PointNormCStarAddAction.aut γ n (f x) := by
+  fin_cases n
+  · change (zeroAtInfty X γ) (0 : ZMod 2) f x = γ (0 : ZMod 2) (f x)
+    simp only [PointNormCStarAddAction.apply_zero]
+  · change (zeroAtInfty X γ).generatorAut f x = γ.generatorAut (f x)
+    exact zeroAtInfty_generator_apply X γ f x
+
+/-- A function has degree `n` exactly when every value has degree `n`. -/
+theorem mem_zeroAtInfty_part_iff (n : ZMod 2) (f : C₀(X, A)) :
+    f ∈ (zeroAtInfty X γ).part n ↔ ∀ x, f x ∈ γ.part n := by
+  rw [(zeroAtInfty X γ).mem_part_iff_generator]
+  constructor
+  · intro h x
+    apply (γ.mem_part_iff_generator n (f x)).2
+    have hx := congrArg (fun g : C₀(X, A) => g x) h
+    simpa only [zeroAtInfty_generator_apply,
+      ZeroAtInftyContinuousMap.smul_apply] using hx
+  · intro h
+    apply ZeroAtInftyContinuousMap.ext
+    intro x
+    have hx := (γ.mem_part_iff_generator n (f x)).1 (h x)
+    simpa only [zeroAtInfty_generator_apply,
+      ZeroAtInftyContinuousMap.smul_apply] using hx
+
+/-- The even projection is pointwise coefficient projection. -/
+@[simp]
+theorem zeroAtInfty_evenProjection_apply (f : C₀(X, A)) (x : X) :
+    (zeroAtInfty X γ).evenProjection f x = γ.evenProjection (f x) := by
+  simp only [evenProjection_apply, ZeroAtInftyContinuousMap.smul_apply,
+    ZeroAtInftyContinuousMap.add_apply, zeroAtInfty_generator_apply]
+
+/-- The odd projection is pointwise coefficient projection. -/
+@[simp]
+theorem zeroAtInfty_oddProjection_apply (f : C₀(X, A)) (x : X) :
+    (zeroAtInfty X γ).oddProjection f x = γ.oddProjection (f x) := by
+  simp only [oddProjection_apply, ZeroAtInftyContinuousMap.smul_apply,
+    ZeroAtInftyContinuousMap.sub_apply, zeroAtInfty_generator_apply]
+
+/-- Evaluation at any point is graded for the computed coefficient grading. -/
+def zeroAtInftyEval (x : X) : Hom (zeroAtInfty X γ) γ where
+  toNonUnitalStarAlgHom := ZeroAtInftyContinuousMap.evalAt x
+  equivariant' := by
+    intro n f
+    change PointNormCStarAddAction.aut (zeroAtInfty X γ) n.toAdd f x =
+      PointNormCStarAddAction.aut γ n.toAdd (f x)
+    exact zeroAtInfty_aut_apply X γ n.toAdd f x
+
+/-- Graded evaluation has the original point value. -/
+@[simp]
+theorem zeroAtInftyEval_apply (x : X) (f : C₀(X, A)) :
+    zeroAtInftyEval X γ x f = f x := rfl
+
+/-- Graded evaluation keeps the existing ungraded homomorphism. -/
+@[simp]
+theorem zeroAtInftyEval_toNonUnitalStarAlgHom (x : X) :
+    (zeroAtInftyEval X γ x).toNonUnitalStarAlgHom =
+      ZeroAtInftyContinuousMap.evalAt x := rfl
+
+end Grading
+
+section Postcomposition
+
+variable (X : Type uX) [TopologicalSpace X]
+variable {A : Type uA} {B : Type uB} {C : Type uC}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+  [NonUnitalCStarAlgebra C]
+variable {γA : CStarGrading A} {γB : CStarGrading B} {γC : CStarGrading C}
+
+/-- Coefficient postcomposition by a genuine graded homomorphism. -/
+def zeroAtInftyPostcomp (φ : Hom γA γB) :
+    Hom (zeroAtInfty X γA) (zeroAtInfty X γB) where
+  toNonUnitalStarAlgHom :=
+    ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp φ.toNonUnitalStarAlgHom
+  equivariant' := by
+    intro n f
+    apply ZeroAtInftyContinuousMap.ext
+    intro x
+    change φ (PointNormCStarAddAction.aut (zeroAtInfty X γA) n.toAdd f x) =
+      PointNormCStarAddAction.aut (zeroAtInfty X γB) n.toAdd
+        (ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp
+          φ.toNonUnitalStarAlgHom f) x
+    rw [zeroAtInfty_aut_apply, zeroAtInfty_aut_apply]
+    exact Hom.equivariant φ n.toAdd (f x)
+
+/-- Graded coefficient postcomposition has the same pointwise value. -/
+@[simp]
+theorem zeroAtInftyPostcomp_apply (φ : Hom γA γB) (f : C₀(X, A)) (x : X) :
+    zeroAtInftyPostcomp X φ f x = φ (f x) := rfl
+
+/-- Its underlying map is exactly the existing coefficient homomorphism. -/
+@[simp]
+theorem zeroAtInftyPostcomp_toNonUnitalStarAlgHom (φ : Hom γA γB) :
+    (zeroAtInftyPostcomp X φ).toNonUnitalStarAlgHom =
+      ZeroAtInftyContinuousMap.nonUnitalStarAlgHom_postcomp
+        φ.toNonUnitalStarAlgHom := rfl
+
+/-- Coefficient postcomposition preserves the graded identity. -/
+@[simp]
+theorem zeroAtInftyPostcomp_id (γ : CStarGrading A) :
+    zeroAtInftyPostcomp X (Hom.id γ) = Hom.id (zeroAtInfty X γ) := by
+  apply PointNormCStarAction.Hom.ext
+  intro f
+  apply ZeroAtInftyContinuousMap.ext
+  intro x
+  rfl
+
+/-- Coefficient postcomposition preserves graded composition. -/
+theorem zeroAtInftyPostcomp_comp (ψ : Hom γB γC) (φ : Hom γA γB) :
+    zeroAtInftyPostcomp X (Hom.comp ψ φ) =
+      Hom.comp (zeroAtInftyPostcomp X ψ) (zeroAtInftyPostcomp X φ) := by
+  apply PointNormCStarAction.Hom.ext
+  intro f
+  apply ZeroAtInftyContinuousMap.ext
+  intro x
+  rfl
+
+/-- Graded evaluation is natural under coefficient postcomposition. -/
+theorem zeroAtInftyEval_postcomp (φ : Hom γA γB) (x : X) :
+    Hom.comp (zeroAtInftyEval X γB x) (zeroAtInftyPostcomp X φ) =
+      Hom.comp φ (zeroAtInftyEval X γA x) := by
+  apply PointNormCStarAction.Hom.ext
+  intro f
+  rfl
+
+end Postcomposition
+
+section Precomposition
+
+variable {X : Type uX} {Y : Type uY} {Z : Type uZ}
+variable [TopologicalSpace X] [TopologicalSpace Y] [TopologicalSpace Z]
+variable {A : Type uA} [NonUnitalCStarAlgebra A]
+variable (γ : CStarGrading A)
+
+/-- Cocompact precomposition is a genuine contravariant graded homomorphism. -/
+def zeroAtInftyPrecomp (g : CocompactMap X Y) :
+    Hom (zeroAtInfty Y γ) (zeroAtInfty X γ) where
+  toNonUnitalStarAlgHom := ZeroAtInftyContinuousMap.compNonUnitalStarAlgHom g
+  equivariant' := by
+    intro n f
+    apply ZeroAtInftyContinuousMap.ext
+    intro x
+    change PointNormCStarAddAction.aut (zeroAtInfty Y γ) n.toAdd f (g x) =
+      PointNormCStarAddAction.aut (zeroAtInfty X γ) n.toAdd
+        (ZeroAtInftyContinuousMap.compNonUnitalStarAlgHom g f) x
+    rw [zeroAtInfty_aut_apply, zeroAtInfty_aut_apply]
+    rfl
+
+/-- Graded precomposition has the same pointwise domain substitution. -/
+@[simp]
+theorem zeroAtInftyPrecomp_apply (g : CocompactMap X Y) (f : C₀(Y, A)) (x : X) :
+    zeroAtInftyPrecomp γ g f x = f (g x) := rfl
+
+/-- Its underlying homomorphism is exactly the existing cocompact map. -/
+@[simp]
+theorem zeroAtInftyPrecomp_toNonUnitalStarAlgHom (g : CocompactMap X Y) :
+    (zeroAtInftyPrecomp γ g).toNonUnitalStarAlgHom =
+      ZeroAtInftyContinuousMap.compNonUnitalStarAlgHom g := rfl
+
+/-- Cocompact precomposition preserves the graded identity. -/
+@[simp]
+theorem zeroAtInftyPrecomp_id :
+    zeroAtInftyPrecomp γ (CocompactMap.id X) = Hom.id (zeroAtInfty X γ) := by
+  apply PointNormCStarAction.Hom.ext
+  intro f
+  apply ZeroAtInftyContinuousMap.ext
+  intro x
+  rfl
+
+/-- Domain composition is contravariant, with the actual map order. -/
+theorem zeroAtInftyPrecomp_comp (g : CocompactMap Y Z) (h : CocompactMap X Y) :
+    zeroAtInftyPrecomp γ (g.comp h) =
+      Hom.comp (zeroAtInftyPrecomp γ h) (zeroAtInftyPrecomp γ g) := by
+  apply PointNormCStarAction.Hom.ext
+  intro f
+  apply ZeroAtInftyContinuousMap.ext
+  intro x
+  rfl
+
+/-- Graded evaluation is natural under cocompact domain substitution. -/
+theorem zeroAtInftyEval_precomp (g : CocompactMap X Y) (x : X) :
+    Hom.comp (zeroAtInftyEval X γ x) (zeroAtInftyPrecomp γ g) =
+      zeroAtInftyEval Y γ (g x) := by
+  apply PointNormCStarAction.Hom.ext
+  intro f
+  rfl
+
+end Precomposition
+
+section Interchange
+
+variable {X : Type uX} {Y : Type uY}
+variable [TopologicalSpace X] [TopologicalSpace Y]
+variable {A : Type uA} {B : Type uB}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+variable {γA : CStarGrading A} {γB : CStarGrading B}
+
+/-- Coefficient postcomposition and cocompact precomposition commute. -/
+theorem zeroAtInftyPostcomp_precomp (φ : Hom γA γB) (g : CocompactMap X Y) :
+    Hom.comp (zeroAtInftyPostcomp X φ) (zeroAtInftyPrecomp γA g) =
+      Hom.comp (zeroAtInftyPrecomp γB g) (zeroAtInftyPostcomp Y φ) := by
+  apply PointNormCStarAction.Hom.ext
+  intro f
+  apply ZeroAtInftyContinuousMap.ext
+  intro x
+  rfl
+
+end Interchange
+
+end CStarGrading

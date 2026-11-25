@@ -11,3 +11,4 @@ Fourier analysis on finite abelian groups and the Boolean cube: DFT and FFT, Pla
 - [Young's convolution inequality on finite groups](young-s-convolution-inequality-on-finite-groups/README.md)
 - [Convolution theorem for the discrete Fourier transform](inv-dft-mul-dft.md)
 - [Spectral structure of Boolean functions](spectral-structure-of-boolean-functions/README.md)
+- [Structure factors of finite crystals](structure-factors-of-finite-crystals/README.md)

@@ -8,3 +8,8 @@
 
 - [Arrow colim preserves Pullbacks](arrow-colim-preserves-pullbacks.md)
 - [Filtered colim preserves Pullbacks of presheaf equivalence](filtered-colim-preserves-pullbacks-of-pr.md)
+
+## Colimits of accessible functors
+
+- [Is Cardinal Accessible colimit](is-cardinal-accessible-colimit.md)
+- [Is Cardinal Accessible of is Colimit](is-cardinal-accessible-of-is-colimit.md)
