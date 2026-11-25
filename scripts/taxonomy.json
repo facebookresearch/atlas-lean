@@ -11527,6 +11527,7 @@
   "MathlibExt/Combinatorics/SimpleGraph/Lattice/WindingColoring": {"to": "GraphTheory/planar-graphs-and-minors", "title": "Whitney's cut–cycle duality on the square lattice"},
   "MathlibExt/Combinatorics/SimpleGraph/LineGraph": {"to": "GraphTheory/graph-families-and-operations", "title": "Line graphs"},
   "MathlibExt/Combinatorics/SimpleGraph/ListColoring": {"to": "GraphTheory/graph-coloring", "title": "List coloring"},
+  "MathlibExt/Combinatorics/SimpleGraph/LocalClusteringCoefficient": {"to": "GraphTheory/social-networks", "title": "Social and complex networks"},
   "MathlibExt/Combinatorics/SimpleGraph/LongestCycle": {"to": "GraphTheory/paths-cycles-connectivity", "title": "Cycle lengths and circumference"},
   "MathlibExt/Combinatorics/SimpleGraph/LovaszTheta": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Theta function of a graph"},
   "MathlibExt/Combinatorics/SimpleGraph/LovaszThetaBody": {"to": "GraphTheory/graph-invariants-and-labelings", "title": "Theta function of a graph"},
