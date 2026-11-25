@@ -57,7 +57,6 @@ that it decodes up to the $1 - \sqrt{R}$ radius in polynomial time.
 - [Below the Johnson radius the integer Johnson conditions hold](qary-johnson-conditions-of-lt-johnson-ra.md)
 - [Every code is list decodable below the q-ary Johnson radius](is-list-decodable-of-lt-johnson-radius.md)
 - [List decodability below the q-ary Johnson radius, relative form](is-list-decodable-floor-of-lt-johnson-ra.md)
-- [Codewords in a Hamming ball below the Johnson radius](card-inter-ball-le-of-lt-johnson-radius.md)
 - [Binary constant-weight code](weight-code.md)
 - [Distinct words of equal weight are at distance at least two](two-le-hamming-dist-weight-code.md)
 - [Binary Johnson radius at relative distance 2/n is below 3](johnson-radius-two-lt-three.md)

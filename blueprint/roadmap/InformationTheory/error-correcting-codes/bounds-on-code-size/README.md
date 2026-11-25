@@ -32,10 +32,6 @@ $\delta$ exist, linear ones included.
 - [One greedy step](exists-extend.md)
 - [Gilbert–Varshamov bound for linear codes](exists-linear-code-finrank-eq.md)
 
-## The Plotkin bound
-
-- [Plotkin bound for binary codes](plotkin-bound-2.md)
-
 ## Related topics
 
 - [Linear codes](../linear-codes/README.md): the Singleton and Hamming bounds specialised to linear codes.
