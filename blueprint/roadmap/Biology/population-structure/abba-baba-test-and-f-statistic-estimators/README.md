@@ -62,3 +62,7 @@
 - [The scaled block jackknife is consistent for independent identically distributed blocks](consistency-of-the-scaled-block-jackknife-covari.md)
 - [Averages with summable autocovariances converge in mean square](consistency-of-mean-genetic-summaries-under-summ.md)
 - [Consistency, delta variance and weak-denominator behavior of the f4 ratio](statistical-behavior-of-the-f4-ratio-estimate.md)
+
+- [Genome-wide f-statistic estimation with dependent loci](genome-wide-f-statistic-estimation-with-dependen.md)
+- [Goodness of fit of a qpGraph model and its limits](qp-graph-goodness-of-fit-and-model-ambiguity.md)
+- [Asymptotic rank test for qpWave and qpAdm](rank-test-for-qp-wave-qp-adm.md)

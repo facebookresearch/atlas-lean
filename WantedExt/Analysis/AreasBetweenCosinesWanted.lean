@@ -16,24 +16,13 @@ public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.ArcsinQuotientD
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosineAlternatingIntegralLimit
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaRecurrence
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Real Filter Topology
-
-/-- **Area between powers of cosines.** For natural numbers $n$ and $k$, the area between the
-curves $y = \cos^n x$ and $y = \cos^n(kx)$ on $[0, \pi]$ is
-$A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$, where $\cos^n x$ means $(\cos x)^n$.
-
-The paper's $A_n$ is the limit of $A_n(k)$ as $k \to \infty$ (Eq. (1)), with $k$ running over
-the natural numbers.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Eq. (1). -/
-public noncomputable def cosPowArea (n k : ℕ) : ℝ :=
-  ∫ x in (0 : ℝ)..π, |cos x ^ n - cos (k * x) ^ n|
 
 /-- **The area between cosine powers vanishes for exponent zero.** For natural numbers $n$ and
 $k$, let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$ be the area between $\cos^n x$ and
@@ -88,20 +77,6 @@ public theorem_wanted tendsto_cosPowArea_of_even (n : ℕ) :
     (n % 4 = 0 → Tendsto (fun k => cosPowArea n k) atTop
       (𝓝 (16 / (2 ^ n * π) * ∑ j ∈ Finset.range ((n - 4) / 4 + 1),
         (n.choose (2 * j + 1) : ℝ) / ((n : ℝ) / 2 - (2 * j + 1)) ^ 2)))
-
-/-- **Recursion for the limiting areas between cosine powers.** For natural numbers $n$ and $k$,
-let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$. For every natural number $n \ge 3$ there
-are real numbers $L$ and $L'$ such that $A_n(k) \to L$ and $A_{n-2}(k) \to L'$ as $k \to \infty$
-through the natural numbers, and $L = \frac{n-1}{n} L' + \frac{c}{n^2 \pi}$, where $c = 8$ if $n$
-is odd and $c = 16$ if $n$ is even.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Theorem 3
-(`jis-2025-25.2.3-thm-3`). -/
-public theorem_wanted cosPowArea_limit_recursion {n : ℕ} (hn : 3 ≤ n) :
-    ∃ L L' : ℝ, Tendsto (fun k => cosPowArea n k) atTop (𝓝 L) ∧
-      Tendsto (fun k => cosPowArea (n - 2) k) atTop (𝓝 L') ∧
-      L = ((n : ℝ) - 1) / n * L' + (if Odd n then 8 else 16) / ((n : ℝ) ^ 2 * π)
 
 /-- **Limiting area between cosine powers via double factorials.** For natural numbers $n$ and
 $k$, let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$. As $k \to \infty$ through the natural

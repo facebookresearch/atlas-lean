@@ -12,3 +12,5 @@ Galton–Watson processes, extinction probabilities, total progeny and the hitti
 - [Real trees coded by functions](../../Geometry/metric-geometry/real-trees-coded-by-functions/README.md):
   the continuous counterpart of coding a Galton–Watson tree by its contour or height process
   (Le Gall, *Random trees and applications*, Sections 1–2).
+
+- [Superprocesses](superprocesses/README.md)

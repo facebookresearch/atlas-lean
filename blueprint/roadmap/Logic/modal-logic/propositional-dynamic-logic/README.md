@@ -5,3 +5,5 @@
 - [Partial correctness and loop invariants for PDL](partial-correctness-and-loop-invariants-for-pdl/README.md)
 
 - [Completeness of the Segerberg axioms for PDL](completeness-of-the-segerberg-axioms.md)
+
+- [Craig interpolation for propositional dynamic logic](craig-interpolation-for-pdl.md)

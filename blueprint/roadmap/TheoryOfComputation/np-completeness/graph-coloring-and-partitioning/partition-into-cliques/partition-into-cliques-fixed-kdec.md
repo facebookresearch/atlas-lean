@@ -1,0 +1,3 @@
+# PARTITION INTO k CLIQUES as a decision problem
+
+Fix a natural number $k$. The decision problem PARTITION INTO $k$ CLIQUES accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of triples $(n, E, K)$ (a natural number, a list of pairs of natural numbers and a natural number), to an instance that is well-formed for PARTITION INTO $k$ CLIQUES and feasible for PARTITION INTO CLIQUES: for some $m \le K$, some map $c$ from the vertices to $\{0, \dots, m-1\}$ makes every block $c^{-1}(j)$ a clique (a set of pairwise adjacent vertices) of the graph. It rejects every bitstring that does not decode to such an instance.
