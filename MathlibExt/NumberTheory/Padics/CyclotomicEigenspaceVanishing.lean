@@ -66,8 +66,6 @@ import Mathlib.RingTheory.Ideal.Span
 import Mathlib.RingTheory.Polynomial.Cyclotomic.Eval
 import Mathlib.Topology.Algebra.Module.Basic
 
-@[expose] public section
-
 open UniformSpace
 
 open scoped NNReal TensorProduct
@@ -78,14 +76,15 @@ noncomputable section
 namespace PadicAlgCl
 
 
-def cyclotomicTower (p : ℕ) [Fact p.Prime] (n : ℕ) : IntermediateField ℚ_[p] (PadicAlgCl p) :=
+@[expose] public def cyclotomicTower (p : ℕ) [Fact p.Prime] (n : ℕ) :
+    IntermediateField ℚ_[p] (PadicAlgCl p) :=
   IntermediateField.adjoin ℚ_[p] {ζ : PadicAlgCl p | ζ ^ (p ^ n) = 1}
 
-theorem mem_cyclotomicTower_of_pow_eq_one (p : ℕ) [Fact p.Prime] {n : ℕ} {ζ : PadicAlgCl p}
+public theorem mem_cyclotomicTower_of_pow_eq_one (p : ℕ) [Fact p.Prime] {n : ℕ} {ζ : PadicAlgCl p}
     (h : ζ ^ (p ^ n) = 1) : ζ ∈ cyclotomicTower p n :=
   IntermediateField.subset_adjoin ℚ_[p] _ h
 
-theorem cyclotomicTower_mono (p : ℕ) [Fact p.Prime] : Monotone (cyclotomicTower p) := by
+public theorem cyclotomicTower_mono (p : ℕ) [Fact p.Prime] : Monotone (cyclotomicTower p) := by
   intro m n hmn
   refine IntermediateField.adjoin.mono ℚ_[p] _ _ fun ζ (hζ : ζ ^ (p ^ m) = 1) => ?_
   show ζ ^ (p ^ n) = 1
@@ -99,28 +98,28 @@ namespace PadicComplex
 
 variable (p : ℕ) [Fact p.Prime]
 
-abbrev Gal : Type := PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p
+public abbrev Gal : Type := PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p
 
-theorem isometry_algEquiv (σ : Gal p) : Isometry σ := by
+public theorem isometry_algEquiv (σ : Gal p) : Isometry σ := by
   refine AddMonoidHomClass.isometry_of_norm σ fun x => ?_
   exact (spectralNorm_eq_of_equiv σ x).symm
 
-instance uniformContinuousConstSMul_gal :
+public instance uniformContinuousConstSMul_gal :
     UniformContinuousConstSMul (Gal p) (PadicAlgCl p) :=
   ⟨fun σ => (isometry_algEquiv p σ).uniformContinuous⟩
 
 @[simp]
-theorem smul_coe (σ : Gal p) (x : PadicAlgCl p) :
+public theorem smul_coe (σ : Gal p) (x : PadicAlgCl p) :
     σ • ((x : ℂ_[p])) = ((σ x : PadicAlgCl p) : ℂ_[p]) :=
   (Completion.coe_smul σ x).symm
 
-theorem continuous_smul_left (σ : Gal p) : Continuous fun x : ℂ_[p] => σ • x :=
+public theorem continuous_smul_left (σ : Gal p) : Continuous fun x : ℂ_[p] => σ • x :=
   continuous_const_smul σ
 
-theorem uniformContinuous_smul_left (σ : Gal p) : UniformContinuous fun x : ℂ_[p] => σ • x :=
+public theorem uniformContinuous_smul_left (σ : Gal p) : UniformContinuous fun x : ℂ_[p] => σ • x :=
   uniformContinuous_const_smul σ
 
-instance mulSemiringAction : MulSemiringAction (Gal p) ℂ_[p] :=
+public instance mulSemiringAction : MulSemiringAction (Gal p) ℂ_[p] :=
   { (inferInstance : DistribMulAction (Gal p) ℂ_[p]) with
     smul_one := fun σ => by
       rw [← Completion.coe_one, smul_coe, map_one]
@@ -132,7 +131,7 @@ instance mulSemiringAction : MulSemiringAction (Gal p) ℂ_[p] :=
         rw [← Completion.coe_mul, smul_coe, smul_coe, smul_coe, map_mul, Completion.coe_mul] }
 
 @[simp]
-theorem norm_smul_eq (σ : Gal p) (x : ℂ_[p]) : ‖σ • x‖ = ‖x‖ := by
+public theorem norm_smul_eq (σ : Gal p) (x : ℂ_[p]) : ‖σ • x‖ = ‖x‖ := by
   refine Completion.induction_on x ?_ ?_
   · exact isClosed_eq ((continuous_norm).comp (continuous_const_smul σ)) continuous_norm
   · intro a
@@ -140,39 +139,39 @@ theorem norm_smul_eq (σ : Gal p) (x : ℂ_[p]) : ‖σ • x‖ = ‖x‖ := by
     exact (spectralNorm_eq_of_equiv σ a).symm
 
 @[simp]
-theorem nnnorm_smul_eq (σ : Gal p) (x : ℂ_[p]) : ‖σ • x‖₊ = ‖x‖₊ :=
+public theorem nnnorm_smul_eq (σ : Gal p) (x : ℂ_[p]) : ‖σ • x‖₊ = ‖x‖₊ :=
   NNReal.eq (norm_smul_eq p σ x)
 
-theorem isometry_smul (σ : Gal p) : Isometry fun x : ℂ_[p] => σ • x :=
+public theorem isometry_smul (σ : Gal p) : Isometry fun x : ℂ_[p] => σ • x :=
   AddMonoidHomClass.isometry_of_norm (MulSemiringAction.toRingHom (Gal p) ℂ_[p] σ)
     (norm_smul_eq p σ)
 
-instance smulCommClass_gal_padic : SMulCommClass (Gal p) ℚ_[p] ℂ_[p] :=
+public instance smulCommClass_gal_padic : SMulCommClass (Gal p) ℚ_[p] ℂ_[p] :=
   inferInstance
 
-instance smulCommClass_padic_gal : SMulCommClass ℚ_[p] (Gal p) ℂ_[p] :=
+public instance smulCommClass_padic_gal : SMulCommClass ℚ_[p] (Gal p) ℂ_[p] :=
   SMulCommClass.symm _ _ _
 
 @[simp]
-theorem smul_algebraMap (σ : Gal p) (q : ℚ_[p]) :
+public theorem smul_algebraMap (σ : Gal p) (q : ℚ_[p]) :
     σ • (algebraMap ℚ_[p] ℂ_[p] q) = algebraMap ℚ_[p] ℂ_[p] q := by
   rw [Algebra.algebraMap_eq_smul_one, smul_comm, smul_one]
 
-abbrev galAlgHom (σ : Gal p) : ℂ_[p] →ₐ[ℚ_[p]] ℂ_[p] :=
+public abbrev galAlgHom (σ : Gal p) : ℂ_[p] →ₐ[ℚ_[p]] ℂ_[p] :=
   MulSemiringAction.toAlgHom ℚ_[p] ℂ_[p] σ
 
 @[simp]
-theorem galAlgHom_apply (σ : Gal p) (x : ℂ_[p]) : galAlgHom p σ x = σ • x := rfl
+public theorem galAlgHom_apply (σ : Gal p) (x : ℂ_[p]) : galAlgHom p σ x = σ • x := rfl
 
 
 
 
 variable (p : ℕ) [Fact p.Prime]
 
-def towerClosure (Km : ℕ → IntermediateField ℚ_[p] (PadicAlgCl p)) : Set ℂ_[p] :=
+@[expose] public def towerClosure (Km : ℕ → IntermediateField ℚ_[p] (PadicAlgCl p)) : Set ℂ_[p] :=
   closure (⋃ m : ℕ, Set.range fun k : Km m => ((k : PadicAlgCl p) : ℂ_[p]))
 
-structure IsTateTrace (Km : ℕ → IntermediateField ℚ_[p] (PadicAlgCl p)) (m : ℕ) (d : ℝ)
+public structure IsTateTrace (Km : ℕ → IntermediateField ℚ_[p] (PadicAlgCl p)) (m : ℕ) (d : ℝ)
     (R : ℂ_[p] → ℂ_[p]) : Prop where
   map_add : ∀ x ∈ towerClosure p Km, ∀ y ∈ towerClosure p Km, R (x + y) = R x + R y
   map_mul_left : ∀ (k : Km m), ∀ x ∈ towerClosure p Km,
@@ -435,7 +434,7 @@ namespace PadicAlgCl
 /-- The finrank of the `p`-power cyclotomic tower over `ℚ_[p]`, and the
 behaviour of automorphisms just outside a tower level under taking
 `p`-th powers. -/
-theorem finrank_cyclotomicTower_and_pow_mem_fixingSubgroup (p : ℕ) [Fact p.Prime] :
+public theorem finrank_cyclotomicTower_and_pow_mem_fixingSubgroup (p : ℕ) [Fact p.Prime] :
     (∀ n : ℕ, 0 < n →
       Module.finrank ℚ_[p] (PadicAlgCl.cyclotomicTower p n) = (p - 1) * p ^ (n - 1)) ∧
     (∀ (m : ℕ) (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p),
@@ -1029,7 +1028,7 @@ namespace PadicAlgCl
 /-- Tate's trace bound: for `σ` fixing the tower level `m + 2` but not
 `m + 3`, the norm of the trace sum `∑ i < p, (σ ^ i) y` over an element
 of the next level is bounded by `‖p‖` times a root-of-unity factor. -/
-theorem norm_sum_pow_apply_le_of_mem_cyclotomicTower (p : ℕ) [Fact p.Prime]
+public theorem norm_sum_pow_apply_le_of_mem_cyclotomicTower (p : ℕ) [Fact p.Prime]
     (m : ℕ) (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p)
     (hσ : σ ∈ (PadicAlgCl.cyclotomicTower p (m + 2)).fixingSubgroup)
     (hσ' : σ ∉ (PadicAlgCl.cyclotomicTower p (m + 3)).fixingSubgroup)
@@ -1525,7 +1524,7 @@ namespace PadicAlgCl
 closure moved only slightly by every automorphism fixing `K` is
 approximated, up to a constant independent of the element, by an
 element of `K`. -/
-theorem exists_mem_intermediateField_norm_sub_le_mul_of_forall_norm_algEquiv_sub_le
+public theorem exists_mem_intermediateField_norm_sub_le_mul_of_forall_norm_algEquiv_sub_le
     (p : ℕ) [Fact p.Prime] :
     ∃ c : ℝ, 0 < c ∧
       ∀ (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (α : PadicAlgCl p) (δ : ℝ),
@@ -1613,7 +1612,7 @@ namespace PadicComplex
 
 /-- An element of `ℂ_[p]` is fixed by every automorphism fixing `K`
 if and only if it lies in the closure of the image of `K`. -/
-theorem forall_smul_eq_self_iff_mem_closure
+public theorem forall_smul_eq_self_iff_mem_closure
     (p : ℕ) [Fact p.Prime] (K : IntermediateField ℚ_[p] (PadicAlgCl p)) (x : ℂ_[p]) :
     (∀ σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p, σ ∈ K.fixingSubgroup → σ • x = x) ↔
       x ∈ closure (Set.range fun k : K => ((k : PadicAlgCl p) : ℂ_[p])) :=
@@ -2627,7 +2626,7 @@ namespace PadicComplex
 /-- Tate traces exist along any monotone tower of finite extensions
 satisfying the degree and trace-bound hypotheses: there is a uniform
 constant `d > 0` such that every level admits a Tate trace map. -/
-theorem exists_isTateTrace_of_norm_sum_pow_apply_le
+public theorem exists_isTateTrace_of_norm_sum_pow_apply_le
     (p : ℕ) [Fact p.Prime] (Km : ℕ → IntermediateField ℚ_[p] (PadicAlgCl p)) (hmono : Monotone Km)
     (hfin : ∀ m, FiniteDimensional ℚ_[p] (Km m))
     (hstab : ∀ (m : ℕ) (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p), σ ∈ (Km 0).fixingSubgroup →
@@ -3197,7 +3196,7 @@ namespace PadicComplex
 
 /-- Tate traces exist along the cyclotomic tower, with a uniform
 constant independent of the level. -/
-theorem exists_isTateTrace_cyclotomicTower (p : ℕ) [Fact p.Prime] :
+public theorem exists_isTateTrace_cyclotomicTower (p : ℕ) [Fact p.Prime] :
     ∃ d : ℝ, 0 < d ∧ ∀ m : ℕ, ∃ R : ℂ_[p] → ℂ_[p],
       PadicComplex.IsTateTrace p (fun n => PadicAlgCl.cyclotomicTower p (n + 2)) m d R :=
   TateTraceTower.main p
@@ -3205,7 +3204,7 @@ theorem exists_isTateTrace_cyclotomicTower (p : ℕ) [Fact p.Prime] :
 /-- If a tensor satisfies the eigenrelation for every automorphism
 fixing `K`, and the Tate traces along a tower above `K` exist, then
 some positive power of every eigenvalue `ψ σ` is trivial. -/
-theorem exists_forall_pow_eq_one_of_isTateTrace_of_tmul_eq_mul
+public theorem exists_forall_pow_eq_one_of_isTateTrace_of_tmul_eq_mul
     (p : ℕ) [Fact p.Prime] (K : IntermediateField ℚ_[p] (PadicAlgCl p))
     (Km : ℕ → IntermediateField ℚ_[p] (PadicAlgCl p)) (hmono : Monotone Km)
     (hK : ∀ m, K ≤ Km m) (hfin : ∀ m, FiniteDimensional ℚ_[p] (Km m))
@@ -3491,7 +3490,7 @@ end FullVanishing
 
 /-- The cyclotomic character computed through the global Galois group
 agrees with the one computed in the `p`-adic algebraic closure. -/
-theorem cyclotomicCharacter_localGaloisToGlobal (p : ℕ) [Fact p.Prime]
+public theorem cyclotomicCharacter_localGaloisToGlobal (p : ℕ) [Fact p.Prime]
     (σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p) :
     cyclotomicCharacter (AlgebraicClosure ℚ) p (localGaloisToGlobal p σ).toRingEquiv =
       cyclotomicCharacter (PadicAlgCl p) p σ.toRingEquiv :=
@@ -3503,7 +3502,7 @@ open FullVanishing in
 /-- Tate vanishing for the full `p`-adic Galois group: a nonzero
 cyclotomic eigenspace in `ℂ_[p]` does not exist. An element transforming
 by `χ ^ k` with `k ≠ 0` under every automorphism must be zero. -/
-theorem eq_zero_of_forall_smul_eq_cyclotomicCharacter_zpow_mul
+public theorem eq_zero_of_forall_smul_eq_cyclotomicCharacter_zpow_mul
     (p : ℕ) [Fact p.Prime] (k : ℤ) (hk : k ≠ 0) (c : ℂ_[p])
     (hc : ∀ σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p,
       σ • c =
@@ -3663,7 +3662,7 @@ namespace PadicComplex
 /-- Vanishing of nontrivial cyclotomic eigenspaces in `ℂ_[p]` over a
 finite extension of `ℚ_[p]`: if `σ • c = χ_p(σ) ^ k • c` for every `σ`
 fixing `K` and `k ≠ 0`, then `c = 0`. -/
-theorem eq_zero_of_forall_mem_fixingSubgroup_smul_eq_cyclotomicCharacter_zpow_mul
+public theorem eq_zero_of_forall_mem_fixingSubgroup_smul_eq_cyclotomicCharacter_zpow_mul
     (p : ℕ) [Fact p.Prime] (K : IntermediateField ℚ_[p] (PadicAlgCl p)) [FiniteDimensional ℚ_[p] K]
     (k : ℤ) (hk : k ≠ 0) (c : ℂ_[p])
     (hc : ∀ σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p, σ ∈ K.fixingSubgroup →

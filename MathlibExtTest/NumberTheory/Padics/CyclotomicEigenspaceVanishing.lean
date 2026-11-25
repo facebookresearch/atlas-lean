@@ -15,7 +15,7 @@ public import MathlibExt.NumberTheory.Padics.CyclotomicEigenspaceVanishing
 namespace PadicComplex
 
 /-- Consumer with the original binders. -/
-theorem exactSource (p : ℕ) [Fact p.Prime]
+private theorem exactSource (p : ℕ) [Fact p.Prime]
     (K : IntermediateField ℚ_[p] (PadicAlgCl p)) [FiniteDimensional ℚ_[p] K]
     (k : ℤ) (hk : k ≠ 0) (c : ℂ_[p])
     (hc : ∀ σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p, σ ∈ K.fixingSubgroup →
@@ -30,7 +30,7 @@ theorem exactSource (p : ℕ) [Fact p.Prime]
 /-- Boundary example: the hypothesis `k ≠ 0` matters. For `k = 0` the
 element `1` satisfies the eigenrelation for every automorphism and is
 nonzero. -/
-theorem boundary_k_ne_zero_matters (p : ℕ) [Fact p.Prime] :
+private theorem boundary_k_ne_zero_matters (p : ℕ) [Fact p.Prime] :
     ∃ c : ℂ_[p], c ≠ 0 ∧
       ∀ σ : PadicAlgCl p ≃ₐ[ℚ_[p]] PadicAlgCl p,
         σ ∈ (⊥ : IntermediateField ℚ_[p] (PadicAlgCl p)).fixingSubgroup →
