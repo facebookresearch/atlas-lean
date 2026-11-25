@@ -8,3 +8,4 @@ Means, variances and covariances, among them the variance of a sum and Chebyshev
 - [Chebyshev's inequality](chebyshev-s-inequality/README.md)
 - [Truncated curtate expectation as a tail sum](integral-min-nat-floor-eq-sum.md)
 - [Variance of stopped sums](variance-stopped-sum-finite.md)
+- [Means and variances under affine change of scale](affine-transformations-of-means-and-variances.md)

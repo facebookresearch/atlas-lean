@@ -1,0 +1,56 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.CuntzFold
+public import Mathlib.Algebra.Star.StarAlgHom
+
+/-!
+# Actual coefficient-map naturality of finite Cuntz folds
+
+The two supplied families are genuine algebraic families and the second is
+exactly the coefficient image of the first. The literal matrix fold and its
+inverse commute with that actual coefficient map. These characteristics are
+needed to build the all-positive-size stabilized quotient and unitary maps.
+No matrix equivalence, norm, quotient kernel or outcome model is an input.
+-/
+
+@[expose] public section
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open scoped BigOperators Matrix
+
+namespace CuntzFamily
+
+universe uS uR uT uI
+variable {S : Type uS} [CommSemiring S]
+variable {R : Type uR} {T : Type uT} {ι : Type uI}
+variable [Semiring R] [StarRing R] [Algebra S R]
+variable [Semiring T] [StarRing T] [Algebra S T]
+variable [Fintype ι] [DecidableEq ι]
+
+/-- The actual ordered fold commutes with every coefficient entry of a star-algebra homomorphism. -/
+public theorem fold_map (f : R →⋆ₐ[S] T) (v : ι → R) (w : ι → T)
+    (hVOrth : ∀ i j : ι, star (v i) * v j = if i = j then 1 else 0)
+    (hVPartition : (∑ i : ι, v i * star (v i)) = 1)
+    (hWOrth : ∀ i j : ι, star (w i) * w j = if i = j then 1 else 0)
+    (hWPartition : (∑ i : ι, w i * star (w i)) = 1)
+    (hw : ∀ i : ι, w i = f (v i)) (X : CStarMatrix ι ι R) :
+    fold S w hWOrth hWPartition (X.map f) = f (fold S v hVOrth hVPartition X) := by
+  simp only [fold_apply, CStarMatrix.map_apply, map_sum, map_mul, map_star, hw]
+
+/-- Every inverse matrix entry is the actual coefficient image of the source sandwich entry. -/
+public theorem fold_symm_map (f : R →⋆ₐ[S] T) (v : ι → R) (w : ι → T)
+    (hVOrth : ∀ i j : ι, star (v i) * v j = if i = j then 1 else 0)
+    (hVPartition : (∑ i : ι, v i * star (v i)) = 1)
+    (hWOrth : ∀ i j : ι, star (w i) * w j = if i = j then 1 else 0)
+    (hWPartition : (∑ i : ι, w i * star (w i)) = 1)
+    (hw : ∀ i : ι, w i = f (v i)) (z : R) :
+    (fold S w hWOrth hWPartition).symm (f z) =
+      ((fold S v hVOrth hVPartition).symm z).map f := by
+  apply CStarMatrix.ext
+  intro i j
+  simp only [fold_symm_apply_entry, CStarMatrix.map_apply, map_mul, map_star, hw]
+
+end CuntzFamily

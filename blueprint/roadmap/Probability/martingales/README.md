@@ -18,6 +18,7 @@ Discrete-time martingales, sub- and supermartingales: convergence theorems (almo
 - [Lévy's upward theorem](levy-s-upward-theorem/README.md)
 - [Uniform integrability](uniform-integrability/README.md)
 - [Self-normalized bounds for symmetric random walks](self-normalized-bounds-for-symmetric-random-walk/README.md)
+- [Prophet inequalities](prophet-inequalities/README.md)
 
 ## Related topics
 

@@ -31,3 +31,4 @@ Discrete-time Markov chains (construction, path measures, finite-dimensional dis
 - [Markov chains: contraction of total variation](markov-chains-contraction-of-total-variation/README.md)
 - [Path coupling](path-coupling/README.md)
 - [Time reversal of a stationary finite Markov chain](time-reversal-of-a-stationary-finite-markov-chai/README.md)
+- [Autoregressive processes](autoregressive-processes/README.md)

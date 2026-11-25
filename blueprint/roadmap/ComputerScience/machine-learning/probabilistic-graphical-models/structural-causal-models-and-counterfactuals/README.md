@@ -64,3 +64,11 @@ rungs of Pearl's hierarchy: association, intervention, counterfactual.
 - [Additive noise models and causal identifiability](../additive-noise-models-and-causal-identifiability/README.md):
   restricting the structural equations to linear ones with additive non-Gaussian noise makes the
   causal direction identifiable from observational data, while the linear Gaussian case is not.
+
+- [Response SCM](response-scm.md)
+
+- [Finite recursive structural causal model](finite-scm.md)
+
+- [Unique solvability of a recursive SCM](exists-unique-is-solution.md)
+
+- [A Markovian SCM induces its Bayesian network](induced-law-eq-joint.md)

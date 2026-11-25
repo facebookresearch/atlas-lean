@@ -10,6 +10,7 @@ Continuous-time processes with continuous paths or independent increments: the c
 - [Markov property of processes with independent increments](markov-property-of-processes-with-independent-in/README.md)
 - [Realized quadratic variation from predictable quadratic variation](realized-quadratic-variation-from-predictable-qu/README.md)
 - [Realized quadratic variation: uniform convergence and the converse direction](realized-quadratic-variation-uniform-convergence/README.md)
+- [Multidimensional Ornstein-Uhlenbeck process](multidimensional-ornstein-uhlenbeck-process/README.md)
 - [Strong Markov property and reflection principle](strong-markov-property-and-reflection-principle/README.md)
 - [Quadratic variation of Brownian motion](quadratic-variation-of-brownian-motion/README.md)
 - [Itô integral](it-integral/README.md)

@@ -1,0 +1,134 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.SeparationQuotient
+public import MathlibExt.Analysis.CStarAlgebra.Completion
+
+/-!
+# The computed separated completion of a C-star seminorm
+
+An isometric involution and a proved C-star norm inequality on a seminormed
+complex algebra define a C-star algebra on its actual separation quotient's
+ordinary completion. All quotient and completion operations and norms are
+the stock operations, with the canonical map given by coercion after quotient.
+
+The source need not be separated or complete. The construction permits the
+zero seminorm and asserts no injectivity of the original source map.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+namespace CStarAlgebra
+
+universe uA
+
+/-- The actual unital complex C-star structure on the computed separated
+completion of the source seminormed algebra. Activate the dictionary locally. -/
+@[instance_reducible]
+def separatedCompletionCStarAlgebra
+    (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
+    [StarRing A] [NormedStarGroup A] [StarModule ℂ A]
+    (hCStar : ∀ a : A, ‖a‖ * ‖a‖ ≤ ‖star a * a‖) :
+    CStarAlgebra (UniformSpace.Completion (SeparationQuotient A)) := by
+  let _ : StarRing (SeparationQuotient A) := SeparationQuotient.cstarStarRing A
+  let _ : StarModule ℂ (SeparationQuotient A) := SeparationQuotient.cstarStarModule A
+  let _ : CStarRing (SeparationQuotient A) := SeparationQuotient.cstarRing A hCStar
+  exact completionCStarAlgebra (SeparationQuotient A)
+
+/-- The canonical quotient and dense-completion map, preserving the original
+ring, complex scalar and involution operations. -/
+def separatedCompletionStarAlgHom
+    (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
+    [StarRing A] [NormedStarGroup A] [StarModule ℂ A]
+    (hCStar : ∀ a : A, ‖a‖ * ‖a‖ ≤ ‖star a * a‖) :
+    let _ : CStarAlgebra (UniformSpace.Completion (SeparationQuotient A)) :=
+      separatedCompletionCStarAlgebra A hCStar
+    A →⋆ₐ[ℂ] UniformSpace.Completion (SeparationQuotient A) := by
+  let _ : StarRing (SeparationQuotient A) := SeparationQuotient.cstarStarRing A
+  let _ : StarModule ℂ (SeparationQuotient A) := SeparationQuotient.cstarStarModule A
+  let _ : CStarRing (SeparationQuotient A) := SeparationQuotient.cstarRing A hCStar
+  let _ : CStarAlgebra (UniformSpace.Completion (SeparationQuotient A)) :=
+    separatedCompletionCStarAlgebra A hCStar
+  exact
+    { toFun := fun a => ((SeparationQuotient.mk a : SeparationQuotient A) :
+          UniformSpace.Completion (SeparationQuotient A))
+      map_one' := by
+        change ((SeparationQuotient.mk (1 : A) : SeparationQuotient A) :
+          UniformSpace.Completion (SeparationQuotient A)) = 1
+        rw [SeparationQuotient.mk_one, UniformSpace.Completion.coe_one]
+      map_zero' := by
+        change ((SeparationQuotient.mk (0 : A) : SeparationQuotient A) :
+          UniformSpace.Completion (SeparationQuotient A)) = 0
+        rw [SeparationQuotient.mk_zero, UniformSpace.Completion.coe_zero]
+      map_add' := fun a b => by
+        change ((SeparationQuotient.mk (a + b) : SeparationQuotient A) :
+          UniformSpace.Completion (SeparationQuotient A)) =
+            ((SeparationQuotient.mk a : SeparationQuotient A) : UniformSpace.Completion (SeparationQuotient A)) +
+              ((SeparationQuotient.mk b : SeparationQuotient A) : UniformSpace.Completion (SeparationQuotient A))
+        rw [SeparationQuotient.mk_add, UniformSpace.Completion.coe_add]
+      map_mul' := fun a b => by
+        change ((SeparationQuotient.mk (a * b) : SeparationQuotient A) :
+          UniformSpace.Completion (SeparationQuotient A)) =
+            ((SeparationQuotient.mk a : SeparationQuotient A) : UniformSpace.Completion (SeparationQuotient A)) *
+              ((SeparationQuotient.mk b : SeparationQuotient A) : UniformSpace.Completion (SeparationQuotient A))
+        rw [SeparationQuotient.mk_mul, UniformSpace.Completion.coe_mul]
+      commutes' := fun c => by
+        change ((SeparationQuotient.mk (algebraMap ℂ A c) : SeparationQuotient A) :
+          UniformSpace.Completion (SeparationQuotient A)) =
+            algebraMap ℂ (UniformSpace.Completion (SeparationQuotient A)) c
+        simp only [Algebra.algebraMap_eq_smul_one, SeparationQuotient.mk_smul,
+          SeparationQuotient.mk_one, UniformSpace.Completion.coe_smul,
+          UniformSpace.Completion.coe_one]
+      map_star' := fun a => by
+        change ((SeparationQuotient.mk (star a) : SeparationQuotient A) :
+          UniformSpace.Completion (SeparationQuotient A)) =
+            star ((SeparationQuotient.mk a : SeparationQuotient A) :
+              UniformSpace.Completion (SeparationQuotient A))
+        calc
+          ((SeparationQuotient.mk (star a) : SeparationQuotient A) :
+              UniformSpace.Completion (SeparationQuotient A)) =
+              ((star (SeparationQuotient.mk a : SeparationQuotient A) : SeparationQuotient A) :
+                UniformSpace.Completion (SeparationQuotient A)) :=
+            congrArg (fun q : SeparationQuotient A =>
+              (q : UniformSpace.Completion (SeparationQuotient A)))
+              (SeparationQuotient.mk_cstarStar A a).symm
+          _ = star ((SeparationQuotient.mk a : SeparationQuotient A) :
+              UniformSpace.Completion (SeparationQuotient A)) :=
+            (completionCStarAlgebra_star_coe (SeparationQuotient A)
+              (SeparationQuotient.mk a : SeparationQuotient A)).symm }
+
+/-- The canonical map has the literal quotient-completion value. -/
+@[simp]
+theorem separatedCompletionStarAlgHom_apply
+    (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
+    [StarRing A] [NormedStarGroup A] [StarModule ℂ A]
+    (hCStar : ∀ a : A, ‖a‖ * ‖a‖ ≤ ‖star a * a‖) (a : A) :
+    let _ : CStarAlgebra (UniformSpace.Completion (SeparationQuotient A)) :=
+      separatedCompletionCStarAlgebra A hCStar
+    separatedCompletionStarAlgHom A hCStar a =
+      ((SeparationQuotient.mk a : SeparationQuotient A) : UniformSpace.Completion (SeparationQuotient A)) :=
+  rfl
+
+/-- The computed completion preserves the original seminorm exactly,
+including when that seminorm vanishes on nonzero source elements. -/
+theorem separatedCompletionStarAlgHom_norm
+    (A : Type uA) [SeminormedRing A] [NormedAlgebra ℂ A]
+    [StarRing A] [NormedStarGroup A] [StarModule ℂ A]
+    (hCStar : ∀ a : A, ‖a‖ * ‖a‖ ≤ ‖star a * a‖) (a : A) :
+    let _ : CStarAlgebra (UniformSpace.Completion (SeparationQuotient A)) :=
+      separatedCompletionCStarAlgebra A hCStar
+    ‖separatedCompletionStarAlgHom A hCStar a‖ = ‖a‖ := by
+  let _ : CStarAlgebra (UniformSpace.Completion (SeparationQuotient A)) :=
+    separatedCompletionCStarAlgebra A hCStar
+  change ‖((SeparationQuotient.mk a : SeparationQuotient A) :
+    UniformSpace.Completion (SeparationQuotient A))‖ = ‖a‖
+  rw [UniformSpace.Completion.norm_coe, SeparationQuotient.norm_mk]
+
+end CStarAlgebra
