@@ -1,0 +1,17 @@
+# Left Kan Comparison
+
+- [External Object](external-object.md)
+- [Day Object](day-object.md)
+- [To Kan](to-kan.md)
+- [From Kan](from-kan.md)
+- [To Kan component](to-kan-component.md)
+- [From Kan component](from-kan-component.md)
+- [Gen to Kan](gen-to-kan.md)
+- [Ι from Kan](from-kan-2.md)
+- [To Kan from Kan](to-kan-from-kan.md)
+- [From Kan to Kan](from-kan-to-kan.md)
+- [Iso](iso.md)
+- [Iso hom](iso-hom.md)
+- [Iso inv](iso-inv.md)
+- [To Kan full naturality](to-kan-full-naturality.md)
+- [From Kan full naturality](from-kan-full-naturality.md)

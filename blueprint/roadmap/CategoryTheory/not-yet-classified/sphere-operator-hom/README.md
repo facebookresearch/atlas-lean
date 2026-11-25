@@ -1,0 +1,15 @@
+# Sphere Operator Hom
+
+- [Fixed Right Product](fixed-right-product.md)
+- [Fixed Right Tensor](fixed-right-tensor.md)
+- [Fixed Right Tensor map](fixed-right-tensor-map.md)
+- [Fixed Right Tensor point](fixed-right-tensor-point.md)
+- [Fixed Right Tensor id](fixed-right-tensor-id.md)
+- [Fixed Right Tensor comp](fixed-right-tensor-comp.md)
+- [Opposite Fixed Right Tensor](opposite-fixed-right-tensor.md)
+- [Weight](weight.md)
+- [Weight uncurry map](weight-uncurry-map.md)
+- [Operator objects](operator-objects.md)
+- [Operator relations](operator-relations.md)
+- [Hom](hom.md)
+- [Operator balance](operator-balance.md)

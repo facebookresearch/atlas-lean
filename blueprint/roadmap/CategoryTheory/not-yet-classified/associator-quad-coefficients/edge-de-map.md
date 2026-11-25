@@ -1,0 +1,3 @@
+# Edge DE map
+
+DE preserves the original complete four-input coefficient Hom action.

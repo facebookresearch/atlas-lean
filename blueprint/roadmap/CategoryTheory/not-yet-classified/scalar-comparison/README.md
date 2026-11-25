@@ -1,0 +1,15 @@
+# Scalar Comparison
+
+- [External Tensor Scalar full naturality](external-tensor-scalar-full-naturality.md)
+- [External Tensor Scalar inv full naturality](external-tensor-scalar-inv-full-naturali.md)
+- [External Tensor Scalar Hom](external-tensor-scalar-hom.md)
+- [External Tensor Scalar Inv](external-tensor-scalar-inv.md)
+- [External Tensor Scalar Hom component](external-tensor-scalar-hom-component.md)
+- [External Tensor Scalar Inv component](external-tensor-scalar-inv-component.md)
+- [External Tensor Scalar Iso](external-tensor-scalar-iso.md)
+- [External Tensor Scalar Iso hom component](external-tensor-scalar-iso-hom-component.md)
+- [External Tensor Scalar Iso inv component](external-tensor-scalar-iso-inv-component.md)
+- [External Tensor Scalar Iso naturality](external-tensor-scalar-iso-naturality.md)
+- [External Tensor Scalar Iso inv naturality](external-tensor-scalar-iso-inv-naturalit.md)
+- [External Tensor Scalar Iso scalar naturality](external-tensor-scalar-iso-scalar-natura.md)
+- [External Tensor Scalar Iso inv scalar naturality](external-tensor-scalar-iso-inv-scalar-na.md)

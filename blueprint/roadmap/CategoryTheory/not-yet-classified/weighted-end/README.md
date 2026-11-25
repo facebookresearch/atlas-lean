@@ -1,0 +1,41 @@
+# Weighted End
+
+## Enriched
+
+- [Weighted End](weighted-end.md)
+
+## Weighted End
+
+- [Objects](objects.md)
+- [Relations](relations.md)
+- [Left Map](left-map.md)
+- [Right Map](right-map.md)
+- [Π](untitled.md)
+- [Condition](condition.md)
+- [Lift](lift.md)
+- [Lift π](lift-2.md)
+- [Hom ext](hom-ext.md)
+- [Yoneda Action condition](yoneda-action-condition.md)
+- [Map Diagram](map-diagram.md)
+- [Map Diagram π](map-diagram-2.md)
+- [Map Diagram id](map-diagram-id.md)
+- [Map Diagram comp](map-diagram-comp.md)
+- [Map Weight](map-weight.md)
+- [Map Weight π](map-weight-2.md)
+- [Map Weight id](map-weight-id.md)
+- [Map Weight comp](map-weight-comp.md)
+- [Right Kan Weight](right-kan-weight.md)
+- [Right Kan End Object](right-kan-end-object.md)
+- [Right Kan Action Component](right-kan-action-component.md)
+- [Right Kan Action Component uncurry eq](right-kan-action-component-uncurry-eq.md)
+- [Right Kan End Action](right-kan-end-action.md)
+- [Right Kan End Action π](right-kan-end-action-2.md)
+- [Right Kan End Map](right-kan-end-map.md)
+- [Right Kan End Map uncurry](right-kan-end-map-uncurry.md)
+- [Right Kan End Map id](right-kan-end-map-id.md)
+- [Right Kan End Map comp](right-kan-end-map-comp.md)
+- [Right Kan End Map π](right-kan-end-map-2.md)
+- [Right Kan End Functor](right-kan-end-functor.md)
+- [Right Kan End Functor obj](right-kan-end-functor-obj.md)
+- [Right Kan End Functor map](right-kan-end-functor-map.md)
+- [Yoneda Iso](yoneda-iso.md)
