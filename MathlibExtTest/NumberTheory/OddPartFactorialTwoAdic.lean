@@ -53,6 +53,14 @@ example : ¬ (8 : ℤ) ∣ ((∏ i ∈ oddBelowTwoPow 2, i : ℕ) : ℤ) - 5 := 
 example : ((∏ i ∈ oddBelowTwoPow 3, i : ℕ) : ℤ) % 16 = 9 :=
   (Int.modEq_of_dvd (oddSet_product_congr 3 (by decide))).symm
 
+-- The shift congruence fails just below the lower bound: 1 and 3 differ modulo four.
+example : ¬ (2 : ℤ) ^ (2 * 1) ∣ ((∏ i ∈ oddBelowTwoPow 1, i : ℕ) : ℤ) -
+    ∏ i ∈ oddBelowTwoPow 1, ((2 ^ 1 + i : ℕ) : ℤ) := by decide
+
+-- Shifting 1, 3, 5, 7 by eight keeps the residue 105 ≡ 41 modulo 64.
+example : (∏ i ∈ oddBelowTwoPow 3, ((2 ^ 3 + i : ℕ) : ℤ)) % 64 = 41 :=
+  Eq.trans (Int.modEq_of_dvd (oddSet_product_congr_shift 3 (by decide))) (by decide)
+
 -- Below the exponent bound there are only two roots of one.
 example : ({i ∈ oddBelowTwoPow 2 | i ^ 2 % 4 = 1}).card = 2 := by decide
 
