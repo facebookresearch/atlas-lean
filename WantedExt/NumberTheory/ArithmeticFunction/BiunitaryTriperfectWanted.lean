@@ -63,15 +63,6 @@ Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 2 (`jis-2025-25.4.
 public theorem_wanted two_pow_card_primeFactors_dvd_sigmaBiunitary_of_odd (n : ℕ)
     (hn : Odd n) : 2 ^ n.primeFactors.card ∣ sigmaBiunitary n
 
-/-- **Divisibility of the biunitary divisor sum of an even number by a power of two.** For every
-positive even natural number $n$, writing $\omega(n)$ for the number of distinct prime factors of
-$n$, the power $2^{\omega(n) - 1}$ divides the biunitary divisor sum $\sigma^{**}(n)$.
-
-Source: Tomohiro Yamada, *Determining all Biunitary Triperfect Numbers of a Certain Form*,
-Journal of Integer Sequences 28 (2025), Article 25.4.5, Lemma 2 (`jis-2025-25.4.5-lem-2`). -/
-public theorem_wanted two_pow_card_primeFactors_sub_one_dvd_sigmaBiunitary_of_even (n : ℕ)
-    (hn : 0 < n) (he : Even n) : 2 ^ (n.primeFactors.card - 1) ∣ sigmaBiunitary n
-
 /-- **Comparison bounds for the biunitary divisor sum of a prime power.** Let $p$ be a prime and
 let $m \ge 1$ and $e \ge 2m - 1$ be natural numbers, and write $\sigma^{**}$ for the biunitary
 divisor sum. Then, in $\mathbb{Q}$,

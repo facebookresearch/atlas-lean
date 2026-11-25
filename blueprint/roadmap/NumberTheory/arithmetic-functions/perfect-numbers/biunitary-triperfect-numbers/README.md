@@ -2,6 +2,7 @@
 
 - [The only biunitary triperfect number divisible by $27$ is $2160$](sigma-biunitary-eq-three-mul-iff-of-twen.md)
 - [Parity of the biunitary divisor sum](odd-sigma-biunitary-iff.md)
+- [Multiplicativity of the biunitary divisor sum](is-multiplicative-sigma-biunitary-arithm.md)
 - [Powers of two dividing the biunitary divisor sum of an odd number](two-pow-card-prime-factors-dvd-sigma-biu.md)
 - [Divisibility of the biunitary divisor sum of an even number by a power of two](two-pow-card-prime-factors-sub-one-dvd-s.md)
 - [Lower bounds for the biunitary divisor sum of a prime power](sigma-biunitary-prime-pow-div-ge.md)
