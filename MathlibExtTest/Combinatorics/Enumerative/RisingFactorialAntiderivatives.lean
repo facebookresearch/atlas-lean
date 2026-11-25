@@ -40,3 +40,26 @@ example (b x : ℝ) :
   rw [show Finset.Icc 1 2 = {1, 2} from by decide] at h
   norm_num [I, Nat.factorial, Nat.ascFactorial] at h
   exact h
+
+-- The degree-zero binomial still contributes the single shifted monomial.
+example :
+    (∑ k ∈ Finset.range (0 + 1), ((0 : ℕ).choose k : ℝ) * 3 ^ (k + 2) /
+      (k + 1).ascFactorial 2) = 9 / 2 := by
+  rw [sum_choose_mul_pow_div_ascFactorial 0 2 (by decide)]
+  rw [show Finset.Icc 1 (2 - 1) = {1} from by decide]
+  norm_num [Nat.ascFactorial, Nat.factorial]
+
+-- At x = -1 the full binomial expansion vanishes, but the tail does not.
+example :
+    (∑ k ∈ Finset.range (2 + 1), ((2 : ℕ).choose k : ℝ) * (-1) ^ (k + 2) /
+      (k + 1).ascFactorial 2) = 1 / 4 := by
+  rw [sum_choose_mul_pow_div_ascFactorial 2 2 (by decide)]
+  rw [show Finset.Icc 1 (2 - 1) = {1} from by decide]
+  norm_num [Nat.ascFactorial, Nat.factorial]
+
+-- At order one there are no positive low-degree terms to subtract.
+example (N : ℕ) (x : ℝ) :
+    (∑ k ∈ Finset.range (N + 1), (N.choose k : ℝ) * x ^ (k + 1) /
+      (k + 1).ascFactorial 1) = ((1 + x) ^ (N + 1) - 1) / (N + 1).ascFactorial 1 := by
+  rw [sum_choose_mul_pow_div_ascFactorial N 1 (by decide)]
+  simp

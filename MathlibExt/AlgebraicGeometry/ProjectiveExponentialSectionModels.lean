@@ -50,10 +50,10 @@ def tauInclusion : ℂ → ProjectiveLine := fun z => ↑z
 def zetaInclusion (z : ℂ) : ProjectiveLine :=
   if z = 0 then OnePoint.infty else ↑z⁻¹
 
-/-- The standard complex structure of the projective line: both affine coordinates `τ` and
-`ζ = 1/τ` are holomorphic, which determines it. Dependents are conditional on an instance; a
-construction is requested in `WantedExt`
-(`ProjectiveProductSourceRequests.actual_projective_complex_source`). -/
+/-- A complex structure on the projective line, the one-point compactification of $ℂ$, in which
+both affine coordinates are holomorphic: charts modelled on $ℂ^1$ forming a complex manifold, for
+which the maps $τ : ℂ → \mathbb{P}^1$, $z ↦ z$, and $ζ : ℂ → \mathbb{P}^1$, $z ↦ 1/z$ (sending $0$
+to $∞$), are holomorphic. -/
 class ProjectiveComplexSource where
   [charts : ChartedSpace ProjectiveCoordinates ProjectiveLine]
   [manifold : IsManifold 𝓘(ℂ, ProjectiveCoordinates) ∞ ProjectiveLine]

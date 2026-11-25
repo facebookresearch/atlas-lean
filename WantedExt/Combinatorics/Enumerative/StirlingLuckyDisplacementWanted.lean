@@ -258,22 +258,6 @@ Proposition 4.4 (`jis-2024-24.6.7-prop-35`). -/
 public theorem_wanted isAdmissibleLuckySet_one_pred_two_mul_sub_two_iff (n : ℕ) (hn : 4 ≤ n) :
     IsAdmissibleLuckySet n {1, n - 1, 2 * n - 2} ↔ Even n
 
-/-- **Total displacement of a Stirling permutation is invariant under rearrangement.** Let
-$w = w_1 \cdots w_{2n}$ be a Stirling permutation of order $n$ and let $\sigma$ be a permutation
-of $\{1, \dots, 2n\}$. Read words of length $2n$ as parking functions, and let $d(v)$ denote the
-total displacement of a word $v$, the sum of the displacements of its cars. Then the rearranged
-word $w \circ \sigma = w_{\sigma(1)} \cdots w_{\sigma(2n)}$ satisfies $d(w \circ \sigma) = d(w)$.
-
-The rearranged word $w \circ \sigma$ need not be a Stirling permutation.
-
-Source: L. Colmenarejo et al., *On the Lucky and Displacement Statistics of
-Stirling Permutations*, Journal of Integer Sequences 27 (2024), Article 24.6.7,
-Lemma 5.2 (`jis-2024-24.6.7-lem-37`), quoting Elder, Harris, Kretschmann, and
-Martínez Mori, Lemma 3.1. -/
-public theorem_wanted stirlingTotalDisplacement_comp_perm (n : ℕ) (w : Fin (2 * n) → ℕ)
-    (hw : IsStirlingPermutation n w) (σ : Equiv.Perm (Fin (2 * n))) :
-    stirlingTotalDisplacement (w ∘ σ) = stirlingTotalDisplacement w
-
 /-- **Unlucky cars of an extremely lucky Stirling permutation.** Let $w = w_1 \cdots w_{2n}$ be a
 Stirling permutation of order $n$ that is extremely lucky, that is, its set $\mathrm{Lucky}(w)$
 of lucky cars has exactly $n$ elements, and let $1 \le i \le n$. If car $j$ is unlucky and

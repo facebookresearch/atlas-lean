@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import MathlibExt.Combinatorics.Coding.CycleCode
+public import MathlibExt.Combinatorics.Coding.CycleShannonBounds
 
 /-!
 # Known cycle-capacity construction and rate requests
@@ -63,13 +63,6 @@ $7$-cycle is at most $\frac{7 \cos(\pi/7)}{1 + \cos(\pi/7)}$, as an inequality i
 Source: Lovász (1979); the closed form is also printed in the retained BPZ primary. -/
 theorem_wanted lovasz1979UpperBound :
   shannonCapacityCycle 7 ≤ lovaszThetaCycleSeven
-
-/-- **Baumert et al. lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at least $343^{1/5}$, as an inequality in $[0, \infty]$.
-
-Source: Baumert--McEliece--Rodemich--Rumsey--Stanley--Taylor (1971), exact rate row. -/
-theorem_wanted bmrrst1971LowerBound :
-  ENNReal.rpow 343 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
 
 /-- **Vesel–Žerovnik lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
 $7$-cycle is at least $108^{1/4}$.

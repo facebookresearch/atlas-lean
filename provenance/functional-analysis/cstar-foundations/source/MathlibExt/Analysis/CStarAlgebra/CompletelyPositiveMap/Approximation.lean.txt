@@ -1,0 +1,62 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Canonical
+public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
+
+/-!
+# Finite-rank completely positive contractive approximation
+
+The approximation witnesses are actual canonical completely positive maps,
+with an explicit pointwise contraction bound and finite-dimensional linear
+range. Source and target may be nonunital or zero. No nuclearity theorem,
+selected approximation, matrix model or new order/norm instance is assumed.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+namespace CompletelyPositiveMap
+
+universe uA uB
+
+variable {A : Type uA} {B : Type uB}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
+
+/-- A function is approximable on every finite set by genuine finite-rank
+completely positive contractions. The four canonical order dictionaries are
+local values, including the scope in which the linear range is projected.
+No approximation witness is selected by this predicate. -/
+def HasFiniteRankCPCApproximation (f : A → B) : Prop :=
+  letI : PartialOrder A := CStarAlgebra.spectralOrder A
+  letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  letI : PartialOrder B := CStarAlgebra.spectralOrder B
+  letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+  ∀ (F : Finset A) (ε : ℝ), 0 < ε →
+    ∃ phi : Canonical A B,
+      (∀ a : A, ‖phi a‖ ≤ ‖a‖) ∧
+      FiniteDimensional ℂ (LinearMap.range phi.toLinearMap) ∧
+      ∀ a ∈ F, ‖phi a - f a‖ < ε
+
+/-- The public finite-test characterization, with the same canonical
+source/target dictionaries and the actual linear range. -/
+theorem hasFiniteRankCPCApproximation_iff (f : A → B) :
+    HasFiniteRankCPCApproximation f ↔
+      (letI : PartialOrder A := CStarAlgebra.spectralOrder A
+       letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+       letI : PartialOrder B := CStarAlgebra.spectralOrder B
+       letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B
+       ∀ (F : Finset A) (ε : ℝ), 0 < ε →
+         ∃ phi : Canonical A B,
+           (∀ a : A, ‖phi a‖ ≤ ‖a‖) ∧
+           FiniteDimensional ℂ (LinearMap.range phi.toLinearMap) ∧
+           ∀ a ∈ F, ‖phi a - f a‖ < ε) :=
+  Iff.rfl
+
+end CompletelyPositiveMap

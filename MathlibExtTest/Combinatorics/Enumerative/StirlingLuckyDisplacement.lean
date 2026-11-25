@@ -39,6 +39,22 @@ example : stirlingTotalDisplacement (n := 0) Fin.elim0 = 0 :=
 -- In 332211 the first car takes spot 3 and the last car travels from spot 1 to spot 6.
 example : stirlingTotalDisplacement (n := 3) ![3, 3, 2, 2, 1, 1] = 9 := by decide
 
+-- Swapping the middle cars of 1122 gives 1212, which is not a Stirling permutation.
+example :
+    let w : Fin (2 * 2) → ℕ := ![1, 1, 2, 2]
+    let σ : Equiv.Perm (Fin (2 * 2)) := Equiv.swap 1 2
+    ¬ IsStirlingPermutation 2 (w ∘ σ) ∧
+      stirlingTotalDisplacement (w ∘ σ) = stirlingTotalDisplacement w := by
+  dsimp only
+  exact ⟨by unfold IsStirlingPermutation; decide,
+    stirlingTotalDisplacement_comp_perm 2 _ (by unfold IsStirlingPermutation; decide) _⟩
+
+-- There is also a rearrangement of the empty parking lot.
+example :
+    stirlingTotalDisplacement (n := 0) (Fin.elim0 ∘ Equiv.refl _) =
+      stirlingTotalDisplacement (n := 0) Fin.elim0 :=
+  stirlingTotalDisplacement_comp_perm 0 Fin.elim0 (by simp [IsStirlingPermutation]) _
+
 -- At order one the two bounds coincide.
 example : (Finset.univ.filter fun i => stirlingDisplacement (n := 1) ![1, 1] i = 0).card = 1 := by
   have h := stirling_card_zero_displacement 1 (by decide) ![1, 1]

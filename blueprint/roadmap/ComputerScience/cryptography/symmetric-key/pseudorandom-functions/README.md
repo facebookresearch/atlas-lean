@@ -34,3 +34,7 @@
 - [The encryption oracle depends only on the encryption randomness](run-enc-congr.md)
 - [The CPA reduction against a random function](prf-rand-cpa-reduction.md)
 - [CPA encryption from a PRF, concrete security](cpa-advantage-le.md)
+
+## Constructions from pseudorandom generators
+
+- [The GGM construction: pseudorandom generators give pseudorandom functions](the-ggm-construction-pseudorandom-generators.md)
