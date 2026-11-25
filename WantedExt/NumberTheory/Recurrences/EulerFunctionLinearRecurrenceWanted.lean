@@ -13,6 +13,7 @@ public import Mathlib.Algebra.LinearRecurrence
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.RoughNumberSieve
+public import MathlibExt.NumberTheory.Recurrences.EulerFunctionLinearRecurrence
 
 /-!
 Statements from Luca and Manape on the Euler function of linearly recurrent sequences.
@@ -43,20 +44,6 @@ public theorem_wanted totient_div_gg_and_sigma_div_ll_log_log :
         C / Real.log (Real.log n) ≤ (Nat.totient n : ℝ) / n) ∧
       ∃ C : ℝ, ∀ n : ℕ, 3 ≤ n →
         (ArithmeticFunction.sigma 1 n : ℝ) / n ≤ C * Real.log (Real.log n)
-
-/-- **Integers with many prime factors are rare.** Let $\Omega(n)$ be the number of prime factors
-of $n$ counted with multiplicity. There is a constant $C$ such that for every real $x \ge 10$, the
-number of integers $1 \le n \le x$ with $\Omega(n) \ge 10 \log\log x$ is at most
-$C x / (\log x)^2$.
-
-Source: Florian Luca and Makoko Campbell Manape, *On the Euler Function of Linearly Recurrence
-Sequences*, Fibonacci Quarterly 62 (2024), Article 62-4/luca09162024rev2,
-Lemma 3 (`fq-2024-luca09162024rev2-lem-3`). -/
-public theorem_wanted card_cardFactors_ge_ten_log_log_le :
-    ∃ C : ℝ, ∀ x : ℝ, 10 ≤ x →
-      ((Finset.Icc 1 ⌊x⌋₊).filter (fun n =>
-          10 * Real.log (Real.log x) ≤ (ArithmeticFunction.cardFactors n : ℝ))).card ≤
-        C * x / Real.log x ^ 2
 
 /-- **Integers whose sum of divisors has many divisors.** Let $\sigma(n)$ be the sum of the
 positive divisors of $n$ and $\tau(m)$ the number of positive divisors of $m$. There is a constant
