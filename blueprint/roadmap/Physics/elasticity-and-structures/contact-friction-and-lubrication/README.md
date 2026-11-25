@@ -5,7 +5,7 @@
 - [Film thickness of a plane slider](slider-film.md)
 - [Solutions of the Reynolds equation for a plane slider](is-reynolds-solution.md)
 - [Closed-form pressure of a plane slider](slider-pressure.md)
-- [Closed-form pressure gradient of a plane slider](slider-pressure-gradient.md)
+- [Pressure-gradient formula of a plane slider](slider-pressure-gradient.md)
 - [Load per unit width of a plane slider](slider-load.md)
 - [The slider film stays open](slider-film-pos.md)
 
