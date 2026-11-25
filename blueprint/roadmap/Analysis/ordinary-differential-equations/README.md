@@ -20,6 +20,8 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 - [Solutions of $xu''+2u'+u=0$ have infinitely many zeros](set-infinite-zero-of-mul-iterated-deriv.md)
 - [Sturm separation theorem](sturm-separation.md)
 
+- [Stability of linear systems](stability-of-linear-systems/README.md)
+
 ## Logistic traveling-wave profiles
 
 - [Traveling-wave profile of the Fisher–KPP equation](is-wave-profile.md)
