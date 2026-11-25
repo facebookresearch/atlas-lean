@@ -570,7 +570,7 @@ theorem fiber_snd_card {n : ℕ} (π : Equiv.Perm (Fin n)) (b : Fin n) :
     simp only [Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and]
     constructor
     · rintro ⟨p, ⟨⟨⟨hlt1, hlt2⟩, heq⟩, hfst⟩⟩
-      rw [heq, hsnd] at hlt1 hlt2
+      rw [heq, hfst] at hlt1 hlt2
       exact ⟨hlt1, hlt2⟩
     · rintro ⟨hlt1, hlt2⟩
       exact ⟨(k, b), ⟨⟨⟨hlt1, hlt2⟩, rfl⟩, rfl⟩⟩
