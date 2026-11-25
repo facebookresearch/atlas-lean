@@ -55,6 +55,7 @@ module
 
 public import Mathlib.FieldTheory.RatFunc.Valuation
 public import MathlibExt.AlgebraicGeometry.Curve.ChartDichotomy
+public import MathlibExt.AlgebraicGeometry.Curve.LPolynomial
 public import MathlibExt.AlgebraicGeometry.Curve.Place
 import Mathlib.LinearAlgebra.Charpoly.Basic
 import Mathlib.LinearAlgebra.Eigenspace.Zero
@@ -62,9 +63,9 @@ import Mathlib.LinearAlgebra.Eigenspace.Zero
 /-!
 # Divisors, residue fields and evaluation at places of a function field
 
-For a field extension `F / K`, this file extends `AlgebraicCurve.Place` with the residue field
-and degree of a place, divisors (finitely supported `ℤ`-valued functions on places) and their
-degree, the class `AlgebraicCurve.HasPrincipalDivisors` saying that principal divisors exist
+For a field extension `F / K`, this file adds to `AlgebraicCurve.Place` (with its residue field
+from `ChartDichotomy` and the degree of places and divisors from `LPolynomial`)
+the class `AlgebraicCurve.HasPrincipalDivisors` saying that principal divisors exist
 and have degree zero, evaluation `Place.evalAt` of functions at rational places, the
 multiplicative evaluation `Divisor.evalFun f D = ∏ v, f(v) ^ D v`, and the statement
 `AlgebraicCurve.WeilReciprocity K F`. It also constructs the places of the rational function
@@ -83,33 +84,6 @@ open IsDedekindDomain WithZero IsLocalRing
 namespace AlgebraicCurve
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
-
-namespace Place
-
-variable {K F} (v : Place K F)
-
-/-- The degree of a place: the dimension of its residue field over `K`. -/
-def deg : ℕ := Module.finrank K v.ResidueField
-
-end Place
-
-/-- A divisor on `F / K`: a finitely supported integer-valued function on places. -/
-abbrev Divisor : Type _ := Place K F →₀ ℤ
-
-namespace Divisor
-
-variable {K F}
-
-/-- The degree of a divisor, `∑ v, D v * deg v`. -/
-def degree : Divisor K F →+ ℤ :=
-  Finsupp.liftAddHom fun v => AddMonoidHom.mulRight (v.deg : ℤ)
-
-@[simp]
-theorem degree_single (v : Place K F) (n : ℤ) :
-    degree (Finsupp.single v n) = n * v.deg := by
-  simp [degree]
-
-end Divisor
 
 /-- Every nonzero element of `F` has a principal divisor, and it has degree zero. -/
 class HasPrincipalDivisors : Prop where
