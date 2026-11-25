@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.PrimePairTwoPowEvenMulPowSubPowEqSq
 public import MathlibExt.NumberTheory.PrimePairTwoPowOddMulPowSubPowEqSq
 public import MathlibExt.NumberTheory.PrimePowAddOneEqSq
 public import MathlibExt.NumberTheory.ThreePowEqSqAddTwoIff
+public import MathlibExt.NumberTheory.TwoAddSevenPowEqSqIff
 
 /-!
 # The equations `(-1)^α pˣ + (-1)^β (2ᵏ(2p - 1))ʸ = z²` for prime pairs `(p, 2p - 1)`
@@ -135,13 +136,6 @@ theorem_wanted two_pow_three_pow_six_pow_eq_sq_solutions :
     (∀ x y z : ℕ, -(2 : ℤ) ^ x + 6 ^ y = (z : ℤ) ^ 2 ↔
       (x, y, z) = (0, 0, 0) ∨ (x, y, z) = (1, 1, 2) ∨ (x, y, z) = (5, 2, 2) ∨
         (x, y, z) = (9, 4, 28) ∨ (x, y, z) = (5, 5, 88))
-
-/-- **Solutions of $2 + 7^y = z^2$.** For natural numbers $y, z$, we have $2 + 7^y = z^2$ if and
-only if $(y, z) = (1, 3)$.
-
-Source: Jing Zhang and Yuan Li, *On the Equation (-1)^α p^x + (-1)^β (2^k(2p - 1))^y = z^2 for
-Prime Pairs (p, 2p - 1)*, INTEGERS 24 (2024), Article A64, Theorem 11. -/
-theorem_wanted two_add_seven_pow_eq_sq_iff (y z : ℕ) : 2 + 7 ^ y = z ^ 2 ↔ (y, z) = (1, 3)
 
 end
 

@@ -48,6 +48,16 @@ example : ∃ A B C : ℤ, A ≠ 0 ∧ C = 4 * A ∧ HasSquareElementarySymmetri
 example : HasSquareElementarySymmetricFunctions 45 180 64 :=
   hasSquareElementarySymmetricFunctions_family33 2 1
 
+-- Pairwise products of a member of the family keep square symmetric functions.
+example : HasSquareElementarySymmetricFunctions (45 * 180) (180 * 64) (64 * 45) :=
+  hasSquareElementarySymmetricFunctions_pairwise_products
+    (hasSquareElementarySymmetricFunctions_family33 2 1)
+
+-- The zero triple is preserved by pairwise products.
+example : HasSquareElementarySymmetricFunctions (0 * 0) (0 * 0) (0 * 0) :=
+  hasSquareElementarySymmetricFunctions_pairwise_products
+    ⟨⟨0, by norm_num⟩, ⟨0, by norm_num⟩, ⟨0, by norm_num⟩⟩
+
 -- Opposite parameters make the first two entries vanish.
 example : HasSquareElementarySymmetricFunctions 0 0 4 := by
   convert hasSquareElementarySymmetricFunctions_family33 (-1) 1 using 1 <;> norm_num
