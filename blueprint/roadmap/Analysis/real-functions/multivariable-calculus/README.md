@@ -19,3 +19,4 @@ Functions on R^n: partial derivatives, gradients, Jacobians, Hessians, implicit 
 - [Green's theorem](greens-theorem.md)
 - [Smooth functions vanishing on the axes are $O(|x|\,|y|)$ near the origin](exists-abs-le-mul-abs-mul-abs-of-cont-di.md)
 - [Taylor's theorem with little-o remainder in several variables](taylor-is-little-o-multivariable.md)
+- [Implicit function theorem](implicit-function-theorem.md)

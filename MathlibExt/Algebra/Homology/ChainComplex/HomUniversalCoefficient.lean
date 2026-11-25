@@ -2032,8 +2032,23 @@ def homUniversalCoefficientSequenceEngineIso (P : ChainComplex C ℤ) (Q : Cocha
       congrArg₂ (fun t : M ⟶ M => fun v : M ⟶ T.X₃ => t ≫ v) heM hgM
     exact hFirst.trans (Category.id_comp (sG ≫ e₃.hom))
 
-/-- Printed projective terms and outgoing images prove
-the actual full-Π UCT short exact sequence. -/
+/-- Let `C : Type u` be an abelian category with morphisms in universe `v` and
+`HasExt.{w} C`, let `P : ChainComplex C ℤ` and `Q : CochainComplex C ℤ`, and let `n : ℤ`.
+If every `P.X p` and every `Abelian.image (P.d p (p - 1))`, for all `p : ℤ`, is projective,
+the full-product universal coefficient sequence is short exact:
+`0 → (∏ p : ℤ, Ext¹_C(H_p(P), H^{n-1-p}(Q))) → Hⁿ(homCochainComplex P Q) →
+(∏ p : ℤ, Hom_C(H_p(P), H^{n-p}(Q))) → 0`.
+The Hom complex uses products over all integer degrees and retains both given differentials.
+
+Each Ext factor uses `ULift.{v, w}`; the middle cohomology uses
+`AddCommGrpCat.uliftFunctor.{w, v}`; each right-hand Hom factor uses `ULift.{w, v}`.
+All three terms lie in `AddCommGrpCat.{max v w}`.
+
+For `S = homCyclesCohomologyClip P Q n hI`, the first arrow is
+`(homUctCokernelIso P Q n hI hZ).inv ≫ S.f` and the second is
+`S.g ≫ (homUctKernelIso P Q n hI hZ).hom`, where `hZ` is the projectivity of all cycles
+derived from the two hypotheses. These are the Hom long-exact-sequence inclusion and cycles
+restriction, transported through the Yoneda Ext and homology-Hom product comparisons. -/
 lemma homUniversalCoefficientSequenceEngine_shortExact (P : ChainComplex C ℤ)
     (Q : CochainComplex C ℤ) (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -2478,7 +2493,22 @@ def homUniversalCoefficientSequenceIso (P : ChainComplex C ℤ) (Q : CochainComp
   change S ≅ S.changeObjects e₁ e₂ e₃
   exact S.changeObjectsIso e₁ e₂ e₃
 
-/-- The standard full-product sequence is short exact under precisely the printed P hypotheses. -/
+/-- Let `C : Type u` be an abelian category with morphisms in universe `v`, let
+`P : ChainComplex C ℤ` and `Q : CochainComplex C ℤ`, and let `n : ℤ`.
+Assume that `P.X p` and `Abelian.image (P.d p (p - 1))` are projective for every `p : ℤ`.
+Then the standard full-product universal coefficient sequence is short exact:
+`0 → (∏ p : ℤ, Ext¹_C(H_p(P), H^{n-1-p}(Q))) → Hⁿ(homCochainComplex P Q) →
+(∏ p : ℤ, Hom_C(H_p(P), H^{n-p}(Q))) → 0`.
+The target `Q` retains its differential and every product ranges over all integers.
+
+`HasExt.standard C` supplies Ext in universe `max u v`. The left term is the unlifted product
+of these Ext groups; the middle and the full right-hand Hom product are lifted by
+`AddCommGrpCat.uliftFunctor.{u, v}` into `AddCommGrpCat.{max u v}`.
+
+The arrows are the Hom long-exact-sequence inclusion and cycles restriction, using the Ext
+and homology-Hom product comparisons of `homUniversalCoefficientSequenceEngine` and then
+transported by `homUniversalCoefficientStandardCoordinates`. Short exactness is transported
+through `homUniversalCoefficientSequenceIso`. -/
 lemma homUniversalCoefficientSequence_shortExact (P : ChainComplex C ℤ)
     (Q : CochainComplex C ℤ) (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p, Projective (Abelian.image (P.d p (p - 1)))) :

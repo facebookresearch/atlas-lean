@@ -392,7 +392,6 @@ Files:
   MathlibExt/AlgebraicTopology/SimplexCategory/GeneratorsRelations/DeltaChain.lean
   MathlibExt/AlgebraicTopology/SimplexCategory/GeneratorsRelations/Equivalence.lean
   MathlibExt/AlgebraicTopology/SimplicialObject/AugmentedRightExtraDegeneracy.lean
-  MathlibExt/AlgebraicTopology/SimplicialObject/AugmentedWhiskering.lean
   MathlibExt/AlgebraicTopology/SimplicialObject/DataAugmented.lean
   MathlibExt/AlgebraicTopology/SimplicialObject/DataAugmentedRev.lean
   MathlibExt/AlgebraicTopology/SimplicialObject/DataExtraDegeneracy.lean

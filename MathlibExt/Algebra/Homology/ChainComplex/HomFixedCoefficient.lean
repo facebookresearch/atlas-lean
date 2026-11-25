@@ -1549,9 +1549,22 @@ private lemma homFixedCoefficientUCT_right_raw (P : ChainComplex C ℤ) (M : C) 
     change (S.g ≫ e₃.hom).hom (ULift.up x₀) = (e₂.hom ≫ U.map r).hom (ULift.up x₀)
     exact hLeft.trans hRight.symm
 
-/-- The fixed-coefficient sequence uses the actual native Ext/Hom sequence and computed coordinates.
-Its projective-term and image hypotheses are the printed hypotheses.
-Homology projectivity is unnecessary. -/
+/-- The universal coefficient sequence for an integer chain complex `P` and an object `M`
+in an abelian category `C` with `HasExt.{w} C`. For every `p : ℤ`, the hypotheses require
+`Projective (P.X p)` and `Projective (Abelian.image (P.d p (p - 1)))`.
+
+For every `n : ℤ`, its three terms are
+`Ext¹_C(H_{n-1}(P), M) → Hⁿ(Hom_C(P, M)) → Hom_C(H_n(P), M)`.
+The Hom cochain differential is positive precomposition with the differential of `P`.
+The Ext term is lifted by `AddCommGrpCat.uliftFunctor.{v, w}` and the middle and right terms
+by `AddCommGrpCat.uliftFunctor.{w, v}`, giving a short complex in `AddCommGrpCat.{max v w}`.
+
+The left arrow is the Yoneda-extension injection from the boundary–cycle–homology sequence,
+transported through `homFixedCoefficientUCTCoordinates` with positive Ext-class normalization.
+The right arrow is `AddCommGrpCat.uliftFunctor.{w, v}.map
+(homFixedCoefficientRestriction P M n)`: a cocycle restricts to cycles and descends to `H_n(P)`.
+`homFixedCoefficientUniversalCoefficientSequence_shortExact` proves that these maps form a
+short exact sequence. -/
 def homFixedCoefficientUniversalCoefficientSequence (P : ChainComplex C ℤ) (M : C) (n : ℤ)
     (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p (p - 1)))) :
@@ -1575,7 +1588,17 @@ def homFixedCoefficientUniversalCoefficientSequenceIso (P : ChainComplex C ℤ) 
   let c := homFixedCoefficientUCTCoordinates P M n
   exact S.changeObjectsIso c.1 c.2.1 c.2.2
 
-/-- The full integer fixed-coefficient sequence is short exact under the printed inputs. -/
+/-- For an integer chain complex `P` in an abelian category `C` with `HasExt.{w} C`, an
+object `M`, and any `n : ℤ`, the fixed-coefficient universal coefficient sequence is short exact:
+`0 → Ext¹_C(H_{n-1}(P), M) → Hⁿ(Hom_C(P, M)) → Hom_C(H_n(P), M) → 0`.
+The hypotheses require every `P.X p` and every `Abelian.image (P.d p (p - 1))`, for all `p : ℤ`,
+to be projective.
+
+The Ext term uses `AddCommGrpCat.uliftFunctor.{v, w}`; the middle and right terms use
+`AddCommGrpCat.uliftFunctor.{w, v}`. All three lie in `AddCommGrpCat.{max v w}`.
+The first map is the positively normalized Yoneda-extension injection from the
+boundary–cycle–homology sequence, and the second is the lifted homology restriction
+`homFixedCoefficientRestriction P M n`. -/
 lemma homFixedCoefficientUniversalCoefficientSequence_shortExact
     (P : ChainComplex C ℤ) (M : C) (n : ℤ) (hP : ∀ p : ℤ, Projective (P.X p))
     (hI : ∀ p : ℤ, Projective (Abelian.image (P.d p (p - 1)))) :

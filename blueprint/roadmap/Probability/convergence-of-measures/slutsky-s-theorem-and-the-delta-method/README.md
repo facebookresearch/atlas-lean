@@ -11,3 +11,5 @@ Convergence in probability implies convergence in distribution, but not converse
 - [Convergence in distribution to a constant implies convergence in probability](tendsto-in-measure-of-tendsto-in-distrib.md)
 - [Delta method](delta-method.md): an application, whose proof uses the main statement
 - [Delta method in one dimension](delta-method-real.md): the delta method for real random variables
+- [Studentization with a consistent covariance estimator](studentization-for-an-explicitly-supplied-depend.md): an application of Slutsky's theorem, normalizing an asymptotically normal vector by a consistent covariance estimator
+- [Slutsky's theorem for a random matrix times a random vector](slutsky-s-theorem-for-a-random-matrix-times-a-random-vector.md)
