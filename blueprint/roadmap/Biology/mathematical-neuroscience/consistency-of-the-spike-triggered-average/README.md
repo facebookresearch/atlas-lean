@@ -5,4 +5,4 @@
 - [Cov Matrix](cov-matrix.md)
 - [Spike Triggered Average](spike-triggered-average.md)
 - [Consistency of the spike-triggered average](tendsto-spike-triggered-average.md)
-- [Consistency can fail without elliptical symmetry](exists-spike-triggered-average-not-paral.md)
+- [Elliptical symmetry is necessary for consistency](exists-spike-triggered-average-not-paral.md)

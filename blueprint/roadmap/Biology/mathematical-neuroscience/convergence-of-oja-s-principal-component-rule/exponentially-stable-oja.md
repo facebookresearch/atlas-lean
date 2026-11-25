@@ -8,4 +8,4 @@ averaged Oja ODE on `[0, ∞)` with `‖z(0) - c‖ < δ` satisfies
 
 ## Sources
 
-- Oja (1982).
+- E. Oja, "A simplified neuron model as a principal component analyzer", J. Math. Biol. 15 (1982) 267–273.

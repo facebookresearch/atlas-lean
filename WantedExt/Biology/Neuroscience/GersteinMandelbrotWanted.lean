@@ -21,8 +21,7 @@ is reset, so successive intervals are independent copies; that renewal structure
 here.
 
 The deterministic leaky integrate-and-fire first hit is
-`Domains.Biology.Biophysics.IntegrateAndFire.FirstHit`; no first-passage law of Brownian motion
-is on main.
+`Domains.Biology.Biophysics.IntegrateAndFire.FirstHit`.
 
 Sources: G. L. Gerstein and B. Mandelbrot, "Random walk models for the spike activity of a single
 neuron", Biophys. J. 4 (1964) 41–68.
@@ -63,7 +62,8 @@ time of `c t + √2 B(t)` to `[z₀, ∞)` take values in `WithTop ℝ≥0` (`�
 reached). Then for all `a, b : ℝ≥0` with `0 < a ≤ b`, the probability that the first passage time
 lies in `[a, b]` equals `∫_a^b z₀ (4π)^{-1/2} T^{-3/2} exp(-(z₀ - cT)² / (4T)) dT`.
 
-Source: Gerstein and Mandelbrot (1964). -/
+Source: G. L. Gerstein and B. Mandelbrot, "Random walk models for the spike activity of a single
+neuron", Biophys. J. 4 (1964) 41–68. -/
 public theorem_wanted measure_firstPassageTime_mem_Icc (P : Measure Ω) [IsProbabilityMeasure P]
     (B : ℝ≥0 → Ω → ℝ) (hB : IsBrownianReal B P) (z₀ c : ℝ) (hz₀ : 0 < z₀) (a b : ℝ≥0)
     (ha : 0 < a) (hab : a ≤ b) :

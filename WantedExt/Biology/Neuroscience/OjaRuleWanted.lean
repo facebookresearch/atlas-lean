@@ -23,8 +23,7 @@ iterates that the statement used for this module does not fix, so it is not stat
 condition `λ₁ > 0` is automatic for `n ≥ 2` and is assumed explicitly to exclude `C = 0` in
 dimension one.
 
-`MathlibExt.Probability.Statistics.PCA` treats principal components statistically; no learning
-dynamics are on main.
+`MathlibExt.Probability.Statistics.PCA` treats principal components statistically.
 
 Sources: E. Oja, "A simplified neuron model as a principal component analyzer", J. Math. Biol. 15
 (1982) 267–273; E. Oja and J. Karhunen, "On stochastic approximation of the eigenvectors and
@@ -69,7 +68,8 @@ semidefinite `n × n` matrix with a simple top eigenvalue `λ₁ > 0` and unit e
 every solution `z` of `z' = C z - (zᵀ C z) z` on `[0, ∞)` with `z(0) ⬝ᵥ c > 0` converges to `c`,
 and every solution with `z(0) ⬝ᵥ c < 0` converges to `-c`.
 
-Source: Oja (1982). -/
+Source: E. Oja, "A simplified neuron model as a principal component analyzer", J. Math. Biol.
+15 (1982) 267–273. -/
 public theorem_wanted tendsto_oja {C : Matrix (Fin n) (Fin n) ℝ} (hC : C.PosSemidef) {lam : ℝ}
     {c : Fin n → ℝ} (hc : IsTopEigenvector C lam c) {z : ℝ → Fin n → ℝ}
     (hz : IsOjaSolution C z) :
@@ -81,7 +81,8 @@ averaged Oja ODE on `[0, ∞)` with `‖z(0) - c‖ < δ` satisfies
 `‖z(t) - c‖ ≤ K e^{-κ t} ‖z(0) - c‖` for all `t ≥ 0`, and likewise every solution with
 `‖z(0) + c‖ < δ` satisfies `‖z(t) + c‖ ≤ K e^{-κ t} ‖z(0) + c‖` for all `t ≥ 0`.
 
-Source: Oja (1982). -/
+Source: E. Oja, "A simplified neuron model as a principal component analyzer", J. Math. Biol.
+15 (1982) 267–273. -/
 public theorem_wanted exponentially_stable_oja {C : Matrix (Fin n) (Fin n) ℝ}
     (hC : C.PosSemidef) {lam : ℝ} {c : Fin n → ℝ} (hc : IsTopEigenvector C lam c) :
     ∃ δ > 0, ∃ K > 0, ∃ κ > 0, ∀ z : ℝ → Fin n → ℝ, IsOjaSolution C z →

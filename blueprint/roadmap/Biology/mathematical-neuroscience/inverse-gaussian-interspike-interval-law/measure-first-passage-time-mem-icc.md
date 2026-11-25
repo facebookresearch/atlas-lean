@@ -9,4 +9,4 @@ lies in `[a, b]` equals `∫_a^b z₀ (4π)^{-1/2} T^{-3/2} exp(-(z₀ - cT)² /
 
 ## Sources
 
-- Gerstein and Mandelbrot (1964).
+- G. L. Gerstein and B. Mandelbrot, "Random walk models for the spike activity of a single neuron", Biophys. J. 4 (1964) 41–68.

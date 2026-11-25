@@ -11,4 +11,4 @@ every travelling front from `u₃` to `u₁`, with speed `c'` and profile `U'`, 
 
 ## Sources
 
-- Ermentrout and McLeod (1993).
+- G. B. Ermentrout and J. B. McLeod, "Existence and uniqueness of travelling waves for a neural network", Proc. Roy. Soc. Edinburgh Sect. A 123 (1993) 461–478.

@@ -72,7 +72,9 @@ amplitude `σ / √τ` under `P`, every path of which is continuous. Then the fi
 almost surely, its finite value `firingTimeValue` is integrable, and its mean is
 `τ √π ∫_{(V₀-μ)/σ}^{(θ-μ)/σ} e^{u²} (1 + erf u) du`.
 
-Sources: Siegert (1951); arXiv:1501.04032. -/
+Sources: A. J. F. Siegert, "On the first passage time probability problem", Phys. Rev. 81
+(1951) 617–623; "Mean time-to-fire for the noisy LIF neuron: a detailed derivation of the
+Siegert formula", arXiv:1501.04032. -/
 public theorem_wanted integral_firingTime (P : Measure Ω) [IsProbabilityMeasure P]
     (τ μ σ V₀ θ : ℝ) (hτ : 0 < τ) (hσ : 0 < σ) (hV₀ : V₀ < θ) (X : ℝ≥0 → Ω → ℝ)
     (hX : IsOrnsteinUhlenbeckFromZero (1 / τ) (σ / √τ) X P)

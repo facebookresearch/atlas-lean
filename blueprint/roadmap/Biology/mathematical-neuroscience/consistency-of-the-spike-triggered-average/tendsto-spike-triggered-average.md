@@ -13,4 +13,4 @@ nonzero multiple `κ k` of the filter `k`.
 
 ## Sources
 
-- Paninski (2003).
+- L. Paninski, "Convergence properties of three spike-triggered analysis techniques", Network: Comput. Neural Syst. 14 (2003) 437–464, Theorem 1.

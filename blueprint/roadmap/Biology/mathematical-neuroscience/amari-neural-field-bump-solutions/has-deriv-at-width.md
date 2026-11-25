@@ -9,4 +9,4 @@ slopes `c₁ t = ∂_x u(x₁ t, t)` and `c₂ t = -∂_x u(x₂ t, t)` be posit
 
 ## Sources
 
-- Amari (1977).
+- S. Amari, "Dynamics of pattern formation in lateral-inhibition type neural fields", Biol. Cybern. 27 (1977) 77–87.

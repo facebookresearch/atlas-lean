@@ -64,7 +64,8 @@ integrable, `h, s ∈ ℝ`, `a > 0`, and let `U : ℝ → ℝ` be continuous wit
 for every `x` (a stationary solution) and excited region `{x | h < U x} = (0, a)`. Then
 `W(a) + s = h` and `U x = W(x) - W(x - a) + s` for every `x`.
 
-Source: Amari (1977). -/
+Source: S. Amari, "Dynamics of pattern formation in lateral-inhibition type neural fields",
+Biol. Cybern. 27 (1977) 77–87. -/
 public theorem_wanted bump_condition_and_profile {w : ℝ → ℝ} (hw : IsKernel w) (h s a : ℝ)
     (ha : 0 < a) (U : ℝ → ℝ) (hU : Continuous U) (hstat : ∀ x, U x = fieldInput w h s U x)
     (hex : {x | h < U x} = Set.Ioo 0 a) :
@@ -78,7 +79,8 @@ differentiable with `x₁ t < x₂ t` and `{x | h < u x t} = (x₁ t, x₂ t)` f
 slopes `c₁ t = ∂_x u(x₁ t, t)` and `c₂ t = -∂_x u(x₂ t, t)` be positive for all `t`. Then for every
 `t` the width `a = x₂ - x₁` has derivative `(W(a(t)) + s - h) (1 / c₁ t + 1 / c₂ t)` at `t`.
 
-Source: Amari (1977). -/
+Source: S. Amari, "Dynamics of pattern formation in lateral-inhibition type neural fields",
+Biol. Cybern. 27 (1977) 77–87. -/
 public theorem_wanted hasDerivAt_width {w : ℝ → ℝ} (hw : IsKernel w) (h s : ℝ)
     (u : ℝ → ℝ → ℝ) (hu : ContDiff ℝ 1 (fun p : ℝ × ℝ => u p.1 p.2))
     (heq : ∀ x t, HasDerivAt (fun t => u x t) (-u x t + fieldInput w h s (fun y => u y t) x) t)
@@ -96,7 +98,8 @@ every width `a` with `0 < |a - a*| < δ` has `(a - a*) (W(a) + s - h) < 0`, so t
 equation moves `a` towards `a*`; if `w(a*) > 0`, there is `δ > 0` such that every such `a` has
 `(a - a*) (W(a) + s - h) > 0`, so it moves `a` away from `a*`.
 
-Source: Amari (1977). -/
+Source: S. Amari, "Dynamics of pattern formation in lateral-inhibition type neural fields",
+Biol. Cybern. 27 (1977) 77–87. -/
 public theorem_wanted width_stability {w : ℝ → ℝ} (hw : IsKernel w) {h s a₀ : ℝ} (ha₀ : 0 < a₀)
     (hbump : kernelPrimitive w a₀ + s = h) :
     (w a₀ < 0 → ∃ δ > 0, ∀ a, 0 < |a - a₀| → |a - a₀| < δ →

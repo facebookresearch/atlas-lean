@@ -9,4 +9,4 @@ almost surely, its finite value `firingTimeValue` is integrable, and its mean is
 
 ## Sources
 
-- Siegert (1951); arXiv:1501.04032.
+- A. J. F. Siegert, "On the first passage time probability problem", Phys. Rev. 81 (1951) 617–623; "Mean time-to-fire for the noisy LIF neuron: a detailed derivation of the Siegert formula", arXiv:1501.04032.

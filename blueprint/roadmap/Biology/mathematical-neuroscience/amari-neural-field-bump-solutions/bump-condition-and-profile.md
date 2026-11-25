@@ -7,4 +7,4 @@ for every `x` (a stationary solution) and excited region `{x | h < U x} = (0, a)
 
 ## Sources
 
-- Amari (1977).
+- S. Amari, "Dynamics of pattern formation in lateral-inhibition type neural fields", Biol. Cybern. 27 (1977) 77–87.

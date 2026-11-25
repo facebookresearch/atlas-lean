@@ -84,7 +84,8 @@ every travelling front from `u₃` to `u₁`, with speed `c'` and profile `U'`, 
 `U' = U(· + ξ)` for some `ξ`; and `c > 0 ↔ ∫_{u₁}^{u₃} (f(u) - u) du > 0` and
 `c = 0 ↔ ∫_{u₁}^{u₃} (f(u) - u) du = 0`.
 
-Source: Ermentrout and McLeod (1993). -/
+Source: G. B. Ermentrout and J. B. McLeod, "Existence and uniqueness of travelling waves for a
+neural network", Proc. Roy. Soc. Edinburgh Sect. A 123 (1993) 461–478. -/
 public theorem_wanted existsUnique_travellingFront {w f : ℝ → ℝ} {u₁ u₂ u₃ : ℝ}
     (hw : IsNeuralKernel w) (hf : IsBistable f u₁ u₂ u₃) :
     ∃ c : ℝ, ∃ U : ℝ → ℝ, IsTravellingFront w f u₁ u₃ c U ∧
