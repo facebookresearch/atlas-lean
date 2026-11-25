@@ -9400,6 +9400,7 @@
   "MathlibExt/Analysis/Calculus/ExpTaylorPolyOddUniqueZero": {"to": "Analysis/real-functions/differential-calculus", "title": "Real zeros of Taylor polynomials of the exponential"},
   "MathlibExt/Analysis/Calculus/Gradient": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Gradient"},
   "MathlibExt/Analysis/Calculus/GraphNonAccumulationPointsCountable": {"to": "Analysis/real-functions/continuity-and-functional-equations", "title": "Isolated points of the graph of a function"},
+  "MathlibExt/Analysis/Calculus/GreensTheorem": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Green's theorem"},
   "MathlibExt/Analysis/Calculus/Hessian": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Hessian matrix"},
   "MathlibExt/Analysis/Calculus/HigherPartials": {"to": "Analysis/real-functions/multivariable-calculus", "title": "Partial derivatives and symmetry of mixed partials"},
   "MathlibExt/Analysis/Calculus/IntegralSinSqUnitWindowBound": {"to": "Analysis/real-functions/integration", "title": "Integrals of sin(t²) over unit windows"},
