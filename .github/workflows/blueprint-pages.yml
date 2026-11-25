@@ -173,6 +173,8 @@ jobs:
           fi
           # `--` ends the revisions: a file named HEAD must not make them ambiguous.
           git diff-tree -r -z --no-commit-id --name-only HEAD^1 HEAD -- > "$RUNNER_TEMP/changed-paths"
+          # Experiment only: leave out the files of the pull requests this branch is stacked on.
+          python3 -c 'import sys; p, skip = sys.argv[1], set(sys.argv[2:]); rows = open(p, "rb").read().split(b"\0"); open(p, "wb").write(b"".join(r + b"\0" for r in rows if r and r.decode() not in skip))' "$RUNNER_TEMP/changed-paths" .github/workflows/ci.yml .github/workflows/blueprint-pages.yml CONTRIBUTING.md docs/BLUEPRINT.md scripts/README.md scripts/ci_scope.py scripts/test_ci_scope.py scripts/test_merge_queue_checks.py scripts/test_scripts.sh scripts/queue/preflight.py scripts/queue/test_preflight.py scripts/"test_blueprint_workflow.py"
           # Isolated: the checkout's root, the working directory, must not shadow a module the decision imports.
           python3 -I - "$RUNNER_TEMP/changed-paths" <<'PY'
           import os
@@ -248,6 +250,8 @@ jobs:
           set -euo pipefail
           # `--` ends the revisions: a file named HEAD must not make them ambiguous.
           git diff-tree -r -z --no-commit-id --name-only HEAD^1 HEAD -- > "$RUNNER_TEMP/changed-paths"
+          # Experiment only: leave out the files of the pull requests this branch is stacked on.
+          python3 -c 'import sys; p, skip = sys.argv[1], set(sys.argv[2:]); rows = open(p, "rb").read().split(b"\0"); open(p, "wb").write(b"".join(r + b"\0" for r in rows if r and r.decode() not in skip))' "$RUNNER_TEMP/changed-paths" .github/workflows/ci.yml .github/workflows/blueprint-pages.yml CONTRIBUTING.md docs/BLUEPRINT.md scripts/README.md scripts/ci_scope.py scripts/test_ci_scope.py scripts/test_merge_queue_checks.py scripts/test_scripts.sh scripts/queue/preflight.py scripts/queue/test_preflight.py scripts/"test_blueprint_workflow.py"
           python3 -I scripts/ci_scope.py "$RUNNER_TEMP/changed-paths" >> "$GITHUB_OUTPUT"
 
   # On a PR that skips the build, the build's unit tests still run, on the wiki
