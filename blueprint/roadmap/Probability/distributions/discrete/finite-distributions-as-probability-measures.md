@@ -10,6 +10,10 @@ so expectations computed from the weights agree with integrals against the measu
 
 - [Probability measure](../../foundations/probability-measures/is-probability-measure.md)
 
+## Proof depends on
+
+- [Expectation on a finite type](expectation-under-a-probability-mass-function/expect-eq-sum.md)
+
 ## Sources
 
 - P. Billingsley, *Probability and Measure*, 3rd ed., Wiley, 1995, Section 1 (discrete probability spaces)

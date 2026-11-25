@@ -30,4 +30,10 @@
 
 - [Common knowledge and the agreement theorem](../../../GameTheory/noncooperative-games/common-knowledge-and-the-agreement-theorem/README.md): the semantic, event-based model of knowledge with information partitions, common knowledge as the meet of the partitions, and Aumann's agreement theorem.
 
-- [Public announcement logic](public-announcement-logic.md)
+- [Reduction law for announced atoms](reduction-law-for-announced-atoms.md)
+- [Announcements distribute over implication](announcements-distribute-over-implication.md)
+- [Reduction law for knowledge after an announcement](reduction-law-for-knowledge-after-an-announcement.md)
+- [Announcement elimination](announcement-elimination.md)
+- [The announcement translation is free of announcements and common knowledge](the-announcement-translation-is-announcement-free.md)
+- [Soundness and completeness of public announcement logic](public-announcement-logic.md)
+- [Public announcements with common knowledge do not reduce](public-announcements-with-common-knowledge-do-not-reduce.md)

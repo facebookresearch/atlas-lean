@@ -7,6 +7,10 @@ Let $f : \mathbb R^n_{++} \to \mathbb R$ be a continuously differentiable produc
 
 These conditions are necessary, not sufficient. For the convex technology $f(x) = x^2$ with one input and $p = w = 1$, the condition $2x = 1$ holds at $x = 1/2$, which minimizes the profit $x^2 - x$ locally, and profit is unbounded above. When $f$ is concave, for example a Cobb–Douglas technology $f(x) = \prod_i x_i^{a_i}$ with $a_i > 0$ and $\sum_i a_i < 1$, the profit is concave and an interior point satisfying the first-order conditions is a global maximizer.
 
+## Proof depends on
+
+- [Karush–Kuhn–Tucker conditions for inequality constraints](../../../Analysis/convex-analysis-and-variations/karush-kuhn-tucker-inequality.md)
+
 ## Background
 
 - [Profit function of a production set](profit-fn.md)
