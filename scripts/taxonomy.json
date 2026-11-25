@@ -16588,6 +16588,7 @@
   "WantedExt/NumberTheory/QMultipleZetaValuesWanted": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "q-analogues of multiple zeta values"},
   "WantedExt/NumberTheory/QWeightedTrollopeDelangeWanted": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Binary digit sums and the Trollope–Delange formula"},
   "WantedExt/NumberTheory/QuadraticForms/BinaryQuadraticArithmeticProgressionsWanted": {"to": "NumberTheory/quadratic-forms-sums-of-squares/binary-quaternary-forms", "title": "Arithmetic progressions represented by binary forms"},
+  "WantedExt/NumberTheory/QuadraticForms/EpsteinZetaWanted": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Epstein zeta function of a binary form"},
   "WantedExt/NumberTheory/QuadraticForms/KroneckerFormSumsWanted": {"to": "NumberTheory/quadratic-forms-sums-of-squares/binary-quaternary-forms", "title": "Kronecker's class number sums"},
   "WantedExt/NumberTheory/QuadraticForms/ThreeSquares": {"to": "NumberTheory/quadratic-forms-sums-of-squares/sums-of-squares", "title": "Sums of three squares"},
   "WantedExt/NumberTheory/QuadraticIrrationalCFClassificationWanted": {"to": "NumberTheory/continued-fractions-expansions", "title": "Continued fractions of quadratic irrationals"},
