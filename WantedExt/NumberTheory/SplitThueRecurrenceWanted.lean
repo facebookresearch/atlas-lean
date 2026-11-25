@@ -24,9 +24,9 @@ coefficients). `γ i` is the dominant root of `G i` (real and nonnegative, as th
 assumes), and `δ (d - 1)`, `δ d` are the second dominant roots of `G (d - 1)`, `G d`.
 
 The roots `α⁽ⁱ⁾ = α n i` of `fₙ(x, 1) = ∏ (x - G k n) - 1` are labelled as in the paper,
-`α⁽ⁱ⁾` being the root close to `G i n`: an admissible labelling is any `α : ℕ → ℕ → ℝ`
-such that, for all large `n`, every `α n i` is a root with `|α n i - G i n| < 1` (for large
-`n` this determines the labelling, since the `G i n` are far apart).
+`α⁽ⁱ⁾` being the root close to `G i n`. The statements specify their root and proximity
+hypotheses for a labelling `α : ℕ → ℕ → ℝ`. For the growth estimate, the half-unit bound keeps
+the neighbourhoods of distinct integer centres disjoint.
 -/
 
 namespace MetaMathlibExt
@@ -179,11 +179,12 @@ public theorem_wanted splitThue_recurrence_roots_asymptotic {d : ℕ} {G : ℕ �
 /-- **Growth of the roots of a split Thue family.** Let $(d, G, \gamma, \delta)$ be a split Thue
 recurrence family, and let $\alpha_i(n)$ ($i, n \in \mathbb{N}$) be reals for which there is $N$
 such that for all $n \ge N$ and $1 \le i \le d$, $\prod_{k=1}^{d} (\alpha_i(n) - G_k(n)) = 1$
-and $|\alpha_i(n) - G_i(n)| < 1$. Then there are $c > 0$ and $N'$ such that for all $n \ge N'$
+and $|\alpha_i(n) - G_i(n)| < 1/2$. Then there are $c > 0$ and $N'$ such that for all $n \ge N'$
 and $1 \le i \le d$ we have $|\alpha_i(n)| \ge c \gamma_i^n$, and for every $1 \le j \le d$ with
 $j \ne i$ both $|\alpha_i(n) - \alpha_j(n)|$ and $|\alpha_i(n) - G_j(n)|$ are at least
 $c |\delta_d|^n$ if $\{i, j\} = \{d - 1, d\}$, and at least $c \max(\gamma_i, \gamma_j)^n$
-otherwise.
+otherwise. The roots in Lemma 1 have offsets tending to zero from the matching integer centres;
+the half-unit bound distinguishes their labels even when two centres differ by one.
 
 Source: Tobias Hilgart, *On Split Families of Thue Equations with Linear Recurrence Sequences as
 Factors*, INTEGERS 25 (2025), Article A35, Lemma 2 (`integers-2025-A35-lem-2`), including its last
@@ -193,7 +194,7 @@ bounds with `α⁽ʲ⁾` replaced by `G j n`). `Ω` is the paper's lower bound
 public theorem_wanted splitThue_recurrence_roots_growth {d : ℕ} {G : ℕ → ℕ → ℤ}
     {γ : ℕ → ℝ} {δ : ℕ → ℂ} (hF : IsSplitThueRecurrenceFamily d G γ δ)
     (α : ℕ → ℕ → ℝ) (hα : ∃ N : ℕ, ∀ n ≥ N, ∀ i ∈ Finset.Icc 1 d,
-      ∏ k ∈ Finset.Icc 1 d, (α n i - G k n) = 1 ∧ |α n i - G i n| < 1) :
+      ∏ k ∈ Finset.Icc 1 d, (α n i - G k n) = 1 ∧ |α n i - G i n| < 1 / 2) :
     ∃ c > 0, ∃ N : ℕ, ∀ n ≥ N, ∀ i ∈ Finset.Icc 1 d,
       c * γ i ^ n ≤ |α n i| ∧ ∀ j ∈ Finset.Icc 1 d, j ≠ i →
         (({i, j} : Finset ℕ) = {d - 1, d} →
