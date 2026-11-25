@@ -13,6 +13,7 @@ Authors: @toskua, Codex
 module
 
 public import MathlibExt.Algebra.Lie.BaseChange
+public import MathlibExt.Algebra.Lie.BaseChange.UniversalProperty
 public import MathlibExt.Algebra.Lie.UniversalEnveloping.PrimitiveLift
 public import Mathlib.RingTheory.Bialgebra.TensorProduct
 public import Mathlib.RingTheory.TensorProduct.Maps
@@ -77,21 +78,25 @@ private theorem tensor_ι_lie (z z' : SL) :
           TensorProduct.AlgebraTensorModule.lTensor S S (ι R : L →ₗ⁅R⁆ U).toLinearMap z' -
         TensorProduct.AlgebraTensorModule.lTensor S S (ι R : L →ₗ⁅R⁆ U).toLinearMap z' *
           TensorProduct.AlgebraTensorModule.lTensor S S (ι R : L →ₗ⁅R⁆ U).toLinearMap z := by
-  refine z.inductionOn ?_ ?_
-  · intro s x
-    refine z'.inductionOn ?_ ?_
-    · intro t y
-      simp only [LieAlgebra.ExtendScalars.bracket_tmul,
-        TensorProduct.AlgebraTensorModule.lTensor_tmul, (ι R : L →ₗ⁅R⁆ U).map_lie,
-        LieRing.of_associative_ring_bracket, Algebra.TensorProduct.tmul_mul_tmul,
-        TensorProduct.tmul_sub]
-      rw [mul_comm t s]
-    · intro z z' hz hz'
-      simpa only [lie_add, map_add, mul_add, add_mul, add_sub_add_comm]
-        using congrArg₂ (· + ·) hz hz'
-  · intro z z' hz hz'
-    simpa only [add_lie, map_add, add_mul, mul_add, add_sub_add_comm]
-      using congrArg₂ (· + ·) hz hz'
+  letI : LieRing B := LieRing.ofAssociativeRing
+  letI : LieAlgebra R B := LieAlgebra.ofAssociativeAlgebra
+  letI : LieAlgebra S B := LieAlgebra.ofAssociativeAlgebra
+  let f : L →ₗ⁅R⁆ B :=
+    ((Algebra.TensorProduct.includeRight : U →ₐ[R] B) : U →ₗ⁅R⁆ B).comp (ι R)
+  let ψ : SL →ₗ⁅S⁆ B := LieHom.liftBaseChange R S f
+  have hψ : ψ.toLinearMap =
+      TensorProduct.AlgebraTensorModule.lTensor S S (ι R : L →ₗ⁅R⁆ U).toLinearMap := by
+    apply TensorProduct.AlgebraTensorModule.ext
+    intro s x
+    change LieHom.liftBaseChange R S f (s ⊗ₜ[R] x) = s ⊗ₜ[R] ι R x
+    rw [LieHom.liftBaseChange_tmul]
+    change s • ((1 : S) ⊗ₜ[R] ι R x) = s ⊗ₜ[R] ι R x
+    rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
+  have h := ψ.map_lie z z'
+  simp only [LieRing.of_associative_ring_bracket] at h
+  change ψ.toLinearMap ⁅z, z'⁆ =
+    ψ.toLinearMap z * ψ.toLinearMap z' - ψ.toLinearMap z' * ψ.toLinearMap z at h
+  simpa only [hψ] using h
 
 /-- The coefficient tensor of the native Lie inclusion takes values in the primitive elements
 of the scalar-extended enveloping bialgebra. -/
@@ -118,14 +123,8 @@ theorem baseChangePrimitive_tmul (s : S) (x : L) :
 def baseChangeTo : B →ₐ[S] V :=
   letI : Algebra R V := Algebra.restrictScalars R S V
   letI : IsScalarTower R S V := IsScalarTower.restrictScalars R S V
-  AlgHom.liftEquiv R S U V (lift R
-    { toLinearMap := ((ι S : SL →ₗ⁅S⁆ V).toLinearMap.restrictScalars R).comp
-        (LieHom.baseChangeUnit R S L).toLinearMap
-      map_lie' := by
-        intro x y
-        change ι S (LieHom.baseChangeUnit R S L ⁅x, y⁆) =
-          ⁅ι S (LieHom.baseChangeUnit R S L x), ι S (LieHom.baseChangeUnit R S L y)⁆
-        rw [(LieHom.baseChangeUnit R S L).map_lie, (ι S : SL →ₗ⁅S⁆ V).map_lie] })
+  AlgHom.liftEquiv R S U V
+    (lift R ((LieHom.liftBaseChangeEquiv R S L V).symm (ι S : SL →ₗ⁅S⁆ V)))
 
 /-- The forward scalar-extension map sends each coefficient tensor of a Lie generator to
 the corresponding Lie generator over `S`. -/
@@ -135,7 +134,7 @@ theorem baseChangeTo_tmul_ι (s : S) (x : L) :
   letI : Algebra R V := Algebra.restrictScalars R S V
   letI : IsScalarTower R S V := IsScalarTower.restrictScalars R S V
   simp only [baseChangeTo, AlgHom.liftEquiv_tmul, lift_ι_apply,
-    LinearMap.comp_apply, LinearMap.restrictScalars_apply, LieHom.baseChangeUnit_apply]
+    LieHom.liftBaseChangeEquiv_symm_apply]
   simpa only [TensorProduct.smul_tmul', smul_eq_mul, mul_one]
     using (map_smul (ι S : SL →ₗ⁅S⁆ V) s ((1 : S) ⊗ₜ[R] x)).symm
 

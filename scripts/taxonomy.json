@@ -19772,7 +19772,11 @@
   "MathlibExt/RingTheory/Bialgebra/BaseChange": {"to": "Algebra/associative-algebras", "title": "Bialgebra scalar extension through an algebra tower"},
   "MathlibExt/Algebra/Lie/BaseChange": {"to": "Algebra/nonassociative-algebras", "title": "Scalar extension of Lie algebra morphisms"},
   "MathlibExt/Algebra/Lie/UniversalEnveloping/BaseChange": {"to": "Algebra/nonassociative-algebras", "title": "Universal enveloping algebras under scalar extension"},
-  "MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/Connecting": {"to": "CategoryTheory/homological-algebra/complexes-and-homology", "title": "Connecting maps of balanced tensor complexes"}
+  "MathlibExt/Algebra/Homology/ChainComplex/BalancedTensor/Connecting": {"to": "CategoryTheory/homological-algebra/complexes-and-homology", "title": "Connecting maps of balanced tensor complexes"},
+  "MathlibExt/Algebra/Lie/BaseChange/UniversalProperty": {"to": "Algebra/nonassociative-algebras", "title": "Universal property of Lie scalar extension"},
+  "MathlibExt/Algebra/Homology/HomologicalComplex/BalancedTensor/TorBoundary": {"to": "CategoryTheory/homological-algebra/complexes-and-homology", "title": "Tor boundary and kernel comparison for complexes"}
+
+
 
 
 

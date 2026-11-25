@@ -16,6 +16,8 @@ import MathlibExt.RingTheory.Bialgebra.BaseChange
 import MathlibExt.RingTheory.HopfAlgebra.Hom
 import MathlibExt.Algebra.Lie.UniversalEnveloping.HopfAlgebra
 import Mathlib.RingTheory.HopfAlgebra.TensorProduct
+import Mathlib.RingTheory.Bialgebra.MonoidAlgebra
+import Mathlib.Algebra.Group.ULift
 import Mathlib.RingTheory.Flat.TorsionFree
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Data.Matrix.Basis
@@ -261,5 +263,55 @@ example : evaluateBase (FT (K x01)) 1 0 = 1 ∧ evaluateBase (K (FST x01)) 1 0 =
     rw [evaluateBase_y10]
     norm_num [Matrix.single_apply]
   exact ⟨hvalue, by rw [← hsquare]; exact hvalue⟩
+
+/-!
+## Group-algebra scalar extension with a larger carrier
+
+The group-algebra carrier lies in `Type 1`, while the three scalar rings
+lie in `Type 0`. Cancellation sends the coefficient seven to one, and the
+counit detects the nonzero image of an integer-exponent basis element.
+-/
+
+namespace LiftedGroup
+
+private abbrev G : Type 1 := ULift.{1} (Multiplicative ℤ)
+private abbrev A₁ : Type 1 := MonoidAlgebra ℤ G
+private abbrev X₁ : Type 1 := T ⊗[S] (S ⊗[ℤ] A₁)
+private abbrev Y₁ : Type 1 := T ⊗[ℤ] A₁
+
+private abbrev comparison : X₁ ≃ₐc[T] Y₁ :=
+  Bialgebra.TensorProduct.cancelBaseChange ℤ S T A₁
+
+private def basis : A₁ :=
+  MonoidAlgebra.single (ULift.up (Multiplicative.ofAdd 1)) 1
+
+private abbrev source : X₁ := (1 : T) ⊗ₜ[S] ((7 : S) ⊗ₜ[ℤ] basis)
+private abbrev target : Y₁ := (1 : T) ⊗ₜ[ℤ] basis
+
+/-- Cancellation of a lifted group basis element preserves a counit of one. -/
+example : comparison source = target ∧
+    Coalgebra.counit (R := T) (comparison source) = 1 ∧
+    source ≠ 0 ∧ target ≠ 0 := by
+  have hcomparison : comparison source = target := by
+    change Bialgebra.TensorProduct.cancelBaseChange ℤ S T A₁
+      ((1 : T) ⊗ₜ[S] ((7 : S) ⊗ₜ[ℤ] basis)) = (1 : T) ⊗ₜ[ℤ] basis
+    rw [Bialgebra.TensorProduct.cancelBaseChange_tmul, seven_action]
+  have hbasis : Coalgebra.counit (R := ℤ) basis = 1 := by
+    simp only [basis, MonoidAlgebra.counit_single, Bialgebra.counit_one]
+  have htarget : Coalgebra.counit (R := T) target = 1 := by
+    change Coalgebra.counit (R := T) ((1 : T) ⊗ₜ[ℤ] basis) = 1
+    rw [TensorProduct.counit_tmul, hbasis, Bialgebra.counit_one, one_smul]
+  refine ⟨hcomparison, by rw [hcomparison, htarget], ?_, ?_⟩
+  · intro h
+    have hv := congrArg
+      (fun x : X₁ => Coalgebra.counit (R := T) (comparison x)) h
+    rw [hcomparison, htarget, map_zero, map_zero] at hv
+    exact (by decide : (1 : T) ≠ 0) hv
+  · intro h
+    have hv := congrArg (Coalgebra.counit (R := T) : Y₁ →ₗ[T] T) h
+    rw [htarget, map_zero] at hv
+    exact (by decide : (1 : T) ≠ 0) hv
+
+end LiftedGroup
 
 end MathlibExtTest.BialgebraBaseChange

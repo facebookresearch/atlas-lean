@@ -23,6 +23,7 @@ Lie algebras and their structure and representations, free Lie algebras, Poisson
 - [The Jacobi identity in the overlapping PBW reductions](the-jacobi-identity-in-the-overlapping-pbw-reduc/README.md)
 - [The primitive universal property of an enveloping bialgebra](the-primitive-universal-property-of-an-envelopin/README.md)
 - [Universal enveloping algebras under scalar extension](universal-enveloping-algebras-under-scalar-exten/README.md)
+- [Universal property of Lie scalar extension](universal-property-of-lie-scalar-extension/README.md)
 - [Virtual racks and quandles](virtual-racks-and-quandles/README.md)
 - [Witt's formula for free Lie algebras](witt-s-formula-for-free-lie-algebras/README.md)
 - [Induction on the native universal enveloping algebra](induction.md)
