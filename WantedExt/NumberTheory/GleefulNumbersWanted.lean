@@ -34,8 +34,12 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Lemma 1.** If `k > 1` and `M = M(x, k) ≥ M₀ ≥ 6`, then
-`M < 4^{1/(k+1)} (k+1) x^{1/(k+1)} / (log x)^{k/(k+1)} · C(M₀, k)`.
+/-- **Upper bound for the maximal gleeful chain length.** Let $p_1 = 2, p_2 = 3, \dots$ be the
+primes in increasing order. Let $k > 1$, $M_0 \ge 6$, $M \ge M_0$ and $x$ be natural numbers with
+$p_1^k + \cdots + p_M^k \le x < p_1^k + \cdots + p_{M+1}^k$. Put $y = M_0$,
+$$B = \frac{\log(y+1)}{\log y} + \frac{\log\log((y+1)^2)}{\log y} \cdot \frac{k}{k+1}$$
+and $C = (y/(y-1))^{1/(k+1)} B^{k/(k+1)}$, where $\log$ is the natural logarithm. Then
+$$M < 4^{1/(k+1)} \cdot \frac{(k+1)\, x^{1/(k+1)}}{(\log x)^{k/(k+1)}} \cdot C.$$
 
 Source: Sara Moore and Jonathan P. Sorenson, *Explicit Bounds and Parallel
 Algorithms for Counting Multiply Gleeful Numbers*, INTEGERS 26 (2026), Article A84,
@@ -50,8 +54,12 @@ public theorem_wanted maxChainLength_lt (k M₀ M x : ℕ) (hk : 1 < k) (hM₀ :
     (M : ℝ) < (4 : ℝ) ^ ((1 : ℝ) / (k + 1)) *
       ((k + 1) * (x : ℝ) ^ ((1 : ℝ) / (k + 1)) / Real.log x ^ ((k : ℝ) / (k + 1))) * C
 
-/-- **Lemma 2.** If `k > 1` and `M = M(x, k) ≥ M₀ ≥ 6`, then
-`M ≥ (k+1) x^{1/(k+1)} / (log x)^{k/(k+1)} · D(M₀, k)`.
+/-- **Lower bound for the maximal gleeful chain length.** Let $p_1 = 2, p_2 = 3, \dots$ be the
+primes in increasing order. Let $k > 1$, $M_0 \ge 6$, $M \ge M_0$ and $x$ be natural numbers with
+$p_1^k + \cdots + p_M^k \le x < p_1^k + \cdots + p_{M+1}^k$. Put $y = M_0$ and
+$$D = \frac{y}{y+3} \Big(\frac{\log(y/2)}{\log y + 2 \log\log(y+2)}\Big)^{k/(k+1)},$$
+where $\log$ is the natural logarithm. Then
+$$\frac{(k+1)\, x^{1/(k+1)}}{(\log x)^{k/(k+1)}} \cdot D \le M.$$
 
 Source: Sara Moore and Jonathan P. Sorenson, *Explicit Bounds and Parallel
 Algorithms for Counting Multiply Gleeful Numbers*, INTEGERS 26 (2026), Article A84,
@@ -65,8 +73,14 @@ public theorem_wanted le_maxChainLength (k M₀ M x : ℕ) (hk : 1 < k) (hM₀ :
         ((k : ℝ) / (k + 1))
     (k + 1) * (x : ℝ) ^ ((1 : ℝ) / (k + 1)) / Real.log x ^ ((k : ℝ) / (k + 1)) * D ≤ M
 
-/-- **Lemma 3.** If `k > 1` and `M = M(x, k) ≥ M₀ ≥ 6`, then
-`log M < log x / (k+1) · 1 / A(M₀)` and `log M ≥ log x / (k+1) · 1 / B(M₀, k)`.
+/-- **Bounds for the logarithm of the maximal gleeful chain length.** Let
+$p_1 = 2, p_2 = 3, \dots$ be the primes in increasing order. Let $k > 1$, $M_0 \ge 6$, $M \ge M_0$
+and $x$ be natural numbers with $p_1^k + \cdots + p_M^k \le x < p_1^k + \cdots + p_{M+1}^k$.
+Put $y = M_0$, let $\log$ be the natural logarithm, and set
+$$A = \frac{\log(y/2)}{\log y},$$
+$$B = \frac{\log(y+1)}{\log y} + \frac{\log\log((y+1)^2)}{\log y} \cdot \frac{k}{k+1}.$$
+Then
+$$\frac{\log x}{k+1} \cdot \frac{1}{B} \le \log M < \frac{\log x}{k+1} \cdot \frac{1}{A}.$$
 
 Source: Sara Moore and Jonathan P. Sorenson, *Explicit Bounds and Parallel
 Algorithms for Counting Multiply Gleeful Numbers*, INTEGERS 26 (2026), Article A84,
@@ -81,11 +95,20 @@ public theorem_wanted log_maxChainLength_bounds (k M₀ M x : ℕ) (hk : 1 < k) 
     Real.log M < Real.log x / (k + 1) * (1 / A) ∧
       Real.log x / (k + 1) * (1 / B) ≤ Real.log M
 
-/-- **Theorem 1.** If `k > 1` and `M(x, k) ≥ M₀ ≥ 6`, then
-`s_k(x) ≤ c_k · x^{2/(k+1)} / (log x)^{2k/(k+1)} · U(M₀, k)`.
+/-- **Upper bound for the number of gleeful representations.** Let $p_1 = 2, p_2 = 3, \dots$ be
+the primes in increasing order, and for natural numbers $k$ and $x$ let $s_k(x)$ be the number
+of pairs $(n, m)$ of natural numbers with $m \ge 1$ and $p_{n+1}^k + \cdots + p_{n+m}^k \le x$.
+Let $k > 1$, $M_0 \ge 6$ and $x$ be natural numbers with $p_1^k + \cdots + p_{M_0}^k \le x$. Put
+$y = M_0$, let $\log$ be the natural logarithm, and set
+$$A = \frac{\log(y/2)}{\log y},$$
+$$B = \frac{\log(y+1)}{\log y} + \frac{\log\log((y+1)^2)}{\log y} \cdot \frac{k}{k+1},$$
+$$C = \Big(\frac{y}{y-1}\Big)^{1/(k+1)} B^{k/(k+1)}, \qquad E = 1 + \frac{1}{(k+1)A - 1},$$
+$$F = \Big(\frac{y+1}{y}\Big)^{(k-1)/k} 4^{(k-1)/(k(k+1))} C^{(k-1)/k} E,$$
+$U = 1.25506\,F$ and $c_k = \frac{k^2}{k-1} (k+1)^{(k-1)/k}$. Then
+$$s_k(x) \le c_k \cdot \frac{x^{2/(k+1)}}{(\log x)^{2k/(k+1)}} \cdot U.$$
 
-The printed exponent of `log x` is `k/(k+1)`; the paper's proof ends with
-`2k/(k+1)`, which is stated here and implies the printed bound since `log x ≥ 1`.
+The paper prints the exponent of $\log x$ as $k/(k+1)$; its proof ends with $2k/(k+1)$, which
+is stated here and implies the printed bound because $\log x \ge 1$.
 
 Source: Sara Moore and Jonathan P. Sorenson, *Explicit Bounds and Parallel
 Algorithms for Counting Multiply Gleeful Numbers*, INTEGERS 26 (2026), Article A84,
@@ -108,12 +131,17 @@ public theorem_wanted gleefulRepCount_le (k M₀ x : ℕ) (hk : 1 < k) (hM₀ : 
         ∑ i ∈ Finset.range q.2, Nat.nth Nat.Prime (q.1 + i) ^ k ≤ x}.ncard : ℝ) ≤
       c * ((x : ℝ) ^ (2 / (κ + 1)) / Real.log x ^ (2 * κ / (κ + 1))) * U
 
-/-- **Theorem 2.** If `k > 1` and `M(x, k) ≥ M₀ ≥ 6`, then
-`s_k(x) ≥ (k+1)^2 / 2 · x^{2/(k+1)} / (log x)^{2k/(k+1)} · L(M₀, k)`.
+/-- **Lower bound for the number of gleeful representations.** Let $p_1 = 2, p_2 = 3, \dots$ be
+the primes in increasing order, and for natural numbers $k$ and $x$ let $s_k(x)$ be the number
+of pairs $(n, m)$ of natural numbers with $m \ge 1$ and $p_{n+1}^k + \cdots + p_{n+m}^k \le x$.
+Let $k > 1$, $M_0 \ge 6$ and $x$ be natural numbers with $p_1^k + \cdots + p_{M_0}^k \le x$. Put
+$y = M_0$, let $\log$ be the natural logarithm, and set
+$$D = \frac{y}{y+3} \Big(\frac{\log(y/2)}{\log y + 2 \log\log(y+2)}\Big)^{k/(k+1)}$$
+and $L = \frac{y-1}{y} D^2$. Then
+$$\frac{(k+1)^2}{2} \cdot \frac{x^{2/(k+1)}}{(\log x)^{2k/(k+1)}} \cdot L \le s_k(x).$$
 
-The printed exponent of `log x` is `k/(k+1)`; the paper's proof (from
-`s_k(x) ≥ M(M-1)/2` and Lemma 2) gives `2k/(k+1)`, stated here. The printed form
-contradicts Theorem 1 for large `x`.
+The paper prints the exponent of $\log x$ as $k/(k+1)$; its proof gives $2k/(k+1)$, which is
+stated here. The printed form contradicts the upper bound for $s_k(x)$ for large $x$.
 
 Source: Sara Moore and Jonathan P. Sorenson, *Explicit Bounds and Parallel
 Algorithms for Counting Multiply Gleeful Numbers*, INTEGERS 26 (2026), Article A84,

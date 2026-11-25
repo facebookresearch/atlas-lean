@@ -26,8 +26,9 @@ namespace Section8Example4Integrable
 
 open Entry9IiGeneralizedbellgeneratingDefining (generalizedBellGenerating)
 
-/-- `f n x = 1` for `n = -1`, and `f n x = exp (-x) * ∑' j, (j + 1) ^ n * x ^ (j + 1) / j!`,
-which is `generalizedBellGenerating 0 1 x n`, otherwise.
+/-- **Generalized Bell function extended to $n = -1$.** For an integer $n \ge -1$ and a complex
+number $x$, $f(n, x) = 1$ if $n = -1$, and otherwise $f(n, x)$ is the generalized Bell function
+$F(0, 1, x; n) = e^{-x} \sum_{k \ge 0} (k + 1)^n x^{k + 1} / k!$.
 
 Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Section 8, Example 4 and its
 correction, printed pp. 51--52 / PDF pp. 61--62. -/
@@ -116,7 +117,12 @@ private lemma norm_bound_aux (k : ℕ) (x : ℂ) (j : ℕ) (t : ℝ) (ht : t ∈
   exact div_le_div_of_nonneg_right hmul hfact_nonneg
 
 set_option backward.proofsInPublic true in
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Section 8, Example 4 and its
+/-- **Integrability of the scaled generalized Bell integrand on $[0, 1]$.** Let $f$ be the
+generalized Bell function extended to $n = -1$. For every natural number $m$ and every complex
+number $x$, the complex-valued function $t \mapsto x f(m - 1, t x)$ of a real variable $t$ is
+interval integrable on $[0, 1]$ with respect to Lebesgue measure.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Section 8, Example 4 and its
     correction, printed pp. 51--52 / PDF pp. 61--62.
 Proves `Wanted` entry `ramanujan_part1_ch3_section8_example4_integrable`.
 -/

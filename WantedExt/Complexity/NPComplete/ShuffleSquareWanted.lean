@@ -17,7 +17,7 @@ Sciences 80(4) (2014), 766-776, doi:10.1016/j.jcss.2013.11.002, arXiv:1211.7161
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Languages.Shuffle

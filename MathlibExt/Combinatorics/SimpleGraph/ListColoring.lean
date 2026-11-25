@@ -24,25 +24,28 @@ namespace SimpleGraph
 
 variable {V : Type*} {G : SimpleGraph V} {q r : ℕ}
 
-/-- A graph is `q`-list-colorable if every assignment of at least `q` colors to
-each vertex admits a proper coloring chosen from those lists. -/
+/-- **List colorability.** A simple graph $G$ is $q$-list-colorable if, for every set of colors and
+every assignment of a finite list $L(v)$ of at least $q$ colors to each vertex $v$, there is a
+proper coloring $c$ of $G$ with $c(v) \in L(v)$ for every vertex $v$. -/
 def IsListColorable (G : SimpleGraph V) (q : ℕ) : Prop :=
   ∀ (C : Type) [DecidableEq C] (lists : V → Finset C),
     (∀ v, q ≤ (lists v).card) →
       ∃ color : G.Coloring C, ∀ v, color v ∈ lists v
 
-/-- `q` is the choice number of `G` if `G` is `q`-list-colorable but is not
-list-colorable with any smaller number of colors. -/
+/-- **Choice number.** A natural number $q$ is the choice number of a simple graph $G$ if $G$ is
+$q$-list-colorable but is not $r$-list-colorable for any $r < q$. -/
 def IsChoiceNumber (G : SimpleGraph V) (q : ℕ) : Prop :=
   G.IsListColorable q ∧ ∀ r < q, ¬G.IsListColorable r
 
-/-- List colorability is monotone in the number of colors required in each list. -/
+/-- **Monotonicity of list colorability.** If a simple graph $G$ is $q$-list-colorable and
+$q \le r$, then $G$ is $r$-list-colorable. -/
 theorem IsListColorable.mono (hG : G.IsListColorable q) (hqr : q ≤ r) :
     G.IsListColorable r := by
   intro C _ lists hlists
   exact hG C lists fun v => hqr.trans (hlists v)
 
-/-- A list-colorable graph is colorable with the same number of colors. -/
+/-- **List-colorable graphs are colorable.** If a simple graph $G$ is $q$-list-colorable, then $G$
+is $q$-colorable, that is, it has a proper coloring with $q$ colors. -/
 theorem IsListColorable.colorable (hG : G.IsListColorable q) : G.Colorable q := by
   let lists : V → Finset (Fin q) := fun _ => Finset.univ
   obtain ⟨color, _⟩ := hG (Fin q) lists (by simp [lists])

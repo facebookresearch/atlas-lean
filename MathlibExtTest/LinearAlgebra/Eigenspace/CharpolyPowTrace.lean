@@ -22,7 +22,7 @@ public import Mathlib.Analysis.Complex.Polynomial.Basic
 
 @[expose] public section
 
-public theorem exactSource {L : Type*} [Field L] {V : Type*}
+private theorem exactSource {L : Type*} [Field L] {V : Type*}
     [AddCommGroup V] [Module L V] [FiniteDimensional L V] (E : Type*) [Field E] [Algebra L E]
     [IsAlgClosed E] (T : V →ₗ[L] V) (n : ℕ) :
     (((T.charpoly).map (algebraMap L E)).roots.map (fun z => z ^ n)).sum =

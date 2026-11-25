@@ -1,0 +1,18 @@
+# Derived Native Contraction Spaces
+
+- [Coefficients To Global](coefficients-to-global.md)
+- [Coefficient Round Trip Iso](coefficient-round-trip-iso.md)
+- [Hom Global](hom-global.md)
+- [Vertex Coefficient](vertex-coefficient.md)
+- [Vertex Coefficient closed](vertex-coefficient-closed.md)
+- [Path Coefficient](path-coefficient.md)
+- [Alternating Edge boundary](alternating-edge-boundary.md)
+- [Path Coefficient boundary](path-coefficient-boundary.md)
+- [NCContraction Source](nccontraction-source.md)
+- [Contraction Space](contraction-space.md)
+- [Theta](theta.md)
+- [Theta closed](theta-closed.md)
+- [Contraction Space zero](contraction-space-zero.md)
+- [Isotropic Homotopy](isotropic-homotopy.md)
+- [Isotropic Homotopy boundary](isotropic-homotopy-boundary.md)
+- [Is Symplectic](is-symplectic.md)

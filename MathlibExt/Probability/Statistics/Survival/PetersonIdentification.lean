@@ -310,7 +310,7 @@ theorem eq_zero_of_le_setLIntegral_Iio {Λ : Measure ℝ} [IsFiniteMeasure Λ] {
   have hab : a < b := lt_min (lt_add_of_pos_right _ Nat.one_div_pos_of_nat) (hat'.trans_le ht₁)
   have hE : Λ (Ioo a b) < 1 := (measure_mono (Ioo_subset_Ioo_right (min_le_left _ _))).trans_lt hn
   have hbA : b ∈ A := by
-    refine eq_zero_of_le_setLIntegral_of_lt_one hB hBt hE
+    refine eq_zero_of_le_setLIntegral_of_lt_one (T := Iio b) hB hBt hE
       (fun s hs => hs.2) fun t' ht' => ?_
     calc e t' ≤ ∫⁻ s in Iio t', e s ∂Λ := hle t' ((le_of_lt ht').trans (min_le_right _ _))
       _ ≤ ∫⁻ s in Iio b, e s ∂Λ := lintegral_mono_set (Iio_subset_Iio (le_of_lt ht'))
