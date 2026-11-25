@@ -15,7 +15,7 @@ public meta import CSLibExt.Computability.Complexity.Karp.CliqueEmit
 
 namespace Cslib.Complexity.Karp.EmitClique.Tests
 
-open Turing Cslib.CookLevin Cslib.Complexity.SatVerifier Cslib.Logic.PL
+open Turing Cslib.CookLevin Cslib.Complexity.SatVerifier Cslib.Logic.LegacyPL
 
 /-- Step a `TM2` program, with fuel, until the next step would halt; return the last
 configuration with a label and the number of steps taken. -/

@@ -19,7 +19,7 @@ problem", Networks 8(4) (1978), 279-285, doi:10.1002/net.3230080402.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.OptimumCommunicationSpanningTreeWanted

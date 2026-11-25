@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Geometry.MovingSofa
+public import MathlibExt.Geometry.MovingSofaHammersley
+public import MathlibExt.Geometry.MovingSofaHammersleyLower
 
 /-!
 # Moving sofa catalogue bounds: unproved public requests
@@ -30,19 +31,19 @@ open scoped ENNReal
 
 namespace MovingSofaWanted
 
-/-- Source: catalogue line 13, attributed to Hammersley (1968). Primary not retained. -/
-public theorem_wanted hammersley_upper :
-    MovingSofa.optimalArea ≤ ENNReal.ofReal (2 * Real.sqrt 2)
+/-- **Kallus–Romik upper bound for the moving sofa constant.** The moving sofa constant, the
+supremum of the areas of connected Lebesgue-measurable planar shapes that a continuous rigid motion
+can carry through the right-angled corridor of width $1$, is at most $2.37$.
 
-/-- Source: catalogue line 14, Kallus-Romik (2018). Numerical certificate not retained. -/
+Source: catalogue line 14, Kallus-Romik (2018). Numerical certificate not retained. -/
 public theorem_wanted kallus_romik_upper :
     MovingSofa.optimalArea ≤ ENNReal.ofReal ((237 : ℝ) / 100)
 
-/-- Source: catalogue line 21, Hammersley (1968). Construction not retained. -/
-public theorem_wanted hammersley_lower :
-    ENNReal.ofReal (Real.pi / 2 + 2 / Real.pi) ≤ MovingSofa.optimalArea
+/-- **Gerver's lower bound for the moving sofa constant.** The moving sofa constant, the
+supremum of the areas of connected Lebesgue-measurable planar shapes that a continuous rigid motion
+can carry through the right-angled corridor of width $1$, is at least $2.2195$.
 
-/-- Source: catalogue line 22, printed Gerver lower target, not an exact area formula. -/
+Source: catalogue line 22, printed Gerver lower target, not an exact area formula. -/
 public theorem_wanted gerver_printed_lower :
     ENNReal.ofReal ((4439 : ℝ) / 2000) ≤ MovingSofa.optimalArea
 

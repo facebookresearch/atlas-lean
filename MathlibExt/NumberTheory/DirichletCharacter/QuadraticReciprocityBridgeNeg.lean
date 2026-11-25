@@ -16,8 +16,9 @@ public import MathlibExt.NumberTheory.DirichletCharacter.QuadraticReciprocityBri
 
 namespace MetaMathlibExt
 
-/-- Reciprocity bridge for negative `D` with `D % 4 = 1` at an odd prime `p`.
-Covers `D < 0`; the positive case is proved separately. -/
+/-- **Kronecker symbol at odd primes for negative integers congruent to 1 mod 4.** Let $D$ be a
+negative integer with $D \equiv 1 \pmod 4$ and let $p$ be an odd prime. Then the Jacobi symbol
+$\left(\frac{p}{|D|}\right)$ equals the Kronecker symbol $\left(\frac{D}{p}\right)$. -/
 public theorem jacobiSym_natAbs_eq_kroneckerSym_of_prime_ne_two_of_one_mod_four_neg
     (D : ℤ) (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) (hneg : D < 0)
     (h1 : D % 4 = 1) :
@@ -85,12 +86,12 @@ public theorem jacobiSym_natAbs_eq_kroneckerSym_of_prime_ne_two_of_one_mod_four_
       decide
   rw [hKR, hDsplit, hneg1, hrec, ← mul_assoc, hcancel, one_mul]
 
-/-- Combined reciprocity bridge for `D % 4 = 1` at an odd prime `p`.
-Covers every `D ≡ 1 (mod 4)`, of either sign: the `0 < D` case and
-the `D < 0` case (`D = 0` is impossible since `(0 : ℤ) % 4 = 0`).
-`h1` is a genuine truth condition, not a proof boundary: at
-`(D, p) = (3, 7)` the left side is `1` while the right side is `-1`.
-The `D = 4 * m` family remains uncovered. -/
+/-- **Kronecker symbol at odd primes for integers congruent to 1 mod 4.** Let $D$ be an integer
+with $D \equiv 1 \pmod 4$ and let $p$ be an odd prime. Then the Jacobi symbol
+$\left(\frac{p}{|D|}\right)$ equals the Kronecker symbol $\left(\frac{D}{p}\right)$.
+
+This covers $D$ of either sign. The congruence condition cannot be dropped: for $D = 3$ and
+$p = 7$ the Jacobi symbol is $1$ while the Kronecker symbol is $-1$. -/
 public theorem jacobiSym_natAbs_eq_kroneckerSym_of_prime_ne_two_of_one_mod_four
     (D : ℤ) (p : ℕ) (hp : p.Prime) (hp2 : p ≠ 2) (h1 : D % 4 = 1) :
     jacobiSym (p : ℤ) D.natAbs = kroneckerSym D p := by

@@ -1,7 +1,8 @@
 # Binary64 add/multiply conformance diagnostic
 
-This core-only diagnostic compares Lean 4.35 `Float.Model`, MPFR and scalar
-hardware binary64 add/multiply, round-to-nearest ties-to-even. Non-NaNs match
+This core-only diagnostic compares `Float.Model` of the Lean release pinned in
+`lean-toolchain`, MPFR and scalar hardware binary64 add/multiply,
+round-to-nearest ties-to-even. Non-NaNs match
 exact bits, including signed zero. NaNs match only by class: payload, sign,
 signaling, exception flags and traps are outside the contract. No other
 operations, formats, rounding modes or numerical-stability claims are covered.
@@ -11,7 +12,7 @@ Finite test evidence is not an exhaustive correctness proof or a C2/C3 claim.
 
 Requirements: x86_64 Linux, Python 3.9+, a C compiler supporting the supplied
 GCC/Clang flags, `ldd`, GNU `objdump`, GDB with Python and debuginfod controls,
-installed Lean 4.35, and matching MPFR/GMP development
+the Lean release pinned in `lean-toolchain`, and matching MPFR/GMP development
 headers and runtime libraries. Nothing is downloaded or installed by the driver.
 It uses no Lake build or Mathlib cache.
 

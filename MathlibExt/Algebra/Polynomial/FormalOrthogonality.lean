@@ -16,10 +16,11 @@ namespace MetaMathlibExt.Polynomial
 
 @[expose] public section
 
-/-- Formal orthogonality of a polynomial family over a field: `p` is
-formally orthogonal iff there is a linear functional `L` on polynomials
-with `(p n).natDegree = n` for all `n`, `L (p n * p m) = 0` for `n ≠ m`,
-and `L (p n ^ 2) ≠ 0` for all `n`.
+/-- **Formally orthogonal polynomial family.** Let $R$ be a field. A family $(p_n)_{n \ge 0}$ of
+polynomials over $R$ is formally orthogonal if there is an $R$-linear functional
+$L \colon R[x] \to R$ such that each $p_n$ has degree $n$, $L(p_n p_m) = 0$ whenever $n \ne m$,
+and $L(p_n^2) \ne 0$ for every $n$.
+
 Source: Barry, JIS VOL14 (`Barry1/barry97r2.tex`), lines 326-331.
 URL: https://cs.uwaterloo.ca/journals/JIS/VOL14/Barry1/barry97r2.tex
 Source SHA-256:

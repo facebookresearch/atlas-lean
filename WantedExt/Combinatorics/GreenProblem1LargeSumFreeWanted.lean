@@ -22,15 +22,19 @@ namespace MathlibExt.Combinatorics.GreenProblem1LargeSumFreeWanted
 
 /-! Source record `GREEN-001__92`. -/
 
-/-- A finite set of natural numbers is sum-free: no sum of two (not necessarily
-distinct) members lies in the set [GREEN-001]. -/
+/-- **Sum-free sets of natural numbers.** A finite set $S$ of natural numbers is sum-free if
+$x + y \notin S$ for all $x, y \in S$, where $x = y$ is allowed.
+
+Source: [GREEN-001]. -/
 def IsSumFree (s : Finset ℕ) : Prop :=
   ∀ x ∈ s, ∀ y ∈ s, x + y ∉ s
 
-/-- Large sum-free subset question from [GREEN-001] (Ben Green, Problem 1):
-there exists an unbounded function `ω`, with `ω(n) → ∞` as `n → ∞`, such that
-every finite set `A` of positive integers contains a sum-free subset `B ⊆ A`
-of size at least `|A| / 3 + ω(|A|)`. -/
+/-- **Green's Problem 1 on large sum-free subsets.** The statement that there is a function
+$\omega$ from the natural numbers to the real numbers with $\omega(n) \to \infty$ as
+$n \to \infty$ such that every finite set $A$ of positive integers contains a sum-free subset
+$B \subseteq A$ with $|B| \ge |A|/3 + \omega(|A|)$.
+
+Source: Ben Green, Problem 1 [GREEN-001]. -/
 def conjecture : Prop :=
   ∃ ω : ℕ → ℝ, Filter.Tendsto ω Filter.atTop Filter.atTop ∧
     ∀ (A : Finset ℕ), (∀ a ∈ A, 0 < a) →
@@ -38,8 +42,14 @@ def conjecture : Prop :=
         (A.card : ℝ) / 3 + ω (A.card) ≤ (B.card : ℝ)
 
 /--
-Resolved true: Resolved affirmatively by Bedert, who proves that every n-element set of integers
-contains a sum-free subset of size at least n/3 + c log log n for an absolute constant c > 0.
+**Bedert's theorem on large sum-free subsets.** There is a function $\omega$ from the natural
+numbers to the real numbers with $\omega(n) \to \infty$ as $n \to \infty$ such that every finite
+set $A$ of positive integers contains a subset $B \subseteq A$ with $x + y \notin B$ for all
+$x, y \in B$ (a sum-free subset) and $|B| \ge |A|/3 + \omega(|A|)$.
+
+Bedert proves more: every $n$-element set of integers contains a sum-free subset of size at least
+$n/3 + c \log \log n$ for an absolute constant $c > 0$. This answers Green's Problem 1.
+
 Source: Benjamin Bedert, Large sum-free subsets of sets of integers via L¹-estimates for
 trigonometric series, arXiv:2502.08624v1, https://arxiv.org/abs/2502.08624v1. Moved from
 `OpenConjectures/Combinatorics/GreenProblem1LargeSumFree`.

@@ -19,7 +19,7 @@ doi:10.1287/ijoc.1040.0096.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Fin
 public import MathlibExt.Computability.BinaryNatEncoding

@@ -46,11 +46,15 @@ namespace MeasureTheory
 
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
 
-/-- Orthogonality of martingale increments (Lecture 28): if `X` is a
-martingale with `E[X_n^2] < ∞` for all `n`, and `m ≤ n`, then for any
-`ℱ_m`-measurable random variable `Y` with `E[Y^2] < ∞` we have
-`E[(X_n - X_m) * Y] = 0`. In other words the increment `X_n - X_m` is
-orthogonal in `L²` to every `ℱ_m`-measurable random variable. -/
+/-- **Orthogonality of martingale increments.** Let $(\Omega, \mu)$ be a probability space with a
+filtration $(\mathcal{F}_n)_{n \in \mathbb{N}}$, and let $(X_n)_{n \in \mathbb{N}}$ be a real-valued
+martingale with respect to $(\mathcal{F}_n)$ and $\mu$ such that $\mathbb{E}[X_k^2] < \infty$ for
+every $k$. Let $m \le n$ and let $Y$ be an $\mathcal{F}_m$-measurable real random variable with
+$\mathbb{E}[Y^2] < \infty$. Then $\mathbb{E}[(X_n - X_m) Y] = 0$. In other words, the increment
+$X_n - X_m$ is orthogonal in $L^2$ to every square-integrable $\mathcal{F}_m$-measurable random
+variable.
+
+Source: Lecture 28, orthogonality of martingale increments. -/
 theorem Martingale.integral_sub_mul_eq_zero
     [IsProbabilityMeasure μ]
     {ℱ : Filtration ℕ m0} {X : ℕ → Ω → ℝ}
@@ -69,9 +73,16 @@ theorem Martingale.integral_sub_mul_eq_zero
         integral_congr_ae ((hmart.condExp_ae_eq hmn).mono fun ω hω => by dsimp only; rw [hω])
     _ = 0 := integral_sub_condExp_mul_eq_zero (ℱ.le m) hn hY hY_meas
 
-/-- Variance-of-increment identity: for a square-integrable martingale and
-`m ≤ n`, `E[(X_n - X_m)^2] = E[X_n^2] - E[X_m^2]`. This is orthogonality
-with `Y = X_m`, expanded. -/
+/-- **Pythagorean identity for martingale increments.** Let $(\Omega, \mu)$ be a probability
+space with a filtration $(\mathcal{F}_n)_{n \in \mathbb{N}}$, and let $(X_n)_{n \in \mathbb{N}}$ be
+a real-valued martingale with respect to $(\mathcal{F}_n)$ and $\mu$ such that
+$\mathbb{E}[X_k^2] < \infty$ for every $k$. Then for all $m \le n$,
+$$
+\mathbb{E}[(X_n - X_m)^2] = \mathbb{E}[X_n^2] - \mathbb{E}[X_m^2].
+$$
+
+This is the orthogonality of martingale increments applied to the $\mathcal{F}_m$-measurable
+random variable $X_m$, expanded. -/
 theorem Martingale.integral_sub_sq_eq
     [IsProbabilityMeasure μ]
     {ℱ : Filtration ℕ m0} {X : ℕ → Ω → ℝ}
