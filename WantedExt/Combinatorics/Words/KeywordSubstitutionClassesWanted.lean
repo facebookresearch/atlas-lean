@@ -14,6 +14,7 @@ public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.List.OfFn
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Words.KeywordClassCount
 public import MathlibExt.Combinatorics.Words.KeywordGraphDistance
 public import MathlibExt.Combinatorics.Words.KeywordGraphSymmetries
 public import MathlibExt.Combinatorics.Words.KeywordSimpleMapComm
@@ -41,23 +42,6 @@ Conventions.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Keyword classes are counted by partial sums of $m$-step Fibonacci numbers.** Let
-$m, n \ge 1$ and let $F_0, F_1, F_2, \dots$ be the $m$-step Fibonacci numbers: $F_0 = 1$,
-$F_k = 2^{k-1}$ for $1 \le k \le m - 1$, and $F_k = F_{k-1} + F_{k-2} + \dots + F_{k-m}$ for
-$k \ge m$. Then for every binary keyword $a$ of length $m + 1$, the number of equivalence
-classes of the relation $\sim_a$ on binary words of length $n$ is $F_0 + F_1 + \dots + F_n$.
-
-Source: Erik Bates, Blan Morrison, Mason Rogers, Arianna Serafini and Anav Sood,
-*A New Combinatorial Interpretation of Partial Sums of m-Step Fibonacci Numbers*,
-Journal of Integer Sequences 28 (2025), Article 25.6.6, Theorem 1
-(`jis-2025-25.6.6-thm-1`). -/
-public theorem_wanted card_quot_keywordEquiv_eq_sum_mStepFibonacci
-    (m n : ℕ) (hm : 1 ≤ m) (hn : 1 ≤ n) (F : ℕ → ℕ) (hF0 : F 0 = 1)
-    (hFinit : ∀ k, 1 ≤ k → k ≤ m - 1 → F k = 2 ^ (k - 1))
-    (hFrec : ∀ k, m ≤ k → F k = ∑ t ∈ Finset.Icc 1 m, F (k - t))
-    (a : Fin (m + 1) → Bool) :
-    Nat.card (Quot (KeywordEquiv (n := n) a)) = ∑ j ∈ Finset.range (n + 1), F j
 
 /-- **Keyword equivalence is stable under concatenation.** Let $a$ be a binary keyword, let $u$
 and $v$ be binary words of length $n$, and let $w$ be a binary word of length $n'$. Writing $xy$

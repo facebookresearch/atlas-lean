@@ -33,3 +33,23 @@ example : rhoRed thueMorse 2 = 4 ∧ rhoRed thueMorse 4 = 6 := by
   change rhoRed thueMorse 4 = rhoRed thueMorse 2 + 2 at h₄
   rw [rhoRed_one] at h₂
   exact ⟨h₂, by rw [h₄, h₂]⟩
+
+-- At n = 1 the short factors 11 and 01 attain the two possible alternation counts.
+example : minAlt 4 = 1 ∧ maxAlt 4 = 3 ∧ minAlt 6 = 2 ∧ maxAlt 6 = 4 := by
+  have counts : (fun v => alternations (List.ofFn v)) '' factorSet thueMorse 2 =
+      Set.Icc 0 1 := by
+    ext a
+    constructor
+    · rintro ⟨v, _, rfl⟩
+      refine ⟨Nat.zero_le _, ?_⟩
+      simp [alternations, List.ofFn_succ, List.countP_cons]
+      split <;> decide
+    · rintro ⟨_, ha⟩
+      obtain rfl | rfl : a = 0 ∨ a = 1 := by omega
+      · exact ⟨factor thueMorse 2 1, ⟨1, rfl⟩, by decide +kernel⟩
+      · exact ⟨factor thueMorse 2 0, ⟨0, rfl⟩, by decide +kernel⟩
+  have hmin : minAlt 2 = 0 := by rw [minAlt, counts, csInf_Icc (by decide)]
+  have hmax : maxAlt 2 = 1 := by rw [maxAlt, counts, csSup_Icc (by decide)]
+  obtain ⟨h₁, h₂, h₃, h₄⟩ := minAlt_maxAlt_four_mul 1 (by decide)
+  simp only [Nat.reduceMul, Nat.reduceAdd, hmin, hmax] at h₁ h₂ h₃ h₄
+  omega

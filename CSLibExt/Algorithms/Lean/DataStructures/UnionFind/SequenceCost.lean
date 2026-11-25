@@ -32,7 +32,8 @@ counts as two finds (`numFinds`), as in Tarjan–van Leeuwen §1.
 **Results.** `run_cost_le_log` proves the bound `n + m (⌊log₂ n⌋ + 2)` for a sequence with `n`
 make-sets and `m` finds, the explicit form of the `O(n + m log n)` bound of Tarjan–van Leeuwen
 §2, Theorem 2, which compression does not worsen. The optimal bound `O(n + m α(m + n, n))` of
-their Theorem 3 is recorded in `WantedExt` with the definitions below.
+their Theorem 3 is proved in `CSLibExt.Algorithms.Lean.DataStructures.UnionFind.InverseAckermann`
+using the definitions below.
 -/
 
 open Batteries

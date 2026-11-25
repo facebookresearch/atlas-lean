@@ -15,9 +15,9 @@ import Mathlib.Order.Interval.Set.Nat
 # Reduced complexity of the Thue–Morse word at even lengths
 
 `rhoRed_thueMorse_even` gives the recurrences for lengths congruent to zero and two modulo
-four. We count changes of letter in a sliding window. In every aligned block of four adjacent
-pairs, the first three change indicators are 1, 0, 1, and the fourth is the indicator at the
-corresponding position of the original sequence.
+four. `minAlt_maxAlt_four_mul` gives the corresponding minimum and maximum alternation counts.
+In every aligned block of four adjacent pairs, the first three change indicators are 1, 0, 1,
+and the fourth is the indicator at the corresponding position of the original sequence.
 -/
 
 namespace MathlibExt.Combinatorics.ReducedComplexitiesWanted
@@ -283,6 +283,46 @@ private theorem bounds_four_sub_one {n lo hi : ℕ} (hn : 0 < n) (h : ChangeBoun
     rw [show 4 * i + 2 + (4 * n - 1) = 4 * (i + n) + 1 by omega,
       (edge_four (i + n)).2.1, hi, Nat.add_zero] at hc
     exact hc
+
+private theorem alternations_factor (n i : ℕ) :
+    alternations (factorList thueMorse (n + 1) i) = changes n i := by
+  induction n generalizing i with
+  | zero => simp [factorList, alternations, changes]
+  | succ n ih =>
+    rw [factorList_succ (n + 1) i, changes, ← ih (i + 1), factorList_succ n (i + 1)]
+    simp [alternations, List.countP_cons, edge]
+
+private theorem extrema_of_bounds {n lo hi : ℕ} (h : ChangeBounds n lo hi) :
+    minAlt (n + 1) = lo ∧ maxAlt (n + 1) = hi := by
+  have counts : (fun v => alternations (List.ofFn v)) '' factorSet thueMorse (n + 1) =
+      Set.Icc lo hi := by
+    rw [factorSet, ← Set.range_comp', ← changes_range h]
+    exact congrArg Set.range (funext (alternations_factor n))
+  have hlohi := (h.bounds 0).1.trans (h.bounds 0).2
+  rw [minAlt, maxAlt, counts]
+  exact ⟨csInf_Icc hlohi, csSup_Icc hlohi⟩
+
+/-- **Quadrupling recurrences for Thue–Morse alternation extrema.** For a natural number $k$, let
+$m_k$ and $M_k$ be the least and the largest number of alternations (positions where two adjacent
+letters differ) among the length-$k$ factors of the Thue–Morse sequence. Then for every $n \ge 1$,
+$m_{4n} = 2n - 1 + m_{n+1}$, $M_{4n} = 2n + M_{n+1}$, $m_{4n+2} = 2n + m_{n+1}$ and
+$M_{4n+2} = 2n + 1 + M_{n+1}$.
+
+Source: John M. Campbell, James D. Currie, and Narad
+Rampersad, "Reduced Complexities for Sequences Over Finite
+Alphabets", Lemma 3. -/
+public theorem minAlt_maxAlt_four_mul (n : ℕ) (hn : 1 ≤ n) :
+    (minAlt (4 * n) : ℤ) = 2 * n - 1 + minAlt (n + 1) ∧
+      (maxAlt (4 * n) : ℤ) = 2 * n + maxAlt (n + 1) ∧
+      (minAlt (4 * n + 2) : ℤ) = 2 * n + minAlt (n + 1) ∧
+      (maxAlt (4 * n + 2) : ℤ) = 2 * n + 1 + maxAlt (n + 1) := by
+  obtain ⟨lo, hi, h⟩ := exists_changeBounds n
+  obtain ⟨hmin, hmax⟩ := extrema_of_bounds h
+  obtain ⟨hmin₄, hmax₄⟩ := extrema_of_bounds (bounds_four_sub_one hn h)
+  obtain ⟨hmin₂, hmax₂⟩ := extrema_of_bounds (bounds_four_add_one h)
+  rw [show 4 * n - 1 + 1 = 4 * n by omega] at hmin₄ hmax₄
+  rw [show 4 * n + 1 + 1 = 4 * n + 2 by rfl] at hmin₂ hmax₂
+  omega
 
 /-- **Reduced complexity of the Thue–Morse word at even lengths.** Let $t$ be the Thue–Morse
 sequence and $\rho^{\mathrm{red}}_t$ its reduced factor complexity. For every natural number
