@@ -8,4 +8,4 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Analysis.InnerProductSpace.NewtonianKernel
+public import MathlibExt.Analysis.InnerProductSpace.InvNormHarmonic
