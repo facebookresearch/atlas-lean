@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.NumberTheory.ModularForms.CoeffHecke
+import Mathlib.NumberTheory.LegendreSymbol.ZModChar
+import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
@@ -53,7 +55,23 @@ example
     HeckeEis.coeffHeckeFun_coeffHeckeFun_sub_coeffHeckeFun_mul_mem_coboundaries₁
       N ℓ ℓ' m hℓ hℓN hℓℓ' hm ρ a a' ha ha' hz
 
-/-- The prime hypothesis matters: for `ℓ = 4` the conclusion can fail
-already at the level of the statement's side conditions, since `4` is not
-prime.  This records only that the hypothesis is not vacuous. -/
-example : ¬ Nat.Prime 4 := by decide
+/-- Non-vacuity: every hypothesis holds together for `N = 4`, `ℓ = 3`, `ℓ' = 2`,
+`m = 6`, the representation of `Gamma0 4` on `ℚ` by `χ₄` of the lower-right
+entry (the conjugation keeps that entry, so `a = a' = id` intertwine), and the
+cocycle `z g = χ₄ (g 1 1) - 1`, which is not zero: `z (-1) = -2`. -/
+example :
+    let ρ : Representation ℚ (CongruenceSubgroup.Gamma0 4) ℚ :=
+      (Algebra.lmul ℚ ℚ : ℚ →* Module.End ℚ ℚ).comp ((Int.castRingHom ℚ : ℤ →* ℚ).comp
+        ((ZMod.χ₄ : ZMod 4 →* ℤ).comp (CongruenceSubgroup.Gamma0Map 4)))
+    let z : CongruenceSubgroup.Gamma0 4 → ℚ := fun g => ρ g 1 - 1
+    z ⟨-1, by simp [CongruenceSubgroup.Gamma0_mem]⟩ = -2 ∧
+      HeckeEis.coeffHeckeFun 4 3 ρ LinearMap.id (HeckeEis.coeffHeckeFun 4 2 ρ LinearMap.id z)
+        - HeckeEis.coeffHeckeFun 4 6 ρ (LinearMap.id ∘ₗ LinearMap.id) z ∈
+          coboundaries₁ (Rep.of ρ) := by
+  intro ρ z
+  refine ⟨?_, HeckeEis.coeffHeckeFun_coeffHeckeFun_sub_coeffHeckeFun_mul_mem_coboundaries₁
+    4 3 2 6 Nat.prime_three (by decide) (by decide) rfl ρ LinearMap.id LinearMap.id
+    (fun _ => rfl) (fun _ => rfl) (coboundaries₁_le_cocycles₁ _ ⟨1, rfl⟩)⟩
+  change ((ZMod.χ₄ (-1 : ZMod 4) : ℤ) : ℚ) * 1 - 1 = -2
+  rw [show ZMod.χ₄ (-1 : ZMod 4) = -1 by decide]
+  norm_num
