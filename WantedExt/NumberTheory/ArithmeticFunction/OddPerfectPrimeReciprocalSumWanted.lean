@@ -14,6 +14,7 @@ public import Mathlib.NumberTheory.PrimeCounting
 public import MathlibExt.Analysis.SpecialFunctions.Exp.Zelinsky
 public import MathlibExt.Analysis.SpecialFunctions.Log.Zelinsky
 public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancySupDivIndex
+public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectFiveExponent
 public import MathlibExt.NumberTheory.ArithmeticFunction.OddPerfectPrimeProduct
 public import MathlibExt.NumberTheory.EulerPrime
 public import WantedExt.NumberTheory.PrimitiveNondeficientWanted
@@ -100,16 +101,6 @@ public theorem_wanted tsum_log_sq_div_sq_sub_one_primes_ge_le
         Real.log (((p : ℕ) : ℝ) ^ 2 / (((p : ℕ) : ℝ) ^ 2 - 1)) ≤
       1 / ((q : ℝ) * Real.log q) * (1 + 2 * Real.log (Real.log q) / Real.log q) +
         4 / (q : ℝ) ^ 3
-
-/-- **Odd perfect numbers divisible by 165 contain 5 exactly once.** If $n$ is an odd perfect
-number divisible by $165$, then $5$ divides $n$ exactly once: $5 \mid n$ but $25 \nmid n$.
-
-Source: Joshua Zelinsky, *The Sum of the Reciprocals of the Prime Divisors of an Odd
-Perfect or Odd Primitive Non-deficient Number*, INTEGERS 25 (2025), Article A59,
-Lemma 11 (`integers-2025-A59-lem-11`). -/
-public theorem_wanted oddPerfect_factorization_five_eq_one_of_dvd
-    (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) (h165 : 165 ∣ n) :
-    n.factorization 5 = 1
 
 /-- **Cohen–Hagis–Suryanarayana bounds on the prime reciprocal sum of an odd perfect number.**
 Let $n$ be an odd perfect number and $T(n) = \sum_{p \mid n} 1/p$, the sum over the primes $p$
