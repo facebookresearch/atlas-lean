@@ -65,8 +65,9 @@ assembled from ideal and prime sums over the ring of integers.  The
 prime sum has the same logarithmic pole at `s = 1` as the Dedekind zeta
 function; discarding the finitely many bad (ramified or small) primes and
 the higher-degree primes leaves the degree-one sum, whose
-`log (s - 1)`-shifted form is bounded near `1`.  A separate finite-group
-count gives `|conj class| * |centralizer| = |G|` for every group element.
+`log (s - 1)`-shifted form is bounded near `1`.  A separate count gives
+`|conj class| * |centralizer| = |G|` for every element of any group, as an
+identity of cardinals.
 -/
 
 @[expose] public section
@@ -1522,21 +1523,22 @@ theorem setOf_isConj_eq_orbit_conjAct (σ : G) :
     ConjClasses.mk_eq_mk_iff_isConj]
   exact ⟨IsConj.symm, IsConj.symm⟩
 
-theorem card_stabilizer_conjAct_eq_card_centralizer (σ : G) :
-    Nat.card (MulAction.stabilizer (ConjAct G) σ) =
-      Nat.card (Subgroup.centralizer ({σ} : Set G)) := by
-  refine Nat.card_congr (Equiv.subtypeEquiv ConjAct.ofConjAct.toEquiv fun g => ?_)
+theorem mk_stabilizer_conjAct_eq_mk_centralizer (σ : G) :
+    Cardinal.mk (MulAction.stabilizer (ConjAct G) σ) =
+      Cardinal.mk (Subgroup.centralizer ({σ} : Set G)) := by
+  refine Cardinal.mk_congr (Equiv.subtypeEquiv ConjAct.ofConjAct.toEquiv fun g => ?_)
   show g ∈ MulAction.stabilizer (ConjAct G) σ ↔
     ConjAct.ofConjAct g ∈ Subgroup.centralizer ({σ} : Set G)
   rw [MulAction.mem_stabilizer_iff, Subgroup.mem_centralizer_singleton_iff, ConjAct.smul_def]
   rw [mul_inv_eq_iff_eq_mul]
   exact Iff.rfl
 
-public theorem card_setOf_isConj_mul_card_centralizer (σ : G) :
-    Nat.card {τ : G | IsConj σ τ} * Nat.card (Subgroup.centralizer ({σ} : Set G)) = Nat.card G := by
-  rw [setOf_isConj_eq_orbit_conjAct, ← card_stabilizer_conjAct_eq_card_centralizer,
-    Nat.card_congr (MulAction.orbitEquivQuotientStabilizer (ConjAct G) σ),
-    ← Subgroup.card_eq_card_quotient_mul_card_subgroup]
+public theorem mk_setOf_isConj_mul_mk_centralizer (σ : G) :
+    Cardinal.mk {τ : G | IsConj σ τ} * Cardinal.mk (Subgroup.centralizer ({σ} : Set G)) =
+      Cardinal.mk G := by
+  rw [setOf_isConj_eq_orbit_conjAct, ← mk_stabilizer_conjAct_eq_mk_centralizer,
+    Cardinal.mk_congr (MulAction.orbitEquivQuotientStabilizer (ConjAct G) σ), Cardinal.mul_def,
+    ← Cardinal.mk_congr Subgroup.groupEquivQuotientProdSubgroup]
   rfl
 
 theorem sum_moebius_mul_eq_totient (n : ℕ) (hn : 0 < n) :
