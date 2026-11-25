@@ -36,8 +36,8 @@ def SmallEtaleLongSequenceComponents (X : Scheme.{u}) (n : ℕ)
   let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
   let A := AddCommGrpCat.{max u w}
   let _ : HasExt.{max u w} C := smallEtaleHasExt.{u, w} X
-  let H₀ : C ⥤ A := Sheaf.H.functorH.{max u w, max u w, u, u + 1} X.smallEtaleTopology n
-  let H₁ : C ⥤ A := Sheaf.H.functorH.{max u w, max u w, u, u + 1} X.smallEtaleTopology (n + 1)
+  let H₀ : C ⥤ A := Sheaf.functorH.{max u w, max u w, u, u + 1} X.smallEtaleTopology n
+  let H₁ : C ⥤ A := Sheaf.functorH.{max u w, max u w, u, u + 1} X.smallEtaleTopology (n + 1)
   let m : smallEtaleLongSequence.{u, w} S.property n ⟶
       smallEtaleLongSequence.{u, w} T.property n :=
     (smallEtaleLongSequenceFunctor.{u, w} X n).map α
