@@ -19,3 +19,4 @@ Topics added since this subject's fields were last revised.
 - [Spearman Karber](spearman-karber/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [Worm Like Chain](worm-like-chain/README.md)
+- [String Overlap](string-overlap/README.md)
