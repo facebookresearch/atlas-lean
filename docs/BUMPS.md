@@ -221,3 +221,5 @@ queue, not merged. Watch for that and fix it as in step 7. While the bump is
 queued, `scripts/queue/preflight.py` reports any other pull request whose CI
 has not run on the new pins as not ready. Once the bump has merged, merge main
 into your branch, wait for CI and Codex, and queue it then.
+
+This guide is also used to measure CI.
