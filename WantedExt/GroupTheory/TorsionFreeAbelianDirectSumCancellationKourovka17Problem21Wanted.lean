@@ -34,27 +34,35 @@ Torsion-free: `n • a = 0` with `n ≠ 0` forces `a = 0`. Direct sums are produ
 are taken in `Type`; one target per part.
 -/
 
-/-- An additive group is torsion-free: `n • a = 0` with `n ≠ 0` forces `a = 0`. -/
+/-- **Torsion-free abelian group.** An abelian group $A$, written additively, is torsion-free when
+for every natural number $n \ne 0$ and every $a \in A$, $n a = 0$ implies $a = 0$. -/
 def IsTorsionFreeAddGroup (A : Type*) [AddCommGroup A] : Prop :=
   ∀ (n : ℕ) (a : A), n ≠ 0 → n • a = 0 → a = 0
 
-/-- Kourovka 17.21(a) (G. M. Bergman): for torsion-free abelian groups `A, B, C`,
-`A ≅ A ⊕ B ⊕ C` implies `A ≅ A ⊕ B`. -/
+/-- **Bergman's absorption question (Kourovka 17.21(a)).** The statement that for all torsion-free
+abelian groups $A$, $B$, $C$, if $A \cong A \oplus B \oplus C$ then $A \cong A \oplus B$. -/
 def torsionFreeAbsorbsDirectSummand : Prop :=
   ∀ (A B C : Type) [AddCommGroup A] [AddCommGroup B] [AddCommGroup C],
     IsTorsionFreeAddGroup A → IsTorsionFreeAddGroup B → IsTorsionFreeAddGroup C →
       Nonempty (A ≃+ A × B × C) → Nonempty (A ≃+ A × B)
 
-/-- Kourovka 17.21(b) (G. M. Bergman): the same implication under the extra hypothesis `B ≅ C`. -/
+/-- **Bergman's absorption question for isomorphic summands (Kourovka 17.21(b)).** The statement
+that for all torsion-free abelian groups $A$, $B$, $C$ with $B \cong C$, if
+$A \cong A \oplus B \oplus C$ then $A \cong A \oplus B$. -/
 def torsionFreeAbsorbsDirectSummandOfIso : Prop :=
   ∀ (A B C : Type) [AddCommGroup A] [AddCommGroup B] [AddCommGroup C],
     IsTorsionFreeAddGroup A → IsTorsionFreeAddGroup B → IsTorsionFreeAddGroup C →
       Nonempty (B ≃+ C) → Nonempty (A ≃+ A × B × C) → Nonempty (A ≃+ A × B)
 
 /--
-Resolved false: the Kourovka Archive answers 17.21 "No, not necessarily, even in case b)", citing
-Corner (1964) and Bergman (letter of 2011, an example with `B` and `C` of rank 1): there are
-torsion-free abelian groups with `A ≅ A ⊕ B ⊕ C` but `A ≇ A ⊕ B`. Source: E. I. Khukhro and V. D.
+**Failure of direct-summand absorption for torsion-free abelian groups.** There exist torsion-free
+abelian groups $A$, $B$, $C$ with $A \cong A \oplus B \oplus C$ but $A \not\cong A \oplus B$; thus
+the answer to Kourovka Problem 17.21(a) is negative.
+
+The Kourovka Archive answers 17.21 "No, not necessarily, even in case b)", citing Corner (1964)
+and Bergman (letter of 2011, an example with $B$ and $C$ of rank 1).
+
+Source: E. I. Khukhro and V. D.
 Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 17.21 (G. M. Bergman); resolution: A.
 L. S. Corner, in Proc. Colloq. Abelian Groups (Tihany, 1963), Budapest, 1964, 43-48; G. M. Bergman,
@@ -65,9 +73,14 @@ of rank 1).
 public theorem_wanted torsionFreeAbsorbsDirectSummand_refuted : ¬ torsionFreeAbsorbsDirectSummand
 
 /--
-Resolved false: the Kourovka Archive answers 17.21(b) negatively as well ("even in case b)", Corner
-1964; Bergman, letter of 2011): there are torsion-free abelian groups with `B ≅ C` and `A ≅ A ⊕ B ⊕
-C` but `A ≇ A ⊕ B`. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+**Failure of direct-summand absorption with isomorphic summands.** There exist torsion-free abelian
+groups $A$, $B$, $C$ with $B \cong C$ and $A \cong A \oplus B \oplus C$ but
+$A \not\cong A \oplus B$; thus the answer to Kourovka Problem 17.21(b) is negative.
+
+The Kourovka Archive answers 17.21(b) negatively as well ("even in case b)", Corner 1964; Bergman,
+letter of 2011).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
 Problem 17.21 (G. M. Bergman); resolution: A. L. S. Corner, in Proc. Colloq. Abelian Groups (Tihany,
 1963), Budapest, 1964, 43-48; G. M. Bergman, letter of 20 February 2011, as recorded in the Kourovka

@@ -39,7 +39,9 @@ private lemma ksL2_opNorm_eq_norm_eigenvalues
         Matrix.l2_opNorm_diagonal]
       rfl
 
-/-- The characteristic polynomial of a Hermitian complex matrix is real-rooted. -/
+/-- **Hermitian matrices have real-rooted characteristic polynomials.** Let $n$ be a finite type
+with decidable equality. The characteristic polynomial of a Hermitian complex matrix indexed by $n$
+is real-rooted. -/
 public theorem IsHermitian.charpoly_isRealRooted
     {n : Type*} [Fintype n] [DecidableEq n] {A : Matrix n n ℂ}
     (hA : A.IsHermitian) : A.charpoly.IsRealRooted := by
@@ -48,8 +50,10 @@ public theorem IsHermitian.charpoly_isRealRooted
   obtain ⟨i, hi, rfl⟩ := Multiset.mem_map.mp hz
   simp
 
-/-- For a nonempty positive semidefinite complex matrix, the L2 operator norm equals the largest
-root of its characteristic polynomial. -/
+/-- **Spectral norm of a positive semidefinite matrix.** Let $A$ be a positive semidefinite
+complex square matrix indexed by a nonempty finite set. Then the operator norm of $A$ with
+respect to the Euclidean ($\ell^2$) norm equals the largest real part of a root of the
+characteristic polynomial of $A$. Since these roots are real, this is its largest root. -/
 public theorem PosSemidef.l2_opNorm_eq_maxRealRoot_charpoly
     {n : Type*} [Fintype n] [DecidableEq n] [Nonempty n] {A : Matrix n n ℂ}
     (hA : A.PosSemidef) : ‖A‖ = A.charpoly.maxRealRoot := by

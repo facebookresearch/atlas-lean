@@ -23,7 +23,7 @@ public import MathlibExt.NumberTheory.NumberField.PrescribedValuations
 
 open IsDedekindDomain NumberField
 
-theorem exactSource (K : Type) [Field K]
+private theorem exactSource (K : Type) [Field K]
     [NumberField K] (S : Finset (HeightOneSpectrum (𝓞 K))) (n : ↥S → ℤ) :
     ∃ α : K, α ≠ 0 ∧ ∀ v : ↥S, v.1.valuation K α = WithZero.exp (-(n v)) :=
   IsDedekindDomain.HeightOneSpectrum.exists_ne_zero_valuation_eq_exp_neg K S n

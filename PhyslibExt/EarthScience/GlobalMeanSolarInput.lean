@@ -51,8 +51,8 @@ intercepted power.
 
 namespace EarthScience
 
-/-- Global mean solar input: total intercepted power `S₀ π R²` spread over
-the sphere area `4π R²` is `S₀ / 4`. -/
+/-- Global mean solar input: for `R ≠ 0`, total intercepted power `S₀ π R²`
+spread over the sphere area `4π R²` is `S₀ / 4`. -/
 theorem global_mean_solar_input_eq {S₀ R : ℝ} (hR : R ≠ 0) :
     (S₀ * (Real.pi * R ^ 2)) / (4 * Real.pi * R ^ 2) = S₀ / 4 := by
   have hpi : Real.pi ≠ 0 := Real.pi_ne_zero

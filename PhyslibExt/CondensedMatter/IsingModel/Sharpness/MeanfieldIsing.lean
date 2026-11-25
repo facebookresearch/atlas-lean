@@ -51,14 +51,14 @@ namespace Sharpness
 /-! ## A. The integrated inequality -/
 
 lemma meanfield_ode_antitone (β₀ : ℝ) (hβ₀ : 0 < β₀) (u : ℝ → ℝ)
-    (hdiff : ∀ β ∈ Ici β₀, DifferentiableAt ℝ u β)
+    (hcont : ContinuousOn u (Ici β₀))
+    (hdiff : ∀ β ∈ Ioi β₀, DifferentiableAt ℝ u β)
     (hineq : ∀ β ∈ Ioi β₀, (2 / β) * (1 - u β) ≤ deriv u β) :
     AntitoneOn (fun β => β ^ 2 * (1 - u β)) (Ici β₀) := by
   set g : ℝ → ℝ := fun β => β ^ 2 * (1 - u β) with hg
   have hgderiv : ∀ β ∈ Ioi β₀, deriv g β = 2 * β * (1 - u β) - β ^ 2 * deriv u β := by
     intro β hβ
-    have hβ0 : β ∈ Ici β₀ := le_of_lt (mem_Ioi.mp hβ)
-    have hd := hdiff β hβ0
+    have hd := hdiff β hβ
     have hH : HasDerivAt g (2 * β * (1 - u β) - β ^ 2 * deriv u β) β := by
       have h1 : HasDerivAt (fun β : ℝ => β ^ 2) (2 * β) β := by
         simpa using (hasDerivAt_pow 2 β)
@@ -81,29 +81,27 @@ lemma meanfield_ode_antitone (β₀ : ℝ) (hβ₀ : 0 < β₀) (u : ℝ → ℝ
       ring
     rw [hsimp] at hub
     linarith
-  have hcont : ContinuousOn g (Ici β₀) := by
+  have hcontg : ContinuousOn g (Ici β₀) := by
     apply ContinuousOn.mul
     · exact (continuous_pow 2).continuousOn
-    · apply ContinuousOn.sub continuousOn_const
-      intro β hβ
-      exact (hdiff β hβ).continuousAt.continuousWithinAt
+    · exact continuousOn_const.sub hcont
   have hdon : DifferentiableOn ℝ g (interior (Ici β₀)) := by
     rw [interior_Ici]
     intro β hβ
-    have hβ0 : β ∈ Ici β₀ := le_of_lt (mem_Ioi.mp hβ)
     exact ((differentiableAt_pow 2).mul
-      ((differentiableAt_const 1).sub (hdiff β hβ0))).differentiableWithinAt
-  apply antitoneOn_of_deriv_nonpos (convex_Ici β₀) hcont hdon
+      ((differentiableAt_const 1).sub (hdiff β hβ))).differentiableWithinAt
+  apply antitoneOn_of_deriv_nonpos (convex_Ici β₀) hcontg hdon
   rw [interior_Ici]
   exact hgnonpos
 
 lemma meanfield_one_minus_le (β₀ : ℝ) (hβ₀ : 0 < β₀) (u : ℝ → ℝ)
-    (hdiff : ∀ β ∈ Ici β₀, DifferentiableAt ℝ u β)
+    (hcont : ContinuousOn u (Ici β₀))
+    (hdiff : ∀ β ∈ Ioi β₀, DifferentiableAt ℝ u β)
     (hineq : ∀ β ∈ Ioi β₀, (2 / β) * (1 - u β) ≤ deriv u β)
     {β : ℝ} (hβ : β₀ ≤ β) :
     1 - u β ≤ (β₀ / β) ^ 2 * (1 - u β₀) := by
   have hβpos : 0 < β := lt_of_lt_of_le hβ₀ hβ
-  have hanti := meanfield_ode_antitone β₀ hβ₀ u hdiff hineq
+  have hanti := meanfield_ode_antitone β₀ hβ₀ u hcont hdiff hineq
   have hmono : β ^ 2 * (1 - u β) ≤ β₀ ^ 2 * (1 - u β₀) :=
     hanti self_mem_Ici (mem_Ici.mpr hβ) hβ
   rw [div_pow, mul_comm_div, mul_div_assoc']
@@ -113,16 +111,17 @@ lemma meanfield_one_minus_le (β₀ : ℝ) (hβ₀ : 0 < β₀) (u : ℝ → ℝ
     _ = β₀ ^ 2 * (1 - u β₀) := rfl
 
 /-- If `(m²)' ≥ (2/β)(1 - m²)` above `β₀ > 0`, `m(β₀) = 0` and `m ≥ 0`, then `m(β) ≥ √(1 - (β₀/β)²)`
-for `β ≥ β₀`. See also `meanfield_lower_bound_of_initial_nonneg`, which drops the hypothesis `m(β₀)
-= 0`. -/
+for `β ≥ β₀`. See also `meanfield_lower_bound_of_initial_nonneg`, which drops `m(β₀) = 0` but
+retains differentiability at `β₀`. -/
 lemma meanfield_lower_bound (β₀ : ℝ) (hβ₀ : 0 < β₀) (m : ℝ → ℝ)
-    (hdiff : ∀ β ∈ Ici β₀, DifferentiableAt ℝ (fun β => (m β) ^ 2) β)
+    (hcont : ContinuousOn (fun β => (m β) ^ 2) (Ici β₀))
+    (hdiff : ∀ β ∈ Ioi β₀, DifferentiableAt ℝ (fun β => (m β) ^ 2) β)
     (hineq : ∀ β ∈ Ioi β₀, (2 / β) * (1 - (m β) ^ 2) ≤ deriv (fun β => (m β) ^ 2) β)
     (hzero : m β₀ = 0) (hnonneg : ∀ β ∈ Ici β₀, 0 ≤ m β)
     {β : ℝ} (hβ : β₀ ≤ β) :
     Real.sqrt (1 - (β₀ / β) ^ 2) ≤ m β := by
   have hβpos : 0 < β := lt_of_lt_of_le hβ₀ hβ
-  have hgw := meanfield_one_minus_le β₀ hβ₀ (fun β => (m β) ^ 2) hdiff hineq hβ
+  have hgw := meanfield_one_minus_le β₀ hβ₀ (fun β => (m β) ^ 2) hcont hdiff hineq hβ
   rw [hzero] at hgw
   simp only [ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow, sub_zero,
     mul_one] at hgw

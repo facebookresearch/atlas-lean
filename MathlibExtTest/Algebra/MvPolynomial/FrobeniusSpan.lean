@@ -12,7 +12,7 @@ public import MathlibExt.Algebra.MvPolynomial.FrobeniusSpan
 
 @[expose] public section
 
-theorem exactSource
+private theorem exactSource
     {p : ℕ} [Fact p.Prime] {K : Type*} [Field K] [Algebra (ZMod p) K] {σ : Type*}
     (n : ℕ) (f : MvPolynomial σ (ZMod p)) (hf : Prime f) (g : MvPolynomial σ K)
     (hg : MvPolynomial.aeval (fun i => (MvPolynomial.X i : MvPolynomial σ K) ^ p ^ n) g ∈

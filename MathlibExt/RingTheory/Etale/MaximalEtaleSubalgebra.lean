@@ -206,7 +206,7 @@ private theorem red_surjective : Function.Surjective (red k A) := Ideal.Quotient
 include k in
 private theorem isNilpotent_nilradical_aux : IsNilpotent (nilradical A) := by
   haveI : IsArtinianRing A := IsArtinianRing.of_finite k A
-  exact IsArtinianRing.isNilpotent_nilradical
+  exact IsArtinianRing.isNilpotent_nilradical A
 
 private theorem isNilpotent_ker_red : IsNilpotent (RingHom.ker (red k A : A →+* Ared A)) := by
   have : RingHom.ker (red k A : A →+* Ared A) = nilradical A := Ideal.Quotient.mkₐ_ker k _

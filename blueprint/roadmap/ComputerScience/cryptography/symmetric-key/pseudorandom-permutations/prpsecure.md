@@ -1,0 +1,9 @@
+# Asymptotic PRP security relative to a class of distinguishers
+
+A family of keyed permutations $F_n$ of finite sets $X_n$ is PRP-secure relative to a class of
+admissible distinguisher families, with uniform coins in finite nonempty sets $S_n$, when every
+admissible family has negligible PRP advantage. This is the indistinguishability condition of Katz
+and Lindell, Section 3.5.1, with the admissible class as a parameter. Katz and Lindell also require
+$F_k$ and $F_k^{-1}$ to be computable in deterministic polynomial time and quantify over
+probabilistic polynomial-time distinguishers; the first is not imposed here, and the second must be
+supplied through the class.
