@@ -4,6 +4,8 @@ Local rings and their residue fields, Krull dimension, adic completion, regular 
 
 - [Adic completion](adic-completion/README.md)
 - [Krull dimension](krull-dimension/README.md)
+- [Length and colength of modules](length-and-colength-of-modules/README.md)
+- [Local algebra and Koszul intersection multiplicities](local-algebra-and-koszul-intersection-multiplici/README.md)
 - [Local rings and residue fields](local-rings-and-residue-fields/README.md)
 - [Maximal ideals in integral extensions of local rings](maximal-ideals-in-integral-extensions-of-local-r/README.md)
 - [Reconstructing complete local rings from quotients](reconstructing-complete-local-rings-from-quotien/README.md)

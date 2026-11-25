@@ -5,4 +5,5 @@ Concrete categories of algebraic objects (semigroups, monoids, groups, rings, al
 - [Categories of groups and monoids](groups-and-monoids/README.md)
 - [Categories of rings and algebras](rings-and-algebras/README.md)
 - [Categories of modules](modules/README.md)
+- [Presheaves and sheaves of modules](sheaves-of-modules/README.md)
 - [Products of abelian groups](products-of-abelian-groups/README.md)

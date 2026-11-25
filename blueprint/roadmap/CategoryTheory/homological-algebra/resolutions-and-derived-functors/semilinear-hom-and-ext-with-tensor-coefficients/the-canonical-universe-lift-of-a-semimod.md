@@ -1,0 +1,3 @@
+# The canonical universe lift of a semimodule, retaining its...
+
+The canonical universe lift of a semimodule, retaining its linear maps.

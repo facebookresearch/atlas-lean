@@ -16,6 +16,7 @@ Lie algebras and their structure and representations, free Lie algebras, Poisson
 - [Invariance of the actual ordered-word normalizer](invariance-of-the-actual-ordered-word-normalizer/README.md)
 - [Length bounds and the leading ordered term of normalization](length-bounds-and-the-leading-ordered-term-of-no/README.md)
 - [Poisson algebras and Poisson ideals](poisson-algebras-and-poisson-ideals/README.md)
+- [Primitive Lie algebras and enveloping Hopf algebras](primitive-lie-algebras-and-enveloping-hopf-algeb/README.md)
 - [Rota–Baxter operators on groups](rota-baxter-operators-on-groups/README.md)
 - [The degree filtration of the native universal enveloping algebra](the-degree-filtration-of-the-native-universal-en/README.md)
 - [The Jacobi identity in the overlapping PBW reductions](the-jacobi-identity-in-the-overlapping-pbw-reduc/README.md)
