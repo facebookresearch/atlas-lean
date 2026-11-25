@@ -1,0 +1,156 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+  Author: @toskua, Avocado
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.CompletelyPositiveMap
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Matrix.Basic
+
+@[expose] public section
+
+open scoped CStarAlgebra
+open BigOperators
+
+namespace CompletelyPositiveMap
+
+variable {A₁ A₂ A₃ A₄ : Type*}
+  [NonUnitalCStarAlgebra A₁] [NonUnitalCStarAlgebra A₂]
+  [NonUnitalCStarAlgebra A₃] [NonUnitalCStarAlgebra A₄]
+  [PartialOrder A₁] [PartialOrder A₂] [PartialOrder A₃] [PartialOrder A₄]
+  [StarOrderedRing A₁] [StarOrderedRing A₂] [StarOrderedRing A₃] [StarOrderedRing A₄]
+
+open CStarMatrix
+
+/-- **Completely positive identity map.** For a nonunital complex C*-algebra `A` with a star-compatible
+partial order, the identity `a ↦ a` is a completely positive map from `A` to itself. -/
+def id (A : Type*) [NonUnitalCStarAlgebra A] [PartialOrder A] [StarOrderedRing A] :
+    A →CP A where
+  toLinearMap := LinearMap.id
+  map_cstarMatrix_nonneg' k M hM := by
+    have h_eq : M.map (LinearMap.id : A →ₗ[ℂ] A) = M := by
+      ext i j
+      simp [map_apply]
+    rw [h_eq]
+    exact hM
+
+@[simp]
+theorem id_apply (A : Type*) [NonUnitalCStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
+    (a : A) : (id A : A →CP A) a = a :=
+  rfl
+
+@[simp]
+theorem toLinearMap_id (A : Type*) [NonUnitalCStarAlgebra A] [PartialOrder A] [StarOrderedRing A] :
+    (id A : A →CP A).toLinearMap = LinearMap.id :=
+  rfl
+
+/-- **Composition of completely positive maps.** For nonunital complex C*-algebras `A₁`, `A₂`, and `A₃`
+with star-compatible partial orders, completely positive maps `φ : A₁ → A₂` and `ψ : A₂ → A₃` have
+the completely positive composite `a ↦ ψ(φ(a))`. -/
+def comp (ψ : A₂ →CP A₃) (φ : A₁ →CP A₂) : A₁ →CP A₃ where
+  toLinearMap := ψ.toLinearMap.comp φ.toLinearMap
+  map_cstarMatrix_nonneg' k M hM := by
+    have h₁ : 0 ≤ M.map φ.toLinearMap := φ.map_cstarMatrix_nonneg' k M hM
+    have h₂ : 0 ≤ (M.map φ.toLinearMap).map ψ.toLinearMap :=
+      ψ.map_cstarMatrix_nonneg' k _ h₁
+    have h_eq : M.map (ψ.toLinearMap.comp φ.toLinearMap) =
+        (M.map φ.toLinearMap).map ψ.toLinearMap := by
+      ext i j
+      simp [map_apply]
+    rw [h_eq]
+    exact h₂
+
+@[simp]
+theorem comp_apply (φ : A₁ →CP A₂) (ψ : A₂ →CP A₃) (a : A₁) :
+    (comp ψ φ : A₁ →CP A₃) a = ψ (φ a) :=
+  rfl
+
+@[simp]
+theorem toLinearMap_comp (φ : A₁ →CP A₂) (ψ : A₂ →CP A₃) :
+    (comp ψ φ).toLinearMap = ψ.toLinearMap.comp φ.toLinearMap :=
+  rfl
+
+@[simp]
+theorem id_comp (φ : A₁ →CP A₂) : comp (id A₂) φ = φ :=
+  DFunLike.ext _ _ fun _ => rfl
+
+@[simp]
+theorem comp_id (φ : A₁ →CP A₂) : comp φ (id A₁) = φ :=
+  DFunLike.ext _ _ fun _ => rfl
+
+theorem comp_assoc (φ : A₁ →CP A₂) (ψ : A₂ →CP A₃) (χ : A₃ →CP A₄) :
+    comp χ (comp ψ φ) = comp (comp χ ψ) φ :=
+  DFunLike.ext _ _ fun _ => rfl
+
+variable {ι : Type*} [Fintype ι]
+
+/-- **Finite sums of completely positive maps.** For nonunital complex
+C*-algebras `A` and `B` with compatible star orders, a finite family
+`phi : ι → A →CP B` defines the completely positive map
+`a ↦ ∑ i, phi i a`. The empty family gives the zero map. -/
+noncomputable def sum (φ : ι → A₁ →CP A₂) : A₁ →CP A₂ where
+  toLinearMap := ∑ i, (φ i).toLinearMap
+  map_cstarMatrix_nonneg' k M hM := by
+    classical
+    have h_each : ∀ i, 0 ≤ M.map (φ i) :=
+      fun i => map_cstarMatrix_nonneg (φ i) M hM
+    have h_map_zero : M.map (0 : A₁ → A₂) = 0 := by
+      ext a b
+      simp [CStarMatrix.map_apply]
+    have h_map_add : ∀ (f g : A₁ → A₂), M.map (f + g) = M.map f + M.map g := by
+      intro f g
+      ext a b
+      simp [CStarMatrix.map_apply]
+    have h_map_finset_sum : ∀ (s : Finset ι) (f : ι → A₁ → A₂),
+        M.map (s.sum f) = s.sum fun i => M.map (f i) := by
+      intro s f
+      induction s using Finset.induction_on with
+      | empty =>
+        simp [h_map_zero]
+      | insert i s hi ih =>
+        calc
+          M.map ((insert i s).sum f)
+              = M.map (f i + s.sum f) := by rw [Finset.sum_insert hi]
+          _ = M.map (f i) + M.map (s.sum f) := h_map_add _ _
+          _ = M.map (f i) + s.sum fun j => M.map (f j) := by rw [ih]
+          _ = (insert i s).sum fun j => M.map (f j) := by rw [Finset.sum_insert hi]
+    have h_coe_fun : (⇑(∑ i, (φ i).toLinearMap) : A₁ → A₂) = ∑ i, (φ i : A₁ → A₂) := by
+      calc
+        (⇑(∑ i, (φ i).toLinearMap) : A₁ → A₂)
+            = ∑ i, (⇑(φ i).toLinearMap : A₁ → A₂) := LinearMap.coe_sum Finset.univ _
+        _ = ∑ i, (φ i : A₁ → A₂) := rfl
+    have h_eq : M.map (⇑(∑ i, (φ i).toLinearMap) : A₁ → A₂) = ∑ i, M.map (φ i) := by
+      calc
+        M.map (⇑(∑ i, (φ i).toLinearMap) : A₁ → A₂)
+            = M.map (∑ i, (φ i : A₁ → A₂)) := by rw [h_coe_fun]
+        _ = ∑ i, M.map (φ i) := h_map_finset_sum Finset.univ _
+    have h_goal_eq : M.map (∑ i, (φ i).toLinearMap : A₁ →ₗ[ℂ] A₂) =
+        M.map (⇑(∑ i, (φ i).toLinearMap) : A₁ → A₂) := rfl
+    rw [h_goal_eq, h_eq]
+    exact Finset.sum_nonneg fun i _ => h_each i
+
+@[simp]
+theorem toLinearMap_sum (φ : ι → A₁ →CP A₂) :
+    (sum φ).toLinearMap = ∑ i, (φ i).toLinearMap :=
+  rfl
+
+@[simp]
+theorem sum_apply (φ : ι → A₁ →CP A₂) (a : A₁) :
+    (sum φ) a = ∑ i, φ i a := by
+  classical
+  calc
+    (sum φ) a = (∑ i, (φ i).toLinearMap) a := rfl
+    _ = ∑ i, (φ i).toLinearMap a := LinearMap.sum_apply Finset.univ _ a
+    _ = ∑ i, φ i a := rfl
+
+end CompletelyPositiveMap

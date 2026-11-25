@@ -1,0 +1,179 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
+public import Mathlib.Algebra.Order.Nonneg.Basic
+public import Mathlib.Basic.ENNReal.Operations
+public import Mathlib.Topology.Semicontinuity.Basic
+
+/-!
+# Global scalar weights on the original nonunital C-star algebra
+
+An extended positive weight on a nonunital C-star algebra has positive
+additivity and nonnegative-real homogeneity. Its finite square domain is
+`{x : phi (star x * x) < infinity}`. Norm semicontinuity, norm density and
+the trace-square law are separate properties.
+
+Every positive-domain type below uses the stock canonical spectral order.
+All topologies and norms are inherited from the given algebra A. No local
+AF algebra, K0 map, bounded functional or alternate carrier is stored.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open scoped NNReal ENNReal
+
+namespace CStarAlgebra
+namespace ScalarWeight
+
+universe u
+
+variable {A : Type u} [NonUnitalCStarAlgebra A]
+
+attribute [local instance] CStarAlgebra.spectralOrder CStarAlgebra.spectralOrderedRing
+
+/-- The actual positive cone of A with its canonical spectral positivity. -/
+abbrev PositiveElement (A : Type u) [NonUnitalCStarAlgebra A] := Nonneg A
+
+/-- The zero element in the original positive cone. -/
+def positiveZero (A : Type u) [NonUnitalCStarAlgebra A] : PositiveElement A :=
+  ⟨0, le_rfl⟩
+
+/-- Addition of actual positive elements, using their original algebra sum. -/
+def positiveAdd (a b : PositiveElement A) : PositiveElement A :=
+  ⟨(a : A) + (b : A), add_nonneg a.property b.property⟩
+
+/-- Finite nonnegative-real scaling in the original algebra. -/
+noncomputable def positiveSmul (r : ℝ≥0) (a : PositiveElement A) : PositiveElement A :=
+  ⟨(r : ℝ) • (a : A), smul_nonneg r.property a.property⟩
+
+/-- The original positive left square x*x, for any x in the nonunital algebra. -/
+def leftSquare (x : A) : PositiveElement A :=
+  ⟨star x * x, star_mul_self_nonneg x⟩
+
+/-- The original positive right square xx*, on the same algebra and positivity. -/
+def rightSquare (x : A) : PositiveElement A :=
+  ⟨x * star x, by simpa only [star_star] using star_mul_self_nonneg (star x)⟩
+
+/-- An extended positive weight on the original global positive cone.
+Only finite nonnegative-real scalars act on the algebra; weight values may be infinity. -/
+structure Weight (A : Type u) [NonUnitalCStarAlgebra A] where
+  /-- The global extended nonnegative value on each actual positive element. -/
+  value : PositiveElement A → ℝ≥0∞
+  zero_value : value (positiveZero A) = 0
+  add_value : ∀ a b, value (positiveAdd a b) = value a + value b
+  smul_value : ∀ (r : ℝ≥0) a, value (positiveSmul r a) = (r : ℝ≥0∞) * value a
+
+/-- Two original global weights are equal when all their original positive values agree. -/
+@[ext]
+theorem Weight.ext_value {φ ψ : Weight A} (h : ∀ a : PositiveElement A, φ.value a = ψ.value a) :
+    φ = ψ := by
+  rcases φ with ⟨f, hf0, hfadd, hfsmul⟩
+  rcases ψ with ⟨g, hg0, hgadd, hgsmul⟩
+  have hfg : f = g := funext h
+  cases hfg
+  rfl
+
+/-- The genuine zero weight on all positive elements of the original algebra. -/
+def zeroWeight (A : Type u) [NonUnitalCStarAlgebra A] : Weight A where
+  value := fun _ => 0
+  zero_value := rfl
+  add_value := by intro a b; exact (zero_add 0).symm
+  smul_value := by intro r a; exact (mul_zero (r : ℝ≥0∞)).symm
+
+/-- The actual finite positive elements for a global weight. -/
+def Weight.finitePositiveElements (phi : Weight A) : Set A :=
+  {a | ∃ ha : (0 : A) ≤ a, phi.value ⟨a, ha⟩ < ⊤}
+
+/-- The finite square domain on the original algebra. -/
+def Weight.finiteSquareDomain (phi : Weight A) : Set A :=
+  {x | phi.value (leftSquare x) < ⊤}
+
+/-- The complex span of the actual finite positive elements.
+Star/ideal laws and an unbounded linear trace extension are later obligations. -/
+def Weight.finiteIntegrationDomain (phi : Weight A) : Submodule ℂ A :=
+  Submodule.span ℂ phi.finitePositiveElements
+
+/-- The actual nonunital trace-square law on an extended positive weight. -/
+def Weight.IsTracial (phi : Weight A) : Prop :=
+  ∀ x : A, phi.value (leftSquare x) = phi.value (rightSquare x)
+
+/-- A global tracial weight, retaining its original extended positive values. -/
+abbrev TracialWeight (A : Type u) [NonUnitalCStarAlgebra A] :=
+  {phi : Weight A // phi.IsTracial}
+
+/-- Lower semicontinuity in the original norm topology of the positive cone. -/
+def Weight.IsNormLowerSemicontinuous (phi : Weight A) : Prop :=
+  LowerSemicontinuous phi.value
+
+/-- Norm density of the finite square domain in A. -/
+def Weight.IsNormDenselyDefined (phi : Weight A) : Prop :=
+  Dense phi.finiteSquareDomain
+
+/-- Norm density of the actual finite integration span, recorded separately. -/
+def Weight.HasNormDenseIntegrationDomain (phi : Weight A) : Prop :=
+  Dense (phi.finiteIntegrationDomain : Set A)
+
+/-- Block addition of finite positive values is finite exactly when both are finite. -/
+theorem Weight.finite_add_iff (phi : Weight A) (a b : PositiveElement A) :
+    phi.value (positiveAdd a b) < ⊤ ↔ phi.value a < ⊤ ∧ phi.value b < ⊤ := by
+  rw [phi.add_value]
+  exact ENNReal.add_lt_top
+
+/-- Zero belongs to the actual finite square domain of every weight. -/
+theorem Weight.zero_mem_finiteSquareDomain (phi : Weight A) :
+    (0 : A) ∈ phi.finiteSquareDomain := by
+  have hzero : leftSquare (0 : A) = positiveZero A := by
+    apply Subtype.ext
+    simp only [leftSquare, positiveZero, star_zero, zero_mul]
+  change phi.value (leftSquare (0 : A)) < ⊤
+  rw [hzero, phi.zero_value]
+  exact ENNReal.zero_lt_top
+
+/-- Taking star swaps the two actual positive squares. -/
+theorem leftSquare_star (x : A) : leftSquare (star x) = rightSquare x := by
+  apply Subtype.ext
+  simp only [leftSquare, rightSquare, star_star]
+
+/-- A tracial weight has a star-invariant actual finite square domain. -/
+theorem Weight.finiteSquareDomain_star_iff (phi : Weight A) (hphi : phi.IsTracial)
+    (x : A) : star x ∈ phi.finiteSquareDomain ↔ x ∈ phi.finiteSquareDomain := by
+  change phi.value (leftSquare (star x)) < ⊤ ↔ phi.value (leftSquare x) < ⊤
+  rw [leftSquare_star, ← hphi x]
+
+/-- Norm lower semicontinuity is exactly closedness of every original positive sublevel set. -/
+theorem Weight.normLowerSemicontinuous_iff (phi : Weight A) :
+    phi.IsNormLowerSemicontinuous ↔ ∀ r : ℝ≥0∞,
+      IsClosed {a : PositiveElement A | phi.value a ≤ r} :=
+  lowerSemicontinuous_iff_isClosed_preimage
+
+/-- The zero weight has zero extended values on every original positive element. -/
+theorem zeroWeight_value (a : PositiveElement A) : (zeroWeight A).value a = 0 := rfl
+
+/-- Every original element lies in the finite square domain of the zero weight. -/
+theorem zeroWeight_finiteSquareDomain : (zeroWeight A).finiteSquareDomain = Set.univ := by
+  ext x
+  simp [Weight.finiteSquareDomain, zeroWeight, ENNReal.zero_lt_top]
+
+/-- The zero weight satisfies the actual nonunital trace-square law. -/
+theorem zeroWeight_isTracial : (zeroWeight A).IsTracial := by
+  intro x
+  rfl
+
+/-- The zero weight is lower semicontinuous for the original norm topology. -/
+theorem zeroWeight_isNormLowerSemicontinuous :
+    (zeroWeight A).IsNormLowerSemicontinuous :=
+  lowerSemicontinuous_const
+
+/-- The zero weight is norm densely defined on the original algebra. -/
+theorem zeroWeight_isNormDenselyDefined : (zeroWeight A).IsNormDenselyDefined := by
+  rw [Weight.IsNormDenselyDefined, zeroWeight_finiteSquareDomain]
+  exact dense_univ
+
+end ScalarWeight
+end CStarAlgebra

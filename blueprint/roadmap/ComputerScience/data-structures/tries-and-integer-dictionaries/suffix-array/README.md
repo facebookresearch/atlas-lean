@@ -22,3 +22,4 @@
 - [Suffix-array search for a pattern's row interval](sa-search.md)
 - [Suffix-array search returns a valid row interval](sa-search-bounds.md)
 - [Suffix-array search is correct](sa-search-spec.md)
+- [Construction time of suffix arrays, LCP arrays and suffix trees](construction-time-of-suffix-arrays-lcp-arrays-and-suffix-trees.md)

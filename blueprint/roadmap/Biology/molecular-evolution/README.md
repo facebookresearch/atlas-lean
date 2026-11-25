@@ -11,3 +11,6 @@
 - [Long-run expected calendar-time rate of neutral substitution](long-run-neutral-substitution-rate-law-of-large.md)
 - [Selected origination flux and its weak-selection scaling function](substitution-rate-with-selection.md)
 - [Reversibility of the Moran origination–fixation rate model](fixation-flux-weak-mutation-chain-is-reversible.md)
+
+- [Origination–fixation dynamics](origination-fixation-dynamics/README.md)
+- [Mutation-rate modifiers and the drift-barrier hypothesis](mutation-rate-modifiers-and-the-drift-barrier-hy.md)
