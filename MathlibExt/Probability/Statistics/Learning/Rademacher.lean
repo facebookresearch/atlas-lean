@@ -39,6 +39,8 @@ Main result: `empiricalRademacher_le_massart`, the finite-class Massart lemma wi
 `empiricalRademacher A ≤ A.sup' hA (fun v => Real.sqrt (∑ i, v i ^ 2)) *
   Real.sqrt (2 * Real.log A.card) / n`.
 It is obtained from `massart_finite_class` through `empiricalRademacher_eq_sum_sup'_div`.
+Translation invariance and the centered corollary are also included
+(`empiricalRademacher_image_add_const`, `empiricalRademacher_le_massart_centered`).
 -/
 
 @[expose] public section
@@ -242,6 +244,58 @@ theorem empiricalRademacher_image_smul {n : ℕ} (A : Finset (Fin n → ℝ)) (c
       empiricalRademacher_image_smul_of_nonneg _ (abs_nonneg c),
       empiricalRademacher_image_neg]
 
+/-- Translation invariance: `A + c` has the same complexity as `A`. -/
+theorem empiricalRademacher_image_add_const {n : ℕ} (A : Finset (Fin n → ℝ))
+    (c : Fin n → ℝ) :
+    empiricalRademacher (A.image fun a => a + c) = empiricalRademacher A := by
+  by_cases hA : A.Nonempty
+  · have hAI : (A.image fun a => a + c).Nonempty := hA.image _
+    rw [empiricalRademacher_eq_sup' hAI, empiricalRademacher_eq_sup' hA]
+    congr 1
+    have per : ∀ σ : Fin n → Bool,
+        (A.image fun a => a + c).sup' hAI
+            (fun b => (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * b i) =
+          A.sup' hA (fun a => (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * a i) +
+            (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * c i := by
+      intro σ
+      simp only [Finset.sup'_image]
+      have hpt : ((fun b : Fin n → ℝ =>
+            (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * b i) ∘
+          (fun a : Fin n → ℝ => a + c)) =
+          fun a : Fin n → ℝ => (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * a i +
+            (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * c i := by
+        funext a
+        simp only [Function.comp_apply, Pi.add_apply]
+        have hsum : (∑ i, (if σ i then (1 : ℝ) else -1) * (a i + c i)) =
+            (∑ i, (if σ i then (1 : ℝ) else -1) * a i) +
+              ∑ i, (if σ i then (1 : ℝ) else -1) * c i := by
+          rw [← Finset.sum_add_distrib]
+          apply Finset.sum_congr rfl
+          intro i _
+          ring
+        rw [hsum, mul_add]
+      rw [hpt]
+      exact (Finset.sup'_add A _ _ hA).symm
+    have hsum : (∑ σ : Fin n → Bool, (A.image fun a => a + c).sup' hAI
+          (fun b => (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * b i)) =
+        ∑ σ : Fin n → Bool, A.sup' hA
+          (fun a => (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * a i) := by
+      have hsplit : (∑ σ : Fin n → Bool, (A.sup' hA
+            (fun a => (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * a i) +
+            (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * c i)) =
+          ∑ σ : Fin n → Bool, A.sup' hA
+            (fun a => (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * a i) := by
+        rw [Finset.sum_add_distrib]
+        have hzero : (∑ σ : Fin n → Bool,
+            (n : ℝ)⁻¹ * ∑ i, (if σ i then (1 : ℝ) else -1) * c i) = 0 := by
+          rw [← Finset.mul_sum, sum_sign_mul_self_eq_zero, mul_zero]
+        rw [hzero, add_zero]
+      exact (Finset.sum_congr rfl (fun σ _ => per σ)).trans hsplit
+    exact hsum
+  · have hAe : A = ∅ := Finset.not_nonempty_iff_eq_empty.mp hA
+    rw [hAe]
+    simp [Finset.image_empty, empiricalRademacher_empty]
+
 /-- Bridge to the Boolean form: the left side of `rademacher_finite_class` is the empirical
 Rademacher complexity of the `±1` image of the class. -/
 theorem empiricalRademacher_image_sign {m : ℕ} {H : Finset (Fin m → Bool)}
@@ -263,5 +317,28 @@ theorem empiricalRademacher_le_massart {n : ℕ} {A : Finset (Fin n → ℝ)} (h
       A.sup' hA (fun v => Real.sqrt (∑ i, v i ^ 2)) * Real.sqrt (2 * Real.log A.card) / n := by
   rw [empiricalRademacher_eq_sum_sup'_div hA, mul_comm (A.sup' hA _)]
   exact div_le_div_of_nonneg_right (massart_finite_class hA) (Nat.cast_nonneg n)
+
+/-- Centered Massart bound: by translation invariance, the Massart bound applies with the
+largest Euclidean norm measured from any center `c`. -/
+theorem empiricalRademacher_le_massart_centered {n : ℕ} {A : Finset (Fin n → ℝ)}
+    (hA : A.Nonempty) (c : Fin n → ℝ) :
+    empiricalRademacher A ≤
+      A.sup' hA (fun v => Real.sqrt (∑ i, (v i - c i) ^ 2)) *
+        Real.sqrt (2 * Real.log A.card) / n := by
+  have hB : (A.image fun a => a + -c).Nonempty := hA.image _
+  have hmass := empiricalRademacher_le_massart hB
+  have hcard : (A.image fun a => a + -c).card = A.card :=
+    Finset.card_image_of_injective A (add_left_injective (-c))
+  have hsup : (A.image fun a => a + -c).sup' hB (fun v => Real.sqrt (∑ i, v i ^ 2)) =
+      A.sup' hA (fun v => Real.sqrt (∑ i, (v i - c i) ^ 2)) := by
+    rw [Finset.sup'_image]
+    have hpt : ((fun v : Fin n → ℝ => Real.sqrt (∑ i, v i ^ 2)) ∘
+        (fun a : Fin n → ℝ => a + -c)) =
+        fun v : Fin n → ℝ => Real.sqrt (∑ i, (v i - c i) ^ 2) := by
+      funext a
+      simp only [Function.comp_apply, Pi.add_apply, Pi.neg_apply, sub_eq_add_neg]
+    rw [hpt]
+  rw [empiricalRademacher_image_add_const A (-c), hsup, hcard] at hmass
+  exact hmass
 
 end ProbabilityTheory

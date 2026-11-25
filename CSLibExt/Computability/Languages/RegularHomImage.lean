@@ -43,25 +43,43 @@ namespace HomImage
 
 variable {T T' : Type*} [Fintype T] (φ : T → List T') {σ : Type*} (M : DFA T σ)
 
-/-- An upper bound on the lengths of the images of the letters. -/
+/-- **Maximal length of the image of a letter.** For a map $\varphi$ from a finite alphabet $T$ to
+words over $T'$, the bound is the maximum of the lengths $|\varphi(a)|$ over all letters $a \in T$
+(and $0$ when $T$ is empty). -/
 def bound : ℕ :=
   Finset.univ.sup fun a => (φ a).length
 
 theorem length_le_bound (a : T) : (φ a).length ≤ bound φ :=
   Finset.le_sup (f := fun a => (φ a).length) (Finset.mem_univ a)
 
-/-- The states of the ε-NFA: a state of `M`, or a state `q`, a letter `a` and a position `i`
-inside `φ a` while it is spelled out from `q`. -/
+/-- **States of the homomorphic-image ε-NFA.** Let $T$ be a finite alphabet, let $\varphi$ map
+letters of $T$ to words over $T'$, let $\sigma$ be a set (the states of a DFA), and let $N$ be the
+maximum of the lengths $|\varphi(a)|$ over $a \in T$. The states of the ε-NFA form the disjoint
+union of $\sigma$ and the set of triples $(q, a, i)$ with $q \in \sigma$, $a \in T$ and
+$0 \le i < N$. -/
 abbrev State (σ : Type*) : Type _ :=
   σ ⊕ (σ × T × Fin (bound φ))
 
-/-- After spelling out position `i` of `φ a` from `q`: the next position, or `M.step q a` at the
-end. -/
+/-- **Next state while spelling out a letter's image.** Let $M$ be a DFA over a finite alphabet $T$
+with transition function $\delta$, and let $\varphi$ map each letter of $T$ to a word over $T'$. For
+a state $q$ of $M$, a letter $a$ and a natural number $i$, the state reached after emitting position
+$i$ (counted from $0$) of $\varphi(a)$ from $q$ is the intermediate state $(q, a, i + 1)$ of the
+ε-NFA if $i + 1 < |\varphi(a)|$, and the state $\delta(q, a)$ of $M$ otherwise. -/
 def advance (q : σ) (a : T) (i : ℕ) : State φ σ :=
   if h : i + 1 < (φ a).length then .inr (q, a, ⟨i + 1, lt_of_lt_of_le h (length_le_bound φ a)⟩)
   else .inl (M.step q a)
 
-/-- The ε-NFA spelling out the images of the transitions of `M`. -/
+/-- **The ε-NFA for the homomorphic image.** Let $M$ be a DFA over a finite alphabet $T$ with start
+state $q_0$, transition function $\delta$ and accepting states $F$, let $\varphi$ map letters of $T$
+to words over $T'$, and let $N$ be the maximum of the lengths $|\varphi(a)|$ over $a \in T$. The
+ε-NFA over $T'$ has as states the states of $M$ together with the triples $(q, a, i)$ with $q$ a
+state of $M$, $a \in T$ and $0 \le i < N$. Write $\mathrm{next}(q, a, i)$ for $(q, a, i + 1)$ if
+$i + 1 < |\varphi(a)|$ and for $\delta(q, a)$ otherwise. From a state $q$ of $M$, reading $b$ leads
+to $\mathrm{next}(q, a, 0)$ for each letter $a$ whose image starts with $b$, and an ε-move leads to
+$\delta(q, a)$ for each letter $a$ with $\varphi(a)$ empty. From $(q, a, i)$, reading $b$ leads to
+$\mathrm{next}(q, a, i)$ if the letter of $\varphi(a)$ at position $i$ (counted from $0$) is $b$,
+and there are no ε-moves. The only start state is $q_0$ and the accepting states are those in
+$F$. -/
 def εnfa : εNFA T' (State φ σ) where
   step
     | .inl q, some b => {s | ∃ a, (φ a)[0]? = some b ∧ s = advance φ M q a 0}
@@ -71,7 +89,9 @@ def εnfa : εNFA T' (State φ σ) where
   start := {.inl M.start}
   accept := {s | ∃ q ∈ M.accept, s = .inl q}
 
-/-- The labels of the path spelling out `φ a`: one ε-move when `φ a` is empty. -/
+/-- **Edge labels for a letter's image.** For a map $\varphi$ from letters of $T$ to words over $T'$
+and a letter $a$, the label sequence of $a$ is a single ε-label when $\varphi(a)$ is empty, and
+otherwise the letters of $\varphi(a)$ in order, each as a non-ε label. -/
 def code (a : T) : List (Option T') :=
   if φ a = [] then [none] else (φ a).map some
 
@@ -87,7 +107,12 @@ theorem reduceOption_code (a : T) : (code φ a).reduceOption = φ a := by
   · simp [h]
   · exact reduceOption_map_some _
 
-/-- From the state after position `i`, the rest of `φ a` leads to `M.step q a`. -/
+/-- **Finishing a letter's image in the image ε-NFA.** Let $M$ be a DFA over a finite alphabet $T$
+with transition function $\delta$, and let $\varphi$ map letters of $T$ to words over $T'$. For
+every state $q$ of $M$, letter $a$ and natural number $i$, the ε-NFA of $M$ and $\varphi$ has a path
+to the state $\delta(q, a)$ of $M$ from the state $(q, a, i + 1)$ if $i + 1 < |\varphi(a)|$, and
+from $\delta(q, a)$ otherwise, whose labels are the letters of $\varphi(a)$ after position $i$
+(positions counted from $0$), in order and all non-ε. -/
 theorem isPath_advance (q : σ) (a : T) :
     ∀ i, (εnfa φ M).IsPath (advance φ M q a i) (.inl (M.step q a))
       (((φ a).drop (i + 1)).map some) := by
@@ -105,7 +130,11 @@ theorem isPath_advance (q : σ) (a : T) :
       simp only [advance, hi, ↓reduceDIte]
       exact ⟨List.getElem?_eq_getElem hi, rfl⟩
 
-/-- The path spelling out `φ a` from `q` ends in `M.step q a`. -/
+/-- **Spelling out a letter's image in the image ε-NFA.** Let $M$ be a DFA over a finite alphabet
+$T$ with transition function $\delta$, and let $\varphi$ map letters of $T$ to words over $T'$. For
+every state $q$ of $M$ and letter $a$, the ε-NFA of $M$ and $\varphi$ has a path from the state $q$
+to the state $\delta(q, a)$ whose label sequence is a single ε-label if $\varphi(a)$ is empty, and
+the letters of $\varphi(a)$ in order, all non-ε, otherwise. -/
 theorem isPath_code (q : σ) (a : T) :
     (εnfa φ M).IsPath (.inl q) (.inl (M.step q a)) (code φ a) := by
   unfold code
@@ -132,8 +161,15 @@ theorem reduceOption_flatMap_code (w : List T) :
   | nil => rfl
   | cons a w ih => rw [List.flatMap_cons, List.reduceOption_append, reduceOption_code, ih]; rfl
 
-/-- **Soundness of the paths**: a path from the start state spells out the image of a word, up to
-the part of the current letter's image already emitted. -/
+/-- **Soundness of the homomorphic-image ε-NFA.** Let $M$ be a DFA over a finite alphabet $T$ with
+start state $q_0$, and let $\varphi$ map letters of $T$ to words over $T'$; for a word $w$ over $T$,
+write $\varphi(w)$ for the concatenation of the images of its letters. Suppose the ε-NFA of $M$ and
+$\varphi$ has a path from the state $q_0$ of $M$ to a state $u$, with label sequence $x$, and let
+$\bar x$ be the word formed by the non-ε labels of $x$. If $u$ is a state $q$ of $M$, then there is
+a word $w$ over $T$ on which $M$ reaches $q$ from $q_0$ and $\varphi(w) = \bar x$. If $u$ is the
+intermediate state $(q, a, i)$, then there is a word $w$ over $T$ on which $M$ reaches $q$ from
+$q_0$ and $\varphi(w)$ followed by the first $i$ letters of $\varphi(a)$ (all of $\varphi(a)$ if it
+is shorter) equals $\bar x$. -/
 theorem exists_of_isPath (x : List (Option T')) :
     ∀ u, (εnfa φ M).IsPath (.inl M.start) u x →
       (∀ q, u = .inl q → ∃ w, M.eval w = q ∧ (w.map φ).flatten = x.reduceOption) ∧
@@ -218,7 +254,11 @@ theorem accepts_εnfa :
 
 end HomImage
 
-/-- **Homomorphic images of regular languages over finite alphabets are regular.** -/
+/-- **Homomorphic images of regular languages over finite alphabets are regular.** Let $T$ be a
+finite alphabet, $T'$ an arbitrary (possibly infinite) alphabet, and $\varphi$ a map from $T$ to
+words over $T'$, extended to words by $\varphi(a_1 \cdots a_n) = \varphi(a_1) \cdots \varphi(a_n)$.
+If $L$ is a regular language over $T$, then its image $\{\varphi(w) : w \in L\}$ is a regular
+language over $T'$. -/
 theorem IsRegular.homImage {T T' : Type*} [Finite T] {L : Language T} (hL : L.IsRegular)
     (φ : T → List T') : Language.IsRegular ((fun w => (w.map φ).flatten) '' L) := by
   classical

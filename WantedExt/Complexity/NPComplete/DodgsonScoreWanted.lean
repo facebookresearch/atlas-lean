@@ -21,7 +21,7 @@ DodgsonScore and its NP-completeness, due to Bartholdi, Tovey and Trick).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.GameTheory.SocialChoice.CondorcetCycle

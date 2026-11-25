@@ -7,6 +7,7 @@
 - [Partial stage rows agree with the stages](stage-row-eq-of-lt.md)
 - [The defining equation of the stages](stage-eq.md)
 - [One Runge–Kutta step](rk-step.md)
+- [The increment of an explicit Runge–Kutta method is Lipschitz](the-increment-of-an-explicit-runge-kutta-method-is-lipschitz.md)
 
 ## Order conditions
 

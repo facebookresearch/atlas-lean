@@ -65,10 +65,10 @@ example (f : α → ℝ) (hf : Integrable f μ) : ∀ᵐ x ∂μ, birkhoffLimit 
 theorem ergodic_id_dirac : Ergodic (id : Unit → Unit) (Measure.dirac ()) :=
   Ergodic.of_preimage_eq (MeasurePreserving.id _) fun s _ _ => by
     rcases s.eq_empty_or_nonempty with rfl | ⟨u, hu⟩
-    · exact eventuallyEmptyOrUniv_iff'.2 (Or.inl EventuallyEq.rfl)
+    · exact eventuallyEmptyOrUniv_iff'.2 (Or.inl EventuallyEqSet.rfl)
     · have : s = Set.univ := Set.eq_univ_of_forall fun v => by rwa [Subsingleton.elim v u]
       subst this
-      exact eventuallyEmptyOrUniv_iff'.2 (Or.inr EventuallyEq.rfl)
+      exact eventuallyEmptyOrUniv_iff'.2 (Or.inr EventuallyEqSet.rfl)
 
 /-- The ergodic form: the Birkhoff limit of a constant is its integral. -/
 example (c : ℝ) :

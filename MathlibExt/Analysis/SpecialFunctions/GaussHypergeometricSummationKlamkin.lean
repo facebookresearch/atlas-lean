@@ -631,11 +631,20 @@ private lemma klam_FG_eq (n : ℕ) (a b : ℝ)
 
 set_option linter.unusedVariables false in
 /--
-Klamkin's summation: `₂F₁(n, b + 1; b - a; 1)` equals
-`Γ(-a - n - 1) Γ(b - a) / (Γ(b - a - n) Γ(-a - 1))`, under the source
-conditions `-a ∉ ℕ`, `-b ∉ ℕ`, `1 ≤ n`, the convergence condition
-`-a - 1 > n` (i.e. `a + 1 + n < 0`), and the admissibility condition
-`a - b + 1 ∉ ℕ`.
+**Klamkin's Gauss summation.** Let $n \ge 1$ be an integer and let $a$ and $b$ be real numbers
+such that $-a$ and $-b$ are not nonnegative integers, $a + 1 + n < 0$, and $a - b + 1$ is not a
+nonnegative integer. Then
+$$
+{}_2F_1(n, b + 1; b - a; 1) =
+  \frac{\Gamma(-a - n - 1)\,\Gamma(b - a)}{\Gamma(b - a - n)\,\Gamma(-a - 1)},
+$$
+where ${}_2F_1(\alpha, \beta; \gamma; 1) =
+\sum_{k \ge 0} \frac{(\alpha)_k (\beta)_k}{(\gamma)_k\, k!}$ and $(x)_k$ is the rising factorial.
+
+The condition $a + 1 + n < 0$ makes the series converge. The Gamma function is taken to be $0$
+at its poles and division by $0$ gives $0$, so the right side is $0$ when $b - a - n$ is a
+nonpositive integer.
+
 Source: U. Abel, "A Short Proof of the Binomial Identities of Frisch and
 Klamkin," _Journal of Integer Sequences_ 23 (2020), Article 20.7.1.
 
@@ -673,8 +682,20 @@ theorem gauss_hypergeometric_summation_klamkin (n : ℕ) (a b : ℝ)
   rw [e]
 
 /--
-The coefficient series in `gauss_hypergeometric_summation_klamkin` has the corresponding
-Gamma quotient as its sum.
+**Klamkin's Gauss summation as a convergent series.** Let $n \ge 1$ be an integer and let $a$
+and $b$ be real numbers such that $-a$ and $-b$ are not nonnegative integers, $a + 1 + n < 0$,
+and $a - b + 1$ is not a nonnegative integer. Then the series
+$$
+\sum_{k \ge 0} \frac{(n)_k\,(b + 1)_k}{(b - a)_k\, k!}
+$$
+converges absolutely, with sum
+$$
+\frac{\Gamma(-a - n - 1)\,\Gamma(b - a)}{\Gamma(b - a - n)\,\Gamma(-a - 1)},
+$$
+where $(x)_k = x(x + 1) \cdots (x + k - 1)$ is the rising factorial.
+
+The Gamma function is taken to be $0$ at its poles and division by $0$ gives $0$, so this sum is
+$0$ when $b - a - n$ is a nonpositive integer.
 -/
 theorem hasSum_ordinaryHypergeometricCoefficient_klamkin (n : ℕ) (a b : ℝ)
     (ha : ∀ k : ℕ, -a ≠ (k : ℝ))

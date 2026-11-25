@@ -12,17 +12,14 @@ public import CSLibExt.Bioinformatics.Phylogenetics.FelsensteinZone
 public meta import CSLibExt.Bioinformatics.Phylogenetics.FelsensteinZone
 
 /-!
-# Tests for the pulley principle, LogDet distances, the Felsenstein zone and NJ consistency
+# Tests for LogDet distances, the Felsenstein zone and neighbor-joining recovery
 
-* Non-vacuity of `IsReversibleSemigroup`: the Jukes–Cantor model with the uniform distribution,
-  and every GTR model; the pulley moves on a concrete Jukes–Cantor quartet.
 * LogDet: the distance of a vertex to itself, a concrete three-point instance, the junk value of
   a singular joint distribution (independent sites), and a two-step path.
 * The Felsenstein zone: the pattern distribution sums to `1`; a point inside the zone
   (`P = 2/5`, `Q = 1/10`); the boundary `Q = 1/2` and the diagonal `P = Q`, where the
   differences vanish; Fitch scores of an informative pattern on the three quartets.
-* Jukes–Cantor: the path matrix of `[1, 2]` is the matrix of length `3`; corrected distances of a
-  taxon to itself are `0`; Atteson's radius `μ m / 2` at the rate `μ = 2`.
+* The corrected distance of a taxon to itself is zero; Atteson's radius is checked at rate two.
 -/
 
 @[expose] public section
@@ -30,54 +27,7 @@ public meta import CSLibExt.Bioinformatics.Phylogenetics.FelsensteinZone
 namespace CSLibExtTest.Bioinformatics.Phylogenetics.FelsensteinZone
 
 open Cslib.Bioinformatics.Phylogenetics FelsensteinPruning Tree FelsensteinZone Parsimony
-open MathlibExt.Biology.Phylogenetics.JukesCantor
-open MathlibExt.Biology.Phylogenetics.SubstitutionModels
 open Matrix ProbabilityTheory
-
-/-! ### The pulley principle -/
-
-/-- Non-vacuity: the Jukes–Cantor transition probabilities form a reversible semigroup for the
-uniform distribution. -/
-theorem jc_isReversibleSemigroup (μ : ℝ) :
-    IsReversibleSemigroup (fun _ : Fin 4 => (1 / 4 : ℝ)) (jcProb μ) where
-  chapman_kolmogorov s t a c := sum_jcProb_mul_jcProb μ s t a c
-  detailed_balance t a b := by
-    unfold jcProb
-    by_cases h : a = b
-    · subst h; rfl
-    · simp [h, Ne.symm h]
-
-/-- Every GTR model gives a reversible semigroup. -/
-theorem gtr_isReversibleSemigroup (π : Fin 4 → ℝ) {s : Matrix (Fin 4) (Fin 4) ℝ}
-    (hs : ∀ i j, s i j = s j i) :
-    IsReversibleSemigroup π (fun t => ctmcTransition (gtrRate π s) t) :=
-  isReversibleSemigroup_ctmcTransition (isDetailedBalance_gtrRate π hs)
-
-/-- Leaf data: taxon `0` shows base `0`, the other taxa base `1`. -/
-def obs₀ (l : Fin 4) (b : Fin 4) : ℝ :=
-  if b = (if l = 0 then 0 else 1) then 1 else 0
-
-/-- Sliding the root of a Jukes–Cantor quartet along the internal edge. -/
-example : likelihood obs₀
-      (node (jcProb 1 (1 / 3)) (node (jcProb 1 1) (leaf 0) (jcProb 1 2) (leaf 1))
-        (jcProb 1 (2 / 3)) (node (jcProb 1 1) (leaf 2) (jcProb 1 1) (leaf 3)))
-      (fun _ => 1 / 4) =
-    likelihood obs₀
-      (node (jcProb 1 0) (node (jcProb 1 1) (leaf 0) (jcProb 1 2) (leaf 1))
-        (jcProb 1 1) (node (jcProb 1 1) (leaf 2) (jcProb 1 1) (leaf 3)))
-      (fun _ => 1 / 4) :=
-  likelihood_slide (jc_isReversibleSemigroup 1) obs₀ _ _ (by norm_num)
-
-/-- Rerooting a Jukes–Cantor quartet onto the pendant edge of taxon `0`. -/
-example : likelihood obs₀
-      (node (jcProb 1 (1 / 3)) (node (jcProb 1 1) (leaf 0) (jcProb 1 2) (leaf 1))
-        (jcProb 1 (2 / 3)) (leaf 2))
-      (fun _ => 1 / 4) =
-    likelihood obs₀
-      (node (jcProb 1 (1 / 2)) (leaf 0) (jcProb 1 (1 / 2))
-        (node (jcProb 1 2) (leaf 1) (jcProb 1 (1 / 3 + 2 / 3)) (leaf 2)))
-      (fun _ => 1 / 4) :=
-  likelihood_reroot (jc_isReversibleSemigroup 1) obs₀ _ _ _ (by norm_num)
 
 /-! ### LogDet -/
 
@@ -169,21 +119,9 @@ example : parsimonyScore 0 1 2 3 ![true, true, false, false] = 1 ∧
     parsimonyScore 0 3 1 2 ![true, true, false, false] = 2 := by
   decide
 
-/-! ### Jukes–Cantor distances -/
-
-/-- Chapman–Kolmogorov along a path of lengths `1` and `2`. -/
-example (μ : ℝ) : jcPath μ [1, 2] = Matrix.of (jcProb μ 3) := by
-  rw [jcPath_eq]
-  norm_num
-
-/-- The corrected distance along that path is `3 μ`. -/
-example (μ : ℝ) : jcDistance (∑ j ∈ Finset.univ.erase 0, jcPath μ [1, 2] 0 j) = μ * 3 := by
-  rw [jcDistance_jcPath]
-  norm_num
-
 /-- The corrected empirical distance of a taxon to itself is `0`. -/
 example (seq : ℕ → Fin 3 → Fin 4) (n : ℕ) (x : Fin 3) : jcHat seq n x x = 0 := by
-  simp [jcHat, pHat, jcDistance]
+  simp [jcHat, pHat, equalRatesDistance]
 
 
 /-- Atteson's radius: on a binary phylogenetic tree with positive edge lengths whose internal
