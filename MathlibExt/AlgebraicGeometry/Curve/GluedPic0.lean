@@ -34,12 +34,22 @@ public import MathlibExt.AlgebraicGeometry.Curve.DivisorClassGroup
 public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 
 /-!
-# The glued degree-zero Picard group
+# The glued degree-zero Picard group of two curves meeting in nodes
 
-Gluing data for a finite set `S` of nodes, each a pair of places of `F`, consists of two divisors
-and a unit of `K` at each node. `GluedPic0 K F S` is the quotient of the admissible data by the
-glued principal data: the divisors of two nonzero functions together with the ratios of their
-values (`AlgebraicCurve.Place.HasValueAt`) at the two places of each node.
+Let `C₁` and `C₂` be two copies of the curve with function field `F` over `K`, and let `S` be a
+finite set of pairs `s = (P_s, Q_s)` of places of `F`. The curve `X = C₁ ∪_S C₂` is obtained by
+identifying `P_s ∈ C₁` with `Q_s ∈ C₂` for each `s ∈ S`. It is nodal exactly when both projections
+of `S` are injective; if a place occurs in two elements of `S`, everything below is still defined,
+but `X` is not nodal there.
+
+Gluing data `(D₁, D₂, w)` consists of a divisor `D₁` on `C₁`, a divisor `D₂` on `C₂` and a unit
+`w s` of `K` at each node. `GluedPic0 K F S` is the quotient of the admissible data by the glued
+principal data `(div g₁, div g₂, (g₁(P_s) / g₂(Q_s))_s)`, for nonzero functions `g₁` on `C₁` and
+`g₂` on `C₂`, with values in the sense of `AlgebraicCurve.Place.HasValueAt`. It models the group
+of isomorphism classes of line bundles on `X` of degree zero on each component;
+`AlgebraicCurve.GluedPic0.toPic0Pair` restricts a class to the degree-zero Picard groups of `C₁`
+and `C₂`. Gluing `P_s` to `Q_s` on a single copy of the curve gives a different group, with one
+function and node values `g(P_s) / g(Q_s)`.
 
 * Nodes join `K`-rational places (`AlgebraicCurve.RationalPlace`), where `K` maps onto the residue
   field. There a function of order zero has a value in `Kˣ`, so the node units in `Kˣ` record every
@@ -108,8 +118,10 @@ section Glued
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
-/-- Gluing data for two divisor classes together with node units, for a finite set of nodes,
-each a pair of `K`-rational places. -/
+/-- Gluing data for `X = C₁ ∪_S C₂`: `C₁` and `C₂` are two copies of the curve with function
+field `F`, and a node `s = (P_s, Q_s) ∈ S` identifies the `K`-rational place `P_s` of `C₁` with the
+`K`-rational place `Q_s` of `C₂`. The data is a divisor on `C₁`, a divisor on `C₂` and a unit of `K`
+at each node. `X` is nodal exactly when both projections of `S` are injective. -/
 abbrev GluingData (S : Finset (RationalPlace K F × RationalPlace K F)) : Type _ :=
   Divisor K F × Divisor K F × (↥S → Additive Kˣ)
 
@@ -134,8 +146,8 @@ theorem finiteDegZero_le_degZero : finiteDegZero K F ≤ Divisor.degZero (K := K
 
 variable (S : Finset (RationalPlace K F × RationalPlace K F))
 
-/-- The admissible subgroup of gluing data: both divisors lie in `finiteDegZero` and vanish at
-the places of the nodes. -/
+/-- The admissible subgroup of gluing data: both divisors lie in `finiteDegZero`, the divisor on
+`C₁` vanishes at each `P_s` and the divisor on `C₂` vanishes at each `Q_s`. -/
 def admissible : AddSubgroup (GluingData K F S) where
   carrier := {x | x.1 ∈ finiteDegZero K F ∧ x.2.1 ∈ finiteDegZero K F ∧
     ∀ s ∈ S, x.1 s.1 = 0 ∧ x.2.1 s.2 = 0}
@@ -160,8 +172,9 @@ theorem zero_zero_mem_admissible (w : ↥S → Additive Kˣ) :
     ((0, 0, w) : GluingData K F S) ∈ admissible S :=
   ⟨zero_mem _, zero_mem _, fun _ _ => ⟨rfl, rfl⟩⟩
 
-/-- Gluing data is glued principal when it comes from two functions
-whose values at glued places differ by the recorded node units. -/
+/-- Gluing data is glued principal when it is `(div g₁, div g₂, (g₁(P_s) / g₂(Q_s))_s)` for
+nonzero functions `g₁` on `C₁` and `g₂` on `C₂`: the unit at each node is the value of `g₁` at
+`P_s` divided by the value of `g₂` at `Q_s`. -/
 def IsGluedPrincipal (x : GluingData K F S) : Prop :=
   ∃ (g₁ g₂ : F) (a b : ↥S → Kˣ), g₁ ≠ 0 ∧ g₂ ≠ 0 ∧
     (∀ v : Place K F, x.1 v = v.ord g₁) ∧ (∀ v : Place K F, x.2.1 v = v.ord g₂) ∧
@@ -215,8 +228,10 @@ theorem mem_gluedPrincipal {x : GluingData K F S} :
 
 end GluingData
 
-/-- The glued degree-zero Picard group for a finite set of nodes, each a pair of `K`-rational
-places. -/
+/-- The glued degree-zero Picard group of `X = C₁ ∪_S C₂` (see `GluingData`): admissible gluing
+data modulo glued principal data. It models the group of isomorphism classes of line bundles on `X`
+of degree zero on each of the components `C₁` and `C₂`; `GluedPic0.toPic0Pair` restricts a class
+to the two components. -/
 abbrev GluedPic0 (S : Finset (RationalPlace K F × RationalPlace K F)) : Type _ :=
   ↥(GluingData.admissible S) ⧸ (GluingData.gluedPrincipal S).addSubgroupOf (GluingData.admissible S)
 
@@ -247,7 +262,8 @@ def toPic0PairAux : ↥(GluingData.admissible S) →+ Pic0 K F × Pic0 K F where
   map_zero' := rfl
   map_add' _ _ := rfl
 
-/-- The map from the glued Picard group to the pair of Picard groups. -/
+/-- The map from the glued Picard group to the degree-zero Picard groups of the components `C₁`
+and `C₂`. -/
 def toPic0Pair : GluedPic0 K F S →+ Pic0 K F × Pic0 K F :=
   QuotientAddGroup.lift _ (toPic0PairAux S) <| by
     rintro x ⟨g₁, g₂, _, _, hg₁, hg₂, h₁, h₂, -, -⟩
@@ -292,8 +308,9 @@ theorem nodeUnit_const (c : Kˣ) : nodeUnit S (fun _ => Additive.ofMul c) = 0 :=
   · funext s
     simp
 
-/-- At nodes joining `K`-rational places, the classes whose two Picard classes vanish are exactly
-the classes of node units. -/
+/-- A class of `GluedPic0 K F S` whose restrictions to `C₁` and to `C₂` are both trivial is a class
+of node units: the kernel of `toPic0Pair` is the range of `nodeUnit`. The proof uses that the
+nodes join `K`-rational places, not that the projections of `S` are injective. -/
 theorem ker_toPic0Pair : (toPic0Pair S).ker = (nodeUnit S).range := by
   refine le_antisymm (fun z hz => ?_) ?_
   · obtain ⟨⟨⟨D₁, D₂, w⟩, hx⟩, rfl⟩ := mk_surjective S z
