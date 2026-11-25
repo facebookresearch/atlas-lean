@@ -13,6 +13,7 @@ public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Algebra.Group.Pointwise.Set.Basic
 public import Mathlib.Data.Set.Card
 import Mathlib.Data.Nat.ChineseRemainder
+import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Data.Nat.PrimeFin
 import Mathlib.FieldTheory.Finite.Basic
 
@@ -24,8 +25,9 @@ and $U(n)^2$ for the squares of its units. An $A$-weighted zero sum uses a weigh
 each term of a sequence; an $A$-weighted zero-sum subsequence uses weights at a nonempty set of
 indices. In either case the weighted terms sum to zero.
 
-This file proves three results of Paul and Paul. Lemma 5 counts the unit squares modulo a prime
-power after scaling by an even power of the prime. For odd $n \ge 2$, Proposition 17 gives units
+Paul and Paul partition the nonzero squares modulo a prime power into sets of unit squares
+scaled by distinct even powers of the prime. Lemma 5 counts each set.
+For odd $n \ge 2$, Proposition 17 gives units
 $u, v$ whose reductions modulo every prime $p$ dividing $n$ have no $S(p)$-weighted zero-sum
 subsequence. Lemma 13 lifts a $U(p^2)^2$-weighted zero sum modulo $p^2$ to an $S(p^r)$-weighted
 zero sum modulo $p^r$ when $p \ge 2$ and $r$ is positive and even; $p$ need not be prime.
@@ -39,6 +41,7 @@ zero sum modulo $p^r$ when $p \ge 2$ and $r$ is positive and even; $p$ need not 
 
 ## Main results
 
+* `MetaMathlibExt.squareSet_primePower_decomposition`: the partition by even valuation.
 * `MetaMathlibExt.ncard_scale_unitSquares_primePower`: Lemma 5.
 * `MetaMathlibExt.exists_pair_units_avoiding_prime_squareWeights`: Proposition 17.
 * `MetaMathlibExt.squareWeightedZeroSum_of_reduction_square`: Lemma 13.
@@ -252,6 +255,65 @@ public theorem squareWeightedZeroSum_of_reduction_square (p r k : ℕ)
       simp [d, Nat.mul_comm]
   · simpa only [z, Nat.cast_mul, Nat.cast_sum, Nat.cast_pow, ZMod.natCast_zmod_val,
       Finset.mul_sum, ← mul_assoc] using hdz
+
+open scoped Pointwise in
+/-- **Decomposition of the nonzero squares modulo a prime power.** Let $p$ be a prime, let
+$r \ge 1$, and let $l = \lfloor (r - 1)/2 \rfloor$. Write $S(p^r)$ for the set of nonzero squares
+in $\mathbb{Z}_{p^r}$, $U(p^r)^2$ for the set of squares of units in $\mathbb{Z}_{p^r}$, and
+$p^{2k} U(p^r)^2 = \{p^{2k} x : x \in U(p^r)^2\}$. Then
+$$S(p^r) = \bigcup_{k=0}^{l} p^{2k} U(p^r)^2,$$
+and the sets $p^{2k} U(p^r)^2$ for $k = 0, \dots, l$ are pairwise disjoint.
+
+Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
+Sequences 27 (2024), Article 24.6.6, Lemma 4. -/
+public theorem squareSet_primePower_decomposition (p r : ℕ) (hp : p.Prime) (hr : 0 < r) :
+    let l := (r - 1) / 2
+    let pieces : Fin (l + 1) → Set (ZMod (p ^ r)) := fun k =>
+      ((p : ZMod (p ^ r)) ^ (2 * (k : ℕ))) • unitSquareSet (p ^ r)
+    squareSet (p ^ r) = ⋃ k, pieces k ∧ Set.PairwiseDisjoint Set.univ pieces := by
+  dsimp only
+  have : NeZero (p ^ r) := ⟨pow_ne_zero _ hp.ne_zero⟩
+  -- A power of p times a unit vanishes precisely when its exponent reaches r.
+  have zero_iff (e : ℕ) {u : ZMod (p ^ r)} (hu : IsUnit u) :
+      (p : ZMod (p ^ r)) ^ e * u = 0 ↔ r ≤ e := by
+    rw [hu.mul_left_eq_zero, ← Nat.cast_pow, ZMod.natCast_eq_zero_iff,
+      Nat.pow_dvd_pow_iff_le_right hp.one_lt]
+  constructor
+  · ext x
+    rw [Set.mem_iUnion]
+    constructor
+    · rintro ⟨hx, y, rfl⟩
+      have hy : y.val ≠ 0 := by
+        intro h
+        exact hx (by simp [(ZMod.val_eq_zero y).mp h])
+      obtain ⟨k, a, ha, hval⟩ := Nat.exists_eq_pow_mul_and_not_dvd hy p hp.ne_one
+      have hu : IsUnit (a : ZMod (p ^ r)) := (ZMod.isUnit_natCast_iff_not_dvd_pow hp hr).mpr ha
+      have hy' : y = (p : ZMod (p ^ r)) ^ k * a := by
+        simpa only [Nat.cast_mul, Nat.cast_pow, ZMod.natCast_zmod_val] using
+          congrArg (Nat.cast : ℕ → ZMod (p ^ r)) hval
+      have hsq : y ^ 2 = (p : ZMod (p ^ r)) ^ (2 * k) * (a : ZMod (p ^ r)) ^ 2 := by
+        rw [hy', mul_pow, ← pow_mul, Nat.mul_comm k 2]
+      have hk : 2 * k < r := lt_of_not_ge fun h => hx (hsq.trans ((zero_iff _ (hu.pow 2)).mpr h))
+      exact ⟨⟨k, by omega⟩, _, ⟨_, hu, rfl⟩, hsq.symm⟩
+    · rintro ⟨k, _, ⟨u, hu, rfl⟩, rfl⟩
+      have hk := k.isLt
+      refine ⟨fun h => ?_, (p : ZMod (p ^ r)) ^ (k : ℕ) * u, ?_⟩
+      · have := (zero_iff _ (hu.pow 2)).mp h
+        omega
+      · simp only [smul_eq_mul, mul_pow, ← pow_mul, Nat.mul_comm (k : ℕ) 2]
+  · apply Set.pairwiseDisjoint_iff.mpr
+    rintro i _ j _ ⟨x, ⟨_, ⟨u, hu, rfl⟩, hi⟩, ⟨_, ⟨v, hv, rfl⟩, hj⟩⟩
+    simp only [smul_eq_mul] at hi hj
+    -- Multiplying a common element by p^t detects when each exponent reaches r.
+    have h (t : ℕ) : r ≤ t + 2 * (i : ℕ) ↔ r ≤ t + 2 * (j : ℕ) := by
+      rw [← zero_iff _ (hu.pow 2), ← zero_iff _ (hv.pow 2), pow_add, pow_add]
+      simp only [mul_assoc, hi, hj]
+    have hi' := (h (r - 2 * (i : ℕ))).mp (by omega)
+    have hj' := (h (r - 2 * (j : ℕ))).mpr (by omega)
+    have hiBound := i.isLt
+    have hjBound := j.isLt
+    apply Fin.ext
+    omega
 
 open scoped Pointwise in
 /-- **Scaled unit squares modulo a prime power.** Let $p$ be a prime and $r, k$ natural numbers

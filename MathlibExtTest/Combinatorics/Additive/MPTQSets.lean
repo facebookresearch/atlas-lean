@@ -40,6 +40,18 @@ example :
   · exact ⟨1, 2, by norm_num⟩
   · exact ⟨1, 0, by norm_num⟩
 
+-- A geometric five-element set with one negative element is not an MPTQ set.
+example : ¬ IsMPTQSet ({-4, 1, 2, 4, 8} : Finset ℝ) := by
+  apply not_isMPTQSet_of_card_five_one_neg (hcard := ?_) (hneg := ?_)
+  · norm_num [Finset.card_insert_of_notMem]
+  · norm_num [Finset.filter]
+
+-- The same conclusion holds when the set contains zero.
+example : ¬ IsMPTQSet ({-1, 0, 1, 2, 3} : Finset ℝ) := by
+  apply not_isMPTQSet_of_card_five_one_neg (hcard := ?_) (hneg := ?_)
+  · norm_num [Finset.card_insert_of_notMem]
+  · norm_num [Finset.filter]
+
 -- The three copies can all be empty; the proof need not assume the original set is inhabited.
 example : ¬ IsMPTQSet (∅ : Finset ℝ) := by
   have h := isMPTQSet_union_prime_mul_iff (∅ : Finset ℤ) (p := 2) Nat.prime_two (by simp)

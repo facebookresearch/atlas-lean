@@ -63913,6 +63913,8 @@
 "MetaMathlibExt.ComplementaryMomentRecurrence": "55cbc650e402006f",
 "MetaMathlibExt.Complexity.KeyTheorems.AMSubsetPi2.am_subset_pi2": "304596b23f761a0a",
 "MetaMathlibExt.Complexity.KeyTheorems.Adleman.adleman": "2e5ca2de268a0079",
+"MetaMathlibExt.Complexity.KeyTheorems.Adleman.isPolyTime_majorityVerifier": "3c206dd37d644485",
+"MetaMathlibExt.Complexity.KeyTheorems.Adleman.majorityVerifier": "4967568d9fecf75e",
 "MetaMathlibExt.Complexity.KeyTheorems.Algebrization.IsAlgebraicExtension": "484394244ec29059",
 "MetaMathlibExt.Complexity.KeyTheorems.Algebrization.aaronson_wigderson_algebrization": "fc05d226dd5a51fa",
 "MetaMathlibExt.Complexity.KeyTheorems.Algebrization.baseAt": "3ec236a4218a8fd0",

@@ -119,6 +119,24 @@ private theorem count_lifts {m : ℕ} [NeZero m] (D : Finset (ZMod m))
         exact Or.inr ⟨rfl, rfl⟩
   simpa using card_le_card_of_injOn (s := univ) family (fun f _ ↦ hmem f) hfamily.injOn
 
+/-- Three blocks of a Singer difference set give four choices at each of its residues. -/
+private theorem singer_count_bound {p : ℕ} (hp : p.Prime) :
+    2 ^ (2 * (p + 1)) ≤ (sidonSubsetsUpTo (3 * (p ^ 2 + p + 1))).card := by
+  let m := p ^ 2 + p + 1
+  obtain ⟨D, hcard, hdiff⟩ :=
+    MetaMathlibExt.singer_cyclic_difference_set_exists p hp.isPrimePow
+  have hD : (D : Set (ZMod m)).IsSidon := by
+    intro a ha b hb c hc d hd h
+    by_cases hac : a = c
+    · subst c
+      exact Or.inl ⟨rfl, add_left_cancel h⟩
+    · have he : d - b = a - c := by linear_combination -h
+      have hu := hdiff (a - c) (sub_ne_zero.mpr hac)
+      have hpairs := hu.unique (y₁ := (⟨a, ha⟩, ⟨c, hc⟩)) (y₂ := (⟨d, hd⟩, ⟨b, hb⟩)) rfl he
+      exact Or.inr ⟨congrArg (fun z : D × D ↦ z.1.val) hpairs,
+        (congrArg (fun z : D × D ↦ z.2.val) hpairs).symm⟩
+  simpa only [hcard, pow_mul, Nat.reducePow] using count_lifts D hD
+
 /-- For a Sidon set, two distinct translates intersect in at most one point.
 Thus an energy quadruple is determined by either a diagonal incidence or two shifts. -/
 private theorem energy_le_of_sidon {s : Finset ℕ} (hs : (s : Set ℕ).IsSidon) (t : Finset ℕ) :
@@ -222,20 +240,7 @@ public theorem sidonCountExponentAsymptotic_refuted : ¬ sidonCountExponentAsymp
   have hp200 : 200 ≤ p := le_trans (le_max_right ..) hp
   let m := p ^ 2 + p + 1
   have hm : p ≤ m := by dsimp [m]; omega
-  obtain ⟨D, hcard, hdiff⟩ :=
-    MetaMathlibExt.singer_cyclic_difference_set_exists p hpPrime.isPrimePow
-  have hD : (D : Set (ZMod m)).IsSidon := by
-    intro a ha b hb c hc d hd h
-    by_cases hac : a = c
-    · subst c
-      exact Or.inl ⟨rfl, add_left_cancel h⟩
-    · have he : d - b = a - c := by linear_combination -h
-      have hu := hdiff (a - c) (sub_ne_zero.mpr hac)
-      have hpairs := hu.unique (y₁ := (⟨a, ha⟩, ⟨c, hc⟩)) (y₂ := (⟨d, hd⟩, ⟨b, hb⟩)) rfl he
-      exact Or.inr ⟨congrArg (fun z : D × D ↦ z.1.val) hpairs,
-        (congrArg (fun z : D × D ↦ z.2.val) hpairs).symm⟩
-  have hcount : 2 ^ (2 * (p + 1)) ≤ (sidonSubsetsUpTo (3 * m)).card := by
-    simpa only [hcard, pow_mul, Nat.reducePow] using count_lifts D hD
+  have hcount := singer_count_bound hpPrime
   have hlog := Real.logb_le_logb_of_le (b := 2) (y := ((sidonSubsetsUpTo (3 * m)).card : ℝ))
     (by norm_num) (show (0 : ℝ) < 2 ^ (2 * (p + 1)) by positivity) (by exact_mod_cast hcount)
   rw [Real.logb_pow, Real.logb_self_eq_one (by norm_num), mul_one] at hlog

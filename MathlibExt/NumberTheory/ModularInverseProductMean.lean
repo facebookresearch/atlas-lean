@@ -9,14 +9,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.NumberTheory.Divisors
 import Mathlib.Algebra.Field.GeomSum
 import Mathlib.RingTheory.RootsOfUnity.Complex
 
 /-!
-# Weighted sum of an additive character
+# Finite sums for mean values of products of modular inverses
 
 Multiplying the weighted sum by one minus the character value reduces it to a geometric sum
-and a boundary term.
+and a boundary term. A sum over a positive interval also splits into sums over gcd classes.
 -/
 
 namespace MetaMathlibExt
@@ -65,5 +66,38 @@ public theorem sum_mul_additive_character {q k : ℕ} (hq : 2 ≤ q) (hk : ¬ q 
   apply (eq_div_iff (sub_ne_zero.mpr hne.symm)).2
   rw [sum_mul_additive_character.weighted_geom_sum, geom_sum_eq hne, hpow]
   simp
+
+/-- **Splitting a sum by greatest common divisor.** For every function
+$f : \mathbb{N} \to \mathbb{C}$ and every natural number $n$,
+$$\sum_{k=1}^{n} f(k) = \sum_{d \mid n} \sum_{1 \le h \le n/d,\ \gcd(n/d, h) = 1} f(hd).$$
+
+Here $d$ runs over the positive divisors of $n$, and $0$ is taken to have none, so for $n = 0$
+both sides are empty sums.
+
+Source: O. Bordellès and L. Tóth, *Mean Values of the Product of an Integer and Its Modular
+Inverse*, INTEGERS 24 (2024), Article A33, Lemma 5. -/
+public theorem sum_Icc_eq_sum_divisors_coprime (f : ℕ → ℂ) (n : ℕ) :
+    ∑ k ∈ Icc 1 n, f k =
+      ∑ d ∈ n.divisors, ∑ h ∈ Icc 1 (n / d) with Nat.Coprime (n / d) h, f (h * d) := by
+  obtain rfl | hn := n.eq_zero_or_pos
+  · simp
+  rw [← sum_fiberwise_of_maps_to (g := Nat.gcd n) (t := n.divisors)
+    (fun k _ ↦ Nat.mem_divisors.mpr ⟨Nat.gcd_dvd_left n k, hn.ne'⟩) f]
+  refine sum_congr rfl fun d hd ↦ ?_
+  have hdpos := Nat.pos_of_mem_divisors hd
+  obtain ⟨m, rfl⟩ := Nat.dvd_of_mem_divisors hd
+  rw [Nat.mul_div_cancel_left m hdpos]
+  have hmem (h : ℕ) :
+      d * h ∈ {k ∈ Icc 1 (d * m) | (d * m).gcd k = d} ↔
+        h ∈ {j ∈ Icc 1 m | m.Coprime j} := by
+    simp [Nat.one_le_iff_ne_zero, hdpos.ne', hdpos, Nat.gcd_mul_left, Nat.Coprime]
+  symm
+  apply sum_nbij (d * ·) (fun h hh ↦ (hmem h).2 hh)
+  · exact fun _ _ _ _ heq ↦ (Nat.mul_right_inj hdpos.ne').mp heq
+  · intro k hk
+    have hdk : d ∣ k := (mem_filter.mp hk).2 ▸ Nat.gcd_dvd_right (d * m) k
+    obtain ⟨h, rfl⟩ := hdk
+    exact ⟨h, (hmem h).1 hk, rfl⟩
+  · exact fun h _ ↦ congrArg f (Nat.mul_comm h d)
 
 end MetaMathlibExt

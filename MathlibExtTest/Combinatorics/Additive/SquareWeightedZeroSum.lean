@@ -96,3 +96,18 @@ example : ((4 : ZMod 8) • unitSquareSet 8).ncard = (unitSquareSet 2).ncard :=
 -- The zero exponent and zero scale reduce to the identity on residues modulo one.
 example : ((1 : ZMod 1) • unitSquareSet 1).ncard = (unitSquareSet 1).ncard :=
   ncard_scale_unitSquares_primePower 2 0 0 (by decide) (by decide)
+
+-- At exponent one the unit squares form the only piece.
+example (p : ℕ) (hp : p.Prime) : squareSet (p ^ 1) = unitSquareSet (p ^ 1) := by
+  simpa [Fin.fin_one_eq_zero, Set.iUnion_const] using
+    (squareSet_primePower_decomposition p 1 hp (by decide)).1
+
+-- Modulo eight, four lies in the second piece and disjointness excludes it from the unit squares.
+example : (4 : ZMod 8) ∈ squareSet 8 ∧ (4 : ZMod 8) ∉ unitSquareSet 8 := by
+  let pieces (k : Fin 2) := (2 : ZMod 8) ^ (2 * (k : ℕ)) • unitSquareSet 8
+  obtain ⟨hcover, hdisj⟩ : squareSet 8 = ⋃ k, pieces k ∧ Set.PairwiseDisjoint Set.univ pieces :=
+    squareSet_primePower_decomposition 2 3 (by decide) (by decide)
+  have hfour : (4 : ZMod 8) ∈ pieces 1 := ⟨1, ⟨1, isUnit_one, by decide⟩, by decide⟩
+  refine ⟨hcover ▸ Set.mem_iUnion.mpr ⟨1, hfour⟩, fun h => ?_⟩
+  have hd := hdisj (Set.mem_univ (0 : Fin 2)) (Set.mem_univ (1 : Fin 2)) (by decide)
+  exact Set.disjoint_left.mp hd (by simpa [pieces] using h) hfour

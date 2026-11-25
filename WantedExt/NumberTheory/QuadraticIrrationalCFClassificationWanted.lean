@@ -48,26 +48,6 @@ public theorem_wanted sqrt_hasPeriodicCF_exists_iff_parity (l : ℕ) (hl : 3 ≤
         (Even (convergentDen a (l - 1)) ∧ Even (convergentDen (fun n => a (n + 1)) (l - 3)) ∧
           Odd (convergentDen a (l - 2)))
 
-/-- **Existence of $(1 + \sqrt{d})/2$ with a given symmetric period.** Let $l$ be a natural number
-and $a_1, \dots, a_{l-1}$ positive integers with $a_i = a_{l-i}$ for $1 \le i < l$. If $l$ is odd,
-there are natural numbers $d$ and $a_0$ with $d \equiv 1 \pmod 4$, $d$ not a perfect square, and
-$(1 + \sqrt{d})/2 = [a_0; \overline{a_1, \dots, a_{l-1}, 2a_0 - 1}]$. If $l$ is even and positive,
-such $d$ and $a_0$ exist if and only if $a_{l/2}$ is odd.
-
-Source: Jun Ho Lee, *Classification for Existence of the Continued Fraction Expansions of √D and
-(1 + √D)/2*, INTEGERS 24 (2024), Article A50, Theorem 3 (`integers-2024-A50-thm-3`). -/
-public theorem_wanted half_one_add_sqrt_hasPeriodicCF_exists_classification (l : ℕ)
-    (a : ℕ → ℕ) (hpos : ∀ i, 1 ≤ i → i < l → 0 < a i)
-    (hsymm : ∀ i, 1 ≤ i → i < l → a i = a (l - i)) :
-    (Odd l →
-      ∃ d a₀ : ℕ, d % 4 = 1 ∧ ¬IsSquare d ∧
-        HasPeriodicCF ((1 + √(d : ℝ)) / 2) a₀ a l (2 * a₀ - 1)) ∧
-    (Even l → 0 < l →
-      ((∃ d a₀ : ℕ, d % 4 = 1 ∧ ¬IsSquare d ∧
-          HasPeriodicCF ((1 + √(d : ℝ)) / 2) a₀ a l (2 * a₀ - 1)) ↔
-        Odd (a (l / 2))))
-
-
 /-- **Fundamental unit from the period of $\sqrt{d}$.** Let $d \ge 2$ be a squarefree integer, let
 $\varepsilon$ be the least real number $u > 1$ of the form $u = (x + y\sqrt{d})/2$ with
 $x, y \in \mathbb{Z}$ and $x^2 - d y^2 = \pm 4$ (the fundamental unit of $\mathbb{Q}(\sqrt{d})$),

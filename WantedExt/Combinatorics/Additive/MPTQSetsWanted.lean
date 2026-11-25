@@ -65,17 +65,6 @@ INTEGERS 24 (2024), Article A96, Theorem 2 (`integers-2024-A96-thm-2`). -/
 public theorem_wanted five_le_card_of_isMPTQSet_of_neg {A : Finset ℝ} (hA : IsMPTQSet A)
     (hneg : ∃ a ∈ A, a < 0) : 5 ≤ A.card
 
-/-- **Five-element sets with one negative element are not MPTQ sets.** If $A$ is a set of five
-real numbers exactly one of which is negative, then $A$ is not an MPTQ set.
-
-The source assumes the elements are nonzero; this is not needed, since a set containing $0$ is
-never an MPTQ set.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Lemma 4 (`integers-2024-A96-lem-4`). -/
-public theorem_wanted not_isMPTQSet_of_card_five_one_neg {A : Finset ℝ} (hcard : A.card = 5)
-    (hneg : (A.filter (· < 0)).card = 1) : ¬ IsMPTQSet A
-
 /-- **Five-element sets with two negative elements are not MPTQ sets.** If $A$ is a set of five
 real numbers exactly two of which are negative, then $A$ is not an MPTQ set.
 

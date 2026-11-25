@@ -130,21 +130,6 @@ public theorem zeroSingleton_hasWeightedZeroSum (n : ℕ) (hn : 2 ≤ n) :
     omega
   · simp
 
-/-- **Decomposition of the nonzero squares modulo a prime power.** Let $p$ be a prime, let
-$r \ge 1$, and let $l = \lfloor (r - 1)/2 \rfloor$. Write $S(p^r)$ for the set of nonzero squares
-in $\mathbb{Z}_{p^r}$, $U(p^r)^2$ for the set of squares of units in $\mathbb{Z}_{p^r}$, and
-$p^{2k} U(p^r)^2 = \{p^{2k} x : x \in U(p^r)^2\}$. Then
-$$S(p^r) = \bigcup_{k=0}^{l} p^{2k} U(p^r)^2,$$
-and the sets $p^{2k} U(p^r)^2$ for $k = 0, \dots, l$ are pairwise disjoint.
-
-Source: Krishnendu Paul and Shameek Paul, *Square-Weighted Zero-Sum Constants*, Journal of Integer
-Sequences 27 (2024), Article 24.6.6, Lemma 4. -/
-public theorem_wanted squareSet_primePower_decomposition (p r : ℕ) (hp : p.Prime) (hr : 0 < r) :
-    let l := (r - 1) / 2
-    let pieces : Fin (l + 1) → Set (ZMod (p ^ r)) := fun k =>
-      ((p : ZMod (p ^ r)) ^ (2 * (k : ℕ))) • unitSquareSet (p ^ r)
-    squareSet (p ^ r) = ⋃ k, pieces k ∧ Set.PairwiseDisjoint Set.univ pieces
-
 /-- **Number of nonzero squares modulo a prime power.** Let $p$ be a prime and $r \ge 1$, and write
 $S(m)$ for the set of nonzero squares and $U(m)^2$ for the set of squares of units in
 $\mathbb{Z}/m\mathbb{Z}$. If $r$ is even, then
