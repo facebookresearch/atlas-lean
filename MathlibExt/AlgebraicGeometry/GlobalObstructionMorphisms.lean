@@ -70,8 +70,12 @@ def LocallyPerfectAmplitude {X : Scheme.{0}} (E : Complex X) : Prop :=
       Nonempty (DerivedCategory.Q.obj (restriction U E) ≅
         DerivedCategory.Q.obj (twoTerm U.toScheme rMinus rZero d))
 
-/-- The actual global derived morphism and homology conditions. For a perfect
-obstruction theory the target must be the actual relative cotangent provider. -/
+/-- A morphism $\varphi : E \to L$ in the derived category of $\mathcal{O}_X$-modules, from a
+complex $E$ of locally perfect amplitude in $[-1, 0]$ (on an open neighbourhood of every point,
+isomorphic in the derived category to a two-term complex of finite free modules in degrees $-1$
+and $0$) to the given complex $L$ (`target`), such that $H^0(\varphi)$ is an isomorphism and
+$H^{-1}(\varphi)$ is an epimorphism. When $L$ is the relative cotangent complex, such a morphism
+is a perfect obstruction theory. -/
 structure ObstructionMorphism {X : Scheme.{0}} (target : Complex X) where
   source : Complex X
   amplitude : LocallyPerfectAmplitude source
