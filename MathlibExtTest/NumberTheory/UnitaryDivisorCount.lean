@@ -50,4 +50,20 @@ example : (Nat.unitaryDivisors 60).card = 8 := by
   rw [card_unitaryDivisors (n := 60) (hn := by decide), hFactors]
   decide
 
+-- At one the product is empty, and the only unitary divisor is one.
+example : ∑ d ∈ Nat.unitaryDivisors 1, d ^ 2 = 1 := by
+  simpa only [Nat.primeFactors_one, Finset.prod_empty] using
+    sum_sq_unitaryDivisors (n := 1) (hn := by decide)
+
+-- The factors are 1 + 4² and 1 + 3², for the unitary divisors 1, 3, 4 and 12.
+example : ∑ d ∈ Nat.unitaryDivisors 12, d ^ 2 = 170 := by
+  have hFour : (4 : ℕ).factorization = Finsupp.single 2 2 := by
+    exact Nat.prime_two.factorization_pow (k := 2)
+  have hTwelve : (12 : ℕ).factorization = Finsupp.single 2 2 + Finsupp.single 3 1 := by
+    change (4 * 3 : ℕ).factorization = _
+    rw [Nat.factorization_mul (by decide) (by decide), hFour, Nat.prime_three.factorization]
+  rw [sum_sq_unitaryDivisors (n := 12) (hn := by decide), primeFactors_twelve, hTwelve,
+    Finset.prod_insert (by decide : (2 : ℕ) ∉ ({3} : Finset ℕ)), Finset.prod_singleton]
+  simp
+
 end MetaMathlibExt
