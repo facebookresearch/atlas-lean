@@ -92,20 +92,6 @@ public theorem_wanted abs_tribonacci_succ_sub_mul_lt (α : ℝ) (hα : α ^ 3 = 
     |(tribonacci (n + 1) : ℝ) - α * tribonacci n|
       < 2 * α ^ (-(n : ℝ) / 2) / ‖β - (starRingEnd ℂ) β‖
 
-/-- **Tribonacci differences do not keep one strict sign for three steps.** Let $T_n$ be the
-Tribonacci numbers ($T_0 = T_1 = 0$, $T_2 = 1$, $T_{n+3} = T_{n+2} + T_{n+1} + T_n$) and let
-$\alpha$ be a real number with $\alpha^3 = \alpha^2 + \alpha + 1$. Then for every $n \ge 0$ the
-three numbers $T_{k+1} - \alpha T_k$ for $k = n, n + 1, n + 2$ are neither all positive nor all
-negative.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Proposition 3 (`jis-2025-25.5.4-prop-3`). -/
-public theorem_wanted tribonacci_succ_sub_mul_sign_changes (α : ℝ)
-    (hα : α ^ 3 = α ^ 2 + α + 1) (n : ℕ) :
-    ¬ (∀ i < 3, 0 < (tribonacci (n + i + 1) : ℝ) - α * tribonacci (n + i)) ∧
-      ¬ (∀ i < 3, (tribonacci (n + i + 1) : ℝ) - α * tribonacci (n + i) < 0)
-
 /-- **Growth of the first column of the Trithoff array.** Let $\alpha$ be a real number with
 $\alpha^3 = \alpha^2 + \alpha + 1$, and let $a_0 < a_1 < a_2 < \cdots$ be the positive integers
 that have a Tribonacci representation with least significant digit $1$, in increasing order

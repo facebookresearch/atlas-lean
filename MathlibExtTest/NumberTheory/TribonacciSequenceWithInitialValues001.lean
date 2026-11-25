@@ -24,4 +24,18 @@ example : tribonacci 5 = 4 := rfl
 example (n : ℕ) :
     tribonacci (n + 3) = tribonacci (n + 2) + tribonacci (n + 1) + tribonacci n := rfl
 
+-- At n = 0 the first difference vanishes; strict signs do not exclude this boundary.
+example (α : ℝ) : (tribonacci 1 : ℝ) - α * tribonacci 0 = 0 := by
+  simp [tribonacci]
+
+example (α : ℝ) (hα : α ^ 3 = α ^ 2 + α + 1) :
+    ¬ (∀ i < 3, 0 < (tribonacci (i + 1) : ℝ) - α * tribonacci i) ∧
+      ¬ (∀ i < 3, (tribonacci (i + 1) : ℝ) - α * tribonacci i < 0) := by
+  simpa only [Nat.zero_add] using tribonacci_succ_sub_mul_sign_changes (α := α) (hα := hα) (n := 0)
+
+example (α : ℝ) (hα : α ^ 3 = α ^ 2 + α + 1) :
+    ¬ (∀ i < 3, 0 < (tribonacci (1 + i + 1) : ℝ) - α * tribonacci (1 + i)) ∧
+      ¬ (∀ i < 3, (tribonacci (1 + i + 1) : ℝ) - α * tribonacci (1 + i) < 0) :=
+  tribonacci_succ_sub_mul_sign_changes (α := α) (hα := hα) (n := 1)
+
 end MetaMathlibExt
