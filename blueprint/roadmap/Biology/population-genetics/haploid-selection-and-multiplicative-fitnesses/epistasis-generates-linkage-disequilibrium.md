@@ -7,24 +7,22 @@ the [linkage disequilibrium](../linkage-disequilibrium-and-haldane-s-map-functio
 
 $$D' = \frac{x_1 x_4\, w_1 w_4 - x_2 x_3\, w_2 w_3}{\bar w^{\,2}},$$
 
-and, when $x_2 x_3 > 0$, the crossproduct ratio $R = x_1 x_4 / (x_2 x_3)$ becomes
-$R' = R \cdot w_1 w_4 / (w_2 w_3)$. In particular, starting from linkage equilibrium with allele
-frequencies $p_A = x_1 + x_2$, $p_B = x_1 + x_3$, $p_a = 1 - p_A$ and $p_b = 1 - p_B$ (so $x_1 x_4 = x_2 x_3 = p_A p_a p_B p_b$),
+and, when $x_2 x_3 > 0$, the product $x'_2 x'_3$ is also positive and the crossproduct ratio
+$R = x_1 x_4 / (x_2 x_3)$ becomes $R' = R \cdot w_1 w_4 / (w_2 w_3)$. In particular, starting
+from linkage equilibrium with allele frequencies $p_A = x_1 + x_2$, $p_B = x_1 + x_3$,
+$p_a = 1 - p_A$ and $p_b = 1 - p_B$ (so $x_1 x_4 = x_2 x_3 = p_A p_a p_B p_b$),
 
 $$D' = \frac{p_A p_a p_B p_b \,(w_1 w_4 - w_2 w_3)}{\bar w^{\,2}} .$$
 
 So selection keeps linkage equilibrium exactly when the fitnesses are multiplicative across loci
 ($w_1 w_4 = w_2 w_3$) or a locus is monomorphic; otherwise it creates disequilibrium of the sign of
 $w_1 w_4 - w_2 w_3$. The multiplicative case also follows, at recombination fraction $0$, from
-[Multiplicative haploid selection preserves linkage equilibrium](recombine-select-eq-mul.md). Writing $w_1 = (1 + s)(1 + t)(1 + E)$, $w_2 = 1 + s$, $w_3 = 1 + t$, $w_4 = 1$, the
-factor is $w_1 w_4 / (w_2 w_3) = 1 + E$, so the epistasis $E$ measures departure from multiplicative
-fitness; additive fitnesses ($E = -st/((1 + s)(1 + t))$, so $E < 0$ when $st > 0$) create negative
-disequilibrium from linkage equilibrium when both loci are polymorphic.
-
-## Depends on
-
-- [One generation of haploid selection](../natural-selection-fisher-s-theorem-and-the-price/select.md)
-- [Linkage disequilibrium of a two-locus gamete law](../linkage-disequilibrium-and-haldane-s-map-functio/linkage-diseq.md)
+[Multiplicative haploid selection preserves linkage equilibrium](recombine-select-eq-mul.md).
+Writing $w_1 = (1 + s)(1 + t)(1 + E)$, $w_2 = 1 + s$, $w_3 = 1 + t$ and $w_4 = 1$,
+the factor is $w_1 w_4 / (w_2 w_3) = 1 + E$, so $E$ measures departure from multiplicative
+fitness. For additive fitnesses ($w_1 = 1 + s + t$), $E = -st/((1 + s)(1 + t))$.
+If $st > 0$ and both loci are polymorphic, additive fitnesses create negative disequilibrium
+from linkage equilibrium.
 
 ## Sources
 

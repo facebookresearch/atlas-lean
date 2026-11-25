@@ -52177,6 +52177,7 @@
     "MathlibExt.Biology.PopulationGenetics.Classical.SexRatio.hasDerivAt_W_left": "263a32de8e99ab5f",
     "MathlibExt.Biology.PopulationGenetics.Classical.SexRatio.sonFraction": "6c467615cf31ac73",
     "MathlibExt.Biology.PopulationGenetics.Classical.SexRatio.sonFraction_half": "14a758aa2226272c",
+    "MathlibExt.Biology.PopulationGenetics.Classical.TwoLocusSelection.haploid_selection_crossproduct_ratio": "af128de8126e0748",
     "MathlibExt.Biology.PopulationGenetics.Classical.TwoLocusSelection.linkageDiseq_recombine_select_of_mul": "0c37a0fd792c45fc",
     "MathlibExt.Biology.PopulationGenetics.Classical.TwoLocusSelection.recombine_select_eq_mul": "f4eeb5c240dd257c",
     "MathlibExt.Biology.PopulationGenetics.Classical.TwoLocusSelection.recombine_select_of_mul": "6a4925a602344af2",
