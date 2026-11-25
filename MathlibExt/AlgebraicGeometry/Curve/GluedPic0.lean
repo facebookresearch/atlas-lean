@@ -39,7 +39,7 @@ public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
 Gluing data for a finite set `S` of nodes, each a pair of places of `F`, consists of two divisors
 and a unit of `K` at each node. `GluedPic0 K F S` is the quotient of the admissible data by the
 glued principal data: the divisors of two nonzero functions together with the ratios of their
-values at the two places of each node.
+values (`AlgebraicCurve.Place.HasValueAt`) at the two places of each node.
 
 * Nodes join `K`-rational places (`AlgebraicCurve.RationalPlace`), where `K` maps onto the residue
   field. There a function of order zero has a value in `Kˣ`, so the node units in `Kˣ` record every
@@ -71,84 +71,10 @@ private theorem ord_algebraMap_of_constant (c : K) : v.ord (algebraMap K F c) = 
     have h := v.ord_coe_unit hu.unit
     rwa [IsUnit.unit_spec, coe_algebraMap] at h
 
-/-- The residue of a constant is its image in the residue field. -/
-theorem residue_algebraMap (c : K) :
-    residue v.toValuationSubring (algebraMap K v.toValuationSubring c)
-      = algebraMap K v.ResidueField c := by
-  rw [IsScalarTower.algebraMap_apply K v.toValuationSubring v.ResidueField c,
-    ResidueField.algebraMap_eq]
+private theorem hasValueAt_algebraMap (c : K) : v.HasValueAt (algebraMap K F c) c := by
+  change algebraMap K F c - algebraMap K F c ∈ v.toValuationSubring.nonunits
+  simp
 
-/-- An element has value `a` at a place when it lies in the valuation
-subring and its residue is the image of `a`. -/
-def HasValue (g : F) (a : K) : Prop :=
-  ∃ h : g ∈ v.toValuationSubring,
-    residue v.toValuationSubring ⟨g, h⟩ = algebraMap K v.ResidueField a
-
-theorem hasValue_iff (g : F) (a : K) :
-    v.HasValue g a ↔ ∃ h : g ∈ v.toValuationSubring,
-      residue v.toValuationSubring ⟨g, h⟩ = algebraMap K v.ResidueField a :=
-  Iff.rfl
-
-variable {v}
-
-theorem HasValue.mem {g : F} {a : K} (h : v.HasValue g a) : g ∈ v.toValuationSubring :=
-  h.1
-
-theorem HasValue.residue_eq {g : F} {a : K} (h : v.HasValue g a) :
-    residue v.toValuationSubring ⟨g, h.mem⟩ = algebraMap K v.ResidueField a :=
-  h.2
-
-variable (v) in
-theorem hasValue_one : v.HasValue (1 : F) 1 :=
-  ⟨one_mem _, by rw [map_one]; exact map_one (residue v.toValuationSubring)⟩
-
-variable (v) in
-theorem hasValue_algebraMap (c : K) : v.HasValue (algebraMap K F c) c :=
-  ⟨v.algebraMap_mem' c, v.residue_algebraMap c⟩
-
-theorem HasValue.mul {g g' : F} {a a' : K} (h : v.HasValue g a) (h' : v.HasValue g' a') :
-    v.HasValue (g * g') (a * a') := by
-  obtain ⟨hg, hr⟩ := h
-  obtain ⟨hg', hr'⟩ := h'
-  refine ⟨mul_mem hg hg', ?_⟩
-  have hx : (⟨g * g', mul_mem hg hg'⟩ : v.toValuationSubring) = ⟨g, hg⟩ * ⟨g', hg'⟩ := rfl
-  rw [hx, map_mul, hr, hr', map_mul]
-
-theorem HasValue.isUnit {g : F} {a : K} (h : v.HasValue g a) (ha : a ≠ 0) :
-    IsUnit (⟨g, h.mem⟩ : v.toValuationSubring) := by
-  rw [← residue_ne_zero_iff_isUnit, h.residue_eq]
-  exact (map_ne_zero _).mpr ha
-
-theorem HasValue.ne_zero {g : F} {a : K} (h : v.HasValue g a) (ha : a ≠ 0) : g ≠ 0 := by
-  intro hg
-  apply (h.isUnit ha).ne_zero
-  exact Subtype.ext hg
-
-theorem HasValue.inv {g : F} {a : K} (h : v.HasValue g a) (ha : a ≠ 0) :
-    v.HasValue g⁻¹ a⁻¹ := by
-  obtain ⟨u, hu⟩ := h.isUnit ha
-  have hcoe : ((u : v.toValuationSubring) : F) = g := by rw [hu]
-  have hinv : (((u⁻¹ : v.toValuationSubringˣ) : v.toValuationSubring) : F) = g⁻¹ := by
-    have h1 : g * (((u⁻¹ : v.toValuationSubringˣ) : v.toValuationSubring) : F) = 1 := by
-      rw [← hcoe, ← MulMemClass.coe_mul, ← Units.val_mul, mul_inv_cancel, Units.val_one,
-        OneMemClass.coe_one]
-    exact (inv_eq_of_mul_eq_one_right h1).symm
-  have hmem : g⁻¹ ∈ v.toValuationSubring := hinv ▸ SetLike.coe_mem _
-  refine ⟨hmem, ?_⟩
-  have hx : (⟨g⁻¹, hmem⟩ : v.toValuationSubring)
-      = ((u⁻¹ : v.toValuationSubringˣ) : v.toValuationSubring) :=
-    Subtype.ext hinv.symm
-  rw [hx, map_units_inv, hu, h.residue_eq, map_inv₀]
-
-theorem HasValue.unique {g : F} {a a' : K} (h : v.HasValue g a) (h' : v.HasValue g a') :
-    a = a' :=
-  (algebraMap K v.ResidueField).injective (h.residue_eq.symm.trans h'.residue_eq)
-
-theorem HasValue.ord_eq_zero {g : F} {a : K} (h : v.HasValue g a) (ha : a ≠ 0) : v.ord g = 0 := by
-  have h0 := v.ord_coe_unit (h.isUnit ha).unit
-  rwa [IsUnit.unit_spec] at h0
-
-variable (v) in
 theorem exists_isUnit_of_ord_eq_zero {f : F} (hf : f ≠ 0) (h : v.ord f = 0) :
     ∃ hm : f ∈ v.toValuationSubring, IsUnit (⟨f, hm⟩ : v.toValuationSubring) := by
   obtain ⟨π, hπ⟩ := IsDiscreteValuationRing.exists_irreducible v.toValuationSubring
@@ -156,15 +82,6 @@ theorem exists_isUnit_of_ord_eq_zero {f : F} (hf : f ≠ 0) (h : v.ord f = 0) :
   rw [h, zpow_zero, mul_one] at hu
   subst hu
   exact ⟨(u : v.toValuationSubring).2, u.isUnit⟩
-
-variable (v) in
-theorem exists_hasValue_of_surjective (hv : Function.Surjective (algebraMap K v.ResidueField))
-    {g : F} (hg : g ∈ v.toValuationSubring) :
-    ∃ a : K, v.HasValue g a ∧ (IsUnit (⟨g, hg⟩ : v.toValuationSubring) → a ≠ 0) := by
-  obtain ⟨a, ha⟩ := hv (residue v.toValuationSubring ⟨g, hg⟩)
-  refine ⟨a, ⟨hg, ha.symm⟩, fun hu h0 => ?_⟩
-  rw [← residue_ne_zero_iff_isUnit, ← ha, h0, map_zero] at hu
-  exact hu rfl
 
 end Place
 
@@ -178,11 +95,12 @@ abbrev RationalPlace : Type _ :=
 
 variable {K F}
 
-theorem RationalPlace.exists_hasValue_of_ord_eq_zero (v : RationalPlace K F) {g : F}
-    (hg : g ≠ 0) (h : (v : Place K F).ord g = 0) : ∃ a : Kˣ, (v : Place K F).HasValue g a := by
+theorem RationalPlace.exists_hasValueAt_of_ord_eq_zero (v : RationalPlace K F) {g : F}
+    (hg : g ≠ 0) (h : (v : Place K F).ord g = 0) : ∃ a : Kˣ, (v : Place K F).HasValueAt g a := by
   obtain ⟨hm, hu⟩ := (v : Place K F).exists_isUnit_of_ord_eq_zero hg h
-  obtain ⟨a, ha, ha0⟩ := (v : Place K F).exists_hasValue_of_surjective v.2 hm
-  exact ⟨Units.mk0 a (ha0 hu), ha⟩
+  obtain ⟨a, ha⟩ := (v : Place K F).exists_hasValueAt v.2 hm
+  refine ⟨Units.mk0 a fun h0 => (residue_ne_zero_iff_isUnit _).mpr hu ?_, ha⟩
+  rw [((v : Place K F).hasValueAt_iff_residue hm a).mp ha, h0, map_zero]
 
 end Rational
 
@@ -247,8 +165,8 @@ whose values at glued places differ by the recorded node units. -/
 def IsGluedPrincipal (x : GluingData K F S) : Prop :=
   ∃ (g₁ g₂ : F) (a b : ↥S → Kˣ), g₁ ≠ 0 ∧ g₂ ≠ 0 ∧
     (∀ v : Place K F, x.1 v = v.ord g₁) ∧ (∀ v : Place K F, x.2.1 v = v.ord g₂) ∧
-    (∀ s : ↥S, ((s : RationalPlace K F × RationalPlace K F).1 : Place K F).HasValue g₁ (a s) ∧
-      ((s : RationalPlace K F × RationalPlace K F).2 : Place K F).HasValue g₂ (b s)) ∧
+    (∀ s : ↥S, ((s : RationalPlace K F × RationalPlace K F).1 : Place K F).HasValueAt g₁ (a s) ∧
+      ((s : RationalPlace K F × RationalPlace K F).2 : Place K F).HasValueAt g₂ (b s)) ∧
     x.2.2 = fun s => Additive.ofMul (a s / b s)
 
 /-- The subgroup of glued principal gluing data. -/
@@ -257,8 +175,10 @@ def gluedPrincipal : AddSubgroup (GluingData K F S) where
   zero_mem' := by
     refine ⟨1, 1, 1, 1, one_ne_zero, one_ne_zero, fun v => by simp, fun v => by simp,
       fun s => ⟨?_, ?_⟩, ?_⟩
-    · simpa using ((s : RationalPlace K F × RationalPlace K F).1 : Place K F).hasValue_one
-    · simpa using ((s : RationalPlace K F × RationalPlace K F).2 : Place K F).hasValue_one
+    · simpa using
+        ((s : RationalPlace K F × RationalPlace K F).1 : Place K F).hasValueAt_algebraMap 1
+    · simpa using
+        ((s : RationalPlace K F × RationalPlace K F).2 : Place K F).hasValueAt_algebraMap 1
     · funext s
       simp
   add_mem' := by
@@ -268,8 +188,10 @@ def gluedPrincipal : AddSubgroup (GluingData K F S) where
       fun v => ?_, fun v => ?_, fun s => ⟨?_, ?_⟩, ?_⟩
     · rw [Prod.fst_add, Finsupp.add_apply, hx₁ v, hy₁ v, v.ord_mul hg₁ hg₁']
     · rw [Prod.snd_add, Prod.fst_add, Finsupp.add_apply, hx₂ v, hy₂ v, v.ord_mul hg₂ hg₂']
-    · simpa only [Pi.mul_apply, Units.val_mul] using (hv s).1.mul (hv' s).1
-    · simpa only [Pi.mul_apply, Units.val_mul] using (hv s).2.mul (hv' s).2
+    · simpa only [Pi.mul_apply, Units.val_mul] using
+        Place.hasValueAt_mul _ (hv s).1 (hv' s).1
+    · simpa only [Pi.mul_apply, Units.val_mul] using
+        Place.hasValueAt_mul _ (hv s).2 (hv' s).2
     · rw [Prod.snd_add, Prod.snd_add, hw, hw']
       funext s
       rw [Pi.add_apply, Pi.mul_apply, Pi.mul_apply, ← ofMul_mul, div_mul_div_comm]
@@ -279,8 +201,10 @@ def gluedPrincipal : AddSubgroup (GluingData K F S) where
       fun v => ?_, fun v => ?_, fun s => ⟨?_, ?_⟩, ?_⟩
     · rw [Prod.fst_neg, Finsupp.neg_apply, hx₁ v, v.ord_inv]
     · rw [Prod.snd_neg, Prod.fst_neg, Finsupp.neg_apply, hx₂ v, v.ord_inv]
-    · simpa only [Pi.inv_apply, Units.val_inv_eq_inv_val] using (hv s).1.inv (a s).ne_zero
-    · simpa only [Pi.inv_apply, Units.val_inv_eq_inv_val] using (hv s).2.inv (b s).ne_zero
+    · simpa only [Pi.inv_apply, Units.val_inv_eq_inv_val] using
+        Place.hasValueAt_inv _ (hv s).1 (a s).ne_zero
+    · simpa only [Pi.inv_apply, Units.val_inv_eq_inv_val] using
+        Place.hasValueAt_inv _ (hv s).2 (b s).ne_zero
     · rw [Prod.snd_neg, Prod.snd_neg, hw]
       funext s
       rw [Pi.neg_apply, Pi.inv_apply, Pi.inv_apply, inv_div_inv, ← ofMul_inv, inv_div]
@@ -363,8 +287,8 @@ theorem nodeUnit_const (c : Kˣ) : nodeUnit S (fun _ => Additive.ofMul c) = 0 :=
   rw [nodeUnit_apply, mk_eq_zero_iff]
   refine ⟨algebraMap K F c, 1, fun _ => c, 1, (map_ne_zero _).mpr c.ne_zero, one_ne_zero,
     fun v => by simp, fun v => by simp, fun s => ⟨?_, ?_⟩, ?_⟩
-  · exact ((s : RationalPlace K F × RationalPlace K F).1 : Place K F).hasValue_algebraMap (c : K)
-  · simpa using ((s : RationalPlace K F × RationalPlace K F).2 : Place K F).hasValue_one
+  · exact ((s : RationalPlace K F × RationalPlace K F).1 : Place K F).hasValueAt_algebraMap (c : K)
+  · simpa using ((s : RationalPlace K F × RationalPlace K F).2 : Place K F).hasValueAt_algebraMap 1
   · funext s
     simp
 
@@ -380,9 +304,9 @@ theorem ker_toPic0Pair : (toPic0Pair S).ker = (nodeUnit S).range := by
     have h₁' : ∀ v : Place K F, D₁ v = v.ord g₁ := h₁
     have h₂' : ∀ v : Place K F, D₂ v = v.ord g₂ := h₂
     choose a ha using fun s : ↥S => (s : RationalPlace K F × RationalPlace K F).1
-      |>.exists_hasValue_of_ord_eq_zero hg₁ ((h₁' _).symm.trans (hS s s.2).1)
+      |>.exists_hasValueAt_of_ord_eq_zero hg₁ ((h₁' _).symm.trans (hS s s.2).1)
     choose b hb using fun s : ↥S => (s : RationalPlace K F × RationalPlace K F).2
-      |>.exists_hasValue_of_ord_eq_zero hg₂ ((h₂' _).symm.trans (hS s s.2).2)
+      |>.exists_hasValueAt_of_ord_eq_zero hg₂ ((h₂' _).symm.trans (hS s s.2).2)
     refine AddMonoidHom.mem_range.mpr ⟨w - fun s => Additive.ofMul (a s / b s), ?_⟩
     rw [nodeUnit_apply, mk_eq_mk_iff]
     refine ⟨g₁, g₂, a, b, hg₁, hg₂, fun v => ?_, fun v => ?_, fun s => ⟨ha s, hb s⟩, ?_⟩

@@ -48,18 +48,12 @@ example (w : ↥S → Additive Kˣ) :
 example (c : Kˣ) : GluedPic0.nodeUnit S (fun _ => Additive.ofMul c) = 0 :=
   GluedPic0.nodeUnit_const S c
 
-example (v : Place K F) : v.HasValue (1 : F) 1 :=
-  v.hasValue_one
-
-example (v : Place K F) (c : K) : v.HasValue (algebraMap K F c) c :=
-  v.hasValue_algebraMap c
-
 -- Boundary: at a `K`-rational place a function of order zero has a value in `Kˣ`, so the node
 -- units record every gluing relation, and the classes over the zero pair of Picard classes are
 -- exactly the node units.
 example (v : RationalPlace K F) {g : F} (hg : g ≠ 0) (h : (v : Place K F).ord g = 0) :
-    ∃ a : Kˣ, (v : Place K F).HasValue g a :=
-  v.exists_hasValue_of_ord_eq_zero hg h
+    ∃ a : Kˣ, (v : Place K F).HasValueAt g a :=
+  v.exists_hasValueAt_of_ord_eq_zero hg h
 
 example : (GluedPic0.toPic0Pair S).ker = (GluedPic0.nodeUnit S).range :=
   GluedPic0.ker_toPic0Pair S
