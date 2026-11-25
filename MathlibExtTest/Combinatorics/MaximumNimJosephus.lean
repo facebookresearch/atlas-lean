@@ -99,6 +99,15 @@ example : ¬(7 : ℕ) ∣ 15 :=
 -- At the excluded step `s = t`, the index `i = h` gives a multiple of the same divisor.
 example : (7 : ℕ) ∣ 3 * (7 - 2) - 1 := by decide
 
+-- With `8 = 3 * 2 + 2`, the offsets from `16` are positive for `i = 1` and negative for `i = 3`.
+example : ¬(8 : ℕ) ∣ 3 * (8 - 2) - 1 :=
+  maximumNim_not_dvd_mul_sub_of_ne 8 3 2 2 1 (by decide) (by decide) rfl (by decide)
+    (by decide) (by decide) (by decide)
+
+example : ¬(8 : ℕ) ∣ 3 * (8 - 2) - 3 :=
+  maximumNim_not_dvd_mul_sub_of_ne 8 3 2 2 3 (by decide) (by decide) rfl (by decide)
+    (by decide) (by decide) (by decide)
+
 -- At step three, the quotient stays at zero from input zero to one and rises at input two.
 example : maximumNimH 3 0 < maximumNimH 3 1 ∧ maximumNimH 3 1 < maximumNimH 3 2 :=
   ⟨maximumNimH_strictMono 3 0 1 (by decide) (by decide),
