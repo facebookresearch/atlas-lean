@@ -9,6 +9,7 @@
 - [Difference basis number of $\mathbb{Z}/3\mathbb{Z}$](group-diff-basis-number-one-zmod-three.md)
 - [Trivial upper bound for sets with bounded difference multiplicities](bounded-diff-set-number-le.md)
 - [The value $\alpha_g(1) = 1$](bounded-diff-set-number-one.md)
+- [Exists min basis](exists-min-basis.md)
 - [Trivial lower bound for difference bases of an interval](sqrt-two-mul-le-diff-basis-number-div-sq.md)
 - [Rédei–Rényi difference basis](redei-renyi-diff-basis.md)
 - [Upper bound for the $g$-difference basis number](diff-basis-number-div-sqrt-le.md)

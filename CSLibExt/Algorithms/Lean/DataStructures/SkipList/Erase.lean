@@ -26,7 +26,12 @@ universe u v
 
 namespace SkipList
 
-/-- Remove the stored entry for a key, retaining every surviving tower unchanged. -/
+/-- **Skip-list erasure.** Given a key $k$ from a linearly ordered type and a skip list $S$, the
+erasure of $k$ from $S$ is the skip list obtained by scanning the entries of $S$ in order: an
+entry whose key is less than $k$ is kept and the scan continues; at the first entry whose key is
+greater than $k$ the scan stops, and that entry and all later ones are kept; at the first entry
+whose key equals $k$ that entry is removed, the scan stops, and all later entries are kept. Every
+kept entry keeps its key, value and tower height. -/
 public def erase {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) (list : SkipList α β) : SkipList α β :=
   ⟨go list.entries⟩
@@ -41,19 +46,25 @@ where
         else
           entries
 
-/-- Erasing from the empty skip list is a no-op. -/
+/-- **Erasing from the empty skip list.** For every key $k$, erasing $k$ from the empty skip list
+gives the empty skip list. -/
 @[simp] public theorem erase_empty {α : Type u} {β : Type v} [LinearOrder α]
     (key : α) : erase key (empty : SkipList α β) = empty := by
   rfl
 
-/-- Erasure stops when the requested key precedes the first entry. -/
+/-- **Erasing a key below the first entry.** Let $e$ be a skip-list entry and $L$ a list of
+entries. If a key $k$ is less than the key of $e$, then erasing $k$ from the skip list with entry
+list $e$ followed by $L$ leaves the entry list $e$ followed by $L$ unchanged. -/
 public theorem erase_cons_of_lt {α : Type u} {β : Type v} [LinearOrder α]
     {key : α} {entry : Entry α β} {entries : List (Entry α β)}
     (before : key < entry.key) :
     (erase key ⟨entry :: entries⟩).entries = entry :: entries := by
   simp [erase, erase.go, before]
 
-/-- Erasure retains a preceding entry and continues through the remaining entries. -/
+/-- **Erasing past a smaller first entry.** Let $e$ be a skip-list entry and $L$ a list of
+entries. If the key of $e$ is less than a key $k$, then erasing $k$ from the skip list with entry
+list $e$ followed by $L$ gives the entry list consisting of $e$ followed by the entry list obtained
+by erasing $k$ from the skip list with entry list $L$. -/
 public theorem erase_cons_of_gt {α : Type u} {β : Type v} [LinearOrder α]
     {key : α} {entry : Entry α β} {entries : List (Entry α β)}
     (after : entry.key < key) :
@@ -61,7 +72,9 @@ public theorem erase_cons_of_gt {α : Type u} {β : Type v} [LinearOrder α]
       entry :: (erase key ⟨entries⟩).entries := by
   simp [erase, erase.go, after, not_lt_of_ge (le_of_lt after)]
 
-/-- Erasure removes the matching head entry and returns its existing tail. -/
+/-- **Erasing the key of the first entry.** Let $e$ be a skip-list entry and $L$ a list of
+entries, and consider the skip list whose entry list is $e$ followed by $L$. If a key $k$ equals
+the key of $e$, then erasing $k$ from this skip list leaves the entry list $L$. -/
 public theorem erase_cons_of_eq {α : Type u} {β : Type v} [LinearOrder α]
     {key : α} {entry : Entry α β} {entries : List (Entry α β)}
     (matching : key = entry.key) :
@@ -118,7 +131,9 @@ private theorem eraseEntries_eq_filter {α : Type u} {β : Type v} [LinearOrder 
           simp only [before, ite_false, after, drop]
           exact filtered.symm
 
-/-- On valid lists, erasure is precisely filtering out the requested key. -/
+/-- **Erasure on a valid skip list filters out the key.** If $S$ is a valid skip list and $k$ is
+a key, then the entry list of the skip list obtained by erasing $k$ from $S$ is the entry list of
+$S$ with every entry whose key equals $k$ removed, the remaining entries kept in their order. -/
 public theorem erase_entries_filter {α : Type u} {β : Type v} [LinearOrder α]
     {key : α} {list : SkipList α β} (valid : Valid list) :
     (erase key list).entries =
@@ -126,7 +141,9 @@ public theorem erase_entries_filter {α : Type u} {β : Type v} [LinearOrder α]
   change erase.go key list.entries = _
   exact eraseEntries_eq_filter key list.entries valid.1
 
-/-- Erasure preserves strict key ordering and positive tower heights. -/
+/-- **Erasure preserves skip-list validity.** Let $L$ be a valid skip list, that is, its keys are
+strictly increasing and every stored tower has positive height. For every key $k$, the skip list
+obtained from $L$ by erasing $k$ is again valid. -/
 public theorem valid_erase {α : Type u} {β : Type v} [LinearOrder α]
     {key : α} {list : SkipList α β} (valid : Valid list) :
     Valid (erase key list) := by
@@ -183,14 +200,18 @@ private theorem lookup_map_filter_of_ne {α : Type u} {β : Type v} {γ : Type*}
           simp only [List.lookup_cons, keysDiffer]
           exact ih
 
-/-- Lookup of an erased key returns no value. -/
+/-- **Erased keys are absent from a skip list.** Let $L$ be a valid skip list, that is, its keys
+are strictly increasing and every stored tower has positive height. For every key $k$, looking
+up $k$ in the skip list obtained from $L$ by erasing $k$ returns no value. -/
 public theorem lookup_erase {α : Type u} {β : Type v} [LinearOrder α]
     {key : α} {list : SkipList α β} (valid : Valid list) :
     lookup key (erase key list) = none := by
   rw [lookup_eq_abstraction, abstraction, erase_entries_filter valid]
   exact lookup_map_filter_eq_none key (fun entry => entry.value) list.entries
 
-/-- Erasure leaves lookup of every distinct key unchanged. -/
+/-- **Erasure preserves lookups of other keys.** If $S$ is a valid skip list and $k$, $k'$ are
+keys with $k' \ne k$, then looking up $k'$ in the skip list obtained by erasing $k$ from $S$ gives
+the same result as looking up $k'$ in $S$: the same value, or no value in both. -/
 public theorem lookup_erase_of_ne {α : Type u} {β : Type v} [LinearOrder α]
     {key other : α} {list : SkipList α β} (valid : Valid list)
     (different : other ≠ key) :
@@ -199,14 +220,18 @@ public theorem lookup_erase_of_ne {α : Type u} {β : Type v} [LinearOrder α]
     erase_entries_filter valid]
   exact lookup_map_filter_of_ne key other (fun entry => entry.value) list.entries different
 
-/-- The erased key has no stored tower height. -/
+/-- **The erased key has no stored height.** If $S$ is a valid skip list and $k$ is a key, then
+after erasing $k$ from $S$ the key $k$ has no stored tower height. -/
 public theorem heightOf_erase {α : Type u} {β : Type v} [LinearOrder α]
     {key : α} {list : SkipList α β} (valid : Valid list) :
     heightOf key (erase key list) = none := by
   rw [heightOf, erase_entries_filter valid]
   exact lookup_map_filter_eq_none key (fun entry => entry.height) list.entries
 
-/-- Erasure leaves the stored height of every distinct key unchanged. -/
+/-- **Erasure preserves the heights of other keys.** If $S$ is a valid skip list and $k$, $k'$
+are keys with $k' \ne k$, then the stored tower height of $k'$ in the skip list obtained by
+erasing $k$ from $S$ is the same as in $S$; in particular $k'$ has no stored height in one exactly
+when it has none in the other. -/
 public theorem heightOf_erase_of_ne {α : Type u} {β : Type v} [LinearOrder α]
     {key other : α} {list : SkipList α β} (valid : Valid list)
     (different : other ≠ key) :
@@ -248,7 +273,10 @@ private theorem level_filter_ne {α : Type u} {β : Type v} [DecidableEq α]
           simpa only [List.filter_cons, keep, visibleFalse, Bool.false_eq_true,
             ite_false, ite_true, List.map_cons] using ih
 
-/-- Every derived level removes the erased key and preserves survivor order and payloads. -/
+/-- **Erasure removes the key from every level.** If $S$ is a valid skip list, $k$ is a key and
+$i$ is a natural number, then the level-$i$ list of key-value pairs (levels numbered from $0$) of
+the skip list obtained by erasing $k$ from $S$ is the level-$i$ list of $S$ with every pair whose
+key equals $k$ removed, the remaining pairs kept in their order. -/
 public theorem level_erase {α : Type u} {β : Type v} [LinearOrder α]
     {key : α} {list : SkipList α β} (valid : Valid list) (index : Nat) :
     level index (erase key list) =

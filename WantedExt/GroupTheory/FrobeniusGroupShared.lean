@@ -26,10 +26,11 @@ public import Mathlib.Algebra.Group.End
 
 namespace MathlibExt.GroupTheory.FrobeniusGroupShared
 
-/-- `G` is a Frobenius group with kernel `F` and complement `H` (Kourovka 6.53): `G = F ⋊ H`
-(`F` normal, `F ∩ H = 1`, `F H = G`), `H ∩ Hᵍ = 1` for every `g ∉ H`, the non-trivial elements
-of `F` are exactly the elements lying in no conjugate of `H`, and `F` and `H` are
-non-trivial. -/
+/-- **Frobenius group with given kernel and complement.** For subgroups $F$ and $H$ of a group $G$,
+$G$ is a Frobenius group with kernel $F$ and complement $H$ (Kourovka 6.53) if $G = F \rtimes H$
+(that is, $F$ is normal in $G$, $F \cap H = 1$ and $FH = G$), $F \ne 1$, $H \ne 1$,
+$H \cap gHg^{-1} = 1$ for every $g \in G \setminus H$, and the non-trivial elements of $F$ are
+exactly the elements of $G$ that lie in no conjugate $gHg^{-1}$ of $H$. -/
 def IsFrobeniusGroup {G : Type*} [Group G] (F H : Subgroup G) : Prop :=
   F.Normal ∧ F ⊓ H = ⊥ ∧ F ⊔ H = ⊤ ∧ F ≠ ⊥ ∧ H ≠ ⊥ ∧
     (∀ g : G, g ∉ H → H ⊓ H.map (MulAut.conj g).toMonoidHom = ⊥) ∧

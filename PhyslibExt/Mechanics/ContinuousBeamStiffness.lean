@@ -99,10 +99,10 @@ def spanTwoGather : Matrix (Fin 4) (Fin 6) ℝ :=
     0, 0, 0, 0, 1, 0;
     0, 0, 0, 0, 0, 1]
 
-/-- Assembled two-span continuous-beam stiffness: the sum of
-the two element stiffnesses scattered by their gather matrices,
-so the middle-node displacement and slope are shared. Span `i`
-has flexural rigidity `EIi` and length `Li`. -/
+/-- Assembled two-span continuous-beam stiffness: the sum of the two element stiffnesses scattered
+by their gather matrices, so the middle-node displacement and slope are shared. Span `i` has
+flexural rigidity `EIi` and length `Li`. A span of length `0` contributes the zero matrix
+(`x / 0 = 0`). -/
 noncomputable def continuousBeamStiffness (EI1 L1 EI2 L2 : ℝ) :
     Matrix (Fin 6) (Fin 6) ℝ :=
   spanOneGatherᵀ * beamStiffness EI1 L1 * spanOneGather
@@ -495,8 +495,8 @@ private theorem continuousBeamStiffness_mulVec_rotation_of
 
 /-! ## C. Supported stiffness and rigid modes -/
 
-/-- The supported quadratic form in factored form: only
-rotational squares survive the support injection. -/
+/-- The supported quadratic form in factored form: only rotational squares survive the support
+injection. A span of length `0` contributes `0` (`x / 0 = 0`). -/
 theorem supportedStiffness_quad_form_factor (EI1 L1 EI2 L2 : ℝ)
     (w : Fin 3 → ℝ) :
     w ⬝ᵥ (supportedStiffness EI1 L1 EI2 L2 *ᵥ w)
@@ -541,9 +541,8 @@ theorem continuousBeamStiffness_mulVec_rotation
 
 /-! ## D. Two-span nodal exactness -/
 
-/-- Global nodal data `(v0, θ0, v1, θ1, v2, θ2)` read from
-the two span fields: span 1 at nodes 0 and 1, span 2 at
-node 2. -/
+/-- Global nodal data `(v0, θ0, v1, θ1, v2, θ2)` read from the two span fields: span 1 at nodes 0
+and 1, span 2 at node 2. Derivatives are `0` where the field is not differentiable. -/
 noncomputable def continuousBeamNodalData (L1 L2 : ℝ)
     (y1 y2 : ℝ → ℝ) : Fin 6 → ℝ :=
   ![y1 0, iteratedDeriv 1 y1 0, y1 L1, iteratedDeriv 1 y1 L1,
@@ -661,7 +660,11 @@ private lemma supportedStiffness_mulVec_nodalSlopes_of
     supportInjection_transpose_scatter, hmeq, add_comm]
 
 /-- The exact nodal slopes of two quartic span solutions
-solve the supported finite-element system. -/
+solve the supported finite-element system, for positive
+rigidities and lengths, quartic spans with `EI * y'''' = w` on
+each span, deflection and slope continuous at the middle node,
+zero deflection at the three supports, and `m` the nodal moments
+of the span end forces. -/
 theorem supportedStiffness_mulVec_nodalSlopes
     {EI1 L1 w1 EI2 L2 w2 : ℝ} (hEI1 : 0 < EI1) (hL1 : 0 < L1)
     (hEI2 : 0 < EI2) (hL2 : 0 < L2)
@@ -729,9 +732,13 @@ private lemma continuousBeam_nodal_exact_of
   rw [heq, hSu]
   exact hg
 
-/-- Main result: for the simply supported two-span beam,
-every solution of the supported finite-element system has
-the exact end data of both quartic spans. The deflection
+/-- Main result: for the simply supported two-span beam, with
+positive rigidities and lengths, quartic spans with
+`EI * y'''' = w` on each span, deflection and slope continuous at
+the middle node, zero deflection at the three supports, and `m`
+the nodal moments of the span end forces, every solution of the
+supported finite-element system has the exact end data of both
+quartic spans. The deflection
 entries are support zeros; the nontrivial content is the
 three rotations. This is exactness for the linear
 small-deflection model and asserts nothing about the

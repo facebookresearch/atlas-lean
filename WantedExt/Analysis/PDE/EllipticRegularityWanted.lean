@@ -9,7 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Analysis.SobolevMorreyWanted
+public import MathlibExt.Analysis.SobolevMorrey
+
+import Mathlib.Analysis.Calculus.ContDiff.Basic
+import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 
 /-!
 # Weak solutions of elliptic equations on domains: existence and interior regularity
@@ -28,7 +31,7 @@ The weak formulation tests against smooth compactly supported functions instead 
 `H¹₀(U)`; for `u ∈ H¹(U)`, bounded coefficients and `f ∈ L²(U)` both sides of the identity are
 continuous in the test function for the `H¹` norm, and `H¹₀(U)` is by definition the `H¹` closure
 of these test functions, so the two formulations agree (argued, not formalized). At `U = ℝⁿ`
-the notions agree with the whole-space ones of `WantedExt.Analysis.SobolevMorreyWanted`:
+the notions agree with the whole-space ones of `MathlibExt.Analysis.SobolevMorrey`:
 `isWeakPartialDerivOn_univ_iff` and `memH1On_univ_iff` prove it. The abstract Hilbert-space
 version of the existence theorem is proved in `MathlibExt.Analysis.PDE.WeakSolutions`.
 

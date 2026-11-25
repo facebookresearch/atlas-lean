@@ -16,8 +16,9 @@ namespace MathlibExt.NumberTheory.BreuschWanted.Internal
 
 open Nat
 
-/-- Extend a checked endpoint bound leftward across an interval, using monotonicity of
-the primorial and `10 ≤ 34`. -/
+/-- **Extending the primorial bound leftward across an interval.** Let $a \le m \le b$ be
+natural numbers, and write $n\#$ for the primorial of $n$ (the product of all primes
+$p \le n$). If $10^a \cdot b\# \le 34^a$, then $10^m \cdot m\# \le 34^m$. -/
 lemma theta34_of_interval {lo hi m : ℕ} (hlo : lo ≤ m) (hhi : m ≤ hi)
     (hend : 10 ^ lo * primorial hi ≤ 34 ^ lo) :
     10 ^ m * primorial m ≤ 34 ^ m := by

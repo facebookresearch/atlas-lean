@@ -47,31 +47,52 @@ namespace Cslib.Languages.LambdaCalculus.PCF
 open scoped CslibStlc
 open OmegaCompletePartialOrder
 
-/-- The domain denoted by a PCF type. -/
+/-- **Domain of a PCF type.** The ω-complete partial order denoted by a PCF type is defined by
+recursion on the type: the ground type denotes the flat domain of partial natural numbers, and a
+function type $A \to B$ denotes the ω-complete partial order of Scott-continuous maps from the
+domain of $A$ to the domain of $B$. -/
 @[reducible] noncomputable def Ty.dom : Ty → ωCPO.{0}
   | .base _ => ωCPO.of (Part ℕ)
   | .arr A B => ωCPO.of (Ty.dom A →𝒄 Ty.dom B)
 
-/-- Every domain of a PCF type has a least element. -/
+/-- **Least elements of PCF domains.** For every PCF type $A$, the domain denoted by $A$ has a
+least element, defined by recursion on $A$: at the ground type it is the undefined element of the
+flat domain of partial natural numbers, and at a function type $B \to C$ it is the continuous map
+that sends every argument to the least element of the domain denoted by $C$. -/
 @[instance_reducible] noncomputable def Ty.orderBot : (A : Ty) → OrderBot (Ty.dom A)
   | .base _ => inferInstanceAs (OrderBot (Part ℕ))
   | .arr A B => @ContinuousHom.instOrderBot (Ty.dom A) (Ty.dom B) _ _ (Ty.orderBot B)
 
 noncomputable instance (A : Ty) : OrderBot (Ty.dom A) := Ty.orderBot A
 
-/-- The semantic environment for a context. -/
+/-- **Semantic environments for PCF.** The ω-complete partial order of environments for a context
+$\Gamma$ (a list of PCF types) is defined by recursion on $\Gamma$: the empty context has the
+one-point order, and the environments for $\Gamma$ extended by a newest variable of type $A$ are
+the pairs $(\eta, a)$ of an environment $\eta$ for $\Gamma$ and an element $a$ of the domain of
+$A$, ordered componentwise. -/
 @[reducible] noncomputable def Env : List Ty → ωCPO.{0}
   | [] => ωCPO.of PUnit
   | A :: Γ => ωCPO.of (Env Γ × Ty.dom A)
 
 variable {Γ Δ : List Ty} {A B : Ty}
 
-/-- Variable lookup in an environment, as a continuous map. -/
+/-- **Variable lookup in a PCF environment.** For a variable $x$ of type $A$ in a context $\Gamma$,
+the lookup of $x$ is the Scott-continuous map from environments for $\Gamma$ to the domain of $A$
+defined by recursion on $x$: if $x$ is the newest variable, it sends an environment $(\eta, a)$ to
+$a$; if $x$ is the shift of a variable $y$ of the older context, it sends $(\eta, a)$ to the lookup
+of $y$ at $\eta$. -/
 noncomputable def Env.lookup : {Γ : List Ty} → {A : Ty} → Var Γ A → (Env Γ →𝒄 Ty.dom A)
   | _ :: _, _, .zero => ContinuousHom.ofFun Prod.snd
   | _ :: _, _, .succ x => (Env.lookup x).comp (ContinuousHom.ofFun Prod.fst)
 
-/-- The environment with the given value at every variable. -/
+/-- **Environment from a family of values.** Let $\Gamma$ be a context, that is, a list of PCF
+types, and suppose that for every type $A$ and every variable $x$ of type $A$ in $\Gamma$ we are
+given a value $f(x)$ in the domain denoted by $A$. The environment built from $f$ is the
+environment for $\Gamma$ defined by recursion on $\Gamma$: for the empty context it is the unique
+element of the one-point domain, and for the context obtained from $\Gamma'$ by adding a newest
+variable of type $B$ it is the pair of the environment built from $f$ on the older variables of
+$\Gamma'$ and the value of $f$ at the newest variable. So its entry at every variable $x$ is
+$f(x)$. -/
 noncomputable def Env.ofFun : {Γ : List Ty} → (∀ {A}, Var Γ A → Ty.dom A) → Env Γ
   | [], _ => PUnit.unit
   | _ :: _, f => (Env.ofFun fun x => f (.succ x), f .zero)
@@ -104,8 +125,11 @@ theorem Env.ofFun_lookup (η : Env Γ) : Env.ofFun (fun x => Env.lookup x η) = 
       change (Env.ofFun fun x => Env.lookup x η, a) = (η, a)
       rw [ih]
 
-/-- The strict zero test on `Part ℕ`, pointwise in an environment: `s₁` if the
-test is `0`, `s₂` if it is a successor, undefined if it is undefined. -/
+/-- **Strict zero test as a continuous map.** Let $\alpha$ be an ω-complete partial order and let
+$t$, $s_1$, $s_2$ be Scott-continuous maps from $\alpha$ to the flat domain of partial natural
+numbers. Their strict zero test is the Scott-continuous map sending $x \in \alpha$ to $s_1(x)$ if
+$t(x)$ is defined and equal to $0$, to $s_2(x)$ if $t(x)$ is defined and nonzero, and to the
+undefined value if $t(x)$ is undefined. -/
 noncomputable def ifzHom {α : Type*} [OmegaCompletePartialOrder α] (t s₁ s₂ : α →𝒄 Part ℕ) :
     α →𝒄 Part ℕ :=
   ContinuousHom.ofFun (fun x => (t x).bind fun n => if n = 0 then s₁ x else s₂ x)
@@ -117,8 +141,16 @@ noncomputable def ifzHom {α : Type*} [OmegaCompletePartialOrder α] (t s₁ s�
 
 namespace Tm
 
-/-- The denotation of a term: a continuous map from environments to the domain
-of its type. -/
+/-- **Denotation of PCF terms.** The denotation of a PCF term $t$ of type $A$ in a context $\Gamma$
+is the Scott-continuous map $[\![t]\!]$ from environments for $\Gamma$ to the domain of $A$,
+defined by recursion on $t$: a variable denotes its lookup map; $[\![\lambda t]\!]$ is the
+currying of $[\![t]\!]$; $[\![f\,a]\!]\eta = [\![f]\!]\eta\,([\![a]\!]\eta)$;
+$[\![\mathsf{zero}]\!]$ is constantly the defined value $0$; $[\![\mathsf{succ}\,t]\!]\eta$ and
+$[\![\mathsf{pred}\,t]\!]\eta$ apply $n \mapsto n + 1$ and the predecessor map (with $0 \mapsto 0$)
+to the partial natural number $[\![t]\!]\eta$, and are undefined where it is undefined;
+$[\![\mathsf{ifz}\,t\,s_1\,s_2]\!]$ is the strict zero test of $[\![t]\!]$, $[\![s_1]\!]$,
+$[\![s_2]\!]$; and $[\![\mathsf{fix}\,t]\!]\eta$ is the least fixed point of the continuous map
+$[\![t]\!]\eta$. -/
 noncomputable def denote : {Γ : List Ty} → {A : Ty} → Tm Γ A → (Env Γ →𝒄 Ty.dom A)
   | _, _, .var x => Env.lookup x
   | _, _, .lam body => ContinuousHom.curry (denote body)
@@ -151,7 +183,10 @@ theorem denote_ifz (t s₁ s₂ : Tm Γ .nat) :
 theorem denote_fix (t : Tm Γ (A ⇒ A)) : denote (.fix t) η = ContinuousHom.lfp (denote t η) :=
   rfl
 
-/-- The fixed-point equation: `fix t` denotes the same as `t (fix t)`. -/
+/-- **Fixed-point equation for the PCF denotation of fix.** For every PCF term $t$ of type
+$A \to A$ in a context $\Gamma$ and every environment $\eta$ for $\Gamma$, the denotation of
+$\mathsf{fix}\,t$ at $\eta$ equals the denotation of the application $t\,(\mathsf{fix}\,t)$ at
+$\eta$. -/
 theorem denote_fix_unfold (t : Tm Γ (A ⇒ A)) :
     denote (.fix t) η = denote (.app t (.fix t)) η :=
   (ContinuousHom.lfp_eq (denote t η)).symm
@@ -165,7 +200,11 @@ theorem denote_numeral (n : Nat) : denote (numeral n : Tm Γ .nat) η = Part.som
 
 end Equations
 
-/-- Denotation commutes with renaming. -/
+/-- **PCF denotation of a renamed term.** Let $\rho$ be a type-preserving renaming of the
+variables of a context $\Gamma$ into a context $\Delta$, let $t$ be a PCF term of type $A$ in
+context $\Gamma$, and let $\eta$ be an environment for $\Delta$. Then the denotation at $\eta$ of
+the renaming of $t$ along $\rho$ equals the denotation of $t$ at the environment for $\Gamma$ that
+gives each variable $x$ of $\Gamma$ the value of the variable $\rho(x)$ in $\eta$. -/
 theorem denote_rename (ρ : Ren Γ Δ) (t : Tm Γ A) (η : Env Δ) :
     denote (rename ρ t) η = denote t (Env.ofFun fun x => Env.lookup (ρ x) η) := by
   induction t generalizing Δ with
@@ -183,14 +222,23 @@ theorem denote_rename (ρ : Ren Γ Δ) (t : Tm Γ A) (η : Env Δ) :
   | ifz t s₁ s₂ iht ih₁ ih₂ => rw [rename_ifz, denote_ifz, denote_ifz, iht, ih₁, ih₂]
   | fix t ih => rw [rename_fix, denote_fix, denote_fix, ih]
 
-/-- Weakening does not change the denotation. -/
+/-- **Weakening preserves the PCF denotation.** Let $t$ be a PCF term of type $A$ in a context
+$\Gamma$, let $\eta$ be an environment for $\Gamma$, and let $b$ be an element of the domain of a
+type $B$. The denotation of the weakening of $t$ (the same term in the context $\Gamma$ extended by
+a newest variable of type $B$) at the extended environment $(\eta, b)$ equals the denotation of $t$
+at $\eta$. -/
 theorem denote_weaken (t : Tm Γ A) (η : Env Γ) (b : Ty.dom B) :
     denote (weaken (B := B) t) ((η, b) : Env (B :: Γ)) = denote t η := by
   rw [weaken, denote_rename]
   congr 1
   exact (Env.ofFun_congr fun _ => rfl).trans (Env.ofFun_lookup η)
 
-/-- Denotation commutes with substitution. -/
+/-- **PCF denotation of a substituted term.** Let $\sigma$ be a type-preserving substitution
+assigning to each variable of a context $\Gamma$ a PCF term in a context $\Delta$, let $t$ be a
+term of type $A$ in context $\Gamma$, and let $\eta$ be an environment for $\Delta$. Then the
+denotation at $\eta$ of the term obtained by applying $\sigma$ to $t$ equals the denotation of $t$
+at the environment for $\Gamma$ that gives each variable $x$ of $\Gamma$ the value at $\eta$ of the
+denotation of $\sigma(x)$. -/
 theorem denote_subst (σ : Sub Γ Δ) (t : Tm Γ A) (η : Env Δ) :
     denote (subst σ t) η = denote t (Env.ofFun fun x => denote (σ x) η) := by
   induction t generalizing Δ with
@@ -209,7 +257,12 @@ theorem denote_subst (σ : Sub Γ Δ) (t : Tm Γ A) (η : Env Δ) :
   | ifz t s₁ s₂ iht ih₁ ih₂ => rw [subst_ifz, denote_ifz, denote_ifz, iht, ih₁, ih₂]
   | fix t ih => rw [subst_fix, denote_fix, denote_fix, ih]
 
-/-- Substituting for the newest variable is environment extension. -/
+/-- **PCF denotation of instantiation.** Let $t$ be a PCF term of type $B$ in the context $\Gamma$
+extended by a newest variable of type $A$, let $a$ be a term of type $A$ in context $\Gamma$, and
+let $\eta$ be an environment for $\Gamma$. Writing $[\![s]\!]\eta$ for the denotation of a term $s$
+at $\eta$, the denotation at $\eta$ of the term obtained from $t$ by substituting $a$ for the newest
+variable equals $[\![t]\!](\eta, [\![a]\!]\eta)$, the denotation of $t$ at the extension of $\eta$
+that gives the newest variable the value $[\![a]\!]\eta$. -/
 theorem denote_instantiate (body : Tm (A :: Γ) B) (a : Tm Γ A) (η : Env Γ) :
     denote (body.instantiate a) η = denote body ((η, denote a η) : Env (A :: Γ)) := by
   rw [instantiate, denote_subst]

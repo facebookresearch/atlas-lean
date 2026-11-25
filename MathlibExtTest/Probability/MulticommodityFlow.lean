@@ -22,7 +22,7 @@ The two-state chain with all transition probabilities `1/2` mixes in one step (`
 equal to `π` for `t ≥ 1`), so the hypotheses of Lemma 7 hold with `τ = 1`; its conclusion
 `Pᵗ(x, y) = 1/2 ≥ 1/16` is checked. The same hypotheses are those of the wanted Theorem 8
 (`WantedExt.Probability.MulticommodityFlowWanted`), so they are jointly satisfiable; the direct
-flow `γ x y = [y]` has load `1/4 ≤ 16 · 1 · Q(0, 1) = 4`. The hypotheses of the wanted chain
+flow `γ x y = [y]` has load `1/4 ≤ 16 · 1 · Q(0, 1) = 4`. The hypotheses of the chain
 Cheeger inequality hold on the same chain with `Φ = 1/2`.
 -/
 
@@ -52,7 +52,7 @@ theorem P₂_rev : ∀ x y, unif x * P₂ x y = unif y * P₂ y x := by
   intro x y; norm_num [P₂, unif]
 
 theorem P₂_mul_self : P₂ * P₂ = P₂ := by
-  ext i j; norm_num [P₂, mul_apply, Fin.sum_univ_two]
+  ext i j; norm_num [P₂, Matrix.mul_apply, Fin.sum_univ_two]
 
 theorem P₂_pow : ∀ t, 1 ≤ t → P₂ ^ t = P₂ := by
   intro t ht
@@ -137,7 +137,7 @@ example : ∑ x ∈ ({0} : Finset (Fin 2)), unif x ≤
         norm_num [MulticommodityFlow.load, directFlow, pathEdges, unif, P₂, Fin.sum_univ_two])
     _ (by norm_num [unif])
 
-/-- The conductance hypothesis of the wanted chain Cheeger inequality holds with `Φ = 1/2`. -/
+/-- The conductance hypothesis of the chain Cheeger inequality holds with `Φ = 1/2`. -/
 example : ∀ A : Finset (Fin 2), 0 < ∑ x ∈ A, unif x → ∑ x ∈ A, unif x ≤ 1 / 2 →
     1 / 2 * ∑ x ∈ A, unif x ≤ ∑ u ∈ A, ∑ v ∈ Aᶜ, unif u * P₂ u v := by
   intro A
