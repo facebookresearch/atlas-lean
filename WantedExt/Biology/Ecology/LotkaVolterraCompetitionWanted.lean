@@ -86,46 +86,50 @@ def IsSolution (z : ℝ → ℝ × ℝ) : Prop := ∀ t : ℝ, 0 ≤ t → HasDe
 noncomputable def interiorEq : ℝ × ℝ :=
   ((p.K₁ - p.α₁₂ * p.K₂) / (1 - p.α₁₂ * p.α₂₁), (p.K₂ - p.α₂₁ * p.K₁) / (1 - p.α₁₂ * p.α₂₁))
 
-/-- **Stable coexistence** (case (i)): for positive parameters with `α₁₂ < K₁ / K₂` and
+/-- **Stable coexistence**: for positive parameters with `α₁₂ < K₁ / K₂` and
 `α₂₁ < K₂ / K₁`, the interior equilibrium has both coordinates positive, and every solution on
 `[0, ∞)` with both initial densities positive converges to it.
 
 Source: S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (NTHU),
-case (i) (global convergence over all interior orbits derived from the planar phase analysis). -/
+case (iii) / Fig. 12.3 (global convergence over all interior orbits derived from the planar phase
+analysis). -/
 public theorem_wanted tendsto_interiorEq (h₁ : p.α₁₂ < p.K₁ / p.K₂) (h₂ : p.α₂₁ < p.K₂ / p.K₁) :
     0 < p.interiorEq.1 ∧ 0 < p.interiorEq.2 ∧
       ∀ z : ℝ → ℝ × ℝ, p.IsSolution z → 0 < (z 0).1 → 0 < (z 0).2 →
         Tendsto z atTop (𝓝 p.interiorEq)
 
-/-- **Exclusion of species `2`** (case (iii)): for positive parameters with `α₁₂ < K₁ / K₂` and
-`α₂₁ > K₂ / K₁`, every solution on `[0, ∞)` with both initial densities positive converges to
-`(K₁, 0)`.
+/-- **Exclusion of species `2`** (first species wins): for positive parameters with
+`α₁₂ < K₁ / K₂` and `α₂₁ > K₂ / K₁`, every solution on `[0, ∞)` with both initial densities
+positive converges to `(K₁, 0)`.
 
 Source: S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (NTHU),
-case (iii) (global convergence over all interior orbits derived from the planar phase analysis). -/
+case (ii) / Fig. 12.2 (global convergence over all interior orbits derived from the planar phase
+analysis). -/
 public theorem_wanted tendsto_first (h₁ : p.α₁₂ < p.K₁ / p.K₂) (h₂ : p.K₂ / p.K₁ < p.α₂₁)
     (z : ℝ → ℝ × ℝ) (hz : p.IsSolution z) (h₀₁ : 0 < (z 0).1) (h₀₂ : 0 < (z 0).2) :
     Tendsto z atTop (𝓝 (p.K₁, 0))
 
-/-- **Exclusion of species `1`** (case (iv)): for positive parameters with `α₁₂ > K₁ / K₂` and
-`α₂₁ < K₂ / K₁`, every solution on `[0, ∞)` with both initial densities positive converges to
-`(0, K₂)`.
+/-- **Exclusion of species `1`** (second species wins): for positive parameters with
+`α₁₂ > K₁ / K₂` and `α₂₁ < K₂ / K₁`, every solution on `[0, ∞)` with both initial densities
+positive converges to `(0, K₂)`.
 
 Source: S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (NTHU),
-case (iv) (global convergence over all interior orbits derived from the planar phase analysis). -/
+case (i) / Fig. 12.1 (global convergence over all interior orbits derived from the planar phase
+analysis). -/
 public theorem_wanted tendsto_second (h₁ : p.K₁ / p.K₂ < p.α₁₂) (h₂ : p.α₂₁ < p.K₂ / p.K₁)
     (z : ℝ → ℝ × ℝ) (hz : p.IsSolution z) (h₀₁ : 0 < (z 0).1) (h₀₂ : 0 < (z 0).2) :
     Tendsto z atTop (𝓝 (0, p.K₂))
 
-/-- **Bistability** (case (ii)): for positive parameters with `α₁₂ > K₁ / K₂` and
-`α₂₁ > K₂ / K₁`, the interior equilibrium has both coordinates positive; every solution on
-`[0, ∞)` with both initial densities positive converges to `(K₁, 0)`, to `(0, K₂)` or to the
-interior equilibrium; each of `(K₁, 0)` and `(0, K₂)` is the limit of some such solution; and the
-interior equilibrium is Lyapunov unstable: there is `ε > 0` such that for every `δ > 0` some such
-solution starts within `δ` of it and later leaves its `ε`-neighbourhood.
+/-- **Bistability**: for positive parameters with `α₁₂ > K₁ / K₂` and `α₂₁ > K₂ / K₁`, the
+interior equilibrium has both coordinates positive; every solution on `[0, ∞)` with both initial
+densities positive converges to `(K₁, 0)`, to `(0, K₂)` or to the interior equilibrium; each of
+`(K₁, 0)` and `(0, K₂)` is the limit of some such solution; and the interior equilibrium is
+Lyapunov unstable: there is `ε > 0` such that for every `δ > 0` some such solution starts within
+`δ` of it and later leaves its `ε`-neighbourhood.
 
 Source: S.-B. Hsu, lecture notes, §3.12 "Competition models, Mutualism or Symbiosis" (NTHU),
-case (ii) (Lyapunov instability and trichotomy derived from the planar phase analysis). -/
+case (iv) / Fig. 12.4 (Lyapunov instability and trichotomy derived from the planar phase
+analysis). -/
 public theorem_wanted bistable (h₁ : p.K₁ / p.K₂ < p.α₁₂) (h₂ : p.K₂ / p.K₁ < p.α₂₁) :
     0 < p.interiorEq.1 ∧ 0 < p.interiorEq.2 ∧
       (∀ z : ℝ → ℝ × ℝ, p.IsSolution z → 0 < (z 0).1 → 0 < (z 0).2 →
