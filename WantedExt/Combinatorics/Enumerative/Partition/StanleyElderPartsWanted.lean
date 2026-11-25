@@ -33,20 +33,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Elder's theorem.** Let $n$ and $k$ be natural numbers with $k \ge 1$. The total number of
-times the part $k$ occurs, counted with multiplicity, over all partitions of $n$ equals the sum,
-over all partitions $\lambda$ of $n$, of the number of distinct parts of $\lambda$ that occur at
-least $k$ times in $\lambda$.
-
-The hypothesis $k \ge 1$ is needed: for $k = 0$ and $n = 1$ the left side is $0$ and the right
-side is $1$.
-
-Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
-INTEGERS 25 (2025), Article A94, Theorem 2 (Elder's theorem). -/
-public theorem_wanted sum_count_eq_sum_card_parts_count_ge (n k : ℕ) (hk : 1 ≤ k) :
-    ∑ p : Nat.Partition n, p.parts.count k =
-      ∑ p : Nat.Partition n, (p.parts.toFinset.filter fun i => k ≤ p.parts.count i).card
-
 /-- **Total number of parts of $n$-color partitions via the divisor sum.** For $r \ge 0$ let
 $C(r)$ be the number of $n$-color partitions of $r$, and let $T_o(r)$ (resp. $T_e(r)$) be the
 total number of parts, counted with multiplicity, over the $n$-color partitions of $r$ having an
