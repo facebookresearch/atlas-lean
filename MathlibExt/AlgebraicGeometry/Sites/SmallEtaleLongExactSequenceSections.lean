@@ -60,6 +60,13 @@ section GenericSections
 
 universe c v s e
 
+private theorem addCommGrp_comp_zero_apply
+    {A B D : AddCommGrpCat.{e}} (g : A ⟶ B) (δ : B ⟶ D)
+    (h : g ≫ δ = 0) (x : A) : δ.hom (g.hom x) = 0 := by
+  have h₀ := congrArg (fun f : A ⟶ D => f.hom x) h
+  simpa only [AddCommGrpCat.hom_comp, AddMonoidHom.comp_apply,
+    AddCommGrpCat.hom_zero, AddMonoidHom.zero_apply] using h₀
+
 private theorem sectionBoundary_zero_iff_atTerminal
     {C : Type c} [Category.{v} C] {J : GrothendieckTopology C}
     [HasSheafify J AddCommGrpCat.{s}] [HasExt.{e} (Sheaf J AddCommGrpCat.{s})]
@@ -80,7 +87,7 @@ private theorem sectionBoundary_zero_iff_atTerminal
   · rintro ⟨b, hb⟩
     let x : Sheaf.H S.X₂ 0 := e₂.symm b
     have hZero : g ≫ δ = 0 := (Sheaf.H.longSequence_exact hS 0 1 rfl).zero 1
-    have hδ : δ.hom (g.hom x) = 0 := ConcreteCategory.congr_hom hZero x
+    have hδ : δ.hom (g.hom x) = 0 := addCommGrp_comp_zero_apply g δ hZero x
     have hg : g.hom x = e₃.symm c :=
       (Sheaf.H.equiv₀_symm_naturality (f := S.g) (hT := hT) b).trans
         (congrArg e₃.symm hb)

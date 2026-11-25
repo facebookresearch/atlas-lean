@@ -407,7 +407,7 @@ private lemma linearHomCochainPair_one_left_apply
         (((linearHomCochainGradedPairing R (ComonObj.comul (X := K))
           (MonObj.mul (X := A))).pair 0 q).hom
           (linearHomCochainOne R K A ⊗ₜ[R] φ)) = φ := by
-  dsimp only [linearHomCochainComplexFunctor_obj_X] at φ
+  dsimp only [linearHomCochainComplexFunctor_obj_X] at φ ⊢
   have hcoord : (λ_ K).inv.f q = (leftUnitor' K).inv q := rfl
   have hinv : (λ_ K).inv.f q =
       (λ_ (K.X q)).inv ≫
@@ -549,7 +549,7 @@ private lemma linearHomCochainPair_one_right_apply
         (((linearHomCochainGradedPairing R (ComonObj.comul (X := K))
           (MonObj.mul (X := A))).pair p 0).hom
           (φ ⊗ₜ[R] linearHomCochainOne R K A)) = φ := by
-  dsimp only [linearHomCochainComplexFunctor_obj_X] at φ
+  dsimp only [linearHomCochainComplexFunctor_obj_X] at φ ⊢
   have hcoord : (ρ_ K).inv.f p = (rightUnitor' K).inv p := rfl
   have hinv : (ρ_ K).inv.f p =
       (ρ_ (K.X p)).inv ≫
@@ -663,7 +663,9 @@ private lemma linearHomCochainPair_one_right_apply
           congrArg (fun f : K.X p ⟶ K.X p => f ≫ φ) hdegree
   rw [linearHomCochainGradedPairing_pair]
   erw [linearHomCochainPair_tmul]
-  erw [linearHomCochainComplex_XIsoOfEq_hom_apply]
+  have hsum : (K.XIsoOfEq (Nat.add_zero p).symm).hom = 𝟙 (K.X p) := by
+    rfl
+  rw [hsum, Category.id_comp] at hcore
   simpa only [linearHomCochainOne, linearHomPairingDesc, Category.assoc] using hcore
 
 private lemma linearHomCochainPair_one_right_smul
