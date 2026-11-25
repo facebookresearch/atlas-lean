@@ -1,0 +1,3 @@
+# Torus even subgraph of a decorated even subgraph
+
+For $L > 2$ and an even subgraph $D$ of the [decorated torus graph](../trivalent-decoration-of-the-torus/ons-dec-graph.md) $\mathcal{D}_L$ (vertices the darts of $T_L = (\mathbb{Z}/L\mathbb{Z})^2$; external edges $\{d, \bar d\}$ joining each dart to its reverse, and chain edges $c_{p,i} = \{(p, i), (p, i + 1)\}$, $i \in \{0, 1, 2\}$, joining the four darts at each site $p$), the torus even subgraph $\pi(D)$ is the even subgraph of $T_L$ corresponding to $D$ under the [decoration bijection](../trivalent-decoration-of-the-torus/ons-decoration-equiv.md) between even subgraphs of $T_L$ and of $\mathcal{D}_L$.

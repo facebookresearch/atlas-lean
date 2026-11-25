@@ -1,0 +1,3 @@
+# Wired $q = 2$ infinite-volume mass function on a box
+
+For $d, N \in \mathbb{N}$ and $t \in \mathbb{R}$, the wired mass function assigns to a configuration $\omega$ of $\Lambda_N = \{-N, \dots, N\}^d$ the probability, under the [wired infinite-volume random-cluster measure](../infinite-volume-random-cluster-measures/finite-and-infinite-volume-fk-measures-on-d/wired-infinite-volume.md) $\phi^1_{\sigma(t),2}$ on $\mathbb{Z}^d$, that the restriction to the pairs of vertices of $\Lambda_N$ equals $\omega$; here $\sigma(t) = e^t/(1 + e^t)$ is the [logistic function](../convexity-of-the-free-energy-and-edge-densities/fsc-logistic.md).

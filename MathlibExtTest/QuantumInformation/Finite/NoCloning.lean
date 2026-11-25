@@ -42,4 +42,23 @@ example {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   rw [hself, norm_one]
   norm_num
 
+/-- The orthonormal-pair hypothesis of `no_cloning_linear` holds on a qubit `ℂ²`, so the
+linear no-cloning theorem is not vacuous there. -/
+example : ‖(EuclideanSpace.single 0 1 : EuclideanSpace ℂ (Fin 2))‖ = 1 ∧
+    ‖(EuclideanSpace.single 1 1 : EuclideanSpace ℂ (Fin 2))‖ = 1 ∧
+    ⟪(EuclideanSpace.single 0 1 : EuclideanSpace ℂ (Fin 2)),
+      (EuclideanSpace.single 1 1 : EuclideanSpace ℂ (Fin 2))⟫_ℂ = 0 := by
+  refine ⟨by simp, by simp, ?_⟩
+  rw [EuclideanSpace.inner_single_left]
+  simp
+
+/-- On a qubit, no linear map clones every unit vector. -/
+example (b : EuclideanSpace ℂ (Fin 2)) :
+    ¬ ∃ U : (EuclideanSpace ℂ (Fin 2) ⊗[ℂ] EuclideanSpace ℂ (Fin 2)) →ₗ[ℂ]
+        (EuclideanSpace ℂ (Fin 2) ⊗[ℂ] EuclideanSpace ℂ (Fin 2)),
+      ∀ ψ : EuclideanSpace ℂ (Fin 2), ‖ψ‖ = 1 → U (ψ ⊗ₜ[ℂ] b) = ψ ⊗ₜ[ℂ] ψ :=
+  MathlibExt.QuantumInformation.Finite.NoCloning.no_cloning_linear
+    (EuclideanSpace.single 0 1) (EuclideanSpace.single 1 1) b (by simp) (by simp)
+    (by rw [EuclideanSpace.inner_single_left]; simp)
+
 end NoCloningTest

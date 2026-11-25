@@ -8,11 +8,11 @@ This is Lemma 2.4 of Gowers (2010) and identity (2.4) of Green and Tao. Both nor
 
 ## Informally uses
 
-- Plancherel formula on a finite abelian group: Gowers's proof writes $\|f\|_{U^2}^4 = \langle f * f, f * f \rangle$ and applies Parseval's identity.
+- [Plancherel formula on a finite abelian group](../../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-transform-on-finite-abelian-groups/dft-plancherel.md): Gowers's proof writes $\|f\|_{U^2}^4 = \langle f * f, f * f \rangle$ and applies Parseval's identity.
 
 ## Background
 
-- Plancherel formula for finite groups: the non-abelian Fourier transform, whose Plancherel formula reduces to the abelian one when every irreducible representation is a character.
+- [Plancherel formula for finite groups](../../../../RepresentationTheory/finite-group-representations/fourier-transform-on-finite-groups/plancherel.md): the non-abelian Fourier transform, whose Plancherel formula reduces to the abelian one when every irreducible representation is a character.
 
 ## Sources
 

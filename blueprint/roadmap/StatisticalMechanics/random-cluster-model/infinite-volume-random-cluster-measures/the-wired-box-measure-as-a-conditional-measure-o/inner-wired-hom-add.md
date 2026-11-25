@@ -1,0 +1,3 @@
+# Inclusion of the wired inner graph into the extra-wired graph
+
+Let $d, n \in \mathbb{N}$, $\Lambda_m = \{-m, \dots, m\}^d$, $\omega$ a configuration of $\Lambda_n$, and $D$ a graph on $\Lambda_{n+1}$ no edge of which has an endpoint in $\Lambda_n$. The inclusion $\Lambda_n \subseteq \Lambda_{n+1}$ is a graph homomorphism from the wired graph $H_\omega$ of $\Lambda_n$ (the edges of $\Lambda_n$ open in $\omega$ together with all pairs of distinct vertices of $\partial\Lambda_n = \Lambda_n \setminus \Lambda_{n-1}$) into the [extra-wired graph](cross-wired-graph-add.md) (the edges of $\tilde H_\omega$ together with those of $D$).

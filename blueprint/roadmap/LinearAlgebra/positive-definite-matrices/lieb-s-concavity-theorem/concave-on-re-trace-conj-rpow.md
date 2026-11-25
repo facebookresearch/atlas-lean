@@ -10,7 +10,7 @@ Only one matrix varies here; the joint concavity in two matrices, which is Lieb'
 ## Background
 
 - [Lieb's concavity theorem, joint form](lieb-concavity-trace-rpow.md): the two-matrix statement, of which this is the one-variable shadow.
-- The square is operator convex: the endpoint $p = 2$ of the Loewner–Heinz family, on the convex side.
+- [The square is operator convex](../../../Analysis/operator-algebras/operator-monotone-and-operator-convex-functions/sq-convex-comb-le.md): the endpoint $p = 2$ of the Loewner–Heinz family, on the convex side.
 
 ## Sources
 

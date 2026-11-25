@@ -20,7 +20,7 @@ pair partitions (Proposition 2.1.11), each contributing $1$ in the limit.
 
 ## Informally uses
 
-- Noncrossing pair partitions of $\{1, \dots, 2k\}$ are counted by the Catalan number $C_k$:
+- [Noncrossing pair partitions of $\{1, \dots, 2k\}$ are counted by the Catalan number $C_k$](../../../Combinatorics/set-partitions/noncrossing-partitions/noncrossing-pair-partitions-and-the-catalan-count/card-noncrossing-pair-partition-two-mul.md):
   the number of equivalence classes of Wigner words.
 - [The moments of the semicircle law count noncrossing pair partitions](integral-pow-semicircle-real-eq-card-non.md):
   identifies the count with the semicircle moments.

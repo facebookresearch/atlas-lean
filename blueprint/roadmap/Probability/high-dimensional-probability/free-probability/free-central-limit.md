@@ -22,7 +22,7 @@ space.
   the cumulants of $X_N$.
 - [Moment-cumulant formula](moment-eq-sum-noncrossing-prod-free-cumu.md): to return from the limit
   cumulants to the limit moments.
-- Counting noncrossing pair partitions:
+- [Counting noncrossing pair partitions](../../../Combinatorics/set-partitions/noncrossing-partitions/noncrossing-pair-partitions-and-the-catalan-count/card-noncrossing-pair-partition.md):
   the limit moments.
 
 ## Sources

@@ -90,7 +90,9 @@
 - [The last entry of FFT linear convolution is zero (MIT/CLRS sign)](fft-linear-std-add-char-one-last.md)
 - [Inverse FFT after FFT at the positive root is the identity](ifft-fft-std-add-char-one.md)
 - [FFT after inverse FFT at the positive root is the identity](fft-ifft-std-add-char-one.md)
+- [Overlap-add block convolution with a finite FFT size](overlap-add-block-convolution-with-a-finite-fft/README.md)
 
 ## Related topics
 
-- Quantum Fourier transform: the normalised discrete Fourier transform acting on quantum amplitudes, which Shor implements for $q = 2^l$ by a circuit of Hadamard and controlled phase gates.
+- [Quantum Fourier transform](../../../QuantumInformation/quantum-operations/quantum-fourier-transform/README.md): the normalised discrete Fourier transform acting on quantum amplitudes, which Shor implements for $q = 2^l$ by a circuit of Hadamard and controlled phase gates.
+- [Polynomial multiplication by evaluation and interpolation](polynomial-multiplication-by-evaluation-and.md)

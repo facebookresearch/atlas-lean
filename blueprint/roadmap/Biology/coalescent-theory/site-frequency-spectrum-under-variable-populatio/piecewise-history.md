@@ -1,0 +1,3 @@
+# Piecewise-constant population-size history
+
+For a natural number $K$, a piecewise-constant population-size history with $K$ pieces consists of real numbers $\nu_j$ (sizes) and $s_j$ (start times), $j \in \mathbb{N}$, such that $\nu_j > 0$ for every $j < K$, $s_0 = 0$, and $s_j < s_{j+1}$ whenever $j + 1 < K$. Piece $j < K$ starts at time $s_j$ before the present and has relative size $\nu_j$; the last piece extends to infinity. Adjacent pieces may have equal sizes, so this also covers histories with fewer distinct pieces; the values for $j \ge K$ are unused, and for $K = 0$ the [size function](size-fn.md) is $0$.

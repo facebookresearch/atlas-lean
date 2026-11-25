@@ -33,8 +33,9 @@ namespace Algebra
 
 variable (K L : Type*) [Field K] [Field L] [Algebra K L] [FiniteDimensional K L]
 
-/-- A finite extension is separable iff it is `AdjoinRoot` of a monic separable
-irreducible polynomial. -/
+/-- **Finite separable extensions are quotients by separable irreducible polynomials.** Let $L/K$
+be a finite field extension. Then $L/K$ is separable if and only if there is a monic, irreducible,
+separable polynomial $f \in K[X]$ such that $L$ is isomorphic as a $K$-algebra to $K[X]/(f)$. -/
 theorem isSeparable_iff_exists_monic_irreducible_separable :
     Algebra.IsSeparable K L ↔
       ∃ f : K[X], f.Monic ∧ Irreducible f ∧ f.Separable ∧

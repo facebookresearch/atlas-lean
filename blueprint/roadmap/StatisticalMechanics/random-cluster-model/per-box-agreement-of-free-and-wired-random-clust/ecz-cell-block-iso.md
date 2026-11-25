@@ -1,0 +1,3 @@
+# Graph isomorphism between a sub-box and a tiling cell
+
+Let $d, m, n \in \mathbb{N}$, $T = \lfloor (2n+1)/(2m+1) \rfloor$ is the [number of cells per side](ecz-t.md), and $c \in \{0, \dots, T-1\}^d$. The translation $y \mapsto y + z_c$ is a graph isomorphism from the nearest-neighbour graph on $\Lambda_m$ onto the graph induced by the nearest-neighbour graph of $\Lambda_n$ on the vertices whose tag is $c$; here $z_c$ is the [cell centre](ecz-center.md) with coordinates $c_i(2m+1) + m - n$, the tag is the [cell tag](ecz-van-hove-tag.md) of a vertex $x \in \Lambda_n$ (the index $c \in \{0, \dots, T-1\}^d$ with $c_i = \lfloor \max(x_i + n, 0)/(2m+1) \rfloor$ when all these indices are below $T$, and no tag otherwise), and $\Lambda_k = \{-k, \dots, k\}^d$.

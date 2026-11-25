@@ -1,0 +1,3 @@
+# Edwards–Sokal weight with fixed boundary color
+
+Let $G = (V, E)$ be a finite simple graph and $\partial \subseteq V$ a set of boundary vertices, $q \in \mathbb{N}$, $b \in \{0, \dots, q - 1\}$ and $p \in \mathbb{R}$. For a coloring $\sigma : V \to \{0, \dots, q - 1\}$ and an assignment $\omega$ of open/closed states to the unordered pairs of vertices, the wired Edwards–Sokal weight is $W_p(\sigma, \omega)$ if $\sigma_x = b$ for every $x \in \partial$, and $0$ otherwise, where $W_p$ is the [Edwards–Sokal weight](../the-edwards-sokal-coupling/es-weight.md) $W_p(\sigma, \omega) = \prod_{e \in E} f_e$, where for $e = \{x, y\}$ the factor $f_e$ is $p\,\mathbf{1}[\sigma_x = \sigma_y]$ if $e$ is open in $\omega$ and $1 - p$ if $e$ is closed.

@@ -9,9 +9,11 @@ Coron proves the single-input case through the controller (companion) form of $(
 - [Pole-shifting theorem](exists-charpoly-add-comp-eq.md)
 - [Controllable linear systems have a Hurwitz closed loop](exists-is-hurwitz-add-mul.md)
 - [Exponential stabilisation of controllable linear systems](exists-norm-exp-add-mul-le.md)
+- [Hautus test for stabilizability and detectability](hautus-test-for-stabilizability-and-detectability.md)
+- [Hautus test for stabilizability and detectability, discrete time](hautus-test-for-stabilizability-and-detectability-discrete-time.md)
 
 ## Related topics
 
 - [Controllability of linear systems](../controllability-of-linear-systems/README.md): the Kalman rank condition is the hypothesis of pole placement.
 - [Lyapunov's indirect method](../../ordinary-differential-equations/lyapunov-s-indirect-method/README.md): a matrix with all eigenvalues in the open left half-plane generates an exponentially stable flow, and stability of the linearisation gives local stability of a nonlinear equilibrium.
-- Linear quadratic regulator: the other classical way to compute a stabilising linear feedback, by optimising a quadratic cost through the Riccati equation.
+- [Linear quadratic regulator](../../../ComputerScience/machine-learning/reinforcement-learning/linear-quadratic-regulator/README.md): the other classical way to compute a stabilising linear feedback, by optimising a quadratic cost through the Riccati equation.

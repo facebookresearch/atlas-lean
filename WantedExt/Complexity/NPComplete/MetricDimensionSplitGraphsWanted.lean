@@ -18,7 +18,7 @@ easy cases", Algorithmica 72 (2015), 1130-1171, doi:10.1007/s00453-014-9896-2.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MetricDimensionWanted

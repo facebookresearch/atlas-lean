@@ -77,21 +77,34 @@ namespace Cslib.Decidability
 
 variable {α : Type*} [Primcodable α] {p : α → Prop}
 
-/-- `p` is **decidable by a multi-tape machine**: for some number `k` of work tapes and
-some finite-state machine `tm : MultiTapeTM k Bool State`, `tm` computes `[b]` on the
-input word `encodeNat (encode a)`, with `b = true` exactly when `p a`. -/
+/-- **Decidability by multi-tape machines.** Let $\alpha$ be a primcodable type (it has an
+encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is primitive recursive). A
+predicate $p$ on $\alpha$ is decidable by a multi-tape machine when there are a number $k$ and a
+deterministic Turing machine $M$ with finitely many states, a read-only input tape, $k$ work tapes
+and a write-only output tape, all over the Boolean alphabet, such that for every $a \in \alpha$
+there is a Boolean $b$ for which $M$ computes the one-letter word $b$ on the binary word of
+$\mathrm{encode}(a)$ (least significant bit first), and $b$ is true exactly when $p(a)$ holds.
+Here $M$ computes a word $v$ on an input word $w$ when its run started on $w$ halts with $v$ on
+its output tape. -/
 def MultiTapeDecidable (p : α → Prop) : Prop :=
   ∃ (k : ℕ) (State : Type) (_ : Finite State) (tm : MultiTapeTM k Bool State),
     ∀ a, ∃ b : Bool, tm.Computes (encodeNat (encode a)) [b] ∧ (b = true ↔ p a)
 
-/-- `p` is **recognizable by a multi-tape machine**: for some number `k` of work tapes
-and some finite-state machine `tm : MultiTapeTM k Bool State`, `tm` halts (computes
-some output) on the input word `encodeNat (encode a)` exactly when `p a`. -/
+/-- **Recognizability by multi-tape machines.** Let $\alpha$ be a primcodable type (it has an
+encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is primitive recursive). A
+predicate $p$ on $\alpha$ is recognizable by a multi-tape machine when there are a number $k$ and
+a deterministic Turing machine $M$ with finitely many states, a read-only input tape, $k$ work
+tapes and a write-only output tape, all over the Boolean alphabet, such that for every
+$a \in \alpha$, the run of $M$ started on the binary word of $\mathrm{encode}(a)$ (least
+significant bit first) halts if and only if $p(a)$ holds. -/
 def MultiTapeRecognizable (p : α → Prop) : Prop :=
   ∃ (k : ℕ) (State : Type) (_ : Finite State) (tm : MultiTapeTM k Bool State),
     ∀ a, (∃ o, tm.Computes (encodeNat (encode a)) o) ↔ p a
 
-/-- `p` is **co-recognizable by a multi-tape machine**: its complement is recognizable. -/
+/-- **Co-recognizability by multi-tape machines.** Let $\alpha$ be a primcodable type (it has an
+encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is primitive recursive). A
+predicate $p$ on $\alpha$ is co-recognizable by a multi-tape machine when its complement
+$\neg p$ is recognizable by a multi-tape machine. -/
 def MultiTapeCoRecognizable (p : α → Prop) : Prop :=
   MultiTapeRecognizable fun a ↦ ¬p a
 
@@ -144,9 +157,11 @@ private theorem computablePred_evalSteps_isSome {k : ℕ} (c : Cslib.Turing.Mult
   · funext p
     simp
 
-/-- **A predicate recognizable by a multi-tape machine is r.e.** The code of the
-machine gives a clocked evaluator; the predicate holds iff some clock makes the
-evaluator defined. -/
+/-- **A predicate recognizable by a multi-tape machine is recursively enumerable.** Let $\alpha$
+be a primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding
+is primitive recursive). If a predicate $p$ on $\alpha$ is recognizable by a multi-tape machine,
+then $p$ is recursively enumerable, that is, the partial function on $\alpha$ that is defined,
+with a trivial value, exactly where $p$ holds is partial recursive. -/
 theorem MultiTapeRecognizable.rePred (h : MultiTapeRecognizable p) : REPred p := by
   obtain ⟨k, State, _, tm, hp⟩ := h
   obtain ⟨c, _e, _he, hrel⟩ := Cslib.Turing.MultiTapeTM.Code.exists_code_isRelabelling tm
@@ -166,8 +181,11 @@ theorem MultiTapeRecognizable.rePred (h : MultiTapeRecognizable p) : REPred p :=
     (R := fun a T ↦ (c.evalSteps (encodeNat (encode a)) T).isSome)
     (computablePred_evalSteps_isSome c).to_re).of_eq fun a ↦ (key a).symm
 
-/-- **A predicate decided by a multi-tape machine is r.e.**, with the witness
-clock at which the evaluator returns `[true]`. -/
+/-- **A predicate decided by a multi-tape machine is recursively enumerable.** Let $\alpha$ be a
+primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is
+primitive recursive). If a predicate $p$ on $\alpha$ is decidable by a multi-tape machine, then
+$p$ is recursively enumerable, that is, the partial function on $\alpha$ that is defined, with a
+trivial value, exactly where $p$ holds is partial recursive. -/
 theorem MultiTapeDecidable.rePred (h : MultiTapeDecidable p) : REPred p := by
   obtain ⟨k, State, _, tm, hp⟩ := h
   obtain ⟨c, _e, _he, hrel⟩ := Cslib.Turing.MultiTapeTM.Code.exists_code_isRelabelling tm
@@ -193,8 +211,12 @@ theorem MultiTapeDecidable.rePred (h : MultiTapeDecidable p) : REPred p := by
     (R := fun a T ↦ c.evalSteps (encodeNat (encode a)) T = some [true])
     (computablePred_evalSteps_eq c [true]).to_re).of_eq fun a ↦ (key a).symm
 
-/-- **A predicate decided by a multi-tape machine is co-r.e.**, with the witness
-clock at which the evaluator returns `[false]`. -/
+/-- **A predicate decided by a multi-tape machine has a recursively enumerable complement.** Let
+$\alpha$ be a primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose
+decoding is primitive recursive). If a predicate $p$ on $\alpha$ is decidable by a multi-tape
+machine, then its complement $\neg p$ is recursively enumerable, that is, the partial function on
+$\alpha$ that is defined, with a trivial value, exactly where $\neg p$ holds is partial
+recursive. -/
 theorem MultiTapeDecidable.rePred_not (h : MultiTapeDecidable p) :
     REPred fun a ↦ ¬p a := by
   obtain ⟨k, State, _, tm, hp⟩ := h
@@ -227,17 +249,28 @@ theorem MultiTapeDecidable.rePred_not (h : MultiTapeDecidable p) :
     (R := fun a T ↦ c.evalSteps (encodeNat (encode a)) T = some [false])
     (computablePred_evalSteps_eq c [false]).to_re).of_eq fun a ↦ (key a).symm
 
-/-- **A predicate decided by a multi-tape machine is computable** (Post's theorem:
-r.e. and co-r.e. imply computable). -/
+/-- **A predicate decided by a multi-tape machine is computable.** Let $\alpha$ be a primcodable
+type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is primitive
+recursive). If a predicate $p$ on $\alpha$ is decidable by a multi-tape machine, then $p$ is
+computable, that is, $p$ is decidable and its Boolean characteristic function
+$\alpha \to \mathrm{Bool}$ is computable.
+
+This is Post's theorem applied to $p$ and its complement, both recursively enumerable. -/
 theorem MultiTapeDecidable.computablePred (h : MultiTapeDecidable p) : ComputablePred p :=
   ComputablePred.computable_iff_re_compl_re'.mpr ⟨h.rePred, h.rePred_not⟩
 
-/-- **Multi-tape machines decide no more than multi-stack machines.** -/
+/-- **Multi-tape machines decide no more than multi-stack machines.** Let $\alpha$ be a
+primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is
+primitive recursive). Every predicate on $\alpha$ that is decidable by a multi-tape machine is
+decidable by a multi-stack machine. -/
 theorem multiTapeDecidable_implies_tm2Decidable (h : MultiTapeDecidable p) :
     TM2Decidable p :=
   tm2Decidable_iff_computablePred.mpr h.computablePred
 
-/-- **Multi-tape machines recognize no more than multi-stack machines.** -/
+/-- **Multi-tape machines recognize no more than multi-stack machines.** Let $\alpha$ be a
+primcodable type (it has an encoding $\mathrm{encode} : \alpha \to \mathbb{N}$ whose decoding is
+primitive recursive). Every predicate on $\alpha$ that is recognizable by a multi-tape machine is
+recognizable by a multi-stack machine. -/
 theorem multiTapeRecognizable_implies_tm2Recognizable (h : MultiTapeRecognizable p) :
     TM2Recognizable p :=
   tm2Recognizable_iff_rePred.mpr h.rePred

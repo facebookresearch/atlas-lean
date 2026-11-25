@@ -1,0 +1,3 @@
+# Common subsequence with free and wired weak limits
+
+For $d \in \mathbb{N}$, $0 < p < 1$ and $q > 0$, there are a strictly increasing $\psi : \mathbb{N} \to \mathbb{N}$ and probability measures $\nu_0, \nu_1$ on configurations of $\mathbb{Z}^d$ (assignments of open/closed states to all unordered pairs of sites) such that the [free box measures](../finite-and-infinite-volume-fk-measures-on-d/free-finite-measure.md) $\phi^0_{\Lambda_{\psi(n)},p,q}$ converge weakly to $\nu_0$ and the [wired box measures](../finite-and-infinite-volume-fk-measures-on-d/wired-finite-measure.md) $\phi^1_{\Lambda_{\psi(n)},p,q}$ converge weakly to $\nu_1$.

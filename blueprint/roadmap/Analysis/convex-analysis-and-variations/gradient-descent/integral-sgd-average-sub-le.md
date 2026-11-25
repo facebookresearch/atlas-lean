@@ -19,7 +19,7 @@ With $f$ the expected risk and $G(\theta, \xi)$ the gradient of the loss at one 
 ## Background
 
 - [Convergence of the subgradient method](subgradient-method-rate.md): background, the deterministic version.
-- Rademacher average of a ball of linear predictors: background, the matching $D R / \sqrt{n}$ complexity of the ball, which governs the estimation error of empirical risk minimization.
+- [Rademacher average of a ball of linear predictors](../../../ComputerScience/machine-learning/generalization-bounds-and-concentration/rademacher-average-linear-ball-le.md): background, the matching $D R / \sqrt{n}$ complexity of the ball, which governs the estimation error of empirical risk minimization.
 
 ## Sources
 

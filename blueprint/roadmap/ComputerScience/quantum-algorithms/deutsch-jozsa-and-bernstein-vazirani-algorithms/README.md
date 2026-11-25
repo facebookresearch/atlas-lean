@@ -31,5 +31,5 @@ single query, whereas a classical algorithm needs $n$ evaluations to find $s$.
 
 ## Related topics
 
-- Quantum Fourier transform: Fourier sampling over $\mathbb{Z}_q$, used by Shor's algorithm.
+- [Quantum Fourier transform](../../../QuantumInformation/quantum-operations/quantum-fourier-transform/README.md): Fourier sampling over $\mathbb{Z}_q$, used by Shor's algorithm.
 - [Lower bound for quantum search](../lower-bound-for-quantum-search/README.md): the other half of the query-complexity picture, where quantum speedups are limited.

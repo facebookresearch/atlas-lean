@@ -8,8 +8,8 @@ the expected number of triangles: each of the $\binom n3$ vertex triples spans a
 
 ## Informally uses
 
-- First moment method: $\Pr[X \ge 1] \le \mathbb E X$ for the number $X$ of triangles, here in union-bound form.
-- Probability that a random subset contains a given set: a triple spans a triangle with probability $p^3$.
+- [First moment method](../../../Combinatorics/probabilistic-combinatorics/first-and-second-moment-methods/measure-real-one-le-le-integral.md): $\Pr[X \ge 1] \le \mathbb E X$ for the number $X$ of triangles, here in union-bound form.
+- [Probability that a random subset contains a given set](../../../Combinatorics/probabilistic-combinatorics/janson-s-inequalities/random-subset-law-real-contains-event.md): a triple spans a triangle with probability $p^3$.
 
 ## Sources
 

@@ -13,7 +13,7 @@ weight of a maximum cut.
 
 ## Background
 
-- Ellipsoid method:
+- [Ellipsoid method](../../../Analysis/convex-analysis-and-variations/ellipsoid-method/README.md):
   Goemans and Williamson solve (P) approximately as a semidefinite program; for integral weights
   and accuracy $\varepsilon > 0$, the ellipsoid method of Grötschel, Lovász and Schrijver is one
   of the algorithms that do this in time polynomial in the input size and $\log(1/\varepsilon)$.

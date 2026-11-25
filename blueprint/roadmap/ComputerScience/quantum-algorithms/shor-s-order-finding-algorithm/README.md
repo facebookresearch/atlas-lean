@@ -9,4 +9,4 @@ Shor's algorithm finds the multiplicative order $r$ of $x$ modulo $n$. It prepar
 
 - [Shor's reduction of factoring to order finding](../shor-s-reduction-of-factoring-to-order-finding/README.md): the order found here gives a factor of $n$ by the $\gcd(x^{r/2} - 1, n)$ step.
 - [Continued fractions and expansions of reals](../../../NumberTheory/continued-fractions-expansions/README.md): the convergents that the post-processing searches.
-- Quantum Fourier transform: the unitary $A_q$ applied before the measurement.
+- [Quantum Fourier transform](../../../QuantumInformation/quantum-operations/quantum-fourier-transform/README.md): the unitary $A_q$ applied before the measurement.

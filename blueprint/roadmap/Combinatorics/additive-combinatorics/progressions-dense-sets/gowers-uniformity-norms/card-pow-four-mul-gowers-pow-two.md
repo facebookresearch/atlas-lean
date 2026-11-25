@@ -1,6 +1,6 @@
 # Fourth moment of the Fourier transform
 
-Let $G$ be a finite abelian group; $\psi$ ranges over its characters, the homomorphisms $G \to \mathbb{C}^\times$, and $\mathbb{E}$ denotes an average over $G$. For every $f : G \to \mathbb{C}$, with the unnormalised discrete Fourier transform,
+Let $G$ be a finite abelian group; $\psi$ ranges over its characters, the homomorphisms $G \to \mathbb{C}^\times$, and $\mathbb{E}$ denotes an average over $G$. For every $f : G \to \mathbb{C}$, with the unnormalised [discrete Fourier transform](../../../../Analysis/harmonic-analysis/discrete-fourier-analysis/fourier-transform-on-finite-abelian-groups/dft-fun.md),
 
 $$|G|^4\,\|f\|_{U^2}^4 = \sum_{\psi} |\hat f(\psi)|^4.$$
 

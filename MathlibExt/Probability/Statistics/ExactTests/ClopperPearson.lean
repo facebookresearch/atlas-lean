@@ -345,14 +345,16 @@ private theorem measureReal_lowerTail_lt_le {ν : Measure ℕ} [IsProbabilityMea
 private theorem measureReal_upperTail_lt_le {ν : Measure ℕ} [IsProbabilityMeasure ν] {s : ℝ}
     (hs : s ∈ Icc (0 : ℝ) 1) : ν.real {k | upperTail ν k < s} ≤ s := by
   have h := isValidPValue_upperTailPValue (μ := ν) HasLaw.id s hs
-  refine (measureReal_mono (μ := ν) fun k (hk : upperTail ν k < s) => hk.le).trans ?_
+  refine (measureReal_mono (μ := ν) (s₁ := {k | upperTail ν k < s})
+    (s₂ := {ω | upperTailPValue ν id ω ≤ s}) fun k (hk : upperTail ν k < s) => hk.le).trans ?_
   exact ENNReal.toReal_le_of_le_ofReal hs.1 h
 
 /-- Under `Bin(n, p)`, the lower endpoint exceeds `p` with probability at most `α / 2`. -/
 private theorem binomial_real_lt_clopperPearsonLower_le (n : ℕ) (p : unitInterval) {α : ℝ}
     (hα0 : 0 ≤ α) (hα2 : α ≤ 2) :
     (binomial n p).real {k | (p : ℝ) < clopperPearsonLower n k α} ≤ α / 2 := by
-  refine (measureReal_mono (μ := binomial n p) fun k (hk : (p : ℝ) < _) => ?_).trans
+  refine (measureReal_mono (μ := binomial n p) (s₁ := {k | (p : ℝ) < clopperPearsonLower n k α})
+    fun k (hk : (p : ℝ) < _) => ?_).trans
     (measureReal_upperTail_lt_le ⟨by linarith, by linarith⟩)
   change upperTail (binomial n p) k < α / 2
   rw [upperTail_binomial]
@@ -365,7 +367,8 @@ private theorem binomial_real_clopperPearsonUpper_lt_le (n : ℕ) (p : unitInter
     (binomial n p).real {k | clopperPearsonUpper n k α < p} ≤ α / 2 := by
   have hex : ∃ k, α / 2 ≤ (binomial n p).real (Iic k) :=
     ⟨n, by rw [binomial_real_Iic, binomTail_of_lt (Nat.lt_succ_self n)]; linarith⟩
-  refine (measureReal_mono (μ := binomial n p) fun k (hk : _ < (p : ℝ)) => ?_).trans
+  refine (measureReal_mono (μ := binomial n p) (s₁ := {k | clopperPearsonUpper n k α < p})
+    fun k (hk : _ < (p : ℝ)) => ?_).trans
     (measureReal_lowerTail_lt_le (by linarith) hex)
   change (binomial n p).real (Iic k) < α / 2
   rw [binomial_real_Iic]

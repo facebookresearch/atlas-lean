@@ -1,0 +1,3 @@
+# Kac-Ward loops with a given squarefree exponent and nonzero scalar
+
+For $L > 2$, $a, b \in \{0, 1\}$, $n \ge 1$ and a finite set $S$ of decorated edges, the set consists of the sequences $d$ of $n$ darts with $\varepsilon(d) = \sum_{e \in S} [e]$ and $\kappa(d) \ne 0$, the scalar taken at $\omega = e^{i\pi/4}$ and $\zeta_L(a) = e^{i\pi a/L}$ (boundary phases $\zeta_L(a), \zeta_L(b)$); here $\varepsilon(d) = \sum_{k} \varepsilon(d_k, d_{k+1})$ is the [loop exponent](ons-dec-loop-exponent.md) and $\kappa(d) = \prod_k \kappa(d_k, d_{k+1})$ the [loop scalar](ons-dec-loop-scalar.md) of a cyclic dart sequence $d$ (indices mod its length).

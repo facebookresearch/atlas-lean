@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.Analysis.Calculus.Gradient.Basic
 public import PhyslibExt.Mechanics.OrbitalPerturbations
+public import PhyslibExt.Mechanics.RigidMotionPorts
 import PhyslibExt.EarthScience.PointMassGradient
 import PhyslibExt.EarthScience.NewtonianEnergy
 import PhyslibExt.Mechanics.HarmonicMechanics
@@ -20,14 +21,16 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# Particle force and power ports on actual trajectories
+# Particle force and power ports on actual trajectories, and the planar rigid-body port
 
 A particle of constant mass `m > 0` in a real inner product space `E` under a constant force
 `F` follows the actual trajectory `x t = x₀ + t • v₀ + (t ^ 2 / (2 * m)) • F` with velocity
 `v t = v₀ + (t / m) • F`. On it the force port agrees with Newton's law, the power port is the
 kinetic-energy derivative, and integrating gives the work and impulse identities with both
 endpoint terms. A spring example reuses the existing harmonic-oscillator trajectory, and
-inverse-square work is stated only along paths that avoid the centre.
+inverse-square work is stated only along paths that avoid the centre. A planar rigid body adds a
+torque port: its kinetic energy `m ‖V‖² / 2 + J θ'² / 2` has the rate `⟪F, V⟫ + τ θ'`, linked to
+Physlib's kinetic-energy split and to Euler's equations.
 
 ## i. Overview
 
@@ -45,6 +48,19 @@ collision-exclusion hypothesis. Mass is
 constant throughout; nothing here applies to variable-mass motion. Forces, initial data and
 time intervals are model inputs.
 
+A rigid body of mass `m > 0` moves in a plane and turns about a fixed axis normal to the plane,
+with constant moment of inertia `J > 0` about the axis through its centre of mass; its state is the
+centre-of-mass velocity `V` (`C¹`) and the actual rotation angle `θ` (`C²`). The balances
+`m V' = F` and `J θ'' = τ` are stated model laws: the torque balance is not a theorem of the mass
+functional alone. Under them the kinetic energy `m ‖V‖² / 2 + J θ'² / 2` has the rate
+`⟪F, V⟫ + τ θ'`, the power at the force port plus the power at the torque port, and a wrong torque
+sign breaks the balance. For a Physlib rigid motion of positive mass with the body frame centered
+at the centre of mass and body angular velocity `(0, 0, ω)` (rotation about the third body axis),
+Physlib's kinetic-energy split is `m ‖V‖² / 2 + J ω² / 2` with `J = (I_B)₃₃`, and the declared
+torque balance is the axial component `J ω' = (Rᵀ τ_I)₃` of the rotational balance law
+`dL_COM/dt = τ_I` of `PhyslibExt.Mechanics.RigidMotionPorts`. Variable inertia, constraint torques
+for axes that are not principal and attitude reconstruction are not treated.
+
 ## ii. Key results
 
 - `constForce_actual_trajectory`: initial data `x₀`, `v₀` and `m • x'' = F`.
@@ -56,6 +72,10 @@ time intervals are model inputs.
   gradient of `-μ / ‖y‖`.
 - `inverseSquarePotential_not_continuousAt_zero`: the inverse-square potential is not
   continuous at the centre.
+- `planarRigid_power_port`, `planarRigid_power_port_neg_torque`: the planar rigid-body power
+  port, and the failure of the wrong torque sign.
+- `kineticEnergy_eq_planar`, `axial_torque_balance`: Physlib's kinetic-energy split and the
+  rotational balance law for a rigid motion turning about its third body axis.
 
 ## iii. Table of contents
 
@@ -64,16 +84,23 @@ time intervals are model inputs.
 - C. Power port, work and impulse
 - D. Spring example on the existing oscillator trajectory
 - E. Inverse-square work needs collision exclusion
+- F. Planar rigid-body power port
 
 ## iv. References
 
 - R. C. Hibbeler, *Engineering Mechanics: Dynamics*, 14th edition, chapters 14-15 (work and
-  energy, impulse and momentum of a particle).
+  energy, impulse and momentum of a particle) and 17-18 (planar kinetics of a rigid body; its
+  work and energy, `T = m v_G² / 2 + I_G ω² / 2`).
+- L. D. Landau and E. M. Lifshitz, *Mechanics*, Sections 32 and 36 (the kinetic energy of a rigid
+  body; Euler's equations).
 - H. Goldstein, *Classical Mechanics*, central-force chapter (inverse-square potential).
 - `PhyslibExt.EarthScience.NewtonianEnergy` and `PhyslibExt.Mechanics.HarmonicMechanics`: the
   kinetic-energy derivative and the oscillator trajectory reused here.
 - `PhyslibExt.Mechanics.OrbitalPerturbations` and `PhyslibExt.EarthScience.PointMassGradient`:
   the inverse-square field and the point-mass gradient reused here.
+- Physlib's `RigidBodyMotion.kineticEnergy_eq_translational_add_bodyAngularVelocity` and the
+  rotational balance law of `PhyslibExt.Mechanics.RigidMotionPorts`: the kinetic-energy split
+  and Euler's equations reused here.
 -/
 
 @[expose] public section
@@ -87,11 +114,11 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 /-! ## A. Model: the constant-force trajectory -/
 
 /-- Position on the actual trajectory of a particle of mass `m` under the constant force `F`,
-started at `x₀` with velocity `v₀`. -/
+started at `x₀` with velocity `v₀`. With `u / 0 = 0` the force term vanishes at `m = 0`. -/
 noncomputable def constForcePosition (m : ℝ) (x₀ v₀ F : E) (t : ℝ) : E :=
   x₀ + t • v₀ + (t ^ 2 / (2 * m)) • F
 
-/-- Velocity on that trajectory. -/
+/-- Velocity on that trajectory (`v₀` at every time when `m = 0`, by `u / 0 = 0`). -/
 noncomputable def constForceVelocity (m : ℝ) (v₀ F : E) (t : ℝ) : E :=
   v₀ + (t / m) • F
 
@@ -125,7 +152,8 @@ lemma constForcePosition_hasDerivAt (m : ℝ) (x₀ v₀ F : E) (t : ℝ) :
   rw [hfun]
   simpa using h
 
-/-- The velocity has derivative the acceleration `m⁻¹ • F`. -/
+/-- The velocity has derivative the acceleration `m⁻¹ • F`; with the convention `0⁻¹ = 0` the
+acceleration is `0` when `m = 0`, where the velocity is the constant `v₀`. -/
 lemma constForceVelocity_hasDerivAt (m : ℝ) (v₀ F : E) (t : ℝ) :
     HasDerivAt (constForceVelocity m v₀ F) (m⁻¹ • F) t := by
   unfold constForceVelocity
@@ -143,8 +171,8 @@ lemma constForceVelocity_hasDerivAt (m : ℝ) (v₀ F : E) (t : ℝ) :
   rw [hfun]
   simpa using h
 
-/-- The force port agrees with Newton's law: the trajectory starts at `x₀` with velocity `v₀`
-and satisfies `m • x'' = F` at every time. -/
+/-- The force port agrees with Newton's law: for `m > 0`, the trajectory starts at `x₀` with
+velocity `v₀` and satisfies `m • x'' = F` at every time. -/
 lemma constForce_actual_trajectory {m : ℝ} (hm : 0 < m) (x₀ v₀ F : E) :
     constForcePosition m x₀ v₀ F 0 = x₀ ∧ deriv (constForcePosition m x₀ v₀ F) 0 = v₀ ∧
       ∀ t, m • deriv (deriv (constForcePosition m x₀ v₀ F)) t = F := by
@@ -168,7 +196,7 @@ lemma constForce_actual_trajectory {m : ℝ} (hm : 0 < m) (x₀ v₀ F : E) :
 
 /-! ## C. Power port, work and impulse -/
 
-/-- Power port: on the actual trajectory the kinetic energy has derivative the power
+/-- Power port: for `m > 0`, on the actual trajectory the kinetic energy has derivative the power
 `⟪F, v t⟫` delivered by the force. -/
 lemma constForce_power_port {m : ℝ} (hm : 0 < m) (v₀ F : E) (t : ℝ) :
     HasDerivAt (fun s => m * ‖constForceVelocity m v₀ F s‖ ^ 2 / 2)
@@ -182,8 +210,9 @@ lemma constForce_power_port {m : ℝ} (hm : 0 < m) (v₀ F : E) (t : ℝ) :
     rw [← smul_assoc, smul_eq_mul, mul_inv_cancel₀ hm0, one_smul]
   rwa [heq] at h
 
-/-- Work identity with both endpoint terms: the work of `F` over `[t₀, t₁]` is the change of
-kinetic energy, and it is also `⟪F, x t₁ - x t₀⟫`. -/
+/-- Work identity with both endpoint terms: for `m > 0`, the work of `F` from `t₀` to `t₁`
+(oriented integral, either order) is the change of kinetic energy, and it is also
+`⟪F, x t₁ - x t₀⟫`. -/
 lemma constForce_work {m : ℝ} (hm : 0 < m) (x₀ v₀ F : E) (t₀ t₁ : ℝ) :
     ∫ t in t₀..t₁, inner ℝ F (constForceVelocity m v₀ F t) =
         m * ‖constForceVelocity m v₀ F t₁‖ ^ 2 / 2 - m * ‖constForceVelocity m v₀ F t₀‖ ^ 2 / 2 ∧
@@ -215,7 +244,8 @@ lemma constForce_work {m : ℝ} (hm : 0 < m) (x₀ v₀ F : E) (t₀ t₁ : ℝ)
   rw [hsub] at hsecond_ftc
   exact ⟨hfirst, hsecond_ftc⟩
 
-/-- Impulse identity: the impulse of `F` over `[t₀, t₁]` is the change of momentum. -/
+/-- Impulse identity: in a complete space and for `m > 0`, the impulse of `F` from `t₀` to `t₁`
+(oriented integral, either order) is the change of momentum. -/
 lemma constForce_impulse [CompleteSpace E] {m : ℝ} (hm : 0 < m) (v₀ F : E) (t₀ t₁ : ℝ) :
     ∫ _ in t₀..t₁, F = m • constForceVelocity m v₀ F t₁ - m • constForceVelocity m v₀ F t₀ := by
   have hm0 : m ≠ 0 := ne_of_gt hm
@@ -233,7 +263,7 @@ lemma constForce_impulse [CompleteSpace E] {m : ℝ} (hm : 0 < m) (v₀ F : E) (
 /-! ## D. Spring example on the existing oscillator trajectory -/
 
 /-- Power port of the spring force `-k x` on the oscillator trajectory `x t = A * cos (ω t)`,
-`v t = -A * ω * sin (ω t)`, `ω = √(k / m)`. -/
+`v t = -A * ω * sin (ω t)`, `ω = √(k / m)`, for `m > 0` and `k > 0`. -/
 lemma spring_power_port {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = Real.sqrt (k / m))
     (t : ℝ) :
     HasDerivAt (fun s : ℝ => m * ‖-A * ω * Real.sin (ω * s)‖ ^ 2 / 2)
@@ -249,8 +279,9 @@ lemma spring_power_port {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = R
     field_simp
   rwa [heq] at h
 
-/-- Spring work over `[t₀, t₁]`: the change of kinetic energy, and the decrease of the potential
-`k x ^ 2 / 2 + C`, whatever the constant `C`. -/
+/-- Spring work from `t₀` to `t₁` (oriented integral, either order) on the oscillator trajectory
+with `ω = √(k / m)`, for `m > 0` and `k > 0`: the change of kinetic energy, and the decrease of the
+potential `k x ^ 2 / 2 + C`, whatever the constant `C`. -/
 lemma spring_work {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = Real.sqrt (k / m))
     (t₀ t₁ C : ℝ) :
     ∫ t in t₀..t₁, inner ℝ (-k * (A * Real.cos (ω * t))) (-A * ω * Real.sin (ω * t)) =
@@ -294,8 +325,8 @@ lemma spring_work {m k A ω : ℝ} (hm : 0 < m) (hk : 0 < k) (hω : ω = Real.sq
 /-! ## E. Inverse-square work needs collision exclusion -/
 
 /-- Work of the inverse-square force `-OrbitalPerturbations.inverseSquareField μ y`
-(`= -(μ / ‖y‖ ^ 3) • y`) along a path that never meets the centre on `[a, b]` equals the
-decrease of the potential `-μ / ‖y‖`. -/
+(`= -(μ / ‖y‖ ^ 3) • y`) along a path that never meets the centre on the interval between `a`
+and `b` (either order) equals the decrease of the potential `-μ / ‖y‖`. -/
 lemma inverseSquare_work {μ a b : ℝ} {γ γ' : ℝ → E}
     (hγ : ∀ t ∈ Set.uIcc a b, HasDerivAt γ (γ' t) t) (hcoll : ∀ t ∈ Set.uIcc a b, γ t ≠ 0)
     (hint : IntervalIntegrable
@@ -349,8 +380,9 @@ lemma hasGradientAt_inverseSquarePotential [CompleteSpace E] {μ : ℝ} {x : E} 
   have h := EarthScience.hasGradientAt_pointMass_potential (G := μ) (M := 1) hx
   simpa [OrbitalPerturbations.inverseSquareField] using h
 
-/-- At the collision point the inverse-square potential (whose value there is the division-by-zero
-convention `-μ / 0 = 0`) is not continuous, so no gradient of it exists there. -/
+/-- For `μ ≠ 0` in a nontrivial space, at the collision point the inverse-square potential (whose
+value there is the division-by-zero convention `-μ / 0 = 0`) is not continuous, so no gradient of
+it exists there. -/
 lemma inverseSquarePotential_not_continuousAt_zero [Nontrivial E] {μ : ℝ} (hμ : μ ≠ 0) :
     ¬ ContinuousAt (fun y : E => -μ / ‖y‖) 0 := by
   intro hcont
@@ -389,5 +421,98 @@ lemma inverseSquarePotential_not_continuousAt_zero [Nontrivial E] {μ : ℝ} (h�
     have h2 : |μ| / (|μ| / 2) = 2 := by field_simp
     linarith
   linarith
+
+/-! ## F. Planar rigid-body power port -/
+
+open scoped Matrix Time
+open _root_.Mechanics.RigidMotionPorts _root_.Units.EngineeringFrames
+
+/-- Planar rigid-body power port: for a body of mass `m > 0` with constant moment of inertia
+`J > 0` about the fixed axis through its centre of mass, centre-of-mass velocity `V` of class `C¹`
+and actual rotation angle `θ` of class `C²` about the axis, the declared balances `m V' = F` and
+`J θ'' = τ` give `d/dt (m ‖V‖² / 2 + J θ'² / 2) = ⟪F, V⟫ + τ θ'`. -/
+lemma planarRigid_power_port {m J : ℝ} (_hm : 0 < m) (_hJ : 0 < J) {V F : ℝ → E}
+    {θ τ : ℝ → ℝ} (hV : ContDiff ℝ 1 V) (hθ : ContDiff ℝ 2 θ) (hF : ∀ t, m • deriv V t = F t)
+    (hτ : ∀ t, J * deriv (deriv θ) t = τ t) (t : ℝ) :
+    HasDerivAt (fun s => m * ‖V s‖ ^ 2 / 2 + J * deriv θ s ^ 2 / 2)
+      (inner ℝ (F t) (V t) + τ t * deriv θ t) t := by
+  have hVd : HasDerivAt V (deriv V t) t := ((hV.differentiable one_ne_zero) t).hasDerivAt
+  have hω : HasDerivAt (deriv θ) (deriv (deriv θ) t) t :=
+    (((contDiff_succ_iff_deriv.1 hθ).2.2.differentiable one_ne_zero) t).hasDerivAt
+  have htr := EarthScience.hasDerivAt_kinetic_energy (m := m) (v := V) (a := deriv V) hVd
+  rw [hF t] at htr
+  have hrot : HasDerivAt (fun s => J * deriv θ s ^ 2 / 2) (τ t * deriv θ t) t := by
+    have h := ((hω.pow 2).const_mul J).div_const 2
+    rw [← hτ t]
+    convert h using 1
+    simp only [Nat.cast_ofNat, Nat.add_one_sub_one, pow_one]
+    ring
+  exact htr.add hrot
+
+/-- A wrong torque sign fails the power balance: for the planar body (`m, J > 0`, `V` of class
+`C¹`, `θ` of class `C²`, `m V' = F` and `J θ'' = τ` at every time), where `τ θ' ≠ 0` the kinetic
+energy does not have the rate `⟪F, V⟫ + (-τ) θ'`. -/
+lemma planarRigid_power_port_neg_torque {m J : ℝ} (hm : 0 < m) (hJ : 0 < J) {V F : ℝ → E}
+    {θ τ : ℝ → ℝ} (hV : ContDiff ℝ 1 V) (hθ : ContDiff ℝ 2 θ) (hF : ∀ t, m • deriv V t = F t)
+    (hτ : ∀ t, J * deriv (deriv θ) t = τ t) {t : ℝ} (hτθ : τ t * deriv θ t ≠ 0) :
+    ¬ HasDerivAt (fun s => m * ‖V s‖ ^ 2 / 2 + J * deriv θ s ^ 2 / 2)
+      (inner ℝ (F t) (V t) + -τ t * deriv θ t) t := by
+  intro h
+  have h' := planarRigid_power_port hm hJ hV hθ hF hτ t
+  have heq := h.unique h'
+  apply hτθ
+  linarith
+
+/-- Link to Physlib's kinetic-energy split: a rigid motion of positive mass, with body frame
+centered at its centre of mass, orientation differentiable at `t` and body angular velocity
+`(0, 0, ω)` at `t` (rotation about the third body axis), has Physlib's total kinetic energy
+`T = m ‖V‖² / 2 + J ω² / 2`, with `V` the centre-of-mass velocity and `J = (I_B)₃₃` the moment of
+inertia about the axis through the centre of mass. -/
+lemma kineticEnergy_eq_planar (M : RigidBodyMotion 3) (t : Time) (hm : 0 < M.mass)
+    (hR : DifferentiableAt ℝ (fun s => (M.orientation s).1) t) (hc : M.centerOfMass = 0)
+    {ω : ℝ} (hω : M.bodyAngularVelocity t = ![0, 0, ω]) :
+    M.kineticEnergy t = M.mass * ‖M.centerOfMassVelocity t‖ ^ 2 / 2 +
+      M.inertiaTensorAbout M.centerOfMass 2 2 * ω ^ 2 / 2 := by
+  rw [M.kineticEnergy_eq_translational_add_bodyAngularVelocity t hm.ne' hR hc, hω,
+    real_inner_self_eq_norm_sq]
+  have hI : M.toRigidBody.inertiaTensor = M.inertiaTensorAbout M.centerOfMass := by
+    rw [hc, RigidBody.inertiaTensorAbout_zero]
+  rw [RigidBody.rotationalKineticEnergy, hI]
+  simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_three, Matrix.cons_val_zero,
+    Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons]
+  ring
+
+/-- The planar torque balance is the axial component of the rotational balance law of the
+torque-balance section: along a rigid motion whose orientation is `C²` entry by entry on an open
+set `U` of times, with body frame centered at the centre of mass and body angular velocity
+`(0, 0, ω)` on `U`, the balance law `dL_COM/dt = τ_I` at `t ∈ U` gives `J ω' = τ`, with
+`J = (I_B)₃₃` and `τ = (Rᵀ τ_I)₃` the axial body torque. -/
+lemma axial_torque_balance (M : RigidBodyMotion 3) {U : Set Time} (hU : IsOpen U)
+    (hR : ∀ i j, ContDiffOn ℝ 2 (fun s => (M.orientation s).1 i j) U) (hc : M.centerOfMass = 0)
+    {ω : Time → ℝ} (hω : ∀ s ∈ U, M.bodyAngularVelocity s = ![0, 0, ω s]) {t : Time}
+    (ht : t ∈ U) {τI : Fin 3 → ℝ} (hbal : ∂ₜ (comAngularMomentum M) t = τI) :
+    M.inertiaTensorAbout M.centerOfMass 2 2 * ∂ₜ ω t =
+      inertialToBodyVec (M.orientation t) τI 2 := by
+  have heul := (deriv_comAngularMomentum_eq_iff_euler M hU hR hc ht τI).mp hbal
+  have hev : M.bodyAngularVelocity =ᶠ[nhds t] fun s => ω s • (![0, 0, 1] : Fin 3 → ℝ) :=
+    Filter.eventually_of_mem (hU.mem_nhds ht) fun s hs => by
+      rw [hω s hs]
+      ext i
+      fin_cases i <;> simp
+  have hd : ∂ₜ M.bodyAngularVelocity t = ∂ₜ ω t • (![0, 0, 1] : Fin 3 → ℝ) := by
+    rw [Time.deriv_eq, hev.fderiv_eq]
+    by_cases hf : DifferentiableAt ℝ ω t
+    · rw [fderiv_smul_const hf, ContinuousLinearMap.smulRight_apply]
+      rfl
+    · have hnd : ¬ DifferentiableAt ℝ (fun s => ω s • (![0, 0, 1] : Fin 3 → ℝ)) t := by
+        intro h
+        apply hf
+        simpa using (differentiableAt_pi.1 h) 2
+      rw [fderiv_zero_of_not_differentiableAt hnd, Time.deriv_eq,
+        fderiv_zero_of_not_differentiableAt hf]
+      simp
+  have h2 := congrFun heul 2
+  rw [hd, hω t ht] at h2
+  simpa [Matrix.mulVec, dotProduct, Fin.sum_univ_three, cross_apply, mul_comm] using h2
 
 end PhyslibExt.Mechanics.PowerPorts

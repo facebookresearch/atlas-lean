@@ -31,6 +31,14 @@ covariance selection model).
 * `inv_toBlocks₁₁_inv`: **conditional covariance from the precision matrix**: for a positive
   definite `Σ` on `ι ⊕ κ`, the Schur complement `Σ₁₁ - Σ₁₂ Σ₂₂⁻¹ Σ₂₁` (the conditional covariance
   of the `ι`-block given the `κ`-block, `condDistrib_multivariateGaussian`) is `((Σ⁻¹)₁₁)⁻¹`.
+* `toBlocks₁₂_mul_inv_toBlocks₂₂`: **the regression coefficient from the precision matrix**: for a
+  positive definite `Σ` on `ι ⊕ κ` with `K = Σ⁻¹`, `Σ₁₂ Σ₂₂⁻¹ = -(K₁₁)⁻¹ K₁₂`, the coefficient of
+  the conditional mean in `condDistrib_multivariateGaussian`.
+* `dotProduct_laplacian_mulVec_and_posDef_leroux`: **weighted graph Laplacians and the Leroux
+  precision matrix**: for a symmetric real weight matrix `W` and `L = diag(W 1) - W`,
+  `zᵀ L z = ∑ᵢ ∑ⱼ wᵢⱼ (zᵢ - zⱼ)² / 2`; with nonnegative weights and `0 ≤ ρ < 1`, the matrix
+  `Q = ρ L + (1 - ρ) I` satisfies `zᵀ Q z ≥ (1 - ρ) zᵀ z`, is positive definite, and
+  `Q 1 = (1 - ρ) 1`.
 * `partialCorrelation_eq`: the partial correlation of coordinates `0` and `1` given the rest is
   `-Ω₀₁ / √(Ω₀₀ Ω₁₁)`.
 * `condIndepFun_iff_inv_apply_eq_zero`: **pairwise Markov property of Gaussians** (Dempster 1972;
@@ -115,6 +123,111 @@ theorem partialCorrelation_eq {S : Matrix (Fin 2 ⊕ κ) (Fin 2 ⊕ κ) ℝ} (hS
       sqrt_mul (sq_nonneg _), sqrt_sq (inv_pos.mpr hd).le]
   rw [hden]
   field_simp
+
+omit [DecidableEq ι] in
+private theorem sum_sum_mul_sq_comm {W : Matrix ι ι ℝ} (hW : Wᵀ = W) (z : ι → ℝ) :
+    ∑ i, ∑ j, W i j * z j ^ 2 = ∑ i, (∑ j, W i j) * z i ^ 2 := by
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [Finset.sum_mul]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  have h := congrFun (congrFun hW i) j
+  rw [transpose_apply] at h
+  rw [h]
+
+/-- **Weighted graph Laplacians and the Leroux precision matrix**: let `W` be a symmetric real
+matrix of weights on a finite index set and `L = diag(W 1) - W`, where `(W 1)ᵢ = ∑ⱼ wᵢⱼ`. Then:
+
+* `zᵀ L z = (∑ᵢ ∑ⱼ wᵢⱼ (zᵢ - zⱼ)²) / 2` for every `z` (symmetry suffices; the diagonal of `W` may
+  be nonzero, since it cancels);
+* if moreover `wᵢⱼ ≥ 0` and `0 ≤ ρ < 1`, then `Q = ρ L + (1 - ρ) I` satisfies
+  `(1 - ρ) ∑ᵢ zᵢ² ≤ zᵀ Q z` for every `z`, and `Q` is positive definite;
+* `Q 1 = (1 - ρ) 1` for every `ρ`, since the rows of `L` sum to zero.
+
+`Q / v` is the precision matrix of the Leroux conditional autoregressive model. -/
+theorem dotProduct_laplacian_mulVec_and_posDef_leroux {W : Matrix ι ι ℝ} (hW : Wᵀ = W) :
+    (∀ z : ι → ℝ, z ⬝ᵥ (diagonal (fun i => ∑ j, W i j) - W) *ᵥ z =
+      (∑ i, ∑ j, W i j * (z i - z j) ^ 2) / 2) ∧
+    (∀ ρ : ℝ, (∀ i j, 0 ≤ W i j) → 0 ≤ ρ → ρ < 1 →
+      (∀ z : ι → ℝ, (1 - ρ) * (z ⬝ᵥ z) ≤
+        z ⬝ᵥ (ρ • (diagonal (fun i => ∑ j, W i j) - W) + (1 - ρ) • (1 : Matrix ι ι ℝ)) *ᵥ z) ∧
+      (ρ • (diagonal (fun i => ∑ j, W i j) - W) + (1 - ρ) • (1 : Matrix ι ι ℝ)).PosDef) ∧
+    (∀ ρ : ℝ, (ρ • (diagonal (fun i => ∑ j, W i j) - W) + (1 - ρ) • (1 : Matrix ι ι ℝ)) *ᵥ
+      (fun _ => (1 : ℝ)) = (1 - ρ) • (fun _ => (1 : ℝ))) := by
+  have quad : ∀ z : ι → ℝ, z ⬝ᵥ (diagonal (fun i => ∑ j, W i j) - W) *ᵥ z =
+      (∑ i, ∑ j, W i j * (z i - z j) ^ 2) / 2 := by
+    intro z
+    have e1 : z ⬝ᵥ (diagonal (fun i => ∑ j, W i j) - W) *ᵥ z =
+        ∑ i, (∑ j, W i j) * z i ^ 2 - ∑ i, ∑ j, W i j * z i * z j := by
+      rw [sub_mulVec, dotProduct_sub]
+      simp only [dotProduct, mulVec_diagonal]
+      simp only [mulVec, dotProduct, Finset.mul_sum]
+      congr 1
+      · exact Finset.sum_congr rfl fun i _ => by ring
+      · exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
+    have e3 : ∑ i, ∑ j, W i j * (z i - z j) ^ 2 = ∑ i, (∑ j, W i j) * z i ^ 2 -
+        2 * ∑ i, ∑ j, W i j * z i * z j + ∑ i, ∑ j, W i j * z j ^ 2 := by
+      have : ∀ i j, W i j * (z i - z j) ^ 2 =
+          W i j * z i ^ 2 - 2 * (W i j * z i * z j) + W i j * z j ^ 2 := fun i j => by ring
+      simp only [this, Finset.sum_add_distrib, Finset.sum_sub_distrib, ← Finset.mul_sum,
+        ← Finset.sum_mul]
+    rw [e1, e3, sum_sum_mul_sq_comm hW]
+    ring
+  refine ⟨quad, fun ρ hnn hρ0 hρ1 => ?_, fun ρ => ?_⟩
+  · have hq : ∀ z : ι → ℝ,
+        z ⬝ᵥ (ρ • (diagonal (fun i => ∑ j, W i j) - W) + (1 - ρ) • (1 : Matrix ι ι ℝ)) *ᵥ z =
+          ρ * ((∑ i, ∑ j, W i j * (z i - z j) ^ 2) / 2) + (1 - ρ) * (z ⬝ᵥ z) := fun z => by
+      rw [add_mulVec, smul_mulVec, smul_mulVec, one_mulVec, dotProduct_add, dotProduct_smul,
+        dotProduct_smul, quad, smul_eq_mul, smul_eq_mul]
+    have hnn' : ∀ z : ι → ℝ, 0 ≤ (∑ i, ∑ j, W i j * (z i - z j) ^ 2) / 2 := fun z =>
+      div_nonneg (Finset.sum_nonneg fun i _ => Finset.sum_nonneg fun j _ =>
+        mul_nonneg (hnn i j) (sq_nonneg _)) zero_le_two
+    have hlow : ∀ z : ι → ℝ, (1 - ρ) * (z ⬝ᵥ z) ≤
+        z ⬝ᵥ (ρ • (diagonal (fun i => ∑ j, W i j) - W) + (1 - ρ) • (1 : Matrix ι ι ℝ)) *ᵥ z :=
+      fun z => by
+        rw [hq]
+        nlinarith [mul_nonneg hρ0 (hnn' z)]
+    refine ⟨hlow, ?_⟩
+    have herm : (ρ • (diagonal (fun i => ∑ j, W i j) - W) +
+        (1 - ρ) • (1 : Matrix ι ι ℝ)).IsHermitian := by
+      rw [IsHermitian, conjTranspose_eq_transpose_of_trivial, transpose_add, transpose_smul,
+        transpose_smul, transpose_sub, diagonal_transpose, hW, transpose_one]
+    rw [posDef_iff_dotProduct_mulVec]
+    refine ⟨herm, fun z hz => ?_⟩
+    rw [star_trivial]
+    have hzz : 0 < z ⬝ᵥ z := by
+      obtain ⟨i, hi⟩ := Function.ne_iff.mp hz
+      exact Finset.sum_pos' (fun j _ => mul_self_nonneg (z j))
+        ⟨i, Finset.mem_univ _, mul_self_pos.mpr hi⟩
+    exact lt_of_lt_of_le (mul_pos (by linarith) hzz) (hlow z)
+  · rw [add_mulVec, smul_mulVec, smul_mulVec, sub_mulVec, one_mulVec]
+    ext i
+    simp [mulVec, dotProduct, diagonal_apply]
+
+/-- **The regression coefficient from the precision matrix**: for a positive definite `S` on
+`ι ⊕ κ` with precision `K = S⁻¹`, `S₁₂ S₂₂⁻¹ = -(K₁₁)⁻¹ K₁₂`. This is the coefficient of `y - μ_Y`
+in the conditional mean of `condDistrib_multivariateGaussian`, whose conditional covariance is
+`(K₁₁)⁻¹` (`inv_toBlocks₁₁_inv`). -/
+theorem toBlocks₁₂_mul_inv_toBlocks₂₂ {S : Matrix (ι ⊕ κ) (ι ⊕ κ) ℝ} (hS : S.PosDef) :
+    S.toBlocks₁₂ * S.toBlocks₂₂⁻¹ = -((S⁻¹.toBlocks₁₁)⁻¹ * S⁻¹.toBlocks₁₂) := by
+  let := hS.isUnit.invertible
+  have hD : S.toBlocks₂₂.PosDef := hS.submatrix Sum.inr_injective
+  let := hD.isUnit.invertible
+  let : Invertible
+      (fromBlocks S.toBlocks₁₁ S.toBlocks₁₂ S.toBlocks₂₁ S.toBlocks₂₂) :=
+    Invertible.copy ‹Invertible S› _ (fromBlocks_toBlocks S)
+  let := invertibleOfFromBlocks₂₂Invertible
+    S.toBlocks₁₁ S.toBlocks₁₂ S.toBlocks₂₁ S.toBlocks₂₂
+  have h := invOf_fromBlocks₂₂_eq
+    S.toBlocks₁₁ S.toBlocks₁₂ S.toBlocks₂₁ S.toBlocks₂₂
+  have hSc : IsUnit (S.toBlocks₁₁ - S.toBlocks₁₂ * ⅟S.toBlocks₂₂ * S.toBlocks₂₁).det :=
+    isUnit_det_of_invertible _
+  simp only [invOf_eq_nonsing_inv, fromBlocks_toBlocks] at h hSc
+  have h11 := congrArg Matrix.toBlocks₁₁ h
+  have h12 := congrArg Matrix.toBlocks₁₂ h
+  simp only [toBlocks_fromBlocks₁₁, toBlocks_fromBlocks₁₂] at h11 h12
+  rw [h11, h12, Matrix.nonsing_inv_nonsing_inv _ hSc, Matrix.mul_neg, neg_neg, ← Matrix.mul_assoc,
+    ← Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hSc, Matrix.one_mul]
 
 end Matrix
 
@@ -252,7 +365,8 @@ section Dempster
 
 variable {ι : Type*} [Fintype ι]
 
-/-- The sample second-moment matrix `m⁻¹ ∑ₛ xₛ xₛᵀ` of `m` observations in `ℝ^ι`. -/
+/-- The sample second-moment matrix `m⁻¹ ∑ₛ xₛ xₛᵀ` of `m` observations in `ℝ^ι`. For an empty
+sample (`m = 0`) it is the zero matrix (`0⁻¹ = 0`), not the second moment of any data. -/
 noncomputable def sampleCov {m : ℕ} (x : Fin m → ι → ℝ) : Matrix ι ι ℝ :=
   (m : ℝ)⁻¹ • ∑ s, vecMulVec (x s) (x s)
 
@@ -282,7 +396,7 @@ private theorem trace_eq_of_supported {ι : Type*} [Fintype ι] [DecidableEq ι]
     (hmatch : ∀ i j, (i = j ∨ G.Adj i j) → K₀⁻¹ i j = S i j)
     (hsupp : IsSupportedOn G K) : (S * K).trace = (K₀⁻¹ * K).trace := by
   classical
-  simp only [trace, diag_apply, mul_apply]
+  simp only [trace, diag_apply, Matrix.mul_apply]
   apply Finset.sum_congr rfl
   intro i _
   apply Finset.sum_congr rfl
