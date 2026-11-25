@@ -16,6 +16,7 @@ public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.Combinatorics.Enumerative.BinomialInversion
 public import MathlibExt.Combinatorics.Enumerative.CarlitzTypeQPolynomials
+public import MathlibExt.Combinatorics.Enumerative.ConsecutiveBernoulliNumbers
 
 namespace MetaMathlibExt
 
@@ -275,18 +276,6 @@ public theorem_wanted carlitzBeta_add_mul_succ_eq_sum_qStirling (q : ℝ) (hq0 :
       q ^ (k * (k - 1) / 2) * S m k * ∏ j ∈ range k, qBracket q (x - j)) :
     carlitzBetaPoly q n 0 + q * carlitzBetaPoly q (n + 1) 0 = ∑ k ∈ range (n + 1),
       (-1 : ℝ) ^ k * (∏ j ∈ range k, qBracket q ((j : ℝ) + 1)) / qBracket q ((k : ℝ) + 2) * S n k
-
-/-- **Sum of consecutive Bernoulli numbers via Stirling numbers.** For every natural number $n$,
-$B_n + B_{n+1} = \sum_{k=0}^{n} (-1)^k \frac{k!}{k+2} S(n,k)$, where $B_n$ are the Bernoulli numbers
-with $B_1 = -1/2$ (generating function $t/(e^t - 1)$, the paper's convention) and $S(n,k)$ are the
-Stirling numbers of the second kind.
-
-Source: Bakir Farhi, *q-Analogues of Sums of Consecutive Powers of Natural Numbers and Extended
-Carlitz q-Bernoulli Numbers and Polynomials*, INTEGERS 26 (2026), Article A85, Corollary 2.19
-(`integers-2026-A85-cor-2-19`). -/
-public theorem_wanted bernoulli_add_bernoulli_succ_eq_sum_stirlingSecond (n : ℕ) :
-    bernoulli n + bernoulli (n + 1) = ∑ k ∈ range (n + 1),
-      (-1 : ℚ) ^ k * (k.factorial : ℚ) / ((k : ℚ) + 2) * (Nat.stirlingSecond n k : ℚ)
 
 end
 

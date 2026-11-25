@@ -22,3 +22,11 @@ example : (cyclicSortingMachine [1, 2, 3])^[2] [1, 4, 2, 3, 5] = List.range' 1 5
   apply (cyclicSortingMachine_123_iterate_eq_id_iff_reductionSeq (k := 2) (n := 5)
     (π := [1, 4, 2, 3, 5]) (by decide)).mpr
   decide
+
+-- Contract two disjoint pairs before sorting. The reduced output still has a descent.
+example : reductionSeq (cyclicSortingMachine [1, 2, 3] [1, 2, 5, 3, 4, 6]) = [2, 1, 3] := by
+  calc
+    _ = reductionSeq (cyclicSortingMachine [1, 2, 3] [1, 3, 2, 4]) :=
+      (reductionSeq_cyclicSortingMachine_123_reductionSeq
+        (π := [1, 2, 5, 3, 4, 6]) (n := 6) (by decide)).symm
+    _ = [2, 1, 3] := by decide

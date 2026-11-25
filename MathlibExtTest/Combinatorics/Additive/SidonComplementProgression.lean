@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Combinatorics.Additive.SidonComplementProgression
+import Mathlib.Tactic.Push
 
 open MathlibExt.Combinatorics.SidonSetComplementProgressionErdosProblem198Wanted
 

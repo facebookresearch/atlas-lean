@@ -90,7 +90,8 @@ def primeEuler {X : SchemeData} {x : X.scheme.left} (D : PrimeEulerData X x)
 /-- Linear Euler obstruction of an actual nonhomogeneous integer cycle. -/
 def cycleEuler (X : SchemeData) (c : AlgebraicCycle X.scheme.left ℤ)
     (D : ∀ x : X.scheme.left, PrimeEulerData X x) (p : space X.scheme) : ℤ :=
-  (cycleFinsupp X.scheme.left c).sum (fun x n => n * primeEuler (D x) p)
+  (_root_.AlgebraicGeometry.IntegralOperationalChow.cycleCoordinates X.scheme.left c).sum
+    (fun x n => n * primeEuler (D x) p)
 
 /-- Closed-embedding weight data have the actual ordinary normal cone and its sign profile. -/
 structure EmbeddingWeightData (X : SchemeData) where

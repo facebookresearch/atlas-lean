@@ -43,7 +43,7 @@ expression values for `n < 60`).
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Log.Base
+public import MathlibExt.NumberTheory.IntegerComplexityLogBound
 public import MathlibExt.NumberTheory.IntegerComplexityRecurrence
 
 set_option autoImplicit false
@@ -66,15 +66,6 @@ theorem_wanted le_complexity_of_subadditive (P : ℕ → ℝ)
     (hmul : ∀ n m : ℕ, 1 ≤ n → 1 ≤ m → P (n * m) ≤ P n + P m)
     (n : ℕ) (hn : 1 ≤ n) :
     P n ≤ (cx n : ℝ)
-
-/-- **Logarithmic lower bound for integer complexity.** Write $\lVert n \rVert$ for the integer
-complexity of a positive integer $n$, the least number of ones needed to write $n$ using $1$, $+$,
-$\times$ and parentheses. For every positive integer $n$, $\log_2(1 + n) \le \lVert n \rVert$.
-
-Source: Juan Arias de Reyna, "Complexity of Natural
-Numbers", Corollary 1. -/
-theorem_wanted logb_two_add_one_le (n : ℕ) (hn : 1 ≤ n) :
-    Real.logb 2 (1 + n) ≤ (cx n : ℝ)
 
 /-- **Integer complexity of $2^a 3^b$ for $a \le 2$.** Write $\lVert n \rVert$ for the integer
 complexity of a positive integer $n$, the least number of ones needed to write $n$ using $1$, $+$,
