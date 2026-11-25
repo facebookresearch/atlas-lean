@@ -13,9 +13,10 @@ where the vector on the left is the collection of the real expectations of
 its coordinates.
 
 By the weighted gradient formula, coordinate $j$ of $\nabla f_v(x)$ is a
-finite sum of the integrable weights $v_i$ with deterministic coefficients
-$(\nabla f_i(x))_j/n$. Applying additivity and homogeneity of the real
-integral to each coordinate gives
+finite sum of the integrable weights $v_i$ multiplied by the deterministic
+coefficients $(\nabla f_i(x))_j/n$. Each constant multiple is integrable, so
+the finite sum is integrable. Applying additivity and homogeneity of the
+real integral to each coordinate gives
 
 $$
 \mathbb E_{\mathcal D}[(\nabla f_v(x))_j]
@@ -35,6 +36,8 @@ with all weights equal to one. No finite second moments are needed.
 ## Proof depends on
 
 - [Gradient of the weighted finite-sum objective](weighted-finite-sum-gradient.md)
+- [Integrability of a constant left multiple](../../../MeasureTheory/integration/integrability-of-sums-and-constant-multiples/integrable-const-mul.md)
+- [Integrability of a finite pointwise sum](../../../MeasureTheory/integration/integrability-of-sums-and-constant-multiples/integrable-finset-sum.md)
 - [Additivity of the integral of integrable functions](../../../MeasureTheory/integration/nonnegative-lebesgue-integral/additivity-of-the-integral/integral-add.md)
 - [Homogeneity of the integral](../../../MeasureTheory/integration/nonnegative-lebesgue-integral/additivity-of-the-integral/integral-smul.md)
 

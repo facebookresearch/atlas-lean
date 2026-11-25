@@ -17,6 +17,7 @@ finite second moments.
 ## Depends on
 
 - [Probability measure](../../../Probability/foundations/probability-measures/is-probability-measure.md)
+- [Law of a random element](../../../Probability/foundations/probability-measures/probability-measure-map.md)
 - [Expected value of a random variable](../../../Probability/foundations/laws-of-random-variables-and-identical-distribut/expectation/expectation-random-variable.md)
 
 ## Proof depends on
