@@ -31,6 +31,7 @@ public import Mathlib.Algebra.Ring.Action.End
 public import Mathlib.NumberTheory.Cyclotomic.Gal
 public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 public import Mathlib.NumberTheory.NumberField.Cyclotomic.Basic
+public import Mathlib.NumberTheory.NumberField.Cyclotomic.Galois
 public import Mathlib.RingTheory.IntegralClosure.IntegralRestrict
 public import MathlibExt.NumberTheory.Cyclotomic.Stickelberger
 
@@ -81,7 +82,8 @@ def Ideal.mapNonZero [IsDomain R] [IsDomain R'] (g : R ≃+* R') (P : (Ideal R)�
 
 variable [IsDedekindDomain R] [IsDedekindDomain R']
 
-theorem ClassGroup.mulEquiv_mk0_mapNonZero (g : R ≃+* R') (P : (Ideal R)⁰) :
+/-- `ClassGroup.mulEquiv_mk0` with its right side written through `Ideal.mapNonZero`. -/
+private theorem mulEquiv_mk0_eq_mk0_mapNonZero (g : R ≃+* R') (P : (Ideal R)⁰) :
     ClassGroup.mulEquiv g (ClassGroup.mk0 P) =
       ClassGroup.mk0 (Ideal.mapNonZero g P) :=
   ClassGroup.mulEquiv_mk0 g P
@@ -89,7 +91,7 @@ theorem ClassGroup.mulEquiv_mk0_mapNonZero (g : R ≃+* R') (P : (Ideal R)⁰) :
 theorem ClassGroup.mulEquiv_refl_apply (C : ClassGroup R) :
     ClassGroup.mulEquiv (RingEquiv.refl R) C = C := by
   obtain ⟨P, rfl⟩ := ClassGroup.mk0_surjective C
-  rw [ClassGroup.mulEquiv_mk0_mapNonZero]
+  rw [mulEquiv_mk0_eq_mk0_mapNonZero]
   congr 1
   refine Subtype.ext ?_
   rw [Ideal.coe_mapNonZero,
@@ -100,8 +102,8 @@ theorem ClassGroup.mulEquiv_trans_apply {R'' : Type*} [CommRing R''] [IsDedekind
     (g : R ≃+* R') (h : R' ≃+* R'') (C : ClassGroup R) :
     ClassGroup.mulEquiv (g.trans h) C = ClassGroup.mulEquiv h (ClassGroup.mulEquiv g C) := by
   obtain ⟨P, rfl⟩ := ClassGroup.mk0_surjective C
-  rw [ClassGroup.mulEquiv_mk0_mapNonZero, ClassGroup.mulEquiv_mk0_mapNonZero,
-    ClassGroup.mulEquiv_mk0_mapNonZero]
+  rw [mulEquiv_mk0_eq_mk0_mapNonZero, mulEquiv_mk0_eq_mk0_mapNonZero,
+    mulEquiv_mk0_eq_mk0_mapNonZero]
   congr 1
   refine Subtype.ext ?_
   rw [Ideal.coe_mapNonZero, Ideal.coe_mapNonZero, Ideal.coe_mapNonZero,
@@ -149,8 +151,9 @@ variable [IsDedekindDomain R] in
 omit [NeZero p] in
 theorem clEnd_clProj_mk0 (g : R ≃+* R) (P : (Ideal R)⁰) :
     clEnd p g (clProj p R (Additive.ofMul (ClassGroup.mk0 P))) =
-      clProj p R (Additive.ofMul (ClassGroup.mk0 (Ideal.mapNonZero g P))) := by
-  rw [clEnd_clProj, ClassGroup.mulEquiv_mk0_mapNonZero]
+      clProj p R (Additive.ofMul (ClassGroup.mk0 (Ideal.mapNonZero g P))) :=
+  (clEnd_clProj p g _).trans
+    (congrArg (fun C => clProj p R (Additive.ofMul C)) (ClassGroup.mulEquiv_mk0 g P))
 
 variable {R} in
 variable [IsDedekindDomain R] in
@@ -178,23 +181,21 @@ section Cyclotomic
 
 variable (K : Type*) [Field K] [NumberField K]
 
-/-- Mathlib's isomorphism `Gal(K / ℚ) ≃* (ZMod p)ˣ` for a `p`-th cyclotomic field. -/
-noncomputable def cycloGalEquiv [IsCyclotomicExtension {p} ℚ K] :
-    (K ≃ₐ[ℚ] K) ≃* (ZMod p)ˣ :=
-  IsCyclotomicExtension.autEquivPow K
-    (Polynomial.cyclotomic.irreducible_rat (Nat.pos_of_ne_zero (NeZero.ne p)))
-
-/-- `(ZMod p)ˣ` acting on `𝓞 K` by ring automorphisms through `cycloGalEquiv`. -/
+/-- `(ZMod p)ˣ` acting on `𝓞 K` by ring automorphisms through Mathlib's
+`IsCyclotomicExtension.Rat.galEquivZMod : Gal(K / ℚ) ≃* (ZMod p)ˣ`. -/
 noncomputable def clRingAction [IsCyclotomicExtension {p} ℚ K] :
     (ZMod p)ˣ →* ((𝓞 K) ≃+* (𝓞 K)) :=
-  (galRestrictRingAut ℤ ℚ K (𝓞 K)).comp (cycloGalEquiv p K).symm.toMonoidHom
+  (galRestrictRingAut ℤ ℚ K (𝓞 K)).comp
+    (IsCyclotomicExtension.Rat.galEquivZMod p K).symm.toMonoidHom
 
-/-- `(ZMod p)ˣ` acting on the class group of `𝓞 K` modulo `p`. -/
+/-- For `p ≠ 0` and a `p`-th cyclotomic number field `K`, `(ZMod p)ˣ` acting on the class group
+of `𝓞 K` modulo `p`-th powers. -/
 noncomputable def clGalAction [IsCyclotomicExtension {p} ℚ K] :
     (ZMod p)ˣ →* Module.End (ZMod p) (ClGalModule p (𝓞 K)) :=
   (clEndHom p).comp (clRingAction p K)
 
-/-- `d` sends the class of a nonzero ideal `P` to the class of its image under
+/-- For `p ≠ 0` and a `p`-th cyclotomic number field `K`, `d` sends the class of a nonzero ideal
+`P` in the class group modulo `p`-th powers to the class of its image under
 `clRingAction p K d`. -/
 theorem clGalAction_clProj_mk0 [IsCyclotomicExtension {p} ℚ K] (d : (ZMod p)ˣ)
     (P : (Ideal (𝓞 K))⁰) :
@@ -271,8 +272,9 @@ def unitsOmegaEigenspace (i : ℕ) :
     simp only [Set.mem_ofPred_eq, IsOmegaEigenvector] at *
     rw [map_smul, ha d, smul_comm]
 
-/-- The projector `(p - 1)⁻¹ ∑_d (d ^ i)⁻¹ ρ(d)` onto the `ω ^ i` eigenvectors of `ρ`;
-see `omegaIdempotent_comp_self` and `isOmegaEigenvector_omegaIdempotent`. -/
+/-- For a prime `p` and an action `ρ` of `(ZMod p)ˣ` on a `ZMod p`-module, the projector
+`(p - 1)⁻¹ ∑_d (d ^ i)⁻¹ ρ(d)` onto the `ω ^ i` eigenvectors of `ρ`, with the inverses taken in
+`ZMod p`; see `omegaIdempotent_comp_self` and `isOmegaEigenvector_omegaIdempotent`. -/
 noncomputable def omegaIdempotent {M : Type*} [AddCommGroup M] [Module (ZMod p) M]
     (ρ : (ZMod p)ˣ →* Module.End (ZMod p) M) (i : ℕ) : Module.End (ZMod p) M :=
   (Nat.card (ZMod p)ˣ : ZMod p)⁻¹ • ∑ d : (ZMod p)ˣ, (((d : ZMod p) ^ i)⁻¹) • ρ d
