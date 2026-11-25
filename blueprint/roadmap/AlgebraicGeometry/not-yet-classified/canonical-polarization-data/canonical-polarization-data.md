@@ -7,4 +7,5 @@ base change that is compatible with `G` (the base change of `G` is one)
 makes `L` locally isomorphic over `Spec S'` to `L₀ ⊗ (-1)^* L₀` for an
 invertible kernel-trivial `L₀`, its global sections on every geometric
 fibre are finite-dimensional and nonzero, and it is Rosati compatible with
-the action.
+the family `act` of endomorphisms over the base and the map `star : I → I`
+(`act` need not be an action, nor `star` an involution).
