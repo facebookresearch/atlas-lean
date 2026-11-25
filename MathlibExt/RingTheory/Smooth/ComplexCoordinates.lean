@@ -19,9 +19,9 @@ Portions of this file are adapted from:
 `surj_and_repr_of_mvPolynomial.lean`,
 `P2M/Sol/S_Algebra_IsStandardEtale_exists_forall_algHom_eval_map_eval_eq_zero_and_ext_and_surj`
 `and_repr_of_mvPolynomial.lean`,
-`Theorems/Thm_Complex_exists_differentiableOn_forall_eval_map_eval_eq_zero_iff_eq_of_derivative`
+`Theorems/Thm_Complex_exists_differentiableOn_forall_eval_map_eval_eq_zero_iff_eq_of_derivative_ne_zero_pi.lean`
 and
-`ne_zero_pi.lean`
+`P2M/Sol/S_Complex_exists_differentiableOn_forall_eval_map_eval_eq_zero_iff_eq_of_derivative_ne_zero_pi.lean`
 (https://github.com/anthropics/fermats-last-theorem):
 Compared with the source files at commit
 `6e837e75355538c7f80bab5b956861e86c4eacc2`.
@@ -93,8 +93,8 @@ private theorem rankAtStalk_eq [IsDomain S] {M : Type u} [AddCommGroup M] [Modul
       IsLocalizedModule.rank_eq (p := (⊥ : Ideal S).primeCompl) (f := LocalizedModule.mkLinearMap (⊥
         : Ideal S).primeCompl M)
         (hp := hle), hrank]
-  show Module.finrank (Localization.AtPrime (⊥ : Ideal S)) (LocalizedModule (⊥ : Ideal S).primeCompl
-    M) = n
+  change Module.finrank (Localization.AtPrime (⊥ : Ideal S))
+    (LocalizedModule (⊥ : Ideal S).primeCompl M) = n
   exact Module.finrank_eq_of_rank_eq (by rw [hr])
 
 private theorem exists_smul_mem_of_mk_mem {M : Type u} [AddCommGroup M] [Module S M] (𝔭 : Ideal S)
@@ -132,7 +132,6 @@ private theorem bijective_linearCombination {M : Type u} [AddCommGroup M] [Modul
     𝔪.primeCompl) with hω
   set ψ := Fintype.linearCombination (Localization.AtPrime 𝔪) ω with hψ
   have hn' : Module.finrank (Localization.AtPrime 𝔪) (LocalizedModule 𝔪.primeCompl M) = n := hn
-
   have hloc := congrArg (Submodule.localized' (Localization.AtPrime 𝔪) 𝔪.primeCompl
     (LocalizedModule.mkLinearMap 𝔪.primeCompl M)) hx
   rw [localized'_sup, Submodule.localized'_smul, Ideal.localized'_eq_map, Submodule.localized'_top,
@@ -141,12 +140,11 @@ private theorem bijective_linearCombination {M : Type u} [AddCommGroup M] [Modul
     funext i; rfl
   rw [hrange] at hloc
   have hspan : Submodule.span (Localization.AtPrime 𝔪) (Set.range ω) = ⊤ := by
-    refine top_le_iff.mp (Submodule.le_of_le_smul_of_le_jacobson_bot (N' := ⊤) Module.Finite.fg_top
-      (IsLocalRing.jacobson_eq_maximalIdeal ⊥ bot_ne_top).ge ?_)
+    refine top_le_iff.mp (Submodule.le_of_le_smul_of_le_jacobson (N' := ⊤) Module.Finite.fg_top
+      (IsLocalRing.ringJacobson_eq_maximalIdeal _).ge ?_)
     rw [sup_comm, hloc]
   have hsurj : Function.Surjective ψ := by
     rw [← LinearMap.range_eq_top, hψ, Fintype.range_linearCombination, hspan]
-
   let b := Module.finBasisOfFinrankEq (Localization.AtPrime 𝔪) (LocalizedModule 𝔪.primeCompl M) hn'
   have hcomp : Function.Surjective (b.equivFun.toLinearMap.comp ψ) :=
     b.equivFun.surjective.comp hsurj
@@ -156,10 +154,6 @@ private theorem bijective_linearCombination {M : Type u} [AddCommGroup M] [Modul
     rw [LinearMap.coe_comp, LinearEquiv.coe_coe] at hinj
     exact hinj
   exact ⟨Function.Injective.of_comp hinj', hsurj⟩
-
-private theorem D_algebraMap_eq_zero (R A : Type*) [CommRing R] [CommRing A] [Algebra R A] (r : R) :
-    KaehlerDifferential.D R A (algebraMap R A r) = 0 := by
-  rw [Algebra.algebraMap_eq_smul_one, Derivation.map_smul, Derivation.map_one_eq_zero, smul_zero]
 
 private theorem notMem_support_kaehlerDifferential {R : Type*} [CommRing R] [Algebra ℂ R] [Algebra ℂ
   S] [Algebra R S]
@@ -191,9 +185,9 @@ private theorem notMem_support_kaehlerDifferential {R : Type*} [CommRing R] [Alg
     refine Submodule.span_le.mpr ?_
     rintro _ ⟨i, rfl⟩
     obtain ⟨ri, hri⟩ := ht i
-    show KaehlerDifferential.D ℂ S (t i) ∈ LinearMap.ker (KaehlerDifferential.map ℂ R S S)
+    change KaehlerDifferential.D ℂ S (t i) ∈ LinearMap.ker (KaehlerDifferential.map ℂ R S S)
     rw [LinearMap.mem_ker, KaehlerDifferential.map_D, Algebra.algebraMap_self_apply, ← hri,
-      D_algebraMap_eq_zero]
+      Derivation.map_algebraMap]
   exact hle hrω
 
 private theorem notMem_support_h1Cotangent [Algebra ℂ S] [Algebra.FormallySmooth ℂ S] {n : ℕ}
@@ -215,7 +209,6 @@ private theorem notMem_support_h1Cotangent [Algebra ℂ S] [Algebra.FormallySmoo
     rw [Subsingleton.elim w 0, LinearMap.map_zero]
   have hδ0 : KaehlerDifferential.mapBaseChange ℂ R S (Algebra.H1Cotangent.δ ℂ R S h) = 0 :=
     (Algebra.H1Cotangent.exact_δ_mapBaseChange (R := ℂ) (S := R) (T := S) _).2 ⟨h, rfl⟩
-
   let B : Module.Basis (Fin n) S (S ⊗[R] Ω[R⁄ℂ]) :=
     Algebra.TensorProduct.basis S (KaehlerDifferential.mvPolynomialBasis ℂ (Fin n))
   have hB : ∀ i, B i = (1 : S) ⊗ₜ[R] KaehlerDifferential.D ℂ R (MvPolynomial.X i) := by
@@ -234,7 +227,6 @@ private theorem notMem_support_h1Cotangent [Algebra ℂ S] [Algebra.FormallySmoo
     rw [hsum, map_sum] at this
     simp only [map_smul, hmap] at this
     exact this
-
   have hloc : Fintype.linearCombination (Localization.AtPrime 𝔪)
       (fun i => LocalizedModule.mk (KaehlerDifferential.D ℂ S (t i)) (1 : 𝔪.primeCompl))
       (fun i => algebraMap S (Localization.AtPrime 𝔪) (a i)) = 0 := by
@@ -253,11 +245,10 @@ private theorem notMem_support_h1Cotangent [Algebra ℂ S] [Algebra.FormallySmoo
     exact congrFun this i
   choose c hc using fun i => (IsLocalization.map_eq_zero_iff 𝔪.primeCompl (Localization.AtPrime 𝔪)
     (a i)).1 (hai i)
-
   set C : 𝔪.primeCompl := ∏ i, c i with hC
   have hCa : ∀ i, (C : S) * a i = 0 := by
     intro i
-    rw [hC, Submonoid.coe_finset_prod, ← Finset.prod_erase_mul _ _ (Finset.mem_univ i), mul_assoc,
+    rw [hC, Submonoid.coe_finsetProd, ← Finset.prod_erase_mul _ _ (Finset.mem_univ i), mul_assoc,
       hc i, mul_zero]
   refine ⟨C, C.2, hinj ?_⟩
   rw [LinearMap.map_smul, map_zero, hsum, Finset.smul_sum]
@@ -266,8 +257,7 @@ private theorem notMem_support_h1Cotangent [Algebra ℂ S] [Algebra.FormallySmoo
 
 private theorem
   exists_isStandardEtale_mvPolynomial_localizationAway_of_smooth_of_kaehlerDifferential
-(S : Type*) [CommRing S] [IsDomain S] [Algebra ℂ S] [Algebra.FiniteType ℂ S] (hsm : Algebra.Smooth ℂ
-  S)
+(S : Type*) [CommRing S] [IsDomain S] [Algebra ℂ S] (hsm : Algebra.Smooth ℂ S)
     {n : ℕ} (hrank : Module.rank S (KaehlerDifferential ℂ S) = n)
     (σ₀ : S →ₐ[ℂ] ℂ) (t : Fin n → S)
     (hdt : (RingHom.ker σ₀.toRingHom) • (⊤ : Submodule S (KaehlerDifferential ℂ S)) ⊔
@@ -277,25 +267,23 @@ private theorem
         ((algebraMap S (Localization.Away g)).comp (MvPolynomial.aeval t).toRingHom).toAlgebra
       Algebra.IsStandardEtale (MvPolynomial (Fin n) ℂ) (Localization.Away g) := by
   classical
-  haveI := hsm
-  letI algX : Algebra (MvPolynomial (Fin n) ℂ) S := (MvPolynomial.aeval t).toRingHom.toAlgebra
+  have := hsm
+  let algX : Algebra (MvPolynomial (Fin n) ℂ) S := (MvPolynomial.aeval t).toRingHom.toAlgebra
   have halg : ∀ p : MvPolynomial (Fin n) ℂ, algebraMap (MvPolynomial (Fin n) ℂ) S p =
     MvPolynomial.aeval t p :=
     fun _ => rfl
-  haveI : IsScalarTower ℂ (MvPolynomial (Fin n) ℂ) S := IsScalarTower.of_algebraMap_eq (fun c => by
+  have : IsScalarTower ℂ (MvPolynomial (Fin n) ℂ) S := IsScalarTower.of_algebraMap_eq (fun c => by
     rw [halg, MvPolynomial.algebraMap_eq, MvPolynomial.aeval_C])
   have hX : ∀ i, algebraMap (MvPolynomial (Fin n) ℂ) S (MvPolynomial.X i) = t i := fun i => by
     rw [halg, MvPolynomial.aeval_X]
-  haveI : Algebra.FiniteType (MvPolynomial (Fin n) ℂ) S :=
+  have : Algebra.FiniteType (MvPolynomial (Fin n) ℂ) S :=
     Algebra.FiniteType.of_restrictScalars_finiteType ℂ (MvPolynomial (Fin n) ℂ) S
-  haveI : Algebra.FinitePresentation (MvPolynomial (Fin n) ℂ) S :=
+  have : Algebra.FinitePresentation (MvPolynomial (Fin n) ℂ) S :=
     (Algebra.FinitePresentation.of_finiteType (R := MvPolynomial (Fin n) ℂ) (A := S)).mp ‹_›
-
   set 𝔪 : Ideal S := RingHom.ker σ₀.toRingHom with h𝔪
-  haveI h𝔪max : 𝔪.IsMaximal := by
+  have h𝔪max : 𝔪.IsMaximal := by
     rw [h𝔪]; exact RingHom.ker_isMaximal_of_surjective σ₀.toRingHom (fun c => ⟨algebraMap ℂ S c,
       σ₀.commutes c⟩)
-
   have hn : Module.rankAtStalk (Ω[S⁄ℂ]) ⟨𝔪, inferInstance⟩ = n := rankAtStalk_eq hrank _
   have hψ := bijective_linearCombination 𝔪 hn (fun i => KaehlerDifferential.D ℂ S (t i))
     (by rw [h𝔪]; exact hdt)
@@ -311,10 +299,9 @@ private theorem
       exact ⟨notMem_support_kaehlerDifferential t (fun i => ⟨MvPolynomial.X i, hX i⟩) 𝔪 hspan,
         notMem_support_h1Cotangent t hX 𝔪 hψ.1⟩
     exact Algebra.mem_etaleLocus_iff.1 this
-  haveI := hEt
+  have := hEt
   obtain ⟨g, hg𝔪, hSE⟩ := Algebra.IsEtaleAt.exists_isStandardEtale (R := MvPolynomial (Fin n) ℂ) 𝔪
   refine ⟨g, fun h0 => hg𝔪 (by rw [h𝔪, RingHom.mem_ker]; exact h0), ?_⟩
-
   have hinst : (((algebraMap S (Localization.Away g)).comp (MvPolynomial.aeval
     t).toRingHom).toAlgebra :
       Algebra (MvPolynomial (Fin n) ℂ) (Localization.Away g)) =
@@ -355,18 +342,17 @@ private theorem isStandardEtale_exists_algHom_data
   set R := MvPolynomial (Fin n) k with hR
   obtain ⟨P⟩ := (Algebra.IsStandardEtale.nonempty_standardEtalePresentation :
     Nonempty (StandardEtalePresentation R A))
-
   have hring : ∀ τ : A →ₐ[k] k, (τ : A →+* k).comp (algebraMap R A) =
       MvPolynomial.eval (fun i : Fin n => τ (algebraMap R A (MvPolynomial.X i))) := by
     intro τ
     apply MvPolynomial.ringHom_ext
     · intro a
-      show τ (algebraMap R A (MvPolynomial.C a)) = MvPolynomial.eval _ (MvPolynomial.C a)
+      change τ (algebraMap R A (MvPolynomial.C a)) = MvPolynomial.eval _ (MvPolynomial.C a)
       rw [MvPolynomial.eval_C, ← MvPolynomial.algebraMap_eq, ← IsScalarTower.algebraMap_apply,
         AlgHom.commutes,
         Algebra.algebraMap_self, RingHom.id_apply]
     · intro i
-      show τ (algebraMap R A (MvPolynomial.X i)) = MvPolynomial.eval _ (MvPolynomial.X i)
+      change τ (algebraMap R A (MvPolynomial.X i)) = MvPolynomial.eval _ (MvPolynomial.X i)
       rw [MvPolynomial.eval_X]
   have hev : ∀ (τ : A →ₐ[k] k) (q : Polynomial R),
       τ (aeval P.x q) = (q.map (MvPolynomial.eval fun i : Fin n => τ (algebraMap R A (MvPolynomial.X
@@ -378,41 +364,39 @@ private theorem isStandardEtale_exists_algHom_data
     rfl
   obtain ⟨hf0, hgU⟩ := P.hasMap
   refine ⟨P.x, P.f, P.g, ?_, ?_, ?_, ?_⟩
-  ·
-    intro τ
+  · intro τ
     refine ⟨?_, ?_, ?_⟩
     · rw [← hev, hf0, map_zero]
     · rw [← hev]; exact (hgU.map τ).ne_zero
     · rw [← hev]; exact (P.hasMap.isUnit_derivative_f.map τ).ne_zero
-  ·
-    intro τ τ' hX hx
-    letI instk : Algebra R k := (MvPolynomial.eval fun i : Fin n => τ (algebraMap R A
+  · intro τ τ' hX hx
+    let instk : Algebra R k := (MvPolynomial.eval fun i : Fin n => τ (algebraMap R A
       (MvPolynomial.X i))).toAlgebra
     have hv : (fun i : Fin n => τ' (algebraMap R A (MvPolynomial.X i)))
         = fun i : Fin n => τ (algebraMap R A (MvPolynomial.X i)) := funext fun i => (hX i).symm
     let τR : A →ₐ[R] k :=
       { toRingHom := (τ : A →+* k)
         commutes' := fun p => by
-          show ((τ : A →+* k).comp (algebraMap R A)) p = _
+          change ((τ : A →+* k).comp (algebraMap R A)) p = _
           rw [hring τ]; rfl }
     let τR' : A →ₐ[R] k :=
       { toRingHom := (τ' : A →+* k)
         commutes' := fun p => by
-          show ((τ' : A →+* k).comp (algebraMap R A)) p = _
+          change ((τ' : A →+* k).comp (algebraMap R A)) p = _
           rw [hring τ', hv]; rfl }
     have hcomp : τR.comp (P.equivRing.symm : P.Ring →ₐ[R] A) = τR'.comp (P.equivRing.symm : P.Ring
       →ₐ[R] A) := by
       apply StandardEtalePair.hom_ext
-      show τ (P.equivRing.symm P.X) = τ' (P.equivRing.symm P.X)
+      change τ (P.equivRing.symm P.X) = τ' (P.equivRing.symm P.X)
       rw [P.equivRing_symm_X]; exact hx
     apply AlgHom.ext
     intro s
     have := congrArg (fun φ : P.Ring →ₐ[R] k => φ (P.equivRing s)) hcomp
-    simp at this
+    simp only [AlgHom.coe_comp, AlgEquiv.coe_toAlgHom, Function.comp_apply,
+      AlgEquiv.symm_apply_apply] at this
     exact this
-  ·
-    intro z w hF hG
-    letI instk : Algebra R k := (MvPolynomial.eval z).toAlgebra
+  · intro z w hF hG
+    let instk : Algebra R k := (MvPolynomial.eval z).toAlgebra
     have haev : ∀ q : Polynomial R, aeval (R := R) w q = (q.map (MvPolynomial.eval z)).eval w := by
       intro q
       rw [aeval_def, show algebraMap R k = MvPolynomial.eval z from rfl, eval₂_eq_eval_map]
@@ -423,21 +407,20 @@ private theorem isStandardEtale_exists_algHom_data
     let τ : A →ₐ[k] k :=
       { toRingHom := (θ : A →+* k)
         commutes' := fun c => by
-          show θ (algebraMap k A c) = c
+          change θ (algebraMap k A c) = c
           rw [IsScalarTower.algebraMap_apply k R A, AlgHom.commutes]
-          show MvPolynomial.eval z (algebraMap k R c) = c
+          change MvPolynomial.eval z (algebraMap k R c) = c
           rw [MvPolynomial.algebraMap_eq, MvPolynomial.eval_C] }
     refine ⟨τ, ?_, ?_⟩
     · intro i
-      show θ (algebraMap R A (MvPolynomial.X i)) = z i
+      change θ (algebraMap R A (MvPolynomial.X i)) = z i
       rw [AlgHom.commutes]
-      show MvPolynomial.eval z (MvPolynomial.X i) = z i
+      change MvPolynomial.eval z (MvPolynomial.X i) = z i
       rw [MvPolynomial.eval_X]
-    · show ψ (P.equivRing P.x) = w
+    · change ψ (P.equivRing P.x) = w
       rw [P.equivRing_x]
       exact P.lift_X w hmap
-  ·
-    intro s
+  · intro s
     obtain ⟨p, N, hp⟩ := P.exists_mul_aeval_x_g_pow_eq_aeval_x s
     refine ⟨p, N, fun τ => ?_⟩
     have := congrArg τ hp
@@ -456,7 +439,6 @@ private theorem
       (∀ z ∈ Metric.ball z₀ r, ∀ w ∈ Metric.ball w₀ ρ, (F.map (MvPolynomial.eval z)).eval w = 0 → w
         = φ z) := by
   classical
-
   have hev : ∀ a : MvPolynomial (Fin n) ℂ, ContDiff ℂ ⊤ (fun z : Fin n → ℂ => MvPolynomial.eval z a)
     :=
     fun a => (AnalyticOnNhd.eval_mvPolynomial a).contDiff
@@ -480,7 +462,6 @@ private theorem
   set f : (Fin n → ℂ) × ℂ → ℂ := fun p => (F.map (MvPolynomial.eval p.1)).eval p.2 with hf
   have hcd : ContDiffAt ℂ ⊤ f (z₀, w₀) := (hsm F).contDiffAt
   have f00 : f (z₀, w₀) = 0 := h₀
-
   set c : ℂ := ((Polynomial.derivative F).map (MvPolynomial.eval z₀)).eval w₀ with hc
   have hderw : HasDerivAt (fun w : ℂ => f (z₀, w)) c w₀ := by
     have h := (F.map (MvPolynomial.eval z₀)).hasDerivAt w₀
@@ -498,7 +479,6 @@ private theorem
       →L[ℂ] ℂ) c⁻¹) ?_ ?_
     · ext; simp [hd]
     · ext; simp [hd]
-
   have htop : (⊤ : WithTop ℕ∞) ≠ 0 := by simp
   set ψ : (Fin n → ℂ) → ℂ := hcd.implicitFunction htop hinv with hψ
   have hψ0 : ψ z₀ = w₀ := hcd.implicitFunction_apply_self htop hinv
@@ -510,7 +490,6 @@ private theorem
   obtain ⟨U, hU, hψU⟩ := hψcd.contDiffOn (m := ⊤) le_rfl (by simp)
   have hdiffU : DifferentiableOn ℂ ψ U := hψU.differentiableOn (by simp)
   have hψcont : ContinuousAt ψ z₀ := hψcd.continuousAt
-
   obtain ⟨ε, hε, hεsub⟩ := Metric.mem_nhds_iff.1 huniq
   have hball : ∀ᶠ z in 𝓝 z₀, ψ z ∈ Metric.ball w₀ ε := by
     have : Metric.ball w₀ ε ∈ 𝓝 (ψ z₀) := by rw [hψ0]; exact Metric.ball_mem_nhds _ hε
@@ -530,7 +509,7 @@ private theorem
     have hv : (z, w) ∈ Metric.ball (z₀, w₀) ε := by
       rw [← ball_prod_same]; exact ⟨h4, hw⟩
     have h5 := hεsub hv
-    simp only [Set.mem_setOf_eq] at h5
+    simp only [Set.mem_ofPred_eq] at h5
     rw [f00] at h5
     exact (h5.1 hw').symm
 
@@ -572,8 +551,7 @@ open SmoothComplexCoordinatesAux
 at a point admits local complex-analytic coordinates given by evaluation
 at the basis elements. -/
 public theorem Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehlerDifferential
-(S : Type*) [CommRing S] [IsDomain S] [Algebra ℂ S] [Algebra.FiniteType ℂ S] (hsm : Algebra.Smooth ℂ
-  S)
+(S : Type*) [CommRing S] [IsDomain S] [Algebra ℂ S] (hsm : Algebra.Smooth ℂ S)
     {n : ℕ} (hrank : Module.rank S (KaehlerDifferential ℂ S) = n)
     (σ₀ : S →ₐ[ℂ] ℂ) (t : Fin n → S)
     (hdt : (RingHom.ker σ₀.toRingHom) • (⊤ : Submodule S (KaehlerDifferential ℂ S)) ⊔
@@ -584,24 +562,21 @@ public theorem Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehle
       (∀ s : S, ∃ F : (Fin n → ℂ) → ℂ,
         DifferentiableOn ℂ F (Metric.ball (fun i : Fin n => σ₀ (t i)) r) ∧
         ∀ σ ∈ 𝒰, σ s = F (fun i : Fin n => σ (t i))) ∧
-
       (∀ σ ∈ 𝒰, ∃ (fs : Finset S) (ε : ℝ), 0 < ε ∧
         ∀ σ' : S →ₐ[ℂ] ℂ, (∀ s ∈ fs, ‖σ' s - σ s‖ < ε) → σ' ∈ 𝒰) := by
   classical
-
   obtain ⟨g, hg, hSE⟩ :=
     exists_isStandardEtale_mvPolynomial_localizationAway_of_smooth_of_kaehlerDifferential S
       hsm hrank σ₀ t hdt
-  letI instA : Algebra (MvPolynomial (Fin n) ℂ) (Localization.Away g) :=
+  let instA : Algebra (MvPolynomial (Fin n) ℂ) (Localization.Away g) :=
     ((algebraMap S (Localization.Away g)).comp (MvPolynomial.aeval t).toRingHom).toAlgebra
-  haveI : Algebra.IsStandardEtale (MvPolynomial (Fin n) ℂ) (Localization.Away g) := hSE
+  have : Algebra.IsStandardEtale (MvPolynomial (Fin n) ℂ) (Localization.Away g) := hSE
   have halg : ∀ p : MvPolynomial (Fin n) ℂ, algebraMap (MvPolynomial (Fin n) ℂ) (Localization.Away
     g) p =
       algebraMap S (Localization.Away g) (MvPolynomial.aeval t p) := fun p => rfl
-  haveI : IsScalarTower ℂ (MvPolynomial (Fin n) ℂ) (Localization.Away g) := by
+  have : IsScalarTower ℂ (MvPolynomial (Fin n) ℂ) (Localization.Away g) := by
     refine IsScalarTower.of_algebraMap_eq fun c => ?_
     rw [halg, MvPolynomial.algebraMap_eq, MvPolynomial.aeval_C, ← IsScalarTower.algebraMap_apply]
-
   obtain ⟨x, F, G, hpt, hinjc, hsurjc, hrepr⟩ :=
     isStandardEtale_exists_algHom_data ℂ (n := n) (Localization.Away g)
   have hXt : ∀ i : Fin n, algebraMap (MvPolynomial (Fin n) ℂ) (Localization.Away g) (MvPolynomial.X
@@ -609,7 +584,6 @@ public theorem Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehle
       algebraMap S (Localization.Away g) (t i) := by
     intro i; rw [halg, MvPolynomial.aeval_X]
   simp only [hXt] at hpt hinjc hsurjc hrepr
-
   let ι : S →ₐ[ℂ] (Localization.Away g) := IsScalarTower.toAlgHom ℂ S (Localization.Away g)
   have hι : ∀ s : S, ι s = algebraMap S (Localization.Away g) s := fun s => rfl
   have hunit : ∀ (σ : S →ₐ[ℂ] ℂ), σ g ≠ 0 → ∀ y : Submonoid.powers g, IsUnit (σ y) := by
@@ -619,21 +593,20 @@ public theorem Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehle
     IsLocalization.liftAlgHom (M := Submonoid.powers g) (f := σ) (hunit σ hσ)
   have hL : ∀ (σ : S →ₐ[ℂ] ℂ) (hσ : σ g ≠ 0) (s : S), L σ hσ (algebraMap S (Localization.Away g) s)
     = σ s := fun σ hσ s => by
-    show IsLocalization.liftAlgHom _ _ = _
+    change IsLocalization.liftAlgHom _ _ = _
     rw [IsLocalization.liftAlgHom_apply, IsLocalization.lift_eq]; rfl
   have hLcomp : ∀ (σ : S →ₐ[ℂ] ℂ) (hσ : σ g ≠ 0), (L σ hσ).comp ι = σ := fun σ hσ =>
     AlgHom.ext fun s => hL σ hσ s
   have hτg : ∀ τ : (Localization.Away g) →ₐ[ℂ] ℂ, (τ.comp ι) g ≠ 0 := by
     intro τ
-    show τ (algebraMap S (Localization.Away g) g) ≠ 0
+    change τ (algebraMap S (Localization.Away g) g) ≠ 0
     exact ((IsLocalization.Away.algebraMap_isUnit g).map τ).ne_zero
   have hcompL : ∀ τ : (Localization.Away g) →ₐ[ℂ] ℂ, L (τ.comp ι) (hτg τ) = τ := by
     intro τ
-    apply AlgHom.coe_ringHom_injective
+    apply AlgHom.toRingHom_injective
     refine IsLocalization.ringHom_ext (Submonoid.powers g) ?_
     ext s
     exact hL (τ.comp ι) (hτg τ) s
-
   obtain ⟨⟨a, ⟨gm, m, rfl⟩⟩, hax⟩ := IsLocalization.surj (Submonoid.powers g) x
   have hxval : ∀ τ : (Localization.Away g) →ₐ[ℂ] ℂ, τ x = (τ.comp ι) a / ((τ.comp ι) g) ^ m := by
     intro τ
@@ -641,20 +614,16 @@ public theorem Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehle
     rw [map_mul, map_pow (algebraMap S (Localization.Away g)), map_pow] at h1
     rw [eq_div_iff (pow_ne_zero _ (hτg τ))]
     exact h1
-
   have hcoord : ∀ τ : (Localization.Away g) →ₐ[ℂ] ℂ, (fun i : Fin n => τ (algebraMap S
     (Localization.Away g) (t i))) =
       fun i : Fin n => (τ.comp ι) (t i) := fun τ => rfl
-
   let τ₀ : (Localization.Away g) →ₐ[ℂ] ℂ := L σ₀ hg
   have hτ₀ : ∀ s : S, τ₀ (algebraMap S (Localization.Away g) s) = σ₀ s := hL σ₀ hg
   obtain ⟨hF0, hG0, hD0⟩ := hpt τ₀
   simp only [hτ₀] at hF0 hG0 hD0
-
   obtain ⟨r, ρ, φ, hr, hρ, hφ0, hφd, -, hφF, hφuniq⟩ :=
     complex_exists_differentiableOn_forall_eval_map_eval_eq_zero_iff_eq_of_derivative_ne_zero_pi F
       (fun i : Fin n => σ₀ (t i)) (τ₀ x) hF0 hD0
-
   have hGcont : ContinuousAt (fun z : Fin n → ℂ => (G.map (MvPolynomial.eval z)).eval (φ z)) (fun i
     : Fin n => σ₀ (t i)) := by
     have hφc : ContinuousAt φ (fun i : Fin n => σ₀ (t i)) := (hφd.differentiableAt
@@ -674,23 +643,19 @@ public theorem Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehle
   have hb2 : ∀ z ∈ Metric.ball (fun i : Fin n => σ₀ (t i)) r', (G.map (MvPolynomial.eval z)).eval (φ
     z) ≠ 0 := fun z hz =>
     hr₁sub (Metric.ball_subset_ball (min_le_right _ _) hz)
-
   set 𝒱 : Set ((Localization.Away g) →ₐ[ℂ] ℂ) :=
     {τ | (fun i : Fin n => τ (algebraMap S (Localization.Away g) (t i))) ∈ Metric.ball (fun i : Fin
       n => σ₀ (t i)) r' ∧
       τ x ∈ Metric.ball (τ₀ x) ρ} with h𝒱
   set 𝒰 : Set (S →ₐ[ℂ] ℂ) := (fun τ : (Localization.Away g) →ₐ[ℂ] ℂ => τ.comp ι) '' 𝒱 with h𝒰
-
   have hφτ : ∀ τ ∈ 𝒱, τ x = φ (fun i : Fin n => τ (algebraMap S (Localization.Away g) (t i))) := by
     intro τ hτ
     exact hφuniq _ (hb1 _ hτ.1) _ hτ.2 (hpt τ).1
   refine ⟨r', 𝒰, hr'pos, ?_, ?_, ?_, ?_⟩
-  ·
-    refine ⟨τ₀, ⟨?_, ?_⟩, hLcomp σ₀ hg⟩
+  · refine ⟨τ₀, ⟨?_, ?_⟩, hLcomp σ₀ hg⟩
     · simp only [hτ₀]; exact Metric.mem_ball_self hr'pos
     · exact Metric.mem_ball_self hρ
-  ·
-    refine ⟨?_, ?_, ?_⟩
+  · refine ⟨?_, ?_, ?_⟩
     · rintro σ ⟨τ, hτ, rfl⟩
       exact hτ.1
     · rintro σ ⟨τ, hτ, rfl⟩ σ' ⟨τ', hτ', rfl⟩ heq
@@ -707,8 +672,7 @@ public theorem Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehle
       · rw [hzt]; exact hz
       · rw [hτx]; exact hw
       · exact hzt
-  ·
-    intro s
+  · intro s
     obtain ⟨h, k, hk⟩ := hrepr (algebraMap S (Localization.Away g) s)
     refine ⟨fun z => (h.map (MvPolynomial.eval z)).eval (φ z) / ((G.map (MvPolynomial.eval z)).eval
       (φ z)) ^ k, ?_, ?_⟩
@@ -729,7 +693,7 @@ public theorem Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehle
         z hz => pow_ne_zero _ (hb2
         z hz))
     · rintro σ ⟨τ, hτ, rfl⟩
-      show τ (algebraMap S (Localization.Away g) s) =
+      change τ (algebraMap S (Localization.Away g) s) =
         (h.map (MvPolynomial.eval (fun i : Fin n => τ (algebraMap S (Localization.Away g) (t
           i))))).eval
             (φ (fun i : Fin n => τ (algebraMap S (Localization.Away g) (t i)))) /
@@ -739,8 +703,7 @@ public theorem Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehle
       rw [← hφτ τ hτ, eq_div_iff (pow_ne_zero _ ?_)]
       · exact hk τ
       · rw [hφτ τ hτ]; exact hb2 _ hτ.1
-  ·
-    rintro σ ⟨τ, hτ, rfl⟩
+  · rintro σ ⟨τ, hτ, rfl⟩
     set V : Set (ℂ × (Fin n → ℂ) × ℂ) :=
       {p | p.1 ≠ 0 ∧ p.2.1 ∈ Metric.ball (fun i : Fin n => σ₀ (t i)) r' ∧ p.2.2 / p.1 ^ m ∈
         Metric.ball (τ₀ x) ρ} with hV
@@ -759,12 +722,12 @@ public theorem Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehle
         Metric.isOpen_ball.preimage (continuous_fst.comp continuous_snd)
       have : V = {p : ℂ × (Fin n → ℂ) × ℂ | p.1 ≠ 0 ∧ p.2.2 / p.1 ^ m ∈ Metric.ball (τ₀ x) ρ} ∩
           {p | p.2.1 ∈ Metric.ball (fun i : Fin n => σ₀ (t i)) r'} := by
-        ext p; simp only [hV, Set.mem_setOf_eq, Set.mem_inter_iff]; tauto
+        ext p; simp only [hV, Set.mem_ofPred_eq, Set.mem_inter_iff]; tauto
       rw [this]; exact h3.inter h2
     have hPV : ((τ.comp ι) g, (fun i : Fin n => (τ.comp ι) (t i)), (τ.comp ι) a) ∈ V := by
       refine ⟨hτg τ, ?_, ?_⟩
       · exact hτ.1
-      · show (τ.comp ι) a / (τ.comp ι) g ^ m ∈ _
+      · change (τ.comp ι) a / (τ.comp ι) g ^ m ∈ _
         rw [← hxval τ]; exact hτ.2
     obtain ⟨ε, hε, hεsub⟩ := Metric.isOpen_iff.1 hVopen _ hPV
     refine ⟨insert g (insert a (Finset.univ.image t)), ε, hε, fun σ' hσ' => ?_⟩

@@ -14,7 +14,7 @@ public import MathlibExt.RingTheory.Smooth.ComplexCoordinates
 
 open Topology
 
-example (S : Type) [CommRing S] [IsDomain S] [Algebra ℂ S] [Algebra.FiniteType ℂ S]
+example (S : Type) [CommRing S] [IsDomain S] [Algebra ℂ S]
     (hsm : Algebra.Smooth ℂ S)
     {n : ℕ} (hrank : Module.rank S (KaehlerDifferential ℂ S) = n)
     (σ₀ : S →ₐ[ℂ] ℂ) (t : Fin n → S)
@@ -33,7 +33,7 @@ example (S : Type) [CommRing S] [IsDomain S] [Algebra ℂ S] [Algebra.FiniteType
 
 universe u
 
-example (S : Type u) [CommRing S] [IsDomain S] [Algebra ℂ S] [Algebra.FiniteType ℂ S]
+example (S : Type u) [CommRing S] [IsDomain S] [Algebra ℂ S]
     (hsm : Algebra.Smooth ℂ S)
     {n : ℕ} (hrank : Module.rank S (KaehlerDifferential ℂ S) = n)
     (σ₀ : S →ₐ[ℂ] ℂ) (t : Fin n → S)
@@ -46,3 +46,19 @@ example (S : Type u) [CommRing S] [IsDomain S] [Algebra ℂ S] [Algebra.FiniteTy
       Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehlerDifferential
         S hsm hrank σ₀ t hdt
     exact ⟨r, 𝒰, hr, hσ, hbij⟩
+
+/-- Smoothness known only through an algebra equivalence suffices: there is no
+`Algebra.FiniteType ℂ S` instance in scope, and none is needed. -/
+example (S T : Type) [CommRing S] [IsDomain S] [Algebra ℂ S] [CommRing T] [Algebra ℂ T]
+    [Algebra.Smooth ℂ T] (e : T ≃ₐ[ℂ] S)
+    {n : ℕ} (hrank : Module.rank S (KaehlerDifferential ℂ S) = n)
+    (σ₀ : S →ₐ[ℂ] ℂ) (t : Fin n → S)
+    (hdt : (RingHom.ker σ₀.toRingHom) • (⊤ : Submodule S (KaehlerDifferential ℂ S)) ⊔
+        Submodule.span S (Set.range fun i : Fin n => KaehlerDifferential.D ℂ S (t i)) = ⊤) :
+    ∃ (r : ℝ) (𝒰 : Set (S →ₐ[ℂ] ℂ)), 0 < r ∧ σ₀ ∈ 𝒰 ∧
+      Set.BijOn (fun σ : S →ₐ[ℂ] ℂ => fun i : Fin n => σ (t i)) 𝒰
+        (Metric.ball (fun i : Fin n => σ₀ (t i)) r) := by
+  obtain ⟨r, 𝒰, hr, hσ, hbij, -, -⟩ :=
+    Algebra.exists_bijOn_eval_differentiableOn_pi_of_smooth_of_kaehlerDifferential
+      S (Algebra.Smooth.of_equiv e) hrank σ₀ t hdt
+  exact ⟨r, 𝒰, hr, hσ, hbij⟩
