@@ -29,6 +29,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Module.LinearMap.End
+public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Algebra.Module.ZMod
 public import Mathlib.GroupTheory.QuotientGroup.Basic
@@ -44,7 +45,7 @@ open scoped NumberField nonZeroDivisors
 
 namespace Stickelberger
 
-
+/-- The Stickelberger exponents `c` with `0 < c` and `2 * c < p`. -/
 def exponentSet (p : ℕ) : Finset ℕ :=
   (Finset.range p).filter fun c => 0 < c ∧ 2 * c < p
 
@@ -53,27 +54,44 @@ def exponentSet (p : ℕ) : Finset ℕ :=
   simp only [exponentSet, Finset.mem_filter, Finset.mem_range]
   exact ⟨fun h => h.2, fun h => ⟨by omega, h⟩⟩
 
+/-- The sum of the Stickelberger exponents. -/
 def eigenvalueScalar (p : ℕ) : ℕ := ∑ c ∈ exponentSet p, c
 
-noncomputable def expUnit (p : ℕ) (c : ℕ) : (ZMod p)ˣ :=
-  if h : Nat.Coprime c p then ZMod.unitOfCoprime c h else 1
+variable {p : ℕ}
 
-variable {p : ℕ} {A : Type*} [AddCommGroup A] [Module (ZMod p) A]
+/-- For prime `p`, every Stickelberger exponent is coprime to `p`. -/
+theorem coprime_of_mem_exponentSet (hp : p.Prime) {c : ℕ} (hc : c ∈ exponentSet p) :
+    c.Coprime p := by
+  rw [mem_exponentSet] at hc
+  exact (hp.coprime_iff_not_dvd.mpr (Nat.not_dvd_of_pos_of_lt hc.1 (by omega))).symm
 
-noncomputable def stickelbergerEnd (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) :
+/-- For prime `p`, the unit of `ZMod p` represented by a Stickelberger exponent. -/
+noncomputable def expUnit [Fact p.Prime] {c : ℕ} (hc : c ∈ exponentSet p) : (ZMod p)ˣ :=
+  ZMod.unitOfCoprime c (coprime_of_mem_exponentSet Fact.out hc)
+
+@[simp] lemma coe_expUnit [Fact p.Prime] {c : ℕ} (hc : c ∈ exponentSet p) :
+    (expUnit hc : ZMod p) = c :=
+  ZMod.coe_unitOfCoprime c _
+
+variable {A : Type*} [AddCommGroup A] [Module (ZMod p) A]
+
+/-- The Stickelberger endomorphism `∑ c, ρ (c⁻¹)` over the Stickelberger exponents. -/
+noncomputable def stickelbergerEnd [Fact p.Prime] (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) :
     Module.End (ZMod p) A :=
-  ∑ c ∈ exponentSet p, ρ (expUnit p c)⁻¹
+  ∑ c ∈ (exponentSet p).attach, ρ (expUnit c.2)⁻¹
 
-def StickelbergerAnnihilates (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) : Prop :=
+/-- The Stickelberger endomorphism kills every element. -/
+def StickelbergerAnnihilates [Fact p.Prime] (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) :
+    Prop :=
   ∀ a : A, stickelbergerEnd ρ a = 0
 
+/-- `a` lies in the `ω ^ i` eigenspace: each unit `d` acts on it as `d ^ i`. -/
 def IsOmegaEigenvector (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) (i : ℕ) (a : A) : Prop :=
   ∀ d : (ZMod p)ˣ, ρ d a = ((d : ZMod p) ^ i) • a
 
-
 /-- The Stickelberger endomorphism annihilates every element exactly when
 its defining sum acts as zero on the module. -/
-theorem stickelbergerAnnihilates_iff {A : Type*} [AddCommGroup A]
+theorem stickelbergerAnnihilates_iff [Fact p.Prime] {A : Type*} [AddCommGroup A]
     [Module (ZMod p) A] (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) :
     StickelbergerAnnihilates ρ ↔ ∀ a : A, stickelbergerEnd ρ a = 0 :=
   Iff.rfl
