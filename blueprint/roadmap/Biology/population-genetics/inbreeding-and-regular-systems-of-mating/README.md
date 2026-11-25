@@ -1,5 +1,6 @@
 # Inbreeding and regular systems of mating
 
+- [Ordered Genotype Frequency](ordered-genotype-frequency.md)
 - [Genotype frequencies of an inbred individual](genotype-frequencies-under-inbreeding.md)
 - [Inbreeding coefficient under partial self-fertilization](inbreeding-under-partial-selfing.md)
 - [Inbreeding under repeated full-sib mating](inbreeding-under-full-sib-mating.md)
