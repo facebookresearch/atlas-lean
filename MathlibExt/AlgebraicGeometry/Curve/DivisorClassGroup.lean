@@ -33,15 +33,43 @@ public import MathlibExt.AlgebraicGeometry.Curve.Place
 /-!
 # Degree-zero divisor classes of a function field
 
-For a field extension `F/K`, this file defines the divisors of `F` over `K`, as finitely supported
-integer combinations of the places of `F` over `K`, and the subgroup of principal divisors (the
-divisors of nonzero elements of `F`). When the residue field of every place is finite-dimensional
-over `K`, as for the function field of a curve over `K`, it defines the degree of a place and of a
-divisor, and the group `Pic0 K F` of divisors of degree zero modulo the principal divisors of
-degree zero.
+This file defines the divisor `P - Q` of two points on any type of points. For a field extension
+`F/K`, it defines the divisors of `F` over `K`, as finitely supported integer combinations of the
+places of `F` over `K`, and the subgroup of principal divisors (the divisors of nonzero elements
+of `F`). When the residue field of every place is finite-dimensional over `K`, as for the function
+field of a curve over `K`, it defines the degree of a place and of a divisor, and the group
+`Pic0 K F` of divisors of degree zero modulo the principal divisors of degree zero.
 -/
 
 @[expose] public section
+
+namespace CurveDivisor
+
+variable {C : Type*}
+
+/-- The divisor `P - Q` of two points `P` and `Q`: the difference of the two single-point
+divisors. -/
+noncomputable def pointDiff (P Q : C) : CurveDivisor C :=
+  Finsupp.single P 1 - Finsupp.single Q 1
+
+theorem pointDiff_def (P Q : C) : pointDiff P Q = Finsupp.single P 1 - Finsupp.single Q 1 :=
+  rfl
+
+theorem pointDiff_self (P : C) : pointDiff P P = 0 := by
+  simp [pointDiff_def]
+
+/-- For distinct points `P` and `Q`, the divisor `P - Q` has coefficient `1` at `P`. -/
+theorem coeff_pointDiff_left (P Q : C) (h : P ≠ Q) : coeff (pointDiff P Q) P = 1 := by
+  classical
+  simp [pointDiff_def, coeff, h]
+
+theorem pointDiff_ne_zero (P Q : C) (h : P ≠ Q) : pointDiff P Q ≠ 0 := by
+  intro h0
+  have := coeff_pointDiff_left P Q h
+  rw [h0] at this
+  simp [coeff] at this
+
+end CurveDivisor
 
 namespace AlgebraicCurve
 
@@ -112,6 +140,17 @@ noncomputable def degZero : AddSubgroup (Divisor K F) := degree.ker
 
 theorem mem_degZero {D : Divisor K F} : D ∈ degZero (K := K) (F := F) ↔ degree D = 0 :=
   Iff.rfl
+
+/-- The degree of the divisor `P - Q` of two places is the difference of their degrees. -/
+theorem degree_pointDiff (P Q : Place K F) :
+    degree (CurveDivisor.pointDiff P Q) = (P.deg : ℤ) - Q.deg := by
+  rw [CurveDivisor.pointDiff_def, map_sub, degree_single, degree_single, one_mul, one_mul]
+
+/-- The divisor `P - Q` of two places has degree zero exactly when the two places have the same
+degree. -/
+theorem pointDiff_mem_degZero_iff (P Q : Place K F) :
+    CurveDivisor.pointDiff P Q ∈ degZero (K := K) (F := F) ↔ P.deg = Q.deg := by
+  rw [mem_degZero, degree_pointDiff, sub_eq_zero, Nat.cast_inj]
 
 end Divisor
 

@@ -16,6 +16,15 @@ namespace AlgebraicCurve.DivisorClassGroupTest
 
 open AlgebraicCurve
 
+-- The divisor `P - Q` is defined on any type of points; for distinct points it has coefficient
+-- `1` at `P` and is nonzero, and it vanishes when the points coincide.
+example {C : Type*} (P Q : C) (h : P ≠ Q) :
+    CurveDivisor.coeff (CurveDivisor.pointDiff P Q) P = 1 ∧ CurveDivisor.pointDiff P Q ≠ 0 :=
+  ⟨CurveDivisor.coeff_pointDiff_left P Q h, CurveDivisor.pointDiff_ne_zero P Q h⟩
+
+example {C : Type 1} (P : C) : CurveDivisor.pointDiff P P = 0 :=
+  CurveDivisor.pointDiff_self P
+
 variable {K F : Type*} [Field K] [Field F] [Algebra K F]
 
 -- The degree of a place with a finite-dimensional residue field is that dimension, and it is
@@ -48,6 +57,13 @@ example (v w : Place K F) (n : ℤ) :
 example (v : Place K F) : Finsupp.single v 1 ∉ Divisor.degZero (K := K) (F := F) := by
   rw [Divisor.mem_degZero, Divisor.degree_single, one_mul]
   exact_mod_cast v.deg_pos.ne'
+
+-- The divisor `P - Q` of two places has degree `deg P - deg Q`, so it has degree zero exactly
+-- when the two places have the same degree.
+example (P Q : Place K F) :
+    Divisor.degree (CurveDivisor.pointDiff P Q) = (P.deg : ℤ) - Q.deg ∧
+      (CurveDivisor.pointDiff P Q ∈ Divisor.degZero (K := K) (F := F) ↔ P.deg = Q.deg) :=
+  ⟨Divisor.degree_pointDiff P Q, Divisor.pointDiff_mem_degZero_iff P Q⟩
 
 -- A divisor of degree zero has class zero exactly when it is the divisor of a nonzero element.
 example (D : Divisor.degZero (K := K) (F := F)) :
