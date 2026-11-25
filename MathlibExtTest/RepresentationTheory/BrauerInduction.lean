@@ -36,6 +36,7 @@ module
 public import MathlibExt.RepresentationTheory.BrauerInduction
 public import MathlibExt.RepresentationTheory.MonomialCharacter
 public import MathlibExt.RepresentationTheory.SolomonInduction
+import Mathlib.Algebra.Field.ZMod
 import Mathlib.Algebra.Group.TypeTags.Finite
 import Mathlib.Data.ZMod.Defs
 
@@ -46,7 +47,7 @@ open scoped MatrixGroups
 /-! The source statements, with their original binders (`G : Type`). -/
 
 open scoped Classical in
-theorem exactSource
+private theorem exactSource
     {G : Type} [Group G] [Fintype G] {n : ℕ} (ρ : G →* GL (Fin n) ℂ) :
     ∃ (k : ℕ) (H : Fin k → Subgroup G) (ψ : (i : Fin k) → (H i →* ℂˣ)) (a : Fin k → ℤ),
       ∀ g : G, ((ρ g : GL (Fin n) ℂ) : Matrix (Fin n) (Fin n) ℂ).trace =
@@ -55,7 +56,7 @@ theorem exactSource
             else 0) :=
   BrauerInduction.exists_trace_eq_sum_zsmul_induced_linearCharacter ρ
 
-theorem exactSource_solomon
+private theorem exactSource_solomon
     {G : Type} [Group G] [Fintype G] :
     ∃ (k : ℕ) (H : Fin k → Subgroup G) (a : Fin k → ℤ),
       (∀ i, ∃ q : ℕ, q.Prime ∧ ∃ C : Subgroup G, C ≤ H i ∧ IsCyclic C ∧
@@ -65,7 +66,7 @@ theorem exactSource_solomon
   ClassFunction.exists_one_eq_sum_zsmul_induced_one_of_hyperelementary
 
 open scoped Classical in
-theorem exactSource_monomial
+private theorem exactSource_monomial
     {G : Type} [Group G] [Fintype G] {p : ℕ} (hp : p.Prime) (A : Subgroup G) (hA : A.Normal)
     (hcomm : ∀ a ∈ A, ∀ b ∈ A, a * b = b * a) (hquot : ∀ g : G, ∃ n : ℕ, g ^ p ^ n ∈ A)
     {n : ℕ} (ρ : G →* GL (Fin n) ℂ) :
@@ -114,3 +115,32 @@ example :
 example {G : Type*} [Group G] [Fintype G] :
     ClassFunction.induced (⊤ : Subgroup G) (fun _ => (1 : ℚ)) = fun _ => 1 :=
   ClassFunction.induced_top_of_conj_invariant _ fun _ _ => rfl
+
+/-! The order of the subgroup must be invertible in the field. Over `ZMod 3` the order `2` of
+`ℤ/2` is invertible, and inducing the constant function `1` from the whole group returns it. -/
+
+private instance : NeZero ((Nat.card (⊤ : Subgroup (Multiplicative (ZMod 2))) : ℕ) : ZMod 3) :=
+  ⟨by rw [Subgroup.card_top, Nat.card_eq_fintype_card, Fintype.card_multiplicative, ZMod.card]
+      decide⟩
+
+example : ClassFunction.induced (⊤ : Subgroup (Multiplicative (ZMod 2)))
+    (fun _ => (1 : ZMod 3)) = fun _ => 1 :=
+  ClassFunction.induced_top_of_conj_invariant _ fun _ _ => rfl
+
+/-! Over `ZMod 2` the order `2` vanishes, so `ClassFunction.induced` does not apply: the
+normalized Frobenius sum of the constant function `1` over the whole group `ℤ/2` is `0`, not
+`1`. -/
+
+example : ¬ NeZero ((Nat.card (⊤ : Subgroup (Multiplicative (ZMod 2))) : ℕ) : ZMod 2) := by
+  rw [Subgroup.card_top, Nat.card_eq_fintype_card, Fintype.card_multiplicative, ZMod.card,
+    ZMod.natCast_self]
+  exact fun h => h.out rfl
+
+open scoped Classical in
+example (g : Multiplicative (ZMod 2)) :
+    (Nat.card (⊤ : Subgroup (Multiplicative (ZMod 2))) : ZMod 2)⁻¹ *
+      ∑ x : Multiplicative (ZMod 2),
+        (if x⁻¹ * g * x ∈ (⊤ : Subgroup (Multiplicative (ZMod 2))) then (1 : ZMod 2) else 0) =
+      0 := by
+  rw [Subgroup.card_top, Nat.card_eq_fintype_card, Fintype.card_multiplicative, ZMod.card,
+    ZMod.natCast_self, ZMod.inv_zero, zero_mul]

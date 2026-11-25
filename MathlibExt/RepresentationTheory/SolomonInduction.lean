@@ -297,8 +297,8 @@ private theorem mul_mem_P {f g : G → ℤ} (hf : f ∈ (P : Submodule ℤ (G �
 
 private theorem mul_mem_I {f g : G → ℤ} (hf : f ∈ (P : Submodule ℤ (G → ℤ)))
     (hg : g ∈ (I : Submodule ℤ (G → ℤ))) : f * g ∈ (I : Submodule ℤ (G → ℤ)) :=
-  mul_mem_span_of_gen _ _
-    (fun H _ K hK => pc_mul_pc_mem_span H K _ fun a S hS => hK.of_le_conj a S hS) hf hg
+  mul_mem_span_of_gen _ {S : Subgroup G | IsHyper S}
+    (fun H _ K hK => pc_mul_pc_mem_span H K _ fun a S hS => IsHyper.of_le_conj hK a S hS) hf hg
 
 private def Psub : Subring (G → ℤ) where
   carrier := (P : Submodule ℤ (G → ℤ))

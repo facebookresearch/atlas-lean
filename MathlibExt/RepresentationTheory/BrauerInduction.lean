@@ -205,9 +205,8 @@ private theorem main :
     fun m => ψf (e.symm m).1 (e.symm m).2, fun m => a (e.symm m).1, fun g => ?_⟩
   rw [h2 g]
   simp_rw [hf]
-  rw [← Fintype.sum_equiv e (fun s : ι => (a s.1 : ℂ) *
-      ClassFunction.induced (Lf s.1 s.2) (ext (Lf s.1 s.2) (ψf s.1 s.2)) g) _
-      (fun s => by rw [Equiv.symm_apply_apply])]
+  rw [Equiv.sum_comp e.symm (fun s : ι => (a s.1 : ℂ) *
+      ClassFunction.induced (Lf s.1 s.2) (ext (Lf s.1 s.2) (ψf s.1 s.2)) g)]
   rw [Fintype.sum_sigma]
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.mul_sum]
