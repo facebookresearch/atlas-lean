@@ -98,22 +98,25 @@ theorem card_stabilizer_smul (g : G) (d : 𝒯.Dart) :
 
 variable (G) in
 /-- The width of a quotient edge: the cardinality of the stabilizer of any
-dart above it. -/
-def stabWidth (e : QuotEdge G 𝒯) : ℕ+ :=
-  Nat.toPNat' (Nat.card (stabilizer G e.out))
+dart above it. It is defined only when every dart stabilizer is finite, so
+that the width is the actual, positive cardinality. -/
+def stabWidth (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d)) (e : QuotEdge G 𝒯) : ℕ+ :=
+  ⟨Nat.card (stabilizer G e.out), @Nat.card_pos _ _ (hfin e.out)⟩
 
-theorem stabWidth_mk (d : 𝒯.Dart) :
-    stabWidth G 𝒯 (Quotient.mk'' d) = Nat.toPNat' (Nat.card (stabilizer G d)) :=
-  congrArg Nat.toPNat' (Nat.card_congr
-    (stabilizerEquivStabilizerOfOrbitRel (Quotient.mk_out (s := orbitRel G 𝒯.Dart) d)).toEquiv)
+theorem coe_stabWidth_mk (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d)) (d : 𝒯.Dart) :
+    (stabWidth G 𝒯 hfin (Quotient.mk'' d) : ℕ) = Nat.card (stabilizer G d) :=
+  Nat.card_congr
+    (stabilizerEquivStabilizerOfOrbitRel (Quotient.mk_out (s := orbitRel G 𝒯.Dart) d)).toEquiv
 
 variable (G) in
 /-- The degeneracy data of the quotient graph: endpoints are the endpoint
-orbits, and widths are dart stabilizer cardinalities. -/
-def quotientDegeneracyData : DegeneracyData (QuotEdge G 𝒯) (QuotVert G W) where
+orbits, and widths are dart stabilizer cardinalities, which requires every
+dart stabilizer to be finite. -/
+def quotientDegeneracyData (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d)) :
+    DegeneracyData (QuotEdge G 𝒯) (QuotVert G W) where
   a := Quotient.map' (fun d : 𝒯.Dart => d.fst) (by rintro _ b ⟨g, rfl⟩; exact ⟨g, rfl⟩)
   b := Quotient.map' (fun d : 𝒯.Dart => d.snd) (by rintro _ b ⟨g, rfl⟩; exact ⟨g, rfl⟩)
-  w := stabWidth G 𝒯
+  w := stabWidth G 𝒯 hfin
 
 variable (G) in
 /-- The reversal of a quotient edge, induced by dart reversal. -/
@@ -121,10 +124,12 @@ def quotientReversal : QuotEdge G 𝒯 → QuotEdge G 𝒯 :=
   Quotient.map' SimpleGraph.Dart.symm (by rintro _ b ⟨g, rfl⟩; exact ⟨g, rfl⟩)
 
 variable (G) in
-/-- A group acting on a graph is a tree lattice if the action is faithful,
+/-- A group acting on a tree is a tree lattice if the action is faithful,
 every vertex stabilizer is finite, and the quotient graph has finitely many
 vertices and edges. -/
 structure IsTreeLattice : Prop where
+  /-- The graph is a tree. -/
+  isTree : 𝒯.IsTree
   /-- The action is faithful. -/
   faithful : FaithfulSMul G W
   /-- Every vertex stabilizer is finite. -/
@@ -135,10 +140,12 @@ structure IsTreeLattice : Prop where
   finite_quotEdge : Finite (QuotEdge G 𝒯)
 
 variable (G) in
-/-- A group acting on a graph is a Schottky group if every vertex stabilizer
+/-- A group acting on a tree is a Schottky group if every vertex stabilizer
 is trivial, no group element sends a dart to its reverse, and the quotient
 graph has finitely many vertices and edges. -/
 structure IsSchottky : Prop where
+  /-- The graph is a tree. -/
+  isTree : 𝒯.IsTree
   /-- Every vertex stabilizer is trivial. -/
   stabilizer_eq_bot : ∀ w : W, stabilizer G w = ⊥
   /-- No group element sends a dart to its reverse. -/
@@ -160,17 +167,25 @@ variable {𝒯}
 theorem stabilizer_dart_eq_bot (h : IsSchottky G 𝒯) (d : 𝒯.Dart) : stabilizer G d = ⊥ :=
   le_bot_iff.mp ((stabilizer_dart_le 𝒯 d).trans (h.stabilizer_eq_bot d.fst).le)
 
-theorem stabWidth_eq_one (h : IsSchottky G 𝒯) (e : QuotEdge G 𝒯) : stabWidth G 𝒯 e = 1 := by
+theorem finite_stabilizer_dart (h : IsSchottky G 𝒯) (d : 𝒯.Dart) : Finite (stabilizer G d) := by
+  rw [h.stabilizer_dart_eq_bot d]; infer_instance
+
+theorem stabWidth_eq_one (h : IsSchottky G 𝒯) (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d))
+    (e : QuotEdge G 𝒯) : stabWidth G 𝒯 hfin e = 1 := by
   induction e using Quotient.inductionOn' with
-  | h d => rw [stabWidth_mk, h.stabilizer_dart_eq_bot d, Subgroup.card_bot]; rfl
+  | h d =>
+    apply PNat.coe_injective
+    rw [coe_stabWidth_mk, h.stabilizer_dart_eq_bot d, Subgroup.card_bot]; rfl
 
-theorem quotientDegeneracyData_w (h : IsSchottky G 𝒯) (e : QuotEdge G 𝒯) :
-    (quotientDegeneracyData G 𝒯).w e = 1 :=
-  h.stabWidth_eq_one e
+theorem quotientDegeneracyData_w (h : IsSchottky G 𝒯)
+    (hfin : ∀ d : 𝒯.Dart, Finite (stabilizer G d)) (e : QuotEdge G 𝒯) :
+    (quotientDegeneracyData G 𝒯 hfin).w e = 1 :=
+  h.stabWidth_eq_one hfin e
 
-theorem isTreeLattice [Nonempty W] (h : IsSchottky G 𝒯) : IsTreeLattice G 𝒯 where
+theorem isTreeLattice (h : IsSchottky G 𝒯) : IsTreeLattice G 𝒯 where
+  isTree := h.isTree
   faithful := ⟨fun {g₁ g₂} hg => by
-    obtain ⟨w⟩ := ‹Nonempty W›
+    obtain ⟨w⟩ := h.isTree.connected.nonempty
     have : g₂⁻¹ * g₁ ∈ stabilizer G w := by
       rw [mem_stabilizer_iff, mul_smul, hg w, inv_smul_smul]
     rw [h.stabilizer_eq_bot w, Subgroup.mem_bot] at this
@@ -184,6 +199,11 @@ end IsSchottky
 namespace IsTreeLattice
 
 variable {𝒯}
+
+theorem finite_stabilizer_dart (h : IsTreeLattice G 𝒯) (d : 𝒯.Dart) :
+    Finite (stabilizer G d) := by
+  have := h.finite_stabilizer d.fst
+  exact Finite.of_injective _ (Subgroup.inclusion_injective (stabilizer_dart_le 𝒯 d))
 
 @[reducible] def fintypeQuotVert (h : IsTreeLattice G 𝒯) : Fintype (QuotVert G W) :=
   @Fintype.ofFinite _ h.finite_quotVert
@@ -283,11 +303,12 @@ theorem walkCycle_map_smulHom {u v : W} (g : G) (p : 𝒯.Walk u v) :
 
 theorem pathCycle_eq_walkCycle (hac : 𝒯.IsAcyclic) (v₀ : W) (g : G) (p : 𝒯.Path v₀ (g • v₀)) :
     pathCycle 𝒯 orb v₀ g = walkCycle 𝒯 orb (p : 𝒯.Walk v₀ (g • v₀)) := by
-  rw [pathCycle, dif_pos p.1.reachable, hac.path_unique (somePath p.1.reachable) p]
+  rw [pathCycle, dite_eq_left p.1.reachable,
+    (hac.subsingleton_path v₀ (g • v₀)).elim (somePath p.1.reachable) p]
 
 theorem pathCycle_of_not_reachable (v₀ : W) (g : G) (h : ¬𝒯.Reachable v₀ (g • v₀)) :
     pathCycle 𝒯 orb v₀ g = 0 := by
-  rw [pathCycle, dif_neg h]
+  rw [pathCycle, dite_eq_right h]
 
 end lemmas
 

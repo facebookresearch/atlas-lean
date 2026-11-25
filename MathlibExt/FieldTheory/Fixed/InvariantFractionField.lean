@@ -32,9 +32,9 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.Algebra.Ring.Action.Group
-public import Mathlib.Combinatorics.SimpleGraph.Metric
 public import Mathlib.FieldTheory.Galois.Basic
 public import Mathlib.RingTheory.Localization.FractionRing
+public import MathlibExt.Combinatorics.SimpleGraph.VertexType
 
 import Mathlib.Tactic.Group
 
@@ -623,34 +623,6 @@ end Normalizer
 
 end Generic
 
-section VertexType
-
-variable {W : Type*} (𝒯 : SimpleGraph W) (w₀ : W)
-
-/-- The type of a vertex `w` relative to a base vertex `w₀`: the parity of
-the distance from `w₀` to `w`. -/
-def vertexType (w : W) : ZMod 2 := (𝒯.dist w₀ w : ZMod 2)
-
-theorem vertexType_apply (w : W) : vertexType 𝒯 w₀ w = (𝒯.dist w₀ w : ZMod 2) := rfl
-
-@[simp] theorem vertexType_self : vertexType 𝒯 w₀ w₀ = 0 := by
-  rw [vertexType, SimpleGraph.dist_self, Nat.cast_zero]
-
-/-- The subgroup of `G` preserving the vertex type of every vertex. -/
-def typePreserving (G : Type*) [Group G] [MulAction G W] (𝒯 : SimpleGraph W) (w₀ : W) :
-    Subgroup G where
-  carrier := {g | ∀ w : W, vertexType 𝒯 w₀ (g • w) = vertexType 𝒯 w₀ w}
-  one_mem' := fun w => by rw [one_smul]
-  mul_mem' {g h} hg hh := fun w => by rw [mul_smul, hg, hh]
-  inv_mem' {g} hg := fun w => by rw [← hg (g⁻¹ • w), smul_inv_smul]
-
-@[simp] theorem mem_typePreserving_iff {G : Type*} [Group G] [MulAction G W]
-    (𝒯 : SimpleGraph W) (w₀ : W) (g : G) :
-    g ∈ typePreserving G 𝒯 w₀ ↔ ∀ w : W, vertexType 𝒯 w₀ (g • w) = vertexType 𝒯 w₀ w :=
-  Iff.rfl
-
-end VertexType
-
 section MumfordLayer
 
 variable (K : Type*) [Field K] (G : Type*) [Group G] (M : Type*) [CommRing M] [IsDomain M]
@@ -662,8 +634,28 @@ abbrev mumfordField : Subfield (FractionRing M) := invariantField K G M
 
 variable {W : Type*} [MulAction G W] (𝒯 : SimpleGraph W) (w₀ : W)
 
-/-- There is an element of `G` exchanging the two vertex types. -/
-def HasTypeExchanger : Prop := ∃ g : G, g ∉ typePreserving G 𝒯 w₀
+variable {G} in
+/-- The element `g` exchanges the two vertex types: it adds one to the type
+of every vertex. -/
+def IsTypeExchanger (g : G) : Prop :=
+  ∀ w : W, vertexType 𝒯 w₀ (g • w) = vertexType 𝒯 w₀ w + 1
+
+/-- There is an element of `G` exchanging the two vertex types, that is,
+adding one to the type of every vertex. -/
+def HasTypeExchanger : Prop := ∃ g : G, IsTypeExchanger 𝒯 w₀ g
+
+variable {G 𝒯 w₀} in
+/-- A type exchanger is not type-preserving. -/
+theorem IsTypeExchanger.notMem_typePreserving {g : G} (hg : IsTypeExchanger 𝒯 w₀ g) :
+    g ∉ typePreserving G 𝒯 w₀ := fun hp => by
+  have h := hg w₀
+  rw [hp w₀, left_eq_add] at h
+  exact one_ne_zero h
+
+variable {G 𝒯 w₀} in
+theorem HasTypeExchanger.exists_notMem_typePreserving (h : HasTypeExchanger G 𝒯 w₀) :
+    ∃ g : G, g ∉ typePreserving G 𝒯 w₀ :=
+  h.imp fun _ hg => hg.notMem_typePreserving
 
 /-- The field fixed by the type-preserving subgroup. -/
 abbrev mumfordFieldPlus : Subfield (FractionRing M) :=

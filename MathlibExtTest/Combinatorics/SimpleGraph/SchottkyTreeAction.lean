@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.SimpleGraph.SchottkyTreeAction
+public import Mathlib.Algebra.Group.TypeTags.Finite
+public import Mathlib.Order.SuccPred.Int
 
 import Mathlib.Tactic.Ring
 
@@ -17,6 +19,8 @@ import Mathlib.Tactic.Ring
 open CerednikDrinfeld.Mumford
 
 noncomputable section
+
+namespace SchottkyTreeActionTest
 
 /-- The path graph on the integers: two integers are adjacent when they
 differ by one. -/
@@ -47,10 +51,24 @@ instance : GraphAction (Multiplicative ℤ) intPathGraph where
         (Multiplicative.toAdd g + (w + 1) = Multiplicative.toAdd g + w + 1)
       exact Or.inr (by ring)
 
+/-- The integer path graph is the Hasse diagram of `ℤ`. -/
+theorem intPathGraph_eq_hasse : intPathGraph = SimpleGraph.hasse ℤ := by
+  ext a b
+  change (b = a + 1 ∨ a = b + 1) ↔ (SimpleGraph.hasse ℤ).Adj a b
+  rw [SimpleGraph.hasse_adj, Order.covBy_iff_add_one_eq, Order.covBy_iff_add_one_eq]
+  omega
+
+/-- The integer path graph is a tree. -/
+theorem isTree_intPathGraph : intPathGraph.IsTree := by
+  rw [intPathGraph_eq_hasse]
+  exact ⟨⟨SimpleGraph.preconnected_hasse_of_succOrder ℤ⟩,
+    SimpleGraph.isAcyclic_hasse_of_linearOrder ℤ⟩
+
 /-- The translation action on the integer path graph is a Schottky action:
-it is free on vertices, never reverses a dart, and the quotient graph (one
-vertex, two directed edges) is finite. -/
-def intPathSchottky : IsSchottky (Multiplicative ℤ) intPathGraph where
+the graph is a tree, the action is free on vertices, it never reverses a
+dart, and the quotient graph (one vertex, two directed edges) is finite. -/
+theorem intPathSchottky : IsSchottky (Multiplicative ℤ) intPathGraph where
+  isTree := isTree_intPathGraph
   stabilizer_eq_bot w := by
     rw [Subgroup.eq_bot_iff_forall]
     intro g hg
@@ -113,16 +131,74 @@ def intPathSchottky : IsSchottky (Multiplicative ℤ) intPathGraph where
             rw [toAdd_ofAdd]; omega
     exact Finite.of_surjective _ hsurj
 
-/-- A Schottky action is in particular a tree lattice action, once the
-vertex set is nonempty. -/
+/-- A Schottky action is in particular a tree lattice action. -/
 example : IsTreeLattice (Multiplicative ℤ) intPathGraph :=
   intPathSchottky.isTreeLattice
 
 /-- The quotient degeneracy data of the integer path graph has width one
 everywhere, by the Schottky property. -/
 example (e : QuotEdge (Multiplicative ℤ) intPathGraph) :
-    (quotientDegeneracyData (Multiplicative ℤ) intPathGraph).w e = 1 :=
-  intPathSchottky.quotientDegeneracyData_w e
+    (quotientDegeneracyData (Multiplicative ℤ) intPathGraph
+      intPathSchottky.finite_stabilizer_dart).w e = 1 :=
+  intPathSchottky.quotientDegeneracyData_w _ e
+
+/-- The triangle is not a tree: a tree on three vertices has two edges, and
+the triangle has three. -/
+theorem not_isTree_triangle : ¬(⊤ : SimpleGraph (Fin 3)).IsTree := fun h => by
+  have hcard := h.card_edgeFinset
+  rw [SimpleGraph.card_edgeFinset_top_eq_card_choose_two, Fintype.card_fin] at hcard
+  exact absurd hcard (by decide)
+
+/-- No action on the triangle, not even the trivial one, is a Schottky
+action or a tree lattice action: both require the graph to be a tree. -/
+example {G : Type*} [Group G] [MulAction G (Fin 3)] [GraphAction G (⊤ : SimpleGraph (Fin 3))] :
+    ¬IsSchottky G (⊤ : SimpleGraph (Fin 3)) ∧ ¬IsTreeLattice G (⊤ : SimpleGraph (Fin 3)) :=
+  ⟨fun h => not_isTree_triangle h.isTree, fun h => not_isTree_triangle h.isTree⟩
+
+/-- The trivial action of the infinite group `Multiplicative ℤ` on `Bool`. -/
+instance trivialIntAction : MulAction (Multiplicative ℤ) Bool where
+  smul _ b := b
+  one_smul _ := rfl
+  mul_smul _ _ _ := rfl
+
+instance : GraphAction (Multiplicative ℤ) (⊤ : SimpleGraph Bool) where
+  smul_adj _ _ _ h := h
+
+/-- Under the trivial action of an infinite group, a dart stabilizer is the
+whole group, hence infinite, so `stabWidth` and `quotientDegeneracyData` do not
+apply: no width is assigned to an infinite stabilizer. -/
+theorem not_forall_finite_stabilizer_trivialIntAction :
+    ¬∀ d : (⊤ : SimpleGraph Bool).Dart, Finite (MulAction.stabilizer (Multiplicative ℤ) d) := by
+  intro h
+  let d : (⊤ : SimpleGraph Bool).Dart := ⟨(false, true), Bool.false_ne_true⟩
+  have htop : MulAction.stabilizer (Multiplicative ℤ) d = ⊤ :=
+    eq_top_iff.mpr fun _ _ => MulAction.mem_stabilizer_iff.mpr rfl
+  have hfin := h d
+  rw [htop] at hfin
+  have := Finite.of_equiv _ (Subgroup.topEquiv (G := Multiplicative ℤ)).toEquiv
+  exact not_finite (Multiplicative ℤ)
+
+/-- The trivial action of the two-element group `Multiplicative (ZMod 2)` on
+`Bool`. -/
+instance trivialZModTwoAction : MulAction (Multiplicative (ZMod 2)) Bool where
+  smul _ b := b
+  one_smul _ := rfl
+  mul_smul _ _ _ := rfl
+
+instance : GraphAction (Multiplicative (ZMod 2)) (⊤ : SimpleGraph Bool) where
+  smul_adj _ _ _ h := h
+
+/-- With finite stabilizers the width is their actual cardinality: under the
+trivial action of a group of order two, every quotient edge has width two. -/
+example (e : QuotEdge (Multiplicative (ZMod 2)) (⊤ : SimpleGraph Bool)) :
+    (stabWidth (Multiplicative (ZMod 2)) (⊤ : SimpleGraph Bool) (fun _ => inferInstance) e :
+      ℕ) = 2 := by
+  induction e using Quotient.inductionOn' with
+  | h d =>
+    have htop : MulAction.stabilizer (Multiplicative (ZMod 2)) d = ⊤ :=
+      eq_top_iff.mpr fun _ _ => MulAction.mem_stabilizer_iff.mpr rfl
+    rw [coe_stabWidth_mk, htop, Subgroup.card_top, Nat.card_eq_fintype_card,
+      Fintype.card_multiplicative, ZMod.card]
 
 /-- The walk cycle of the empty walk is zero, and dart indices change sign
 under reversal, on the integer path graph. -/
@@ -135,5 +211,7 @@ example [DecidableEq (QuotEdge (Multiplicative ℤ) intPathGraph)]
     (q : QuotEdge (Multiplicative ℤ) intPathGraph) (d : intPathGraph.Dart) :
     dartIndex intPathGraph q d.symm = -dartIndex intPathGraph q d :=
   dartIndex_symm intPathGraph q d
+
+end SchottkyTreeActionTest
 
 end
