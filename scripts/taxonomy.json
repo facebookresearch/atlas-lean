@@ -12847,6 +12847,7 @@
   "MathlibExt/NumberTheory/LeonardoPFibonacciSum": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "Leonardo p-numbers"},
   "MathlibExt/NumberTheory/Lindemann": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Hermite–Lindemann theorem"},
   "MathlibExt/NumberTheory/LindemannWeierstrass": {"to": "NumberTheory/diophantine-approximation/transcendence-irrationality", "title": "Lindemann–Weierstrass theorem"},
+  "MathlibExt/NumberTheory/LocalGlobalApollonianCirclePackings": {"to": "NumberTheory/arithmetic-geometry", "title": "Local-global conjecture for Apollonian circle packings"},
   "MathlibExt/NumberTheory/LocallyNilpotentPolynomials": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Locally nilpotent polynomials"},
   "MathlibExt/NumberTheory/LogarithmicCompletion": {"to": "NumberTheory/exponential-sums", "title": "Incomplete exponential sums"},
   "MathlibExt/NumberTheory/LucasLehmerAcceptableSeed": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Lucas–Lehmer test"},
