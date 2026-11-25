@@ -1,5 +1,8 @@
 # Well-posedness
 
 **Well-posedness** (Lajmanovich and Yorke 1976, as restated by Hethcote and Yorke 1984,
-p. 27): for initial data in `[0, 1]ⁿ` there is a forward solution, it stays in `[0, 1]ⁿ`, and
-any two forward solutions with the same initial data agree for all `t ≥ 0`.
+p. 27): let `C` be a contact matrix with every `C_ij ≥ 0` and `e` recovery rates with every
+`e_i > 0` (for the multigroup SIS model, `C_ij = λ_ij N_j / N_i` and `e_i = 1 / d_i`). For every
+initial state `I₀ ∈ [0, 1]ⁿ` there is a solution `I` of `I' = LevinsNetwork.field C e I` on
+`[0, ∞)` (`LevinsNetwork.IsSolution C e I`) with `I 0 = I₀`; it stays in `[0, 1]ⁿ`, and every
+solution `J` with `J 0 = I₀` agrees with `I` for all `t ≥ 0`.

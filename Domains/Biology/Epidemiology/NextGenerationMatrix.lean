@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.ODE.LinearizedStability
+public import MathlibExt.Dynamics.Epidemiology.NextGenerationMatrixBasic
 import Mathlib.LinearAlgebra.Matrix.Charpoly.Eigs
 import Mathlib.LinearAlgebra.Eigenspace.Matrix
 import Mathlib.Analysis.Matrix.Normed
@@ -33,7 +34,7 @@ the **basic reproduction number** is its spectral radius `R₀ = ρ(F V⁻¹)`.
 
 ## Main results
 
-* `R0`: `R₀ = ρ(F V⁻¹)`.
+* `R0`: `R₀ = ρ(F V⁻¹)`, defined in `MathlibExt.Dynamics.Epidemiology.NextGenerationMatrixBasic`.
 * `R0_smul_one`, `R0_smul_one_of_nonneg`, `smul_one_nonneg`: for scalar `F = β • 1`,
   `V = γ • 1` (`γ > 0`), `R₀ = |β / γ|`, `= β / γ` when `β ≥ 0`; this covers one infected
   compartment, `F = (β)`, `V = (γ)`.
@@ -127,7 +128,7 @@ private theorem spectralRadius_ne_top (M : Matrix ι ι ℂ) : spectralRadius �
   classical
   let _ : NormedRing (Matrix ι ι ℂ) := Matrix.linftyOpNormedRing
   let _ : NormedAlgebra ℂ (Matrix ι ι ℂ) := Matrix.linftyOpNormedAlgebra
-  exact ne_top_of_le_ne_top ENNReal.coe_ne_top (spectralRadius_le_nnnorm M)
+  exact ne_top_of_le_ne_top ENNReal.coe_ne_top (spectralRadius_le_nnNorm M)
 
 /-- `ρ(V⁻¹ F) = ρ(F V⁻¹)` for invertible `V`. -/
 private theorem spectralRadius_inv_mul {F V : Matrix ι ι ℝ} (hV : IsUnit V) :
@@ -251,12 +252,6 @@ private theorem nnnorm_le_spectralRadius {M : Matrix ι ι ℂ} {k : ℂ} (hk : 
   le_iSup₂ (f := fun k (_ : k ∈ quasispectrum ℂ M) => (‖k‖₊ : ℝ≥0∞)) k
     (spectrum_subset_quasispectrum ℂ _ hk)
 
-/-- The **basic reproduction number** `R₀ = ρ(F V⁻¹)`: the spectral radius (largest modulus of
-a complex eigenvalue) of the next-generation matrix `F V⁻¹` (van den Driessche–Watmough 2002,
-Eq. (4)). It is meaningful when `V` is invertible (for a nonsingular M-matrix it is). -/
-noncomputable def R0 (F V : Matrix ι ι ℝ) : ℝ :=
-  (spectralRadius ℂ ((F * V⁻¹).map (algebraMap ℝ ℂ))).toReal
-
 private theorem R0_lt_one_iff (F V : Matrix ι ι ℝ) :
     R0 F V < 1 ↔ spectralRadius ℂ ((F * V⁻¹).map (algebraMap ℝ ℂ)) < 1 := by
   rw [R0, ← ENNReal.toReal_one,
@@ -280,7 +275,7 @@ theorem isHurwitz_sub_iff_R0_lt_one {F V : Matrix ι ι ℝ} (hF : ∀ i j, 0 �
   · intro hH
     let _ : NormedRing (Matrix ι ι ℂ) := Matrix.linftyOpNormedRing
     let _ : NormedAlgebra ℂ (Matrix ι ι ℂ) := Matrix.linftyOpNormedAlgebra
-    have _ : CompleteSpace (Matrix ι ι ℂ) := FiniteDimensional.complete ℂ _
+    have _ : CompleteSpace (Matrix ι ι ℂ) := FiniteDimensional.completeSpace ℂ _
     refine spectralRadius_lt_of_forall_quasispectrum_lt fun ν hν => ?_
     rw [quasispectrum_eq_spectrum_union_zero, Set.mem_union, Set.mem_singleton_iff] at hν
     rcases hν with hν | rfl

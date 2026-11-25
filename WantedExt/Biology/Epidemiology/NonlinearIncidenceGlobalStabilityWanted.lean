@@ -28,8 +28,7 @@ nonnegative states with `E + I > 0` (`I > 0` for SIR), and the existence and uni
 endemic equilibrium are part of the statement.
 
 The bilinear SEIR model with vital dynamics, `h(S) = β S / N` and `g(I) = I`, is proved in
-`Domains.Biology.Epidemiology.SEIRGlobalStability`; the nonlinear-incidence theorem is not
-proved yet.
+`Domains.Biology.Epidemiology.SEIRGlobalStability`.
 
 Sources: A. Korobeinikov and P. K. Maini, "Non-linear incidence and stability of infectious
 disease models", Math. Med. Biol. 22 (2005) 113–128, conditions (2.1)–(2.3), Eqs. (4.1)–(4.5)

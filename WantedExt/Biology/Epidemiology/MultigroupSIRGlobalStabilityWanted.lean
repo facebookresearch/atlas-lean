@@ -18,7 +18,10 @@ with recruitment `Λ_k > 0`, vaccinated fraction `p_k`, death rates `dS_k, dI_k,
 vaccination rate `θ_k ≥ 0`, disease-induced death rate `ε_k ≥ 0`, recovery rate `γ_k ≥ 0` and
 transmission coefficients `β_kj ≥ 0`. The disease-free equilibrium has
 `S_k⁰ = Λ_k (1 - p_k) / (dS_k + θ_k)` and `I_k⁰ = 0`; the basic reproduction number `R₀` is the
-spectral radius of `M₀ = (β_ij S_i⁰ / (dI_i + ε_i + γ_i))`. The feasible region `Γ` is
+spectral radius of `M₀ = (β_ij S_i⁰ / (dI_i + ε_i + γ_i))`. With `F = (β_ij S_i⁰)` and
+`V = diag (dI_i + ε_i + γ_i)`, `M₀ = V⁻¹ F = V⁻¹ (F V⁻¹) V` has the spectrum of the
+next-generation matrix `F V⁻¹`, so `R₀` is `NextGenerationMatrix.R0 F V = ρ(F V⁻¹)`, which is
+how it is defined here. The feasible region `Γ` is
 `S_k ≤ S_k⁰`, `S_k + I_k ≤ Λ_k / d*_k` with `d*_k = min (dS_k, dI_k + ε_k, dR_k)`.
 
 Their Theorem 3.3: if `(β_kj)` is irreducible and `R₀ > 1`, the endemic equilibrium is unique
@@ -30,8 +33,8 @@ assumed here.
 
 The single-group SEIR case with vital dynamics is proved in
 `Domains.Biology.Epidemiology.SEIRGlobalStability`, and the finite next-generation matrix
-threshold in `Domains.Biology.Epidemiology.NextGenerationMatrix`; the multigroup theorem is not
-proved yet.
+threshold in `Domains.Biology.Epidemiology.NextGenerationMatrix` (the definition of `R₀` is in
+`MathlibExt.Dynamics.Epidemiology.NextGenerationMatrixBasic`).
 
 Sources: H. Guo, M. Y. Li and Z. Shuai, "Global stability of the endemic equilibrium of
 multigroup SIR epidemic models", Canad. Appl. Math. Q. 14 (2006) 259–284, model (1.3),
@@ -41,7 +44,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Normed.Algebra.Spectrum
+public import MathlibExt.Dynamics.Epidemiology.NextGenerationMatrixBasic
 public import Mathlib.LinearAlgebra.Complex.Module
 public import Mathlib.LinearAlgebra.Matrix.Irreducible.Defs
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
@@ -104,14 +107,15 @@ equilibrium. -/
 noncomputable def susceptibleDFE (P : Params ι) (k : ι) : ℝ :=
   P.recruit k * (1 - P.vacc k) / (P.deathS k + P.vaccRate k)
 
-/-- The matrix `M₀ = (β_ij S_i⁰ / (dI_i + ε_i + γ_i))` of Eq. (1.6). -/
-noncomputable def nextGen (P : Params ι) : Matrix ι ι ℝ :=
-  fun i j => P.beta i j * P.susceptibleDFE i / (P.deathI i + P.diseaseDeath i + P.recovery i)
-
-/-- The basic reproduction number `R₀ = ρ(M₀)` (Eq. (1.7)), the spectral radius of `M₀`
-viewed as a complex matrix. -/
+/-- The basic reproduction number `R₀` of Eq. (1.7), as the library's
+`NextGenerationMatrix.R0 F V = ρ(F V⁻¹)` with new infections `F = (β_ij S_i⁰)` and transfers
+`V = diag (dI_i + ε_i + γ_i)`. When every `dI_i + ε_i + γ_i ≠ 0` (for instance under
+`Admissible`), `V` is invertible and the matrix `M₀ = (β_ij S_i⁰ / (dI_i + ε_i + γ_i)) = V⁻¹ F`
+of Eq. (1.6) is similar to `F V⁻¹`, so `R₀ = ρ(M₀)` as in the source. -/
 noncomputable def R0 (P : Params ι) : ℝ :=
-  (spectralRadius ℂ (P.nextGen.map (algebraMap ℝ ℂ))).toReal
+  MathlibExt.Biology.Epidemiology.NextGenerationMatrix.R0
+    (fun i j => P.beta i j * P.susceptibleDFE i)
+    (Matrix.diagonal fun i => P.deathI i + P.diseaseDeath i + P.recovery i)
 
 /-- The interior of the feasible region `Γ` of Eq. (1.4): `S_k, I_k > 0`, `S_k < S_k⁰` and
 `S_k + I_k < Λ_k / d*_k` with `d*_k = min (dS_k, dI_k + ε_k, dR_k)`. -/

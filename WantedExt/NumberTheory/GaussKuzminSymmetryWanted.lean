@@ -13,6 +13,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import MathlibExt.NumberTheory.GaussKuzminSymmetry
 public import MathlibExt.NumberTheory.GaussKuzminFundamentalIntervals
+public import MathlibExt.NumberTheory.GaussKuzminCharacterization
 
 namespace MetaMathlibExt
 
@@ -47,24 +48,6 @@ Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), 
 Proposition 1.3 (`integers-2025-A89-prop-1-3`), equations (1.8) and (1.9). -/
 public theorem_wanted gaussKuzminMass_reverse (a : List ℕ) (ha : (∀ x ∈ a, 0 < x)) :
     gaussKuzminMass a.reverse = gaussKuzminMass a
-
-/-- **Reversal symmetry forces the Gauss–Kuzmin density.** Let $f$ be a real function that is
-continuous and nonnegative on $[0, 1]$ with $\int_0^1 f(x)\,dx = 1$, and let $S$ be an infinite
-set of natural numbers. Write $I(a)$ for the fundamental interval of a string $a$ and
-$\overleftarrow{a}$ for the reverse of $a$. If
-$\int_{I(a)} f(x)\,dx = \int_{I(\overleftarrow{a})} f(x)\,dx$ for every string $a$ of positive
-integers whose length lies in $S$, then $f(x) = \frac{1}{\log 2 \cdot (1 + x)}$ for every
-$x \in [0, 1]$.
-
-Source: Shreyas Singh, Zhuo Zhang and AJ Hildebrand, *An Elementary Characterization of the
-Gauss-Kuzmin Measure in the Theory of Continued Fractions*, INTEGERS 25 (2025), Article A89,
-Theorem 1 (`integers-2025-A89-thm-1`). -/
-public theorem_wanted density_eq_gaussKuzmin_of_reverse_symmetric (f : ℝ → ℝ)
-    (hf : ContinuousOn f (Set.Icc 0 1)) (hf0 : ∀ x ∈ Set.Icc (0 : ℝ) 1, 0 ≤ f x)
-    (hf1 : ∫ x in (0 : ℝ)..1, f x = 1) (S : Set ℕ) (hS : S.Infinite)
-    (hsym : ∀ a : List ℕ, (∀ x ∈ a, 0 < x) → a.length ∈ S →
-      ∫ x in cfCylinder a, f x = ∫ x in cfCylinder a.reverse, f x) :
-    ∀ x ∈ Set.Icc (0 : ℝ) 1, f x = 1 / (log 2 * (1 + x))
 
 /-- **Symmetry up to a fixed length does not force the Gauss–Kuzmin density.** Write $I(a)$ for
 the fundamental interval of a string $a$ and $\overleftarrow{a}$ for the reverse of $a$. For every

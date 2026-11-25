@@ -25,7 +25,7 @@ the corresponding expansion of `E T_N` holds with the Euler–Mascheroni constan
 The chain is the continuous-time Markov chain of
 `MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Path`, built from its rate matrix,
 and `T_N` is `ProbabilityTheory.ctmcHittingTime`. The deterministic logistic SIS model is in
-`Domains.Biology.Epidemiology.SIS`; the extinction-time limit law is not proved yet.
+`Domains.Biology.Epidemiology.SIS`.
 
 Sources: G. Brightwell, T. House and M. Luczak, "Extinction times in the subcritical
 stochastic SIS logistic epidemic", J. Math. Biol. (2018), Theorem 1.1 and

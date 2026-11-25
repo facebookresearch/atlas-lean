@@ -23,8 +23,7 @@ operator has one-dimensional range and `R₀ = ∫ b S a` (Eqs. (3.1)–(3.3)).
 
 The generation-growth factor `inf_m ‖K^m‖^(1/m)` is the spectral radius of `K` by Gelfand's
 formula. The finite-dimensional threshold `R₀ = ρ(F V⁻¹)` of van den Driessche and Watmough is
-proved in `Domains.Biology.Epidemiology.NextGenerationMatrix`; the operator statements below
-are not proved yet.
+proved in `Domains.Biology.Epidemiology.NextGenerationMatrix`.
 
 Sources: O. Diekmann, J. A. P. Heesterbeek and J. A. J. Metz, "On the definition and the
 computation of the basic reproduction ratio R₀ in models for infectious diseases in

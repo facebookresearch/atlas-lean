@@ -9,7 +9,6 @@
 - [Admissible](admissible.md)
 - [Field](field.md)
 - [Susceptible DFE](susceptible-dfe.md)
-- [Next Gen](next-gen.md)
 - [R0](r0.md)
 - [Interior Feasible](interior-feasible.md)
 - [Is Solution](is-solution.md)
