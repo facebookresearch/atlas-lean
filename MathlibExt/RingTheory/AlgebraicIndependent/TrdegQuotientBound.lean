@@ -35,12 +35,13 @@ module
 
 public import Mathlib.RingTheory.AlgebraicIndependent.TranscendenceBasis
 public import Mathlib.RingTheory.Ideal.Quotient.Operations
-public import Mathlib.RingTheory.NoetherNormalization
 
 import Mathlib.Algebra.Polynomial.Lifts
+import Mathlib.RingTheory.Localization.Finiteness
 import Mathlib.RingTheory.Localization.FractionRing
 import Mathlib.RingTheory.Finiteness.Quotient
 import Mathlib.RingTheory.MvPolynomial.Tower
+import Mathlib.RingTheory.NoetherNormalization
 import Mathlib.RingTheory.Polynomial.ScaleRoots
 
 @[expose] public section
@@ -60,34 +61,11 @@ variable {R : Type u} {C : Type v} [CommRing R] [IsDomain R] [CommRing C] [Algeb
 private lemma exists_mul_eq_of_mem_adjoin (S : Set C) {w : L}
     (hw : w ∈ Algebra.adjoin (FractionRing R) ((algebraMap C L) '' S)) :
     ∃ r : R, r ≠ 0 ∧ ∃ c ∈ Algebra.adjoin R S, algebraMap R L r * w = algebraMap C L c := by
-  induction hw using Algebra.adjoin_induction with
-  | mem x hx =>
-    obtain ⟨c, hc, rfl⟩ := hx
-    exact ⟨1, one_ne_zero, c, Algebra.subset_adjoin hc, by simp⟩
-  | algebraMap κ =>
-    obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := R) κ
-    refine ⟨b, nonZeroDivisors.ne_zero hb, algebraMap R C a, Subalgebra.algebraMap_mem _ a, ?_⟩
-    have hb' : algebraMap R L b ≠ 0 := by
-      rw [IsScalarTower.algebraMap_apply R (FractionRing R) L]
-      exact (_root_.map_ne_zero _).mpr
-        ((_root_.map_ne_zero_iff _ (IsFractionRing.injective R (FractionRing R))).mpr
-          (nonZeroDivisors.ne_zero hb))
-    rw [map_div₀, ← IsScalarTower.algebraMap_apply, ← IsScalarTower.algebraMap_apply,
-      ← IsScalarTower.algebraMap_apply, mul_div_cancel₀ _ hb']
-  | add x y _ _ ihx ihy =>
-    obtain ⟨r, hr, c, hc, e⟩ := ihx
-    obtain ⟨r', hr', c', hc', e'⟩ := ihy
-    refine ⟨r * r', mul_ne_zero hr hr', r' • c + r • c',
-      add_mem (Subalgebra.smul_mem _ hc _) (Subalgebra.smul_mem _ hc' _), ?_⟩
-    simp only [map_add, map_mul, Algebra.smul_def, ← IsScalarTower.algebraMap_apply R C L]
-    rw [← e, ← e']
-    ring
-  | mul x y _ _ ihx ihy =>
-    obtain ⟨r, hr, c, hc, e⟩ := ihx
-    obtain ⟨r', hr', c', hc', e'⟩ := ihy
-    refine ⟨r * r', mul_ne_zero hr hr', c * c', mul_mem hc hc', ?_⟩
-    rw [map_mul, map_mul, ← e, ← e']
-    ring
+  obtain ⟨⟨r, hr⟩, hrw⟩ :=
+    multiple_mem_adjoin_of_mem_localization_adjoin (nonZeroDivisors R) (FractionRing R) _ w hw
+  rw [← IsScalarTower.coe_toAlgHom' R C L, Algebra.adjoin_image] at hrw
+  obtain ⟨c, hc, hcw⟩ := Subalgebra.mem_map.mp hrw
+  exact ⟨r, nonZeroDivisors.ne_zero hr, c, hc, by rw [← Algebra.smul_def]; exact hcw.symm⟩
 
 end Denominators
 
@@ -124,27 +102,21 @@ section Main
 variable {R : Type u} {C : Type v} [CommRing R] [IsDomain R] [CommRing C] [IsDomain C]
   [Algebra R C] [FaithfulSMul R C] [Algebra.FiniteType R C]
 
-set_option backward.isDefEq.respectTransparency false in
-set_option maxHeartbeats 3200000 in
-
 private theorem genericPointMain :
     ∃ r : R, r ≠ 0 ∧ ∃ (d : ℕ) (z : Fin d → C), AlgebraicIndependent R z ∧
       ∀ c : C, ∃ n : ℕ, IsIntegral (Algebra.adjoin R (Set.range z)) (r ^ n • c) := by
   classical
-
   let K := FractionRing R
   let L := FractionRing C
-  letI : Algebra K L := FractionRing.liftAlgebra R L
-  haveI : IsScalarTower R K L := FractionRing.isScalarTower_liftAlgebra R L
+  let : Algebra K L := FractionRing.liftAlgebra R L
+  have : IsScalarTower R K L := FractionRing.isScalarTower_liftAlgebra R L
   have hCL : Function.Injective (algebraMap C L) := IsFractionRing.injective C L
   have hRK : Function.Injective (algebraMap R K) := IsFractionRing.injective R K
-
   obtain ⟨s, hs⟩ := Algebra.FiniteType.out (R := R) (A := C)
   let CK : Subalgebra K L := Algebra.adjoin K ((algebraMap C L) '' (s : Set C))
-  haveI : Algebra.FiniteType K CK := by
+  have : Algebra.FiniteType K CK := by
     rw [← Subalgebra.fg_iff_finiteType]
     exact ⟨(s.image (algebraMap C L)), by simp [CK]⟩
-
   have hmemCK : ∀ c : C, algebraMap C L c ∈ CK := by
     intro c
     have hc : c ∈ Algebra.adjoin R (s : Set C) := by rw [hs]; exact Algebra.mem_top
@@ -153,14 +125,11 @@ private theorem genericPointMain :
       rw [AlgHom.map_adjoin]
       exact Algebra.adjoin_le (fun x hx => Algebra.subset_adjoin hx)
     exact this ⟨c, hc, rfl⟩
-
   obtain ⟨d, g, hginj, hgfin⟩ := exists_finite_inj_algHom_of_fg K CK
-
   have hw : ∀ i : Fin d, ∃ r : R, r ≠ 0 ∧ ∃ c ∈ Algebra.adjoin R (s : Set C),
       algebraMap R L r * (g (MvPolynomial.X i) : L) = algebraMap C L c :=
     fun i => exists_mul_eq_of_mem_adjoin (R := R) _ (g (MvPolynomial.X i)).2
   choose ρ hρ0 z _hzmem hz using hw
-
   have hg_aeval : ∀ p : MvPolynomial (Fin d) K,
       (g p : L) = MvPolynomial.aeval (fun i => (g (MvPolynomial.X i) : L)) p := by
     intro p
@@ -184,7 +153,6 @@ private theorem genericPointMain :
       rw [← hz i, IsScalarTower.algebraMap_apply R K L]
     exact congrArg (fun φ : MvPolynomial (Fin d) K →ₐ[K] L => φ p) this
   have hρK : ∀ i, algebraMap R K (ρ i) ≠ 0 := fun i => (map_ne_zero_iff _ hRK).mpr (hρ0 i)
-
   have hzind : AlgebraicIndependent R z := by
     rw [AlgebraicIndependent]
     intro p q hpq
@@ -204,9 +172,7 @@ private theorem genericPointMain :
     have h2 := hginj (Subtype.ext h1)
     have h3 := scaleAux_injective _ hρK h2
     exact MvPolynomial.map_injective _ hRK h3
-
   set A : Subalgebra R C := Algebra.adjoin R (Set.range z) with hA
-
   have hrange : ∀ p : MvPolynomial (Fin d) K,
       (g p : L) ∈ Algebra.adjoin K ((algebraMap C L) '' Set.range z) := by
     intro p
@@ -223,12 +189,10 @@ private theorem genericPointMain :
           inv_mul_cancel₀ (hρK i), map_one, one_mul]
       rw [this]
       exact mul_mem (Subalgebra.algebraMap_mem _ _) (Algebra.subset_adjoin ⟨z i, ⟨i, rfl⟩, rfl⟩)
-
   have hint : ∀ c : C, ∃ τ : R, τ ≠ 0 ∧ IsIntegral A (τ • c) := by
     intro c
     have hgint : g.toRingHom.IsIntegral := RingHom.Finite.to_isIntegral hgfin
     obtain ⟨P, hPm, hP⟩ := hgint ⟨algebraMap C L c, hmemCK c⟩
-
     let P₂ : L[X] := (P.map g.toRingHom).map (CK.val : CK →+* L)
     have hP₂m : P₂.Monic := (hPm.map _).map _
     have hP₂ : P₂.eval (algebraMap C L c) = 0 := by
@@ -237,7 +201,6 @@ private theorem genericPointMain :
       rw [Polynomial.hom_eval₂] at h2
       simp only [P₂, Polynomial.map_map, Polynomial.eval_map]
       exact h2
-
     have hcoef : ∀ j : ℕ, ∃ r : R, r ≠ 0 ∧ ∃ a ∈ A, algebraMap R L r * P₂.coeff j =
         algebraMap C L a := by
       intro j
@@ -249,14 +212,12 @@ private theorem genericPointMain :
     let τ : R := ∏ j ∈ Finset.range P₂.natDegree, r j
     have hτ0 : τ ≠ 0 := Finset.prod_ne_zero_iff.mpr fun j _ => hr0 j
     refine ⟨τ, hτ0, ?_⟩
-
     let P₃ : L[X] := P₂.scaleRoots (algebraMap R L τ)
     have hP₃m : P₃.Monic := (Polynomial.monic_scaleRoots_iff _).mpr hP₂m
     have hP₃ : P₃.eval₂ (RingHom.id L) (algebraMap R L τ * algebraMap C L c) = 0 := by
       have h := Polynomial.scaleRoots_eval₂_eq_zero (RingHom.id L) (r := algebraMap C L c)
         (s := algebraMap R L τ) (by rw [Polynomial.eval₂_id]; exact hP₂)
       simpa using h
-
     have hlift : P₃ ∈ Polynomial.lifts (algebraMap A L) := by
       rw [Polynomial.lifts_iff_coeff_lifts]
       intro j
@@ -285,7 +246,6 @@ private theorem genericPointMain :
         ← IsScalarTower.algebraMap_apply]
       exact hP₃
     exact (isIntegral_algHom_iff (IsScalarTower.toAlgHom A C L) hCL).mp hτc
-
   choose τ hτ0 hτint using hint
   let r : R := ∏ c ∈ s, τ c
   have hr0 : r ≠ 0 := Finset.prod_ne_zero_iff.mpr fun c _ => hτ0 c
@@ -293,7 +253,6 @@ private theorem genericPointMain :
   have hAint : ∀ x : R, IsIntegral A (algebraMap R C x) := fun x =>
     (isIntegral_algebraMap (R := A) (A := C)
       (x := ⟨algebraMap R C x, Subalgebra.algebraMap_mem _ x⟩))
-
   let T : Subalgebra R C :=
     { carrier := {c | ∃ n : ℕ, IsIntegral A (r ^ n • c)}
       mul_mem' := by
@@ -331,26 +290,6 @@ private theorem genericPointMain :
 
 end Main
 
-
-
-
-private theorem isIntegral_map_of_forall_mem {R R' C C' : Type*} [CommRing R] [CommRing R']
-    [CommRing C] [CommRing C']
-    [Algebra R C] [Algebra R' C'] (f : C →+* C') (D : Subalgebra R C) (D' : Subalgebra R' C')
-    (hDD' : ∀ x ∈ D, f x ∈ D') {x : C} (hx : IsIntegral D x) : IsIntegral D' (f x) := by
-  obtain ⟨p, hmonic, hp⟩ := hx
-  let φ : D →+* D' := (f.comp (algebraMap D C)).codRestrict D'.toSubring
-    (fun d => hDD' _ (by exact d.2))
-  have hφ : (algebraMap D' C').comp φ = f.comp (algebraMap D C) := by
-    ext d; rfl
-  refine ⟨p.map φ, hmonic.map φ, ?_⟩
-  rw [eval₂_map, hφ, ← hom_eval₂, hp, map_zero]
-
-private theorem isAlgebraic_of_smul {R A : Type*} [CommRing R] [IsDomain R] [Ring A]
-    [Algebra R A] {z : A} {y : R}
-    (hy : y ≠ 0) (h : IsAlgebraic R (y • z)) : IsAlgebraic R z :=
-  IsAlgebraic.of_smul (mem_nonZeroDivisors_of_ne_zero hy) h
-
 /-- For a finite type algebra `B` over a commutative ring `A` and a prime
 `𝔮` of `B`, some element `s` of `A` outside the contraction of `𝔮` bounds the
 transcendence degrees of all specializations: for every prime `𝔔 ⊇ 𝔮` whose
@@ -363,19 +302,16 @@ public theorem Algebra.FiniteType.exists_notMem_under_forall_trdeg_quotient_le
       Algebra.trdeg (A ⧸ 𝔔.under A) (B ⧸ 𝔔) ≤ Algebra.trdeg (A ⧸ 𝔮.under A) (B ⧸ 𝔮) := by
   classical
   set 𝔭 := 𝔮.under A with h𝔭
-
-  haveI : Algebra.FiniteType (A ⧸ 𝔭) (B ⧸ 𝔮) := inferInstance
+  have : Algebra.FiniteType (A ⧸ 𝔭) (B ⧸ 𝔮) := inferInstance
   obtain ⟨r, hr, d, z, hz, hint⟩ :=
     genericPointMain (R := A ⧸ 𝔭) (C := B ⧸ 𝔮)
   obtain ⟨s, rfl⟩ := Ideal.Quotient.mk_surjective r
   have hs : s ∉ 𝔭 := fun h => hr (Ideal.Quotient.eq_zero_iff_mem.mpr h)
   refine ⟨s, hs, ?_⟩
   intro 𝔔 _ h𝔮𝔔 hs𝔔
-
   have hd : (d : Cardinal) ≤ Algebra.trdeg (A ⧸ 𝔭) (B ⧸ 𝔮) := by
     simpa using hz.lift_cardinalMk_le_trdeg
   refine le_trans ?_ hd
-
   set 𝔭' := 𝔔.under A with h𝔭'
   have h𝔭𝔭' : 𝔭 ≤ 𝔭' := Ideal.comap_mono h𝔮𝔔
   let πR : A ⧸ 𝔭 →+* A ⧸ 𝔭' := Ideal.Quotient.factor h𝔭𝔭'
@@ -388,7 +324,6 @@ public theorem Algebra.FiniteType.exists_notMem_under_forall_trdeg_quotient_le
   have hr' : πR (Ideal.Quotient.mk 𝔭 s) ≠ 0 := by
     change Ideal.Quotient.mk 𝔭' s ≠ 0
     exact fun h => hs𝔔 (Ideal.Quotient.eq_zero_iff_mem.mp h)
-
   let z' : Fin d → B ⧸ 𝔔 := fun i => πC (z i)
   let D : Subalgebra (A ⧸ 𝔭) (B ⧸ 𝔮) := Algebra.adjoin (A ⧸ 𝔭) (Set.range z)
   let D' : Subalgebra (A ⧸ 𝔭') (B ⧸ 𝔔) := Algebra.adjoin (A ⧸ 𝔭') (Set.range z')
@@ -399,17 +334,16 @@ public theorem Algebra.FiniteType.exists_notMem_under_forall_trdeg_quotient_le
     · intro x; rw [hπ]; exact Subalgebra.algebraMap_mem _ _
     · intro x y _ _ hx hy; rw [map_add]; exact D'.add_mem hx hy
     · intro x y _ _ hx hy; rw [map_mul]; exact D'.mul_mem hx hy
-
-  haveI : Algebra.IsAlgebraic D' (B ⧸ 𝔔) := by
+  have : Algebra.IsAlgebraic D' (B ⧸ 𝔔) := by
     refine ⟨fun c' => ?_⟩
     obtain ⟨c, rfl⟩ := Ideal.Quotient.factor_surjective h𝔮𝔔 c'
     change IsAlgebraic D' (πC c)
     obtain ⟨n, hn⟩ := hint c
+    let φ : D →+* D' := (πC.comp (algebraMap D (B ⧸ 𝔮))).codRestrict D' fun d => hDD' _ d.2
     have h1 : IsIntegral D' (πC ((Ideal.Quotient.mk 𝔭 s) ^ n • c)) :=
-      isIntegral_map_of_forall_mem πC D D' hDD' hn
+      IsIntegral.map_of_comp_eq φ πC (RingHom.ext fun _ => rfl) hn
     simp only [Algebra.smul_def, map_pow, map_mul] at h1
     rw [hπ] at h1
-
     let ρ : D' := ⟨algebraMap (A ⧸ 𝔭') (B ⧸ 𝔔) (πR (Ideal.Quotient.mk 𝔭 s)) ^ n,
       D'.pow_mem (Subalgebra.algebraMap_mem _ _) n⟩
     have hρ : (ρ : B ⧸ 𝔔) ≠ 0 := by
@@ -421,7 +355,7 @@ public theorem Algebra.FiniteType.exists_notMem_under_forall_trdeg_quotient_le
     have h2 : IsAlgebraic D' (ρ • πC c) := by
       rw [Algebra.smul_def]
       exact h1.isAlgebraic
-    exact isAlgebraic_of_smul hρ' h2
+    exact IsAlgebraic.of_smul (mem_nonZeroDivisors_of_ne_zero hρ') h2
   have hrange : Cardinal.mk (Set.range z') ≤ (d : Cardinal.{v}) := by
     simpa using Cardinal.mk_range_le_lift (f := z')
   exact (Algebra.IsAlgebraic.trdeg_le_cardinalMk (A ⧸ 𝔭') (Set.range z')).trans hrange

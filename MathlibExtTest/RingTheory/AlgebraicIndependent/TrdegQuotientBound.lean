@@ -28,12 +28,15 @@ example {A : Type 1} {B : Type 2} [CommRing A] [CommRing B] [Algebra A B]
       Algebra.trdeg (A ⧸ 𝔔.under A) (B ⧸ 𝔔) ≤ Algebra.trdeg (A ⧸ 𝔮.under A) (B ⧸ 𝔮) :=
   Algebra.FiniteType.exists_notMem_under_forall_trdeg_quotient_le 𝔮
 
--- Boundary: over a field, with `𝔮 = ⊥`, the element produced is nonzero,
--- so the avoidance hypothesis on a specialization is a genuine restriction.
-example : ∃ s : ℚ, s ≠ 0 := by
-  obtain ⟨s, hs, -⟩ :=
+-- Field boundary: for `A = B = ℚ` and `𝔮 = ⊥`, every prime of `ℚ` is `⊥`, so the avoidance
+-- condition holds automatically for the element `s ∉ ⊥.under ℚ` produced (it only says
+-- `s ≠ 0`): no specialization is excluded, and the bound applies at every prime of `ℚ`.
+example : ∀ (𝔔 : Ideal ℚ) [𝔔.IsPrime],
+    Algebra.trdeg (ℚ ⧸ 𝔔.under ℚ) (ℚ ⧸ 𝔔) ≤
+      Algebra.trdeg (ℚ ⧸ (⊥ : Ideal ℚ).under ℚ) (ℚ ⧸ (⊥ : Ideal ℚ)) := by
+  obtain ⟨s, hs, hbound⟩ :=
     Algebra.FiniteType.exists_notMem_under_forall_trdeg_quotient_le (A := ℚ) (B := ℚ)
       (⊥ : Ideal ℚ)
-  refine ⟨s, fun h => hs ?_⟩
-  rw [Ideal.mem_under, h]
-  simp
+  intro 𝔔 _
+  obtain rfl := Ideal.eq_bot_of_prime 𝔔
+  exact hbound ⊥ le_rfl hs
