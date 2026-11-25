@@ -18,9 +18,6 @@ import MathlibExt.Combinatorics.ErdosProblem574
 
 namespace MathlibExt.Combinatorics.ErdosProblem574Wanted
 
-/-- The prime `2`, as a typeclass fact for the test field `ZMod 2`. -/
-instance factPrimeTwo : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-
 /-- Erdős Problem 574 is false. -/
 example : ¬ conjecture := conjecture_refuted
 

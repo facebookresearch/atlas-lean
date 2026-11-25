@@ -34,10 +34,14 @@ $\mathrm{ex}(n; \{C_{2k-1}, C_{2k}\}) / (n/2)^{1 + 1/k}$ tends to $1$ as
 $n \to \infty$. It does not: the one-sided blow-up of the Wenger graph
 $W_2(q)$ over a finite field is $\{C_5, C_6\}$-free and has
 $2q^4$ edges on $3q^3$ vertices, so at $k = 3$ the ratio is at least
-$8/7$ infinitely often. The main result is `conjecture_refuted`. The graph
-is Wenger's (R. Wenger, *Extremal graphs with no $C_4$'s, $C_6$'s, or
-$C_{10}$'s*, J. Combin. Theory Ser. B 52 (1991), 113–116); the blow-up,
-its freeness and its edge count are proved here directly.
+$8/7$ infinitely often. The main result is `conjecture_refuted`.
+
+Lazebnik, Ustimenko and Woldar's one-sided blow-up gives counterexamples at $k = 3$ and $k = 5$.
+For $k = 3$ we double each line of Wenger's graph (R. Wenger, *Extremal graphs with no $C_4$'s,
+$C_6$'s, or $C_{10}$'s*, J. Combin. Theory Ser. B 52 (1991), 113–116). The resulting edge count
+is $(2/3^{4/3})n^{4/3}$ for $n = 3q^3$, the bipartite lower bound of Füredi, Naor and Verstraëte,
+*On the Turán number for the hexagon*, Adv. Math. 203 (2006), 476–496. See Füredi and Simonovits,
+*The history of degenerate (bipartite) extremal graph problems*, Construction 4.28 and Theorem 4.31.
 -/
 
 @[expose] public section
@@ -84,8 +88,12 @@ namespace Wenger
 
 variable {K : Type*} [Field K]
 
-/-- Adjacency in the Wenger graph: the point `p` and the line `l` are joined
-when `p₂ + l₂ = p₁ * l₁` and `p₃ + l₃ = p₁ * l₁²`. -/
+/-- **Adjacency in the Wenger graph.** Over any field $K$, points $p$ and lines $\ell$ are
+triples in $K^3$. A point and a line are adjacent exactly when $p_2+\ell_2=p_1\ell_1$ and
+$p_3+\ell_3=p_1\ell_1^2$.
+
+Source: Cioabă, Lazebnik and Li, *On the Spectrum of Wenger Graphs*, arXiv:1402.3341,
+equation (1), with the two vertex classes interchanged and the equations taken over $K$. -/
 def adj (p l : K × K × K) : Prop :=
   p.2.1 + l.2.1 = p.1 * l.1 ∧ p.2.2 + l.2.2 = p.1 * l.1 ^ 2
 
@@ -211,8 +219,13 @@ private theorem noSix {p₀ p₁ p₂ l₀ l₁ l₂ : K × K × K}
     rw [hd0, zero_mul, sub_eq_zero] at g0; exact g0
   exact Prod.ext h1 (Prod.ext h2 h3)
 
-/-- The one-sided blow-up of the Wenger graph: every line is replaced by two
-copies, each adjacent to the same points as the original line. -/
+/-- **One-sided blow-up of the Wenger graph.** Over any field $K$, points and lines are triples
+in $K^3$. The two vertex classes are the points and two copies of each line. A point $p$ is joined
+to a copy of $\ell$ exactly when $p_2+\ell_2=p_1\ell_1$ and $p_3+\ell_3=p_1\ell_1^2$.
+These are all the edges.
+
+Source: The one-sided blow-up of Lazebnik, Ustimenko and Woldar, described in Füredi and
+Simonovits, *The history of degenerate (bipartite) extremal graph problems*, Construction 4.28. -/
 def blowGraph : SimpleGraph ((K × K × K) ⊕ ((K × K × K) × Fin 2)) where
   Adj x y :=
     match x, y with
@@ -298,7 +311,12 @@ private theorem sumCases {A B : Type*} (x : A ⊕ B) :
   | inl a => exact Or.inl ⟨a, rfl⟩
   | inr b => exact Or.inr ⟨b, rfl⟩
 
-/-- **The blow-up of the Wenger graph has no 6-cycle.** -/
+/-- **The blow-up of the Wenger graph has no 6-cycle.** Over any field $K$, take points and
+lines in $K^3$ and replace each line of the Wenger graph by two copies with the same neighbors.
+The resulting graph contains no copy of $C_6$.
+
+Source: The one-sided doubling argument of Lazebnik, Ustimenko and Woldar, described in Füredi and
+Simonovits, *The history of degenerate (bipartite) extremal graph problems*, Construction 4.28. -/
 theorem blowGraph_free_six : (SimpleGraph.cycleGraph 6).Free (blowGraph (K := K)) := by
   rintro ⟨f⟩
   have hadj : ∀ i j : Fin 6, (SimpleGraph.cycleGraph 6).Adj i j →
@@ -385,7 +403,11 @@ theorem blowGraph_free_six : (SimpleGraph.cycleGraph 6).Free (blowGraph (K := K)
       exact (by decide : (0 : Fin 6) ≠ 2) (f.injective hEq)
     exact blowNoSixData hp01 hp12 hp20 hb01 hb12 hb20 h00 h10 h11 h21 h22 h02
 
-/-- **The blow-up of the Wenger graph has no 5-cycle:** it is bipartite. -/
+/-- **The blow-up of the Wenger graph has no 5-cycle.** Over any field $K$, take points and
+lines in $K^3$ and replace each line of the Wenger graph by two copies with the same neighbors.
+The resulting graph contains no copy of $C_5$, since every edge joins a point to a line copy.
+
+Source: The bipartition into points and line copies. -/
 theorem blowGraph_free_five : (SimpleGraph.cycleGraph 5).Free (blowGraph (K := K)) := by
   rintro ⟨f⟩
   have hadj : ∀ i j : Fin 5, (SimpleGraph.cycleGraph 5).Adj i j →
@@ -417,8 +439,11 @@ theorem blowGraph_free_five : (SimpleGraph.cycleGraph 5).Free (blowGraph (K := K
     rw [h4] at h40
     exact absurd h40 notAdjInrInr
 
-/-- The line through the point `p` with first coordinate `b`: the unique line
-adjacent to `p` with that first coordinate. -/
+/-- **Wenger line with prescribed first coordinate through a point.** Over any field $K$,
+points and lines are triples in $K^3$. Given a point $p=(p_1,p_2,p_3)$ and $b\in K$, the unique
+line adjacent to $p$ with first coordinate $b$ is $(b,p_1b-p_2,p_1b^2-p_3)$.
+
+Source: Solving the Wenger incidence equations for the last two line coordinates. -/
 def wline (p : K × K × K) (b : K) : K × K × K := (b, p.1 * b - p.2.1, p.1 * b ^ 2 - p.2.2)
 
 private theorem wline_adj (p : K × K × K) (b : K) : adj p (wline p b) := by
@@ -429,8 +454,12 @@ private theorem wline_eq {p l : K × K × K} (h : adj p l) : l = wline p l.1 := 
   have h3 : l.2.2 = p.1 * l.1 ^ 2 - p.2.2 := by linear_combination h.2
   exact Prod.ext rfl (Prod.ext h2 h3)
 
-/-- The point through the line `l` with first coordinate `a`: the unique point
-adjacent to `l` with that first coordinate. -/
+/-- **Wenger point with prescribed first coordinate on a line.** Over any field $K$,
+points and lines are triples in $K^3$. Given a line $\ell=(\ell_1,\ell_2,\ell_3)$ and $a\in K$,
+the unique point adjacent to $\ell$ with first coordinate $a$ is
+$(a,a\ell_1-\ell_2,a\ell_1^2-\ell_3)$.
+
+Source: Solving the Wenger incidence equations for the last two point coordinates. -/
 def wpoint (l : K × K × K) (a : K) : K × K × K := (a, a * l.1 - l.2.1, a * l.1 ^ 2 - l.2.2)
 
 private theorem wpoint_adj (l : K × K × K) (a : K) : adj (wpoint l a) l := by
@@ -545,8 +574,11 @@ private theorem blowGraph_edgeFinset_card :
   omega
 
 omit [DecidableEq K] in
-/-- **Edge count of the blow-up.** Over a field with $q$ elements, the blow-up
-has $2q^4$ edges. -/
+/-- **Edge count of the one-sided blow-up of the Wenger graph.** Let $K$ be a finite field
+of order $q$. Take points and lines in $K^3$ and replace each line of the Wenger graph by two
+copies with the same neighbors. The resulting graph has exactly $2q^4$ edges.
+
+Source: Counting the $q$ incident points for each of the $2q^3$ line copies. -/
 theorem blowGraph_edgeSet_ncard :
     (blowGraph (K := K)).edgeSet.ncard = 2 * (Fintype.card K) ^ 4 := by
   classical
@@ -583,10 +615,13 @@ private theorem le_extremalNumber_of_card {V : Type*} [Fintype V] (G : SimpleGra
     exact hle
   · exact ⟨G', hfree', rfl⟩
 
-/-- **Lower bound for the extremal number at $k = 3$.** For every $m$, the
-blow-up of the Wenger graph over the field with $2^{m+1}$ elements has
-$2 \cdot (2^{m+1})^4$ edges on $3 \cdot (2^{m+1})^3$ vertices and is
-$\{C_5, C_6\}$-free. -/
+/-- **Lower bound for the extremal number at $k = 3$.** For every natural number $m$, put
+$q=2^{m+1}$. Then $\mathrm{ex}(3q^3;\{C_5,C_6\}) \ge 2q^4$. Doubling each line of the Wenger
+graph over the field of order $q$ gives a graph on $3q^3$ vertices with $2q^4$ edges and no copy
+of either cycle.
+
+Source: Füredi and Simonovits, *The history of degenerate (bipartite) extremal graph problems*,
+Construction 4.28 and the bipartite lower bound following Theorem 4.31. -/
 theorem extremalNumber_three_lower (m : ℕ) :
     2 * (2 ^ (m + 1)) ^ 4 ≤ extremalNumber 3 (3 * (2 ^ (m + 1)) ^ 3) := by
   classical
@@ -668,6 +703,11 @@ ratio $\mathrm{ex}(n; \{C_{2k-1}, C_{2k}\}) / (n/2)^{1 + 1/k}$ tends to $1$ as $
 Here $\mathrm{ex}(n; \{C_{2k-1}, C_{2k}\})$ is the extremal number: the supremum of the numbers
 of edges of simple graphs on $n$ vertices that contain no copy of the cycle graph $C_{2k-1}$ and
 no copy of the cycle graph $C_{2k}$.
+
+At $k=3$, doubling each line of the Wenger graph gives $2q^4$ edges on $n=3q^3$ vertices
+for $q=2^{m+1}$, with no copy of $C_5$ or $C_6$. This applies the one-sided blow-up of Lazebnik,
+Ustimenko and Woldar and realizes the bipartite lower bound $(2/3^{4/3})n^{4/3}$ of Füredi,
+Naor and Verstraëte (*On the Turán number for the hexagon*, Adv. Math. 203 (2006), 476–496).
 
 Lazebnik, Ustimenko and Woldar (Discrete Math. 1999), per Füredi–Simonovits
 (arXiv:1306.5167, Construction 4.28), blow up one side of Benson's girth-12 bipartite graph to

@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.NormNum.NatFib
 import Mathlib.Tactic.Simproc.Factors
 import MathlibExt.NumberTheory.Recurrences.FibonacciPrimitivePart
@@ -51,14 +50,6 @@ private theorem fibCyclotomicValue_twelve : fibCyclotomicValue 12 = 6 := by
 private theorem fibCyclotomicValue_twentyFive : fibCyclotomicValue 25 = 15005 := by
   have hd : Nat.divisors 25 = {1, 5, 25} := by decide
   norm_num [fibCyclotomicValue, hd, moebius_apply_prime Nat.prime_five]
-
-private theorem fibEntryPoint_three : fibEntryPoint 3 = 4 := by
-  apply le_antisymm
-  · exact Nat.sInf_le ⟨by norm_num, by decide⟩
-  · refine le_csInf ⟨4, by norm_num, by decide⟩ ?_
-    rintro m ⟨hm, hdvd⟩
-    by_contra h
-    interval_cases m <;> revert hdvd <;> decide
 
 private theorem fibPrimitivePart_prime {m p : ℕ} (hp : p.Prime) (hfib : Nat.fib m = p)
     (hz : fibEntryPoint p = m) : fibPrimitivePart m = p := by

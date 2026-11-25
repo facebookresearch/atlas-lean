@@ -1,4 +1,9 @@
-# Edge count of the blow-up
+# Edge count of the one-sided blow-up of the Wenger graph
 
-Over a field with $q$ elements, the blow-up
-has $2q^4$ edges.
+Let $K$ be a finite field
+of order $q$. Take points and lines in $K^3$ and replace each line of the Wenger graph by two
+copies with the same neighbors. The resulting graph has exactly $2q^4$ edges.
+
+## Sources
+
+- Counting the $q$ incident points for each of the $2q^3$ line copies.

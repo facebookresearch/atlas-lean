@@ -22,7 +22,8 @@ This module defines the Fibonacci entry point `z(k)`, the Fibonacci cyclotomic v
 the primitive parts `Ψ_m` of the Fibonacci numbers, and proves Lemma 1 of Luca's paper on
 factorials that are Fibonacci integers: if `∏_{a ∈ I} Φ_a / ∏_{b ∈ J} Φ_b` is a natural number,
 the prime factors of `∏_{b ∈ J} Ψ_b` inject into `I`, each prime `p` going to an element of the
-form `p^k z(p)` (`exists_injection_primeFactors_fibPrimitivePart`).
+form `p^k z(p)` (`exists_injection_primeFactors_fibPrimitivePart`). Luca attributes the lemma to
+F. Luca, C. Pomerance and S. Wagner, *Fibonacci integers*, J. Number Theory 131 (2011), 440–457.
 
 The proof computes the `p`-adic valuation of `Φ_a` by Möbius inversion from that of the Fibonacci
 numbers: it is `v_p(F_{z(p)})` at `a = z(p)`, `1` at `a = p^k z(p)` with `k ≥ 1` (except
@@ -142,8 +143,11 @@ private theorem dvd_fib_iff_fibEntryPoint_dvd {k : ℕ} (hk : 0 < fibEntryPoint 
   · intro h
     exact (dvd_fib_fibEntryPoint hk).trans (Nat.fib_dvd _ _ h)
 
-/-- The Fibonacci entry point of `3` is `4`. -/
-private theorem fibEntryPoint_three : fibEntryPoint 3 = 4 := by
+/-- **Fibonacci entry point of $3$.** The least positive index $m$ for which $3$ divides the
+Fibonacci number $F_m$ is $4$.
+
+Source: Direct computation from $F_1=F_2=1$, $F_3=2$ and $F_4=3$. -/
+public theorem fibEntryPoint_three : fibEntryPoint 3 = 4 := by
   apply le_antisymm
   · exact Nat.sInf_le ⟨by norm_num, by decide⟩
   · refine le_csInf ⟨4, by norm_num, by decide⟩ ?_
