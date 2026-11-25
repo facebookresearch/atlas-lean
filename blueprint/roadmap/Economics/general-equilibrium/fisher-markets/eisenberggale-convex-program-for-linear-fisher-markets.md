@@ -26,6 +26,10 @@ For part 2, an equilibrium $(p, x)$ satisfies these conditions, because all pric
 
 For part 3, $\log$ is strictly concave, so all optimal solutions have the same utilities $u_i$. Every good is bought by some buyer, so the equality condition then determines $p_j$.
 
+## Depends on
+
+- [Linear Fisher markets](linear-fisher-markets.md)
+
 ## Proof depends on
 
 - [Slater's theorem, multiplier form](../../../Analysis/convex-analysis-and-variations/lagrange-duality/exists-multiplier-of-slater.md)

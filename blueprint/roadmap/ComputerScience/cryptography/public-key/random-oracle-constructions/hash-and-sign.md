@@ -2,8 +2,8 @@
 
 Let $\mathcal{S} = (G, S, V)$ be a signature scheme over $(M, \Sigma)$ that is secure (existentially unforgeable under chosen-message attacks).
 
-**Collision-resistant hashing.** If $H : M' \to M$ is collision resistant, the scheme that signs $m \in M'$ by $S(sk, H(m))$ and verifies by
-$V(pk, H(m), \sigma)$ is secure: for every signature adversary $A$ there are an efficient signature adversary $B_S$ and an efficient collision finder
+**Collision-resistant hashing.** If $H : K_H \times M' \to M$ is a collision-resistant keyed hash family, the scheme whose key generation also samples a uniform key $k_H \in K_H$ and includes it in the public verification key, which signs $m \in M'$ by $S(sk, H(k_H, m))$ and verifies by
+$V(pk, H(k_H, m), \sigma)$, is secure: for every signature adversary $A$ there are an efficient signature adversary $B_S$ and an efficient collision finder
 $B_H$, elementary wrappers around $A$, with
 
 $$\mathrm{SIGadv}[A, \mathcal{S}'] \le \mathrm{SIGadv}[B_S, \mathcal{S}] + \mathrm{CRadv}[B_H, H].$$
