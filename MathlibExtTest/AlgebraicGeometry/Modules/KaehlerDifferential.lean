@@ -16,11 +16,15 @@ universe u
 
 open CategoryTheory Opposite
 
+private local instance {X : AlgebraicGeometry.Scheme.{u}} (U : (X.Opens)ᵒᵖ) :
+    CommRing ((X.sheaf.obj ⋙ forget₂ CommRingCat RingCat).obj U) :=
+  inferInstanceAs (CommRing (X.sheaf.obj.obj U))
+
 namespace AlgebraicGeometry.Scheme.Hom
 
 -- `exactSource` consumer with the original binders: the presheaf of
 -- relative differentials is pointwise the Kähler differential module.
-theorem exactSource {A : Type u} [CommRing A] {X : Scheme.{u}}
+private theorem exactSource {A : Type u} [CommRing A] {X : Scheme.{u}}
     (f : X ⟶ Spec (CommRingCat.of A)) (U : (X.Opens)ᵒᵖ) :
     f.kaehlerPresheaf.obj U =
       CommRingCat.KaehlerDifferential (f.constToPresheaf.app U) :=
@@ -34,10 +38,26 @@ example {A : Type u} [CommRing A] {X : Scheme.{u}}
       f.kaehlerToSections U s + f.kaehlerToSections U t :=
   f.kaehlerToSections_add U s t
 
--- The top exterior power sheaf exists for every degree.
+-- The top power sheaf is the sheafified sectionwise exterior power of the Kähler sheaf.
 example {A : Type u} [CommRing A] {X : Scheme.{u}}
-    (f : X ⟶ Spec (CommRingCat.of A)) (d : ℕ) : Nonempty X.Modules :=
-  ⟨f.topDifferentials d⟩
+    (f : X ⟶ Spec (CommRingCat.of A)) (d : ℕ) :
+    f.topDifferentials d = (PresheafOfModules.sheafification (𝟙 X.ringCatSheaf.obj)).obj
+      (PresheafOfModules.extPow (O := X.sheaf.obj) d f.kaehler.val) := rfl
+
+-- The scheme-level functor acts on morphisms through `PresheafOfModules.exteriorPowerMap`.
+example {X : Scheme.{u}} (d : ℕ) {M N : X.Modules} (φ : M ⟶ N) :
+    (Scheme.Modules.exteriorPower X d).map φ =
+      (PresheafOfModules.sheafification (𝟙 X.ringCatSheaf.obj)).map
+        (PresheafOfModules.exteriorPowerMap (R := X.sheaf.obj) d
+          ((Scheme.Modules.toPresheafOfModules X).map φ)) := rfl
+
+-- Restricting a wedge of differentials in the top power presheaf restricts each factor.
+example {A : Type u} [CommRing A] {X : Scheme.{u}}
+    (f : X ⟶ Spec (CommRingCat.of A)) (d : ℕ) {U V : (X.Opens)ᵒᵖ} (i : U ⟶ V)
+    (m : Fin d → f.kaehlerPresheaf.obj U) :
+    (f.topPresheaf d).map i (exteriorPower.ιMulti _ d m) =
+      exteriorPower.ιMulti _ d fun j => f.kaehlerPresheaf.map i (m j) :=
+  PresheafOfModules.extPow_map_ιMulti d _ i m
 
 end AlgebraicGeometry.Scheme.Hom
 
@@ -50,3 +70,16 @@ example : Nontrivial
       AlgebraicGeometry.Spec.map (CommRingCat.ofHom (algebraMap ℚ (Polynomial ℚ)))
     (f.kaehlerPresheaf.obj (op ⊤))) :=
   AlgebraicGeometry.Scheme.Hom.kaehlerPresheaf_nontrivial_polynomial ℚ
+
+-- Degree `1`: the first exterior power of those global differentials, the global sections of
+-- `topPresheaf 1`, is nontrivial too.
+example : Nontrivial
+    (let f : AlgebraicGeometry.Spec (CommRingCat.of (Polynomial ℚ)) ⟶
+        AlgebraicGeometry.Spec (CommRingCat.of ℚ) :=
+      AlgebraicGeometry.Spec.map (CommRingCat.ofHom (algebraMap ℚ (Polynomial ℚ)))
+    ((f.topPresheaf 1).obj (op ⊤))) := by
+  let f : AlgebraicGeometry.Spec (CommRingCat.of (Polynomial ℚ)) ⟶
+      AlgebraicGeometry.Spec (CommRingCat.of ℚ) :=
+    AlgebraicGeometry.Spec.map (CommRingCat.ofHom (algebraMap ℚ (Polynomial ℚ)))
+  have := AlgebraicGeometry.Scheme.Hom.kaehlerPresheaf_nontrivial_polynomial ℚ
+  exact (exteriorPower.oneEquiv _ (f.kaehlerPresheaf.obj (op ⊤))).toEquiv.nontrivial
