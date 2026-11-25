@@ -20,10 +20,10 @@ public import Mathlib.Tactic.Ring
 ## i. Overview
 
 For the forced damped oscillator `x'' + 2γx' + ω₀²x = F cos(ωt)` with `γ > 0`, `ω₀ > 0`, `ω ≥ 0`,
-  the harmonic steady-state coefficients `A = F(ω₀² - ω²)/D`, `B = F(2γω)/D` with `D = (ω₀² - ω²)²
-  + (2γω)²` give amplitude `|F| / √D`. The oscillator equation is proved from the harmonic
-  derivative formulas of `A cos(ωt) + B sin(ωt)`; this is a toy dynamical tide, not an equilibrium
-  astronomical prediction.
+the harmonic steady-state coefficients `A = F(ω₀² - ω²)/D`, `B = F(2γω)/D` with
+`D = (ω₀² - ω²)² + (2γω)²` give amplitude `|F| / √D`. The oscillator equation is proved from the
+harmonic derivative formulas of `A cos(ωt) + B sin(ωt)`; this is a toy dynamical tide, not an
+equilibrium astronomical prediction.
 
 ## ii. Key results
 
@@ -85,10 +85,11 @@ theorem damped_oscillator_amplitude {F γ ω₀ ω : ℝ}
     |F| / Real.sqrt ((ω₀ ^ 2 - ω ^ 2) ^ 2 + (2 * γ * ω) ^ 2) := by
   exact damped_oscillator_amplitude_aux hD
 
-/-- A harmonic function with the coefficient values above and derivative
-formulas `x' = -Aω sin(ωt) + Bω cos(ωt)`, `x'' = -ω²x` (the derivative
-formulas of `A cos(ωt) + B sin(ωt)`) satisfies the forced oscillator
-equation `x'' + 2γx' + ω₀²x = F cos(ωt)` at every `t`. -/
+/-- If at a time `t` a function `x` has the value `A cos(ωt) + B sin(ωt)` (coefficients
+above, `D ≠ 0`), `deriv x t = -Aω sin(ωt) + Bω cos(ωt)` and `deriv (deriv x) t = -ω² x t` (the
+derivative formulas of `A cos(ωt) + B sin(ωt)`), then the forced oscillator equation
+`x'' + 2γx' + ω₀²x = F cos(ωt)` holds at `t`; for `x = A cos(ω·) + B sin(ω·)` it holds at every
+`t`. -/
 theorem damped_oscillator_ode {F γ ω₀ ω : ℝ} (x : ℝ → ℝ) (t : ℝ)
     (hD : (ω₀ ^ 2 - ω ^ 2) ^ 2 + (2 * γ * ω) ^ 2 ≠ 0)
     (hx : x t = F * (ω₀ ^ 2 - ω ^ 2) / ((ω₀ ^ 2 - ω ^ 2) ^ 2 + (2 * γ * ω) ^ 2) *

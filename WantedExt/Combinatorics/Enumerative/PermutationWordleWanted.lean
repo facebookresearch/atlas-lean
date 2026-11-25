@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.PermutationWordleCounts
+public import MathlibExt.Combinatorics.Enumerative.PermutationWordleDerangements
 public import MathlibExt.NumberTheory.LucasSequence
 
 /-!
@@ -41,16 +42,6 @@ public theorem_wanted permWordleCoeff_three_lt_cyclicShift (n : ℕ) (hn : 4 ≤
     (S : (m : ℕ) → Equiv.Perm (Fin m)) (hS : IsInductivePermWordleStrategy n S)
     (hne : S n ≠ finRotate n) :
     permWordleCoeff S n 3 < permWordleCoeff cyclicShiftStrategy n 3
-
-/-- **Derangements solved in three guesses by cyclic shift.** For $n \ge 3$, exactly
-$2^n - (2n + 1)$ derangements $\pi$ of $\{0, \dots, n-1\}$ are guessed by the cyclic shift
-strategy in exactly three guesses.
-
-Source: Aurora Hiveley, *Experimenting with Permutation Wordle*, Journal of Integer Sequences 29
-(2026), Article 26.1.7, Lemma 9 (`jis-2026-26.1.7-lem-9`). -/
-public theorem_wanted card_derangements_solvedIn_three_cyclicShift (n : ℕ) (hn : 3 ≤ n) :
-    Nat.card {π : Equiv.Perm (Fin n) //
-      (∀ k, π k ≠ k) ∧ PermWordleSolvedIn cyclicShiftStrategy π 3} = 2 ^ n - (2 * n + 1)
 
 /-- **Three-guess solves of permutations with a fixed point.** Let $n \ge 4$ and let $S$ be a
 permutation Wordle strategy (a permutation $S[m]$ of $\{0, \dots, m-1\}$ for each $m$) with

@@ -10,6 +10,9 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Vickrey–Clarke–Groves mechanisms](vickrey-clarke-groves-mechanisms/README.md)
 - [Myerson–Satterthwaite theorem](myerson-satterthwaite.md)
 - [Screening with two types](screening-with-two-types/README.md)
+- [Bilateral trade impossibility (dominant-strategy form)](bilateral-trade-impossibility.md)
+- [Characterization of proper scoring rules](characterization-of-proper-scoring-rules.md)
+- [Scoring rules and properness for finite outcomes](remaining-clauses-of-scoring-rules-and-properness.md)
 
 ## Related topics
 
@@ -18,3 +21,8 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Correlated equilibria](../noncooperative-games/correlated-equilibria/README.md): equilibria with a mediator who sends private recommendations, the communication counterpart of direct mechanisms.
 - [Social choice theory](../social-choice/README.md): aggregation of preferences without money, where the Gibbard–Satterthwaite theorem rules out nontrivial strategy-proof rules.
 - [Matching markets](../matching-markets/README.md): mechanisms without money for two-sided matching with ordinal preferences and private outcomes, where Roth's impossibility theorem rules out stable mechanisms that are strategy-proof for both sides.
+
+## Research directions
+
+- [Menu-size complexity of revenue approximation](menu-size-complexity-of-revenue-approximation.md)
+- [Optimal prophet-secretary ratio](optimal-prophet-secretary-ratio.md)

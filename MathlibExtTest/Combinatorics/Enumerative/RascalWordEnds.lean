@@ -28,4 +28,35 @@ example (k z : ℕ) : Nat.card { w : RascalWord 1 k (k + z) //
     ∀ x ∈ w.1.drop k, x = 0 } = 1 := by
   simpa [rascalZ] using card_prefixOnes_suffixZeros (k + z) k 0 z (by omega) le_rfl
 
+-- The empty word and the all-zero and all-one words each contribute once.
+example : rascalGenZ 1 0 0 = 1 := by
+  rw [← rascalZ_eq_rascalGenZ_one]
+  decide
+
+example : rascalGenZ 1 4 0 = 1 := by
+  rw [← rascalZ_eq_rascalGenZ_one]
+  decide
+
+example : rascalGenZ 1 4 4 = 1 := by
+  rw [← rascalZ_eq_rascalGenZ_one]
+  decide
+
+-- Of the six words with two ones and two zeros, only 0101 has two ascents.
+example : rascalGenZ 1 4 2 = 5 := by
+  rw [← rascalZ_eq_rascalGenZ_one]
+  decide
+
+-- A negative length, a negative weight, and a weight above the length are out of range.
+example : rascalGenZ 1 (-1) 0 = 0 := by
+  rw [← rascalZ_eq_rascalGenZ_one]
+  decide
+
+example : rascalGenZ 1 4 (-1) = 0 := by
+  rw [← rascalZ_eq_rascalGenZ_one]
+  decide
+
+example : rascalGenZ 1 4 5 = 0 := by
+  rw [← rascalZ_eq_rascalGenZ_one]
+  decide
+
 end MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted

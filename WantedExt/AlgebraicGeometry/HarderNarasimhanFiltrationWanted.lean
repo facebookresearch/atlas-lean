@@ -43,7 +43,7 @@ theorem_wanted exists_harderNarasimhanFiltration
     (k : Type u) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [IsProper C.hom] [SmoothOfRelativeDimension 1 C.hom]
     [IsIntegral C.left]
-    (E : C.left.Modules) (r : ℕ) (hr : 0 < r)
+    (E : C.left.Modules) (r : ℕ)
     (hE : IsVectorBundle E r) : Nonempty (Filtration C.hom E r)
 
 end WantedExt.AlgebraicGeometry.HarderNarasimhanFiltrationWanted

@@ -43,8 +43,9 @@ open _root_.AlgebraicGeometry
 
 universe u
 
-/-- `Cat`-valued pseudofunctors on schemes, contravariant in the scheme. These are the carriers
-of prestacks and stacks over the big category of schemes, in the sense of Mathlib's
+/-- `Cat`-valued pseudofunctors on schemes, contravariant in the scheme: pseudofunctors from the
+locally discrete bicategory on the opposite of the category of schemes to `Cat`. Prestacks and
+stacks over the big category of schemes are such pseudofunctors, satisfying
 `Pseudofunctor.IsPrestack` and `Pseudofunctor.IsStack`. -/
 abbrev SchPseudofunctor := Pseudofunctor (LocallyDiscrete Scheme.{u}ᵒᵖ) Cat.{u, u + 1}
 
