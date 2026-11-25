@@ -26,3 +26,5 @@ Specific concurrent or distributed systems and their verified properties: deadlo
 - [Two-phase commit](two-phase-commit/README.md)
 - [Two-process bakery algorithm](two-process-bakery-algorithm/README.md)
 - [Vector clocks](vector-clocks/README.md)
+
+- [Sampled registers and polling drivers](sampled-registers-and-polling-drivers/README.md)

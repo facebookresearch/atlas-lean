@@ -19,3 +19,5 @@ Linear elasticity and the mechanics of structures: Cauchy stress, small strain a
 - [Geotechnical limit analysis](geotechnical-limit-analysis/README.md)
 - [Plates and shells](plates-and-shells/README.md)
 - [Elasticity boundary-value problems](elasticity-boundary-value-problems/README.md)
+
+- [Fracture and fatigue](fracture-and-fatigue/README.md)

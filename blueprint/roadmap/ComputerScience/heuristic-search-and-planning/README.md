@@ -23,3 +23,5 @@ Search and decision procedures from artificial intelligence: A* search, game-tre
 ## Related topics
 
 - [Reinforcement learning theory](../machine-learning/reinforcement-learning/README.md)
+
+- [Behavior trees](behavior-trees/README.md)
