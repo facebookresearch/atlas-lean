@@ -1184,5 +1184,6 @@ Topics added since this subject's fields were last revised.
 - [Witt Loop Groups](witt-loop-groups/README.md)
 - [Witt Loop Ind Geometry](witt-loop-ind-geometry/README.md)
 - [Witt Quotient Action Models](witt-quotient-action-models/README.md)
+- [Relative Group Law End Degree Nsmul](relative-group-law-end-degree-nsmul/README.md)
 - [Formal Group](formal-group/README.md)
 - [Formal Group Law](formal-group-law/README.md)
