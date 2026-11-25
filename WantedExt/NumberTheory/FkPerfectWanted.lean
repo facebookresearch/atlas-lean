@@ -39,6 +39,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.NumberTheory.Divisors
+public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 
 set_option autoImplicit false
@@ -46,14 +47,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.FkPerfectWanted
-
-/-- **$[k,\ell]$-near-perfect with a given divisor.** For natural numbers $k$, $\ell$, $n$ and
-$d$, the number $n$ is $[k,\ell]$-near-perfect with divisor $d$ when $d$ is a proper divisor of
-$n$ ($d \mid n$ and $d < n$) and $\sigma_k(n) = n^k + d^k + \ell n$, where
-$\sigma_k(n) = \sum_{e \mid n} e^k$ is the sum of the $k$-th powers of the divisors of $n$. -/
-def KLNearPerfectWith (k l n d : ℕ) : Prop :=
-  d ∣ n ∧ d < n ∧
-    (∑ e ∈ n.divisors, e ^ k) = n ^ k + d ^ k + l * n
 
 /-- **$[k,\ell]$-near-perfect numbers.** For natural numbers $k$, $\ell$ and $n$, write
 $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-near-perfect when there is a
@@ -90,17 +83,6 @@ satisfies $\sigma_2(n) = n^2 + d^2 + 3n$, where $\sigma_2(n) = \sum_{e \mid n} e
 of the squares of the divisors of $n$. -/
 def IsNearFPerfect (n : ℕ) : Prop :=
   IsKLNearPerfect 2 3 n
-
-/-- **$2$ is $[k,1]$-deficient-perfect.** For every natural number $k$, the number $2$ is
-$[k,1]$-deficient-perfect.
-
-The divisor is $d = 1$, since $1 + 2^k + 1^k = 2^k + 1 \cdot 2$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Corollary 1. -/
-theorem_wanted isKLDeficientPerfect_two (k : ℕ) :
-    IsKLDeficientPerfect k 1 2
 
 /-- **No prime is deficient $F$-perfect.** If $p$ is a prime, then $p$ is not deficient
 $F$-perfect.
@@ -326,23 +308,6 @@ theorem_wanted isKLNearPerfect_one_two_mul_prime_pow
     (p a l : ℕ) (hp : p.Prime) (hpo : Odd p) (hl : 1 ≤ l) :
     IsKLNearPerfect 1 1 18 ∧
       (IsKLNearPerfect 1 l (2 * p ^ a) → 2 * p ^ a = 18)
-
-/-- **A divisibility condition for near-perfect numbers $2p^a$.** Let $p$ be an odd prime, let
-$a$, $k$, $\ell$ and $d$ be natural numbers with $k > 1$ and $\ell \ge 1$, and write
-$\sigma_k(m) = \sum_{e \mid m} e^k$. If $d$ is a proper divisor of $2p^a$ ($d \mid 2p^a$ and
-$d < 2p^a$) with $\sigma_k(2p^a) = (2p^a)^k + d^k + \ell \cdot 2p^a$, then $p^2 \mid 1 + 2^k$,
-and $a$ is even if and only if $d$ is odd.
-
-This is part 2 of Theorem 14 of the source.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 14. -/
-theorem_wanted klNearPerfectWith_two_mul_prime_pow_imp
-    (p a k l d : ℕ) (hp : p.Prime) (hpo : Odd p) (hk : 1 < k)
-    (hl : 1 ≤ l) :
-    KLNearPerfectWith k l (2 * p ^ a) d →
-      p ^ 2 ∣ 1 + 2 ^ k ∧ (Even a ↔ Odd d)
 
 /-- **No near $F$-perfect number of the form $2^a p^b$ with $b$ even.** For every prime $p$ and
 all natural numbers $a$ and $b$ with $b$ even, the number $n = 2^a p^b$ is not near $F$-perfect:

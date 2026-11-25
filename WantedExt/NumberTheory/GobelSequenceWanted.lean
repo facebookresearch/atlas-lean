@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.GobelSequence
 public import MathlibExt.NumberTheory.GobelSequenceRoots
 public import MathlibExt.NumberTheory.GobelSequenceSomosBound
+public import MathlibExt.NumberTheory.SomosLikeRoots
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.ZMod.Basic
@@ -140,24 +141,6 @@ public theorem_wanted gobelSequence_seven_iff_padic_claims :
         0 ≤ padicValRat 5 (gobelSequence k l 7)) ∧
       (∀ k ∈ Finset.Icc 1 6, ∀ l ∈ Finset.Icc 1 7,
         (padicValRat 7 (gobelSequence k l 7) < 0 ↔ k = 2 ∧ l = 3)))
-
-/-- **Root asymptotics of Somos-type sequences.** Let $k \ge 2$ be a natural number, let
-$\sigma_k = \exp\bigl(\sum_{m \ge 1} \log m / k^m\bigr)$ be the $k$-Somos constant, and let
-$t : \mathbb{N} \to \mathbb{R}$ satisfy $t(n + 1) = t(n)^k / (n + 1)$ for all $n \ge 0$. If
-$t(0) > \sigma_k$, then the sequence $n \mapsto t(n)^{1/k^n}$ is nonincreasing and converges to
-some real number $c > 1$.
-
-The sequence is constant from $n = 0$ to $n = 1$, so the paper's "decreases monotonically" is
-read in the non-strict sense.
-
-Source: Gima, Matsusaka, Miyazaki, and Yara, *On Integrality and Asymptotic
-Behavior of the (k, l)-Göbel Sequences*, Journal of Integer Sequences 27 (2024),
-Article 24.8.1, Lemma 8 (`jis-2024-24.8.1-lem-8`). -/
-public theorem_wanted somosLike_root_antitone_tendsto (k : ℕ) (hk : 2 ≤ k) (t : ℕ → ℝ)
-    (ht : ∀ n : ℕ, t (n + 1) = t n ^ k / (n + 1))
-    (h0 : Real.exp (∑' m : ℕ, Real.log m / (k : ℝ) ^ m) < t 0) :
-    ∃ c : ℝ, 1 < c ∧ Antitone (fun n : ℕ => t n ^ ((1 : ℝ) / (k : ℝ) ^ n)) ∧
-      Tendsto (fun n : ℕ => t n ^ ((1 : ℝ) / (k : ℝ) ^ n)) atTop (𝓝 c)
 
 /-- **The normalized Göbel roots converge to a limit greater than 1.** Let $k, l \ge 2$ be natural
 numbers and let $g_{k,l}$ be the $(k, l)$-Göbel sequence. There is a real number $C > 1$ such

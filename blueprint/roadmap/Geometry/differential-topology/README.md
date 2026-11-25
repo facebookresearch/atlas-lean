@@ -16,3 +16,4 @@ Smooth manifolds and smooth maps between them: immersions, submersions, transver
 - [Lie group](lie-group.md)
 - [Smooth retraction onto a closed embedded manifold in $\mathbb{R}^n$](tubular-smooth-retraction.md)
 - [Existence of smooth partitions of unity](partition-of-unity-existence.md)
+- [Differential of a smooth map at a point, acting on derivations](differential-smooth-map.md)

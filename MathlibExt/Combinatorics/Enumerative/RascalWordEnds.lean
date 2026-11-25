@@ -231,4 +231,24 @@ public theorem card_prefixOnes_suffixZeros (n k ℓ u : ℕ)
   rw [show n - k - u = (n - u - ℓ) - (k - ℓ) by omega]
   simp [rascalZ, hkn, Int.ofNat_sub hkn]
 
+/-- **Rascal numbers count binary words with at most one ascent.** For all integers $n$ and $k$,
+$R_{n,k} = b_k(n)$, where $R_{n,k}$ is the Rascal number and $b_k(n)$ is the number of binary
+words of length $n$ with exactly $k$ ones and at most one ascent (taken to be $0$ unless
+$0 \le k \le n$).
+
+Source: Amelia Gibbs and Brian K. Miceli, "Two Combinatorial
+Interpretations of Rascal Numbers", Theorem 1. -/
+public theorem rascalZ_eq_rascalGenZ_one (n k : ℤ) :
+    rascalZ n k = rascalGenZ 1 n k := by
+  by_cases h : 0 ≤ k ∧ k ≤ n
+  · have hEnds (w : RascalWord 1 k.toNat n.toNat) :
+        (∀ x ∈ w.1.take 0, x = 1) ∧ (∀ x ∈ w.1.drop n.toNat, x = 0) := by
+      simp [← w.2.1]
+    have hcount := card_prefixOnes_suffixZeros n.toNat k.toNat 0 0 (Nat.zero_le _)
+      (by simpa using Int.toNat_le_toNat h.2)
+    simp only [Nat.sub_zero, Nat.card_congr (Equiv.subtypeUnivEquiv hEnds),
+      Int.toNat_of_nonneg h.1, Int.toNat_of_nonneg (h.1.trans h.2)] at hcount
+    simpa only [rascalGenZ, ite_eq_left h, rascalGen] using hcount.symm
+  · simp [rascalZ, rascalGenZ, h]
+
 end MathlibExt.Combinatorics.Enumerative.RascalNumbersWanted
