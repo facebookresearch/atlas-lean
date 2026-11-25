@@ -12863,6 +12863,7 @@
   "MathlibExt/NumberTheory/NearPerfectTwoPrimePower": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "MathlibExt/NumberTheory/NegRFibonacciGeneratingFunction": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
   "MathlibExt/NumberTheory/NegRFibonacciPolynomial": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "r-Fibonacci and r-Lucas polynomials"},
+  "MathlibExt/NumberTheory/NegativePellDivisibility": {"to": "NumberTheory/diophantine-equations/pell-quadratic-equations", "title": "Negative Pell equation and angle bisectors"},
   "MathlibExt/NumberTheory/NetoHigherOrderBernoulli": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Higher-order Bernoulli numbers"},
   "MathlibExt/NumberTheory/NewtonSequence": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Newton sequences"},
   "MathlibExt/NumberTheory/NicolNumber": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Nicol numbers"},
