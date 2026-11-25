@@ -51,3 +51,4 @@
 - [Four-state Busy Beaver score value](busy-beaver-ones-four-wanted.md)
 - [Five-state Busy Beaver shift value](busy-beaver-steps-five-wanted.md)
 - [Five-state Busy Beaver score value](busy-beaver-ones-five-wanted.md)
+- [The busy beaver function dominates every computable function](the-busy-beaver-function-dominates-every.md)

@@ -37,8 +37,8 @@ the composition of derived inverse images, the adjunction between derived invers
 image, and the comparison of derived global sections with derived direct image, each normalized by
 the corresponding underived map on every complex. The first always holds
 (`derivedPullbackPasting`); the other two are hypotheses of the constructions that use them, and
-their constructions are tracked as `def_wanted` in
-`WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted`.
+their constructions are tracked as the `def_wanted` requests `derivedAdjunction` and
+`globalSectionsPushforward` in `WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted`.
 
 For an open immersion `j` and a closed immersion `i` into the same scheme, the nearby object is
 `i^* Rj_*` of the continuous coefficients, specialization is the map from the coefficients
@@ -178,9 +178,10 @@ instance pullbackDerivedNormalization {Y X : Scheme} (f : Y ⟶ X) :
       (pullback R f).rightDerivedFunctorPlusUnit hF
     infer_instance
 
-/-- An adjunction between derived inverse and direct image along `f` whose unit on every complex
-is the expected one (`normalizedDerivedUnit`). Its construction is tracked as `def_wanted`
-(`WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted.derivedAdjunction`). -/
+/-- An adjunction between derived inverse and direct image along `f`, on the bounded-below derived
+categories of pro-étale sheaves of `R`-modules, whose unit on every bounded-below complex is the
+expected one, `normalizedDerivedUnit`: the underived unit followed by the derived units of direct
+and inverse image. -/
 class DerivedAdjunction {Y X : Scheme} (f : Y ⟶ X) where
   adjunction : derivedPullback R f ⊣ derivedPushforward R f
   unit_normalization : ∀ K : Cochains R X,
@@ -369,10 +370,9 @@ def cochainSectionsPushforward {Y X : Scheme} (f : Y ⟶ X)
     ((Functor.mapHomologicalComplexCompIso (sectionsPushforward R f) (.up
       ℤ)).app K.obj)
 
-/-- An isomorphism between derived global sections of a derived direct image and derived global
-sections, compatible on every complex with the underived comparison `sectionsPushforward`. Its
-construction is tracked as `def_wanted`
-(`WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted.globalSectionsPushforward`). -/
+/-- An isomorphism between derived global sections of a derived direct image along `f` and derived
+global sections, on the bounded-below derived categories of pro-étale sheaves of `R`-modules,
+compatible on every bounded-below complex with the underived comparison `sectionsPushforward`. -/
 class GlobalSectionsPushforward {Y X : Scheme} (f : Y ⟶ X) where
   comparison : derivedPushforward R f ⋙ derivedSections R X ≅
     derivedSections R Y
@@ -400,10 +400,10 @@ def nearbyGlobalComparison {A Y Z : Scheme} (j : Y ⟶ A) (i : Z ⟶ A)
         ((derivedPushforward R j).obj K)) ≫
     (GlobalSectionsPushforward.comparison (R := R) (f := i)).hom.app _
 
-/-- The classes `DerivedAdjunction` and `GlobalSectionsPushforward` for all morphisms of schemes,
-for statements that need them for many morphisms. (`PullbackDerivedNormalization` and
-`DerivedPullbackPasting` always hold.) Their constructions are tracked as `def_wanted` in
-`WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted`. -/
+/-- Instances of `DerivedAdjunction` and `GlobalSectionsPushforward` for every morphism of schemes:
+for each morphism, a normalized adjunction between derived inverse and direct image, and a
+normalized comparison of derived global sections of a derived direct image with derived global
+sections. -/
 class DerivedFunctorTheory where
   [adjunctions : ∀ {Y X : Scheme.{0}} (f : Y ⟶ X), DerivedAdjunction R f]
   [sectionsComparison : ∀ {Y X : Scheme.{0}} (f : Y ⟶ X),

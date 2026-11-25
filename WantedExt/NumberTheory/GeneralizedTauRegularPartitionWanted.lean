@@ -486,17 +486,6 @@ public theorem_wanted generalizedTau_modEq_zero_of_pentagonal (n : ℕ) (hn : 0 
     (h : ∀ t : ℤ, pentagonal t ≤ n - 1 → ¬ (k - 1) ∣ n - 1 - pentagonal t) :
     generalizedTau k n ≡ 0 [ZMOD ((k - 1 : ℕ) : ℤ)]
 
-/-- **Divisibility of $n\,\tau_k(n + 1)$ by $|k|$.** Let $\tau_k$ be the generalized tau function.
-For every positive integer $n$ and every integer $k$ with $|k| \ge 2$,
-$n\,\tau_k(n + 1) \equiv 0 \pmod{|k|}$.
-
-Source: S. Sriram and A. David Christopher, *Congruences Relating Regular Partition Functions, a
-Generalized Tau Function, and Partition Function Weighted Composition Sums*, INTEGERS 24 (2024),
-Article A39, Proposition 2 (`integers-2024-A39-prop-2`). -/
-public theorem_wanted mul_generalizedTau_succ_modEq_zero (n : ℕ) (hn : 0 < n) (k : ℤ) (hk : 2 ≤ |k|)
-    :
-    (n : ℤ) * generalizedTau k (n + 1) ≡ 0 [ZMOD |k|]
-
 /-- **Vanishing of the generalized tau function modulo $|k|/d$.** Let $\tau_k(n)$ be the
 generalized tau function, the coefficient of $q^n$ in $q \prod_{j \ge 1} (1 - q^j)^k$. Let $k$ be
 an integer with $|k| \ge 2$ and $d$ a natural number dividing $|k|$ with $d < |k|$. Then for all

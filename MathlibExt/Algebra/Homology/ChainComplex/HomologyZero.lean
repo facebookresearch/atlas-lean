@@ -6,24 +6,18 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
+
 module
 
 public import Mathlib.Algebra.Homology.ShortComplex.HomologicalComplex
 
 /-!
-# The native degree-zero chain class as a cokernel
+# The degree-zero homology class map as a cokernel
 
-For a nonnegative chain complex, the actual class map is the native opcycles
-projection followed by the inverse native degree-zero homology isomorphism.
-It is a cokernel of the actual degree-one differential. The comparison with
-the native cokernel and its naturality use the same projection.
-
-The construction needs only zero morphisms and the individual homology
-in degree zero. The arbitrary-ring module specialization is provided in
-`MathlibExt.Algebra.Category.ModuleCat.HomologyZero`.
+For a nonnegative chain complex, the degree-zero class map is a cokernel
+of the degree-one differential. It is the opcycles projection followed by
+the degree-zero homology isomorphism, and the comparison is natural.
+Only zero morphisms and the specified degree-zero homology are required.
 -/
 
 @[expose] public section
@@ -42,7 +36,7 @@ section Homology
 
 variable (K : ChainComplex C ℕ) [K.HasHomology 0]
 
-/-- The actual degree-zero class of a chain, using native opcycles and homology. -/
+/-- The degree-zero class of a chain, using native opcycles and homology. -/
 def homologyZeroClass : K.X 0 ⟶ K.homology 0 :=
   K.pOpcycles 0 ≫ K.isoHomologyι₀.inv
 
@@ -51,7 +45,7 @@ theorem d_comp_homologyZeroClass : K.d 1 0 ≫ homologyZeroClass K = 0 := by
   change K.d 1 0 ≫ (K.pOpcycles 0 ≫ K.isoHomologyι₀.inv) = 0
   rw [← Category.assoc, K.d_pOpcycles, zero_comp]
 
-/-- The actual degree-zero homology class as a cokernel cofork of `d₁`. -/
+/-- The degree-zero homology class as a cokernel cofork of `d₁`. -/
 def homologyZeroCofork : CokernelCofork (K.d 1 0) :=
   CokernelCofork.ofπ (homologyZeroClass K) (d_comp_homologyZeroClass K)
 
@@ -75,7 +69,7 @@ def homologyZeroCoforkIsColimit : IsColimit (homologyZeroCofork K) := by
 
 variable [HasCokernel (K.d 1 0)]
 
-/-- Native degree-zero homology is the native cokernel of the actual differential. -/
+/-- Native degree-zero homology is the native cokernel of the differential. -/
 def homologyZeroIsoCokernel : K.homology 0 ≅ cokernel (K.d 1 0) :=
   IsColimit.coconePointUniqueUpToIso
     (s := homologyZeroCofork K)
@@ -127,7 +121,7 @@ theorem homologyZeroClass_naturality (φ : K ⟶ L) :
 
 variable [HasCokernel (K.d 1 0)] [HasCokernel (L.d 1 0)]
 
-/-- The comparison is natural for the actual native maps of cokernels. -/
+/-- The comparison is natural for the maps of cokernels. -/
 @[reassoc]
 theorem homologyZeroIsoCokernel_naturality (φ : K ⟶ L) :
     HomologicalComplex.homologyMap φ 0 ≫ (homologyZeroIsoCokernel L).hom =

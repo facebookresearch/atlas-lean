@@ -1,16 +1,25 @@
 /-
-Author: @toskua, Avocado
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
 
-The mirrored structure and isomorphism transport are adapted from Mathlib's
-`Mathlib/AlgebraicTopology/ExtraDegeneracy.lean` (author: Joël Riou).
-Copyright (c) 2022 Joël Riou. All rights reserved.
-The Mathlib-derived portions are released under the Apache 2.0 license as described
-in the file LICENSE.
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
 -/
+
+/-
+Portions of this file are adapted from:
+
+`Mathlib/AlgebraicTopology/ExtraDegeneracy.lean` (Mathlib):
+Copyright (c) 2022 Joël Riou. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Joël Riou
+-/
+
 
 module
 
 public import Mathlib.AlgebraicTopology.ExtraDegeneracy
+public import MathlibExt.AlgebraicTopology.SimplicialObject.AugmentedWhiskering
 
 /-!
 # Right extra degeneracies for augmented simplicial objects
@@ -19,9 +28,10 @@ This module provides the mirrored right-handed extra-degeneracy structure:
 the distinguished identity uses the last face `Fin.last (n + 1)`, while the
 remaining face and degeneracy compatibilities use `Fin.castSucc`.
 `RightExtraDegeneracy.map` and `RightExtraDegeneracy.ofIso` transport the
-structure along functors and isomorphisms of augmented objects.
-Unlike Mathlib's `SimplicialObject.Augmented.ExtraDegeneracy`, this structure
-records the terminal-face identities on the original augmented object.
+structure along functors and isomorphisms of augmented objects. Simplex
+reversal converts it to Mathlib's left-handed
+`SimplicialObject.Augmented.ExtraDegeneracy` contraction API, so its
+homotopy consequences are inherited rather than reproved.
 -/
 
 @[expose] public section
@@ -36,26 +46,28 @@ namespace Augmented
 
 variable {C : Type u} [Category.{v} C]
 
-/-- Right-handed extra-degeneracy structure for augmented simplicial objects,
+/--
+Right-handed extra-degeneracy structure for augmented simplicial objects,
 mirroring `SimplicialObject.Augmented.ExtraDegeneracy` with distinguished terminal face
-`Fin.last (n + 1)` and nonterminal equations using `Fin.castSucc`. -/
+`Fin.last (n + 1)` and nonterminal equations using `Fin.castSucc`.
+-/
 @[ext]
 structure RightExtraDegeneracy (X : Augmented C) where
-  /-- a section from the augmentation point to degree zero -/
+  /-- A section from the augmentation point to degree zero -/
   s' : X.right ⟶ X.left _⦋0⦌
-  /-- extra degeneracies `X_n ⟶ X_{n+1}` -/
+  /-- Extra degeneracies `X_n ⟶ X_{n+1}` -/
   s : ∀ n : ℕ, X.left _⦋n⦌ ⟶ X.left _⦋n + 1⦌
-  /-- section / augmentation identity -/
+  /-- Section / augmentation identity -/
   s'_comp_ε : s' ≫ X.hom.app (op ⦋0⦌) = 𝟙 X.right := by cat_disch
-  /-- degree-zero compatibility with face `0` -/
+  /-- Degree-zero compatibility with face `0` -/
   s₀_comp_δ₀ : s 0 ≫ X.left.δ 0 = X.hom.app (op ⦋0⦌) ≫ s' := by cat_disch
-  /-- distinguished terminal-face identity -/
+  /-- Distinguished terminal-face identity -/
   s_comp_δ_last : ∀ n : ℕ, s n ≫ X.left.δ (Fin.last (n + 1) : Fin (n + 2)) = 𝟙 _ := by cat_disch
-  /-- compatibility with all nonterminal faces -/
+  /-- Compatibility with all nonterminal faces -/
   s_comp_δ :
     ∀ (n : ℕ) (i : Fin (n + 2)), s (n + 1) ≫ X.left.δ i.castSucc = X.left.δ i ≫ s n := by
     cat_disch
-  /-- compatibility with all nonterminal degeneracies -/
+  /-- Compatibility with all nonterminal degeneracies -/
   s_comp_σ :
     ∀ (n : ℕ) (i : Fin (n + 1)), s n ≫ X.left.σ i.castSucc = X.left.σ i ≫ s (n + 1) := by
     cat_disch
@@ -71,21 +83,26 @@ def map {D : Type u'} [Category.{v'} D] {X : Augmented C}
   s' := F.map ed.s'
   s n := F.map (ed.s n)
   s'_comp_ε := by
-    change F.map ed.s' ≫ (F.map (X.hom.app (op ⦋0⦌)) ≫ 𝟙 _) = 𝟙 (F.obj X.right)
-    rw [Category.comp_id, ← F.map_comp, ed.s'_comp_ε, F.map_id]
+    rw [whiskeringObj_obj_hom_app]
+    change F.map ed.s' ≫ F.map (X.hom.app (op ⦋0⦌)) = 𝟙 (F.obj X.right)
+    rw [← F.map_comp, ed.s'_comp_ε, F.map_id]
   s₀_comp_δ₀ := by
+    rw [whiskeringObj_obj_left_δ, whiskeringObj_obj_hom_app]
     change F.map (ed.s 0) ≫ F.map (X.left.δ 0) =
-        (F.map (X.hom.app (op ⦋0⦌)) ≫ 𝟙 _) ≫ F.map ed.s'
-    rw [Category.comp_id, ← F.map_comp, ed.s₀_comp_δ₀, F.map_comp]
+        F.map (X.hom.app (op ⦋0⦌)) ≫ F.map ed.s'
+    rw [← F.map_comp, ed.s₀_comp_δ₀, F.map_comp]
   s_comp_δ_last n := by
+    rw [whiskeringObj_obj_left_δ]
     change F.map (ed.s n) ≫ F.map (X.left.δ (Fin.last (n + 1))) =
         𝟙 (F.obj (X.left _⦋n⦌))
     rw [← F.map_comp, ed.s_comp_δ_last, F.map_id]
   s_comp_δ n i := by
+    rw [whiskeringObj_obj_left_δ, whiskeringObj_obj_left_δ]
     change F.map (ed.s (n + 1)) ≫ F.map (X.left.δ i.castSucc) =
         F.map (X.left.δ i) ≫ F.map (ed.s n)
     rw [← F.map_comp, ← F.map_comp, ed.s_comp_δ]
   s_comp_σ n i := by
+    rw [whiskeringObj_obj_left_σ, whiskeringObj_obj_left_σ]
     change F.map (ed.s n) ≫ F.map (X.left.σ i.castSucc) =
         F.map (X.left.σ i) ≫ F.map (ed.s (n + 1))
     rw [← F.map_comp, ← F.map_comp, ed.s_comp_σ]
@@ -100,8 +117,10 @@ theorem map_s {D : Type u'} [Category.{v'} D] {X : Augmented C}
     (ed : RightExtraDegeneracy X) (F : C ⥤ D) (n : ℕ) :
     (ed.map F).s n = F.map (ed.s n) := rfl
 
-/-- If `X` and `Y` are isomorphic augmented simplicial objects, then a right extra
-degeneracy for `X` gives also a right extra degeneracy for `Y`. -/
+/--
+If `X` and `Y` are isomorphic augmented simplicial objects, then a right extra
+degeneracy for `X` gives also a right extra degeneracy for `Y`.
+-/
 def ofIso {X Y : Augmented C} (e : X ≅ Y) (ed : RightExtraDegeneracy X) :
     RightExtraDegeneracy Y where
   s' := (point.mapIso e).inv ≫ ed.s' ≫ (drop.mapIso e).hom.app (op ⦋0⦌)

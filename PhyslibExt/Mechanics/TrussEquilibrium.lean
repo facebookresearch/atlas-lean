@@ -81,9 +81,9 @@ def reactionMatrix {J R : Type*} [DecidableEq J]
     (sj : R → J) (sd : R → (Fin 2 → ℝ)) : Matrix (J × Fin 2) R ℝ :=
   Matrix.of fun q s => if sj s = q.1 then sd s q.2 else 0
 
-/-- Assembled equilibrium matrix `[Bᵤᵀ | -Rsup]`: rows are
-joint coordinates, columns are member forces then reaction
-components. -/
+/-- Assembled equilibrium matrix `[Bᵤᵀ | -Rsup]`: rows are joint coordinates, columns are member
+forces then reaction components. A zero-length member gives a zero column (totalized inverse
+length). -/
 noncomputable def equilibriumMatrix {J M R : Type*} [DecidableEq J]
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (sj : R → J) (sd : R → (Fin 2 → ℝ)) :
@@ -98,10 +98,9 @@ noncomputable def squareEquilibriumMatrix {J M R : Type*}
     Matrix (M ⊕ R) (M ⊕ R) ℝ :=
   (equilibriumMatrix r a b sj sd).submatrix e id
 
-/-- Method-of-joints balance: at every joint coordinate the
-axial forces the members exert on the joint, the support
-reactions at the joint, and the external load sum to
-zero. -/
+/-- Method-of-joints balance: at every joint coordinate the axial forces the members exert on the
+joint, the support reactions at the joint, and the external load sum to zero. A zero-length member
+exerts no force: its unit direction is `0` by the convention `0⁻¹ = 0`. -/
 def JointBalance {J M R : Type*} [DecidableEq J] [Fintype M] [Fintype R]
     (r : J → (Fin 2 → ℝ)) (a b : M → J)
     (sj : R → J) (sd : R → (Fin 2 → ℝ))
