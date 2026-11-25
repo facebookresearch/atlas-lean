@@ -7,6 +7,8 @@
 - [Quillen Q-construction for exact categories](quillen-q-construction-for-exact-categories/README.md)
 - [Equivalence invariance for the Quillen Q-construction](equivalence-invariance-for-the-quillen-q-constru/README.md)
 - [Bundled exact-functor maps on the Quillen Q-construction](bundled-exact-functor-maps-on-the-quillen-q-cons/README.md)
+- [Connectedness of the Quillen nerve via zero-to-object edges](connectedness-of-the-quillen-nerve-via-zero-to-o/README.md)
+- [Unpointed nerve of the Quillen Q-construction](unpointed-nerve-of-the-quillen-q-construction/README.md)
 - [Pure admissible spans and their Quillen arrow classes](pure-admissible-spans-and-their-quillen-arrow-cl/README.md)
 - [Outer-edgewise nerves of weak Waldhausen Stages](outer-edgewise-nerves-of-weak-waldhausen-stages/README.md)
 - [Span presentations and edgewise filtrations for Quillen simplices](span-presentations-and-edgewise-filtrations-for/README.md)

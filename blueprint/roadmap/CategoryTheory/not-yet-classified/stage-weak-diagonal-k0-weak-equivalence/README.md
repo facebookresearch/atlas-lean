@@ -1,0 +1,18 @@
+# Stage Weak Diagonal K0 Weak Equivalence
+
+- [Stage One Weak Map](stage-one-weak-map.md)
+- [Stage Weak Diagonal Weak Equivalence Simplex](stage-weak-diagonal-weak-equivalence-sim.md)
+- [Stage Weak Diagonal Weak Equivalence Simplex d1](stage-weak-diagonal-weak-equivalence-sim-2.md)
+- [Stage Weak Diagonal Weak Equivalence Simplex d0](stage-weak-diagonal-weak-equivalence-sim-3.md)
+- [Stage Weak Diagonal Weak Equivalence Edge](stage-weak-diagonal-weak-equivalence-edg.md)
+- [Stage Weak Diagonal Zero Vertex degeneracy](stage-weak-diagonal-zero-vertex-degenera.md)
+- [Stage Weak Diagonal Zero Edge edge](stage-weak-diagonal-zero-edge-edge.md)
+- [Reindex Stage Weak sigma delta obj](reindex-stage-weak-sigma-delta-obj.md)
+- [Reindex Stage Weak sigma delta map](reindex-stage-weak-sigma-delta-map.md)
+- [Stage One Weak Obj reindex sigma One d0](stage-one-weak-obj-reindex-sigma-one-d0.md)
+- [Stage One Weak Obj reindex sigma Zero d2](stage-one-weak-obj-reindex-sigma-zero-d2.md)
+- [Stage Weak Diagonal Weak Equivalence Source Triangle Simplex](stage-weak-diagonal-weak-equivalence-sou.md)
+- [Stage Weak Diagonal Weak Equivalence Source Comp Struct](stage-weak-diagonal-weak-equivalence-sou-2.md)
+- [Stage Weak Diagonal Weak Equivalence Target Triangle Simplex](stage-weak-diagonal-weak-equivalence-tar.md)
+- [Stage Weak Diagonal Weak Equivalence Target Comp Struct](stage-weak-diagonal-weak-equivalence-tar-2.md)
+- [Stage Weak Diagonal Object Edge hom Mk eq of weak Equivalence](stage-weak-diagonal-object-edge-hom-mk-e.md)
