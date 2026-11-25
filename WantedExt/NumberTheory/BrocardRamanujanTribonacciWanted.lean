@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Factorial.Basic
+public import MathlibExt.NumberTheory.BrocardRamanujanNotTetranacci
 public import MathlibExt.NumberTheory.TribonacciPadicValInt
 public import MathlibExt.NumberTheory.TetranacciSequence
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
@@ -45,18 +46,6 @@ Numbers*, INTEGERS 24 (2024), Article A92, Theorem 1.
 -/
 public theorem_wanted brocardRamanujan_not_tribonacci :
     ∀ m n : ℕ, Nat.factorial m + 1 ≠ tribonacci n ^ 2
-
-/--
-**The Brocard–Ramanujan equation has no Tetranacci solutions.** Let $(Q_n)_{n \ge 0}$ be the
-Tetranacci sequence, given by $Q_0 = Q_1 = Q_2 = 0$, $Q_3 = 1$ and
-$Q_{n+4} = Q_{n+3} + Q_{n+2} + Q_{n+1} + Q_n$ for $n \ge 0$. For all natural numbers $m$ and $n$,
-$m! + 1 \ne Q_n^2$.
-
-Source: Paul Thomas Young, *On the Brocard-Ramanujan Equation with Tribonacci and Tetranacci
-Numbers*, INTEGERS 24 (2024), Article A92, Theorem 2.
--/
-public theorem_wanted brocardRamanujan_not_tetranacci :
-    ∀ m n : ℕ, Nat.factorial m + 1 ≠ tetranacci n ^ 2
 
 end
 
