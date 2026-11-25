@@ -13,6 +13,7 @@ public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Domains.Biology.PopulationGenetics.Diffusion.SingularSpeedMeasure
+public import MathlibExt.Probability.Diffusion.DirichletForm
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.Analysis.Calculus.Deriv.Inv
 public import Mathlib.Analysis.Calculus.Deriv.Mul
@@ -50,11 +51,15 @@ the quadratic form that follow when the boundary flux vanishes.
 
 Let `L = diffusionGenerator b a` be the generator with drift `b` and diffusion
 coefficient `a`, `ψ = scaleDensityFrom b a c` the scale density with interior
-basepoint `c ∈ (0, 1)`, and `speedMeasureFrom b a c` the speed measure, all
-from the companion module
-`Domains.Biology.PopulationGenetics.Diffusion.SingularSpeedMeasure`. The
-canonical form `f * L g * (speed density) = f * (g' / ψ)'` on `(0, 1)` gives,
-by integration by parts,
+basepoint `c ∈ (0, 1)`, and `speedMeasureFrom b a c` the speed measure. The
+scale density and the speed measure are generic and live in
+`MathlibExt.Probability.Diffusion.SpeedMeasure`; the companion module
+`Domains.Biology.PopulationGenetics.Diffusion.SingularSpeedMeasure` re-exports
+them into this namespace and gives the canonical form
+`f * L g * (speed density) = f * (g' / ψ)'` on `(0, 1)`. Integration by parts
+against the speed measure,
+`integral_mul_speedMeasureFrom_eq_sub_of_hasDerivAt_of_tendsto` in
+`MathlibExt.Probability.Diffusion.DirichletForm`, then gives
 `∫ f * L g ∂(speed measure) = [f * (g' / ψ)]₀¹ - ∫₀¹ (f' * g') / ψ`. All test
 functions are `ContDiffOn ℝ 2` on the closed interval `Icc 0 1`; endpoint flux
 limits are one-sided, taken from inside `(0, 1)`.
@@ -132,173 +137,30 @@ public theorem integral_mul_diffusionGenerator_speedMeasureFrom
     ∫ x, f x * diffusionGenerator b a g x ∂(speedMeasureFrom b a c) =
       (B1 - B0) - ∫ x in (0 : ℝ)..1, deriv f x * deriv g x /
         scaleDensityFrom b a c x := by
-  have h01 : (0 : ℝ) ≤ 1 := zero_le_one
-  have h01lt : (0 : ℝ) < 1 := zero_lt_one
   have hU : UniqueDiffOn ℝ (Ioo (0 : ℝ) 1) := isOpen_Ioo.uniqueDiffOn
-  have hfIoo : ContDiffOn ℝ 2 f (Ioo 0 1) := hf.mono Ioo_subset_Icc_self
-  have hgIoo : ContDiffOn ℝ 2 g (Ioo 0 1) := hg.mono Ioo_subset_Icc_self
   have hfC1 : ContDiffOn ℝ 1 f (Ioo 0 1) :=
     ((contDiffOn_nat_succ_iff_contDiffOn_one_iteratedDerivWithin (n := 1)
-      hU).mp hfIoo).1
+      hU).mp (hf.mono Ioo_subset_Icc_self)).1
   have hgC1 : ContDiffOn ℝ 1 (iteratedDerivWithin 1 g (Ioo 0 1))
       (Ioo 0 1) :=
     ((contDiffOn_nat_succ_iff_contDiffOn_one_iteratedDerivWithin (n := 1)
-      hU).mp hgIoo).2
-  have hfDiff : DifferentiableOn ℝ f (Ioo 0 1) := hfC1.differentiableOn_one
+      hU).mp (hg.mono Ioo_subset_Icc_self)).2
   have hgDerivDiff : DifferentiableOn ℝ (deriv g) (Ioo 0 1) := by
     have h := hgC1.differentiableOn_one
     rw [iteratedDerivWithin_one] at h
     exact h.congr (fun x hx => (derivWithin_of_isOpen isOpen_Ioo hx).symm)
-  have hderiv : ∀ x ∈ Ioo (0 : ℝ) 1, HasDerivAt
-      (fun y => f y * (deriv g y / scaleDensityFrom b a c y))
-      (deriv f x * deriv g x / scaleDensityFrom b a c x +
-        f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x)
-      x := by
-    intro x hx
-    have hxIoo : Ioo (0 : ℝ) 1 ∈ 𝓝 x := isOpen_Ioo.mem_nhds hx
-    have hf_at : HasDerivAt f (deriv f x) x :=
-      (hfDiff.differentiableAt hxIoo).hasDerivAt
-    have hg_at : HasDerivAt (deriv g) (deriv (deriv g) x) x :=
-      (hgDerivDiff.differentiableAt hxIoo).hasDerivAt
-    have hψne : scaleDensityFrom b a c x ≠ 0 :=
+  simp only [mul_div_assoc] at hdir ⊢
+  refine
+    MathlibExt.Probability.Diffusion.integral_mul_speedMeasureFrom_eq_sub_of_hasDerivAt_of_tendsto
+      b a f (diffusionGenerator b a g) (fun y => deriv g y / scaleDensityFrom b a c y) c B0 B1
+      ha ha_cont hba_cont hc hfC1.differentiableOn_one (fun x hx => ?_) hB0 hB1 hint hdir
+  have hQx : DifferentiableAt ℝ (fun y => deriv g y / scaleDensityFrom b a c y) x :=
+    (hgDerivDiff.differentiableAt (isOpen_Ioo.mem_nhds hx)).div
+      (hasDerivAt_scaleDensityFrom b a c x hba_cont hx hc).differentiableAt
       (scaleDensityFrom_pos b a c x).ne'
-    have hψ := hasDerivAt_scaleDensityFrom b a c x hba_cont hx hc
-    have hQ : HasDerivAt (fun y => deriv g y / scaleDensityFrom b a c y)
-        (deriv (fun y => deriv g y / scaleDensityFrom b a c y) x) x :=
-      ((hg_at.div hψ hψne).differentiableAt).hasDerivAt
-    have hmul0 := hf_at.mul hQ
-    have hval : deriv f x * (fun y => deriv g y / scaleDensityFrom b a c y) x +
-        f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x =
-        deriv f x * deriv g x / scaleDensityFrom b a c x +
-        f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x := by
-      change deriv f x * (deriv g x / scaleDensityFrom b a c x) +
-        f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x =
-        deriv f x * deriv g x / scaleDensityFrom b a c x +
-        f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x
-      ring
-    rw [hval] at hmul0
-    exact hmul0
-  have hψcont : ContinuousOn (scaleDensityFrom b a c) (Ioo 0 1) :=
-    HasDerivAt.continuousOn
-      (fun x hx => hasDerivAt_scaleDensityFrom b a c x hba_cont hx hc)
-  have hσcont : ContinuousOn (fun x => speedDensityFrom b a c x)
-      (Ioo 0 1) := by
-    simp only [speedDensityFrom]
-    refine continuousOn_const.div₀ (ha_cont.mul hψcont) (fun x hx => ?_)
-    change a x * scaleDensityFrom b a c x ≠ 0
-    exact (mul_pos (ha x hx) (scaleDensityFrom_pos b a c x)).ne'
-  have hσae : AEMeasurable (fun x => speedDensityFrom b a c x)
-      (volume.restrict (Ioo 0 1)) :=
-    hσcont.aemeasurable measurableSet_Ioo
-  have hdens_ae : AEMeasurable
-      (fun x => ENNReal.ofReal (speedDensityFrom b a c x))
-      (volume.restrict (Ioo 0 1)) :=
-    ENNReal.measurable_ofReal.comp_aemeasurable' hσae
-  have hdens_lt : ∀ᵐ x ∂(volume.restrict (Ioo 0 1)),
-      ENNReal.ofReal (speedDensityFrom b a c x) < ∞ :=
-    Filter.Eventually.of_forall (fun _ => ENNReal.ofReal_lt_top)
-  have hae : (fun x => (ENNReal.ofReal (speedDensityFrom b a c x)).toReal •
-        (f x * diffusionGenerator b a g x)) =ᵐ[volume.restrict (Ioo 0 1)]
-      (fun x => f x *
-        deriv (fun y => deriv g y / scaleDensityFrom b a c y) x) := by
-    refine ae_restrict_of_forall_mem measurableSet_Ioo (fun x hx => ?_)
-    change (ENNReal.ofReal (speedDensityFrom b a c x)).toReal •
-        (f x * diffusionGenerator b a g x) =
-      f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x
-    rw [ENNReal.toReal_ofReal
-      (le_of_lt (speedDensityFrom_pos b a c x ha hx)), smul_eq_mul,
-      diffusionGenerator_eq_one_div_speedDensityFrom _ _ g _ _ ha
-        hba_cont hgDerivDiff hx hc]
-    have hσne : speedDensityFrom b a c x ≠ 0 :=
-      (speedDensityFrom_pos b a c x ha hx).ne'
-    have e1 : speedDensityFrom b a c x *
-          (f x * ((1 / speedDensityFrom b a c x) *
-            deriv (fun y => deriv g y / scaleDensityFrom b a c y) x)) =
-          (speedDensityFrom b a c x * (speedDensityFrom b a c x)⁻¹) *
-          (f x *
-            deriv (fun y => deriv g y / scaleDensityFrom b a c y) x) := by
-      rw [one_div]
-      ring
-    have e2 : (speedDensityFrom b a c x * (speedDensityFrom b a c x)⁻¹) *
-          (f x *
-            deriv (fun y => deriv g y / scaleDensityFrom b a c y) x) =
-          f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x := by
-      rw [mul_inv_cancel₀ hσne, one_mul]
-    exact e1.trans e2
-  have hintW : Integrable (fun x => f x * diffusionGenerator b a g x)
-      ((volume.restrict (Ioo 0 1)).withDensity fun x =>
-        ENNReal.ofReal (speedDensityFrom b a c x)) := hint
-  have hiff2 : Integrable
-      (fun x => (ENNReal.ofReal (speedDensityFrom b a c x)).toReal •
-        (f x * diffusionGenerator b a g x))
-      (volume.restrict (Ioo 0 1)) :=
-    (integrable_withDensity_iff_integrable_smul₀' hdens_ae hdens_lt).mp hintW
-  have hD2 : Integrable
-      (fun x => f x *
-        deriv (fun y => deriv g y / scaleDensityFrom b a c y) x)
-      (volume.restrict (Ioo 0 1)) :=
-    hiff2.congr hae
-  have hset : Ioo (0 : ℝ) 1 =ᵐ[volume] Ioc (0 : ℝ) 1 := Ioo_ae_eq_Ioc
-  have hD2Ioc : Integrable
-      (fun x => f x *
-        deriv (fun y => deriv g y / scaleDensityFrom b a c y) x)
-      (volume.restrict (Ioc 0 1)) := by
-    rw [← Measure.restrict_congr_set hset]
-    exact hD2
-  have hD2Int : IntervalIntegrable
-      (fun x => f x *
-        deriv (fun y => deriv g y / scaleDensityFrom b a c y) x)
-      volume 0 1 := by
-    rw [intervalIntegrable_iff_integrableOn_Ioc_of_le h01]
-    exact hD2Ioc
-  have hInt : IntervalIntegrable
-      (fun x => deriv f x * deriv g x / scaleDensityFrom b a c x +
-        f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x)
-      volume 0 1 :=
-    hdir.add hD2Int
-  have hFTC : (∫ x in (0 : ℝ)..1, deriv f x * deriv g x /
-        scaleDensityFrom b a c x +
-        f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x) =
-      B1 - B0 :=
-    intervalIntegral.integral_eq_sub_of_hasDerivAt_of_tendsto h01lt hderiv
-      hInt hB0 hB1
-  have hsplit : (∫ x in (0 : ℝ)..1, deriv f x * deriv g x /
-        scaleDensityFrom b a c x +
-        f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x) =
-      (∫ x in (0 : ℝ)..1,
-        deriv f x * deriv g x / scaleDensityFrom b a c x) +
-      (∫ x in (0 : ℝ)..1,
-        f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x) :=
-    intervalIntegral.integral_add hdir hD2Int
-  have hLHS : (∫ x, f x * diffusionGenerator b a g x
-        ∂(speedMeasureFrom b a c)) =
-      (∫ x in (0 : ℝ)..1,
-        f x * deriv (fun y => deriv g y / scaleDensityFrom b a c y) x) := by
-    simp only [speedMeasureFrom]
-    rw [integral_withDensity_eq_integral_toReal_smul₀ hdens_ae hdens_lt]
-    have c1 : (∫ x, (ENNReal.ofReal (speedDensityFrom b a c x)).toReal •
-          (f x * diffusionGenerator b a g x)
-        ∂(volume.restrict (Ioo 0 1))) =
-        (∫ x in Ioo (0 : ℝ) 1, f x *
-          deriv (fun y => deriv g y / scaleDensityFrom b a c y) x
-        ∂volume) :=
-      integral_congr_ae hae
-    have c2 : (∫ x in Ioo (0 : ℝ) 1, f x *
-          deriv (fun y => deriv g y / scaleDensityFrom b a c y) x
-        ∂volume) =
-        (∫ x in Ioc (0 : ℝ) 1, f x *
-          deriv (fun y => deriv g y / scaleDensityFrom b a c y) x
-        ∂volume) :=
-      setIntegral_congr_set hset
-    have c3 : (∫ x in Ioc (0 : ℝ) 1, f x *
-          deriv (fun y => deriv g y / scaleDensityFrom b a c y) x
-        ∂volume) =
-        (∫ x in (0 : ℝ)..1, f x *
-          deriv (fun y => deriv g y / scaleDensityFrom b a c y) x) :=
-      (intervalIntegral.integral_of_le h01).symm
-    exact c1.trans (c2.trans c3)
-  rw [hLHS, ← hFTC, hsplit]
-  ring
+  rw [diffusionGenerator_eq_one_div_speedDensityFrom b a g c x ha hba_cont hgDerivDiff hx hc,
+    ← mul_assoc, mul_one_div_cancel (speedDensityFrom_pos b a c x ha hx).ne', one_mul]
+  exact hQx.hasDerivAt
 
 /-- Symmetry (reversibility on the stated core) of a one-dimensional diffusion
 generator against its interior-basepoint speed measure.
