@@ -65,7 +65,8 @@ theorem identity_isLocallyOfFinitePresentation (k : Type u) [CommRing k] :
     LocallyOfFinitePresentation (𝟙 (Spec (CommRingCat.of k))) := by
   infer_instance
 
-/-- Mathlib's full finite-presentation convention retains quasi-compactness and quasi-separatedness. -/
+/-- For a commutative ring `k`, the identity of `Spec k` is of finite presentation: it is locally
+of finite presentation, quasi-compact and quasi-separated. -/
 theorem identity_finitePresentation (k : Type u) [CommRing k] :
     LocallyOfFinitePresentation (𝟙 (Spec (CommRingCat.of k))) ∧
       QuasiCompact (𝟙 (Spec (CommRingCat.of k))) ∧
