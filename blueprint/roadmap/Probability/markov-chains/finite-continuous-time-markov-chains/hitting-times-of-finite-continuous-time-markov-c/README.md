@@ -16,3 +16,5 @@
 - [Minimality of the product moment](lintegral-ctmc-hitting-time-mul-le.md)
 - [Backward equations for the mean hitting time](ctmc-hitting-time-backward.md)
 - [Backward equations for the product moment of two hitting times](ctmc-hitting-time-mul-backward.md)
+
+- [Expected transition counts of a finite Markov chain up to a hitting time](expected-transition-counts-of-a-finite-ctmc-up-t.md)

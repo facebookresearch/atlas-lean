@@ -15,3 +15,13 @@
 - [Pushing the clamped Beta measure back to the real line](map-val-beta-lambda.md)
 - [Growth of the Laplace exponent for a Beta pushforward, 1 < α < 2](tendsto-psi-div-rpow-of-map-val-eq-beta.md)
 - [Growth of the Laplace exponent of the Beta-coalescent for 1 < α < 2](tendsto-psi-div-rpow-beta-lambda.md)
+
+- [The number of blocks of a Λ-coalescent is asymptotic to the speed function](the-number-of-blocks-of-a-coalescent-is-asymptot.md)
+- [Moment convergence of the number of blocks of a Λ-coalescent to the speed function](moment-convergence-of-the-number-of-blocks-of-a.md)
+- [Speed of coming down from infinity of Λ-coalescents](speed-of-coming-down-from-infinity-of-coalescent.md)
+- [Speed of coming down from infinity of the Beta-coalescent](speed-of-coming-down-from-infinity-of-the-beta-c.md)
+- [The Λ-coalescent on the natural numbers](lambda-coalescent-on-n-as-a-time-indexed-cadlag.md)
+- [The entrance dichotomy and finite expected absorption of a Λ-coalescent](entrance-dichotomy-and-finite-expected-absorption.md)
+- [The expected absorption time is bounded by the sum of inverse block-count drifts](sufficiency-sum-1-gamma-b-infinity-implies-comin.md)
+- [Necessity in Schweinsberg's criterion](necessity-coming-down-from-infinity-implies-sum.md)
+- [Schweinsberg's criterion for coming down from infinity](schweinsberg-criterion-lambda-coalescent-comes-d.md)

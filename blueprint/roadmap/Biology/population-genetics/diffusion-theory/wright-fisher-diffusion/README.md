@@ -38,3 +38,12 @@
 - [Wright's density has finite positive total mass](integral-wright-density-pos.md)
 - [Integrability of Wright's density on the unit interval](interval-integrable-wright-density.md)
 - [Heterozygosity decay in one Wright–Fisher generation](integral-binomial-heterozygosity.md)
+
+- [The mean-time-to-monomorphism equation for neutral K-allele drift](neutral-k-allele-fixation-probabilities-and-mean.md)
+
+- [Convergence and PDEs of the neutral Gegenbauer series](kimura-1955-eigen-series-convergence-and-pde-for.md)
+- [Spatial and time integrals of the neutral spectral series](distribution-of-absorption-time-from-the-spectra.md)
+
+- [Robertson's limit of artificial selection](robertson-s-limit-of-artificial-selection.md)
+
+- [The neutral Gegenbauer series identifies the Wright–Fisher kernel](identification-of-the-kimura-series-with-the-neu.md)
