@@ -22,6 +22,18 @@ factorial-weighted inversion count and read this count modulo the desired cardin
 We realize the group elements as permutations of pairs `(x, z)`. Reading a product from
 right to left, the counter `x j` records how many smaller letters have appeared. The letter
 `j` adds `j! * x j` to `z` and increments the counters for all larger letters.
+
+## Record carried over from the retired wanted module
+
+From `WantedExt/GroupTheory/PermutedProductsCountKourovka18Problem50Wanted.lean`:
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 18.50 (S. Kohl). UnsolvedMath record
+UM-00701479 (`KOU-18.50`), dataset ulamai/UnsolvedMath v1.8.0.
+
+The product `g_{σ(1)} ⋯ g_{σ(n)}` is the product of `List.ofFn (g ∘ σ)`; groups are taken in `Type`.
+The resolution is an AI-generated solution confirmed by S. Kohl, with an independent account by van
+Doorn, Judin, Monticone and Morrison.
 -/
 
 @[expose] public section
