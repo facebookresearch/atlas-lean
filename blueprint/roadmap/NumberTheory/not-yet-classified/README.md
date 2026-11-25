@@ -4,4 +4,5 @@ Topics added since this subject's fields were last revised.
 
 - [Finite Ramification Conductors](finite-ramification-conductors/README.md)
 - [Projective Northcott](projective-northcott/README.md)
+- [Supersingular JSet](supersingular-jset/README.md)
 - [Gross–Zagier–Kolyvagin, rank-one implication](rank-eq-one-of-simple-zero-l-series.md)
