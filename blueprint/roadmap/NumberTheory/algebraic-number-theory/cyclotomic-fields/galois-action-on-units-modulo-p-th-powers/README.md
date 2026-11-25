@@ -3,7 +3,6 @@
 - [Map Non Zero](map-non-zero.md)
 - [Gal Restrict Ring Aut](gal-restrict-ring-aut.md)
 - [Cl End Hom](cl-end-hom.md)
-- [Cyclo Gal Equiv](cyclo-gal-equiv.md)
 - [Cl Ring Action](cl-ring-action.md)
 - [Cl Gal Action](cl-gal-action.md)
 - [Cl Gal Action cl Proj mk0](cl-gal-action-cl-proj-mk0.md)
