@@ -47,3 +47,34 @@ example {N : ℕ} [NeZero N] (k : ℤ) (S : Set ℕ) {ℓ q : ℕ} (hℓ : ℓ.P
 example {N : ℕ} [NeZero N] (k : ℤ) :
     CuspForm.heckeAlgebra N k {2} ≤ CuspForm.heckeAlgebra N k ∅ :=
   CuspForm.heckeAlgebra_mono (Set.empty_subset _)
+
+/-- The primes in `S` are left out: away from every prime, the Hecke algebra is just `ℤ`. -/
+example {N : ℕ} [NeZero N] (k : ℤ) : CuspForm.heckeAlgebra N k Set.univ = ⊥ := by
+  have h : CuspForm.heckeGenerators N k Set.univ = ∅ :=
+    Set.eq_empty_of_forall_notMem fun _ hT => by
+      rcases hT with ⟨ℓ, -, -, hℓ, -⟩ | ⟨q, -, -, hq, -⟩
+      · exact hℓ (Set.mem_univ ℓ)
+      · exact hq (Set.mem_univ q)
+  change Algebra.adjoin ℤ (CuspForm.heckeGenerators N k Set.univ) = ⊥
+  rw [h, Algebra.adjoin_empty]
+
+open ModularForm in
+/-- The primality hypotheses of `ModularForm.coeffHeckeT_comm` are needed: the coefficient
+operators `T_4` and `T_2` do not commute. -/
+example :
+    coeffHeckeT 2 4 (coeffHeckeT 2 2 fun n => if n = 2 then 1 else 0) ≠
+      coeffHeckeT 2 2 (coeffHeckeT 2 4 fun n => if n = 2 then 1 else 0) := by
+  intro h
+  have h1 := congrFun h 1
+  norm_num [coeffHeckeT_apply] at h1
+
+/-- The weight hypothesis of `ModularForm.coeffHeckeT_int` is needed: in weight `0`, `T_2` takes
+the constant sequence `1` to a sequence whose coefficient at `2` is `3 / 2`. -/
+example : ¬ ∃ m : ℤ, ModularForm.coeffHeckeT 0 2 (fun _ => 1) 2 = m := by
+  rintro ⟨m, hm⟩
+  rw [ModularForm.coeffHeckeT_of_dvd 0 (dvd_refl 2)] at hm
+  have h3 : ((3 : ℤ) : ℂ) = ((2 * m : ℤ) : ℂ) := by
+    norm_num at hm ⊢
+    linear_combination 2 * hm
+  have := Int.cast_injective h3
+  omega
