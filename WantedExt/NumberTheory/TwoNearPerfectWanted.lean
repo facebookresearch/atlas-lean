@@ -26,6 +26,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import MathlibExt.NumberTheory.NearPerfectPowerTwoDivisibility
 public import MathlibExt.NumberTheory.StrongTwoNearPerfectExponentBound
+public import MathlibExt.NumberTheory.TwoNearPerfectEquationDivisibility
 public import MathlibExt.NumberTheory.TwoNearPerfectEquationSeven
 public import MathlibExt.NumberTheory.TwoNearPerfectEquationSix
 public import MathlibExt.NumberTheory.TwoNearPerfectOddDivisor
@@ -85,19 +86,6 @@ Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Ze
 public theorem_wanted eq_one_of_isSquare_discriminant {a k : ℕ} (ha : 0 < a) (hak : a ≤ k)
     (hD : IsSquare ((2 : ℤ) ^ (2 * k + 2) + 2 ^ (k + 2) - 2 ^ (a + 2) - 7)) :
     k = 1 ∧ a = 1
-
-/-- **Odd solutions $p$ of $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$ satisfy
-$p + 1 \mid 2^b + 2$.** Let $k$ and $b$ be positive natural numbers and let $p$ be an odd natural
-number such that $(2^{k+1} - 1)(p^2 + p + 1) = 2^{k+1} p^2 + 2^b p^2 + 1$. Then, as integers,
-$p + 1$ divides $2^b + 2$.
-
-Source: Vedant Aryan, Dev Madhavani, Savan Parikh, Ingrid Slattery and Joshua Zelinsky,
-*On 2-Near Perfect Numbers*, INTEGERS 24 (2024), Article A61, Lemma 7
-(`integers-2024-A61-lem-7`). -/
-public theorem_wanted succ_dvd_of_two_near_perfect_eq_twelve {b k p : ℕ} (hk : 0 < k)
-    (hb : 0 < b) (hp : Odd p)
-    (h : ((2 : ℤ) ^ (k + 1) - 1) * (p ^ 2 + p + 1) = 2 ^ (k + 1) * p ^ 2 + 2 ^ b * p ^ 2 + 1) :
-    (p + 1 : ℤ) ∣ 2 ^ b + 2
 
 /-- **Strongly $2$-near perfect numbers of the form $2^k p$.** Let $p$ be an odd prime, let $k$
 be a natural number and let $n = 2^k p$. Suppose that $n$ is strongly $2$-near perfect, that is,
