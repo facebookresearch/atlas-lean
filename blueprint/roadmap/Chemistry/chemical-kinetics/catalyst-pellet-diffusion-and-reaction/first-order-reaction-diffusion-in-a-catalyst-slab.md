@@ -16,12 +16,8 @@ $I(s) = D_A\,c_A'(L - s)$; then $V' = -I/D_A$ and $I' = -kV$, the cable equation
 constant is $\sqrt{D_A/k} = L/\Phi$, and $I(L) = D_A\,c_A'(0) = 0$ is a sealed end with $V(0) = c_{As}$. If $k = 0$, then
 $c_A'' = 0$ and $c_A'(0) = 0$ force $c_A \equiv c_{As}$; this branch is outside the cable result, which needs positive resistances.
 
-## Depends on
-
-## Proof depends on
-
-- [Voltage profile and inlet relation for a cable with a sealed end](../../../Analysis/ordinary-differential-equations/linear-systems-and-fundamental-matrices/sealed-end.md)
+For existence, differentiating the displayed profiles gives the differential equation and the two boundary conditions. Uniqueness is on the closed interval; an extension outside it is immaterial.
 
 ## Sources
 
-- J. B. Rawlings and J. G. Ekerdt, *Chemical Reactor Analysis and Design Fundamentals*, 2nd edition, paperback, seventh printing (November 2026), Nob Hill Publishing; freely distributed by the authors at <https://sites.engineering.ucsb.edu/~jbraw/chemreacfun/> (page numbers below are the printed ones): Section 7.4.2, the slab case $q = 0$ of Equation 7.34 with its boundary conditions (pp. 370–371), the effectiveness factor in integral and flux form, Equations 7.36–7.37 (p. 371), and Table 7.3, Equation 7.40 (p. 372); the Thiele modulus, Equation 7.18.
+- J. B. Rawlings and J. G. Ekerdt, *Chemical Reactor Analysis and Design Fundamentals*, 2nd edition, paperback, seventh printing (November 2026), Nob Hill Publishing; freely distributed by the authors at <https://sites.engineering.ucsb.edu/~jbraw/chemreacfun/>. Section 7.4.2, the $q=0$ case of Equation 7.34 (printed pp. 370–371), gives the slab model and boundary conditions; Equation 7.18 gives the Thiele modulus. The concentration profile is derived above.

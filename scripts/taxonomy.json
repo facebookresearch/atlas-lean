@@ -10287,6 +10287,7 @@
   "Domains/Biology/StatisticalGenetics/TransmissionTest": {"to": "Biology/statistical-genetics", "title": "Transmission disequilibrium test"},
   "Domains/Chemistry/Aqueous/Balances": {"to": "Chemistry/solutions-and-aqueous-equilibria", "title": "Charge balance, mass balance and the proton condition"},
   "Domains/Chemistry/Spectrometry/IsotopePatterns": {"to": "Chemistry/analytical-chemistry", "title": "Mass spectrometry and isotope patterns"},
+  "Domains/Chemistry/Transport/CatalystSlab": {"to": "Chemistry/chemical-kinetics", "title": "Catalyst pellet diffusion and reaction"},
   "Domains/Economics/Accounting/BalancedNotCorrect": {"to": "Economics/financial-accounting", "title": "Limits of the trial balance"},
   "Domains/Economics/Accounting/CashConversionCycle": {"to": "Economics/financial-accounting", "title": "Cash conversion cycle"},
   "Domains/Economics/Accounting/CashFlowStatement": {"to": "Economics/financial-accounting", "title": "Cash flow statement"},
