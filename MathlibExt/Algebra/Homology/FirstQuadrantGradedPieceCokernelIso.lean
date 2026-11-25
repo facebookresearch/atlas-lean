@@ -231,7 +231,9 @@ noncomputable def horizontalFirstPageSuccShortComplexIso (p : ℕ) :
     dsimp only [horizontalCompleteDirectColumnProjectionMap,
       horizontalCompleteSuccDirectColumnProjectionMap,
       horizontalMonoStageDirectColumnProjectionMap]
-    simp only [Category.assoc, Category.comp_id]
+    simp only [Category.comp_id]
+    dsimp only [eU, sU]
+    exact Category.assoc _ _ _
 
 /-- Inclusion of the top-column summand into its horizontal filtration
 stage. -/
@@ -262,15 +264,8 @@ noncomputable def horizontalFilteredTopProjectionZeroIso (q : ℕ) :
       apply Subtype.ext
       rfl
     subst idx
-    let F : DownNatHorizontalFilteredFiber (0 + q) 0 → C :=
-      fun pq => (K.X pq.val.val.1).X pq.val.val.2
-    let t : DownNatHorizontalFilteredFiber (0 + q) 0 := horizontalFilteredTopIndex 0 q
-    have hπ : Sigma.ι F t ≫ Sigma.π F t = 𝟙 (F t) := by
-      simpa only [dite_eq_left rfl, eqToHom_refl] using (Sigma.ι_π F t t)
-    have h : (Sigma.ι F t ≫ Sigma.π F t) ≫ Sigma.ι F t =
-        Sigma.ι F t ≫ 𝟙 (∐ F) := by
-      rw [hπ, Category.id_comp, Category.comp_id]
-    simpa only [F, t, id, horizontalFilteredTotalObj, Category.assoc] using h
+    rw [← Category.assoc, Sigma.ι_π]
+    simp only [dite_eq_left rfl, eqToHom_refl, Category.id_comp, Category.comp_id]
   inv_hom_id := by
     simpa [horizontalFilteredTopInclusion, horizontalFilteredTopIndex] using
       horizontalFilteredTopι_topProjection K 0 q
@@ -293,8 +288,22 @@ theorem horizontalCompleteDirectColumnProjectionMap_zero_f_isIso_of_degree
     IsIso.comp_isIso'
       (f := horizontalFilteredTopProjection K 0 q') (h := e₂.inv)
       htop e₂.isIso_inv
-  dsimp [horizontalDirectColumnProjectionComponent]
-  simpa only [e₂, isIso_comp_left_iff, isIso_comp_right_iff] using hcomp
+  let n' : ℤ := -(0 : ℤ) - (q' : ℤ)
+  let e₀ := (HomologicalComplex.eval C (ComplexShape.up ℤ) n').mapIso
+    (horizontalCompleteFiltrationCochainUpperIso K 0)
+  let e₁ := (horizontalFilteredTotalComplex K 0).extendXIso
+    ComplexShape.embeddingDownNat (i := 0 + q') (i' := n') (by dsimp [n']; simp)
+  have hcomponent : IsIso (horizontalDirectColumnProjectionComponent K 0 q') := by
+    change IsIso
+      (e₀.hom ≫ e₁.hom ≫ (horizontalFilteredTopProjection K 0 q' ≫ e₂.inv))
+    exact IsIso.comp_isIso'
+      (f := e₀.hom) (h := e₁.hom ≫ (horizontalFilteredTopProjection K 0 q' ≫ e₂.inv))
+      e₀.isIso_hom
+      (IsIso.comp_isIso'
+        (f := e₁.hom) (h := horizontalFilteredTopProjection K 0 q' ≫ e₂.inv)
+        e₁.isIso_hom hcomp)
+  letI : IsIso (horizontalDirectColumnProjectionComponent K 0 q') := hcomponent
+  infer_instance
 
 /-- The zeroth complete filtration stage projects isomorphically onto the
 zeroth direct column. -/

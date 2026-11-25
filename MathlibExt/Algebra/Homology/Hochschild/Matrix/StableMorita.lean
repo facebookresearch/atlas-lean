@@ -39,16 +39,22 @@ universe t u v w j j'
 
 namespace ModuleCat.Algebra.Hochschild.Matrix.StableMorita
 
-private instance (priority := 2000) connectedConstantModuleHasColimit.{c, u, j, j'}
+section ConnectedConstants
+
+universe c
+
+private instance (priority := 2000) connectedConstantModuleHasColimit
     {k : Type u} [CommRing k] {J : Type j} [Category.{j'} J] [IsConnected J]
     (X : ModuleCat.{c} k) : HasColimit ((Functor.const J).obj X) :=
   hasColimit_const_of_isConnected (J := J) (C := ModuleCat.{c} k) X
 
-private instance (priority := 2000) connectedConstantChainHasColimit.{c, u, j, j'}
+private instance (priority := 2000) connectedConstantChainHasColimit
     {k : Type u} [CommRing k] {J : Type j} [Category.{j'} J] [IsConnected J]
     (X : ChainComplex (ModuleCat.{c} k) ℕ) : HasColimit ((Functor.const J).obj X) :=
   hasColimit_const_of_isConnected
     (J := J) (C := ChainComplex (ModuleCat.{c} k) ℕ) X
+
+end ConnectedConstants
 
 variable (k : Type u) [CommRing k]
   (A : Type v) [Ring A] [Algebra k A]
@@ -322,16 +328,28 @@ theorem corner_comp_finiteTransitionAt {r s : ℕ} (h : r ≤ s) :
       (cornerLinear k (Fin (r + 1)) 0 m)
       (fun i => cornerLinear k (Fin (r + 1)) 0 (a i)),
     Morita.cornerChainMapAt_f_tprod.{t} k A M (Fin (s + 1)) 0 n m a]
-  change (ULift.up (Matrix.zeroExtend (Nat.succ_le_succ h)
-      (cornerLinear k (Fin (r + 1)) 0 m)) :
-      ULift.{max u v w t} (Matrix (Fin (s + 1)) (Fin (s + 1)) M)) ⊗ₜ[k]
-      PiTensorProduct.tprod k
-        (fun i => Matrix.zeroExtend (Nat.succ_le_succ h)
-          (cornerLinear k (Fin (r + 1)) 0 (a i))) =
-    (ULift.up (cornerLinear k (Fin (s + 1)) 0 m) :
-      ULift.{max u v w t} (Matrix (Fin (s + 1)) (Fin (s + 1)) M)) ⊗ₜ[k]
-      PiTensorProduct.tprod k (fun i => cornerLinear k (Fin (s + 1)) 0 (a i))
-  simp only [zeroExtend_corner]
+  have hm : Matrix.zeroExtend (Nat.succ_le_succ h)
+      (cornerLinear k (Fin (r + 1)) 0 m) = cornerLinear k (Fin (s + 1)) 0 m :=
+    zeroExtend_corner (k := k) h m
+  have ha : (fun i : Fin n => Matrix.zeroExtend (Nat.succ_le_succ h)
+        (cornerLinear k (Fin (r + 1)) 0 (a i))) =
+      (fun i : Fin n => cornerLinear k (Fin (s + 1)) 0 (a i)) :=
+    funext (fun i => zeroExtend_corner (k := k) h (a i))
+  have hcoords :
+      (ULift.up (Matrix.zeroExtend (Nat.succ_le_succ h)
+        (cornerLinear k (Fin (r + 1)) 0 m)) ⊗ₜ[k]
+          PiTensorProduct.tprod k
+            (fun i => Matrix.zeroExtend (Nat.succ_le_succ h)
+              (cornerLinear k (Fin (r + 1)) 0 (a i))) :
+        ULift.{max u v w t} (Matrix (Fin (s + 1)) (Fin (s + 1)) M) ⊗[k]
+          TensorPower k n (Matrix (Fin (s + 1)) (Fin (s + 1)) A)) =
+      ULift.up (cornerLinear k (Fin (s + 1)) 0 m) ⊗ₜ[k]
+        PiTensorProduct.tprod k (fun i => cornerLinear k (Fin (s + 1)) 0 (a i)) :=
+    congrArg₂ (fun (x : Matrix (Fin (s + 1)) (Fin (s + 1)) M)
+        (b : Fin n → Matrix (Fin (s + 1)) (Fin (s + 1)) A) =>
+      (ULift.up x : ULift.{max u v w t} (Matrix (Fin (s + 1)) (Fin (s + 1)) M)) ⊗ₜ[k]
+        PiTensorProduct.tprod k b) hm ha
+  exact hcoords
 
 /-- Finite trace is a natural transformation to the original coefficient complex. -/
 def traceNatAt : finiteDiagramAt.{t} k A M ⟶
