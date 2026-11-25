@@ -26,6 +26,16 @@ example : ¬ IsSumFreeMod 6 4 {4} := by
   have criterion := (not_isSumFreeMod_singleton_iff 4 4 6 (by decide) (by decide) (by decide)).2
   exact (criterion (by decide)).mpr (by decide)
 
+-- The gcd lowers the required modulus to 2: the arity is 1 modulo 2 but not modulo 4.
+example : modularSchurNumber 4 1 3 < 2 :=
+  modularSchurNumber_lt_of_modEq 4 1 3 2 (by decide) (by decide) (by decide) (by decide) (by decide)
+
+-- For a = 1, the strict bound forces the empty interval to be maximal.
+example : modularSchurNumber 2 1 1 = 0 :=
+  Nat.lt_one_iff.mp
+    (modularSchurNumber_lt_of_modEq 2 1 1 1
+      (by decide) (by decide) (by decide) (by decide) (by decide))
+
 -- At the arity threshold for 3², elements with distinct residues modulo 3 cannot form a class.
 example : ¬ IsSumFreeMod 9 8 {8, 4} := by
   intro h
