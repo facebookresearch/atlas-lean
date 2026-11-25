@@ -5,3 +5,4 @@
 - [Curve Determinant Data](curve-determinant-data.md)
 - [Line Comparison](line-comparison.md)
 - [Pullback Line Comparison](pullback-line-comparison.md)
+- [Affine determinant transports and derived base change](affine-sources-2.md)
