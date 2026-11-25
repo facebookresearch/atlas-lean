@@ -21,18 +21,21 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The Meissel–Mertens constant
-`B = lim_{x → ∞} (∑_{p ≤ x} 1 / p - log log x) ≈ 0.2614972128`,
-defined by its standard limiting characterization. -/
+/-- **The Meissel–Mertens constant.** With $p$ ranging over the primes and $\log$ the natural
+logarithm, the Meissel–Mertens constant is the real number
+$$B = \lim_{n \to \infty} \Bigl(\sum_{p \le n} \frac{1}{p} - \log \log n\Bigr),$$
+the limit taken over natural numbers $n$. Numerically, $B \approx 0.2614972128$. -/
 noncomputable def meisselMertensConstant : ℝ :=
   Filter.limUnder Filter.atTop (fun n : ℕ =>
     (∑ p ∈ Finset.filter Nat.Prime (Finset.range (n + 1)),
       1 / (p : ℝ)) - Real.log (Real.log n))
 
-/-- Dusart explicit Mertens second theorem: for `x ≥ 2278383`,
-`∑_{p ≤ x} 1 / p = log log x + B + E` with `|E| ≤ 0.2 / (log x)^3`,
-where `B` is the Meissel–Mertens constant. The sum ranges over
-`Finset.range (⌊x⌋₊ + 1)` filtered by `Nat.Prime`.
+/-- **Dusart's explicit Mertens second theorem.** Let $p$ range over the primes, let $\log$ be
+the natural logarithm, and let
+$B = \lim_{n \to \infty} \bigl(\sum_{p \le n} \frac{1}{p} - \log \log n\bigr)$ be the
+Meissel–Mertens constant. For every real number $x \ge 2278383$ there is a real number $E$ with
+$|E| \le \frac{0.2}{(\log x)^3}$ such that
+$$\sum_{p \le x} \frac{1}{p} = \log \log x + B + E.$$
 
 Source: Pierre Dusart, *Explicit estimates of some functions over primes*,
 Ramanujan J. 45(1) (2018), 227–251, <https://doi.org/10.1007/s11139-016-9839-4>, Theorem 5.6. -/

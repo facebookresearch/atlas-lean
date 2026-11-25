@@ -22,7 +22,7 @@ selection, and satisfiable and unsatisfiable DPLL examples.
 
 set_option autoImplicit false
 
-open Cslib.Logic.PL
+open Cslib.Logic.LegacyPL
 open Cslib.Algorithms.SAT.DPLL
 
 private def allFalse : Nat → Bool := fun _ => false
@@ -81,7 +81,7 @@ example : ¬CNFSat [[(0, true)], [(0, false)]] := by
   have := dpll_eq_true_iff.mpr hsatisfiable
   contradiction
 
-#print axioms Cslib.Logic.PL.CNF.satisfies_restrict_iff
+#print axioms Cslib.Logic.LegacyPL.CNF.satisfies_restrict_iff
 #print axioms Cslib.Algorithms.SAT.DPLL.clauseSatisfied_eq_true_iff
 #print axioms Cslib.Algorithms.SAT.DPLL.formulaSatisfied_eq_true_iff
 #print axioms Cslib.Algorithms.SAT.DPLL.dpll_eq_true_iff

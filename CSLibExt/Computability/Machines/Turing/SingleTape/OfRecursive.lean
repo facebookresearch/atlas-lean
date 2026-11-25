@@ -57,7 +57,11 @@ variable {Symbol : Type} [Inhabited Symbol] [Fintype Symbol]
 
 /-! ### Prepending a symbol -/
 
-/-- The machine that prepends the symbol `c` to its input: it steps left and writes `c`. -/
+/-- **The machine that prepends a symbol.** For a symbol $c$, this is the single-tape machine
+with two states that, from its start state, writes back the symbol under the head, moves left and
+enters its second state, and from its second state writes $c$ and halts without moving.
+
+On an input word $l$ it outputs $c$ followed by $l$. -/
 def consComputer (c : Symbol) : SingleTapeTM Symbol where
   State := Bool
   q₀ := false
@@ -66,13 +70,18 @@ def consComputer (c : Symbol) : SingleTapeTM Symbol where
     | true => (⟨some c, none⟩, none)
 
 omit [Inhabited Symbol] [Fintype Symbol] in
-/-- Stepping left from the start of a word and writing `c` gives the word with `c` prepended. -/
+/-- **Prepending a symbol by stepping left.** Let $c$ be a symbol and $l$ a list of symbols, and
+consider the tape holding $l$ from the head rightwards, all other cells blank. Writing back the
+symbol under the head, moving the head one cell left, and then writing $c$ gives the tape holding
+the list $c$ followed by $l$ from the head rightwards, all other cells blank. -/
 theorem write_moveLeft_mk₁ (c : Symbol) (l : List Symbol) :
     (((BiTape.mk₁ l).write (BiTape.mk₁ l).head).optionMove (some .left)).write (some c) =
       BiTape.mk₁ (c :: l) := by
   cases l <;> rfl
 
-/-- `consComputer c` outputs `c :: l` on `l`, in two steps. -/
+/-- **Prepending a symbol takes at most two steps.** For every symbol $c$ and every word $l$, the
+machine that prepends $c$, started on $l$, halts with output the word $c$ followed by $l$ within
+at most two steps. -/
 theorem consComputer_outputsWithinTime (c : Symbol) (l : List Symbol) :
     (consComputer c).OutputsWithinTime l (c :: l) 2 := by
   refine RelatesWithinSteps.of_relatesInSteps (RelatesInSteps.head _ _ _ _ rfl
@@ -81,7 +90,8 @@ theorem consComputer_outputsWithinTime (c : Symbol) (l : List Symbol) :
   congr 1
   exact write_moveLeft_mk₁ c l
 
-/-- `consComputer c` outputs `c :: l` on `l`. -/
+/-- **Correctness of the prepending machine.** For every symbol $c$ and every word $l$, the
+machine that prepends $c$, started on $l$, halts with output the word $c$ followed by $l$. -/
 theorem consComputer_outputs (c : Symbol) (l : List Symbol) :
     (consComputer c).Outputs l (c :: l) :=
   let ⟨_, _, h⟩ := consComputer_outputsWithinTime c l
@@ -95,8 +105,11 @@ open MetaMathlibExt.TM2Recursive
 
 /-! ### The input stack of the emulation as a number -/
 
-/-- The number whose binary code is the bit list `w.reverse ++ [true]`: the input stack the
-single-tape emulation starts on for the input word `w`. -/
+/-- **Input code of a bit word.** For a list of bits $w$, let $b_0, \dots, b_n$ be the reversal of
+$w$ followed by $\mathsf{true}$, reading $\mathsf{true}$ as $1$ and $\mathsf{false}$ as $0$. The
+input code of $w$ is the natural number $\sum_{i=0}^{n} b_i 2^i$. Its binary expansion, least
+significant bit first, is $b_0, \dots, b_n$: the input stack on which the single-tape emulation
+starts for the input word $w$. -/
 def inputCode (w : List Bool) : ℕ := bitsVal (w.reverse ++ [true])
 
 /-- A bit list ending in `true` is the binary code of its value. (Private: the general fact for
@@ -117,14 +130,22 @@ private theorem encodeNat_bitsVal_append_true (l : List Bool) :
 theorem encodeNat_inputCode (w : List Bool) : encodeNat (inputCode w) = w.reverse ++ [true] :=
   encodeNat_bitsVal_append_true _
 
-/-- `inputCode` is undone by reversing the binary code and dropping its first bit. -/
+/-- **Recovering a word from its input code.** For every list of bits $w$, reversing the binary
+encoding (least significant bit first) of the input code of $w$ and then dropping the first bit of
+the result gives back $w$. -/
 theorem reverse_tail_encodeNat_inputCode (w : List Bool) :
     (encodeNat (inputCode w)).reverse.tail = w := by
   rw [encodeNat_inputCode]
   simp
 
-/-- Reading back the input word's value from the multi-stack machine's input number: reverse the
-binary code and drop its first bit (`inputCode` in the other direction). -/
+/-- **Input decoding.** For a natural number $m > 0$, let $b_0, \dots, b_n$ be its binary
+expansion, least significant bit first, without trailing zeros. The input decoding of $m$ is
+$\sum_{i=0}^{n-1} b_{n-1-i} 2^i$, the value, least significant bit first, of the reversed
+expansion with its first bit dropped. The input decoding of $0$, whose expansion is empty, is $0$.
+
+It undoes the encoding of input words: for every natural number $k$ with binary expansion $w$,
+least significant bit first, the input decoding of the number whose binary expansion, least
+significant bit first, is the reversal of $w$ followed by $1$ is $k$. -/
 def inputDecode (m : ℕ) : ℕ := bitsVal (encodeNat m).reverse.tail
 
 theorem computable_inputDecode : Computable inputDecode :=
@@ -159,15 +180,21 @@ scoped instance instInhabitedNonBlankΓ' : Inhabited (NonBlank (TM2to1.Γ' tm.K 
 
 variable (e : tm.Γ tm.k₀ ≃ Bool)
 
-/-- The tape symbol of the input bit `b`: the cell holding `b` on the input stack. -/
+/-- **Input cell of a bit.** Let $M$ be a multi-stack machine with finitely many stacks, labels
+and internal states, and let $e$ be a bijection from the alphabet of its input stack to the bits.
+The input cell of a bit $b$ is the non-blank cell of the single-tape emulation of $M$ whose
+bottom-of-stack flag is off, whose entry for the input stack is $e^{-1}(b)$, and whose entries for
+all other stacks are empty. -/
 def inCell (b : Bool) : NonBlank (TM2to1.Γ' tm.K tm.Γ) :=
   ⟨(false, Function.update (fun _ ↦ none) tm.k₀ (some (e.symm b))), fun h ↦ by
     have := congrFun (congrArg Prod.snd h) tm.k₀
     simp only [Function.update_self] at this
     cases this⟩
 
-/-- The bottom cell of the emulation's start tape: the flagged cell holding `true` on the input
-stack. -/
+/-- **The bottom cell of the start tape.** Let $M$ be a finite multi-stack machine whose input
+stack alphabet is identified with the bits. The bottom cell of the emulation's start tape is the
+cell flagged as the stack bottom that holds the symbol for $\mathrm{true}$ on the input stack and
+nothing on every other stack. -/
 def botCell : NonBlank (TM2to1.Γ' tm.K tm.Γ) :=
   ⟨(true, Function.update (fun _ ↦ none) tm.k₀ (some (e.symm true))),
     fun h ↦ Bool.noConfusion (congrArg Prod.fst h)⟩
@@ -177,22 +204,46 @@ theorem inCell_injective : Function.Injective (inCell tm e) := fun b b' h ↦ by
   have := congrFun (congrArg Prod.snd (congrArg Subtype.val h)) tm.k₀
   simpa [inCell] using this
 
-/-- The finite set of `TM0` states the emulation visits. -/
+/-- **States of the single-tape emulation.** Let $M$ be a multi-stack machine with finitely many
+stacks, labels and internal states and a finite input alphabet. Its plain single-tape emulation
+is the translation of $M$ to a single-tape machine with a finite store, followed by the
+translation of that machine to a plain single-tape machine, whose states are pairs of a
+statement of the intermediate machine, or the halting state, and an internal state. This is the
+finite set of those pairs whose first entry is the halting state or a statement occurring in the
+program of one of the labels that the first translation produces from the labels of $M$.
+
+The emulation only visits states in this set. -/
 noncomputable abbrev emuSupport : Finset (TM1to0.Λ' (TM2to1.tr tm.m)) :=
   TM1to0.trStmts (TM2to1.tr tm.m) (TM2to1.trSupp tm.m Finset.univ)
 
-/-- The single-tape emulation of `tm` as a CSLib single-tape machine. -/
+/-- **Finite single-tape emulation of a multi-stack machine.** Let $M$ be a multi-stack machine
+with finitely many stacks, labels and internal states, and with finite stack alphabets. Its
+finite single-tape emulation is the single-tape machine that runs the plain single-tape emulation
+of $M$ (through a single-tape machine with a finite store) step for step: its states are those in
+the finite set of states the emulation visits, and its tape alphabet is the set of non-blank cells
+of the emulation, where a cell is a bottom-of-stack flag together with an optional symbol for each
+stack. -/
 noncomputable def emuTM : SingleTapeTM (NonBlank (TM2to1.Γ' tm.K tm.Γ)) :=
   ofTM0 (TM2ToTM0.tr tm.m) (emuSupport tm)
     (TM2ToTM0.tr_supports tm.m (TM2ToTM0.supports_univ tm.m))
 
-/-- The recognizer built from `tm`: prepend the bottom cell, then run the emulation. -/
+/-- **The recognizer of a multi-stack machine.** Let $M$ be a finite multi-stack machine all of
+whose stack alphabets are finite, and let $e$ be an identification of the alphabet of its input
+stack with the booleans. The recognizer of $M$ is the single-tape machine, over the non-blank
+cells of the multi-stack-to-single-tape translation of $M$, that first runs the machine
+prepending the bottom cell determined by $M$ and $e$ (the bottom-flagged cell holding
+$e^{-1}(\mathrm{true})$ on the input stack and nothing on the other stacks) to its input and, when
+that machine halts, runs the single-tape emulation of $M$. -/
 noncomputable def recognizerTM : SingleTapeTM (NonBlank (TM2to1.Γ' tm.K tm.Γ)) :=
   compComputer (consComputer (botCell tm e)) (emuTM tm)
 
 omit [∀ k, Fintype (tm.Γ k)] in
-/-- The input word with the bottom cell prepended is the emulation's start tape for the input
-stack `w.reverse ++ [true]`. -/
+/-- **The bottom cell followed by the input word is the emulation's start tape.** Let $M$ be a
+multi-stack machine with finitely many stacks, labels and internal states, and let $e$ be a
+bijection from the alphabet of its input stack to the bits. For every list of bits $w$, the bottom
+cell followed by the input cells of the bits of $w$, read as cells of the emulation, is the start
+tape that the single-tape emulation assigns to the input stack obtained by applying $e^{-1}$ to
+each entry of the reversal of $w$ followed by $\mathsf{true}$. -/
 theorem map_val_botCell_cons (w : List Bool) :
     (botCell tm e :: w.map (inCell tm e)).map Subtype.val =
       TM2to1.trInit tm.k₀ ((w.reverse ++ [true]).map e.symm) := by
@@ -205,8 +256,12 @@ theorem map_val_botCell_cons (w : List Bool) :
   | nil => rfl
   | cons b w ih => exact congrArg₂ List.cons rfl ih
 
-/-- **The recognizer halts iff the multi-stack machine does**, on the input stack
-`w.reverse ++ [true]`. -/
+/-- **The recognizer halts iff the multi-stack machine does.** Let $M$ be a multi-stack machine
+with finitely many stacks, labels and internal states and with finite stack alphabets, and let
+$e$ be a bijection from the alphabet of its input stack to the bits. For every list of bits $w$,
+the recognizer built from $M$ and $e$ halts on the word of input cells of the bits of $w$ if and
+only if $M$ halts when started on the input stack obtained by applying $e^{-1}$ to each entry of
+the reversal of $w$ followed by $\mathsf{true}$. -/
 theorem haltsOn_recognizerTM_iff (w : List Bool) :
     (recognizerTM tm e).HaltsOn (w.map (inCell tm e)) ↔
       TM2HaltsOn tm ((w.reverse ++ [true]).map e.symm) := by
@@ -217,9 +272,16 @@ theorem haltsOn_recognizerTM_iff (w : List Bool) :
 /-! ### The emulation's final tape, and deciders -/
 
 omit [∀ k, Fintype (tm.Γ k)] in
-/-- **The emulation's final tape.** If `tm` halts at `c` on the input stack `L`, the `TM0`
-emulation halts at a configuration whose tape is `Tape.mk' ∅ (addBottom L')`, where `L'` lays out
-the stacks of `c`, each bottom first. -/
+/-- **The emulation's final tape.** Let $M$ be a multi-stack machine with finitely many stacks,
+labels and internal states and a finite input alphabet, let $L$ be a list of symbols of its input
+stack, and suppose that $M$, started with $L$ on its input stack and every other stack empty,
+halts at the configuration $c$. Then its plain single-tape emulation, started on the tape that
+holds the symbols of $L$ bottom first on the input stack with the first cell flagged as the
+bottom, halts at a configuration $c_0$ for which there is a list $L'$ of columns, each holding an
+optional symbol for every stack and padded with blank columns, such that for every stack $k$ the
+entries of $L'$ for $k$ are the symbols of stack $k$ of $c$ listed bottom first, followed by
+blanks, and the tape of $c_0$ is blank to the left of the head and holds $L'$ from the head
+rightwards, with the bottom-of-stack flag set on its first cell and cleared on all others. -/
 theorem exists_mem_eval_tr (L : List (tm.Γ tm.k₀)) {c : tm.Cfg}
     (hc : c ∈ StateTransition.eval tm.step (initList tm L)) :
     ∃ c₀ ∈ StateTransition.eval (TM0.step (TM2ToTM0.tr tm.m))
@@ -242,8 +304,12 @@ theorem exists_mem_eval_tr (L : List (tm.Γ tm.k₀)) {c : tm.Cfg}
     | mk L' hL' => exact ⟨L', hL', rfl⟩
 
 omit [∀ k, Fintype (tm.Γ k)] in
-/-- Stacks holding at most one symbol each make a one-cell tape: the bottom cell with the top of
-every stack. -/
+/-- **Stacks of height at most one give a one-cell tape.** Let $M$ be a finite multi-stack
+machine, and let $S$ assign to every stack $k$ of $M$ a list $S_k$ of length at most $1$. Let $L'$
+be a tape of stack columns whose $k$-th track, for every $k$, is $S_k$ laid out bottom first and
+followed by blanks. Then adding the bottom marker to $L'$, as in the translation of $M$ to a
+single-tape machine, gives the tape whose first cell is flagged as the bottom and holds the top of
+$S_k$ on every stack $k$ (nothing if $S_k$ is empty), followed by blank cells. -/
 theorem addBottom_eq_of_length_le_one {S : ∀ k, List (tm.Γ k)} (hS : ∀ k, (S k).length ≤ 1)
     {L' : ListBlank (∀ k, Option (tm.Γ k))}
     (hL' : ∀ k, L'.map (proj k) = ListBlank.mk ((S k).map some).reverse) :
@@ -274,29 +340,49 @@ theorem addBottom_eq_of_length_le_one {S : ∀ k, List (tm.Γ k)} (hS : ∀ k, (
 variable (e₁ : tm.Γ tm.k₁ ≃ Bool)
 
 open scoped Classical in
-/-- The answer read from a cell: whether it holds `true` on the output stack. -/
+/-- **The answer bit of a cell.** Let $M$ be a finite multi-stack machine whose output stack
+alphabet is identified with the bits. The answer read from a non-blank cell of the single-tape
+emulation of $M$ is $\mathrm{true}$ exactly when the cell holds the symbol for $\mathrm{true}$ on
+the output stack. -/
 noncomputable def cellAnswer (x : NonBlank (TM2to1.Γ' tm.K tm.Γ)) : Bool :=
   decide (x.1.2 tm.k₁ = some (e₁.symm true))
 
-/-- The answer machine: read the answer of the cell under the head, write the input-bit cell for
-it, and halt (one step). -/
+/-- **The answer machine.** Let $M$ be a finite multi-stack machine whose stack alphabets are all
+finite, with its input and output stack alphabets identified with the bits. The answer machine of
+$M$ is the single-tape machine over the non-blank cells of the single-tape emulation of $M$ with a
+single state that, in one step, replaces the symbol under the head by the input-bit cell for the
+answer read from that cell (the answer $\mathrm{false}$ if the cell is blank), does not move, and
+halts. -/
 noncomputable def answerTM : SingleTapeTM (NonBlank (TM2to1.Γ' tm.K tm.Γ)) where
   State := Unit
   q₀ := ()
   tr _ s := (⟨some (inCell tm e (s.elim false (cellAnswer tm e₁))), none⟩, none)
 
-/-- `answerTM` turns a one-cell tape into the answer bit of that cell. -/
+/-- **The answer machine outputs the answer of a one-cell input.** Let $M$ be a finite multi-stack
+machine whose stack alphabets are all finite, with its input and output stack alphabets
+identified with the bits. For every non-blank cell $x$ of the single-tape emulation of $M$, the
+answer machine of $M$, started on the one-cell input $x$, halts with the one-cell output holding
+the input-bit cell for the answer read from $x$. -/
 theorem answerTM_outputs (x : NonBlank (TM2to1.Γ' tm.K tm.Γ)) :
     (answerTM tm e e₁).Outputs [x] [inCell tm e (cellAnswer tm e₁ x)] :=
   ReflTransGen.single rfl
 
-/-- The decider built from `tm`: the recognizer, then the answer machine. -/
+/-- **The decider of a multi-stack machine.** Let $M$ be a finite multi-stack machine whose stack
+alphabets are all finite, with its input and output stack alphabets identified with the bits. The
+decider of $M$ is the single-tape machine over the non-blank cells of the single-tape emulation of
+$M$ that runs the recognizer of $M$ and, once the recognizer halts, runs the answer machine of $M$
+on the resulting tape. -/
 noncomputable def deciderTM : SingleTapeTM (NonBlank (TM2to1.Γ' tm.K tm.Γ)) :=
   compComputer (recognizerTM tm e) (answerTM tm e e₁)
 
-/-- **The decider outputs the answer bit.** If `tm` halts on the input stack `w.reverse ++ [true]`
-with output `out` of length at most one (and every other stack empty), the decider outputs, on the
-input word `w`, the input-bit cell for an answer that is `true` exactly when `out` is `[true]`. -/
+/-- **The decider outputs the answer bit.** Let $M$ be a finite multi-stack machine whose stack
+alphabets are all finite, with its input and output stack alphabets identified with the bits, and
+let $w$ be a word of bits. Suppose that $M$, started with the input stack holding the reverse of
+$w$ followed by $\mathrm{true}$, halts with the output stack holding a list $u$ of length at most
+$1$, every other stack empty and its variable back at its initial value. Then there is a bit $b$
+such that the decider of $M$, started on the input-bit cells of $w$, halts with the one-cell
+output holding the input-bit cell for $b$, and $b = \mathrm{true}$ exactly when $u$ is nonempty
+and its first symbol is the symbol for $\mathrm{true}$. -/
 theorem deciderTM_outputs {w : List Bool} {out : List (tm.Γ tm.k₁)} (hout : out.length ≤ 1)
     (h : haltList tm out ∈
       StateTransition.eval tm.step (initList tm ((w.reverse ++ [true]).map e.symm))) :
@@ -355,7 +441,10 @@ theorem SingleTapeRecognizable.of_rePred {p : α → Prop} (hp : REPred p) :
   rw [haltsOn_recognizerTM_iff, ← encodeNat_inputCode, ← h, inputDecode_inputCode]
   simp
 
-/-- **Computable predicates are decidable by single-tape machines.** -/
+/-- **Computable predicates are decidable by single-tape machines.** Let $\alpha$ be a type with a
+primitive recursive encoding into $\mathbb{N}$, and let $p$ be a computable predicate on $\alpha$,
+that is, one whose indicator function $\alpha \to \{0, 1\}$ is computable. Then $p$ is decidable
+by a single-tape Turing machine. -/
 theorem SingleTapeDecidable.of_computablePred {p : α → Prop} (hp : ComputablePred p) :
     SingleTapeDecidable p := by
   classical
