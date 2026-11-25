@@ -7,6 +7,5 @@ Schur complement
 
 `K = A − B D⁻¹ Bᵀ`.
 
-The intended domain is `D` invertible, for example when the whole conductance matrix is positive
-definite; with the convention that the inverse of a singular matrix is `0`, `K` is the entry of
-`A` when `D` is singular.
+The intended domain is `D` invertible; with the convention that the inverse of a singular matrix is
+`0`, `K` is the entry of `A` when `D` is singular.

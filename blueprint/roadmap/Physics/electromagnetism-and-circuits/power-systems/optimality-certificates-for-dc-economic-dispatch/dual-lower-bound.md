@@ -5,5 +5,5 @@ For rational `d`, `p_min`, `p_max`, `f_min`, `f_max`, prices `λ` and bound mult
 
 `L = d · λ + p_min · μ_lo - p_max · μ_hi + f_min · η_lo - f_max · η_hi`.
 
-For a [dual feasible](is-dual-feasible.md) witness accepted by the checker it bounds the cost of
-every feasible dispatch from below ([correctness](dispatch-certificate-correct.md)).
+For a witness accepted by the [checker](checks-dispatch-certificate.md) it bounds the cost of every
+feasible dispatch from below ([correctness](dispatch-certificate-correct.md)).

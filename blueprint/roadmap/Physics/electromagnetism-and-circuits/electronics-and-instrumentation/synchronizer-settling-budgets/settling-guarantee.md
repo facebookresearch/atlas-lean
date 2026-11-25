@@ -16,6 +16,4 @@ of:
 
 Nothing is required when $r_i(\omega) > b_i$. The intended levels satisfy
 $V_{ol} < V_{il} < V_{ih} < V_{oh}$, which makes both margins positive. The definition accepts any
-reals; if a margin is at most $0$, the third condition holds only when $r_i(\omega) > b_i$ for every
-$i$ and $\omega$. The budgets, resolution times and voltages are data supplied by a synchronizer
-analysis.
+reals. The budgets, resolution times and voltages are data supplied by a synchronizer analysis.

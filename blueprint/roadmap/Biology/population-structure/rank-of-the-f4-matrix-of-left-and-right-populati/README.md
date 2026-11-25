@@ -23,3 +23,7 @@
 - [Admixture-model f4 statistics of an individual mix the ancestral ones](f4-ancestry-freq-individual.md)
 - [The admixture model bounds the rank of the individual f4 matrix](rank-f4-matrix-ancestry-freq-le.md)
 - [Admixture-model rank bound for the f4 matrix over finitely many loci](rank-f4-matrix-ancestry-freq-le-of-finit.md)
+
+- [Asymptotic chi-square for minimum-distance rank statistics (assembly)](asymptotic-chi-square-for-minimum-distance-rank.md)
+- [Local manifold structure of rank-k matrices](local-manifold-structure-of-rank-k-matrices.md)
+- [Local quadratic approximation of the distance to a smooth submanifold](local-quadratic-approximation-of-the-distance-to.md)

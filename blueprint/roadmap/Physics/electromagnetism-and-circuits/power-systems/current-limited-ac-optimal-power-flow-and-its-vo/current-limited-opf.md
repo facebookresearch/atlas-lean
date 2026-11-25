@@ -13,9 +13,8 @@ power flow problem, with one aggregate generator per bus, consists of:
 - a cost coefficient $c_k \in \mathbb{R}$ of active generation at each bus $k$.
 
 No condition relates these numbers: the entries of $B$ are arbitrary reals, the admittances
-arbitrary complex numbers, and a lower limit may exceed the corresponding upper limit, in which case
-no voltage vector is feasible. In the physical reading $B$ has one entry $1$ and one entry $-1$ in
-each column, the admittances have nonnegative real parts, the limits are ordered and the
-squared-magnitude bounds are nonnegative. The instance determines its
-[bus admittance matrix](admittance.md), its [AC feasibility](ac-feasible.md) and [cost](ac-cost.md),
-and its [semidefinite relaxation](sdp-feasible.md).
+arbitrary complex numbers, and a lower limit may exceed the corresponding upper limit. In the
+physical reading $B$ has one entry $1$ and one entry $-1$ in each column, the admittances have
+nonnegative real parts, the limits are ordered and the squared-magnitude bounds are nonnegative. The
+instance determines its [bus admittance matrix](admittance.md), its [AC feasibility](ac-feasible.md)
+and [cost](ac-cost.md), and its [semidefinite relaxation](sdp-feasible.md).

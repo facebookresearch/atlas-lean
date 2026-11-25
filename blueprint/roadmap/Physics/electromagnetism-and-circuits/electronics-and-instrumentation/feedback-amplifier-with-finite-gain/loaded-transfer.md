@@ -14,6 +14,7 @@ when $1 + \beta b A_0 = 0$.
 In the model, $A_0 > 0$ and $\omega_p > 0$ describe the
 [one-pole open-loop response](open-loop-gain.md) $A_0 / (1 + s/\omega_p)$, $\beta > 0$ is the
 feedback factor, and $a$ and $b$ are the [source divider](source-divider.md) and the
-[load divider](load-divider.md), both positive and at most $1$. Signals obeying the loaded model
-satisfy $v_o = G(s)\, v_i$ away from the denominator zeros
+[load divider](load-divider.md), both positive and at most $1$. For $\omega_p \ne 0$, signals
+obeying the two model equations satisfy $v_o = G(s)\, v_i$ wherever neither the open-loop
+denominator $1 + s/\omega_p$ nor the loaded denominator vanishes
 ([loaded transfer theorem](output-eq-loaded-transfer-mul-input.md)).

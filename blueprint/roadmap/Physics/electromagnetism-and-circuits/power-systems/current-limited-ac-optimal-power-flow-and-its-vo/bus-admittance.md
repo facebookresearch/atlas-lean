@@ -11,8 +11,7 @@ with entries
 
 $$Y_{ab} = \sum_{e} B_{ae}\, y_e\, B_{be} + \delta_{ab}\, y^{\mathrm{sh}}_a.$$
 
-Since $B$ is real, $Y$ is symmetric, $Y^{\mathsf T} = Y$; it is Hermitian exactly when all its
-entries are real. It maps the node voltages to the
+Applied to the vector of node voltages, it gives the
 [nodal current injections](bus-admittance-mul-vec-eq-node-injection.md). In the physical reading $B$
 is the signed node–branch incidence matrix (one entry $1$ and one entry $-1$ in each column) and the
 branches and shunts are passive, with nonnegative conductances $\operatorname{Re} y_e$ and

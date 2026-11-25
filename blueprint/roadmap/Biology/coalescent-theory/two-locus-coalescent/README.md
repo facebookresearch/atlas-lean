@@ -48,3 +48,16 @@
 
 - [Pairwise sequentially Markov coalescents SMC and SMC′](sequentially-markov-coalescent-smc-smc-pairwise.md)
 - [SMC′ matches the two-locus covariance to first order and SMC does not](smc-vs-smc-vs-arg-first-order-two-locus-covarian.md)
+
+- [Coalescent with recombination: ancestral-material state space and generator](coalescent-with-recombination-ancestral-material.md)
+- [Continuum ARG with homogeneous recombination: finite-locus marginals and two-point law](continuum-arg-homogeneous-rho-dx-finite-locus-ma.md)
+- [Continuum ARG with a general finite recombination measure](continuum-arg-with-a-general-finite-recombinatio.md)
+- [Local trees are not Markov along the sequence](local-trees-are-not-markov-along-the-sequence-ve.md)
+- [The unreduced finite-locus ARG and the reduction map](marked-whole-chromosome-unreduced-finite-locus-a.md)
+- [Expected number of recombination events: compensator identity and two-locus value](recombination-event-count-compensator-identity-a.md)
+- [The local trees along the sequence: finitely many changes, expected counts and failure of the Markov property](sequence-direction-description-of-local-trees-fi.md)
+- [Termination of the reduced finite-locus ancestral recombination graph](termination-of-the-reduced-finite-locus-arg.md)
+- [Two-locus ancestral process for n sequences](two-locus-ancestral-process-for-n-sequences.md)
+- [Two-locus Hudson simulator samples the two-locus ancestral process](two-locus-hudson-simulator-samples-the-two-locus.md)
+- [Two-locus coalescence times of a pair: a diagonal atom and an absolutely continuous part](two-locus-n-2-joint-law-of-t-a-t-b-is-diagonal-a.md)
+- [Wiuf–Hein algorithm reproduces the joint law of local trees](wiuf-hein-algorithm-reproduces-the-joint-law-of.md)

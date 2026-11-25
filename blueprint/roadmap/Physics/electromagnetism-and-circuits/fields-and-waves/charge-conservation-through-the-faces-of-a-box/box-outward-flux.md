@@ -8,6 +8,4 @@ axes indexed `0, 1, 2`. For a current density `J : ℝ³ → ℝ³`, the outward
 the integral over the [parameter rectangle](box-face-domain.md) `R_f` of the
 [outward-normal density](box-normal-density.md), with `k` the [normal axis](face-axis.md) of `f`,
 `s_f` its [outward sign](face-sign.md) and `φ_f` its [embedding](box-face-embed.md); the integral is
-with respect to Lebesgue measure on `ℝ²` and is `0` when the integrand is not integrable there. For
-`a ≤ b` each face is a translate of a coordinate rectangle, so this is the surface integral of
-`J · n` over the face, `n` the outward unit normal.
+with respect to Lebesgue measure on `ℝ²` and is `0` when the integrand is not integrable there.
