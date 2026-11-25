@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import MathlibExt.AlgebraicGeometry.EllipticCurve.ResidualModularity
 import MathlibExt.AlgebraicGeometry.EllipticCurve.SemistableModel
 
 namespace WeierstrassCurve
@@ -15,6 +16,17 @@ namespace WeierstrassCurve
 theorem exactSource (W : WeierstrassCurve ℤ) (hW : W.IsSemistableModel) :
     W.c₄ ≠ 0 ∧ W.c₆ ≠ 0 :=
   c4_ne_zero_and_c6_ne_zero_of_isSemistableModel W hW
+
+/-- `IsSemistableModel` is the predicate from `FreyCurve`, so the theorem applies to
+the Frey curve's semistability result. -/
+example (P : FreyPackage) : P.freyCurveInt.c₄ ≠ 0 ∧ P.freyCurveInt.c₆ ≠ 0 :=
+  c4_ne_zero_and_c6_ne_zero_of_isSemistableModel _ P.frey_isSemistableModel
+
+/-- The good primes of `ResidualModularity` are the primes not dividing the
+conductor level. -/
+example (W : WeierstrassCurve ℤ) (hΔ : W.Δ ≠ 0) {q : ℕ} (hq : q.Prime) :
+    W.IsGoodPrimeFor q ↔ ¬ q ∣ W.conductorLevel :=
+  (prime_dvd_conductorLevel_iff W hΔ hq).not.symm
 
 /-- The curve `y² = x³ + 1` unfolds the new definitions concretely. -/
 example : (⟨0, 0, 0, 0, 1⟩ : WeierstrassCurve ℤ).conductorLevel = 6 := by

@@ -37,6 +37,7 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.VariableChange
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
 public import Mathlib.RingTheory.Radical.NatInt
+public import MathlibExt.AlgebraicGeometry.EllipticCurve.FreyCurve
 
 import Mathlib.Data.Nat.Prime.Int
 import Mathlib.Tactic.IntervalCases
@@ -51,8 +52,9 @@ namespace WeierstrassCurve
 # Semistable integral models and conductor level
 
 The conductor level of an integral Weierstrass model is the radical of its
-discriminant. A prime is good when it does not divide the discriminant, and
-a model is semistable when every bad prime does not divide `c₄`.
+discriminant. A model is semistable (`WeierstrassCurve.IsSemistableModel`,
+declared in `FreyCurve`) when no prime dividing the discriminant divides `c₄`;
+such a model has `c₄ ≠ 0` and `c₆ ≠ 0`.
 -/
 
 /-- The conductor level of an integral Weierstrass model: the radical of
@@ -82,15 +84,6 @@ theorem prime_dvd_conductorLevel_iff (W : WeierstrassCurve ℤ) (hΔ : W.Δ ≠ 
   · intro h
     rw [← Int.dvd_natAbs] at h
     exact_mod_cast h
-
-/-- A prime is good for an integral model when it does not divide the
-discriminant. -/
-def IsGoodPrimeFor (W : WeierstrassCurve ℤ) (p : ℕ) : Prop :=
-  ¬ (p : ℤ) ∣ W.Δ
-
-/-- An integral model is semistable when no bad prime divides `c₄`. -/
-def IsSemistableModel (W : WeierstrassCurve ℤ) : Prop :=
-  ∀ p : ℕ, p.Prime → (p : ℤ) ∣ W.Δ → ¬ (p : ℤ) ∣ W.c₄
 
 /-- An integral model of a rational Weierstrass curve, obtained by a
 variable change over `ℚ`. -/
@@ -127,7 +120,7 @@ private theorem exists_prime_ne_three_odd_factorization {n : ℕ}
     by_cases hp : p = 3
     · subst hp
       simp
-    · rw [hfac p hp, if_neg (Ne.symm hp)]
+    · rw [hfac p hp, ite_eq_right (Ne.symm hp)]
   have ha13 : a = 1 ∨ a = 3 := by
     have hk := (Nat.squarefree_iff_factorization_le_one ha0).mp hsq 3
     generalize hk' : a.factorization 3 = k at hk ha3
