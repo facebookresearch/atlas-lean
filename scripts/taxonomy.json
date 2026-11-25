@@ -10236,6 +10236,7 @@
   "Domains/Biology/PopulationGenetics/GlobalAncestryBridge": {"to": "Biology/population-structure", "title": "Rank of the f4 matrix of left and right populations"},
   "Domains/Biology/PopulationGenetics/Haldane": {"to": "Biology/population-genetics", "title": "Haldane's survival probability of a beneficial mutation"},
   "Domains/Biology/PopulationGenetics/HardyWeinberg": {"to": "Biology/population-genetics", "title": "Hardy–Weinberg law"},
+  "Domains/Biology/PopulationGenetics/Inbreeding": {"to": "Biology/population-genetics", "title": "Inbreeding and regular systems of mating"},
   "Domains/Biology/PopulationGenetics/InfiniteAlleles": {"to": "Biology/population-genetics", "title": "Infinite-alleles model and homozygosity"},
   "Domains/Biology/PopulationGenetics/IslandModel": {"to": "Biology/population-genetics", "title": "Wright's island model"},
   "Domains/Biology/PopulationGenetics/Linkage": {"to": "Biology/population-genetics", "title": "Linkage disequilibrium and Haldane's map function"},
