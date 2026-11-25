@@ -1,6 +1,6 @@
 # Announcements distribute over implication
 
-In an [epistemic model](../model.md), $[\varphi!](../\psi \to \chi)$ holds at a world exactly when $[\varphi!]\psi \to [\varphi!]\chi$ holds there, under [satisfaction](../sat.md) of epistemic formulas with announcements.
+In an [epistemic model](../model.md), $[\varphi!]\bigl(\psi \to \chi\bigr)$ holds at a world exactly when $[\varphi!]\psi \to [\varphi!]\chi$ holds there, under [satisfaction](../sat.md) of epistemic formulas with announcements.
 
 ## Sources
 

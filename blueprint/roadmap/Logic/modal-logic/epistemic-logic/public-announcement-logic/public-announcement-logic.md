@@ -3,7 +3,7 @@
 Extend the multi-agent epistemic language with formulas $[F!]G$. In a Kripke model $M = (W, R, V)$ with one accessibility relation $R_a$ per agent, $M, w \models [F!]G$ holds if $M, w \not\models F$ or $M[F!], w \models G$, where $M[F!]$ restricts $M$ to the worlds satisfying $F$: its worlds are $\{v \in W : M, v \models F\}$ and each $R_a$ and the valuation are restricted to them. Public announcement logic is axiomatized over a sound and complete axiomatization of multi-agent epistemic logic by the reduction axioms
 
 - $[F!]p \leftrightarrow (F \to p)$ for propositional letters $p$;
-- $[F!](../G \wedge H) \leftrightarrow ([F!]G \wedge [F!]H)$;
+- $[F!]\bigl(G \wedge H\bigr) \leftrightarrow ([F!]G \wedge [F!]H)$;
 - $[F!]\neg G \leftrightarrow (F \to \neg [F!]G)$;
 - $[F!][a]G \leftrightarrow (F \to [a][F!]G)$,
 
