@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Set.Card
 public import MathlibExt.Combinatorics.Enumerative.ExtraTribLeftExtension
 public import MathlibExt.Combinatorics.Enumerative.ExtraTribReversal
+public import MathlibExt.Combinatorics.Enumerative.FibternaryMultiple
 public import MathlibExt.Combinatorics.Enumerative.FibternarySums
 public import MathlibExt.Combinatorics.Enumerative.TrithoffPrecolumns
 public import MathlibExt.Combinatorics.Enumerative.TrithoffRowDifference
@@ -123,16 +124,6 @@ public theorem_wanted tendsto_trithoff_first_column_div (α : ℝ)
       (fun r : ℕ => (Nat.nth (fun n => 0 < n ∧ ∃ w, IsTribonacciRepr w n ∧ w.getD 0 0 = 1) r
         : ℝ) / (r + 1))
       Filter.atTop (nhds (α / (α - 1)))
-
-/-- **Fibternary multiples.** Every positive integer $n$ has a positive multiple $m$ that is
-Fibternary: the base-$3$ digits of $m$ are all $0$ or $1$, and no two consecutive digits
-of $m$ are both $1$.
-
-Source: E. Chen et al., *Generalizing the Wythoff Array and Other Fibonacci Facts to
-Tribonacci Numbers*, Journal of Integer Sequences 28 (2025), Article 25.5.4,
-Proposition 22 (`jis-2025-25.5.4-prop-22`). -/
-public theorem_wanted exists_fibternary_multiple (n : ℕ) (hn : 0 < n) :
-    ∃ m, 0 < m ∧ n ∣ m ∧ (∀ e ∈ Nat.digits 3 m, e ≤ 1) ∧ ¬ [1, 1] <:+: Nat.digits 3 m
 
 /-- **Tribbinary and Tribternary multiples.** Every positive integer $n$ has a positive
 multiple whose binary digits contain no three consecutive $1$s (a Tribbinary number), and a
