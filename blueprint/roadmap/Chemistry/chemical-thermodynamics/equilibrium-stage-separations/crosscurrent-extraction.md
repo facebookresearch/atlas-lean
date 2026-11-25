@@ -13,10 +13,9 @@ mass ratio with varying output phase amounts does not in general give this formu
 and material-balance context; this fixed-volume linear model is an explicit specialization, not a general ternary-phase extraction law.
 Countercurrent extraction requires its own matched Kremser model and is outside this result.
 
-## Depends on
-
-## Proof depends on
+The iteration is over the amounts after each contact, with $q_0$ the initial amount. The inverse
+of $1+KR$ is raised to the natural-number stage count; at zero stages this factor is $1$.
 
 ## Sources
 
-- L. Lamm and L. Jarboe, *Chemical Engineering Separations: A Handbook for Students*, LibreTexts, Section 1.3, the distribution coefficient of the solute, <https://eng.libretexts.org/Bookshelves/Chemical_Engineering/Chemical_Engineering_Separations%3A_A_Handbook_for_Students_(Lamm_and_Jarboe)/01%3A_Chapters/1.03%3A_Liquid-liquid_Extraction>.
+- Monica Lamm and Laura Jarboe, *Chemical Engineering Separations: A Handbook for Students*, LibreTexts, Section 1.3, the distribution coefficient of the solute, <https://eng.libretexts.org/Bookshelves/Chemical_Engineering/Chemical_Engineering_Separations%3A_A_Handbook_for_Students_(Lamm_and_Jarboe)/01%3A_Chapters/1.03%3A_Liquid-liquid_Extraction>.
