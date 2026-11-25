@@ -14,3 +14,11 @@
 
 - [Two Sided Bar](two-sided-bar.md)
 - [Two Sided Bar map](two-sided-bar-map.md)
+
+## Simplicial coefficient bar and category homology with coefficients
+
+- [Coefficient Bar Data](coefficient-bar-data.md)
+- [Coefficient Bar Simplicial](coefficient-bar-simplicial.md)
+- [Coefficient Bar Complex](coefficient-bar-complex.md)
+- [Normalized Coefficient Bar Complex](normalized-coefficient-bar-complex.md)
+- [Homology With Coefficients](homology-with-coefficients.md)
