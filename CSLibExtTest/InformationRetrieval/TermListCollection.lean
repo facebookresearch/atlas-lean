@@ -10,6 +10,10 @@ module
 
 import CSLibExt.InformationRetrieval.TermListCollection
 
+/-!
+# Tests for term-list document collections
+-/
+
 set_option autoImplicit false
 
 namespace Cslib.InformationRetrieval
@@ -54,7 +58,9 @@ example (d : Fin 3) :
 example : testQuery.evalSet testDocs.toCorpus = {0, 1} := by decide
 
 -- T5: `toCorpus` forgets order.
+/-- One-document fixture with term list `[0, 1]`. -/
 def oneDocA : TermListCollection 1 ℕ := fun _ => [0, 1]
+/-- The terms of `oneDocA` in the reverse order, `[1, 0]`. -/
 def oneDocB : TermListCollection 1 ℕ := fun _ => [1, 0]
 example : oneDocA.toCorpus = oneDocB.toCorpus := by decide
 

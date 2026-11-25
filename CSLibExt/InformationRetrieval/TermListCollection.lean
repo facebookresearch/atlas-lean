@@ -13,6 +13,49 @@ public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Multiset.Basic
 
+/-!
+# Term-list document collections
+
+A term-list collection on documents `Fin N` stores each document as a list of
+terms. It keeps token order and repetition, and a token's position is its
+zero-based list index. The Boolean retrieval `Corpus` of
+`CSLibExt.InformationRetrieval.BooleanRetrieval` stores each document as a
+multiset of terms instead. `TermListCollection.toCorpus` views each term list
+as a multiset: it forgets order and positions but keeps term membership.
+
+The results relate only membership semantics. A term occurs in a document
+exactly when it is at some position of the term list; `docsWith` on the
+multiset view selects the documents in which the term occurs; and evaluating a
+Boolean query on the multiset view agrees with term-list satisfaction, with
+negation relative to all documents. No positional index or phrase query is
+defined here.
+
+## Main declarations
+
+* `TermListCollection`: documents as term lists.
+* `TermListCollection.toCorpus`: the multiset view as a `Corpus`.
+* `TermListCollection.occurs`: term occurrence, with a decidability instance.
+* `TermListCollection.occurs_iff_exists_position`: occurrence is membership at
+  some list position.
+* `TermListCollection.docsWith_toCorpus`: `docsWith` on the multiset view
+  selects documents by occurrence.
+* `TermListCollection.Satisfies`: Boolean-query satisfaction on term lists.
+* `TermListCollection.mem_evalSet_toCorpus_iff`: query evaluation on the
+  multiset view agrees with term-list satisfaction.
+
+## References
+
+* Christopher D. Manning, Prabhakar Raghavan and Hinrich Schütze,
+  *Introduction to Information Retrieval*, Cambridge University Press (2008):
+  §1.1 for the Boolean retrieval model, which answers Boolean queries over
+  terms and views each document as a set of words, and §2.4.2 for positional
+  indexes, which record each occurrence of a term by its token position in
+  the document.
+
+The Lean definitions and proofs are original; the book is cited for the model
+they formalize, and no code is adapted from another project.
+-/
+
 @[expose] public section
 
 set_option autoImplicit false
@@ -39,7 +82,8 @@ instance TermListCollection.decidableOccurs {N : ℕ} {α : Type*} [DecidableEq 
     (D : TermListCollection N α) (t : α) : DecidablePred (D.occurs t) :=
   fun d => inferInstanceAs (Decidable (t ∈ D d))
 
-/-- Occurrence unfolds to membership at some list position. -/
+/-- Occurrence unfolds to membership at some list position. This is
+`List.mem_iff_getElem?`, stated for `occurs`. -/
 theorem TermListCollection.occurs_iff_exists_position {N : ℕ} {α : Type*}
     (D : TermListCollection N α) (t : α) (d : Fin N) :
     D.occurs t d ↔ ∃ p : ℕ, (D d)[p]? = some t := by
