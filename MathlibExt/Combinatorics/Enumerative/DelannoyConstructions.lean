@@ -206,7 +206,8 @@ Source: Steven Edwards and William Griffiths, *Delannoy Constructions*, Journal
 of Integer Sequences 27 (2024), Article 24.1.8, Corollary 6
 (`jis-2024-24.1.8-cor-6`). -/
 public theorem genDelannoyUpper_succ_left_sub (k m n : ℕ) (hk : 1 ≤ k) :
-    (genDelannoyUpper k (m + 1) n : ℤ) - genDelannoyUpper k m n = genDelannoyUpper (k - 1) (m + 1) n := by
+    (genDelannoyUpper k (m + 1) n : ℤ) - genDelannoyUpper k m n =
+      genDelannoyUpper (k - 1) (m + 1) n := by
   have hv := genDelannoyUpper_add_succ_left k m n hk
   have hh := genDelannoyUpper_add_succ_right (k - 1) (m + 1) n
   rw [Nat.sub_add_cancel hk] at hh
