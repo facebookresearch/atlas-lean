@@ -20,108 +20,106 @@ noncomputable section
 
 namespace InvariantFractionFieldTest
 
-/-- The automorphism group of `ℚ[X]` over `ℚ`, acting on `ℚ[X]`, is a
-nontrivial instance of the invariant-field setup: membership in the
-invariant field is the characterization by fixed points. -/
-example (x : FractionRing ℚ[X]) :
-    x ∈ invariantField ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ↔
-      ∀ g : ℚ[X] ≃ₐ[ℚ] ℚ[X], g • x = x :=
-  mem_invariantField_iff ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] x
+variable (k : Type*) [Field k]
 
-/-- For a subgroup, membership is fixedness by that subgroup alone, and the
-full invariant field is the top-subgroup case. -/
-example (Γ : Subgroup (ℚ[X] ≃ₐ[ℚ] ℚ[X])) (x : FractionRing ℚ[X]) :
-    x ∈ invariantFieldOf ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] Γ ↔
-      ∀ γ : ℚ[X] ≃ₐ[ℚ] ℚ[X], γ ∈ Γ → γ • x = x :=
-  mem_invariantFieldOf_iff ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] Γ x
+/-- The automorphism group of `k[X]` over a field `k`, acting on `k[X]`, is a
+nontrivial instance of the setup: the Mumford field is Mathlib's field of fixed
+points of the induced action on the fraction field. -/
+example (x : FractionRing k[X]) :
+    x ∈ mumfordField k (k[X] ≃ₐ[k] k[X]) k[X] ↔ ∀ g : k[X] ≃ₐ[k] k[X], g • x = x :=
+  FixedPoints.mem_intermediateField_iff
 
+/-- For a subgroup, its fixed field is Mathlib's fixed field of the restricted
+action: membership is fixedness by the elements of the subgroup. -/
+example (Γ : Subgroup (k[X] ≃ₐ[k] k[X])) (x : FractionRing k[X]) :
+    x ∈ (FixedPoints.intermediateField Γ : IntermediateField k (FractionRing k[X])) ↔
+      ∀ γ : Γ, γ • x = x :=
+  FixedPoints.mem_intermediateField_iff
+
+/-- The identity ambient automorphism extends to the identity of the fraction field,
+by Mathlib's `IsFractionRing.ringEquivOfRingEquiv_refl`. -/
 example :
-    invariantFieldOf ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊤ =
-      invariantField ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] :=
-  invariantFieldOf_top ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X]
+    (1 : AmbientSemilinearAut k (k[X] ≃ₐ[k] k[X]) k[X]).fracMap =
+      RingEquiv.refl (FractionRing k[X]) :=
+  IsFractionRing.ringEquivOfRingEquiv_refl
 
-/-- The invariant field is contained in every subgroup fixed field. -/
-example (Γ : Subgroup (ℚ[X] ≃ₐ[ℚ] ℚ[X])) :
-    invariantField ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ≤
-      invariantFieldOf ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] Γ :=
-  invariantField_le_invariantFieldOf ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] Γ
+/-- The substitution `X ↦ X + 1`, an automorphism of `k[X]` other than the
+identity. -/
+abbrev shiftX : k[X] ≃ₐ[k] k[X] := algEquivAevalXAddC 1
 
-example :
-    (1 : AmbientSemilinearAut ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X]).fracMap =
-      RingEquiv.refl (FractionRing ℚ[X]) :=
-  AmbientSemilinearAut.fracMap_one
-
-/-- The substitution `X ↦ X + 1`, an automorphism of `ℚ[X]` that is not
-its own inverse. -/
-abbrev shiftX : ℚ[X] ≃ₐ[ℚ] ℚ[X] := algEquivAevalXAddC 1
-
-theorem shiftX_smul_X : shiftX • (X : ℚ[X]) = X + 1 := by
+theorem shiftX_smul_X : shiftX k • (X : k[X]) = X + 1 := by
   rw [AlgEquiv.smul_def, algEquivAevalXAddC_apply, aeval_X, C_1]
 
 /-- Every element of the fraction field is fixed by the trivial subgroup. -/
-theorem mem_invariantFieldOf_bot (x : FractionRing ℚ[X]) :
-    x ∈ invariantFieldOf ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊥ := fun γ hγ => by
-  rw [Subgroup.mem_bot] at hγ
-  rw [hγ, one_smul]
+theorem mem_fixedPoints_bot (x : FractionRing k[X]) :
+    x ∈ (FixedPoints.intermediateField (⊥ : Subgroup (k[X] ≃ₐ[k] k[X])) :
+      IntermediateField k (FractionRing k[X])) := fun γ => by
+  change (γ : k[X] ≃ₐ[k] k[X]) • x = x
+  rw [Subgroup.mem_bot.mp γ.2, one_smul]
 
 /-- The element `X` of the field fixed by the trivial subgroup. -/
-abbrev xBot : invariantFieldOf ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊥ :=
-  ⟨algebraMap ℚ[X] (FractionRing ℚ[X]) X, mem_invariantFieldOf_bot _⟩
+abbrev xBot : (FixedPoints.intermediateField (⊥ : Subgroup (k[X] ≃ₐ[k] k[X])) :
+    IntermediateField k (FractionRing k[X])) :=
+  ⟨algebraMap k[X] (FractionRing k[X]) X, mem_fixedPoints_bot k _⟩
 
 /-- The residual action on the field fixed by the trivial normal subgroup is
-the action itself: the shift sends `X` to `X + 1`, not to `X - 1`. -/
+the action itself: the shift sends `X` to `X + 1`. -/
 theorem coe_residualAct_bot_shiftX :
-    ((residualAct ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊥ shiftX xBot :
-        invariantFieldOf ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊥) : FractionRing ℚ[X]) =
-      algebraMap ℚ[X] (FractionRing ℚ[X]) (X + 1) := by
-  rw [coe_residualAct, frac_smul_algebraMap, shiftX_smul_X]
+    ((residualAct k (k[X] ≃ₐ[k] k[X]) k[X] ⊥ (shiftX k) (xBot k) :
+        (FixedPoints.intermediateField (⊥ : Subgroup (k[X] ≃ₐ[k] k[X])) :
+          IntermediateField k (FractionRing k[X]))) : FractionRing k[X]) =
+      algebraMap k[X] (FractionRing k[X]) (X + 1) := by
+  rw [coe_residualAct, ← algebraMap.smul', shiftX_smul_X]
 
 /-- So the residual action of the trivial normal subgroup is not trivial. -/
-example : residualAct ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊥ shiftX ≠ 1 := fun h => by
-  have hx := coe_residualAct_bot_shiftX
+example : residualAct k (k[X] ≃ₐ[k] k[X]) k[X] ⊥ (shiftX k) ≠ 1 := fun h => by
+  have hx := coe_residualAct_bot_shiftX k
   rw [h] at hx
-  change algebraMap ℚ[X] (FractionRing ℚ[X]) X =
-    algebraMap ℚ[X] (FractionRing ℚ[X]) (X + 1) at hx
-  have hX := IsFractionRing.injective ℚ[X] (FractionRing ℚ[X]) hx
+  change algebraMap k[X] (FractionRing k[X]) X =
+    algebraMap k[X] (FractionRing k[X]) (X + 1) at hx
+  have hX := IsFractionRing.injective k[X] (FractionRing k[X]) hx
   simp at hX
 
 /-- The residual action of the top normal subgroup is trivial: every element
 of the group lies in it. -/
-example (g : ℚ[X] ≃ₐ[ℚ] ℚ[X]) : residualAct ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊤ g = 1 :=
-  residualAct_eq_one_of_mem ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊤ (Subgroup.mem_top g)
+example (g : k[X] ≃ₐ[k] k[X]) : residualAct k (k[X] ≃ₐ[k] k[X]) k[X] ⊤ g = 1 :=
+  residualAct_eq_one_of_mem k (k[X] ≃ₐ[k] k[X]) k[X] ⊤ (Subgroup.mem_top g)
 
 /-- The shift lies in the normalizer of the trivial subgroup. -/
 theorem shiftX_mem_normalizer_bot :
-    shiftX ∈ Subgroup.normalizer ((⊥ : Subgroup (ℚ[X] ≃ₐ[ℚ] ℚ[X])) : Set (ℚ[X] ≃ₐ[ℚ] ℚ[X])) := by
+    shiftX k ∈
+      Subgroup.normalizer ((⊥ : Subgroup (k[X] ≃ₐ[k] k[X])) : Set (k[X] ≃ₐ[k] k[X])) := by
   rw [Subgroup.normalizer_eq_top]
   exact Subgroup.mem_top _
 
 /-- The normalizer of the trivial subgroup acts on its fixed field through
 the group action, and agrees with the residual action there. -/
 example :
-    ((normalizerAct ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊥ ⟨shiftX, shiftX_mem_normalizer_bot⟩ xBot :
-        invariantFieldOf ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊥) : FractionRing ℚ[X]) =
-      algebraMap ℚ[X] (FractionRing ℚ[X]) (X + 1) := by
+    ((normalizerAct k (k[X] ≃ₐ[k] k[X]) k[X] ⊥ ⟨shiftX k, shiftX_mem_normalizer_bot k⟩
+        (xBot k) :
+        (FixedPoints.intermediateField (⊥ : Subgroup (k[X] ≃ₐ[k] k[X])) :
+          IntermediateField k (FractionRing k[X]))) : FractionRing k[X]) =
+      algebraMap k[X] (FractionRing k[X]) (X + 1) := by
   rw [normalizerAct_eq_residualAct]
-  exact coe_residualAct_bot_shiftX
+  exact coe_residualAct_bot_shiftX k
 
 /-- Elements of the subgroup act trivially through the normalizer action. -/
 example (n : Subgroup.normalizer
-      ((⊤ : Subgroup (ℚ[X] ≃ₐ[ℚ] ℚ[X])) : Set (ℚ[X] ≃ₐ[ℚ] ℚ[X]))) :
-    normalizerAct ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊤ n = 1 :=
-  normalizerAct_eq_one_of_mem ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] ⊤ (Subgroup.mem_top _)
+      ((⊤ : Subgroup (k[X] ≃ₐ[k] k[X])) : Set (k[X] ≃ₐ[k] k[X]))) :
+    normalizerAct k (k[X] ≃ₐ[k] k[X]) k[X] ⊤ n = 1 :=
+  normalizerAct_eq_one_of_mem k (k[X] ≃ₐ[k] k[X]) k[X] ⊤ (Subgroup.mem_top _)
 
 /-- Conjugation transport from a subgroup to its conjugate by the shift
 applies the shift. -/
 example :
-    ((conjTransport ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X] shiftX ⊥
-        ((⊥ : Subgroup (ℚ[X] ≃ₐ[ℚ] ℚ[X])).map (MulAut.conj shiftX).toMonoidHom)
-        (mem_map_conj_iff (ℚ[X] ≃ₐ[ℚ] ℚ[X]) shiftX ⊥) xBot :
-        invariantFieldOf ℚ (ℚ[X] ≃ₐ[ℚ] ℚ[X]) ℚ[X]
-          ((⊥ : Subgroup (ℚ[X] ≃ₐ[ℚ] ℚ[X])).map (MulAut.conj shiftX).toMonoidHom)) :
-        FractionRing ℚ[X]) =
-      algebraMap ℚ[X] (FractionRing ℚ[X]) (X + 1) := by
-  rw [coe_conjTransport, frac_smul_algebraMap, shiftX_smul_X]
+    ((conjTransport k (k[X] ≃ₐ[k] k[X]) k[X] (shiftX k) ⊥
+        ((⊥ : Subgroup (k[X] ≃ₐ[k] k[X])).map (MulAut.conj (shiftX k)).toMonoidHom)
+        (mem_map_conj_iff (k[X] ≃ₐ[k] k[X]) (shiftX k) ⊥) (xBot k) :
+        (FixedPoints.intermediateField
+            ((⊥ : Subgroup (k[X] ≃ₐ[k] k[X])).map (MulAut.conj (shiftX k)).toMonoidHom) :
+          IntermediateField k (FractionRing k[X]))) : FractionRing k[X]) =
+      algebraMap k[X] (FractionRing k[X]) (X + 1) := by
+  rw [coe_conjTransport, ← algebraMap.smul', shiftX_smul_X]
 
 /-- On the complete graph on `Fin 2`, the transposition exchanges the two
 vertex types: it adds one to the type of each vertex. -/
