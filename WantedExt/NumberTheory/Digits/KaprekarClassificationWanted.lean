@@ -30,24 +30,33 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- `α_M - α_L` for a list of decimal digits: the number whose digits are those of `l` in
-descending order minus the number with the same digits in ascending order (`Nat.ofDigits` is
-little-endian, so an ascending list gives the descending numeral).
+/-- **Kaprekar difference.** Let $l$ be a list of $k$ natural numbers and let
+$a_0 \le a_1 \le \dots \le a_{k-1}$ be its entries in increasing order. The Kaprekar difference of
+$l$ is $\alpha_M - \alpha_L$, where $\alpha_M = \sum_{i<k} a_i 10^i$ and
+$\alpha_L = \sum_{i<k} a_{k-1-i} 10^i$. When the entries are decimal digits, $\alpha_M$ is the
+number written with the digits of $l$ in descending order and $\alpha_L$ is the number written
+with them in ascending order (leading zeros allowed).
 
 Source: Haruo Iwasaki, *A New Classification of the Kaprekar Numbers*, The Fibonacci Quarterly
 62 (2024), Article iwasaki06162024-ASrev2, Definition 1.1. -/
 public def kaprekarDiff (l : List ℕ) : ℕ :=
   Nat.ofDigits 10 (List.insertionSort (· ≤ ·) l) - Nat.ofDigits 10 (List.insertionSort (· ≥ ·) l)
 
-/-- The Kaprekar transformation on `D_n`: `α < 10^n` is read as the `n`-digit string of its
-decimal digits padded with leading zeros, and sent to `α_M - α_L`.
+/-- **Kaprekar map.** For natural numbers $n$ and $\alpha$, take the decimal digits of $\alpha$
+(without leading zeros, and no digits at all for $\alpha = 0$) and, if there are fewer than $n$
+of them, pad them with leading zeros to a string of exactly $n$ digits. The Kaprekar map sends
+$\alpha$ to the Kaprekar difference $\alpha_M - \alpha_L$ of this digit string: the number with
+these digits in descending order minus the number with them in ascending order. For
+$\alpha < 10^n$ this is the Kaprekar transformation on the set $D_n$ of $n$-digit strings; for
+$\alpha \ge 10^n$ nothing is padded and all digits of $\alpha$ are used.
 
 Source: Haruo Iwasaki, *A New Classification of the Kaprekar Numbers*, The Fibonacci Quarterly
 62 (2024), Article iwasaki06162024-ASrev2, Definition 1.1. -/
 public def kaprekarMap (n α : ℕ) : ℕ :=
   kaprekarDiff (Nat.digits 10 α ++ List.replicate (n - (Nat.digits 10 α).length) 0)
 
-/-- Characteristic value: `f(6174) = 7641 - 1467 = 6174` in `D_4`.
+/-- **6174 is fixed by the four-digit Kaprekar map.** The Kaprekar map with $n = 4$ sends $6174$
+to itself: $7641 - 1467 = 6174$.
 
 Source: Haruo Iwasaki, *A New Classification of the Kaprekar Numbers*, The Fibonacci Quarterly
 62 (2024), Article iwasaki06162024-ASrev2, Section 1. -/
@@ -55,7 +64,8 @@ public theorem kaprekarMap_four_6174 : kaprekarMap 4 6174 = 6174 := by
   norm_num [kaprekarMap, kaprekarDiff, List.insertionSort_cons, List.orderedInsert_cons,
     Nat.ofDigits_cons]
 
-/-- Characteristic value: `495` is fixed in `D_3`.
+/-- **495 is fixed by the three-digit Kaprekar map.** The Kaprekar map with $n = 3$ sends $495$ to
+itself: $954 - 459 = 495$.
 
 Source: Haruo Iwasaki, *A New Classification of the Kaprekar Numbers*, The Fibonacci Quarterly
 62 (2024), Article iwasaki06162024-ASrev2, Section 1. -/
@@ -63,7 +73,8 @@ public theorem kaprekarMap_three_495 : kaprekarMap 3 495 = 495 := by
   norm_num [kaprekarMap, kaprekarDiff, List.insertionSort_cons, List.orderedInsert_cons,
     Nat.ofDigits_cons]
 
-/-- Characteristic value: in `D_4`, `495` is the string `0495` and `f(0495) = 9540 - 0459`.
+/-- **The four-digit Kaprekar map sends 495 to 9081.** With $n = 4$, the number $495$ is padded to
+the digit string $0495$, and the Kaprekar map sends it to $9540 - 0459 = 9081$.
 
 Source: Haruo Iwasaki, *A New Classification of the Kaprekar Numbers*, The Fibonacci Quarterly
 62 (2024), Article iwasaki06162024-ASrev2, Definition 1.1. -/
@@ -71,15 +82,17 @@ public theorem kaprekarMap_four_495 : kaprekarMap 4 495 = 9081 := by
   norm_num [kaprekarMap, kaprekarDiff, List.insertionSort_cons, List.orderedInsert_cons,
     Nat.ofDigits_cons]
 
-/-- Theorem 3.1: for `n ≥ 3`, a nonzero `α ∈ D_n` is a Kaprekar number if and only if it lies in
-one of the sets `T_1, …, T_5` of Definition 2.1, i.e. it equals `f(s)` for a digit string `s` of
-length `n` of one of the forms (`x ≥ 1`, `y ≥ 0`, blocks repeated as indicated)
-`(495)^{x_1}`; `6174 (36)^{y_2}`; `(123456789)^{x_3} (36)^{y_3}`;
-`(123456789)^{x_{4,1}} (36)^{x_{4,2}} (495)^{2x_{4,2}} (27)^{3x_{4,2}}`;
-`(124578)^{x_{5,1}} (09)^{x_{5,2}} (123456789)^{y_{5,1}} (36)^{y_{5,2}}`.
-Membership of `α ∈ D_n` in `T_i` is read in `D`, where strings of different lengths are
-different elements, so the witness string has length `n` (as numbers, `495 ∈ T_1` is below
-`10^4` but is not a Kaprekar number of `D_4`). The record's "digit `α`" is the number `α`.
+/-- **Classification of decimal Kaprekar numbers.** Let $n \ge 3$ and $0 < \alpha < 10^n$. Then
+the Kaprekar map on $n$-digit strings fixes $\alpha$ if and only if $\alpha$ is the Kaprekar
+difference of some string $s$ of exactly $n$ decimal digits of one of the following five forms,
+where juxtaposition is concatenation, $(w)^k$ is the block $w$ repeated $k$ times, and in each
+form the exponents are chosen independently with $x, x_1, x_2 \ge 1$ and $y, y_1, y_2 \ge 0$:
+$(495)^x$; $6174\,(36)^y$; $(123456789)^x (36)^y$;
+$(123456789)^{x_1} (36)^{x_2} (495)^{2x_2} (27)^{3x_2}$;
+$(124578)^{x_1} (09)^{x_2} (123456789)^{y_1} (36)^{y_2}$.
+
+The witness string must have length $n$: $495$ is the Kaprekar difference of $(495)^1$, but the
+Kaprekar map on $4$-digit strings sends $495$ to $9081$.
 
 Source: Haruo Iwasaki, *A New Classification of the Kaprekar Numbers*, The Fibonacci Quarterly
 62 (2024), Article iwasaki06162024-ASrev2, Theorem 3.1. -/

@@ -25,12 +25,13 @@ Sequences: a Case Study*, Journal of Integer Sequences 22 (2019),
 [`band3.tex`](https://cs.uwaterloo.ca/journals/JIS/VOL22/Banderier/band3.tex).
 -/
 
-/-- An integer sequence is P-recursive of order `r` with coefficient polynomials
-`P₀, …, Pᵣ` if, for every `n ≥ r`,
-`P₀(n) uₙ = ∑_{i=1}^r Pᵢ(n) uₙ₋ᵢ`.
-
-The finite coefficient family prevents accidental access beyond `Pᵣ`, and the explicit
-index guard records the source domain without relying on truncated subtraction. -/
+/-- **P-recursive sequences.** Let $r$ be a natural number, let $P_0, \dots, P_r$ be polynomials
+with integer coefficients, and let $(u_n)_{n \ge 0}$ be a sequence of integers. The sequence $u$
+is P-recursive of order $r$ with coefficient polynomials $P_0, \dots, P_r$ if for every $n \ge r$,
+$$
+P_0(n)\, u_n = \sum_{i=1}^{r} P_i(n)\, u_{n-i}.
+$$
+-/
 public def IsPRecursiveSequence (r : ℕ) (P : Fin (r + 1) → Polynomial ℤ)
     (u : ℕ → ℤ) : Prop :=
   ∀ n, r ≤ n →

@@ -69,36 +69,56 @@ open Finset
 
 variable {K : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K] {n : ℕ}
 
-/-- One round: the experts' advice and the true outcome. -/
+/-- **Round of prediction with expert advice.** A round with $n$ experts is a pair $(a, y)$, where
+$a$ assigns to each expert $i \in \{0, \dots, n - 1\}$ its binary advice (true or false) and the
+binary value $y$ is the true outcome. -/
 abbrev Round (n : ℕ) := (Fin n → Bool) × Bool
 
-/-- The total weight of the experts advising `b`. -/
+/-- **Weight on an answer.** Given weights $w_0, \dots, w_{n-1}$ in a field $K$, advice
+$a \in \{\mathrm{true}, \mathrm{false}\}^n$ and an answer $b \in \{\mathrm{true}, \mathrm{false}\}$,
+the weight on $b$ is $\sum_{i : a_i = b} w_i$, the total weight of the experts advising $b$. -/
 def weightOn (w : Fin n → K) (advice : Fin n → Bool) (b : Bool) : K :=
   ∑ i ∈ univ.filter (fun i => advice i = b), w i
 
-/-- The weighted majority vote (ties go to `true`). -/
+/-- **Weighted majority vote.** Let $K$ be a field with a linear order. Given weights in $K$ on
+$n$ experts and a binary advice (true or false) from each expert, the weighted majority vote is
+true when the total weight of the experts advising false is at most the total weight of the
+experts advising true, and false otherwise. In particular ties go to true. -/
 def predict (w : Fin n → K) (advice : Fin n → Bool) : Bool :=
   decide (weightOn w advice false ≤ weightOn w advice true)
 
-/-- After the outcome is revealed, every expert that was wrong has its weight multiplied by the
-penalty factor `β`. -/
+/-- **Weighted majority update.** Given a penalty factor $\beta$ and weights $w_0, \dots, w_{n-1}$
+in a field $K$, and a round with advice $a \in \{\mathrm{true}, \mathrm{false}\}^n$ and outcome
+$y$, the updated weight of expert $i$ is $w_i$ if $a_i = y$ and $\beta w_i$ otherwise: after the
+outcome is revealed, every expert that was wrong has its weight multiplied by $\beta$. -/
 def update (β : K) (w : Fin n → K) (r : Round n) : Fin n → K :=
   fun i => if r.1 i = r.2 then w i else β * w i
 
-/-- The weights after a sequence of rounds. -/
+/-- **Weights after a run.** For a penalty factor $\beta$ in a field $K$, the weights after a
+sequence of rounds $r_1, \dots, r_k$ starting from weights $w$ in $K$ are obtained by applying the
+weighted majority update with penalty $\beta$ for $r_1$, then for $r_2$, and so on up to $r_k$;
+for the empty sequence they are $w$. -/
 def weights (β : K) : List (Round n) → (Fin n → K) → Fin n → K
   | [], w => w
   | r :: rs, w => weights β rs (update β w r)
 
-/-- The mistakes of the weighted majority algorithm. -/
+/-- **Mistakes of the weighted majority algorithm.** Let $K$ be a field with a linear order, let
+$\beta \in K$ be a penalty and let $w$ be initial weights in $K$ on $n$ experts. The weighted
+majority algorithm processes a list of rounds in order: in each round it predicts the weighted
+majority vote of the experts' advice under the current weights, and then multiplies the weight of
+every expert whose advice differed from the true outcome by $\beta$. Its number of mistakes is the
+number of rounds in which its prediction differs from the true outcome. -/
 def mistakes (β : K) : List (Round n) → (Fin n → K) → ℕ
   | [], _ => 0
   | r :: rs, w => (if predict w r.1 = r.2 then 0 else 1) + mistakes β rs (update β w r)
 
-/-- The mistakes of expert `i`. -/
+/-- **Mistakes of an expert.** Given a list of rounds with $n$ experts and an expert $i$, the
+number of mistakes of $i$ is the number of rounds in the list in which the advice of expert $i$
+differs from the true outcome. -/
 def expertMistakes (i : Fin n) (rs : List (Round n)) : ℕ := (rs.filter fun r => r.1 i ≠ r.2).length
 
-/-- The total weight. -/
+/-- **Total weight.** The total weight of weights $w_0, \dots, w_{n-1}$ in a field $K$ is
+$\sum_{i < n} w_i$. -/
 def total (w : Fin n → K) : K := ∑ i, w i
 
 omit [LinearOrder K] [IsStrictOrderedRing K] in
@@ -108,7 +128,12 @@ theorem total_eq_weightOn (w : Fin n → K) (advice : Fin n → Bool) :
     (sum_filter_add_sum_filter_not (univ : Finset (Fin n))
       (fun i => advice i = true) w).symm
 
-/-- The total weight after an update: the wrong side keeps a `β` fraction of its weight. -/
+/-- **Total weight after an update.** Let $\beta$ be an element of a linearly ordered field $K$,
+let $w_0, \dots, w_{n-1} \in K$ be weights on $n$ experts, and let $r$ be a round with advice
+$a \in \{\mathrm{true}, \mathrm{false}\}^n$ and outcome $y$. If $w'$ are the weights after the
+update with penalty $\beta$ on $r$, then
+$\sum_{i < n} w'_i = \sum_{i < n} w_i - (1 - \beta) \sum_{i : a_i = \lnot y} w_i$: the experts
+that advised wrongly keep a $\beta$ fraction of their weight. -/
 theorem total_update (β : K) (w : Fin n → K) (r : Round n) :
     total (update β w r) = total w - (1 - β) * weightOn w r.1 (!r.2) := by
   have hsplit := total_eq_weightOn w r.1
@@ -129,8 +154,14 @@ theorem total_update (β : K) (w : Fin n → K) (r : Round n) :
   cases hr : r.2 <;> simp only [hr, Bool.not_false, Bool.not_true] at hall hsplit ⊢ <;>
     linear_combination hall
 
-/-- **A mistake costs weight**: if the majority was wrong, at least half of the weight was on the
-wrong side, and it keeps only a `β ≤ 1` fraction, so `2 total' ≤ (1 + β) total`. -/
+/-- **A mistake costs weight.** Let $K$ be a linearly ordered field, let $\beta \in K$ with
+$\beta \le 1$, let $w$ be weights in $K$ on $n$ experts, and let $r$ be a round on which the
+weighted majority vote under $w$ differs from the true outcome. If $W$ is the total weight of $w$
+and $W'$ is the total weight after updating $w$ on $r$ with penalty $\beta$, then
+$2 W' \le (1 + \beta) W$.
+
+At least half of the weight was on the wrong side, and that side keeps only a $\beta$ fraction of
+its weight. -/
 theorem total_update_of_mistake {β : K} (hβ1 : β ≤ 1) {w : Fin n → K} {r : Round n}
     (h : predict w r.1 ≠ r.2) : 2 * total (update β w r) ≤ (1 + β) * total w := by
   rw [total_update, total_eq_weightOn w r.1]
@@ -148,7 +179,10 @@ theorem total_update_of_mistake {β : K} (hβ1 : β ≤ 1) {w : Fin n → K} {r 
 theorem weightOn_nonneg {w : Fin n → K} (hw : ∀ i, 0 ≤ w i) (advice : Fin n → Bool) (b : Bool) :
     0 ≤ weightOn w advice b := sum_nonneg fun i _ => hw i
 
-/-- Updates never increase the total weight. -/
+/-- **An update never increases the total weight.** Let $K$ be a linearly ordered field, let
+$\beta \in K$ with $\beta \le 1$, and let $w$ be nonnegative weights in $K$ on $n$ experts. For
+every round $r$, the total weight after updating $w$ on $r$ with penalty $\beta$ is at most the
+total weight of $w$. -/
 theorem total_update_le {β : K} (hβ1 : β ≤ 1) {w : Fin n → K} (hw : ∀ i, 0 ≤ w i)
     (r : Round n) : total (update β w r) ≤ total w := by
   rw [total_update]
@@ -163,7 +197,11 @@ theorem update_nonneg {β : K} (hβ0 : 0 ≤ β) {w : Fin n → K} (hw : ∀ i, 
   · exact hw i
   · exact mul_nonneg hβ0 (hw i)
 
-/-- The total weight shrinks by `(1 + β)/2` per mistake. -/
+/-- **Total weight bound in terms of mistakes.** Let $0 \le \beta \le 1$ in a linearly ordered
+field $K$, let $w$ be nonnegative weights in $K$ on $n$ experts, and let $\rho$ be a sequence of
+rounds. Let $M$ be the number of mistakes the weighted majority algorithm with penalty $\beta$
+makes on $\rho$ starting from $w$, and let $W$ and $W'$ be the total weights before and after
+$\rho$. Then $W' \cdot 2^M \le (1 + \beta)^M \cdot W$. -/
 theorem total_weights_mul_le {β : K} (hβ0 : 0 ≤ β) (hβ1 : β ≤ 1) :
     ∀ (rs : List (Round n)) (w : Fin n → K), (∀ i, 0 ≤ w i) →
     total (weights β rs w) * 2 ^ mistakes β rs w ≤ (1 + β) ^ mistakes β rs w * total w
@@ -188,7 +226,10 @@ theorem total_weights_mul_le {β : K} (hβ0 : 0 ≤ β) (hβ1 : β ≤ 1) :
           _ = (1 + β) ^ mistakes β rs (update β w r) * (1 + β) * total w := by ring
 
 omit [LinearOrder K] [IsStrictOrderedRing K] in
-/-- The weight of expert `i` is multiplied by `β` at each of its mistakes. -/
+/-- **Final weight of an expert.** For a penalty factor $\beta$ in a field $K$, initial weights
+$w_0, \dots, w_{n-1} \in K$ and a sequence of rounds, the weight of expert $i$ after these rounds
+is $w_i \beta^{m_i}$, where $m_i$ is the number of rounds in which the advice of expert $i$
+differs from the outcome. -/
 theorem weights_apply (β : K) : ∀ (rs : List (Round n)) (w : Fin n → K) (i : Fin n),
     weights β rs w i = w i * β ^ expertMistakes i rs
   | [], w, i => by simp [weights, expertMistakes]
@@ -206,9 +247,11 @@ theorem weights_nonneg {β : K} (hβ0 : 0 ≤ β) : ∀ (rs : List (Round n)) {w
   | [], _, hw => hw
   | r :: rs, _, hw => weights_nonneg hβ0 rs (update_nonneg hβ0 hw r)
 
-/-- **The mistake bound** (Littlestone and Warmuth): starting from unit weights with penalty
-`β ∈ [0, 1]`, the weighted majority algorithm makes `M` mistakes with
-`β ^ m * 2 ^ M ≤ n (1 + β) ^ M` for every expert with `m` mistakes. -/
+/-- **Littlestone–Warmuth mistake bound.** Let $K$ be a linearly ordered field and let
+$\beta \in K$ with $0 \le \beta \le 1$. Run the weighted majority algorithm with penalty $\beta$
+on a list of rounds with $n$ experts, starting from weight $1$ on every expert, and let $M$ be its
+number of mistakes. Then every expert $i$, with $m$ mistakes on these rounds, satisfies
+$\beta^m 2^M \le n (1 + \beta)^M$. -/
 theorem mistake_bound_general {β : K} (hβ0 : 0 ≤ β) (hβ1 : β ≤ 1) (rs : List (Round n))
     (i : Fin n) :
     β ^ expertMistakes i rs * 2 ^ mistakes β rs (fun _ => 1) ≤
@@ -226,9 +269,10 @@ theorem mistake_bound_general {β : K} (hβ0 : 0 ≤ β) (hβ1 : β ≤ 1) (rs :
     _ ≤ (1 + β) ^ mistakes β rs (fun _ => 1) * n := h1
     _ = n * (1 + β) ^ mistakes β rs (fun _ => 1) := mul_comm _ _
 
-/-- **The mistake bound for the penalty `1/2`**: starting from unit weights, the weighted
-majority algorithm makes `M` mistakes with `(4/3) ^ M ≤ n 2 ^ m` for every expert with `m`
-mistakes. -/
+/-- **Mistake bound for the penalty $1/2$.** Run the weighted majority algorithm with rational
+weights and penalty $1/2$ on a list of rounds with $n$ experts, starting from weight $1$ on every
+expert, and let $M$ be its number of mistakes. Then every expert $i$, with $m$ mistakes on these
+rounds, satisfies $(4/3)^M \le n \cdot 2^m$. -/
 theorem mistake_bound (rs : List (Round n)) (i : Fin n) :
     (4 / 3 : ℚ) ^ mistakes (1 / 2 : ℚ) rs (fun _ => 1) ≤ n * 2 ^ expertMistakes i rs := by
   have h := mistake_bound_general (by norm_num : (0 : ℚ) ≤ 1 / 2) (by norm_num) rs i
@@ -248,8 +292,12 @@ theorem mistake_bound (rs : List (Round n)) (i : Fin n) :
       _ = n * 2 ^ m * (1 + 1 / 2) ^ M := by ring
   exact le_of_mul_le_mul_right key h32
 
-/-- **The mistake bound in integers**: `4 ^ M ≤ n 3 ^ M 2 ^ m`, i.e.
-`M ≤ (m + log₂ n) / log₂ (4/3) ≈ 2.41 (m + log₂ n)`. -/
+/-- **Mistake bound for the penalty $1/2$ in integers.** Run the weighted majority algorithm
+with rational weights and penalty $1/2$ on a list of rounds with $n$ experts, starting from
+weight $1$ on every expert, and let $M$ be its number of mistakes. Then every expert $i$, with
+$m$ mistakes on these rounds, satisfies $4^M \le n \cdot 3^M \cdot 2^m$ in the natural numbers.
+
+Taking logarithms, $M \le (m + \log_2 n) / \log_2 (4/3) \approx 2.41 (m + \log_2 n)$. -/
 theorem mistake_bound_nat (rs : List (Round n)) (i : Fin n) :
     4 ^ mistakes (1 / 2 : ℚ) rs (fun _ => 1) ≤
       n * 3 ^ mistakes (1 / 2 : ℚ) rs (fun _ => 1) * 2 ^ expertMistakes i rs := by
@@ -262,15 +310,21 @@ theorem mistake_bound_nat (rs : List (Round n)) (i : Fin n) :
 /-! ## Splitting a run -/
 
 omit [LinearOrder K] [IsStrictOrderedRing K] in
-/-- The weights after `rs ++ rs'` are the weights after `rs'`, started from those after `rs`. -/
+/-- **Weights over a concatenated run.** For a penalty factor $\beta$ in a field $K$, initial
+weights $w$ in $K$ and sequences of rounds $\rho$ and $\rho'$, the weights after running $\rho$
+followed by $\rho'$ from $w$ equal the weights after running $\rho'$ from the weights obtained by
+running $\rho$ from $w$. -/
 theorem weights_append (β : K) : ∀ (rs rs' : List (Round n)) (w : Fin n → K),
     weights β (rs ++ rs') w = weights β rs' (weights β rs w)
   | [], _, _ => rfl
   | r :: rs, rs', w => weights_append β rs rs' (update β w r)
 
 omit [IsStrictOrderedRing K] in
-/-- The mistakes over `rs ++ rs'` are those over `rs` plus those over `rs'` from the weights after
-`rs`. -/
+/-- **Mistakes split over concatenated runs.** Let $K$ be a field with a linear order, let
+$\beta \in K$ be a penalty, let $w$ be weights in $K$ on $n$ experts, and let $R$ and $R'$ be
+lists of rounds. The number of mistakes of the weighted majority algorithm with penalty $\beta$
+on $R$ followed by $R'$, starting from $w$, equals its number of mistakes on $R$ starting from
+$w$ plus its number of mistakes on $R'$ starting from the weights reached after $R$. -/
 theorem mistakes_append (β : K) : ∀ (rs rs' : List (Round n)) (w : Fin n → K),
     mistakes β (rs ++ rs') w = mistakes β rs w + mistakes β rs' (weights β rs w)
   | [], _, _ => by simp [mistakes, weights]

@@ -50,21 +50,32 @@ open Cslib.Algorithms.Lean.Parallel.ListRanking
 
 variable {n : ℕ} {M : Type*} [AddMonoid M]
 
-/-- The value of the node `k` steps after `v`, or `0` past the end. -/
+/-- **The value $k$ steps ahead.** Let $n$ nodes be linked into lists by a partial successor
+function, each node $u$ carrying a value $x_u$ in an additive monoid $M$. For $k \in \mathbb{N}$
+and a node $v$, this is $x_u$ where $u$ is the node $k$ steps after $v$ along its list, and $0$
+if the list ends before $k$ steps. -/
 def stepVal (succ : Fin n → Option (Fin n)) (x : Fin n → M) (k : ℕ) (v : Fin n) : M :=
   match jump succ k v with
   | some u => x u
   | none => 0
 
-/-- The sum of the values of the first `k` nodes from `v` on (fewer at the end of the list), in
-list order. -/
+/-- **Segment sums.** Let $n$ nodes be linked into lists by a partial successor function, and
+let each node $v$ carry a value $x_v$ in an additive monoid $M$ (not necessarily commutative).
+For $k \in \mathbb{N}$ and a node $v$, the segment sum of length $k$ from $v$ is the sum, in
+list order, of the values of the first $k$ nodes of the list starting at $v$ (fewer if the list
+ends sooner); for $k = 0$ it is $0$. -/
 def segSum (succ : Fin n → Option (Fin n)) (x : Fin n → M) : ℕ → Fin n → M
   | 0, _ => 0
   | k + 1, v => segSum succ x k v + stepVal succ x k v
 
 variable {succ : Fin n → Option (Fin n)} {x : Fin n → M}
 
-/-- Segments add up: the first `a + b` nodes are the first `a`, then `b` from where those end. -/
+/-- **Segment sums add up.** Let $\mathrm{succ}$ be a partial successor function on nodes
+$0, \dots, n-1$ and $x_v$ values in an additive monoid $M$. For $k \in \mathbb{N}$ write
+$S_k(v)$ for the sum, in list order, of the values of the nodes reached from $v$ in
+$0, 1, \dots, k - 1$ steps along $\mathrm{succ}$ (a missing node contributes $0$). Then for all
+$a, b \in \mathbb{N}$ and every node $v$, $S_{a+b}(v) = S_a(v) + S_b(u)$ if the node $u$ reached
+from $v$ in $a$ steps exists, and $S_{a+b}(v) = S_a(v)$ otherwise. -/
 theorem segSum_add (a b : ℕ) (v : Fin n) : segSum succ x (a + b) v =
     segSum succ x a v + match jump succ a v with
       | some u => segSum succ x b u
@@ -79,7 +90,13 @@ theorem segSum_add (a b : ℕ) (v : Fin n) : segSum succ x (a + b) v =
       | none => simp
       | some u => simp [segSum, stepVal, add_assoc]
 
-/-- The suffix sum of `v`: the values from `v` to the end of its list, in list order. -/
+/-- **Suffix sums.** Let $n$ nodes be linked into lists by a partial successor function, each
+node $v$ carrying a value $x_v$ in an additive monoid $M$. The suffix sum of a node $v$ is the
+segment sum of length $n$ from $v$: the sum, in list order, of the values of the first $n$ nodes
+of the list starting at $v$ (fewer if it ends sooner).
+
+When the list from $v$ ends, it has at most $n$ nodes, so this is the sum of the values from $v$
+to the end of its list. -/
 def suffixSum (succ : Fin n → Option (Fin n)) (x : Fin n → M) (v : Fin n) : M := segSum succ x n v
 
 theorem segSum_of_le (hs : Terminates succ) {k : ℕ} (hk : n ≤ k) (v : Fin n) :
@@ -88,8 +105,11 @@ theorem segSum_of_le (hs : Terminates succ) {k : ℕ} (hk : n ≤ k) (v : Fin n)
   rw [segSum_add, hs v, suffixSum]
   simp
 
-/-- **The characteristic property of suffix sums**: a node's suffix sum is its value plus its
-successor's suffix sum. -/
+/-- **The characteristic property of suffix sums.** Let $n$ nodes be linked into lists by a
+partial successor function such that, starting from any node, $n$ steps run off the end of its
+list, and let each node $v$ carry a value $x_v$ in an additive monoid $M$. Then for every node
+$v$, the suffix sum of $v$ is $x_v$ plus the suffix sum of the successor of $v$, or just $x_v$
+if $v$ has no successor. -/
 theorem suffixSum_eq (hs : Terminates succ) (v : Fin n) :
     suffixSum succ x v = x v + match succ v with
       | some u => suffixSum succ x u
@@ -113,8 +133,12 @@ theorem suffixSum_eq (hs : Terminates succ) (v : Fin n) :
       rw [show n - 1 + 1 = n by omega] at k2
       rw [suffixSum, k2]
 
-/-- **List ranking is the special case of unit values**: summing `1` over the first `k` nodes
-from `v` counts `min k (rank v + 1)` nodes. -/
+/-- **Segment sums of unit values count nodes.** Let $n$ nodes be linked into lists by a
+partial successor function such that, starting from any node, $n$ steps run off the end of its
+list, and give every node the value $1 \in \mathbb{N}$. Then for every $k \in \mathbb{N}$ and
+every node $v$, the segment sum of length $k$ from $v$ (the sum of the values of the first $k$
+nodes from $v$, fewer at the end of the list) is $\min(k, \operatorname{rank}(v) + 1)$, where
+$\operatorname{rank}(v)$ is the number of nodes after $v$ in its list. -/
 theorem segSum_one (hs : Terminates succ) (k : ℕ) (v : Fin n) :
     segSum succ (fun _ => (1 : ℕ)) k v = min k (rank hs v + 1) := by
   induction k with
@@ -132,7 +156,11 @@ theorem segSum_one (hs : Terminates succ) (k : ℕ) (v : Fin n) :
           simp only
           omega
 
-/-- Suffix sums of unit values are the ranks plus one. -/
+/-- **List ranking is the special case of unit values.** Let $n$ nodes be linked into lists by
+a partial successor function such that, starting from any node, $n$ steps run off the end of
+its list. If every node has value $1 \in \mathbb{N}$, then the suffix sum of every node $v$ is
+$\operatorname{rank}(v) + 1$, where $\operatorname{rank}(v)$ is the number of nodes after $v$ in
+its list. -/
 theorem suffixSum_one (hs : Terminates succ) (v : Fin n) :
     suffixSum succ (fun _ => (1 : ℕ)) v = rank hs v + 1 := by
   rw [suffixSum, segSum_one hs]
@@ -141,31 +169,47 @@ theorem suffixSum_one (hs : Terminates succ) (v : Fin n) :
 
 /-! ## Pointer jumping -/
 
-/-- The state of pointer jumping: each node's pointer and the sum of the values it has covered. -/
+/-- **State of pointer jumping for suffix sums.** For $n$ nodes and a type $M$, a state assigns
+to each node $v$ a pointer, which is either a node or none (past the end of the list), and an
+accumulated value in $M$. The accumulated value is meant to be the sum of the node values from
+$v$ up to, but not including, the pointer's target. -/
 structure State (n : ℕ) (M : Type*) where
   /-- The node's pointer (`none` once it points past the end). -/
   ptr : Fin n → Option (Fin n)
   /-- The sum of the values from the node up to, not including, the pointer's target. -/
   acc : Fin n → M
 
-/-- The initial state: pointers are the successors, sums the nodes' own values. -/
+/-- **Initial state of pointer jumping for suffix sums.** Given nodes $0, \dots, n-1$ with a
+partial successor function $\mathrm{succ}$ and values $x_v$ in an additive monoid $M$, the
+initial state gives each node $v$ the pointer $\mathrm{succ}(v)$ (undefined at the end of a
+list) and the sum $x_v$. -/
 def init (succ : Fin n → Option (Fin n)) (x : Fin n → M) : State n M := ⟨succ, x⟩
 
-/-- One parallel round: every node adds its target's sum to its own (on the right, keeping list
-order) and jumps to its target's target. -/
+/-- **One round of pointer jumping for suffix sums.** Given a state in which each node $v$ has
+a pointer $p(v)$, either a node or undefined, and a sum $s(v)$ in an additive monoid $M$, one
+round produces a new state as follows. If $p(v)$ is undefined, the pointer of $v$ stays
+undefined and its sum stays $s(v)$. If $p(v) = u$, the new pointer of $v$ is $p(u)$ and its new
+sum is $s(v) + s(u)$, with $s(u)$ added on the right so that list order is kept. -/
 def round (s : State n M) : State n M :=
   ⟨fun v => (s.ptr v).bind s.ptr, fun v =>
     match s.ptr v with
     | none => s.acc v
     | some u => s.acc v + s.acc u⟩
 
-/-- The state after `t` rounds. -/
+/-- **State after $t$ rounds of pointer jumping for suffix sums.** Given a partial successor
+function $\mathrm{succ}$ on nodes $0, \dots, n-1$, values $x_v$ in an additive monoid $M$ and
+$t \in \mathbb{N}$, the state after $t$ rounds is obtained from the initial state (pointers
+$\mathrm{succ}(v)$, sums $x_v$) by applying one round of pointer jumping $t$ times. -/
 def rounds (succ : Fin n → Option (Fin n)) (x : Fin n → M) : ℕ → State n M
   | 0 => init succ x
   | t + 1 => round (rounds succ x t)
 
-/-- **The invariant of pointer jumping**: after `t` rounds each pointer is `2 ^ t` steps ahead
-and each sum covers the first `2 ^ t` nodes. -/
+/-- **The invariant of pointer jumping for suffix sums.** Let $\mathrm{succ}$ be a partial
+successor function on nodes $0, \dots, n-1$ and $x_v$ values in an additive monoid $M$. For
+every $t \in \mathbb{N}$ and every node $v$, after $t$ rounds of pointer jumping the pointer of
+$v$ is the node reached from $v$ in $2^t$ steps along $\mathrm{succ}$ (undefined if the list
+ends sooner), and the sum of $v$ is the sum, in list order, of the values of the nodes reached
+from $v$ in $0, 1, \dots, 2^t - 1$ steps (a missing node contributes $0$). -/
 theorem rounds_spec : ∀ t v, (rounds succ x t).ptr v = jump succ (2 ^ t) v ∧
     (rounds succ x t).acc v = segSum succ x (2 ^ t) v
   | 0, v => ⟨by simp [rounds, init, jump], by simp [rounds, init, segSum, stepVal, jump]⟩
@@ -182,19 +226,32 @@ theorem rounds_spec : ∀ t v, (rounds succ x t).ptr v = jump succ (2 ^ t) v ∧
         | none => simp [ha]
         | some u => simp [ha, (rounds_spec t u).2]
 
-/-- After `t` rounds with `n ≤ 2 ^ t`, every sum is the suffix sum. -/
+/-- **Pointer-jumping sums are the suffix sums once $n \le 2^t$.** Let $\mathrm{succ}$ be a
+partial successor function on nodes $0, \dots, n-1$ under which every list ends, that is, from
+every node, the node reached in $n$ steps along $\mathrm{succ}$ is undefined, and let $x_v$ be
+values in an additive monoid $M$. If $t \in \mathbb{N}$ satisfies $n \le 2^t$, then for every
+node $v$ the sum of $v$ after $t$ rounds of pointer jumping is the suffix sum of $v$: the sum, in
+list order, of the values from $v$ to the end of its list. -/
 theorem rounds_acc (hs : Terminates succ) {t : ℕ} (ht : n ≤ 2 ^ t) (v : Fin n) :
     (rounds succ x t).acc v = suffixSum succ x v := by
   rw [(rounds_spec t v).2, segSum_of_le hs ht]
 
 /-! ## Tabulated rounds -/
 
-/-- A state stored in arrays: evaluating `rounds` directly re-reads earlier rounds at every query,
-a cost exponential in the number of rounds; on arrays each round costs `O(n)` operations. -/
+/-- **Pointer-jumping state as arrays.** A suffix-sum pointer-jumping state on $n$ nodes is
+stored as a pair of arrays of length $n$: the array whose entry $v$ is the pointer of node $v$,
+and the array whose entry $v$ is the accumulated value of node $v$.
+
+Evaluating the rounds of pointer jumping directly re-reads earlier rounds at every query, a
+cost exponential in the number of rounds; on arrays each round costs $O(n)$ operations. -/
 def tabulate (s : State n M) : Array (Option (Fin n)) × Array M :=
   (Array.ofFn s.ptr, Array.ofFn s.acc)
 
-/-- One round on arrays. -/
+/-- **One round of pointer jumping on arrays.** Given an array $P$ of pointers (each a node
+among $0, \dots, n-1$ or undefined) and an array $S$ of sums in an additive monoid $M$, one
+round returns arrays $P'$ and $S'$ of length $n$ where, for each node $v$: if $P[v]$ is
+undefined, then $P'[v]$ is undefined and $S'[v] = S[v]$; if $P[v] = u$, then $P'[v] = P[u]$ and
+$S'[v] = S[v] + S[u]$. A read outside an array gives an undefined pointer or the sum $0$. -/
 def roundTab (s : Array (Option (Fin n)) × Array M) : Array (Option (Fin n)) × Array M :=
   (Array.ofFn fun v : Fin n => (s.1.getD v none).bind fun u => s.1.getD u none,
     Array.ofFn fun v : Fin n =>
@@ -202,7 +259,11 @@ def roundTab (s : Array (Option (Fin n)) × Array M) : Array (Option (Fin n)) ×
       | none => s.2.getD v 0
       | some u => s.2.getD v 0 + s.2.getD u 0)
 
-/-- The arrays after `t` rounds. -/
+/-- **Arrays after $t$ rounds of pointer jumping for suffix sums.** Given a partial successor
+function $\mathrm{succ}$ on nodes $0, \dots, n-1$ and values $x_v$ in an additive monoid $M$,
+the pair of arrays after $0$ rounds stores the pointers $\mathrm{succ}(v)$ and the sums $x_v$,
+and the pair after $t + 1$ rounds is one round of pointer jumping on arrays applied to the pair
+after $t$ rounds. -/
 def roundsTab (succ : Fin n → Option (Fin n)) (x : Fin n → M) :
     ℕ → Array (Option (Fin n)) × Array M
   | 0 => tabulate (init succ x)
@@ -220,8 +281,13 @@ theorem roundsTab_eq (succ : Fin n → Option (Fin n)) (x : Fin n → M) :
   | 0 => rfl
   | t + 1 => by rw [roundsTab, roundsTab_eq succ x t, roundTab_tabulate]; rfl
 
-/-- Suffix sums by pointer jumping: `⌈log₂ n⌉` rounds (`Nat.clog 2 n`) on arrays, returning the
-whole table (entry `v` is the suffix sum of node `v`). -/
+/-- **Suffix sums by pointer jumping on arrays.** Given a partial successor function
+$\mathrm{succ}$ on nodes $0, \dots, n-1$ and values $x_v$ in an additive monoid $M$, this is
+the array of sums obtained after $\lceil \log_2 n \rceil$ rounds (the least $k$ with
+$n \le 2^k$) of pointer jumping on arrays, starting from the pointers $\mathrm{succ}(v)$ and the
+sums $x_v$.
+
+When every list ends, entry $v$ is the suffix sum of node $v$. -/
 def listSums (succ : Fin n → Option (Fin n)) (x : Fin n → M) : Array M :=
   (roundsTab succ x (Nat.clog 2 n)).2
 
@@ -229,7 +295,12 @@ theorem size_listSums (succ : Fin n → Option (Fin n)) (x : Fin n → M) :
     (listSums succ x).size = n := by
   rw [listSums, roundsTab_eq, tabulate, Array.size_ofFn]
 
-/-- **Pointer jumping computes all suffix sums in `⌈log₂ n⌉` rounds.** -/
+/-- **Pointer jumping computes all suffix sums in $\lceil \log_2 n \rceil$ rounds.** Let
+$\mathrm{succ}$ be a partial successor function on nodes $0, \dots, n-1$ under which every list
+ends, that is, from every node, the node reached in $n$ steps along $\mathrm{succ}$ is undefined,
+and let $x_v$ be values in an additive monoid $M$. Then for every node $v$, entry $v$ of the
+array of sums computed by $\lceil \log_2 n \rceil$ rounds of pointer jumping on arrays is the
+suffix sum of $v$: the sum, in list order, of the values from $v$ to the end of its list. -/
 theorem listSums_getD (hs : Terminates succ) (v : Fin n) :
     (listSums succ x).getD v 0 = suffixSum succ x v := by
   rw [listSums, roundsTab_eq, tabulate, getD_ofFn]

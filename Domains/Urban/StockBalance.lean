@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Combinatorics.Graph.ArcNetwork
-public import MathlibExt.Economics.Macro.StockFlow
+public import Domains.Economics.Macro.StockFlow
 
 /-!
 # Urban stock totals from the shared inventory balance
@@ -46,7 +46,7 @@ certificate and is not part of this identity.
 
 - `MathlibExt.Combinatorics.Graph.ArcNetwork` for the shared
   stock-level balance.
-- `MathlibExt.Economics.Macro.StockFlow` for the scalar
+- `Domains.Economics.Macro.StockFlow` for the scalar
   multi-period telescoping.
 -/
 

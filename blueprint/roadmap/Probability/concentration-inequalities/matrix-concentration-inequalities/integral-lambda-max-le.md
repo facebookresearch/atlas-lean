@@ -8,7 +8,7 @@ The proof applies Jensen's inequality to the exponential, $e^{\theta\,\mathbb{E}
 
 ## Informally uses
 
-- [Trace exponential dominates the top eigenvalue](../../../LinearAlgebra/eigenvalues-and-canonical-forms/eigenvalues-and-spectral-norm-of-hermitian-matri/exp-mul-lambda-max-le-re-trace-exp.md): the matrix step $e^{\theta\lambda_{\max}(Y)} \le \operatorname{tr} e^{\theta Y}$.
+- [Trace exponential dominates the top eigenvalue](../../../LinearAlgebra/eigenvalues-and-canonical-forms/eigenvalues-and-spectral-norm-of-hermitian-matri/trace-exponential/exp-mul-lambda-max-le-re-trace-exp.md): the matrix step $e^{\theta\lambda_{\max}(Y)} \le \operatorname{tr} e^{\theta Y}$.
 
 ## Sources
 

@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "WantedExt/CategoryTheory/FundamentalToposWanted.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "8e864a9407b4efa0a05830882df48468f20cc0e7a2831dea0f446c3333d758b6", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #992)", "upstream_sha256": "2c6635ac0322262f80a758e0b3e3ce4f7160b99e99331e2b03e0af721969e9e6"}
+  ]
+}

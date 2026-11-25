@@ -16,17 +16,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Christian Axler's upper bound for the `n`th prime (statement only).
-
-For one-indexed `n ≥ 46254381`, with `pₙ` the `n`th prime,
-`pₙ < n * (log n + log log n - 1 + (log log n - 2) / log n -
-  ((log log n) ^ 2 - 6 * log log n + 10.667) / (2 * (log n) ^ 2))`.
-
-Mathlib's `Nat.nth Nat.Prime` is zero-indexed, so `Nat.nth Nat.Prime (n - 1)`
-is the source's one-indexed `pₙ`; the lower bound on `n` makes this
-subtraction safe. The decimal `10.667` is kept exact as Lean's decimal
-rational literal coerced to `ℝ`. This exact refinement is due to
-Christian Axler, not to Rosser–Schoenfeld.
+/-- **Axler's upper bound for the $n$th prime.** For every integer $n \ge 46254381$, the $n$th
+prime $p_n$ (so that $p_1 = 2$) satisfies
+$p_n < n \left(\log n + \log\log n - 1 + \frac{\log\log n - 2}{\log n} -
+\frac{(\log\log n)^2 - 6 \log\log n + 10.667}{2 \log^2 n}\right)$.
 
 Source: Christian Axler, "New Estimates for the nth Prime Number,"
 Journal of Integer Sequences 22 (2019), Article 19.4.2, Theorem `thm101`,

@@ -1,0 +1,161 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.AF.StageMatrix
+public import MathlibExt.Analysis.CStarAlgebra.Projection.Near
+public import Mathlib.Analysis.CStarAlgebra.Hom
+import Mathlib.Tactic.Module
+import Mathlib.Tactic.NoncommRing
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+
+/-!
+# Actual finite-stage projection approximation
+
+Every matrix projection over the original nonunital coefficient algebra
+is approximated by actual matrix projection DATA in one stage of its
+increasing dense closed C-star exhaustion. Matrix norms and star maps
+are the inherited original ones. No projection-lift or K0 comparison is
+an input field or hypothesis.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open Set
+open scoped CStarAlgebra
+
+namespace CStarAlgebra
+
+universe uA uB uN
+
+private theorem norm_defect_le_of_near_projection
+    {A : Type uA} [NonUnitalCStarAlgebra A] (a : A) (p : StarProjection A) :
+    ‖a * a - a‖ ≤ ‖a - (p : A)‖ * (‖a - (p : A)‖ + 3) := by
+  let d := a - (p : A)
+  have hid : (p : A) * (p : A) = (p : A) := p.property.isIdempotentElem.eq
+  have heq : a * a - a = a * d + d * (p : A) - d := by
+    dsimp only [d]
+    noncomm_ring [hid]
+  have hp : ‖(p : A)‖ ≤ 1 := p.property.norm_le
+  have ha : ‖a‖ ≤ ‖d‖ + 1 := by
+    calc
+      ‖a‖ = ‖d + (p : A)‖ := by simp only [d, sub_add_cancel]
+      _ ≤ ‖d‖ + ‖(p : A)‖ := norm_add_le _ _
+      _ ≤ ‖d‖ + 1 := add_le_add le_rfl hp
+  calc
+    ‖a * a - a‖ = ‖a * d + d * (p : A) - d‖ := by rw [heq]
+    _ ≤ ‖a * d‖ + ‖d * (p : A)‖ + ‖d‖ :=
+      (norm_sub_le _ _).trans (add_le_add (norm_add_le _ _) le_rfl)
+    _ ≤ ‖a‖ * ‖d‖ + ‖d‖ * ‖(p : A)‖ + ‖d‖ := by
+      gcongr <;> exact norm_mul_le _ _
+    _ ≤ (‖d‖ + 1) * ‖d‖ + ‖d‖ * 1 + ‖d‖ := by
+      gcongr
+    _ = ‖a - (p : A)‖ * (‖a - (p : A)‖ + 3) := by
+      dsimp only [d]
+      ring
+
+private theorem norm_symmetrize_map_sub_projection_le
+    {B : Type uB} [NonUnitalCStarAlgebra B]
+    {A : Type uA} [NonUnitalCStarAlgebra A]
+    (ι : B →⋆ₙₐ[ℂ] A) (x : B) (p : StarProjection A) :
+    ‖ι ((1 / 2 : ℂ) • (x + star x)) - (p : A)‖ ≤ ‖ι x - (p : A)‖ := by
+  have hpstar : star (p : A) = (p : A) := p.property.isSelfAdjoint.star_eq
+  have heq : ι ((1 / 2 : ℂ) • (x + star x)) - (p : A) =
+      (1 / 2 : ℂ) • ((ι x - (p : A)) + star (ι x - (p : A))) := by
+    rw [map_smul, map_add, map_star, star_sub, hpstar]
+    module
+  rw [heq, norm_smul]
+  calc
+    ‖(1 / 2 : ℂ)‖ * ‖(ι x - (p : A)) + star (ι x - (p : A))‖ ≤
+        ‖(1 / 2 : ℂ)‖ * (‖ι x - (p : A)‖ + ‖star (ι x - (p : A))‖) :=
+      mul_le_mul_of_nonneg_left (norm_add_le _ _) (norm_nonneg _)
+    _ = ‖ι x - (p : A)‖ := by rw [norm_star]; norm_num; ring
+
+variable {A : Type uA} [NonUnitalCStarAlgebra A]
+variable {n : Type uN} [Fintype n]
+
+/-- A projection over the original algebra is approximated by an actual
+projection in one original closed stage, under its inherited matrix norm. -/
+theorem exists_stage_projection_near
+    (stage : ℕ → NonUnitalStarSubalgebra ℂ A)
+    [∀ k, IsClosed (stage k : Set A)] (hmono : Monotone stage)
+    (hdense : Dense (⋃ k, (stage k : Set A)))
+    (p : StarProjection (CStarMatrix n n A)) (ε : ℝ) (hε : 0 < ε) :
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+    ∃ k : ℕ, ∃ q : StarProjection (CStarMatrix n n (stage k)),
+      ‖(p : CStarMatrix n n A) -
+        CStarMatrix.mapₙₐ (NonUnitalStarSubalgebraClass.subtype (stage k)) (q : CStarMatrix n n (stage k))‖ < ε := by
+  classical
+  letI : PartialOrder A := CStarAlgebra.spectralOrder A
+  letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let : ∀ k, NonUnitalCStarAlgebra (stage k) := fun k =>
+    NonUnitalStarSubalgebra.nonUnitalCStarAlgebra (stage k)
+  let δ := min (ε / 16) (1 / 100 : ℝ)
+  have hδ : 0 < δ := lt_min (by positivity) (by norm_num)
+  have hδsmall : δ ≤ 1 / 100 := min_le_right _ _
+  have hδε : δ ≤ ε / 16 := min_le_left _ _
+  obtain ⟨k, x, hx⟩ := exists_stage_matrix_near stage hmono hdense
+    (p : CStarMatrix n n A) δ hδ
+  have hxₙₐ : ‖(p : CStarMatrix n n A) -
+      CStarMatrix.mapₙₐ (NonUnitalStarSubalgebraClass.subtype (stage k)) x‖ < δ := by
+    simpa only [CStarMatrix.mapₙₐ_apply, CStarMatrix.mapₗ_apply] using hx
+  let : PartialOrder (stage k) := CStarAlgebra.spectralOrder (stage k)
+  let : StarOrderedRing (stage k) := CStarAlgebra.spectralOrderedRing (stage k)
+  let ι : CStarMatrix n n (stage k) →⋆ₙₐ[ℂ] CStarMatrix n n A :=
+    CStarMatrix.mapₙₐ (NonUnitalStarSubalgebraClass.subtype (stage k))
+  have hιinj : Function.Injective ι := by
+    intro x y hxy
+    apply CStarMatrix.ext
+    intro i j
+    apply Subtype.ext
+    exact congrArg (fun z : CStarMatrix n n A => z i j) hxy
+  have hι : Isometry ι := NonUnitalStarAlgHom.isometry ι hιinj
+  let a : CStarMatrix n n (stage k) := (1 / 2 : ℂ) • (x + star x)
+  have ha : IsSelfAdjoint a := by
+    change star a = a
+    simp [a, star_smul, star_add, add_comm]
+  let d : ℝ := ‖ι a - (p : CStarMatrix n n A)‖
+  have hd : d < δ := by
+    apply (norm_symmetrize_map_sub_projection_le ι x p).trans_lt
+    simpa only [norm_sub_rev] using hxₙₐ
+  have hd0 : 0 ≤ d := norm_nonneg _
+  have hnormdef : ‖a * a - a‖ ≤ d * (d + 3) := by
+    have hm : ‖ι (a * a - a)‖ = ‖a * a - a‖ := by
+      simpa only [map_zero, dist_zero_right] using hι.dist_eq (a * a - a) 0
+    rw [← hm, map_sub, map_mul]
+    exact norm_defect_le_of_near_projection (ι a) p
+  have hdef : ‖a * a - a‖ < 1 / 4 := by
+    have hdsmall : d < 1 / 100 := hd.trans_le hδsmall
+    nlinarith
+  let q := correctedProjection a ha hdef
+  refine ⟨k, q, ?_⟩
+  have hnormq : ‖ι (q : CStarMatrix n n (stage k)) - ι a‖ =
+      ‖(q : CStarMatrix n n (stage k)) - a‖ := by
+    rw [← map_sub]
+    simpa only [map_zero, dist_zero_right] using hι.dist_eq ((q : CStarMatrix n n (stage k)) - a) 0
+  have hq : ‖(q : CStarMatrix n n (stage k)) - a‖ ≤ 2 * ‖a * a - a‖ :=
+    norm_correctedProjectionValue_sub_le a ha hdef
+  have hpdist : ‖(p : CStarMatrix n n A) - ι a‖ = d := by
+    exact norm_sub_rev _ _
+  have hqdist : ‖ι a - ι (q : CStarMatrix n n (stage k))‖ =
+      ‖(q : CStarMatrix n n (stage k)) - a‖ :=
+    (norm_sub_rev _ _).trans hnormq
+  have hbound : ‖(p : CStarMatrix n n A) - ι (q : CStarMatrix n n (stage k))‖ ≤
+      2 * (d * (d + 3)) + d := by
+    calc
+      _ ≤ ‖(p : CStarMatrix n n A) - ι a‖ + ‖ι a - ι (q : CStarMatrix n n (stage k))‖ :=
+        norm_sub_le_norm_sub_add_norm_sub _ _ _
+      _ = d + ‖(q : CStarMatrix n n (stage k)) - a‖ := by
+        rw [hpdist, hqdist]
+      _ ≤ d + 2 * ‖a * a - a‖ := add_le_add le_rfl hq
+      _ ≤ 2 * (d * (d + 3)) + d := by nlinarith
+  have hdsmall : d < 1 / 100 := hd.trans_le hδsmall
+  exact hbound.trans_lt (by nlinarith)
+
+end CStarAlgebra

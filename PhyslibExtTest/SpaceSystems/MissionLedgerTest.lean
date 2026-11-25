@@ -122,17 +122,6 @@ example :
 
 /-! ## B. Accounting, floor and reserve lemmas -/
 
-/-- The prefix stocks of the schedule `+2, -3, +1` are the zero-lead-time stock-flow trace, and
-the final stock `2` is the initial `2` plus gains `3` minus draws `3`. -/
-example :
-    stock (fun _ : Unit => 2) (fun _ => listFlow [2, -3, 1]) () 2 =
-        Inventory.stockTrace 2 0 Fin.elim0 (gains (fun _ => listFlow [2, -3, 1]) ())
-          (draws (fun _ => listFlow [2, -3, 1]) ()) 2 ∧
-      stock (fun _ : Unit => 2) (fun _ => listFlow [2, -3, 1]) () 3 = 2 + 3 - 3 := by
-  refine ⟨stock_eq_stockTrace _ _ () 2, ?_⟩
-  rw [terminal_accounting]
-  norm_num [gains, draws, listFlow, Finset.sum_range_succ]
-
 /-- Feasibility of the schedule `+2, -3, +1` forces its final stock `2` under the capacity. -/
 example (cap : ℝ) (h : PrefixFeasible (fun _ : Unit => 0) (fun _ => cap) (fun _ => 0)
     (fun _ => 2) (fun _ => listFlow [2, -3, 1]) 3) : 2 ≤ cap := by

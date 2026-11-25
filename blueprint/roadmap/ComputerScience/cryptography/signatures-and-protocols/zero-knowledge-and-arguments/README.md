@@ -1,0 +1,16 @@
+# Interactive arguments and arguments of knowledge
+
+- [Interactive arguments](interactive-arguments.md)
+- [Knowledge soundness](knowledge-soundness.md)
+- [Succinct arguments and SNARKs](succinct-arguments-and-snarks.md)
+- [AND and OR composition of Sigma protocols](and-and-or-composition-of-sigma-protocols.md)
+- [Security of the Fiat–Shamir transform](security-of-the-fiatshamir-transform.md)
+- [The rewinding lemma](the-rewinding-lemma.md)
+- [Schnorr identification is secure against direct attacks](schnorr-identification-is-secure-against-direct.md)
+- [Security of KZG polynomial commitments](security-of-kzg-polynomial-commitments.md)
+- [Polynomial commitment schemes](polynomial-commitment-schemes.md)
+- [Security of Schnorr signatures in the random oracle model](security-of-schnorr-signatures-in-the-random.md)
+- [Soundness of the graph 3-coloring protocol](soundness-of-the-graph-3-coloring-protocol.md)
+- [Succinct arguments from probabilistically checkable proofs](succinct-arguments-from-probabilistically.md)
+- [Zero knowledge of the graph 3-coloring protocol](zero-knowledge-of-the-graph-3-coloring-protocol.md)
+- [Zero-knowledge interactive proofs](zero-knowledge-interactive-proofs.md)

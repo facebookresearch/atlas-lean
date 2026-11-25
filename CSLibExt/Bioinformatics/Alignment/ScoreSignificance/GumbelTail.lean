@@ -362,8 +362,8 @@ theorem tendsto_real_le_of_tendsto [IsProbabilityMeasure P] (I : LadderInput P M
 
 /-- **Gumbel limit, nonlattice case** (Iglehart 1972; Karlin–Dembo 1992, Theorem 1).
 
-If the excursion heights have the exponential tail `P(Y > t) ~ C e^{-θ t}` given by the
-renewal theorem in the nonlattice case, then for every `x`,
+If `θ > 0` and the excursion heights have the exponential tail `P(Y > t) ~ C e^{-θ t}` given by
+the renewal theorem in the nonlattice case, then for every `x`,
 `P(Mₙ ≤ log n / θ + x) → exp (-K e^{-θ x})` with `K = C / A`. -/
 theorem tendsto_real_le_log_div_add [IsProbabilityMeasure P] (I : LadderInput P M) {θ C : ℝ}
     (hθ : 0 < θ) (htail : Tendsto (fun t => (1 - I.F t) * Real.exp (θ * t)) atTop (𝓝 C))
@@ -387,8 +387,8 @@ theorem tendsto_real_le_log_div_add [IsProbabilityMeasure P] (I : LadderInput P 
 
 /-! ### Lattice case -/
 
-/-- If the excursion heights lie on the lattice `hℤ`, their distribution function is constant on
-each cell `[k h, (k + 1) h)`. -/
+/-- If the excursion heights lie on the lattice `hℤ` (`h > 0`), their distribution function is
+constant on each cell `[k h, (k + 1) h)`. -/
 theorem F_eq_F_floor_mul [IsProbabilityMeasure P] (I : LadderInput P M) {h : ℝ} (hh : 0 < h)
     (hlat : ∀ i, ∀ᵐ ω ∂P, ∃ k : ℤ, I.Y i ω = k * h) (t : ℝ) :
     I.F t = I.F (⌊t / h⌋ * h) := by
@@ -396,9 +396,9 @@ theorem F_eq_F_floor_mul [IsProbabilityMeasure P] (I : LadderInput P M) {h : ℝ
   congr 1
   refine measure_congr ?_
   filter_upwards [hlat 0] with ω ⟨k, hk⟩
-  change (I.Y 0 ω ≤ t) = (I.Y 0 ω ≤ ⌊t / h⌋ * h)
+  change (I.Y 0 ω ≤ t) ↔ (I.Y 0 ω ≤ ⌊t / h⌋ * h)
   rw [hk]
-  refine propext ⟨fun hkt => ?_, fun hkt => hkt.trans ?_⟩
+  refine ⟨fun hkt => ?_, fun hkt => hkt.trans ?_⟩
   · have h1 : (k : ℝ) ≤ t / h := (le_div_iff₀ hh).2 hkt
     have h2 : k ≤ ⌊t / h⌋ := Int.le_floor.2 h1
     exact mul_le_mul_of_nonneg_right (by exact_mod_cast h2) hh.le
@@ -471,9 +471,9 @@ private theorem lattice_bounds_along [IsProbabilityMeasure P] (I : LadderInput P
 
 /-- **Lattice case: liminf/limsup bounds** (Karlin–Dembo 1992, Theorem 1, lattice case).
 
-If the excursion heights lie on the lattice `hℤ` and the lattice renewal theorem gives
-`P(Y > k h) = P(Y ≥ (k + 1) h) ~ C e^{-θ (k + 1) h}`, then with `K = C / A`, for every `ε > 0`,
-eventually
+If the excursion heights lie on the lattice `hℤ` (`h > 0`) and the lattice renewal theorem gives
+`P(Y > k h) = P(Y ≥ (k + 1) h) ~ C e^{-θ (k + 1) h}` (`θ > 0`), then with `K = C / A`, for every
+`ε > 0`, eventually
 `exp (-K e^{-θ x}) - ε ≤ P(Mₙ ≤ log n / θ + x) ≤ exp (-K e^{-θ (x + h)}) + ε`,
 that is, `liminf ≥ exp (-K e^{-θ x})` and `limsup ≤ exp (-K e^{-θ (x + h)})`. -/
 theorem eventually_lattice_bounds [IsProbabilityMeasure P] (I : LadderInput P M)
@@ -543,7 +543,8 @@ private theorem frequently_fract_log {θ h : ℝ} (hθ : 0 < θ) (hh : 0 < h) (x
     refine this.congr fun n => ?_
     push_cast; field_simp; ring
 
-/-- **Lattice case: the liminf is approached.** For every `ε > 0`, infinitely often
+/-- **Lattice case: the liminf is approached.** If the excursion heights lie on `hℤ` (`h > 0`) and
+`P(Y > k h) ~ C e^{-θ (k + 1) h}` (`θ > 0`), then for every `ε > 0`, infinitely often
 `P(Mₙ ≤ log n / θ + x) ≤ exp (-K e^{-θ x}) + ε` (`K = C / A`). -/
 theorem frequently_lattice_le [IsProbabilityMeasure P] (I : LadderInput P M)
     {θ h C : ℝ} (hθ : 0 < θ) (hh : 0 < h) (hlat : ∀ i, ∀ᵐ ω ∂P, ∃ k : ℤ, I.Y i ω = k * h)
@@ -577,7 +578,8 @@ theorem frequently_lattice_le [IsProbabilityMeasure P] (I : LadderInput P M)
   rw [e] at this
   linarith
 
-/-- **Lattice case: the limsup is approached.** For every `ε > 0`, infinitely often
+/-- **Lattice case: the limsup is approached.** If the excursion heights lie on `hℤ` (`h > 0`) and
+`P(Y > k h) ~ C e^{-θ (k + 1) h}` (`θ > 0`), then for every `ε > 0`, infinitely often
 `exp (-K e^{-θ (x + h)}) - ε ≤ P(Mₙ ≤ log n / θ + x)` (`K = C / A`). -/
 theorem frequently_le_lattice [IsProbabilityMeasure P] (I : LadderInput P M)
     {θ h C : ℝ} (hθ : 0 < θ) (hh : 0 < h) (hlat : ∀ i, ∀ᵐ ω ∂P, ∃ k : ℤ, I.Y i ω = k * h)
@@ -613,7 +615,8 @@ theorem frequently_le_lattice [IsProbabilityMeasure P] (I : LadderInput P M)
   rw [e] at this
   linarith
 
-/-- **Lattice case: no Gumbel limit.** If `C > 0`, `P(Mₙ ≤ log n / θ + x)` does not converge:
+/-- **Lattice case: no Gumbel limit.** If the excursion heights lie on `hℤ` (`h > 0`),
+`P(Y > k h) ~ C e^{-θ (k + 1) h}` (`θ > 0`) and `C > 0`, `P(Mₙ ≤ log n / θ + x)` does not converge:
 its liminf `exp (-K e^{-θ x})` and limsup `exp (-K e^{-θ (x + h)})` differ. -/
 theorem not_tendsto_lattice [IsProbabilityMeasure P] (I : LadderInput P M)
     {θ h C : ℝ} (hθ : 0 < θ) (hh : 0 < h) (hC : 0 < C)
@@ -672,13 +675,10 @@ noncomputable abbrev maxSegmentScoreRV (X : ℕ → Ω → ℝ) (n : ℕ) (ω : 
 /-- **Renewal input, nonlattice case.** Cramér conditions on nonlattice i.i.d. scores, together
 with the two inputs that renewal theory supplies and that are taken here as hypotheses: the
 ladder decomposition of the maximal segment score (`ladder`) and the nonlattice renewal tail
-`P(Y > t) ~ C e^{-θ t}` of the excursion heights (`tendsto_tail`). The fields `cramer` and
-`nonlattice` record the setting in which renewal theory provides `ladder` and `tendsto_tail`;
-the limit theorem uses only the latter two.
-
-No instance of this structure (or of `LatticeRenewalInput`) is constructed here: that would
-require deriving the ladder input from the scores. Non-vacuity is shown only for `LadderInput`,
-in the test file. -/
+`P(Y > t) ~ C e^{-θ t}` of the excursion heights (`tendsto_tail`). The limit theorem uses
+`ladder`, `tendsto_tail` and `θ > 0` from `cramer` (the calibration results also use the
+measurability of the scores); `nonlattice` records the setting in which renewal theory provides
+the tail and is not used. -/
 structure NonlatticeRenewalInput (P : Measure Ω) (X : ℕ → Ω → ℝ) where
   /-- The Cramér root. -/
   θ : ℝ
@@ -709,8 +709,9 @@ theorem NonlatticeRenewalInput.tendsto_gumbel {P : Measure Ω} [IsProbabilityMea
 /-- **Renewal input, lattice case** with span `h`: Cramér conditions on i.i.d. scores supported
 on `hℤ`, the ladder decomposition of the maximal segment score with excursion heights on `hℤ`
 (`ladder`, `lattice_Y`), and the lattice renewal tail `P(Y ≥ (k + 1) h) ~ C e^{-θ (k + 1) h}`
-(`tendsto_tail`). As in `NonlatticeRenewalInput`, `cramer` and `lattice` record the setting;
-the limit theorems use the remaining fields. -/
+(`tendsto_tail`). The limit theorems use `ladder`, `lattice_Y`, `tendsto_tail`, `h_pos` and
+`θ > 0` from `cramer` (the calibration result also the measurability of the scores); `lattice`
+records the setting and is not used. -/
 structure LatticeRenewalInput (P : Measure Ω) (X : ℕ → Ω → ℝ) where
   /-- The Cramér root. -/
   θ : ℝ

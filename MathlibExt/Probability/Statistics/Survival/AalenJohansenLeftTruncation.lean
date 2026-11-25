@@ -123,7 +123,7 @@ theorem orderedProd_apply_of_row_eq_zero : ∀ {k : ℕ} (A : Fin k → Matrix �
   | k + 1, A, act, _, h, hA => fun l => by
     have ih := orderedProd_apply_of_row_eq_zero (fun i : Fin k => A i.castSucc)
       (fun i => act i.castSucc) h fun j hj => hA _ hj
-    rw [orderedProd_succ, mul_apply, sum_eq_single h
+    rw [orderedProd_succ, Matrix.mul_apply, sum_eq_single h
       (fun x _ hx => by rw [ih x, one_apply_ne (Ne.symm hx), zero_mul])
       (fun hh => absurd (mem_univ h) hh), ih h, one_apply_eq, one_mul]
     split_ifs with hl
@@ -485,7 +485,7 @@ theorem transitionMatrix_none_some (s t : ℝ) (c : Fin r) :
   refine sum_congr rfl fun j _ => ?_
   rw [apply_ite (fun M : Matrix _ _ ℝ => M none (some c)), Matrix.zero_apply]
   refine if_congr Iff.rfl ?_ rfl
-  rw [mul_apply, Fintype.sum_option,
+  rw [Matrix.mul_apply, Fintype.sum_option,
     sum_eq_zero fun c' _ => by rw [naIncrement_some, mul_zero], add_zero, jumpProdLT,
     (CompetingRiskData.orderedProd_none_none _ _ (noReturn_naIncrement E cause)).2,
     naIncrement_none_some, prod_filter]

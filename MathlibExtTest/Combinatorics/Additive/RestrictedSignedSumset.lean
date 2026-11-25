@@ -41,3 +41,38 @@ example : (1 : ℤ) ∈ restrictedSignedSumset 2 ({2, 3} : Finset ℤ) := by
     rcases ha with rfl | rfl <;> simp
   · decide
   · decide
+
+private def consecutive (k : ℕ) (i : Fin k) : ℤ := (i.val : ℤ) + 1
+
+private theorem consecutive_strictMono (k : ℕ) : StrictMono (consecutive k) := by
+  intro i j hij
+  change i.val < j.val at hij
+  unfold consecutive
+  omega
+
+private theorem consecutive_pos (k : ℕ) (i : Fin k) : 0 < consecutive k i := by
+  unfold consecutive
+  omega
+
+-- No terms appended: the lower bound retains the surplus of three on `{1, 2, 3, 4}`.
+example : 19 ≤ ((restrictedSignedSumset 3 (orderedFinset (consecutive 4))).card : ℤ) :=
+  card_restrictedSignedSumset_ge_of_initialSegment 3 4 (by decide) (by decide)
+    (consecutive 4) 3 (consecutive_strictMono 4) (consecutive_pos 4) (by decide) (by decide +kernel)
+
+-- Two extension steps retain that same surplus.
+example : 31 ≤ ((restrictedSignedSumset 3 (orderedFinset (consecutive 6))).card : ℤ) :=
+  card_restrictedSignedSumset_ge_of_initialSegment 3 6 (by decide) (by decide)
+    (consecutive 6) 3 (consecutive_strictMono 6) (consecutive_pos 6) (by decide) (by decide +kernel)
+
+-- A single extension of the first four odd terms attains the lower bound with `t = 0`.
+example : 22 ≤ ((restrictedSignedSumset 3
+    (orderedFinset fun i : Fin 5 => 2 * (i.val : ℤ) + 1)).card : ℤ) := by
+  apply card_restrictedSignedSumset_ge_of_initialSegment 3 5 (by decide) (by decide) _ 0
+  · intro i j hij
+    change i.val < j.val at hij
+    change 2 * (i.val : ℤ) + 1 < 2 * (j.val : ℤ) + 1
+    omega
+  · intro i
+    omega
+  · decide
+  · decide +kernel

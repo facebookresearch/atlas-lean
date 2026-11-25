@@ -16,14 +16,14 @@ universe u v
 
 /-- The source statement, with its original binders, restated on the dual
 module and the cotangent space at the counit. -/
-theorem exactSource (k : Type u) [Field k] (A : Type v) [CommRing A]
+private theorem exactSource (k : Type u) [Field k] (A : Type v) [CommRing A]
     [HopfAlgebra k A] [Coalgebra.IsCocomm k A] [Module.Finite k A] :
     Module.finrank k ↥(dualPrimitives k A)
       = Module.finrank k (cotangentSpaceAtCounit k A) :=
   finrank_dualPrimitives_eq_finrank_cotangentSpaceAtCounit k A
 
 /-- A higher-universe consumer of the source statement. -/
-theorem exactSourceUniverse (k : Type u) [Field k] (A : Type (v + 1)) [CommRing A]
+private theorem exactSourceUniverse (k : Type u) [Field k] (A : Type (v + 1)) [CommRing A]
     [HopfAlgebra k A] [Coalgebra.IsCocomm k A] [Module.Finite k A] :
     Module.finrank k ↥(dualPrimitives k A)
       = Module.finrank k (cotangentSpaceAtCounit k A) :=

@@ -35,9 +35,23 @@ Clause list (every hypothesis, side condition, and quantifier domain in the sour
    in the source, since resolved (see the entry metadata); no proof in this repository.
 -/
 
-/-- Automatic-group property for Question 7.3 [AMR-109-0302] (Farb - Problems on Mapping Class Groups and Related Topics, Question 7.3, PDF p. 339, https://www.math.uchicago.edu/~farb/papers/mcgbook.pdf): finite alphabet closed under inversion with evaluation into `G`, a regular language of words recognized by a finite-state automaton, surjection onto `G`, and fellow-traveler bounds for equal and generator-adjacent words.
+/-- **Automatic group.** A group $G$ is automatic if there are a finite alphabet $A$, an
+involution $\iota$ of $A$, a map $\mathrm{ev} \colon A \to G$ with
+$\mathrm{ev}(\iota(a)) = \mathrm{ev}(a)^{-1}$ for all $a \in A$, a language $L$ of words over $A$
+that is exactly the set of words accepted by some deterministic finite automaton, and a natural
+number $k$ with the following properties. Write $\overline{w} \in G$ for the product of the
+images under $\mathrm{ev}$ of the letters of a word $w$, and $w(t)$ for the prefix of $w$ of
+length $t$ (all of $w$ if $t$ exceeds its length). Every element of $G$ equals $\overline{w}$ for
+some $w \in L$. For all $u, v \in L$ such that $\overline{u} = \overline{v}$, or
+$\overline{u}\,\mathrm{ev}(a) = \overline{v}$ for some letter $a$, and for every $t \in \mathbb{N}$,
+the element $\overline{u(t)}^{-1}\,\overline{v(t)}$ equals $\overline{w}$ for some word $w$ of
+length at most $k$.
+
 This is the fellow-traveller characterization of automatic groups (Epstein et al., Word
-Processing in Groups, Theorem 2.3.5). -/
+Processing in Groups, Theorem 2.3.5).
+
+Source: Question 7.3 [AMR-109-0302], Farb - Problems on Mapping Class Groups and Related Topics,
+PDF p. 339, https://www.math.uchicago.edu/~farb/papers/mcgbook.pdf. -/
 def IsAutomaticGroup (G : Type*) [Group G] : Prop :=
   ∃ (A : Type) (_ : Fintype A) (inv : A → A),
     (∀ a, inv (inv a) = a) ∧
@@ -65,15 +79,25 @@ def IsAutomaticGroup (G : Type*) [Group G] : Prop :=
                   List.prod (List.map eval (List.take t v)) =
                   List.prod (List.map eval w)
 
-/-- Question 7.3 [AMR-109-0302] (Farb - Problems on Mapping Class Groups and Related Topics, Question 7.3, PDF p. 339, https://www.math.uchicago.edu/~farb/papers/mcgbook.pdf): is `Aut(Fn)` automatic for `n > 3`, where `Fn = FreeGroup (Fin n)` and `Aut(Fn)` is `MulAut (FreeGroup (Fin n))`? Stated as an open universal implication; proved by nothing. -/
+/-- **Automaticity of automorphism groups of free groups (Farb's Question 7.3).** The statement
+that for every natural number $n > 3$ the automorphism group $\mathrm{Aut}(F_n)$ of the free group
+$F_n$ on $n$ generators is an automatic group.
+
+Source: Question 7.3 [AMR-109-0302], Farb - Problems on Mapping Class Groups and Related Topics,
+PDF p. 339, https://www.math.uchicago.edu/~farb/papers/mcgbook.pdf. -/
 def conjecture : Prop :=
   ∀ n : ℕ, 3 < n → IsAutomaticGroup (MulAut (FreeGroup (Fin n)))
 
 /--
-Resolved false: Bridson and Vogtmann (Ann. Inst. Fourier 62 (2012), arXiv:1011.1506), with
-Handel-Mosher, proved that Aut(F_n) has exponential Dehn function for every n >= 3; automatic
-groups have quadratic Dehn functions (Epstein et al.), so Aut(F_n) is not automatic for any n >
-3. Source: M. R. Bridson, K. Vogtmann, The Dehn functions of Out(F_n) and Aut(F_n), Annales de
+**Negative answer to Farb's Question 7.3.** It is not the case that for every natural number
+$n > 3$ the automorphism group $\mathrm{Aut}(F_n)$ of the free group on $n$ generators is
+automatic.
+
+Bridson and Vogtmann, with Handel and Mosher, proved more: $\mathrm{Aut}(F_n)$ has exponential
+Dehn function for every $n \ge 3$, while automatic groups have at most quadratic Dehn functions
+(Epstein et al.), so $\mathrm{Aut}(F_n)$ is automatic for no $n \ge 3$.
+
+Source: M. R. Bridson, K. Vogtmann, The Dehn functions of Out(F_n) and Aut(F_n), Annales de
 l'Institut Fourier 62(5) (2012) 1811-1817, arXiv:1011.1506, https://arxiv.org/abs/1011.1506.
 Moved from `OpenConjectures/GroupTheory/AutFnAutomaticQuestion73`.
 -/
