@@ -13,3 +13,4 @@ Bayesian inference and nonparametric priors: the Dirichlet process and stick-bre
 - [Gamma–Poisson counts and empirical-Bayes shrinkage](gamma-poisson-counts-and-empirical-bayes-shrinka/README.md)
 
 - [The posterior predictive distribution](posterior-predictive-distribution.md)
+- [Bayesian filtering equations](bayesian-filtering-equations.md)
