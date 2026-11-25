@@ -1736,18 +1736,18 @@ private theorem invCoords_apply (p : Fin 2 → Fin 2 → 𝕜) (i j : Fin 2) :
 private theorem mulCoords_invCoords_self {p : Fin 2 → Fin 2 → 𝕜} (hp : p ∈ invertibleCoords 𝕜) :
     mulCoords 𝕜 (invCoords p) p = Matrix.of.symm 1 := by
   have h : IsUnit (Matrix.of p).det := isUnit_iff_ne_zero.2 hp
-  simp [invCoords, Matrix.nonsing_inv_mul _ h]
+  simp [invCoords, Matrix.nonsing_inv_mul _ h, -Matrix.symm_of]
 
 private theorem mulCoords_mulCoords_invCoords {p : Fin 2 → Fin 2 → 𝕜} (hp : p ∈ invertibleCoords 𝕜)
     (x : Fin 2 → Fin 2 → 𝕜) : mulCoords 𝕜 (mulCoords 𝕜 x p) (invCoords p) = x := by
   have h : IsUnit (Matrix.of p).det := isUnit_iff_ne_zero.2 hp
-  simp [invCoords, Matrix.mul_assoc, Matrix.mul_nonsing_inv _ h]
+  simp [invCoords, Matrix.mul_assoc, Matrix.mul_nonsing_inv _ h, -Matrix.symm_of]
 
 private theorem mulCoords_self_mulCoords_invCoords {p : Fin 2 → Fin 2 → 𝕜}
     (hp : p ∈ invertibleCoords 𝕜)
     (x : Fin 2 → Fin 2 → 𝕜) : mulCoords 𝕜 p (mulCoords 𝕜 (invCoords p) x) = x := by
   have h : IsUnit (Matrix.of p).det := isUnit_iff_ne_zero.2 hp
-  simp [invCoords, ← Matrix.mul_assoc, Matrix.mul_nonsing_inv _ h]
+  simp [invCoords, ← Matrix.mul_assoc, Matrix.mul_nonsing_inv _ h, -Matrix.symm_of]
 
 private theorem contDiffOn_det_inv :
     ContDiffOn ℝ (⊤ : ℕ∞) (fun p : Fin 2 → Fin 2 → 𝕜 => ((Matrix.of p).det)⁻¹)
@@ -1868,7 +1868,7 @@ private theorem rightDeriv_eq (X : Matrix (Fin 2) (Fin 2) 𝕜) (G : (Fin 2 → 
     rightDeriv X G = fun q => fderivWithin ℝ G (invertibleCoords 𝕜) q
         ((mulCoords 𝕜).flip (Matrix.of.symm X) q) := by
   funext q
-  simp [rightDeriv]
+  simp [rightDeriv, -Matrix.symm_of]
 
 private theorem contDiffOn_rightDeriv (X : Matrix (Fin 2) (Fin 2) 𝕜) {F : (Fin 2 → Fin 2 → 𝕜) → ℂ}
     (hF : ContDiffOn ℝ (⊤ : ℕ∞) F (invertibleCoords 𝕜)) :
@@ -1980,7 +1980,7 @@ private theorem fderivWithin_eq_sum {ι : Type} [Fintype ι] (E : ι → Matrix 
           (mulCoords 𝕜 p (∑ i, coord i (mulCoords 𝕜 (invCoords p) v) • Matrix.of.symm (E i))) := by
         rw [← hw, ← hv]
     _ = ∑ i, coord i (mulCoords 𝕜 (invCoords p) v) • rightDeriv (E i) F p := by
-        simp [map_sum, map_smul, rightDeriv]
+        simp [map_sum, map_smul, rightDeriv, -Matrix.symm_of]
     _ = _ := by simp
 
 private theorem contDiffOn_summand (c : (Fin 2 → Fin 2 → 𝕜) →L[ℝ] ℝ) (X : Matrix (Fin 2) (Fin 2) 𝕜)
@@ -2902,11 +2902,11 @@ private def leftMul (n : Matrix (Fin 2) (Fin 2) ℝ) : (Fin 2 → Fin 2 → ℝ)
 @[scoped simp] private theorem leftMul_apply (n : Matrix (Fin 2) (Fin 2) ℝ)
     (q : Fin 2 → Fin 2 → ℝ) :
     leftMul n q = Matrix.of.symm (n * Matrix.of q) := by
-  simp [leftMul]
+  simp [leftMul, -Matrix.symm_of]
 
 private theorem leftMul_of_symm (n g : Matrix (Fin 2) (Fin 2) ℝ) : leftMul n
     (Matrix.of.symm g) = Matrix.of.symm (n * g) := by
-  simp
+  simp [-Matrix.symm_of]
 
 private theorem leftMul_smul_one (z : ℝ) (q : Fin 2 → Fin 2 → ℝ) : leftMul
     (z • (1 : Matrix (Fin 2) (Fin 2) ℝ)) q = z • q := by
@@ -4246,7 +4246,8 @@ private theorem parts (a : ZMod 2) {f f' g : ℝ → ℂ} (hf : ∀ y : ℝ, y �
   have hgi_pos : IntegrableOn (fun y : ℝ => g y * (y : ℂ) ^ (w - 1)) (Ioi 0) :=
     hgi_on.congr_fun (fun y hy => by beta_reduce; rw [kernel_of_pos a w hy]) measurableSet_Ioi
   have h0_pos : Tendsto (fun y : ℝ => f y * (y : ℂ) ^ w) (𝓝[>] 0) (𝓝 0) := by
-    refine (h0.mono_left (nhdsWithin_mono _ fun y (hy : 0 < y) => hy.ne')).congr' ?_
+    refine (h0.mono_left (nhdsWithin_mono _ fun y (hy : y ∈ Ioi 0) =>
+      (mem_Ioi.mp hy).ne')).congr' ?_
     filter_upwards [self_mem_nhdsWithin] with y (hy : 0 < y)
     rw [abs_of_pos hy]
   have htop_pos : Tendsto (fun y : ℝ => f y * (y : ℂ) ^ w) atTop (𝓝 0) := by
@@ -4858,7 +4859,7 @@ private theorem level (m : ℕ) :
       (max (max (σI (0, 0)) (σI (0, 1))) (max (σI (1, 0)) (σI (1, 1)))))), fun σ hσ => ?_⟩
     have hσW' : σW ≤ σ := le_trans (by simp) hσ
     have hσL' : σL ≤ σ := le_trans (by simp) hσ
-    have hσu : 2 - u.re ≤ σ := le_trans (by simp) hσ
+    have hσu : 2 - u.re ≤ σ := le_trans (le_max_of_le_right (le_max_left _ _)) hσ
     have hσD' : ∀ ij, σD ij ≤ σ := fun ij => le_trans (le_trans (le_max_four σD ij) (by simp)) hσ
     have hσI' : ∀ ij, σI ij ≤ σ := fun ij => le_trans (le_trans (le_max_four σI ij) (by simp)) hσ
     obtain ⟨MW, hMW⟩ := hσW σ hσW'
