@@ -37,23 +37,10 @@ public import Mathlib.GroupTheory.GroupAction.FixingSubgroup
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.RepresentationTheory.Basic
-public import Mathlib.RingTheory.Valuation.RamificationGroup
+public import MathlibExt.AlgebraicGeometry.EllipticCurve.FrobeniusTrace
 public import MathlibExt.RingTheory.Valuation.LiesOverPrime
 
 @[expose] public section
-
-namespace ValuationSubring
-
-variable {L : Type*} [Field L]
-variable {K : Type*} [Field K] [Algebra K L]
-
-/-- `σ` is Frobenius at `q` for `A` when `σ` lies in the decomposition
-subgroup and acts on the residue field by `x ↦ x ^ q`. -/
-def IsFrobeniusAt (A : ValuationSubring L) (σ : L ≃ₐ[K] L) (q : ℕ) : Prop :=
-  ∃ hσ : σ ∈ A.decompositionSubgroup K,
-    ∀ x : IsLocalRing.ResidueField A, (⟨σ, hσ⟩ : A.decompositionSubgroup K) • x = x ^ q
-
-end ValuationSubring
 
 /-- Frobenius powers are dense modulo `H`: every `σ` agrees, up to
 conjugation and a power of a Frobenius element, with an element of `H`
@@ -333,7 +320,7 @@ private theorem coe_heckeTorsionRep_quadRel_apply {G : Type*} [Group G]
       : heckeTorsion J 𝔪) : J)
       = σ • σ • (x : J) - t • (σ • (x : J)) + d • (x : J) := by
   simp only [LinearMap.add_apply, LinearMap.sub_apply, LinearMap.smul_apply,
-    Module.End.mul_apply, Module.End.one_apply]
+    mul_apply_eq_comp, one_apply_eq_self]
   rw [Submodule.coe_add, AddSubgroupClass.coe_sub]
   have hterm1 : ((heckeTorsionRep (J := J) (𝔪) σ
       (heckeTorsionRep (J := J) (𝔪) σ x) : heckeTorsion J 𝔪) : J)
