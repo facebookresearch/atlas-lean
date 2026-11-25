@@ -78,25 +78,6 @@ public theorem_wanted generating_function_term_representation_mono_base
       (∑' k : ℕ, (t k : ℝ) * (((r : ℝ) ^ n)⁻¹) ^ k)) % r ^ n
 
 /--
-**Remainder of a remainder, negative residue case.** Let $a$, $A$, $B$ and $C$ be integers with
-$A > 0$, $B > 0$ and $C \ge 2$ such that $C$ divides $A$, $B$ does not divide $A$, $a < 0$ and
-$B \equiv a \pmod C$. Write $\lfloor A/B \rfloor$ for the floor of $A/B$ and $X \bmod M$ for the
-remainder of $X$ modulo $M$ in $\{0, 1, \dots, M - 1\}$. If
-$|a| \cdot (\lfloor A/B \rfloor \bmod C) < C$, then
-$(A \bmod B) \bmod C = |a| \cdot (\lfloor A/B \rfloor \bmod C)$.
-
-Source: M. Prunescu and J. M. Shunia, *On Modular Representations of C-Recursive Integer Sequences*,
-Journal of Integer Sequences 28 (2025), Article 25.5.3, Lemma 7(i).
--/
-public theorem_wanted emod_emod_eq_abs_mul_ediv_emod_of_neg
-    (a A B C : ℤ)
-    (hA : 0 < A) (hB : 0 < B) (hC : 2 ≤ C)
-    (hCA : C ∣ A) (hBA : ¬ B ∣ A)
-    (hcongr : B % C = a % C) (ha : a < 0)
-    (hbound : |a| * ((A / B) % C) < C) :
-    (A % B) % C = |a| * ((A / B) % C)
-
-/--
 **Mod-mod representation of C-recursive sequences, negative free term.** Let
 $t_0, t_1, t_2, \dots$ be natural numbers, let $c$ be a natural number, and let $A$ and $B$ be
 polynomials with integer coefficients such that $A \ne 0$, $B(0) = 1$ and
