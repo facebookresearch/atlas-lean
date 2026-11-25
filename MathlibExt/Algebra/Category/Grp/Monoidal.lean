@@ -94,7 +94,7 @@ which is an equivalence of categories.
 This is the reverse of
 `ModuleCat.uliftIntAddCommGrpEquivalence` (same composition of the
 integer-module equivalence and restriction of scalars, opposite direction).
- -/
+-/
 @[implicit_reducible, simps! functor inverse]
 noncomputable def toModuleCatULiftInt : Ab.{u} ≌ ModuleCat.{u} (ULift.{u} ℤ) :=
   ModuleCat.intEquivalence.symm.trans
@@ -186,7 +186,7 @@ variable {M₁ M₂ M₃ M₄ : Ab.{u}}
 @[simp] lemma rightUnitor_hom_apply (x : M₁) (a : ULift.{u} ℤ) :
     (ρ_ M₁).hom (x ⊗ₜ a) = a.down • x := rfl
 
-@[simp] lemma brading_hom_apply (x : M₁) (y : M₂) :
+@[simp] lemma braiding_hom_apply (x : M₁) (y : M₂) :
     (β_ M₁ M₂).hom (x ⊗ₜ y) = y ⊗ₜ x := rfl
 
 @[simp] lemma braiding_inv_apply (x : M₁) (y : M₂) :
