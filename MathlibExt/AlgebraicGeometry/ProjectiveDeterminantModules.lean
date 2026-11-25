@@ -91,7 +91,9 @@ def determinantEquiv {N : Type w} [AddCommGroup N] [Module R N] (e : M ≃ₗ[R]
       rw [← AlgHom.comp_apply, ExteriorAlgebra.map_comp_map]
       simp)
 
-/-- Completed-source invertibility of the fixed exterior-annihilator determinant. -/
+/-- The proposition that the determinant module of a finite projective module $M$ over a
+commutative ring $R$ is invertible: `determinantModule R M`, the submodule of the exterior algebra
+of $M$ annihilated by left multiplication by every vector of $M$, is an invertible $R$-module. -/
 structure InvertibleDeterminant [Module.Finite R M] [Module.Projective R M] : Prop where
   invertible : Module.Invertible R (determinantModule R M)
 
@@ -115,9 +117,13 @@ def IsScalarExtension {S : Type w} [CommRing S]
     (φ : R →+* S) (f : M →ₛₗ[φ] N) : Prop :=
   ∀ P : ModuleCat.{w} S, Function.Bijective (fun g : N →ₗ[S] P => g.comp f)
 
-/-- Completed-source determinant base change, fixed on every element by
-the native semilinear exterior map and the scalar-extension property.
-Source: Projective/Determinant/AlongBaseChange.lean at the quoted revision. -/
+/-- Base change of determinant modules along a ring map $\varphi : R \to S$: for a finite projective
+$R$-module $M$, a finite projective $S$-module $N$ and a $\varphi$-semilinear map $f : M \to N$
+exhibiting $N$ as the scalar extension of $M$ (`IsScalarExtension`), a $\varphi$-semilinear map from
+the determinant module of $M$ to that of $N$ that agrees on every element with the
+exterior-algebra map induced by $f$ and itself exhibits the determinant module of $N$ as the
+scalar extension of that of $M$. The determinant module is `determinantModule`, the submodule of
+the exterior algebra annihilated by left multiplication by every vector. -/
 structure BaseChangeDeterminant {S : Type w} [CommRing S]
     {N : Type w} [AddCommGroup N] [Module S N]
     [Module.Finite R M] [Module.Projective R M]

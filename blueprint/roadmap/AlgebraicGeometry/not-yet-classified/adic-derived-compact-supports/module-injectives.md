@@ -1,5 +1,5 @@
 # Module Injectives
 
-Sheaves of modules over the continuous coefficient ring have enough injectives, for every
-scheme. Tracked as `theorem_wanted`
-(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.moduleInjectives`).
+For a topological commutative ring $E$, the category of sheaves of modules over the
+continuous coefficient ring `E_X` on the small pro-étale site of a scheme $X$ has enough
+injectives: an instance of this class asserts it for every scheme $X$.

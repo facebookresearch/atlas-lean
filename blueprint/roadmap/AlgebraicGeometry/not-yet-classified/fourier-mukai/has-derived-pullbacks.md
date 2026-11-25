@@ -1,4 +1,5 @@
 # Has Derived Pullbacks
 
-Existence of the right Kan extensions defining derived pullback of the
-fixed module-sheaf cochain sources. No existence instance is asserted here.
+Derived pullbacks of complexes of module sheaves exist: an instance asserts that for every
+morphism of schemes $f : X ⟶ Y$, the termwise pullback of cochain complexes followed by
+localization, `pullbackSource f`, has a left derived functor with respect to quasi-isomorphisms.

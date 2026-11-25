@@ -1,16 +1,19 @@
 # Fourier Mukai Comp Iso Of Comparisons
 
-Assemble the seven-step comparison proof from public AxiomMath/Stacks
-`FourierMukai/Composition.lean`.
+Composition of Fourier–Mukai functors, for the derived pullbacks, direct images and tensor
+products given by `HasDerivedPullbacks`, `HasDerivedPushforwards` and `HasDerivedTensors`: for
+kernels $K$ on $X ×_S Y$ and $K'$ on $Y ×_S Z$, a natural isomorphism $Φ_{K'} ∘ Φ_K ≅ Φ_{K ⋆ K'}$ on
+the complexes on $X$ with quasi-coherent cohomology, where $K ⋆ K'$ is the convolution kernel on
+$X ×_S Z$.
 
-The supplied natural isomorphisms are the derived base-change comparison,
-monoidality of derived pullback, the two projection-formula comparisons,
-tensor associativity, and the pullback/pushforward composition comparisons.
-Base change and the projection formulas are supplied only on their actual
-quasi-coherent input subcategories. The three preservation hypotheses allow
-the preceding functors to enter those subcategories.
+It is assembled from the given natural isomorphisms: derived base change and the projection formulas
+for $\mathrm{pr}_{23}$ and $\mathrm{pr}_{13}$ (on complexes with quasi-coherent cohomology),
+compatibility of derived pullback along $\mathrm{pr}_{12}$ with the tensor product by $K$,
+associativity of the derived tensor product, and the composition isomorphisms of the derived
+pullbacks and of the derived direct images along the projections from $X ×_S Y ×_S Z$. The
+hypotheses `hA`, `hB` and `hC` say that the intermediate functors send complexes with quasi-coherent
+cohomology to such complexes.
 
-This is a complete conditional construction. It asserts neither existence
-nor invertibility of any geometric comparison. In the flat, quasi-compact,
-quasi-separated setting those must be established separately using Stacks
-08IB, 08EU and the quasi-coherent preservation results.
+## Sources
+
+- Stacks, Tag 0FYS.

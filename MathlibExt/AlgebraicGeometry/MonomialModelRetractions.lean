@@ -74,8 +74,10 @@ structure MonomialRetraction {V : NormalVariety k n} {x : V.X.left}
   normalized : ∀ a : LocalRing V x,
     valuation.valuation (localToField V x a) = monomialNorm w (C.expansion a)
 
-/-- Actual lifting of the same valuation to a proper birational model.
-Existence is a valuative-criterion integration input, not a new generic criterion. -/
+/-- A lift of a centered valuation $v$ on the variety of the log pair $P$ to a proper birational
+model $M$ of $P$: a centered valuation on the variety of $M$ that agrees with $v$ on rational
+functions (through the function-field isomorphism of $M$) and whose center maps to the center of
+$v$. -/
 structure ModelLift {P : LogPair k n} (v : CenteredValuation P.variety)
     (M : BirationalModel P) where
   valuation : CenteredValuation M.variety

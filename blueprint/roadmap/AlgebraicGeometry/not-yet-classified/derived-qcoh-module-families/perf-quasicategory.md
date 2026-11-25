@@ -1,3 +1,5 @@
 # Perf quasicategory
 
-A native quasicategory QCoh model gives the completed source law for its full Perf.
+If the simplicial set `qcoh M X` of quasi-coherent modules on a prestack $X$, for the affine
+module fibration `M`, is a quasicategory, then so is its full simplicial subset `perf M X` spanned
+by the perfect objects.
