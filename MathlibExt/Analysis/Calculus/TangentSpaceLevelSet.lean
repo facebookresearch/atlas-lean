@@ -160,7 +160,7 @@ theorem levelSet_curve_of_tangent_vel
     (hmem : fderiv ℝ f x v = 0) :
     ∃ γ : ℝ → E, γ 0 = x ∧ HasDerivAt γ v 0 ∧ ∀ t, f (γ t) = c := by
   have hstrict : HasStrictFDerivAt f (fderiv ℝ f x) x :=
-    hf.contDiffAt.hasStrictFDerivAt (by norm_num)
+    hf.contDiffAt.hasStrictFDerivAt_fderiv (by norm_num)
   rcases HasStrictFDerivAt.exists_levelSet_curve hstrict hsurj hmem with
     ⟨φ, hφ0, hφ, hφmem⟩
   have hφmemc : ∀ᶠ t in 𝓝 0, f (φ t) = c :=

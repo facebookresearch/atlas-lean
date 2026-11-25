@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.MvPolynomial.Rename
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
+public import MathlibExt.Combinatorics.Enumerative.KingPermutationPatterns
 public import MathlibExt.Combinatorics.Enumerative.PermutationStatistics
 public import WantedExt.Combinatorics.Enumerative.OddFibonacciWanted
 
@@ -34,23 +35,6 @@ public theorem_wanted king_permutation_not_separable (n : ℕ) (hn : 2 ≤ n)
     (hking : ∀ i j : Fin n, (j : ℕ) = i + 1 →
       (σ i : ℕ) + 1 ≠ σ j ∧ (σ j : ℕ) + 1 ≠ σ i) :
     HasPattern σ ![1, 3, 0, 2] ∨ HasPattern σ ![2, 0, 3, 1]
-
-/-- **King permutations of length at least $2$ contain $12$, $21$, $132$, $213$, $231$ and $312$.**
-For every $n \ge 2$, every permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$ in which adjacent
-entries never differ by exactly $1$, that is, $|\sigma(i + 1) - \sigma(i)| \ne 1$ whenever
-$i + 1 < n$, contains each of the classical patterns $12$, $21$, $132$, $213$, $231$ and $312$.
-
-Theorem 1 also lists nine partially ordered patterns that no such permutation avoids; they are
-not part of this statement.
-
-Source: Dan Li and Sergey Kitaev, *King Permutations and Partially Ordered Patterns*,
-INTEGERS 26 (2026), Article A59, Theorem 1 (`integers-2026-A59-thm-1`). -/
-public theorem_wanted king_permutation_hasPattern_classical (n : ℕ) (hn : 2 ≤ n)
-    (σ : Equiv.Perm (Fin n))
-    (hking : ∀ i j : Fin n, (j : ℕ) = i + 1 →
-      (σ i : ℕ) + 1 ≠ σ j ∧ (σ j : ℕ) + 1 ≠ σ i) :
-    HasPattern σ ![0, 1] ∧ HasPattern σ ![1, 0] ∧ HasPattern σ ![0, 2, 1] ∧
-      HasPattern σ ![1, 0, 2] ∧ HasPattern σ ![1, 2, 0] ∧ HasPattern σ ![2, 0, 1]
 
 /-- **King permutations.** A permutation $\sigma$ of $\{0, 1, \dots, n - 1\}$ is a king permutation
 if adjacent entries never differ by exactly $1$: for every position $i$ with $i + 1 < n$, neither

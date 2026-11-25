@@ -152,7 +152,9 @@ noncomputable def controlCount (S : ℕ → Ω → Fin 3 × Bool) (N : ℕ) (ω 
   ((range N).filter fun m ↦ (S m ω).1 = i ∧ (S m ω).2 = false).card
 
 /-- The **Cochran–Armitage trend statistic** of the `2 × 3` table of the first `N` subjects:
-`GenomicPrediction.ArmitageTrend.trendStat` of the case and control genotype counts. -/
+`GenomicPrediction.ArmitageTrend.trendStat` of the case and control genotype counts. With the
+convention `x / 0 = 0` it is `0` when there are no cases, no controls, or all `N` subjects are in
+one genotype class (in particular for `N = 0`). -/
 noncomputable def caStat (S : ℕ → Ω → Fin 3 × Bool) (N : ℕ) (ω : Ω) : ℝ :=
   ArmitageTrend.trendStat (caseCount S N ω) (controlCount S N ω)
 
@@ -181,8 +183,9 @@ private theorem sum_mul_count (f : Fin 3 → ℝ) :
   rw [← sum_add_distrib]
   exact sum_congr rfl fun m _ ↦ by ring
 
-/-- **The Cochran–Armitage statistic is `N r²`** for the sample: `caStat S N ω` is `N` times the
-squared sample correlation of genotype score and case indicator over the first `N` subjects. -/
+/-- **The Cochran–Armitage statistic is `N r²`** for the sample: for every `N`, `caStat S N ω` is
+`N` times the squared sample correlation of genotype score and case indicator over the first `N`
+subjects. With `x / 0 = 0`, both sides are `0` when a sample variance vanishes and for `N = 0`. -/
 theorem caStat_eq_mul_sampleCorrSq :
     caStat S N ω = N * sampleCorrSq (fun m ↦ score (S m ω).1) (fun m ↦ caseInd (S m ω).2) N := by
   have hT : ArmitageTrend.total (caseCount S N ω) (controlCount S N ω) = N := by
@@ -205,20 +208,21 @@ theorem caStat_eq_mul_sampleCorrSq :
 
 /-! ### Boundary cases of the finite statistic -/
 
-/-- **No cases**: a table without cases has trend statistic `0` (the factor `R` of the
-denominator vanishes). -/
+/-- **No cases**: a real-valued table with `∑ r = 0` (for counts, a table without cases) has trend
+statistic `0`, since the factor `R` of the denominator vanishes and `x / 0 = 0`. -/
 theorem trendStat_eq_zero_of_no_cases (r s : Fin 3 → ℝ) (hR : ∑ i, r i = 0) :
     ArmitageTrend.trendStat r s = 0 := by
   simp [ArmitageTrend.trendStat, hR]
 
-/-- **No controls**: a table without controls has trend statistic `0`. -/
+/-- **No controls**: a real-valued table with `∑ s = 0` (for counts, a table without controls) has
+trend statistic `0`, since the factor `S` of the denominator vanishes and `x / 0 = 0`. -/
 theorem trendStat_eq_zero_of_no_controls (r s : Fin 3 → ℝ) (hS : ∑ i, s i = 0) :
     ArmitageTrend.trendStat r s = 0 := by
   simp [ArmitageTrend.trendStat, hS]
 
 /-- **Singular design**: if every individual has the same genotype class `g`, the score has zero
-sample variance, the variance factor `N ∑ i² n_i - (∑ i n_i)²` of the denominator vanishes, and
-the trend statistic is `0`. -/
+sample variance, the variance factor `N ∑ i² n_i - (∑ i n_i)²` of the denominator vanishes, and the
+trend statistic is `0`, by `x / 0 = 0`. -/
 theorem trendStat_eq_zero_of_single_genotype (r s : Fin 3 → ℝ) (g : Fin 3)
     (hr : ∀ i, i ≠ g → r i = 0) (hs : ∀ i, i ≠ g → s i = 0) :
     ArmitageTrend.trendStat r s = 0 := by
@@ -280,11 +284,12 @@ private theorem memLp_caseInd (hS0 : Measurable (S 0)) :
   simp only [Function.comp_apply, caseInd, Set.mem_Icc]
   split_ifs <;> norm_num
 
-/-- **The Cochran–Armitage trend test is asymptotically `χ²₁`.** Subjects `S m = (G m, Y m)`
-(genotype class, case status) are i.i.d. (*multinomial sampling* of the `2 × 3` table). Under
-the null `G 0 ⟂ Y 0`, with case probability `p = P(Y 0 = true) ∈ (0, 1)` and positive genotype
-score variance (at least two genotype classes of positive probability), the trend statistic of
-the first `N` subjects converges in distribution, as `N → ∞`, to `χ²₁`.
+/-- **The Cochran–Armitage trend test is asymptotically `χ²₁`.** Let `P` be a probability measure
+and the subjects `S m = (G m, Y m)` (genotype class, case status), with `S 0` measurable, i.i.d.
+(*multinomial sampling* of the `2 × 3` table). Under the null `G 0 ⟂ Y 0`, with case probability
+`p = P(Y 0 = true) ∈ (0, 1)` and positive genotype score variance (at least two genotype classes of
+positive probability), the trend statistic of the first `N` subjects converges in distribution, as
+`N → ∞`, to `χ²₁`.
 
 All three null parameters (`p` and two genotype frequencies) are fitted from the data inside
 `caStat`; the limit still has one degree of freedom. -/
@@ -313,7 +318,7 @@ theorem tendstoInDistribution_caStat (hS0 : Measurable (S 0)) (hindep : iIndepFu
 `∑ i i π_i`, case probability `p`, score variance, and case-indicator variance `p (1 - p)`),
 `(N^{-1/2} ∑_{m < N} (score G_m - E score)(Y_m - p))² / (Var score · p (1 - p))` also converges
 in distribution to `χ²₁`, the same limit as the fitted statistic of
-`tendstoInDistribution_caStat`. -/
+`tendstoInDistribution_caStat`. For `N = 0` the factor `(√N)⁻¹` is `0`. -/
 theorem tendstoInDistribution_caOracleStat (hS0 : Measurable (S 0)) (hindep : iIndepFun S P)
     (hident : ∀ m, IdentDistrib (S m) (S 0) P P)
     (hnull : IndepFun (fun ω ↦ (S 0 ω).1) (fun ω ↦ (S 0 ω).2) P)
@@ -338,9 +343,10 @@ theorem tendstoInDistribution_caOracleStat (hS0 : Measurable (S 0)) (hindep : iI
     (memLp_score hS0) (memLp_caseInd hS0) hscore hcase hZ
 
 omit [IsProbabilityMeasure P] in
-/-- **Singular design, almost surely**: if every subject almost surely has the genotype class
-`g` (zero score variance), then almost surely the trend statistic is `0` for every sample
-size. -/
+/-- **Singular design, almost surely**: under any measure `P` (not necessarily a probability
+measure), if the subjects are identically distributed and every subject almost surely has the
+genotype class `g` (zero score variance), then almost surely the trend statistic is `0` for every
+sample size, by `x / 0 = 0`. -/
 theorem caStat_ae_eq_zero_of_genotype_const
     (hident : ∀ m, IdentDistrib (S m) (S 0) P P) {g : Fin 3}
     (hg : ∀ᵐ ω ∂P, (S 0 ω).1 = g) :
@@ -356,10 +362,10 @@ theorem caStat_ae_eq_zero_of_genotype_const
     intro m _ h
     exact hi (h.1 ▸ hω m)
 
-/-- **The singular design has no `χ²₁` limit**: if the genotype is almost surely a single class,
-the trend statistic converges in distribution to the Dirac mass at `0`, so it does not converge
-to `χ²₁`. The positive score variance hypothesis of `tendstoInDistribution_caStat` cannot be
-dropped. -/
+/-- **The singular design has no `χ²₁` limit**: if the subjects are identically distributed under
+the probability measure `P` and the genotype is almost surely a single class, the trend statistic
+converges in distribution to the Dirac mass at `0`, so it does not converge to `χ²₁`. The positive
+score variance hypothesis of `tendstoInDistribution_caStat` cannot be dropped. -/
 theorem not_tendstoInDistribution_caStat_of_genotype_const
     (hident : ∀ m, IdentDistrib (S m) (S 0) P P) {g : Fin 3}
     (hg : ∀ᵐ ω ∂P, (S 0 ω).1 = g)

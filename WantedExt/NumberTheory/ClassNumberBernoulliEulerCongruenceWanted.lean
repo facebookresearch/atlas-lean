@@ -190,25 +190,6 @@ public theorem_wanted arcSl_subst_sl (S C : PowerSeries ℚ)
         (-1 : ℚ) ^ (k / 3) * Ring.choose (-2 / 3 : ℚ) (k / 3) / k else 0).subst S =
       PowerSeries.X
 
-/-- **The Hurwitz-normalized coefficients of Sl are integers.** Let $\mathrm{Sl}, \mathrm{Cl}$ be
-formal power series in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$,
-$\mathrm{Cl}' = -\mathrm{Sl}^2$, $\mathrm{Sl}(0) = 0$ and $\mathrm{Cl}(0) = 1$, and let $C_n$ be
-the coefficient of $u^n$ in $\mathrm{Sl}$. Then $(3m + 1)!\,C_{3m+1}$ is an integer for every
-$m \ge 0$.
-
-The four conditions determine $\mathrm{Sl}$ and $\mathrm{Cl}$ uniquely: they are the Taylor series
-at $0$ of the Eisenstein elliptic functions of the source.
-
-Source: Akihiro Goto, *Congruence Relations Connecting Tate-Shafarevich Groups with
-Bernoulli-Hurwitz Numbers by Elliptic Gauss Sums in the Eisenstein Integers Case*, INTEGERS 26
-(2026), Article A112, Lemma 7
-(`integers-2026-A112-lem-7`). -/
-public theorem_wanted factorial_mul_coeff_sl_isInt (S C : PowerSeries ℚ)
-    (hS : PowerSeries.derivative (R := ℚ) S = C ^ 2)
-    (hC : PowerSeries.derivative (R := ℚ) C = -(S ^ 2))
-    (hS0 : PowerSeries.constantCoeff S = 0) (hC0 : PowerSeries.constantCoeff C = 1) (m : ℕ) :
-    ∃ z : ℤ, ((3 * m + 1).factorial : ℚ) * PowerSeries.coeff (3 * m + 1) S = z
-
 /-- **The Hurwitz-normalized coefficients of 1/Sl.** Let $\mathrm{Sl}, \mathrm{Cl}$ be formal power
 series in $\mathbb{Q}[[u]]$ with $\mathrm{Sl}' = \mathrm{Cl}^2$, $\mathrm{Cl}' = -\mathrm{Sl}^2$,
 $\mathrm{Sl}(0) = 0$ and $\mathrm{Cl}(0) = 1$. Write $\mathrm{Sl}(u) = u\,S_0(u)$ with

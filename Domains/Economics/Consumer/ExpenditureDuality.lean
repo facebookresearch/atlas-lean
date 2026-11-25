@@ -68,9 +68,9 @@ def IsMarshallianDemand {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) (x : ι → ℝ) : Prop :=
   x ∈ budgetSet X p w ∧ ∀ y ∈ budgetSet X p w, u y ≤ u x
 
-/-- The indirect utility `v(p, w) = sup {u x | x ∈ B(p, w)}`. As a real
-supremum it is meaningful only when the supremum exists; theorems about it
-assume attainment (`IsMarshallianDemand`). -/
+/-- The indirect utility `v(p, w) = sup {u x | x ∈ B(p, w)}`. As a real supremum it is meaningful
+only when the supremum exists; theorems about it assume attainment (`IsMarshallianDemand`). For an
+empty or unbounded-above set the real supremum is `0` by convention. -/
 noncomputable def indirectUtility {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) : ℝ :=
   sSup (u '' budgetSet X p w)

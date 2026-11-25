@@ -879,7 +879,7 @@ private theorem btSieveDensity_le_divisor_mul_restricted (N z q : ℕ) (hq : 0 <
     exact ⟨⟨⟨Nat.gcd_dvd_right n q, hq.ne'⟩,
       hnData.2.squarefree_of_dvd (Nat.gcd_dvd_left n q)⟩,
       ⟨⟨by omega, hdivle.trans hnRange.2⟩,
-        Nat.coprime_div_gcd_of_squarefree hnData.2 hq.ne',
+        Nat.coprime_div_gcd_of_squarefree hnData.2,
         hnData.2.squarefree_of_dvd ⟨n.gcd q, by
           rw [mul_comm, Nat.mul_div_cancel' (Nat.gcd_dvd_left n q)]⟩⟩⟩
   have hterm : ∀ n ∈ A, f n ≤ g (e n) := by

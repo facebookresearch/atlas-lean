@@ -12,3 +12,5 @@ Proofs or statements that specific problems lie in P or L: graph reachability (P
 - [Maximum flow](maximum-flow/README.md)
 - [Perfect matchings in dense uniform hypergraphs](perfect-matchings-in-dense-uniform-hypergraphs/README.md)
 - [Undirected s-t connectivity](undirected-s-t-connectivity/README.md)
+
+- [Strongly polynomial linear programming](strongly-polynomial-linear-programming.md)

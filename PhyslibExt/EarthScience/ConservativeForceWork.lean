@@ -64,8 +64,8 @@ namespace EarthScience
 /-- Work of a conservative force along an admissible path equals the
 potential decrease, in any real inner product space: if `F = -g` where
 `g x` represents the derivative of `U` at `x` (`HasFDerivAt U (innerSL ℝ (g x)) x`),
-`γ` is differentiable on `[a, b]` with derivative `γ'`, and the work
-integrand is interval-integrable, then
+`γ` is differentiable on the interval between `a` and `b` (either order) with derivative `γ'`,
+and the work integrand is interval-integrable, then
 `∫ t in a..b, ⟪F (γ t), γ' t⟫ = -(U (γ b) - U (γ a))`. -/
 theorem conservative_force_work_eq_potential_decrease_of_hasFDerivAt
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
@@ -91,8 +91,8 @@ theorem conservative_force_work_eq_potential_decrease_of_hasFDerivAt
 
 /-- Work of a conservative force along an admissible path equals the
 potential decrease: if `F = -g` where `g` is the gradient field of `U`
-(`HasGradientAt U (g x) x`), `γ` is differentiable on `[a, b]` with
-derivative `γ'`, and the work integrand is interval-integrable, then
+(`HasGradientAt U (g x) x`), `γ` is differentiable on the interval between `a` and `b` (either
+order) with derivative `γ'`, and the work integrand is interval-integrable, then
 `∫ t in a..b, ⟪F (γ t), γ' t⟫ = -(U (γ b) - U (γ a))`. The space is
 complete because Mathlib's `HasGradientAt` requires it; see
 `conservative_force_work_eq_potential_decrease_of_hasFDerivAt` for the
