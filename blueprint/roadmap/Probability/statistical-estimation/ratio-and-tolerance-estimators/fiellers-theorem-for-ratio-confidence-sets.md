@@ -8,7 +8,7 @@ with $z$ the upper $\alpha/2$ normal quantile, contains $\theta_0$ with probabil
 
 $$\frac{1}{1 - g}\Bigl[\frac{a}{b} - \frac{g \nu_{12}}{\nu_{22}} \mp \frac{t_{r,\alpha}\, s}{b}\sqrt{\nu_{11} - 2\frac{a}{b}\nu_{12} + \frac{a^2}{b^2}\nu_{22} - g\Bigl(\nu_{11} - \frac{\nu_{12}^2}{\nu_{22}}\Bigr)}\Bigr],$$
 
-the interval is infinite as $g$ approaches $1$, and for $g > 1$ the set is exclusive, the complement of the interval between the two values (Fieller's theorem, Wikipedia).
+for $g < 1$. The interval is infinite as $g$ approaches $1$. For $g > 1$ the leading coefficient is negative: if the expression under the square root is positive, the set is exclusive, the complement of the bounded interval between the two values, and if it is negative, the set is the whole real line, matching the classification above (Fieller's theorem, Wikipedia).
 
 ## Expansion
 
