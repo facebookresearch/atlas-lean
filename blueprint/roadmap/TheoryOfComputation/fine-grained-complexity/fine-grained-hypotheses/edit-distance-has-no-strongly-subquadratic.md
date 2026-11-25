@@ -1,6 +1,6 @@
 # Edit distance has no strongly subquadratic algorithm unless SETH fails
 
-If for some $\delta > 0$ the edit distance of two strings of length $n$ over a fixed finite alphabet can be computed in time $O(n^{2-\delta})$, then the Strong Exponential Time Hypothesis fails: there is $\varepsilon > 0$ such that, for every $k$, $k$-SAT on $N$ variables can be decided in time $O(2^{(1-\varepsilon)N})$. The proof reduces Orthogonal Vectors to edit distance by vector gadgets.
+If for some $\delta > 0$ the edit distance of two strings of length $n$ over a fixed alphabet of seven symbols, the alphabet of the reduction, can be computed in time $O(n^{2-\delta})$, then the Strong Exponential Time Hypothesis fails: there is $\varepsilon > 0$ such that, for every $k$, $k$-SAT on $N$ variables can be decided in time $O(2^{(1-\varepsilon)N})$. The proof reduces Orthogonal Vectors to edit distance by vector gadgets.
 
 ## Depends on
 

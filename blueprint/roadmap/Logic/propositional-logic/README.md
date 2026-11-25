@@ -18,3 +18,7 @@ Classical propositional logic: truth-table semantics, natural deduction and its 
 - [Propositional proof complexity](propositional-proof-complexity/README.md)
 
 - [Kripke semantics for intuitionistic propositional logic](kripke-semantics-for-intuitionistic-propositional-logic.md)
+- [Fages: stable models of tight programs = completion models](fages-stable-models-of-tight-programs-completion-models.md)
+- [Definite programs, models and the immediate-consequence operator](definite-programs-models-and-the-immediate-consequence-operator.md)
+- [Finite-ground positive program to DATA Datalog/Horn correspondence](finite-ground-positive-program-to-data-datalog-horn-correspo.md)
+- [Basic properties of stable models](basic-properties-of-stable-models.md)
