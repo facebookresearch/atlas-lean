@@ -12489,6 +12489,7 @@
   "MathlibExt/NumberTheory/Digits/CommaChildParent": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Comma sequences"},
   "MathlibExt/NumberTheory/Digits/CommaNonSuccessors": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Comma sequences"},
   "MathlibExt/NumberTheory/Digits/CommaParent": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Comma sequences"},
+  "MathlibExt/NumberTheory/Digits/CommaTerminal": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Comma sequences"},
   "MathlibExt/NumberTheory/Digits/CompleteYoungGraph": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Reverse multiples"},
   "MathlibExt/NumberTheory/Digits/DigitSumDirichletConvolution": {"to": "NumberTheory/digits-numeration/digit-properties", "title": "Dirichlet convolutions of digit sums"},
   "MathlibExt/NumberTheory/Digits/DigitsPowAndPowAddOne": {"to": "NumberTheory/digits-numeration/repdigits-reverse-multiples", "title": "Palindromic representations of powers of two"},
