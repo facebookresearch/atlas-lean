@@ -1,0 +1,3 @@
+# Target
+
+In PIPE MANIA: the required number of traversed tiles.

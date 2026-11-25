@@ -17,3 +17,6 @@ Subset sum, subset product, partition, 3-partition, multiway partition, knapsack
 - [Partition problem](partition-problem/README.md)
 - [Partition variants](partition-variants/README.md)
 - [Unbounded knapsack problem](unbounded-knapsack-problem/README.md)
+- [NUMERICAL MATCHING WITH TARGET SUMS is NP-complete](numerical-matching-with-target-sums-is-np-comple/README.md)
+- [PARTIAL DIGEST SUPERSET is NP-complete](partial-digest-superset-is-np-complete/README.md)
+- [RING LOADING is NP-complete](ring-loading-is-np-complete/README.md)

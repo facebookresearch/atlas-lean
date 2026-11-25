@@ -1,0 +1,3 @@
+# Planar Monotone Rectilinear Three Sat Dec
+
+PLANAR MONOTONE RECTILINEAR 3SAT as a decision problem over bitstrings: a bitstring is accepted exactly when it decodes to an instance that is well formed and has a solution; every bitstring that decodes to no instance is rejected.

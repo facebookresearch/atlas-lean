@@ -1,0 +1,16 @@
+# ORIENTAL HOUSE is NP-complete
+
+- [Oriental House Instance](oriental-house-instance.md)
+- [Rows](rows.md)
+- [Cols](cols.md)
+- [Cell](cell.md)
+- [Entry](entry.md)
+- [Coords](coords.md)
+- [Grid](grid.md)
+- [Well Formed](well-formed.md)
+- [Moves In Direction](moves-in-direction.md)
+- [Step In Direction](step-in-direction.md)
+- [Arrow Rule](arrow-rule.md)
+- [Oriental House Feasible](oriental-house-feasible.md)
+- [Oriental House Dec](oriental-house-dec.md)
+- [ORIENTAL HOUSE is NP-complete](oriental-house-np-complete.md)

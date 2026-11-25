@@ -1,0 +1,18 @@
+# PIPE MANIA is NP-complete
+
+- [Pipe Mania Instance](pipe-mania-instance.md)
+- [Rows](rows.md)
+- [Cols](cols.md)
+- [Is Free](is-free.md)
+- [Source](source.md)
+- [Outlet](outlet.md)
+- [Target](target.md)
+- [Toward](toward.md)
+- [Adjacent](adjacent.md)
+- [Straight](straight.md)
+- [Well Formed](well-formed.md)
+- [Tile](tile.md)
+- [Route](route.md)
+- [Pipe Mania Feasible](pipe-mania-feasible.md)
+- [Pipe Mania Dec](pipe-mania-dec.md)
+- [PIPE MANIA is NP-complete](pipe-mania-np-complete.md)
