@@ -33,17 +33,20 @@ namespace SimpleGraph
 
 variable {V : Type*} [Fintype V]
 
-/-- Incident-edge sum at `v`: finite labels `k : Fin q` contribute source
-label `k.val + 1` when `v` lies in the corresponding edge. -/
+/-- **Incident-edge sum.** Let $G$ be a simple graph on a finite vertex set $V$, let $q$ be a
+natural number and let $\ell$ be a bijection from the edge set of $G$ to $\{0, 1, \dots, q-1\}$.
+The incident-edge sum at a vertex $v$ is $\sum_{e \ni v} (\ell(e) + 1)$, the sum over the edges
+$e$ of $G$ that contain $v$; in other words, the edges carry the labels $1, \dots, q$. -/
 noncomputable def incidentSum (G : SimpleGraph V) (q : Nat)
     (label : G.edgeSet ≃ Fin q) (v : V) : Nat := by
   classical
   exact ∑ k : Fin q, if v ∈ (label.symm k).val then (k.val + 1) else 0
 
-/-- Induced vertex residue in `Fin (Fintype.card V)`. When the card is zero
-there is no modulo to evaluate: map through `Fintype.equivFin V` and eliminate
-the resulting `Fin 0`. Thus the empty graph gets the canonical empty vertex
-bijection. -/
+/-- **Induced vertex residue.** Let $G$ be a simple graph on a finite vertex set $V$, let $q$ be
+a natural number and let $\ell$ be a bijection from the edge set of $G$ to $\{0, \dots, q-1\}$.
+The induced residue of a vertex $v$ is the incident-edge sum at $v$ (with edge labels
+$\ell(e) + 1$) reduced modulo $|V|$, viewed as an element of $\{0, \dots, |V| - 1\}$. When
+$|V| = 0$ there are no vertices, so there is nothing to define. -/
 noncomputable def inducedResidue (G : SimpleGraph V) (q : Nat)
     (label : G.edgeSet ≃ Fin q) (v : V) : Fin (Fintype.card V) := by
   classical
@@ -52,7 +55,10 @@ noncomputable def inducedResidue (G : SimpleGraph V) (q : Nat)
   · exact ⟨G.incidentSum q label v % Fintype.card V,
       Nat.mod_lt _ (Nat.pos_of_ne_zero hp)⟩
 
-/-- Residue unfolds to the incident sum modulo `p` when `p ≠ 0`. -/
+/-- **Value of the induced residue.** Let $G$ be a simple graph on a finite nonempty vertex set
+$V$, let $q$ be a natural number and let $\ell$ be a bijection from the edge set of $G$ to
+$\{0, \dots, q-1\}$. For every vertex $v$, the induced residue of $v$ with respect to $\ell$, read
+as a natural number, equals the incident-edge sum at $v$ with respect to $\ell$ modulo $|V|$. -/
 theorem inducedResidue_val (G : SimpleGraph V) (q : Nat)
     (label : G.edgeSet ≃ Fin q) (v : V) (hp : Fintype.card V ≠ 0) :
     (G.inducedResidue q label v).val =
@@ -61,14 +67,21 @@ theorem inducedResidue_val (G : SimpleGraph V) (q : Nat)
   unfold inducedResidue
   simp only [dite_eq_right hp]
 
-/-- Edge-graceful: some edge-bijection with `Fin q` induces a bijective
-vertex-residue map. Only `[Fintype V]` is assumed publicly. -/
+/-- **Edge-graceful graph.** A simple graph $G$ on a finite vertex set $V$ is edge-graceful when
+there are a natural number $q$ and a bijection $\ell$ from the edge set of $G$ to
+$\{0, \dots, q-1\}$ such that the induced residue map, sending each vertex $v$ to the sum of
+$\ell(e) + 1$ over the edges $e$ containing $v$ taken modulo $|V|$, is a bijection from $V$ to
+$\{0, \dots, |V| - 1\}$. -/
 def IsEdgeGraceful (G : SimpleGraph V) : Prop :=
   ∃ (q : Nat) (label : G.edgeSet ≃ Fin q),
     Function.Bijective (G.inducedResidue q label)
 
-/-- Characterization exposing existence, edge-bijection, incident-sum and
-vertex-bijection clauses. -/
+/-- **Edge-graceful graphs via a vertex bijection.** A simple graph $G$ on a finite vertex set $V$
+is edge-graceful if and only if there are a natural number $q$, a bijection $\ell$ from the edge
+set of $G$ to $\{0, \dots, q-1\}$ and a bijection $\lambda$ from $V$ to $\{0, \dots, |V| - 1\}$ such
+that for every vertex $v$, $\lambda(v)$ is the induced residue of $v$ with respect to $\ell$ and,
+if $V$ is nonempty, $\lambda(v)$ equals the incident-edge sum at $v$ with respect to $\ell$ modulo
+$|V|$. -/
 theorem isEdgeGraceful_iff (G : SimpleGraph V) :
     G.IsEdgeGraceful ↔
       ∃ (q : Nat) (eLabel : G.edgeSet ≃ Fin q)

@@ -128,7 +128,8 @@ private theorem span_mk_X_le_jacobson (R : Type*) [CommRing R]
 private theorem eq_zero_of_forall_mem_pow {A : Type*} [CommRing A] [IsNoetherianRing A]
   (J : Ideal A)
     (hJ : J ≤ Ideal.jacobson ⊥) (x : A) (hx : ∀ n : ℕ, x ∈ J ^ n) : x = 0 := by
-  have h := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (I := J) (M := A) hJ
+  have h := Ideal.iInf_pow_smul_eq_bot_of_le_jacobson (I := J) (M := A)
+    (hJ.trans_eq Ideal.jacobson_bot)
   have : x ∈ (⨅ i : ℕ, J ^ i • ⊤ : Submodule A A) := by
     rw [Submodule.mem_iInf]; intro i
     rw [Ideal.smul_eq_mul, Ideal.mul_top]; exact hx i

@@ -24,10 +24,13 @@ Source: <https://cs.uwaterloo.ca/journals/JIS/VOL14/Saito/saito22.tex>.
 
 namespace MetaMathlibExt
 
-/-- Finite prefixes of the `n`-step Lucas sequence (source `jis_1628603e2683fb05481e5bfb`,
-concept `jis_sem_4e0294575601a2b8a5f0d3d7`): `nStepLucasList n m = [L_1^n, …, L_m^n]`,
-where `L_k^n = 2 ^ k - 1` for `1 ≤ k ≤ n` and `L_k^n` is the sum of the previous
-`n` terms for `k ≥ n + 1`. -/
+/-- **Finite prefixes of the n-step Lucas numbers.** For natural numbers $n$ and $m$, this is the
+list $[L^{(n)}_1, \dots, L^{(n)}_m]$ of length $m$ (empty for $m = 0$), where
+$L^{(n)}_k = 2^k - 1$ for $1 \le k \le n$ and $L^{(n)}_k$ is the sum of the $n$ preceding terms
+for $k \ge n + 1$. For $n = 0$ every term is $0$.
+
+Source: <https://cs.uwaterloo.ca/journals/JIS/VOL14/Saito/saito22.tex> (source
+`jis_1628603e2683fb05481e5bfb`, concept `jis_sem_4e0294575601a2b8a5f0d3d7`). -/
 def nStepLucasList (n : ℕ) : ℕ → List ℕ
   | Nat.zero => []
   | Nat.succ m =>
@@ -37,12 +40,15 @@ def nStepLucasList (n : ℕ) : ℕ → List ℕ
       else (prev.drop (prev.length - n)).foldl (· + ·) 0
     prev ++ [next]
 
-/-- `n`-step Lucas sequence (source `jis_1628603e2683fb05481e5bfb`, concept
-`jis_sem_4e0294575601a2b8a5f0d3d7`): for `n ≥ 1`, `nStepLucas n m = 2 ^ m - 1`
-for `1 ≤ m ≤ n` and `nStepLucas n m` is the sum of the `n` preceding values for
-`m ≥ n + 1`; by convention `nStepLucas 0 m = 0` for all `m`, and
-`nStepLucas n 0 = 0` as the totalization at `m = 0` outside the source domain
-`m ≥ 1`. -/
+/-- **n-step Lucas numbers.** For natural numbers $n \ge 1$ and $m$, the $n$-step Lucas number
+$L^{(n)}_m$ is defined by $L^{(n)}_0 = 0$, $L^{(n)}_m = 2^m - 1$ for $1 \le m \le n$, and
+$L^{(n)}_m = \sum_{i=1}^{n} L^{(n)}_{m-i}$ for $m \ge n + 1$. For $n = 0$ we set
+$L^{(0)}_m = 0$ for every $m$.
+
+The source defines $L^{(n)}_m$ only for $m \ge 1$; the value $L^{(n)}_0 = 0$ is a convention.
+
+Source: <https://cs.uwaterloo.ca/journals/JIS/VOL14/Saito/saito22.tex> (source
+`jis_1628603e2683fb05481e5bfb`, concept `jis_sem_4e0294575601a2b8a5f0d3d7`). -/
 def nStepLucas (n m : ℕ) : ℕ :=
   match n with
   | Nat.zero => 0

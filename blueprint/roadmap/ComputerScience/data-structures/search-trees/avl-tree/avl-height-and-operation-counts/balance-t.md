@@ -1,0 +1,9 @@
+# Counted AVL rebalancing
+
+For binary trees $l$, $r$ with cached heights and a key $x$, counted rebalancing returns a tree together with a natural-number cost. Write $h(t)$ for the height cached at the root of $t$, with $h$ of the empty tree equal to $0$. Write $N(A, y, B)$ for the node with left subtree $A$, key $y$, right subtree $B$ and cached height $\max(h(A), h(B)) + 1$; each such rebuild costs $1$. The cases are those of AVL rebalancing:
+
+- If $h(l) > h(r) + 1$ and $l$ is a node with left subtree $A$, key $y$ and right subtree $B$, one unit is charged for inspecting $l$. If $h(B) \le h(A)$ the result is the single rotation $N(A, y, N(B, x, r))$ (total cost $3$). Otherwise, if $B$ is a node with left subtree $B_1$, key $z$ and right subtree $B_2$, one more unit is charged for inspecting $B$ and the result is the double rotation $N(N(A, y, B_1), z, N(B_2, x, r))$ (total cost $5$); if $B$ is empty the result is $N(l, x, r)$ (total cost $2$).
+- Otherwise, if $h(r) > h(l) + 1$ and $r$ is a node with left subtree $A$, key $y$ and right subtree $B$, symmetrically one unit is charged for inspecting $r$; the result is $N(N(l, x, A), y, B)$ when $h(A) \le h(B)$ (total cost $3$), the double rotation $N(N(l, x, A_1), z, N(A_2, y, B))$ when $A$ is a node with left subtree $A_1$, key $z$ and right subtree $A_2$ (total cost $5$), and $N(l, x, r)$ when $A$ is empty (total cost $2$).
+- In every other case, including a heavy side that is empty, the result is $N(l, x, r)$ at cost $1$.
+
+In this operation-count model one unit is charged for each visit to a nonempty node in a recursive traversal, each executed key comparison ($<$), each inspection of a nonempty heavy child or inner grandchild during rebalancing, and each node rebuild; reading and comparing cached heights, arithmetic on them, pattern matching, recursive calls themselves and returning existing subtrees cost nothing. The count is not CPU time or Turing-machine time.

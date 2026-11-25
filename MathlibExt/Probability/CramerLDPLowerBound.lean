@@ -80,7 +80,7 @@ theorem exists_pos_sub_lt_of_hasDerivAt {g : ℝ → ℝ} {g' : ℝ} (hg : HasDe
     (hη : 0 < η) : ∃ s > 0, g s - g 0 < s * (g' + η) := by
   have h := hasDerivAt_iff_tendsto_slope_zero.1 hg
   have h2 : ∀ᶠ t in 𝓝[>] (0 : ℝ), t⁻¹ • (g (0 + t) - g 0) < g' + η :=
-    (h.mono_left (nhdsWithin_mono _ fun t (ht : 0 < t) =>
+    (h.mono_left (nhdsWithin_mono _ (s := Set.Ioi 0) fun t (ht : 0 < t) =>
       mem_compl_singleton_iff.2 ht.ne')).eventually (gt_mem_nhds (by linarith))
   obtain ⟨s, hs1, hs2⟩ := (h2.and self_mem_nhdsWithin).exists
   refine ⟨s, hs2, ?_⟩

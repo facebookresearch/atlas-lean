@@ -72,8 +72,11 @@ private theorem zpow_fix (σ : L ≃ₐ[K] L) (x : L) (hx : σ x = x) (n : ℤ) 
   · rw [zpow_neg, zpow_natCast]
     exact inv_pow_fix σ x hx m
 
-/-- Additive Hilbert 90 for a cyclic Galois extension: the trace kernel is the image of
-`σ - 1` when `σ` generates the Galois group. -/
+/-- **Additive Hilbert 90 for cyclic extensions.** Let $L/K$ be a finite-dimensional Galois
+extension and let $\sigma$ be a $K$-algebra automorphism of $L$ that generates its Galois group,
+that is, every $K$-algebra automorphism of $L$ is an integer power of $\sigma$. Then the kernel
+of the trace $\operatorname{Tr}_{L/K} \colon L \to K$ equals the image of the $K$-linear map
+$\sigma - 1 \colon L \to L$, $y \mapsto \sigma(y) - y$. -/
 theorem ker_trace_eq_range_algEquiv_sub_id (σ : L ≃ₐ[K] L)
     (hσ : ∀ τ : L ≃ₐ[K] L, τ ∈ Subgroup.zpowers σ) :
     LinearMap.ker (Algebra.trace K L) =
@@ -115,7 +118,10 @@ theorem ker_trace_eq_range_algEquiv_sub_id (σ : L ≃ₐ[K] L)
     omega
   exact (Submodule.eq_of_le_of_finrank_le hle hfin).symm
 
-/-- Pointwise additive Hilbert 90: every trace-zero element is a `σ`-coboundary. -/
+/-- **Additive Hilbert 90, pointwise form.** Let $L/K$ be a finite-dimensional Galois extension
+and let $\sigma$ be a $K$-algebra automorphism of $L$ that generates its Galois group, that is,
+every $K$-algebra automorphism of $L$ is an integer power of $\sigma$. If $x \in L$ satisfies
+$\operatorname{Tr}_{L/K}(x) = 0$, then there is $y \in L$ with $\sigma(y) - y = x$. -/
 theorem exists_algEquiv_sub_eq_of_trace_eq_zero (σ : L ≃ₐ[K] L)
     (hσ : ∀ τ : L ≃ₐ[K] L, τ ∈ Subgroup.zpowers σ) {x : L}
     (hx : Algebra.trace K L x = 0) :

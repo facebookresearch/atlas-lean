@@ -28,30 +28,48 @@ namespace Cslib.Complexity.Algebraic
 
 @[expose] public section
 
-/-- A circuit whose inputs and outputs are actual rectangular matrix entries. -/
+/-- **Matrix arithmetic circuit.** For a type $F$ of scalars and $m, r, n \in \mathbb{N}$, a matrix
+arithmetic circuit is an arithmetic circuit over $F$ whose inputs are indexed by the entries
+$(i, k)$ of an $m \times r$ matrix together with the entries $(k, j)$ of an $r \times n$ matrix,
+and whose outputs are indexed by the entries $(i, j)$ of an $m \times n$ matrix. -/
 abbrev MatrixArithmeticCircuit (F : Type u) (m r n : ℕ) :=
   ArithmeticCircuit F ((Fin m × Fin r) ⊕ (Fin r × Fin n)) (Fin m × Fin n)
 
-/-- The actual scalar assignment supplied by a pair of rectangular matrices. -/
+/-- **Matrix input assignment.** For matrices $A \in F^{m \times r}$ and $B \in F^{r \times n}$,
+the input assignment of $(A, B)$ is the function on the entry positions $(i, k)$ of an
+$m \times r$ matrix together with the entry positions $(k, j)$ of an $r \times n$ matrix that
+sends $(i, k)$ to $A_{ik}$ and $(k, j)$ to $B_{kj}$. It supplies the inputs of a matrix
+arithmetic circuit. -/
 def matrixInput {F : Type u} {m r n : ℕ}
     (A : Matrix (Fin m) (Fin r) F) (B : Matrix (Fin r) (Fin n) F) :
     ((Fin m × Fin r) ⊕ (Fin r × Fin n)) → F :=
   Sum.elim (fun p => A p.1 p.2) (fun p => B p.1 p.2)
 
-/-- Correctness on all actual inputs, without a formal-polynomial identity restriction. -/
+/-- **Circuits that compute the matrix product.** A circuit $c$ over a field $F$ whose inputs are
+the entries of an $m \times r$ matrix and an $r \times n$ matrix computes matrix multiplication
+when, for all matrices $A \in F^{m \times r}$ and $B \in F^{r \times n}$ and all $i < m$, $j < n$,
+its output at $(i, j)$ on the entries of $A$ and $B$ equals $(AB)_{ij}$.
+
+Correctness is required on actual values in $F$, not as an identity of formal polynomials. -/
 def IsMatrixMultiplication {F : Type u} [Field F] {m r n : ℕ}
     (c : MatrixArithmeticCircuit F m r n) : Prop :=
   ∀ (A : Matrix (Fin m) (Fin r) F) (B : Matrix (Fin r) (Fin n) F)
     (i : Fin m) (j : Fin n), c.evaluate (matrixInput A B) (i, j) = (A * B) i j
 
-/-- One multiplication per output computes the inner-dimension-one matrix product. -/
+/-- **Outer-product matrix circuit.** For a type $F$ of scalars and $m, n \in \mathbb{N}$, the
+outer-product matrix circuit is the matrix arithmetic circuit for an $m \times 1$ matrix times a
+$1 \times n$ matrix with exactly $mn$ gates: for $i < m$ and $j < n$, the gate for $(i, j)$
+multiplies the input at entry $(i, 0)$ of the first matrix by the input at entry $(0, j)$ of
+the second, and the output at $(i, j)$ is that gate. -/
 def outerMatrixCircuit (F : Type u) (m n : ℕ) : MatrixArithmeticCircuit F m 1 n where
   size := (ArithmeticCircuit.outerProduct F m n).size
   gate i := .mul (.input (.inl ((finProdFinEquiv.symm i).1, 0)))
     (.input (.inr (0, (finProdFinEquiv.symm i).2)))
   output ij := .node (finProdFinEquiv ij)
 
-/-- The direct outer-product matrix circuit is correct for every field input. -/
+/-- **The outer-product matrix circuit computes the matrix product.** For every field $F$ and all
+$m, n \in \mathbb{N}$, the outer-product matrix circuit over $F$ computes the product of an
+$m \times 1$ matrix and a $1 \times n$ matrix. -/
 theorem outerMatrixCircuit_correct {F : Type u} [Field F] (m n : ℕ) :
     IsMatrixMultiplication (outerMatrixCircuit F m n) := by
   intro A B i j
@@ -59,11 +77,15 @@ theorem outerMatrixCircuit_correct {F : Type u} [Field F] (m n : ℕ) :
     ArithmeticCircuit.outerProduct, ArithmeticCircuit.evaluateNode,
     ArithmeticGate.evaluate, ArithmeticOperand.evaluate, matrixInput, Matrix.mul_apply]
 
-/-- The exact charged cost of the matrix outer-product circuit. -/
+/-- **Size of the outer-product matrix circuit.** For every type $F$ of scalars and all
+$m, n \in \mathbb{N}$, the outer-product matrix circuit over $F$ has exactly $mn$ gates. -/
 theorem outerMatrixCircuit_size (F : Type u) (m n : ℕ) :
     (outerMatrixCircuit F m n).size = m * n := rfl
 
-/-- Every nonconstant matrix-product output must be computed by a charged node. -/
+/-- **Outputs of a matrix multiplication circuit are gates.** Let $F$ be a field and let $c$ be
+a circuit over $F$ that computes the product of an $m \times r$ matrix and an $r \times n$ matrix,
+where $r \ge 1$. Then for all $i < m$ and $j < n$, the output of $c$ at $(i, j)$ is one of its
+gates, not a constant or an input. -/
 theorem IsMatrixMultiplication.output_is_node {F : Type u} [Field F] {m r n : ℕ}
     {c : MatrixArithmeticCircuit F m r n} (hc : IsMatrixMultiplication c)
     (k : Fin r) (i : Fin m) (j : Fin n) :
@@ -88,7 +110,11 @@ theorem IsMatrixMultiplication.output_is_node {F : Type u} [Field F] {m r n : �
       simp [ArithmeticCircuit.evaluate, h, ArithmeticOperand.evaluate, matrixInput] at hh
   | node t => exact ⟨t, rfl⟩
 
-/-- Distinct matrix entries require distinct charged nodes, over every field. -/
+/-- **Lower bound for matrix multiplication circuits.** Let $F$ be a field and let $c$ be a
+circuit over $F$ that computes the product of an $m \times r$ matrix and an $r \times n$ matrix,
+where $r \ge 1$. Then $c$ has at least $mn$ gates.
+
+Distinct entries of the product require distinct gates, over every field. -/
 theorem IsMatrixMultiplication.output_cost_le {F : Type u} [Field F] {m r n : ℕ}
     {c : MatrixArithmeticCircuit F m r n} (hc : IsMatrixMultiplication c)
     (k : Fin r) : m * n ≤ c.size := by
