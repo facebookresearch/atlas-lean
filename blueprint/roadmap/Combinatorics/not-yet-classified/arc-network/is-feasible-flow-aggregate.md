@@ -1,0 +1,3 @@
+# Arc flows aggregate to a feasible flow
+
+Let a finite directed multigraph have arcs $e$ from $\mathrm{tail}(e)$ to $\mathrm{head}(e)$, capacities $u_e$, a source $s$ and a sink $t$. Let $f$ be arc-feasible: $0 \le f_e \le u_e$ for every arc and zero net inflow at every vertex other than $s$ and $t$. Summing over parallel arcs, the aggregated flow $F(p, q) = \sum_{\mathrm{tail}(e) = p,\ \mathrm{head}(e) = q} f_e$ is a feasible flow for the aggregated capacity $C(p, q) = \sum_{\mathrm{tail}(e) = p,\ \mathrm{head}(e) = q} u_e$: $0 \le F \le C$ and inflow equals outflow at every vertex other than $s$ and $t$.

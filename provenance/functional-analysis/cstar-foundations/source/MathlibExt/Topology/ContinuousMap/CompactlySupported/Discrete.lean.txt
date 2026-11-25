@@ -1,0 +1,99 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Topology.ContinuousMap.CompactlySupported
+public import Mathlib.Data.Finsupp.Defs
+public import Mathlib.Topology.Compactness.Compact
+
+/-!
+# Discrete compactly supported functions and literal finite coefficients
+
+These APIs depend only on a discrete topological domain and a zero/topological
+codomain; the linear equivalence uses its normed complex module structures.
+Every extraction, inverse and equivalence retains the original function values.
+No group, measure, Haar, action or C-star algebra is part of this construction.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+open scoped CompactlySupported
+
+namespace CompactlySupportedContinuousMap
+
+noncomputable section
+
+universe uG uA
+
+variable {G : Type uG} [TopologicalSpace G] [DiscreteTopology G]
+variable {A : Type uA}
+
+section Pointwise
+
+variable [Zero A] [TopologicalSpace A]
+
+/-- The support of every original compact-support function on a discrete group is finite. -/
+theorem finite_support_of_discrete (f : C_c(G, A)) : (Function.support (f : G → A)).Finite :=
+  f.hasCompactSupport.finite_of_discrete.subset subset_closure
+
+/-- The original finite coefficient values of a discrete compact-support function. -/
+def toFinsupp (f : C_c(G, A)) : G →₀ A :=
+  Finsupp.ofSupportFinite f (finite_support_of_discrete f)
+
+/-- Every extracted finite coefficient is the same original function value. -/
+@[simp]
+theorem toFinsupp_apply (f : C_c(G, A)) (g : G) :
+    toFinsupp f g = f g := rfl
+
+/-- A literal finite coefficient function as its actual compact-support continuous function. -/
+def ofFinsupp (x : G →₀ A) : C_c(G, A) where
+  toFun := x
+  continuous_toFun := continuous_of_discreteTopology
+  hasCompactSupport' := by
+    classical
+    apply HasCompactSupport.intro x.support.finite_toSet.isCompact
+    intro g hg
+    exact Finsupp.notMem_support_iff.mp hg
+
+/-- Reconstructing compact support retains every original finite coefficient. -/
+@[simp]
+theorem ofFinsupp_apply (x : G →₀ A) (g : G) :
+    ofFinsupp x g = x g := rfl
+
+end Pointwise
+
+section ComplexLinear
+
+variable [NormedAddCommGroup A] [NormedSpace ℂ A]
+
+/-- The actual value-preserving complex linear equivalence between compact support and finite support. -/
+def finsuppLinearEquiv : C_c(G, A) ≃ₗ[ℂ] (G →₀ A) where
+  toFun := toFinsupp
+  invFun := ofFinsupp
+  left_inv f := by
+    apply CompactlySupportedContinuousMap.ext
+    intro g
+    rfl
+  right_inv x := by
+    apply Finsupp.ext
+    intro g
+    rfl
+  map_add' f h := by
+    apply Finsupp.ext
+    intro g
+    rfl
+  map_smul' c f := by
+    apply Finsupp.ext
+    intro g
+    rfl
+
+end ComplexLinear
+
+end
+
+end CompactlySupportedContinuousMap
