@@ -1,0 +1,41 @@
+# Scalar Extension
+
+## Ring Hom Scalar Extension
+
+- [Right Module](right-module.md)
+- [Right Module smul](right-module-smul.md)
+- [Left Right Comm](left-right-comm.md)
+- [Tensor](tensor.md)
+- [Pure](pure.md)
+- [Pure eq mk](pure-eq-mk.md)
+- [Pure balance](pure-balance.md)
+- [Smul pure](smul-pure.md)
+- [Linear Map](linear-map.md)
+- [Linear Map pure](linear-map-pure.md)
+- [Linear Map ext](linear-map-ext.md)
+- [Linear Map id](linear-map-id.md)
+- [Linear Map comp](linear-map-comp.md)
+- [Obj](obj.md)
+- [Functor](functor.md)
+- [Functor obj](functor-obj.md)
+- [Functor map pure](functor-map-pure.md)
+- [Functor map hom](functor-map-hom.md)
+- [Coefficient](coefficient.md)
+- [Coefficient pure](coefficient-pure.md)
+- [Finite Projective](finite-projective.md)
+- [Is FGProjective obj](is-fgprojective-obj.md)
+- [Finite Free Tensor Linear Equiv](finite-free-tensor-linear-equiv.md)
+- [Finite Free Tensor Linear Equiv pure](finite-free-tensor-linear-equiv-pure.md)
+- [Finite Free Tensor Linear Equiv symm](finite-free-tensor-linear-equiv-symm.md)
+
+## FGProjective Cat
+
+- [Scalar Extension](scalar-extension.md)
+- [Scalar Extension obj obj](scalar-extension-obj-obj.md)
+- [Scalar Extension Carrier Linear Equiv](scalar-extension-carrier-linear-equiv.md)
+- [Scalar Extension Carrier Linear Equiv map pure](scalar-extension-carrier-linear-equiv-ma.md)
+- [Scalar Extension Carrier Linear Equiv naturality](scalar-extension-carrier-linear-equiv-na.md)
+- [Ring Scalar Extension](ring-scalar-extension.md)
+- [Resized Scalar Extension](resized-scalar-extension.md)
+- [Resized Scalar Extension Linear Equiv](resized-scalar-extension-linear-equiv.md)
+- [Lifted Scalar Extension](lifted-scalar-extension.md)

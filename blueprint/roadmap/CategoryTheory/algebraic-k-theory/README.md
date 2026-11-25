@@ -5,3 +5,4 @@ K-groups of rings and exact or Waldhausen categories: Grothendieck groups, stabl
 - [Exact](exact/README.md)
 - [Milnor](milnor/README.md)
 - [Ring](ring/README.md)
+- [Waldhausen](waldhausen/README.md)
