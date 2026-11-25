@@ -34,20 +34,30 @@ Right-orderable as in Problem 16.48 (a linear order invariant under right multip
 `IsSimpleGroup`, which excludes the trivial group.
 -/
 
-/-- The right orders of `G`: linear orders (as relations) invariant under right multiplication. -/
+/-- **Right orders on a group (Kourovka Problem 16.50).** The right orders of a group $G$ are the
+linear orders $\le$ on $G$, viewed as relations, that are invariant under right multiplication:
+$a \le b$ implies $ac \le bc$ for all $a, b, c \in G$. -/
 def rightOrders (G : Type*) [Group G] : Set (G → G → Prop) :=
   {r | IsLinearOrder G r ∧ ∀ a b c : G, r a b → r (a * c) (b * c)}
 
-/-- Kourovka 16.50 (V. M. Kopytov, N. Ya. Medvedev): there is a finitely generated simple
-right-orderable group. -/
+/-- **Kourovka Problem 16.50 (finitely generated simple right-orderable groups).** The statement
+that there exists a finitely generated simple group $G$ admitting a right order, that is, a linear
+order $\le$ on $G$ such that $a \le b$ implies $ac \le bc$ for all $a, b, c \in G$. The problem is
+due to V. M. Kopytov and N. Ya. Medvedev. -/
 def existsSimpleFGRightOrderable : Prop :=
   ∃ (G : Type) (_ : Group G), IsSimpleGroup G ∧ Group.FG G ∧ (rightOrders G).Nonempty
 
 /--
-Resolved true: Hyde and Lodha (Theorem 1.3) construct finitely generated simple groups of
-orientation-preserving homeomorphisms of the real line, which are finitely generated simple left (or
-right) orderable groups (Corollary 1.5 and the abstract). The Kourovka Archive answers 16.50 "Yes,
-such groups do exist". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+**Finitely generated simple right-orderable groups exist.** There is a finitely generated simple
+group $G$ that admits a right order, that is, a linear order $\le$ on $G$ such that $a \le b$
+implies $ac \le bc$ for all $a, b, c \in G$. This answers Kourovka Problem 16.50 positively.
+
+Hyde and Lodha (Theorem 1.3) construct finitely generated simple groups of orientation-preserving
+homeomorphisms of the real line, which are finitely generated simple left (or right) orderable
+groups (Corollary 1.5 and the abstract). The Kourovka Archive answers 16.50 "Yes, such groups do
+exist".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
 Problem 16.50 (V. M. Kopytov, N. Ya. Medvedev); resolution: J. Hyde and Y. Lodha, Finitely generated
 infinite simple groups of homeomorphisms of the real line, Invent. Math. 218 (2019), 83-112,

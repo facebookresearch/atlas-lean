@@ -1,0 +1,14 @@
+/* Mathlib pages (scripts/build_mathlib_pages.py): one block per declaration. */
+.ml-meta { color: var(--md-default-fg-color--light); font-size: .75rem; }
+.ml-decl { border-top: 1px solid var(--md-default-fg-color--lightest); padding: .6rem 0 .2rem; scroll-margin-top: 3.6rem; }
+.ml-decl:target { background: var(--md-accent-fg-color--transparent); }
+.ml-head { margin: 0 0 .3rem; }
+.ml-kind { color: var(--md-default-fg-color--light); font-size: .7rem; margin-right: .3rem; text-transform: uppercase; }
+.ml-name { font-family: var(--md-code-font-family); font-weight: 600; overflow-wrap: anywhere; }
+.ml-src { float: right; font-size: .7rem; }
+.md-typeset pre.ml-sig { margin: .3rem 0; }
+.md-typeset pre.ml-sig > code { white-space: pre-wrap; overflow-wrap: anywhere; }
+.ml-doc > :first-child { margin-top: .2rem; }
+.ml-uses, .ml-used, .ml-atlas, .ml-credit { font-size: .72rem; margin: .2rem 0; overflow-wrap: anywhere; }
+.ml-inst, .ml-count { color: var(--md-default-fg-color--light); }
+.ml-list { columns: 2 22rem; }

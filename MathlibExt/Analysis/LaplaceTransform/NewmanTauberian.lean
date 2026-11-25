@@ -1591,9 +1591,12 @@ private lemma newman_newman_estimate (f : ℝ → ℂ) (B : ℝ)
           add_le_add (add_le_add h12 h14) h13
       _ = 20 * B / R + 2 * M / T + 2 * R * M * Real.exp (-δ * T) := by ring
 
-/-- Newman's Tauberian theorem: a bounded measurable function on the positive ray
-whose Laplace transform extends analytically to the closed right half-plane has
-convergent partial integrals tending to the value at zero. -/
+/-- **Newman's Tauberian theorem.** Let $f : \mathbb{R} \to \mathbb{C}$ be almost everywhere
+strongly measurable on $(0, \infty)$ and bounded on $[0, \infty)$: for some real $B \ge 0$,
+$|f(t)| \le B$ for all $t \ge 0$. Let $G : \mathbb{C} \to \mathbb{C}$ be analytic at every point
+of the closed half-plane $\{s : \operatorname{Re} s \ge 0\}$, and suppose that for every $s$
+with $\operatorname{Re} s > 0$ the Laplace transform of $f$ converges at $s$ and equals $G(s)$.
+Then $\int_0^T f(t)\,dt \to G(0)$ as $T \to \infty$. -/
 theorem newman_tauberian (f : ℝ → ℂ) (B : ℝ)
     (hfmeas : AEStronglyMeasurable f (MeasureTheory.volume.restrict (Set.Ioi 0)))
     (hB : 0 ≤ B) (hbound : ∀ t : ℝ, 0 ≤ t → ‖f t‖ ≤ B)

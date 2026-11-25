@@ -28,11 +28,16 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch3
 
 namespace Entry12SummableSuccN
 
-/-- `ramanujan_part1_ch3_entry12_summable_succ_n` without the hypothesis that `n + k ≠ 0` whenever
-  `0 ≤ k` and `r + k < 0`. This is a statement about Lean's totalized `zpow`: at an index where
-  `n + k = 0` and the exponent `r + 1 + k` is negative, the term is `0 ^ (r + 1 + k) = 0`, whereas
-  the source's term is undefined there. Summability depends only on the tail, where every exponent
-  is nonnegative. -/
+/-- **Absolute convergence of the shifted series in Entry 12 for every $n$.** Let $r$ be an
+integer and let $n$ and $a$ be complex numbers with $|a| > e$, or with $a = e$ and $r \le -2$.
+Then
+$$\sum_{k=0}^{\infty} \left| \frac{(n+k)^{r+1+k}}{a^k\, k!} \right| < \infty,$$
+where integer powers of complex numbers follow the convention $0^m = 0$ for $m < 0$.
+
+Unlike the version that assumes $n + k \ne 0$ whenever $k \ge 0$ and $r + k < 0$, nothing is
+assumed about $n$. At an index where $n + k = 0$ and the exponent $r + 1 + k$ is negative, the
+term is $0^{r+1+k} = 0$, whereas the source's term is undefined there. Summability depends only
+on the tail, where every exponent is nonnegative. -/
 theorem ramanujan_part1_ch3_entry12_summable_succ_n_general (r : ℤ) (n a : ℂ)
     (ha : norm a > Real.exp 1 ∨ (a = ↑(Real.exp 1) ∧ r ≤ -2)) :
     Summable (fun k : ℕ => norm ((n + (k : ℂ)) ^ (r + 1 + (k : ℤ)) / ((a ^ k) * (k.factorial : ℂ)))) := by
@@ -336,7 +341,12 @@ theorem ramanujan_part1_ch3_entry12_summable_succ_n_general (r : ℤ) (n a : ℂ
     exact le_trans h (le_of_eq step)
 
 set_option linter.unusedVariables false in
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, definition (12.1) and Entry 12,
+/-- **Absolute convergence of the shifted series in Entry 12.** Let $r$ be an integer and let $n$
+and $a$ be complex numbers. Suppose that $|a| > e$, or that $a = e$ and $r \le -2$, and that
+$n + k \ne 0$ for every integer $k \ge 0$ with $r + k < 0$. Then
+$$\sum_{k=0}^{\infty} \left| \frac{(n+k)^{r+1+k}}{a^k\, k!} \right| < \infty.$$
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, definition (12.1) and Entry 12,
     printed pp. 66-67 / PDF pp. 76-77.
 Proves `Wanted` entry `ramanujan_part1_ch3_entry12_summable_succ_n`.
 -/

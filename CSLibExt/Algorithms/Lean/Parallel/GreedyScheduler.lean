@@ -43,19 +43,25 @@ namespace Cslib.Algorithms.Lean.Parallel.Brent
 
 variable {n : ℕ} {G : Dag n} {p : ℕ}
 
-/-- The tasks run in step `t`. -/
+/-- **Load of a step.** The load of step $t$ in a schedule $S$ of a computation DAG is the number
+of tasks that $S$ runs in step $t$. -/
 def Schedule.load (S : Schedule G p) (t : ℕ) : ℕ := (Finset.univ.filter fun v => S.time v = t).card
 
-/-- A task is *ready* at step `t` if it has not run yet and all its predecessors ran earlier. -/
+/-- **Ready task.** In a schedule $S$ of a task graph, a task $v$ is ready at step $t$ if $v$
+runs in a step later than $t$ and every predecessor of $v$ runs in a step earlier than $t$. -/
 def Schedule.Ready (S : Schedule G p) (t : ℕ) (v : Fin n) : Prop :=
   t < S.time v ∧ ∀ u ∈ G.preds v, S.time u < t
 
-/-- A schedule is *greedy* if a step leaves a ready task waiting only when all `p` processors are
-busy. -/
+/-- **Greedy schedule.** A schedule $S$ of a computation DAG on $p$ processors is greedy if, for
+every step $t$ and every task that is ready at step $t$, exactly $p$ tasks run in step $t$: a step
+leaves a ready task waiting only when all $p$ processors are busy. -/
 def Schedule.Greedy (S : Schedule G p) : Prop := ∀ t v, S.Ready t v → S.load t = p
 
-/-- Greediness only constrains the steps of the schedule: a task is never ready at or after the
-last step. -/
+/-- **Greediness need only be checked at the steps of the schedule.** Let $S$ be a schedule of a
+computation DAG on $p$ processors taking $T$ steps. Then $S$ is greedy if and only if, for every
+step $t < T$ and every task $v$ that is ready at step $t$, exactly $p$ tasks run in step $t$.
+
+This holds because a task is never ready at or after the last step. -/
 theorem Schedule.greedy_iff (S : Schedule G p) :
     S.Greedy ↔ ∀ t < S.length, ∀ v, S.Ready t v → S.load t = p := by
   constructor
@@ -70,7 +76,9 @@ instance (S : Schedule G p) (t : ℕ) (v : Fin n) : Decidable (S.Ready t v) := b
 instance (S : Schedule G p) : Decidable S.Greedy :=
   decidable_of_iff _ S.greedy_iff.symm
 
-/-- The number of incomplete steps (fewer than `p` tasks) before step `t`. -/
+/-- **Number of incomplete steps.** For a schedule $S$ of a computation DAG on $p$ processors and
+a natural number $t$, the number of incomplete steps before step $t$ is the number of steps
+$s < t$ in which $S$ runs fewer than $p$ tasks. -/
 def Schedule.incomplete (S : Schedule G p) (t : ℕ) : ℕ :=
   ((Finset.range t).filter fun s => S.load s < p).card
 
@@ -131,7 +139,9 @@ theorem Schedule.incomplete_lt_depth (S : Schedule G p) (hS : S.Greedy) :
 
 theorem Schedule.load_le (S : Schedule G p) (t : ℕ) : S.load t ≤ p := S.cap t
 
-/-- The loads of the steps add up to the work. -/
+/-- **The step loads add up to the number of tasks.** For a schedule $S$ of a task graph with $n$
+tasks that takes $T$ steps, the numbers of tasks run in the steps $0, 1, \dots, T - 1$ add up
+to $n$. -/
 theorem Schedule.sum_load (S : Schedule G p) :
     ∑ t ∈ Finset.range S.length, S.load t = n := by
   have h := Finset.card_eq_sum_card_fiberwise (s := Finset.univ) (t := Finset.range S.length)
@@ -139,7 +149,10 @@ theorem Schedule.sum_load (S : Schedule G p) :
   rw [Finset.card_univ, Fintype.card_fin] at h
   exact h.symm
 
-/-- Complete steps (all `p` processors busy) number at most `n / p`. -/
+/-- **Complete steps are bounded by the work.** Let $G$ be a computation DAG with $n$ tasks, and
+let $S$ be a schedule of $G$ on $p$ processors taking $T$ steps. If $C$ is the number of steps
+$t < T$ in which $S$ runs at least $p$ tasks (the complete steps, where all $p$ processors are
+busy), then $pC \le n$. -/
 theorem Schedule.mul_complete_le (S : Schedule G p) :
     p * ((Finset.range S.length).filter fun s => ¬ S.load s < p).card ≤ n := by
   calc p * ((Finset.range S.length).filter fun s => ¬ S.load s < p).card
@@ -154,7 +167,9 @@ theorem Schedule.mul_complete_le (S : Schedule G p) :
         Finset.sum_le_sum_of_subset (Finset.filter_subset _ _)
     _ = n := S.sum_load
 
-/-- In a greedy schedule there are at most `span` incomplete steps. -/
+/-- **A greedy schedule has at most $D$ incomplete steps.** Let $G$ be a computation DAG with span
+$D$, and let $S$ be a greedy schedule of $G$ on $p$ processors taking $T$ steps. Then at most $D$
+of the steps $t < T$ are incomplete, that is, run fewer than $p$ tasks. -/
 theorem Schedule.incomplete_length_le (S : Schedule G p) (hS : S.Greedy) :
     S.incomplete S.length ≤ span G := by
   rcases Nat.eq_zero_or_pos S.length with h0 | hpos
@@ -179,15 +194,21 @@ theorem Schedule.incomplete_length_le (S : Schedule G p) (hS : S.Greedy) :
     have := depth_le_span G v
     omega
 
-/-- Before the last step some task is still to run. -/
+/-- **Every step of a schedule has a task running at or after it.** Let $S$ be a schedule of a
+computation DAG on $p$ processors taking $T$ steps, numbered from $0$. For every step $t < T$
+there is a task that $S$ runs at step $t$ or later. -/
 theorem Schedule.exists_le_time (S : Schedule G p) {t : ℕ} (ht : t < S.length) :
     ∃ v, t ≤ S.time v := by
   obtain ⟨v, -, hv⟩ := (Finset.lt_sup_iff (f := fun v => S.time v + 1)).1 ht
   exact ⟨v, by omega⟩
 
-/-- **A greedy schedule never idles**: every step before the last runs at least one task. A task
-that runs last among those not yet run by step `t` has all its predecessors done, so it is ready,
-and a greedy step with a ready task is full. -/
+/-- **A greedy schedule never idles.** Let $S$ be a greedy schedule of a task graph on $p$
+processors that takes $T$ steps, numbered $0, \dots, T - 1$. Then every step $t < T$ of $S$
+runs at least one task.
+
+The task that runs earliest among those not run before step $t$ has all its predecessors done
+before step $t$. If step $t$ ran no task, this task would be ready at step $t$, while a greedy
+step with a ready task keeps all $p$ processors busy. -/
 theorem Schedule.one_le_load (S : Schedule G p) (hS : S.Greedy) {t : ℕ} (ht : t < S.length) :
     1 ≤ S.load t := by
   by_contra h0
@@ -216,10 +237,14 @@ theorem Schedule.one_le_load (S : Schedule G p) (hS : S.Greedy) {t : ℕ} (ht : 
     omega
   omega
 
-/-- **The greedy scheduling bound** (the unit-task case of Graham's list-scheduling argument,
-Graham, *Bounds for certain multiprocessing anomalies*, Bell System Tech. J. 45, 1966): a greedy
-schedule on `p` processors takes `T` steps with `p T ≤ n + (p - 1) D`. Complete steps hold `p`
-tasks, the at most `D` incomplete ones at least one each. -/
+/-- **The greedy scheduling bound.** Let $G$ be a computation DAG with $n$ tasks and span $D$, and
+let $S$ be a greedy schedule of $G$ on $p$ processors taking $T$ steps. Then
+$pT \le n + (p - 1)D$.
+
+Each complete step runs $p$ tasks, and each of the at most $D$ incomplete steps runs at least one.
+
+Source: the unit-task case of Graham's list-scheduling argument, Graham, *Bounds for certain
+multiprocessing anomalies*, Bell System Tech. J. 45, 1966. -/
 theorem Schedule.greedy_length_le (S : Schedule G p) (hS : S.Greedy) :
     p * S.length ≤ n + (p - 1) * span G := by
   set I := ((Finset.range S.length).filter fun s => S.load s < p).card
@@ -253,8 +278,13 @@ theorem Schedule.greedy_length_le (S : Schedule G p) (hS : S.Greedy) :
     simp only [Nat.add_sub_cancel]
     omega
 
-/-- **CLRS Theorem 27.1** (third edition): a greedy schedule takes `T ≤ n / p + D` steps,
-`p T ≤ n + p D`; a weakening of `greedy_length_le`. -/
+/-- **The work-span bound for greedy schedules.** Let $G$ be a computation DAG with $n$ tasks and
+span $D$, and let $S$ be a greedy schedule of $G$ on $p$ processors taking $T$ steps. Then
+$pT \le n + pD$, that is, $T \le n/p + D$ when $p \ge 1$.
+
+This is a weakening of the greedy scheduling bound $pT \le n + (p - 1)D$.
+
+Source: CLRS, third edition, Theorem 27.1. -/
 theorem Schedule.greedy_length (S : Schedule G p) (hS : S.Greedy) :
     p * S.length ≤ n + p * span G :=
   (S.greedy_length_le hS).trans (Nat.add_le_add_left (Nat.mul_le_mul_right _ (Nat.sub_le p 1)) n)

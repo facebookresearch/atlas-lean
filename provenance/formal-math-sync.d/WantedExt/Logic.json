@@ -1,0 +1,7 @@
+{
+  "rows": [
+    {"path": "WantedExt/Logic/AIMLogicProblem65Wanted.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "cc8f4d9a4cc45acb46092360fd3459ad26f51bf0fd2565eaedf7e8e28d0df53c", "rationale": "ATLAS-side edit not in formal-math; last ATLAS change a0d45c506 (State AIM logic problem 65 with Mathlib's first-order ring language)", "upstream_sha256": "db643ae4a9bacfaa7d4128fe2096b600d1fc47f4dfd3c5101691a657a2837b41"},
+    {"path": "WantedExt/Logic/PseudointersectionHierarchyAMR133Problem0046Wanted.lean", "disposition": "identical", "published_sha256": "f8e905c59cb1db5df63f8dd7bb029577ce2e6cec4ee160444d3b2a98e8dfd9d6", "upstream_sha256": "86f544095811ab27895e3c2647682efc6eb33dba3d041615904b3ef38535adac"},
+    {"path": "WantedExt/Logic/SelfComplementaryGraphsNotBorelAMR150Problem0049Wanted.lean", "disposition": "identical", "published_sha256": "a94d7649f4f7f313222f2416f16fa6f6619a4e6a9f2165bacd12699e78f8199d", "upstream_sha256": "7ff5ed62a3615f40521c5ee475f8f7e8778e668b11cad4934f5b8d9c7ca00d67"}
+  ]
+}

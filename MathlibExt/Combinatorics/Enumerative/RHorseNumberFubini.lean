@@ -284,25 +284,6 @@ private theorem rHorse_signedStirling_power (r k : ℕ) :
       rw [rHorse_signedStirling_orthogonal_rat]
     _ = (k.descFactorial r : ℚ) := by simp
 
-private theorem rHorse_sum_range_reflect (r : ℕ) (f : ℕ → ℚ) :
-    (∑ j ∈ Finset.range (r + 1), f (r - j)) =
-      ∑ m ∈ Finset.range (r + 1), f m := by
-  refine Finset.sum_bij (fun j _ => r - j) ?_ ?_ ?_ ?_
-  · intro j hj
-    rw [Finset.mem_range] at hj ⊢
-    omega
-  · intro j₁ hj₁ j₂ hj₂ h
-    rw [Finset.mem_range] at hj₁ hj₂
-    omega
-  · intro m hm
-    rw [Finset.mem_range] at hm
-    refine ⟨r - m, ?_, ?_⟩
-    · rw [Finset.mem_range]
-      omega
-    · omega
-  · intro j _
-    rfl
-
 private theorem rHorse_signedStirlingFirst_cast (r m : ℕ) :
     (signedStirlingFirst r m : ℚ) =
       (-1 : ℚ) ^ (r - m) * (Nat.stirlingFirst r m : ℚ) := by
@@ -328,7 +309,7 @@ private theorem rHorse_falling_stirling (r k : ℕ) :
       rw [hsub]
     _ = ∑ m ∈ Finset.range (r + 1),
           (-1 : ℚ) ^ (r - m) * (Nat.stirlingFirst r m : ℚ) * (k : ℚ) ^ m :=
-      rHorse_sum_range_reflect r
+      Finset.sum_flip
         (fun m => (-1 : ℚ) ^ (r - m) * (Nat.stirlingFirst r m : ℚ) * (k : ℚ) ^ m)
     _ = ∑ m ∈ Finset.range (r + 1),
           (signedStirlingFirst r m : ℚ) * (k : ℚ) ^ m := by
@@ -437,7 +418,7 @@ private theorem rHorse_binomial_injective (a b : ℕ → ℚ)
     ∀ k, a k = b k := by
   intro k
   induction k using Nat.strong_induction_on with
-  | h k ih =>
+  | ind k ih =>
       have hk := h k
       rw [Finset.sum_range_succ, Finset.sum_range_succ] at hk
       have hlow : (∑ i ∈ Finset.range k, (k.choose i : ℚ) * a i) =
@@ -486,20 +467,26 @@ private theorem rHorse_fubini_sum_extend {n j : ℕ} (hj : j ≤ n) :
         rw [Nat.stirlingSecond_eq_zero_of_lt hlt, zero_mul]
   exact_mod_cast hnat
 
-/-- For `r ≤ n`, the `r`-horse number — surjective maps `Fin n → Fin k` with
-the first `r` values strictly increasing, summed over `k` — equals the signed
-first-kind Stirling transform of the Fubini numbers, divided by `r!`.
+/-- **Schreyer's Fubini formula for r-horse numbers.** Let $r \le n$ be natural numbers. For each
+$k$, count the surjections $f : \{0, \dots, n - 1\} \to \{0, \dots, k - 1\}$ whose values on the
+first $r$ points are strictly increasing, $f(0) < f(1) < \dots < f(r - 1)$, and let $H$ (the
+$r$-horse number) be the sum of these counts over $0 \le k \le n$. Then, as rational numbers,
+$$
+H = \frac{1}{r!} \sum_{j=0}^{r} (-1)^j \, c(r, r - j) \, F_{n-j},
+$$
+where $c(r, i)$ is the unsigned Stirling number of the first kind (the number of permutations of
+$r$ elements with exactly $i$ cycles) and $F_m$ is the $m$-th Fubini number.
+
+The proof follows Schreyer's: the signed falling-factorial expansion is evaluated at integers and
+transported to surjection counts by image decomposition and binomial inversion, rather than by
+shift operators.
+
+Proves `Wanted` entry `rHorseNumber_eq_stirlingFirst_sum_fubini`.
 
 Source: Benjamin Schreyer, "Rigged Horse Numbers and their Modular
 Periodicity," Journal of Integer Sequences 28 (2025), Article 25.4.1,
 Theorem (label thm:fubinir), lines 211–215,
 https://cs.uwaterloo.ca/journals/JIS/VOL28/Schreyer/schreyer7.tex
-
-Proves `Wanted` entry `rHorseNumber_eq_stirlingFirst_sum_fubini`.
-
-Proof: Following Schreyer's proof of Theorem `thm:fubinir` (lines 216–240), the signed
-falling-factorial expansion is evaluated at integers and transported to surjection counts by
-image decomposition and binomial inversion, rather than by shift operators.
 -/
 public theorem rHorseNumber_eq_stirlingFirst_sum_fubini
     (n r : ℕ) (hrn : r ≤ n) :

@@ -39,8 +39,10 @@ variable [Algebra A B] [Algebra.IsIntegral A B]
 variable (p : Ideal A) [p.IsMaximal] [IsAdicComplete p A]
 variable (Q : Ideal B) [Q.IsMaximal]
 
-/-- Comap of a maximal ideal along an integral extension of an adically
-complete base is the base maximal ideal. -/
+/-- **Maximal ideals contract to the maximal ideal of a complete base.** Let $A$ and $B$ be
+commutative rings with $B$ an $A$-algebra that is integral over $A$, and let $\mathfrak p$ be a
+maximal ideal of $A$ such that $A$ is $\mathfrak p$-adically complete. Then every maximal ideal
+$Q$ of $B$ has preimage $\mathfrak p$ under the structure map $A \to B$. -/
 theorem Ideal.comap_eq_base_maximal_of_isAdicComplete_of_isIntegral
     : Q.comap (algebraMap A B) = p := by
   let _ : IsLocalRing A := isLocalRing_of_isAdicComplete_maximal p
@@ -50,7 +52,9 @@ theorem Ideal.comap_eq_base_maximal_of_isAdicComplete_of_isIntegral
   exact (IsLocalRing.eq_maximalIdeal hQ).trans
     (IsLocalRing.eq_maximalIdeal (inferInstance : p.IsMaximal)).symm
 
-/-- An integral domain over an adically complete domain at a maximal ideal is local. -/
+/-- **Domains integral over a complete local domain are local.** Let $A$ be an integral domain
+and $\mathfrak p$ a maximal ideal of $A$ such that $A$ is $\mathfrak p$-adically complete. If $B$
+is an integral domain and an $A$-algebra that is integral over $A$, then $B$ is a local ring. -/
 theorem isLocalRing_of_isIntegral_of_isAdicComplete_maximal
     (p : Ideal A) [p.IsMaximal] [IsAdicComplete p A]
     [IsDomain A] [IsDomain B] : IsLocalRing B := by
@@ -133,8 +137,9 @@ theorem isLocalRing_of_isIntegral_of_isAdicComplete_maximal
 
 namespace IsIntegralClosure
 
-/-- The integral closure of an adically complete DVR in a finite separable
-extension of its fraction field is local. -/
+/-- **The integral closure of a complete DVR is local.** Let $A$ be a discrete valuation ring
+that is complete with respect to its maximal ideal, $K$ its fraction field and $L$ a finite
+separable extension of $K$. Then the integral closure of $A$ in $L$ is a local ring. -/
 theorem isLocalRing_of_isAdicComplete
     (A K L B : Type*) [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
     [Field K] [Algebra A K] [IsFractionRing A K]
@@ -147,8 +152,10 @@ theorem isLocalRing_of_isAdicComplete
   exact isLocalRing_of_isIntegral_of_isAdicComplete_maximal
     (IsLocalRing.maximalIdeal A)
 
-/-- The integral closure of an adically complete DVR in a finite separable
-extension of its fraction field is a DVR. -/
+/-- **The integral closure of a complete DVR is a DVR.** Let $A$ be a discrete valuation ring
+that is complete with respect to its maximal ideal, $K$ its fraction field and $L$ a finite
+separable extension of $K$. Then the integral closure of $A$ in $L$ is a discrete valuation
+ring. -/
 theorem isDiscreteValuationRing_of_isAdicComplete
     (A K L B : Type*) [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
     [Field K] [Algebra A K] [IsFractionRing A K]
@@ -181,11 +188,14 @@ theorem isDiscreteValuationRing_of_isAdicComplete
       (FaithfulSMul.algebraMap_injective A B)).mpr h)
   exact ((IsDiscreteValuationRing.TFAE B hB).out 3 1).mp hDedekind
 
-/-- The integral closure of an adically complete DVR in a finite separable
-extension of its fraction field is adically complete at its own maximal ideal.
-This factors the ATLAS `Atlas/NumberTheoryI/code/LocalExtensions.lean` source
-`integral_closure_isAdicComplete` (lines 1184--1259) through the existing generic
-finite-local-extension completeness theorem. -/
+/-- **The integral closure of a complete DVR is complete.** Let $A$ be a discrete valuation ring
+that is complete with respect to its maximal ideal, $K$ its fraction field, $L$ a finite separable
+extension of $K$, and $B$ the integral closure of $A$ in $L$. If $B$ is local (as it always is
+here), then $B$ is complete with respect to its maximal ideal.
+
+Source: ATLAS `Atlas/NumberTheoryI/code/LocalExtensions.lean`, `integral_closure_isAdicComplete`
+(lines 1184--1259), obtained here from the general completeness theorem for finite local
+extensions. -/
 theorem isAdicComplete_of_isAdicComplete
     {A K L B : Type*} [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
     [Field K] [Algebra A K] [IsFractionRing A K]
@@ -203,8 +213,10 @@ theorem isAdicComplete_of_isAdicComplete
   exact IsDiscreteValuationRing.isAdicComplete_of_finite_local_extension
     (A := A) (B := B)
 
-/-- There is a unique prime of the integral closure above the maximal ideal of
-an adically complete DVR. -/
+/-- **Exactly one prime lies over the maximal ideal of a complete DVR.** Let $A$ be a discrete
+valuation ring that is complete with respect to its maximal ideal $\mathfrak m$, $K$ its fraction
+field, $L$ a finite separable extension of $K$, and $B$ the integral closure of $A$ in $L$. Then
+there is exactly one prime ideal of $B$ whose preimage under $A \to B$ is $\mathfrak m$. -/
 theorem existsUnique_primesOver_maximalIdeal_of_isAdicComplete
     (A K L B : Type*) [CommRing A] [IsDomain A] [IsDiscreteValuationRing A]
     [Field K] [Algebra A K] [IsFractionRing A K]
@@ -275,9 +287,13 @@ or prove the final tensor-product equivalence.
 
 namespace Valuation
 
-/-- For a finite separable extension of the fraction field of an adically complete DVR,
-a valuation integer ring receiving the base by a local algebra map is the integral closure.
-Completeness gives the unique prime over the base maximal ideal. -/
+/-- **Valuation rings dominating a complete DVR are integral closures.** Let $A$ be a discrete
+valuation ring that is complete with respect to its maximal ideal, $K$ its fraction field, and
+$L$ a finite separable extension of $K$. Let $v$ be a valuation on $L$ with values in a linearly
+ordered commutative group with zero, with valuation ring $\mathcal O_v = \{x \in L : v(x) \le 1\}$.
+Suppose $\mathcal O_v$ is an $A$-algebra such that the composite $A \to \mathcal O_v \subseteq L$
+is the structure map $A \to L$, and $A \to \mathcal O_v$ is a local homomorphism. Then
+$\mathcal O_v$ is the integral closure of $A$ in $L$. -/
 theorem integer_isIntegralClosure_of_isAdicComplete
     (A K L Gamma : Type*) [CommRing A] [IsDomain A]
     [IsDiscreteValuationRing A] [Field K] [Algebra A K]
@@ -382,8 +398,13 @@ theorem integer_isIntegralClosure_of_isAdicComplete
     Algebra.IsIntegral.of_surjective F hFsurj
   exact inferInstance
 
-/-- The valuation integer ring is a finite module over the complete DVR,
-as the immediate integral-closure consequence. -/
+/-- **Valuation rings dominating a complete DVR are finite over it.** Let $A$ be a discrete
+valuation ring that is complete with respect to its maximal ideal, $K$ its fraction field, and
+$L$ a finite separable extension of $K$. Let $v$ be a valuation on $L$ with values in a linearly
+ordered commutative group with zero, with valuation ring $\mathcal O_v = \{x \in L : v(x) \le 1\}$.
+Suppose $\mathcal O_v$ is an $A$-algebra such that the composite $A \to \mathcal O_v \subseteq L$
+is the structure map $A \to L$, and $A \to \mathcal O_v$ is a local homomorphism. Then
+$\mathcal O_v$ is a finitely generated $A$-module. -/
 theorem module_finite_integer_of_isAdicComplete
     (A K L Gamma : Type*) [CommRing A] [IsDomain A]
     [IsDiscreteValuationRing A] [Field K] [Algebra A K]

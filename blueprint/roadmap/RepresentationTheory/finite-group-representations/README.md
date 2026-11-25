@@ -9,3 +9,4 @@ Ordinary representation theory of finite groups over algebraically closed fields
 - [Fourier transform on finite groups](fourier-transform-on-finite-groups/README.md)
 - [Dimension of an irreducible representation divides the group order](irred-dim-dvd-card.md)
 - [Maschke's theorem](maschke-decomposition.md)
+- [Brauer's induction theorem](brauer-induction-theorem.md)

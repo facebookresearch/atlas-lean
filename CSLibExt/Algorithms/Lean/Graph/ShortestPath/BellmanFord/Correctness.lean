@@ -960,14 +960,34 @@ private lemma ranked_finite_path {n : Nat} (result : Distances n)
 
 end Internal
 
-/-- Bellman-Ford with integer weights and a concrete reachable-negative-cycle witness. -/
+/-- **Bellman–Ford algorithm.** Let $E$ be a list of integer-weighted directed edges on the
+vertices $\{0, \dots, n-1\}$ and let $s$ be a vertex. Bellman–Ford run on $E$ from $s$ starts
+with distance $d(s) = 0$ and $d(v) = \infty$ for every other vertex $v$, and makes $n - 1$ passes
+over $E$ followed by one final pass. A pass goes through the edges of $E$ in list order, charging
+one relaxation check per edge occurrence; an edge from $u$ to $v$ of weight $w$ with $d(u)$ finite
+sets $d(v)$ to $d(u) + w$ and records the edge as the predecessor edge of $v$ when $d(v) = \infty$
+or $d(u) + w < d(v)$. If the final pass changes no distance, the result is the distances and
+predecessor edges. Otherwise, starting from the vertex whose distance the final pass changed
+last, the algorithm follows $n$ predecessor edges back to a vertex $b$; it then collects the
+cycle of predecessor edges through $b$, following at most $n$ predecessor edges back from $b$
+until it reaches an edge with source $b$, and collects a path from $s$ to $b$ of at most $n - 1$
+edges by following back from $b$ the edges by which vertices first received a finite distance.
+Each lookup of a recorded edge in these three steps is charged as one witness step, also when
+no edge is recorded. If all three steps succeed and give a reachable negative cycle witness for
+$E$ and $s$, that witness is the result; otherwise the result is the distances and predecessor
+edges. -/
 public def bellmanFord {n : Nat} (edges : List (Edge n)) (source : Fin n) :
     TimeM Cost (Result edges source) :=
   Internal.bellmanFord edges source
 
 open Internal
 
-/-- Bellman-Ford returns distances exactly when no reachable negative cycle exists. -/
+/-- **Bellman-Ford succeeds exactly when no negative cycle is reachable.** Let $E$ be a list of
+integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$ and let $s$ be a vertex.
+Bellman-Ford run on $E$ from $s$ returns distances if and only if there is no negative cycle
+reachable from $s$, that is, no simple path from $s$ to a vertex $b$ together with a nonempty
+cycle through $b$ along edges of $E$ whose edge sources are pairwise distinct and whose total
+weight is negative. -/
 public theorem bellmanFord_returns_distances_iff {n : Nat} (edges : List (Edge n))
     (source : Fin n) :
     (∃ result, (bellmanFord edges source).ret = Result.distances result) ↔
@@ -983,7 +1003,12 @@ public theorem bellmanFord_returns_distances_iff {n : Nat} (edges : List (Edge n
     rw [bellmanFord_eq_finish_afterFinal]
     simp [finish, final_none]
 
-/-- Bellman-Ford returns a witness exactly when a reachable negative cycle exists. -/
+/-- **Bellman-Ford reports a negative cycle exactly when one is reachable.** Let $E$ be a list of
+integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$ and let $s$ be a vertex.
+Bellman-Ford run on $E$ from $s$ returns a reachable negative cycle witness if and only if a
+negative cycle is reachable from $s$, that is, there are a simple path from $s$ to a vertex $b$
+and a nonempty cycle through $b$ along edges of $E$ whose edge sources are pairwise distinct and
+whose total weight is negative. -/
 public theorem bellmanFord_returns_negativeCycle_iff {n : Nat} (edges : List (Edge n))
     (source : Fin n) :
     (∃ witness, (bellmanFord edges source).ret = Result.negativeCycle witness) ↔
@@ -1004,7 +1029,11 @@ public theorem bellmanFord_returns_negativeCycle_iff {n : Nat} (edges : List (Ed
           rw [bellmanFord_eq_finish_afterFinal]
           exact finish_eq⟩
 
-/-- Every finite distance returned by Bellman-Ford is realized by an input-edge path. -/
+/-- **Bellman-Ford distances are realized by walks.** Let $E$ be a list of integer-weighted
+directed edges on the vertices $\{0, \dots, n-1\}$ and let $s$ be a vertex. If Bellman-Ford run
+on $E$ from $s$ returns distances $d$ and the distance $d(t)$ of a vertex $t$ is a finite integer
+$\delta$, then there is a walk from $s$ to $t$ along edges of $E$ whose total weight is
+$\delta$. -/
 public theorem bellmanFord_distance_realized {n : Nat} {edges : List (Edge n)}
     {source target : Fin n}
     {result : Distances n} {distance : Int}
@@ -1027,7 +1056,11 @@ public theorem bellmanFord_distance_realized {n : Nat} {edges : List (Edge n)}
   apply final_realizes target distance
   rwa [← distance_vector]
 
-/-- A returned finite distance is no larger than every competing path weight. -/
+/-- **Bellman-Ford distances are lower bounds on walk weights.** Let $E$ be a list of
+integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$ and let $s$ be a vertex.
+If Bellman-Ford run on $E$ from $s$ returns distances $d$, the distance $d(t)$ of a vertex $t$
+is a finite integer $\delta$, and $P$ is a walk from $s$ to $t$ along edges of $E$ (vertices may
+repeat), then $\delta$ is at most the total weight of $P$. -/
 public theorem bellmanFord_distance_minimal {n : Nat} {edges : List (Edge n)}
     {source target : Fin n} {result : Distances n} {distance : Int}
     {path : List (Edge n)}
@@ -1040,7 +1073,11 @@ public theorem bellmanFord_distance_minimal {n : Nat} {edges : List (Edge n)}
   subst result
   exact afterFinal_minimal_of_none final_none hDistance hPath
 
-/-- A returned distance is infinite exactly at unreachable vertices. -/
+/-- **Bellman-Ford leaves exactly the unreachable vertices at infinite distance.** Let $E$ be a
+list of integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$ and let $s$ be a
+vertex. If Bellman-Ford run on $E$ from $s$ returns distances $d$, with $\infty$ marking a vertex
+that has no finite distance, then for every vertex $t$, $d(t) = \infty$ if and only if $t$ is not
+reachable from $s$ in the directed graph obtained from $E$ by forgetting the weights. -/
 public theorem bellmanFord_distance_eq_none_iff {n : Nat} {edges : List (Edge n)}
     {source target : Fin n} {result : Distances n}
     (hRun : (bellmanFord edges source).ret = Result.distances result) :
@@ -1051,7 +1088,11 @@ public theorem bellmanFord_distance_eq_none_iff {n : Nat} {edges : List (Edge n)
   subst result
   exact afterFinal_distance_eq_none_iff_of_none final_none
 
-/-- Every returned predecessor is a tight input edge for the final distances. -/
+/-- **Bellman-Ford predecessor edges are tight.** Let $E$ be a list of integer-weighted directed
+edges on the vertices $\{0, \dots, n-1\}$ and let $s$ be a vertex. Suppose Bellman-Ford run on
+$E$ from $s$ returns distances $d$ together with predecessor edges, and the predecessor edge of a
+vertex $t$ is an edge $e$ from $u$ to $v$ of weight $w$. Then $e$ belongs to $E$, $v = t$, and
+$d(u)$ and $d(t)$ are both finite with $d(t) = d(u) + w$. -/
 public theorem bellmanFord_predecessor_spec {n : Nat} {edges : List (Edge n)}
     {source target : Fin n} {result : Distances n} {edge : Edge n}
     (hRun : (bellmanFord edges source).ret = Result.distances result)
@@ -1077,7 +1118,10 @@ public theorem bellmanFord_predecessor_spec {n : Nat} {edges : List (Edge n)}
   exact ⟨edge_mem, edge_target, sourceDistance, targetDistance, source_eq,
     edge_target ▸ target_eq, by omega⟩
 
-/-- The successful predecessor tree has no predecessor at the source. -/
+/-- **Bellman-Ford gives the source no predecessor.** Let $E$ be a list of integer-weighted
+directed edges on the vertices $\{0, \dots, n-1\}$ and let $s$ be a vertex. If Bellman-Ford run
+on $E$ from $s$ returns distances together with predecessor edges, then $s$ has no predecessor
+edge. -/
 public theorem bellmanFord_source_predecessor_eq_none {n : Nat} {edges : List (Edge n)}
     {source : Fin n} {result : Distances n}
     (hRun : (bellmanFord edges source).ret = Result.distances result) :
@@ -1087,7 +1131,12 @@ public theorem bellmanFord_source_predecessor_eq_none {n : Nat} {edges : List (E
   subst result
   exact afterFinal_source_predecessor_none_of_none edges source final_none
 
-/-- Path reconstruction fails exactly at vertices with infinite distance. -/
+/-- **Bellman-Ford path reconstruction fails exactly at infinite distances.** Let $E$ be a list of
+integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$ and let $s$ be a vertex. If
+Bellman-Ford run on $E$ from $s$ returns distances $d$, with $\infty$ marking a vertex that has
+no finite distance, together with predecessor edges, then for every vertex $t$, reconstructing a
+path to $t$ (following predecessor edges back from $t$ for at most $n$ steps until $s$ is
+reached) fails if and only if $d(t) = \infty$. -/
 public theorem bellmanFord_pathTo?_eq_none_iff {n : Nat} {edges : List (Edge n)}
     {source target : Fin n} {result : Distances n}
     (hRun : (bellmanFord edges source).ret = Result.distances result) :
@@ -1109,7 +1158,13 @@ public theorem bellmanFord_pathTo?_eq_none_iff {n : Nat} {edges : List (Edge n)}
         contradiction
   · exact followPredecessors_none_of_distance_none final_none
 
-/-- Every reconstructed predecessor path is simple, valid, and realizes its distance. -/
+/-- **Bellman-Ford reconstructed paths are simple and realize the distances.** Let $E$ be a list
+of integer-weighted directed edges on the vertices $\{0, \dots, n-1\}$ and let $s$ be a vertex.
+Suppose Bellman-Ford run on $E$ from $s$ returns distances $d$ together with predecessor edges,
+and that reconstructing a path to a vertex $t$ (following predecessor edges back from $t$ for at
+most $n$ steps until $s$ is reached) yields the edge sequence $P$. Then $P$ is a walk from $s$
+to $t$ along edges of $E$, $d(t)$ is finite and equals the total weight of $P$, the vertex $s$
+and the targets of the edges of $P$ are pairwise distinct, and $P$ has fewer than $n$ edges. -/
 public theorem bellmanFord_pathTo?_spec {n : Nat} {edges : List (Edge n)}
     {source target : Fin n} {result : Distances n} {path : List (Edge n)}
     (hRun : (bellmanFord edges source).ret = Result.distances result)
@@ -1131,8 +1186,17 @@ public theorem bellmanFord_pathTo?_spec {n : Nat} {edges : List (Edge n)}
   | some distance =>
       exact followPredecessors_spec final_none distance distance_eq path hPath
 
-/-- A tight predecessor forest with bounded decreasing ranks reconstructs exactly the finite
-distances as input-edge paths of fewer than `n` edges. -/
+/-- **Predecessor paths realize the distances under a decreasing rank.** Let $R$ be a
+distances record on $n$ vertices with source $s$, distance table $d$ (each $d(v)$ is an integer
+or infinite) and predecessor table $p$; let $E$ be a list of weighted edges; and let $r$ assign to
+each vertex $v$ a natural number $r(v) < n$. Suppose that $d(s) = 0$, that every vertex $v$ with
+$d(v)$ infinite has no predecessor, that every vertex $v \ne s$ with $d(v)$ finite has a
+predecessor, and that whenever $p(v) = e$, the edge $e$ occurs in $E$, ends at $v$, and its start
+$u$ has $d(u)$ finite, $d(v) = d(u) + w(e)$ where $w(e)$ is the weight of $e$, and $r(u) < r(v)$.
+Then for every vertex $t$, following predecessors from $t$ back to $s$ for at most $n$ edges fails
+exactly when $d(t)$ is infinite; and whenever it returns a path $P$ and $d(t)$ is finite, $P$ is a
+path from $s$ to $t$ made of edges of $E$, its total weight is $d(t)$, and it has fewer than $n$
+edges. -/
 public theorem Distances.pathTo?_spec_of_rank {n : Nat} (result : Distances n)
     (edges : List (Edge n)) (rank : Fin n → Nat)
     (rank_bound : ∀ vertex, rank vertex < n)

@@ -47,16 +47,25 @@ universe u v
 
 variable {ι : Type u} {τ : Type v} [LinearOrder τ]
 
-/-- Two closed-open activities are compatible when one finishes before the other starts. -/
+/-- **Compatible activities.** Let each activity $a$ have a start time $s(a)$ and a finish time
+$f(a)$ in a linearly ordered type, thought of as the closed-open interval $[s(a), f(a))$. Two
+activities $a$ and $b$ are compatible when $f(a) \le s(b)$ or $f(b) \le s(a)$; in particular,
+activities whose intervals only touch at an endpoint are compatible. -/
 def IntervalCompatible (start finish : ι → τ) (a b : ι) : Prop :=
   finish a ≤ start b ∨ finish b ≤ start a
 
-/-- Compatibility is symmetric. -/
+/-- **Symmetry of interval compatibility.** For any start and finish times and any activities $a$
+and $b$, if $a$ is compatible with $b$, then $b$ is compatible with $a$. -/
 theorem IntervalCompatible.symm {start finish : ι → τ} {a b : ι}
     (h : IntervalCompatible start finish a b) : IntervalCompatible start finish b a :=
   Or.symm h
 
-/-- An earliest-finish schedule, obtained by sorting by finish time and scanning once. -/
+/-- **Earliest-finish greedy interval scheduling.** Given start and finish times $s$ and $f$ in a
+linear order and a list $L$ of activities, sort $L$ by finish time with merge sort, then scan the
+sorted list: the first activity is selected, and each later activity $a$ is selected exactly when
+$s(a)$ is at least the finish time of the last selected activity. The result is the list of
+selected activities in sorted order, together with a cost that counts one for each finish-time
+comparison made by the merge sort and one for each scanned activity after the first. -/
 def intervalSchedule (start finish : ι → τ) (xs : List ι) : TimeM Nat (List ι) :=
   let rec scan (lastFinish : τ) : List ι → TimeM Nat (List ι)
     | [] => pure []
@@ -359,8 +368,13 @@ private theorem intervalSchedule_eq (start finish : ι → τ) (xs : List ι) :
   simp only [intervalSchedule_scan_eq]
   rfl
 
-/-- The output preserves input occurrences, is feasible, and has maximum cardinality
-among all feasible subpermutations of the input. Strictly positive durations are required. -/
+/-- **Correctness and optimality of earliest-finish interval scheduling.** Let $s$ and $f$ assign
+start and finish times in a linear order to activities, and let $L$ be a list of activities with
+$s(a) < f(a)$ for every $a$ in $L$. Let $S$ be the list returned by the earliest-finish schedule
+of $L$. Then $S$ is a subpermutation of $L$ (each activity occurs in $S$ at most as often as in
+$L$), any two entries of $S$ at distinct positions are compatible, and every subpermutation $M$
+of $L$ whose entries at distinct positions are pairwise compatible has length at most the length
+of $S$. -/
 theorem intervalSchedule_correct (start finish : ι → τ) (xs : List ι)
     (hproper : ∀ a ∈ xs, start a < finish a) :
     (intervalSchedule start finish xs).ret.Subperm xs ∧
@@ -376,7 +390,9 @@ theorem intervalSchedule_correct (start finish : ι → τ) (xs : List ι)
   exact ⟨hc.1.trans hperm.subperm, hc.2.1,
     fun ys hsub hcompatible => hc.2.2 ys (hsub.trans hperm.symm.subperm) hcompatible⟩
 
-/-- At most `n * ⌈log₂ n⌉ + (n - 1)` comparisons are charged for `n` input occurrences. -/
+/-- **Comparison bound for earliest-finish interval scheduling.** For any start and finish times
+and any list of $n$ activities, the earliest-finish schedule charges at most
+$n \lceil \log_2 n \rceil + (n - 1)$ comparisons when $n \ge 1$, and none when $n = 0$. -/
 theorem intervalSchedule_time (start finish : ι → τ) (xs : List ι) :
     (intervalSchedule start finish xs).time ≤
       xs.length * Nat.clog 2 xs.length + (xs.length - 1) := by
