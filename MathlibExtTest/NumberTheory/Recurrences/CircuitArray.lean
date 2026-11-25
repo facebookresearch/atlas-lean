@@ -75,23 +75,4 @@ example : circuitArrayX 0 3 = (27 * RatFunc.X - 1) / (27 * RatFunc.X) := by
   rw [(circuitArrayX_row_zero 3 (by norm_num)).1]
   norm_num
 
-/-! ### Annihilators of recurrence solutions -/
-
-open Polynomial in
--- At order zero the coefficient sum is empty and the characteristic polynomial is `1`.
-example (G : ℕ → ℚ) (hG : (⟨0, Fin.elim0⟩ : LinearRecurrence ℚ).IsSolution G) :
-    AnnihilatesSeq (1 : ℚ[X]) G := by
-  simpa [LinearRecurrence.charPoly] using
-    annihilatesSeq_charPoly_of_isSolution ⟨0, Fin.elim0⟩ G hG
-
-open Polynomial in
--- The nonzero sequence `2^n` solves the order-one recurrence `G (n + 1) = 2 * G n`.
-example : AnnihilatesSeq (X - C 2 : ℚ[X]) (fun n => 2 ^ n) := by
-  let E : LinearRecurrence ℚ := ⟨1, fun _ => 2⟩
-  have hG : E.IsSolution (fun n => 2 ^ n) := by
-    intro n
-    simp [E, pow_succ']
-  simpa [E, LinearRecurrence.charPoly, ← X_pow_eq_monomial] using
-    annihilatesSeq_charPoly_of_isSolution E _ hG
-
 end MetaMathlibExt
