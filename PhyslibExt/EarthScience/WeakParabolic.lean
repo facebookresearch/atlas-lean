@@ -30,9 +30,10 @@ functions (`ParabolicTest`) are C^∞ with compact support in the open rectangle
 forms are iterated integrals with time outside.
 
 Rothe's method splits `[t0, t1]` into `N` slabs of length `τ = (t1 - t0) / N`, averages `κ`
-and `F` over each slab, and solves one implicit Euler step per slab
-(`parabolic_euler_step`). This gives the Rothe sequence `rotheSeq` and its discrete energy
-estimate (`parabolic_euler_step_energy`, `rothe_iter_bounds`). Sections E to N pass to the
+and `F` over each slab, and solves one implicit Euler step per slab by Lax–Milgram
+(`parabolic_euler_step_laxMilgram`; `parabolic_euler_step` packages a step with its energy
+bound). This gives the Rothe sequence `rotheSeq` and its discrete energy estimate
+(`parabolic_euler_step_energy`, `rothe_iter_bounds`). Sections E to N pass to the
 limit `N → ∞` along subsequences: weak limits of the piecewise constant interpolants, the
 weak equation and the energy estimate of the limit, and the profiles, time slices and
 initial values of a representative of the limit. Many of these results take analytic
@@ -49,8 +50,8 @@ equation.
 
 ## ii. Key results
 
-- `EarthScience.parabolic_euler_step`: one implicit Euler step has a solution in
-  `H¹₀(0,1)`, by Lax–Milgram for the step's bilinear form.
+- `EarthScience.parabolic_euler_step_laxMilgram`: Lax–Milgram for one implicit Euler step,
+  given the step's bilinear form and right-hand side with their bound and coercivity.
 - `EarthScience.parabolic_euler_step_energy`: the energy inequality of one step.
 - `EarthScience.rotheSeq` and `EarthScience.rotheSeq_spec`: the Rothe sequence.
 - `EarthScience.weak_parabolic_unique_final`: uniqueness of time-continuous weak
