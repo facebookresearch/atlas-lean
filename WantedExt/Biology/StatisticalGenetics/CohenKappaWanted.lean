@@ -18,9 +18,9 @@ and, for fixed margins, `κ ≤ κ_max = (∑ᵢ min(pᵢ., p.ᵢ) - p_e) / (1 -
 `pᵢᵢ ≤ min(pᵢ., p.ᵢ)`, with equality for a table with these margins whose diagonal is
 `min(pᵢ., p.ᵢ)` (Cohen's `κ_M`, the maximum permitted by the margins).
 
-Recorded here: the three properties, including attainment of `κ_max`. The primary is paywalled
-and was not read; the definitions follow Cohen (1960) as restated in secondary sources, and the
-three properties are derived.
+The perfect-agreement result and its definitions are re-exported from
+`MathlibExt.Probability.CohenKappa`. The primary is paywalled and was not read; the definitions
+follow Cohen (1960) as restated in secondary sources, and the three properties are derived.
 
 Sources: J. Cohen, "A coefficient of agreement for nominal scales", Educ. Psychol. Meas. 20
 (1960) 37–46, doi:10.1177/001316446002000104.
@@ -28,45 +28,16 @@ Sources: J. Cohen, "A coefficient of agreement for nominal scales", Educ. Psycho
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Probability.CohenKappa
 
 @[expose] public section
 
 namespace WantedExt.Biology.StatisticalGenetics.CohenKappaWanted
 
-/-- `P` is a joint probability table: every entry is nonnegative and the entries sum to `1`. -/
-def IsTable {k : ℕ} (P : Fin k → Fin k → ℝ) : Prop := (∀ i j, 0 ≤ P i j) ∧ ∑ i, ∑ j, P i j = 1
-
-/-- Row margin `pᵢ. = ∑ⱼ pᵢⱼ`. -/
-noncomputable def rowMargin {k : ℕ} (P : Fin k → Fin k → ℝ) (i : Fin k) : ℝ := ∑ j, P i j
-
-/-- Column margin `p.ⱼ = ∑ᵢ pᵢⱼ`. -/
-noncomputable def colMargin {k : ℕ} (P : Fin k → Fin k → ℝ) (j : Fin k) : ℝ := ∑ i, P i j
-
-/-- Observed agreement `p_o = ∑ᵢ pᵢᵢ`. -/
-noncomputable def observed {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ := ∑ i, P i i
-
-/-- Chance agreement `p_e = ∑ᵢ pᵢ. p.ᵢ`. -/
-noncomputable def chance {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ :=
-  ∑ i, rowMargin P i * colMargin P i
-
-/-- **Cohen's kappa** `κ = (p_o - p_e) / (1 - p_e)`. -/
-noncomputable def kappa {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ :=
-  (observed P - chance P) / (1 - chance P)
-
 /-- The **maximum kappa for the margins of `P`**:
 `κ_max = (∑ᵢ min(pᵢ., p.ᵢ) - p_e) / (1 - p_e)`. -/
 noncomputable def kappaMax {k : ℕ} (P : Fin k → Fin k → ℝ) : ℝ :=
   (∑ i, min (rowMargin P i) (colMargin P i) - chance P) / (1 - chance P)
-
-/-- **Perfect agreement** (Cohen 1960; derived): let `P` be a joint probability table with chance
-agreement `p_e < 1`. Then `κ = 1` if and only if the observed agreement is `p_o = 1`.
-
-Source: Cohen (1960). -/
-public theorem_wanted kappa_eq_one_iff {k : ℕ} (P : Fin k → Fin k → ℝ) (hP : IsTable P)
-    (he : chance P < 1) :
-    kappa P = 1 ↔ observed P = 1
 
 /-- **Independent raters** (Cohen 1960; derived): let `P` be a joint probability table that is the
 product of its margins (`pᵢⱼ = pᵢ. p.ⱼ` for all `i, j`) with chance agreement `p_e < 1`. Then
