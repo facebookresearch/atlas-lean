@@ -39,6 +39,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.NumberTheory.Divisors
+public import MathlibExt.NumberTheory.DeficientPerfectPrimePower
 public import MathlibExt.NumberTheory.NearPerfectTwoPrimePower
 public import MathlibExt.NumberTheory.OddPrimeDeficientPerfect
 
@@ -164,17 +165,6 @@ theorem_wanted klNearPerfectWith_prime_pow_iff
       2 ≤ a ∧ a ≤ k ∧ d = 1 ∧
         l = p ^ (k - a) *
           ∑ i ∈ Finset.range (a - 1), p ^ (i * k)
-
-/-- **$[k,\ell]$-deficient-perfect prime powers for $k \ge 2$.** Let $p$ be a prime and let $a$,
-$k$ and $\ell$ be natural numbers with $k \ge 2$. If $p^a$ is $[k,\ell]$-deficient-perfect, then
-$p = 2$ and $a = 1$.
-
-Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
-and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
-`F_k`-Perfect Numbers", Theorem 5. -/
-theorem_wanted isKLDeficientPerfect_prime_pow_imp
-    (p a k l : ℕ) (hp : p.Prime) (hk : 2 ≤ k) :
-    IsKLDeficientPerfect k l (p ^ a) → p = 2 ∧ a = 1
 
 /-- **Prime powers that are $[1,\ell]$-deficient-perfect with a given divisor.** Let $p$ be a
 prime, let $a$, $\ell$ and $d$ be natural numbers, and write $\sigma_1(m)$ for the sum of the
