@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Domains.Biology.Biophysics.SaturableElimination
 public import Domains.Biology.Dynamics.MichaelisMenten
 public import Mathlib.Analysis.ODE.Basic
 import Mathlib.Analysis.Calculus.Deriv.Prod
@@ -28,7 +29,8 @@ A state is a point `x : Fin 2 → ℝ` with biomass `x 0 = X` and substrate `x 1
 solutions on a set `I` of times are the integral curves `IsIntegralCurveOn x (fun _ ↦ v) I` of
 the autonomous field `v = vectorField μ D Sf y`, and the norm of `Fin 2 → ℝ` is the maximum norm
 on states. Monod's growth rate `μ(S) = μ_m S / (K_s + S)` has the form of the Michaelis–Menten
-rate law and is `mmRate μm Ks`.
+rate law and is `mmRate μm Ks`; the substrate level `S*` at which it balances the dilution rate,
+`μ(S*) = D`, is the steady concentration `steadyConc μm Ks D` of saturable elimination.
 
 ## Main results
 
@@ -37,10 +39,8 @@ rate law and is `mmRate μm Ks`.
 * `substrateEquivalent`: the substrate equivalent `Z = S + X / y`.
 * `hasDerivWithinAt_substrateEquivalent`, `substrateEquivalent_relaxation`: along every
   solution on an interval `I ∋ 0`, `Z' = D (S_f - Z)`, so `Z(t) = S_f + (Z(0) - S_f) e^{-D t}`
-  on `I`, and `Z(t) → S_f` as `t → ∞` when `I ⊇ [0, ∞)`. Only the common factor `μ(S) X` of the
-  two growth terms is used, not the form of `μ`.
-* `mmRate_eq_iff`: on `S ≥ 0` the Monod rate equals `D < μ_m` exactly at
-  `S = D K_s / (μ_m - D)`.
+  on `I`, and `Z(t) → S_f` as `t → ∞` when `D > 0` and `I ⊇ [0, ∞)`. Only the common factor
+  `μ(S) X` of the two growth terms is used, not the form of `μ`.
 * `interiorState`: the steady state `(X*, S*)` with `S* = D K_s / (μ_m - D)` and
   `X* = y (S_f - S*)`.
 * `equilibria_and_washout_threshold`: for Monod growth with `μ_m, K_s, S_f, y > 0` and
@@ -64,6 +64,8 @@ open scoped Topology
 namespace Domains.Biology.Dynamics.Chemostat
 
 open MathlibExt.Biology.Dynamics.MichaelisMenten (mmRate mmRate_lt mmRate_strictMono)
+open MathlibExt.Biology.Biophysics.SaturableElimination
+  (steadyConc eq_steadyConc_of_mmRate_eq mmRate_steadyConc)
 
 /-- **The chemostat vector field.** At a state `x : Fin 2 → ℝ` with biomass `X = x 0` and
 substrate `S = x 1`, the chemostat with specific growth rate `μ : ℝ → ℝ`, dilution rate `D`,
@@ -112,21 +114,21 @@ theorem hasDerivWithinAt_substrateEquivalent {μ : ℝ → ℝ} {D Sf y t : ℝ}
   simp only [vectorField_apply_zero, vectorField_apply_one] at h₀ h₁
   exact (h₁.fun_add (h₀.div_const y)).congr_deriv (by simp only [substrateEquivalent]; ring)
 
-/-- **The substrate equivalent relaxes to the feed.** Let `D > 0`, let `Sf` and `y` be real and
-let `μ : ℝ → ℝ` be any growth rate (a quotient by `0` is `0`). Let `I` be an interval containing
-`0` and `x` a solution of the chemostat balances on `I`, that is, an integral curve on `I` of the
+/-- **The substrate equivalent relaxes to the feed.** Let `D`, `Sf` and `y` be real and let
+`μ : ℝ → ℝ` be any growth rate (a quotient by `0` is `0`). Let `I` be an interval containing `0`
+and `x` a solution of the chemostat balances on `I`, that is, an integral curve on `I` of the
 chemostat vector field (with derivatives within `I`). Then the substrate equivalent
 `Z(t) = S(t) + X(t) / y` satisfies `Z' = D (Sf - Z)` on `I`, hence
-`Z(t) = Sf + (Z(0) - Sf) e^{-D t}` for every `t ∈ I`; and if `I` contains `[0, ∞)`, then
-`Z(t) → Sf` as `t → ∞`. -/
-theorem substrateEquivalent_relaxation {μ : ℝ → ℝ} {D Sf y : ℝ} (hD : 0 < D) {I : Set ℝ}
+`Z(t) = Sf + (Z(0) - Sf) e^{-D t}` for every `t ∈ I`; and if `D > 0` and `I` contains `[0, ∞)`,
+then `Z(t) → Sf` as `t → ∞`. -/
+theorem substrateEquivalent_relaxation {μ : ℝ → ℝ} {D Sf y : ℝ} {I : Set ℝ}
     (hI : I.OrdConnected) (h0 : 0 ∈ I) {x : ℝ → Fin 2 → ℝ}
     (hx : IsIntegralCurveOn x (fun _ ↦ vectorField μ D Sf y) I) :
     (∀ t ∈ I, HasDerivWithinAt (fun t ↦ substrateEquivalent y (x t))
       (D * (Sf - substrateEquivalent y (x t))) I t) ∧
     (∀ t ∈ I, substrateEquivalent y (x t) =
       Sf + (substrateEquivalent y (x 0) - Sf) * exp (-(D * t))) ∧
-    (Ici 0 ⊆ I → Tendsto (fun t ↦ substrateEquivalent y (x t)) atTop (𝓝 Sf)) := by
+    (0 < D → Ici 0 ⊆ I → Tendsto (fun t ↦ substrateEquivalent y (x t)) atTop (𝓝 Sf)) := by
   set Z : ℝ → ℝ := fun t ↦ substrateEquivalent y (x t)
   have hZ : ∀ t ∈ I, HasDerivWithinAt Z (D * (Sf - Z t)) I t := fun t ht ↦
     hasDerivWithinAt_substrateEquivalent (hx t ht)
@@ -145,7 +147,7 @@ theorem substrateEquivalent_relaxation {μ : ℝ → ℝ} {D Sf y : ℝ} (hD : 0
     have h' := congrArg (· * exp (-(D * t))) h
     simp only [mul_assoc, ← exp_add, add_neg_cancel, exp_zero, mul_one] at h'
     linarith
-  refine ⟨hZ, hexp, fun hsub ↦ ?_⟩
+  refine ⟨hZ, hexp, fun hD hsub ↦ ?_⟩
   have hdecay : Tendsto (fun t ↦ exp (-(D * t))) atTop (𝓝 0) :=
     tendsto_exp_neg_atTop_nhds_zero.comp (tendsto_id.const_mul_atTop hD)
   have hlim := (hdecay.const_mul (Z 0 - Sf)).const_add Sf
@@ -154,31 +156,24 @@ theorem substrateEquivalent_relaxation {μ : ℝ → ℝ} {D Sf y : ℝ} (hD : 0
   filter_upwards [eventually_ge_atTop 0] with t ht
   exact (hexp t (hsub ht)).symm
 
-/-- **Where the Monod rate equals the dilution rate.** Let `Ks > 0`, `S ≥ 0` and `D < μm`.
-Then the Monod rate `μm S / (Ks + S)` equals `D` exactly when `S = D Ks / (μm - D)`. -/
-theorem mmRate_eq_iff {μm Ks D S : ℝ} (hKs : 0 < Ks) (hS : 0 ≤ S) (hD : D < μm) :
-    mmRate μm Ks S = D ↔ S = D * Ks / (μm - D) := by
-  have h₁ : Ks + S ≠ 0 := by positivity
-  have h₂ : μm - D ≠ 0 := sub_ne_zero.2 hD.ne'
-  rw [mmRate, div_eq_iff h₁, eq_div_iff h₂]
-  constructor <;> intro h <;> linarith
-
 /-- **Interior steady state of the chemostat.** For the Monod growth rate
 `μ(S) = μm S / (Ks + S)`, dilution rate `D`, feed substrate concentration `Sf` and yield `y`, the
-state `(X*, S*)` with substrate `S* = D Ks / (μm - D)`, the level at which growth balances dilution
-(`μ(S*) = D` when `Ks > 0` and `0 ≤ D < μm`), and biomass `X* = y (Sf - S*)` (a quotient by `0`
-is `0`). For `μm, Ks, Sf, y > 0` and `0 < D < μ(Sf)` it is a steady state in the closed quadrant
-`X, S ≥ 0`, with `0 < S* < Sf` and `X* > 0`. -/
+state `(X*, S*)` with substrate `S* = D Ks / (μm - D)` and biomass `X* = y (Sf - S*)` (a quotient
+by `0` is `0`). The substrate level `S*` is the steady concentration `steadyConc μm Ks D` of
+saturable elimination at infusion rate `D`: for `μm, Ks > 0` and `D < μm` it is where growth
+balances dilution, `μ(S*) = D`, and the only such level `S ≥ 0`. For `μm, Ks, Sf, y > 0` and
+`0 < D < μ(Sf)` the state is a steady state in the closed quadrant `X, S ≥ 0`, with
+`0 < S* < Sf` and `X* > 0`. -/
 noncomputable def interiorState (μm Ks D Sf y : ℝ) : Fin 2 → ℝ :=
-  ![y * (Sf - D * Ks / (μm - D)), D * Ks / (μm - D)]
+  ![y * (Sf - steadyConc μm Ks D), steadyConc μm Ks D]
 
 @[simp]
 theorem interiorState_apply_zero (μm Ks D Sf y : ℝ) :
-    interiorState μm Ks D Sf y 0 = y * (Sf - D * Ks / (μm - D)) := rfl
+    interiorState μm Ks D Sf y 0 = y * (Sf - steadyConc μm Ks D) := rfl
 
 @[simp]
 theorem interiorState_apply_one (μm Ks D Sf y : ℝ) :
-    interiorState μm Ks D Sf y 1 = D * Ks / (μm - D) := rfl
+    interiorState μm Ks D Sf y 1 = steadyConc μm Ks D := rfl
 
 /-- A state of `Fin 2 → ℝ` is the vector of its two coordinates. -/
 private theorem eq_vec_iff {x : Fin 2 → ℝ} {a b : ℝ} : x = ![a, b] ↔ x 0 = a ∧ x 1 = b := by
@@ -213,7 +208,7 @@ theorem equilibria_and_washout_threshold {μm Ks Sf y : ℝ} (hμm : 0 < μm) (h
   have hDc_pos : 0 < Dc := by simp only [hDc, mmRate]; positivity
   have hDc_lt : Dc < μm := mmRate_lt hμm hKs hSf.le
   -- `Sf` is the interior substrate level at `D = D_c`.
-  have hSf_eq : Sf = Dc * Ks / (μm - Dc) := (mmRate_eq_iff hKs hSf.le hDc_lt).1 rfl
+  have hSf_eq : Sf = steadyConc μm Ks Dc := eq_steadyConc_of_mmRate_eq hKs hDc_lt hSf.le rfl
   have hy' : y ≠ 0 := hy.ne'
   -- A steady state with `X = 0` is washout.
   have washout_of_zero : ∀ D, 0 < D → ∀ x : Fin 2 → ℝ,
@@ -260,10 +255,10 @@ theorem equilibria_and_washout_threshold {μm Ks Sf y : ℝ} (hμm : 0 < μm) (h
     intro D hD hDDc
     have hDμ : D < μm := hDDc.trans hDc_lt
     have hμD : 0 < μm - D := sub_pos.2 hDμ
-    set Ss := D * Ks / (μm - D) with hSs
-    have hSs_pos : 0 < Ss := by positivity
+    set Ss := steadyConc μm Ks D with hSs
+    have hSs_pos : 0 < Ss := div_pos (mul_pos hD hKs) hμD
     have hSs_lt : Ss < Sf := by
-      rw [hSs, div_lt_iff₀ hμD]
+      rw [hSs, steadyConc, div_lt_iff₀ hμD]
       have h := hDDc
       rw [hDc, mmRate, lt_div_iff₀ (by positivity)] at h
       nlinarith
@@ -276,7 +271,7 @@ theorem equilibria_and_washout_threshold {μm Ks Sf y : ℝ} (hμm : 0 < μm) (h
       rcases mul_eq_zero.1 h₁ with h | h
       · right
         have hμ : mmRate μm Ks (x 1) = D := by linarith
-        have hS1 : x 1 = Ss := (mmRate_eq_iff hKs hS hDμ).1 hμ
+        have hS1 : x 1 = Ss := eq_steadyConc_of_mmRate_eq hKs hDμ hS hμ
         have hb := balance D hD x h₂ hμ
         refine eq_vec_iff.2 ⟨?_, hS1⟩
         rw [← hSs, ← hS1, hb]
@@ -285,19 +280,19 @@ theorem equilibria_and_washout_threshold {μm Ks Sf y : ℝ} (hμm : 0 < μm) (h
     · rintro (rfl | rfl)
       · simp [hSf.le]
       · simp only [interiorState_apply_zero, interiorState_apply_one]
-        have hμ : mmRate μm Ks Ss = D := (mmRate_eq_iff hKs hSs_pos.le hDμ).2 rfl
+        have hμ : mmRate μm Ks Ss = D := mmRate_steadyConc hμm hKs hDμ
         rw [← hSs, hμ]
         refine ⟨hXs_pos.le, hSs_pos.le, by ring, ?_⟩
         field_simp
         ring
   · -- Coalescence: the interior state tends to washout as `D` increases to `D_c`.
-    have hcont : ContinuousAt (fun D ↦ D * Ks / (μm - D)) Dc :=
+    have hcont : ContinuousAt (fun D ↦ steadyConc μm Ks D) Dc :=
       (continuousAt_id.mul continuousAt_const).div (continuousAt_const.sub continuousAt_id)
         (sub_ne_zero.2 hDc_lt.ne')
-    have hS : Tendsto (fun D ↦ D * Ks / (μm - D)) (𝓝 Dc) (𝓝 Sf) := by
+    have hS : Tendsto (fun D ↦ steadyConc μm Ks D) (𝓝 Dc) (𝓝 Sf) := by
       have := hcont.tendsto
       rwa [← hSf_eq] at this
-    have hX : Tendsto (fun D ↦ y * (Sf - D * Ks / (μm - D))) (𝓝 Dc) (𝓝 0) := by
+    have hX : Tendsto (fun D ↦ y * (Sf - steadyConc μm Ks D)) (𝓝 Dc) (𝓝 0) := by
       have := (hS.const_sub Sf).const_mul y
       rwa [sub_self, mul_zero] at this
     refine tendsto_nhdsWithin_of_tendsto_nhds (tendsto_pi_nhds.2 fun i ↦ ?_)

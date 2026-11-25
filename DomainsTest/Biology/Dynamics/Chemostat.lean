@@ -26,6 +26,7 @@ interior steady state.
 open Filter Set Real
 open scoped Topology
 open MathlibExt.Biology.Dynamics.MichaelisMenten (mmRate)
+open MathlibExt.Biology.Biophysics.SaturableElimination (steadyConc)
 open Domains.Biology.Dynamics.Chemostat
 
 namespace DomainsTest.Biology.Dynamics.Chemostat
@@ -42,10 +43,10 @@ example : substrateEquivalent 0 ![3, 1] = 1 := by norm_num [substrateEquivalent]
 example : mmRate 2 1 1 = 1 := by norm_num [mmRate]
 
 example : interiorState 2 1 (1 / 2) 1 1 = ![2 / 3, 1 / 3] := by
-  ext i; fin_cases i <;> norm_num [interiorState]
+  ext i; fin_cases i <;> norm_num [interiorState, steadyConc]
 
 example : vectorField (mmRate 2 1) (1 / 2) 1 1 (interiorState 2 1 (1 / 2) 1 1) = 0 := by
-  ext i; fin_cases i <;> norm_num [interiorState, vectorField, mmRate]
+  ext i; fin_cases i <;> norm_num [interiorState, steadyConc, vectorField, mmRate]
 
 /-- Below the threshold the steady states in the quadrant are washout and the interior state. -/
 example : {x : Fin 2 → ℝ | 0 ≤ x 0 ∧ 0 ≤ x 1 ∧ vectorField (mmRate 2 1) (1 / 2) 1 1 x = 0} =
@@ -54,7 +55,7 @@ example : {x : Fin 2 → ℝ | 0 ≤ x 0 ∧ 0 ≤ x 1 ∧ vectorField (mmRate 2
     (1 / 2) (by norm_num) (by norm_num [mmRate])).1
   rw [h]
   congr 2
-  ext i; fin_cases i <;> norm_num [interiorState]
+  ext i; fin_cases i <;> norm_num [interiorState, steadyConc]
 
 /-- At the threshold `D = D_c` washout is the only steady state in the quadrant. -/
 example : {x : Fin 2 → ℝ | 0 ≤ x 0 ∧ 0 ≤ x 1 ∧ vectorField (mmRate 2 1) 1 1 1 x = 0} =
@@ -64,11 +65,11 @@ example : {x : Fin 2 → ℝ | 0 ≤ x 0 ∧ 0 ≤ x 1 ∧ vectorField (mmRate 2
 
 /-- At `D = D_c` the interior formula gives the washout state: the two steady states coalesce. -/
 example : interiorState 2 1 1 1 1 = ![0, 1] := by
-  ext i; fin_cases i <;> norm_num [interiorState]
+  ext i; fin_cases i <;> norm_num [interiorState, steadyConc]
 
 /-- The formula's junk value at `D = μ_m`, where `μ_m - D = 0`. -/
 example : interiorState 2 1 2 1 1 = ![1, 0] := by
-  ext i; fin_cases i <;> norm_num [interiorState]
+  ext i; fin_cases i <;> norm_num [interiorState, steadyConc]
 
 /-- The yield must be positive: with `y = -1` and `D = 3/2 ≥ D_c = 1`, the quadrant state
 `(X, S) = (2, 3)` is a steady state besides washout. -/
@@ -96,8 +97,8 @@ theorem isIntegralCurveOn_noBiomass (μ : ℝ → ℝ) (D Sf y S₀ : ℝ) :
 example (μ : ℝ → ℝ) (D Sf y S₀ : ℝ) (hD : 0 < D) :
     Tendsto (fun t ↦ substrateEquivalent y ![0, Sf + (S₀ - Sf) * exp (-(D * t))]) atTop
       (𝓝 Sf) :=
-  (substrateEquivalent_relaxation hD ordConnected_univ (mem_univ 0)
-    (isIntegralCurveOn_noBiomass μ D Sf y S₀)).2.2 (subset_univ _)
+  (substrateEquivalent_relaxation ordConnected_univ (mem_univ 0)
+    (isIntegralCurveOn_noBiomass μ D Sf y S₀)).2.2 hD (subset_univ _)
 
 /-- **Non-vacuity witness with biomass.** The constant curve at the interior steady state solves
 the balances, and its substrate equivalent is the feed. -/
@@ -106,12 +107,12 @@ example : substrateEquivalent 1 (interiorState 2 1 (1 / 2) 1 1) = 1 := by
       (fun _ ↦ vectorField (mmRate 2 1) (1 / 2) 1 1) univ := by
     intro t _
     have h0 : vectorField (mmRate 2 1) (1 / 2) 1 1 (interiorState 2 1 (1 / 2) 1 1) = 0 := by
-      ext i; fin_cases i <;> norm_num [interiorState, vectorField, mmRate]
+      ext i; fin_cases i <;> norm_num [interiorState, steadyConc, vectorField, mmRate]
     beta_reduce
     rw [h0]
     exact hasDerivWithinAt_const t univ _
-  have hlim := (substrateEquivalent_relaxation (by norm_num) ordConnected_univ (mem_univ 0)
-    hx).2.2 (subset_univ _)
+  have hlim := (substrateEquivalent_relaxation ordConnected_univ (mem_univ 0) hx).2.2
+    (by norm_num) (subset_univ _)
   exact tendsto_nhds_unique tendsto_const_nhds hlim
 
 end DomainsTest.Biology.Dynamics.Chemostat
