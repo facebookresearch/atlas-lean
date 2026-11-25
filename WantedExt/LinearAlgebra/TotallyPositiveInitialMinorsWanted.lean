@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.LinearAlgebra.Matrix.PositiveMinors
 public import MathlibExt.NumberTheory.Recurrences.GeneralizedHyperFibonacci
+public import MathlibExt.NumberTheory.Recurrences.HyperFibonacciBinomial
 
 /-!
 # Totally positive matrices and initial minors
@@ -55,26 +56,6 @@ public theorem_wanted hasPositiveMinors_iff_initial_minors_pos {n : ℕ}
       ∀ (k i₀ j₀ : ℕ) (hi : i₀ + k ≤ n) (hj : j₀ + k ≤ n), (i₀ = 0 ∨ j₀ = 0) →
         0 < (A.submatrix (fun r : Fin k => (⟨i₀ + r, by omega⟩ : Fin n))
           (fun c : Fin k => (⟨j₀ + c, by omega⟩ : Fin n))).det
-
-/-- **A binomial-sum formula for generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers
-with $p \ne 0$, let $W_{p,n}$ denote the generalized Fibonacci sequence and $W^{(r)}_{p,n}$ the
-generalized hyper-Fibonacci numbers. For all natural numbers $r$ and $n$ with $1 \le r \le n$, the
-following identity of rational numbers holds:
-$$
-W^{(r)}_{p,n-r} = W_{p,n+r} - \frac{p^n}{p^{r-1}} \sum_{k=0}^{r-1} \binom{n-k-1}{r-k-1} W_{p,2k+1}.
-$$
-
-Source: Abdelhak Taane, Ihab-Eddine Djellas and Mohammed Mekkaoui, *Total Positivity of
-Toeplitz Matrices Involving Generalized Hyper-Fibonacci Numbers*, Journal of Integer
-Sequences 29 (2026), Article 26.2.5, Lemma 5, identity (4), quoting Ait-Amrane et al.
-(`jis-2026-26.2.5-lem-5`). -/
-public theorem_wanted generalizedHyperFibonacci_sub_eq_sub (p a b : ℤ) (hp : p ≠ 0) (r n : ℕ)
-    (hr : 1 ≤ r) (hrn : r ≤ n) :
-    (generalizedHyperFibonacci p a b r (n - r) : ℚ) =
-      generalizedPFibonacci p a b (n + r) -
-        (p : ℚ) ^ n * (∑ k ∈ Finset.range r,
-          ((n - k - 1).choose (r - k - 1) : ℚ) * generalizedPFibonacci p a b (2 * k + 1)) /
-          (p : ℚ) ^ (r - 1)
 
 /-- **Hankel determinants of generalized hyper-Fibonacci numbers.** Let $p, a, b$ be integers, let
 $W^{(r)}_{p,n}$ denote the generalized hyper-Fibonacci numbers and put $\Delta = a^2 + pab - b^2$.
