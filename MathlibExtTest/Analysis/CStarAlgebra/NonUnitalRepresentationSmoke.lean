@@ -43,6 +43,13 @@ local instance : StarOrderedRing ℂ := CStarAlgebra.spectralOrderedRing ℂ
 private abbrev ZeroCoefficients := CStarMatrix (Fin 0) (Fin 0) ℂ
 private abbrev ZeroHilbert := EuclideanSpace ℂ (Fin 0)
 
+/-- Empty rows force equality of all matrices in the actual zero coefficient algebra. -/
+private instance zeroCoefficientsSubsingleton : Subsingleton ZeroCoefficients where
+  allEq a b := by
+    apply CStarMatrix.ext
+    intro i j
+    exact Fin.elim0 i
+
 -- Zero square matrices give an actual zero coefficient algebra. The canonical
 -- factory remains usable and faithful on that algebra.
 example : Function.Injective
