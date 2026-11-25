@@ -2,4 +2,4 @@
 
 - [Elementary transvection](is-elementary-transvection.md)
 - [Petechuk's question restricted to elementary transvections (Kourovka 10.46)](double-commutator-with-transvections-uni.md)
-- [Petechuk's double commutator question has a negative answer (Kourovka 10.46)](double-commutator-with-transvections-uni-2.md)
+- [An integer counterexample to Petechuk's question for elementary transvections (Kourovka 10.46)](double-commutator-with-transvections-uni-2.md)
