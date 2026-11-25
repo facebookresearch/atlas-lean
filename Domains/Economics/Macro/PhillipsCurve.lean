@@ -52,8 +52,8 @@ theorem phillips_recurrence {π πe u : ℕ → ℝ} {κ uₙ : ℝ}
   intro t
   rw [hpc t, hexp t]
 
-/-- **Natural rate (MA06.T03).** If unemployment stays at the natural rate, inflation is
-constant from period to period. -/
+/-- **Natural rate (MA06.T03).** Under adaptive expectations and the Phillips curve, if
+unemployment stays at the natural rate, inflation is constant from period to period. -/
 theorem phillips_natural_rate {π πe u : ℕ → ℝ} {κ uₙ : ℝ}
     (hexp : AdaptiveExpectations πe π) (hpc : IsPhillipsCurve π πe u κ uₙ)
     (hnat : ∀ t, u t = uₙ) : ∀ t, π (t + 1) = π t := by
@@ -62,7 +62,8 @@ theorem phillips_natural_rate {π πe u : ℕ → ℝ} {κ uₙ : ℝ}
   rw [hnat _, sub_self, mul_zero, sub_zero] at h
   exact h
 
-/-- **Accelerationist form (MA06.T03).** If the unemployment gap is constant,
+/-- **Accelerationist form (MA06.T03).** Under adaptive expectations and the Phillips curve, if
+the unemployment gap is constant,
 `u (t + 1) - uₙ = g` for every `t`, then inflation falls (or rises) linearly:
 `π t = π 0 - t * (κ * g)`. Inflation is then a unit-root affine recurrence, so this is
 `MathlibExt.AffineRecurrence.IsAffineRecurrence.eq_add_nsmul_of_one` with intercept `-(κ * g)`. -/

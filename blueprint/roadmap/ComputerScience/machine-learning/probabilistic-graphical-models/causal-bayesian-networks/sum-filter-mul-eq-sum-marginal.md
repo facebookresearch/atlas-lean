@@ -8,3 +8,8 @@ $$\sum_{x \,:\, x_S = x'_S} P(x) \, g(x) = \sum_{t \in \alpha^T} g(x'_t) \, P\bi
 
 where $x'_t$ is [$x'$ overwritten with $t$ on $T$](fill.md) and $P(y_U)$ is the sum of $P(x)$
 over the configurations $x$ that agree with $y$ on $U$.
+
+## Depends on
+
+- [Overwriting an assignment on a set of nodes](fill.md)
+- [Marginal of a weight](../../../../Probability/random-fields/conditional-independence-on-finite-configuration/marginal.md)

@@ -220,7 +220,7 @@ private theorem exists_basis_eq_span_cons_uniformizer_smul {R : Type*} [CommRing
     rintro _ ⟨i, rfl⟩
     exact (bK i).2
   have hli : LinearIndependent R v := by
-    refine LinearIndependent.fin_cons' m (fun i => (bK i : M)) hvK fun c y hy hc => ?_
+    refine LinearIndependent.finCons' m (fun i => (bK i : M)) hvK fun c y hy hc => ?_
     have hyK : y ∈ K := hspanK hy
     have hcongr := congrArg φ hc
     rw [map_add, map_smul, hφm, smul_eq_mul, mul_one, map_zero,

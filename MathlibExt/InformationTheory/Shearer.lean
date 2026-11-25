@@ -28,22 +28,37 @@ Source: F. R. K. Chung, R. L. Graham, P. Frankl, J. B. Shearer,
 JCTA 43 (1986), DOI 10.1016/0097-3165(86)90019-1.
 -/
 
-/-- S-marginal: sum of `μ x` over those `x` whose restriction to `S` equals `y`. -/
+/-- **Marginal on a set of coordinates.** Let $\alpha$ be a finite type, $n$ a natural number and
+$\mu$ a real-valued function on the strings $x = (x_0, \dots, x_{n-1}) \in \alpha^n$. For a set
+$S \subseteq \{0, \dots, n-1\}$ of coordinates, write $x|_S : S \to \alpha$ for the restriction
+of a string $x$ to $S$. For a map $y : S \to \alpha$, the $S$-marginal of $\mu$ at $y$ is the sum
+$\sum_{x \in \alpha^n,\ x|_S = y} \mu(x)$ of $\mu(x)$ over all strings $x$ with $x|_S = y$. -/
 def shearerMarginal {n : ℕ} {α : Type*} [Fintype α] [DecidableEq α]
     (μ : (Fin n → α) → ℝ) (S : Finset (Fin n)) (y : ↥S → α) : ℝ :=
   ∑ x : (Fin n → α), if (fun s : ↥S => x s.val) = y then μ x else 0
 
-/-- Full entropy `H(X) = -∑ μ log μ`. -/
+/-- **Joint entropy.** For a finite set $\alpha$, a natural number $n$ and a real-valued function
+$\mu$ on $\alpha^n$, the full (joint) entropy of $\mu$ is
+$H(\mu) = -\sum_{x \in \alpha^n} \mu(x) \log \mu(x)$, where $\log t$ is the natural logarithm
+of $|t|$ for $t \neq 0$ and $\log 0 = 0$. -/
 noncomputable def shearerFullEntropy {n : ℕ} {α : Type*} [Fintype α]
     (μ : (Fin n → α) → ℝ) : ℝ :=
   -∑ x : (Fin n → α), μ x * Real.log (μ x)
 
-/-- Marginal entropy `H(X_S) = -∑_y P_S(y) log P_S(y)`. -/
+/-- **Marginal entropy.** For a finite set $\alpha$, a natural number $n$, a real-valued function
+$\mu$ on $\alpha^n$ and a set $S \subseteq \{0, \dots, n-1\}$ of coordinates, let $P_S$ be the
+marginal of $\mu$ on $S$: for $y \in \alpha^S$, $P_S(y)$ is the sum of $\mu(x)$ over the
+$x \in \alpha^n$ whose restriction to $S$ is $y$. The marginal entropy of $\mu$ on $S$ is
+$H_S(\mu) = -\sum_{y \in \alpha^S} P_S(y) \log P_S(y)$, where $\log t$ is the natural logarithm
+of $|t|$ for $t \neq 0$ and $\log 0 = 0$. -/
 noncomputable def shearerMarginalEntropy {n : ℕ} {α : Type*} [Fintype α]
     [DecidableEq α] (μ : (Fin n → α) → ℝ) (S : Finset (Fin n)) : ℝ :=
   -∑ y : (↥S → α), shearerMarginal μ S y * Real.log (shearerMarginal μ S y)
 
-/-- Marginals of a nonnegative `μ` are nonnegative. -/
+/-- **Marginals of a nonnegative function are nonnegative.** Let $\alpha$ be a finite set, $n$ a
+natural number, $\mu$ a real-valued function on $\alpha^n$ with $\mu(x) \ge 0$ for all $x$, and
+$S$ a set of coordinates in $\{0, \dots, n-1\}$. Then the marginal $P_S$ of $\mu$ on $S$
+satisfies $P_S(y) \ge 0$ for every $y \in \alpha^S$. -/
 theorem shearerMarginal_nonneg {n : ℕ} {α : Type*} [Fintype α] [DecidableEq α]
     (μ : (Fin n → α) → ℝ) (hμ : ∀ x, 0 ≤ μ x) (S : Finset (Fin n))
     (y : ↥S → α) : 0 ≤ shearerMarginal μ S y := by
@@ -54,7 +69,10 @@ theorem shearerMarginal_nonneg {n : ℕ} {α : Type*} [Fintype α] [DecidableEq 
   · exact hμ x
   · exact le_refl 0
 
-/-- Each marginal of a probability mass function sums to `1`. -/
+/-- **Marginals preserve total mass.** Let $\alpha$ be a finite set, $n$ a natural number, $\mu$ a
+real-valued function on $\alpha^n$ with $\sum_{x \in \alpha^n} \mu(x) = 1$, and $S$ a set of
+coordinates in $\{0, \dots, n-1\}$. Then the marginal $P_S$ of $\mu$ on $S$ satisfies
+$\sum_{y \in \alpha^S} P_S(y) = 1$. -/
 theorem shearerMarginal_sum {n : ℕ} {α : Type*} [Fintype α] [DecidableEq α]
     (μ : (Fin n → α) → ℝ) (hμ_sum : ∑ x : (Fin n → α), μ x = 1)
     (S : Finset (Fin n)) :
@@ -173,7 +191,10 @@ private theorem shearerMarginal_tower {n : ℕ} {α : Type*} [Fintype α] [Decid
   refine Finset.sum_congr rfl (fun x _ => ?_)
   rw [hcomp x]
 
-/-- Marginal entropy is monotone in the set. -/
+/-- **Monotonicity of marginal entropy.** Let $\alpha$ be a finite set, $n$ a natural number, and
+$\mu$ a real-valued function on $\alpha^n$ with $\mu(x) \ge 0$ for all $x$. If $T \subseteq S$
+are sets of coordinates in $\{0, \dots, n-1\}$, then the marginal entropy of $\mu$ on $T$ is at
+most the marginal entropy of $\mu$ on $S$. -/
 theorem shearerMarginalEntropy_mono {n : ℕ} {α : Type*} [Fintype α] [DecidableEq α]
     (μ : (Fin n → α) → ℝ) (hμ : ∀ x, 0 ≤ μ x)
     (S T : Finset (Fin n)) (hTS : T ⊆ S) :
@@ -332,7 +353,11 @@ private theorem shearerGlue_mid {n : ℕ} {α : Type*} (A B : Finset (Fin n))
   calc u ⟨m.val, hmA⟩ = shearerResDL A B u m := rfl
     _ = t m := by rw [hu]
 
-/-- Marginal entropy is submodular: `H(A ∪ B) + H(A ∩ B) ≤ H(A) + H(B)`. -/
+/-- **Submodularity of marginal entropy.** Let $\alpha$ be a finite set, $n$ a natural number,
+and $\mu$ a probability mass function on $\alpha^n$, that is, $\mu(x) \ge 0$ for all $x$ and
+$\sum_{x \in \alpha^n} \mu(x) = 1$. Writing $H_S$ for the marginal entropy of $\mu$ on a set
+$S \subseteq \{0, \dots, n-1\}$ of coordinates, any two such sets $A$ and $B$ satisfy
+$H_{A \cup B} + H_{A \cap B} \le H_A + H_B$. -/
 theorem shearerMarginalEntropy_submodular {n : ℕ} {α : Type*} [Fintype α] [DecidableEq α]
     (μ : (Fin n → α) → ℝ) (hμ : ∀ x, 0 ≤ μ x)
     (hμ_sum : ∑ x : (Fin n → α), μ x = 1)
@@ -778,7 +803,9 @@ private theorem shearerPrefix_succ (n j : ℕ) (hj : j < n) :
     · omega
     · exact Nat.lt_succ_self j
 
-/-- The empty marginal has entropy `0`. -/
+/-- **Marginal entropy on the empty set vanishes.** Let $\alpha$ be a finite set, $n$ a natural
+number, and $\mu$ a real-valued function on $\alpha^n$ with $\sum_{x \in \alpha^n} \mu(x) = 1$.
+Then the marginal entropy of $\mu$ on the empty set of coordinates is $0$. -/
 theorem shearerMarginalEntropy_empty {n : ℕ} {α : Type*} [Fintype α] [DecidableEq α]
     (μ : (Fin n → α) → ℝ) (hμ_sum : ∑ x : (Fin n → α), μ x = 1) :
     shearerMarginalEntropy μ ∅ = 0 := by
@@ -788,7 +815,9 @@ theorem shearerMarginalEntropy_empty {n : ℕ} {α : Type*} [Fintype α] [Decida
   rw [Fintype.sum_unique, hsum]
   simp
 
-/-- The marginal on all coordinates has the full entropy. -/
+/-- **Marginal entropy on all coordinates is the full entropy.** For a finite set $\alpha$, a
+natural number $n$ and a real-valued function $\mu$ on $\alpha^n$, the marginal entropy of $\mu$
+on the set $\{0, \dots, n-1\}$ of all coordinates equals the full entropy of $\mu$. -/
 theorem shearerMarginalEntropy_univ {n : ℕ} {α : Type*} [Fintype α] [DecidableEq α]
     (μ : (Fin n → α) → ℝ) :
     shearerMarginalEntropy μ Finset.univ = shearerFullEntropy μ := by
@@ -914,8 +943,13 @@ private theorem shearerChainMember {n : ℕ} {α : Type*} [Fintype α] [Decidabl
     exact sub_nonneg.mpr (shearerMarginalEntropy_mono μ hμ _ _
       (Finset.inter_subset_inter (Finset.Subset.rfl) hTsub))
 
-/-- Finite Shearer inequality without the hypothesis `0 < k`.
-`shearer_entropy_inequality` is the source-shaped form. -/
+/-- **Shearer's entropy inequality for every cover multiplicity.** Let $\alpha$ be a nonempty
+finite set, $n$ a natural number, and $\mu$ a probability mass function on $\alpha^n$, that is,
+$\mu(x) \ge 0$ for all $x \in \alpha^n$ and $\sum_{x \in \alpha^n} \mu(x) = 1$. Write $H(\mu)$
+for the full entropy of $\mu$ and, for a set $S$ of coordinates in $\{0, \dots, n-1\}$, write
+$H_S(\mu)$ for the marginal entropy of $\mu$ on $S$. Let $C$ be a set of subsets of
+$\{0, \dots, n-1\}$ and $k$ a natural number, possibly $0$, such that every coordinate lies in
+at least $k$ members of $C$. Then $k \, H(\mu) \le \sum_{S \in C} H_S(\mu)$. -/
 theorem shearer_entropy_inequality_general
     {n : ℕ} {α : Type*} [Fintype α] [Nonempty α] [DecidableEq α]
     (μ : (Fin n → α) → ℝ)
@@ -988,7 +1022,14 @@ theorem shearer_entropy_inequality_general
 
 set_option linter.unusedVariables false in
 /--
-Finite Shearer: `k`-cover `C` gives `k * H(full) ≤ ∑_{S∈C} H(S)`.
+**Shearer's entropy inequality.** Let $\alpha$ be a nonempty finite set, $n$ a natural number,
+and $\mu$ a probability mass function on $\alpha^n$, that is, $\mu(x) \ge 0$ for all
+$x \in \alpha^n$ and $\sum_{x \in \alpha^n} \mu(x) = 1$. Write $H(\mu)$ for the full entropy of
+$\mu$ and, for a set $S$ of coordinates in $\{0, \dots, n-1\}$, write $H_S(\mu)$ for the
+marginal entropy of $\mu$ on $S$. Let $C$ be a set of subsets of $\{0, \dots, n-1\}$ and
+$k \ge 1$ an integer such that every coordinate lies in at least $k$ members of $C$. Then
+$k \, H(\mu) \le \sum_{S \in C} H_S(\mu)$.
+
 Source: F. R. K. Chung et al., J. Combin. Theory A 43 (1986), DOI 10.1016/0097-3165(86)90019-1.
 It follows from `shearer_entropy_inequality_general`; the hypothesis `hk` is unused and
 keeps the source's shape.

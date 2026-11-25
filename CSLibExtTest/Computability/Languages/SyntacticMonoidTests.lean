@@ -120,7 +120,8 @@ example : syntacticMorphism lastBitDFA.accepts (FreeMonoid.ofList []) ≠
   simp at h
 
 example (L : Language Bool) : L.IsRegular ↔ Finite (SyntacticMonoid L) :=
-  _root_.Language.IsRegular.iff_finite_syntacticMonoid L
+  (_root_.Language.IsRegular.iff_finite_syntacticMonoid L).trans
+    (SyntacticMonoid.toCslib L).toEquiv.finite_iff.symm
 
 example (L : Language Bool) (w : FreeMonoid Bool) :
     (SyntacticMonoid.toCslib L).symm (_root_.Language.homSyntacticMonoid L w) =

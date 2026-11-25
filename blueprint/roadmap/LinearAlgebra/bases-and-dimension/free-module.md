@@ -1,0 +1,9 @@
+# Free module
+
+Let $R$ be a semiring and let $M$ be an $R$-module, with $M$ a commutative monoid under addition; modules over rings with identity are special cases. A *basis* of $M$ indexed by a set $I$ is a family $(b_i)_{i \in I}$ of elements of $M$ such that every element $x \in M$, the zero element included, can be written in exactly one way as $x = \sum_{i \in I} c_i b_i$ with coefficients $c_i \in R$ of which only finitely many are nonzero. Equivalently, sending each $x \in M$ to its family of coefficients $(c_i)_{i \in I}$ is an $R$-linear bijection from $M$ onto the $R$-module of finitely supported families of elements of $R$ indexed by $I$, under which $b_i$ corresponds to the family with $1$ at $i$ and $0$ elsewhere. The module $M$ is *free* if it has a basis. The zero element is represented by the family of zero coefficients, so the empty family is a basis of the zero module, which is therefore free. A free module also has a basis indexed by a subset of $M$.
+
+## Sources
+
+- David S. Dummit and Richard M. Foote, Abstract Algebra, 3rd ed., John Wiley & Sons, 2004.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for free modules over a semiring as modules having a basis indexed by some type, and the equivalent formulation with a basis indexed by a subset of the module: `Module.Free` and `Module.free_iff_set`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/LinearAlgebra/FreeModule/Basic.lean#L43-L51.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for a basis as a linear equivalence between the module and the finitely supported coefficient families: `Module.Basis`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/LinearAlgebra/Basis/Defs.lean#L79-L93.

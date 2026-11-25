@@ -114,11 +114,11 @@ theorem prod_poissonExposureLik (s : ι → ℝ) (k : ι → ℕ) (r : ℝ) :
 
 /-! ### Posterior consistency: deterministic core -/
 
-/-- **Posterior consistency, deterministic core.** Along any filter, if the pooled exposure
-`S → ∞` and the pooled rate `K / S → r₀`, then for a prior `Gamma(a, b)` with `a, b > 0` the
-pooled posterior `Gamma(a + K, b + S)` has mean `(a + K) / (b + S) → r₀`, variance
-`(a + K) / (b + S)² → 0`, and assigns vanishing mass to the complement of every neighbourhood
-`(r₀ - ε, r₀ + ε)` of `r₀`: the posterior concentrates at `r₀`. -/
+/-- **Posterior consistency, deterministic core.** Along any filter, if the pooled exposure `S → ∞`
+and the pooled rate `K / S → r₀`, then for a prior `Gamma(a, b)` with `a, b > 0` the law
+`Gamma(a + K, b + S)`, eventually a probability measure since `b + S > 0` eventually, has mean
+`(a + K) / (b + S) → r₀`, variance `(a + K) / (b + S)² → 0`, and assigns vanishing mass to the
+complement of every neighbourhood `(r₀ - ε, r₀ + ε)` of `r₀`: the posterior concentrates at `r₀`. -/
 theorem tendsto_pooledPosterior_of_tendsto {α : Type*} {l : Filter α} {a b r₀ : ℝ}
     (ha : 0 < a) (hb : 0 < b) {S : α → ℝ} {K : α → ℕ} (hS : Tendsto S l atTop)
     (hK : Tendsto (fun i => (K i : ℝ) / S i) l (𝓝 r₀)) :
@@ -157,18 +157,19 @@ theorem tendsto_pooledPosterior_of_tendsto {α : Type*} {l : Filter α} {a b r�
 /-! ### Almost-sure posterior consistency with different exposures -/
 
 /-- **Almost-sure convergence of the Gamma sequence `Gamma(a + Kₙ, b + Sₙ)`.** A purely analytic
-statement: let `s₀, s₁, …` be reals with `sᵢ ≤ B` and `Sₙ = ∑_{i<n} sᵢ → ∞`, and let the counts
-`X₀, X₁, …` (natural numbers) be pairwise independent and square-integrable with mean
-`E Xᵢ = sᵢ r₀` for some `r₀ ≥ 0` and variance `Var Xᵢ ≤ C sᵢ`. Then almost surely, for `a, b > 0`
-and `Kₙ = ∑_{i<n} Xᵢ`, the ratio `(a + Kₙ) / (b + Sₙ)` (`posteriorMean`) tends to `r₀`,
-`(a + Kₙ) / (b + Sₙ)²` tends to `0`, and the mass that `gammaMeasure (a + Kₙ) (b + Sₙ)` assigns
-outside every neighbourhood `(r₀ - ε, r₀ + ε)` tends to `0`.
+statement: let `μ` be a probability measure, `a, b > 0`, `s₀, s₁, …` reals with `sᵢ ≤ B` and
+`Sₙ = ∑_{i<n} sᵢ → ∞`, and let the counts `X₀, X₁, …` (natural numbers) be pairwise independent and
+square-integrable with mean `E Xᵢ = sᵢ r₀` for some `r₀ ≥ 0` and variance `Var Xᵢ ≤ C sᵢ`. Then
+almost surely, with `Kₙ = ∑_{i<n} Xᵢ`, the ratio `(a + Kₙ) / (b + Sₙ)` (`posteriorMean`) tends to
+`r₀`, `(a + Kₙ) / (b + Sₙ)²` tends to `0`, and the mass that `gammaMeasure (a + Kₙ) (b + Sₙ)`
+assigns outside every neighbourhood `(r₀ - ε, r₀ + ε)` tends to `0`.
 
 No sign condition on `sᵢ` is imposed (for `r₀ > 0`, `sᵢ ≥ 0` follows from `E Xᵢ = sᵢ r₀ ≥ 0`), so
-`b + Sₙ` may be nonpositive for small `n` and these Gamma laws need not be posteriors. For
-nonnegative exposures they are the pooled posteriors: see `ae_tendsto_pooledPosterior_exposures`.
-The counts are not identically distributed, so Mathlib's `ProbabilityTheory.strong_law_ae` does
-not apply; `Kₙ / Sₙ → r₀` comes from `ProbabilityTheory.ae_tendsto_sum_div_sum_integral`. -/
+`b + Sₙ` may be nonpositive for small `n`, where `gammaMeasure` is not a probability measure, and
+these Gamma laws need not be posteriors. For nonnegative exposures they are the pooled posteriors:
+see `ae_tendsto_pooledPosterior_exposures`. The counts are not identically distributed, so the
+i.i.d. strong law `ProbabilityTheory.strong_law_ae` does not apply; `Kₙ / Sₙ → r₀` comes from
+`ProbabilityTheory.ae_tendsto_sum_div_sum_integral`. -/
 theorem ae_tendsto_gammaSequence_of_moments {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} [IsProbabilityMeasure μ] {X : ℕ → Ω → ℕ} {s : ℕ → ℝ} {a b r₀ B C : ℝ}
     (ha : 0 < a) (hb : 0 < b) (hr₀ : 0 ≤ r₀) (hsB : ∀ i, s i ≤ B)
@@ -242,10 +243,11 @@ theorem ae_tendsto_pooledPosterior_exposures {Ω : Type*} {mΩ : MeasurableSpace
           (b + ∑ i ∈ Finset.range n, (s i : ℝ)) {x | ε ≤ |x - r₀|}) atTop (𝓝 0) :=
   ae_tendsto_gammaSequence_of_moments ha hb hr₀ hsB hS hL2 hindep hmean hvar
 
-/-- **Poisson counts with different exposures.** If the cell counts are pairwise independent with
-`Xᵢ ~ Po(sᵢ r₀)` for size factors `sᵢ ∈ [0, B]` with divergent total exposure, then almost surely
-the pooled posterior `Gamma(a + Kₙ, b + Sₙ)` has mean tending to the true rate `r₀`, variance
-tending to `0`, and concentrates at `r₀`. -/
+/-- **Poisson counts with different exposures.** Under a probability measure, if the cell counts are
+pairwise independent with `Xᵢ ~ Po(sᵢ r₀)` for size factors `sᵢ ∈ [0, B]` with divergent total
+exposure, then for every prior `Gamma(a, b)` with `a, b > 0`, almost surely the pooled posterior
+`Gamma(a + Kₙ, b + Sₙ)` has mean tending to the true rate `r₀`, variance tending to `0`, and
+concentrates at `r₀`. -/
 theorem ae_tendsto_pooledPosterior_poisson {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} [IsProbabilityMeasure μ] {X : ℕ → Ω → ℕ} {s : ℕ → ℝ≥0} {r₀ : ℝ≥0}
     {a b B : ℝ} (ha : 0 < a) (hb : 0 < b) (hsB : ∀ i, (s i : ℝ) ≤ B)

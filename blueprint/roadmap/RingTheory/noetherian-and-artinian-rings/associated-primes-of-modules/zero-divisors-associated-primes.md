@@ -1,0 +1,9 @@
+# The zero divisors on a module over a Noetherian ring are the elements of its associated primes
+
+Let $R$ be a commutative semiring with identity that is Noetherian, meaning that every ideal of $R$ is finitely generated, for example a Noetherian commutative ring. Let $M$ be an $R$-module, with $M$ a commutative monoid under addition; $M$ need not be finitely generated. Call $r \in R$ a *zero divisor on $M$* if $rx = 0$ for some nonzero $x \in M$. A prime ideal $P$ of $R$ is an *associated prime* of $M$ if $P$ is the radical of the annihilator $\operatorname{ann}(x) = \{r \in R : rx = 0\}$ of some $x \in M$; since $R$ is Noetherian, this holds exactly when $P = \operatorname{ann}(y)$ for some, possibly different, element $y \in M$. Then the set of zero divisors on $M$ equals $\bigcup_{P \in \operatorname{Ass} M} P$, the union of the associated primes of $M$. When $M = 0$ both sets are empty.
+
+## Sources
+
+- David Eisenbud, Commutative Algebra with a View Toward Algebraic Geometry, Graduate Texts in Mathematics 150, Springer-Verlag, 1995.
+- The Stacks Project Authors, *The Stacks Project*, Lemma 10.63.9, Tag 00LD, https://stacks.math.columbia.edu/tag/00LD.
+- The mathlib Community, *mathlib4* at revision fc4f59e577feb1a4956671bc04ac18aaaf8cd842, for associated primes as prime ideals equal to the radical of the annihilator of an element, and, over a Noetherian ring, equal to the annihilator of an element: `Submodule.IsAssociatedPrime`, `IsAssociatedPrime` and `isAssociatedPrime_iff`, https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/RingTheory/Ideal/AssociatedPrime/Basic.lean#L56-L62 and https://github.com/leanprover-community/mathlib4/blob/fc4f59e577feb1a4956671bc04ac18aaaf8cd842/Mathlib/RingTheory/Ideal/AssociatedPrime/Basic.lean#L93-L115.

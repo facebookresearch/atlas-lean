@@ -15,21 +15,28 @@ import Mathlib.Tactic.Order
 
 namespace MetaMathlibExt
 
-/-- An integer sequence is C-finite if it eventually satisfies a fixed
-constant-coefficient linear recurrence.
+/-- **C-finite integer sequences.** An integer sequence $s \colon \mathbb{N} \to \mathbb{Z}$ is
+C-finite if there are $p, q \in \mathbb{N}$ and integers $c_0, \dots, c_{p-1}$ such that
+$s(n + p) = \sum_{i=0}^{p-1} c_i \, s(n + i)$ for every $n \ge q$.
 
-Concept `jis_term_8dfeefcfa70ce96efa8b4fb3`; source JIS VOL26/Fischer–Kotek–Makowsky,
-<https://cs.uwaterloo.ca/journals/JIS/VOL26/Makowsky/makowsky16.tex>, lines 249–259. -/
+Source: JIS VOL26/Fischer–Kotek–Makowsky,
+<https://cs.uwaterloo.ca/journals/JIS/VOL26/Makowsky/makowsky16.tex>, lines 249–259;
+concept `jis_term_8dfeefcfa70ce96efa8b4fb3`. -/
 def IsIntegerCFiniteSequence (s : ℕ → ℤ) : Prop :=
   ∃ p q, ∃ c : Fin p → ℤ, ∀ n, q ≤ n → s (n + p) = ∑ i, c i * s (n + (i : ℕ))
 
-/-- Every solution of a `LinearRecurrence` is C-finite. -/
+/-- **Solutions of linear recurrences are C-finite.** Let $p \in \mathbb{N}$ and let
+$c_0, \dots, c_{p-1}$ be integers. If an integer sequence $s$ satisfies
+$s(n + p) = \sum_{i=0}^{p-1} c_i \, s(n + i)$ for every $n \in \mathbb{N}$, then $s$ is C-finite. -/
 theorem isIntegerCFiniteSequence_of_isSolution (E : LinearRecurrence ℤ) (s : ℕ → ℤ)
     (h : E.IsSolution s) : IsIntegerCFiniteSequence s :=
   ⟨E.order, 0, E.coeffs, fun n _ => h n⟩
 
-/-- An eventual C-finite recurrence becomes a `LinearRecurrence` solution after
-discarding the finite exceptional prefix. -/
+/-- **Discarding the exceptional prefix of a C-finite recurrence.** Let $s$ be an integer
+sequence, let $p, q \in \mathbb{N}$ and let $c_0, \dots, c_{p-1}$ be integers. If
+$s(n + p) = \sum_{i=0}^{p-1} c_i \, s(n + i)$ for every $n \ge q$, then the shifted sequence
+$t(n) = s(n + q)$ satisfies $t(n + p) = \sum_{i=0}^{p-1} c_i \, t(n + i)$ for every
+$n \in \mathbb{N}$. -/
 theorem isSolution_tail_of_cFiniteWitness (s : ℕ → ℤ) (p q : ℕ) (c : Fin p → ℤ)
     (h : ∀ n, q ≤ n → s (n + p) = ∑ i, c i * s (n + (i : ℕ))) :
     (LinearRecurrence.mk p c).IsSolution (fun n => s (n + q)) := by
@@ -37,7 +44,10 @@ theorem isSolution_tail_of_cFiniteWitness (s : ℕ → ℤ) (p q : ℕ) (c : Fin
   have hn : q ≤ n + q := by omega
   simpa [Nat.add_assoc, Nat.add_left_comm, Nat.add_comm] using h (n + q) hn
 
-/-- A C-finite sequence has a tail that is a solution of a `LinearRecurrence`. -/
+/-- **A tail of a C-finite sequence satisfies a linear recurrence.** If an integer sequence $s$
+is C-finite, then there are a shift $q \in \mathbb{N}$, an order $p \in \mathbb{N}$ and integers
+$c_0, \dots, c_{p-1}$ such that the shifted sequence $t(n) = s(n + q)$ satisfies
+$t(n + p) = \sum_{i=0}^{p-1} c_i \, t(n + i)$ for every $n \in \mathbb{N}$. -/
 theorem IsIntegerCFiniteSequence.exists_isSolution_tail {s : ℕ → ℤ}
     (h : IsIntegerCFiniteSequence s) :
     ∃ (E : LinearRecurrence ℤ) (q : ℕ), E.IsSolution (fun n => s (n + q)) := by

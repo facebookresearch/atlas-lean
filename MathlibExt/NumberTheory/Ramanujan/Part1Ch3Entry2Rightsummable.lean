@@ -68,7 +68,11 @@ private lemma ramanujan_entry2_denom_atTop (z : ℂ) :
   rw [sub_neg_eq_add, norm_neg, hnorm, hcast, add_comm ((((j + 1 : ℕ))) : ℂ)] at htri
   linarith
 
-/-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 2, formula (2.1), printed
+/-- **Convergence of the right side of Ramanujan's Chapter 3, Entry 2.** For all complex numbers
+$x$ and $z$ such that $z + r \ne 0$ for every natural number $r$, the series
+$\sum_{j \ge 0} \frac{(-1)^j x^{j+1}}{z(z+1)\cdots(z+j)}$ converges absolutely.
+
+Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, Entry 2, formula (2.1), printed
     p. 46 / PDF p. 56.
 Proves `Wanted` entry `ramanujan_part1_ch3_entry2_rightsummable`.
 -/

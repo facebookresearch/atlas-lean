@@ -103,6 +103,9 @@ open scoped BigOperators
 /-- Maxwell-Boltzmann speed density (CH08.1, model input), for the gas constant `R`, absolute
 temperature `T`, molar mass `M` and speed `v`:
 `4 * π * (M / (2 * π * R * T)) ^ (3 / 2) * v ^ 2 * exp (-(M * v ^ 2) / (2 * R * T))`.
+It is defined for all real `R`, `T` and `M`: it is `0` for `R T = 0`, by the convention
+`x / 0 = 0`, and for `M / (R T) < 0`, since `x ^ (3 / 2) = 0` for `x < 0`. The intended domain is
+`R, T, M > 0`.
 Mathlib, Physlib and ATLAS `main` provide no Maxwell-Boltzmann speed density to reuse. -/
 noncomputable def mbSpeed (R T M v : ℝ) : ℝ :=
   4 * π * (M / (2 * π * R * T)) ^ (3 / 2 : ℝ) * v ^ 2 * Real.exp (-(M * v ^ 2) / (2 * R * T))
@@ -144,7 +147,8 @@ lemma mbSpeed_nonneg {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) (v : �
   unfold mbSpeed
   positivity
 
-/-- Normalization of the Maxwell-Boltzmann speed density on `[0, ∞)` (CH08.1). -/
+/-- Normalization of the Maxwell-Boltzmann speed density on `[0, ∞)` (CH08.1), for `0 < R`,
+`0 < T` and `0 < M`. -/
 lemma integral_mbSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) :
     ∫ v in Set.Ioi (0 : ℝ), mbSpeed R T M v = 1 := by
   have h := integral_pow_mul_mbSpeed 0 hR hT hM (e := -(3 / 2)) (g := 3 / 2) (by norm_num)
@@ -163,22 +167,30 @@ lemma integral_mbSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) :
 /-! ## B. Characteristic speeds -/
 
 /-- Mean speed `⟨v⟩ = ∫ v in Ioi 0, v * mbSpeed R T M v` (CH08.2), defined as the integral; its
-closed form is `meanSpeed_eq`. It is new because `mbSpeed` is. -/
+closed form is `meanSpeed_eq`. For `R, T, M > 0` the density is a probability density on `[0, ∞)`
+and this is its mean speed. The integral is defined for all real `R`, `T` and `M`: for `R T = 0` or
+`M / (R T) < 0` the density is `0` by its conventions, so `meanSpeed` is `0`. It is new because
+`mbSpeed` is. -/
 noncomputable def meanSpeed (R T M : ℝ) : ℝ :=
   ∫ v in Set.Ioi (0 : ℝ), v * mbSpeed R T M v
 
 /-- Root-mean-square speed `v_rms = √(∫ v in Ioi 0, v ^ 2 * mbSpeed R T M v)` (CH08.2), defined
-from the integral; its closed form is `rmsSpeed_eq`. It is new because `mbSpeed` is. -/
+from the integral; its closed form is `rmsSpeed_eq`. It is defined for all real `R`, `T` and `M`:
+for `R T = 0` or `M / (R T) < 0` the density is `0` by its conventions, so `v_rms = 0`. It is new
+because `mbSpeed` is. -/
 noncomputable def rmsSpeed (R T M : ℝ) : ℝ :=
   Real.sqrt (∫ v in Set.Ioi (0 : ℝ), v ^ 2 * mbSpeed R T M v)
 
-/-- Most probable speed `v_mp = √(2 * R * T / M)` (CH08.2), new because `mbSpeed` is. That it
+/-- Most probable speed `v_mp = √(2 * R * T / M)` (CH08.2), new because `mbSpeed` is. It is
+defined for all real `R`, `T` and `M`: it is `0` for `M = 0`, by the convention `x / 0 = 0`, and
+for `R T / M < 0`, since `√x = 0` for `x < 0`. The intended domain is `R, T, M > 0`. That it
 is the unique maximizer of `mbSpeed` on `[0, ∞)` is the lemma `isMaxOn_mbSpeed_iff`, not part of
 the definition. -/
 noncomputable def mostProbableSpeed (R T M : ℝ) : ℝ :=
   Real.sqrt (2 * R * T / M)
 
-/-- Closed form of the mean speed (CH08.2): `⟨v⟩ = √(8 * R * T / (π * M))`. -/
+/-- Closed form of the mean speed (CH08.2), for `0 < R`, `0 < T` and `0 < M`:
+`⟨v⟩ = √(8 * R * T / (π * M))`. -/
 lemma meanSpeed_eq {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) :
     meanSpeed R T M = Real.sqrt (8 * R * T / (π * M)) := by
   have h := integral_pow_mul_mbSpeed 1 hR hT hM (e := -2) (g := 2) (by norm_num) (by norm_num)
@@ -195,7 +207,7 @@ lemma meanSpeed_eq {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) :
   field_simp
   ring
 
-/-- Second moment of the Maxwell-Boltzmann density (CH08.2):
+/-- Second moment of the Maxwell-Boltzmann density (CH08.2), for `0 < R`, `0 < T` and `0 < M`:
 `∫ v in Ioi 0, v ^ 2 * mbSpeed R T M v = 3 * R * T / M`. -/
 lemma integral_sq_mul_mbSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) :
     ∫ v in Set.Ioi (0 : ℝ), v ^ 2 * mbSpeed R T M v = 3 * R * T / M := by
@@ -211,7 +223,8 @@ lemma integral_sq_mul_mbSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < 
     rpow_three_halves ha.le, hΓ]
   field_simp
 
-/-- Closed form of the rms speed (CH08.2): `v_rms = √(3 * R * T / M)`. -/
+/-- Closed form of the rms speed (CH08.2), for `0 < R`, `0 < T` and `0 < M`:
+`v_rms = √(3 * R * T / M)`. -/
 lemma rmsSpeed_eq {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) :
     rmsSpeed R T M = Real.sqrt (3 * R * T / M) := by
   rw [rmsSpeed, integral_sq_mul_mbSpeed hR hT hM]
@@ -235,16 +248,17 @@ private lemma mul_mostProbableSpeed_sq_div {R T M : ℝ} (hR : 0 < R) (hT : 0 < 
   rw [mostProbableSpeed, Real.sq_sqrt (by positivity)]
   field_simp
 
-/-- Maximality of the most probable speed (CH08.2): `mbSpeed R T M v ≤ mbSpeed R T M v_mp` for
-every `v`, by `x * exp (-x) ≤ exp (-1)` at `x = M * v ^ 2 / (2 * R * T)`. -/
+/-- Maximality of the most probable speed (CH08.2): for `0 < R`, `0 < T` and `0 < M`,
+`mbSpeed R T M v ≤ mbSpeed R T M v_mp` for every `v`, by `x * exp (-x) ≤ exp (-1)` at
+`x = M * v ^ 2 / (2 * R * T)`. -/
 lemma mbSpeed_le_mbSpeed_mostProbableSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M)
     (v : ℝ) : mbSpeed R T M v ≤ mbSpeed R T M (mostProbableSpeed R T M) := by
   rw [mbSpeed_eq_mul hR hT hM v, mbSpeed_eq_mul hR hT hM, mul_mostProbableSpeed_sq_div hR hT hM,
     one_mul]
   exact mul_le_mul_of_nonneg_left (Real.mul_exp_neg_le_exp_neg_one _) (by positivity)
 
-/-- Strict maximality (CH08.2): on `[0, ∞)`, every speed other than `v_mp` has strictly smaller
-density. -/
+/-- Strict maximality (CH08.2): for `0 < R`, `0 < T` and `0 < M`, on `[0, ∞)`, every speed other
+than `v_mp` has strictly smaller density. -/
 lemma mbSpeed_lt_mbSpeed_mostProbableSpeed {R T M v : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M)
     (hv : 0 ≤ v) (hne : v ≠ mostProbableSpeed R T M) :
     mbSpeed R T M v < mbSpeed R T M (mostProbableSpeed R T M) := by
@@ -259,9 +273,9 @@ lemma mbSpeed_lt_mbSpeed_mostProbableSpeed {R T M v : ℝ} (hR : 0 < R) (hT : 0 
     one_mul]
   exact mul_lt_mul_of_pos_left (mul_exp_neg_lt_exp_neg_one hx) (by positivity)
 
-/-- The most probable speed is the unique maximizer of the Maxwell-Boltzmann density on
-`[0, ∞)` (CH08.2): for `0 ≤ w`, `w` maximizes `mbSpeed R T M` on `Set.Ici 0` iff
-`w = mostProbableSpeed R T M`. -/
+/-- The most probable speed is the unique maximizer of the Maxwell-Boltzmann density on `[0, ∞)`
+(CH08.2): for `0 < R`, `0 < T`, `0 < M` and `0 ≤ w`, `w` maximizes `mbSpeed R T M` on `Set.Ici 0`
+iff `w = mostProbableSpeed R T M`. -/
 lemma isMaxOn_mbSpeed_iff {R T M w : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) (hw : 0 ≤ w) :
     IsMaxOn (mbSpeed R T M) (Set.Ici 0) w ↔ w = mostProbableSpeed R T M := by
   constructor
@@ -273,7 +287,8 @@ lemma isMaxOn_mbSpeed_iff {R T M w : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M)
   · rintro rfl
     exact isMaxOn_iff.mpr fun v _ => mbSpeed_le_mbSpeed_mostProbableSpeed hR hT hM v
 
-/-- Ordering `v_mp < ⟨v⟩` (CH08.2): `2 < 8 / π` by `Real.pi_lt_four`. -/
+/-- Ordering `v_mp < ⟨v⟩` (CH08.2) for `0 < R`, `0 < T` and `0 < M`: `2 < 8 / π` by
+`Real.pi_lt_four`. -/
 lemma mostProbableSpeed_lt_meanSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) :
     mostProbableSpeed R T M < meanSpeed R T M := by
   rw [meanSpeed_eq hR hT hM, mostProbableSpeed]
@@ -285,7 +300,8 @@ lemma mostProbableSpeed_lt_meanSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM
     _ < 8 / π * (R * T / M) := mul_lt_mul_of_pos_right h (by positivity)
     _ = 8 * R * T / (π * M) := by ring
 
-/-- Ordering `⟨v⟩ < v_rms` (CH08.2): `8 / π < 3` by `Real.pi_gt_three`. -/
+/-- Ordering `⟨v⟩ < v_rms` (CH08.2) for `0 < R`, `0 < T` and `0 < M`: `8 / π < 3` by
+`Real.pi_gt_three`. -/
 lemma meanSpeed_lt_rmsSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M) :
     meanSpeed R T M < rmsSpeed R T M := by
   rw [meanSpeed_eq hR hT hM, rmsSpeed_eq hR hT hM]
@@ -303,7 +319,10 @@ lemma meanSpeed_lt_rmsSpeed {R T M : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M)
 area per unit time: particle `i ∈ s` delivers momentum `Δp i` to the wall once every `τ i`, so
 the wall receives momentum at the rate `∑ i ∈ s, Δp i / τ i`, spread over its area `A`. A
 particle with `Δp i = 0` contributes `0` regardless of its `τ i`, so the definition never
-needs an (unphysical) infinite flight time to be represented as `τ i = 0`. Neither
+needs an (unphysical) infinite flight time to be represented as `τ i = 0`. It is defined for all
+real `τ i` and `A`: by the convention `x / 0 = 0`, a particle with `τ i = 0` contributes `0`, and
+the pressure is `0` for `A = 0`. The intended domain is `A > 0`, with `τ i > 0` for every particle
+with `Δp i ≠ 0`. Neither
 Mathlib nor ATLAS `main` defines a kinetic (momentum-flux) pressure; Physlib's
 `NVEHamiltonian.pressure` (used by `IdealGas.ideal_gas_law`) is the thermodynamic pressure
 `-∂A/∂V`, a different quantity. -/
@@ -387,10 +406,11 @@ lemma wallPressure_mul_volume_molar {ι : Type*} {s : Finset ι} {Δp τ vx vy v
 
 /-! ## D. Effusion -/
 
-/-- Dependence of the effusion rate on `T` and `M` (CH08.4): under the model hypothesis
-`rate = k * ⟨v⟩`, `rate = k * √(8 * R / π) * √(T / M)`; for a proportionality factor `k` held
-fixed, i.e. at fixed number density, `rate ∝ √(T / M)`. At fixed pressure, `k` would instead
-vary as `1 / T` (number density `n = p / (R T)`), so this is not a fixed-pressure scaling. -/
+/-- Dependence of the effusion rate on `T` and `M` (CH08.4): for `0 < R`, `0 < T` and `0 < M`, under
+the model hypothesis `rate = k * ⟨v⟩`, `rate = k * √(8 * R / π) * √(T / M)`; for a proportionality
+factor `k` held fixed, i.e. at fixed number density, `rate ∝ √(T / M)`. At fixed pressure, `k` would
+instead vary as `1 / T` (number density `n = p / (R T)`), so this is not a fixed-pressure
+scaling. -/
 lemma effusion_rate_eq {R T M k rate : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < M)
     (h : rate = k * meanSpeed R T M) :
     rate = k * Real.sqrt (8 * R / π) * Real.sqrt (T / M) := by
@@ -399,14 +419,14 @@ lemma effusion_rate_eq {R T M k rate : ℝ} (hR : 0 < R) (hT : 0 < T) (hM : 0 < 
   congr 2
   ring
 
-/-- Graham's law of effusion (CH08.4): two gases at the same temperature `T`, with rates
-proportional to their mean speeds with their own factors (model hypothesis),
-`rate₁ = k₁ * meanSpeed R T M₁` and `rate₂ = k₂ * meanSpeed R T M₂`, and with `k₁ > 0` and
-`hk : k₁ = k₂`, satisfy `rate₁ / rate₂ = √(M₂ / M₁)`. In this model the factor `k` packages the
-hole area, the number density and the flow regime, so `hk` is the formal content of "same hole,
-same number density, molecular flow"; the model does not resolve `k` into area, number density
-and flow components (the mean free path is out of scope). At equal temperature, equal number
-density is also equal pressure, so this is also the fixed-pressure Graham's law at equal `T`. -/
+/-- Graham's law of effusion (CH08.4): two gases at the same temperature `T`, with `0 < R`, `0 < T`,
+`0 < M₁` and `0 < M₂`, with rates proportional to their mean speeds with their own factors (model
+hypothesis), `rate₁ = k₁ * meanSpeed R T M₁` and `rate₂ = k₂ * meanSpeed R T M₂`, and with `k₁ > 0`
+and `hk : k₁ = k₂`, satisfy `rate₁ / rate₂ = √(M₂ / M₁)`. In this model the factor `k` packages the
+hole area, the number density and the flow regime, so `hk` is the formal content of "same hole, same
+number density, molecular flow"; the model does not resolve `k` into area, number density and flow
+components (the mean free path is out of scope). At equal temperature, equal number density is also
+equal pressure, so this is also the fixed-pressure Graham's law at equal `T`. -/
 theorem effusion_rate_ratio {R T M₁ M₂ k₁ k₂ rate₁ rate₂ : ℝ} (hR : 0 < R) (hT : 0 < T)
     (hM₁ : 0 < M₁) (hM₂ : 0 < M₂) (hk₁ : 0 < k₁) (hk : k₁ = k₂)
     (h₁ : rate₁ = k₁ * meanSpeed R T M₁) (h₂ : rate₂ = k₂ * meanSpeed R T M₂) :
@@ -417,16 +437,16 @@ theorem effusion_rate_ratio {R T M₁ M₂ k₁ k₂ rate₁ rate₂ : ℝ} (hR 
   congr 1
   field_simp
 
-/-- Equal effusion rates at fixed number density (CH08.4): under the model hypothesis of
-`effusion_rate_eq` for each gas, with its own factor
+/-- Equal effusion rates at fixed number density (CH08.4): for `0 < R` and positive temperatures and
+molar masses, under the model hypothesis of `effusion_rate_eq` for each gas, with its own factor
 (`rate₁ = k₁ * meanSpeed R T₁ M₁`, `rate₂ = k₂ * meanSpeed R T₂ M₂`), and with `k₁ > 0` and
 `hk : k₁ = k₂`, `rate₁ = rate₂ ↔ T₁ / M₁ = T₂ / M₂`; equal rates need the temperature ratio to
-compensate the molar-mass ratio. As in `effusion_rate_ratio`, `k` packages the hole area, the
-number density and the flow regime, which the model does not resolve, so `hk` is the formal
-content of "same hole, same number density, molecular flow"; the model holds `k` fixed as the
-temperature changes. This is not a fixed-pressure criterion: at fixed pressure the number
-density, and hence `k`, would vary as `1 / T`, and equal fixed-pressure rates would instead
-require `M₁ * T₁ = M₂ * T₂`. -/
+compensate the molar-mass ratio. As in `effusion_rate_ratio`, `k` packages the hole area, the number
+density and the flow regime, which the model does not resolve, so `hk` is the formal content of
+"same hole, same number density, molecular flow"; the model holds `k` fixed as the temperature
+changes. This is not a fixed-pressure criterion: at fixed pressure the number density, and hence
+`k`, would vary as `1 / T`, and equal fixed-pressure rates would instead require
+`M₁ * T₁ = M₂ * T₂`. -/
 lemma effusion_rate_eq_iff {R T₁ T₂ M₁ M₂ k₁ k₂ rate₁ rate₂ : ℝ} (hR : 0 < R) (hT₁ : 0 < T₁)
     (hT₂ : 0 < T₂) (hM₁ : 0 < M₁) (hM₂ : 0 < M₂) (hk₁ : 0 < k₁) (hk : k₁ = k₂)
     (h₁ : rate₁ = k₁ * meanSpeed R T₁ M₁) (h₂ : rate₂ = k₂ * meanSpeed R T₂ M₂) :
@@ -436,11 +456,12 @@ lemma effusion_rate_eq_iff {R T₁ T₂ M₁ M₂ k₁ k₂ rate₁ rate₂ : �
     mul_right_inj' (show k₁ * Real.sqrt (8 * R / π) ≠ 0 by positivity),
     Real.sqrt_inj (by positivity) (by positivity)]
 
-/-- Non-claim (CH08.4): under the same model hypothesis, with `k₁ > 0` and `hk : k₁ = k₂`, gases
-of equal molar mass at different temperatures do not effuse at equal rates. As in
-`effusion_rate_ratio`, `hk` is the formal content of "same hole, same number density, molecular
-flow", since `k` packages the hole area, the number density and the flow regime, which the model
-does not resolve; the model holds `k` fixed as the temperature changes. -/
+/-- Equal molar mass, different temperatures (CH08.4): for a positive gas constant, positive
+temperatures and a positive molar mass, under the same model hypothesis, with `k₁ > 0` and
+`hk : k₁ = k₂`, gases of equal molar mass at different temperatures do not effuse at equal rates.
+As in `effusion_rate_ratio`, `hk` is the formal content of "same hole, same number density,
+molecular flow", since `k` packages the hole area, the number density and the flow regime, which
+the model does not resolve; the model holds `k` fixed as the temperature changes. -/
 lemma effusion_rate_ne_of_temperature_ne {R T₁ T₂ M k₁ k₂ rate₁ rate₂ : ℝ} (hR : 0 < R)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hM : 0 < M) (hk₁ : 0 < k₁) (hk : k₁ = k₂)
     (h₁ : rate₁ = k₁ * meanSpeed R T₁ M) (h₂ : rate₂ = k₂ * meanSpeed R T₂ M) (hT : T₁ ≠ T₂) :

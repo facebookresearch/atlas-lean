@@ -59,7 +59,7 @@ lemma decay_expansion_nonneg {A ka ke t : ℝ} (hA : 0 ≤ A)
     have hden : 0 ≤ ka - ke := sub_nonneg.mpr (le_of_lt h)
     exact div_nonneg hAnum hden
 
-/-- **Equal-rate limit form.** At equal rates the component is
+/-- **Equal-rate limit form.** For `A ≥ 0` and `ka ≥ 0`, at equal rates the component is
 `A * t * exp (-ka * t) ≥ 0` on `t ≥ 0`. -/
 lemma decay_equal_rate_nonneg {A ka t : ℝ} (hA : 0 ≤ A)
     (hka : 0 ≤ ka) (ht : 0 ≤ t) :

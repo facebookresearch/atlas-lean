@@ -16,3 +16,7 @@
 - [The evidence from a factorization of densities](comp-eq-with-density-of-mul-eq.md)
 - [Disintegration of the joint law from a factorization of densities](comp-prod-eq-of-mul-eq.md)
 - [Bayes' rule for densities](posterior-ae-eq-of-mul-eq.md)
+
+- [Simulation-based calibration: conditional no-ties and randomized ranks](simulation-based-calibration-rank-uniformity-und.md)
+
+- [Bernstein–von Mises for the Beta–Binomial allele-frequency posterior](bernstein-von-mises-for-the-beta-binomial-allele.md)
