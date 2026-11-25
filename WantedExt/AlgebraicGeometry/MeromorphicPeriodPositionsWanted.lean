@@ -40,7 +40,14 @@ open CompletedTorsorSourceFrames MeromorphicTorsorCompletion MeromorphicPeriodPo
 open AlgebraicGroupPointRepresentations AnalyticProObjectSites
 open MathlibExt.LinearAlgebra.LocalizedLattices
 
-/-- Match each actual source untilt period chart to its native whole analytic pole chart. -/
+/-- A pole chart matching a period chart: for a prime $p$, coefficient data `K` for a finite
+extension $E$ of $\mathbb{Q}_p$, realization data `R` and `I`, a relative Fargues–Fontaine curve
+family `A`, an untilt `T` of a perfectoid base, a source divisor `D` (an untilt divisor with its
+cover by period charts), an index `i` of that cover whose curve chart pair is strongly Noetherian,
+and a puncture `U` of the divisor map: a pole chart of the divisor map at `U` with the same Tate
+pair as the `i`-th period chart, together with a period bridge to that chart (`PeriodBridge`: an
+identification of their completed rings matching coefficients, finite quotients, $E$-scalars and
+filtrations, which sends the formal parameter to a unit multiple of the period parameter). -/
 public def_wanted untiltPeriodPoleChart (p : ℕ) [Fact p.Prime]
     {E : MixedField p} (K : CoefficientData p E)
     (R : AffineRealization p) (I : IntegerPresentation p K)
@@ -54,7 +61,17 @@ public def_wanted untiltPeriodPoleChart (p : ℕ) [Fact p.Prime]
 
 section GeneralFormalLattices
 
-/-- Realize every actual formal representation image as its original finite-projective lattice. -/
+/-- The lattice of a represented framed modification: for a prime $p$, a reductive group scheme $G$
+over a field $E$ with torsor descent `H` and pullback preservation `P` on $E$-spaces, a map
+$d : D \to X$ of $E$-spaces with a puncture `U`, a pole chart `Q` at `U` whose whole chart is
+strongly Noetherian, with algebraization `Aq`, fpqc torsor condition `Bq` along its completion,
+source frames `F`, the condition `h` that its parameter is a unit on the puncture and a completion
+comparison `C`, a meromorphic Hecke modification `M` with integral frames `left` and `right` of its
+two bundles on `Q`, and an $n$-dimensional representation $\rho$ of $G$: the image of the standard
+lattice $\widehat{\mathcal{O}}^n$ under the matrix of $\rho$ at the framed element of `M` is a
+lattice (finite projective, of full rank $n$ and bounded) in $\widehat{\mathcal{O}}[1/t]^n$, where
+$\widehat{\mathcal{O}}$ is the completion of the chart's coefficient ring along the divisor and $t$
+its formal parameter. -/
 public def_wanted representedFormalLattice (p : ℕ) [Fact p.Prime]
     (E : Type) [Field E] (G : Over (Spec (.of E))) [GrpObj G]
     [ReductiveGroupSchemeModels.IsReductive (Spec (.of E)) G]
