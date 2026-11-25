@@ -10,7 +10,7 @@ $\tfrac12\omega\cdot I\omega$ and $|I\omega|$ are constant, the inertial angular
 
 ## Depends on
 
-- [Exit from compact sets of maximal solutions](../maximal-solutions-and-global-existence/ode-maximal-solution-exit-compact.md)
+- [Exit from compact sets of maximal solutions](../../maximal-solutions-and-global-existence/ode-maximal-solution-exit-compact.md)
 
 ## Expansion
 

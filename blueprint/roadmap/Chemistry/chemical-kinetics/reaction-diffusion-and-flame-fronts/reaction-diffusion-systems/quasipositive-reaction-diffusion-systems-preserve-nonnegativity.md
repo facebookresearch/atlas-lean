@@ -9,7 +9,7 @@ $\sum_i \int_\Omega c_i\,dx$ is nonincreasing.
 
 ## Depends on
 
-- [Parabolic boundary maximum principle](../../../Analysis/partial-differential-equations/heat-equation/exists-mem-parabolic-boundary-is-max-on.md)
+- [Parabolic boundary maximum principle](../../../../Analysis/partial-differential-equations/heat-equation/exists-mem-parabolic-boundary-is-max-on.md)
 
 ## Expansion
 
