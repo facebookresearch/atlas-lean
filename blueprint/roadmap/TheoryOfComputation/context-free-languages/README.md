@@ -4,6 +4,7 @@ Context-free grammars and derivations, normal forms, parsing algorithms, pushdow
 
 - [Grammars, parsing and pushdown automata](grammars-and-pushdown-automata/README.md)
 - [Closure properties and pumping lemmas](closure-and-pumping/README.md)
+- [Probabilistic context-free grammars](probabilistic-context-free-grammars/README.md)
 - [Chomsky–Schützenberger theorem](chomsky-sch-tzenberger-theorem/README.md)
 - [Deterministic context-free languages are closed under complement](is-deterministic-context-free-compl.md)
 - [Some context-free language is not deterministic](exists-is-context-free-not-is-determinis.md)
