@@ -1,0 +1,17 @@
+# Native Tensor Comparisons
+
+- [Module Adjunction](module-adjunction.md)
+- [Tensor Left Unit](tensor-left-unit.md)
+- [Tensor Right Unit](tensor-right-unit.md)
+- [Tensor Swap](tensor-swap.md)
+- [Triple Tensor](triple-tensor.md)
+- [Triple Left](triple-left.md)
+- [Triple Right](triple-right.md)
+- [Tensor Iso](tensor-iso.md)
+- [Tensor Associator](tensor-associator.md)
+- [Pair Comparison](pair-comparison.md)
+- [Unit naturality apply](unit-naturality-apply.md)
+- [Pair Comparison apply tmul](pair-comparison-apply-tmul.md)
+- [Triple Left comp tensor Associator hom](triple-left-comp-tensor-associator-hom.md)
+- [Tensor Associator hom apply tmul](tensor-associator-hom-apply-tmul.md)
+- [Tensor Associator inv apply tmul](tensor-associator-inv-apply-tmul.md)

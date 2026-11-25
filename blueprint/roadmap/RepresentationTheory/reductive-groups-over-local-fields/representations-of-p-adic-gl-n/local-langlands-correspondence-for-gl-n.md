@@ -49,7 +49,8 @@ positive characteristic and is not part of this statement.
 - [Smooth and admissible representations of p-adic groups](../representations-of-p-adic-reductive-groups/smooth-representations-of-p-adic-groups.md), for irreducible admissible representations, twists, central characters and contragredients
 - [Cuspidal representations and Jacquet's embedding theorem](../representations-of-p-adic-reductive-groups/cuspidal-representations-and-jacquet-embedding.md), for supercuspidal representations
 - [Essentially square-integrable representations of GLₙ](essentially-square-integrable-representations-of-gl-n.md)
-- [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Weil group, Frobenius-semisimple Weil–Deligne representations and their tensor products, determinants and contragredients
+- [Weil group of a p-adic field](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-group-of-a-p-adic-field.md), for the Weil group
+- [Weil–Deligne representations](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-deligne-representations.md), for Frobenius-semisimple Weil–Deligne representations and their tensor products, determinants and contragredients
 - [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the local Artin map $\mathrm{rec}_F$ of a finite extension of $\mathbb{Q}_p$; $\mathrm{Art}_F$ is $x \mapsto \mathrm{rec}_F(x)^{-1}$, pointwise inversion (not the inverse map), read in the Weil group, so that uniformizers correspond to geometric Frobenius elements
 - [L- and ε-factors of pairs for GLₙ and of Weil–Deligne representations](l-and-epsilon-factors-of-pairs.md)
 

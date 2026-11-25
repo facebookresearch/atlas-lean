@@ -21,9 +21,6 @@ public import CSLibExt.Coding.QuantumCodeDistance
 * A one-dimensional code (here `|00⟩`) has distance at least `d` for every `d`, so
   `isCorrectable_of_hasDistanceAtLeast` applies to it with `d = 3`: every single-qubit Pauli
   error is correctable on it (the recovery prepares `|00⟩` again).
-* The hypotheses of the wanted quantum Singleton bound
-  (`WantedExt/QuantumInformation/QuantumSingletonWanted`) are jointly satisfiable: the whole
-  space of two qubits (`P = 1`, `k = 2`) has distance at least `1`.
 * The hypotheses of the proved stabilizer dimension theorem
   `Cslib.CodingTheory.StabilizerCode.finrank_stabilizerCode`
   (`CSLibExt/Coding/StabilizerCode.lean`) are jointly satisfiable: the single
@@ -93,17 +90,6 @@ theorem p00_hasDistanceAtLeast (d : ℕ) : HasDistanceAtLeast p00 d := by
 example : IsCorrectable p00 (fun e : {e : (Fin 2 → ZMod 2) × (Fin 2 → ZMod 2) //
     2 * pauliWeight e.1 e.2 + 1 ≤ 3} => pauli e.1.1 e.1.2) :=
   isCorrectable_of_hasDistanceAtLeast p00_isProj.1 p00_isProj.2 (p00_hasDistanceAtLeast 3)
-
-/-- Hypotheses of the quantum Singleton bound for `P = 1`, `n = k = 2`, `d = 1`. -/
-example : (1 : Matrix (Fin 2 → ZMod 2) (Fin 2 → ZMod 2) ℂ)ᴴ = 1 ∧
-    (1 : Matrix (Fin 2 → ZMod 2) (Fin 2 → ZMod 2) ℂ) * 1 = 1 ∧ 1 ≤ 2 ∧
-    Module.finrank ℂ (LinearMap.range (Matrix.toLin'
-      (1 : Matrix (Fin 2 → ZMod 2) (Fin 2 → ZMod 2) ℂ))) = 2 ^ 2 ∧
-    HasDistanceAtLeast (1 : Matrix (Fin 2 → ZMod 2) (Fin 2 → ZMod 2) ℂ) 1 := by
-  refine ⟨conjTranspose_one, Matrix.mul_one 1, by norm_num, ?_,
-    hasDistanceAtLeast_one 1 (Matrix.mul_one 1)⟩
-  rw [Matrix.toLin'_one, LinearMap.range_id, finrank_top, Module.finrank_fintype_fun_eq_card]
-  simp
 
 theorem pauliZ_conjTranspose : (pauli (0 : Fin 1 → ZMod 2) 1)ᴴ = pauli 0 1 := by
   ext u v

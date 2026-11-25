@@ -51,22 +51,22 @@ variable [HasDerivedPullbacks.{0}] [HasDerivedPushforwards.{0}] [HasDerivedTenso
 
 def_wanted actualBranchComplexData (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
     (D T : Over (Spec (.of k))) [SmoothOfRelativeDimension 1 D.hom]
-    (projective : IsProjectiveVariety D) (n g : ℕ)
+    (projective : ProjectiveSpace.IsProjective D) (n g : ℕ)
     (F : Family D.hom n g T.left T.hom) : BranchComplexData D F
 
 def_wanted actualSymmetricDivisorScheme (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
     (D : Over (Spec (.of k))) [SmoothOfRelativeDimension 1 D.hom]
-    (projective : IsProjectiveVariety D) (r : ℕ) : DivisorScheme D r
+    (projective : ProjectiveSpace.IsProjective D) (r : ℕ) : DivisorScheme D r
 
 def_wanted actualFixedDegreeModuli (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
     (D : Over (Spec (.of k))) [LocallyOfFiniteType D.hom] [IsNoetherian D.left]
-    [SmoothOfRelativeDimension 1 D.hom] (projective : IsProjectiveVariety D) (n g d : ℕ) :
+    [SmoothOfRelativeDimension 1 D.hom] (projective : ProjectiveSpace.IsProjective D) (n g d : ℕ) :
     (M : DegreeModuli D n g d) × DegreeBaseChange D M
 
 def_wanted actualBranchDivisorOrigin (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
     (D T : Over (Spec (.of k))) [LocallyOfFiniteType D.hom] [IsNoetherian D.left]
     [SmoothOfRelativeDimension 1 D.hom] [GeometricallyConnected D.hom]
-    (projective : IsProjectiveVariety D) (n g d r : ℕ) (positive : 0 < d)
+    (projective : ProjectiveSpace.IsProjective D) (n g d r : ℕ) (positive : 0 < d)
     (degree : (r : ℤ) = 2 * (g : ℤ) - 2 -
       (d : ℤ) * (2 * (Module.finrank k (cohomology D.hom (structureModule D.left) 1) : ℤ) - 2))
     (F : Family D.hom n g T.left T.hom) (stable : IsGeometricallyStable F)
@@ -77,7 +77,7 @@ def_wanted actualBranchDivisorOrigin (k : Type) [Field k] [IsAlgClosed k] [CharZ
 def_wanted actualBranchMorphism (k : Type) [Field k] [IsAlgClosed k] [CharZero k]
     (D : Over (Spec (.of k))) [LocallyOfFiniteType D.hom] [IsNoetherian D.left]
     [SmoothOfRelativeDimension 1 D.hom] [GeometricallyConnected D.hom]
-    (projective : IsProjectiveVariety D) (n g d r : ℕ) (positive : 0 < d)
+    (projective : ProjectiveSpace.IsProjective D) (n g d r : ℕ) (positive : 0 < d)
     (degree : (r : ℤ) = 2 * (g : ℤ) - 2 -
       (d : ℤ) * (2 * (Module.finrank k (cohomology D.hom (structureModule D.left) 1) : ℤ) - 2))
     (M : DegreeModuli D n g d) (base : DegreeBaseChange D M) (S : DivisorScheme D r) :

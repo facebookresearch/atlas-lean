@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.SquareSplittingConvolution.DivisorProperties
 public import MathlibExt.NumberTheory.SquareSplittingConvolution.MoebiusInversion
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
@@ -21,29 +22,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter Topology Asymptotics
-
-/-- **Basic properties of the square-splitting divisor sets.** Let
-$A(n) = \{u_1 v_1^2 : u_1 \mid u(n),\ v_1 \mid v(n)\}$ be the square-splitting divisor set of
-$n$, where $u(n)$ is the squarefree part of $n$ and $n = u(n) v(n)^2$ for $n \ge 1$. Then
-(i) for every $n \ge 1$, both $1$ and $n$ belong to $A(n)$, and every element of $A(n)$ divides
-$n$; (ii) for all coprime natural numbers $m$ and $n$, $A(mn) = \{ab : a \in A(m),\ b \in A(n)\}$;
-and (iii) for every $n \ge 1$, $|A(n)| = d(u(n))\, d(v(n))$ and $|A(n)| = 2^{\omega(u(n))} d(v(n))$,
-where $d(k)$ is the number of divisors of $k$ and $\omega(k)$ is the number of distinct prime
-factors of $k$.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 1
-(`integers-2026-A56-thm-1`). -/
-public theorem_wanted squareSplitDivisors_properties :
-    (∀ n ≠ 0, 1 ∈ squareSplitDivisors n ∧ n ∈ squareSplitDivisors n ∧
-      ∀ d ∈ squareSplitDivisors n, d ∣ n) ∧
-    (∀ m n, Nat.Coprime m n → squareSplitDivisors (m * n) =
-      (squareSplitDivisors m ×ˢ squareSplitDivisors n).image fun x => x.1 * x.2) ∧
-    (∀ n ≠ 0, (squareSplitDivisors n).card =
-        (squareSplitU n).divisors.card * (squareSplitV n).divisors.card ∧
-      (squareSplitDivisors n).card =
-        2 ^ ArithmeticFunction.cardDistinctFactors (squareSplitU n) *
-          (squareSplitV n).divisors.card)
 
 /-- **Ring axioms for the square-splitting convolution.** For all complex arithmetic functions
 $f$, $g$ and $h$, the square-splitting convolution $\star$ satisfies $f \star g = g \star f$,

@@ -13,3 +13,4 @@ Representations of infinite groups and Lie algebras: continuous and unitary repr
 - [Lie groups: the exponential map, closed subgroups and maximal compact subgroups](lie-groups-exponential-map-and-maximal-compact-subgroups.md)
 - [Unitary representations of locally compact groups and representations of compact groups](unitary-representations-and-representations-of-compact-groups.md)
 - [Vector-valued integrals and distributions on Lie groups](vector-valued-integrals-and-distributions-on-lie-groups.md)
+- [Lie's theorem: a common eigenvector for a solvable Lie algebra](lie-theorem.md)

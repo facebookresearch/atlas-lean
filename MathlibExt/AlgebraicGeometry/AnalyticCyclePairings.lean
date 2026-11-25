@@ -58,9 +58,9 @@ def pullbackRough (f : Y → M) {p : ℕ}
   fun y ↦ (a ⟨f y.val, by trivial⟩).compContinuousLinearMap
     (mfderiv 𝓘(ℝ, Coordinates d) 𝓘(ℝ, Coordinates n) f y.val)
 
-/-- Smoothness of the displayed pullback of smooth forms, with no cone
-conclusion. A hypothesis class; it holds for every smooth map, as requested in
-`WantedExt/AlgebraicGeometry/AnalyticCyclePairingsWanted.lean`. -/
+/-- For a map $f : Y → M$ between spaces charted on $ℂ^d$ and $ℂ^n$: an instance asserts that,
+for every $p$ and every smooth real $p$-form $a$ on $M$, the pointwise pullback of $a$ along $f$
+through the real manifold derivative of $f$ (`pullbackRough`) is a smooth form on $Y$. -/
 class PullbackTheory (f : Y → M) : Prop where
   smooth : ∀ p (a : GlobalForms ℝ (Coordinates n) M p),
     IsSmooth ℝ (Coordinates d) Y (pullbackRough n M d Y f a.val)

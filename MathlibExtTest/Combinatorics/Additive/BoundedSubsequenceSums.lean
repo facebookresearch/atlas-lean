@@ -26,3 +26,17 @@ example : boundedSubsequenceSums 2 3
   rw [boundedSubsequenceSums_eq_generalizedHFoldSumset_of_zero_mem _ (by decide) (by decide)
     _ (by decide) 5 (by decide) 2 3 (by decide) (by decide) (by decide)]
   decide
+
+-- Only lengths two and three contribute, with at most two copies of either term.
+example : boundedSubsequenceSums 2 1
+    (repetitionSequence ![(2 : ℤ), -3] ![2, 2]) = {-6, -4, -1, 1, 4} := by
+  rw [boundedSubsequenceSums_eq_generalizedHFoldSumset_of_zero_not_mem _ (by decide) (by decide)
+    _ (by decide) 4 (by decide) 2 1 (by decide) (by decide)]
+  decide
+
+-- With β = 0 the full sequence is allowed, and it is the only nonempty choice summing to zero.
+example : boundedSubsequenceSums 1 0
+    (repetitionSequence ![(-1 : ℤ), 2] ![2, 1]) = {-2, -1, 0, 1, 2} := by
+  rw [boundedSubsequenceSums_eq_generalizedHFoldSumset_of_zero_not_mem _ (by decide) (by decide)
+    _ (by decide) 3 (by decide) 1 0 (by decide) (by decide)]
+  decide

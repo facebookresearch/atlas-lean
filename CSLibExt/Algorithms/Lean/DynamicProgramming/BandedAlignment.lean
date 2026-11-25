@@ -210,10 +210,10 @@ theorem isAlignment_diagAlign (xs ys : List α) :
           · simp only [diagAlign]
             simp [ih'.2.2]
 
-/-- **Columns using only the second sequence stay in the band.** Let $w, i, j \in \mathbb{N}$,
-let $y$ be a list of length $n$, and let $A$ be the alignment with one column for each element
-$b$ of $y$, in order, with empty first entry and second entry $b$. If $|i - j| \le w$ and
-$|i - (j + n)| \le w$, then the band check of $A$ with width $w$ from offset
+/-- **Second-sequence gap columns stay in the band if both endpoints do.** Let
+$w, i, j \in \mathbb{N}$, let $y$ be a list of length $n$, and let $A$ be the alignment with one
+column for each element $b$ of $y$, in order, with empty first entry and second entry $b$. If
+$|i - j| \le w$ and $|i - (j + n)| \le w$, then the band check of $A$ with width $w$ from offset
 $(i, j)$ is true. -/
 theorem bandedFrom_map_gapY : ∀ (ys : List α) (i j : ℕ),
     |(i : ℤ) - (j : ℤ)| ≤ (w : ℤ) →
@@ -246,10 +246,10 @@ theorem bandedFrom_map_gapY : ∀ (ys : List α) (i j : ℕ),
         push_cast
         ring
 
-/-- **Columns using only the first sequence stay in the band.** Let $w, i, j \in \mathbb{N}$,
-let $x$ be a list of length $n$, and let $A$ be the alignment with one column for each element
-$a$ of $x$, in order, with first entry $a$ and empty second entry. If $|i - j| \le w$ and
-$|(i + n) - j| \le w$, then the band check of $A$ with width $w$ from offset
+/-- **First-sequence gap columns stay in the band if both endpoints do.** Let
+$w, i, j \in \mathbb{N}$, let $x$ be a list of length $n$, and let $A$ be the alignment with one
+column for each element $a$ of $x$, in order, with first entry $a$ and empty second entry. If
+$|i - j| \le w$ and $|(i + n) - j| \le w$, then the band check of $A$ with width $w$ from offset
 $(i, j)$ is true. -/
 theorem bandedFrom_map_gapX : ∀ (xs : List α) (i j : ℕ),
     |(i : ℤ) - (j : ℤ)| ≤ (w : ℤ) →
@@ -282,9 +282,10 @@ theorem bandedFrom_map_gapX : ∀ (xs : List α) (i j : ℕ),
         push_cast
         ring
 
-/-- **The diagonal alignment stays in the band.** Let $w, i, j \in \mathbb{N}$ and let $x$, $y$
-be lists of lengths $m$ and $n$. If $|i - j| \le w$ and $|(i + m) - (j + n)| \le w$, then the
-band check of the diagonal alignment of $x$ and $y$ with width $w$ from offset $(i, j)$ is true.
+/-- **The diagonal alignment stays in the band if both endpoints do.** Let $w, i, j \in \mathbb{N}$
+and let $x$, $y$ be lists of lengths $m$ and $n$. If $|i - j| \le w$ and
+$|(i + m) - (j + n)| \le w$, then the band check of the diagonal alignment of $x$ and $y$ with width
+$w$ from offset $(i, j)$ is true.
 
 The match phase keeps the offset difference and the gap phases interpolate it. -/
 theorem bandedFrom_diagAlign : ∀ (i j : ℕ) (xs ys : List α),
@@ -317,9 +318,10 @@ theorem bandedFrom_diagAlign : ∀ (i j : ℕ) (xs ys : List α),
         rw [hcast]
         exact hend
 
-/-- **The diagonal alignment is banded.** Let $w \in \mathbb{N}$. If two sequences $x$ and $y$
-have lengths differing by at most $w$, that is $\bigl| |x| - |y| \bigr| \le w$, then the diagonal
-alignment of $x$ and $y$ is banded with width $w$. -/
+/-- **The diagonal alignment is $w$-banded if lengths differ by at most $w$.** Let
+$w \in \mathbb{N}$. If two sequences $x$ and $y$ have lengths differing by at most $w$, that is
+$\bigl| |x| - |y| \bigr| \le w$, then the diagonal alignment of $x$ and $y$ is banded with width
+$w$. -/
 theorem isBanded_diagAlign {xs ys : List α}
     (h : |(xs.length : ℤ) - (ys.length : ℤ)| ≤ (w : ℤ)) :
     IsBanded w (diagAlign xs ys) := by

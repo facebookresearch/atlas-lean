@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import MathlibExt.NumberTheory.MultiplicativeAdditiveEightSquares
 public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquares
 public import MathlibExt.NumberTheory.MultiplicativeAdditivePairedSquaresRigidity
 public import MathlibExt.NumberTheory.MultiplicativeAdditiveThreePairedSquares
@@ -108,21 +109,6 @@ Squares*, INTEGERS 26 (2026), Article A121, Theorem 3 (`integers-2026-A121-thm-3
 public theorem_wanted multiplicative_additive_six_squares_eq_id (f : ArithmeticFunction ℂ)
     (hf : f.IsMultiplicative)
     (hadd : ∀ x y : Fin 3 → ℕ, (∀ j, 0 < x j) → (∀ j, 0 < y j) →
-      f (∑ j, (x j ^ 2 + y j ^ 2)) = ∑ j, f (x j ^ 2 + y j ^ 2))
-    (h2 : f 2 ≠ 0) :
-    ∀ n : ℕ, 0 < n → f n = n
-
-/-- **Multiplicative functions additive on eight paired squares and nonzero at $2$ are the
-identity.** Let $f$ be a complex-valued multiplicative function with $f(2) \ne 0$ such that
-$$f\Big(\sum_{j=1}^{4} (x_j^2 + y_j^2)\Big) = \sum_{j=1}^{4} f(x_j^2 + y_j^2)$$
-for all positive integers $x_1, \dots, x_4, y_1, \dots, y_4$. Then $f(n) = n$ for every positive
-integer $n$.
-
-Source: Jewel Mahajan, *Multiplicative Functions Additive on Partitions of 2k Nonzero
-Squares*, INTEGERS 26 (2026), Article A121, Theorem 4 (`integers-2026-A121-thm-4`). -/
-public theorem_wanted multiplicative_additive_eight_squares_eq_id (f : ArithmeticFunction ℂ)
-    (hf : f.IsMultiplicative)
-    (hadd : ∀ x y : Fin 4 → ℕ, (∀ j, 0 < x j) → (∀ j, 0 < y j) →
       f (∑ j, (x j ^ 2 + y j ^ 2)) = ∑ j, f (x j ^ 2 + y j ^ 2))
     (h2 : f 2 ≠ 0) :
     ∀ n : ℕ, 0 < n → f n = n

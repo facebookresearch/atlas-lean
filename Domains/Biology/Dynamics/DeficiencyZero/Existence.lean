@@ -120,11 +120,12 @@ private theorem exists_log_solution [Fintype S] [Fintype ρ]
 /-- **Horn's construction.** Suppose the network has deficiency zero, in the linear form
 `ker Y ∩ im ∂ = 0`: every weighting `α` of the reactions whose net stoichiometric change
 `∑ α r (prod r - src r)` vanishes also has zero net change on the complexes (tested against
-every `η`). Then every positive vector `ψ` on the complexes balancing the weighted reaction
-graph (inflow `∑_{prod r = z} k r ψ (src r)` equals outflow `∑_{src r = z} k r ψ (src r)` at
-each complex `z`) is realized, up to a positive factor on each linkage class, by the mass-action
-monomials of a positive concentration vector, which is therefore complex balanced. No sign
-condition on `k` is needed here.
+every `η`). Let `ψ` be positive at every complex and balance the weighted reaction graph
+(inflow `∑_{prod r = z} k r ψ (src r)` equals outflow `∑_{src r = z} k r ψ (src r)` at every
+`z`). Then some positive concentration vector `c` is complex balanced for `k`. No sign condition
+on `k` is needed here (in the chemical model `k > 0`). The proof takes `c = exp μ`, where
+`⟨prod r - src r, μ⟩ = log ψ (prod r) - log ψ (src r)` for every reaction `r`, so that
+`c ^ y / ψ y` is the same at both ends of every reaction.
 
 Source: Horn (1972); Feinberg (2019), ch. 16. -/
 theorem exists_pos_isComplexBalanced_of_balanced_weights [Fintype S] [Fintype ρ]
