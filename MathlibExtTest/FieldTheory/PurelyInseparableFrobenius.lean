@@ -17,7 +17,7 @@ public import Mathlib.FieldTheory.PurelyInseparable.Basic
 @[expose] public section
 
 /-- Consumer with the original binders. -/
-theorem exactSource {M E : Type*} [Field M] [Field E] [Algebra M E]
+private theorem exactSource {M E : Type*} [Field M] [Field E] [Algebra M E]
     [FiniteDimensional M E] [IsPurelyInseparable M E] (p : ℕ)
     [Fact p.Prime] [CharP E p]
     (hp : Module.finrank (frobenius E p).fieldRange E = p) :

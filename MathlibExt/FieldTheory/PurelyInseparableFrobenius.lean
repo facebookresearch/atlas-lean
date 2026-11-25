@@ -160,8 +160,8 @@ private theorem frobeniusSubfield_core
       rcases Nat.eq_zero_or_pos (Module.finrank S₁ E) with h | h
       · rw [h, zero_mul] at hrel; omega
       · exact h
-    haveI : FiniteDimensional S₁ E := Module.finite_of_finrank_pos hpos₁
-    haveI : IsPurelyInseparable S₁ E := by
+    have : FiniteDimensional S₁ E := Module.finite_of_finrank_pos hpos₁
+    have : IsPurelyInseparable S₁ E := by
       rw [isPurelyInseparable_iff_pow_mem S₁ p]
       intro x
       obtain ⟨n, hn⟩ := IsPurelyInseparable.pow_mem S p x
@@ -180,9 +180,10 @@ private theorem frobeniusSubfield_core
     · rw [← hd, hrel, hr, pow_succ]
     · rw [← hmap, hS₁r, frobeniusSubfield_succ]
 
-/-- For a finite purely inseparable extension whose Frobenius image has
-degree `p` over the top field, the degree is a power of `p` and the base
-field is exactly the image of the corresponding iterated Frobenius. -/
+/-- For a finite purely inseparable extension `E / M` of characteristic `p` whose ambient field
+`E` has degree `p` over its Frobenius image (`[E : E^p] = p`), the degree `[E : M]` is a power
+`p ^ r`, and the image of the base field `M` in `E` is exactly the image of the `r`-th iterated
+Frobenius. -/
 public theorem
     exists_finrank_eq_pow_and_fieldRange_eq_iterateFrobenius_of_isPurelyInseparable
     {M : Type*} [Field M] [Algebra M E] [FiniteDimensional M E]
@@ -191,16 +192,16 @@ public theorem
     ∃ r : ℕ, Module.finrank M E = p ^ r ∧
       (algebraMap M E).fieldRange =
         (iterateFrobenius E p r).fieldRange := by
-  haveI : CharP M p := (Algebra.charP_iff M E p).2 inferInstance
+  have : CharP M p := (Algebra.charP_iff M E p).2 inferInstance
   have hfr : Module.finrank M E =
       Module.finrank (algebraMap M E).fieldRange E := by
     refine Algebra.finrank_eq_of_equiv_equiv
       (RingHom.rangeRestrictFieldEquiv (algebraMap M E))
       (RingEquiv.refl E) ?_
     ext x; rfl
-  haveI : FiniteDimensional (algebraMap M E).fieldRange E :=
+  have : FiniteDimensional (algebraMap M E).fieldRange E :=
     Module.finite_of_finrank_pos (hfr ▸ Module.finrank_pos)
-  haveI : IsPurelyInseparable (algebraMap M E).fieldRange E := by
+  have : IsPurelyInseparable (algebraMap M E).fieldRange E := by
     rw [isPurelyInseparable_iff_pow_mem (algebraMap M E).fieldRange p]
     intro x
     obtain ⟨n, hn⟩ := IsPurelyInseparable.pow_mem M p x
