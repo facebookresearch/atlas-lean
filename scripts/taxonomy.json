@@ -9260,6 +9260,7 @@
   "MathlibExt/Algebra/PatchingDatum": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Taylor–Wiles patching"},
   "MathlibExt/Algebra/PointDerivations": {"to": "RingTheory/algebras-and-differentials", "title": "Point derivations"},
   "MathlibExt/Algebra/Polynomial/AevalFrobenius": {"to": "FieldTheory/finite-fields", "title": "Frobenius endomorphism of finite fields"},
+  "MathlibExt/Algebra/Polynomial/ArithmeticProgressionAuxiliaryFloor": {"to": "Algebra/polynomials", "title": "Floors at powers of the positive arithmetic-progression auxiliary root"},
   "MathlibExt/Algebra/Polynomial/ArithmeticProgressionAuxiliaryRoot": {"to": "Algebra/polynomials", "title": "The positive root of the arithmetic-progression auxiliary equation"},
   "MathlibExt/Algebra/Polynomial/ArithmeticProgressionPolynomial": {"to": "Algebra/polynomials", "title": "Boundary identity for an arithmetic-progression polynomial"},
   "MathlibExt/Algebra/Polynomial/ArithmeticProgressionRootPower": {"to": "Algebra/polynomials", "title": "Power identity at the roots of an arithmetic-progression polynomial"},
