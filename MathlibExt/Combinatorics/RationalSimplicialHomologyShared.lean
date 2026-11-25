@@ -6,24 +6,19 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-# Rational reduced homology of finite abstract simplicial complexes
-
-Shared helper for the UnsolvedMath entries on Stanley's Positivity Problems 5 and 6
-(`WantedExt/Combinatorics/AcyclicLinksIntervalDecompositionAMR156Problem0004Wanted.lean` and
-`WantedExt/Combinatorics/CohenMacaulayPartitionabilityAMR156Problem0005Wanted.lean`), so both speak
-about the same complexes, links and Betti numbers.
--/
 module
 
 public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Mathlib.Data.Finset.Lattice.Fold
 
-@[expose] public section
-
-namespace MathlibExt.Combinatorics.RationalSimplicialHomologyShared
-
 /-!
+# Rational reduced homology of finite abstract simplicial complexes
+
+Shared helper for the UnsolvedMath entries on Stanley's Positivity Problems 5 and 6
+(`MathlibExt/Combinatorics/AcyclicLinksIntervalDecomposition.lean` and
+`WantedExt/Combinatorics/CohenMacaulayPartitionabilityAMR156Problem0005Wanted.lean`), so both speak
+about the same complexes, links and Betti numbers.
+
 A finite abstract simplicial complex on the vertex set `ℕ` is a finite family `K` of finite sets
 closed under taking subsets; it contains the empty face unless it is the void complex `∅`. The
 reduced rational homology is computed from the augmented simplicial chain complex: the faces with
@@ -35,6 +30,10 @@ Mathlib's `PreAbstractSimplicialComplex` is not used: its faces are nonempty, so
 void complex (acyclic) from `{∅}` (not acyclic, `H̃_{-1} = ℚ`), which is the link of a facet; the
 acyclic-links condition of Problem 5 needs that distinction.
 -/
+
+@[expose] public section
+
+namespace MathlibExt.Combinatorics.RationalSimplicialHomologyShared
 
 /-- **Finite abstract simplicial complex.** A finite family $K$ of finite subsets of
 $\mathbb{N}$ is a simplicial complex when it is closed under taking subsets: for every

@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.SabarFineNumberWhitt
 public import MathlibExt.Combinatorics.Enumerative.SabarFineNumber
+public import MathlibExt.Combinatorics.Enumerative.SabarFineNumberDifference
 public import MathlibExt.Combinatorics.Enumerative.WhittGeneralizedCatalan
 public import MathlibExt.Combinatorics.Enumerative.SabarTriangle
 public import MathlibExt.Combinatorics.Enumerative.SabarWeightedBinomialSum
@@ -42,6 +43,9 @@ definition `sabarNumber` with its checks `sabarNumber_rows_five_ten` and
 
 The weighted binomial sum identity `sum_choose_mul_two_pow_add_succ` is proved in
 `MathlibExt.Combinatorics.Enumerative.SabarWeightedBinomialSum`, also imported here.
+
+The Fine-number identity `fineNumber_eq_sabarNumber_sub` is proved in
+`MathlibExt.Combinatorics.Enumerative.SabarFineNumberDifference`, also imported here.
 -/
 
 namespace MetaMathlibExt
@@ -59,15 +63,6 @@ public theorem_wanted harmonic_eq_sum_inv_choose_add_sum_sabarNumber (n : ℕ) (
     harmonic n =
       (1 / (n : ℚ)) * ∑ i ∈ Finset.range n, 1 / ((n - 1).choose i : ℚ) +
         ∑ i ∈ Finset.range (n - 1), (-1 : ℚ) ^ (n - i) * sabarNumber (n - 1) i / ((n - i : ℕ) : ℚ)
-
-/-- **Fine numbers from Sabar's triangle.** For every natural number $n \ge 2$, the Fine number
-$F(n)$ is the difference of two entries of row $2n$ of Sabar's triangle $s$:
-$F(n) = s(2n, n+1) - s(2n, n-1)$.
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Theorem 4 (`integers-2026-A27-thm-4`). -/
-public theorem_wanted fineNumber_eq_sabarNumber_sub (n : ℕ) (hn : 2 ≤ n) :
-    fineNumber n = (sabarNumber (2 * n) (n + 1) - sabarNumber (2 * n) (n - 1) : ℤ)
 
 /-- **Central entries of Sabar's triangle and Fine numbers.** Let $F(m)$ denote the Fine numbers
 and $C_m$ the Catalan numbers. For every natural number $n \ge 1$, the entries of Sabar's

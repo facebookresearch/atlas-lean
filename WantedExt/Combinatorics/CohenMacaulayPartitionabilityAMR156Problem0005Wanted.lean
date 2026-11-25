@@ -18,7 +18,7 @@ intervals `[F, F']` with each `F'` a facet?
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Combinatorics.RationalSimplicialHomologyShared
+public import MathlibExt.Combinatorics.RationalSimplicialHomologyShared
 
 @[expose] public section
 
@@ -30,7 +30,7 @@ Problem 6 (Stanley–Garsia partitionability conjecture). UnsolvedMath record UM
 (`AMR-156-0005`), dataset ulamai/UnsolvedMath v1.8.0.
 
 Finite abstract simplicial complexes on the vertex set `ℕ`, links and reduced rational Betti numbers
-are those of `WantedExt/Combinatorics/RationalSimplicialHomologyShared.lean`. Cohen–Macaulay over
+are those of `MathlibExt/Combinatorics/RationalSimplicialHomologyShared.lean`. Cohen–Macaulay over
 `ℚ` is Reisner's criterion: `H̃_i(link F; ℚ) = 0` for `i < dim link F` (degrees above the dimension
 vanish automatically). Partitionable: the faces are partitioned into intervals `[r F, F]` indexed by
 the facets. Duval–Goeckner–Klivans–Martin take Reisner's criterion over an arbitrary field;
