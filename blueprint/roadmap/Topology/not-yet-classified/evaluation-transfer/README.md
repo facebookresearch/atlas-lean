@@ -1,0 +1,18 @@
+# Evaluation Transfer
+
+- [Evaluation Diagram](evaluation-diagram.md)
+- [Evaluation Property](evaluation-property.md)
+- [Evaluation Property iff](evaluation-property-iff.md)
+- [Evaluation Property inf](evaluation-property-inf.md)
+- [Evaluation Property has Two Out Of Three](evaluation-property-has-two-out-of-three.md)
+- [Evaluated Generators rlp eq](evaluated-generators-rlp-eq.md)
+- [Evaluated Generators trivial Fibrations eq](evaluated-generators-trivial-fibrations.md)
+- [Evaluation Recognition Data](evaluation-recognition-data.md)
+- [Evaluation Projective Model Category](evaluation-projective-model-category.md)
+- [Evaluation Projective Weak Equivalences eq](evaluation-projective-weak-equivalences.md)
+- [Evaluation Projective Cofibrations eq](evaluation-projective-cofibrations-eq.md)
+- [Evaluation Projective Fibrations eq](evaluation-projective-fibrations-eq.md)
+- [Evaluation Projective Trivial Fibrations eq](evaluation-projective-trivial-fibrations.md)
+- [Evaluation Projective Trivial Cofibrations eq](evaluation-projective-trivial-cofibratio.md)
+- [Evaluation Projective Cofibrant Factorization](evaluation-projective-cofibrant-factoriz.md)
+- [Evaluation Projective Fibrant Factorization](evaluation-projective-fibrant-factorizat.md)
