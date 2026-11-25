@@ -6,6 +6,7 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+-- Author: @toskua, Avocado
 module
 
 public import Mathlib.CategoryTheory.MorphismProperty.TransfiniteComposition
@@ -65,9 +66,9 @@ theorem horn_llp_le_weakHomotopyEquivalences_of_cardinalOrd_perDiagram
 /-- Horn left-class maps are weak equivalences, conditional only on `W`
 stability for the sequential (`ℕ`) shape. -/
 theorem horn_llp_le_weakHomotopyEquivalences_of_sequential_perDiagram
-    [(SSet.KanComplex.W :
+    (hW : (SSet.KanComplex.W :
       MorphismProperty SSet.{0}).IsStableUnderTransfiniteCompositionOfShape
-      ℕ] :
+      ℕ := by infer_instance) :
     realizedHornInclusions.{0}.rlp.llp ≤ weakHomotopyEquivalences := by
   rw [horn_rlp_llp_eq_sequential]
   refine retracts_le_iff.mpr ?_

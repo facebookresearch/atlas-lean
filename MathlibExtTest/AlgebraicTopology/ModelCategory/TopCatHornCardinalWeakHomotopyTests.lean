@@ -37,19 +37,19 @@ namespace MathlibExtTest.AlgebraicTopology.ModelCategory.TopCatHornCardinalWeakH
 
 /-- Actual-cardinal per-diagram horn left-class client, forwarding the sole premise. -/
 theorem horn_llp_cardinalOrd_perDiagram_client
-    [(SSet.KanComplex.W :
+    (hW : (SSet.KanComplex.W :
       MorphismProperty SSet.{0}).IsStableUnderTransfiniteCompositionOfShape
-      realizedGeneratorCardinal.{0}.ord.ToType] :
+      realizedGeneratorCardinal.{0}.ord.ToType := by infer_instance) :
     TopCat.realizedHornInclusions.{0}.rlp.llp ≤ TopCat.weakHomotopyEquivalences :=
-  TopCat.horn_llp_le_weakHomotopyEquivalences_of_cardinalOrd_perDiagram
+  @TopCat.horn_llp_le_weakHomotopyEquivalences_of_cardinalOrd_perDiagram.{0} hW
 
 /-- Sequential per-diagram horn left-class client, forwarding the sole premise. -/
 theorem horn_llp_sequential_perDiagram_client
-    [(SSet.KanComplex.W :
+    (hW : (SSet.KanComplex.W :
       MorphismProperty SSet.{0}).IsStableUnderTransfiniteCompositionOfShape
-      ℕ] :
+      ℕ := by infer_instance) :
     TopCat.realizedHornInclusions.{0}.rlp.llp ≤ TopCat.weakHomotopyEquivalences :=
-  TopCat.horn_llp_le_weakHomotopyEquivalences_of_sequential_perDiagram
+  TopCat.horn_llp_le_weakHomotopyEquivalences_of_sequential_perDiagram hW
 
 /-- Symbolic actual-cardinal conditional horn closure. -/
 theorem cardinalPerDiagram_symbolic
@@ -62,12 +62,12 @@ theorem cardinalPerDiagram_symbolic
 
 /-- Universe-one actual-cardinal conditional horn closure. -/
 theorem cardinalPerDiagram_u1
-    [MorphismProperty.IsStableUnderTransfiniteCompositionOfShape
+    (hW : MorphismProperty.IsStableUnderTransfiniteCompositionOfShape
       (SSet.KanComplex.W : MorphismProperty SSet.{1})
-        realizedGeneratorCardinal.{1}.ord.ToType] :
+        realizedGeneratorCardinal.{1}.ord.ToType := by infer_instance) :
     TopCat.realizedHornInclusions.{1}.rlp.llp ≤
       TopCat.weakHomotopyEquivalences.{1} :=
-  TopCat.horn_llp_le_weakHomotopyEquivalences_of_cardinalOrd_perDiagram
+  @TopCat.horn_llp_le_weakHomotopyEquivalences_of_cardinalOrd_perDiagram.{1} hW
 
 /-- The exact no-maximum-order witness used locally by the final endpoint. -/
 theorem actualCardinal_noMax_symbolic :
