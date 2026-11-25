@@ -18,6 +18,13 @@ $D_\mathcal{E}(\Gamma)$ is the set of these circuits. $\mathcal{E}$ is *bootstra
 
 - [The hybrid step](../../security-games/games-and-advantages/advantage-hybrid-uniform.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- The exact running-time overhead $t'$ of the reduction in part 2, as a function of $t$, $\ell$, $d$ and the cost of encryption, in place of $t' \approx t \cdot \ell$ (statement prerequisite; not yet stated)
+- Key-dependent-message (KDM) security for encryption of the scheme's own secret key, used in part 3 (statement prerequisite; not yet stated)
+
 ## Sources
 
 - C. Gentry, *A fully homomorphic encryption scheme*, PhD thesis, Stanford University, 2009, <https://crypto.stanford.edu/craig/craig-thesis.pdf>: Section 4.1 (Definitions 4.1.2 and 4.1.3), Section 4.2 (the construction of $\mathcal{E}^{(d)}$, Theorems 4.2.1–4.2.3) and Section 4.3 (Theorem 4.3.2).

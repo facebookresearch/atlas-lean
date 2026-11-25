@@ -1,6 +1,6 @@
 # Partial persistence for bounded in-degree pointer structures
 
-Every pointer-machine data structure whose nodes have in-degree bounded by a constant can be made partially persistent (all past versions can be queried, the newest can be updated) with $O(1)$ amortized time overhead per operation and $O(1)$ amortized extra space per update, by the node-copying method of Driscoll, Sarnak, Sleator and Tarjan.
+Every pointer-machine data structure whose nodes have in-degree bounded by a constant can be made partially persistent (all past versions can be queried, the newest can be updated) with $O(1)$ amortized time overhead per primitive pointer-machine access or update step, so that every operation is slowed down by at most a constant factor, and $O(1)$ amortized extra space per update step, by the node-copying method of Driscoll, Sarnak, Sleator and Tarjan.
 
 ## Proof depends on
 

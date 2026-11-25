@@ -4,7 +4,7 @@ Consider an optimization problem in which each instance $I$ has a nonempty set o
 
 An *$\alpha$-approximation algorithm* is a polynomial-time algorithm that, on every instance $I$, returns a feasible solution $A(I)$ whose value is within a factor $\alpha$ of optimal. The number $\alpha$ is its *performance guarantee*, also called its *approximation ratio* or *approximation factor*. Under the convention used here:
 - for minimization, $\alpha \ge 1$ and $f(A(I)) \le \alpha \cdot \mathrm{OPT}(I)$;
-- for maximization, $\alpha \le 1$ and $f(A(I)) \ge \alpha \cdot \mathrm{OPT}(I)$.
+- for maximization, $0 < \alpha \le 1$ and $f(A(I)) \ge \alpha \cdot \mathrm{OPT}(I)$.
 
 Some authors instead use $\alpha \ge 1$ for maximization and require $f(A(I)) \ge \mathrm{OPT}(I)/\alpha$. Under that convention, a $1/2$-approximation here is a $2$-approximation there.
 
