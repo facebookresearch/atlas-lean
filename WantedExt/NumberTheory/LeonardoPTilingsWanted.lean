@@ -37,6 +37,7 @@ public import MathlibExt.NumberTheory.IncompleteLeonardoP
 public import MathlibExt.NumberTheory.IncompleteLeonardoPBinomialSum
 public import MathlibExt.NumberTheory.IncompleteLeonardoPPartialSum
 public import MathlibExt.NumberTheory.LeonardoPTilings
+public import MathlibExt.NumberTheory.LucasLeonardoPIdentity
 public import WantedExt.NumberTheory.LeonardoPWanted
 
 namespace MetaMathlibExt
@@ -138,17 +139,6 @@ Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Nu
 Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 13. -/
 public theorem_wanted lucasLeonardoP_eq_lucasP (p n : ℕ) (hp : 1 ≤ p) :
     lucasLeonardoP p n = ((p : ℤ) + 1) * lucasP p n - p
-
-/-- **Lucas-Leonardo $p$-numbers from Leonardo $p$-numbers.** Let $p \ge 1$, let $R_{p,n}$ denote
-the Lucas-Leonardo $p$-numbers, and let $\mathcal{L}_{p,n}$ denote the Leonardo $p$-numbers
-$\mathcal{L}_{p,p}(n)$ (the generalized Leonardo $p$-numbers with $k = p$), extended to $n = -1$
-by $\mathcal{L}_{p,-1} = -p$. Then $R_{p,n} = (p + 1) \mathcal{L}_{p,n} - p \mathcal{L}_{p,n-1}$
-for every natural number $n$.
-
-Source: Amine Belkhir and Elif Tan, *Combinatorial Insights into Leonardo `p`-Numbers and
-Lucas-Leonardo `p`-Numbers*, INTEGERS 25 (2025), Article A57, Proposition 14. -/
-public theorem_wanted lucasLeonardoP_eq_leonardoPK (p n : ℕ) (hp : 1 ≤ p) :
-    lucasLeonardoP p n = ((p : ℤ) + 1) * leonardoPK p p n - p * leonardoPKZ p p ((n : ℤ) - 1)
 
 /-- **Sum of the Lucas-Leonardo p-numbers.** For every natural number $p \ge 1$ and every natural
 number $n$, the Lucas-Leonardo $p$-numbers $R_{p,m}$ satisfy

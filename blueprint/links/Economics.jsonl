@@ -1061,3 +1061,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Economics/asset-pricing-and-financial-risk/part-02/glosten-milgrom-model/README.md"}], "id": "af_ed30293520b30dff2c0da88d"}
 {"subject": [{"type": "generic", "uri": "../roadmap/Economics/choice-and-utility/ordinal-utility-representation/natural-number-utilities-of-finite-preferences.md"}], "id": "af_e7f18070899c7855ea59a5fc", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/Economics/producer-theory/profit-function/interior-first-order-conditions.md"}], "id": "af_7cb24d7f4ae4219dc3d072c4", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Economics/inventory-transport-and-spatial-models/deterministic-yield/order-quantities-under-a-deterministic-yield.md"}], "id": "af_f5051fc42b0ddedfe0df4dff", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Economics/inventory-transport-and-spatial-models/deterministic-yield/README.md"}], "id": "af_fadeae161bfdc3ef4d9f4a93"}
