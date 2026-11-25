@@ -15,7 +15,7 @@ where $\Delta_r H(T) = \Delta_r H(T_0) + \Delta c_p\, (T - T_0)$ with $\Delta c_
 
 - The reaction term depends only on the product $\xi\, \Delta_r H$: multiplying every $\nu_i$ by $2$ doubles $\Delta_r H$ and halves the extent
   that gives the same outlet flows, so the term is unchanged.
-- Adding the reaction heat $\xi\, \Delta_r H(T_0)$ to the formation-enthalpy duty $Q$ counts it twice: the sum exceeds $Q$ by
+- Adding the reaction heat $\xi\, \Delta_r H(T_0)$ to the formation-enthalpy duty $Q$ counts it twice: the sum differs from $Q$ by
   $\xi\, \Delta_r H(T_0)$, which is nonzero whenever $\xi \ne 0$ and $\Delta_r H(T_0) \ne 0$.
 
 Proof: substituting $n_i^{\mathrm{out}} = n_i^{\mathrm{in}} + \nu_i \xi$ and $h_i$ into $Q$, the formation terms combine to $\xi \sum_i \nu_i \Delta_f H_i^\circ$, which

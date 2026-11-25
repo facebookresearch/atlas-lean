@@ -9,10 +9,6 @@ $$Y_{n+2} = Y_{n+1} + h\Big(\tfrac32 f(t_{n+1}, Y_{n+1}) - \tfrac12 f(t_n, Y_n)\
 If the numerical starting values $Y_0, Y_1$ satisfy $|Y_0 - \eta| + |Y_1 - y(h)| \le Kh^2$, then
 $\max_{0 \le n \le N}|Y_n - y(t_n)| \le Ch^2$ with $C$ independent of $h$.
 
-## Depends on
-
-- [First-order convergence of the explicit Euler method](../euler-method/explicit-euler-first-order-convergence.md)
-
 ## Expansion
 
 A good expansion bounds the local truncation error by Taylor's theorem, proves zero-stability from the roots $1$ and $0$ of the first

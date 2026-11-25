@@ -11,7 +11,7 @@ Let $X \subseteq \mathbb{R}^n$ and $U \subseteq \mathbb{R}^m$ be open, let $f : 
 
 **Proof sketch.** For nearby $(x', \omega')$, the difference of the solutions satisfies an integral equation whose right-hand side is Lipschitz in the state on a compact neighborhood of the trajectory, and Grönwall's inequality bounds it by $C(\|x' - x\| + \|\omega' - \omega\|_{L^1})$; this gives part 1. For part 2, the remainder $\xi' - \xi - \lambda$ satisfies a linear equation forced by the second-order Taylor remainder of $f$, which is $o(\|x' - x\| + \|\omega' - \omega\|_\infty)$ uniformly by uniform continuity of $f_x$ and $f_u$ on compact sets, and Grönwall again shows the remainder is of that order. Continuity of the derivative follows from continuous dependence of the variational equation on its coefficients. Part 3 is part 2 with $\lambda_0 = 0$ and the variation-of-constants formula for $\lambda(\tau)$.
 
-## Background
+## Proof depends on
 
 - [Carathéodory solutions of linear systems with locally integrable inputs](../../ordinary-differential-equations/caratheodory-solutions-of-linear-systems-with-locally-integrable-inputs.md): the solution concept and variation of constants for the variational equation
 
