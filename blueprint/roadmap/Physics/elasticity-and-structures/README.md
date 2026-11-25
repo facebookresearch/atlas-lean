@@ -1,6 +1,6 @@
 # Elasticity and structural mechanics
 
-Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, elasticity boundary-value problems, weak formulations and virtual work, prismatic bars and shafts, Euler–Bernoulli beams and their vibration modes, column buckling, the stiffness method for beams and frames, trusses and their load envelopes, plastic collapse of beams, plasticity and viscoelasticity, laminates and plates, contact, friction and lubrication, aeroelastic divergence and flutter, and rigid footings on elastic foundations.
+Linear elasticity and the mechanics of structures: Cauchy stress, small strain and Mohr's circle, isotropic elastic energy, elasticity boundary-value problems, weak formulations and virtual work, prismatic bars and shafts, Euler–Bernoulli beams and their vibration modes, column buckling, the stiffness method for beams and frames, trusses and their load envelopes, plastic collapse of beams, plasticity and viscoelasticity, laminates and plates, contact, friction and lubrication, aeroelastic divergence and flutter, the vibrations of a monatomic chain, rigid footings on elastic foundations, and geotechnical limit analysis.
 
 - [Aeroelastic divergence and flutter](aeroelastic-divergence-and-flutter/README.md)
 - [Boussinesq point load on an elastic half-space](boussinesq-point-load-on-an-elastic-half-space/README.md)
