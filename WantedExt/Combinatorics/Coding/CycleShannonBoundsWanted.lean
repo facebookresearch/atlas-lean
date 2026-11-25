@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Combinatorics.Coding.CycleShannonBounds
+public import MathlibExt.Combinatorics.Coding.PolakSchrijver
 
 /-!
 # Known cycle-capacity construction and rate requests
@@ -77,13 +78,6 @@ $7$-cycle is at least $350^{1/5}$, as an inequality in $[0, \infty]$.
 Source: Mathew--Östergård (2017), exact rate row; no unprinted code is supplied. -/
 theorem_wanted mathewOstergard2017LowerBound :
   ENNReal.rpow 350 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
-
-/-- **Polak–Schrijver lower bound for the capacity of the 7-cycle.** The Shannon capacity of the
-$7$-cycle is at least $367^{1/5}$, as an inequality in $[0, \infty]$.
-
-Source: Polak--Schrijver, arXiv:1808.07438, exact fifth-root rate. -/
-theorem_wanted polakSchrijverRateLowerBound :
-  ENNReal.rpow 367 ((5 : ℝ)⁻¹) ≤ shannonCapacityCycle 7
 
 /-- **Itty–Rosin–Carstensen–Reichman lower bound for the capacity of the 7-cycle.** The Shannon
 capacity of the $7$-cycle is at least $134753^{1/10}$, as an inequality in $[0, \infty]$.

@@ -133,23 +133,6 @@ public theorem_wanted tendsto_sum_integral_cos_sub_cos_odd_even {q : ℕ} (hq : 
           (cos (q * x) - cos (q * (2 * m + 1 : ℝ) * x)))) atTop
       (𝓝 (if q % 4 = 0 then 0 else 16 / ((q : ℝ) ^ 2 * π)))
 
-/-- **Alternating integral sums of $\cos qx - \cos qkx$ for odd $q$ and even $k$.** Let $q$ be an
-odd natural number, for each natural number $m$ put $k = 2m$, and let
-$f(x) = \cos(qx) - \cos(qkx)$. Then, as $m \to \infty$,
-$$\sum_{\ell=1}^{m} \left(\int_{2(\ell-1)\pi/(k-1)}^{2\ell\pi/(k+1)} f(x)\,dx -
-\int_{2\ell\pi/(k+1)}^{2\ell\pi/(k-1)} f(x)\,dx\right) \to \frac{8}{q^2\pi}.$$
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 11
-(`jis-2025-25.2.3-lem-11`). -/
-public theorem_wanted tendsto_sum_integral_cos_sub_cos_even_odd {q : ℕ} (hq : Odd q) :
-    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
-      ((∫ x in (((l : ℝ) - 1) * 2 * π / ((2 * m : ℝ) - 1))..((l : ℝ) * 2 * π / ((2 * m : ℝ) + 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x))) -
-        ∫ x in ((l : ℝ) * 2 * π / ((2 * m : ℝ) + 1))..((l : ℝ) * 2 * π / ((2 * m : ℝ) - 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x)))) atTop
-      (𝓝 (8 / ((q : ℝ) ^ 2 * π)))
-
 end
 
 end MetaMathlibExt
