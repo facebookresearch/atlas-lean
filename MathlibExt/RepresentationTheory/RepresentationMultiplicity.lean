@@ -48,10 +48,11 @@ namespace CharacterTheory
 universe uK uG uV uW
 
 open scoped Classical in
-/-- **Schur's lemma, dimension form.** For irreducible representations
-`ρ`, `σ` over an algebraically closed field, the intertwining space
-`Hom_G(ρ, σ)` is one-dimensional if `ρ` and `σ` are equivalent, and
-zero-dimensional otherwise. -/
+/-- **Schur's lemma, dimension form.** Let $G$ be a finite group, $k$ an algebraically closed
+field, and $\rho$, $\sigma$ irreducible representations of $G$ on finite-dimensional $k$-vector
+spaces. Then the space $\operatorname{Hom}_G(\rho, \sigma)$ of intertwining maps from $\rho$ to
+$\sigma$ has dimension $1$ over $k$ if $\sigma$ and $\rho$ are equivalent, and dimension $0$
+otherwise. -/
 theorem finrank_intertwiningMap_eq_one_or_zero
     {k : Type uK} [Field k] [IsAlgClosed k]
     {G : Type uG} [Group G] [Fintype G]
@@ -78,10 +79,14 @@ theorem finrank_intertwiningMap_eq_one_or_zero
     haveI : Subsingleton (ρ.IntertwiningMap σ) := inferInstance
     exact Module.finrank_zero_of_subsingleton
 
-/-- **Multiplicity equals the dimension of the intertwining space.** If
-`σ` is equivalent to the direct sum of `d i` copies of each irreducible
-`ρ i`, where the `ρ i` are pairwise non-equivalent, then the multiplicity
-`d i` of `ρ i` in `σ` is `dim Hom_G(ρ i, σ)`. -/
+/-- **Multiplicity equals the dimension of the intertwining space.** Let $G$ be a finite group,
+$k$ an algebraically closed field, and $(\rho_i)_{i \in I}$ a family, indexed by a finite set $I$,
+of irreducible representations of $G$ on finite-dimensional $k$-vector spaces that are pairwise
+non-equivalent: $\rho_i$ and $\rho_j$ are not equivalent whenever $i \ne j$. Let $\sigma$ be a
+representation of $G$ on a finite-dimensional $k$-vector space, and let $(d_i)_{i \in I}$ be
+natural numbers such that $\sigma$ is equivalent to the direct sum of $d_i$ copies of $\rho_i$ over
+all $i \in I$. Then for every $i \in I$, $d_i$ equals the dimension over $k$ of the space
+$\operatorname{Hom}_G(\rho_i, \sigma)$ of intertwining maps from $\rho_i$ to $\sigma$. -/
 theorem multiplicity_eq_finrank_intertwiningMap
     {G k : Type*} [Group G] [Fintype G] [Field k] [IsAlgClosed k]
     {ι : Type*} [Fintype ι] [DecidableEq ι]

@@ -64,68 +64,91 @@ variable {d : ℕ}
 
 local notation "ℝᵈ" => EuclideanSpace ℝ (Fin d)
 
-/-- When `x = x¹` and `y = y¹` are lines, the distance is the usual distance on the
-projective space, given by `d(x¹,y¹) = sin ∡(x¹,y¹)`. -/
+/-- **Distance between lines.** For lines $x$ and $y$ through the origin in $\mathbb{R}^d$, the
+distance $\operatorname{dist}(x, y)$ is $\sin \theta$, where $\theta \in [0, \pi]$ is the angle
+between nonzero vectors spanning $x$ and $y$. This is the usual distance on the projective
+space. -/
 def distLines (x y : ℙ ℝ ℝᵈ) : ℝ := sin (angle x.rep y.rep)
 
-/-- Then, if `x = x¹` is a line and `y = yᵏ` a k-dimensional subspace, we set
-`d(x¹,yᵏ) = min { d(x¹, y¹) : y¹ ≤ yᵏ }`. -/
+/-- **Distance from a line to a subspace.** For a line $x$ through the origin in $\mathbb{R}^d$
+and a subspace $y$ of $\mathbb{R}^d$, the distance $\operatorname{dist}(x, y)$ is the infimum,
+over all lines $y'$ contained in $y$, of the distance $\operatorname{dist}(x, y')$ between the
+lines $x$ and $y'$. When $y = 0$ there is no such line and the value is $0$. -/
 def distLineSubspace (x : ℙ ℝ ℝᵈ) (y : Submodule ℝ ℝᵈ) : ℝ :=
   ⨅ y' : {y' : ℙ ℝ ℝᵈ // y'.submodule ≤ y}, distLines x y'.1
 
-/-- Finally, in general, if `x = xˡ` is `l`-dimensional and `y = yᵏ` is `k`-dimensional, then
-`d(xˡ, yᵏ) = max { d(y¹, xˡ) : y¹ ≤ yᵏ }`, if `k ≤ l`, and
-`d(xˡ, yᵏ) = max { d(x¹, yᵏ) : x¹ ≤ xˡ }`, if `k ≥ l`. -/
+/-- **Distance between subspaces.** For subspaces $x$ and $y$ of $\mathbb{R}^d$, the distance
+$\operatorname{dist}(x, y)$ is defined as follows. If $\dim y \le \dim x$, it is the supremum,
+over all lines $y'$ contained in $y$, of the distance $\operatorname{dist}(y', x)$ from the line
+$y'$ to the subspace $x$. If $\dim y > \dim x$, it is the supremum, over all lines $x'$ contained
+in $x$, of the distance $\operatorname{dist}(x', y)$ from the line $x'$ to the subspace $y$. A
+supremum over no lines is $0$. -/
 def distSubspaces (x y : Submodule ℝ ℝᵈ) : ℝ :=
   if finrank ℝ y ≤ finrank ℝ x then
     ⨆ y' : {y' : ℙ ℝ ℝᵈ // y'.submodule ≤ y}, distLineSubspace y'.1 x
   else
     ⨆ x' : {x' : ℙ ℝ ℝᵈ // x'.submodule ≤ x}, distLineSubspace x'.1 y
 
-/-- The lattice `ℤᵈ`, as a `ℤ`-submodule of `ℝᵈ`. -/
+/-- **The integer lattice.** $\mathbb{Z}^d$ is the $\mathbb{Z}$-submodule of $\mathbb{R}^d$
+spanned by the standard basis vectors, that is, the lattice of points with integer coordinates. -/
 abbrev intPoints : Submodule ℤ ℝᵈ :=
   .span ℤ (Set.range (EuclideanSpace.basisFun (Fin d) ℝ).toBasis)
 
 local notation "ℤᵈ" => intPoints
 
-/-- Given a subspace `V ≤ ℝᵈ`, this is the set `V ∩ ℤᵈ` as a `ℤ`-submodule of `V`. -/
+/-- **Integer points of a subspace.** For a subspace $V$ of $\mathbb{R}^d$, this is the set
+$V \cap \mathbb{Z}^d$ of integer points of $V$, as a $\mathbb{Z}$-submodule of $V$. -/
 def intPointsSubspace (V : Submodule ℝ ℝᵈ) : Submodule ℤ V :=
   ZLattice.comap ℝ ℤᵈ V.subtype
 
 instance (V : Submodule ℝ ℝᵈ) : DiscreteTopology (intPointsSubspace V) :=
   ZLattice.comap_discreteTopology ℝ _ (by fun_prop) V.injective_subtype
 
-/-- A subspace `V ≤ ℝᵈ` is called rational, if `V ∩ ℤᵈ` is a full-rank lattice in `V`.
-Note that the paper never explicitly mentions the definition of "rational subspace" they are
-using. The one we use here is common, and it is the most convenient for defining heights
-of rational subspaces below. -/
+/-- **Rational subspace.** A subspace $V$ of $\mathbb{R}^d$ is rational if $V \cap \mathbb{Z}^d$
+is a full-rank lattice in $V$, that is, a discrete subgroup of $V$ that spans $V$ over
+$\mathbb{R}$.
+
+The paper does not state which definition of rational subspace it uses; this one is common
+and is the most convenient for defining heights of rational subspaces. -/
 abbrev IsRational (V : Submodule ℝ ℝᵈ) : Prop :=
   IsZLattice ℝ (intPointsSubspace V)
 
-/-- For a rational subspace `V ≤ ℝᵈ`, a choice of a `ℤ`-basis of the lattice `V ∩ ℤᵈ`, viewed
-as an `ℝ`-basis of `V`. -/
+/-- **Chosen basis of a rational subspace.** For a rational subspace $V$ of $\mathbb{R}^d$, this
+is a fixed choice of a $\mathbb{Z}$-basis of the lattice $V \cap \mathbb{Z}^d$, indexed by
+$\{0, \dots, \dim V - 1\}$ and viewed as an $\mathbb{R}$-basis of $V$. -/
 def chosenBasis (V : Submodule ℝ ℝᵈ) (hV : IsRational V) : Basis (Fin (finrank ℝ V)) ℝ V :=
   .ofZLatticeBasis ℝ _ <| .reindex (Free.chooseBasis ℤ (intPointsSubspace V)) <|
     Fintype.equivFinOfCardEq <| by rw [← finrank_eq_card_chooseBasisIndex, ZLattice.rank ℝ]
 
-/-- For a rational subspace `V ≤ ℝᵈ`, choose a basis `v₁, ... vₖ` for the subgroup `V ∩ ℤᵈ`.
-The height is defined as `H(v) = ‖v₁ ∧ ··· ∧ vₖ‖`, where the norm on `⋀ᵏ ℝᵈ` is the usual
-Euclidean norm. -/
+/-- **Height of a rational subspace.** For a rational subspace $V$ of $\mathbb{R}^d$ of dimension
+$k$, let $v_1, \dots, v_k$ be the chosen basis of the lattice $V \cap \mathbb{Z}^d$. The height of
+$V$ is $H(V) = \lVert v_1 \wedge \dots \wedge v_k \rVert$, where the exterior power
+$\bigwedge^k \mathbb{R}^d$ carries the inner product whose value on decomposable elements
+$u_1 \wedge \dots \wedge u_k$ and $w_1 \wedge \dots \wedge w_k$ is the Gram determinant
+$\det(\langle u_i, w_j \rangle)_{i,j}$. -/
 def height (V : Submodule ℝ ℝᵈ) (hV : IsRational V) : ℝ :=
   ‖ιMulti ℝ _ (V.subtype ∘ chosenBasis V hV)‖
 
-/-- For a subspace `x ≤ ℝᵈ` and `k : ℕ`, define the diophantine exponent of `x`
-for approximation by `k`-dimensional rational subspaces by
-`βₖ(x) = inf { β > 0 | ∃ c > 0 : ∀ v ∈ Xₖ(ℚ), d(v, x) ≥ c * H(v)^(−β) }.` -/
+/-- **Diophantine exponent.** Let $x$ be a subspace of $\mathbb{R}^d$ and let $k$ be a natural
+number. For subspaces $v$ of $\mathbb{R}^d$ write $\operatorname{dist}(v, x)$ for the distance
+between the subspaces $v$ and $x$, and for a rational subspace $v$ write $H(v)$ for its height.
+The diophantine exponent $\beta_k(x)$ of $x$ for approximation by $k$-dimensional rational
+subspaces is the infimum, taken in $[0, \infty]$, of the set of real numbers $\beta > 0$ for
+which there is a real number $c > 0$ such that $\operatorname{dist}(v, x) \ge c \, H(v)^{-\beta}$
+for every $k$-dimensional rational subspace $v$ of $\mathbb{R}^d$. In particular
+$\beta_k(x) = \infty$ when there is no such $\beta$. -/
 def diophantineExponent (k : ℕ) (x : Submodule ℝ ℝᵈ) : ℝ≥0∞ :=
   sInf (.ofReal '' {β : ℝ | β > 0 ∧ ∃ c > 0, ∀ v : Submodule ℝ ℝᵈ, finrank ℝ v = k →
     (hv : IsRational v) → distSubspaces v x ≥ c * height v hv ^ (-β)})
 
 /--
-Statement of Theorem 1 (Dirichlet's principle in Grassmann varieties):
+**Dirichlet's principle in Grassmann varieties.** Let $d$, $l$ and $k$ be natural numbers with
+$d \ge 2$, $0 < l < d$ and $1 \le k \le l$, and for a subspace $x$ of $\mathbb{R}^d$ write
+$\beta_k(x)$ for the diophantine exponent of $x$ for approximation by $k$-dimensional rational
+subspaces. Then every $l$-dimensional subspace $x$ of $\mathbb{R}^d$ satisfies
+$\beta_k(x) \ge \frac{d}{k(d - l)}$. Moreover, some $l$-dimensional subspace $x$ of
+$\mathbb{R}^d$ satisfies $\beta_k(x) = \frac{d}{k(d - l)}$.
 
-For all `l`-dimensional subspaces `x ≤ ℝᵈ` and all `k ∈ {1,...,l}`, we have
-`βₖ(x) ≥ d / (k * (d - l))`, and this lower bound is optimal.
 Source: N. de Saxcé, `Rational approximations to linear subspaces`, Annals of Math, 203 (3) 2026. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2026-203-3-LinearSubspaces.lean Via leanprover/lean-eval@38361be, problem `annals_linear_subspaces`.
 -/
 public theorem_wanted theorem_1

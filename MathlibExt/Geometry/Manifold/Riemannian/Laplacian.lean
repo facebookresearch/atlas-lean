@@ -84,12 +84,16 @@ def laplacian (f : M → ℝ) (x : M) : ℝ :=
   ∑ i, hessian I f x (stdOrthonormalBasis ℝ (TangentSpace I x) i)
     (stdOrthonormalBasis ℝ (TangentSpace I x) i)
 
-/-- On a finite-dimensional real inner product space with its standard metric, the
-Laplacian is the sum over the same orthonormal basis of the second directional
-derivatives from `Manifold.hessian_vectorSpace`. The sum on the right is the
-flat-Laplacian formula also computed by Mathlib's `Δ` (`Laplacian.laplacian`);
-under `DifferentiableAt ℝ (fderiv ℝ f) x` the two operators agree, proved in
-`laplacian_vectorSpace_eq_laplacian`. -/
+/-- **Laplacian on a vector space as a sum of second directional derivatives.** Let $F$ be a
+finite-dimensional real inner product space of dimension $n$ with its standard Riemannian
+metric, let $f : F \to \mathbb{R}$ and $x \in F$, and let $e_1, \dots, e_n$ be the orthonormal
+basis of the tangent space $T_xF$ used in the definition of the Laplacian, viewed as vectors of
+$F$. For each $i$ let $g_i(y) = Df(y)(e_i)$, where $D$ denotes the Fréchet derivative. Then the
+Laplacian of $f$ at $x$ is $\Delta f(x) = \sum_{i=1}^{n} Dg_i(x)(e_i)$. No differentiability of
+$f$ is assumed; a Fréchet derivative that does not exist is taken to be $0$.
+
+When $Df$ is differentiable at $x$, the right side is the flat Laplacian
+$\sum_i D^2 f(x)(e_i, e_i)$ of $f$ at $x$. -/
 theorem laplacian_vectorSpace {F : Type*} [NormedAddCommGroup F]
     [InnerProductSpace ℝ F] [FiniteDimensional ℝ F] (f : F → ℝ) (x : F) :
     laplacian 𝓘(ℝ, F) f x =
@@ -101,15 +105,17 @@ theorem laplacian_vectorSpace {F : Type*} [NormedAddCommGroup F]
   unfold laplacian
   exact Finset.sum_congr rfl (fun i _ => hessian_vectorSpace f x _ _)
 
-/-- On a finite-dimensional real inner product space, if `fderiv ℝ f` is differentiable
-at `x`, the manifold Laplacian on the model space agrees with Mathlib's flat Laplacian
-`Δ` (`Laplacian.laplacian`). The hypothesis is the one used by
-`hessian_vectorSpace_eq_fderiv_fderiv`: Mathlib's `Δ f x` is built from
-`fderiv ℝ (fderiv ℝ f) x`, which is `0` when `fderiv ℝ f` is not differentiable at `x`,
-while `laplacian 𝓘(ℝ, F) f x` sums the directional derivatives of
-`y ↦ fderiv ℝ f y v`. The orthonormal basis of `F` is the transfer of
-`stdOrthonormalBasis ℝ (TangentSpace 𝓘(ℝ, F) x)` along `NormedSpace.fromTangentSpace x`,
-which preserves inner products by `rfl`. -/
+/-- **The Laplacian on a vector space is the flat Laplacian at twice-differentiable points.** Let
+$F$ be a finite-dimensional real inner product space with its standard Riemannian metric, let
+$f : F \to \mathbb{R}$ and $x \in F$, and let $Df$ denote the Fréchet derivative of $f$, taken to
+be $0$ at points where $f$ is not differentiable. Suppose $Df$ is differentiable at $x$, with
+derivative $D^2 f(x)$ there. Then the Laplacian $\Delta f(x)$ equals $\sum_i D^2 f(x)(b_i, b_i)$
+for any orthonormal basis $(b_i)$ of $F$, the flat Laplacian of $f$ at $x$.
+
+Without the hypothesis the two can differ: $D^2 f(x)$ is taken to be $0$ when $Df$ is not
+differentiable at $x$, while $\Delta f(x)$ is the sum, over the vectors $v$ of the orthonormal
+basis used in its definition, of the derivative at $x$ in direction $v$ of the function
+$y \mapsto Df(y)(v)$. -/
 theorem laplacian_vectorSpace_eq_laplacian {F : Type*} [NormedAddCommGroup F]
     [InnerProductSpace ℝ F] [FiniteDimensional ℝ F] (f : F → ℝ) (x : F)
     (h : DifferentiableAt ℝ (fderiv ℝ f) x) :
@@ -170,10 +176,12 @@ theorem laplacian_vectorSpace_eq_laplacian {F : Type*} [NormedAddCommGroup F]
           Finset.sum_congr rfl (fun i _ => hterm i)
     _ = Δ f x := hDelta.symm
 
-/-- The Laplacian of the squared norm on a finite-dimensional real inner product space
-is `2 * finrank ℝ F` at every point. The Hessian of `‖·‖ ^ 2` is `2⟪·, ·⟫` by
-`fderiv_fderiv_norm_sq_apply`, and each orthonormal basis vector pairs to one. These are
-the familiar flat-space values, with the same sign convention as Mathlib's `Δ`. -/
+/-- **Laplacian of the squared norm.** Let $F$ be a finite-dimensional real inner product space
+of dimension $n$ with its standard Riemannian metric. For every $x \in F$, the Laplacian of the
+function $y \mapsto \|y\|^2$ at $x$ is $2n$.
+
+The Hessian of $\|\cdot\|^2$ is $2\langle \cdot, \cdot \rangle$, so each of its diagonal entries
+in an orthonormal basis is $2$. -/
 theorem laplacian_norm_sq {F : Type*} [NormedAddCommGroup F]
     [InnerProductSpace ℝ F] [FiniteDimensional ℝ F] (x : F) :
     laplacian 𝓘(ℝ, F) (fun x => ‖x‖ ^ 2) x
@@ -218,11 +226,12 @@ theorem laplacian_norm_sq {F : Type*} [NormedAddCommGroup F]
         exact h_sum
     _ = 2 * (Module.finrank ℝ F : ℝ) := h_card
 
-/-- The Laplacian of the Gaussian potential `x ↦ (a / 2) * ‖x‖ ^ 2` on a
-finite-dimensional real inner product space is `a * finrank ℝ F`. This is the
-potential of the Gaussian gradient Ricci soliton. Each Hessian diagonal entry is `a`
-since the second derivative is scaled by `a / 2` from the squared-norm case. As above,
-this is the flat-space value with the same sign convention as Mathlib's `Δ`. -/
+/-- **Laplacian of the Gaussian potential.** Let $F$ be a finite-dimensional real inner product
+space of dimension $n$ with its standard Riemannian metric. For every real number $a$ and every
+$x \in F$, the Laplacian of the function $y \mapsto \frac{a}{2}\|y\|^2$ at $x$ is $a \cdot n$.
+
+This function is the potential of the Gaussian gradient Ricci soliton; each diagonal entry of
+its Hessian in an orthonormal basis is $a$. -/
 theorem laplacian_gaussian {F : Type*} [NormedAddCommGroup F]
     [InnerProductSpace ℝ F] [FiniteDimensional ℝ F] (a : ℝ) (x : F) :
     laplacian 𝓘(ℝ, F) (fun x => (a / 2) * ‖x‖ ^ 2) x

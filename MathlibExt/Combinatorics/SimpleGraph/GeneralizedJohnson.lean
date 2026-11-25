@@ -34,9 +34,12 @@ namespace MetaMathlibExt
 
 -- Combinatorics 1: Generalized Johnson graph
 
-/-- Let v ≥ k ≥ i be non-negative integers. The *generalized Johnson graph* J(v,k,i) is the graph
-whose vertices are the k-subsets of {1,2,…,v}, and for which two distinct vertices are adjacent if
-and only if their intersection has size i.
+/-- **Generalized Johnson graph.** For natural numbers $v$, $k$ and $i$, the generalized Johnson
+graph $J(v,k,i)$ is the graph whose vertices are the $k$-element subsets of $\{0, 1, \dots, v-1\}$,
+in which two distinct vertices are adjacent if and only if their intersection has exactly $i$
+elements.
+
+The usual setting is $v \ge k \ge i$; the definition does not require it.
 -/
 def johnsonGraph (v k i : ℕ) :
     SimpleGraph {S : Finset (Fin v) // S.card = k} where

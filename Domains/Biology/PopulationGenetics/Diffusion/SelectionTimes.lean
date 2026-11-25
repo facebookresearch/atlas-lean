@@ -58,7 +58,8 @@ namespace MathlibExt.Biology.PopulationGenetics.Diffusion
 /-- The mean absorption time (loss or fixation) of the mutation-free Wright–Fisher diffusion
 with genic selection `σ = 2Ns`, from initial frequency `p`, in units of `2N` generations:
 `T_σ(p) = ∫₀¹ Ψ_σ(p, x) dx`, the Green representation (`selectionGreen`). Only the analytic
-function is defined; the diffusion process is not. -/
+function is defined; the diffusion process is not. The reading is for `p ∈ [0, 1]`; for `p < 0`
+or `p > 1` the integrand is not integrable and the interval integral is `0`. -/
 noncomputable def selectionMeanAbsorptionTime (σ p : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..1, selectionGreen σ p x
 
@@ -157,7 +158,9 @@ private theorem kimuraSlope_neg_mul_exp (σ x : ℝ) :
   field_simp
   ring
 
-/-- **Relabeling symmetry of the Green kernel:** `Ψ_{-σ}(1 - p, 1 - x) = Ψ_σ(p, x)`. -/
+/-- **Relabeling symmetry of the Green kernel:** `Ψ_{-σ}(1 - p, 1 - x) = Ψ_σ(p, x)` for all real
+`σ`, `p`, `x`, as an identity of the analytic Green formula; it is a sojourn density for
+`p ∈ [0, 1]`, `x ∈ (0, 1)`. -/
 theorem selectionGreen_neg_one_sub (σ p x : ℝ) :
     selectionGreen (-σ) (1 - p) (1 - x) = selectionGreen σ p x := by
   have hmin : min (1 - p) (1 - x) = 1 - max p x := min_sub_sub_left 1 p x
@@ -165,7 +168,8 @@ theorem selectionGreen_neg_one_sub (σ p x : ℝ) :
   simp only [selectionGreen, hmin, hmax, kimuraFixation_neg_one_sub, kimuraSlope_neg_mul_exp]
   congr 1 <;> ring
 
-/-- **Relabeling symmetry:** `T_σ = T_{-σ} ∘ (1 - ·)`, i.e. `T_{-σ}(1 - p) = T_σ(p)`. -/
+/-- **Relabeling symmetry:** `T_σ = T_{-σ} ∘ (1 - ·)`, i.e. `T_{-σ}(1 - p) = T_σ(p)` for all real
+`σ`, `p`; outside `[0, 1]` both sides are the totalized integral `0`, not mean hitting times. -/
 theorem selectionMeanAbsorptionTime_neg_one_sub (σ p : ℝ) :
     selectionMeanAbsorptionTime (-σ) (1 - p) = selectionMeanAbsorptionTime σ p := by
   have h := intervalIntegral.integral_comp_sub_left (a := 0) (b := 1)
@@ -173,7 +177,8 @@ theorem selectionMeanAbsorptionTime_neg_one_sub (σ p : ℝ) :
   simp only [sub_self, sub_zero, selectionGreen_neg_one_sub] at h
   exact h.symm
 
-/-- **No selection:** `T_0(p)` is the Kimura–Ohta time `-2 (p log p + (1 - p) log (1 - p))`. -/
+/-- **No selection:** for `p ∈ [0, 1]`, `T_0(p)` is the Kimura–Ohta time
+`-2 (p log p + (1 - p) log (1 - p))`, with `0 log 0 = 0` at `p = 0` and `p = 1`. -/
 theorem selectionMeanAbsorptionTime_zero {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     selectionMeanAbsorptionTime 0 p = meanAbsorptionTime p := by
   unfold selectionMeanAbsorptionTime
@@ -219,8 +224,8 @@ private theorem continuousAt_selectionGreen_zero (p : ℝ) {x : ℝ} (hx : x ∈
     (continuousAt_const.sub (continuousAt_kimuraFixation_zero _))).div
     (continuousAt_const.mul (continuousAt_kimuraSlope_zero.mul (by fun_prop))) hden
 
-/-- **Weak-selection limit:** `T_σ(p) → T(p)` (Kimura–Ohta) as `σ → 0`, for `p ∈ [0, 1]`,
-by dominated convergence with the constant bound `2`. -/
+/-- **Weak-selection limit:** `T_σ(p) → T(p)` (Kimura–Ohta, with `0 log 0 = 0`) as `σ → 0`, for
+`p ∈ [0, 1]`, by dominated convergence with the constant bound `2`. -/
 theorem tendsto_selectionMeanAbsorptionTime_zero {p : ℝ} (hp : p ∈ Icc (0 : ℝ) 1) :
     Tendsto (fun σ => selectionMeanAbsorptionTime σ p) (𝓝 0) (𝓝 (meanAbsorptionTime p)) := by
   have hc : ContinuousAt (fun σ => ∫ x in (0 : ℝ)..1, selectionGreen σ p x) 0 := by

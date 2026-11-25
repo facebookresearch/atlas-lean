@@ -32,8 +32,10 @@ record UM-00701203 (`KOU-16.11`), dataset ulamai/UnsolvedMath v1.8.0.
 as in the problem; groups are taken in `Type`.
 -/
 
-/-- Kourovka 16.11 (Ya. G. Berkovich): for every prime `p` and every finite `p`-group `G` there is a
-finite `p`-group `H` whose Frattini subgroup `Φ(H)` is isomorphic to the derived subgroup `[G, G]`.
+/-- **Derived subgroups of p-groups as Frattini subgroups (Kourovka 16.11).** The conjecture of
+Ya. G. Berkovich that for every prime $p$ and every finite $p$-group $G$ there is a finite
+$p$-group $H$ whose Frattini subgroup $\Phi(H)$, the intersection of the maximal subgroups of $H$,
+is isomorphic to the derived subgroup $[G, G]$ of $G$.
 -/
 def derivedSubgroupIsFrattini : Prop :=
   ∀ p : ℕ, p.Prime → ∀ (G : Type) [Group G] [Finite G], IsPGroup p G →
@@ -41,11 +43,16 @@ def derivedSubgroupIsFrattini : Prop :=
       Nonempty (frattini H ≃* commutator G)
 
 /--
-Resolved false: Ionin and Semidetnov (Answer 3.2) take `p = 2` and `G = SmallGroup(256, 511)`, whose
-derived subgroup is the Hall-Senior group 32/40 (Lemma 3.4, a GAP computation); by a theorem of van
-der Waall and de Nijs (their Theorem 1.15) that group is not isomorphic to `Φ(H)` for any finite
-2-group `H`; the authors state that their solutions were found with the assistance of large language
-models and checked by them. The Kourovka Notebook (21st issue) answers 16.11 "No, not always".
+**Derived subgroups of p-groups need not be Frattini subgroups of p-groups.** There exist a prime
+$p$ and a finite $p$-group $G$ such that for every finite $p$-group $H$, the Frattini subgroup
+$\Phi(H)$ of $H$ is not isomorphic to the derived subgroup $[G, G]$ of $G$. That is, the conjecture
+of Kourovka Problem 16.11 is false.
+
+Ionin and Semidetnov take $p = 2$ and $G$ the group SmallGroup(256, 511), whose derived subgroup
+is the Hall-Senior group 32/40 (a GAP computation); by a theorem of van der Waall and de Nijs, that
+group is not isomorphic to the Frattini subgroup of any finite 2-group. The authors state that
+their solutions were found with the assistance of large language models and checked by them.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.11 (Ya. G. Berkovich); resolution: V.
 Ionin and A. Semidetnov, On some more problems from the Kourovka Notebook, preprint,

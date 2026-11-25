@@ -32,16 +32,24 @@ Olshanskii). UnsolvedMath record UM-00701504 (`KOU-18.75`), dataset ulamai/Unsol
 A group with `d` generators and one relation is `PresentedGroup {w}` for `w ∈ FreeGroup (Fin d)`.
 -/
 
-/-- Kourovka 18.75 (A. Yu. Olshanskii): every finite soluble group `G` has a number `d = d(G)` such
-that `G` is a homomorphic image of every group `⟨x₁, …, x_d | w⟩` with `d` generators and one
-relation. -/
+/-- **Finite soluble groups as images of one-relator groups (Kourovka 18.75).** The statement,
+posed by A. Yu. Olshanskii, that every finite soluble group $G$ has a natural number $d$ such that
+for every element $w$ of the free group on $x_1, \dots, x_d$ there is a surjective homomorphism
+from the one-relator group $\langle x_1, \dots, x_d \mid w \rangle$ onto $G$. -/
 def solubleGroupImageOfOneRelatorGroups : Prop :=
   ∀ (G : Type) [Group G] [Finite G], Group.IsSolvable G →
     ∃ d : ℕ, ∀ w : FreeGroup (Fin d),
       ∃ f : PresentedGroup ({w} : Set (FreeGroup (Fin d))) →* G, Function.Surjective f
 
 /--
+**Finite soluble groups are images of one-relator groups.** Every
+finite soluble group $G$ has a natural number $d$ such that for every element $w$ of the free
+group on $x_1, \dots, x_d$ there is a surjective homomorphism from the one-relator group
+$\langle x_1, \dots, x_d \mid w \rangle$ onto $G$. That is, Kourovka Problem 18.75 has a positive
+answer.
+
 Resolved true: the Kourovka Archive answers 18.75 "Yes, it does" (N. Nikolov and D. Segal, 2007).
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.75 (A. Yu.
 Olshanskii); resolution: N. Nikolov and D. Segal, Bull. London Math. Soc. 39 (2007), no. 2, 209-213,

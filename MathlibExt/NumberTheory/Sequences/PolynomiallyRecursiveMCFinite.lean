@@ -18,9 +18,10 @@ import Mathlib.Data.ZMod.Basic
 
 namespace MetaMathlibExt
 
-/-- An integer sequence `s` is MC-finite if for every modulus `m > 0` it eventually satisfies,
-modulo `m`, a linear recurrence with constant integer coefficients: there are `p, q > 0` and
-`c₀, …, c_{p-1}` with `s (n + p) ≡ ∑ i < p, cᵢ s (n + i) [ZMOD m]` for all `n ≥ q`.
+/-- **MC-finite sequences.** An integer sequence $s$ is MC-finite if for every natural number
+$m > 0$ it eventually satisfies, modulo $m$, a linear recurrence with constant integer
+coefficients: there are natural numbers $p > 0$ and $q > 0$ and integers $c_0, \dots, c_{p-1}$
+such that $s(n + p) \equiv \sum_{i=0}^{p-1} c_i\, s(n + i) \pmod{m}$ for all $n \ge q$.
 
 Source: Filmus, Fischer, Makowsky, and Rakita, "MC-Finiteness of Restricted Set Partition
 Functions," Journal of Integer Sequences 26 (2023), Article 23.7.4, lines 281–286. -/
@@ -71,8 +72,10 @@ private theorem mc_finite_of_zmod_periodic (s : ℕ → ℤ) (m : ℕ)
     (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hcast
   exact Int.emod_eq_zero_of_dvd hdvd
 
-/-- The first coordinate of a polynomial recursion over `ℤ`,
-`uᵢ (n + 1) = Pᵢ (u₀ n, …, u_k n, n)`, is MC-finite. -/
+/-- **Polynomial recursions give MC-finite sequences.** Let $u_0, \dots, u_k$ be integer sequences
+and let $P_0, \dots, P_k$ be polynomials with integer coefficients in $k + 2$ variables such that
+$u_i(n+1) = P_i(u_0(n), \dots, u_k(n), n)$ for every $i \le k$ and every $n \ge 0$. Then the
+sequence $u_0$ is MC-finite. -/
 theorem isMCFinite_of_mvPolynomial_recursion {k : ℕ} (u : Fin (k + 1) → ℕ → ℤ)
     (P : Fin (k + 1) → MvPolynomial (Fin (k + 1) ⊕ Unit) ℤ)
     (hrec : ∀ i : Fin (k + 1), ∀ n : ℕ,
@@ -109,8 +112,10 @@ theorem isMCFinite_of_mvPolynomial_recursion {k : ℕ} (u : Fin (k + 1) → ℕ 
     congrFun (congrArg Prod.fst h2) 0
   exact h3
 
-/-- A P-recursive integer sequence whose leading coefficient polynomial `Q 0` is `1` is
-MC-finite. -/
+/-- **P-recursive sequences with leading coefficient 1 are MC-finite.** Let $s$ be an integer
+sequence that is P-recursive of order $k$ with coefficient polynomials $Q_0, \dots, Q_k$ with
+integer coefficients, that is, $Q_0(n)\, s_n = \sum_{i=1}^{k} Q_i(n)\, s_{n-i}$ for every $n \ge k$.
+If $Q_0 = 1$, then $s$ is MC-finite. -/
 theorem IsPRecursiveSequence.isMCFinite {k : ℕ} {Q : Fin (k + 1) → Polynomial ℤ} {s : ℕ → ℤ}
     (hs : IsPRecursiveSequence k Q s) (hQ : Q 0 = 1) : IsMCFinite s := by
   intro m hm
@@ -192,9 +197,19 @@ theorem IsPRecursiveSequence.isMCFinite {k : ℕ} {Q : Fin (k + 1) → Polynomia
   exact h3
 
 /--
-Polynomially recursive integer sequences are MC-finite, including the holonomic
-special case: a sequence that is PRS over `ℤ` and `n` is MC-finite, and in
-particular a sequence that is holonomic over `ℤ` is MC-finite.
+**Polynomially recursive integer sequences are MC-finite.** Call an integer sequence $s$
+MC-finite if for every natural number $m > 0$ there are natural numbers $p > 0$ and $q > 0$ and
+integers $c_0, \dots, c_{p-1}$ such that $m$ divides $s(n + p) - \sum_{i=0}^{p-1} c_i\, s(n + i)$
+for all $n \ge q$. Every integer sequence $s$ has the following two properties.
+
+(1) If there are $k \ge 0$, integer sequences $u_0, \dots, u_k$ with $s = u_0$, and polynomials
+$P_0, \dots, P_k$ with integer coefficients in $k + 2$ variables such that
+$u_i(n+1) = P_i(u_0(n), \dots, u_k(n), n)$ for all $i \le k$ and all $n \ge 0$, then $s$ is
+MC-finite.
+
+(2) Holonomic case: if there are $k > 0$ and polynomials $P_1, \dots, P_k$ with integer
+coefficients such that $P_1 \ne 0$, $P_k \ne 0$ and $s(n) = \sum_{i=1}^{k} P_i(n)\, s(n - i)$ for
+all $n \ge k$, then $s$ is MC-finite.
 
 Source: Yuval Filmus, Eldar Fischer, and Johann A. Makowsky, with Vsevolod
 Rakita, "MC-Finiteness of Restricted Set Partition Functions," Journal of
