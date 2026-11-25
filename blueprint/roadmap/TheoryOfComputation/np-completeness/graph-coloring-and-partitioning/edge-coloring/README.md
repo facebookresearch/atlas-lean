@@ -1,5 +1,12 @@
 # Edge coloring
 
+- [Well-formed instances of CHROMATIC INDEX of k-regular comparability graphs](chromatic-index-regular-comparability-well-formed.md)
+- [CHROMATIC INDEX of k-regular comparability graphs as a decision problem](chromatic-index-regular-comparability-dec.md)
+- [CHROMATIC INDEX of k-regular comparability graphs is NP-complete for every fixed k ≥ 3](chromatic-index-regular-comparability-np-complete.md)
+- [Well-formed instances of CHROMATIC INDEX of k-regular graphs](chromatic-index-regular-well-formed.md)
+- [Feasible instances of CHROMATIC INDEX of k-regular graphs](chromatic-index-regular-feasible.md)
+- [CHROMATIC INDEX of k-regular graphs as a decision problem](chromatic-index-regular-dec.md)
+- [CHROMATIC INDEX of k-regular graphs is NP-complete for every fixed k ≥ 3](chromatic-index-regular-np-complete.md)
 - [Edge coloring instances](edge-coloring-instance.md)
 - [Adjacency in an edge coloring edge list](adj.md)
 - [Well-formed edge coloring instances](well-formed.md)

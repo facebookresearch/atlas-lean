@@ -3,6 +3,7 @@
 3-dimensional matching, exact cover, set cover, set packing, set splitting, maximum coverage, minimum test set, generalized and quadratic assignment, facility location, k-center and k-median.
 
 - [3-dimensional matching](3-dimensional-matching/README.md)
+- [Decision trees and testing](decision-trees-and-testing/README.md)
 - [Coalition formation](coalition-formation/README.md)
 - [Consecutive ones and block minimization](consecutive-ones-and-block-minimization/README.md)
 - [Exact cover](exact-cover/README.md)
