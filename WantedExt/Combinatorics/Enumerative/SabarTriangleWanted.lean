@@ -69,17 +69,6 @@ Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*,
 public theorem_wanted fineNumber_eq_sabarNumber_sub (n : ℕ) (hn : 2 ≤ n) :
     fineNumber n = (sabarNumber (2 * n) (n + 1) - sabarNumber (2 * n) (n - 1) : ℤ)
 
-/-- **Sabar's alternating binomial sum equal to $n$.** For every natural number $n \ge 2$, in the
-rational numbers,
-
-$$\sum_{k=1}^{n} (-1)^{k+1} \left(1 - \frac{2k}{n+1} + \frac{n}{k+1}\right) \binom{n+k}{k} = n.$$
-
-Source: Sabar Taoufik, *A New Triangle of Numbers: Properties and Observations*, INTEGERS 26
-(2026), Article A27, Corollary 2 (`integers-2026-A27-cor-2`). -/
-public theorem_wanted sum_neg_one_pow_mul_choose_eq_self (n : ℕ) (hn : 2 ≤ n) :
-    ∑ k ∈ Finset.Icc 1 n, (-1 : ℚ) ^ (k + 1) *
-        (1 - 2 * (k : ℚ) / (n + 1) + (n : ℚ) / (k + 1)) * ((n + k).choose k : ℚ) = n
-
 /-- **Central entries of Sabar's triangle and Fine numbers.** Let $F(m)$ denote the Fine numbers
 and $C_m$ the Catalan numbers. For every natural number $n \ge 1$, the entries of Sabar's
 triangle $s$ satisfy

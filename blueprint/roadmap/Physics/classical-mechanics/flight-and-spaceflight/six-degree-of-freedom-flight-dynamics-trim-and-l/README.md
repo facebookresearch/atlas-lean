@@ -89,3 +89,5 @@
 - [Forward solutions starting near the trim decay exponentially](norm-le-of-is-integral-curve-on-nonlinea-2.md)
 - [Forward solutions exist from states near the trim](exists-nonlinear-reduced-field-solution.md)
 - [Near the trim a forward solution exists and decays exponentially](nonlinear-reduced-field-solution-decay.md)
+
+- [Symmetric trim decouples longitudinal and lateral-directional dynamics](symmetric-trim-decouples-longitudinal-and-lateral-directional-dynamics.md)
