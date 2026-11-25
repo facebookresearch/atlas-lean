@@ -117,10 +117,7 @@ theorem baseChangeHom_baseChangeInv (q : ℍ[S, d₁, d₂, d₃]) :
 
 theorem baseChangeInv_baseChangeHom (x : S ⊗[R] ℍ[R, c₁, c₂, c₃]) :
     baseChangeInv (baseChangeHom h₁ h₂ h₃ x) = x := by
-  induction x using TensorProduct.induction_on with
-  | zero =>
-      rw [map_zero]
-      simp [baseChangeInv]
+  induction x using TensorProduct.inductionOn with
   | tmul s y =>
       have aux : ∀ (r : R) (e : ℍ[R, c₁, c₂, c₃]),
           (s * algebraMap R S r) ⊗ₜ[R] e = s ⊗ₜ[R] (r • e) := by

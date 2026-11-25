@@ -34,7 +34,7 @@ public import Mathlib.Algebra.Quaternion
 public import Mathlib.GroupTheory.Index
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.NumberTheory.NumberField.Basic
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
 
 @[expose] public section
 
@@ -75,10 +75,13 @@ def UnitConj {Λ : Submodule ℤ ℍ[ℚ, a, b]} {t n : ℤ}
     (d d' : EmbeddingDatum Λ t n) : Prop :=
   ∃ u : ℍ[ℚ, a, b], IsUnitOf Λ u ∧ d'.1 * u = u * d.1
 
-/-- `f` is the embedding conductor of `α` in `Λ`. -/
+/-- `f` is the embedding conductor of `α` in `Λ`: the least positive `f` with
+`f • x ∈ ℤ + ℤα` for every `x ∈ Λ` in the rational span of `1` and `α`.
+Unlike the adapted source, `f` must be positive: for `f = 0` the other two
+clauses hold for every `α`. -/
 def HasEmbeddingConductor (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b])
     (f : ℕ) : Prop :=
-  (∀ x ∈ Λ, (∃ c e : ℚ, x = c • (1 : ℍ[ℚ, a, b]) + e • α) →
+  0 < f ∧ (∀ x ∈ Λ, (∃ c e : ℚ, x = c • (1 : ℍ[ℚ, a, b]) + e • α) →
       ∃ p q : ℤ, (f : ℚ) • x = (p : ℚ) • (1 : ℍ[ℚ, a, b]) + (q : ℚ) • α) ∧
     (∀ g : ℕ, 0 < g → g < f →
       ¬ (∀ x ∈ Λ, (∃ c e : ℚ, x = c • (1 : ℍ[ℚ, a, b]) + e • α) →
@@ -150,8 +153,8 @@ theorem IsOrder.inf {Λ₁ Λ₂ : Submodule ℤ ℍ[ℚ, a, b]} (h₁ : IsOrder
     rw [hy_eq]
     exact Submodule.smul_mem _ _ (Submodule.subset_span hmem)
   fg := by
-    haveI : Module.Finite ℤ Λ₁ := Module.Finite.iff_fg.mpr h₁.fg
-    haveI : Module.Finite ℤ ↥(Λ₁ ⊓ Λ₂) :=
+    have : Module.Finite ℤ Λ₁ := Module.Finite.iff_fg.mpr h₁.fg
+    have : Module.Finite ℤ ↥(Λ₁ ⊓ Λ₂) :=
       Module.Finite.of_injective (Submodule.inclusion inf_le_left)
         (Submodule.inclusion_injective _)
     exact Module.Finite.iff_fg.mp inferInstance

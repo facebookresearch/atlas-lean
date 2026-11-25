@@ -23,7 +23,7 @@ example (Λ : Submodule ℤ ℍ[ℚ, a, b]) (h : IsOrder Λ) :
     (1 : ℍ[ℚ, a, b]) ∈ Λ ∧
       (∀ x y : ℍ[ℚ, a, b], x ∈ Λ → y ∈ Λ → x * y ∈ Λ) ∧
       Submodule.span ℚ (Λ : Set ℍ[ℚ, a, b]) = ⊤ ∧ Λ.FG :=
-  ⟨h.one_mem, fun x y hx hy => h.mul_mem hx hy, h.spanTop, h.fg⟩
+  ⟨h.one_mem, fun _ _ hx hy => h.mul_mem hx hy, h.spanTop, h.fg⟩
 
 /-- Eichler orders are orders, and the quadratic datum unfolds. -/
 example (Λ : Submodule ℤ ℍ[ℚ, a, b]) (N : ℕ) (h : IsEichlerOrder Λ N)
@@ -38,7 +38,7 @@ example (Λ₁ Λ₂ : Submodule ℤ ℍ[ℚ, a, b]) (h₁ : IsMaximalOrder Λ�
   h₁.isOrder.inf h₂.isOrder
 
 /-- The Lipschitz order in `ℍ[ℚ, -1, -1]`, spanned over `ℤ` by `1, i, j, k`. -/
-def lipschitzOrder : Submodule ℤ ℍ[ℚ, -1, -1] :=
+private def lipschitzOrder : Submodule ℤ ℍ[ℚ, -1, -1] :=
   Submodule.span ℤ {(1 : ℍ[ℚ, -1, -1]), ⟨0, 1, 0, 0⟩, ⟨0, 0, 1, 0⟩,
     ⟨0, 0, 0, 1⟩}
 
@@ -62,7 +62,7 @@ private theorem mem_lipschitzOrder_mk (m n p r : ℤ) :
     (Submodule.smul_mem _ _ hi)) (Submodule.smul_mem _ _ hj))
     (Submodule.smul_mem _ _ hk)
 
-theorem lipschitzOrder_isOrder : IsOrder lipschitzOrder := by
+private theorem lipschitzOrder_isOrder : IsOrder lipschitzOrder := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · apply Submodule.subset_span
     simp
@@ -105,5 +105,47 @@ theorem lipschitzOrder_isOrder : IsOrder lipschitzOrder := by
       (Set.finite_insert.2 (Set.finite_singleton _)))
 
 example : IsOrder lipschitzOrder := lipschitzOrder_isOrder
+
+/-- Zero is never an embedding conductor. -/
+example (Λ : Submodule ℤ ℍ[ℚ, a, b]) (α : ℍ[ℚ, a, b]) :
+    ¬ HasEmbeddingConductor Λ α 0 :=
+  fun h => lt_irrefl 0 h.1
+
+/-- So no embedding class is counted with conductor zero. -/
+example (Λ : Submodule ℤ ℍ[ℚ, a, b]) (t n : ℤ) : condEmbeddingCount Λ t n 0 = 0 :=
+  Nat.card_eq_zero.mpr (Or.inl ⟨fun ⟨_, _, _, h⟩ => lt_irrefl 0 h.1⟩)
+
+private theorem exists_eq_mk_of_mem_lipschitzOrder {x : ℍ[ℚ, -1, -1]}
+    (hx : x ∈ lipschitzOrder) :
+    ∃ m n p r : ℤ, x = ⟨(m : ℚ), (n : ℚ), (p : ℚ), (r : ℚ)⟩ := by
+  induction hx using Submodule.span_induction with
+  | mem u hu =>
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hu
+    obtain rfl | rfl | rfl | rfl := hu
+    · exact ⟨1, 0, 0, 0, by ext <;> simp⟩
+    · exact ⟨0, 1, 0, 0, by ext <;> simp⟩
+    · exact ⟨0, 0, 1, 0, by ext <;> simp⟩
+    · exact ⟨0, 0, 0, 1, by ext <;> simp⟩
+  | zero => exact ⟨0, 0, 0, 0, by ext <;> simp⟩
+  | add u v _ _ hu hv =>
+    obtain ⟨m, n, p, r, rfl⟩ := hu
+    obtain ⟨m', n', p', r', rfl⟩ := hv
+    exact ⟨m + m', n + n', p + p', r + r', by ext <;> simp⟩
+  | smul c u _ hu =>
+    obtain ⟨m, n, p, r, rfl⟩ := hu
+    exact ⟨c * m, c * n, c * p, c * r, by ext <;> simp⟩
+
+/-- The embedding `i ↦ i` of `ℤ[i]` into the Lipschitz order has conductor `1`,
+the least value the conductor can take. -/
+example :
+    EmbeddingDatum.HasConductor (Λ := lipschitzOrder) (t := 0) (n := 1)
+      ⟨⟨0, 1, 0, 0⟩, Submodule.subset_span (by simp), by
+        rw [isQuadraticDatum_iff]; ext <;> simp⟩ 1 := by
+  refine ⟨one_pos, fun x hx ⟨c, e, hce⟩ => ?_, fun g hg hg1 => absurd hg1 (by omega)⟩
+  obtain ⟨m, n, p, r, rfl⟩ := exists_eq_mk_of_mem_lipschitzOrder hx
+  have hp : p = 0 := by simpa using congrArg QuaternionAlgebra.imJ hce
+  have hr : r = 0 := by simpa using congrArg QuaternionAlgebra.imK hce
+  subst hp hr
+  exact ⟨m, n, by ext <;> simp⟩
 
 end QuaternionAlgebra
