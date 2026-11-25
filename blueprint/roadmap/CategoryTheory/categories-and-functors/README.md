@@ -13,6 +13,7 @@ The basic language of category theory: categories, functors, natural transformat
 - [Comparison arrows with identical inferred endpoints](comparison-arrows-with-identical-inferred-endpoi/README.md)
 - [Completing a natural diagram at both extended-integer endpoints](completing-a-natural-diagram-at-both-extended-in/README.md)
 - [Extending a natural diagram to the integers by zero](extending-a-natural-diagram-to-the-integers-by-z/README.md)
+- [Finite folds of a bifunctor action](finite-folds-of-a-bifunctor-action/README.md)
 - [Natural transformations as pointwise arrow functors](natural-transformations-as-pointwise-arrow-funct/README.md)
 - [Naturality through endpoint isomorphisms](naturality-through-endpoint-isomorphisms/README.md)
 - [Opposites of composable arrows](opposites-of-composable-arrows/README.md)
@@ -20,3 +21,4 @@ The basic language of category theory: categories, functors, natural transformat
 - [Transport of actual functor comparisons through source refinements](transport-of-actual-functor-comparisons-through/README.md)
 - [Edges in functorial strings of composable arrows](edge-nat-trans.md)
 - [Opposite functors and natural isomorphisms](right-op.md)
+- [Transport of commutative squares by vertex isomorphisms](hom-congr.md)

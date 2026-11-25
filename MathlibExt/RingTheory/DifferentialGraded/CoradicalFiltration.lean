@@ -489,6 +489,51 @@ theorem redComul_coassoc
     exact hdone
   exact Cofork.IsColimit.hom_ext (cokernelIsCokernel η) key
 
+private theorem redComulUnitTensorStep
+    {D : Type*} [Category D] [MonoidalCategory D] {X P : D}
+    (δ : X ⟶ X ⊗ X) (f : X ⟶ P) :
+    (δ ≫ (f ⊗ₘ 𝟙 X)) ≫
+        (((ρ_ P).inv ⊗ₘ 𝟙 X) ≫ (α_ P (𝟙_ D) X).hom) =
+      δ ≫ (f ⊗ₘ (λ_ X).inv) := by
+  have hTri : ((ρ_ P).inv ⊗ₘ 𝟙 X) ≫ (α_ P (𝟙_ D) X).hom =
+      𝟙 P ⊗ₘ (λ_ X).inv := by
+    simpa only [MonoidalCategory.tensorHom_id, MonoidalCategory.id_tensorHom] using
+      MonoidalCategory.triangle_assoc_comp_right_inv P X
+  rw [hTri, Category.assoc, MonoidalCategory.tensorHom_comp_tensorHom]
+  simp only [Category.comp_id, Category.id_comp]
+
+private theorem redComulCoassocTensorStep
+    {D : Type*} [Category D] [MonoidalCategory D] {X P Q A : D}
+    (δ : X ⟶ X ⊗ X)
+    (hcoassoc : δ ≫ (𝟙 X ⊗ₘ δ) =
+      δ ≫ (δ ⊗ₘ 𝟙 X) ≫ (α_ X X X).hom)
+    (f : X ⟶ P) (g : X ⟶ Q) (r : X ⟶ A) (a : A ⟶ P ⊗ Q)
+    (h : r ≫ a = δ ≫ (f ⊗ₘ g)) :
+    (δ ≫ (r ⊗ₘ 𝟙 X)) ≫ ((a ⊗ₘ 𝟙 X) ≫ (α_ P Q X).hom) =
+      δ ≫ (f ⊗ₘ (δ ≫ (g ⊗ₘ 𝟙 X))) := by
+  have hLeft : (r ⊗ₘ 𝟙 X) ≫ (a ⊗ₘ 𝟙 X) = (r ≫ a) ⊗ₘ 𝟙 X := by
+    rw [MonoidalCategory.tensorHom_comp_tensorHom, Category.comp_id]
+  have hSplit : (δ ≫ (f ⊗ₘ g)) ⊗ₘ 𝟙 X =
+      (δ ⊗ₘ 𝟙 X) ≫ ((f ⊗ₘ g) ⊗ₘ 𝟙 X) := by
+    rw [MonoidalCategory.tensorHom_comp_tensorHom, Category.comp_id]
+  have hAssoc : ((f ⊗ₘ g) ⊗ₘ 𝟙 X) ≫ (α_ P Q X).hom =
+      (α_ X X X).hom ≫ (f ⊗ₘ (g ⊗ₘ 𝟙 X)) :=
+    MonoidalCategory.associator_naturality f g (𝟙 X)
+  calc
+    _ = δ ≫ (((r ⊗ₘ 𝟙 X) ≫ (a ⊗ₘ 𝟙 X)) ≫ (α_ P Q X).hom) := by
+      simp only [Category.assoc]
+    _ = δ ≫ (((r ≫ a) ⊗ₘ 𝟙 X) ≫ (α_ P Q X).hom) := by rw [hLeft]
+    _ = δ ≫ (((δ ≫ (f ⊗ₘ g)) ⊗ₘ 𝟙 X) ≫ (α_ P Q X).hom) := by rw [h]
+    _ = δ ≫ (δ ⊗ₘ 𝟙 X) ≫ (α_ X X X).hom ≫ (f ⊗ₘ (g ⊗ₘ 𝟙 X)) := by
+      rw [hSplit]
+      simp only [Category.assoc]
+      rw [hAssoc]
+    _ = δ ≫ (𝟙 X ⊗ₘ δ) ≫ (f ⊗ₘ (g ⊗ₘ 𝟙 X)) := by
+      simpa only [Category.assoc] using
+        congrArg (fun k => k ≫ (f ⊗ₘ (g ⊗ₘ 𝟙 X))) hcoassoc.symm
+    _ = _ := by
+      rw [MonoidalCategory.tensorHom_comp_tensorHom, Category.id_comp]
+
 omit [ComonObj C] in
 /-- Generic finite-iterate splitting for an arbitrary reduced-comultiplication
 candidate: with explicit binary coassociativity, the `(m+1+n)`-th iterate
@@ -549,24 +594,8 @@ theorem redComulPowFrom_split
               (ComplexShape.up ℤ)) C).hom) =
       Δbar ≫ HomologicalComplex.tensorHom (redComulPowFrom Δbar m)
         (HomologicalComplex.leftUnitor C).symm.hom
-    have hTriHC : HomologicalComplex.tensorHom
-          (HomologicalComplex.rightUnitor
-            (tensorPowObj C (m + 1))).symm.hom (𝟙 C) ≫
-          (HomologicalComplex.associator (tensorPowObj C (m + 1))
-            (HomologicalComplex.tensorUnit (ModuleCat R)
-              (ComplexShape.up ℤ)) C).hom =
-        HomologicalComplex.tensorHom (𝟙 (tensorPowObj C (m + 1)))
-          (HomologicalComplex.leftUnitor C).symm.hom := by
-      have hTri := MonoidalCategory.triangle_assoc_comp_right_inv
-        (tensorPowObj C (m + 1)) C
-      simp only [← MonoidalCategory.tensorHom_id,
-        ← MonoidalCategory.id_tensorHom] at hTri
-      exact hTri
-    -- hTriHC : tensorHom ρ.inv 𝟙 ≫ α.hom = tensorHom 𝟙 λ.inv, HC heads
-    rw [hTriHC, CategoryTheory.Category.assoc,
-      HomologicalComplex.tensorHom_comp_tensorHom]
-    simp only [CategoryTheory.Category.comp_id,
-      CategoryTheory.Category.id_comp]
+    exact redComulUnitTensorStep
+      (D := CochainComplex (ModuleCat R) ℤ) Δbar (redComulPowFrom Δbar m)
   | succ k ih =>
     have hRsucc : redComulPowFrom Δbar (m + 1 + (k + 1)) =
         Δbar ≫ HomologicalComplex.tensorHom
@@ -597,64 +626,11 @@ theorem redComulPowFrom_split
             (tensorPowObj C (k + 1)) C).hom) =
       Δbar ≫ HomologicalComplex.tensorHom (redComulPowFrom Δbar m)
         (Δbar ≫ HomologicalComplex.tensorHom (redComulPowFrom Δbar k) (𝟙 C))
-    -- LHS is left-nested at top; normalize right, then reassociate the inner pair.
-    rw [CategoryTheory.Category.assoc]
-    conv_lhs =>
-      arg 2
-      rw [← CategoryTheory.Category.assoc]
-    -- LHS : Δbar ≫ ((tensorHom (R (m+1+k)) 𝟙 ≫ tensorHom (add...hom) 𝟙) ≫ α.hom)
-    rw [HomologicalComplex.tensorHom_comp_tensorHom]
-    simp only [CategoryTheory.Category.comp_id]
-    -- LHS : Δbar ≫ (tensorHom (R (m+1+k) ≫ add...hom) 𝟙 ≫ α.hom)
-    rw [ih]
-    -- LHS : Δbar ≫ (tensorHom (Δbar ≫ tensorHom (R m) (R k)) 𝟙 ≫ α.hom)
-    have hSplit : HomologicalComplex.tensorHom
-          (Δbar ≫ HomologicalComplex.tensorHom (redComulPowFrom Δbar m)
-            (redComulPowFrom Δbar k)) (𝟙 C) =
-        HomologicalComplex.tensorHom Δbar (𝟙 C) ≫
-          HomologicalComplex.tensorHom
-            (HomologicalComplex.tensorHom (redComulPowFrom Δbar m)
-              (redComulPowFrom Δbar k)) (𝟙 C) := by
-      rw [HomologicalComplex.tensorHom_comp_tensorHom]
-      simp only [CategoryTheory.Category.comp_id]
-    rw [hSplit]
-    simp only [CategoryTheory.Category.assoc]
-    have hNatAssocHC : HomologicalComplex.tensorHom
-          (HomologicalComplex.tensorHom (redComulPowFrom Δbar m)
-            (redComulPowFrom Δbar k)) (𝟙 C) ≫
-          (HomologicalComplex.associator (tensorPowObj C (m + 1))
-            (tensorPowObj C (k + 1)) C).hom =
-        (α_ C C C).hom ≫
-          HomologicalComplex.tensorHom (redComulPowFrom Δbar m)
-            (HomologicalComplex.tensorHom (redComulPowFrom Δbar k) (𝟙 C)) :=
-      MonoidalCategory.associator_naturality _ _ _
-    rw [hNatAssocHC]
-    simp only [← CategoryTheory.Category.assoc]
-    have hSplitR : HomologicalComplex.tensorHom (redComulPowFrom Δbar m)
-          (Δbar ≫ HomologicalComplex.tensorHom (redComulPowFrom Δbar k)
-            (𝟙 C)) =
-        HomologicalComplex.tensorHom (redComulPowFrom Δbar m) Δbar ≫
-          HomologicalComplex.tensorHom (𝟙 (tensorPowObj C (m + 1)))
-            (HomologicalComplex.tensorHom (redComulPowFrom Δbar k)
-              (𝟙 C)) := by
-      rw [HomologicalComplex.tensorHom_comp_tensorHom]
-      simp only [CategoryTheory.Category.comp_id]
-    rw [hSplitR]
-    have hFactor : HomologicalComplex.tensorHom (redComulPowFrom Δbar m)
-          Δbar =
-        HomologicalComplex.tensorHom (𝟙 C) Δbar ≫
-          HomologicalComplex.tensorHom (redComulPowFrom Δbar m)
-            (𝟙 _) := by
-      rw [HomologicalComplex.tensorHom_comp_tensorHom]
-      simp only [CategoryTheory.Category.comp_id,
-        CategoryTheory.Category.id_comp]
-    rw [hFactor]
-    simp only [← CategoryTheory.Category.assoc]
-    rw [hcoassoc]
-    simp only [CategoryTheory.Category.assoc]
-    rw [HomologicalComplex.tensorHom_comp_tensorHom]
-    simp only [CategoryTheory.Category.comp_id,
-      CategoryTheory.Category.id_comp]
+    exact redComulCoassocTensorStep
+      (D := CochainComplex (ModuleCat R) ℤ) Δbar hcoassoc
+      (redComulPowFrom Δbar m) (redComulPowFrom Δbar k)
+      (redComulPowFrom Δbar (m + 1 + k))
+      (tensorPowObj_add C (m + 1) (k + 1)).hom ih
 
 /-- Splitting for the descended `redComul`: binary coassociativity comes only
 from `redComul_coassoc`, with no extra hypothesis beyond `IsRedComul`. -/

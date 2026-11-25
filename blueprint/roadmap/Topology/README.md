@@ -36,6 +36,7 @@ and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero
 - [Continuum theory and infinite-dimensional topology](continua-infinite-dimensional/README.md)
 - [Topological groups](topological-groups/README.md)
 - [Topological modules and vector spaces](topological-modules/README.md)
+- [Categories of spaces and locales](categorical-topology/README.md)
 - [Algebraic topology](algebraic-topology/README.md)
 - [Manifolds and geometric topology](manifolds-geometric-topology/README.md)
 - [Knot theory](knot-theory/README.md)
@@ -44,4 +45,5 @@ and draws data sets with [Mapper](algebraic-topology/mapper/README.md); its zero
 - [Spaces of continuous functions](function-spaces/README.md)
 - [Uniform spaces](uniform-spaces/README.md)
 - [Simplicial homotopy theory](simplicial-homotopy-theory/README.md)
+- [Model categories and homotopical algebra](homotopical-algebra/README.md)
 - [Metric spaces](metric-spaces/README.md)

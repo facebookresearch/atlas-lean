@@ -20,6 +20,7 @@ Lie algebras and their structure and representations, free Lie algebras, Poisson
 - [Rota–Baxter operators on groups](rota-baxter-operators-on-groups/README.md)
 - [The degree filtration of the native universal enveloping algebra](the-degree-filtration-of-the-native-universal-en/README.md)
 - [The Jacobi identity in the overlapping PBW reductions](the-jacobi-identity-in-the-overlapping-pbw-reduc/README.md)
+- [The primitive universal property of an enveloping bialgebra](the-primitive-universal-property-of-an-envelopin/README.md)
 - [Virtual racks and quandles](virtual-racks-and-quandles/README.md)
 - [Witt's formula for free Lie algebras](witt-s-formula-for-free-lie-algebras/README.md)
 - [Induction on the native universal enveloping algebra](induction.md)

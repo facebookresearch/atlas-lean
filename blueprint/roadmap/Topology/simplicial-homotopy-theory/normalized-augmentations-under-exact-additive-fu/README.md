@@ -1,0 +1,15 @@
+# Normalized augmentations under exact additive functors
+
+- [Complex](complex.md)
+- [Augmentation](augmentation.md)
+- [To Constant](to-constant.md)
+- [Normalization Map](normalization-map.md)
+- [Augmentation naturality](augmentation-naturality.md)
+- [Factorization](factorization.md)
+- [Constant quasi Iso](constant-quasi-iso.md)
+- [Normalization Map quasi Iso](normalization-map-quasi-iso.md)
+- [Augmentation quasi Iso of iso](augmentation-quasi-iso-of-iso.md)
+- [Mapped](mapped.md)
+- [Constant Map Iso](constant-map-iso.md)
+- [Mapped hom](mapped-hom.md)
+- [Mapped augmentation quasi Iso](mapped-augmentation-quasi-iso.md)

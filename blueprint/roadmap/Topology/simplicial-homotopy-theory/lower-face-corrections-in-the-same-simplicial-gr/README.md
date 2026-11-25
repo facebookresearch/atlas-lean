@@ -1,0 +1,15 @@
+# Lower-face corrections in the SAME simplicial group
+
+- [Lower Error](lower-error.md)
+- [Correct Lower](correct-lower.md)
+- [Correct Lower face](correct-lower-face.md)
+- [Lower Error one](lower-error-one.md)
+- [Lower Pair Pred](lower-pair-pred.md)
+- [Lower Error face one](lower-error-face-one.md)
+- [Correct Lower preserves](correct-lower-preserves.md)
+- [Face Compatible](face-compatible.md)
+- [Lower Pass](lower-pass.md)
+- [Lower Pass zero](lower-pass-zero.md)
+- [Lower Pass succ](lower-pass-succ.md)
+- [Lower Pass faces](lower-pass-faces.md)
+- [Lower Pass below](lower-pass-below.md)

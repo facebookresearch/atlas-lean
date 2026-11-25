@@ -4,6 +4,7 @@ Monads and comonads, their Eilenberg–Moore and Kleisli categories, monadicity 
 
 - [Actual opposite powers and insertion maps](actual-opposite-powers-and-insertion-maps/README.md)
 - [Algebra-valued two-sided monadic bar construction](algebra-valued-two-sided-monadic-bar-constructio/README.md)
+- [Asphericity of canonical comonad resolutions](asphericity-of-canonical-comonad-resolutions/README.md)
 - [Balanced tensor products of monadic modules](balanced-tensor-products-of-monadic-modules/README.md)
 - [Bar augmentation via balanced pairings](bar-augmentation-via-balanced-pairings/README.md)
 - [Bar Regular Contraction](bar-regular-contraction/README.md)
@@ -17,6 +18,7 @@ Monads and comonads, their Eilenberg–Moore and Kleisli categories, monadicity 
 - [Left and right module functors for a monad](left-and-right-module-functors-for-a-monad/README.md)
 - [Monad bar resolution](monad-bar-resolution/README.md)
 - [Opposite monads and comonads](opposite-monads-and-comonads/README.md)
+- [The comonad induced in a slice over a fixed target](the-comonad-induced-in-a-slice-over-a-fixed-targ/README.md)
 - [Two-sided Bar constructions in a monoidal category](two-sided-bar-constructions-in-a-monoidal-catego/README.md)
 - [Two-sided bar: simplicial assembly](two-sided-bar-simplicial-assembly/README.md)
 - [Two-sided comonadic cobar cosimplicial identities](two-sided-comonadic-cobar-cosimplicial-identitie/README.md)
