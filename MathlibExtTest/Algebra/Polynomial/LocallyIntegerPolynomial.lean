@@ -42,3 +42,11 @@ example (f g : lipSubring Set.univ)
   intro hX
   have h1 := congrArg (fun p : lipSubring Set.univ => p.val ⟨1, Set.mem_univ 1⟩) hX
   simp at h1
+
+-- The backward difference of the square function is 2x - 1 on all integers.
+example : (fun x : (Set.univ : Set ℤ) => 2 * (x : ℤ) - 1) ∈ lipSubring Set.univ := by
+  have h := lip_univ_sub_shift (polynomialToLIP Set.univ (X ^ 2)).property
+  convert h using 1
+  funext x
+  simp only [polynomialToLIP_apply, eval_pow, eval_X]
+  ring

@@ -27,6 +27,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
+public import MathlibExt.Combinatorics.Enumerative.Partition.RookParityFive
 public import MathlibExt.Combinatorics.Enumerative.Partition.RookPeriodicity
 public import MathlibExt.Analysis.SpecialFunctions.QPochhammer
 
@@ -181,15 +182,5 @@ Journal of Integer Sequences 29 (2026), Article 26.2.6, Theorem 11
 (`jis-2026-26.2.6-thm-11`). -/
 public theorem_wanted maxRookPartitionCount_four_mod_two (n : ℕ) (hn : 16 < n) :
     maxRookPartitionCount 4 n % 2 = if n % 8 = 4 ∨ n % 8 = 6 then 0 else 1
-
-/-- **Parity of the number of partitions with max-rook number 5.** Let $R_5(n)$ be the number of
-partitions of $n$ with max-rook number $5$. For every natural number $n > 25$, $R_5(n)$ is even if
-$n \equiv 5 \pmod 8$ or $n \equiv 7 \pmod 8$, and odd otherwise.
-
-Source: N. Guru Sharan, *Rook Decomposition of the Partition Function*,
-Journal of Integer Sequences 29 (2026), Article 26.2.6, Theorem 13
-(`jis-2026-26.2.6-thm-13`). -/
-public theorem_wanted maxRookPartitionCount_five_mod_two (n : ℕ) (hn : 25 < n) :
-    maxRookPartitionCount 5 n % 2 = if n % 8 = 5 ∨ n % 8 = 7 then 0 else 1
 
 end MetaMathlibExt
