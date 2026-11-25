@@ -6,9 +6,8 @@ $L_{n-1} x_{n-1} + V_{n+1} y_{n+1} = L_n x_n + V_n y_n$, add up to the balance o
 $L_0 x_0 + V_{N+1} y_{N+1} = L_N x_N + V_1 y_1$, because every interstage stream enters one balance and leaves another. No
 equilibrium relation is used.
 
-## Depends on
-
-## Proof depends on
+Equivalently, the net flow $L_k x_k - V_{k+1} y_{k+1}$ has the same value on either side of each
+stage $k+1$, so its values at the two ends agree.
 
 ## Sources
 
