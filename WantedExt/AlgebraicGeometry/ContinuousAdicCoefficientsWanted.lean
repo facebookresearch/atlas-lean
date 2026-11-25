@@ -35,9 +35,12 @@ open _root_.MathlibExt.AlgebraicGeometry.ContinuousAdicCoefficients
 
 universe u
 
-/-- For an open, finitely generated `R`-submodule `L` of a topological `R[1/a]`-module `V` such that
-every vector has a multiple by a power of `a` in `L`, the comparison from the sheafified extension
-of scalars of `C(-, L)` to `C(-, V)` is an isomorphism. -/
+/-- **Scalar extension of continuous maps to an open lattice.** Let $R$ be a commutative ring,
+$a \in R$, $S$ a localization of $R$ away from $a$, $V$ a topological abelian group with an
+$S$-module structure in which multiplication by each scalar is continuous, and $L$ an open,
+finitely generated $R$-submodule of $V$ such that every $v \in V$ has a multiple $a^n v$ in $L$.
+Then for every scheme $X$, the comparison from the sheafified extension of scalars to $S$ of the
+sheaf $C(-, L)$ to the sheaf $C(-, V)$ on the small pro-étale site of $X$ is an isomorphism. -/
 public theorem_wanted latticeScalarComparison_isIso
     (R S : Type) [CommRing R] [CommRing S] [Algebra R S]
     (a : R) [IsLocalization.Away a S]
