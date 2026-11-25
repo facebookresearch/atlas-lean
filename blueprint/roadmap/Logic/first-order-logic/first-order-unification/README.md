@@ -45,3 +45,4 @@
 
 - [The elimination step of unification introduces no variables](vars-single-comp-subset.md)
 - [Unification introduces no new variables](vars-unify-subset.md)
+- [Unification of ranked terms through the curried encoding](unification-of-ranked-terms-through-the-curried-encoding.md)

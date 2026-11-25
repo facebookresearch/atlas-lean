@@ -34,6 +34,7 @@
 ## Inverse probability weighting with a general covariate
 
 - [Inverse probability weighting with a general covariate](integral-ipw-treated-cond-exp.md)
+- [Inverse probability weighting equals standardization](inverse-probability-weighting-equals-standardization.md)
 
 ## Potential outcomes and the local average treatment effect
 
@@ -65,6 +66,13 @@
 - [Measure Real inter preimage eq propensity mul](measure-real-inter-preimage-eq-propensit.md)
 - [Set Integral inter eq propensity mul](set-integral-inter-eq-propensity-mul.md)
 - [Sum powerset Card ite mem](sum-powerset-card-ite-mem.md)
+
+## Failures of identifying assumptions and partial identification
+
+- [Violations of parallel trends and their dependence on the outcome scale](parallel-trends-violations-and-scale-dependence.md)
+- [A discontinuous untreated mean produces a jump with no treatment effect](discontinuous-untreated-mean-in-regression-discontinuity.md)
+- [Worst-case bounds for a mean with missing outcomes](worst-case-bounds-for-a-mean-with-missing-outcomes.md)
+- [A defier model in which the Wald ratio is not the complier effect](wald-ratio-with-defiers.md)
 
 ## Related topics
 

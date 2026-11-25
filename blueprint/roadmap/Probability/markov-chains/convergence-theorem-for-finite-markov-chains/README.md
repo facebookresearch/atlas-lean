@@ -21,6 +21,8 @@
 - [Transition probabilities of the identity chain](prob-identity.md)
 - [Powers of the identity chain are the identity matrix](mat-pow-identity.md)
 - [The identity Markov chain is not ergodic](not-is-ergodic-identity.md)
+- [Existence of a stationary distribution](exists-stationary.md)
+- [A stationary vector is invariant under repeated transition](vec-mul-pow-eq-self.md)
 - [Sum mul pow apply eq self](sum-mul-pow-apply-eq-self.md)
 - [Doeblin's argument](tv-dist-pow-le-of-minorization.md)
 - [The convergence theorem](exists-tv-dist-pow-le.md)

@@ -1,6 +1,6 @@
 # Special matrices
 
-Classes of matrices defined by their structure or entries: Toeplitz, Hankel and circulant matrices, Hadamard and sign matrices, combinatorial matrices, nonnegative, doubly stochastic and totally positive matrices.
+Classes of matrices defined by their structure or entries: Toeplitz, Hankel and circulant matrices, Hadamard and sign matrices, combinatorial matrices, nonnegative, row-stochastic, doubly stochastic and totally positive matrices.
 
 - [Circulant matrices](circulant-matrices/README.md)
 - [Complex iwasawa](complex-iwasawa/README.md)
@@ -25,6 +25,7 @@ Classes of matrices defined by their structure or entries: Toeplitz, Hankel and 
 - [Semiseparable matrices](semiseparable-matrices/README.md)
 - [Generalized Householder matrices](generalized-householder-matrices/README.md)
 - [Real planar rotation matrices](rotation-matrices/README.md)
+- [Row-stochastic matrices](row-stochastic-matrices/README.md)
 - [Det one or commutator](eq-one-or-eq-commutator-of-det-eq-one.md)
 - [Idempotent det](det-eq-zero-of-is-idempotent-elem-of-tra.md)
 - [Weak diagonal dominance and positive semidefiniteness](pos-semidef-of-diagonally-dominant.md)
