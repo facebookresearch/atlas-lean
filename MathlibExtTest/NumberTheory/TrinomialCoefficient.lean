@@ -90,6 +90,25 @@ example : generalizedCentralTrinomial (-3) (-2) 5 = 477 := by
   rw [generalizedCentralTrinomial_eq_sum]
   norm_num [Finset.sum_range_succ, Nat.choose]
 
+-- Modulus one retains every coefficient of the row.
+example (z : ℂ) (hz : z ≠ 0) : z * (1 + z + z⁻¹) = 1 + z + z ^ 2 := by
+  have h := sum_trinomialCoefficient_arith_prog 1 0 1 (by decide) z hz
+  norm_num [Finset.sum_range_succ, trinomialCoefficient, Polynomial.coeff_add,
+    Polynomial.coeff_one, Polynomial.coeff_X, Polynomial.coeff_X_pow,
+    Complex.exp_two_pi_mul_I] at h
+  simpa [add_assoc] using h.symm
+
+-- Here `x > 2*n`: the single term left by truncated subtraction vanishes.
+example (w : ℂ) (hw : w = Complex.exp (2 * Real.pi * Complex.I / ((2 : ℕ) : ℂ))) :
+    ∑ j ∈ Finset.Icc (1 : ℕ) 2, w ^ (-(j : ℤ)) = 0 := by
+  have h := sum_trinomialCoefficient_arith_prog 0 1 2 (by decide) 1 one_ne_zero
+  dsimp only at h
+  rw [← hw] at h
+  have hzero : trinomialCoefficient 0 1 = 0 := by
+    norm_num [trinomialCoefficient, Polynomial.coeff_one]
+  simpa [hzero] using h.symm
+
+#print axioms MetaMathlibExt.sum_trinomialCoefficient_arith_prog
 #print axioms MetaMathlibExt.trinomialCoefficient
 #print axioms MetaMathlibExt.generalizedCentralTrinomial_one
 #print axioms MetaMathlibExt.generalizedCentralTrinomial_eq_sum
