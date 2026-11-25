@@ -959,16 +959,6 @@ public theorem_wanted sum_choose_even_centralBinom_div_succ (n : ℕ) :
         (n.choose (2 * k) : ℚ) / (k + 1) / 2 ^ (2 * k) * ((2 * k).choose k : ℚ) =
       2 / 2 ^ n / (n + 2) * (2 * n + 1) * catalan n
 
-/-- **Even-index expansion of a weighted central binomial sum.** For every natural number $n$,
-$$\sum_{k=0}^{n} \binom{n}{k} 2^{-k} \binom{2k}{k} =
-\sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} 2^{n-4k} \binom{2k}{k}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 5 (`integers-2026-A19-prop-5`). -/
-public theorem_wanted sum_choose_centralBinom_div_two_pow (n : ℕ) :
-    ∑ k ∈ range (n + 1), (n.choose k : ℚ) / 2 ^ k * ((2 * k).choose k : ℚ) =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) * 2 ^ n / 2 ^ (4 * k) * ((2 * k).choose k : ℚ)
-
 /-- **Binomial transform of weighted Catalan numbers.** Write $C_m = \binom{2m}{m}/(m+1)$ for the
 $m$-th Catalan number. For every natural number $n$,
 $$\sum_{k=0}^{n} \binom{n}{k} \frac{2k+1}{k+2} \cdot \frac{2}{2^k} C_k =
