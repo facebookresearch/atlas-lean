@@ -13,6 +13,7 @@ public import Mathlib.Combinatorics.Enumerative.Bell
 public import Mathlib.Data.Set.Card
 public import MathlibExt.Combinatorics.Enumerative.Partition.ColoredPartitionsDifferentColors
 public import MathlibExt.Combinatorics.Enumerative.Partition.ColoredPartitionsFullyDifferent
+public import MathlibExt.Combinatorics.Enumerative.Partition.ColoredPartitionsRestrictedColors
 public import MathlibExt.Combinatorics.Enumerative.Partition.DistinctConstantBlockPartitions
 
 /-!
@@ -89,25 +90,6 @@ public theorem_wanted euler_partition_theorem_restrictedCompositions (ℓ n : �
         x.2.length ≤ ℓ ∧ x.2.sum = x.1) ∧ (M.map Prod.fst).sum = n}.ncard =
       {M : Multiset (ℕ × List ℕ) | (∀ x ∈ M, 0 < x.1 ∧ (∀ y ∈ x.2, 0 < y) ∧
         x.2.length ≤ ℓ ∧ x.2.sum = x.1 ∧ (Even x.1 → ¬ ∀ y ∈ x.2, Even y)) ∧
-        (M.map Prod.fst).sum = n}.ncard
-
-/-- **Colored partitions with different parts.** A colored part is a pair $(m, j)$ of integers
-with $1 \le j \le m$, read as the part $m$ in color $j$, and a colored partition of $n$ is a
-finite multiset of colored parts whose sizes $m$ sum to $n$. For every $n \ge 0$, the number of
-colored partitions of $n$ in which no colored part is repeated equals the number of colored
-partitions of $n$ in which no even part has an even color, and it also equals the number of
-colored partitions of $n$ in which no even part has an odd color.
-
-Source: Beimar J. Naranjo and José L. Ramírez, *On Colored Partitions and Euler-Type
-Identities*, INTEGERS 26 (2026), Article A20, Corollary 4 (`integers-2026-A20-cor-4`). -/
-public theorem_wanted coloredPartitions_differentParts_eq_restrictedColors (n : ℕ) :
-    {M : Multiset (ℕ × ℕ) | M.Nodup ∧ (∀ x ∈ M, 1 ≤ x.2 ∧ x.2 ≤ x.1) ∧
-        (M.map Prod.fst).sum = n}.ncard =
-      {M : Multiset (ℕ × ℕ) | (∀ x ∈ M, 1 ≤ x.2 ∧ x.2 ≤ x.1 ∧ (Even x.1 → ¬ Even x.2)) ∧
-        (M.map Prod.fst).sum = n}.ncard ∧
-    {M : Multiset (ℕ × ℕ) | M.Nodup ∧ (∀ x ∈ M, 1 ≤ x.2 ∧ x.2 ≤ x.1) ∧
-        (M.map Prod.fst).sum = n}.ncard =
-      {M : Multiset (ℕ × ℕ) | (∀ x ∈ M, 1 ≤ x.2 ∧ x.2 ≤ x.1 ∧ (Even x.1 → Even x.2)) ∧
         (M.map Prod.fst).sum = n}.ncard
 
 end
