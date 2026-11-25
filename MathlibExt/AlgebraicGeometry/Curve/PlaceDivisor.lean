@@ -48,15 +48,6 @@ namespace AlgebraicCurve
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
-namespace Place
-
-variable {K F} (v : Place K F)
-
-public class FiniteResidue : Prop where
-  finite : Module.Finite K v.ResidueField
-
-end Place
-
 namespace Pic0
 
 variable {K F}
