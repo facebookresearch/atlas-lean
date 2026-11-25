@@ -63,57 +63,6 @@ Fields*, 2nd ed., GTM 83, §6.3, written for an arbitrary `(ZMod p)ˣ`-module.
 open scoped NumberField nonZeroDivisors
 open Polynomial
 
-
-section ClassGroupFunctoriality
-variable {R : Type*} [CommRing R]
-variable {R' : Type*} [CommRing R']
-
-/-- The image of a nonzero ideal under a ring isomorphism, as a nonzero ideal. -/
-private def Ideal.mapNonZero [IsDomain R] [IsDomain R'] (g : R ≃+* R') (P : (Ideal R)⁰) :
-    (Ideal R')⁰ :=
-  ⟨(P : Ideal R).map (g : R →+* R'), by
-    have hinj : Function.Injective ((g : R →+* R') : R → R') := g.injective
-    refine mem_nonZeroDivisors_iff_ne_zero.mpr fun hbot => ?_
-    refine mem_nonZeroDivisors_iff_ne_zero.mp P.2 ?_
-    rw [Ideal.zero_eq_bot] at hbot ⊢
-    exact (Ideal.map_eq_bot_iff_of_injective hinj).mp hbot⟩
-
-private lemma Ideal.coe_mapNonZero [IsDomain R] [IsDomain R'] (g : R ≃+* R') (P : (Ideal R)⁰) :
-    (Ideal.mapNonZero g P : Ideal R') = (P : Ideal R).map (g : R →+* R') := rfl
-
-variable [IsDedekindDomain R] [IsDedekindDomain R']
-
-/-- `ClassGroup.mulEquiv_mk0` with its right side written through `Ideal.mapNonZero`. -/
-private theorem mulEquiv_mk0_eq_mk0_mapNonZero (g : R ≃+* R') (P : (Ideal R)⁰) :
-    ClassGroup.mulEquiv g (ClassGroup.mk0 P) =
-      ClassGroup.mk0 (Ideal.mapNonZero g P) :=
-  ClassGroup.mulEquiv_mk0 g P
-
-theorem ClassGroup.mulEquiv_refl_apply (C : ClassGroup R) :
-    ClassGroup.mulEquiv (RingEquiv.refl R) C = C := by
-  obtain ⟨P, rfl⟩ := ClassGroup.mk0_surjective C
-  rw [mulEquiv_mk0_eq_mk0_mapNonZero]
-  congr 1
-  refine Subtype.ext ?_
-  rw [Ideal.coe_mapNonZero,
-    show ((RingEquiv.refl R : R ≃+* R) : R →+* R) = RingHom.id R from RingHom.ext fun _ => rfl,
-    Ideal.map_id]
-
-theorem ClassGroup.mulEquiv_trans_apply {R'' : Type*} [CommRing R''] [IsDedekindDomain R'']
-    (g : R ≃+* R') (h : R' ≃+* R'') (C : ClassGroup R) :
-    ClassGroup.mulEquiv (g.trans h) C = ClassGroup.mulEquiv h (ClassGroup.mulEquiv g C) := by
-  obtain ⟨P, rfl⟩ := ClassGroup.mk0_surjective C
-  rw [mulEquiv_mk0_eq_mk0_mapNonZero, mulEquiv_mk0_eq_mk0_mapNonZero,
-    mulEquiv_mk0_eq_mk0_mapNonZero]
-  congr 1
-  refine Subtype.ext ?_
-  rw [Ideal.coe_mapNonZero, Ideal.coe_mapNonZero, Ideal.coe_mapNonZero,
-    show ((g.trans h : R ≃+* R'') : R →+* R'') = (h : R' →+* R'').comp (g : R →+* R') from
-      RingHom.ext fun _ => rfl,
-    ← Ideal.map_map]
-
-end ClassGroupFunctoriality
-
 namespace Stickelberger
 
 section GalRestrict
@@ -162,7 +111,7 @@ theorem clEnd_clProj_mk0 (g : R ≃+* R) (P : (Ideal R)⁰) :
     (congrArg (fun C => clProj p R (Additive.ofMul C)) (ClassGroup.mulEquiv_mk0 g P))
 
 variable {R} in
-variable [IsDedekindDomain R] in
+variable [IsDomain R] in
 /-- `clEnd` as a monoid hom from the ring automorphisms of `R`. -/
 noncomputable def clEndHom : (R ≃+* R) →* Module.End (ZMod p) (ClGalModule p R) where
   toFun := clEnd p
@@ -172,14 +121,23 @@ noncomputable def clEndHom : (R ≃+* R) →* Module.End (ZMod p) (ClGalModule p
     rw [one_apply_eq_self]
     change clProj p R (Additive.ofMul (ClassGroup.mulEquiv (RingEquiv.refl R) C.toMul)) =
       clProj p R C
-    rw [ClassGroup.mulEquiv_refl_apply]; rfl
+    have hrefl : ClassGroup.mulEquiv (RingEquiv.refl R) C.toMul = C.toMul := by
+      rw [ClassGroup.mulEquiv_apply]
+      convert ClassGroup.map_id C.toMul
+      exact RingHom.ext fun _ => rfl
+    rw [hrefl]; rfl
   map_mul' g h := by
     refine LinearMap.ext fun a => ?_
     obtain ⟨C, rfl⟩ := clProj_surjective p R a
     rw [mul_apply_eq_comp]
     change clProj p R (Additive.ofMul (ClassGroup.mulEquiv (h.trans g) C.toMul)) =
       clEnd p g (clProj p R (Additive.ofMul (ClassGroup.mulEquiv h C.toMul)))
-    rw [clEnd_clProj, ClassGroup.mulEquiv_trans_apply]
+    have htrans : ClassGroup.mulEquiv (h.trans g) C.toMul =
+        ClassGroup.mulEquiv g (ClassGroup.mulEquiv h C.toMul) := by
+      rw [ClassGroup.mulEquiv_apply, ClassGroup.mulEquiv_apply, ClassGroup.mulEquiv_apply,
+        ClassGroup.map_map]
+      rfl
+    rw [clEnd_clProj, htrans]
 
 end DedekindAction
 
