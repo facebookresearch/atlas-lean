@@ -18,14 +18,6 @@ $$\frac{d}{dx}\left(h^3\,\frac{dP}{dx}\right) = 6\mu U\,\frac{dh}{dx},$$
 and for given end pressures $P(0) = P_0$ and $P(L) = P_L$ the Reynolds equation has exactly one solution, namely
 $P' = 6\mu U/h^2 - 12\mu q/h^3$ with the constant $q$ fixed by $P_L - P_0 = \int_0^L \big(6\mu U h^{-2} - 12\mu q h^{-3}\big)\,dx$.
 
-## Expansion
-
-A good expansion proves that this reduced model is the thin-gap limit of the steady Stokes equations in one rigorous formulation, such as
-that of Bayada and Chambat: the Stokes problem in $\{(x, y) : 0 < x < L,\ 0 < y < \varepsilon h(x)\}$ with prescribed velocity data on the
-whole boundary compatible with the wall motions, the scaled a priori estimates in the variables $Y = y/\varepsilon$ and $P = \varepsilon^2 p$,
-and the spaces and topologies in which the scaled velocities and pressures converge to the profile and pressure above.
-
 ## Sources
 
-- G. Bayada and M. Chambat, The transition between the Stokes equations and the Reynolds equation: a mathematical proof, *Applied Mathematics and Optimization* 14 (1986) 73-93.
 - R. L. Panton, *Incompressible Flow*, 4th edition, Wiley, 2013, for the lubrication approximation.
