@@ -105,11 +105,11 @@ end QExpand
 
 section Decimate
 
-variable (K : Type*) [Field K] (p : ℕ) [NeZero p]
+variable (K : Type*) (p : ℕ) [NeZero p]
 
 /-- The coefficient support of a decimated Laurent series is bounded
 below. -/
-public theorem bddBelow_support_decimate (x : LaurentSeries K) :
+public theorem bddBelow_support_decimate [Zero K] (x : LaurentSeries K) :
     BddBelow (Function.support fun k : ℤ => x.coeff ((p : ℤ) * k)) := by
   by_cases hne : x.support.Nonempty
   · refine ⟨min (x.isWF_support.min hne) 0, fun k hk => ?_⟩
@@ -126,6 +126,10 @@ public theorem bddBelow_support_decimate (x : LaurentSeries K) :
     have hk' : (p : ℤ) * k ∈ x.support := hk
     rw [hne] at hk'
     exact hk'
+
+section Semiring
+
+variable [Semiring K]
 
 /-- The decimation map on Laurent series: it keeps only the coefficients
 whose index is divisible by `p`, reindexed by division by `p`. This is the
@@ -147,8 +151,10 @@ public theorem coeff_qDecimate (x : LaurentSeries K) (k : ℤ) :
     (qDecimate K p x).coeff k = x.coeff ((p : ℤ) * k) := by
   simp only [qDecimate, LinearMap.coe_mk, AddHom.coe_mk, HahnSeries.coeff_ofSuppBddBelow]
 
+end Semiring
+
 /-- Decimation undoes `q`-expansion by the same factor. -/
-public theorem qDecimate_qExpand (x : LaurentSeries K) :
+public theorem qDecimate_qExpand [CommRing K] (x : LaurentSeries K) :
     qDecimate K p (qExpand K p x) = x := by
   ext k
   rw [coeff_qDecimate, qExpand_coeff_mul]

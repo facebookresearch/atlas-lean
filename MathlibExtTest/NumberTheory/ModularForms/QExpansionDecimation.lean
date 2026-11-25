@@ -38,3 +38,28 @@ example (R : Type*) [CommRing R] (f : LaurentSeries R) {k : ℤ}
 example (R : Type*) [CommRing R] (f : LaurentSeries R) :
     ModularCurve.qExpand R 1 f = f :=
   ModularCurve.qExpand_one_apply f
+
+/-- Non-field consumer: decimation undoes expansion over `ℤ`. -/
+example (p : ℕ) [NeZero p] (x : LaurentSeries ℤ) :
+    ModularCurve.qDecimate ℤ p (ModularCurve.qExpand ℤ p x) = x :=
+  ModularCurve.qDecimate_qExpand ℤ p x
+
+/-- Concrete values over `ℤ`: decimation by `2` keeps `5 q ^ 6` as `5 q ^ 3`
+and drops the odd-exponent term `7 q ^ 5`. -/
+example :
+    ModularCurve.qDecimate ℤ 2 (HahnSeries.single 6 (5 : ℤ) + HahnSeries.single 5 7) =
+      HahnSeries.single 3 5 := by
+  ext k
+  simp only [map_add, HahnSeries.coeff_add, ModularCurve.coeff_qDecimate,
+    HahnSeries.coeff_single, Nat.cast_ofNat]
+  split_ifs <;> omega
+
+/-- Semiring consumer: the coefficient formula over `ℕ`, which is not a ring. -/
+example (p : ℕ) [NeZero p] (x : LaurentSeries ℕ) (k : ℤ) :
+    (ModularCurve.qDecimate ℕ p x).coeff k = x.coeff ((p : ℤ) * k) :=
+  ModularCurve.coeff_qDecimate ℕ p x k
+
+/-- The support bound needs only a zero in the coefficients. -/
+example (K : Type*) [Zero K] (x : LaurentSeries K) :
+    BddBelow (Function.support fun k : ℤ => x.coeff (((2 : ℕ) : ℤ) * k)) :=
+  ModularCurve.bddBelow_support_decimate K 2 x
