@@ -11075,6 +11075,7 @@
   "MathlibExt/Combinatorics/Enumerative/TrinomialBinomialTransform": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/TrinomialConvolution": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/TrinomialEvenAlternating": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
+  "MathlibExt/Combinatorics/Enumerative/TrinomialInverseTransform": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/TrinomialUpperHalf": {"to": "Combinatorics/binomial-coefficients/generalized-binomial-coefficients", "title": "Trinomial coefficients and the 2-Pascal triangle"},
   "MathlibExt/Combinatorics/Enumerative/TripleFactorization": {"to": "Combinatorics/riordan-arrays-transforms/riordan-arrays", "title": "Triple factorization of Riordan arrays"},
   "MathlibExt/Combinatorics/Enumerative/TrithoffPrecolumns": {"to": "Combinatorics/combinatorics-on-words/automatic-sequences", "title": "Tribonacci representations and the Trithoff array"},
