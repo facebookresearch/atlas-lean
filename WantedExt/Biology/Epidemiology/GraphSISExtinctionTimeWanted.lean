@@ -77,7 +77,9 @@ noncomputable def cutSize (G : SimpleGraph V) (S : Finset V) : ℕ :=
   ((univ ×ˢ univ).filter fun p : V × V => p.1 ∈ S ∧ p.2 ∉ S ∧ G.Adj p.1 p.2).card
 
 /-- The generalized isoperimetric constant `η(G, m)` of Ganesh, Massoulié and Towsley (2005,
-Eq. (4)): the least ratio `E(S, Sᶜ) / |S|` over nonempty vertex sets `S` with `|S| ≤ m`. -/
+Eq. (4)): defined via `sInf` of `E(S, Sᶜ) / |S|` over nonempty vertex sets `S` with `|S| ≤ m`.
+When `V` is nonempty and `1 ≤ m`, this finite nonempty set attains its minimum; when no admissible
+subset exists (for example `m = 0`), Lean's real infimum convention `sInf ∅ = 0` yields `0`. -/
 noncomputable def isoperimetric (G : SimpleGraph V) (m : ℕ) : ℝ :=
   sInf ((fun S : Finset V => (cutSize G S : ℝ) / S.card) '' {S | 0 < S.card ∧ S.card ≤ m})
 
