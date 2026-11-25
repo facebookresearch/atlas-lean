@@ -1,0 +1,3 @@
+# Original identity coefficients give the actual tensor...
+
+Original identity coefficients give the actual tensor identity at every raw input.

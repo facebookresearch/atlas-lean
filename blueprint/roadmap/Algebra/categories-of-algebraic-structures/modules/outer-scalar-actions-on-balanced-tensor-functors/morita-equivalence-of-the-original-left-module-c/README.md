@@ -1,0 +1,16 @@
+# Morita equivalence of the original left-module categories
+
+- [Raw Object](raw-object.md)
+- [Composite Mk](composite-mk.md)
+- [Raw Mk](raw-mk.md)
+- [Composite Hom ext](composite-hom-ext.md)
+- [Composite Map mk](composite-map-mk.md)
+- [Coordinate Data](coordinate-data.md)
+- [Coordinates](coordinates.md)
+- [Return Iso](return-iso.md)
+- [Return Iso mk](return-iso-mk.md)
+- [Return Nat Iso](return-nat-iso.md)
+- [Equivalence](equivalence.md)
+- [Equivalence counit Iso](equivalence-counit-iso.md)
+- [Equivalence unit Iso](equivalence-unit-iso.md)
+- [Equivalence counit Iso mk](equivalence-counit-iso-mk.md)

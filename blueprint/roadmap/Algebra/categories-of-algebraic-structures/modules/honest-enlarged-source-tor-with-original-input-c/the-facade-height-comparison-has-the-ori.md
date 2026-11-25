@@ -1,0 +1,3 @@
+# The facade height comparison has the original pure value...
+
+The facade height comparison has the original pure value after native input flattening.

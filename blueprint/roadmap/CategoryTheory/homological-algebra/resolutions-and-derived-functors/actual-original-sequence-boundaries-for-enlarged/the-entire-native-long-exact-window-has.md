@@ -1,0 +1,3 @@
+# The entire native long-exact window has the same actual...
+
+The entire native long-exact window has the same actual common-height identity.

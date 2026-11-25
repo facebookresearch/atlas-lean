@@ -1,0 +1,3 @@
+# The height comparison has the actual original pure value in...
+
+The height comparison has the actual original pure value in the lower tensor.

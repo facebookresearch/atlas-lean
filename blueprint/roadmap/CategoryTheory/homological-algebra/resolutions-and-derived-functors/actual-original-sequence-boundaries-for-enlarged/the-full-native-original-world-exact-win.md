@@ -1,0 +1,3 @@
+# The full native original-world exact window has this actual...
+
+The full native original-world exact window has this actual enlarged-source comparison.

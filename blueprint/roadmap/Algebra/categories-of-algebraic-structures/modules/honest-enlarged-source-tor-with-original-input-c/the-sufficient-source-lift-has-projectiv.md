@@ -1,0 +1,3 @@
+# The sufficient source lift has projective preservation; the...
+
+The sufficient source lift has projective preservation; the target needs only exactness.

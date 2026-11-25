@@ -1,0 +1,3 @@
+# Native exactness proves this window, without assuming...
+
+Native exactness proves this window, without assuming tensor exactness.

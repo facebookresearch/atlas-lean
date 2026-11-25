@@ -1,0 +1,3 @@
+# The independent-carrier tensor is naturally the...
+
+The independent-carrier tensor is naturally the whole-output lift of the original model.

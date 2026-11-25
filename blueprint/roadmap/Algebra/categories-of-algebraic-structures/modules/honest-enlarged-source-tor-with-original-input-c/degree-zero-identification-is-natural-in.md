@@ -1,0 +1,3 @@
+# Degree-zero identification is natural in every original...
+
+Degree-zero identification is natural in every original coefficient map.

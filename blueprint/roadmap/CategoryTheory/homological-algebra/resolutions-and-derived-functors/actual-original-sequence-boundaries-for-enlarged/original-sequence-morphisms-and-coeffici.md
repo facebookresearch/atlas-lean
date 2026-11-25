@@ -1,0 +1,3 @@
+# Original sequence morphisms and coefficient morphisms...
+
+Original sequence morphisms and coefficient morphisms commute on the entire window.

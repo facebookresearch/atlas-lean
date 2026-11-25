@@ -1,0 +1,3 @@
+# Two actual working heights are compared in their explicitly...
+
+Two actual working heights are compared in their explicitly common third height.

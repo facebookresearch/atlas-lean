@@ -1,0 +1,3 @@
+# Actual source capabilities compare original Tor with Tor...
+
+Actual source capabilities compare original Tor with Tor derived in the larger universe.

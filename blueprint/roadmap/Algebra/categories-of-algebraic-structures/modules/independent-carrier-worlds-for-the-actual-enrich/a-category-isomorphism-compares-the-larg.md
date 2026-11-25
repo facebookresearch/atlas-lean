@@ -1,0 +1,3 @@
+# A category isomorphism compares the large tensor only after...
+
+A category isomorphism compares the large tensor only after lifting the whole output.

@@ -1,0 +1,3 @@
+# The existing native coefficient zero iso is precomposed...
+
+The existing native coefficient zero iso is precomposed only after derivation in Gamma.

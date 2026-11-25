@@ -1,0 +1,3 @@
+# Coefficients map the actual whole long-exact window, not...
+
+Coefficients map the actual whole long-exact window, not aGlobal supplied LES certificate.

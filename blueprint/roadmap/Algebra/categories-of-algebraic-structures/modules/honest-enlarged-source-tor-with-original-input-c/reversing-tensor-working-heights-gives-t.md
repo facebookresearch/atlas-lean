@@ -1,0 +1,3 @@
+# Reversing tensor working heights gives the same actual...
+
+Reversing tensor working heights gives the same actual inverse.

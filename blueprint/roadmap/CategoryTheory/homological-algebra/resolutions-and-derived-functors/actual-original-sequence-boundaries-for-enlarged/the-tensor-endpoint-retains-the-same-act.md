@@ -1,0 +1,3 @@
+# The tensor endpoint retains the same actual...
+
+The tensor endpoint retains the same actual universe-comparison map.

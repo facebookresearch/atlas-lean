@@ -1,0 +1,3 @@
+# Flattening the actual lifted original sequence gives the...
+
+Flattening the actual lifted original sequence gives the facade boundary square.

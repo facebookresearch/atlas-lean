@@ -1,0 +1,3 @@
+# Underived input lifting does not assume projective...
+
+Underived input lifting does not assume projective resolutions in the raw world.

@@ -1,0 +1,3 @@
+# The original boundary followed by the original tensor...
+
+The original boundary followed by the original tensor augmentation has the same value.

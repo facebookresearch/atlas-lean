@@ -1,0 +1,3 @@
+# The actual connecting map ending in the original lifted...
+
+The actual connecting map ending in the original lifted tensor object.

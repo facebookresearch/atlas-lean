@@ -1,0 +1,3 @@
+# Original coefficient composition is retained on the actual...
+
+Original coefficient composition is retained on the actual lifted tensor functor.

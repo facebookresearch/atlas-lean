@@ -1,0 +1,3 @@
+# Every actual coefficient-window map commutes with the...
+
+Every actual coefficient-window map commutes with the earned whole-window height comparison.

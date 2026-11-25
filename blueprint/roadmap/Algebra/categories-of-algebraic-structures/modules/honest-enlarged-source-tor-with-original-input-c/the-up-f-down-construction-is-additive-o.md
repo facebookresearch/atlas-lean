@@ -1,0 +1,3 @@
+# The up-f-down construction is additive on the original...
+
+The up-f-down construction is additive on the original coefficient maps.

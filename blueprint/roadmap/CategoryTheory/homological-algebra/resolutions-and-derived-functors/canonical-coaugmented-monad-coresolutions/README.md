@@ -1,0 +1,18 @@
+# Canonical coaugmented monad coresolutions
+
+- [Coresolution Augmented Functor](coresolution-augmented-functor.md)
+- [Coresolution Augmented](coresolution-augmented.md)
+- [Coresolution Functor](coresolution-functor.md)
+- [Coresolution](coresolution.md)
+- [Coresolution Augmented point](coresolution-augmented-point.md)
+- [Coresolution obj](coresolution-obj.md)
+- [Coresolution map δ](coresolution-map.md)
+- [Coresolution map σ](coresolution-map-2.md)
+- [Coresolution Augmented hom zero](coresolution-augmented-hom-zero.md)
+- [Coresolution Functor map app](coresolution-functor-map-app.md)
+- [Coresolution Augmented Functor map left](coresolution-augmented-functor-map-left.md)
+- [Coresolution Obj Iso](coresolution-obj-iso.md)
+- [Coresolution Obj Iso hom](coresolution-obj-iso-hom.md)
+- [Coresolution Obj Iso naturality](coresolution-obj-iso-naturality.md)
+- [Coresolution Obj Iso coface](coresolution-obj-iso-coface.md)
+- [Coresolution Obj Iso codegeneracy](coresolution-obj-iso-codegeneracy.md)

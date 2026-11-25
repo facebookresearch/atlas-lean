@@ -1,0 +1,3 @@
+# The sufficient original-world comparison agrees with the...
+
+The sufficient original-world comparison agrees with the actual degree-zero tensor map.

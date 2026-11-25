@@ -1,0 +1,3 @@
+# The tensor triangles commute on all three heights in their...
+
+The tensor triangles commute on all three heights in their explicit common universe.

@@ -1,0 +1,3 @@
+# Derive the actual tensor family in Gamma before restricting...
+
+Derive the actual tensor family in Gamma before restricting its original input.

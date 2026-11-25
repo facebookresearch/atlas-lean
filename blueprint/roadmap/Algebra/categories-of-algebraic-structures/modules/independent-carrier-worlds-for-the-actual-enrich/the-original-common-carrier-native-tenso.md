@@ -1,0 +1,3 @@
+# The original common-carrier native tensor functor is...
+
+The original common-carrier native tensor functor is recovered through the whole-output lift.

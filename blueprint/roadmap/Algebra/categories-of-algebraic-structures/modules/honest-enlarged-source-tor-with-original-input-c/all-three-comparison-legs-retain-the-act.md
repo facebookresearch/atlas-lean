@@ -1,0 +1,3 @@
+# All three comparison legs retain the actual degree-zero...
+
+All three comparison legs retain the actual degree-zero augmentation.

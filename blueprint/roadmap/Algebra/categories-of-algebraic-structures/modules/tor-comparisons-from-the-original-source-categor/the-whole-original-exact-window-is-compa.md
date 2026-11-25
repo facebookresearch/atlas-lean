@@ -1,0 +1,3 @@
+# The whole original exact window is compared using these...
+
+The whole original exact window is compared using these same six object isomorphisms.

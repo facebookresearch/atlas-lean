@@ -1,0 +1,3 @@
+# Native lifting retains the original identity coefficient...
+
+Native lifting retains the original identity coefficient morphism.

@@ -1,0 +1,17 @@
+# Graded pairings on linear-Yoneda cochains
+
+- [ΙTensor Obj comp linear Yoneda Pairing Desc Of Eq](tensor-obj-comp-linear-yoneda-pairing-de.md)
+- [ΙTensor Obj comp linear Yoneda Pairing Desc Of Eq of eq](tensor-obj-comp-linear-yoneda-pairing-de-2.md)
+- [ΙTensor Obj comp linear Yoneda Pairing Desc](tensor-obj-comp-linear-yoneda-pairing-de-3.md)
+- [ΙTensor Obj comp linear Yoneda Pairing Desc of ne left](tensor-obj-comp-linear-yoneda-pairing-de-4.md)
+- [Linear Yoneda Pairing Desc Of Eq naturality](linear-yoneda-pairing-desc-of-eq-natural.md)
+- [Linear Yoneda Pairing Desc naturality](linear-yoneda-pairing-desc-naturality.md)
+- [XIso Of Eq comp linear Yoneda Pairing Desc Of Eq](xiso-of-eq-comp-linear-yoneda-pairing-de.md)
+- [XIso Of Eq comp linear Yoneda Pairing Desc](xiso-of-eq-comp-linear-yoneda-pairing-de-2.md)
+- [Linear Yoneda Cochain Pair](linear-yoneda-cochain-pair.md)
+- [Linear Yoneda Cochain Pair tmul](linear-yoneda-cochain-pair-tmul.md)
+- [Linear Yoneda Cochain Pair coefficient naturality](linear-yoneda-cochain-pair-coefficient-n.md)
+- [Linear Yoneda Cochain Complex XIso Of Eq hom apply](linear-yoneda-cochain-complex-xiso-of-eq.md)
+- [Linear Yoneda Cochain Graded Pairing](linear-yoneda-cochain-graded-pairing.md)
+- [Linear Yoneda Cochain Graded Pairing pair](linear-yoneda-cochain-graded-pairing-pai.md)
+- [Linear Yoneda Cochain Graded Pairing coefficient naturality](linear-yoneda-cochain-graded-pairing-coe.md)

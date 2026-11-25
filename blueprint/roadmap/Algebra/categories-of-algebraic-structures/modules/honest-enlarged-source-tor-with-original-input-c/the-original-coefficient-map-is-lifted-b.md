@@ -1,0 +1,3 @@
+# The original coefficient map is lifted by native up-f-down,...
+
+The original coefficient map is lifted by native up-f-down, retaining R-linearity.

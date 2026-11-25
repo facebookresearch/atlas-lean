@@ -1,0 +1,3 @@
+# Public coefficient-window maps compose in the order of the...
+
+Public coefficient-window maps compose in the order of the original bimodule maps.

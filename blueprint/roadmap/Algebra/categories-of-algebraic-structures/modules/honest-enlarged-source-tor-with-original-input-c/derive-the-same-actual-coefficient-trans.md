@@ -1,0 +1,3 @@
+# Derive the same actual coefficient transformation in the...
+
+Derive the same actual coefficient transformation in the sufficient source category.

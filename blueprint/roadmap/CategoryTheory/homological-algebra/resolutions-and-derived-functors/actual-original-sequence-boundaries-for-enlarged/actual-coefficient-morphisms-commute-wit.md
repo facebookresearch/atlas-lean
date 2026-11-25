@@ -1,0 +1,3 @@
+# Actual coefficient morphisms commute with the retained...
+
+Actual coefficient morphisms commute with the retained native connecting map.

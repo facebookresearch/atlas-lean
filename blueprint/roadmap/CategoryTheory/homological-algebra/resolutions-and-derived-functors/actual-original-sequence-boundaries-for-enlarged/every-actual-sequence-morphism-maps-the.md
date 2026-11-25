@@ -1,0 +1,3 @@
+# Every actual sequence morphism maps the whole original...
+
+Every actual sequence morphism maps the whole original five-arrow Tor window.

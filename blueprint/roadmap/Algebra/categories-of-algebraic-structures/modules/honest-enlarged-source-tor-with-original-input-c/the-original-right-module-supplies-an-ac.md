@@ -1,0 +1,3 @@
+# The original right module supplies an actual lifted input...
+
+The original right module supplies an actual lifted input to native Tor.

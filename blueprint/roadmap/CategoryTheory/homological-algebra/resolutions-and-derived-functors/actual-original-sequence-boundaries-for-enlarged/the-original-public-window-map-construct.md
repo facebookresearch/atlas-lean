@@ -1,0 +1,3 @@
+# The original public window-map constructor preserves...
+
+The original public window-map constructor preserves identity by the actual sequence functor.

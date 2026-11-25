@@ -1,0 +1,3 @@
+# Original input maps commute with the computed whole-output...
+
+Original input maps commute with the computed whole-output universe comparison.

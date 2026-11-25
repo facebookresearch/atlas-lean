@@ -1,0 +1,3 @@
+# Up on both factors is the actual inverse outer-linear...
+
+Up on both factors is the actual inverse outer-linear quotient map.

@@ -1,0 +1,3 @@
+# Package all legitimate additive scalar laws on actual...
+
+Package all legitimate additive scalar laws on actual original coefficient maps.

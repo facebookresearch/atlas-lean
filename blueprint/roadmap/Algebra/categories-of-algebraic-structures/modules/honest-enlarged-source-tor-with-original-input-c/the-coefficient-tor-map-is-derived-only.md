@@ -1,0 +1,3 @@
+# The coefficient Tor map is derived only in the sufficient...
+
+The coefficient Tor map is derived only in the sufficient source universe.

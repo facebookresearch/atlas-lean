@@ -1,0 +1,3 @@
+# The whole-output tensor comparison respects the actual...
+
+The whole-output tensor comparison respects the actual original coefficient map.

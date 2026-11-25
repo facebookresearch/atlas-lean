@@ -1,0 +1,3 @@
+# Actual coefficient morphisms commute with the...
+
+Actual coefficient morphisms commute with the original-world exact-window comparison.

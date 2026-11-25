@@ -1,0 +1,3 @@
+# The common-height tensor comparison uses the same actual...
+
+The common-height tensor comparison uses the same actual input and coefficient lifts.

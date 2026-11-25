@@ -8,6 +8,7 @@ Categories enriched in abelian groups and modules: preadditive, additive and lin
 - [Cokernels of split complementary projectors](cokernels-of-split-complementary-projectors/README.md)
 - [Essential epimorphisms and projective covers](essential-epimorphisms-and-projective-covers/README.md)
 - [Exact categories](exact-categories/README.md)
+- [Exact functors between abelian categories](exact-functors-between-abelian-categories/README.md)
 - [Exact pushout flag completion](exact-pushout-flag-completion/README.md)
 - [Functorial endomorphism rings and scalar algebras](functorial-endomorphism-rings-and-scalar-algebra/README.md)
 - [Functoriality of split projectors](functoriality-of-split-projectors/README.md)
@@ -16,3 +17,4 @@ Categories enriched in abelian groups and modules: preadditive, additive and lin
 - [Locally finite split-image coproduct inverses](locally-finite-split-image-coproduct-inverses/README.md)
 - [Objects killed by an integer](objects-killed-by-an-integer/README.md)
 - [Quillen exact functors](quillen-exact-functors/README.md)
+- [The canonical split exact structure](the-canonical-split-exact-structure/README.md)

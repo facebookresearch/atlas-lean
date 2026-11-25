@@ -1,0 +1,3 @@
+# Native derived coefficient maps retain original addition...
+
+Native derived coefficient maps retain original addition and hence integer actions.

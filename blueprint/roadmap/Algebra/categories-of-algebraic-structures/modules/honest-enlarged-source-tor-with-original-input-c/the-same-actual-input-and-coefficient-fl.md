@@ -1,0 +1,3 @@
+# The same actual input and coefficient flattening give the...
+
+The same actual input and coefficient flattening give the underived height comparison.

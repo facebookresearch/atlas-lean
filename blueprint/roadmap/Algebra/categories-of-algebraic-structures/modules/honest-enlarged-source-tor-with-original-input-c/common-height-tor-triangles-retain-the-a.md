@@ -1,0 +1,3 @@
+# Common-height Tor triangles retain the actual degree-zero...
+
+Common-height Tor triangles retain the actual degree-zero tensor endpoints.

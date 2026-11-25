@@ -1,0 +1,3 @@
+# Three actual comparison windows compose in their explicitly...
+
+Three actual comparison windows compose in their explicitly common source/output world.

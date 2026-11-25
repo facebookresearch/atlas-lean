@@ -1,0 +1,3 @@
+# The facade component is the actual sufficient-world...
+
+The facade component is the actual sufficient-world comparison followed by input flattening.

@@ -1,0 +1,3 @@
+# The comparison is natural in the actual original...
+
+The comparison is natural in the actual original coefficient morphism.

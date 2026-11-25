@@ -1,0 +1,3 @@
+# The actual input map is the native tensor functor applied...
+
+The actual input map is the native tensor functor applied to native input lifting.
