@@ -17,19 +17,21 @@ import Mathlib.Topology.ContinuousMap.Bounded.Normed
 import Mathlib.Tactic.Linarith
 
 /-!
-# Asymptotically equivalent cocompact metrics (OWR-1319-022)
+# Asymptotically equivalent cocompact metrics without a properness assumption
 
 The theorem `conjecture_refuted` gives complete, cocompact length metrics with ratio tending to
 one and unbounded difference. On the product of the line and its space of bounded continuous
 functions, pull the supremum metric back by the involution `(t, f) ↦ (t, bₜ - f)`, where
 `bₜ(r) = √|r + t| - √|r|`. The two distances differ by at most the square root of the horizontal
 distance. Equality holds between the origin and `(t, const (-t))` for every nonnegative `t`.
+The function-space factor has a noncompact closed unit ball, so this example is non-proper.
+The Engel-group example cited in the theorem docstring is a separate, proper example.
 
-Clause list from the source:
+The unrestricted bounded-difference question has the following hypotheses and conclusion.
 (a) `Γ` is a group (domain of the acting group).
 (b) `(M, d₁)` is a complete length space (metric axioms via `MetricSpace`,
     completeness via `CompleteSpace`, length via approximate midpoints).
-(c) `(M, d₂)` is a complete length space on the same underlying type `M`
+(c) `(M, d₂)` is a complete length space inducing the same topology on `M`
     (explicit metric axioms, explicit Cauchy completeness, approximate midpoints).
 (d) `Γ` acts on `M` (a `MulAction`).
 (e) the action is by isometries for `d₁` and for `d₂`.
@@ -92,13 +94,15 @@ structure OWR1319022Data (Γ : Type*) (M : Type*) [Group Γ] [MetricSpace M]
     ∃ R : ℝ, ∀ x y : M, R ≤ dist x y → |dist x y / d2 x y - 1| < ε
 
 /--
-**Bounded-difference conjecture for cocompact asymptotically equivalent metrics.** The statement
-that for every group $\Gamma$, every complete metric space $(M, d_1)$ on which $\Gamma$ acts, and
-every cocompact asymptotically equivalent length-space pair on $M$ with second metric $d_2$, there
-is a real number $C$ such that $|d_1(x, y) - d_2(x, y)| \le C$ for all $x, y \in M$.
+**Unrestricted bounded-difference conjecture for cocompact metrics.** The conjecture asserts that
+for every group $\Gamma$, every complete metric space $(M, d_1)$ on which $\Gamma$ acts, and every
+cocompact asymptotically equivalent length-space pair on $M$ with second metric $d_2$, there is a
+real number $C$ such that $|d_1(x, y) - d_2(x, y)| \le C$ for all $x, y \in M$.
+This variant allows non-proper metric spaces and imposes no topology on the acting group.
 
-Source: open question of [OWR-1319-022] (Geometric Group Theory, Hyperbolic Dynamics and
-Symplectic Geometry (2007), Oberwolfach Reports, DOI 10.4171/owr/2006/33, pp. 1991--2058).
+Source: For Margulis's question about proper left-invariant pseudometrics on groups, see
+Geometric Group Theory, Hyperbolic Dynamics and Symplectic Geometry, Oberwolfach Reports 3
+(2006), pp. 1991--2058, DOI 10.4171/owr/2006/33 [OWR-1319-022].
 -/
 def conjecture : Prop :=
   ∀ (Γ : Type*) (M : Type*) [Group Γ] [MetricSpace M] [CompleteSpace M]
