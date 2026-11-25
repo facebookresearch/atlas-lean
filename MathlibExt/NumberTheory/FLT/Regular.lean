@@ -25,6 +25,18 @@ Released under the Apache License, Version 2.0.
 The source is machine-generated proof code built around a proof-extraction
 framework; the statements and proofs are reused here with that machinery
 removed and the names restated in Mathlib style.
+
+`FltRegular/NumberTheory/*`, `FltRegular/MayAssume/*`, `FltRegular/CaseI/*`,
+`FltRegular/CaseII/*` and `FltRegular/FltRegular.lean`
+(https://github.com/leanprover-community/flt-regular), the formalization of
+Fermat's Last Theorem for regular primes that `P2M/Sol/S_flt_regular.lean`
+ports with proofs:
+Copyright (c) the flt-regular authors, as recorded in that repository.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Alex J. Best, Christopher Birkbeck, Riccardo Brasca, Eric Rodriguez Boidi,
+Ruben Van de Velde, Andrew Yang
+The source's NOTICE (item 2) and ATTRIBUTION.md (§3) record this credit and
+name the upstream files; that project's per-file headers are not reproduced there.
 -/
 
 module
@@ -69,6 +81,12 @@ public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 public import Mathlib.RingTheory.Unramified.Basic
 public import Mathlib.RingTheory.Unramified.Locus
 public import Mathlib.Tactic.NormNum.Prime
+import MathlibExt.NumberTheory.Cyclotomic.CoefficientDivisibility
+import MathlibExt.NumberTheory.Cyclotomic.TwoFactorIdealBound
+import MathlibExt.NumberTheory.PrimitiveFamily
+import MathlibExt.RingTheory.DedekindDomain.PrimeAvoidingGenerator
+import MathlibExt.RingTheory.DedekindDomain.UnramifiedIdealDescent
+import MathlibExt.RingTheory.DedekindDomain.UnramifiedMinpoly
 
 /-!
 # Kummer's theorem on Fermat's Last Theorem for regular primes
@@ -566,104 +584,6 @@ theorem fltIdeals_coprime (p5 : 5 ≤ p) {x y z : ℤ} (H : x ^ p + y ^ p = z ^ 
 
 end FltIdeals
 
-section CoeffDvd
-
-variable {L : Type*} [Field L] [CharZero L] [IsCyclotomicExtension {p} ℚ L]
-
-theorem dvd_last_coeff_cycl_integer [hp : Fact p.Prime] {ζ : 𝓞 L}
-    (hζ : IsPrimitiveRoot ζ p) {f : Fin p → ℤ} (hf : ∃ i, f i = 0) {m : ℤ}
-    (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) :
-    m ∣ f ⟨p.pred, pred_lt hp.out.ne_zero⟩ := by
-  obtain ⟨i, Hi⟩ := hf
-  have hlast :
-    (Fin.castOrderIso (succ_pred_prime hp.out)) (Fin.last p.pred) =
-    ⟨p.pred, pred_lt hp.out.ne_zero⟩ := Fin.ext rfl
-  let ζ' := (ζ : L)
-  have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
-  set b := hζ'.integralPowerBasis with hb
-  have hdim : b.dim = p.pred := by rw [hζ'.integralPowerBasis_dim, totient_prime hp.out,
-    pred_eq_sub_one]
-  by_cases H : i = ⟨p - 1, pred_lt hp.out.ne_zero⟩
-  · simp [H.symm, Hi]
-  have hi : ↑i < p - 1 := by
-    by_contra! habs
-    simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt i))] at H
-  obtain ⟨y, hy⟩ := hdiv
-  rw [← Equiv.sum_comp (Fin.castOrderIso (succ_pred_prime hp.out)).toEquiv,
-    Fin.sum_univ_castSucc] at hy
-  simp only [hlast, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
-  rw [hζ.pow_sub_one_eq hp.out.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
-    ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy
-  simp only [RelIso.coe_fn_toEquiv, Fin.val_castSucc, Fin.coe_orderIso_apply] at hy
-  conv_lhs at hy =>
-    congr; rfl; ext x
-    rw [smul_neg]
-    congr; congr; rfl; congr
-    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis_gen, ← hb]
-    rfl; rfl; congr; congr; rfl; congr
-    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis_gen, ← hb]
-  conv_lhs at hy =>
-    congr; rfl; ext x
-    rw [← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
-  rw [sum_sub_distrib] at hy
-  replace hy := congr_arg (b.basis.coord ((Fin.castOrderIso hdim.symm) ⟨i, hi⟩)) hy
-  rw [← b.basis.equivFun_symm_apply, ← b.basis.equivFun_symm_apply, LinearMap.map_sub,
-    b.basis.coord_equivFun_symm, b.basis.coord_equivFun_symm, ← smul_eq_mul,
-    Int.cast_smul_eq_zsmul] at hy
-  obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.castOrderIso hdim.symm) ⟨i, hi⟩) y m
-  rw [hn] at hy
-  simp only [Fin.castOrderIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta, Hi, zero_sub,
-    neg_eq_iff_eq_neg] at hy
-  rw [hy]
-  simp [dvd_neg]
-
-theorem dvd_coeff_cycl_integer [Fact p.Prime] {ζ : 𝓞 L}
-    (hζ : IsPrimitiveRoot ζ p) {f : Fin p → ℤ} (hf : ∃ i, f i = 0) {m : ℤ}
-    (hdiv : ↑m ∣ ∑ j, f j • ζ ^ (j : ℕ)) : ∀ j, m ∣ f j := by
-  have hp : p.Prime := Fact.out
-  let ζ' := (ζ : L)
-  have hζ' : IsPrimitiveRoot ζ' p := IsPrimitiveRoot.coe_submonoidClass_iff.2 hζ
-  have hlast : (Fin.castOrderIso (succ_pred_prime hp)) (Fin.last p.pred) =
-      ⟨p.pred, pred_lt hp.ne_zero⟩ := Fin.ext rfl
-  set b := hζ'.integralPowerBasis with hb
-  have hdim : b.dim = p.pred := by rw [hζ'.integralPowerBasis_dim, totient_prime hp,
-    pred_eq_sub_one]
-  have last_dvd := dvd_last_coeff_cycl_integer hζ hf hdiv
-  intro j
-  by_cases H : j = ⟨p - 1, pred_lt hp.ne_zero⟩
-  · simpa [H] using last_dvd
-  have hj : ↑j < p - 1 := by
-    by_contra! habs
-    simp [le_antisymm habs (le_pred_of_lt (Fin.is_lt j))] at H
-  obtain ⟨y, hy⟩ := hdiv
-  rw [← Equiv.sum_comp (Fin.castOrderIso (succ_pred_prime hp)).toEquiv, Fin.sum_univ_castSucc] at hy
-  simp only [hlast, RelIso.coe_fn_toEquiv, Fin.val_mk] at hy
-  rw [hζ.pow_sub_one_eq hp.one_lt, ← sum_neg_distrib, smul_sum, sum_range, ← sum_add_distrib,
-    ← (Fin.castOrderIso hdim).toEquiv.sum_comp] at hy
-  simp only [RelIso.coe_fn_toEquiv, Fin.val_castSucc, Fin.coe_orderIso_apply] at hy
-  conv_lhs at hy =>
-    congr; rfl; ext x
-    rw [smul_neg]
-    congr; congr; rfl; congr
-    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis_gen, ← hb]
-    rfl; rfl; congr; congr; rfl; congr
-    rw [show ζ = hζ'.toInteger from rfl, ← hζ'.integralPowerBasis_gen, ← hb]
-  conv_lhs at hy =>
-    congr; rfl; ext x
-    rw [← show ∀ y, _ = _ from fun y => congr_fun b.coe_basis y, ← sub_eq_add_neg]
-  rw [sum_sub_distrib] at hy
-  replace hy := congr_arg (b.basis.coord ((Fin.castOrderIso hdim.symm) ⟨j, hj⟩)) hy
-  rw [← b.basis.equivFun_symm_apply, ← b.basis.equivFun_symm_apply, LinearMap.map_sub,
-    b.basis.coord_equivFun_symm, b.basis.coord_equivFun_symm] at hy
-  simp only [Fin.castOrderIso_apply, Fin.cast_mk, Fin.castSucc_mk, Fin.eta,
-    Module.Basis.coord_apply, sub_eq_iff_eq_add] at hy
-  obtain ⟨n, hn⟩ := b.basis.dvd_coord_smul ((Fin.cast hdim.symm) ⟨j, hj⟩) y m
-  rw [hy, ← smul_eq_mul, Int.cast_smul_eq_zsmul, ← b.basis.coord_apply, ← Fin.cast_mk hdim.symm _
-    hj, hn]
-  exact dvd_add (dvd_mul_right _ _) last_dvd
-
-end CoeffDvd
-
 section MoreLemmas
 
 variable [hpri : Fact p.Prime] {K : Type*} [Field K] [CharZero K]
@@ -1061,7 +981,7 @@ theorem aux0k₁ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
   haveI : NeZero p := ⟨hpri.ne_zero⟩
   haveI : Fact p.Prime := ⟨hpri⟩
   haveI : IsCyclotomicExtension {p} ℚ K := CyclotomicField.isCyclotomicExtension p ℚ
-  simpa [f0k₁] using dvd_coeff_cycl_integer hζ (auxf0k₁ hp5 b) key ⟨1, hpri.one_lt⟩
+  simpa [f0k₁] using hζ.int_dvd_coeff_of_dvd_sum (auxf0k₁ hp5 b) key ⟨1, hpri.one_lt⟩
 
 include hpri in
 
@@ -1091,7 +1011,7 @@ theorem aux0k₂ {a b : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot ζ 
   haveI : NeZero p := ⟨hpri.ne_zero⟩
   haveI : Fact p.Prime := ⟨hpri⟩
   haveI : IsCyclotomicExtension {p} ℚ K := CyclotomicField.isCyclotomicExtension p ℚ
-  simpa [f0k₂] using dvd_coeff_cycl_integer hζ (auxf0k₂ hp5 a b) key ⟨0, hpri.pos⟩
+  simpa [f0k₂] using hζ.int_dvd_coeff_of_dvd_sum (auxf0k₂ hp5 a b) key ⟨0, hpri.pos⟩
 
 include hpri in
 
@@ -1132,7 +1052,7 @@ theorem aux1k₂ {a b c : ℤ} {ζ : R} (hp5 : 5 ≤ p) (hζ : IsPrimitiveRoot �
   haveI : NeZero p := ⟨hpri.ne_zero⟩
   haveI : Fact p.Prime := ⟨hpri⟩
   haveI : IsCyclotomicExtension {p} ℚ K := CyclotomicField.isCyclotomicExtension p ℚ
-  simpa [f1k₂] using dvd_coeff_cycl_integer hζ (auxf1k₂ hpri a) key ⟨0, hpri.pos⟩
+  simpa [f1k₂] using hζ.int_dvd_coeff_of_dvd_sum (auxf1k₂ hpri a) key ⟨0, hpri.pos⟩
 
 end FltRegular.CaseI
 
@@ -1390,7 +1310,7 @@ theorem caseI_easier {a b c : ℤ} (hreg : IsRegularPrime p) (hp5 : 5 ≤ p)
     ring
   rw [sum_range] at key
   refine caseI (Dvd.dvd.mul_right (Dvd.dvd.mul_right ?_ _) _)
-  exact dvd_coeff_cycl_integer hζ (auxf hp5 a b k₁ k₂) key ⟨0, hpri.out.pos⟩
+  exact hζ.int_dvd_coeff_of_dvd_sum (auxf hp5 a b k₁ k₂) key ⟨0, hpri.out.pos⟩
 
 end FltRegular
 
@@ -1498,7 +1418,7 @@ lemma exists_dvd_int (n : CyclotomicIntegers p) (hn : n ≠ 0) :
   have : IsCyclotomicExtension {p} ℚ (CyclotomicField p ℚ) :=
     CyclotomicField.instIsCyclotomicExtensionSingletonNatSetOfCharZero p ℚ
   have : IsGalois ℚ (CyclotomicField p ℚ) := IsCyclotomicExtension.isGalois {p} _ _
-  convert RingOfIntegers.dvd_norm ℚ (equiv p n) using 1
+  convert NumberField.RingOfIntegers.dvd_norm ℚ (equiv p n) using 1
   ext1
   exact DFunLike.congr_arg (algebraMap ℚ _) (Algebra.coe_norm_int (equiv p n))
 
@@ -2018,9 +1938,10 @@ lemma isTors' [IsGalois k K] : Module.IsTorsionBySet ℤ[X]
       (fun i => ((QuotientGroup.mk
         (((Units.mapEquiv (galRestrict (𝓞 k) k K (𝓞 K) σ).toRingEquiv) ^ i) x)) :
         RelativeUnits k K)), ← QuotientGroup.mk_prod, ofMul_eq_zero, QuotientGroup.eq_one_iff]
-  use Units.map (RingOfIntegers.norm k) x
+  use Units.map (NumberField.RingOfIntegers.norm k) x
   ext
-  simp only [Units.coe_map, MonoidHom.coe_coe, RingOfIntegers.coe_algebraMap_norm, Units.coe_prod,
+  simp only [Units.coe_map, MonoidHom.coe_coe,
+    NumberField.RingOfIntegers.coe_algebraMap_norm, Units.coe_prod,
     Algebra.norm_eq_prod_automorphisms]
   rw [← hKL, ← IsGalois.card_aut_eq_finrank,
     ← orderOf_eq_card_of_forall_mem_zpowers hσ, ← Fin.prod_univ_eq_prod_range,
@@ -2105,29 +2026,6 @@ lemma unit_to_U_map (x : (𝓞 k)ˣ) : mkG (Units.map (algebraMap (𝓞 k) (𝓞
 
 variable [NumberField k]
 
-open Finset in
-lemma exists_pow_smul_eq_and_not_dvd
-    {ι : Type*} [Finite ι] (f : ι → ℤ) (hf : f ≠ 0) (p : ℕ) (hp : p ≠ 1) :
-    ∃ (n : ℕ) (f' : ι → ℤ), (f = p ^ n • f') ∧ ∃ i, ¬ ↑p ∣ f' i := by
-  cases nonempty_fintype ι
-  have : (univ.filter (fun i ↦ f i ≠ 0)).Nonempty := by
-    by_contra h
-    exact hf (funext <| by simpa [filter_eq_empty_iff] using h)
-  obtain ⟨i, hfi, hi⟩ := exists_min_image _ (padicValInt p ∘ f) this
-  replace hfi : f i ≠ 0 := by simpa using hfi
-  let n := padicValInt p (f i)
-  have : ∀ j, (p : ℤ) ^ n ∣ f j := fun j ↦ if h : f j = 0 then h ▸ dvd_zero _ else
-    (pow_dvd_pow _ (hi _ (mem_filter.mpr ⟨mem_univ j, h⟩))).trans (padicValInt_dvd _)
-  simp_rw [← Nat.cast_pow] at this
-  choose f' hf' using this
-  use n, f', funext hf', i
-  intro hi
-  have : (p : ℤ) ^ (n + 1) ∣ f i := by
-    rw [hf', pow_succ, Nat.cast_pow]
-    exact _root_.mul_dvd_mul_left _ hi
-  simp only [padicValInt_dvd_iff_of_ne_one hp, hfi, false_or] at this
-  omega
-
 include hp in
 lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M)
     (hk : ∀ (ε : M) (n : ℕ), ε ^ (p ^ n) = 1 → ∃ i, ν ^ i = ε)
@@ -2137,7 +2035,7 @@ lemma lh_pow_free_aux {M} [CommGroup M] [Module.Finite ℤ (Additive M)] (ν : M
   obtain ⟨f, hf, hf'⟩ := Fintype.not_linearIndependent_iff.mp
     (mt (LinearIndependent.fintype_card_le_finrank (R := ℤ) (b := η))
       ((hr.trans_eq (Fintype.card_fin r).symm).not_ge))
-  obtain ⟨n, f', hf', i, hi⟩ := exists_pow_smul_eq_and_not_dvd f
+  obtain ⟨n, f', hf', i, hi⟩ := Int.exists_pow_smul_eq_and_not_dvd f
     (Function.ne_iff.mpr hf') p hp.ne_one
   simp_rw [hf', Pi.smul_apply, smul_assoc, ← smul_sum] at hf
   obtain ⟨a, ha⟩ := hk _ _ hf
@@ -2412,7 +2310,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
   · exact Hilbert92_aux0 p hKL σ h ν hν H
   simp only [ne_eq, not_forall, not_not] at H
   obtain ⟨E, hE⟩ := H
-  let NE := Units.map (RingOfIntegers.norm k) E
+  let NE := Units.map (NumberField.RingOfIntegers.norm k) E
   have hNE : (NE : k) = Algebra.norm k (E : K) := rfl
   obtain ⟨S, hS⟩ := Hilbert91 p (K := K) (k := k) hp hKL σ hσ
   have NE_p_pow : (Units.map (algebraMap (𝓞 k) (𝓞 K)).toMonoidHom NE) = E ^ p := by
@@ -2427,7 +2325,7 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
       Nat.succ_sub_succ_eq_sub, tsub_zero, dvd_refl]
   let H := unitlifts p hp hKL σ hσ S
   let N : Fin (r + 1) → Additive (𝓞 k)ˣ :=
-    fun e => Additive.ofMul (Units.map (RingOfIntegers.norm k) (Additive.toMul (H e)))
+    fun e => Additive.ofMul (Units.map (NumberField.RingOfIntegers.norm k) (Additive.toMul (H e)))
   let η : Fin (r + 2) → Additive (𝓞 k)ˣ := Fin.snoc N (Additive.ofMul NE)
   obtain ⟨a, ι, i, ha, ha', ha''⟩ := lh_pow_free p hp ν (k := k) hν' η
   let H2 : Fin (r + 2) → Additive (𝓞 K)ˣ := Fin.snoc H (Additive.ofMul E)
@@ -2440,10 +2338,11 @@ lemma almostHilbert92 (hpodd : p ≠ 2) :
     intro i
     induction i using Fin.lastCases with
     | last =>
-      simp only [Fin.snoc_last, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE, η, H2]
+      simp only [Fin.snoc_last, toMul_ofMul, Units.coe_map,
+        NumberField.RingOfIntegers.coe_norm, NE, η, H2]
     | cast i =>
-      simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map, RingOfIntegers.coe_norm, NE,
-        η, H2, N, H]
+      simp only [Fin.snoc_castSucc, toMul_ofMul, Units.coe_map,
+        NumberField.RingOfIntegers.coe_norm, NE, η, H2, N, H]
   · intro ε hε
     refine hS.corollary p hp _ _ (finrank_G p hp hKL σ hσ) _ (ι ∘ Fin.castSucc) ?_ (mkG ε) ?_
     · by_contra hε'
@@ -2529,188 +2428,6 @@ end FltRegular
 
 end Port_FLT_Deep_Regular_Hilbert92_lean
 
-section Port_FLT_Deep_Regular_Unramified_lean
-
-namespace FltRegular
-open UniqueFactorizationMonoid Ideal
-
-attribute [local instance] FractionRing.liftAlgebra
-
-variable (R K L S : Type*) [CommRing R] [CommRing S] [Algebra R S] [Field K] [Field L]
-    [IsDedekindDomain R] [Algebra R K] [IsFractionRing R K] [Algebra S L]
-    [Algebra K L] [Algebra R L] [IsScalarTower R S L] [IsScalarTower R K L]
-    [IsIntegralClosure S R L] [FiniteDimensional K L]
-
-variable {R} {S}
-
-lemma prod_primesOverFinset_of_unramified [Algebra.Unramified R S] [IsDedekindDomain S]
-    [Module.IsTorsionFree R S] (p : Ideal R) [p.IsPrime] (hp : p ≠ ⊥) :
-    ∏ P ∈ IsDedekindDomain.primesOverFinset p S, P = p.map (algebraMap R S) := by
-  classical
-  have hpbot' : p.map (algebraMap R S) ≠ ⊥ := (Ideal.map_eq_bot_iff_of_injective
-      (Module.isTorsionFree_iff_algebraMap_injective.mp inferInstance)).not.mpr hp
-  rw [← associated_iff_eq.mp (factors_pow_count_prod hpbot')]
-  apply Finset.prod_congr rfl
-  intros P hP
-  convert (pow_one _).symm
-  have : p.IsMaximal := Ring.DimensionLEOne.maximalOfPrime hp ‹_›
-  rw [← Finset.mem_coe, IsDedekindDomain.coe_primesOverFinset hp S] at hP
-  rw [← Ideal.IsDedekindDomain.ramificationIdx'_eq_factors_count hpbot' hP.1
-    (ne_bot_of_mem_primesOver hp hP)]
-  letI : P.IsPrime := hP.1
-  letI : P.LiesOver p := hP.2
-  rw [Ideal.ramificationIdx'_eq_ramificationIdx (p := p) (q := P) hp]
-  exact Ideal.ramificationIdx_eq_one_of_isUnramifiedAt (R := R) (p := P)
-
-lemma comap_map_eq_of_unramified [IsGalois K L] [Algebra.Unramified R S] (I : Ideal S)
-    (hI : ∀ σ : L ≃ₐ[K] L, I.comap (galRestrict R K L S σ) = I) :
-    (I.comap (algebraMap R S)).map (algebraMap R S) = I := by
-  classical
-  have : IsDomain S :=
-    (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
-  have := IsIntegralClosure.isDedekindDomain R K L S
-  have hRS : Function.Injective (algebraMap R S) := by
-    refine Function.Injective.of_comp (f := algebraMap S L) ?_
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
-  by_cases hIbot : I = ⊥
-  · rw [hIbot, Ideal.comap_bot_of_injective _ hRS, Ideal.map_bot]
-  haveI : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
-  have hIbot' : I.comap (algebraMap R S) ≠ ⊥ := mt Ideal.eq_bot_of_comap_eq_bot hIbot
-  have : ∀ p, (p.IsPrime ∧ I.comap (algebraMap R S) ≤ p) →
-      ∃ P ≥ I, P ∈ primesOver p S := by
-    intro p ⟨hp₁, hp₂⟩
-    obtain ⟨P, hP1, hP2, hP3⟩ := Ideal.exists_ideal_over_prime_of_isIntegral _ _ hp₂
-    exact ⟨P, hP1, hP2, ⟨hP3.symm⟩⟩
-  choose 𝔓 h𝔓 h𝔓' using this
-  suffices I = ∏ p ∈ (factors (I.comap <| algebraMap R S)).toFinset,
-    (p.map (algebraMap R S)) ^ (if h : _ then (factors I).count (𝔓 p h) else 0) by
-    simp_rw [← Ideal.mapHom_apply, ← map_pow, ← map_prod, Ideal.mapHom_apply] at this
-    rw [this, Ideal.map_comap_map]
-  conv_lhs => rw [← associated_iff_eq.mp (factors_pow_count_prod hIbot)]
-  rw [← Finset.prod_fiberwise_of_maps_to
-    (g := (Ideal.comap (algebraMap R S) : Ideal S → Ideal R))
-    (t := (factors (I.comap (algebraMap R S))).toFinset)]
-  · apply Finset.prod_congr rfl
-    intros p hp
-    simp only [factors_eq_normalizedFactors, Multiset.mem_toFinset,
-      Ideal.mem_normalizedFactors_iff hIbot'] at hp
-    have hpbot : p ≠ ⊥ := fun hp' ↦ hIbot' (eq_bot_iff.mpr (hp.2.trans_eq hp'))
-    have hpbot' : p.map (algebraMap R S) ≠ ⊥ := (Ideal.map_eq_bot_iff_of_injective hRS).not.mpr
-      hpbot
-    have := hp.1
-    rw [← prod_primesOverFinset_of_unramified p hpbot, ← Finset.prod_pow]
-    have : p.IsMaximal := Ring.DimensionLEOne.maximalOfPrime hpbot this
-    apply Finset.prod_congr
-    · ext P
-      rw [factors_eq_normalizedFactors, Finset.mem_filter, Multiset.mem_toFinset,
-        Ideal.mem_normalizedFactors_iff hIbot, ← Finset.mem_coe,
-          IsDedekindDomain.coe_primesOverFinset hpbot S]
-      refine ⟨fun H ↦ ⟨H.1.1, ⟨H.2.symm⟩⟩, fun H ↦ ⟨⟨H.1, ?_⟩, ?_⟩⟩
-      · have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) H
-        rw [← hσ, ← hI σ]
-        exact Ideal.comap_mono (h𝔓 _ hp)
-      · have := H.2.1
-        rw [Ideal.under_def] at this
-        exact this.symm
-    · intro P hP
-      rw [← Finset.mem_coe, IsDedekindDomain.coe_primesOverFinset hpbot S] at hP
-      congr
-      rw [dif_pos hp, ← Nat.cast_inj (R := ENat), ← normalize_eq P,
-        factors_eq_normalizedFactors,
-        ← emultiplicity_eq_count_normalizedFactors
-          (prime_of_mem_primesOver hpbot hP).irreducible hIbot,
-        ← normalize_eq (𝔓 p hp), ← emultiplicity_eq_count_normalizedFactors
-          (prime_of_mem_primesOver hpbot <| h𝔓' p hp).irreducible hIbot,
-          emultiplicity_eq_emultiplicity_iff]
-      intro n
-      have ⟨σ, hσ⟩ := exists_comap_galRestrict_eq R K L S (h𝔓' _ hp) hP
-      rw [Ideal.dvd_iff_le, Ideal.dvd_iff_le]
-      conv_lhs => rw [← hI σ, ← hσ,
-        Ideal.comap_le_iff_le_map _ (AlgEquiv.bijective _), Ideal.map_pow,
-        Ideal.map_comap_of_surjective _ (AlgEquiv.surjective _)]
-  · intro P hP
-    simp only [factors_eq_normalizedFactors, Multiset.mem_toFinset,
-      Ideal.mem_normalizedFactors_iff hIbot] at hP
-    simp only [factors_eq_normalizedFactors, Multiset.mem_toFinset,
-      Ideal.mem_normalizedFactors_iff hIbot']
-    exact ⟨hP.1.comap _, Ideal.comap_mono hP.2⟩
-
-section KummerDedekind
-
-end KummerDedekind
-open scoped FltRegularPort.Internal.FltRegular.CyclotomicIntegers FltRegularPort.Internal.FltRegular
-
-open nonZeroDivisors Polynomial
-
-attribute [local instance] Ideal.Quotient.field in
-lemma isUnramifiedAt_of_Separable_minpoly' [Algebra.IsSeparable K L]
-    (P : Ideal S) [hP : P.IsPrime] (hPbot : P ≠ ⊥) (x : S)
-    (hx' : Algebra.adjoin K {algebraMap S L x} = ⊤)
-    (h : Polynomial.Separable ((minpoly R x).map (Ideal.Quotient.mk (P.under R)))) :
-    Algebra.IsUnramifiedAt R P := by
-  classical
-  have : IsDomain S :=
-    (IsIntegralClosure.equiv R S L (integralClosure R L)).toMulEquiv.isDomain (integralClosure R L)
-  have hRS : Function.Injective (algebraMap R S) := by
-    refine Function.Injective.of_comp (f := algebraMap S L) ?_
-    rw [← RingHom.coe_comp, ← IsScalarTower.algebraMap_eq, IsScalarTower.algebraMap_eq R K L]
-    exact (algebraMap K L).injective.comp (IsFractionRing.injective _ _)
-  have := Module.isTorsionFree_iff_algebraMap_injective.mpr hRS
-  have := IsIntegralClosure.isNoetherian R K L S
-  have := IsIntegralClosure.isDedekindDomain R K L S
-  have := IsIntegralClosure.isFractionRing_of_finite_extension R K L S
-  haveI : Algebra.IsIntegral R S := IsIntegralClosure.isIntegral_algebra R L
-  haveI : Module.Finite R S := IsIntegralClosure.finite R K L S
-  have := aeval_derivative_mem_differentIdeal R K L x hx'
-  have H : RingHom.comp (algebraMap (FractionRing R) (FractionRing S))
-    (FractionRing.algEquiv R K).symm.toRingEquiv =
-      RingHom.comp (FractionRing.algEquiv S L).symm.toRingEquiv (algebraMap K L) := by
-    apply IsLocalization.ringHom_ext R⁰
-    ext
-    simp only [RingHom.coe_comp, RingHom.coe_coe,
-      AlgEquiv.coe_ringEquiv, Function.comp_apply, AlgEquiv.commutes,
-      ← IsScalarTower.algebraMap_apply]
-    rw [IsScalarTower.algebraMap_apply R S L, AlgEquiv.commutes, ← IsScalarTower.algebraMap_apply]
-  have : Algebra.IsSeparable (FractionRing R) (FractionRing S) :=
-    Algebra.IsSeparable.of_equiv_equiv _ _ H
-  rw [← not_dvd_differentIdeal_iff (A := R) (B := S) (P := P)]
-  intro hPdiv
-  have hxP : aeval x (derivative (minpoly R x)) ∈ P :=
-    (Ideal.dvd_iff_le.mp hPdiv) (aeval_derivative_mem_differentIdeal R K L _ hx')
-  rw [← Ideal.Quotient.eq_zero_iff_mem, ← Ideal.Quotient.algebraMap_eq] at hxP
-  let p : Ideal R := P.under R
-  haveI : p.IsPrime := inferInstance
-  have hpbot : p ≠ ⊥ := Ideal.under_ne_bot R hPbot
-  haveI : p.IsMaximal := (show p.IsPrime from inferInstance).isMaximal hpbot
-  haveI : P.IsMaximal := (show P.IsPrime from inferInstance).isMaximal hPbot
-  letI : IsScalarTower S (S ⧸ P) (S ⧸ P) := IsScalarTower.right
-  have hle : p ≤ P.comap (algebraMap R S) := by
-    change P.under R ≤ P.comap (algebraMap R S)
-    rw [Ideal.under_def]
-  have := (separable_map (Ideal.quotientMap P (algebraMap R S) hle)).mpr h
-  rw [Polynomial.map_map, Ideal.quotientMap_comp_mk] at this
-  obtain ⟨a, b, e⟩ := this
-  apply_fun (aeval (Ideal.Quotient.mk P x)) at e
-  simp_rw [← Ideal.Quotient.algebraMap_eq, ← Polynomial.map_map, derivative_map, map_add,
-    _root_.map_mul, aeval_map_algebraMap, aeval_algebraMap_apply, minpoly.aeval, hxP, map_zero,
-    mul_zero, zero_add, map_one, zero_ne_one] at e
-
-lemma isUnramifiedAt_of_Separable_minpoly [Algebra.IsSeparable K L]
-    (P : Ideal S) [hP : P.IsPrime] (hPbot : P ≠ ⊥) (x : L) (hx : IsIntegral R x)
-    (hx' : Algebra.adjoin K {x} = ⊤)
-    (h : Polynomial.Separable ((minpoly R x).map (Ideal.Quotient.mk (P.under R)))) :
-    Algebra.IsUnramifiedAt R P := by
-  rw [← IsIntegralClosure.algebraMap_mk' S x hx, minpoly.algebraMap_eq
-    (IsIntegralClosure.algebraMap_injective S R L)] at h
-  exact isUnramifiedAt_of_Separable_minpoly' K L P hPbot (IsIntegralClosure.mk' S x hx)
-    (by rwa [IsIntegralClosure.algebraMap_mk']) h
-
-end FltRegular
-open scoped FltRegularPort.Internal.FltRegular.CyclotomicIntegers FltRegularPort.Internal.FltRegular
-
-end Port_FLT_Deep_Regular_Unramified_lean
 open scoped FltRegularPort.Internal.FltRegular.CyclotomicIntegers FltRegularPort.Internal.FltRegular
 
 section Port_FLT_Deep_Regular_Hilbert94_lean
@@ -2769,7 +2486,7 @@ theorem exists_not_isPrincipal_and_isPrincipal_map_aux
     (B := B) hσ hη
   haveI : IsDomain B :=
     (IsIntegralClosure.equiv A B L (integralClosure A L)).toMulEquiv.isDomain (integralClosure A L)
-  have hβ' := comap_map_eq_of_unramified K L _
+  have hβ' := Ideal.map_comap_eq_of_unramified_of_galois_invariant A K L B _
     (comap_span_galRestrict_eq_of_cyclic σ hσ (A := A) (B := B) β η hβ)
   refine ⟨(Ideal.span {β}).comap (algebraMap A B), ?_, ?_⟩
   · rintro ⟨⟨γ, hγ : _ = Ideal.span _⟩⟩
@@ -2944,7 +2661,7 @@ lemma natDegree_poly : natDegree (poly hp hζ u hcong) = p := by
 lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
     (X - C (1 / (ζ - 1))) ^ p + C (u / (ζ - 1) ^ p : K) := by
   ext i
-  have := congr_arg (fun P : (𝓞 K)[X] ↦ (↑(coeff P i) : K)) (poly_spec hp hζ u hcong)
+  have := congr_arg (fun P : (𝓞 K)[X] ↦ (↑(P.coeff i) : K)) (poly_spec hp hζ u hcong)
   change _ = algebraMap (𝓞 K) K _ at this
   rw [← coeff_map] at this
   replace this : (ζ - 1) ^ p * ↑((poly hp hζ u hcong).coeff i) =
@@ -2968,7 +2685,7 @@ lemma map_poly : (poly hp hζ u hcong).map (algebraMap (𝓞 K) K) =
       all_goals rw [hcoe]
   apply mul_right_injective₀ (pow_ne_zero p (hζ.sub_one_ne_zero hpri.out.one_lt))
   simp only [coeff_map, one_div, coeff_add, this, mul_add]
-  simp_rw [← smul_eq_mul (α := K), ← coeff_smul]
+  simp_rw [← smul_eq_mul (α := K), ← AddMonoidAlgebra.coeff_smul_apply]
   rw [smul_C, smul_eq_mul, ← _root_.smul_pow, ← mul_div_assoc, mul_div_cancel_left₀, smul_sub,
     smul_C, smul_eq_mul, mul_inv_cancel₀, map_one, Algebra.smul_def, ← C_eq_algebraMap, map_sub,
     map_one]
@@ -3219,7 +2936,8 @@ lemma isUnramified (L) [Field L] [Algebra K L] [IsSplittingField K L (X ^ p - C 
       haveI : Algebra.FormallyUnramified K L :=
         Algebra.FormallyUnramified.of_isSeparable K L
       exact .comp (𝓞 K) K L
-    · refine isUnramifiedAt_of_Separable_minpoly K L P hPbot α (IsIntegral.tower_top α.prop) hα ?_
+    · refine Algebra.isUnramifiedAt_of_separable_minpoly_of_isIntegral K L P hPbot α
+        (IsIntegral.tower_top α.prop) hα ?_
       rw [minpoly_polyRoot' hp hζ u hcong hu]
       have hPbot' : P.under (𝓞 K) ≠ ⊥ := Ideal.under_ne_bot (𝓞 K) hPbot
       haveI : (P.under (𝓞 K)).IsMaximal :=
@@ -3319,7 +3037,7 @@ theorem norm_add_one_smul_of_isUnit {K : Type*} [Field K] [NumberField K] {p : �
     apply (Int.cast_injective (α := ℚ)).comp Nat.cast_injective
     simp only [Int.cast_abs, Function.comp_apply, Nat.cast_one, Int.cast_one, ← Int.abs_eq_natAbs,
       Algebra.coe_norm_int, ← NumberField.isUnit_iff_norm.mp hx,
-      RingOfIntegers.coe_norm]
+      NumberField.RingOfIntegers.coe_norm]
   have : Algebra.norm ℤ (1 + p • x) ≠ -1 := by
     intro e
     apply hp
@@ -3470,90 +3188,6 @@ theorem isPrincipal_of_isPrincipal_pow_of_Coprime'
   rw [orderOf_dvd_iff_pow_eq_one, ← map_pow, ClassGroup.mk_eq_one_iff]
   simp only [Units.val_pow_eq_pow_val, IsUnit.val_unit', hI]
 
-open FractionalIdeal in
-lemma exists_not_dvd_spanSingleton_eq {R : Type*} [CommRing R] [IsDedekindDomain R]
-    {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
-    {x : R} (hx : Prime x) (I J : Ideal R)
-    (hI : ¬ (Ideal.span <| singleton x) ∣ I) (hJ : ¬ (Ideal.span <| singleton x) ∣ J)
-    (h : Submodule.IsPrincipal ((I / J : FractionalIdeal R⁰ K) : Submodule R K)) :
-    ∃ a b : R,
-      ¬(x ∣ a) ∧ ¬(x ∣ b) ∧
-        spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
-  by_contra H1
-  have hI' : (I : FractionalIdeal R⁰ K) ≠ 0 := by
-    rw [← coeIdeal_bot, Ne, coeIdeal_inj]
-    rintro rfl
-    exact hI (dvd_zero _)
-  have hJ' : (J : FractionalIdeal R⁰ K) ≠ 0 := by
-    rw [← coeIdeal_bot, Ne, coeIdeal_inj]
-    rintro rfl
-    exact hJ (dvd_zero _)
-  have : ∀ n : ℕ, (1 ≤ n) → ¬∃ a b : R, ¬(x ^ n ∣ a) ∧ ¬(x ^ n ∣ b) ∧
-    spanSingleton R⁰ (algebraMap R K a / algebraMap R K b) = I / J := by
-    intro n hn
-    induction n, hn using Nat.le_induction with
-    | base =>
-        simp_rw [pow_one]
-        exact H1
-    | succ n' hn' IH =>
-        rintro ⟨a, b, ha, hb, e⟩
-        have e₀ := e
-        rw [div_eq_mul_inv, ← spanSingleton_mul_spanSingleton,
-          ← one_div_spanSingleton, ← mul_div_assoc, mul_one, div_eq_iff,
-          ← mul_div_right_comm, eq_div_iff hJ', ← coeIdeal_span_singleton,
-          ← coeIdeal_span_singleton, ← coeIdeal_mul, ← coeIdeal_mul, coeIdeal_inj] at e
-        on_goal 2 =>
-          rw [Ne, spanSingleton_eq_zero_iff, ← (algebraMap R K).map_zero,
-            (IsFractionRing.injective R K).eq_iff]
-          rintro rfl
-          apply hb (dvd_zero _)
-        by_cases h : x ^ n' ∣ a
-        · have ha' : x ∣ a := (dvd_pow_self _ (Nat.one_le_iff_ne_zero.mp hn')).trans h
-          have hb' : x ∣ b := by
-            have : gcd (Ideal.span <| singleton x) I = 1 := by
-              rwa [Irreducible.gcd_eq_one_iff]
-              · rwa [irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
-                · exact hx.ne_zero
-                · rw [Ne, Ideal.span_singleton_eq_bot]
-                  exact hx.ne_zero
-            rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton] at ha' ⊢
-            replace h := ha'.trans (dvd_mul_right _ J)
-            rwa [e, ← dvd_gcd_mul_iff_dvd_mul, this, one_mul] at h
-          obtain ⟨a', rfl⟩ := ha'
-          obtain ⟨b', rfl⟩ := hb'
-          rw [pow_succ', mul_dvd_mul_iff_left hx.ne_zero] at ha hb
-          rw [_root_.map_mul, _root_.map_mul, mul_div_mul_left] at e₀
-          · exact IH ⟨a', b', ha, hb, e₀⟩
-          · rw [Ne, ← (algebraMap R K).map_zero, (IsFractionRing.injective R K).eq_iff]
-            exact hx.ne_zero
-        · refine IH ⟨a, b, h, ?_, e₀⟩
-          intro hb
-          apply h
-          rw [← Ideal.mem_span_singleton, ← Ideal.dvd_span_singleton] at hb ⊢
-          replace hb := hb.trans (dvd_mul_left _ I)
-          have : gcd (Ideal.span <| singleton <| x ^ n') J = 1 := by
-            rwa [← Ideal.isCoprime_iff_gcd, ← Ideal.span_singleton_pow,
-              IsCoprime.pow_left_iff, Ideal.isCoprime_iff_gcd, Irreducible.gcd_eq_one_iff]
-            · rwa [irreducible_iff_prime, Ideal.prime_iff_isPrime, Ideal.span_singleton_prime]
-              · exact hx.ne_zero
-              · rw [Ne, Ideal.span_singleton_eq_bot]
-                exact hx.ne_zero
-          rwa [← e, mul_comm, ← dvd_gcd_mul_iff_dvd_mul, this, one_mul] at hb
-  rw [isPrincipal_iff] at h
-  obtain ⟨a, ha⟩ := h
-  obtain ⟨s, t, rfl⟩ := IsLocalization.exists_mk'_eq R⁰ a
-  by_cases h : s = 0
-  · rw [div_eq_iff hJ', h, IsLocalization.mk'_zero, spanSingleton_zero, zero_mul] at ha
-    exact hI' ha
-  obtain ⟨n, hn⟩ := FiniteMultiplicity.of_not_isUnit hx.not_unit h
-  obtain ⟨m, hm⟩ :=
-    FiniteMultiplicity.of_not_isUnit hx.not_unit (nonZeroDivisors.ne_zero t.prop)
-  rw [IsFractionRing.mk'_eq_div] at ha
-  refine this (n + m + 1) (Nat.le_add_left 1 (n + m))
-    ⟨s, t, (fun hs ↦ ?_), (fun ht ↦ ?_), ha.symm⟩
-  · exact hn (dvd_trans (pow_dvd_pow _ (by linarith)) hs)
-  · exact hm (dvd_trans (pow_dvd_pow _ (Nat.le_add_left _ _)) ht)
-
 open UniqueFactorizationMonoid in
 
 theorem pow_dvd_pow_iff_dvd {α : Type*} [CommMonoidWithZero α] [IsCancelMulZero α]
@@ -3639,20 +3273,6 @@ lemma m_ne_zero : 𝔪 ≠ 0 := by
   exact hy (dvd_zero _)
 
 variable [hpri : Fact p.Prime]
-
-lemma coprime_c_aux (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) (hη : η₁ ≠ η₂) :
-    (𝔦 η₁) ⊔ (𝔦 η₂) ∣ 𝔪 * 𝔭 := by
-  have : 𝔭 = Ideal.span (singleton <| (η₁ : 𝓞 K) - η₂) := by
-    rw [Ideal.span_singleton_eq_span_singleton]
-    exact hζ.toInteger_isPrimitiveRoot.nthRootsFinset_pairwise_associated_sub_one_sub_of_prime
-      hpri.out (Finset.mem_coe.mpr η₁.prop) (Finset.mem_coe.mpr η₂.prop)
-      (Subtype.coe_injective.ne hη)
-  rw [(gcd_mul_right' 𝔭 𝔵 𝔶).symm.dvd_iff_dvd_right, dvd_gcd_iff]
-  simp_rw [this, Ideal.span_singleton_mul_span_singleton, Ideal.dvd_span_singleton,
-    Ideal.mem_span_singleton_sup, Ideal.mem_span_singleton]
-  refine ⟨⟨-η₂, _, ⟨η₁, rfl⟩, ?_⟩, ⟨1, _, ⟨-1, rfl⟩, ?_⟩⟩
-  · ring
-  · ring
 
 include hp hζ e hz in
 omit [NumberField K] in
@@ -3804,7 +3424,8 @@ lemma coprime_c (η₁ η₂ : nthRootsFinset p (1 : 𝓞 K)) (hη : η₁ ≠ �
   rw [Ideal.isCoprime_iff_codisjoint, codisjoint_iff_le_sup, ← Ideal.dvd_iff_le]
   rw [← mul_dvd_mul_iff_left (m_ne_zero hζ hy), ← mul_dvd_mul_iff_right (p_ne_zero hζ)]
   rw [Ideal.mul_sup, Ideal.sup_mul, m_mul_c_mul_p, m_mul_c_mul_p, Ideal.mul_top]
-  exact coprime_c_aux hζ η₁ η₂ hη
+  exact hζ.toInteger_isPrimitiveRoot.span_add_mul_sup_dvd_gcd_mul_sub_one hpri.out
+    η₁.prop η₂.prop (Subtype.coe_injective.ne hη)
 
 include hy in
 lemma gcd_m_p_pow_eq_one : gcd 𝔪 (𝔭 ^ (m + 1)) = 1 := by
@@ -4014,7 +3635,7 @@ include hz hreg in
 lemma exists_not_dvd_spanSingleton_eq_a_div_a_zero (hη : η ≠ η₀) :
     ∃ a b : 𝓞 K, ¬ π ∣ a ∧ ¬ π ∣ b ∧
       FractionalIdeal.spanSingleton (𝓞 K)⁰ (a / b : K) = 𝔞 η / 𝔞₀ :=
-  exists_not_dvd_spanSingleton_eq hζ.zeta_sub_one_prime'
+  FractionalIdeal.exists_not_dvd_spanSingleton_eq hζ.zeta_sub_one_prime'
     _ _ ((p_dvd_a_iff hp hζ e hy η).not.mpr hη) (not_p_div_a_zero hp hζ e hy hz)
       (isPrincipal_a_div_a_zero hp hζ e hy η hreg)
 

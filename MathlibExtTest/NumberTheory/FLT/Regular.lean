@@ -18,7 +18,7 @@ import Mathlib.Tactic.NormNum.Basic
 open scoped NumberField
 
 -- `exactSource` consumer with the original statement.
-theorem exactSource {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
+private theorem exactSource {p : ℕ} (hp : p.Prime) (hp2 : p ≠ 2)
     (K : Type*) [Field K] [NumberField K] [IsCyclotomicExtension {p} ℚ K]
     (hreg : ¬ p ∣ NumberField.classNumber K) : FermatLastTheoremFor p :=
   MetaMathlibExt.fermatLastTheoremFor_of_regular hp hp2 K hreg
