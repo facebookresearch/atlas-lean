@@ -49,33 +49,37 @@ For isometries of Euclidean space fixing `0`, use
 
 namespace Isometries
 
-/-- The Euclidean plane, as `EuclideanSpace ℝ (Fin 2)`. -/
+/-- **The Euclidean plane.** The Euclidean plane is the real vector space $\mathbb{R}^2$ with
+its standard inner product $\langle x, y \rangle = x_1 y_1 + x_2 y_2$. -/
 abbrev Plane := EuclideanSpace ℝ (Fin 2)
 
-/-- The determinant of the linear part of a plane isometry. -/
+/-- **Linear determinant of a plane isometry.** The linear determinant of an isometry $f$ of
+the Euclidean plane is the determinant of the linear part of $f$. -/
 noncomputable def linearDet (f : Plane ≃ᵃⁱ[ℝ] Plane) : ℝ :=
   LinearMap.det (f.linear.toLinearMap)
 
-/-- A plane isometry is a **translation** if it is translation by a fixed vector. -/
+/-- **Translation.** An isometry $f$ of the Euclidean plane is a translation if there is a
+vector $v$ such that $f(x) = x + v$ for every point $x$. -/
 def IsTranslation (f : Plane ≃ᵃⁱ[ℝ] Plane) : Prop :=
   ∃ v : Plane, ∀ x : Plane, f x = v +ᵥ x
 
-/-- A plane isometry is a **rotation** if it fixes a point, has linear
-determinant `1`, and is not a translation. -/
+/-- **Rotation.** An isometry $f$ of the Euclidean plane is a rotation if it fixes some point
+$p$, the determinant of its linear part is $1$, and $f$ is not a translation. -/
 def IsRotation (f : Plane ≃ᵃⁱ[ℝ] Plane) : Prop :=
   ∃ p : Plane, f p = p ∧ linearDet f = 1 ∧ ¬IsTranslation f
 
-/-- A plane isometry is a **reflection** if it fixes a line pointwise and has
-linear determinant `-1`. -/
+/-- **Reflection.** An isometry $f$ of the Euclidean plane is a reflection if there is a line
+$L$ such that $f(x) = x$ for every point $x$ of $L$, and the determinant of the linear part
+of $f$ is $-1$. -/
 def IsReflection (f : Plane ≃ᵃⁱ[ℝ] Plane) : Prop :=
   ∃ L : AffineSubspace ℝ Plane,
     Module.finrank ℝ L.direction = 1 ∧
     (∀ x : Plane, x ∈ L → f x = x) ∧
     linearDet f = -1
 
-/-- A plane isometry is a **glide reflection** if it has linear determinant
-`-1` and, on some line `L`, it acts as translation by a nonzero vector of
-`L.direction`. -/
+/-- **Glide reflection.** An isometry $f$ of the Euclidean plane is a glide reflection if the
+determinant of its linear part is $-1$ and there are a line $L$ and a nonzero vector $v$
+parallel to $L$ such that $f(x) = x + v$ for every point $x$ of $L$. -/
 def IsGlideReflection (f : Plane ≃ᵃⁱ[ℝ] Plane) : Prop :=
   linearDet f = -1 ∧
     ∃ (L : AffineSubspace ℝ Plane),

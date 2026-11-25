@@ -324,8 +324,9 @@ private lemma boundary_disjoint
       exact hx1
     exact (mem_image_supp_not_mem G u c1 hy2S1) hy2u
 
-/-- Petersen's theorem: every finite bridgeless cubic simple graph has a perfect matching.
-`petersen_bridgeless_cubic_has_perfect_matching` is the source-shaped form. -/
+/-- **Petersen's theorem on cubic graphs.** Every finite simple graph that is $3$-regular
+and has no bridge, that is, no edge whose removal disconnects its endpoints, has a perfect
+matching: a set of edges of the graph such that every vertex lies on exactly one of them. -/
 theorem petersen_bridgeless_cubic_has_perfect_matching_general
     {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -417,13 +418,16 @@ theorem petersen_bridgeless_cubic_has_perfect_matching_general
 
 set_option linter.unusedDecidableInType false in
 /--
-Petersen's theorem: every finite bridgeless cubic simple graph has a perfect matching.
+**Petersen's perfect matching theorem.** Every finite simple graph that is $3$-regular and
+has no bridge, that is, no edge whose removal disconnects its endpoints, has a perfect
+matching: a set of edges of the graph such that every vertex lies on exactly one of them.
+
+Proves `Wanted` entry `petersen_bridgeless_cubic_has_perfect_matching`.
+
 Source: J. Petersen, "Die Theorie der regulären graphs", Acta Mathematica 15 (1891), 193-220, DOI
 10.1007/BF02392606.
 It follows from `petersen_bridgeless_cubic_has_perfect_matching_general`; the instance
 `[DecidableEq V]` is unused and keeps the source's shape.
-
-Proves `Wanted` entry `petersen_bridgeless_cubic_has_perfect_matching`.
 -/
 theorem petersen_bridgeless_cubic_has_perfect_matching
     {V : Type*} [Fintype V] [DecidableEq V]

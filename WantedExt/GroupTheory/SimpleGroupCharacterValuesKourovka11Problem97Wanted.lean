@@ -36,22 +36,35 @@ irreducible characters those of the simple objects of `FDRep ℂ G`. "Finitely m
 is a bound on the order.
 -/
 
-/-- The set of values `χ(g)` of the irreducible complex characters `χ` of `G` at `g`. -/
+/-- **Values of the irreducible characters at an element.** For an element $g$ of a group $G$, the
+set of complex numbers $\chi(g)$, where $\chi$ ranges over the characters of the irreducible
+finite-dimensional complex representations of $G$. -/
 def irrCharValues {G : Type} [Group G] (g : G) : Set ℂ :=
   {z | ∃ V : FDRep ℂ G, CategoryTheory.Simple V ∧ V.character g = z}
 
-/-- Kourovka 11.97 (S. P. Strunkov): for every finite set `S` of complex numbers only finitely many
-finite non-abelian simple groups have an element `g` at which the set of values of the irreducible
-characters is exactly `S`. "Finitely many" up to isomorphism is stated as a bound on the order. -/
+/-- **Kourovka Problem 11.97 (simple groups with a given set of character values).** The
+statement that for every finite set $S$ of complex numbers there is a bound $N$ such that every
+finite non-abelian simple group $G$ having an element $g$ at which the set of values of the
+irreducible complex characters of $G$ is exactly $S$ has order at most $N$. The problem is due to
+S. P. Strunkov.
+
+"Only finitely many such groups" up to isomorphism is stated as this bound on the order. -/
 def finitelyManySimpleGivenCharacterValues : Prop :=
   ∀ S : Set ℂ, S.Finite → ∃ N : ℕ, ∀ (G : Type) [Group G] [Finite G], IsSimpleGroup G →
     (∃ a b : G, a * b ≠ b * a) → (∃ g : G, irrCharValues g = S) → Nat.card G ≤ N
 
 /--
-Resolved false: the Kourovka Archive records (V. D. Mazurov) that every complex irreducible
-character of `L_2(2^m)`, `m ≥ 2`, takes a value in `{0, 1, -1}` at an involution, so some subset of
-`{0, 1, -1}` is the set of values at an involution for infinitely many of these non-abelian simple
-groups. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**Kourovka Problem 11.97 has a negative answer.** There is a finite set $S$ of complex numbers
+such that for every natural number $N$ there is a finite non-abelian simple group $G$ with more
+than $N$ elements and an element $g \in G$ at which the set of values of the irreducible complex
+characters of $G$ is exactly $S$.
+
+The Kourovka Archive records (V. D. Mazurov) that every complex irreducible character of
+$L_2(2^m)$, $m \ge 2$, takes a value in $\{0, 1, -1\}$ at an involution, so some subset of
+$\{0, 1, -1\}$ is the set of values at an involution for infinitely many of these non-abelian
+simple groups.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.97
 (S. P. Strunkov); resolution: V. D. Mazurov, Kourovka Archive, Problem 11.97: "No; all complex
 irreducible characters of the groups `L_2(2^m)`, `m ≥ 2`, take the values `0, ±1` on involutions",

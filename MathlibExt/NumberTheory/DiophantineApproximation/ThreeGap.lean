@@ -431,7 +431,10 @@ private theorem threeGap_exists_successor (n u v k : ℕ) (α : ℝ) (hα : Irra
         rw [hdist]
         exact hlower
 
-/-- The points on the circle represented by the first `n` fractional multiples of `α`. -/
+/-- **Points of the three-gap configuration.** Let $n$ be a natural number and $\alpha$ a real
+number, and write $\operatorname{frac}(t) = t - \lfloor t \rfloor$ for the fractional part of a
+real number $t$. A real number $x$ is a three-gap point of $n$ and $\alpha$ if
+$x = \operatorname{frac}(k\alpha)$ for some natural number $k < n$. -/
 def IsThreeGapPoint (n : ℕ) (α x : ℝ) : Prop :=
   ∃ k : ℕ, k < n ∧ x = Int.fract ((k : ℝ) * α)
 
@@ -454,7 +457,12 @@ private theorem threeGap_isPoint_one_iff (α x : ℝ) :
   · rintro rfl
     exact ⟨0, by omega, by simp [threeGap_natFract, threeGap_fract]⟩
 
-/-- A length of one of the cyclic gaps between consecutive fractional multiples. -/
+/-- **Gap lengths of the three-gap configuration.** Let $n$ be a natural number and $\alpha$ a real
+number. In this definition a point means a three-gap point of $n$ and $\alpha$, that is, a number
+$\operatorname{frac}(k\alpha) = k\alpha - \lfloor k\alpha \rfloor$ for a natural number $k < n$.
+A real number $d$ is a gap length of $n$ and $\alpha$ if either $d = y - x$ for points $x < y$
+with no point strictly between $x$ and $y$, or there are a least point $x_{\min}$ and a greatest
+point $x_{\max}$ and $d = 1 + x_{\min} - x_{\max}$. -/
 def IsThreeGapLength (n : ℕ) (α d : ℝ) : Prop :=
   (∃ x y : ℝ, IsThreeGapPoint n α x ∧ IsThreeGapPoint n α y ∧ x < y ∧
     (∀ z : ℝ, IsThreeGapPoint n α z → x < z → z < y → False) ∧ d = y - x) ∨
@@ -595,17 +603,19 @@ private theorem threeGap_length_cases (n u v : ℕ) (hn : 1 ≤ n) (α : ℝ)
     exact Or.inr (Or.inl
       (threeGap_wrap_length_eq n v hn α hv_lt hvmax hplo hphi hhi hlo hd))
 
-/-- Three-gap theorem (statement `three-gap-s1`): the fractional parts of the
-multiples `0, α, 2 * α, ..., (n - 1) * α` cut the circle into `n` arcs taking
-at most three distinct lengths. Irrationality ensures the indexed points are distinct.
-When exactly three lengths occur, the largest is the sum of the other two.
-
-Source: https://en.wikipedia.org/wiki/Three-gap_theorem.
-
-Proves `Wanted` entry `three_gap`.
+/-- **Three-gap theorem.** Let $n \ge 1$ be a natural number and $\alpha$ an irrational real
+number. Consider the points $\operatorname{frac}(k\alpha) = k\alpha - \lfloor k\alpha \rfloor$ for
+$0 \le k < n$ on the circle $[0, 1)$. The set of gap lengths of $n$ and $\alpha$, that is, the
+lengths of the gaps between cyclically consecutive points, including the gap that wraps around
+from the greatest point to the least, is finite and has at most three elements. If it has exactly
+three elements, the largest of them is the sum of the other two.
 
 Proof: We formalize the standard successor argument of Sós (1958) and Świerczkowski (1959),
 following Alessandri and Berthé, *Three distance theorems and combinatorics on words*, §2.
+
+Proves `Wanted` entry `three_gap` (statement `three-gap-s1`).
+
+Source: https://en.wikipedia.org/wiki/Three-gap_theorem.
 -/
 theorem three_gap (n : ℕ) (hn : 1 ≤ n) (α : ℝ) (hα : Irrational α) :
     ∃ G : Finset ℝ,

@@ -38,7 +38,7 @@ cases of `f4` (`f2_eq_f4`, `f3_eq_f4`).
 `DriftModel` states the admixture-graph model at the level of second moments, which is all
 that f-statistics see. The frequency in population `X` is
 `root + ∑ e, weight X e * incr e`, where `incr e` is the drift increment on edge `e` of the
-graph, the increments are pairwise uncorrelated (`𝔼[incr e * incr f] = 0` for `e ≠ f`), and
+graph, the increments are pairwise orthogonal in L² (`∫ incr e * incr f ∂μ = 0` for `e ≠ f`), and
 the drift length of `e` is `len e = 𝔼[incr e ^ 2]` (measured in units of the second moment of
 the frequency change, e.g. `≈ p₀ (1 - p₀) t / (2 N)` under pure drift). On an admixture graph
 `weight X e` is the sum, over root-to-`X` paths through `e`, of the products of the admixture
@@ -154,7 +154,8 @@ theorem f3_eq_f2 (hp : ∀ X, MemLp (p X) 2 μ) (C A B : P) :
   rw [integral_div, integral_sub h1 (integrable_sub_sq hp A B),
     integral_add (integrable_sub_sq hp C A) (integrable_sub_sq hp C B)]
 
-/-- `f4` in terms of `f2`: `f4 A B C D = (f2 A D + f2 B C - f2 A C - f2 B D) / 2`. -/
+/-- `f4` in terms of `f2`, for square-integrable frequencies:
+`f4 A B C D = (f2 A D + f2 B C - f2 A C - f2 B D) / 2`. -/
 theorem f4_eq_f2 (hp : ∀ X, MemLp (p X) 2 μ) (A B C D : P) :
     f4 μ p A B C D = (f2 μ p A D + f2 μ p B C - f2 μ p A C - f2 μ p B D) / 2 := by
   unfold f4 f2
@@ -188,8 +189,9 @@ The allele frequency of population `X` is `root + ∑ e, weight X e * incr e` (s
 
 f-statistics depend only on second moments of frequency differences, in which the root
 cancels, so only these are assumed: the increments are square integrable, pairwise
-uncorrelated (the mixed second moments `𝔼[incr e * incr f]`, `e ≠ f`, vanish, as they do for
-independent mean-zero drift on distinct edges), and `𝔼[incr e ^ 2] = len e`. -/
+orthogonal in L² (the mixed second moments `∫ incr e * incr f ∂μ`, `e ≠ f`, vanish; for
+mean-zero increments under a probability measure this is uncorrelatedness, as for independent
+mean-zero drift on distinct edges), and `∫ incr e ^ 2 ∂μ = len e`. -/
 structure DriftModel (μ : Measure Ω) (E P : Type*) [Fintype E] where
   /-- Ancestral (root) allele frequency. -/
   root : Ω → ℝ
@@ -203,7 +205,7 @@ structure DriftModel (μ : Measure Ω) (E P : Type*) [Fintype E] where
   memLp_root : MemLp root 2 μ
   /-- Each drift increment is square integrable. -/
   memLp_incr : ∀ e, MemLp (incr e) 2 μ
-  /-- Increments on distinct edges are uncorrelated. -/
+  /-- Increments on distinct edges are orthogonal in L²: their mixed second moment is `0`. -/
   inner_incr : ∀ e f, e ≠ f → ∫ ω, incr e ω * incr f ω ∂μ = 0
   /-- The drift length of an edge is the second moment of its increment. -/
   sq_incr : ∀ e, ∫ ω, incr e ω ^ 2 ∂μ = len e
@@ -387,7 +389,8 @@ theorem f4_ratio {A O X Y B C : P} {α : ℝ}
     f4 μ M.freq A O X C / f4 μ M.freq A O B C = α := by
   rw [M.f4_admixture_right h, hYB, mul_div_assoc, div_self hB, mul_one]
 
-/-- The root-relative second moment `Σ X Y = 𝔼[(p X - root) * (p Y - root)]`. -/
+/-- The root-relative second moment `Σ X Y = 𝔼[(p X - root) * (p Y - root)]`, the integral
+against the model's measure `μ` (an expectation when `μ` is a probability measure). -/
 noncomputable def rootSecondMoment (X Y : P) : ℝ :=
   ∫ ω, (M.freq X ω - M.root ω) * (M.freq Y ω - M.root ω) ∂μ
 

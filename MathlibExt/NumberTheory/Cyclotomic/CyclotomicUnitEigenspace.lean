@@ -138,14 +138,14 @@ noncomputable def clEndHom : (R ≃+* R) →* Module.End (ZMod p) (ClGalModule p
   map_one' := by
     refine LinearMap.ext fun a => ?_
     obtain ⟨C, rfl⟩ := clProj_surjective p R a
-    rw [Module.End.one_apply]
+    rw [one_apply_eq_self]
     show clProj p R (Additive.ofMul (ClassGroup.mulEquiv (RingEquiv.refl R) C.toMul)) =
       clProj p R C
     rw [ClassGroup.mulEquiv_refl_apply]; rfl
   map_mul' g h := by
     refine LinearMap.ext fun a => ?_
     obtain ⟨C, rfl⟩ := clProj_surjective p R a
-    rw [Module.End.mul_apply]
+    rw [mul_apply_eq_comp]
     show clProj p R (Additive.ofMul (ClassGroup.mulEquiv (h.trans g) C.toMul)) =
       clEnd p g (clProj p R (Additive.ofMul (ClassGroup.mulEquiv h C.toMul)))
     rw [clEnd_clProj, ClassGroup.mulEquiv_trans_apply]
@@ -215,7 +215,7 @@ noncomputable def unitsEndHom : (R ≃+* R) →* Module.End (ZMod p) (ModP p (Ad
   map_mul' g h := by
     ext a
     obtain ⟨u, rfl⟩ := ModP.proj_surjective p (Additive Rˣ) a
-    simp only [Module.End.mul_apply]
+    simp only [mul_apply_eq_comp]
     rfl
 
 end UnitsGalAction
@@ -235,11 +235,11 @@ def unitsOmegaEigenspace (i : ℕ) :
     Submodule (ZMod p) (ModP p (Additive (𝓞 (CyclotomicField p ℚ))ˣ)) where
   carrier := {a | IsOmegaEigenvector (unitsGalAction p) i a}
   add_mem' {a b} ha hb d := by
-    simp only [Set.mem_setOf_eq, IsOmegaEigenvector] at *
+    simp only [Set.mem_ofPred_eq, IsOmegaEigenvector] at *
     rw [map_add, ha d, hb d, smul_add]
   zero_mem' d := by simp
   smul_mem' c a ha d := by
-    simp only [Set.mem_setOf_eq, IsOmegaEigenvector] at *
+    simp only [Set.mem_ofPred_eq, IsOmegaEigenvector] at *
     rw [map_smul, ha d, smul_comm]
 
 noncomputable def omegaIdempotent {M : Type*} [AddCommGroup M] [Module (ZMod p) M]
