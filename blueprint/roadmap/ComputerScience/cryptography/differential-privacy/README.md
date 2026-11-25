@@ -45,3 +45,5 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [Blatant non-privacy and distortion of subset-sum mechanisms](blatant-non-privacy-and-distortion-of-subset.md)
 - [Dinur–Nissim reconstruction attack](dinurnissim-reconstruction-attack.md)
 - [Packing lower bound for pure differential privacy](packing-lower-bound-for-pure-differential.md)
+- [Rényi differential privacy of the Gaussian mechanism](renyi-differential-privacy-of-the-gaussian.md)
+- [Fingerprinting codes](fingerprinting-codes.md)
