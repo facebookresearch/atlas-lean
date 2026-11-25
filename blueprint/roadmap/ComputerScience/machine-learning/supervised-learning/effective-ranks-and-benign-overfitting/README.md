@@ -12,6 +12,7 @@ relations between them (their Lemma 5).
 - [$r_k(\Sigma^2) \le r_k(\Sigma)$](eff-rank-sq-le-eff-rank.md)
 - [$r_k \le R_k$](eff-rank-le-eff-rank-large.md)
 - [$R_k \le r_k^2$](eff-rank-large-le-eff-rank-sq.md)
+- [Benign overfitting of minimum-norm interpolation in linear regression](benign-overfitting-of-minimum-norm-interpolation-in-linear-r.md)
 
 ## Supporting lemmas
 

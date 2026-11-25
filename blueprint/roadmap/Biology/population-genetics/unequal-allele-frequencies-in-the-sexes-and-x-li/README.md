@@ -25,3 +25,5 @@
 - [Boundary invasion under sex-differential and parent-of-origin viability](protected-polymorphism-under-sex-differential-vi.md)
 
 - [Sex-differential viability selection makes the sexes' allele frequencies differ](sex-differential-viability-selection-dioecy.md)
+
+- [Fertility selection at one autosomal locus: multiplicative reduction and departure from Hardy–Weinberg proportions](fertility-selection-model-and-mean-fitness-count.md)

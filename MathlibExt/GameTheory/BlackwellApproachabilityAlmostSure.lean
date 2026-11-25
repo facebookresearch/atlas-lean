@@ -11,12 +11,9 @@ module
 public import MathlibExt.GameTheory.BlackwellApproachability
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
 public import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
-import Mathlib.Analysis.PSeries
-import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
-import Mathlib.Probability.Martingale.Convergence
-import MathlibExt.Probability.KolmogorovThreeSeries
-import MathlibExt.Probability.MartingaleOrthogonality
+import MathlibExt.Analysis.Series.Kronecker
+import MathlibExt.MeasureTheory.Function.ConditionalExpectation.FiniteValued
+import MathlibExt.Probability.SqMartingaleConvergence
 
 /-! # Blackwell's approachability theorem, almost-sure form
 
@@ -39,6 +36,10 @@ expectations of indicators.
 ## Main results
 
 * `historySigma`: the σ-algebra of the events determined by the first rounds of a process.
+* `historySigma_mono`, `historySigma_le`, `measurable_historySigma`: for a finite-valued process
+  with measurable level sets, the history σ-algebras form a filtration of the ambient σ-algebra,
+  and every function of the first `n + 1` rounds is measurable for the history σ-algebra at time
+  `n`.
 * `blackwell_approachability`: Blackwell's approachability theorem for realised payoffs, with
   almost-sure convergence.
 
@@ -57,11 +58,13 @@ nearest point of `C` to `x̄_n`, `d_n = dist(x̄_n, C)` and `ξ_n = ⟪x̄_n −
   `E[ξ_{k+1} | history] = ∑_b P(b | history) ⟪x̄_{k+1} − c_{k+1}, v(σ(x̄_{k+1}), b) − c_{k+1}⟫ ≤ 0`.
   Hence `ξ_{k+1} ≤ e_k`, where `e_k = ξ_{k+1} − E[ξ_{k+1} | history]` are bounded martingale
   differences.
-* Strong law: the martingale `∑_{k < n} e_k / (k + 1)` has orthogonal increments, so it is bounded
-  in `L²` and converges almost surely; by Kronecker's lemma, summation by parts followed by a
-  Cesàro mean, `(∑_{k < n} (k + 1) e_k) / (n + 1)² → 0` almost surely (Williams 1991,
-  Chapter 12). The sources use a strong law of large numbers for bounded martingale differences
-  at this point instead (Blackwell 1956, Theorem 2; Hart 2005, footnote 38).
+* Strong law: the series `∑_k e_k / (k + 1)` converges almost surely, as a martingale with
+  bounded predictable quadratic variation (`MeasureTheory.ae_exists_tendsto_sum_div_succ`), and
+  Kronecker's lemma with the weights `(k + 1)²`
+  (`MetaMathlibExt.tendsto_sum_range_add_one_sq_mul_div_of_tendsto`) gives
+  `(∑_{k < n} (k + 1) e_k) / (n + 1)² → 0` almost surely (Williams 1991, Chapter 12). The
+  sources use a strong law of large numbers for bounded martingale differences at this point
+  instead (Blackwell 1956, Theorem 2; Hart 2005, footnote 38).
 * So `d_{n+1}² ≤ M² / (n + 1) + 2 (∑_{k < n} (k + 1) e_k) / (n + 1)² → 0` almost surely.
 
 ## Implementation notes
@@ -107,13 +110,13 @@ section History
 
 variable {Ω α : Type*}
 
-/-- The history σ-algebras grow with time. -/
-private lemma historySigma_mono (Z : ℕ → Ω → α) : Monotone (historySigma Z) :=
+/-- **Monotonicity of the history σ-algebras**: the history σ-algebras grow with time. -/
+theorem historySigma_mono (Z : ℕ → Ω → α) : Monotone (historySigma Z) :=
   fun _ _ hnm => iSup₂_mono' fun k hk => ⟨k, hk.trans hnm, le_rfl⟩
 
-/-- The history σ-algebras of a finite-valued process with measurable level sets are
-sub-σ-algebras of the ambient one. -/
-private lemma historySigma_le [mΩ : MeasurableSpace Ω] [Finite α] {Z : ℕ → Ω → α}
+/-- **History σ-algebras are sub-σ-algebras**: the history σ-algebras of a finite-valued process
+with measurable level sets are sub-σ-algebras of the ambient one. -/
+theorem historySigma_le [mΩ : MeasurableSpace Ω] [Finite α] {Z : ℕ → Ω → α}
     (hZ : ∀ n z, MeasurableSet {ω | Z n ω = z}) (n : ℕ) : historySigma Z n ≤ mΩ :=
   iSup₂_le fun k _ => (@measurable_to_countable' α Ω ⊤ _ _ (Z k) fun z => hZ k z).comap_le
 
@@ -122,9 +125,10 @@ private lemma measurableSet_historySigma_preimage {Z : ℕ → Ω → α} {n k :
     (s : Set α) : MeasurableSet[historySigma Z n] (Z k ⁻¹' s) :=
   le_iSup₂ (f := fun k (_ : k ≤ n) => MeasurableSpace.comap (Z k) ⊤) k hk _ ⟨s, trivial, rfl⟩
 
-/-- A function of the first `n + 1` values of a finite-valued process is measurable for the
-history σ-algebra at time `n`, whatever its target. -/
-private lemma measurable_historySigma [Finite α] {Z : ℕ → Ω → α} {n : ℕ} {β : Type*}
+/-- **Measurability of functions of the history**: a function of the first `n + 1` values of a
+finite-valued process is measurable for the history σ-algebra at time `n`, whatever its
+target. -/
+theorem measurable_historySigma [Finite α] {Z : ℕ → Ω → α} {n : ℕ} {β : Type*}
     [MeasurableSpace β] {g : Ω → β} (hg : ∀ ω ω', (∀ k ≤ n, Z k ω = Z k ω') → g ω = g ω') :
     Measurable[historySigma Z n] g := by
   intro s _
@@ -171,186 +175,24 @@ private lemma condExp_comp_nonpos (hm : m ≤ mΩ) {X : Ω → A × B}
     P[fun ω => g (X ω) ω | m] ≤ᵐ[P] 0 := by
   classical
   have := Fintype.ofFinite B
-  set I : A × B → Ω → ℝ := fun z => {ω | X ω = z}.indicator (fun _ => (1 : ℝ)) with hIdef
-  have hI : ∀ z, Integrable (I z) P := fun z => (integrable_const (1 : ℝ)).indicator (hX z)
-  have hI1 : ∀ z ω, |I z ω| ≤ 1 := fun z ω => by
-    simp only [hIdef, Set.indicator_apply]
-    split_ifs <;> simp
-  have hsum : (fun ω => g (X ω) ω) = ∑ z, g z * I z := by
-    ext ω
-    simp only [Finset.sum_apply, Pi.mul_apply, hIdef, Set.indicator_apply, Set.mem_ofPred_eq,
-      mul_ite, mul_one, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
-  have hint : ∀ z ∈ (univ : Finset (A × B)), Integrable (g z * I z) P := fun z _ =>
-    Integrable.of_bound (((hg z).mono hm).aestronglyMeasurable.mul (hI z).aestronglyMeasurable) K
-      (ae_of_all _ fun ω => by
-        rw [Pi.mul_apply, norm_mul, Real.norm_eq_abs, Real.norm_eq_abs]
-        exact (mul_le_of_le_one_right (abs_nonneg _) (hI1 z ω)).trans (hgK z ω))
-  have h2 : ∀ᵐ ω ∂P, ∀ z, P[g z * I z | m] ω = g z ω * P[I z | m] ω :=
-    ae_all_iff.2 fun z => (condExp_stronglyMeasurable_mul_of_bound hm (hg z) (hI z) K
-      (ae_of_all _ fun ω => (Real.norm_eq_abs _).le.trans (hgK z ω))).mono fun ω h => by
-        simpa using h
   have h3 := ae_all_iff.2 fun a => ae_all_iff.2 fun b => hlaw a b
   have h4 : ∀ᵐ ω ∂P, ∀ b,
       0 ≤ P[{ω | (X ω).2 = b}.indicator (fun _ => (1 : ℝ)) | m] ω :=
     ae_all_iff.2 fun b => condExp_nonneg
       (ae_of_all _ fun ω => Set.indicator_nonneg (fun _ _ => zero_le_one) ω)
-  rw [hsum]
-  filter_upwards [condExp_finsetSum hint m, h2, h3, h4] with ω h1 h2 h3 h4
-  rw [h1, Finset.sum_apply, Pi.zero_apply]
-  simp only [h2]
-  rw [Fintype.sum_prod_type, Finset.sum_comm]
+  filter_upwards [condExp_comp_eq_sum hm hX hg hgK, h3, h4] with ω h1 h3 h4
+  rw [h1, Pi.zero_apply, Fintype.sum_prod_type, Finset.sum_comm]
   refine Finset.sum_nonpos fun b _ => ?_
-  have : ∑ a, g (a, b) ω * P[I (a, b) | m] ω =
+  have : ∑ a, g (a, b) ω * P[{ω | X ω = (a, b)}.indicator (fun _ => (1 : ℝ)) | m] ω =
       P[{ω | (X ω).2 = b}.indicator (fun _ => (1 : ℝ)) | m] ω * ∑ a, q ω a * g (a, b) ω := by
     rw [Finset.mul_sum]
     refine Finset.sum_congr rfl fun a _ => ?_
-    rw [hIdef, h3 a b]
+    rw [h3 a b]
     ring
   rw [this]
   exact mul_nonpos_of_nonneg_of_nonpos (h4 b) (hneg ω b)
 
 end CondExp
-
-/-! ### Martingale convergence and Kronecker's lemma -/
-
-section StrongLaw
-
-variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
-
-/-- Let `e k` be bounded martingale differences for a filtration `ℱ` on a probability space:
-`e k` is `ℱ (k + 1)`-measurable, `|e k| ≤ K` almost surely and `E[e k | ℱ k] = 0` almost surely.
-Then the series `∑ e k / (k + 1)` converges almost surely: its partial sums form a martingale
-bounded in `L²`. -/
-private lemma ae_exists_tendsto_sum_div_succ (ℱ : Filtration ℕ mΩ) {e : ℕ → Ω → ℝ} {K : ℝ}
-    (he : ∀ k, StronglyMeasurable[ℱ (k + 1)] (e k)) (heK : ∀ k, ∀ᵐ ω ∂μ, |e k ω| ≤ K)
-    (hce : ∀ k, μ[e k | ℱ k] =ᵐ[μ] 0) :
-    ∀ᵐ ω ∂μ, ∃ c, Tendsto (fun n => ∑ k ∈ range n, e k ω / ((k : ℝ) + 1)) atTop (𝓝 c) := by
-  set M : ℕ → Ω → ℝ := fun n ω => ∑ k ∈ range n, e k ω / ((k : ℝ) + 1) with hMdef
-  have hem : ∀ k, StronglyMeasurable[mΩ] (e k) := fun k => (he k).mono (ℱ.le _)
-  have heint : ∀ k, Integrable (e k) μ := fun k =>
-    Integrable.of_bound (hem k).aestronglyMeasurable K (by simpa [Real.norm_eq_abs] using heK k)
-  have hMadapt : StronglyAdapted ℱ M := fun n =>
-    Finset.stronglyMeasurable_fun_sum _ fun k hk =>
-      (((he k).mono (ℱ.mono (by simpa using mem_range.1 hk))).measurable.div_const
-        _).stronglyMeasurable
-  have hMint : ∀ n, Integrable (M n) μ := fun n =>
-    integrable_finsetSum _ fun k _ => (heint k).div_const _
-  have hMsucc : ∀ n, M (n + 1) = M n + fun ω => e n ω / ((n : ℝ) + 1) := fun n => by
-    ext ω
-    simp [hMdef, sum_range_succ]
-  have hmart : Martingale M ℱ μ := by
-    refine martingale_nat hMadapt hMint fun n => ?_
-    rw [hMsucc]
-    have h1 := condExp_add (hMint n) ((heint n).div_const ((n : ℝ) + 1)) (ℱ n : MeasurableSpace Ω)
-    have h2 : μ[M n | ℱ n] = M n := condExp_of_stronglyMeasurable (ℱ.le n) (hMadapt n) (hMint n)
-    have h3 : μ[fun ω => e n ω / ((n : ℝ) + 1) | ℱ n] =ᵐ[μ] 0 := by
-      have : (fun ω => e n ω / ((n : ℝ) + 1)) = ((n : ℝ) + 1)⁻¹ • e n := by
-        ext ω
-        simp [div_eq_inv_mul]
-      rw [this]
-      filter_upwards [condExp_smul ((n : ℝ) + 1)⁻¹ (e n) (ℱ n), hce n] with ω h h'
-      simp [h, h']
-    filter_upwards [h1, h3] with ω h1 h3
-    rw [h1, Pi.add_apply, h2, h3, Pi.zero_apply, add_zero]
-  have hMbdd : ∀ n, ∀ᵐ ω ∂μ, |M n ω| ≤ ∑ k ∈ range n, K / ((k : ℝ) + 1) := fun n => by
-    filter_upwards [ae_all_iff.2 heK] with ω hω
-    calc |M n ω| ≤ ∑ k ∈ range n, |e k ω / ((k : ℝ) + 1)| := abs_sum_le_sum_abs _ _
-      _ ≤ _ := sum_le_sum fun k _ => by
-        rw [abs_div, abs_of_pos (by positivity : (0 : ℝ) < k + 1)]
-        exact div_le_div_of_nonneg_right (hω k) (by positivity)
-  have hMLp : ∀ n, MemLp (M n) 2 μ := fun n =>
-    MemLp.of_bound ((hMadapt n).mono (ℱ.le n)).aestronglyMeasurable _
-      (by simpa [Real.norm_eq_abs] using hMbdd n)
-  have hsq : ∀ n, ∫ ω, M n ω ^ 2 ∂μ ≤ K ^ 2 * ∑ k ∈ range n, (((k : ℝ) + 1) ^ 2)⁻¹ := by
-    intro n
-    induction n with
-    | zero => simp [hMdef]
-    | succ n ih =>
-      have h := hmart.integral_sub_sq_eq (Nat.le_succ n) fun k => (hMLp k).integrable_sq
-      have hd : ∫ ω, (M (n + 1) ω - M n ω) ^ 2 ∂μ ≤ K ^ 2 * (((n : ℝ) + 1) ^ 2)⁻¹ := by
-        calc ∫ ω, (M (n + 1) ω - M n ω) ^ 2 ∂μ
-            ≤ ∫ _ω, K ^ 2 * (((n : ℝ) + 1) ^ 2)⁻¹ ∂μ := by
-              refine integral_mono_ae ((hMLp (n + 1)).sub (hMLp n)).integrable_sq
-                (integrable_const _) ?_
-              filter_upwards [heK n] with ω hω
-              rw [hMsucc, Pi.add_apply, add_sub_cancel_left, div_pow, div_eq_mul_inv]
-              exact mul_le_mul_of_nonneg_right (sq_le_sq' (abs_le.1 hω).1 (abs_le.1 hω).2)
-                (by positivity)
-          _ = K ^ 2 * (((n : ℝ) + 1) ^ 2)⁻¹ := by simp
-      rw [sum_range_succ, mul_add]
-      linarith
-  have hL1 : ∀ n, eLpNorm (M n) 1 μ ≤ ENNReal.ofReal (Real.sqrt (2 * K ^ 2)) := fun n => by
-    refine ProbabilityTheory.eLpNorm_one_le_sqrt_integral_sq (hMLp n) ?_
-    have h2 : K ^ 2 * ∑ k ∈ range n, (((k : ℝ) + 1) ^ 2)⁻¹ ≤ 2 * K ^ 2 := by
-      have hs : ∑ k ∈ range n, (((k : ℝ) + 1) ^ 2)⁻¹ ≤ 2 := by
-        have := sum_Ioo_inv_sq_le (α := ℝ) 0 (n + 1)
-        rw [← Finset.Ico_add_one_left_eq_Ioo, Finset.sum_Ico_eq_sum_range] at this
-        simpa [add_comm] using this
-      nlinarith [sq_nonneg K]
-    simpa [Real.norm_eq_abs, sq_abs] using (hsq n).trans h2
-  exact hmart.submartingale.exists_ae_tendsto_of_bdd ((iSup_le hL1).trans_lt ENNReal.ofReal_lt_top)
-
-/-- **Kronecker's lemma** for the weights `(k + 1)²`: if the series `∑ x k` converges, then
-`(∑_{k < n} (k + 1)² x k) / (n + 1)² → 0`. -/
-private lemma tendsto_sum_sq_mul_div_sq {x : ℕ → ℝ} {s : ℝ}
-    (hx : Tendsto (fun n => ∑ k ∈ range n, x k) atTop (𝓝 s)) :
-    Tendsto (fun n : ℕ => (∑ k ∈ range n, ((k : ℝ) + 1) ^ 2 * x k) / ((n : ℝ) + 1) ^ 2) atTop
-      (𝓝 0) := by
-  set S : ℕ → ℝ := fun n => ∑ k ∈ range n, x k with hSdef
-  -- summation by parts
-  have habel : ∀ n, ∑ k ∈ range n, ((k : ℝ) + 1) ^ 2 * x k = ((n : ℝ) + 1) ^ 2 * (S n - s) + s -
-      ∑ k ∈ range n, (2 * (k : ℝ) + 3) * (S (k + 1) - s) := by
-    intro n
-    induction n with
-    | zero => simp [hSdef]
-    | succ n ih =>
-      have hS : S (n + 1) = S n + x n := sum_range_succ _ _
-      rw [sum_range_succ, ih, sum_range_succ, hS]
-      push_cast
-      ring
-  have hu : Tendsto (fun k => |S (k + 1) - s|) atTop (𝓝 0) := by
-    have := ((hx.comp (tendsto_add_atTop_nat 1)).sub_const s).abs
-    simpa using this
-  have hT : Tendsto (fun n : ℕ =>
-      (∑ k ∈ range n, (2 * (k : ℝ) + 3) * (S (k + 1) - s)) / ((n : ℝ) + 1) ^ 2) atTop (𝓝 0) := by
-    have hc : Tendsto (fun n : ℕ => 2 * ((n : ℝ)⁻¹ * ∑ k ∈ range n, |S (k + 1) - s|)) atTop
-        (𝓝 0) := by
-      simpa using hu.cesaro.const_mul 2
-    refine squeeze_zero_norm (fun n => ?_) hc
-    rcases Nat.eq_zero_or_pos n with rfl | hn
-    · simp
-    have hn' : (0 : ℝ) < n := by exact_mod_cast hn
-    rw [Real.norm_eq_abs, abs_div, abs_of_pos (by positivity : (0 : ℝ) < ((n : ℝ) + 1) ^ 2),
-      div_le_iff₀ (by positivity)]
-    calc |∑ k ∈ range n, (2 * (k : ℝ) + 3) * (S (k + 1) - s)|
-        ≤ ∑ k ∈ range n, (2 * (n : ℝ) + 1) * |S (k + 1) - s| := by
-          refine (abs_sum_le_sum_abs _ _).trans (sum_le_sum fun k hk => ?_)
-          have hk' : (k : ℝ) + 1 ≤ n := by exact_mod_cast mem_range.1 hk
-          rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < 2 * k + 3)]
-          exact mul_le_mul_of_nonneg_right (by linarith) (abs_nonneg _)
-      _ = (2 * (n : ℝ) + 1) * ∑ k ∈ range n, |S (k + 1) - s| := by rw [mul_sum]
-      _ ≤ 2 * ((n : ℝ)⁻¹ * ∑ k ∈ range n, |S (k + 1) - s|) * ((n : ℝ) + 1) ^ 2 := by
-          have h0 : 0 ≤ ∑ k ∈ range n, |S (k + 1) - s| := sum_nonneg fun _ _ => abs_nonneg _
-          rw [show 2 * ((n : ℝ)⁻¹ * ∑ k ∈ range n, |S (k + 1) - s|) * ((n : ℝ) + 1) ^ 2 =
-            (2 * ((n : ℝ) + 1) ^ 2 / n) * ∑ k ∈ range n, |S (k + 1) - s| by field_simp]
-          gcongr
-          rw [le_div_iff₀ hn']
-          nlinarith
-  have hS0 : Tendsto (fun n => S n - s) atTop (𝓝 0) := by simpa using hx.sub_const s
-  have hs0 : Tendsto (fun n : ℕ => s / ((n : ℝ) + 1) ^ 2) atTop (𝓝 0) := by
-    refine tendsto_const_nhds.div_atTop ?_
-    exact (tendsto_pow_atTop two_ne_zero).comp
-      (tendsto_atTop_add_const_right _ 1 tendsto_natCast_atTop_atTop)
-  have : (fun n : ℕ => (∑ k ∈ range n, ((k : ℝ) + 1) ^ 2 * x k) / ((n : ℝ) + 1) ^ 2) =
-      fun n : ℕ => (S n - s) + s / ((n : ℝ) + 1) ^ 2 -
-        (∑ k ∈ range n, (2 * (k : ℝ) + 3) * (S (k + 1) - s)) / ((n : ℝ) + 1) ^ 2 := by
-    ext n
-    rw [habel n]
-    field_simp
-  rw [this]
-  simpa using (hS0.add hs0).sub hT
-
-end StrongLaw
 
 /-! ### The squared-distance recursion -/
 
@@ -386,7 +228,7 @@ private lemma sq_succ_mul_infDist_average_le_sum {C : Set E} {y c : ℕ → E} {
 /-- The average of the first `n` terms depends only on those terms. -/
 private lemma average_congr {y y' : ℕ → E} {n : ℕ} (h : ∀ k < n, y k = y' k) :
     average y n = average y' n := by
-  simp only [average]
+  simp only [BlackwellApproachability.average]
   rw [sum_congr rfl fun k hk => h k (mem_range.1 hk)]
 
 end Recursion
@@ -513,11 +355,11 @@ theorem blackwell_approachability {d : ℕ} {A B : Type*} [Fintype A] [Fintype B
     simp only [Pi.zero_apply] at this
     simp only [hedef, Pi.sub_apply]
     linarith
-  filter_upwards [ae_exists_tendsto_sum_div_succ ℱ he heK hce, hle] with ω ⟨s, hs⟩ hle
+  filter_upwards [ae_exists_tendsto_sum_div_succ (μ := P) ℱ he heK hce, hle] with ω ⟨s, hs⟩ hle
   -- Kronecker's lemma: `(∑_{k < n} (k + 1) e k) / (n + 1)² → 0`
   have hK : Tendsto (fun n : ℕ => (∑ k ∈ range n, ((k : ℝ) + 1) * e k ω) / ((n : ℝ) + 1) ^ 2)
       atTop (𝓝 0) := by
-    refine (tendsto_sum_sq_mul_div_sq hs).congr fun n => ?_
+    refine (MetaMathlibExt.tendsto_sum_range_add_one_sq_mul_div_of_tendsto hs).congr fun n => ?_
     congr 1
     refine sum_congr rfl fun k _ => ?_
     field_simp
