@@ -50,9 +50,9 @@ universe u
 
 variable {G : Type u} [Group G]
 
-/-- The discrete logarithm to the base `s`: the exponent in
-`Fin (orderOf s)` representing `g`, under the assumption that `s`
-generates `G` and has finite order. -/
+/-- The discrete logarithm to the base `s`: the natural number `n < orderOf s`
+with `s ^ n = g`, under the assumption that `s` generates `G` and has finite
+order. -/
 public noncomputable def cyclicLog (s : G) (hs : ∀ g : G, g ∈ Subgroup.zpowers s)
     (hfin : IsOfFinOrder s) (g : G) : ℕ :=
   ((finEquivZPowers hfin).symm ⟨g, hs g⟩ : Fin (orderOf s))
@@ -82,8 +82,8 @@ public theorem cyclicLog_one (s : G) (hs : ∀ g : G, g ∈ Subgroup.zpowers s)
     (hfin : IsOfFinOrder s) : cyclicLog s hs hfin 1 = 0 :=
   cyclicLog_eq_of_pow_eq_of_lt hs hfin (pow_zero s) hfin.orderOf_pos
 
-/-- The carry cochain: it takes the value `a` exactly when the sum of the
-logarithms of the two entries reaches the order of `s`. -/
+/-- The carry cochain: it equals `a` when the sum of the logarithms of the
+two entries reaches the order of `s`, and `0` otherwise. -/
 public noncomputable def carryFun (s : G) (hs : ∀ g : G, g ∈ Subgroup.zpowers s)
     (hfin : IsOfFinOrder s) {A : Rep ℤ G} (a : A) : G × G → A :=
   fun p => if orderOf s ≤ cyclicLog s hs hfin p.1 + cyclicLog s hs hfin p.2
