@@ -51,16 +51,9 @@ variable {X}
 def smallEtaleSectionBoundary (hS : S.ShortExact) :
     S.X₃.obj.obj (op (Scheme.Etale.mk (𝟙 X))) →+ Sheaf.H S.X₁ 1 :=
   let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
-  let A := AddCommGrpCat.{max u w}
-  let _ : HasExt.{max u w} C := smallEtaleHasExt.{u, w} X
-  let H₀ : C ⥤ A := Sheaf.H.functorH.{max u w, max u w, u, u + 1} X.smallEtaleTopology 0
-  let H₁ : C ⥤ A := Sheaf.H.functorH.{max u w, max u w, u, u + 1} X.smallEtaleTopology 1
-  let e : H₀.obj S.X₃ ≅ S.X₃.obj.obj (op (Scheme.Etale.mk (𝟙 X))) :=
-    (smallEtaleH0Sections.{u, w} X S.X₃).toAddCommGrpIso
-  let δ : H₀.obj S.X₃ ⟶ H₁.obj S.X₁ :=
-    AddCommGrpCat.ofHom (X := H₀.obj S.X₃) (Y := H₁.obj S.X₁)
-      (smallEtaleConnectingMap.{u, w} (X := X) (S := S) hS 0)
-  (e.inv ≫ δ).hom
+  letI : HasExt.{max u w} C := smallEtaleHasExt.{u, w} X
+  (smallEtaleConnectingMap.{u, w} (X := X) (S := S) hS 0).comp
+    (smallEtaleH0Sections.{u, w} X S.X₃).symm.toAddMonoidHom
 
 
 /-- Zero boundary is equivalent to an actual original global section lift. -/
@@ -70,17 +63,15 @@ theorem smallEtaleSectionBoundary_zero_iff (hS : S.ShortExact)
       ∃ b : S.X₂.obj.obj (op (Scheme.Etale.mk (𝟙 X))),
         S.g.hom.app (op (Scheme.Etale.mk (𝟙 X))) b = c := by
   let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
-  let A := AddCommGrpCat.{max u w}
-  let _ : HasExt.{max u w} C := smallEtaleHasExt.{u, w} X
-  let H₀ : C ⥤ A := Sheaf.H.functorH.{max u w, max u w, u, u + 1} X.smallEtaleTopology 0
-  let H₁ : C ⥤ A := Sheaf.H.functorH.{max u w, max u w, u, u + 1} X.smallEtaleTopology 1
+  letI : HasExt.{max u w} C := smallEtaleHasExt.{u, w} X
   let e₂ : Sheaf.H S.X₂ 0 ≃+ S.X₂.obj.obj (op (Scheme.Etale.mk (𝟙 X))) :=
     smallEtaleH0Sections.{u, w} X S.X₂
   let e₃ : Sheaf.H S.X₃ 0 ≃+ S.X₃.obj.obj (op (Scheme.Etale.mk (𝟙 X))) :=
     smallEtaleH0Sections.{u, w} X S.X₃
-  let g : H₀.obj S.X₂ ⟶ H₀.obj S.X₃ := H₀.map S.g
-  let δ : H₀.obj S.X₃ ⟶ H₁.obj S.X₁ :=
-    AddCommGrpCat.ofHom (X := H₀.obj S.X₃) (Y := H₁.obj S.X₁)
+  let g : AddCommGrpCat.of (Sheaf.H S.X₂ 0) ⟶ AddCommGrpCat.of (Sheaf.H S.X₃ 0) :=
+    AddCommGrpCat.ofHom (Sheaf.H.map S.g 0)
+  let δ : AddCommGrpCat.of (Sheaf.H S.X₃ 0) ⟶ AddCommGrpCat.of (Sheaf.H S.X₁ 1) :=
+    AddCommGrpCat.ofHom
       (smallEtaleConnectingMap.{u, w} (X := X) (S := S) hS 0)
   constructor
   · intro hc
@@ -88,7 +79,7 @@ theorem smallEtaleSectionBoundary_zero_iff (hS : S.ShortExact)
     exact Sheaf.H.longSequence_equiv₀_exact₃ (hS := hS)
       (hT := identityEtaleIsTerminal X) c hδ
   · rintro ⟨b, hb⟩
-    let x : H₀.obj S.X₂ := e₂.symm b
+    let x : Sheaf.H S.X₂ 0 := e₂.symm b
     have hZero : g ≫ δ = 0 :=
       (Sheaf.H.longSequence_exact hS 0 1 rfl).zero 1
     have hδ : δ.hom (g.hom x) = 0 := ConcreteCategory.congr_hom hZero x

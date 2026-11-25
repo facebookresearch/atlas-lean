@@ -24,13 +24,15 @@ universe u w
 namespace AlgebraicGeometry.Scheme.DerivedSections
 variable (X : Scheme.{u})
 /-- The literal three-term sections complex in each positive degree. -/
-abbrev positiveShort (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :=
+abbrev positiveShort (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ) :
+    ShortComplex AddCommGrpCat.{max u w} :=
   (((Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).mapHomologicalComplex
     (ComplexShape.up ℕ)).obj (injectiveResolution Q).cocomplex).sc' n (n + 1) (n + 2)
 
 /-- The literal sections-homology class followed by the canonical derived-object comparison. -/
 def positiveCycleClass (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ)
-    (z : (positiveShort.{u, w} X Q n).g.hom.ker) :=
+    (z : (positiveShort.{u, w} X Q n).g.hom.ker) :
+    ((Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}).rightDerived (n + 1)).obj Q :=
   let Γ := Sheaf.Γ X.smallEtaleTopology AddCommGrpCat.{max u w}
   let R := injectiveResolution Q
   let K := (Γ.mapHomologicalComplex (ComplexShape.up ℕ)).obj R.cocomplex
@@ -155,25 +157,20 @@ end AlgebraicGeometry.Scheme.DerivedSections.Reuse
 namespace AlgebraicGeometry.Scheme.DerivedSections.Reuse
 variable (X : Scheme.{u})
 
-private instance originalComparisonHasExt :
-    HasExt.{max u w} (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :=
-  smallEtaleHasExt.{u, w} X
-
-private instance originalComparisonDerivedCategory :
-    HasDerivedCategory.{(max u w) + 1}
-      (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :=
-  HasDerivedCategory.standard _
-
-private theorem originalComparison_extMk
+private theorem largeComparison_extMk
     (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ)
     (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X (n + 1))
     (hf : f ≫ (injectiveResolution Q).cocomplex.d (n + 1) (n + 2) = 0)
     (z : (positiveShort.{u, w} X Q n).g.hom.ker)
     (hz : z.val = integralHomSections.{u, w} X _ f) :
-    originalComparison.{u, w} X Q (n + 1)
-        ((injectiveResolution Q).extMk.{max u w, max (u + 1) w, (max u w) + 1}
+    letI : HasExt.{max (u + 1) w}
+      (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) := largeExt.{u, w} X
+    ((largeComparisonIso.{u, w} X (n + 1)).app Q).hom
+        ((injectiveResolution Q).extMk.{max (u + 1) w, max (u + 1) w, (max u w) + 1}
           f (n + 2) rfl hf) =
-      positiveCycleClass.{u, w} X Q n z := by
+      (ULift.up (positiveCycleClass.{u, w} X Q n z) :
+        AddCommGrpCat.uliftFunctor.{u + 1, max u w}.obj
+          (((Γ.{u, w} X).rightDerived (n + 1)).obj Q)) := by
   let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
   let _ : HasExt.{max (u + 1) w} C := largeExt.{u, w} X
   let R : InjectiveResolution Q := injectiveResolution Q
@@ -228,8 +225,6 @@ private theorem originalComparison_extMk
     (NatTrans.rightDerived α q).app Q
   let L : AddCommGrpCat.of (Abelian.Ext.{max (u + 1) w} Z Q q) ≅
       U.obj ((G.rightDerived q).obj Q) := (largeComparisonIso.{u, w} X q).app Q
-  let ξ : Sheaf.H.{max u w, max u w, u, u + 1} Q q :=
-    R.extMk.{max u w, max (u + 1) w, (max u w) + 1} f (n + 2) rfl hf
   let ξ' : Abelian.Ext.{max (u + 1) w} Z Q q :=
     R.extMk.{max (u + 1) w, max (u + 1) w, (max u w) + 1} f (n + 2) rfl hf
   have hDC : D.inv ξ' = eF.inv a :=
@@ -246,15 +241,43 @@ private theorem originalComparison_extMk
         (S'.homologyπ (S'.abCyclesIso.inv z)))) =
       (ULift.up (positiveCycleClass.{u, w} X Q n z) :
         U.obj ((G.rightDerived q).obj Q)) := rfl
-  have hSize : extSizeEquiv.{u, w} X Q q ξ = ξ' :=
+  change L.hom ξ' = _
+  exact hLarge.trans ((congrArg (U.map eG.inv) hH).trans hFinal)
+
+private instance originalComparisonHasExt :
+    HasExt.{max u w} (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :=
+  smallEtaleHasExt.{u, w} X
+
+private instance originalComparisonDerivedCategory :
+    HasDerivedCategory.{(max u w) + 1}
+      (Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) :=
+  HasDerivedCategory.standard _
+
+private theorem originalComparison_extMk
+    (Q : Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}) (n : ℕ)
+    (f : integralSheaf.{u, w} X ⟶ (injectiveResolution Q).cocomplex.X (n + 1))
+    (hf : f ≫ (injectiveResolution Q).cocomplex.d (n + 1) (n + 2) = 0)
+    (z : (positiveShort.{u, w} X Q n).g.hom.ker)
+    (hz : z.val = integralHomSections.{u, w} X _ f) :
+    originalComparison.{u, w} X Q (n + 1)
+        ((injectiveResolution Q).extMk.{max u w, max (u + 1) w, (max u w) + 1}
+          f (n + 2) rfl hf) =
+      positiveCycleClass.{u, w} X Q n z := by
+  let C := Sheaf X.smallEtaleTopology AddCommGrpCat.{max u w}
+  letI : HasExt.{max (u + 1) w} C := largeExt.{u, w} X
+  let q := n + 1
+  let ξ : Sheaf.H.{max u w, max u w, u, u + 1} Q q :=
+    (injectiveResolution Q).extMk.{max u w, max (u + 1) w, (max u w) + 1}
+      f (n + 2) rfl hf
+  have hSize : extSizeEquiv.{u, w} X Q q ξ =
+      (injectiveResolution Q).extMk.{max (u + 1) w, max (u + 1) w, (max u w) + 1}
+        f (n + 2) rfl hf :=
     extSizeEquiv_extMk.{u, w} X Q q f hf
-  have hResult : L.hom (extSizeEquiv.{u, w} X Q q ξ) =
-      (ULift.up (positiveCycleClass.{u, w} X Q n z) :
-        U.obj ((G.rightDerived q).obj Q)) :=
-    (congrArg L.hom hSize).trans
-      (hLarge.trans ((congrArg (U.map eG.inv) hH).trans hFinal))
-  change (L.hom (extSizeEquiv.{u, w} X Q q ξ)).down = _
-  exact congrArg ULift.down hResult
+  have hLarge := largeComparison_extMk.{u, w} X Q n f hf z hz
+  change (((largeComparisonIso.{u, w} X q).app Q).hom
+    (extSizeEquiv.{u, w} X Q q ξ)).down = _
+  rw [hSize]
+  exact congrArg ULift.down hLarge
 
 end AlgebraicGeometry.Scheme.DerivedSections.Reuse
 

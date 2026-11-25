@@ -39,6 +39,17 @@ universe t u v w j j'
 
 namespace ModuleCat.Algebra.Hochschild.Matrix.StableMorita
 
+private instance (priority := 2000) connectedConstantModuleHasColimit.{c, u, j, j'}
+    {k : Type u} [CommRing k] {J : Type j} [Category.{j'} J] [IsConnected J]
+    (X : ModuleCat.{c} k) : HasColimit ((Functor.const J).obj X) :=
+  hasColimit_const_of_isConnected (J := J) (C := ModuleCat.{c} k) X
+
+private instance (priority := 2000) connectedConstantChainHasColimit.{c, u, j, j'}
+    {k : Type u} [CommRing k] {J : Type j} [Category.{j'} J] [IsConnected J]
+    (X : ChainComplex (ModuleCat.{c} k) ℕ) : HasColimit ((Functor.const J).obj X) :=
+  hasColimit_const_of_isConnected
+    (J := J) (C := ChainComplex (ModuleCat.{c} k) ℕ) X
+
 variable (k : Type u) [CommRing k]
   (A : Type v) [Ring A] [Algebra k A]
   (M : Type w) [AddCommGroup M] [Module k M]
@@ -235,6 +246,7 @@ theorem finiteTransitionAt_comp {r s q : ℕ} (h : r ≤ s) (h' : s ≤ q) :
       (fun i => Matrix.zeroExtend (Nat.succ_le_succ h) (a i)),
     finiteTransitionAt_f_tprod.{t} k A M (h.trans h') n X a]
   simp only [Matrix.zeroExtend_comp]
+  rfl
 
 /-- Positive-size finite matrix Hochschild complexes with their actual zero extensions. -/
 def finiteDiagramAt : ℕ ⥤ ChainComplex (ModuleCat.{max u v w t} k) ℕ where
@@ -310,6 +322,15 @@ theorem corner_comp_finiteTransitionAt {r s : ℕ} (h : r ≤ s) :
       (cornerLinear k (Fin (r + 1)) 0 m)
       (fun i => cornerLinear k (Fin (r + 1)) 0 (a i)),
     Morita.cornerChainMapAt_f_tprod.{t} k A M (Fin (s + 1)) 0 n m a]
+  change (ULift.up (Matrix.zeroExtend (Nat.succ_le_succ h)
+      (cornerLinear k (Fin (r + 1)) 0 m)) :
+      ULift.{max u v w t} (Matrix (Fin (s + 1)) (Fin (s + 1)) M)) ⊗ₜ[k]
+      PiTensorProduct.tprod k
+        (fun i => Matrix.zeroExtend (Nat.succ_le_succ h)
+          (cornerLinear k (Fin (r + 1)) 0 (a i))) =
+    (ULift.up (cornerLinear k (Fin (s + 1)) 0 m) :
+      ULift.{max u v w t} (Matrix (Fin (s + 1)) (Fin (s + 1)) M)) ⊗ₜ[k]
+      PiTensorProduct.tprod k (fun i => cornerLinear k (Fin (s + 1)) 0 (a i))
   simp only [zeroExtend_corner]
 
 /-- Finite trace is a natural transformation to the original coefficient complex. -/
@@ -372,7 +393,7 @@ theorem traceHomologyNatIsoAt_hom_app (G : J ⥤ ℕ) (n : ℕ) (r : J) :
 variable [HasColimitsOfShape J (ModuleCat.{max u v w t} k)]
 
 /-- The stable colimit model of a reindexed positive-size finite matrix diagram. -/
-def stableComplexAt (G : J ⥤ ℕ) : ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
+abbrev stableComplexAt (G : J ⥤ ℕ) : ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
   colimit (G ⋙ finiteDiagramAt.{t} k A M)
 
 private def traceCoconeAt (G : J ⥤ ℕ) : Cocone (G ⋙ finiteDiagramAt.{t} k A M) where
