@@ -39,6 +39,7 @@ public import MathlibExt.NumberTheory.AutomorphicForm.ConstantTerm
 public import MathlibExt.NumberTheory.AutomorphicForm.FnTwist
 
 import Mathlib.Tactic.Group
+import MathlibExt.NumberTheory.NumberField.AdelicLevel
 
 @[expose] public section
 
@@ -263,34 +264,17 @@ private theorem archComp_archGLIncl_of_ne {v w : InfinitePlace K} (hvw : v ≠ w
     archMatrixUpdate_apply]
   simp [Function.update_of_ne hvw]
 
-private def glArchOf :
-    GL (Fin 2) (AdeleRing (𝓞 K) K) →* GL (Fin 2) (InfiniteAdeleRing K) :=
-  Matrix.GeneralLinearGroup.map
-    { toFun := fun a : AdeleRing (𝓞 K) K => a.1
-      map_one' := rfl
-      map_mul' := fun _ _ => rfl
-      map_zero' := rfl
-      map_add' := fun _ _ => rfl }
-
-private def glFinOf :
-    GL (Fin 2) (AdeleRing (𝓞 K) K) →* GL (Fin 2) (FiniteAdeleRing (𝓞 K) K) :=
-  Matrix.GeneralLinearGroup.map
-    { toFun := fun a : AdeleRing (𝓞 K) K => a.2
-      map_one' := rfl
-      map_mul' := fun _ _ => rfl
-      map_zero' := rfl
-      map_add' := fun _ _ => rfl }
-
-private theorem glArchOf_adelicArchGLIncl (k : GL (Fin 2) (InfiniteAdeleRing K)) :
-    glArchOf K (adelicArchGLIncl K k) = k := by
+private theorem glArch_adelicArchGLIncl (k : GL (Fin 2) (InfiniteAdeleRing K)) :
+    AdelicLevel.glArch (𝓞 K) K (adelicArchGLIncl K k) = k := by
   ext i j; rfl
 
-private theorem glFinOf_adelicArchGLIncl (k : GL (Fin 2) (InfiniteAdeleRing K)) :
-    glFinOf K (adelicArchGLIncl K k) = 1 := by
+private theorem glFin_adelicArchGLIncl (k : GL (Fin 2) (InfiniteAdeleRing K)) :
+    AdelicLevel.glFin (𝓞 K) K (adelicArchGLIncl K k) = 1 := by
   ext i j; rfl
 
-private theorem eq_of_glArchOf_eq_of_glFinOf_eq {x y : AdelicGL2 (𝓞 K) K}
-    (h₁ : glArchOf K x = glArchOf K y) (h₂ : glFinOf K x = glFinOf K y) : x = y := by
+private theorem eq_of_glArch_eq_of_glFin_eq {x y : AdelicGL2 (𝓞 K) K}
+    (h₁ : AdelicLevel.glArch (𝓞 K) K x = AdelicLevel.glArch (𝓞 K) K y)
+    (h₂ : AdelicLevel.glFin (𝓞 K) K x = AdelicLevel.glFin (𝓞 K) K y) : x = y := by
   apply Units.ext
   apply Matrix.ext
   intro i j
@@ -315,25 +299,25 @@ private theorem placed_comm_of_ne {w w' : InfinitePlace K} (hww : w ≠ w')
     (a : GL (Fin 2) w.Completion) (b : GL (Fin 2) w'.Completion) :
     adelicArchGLInclAt K w a * adelicArchGLInclAt K w' b
       = adelicArchGLInclAt K w' b * adelicArchGLInclAt K w a := by
-  refine eq_of_glArchOf_eq_of_glFinOf_eq K ?_ ?_
+  refine eq_of_glArch_eq_of_glFin_eq K ?_ ?_
   · rw [map_mul, map_mul]
     refine eq_of_forall_archComp_eq K fun v => ?_
     rw [map_mul, map_mul]
-    show archComp K v (glArchOf K (adelicArchGLIncl K (archGLIncl K w a))) *
-        archComp K v (glArchOf K (adelicArchGLIncl K (archGLIncl K w' b))) =
-      archComp K v (glArchOf K (adelicArchGLIncl K (archGLIncl K w' b))) *
-        archComp K v (glArchOf K (adelicArchGLIncl K (archGLIncl K w a)))
-    rw [glArchOf_adelicArchGLIncl K (archGLIncl K w a),
-      glArchOf_adelicArchGLIncl K (archGLIncl K w' b)]
+    show archComp K v (AdelicLevel.glArch (𝓞 K) K (adelicArchGLIncl K (archGLIncl K w a))) *
+        archComp K v (AdelicLevel.glArch (𝓞 K) K (adelicArchGLIncl K (archGLIncl K w' b))) =
+      archComp K v (AdelicLevel.glArch (𝓞 K) K (adelicArchGLIncl K (archGLIncl K w' b))) *
+        archComp K v (AdelicLevel.glArch (𝓞 K) K (adelicArchGLIncl K (archGLIncl K w a)))
+    rw [glArch_adelicArchGLIncl K (archGLIncl K w a),
+      glArch_adelicArchGLIncl K (archGLIncl K w' b)]
     by_cases hv : v = w
     · subst hv
       rw [archComp_archGLIncl_of_ne K hww, mul_one, one_mul]
     · rw [archComp_archGLIncl_of_ne K hv, one_mul, mul_one]
   · rw [map_mul, map_mul,
-      show glFinOf K (adelicArchGLInclAt K w a) = 1 from
-        glFinOf_adelicArchGLIncl K (archGLIncl K w a),
-      show glFinOf K (adelicArchGLInclAt K w' b) = 1 from
-        glFinOf_adelicArchGLIncl K (archGLIncl K w' b)]
+      show AdelicLevel.glFin (𝓞 K) K (adelicArchGLInclAt K w a) = 1 from
+        glFin_adelicArchGLIncl K (archGLIncl K w a),
+      show AdelicLevel.glFin (𝓞 K) K (adelicArchGLInclAt K w' b) = 1 from
+        glFin_adelicArchGLIncl K (archGLIncl K w' b)]
 
 private theorem conj_eq_self_of_ne {w w' : InfinitePlace K} (hww : w ≠ w')
     (f : GL (Fin 2) w'.Completion) (a : GL (Fin 2) w.Completion) :
