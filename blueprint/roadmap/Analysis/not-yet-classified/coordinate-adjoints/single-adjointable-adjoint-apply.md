@@ -1,3 +1,4 @@
-# Single Adjointable adjoint apply
+# Evaluation of the coordinate adjoint
 
-The constructed adjoint operator has the original coordinate value.
+For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, `(singleAdjointable i).adjointOperator y = coord i y`.

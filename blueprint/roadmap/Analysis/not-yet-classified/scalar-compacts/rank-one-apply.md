@@ -1,3 +1,4 @@
-# Rank One apply
+# Action of the scalar rank-one operator
 
-The computed compact rank-one operator has its original Hilbert-space action.
+`(rankOne v w) x = inner ℂ w x • v` on
+`lp(ℕ,ℂ,2)`.

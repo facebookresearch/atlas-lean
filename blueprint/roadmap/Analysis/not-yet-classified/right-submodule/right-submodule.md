@@ -1,7 +1,5 @@
-# Right Submodule
+# Right submodule of a C-star module
 
-A complex submodule stable under the right coefficient action of `B`.
-
-No closedness or complementability is stored.  Thus its subtype is always a
-right pre-Hilbert module, and it becomes a Hilbert module when its carrier is
-closed in a complete ambient module.
+Let `E` be a right C-star module over a nonunital
+C-star algebra `B`. A complex submodule `S` of `E` with `x <• b ∈ S` whenever `x ∈ S` and `b :
+B`. Its norm and inner product are restricted from `E`; closedness is a separate property.

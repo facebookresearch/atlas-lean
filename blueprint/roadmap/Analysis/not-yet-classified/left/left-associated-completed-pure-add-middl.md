@@ -1,3 +1,6 @@
-# Left Associated Completed Pure add middle
+# Additivity in the middle factor of a left-associated tensor
 
-The original middle fibre is additive in the completed pure triple.
+Let `Eᵢ` be complete right
+modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ : B₁
+→ End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = leftAssociatedCompletedPure φ χ x y z`. Then `P(x,y+y',z) = P(x,y,z) + P(x,y',z)`.

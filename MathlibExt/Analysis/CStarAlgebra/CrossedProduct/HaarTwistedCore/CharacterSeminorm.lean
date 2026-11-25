@@ -16,14 +16,13 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Fu
 public import MathlibExt.Analysis.CStarAlgebra.SeminormPullback
 
 /-!
-# Original full crossed-product gauge under actual character modulation
+# Character invariance of the maximal covariant C-star seminorm
 
-Composition with the computed raw character star automorphism preserves
-admissibility by the original L1 isometry. The original maximal gauge is
-itself admissible, so its character pullback is bounded by that same maximum.
-The inverse character gives the reverse inequality. This is the original
-all-covariant full norm, through its already proved intrinsic identification.
-No covariant model, isometry certificate or desired completed action is input.
+For a point-norm action α of a locally compact group G on a nonunital C-star algebra A and
+regular Haar measure μ, write Mχf(s)=χ(s)•f(s). A C-star seminorm p dominated by the L¹ gauge
+remains dominated after pullback along Mχ. Consequently the maximal such seminorm pmax
+satisfies pmax(Mχf)=pmax(f) for every continuous unitary character χ and compactly supported
+coefficient f.
 -/
 
 @[expose] public section
@@ -45,7 +44,12 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (mu : Measure G) [mu.IsHaarMeasure] [mu.Regular] (alpha : PointNormCStarAction G A)
 
 omit [mu.Regular] in
-/-- Actual character pullback preserves the original L1-admissible C-star seminorm family. -/
+/-- **Character pullback preserves L¹-admissibility.**
+
+Let p be a C-star seminorm on the Haar twisted-convolution core satisfying p(f)≤∫ s, ‖f(s)‖ ∂μ
+for every compactly supported f. For a continuous unitary character χ, its pullback f↦p(Mχf),
+where Mχf(s)=χ(s)•f(s), satisfies the same bound.
+-/
 theorem admissible_character_pullback
     (chi : PontryaginDual G) {p : CStarSeminorm (Carrier mu alpha)}
     (hp : p ∈ admissibleCStarSeminorms mu alpha) :
@@ -57,7 +61,12 @@ theorem admissible_character_pullback
     (l1Gauge_characterModulation mu alpha chi f).le
 
 omit [mu.Regular] in
-/-- The actual modulated original full gauge is bounded by the same original full gauge. -/
+/-- **Maximal covariant seminorm bound after modulation.**
+
+For a continuous unitary character χ of G and Haar-core coefficient f, pmax(Mχf)≤pmax(f),
+where Mχf(s)=χ(s)•f(s) and pmax is the supremum of the C-star seminorms dominated by the L¹
+gauge.
+-/
 theorem maximal_character_le (chi : PontryaginDual G) (f : Carrier mu alpha) :
     maximalCStarSeminorm mu alpha (characterModulation mu alpha chi f) ≤
       maximalCStarSeminorm mu alpha f :=
@@ -65,7 +74,12 @@ theorem maximal_character_le (chi : PontryaginDual G) (f : Carrier mu alpha) :
     (admissible_character_pullback mu alpha chi (maximalCStarSeminorm_mem_admissible mu alpha)) f
 
 omit [mu.Regular] in
-/-- The actual original full covariant norm is exactly unchanged by the dual character. -/
+/-- **Maximal covariant seminorm is character invariant.**
+
+For every unitary character χ of G and compactly supported coefficient f, pmax(Mχf)=pmax(f),
+with Mχf(s)=χ(s)•f(s) and pmax the maximal L¹-dominated C-star seminorm of the Haar
+convolution core.
+-/
 theorem maximal_character_eq (chi : PontryaginDual G) (f : Carrier mu alpha) :
     maximalCStarSeminorm mu alpha (characterModulation mu alpha chi f) =
       maximalCStarSeminorm mu alpha f := by

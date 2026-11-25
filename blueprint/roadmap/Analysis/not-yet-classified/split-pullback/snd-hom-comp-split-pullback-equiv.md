@@ -1,4 +1,9 @@
-# Snd Hom comp split Pullback Equiv
+# Second coordinate of the split pullback equivalence
 
-The second projection of the split-pullback equivalence is the induced
-second-coordinate coefficient map.
+For a nonunital complex C-star algebra X, write αX=C_b(T,X)/C₀(T,X), T=[1,∞), with its
+quotient C-star norm and quotient map q_X. Let A,B,C be nonunital complex C-star algebras in
+independent universes and f:A→C, g:B→C nonunital complex star homomorphisms. Put
+P={(a,b)∈A×B:f(a)=g(b)}, with its inherited maximum norm, and Pα={(x,y)∈αA×αB:αf(x)=αg(y)}.
+Assume a nonunital complex star homomorphism s:C→B satisfies g∘s=id_C. For
+E=splitPullbackEquiv f g s hs and the pullback projections pr_B:P→B, pr_2:Pα→αB,
+pr_2∘E=α(pr_B).

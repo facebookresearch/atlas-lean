@@ -15,19 +15,16 @@ public import MathlibExt.Analysis.CStarAlgebra.NonUnitalRepresentation
 public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarRegularCovariantModel
 
 /-!
-# The canonical regular Haar pair from the strict nonunital GN construction
+# Canonical Haar regular covariant representation
 
-Select the actual same-universe Hilbert representation supplied by the
-proved nonunital Gelfand--Naimark construction. Its original dictionaries,
-injective coefficient map share the single neutral GN packet and choice.
-The original coefficient norm follows from the neutral norm theorem. The
-verified original regular construction then gives the coefficient and
-Haar translation pair on that selected Hilbert space's actual Lp carrier.
-
-The canonical endpoint has no coefficient-representation or regular-model
-input. The group and coefficient universes remain independent, and zero
-coefficient algebras are permitted. Independence of the resulting source
-model and raw-core faithfulness remain separate theorem obligations.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let
+H_A=CanonicalCoefficientSpace A and π_A=canonicalCoefficientRepresentation A be the faithful
+Hilbert representation given by the nonunital Gelfand–Naimark construction. If A:Type uA, then
+H_A:Type uA. Put K=L²(G,μ;H_A)=CanonicalRegularSpace μ. The regular pair has
+(Π(a)ξ)(s)=π_A(α_(s⁻¹)(a))ξ(s) and (λ_g ξ)(s)=ξ(g⁻¹*s), with equality of L² representatives
+understood μ-almost everywhere. The pair (Π,λ) is a covariant representation of α on K. The
+coefficient representation π_A is injective and isometric.
 -/
 
 @[expose] public section
@@ -46,7 +43,12 @@ noncomputable section
 
 universe uG uA
 
-/-- The actual source-sized coefficient Hilbert space selected from strict GN data. -/
+/-- **Canonical Hilbert space for a C-star algebra.**
+
+For a nonunital complex C-star algebra A:Type uA, CanonicalCoefficientSpace A is the complete
+complex Hilbert space H_A:Type uA chosen by the faithful nonunital Gelfand–Naimark
+representation.
+-/
 abbrev CanonicalCoefficientSpace (A : Type uA) [NonUnitalCStarAlgebra A] : Type uA :=
   (faithfulHilbertRepresentationData A).space
 
@@ -59,17 +61,30 @@ instance instCanonicalCoefficientInner (A : Type uA) [NonUnitalCStarAlgebra A] :
 instance instCanonicalCoefficientComplete (A : Type uA) [NonUnitalCStarAlgebra A] :
     CompleteSpace (CanonicalCoefficientSpace A) := (faithfulHilbertRepresentationData A).complete
 
-/-- The canonical coefficient representation is the actual selected strict GN map. -/
+/-- **Canonical faithful coefficient representation.**
+
+For a nonunital complex C-star algebra A, canonicalCoefficientRepresentation A:A→B(H_A), with
+H_A=CanonicalCoefficientSpace A, is the nonunital complex star homomorphism from the faithful
+Gelfand–Naimark construction.
+-/
 def canonicalCoefficientRepresentation (A : Type uA) [NonUnitalCStarAlgebra A] :
     A →⋆ₙₐ[ℂ] (CanonicalCoefficientSpace A →L[ℂ] CanonicalCoefficientSpace A) :=
   (faithfulHilbertRepresentationData A).representation
 
-/-- The canonical selected coefficient map is genuinely faithful. -/
+/-- **Faithfulness of the canonical coefficient representation.**
+
+For a nonunital complex C-star algebra A and H_A=CanonicalCoefficientSpace A, the homomorphism
+π_A=canonicalCoefficientRepresentation A:A→B(H_A) is injective.
+-/
 theorem canonicalCoefficientRepresentation_injective (A : Type uA) [NonUnitalCStarAlgebra A] :
     Function.Injective (canonicalCoefficientRepresentation A) :=
   (faithfulHilbertRepresentationData A).injective_representation
 
-/-- The canonical coefficient operator retains the original algebra norm. -/
+/-- **Norm preservation of the canonical coefficient representation.**
+
+For a nonunital complex C-star algebra A, a∈A and H_A=CanonicalCoefficientSpace A,
+‖canonicalCoefficientRepresentation A a‖=‖a‖, with the operator norm on B(H_A).
+-/
 theorem norm_canonicalCoefficientRepresentation (A : Type uA) [NonUnitalCStarAlgebra A] (a : A) :
     ‖canonicalCoefficientRepresentation A a‖ = ‖a‖ :=
   (faithfulHilbertRepresentationData A).norm_representation a
@@ -79,20 +94,56 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) [μ.Regular] [μ.IsHaarMeasure] (α : PointNormCStarAction G A)
 
-/-- The actual original Haar L2 carrier of the internally selected canonical GN coefficient space. -/
+/-- **Hilbert space of the canonical Haar regular representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let
+H_A=CanonicalCoefficientSpace A and π_A=canonicalCoefficientRepresentation A be the faithful
+Hilbert representation given by the nonunital Gelfand–Naimark construction. If A:Type uA, then
+H_A:Type uA. CanonicalRegularSpace μ is K=L²(G,μ;H_A), with its vector-valued L² inner product
+and norm.
+-/
 abbrev CanonicalRegularSpace := Lp (CanonicalCoefficientSpace A) 2 μ
 
-/-- The actual canonical regular covariant pair, with no external coefficient-model input. -/
+/-- **Canonical regular covariant pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let
+H_A=CanonicalCoefficientSpace A and π_A=canonicalCoefficientRepresentation A be the faithful
+Hilbert representation given by the nonunital Gelfand–Naimark construction. If A:Type uA, then
+H_A:Type uA. Put K=L²(G,μ;H_A)=CanonicalRegularSpace μ. The regular pair has
+(Π(a)ξ)(s)=π_A(α_(s⁻¹)(a))ξ(s) and (λ_g ξ)(s)=ξ(g⁻¹*s), with equality of L² representatives
+understood μ-almost everywhere. The pair canonicalRegularCovariantRepresentation μ α=(Π,λ)
+satisfies λ_g Π(a) λ_g*=Π(α_g(a)).
+-/
 def canonicalRegularCovariantRepresentation : CovariantRepresentation α (CanonicalRegularSpace (A := A) μ) :=
   α.regularCovariantRepresentation (canonicalCoefficientRepresentation A) μ
 
-/-- The canonical regular coefficient keeps the original inverse-action formula on every vector. -/
+/-- **Canonical regular coefficient action almost everywhere.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let
+H_A=CanonicalCoefficientSpace A and π_A=canonicalCoefficientRepresentation A be the faithful
+Hilbert representation given by the nonunital Gelfand–Naimark construction. If A:Type uA, then
+H_A:Type uA. On K=CanonicalRegularSpace μ=L²(G,μ;H_A),
+(canonicalRegularCovariantRepresentation μ α).algebra a ξ agrees μ-almost everywhere with
+s↦π_A(α_(s⁻¹)(a))ξ(s).
+-/
 theorem canonicalRegularCoefficient_ae_eq (a : A) (ξ : CanonicalRegularSpace (A := A) μ) :
     (canonicalRegularCovariantRepresentation μ α).algebra a ξ =ᵐ[μ]
       fun s : G => canonicalCoefficientRepresentation A (α s⁻¹ a) (ξ s) :=
   α.regularCoefficientOperator_ae_eq (canonicalCoefficientRepresentation A) μ a ξ
 
-/-- The canonical group's actual vector action is the original Haar inverse left translation. -/
+/-- **Canonical regular group action almost everywhere.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let
+H_A=CanonicalCoefficientSpace A and π_A=canonicalCoefficientRepresentation A be the faithful
+Hilbert representation given by the nonunital Gelfand–Naimark construction. If A:Type uA, then
+H_A:Type uA. On K=CanonicalRegularSpace μ=L²(G,μ;H_A), the group operator of
+canonicalRegularCovariantRepresentation μ α at g sends ξ to a representative equal μ-almost
+everywhere to s↦ξ(g⁻¹*s).
+-/
 theorem canonicalRegularGroup_ae_eq (g : G) (ξ : CanonicalRegularSpace (A := A) μ) :
     ((canonicalRegularCovariantRepresentation μ α).group g :
         CanonicalRegularSpace (A := A) μ →L[ℂ] CanonicalRegularSpace (A := A) μ) ξ =ᵐ[μ]

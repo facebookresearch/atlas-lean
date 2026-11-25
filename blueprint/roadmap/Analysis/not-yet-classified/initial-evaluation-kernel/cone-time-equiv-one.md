@@ -1,3 +1,3 @@
-# Cone Time Equiv one
+# Endpoint preserved by cone translation
 
-Transport preserves the endpoint value, with zero corresponding to time one.
+Let B be a nonunital complex C-star algebra and f∈C₀([0,∞),B). Then coneTimeEquiv B f 1=f(0).

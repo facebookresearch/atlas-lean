@@ -1,3 +1,4 @@
-# Norm pre Sum Linear Equiv
+# Norm of split finite-support vectors
 
-Splitting finite-support vectors preserves the standard-module norm.
+`‖preSumLinearEquiv x‖ = ‖x‖` for the Hilbert-module
+direct-sum norm.

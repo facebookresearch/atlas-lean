@@ -1,3 +1,4 @@
-# Compact Operator Matrix Coefficient apply
+# Value of a compact operator matrix entry
 
-The linear functional has the literal original matrix entry on every compact operator.
+`compactOperatorMatrixCoefficient H ξ η T =
+inner ℂ η ((T : H →L[ℂ] H) ξ)`.

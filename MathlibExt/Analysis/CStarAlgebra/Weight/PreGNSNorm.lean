@@ -15,19 +15,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Weight.PreInnerProduct
 public import Mathlib.Analysis.CStarAlgebra.Basic
 
 /-!
-# The actual weight seminorm and faithful pre-GNS norm
+# Weight seminorm and faithful pre-GNS norm
 
-The proved scalar-weight pre-inner-product Core supplies the stock
-seminormed additive group and complex inner-product structure on the
-literal pre-GNS type copy. Its norm is the square root of the original
-finite positive-square weight value, with no ambient norm substitution.
+For an extended positive weight on a nonunital complex C-star algebra, the polarized form on
+`n_φ = {x : φ(x* x) < ∞}` gives the seminorm `‖x‖_φ=√((φ(x* x)).toReal)` and distance
+`d_φ(x,y)=‖x-y‖_φ`. The space `PreGNS φ` is a type copy of `n_φ` carrying this seminorm and
+inner product, rather than the ambient norm inherited from `A`.
 
-The original positive-weight faithfulness law proves definiteness:
-a zero diagonal has finite square value zero, hence its original positive
-square is zero, and the C-star proper-star law forces the original element
-to be zero. The stock definite-Core factory constructs the faithful normed
-additive group. The same actual pre-inner-product structure is retained.
-No norm/inner/Hilbert certificate or existence theorem is supplied as input.
+If the weight is faithful on positive elements, the form is definite and this seminorm is a
+norm. For a general weight nonzero null vectors are allowed; completeness of the domain is not
+assumed.
 -/
 
 @[expose] public section
@@ -45,21 +42,37 @@ universe u
 
 variable {A : Type u} [NonUnitalCStarAlgebra A]
 
-/-- The actual weight Core gives its original induced seminorm and distance. -/
+/-- **Weight seminormed additive group.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈ n_φ`. the
+type copy `PreGNS φ` of `n_φ` has seminorm `‖x‖_φ=√q(x)` and distance `d_φ(x,y)=√q(x-y)`,
+which may vanish on nonzero vectors. -/
 instance Weight.preGNSSeminormedAddCommGroup (φ : Weight A) : SeminormedAddCommGroup φ.PreGNS :=
   InnerProductSpace.Core.toSeminormedAddCommGroup (c := φ.preGNSPreInnerProduct)
 
-/-- The same proved Core gives the actual complex pre-inner-product structure. -/
+/-- **Seminormed GNS inner-product space.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈ n_φ`. For
+`x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i • x,y)`. `PreGNS φ`
+carries the complex inner product `P` and its induced seminorm; the form may be degenerate. -/
 instance Weight.preGNSInnerProductSpace (φ : Weight A) : InnerProductSpace ℂ φ.PreGNS :=
   InnerProductSpace.ofCore φ.preGNSPreInnerProduct
 
-/-- The induced inner product retains the original scalar-weight polarization values. -/
+/-- **Pre-GNS inner product under the domain identification.** Let `A` be a nonunital complex
+C-star algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real
+homogeneous weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x*
+x)).toReal` for `x ∈ n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and
+`P(x,y)=R(x,y)+i R(i • x,y)`. if `e=preGNSLinearEquiv φ : PreGNS φ ≃ₗ[ℂ] n_φ`, then
+`⟨x,y⟩=P(e(x),e(y))` for pre-GNS vectors `x,y`. -/
 @[simp]
 theorem Weight.preGNS_inner (φ : Weight A) (x y : φ.PreGNS) :
     ⟪x, y⟫_ℂ = φ.finiteSquarePolarInner (φ.preGNSLinearEquiv x) (φ.preGNSLinearEquiv y) :=
   rfl
 
-/-- The induced norm is the square root of the original finite positive-square value. -/
+/-- **Square-root formula for the weight seminorm.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. if `e=preGNSLinearEquiv φ`, then `‖x‖_φ=√q(e(x))` for `x : PreGNS φ`. -/
 theorem Weight.preGNS_norm (φ : Weight A) (x : φ.PreGNS) :
     ‖x‖ = Real.sqrt (φ.finiteSquareValue (φ.preGNSLinearEquiv x)) := by
   change Real.sqrt (RCLike.re (φ.finiteSquarePolarInner
@@ -67,13 +80,20 @@ theorem Weight.preGNS_norm (φ : Weight A) (x : φ.PreGNS) :
       Real.sqrt (φ.finiteSquareValue (φ.preGNSLinearEquiv x))
   rw [φ.finiteSquarePolarInner_self, RCLike.ofReal_re]
 
-/-- The actual pre-GNS norm square equals the original finite weight value. -/
+/-- **Square of the pre-GNS seminorm.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈ n_φ`. if
+`e=preGNSLinearEquiv φ`, then `‖x‖_φ²=q(e(x))=(φ(e(x)* e(x))).toReal` for `x : PreGNS φ`. -/
 theorem Weight.preGNS_norm_sq (φ : Weight A) (x : φ.PreGNS) :
     ‖x‖ ^ 2 = φ.finiteSquareValue (φ.preGNSLinearEquiv x) := by
   rw [φ.preGNS_norm]
   exact Real.sq_sqrt (φ.finiteSquareValue_nonneg _)
 
-/-- Original positive-weight faithfulness proves the actual diagonal is definite. -/
+/-- **Definiteness of a faithful weight pairing.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. assume `φ(a)=0 → a=0` for every positive `a : A`. Then `⟨x,x⟩=0` implies `x=0` for every
+`x : PreGNS φ`. -/
 theorem Weight.preGNS_definite (φ : Weight A)
     (hφ : ∀ a : PositiveElement A, φ.value a = 0 → (a : A) = 0)
     (x : φ.PreGNS) (hx : φ.preGNSPreInnerProduct.inner x x = 0) : x = 0 := by
@@ -92,7 +112,12 @@ theorem Weight.preGNS_definite (φ : Weight A)
   apply Subtype.ext
   exact hy
 
-/-- The genuine faithful Core retains the same weight kernel and proved definite field. -/
+/-- **Definite inner-product core of a faithful weight.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal`
+for `x ∈ n_φ`. For `x,y ∈ n_φ`, write `R(x,y)=(q(x+y)-q(x-y))/4` and `P(x,y)=R(x,y)+i R(i •
+x,y)`. under faithfulness `φ(a)=0 → a=0` on positive elements, `faithfulPreGNSCore φ` is the
+definite complex inner-product core with pairing `P` on `PreGNS φ`. -/
 @[instance_reducible]
 def Weight.faithfulPreGNSCore (φ : Weight A)
     (hφ : ∀ a : PositiveElement A, φ.value a = 0 → (a : A) = 0) :
@@ -100,7 +125,11 @@ def Weight.faithfulPreGNSCore (φ : Weight A)
   __ := φ.preGNSPreInnerProduct
   definite x hx := φ.preGNS_definite hφ x hx
 
-/-- The stock definite-Core factory gives the actual faithful weight normed group. -/
+/-- **Pre-GNS normed group for a faithful weight.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. Put `q(x) = (φ(x* x)).toReal` for `x ∈
+n_φ`. if `φ(a)=0 → a=0` for all positive `a`, `PreGNS φ` is a normed additive commutative
+group with norm `√q(x)`; the norm is the same weight seminorm with definiteness proved. -/
 @[instance_reducible]
 def Weight.faithfulPreGNSNormedAddCommGroup (φ : Weight A)
     (hφ : ∀ a : PositiveElement A, φ.value a = 0 → (a : A) = 0) :

@@ -15,17 +15,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.HilbertAmplification.Basic
 public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.MapRight.Completion
 
 /-!
-# The actual coefficient action on Hilbert amplification
+# Left coefficient multiplication on Hilbert amplification
 
-Left multiplication on the original nonunital coefficient self module commutes
-with the literal scalar representation. The already constructed completed
-second-factor operator therefore acts on the original Hilbert amplification.
-Its pure-tensor value multiplies the coefficient in its original order, and
-its stored adjoint multiplies by the genuine coefficient adjoint.
+Let `H` be a complex Hilbert space, `A` a nonunital C-star algebra and `X = Space H A`. Left
+multiplication by `a : A` on the coefficient factor extends to an adjointable map `L_a : X → X`
+satisfying `L_a (ξ⊗b) = ξ⊗(a*b)` and `L_a* (ξ⊗b) = ξ⊗(star a*b)`. Its operator norm satisfies
+`‖L_a‖ ≤ ‖a‖`.
 
-This supplies the coefficient factor of the elementary tensor action needed
-for Blackadar, K-Theory for Operator Algebras, Theorem 10.1.2. The minimum tensor
-norm, compact range identification and Takai isomorphism are separate statements.
+Left multiplication commutes with the complex scalar representation on the coefficient
+self-module, so it respects the balanced tensor relation. This coefficient action is used in
+Blackadar, K-Theory for Operator Algebras, Theorem 10.1.2.
 -/
 
 @[expose] public section
@@ -42,7 +41,9 @@ noncomputable section
 
 universe uH uA
 
-/-- Original coefficient left multiplication commutes with the literal scalar self representation. -/
+/-- **Commutation of coefficient multiplication with scalars.** For nonunital `A`, left
+multiplication `b ↦ a*b` commutes with `scalarSelfHom A c`, the map `b ↦ c • b`, for all `a :
+A` and `c : ℂ`. -/
 theorem leftMul_commutes_scalarSelfHom
     (A : Type uA) [NonUnitalCStarAlgebra A] (a : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -64,7 +65,9 @@ variable (H : Type uH) (A : Type uA)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NonUnitalCStarAlgebra A]
 
-/-- The coefficient acts through actual left multiplication on the original second factor. -/
+/-- **Left coefficient operator on the amplification.** For a complex Hilbert space `H` and
+nonunital `A`, `coefficientOperator H A a` is the adjointable map determined by `ξ⊗b ↦
+ξ⊗(a*b)`. -/
 def coefficientOperator (a : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -98,7 +101,8 @@ def coefficientOperator (a : A) :
   exact completedRightOperator (E₁ := ScalarRight H) (scalarSelfHom A)
     (AdjointableOperator.leftMul (B := A) a) (leftMul_commutes_scalarSelfHom A a)
 
-/-- The original Hilbert vector stays fixed while its coefficient is multiplied on the left. -/
+/-- **Coefficient operator on pure vectors.** `coefficientOperator H A a (pure H A ξ b) = pure H A
+ξ (a*b)`. -/
 @[simp]
 theorem coefficientOperator_pure (a : A) (ξ : H) (b : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -138,7 +142,8 @@ theorem coefficientOperator_pure (a : A) (ξ : H) (b : A) :
     completedRightOperator_pure (scalarSelfHom A) (AdjointableOperator.leftMul (B := A) a)
       (leftMul_commutes_scalarSelfHom A a) ((ScalarRight.equivL H).symm ξ) b
 
-/-- The stored genuine adjoint multiplies the coefficient by the original coefficient adjoint. -/
+/-- **Adjoint coefficient operator on pure vectors.** The adjoint satisfies `(coefficientOperator
+H A a).adjoint (pure ξ b) = pure ξ (star a*b)`. -/
 @[simp]
 theorem coefficientOperator_adjoint_pure (a : A) (ξ : H) (b : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -178,7 +183,8 @@ theorem coefficientOperator_adjoint_pure (a : A) (ξ : H) (b : A) :
       (AdjointableOperator.leftMul (B := A) a) (leftMul_commutes_scalarSelfHom A a)
       ((ScalarRight.equivL H).symm ξ) b
 
-/-- The actual completed coefficient action is bounded by the original coefficient norm. -/
+/-- **Norm bound for coefficient multiplication.** On the Hilbert amplification of nonunital `A`,
+`‖coefficientOperator H A a‖ ≤ ‖a‖`. -/
 theorem coefficientOperator_norm_le (a : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;

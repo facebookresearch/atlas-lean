@@ -1,3 +1,5 @@
-# Dense Range compact Tensor Completion To Compacts
+# Density of the completed compact tensor map
 
-The original dense algebraic compact images lie in the actually constructed completion-map range.
+For complex Hilbert `H` and nonunital `A`,
+the map from the induced completion for `p(z)=‖algebraicCompactTensorHom H A z‖` to
+`CompactAlgebra H A` has dense range.

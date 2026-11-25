@@ -1,3 +1,3 @@
-# Hilbert Compact Rank One mul
+# Product of compact rank-one operators
 
-The original rank-one composition law in the actual compact ideal.
+`θ_(x,y) θ_(z,w) = inner ℂ y z • θ_(x,w)`.

@@ -1,4 +1,4 @@
-# Comp Left to Homotopic
+# Underlying homotopy after left composition
 
-Left composition of an automorphism path has the correspondingly
-postcomposed homomorphism-homotopy endpoints.
+For an automorphism δ of A, left composition of h gives a homotopy between the star
+homomorphisms underlying δ ∘ α and δ ∘ β.

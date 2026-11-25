@@ -1,4 +1,4 @@
-# Pullback
+# Pullback of a Busby extension along a homomorphism
 
 - [Invariance of a graded pullback](pullback-generator-invariant.md)
 - [Grading of a C*-pullback](pullback.md)
@@ -64,8 +64,8 @@
 - [Lift unique](lift-unique.md)
 - [Common Map](common-map.md)
 - [Diagonal](diagonal.md)
-- [Pullback](pullback-3.md)
-- [Pullback middle](pullback-middle.md)
-- [Pullback Middle Map](pullback-middle-map.md)
-- [Pullback Middle Map coe](pullback-middle-map-coe.md)
-- [Pullback Hom](pullback-hom.md)
+- [Extension of a precomposed Busby map](pullback-3.md)
+- [Middle algebra of the precomposed extension](pullback-middle.md)
+- [Comparison of Busby pullback algebras](pullback-middle-map.md)
+- [Pair formula for pullback comparison](pullback-middle-map-coe.md)
+- [Morphism of pullback extensions](pullback-hom.md)

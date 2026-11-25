@@ -1,3 +1,4 @@
-# Product Of Pre apply
+# Components of the finite-support product inclusion
 
-The product inclusion acts componentwise.
+Under the direct-sum carrier
+identification, `productOfPre (x,y) = (ofPre x, ofPre y)`.

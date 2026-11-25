@@ -1,4 +1,5 @@
-# Of Continuous Linear Map rank One mem finite Rank
+# Rank-one images in the module finite-rank span
 
-Ordinary Hilbert-space rank-one maps land in the module finite-rank span
-under the complete-Hilbert scalar-right correspondence.
+For complex Hilbert spaces,
+`ofContinuousLinearMap H K (InnerProductSpace.rankOne ℂ x y)` lies in the module finite-rank
+submodule.

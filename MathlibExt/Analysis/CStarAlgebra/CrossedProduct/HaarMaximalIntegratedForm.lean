@@ -15,17 +15,18 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarCovariantSemin
 public import MathlibExt.Analysis.CStarAlgebra.SeminormNonUnitalCompletionHom
 
 /-!
-# The original integrated representation on the actual intrinsic maximal completion
+# Integrated representations on the maximal C-star completion
 
-The actual integrated seminorm is bounded by the computed intrinsic
-maximum on the original Haar core. Use the same bounded nonunital
-star-hom separation/completion extension on that exact maximum. Its
-canonical source images retain the literal original Haar vector integral.
-
-The construction permits an arbitrary independent Hilbert universe and
-requires no supplied completed representation. The identification of this
-intrinsic seminorm with all nondegenerate covariant norms and the faithful
-full crossed-product source statement remain separate obligations.
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. Write pmax(f)=sup{p(f): p is a C-star
+seminorm on the twisted convolution core and p(h)≤∫ s, ‖h(s)‖ ∂μ for every core coefficient
+h}. Let X be the separated completion of the core in pmax, with dense map ιmax. The bound
+‖Iρ(f)‖≤pmax(f) gives a continuous nonunital complex star homomorphism Iρmax:X→B(H) satisfying
+Iρmax(ιmax(f))=Iρ(f).
 -/
 
 @[expose] public section
@@ -48,7 +49,18 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable {α : PointNormCStarAction G A} (ρ : CovariantRepresentation α H)
 
-/-- The original Haar integrated map extended to the same intrinsic maximal seminorm completion. -/
+/-- **Integrated homomorphism on the maximal completion.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. Write pmax(f)=sup{p(f): p is a C-star
+seminorm on the twisted convolution core and p(h)≤∫ s, ‖h(s)‖ ∂μ for every core coefficient
+h}. The nonunital complex star homomorphism haarMaximalIntegratedHom μ ρ from the separated
+pmax-completion of the core to B(H) extends f↦Iρ(f), using its bound ‖Iρ(f)‖≤pmax(f).
+-/
 def haarMaximalIntegratedHom :
     let p := HaarTwistedCore.maximalCStarSeminorm μ α
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
@@ -59,7 +71,18 @@ def haarMaximalIntegratedHom :
   exact p.fromNonUnitalCompletion (haarIntegratedHom μ ρ)
     (norm_haarIntegratedHom_le_maximalCStarSeminorm μ ρ)
 
-/-- Every original coefficient retains its actual integrated operator value. -/
+/-- **Maximal integrated homomorphism on dense coefficients.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. Write pmax(f)=sup{p(f): p is a C-star
+seminorm on the twisted convolution core and p(h)≤∫ s, ‖h(s)‖ ∂μ for every core coefficient
+h}. Let ιmax be the dense map into the separated pmax-completion. For every core coefficient
+f, haarMaximalIntegratedHom μ ρ (ιmax(f))=Iρ(f).
+-/
 theorem haarMaximalIntegratedHom_apply (f : HaarTwistedCore.Carrier μ α) :
     let p := HaarTwistedCore.maximalCStarSeminorm μ α
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
@@ -71,7 +94,18 @@ theorem haarMaximalIntegratedHom_apply (f : HaarTwistedCore.Carrier μ α) :
   exact p.fromNonUnitalCompletion_apply (haarIntegratedHom μ ρ)
     (norm_haarIntegratedHom_le_maximalCStarSeminorm μ ρ) f
 
-/-- The completed source image acts by the literal original Haar vector integral. -/
+/-- **Vector integral on dense maximal coefficients.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). Write pmax(f)=sup{p(f): p is a C-star
+seminorm on the twisted convolution core and p(h)≤∫ s, ‖h(s)‖ ∂μ for every core coefficient
+h}. Let ιmax map the twisted core into its separated pmax-completion. For every compactly
+supported continuous f:G→A and ξ∈H, haarMaximalIntegratedHom μ ρ (ιmax(f)) ξ=∫ s:G,
+π(f(s))(U_s ξ) ∂μ.
+-/
 theorem haarMaximalIntegratedHom_apply_vector (f : HaarTwistedCore.Carrier μ α) (ξ : H) :
     let p := HaarTwistedCore.maximalCStarSeminorm μ α
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
@@ -82,7 +116,18 @@ theorem haarMaximalIntegratedHom_apply_vector (f : HaarTwistedCore.Carrier μ α
   exact (congrArg (fun T : H →L[ℂ] H => T ξ) (haarMaximalIntegratedHom_apply μ ρ f)).trans
     (haarIntegratedHom_apply_vector μ ρ f ξ)
 
-/-- The constructed original completed representation is continuous in that completion's norm. -/
+/-- **Continuity of the maximal integrated representation.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). Write pmax(f)=sup{p(f): p is a C-star
+seminorm on the twisted convolution core and p(h)≤∫ s, ‖h(s)‖ ∂μ for every core coefficient
+h}. The homomorphism haarMaximalIntegratedHom μ ρ from the separated pmax-completion into B(H)
+is continuous for the completion norm and the operator norm; it extends the vector integral
+ξ↦∫ s, π(f(s))(U_s ξ) ∂μ on dense core coefficients.
+-/
 theorem continuous_haarMaximalIntegratedHom :
     let p := HaarTwistedCore.maximalCStarSeminorm μ α
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra

@@ -1,3 +1,4 @@
-# Complete Space iff
+# Completeness of the right scalar module
 
-Completeness is inherited through the original uniformity, with the factory metric fixed.
+With the transported norm and uniformity,
+`CompleteSpace (ScalarRight H) ↔ CompleteSpace H`.

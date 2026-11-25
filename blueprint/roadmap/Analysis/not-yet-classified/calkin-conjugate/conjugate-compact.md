@@ -1,3 +1,5 @@
-# Conjugate compact
+# Unitary conjugation preserves compactness
 
-Hilbert-unitary conjugation preserves compactness on the original operator spaces.
+For complex Hilbert spaces `H,K`, if `U : H
+≃ₗᵢ[ℂ] K` and `T : H →L[ℂ] H` is compact, then `U.conjStarAlgEquiv T = U T U*` is compact on
+`K`.

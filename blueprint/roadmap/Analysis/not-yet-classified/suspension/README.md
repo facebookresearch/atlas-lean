@@ -1,4 +1,4 @@
-# Suspension
+# Suspension of uniform asymptotic morphisms
 
 - [Suspension functor for C*-algebras](suspension-functor.md)
 - [Scalar suspension](scalar-suspension.md)
@@ -6,11 +6,11 @@
 - [Suspension Functor](suspension-functor.md)
 - [Scalar Suspension](scalar-suspension.md)
 - [Scalar Suspension Equiv](scalar-suspension-equiv.md)
-- [Normalized Uniform Suspension](normalized-uniform-suspension.md)
-- [Normalized Uniform Suspension apply](normalized-uniform-suspension-apply.md)
-- [Is Uniform normalized Uniform Suspension](is-uniform-normalized-uniform-suspension.md)
-- [Normalized Uniform Suspension apply of zero](normalized-uniform-suspension-apply-of-z.md)
-- [Normalized Uniform Suspension Homotopy Family](normalized-uniform-suspension-homotopy-f.md)
-- [Normalized Uniform Suspension Homotopy Family apply](normalized-uniform-suspension-homotopy-f-2.md)
-- [Normalized Uniform Suspension](normalized-uniform-suspension-2.md)
-- [Homotopic normalized Uniform Suspension](homotopic-normalized-uniform-suspension.md)
+- [Normalized suspension representative](normalized-uniform-suspension.md)
+- [Value of the normalized suspension family](normalized-uniform-suspension-apply.md)
+- [Uniformity of the normalized suspension](is-uniform-normalized-uniform-suspension.md)
+- [Suspension formula for a zero-preserving family](normalized-uniform-suspension-apply-of-z.md)
+- [Interval-valued normalized suspension homotopy family](normalized-uniform-suspension-homotopy-f.md)
+- [Pointwise value of the suspended homotopy family](normalized-uniform-suspension-homotopy-f-2.md)
+- [Homotopy of normalized suspension representatives](normalized-uniform-suspension-2.md)
+- [Normalized suspensions of uniformly homotopic families are homotopic](homotopic-normalized-uniform-suspension.md)

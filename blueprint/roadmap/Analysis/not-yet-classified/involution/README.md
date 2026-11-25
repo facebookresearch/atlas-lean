@@ -1,10 +1,10 @@
-# Involution
+# Modular involution of compact coefficients
 
-- [Crossed Star Cc](crossed-star-cc.md)
-- [Crossed Star Cc apply](crossed-star-cc-apply.md)
-- [Tsupport crossed Star Cc subset](tsupport-crossed-star-cc-subset.md)
-- [Crossed Star](crossed-star.md)
-- [Crossed Star apply](crossed-star-apply.md)
-- [Crossed Star add](crossed-star-add.md)
-- [Crossed Star smul](crossed-star-smul.md)
-- [Crossed Star crossed Star](crossed-star-crossed-star.md)
+- [Modular adjoint of a compact coefficient](crossed-star-cc.md)
+- [Evaluation of the modular adjoint](crossed-star-cc-apply.md)
+- [Support of the modular adjoint](tsupport-crossed-star-cc-subset.md)
+- [Modular involution on core coefficients](crossed-star.md)
+- [Value of the core modular involution](crossed-star-apply.md)
+- [Additivity of the modular involution](crossed-star-add.md)
+- [Conjugate-linearity of the modular involution](crossed-star-smul.md)
+- [The modular adjoint is involutive](crossed-star-crossed-star.md)

@@ -1,3 +1,4 @@
-# Operator Pullback compatibility
+# Calkin compatibility of the two projections
 
-The original operator and coefficient projections have the same literal Calkin class.
+For `p : P_φ`,
+`[operatorPullbackRepresentation φ p] = φ(operatorPullbackQuotient φ p)` in `Q(H)`.

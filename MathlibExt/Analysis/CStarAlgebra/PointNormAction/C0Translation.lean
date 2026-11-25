@@ -19,15 +19,12 @@ public import Mathlib.Topology.Algebra.IsUniformGroup.Defs
 import Mathlib.Tactic.Group
 
 /-!
-# The original C0(G) left-translation covariant system
+# Left translation on functions vanishing at infinity
 
-Precomposition by the actual inverse-left-translation homeomorphism preserves
-vanishing at infinity, algebra operations and star. Its inverse is the
-opposite translation. Uniform continuity of every original C0 function in
-the canonical right group uniformity proves point-norm orbit continuity.
-The uniformity has the original topology; no alternate norm or group model
-is introduced. This construction requires no discreteness, separability,
-coefficient unit, nonzero space or supplied action.
+For a topological group G, define λg on C₀(G,ℂ) by (λg f)(s) = f(g⁻¹s). Each λg is a complex
+star-algebra automorphism, λgh = λg ∘ λh, and g ↦ λg f is continuous in the supremum norm for
+every f. This gives the point-norm left-translation action without a discreteness or
+separability assumption.
 -/
 
 @[expose] public section
@@ -47,16 +44,26 @@ universe uG
 
 variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-/-- The actual C0 star-algebra automorphism f(s)↦f(g inverse*s). -/
+/-- **Left-translation automorphism of C₀(G).**
+
+For a topological group G and g ∈ G, the automorphism λg of C₀(G,ℂ) is (λg f)(s) = f(g⁻¹s).
+Its inverse is λg⁻¹.
+-/
 def c0LeftTranslationEquiv (g : G) : C₀(G, ℂ) ≃⋆ₐ[ℂ] C₀(G, ℂ) :=
   ZeroAtInftyContinuousMap.starAlgEquivPrecomp (A := ℂ) (Homeomorph.mulLeft g⁻¹)
 
-/-- Every coefficient value is the original inverse-left-translation formula. -/
+/-- **Evaluation of a left translation.**
+
+For g, s ∈ G and f ∈ C₀(G,ℂ), `c0LeftTranslationEquiv g f s = f (g⁻¹ * s)`.
+-/
 @[simp]
 theorem c0LeftTranslationEquiv_apply (g : G) (f : C₀(G, ℂ)) (s : G) :
     c0LeftTranslationEquiv g f s = f (g⁻¹ * s) := rfl
 
-/-- The actual identity translation is the original identity automorphism. -/
+/-- **Identity left translation.**
+
+Translation by the group identity is the identity star-algebra automorphism of C₀(G,ℂ).
+-/
 @[simp]
 theorem c0LeftTranslationEquiv_one : c0LeftTranslationEquiv (1 : G) = StarAlgEquiv.refl ℂ _ := by
   apply StarAlgEquiv.ext
@@ -66,7 +73,10 @@ theorem c0LeftTranslationEquiv_one : c0LeftTranslationEquiv (1 : G) = StarAlgEqu
   have hrefl : (StarAlgEquiv.refl ℂ C₀(G, ℂ)) f = f := rfl
   rw [hrefl, c0LeftTranslationEquiv_apply, inv_one, one_mul]
 
-/-- Translation composition has exactly the original noncommutative group order. -/
+/-- **Composition of left translations.**
+
+For g, h ∈ G, λgh = λg ∘ λh. The formula retains this order for a noncommutative group.
+-/
 theorem c0LeftTranslationEquiv_mul (g h : G) :
     c0LeftTranslationEquiv (g * h) = c0LeftTranslationEquiv g * c0LeftTranslationEquiv h := by
   apply StarAlgEquiv.ext
@@ -76,7 +86,10 @@ theorem c0LeftTranslationEquiv_mul (g h : G) :
   change f ((g * h)⁻¹ * s) = f (h⁻¹ * (g⁻¹ * s))
   rw [mul_inv_rev, mul_assoc]
 
-/-- Every actual original C0 translation orbit is continuous in the original supremum norm. -/
+/-- **Supremum-norm continuity of translation orbits.**
+
+For every f ∈ C₀(G,ℂ), the map g ↦ λg f is continuous in the supremum norm.
+-/
 theorem continuous_c0LeftTranslationEquiv_orbit (f : C₀(G, ℂ)) :
     Continuous (fun g : G => c0LeftTranslationEquiv g f) := by
   let : UniformSpace G := IsTopologicalGroup.rightUniformSpace G
@@ -111,7 +124,11 @@ theorem continuous_c0LeftTranslationEquiv_orbit (f : C₀(G, ℂ)) :
     simpa only [c0LeftTranslationEquiv_apply, dist_comm] using hdist.le
   exact hbound.trans_lt (half_lt_self hepsilon)
 
-/-- The actual original point-norm translation action on C0(G). -/
+/-- **Point-norm left-translation action.**
+
+The automorphisms (λg f)(s) = f(g⁻¹s) form a point-norm continuous action of the topological
+group G on C₀(G,ℂ).
+-/
 def c0LeftTranslationAction : PointNormCStarAction G C₀(G, ℂ) where
   toMonoidHom :=
     { toFun := c0LeftTranslationEquiv
@@ -119,7 +136,10 @@ def c0LeftTranslationAction : PointNormCStarAction G C₀(G, ℂ) where
       map_mul' := c0LeftTranslationEquiv_mul }
   continuous_orbit := continuous_c0LeftTranslationEquiv_orbit
 
-/-- The point-norm action keeps every original coefficient value. -/
+/-- **Evaluation of the translation action.**
+
+For g, s ∈ G and f ∈ C₀(G,ℂ), `c0LeftTranslationAction g f s = f (g⁻¹ * s)`.
+-/
 @[simp]
 theorem c0LeftTranslationAction_apply (g : G) (f : C₀(G, ℂ)) (s : G) :
     c0LeftTranslationAction g f s = f (g⁻¹ * s) := rfl

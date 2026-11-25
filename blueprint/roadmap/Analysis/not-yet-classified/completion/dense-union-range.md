@@ -1,3 +1,4 @@
-# Dense union range
+# Density of the stage images
 
-The completed algebra is the closure of its actual coefficient images.
+For a nonempty directed isometric C-star system, `⋃ i,
+Set.range (S.of i)` is dense in the completed limit.

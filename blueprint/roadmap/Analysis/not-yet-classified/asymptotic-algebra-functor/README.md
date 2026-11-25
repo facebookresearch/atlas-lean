@@ -1,10 +1,10 @@
-# Asymptotic Algebra Functor
+# Asymptotic algebra as an endofunctor
 
-- [Asymptotic Algebra Object](asymptotic-algebra-object.md)
-- [Asymptotic Algebra Functor](asymptotic-algebra-functor.md)
-- [Asymptotic Algebra Functor obj](asymptotic-algebra-functor-obj.md)
-- [Asymptotic Algebra Functor map](asymptotic-algebra-functor-map.md)
-- [Asymptotic Algebra Functor map quotient Map](asymptotic-algebra-functor-map-quotient.md)
-- [Asymptotic Algebra Constant](asymptotic-algebra-constant.md)
-- [Asymptotic Algebra Constant app](asymptotic-algebra-constant-app.md)
-- [Asymptotic Algebra Constant app injective](asymptotic-algebra-constant-app-injectiv.md)
+- [Asymptotic quotient as a C-star algebra object](asymptotic-algebra-object.md)
+- [Asymptotic quotient endofunctor](asymptotic-algebra-functor.md)
+- [Object value of the asymptotic algebra functor](asymptotic-algebra-functor-obj.md)
+- [Morphism value of the asymptotic algebra functor](asymptotic-algebra-functor-map.md)
+- [Functor map on quotient representatives](asymptotic-algebra-functor-map-quotient.md)
+- [Natural transformation of constant coefficient classes](asymptotic-algebra-constant.md)
+- [Component of the constant-class natural transformation](asymptotic-algebra-constant-app.md)
+- [Injectivity of each constant-class component](asymptotic-algebra-constant-app-injectiv.md)

@@ -1,4 +1,5 @@
-# Norm continuous Linear Map
+# Norm of a transported bounded operator
 
-Conjugation through the fixed ScalarRight equivalences preserves the
-operator norm. Completeness is not needed.
+For arbitrary complex normed spaces `H,K`,
+conjugation by `equivL H` and `equivL K` preserves the operator norm: the transported map has
+norm `‖T‖`.

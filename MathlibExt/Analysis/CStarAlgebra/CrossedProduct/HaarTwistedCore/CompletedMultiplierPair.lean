@@ -16,18 +16,17 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Co
 public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.ConvolutionSeminormIntegral
 
 /-!
-# The actual algebraic coefficient/group multiplier pair
+# Covariant coefficient and group multiplier pairs
 
-The coefficient and group maps are the computed same-seminorm multipliers.
-Their original covariance is proved on the dense core and extended by
-continuous equality. These literal maps form a pair with the covariance
-proof as actual DATA. The full source pair's strict continuity and
-nondegeneracy requirements remain separate.
-
-For an admissible seminorm, the actual paired multiplier slices are
-integrable on each original core vector and their Haar integral is its
-original convolution image. This uses the constructed L1-to-seminorm
-primitive, without a supplied integrated identity or full-norm comparison.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. For a∈A, the multiplier j_p(a) has left and right
+components extending L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). The group multiplier u_p(g)
+extends the left action L_g f(s)=α_g(f(g⁻¹*s)) and the right action R_g f(s)=δ(g)•f(s*g⁻¹),
+where δ(g)=Measure.modularCharacter g is viewed as a complex scalar. Their covariance is
+u_p(g)j_p(a)=j_p(α_g(a))u_p(g). If p is L¹-dominated, then ∫ s, (j_p(f(s))*u_p(s)).fst(ιp(h))
+∂μ=ιp(f*h) for compactly supported continuous coefficients f,h.
 -/
 
 @[expose] public section
@@ -53,7 +52,17 @@ attribute [local instance] CStarSeminorm.nonUnitalCompletionCStarAlgebra
 
 variable (p : CStarSeminorm (Carrier μ α))
 
-/-- The computed completed multiplier maps retain the original covariance orientation. -/
+/-- **Covariance of the coefficient and group multipliers.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. For a∈A, the multiplier j_p(a) has left and right
+components extending L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). The group multiplier u_p(g)
+extends the left action L_g f(s)=α_g(f(g⁻¹*s)) and the right action R_g f(s)=δ(g)•f(s*g⁻¹),
+where δ(g)=Measure.modularCharacter g is viewed as a complex scalar. For g∈G and a∈A,
+u_p(g)j_p(a)=j_p(α_g(a))u_p(g).
+-/
 theorem groupMultiplier_coefficientMultiplier (g : G) (a : A) :
     groupMultiplier μ α p g * coefficientMultiplier μ α p a =
       coefficientMultiplier μ α p (α g a) * groupMultiplier μ α p g := by
@@ -84,14 +93,36 @@ theorem groupMultiplier_coefficientMultiplier (g : G) (a : A) :
       congrArg (fun T : Carrier μ α →ₗ[ℂ] Carrier μ α => p.toNonUnitalCompletion (T f))
         (coefficientRight_groupRight μ α g a)
 
-/-- The actual group multiplier conjugates the original completed coefficient by its given action. -/
+/-- **Conjugation of coefficients by group multipliers.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. For a∈A, the multiplier j_p(a) has left and right
+components extending L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). The group multiplier u_p(g)
+extends the left action L_g f(s)=α_g(f(g⁻¹*s)) and the right action R_g f(s)=δ(g)•f(s*g⁻¹),
+where δ(g)=Measure.modularCharacter g is viewed as a complex scalar. For g∈G and a∈A,
+u_p(g)*j_p(a)*star(u_p(g))=j_p(α_g(a)).
+-/
 theorem groupMultiplier_conjugates_coefficient (g : G) (a : A) :
     groupMultiplier μ α p g * coefficientMultiplier μ α p a * star (groupMultiplier μ α p g) =
       coefficientMultiplier μ α p (α g a) := by
   rw [groupMultiplier_coefficientMultiplier, mul_assoc,
     Unitary.mul_star_self_of_mem (groupMultiplier_mem_unitary μ α p g), mul_one]
 
-/-- The literal computed multiplier maps together with their proved algebraic covariance DATA. -/
+/-- **Canonical covariant multiplier pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. For a∈A, the multiplier j_p(a) has left and right
+components extending L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). The group multiplier u_p(g)
+extends the left action L_g f(s)=α_g(f(g⁻¹*s)) and the right action R_g f(s)=δ(g)•f(s*g⁻¹),
+where δ(g)=Measure.modularCharacter g is viewed as a complex scalar. The pair
+canonicalMultiplierPair μ α p consists of the nonunital complex star homomorphism
+j_p:A→𝓜(ℂ,Xp) and unitary-valued group homomorphism u_p:G→unitary(𝓜(ℂ,Xp)), together with the
+identity u_p(g)*j_p(a)*star(u_p(g))=j_p(α_g(a)).
+-/
 def canonicalMultiplierPair :
     { pair : (A →⋆ₙₐ[ℂ] 𝓜(ℂ, p.NonUnitalCompletion)) ×
         (G →* unitary 𝓜(ℂ, p.NonUnitalCompletion)) //
@@ -103,17 +134,44 @@ def canonicalMultiplierPair :
       star (groupMultiplier μ α p g) = coefficientMultiplier μ α p (α g a)
     exact groupMultiplier_conjugates_coefficient μ α p g a⟩
 
-/-- The pair retains exactly the actual computed coefficient homomorphism. -/
+/-- **Coefficient map of the canonical multiplier pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. The coefficient homomorphism of
+canonicalMultiplierPair μ α p is coefficientMultiplierHom μ α p, whose dense left component
+sends ιp(f) to ιp(s↦a*f(s)) for a∈A.
+-/
 @[simp]
 theorem canonicalMultiplierPair_coefficient :
     (canonicalMultiplierPair μ α p).val.1 = coefficientMultiplierHom μ α p := rfl
 
-/-- The pair retains exactly the actual computed unitary group homomorphism. -/
+/-- **Group map of the canonical multiplier pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. The group homomorphism of canonicalMultiplierPair
+μ α p is groupUnitaryMultiplierHom μ α p, whose dense left component sends ιp(f) to
+ιp(s↦α_g(f(g⁻¹*s))) for g∈G.
+-/
 @[simp]
 theorem canonicalMultiplierPair_group :
     (canonicalMultiplierPair μ α p).val.2 = groupUnitaryMultiplierHom μ α p := rfl
 
-/-- The literal pair has the original conjugation equation without a supplied covariance witness. -/
+/-- **Conjugation covariance of the canonical pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. For a∈A, the multiplier j_p(a) has left and right
+components extending L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). The group multiplier u_p(g)
+extends the left action L_g f(s)=α_g(f(g⁻¹*s)) and the right action R_g f(s)=δ(g)•f(s*g⁻¹),
+where δ(g)=Measure.modularCharacter g is viewed as a complex scalar. The coefficient and group
+maps j_p,u_p in canonicalMultiplierPair μ α p satisfy u_p(g)*j_p(a)*star(u_p(g))=j_p(α_g(a))
+for g∈G and a∈A.
+-/
 theorem canonicalMultiplierPair_covariance (g : G) (a : A) :
     ((canonicalMultiplierPair μ α p).val.2 g : 𝓜(ℂ, p.NonUnitalCompletion)) *
         (canonicalMultiplierPair μ α p).val.1 a *
@@ -121,7 +179,14 @@ theorem canonicalMultiplierPair_covariance (g : G) (a : A) :
       (canonicalMultiplierPair μ α p).val.1 (α g a) :=
   (canonicalMultiplierPair μ α p).property g a
 
-/-- Each paired multiplier slice has exactly its original coefficient/group value on the dense core. -/
+/-- **Multiplier slices on dense core vectors.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. For j_p,u_p in canonicalMultiplierPair μ α p,
+core coefficients f,h and s∈G, (j_p(f(s))*u_p(s)).fst(ιp(h))=ιp(x↦f(s)*α_s(h(s⁻¹*x))).
+-/
 theorem canonicalMultiplierPair_slice_apply (f : Carrier μ α) (s : G) (h : Carrier μ α) :
     ((canonicalMultiplierPair μ α p).val.1 (f s) *
         ((canonicalMultiplierPair μ α p).val.2 s : 𝓜(ℂ, p.NonUnitalCompletion))).fst
@@ -134,7 +199,15 @@ theorem canonicalMultiplierPair_slice_apply (f : Carrier μ α) (s : G) (h : Car
 variable (hp : p ∈ admissibleCStarSeminorms μ α)
 
 include hp in
-/-- Actual paired multiplier slices are integrable at every original source-core vector. -/
+/-- **Integrability of canonical multiplier slices.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. For j_p,u_p in canonicalMultiplierPair μ α
+p and core coefficients f,h, the curve s↦(j_p(f(s))*u_p(s)).fst(ιp(h)) is μ-integrable in Xp.
+-/
 theorem integrable_canonicalMultiplierPair_slice (f h : Carrier μ α) :
     let _ : NormedSpace ℝ p.NonUnitalCompletion := NormedSpace.restrictScalars ℝ ℂ _
     Integrable (fun s : G =>
@@ -146,7 +219,16 @@ theorem integrable_canonicalMultiplierPair_slice (f h : Carrier μ α) :
   exact Eventually.of_forall fun s => (canonicalMultiplierPair_slice_apply μ α p f s h).symm
 
 include hp in
-/-- The actual paired multiplier integral on the dense core is the original convolution image. -/
+/-- **Integrated multiplier slices equal convolution.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star
+completion and ιp its dense coefficient map. Assume p(k)≤q(k)=∫ s, ‖k(s)‖ ∂μ for every
+compactly supported continuous core coefficient k. For j_p,u_p in canonicalMultiplierPair μ α
+p and core coefficients f,h, ∫ s:G, (j_p(f(s))*u_p(s)).fst(ιp(h)) ∂μ=ιp(f*h), where (f*h)(x)=∫
+s, f(s)*α_s(h(s⁻¹*x)) ∂μ.
+-/
 theorem integral_canonicalMultiplierPair_slice (f h : Carrier μ α) :
     let _ : NormedSpace ℝ p.NonUnitalCompletion := NormedSpace.restrictScalars ℝ ℂ _
     (∫ s : G,

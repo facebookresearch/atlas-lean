@@ -15,17 +15,17 @@ public import Mathlib.Order.DirectedInverseSystem
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.NClassStageTransition
 
 /-!
-# The raw direct limit of literal finite-stage homotopy classes
+# Direct limit of finite-stage homotopy classes
 
-For a proof `h : i <= j`, the transition map is the already constructed
-offset map by `j - i`, transported along `Nat.add_sub_of_le h`.  Its identity
-and composition laws make the literal classes a genuine `DirectedSystem` of
-types.  Mathlib's arbitrary-type `DirectLimit` then supplies the raw colimit,
-its canonical stage maps, and its universal lift.
-
-No additive, group, algebraic, or E-theory structure is placed on the
-colimit.  In particular this file does not define products, flattening,
-surjectivity, or the disputed shifted map in Blackadar 25.7.4.
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For i≤j, write S_(i,j) for the transition across j-i constant-class stages. The direct limit
+L=NClassesDirectLimit A B identifies a class at any stage with its image at every later stage.
+The transitions satisfy S_(i,i)=id and S_(j,k)∘S_(i,j)=S_(i,k) for i≤j≤k. Compatible functions
+on the stages extend to a function on L. This is the finite-stage class system occurring in
+Blackadar25.7.4.
 -/
 
 @[expose] public section
@@ -43,9 +43,26 @@ namespace IteratedAsymptoticAlgebra
 
 universe uA uB uC
 
-/-! ## Explicit transport and proof-indexed stage maps -/
+/-!
+## Equal stage indices and later-stage inclusions
 
-/-- Transport literal classes across an equality of finite stage indices. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For equal stage indices n=m, class spaces identify canonically. For i≤j, the later-stage map
+uses j-i constant-class inclusions.
+-/
+
+/-- **Identification of class spaces with equal stage indices.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For an equality h:n=m, nClassesCast A B h:Q_n(A,B)→Q_m(A,B) is the canonical identification of
+the same indexed homotopy class space.
+-/
 def nClassesCast {n m : ℕ}
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -96,9 +113,15 @@ private theorem nClassesCast_stageTransitionFrom_offset
   cases hh
   rfl
 
-/-- The stage map attached to a proof `i <= j`.  Its computational offset is
-literally `j-i`; the result is transported into stage `j` by
-`Nat.add_sub_of_le`. -/
+/-- **Transition map between ordered finite stages.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For i≤j, stageTransitionLE A B h:Q_i(A,B)→Q_j(A,B) is the offset map stageTransitionFrom
+i(j-i) A B with target identified using i+(j-i)=j.
+-/
 @[no_expose]
 def stageTransitionLE
     (A : Type uA) (B : Type uB)
@@ -120,8 +143,15 @@ theorem stageTransitionLE_classOf
   unfold stageTransitionLE Function.comp
   rw [stageTransitionFrom_classOf]
 
-/-- For the canonical proof `i <= i+k`, the proof-indexed map is exactly the
-offset map by `k`. -/
+/-- **Ordered-stage transition for a specified offset.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For i,k∈ℕ, stageTransitionLE A B (i≤i+k)=stageTransitionFrom i k A B, the transition from
+Q_i(A,B) to Q_(i+k)(A,B).
+-/
 theorem stageTransitionLE_of_add (i k : ℕ)
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
@@ -191,10 +221,25 @@ private theorem stageTransitionLE_of_add_add (i k l : ℕ)
     _ = stageTransitionFromReassoc i k l A B q :=
       nClassesCast_stageTransitionFrom_add i k l A B q
 
-/-! ## Directed-system laws -/
+/-!
+## Directed-system identities
 
-/-- The proof-indexed stage maps form a directed system.  This dictionary is
-ordinary public data, not a globally registered instance. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For i≤j≤k, the transition maps satisfy S_(j,k)∘S_(i,j)=S_(i,k), with S_(i,i)=id.
+-/
+
+/-- **Directed system of finite-stage homotopy classes.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+The class spaces Q_i(A,B), i∈ℕ, and maps S_(i,j)=stageTransitionLE A B (i≤j) form a directed
+system: S_(i,i)=id and S_(j,k)∘S_(i,j)=S_(i,k) whenever i≤j≤k.
+-/
 theorem nClassesDirectedSystem
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
@@ -219,10 +264,28 @@ theorem nClassesDirectedSystem
       stageTransitionLE_of_add_add i a b A B]
     exact (congrFun (stageTransitionFrom_add i a b A B) q).symm
 
-/-! ## Raw direct limit and its universal maps -/
+/-!
+## Direct limit and its universal maps
 
-/-- The raw set-level direct limit of literal finite-stage homotopy classes.
-It is Mathlib's arbitrary-type `DirectLimit`, not a new quotient model. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For i≤j, write S_(i,j) for the transition across j-i constant-class stages. The direct limit
+L=NClassesDirectLimit A B identifies a class at any stage with its image at every later stage.
+The canonical stage maps j_n:Q_n(A,B)→L satisfy j_j∘S_(i,j)=j_i for i≤j.
+-/
+
+/-- **Direct-limit set of finite-stage homotopy classes.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For i≤j, write S_(i,j) for the transition across j-i constant-class stages. The direct limit
+L=NClassesDirectLimit A B identifies a class at any stage with its image at every later stage.
+NClassesDirectLimit A B is the direct limit of this directed system of class spaces.
+-/
 abbrev NClassesDirectLimit
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :=
@@ -232,7 +295,16 @@ abbrev NClassesDirectLimit
     (fun {_ _} _ => { coe := id, coe_injective := Function.injective_id })
     (nClassesDirectedSystem A B) inferInstance
 
-/-- The canonical map from one finite stage into the raw direct limit. -/
+/-- **Canonical map from a class stage to the direct limit.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For i≤j, write S_(i,j) for the transition across j-i constant-class stages. The direct limit
+L=NClassesDirectLimit A B identifies a class at any stage with its image at every later stage.
+For n∈ℕ, nClassesDirectLimitOf A B n:Q_n(A,B)→L is the canonical stage map j_n.
+-/
 @[no_expose]
 def nClassesDirectLimitOf
     (A : Type uA) (B : Type uB)
@@ -240,8 +312,16 @@ def nClassesDirectLimitOf
     (n : ℕ) : NClasses n A B → NClassesDirectLimit A B :=
   fun q => ⟦⟨n, q⟩⟧
 
-/-- Canonical direct-limit maps identify a class with every later-stage
-image. -/
+/-- **A direct-limit class equals each later-stage image.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For i≤j, write S_(i,j) for the transition across j-i constant-class stages. The direct limit
+L=NClassesDirectLimit A B identifies a class at any stage with its image at every later stage.
+For i≤j and q∈Q_i(A,B), nClassesDirectLimitOf A B j (S_(i,j)q)=nClassesDirectLimitOf A B i q.
+-/
 theorem nClassesDirectLimitOf_transition
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -255,8 +335,18 @@ theorem nClassesDirectLimitOf_transition
     (fun {_ _} _ => { coe := id, coe_injective := Function.injective_id })
     (nClassesDirectedSystem A B) inferInstance i j q h
 
-/-- Lift compatible finite-stage functions out of the raw direct limit. The
-codomain is an arbitrary `Sort`; no algebraic structure is required. -/
+/-- **Universal function out of the direct limit.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For i≤j, write S_(i,j) for the transition across j-i constant-class stages. The direct limit
+L=NClassesDirectLimit A B identifies a class at any stage with its image at every later stage.
+Let C be any Sort and let g_n:Q_n(A,B)→C satisfy g_i(q)=g_j(S_(i,j)q) for every i≤j and q. The
+function nClassesDirectLimitLift A B g hcompat:L→C extends these compatible stage functions,
+with value g_n(q) on j_n(q).
+-/
 @[no_expose]
 def nClassesDirectLimitLift
     (A : Type uA) (B : Type uB)

@@ -1,3 +1,4 @@
-# Computed Adjoint eq
+# Adjoint of the regular realization
 
-Canonical maximality identifies the entire computed adjoint partial map.
+For a regular operator,
+`DenselyDefinedRightPartialOperator.adjoint T.toDenselyDefined = T.adjoint` as partial maps.

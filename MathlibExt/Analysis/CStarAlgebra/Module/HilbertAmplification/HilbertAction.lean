@@ -16,17 +16,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.MapL
 public import MathlibExt.Analysis.CStarAlgebra.Module.ScalarRight.AdjointableLaws
 
 /-!
-# The actual Hilbert-factor action on coefficient amplification
+# Hilbert-space operators on coefficient amplification
 
-The existing scalar-right correspondence transports an original bounded
-Hilbert-space operator and its genuine Hilbert adjoint. The existing completed
-first-factor construction acts on the literal Hilbert/coefficient tensor.
-Its original pure formula implies commutation with the coefficient action.
+For a complex Hilbert space `H`, nonunital C-star algebra `A` and bounded operator `T : H →L[ℂ]
+H`, the first-factor action on `Space H A` is the adjointable map `D_T (ξ⊗b) = (T ξ)⊗b`. Its
+adjoint is `D_(T*)` and `‖D_T‖ ≤ ‖T‖` for the Hilbert-space and module operator norms.
 
-These are the two factors needed for the elementary A tensor K(H) operator
-in Blackadar, K-Theory for Operator Algebras, Theorem10.1.2. Definition13.5.1
-and its following paragraph give the actual internal tensor and first-factor
-operator. The minimum tensor norm and the Takai isomorphism remain separate.
+The actions on the two factors commute: `D_T L_a = L_a D_T`, where `L_a (ξ⊗b) = ξ⊗(a*b)`. These
+actions occur in Blackadar, K-Theory for Operator Algebras, Theorem 10.1.2 and Definition
+13.5.1.
 -/
 
 @[expose] public section
@@ -47,7 +45,9 @@ variable (H : Type uH) (A : Type uA)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NonUnitalCStarAlgebra A]
 
-/-- The original Hilbert operator acts through the actual completed first-factor map. -/
+/-- **First-factor operator on the amplification.** For a complex Hilbert space `H`, nonunital `A`
+and `T : H →L[ℂ] H`, `hilbertOperator H A T` is adjointable on `Space H A` with action `ξ⊗b ↦
+(T ξ)⊗b`. -/
 def hilbertOperator (T : H →L[ℂ] H) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -81,7 +81,8 @@ def hilbertOperator (T : H →L[ℂ] H) :
   exact completedLeftOperator (E₁ := ScalarRight H) (F₁ := ScalarRight H)
     (scalarSelfHom A) (ScalarRight.Adjointable.ofContinuousLinearMap H H T)
 
-/-- The original coefficient stays fixed while its Hilbert vector receives the source operator. -/
+/-- **Hilbert operator on a pure amplification vector.** `hilbertOperator H A T (pure H A ξ b) =
+pure H A (T ξ) b`. -/
 @[simp]
 theorem hilbertOperator_pure (T : H →L[ℂ] H) (ξ : H) (b : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -124,7 +125,8 @@ theorem hilbertOperator_pure (T : H →L[ℂ] H) (ξ : H) (b : A) :
     completedPure (scalarSelfHom A) ((ScalarRight.equivL H).symm (T ξ)) b
   rw [completedLeftOperator_pure, hSource]
 
-/-- The actual stored adjoint acts through the genuine Hilbert-space adjoint. -/
+/-- **Adjoint Hilbert action on pure vectors.** `(hilbertOperator H A T).adjoint (pure ξ b) = pure
+(ContinuousLinearMap.adjoint T ξ) b`. -/
 @[simp]
 theorem hilbertOperator_adjoint_pure (T : H →L[ℂ] H) (ξ : H) (b : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -192,7 +194,8 @@ theorem hilbertOperator_adjoint_pure (T : H →L[ℂ] H) (ξ : H) (b : A) :
       ((ScalarRight.equivL H).symm (ContinuousLinearMap.adjoint T ξ)) b
   rw [completedLeftOperator_adjoint_pure, hSource]
 
-/-- The actual completed Hilbert action retains the original Hilbert operator norm bound. -/
+/-- **Norm bound for the first-factor action.** For a bounded Hilbert-space operator `T`,
+`‖hilbertOperator H A T‖ ≤ ‖T‖`. -/
 theorem hilbertOperator_norm_le (T : H →L[ℂ] H) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -228,7 +231,8 @@ theorem hilbertOperator_norm_le (T : H →L[ℂ] H) :
   rw [ScalarRight.Adjointable.norm_ofContinuousLinearMap] at hBound
   exact hBound
 
-/-- The two actual completed factor operators commute on the original amplification. -/
+/-- **Commutation of the Hilbert and coefficient factors.** For `T : H →L[ℂ] H` and `a : A`, the
+two amplification operators commute: `D_T L_a = L_a D_T`. -/
 theorem hilbertOperator_commutes_coefficientOperator (T : H →L[ℂ] H) (a : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;

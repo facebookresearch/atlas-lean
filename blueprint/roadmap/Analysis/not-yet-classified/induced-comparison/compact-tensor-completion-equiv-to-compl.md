@@ -1,3 +1,4 @@
-# Compact Tensor Completion Equiv to Completion
+# Completion equivalence on the algebraic core
 
-Every original canonical raw image has its unchanged actual compact tensor value.
+For `z : A ⊗_ℂ K(H)`, the completion
+equivalence sends `toCompactTensorCompletion H A z` to `algebraicCompactTensorHom H A z`.

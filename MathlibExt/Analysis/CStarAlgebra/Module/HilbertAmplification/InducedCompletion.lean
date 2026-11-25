@@ -16,18 +16,15 @@ public import MathlibExt.Analysis.CStarAlgebra.SeminormPullback
 public import MathlibExt.Analysis.CStarAlgebra.SeminormNonUnitalCompletionHom
 
 /-!
-# The actual completion induced by the original compact tensor action
+# Completion for the compact-action seminorm
 
-Pull back the actual CompactAlgebra H A norm along the verified original
-algebraic tensor homomorphism. Reuse the existing same-seminorm nonunital
-separation/completion engine for its carrier, dictionaries and canonical map.
-The same actual homomorphism extends into the original compact algebra; its
-completed norm equality follows from the dense original canonical images.
+For complex Hilbert `H` and nonunital C-star `A`, let `ρ : A ⊗_ℂ K(H) → CompactAlgebra H A` be
+the compact tensor representation. Its induced C-star seminorm is `p(z) = ‖ρ(z)‖`. Quotient by
+the zero-seminorm subspace and complete to obtain `CompactTensorCompletion H A`.
 
-This computes strict carrier/hom/norm prerequisites of the original spatial
-minimum target in Blackadar10.1.2. It does not identify the induced seminorm
-with the source's least cross norm, select a supplied minimal tensor model,
-or prove raw faithfulness, compact range density or the terminal Takai theorem.
+The dense canonical map `j` has `‖j z‖ = p(z)`. The extended star homomorphism satisfies `ρ̄(j
+z) = ρ(z)` and `‖ρ̄ x‖ = ‖x‖` on the completion, so it is an isometric map into the compact
+algebra.
 -/
 
 @[expose] public section
@@ -47,33 +44,44 @@ variable (H : Type uH) (A : Type uA)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NonUnitalCStarAlgebra A]
 
-/-- The original compact-action norm as a genuine C-star seminorm on the same raw tensor. -/
+/-- **C-star seminorm of the compact tensor action.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, define `compactTensorSeminorm H A z = ‖algebraicCompactTensorHom
+H A z‖` on the raw algebraic tensor `A ⊗_ℂ K(H)`. -/
 def compactTensorSeminorm : CStarSeminorm (A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier) := by
   let : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A
   exact CStarSeminorm.ofNonUnitalStarAlgHom (algebraicCompactTensorHom H A)
 
-/-- Every induced seminorm value is exactly the original algebraic compact-action norm. -/
+/-- **Value of the induced tensor seminorm.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, `compactTensorSeminorm H A z = ‖algebraicCompactTensorHom H A z‖`. -/
 theorem compactTensorSeminorm_apply (z : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A;
     compactTensorSeminorm H A z = ‖algebraicCompactTensorHom H A z‖ := by
   let : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A
   rfl
 
-/-- The existing literal same-seminorm separation quotient followed by ordinary completion. -/
+/-- **Induced compact tensor completion.** For a complex Hilbert space `H` and a nonunital C-star
+algebra `A`, `CompactTensorCompletion H A` is the completion of `A ⊗_ℂ K(H)` after quotienting
+by the zero subspace of `p(z)=‖algebraicCompactTensorHom z‖`. -/
 abbrev CompactTensorCompletion := (compactTensorSeminorm H A).NonUnitalCompletion
 
-/-- The existing same-seminorm completion dictionary on this actual carrier. -/
+/-- **C-star structure on the induced completion.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, the zero-seminorm quotient completion has its nonunital C-star
+algebra structure with the completed seminorm `p`. -/
 @[instance_reducible]
 def compactTensorCompletionCStarAlgebra : NonUnitalCStarAlgebra (CompactTensorCompletion H A) :=
   (compactTensorSeminorm H A).nonUnitalCompletionCStarAlgebra
 
-/-- The canonical raw-tensor map is the existing separation/completion map for this actual gauge. -/
+/-- **Canonical algebraic tensor inclusion.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, the complex nonunital star homomorphism `j : A ⊗_ℂ K(H) →
+CompactTensorCompletion H A` is the separation-quotient map followed by completion. -/
 def toCompactTensorCompletion :
     letI : NonUnitalCStarAlgebra (CompactTensorCompletion H A) := compactTensorCompletionCStarAlgebra H A;
     A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier →⋆ₙₐ[ℂ] CompactTensorCompletion H A :=
   (compactTensorSeminorm H A).toNonUnitalCompletion
 
-/-- The canonical completed source norm is the original compact-action norm on every raw tensor. -/
+/-- **Norm of an algebraic completion image.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, `‖toCompactTensorCompletion H A z‖ = ‖algebraicCompactTensorHom H A z‖`
+for every raw tensor `z`. -/
 theorem norm_toCompactTensorCompletion (z : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : NonUnitalCStarAlgebra (CompactTensorCompletion H A) := compactTensorCompletionCStarAlgebra H A;
     letI : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A;
@@ -83,14 +91,19 @@ theorem norm_toCompactTensorCompletion (z : A ⊗[ℂ] (compactEndomorphismClose
   exact ((compactTensorSeminorm H A).norm_toNonUnitalCompletion z).trans
     (compactTensorSeminorm_apply H A z)
 
-/-- The original canonical raw-tensor images are dense in the constructed same-gauge completion. -/
+/-- **Density of algebraic completion images.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, the canonical map `toCompactTensorCompletion H A` has dense range in the
+induced tensor completion. -/
 theorem denseRange_toCompactTensorCompletion :
     letI : NonUnitalCStarAlgebra (CompactTensorCompletion H A) := compactTensorCompletionCStarAlgebra H A;
     DenseRange (toCompactTensorCompletion H A) := by
   let : NonUnitalCStarAlgebra (CompactTensorCompletion H A) := compactTensorCompletionCStarAlgebra H A
   exact (compactTensorSeminorm H A).denseRange_toNonUnitalCompletion
 
-/-- Extend the same original compact-action hom through its actually induced completion. -/
+/-- **Extended compact tensor homomorphism.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, extend `ρ = algebraicCompactTensorHom H A` to the complex nonunital star
+homomorphism `ρ̄ : CompactTensorCompletion H A → CompactAlgebra H A`, characterized by `ρ̄(j
+z) = ρ(z)`. -/
 def compactTensorCompletionToCompacts :
     letI : NonUnitalCStarAlgebra (CompactTensorCompletion H A) := compactTensorCompletionCStarAlgebra H A;
     letI : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A;
@@ -100,7 +113,9 @@ def compactTensorCompletionToCompacts :
   exact (compactTensorSeminorm H A).fromNonUnitalCompletion (algebraicCompactTensorHom H A)
     (fun z => (compactTensorSeminorm_apply H A z).ge)
 
-/-- Every original completed canonical image has its unchanged original compact-action value. -/
+/-- **Extended representation on the algebraic core.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, `compactTensorCompletionToCompacts H A
+(toCompactTensorCompletion H A z) = algebraicCompactTensorHom H A z`. -/
 theorem compactTensorCompletionToCompacts_apply (z : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : NonUnitalCStarAlgebra (CompactTensorCompletion H A) := compactTensorCompletionCStarAlgebra H A;
     letI : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A;
@@ -111,7 +126,9 @@ theorem compactTensorCompletionToCompacts_apply (z : A ⊗[ℂ] (compactEndomorp
   exact (compactTensorSeminorm H A).fromNonUnitalCompletion_apply (algebraicCompactTensorHom H A)
     (fun z => (compactTensorSeminorm_apply H A z).ge) z
 
-/-- The existing extended star hom is continuous on this actual same-seminorm completion. -/
+/-- **Continuity of the induced representation.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, the map `compactTensorCompletionToCompacts H A` is continuous for the
+induced completion norm and compact-operator norm. -/
 theorem continuous_compactTensorCompletionToCompacts :
     letI : NonUnitalCStarAlgebra (CompactTensorCompletion H A) := compactTensorCompletionCStarAlgebra H A;
     letI : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A;
@@ -121,7 +138,9 @@ theorem continuous_compactTensorCompletionToCompacts :
   exact (compactTensorSeminorm H A).continuous_fromNonUnitalCompletion
     (algebraicCompactTensorHom H A) (fun z => (compactTensorSeminorm_apply H A z).ge)
 
-/-- The actually induced completed map is isometric in norm, derived from its dense raw images. -/
+/-- **Norm preservation of the induced representation.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, `‖compactTensorCompletionToCompacts H A x‖ = ‖x‖` for every
+induced completed tensor `x`. -/
 theorem norm_compactTensorCompletionToCompacts (x : CompactTensorCompletion H A) :
     letI : NonUnitalCStarAlgebra (CompactTensorCompletion H A) := compactTensorCompletionCStarAlgebra H A;
     letI : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A;
@@ -133,7 +152,9 @@ theorem norm_compactTensorCompletionToCompacts (x : CompactTensorCompletion H A)
   intro z
   rw [compactTensorCompletionToCompacts_apply, norm_toCompactTensorCompletion]
 
-/-- The completion comparison embeds its actual same-gauge carrier isometrically into original compacts. -/
+/-- **Isometry of the induced representation.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, the completed compact tensor homomorphism is an isometry between the
+induced completion and the compact algebra. -/
 theorem isometry_compactTensorCompletionToCompacts :
     letI : NonUnitalCStarAlgebra (CompactTensorCompletion H A) := compactTensorCompletionCStarAlgebra H A;
     letI : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A;

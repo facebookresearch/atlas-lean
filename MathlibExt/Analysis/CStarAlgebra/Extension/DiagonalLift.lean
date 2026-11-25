@@ -16,11 +16,15 @@ public import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.DiagonalPair
 public import Mathlib.Analysis.CStarAlgebra.CStarMatrix
 
 /-!
-# Literal diagonal lifts of multiplier-quotient homomorphisms
+# Diagonal lifts through multiplier quotients
 
-Entrywise matrix maps commute with the actual algebraic diagonal pairing.
-Two real multiplier-valued lifts therefore give a real diagonal matrix lift;
-no source fold or quotient class operation is assumed.
+For star homomorphisms `ρ₀,ρ₁ : C → M` and `q : M → Q`, applying `q` entrywise to `diag(ρ₀,ρ₁)`
+gives `diag(q ∘ ρ₀,q ∘ ρ₁)`. This identity is algebraic: the domain is permitted to be a
+nonunital, nonassociative semiring with a complex scalar action and star operation.
+
+In particular, if two Busby maps `τ₀,τ₁ : C → Q(P)` lift to `M(P)`, their diagonal map lifts to
+the two-by-two multiplier matrices by taking the diagonal of the two lifts. Here `P` is a
+nonunital C-star algebra.
 -/
 
 @[expose] public section
@@ -39,7 +43,8 @@ variable [NonUnitalNonAssocSemiring C] [DistribMulAction ℂ C] [Star C]
 variable [Semiring M] [StarRing M] [Algebra ℂ M]
 variable [Semiring Q] [StarRing Q] [Algebra ℂ Q]
 
-/-- Actual entrywise projection commutes with the literal two-hom diagonal pairing. -/
+/-- **Entrywise homomorphism of a diagonal pair.** For `ρ₀,ρ₁ : C → M` and a star homomorphism `q
+: M → Q`, the induced matrix homomorphism satisfies `q₂ ∘ diag(ρ₀,ρ₁) = diag(q ∘ ρ₀,q ∘ ρ₁)`. -/
 theorem map_diagonalPair (q : M →⋆ₙₐ[ℂ] Q) (rho₀ rho₁ : C →⋆ₙₐ[ℂ] M) :
     (CStarMatrix.mapₙₐ (n := Fin 2) q).comp (diagonalPair rho₀ rho₁) =
       diagonalPair (q.comp rho₀) (q.comp rho₁) := by
@@ -68,8 +73,9 @@ variable [NonUnitalCStarAlgebra P]
 
 attribute [local instance] CStarExtension.outerCStarAlgebra
 
-/-- Literal multiplier lifts of two Busby maps give their literal diagonal matrix lift.
-The matrix projection is the actual map induced by the outer quotient. -/
+/-- **Diagonal lift of two split Busby maps.** If `τ₀,τ₁ : C → Q(P)` each admit a
+star-homomorphism lift into `M(P)`, then `diag(τ₀,τ₁)` admits a lift into `M₂(M(P))` through
+the entrywise quotient map. -/
 theorem diagonalPair_hasLift
     {tau₀ tau₁ : BusbyHom C P} (h₀ : IsTrivial tau₀) (h₁ : IsTrivial tau₁) :
     ∃ rhoPair : C →⋆ₙₐ[ℂ] CStarMatrix (Fin 2) (Fin 2) (DoubleCentralizer ℂ P),

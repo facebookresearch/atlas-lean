@@ -1,3 +1,4 @@
-# Basis Vector
+# Coordinate vector of scalar sequence space
 
-A standard Hilbert vector has its actual single-coordinate lp value.
+`basisVector i` is `lp.single 2 i (1 : ℂ)`,
+with entry `1` at coordinate `i` and zero elsewhere.

@@ -19,21 +19,19 @@ public import MathlibExt.Analysis.CStarAlgebra.EssentialNondegeneracy
 public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 
 /-!
-# The original integrated identity of the actual admissible Gram model
+# Integrated identity for a Gram covariant representation
 
-The literal coefficient/group convolution curve has its actual integral
-in the same seminorm completion. Applying the completed representation
-and each vector evaluation gives the original covariant integrated
-identity on the dense source Gram generators, hence on all Hilbert
-vectors. A faithful completed representation retains exactly the
-original seminorm values.
-
-Each such integral lies in the closed span of the actual coefficient
-operator ranges. Density of the original Gram domain then proves
-coefficient nondegeneracy. The strict same-p Hilbert construction thus
-gives an actual nondegenerate covariant representation realizing every
-admissible seminorm. No integrated identity, coefficient nondegeneracy
-or desired covariant model is supplied as an input.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For the Gram
+covariant pair (P,U), put I(f)ξ=∫ s, P_(f(s))(U_s ξ) ∂μ. The integrated homomorphism satisfies
+I(f)=T(f). If ρ is injective, then ‖I(f)‖=p(f). The coefficient representation P is
+nondegenerate, so every L¹-dominated C-star seminorm has a nondegenerate covariant realization
+with exactly its integrated norm.
 -/
 
 @[expose] public section
@@ -66,7 +64,18 @@ variable (H : Type uH)
   [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable (ρ : p.NonUnitalCompletion →⋆ₙₐ[ℂ] (H →L[ℂ] H))
 
-/-- The actual integrated Gram operator has the original convolution action on every source generator. -/
+/-- **Integrated Gram action on a source generator.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For the Gram
+covariant pair (P,U), put I(f)ξ=∫ s, P_(f(s))(U_s ξ) ∂μ. For core coefficients f,h and ξ∈E,
+I(f)(T(h)ξ)=T(f*h)ξ.
+-/
 theorem gramCovariant_haarIntegratedHom_apply_generator
     (hp : p ∈ admissibleCStarSeminorms μ α) (f h : Carrier μ α) (ξ : ρ.essentialSpace) :
     CovariantRepresentation.haarIntegratedHom μ (gramCovariantRepresentation μ α p H ρ hp) f
@@ -100,7 +109,19 @@ theorem gramCovariant_haarIntegratedHom_apply_generator
       rw [integral_toNonUnitalCompletion_coefficientLeft_groupLeft μ α p hp f h]
     _ = _ := hT _
 
-/-- The actual integrated Gram homomorphism is the original completed representation on the source. -/
+/-- **Integrated Gram homomorphism equals the completed representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For the Gram
+covariant pair (P,U), put I(f)ξ=∫ s, P_(f(s))(U_s ξ) ∂μ. For each core coefficient f,
+CovariantRepresentation.haarIntegratedHom μ (gramCovariantRepresentation μ α p H ρ hp)
+f=T(f)=ρE(ιp(f)).
+-/
 theorem gramCovariant_haarIntegratedHom
     (hp : p ∈ admissibleCStarSeminorms μ α) (f : Carrier μ α) :
     CovariantRepresentation.haarIntegratedHom μ (gramCovariantRepresentation μ α p H ρ hp) f =
@@ -115,7 +136,18 @@ theorem gramCovariant_haarIntegratedHom
   rw [hProduct]
   rfl
 
-/-- Faithfulness of the actual completed Hilbert representation gives the exact original seminorm. -/
+/-- **Faithful Gram realization preserves a C-star seminorm.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For the Gram
+covariant pair (P,U), put I(f)ξ=∫ s, P_(f(s))(U_s ξ) ∂μ. If ρ:Xp→B(H) is injective, then
+‖I(f)‖=p(f) for every core coefficient f.
+-/
 theorem norm_gramCovariant_haarIntegratedHom
     (hp : p ∈ admissibleCStarSeminorms μ α) (hρ : Function.Injective ρ) (f : Carrier μ α) :
     ‖CovariantRepresentation.haarIntegratedHom μ (gramCovariantRepresentation μ α p H ρ hp) f‖ =
@@ -123,7 +155,18 @@ theorem norm_gramCovariant_haarIntegratedHom
   rw [gramCovariant_haarIntegratedHom μ α p H ρ hp f,
     ρ.norm_essentialRepresentation hρ, p.norm_toNonUnitalCompletion]
 
-/-- The actual Gram coefficient map satisfies the same neutral essential-space condition. -/
+/-- **Essential coefficient space of the Gram pair is the whole space.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For the coefficient
+representation P of gramCovariantRepresentation μ α p H ρ hp, closure(span_ℂ{P_a
+ξ:a∈A,ξ∈E})=E; equivalently its essentialSpace is the whole Hilbert space.
+-/
 theorem gramCovariantRepresentation_essentialSpace_eq_top
     (hp : p ∈ admissibleCStarSeminorms μ α) :
     (gramCovariantRepresentation μ α p H ρ hp).algebra.essentialSpace = ⊤ := by
@@ -176,7 +219,17 @@ theorem gramCovariantRepresentation_essentialSpace_eq_top
   exact (p.rawHilbertGramDomain H ρ).topologicalClosure_minimal hGram S.isClosed_topologicalClosure
 
 
-/-- Compatibility with the original dense-span Gram covariant statement. -/
+/-- **Nondegeneracy of the Gram coefficient representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the core satisfying p(k)≤∫ s, ‖k(s)‖ ∂μ for every core coefficient k, Xp its
+separated completion and ιp its dense map. Let H be a complex Hilbert space and ρ:Xp→B(H) a
+nonunital complex star homomorphism. Write E for its essential Hilbert subspace, ρE for the
+restricted representation and T(f)=ρE(ιp(f)). The Gram coefficient and group operators P_a,U_g
+on E satisfy P_a(T(f)ξ)=T(s↦a*f(s))ξ and U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The complex span of
+{P_a ξ:a∈A,ξ∈E} is dense in E, so gramCovariantRepresentation μ α p H ρ hp is nondegenerate.
+-/
 theorem nondegenerate_gramCovariantRepresentation
     (hp : p ∈ admissibleCStarSeminorms μ α) :
     Dense (Submodule.span ℂ (Set.range fun z : A × ρ.essentialSpace =>
@@ -186,7 +239,15 @@ theorem nondegenerate_gramCovariantRepresentation
 
 end HilbertModel
 
-/-- Every actual admissible seminorm has a same-universe nondegenerate covariant norm model. -/
+/-- **Nondegenerate covariant realization of an admissible seminorm.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Suppose p is a C-star
+seminorm on Carrier μ α with p(f)≤∫ s, ‖f(s)‖ ∂μ for every core coefficient f. For G:Type uG
+and A:Type uA there exist a complex Hilbert space K:Type(max uG uA) and a covariant
+representation π of α on K with ‖Iπ(f)‖=p(f) for every f, where Iπ(f)ξ=∫ s,
+π.algebra(f(s))(π.group(s)ξ) ∂μ. Its coefficient essential space is all of K.
+-/
 theorem exists_admissibleCovariantNormModel_essentialSpace_eq_top (hp : p ∈ admissibleCStarSeminorms μ α) :
     ∃ (K : Type (max uG uA)) (_hK1 : NormedAddCommGroup K)
       (_hK2 : InnerProductSpace ℂ K) (_hK3 : CompleteSpace K)
@@ -204,7 +265,15 @@ theorem exists_admissibleCovariantNormModel_essentialSpace_eq_top (hp : p ∈ ad
   · exact gramCovariantRepresentation_essentialSpace_eq_top μ α p H₀ ρ₀ hp
 
 
-/-- Compatibility with the original dense-span admissible covariant norm-model statement. -/
+/-- **Covariant seminorm realization with dense coefficient span.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Suppose p is a C-star
+seminorm on Carrier μ α with p(f)≤∫ s, ‖f(s)‖ ∂μ for every core coefficient f. For G:Type uG
+and A:Type uA there exist a complex Hilbert space K:Type(max uG uA) and a covariant pair (π,U)
+on K such that ‖Iπ(f)‖=p(f) for every core coefficient f, where Iπ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ
+for ξ∈K. The span of π(A)K is dense in K.
+-/
 theorem exists_admissibleCovariantNormModel (hp : p ∈ admissibleCStarSeminorms μ α) :
     ∃ (K : Type (max uG uA)) (_hK1 : NormedAddCommGroup K)
       (_hK2 : InnerProductSpace ℂ K) (_hK3 : CompleteSpace K)

@@ -1,3 +1,5 @@
-# Norm canonical Map le
+# Contractive canonical base-change map
 
-The actual canonical vector map is contractive; no coefficient injectivity is assumed.
+For nonunital C-star algebras `B,C` with
+star-compatible opposite orders, a complete right `B`-module `E`, and a complex nonunital star
+homomorphism `f : B → C`, `‖canonicalMap f x‖ ≤ ‖x‖`; injectivity of `f` is not a hypothesis.

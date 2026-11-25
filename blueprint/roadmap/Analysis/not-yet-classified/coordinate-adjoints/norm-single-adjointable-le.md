@@ -1,4 +1,4 @@
-# Norm single Adjointable le
+# Operator norm of coefficient insertion
 
-The actual insertion operator has norm at most one. Equality with one is
-not asserted for the zero coefficient algebra.
+For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, `‖singleAdjointable i‖ ≤ 1`, including the zero algebra.

@@ -1,4 +1,5 @@
-# Finite Inclusion to Continuous Linear Map
+# Forward map of finite coordinate inclusion
 
-The forward bounded map is the finite sum of the original single and
-finite evaluation composites.
+For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the forward map is `∑ i, single (η i) ∘
+finiteCoord i`.

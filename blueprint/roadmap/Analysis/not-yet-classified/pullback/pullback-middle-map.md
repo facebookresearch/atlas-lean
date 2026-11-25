@@ -1,3 +1,4 @@
-# Pullback Middle Map
+# Comparison of Busby pullback algebras
 
-The literal middle-algebra comparison applies `f` only to the first coordinate.
+The star homomorphism from the pullback of `τ ∘ f`
+to that of `τ` sends `(a,m)` to `(f a,m)`.

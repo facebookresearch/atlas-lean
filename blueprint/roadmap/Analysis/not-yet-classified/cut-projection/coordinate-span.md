@@ -1,3 +1,4 @@
-# Coordinate Span
+# Span of selected coordinate ranges
 
-The complex linear span of the inclusions of the selected component modules.
+`coordinateSpan s` is the complex submodule spanned by
+`completedSingle i x` for `i ∈ s` and `x : E i`.

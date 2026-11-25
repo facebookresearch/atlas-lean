@@ -1,3 +1,4 @@
-# Norm standard Coefficient Compact Hom
+# Norm of the coefficient corner
 
-The original complete matrix and compact norms give the exact coefficient norm.
+For nonunital C-star `B`, `‖standardCoefficientCompactHom
+B b‖ = ‖b‖`.

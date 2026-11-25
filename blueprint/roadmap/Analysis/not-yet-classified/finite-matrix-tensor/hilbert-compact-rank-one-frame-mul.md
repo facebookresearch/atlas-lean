@@ -1,3 +1,4 @@
-# Hilbert Compact Rank One frame mul
+# Matrix-unit multiplication for an orthonormal frame
 
-Orthonormal rank-one matrix units have their literal Kronecker multiplication.
+If `v : I → H` is orthonormal, `θ_(v
+i,v j) θ_(v k,v l)` is `θ_(v i,v l)` when `j = k` and zero otherwise.

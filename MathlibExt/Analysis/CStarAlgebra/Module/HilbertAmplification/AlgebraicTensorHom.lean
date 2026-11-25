@@ -16,18 +16,14 @@ public import MathlibExt.Algebra.Star.StarAlgHom
 public import Mathlib.RingTheory.TensorProduct.Basic
 
 /-!
-# The actual algebraic A tensor K(full H) star homomorphism
+# Algebraic compact tensors on Hilbert amplification
 
-The neutral complex tensor universal map lifts the original bilinear product
-of the coefficient and full-H compact factor actions. Their actual commutation
-proves multiplication and genuine adjoints prove the star law. The previously
-constructed arbitrary compact product puts every original pure tensor in the
-actual compact module ideal; linearity gives the whole algebraic tensor image.
+For complex Hilbert `H` and nonunital C-star `A`, the commuting coefficient and Hilbert
+representations define a complex-linear tensor action `ρ : A ⊗_ℂ K(H) → End_A(Space H A)`. On a
+pure tensor it is `L_a D_T`, acting by `ρ(a⊗T)(ξ⊗b) = (T ξ)⊗(a*b)`.
 
-The resulting nonunital star-algebra homomorphism has the actual CompactAlgebra
-H A target, with original pure formula Txi tensor ab. This is the algebraic
-constructor needed for Blackadar10.1.2's original A tensor K(L2G) output. The
-spatial minimum completion and terminal Takai theorem remain separate work.
+This action preserves multiplication and star. Every image is module-compact, so it defines a
+nonunital complex star homomorphism into `K_A(Space H A) = CompactAlgebra H A`.
 -/
 
 @[expose] public section
@@ -48,7 +44,9 @@ variable (H : Type uH) (A : Type uA)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NonUnitalCStarAlgebra A]
 
-/-- Lift the literal compact elementary product by the neutral complex tensor universal map. -/
+/-- **Algebraic compact tensor representation.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, the complex-linear map `ρ : A ⊗_ℂ K(H) → End_A(Space H A)` is determined
+by `ρ(a⊗T) = coefficientHom a * compactHilbertHom T`. -/
 def algebraicTensorOperator :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -103,7 +101,9 @@ def algebraicTensorOperator :
           c • (compactElementaryOperator H A a T : AdjointableOperator.End A (Space H A))
         simp only [compactElementaryOperator_coe, map_smul, smul_mul_assoc] }
 
-/-- The neutral universal lift retains the exact original compact elementary tensor value. -/
+/-- **Elementary tensor representation.** For a complex Hilbert space `H` and a nonunital C-star
+algebra `A`, for `a : A` and `T ∈ K(H)`, `algebraicTensorOperator H A (a⊗T) =
+compactElementaryOperator H A a T` after compact-ideal inclusion. -/
 theorem algebraicTensorOperator_tmul (a : A)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -122,7 +122,9 @@ theorem algebraicTensorOperator_tmul (a : A)
   let : CStarModule Aᵐᵒᵖ (Space H A) := spaceCStarModule H A
   rfl
 
-/-- Actual factor commutation gives the original algebraic tensor multiplication law. -/
+/-- **Multiplication of represented tensors.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, `algebraicTensorOperator H A (z*w) = algebraicTensorOperator H A z *
+algebraicTensorOperator H A w` for algebraic compact tensors `z,w`. -/
 theorem algebraicTensorOperator_mul
     (z w : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -161,7 +163,8 @@ theorem algebraicTensorOperator_mul
     | add w w' hw hw' => simp only [mul_add, map_add, hw, hw']
   | add z z' hz hz' => simp only [add_mul, map_add, hz, hz']
 
-/-- The genuine factor adjoints preserve the original algebraic tensor involution. -/
+/-- **Star of a represented tensor.** For a complex Hilbert space `H` and a nonunital C-star
+algebra `A`, `algebraicTensorOperator H A (star z) = star (algebraicTensorOperator H A z)`. -/
 theorem algebraicTensorOperator_star
     (z : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -185,7 +188,9 @@ theorem algebraicTensorOperator_star
       (compactHilbertHom_commutes_coefficientHom H A (star T) (star a)).eq.symm
   | add z w hz hw => simp only [star_add, map_add, hz, hw]
 
-/-- Every original algebraic tensor has actual compact module image. -/
+/-- **Compactness of the algebraic tensor action.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, every `algebraicTensorOperator H A z` belongs to the module
+compact ideal on `Space H A`. -/
 theorem algebraicTensorOperator_mem_compact
     (z : A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
@@ -210,7 +215,9 @@ theorem algebraicTensorOperator_mem_compact
     rw [map_add]
     exact Submodule.add_mem _ hz hw
 
-/-- The actual algebraic A tensor K(full H) nonunital star homomorphism into its compact module target. -/
+/-- **Star homomorphism into amplification compacts.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, the map `a⊗T ↦ L_a D_T` is a nonunital complex star homomorphism
+`A ⊗_ℂ K(H) → CompactAlgebra H A`. -/
 def algebraicCompactTensorHom :
     A ⊗[ℂ] (compactEndomorphismClosedStarIdeal (H := H)).carrier →⋆ₙₐ[ℂ] CompactAlgebra H A := by
   let : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ
@@ -244,7 +251,8 @@ def algebraicCompactTensorHom :
         AdjointableOperator.compactSubmodule (B := A) (E := Space H A) (F := Space H A)
       exact algebraicTensorOperator_mem_compact H A z)
 
-/-- The actual tensor star homomorphism retains each original compact elementary value. -/
+/-- **Pure tensor in the compact representation.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, `algebraicCompactTensorHom H A (a⊗T) = compactElementaryOperator H A a T`. -/
 theorem algebraicCompactTensorHom_tmul (a : A)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) :
     algebraicCompactTensorHom H A (a ⊗ₜ[ℂ] T) = compactElementaryOperator H A a T := by
@@ -275,7 +283,9 @@ theorem algebraicCompactTensorHom_tmul (a : A)
     (compactElementaryOperator H A a T : AdjointableOperator.End A (Space H A))
   exact algebraicTensorOperator_tmul H A a T
 
-/-- The actual algebraic tensor target acts by the original full-H elementary tensor formula. -/
+/-- **Action of an elementary compact tensor.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, for `a,b : A`, `T ∈ K(H)` and `ξ : H`, the represented tensor sends `pure
+ξ b` to `pure (T ξ) (a*b)`. -/
 theorem algebraicCompactTensorHom_pure (a : A)
     (T : (compactEndomorphismClosedStarIdeal (H := H)).carrier) (ξ : H) (b : A) :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;

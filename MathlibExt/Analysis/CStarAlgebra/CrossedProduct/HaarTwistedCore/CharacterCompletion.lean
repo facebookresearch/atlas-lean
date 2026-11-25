@@ -16,16 +16,13 @@ public import MathlibExt.Analysis.CStarAlgebra.SeminormNonUnitalCompletionHom
 public import Mathlib.Topology.DenseEmbedding
 
 /-!
-# The actual dual character automorphism on the original full Haar completion
+# Character automorphisms of the full crossed-product completion
 
-Extend the computed raw character automorphism on the same original maximal
-norm quotient/completion. Its actual bound is the proved gauge isometry.
-Dense original coefficient images prove identity, composition and the
-inverse character laws. No completed action, norm, model or equivalence
-conclusion is supplied as a constructor premise.
-
-Point-norm continuity in the character parameter is a separate required
-constructor fact; no global dual action is selected before it is proved.
+Let G be a locally compact topological group with regular left Haar measure μ, A a nonunital
+complex C-star algebra, and α a point-norm action. Modulation Mχf(s)=χ(s)•f(s) by a continuous
+unitary character preserves the maximal covariant C-star seminorm. It therefore induces a star
+automorphism Dχ of the full covariance completion, characterized by Dχι(f)=ι(Mχf), with D1=id
+and Dχη=Dχ∘Dη.
 -/
 
 @[expose] public section
@@ -48,7 +45,16 @@ variable (mu : Measure G) [mu.IsHaarMeasure] [mu.Regular] (alpha : PointNormCSta
 
 attribute [local instance] fullCovariantCompletionCStarAlgebra
 
-/-- The original full-completion endomorphism induced by the actual raw character map. -/
+/-- **Completed character endomorphism.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let χ:G→𝕋 be a continuous unitary character. On the compactly supported twisted convolution
+core put pmax(f)=sup{p(f): p is a C-star seminorm and p(h)≤∫ s, ‖h(s)‖ ∂μ for every core
+coefficient h}. Write X=FullCovariantCompletion μ α for the separated completion in pmax, and
+ι for its dense core map. The complex star endomorphism Dχ:X→X satisfies
+Dχ(ι(f))=ι(s↦χ(s)•f(s)).
+-/
 def completedCharacterHom (chi : PontryaginDual G) :
     FullCovariantCompletion mu alpha →⋆ₙₐ[ℂ] FullCovariantCompletion mu alpha := by
   let p := maximalCStarSeminorm mu alpha
@@ -59,7 +65,12 @@ def completedCharacterHom (chi : PontryaginDual G) :
     rw [CStarSeminorm.norm_toNonUnitalCompletion, maximal_character_eq])
 
 omit [mu.Regular] in
-/-- The actual completed character map retains every original raw coefficient value. -/
+/-- **Character action on dense completed coefficients.**
+
+For χ∈PontryaginDual G and a Haar-core coefficient f, `completedCharacterHom μ α χ
+(toFullCovariantCompletion μ α f) = toFullCovariantCompletion μ α (characterModulation μ α χ
+f)`, where characterModulation χ f(s)=χ(s)•f(s).
+-/
 @[simp]
 theorem completedCharacterHom_apply (chi : PontryaginDual G) (f : Carrier mu alpha) :
     completedCharacterHom mu alpha chi (toFullCovariantCompletion mu alpha f) =
@@ -73,7 +84,11 @@ theorem completedCharacterHom_apply (chi : PontryaginDual G) (f : Carrier mu alp
       rw [CStarSeminorm.norm_toNonUnitalCompletion, maximal_character_eq]) f
 
 omit [mu.Regular] in
-/-- Identity character gives the actual identity map on the same original completion. -/
+/-- **Trivial character on the full completion.**
+
+The endomorphism D1 induced by the trivial character is the identity of
+FullCovariantCompletion μ α.
+-/
 theorem completedCharacterHom_one : completedCharacterHom mu alpha 1 = NonUnitalStarAlgHom.id ℂ _ := by
   have := NonUnitalStarAlgHom.instContinuousLinearMapClassComplex
     (F := FullCovariantCompletion mu alpha →⋆ₙₐ[ℂ] FullCovariantCompletion mu alpha)
@@ -86,7 +101,11 @@ theorem completedCharacterHom_one : completedCharacterHom mu alpha 1 = NonUnital
   rfl
 
 omit [mu.Regular] in
-/-- Actual completed character maps compose in the original character group order. -/
+/-- **Composition of completed character maps.**
+
+For unitary characters χ,η of G, the completed endomorphisms of FullCovariantCompletion μ α
+satisfy Dχη=Dχ∘Dη.
+-/
 theorem completedCharacterHom_mul (chi eta : PontryaginDual G) :
     completedCharacterHom mu alpha (chi * eta) =
       (completedCharacterHom mu alpha chi).comp (completedCharacterHom mu alpha eta) := by
@@ -102,7 +121,16 @@ theorem completedCharacterHom_mul (chi eta : PontryaginDual G) :
   rw [completedCharacterHom_apply, characterModulation_mul_character]
   rw [NonUnitalStarAlgHom.comp_apply, completedCharacterHom_apply, completedCharacterHom_apply]
 
-/-- The actual completed character map and its inverse character give a star-algebra equivalence. -/
+/-- **Completed unitary-character automorphism.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let χ:G→𝕋 be a continuous unitary character. On the compactly supported twisted convolution
+core put pmax(f)=sup{p(f): p is a C-star seminorm and p(h)≤∫ s, ‖h(s)‖ ∂μ for every core
+coefficient h}. Write X=FullCovariantCompletion μ α for the separated completion in pmax, and
+ι for its dense core map. The character action Dχ:X≃⋆ₐ[ℂ]X satisfies Dχ(ι(f))=ι(s↦χ(s)•f(s));
+its inverse is Dχ⁻¹.
+-/
 def completedCharacterEquiv (chi : PontryaginDual G) :
     FullCovariantCompletion mu alpha ≃⋆ₐ[ℂ] FullCovariantCompletion mu alpha :=
   StarAlgEquiv.ofNonUnitalStarAlgHom (completedCharacterHom mu alpha chi)
@@ -111,7 +139,12 @@ def completedCharacterEquiv (chi : PontryaginDual G) :
     (by rw [← completedCharacterHom_mul, mul_inv_cancel, completedCharacterHom_one])
 
 omit [mu.Regular] in
-/-- Every completed dual automorphism has the original raw scalar character value. -/
+/-- **Character automorphism on the dense full core.**
+
+For a Haar-core coefficient f and unitary character χ, `completedCharacterEquiv μ α χ
+(toFullCovariantCompletion μ α f) = toFullCovariantCompletion μ α (characterModulation μ α χ
+f)`, with characterModulation χ f(s)=χ(s)•f(s).
+-/
 @[simp]
 theorem completedCharacterEquiv_apply (chi : PontryaginDual G) (f : Carrier mu alpha) :
     completedCharacterEquiv mu alpha chi (toFullCovariantCompletion mu alpha f) =

@@ -1,3 +1,3 @@
-# Time Homeomorph NNReal one
+# The initial time translates to zero
 
-Time one is sent to zero, using the proved endpoint transport.
+Under timeHomeomorphNNReal:[1,∞)≃ₜℝ≥0, the time t=1 maps to u=0.

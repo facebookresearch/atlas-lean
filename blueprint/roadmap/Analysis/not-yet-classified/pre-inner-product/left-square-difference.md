@@ -1,3 +1,4 @@
-# Left Square difference
+# Cross terms of an adjoint square difference
 
-The original square difference is the symmetric sum of its two cross terms.
+For `x,y` in a nonunital complex C-star
+algebra, `(x+y)*(x+y)-(x-y)*(x-y)=2 • (x* y+y* x)` as an equality in the algebra.

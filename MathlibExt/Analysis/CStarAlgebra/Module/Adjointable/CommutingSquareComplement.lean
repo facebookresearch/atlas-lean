@@ -15,15 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Adjointable
 public import MathlibExt.Analysis.CStarAlgebra.SquareComplement
 
 /-!
-# The actual square complement in a represented commutant
+# Square complements in represented commutants
 
-An actual adjointable endomorphism commuting with a star representation has a
-square complement in the same commutant. The complement is the positive CFC
-square root of the original norm-square scalar minus the adjoint square.
+Let `E` be a complete right module over nonunital C-star `B` with star-compatible opposite
+order, and `φ : C → End_B(E)` a complex nonunital star representation of a C-star algebra. If
+adjointable `T` commutes with every `φ(c)`, there is `Q` in the same commutant satisfying `T* T
++ Q* Q = ‖T‖² I`.
 
-This extra commutation is needed to bound the second-factor map on the actual
-balanced internal tensor used by Blackadar, K-Theory for Operator Algebras,
-Theorem 10.1.2. A square complement without commutation does not suffice there.
+One takes the positive continuous-functional-calculus square root of `‖T‖² I - T* T`. Functional
+calculus keeps it in the represented commutant.
 -/
 
 @[expose] public section
@@ -45,7 +45,11 @@ variable {C : Type uC} [NonUnitalCStarAlgebra C]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
 
-/-- Construct the norm-square complement in the same actual commutant. -/
+/-- **Square complement in a representation commutant.** Let `E` be a complete right module over
+nonunital C-star `B` with star-compatible opposite order, let `C` be a nonunital C-star
+algebra, and let `φ : C → End_B(E)` be a complex nonunital star homomorphism. If `T` commutes
+with every `φ(c)`, some adjointable `Q` also commutes with every `φ(c)` and satisfies `T* (T
+x) + Q* (Q x) = ‖T‖² • x` for all `x : E`. -/
 theorem exists_commuting_norm_square_complement
     (φ : C →⋆ₙₐ[ℂ] End B E) (T : End B E)
     (hComm : ∀ c : C, Commute T (φ c)) :

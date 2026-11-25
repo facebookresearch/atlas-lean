@@ -1,3 +1,4 @@
-# Nonnegative Projection mul self
+# Idempotence of the nonnegative cut
 
-The nonnegative-degree projection is idempotent.
+`nonnegativeProjection * nonnegativeProjection =
+nonnegativeProjection`.

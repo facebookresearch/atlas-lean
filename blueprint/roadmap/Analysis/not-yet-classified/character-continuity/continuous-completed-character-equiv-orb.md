@@ -1,3 +1,4 @@
-# Continuous completed Character Equiv orbit
+# Point-norm continuity of the completed character action
 
-Every original full-completion character orbit is point-norm continuous.
+For every x∈FullCovariantCompletion μ α, the map χ↦Dχx is norm-continuous, where χ ranges over
+the continuous unitary characters with compact-open topology and Dχ extends f(s)↦χ(s)•f(s).

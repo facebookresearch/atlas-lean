@@ -1,3 +1,4 @@
-# Right Inner cut Projection of disjoint
+# Orthogonality of disjoint cuts
 
-Disjoint cuts have orthogonal ranges for the coefficient-valued inner product.
+For disjoint `s,t` and completed vectors `x,y`,
+`rightInner (cutProjection s x) (cutProjection t y) = 0`.

@@ -1,3 +1,4 @@
-# Of map
+# Compatibility of completed stage inclusions
 
-The canonical inclusions commute with the actual connecting maps.
+For `i ≤ j`, `S.of j (S.map i j hij x) = S.of
+i x`.

@@ -1,4 +1,4 @@
-# Automorphism Homotopic
+# Homotopic C-star automorphisms
 
-The proposition that two automorphisms are joined by a point-norm
-automorphism homotopy.
+Automorphisms α and β are homotopic when there exists a point-norm continuous automorphism
+path from α to β.

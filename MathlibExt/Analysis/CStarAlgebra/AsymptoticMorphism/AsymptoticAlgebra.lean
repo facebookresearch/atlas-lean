@@ -18,15 +18,15 @@ import Mathlib.Order.LatticeIntervals
 import Mathlib.Topology.Order.Compact
 
 /-!
-# The literal asymptotic C-star algebra and quotient lifts
+# The asymptotic C-star algebra and lifted families
 
-AsymptoticAlgebra B is the actual Cb([1,infty),B)/C0([1,infty),B)
-quotient, using the stock bounded-continuous algebra, the constructed closed
-star ideal, and the existing quotient C-star factory. Its norm is not changed.
-
-A set-theoretic lifting of an actual homomorphism into this quotient gives a
-raw nonlinear asymptotic family. Its four laws are derived from the actual
-kernel criterion. No Source bound theorem or extra raw bound premise is used.
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. The
+quotient norm is ‖q_B(F)‖=inf{‖F+h‖∞:h∈C₀(T,B)}, where ‖F‖∞=sup_t‖F(t)‖. The quotient is a
+nonunital complex C-star algebra. A bounded continuous function represents zero precisely when
+it tends to zero at infinity. For a star homomorphism ρ:A→B∞, any choice of representatives
+F_a with q_B(F_a)=ρ(a) defines an asymptotic family φ_t(a)=F_a(t); all such choices are
+strictly equivalent.
 -/
 
 @[expose] public section
@@ -41,7 +41,13 @@ noncomputable section
 
 universe uA uB
 
-/-- The genuine quotient of bounded time-functions by those vanishing at infinity. -/
+/-- **Quotient by functions vanishing at infinity.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. The ideal
+C₀(T,B) consists of bounded continuous functions F with ‖F(t)‖→0 as t→∞. The quotient norm is
+‖q_B(F)‖=inf{‖F+h‖∞:h∈C₀(T,B)}, where ‖F‖∞=sup_t‖F(t)‖.
+-/
 abbrev AsymptoticAlgebra (B : Type uB) [NonUnitalCStarAlgebra B] :=
   (BoundedContinuousFunction.vanishingIdeal AsymptoticTime B).Quotient
 
@@ -50,7 +56,14 @@ namespace AsymptoticAlgebra
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- Explicit existing quotient C-star data. It is not globally registered. -/
+/-- **C-star algebra of asymptotic function classes.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. The
+quotient norm is ‖q_B(F)‖=inf{‖F+h‖∞:h∈C₀(T,B)}, where ‖F‖∞=sup_t‖F(t)‖. Pointwise addition,
+multiplication, complex scaling and star descend to B∞. With this quotient norm it is a
+nonunital complex C-star algebra, satisfying ‖star(x)*x‖=‖x‖².
+-/
 @[instance_reducible]
 def cStarAlgebra (B : Type uB) [NonUnitalCStarAlgebra B] :
     NonUnitalCStarAlgebra (AsymptoticAlgebra B) :=
@@ -58,7 +71,13 @@ def cStarAlgebra (B : Type uB) [NonUnitalCStarAlgebra B] :
 
 attribute [local instance] cStarAlgebra
 
-/-- The actual quotient projection, with the preceding fixed quotient dictionaries. -/
+/-- **Asymptotic quotient homomorphism.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. The map
+quotientMap B=q_B sends a bounded continuous time function F to its class modulo C₀(T,B); it
+is a nonunital complex star homomorphism.
+-/
 def quotientMap (B : Type uB) [NonUnitalCStarAlgebra B] :
     (AsymptoticTime →ᵇ B) →⋆ₙₐ[ℂ] AsymptoticAlgebra B :=
   (BoundedContinuousFunction.vanishingIdeal AsymptoticTime B).quotientMap
@@ -88,38 +107,70 @@ private theorem ray_cocompact_eq_atTop :
       exact isCompact_Icc⟩
   exact cocompact_eq_atTop
 
-/-- The actual ideal on the closed ray is characterized by atTop vanishing. -/
+/-- **Vanishing ideal characterized by the time limit.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. For
+F∈C_b(T,B), F belongs to the closed star ideal C₀(T,B) exactly when F(t)→0 in norm as t→∞.
+-/
 theorem mem_vanishingIdeal_iff (f : AsymptoticTime →ᵇ B) :
     f ∈ BoundedContinuousFunction.vanishingIdeal AsymptoticTime B ↔
       Tendsto f atTop (nhds 0) := by
   rw [BoundedContinuousFunction.mem_vanishingIdeal_iff, ray_cocompact_eq_atTop]
 
-/-- Zero in the real quotient is exactly vanishing at infinity. -/
+/-- **Zero quotient class characterized by vanishing at infinity.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. For
+F∈C_b(T,B), q_B(F)=0 if and only if F(t)→0 in B as t→∞.
+-/
 theorem quotientMap_eq_zero_iff (f : AsymptoticTime →ᵇ B) :
     quotientMap B f = 0 ↔ Tendsto f atTop (nhds 0) := by
   change (BoundedContinuousFunction.vanishingIdeal AsymptoticTime B).quotientMap f = 0 ↔ _
   rw [ClosedStarIdeal.quotientMap_eq_zero_iff, mem_vanishingIdeal_iff]
 
-/-- Equality of quotient classes is precisely the vanishing-difference criterion. -/
+/-- **Equality of asymptotic classes characterized by a vanishing difference.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. For
+F,G∈C_b(T,B), q_B(F)=q_B(G) if and only if F(t)-G(t)→0 in B as t→∞.
+-/
 theorem quotientMap_eq_iff (f g : AsymptoticTime →ᵇ B) :
     quotientMap B f = quotientMap B g ↔
       Tendsto (fun t => f t - g t) atTop (nhds 0) := by
   rw [← sub_eq_zero, ← map_sub, quotientMap_eq_zero_iff]
   rfl
 
-/-- The canonical C0 inclusion has zero quotient class. -/
+/-- **A function vanishing at infinity has zero class.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. For
+f∈C₀(T,B), its bounded continuous representative f.toBCF has q_B(f.toBCF)=0.
+-/
 theorem quotientMap_toBCF (f : C₀(AsymptoticTime, B)) :
     quotientMap B f.toBCF = 0 :=
   ((BoundedContinuousFunction.vanishingIdeal AsymptoticTime B).quotientMap_eq_zero_iff
     f.toBCF).2 (BoundedContinuousFunction.toBCF_mem_vanishingIdeal f)
 
-/-- Surjectivity is inherited from the actual Submodule quotient, not assumed. -/
+/-- **Surjectivity of the asymptotic quotient map.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. Every x∈B∞
+has a bounded continuous representative F∈C_b(T,B) with q_B(F)=x.
+-/
 theorem quotientMap_surjective (B : Type uB) [NonUnitalCStarAlgebra B] :
     Function.Surjective (quotientMap B) :=
   (BoundedContinuousFunction.vanishingIdeal AsymptoticTime B).quotientMap_surjective
 
-/-- Any genuine set-theoretic lifting of a quotient hom yields a raw family.
-F is arbitrary in the coefficient; no linearity or continuity-in-a is imposed. -/
+/-- **Asymptotic morphism from quotient-homomorphism lifts.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. Let A also
+be a nonunital complex C-star algebra and ρ:A→B∞ a nonunital complex star homomorphism. Choose
+F:A→C_b(T,B) with q_B(F(a))=ρ(a) for every a. The family ofLift ρ F hF:A→B is φ_t(a)=F(a)(t).
+Its four algebraic defects tend to zero because their quotient classes are zero, and each
+coefficient orbit is continuous.
+-/
 def ofLift (ρ : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B)
     (F : A → AsymptoticTime →ᵇ B)
     (hF : ∀ a : A, quotientMap B (F a) = ρ a) : AsymptoticMorphism A B where
@@ -150,7 +201,13 @@ def ofLift (ρ : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B)
     exact h.congr' (Filter.Eventually.of_forall fun (t : AsymptoticTime) => by
       simp only [BoundedContinuousFunction.sub_apply, BoundedContinuousFunction.star_apply])
 
-/-- The lifting family has the original pointwise values. -/
+/-- **Value of a lifted asymptotic family.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. Let A also
+be a nonunital complex C-star algebra and ρ:A→B∞ a nonunital complex star homomorphism. Choose
+F:A→C_b(T,B) with q_B(F(a))=ρ(a) for every a. For t∈T and a∈A, ofLift ρ F hF t a=F(a)(t).
+-/
 @[simp]
 theorem ofLift_apply (ρ : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B)
     (F : A → AsymptoticTime →ᵇ B)
@@ -158,7 +215,14 @@ theorem ofLift_apply (ρ : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B)
     (t : AsymptoticTime) (a : A) : ofLift ρ F hF t a = F a t := by
   rfl
 
-/-- Two set-theoretic liftings of the same quotient map are strictly equivalent. -/
+/-- **Strict equivalence of two quotient-homomorphism lifts.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. Let A be a
+nonunital complex C-star algebra, ρ:A→B∞ a nonunital complex star homomorphism and
+F,G:A→C_b(T,B) satisfy q_B(F(a))=q_B(G(a))=ρ(a). Then F(a)(t)-G(a)(t)→0 for every a as t→∞, so
+the two lifted asymptotic families are strictly equivalent.
+-/
 theorem strictlyEquivalent_ofLift (ρ : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B)
     (F G : A → AsymptoticTime →ᵇ B)
     (hF : ∀ a : A, quotientMap B (F a) = ρ a)
@@ -168,14 +232,27 @@ theorem strictlyEquivalent_ofLift (ρ : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B)
   have h := (quotientMap_eq_iff (F a) (G a)).1 ((hF a).trans (hG a).symm)
   simpa only [ofLift_apply] using h
 
-/-- Actual quotient surjectivity supplies a set-theoretic lift by choice.
-This choice constructs the family; it is not an output-model input. -/
+/-- **Asymptotic family associated with a quotient homomorphism.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. Let A be a
+nonunital complex C-star algebra and ρ:A→B∞ a nonunital complex star homomorphism. Choose a
+bounded continuous representative F_a of ρ(a) for each a. The asymptotic morphism ofHom ρ is
+the family φ_t(a)=F_a(t).
+-/
 def ofHom (ρ : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B) : AsymptoticMorphism A B :=
   ofLift ρ
     (fun a => Classical.choose (quotientMap_surjective B (ρ a)))
     (fun a => Classical.choose_spec (quotientMap_surjective B (ρ a)))
 
-/-- Characteristic values of the computed set-theoretic lift. -/
+/-- **Coefficient values of the chosen quotient lift.**
+
+Let B be a nonunital complex C-star algebra and T=AsymptoticTime=[1,∞). Write
+B∞=AsymptoticAlgebra B=C_b(T,B)/C₀(T,B), and q_B:C_b(T,B)→B∞ for the quotient map. Let A be a
+nonunital complex C-star algebra and ρ:A→B∞ a nonunital complex star homomorphism. For the
+representative F_a∈C_b(T,B) chosen with q_B(F_a)=ρ(a) in ofHom ρ, its coefficient values are
+ofHom ρ t a=F_a(t).
+-/
 @[simp]
 theorem ofHom_apply (ρ : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B)
     (t : AsymptoticTime) (a : A) :

@@ -1,11 +1,11 @@
-# Standard Compact
+# Finite matrix corners in standard-module compacts
 
-- [Right Matrix Standard Compact Hom](right-matrix-standard-compact-hom.md)
-- [Right Matrix Standard Compact Hom coe](right-matrix-standard-compact-hom-coe.md)
-- [Right Matrix Standard Compact Hom apply](right-matrix-standard-compact-hom-apply.md)
-- [Coord right Matrix Standard Compact Hom apply](coord-right-matrix-standard-compact-hom.md)
-- [Right Matrix Standard Compact Hom block](right-matrix-standard-compact-hom-block.md)
-- [Right Matrix Standard Compact Hom injective](right-matrix-standard-compact-hom-inject.md)
-- [Norm right Matrix Standard Compact Hom apply](norm-right-matrix-standard-compact-hom-a.md)
-- [Right Matrix Standard Compact Hom isometry](right-matrix-standard-compact-hom-isomet.md)
-- [Right Matrix Standard Compact Hom zero Extend](right-matrix-standard-compact-hom-zero-e.md)
+- [Compact matrix corner in a standard module](right-matrix-standard-compact-hom.md)
+- [Inclusion-matrix-adjoint corner formula](right-matrix-standard-compact-hom-coe.md)
+- [Vector value of the standard matrix corner](right-matrix-standard-compact-hom-apply.md)
+- [Selected coordinates of a matrix corner](coord-right-matrix-standard-compact-hom.md)
+- [Coefficient operator of a matrix block](right-matrix-standard-compact-hom-block.md)
+- [Injectivity of the standard compact corner](right-matrix-standard-compact-hom-inject.md)
+- [Norm of a standard matrix corner](norm-right-matrix-standard-compact-hom-a.md)
+- [Isometric standard matrix corner](right-matrix-standard-compact-hom-isomet.md)
+- [Zero extension preserves an initial matrix corner](right-matrix-standard-compact-hom-zero-e.md)

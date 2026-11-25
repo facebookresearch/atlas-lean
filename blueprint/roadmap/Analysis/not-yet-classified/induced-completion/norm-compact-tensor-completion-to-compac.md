@@ -1,3 +1,5 @@
-# Norm compact Tensor Completion To Compacts
+# Norm preservation of the induced representation
 
-The actually induced completed map is isometric in norm, derived from its dense raw images.
+For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, `‖compactTensorCompletionToCompacts H A x‖ = ‖x‖` for every
+induced completed tensor `x`.

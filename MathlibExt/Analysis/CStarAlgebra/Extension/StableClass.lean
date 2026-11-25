@@ -15,19 +15,16 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Extension.StableSum.Equivalence
 
 /-!
-# The parameterized stable extension-class commutative monoid
+# Stable extension classes relative to coherent folds
 
-For supplied stable-sum data with an actual assoc/comm coherence proof,
-stable strong equivalence gives an actual quotient. The literal
-sum descends to that quotient and the class of the zero Busby map is its
-identity. The unit laws are stable-relation witnesses with extra trivial
-summands; no representative-level strong unit law is used.
+Fix compatible matrix-fold data `S` whose Busby sum is associative and commutative up to strong
+multiplier-unitary equivalence. Quotient the Busby homomorphisms `A → Q(B)` by stable strong
+equivalence, meaning strong equivalence after adjoining liftable summands.
 
-The weak algebraic source requires no norm, topology, unit or completeness.
-The coefficient retains the genuine C-star multiplier/quotient structures.
-This is a conditional quotient attached to `S` and `hS`, not source `Ext(A,B)`:
-that identification still needs the standard
-stabilization construction and its assoc/comm theorem.
+The quotient has addition `[τ₁]+[τ₂] = [S.sum τ₁ τ₂]` and zero `[0]`, forming a commutative
+additive monoid. Every liftable Busby map represents zero. These classes and operations are
+parameterized by `S,hS`; the domain needs only a possibly nonunital, nonassociative semiring
+with distributive complex scalar action and additive involution.
 -/
 
 @[expose] public section
@@ -47,18 +44,21 @@ variable {A : Type uA} {B : Type uB}
 variable [NonUnitalNonAssocSemiring A] [DistribMulAction ℂ A] [StarAddMonoid A]
 variable [NonUnitalCStarAlgebra B]
 
-/-- The literal stable strong relation, with its actual strict equivalence proof. -/
+/-- **Setoid of stable strong Busby equivalence.** For `S` with associativity and commutativity up
+to strong equivalence, the setoid relation is `StablyStrongEquivalent S`. -/
 def StableSumData.setoid (S : StableSumData A B) (hS : S.IsCoherent) :
     Setoid (BusbyHom A B) where
   r := StablyStrongEquivalent S
   iseqv := by exact stably_strong_equivalent_equivalence S hS
 
-/-- Busby-homomorphism classes for the supplied coherent sum, not source-canonical Ext. -/
+/-- **Stable Busby classes for coherent folds.** `StableClass S hS` is the quotient of Busby
+homomorphisms `A → Q(B)` by stable strong equivalence relative to `S`. -/
 abbrev StableClass (S : StableSumData A B) (hS : S.IsCoherent) :=
   Quotient (S.setoid hS)
 
-/-- Strong unitary equivalence gives stable strong equivalence by adding the
-same zero trivial summand on both sides. -/
+/-- **Strong equivalence implies stable strong equivalence.** Strongly unitarily equivalent Busby
+maps become stably strongly equivalent for any compatible `S`, using the zero liftable summand
+on both sides. -/
 theorem StableSumData.stably_strong_equivalent_of_strong
     (S : StableSumData A B)
     {tau₁ tau₂ : BusbyHom A B}
@@ -69,7 +69,8 @@ theorem StableSumData.stably_strong_equivalent_of_strong
     (strongly_unitary_equivalent_refl
       (0 : BusbyHom A B))
 
-/-- Assoc/comm coherence interchanges the two middle summands. -/
+/-- **Interchange of coherent Busby sums.** If `S.IsCoherent`, the sums `(τ₁+τ₂)+(σ₁+σ₂)` and
+`(τ₁+σ₁)+(τ₂+σ₂)` are strongly equivalent, with every addition interpreted as `S.sum`. -/
 theorem StableSumData.sum_interchange_strong
     (S : StableSumData A B) (hS : S.IsCoherent)
     (tau₁ tau₂ sigma₁ sigma₂ :
@@ -107,7 +108,8 @@ theorem StableSumData.sum_interchange_strong
     strongly_unitary_equivalent_trans h₂ <|
     strongly_unitary_equivalent_trans h₃ h₄
 
-/-- Stable strong equivalence is a congruence for the supplied sum. -/
+/-- **Stable equivalence respects coherent addition.** For coherent `S`, stable equivalence in
+each variable implies stable equivalence of the two resulting `S`-sums. -/
 theorem StableSumData.sum_congr_stable
     (S : StableSumData A B) (hS : S.IsCoherent)
     {tau₁ tau₁' tau₂ tau₂' :
@@ -128,8 +130,8 @@ theorem StableSumData.sum_congr_stable
   exact strongly_unitary_equivalent_trans hleft
     (strongly_unitary_equivalent_trans hmiddle hright)
 
-/-- Right addition by zero is an identity only after passing to stable strong
-equivalence. The right-side extra summand is `0 ⊕ 0`. -/
+/-- **Right zero law after stable equivalence.** For coherent `S`, `S.sum τ 0` is stably strongly
+equivalent to `τ`. -/
 theorem StableSumData.sum_zero_stable
     (S : StableSumData A B) (hS : S.IsCoherent)
     (tau : BusbyHom A B) :
@@ -138,9 +140,8 @@ theorem StableSumData.sum_zero_stable
     S.sum_trivial zero_is_trivial zero_is_trivial, ?_⟩
   exact hS.1 tau 0 0
 
-/-- Left addition by zero is an identity only after passing to stable strong
-equivalence. It uses commutativity, congruence and associativity, not a strong
-unit law. -/
+/-- **Left zero law after stable equivalence.** For coherent `S`, `S.sum 0 τ` is stably strongly
+equivalent to `τ`. -/
 theorem StableSumData.zero_sum_stable
     (S : StableSumData A B) (hS : S.IsCoherent)
     (tau : BusbyHom A B) :
@@ -154,7 +155,8 @@ theorem StableSumData.zero_sum_stable
         (0 : BusbyHom A B))
   exact strongly_unitary_equivalent_trans hswap (hS.1 tau 0 0)
 
-/-- Every trivial Busby map represents the same stable class as zero. -/
+/-- **Liftable Busby map is stably zero.** For coherent `S`, a Busby map admitting a multiplier
+homomorphism lift is stably strongly equivalent to zero. -/
 theorem StableSumData.trivial_stably_strong_equivalent_zero
     (S : StableSumData A B) (hS : S.IsCoherent)
     {sigma : BusbyHom A B}
@@ -165,24 +167,27 @@ theorem StableSumData.trivial_stably_strong_equivalent_zero
 
 namespace StableClass
 
-/-- Place a Busby map in the conditional stable quotient. -/
+/-- **Class of a Busby homomorphism.** `mk S hS τ` is the image of `τ : A → Q(B)` in the quotient
+by stable strong equivalence relative to coherent `S`. -/
 def mk (S : StableSumData A B) (hS : S.IsCoherent)
     (tau : BusbyHom A B) :
     StableClass S hS :=
   Quotient.mk (S.setoid hS) tau
 
-/-- Equality of representatives is exactly the original stable relation.
-It is not literal triviality, raw strong conjugacy, or an enlarged closure. -/
+/-- **Equality of stable Busby classes.** `mk S hS τ₁ = mk S hS τ₂` if and only if
+`StablyStrongEquivalent S τ₁ τ₂`. -/
 theorem mk_eq_mk_iff (S : StableSumData A B) (hS : S.IsCoherent)
     (tau₁ tau₂ : BusbyHom A B) :
     mk S hS tau₁ = mk S hS tau₂ ↔ StablyStrongEquivalent S tau₁ tau₂ :=
   ⟨fun h => Quotient.exact h, fun h => Quotient.sound h⟩
 
-/-- The class of the actual zero Busby map. -/
+/-- **Zero stable class.** The zero of the coherent stable quotient is the class of the zero Busby
+map `A → Q(B)`. -/
 def zero (S : StableSumData A B) (hS : S.IsCoherent) : StableClass S hS :=
   mk S hS 0
 
-/-- Diagonal sum descended through stable strong equivalence. -/
+/-- **Addition of stable Busby classes.** The operation on the coherent quotient is determined by
+`[τ₁]+[τ₂] = [S.sum τ₁ τ₂]`. -/
 def add (S : StableSumData A B) (hS : S.IsCoherent) :
     StableClass S hS → StableClass S hS → StableClass S hS :=
   Quotient.lift₂
@@ -199,8 +204,8 @@ theorem add_mk (S : StableSumData A B) (hS : S.IsCoherent)
 
 end StableClass
 
-/-- The parameterized stable strong quotient is a commutative additive
-monoid. Its zero is the stable class of the zero Busby map. -/
+/-- **Commutative monoid of stable Busby classes.** For coherent `S`, the stable strong quotient
+is a commutative additive monoid, with addition induced by `S.sum` and zero the class `[0]`. -/
 noncomputable instance instStableClassAddCommMonoid
     (S : StableSumData A B) (hS : S.IsCoherent) :
     AddCommMonoid (StableClass S hS) where
@@ -259,7 +264,8 @@ theorem StableClass.zero_eq_mk
     (0 : StableClass S hS) = StableClass.mk S hS 0 :=
   rfl
 
-/-- Every trivial extension has the zero class in the stable quotient. -/
+/-- **Zero class of a liftable Busby map.** For coherent `S`, a homomorphism `σ : A → Q(B)`
+admitting a multiplier lift satisfies `StableClass.mk S hS σ = 0`. -/
 theorem StableClass.mk_eq_zero_of_trivial
     (S : StableSumData A B) (hS : S.IsCoherent)
     {sigma : BusbyHom A B}

@@ -1,3 +1,4 @@
-# Continuous compact Convolution Curve
+# Supremum-norm continuity of the convolution curve
 
-Joint original-kernel continuity gives continuity in the true fixed-support Banach norm.
+For compactly supported f,h, the map s↦Fs is continuous in the supremum norm on bounded
+continuous functions supported in K=tsupport(f)*tsupport(h).

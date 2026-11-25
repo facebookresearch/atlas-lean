@@ -1,4 +1,5 @@
-# Single Adjointable adjoint comp self
+# Evaluation after insertion
 
-Evaluation after insertion at the same index is the identity operator on
-the actual coefficient self-module, without assuming a coefficient unit.
+For a nonunital complex C-star algebra `B` and arbitrary index
+type `I`, `(singleAdjointable i)* ∘ singleAdjointable i = id_B` on the coefficient
+self-module.

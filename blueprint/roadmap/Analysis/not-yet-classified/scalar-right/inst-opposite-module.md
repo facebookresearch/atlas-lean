@@ -1,3 +1,5 @@
-# Inst Opposite Module
+# Module structure over opposite complex scalars
 
-The chosen opposite module, pulled back from the fixed ordinary complex module.
+For a complex module `H` with an additive
+group, let `q = WithCStarModule.equiv ℂᵐᵒᵖ H`. The action `a • x = q.symm (a.unop • q x)`
+makes `ScalarRight H` an `ℂᵐᵒᵖ`-module.

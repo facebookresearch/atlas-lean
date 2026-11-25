@@ -1,3 +1,4 @@
-# Is Closed convolution Support
+# Closedness of the convolution support
 
-The same product is closed without imposing separatedness on the original group.
+For continuous compactly supported A-valued coefficients f,h on G, the product
+K=tsupport(f)*tsupport(h) is closed.

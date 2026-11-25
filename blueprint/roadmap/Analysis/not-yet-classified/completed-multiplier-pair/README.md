@@ -1,11 +1,11 @@
-# Completed Multiplier Pair
+# Covariant coefficient and group multiplier pairs
 
-- [Group Multiplier coefficient Multiplier](group-multiplier-coefficient-multiplier.md)
-- [Group Multiplier conjugates coefficient](group-multiplier-conjugates-coefficient.md)
-- [Canonical Multiplier Pair](canonical-multiplier-pair.md)
-- [Canonical Multiplier Pair coefficient](canonical-multiplier-pair-coefficient.md)
-- [Canonical Multiplier Pair group](canonical-multiplier-pair-group.md)
-- [Canonical Multiplier Pair covariance](canonical-multiplier-pair-covariance.md)
-- [Canonical Multiplier Pair slice apply](canonical-multiplier-pair-slice-apply.md)
-- [Integrable canonical Multiplier Pair slice](integrable-canonical-multiplier-pair-sli.md)
-- [Integral canonical Multiplier Pair slice](integral-canonical-multiplier-pair-slice.md)
+- [Covariance of the coefficient and group multipliers](group-multiplier-coefficient-multiplier.md)
+- [Conjugation of coefficients by group multipliers](group-multiplier-conjugates-coefficient.md)
+- [Canonical covariant multiplier pair](canonical-multiplier-pair.md)
+- [Coefficient map of the canonical multiplier pair](canonical-multiplier-pair-coefficient.md)
+- [Group map of the canonical multiplier pair](canonical-multiplier-pair-group.md)
+- [Conjugation covariance of the canonical pair](canonical-multiplier-pair-covariance.md)
+- [Multiplier slices on dense core vectors](canonical-multiplier-pair-slice-apply.md)
+- [Integrability of canonical multiplier slices](integrable-canonical-multiplier-pair-sli.md)
+- [Integrated multiplier slices equal convolution](integral-canonical-multiplier-pair-slice.md)

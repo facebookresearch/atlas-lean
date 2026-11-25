@@ -1,4 +1,5 @@
-# Stably strong equivalent of strong
+# Strong equivalence implies stable strong equivalence
 
-Strong unitary equivalence gives stable strong equivalence by adding the
-same zero trivial summand on both sides.
+Strongly unitarily equivalent Busby
+maps become stably strongly equivalent for any compatible `S`, using the zero liftable summand
+on both sides.

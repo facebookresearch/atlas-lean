@@ -1,3 +1,3 @@
-# Cut Projection mul self
+# Idempotence of a coordinate cut
 
-The computed cut is idempotent.
+`cutProjection s * cutProjection s = cutProjection s`.

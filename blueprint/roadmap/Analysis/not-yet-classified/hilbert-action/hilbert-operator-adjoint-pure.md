@@ -1,3 +1,4 @@
-# Hilbert Operator adjoint pure
+# Adjoint Hilbert action on pure vectors
 
-The actual stored adjoint acts through the genuine Hilbert-space adjoint.
+`(hilbertOperator H A T).adjoint (pure ξ b) = pure
+(ContinuousLinearMap.adjoint T ξ) b`.

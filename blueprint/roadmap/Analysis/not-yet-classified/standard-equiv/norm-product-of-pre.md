@@ -1,4 +1,4 @@
-# Norm product Of Pre
+# Norm of the finite-support product inclusion
 
-The componentwise finite-support inclusion is isometric for the genuine
-C-star-module direct-sum norm.
+`‖productOfPre x‖ = ‖x‖`, with the
+direct-sum norm given by the sum of component inner products.

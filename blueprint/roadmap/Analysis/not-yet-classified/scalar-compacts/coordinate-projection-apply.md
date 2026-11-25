@@ -1,3 +1,4 @@
-# Coordinate Projection apply
+# Action of a scalar coordinate projection
 
-The standard compact projection acts by the actual rank-one formula on every Hilbert vector.
+For `x : lp(ℕ,ℂ,2)`, the projection value is
+`inner ℂ (basisVector i) x • basisVector i`.

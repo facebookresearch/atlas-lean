@@ -1,4 +1,4 @@
-# Compact
+# Compact operators on standard and scalar C-star modules
 
 - [Rank One CLM](rank-one-clm.md)
 - [Rank One](rank-one.md)
@@ -25,9 +25,9 @@
 - [Left Regular surjective](left-regular-surjective.md)
 - [Left Regular bijective](left-regular-bijective.md)
 - [Compact](prod-map-mem-compact.md)
-- [Right Matrix Compact Hom](right-matrix-compact-hom.md)
-- [Right Matrix Compact Hom coe](right-matrix-compact-hom-coe.md)
-- [Right Matrix Compact Hom apply](right-matrix-compact-hom-apply.md)
-- [To Continuous Linear Map rank One](to-continuous-linear-map-rank-one.md)
-- [Of Continuous Linear Map rank One](of-continuous-linear-map-rank-one.md)
-- [Of Continuous Linear Map rank One mem finite Rank](of-continuous-linear-map-rank-one-mem-fi.md)
+- [Compact finite-matrix representation](right-matrix-compact-hom.md)
+- [Endomorphism underlying the compact matrix action](right-matrix-compact-hom-coe.md)
+- [Coordinate formula for a compact matrix action](right-matrix-compact-hom-apply.md)
+- [Hilbert-space form of a module rank-one operator](to-continuous-linear-map-rank-one.md)
+- [Module form of a Hilbert rank-one operator](of-continuous-linear-map-rank-one.md)
+- [Rank-one images in the module finite-rank span](of-continuous-linear-map-rank-one-mem-fi.md)

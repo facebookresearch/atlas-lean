@@ -1,5 +1,5 @@
-# Adjointable Isometry
+# Norm preservation for scalar-module operators
 
-- [Norm continuous Linear Map](norm-continuous-linear-map.md)
-- [Continuous Linear Map Linear Equiv](continuous-linear-map-linear-equiv.md)
-- [Continuous Linear Map Linear Isometry Equiv](continuous-linear-map-linear-isometry-eq.md)
+- [Norm of a transported bounded operator](norm-continuous-linear-map.md)
+- [Complex-linear operator correspondence](continuous-linear-map-linear-equiv.md)
+- [Complex-linear isometry of operator spaces](continuous-linear-map-linear-isometry-eq.md)

@@ -18,19 +18,15 @@ public import Mathlib.Analysis.CStarAlgebra.Spectrum
 public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
 /-!
-# The original regular covariant model from an actual coefficient representation
+# Haar regular covariant representation from a coefficient representation
 
-On the original Lp H 2 Haar carrier, the coefficient at s is
-rho(alpha(s inverse)(a)) applied to the original vector at s. The computed
-bounded pointwise operator gives this literal formula on all L2 vectors.
-The existing Haar left unitaries and these coefficient operators satisfy
-the original covariance identity and define the actual regular pair.
-
-The input is the original coefficient star representation, with independent
-group, coefficient and Hilbert universes. No regular model, desired output
-identity, countability or raw-core faithfulness is assumed. A canonical
-source construction may later select an existing faithful GN representation;
-source model independence remains a separate obligation.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ:A→B(H) a nonunital complex star homomorphism. On K=L²(G,μ;H), let
+Π(a)=regularCoefficientOperator α ρ μ a, given almost everywhere by
+(Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). Together with (λ_g ξ)(s)=ξ(g⁻¹*s), these operators form a
+covariant representation: λ_g Π(a) λ_g*=Π(α_g(a)). The pointwise coefficient operator is also
+defined for regular measures before assuming Haar invariance.
 -/
 
 @[expose] public section
@@ -52,10 +48,20 @@ variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable (α : PointNormCStarAction G A) (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H))
 
-/-- The original inverse-action coefficient field on the original Hilbert vectors. -/
+/-- **Inverse-action coefficient operator field.**
+
+Let G be a topological group, A a nonunital complex C-star algebra, α a point-norm action on
+A, H a complex Hilbert space and ρ:A→B(H) a nonunital complex star homomorphism. For a∈A,
+regularCoefficientField α ρ a:G→B(H) is the field s↦ρ(α_(s⁻¹)(a)).
+-/
 def regularCoefficientField (a : A) : G → H →L[ℂ] H := fun s => ρ (α s⁻¹ a)
 
-/-- The original point-norm action makes its coefficient field jointly vector continuous. -/
+/-- **Joint vector continuity of the regular coefficient field.**
+
+Let G be a topological group, A a nonunital complex C-star algebra, α a point-norm action on
+A, H a complex Hilbert space and ρ:A→B(H) a nonunital complex star homomorphism. For a∈A, the
+map (s,ξ)↦ρ(α_(s⁻¹)(a))ξ from G×H to H is continuous.
+-/
 theorem continuous_regularCoefficientField_action (a : A) :
     Continuous (fun z : G × H => regularCoefficientField α ρ a z.1 z.2) := by
   have hρ : Continuous (ρ : A → (H →L[ℂ] H)) := map_continuous ρ
@@ -63,7 +69,12 @@ theorem continuous_regularCoefficientField_action (a : A) :
     continuous_fst).clm_apply continuous_snd
 
 omit [IsTopologicalGroup G] in
-/-- The original coefficient norm uniformly bounds this actual operator field. -/
+/-- **Uniform norm bound for the regular coefficient field.**
+
+Let G be a group with a topology, A a nonunital complex C-star algebra, α a point-norm action,
+H a complex Hilbert space and ρ:A→B(H) a nonunital complex star homomorphism. For a∈A and s∈G,
+‖regularCoefficientField α ρ a s‖=‖ρ(α_(s⁻¹)(a))‖≤‖a‖.
+-/
 theorem norm_regularCoefficientField_le (a : A) (s : G) :
     ‖regularCoefficientField α ρ a s‖ ≤ ‖a‖ := by
   change ‖ρ (α s⁻¹ a)‖ ≤ ‖a‖
@@ -72,27 +83,53 @@ theorem norm_regularCoefficientField_le (a : A) (s : G) :
 variable [LocallyCompactSpace G] [MeasurableSpace G] [BorelSpace G]
 variable (μ : Measure G) [μ.Regular]
 
-/-- The actual original regular coefficient operator on the same vector-valued L2 carrier. -/
+/-- **Pointwise regular coefficient operator on L².**
+
+Let G be a locally compact Borel topological group, μ a regular measure, A a nonunital complex
+C-star algebra, α a point-norm action, H a complex Hilbert space and ρ:A→B(H) a nonunital
+complex star homomorphism. On K=L²(G,μ;H), let Π(a)=regularCoefficientOperator α ρ μ a, given
+almost everywhere by (Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). The operator Π(a):K→L[ℂ]K is
+regularCoefficientOperator α ρ μ a.
+-/
 def regularCoefficientOperator (a : A) : Lp H 2 μ →L[ℂ] Lp H 2 μ :=
   HaarL2.pointwiseOperator (regularCoefficientField α ρ a)
     (continuous_regularCoefficientField_action α ρ a) μ ‖a‖
     (norm_regularCoefficientField_le α ρ a)
 
-/-- Every original L2 vector retains the printed inverse-action coefficient formula. -/
+/-- **Almost-everywhere formula for the regular coefficient operator.**
+
+Let G be a locally compact Borel topological group, μ a regular measure, A a nonunital complex
+C-star algebra, α a point-norm action, H a complex Hilbert space and ρ:A→B(H) a nonunital
+complex star homomorphism. On K=L²(G,μ;H), let Π(a)=regularCoefficientOperator α ρ μ a, given
+almost everywhere by (Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). For a∈A and ξ∈K, regularCoefficientOperator
+α ρ μ a ξ equals s↦ρ(α_(s⁻¹)(a))ξ(s) μ-almost everywhere.
+-/
 theorem regularCoefficientOperator_ae_eq (a : A) (ξ : Lp H 2 μ) :
     regularCoefficientOperator α ρ μ a ξ =ᵐ[μ] fun s : G => ρ (α s⁻¹ a) (ξ s) :=
   HaarL2.pointwiseOperator_ae_eq (regularCoefficientField α ρ a)
     (continuous_regularCoefficientField_action α ρ a) μ ‖a‖
     (norm_regularCoefficientField_le α ρ a) ξ
 
-/-- The original coefficient norm bounds every actual L2 image. -/
+/-- **L² norm bound for regular coefficient multiplication.**
+
+Let G be a locally compact Borel topological group, μ a regular measure, A a nonunital complex
+C-star algebra, α a point-norm action, H a complex Hilbert space and ρ:A→B(H) a nonunital
+complex star homomorphism. On K=L²(G,μ;H), let Π(a)=regularCoefficientOperator α ρ μ a, given
+almost everywhere by (Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). For a∈A and ξ∈K, ‖Π(a)ξ‖≤‖a‖‖ξ‖.
+-/
 theorem norm_regularCoefficientOperator_apply_le (a : A) (ξ : Lp H 2 μ) :
     ‖regularCoefficientOperator α ρ μ a ξ‖ ≤ ‖a‖ * ‖ξ‖ :=
   HaarL2.pointwiseOperator_norm_apply_le (regularCoefficientField α ρ a)
     (continuous_regularCoefficientField_action α ρ a) μ ‖a‖
     (norm_regularCoefficientField_le α ρ a) ξ
 
-/-- The actual regular coefficient operators preserve original coefficient addition. -/
+/-- **Additivity of regular coefficient operators.**
+
+Let G be a locally compact Borel topological group, μ a regular measure, A a nonunital complex
+C-star algebra, α a point-norm action, H a complex Hilbert space and ρ:A→B(H) a nonunital
+complex star homomorphism. On K=L²(G,μ;H), let Π(a)=regularCoefficientOperator α ρ μ a, given
+almost everywhere by (Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). For a,b∈A, Π(a+b)=Π(a)+Π(b).
+-/
 theorem regularCoefficientOperator_add (a b : A) :
     regularCoefficientOperator α ρ μ (a + b) =
       regularCoefficientOperator α ρ μ a + regularCoefficientOperator α ρ μ b := by
@@ -109,7 +146,13 @@ theorem regularCoefficientOperator_add (a b : A) :
   rw [h₁, h₄, Pi.add_apply, h₂, h₃, map_add (α.aut s⁻¹), map_add ρ]
   rfl
 
-/-- The actual regular coefficient operators preserve original complex scaling. -/
+/-- **Complex scaling of regular coefficient operators.**
+
+Let G be a locally compact Borel topological group, μ a regular measure, A a nonunital complex
+C-star algebra, α a point-norm action, H a complex Hilbert space and ρ:A→B(H) a nonunital
+complex star homomorphism. On K=L²(G,μ;H), let Π(a)=regularCoefficientOperator α ρ μ a, given
+almost everywhere by (Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). For c∈ℂ and a∈A, Π(c•a)=c•Π(a).
+-/
 theorem regularCoefficientOperator_smul (c : ℂ) (a : A) :
     regularCoefficientOperator α ρ μ (c • a) = c • regularCoefficientOperator α ρ μ a := by
   apply ContinuousLinearMap.ext
@@ -123,7 +166,14 @@ theorem regularCoefficientOperator_smul (c : ℂ) (a : A) :
   rw [h₁, h₃, Pi.smul_apply, h₂, map_smul (α.aut s⁻¹), map_smul ρ]
   rfl
 
-/-- The actual regular coefficient operators preserve original coefficient multiplication. -/
+/-- **Multiplication of regular coefficient operators.**
+
+Let G be a locally compact Borel topological group, μ a regular measure, A a nonunital complex
+C-star algebra, α a point-norm action, H a complex Hilbert space and ρ:A→B(H) a nonunital
+complex star homomorphism. On K=L²(G,μ;H), let Π(a)=regularCoefficientOperator α ρ μ a, given
+almost everywhere by (Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). For a,b∈A, Π(a*b)=Π(a)*Π(b), where the
+right product is operator composition.
+-/
 theorem regularCoefficientOperator_mul (a b : A) :
     regularCoefficientOperator α ρ μ (a * b) =
       regularCoefficientOperator α ρ μ a * regularCoefficientOperator α ρ μ b := by
@@ -138,7 +188,14 @@ theorem regularCoefficientOperator_mul (a b : A) :
   rw [h₁, h₂, h₃, map_mul (α.aut s⁻¹), map_mul ρ]
   rfl
 
-/-- The original coefficient involution gives the actual L2 operator adjoint. -/
+/-- **Adjoint of a regular coefficient operator.**
+
+Let G be a locally compact Borel topological group, μ a regular measure, A a nonunital complex
+C-star algebra, α a point-norm action, H a complex Hilbert space and ρ:A→B(H) a nonunital
+complex star homomorphism. On K=L²(G,μ;H), let Π(a)=regularCoefficientOperator α ρ μ a, given
+almost everywhere by (Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). For a∈A, Π(star(a))=star(Π(a)), with
+operator adjoint on K.
+-/
 theorem regularCoefficientOperator_star (a : A) :
     regularCoefficientOperator α ρ μ (star a) = star (regularCoefficientOperator α ρ μ a) := by
   rw [ContinuousLinearMap.star_eq_adjoint]
@@ -154,7 +211,14 @@ theorem regularCoefficientOperator_star (a : A) :
   rw [ContinuousLinearMap.star_eq_adjoint]
   exact ContinuousLinearMap.adjoint_inner_left (ρ (α s⁻¹ a)) (η s) (ξ s)
 
-/-- The computed original regular coefficient representation is a nonunital complex star hom. -/
+/-- **Regular coefficient star homomorphism.**
+
+Let G be a locally compact Borel topological group, μ a regular measure, A a nonunital complex
+C-star algebra, α a point-norm action, H a complex Hilbert space and ρ:A→B(H) a nonunital
+complex star homomorphism. On K=L²(G,μ;H), let Π(a)=regularCoefficientOperator α ρ μ a, given
+almost everywhere by (Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). The map regularCoefficientHom α ρ μ:A→B(K),
+a↦Π(a), is a nonunital complex star homomorphism.
+-/
 def regularCoefficientHom : A →⋆ₙₐ[ℂ] (Lp H 2 μ →L[ℂ] Lp H 2 μ) where
   toFun := regularCoefficientOperator α ρ μ
   map_zero' := by
@@ -173,7 +237,15 @@ def regularCoefficientHom : A →⋆ₙₐ[ℂ] (Lp H 2 μ →L[ℂ] Lp H 2 μ) 
 
 variable [μ.IsHaarMeasure]
 
-/-- The original Haar left translations and coefficient operators satisfy original covariance. -/
+/-- **Covariance of Haar regular coefficient and group operators.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ:A→B(H) a nonunital complex star homomorphism. On K=L²(G,μ;H), let
+Π(a)=regularCoefficientOperator α ρ μ a, given almost everywhere by
+(Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). For the left Haar regular unitary λ_g ξ(s)=ξ(g⁻¹*s),
+λ_g*Π(a)*star(λ_g)=Π(α_g(a)) for g∈G and a∈A.
+-/
 theorem regularCoefficientOperator_covariance (g : G) (a : A) :
     (StronglyContinuousUnitaryRepresentation.haarLeftRegular G μ H g :
         Lp H 2 μ →L[ℂ] Lp H 2 μ) * regularCoefficientOperator α ρ μ a *
@@ -204,7 +276,15 @@ theorem regularCoefficientOperator_covariance (g : G) (a : A) :
   simp only [mul_inv_rev, inv_inv, mul_inv_cancel_left]
   exact congrArg (fun b : A => ρ b (ξ s)) (α.apply_mul s⁻¹ g a)
 
-/-- The actual original regular covariant pair on the original vector-valued Haar L2 carrier. -/
+/-- **Haar regular covariant pair.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ:A→B(H) a nonunital complex star homomorphism. On K=L²(G,μ;H), let
+Π(a)=regularCoefficientOperator α ρ μ a, given almost everywhere by
+(Π(a)ξ)(s)=ρ(α_(s⁻¹)(a))ξ(s). The pair regularCovariantRepresentation α ρ μ on K consists of Π
+and the strongly continuous Haar left regular unitaries λ_g ξ(s)=ξ(g⁻¹*s).
+-/
 def regularCovariantRepresentation : CovariantRepresentation α (Lp H 2 μ) where
   algebra := regularCoefficientHom α ρ μ
   group := StronglyContinuousUnitaryRepresentation.haarLeftRegular G μ H

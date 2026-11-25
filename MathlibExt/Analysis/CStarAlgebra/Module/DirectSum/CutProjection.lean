@@ -14,20 +14,18 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Module.DirectSum.Diagonal
 
 /-!
-# Coordinate projections on completed Hilbert-module direct sums
+# Coordinate cuts on completed Hilbert-module sums
 
-For any set of indices, the bounded diagonal with identity entries on that set
-and zero entries elsewhere gives an adjointable projection on the literal
-completed module sum. Its range is the closure of the complex span of the
-selected coordinate inclusions. The component modules need not be complete,
-and the index type may be infinite or empty.
+For right pre-Hilbert modules `E_i` over nonunital `B` and any set `s` of indices, the
+adjointable projection `P_s` keeps the inclusions `j_i x` for `i ∈ s` and kills them otherwise.
+It satisfies `P_s* = P_s`, `P_s² = P_s` and `‖P_s‖ ≤ 1`; its range is the closure of the complex
+span of the selected coordinate ranges. The fibers may be incomplete and the index type empty.
 
-For an integer-indexed family, the nonnegative cut includes degree zero.
-The computed operator `2P - 1` is self-adjoint and squares to the identity.
-This is the projection convention used in Arici, D'Andrea and Landi,
-*Pimsner algebras and circle bundles*, §3.4, Definition 3.10. The construction
-here works for arbitrary module families; tensor powers, the Fock creation
-operators and Kasparov classes belong to their own constructions.
+Cuts obey `P_s P_t = P_(s ∩ t)`, `P_(sᶜ) = 1-P_s` and `P_(s ∪ t) = P_s+P_t-P_(s ∩ t)`. The
+reflection `F_s = 2P_s-1` is self-adjoint and squares to `1`. For integer indices, `P_+` selects
+`n ≥ 0`, including degree zero, and `F_+` has sign `+1` there and `-1` for `n < 0`. This is the
+cut convention in Arici, D'Andrea and Landi, Pimsner algebras and circle bundles, Section 3.4,
+Definition 3.10.
 -/
 
 @[expose] public section
@@ -52,7 +50,8 @@ variable {I : Type uI} {E : I → Type uE}
 variable [∀ i, NormedAddCommGroup (E i)] [∀ i, NormedSpace ℂ (E i)]
   [∀ i, SMul Bᵐᵒᵖ (E i)] [∀ i, CStarModule Bᵐᵒᵖ (E i)]
 
-/-- Adjointable maps from the completed sum are determined by their coordinate values. -/
+/-- **Determination by completed coordinates.** Two adjointable maps from `Completed B E` are
+equal if they agree on every vector `completedSingle i x`. -/
 theorem adjointable_ext_completedSingle
     {X : Type uX} [NormedAddCommGroup X] [NormedSpace ℂ X]
     [SMul Bᵐᵒᵖ X] [CStarModule Bᵐᵒᵖ X]
@@ -64,7 +63,9 @@ theorem adjointable_ext_completedSingle
   rintro _ ⟨⟨i, x⟩, rfl⟩
   exact h i x
 
-/-- The actual bounded adjointable diagonal selecting a set of coordinates. -/
+/-- **Projection onto a selected coordinate set.** For `s : Set I`, `cutProjection s` is the
+adjointable diagonal with identity in coordinates of `s` and zero elsewhere, on the completed
+direct sum. -/
 def cutProjection (s : Set I) : AdjointableOperator.End B (Completed B E) := by
   classical
   exact completedDiagonal
@@ -76,7 +77,8 @@ def cutProjection (s : Set I) : AdjointableOperator.End B (Completed B E) := by
       · simp⟩
 
 open Classical in
-/-- A cut keeps precisely its selected coordinates, including their original values. -/
+/-- **Coordinate action of a cut projection.** `P_s (j_i x) = j_i x` when `i ∈ s`, and `P_s (j_i
+x) = 0` otherwise. -/
 theorem cutProjection_apply_completedSingle (s : Set I) (i : I) (x : E i) :
     cutProjection (B := B) (E := E) s (completedSingle i x) =
       if i ∈ s then completedSingle (B := B) (E := E) i x else 0 := by
@@ -86,7 +88,7 @@ theorem cutProjection_apply_completedSingle (s : Set I) (i : I) (x : E i) :
     simp only [hi, ite_true, ite_false, AdjointableOperator.one_apply,
       AdjointableOperator.zero_apply, map_zero]
 
-/-- The cut is self-adjoint on the actual completed sum. -/
+/-- **Self-adjoint coordinate cut.** `star (cutProjection s) = cutProjection s`. -/
 @[simp]
 theorem star_cutProjection (s : Set I) :
     star (cutProjection (B := B) (E := E) s) = cutProjection s := by
@@ -102,7 +104,7 @@ theorem star_cutProjection (s : Set I) :
   · simp only [ite_eq_right hi]
     rfl
 
-/-- Selecting no coordinates gives the zero operator. -/
+/-- **Cut on the empty set.** Selecting no coordinates gives `cutProjection ∅ = 0`. -/
 @[simp]
 theorem cutProjection_empty :
     cutProjection (B := B) (E := E) (∅ : Set I) = 0 := by
@@ -111,7 +113,8 @@ theorem cutProjection_empty :
   rw [cutProjection_apply_completedSingle]
   simp
 
-/-- Selecting all coordinates gives the identity on the completion. -/
+/-- **Cut on every coordinate.** Selecting all coordinates gives `cutProjection Set.univ = 1` on
+the completed sum. -/
 @[simp]
 theorem cutProjection_univ :
     cutProjection (B := B) (E := E) (Set.univ : Set I) = 1 := by
@@ -120,7 +123,8 @@ theorem cutProjection_univ :
   rw [cutProjection_apply_completedSingle]
   simp
 
-/-- Composition of cuts is the cut on the intersection. -/
+/-- **Composition of coordinate cuts.** `cutProjection s * cutProjection t = cutProjection (s ∩
+t)`. -/
 @[simp]
 theorem cutProjection_mul (s t : Set I) :
     cutProjection (B := B) (E := E) s * cutProjection t = cutProjection (s ∩ t) := by
@@ -132,33 +136,36 @@ theorem cutProjection_mul (s t : Set I) :
       Set.mem_inter_iff, hs, ht, ite_true, ite_false,
       and_true, and_false, map_zero]
 
-/-- The computed cut is idempotent. -/
+/-- **Idempotence of a coordinate cut.** `cutProjection s * cutProjection s = cutProjection s`. -/
 theorem cutProjection_mul_self (s : Set I) :
     cutProjection (B := B) (E := E) s * cutProjection s = cutProjection s := by
   rw [cutProjection_mul, Set.inter_self]
 
-/-- A coordinate cut is a star projection in the standard projection API. -/
+/-- **Star projection of a coordinate set.** `cutProjection s` is an `IsStarProjection`, being
+self-adjoint and idempotent. -/
 theorem isStarProjection_cutProjection (s : Set I) :
     IsStarProjection (cutProjection (B := B) (E := E) s) :=
   ⟨cutProjection_mul_self s, star_cutProjection s⟩
 
-/-- Every coordinate cut is contractive, also for an empty sum or zero modules. -/
+/-- **Norm bound for coordinate cuts.** `‖cutProjection s‖ ≤ 1` for any index set, including an
+empty direct sum or zero component modules. -/
 theorem norm_cutProjection_le (s : Set I) :
     ‖cutProjection (B := B) (E := E) s‖ ≤ 1 :=
   IsStarProjection.norm_le _ (isStarProjection_cutProjection s)
 
-/-- All coordinate cuts commute. -/
+/-- **Commutation of coordinate cuts.** `cutProjection s * cutProjection t = cutProjection t *
+cutProjection s` for any `s,t`. -/
 theorem cutProjection_comm (s t : Set I) :
     cutProjection (B := B) (E := E) s * cutProjection t =
       cutProjection t * cutProjection s := by
   rw [cutProjection_mul, cutProjection_mul, Set.inter_comm]
 
-/-- Disjoint cuts have zero product. -/
+/-- **Disjoint coordinate cuts.** If `s,t` are disjoint, `cutProjection s * cutProjection t = 0`. -/
 theorem cutProjection_mul_of_disjoint {s t : Set I} (h : Disjoint s t) :
     cutProjection (B := B) (E := E) s * cutProjection t = 0 := by
   rw [cutProjection_mul, Set.disjoint_iff_inter_eq_empty.mp h, cutProjection_empty]
 
-/-- A complementary cut is the complementary projection. -/
+/-- **Complementary coordinate projection.** `cutProjection sᶜ = 1 - cutProjection s`. -/
 @[simp]
 theorem cutProjection_compl (s : Set I) :
     cutProjection (B := B) (E := E) sᶜ = 1 - cutProjection s := by
@@ -172,7 +179,8 @@ theorem cutProjection_compl (s : Set I) :
       not_true_eq_false, not_false_eq_true, ite_true, ite_false, neg_zero,
       add_zero, add_neg_cancel]
 
-/-- A union of cuts satisfies the inclusion-exclusion formula. -/
+/-- **Union of coordinate projections.** `cutProjection (s ∪ t) = cutProjection s + cutProjection
+t - cutProjection (s ∩ t)`. -/
 theorem cutProjection_union (s t : Set I) :
     cutProjection (B := B) (E := E) (s ∪ t) =
       cutProjection s + cutProjection t - cutProjection (s ∩ t) := by
@@ -186,12 +194,14 @@ theorem cutProjection_union (s t : Set I) :
       and_true, and_false, or_true, or_false, add_zero, zero_add, neg_zero,
       add_assoc, add_neg_cancel]
 
-/-- The complex linear span of the inclusions of the selected component modules. -/
+/-- **Span of selected coordinate ranges.** `coordinateSpan s` is the complex submodule spanned by
+`completedSingle i x` for `i ∈ s` and `x : E i`. -/
 def coordinateSpan (s : Set I) : Submodule ℂ (Completed B E) :=
   Submodule.span ℂ (Set.range fun p : Σ i : s, E i.1 ↦
     completedSingle (B := B) (E := E) p.1.1 p.2)
 
-/-- The cut acts identically on the closure of its selected coordinate span. -/
+/-- **Identity on the closed selected-coordinate span.** If `x` lies in the norm closure of
+`coordinateSpan s`, then `cutProjection s x = x`. -/
 theorem cutProjection_eq_self_of_mem_closure_coordinateSpan
     (s : Set I) {x : Completed B E}
     (hx : x ∈ closure (coordinateSpan (B := B) (E := E) s : Set (Completed B E))) :
@@ -202,7 +212,8 @@ theorem cutProjection_eq_self_of_mem_closure_coordinateSpan
   rintro _ ⟨⟨i, y⟩, rfl⟩
   exact (cutProjection_apply_completedSingle s i.1 y).trans (ite_eq_left i.2)
 
-/-- Every cut value belongs to the closure of the selected coordinate span. -/
+/-- **Cut values in the selected-coordinate closure.** Every `cutProjection s x` belongs to the
+closure of `coordinateSpan s`. -/
 theorem cutProjection_mem_closure_coordinateSpan (s : Set I) (x : Completed B E) :
     cutProjection s x ∈
       closure (coordinateSpan (B := B) (E := E) s : Set (Completed B E)) := by
@@ -227,7 +238,8 @@ theorem cutProjection_mem_closure_coordinateSpan (s : Set I) (x : Completed B E)
       (cutProjection s).toContinuousLinearMap.continuous
   exact closure_minimal hspan hclosed (dense_span_completedSingle (B := B) (E := E) x)
 
-/-- The actual range is exactly the closure of the selected coordinate span. -/
+/-- **Range of a coordinate cut.** `Set.range (cutProjection s)` equals the norm closure of
+`coordinateSpan s`. -/
 theorem range_cutProjection (s : Set I) :
     Set.range (cutProjection (B := B) (E := E) s) =
       closure (coordinateSpan (B := B) (E := E) s : Set (Completed B E)) := by
@@ -238,13 +250,15 @@ theorem range_cutProjection (s : Set I) :
   · intro hx
     exact ⟨x, cutProjection_eq_self_of_mem_closure_coordinateSpan s hx⟩
 
-/-- The range of a coordinate cut is closed. -/
+/-- **Closed range of a coordinate cut.** The range of `cutProjection s` is closed in the
+completed-module norm topology. -/
 theorem isClosed_range_cutProjection (s : Set I) :
     IsClosed (Set.range (cutProjection (B := B) (E := E) s)) := by
   rw [range_cutProjection]
   exact isClosed_closure
 
-/-- Disjoint cuts have orthogonal ranges for the coefficient-valued inner product. -/
+/-- **Orthogonality of disjoint cuts.** For disjoint `s,t` and completed vectors `x,y`,
+`rightInner (cutProjection s x) (cutProjection t y) = 0`. -/
 theorem rightInner_cutProjection_of_disjoint {s t : Set I} (h : Disjoint s t)
     (x y : Completed B E) :
     rightInner (B := B) (cutProjection s x) (cutProjection t y) = 0 := by
@@ -256,12 +270,14 @@ theorem rightInner_cutProjection_of_disjoint {s t : Set I} (h : Disjoint s t)
     exact AdjointableOperator.zero_apply y
   rw [hzero, rightInner_zero_right]
 
-/-- The computed reflection is positive on the selected coordinates and negative elsewhere. -/
+/-- **Reflection of a coordinate cut.** `cutInvolution s = 2 * cutProjection s - 1`, with sign
+`+1` on selected coordinates and `-1` elsewhere. -/
 def cutInvolution (s : Set I) : AdjointableOperator.End B (Completed B E) :=
   2 * cutProjection s - 1
 
 open Classical in
-/-- The reflection acts by the literal signs fixed by the chosen cut. -/
+/-- **Coordinate signs of a cut reflection.** `F_s (j_i x) = j_i x` for `i ∈ s` and `F_s (j_i x) =
+-j_i x` otherwise, where `F_s = cutInvolution s`. -/
 theorem cutInvolution_apply_completedSingle (s : Set I) (i : I) (x : E i) :
     cutInvolution (B := B) (E := E) s (completedSingle i x) =
       if i ∈ s then completedSingle (B := B) (E := E) i x
@@ -273,13 +289,14 @@ theorem cutInvolution_apply_completedSingle (s : Set I) (i : I) (x : E i) :
       AdjointableOperator.one_apply, cutProjection_apply_completedSingle,
       hi, ite_true, ite_false, zero_add, add_assoc, add_neg_cancel, add_zero]
 
-/-- The reflection `2P - 1` is self-adjoint. -/
+/-- **Self-adjoint cut reflection.** `star (cutInvolution s) = cutInvolution s`. -/
 @[simp]
 theorem star_cutInvolution (s : Set I) :
     star (cutInvolution (B := B) (E := E) s) = cutInvolution s := by
   simp only [cutInvolution, two_mul, star_sub, star_add, star_cutProjection, star_one]
 
-/-- The actual reflection squares to the identity on the completion. -/
+/-- **Square of a cut reflection.** `cutInvolution s * cutInvolution s = 1` on the completed
+direct sum. -/
 @[simp]
 theorem cutInvolution_mul_self (s : Set I) :
     cutInvolution (B := B) (E := E) s * cutInvolution s = 1 := by
@@ -298,11 +315,13 @@ variable {E : ℤ → Type uE}
 variable [∀ n, NormedAddCommGroup (E n)] [∀ n, NormedSpace ℂ (E n)]
   [∀ n, SMul Bᵐᵒᵖ (E n)] [∀ n, CStarModule Bᵐᵒᵖ (E n)]
 
-/-- The actual projection onto nonnegative degrees, with degree zero included. -/
+/-- **Projection onto nonnegative degrees.** For an integer-indexed family, select the coordinate
+set `{n : ℤ | 0 ≤ n}`, including degree zero. -/
 def nonnegativeProjection : AdjointableOperator.End B (Completed B E) :=
   cutProjection (Set.Ici (0 : ℤ))
 
-/-- Nonnegative degrees keep their values; strictly negative degrees are killed. -/
+/-- **Coordinate action of the nonnegative cut.** `P_+ (j_n x) = j_n x` when `n ≥ 0` and equals
+zero when `n < 0`. -/
 theorem nonnegativeProjection_apply_completedSingle (n : ℤ) (x : E n) :
     nonnegativeProjection (B := B) (E := E)
       (completedSingle (B := B) (E := E) n x) =
@@ -311,36 +330,40 @@ theorem nonnegativeProjection_apply_completedSingle (n : ℤ) (x : E n) :
   simpa only [nonnegativeProjection, Set.mem_Ici] using
     (cutProjection_apply_completedSingle (B := B) (E := E) (Set.Ici (0 : ℤ)) n x)
 
-/-- The nonnegative-degree projection is self-adjoint. -/
+/-- **Self-adjoint nonnegative cut.** `star nonnegativeProjection = nonnegativeProjection`. -/
 @[simp]
 theorem star_nonnegativeProjection :
     star (nonnegativeProjection (B := B) (E := E)) = nonnegativeProjection :=
   star_cutProjection (Set.Ici (0 : ℤ))
 
-/-- The nonnegative-degree projection is idempotent. -/
+/-- **Idempotence of the nonnegative cut.** `nonnegativeProjection * nonnegativeProjection =
+nonnegativeProjection`. -/
 @[simp]
 theorem nonnegativeProjection_mul_self :
     nonnegativeProjection (B := B) (E := E) * nonnegativeProjection =
       nonnegativeProjection :=
   cutProjection_mul_self (Set.Ici (0 : ℤ))
 
-/-- The nonnegative-degree projection is contractive. -/
+/-- **Norm bound for the nonnegative cut.** `‖nonnegativeProjection‖ ≤ 1`. -/
 theorem norm_nonnegativeProjection_le :
     ‖nonnegativeProjection (B := B) (E := E)‖ ≤ 1 :=
   norm_cutProjection_le (Set.Ici (0 : ℤ))
 
-/-- The range of the nonnegative projection is the closed span of its actual degrees. -/
+/-- **Range of the nonnegative-degree projection.** The range of `P_+` is the norm closure of the
+complex span of inclusions `j_n(E_n)` for `n ≥ 0`. -/
 theorem range_nonnegativeProjection :
     Set.range (nonnegativeProjection (B := B) (E := E)) =
       closure (coordinateSpan (B := B) (E := E) (Set.Ici (0 : ℤ)) :
         Set (Completed B E)) :=
   range_cutProjection (Set.Ici (0 : ℤ))
 
-/-- The source's sign convention `2P - 1` on the integer-indexed completion. -/
+/-- **Nonnegative-degree reflection.** `nonnegativeInvolution = 2 * nonnegativeProjection - 1`,
+giving sign `+1` in degree zero and positive degrees and sign `-1` in negative degrees. -/
 def nonnegativeInvolution : AdjointableOperator.End B (Completed B E) :=
   2 * nonnegativeProjection - 1
 
-/-- The boundary reflection is positive in degree zero and every positive degree. -/
+/-- **Coordinate signs of the nonnegative reflection.** `F_+ (j_n x) = j_n x` for `n ≥ 0` and `F_+
+(j_n x) = -j_n x` for `n < 0`. -/
 theorem nonnegativeInvolution_apply_completedSingle (n : ℤ) (x : E n) :
     nonnegativeInvolution (B := B) (E := E)
       (completedSingle (B := B) (E := E) n x) =
@@ -350,13 +373,15 @@ theorem nonnegativeInvolution_apply_completedSingle (n : ℤ) (x : E n) :
   simpa only [nonnegativeInvolution, nonnegativeProjection, cutInvolution, Set.mem_Ici] using
     (cutInvolution_apply_completedSingle (B := B) (E := E) (Set.Ici (0 : ℤ)) n x)
 
-/-- The nonnegative reflection is self-adjoint. -/
+/-- **Self-adjoint nonnegative reflection.**
+`star nonnegativeInvolution = nonnegativeInvolution`. -/
 @[simp]
 theorem star_nonnegativeInvolution :
     star (nonnegativeInvolution (B := B) (E := E)) = nonnegativeInvolution :=
   star_cutInvolution (Set.Ici (0 : ℤ))
 
-/-- The nonnegative reflection squares to the identity. -/
+/-- **Square of the nonnegative reflection.**
+`nonnegativeInvolution * nonnegativeInvolution = 1`. -/
 @[simp]
 theorem nonnegativeInvolution_mul_self :
     nonnegativeInvolution (B := B) (E := E) * nonnegativeInvolution = 1 :=

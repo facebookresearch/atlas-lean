@@ -1,4 +1,5 @@
-# Calkin Alg Equiv class Map
+# Quotient classes under the Calkin algebra equivalence
 
-The quotient algebra equivalence commutes with the two actual quotient
-maps on every endomorphism.
+For a complex Hilbert space `H`,
+for every bounded endomorphism `T`, the Calkin algebra equivalence sends its class to the
+class of `ofContinuousLinearMap H H T`.

@@ -1,3 +1,4 @@
-# Coord reindex Linear Isometry Equiv
+# Coordinates of completed reindexing
 
-Completed reindexing has the expected coordinate formula.
+For `x : Standard B I`, `coord j
+(reindexLinearIsometryEquiv e x) = coord (e.symm j) x`.

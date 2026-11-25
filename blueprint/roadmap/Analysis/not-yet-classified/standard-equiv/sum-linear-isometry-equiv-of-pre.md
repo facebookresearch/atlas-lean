@@ -1,3 +1,4 @@
-# Sum Linear Isometry Equiv of Pre
+# Completed splitting on a finite-support vector
 
-The completed sum equivalence extends finite-support splitting.
+The completed sum equivalence sends `ofPre
+x` to `productOfPre (preSumLinearEquiv x)`.

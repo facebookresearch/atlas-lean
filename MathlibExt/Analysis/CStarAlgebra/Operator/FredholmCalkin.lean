@@ -20,14 +20,15 @@ import Mathlib.Analysis.SpecificLimits.Normed
 import Mathlib.Topology.Order.IntermediateValue
 
 /-!
-# Fredholm operators and the Calkin algebra
+# Fredholm operators and Calkin units
 
-This file develops the bridges relating Fredholm operators on a complex
-Hilbert space to invertible classes in the Calkin algebra. Equality of Calkin
-classes is identified with compactness of the corresponding operator
-difference, and Atkinson's theorem identifies Fredholm operators exactly with
-operators having invertible Calkin class. The resulting Fredholm index depends
-only on the Calkin unit and defines a homomorphism to the additive integers.
+For a complex Hilbert space, `[T]=[U]` in the Calkin algebra exactly when `T-U` is compact.
+Atkinson's theorem gives `T` Fredholm if and only if `[T]` is invertible. Fredholmness and its
+index are invariant under compact perturbations.
+
+For a Calkin unit `x`, every bounded lift `T` is Fredholm and has the same index. This defines
+`Ind(x) ∈ ℤ`, with `Ind(1)=0`, `Ind(x y)=Ind(x)+Ind(y)` and `Ind(x⁻¹)=-Ind(x)`. Hence the index
+is a group homomorphism from Calkin units to additive integers.
 -/
 
 @[expose] public section
@@ -41,8 +42,8 @@ namespace CalkinAlgebra
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   [CompleteSpace H]
 
-/-- Two operators have the same Calkin class exactly when their difference is
-compact. The difference orientation is fixed as `T - U`. -/
+/-- **Equality of Calkin operator classes.** For a complex Hilbert space `H`, `classStarMap T =
+classStarMap U ↔ IsCompactOperator (T-U)` for bounded operators `T,U`. -/
 @[simp]
 theorem classStarMap_eq_iff (T U : H →L[ℂ] H) :
     classStarMap (H := H) T = classStarMap (H := H) U ↔
@@ -180,8 +181,8 @@ private theorem isFredholm_of_isUnit_classStarMap {T : H →L[ℂ] H}
     hRright.congr hLR (Setoid.refl _)
   exact ContinuousLinearMap.IsFredholm.of_isQuasiInverse ⟨hLleft, hLright⟩
 
-/-- Atkinson's theorem: an operator on a complex Hilbert space is Fredholm
-exactly when its Calkin class is invertible. -/
+/-- **Atkinson theorem in the Calkin algebra.** For a complex Hilbert space `H`, a bounded
+operator `T` has invertible Calkin class exactly when `T.IsFredholm`. -/
 theorem isUnit_classStarMap_iff_isFredholm (T : H →L[ℂ] H) :
     IsUnit (classStarMap (H := H) T) ↔ T.IsFredholm :=
   ⟨isFredholm_of_isUnit_classStarMap,
@@ -194,7 +195,8 @@ namespace ContinuousLinearMap.IsFredholm
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   [CompleteSpace H]
 
-/-- Fredholmness depends only on the Calkin class. -/
+/-- **Fredholmness determined by the Calkin class.** For a complex Hilbert space `H`, if `T` is
+Fredholm and `[T]=[U]`, then the bounded operator `U` is Fredholm. -/
 theorem of_classStarMap_eq {T U : H →L[ℂ] H} (hT : T.IsFredholm)
     (h : CalkinAlgebra.classStarMap (H := H) T =
       CalkinAlgebra.classStarMap (H := H) U) : U.IsFredholm := by
@@ -202,7 +204,8 @@ theorem of_classStarMap_eq {T U : H →L[ℂ] H} (hT : T.IsFredholm)
   rw [← h]
   exact (CalkinAlgebra.isUnit_classStarMap_iff_isFredholm T).mpr hT
 
-/-- Equal Calkin classes of Fredholm operators have equal index. -/
+/-- **Fredholm index determined by the Calkin class.** For a complex Hilbert space `H`, if `T` is
+Fredholm and `[T]=[U]`, then `T.index = U.index`. -/
 theorem index_eq_of_classStarMap_eq {T U : H →L[ℂ] H} (hT : T.IsFredholm)
     (h : CalkinAlgebra.classStarMap (H := H) T =
       CalkinAlgebra.classStarMap (H := H) U) : T.index = U.index := by
@@ -230,14 +233,16 @@ theorem index_eq_of_classStarMap_eq {T U : H →L[ℂ] H} (hT : T.IsFredholm)
     (inferInstance : PreconnectedSpace ℝ).constant hindex
   simpa [P] using h01
 
-/-- Compact perturbations preserve Fredholmness. -/
+/-- **Fredholmness under compact addition.** For a complex Hilbert space `H`, if `T` is Fredholm
+and `K` compact, `T+K` is Fredholm. -/
 theorem add_compact {T K : H →L[ℂ] H} (hT : T.IsFredholm)
     (hK : IsCompactOperator K) : (T + K).IsFredholm := by
   apply hT.of_classStarMap_eq
   rw [map_add,
     (CalkinAlgebra.classStarMap_eq_zero_iff (H := H) K).2 hK, add_zero]
 
-/-- Compact perturbations preserve the Fredholm index. -/
+/-- **Index under compact addition.** For a complex Hilbert space `H`, if `T` is Fredholm and `K`
+compact, `(T+K).index = T.index`. -/
 theorem index_add_compact {T K : H →L[ℂ] H} (hT : T.IsFredholm)
     (hK : IsCompactOperator K) : (T + K).index = T.index := by
   symm
@@ -245,13 +250,15 @@ theorem index_add_compact {T K : H →L[ℂ] H} (hT : T.IsFredholm)
   rw [map_add,
     (CalkinAlgebra.classStarMap_eq_zero_iff (H := H) K).2 hK, add_zero]
 
-/-- Subtracting a compact operator preserves Fredholmness. -/
+/-- **Fredholmness under compact subtraction.** For a complex Hilbert space `H`, if `T` is
+Fredholm and `K` compact, `T-K` is Fredholm. -/
 theorem sub_compact {T K : H →L[ℂ] H} (hT : T.IsFredholm)
     (hK : IsCompactOperator K) : (T - K).IsFredholm := by
   rw [sub_eq_add_neg]
   exact hT.add_compact (by simpa using hK.neg)
 
-/-- Subtracting a compact operator preserves the Fredholm index. -/
+/-- **Index under compact subtraction.** For a complex Hilbert space `H`, if `T` is Fredholm and
+`K` compact, `(T-K).index = T.index`. -/
 theorem index_sub_compact {T K : H →L[ℂ] H} (hT : T.IsFredholm)
     (hK : IsCompactOperator K) : (T - K).index = T.index := by
   rw [sub_eq_add_neg]
@@ -264,12 +271,15 @@ namespace CalkinAlgebra.Unit
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
   [CompleteSpace H]
 
-/-- The Fredholm index of a unit in the Calkin algebra. -/
+/-- **Index of a Calkin unit.** For a complex Hilbert space `H`, for `x : Q(H)ˣ`, define its
+integer index as the Fredholm index of any bounded lift of the unit `x`; compact perturbation
+invariance makes the value independent of the lift. -/
 noncomputable def index (x : (CalkinAlgebra ℂ H)ˣ) : ℤ :=
   (Classical.choose
     (classStarMap_surjective (H := H) (x : CalkinAlgebra ℂ H))).index
 
-/-- The Calkin-unit index is computed by every operator lift. -/
+/-- **Index computed by any bounded lift.** For a complex Hilbert space `H`, if the Calkin unit
+`x` has bounded lift `T` with `[T]=x`, then `CalkinAlgebra.index x = T.index`. -/
 theorem index_eq_lift (x : (CalkinAlgebra ℂ H)ˣ) (T : H →L[ℂ] H)
     (hT : classStarMap (H := H) T = (x : CalkinAlgebra ℂ H)) :
     index x = T.index := by
@@ -285,7 +295,8 @@ theorem index_eq_lift (x : (CalkinAlgebra ℂ H)ˣ) (T : H →L[ℂ] H)
   change S.index = T.index
   exact hSFred.index_eq_of_classStarMap_eq (hS.trans hT.symm)
 
-/-- The identity Calkin unit has index zero. -/
+/-- **Index of the identity Calkin unit.** For a complex Hilbert space `H`, `CalkinAlgebra.index
+(1 : Q(H)ˣ) = 0`. -/
 @[simp]
 theorem index_one : index (1 : (CalkinAlgebra ℂ H)ˣ) = 0 := by
   calc
@@ -295,7 +306,8 @@ theorem index_one : index (1 : (CalkinAlgebra ℂ H)ˣ) = 0 := by
       change (LinearMap.id : H →ₗ[ℂ] H).index = 0
       exact LinearMap.index_id
 
-/-- The index of a product of Calkin units is the sum of their indices. -/
+/-- **Additivity of index on Calkin units.** For a complex Hilbert space `H`, `index (x*y) = index
+x + index y` for units `x,y : Q(H)ˣ`. -/
 @[simp]
 theorem index_mul (x y : (CalkinAlgebra ℂ H)ˣ) :
     index (x * y) = index x + index y := by
@@ -328,7 +340,8 @@ theorem index_mul (x y : (CalkinAlgebra ℂ H)ˣ) :
     _ = index x + index y := congrArg₂ (· + ·)
       (index_eq_lift x T hT).symm (index_eq_lift y U hU).symm
 
-/-- Inversion negates the Calkin-unit index. -/
+/-- **Index of an inverse Calkin unit.** For a complex Hilbert space `H`, `index x⁻¹ = -index x`
+for every Calkin unit `x`. -/
 @[simp]
 theorem index_inv (x : (CalkinAlgebra ℂ H)ˣ) :
     index x⁻¹ = -index x := by
@@ -336,7 +349,9 @@ theorem index_inv (x : (CalkinAlgebra ℂ H)ˣ) :
   rw [mul_inv_cancel, index_one] at h
   exact eq_neg_of_add_eq_zero_right h.symm
 
-/-- The Calkin-unit index as a multiplicative-to-additive homomorphism. -/
+/-- **Group homomorphism of Calkin indices.** For a complex Hilbert space `H`, the index defines
+`Q(H)ˣ →* Multiplicative ℤ`, interpreting operator multiplication as addition of Fredholm
+indices. -/
 noncomputable def indexHom :
     (CalkinAlgebra ℂ H)ˣ →* Multiplicative ℤ where
   toFun x := Multiplicative.ofAdd (index x)
@@ -349,7 +364,8 @@ noncomputable def indexHom :
       Multiplicative.ofAdd (index x + index y)
     rw [index_mul]
 
-/-- Evaluation of the Calkin-unit index homomorphism. -/
+/-- **Value of the Calkin index homomorphism.** For a complex Hilbert space `H`, `(indexHom
+x).toAdd = index x` for every Calkin unit `x`. -/
 @[simp]
 theorem indexHom_apply (x : (CalkinAlgebra ℂ H)ˣ) :
     (indexHom (H := H) x).toAdd = index x :=

@@ -1,3 +1,4 @@
-# Tensor Matrix Coefficient finite Matrix Tensor
+# Recovery of finite matrix entries
 
-Existing full-H tensor coefficients recover every original matrix entry.
+For an orthonormal frame, `tensorMatrixCoefficient H A
+(v j) (v i) (finiteMatrixTensorLinear v A M) = M i j`.

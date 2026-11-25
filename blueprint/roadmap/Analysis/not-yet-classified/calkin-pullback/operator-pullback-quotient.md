@@ -1,3 +1,4 @@
-# Operator Pullback Quotient
+# Quotient projection of the operator pullback
 
-The original coefficient quotient is the actual second coordinate of the compatible pair.
+The complex nonunital star homomorphism `P_φ
+→ A` sends `(T,a)` to `a`.

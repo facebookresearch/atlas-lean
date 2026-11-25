@@ -1,3 +1,6 @@
-# Source L1 Seminormed Ring
+# L¹ seminormed ring of compact coefficients
 
-The original nonunital core ring with only norm and pseudometric computed from literal L1.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h, write (f*h)(s)=∫ t:G, f(t)*α_t(h(t⁻¹*s)) ∂μ. The core Carrier μ α is a nonunital
+seminormed ring for ‖f‖=q(f)=∫ s, ‖f(s)‖ ∂μ and dist(f,h)=q(f-h); q(f*h)≤q(f)q(h).

@@ -1,3 +1,5 @@
-# To Compact Tensor Completion
+# Canonical algebraic tensor inclusion
 
-The canonical raw-tensor map is the existing separation/completion map for this actual gauge.
+For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, the complex nonunital star homomorphism `j : A ⊗_ℂ K(H) →
+CompactTensorCompletion H A` is the separation-quotient map followed by completion.

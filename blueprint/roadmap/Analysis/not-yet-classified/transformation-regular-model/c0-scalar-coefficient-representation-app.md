@@ -1,3 +1,4 @@
-# C0 Scalar Coefficient Representation apply
+# Value of the identity-evaluation coefficient representation
 
-Every scalar coefficient action has its exact original identity-evaluation value.
+Let G be a topological group, a∈C₀(G,ℂ) and z∈ℂ. Then c0ScalarCoefficientRepresentation a
+z=a(1)*z.

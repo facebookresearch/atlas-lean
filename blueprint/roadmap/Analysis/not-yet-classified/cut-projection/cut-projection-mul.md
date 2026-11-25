@@ -1,3 +1,4 @@
-# Cut Projection mul
+# Composition of coordinate cuts
 
-Composition of cuts is the cut on the intersection.
+`cutProjection s * cutProjection t = cutProjection (s ∩
+t)`.

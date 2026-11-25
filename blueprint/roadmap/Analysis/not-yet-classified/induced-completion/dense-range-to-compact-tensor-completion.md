@@ -1,3 +1,5 @@
-# Dense Range to Compact Tensor Completion
+# Density of algebraic completion images
 
-The original canonical raw-tensor images are dense in the constructed same-gauge completion.
+For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, the canonical map `toCompactTensorCompletion H A` has dense range in the
+induced tensor completion.

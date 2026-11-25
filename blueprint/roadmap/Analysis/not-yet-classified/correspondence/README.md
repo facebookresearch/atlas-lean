@@ -1,12 +1,12 @@
-# Correspondence
+# Asymptotic morphisms and homomorphisms into the quotient algebra
 
-- [Orbit BCF](orbit-bcf.md)
-- [Orbit BCF apply](orbit-bcf-apply.md)
-- [To Hom](to-hom.md)
-- [To Hom apply](to-hom-apply.md)
-- [To Hom eq iff](to-hom-eq-iff.md)
-- [To Hom of Hom](to-hom-of-hom.md)
-- [Strict Class To Hom](strict-class-to-hom.md)
-- [Strict Class To Hom mk](strict-class-to-hom-mk.md)
-- [Strict Class Equiv](strict-class-equiv.md)
-- [Strict Class Equiv mk](strict-class-equiv-mk.md)
+- [Bounded continuous orbit of an asymptotic coefficient](orbit-bcf.md)
+- [Value of a bounded asymptotic orbit](orbit-bcf-apply.md)
+- [Quotient homomorphism defined by an asymptotic family](to-hom.md)
+- [Quotient class of an asymptotic coefficient orbit](to-hom-apply.md)
+- [Equal quotient homomorphisms exactly for strictly equivalent families](to-hom-eq-iff.md)
+- [A lifted quotient homomorphism maps back to itself](to-hom-of-hom.md)
+- [Map from strict asymptotic classes to quotient homomorphisms](strict-class-to-hom.md)
+- [Value of the strict-class homomorphism map](strict-class-to-hom-mk.md)
+- [Bijection of strict classes with quotient homomorphisms](strict-class-equiv.md)
+- [Value of the strict correspondence on a representative](strict-class-equiv-mk.md)

@@ -1,4 +1,5 @@
-# Lift surjective of dense range
+# Surjectivity of a faithful dense limit map
 
-An injective completed map whose original coefficient images are dense
-is onto the fixed original target algebra.
+If `S.lift g hg` is injective and the union `⋃
+i, Set.range (g i)` is dense in the target C-star algebra `C`, the completed universal map is
+surjective.

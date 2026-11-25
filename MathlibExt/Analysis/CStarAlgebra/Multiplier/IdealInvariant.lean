@@ -16,14 +16,15 @@ public import Mathlib.Analysis.CStarAlgebra.Multiplier
 public import Mathlib.Analysis.CStarAlgebra.ApproximateUnit
 
 /-!
-# Actual multiplier actions preserve every closed two-sided coefficient ideal
+# Closed ideals under multiplier actions
 
-This is the defining prerequisite for descending the original left/right
-multiplier operators to the actual quotient by a closed star ideal.
-Centrality supplies the centralizer product laws. The actual C-star
-approximate unit of the ideal, in its inherited original norm, then gives
-membership of each multiplier value by closedness. No multiplier extension,
-invariance certificate, nonzero quotient or source theorem output is supplied.
+For nonunital C-star `B`, a multiplier `m` has continuous linear components `L_m,R_m` with
+`L_m(a*b) = L_m(a)*b` and `R_m(a*b) = a*R_m(b)`. Both maps preserve every closed two-sided star
+ideal `I ⊆ B`.
+
+An approximate unit of `I`, together with the centralizer identities and closedness of `I`,
+proves `L_m(x),R_m(x) ∈ I` whenever `x ∈ I`. Thus multiplier actions can descend to the quotient
+`B/I`.
 -/
 
 @[expose] public section
@@ -36,7 +37,8 @@ namespace DoubleCentralizer
 universe uB
 variable {B : Type uB} [NonUnitalCStarAlgebra B]
 
-/-- The actual first operator is a left centralizer, needed for quotient well-definedness. -/
+/-- **Left centralizer identity.** For nonunital C-star `B`, multiplier `m` and `a,b : B`, `m.fst
+(a*b) = m.fst a * b`. -/
 theorem fst_apply_mul (m : 𝓜(ℂ, B)) (a b : B) : m.fst (a * b) = m.fst a * b := by
   have h (x : B) : x * m.fst (a * b) = x * (m.fst a * b) := by
     calc
@@ -50,13 +52,15 @@ theorem fst_apply_mul (m : 𝓜(ℂ, B)) (a b : B) : m.fst (a * b) = m.fst a * b
     rw [mul_sub, h, sub_self]
   exact sub_eq_zero.mp (star_mul_self_eq_zero.mp hz)
 
-/-- The actual second operator is a right centralizer in the original multiplication. -/
+/-- **Right centralizer identity.** For nonunital C-star `B`, multiplier `m` and `a,b : B`, `m.snd
+(a*b) = a * m.snd b`. -/
 theorem snd_apply_mul (m : 𝓜(ℂ, B)) (a b : B) : m.snd (a * b) = a * m.snd b := by
   have h := fst_apply_mul (star m) (star b) (star a)
   have hs := congrArg (star : B → B) h
   simpa only [star_fst, star_mul, star_star] using hs
 
-/-- Every original first-component multiplier value of a closed-ideal element remains in that ideal. -/
+/-- **Left multiplier invariance of a closed ideal.** For a closed two-sided star ideal `I` of
+nonunital C-star `B`, `m : M(B)` and `x ∈ I`, `m.fst x ∈ I`. -/
 theorem fst_mem_closedStarIdeal (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) {x : B} (hx : x ∈ I) :
     m.fst x ∈ I := by
   let : NonUnitalCStarAlgebra I.carrier := I.carrierCStarAlgebra
@@ -75,7 +79,8 @@ theorem fst_mem_closedStarIdeal (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) {x : 
   rw [fst_apply_mul]
   exact I.isTwoSided.mul_mem_left (m.fst x) e.property
 
-/-- Every original second-component multiplier value of a closed-ideal element remains in that ideal. -/
+/-- **Right multiplier invariance of a closed ideal.** For a closed two-sided star ideal `I` of
+nonunital C-star `B`, `m : M(B)` and `x ∈ I`, `m.snd x ∈ I`. -/
 theorem snd_mem_closedStarIdeal (I : ClosedStarIdeal B) (m : 𝓜(ℂ, B)) {x : B} (hx : x ∈ I) :
     m.snd x ∈ I := by
   let : NonUnitalCStarAlgebra I.carrier := I.carrierCStarAlgebra

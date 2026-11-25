@@ -1,17 +1,17 @@
-# Partial Bridge
+# Partial adjoints and regular-operator graphs
 
-## Densely Defined Right Partial Operator
+## Densely defined right-linear partial operators
 
-- [Adjoint is Maximal](adjoint-is-maximal.md)
-- [Maximal Adjoint eq adjoint](maximal-adjoint-eq-adjoint.md)
+- [Maximality of the witness adjoint](adjoint-is-maximal.md)
+- [Uniqueness of a maximal partial adjoint](maximal-adjoint-eq-adjoint.md)
 
-## Regular Operator
+## Regular operators
 
-- [To Densely Defined](to-densely-defined.md)
-- [To Densely Defined to Partial](to-densely-defined-to-partial.md)
-- [Computed Adjoint eq](computed-adjoint-eq.md)
-- [To Densely Defined Adjoint](to-densely-defined-adjoint.md)
-- [To Densely Defined Adjoint to Partial](to-densely-defined-adjoint-to-partial.md)
-- [Computed Double Adjoint eq](computed-double-adjoint-eq.md)
-- [Is Closed graph](is-closed-graph.md)
-- [To Densely Defined injective](to-densely-defined-injective.md)
+- [Dense right-linear map of a regular operator](to-densely-defined.md)
+- [Underlying partial map of the regular realization](to-densely-defined-to-partial.md)
+- [Adjoint of the regular realization](computed-adjoint-eq.md)
+- [Dense realization of the regular adjoint](to-densely-defined-adjoint.md)
+- [Underlying partial map of the adjoint realization](to-densely-defined-adjoint-to-partial.md)
+- [Double adjoint of a regular operator](computed-double-adjoint-eq.md)
+- [Closed graph of a regular operator](is-closed-graph.md)
+- [Faithfulness of the dense realization](to-densely-defined-injective.md)

@@ -1,3 +1,4 @@
-# Two Diagonal
+# Two-by-two corona diagonal
 
-The literal two-by-two outer-multiplier diagonal, on the existing matrix carrier.
+For `x,y : Q(B)`, `twoDiagonal x y` is the matrix `diag(x,y)`,
+with these diagonal entries and zero off-diagonal entries.

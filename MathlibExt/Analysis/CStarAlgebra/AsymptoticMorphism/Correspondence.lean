@@ -15,16 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.AsymptoticAlge
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Bounds
 
 /-!
-# Raw asymptotic families and the actual asymptotic-algebra correspondence
+# Asymptotic morphisms and homomorphisms into the quotient algebra
 
-The derived neutral orbit bound packages every raw time orbit in BCF.
-The four asymptotic defects then give an actual nonunital star homomorphism
-into the existing closed-ray Cb/C0 quotient. Equality is precisely strict
-equivalence, and the existing quotient-surjective set lift proves surjectivity.
-
-This is the strict quotient, not a homotopy quotient. No coefficient continuity,
-unitality, separability, extra bound or exact-zero hypothesis is imposed.
-The carrier, norm, quotient projection and strict setoid are the existing ones.
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For an asymptotic star morphism φ:A→B, write
+F_a(t)=φ_t(a) for its bounded continuous coefficient orbit, and Φφ(a)=q_B(F_a). Two families
+φ,ψ are strictly equivalent when φ_t(a)-ψ_t(a)→0 in norm as t→∞ for every a∈A. For each φ,
+Φφ:A→B∞ is a nonunital complex star homomorphism. It gives a bijection between
+strict-equivalence classes of asymptotic morphisms A→B and nonunital complex star
+homomorphisms A→B∞.
 
 Reference: Blackadar, K-Theory for Operator Algebras (1998), 25.1.3–25.1.4(a).
 -/
@@ -48,7 +47,14 @@ attribute [local instance] _root_.AsymptoticAlgebra.cStarAlgebra
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- An actual raw time orbit bundled using the derived neutral bound. -/
+/-- **Bounded continuous orbit of an asymptotic coefficient.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For an asymptotic star morphism φ:A→B, write
+F_a(t)=φ_t(a) for its bounded continuous coefficient orbit, and Φφ(a)=q_B(F_a). The function
+orbitBCF φ a∈C_b(T,B) is F_a:t↦φ_t(a), using the boundedness of each asymptotic coefficient
+orbit.
+-/
 @[no_expose]
 def orbitBCF (φ : AsymptoticMorphism A B) (a : A) : AsymptoticTime →ᵇ B where
   toFun t := φ t a
@@ -61,13 +67,25 @@ def orbitBCF (φ : AsymptoticMorphism A B) (a : A) : AsymptoticTime →ᵇ B whe
     exact (dist_le_norm_add_norm (φ s a) (φ t a)).trans
       (add_le_add (hC s) (hC t))
 
-/-- Bundling changes no pointwise value or time parameter. -/
+/-- **Value of a bounded asymptotic orbit.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For an asymptotic star morphism φ:A→B, write
+F_a(t)=φ_t(a) for its bounded continuous coefficient orbit, and Φφ(a)=q_B(F_a). For a∈A and
+t≥1, orbitBCF φ a t=φ_t(a).
+-/
 @[simp]
 theorem orbitBCF_apply (φ : AsymptoticMorphism A B)
     (a : A) (t : AsymptoticTime) : orbitBCF φ a t = φ t a := by
   rfl
 
-/-- The actual quotient homomorphism of a raw asymptotic family. -/
+/-- **Quotient homomorphism defined by an asymptotic family.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For an asymptotic star morphism φ:A→B, write
+F_a(t)=φ_t(a) for its bounded continuous coefficient orbit, and Φφ(a)=q_B(F_a). The map toHom
+φ:A→B∞ is the nonunital complex star homomorphism Φφ:a↦q_B(t↦φ_t(a)).
+-/
 @[no_expose]
 def toHom (φ : AsymptoticMorphism A B) : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B where
   toFun a := _root_.AsymptoticAlgebra.quotientMap B (orbitBCF φ a)
@@ -138,13 +156,26 @@ def toHom (φ : AsymptoticMorphism A B) : A →⋆ₙₐ[ℂ] AsymptoticAlgebra 
     rw [map_sub, map_star, sub_eq_zero] at h
     exact h
 
-/-- The printed quotient class of the actual time orbit. -/
+/-- **Quotient class of an asymptotic coefficient orbit.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For an asymptotic star morphism φ:A→B, write
+F_a(t)=φ_t(a) for its bounded continuous coefficient orbit, and Φφ(a)=q_B(F_a). For a∈A, toHom
+φ a=q_B(orbitBCF φ a)=[t↦φ_t(a)].
+-/
 @[simp]
 theorem toHom_apply (φ : AsymptoticMorphism A B) (a : A) :
     toHom φ a = _root_.AsymptoticAlgebra.quotientMap B (orbitBCF φ a) := by
   rfl
 
-/-- The kernel criterion recovers EXACT strict equivalence, not homotopy. -/
+/-- **Equal quotient homomorphisms exactly for strictly equivalent families.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. Two families φ,ψ are strictly equivalent when
+φ_t(a)-ψ_t(a)→0 in norm as t→∞ for every a∈A. For asymptotic star morphisms φ,ψ:A→B, toHom
+φ=toHom ψ if and only if they are strictly equivalent; toHom sends a to the quotient class
+[t↦φ_t(a)].
+-/
 theorem toHom_eq_iff (φ ψ : AsymptoticMorphism A B) :
     toHom φ = toHom ψ ↔ StrictlyEquivalent φ ψ := by
   constructor
@@ -160,7 +191,13 @@ theorem toHom_eq_iff (φ ψ : AsymptoticMorphism A B) :
     apply (_root_.AsymptoticAlgebra.quotientMap_eq_iff _ _).2
     simpa only [orbitBCF_apply] using h a
 
-/-- The actual neutral set lift maps back to the original quotient hom. -/
+/-- **A lifted quotient homomorphism maps back to itself.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For a nonunital complex star homomorphism
+ρ:A→B∞, choose bounded continuous representatives F_a with q_B(F_a)=ρ(a). The resulting
+asymptotic family AsymptoticAlgebra.ofHom ρ has toHom(AsymptoticAlgebra.ofHom ρ)=ρ.
+-/
 theorem toHom_ofHom (ρ : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B) :
     toHom (_root_.AsymptoticAlgebra.ofHom ρ) = ρ := by
   apply NonUnitalStarAlgHom.ext
@@ -175,19 +212,38 @@ theorem toHom_ofHom (ρ : A →⋆ₙₐ[ℂ] AsymptoticAlgebra B) :
   rw [horbit]
   exact Classical.choose_spec (_root_.AsymptoticAlgebra.quotientMap_surjective B (ρ a))
 
-/-- The induced map on the ACTUAL existing strict-equivalence quotient. -/
+/-- **Map from strict asymptotic classes to quotient homomorphisms.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. Two families φ,ψ are strictly equivalent when
+φ_t(a)-ψ_t(a)→0 in norm as t→∞ for every a∈A. The map strictClassToHom sends the
+strict-equivalence class [φ] to the nonunital complex star homomorphism a↦[t↦φ_t(a)] in A→B∞.
+-/
 def strictClassToHom :
     Quotient (strictSetoid A B) → (A →⋆ₙₐ[ℂ] AsymptoticAlgebra B) :=
   Quotient.lift toHom (fun φ ψ h => (toHom_eq_iff φ ψ).2 h)
 
-/-- The strict-equivalence class map has its original representative formula. -/
+/-- **Value of the strict-class homomorphism map.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For an asymptotic star morphism φ:A→B, write
+F_a(t)=φ_t(a) for its bounded continuous coefficient orbit, and Φφ(a)=q_B(F_a). Two families
+φ,ψ are strictly equivalent when φ_t(a)-ψ_t(a)→0 in norm as t→∞ for every a∈A. For the
+strict-equivalence class [φ], strictClassToHom([φ])=toHom φ.
+-/
 @[simp]
 theorem strictClassToHom_mk (φ : AsymptoticMorphism A B) :
     strictClassToHom (Quotient.mk (strictSetoid A B) φ) = toHom φ := by
   rfl
 
-/-- The literal strict correspondence, using the separate derived orbit bound.
-It does not equate strict and homotopy classes. -/
+/-- **Bijection of strict classes with quotient homomorphisms.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. Two families φ,ψ are strictly equivalent when
+φ_t(a)-ψ_t(a)→0 in norm as t→∞ for every a∈A. The equivalence strictClassEquiv identifies the
+quotient of asymptotic star morphisms A→B by this relation with the nonunital complex star
+homomorphisms A→B∞, via [φ]↦(a↦[t↦φ_t(a)]).
+-/
 def strictClassEquiv :
     Quotient (strictSetoid A B) ≃ (A →⋆ₙₐ[ℂ] AsymptoticAlgebra B) :=
   Equiv.ofBijective strictClassToHom ⟨
@@ -202,7 +258,14 @@ def strictClassEquiv :
       exact ⟨Quotient.mk (strictSetoid A B) (_root_.AsymptoticAlgebra.ofHom ρ),
         toHom_ofHom ρ⟩⟩
 
-/-- The concrete bijection is the quotient hom of the original raw family. -/
+/-- **Value of the strict correspondence on a representative.**
+
+Let A,B be nonunital complex C-star algebras, T=[1,∞), A∞=C_b(T,A)/C₀(T,A) and
+B∞=C_b(T,B)/C₀(T,B), with quotient maps q_A,q_B. For an asymptotic star morphism φ:A→B, write
+F_a(t)=φ_t(a) for its bounded continuous coefficient orbit, and Φφ(a)=q_B(F_a). Two families
+φ,ψ are strictly equivalent when φ_t(a)-ψ_t(a)→0 in norm as t→∞ for every a∈A. The bijection
+strictClassEquiv sends the strict class of φ to toHom φ, the homomorphism a↦q_B(t↦φ_t(a)).
+-/
 @[simp]
 theorem strictClassEquiv_mk (φ : AsymptoticMorphism A B) :
     strictClassEquiv (Quotient.mk (strictSetoid A B) φ) = toHom φ := by

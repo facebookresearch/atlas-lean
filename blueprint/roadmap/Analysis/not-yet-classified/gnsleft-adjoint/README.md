@@ -1,7 +1,7 @@
-# GNSLeft Adjoint
+# Adjoints of left multiplication in the weight GNS space
 
-- [Left Square difference left Mul](left-square-difference-left-mul.md)
-- [Finite Square Polar Re left Mul](finite-square-polar-re-left-mul.md)
-- [Finite Square Polar Inner left Mul](finite-square-polar-inner-left-mul.md)
-- [Pre GNSLeft Mul adjoint pairing](pre-gnsleft-mul-adjoint-pairing.md)
-- [Gns Left Mul star](gns-left-mul-star.md)
+- [Square difference for a left product](left-square-difference-left-mul.md)
+- [Real adjoint identity for the weight polarization](finite-square-polar-re-left-mul.md)
+- [Complex adjoint identity for the weight polarization](finite-square-polar-inner-left-mul.md)
+- [Adjoint pairing of pre-GNS left operators](pre-gnsleft-mul-adjoint-pairing.md)
+- [Adjoint law of completed left multiplication](gns-left-mul-star.md)

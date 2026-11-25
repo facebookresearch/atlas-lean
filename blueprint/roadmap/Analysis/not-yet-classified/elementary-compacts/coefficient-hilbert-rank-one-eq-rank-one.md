@@ -1,3 +1,5 @@
-# Coefficient hilbert Rank One eq rank One
+# Factorization of a module rank-one operator
 
-The elementary coefficient/rank-one product equals the genuine amplified module rank-one operator.
+On `Space H A`, `coefficientHom (u*star v) *
+hilbertOperator (rankOne ℂ ξ η)` equals the module rank-one operator defined by `pure ξ u` and
+`pure η v`.

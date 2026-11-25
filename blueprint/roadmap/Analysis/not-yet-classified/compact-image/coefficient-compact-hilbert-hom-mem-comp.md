@@ -1,3 +1,5 @@
-# Coefficient compact Hilbert Hom mem compact
+# Compact product of the two representation factors
 
-The two original algebraic tensor factors have actual compact module product image.
+For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, for `a : A` and `T ∈ K(H)`, `coefficientHom a *
+compactHilbertHom T` belongs to the module compact ideal.

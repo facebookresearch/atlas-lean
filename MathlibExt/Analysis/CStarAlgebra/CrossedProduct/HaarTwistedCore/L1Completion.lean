@@ -16,17 +16,14 @@ public import MathlibExt.Analysis.Normed.Algebra.NonUnitalStarCompletion.Scalar
 public import Mathlib.Algebra.Star.StarAlgHom
 
 /-!
-# The ordinary L1 completion of the original Haar core
+# The L¹ completion of Haar twisted convolution
 
-Only the source norm and pseudometric are computed from the literal
-coefficient-norm integral. The original Haar convolution, modular star
-and complex scalar action remain unchanged. Their ordinary completion is
-an actual complete nonunital normed star algebra. The canonical map retains
-every L1 norm and has dense range. No C-star square identity is imposed
-on the source or its L1 completion.
-
-All dictionaries are explicit local factories. An approximate identity
-and the comparison with the full covariant norm are separate obligations.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+Convolution extends to an associative submultiplicative product on X₁, and the modular
+involution extends isometrically. The resulting nonunital complex normed star algebra is
+complete. For each core coefficient f, ‖ι₁(f)‖=q(f), and ι₁ has dense range.
 -/
 
 @[expose] public section
@@ -47,14 +44,26 @@ variable {G : Type uG} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular] (α : PointNormCStarAction G A)
 
-/-- The original nonunital core ring with only norm and pseudometric computed from literal L1. -/
+/-- **L¹ seminormed ring of compact coefficients.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. For core coefficients
+f,h, write (f*h)(s)=∫ t:G, f(t)*α_t(h(t⁻¹*s)) ∂μ. The core Carrier μ α is a nonunital
+seminormed ring for ‖f‖=q(f)=∫ s, ‖f(s)‖ ∂μ and dist(f,h)=q(f-h); q(f*h)≤q(f)q(h).
+-/
 @[instance_reducible]
 def sourceL1SeminormedRing : NonUnitalSeminormedRing (Carrier μ α) where
   __ := (inferInstance : NonUnitalRing (Carrier μ α))
   __ := (l1RingSeminorm μ α).toAddGroupSeminorm.toSeminormedAddCommGroup
   norm_mul_le := (l1RingSeminorm μ α).mul_le'
 
-/-- The original complex module is normed by the same coefficient-norm integral. -/
+/-- **Complex normed structure for the L¹ core seminorm.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. On Carrier μ α with
+q(f)=∫ s, ‖f(s)‖ ∂μ, pointwise complex scaling satisfies q(c•f)=‖c‖q(f). This is its normed
+complex vector-space structure for the L¹ pseudometric.
+-/
 @[instance_reducible]
 def sourceL1NormedSpace :
     let _ : NonUnitalSeminormedRing (Carrier μ α) := sourceL1SeminormedRing μ α
@@ -66,7 +75,13 @@ def sourceL1NormedSpace :
         change l1Gauge μ α (c • f) ≤ ‖c‖ * l1Gauge μ α f
         exact (l1Gauge_smul μ α c f).le }
 
-/-- The original modular involution is isometric in the computed L1 source norm. -/
+/-- **Isometric modular star for the L¹ core.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Writing
+δ(s)=Measure.modularCharacter s, define f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). For f∈Carrier μ
+α with ‖f‖=q(f)=∫ s, ‖f(s)‖ ∂μ, ‖f⁎‖=‖f‖.
+-/
 theorem sourceL1NormedStarGroup :
     let _ : NonUnitalSeminormedRing (Carrier μ α) := sourceL1SeminormedRing μ α
     NormedStarGroup (Carrier μ α) := by
@@ -76,18 +91,37 @@ theorem sourceL1NormedStarGroup :
   change l1Gauge μ α (star f) ≤ l1Gauge μ α f
   exact (l1Gauge_star μ α f).le
 
-/-- The ordinary uniform completion of the same core in its literal L1 pseudometric. -/
+/-- **The completed L¹ twisted convolution algebra.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. L1Completion μ α is the
+uniform completion of Carrier μ α for dist(f,h)=∫ s, ‖f(s)-h(s)‖ ∂μ. Its norm is the extension
+of the L¹ coefficient seminorm.
+-/
 abbrev L1Completion : Type (max uG uA) :=
   let _ : NonUnitalSeminormedRing (Carrier μ α) := sourceL1SeminormedRing μ α
   UniformSpace.Completion (Carrier μ α)
 
-/-- The same dense nonunital multiplication supplies the completed normed ring. -/
+/-- **Nonunital normed ring of L¹ completed coefficients.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+Twisted convolution extends from the dense core to a nonunital normed ring structure on X₁,
+with ‖x*y‖≤‖x‖‖y‖.
+-/
 @[instance_reducible]
 def l1CompletionNonUnitalNormedRing : NonUnitalNormedRing (L1Completion μ α) := by
   let _ : NonUnitalSeminormedRing (Carrier μ α) := sourceL1SeminormedRing μ α
   exact UniformSpace.Completion.nonUnitalCompletionNormedRing (Carrier μ α)
 
-/-- The ordinary L1 completion retains the stock complex scalar action and norm. -/
+/-- **Complex normed space of L¹ completed coefficients.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+Pointwise complex scaling extends to X₁ and satisfies ‖c•x‖=‖c‖‖x‖.
+-/
 @[instance_reducible]
 def l1CompletionNormedSpace :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
@@ -97,7 +131,15 @@ def l1CompletionNormedSpace :
   let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
   exact inferInstance
 
-/-- The completion star is the completion map of the original modular involution. -/
+/-- **Star ring structure on the L¹ completion.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+Writing δ(s)=Measure.modularCharacter s, define f⁎(s)=((δ(s):ℝ):ℂ)•α_s(star(f(s⁻¹))). The
+modular involution on core coefficients extends continuously to star on X₁, with
+star(x*y)=star(y)*star(x) and star(star(x))=x.
+-/
 @[instance_reducible]
 def l1CompletionStarRing :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
@@ -107,7 +149,13 @@ def l1CompletionStarRing :
   let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
   exact UniformSpace.Completion.nonUnitalCompletionStarRing (Carrier μ α)
 
-/-- The canonical completed modular involution preserves the completed L1 norm. -/
+/-- **Isometric star on the L¹ completion.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+The extension of the modular adjoint to X₁ satisfies ‖star(x)‖=‖x‖ for every x∈X₁.
+-/
 theorem l1CompletionNormedStarGroup :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     let _ : StarRing (L1Completion μ α) := l1CompletionStarRing μ α
@@ -129,7 +177,14 @@ theorem l1CompletionNormedStarGroup :
       UniformSpace.Completion.norm_coe, UniformSpace.Completion.norm_coe, norm_star]
   exact hnorm.le
 
-/-- The completed star respects the same stock complex scalar action. -/
+/-- **Complex star module of the L¹ completion.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+The extended complex scalar action and modular involution satisfy star(c•x)=star(c)•star(x)
+for c∈ℂ and x∈X₁.
+-/
 theorem l1CompletionStarModule :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     let _ : NormedSpace ℂ (L1Completion μ α) := l1CompletionNormedSpace μ α
@@ -144,7 +199,13 @@ theorem l1CompletionStarModule :
   exact UniformSpace.Completion.nonUnitalCompletionStarRing_starModule (R := ℂ) (Carrier μ α)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- The original complex scalar-tower law holds for completed convolution. -/
+/-- **Left scalar compatibility for completed convolution.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+For c∈ℂ and x,y∈X₁, (c•x)*y=c•(x*y).
+-/
 theorem l1CompletionIsScalarTower :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     let _ : NormedSpace ℂ (L1Completion μ α) := l1CompletionNormedSpace μ α
@@ -156,7 +217,13 @@ theorem l1CompletionIsScalarTower :
   exact UniformSpace.Completion.nonUnitalCompletionIsScalarTower (𝕜 := ℂ) (Carrier μ α)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- Complex scaling commutes with completed right convolution. -/
+/-- **Right scalar compatibility for completed convolution.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+For c∈ℂ and x,y∈X₁, x*(c•y)=c•(x*y).
+-/
 theorem l1CompletionSMulCommClass :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     let _ : NormedSpace ℂ (L1Completion μ α) := l1CompletionNormedSpace μ α
@@ -168,7 +235,14 @@ theorem l1CompletionSMulCommClass :
   exact UniformSpace.Completion.nonUnitalCompletionSMulCommClass (𝕜 := ℂ) (Carrier μ α)
 
 omit [LocallyCompactSpace G] [μ.Regular] in
-/-- The original uniform completion is complete in its computed L1 normed-ring uniformity. -/
+/-- **Completeness of the L¹ convolution norm.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+Every Cauchy sequence in the L¹ completion norm converges in X₁; equivalently, X₁ is a
+complete normed space.
+-/
 theorem l1CompletionCompleteSpace :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     CompleteSpace (L1Completion μ α) := by
@@ -176,7 +250,14 @@ theorem l1CompletionCompleteSpace :
   let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
   exact inferInstance
 
-/-- The canonical nonunital star-algebra map is the ordinary completion coercion. -/
+/-- **Dense star homomorphism into the L¹ completion.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+The map toL1Completion μ α:Carrier μ α→X₁ is the nonunital complex star homomorphism ι₁
+sending each coefficient to its completion class.
+-/
 def toL1Completion :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     let _ : NormedSpace ℂ (L1Completion μ α) := l1CompletionNormedSpace μ α
@@ -193,7 +274,14 @@ def toL1Completion :
       map_star' := fun f =>
         (UniformSpace.Completion.nonUnitalCompletionStarRing_star_coe (Carrier μ α) f).symm }
 
-/-- The same canonical map retains the original completion coefficient values. -/
+/-- **Coefficient class in the L¹ completion.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+For f∈Carrier μ α, toL1Completion μ α f is the image of f under the canonical
+uniform-completion map.
+-/
 @[simp]
 theorem toL1Completion_apply (f : Carrier μ α) :
     let _ : NonUnitalSeminormedRing (Carrier μ α) := sourceL1SeminormedRing μ α
@@ -203,7 +291,13 @@ theorem toL1Completion_apply (f : Carrier μ α) :
     toL1Completion μ α f = (f : L1Completion μ α) :=
   rfl
 
-/-- The canonical completed norm is exactly the original coefficient-norm integral. -/
+/-- **Norm of a dense L¹ coefficient class.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+Every core coefficient f satisfies ‖toL1Completion μ α f‖=∫ s, ‖f(s)‖ ∂μ.
+-/
 theorem norm_toL1Completion (f : Carrier μ α) :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     let _ : NormedSpace ℂ (L1Completion μ α) := l1CompletionNormedSpace μ α
@@ -219,7 +313,13 @@ theorem norm_toL1Completion (f : Carrier μ α) :
   rw [UniformSpace.Completion.norm_coe]
   rfl
 
-/-- Every original L1 coefficient class has dense image in the same ordinary completion. -/
+/-- **Dense range of the L¹ coefficient map.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let X₁=L1Completion μ α
+be the completion of the twisted convolution core in q(f)=∫ s, ‖f(s)‖ ∂μ, with dense map ι₁.
+The range of toL1Completion μ α is dense in X₁ for the completed L¹ norm.
+-/
 theorem denseRange_toL1Completion :
     let _ : NonUnitalNormedRing (L1Completion μ α) := l1CompletionNonUnitalNormedRing μ α
     let _ : NormedSpace ℂ (L1Completion μ α) := l1CompletionNormedSpace μ α

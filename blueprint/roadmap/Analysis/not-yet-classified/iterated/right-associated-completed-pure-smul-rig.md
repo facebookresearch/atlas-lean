@@ -1,3 +1,6 @@
-# Right Associated Completed Pure smul right
+# Complex scaling in the final factor of a right-associated tensor
 
-Complex scaling in the original right fibre scales the same completed pure triple.
+Let `Eᵢ` be complete
+right modules over nonunital C-star algebras `Bᵢ` with star-compatible opposite orders. Let `φ
+: B₁ → End_(B₂)(E₂)` and `χ : B₂ → End_(B₃)(E₃)` be complex nonunital star homomorphisms. Put
+`P(x,y,z) = rightAssociatedCompletedPure φ χ x y z`. Then `P(x,y,c • z) = c • P(x,y,z)`.

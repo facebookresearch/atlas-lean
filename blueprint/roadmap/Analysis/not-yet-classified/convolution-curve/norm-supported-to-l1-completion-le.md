@@ -1,3 +1,4 @@
-# Norm supported To L1 Completion le
+# Norm bound for the fixed-support L¹ inclusion
 
-The Banach-to-L1 map has the true finite-support-measure sup-norm bound.
+For compact closed K and b supported in K, `‖supportedToL1Completion μ α K hK hKclosed b‖ ≤
+μ.real K * ‖b‖`.

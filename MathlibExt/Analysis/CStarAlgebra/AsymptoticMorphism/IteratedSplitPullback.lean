@@ -15,14 +15,14 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.SplitPullback
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.IteratedAlgebra
 
 /-!
-# Finite iteration of split-pullback preservation
+# Finite asymptotic iteration preserves split pullbacks
 
-A star-homomorphic section of one cospan leg is carried through every finite
-iterate of the literal asymptotic algebra.  The resulting equivalence has the
-expected two coordinate maps.
-
-This file contains only the iterated equivalence and its projection laws.
-It does not define paths, gluing, n-homotopy, classes, products, or limits.
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Let A,B,C be nonunital complex C-star algebras
+and f:A→C, g:B→C, s:C→B nonunital complex star homomorphisms satisfying g∘s=id_C. Put
+P={(a,b)∈A×B:f(a)=g(b)}, a closed C-star subalgebra with the maximum product norm. For every
+n∈ℕ, αⁿP is star-isomorphic to {(x,y)∈αⁿA×αⁿB:αⁿf(x)=αⁿg(y)}. The two coordinate maps are
+αⁿ(pr_1) and αⁿ(pr_2), where pr_1:P→A and pr_2:P→B are the pullback projections.
 -/
 
 @[expose] public section
@@ -142,8 +142,15 @@ private theorem sndHom_comp_pullbackEquivOfEq
   cases hg
   rfl
 
-/-- Every finite alpha iterate preserves a pullback whose right leg has a
-star-homomorphic section. -/
+/-- **Iterated equivalence for a split C-star pullback.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Let A,B,C be nonunital complex C-star algebras
+and f:A→C, g:B→C, s:C→B nonunital complex star homomorphisms satisfying g∘s=id_C. Put
+P={(a,b)∈A×B:f(a)=g(b)}, a closed C-star subalgebra with the maximum product norm. The
+star-algebra equivalence iteratedSplitPullbackEquiv n f g s hs identifies αⁿP with the
+pullback of αⁿf and αⁿg, and its coordinate maps are αⁿ(pr_1) and αⁿ(pr_2).
+-/
 @[no_expose]
 noncomputable def iteratedSplitPullbackEquiv
     (n : ℕ)

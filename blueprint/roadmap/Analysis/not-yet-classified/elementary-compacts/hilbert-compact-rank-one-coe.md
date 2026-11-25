@@ -1,3 +1,4 @@
-# Hilbert Compact Rank One coe
+# Rank-one operator under compact-ideal inclusion
 
-The compact-ideal inclusion retains the original rank-one operator.
+The bounded operator underlying
+`hilbertCompactRankOne H x y` is `InnerProductSpace.rankOne ℂ x y`.

@@ -1,3 +1,4 @@
-# Norm haar Integrated Hom le
+# L¹ bound for the integrated representation
 
-The actual integrated homomorphism has the original Haar L1 coefficient bound.
+For a compactly supported coefficient f and a covariant Hilbert-space representation ρ, the
+operator norm satisfies `‖haarIntegratedHom μ ρ f‖ ≤ ∫ s : G, ‖f s‖ ∂μ`.

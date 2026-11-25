@@ -15,14 +15,17 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Se
 public import Mathlib.Analysis.CStarAlgebra.ContinuousLinearMap
 
 /-!
-# Actual finite Hilbert Gram coefficient bounds
+# Finite Hilbert Gram coefficient estimates
 
-The finite sums are the original source values under an actual representation
-of the same-p completion. The original coefficient and its computed positive
-unitization complement give a norm-square decomposition for those sums.
-Consequently a zero original Gram sum has a zero transformed coefficient sum.
-This proves the kernel inclusion required for descent to the actual Gram
-span; it assumes no descended operator, bound, norm model or nondegeneracy.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core, Xp=p.NonUnitalCompletion its separated completion, H a complex
+Hilbert space in an independent universe and σ:Xp→B(H) a nonunital complex star homomorphism.
+Put T(f)=σ(ιp(f)), where ιp is the dense core map. For a finite set s⊂I, weights c:I→ℂ,
+coefficients f:I→Carrier μ α and vectors ξ:I→H, put F=∑i∈s c_i•T(f_i)ξ_i. For
+z=(r,a)∈Unitization ℂ A let L_z f=r•f+coefficientLeft μ α a f, and put F_z=∑i∈s c_i•T(L_z
+f_i)ξ_i. For a∈A and its positive unitization square complement b, ‖F_a‖²+‖F_b‖²=‖a‖²‖F‖².
+Hence ‖F_a‖≤‖a‖‖F‖, and F=0 implies F_a=0.
 -/
 
 @[expose] public section
@@ -51,17 +54,48 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable (σ : p.NonUnitalCompletion →⋆ₙₐ[ℂ] (H →L[ℂ] H))
 variable {ι : Type uI}
 
-/-- The literal weighted finite sum of original-source Hilbert operator values. -/
+/-- **Finite weighted represented Gram vector.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core, Xp=p.NonUnitalCompletion its separated completion, H a complex
+Hilbert space in an independent universe and σ:Xp→B(H) a nonunital complex star homomorphism.
+Put T(f)=σ(ιp(f)), where ιp is the dense core map. For a finite set s⊂I, weights c:I→ℂ,
+coefficients f:I→Carrier μ α and vectors ξ:I→H, put F=∑i∈s c_i•T(f_i)ξ_i. The vector
+finiteHilbertGram μ α p σ s c f ξ is F. The index type I may have an independent universe, and
+the empty sum is zero.
+-/
 def finiteHilbertGram (s : Finset ι) (z : ι → ℂ) (f : ι → Carrier μ α) (ξ : ι → H) : H :=
   ∑ i ∈ s, z i • σ (p.toNonUnitalCompletion (f i)) (ξ i)
 
-/-- The literal finite coefficient transform using the actual unitized source action. -/
+/-- **Finite Gram vector transformed by a unitized coefficient.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core, Xp=p.NonUnitalCompletion its separated completion, H a complex
+Hilbert space in an independent universe and σ:Xp→B(H) a nonunital complex star homomorphism.
+Put T(f)=σ(ιp(f)), where ιp is the dense core map. For a finite set s⊂I, weights c:I→ℂ,
+coefficients f:I→Carrier μ α and vectors ξ:I→H, put F=∑i∈s c_i•T(f_i)ξ_i. For
+z=(r,a)∈Unitization ℂ A let L_z f=r•f+coefficientLeft μ α a f, and put F_z=∑i∈s c_i•T(L_z
+f_i)ξ_i. The vector finiteHilbertGramCoefficient μ α p σ z s c f ξ is F_z.
+-/
 def finiteHilbertGramCoefficient (a : Unitization ℂ A) (s : Finset ι)
     (z : ι → ℂ) (f : ι → Carrier μ α) (ξ : ι → H) : H :=
   finiteHilbertGram μ α p σ s z (fun i => coefficientLeftUnitization μ α a (f i)) ξ
 
 omit [μ.Regular] in
-/-- The non-scalar coefficient transform retains exactly the original coefficient values. -/
+/-- **Coefficient inclusion in a finite Gram transform.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core, Xp=p.NonUnitalCompletion its separated completion, H a complex
+Hilbert space in an independent universe and σ:Xp→B(H) a nonunital complex star homomorphism.
+Put T(f)=σ(ιp(f)), where ιp is the dense core map. For a finite set s⊂I, weights c:I→ℂ,
+coefficients f:I→Carrier μ α and vectors ξ:I→H, put F=∑i∈s c_i•T(f_i)ξ_i. For
+z=(r,a)∈Unitization ℂ A let L_z f=r•f+coefficientLeft μ α a f, and put F_z=∑i∈s c_i•T(L_z
+f_i)ξ_i. For a∈A included in Unitization ℂ A, F_a=∑i∈s c_i•T(coefficientLeft μ α a f_i)ξ_i,
+where coefficientLeft a f(s)=a*f(s).
+-/
 @[simp]
 theorem finiteHilbertGramCoefficient_inr (a : A) (s : Finset ι)
     (z : ι → ℂ) (f : ι → Carrier μ α) (ξ : ι → H) :
@@ -70,7 +104,18 @@ theorem finiteHilbertGramCoefficient_inr (a : A) (s : Finset ι)
   simp only [finiteHilbertGramCoefficient, finiteHilbertGram, coefficientLeftUnitization_inr]
 
 omit [μ.Regular] in
-/-- The original coefficient and computed complement give the exact finite Gram square identity. -/
+/-- **Inner-product square identity for finite Gram coefficients.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core, Xp=p.NonUnitalCompletion its separated completion, H a complex
+Hilbert space in an independent universe and σ:Xp→B(H) a nonunital complex star homomorphism.
+Put T(f)=σ(ιp(f)), where ιp is the dense core map. For a finite set s⊂I, weights c:I→ℂ,
+coefficients f:I→Carrier μ α and vectors ξ:I→H, put F=∑i∈s c_i•T(f_i)ξ_i. For
+z=(r,a)∈Unitization ℂ A let L_z f=r•f+coefficientLeft μ α a f, and put F_z=∑i∈s c_i•T(L_z
+f_i)ξ_i. For a∈A and b=coefficientSquareComplement a in its unitization,
+⟪F_a,F_a⟫_ℂ+⟪F_b,F_b⟫_ℂ=(‖a‖²:ℂ)⟪F,F⟫_ℂ.
+-/
 theorem finiteHilbertGramCoefficient_inner_square (a : A) (s : Finset ι)
     (z : ι → ℂ) (f : ι → Carrier μ α) (ξ : ι → H) :
     ⟪finiteHilbertGramCoefficient μ α p σ (a : Unitization ℂ A) s z f ξ,
@@ -145,7 +190,17 @@ theorem finiteHilbertGramCoefficient_inner_square (a : A) (s : Finset ι)
     _ = _ := by simp only [Finset.mul_sum]
 
 omit [μ.Regular] in
-/-- The computed coefficient and complement sums have the exact original norm-square decomposition. -/
+/-- **Norm-square decomposition for finite Gram coefficients.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core, Xp=p.NonUnitalCompletion its separated completion, H a complex
+Hilbert space in an independent universe and σ:Xp→B(H) a nonunital complex star homomorphism.
+Put T(f)=σ(ιp(f)), where ιp is the dense core map. For a finite set s⊂I, weights c:I→ℂ,
+coefficients f:I→Carrier μ α and vectors ξ:I→H, put F=∑i∈s c_i•T(f_i)ξ_i. For
+z=(r,a)∈Unitization ℂ A let L_z f=r•f+coefficientLeft μ α a f, and put F_z=∑i∈s c_i•T(L_z
+f_i)ξ_i. For a∈A and b=coefficientSquareComplement a, ‖F_a‖²+‖F_b‖²=‖a‖²‖F‖².
+-/
 theorem finiteHilbertGramCoefficient_norm_sq (a : A) (s : Finset ι)
     (z : ι → ℂ) (f : ι → Carrier μ α) (ξ : ι → H) :
     ‖finiteHilbertGramCoefficient μ α p σ (a : Unitization ℂ A) s z f ξ‖ ^ 2 +
@@ -160,7 +215,17 @@ theorem finiteHilbertGramCoefficient_norm_sq (a : A) (s : Finset ι)
   simpa only [map_add, RCLike.mul_re, hr, hi, zero_mul, sub_zero, inner_self_eq_norm_sq] using h
 
 omit [μ.Regular] in
-/-- The original finite Gram coefficient transform has the actual coefficient norm bound. -/
+/-- **Coefficient norm bound for a finite Gram transform.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core, Xp=p.NonUnitalCompletion its separated completion, H a complex
+Hilbert space in an independent universe and σ:Xp→B(H) a nonunital complex star homomorphism.
+Put T(f)=σ(ιp(f)), where ιp is the dense core map. For a finite set s⊂I, weights c:I→ℂ,
+coefficients f:I→Carrier μ α and vectors ξ:I→H, put F=∑i∈s c_i•T(f_i)ξ_i. For
+z=(r,a)∈Unitization ℂ A let L_z f=r•f+coefficientLeft μ α a f, and put F_z=∑i∈s c_i•T(L_z
+f_i)ξ_i. For a∈A included in its unitization, ‖F_a‖≤‖a‖‖F‖.
+-/
 theorem norm_finiteHilbertGramCoefficient_inr_le (a : A) (s : Finset ι)
     (z : ι → ℂ) (f : ι → Carrier μ α) (ξ : ι → H) :
     ‖finiteHilbertGramCoefficient μ α p σ (a : Unitization ℂ A) s z f ξ‖ ≤
@@ -178,7 +243,17 @@ theorem norm_finiteHilbertGramCoefficient_inr_le (a : A) (s : Finset ι)
     (mul_nonneg (norm_nonneg a) (norm_nonneg _))).mp hLe
 
 omit [μ.Regular] in
-/-- A zero original finite Gram sum has a zero transformed coefficient sum. -/
+/-- **A coefficient transform preserves a zero Gram vector.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let p be a C-star
+seminorm on the twisted core, Xp=p.NonUnitalCompletion its separated completion, H a complex
+Hilbert space in an independent universe and σ:Xp→B(H) a nonunital complex star homomorphism.
+Put T(f)=σ(ιp(f)), where ιp is the dense core map. For a finite set s⊂I, weights c:I→ℂ,
+coefficients f:I→Carrier μ α and vectors ξ:I→H, put F=∑i∈s c_i•T(f_i)ξ_i. For
+z=(r,a)∈Unitization ℂ A let L_z f=r•f+coefficientLeft μ α a f, and put F_z=∑i∈s c_i•T(L_z
+f_i)ξ_i. If F=0, then F_a=0 for every a∈A included in its unitization.
+-/
 theorem finiteHilbertGramCoefficient_inr_eq_zero_of_eq_zero (a : A) (s : Finset ι)
     (z : ι → ℂ) (f : ι → Carrier μ α) (ξ : ι → H)
     (hGram : finiteHilbertGram μ α p σ s z f ξ = 0) :

@@ -1,3 +1,5 @@
-# Block Diagonal Star Alg Hom comp class Maps
+# Diagonal map and the class projections
 
-Bundled compatibility with the standard product of the two class maps.
+For complex Hilbert spaces `H,K`, the map of
+Calkin products satisfies `β ∘ (q_H × q_K) = q_(H⊕K) ∘ diag`, where `β =
+blockDiagonalStarAlgHom`.

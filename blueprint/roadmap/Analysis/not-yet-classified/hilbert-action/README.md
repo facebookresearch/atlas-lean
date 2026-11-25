@@ -1,7 +1,7 @@
-# Hilbert Action
+# Hilbert-space operators on coefficient amplification
 
-- [Hilbert Operator](hilbert-operator.md)
-- [Hilbert Operator pure](hilbert-operator-pure.md)
-- [Hilbert Operator adjoint pure](hilbert-operator-adjoint-pure.md)
-- [Hilbert Operator norm le](hilbert-operator-norm-le.md)
-- [Hilbert Operator commutes coefficient Operator](hilbert-operator-commutes-coefficient-op.md)
+- [First-factor operator on the amplification](hilbert-operator.md)
+- [Hilbert operator on a pure amplification vector](hilbert-operator-pure.md)
+- [Adjoint Hilbert action on pure vectors](hilbert-operator-adjoint-pure.md)
+- [Norm bound for the first-factor action](hilbert-operator-norm-le.md)
+- [Commutation of the Hilbert and coefficient factors](hilbert-operator-commutes-coefficient-op.md)

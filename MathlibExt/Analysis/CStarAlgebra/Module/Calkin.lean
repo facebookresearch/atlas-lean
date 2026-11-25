@@ -15,17 +15,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Compact
 public import MathlibExt.Analysis.CStarAlgebra.Module.Unitary
 
 /-!
-# Calkin algebra of a right C-star module
+# Calkin algebras of right C-star modules
 
-For a complete right Hilbert `B`-module `E`, the module Calkin algebra is the
-quotient of the adjointable endomorphism C-star algebra by its genuine closed
-two-sided ideal of module-compact endomorphisms.
+For a complete right module `E` over a nonunital C-star algebra `B` with star-compatible
+coefficient order, its Calkin algebra is `End_B(E) / K_B(E)`. Here `K_B(E)` is the norm-closed
+span of the module rank-one maps `z ↦ x <• ⟨y,z⟩_B`. The quotient has its quotient C-star norm
+and the identity class of the adjointable endomorphism algebra.
 
-This file is a thin named interface over the existing closed-star-ideal
-quotient. It supplies the explicit unital C-star dictionary, canonical class
-map, zero/compact characteristic, and descent of unitary conjugation. It does
-not identify module compactness with Banach-space compactness and assumes no
-countable generation, fullness, separability, or sigma-unitality.
+The quotient map sends `T` to `[T]`; `[T] = 0` exactly when `T ∈ K_B(E)`. A unitary `U : E ≃ F`
+transports quotient classes by `[T] ↦ [U T U*]`, giving a star-algebra equivalence of the two
+Calkin algebras. Inverse, identity and composition laws hold on all classes.
 -/
 
 @[expose] public section
@@ -55,8 +54,9 @@ variable {G : Type uG}
 variable [NormedAddCommGroup G] [NormedSpace ℂ G] [SMul Bᵐᵒᵖ G]
   [CStarModule Bᵐᵒᵖ G] [CompleteSpace G]
 
-/-- The Calkin carrier of a complete right C-star module: adjointable
-endomorphisms modulo the closed ideal of module-compact endomorphisms. -/
+/-- **Calkin algebra of a Hilbert module.** For a complete right C-star module `E` over nonunital
+`B`, this is `End_B(E) / K_B(E)`, the quotient by the closed ideal of module-compact
+endomorphisms. -/
 abbrev Calkin (B : Type uB) (E : Type uE)
     [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
     [StarOrderedRing Bᵐᵒᵖ]
@@ -66,15 +66,15 @@ abbrev Calkin (B : Type uB) (E : Type uE)
 
 namespace Calkin
 
-/-- The explicit unital C-star structure on the module Calkin carrier. It is
-not installed as a global instance. -/
+/-- **C-star structure on the module Calkin algebra.** The quotient `End_B(E) / K_B(E)` carries
+its unital C-star algebra structure with the quotient norm. -/
 @[instance_reducible]
 noncomputable def cStarAlgebra :
     CStarAlgebra (Calkin B E) :=
   (compactClosedStarIdeal (B := B) (E := E)).unitalQuotientCStarAlgebra
 
-/-- The canonical unital star-algebra class map from adjointable
-endomorphisms to the module Calkin algebra. -/
+/-- **Calkin quotient homomorphism.** For a complete right module, the unital star-algebra map
+`End_B(E) → Calkin B E` sends `T` to its compact-ideal class `[T]`. -/
 noncomputable def classStarAlgHom :
     let _ : CStarAlgebra (Calkin B E) := cStarAlgebra (B := B) (E := E)
     End B E →⋆ₐ[ℂ] Calkin B E := by
@@ -82,14 +82,16 @@ noncomputable def classStarAlgHom :
   let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
   exact I.unitalQuotientMap
 
-/-- The class map is definitionally the existing closed-ideal quotient map. -/
+/-- **Formula for the Calkin class map.** `classStarAlgHom T = compactClosedStarIdeal.quotientMap
+T`, the quotient class of the adjointable endomorphism `T`. -/
 theorem classStarAlgHom_apply (T : End B E) :
     let _ : CStarAlgebra (Calkin B E) := cStarAlgebra (B := B) (E := E)
     classStarAlgHom (B := B) (E := E) T =
       (compactClosedStarIdeal (B := B) (E := E)).quotientMap T := by
   rfl
 
-/-- Every module-Calkin class has an adjointable representative. -/
+/-- **Adjointable representatives of Calkin classes.** Every class in `Calkin B E` has a
+representative `T : End_B(E)` under the compact-ideal quotient map. -/
 theorem classStarAlgHom_surjective :
     let _ : CStarAlgebra (Calkin B E) := cStarAlgebra (B := B) (E := E)
     Function.Surjective (classStarAlgHom (B := B) (E := E)) := by
@@ -98,8 +100,8 @@ theorem classStarAlgHom_surjective :
   change Function.Surjective I.unitalQuotientMap
   exact I.unitalQuotientMap_surjective
 
-/-- An adjointable endomorphism has zero Calkin class exactly when it is
-module-compact. This is module compactness, not Banach compactness. -/
+/-- **Zero Calkin class and module compactness.** For `T : End_B(E)`, `classStarAlgHom T = 0` if
+and only if `T` lies in the module compact submodule `K_B(E)`. -/
 @[simp]
 theorem classStarAlgHom_eq_zero_iff (T : End B E) :
     let _ : CStarAlgebra (Calkin B E) := cStarAlgebra (B := B) (E := E)
@@ -119,8 +121,8 @@ theorem classStarAlgHom_eq_zero_iff (T : End B E) :
     change T ∈ compactSubmodule (B := B) (E := E) (F := E)
     exact h
 
-/-- Two adjointable endomorphisms define the same Calkin class exactly when
-their difference is module-compact. -/
+/-- **Equality of Calkin classes.** Adjointable endomorphisms `S,T` define the same class if and
+only if `S - T ∈ K_B(E)`. -/
 @[simp]
 theorem classStarAlgHom_eq_iff (S T : End B E) :
     let _ : CStarAlgebra (Calkin B E) := cStarAlgebra (B := B) (E := E)
@@ -139,8 +141,8 @@ theorem classStarAlgHom_eq_iff (S T : End B E) :
     exact sub_eq_zero.mp hz
 
 omit [StarOrderedRing Bᵐᵒᵖ] [CompleteSpace E] [CompleteSpace F] in
-/-- Conjugation by a Hilbert-module unitary sends module-compact
-endomorphisms to module-compact endomorphisms. -/
+/-- **Unitary invariance of module compactness.** For a unitary `U : E ≃ F`, `T ∈ K_B(E)` implies
+`U T U* ∈ K_B(F)`. -/
 theorem conjStarAlgHom_mem_compact
     (U : CStarModule.UnitaryEquiv B E F) {T : End B E}
     (hT : T ∈ compactSubmodule (B := B) (E := E) (F := E)) :
@@ -157,8 +159,8 @@ theorem conjStarAlgHom_mem_compact
   exact comp_mem_compact_right U.toAdjointable
     (comp_mem_compact_left hT U.toAdjointable.adjointOperator)
 
-/-- Unitary conjugation maps the compact closed ideal into the target compact
-closed ideal. -/
+/-- **Transport of the compact ideal.** Unitary conjugation `T ↦ U T U*` maps the compact closed
+star ideal of `E` into that of `F`. -/
 theorem conjStarAlgHom_mapsTo_compactClosedStarIdeal
     (U : CStarModule.UnitaryEquiv B E F) :
     Set.MapsTo U.conjStarAlgHom
@@ -170,7 +172,8 @@ theorem conjStarAlgHom_mapsTo_compactClosedStarIdeal
     compactSubmodule (B := B) (E := F) (F := F)
   exact conjStarAlgHom_mem_compact U hT
 
-/-- The map of module Calkin algebras induced by unitary conjugation. -/
+/-- **Unitary transport of Calkin classes.** A unitary `U : E ≃ F` induces the star-algebra map
+`Calkin B E → Calkin B F` given by `[T] ↦ [U T U*]`. -/
 noncomputable def mapUnitary (U : CStarModule.UnitaryEquiv B E F) :
     let _ : CStarAlgebra (Calkin B E) := cStarAlgebra (B := B) (E := E)
     let _ : CStarAlgebra (Calkin B F) := cStarAlgebra (B := B) (E := F)
@@ -191,8 +194,8 @@ noncomputable def mapUnitary (U : CStarModule.UnitaryEquiv B E F) :
   exact NonUnitalStarSubalgebra.Quotient.map IE.carrier IF.carrier
     U.conjStarAlgHom.toNonUnitalStarAlgHom hmap
 
-/-- Unitary conjugation on Calkin algebras intertwines the two canonical class
-maps. -/
+/-- **Unitary transport and quotient representatives.** `mapUnitary U (classStarAlgHom T) =
+classStarAlgHom (U.conjStarAlgHom T)`, so the image of `[T]` is `[U T U*]`. -/
 @[simp]
 theorem mapUnitary_classStarAlgHom_apply
     (U : CStarModule.UnitaryEquiv B E F) (T : End B E) :
@@ -219,8 +222,8 @@ theorem mapUnitary_classStarAlgHom_apply
   exact NonUnitalStarSubalgebra.Quotient.map_mk IE.carrier IF.carrier
     U.conjStarAlgHom.toNonUnitalStarAlgHom hmap T
 
-/-- Unitary conjugation induces a genuine star-algebra equivalence of module
-Calkin algebras. -/
+/-- **Unitary equivalence of Calkin algebras.** A unitary `U : E ≃ F` gives a star-algebra
+equivalence of the compact-ideal quotients, acting as `[T] ↦ [U T U*]`. -/
 noncomputable def equivUnitary (U : CStarModule.UnitaryEquiv B E F) :
     let _ : CStarAlgebra (Calkin B E) := cStarAlgebra (B := B) (E := E)
     let _ : CStarAlgebra (Calkin B F) := cStarAlgebra (B := B) (E := F)
@@ -261,8 +264,8 @@ noncomputable def equivUnitary (U : CStarModule.UnitaryEquiv B E F) :
       hsymm, U.apply_symm_apply]
   exact StarAlgEquiv.ofBijective f ⟨hleft.injective, hright.surjective⟩
 
-/-- The unitary-induced equivalence acts on represented classes by
-conjugating their representatives. -/
+/-- **Action of the unitary-induced Calkin equivalence.** `equivUnitary U (classStarAlgHom T) =
+classStarAlgHom (U.conjStarAlgHom T)` for each adjointable `T`. -/
 @[simp]
 theorem equivUnitary_classStarAlgHom_apply
     (U : CStarModule.UnitaryEquiv B E F) (T : End B E) :
@@ -272,8 +275,8 @@ theorem equivUnitary_classStarAlgHom_apply
       classStarAlgHom (B := B) (E := F) (U.conjStarAlgHom T) := by
   exact mapUnitary_classStarAlgHom_apply U T
 
-/-- The inverse of unitary transport is transport by the inverse module
-unitary, on every Calkin class. -/
+/-- **Inverse unitary transport on Calkin algebras.** `(equivUnitary U).symm q = equivUnitary
+U.symm q` for every class `q : Calkin B F`. -/
 @[simp]
 theorem equivUnitary_symm_apply
     (U : CStarModule.UnitaryEquiv B E F) (q : Calkin B F) :
@@ -296,7 +299,8 @@ theorem equivUnitary_symm_apply
   simp only [CStarModule.UnitaryEquiv.conjStarAlgHom_apply,
     hsymm, U.apply_symm_apply]
 
-/-- The identity unitary induces the identity map on module Calkin classes. -/
+/-- **Identity unitary on Calkin classes.** The equivalence induced by the identity unitary fixes
+every class: `equivUnitary (UnitaryEquiv.refl) q = q`. -/
 @[simp]
 theorem equivUnitary_refl_apply (q : Calkin B E) :
     let _ : CStarAlgebra (Calkin B E) := cStarAlgebra (B := B) (E := E)
@@ -311,8 +315,8 @@ theorem equivUnitary_refl_apply (q : Calkin B E) :
   rw [CStarModule.UnitaryEquiv.conjStarAlgHom_apply]
   rfl
 
-/-- Composition of unitary module equivalences induces composition on module
-Calkin classes. -/
+/-- **Composition of Calkin unitary transport.** For `U : E ≃ F` and `V : F ≃ G`, `equivUnitary
+(U.trans V) q = equivUnitary V (equivUnitary U q)`. -/
 theorem equivUnitary_trans_apply
     (U : CStarModule.UnitaryEquiv B E F)
     (V : CStarModule.UnitaryEquiv B F G) (q : Calkin B E) :

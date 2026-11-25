@@ -1,3 +1,4 @@
-# To Monoid Algebra Equiv
+# Equivalence with monoid-algebra coefficient functions
 
-The transparent carrier equivalence with Mathlib's monoid algebra.
+For any type G, toMonoidAlgebraEquiv G identifies ComplexGroupAlgebra G with MonoidAlgebra ℂ
+G, the finitely supported complex coefficient functions on G.

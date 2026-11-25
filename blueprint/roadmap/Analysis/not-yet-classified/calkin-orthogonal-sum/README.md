@@ -1,12 +1,12 @@
-# Calkin Orthogonal Sum
+# Orthogonal block sums modulo compacts
 
-## Orthogonal Sum
+## Orthogonal sums of operators
 
-- [Is Compact Operator block Diagonal](is-compact-operator-block-diagonal.md)
+- [Compact rectangular block diagonal](is-compact-operator-block-diagonal.md)
 
-## Calkin Algebra
+## Calkin algebras
 
-- [Block Diagonal Star Alg Hom](block-diagonal-star-alg-hom.md)
-- [Block Diagonal Star Alg Hom apply](block-diagonal-star-alg-hom-apply.md)
-- [Block Diagonal Star Alg Hom mk](block-diagonal-star-alg-hom-mk.md)
-- [Block Diagonal Star Alg Hom comp class Maps](block-diagonal-star-alg-hom-comp-class-m.md)
+- [Star homomorphism of orthogonal Calkin sums](block-diagonal-star-alg-hom.md)
+- [Diagonal Calkin map on operator classes](block-diagonal-star-alg-hom-apply.md)
+- [Diagonal map on quotient representatives](block-diagonal-star-alg-hom-mk.md)
+- [Diagonal map and the class projections](block-diagonal-star-alg-hom-comp-class-m.md)

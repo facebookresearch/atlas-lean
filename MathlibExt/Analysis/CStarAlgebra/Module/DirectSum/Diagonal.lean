@@ -18,16 +18,16 @@ public import Mathlib.Analysis.Normed.Operator.ContinuousLinearMap
 import MathlibExt.Analysis.CStarAlgebra.Module.DirectSum.AlgebraicDiagonal.Bounded
 
 /-!
-# Bounded rectangular diagonals on actual completed module sums
+# Uniformly bounded diagonals on completed module sums
 
-The given rectangular family and its given adjoints first form one genuine
-adjointable operator on the literal finite-support sums. Uniform bounds provide
-continuity proofs only. The completed diagonal is then the stock completion of
-that algebraic adjointable operator.
+For adjointable maps `T_i : E_i → F_i` of right pre-Hilbert modules, assume there is `c ≥ 0`
+with `‖T_i‖ ≤ c` for every index. The coordinate map `(D_T x)_i = T_i x_i` on finite-support
+sums extends to an adjointable map between their completed sums. Its adjoint has components
+`T_i*`.
 
-Original components may be incomplete and the index arbitrary or empty. The
-norms and completed C-star-module structures are exactly the existing ones.
-No alternate model, global dictionary or numeric operator choice is added.
+The formulas on finite-support images and component inclusions are preserved by completion.
+Every nonnegative uniform component bound `c` satisfies `‖D_T‖ ≤ c`. The fibers may be
+incomplete and the index type arbitrary or empty.
 -/
 
 public section
@@ -51,8 +51,9 @@ variable [∀ i, NormedAddCommGroup (E i)] [∀ i, NormedSpace ℂ (E i)]
 variable [∀ i, NormedAddCommGroup (F i)] [∀ i, NormedSpace ℂ (F i)]
   [∀ i, SMul Bᵐᵒᵖ (F i)] [∀ i, CStarModule Bᵐᵒᵖ (F i)]
 
-/-- The actual completed diagonal of a given uniformly bounded rectangular
-family. Bound witnesses occur only in continuity proofs, not operator values. -/
+/-- **Completed diagonal of a uniformly bounded family.** If `T_i : E_i → F_i` are adjointable and
+admit one nonnegative common norm bound, their finite-support coordinate map extends to an
+adjointable `Completed B E → Completed B F`. -/
 @[expose]
 def completedDiagonal
     (T : ∀ i, AdjointableOperator B (E i) (F i))
@@ -84,7 +85,8 @@ def completedDiagonal
     AdjointableOperator.ofAdjointPair f0 g0 hPair
   exact AdjointableOperator.completion algebraicOperator
 
-/-- Every canonical algebraic image keeps the literal forward value. -/
+/-- **Completed diagonal on finite-support images.** `completedDiagonal T hBound (x : Completed B
+E) = (algebraicDiagonal T x : Completed B F)` for every algebraic vector `x`. -/
 theorem completedDiagonal_apply_coe
     (T : ∀ i, AdjointableOperator B (E i) (F i))
     (hBound : ∃ c : ℝ, 0 ≤ c ∧ ∀ i, ‖T i‖ ≤ c) (x : Algebraic B E) :
@@ -94,7 +96,8 @@ theorem completedDiagonal_apply_coe
     AdjointableOperator.ofAdjointPair_apply,
     LinearMap.mkContinuousOfExistsBound_apply]
 
-/-- Every canonical algebraic image keeps the given adjoint family's value. -/
+/-- **Adjoint diagonal on finite-support images.** The adjoint of the completed diagonal sends the
+completed image of `y` to the image of `algebraicDiagonal (fun i => (T i).adjointOperator) y`. -/
 theorem completedDiagonal_adjoint_apply_coe
     (T : ∀ i, AdjointableOperator B (E i) (F i))
     (hBound : ∃ c : ℝ, 0 ≤ c ∧ ∀ i, ‖T i‖ ≤ c) (y : Algebraic B F) :
@@ -105,7 +108,8 @@ theorem completedDiagonal_adjoint_apply_coe
     AdjointableOperator.ofAdjointPair_adjoint,
     LinearMap.mkContinuousOfExistsBound_apply]
 
-/-- The forward map acts on a coordinate inclusion by its given component. -/
+/-- **Completed diagonal on a component inclusion.** `D_T (completedSingle i x) = completedSingle
+i (T_i x)` in the target completed sum. -/
 theorem completedDiagonal_apply_completedSingle
     (T : ∀ i, AdjointableOperator B (E i) (F i))
     (hBound : ∃ c : ℝ, 0 ≤ c ∧ ∀ i, ‖T i‖ ≤ c) (i : I) (x : E i) :
@@ -115,7 +119,8 @@ theorem completedDiagonal_apply_completedSingle
     single_apply_eq_singleLinear, algebraicDiagonal_singleLinear,
     completedSingle_apply, single_apply_eq_singleLinear]
 
-/-- The stored adjoint acts on a coordinate by the GIVEN component adjoint. -/
+/-- **Adjoint diagonal on a component inclusion.** `D_T* (completedSingle i y) = completedSingle i
+(T_i* y)` in the source completed sum. -/
 theorem completedDiagonal_adjoint_apply_completedSingle
     (T : ∀ i, AdjointableOperator B (E i) (F i))
     (hBound : ∃ c : ℝ, 0 ≤ c ∧ ∀ i, ‖T i‖ ≤ c) (i : I) (y : F i) :
@@ -139,8 +144,9 @@ private theorem completedDiagonal_norm_apply_le
     UniformSpace.Completion.norm_coe]
   exact algebraicDiagonal_norm_le T c hc hT a
 
-/-- EVERY legitimate nonnegative component bound bounds the completed operator,
-not merely one witness used internally to justify continuity. -/
+/-- **Every common bound controls the completed diagonal.** If `c ≥ 0` and `‖T_i‖ ≤ c` for all
+indices, then `‖completedDiagonal T hBound‖ ≤ c`, independently of the particular existence
+witness `hBound`. -/
 theorem completedDiagonal_norm_le
     (T : ∀ i, AdjointableOperator B (E i) (F i))
     (hBound : ∃ c : ℝ, 0 ≤ c ∧ ∀ i, ‖T i‖ ≤ c)

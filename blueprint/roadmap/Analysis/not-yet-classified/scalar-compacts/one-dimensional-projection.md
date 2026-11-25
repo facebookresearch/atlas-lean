@@ -1,3 +1,4 @@
-# One Dimensional Projection
+# One-dimensional compact star projection
 
-A literal one-dimensional compact star projection on the original Hilbert space.
+This record contains a compact operator `p` on
+`lp(ℕ,ℂ,2)` satisfying `p²=p`, `p*=p`, and `finrank ℂ (range p)=1`.

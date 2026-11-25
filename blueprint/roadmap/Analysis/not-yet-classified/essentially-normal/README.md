@@ -1,9 +1,9 @@
-# Essentially Normal
+# Essential normality and scalar Fredholm resolvents
 
-- [Is Essentially Normal](is-essentially-normal.md)
-- [Is Essentially Normal iff is Compact Operator commutator](is-essentially-normal-iff-is-compact-ope.md)
-- [Essential Spectrum eq spectrum class Star Map](essential-spectrum-eq-spectrum-class-sta.md)
-- [Is Essentially Normal add compact iff](is-essentially-normal-add-compact-iff.md)
-- [Is Essentially Normal sub compact iff](is-essentially-normal-sub-compact-iff.md)
-- [Not Mem essential Spectrum iff is Fredholm](not-mem-essential-spectrum-iff-is-fredho.md)
-- [Is Fredholm of not Mem essential Spectrum](is-fredholm-of-not-mem-essential-spectru.md)
+- [Essential normality of a Hilbert operator](is-essentially-normal.md)
+- [Compact commutator criterion for essential normality](is-essentially-normal-iff-is-compact-ope.md)
+- [Calkin spectrum of a Hilbert operator](essential-spectrum-eq-spectrum-class-sta.md)
+- [Essential normality under compact addition](is-essentially-normal-add-compact-iff.md)
+- [Essential normality under compact subtraction](is-essentially-normal-sub-compact-iff.md)
+- [Fredholm criterion for a scalar resolvent](not-mem-essential-spectrum-iff-is-fredho.md)
+- [Fredholm operator outside the essential spectrum](is-fredholm-of-not-mem-essential-spectru.md)

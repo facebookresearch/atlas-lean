@@ -1,3 +1,3 @@
-# Star cut Projection
+# Self-adjoint coordinate cut
 
-The cut is self-adjoint on the actual completed sum.
+`star (cutProjection s) = cutProjection s`.

@@ -1,3 +1,3 @@
-# C0 Left Translation Equiv one
+# Identity left translation
 
-The actual identity translation is the original identity automorphism.
+Translation by the group identity is the identity star-algebra automorphism of C₀(G,ℂ).

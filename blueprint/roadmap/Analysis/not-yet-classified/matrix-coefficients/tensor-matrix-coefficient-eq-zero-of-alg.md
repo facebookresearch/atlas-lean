@@ -1,3 +1,4 @@
-# Tensor Matrix Coefficient eq zero of algebraic Tensor Operator eq zero
+# Matrix entries of a zero tensor action
 
-A zero original algebraic operator action forces every actual tensor matrix entry to vanish.
+If `algebraicTensorOperator H A z = 0`, then
+`tensorMatrixCoefficient H A ξ η z = 0` for every `ξ,η : H`.

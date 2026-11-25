@@ -1,3 +1,4 @@
-# Scalar Hilbert infinite
+# Infinite dimension of the scalar Hilbert sum
 
-The actual infinite coordinate family rules out finite dimension of the original scalar sum.
+`lp(ULift ℕ,ℂ,2)` is not finite-dimensional
+over `ℂ`, as its infinitely many coordinate vectors are linearly independent.

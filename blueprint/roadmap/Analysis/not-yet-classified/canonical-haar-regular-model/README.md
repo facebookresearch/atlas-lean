@@ -1,10 +1,10 @@
-# Canonical Haar Regular Model
+# Canonical Haar regular covariant representation
 
-- [Canonical Coefficient Space](canonical-coefficient-space.md)
-- [Canonical Coefficient Representation](canonical-coefficient-representation.md)
-- [Canonical Coefficient Representation injective](canonical-coefficient-representation-inj.md)
-- [Norm canonical Coefficient Representation](norm-canonical-coefficient-representatio.md)
-- [Canonical Regular Space](canonical-regular-space.md)
-- [Canonical Regular Covariant Representation](canonical-regular-covariant-representati.md)
-- [Canonical Regular Coefficient ae eq](canonical-regular-coefficient-ae-eq.md)
-- [Canonical Regular Group ae eq](canonical-regular-group-ae-eq.md)
+- [Canonical Hilbert space for a C-star algebra](canonical-coefficient-space.md)
+- [Canonical faithful coefficient representation](canonical-coefficient-representation.md)
+- [Faithfulness of the canonical coefficient representation](canonical-coefficient-representation-inj.md)
+- [Norm preservation of the canonical coefficient representation](norm-canonical-coefficient-representatio.md)
+- [Hilbert space of the canonical Haar regular representation](canonical-regular-space.md)
+- [Canonical regular covariant pair](canonical-regular-covariant-representati.md)
+- [Canonical regular coefficient action almost everywhere](canonical-regular-coefficient-ae-eq.md)
+- [Canonical regular group action almost everywhere](canonical-regular-group-ae-eq.md)

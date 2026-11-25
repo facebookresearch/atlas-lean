@@ -1,3 +1,4 @@
-# Single Adjointable apply
+# Value of adjointable coefficient insertion
 
-The adjointable insertion has the original pointwise value.
+For a nonunital complex C-star algebra `B` and
+arbitrary index type `I`, `singleAdjointable i a = single i a` for every coefficient `a : B`.

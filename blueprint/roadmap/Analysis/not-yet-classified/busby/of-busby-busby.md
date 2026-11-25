@@ -1,4 +1,4 @@
-# Of Busby busby
+# Busby invariant of a pullback extension
 
-The Busby invariant of the pullback extension is the original map:
-`ofBusby` is the converse of `busby`.
+`(ofBusby τ).busby = τ` for every homomorphism `τ
+: A → Q(B)`.

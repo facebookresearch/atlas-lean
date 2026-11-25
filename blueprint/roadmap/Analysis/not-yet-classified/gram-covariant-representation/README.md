@@ -1,12 +1,12 @@
-# Gram Covariant Representation
+# Strongly continuous Gram covariant representation
 
-- [Dist gram Group Operator generator le](dist-gram-group-operator-generator-le.md)
-- [Gram Group Operator generator continuous At one](gram-group-operator-generator-continuous.md)
-- [Gram Group Operator span continuous At one](gram-group-operator-span-continuous-at-o.md)
-- [Gram Group Operator continuous At one](gram-group-operator-continuous-at-one.md)
-- [Gram Group Operator continuous](gram-group-operator-continuous.md)
-- [Gram Strongly Continuous Unitary Representation](gram-strongly-continuous-unitary-represe.md)
-- [Gram Strongly Continuous Unitary Representation apply coe](gram-strongly-continuous-unitary-represe-2.md)
-- [Gram Covariant Representation](gram-covariant-representation.md)
-- [Gram Covariant Representation algebra](gram-covariant-representation-algebra.md)
-- [Gram Covariant Representation group](gram-covariant-representation-group.md)
+- [L¹ bound for a Gram generator orbit difference](dist-gram-group-operator-generator-le.md)
+- [Continuity at the identity of a Gram generator orbit](gram-group-operator-generator-continuous.md)
+- [Continuity at the identity on the dense Gram span](gram-group-operator-span-continuous-at-o.md)
+- [Continuity at the identity of every Gram group orbit](gram-group-operator-continuous-at-one.md)
+- [Continuity of every Gram group orbit](gram-group-operator-continuous.md)
+- [Strongly continuous unitary Gram group representation](gram-strongly-continuous-unitary-represe.md)
+- [Operator underlying the Gram unitary representation](gram-strongly-continuous-unitary-represe-2.md)
+- [Covariant representation on the essential Gram Hilbert space](gram-covariant-representation.md)
+- [Coefficient map of the Gram covariant representation](gram-covariant-representation-algebra.md)
+- [Group map of the Gram covariant representation](gram-covariant-representation-group.md)

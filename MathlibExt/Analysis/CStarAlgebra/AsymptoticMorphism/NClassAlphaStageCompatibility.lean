@@ -14,15 +14,17 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.NClassFunctoriality
 
 /-!
-# Naturality and stage compatibility of literal alpha-next classes
+# Naturality of the asymptotic next-stage class map
 
-The unambiguous alpha-next map is natural under source precomposition and
-coefficient postcomposition. Precomposing it by the constant-class inclusion
-of the source recovers the ordinary one-step stage transition.
-
-This is finite-stage class data only. It does not construct the disputed
-printed target, a path/alpha comparison, a direct-limit map, a class product,
-flattening, or an E-theory operation.
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For a representative φ:A→αⁿB, let a_n(φ)=αφ:αA→α(αⁿB)=αⁿ⁺¹B. It induces
+a_n:Q_n(A,B)→Q_(n+1)(αA,B), called alphaNextClass. For nonunital complex star homomorphisms
+u:A′→A and g:B→C between nonunital complex C-star algebras, this map commutes with source
+precomposition by αu and coefficient postcomposition by αⁿ⁺¹g. Restricting its source along
+c_A:A→αA, a↦[t↦a], recovers the constant-class successor transition Q_n(A,B)→Q_(n+1)(A,B).
 -/
 
 @[expose] public section
@@ -40,9 +42,28 @@ namespace IteratedAsymptoticAlgebra
 
 universe uA uA' uB uC
 
-/-! ## Naturality in the source -/
+/-!
+## Naturality in the source algebra
 
-/-- Applying literal alpha commutes with source precomposition. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For a representative φ:A→αⁿB, let a_n(φ)=αφ:αA→α(αⁿB)=αⁿ⁺¹B. It induces
+a_n:Q_n(A,B)→Q_(n+1)(αA,B), called alphaNextClass. For u:A′→A, the next-stage map sends [φ∘u]
+to [αφ∘αu].
+-/
+
+/-- **Source precomposition and the next-stage representative.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For a representative φ:A→αⁿB, let a_n(φ)=αφ:αA→α(αⁿB)=αⁿ⁺¹B. It induces
+a_n:Q_n(A,B)→Q_(n+1)(αA,B), called alphaNextClass. For a star homomorphism u:A′→A from a
+nonunital complex C-star algebra, a_n(φ∘u)=a_n(φ)∘αu.
+-/
 theorem alphaNextRepresentative_precomp (n : ℕ)
     {A : Type uA} {A' : Type uA'} {B : Type uB}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra A']
@@ -64,7 +85,17 @@ theorem alphaNextRepresentative_precomp (n : ℕ)
     alphaNextRepresentative_eq, alphaRepresentative_eq]
   exact DFunLike.congr_fun (AsymptoticAlgebra.map_comp u phi) x
 
-/-- Source naturality descends to literal finite-stage homotopy classes. -/
+/-- **Source naturality of the next-stage class map.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For a representative φ:A→αⁿB, let a_n(φ)=αφ:αA→α(αⁿB)=αⁿ⁺¹B. It induces
+a_n:Q_n(A,B)→Q_(n+1)(αA,B), called alphaNextClass. For a star homomorphism u:A′→A from a
+nonunital complex C-star algebra and q∈Q_n(A,B), alphaNextClass(precompClass n u
+q)=precompClass(n+1)(αu)(alphaNextClass q), with target Q_(n+1)(αA′,B).
+-/
 theorem alphaNextClass_precomp (n : ℕ)
     {A : Type uA} {A' : Type uA'} {B : Type uB}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra A']
@@ -82,9 +113,28 @@ theorem alphaNextClass_precomp (n : ℕ)
     alphaNextClass_classOf, precompClass_classOf,
     alphaNextRepresentative_precomp]
 
-/-! ## Naturality in the coefficient -/
+/-!
+## Naturality in the coefficient algebra
 
-/-- Applying literal alpha commutes with coefficient postcomposition. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For a representative φ:A→αⁿB, let a_n(φ)=αφ:αA→α(αⁿB)=αⁿ⁺¹B. It induces
+a_n:Q_n(A,B)→Q_(n+1)(αA,B), called alphaNextClass. For a star homomorphism g:B→C, applying α
+to αⁿg∘φ gives αⁿ⁺¹g∘αφ.
+-/
+
+/-- **Coefficient postcomposition and the next-stage representative.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For a representative φ:A→αⁿB, let a_n(φ)=αφ:αA→α(αⁿB)=αⁿ⁺¹B. It induces
+a_n:Q_n(A,B)→Q_(n+1)(αA,B), called alphaNextClass. For a star homomorphism g:B→C into a
+nonunital complex C-star algebra, a_n(αⁿg∘φ)=αⁿ⁺¹g∘a_n(φ).
+-/
 theorem alphaNextRepresentative_postcomp (n : ℕ)
     {A : Type uA} {B : Type uB} {C : Type uC}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -108,7 +158,17 @@ theorem alphaNextRepresentative_postcomp (n : ℕ)
   exact DFunLike.congr_fun
     (AsymptoticAlgebra.map_comp phi (map n g)) x
 
-/-- Coefficient naturality descends to literal finite-stage homotopy classes. -/
+/-- **Coefficient naturality of the next-stage class map.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For a representative φ:A→αⁿB, let a_n(φ)=αφ:αA→α(αⁿB)=αⁿ⁺¹B. It induces
+a_n:Q_n(A,B)→Q_(n+1)(αA,B), called alphaNextClass. For a star homomorphism g:B→C into a
+nonunital complex C-star algebra and q∈Q_n(A,B), alphaNextClass(postcompClass n g
+q)=postcompClass(n+1) g (alphaNextClass q), with target Q_(n+1)(αA,C).
+-/
 theorem alphaNextClass_postcomp (n : ℕ)
     {A : Type uA} {B : Type uB} {C : Type uC}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -126,10 +186,28 @@ theorem alphaNextClass_postcomp (n : ℕ)
     alphaNextClass_classOf, postcompClass_classOf,
     alphaNextRepresentative_postcomp]
 
-/-! ## Compatibility with the ordinary stage transition -/
+/-!
+## Restriction along constant source classes
 
-/-- Restricting literal alpha along the source constant-class inclusion is the
-ordinary one-step representative transition. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For a representative φ:A→αⁿB, let a_n(φ)=αφ:αA→α(αⁿB)=αⁿ⁺¹B. It induces
+a_n:Q_n(A,B)→Q_(n+1)(αA,B), called alphaNextClass. For c_A(a)=[t↦a], the restriction αφ∘c_A is
+c_(αⁿB)∘φ, the successor-stage representative.
+-/
+
+/-- **Next-stage representative restricted to constant source classes.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For a representative φ:A→αⁿB, let a_n(φ)=αφ:αA→α(αⁿB)=αⁿ⁺¹B. It induces
+a_n:Q_n(A,B)→Q_(n+1)(αA,B), called alphaNextClass. With c_X(x)=[t↦x]∈αX,
+a_n(φ)∘c_A=stageTransitionRepresentative n φ=c_(αⁿB)∘φ.
+-/
 theorem alphaNextRepresentative_precomp_constantHom (n : ℕ)
     {A : Type uA} {B : Type uB}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -146,9 +224,16 @@ theorem alphaNextRepresentative_precomp_constantHom (n : ℕ)
   exact DFunLike.congr_fun
     (AsymptoticAlgebra.map_comp_constantHom phi) a
 
-/-- The alpha-next class map restricts along source constants to the ordinary
-one-step stage transition. This is the true finite-stage compatibility
-triangle; no alpha/path comparison is assumed. -/
+/-- **Next-stage classes recover the successor transition on constants.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, set αX=C_b([1,∞),X)/C₀([1,∞),X), α⁰X=X and αⁿ⁺¹X=α(αⁿX), with the
+quotient C-star norms. Write Q_n(A,B)=NClasses n A B for star homomorphisms A→αⁿB modulo
+homotopies F:A→αⁿ(C([0,1],B)) whose iterated endpoint evaluations are the two representatives.
+For a representative φ:A→αⁿB, let a_n(φ)=αφ:αA→α(αⁿB)=αⁿ⁺¹B. It induces
+a_n:Q_n(A,B)→Q_(n+1)(αA,B), called alphaNextClass. For c_A:A→αA, precompClass(n+1)
+c_A∘alphaNextClass n A B=stageTransition n A B, as maps Q_n(A,B)→Q_(n+1)(A,B).
+-/
 theorem precompClass_comp_alphaNextClass (n : ℕ)
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :

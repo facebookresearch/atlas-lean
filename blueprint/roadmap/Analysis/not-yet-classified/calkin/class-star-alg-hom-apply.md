@@ -1,3 +1,4 @@
-# Class Star Alg Hom apply
+# Formula for the Calkin class map
 
-The class map is definitionally the existing closed-ideal quotient map.
+`classStarAlgHom T = compactClosedStarIdeal.quotientMap
+T`, the quotient class of the adjointable endomorphism `T`.

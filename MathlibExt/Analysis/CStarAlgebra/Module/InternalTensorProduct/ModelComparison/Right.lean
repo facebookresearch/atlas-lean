@@ -15,12 +15,18 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.Mode
 public import MathlibExt.Analysis.CStarAlgebra.Module.InternalTensorProduct.MapRight.Completion
 
 /-!
-# Commuting right-factor operators on supplied internal-tensor models
+# Commuting factors on internal tensor presentations
 
-Conjugate the computed canonical right-factor operator by the actual
-canonical-to-model unitary. The model retains its original pure vectors,
-coefficient actions, inner form and dense span. The descended operator uses
-the caller's original opposite orders and independent carrier universes.
+Let `E₁,E₂` be complete right modules over nonunital C-star algebras `B₁,B₂` with
+star-compatible opposite orders, and let `φ : B₁ → End_(B₂)(E₂)` be a complex nonunital star
+homomorphism. Let `X` be a complete right `B₂`-module with a pure map `p : E₁ × E₂ → X`
+satisfying the balanced inner-product and dense-span conditions for `E₁ ⊗_φ E₂`. The comparison
+unitary `U` is characterized by `U(completedPure φ x y) = p(x,y)`.
+
+For an adjointable `S` on `E₂` commuting with the star representation `φ : B₁ → End_(B₂)(E₂)`,
+conjugate the completed operator `I⊗S` through `U`. The resulting adjointable operator on `X` is
+determined by `p(x,y) ↦ p(x,S y)`. The coefficient algebras are nonunital, their opposite orders
+star-compatible, and the component modules complete.
 -/
 
 @[expose] public section
@@ -43,7 +49,11 @@ variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
 variable {X : Type uX} [NormedAddCommGroup X] [NormedSpace ℂ X]
   [SMul B₂ᵐᵒᵖ X] [CStarModule B₂ᵐᵒᵖ X] [CompleteSpace X]
 
-/-- Descend a commuting right-factor operator to the same supplied complete tensor model. -/
+/-- **Right factor on a complete tensor presentation.** Let `E₁,E₂` be complete right C-star
+modules over nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex
+nonunital star representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`. if
+`X,p` satisfy `IsModel φ p`, the comparison unitary `U` gives `U (I⊗S) U*` on `X`,
+characterized by `p(x,y) ↦ p(x,S y)`. -/
 @[no_expose]
 def mapRightOperator
     {φ : B₁ →⋆ₙₐ[ℂ] CStarModule.AdjointableOperator.End B₂ E₂}
@@ -64,7 +74,10 @@ def mapRightOperator
   exact U.conjStarAlgHom
     (CStarModule.InternalTensorProduct.completedRightOperator (E₁ := E₁) φ S hComm)
 
-/-- The descended right-factor operator has the original pure-model value. -/
+/-- **Right factor on pure presentation vectors.** Let `E₁,E₂` be complete right C-star modules
+over nonunital `B₁,B₂` with star-compatible opposite orders, and let the complex nonunital
+star representation `φ : B₁ → End_(B₂)(E₂)` commute with an adjointable `S`. for a complete
+presentation `X,p` with `hX : IsModel φ p`, `mapRightOperator hX S hComm (p x y) = p x (S y)`. -/
 @[simp]
 theorem mapRightOperator_pure
     {φ : B₁ →⋆ₙₐ[ℂ] CStarModule.AdjointableOperator.End B₂ E₂}

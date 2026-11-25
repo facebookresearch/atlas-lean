@@ -1,3 +1,3 @@
-# Time Homeomorph NNReal symm apply
+# Real value of the inverse time translation
 
-The inverse translation has real coordinate `u + 1`.
+For u∈ℝ≥0, the time timeHomeomorphNNReal.symm u∈[1,∞) has real coordinate u+1.

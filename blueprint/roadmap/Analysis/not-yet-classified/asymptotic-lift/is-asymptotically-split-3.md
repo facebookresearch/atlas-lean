@@ -1,4 +1,5 @@
-# Is Asymptotically Split
+# Unitary invariance of asymptotic splitting
 
-Conjugating by an actual multiplier unitary preserves the exact lift.
-The family is postcomposed only by the genuine inner star automorphism.
+If `τ₂(a) = q(u) τ₁(a) q(u)*` for one
+multiplier unitary `u` and `τ₁` is asymptotically split, conjugating its lift by `u` gives an
+exact lift of `τ₂`.

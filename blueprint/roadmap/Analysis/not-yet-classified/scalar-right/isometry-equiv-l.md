@@ -1,3 +1,4 @@
-# Isometry equiv L
+# Isometry of the scalar-module identification
 
-The fixed metric makes the canonical equivalence an isometry.
+For a complex normed space `H`, `equivL H`
+preserves distances for `instNormedAddCommGroup H`.

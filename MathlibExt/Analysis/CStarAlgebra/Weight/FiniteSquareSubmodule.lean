@@ -17,18 +17,15 @@ public import Mathlib.Algebra.Star.NonUnitalSubalgebra
 public import Mathlib.Tactic.Abel
 
 /-!
-# The actual finite-square linear domain and original two-square star algebra
+# Finite weight domains as complex modules and star algebras
 
-A global extended positive weight determines the literal set of x for which
-its value on x*x is finite. Additivity, finite positive homogeneity and
-C-star positivity make that same set a complex submodule and a left ideal.
-The left multiplication maps below have their original algebra values.
+For a nonunital complex C-star algebra `A` and an extended positive weight `φ`, the set `n_φ =
+{x : φ(x* x) < ∞}` is a complex submodule and a left ideal. Positivity gives `(a*x)*(a*x) ≤ ‖a‖²
+• (x* x)` and hence `φ((a*x)*(a*x)) ≤ ‖a‖² φ(x* x)`.
 
-The two-square-finite set likewise supplies an actual complex submodule
-and a nonunital star subalgebra. These are algebraic prerequisites for the
-weight GNS domain and its algebraic core. Only the original ambient norm is
-inherited here; no weight inner product, weight norm, completion, normal
-representation or modular operator is supplied.
+The intersection `n_φ ∩ {x : x* ∈ n_φ}` is a nonunital complex star subalgebra, with the product
+and involution inherited from `A`. These algebraic domains require neither faithfulness nor
+density of the weight. Their subspace norm is the ambient C-star norm.
 -/
 
 @[expose] public section
@@ -48,7 +45,9 @@ variable {A : Type u} [NonUnitalCStarAlgebra A]
 
 attribute [local instance] CStarAlgebra.spectralOrder CStarAlgebra.spectralOrderedRing
 
-/-- Positive additivity makes the actual global weight monotone on the original positive cone. -/
+/-- **Monotonicity of a positive weight.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. for positive `a,b` with `a ≤ b`, `φ(a) ≤ φ(b)`; infinite values are permitted. -/
 theorem Weight.value_mono (φ : Weight A) (a b : PositiveElement A) (hab : (a : A) ≤ (b : A)) :
     φ.value a ≤ φ.value b := by
   let d : PositiveElement A := ⟨(b : A) - (a : A), sub_nonneg.mpr hab⟩
@@ -60,18 +59,24 @@ theorem Weight.value_mono (φ : Weight A) (a b : PositiveElement A) (hab : (a : 
     φ.value a ≤ φ.value a + φ.value d := le_add_of_nonneg_right (show (0 : ℝ≥0∞) ≤ φ.value d from zero_le)
     _ = φ.value b := by rw [← φ.add_value, hsum]
 
-/-- A positive minorant of an actual finite-positive element has finite weight. -/
+/-- **Finite weight of a positive minorant.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. if `0 ≤ a ≤ b` and `φ(b) < ∞`, then `φ(a) < ∞`. -/
 theorem Weight.finite_of_le (φ : Weight A) (a b : PositiveElement A)
     (hab : (a : A) ≤ (b : A)) (hb : φ.value b < ⊤) : φ.value a < ⊤ :=
   lt_of_le_of_lt (φ.value_mono a b hab) hb
 
-/-- Finite nonnegative-real scaling preserves an actual finite-positive weight value. -/
+/-- **Finiteness under nonnegative scalar multiplication.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. if `r : ℝ≥0` is finite and `a ≥ 0` has finite weight, then `φ(r • a)
+< ∞`, including `r=0`. -/
 theorem Weight.finite_positiveSmul (φ : Weight A) (r : ℝ≥0) (a : PositiveElement A)
     (ha : φ.value a < ⊤) : φ.value (positiveSmul r a) < ⊤ := by
   rw [φ.smul_value]
   exact ENNReal.mul_lt_top ENNReal.coe_lt_top ha
 
-/-- Complex scaling of the original square is finite positive scaling by the scalar norm square. -/
+/-- **Adjoint square of a complex multiple.** In a nonunital complex C-star algebra `A`, `(c •
+x)*(c • x) = ‖c‖² • (x* x)` for `c : ℂ` and `x : A`, as an equality of positive elements. -/
 theorem leftSquare_smul (c : ℂ) (x : A) :
     leftSquare (c • x) = positiveSmul ⟨‖c‖ ^ 2, sq_nonneg ‖c‖⟩ (leftSquare x) := by
   apply Subtype.ext
@@ -85,7 +90,10 @@ theorem leftSquare_smul (c : ℂ) (x : A) :
     _ = (‖c‖ ^ 2 : ℝ) • (star x * x) :=
       (RCLike.real_smul_eq_coe_smul (K := ℂ) (‖c‖ ^ 2) (star x * x)).symm
 
-/-- The original finite-square domain is closed under addition, by the positive square bound. -/
+/-- **Addition in the finite square domain.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. if `x,y ∈ n_φ`, then `x+y ∈ n_φ`; the
+positive estimate is `(x+y)*(x+y) ≤ 2 • (x* x+y* y)`. -/
 theorem Weight.add_mem_finiteSquareDomain (φ : Weight A) (x y : A)
     (hx : x ∈ φ.finiteSquareDomain) (hy : y ∈ φ.finiteSquareDomain) :
     x + y ∈ φ.finiteSquareDomain := by
@@ -105,14 +113,18 @@ theorem Weight.add_mem_finiteSquareDomain (φ : Weight A) (x y : A)
   exact φ.finite_of_le (leftSquare (x + y)) (positiveAdd s s) hbound
     ((φ.finite_add_iff s s).2 ⟨hs, hs⟩)
 
-/-- The original finite-square domain is closed under every complex scalar. -/
+/-- **Complex scalars preserve the finite square domain.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. if `x ∈ n_φ` and `c : ℂ`, then
+`c • x ∈ n_φ`. -/
 theorem Weight.smul_mem_finiteSquareDomain (φ : Weight A) (c : ℂ) (x : A)
     (hx : x ∈ φ.finiteSquareDomain) : c • x ∈ φ.finiteSquareDomain := by
   change φ.value (leftSquare (c • x)) < ⊤
   rw [leftSquare_smul]
   exact φ.finite_positiveSmul ⟨‖c‖ ^ 2, sq_nonneg ‖c‖⟩ (leftSquare x) hx
 
-/-- Original left multiplication has the genuine C-star positive square estimate. -/
+/-- **Positive square bound for left multiplication.** For `a,x` in a nonunital complex C-star
+algebra with its spectral order, `(a*x)*(a*x) ≤ ‖a‖² • (x* x)`. -/
 theorem leftSquare_mul_le (a x : A) :
     (leftSquare (a * x) : A) ≤
       (positiveSmul ⟨‖a‖ ^ 2, sq_nonneg ‖a‖⟩ (leftSquare x) : A) := by
@@ -122,7 +134,10 @@ theorem leftSquare_mul_le (a x : A) :
   exact CStarAlgebra.star_left_conjugate_le_norm_smul x (star a * a)
     (IsSelfAdjoint.of_nonneg (star_mul_self_nonneg a))
 
-/-- The global weight retains the actual bound needed by the later weight-norm left action. -/
+/-- **Weighted square bound for a left product.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. for every `a,x : A`, `φ((a*x)*(a*x)) ≤ ‖a‖² φ(x* x)` in `[0,∞]`, with the
+finite real coefficient embedded in the extended nonnegative reals. -/
 theorem Weight.value_leftSquare_mul_le (φ : Weight A) (a x : A) :
     φ.value (leftSquare (a * x)) ≤
       ENNReal.ofNNReal (NNReal.mk (‖a‖ ^ 2) (sq_nonneg ‖a‖)) * φ.value (leftSquare x) := by
@@ -133,14 +148,21 @@ theorem Weight.value_leftSquare_mul_le (φ : Weight A) (a x : A) :
     _ = ENNReal.ofNNReal (NNReal.mk (‖a‖ ^ 2) (sq_nonneg ‖a‖)) * φ.value (leftSquare x) :=
       φ.smul_value (NNReal.mk (‖a‖ ^ 2) (sq_nonneg ‖a‖)) (leftSquare x)
 
-/-- Every original left multiplier preserves the literal finite-square domain. -/
+/-- **Left ideal property of the finite square domain.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. for every `a : A` and `x ∈
+n_φ`, the product `a*x` lies in `n_φ`. -/
 theorem Weight.mul_mem_finiteSquareDomain (φ : Weight A) (a x : A)
     (hx : x ∈ φ.finiteSquareDomain) : a * x ∈ φ.finiteSquareDomain := by
   change φ.value (leftSquare (a * x)) < ⊤
   exact lt_of_le_of_lt (φ.value_leftSquare_mul_le a x)
     (ENNReal.mul_lt_top ENNReal.coe_lt_top hx)
 
-/-- The original finite-square set with its proved complex submodule structure. -/
+/-- **Complex module of finite weight squares.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. `finiteSquareSubmodule φ` is the
+complex submodule of `A` with carrier `n_φ`; its zero, addition and scalar action are
+inherited from `A`. -/
 def Weight.finiteSquareSubmodule (φ : Weight A) : Submodule ℂ A where
   carrier := φ.finiteSquareDomain
   zero_mem' := φ.zero_mem_finiteSquareDomain
@@ -151,13 +173,19 @@ def Weight.finiteSquareSubmodule (φ : Weight A) : Submodule ℂ A where
     intro c x hx
     exact φ.smul_mem_finiteSquareDomain c x hx
 
-/-- The actual linear domain has exactly the original finite-square carrier. -/
+/-- **Carrier of the finite square module.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. the underlying subset of
+`finiteSquareSubmodule φ` is exactly `n_φ`. -/
 @[simp]
 theorem Weight.coe_finiteSquareSubmodule (φ : Weight A) :
     (φ.finiteSquareSubmodule : Set A) = φ.finiteSquareDomain :=
   rfl
 
-/-- Left multiplication on the actual finite-square complex module. -/
+/-- **Linear left multiplication on the weight domain.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. for `a : A`,
+`finiteSquareLeftMul φ a : n_φ →ₗ[ℂ] n_φ` sends `x` to `a*x`. -/
 def Weight.finiteSquareLeftMul (φ : Weight A) (a : A) :
     φ.finiteSquareSubmodule →ₗ[ℂ] φ.finiteSquareSubmodule where
   toFun x := ⟨a * (x : A), φ.mul_mem_finiteSquareDomain a (x : A) x.property⟩
@@ -172,20 +200,29 @@ def Weight.finiteSquareLeftMul (φ : Weight A) (a : A) :
     change a * (c • (x : A)) = c • (a * (x : A))
     exact mul_smul_comm c a (x : A)
 
-/-- The actual linear left action retains every original multiplication value. -/
+/-- **Value of finite-domain left multiplication.** Let `A` be a nonunital complex C-star algebra
+with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. the element of `A` underlying
+`finiteSquareLeftMul φ a x` is `a*x` for `a : A` and `x ∈ n_φ`. -/
 @[simp]
 theorem Weight.finiteSquareLeftMul_apply (φ : Weight A) (a : A) (x : φ.finiteSquareSubmodule) :
     (φ.finiteSquareLeftMul a x : A) = a * (x : A) :=
   rfl
 
-/-- The original two-square core is exactly the finite domain intersected with its star preimage. -/
+/-- **Two-sided square finiteness.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. `x ∈ finiteStarSquareDomain φ` exactly when both
+`x ∈ n_φ` and `x* ∈ n_φ`, equivalently both `φ(x* x)` and `φ(x x*)` are finite. -/
 theorem Weight.mem_finiteStarSquareDomain_iff (φ : Weight A) (x : A) :
     x ∈ φ.finiteStarSquareDomain ↔ x ∈ φ.finiteSquareDomain ∧ star x ∈ φ.finiteSquareDomain := by
   change φ.value (leftSquare x) < ⊤ ∧ φ.value (rightSquare x) < ⊤ ↔
     φ.value (leftSquare x) < ⊤ ∧ φ.value (leftSquare (star x)) < ⊤
   rw [leftSquare_star]
 
-/-- The exact two-square-finite core as a complex submodule of the original algebra. -/
+/-- **Complex module of two finite adjoint squares.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. the subset `{x : x ∈ n_φ ∧ x* ∈
+n_φ}` is a complex submodule of `A`, with inherited addition and scalar multiplication. -/
 def Weight.finiteStarSquareSubmodule (φ : Weight A) : Submodule ℂ A where
   carrier := φ.finiteStarSquareDomain
   zero_mem' := by
@@ -208,13 +245,19 @@ def Weight.finiteStarSquareSubmodule (φ : Weight A) : Submodule ℂ A where
     rw [star_smul]
     exact φ.smul_mem_finiteSquareDomain (star c) (star x) hxStar
 
-/-- The actual core module retains exactly the original two-square-finite set. -/
+/-- **Carrier of the two-square module.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. the underlying set of `finiteStarSquareSubmodule
+φ` is `{x : φ(x* x) < ∞ ∧ φ(x x*) < ∞}`. -/
 @[simp]
 theorem Weight.coe_finiteStarSquareSubmodule (φ : Weight A) :
     (φ.finiteStarSquareSubmodule : Set A) = φ.finiteStarSquareDomain :=
   rfl
 
-/-- Original multiplication preserves the actual two-square-finite core. -/
+/-- **Products in the finite star domain.** Let `A` be a nonunital complex C-star algebra with its
+spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight vanishing
+at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. if `x,x*,y,y*` lie in `n_φ`, then both `x*y` and
+`(x*y)*=y* x*` lie in `n_φ`. -/
 theorem Weight.mul_mem_finiteStarSquareDomain (φ : Weight A) (x y : A)
     (hx : x ∈ φ.finiteStarSquareDomain) (hy : y ∈ φ.finiteStarSquareDomain) :
     x * y ∈ φ.finiteStarSquareDomain := by
@@ -225,7 +268,11 @@ theorem Weight.mul_mem_finiteStarSquareDomain (φ : Weight A) (x y : A)
   rw [star_mul]
   exact φ.mul_mem_finiteSquareDomain (star y) (star x) hxStar
 
-/-- The genuine algebraic core under original complex operations, product and star. -/
+/-- **Nonunital star algebra of finite adjoint squares.** Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. the subset `{x : x ∈ n_φ ∧ x* ∈
+n_φ}` is a nonunital complex star subalgebra of `A`, with inherited multiplication and
+involution. -/
 def Weight.finiteStarSquareSubalgebra (φ : Weight A) : NonUnitalStarSubalgebra ℂ A where
   carrier := φ.finiteStarSquareDomain
   zero_mem' := φ.finiteStarSquareSubmodule.zero_mem
@@ -242,7 +289,10 @@ def Weight.finiteStarSquareSubalgebra (φ : Weight A) : NonUnitalStarSubalgebra 
     intro x hx
     exact (φ.finiteStarSquareDomain_star_iff x).2 hx
 
-/-- The actual nonunital star algebra has exactly the original finite-star-square carrier. -/
+/-- **Carrier of the finite star subalgebra.** Let `A` be a nonunital complex C-star algebra with
+its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous weight
+vanishing at zero. Write `n_φ = {x ∈ A : φ(x* x) < ∞}`. the underlying set of
+`finiteStarSquareSubalgebra φ` consists exactly of `x` with `φ(x* x) < ∞` and `φ(x x*) < ∞`. -/
 @[simp]
 theorem Weight.coe_finiteStarSquareSubalgebra (φ : Weight A) :
     (φ.finiteStarSquareSubalgebra : Set A) = φ.finiteStarSquareDomain :=

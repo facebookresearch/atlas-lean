@@ -1,3 +1,5 @@
-# Inst Normed Add Comm Group
+# Norm and metric on the right scalar module
 
-The fixed original norm and metric, with the inherited comap uniformity and bornology.
+For a normed additive group `H`, let `q =
+WithCStarModule.equiv ℂᵐᵒᵖ H`. Pull back the norm and metric along this equivalence, so `‖x‖ =
+‖q x‖` and `dist x y = dist (q x) (q y)`.

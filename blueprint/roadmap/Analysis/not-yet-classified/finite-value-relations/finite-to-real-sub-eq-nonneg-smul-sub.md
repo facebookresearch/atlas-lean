@@ -1,3 +1,6 @@
-# Finite to Real sub eq nonneg smul sub
+# Nonnegative scaling of finite positive differences
 
-Original nonnegative-real scaling of finite-positive differences scales their real values.
+Let `A` be a nonunital complex C-star
+algebra with its spectral order and `φ : A₊ → [0,∞]` an additive, nonnegative-real homogeneous
+weight vanishing at zero. write `v(t)=(φ(t)).toReal`. For finite-weight positive `a,b,c,d` and
+`r : ℝ≥0`, `a-b=r • (c-d)` implies `v(a)-v(b)=r*(v(c)-v(d))`.

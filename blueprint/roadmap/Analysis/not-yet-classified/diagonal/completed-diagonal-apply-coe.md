@@ -1,3 +1,4 @@
-# Completed Diagonal apply coe
+# Completed diagonal on finite-support images
 
-Every canonical algebraic image keeps the literal forward value.
+`completedDiagonal T hBound (x : Completed B
+E) = (algebraicDiagonal T x : Completed B F)` for every algebraic vector `x`.

@@ -1,3 +1,5 @@
-# Induced Completed Graded Left Action to Non Unital Star Alg Hom
+# Underlying star homomorphism of the graded action
 
-Forgetting the grading returns exactly the existing computed coefficient action.
+For the same graded actions `φ,χ`, the
+underlying homomorphism of `inducedCompletedGradedLeftAction` equals
+`inducedCompletedLeftAction φ.toNonUnitalStarAlgHom χ.toNonUnitalStarAlgHom`.

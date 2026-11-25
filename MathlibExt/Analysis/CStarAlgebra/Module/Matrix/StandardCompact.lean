@@ -19,16 +19,16 @@ public import MathlibExt.Analysis.CStarAlgebra.CStarMatrix.Padding
 public import Mathlib.Algebra.BigOperators.Fin
 
 /-!
-# Actual finite matrix corners in standard-module compacts
+# Finite matrix corners in standard-module compacts
 
-A finite coefficient matrix acts on the standard right module through the
-actual finite-coordinate inclusion and its adjoint. Compactness comes from
-the middle finite matrix operator, not from compactness of the inclusion.
-The finite-source identity proves multiplication and faithful extraction.
+For nonunital C-star `B`, a finite type `I` and an injection `η : I ↪ κ`, let `j_η : B^I →
+Standard B κ` be finite coordinate inclusion. A coefficient matrix `X` gives the compact corner
+`F_X = j_η X j_η*`, with value `F_X y = ∑ i, single (η i) (∑ j, X_ij * coord (η j) y)`.
 
-The original coefficient-inner norms and the C-star matrix operator norm
-are retained. Empty finite indices and zero, possibly nonunital coefficient
-algebras are included; no unit-valued coordinate vectors are used.
+Its selected block is `j_(η i)* F_X j_(η j) = L_(X_ij)` on `B`. Entry recovery makes the corner
+injective, and its compact operator norm is `‖X‖`. Top-left zero extension of a matrix leaves
+its initial-segment corner unchanged. Empty finite stages and zero coefficient algebras are
+allowed.
 -/
 
 @[expose] public section
@@ -45,8 +45,9 @@ universe uB uI uK
 variable {B : Type uB} [NonUnitalCStarAlgebra B]
 variable {I : Type uI} [Fintype I] {κ : Type uK}
 
-/-- The original finite compact matrix hom, conjugated by the actual
-finite-coordinate inclusion into the standard module. -/
+/-- **Compact matrix corner in a standard module.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the nonunital star homomorphism sends `X` to `j_η
+X j_η*` in `K_B(Standard B κ)` using finite coordinate inclusion `j_η`. -/
 noncomputable def rightMatrixStandardCompactHom (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -123,8 +124,9 @@ noncomputable def rightMatrixStandardCompactHom (η : I ↪ κ) :
   exact NonUnitalStarAlgHom.codRestrict θ
     (compactStarSubalgebra (B := B) (E := F)) hMem
 
-/-- Including the corner gives the literal inclusion–matrix–adjoint
-composite, with the same original finite compact matrix operator. -/
+/-- **Inclusion-matrix-adjoint corner formula.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the endomorphism underlying the compact corner is
+`finiteInclusion η ∘ rightMatrixCompactHom X ∘ (finiteInclusion η)*`. -/
 theorem rightMatrixStandardCompactHom_coe (η : I ↪ κ) (X : CStarMatrix I I B) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -139,8 +141,9 @@ theorem rightMatrixStandardCompactHom_coe (η : I ↪ κ) (X : CStarMatrix I I B
   let : CStarModule Bᵐᵒᵖ B := CStarModule.Right.selfModule
   rfl
 
-/-- The whole corner action is the literal finite sum of coefficient singles
-with the original row-before-column, unconjugated matrix entries. -/
+/-- **Vector value of the standard matrix corner.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `F_X y = ∑ i, single (η i) (∑ j, X i j * coord (η
+j) y)`, where `F_X = rightMatrixStandardCompactHom η X`. -/
 theorem rightMatrixStandardCompactHom_apply (η : I ↪ κ) (X : CStarMatrix I I B) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -171,8 +174,9 @@ theorem rightMatrixStandardCompactHom_apply (η : I ↪ κ) (X : CStarMatrix I I
       intro j _
       exact congrArg (fun b : B => X i j * b) (hCoord j)
 
-/-- Every selected coordinate of the corner is the original matrix column
-action on the selected input coordinates. -/
+/-- **Selected coordinates of a matrix corner.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, `coord (η i) (F_X y) = ∑ j, X i j * coord (η j)
+y`, with `F_X = rightMatrixStandardCompactHom η X`. -/
 @[simp]
 theorem coord_rightMatrixStandardCompactHom_apply (η : I ↪ κ)
     (X : CStarMatrix I I B) :
@@ -197,8 +201,10 @@ theorem coord_rightMatrixStandardCompactHom_apply (η : I ↪ κ)
   intro j _
   exact congrArg (fun b : B => X i j * b) (hCoord j)
 
-/-- The original selected coordinate block is left multiplication by Xij,
-as a whole operator on supplied coefficients, without a coefficient unit. -/
+/-- **Coefficient operator of a matrix block.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the `(i,j)` block of `F_X` is the coefficient
+left multiplier `b ↦ X i j * b`, obtained by insertion at `η j` and adjoint evaluation at `η
+i`. -/
 theorem rightMatrixStandardCompactHom_block (η : I ↪ κ) (X : CStarMatrix I I B) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -226,8 +232,9 @@ theorem rightMatrixStandardCompactHom_block (η : I ↪ κ) (X : CStarMatrix I I
     _ = X i j * b := by rw [Standard.coord_single_self]
     _ = leftMul (B := B) (X i j) b := (leftMul_apply _ _).symm
 
-/-- The actual standard compact corner is faithful, by compression back
-to the original faithful finite matrix hom. -/
+/-- **Injectivity of the standard compact corner.** For nonunital complex C-star `B`, finite `I`,
+arbitrary `κ`, and an injection `η : I ↪ κ`, the map `rightMatrixStandardCompactHom η` is
+injective by its finite block extraction. -/
 theorem rightMatrixStandardCompactHom_injective (η : I ↪ κ) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;
     letI : StarOrderedRing Bᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Bᵐᵒᵖ;
@@ -277,8 +284,9 @@ theorem rightMatrixStandardCompactHom_injective (η : I ↪ κ) :
   rw [← hPin]
   exact (NonUnitalStarAlgHom.injective_codRestrict ψ KF hMem).mpr hψ
 
-/-- The corner preserves the original C-star matrix norm and inherited
-compact-operator norm, including the zero algebra and empty indices. -/
+/-- **Norm of a standard matrix corner.** For nonunital complex C-star `B`, finite `I`, arbitrary
+`κ`, and an injection `η : I ↪ κ`, `‖rightMatrixStandardCompactHom η X‖ = ‖X‖` for the
+compact-operator and C-star matrix norms. -/
 theorem norm_rightMatrixStandardCompactHom_apply (η : I ↪ κ)
     (X : CStarMatrix I I B) :
     letI : PartialOrder B := CStarAlgebra.spectralOrder B;
@@ -306,7 +314,9 @@ theorem norm_rightMatrixStandardCompactHom_apply (η : I ↪ κ)
     ‖rightMatrixStandardCompactHom (B := B) η X‖ = ‖ψ X‖ := rfl
     _ = ‖X‖ := NonUnitalStarAlgHom.norm_map ψ hψ X
 
-/-- The same computed corner is an isometry for the original metrics. -/
+/-- **Isometric standard matrix corner.** For nonunital complex C-star `B`, finite `I`, arbitrary
+`κ`, and an injection `η : I ↪ κ`, `rightMatrixStandardCompactHom η` preserves distances for
+the C-star matrix and compact-operator metrics. -/
 theorem rightMatrixStandardCompactHom_isometry (η : I ↪ κ) :
     letI : PartialOrder B := CStarAlgebra.spectralOrder B;
     letI : StarOrderedRing B := CStarAlgebra.spectralOrderedRing B;
@@ -336,8 +346,9 @@ theorem rightMatrixStandardCompactHom_isometry (η : I ↪ κ) :
         (rightMatrixStandardCompactHom (B := B) η Y) = dist (ψ X) (ψ Y) := rfl
     _ = dist X Y := (NonUnitalStarAlgHom.isometry ψ hψ).dist_eq X Y
 
-/-- Literal top-left zero padding leaves the actual initial-segment compact
-corner unchanged. Ordinary size zero is the empty finite stage. -/
+/-- **Zero extension preserves an initial matrix corner.** For nonunital C-star `B`, `n ≤ m` and
+`X ∈ M_n(B)`, write `Φ_r` for the initial `r`-coordinate compact corner on `Standard B ℕ`.
+Then `Φ_m(zeroExtend_nm X) = Φ_n(X)`; the added matrix entries are zero. -/
 theorem rightMatrixStandardCompactHom_zeroExtend {n m : ℕ} (h : n ≤ m)
     (X : CStarMatrix (Fin n) (Fin n) B) :
     letI : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectralOrder Bᵐᵒᵖ;

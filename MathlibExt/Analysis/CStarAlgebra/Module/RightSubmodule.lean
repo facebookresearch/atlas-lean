@@ -16,15 +16,14 @@ public import Mathlib.Analysis.Normed.Operator.LinearIsometry
 public import Mathlib.Topology.Algebra.Module.Basic
 
 /-!
-# Right submodules of right C-star modules
+# Right submodules of C-star modules
 
-This file packages a complex submodule of a right C-star module which is
-stable under the right coefficient action.  Its subtype inherits the exact
-coefficient-valued inner product and norm.  A closed right submodule of a
-complete module is complete.
+For a right C-star module `E` over a nonunital C-star algebra `B`, a `RightSubmodule B E` is a
+complex submodule stable under `x ↦ x <• b` for every `b : B`. Its subtype has the restricted
+right action and coefficient-valued inner product, and norm `‖x‖ = ‖(x : E)‖`.
 
-The construction is deliberately independent of orthogonal complementability:
-closed Hilbert-module submodules need not be ranges of adjointable projections.
+Every such submodule is a right pre-Hilbert module. A submodule closed in a complete ambient
+module is complete; its inclusion is a complex-linear isometry.
 -/
 
 @[expose] public section
@@ -44,17 +43,17 @@ variable {B : Type uB} [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable {E : Type uE} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
 
-/-- A complex submodule stable under the right coefficient action of `B`.
-
-No closedness or complementability is stored.  Thus its subtype is always a
-right pre-Hilbert module, and it becomes a Hilbert module when its carrier is
-closed in a complete ambient module. -/
+/-- **Right submodule of a C-star module.** Let `E` be a right C-star module over a nonunital
+C-star algebra `B`. A complex submodule `S` of `E` with `x <• b ∈ S` whenever `x ∈ S` and `b :
+B`. Its norm and inner product are restricted from `E`; closedness is a separate property. -/
 structure RightSubmodule (B : Type uB) (E : Type uE)
     [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
     [NormedAddCommGroup E] [NormedSpace ℂ E]
     [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
     extends Submodule ℂ E where
-  /-- The carrier is stable under Blackadar's right coefficient action. -/
+  /-- **Closure under right coefficients.** Let `E` be a right C-star module over a nonunital
+  C-star algebra `B`. If `x` belongs to the carrier, then `x <• b` belongs to it for every
+  coefficient `b : B`. -/
   right_smul_mem' : ∀ {x : E}, x ∈ carrier → ∀ b : B, x <• b ∈ carrier
 
 namespace RightSubmodule
@@ -73,7 +72,9 @@ instance : SetLike (RightSubmodule B E) E where
 theorem mem_carrier {x : E} : x ∈ S.carrier ↔ x ∈ S :=
   Iff.rfl
 
-/-- The underlying complex submodule. -/
+/-- **Underlying complex submodule.** Let `E` be a right C-star module over a nonunital C-star
+algebra `B`. `S.toComplexSubmodule` has the same vectors as `S` and retains its closure under
+complex addition and scalar multiplication. -/
 def toComplexSubmodule : Submodule ℂ E :=
   S.toSubmodule
 
@@ -89,7 +90,9 @@ instance : NormedAddCommGroup S :=
 instance : NormedSpace ℂ S :=
   inferInstanceAs (NormedSpace ℂ S.toSubmodule)
 
-/-- Right coefficients act on a right submodule by restriction. -/
+/-- **Right coefficient action on a submodule.** Let `E` be a right C-star module over a nonunital
+C-star algebra `B`. Restrict the coefficient action of `E` to `S`; closure under `x <• b`
+makes this action well-defined. -/
 instance : SMul Bᵐᵒᵖ S where
   smul b x := ⟨(b : Bᵐᵒᵖ) • (x : E), S.right_smul_mem' x.property b.unop⟩
 
@@ -98,8 +101,9 @@ theorem coe_right_smul (x : S) (b : B) :
     ((x <• b : S) : E) = (x : E) <• b :=
   rfl
 
-/-- The restricted coefficient-valued inner product makes every right
-submodule a right pre-Hilbert C-star module. -/
+/-- **C-star module structure on a right submodule.** Let `E` be a right C-star module over a
+nonunital C-star algebra `B`. The subtype has the restricted coefficient inner product `inner
+x y = inner (x : E) (y : E)` and norm `‖x‖ = ‖(x : E)‖`. -/
 instance : CStarModule Bᵐᵒᵖ S where
   inner x y := inner Bᵐᵒᵖ (x : E) (y : E)
   inner_add_right := by
@@ -143,17 +147,20 @@ theorem rightInner_coe (x y : S) :
     change MulOpposite.unop (inner Bᵐᵒᵖ (x : E) (y : E)) = _
     rfl
 
-/-- Closedness of a right submodule, stated on its literal ambient carrier. -/
+/-- **Closed right submodule.** Let `E` be a right C-star module over a nonunital C-star algebra
+`B`. `S.IsClosed` means that its carrier `(S : Set E)` is closed in the topology of `E`. -/
 def IsClosed : Prop :=
   _root_.IsClosed (S : Set E)
 
-/-- A closed right submodule of a complete module is complete.  The result is
-plain locally activatable data, so different closed carriers do not introduce
-competing global instances on the ambient type. -/
+/-- **Completeness of a closed right submodule.** Let `E` be a right C-star module over a
+nonunital C-star algebra `B`. If `E` is complete and `S.IsClosed`, then the subtype `S` is
+complete for its restricted norm and uniformity. -/
 theorem completeSpace [CompleteSpace E] (hS : S.IsClosed) : CompleteSpace S :=
   IsComplete.completeSpace_coe hS.isComplete
 
-/-- The subtype inclusion of a right submodule as a complex-linear isometry. -/
+/-- **Isometric inclusion of a right submodule.** Let `E` be a right C-star module over a
+nonunital C-star algebra `B`. `S.subtypeLIE : S →ₗᵢ[ℂ] E` sends a subtype vector to its
+ambient vector and preserves its norm. -/
 def subtypeLIE : S →ₗᵢ[ℂ] E :=
   S.toSubmodule.subtypeₗᵢ
 
@@ -161,7 +168,9 @@ def subtypeLIE : S →ₗᵢ[ℂ] E :=
 theorem subtypeLIE_apply (x : S) : S.subtypeLIE x = x :=
   rfl
 
-/-- The full ambient module, viewed as a right submodule. -/
+/-- **Whole right module.** Let `E` be a right C-star module over a nonunital C-star algebra `B`.
+`RightSubmodule.top` consists of all vectors of `E`, with its complex and right coefficient
+actions. -/
 def top : RightSubmodule B E where
   toSubmodule := ⊤
   right_smul_mem' := by
@@ -172,7 +181,8 @@ def top : RightSubmodule B E where
 theorem mem_top (x : E) : x ∈ (top : RightSubmodule B E) :=
   trivial
 
-/-- The zero right submodule. -/
+/-- **Zero right submodule.** Let `E` be a right C-star module over a nonunital C-star algebra
+`B`. `RightSubmodule.bot` is the submodule consisting of the zero vector. -/
 def bot : RightSubmodule B E where
   toSubmodule := ⊥
   right_smul_mem' := by

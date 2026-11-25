@@ -17,22 +17,18 @@ import MathlibExt.Analysis.CStarAlgebra.Module.Matrix.Positivity
 public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
 
 /-!
-# Dense-range polar decomposition for adjointable module maps
+# Dense-range polar decomposition of adjointable maps
 
-For an adjointable map `T : E → F`, suppose the adjoint square `T* T` and `T`
-have dense range.  The existing rectangular-operator positivity theorem makes
-`T* T` nonnegative in the canonical spectral order.  Its
-continuous-functional-calculus square root has dense range, and the rule
-`sqrt (T* T) x ↦ T x` extends to a unique unitary equivalence.
+Let `T : E → F` be adjointable between complete right C-star modules over a nonunital algebra
+`B` with star-compatible coefficient order. In `End_B(E)`, put `|T| = sqrt(T* T)` using
+continuous functional calculus. Then `|T| ≥ 0` and `|T|² = T* T` in the spectral order.
 
-This is the source-neutral analytic step used in Blackadar, *K-Theory for
-Operator Algebras*, second edition, in the proof of Theorem 13.6.2.  The
-compactness of the particular operator constructed there is not used here.
+If `|T|` and `T` have dense ranges, the rule `|T| x ↦ T x` extends to a unique unitary `U : E ≃
+F` and `T = U |T|`. Dense range of `T* T` suffices for dense range of `|T|`, so it gives the
+same decomposition when `T` also has dense range.
 
-No compactness, fullness, countability, or closed-range hypothesis is used.
-The cross-module positivity input is the actual
-`AdjointableOperator.adjoint_comp_self_nonneg` theorem, not a supplied model or
-an inferred global order instance.
+This dense-range argument appears in Blackadar, K-Theory for Operator Algebras, second edition,
+Theorem 13.6.2.
 -/
 
 @[expose] public section
@@ -56,12 +52,14 @@ variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
 variable [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
   [CStarModule Bᵐᵒᵖ F] [CompleteSpace F]
 
-/-- The endomorphism `T* T` belonging to a cross-module adjointable map. -/
+/-- **Adjoint square of a module map.** For an adjointable `T : E → F`, `T.adjointSquare =
+T.adjointOperator.comp T` is the endomorphism `T* T` of `E`. -/
 abbrev adjointSquare (T : AdjointableOperator B E F) : End B E :=
   T.adjointOperator.comp T
 
-/-- The positive square root of `T* T` in the adjointable endomorphism
-C-star algebra. -/
+/-- **Absolute value of an adjointable map.** For an adjointable map between complete right C-star
+modules, `T.absoluteValue` is the positive continuous-functional-calculus square root of `T*
+T` in `End_B(E)`. -/
 noncomputable def absoluteValue
     (T : AdjointableOperator B E F) : End B E := by
   letI : PartialOrder (End B E) := CStarAlgebra.spectralOrder _
@@ -69,7 +67,8 @@ noncomputable def absoluteValue
   exact CFC.sqrt T.adjointSquare
 
 omit [CompleteSpace F] in
-/-- The absolute value is nonnegative in the canonical spectral order. -/
+/-- **Positivity of the absolute value.** `0 ≤ T.absoluteValue` in the C-star spectral order on
+`End_B(E)`. -/
 theorem absoluteValue_nonnegative (T : AdjointableOperator B E F) :
     @LE.le (End B E) (CStarAlgebra.spectralOrder (End B E)).toLE
       0 T.absoluteValue := by
@@ -77,7 +76,8 @@ theorem absoluteValue_nonnegative (T : AdjointableOperator B E F) :
   let _ : StarOrderedRing (End B E) := CStarAlgebra.spectralOrderedRing _
   exact CFC.sqrt_nonneg T.adjointSquare
 
-/-- The square of the absolute value is the adjoint square. -/
+/-- **Square of the absolute value.** For an adjointable map, `T.absoluteValue * T.absoluteValue =
+T.adjointSquare`. -/
 theorem absoluteValue_sq (T : AdjointableOperator B E F) :
     T.absoluteValue * T.absoluteValue = T.adjointSquare := by
   let _ : PartialOrder (End B E) := CStarAlgebra.spectralOrder _
@@ -96,7 +96,8 @@ private theorem absoluteValue_adjointOperator
   let _ : StarOrderedRing (End B E) := CStarAlgebra.spectralOrderedRing _
   exact (IsSelfAdjoint.of_nonneg (absoluteValue_nonnegative T)).star_eq
 
-/-- Dense range of `T* T` implies dense range of its positive square root. -/
+/-- **Dense range of the absolute value.** If `T* T` has dense range on `E`, its positive square
+root `T.absoluteValue` has dense range. -/
 theorem denseRange_absoluteValue_of_denseRange_adjointSquare
     (T : AdjointableOperator B E F)
     (hDense : DenseRange T.adjointSquare) :
@@ -138,7 +139,9 @@ private theorem absoluteValue_gram
         (T.absoluteValue y) := by
       exact (T.absoluteValue.adjoint_inner x (T.absoluteValue y)).symm
 
-/-- The canonical unitary factor in the dense-range polar decomposition. -/
+/-- **Unitary factor in a dense-range polar decomposition.** When `T.absoluteValue` and `T` have
+dense ranges between complete right C-star modules, `polarUnitary` is the unitary
+characterized by `U (T.absoluteValue x) = T x`. -/
 @[no_expose]
 noncomputable def polarUnitary
     (T : AdjointableOperator B E F)
@@ -156,8 +159,8 @@ noncomputable def polarUnitary
       exact hDense)
     T.absoluteValue_gram
 
-/-- The polar unitary is characterized on the dense range of the absolute
-value by `U (|T| x) = T x`. -/
+/-- **Polar unitary on the absolute-value range.** Assuming dense ranges of `|T|` and `T`,
+`T.polarUnitary hAbsoluteDense hDense (T.absoluteValue x) = T x` for every `x : E`. -/
 @[simp]
 theorem polarUnitary_absoluteValue_apply
     (T : AdjointableOperator B E F)
@@ -168,7 +171,8 @@ theorem polarUnitary_absoluteValue_apply
     T.absoluteValue.toContinuousLinearMap.toLinearMap
     T.toContinuousLinearMap.toLinearMap _ _ T.absoluteValue_gram x
 
-/-- The adjoint of the polar unitary sends `T x` back to `|T| x`. -/
+/-- **Adjoint of the polar unitary.** Assuming dense ranges of `|T|` and `T`, `U* (T x) = |T| x`,
+where `U = T.polarUnitary hAbsoluteDense hDense`. -/
 @[simp]
 theorem polarUnitary_adjoint_apply
     (T : AdjointableOperator B E F)
@@ -180,7 +184,9 @@ theorem polarUnitary_adjoint_apply
     T.absoluteValue.toContinuousLinearMap.toLinearMap
     T.toContinuousLinearMap.toLinearMap _ _ T.absoluteValue_gram x
 
-/-- Dense-range polar decomposition in source orientation `T = U |T|`. -/
+/-- **Dense-range polar decomposition.** If `|T|` and `T` have dense ranges, `T =
+U.toAdjointable.comp T.absoluteValue` for the unitary `U = T.polarUnitary hAbsoluteDense
+hDense`. -/
 theorem polarDecomposition
     (T : AdjointableOperator B E F)
     (hAbsoluteDense : DenseRange T.absoluteValue)
@@ -191,8 +197,9 @@ theorem polarDecomposition
   intro x
   exact (T.polarUnitary_absoluteValue_apply hAbsoluteDense hDense x).symm
 
-/-- Dense ranges of `T* T` and `T` give one unitary polar decomposition,
-with the unitary characterized on every square-root image. -/
+/-- **Existence of a unitary polar factor.** For an adjointable map between complete right C-star
+modules, dense ranges of `T* T` and `T` imply existence of a unitary `U` with `T = U |T|` and
+`U (|T| x) = T x` for every `x`. -/
 theorem exists_polarDecomposition
     (T : AdjointableOperator B E F)
     (hSquareDense : DenseRange T.adjointSquare)
@@ -206,7 +213,8 @@ theorem exists_polarDecomposition
     T.polarDecomposition hAbsoluteDense hDense,
     T.polarUnitary_absoluteValue_apply hAbsoluteDense hDense⟩
 
-/-- The unitary in the dense-range polar decomposition is unique. -/
+/-- **Uniqueness of the dense-range polar factor.** If `|T|` and `T` have dense ranges, every
+unitary `U` satisfying `T = U |T|` equals `T.polarUnitary hAbsoluteDense hDense`. -/
 theorem polarUnitary_unique
     (T : AdjointableOperator B E F)
     (hAbsoluteDense : DenseRange T.absoluteValue)

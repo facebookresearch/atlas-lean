@@ -1,4 +1,4 @@
-# Completely Positive Homotopy Forgetful
+# From CP-contractive to ordinary asymptotic homotopy classes
 
-- [Forget Class](forget-class.md)
-- [Forget Class mk Class](forget-class-mk-class.md)
+- [Underlying asymptotic homotopy class of a CP-contractive class](forget-class.md)
+- [Value of the forgetful class map on a representative](forget-class-mk-class.md)

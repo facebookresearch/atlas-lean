@@ -1,3 +1,4 @@
-# Mem adjoint Domain iff
+# Membership in the adjoint domain
 
-The domain is exactly the original full witness set.
+`y ∈ adjointDomain T` exactly when some `z : E`
+satisfies `IsAdjointWitness T y z`.

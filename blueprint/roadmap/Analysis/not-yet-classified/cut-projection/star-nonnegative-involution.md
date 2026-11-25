@@ -1,3 +1,3 @@
-# Star nonnegative Involution
+# Self-adjoint nonnegative reflection
 
-The nonnegative reflection is self-adjoint.
+`star nonnegativeInvolution = nonnegativeInvolution`.

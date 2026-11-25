@@ -1,22 +1,22 @@
-# Seminorm Coefficient Actions
+# Coefficient bounds in C-star seminorms
 
-## Unitized Actions
+## Coefficient actions after unitization
 
-- [Coefficient Left Hom](coefficient-left-hom.md)
-- [Coefficient Left Unitization](coefficient-left-unitization.md)
-- [Coefficient Left Unitization apply](coefficient-left-unitization-apply.md)
-- [Coefficient Left Unitization apply pointwise](coefficient-left-unitization-apply-point.md)
-- [Coefficient Left Unitization inr](coefficient-left-unitization-inr.md)
-- [Coefficient Left Unitization algebra Map](coefficient-left-unitization-algebra-map.md)
+- [Algebra representation by left coefficient multiplication](coefficient-left-hom.md)
+- [Unitized left coefficient representation](coefficient-left-unitization.md)
+- [Action of a unitized coefficient](coefficient-left-unitization-apply.md)
+- [Pointwise value of the unitized coefficient action](coefficient-left-unitization-apply-point.md)
+- [Coefficient inclusion in the unitized action](coefficient-left-unitization-inr.md)
+- [Real scalars in the unitized coefficient action](coefficient-left-unitization-algebra-map.md)
 
-## Square Complement
+## Square-root complements of coefficient contractions
 
-- [Coefficient Square Complement](coefficient-square-complement.md)
-- [Coefficient Square Complement identity](coefficient-square-complement-identity.md)
+- [Positive square complement of a coefficient](coefficient-square-complement.md)
+- [Square complement identity in the coefficient unitization](coefficient-square-complement-identity.md)
 
-## Original Gram Identities
+## Gram identities for coefficient actions
 
-- [Coefficient Left Unitization star mul](coefficient-left-unitization-star-mul.md)
-- [Coefficient Left cross gram square](coefficient-left-cross-gram-square.md)
-- [Seminorm coefficient Left le](seminorm-coefficient-left-le.md)
-- [Seminorm coefficient Right le](seminorm-coefficient-right-le.md)
+- [Star exchange for the unitized coefficient action](coefficient-left-unitization-star-mul.md)
+- [Cross-Gram identity for a coefficient and its square complement](coefficient-left-cross-gram-square.md)
+- [Left coefficient bound in any C-star seminorm](seminorm-coefficient-left-le.md)
+- [Right coefficient bound in any C-star seminorm](seminorm-coefficient-right-le.md)

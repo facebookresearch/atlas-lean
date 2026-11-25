@@ -1,3 +1,5 @@
-# Equiv L
+# Identification with the complex normed space
 
-Reuse the existing continuous linear equivalence with its dictionaries fixed by `H`.
+`equivL H : ScalarRight H ≃L[ℂ] H` is the
+continuous complex-linear identification `q`, for the norm and scalar structures defined in
+this module.

@@ -1,3 +1,4 @@
-# Rank One mul self
+# Projection from a unit vector
 
-A unit-vector rank-one operator is an actual idempotent in the compact ideal.
+If `v : lp(ℕ,ℂ,2)` has `‖v‖=1`, then `rankOne v v * rankOne
+v v = rankOne v v`.

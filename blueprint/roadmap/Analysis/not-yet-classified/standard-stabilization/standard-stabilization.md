@@ -1,4 +1,5 @@
-# Standard Stabilization
+# Compact-operator stabilization
 
-The compact-endomorphism model of the stabilization of `B`. The canonical
-opposite spectral-order dictionaries are fixed locally in the carrier.
+For nonunital C-star `B`, `StandardStabilization B` is
+`K_B(Standard B ℕ)`, the compact adjointable endomorphisms of the countable standard right
+module.

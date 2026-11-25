@@ -1,3 +1,4 @@
-# Reindex Linear Isometry Equiv right Inner
+# Inner product under completed reindexing
 
-Completed reindexing preserves the coefficient-valued inner product.
+The reindexing isometry preserves `⟨x,y⟩_B` for
+every pair of completed standard vectors.

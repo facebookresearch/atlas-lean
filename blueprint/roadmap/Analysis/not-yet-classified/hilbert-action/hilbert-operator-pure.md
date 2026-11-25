@@ -1,3 +1,4 @@
-# Hilbert Operator pure
+# Hilbert operator on a pure amplification vector
 
-The original coefficient stays fixed while its Hilbert vector receives the source operator.
+`hilbertOperator H A T (pure H A ξ b) =
+pure H A (T ξ) b`.

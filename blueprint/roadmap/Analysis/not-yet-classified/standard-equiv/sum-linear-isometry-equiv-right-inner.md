@@ -1,4 +1,4 @@
-# Sum Linear Isometry Equiv right Inner
+# Inner product under completed splitting
 
-The completed sum equivalence preserves the coefficient-valued inner
-product.
+`⟨sumLinearIsometryEquiv x,
+sumLinearIsometryEquiv y⟩_B = ⟨x,y⟩_B`, with the target direct-sum inner product.

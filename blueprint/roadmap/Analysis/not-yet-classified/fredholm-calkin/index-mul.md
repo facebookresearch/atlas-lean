@@ -1,3 +1,4 @@
-# Index mul
+# Additivity of index on Calkin units
 
-The index of a product of Calkin units is the sum of their indices.
+For a complex Hilbert space `H`, `index (x*y) = index
+x + index y` for units `x,y : Q(H)ˣ`.

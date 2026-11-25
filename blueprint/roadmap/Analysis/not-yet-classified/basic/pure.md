@@ -1,3 +1,4 @@
-# Pure
+# Pure vector in a Hilbert amplification
 
-The original pure Hilbert/coefficient tensor on the actual completion.
+`pure H A ξ a` is the image of the balanced tensor
+`ξ ⊗ a` in the completed right Hilbert `A`-module.

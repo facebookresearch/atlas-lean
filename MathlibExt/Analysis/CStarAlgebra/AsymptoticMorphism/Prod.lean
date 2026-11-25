@@ -14,11 +14,11 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Basic
 
 /-!
-# Products of nonlinear asymptotic families
+# Products of asymptotic star morphisms
 
-The product is formed on the actual product C-star algebra. Fixed-coefficient
-time continuity and each of the four defect limits follow from the product
-topology. Individual finite-time slices need not be homomorphisms.
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), φ:A→B and ψ:A→C asymptotic star
+morphisms. Their product family sends a to (φ_t(a),ψ_t(a)) in B×C, whose C-star norm is
+max(‖b‖,‖c‖). The four defects tend to zero in this product norm.
 -/
 
 @[expose] public section
@@ -32,7 +32,11 @@ universe uA uB uC
 variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] [NonUnitalCStarAlgebra C]
 
-/-- Pair two actual nonlinear asymptotic families on their product coefficient algebra. -/
+/-- **Product-valued asymptotic family.**
+
+Let A,B,C be nonunital complex C-star algebras, φ:A→B and ψ:A→C asymptotic star morphisms on
+T=[1,∞). The family prod φ ψ:A→B×C is (prod φ ψ)_t(a)=(φ_t(a),ψ_t(a)).
+-/
 def prod (phi : AsymptoticMorphism A B) (psi : AsymptoticMorphism A C) :
     AsymptoticMorphism A (B × C) where
   toFun t a := (phi t a, psi t a)
@@ -57,7 +61,11 @@ def prod (phi : AsymptoticMorphism A B) (psi : AsymptoticMorphism A C) :
       Filter.atTop (𝓝 ((0 : B), (0 : C)))
     exact (phi.star_defect_tendsto a).prodMk_nhds (psi.star_defect_tendsto a)
 
-/-- The product retains both families' actual point values at every time and coefficient. -/
+/-- **Value of the product asymptotic morphism.**
+
+Let A,B,C be nonunital complex C-star algebras, φ:A→B and ψ:A→C asymptotic star morphisms. For
+t≥1 and a∈A, prod φ ψ t a=(φ_t(a),ψ_t(a)).
+-/
 @[simp]
 theorem prod_apply (phi : AsymptoticMorphism A B) (psi : AsymptoticMorphism A C)
     (t : AsymptoticTime) (a : A) : prod phi psi t a = (phi t a, psi t a) := by

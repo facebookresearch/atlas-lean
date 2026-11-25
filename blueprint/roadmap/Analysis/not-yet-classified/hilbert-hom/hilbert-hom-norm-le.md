@@ -1,3 +1,4 @@
-# Hilbert Hom norm le
+# Contractive Hilbert operator representation
 
-The original Hilbert operator norm bounds the actual bundled Hilbert factor.
+`‖hilbertHom H A T‖ ≤ ‖T‖` in the
+amplification operator norm.

@@ -1,4 +1,4 @@
-# Span range single eq top
+# Coordinate ranges span the algebraic sum
 
-Every algebraic direct-sum vector belongs to the complex linear span of
-the coordinate singles.
+The complex linear span of all vectors `single i
+x`, over every `i` and `x : E i`, is the entire finite-support direct sum.

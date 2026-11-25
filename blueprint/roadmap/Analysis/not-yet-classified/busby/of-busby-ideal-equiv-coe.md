@@ -1,3 +1,4 @@
-# Of Busby ideal Equiv coe
+# Ideal identification in the pullback extension
 
-The ideal-equivalence inclusion of the literal Busby pullback.
+The included ideal element of `ofBusby τ`
+corresponding to `b : B` is `pullbackInclusion τ b`.

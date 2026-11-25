@@ -1,3 +1,5 @@
-# Map Of Surjective coe Hom
+# Coefficient embedding under multiplier transport
 
-The multiplier map sends every actual embedded coefficient to its given coefficient quotient.
+For a surjective complex nonunital star
+homomorphism `ρ : B → D` of C-star algebras, `mapOfSurjective ρ hρ (DoubleCentralizer.coeHom
+b) = DoubleCentralizer.coeHom (ρ b)`.

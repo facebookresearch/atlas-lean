@@ -1,3 +1,4 @@
-# Completion apply coe
+# Completed operator on the dense inclusion
 
-The canonical completion image keeps the original forward value.
+`completion T (x : Completion E) = (T x :
+Completion F)` for `x : E`.

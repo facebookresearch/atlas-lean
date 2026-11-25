@@ -15,14 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarIntegratedForm
 public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.MultiplierActions
 
 /-!
-# Actual integrated actions of the original Haar-core multipliers
+# Integrated coefficient and group multiplier actions
 
-Integrating the original coefficient and group actions gives multiplication
-by the covariant coefficient operators and group unitaries. Consequently each
-covariant operator seminorm has the actual coefficient bound and is unchanged
-by either group action. These are prerequisites for the canonical multiplier
-maps on the full crossed product. No raw-core norm or completed-model datum is
-assumed, and no all-covariant supremum identity is asserted here.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. For L_a f(s)=a*f(s),
+R_a f(s)=f(s)*α_s(a), L_g f(s)=α_g(f(g⁻¹*s)) and R_g f(s)=δ(g)•f(s*g⁻¹), integration gives
+Iρ(L_a f)=π(a)Iρ(f), Iρ(R_a f)=Iρ(f)π(a), Iρ(L_g f)=U_g Iρ(f) and Iρ(R_g f)=Iρ(f)U_g. Here
+δ(g)=Measure.modularCharacter g.
 -/
 
 @[expose] public section
@@ -46,7 +47,14 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable {α : PointNormCStarAction G A} (ρ : CovariantRepresentation α H)
 
-/-- Original left coefficients integrate to left multiplication by the actual coefficient operator. -/
+/-- **Left coefficient multiplication under Haar integration.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. For a∈A and L_a
+f(s)=a*f(s), Iρ(L_a f)=π(a)*Iρ(f).
+-/
 theorem haarIntegratedHom_coefficientLeft (a : A) (f : HaarTwistedCore.Carrier μ α) :
     haarIntegratedHom μ ρ (HaarTwistedCore.coefficientLeft μ α a f) =
       ρ.algebra a * haarIntegratedHom μ ρ f := by
@@ -62,7 +70,14 @@ theorem haarIntegratedHom_coefficientLeft (a : A) (f : HaarTwistedCore.Carrier �
     (StronglyContinuousUnitaryRepresentation.integratedVector_integrable μ ρ.group ρ.algebra
       (HaarTwistedCore.toCc μ α f) ξ)
 
-/-- Original right coefficients integrate to right multiplication by the actual coefficient operator. -/
+/-- **Right coefficient multiplication under Haar integration.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. For a∈A and R_a
+f(s)=f(s)*α_s(a), Iρ(R_a f)=Iρ(f)*π(a).
+-/
 theorem haarIntegratedHom_coefficientRight (a : A) (f : HaarTwistedCore.Carrier μ α) :
     haarIntegratedHom μ ρ (HaarTwistedCore.coefficientRight μ α a f) =
       haarIntegratedHom μ ρ f * ρ.algebra a := by
@@ -86,7 +101,14 @@ theorem haarIntegratedHom_coefficientRight (a : A) (f : HaarTwistedCore.Carrier 
     simpa only [mul_assoc] using congrArg (fun T => ρ.algebra (f s) * T) hCov
   exact congrArg (fun T : H →L[ℂ] H => T ξ) hOp
 
-/-- Original inverse left translation integrates to left multiplication by the group unitary. -/
+/-- **Left group translation under Haar integration.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. For g∈G and L_g
+f(s)=α_g(f(g⁻¹*s)), Iρ(L_g f)=U_g*Iρ(f).
+-/
 theorem haarIntegratedHom_groupLeft (g : G) (f : HaarTwistedCore.Carrier μ α) :
     haarIntegratedHom μ ρ (HaarTwistedCore.groupLeft μ α g f) =
       (ρ.group g : H →L[ℂ] H) * haarIntegratedHom μ ρ f := by
@@ -117,7 +139,14 @@ theorem haarIntegratedHom_groupLeft (g : G) (f : HaarTwistedCore.Carrier μ α) 
           (HaarTwistedCore.toCc μ α f) ξ)
     _ = _ := rfl
 
-/-- Original modular right translation integrates to right multiplication by the group unitary. -/
+/-- **Modular right translation under Haar integration.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. For g∈G and R_g
+f(s)=δ(g)•f(s*g⁻¹), with δ(g)=Measure.modularCharacter g, Iρ(R_g f)=Iρ(f)*U_g.
+-/
 theorem haarIntegratedHom_groupRight (g : G) (f : HaarTwistedCore.Carrier μ α) :
     haarIntegratedHom μ ρ (HaarTwistedCore.groupRight μ α g f) =
       haarIntegratedHom μ ρ f * (ρ.group g : H →L[ℂ] H) := by
@@ -144,7 +173,14 @@ theorem haarIntegratedHom_groupRight (g : G) (f : HaarTwistedCore.Carrier μ α)
       simp only [F, mul_inv_cancel_right, ρ.group.apply_mul]
     _ = _ := rfl
 
-/-- Every covariant seminorm has the actual left coefficient norm bound. -/
+/-- **Norm bound for integrated left coefficient multiplication.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. For a∈A and L_a
+f(s)=a*f(s), ‖Iρ(L_a f)‖≤‖a‖‖Iρ(f)‖.
+-/
 theorem norm_haarIntegratedHom_coefficientLeft_le (a : A) (f : HaarTwistedCore.Carrier μ α) :
     ‖haarIntegratedHom μ ρ (HaarTwistedCore.coefficientLeft μ α a f)‖ ≤
       ‖a‖ * ‖haarIntegratedHom μ ρ f‖ := by
@@ -152,7 +188,14 @@ theorem norm_haarIntegratedHom_coefficientLeft_le (a : A) (f : HaarTwistedCore.C
   exact (norm_mul_le _ _).trans
     (mul_le_mul_of_nonneg_right (NonUnitalStarAlgHom.norm_apply_le ρ.algebra a) (norm_nonneg _))
 
-/-- Every covariant seminorm has the actual right coefficient norm bound. -/
+/-- **Norm bound for integrated right coefficient multiplication.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. For a∈A and R_a
+f(s)=f(s)*α_s(a), ‖Iρ(R_a f)‖≤‖Iρ(f)‖‖a‖.
+-/
 theorem norm_haarIntegratedHom_coefficientRight_le (a : A) (f : HaarTwistedCore.Carrier μ α) :
     ‖haarIntegratedHom μ ρ (HaarTwistedCore.coefficientRight μ α a f)‖ ≤
       ‖haarIntegratedHom μ ρ f‖ * ‖a‖ := by
@@ -160,14 +203,28 @@ theorem norm_haarIntegratedHom_coefficientRight_le (a : A) (f : HaarTwistedCore.
   exact (norm_mul_le _ _).trans
     (mul_le_mul_of_nonneg_left (NonUnitalStarAlgHom.norm_apply_le ρ.algebra a) (norm_nonneg _))
 
-/-- Every covariant seminorm is unchanged by original inverse left translation. -/
+/-- **Integrated norm is invariant under left group translation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. For g∈G and L_g
+f(s)=α_g(f(g⁻¹*s)), ‖Iρ(L_g f)‖=‖Iρ(f)‖.
+-/
 theorem norm_haarIntegratedHom_groupLeft (g : G) (f : HaarTwistedCore.Carrier μ α) :
     ‖haarIntegratedHom μ ρ (HaarTwistedCore.groupLeft μ α g f)‖ =
       ‖haarIntegratedHom μ ρ f‖ := by
   rw [haarIntegratedHom_groupLeft]
   exact CStarRing.norm_coe_unitary_mul (ρ.group g) (haarIntegratedHom μ ρ f)
 
-/-- Every covariant seminorm is unchanged by original modular right translation. -/
+/-- **Integrated norm is invariant under right group translation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action of G on A. Let H be a complex
+Hilbert space and ρ=(π,U) a covariant representation of α on H. For a compactly supported
+continuous core coefficient f:G→A, write Iρ(f)ξ=∫ s, π(f(s))(U_s ξ) ∂μ. For g∈G and R_g
+f(s)=δ(g)•f(s*g⁻¹), with δ(g)=Measure.modularCharacter g, ‖Iρ(R_g f)‖=‖Iρ(f)‖.
+-/
 theorem norm_haarIntegratedHom_groupRight (g : G) (f : HaarTwistedCore.Carrier μ α) :
     ‖haarIntegratedHom μ ρ (HaarTwistedCore.groupRight μ α g f)‖ =
       ‖haarIntegratedHom μ ρ f‖ := by

@@ -1,10 +1,10 @@
-# L1 Gauge
+# The L¹ gauge of compactly supported coefficients
 
-- [L1 Gauge](l1-gauge.md)
-- [L1 Gauge nonneg](l1-gauge-nonneg.md)
-- [L1 Gauge zero](l1-gauge-zero.md)
-- [L1 Gauge smul](l1-gauge-smul.md)
-- [L1 Gauge neg](l1-gauge-neg.md)
-- [L1 Gauge add le](l1-gauge-add-le.md)
-- [L1 Seminorm](l1-seminorm.md)
-- [L1 Seminorm apply](l1-seminorm-apply.md)
+- [Integral of the coefficient norm](l1-gauge.md)
+- [Nonnegativity of the L¹ gauge](l1-gauge-nonneg.md)
+- [L¹ gauge of the zero coefficient](l1-gauge-zero.md)
+- [Complex scaling of the L¹ gauge](l1-gauge-smul.md)
+- [L¹ gauge of the additive inverse](l1-gauge-neg.md)
+- [Triangle inequality for the L¹ gauge](l1-gauge-add-le.md)
+- [Complex L¹ seminorm on the coefficient core](l1-seminorm.md)
+- [Value of the complex L¹ seminorm](l1-seminorm-apply.md)

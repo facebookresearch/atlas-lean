@@ -1,3 +1,4 @@
-# Tensor Frame Matrix Linear apply
+# Entry formula for the frame matrix
 
-Each extracted matrix entry is the original full-H coefficient of the raw tensor.
+`tensorFrameMatrixLinear v A z i j =
+tensorMatrixCoefficient H A (v j) (v i) z`.

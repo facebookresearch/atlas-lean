@@ -1,3 +1,4 @@
-# Compact Tensor Completion Equiv apply
+# Value of the induced completion equivalence
 
-The equivalence retains the same actual completed homomorphism value on every element.
+For `x : CompactTensorCompletion H A`,
+`compactTensorCompletionEquiv H A x = compactTensorCompletionToCompacts H A x`.

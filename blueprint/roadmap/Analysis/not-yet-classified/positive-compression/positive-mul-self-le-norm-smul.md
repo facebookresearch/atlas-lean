@@ -1,3 +1,4 @@
-# Positive mul self le norm smul
+# Norm bound on a positive square
 
-The original positive square is bounded by the original positive norm multiple.
+In a nonunital complex C-star algebra with its spectral
+order, every positive `a` satisfies `a*a ≤ ‖a‖ • a`.

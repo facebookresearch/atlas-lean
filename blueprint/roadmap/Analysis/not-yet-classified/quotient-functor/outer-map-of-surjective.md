@@ -1,3 +1,5 @@
-# Outer Map Of Surjective
+# Corona map of a coefficient quotient
 
-The actual coefficient-quotient multiplier map descends to the actual unital outer quotient.
+For a surjective complex nonunital star homomorphism
+`ρ : B → D` of C-star algebras, the multiplier map descends to the unital complex star
+homomorphism `Q(ρ) : Q(B) → Q(D)`.

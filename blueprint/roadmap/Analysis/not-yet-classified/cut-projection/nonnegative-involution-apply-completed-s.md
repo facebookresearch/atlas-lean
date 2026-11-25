@@ -1,3 +1,4 @@
-# Nonnegative Involution apply completed Single
+# Coordinate signs of the nonnegative reflection
 
-The boundary reflection is positive in degree zero and every positive degree.
+`F_+ (j_n x) = j_n x` for `n ≥ 0` and `F_+
+(j_n x) = -j_n x` for `n < 0`.

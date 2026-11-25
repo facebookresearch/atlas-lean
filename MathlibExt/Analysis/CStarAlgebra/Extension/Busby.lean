@@ -17,13 +17,17 @@ public import MathlibExt.Analysis.CStarAlgebra.Multiplier.Outer
 public import MathlibExt.Analysis.CStarAlgebra.Pullback
 
 /-!
-# Busby invariants of C-star extensions
+# Busby invariants and pullback extensions
 
-For a concrete extension of `A` by `B`, the middle algebra acts on its
-distinguished ideal and therefore maps canonically into the multiplier
-algebra of `B`.  Passing to the quotient gives the Busby invariant
-`A → Q(B)`.  Conversely, a homomorphism `A → Q(B)` defines a concrete
-extension by the literal pullback along `M(B) → Q(B)`.
+For an extension `0 → B → E → A → 0` of nonunital C-star algebras, the action of `E` on its
+distinguished ideal defines a multiplier map `μ : E → M(B)`. If `p : E → A` and `q : M(B) → Q(B)
+= M(B)/B` are the quotient maps, its Busby invariant is characterized by `τ(p e) = q(μ e)`. On
+the included ideal, `μ(b)` is the canonical multiplier of `b`.
+
+Conversely `τ : A → Q(B)` defines the closed pullback algebra `P_τ = {(a,m) ∈ A × M(B) | τ(a) =
+q(m)}`, with the inherited product norm. Its ideal inclusion is `b ↦ (0,b)` through the
+multiplier embedding and its quotient is `(a,m) ↦ a`. The resulting extension has Busby
+invariant `τ`.
 -/
 
 @[expose] public section
@@ -42,15 +46,17 @@ variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
 attribute [local instance] CStarExtension.outerCStarAlgebra
 
-/-- The canonical action of the middle algebra on the distinguished ideal,
-viewed as a multiplier of the coefficient algebra. -/
+/-- **Multiplier action of an extension algebra.** For an extension `X` of `A` by `B`, the middle
+algebra acts by left and right multiplication on its distinguished ideal. Transport through
+the ideal identification with `B` defines the complex nonunital star-algebra homomorphism
+`X.multiplierMap : X.Middle → M(B)`. -/
 noncomputable def multiplierMap
     (X : CStarExtension.{uA, uB, uE} A B) :
     X.Middle →⋆ₙₐ[ℂ] 𝓜(ℂ, B) :=
   DoubleCentralizer.multiplierExtension X.ideal X.idealEquiv
 
-/-- The multiplier action restricts to the canonical coefficient embedding
-on the distinguished ideal. -/
+/-- **Multiplier action on the included ideal.** For `b : B`, `X.multiplierMap (X.inclusion b) =
+DoubleCentralizer.coeHom b`, the canonical multiplier embedding. -/
 theorem multiplierMap_inclusion
     (X : CStarExtension.{uA, uB, uE} A B) (b : B) :
     X.multiplierMap (X.inclusion b) =
@@ -61,7 +67,8 @@ theorem multiplierMap_inclusion
   exact DoubleCentralizer.multiplierExtension_idealEquiv
     X.ideal X.idealEquiv b
 
-/-- The canonical multiplier action on literal ideal representatives. -/
+/-- **Multiplier action on an ideal representative.** For the ideal identification `X.idealEquiv :
+B ≃ X.ideal`, `X.multiplierMap (X.idealEquiv b) = DoubleCentralizer.coeHom b`. -/
 @[simp]
 theorem multiplierMap_idealEquiv_coe
     (X : CStarExtension.{uA, uB, uE} A B) (b : B) :
@@ -69,8 +76,8 @@ theorem multiplierMap_idealEquiv_coe
       DoubleCentralizer.coeHom (𝕜 := ℂ) b := by
   exact X.multiplierMap_inclusion b
 
-/-- The quotient of the canonical multiplier action vanishes on the
-distinguished ideal. -/
+/-- **Vanishing on the extension ideal.** If `e ∈ X.ideal`, the multiplier quotient satisfies
+`q(X.multiplierMap e) = 0` in `Q(B)`. -/
 theorem outerQuotient_multiplierMap_eq_zero
     (X : CStarExtension.{uA, uB, uE} A B)
     (e : X.Middle) (he : e ∈ X.ideal) :
@@ -79,7 +86,9 @@ theorem outerQuotient_multiplierMap_eq_zero
   have heq : X.inclusion b = e := congrArg Subtype.val hb
   rw [← heq, multiplierMap_inclusion, outerQuotientMap_coe]
 
-/-- The Busby invariant of a concrete extension. -/
+/-- **Busby invariant of a C-star extension.** The complex nonunital star-algebra homomorphism
+`X.busby : A → Q(B)` is determined by `X.busby (X.quotient e) = q(X.multiplierMap e)` for
+every `e : X.Middle`. -/
 noncomputable def busby
     (X : CStarExtension.{uA, uB, uE} A B) :
     BusbyMap (A := A) (B := B) := by
@@ -93,8 +102,8 @@ noncomputable def busby
       fun e he ↦ outerQuotient_multiplierMap_eq_zero X e he
   exact descended.comp X.quotientEquiv.symm.toNonUnitalStarAlgHom
 
-/-- The Busby invariant is characterized by the quotient of the canonical
-multiplier action. -/
+/-- **Busby formula on quotient representatives.** `X.busby (X.quotient e) = outerQuotientMap
+(X.multiplierMap e)`. -/
 theorem busby_quotient
     (X : CStarExtension.{uA, uB, uE} A B) (e : X.Middle) :
     X.busby (X.quotient e) =
@@ -111,7 +120,9 @@ theorem busby_quotient
   rw [X.quotientEquiv.symm_apply_apply]
   rfl
 
-/-- The Busby formula on literal quotient representatives. -/
+/-- **Busby formula through the quotient identification.** `X.busby (X.quotientEquiv
+(Submodule.Quotient.mk e)) = q(X.multiplierMap e)` for every middle-algebra representative
+`e`. -/
 @[simp]
 theorem busby_quotientEquiv_mk
     (X : CStarExtension.{uA, uB, uE} A B) (e : X.Middle) :
@@ -119,22 +130,23 @@ theorem busby_quotientEquiv_mk
       outerQuotientMap (X.multiplierMap e) := by
   exact X.busby_quotient e
 
-/-- A Busby map belongs to an extension when it has the characteristic
-quotient formula. -/
+/-- **Characteristic equation of a Busby invariant.** A homomorphism `τ : A → Q(B)` is a Busby
+invariant for `X` when `τ(X.quotient e) = q(X.multiplierMap e)` for every `e : X.Middle`. -/
 def IsBusbyInvariant
     (X : CStarExtension.{uA, uB, uE} A B)
     (τ : BusbyMap (A := A) (B := B)) : Prop :=
   ∀ e : X.Middle,
     τ (X.quotient e) = outerQuotientMap (X.multiplierMap e)
 
-/-- The canonical Busby invariant satisfies its characteristic formula. -/
+/-- **Characteristic equation for the extension Busby map.** The map `X.busby` satisfies
+`τ(X.quotient e) = q(X.multiplierMap e)` on every middle-algebra element. -/
 theorem busby_isBusbyInvariant
     (X : CStarExtension.{uA, uB, uE} A B) :
     IsBusbyInvariant X X.busby :=
   X.busby_quotient
 
-/-- The characteristic quotient formula uniquely determines the Busby
-invariant. -/
+/-- **Uniqueness of the Busby invariant.** Any `τ : A → Q(B)` satisfying the extension's
+characteristic quotient equation equals `X.busby`. -/
 theorem busby_unique
     (X : CStarExtension.{uA, uB, uE} A B)
     (τ : BusbyMap (A := A) (B := B))
@@ -147,12 +159,14 @@ theorem busby_unique
 
 /-! ## Pullback construction -/
 
-/-- The literal pullback algebra associated to a Busby map. -/
+/-- **Pullback algebra of a Busby map.** For nonunital C-star algebras and `τ : A → Q(B)`,
+`BusbyPullback τ` is `{(a,m) ∈ A × M(B) | τ(a) = q(m)}` with its closed-subalgebra norm. -/
 abbrev BusbyPullback (τ : BusbyMap (A := A) (B := B)) :=
   NonUnitalCStarPullback.Pullback τ
     (outerQuotientMap (A := B)).toNonUnitalStarAlgHom
 
-/-- The coefficient inclusion into the Busby pullback. -/
+/-- **Coefficient inclusion into a Busby pullback.** The homomorphism `B → BusbyPullback τ` sends
+`b` to `(0, DoubleCentralizer.coeHom b)`. -/
 noncomputable def pullbackInclusion
     (τ : BusbyMap (A := A) (B := B)) :
     B →⋆ₙₐ[ℂ] BusbyPullback τ := by
@@ -168,7 +182,8 @@ noncomputable def pullbackInclusion
   exact NonUnitalCStarPullback.lift τ π zero
     (DoubleCentralizer.coeHom (𝕜 := ℂ) (A := B)) h
 
-/-- The quotient projection from the Busby pullback. -/
+/-- **Quotient of the Busby pullback.** The homomorphism `BusbyPullback τ → A` sends `(a,m)` to
+`a`. -/
 noncomputable def pullbackQuotient
     (τ : BusbyMap (A := A) (B := B)) :
     BusbyPullback τ →⋆ₙₐ[ℂ] A :=
@@ -239,7 +254,9 @@ theorem pullback_exact
   · rintro ⟨b, rfl⟩
     rfl
 
-/-- The concrete extension defined by a Busby map. -/
+/-- **Extension determined by a Busby map.** For `τ : A → Q(B)`, this is the extension with middle
+algebra `BusbyPullback τ`, ideal inclusion `b ↦ (0,b)` via the multiplier embedding, and
+quotient `(a,m) ↦ a`. -/
 noncomputable def ofBusby
     (τ : BusbyMap (A := A) (B := B)) :
     CStarExtension A B :=
@@ -254,7 +271,8 @@ theorem ofBusby_inclusion
     (ofBusby τ).inclusion b = pullbackInclusion τ b :=
   CStarExtension.ofExact_inclusion_apply _ _ _ _ _ b
 
-/-- The ideal-equivalence inclusion of the literal Busby pullback. -/
+/-- **Ideal identification in the pullback extension.** The included ideal element of `ofBusby τ`
+corresponding to `b : B` is `pullbackInclusion τ b`. -/
 @[simp]
 theorem ofBusby_idealEquiv_coe
     (τ : BusbyMap (A := A) (B := B)) (b : B) :
@@ -268,8 +286,8 @@ theorem ofBusby_quotient
     (ofBusby τ).quotient p = pullbackQuotient τ p :=
   CStarExtension.ofExact_quotient_apply _ _ _ _ _ p
 
-/-- The Busby invariant of the pullback extension is the original map:
-`ofBusby` is the converse of `busby`. -/
+/-- **Busby invariant of a pullback extension.** `(ofBusby τ).busby = τ` for every homomorphism `τ
+: A → Q(B)`. -/
 theorem ofBusby_busby
     (τ : BusbyMap (A := A) (B := B)) :
     (ofBusby τ).busby = τ := by

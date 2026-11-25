@@ -1,3 +1,4 @@
-# Fst apply mul
+# Left centralizer identity
 
-The actual first operator is a left centralizer, needed for quotient well-definedness.
+For nonunital C-star `B`, multiplier `m` and `a,b : B`, `m.fst
+(a*b) = m.fst a * b`.

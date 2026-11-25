@@ -1,4 +1,4 @@
-# Morita
+# Analytic strong Morita equivalence
 
-- [Strongly Morita Equivalent](strongly-morita-equivalent.md)
-- [Is Full Hereditary Subalgebra](is-full-hereditary-subalgebra.md)
+- [Strong Morita equivalence through Hilbert modules](strongly-morita-equivalent.md)
+- [Full hereditary C-star subalgebra](is-full-hereditary-subalgebra.md)

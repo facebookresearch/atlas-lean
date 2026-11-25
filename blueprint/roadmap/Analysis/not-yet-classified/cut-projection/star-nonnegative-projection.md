@@ -1,3 +1,3 @@
-# Star nonnegative Projection
+# Self-adjoint nonnegative cut
 
-The nonnegative-degree projection is self-adjoint.
+`star nonnegativeProjection = nonnegativeProjection`.

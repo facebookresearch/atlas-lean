@@ -1,3 +1,5 @@
-# Compact Coefficients
+# Compact-operator coefficient algebra
 
-The original compact-operator coefficient has the literal closed-ideal subtype carrier.
+For a complex Hilbert space `H`,
+`CompactCoefficients H` is the closed star ideal `K(H)` in `B(H)`, with its inherited operator
+norm.

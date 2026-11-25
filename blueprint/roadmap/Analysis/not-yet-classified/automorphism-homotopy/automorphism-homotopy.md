@@ -1,3 +1,4 @@
-# Automorphism Homotopy
+# Point-norm automorphism homotopy
 
-A point-norm continuous path through complex star-algebra automorphisms.
+For a nonunital complex C-star algebra A and automorphisms α, β, this structure records a path
+hₜ ∈ Aut(A), continuous in norm on each coefficient a, with endpoints α and β.

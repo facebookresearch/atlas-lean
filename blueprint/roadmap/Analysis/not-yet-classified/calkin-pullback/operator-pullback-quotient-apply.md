@@ -1,3 +1,4 @@
-# Operator Pullback Quotient apply
+# Coefficient value of a compatible pair
 
-Every compatible pair retains its literal coefficient quotient value.
+For `p : P_φ`, `operatorPullbackQuotient φ p =
+p.1.2`, its `A` coordinate.

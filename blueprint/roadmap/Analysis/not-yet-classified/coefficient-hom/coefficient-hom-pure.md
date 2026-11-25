@@ -1,3 +1,4 @@
-# Coefficient Hom pure
+# Coefficient representation on pure vectors
 
-The bundled homomorphism has the literal elementary coefficient value on original pure vectors.
+`coefficientHom H A a (pure H A ξ b) = pure H
+A ξ (a*b)`.

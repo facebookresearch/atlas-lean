@@ -1,4 +1,4 @@
-# To Homotopic
+# Underlying homotopy of star homomorphisms
 
-Forgetting invertibility gives a point-norm homotopy of nonunital
-star-algebra homomorphisms with the same endpoint orientation.
+An automorphism homotopy from α to β is a point-norm homotopy between the nonunital star
+homomorphisms underlying α and β.

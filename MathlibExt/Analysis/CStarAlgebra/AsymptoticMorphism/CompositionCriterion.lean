@@ -15,16 +15,15 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Homotopy
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.Uniform
 
 /-!
-# A literal sufficiently-fast composition-class criterion
+# Rate criterion for a composition homotopy class
 
-This is only a property of the ACTUAL asymptotic homotopy class. It selects no
-composition operation. Each uniform representative pair gets its own knots
-and thresholds; no universal rate over all representatives is assumed.
-
-The rates are continuous, increasing and proper, and dominate the thresholds
-at the specified knots. The output family has the literal outer-reparametrized
-formula. No condition assuming that this formula is already an asymptotic
-morphism is passed as an input.
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), φ:A→B and ψ:B→C asymptotic star
+morphisms, and z a homotopy class of asymptotic star morphisms A→C. For every uniform pair
+φu,ψu homotopic to φ,ψ, require sequences τ,ν:ℕ→T with τ monotone and τ(n),ν(n)≥n+1. For every
+continuous monotone r:T→T tending to infinity and satisfying r(τ(n))≥ν(n) for all n, the
+family σ_t(a)=ψu_(r(t))(φu_t(a)) must be an asymptotic star morphism with homotopy class z.
+Uniform means a continuous coefficient-to-orbit map into the bounded continuous function
+algebra with its supremum norm. This criterion defines IsCompositionClass z φ ψ.
 -/
 
 @[expose] public section
@@ -40,8 +39,17 @@ variable {A : Type uA} {B : Type uB} {C : Type uC}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 variable [NonUnitalCStarAlgebra C]
 
-/-- Operational representative criterion for the printed reparametrized
-composition. Existence/uniqueness is a separate source theorem, not a field. -/
+/-- **Composition-class predicate for reparametrized representatives.**
+
+Let A,B,C be nonunital complex C-star algebras, T=[1,∞), φ:A→B and ψ:B→C asymptotic star
+morphisms, and z a homotopy class of asymptotic star morphisms A→C. For every uniform pair
+φu,ψu homotopic to φ,ψ, require sequences τ,ν:ℕ→T with τ monotone and τ(n),ν(n)≥n+1. For every
+continuous monotone r:T→T tending to infinity and satisfying r(τ(n))≥ν(n) for all n, the
+family σ_t(a)=ψu_(r(t))(φu_t(a)) must be an asymptotic star morphism with homotopy class z.
+Homotopy classes are defined using interval-valued asymptotic morphisms with supremum-norm
+defect limits. Uniform representatives have continuous maps from the coefficient algebra into
+C_b(T,target).
+-/
 def IsCompositionClass (z : HomotopyClasses A C)
     (φ : AsymptoticMorphism A B) (ψ : AsymptoticMorphism B C) : Prop :=
   ∀ (φu : AsymptoticMorphism A B) (ψu : AsymptoticMorphism B C),

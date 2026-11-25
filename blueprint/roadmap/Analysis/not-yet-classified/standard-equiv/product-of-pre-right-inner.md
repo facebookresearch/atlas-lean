@@ -1,4 +1,4 @@
-# Product Of Pre right Inner
+# Inner product of finite-support pairs after completion
 
-The componentwise finite-support inclusion preserves the
-coefficient-valued inner product.
+`productOfPre` preserves the
+coefficient-valued inner product of the two-component Hilbert-module direct sum.

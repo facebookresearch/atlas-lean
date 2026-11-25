@@ -1,5 +1,5 @@
-# Character Seminorm
+# Character invariance of the maximal covariant C-star seminorm
 
-- [Admissible character pullback](admissible-character-pullback.md)
-- [Maximal character le](maximal-character-le.md)
-- [Maximal character eq](maximal-character-eq.md)
+- [Character pullback preserves L¹-admissibility](admissible-character-pullback.md)
+- [Maximal covariant seminorm bound after modulation](maximal-character-le.md)
+- [Maximal covariant seminorm is character invariant](maximal-character-eq.md)

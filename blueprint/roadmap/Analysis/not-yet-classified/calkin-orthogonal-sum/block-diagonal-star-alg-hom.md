@@ -1,4 +1,5 @@
-# Block Diagonal Star Alg Hom
+# Star homomorphism of orthogonal Calkin sums
 
-The actual unital star-algebra map on the two existing Calkin algebras.
-Its computational value uses only public quotient and upstairs class-map DATA.
+For complex Hilbert spaces `H,K`, the map
+`Q(H) × Q(K) → Q(H ⊕ K)` is the unital complex star homomorphism represented by `(S,T) ↦ S ⊕
+T`.

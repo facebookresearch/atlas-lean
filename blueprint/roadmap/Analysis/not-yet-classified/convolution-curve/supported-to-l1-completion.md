@@ -1,3 +1,4 @@
-# Supported To L1 Completion
+# Bounded inclusion of fixed-support functions in the L¹ completion
 
-The original fixed-support functions map boundedly to their literal L1 completion images.
+For a compact closed set K, the complex linear map JK sends a bounded continuous function b
+supported in K to its class in the L¹ norm completion. Its operator norm is at most μ.real(K).

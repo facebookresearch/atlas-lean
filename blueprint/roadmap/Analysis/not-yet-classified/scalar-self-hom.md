@@ -1,4 +1,5 @@
-# Scalar Representation
+# Scalar representation on the coefficient self-module
 
-The original complex scalar action on the coefficient self module,
-with its canonical opposite spectral order and Hilbert-module data.
+For a nonunital C-star algebra `A`,
+`scalarSelfHom A : ℂ → End_A(A)` sends `c` to `c • id_A`, acting as `a ↦ c • a` with adjoint
+`a ↦ star c • a`.

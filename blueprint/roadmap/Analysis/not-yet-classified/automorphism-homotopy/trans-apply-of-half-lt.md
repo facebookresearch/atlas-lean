@@ -1,4 +1,3 @@
-# Trans apply of half lt
+# Concatenation on the second half interval
 
-On the strict right half of the interval, concatenation is the second
-path with parameter `2t - 1`.
+For t > 1/2 and a ∈ A, the concatenated path satisfies (h.trans k)ₜ(a) = k₂ₜ₋₁(a).

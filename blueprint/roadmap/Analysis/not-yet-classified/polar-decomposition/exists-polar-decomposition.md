@@ -1,4 +1,5 @@
-# Exists polar Decomposition
+# Existence of a unitary polar factor
 
-Dense ranges of `T* T` and `T` give one unitary polar decomposition,
-with the unitary characterized on every square-root image.
+For an adjointable map between complete right C-star
+modules, dense ranges of `T* T` and `T` imply existence of a unitary `U` with `T = U |T|` and
+`U (|T| x) = T x` for every `x`.

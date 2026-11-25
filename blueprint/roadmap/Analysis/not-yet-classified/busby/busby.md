@@ -1,3 +1,5 @@
-# Busby
+# Busby invariant of a C-star extension
 
-The Busby invariant of a concrete extension.
+The complex nonunital star-algebra homomorphism
+`X.busby : A → Q(B)` is determined by `X.busby (X.quotient e) = q(X.multiplierMap e)` for
+every `e : X.Middle`.

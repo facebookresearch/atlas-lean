@@ -1,3 +1,4 @@
-# Tensor Matrix Coefficient tmul
+# Matrix coefficient of a pure tensor
 
-Each original tensor matrix entry has its actual elementary scalar-times-coefficient value.
+`tensorMatrixCoefficient H A ξ η (a⊗T) =
+compactOperatorMatrixCoefficient H ξ η T • a`.

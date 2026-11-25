@@ -1,3 +1,5 @@
-# Closure range algebraic Tensor Operator eq compact Submodule
+# Closed tensor range equals module compacts
 
-The actual algebraic tensor operator range closes to the original compact module ideal.
+For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, the topological closure of the linear range of
+`algebraicTensorOperator H A` is the module compact submodule of `End_A(Space H A)`.

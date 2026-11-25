@@ -1,4 +1,5 @@
-# Completed Diagonal
+# Completed diagonal of a uniformly bounded family
 
-The actual completed diagonal of a given uniformly bounded rectangular
-family. Bound witnesses occur only in continuity proofs, not operator values.
+If `T_i : E_i → F_i` are adjointable and
+admit one nonnegative common norm bound, their finite-support coordinate map extends to an
+adjointable `Completed B E → Completed B F`.

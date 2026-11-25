@@ -1,3 +1,4 @@
-# Block Diagonal Star Alg Hom apply
+# Diagonal Calkin map on operator classes
 
-The descended map is represented by the literal operator block diagonal.
+For complex Hilbert spaces `H,K`,
+`blockDiagonalStarAlgHom ([S],[T]) = [OrthogonalSum.blockDiagonal S T]`.

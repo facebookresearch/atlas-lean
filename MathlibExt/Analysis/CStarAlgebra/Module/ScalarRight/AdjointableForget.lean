@@ -14,12 +14,12 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.Module.ScalarRight.AdjointableIsometry
 
 /-!
-# Forgetting scalar-right adjointable operators is a linear isometry
+# Isometric recovery of Hilbert-space operators
 
-This is the source-facing orientation of the scalar adjointable
-correspondence: module adjointable operators map to ordinary bounded
-complex-linear maps. It is the inverse of the canonical-adjoint construction,
-not a second carrier or comparison.
+For complex Hilbert spaces `H,K`, conjugating an adjointable map on their right scalar modules
+by `qH = equivL H` and `qK = equivL K` gives `qK ∘ T ∘ qH.symm`. This is a complex-linear
+isometric equivalence onto `H →L[ℂ] K`, inverse to the Hilbert-to-module operator
+correspondence.
 -/
 
 @[expose] public section
@@ -32,8 +32,9 @@ noncomputable section
 
 universe u v
 
-/-- Forget scalar-right adjointable structure by conjugating the forward map
-through the fixed ScalarRight equivalences. -/
+/-- **Isometric recovery of a Hilbert operator.** For complex Hilbert spaces `H,K`, the map `T ↦
+equivL K ∘ T ∘ (equivL H).symm` is a complex-linear isometric equivalence from right
+scalar-module adjointable operators to `H →L[ℂ] K`. -/
 noncomputable def adjointableOperatorLinearIsometryEquiv
     (H : Type u) (K : Type v)
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]

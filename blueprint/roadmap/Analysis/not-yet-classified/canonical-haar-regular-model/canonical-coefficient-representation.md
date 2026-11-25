@@ -1,3 +1,5 @@
-# Canonical Coefficient Representation
+# Canonical faithful coefficient representation
 
-The canonical coefficient representation is the actual selected strict GN map.
+For a nonunital complex C-star algebra A, canonicalCoefficientRepresentation A:A→B(H_A), with
+H_A=CanonicalCoefficientSpace A, is the nonunital complex star homomorphism from the faithful
+Gelfand–Naimark construction.

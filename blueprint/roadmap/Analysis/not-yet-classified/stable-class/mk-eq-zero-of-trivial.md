@@ -1,3 +1,4 @@
-# Mk eq zero of trivial
+# Zero class of a liftable Busby map
 
-Every trivial extension has the zero class in the stable quotient.
+For coherent `S`, a homomorphism `σ : A → Q(B)`
+admitting a multiplier lift satisfies `StableClass.mk S hS σ = 0`.

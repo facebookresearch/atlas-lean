@@ -1,3 +1,5 @@
-# Compact Tensor Seminorm
+# C-star seminorm of the compact tensor action
 
-The original compact-action norm as a genuine C-star seminorm on the same raw tensor.
+For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, define `compactTensorSeminorm H A z = ‖algebraicCompactTensorHom
+H A z‖` on the raw algebraic tensor `A ⊗_ℂ K(H)`.

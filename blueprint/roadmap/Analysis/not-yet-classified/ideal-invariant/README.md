@@ -1,6 +1,6 @@
-# Ideal Invariant
+# Closed ideals under multiplier actions
 
-- [Fst apply mul](fst-apply-mul.md)
-- [Snd apply mul](snd-apply-mul.md)
-- [Fst mem closed Star Ideal](fst-mem-closed-star-ideal.md)
-- [Snd mem closed Star Ideal](snd-mem-closed-star-ideal.md)
+- [Left centralizer identity](fst-apply-mul.md)
+- [Right centralizer identity](snd-apply-mul.md)
+- [Left multiplier invariance of a closed ideal](fst-mem-closed-star-ideal.md)
+- [Right multiplier invariance of a closed ideal](snd-mem-closed-star-ideal.md)

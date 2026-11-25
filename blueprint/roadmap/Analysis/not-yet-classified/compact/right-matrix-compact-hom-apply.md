@@ -1,3 +1,5 @@
-# Right Matrix Compact Hom apply
+# Coordinate formula for a compact matrix action
 
-The included compact operator retains the source-order column formula.
+For nonunital complex C-star `B`, finite
+`I`, `M : CStarMatrix I I B`, `x : FiniteStandard B I` and `i : I`, `(rightMatrixCompactHom M)
+x i = ∑ j, M i j * x j`.

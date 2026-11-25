@@ -16,16 +16,16 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Ma
 public import MathlibExt.Analysis.CStarAlgebra.SeminormPullback
 
 /-!
-# The actual covariant integrated seminorm and its original maximal bound
+# C-star seminorms from covariant integrated representations
 
-Pull back the original bounded-operator C-star norm along the actual Haar
-integrated star-algebra homomorphism. Its existing literal L1 coefficient
-bound makes this actual seminorm admissible, so the computed intrinsic
-maximum bounds every original integrated coefficient.
-
-This bound supplies continuity for the completed representation map on
-the actual maximal completion. The Hilbert universe is independent; no
-nondegeneracy or full covariant norm identity is used to construct it.
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. The operator-norm pullback
+pρ(f)=‖Iρ(f)‖ is a C-star seminorm. It satisfies pρ(f)≤∫ s, ‖f(s)‖ ∂μ and pρ(f)≤pmax(f), where
+pmax is the supremum of all L¹-dominated C-star seminorms on the twisted core.
 -/
 
 @[expose] public section
@@ -48,24 +48,63 @@ variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [Complet
 variable (μ : Measure G) [μ.IsHaarMeasure] [μ.Regular]
 variable {α : PointNormCStarAction G A} (ρ : CovariantRepresentation α H)
 
-/-- The norm of the original Haar integrated map is an actual source C-star seminorm. -/
+/-- **Integrated covariant C-star seminorm.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. The C-star seminorm
+haarIntegratedCStarSeminorm μ ρ on the twisted convolution core is pρ(f)=‖Iρ(f)‖, using the
+operator norm on B(H).
+-/
 def haarIntegratedCStarSeminorm : CStarSeminorm (HaarTwistedCore.Carrier μ α) :=
   CStarSeminorm.ofNonUnitalStarAlgHom (haarIntegratedHom μ ρ)
 
-/-- Every seminorm value is the original integrated operator norm. -/
+/-- **Value of the integrated covariant seminorm.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. For each core coefficient f,
+haarIntegratedCStarSeminorm μ ρ f=‖Iρ(f)‖.
+-/
 @[simp]
 theorem haarIntegratedCStarSeminorm_apply (f : HaarTwistedCore.Carrier μ α) :
     haarIntegratedCStarSeminorm μ ρ f = ‖haarIntegratedHom μ ρ f‖ :=
   rfl
 
-/-- The original coefficient-integral bound makes every actual covariant seminorm admissible. -/
+/-- **L¹ admissibility of the integrated seminorm.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. The seminorm pρ(f)=‖Iρ(f)‖ belongs to
+the family of C-star seminorms p with p(h)≤∫ s, ‖h(s)‖ ∂μ for every compactly supported
+continuous coefficient h.
+-/
 theorem haarIntegratedCStarSeminorm_mem_admissible :
     haarIntegratedCStarSeminorm μ ρ ∈ HaarTwistedCore.admissibleCStarSeminorms μ α := by
   intro f
   change ‖haarIntegratedHom μ ρ f‖ ≤ HaarTwistedCore.l1Gauge μ α f
   exact norm_haarIntegratedHom_le μ ρ f
 
-/-- The intrinsic maximal source seminorm bounds every actual covariant integrated coefficient. -/
+/-- **The maximal seminorm bounds each integrated representation.**
+
+Let G be a locally compact topological group with its Borel measurable structure and regular
+left Haar measure μ, A a nonunital complex C-star algebra, and α a point-norm action of G on
+A. Let H be a complex Hilbert space and ρ=(π,U) a covariant representation of α on H, where
+π:A→B(H) is a nonunital star homomorphism and U is a strongly continuous unitary
+representation satisfying U_s π(a) U_s⁻¹=π(α_s(a)). For a compactly supported continuous
+coefficient f:G→A, put Iρ(f)ξ=∫ s:G, π(f(s))(U_s ξ) ∂μ. Write pmax(f)=sup{p(f): p is a C-star
+seminorm on the twisted convolution core and p(h)≤∫ s, ‖h(s)‖ ∂μ for every core coefficient
+h}. Every compactly supported continuous coefficient f satisfies ‖Iρ(f)‖≤pmax(f).
+-/
 theorem norm_haarIntegratedHom_le_maximalCStarSeminorm (f : HaarTwistedCore.Carrier μ α) :
     ‖haarIntegratedHom μ ρ f‖ ≤ HaarTwistedCore.maximalCStarSeminorm μ α f :=
   HaarTwistedCore.le_maximalCStarSeminorm μ α (haarIntegratedCStarSeminorm_mem_admissible μ ρ) f

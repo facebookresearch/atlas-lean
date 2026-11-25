@@ -16,18 +16,16 @@ public import MathlibExt.Analysis.CStarAlgebra.Module.Right
 public import Mathlib.Topology.Separation.Hausdorff
 
 /-!
-# The actual adjoint of a dense rectangular right-module operator
+# Adjoint domains of densely defined right-module operators
 
-The adjoint domain is the full set of vectors admitting a coefficient-valued
-pairing witness. Density makes that witness unique, and the chosen value
-defines the actual complex-linear partial adjoint and right-module action.
-The graph is precisely the intersection of its closed pairing equations.
-No density of the adjoint domain, closedness of the original operator,
-regularity or orthogonal complement is assumed.
+Let `T : E → F` be a densely defined right-linear partial operator between right C-star modules
+over a nonunital algebra `B` with star-compatible coefficient order. Its adjoint domain is `{y ∈
+F | ∃ z ∈ E, ∀ x ∈ dom T, ⟨T x, y⟩_B = ⟨x, z⟩_B}`. Density of `dom T` makes `z` unique, and `T*
+y = z` defines a complex-linear partial map whose domain is stable under right coefficients.
 
-The compatible `StarOrderedRing` dictionary is the one used by the existing
-right-inner-product continuity API. The canonical spectral order supplies
-it for the original C-star coefficient algebra; no unit is required.
+The graph of `T*` is the set of pairs satisfying all these pairing equations, hence is closed in
+the product norm topology. The construction applies to pre-Hilbert modules; density of the
+adjoint domain is a separate condition.
 -/
 
 @[expose] public section
@@ -49,13 +47,16 @@ variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E]
 variable [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F] [CStarModule Bᵐᵒᵖ F]
 
-/-- The literal coefficient pairing equation defining an adjoint witness. -/
+/-- **Adjoint pairing witness.** For a dense right-module partial operator `T`, `z : E` is a
+witness for `y : F` when `⟨T x, y⟩_B = ⟨x, z⟩_B` for every `x ∈ dom T`. -/
 def IsAdjointWitness (T : DenselyDefinedRightPartialOperator B E F) (y : F) (z : E) :
     Prop :=
   ∀ x : T.toPartial.domain,
     rightInner (B := B) (T.toPartial x) y = rightInner (B := B) (x : E) z
 
-/-- Every vector admitting an actual adjoint witness belongs to the full adjoint domain. -/
+/-- **Full adjoint domain.** For a dense right-module partial operator `T : E → F`, this complex
+submodule is the set of `y : F` admitting a witness `z : E` for `⟨T x, y⟩_B = ⟨x, z⟩_B` on
+`dom T`. -/
 def adjointDomain (T : DenselyDefinedRightPartialOperator B E F) : Submodule ℂ F where
   carrier := {y | ∃ z : E, IsAdjointWitness T y z}
   zero_mem' := by
@@ -73,12 +74,14 @@ def adjointDomain (T : DenselyDefinedRightPartialOperator B E F) : Submodule ℂ
     intro x
     rw [rightInner_smul_right, rightInner_smul_right, hz x]
 
-/-- The domain is exactly the original full witness set. -/
+/-- **Membership in the adjoint domain.** `y ∈ adjointDomain T` exactly when some `z : E`
+satisfies `IsAdjointWitness T y z`. -/
 @[simp]
 theorem mem_adjointDomain_iff (T : DenselyDefinedRightPartialOperator B E F) (y : F) :
     y ∈ adjointDomain T ↔ ∃ z : E, IsAdjointWitness T y z := Iff.rfl
 
-/-- The full adjoint domain is stable under right multiplication by the coefficient algebra. -/
+/-- **Right invariance of the adjoint domain.** For a dense right-module operator, `y ∈ dom T*`
+implies `y <• b ∈ dom T*` for every coefficient `b : B`. -/
 theorem adjointDomain_right_smul (T : DenselyDefinedRightPartialOperator B E F)
     {y : F} (hy : y ∈ adjointDomain T) (b : B) : y <• b ∈ adjointDomain T := by
   rcases hy with ⟨z, hz⟩
@@ -88,7 +91,8 @@ theorem adjointDomain_right_smul (T : DenselyDefinedRightPartialOperator B E F)
 
 variable [StarOrderedRing Bᵐᵒᵖ]
 
-/-- Density of the original domain makes each adjoint witness unique. -/
+/-- **Uniqueness of adjoint witnesses.** If `z,z'` both satisfy `⟨T x, y⟩_B = ⟨x, z⟩_B` on the
+dense domain of `T`, then `z = z'`. -/
 theorem adjointWitness_unique (T : DenselyDefinedRightPartialOperator B E F)
     {y : F} {z z' : E} (hz : IsAdjointWitness T y z) (hz' : IsAdjointWitness T y z') :
     z = z' := by
@@ -102,7 +106,8 @@ theorem adjointWitness_unique (T : DenselyDefinedRightPartialOperator B E F)
       exact (hz ⟨u, hu⟩).symm.trans (hz' ⟨u, hu⟩))
   exact congrFun h x
 
-/-- The full domain supplies a proved unique witness for every one of its vectors. -/
+/-- **Unique witness on the adjoint domain.** Every `y : adjointDomain T` has exactly one `z : E`
+satisfying the adjoint pairing equation on `dom T`. -/
 theorem existsUnique_adjointWitness (T : DenselyDefinedRightPartialOperator B E F)
     (y : adjointDomain T) : ∃! z : E, IsAdjointWitness T (y : F) z := by
   rcases y.property with ⟨z, hz⟩
@@ -110,11 +115,13 @@ theorem existsUnique_adjointWitness (T : DenselyDefinedRightPartialOperator B E 
   intro z' hz'
   exact adjointWitness_unique T hz' hz
 
-/-- The actual adjoint value is the unique witness already proved to exist in its domain. -/
+/-- **Value of the partial adjoint.** For `y ∈ dom T*`, `adjointValue T y` is the unique `z : E`
+satisfying `⟨T x, y⟩_B = ⟨x, z⟩_B` for all `x ∈ dom T`. -/
 def adjointValue (T : DenselyDefinedRightPartialOperator B E F) (y : adjointDomain T) : E :=
   Classical.choose (existsUnique_adjointWitness T y)
 
-/-- The constructed value satisfies the full original pairing equation. -/
+/-- **Pairing characterization of the adjoint value.** `IsAdjointWitness T y (adjointValue T y)`
+holds for every `y : adjointDomain T`. -/
 theorem adjointValue_spec (T : DenselyDefinedRightPartialOperator B E F)
     (y : adjointDomain T) : IsAdjointWitness T (y : F) (adjointValue T y) :=
   (Classical.choose_spec (existsUnique_adjointWitness T y)).1
@@ -149,7 +156,8 @@ theorem adjointValue_smul (T : DenselyDefinedRightPartialOperator B E F)
     rightInner (B := B) (x : E) (c • adjointValue T y)
   rw [rightInner_smul_right, rightInner_smul_right, adjointValue_spec T y x]
 
-/-- The selected adjoint witness preserves the original right coefficient multiplication. -/
+/-- **Right linearity of the adjoint value.** For `y ∈ dom T*` and `b : B`, the adjoint value of
+`y <• b` is `adjointValue T y <• b`. -/
 theorem adjointValue_right_smul (T : DenselyDefinedRightPartialOperator B E F)
     (y : adjointDomain T) (b : B) :
     adjointValue T ⟨(y : F) <• b, adjointDomain_right_smul T y.property b⟩ =
@@ -159,7 +167,9 @@ theorem adjointValue_right_smul (T : DenselyDefinedRightPartialOperator B E F)
   intro x
   rw [rightInner_right_smul, rightInner_right_smul, adjointValue_spec T y x]
 
-/-- The genuine rectangular complex-linear partial adjoint on its full witness domain. -/
+/-- **Complex-linear partial adjoint.** For a densely defined right-module map `T : E → F`,
+`adjoint T : F →ₗ.[ℂ] E` has the full witness domain and evaluates each vector at its unique
+adjoint witness. -/
 def adjoint (T : DenselyDefinedRightPartialOperator B E F) : F →ₗ.[ℂ] E where
   domain := adjointDomain T
   toFun :=
@@ -176,21 +186,24 @@ theorem adjoint_domain (T : DenselyDefinedRightPartialOperator B E F) :
 theorem adjoint_apply (T : DenselyDefinedRightPartialOperator B E F)
     (y : adjointDomain T) : (adjoint T) y = adjointValue T y := rfl
 
-/-- The partial adjoint satisfies the original coefficient-valued pairing on both domains. -/
+/-- **Pairing identity for the partial adjoint.** For `x ∈ dom T` and `y ∈ dom T*`, `⟨T x, y⟩_B =
+⟨x, T* y⟩_B`. -/
 theorem adjoint_pairing (T : DenselyDefinedRightPartialOperator B E F)
     (x : T.toPartial.domain) (y : adjointDomain T) :
     rightInner (B := B) (T.toPartial x) (y : F) =
       rightInner (B := B) (x : E) ((adjoint T) y) :=
   adjointValue_spec T y x
 
-/-- The partial adjoint is right-linear on its actual source domain. -/
+/-- **Right linearity of the partial adjoint.** On the full adjoint domain, `T* (y <• b) = T* y <•
+b` for every `b : B`. -/
 theorem adjoint_right_smul (T : DenselyDefinedRightPartialOperator B E F)
     (y : adjointDomain T) (b : B) :
     (adjoint T) ⟨(y : F) <• b, adjointDomain_right_smul T y.property b⟩ =
       (adjoint T) y <• b :=
   adjointValue_right_smul T y b
 
-/-- The actual graph consists of all pairs satisfying the original full pairing equations. -/
+/-- **Graph of the partial adjoint.** The graph is exactly `{(y,z) ∈ F × E | ∀ x ∈ dom T, ⟨T x,
+y⟩_B = ⟨x, z⟩_B}`. -/
 theorem adjoint_graph_eq (T : DenselyDefinedRightPartialOperator B E F) :
     ((adjoint T).graph : Set (F × E)) =
       {p | IsAdjointWitness T p.1 p.2} := by
@@ -208,7 +221,8 @@ theorem adjoint_graph_eq (T : DenselyDefinedRightPartialOperator B E F) :
     refine ⟨⟨p.1, hy⟩, rfl, ?_⟩
     exact adjointWitness_unique T (adjointValue_spec T ⟨p.1, hy⟩) hp
 
-/-- The full witness graph is closed in the original product norm topology. -/
+/-- **Closed graph of the partial adjoint.** For a densely defined right-module operator, the full
+adjoint graph is closed in the product norm topology on `F × E`. -/
 theorem isClosed_adjoint_graph (T : DenselyDefinedRightPartialOperator B E F) :
     IsClosed ((adjoint T).graph : Set (F × E)) := by
   have hs : {p : F × E | IsAdjointWitness T p.1 p.2} =

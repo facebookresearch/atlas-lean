@@ -1,3 +1,4 @@
-# Completion norm apply le
+# Vector norm bound after completion
 
-The completed map has the original operator-norm bound at every vector.
+For `x : Completion E`, `‖completion T x‖ ≤ ‖T‖ *
+‖x‖`.

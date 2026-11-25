@@ -17,18 +17,15 @@ import Mathlib.Topology.Constructions
 import Mathlib.Topology.Maps.Basic
 
 /-!
-# Dense range of the actual algebraic compact tensor action
+# Dense algebraic tensor range in amplification compacts
 
-The original completed pure vectors have dense complex span. Rank-one module
-operators are continuous linear in their first vector and continuous star
-semilinear in their second. The actual elementary tensor range contains every
-pure-pair rank-one, hence its closed span contains every original rank-one.
-The genuine compact module ideal is exactly that norm-closed rank-one span.
+For complex Hilbert `H` and nonunital C-star `A`, pure vectors `ξ⊗a` have dense complex span in
+`Space H A`. The algebraic tensor range contains every rank-one map between two such pure
+vectors.
 
-Subtype inducing topology gives dense range of the actual algebraic tensor
-homomorphism in the existing CompactAlgebra H A. This is the missing onto
-comparison prerequisite for its actually induced completion, not a proof of
-raw injectivity, the least cross norm or the terminal Takai theorem.
+Continuity of rank-one maps in their two vector arguments implies that the closure of the tensor
+range is the norm-closed module rank-one span. Thus `A ⊗_ℂ K(H) → CompactAlgebra H A` has dense
+range in the compact endomorphism norm.
 -/
 
 @[expose] public section
@@ -49,7 +46,9 @@ variable (H : Type uH) (A : Type uA)
 variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable [NonUnitalCStarAlgebra A]
 
-/-- The original Hilbert/coefficient pure vectors have dense complex span in the actual completion. -/
+/-- **Density of pure amplification vectors.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, the complex linear span of all `pure H A ξ a`, with `ξ : H` and `a : A`,
+is dense in `Space H A`. -/
 theorem pure_dense_span :
     letI : NormedAddCommGroup (Space H A) := spaceNormedAddCommGroup H A;
     letI : NormedSpace ℂ (Space H A) := spaceNormedSpace H A;
@@ -91,7 +90,9 @@ theorem pure_dense_span :
   rw [hRange]
   exact completedPure_dense_span (E₁ := ScalarRight H) (scalarSelfHom A)
 
-/-- The actual algebraic tensor operator range closes to the original compact module ideal. -/
+/-- **Closed tensor range equals module compacts.** For a complex Hilbert space `H` and a
+nonunital C-star algebra `A`, the topological closure of the linear range of
+`algebraicTensorOperator H A` is the module compact submodule of `End_A(Space H A)`. -/
 theorem closure_range_algebraicTensorOperator_eq_compactSubmodule :
     letI : PartialOrder Aᵐᵒᵖ := CStarAlgebra.spectralOrder Aᵐᵒᵖ;
     letI : StarOrderedRing Aᵐᵒᵖ := CStarAlgebra.spectralOrderedRing Aᵐᵒᵖ;
@@ -204,7 +205,9 @@ theorem closure_range_algebraicTensorOperator_eq_compactSubmodule :
     rintro _ ⟨⟨x, y⟩, rfl⟩
     exact hAll x y
 
-/-- The actual algebraic A tensor K(full H) hom has dense range in the original compact module algebra. -/
+/-- **Dense compact tensor representation.** For a complex Hilbert space `H` and a nonunital
+C-star algebra `A`, `algebraicCompactTensorHom H A : A ⊗_ℂ K(H) → CompactAlgebra H A` has
+dense range for the compact operator norm. -/
 theorem denseRange_algebraicCompactTensorHom :
     letI : NonUnitalCStarAlgebra (CompactAlgebra H A) := compactCStarAlgebra H A;
     DenseRange (algebraicCompactTensorHom H A) := by

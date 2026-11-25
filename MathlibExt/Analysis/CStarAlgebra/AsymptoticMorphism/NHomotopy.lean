@@ -15,16 +15,16 @@ public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.IteratedAlgebr
 public import MathlibExt.Analysis.CStarAlgebra.AsymptoticMorphism.IteratedMatchingPaths
 
 /-!
-# Literal finite-stage homotopy classes
+# Homotopy classes at finite asymptotic stages
 
-Two representatives `A → α^n B` are `n`-homotopic when they are the two
-actual iterated endpoint evaluations of one homomorphism
-`A → α^n C([0,1], B)`. Constant paths, interval reversal, and genuine
-matching-path gluing prove that this is an equivalence relation.
-
-The explicit quotient and its constant-stage transition are data only. This
-file defines no product, direct limit, flattening, E-theory class, or
-comparison with ordinary asymptotic homotopy.
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. Constant
+interval paths, reversal and matching-path concatenation make n-homotopy an equivalence
+relation. The quotient is NClasses n A B, with a successor transition induced by constant
+classes in the next quotient.
 -/
 
 @[expose] public section
@@ -42,9 +42,20 @@ namespace IteratedAsymptoticAlgebra
 
 universe uA uB
 
-/-! ## Iterated constant paths and reversal -/
+/-!
+## Finite-stage constant paths and reversal
 
-/-- Constant paths after applying the nth finite alpha iterate. -/
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For a nonunital complex C-star algebra B, the
+maps αⁿ(B→C([0,1],B)) and αⁿ(h(s)↦h(1-s)) give constant paths and reversal at stage n.
+-/
+
+/-- **Constant path homomorphism at finite stage.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For B a nonunital complex C-star algebra and n∈ℕ,
+constantPathHomN n B:αⁿB→αⁿ(C([0,1],B)) is αⁿ of the map b↦(s↦b).
+-/
 @[no_expose]
 def constantPathHomN (n : ℕ)
     (B : Type uB) [NonUnitalCStarAlgebra B] :
@@ -52,7 +63,12 @@ def constantPathHomN (n : ℕ)
       IteratedAsymptoticAlgebra n C(unitInterval, B) :=
   map n (ContinuousMap.IntervalGluing.constantHom B)
 
-/-- Interval reversal after applying the nth finite alpha iterate. -/
+/-- **Interval reversal at finite stage.**
+
+For a nonunital complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient
+C-star norm, and define α⁰X=X, αⁿ⁺¹X=α(αⁿX). For B a nonunital complex C-star algebra and n∈ℕ,
+reversePathHomN n B:αⁿ(C([0,1],B))→αⁿ(C([0,1],B)) is αⁿ of the path map h(s)↦h(1-s).
+-/
 @[no_expose]
 def reversePathHomN (n : ℕ)
     (B : Type uB) [NonUnitalCStarAlgebra B] :
@@ -114,9 +130,25 @@ theorem endpointHom_one_comp_reversePathHomN (n : ℕ)
   rw [AsymptoticAlgebra.endpointHom_eq, ← map_comp,
     evalAt_one_comp_reverseHom, ← AsymptoticAlgebra.endpointHom_eq]
 
-/-! ## The literal relation -/
+/-!
+## Finite-stage homotopy relation
 
-/-- Literal `n`-homotopy of homomorphisms `A → α^n B`. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s.
+-/
+
+/-- **Homotopy through the iterated interval algebra.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. This is
+the proposition HomotopicN n φ ψ.
+-/
 def HomotopicN (n : ℕ)
     {A : Type uA} {B : Type uB}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -130,7 +162,15 @@ namespace HomotopicN
 variable {n : ℕ} {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- Every representative is `n`-homotopic to itself. -/
+/-- **Reflexivity of finite-stage homotopy.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. Every
+representative φ∈HomN n A B is n-homotopic to itself through the constant path map.
+-/
 theorem refl (φ : HomN n A B) : HomotopicN n φ φ := by
   refine ⟨(constantPathHomN n B).comp φ, ?_, ?_⟩
   · rw [← NonUnitalStarAlgHom.comp_assoc,
@@ -140,7 +180,15 @@ theorem refl (φ : HomN n A B) : HomotopicN n φ φ := by
       endpointHom_comp_constantPathHomN]
     rfl
 
-/-- Reversing the interval reverses an `n`-homotopy. -/
+/-- **Symmetry of finite-stage homotopy.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. If φ and
+ψ are n-homotopic, then ψ and φ are n-homotopic by interval reversal.
+-/
 theorem symm {φ ψ : HomN n A B} (h : HomotopicN n φ ψ) :
     HomotopicN n ψ φ := by
   obtain ⟨H, h0, h1⟩ := h
@@ -152,7 +200,15 @@ theorem symm {φ ψ : HomN n A B} (h : HomotopicN n φ ψ) :
       endpointHom_one_comp_reversePathHomN]
     exact h0
 
-/-- Genuine matching-path gluing concatenates two `n`-homotopies. -/
+/-- **Transitivity of finite-stage homotopy.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. If φ is
+n-homotopic to ψ and ψ to χ, then φ is n-homotopic to χ by matching-path gluing at stage n.
+-/
 theorem trans {φ ψ χ : HomN n A B}
     (hφψ : HomotopicN n φ ψ) (hψχ : HomotopicN n ψ χ) :
     HomotopicN n φ χ := by
@@ -180,9 +236,26 @@ theorem trans {φ ψ χ : HomN n A B}
 
 end HomotopicN
 
-/-! ## Explicit quotient data -/
+/-!
+## Quotient by finite-stage homotopy
 
-/-- The explicit, non-global setoid of literal `n`-homotopy. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. The
+equivalence relation defines the quotient NClasses n A B.
+-/
+
+/-- **Setoid of finite-stage homotopy.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. The
+setoid homotopicNSetoid n A B has relation HomotopicN n.
+-/
 def homotopicNSetoid (n : ℕ)
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :
@@ -193,23 +266,51 @@ def homotopicNSetoid (n : ℕ)
       symm := HomotopicN.symm
       trans := HomotopicN.trans }
 
-/-- Literal `n`-homotopy classes. This is an explicit quotient, not a global
-setoid instance. -/
+/-- **Finite-stage homotopy class space.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. NClasses
+n A B is the quotient of HomN n A B by this equivalence relation.
+-/
 def NClasses (n : ℕ)
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :=
   Quotient (homotopicNSetoid n A B)
 
-/-- The class of one representative. -/
+/-- **Class of a finite-stage representative.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. The map
+classOf n sends φ to its n-homotopy class in NClasses n A B.
+-/
 def classOf (n : ℕ)
     {A : Type uA} {B : Type uB}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
     (φ : HomN n A B) : NClasses n A B :=
   Quotient.mk _ φ
 
-/-! ## Constant-stage transition -/
+/-!
+## Successor transition by constant quotient classes
 
-/-- Include a representative into the next finite alpha stage. -/
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+The stage inclusion i_n:αⁿB→αⁿ⁺¹B sends x to [t↦x] and acts on representatives by φ↦i_n∘φ.
+-/
+
+/-- **Representative included into the successor stage.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For i_n=stageHom n B:x↦[t↦x], stageTransitionRepresentative n φ=i_n∘φ:A→αⁿ⁺¹B.
+-/
 def stageTransitionRepresentative (n : ℕ)
     {A : Type uA} {B : Type uB}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -223,7 +324,16 @@ theorem stageTransitionRepresentative_apply (n : ℕ)
     stageTransitionRepresentative n φ a = stageHom n B (φ a) :=
   rfl
 
-/-- Constant-stage inclusion preserves literal `n`-homotopy. -/
+/-- **Successor inclusion preserves finite-stage homotopy.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. If φ is
+n-homotopic to ψ, their successor representatives stageTransitionRepresentative n φ and
+stageTransitionRepresentative n ψ are (n+1)-homotopic.
+-/
 theorem stageTransitionRepresentative_respects (n : ℕ)
     {A : Type uA} {B : Type uB}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -246,8 +356,15 @@ theorem stageTransitionRepresentative_respects (n : ℕ)
     rw [← NonUnitalStarAlgHom.comp_assoc, hnat,
       NonUnitalStarAlgHom.comp_assoc, h1]
 
-/-- The constant-stage map on literal `n`-homotopy classes. Naturality in
-the source and target algebras is separate future work. -/
+/-- **Successor map on finite-stage homotopy classes.**
+
+Let A,B be nonunital complex C-star algebras in independent universes and n∈ℕ. For a nonunital
+complex C-star algebra X, put αX=C_b([1,∞),X)/C₀([1,∞),X) with its quotient C-star norm, and
+define α⁰X=X, αⁿ⁺¹X=α(αⁿX). Write HomN n A B for nonunital complex star homomorphisms φ:A→αⁿB.
+For φ,ψ∈HomN n A B, n-homotopy means that there is a star homomorphism F:A→αⁿ(C([0,1],B)) with
+αⁿ(ev_0)∘F=φ and αⁿ(ev_1)∘F=ψ, where ev_s evaluates a continuous interval path at s. The map
+stageTransition n A B:NClasses n A B→NClasses(n+1) A B sends [φ] to [stageHom n B∘φ].
+-/
 def stageTransition (n : ℕ)
     (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :

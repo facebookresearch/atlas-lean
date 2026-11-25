@@ -1,3 +1,5 @@
-# Elementary Compact Rank One coe
+# Endomorphism of the elementary compact
 
-The constructed compact element has the exact original coefficient/Hilbert generator value.
+The inclusion of `elementaryCompactRankOne H A ξ η
+u v` into adjointable endomorphisms is `coefficientHom (u*star v) * hilbertOperator (rankOne ℂ
+ξ η)`.

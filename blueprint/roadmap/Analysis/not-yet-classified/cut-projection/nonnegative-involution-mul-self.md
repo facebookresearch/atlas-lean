@@ -1,3 +1,3 @@
-# Nonnegative Involution mul self
+# Square of the nonnegative reflection
 
-The nonnegative reflection squares to the identity.
+`nonnegativeInvolution * nonnegativeInvolution = 1`.

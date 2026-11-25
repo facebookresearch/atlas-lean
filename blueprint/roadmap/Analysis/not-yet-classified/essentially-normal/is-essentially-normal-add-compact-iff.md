@@ -1,3 +1,4 @@
-# Is Essentially Normal add compact iff
+# Essential normality under compact addition
 
-Compact perturbations preserve and reflect essential normality.
+For a complex Hilbert space `H`, if the
+bounded operator `K` is compact, `(T+K).IsEssentiallyNormal ↔ T.IsEssentiallyNormal`.

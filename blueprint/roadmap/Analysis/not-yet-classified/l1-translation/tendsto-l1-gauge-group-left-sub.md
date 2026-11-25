@@ -1,3 +1,5 @@
-# Tendsto l1 Gauge group Left sub
+# Twisted translations approach the identity in L¹
 
-The literal coefficient-integral distance of a translate from its source tends to zero at one.
+Let G be a locally compact Borel topological group, μ a measure finite on compact sets, A a
+nonunital complex C-star algebra and α a point-norm action. For every compactly supported
+continuous f:G→A, ∫ s, ‖α_g(f(g⁻¹*s))-f(s)‖ ∂μ tends to 0 as g tends to the group identity.

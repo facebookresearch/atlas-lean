@@ -1,3 +1,8 @@
-# Initial Projection surjective
+# Surjectivity of the initial-kernel coefficient projection
 
-The explicit set section proves actual surjectivity for arbitrary raw orbits.
+Let A,B be nonunital complex C-star algebras in independent universes, T=[1,∞) and φ:A→B an
+asymptotic star morphism. For q_B:C_b(T,B)→B∞=C_b(T,B)/C₀(T,B), put Φφ(a)=q_B(t↦φ_t(a)). Let
+Dφ=FullTimePullback φ={(a,F)∈A×C_b(T,B):Φφ(a)=q_B(F)}, with norm max(‖a‖,‖F‖∞). Let
+Eφ=InitialEvaluationKernel φ={(a,F)∈Dφ:F(1)=0}, a closed ideal with the inherited norm, and
+p0:Eφ→A its coefficient projection. The map initialProjection φ:Eφ→A is surjective, with
+section a↦(a,t↦φ_t(a)-exp(1-t)•φ_1(a)).

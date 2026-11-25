@@ -1,4 +1,4 @@
-# Trans
+# Concatenation of automorphism homotopies
 
-Concatenate two automorphism homotopies, following the first on
-`[0, 1/2]` and the second on `[1/2, 1]`.
+A homotopy h from α to β and k from β to γ give a homotopy from α to γ: use h₂ₜ for t ≤ 1/2
+and k₂ₜ₋₁ for t > 1/2.

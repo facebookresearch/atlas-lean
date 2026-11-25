@@ -1,3 +1,4 @@
-# Induced Completed Graded Left Action pure
+# Graded coefficient action on pure tensors
 
-The graded induced action has the original first-factor value on every actual pure tensor.
+The induced graded map sends `completedPure χ y
+z` to `completedPure χ (φ b y) z` for each coefficient `b : D₁`.

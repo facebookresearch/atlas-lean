@@ -1,3 +1,4 @@
-# Full Coefficient Multiplier Hom isometry
+# Isometric coefficient homomorphism
 
-The named original full coefficient homomorphism is isometric for the original C-star norm.
+The coefficient homomorphism from A into the multiplier algebra of the full covariant
+completion is an isometry: `‖fullCoefficientMultiplierHom μ α a‖ = ‖a‖` for every a∈A.

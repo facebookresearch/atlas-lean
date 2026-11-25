@@ -1,5 +1,5 @@
-# Representative Product
+# Products of finite-stage representatives
 
-- [Product Representative](product-representative.md)
-- [Product Representative zero left](product-representative-zero-left.md)
-- [Product Representative zero right](product-representative-zero-right.md)
+- [Composition of representatives at summed stage](product-representative.md)
+- [Representative product with stage zero on the left](product-representative-zero-left.md)
+- [Representative product with stage zero on the right](product-representative-zero-right.md)

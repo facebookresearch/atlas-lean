@@ -1,3 +1,4 @@
-# Finite Tensor Corner tmul
+# Finite corner of a pure compact tensor
 
-On each pure tensor, the compact factor has its actual finite rank-one compression.
+`P_v(a⊗T) = a ⊗ (∑ i,j, inner ℂ (v i) (T (v j)) •
+θ_(v i,v j))` for a finite family `v`.

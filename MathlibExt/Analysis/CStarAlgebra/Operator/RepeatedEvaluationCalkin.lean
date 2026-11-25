@@ -25,25 +25,16 @@ public import Mathlib.Data.ULift
 import Mathlib.Tactic.NormNum
 
 /-!
-# Faithful split Calkin representation by repeated dense evaluations
+# Repeated dense evaluations in a Calkin algebra
 
-The actual scalar Hilbert sum is indexed by `ULift ℕ`, retaining its stock
-lp-two norm, inner product and completeness at any requested Hilbert universe.
-The canonical Hilbert basis has a countable dense span and infinitely many
-linearly independent vectors, giving the required separability and infinite
-dimension internally.
+Let `Y` be a nonempty compact separable topological space and `y_k = denseSeq Y k`. On `H_u = lp
+(fun _ : ULift ℕ => ℂ) 2`, define the diagonal representation `π(f)x_n = f(y_(Nat.unpair
+n.down).1) * x_n` for `f : C(Y,ℂ)`. Each dense point appears at infinitely many paired indices.
 
-Each point of the canonical dense sequence of the coefficient space is
-repeated at all paired indices. A nonzero coefficient at such a point gives
-uniformly separated images of infinitely many original unit vectors. The
-stock compact-image subsequence theorem therefore proves faithfulness
-modulo the actual compact ideal. The operator representation is the existing
-`StarAlgHom.hilbertDirectSum`, with its original coordinate action.
-
-This strict split representation supplies the full target summand needed by
-the original Ext(X) pushforward for a continuous map whose image can be a
-proper subset of its target. No faithful representation, output extension,
-normal-operator existence theorem or naturality witness is assumed.
+If `π(f)` is compact, every repeated coefficient vanishes; density and continuity then give
+`f=0`. Therefore the Calkin representation `C(Y,ℂ) → Q(H_u)` is injective and has spectrum
+`σ(π̄(f)) = f(Y)`. It lifts through the bounded operator representation `π`. The Hilbert space
+is separable and infinite-dimensional, with its lp-two norm.
 -/
 
 @[expose] public section
@@ -59,16 +50,19 @@ namespace CalkinAlgebra.RepeatedEvaluation
 
 universe uH uY
 
-/-- The countable coordinate index is lifted only to preserve the requested carrier universe. -/
+/-- **Lifted countable coordinate index.** `Index = ULift ℕ` preserves the natural-number
+coordinate set in the selected Hilbert-space universe. -/
 private abbrev Index := ULift.{uH, 0} ℕ
 
-/-- The original scalar Hilbert sum keeps the standard lp-two norm and inner product. -/
+/-- **Countable scalar Hilbert space.** `ScalarHilbert = lp (fun _ : ULift ℕ => ℂ) 2`, with the
+square-summable scalar norm and inner product. -/
 abbrev ScalarHilbert : Type uH := lp (fun _ : ULift.{uH, 0} ℕ => ℂ) 2
 
 private def scalarHilbertBasis : HilbertBasis Index.{uH} ℂ ScalarHilbert.{uH} :=
   HilbertBasis.ofRepr (LinearIsometryEquiv.refl ℂ _)
 
-/-- Countably many original basis vectors have dense span, so the actual scalar sum is separable. -/
+/-- **Separability of the lifted scalar Hilbert sum.** The space `lp(ULift ℕ,ℂ,2)` is separable
+because its countable coordinate vectors have dense complex span. -/
 instance scalarHilbertSeparable : SeparableSpace ScalarHilbert.{uH} := by
   apply isSeparable_univ_iff.mp
   have hs : IsSeparable
@@ -80,7 +74,8 @@ instance scalarHilbertSeparable : SeparableSpace ScalarHilbert.{uH} := by
       Set ScalarHilbert.{uH}) at hc
   simpa only [HilbertBasis.dense_span, Submodule.top_coe] using hc
 
-/-- The actual infinite coordinate family rules out finite dimension of the original scalar sum. -/
+/-- **Infinite dimension of the scalar Hilbert sum.** `lp(ULift ℕ,ℂ,2)` is not finite-dimensional
+over `ℂ`, as its infinitely many coordinate vectors are linearly independent. -/
 theorem scalarHilbert_infinite : ¬ FiniteDimensional ℂ ScalarHilbert.{uH} := by
   intro h
   let : FiniteDimensional ℂ ScalarHilbert.{uH} := h
@@ -90,7 +85,8 @@ theorem scalarHilbert_infinite : ¬ FiniteDimensional ℂ ScalarHilbert.{uH} := 
 
 variable {Y : Type uY} [TopologicalSpace Y]
 
-/-- Point evaluation followed by the actual canonical scalar operator action. -/
+/-- **Point-evaluation operator representation.** At a point `y : Y`, the unital complex star
+homomorphism sends `f : C(Y,ℂ)` to the scalar operator `z ↦ f(y)*z` on `ℂ`. -/
 private def pointRepresentation (y : Y) : C(Y, ℂ) →⋆ₐ[ℂ] (ℂ →L[ℂ] ℂ) :=
   (StarAlgHom.ofId ℂ (ℂ →L[ℂ] ℂ)).comp
     (ContinuousMap.evalStarAlgHom ℂ ℂ y)
@@ -104,13 +100,18 @@ private theorem pointRepresentation_apply (y : Y) (a : C(Y, ℂ)) (z : ℂ) :
 
 variable [Nonempty Y] [SeparableSpace Y]
 
-/-- Every canonical dense point appears at infinitely many genuine scalar coordinates. -/
+/-- **Repeated dense point at a scalar coordinate.** For a nonempty compact separable topological
+space `Y`, let `H_u = lp (fun _ : ULift ℕ => ℂ) 2` and `y_k = denseSeq Y k`. the point at `n :
+ULift ℕ` is `y_(Nat.unpair n.down).1`, so each dense point occurs infinitely many times. -/
 private def repeatedPoint (n : Index.{uH}) : Y :=
   denseSeq Y (Nat.unpair n.down).1
 
 variable [CompactSpace Y]
 
-/-- The actual repeated-evaluation operator representation is the existing canonical Hilbert sum. -/
+/-- **Diagonal representation by repeated evaluations.** For a nonempty compact separable
+topological space `Y`, let `H_u = lp (fun _ : ULift ℕ => ℂ) 2` and `y_k = denseSeq Y k`. the
+unital star homomorphism `C(Y,ℂ) → B(H_u)` acts by `(π(f)x)_n = f(y_(Nat.unpair n.down).1) *
+x_n`. -/
 def representation : C(Y, ℂ) →⋆ₐ[ℂ] (ScalarHilbert.{uH} →L[ℂ] ScalarHilbert.{uH}) :=
   StarAlgHom.hilbertDirectSum
     (fun n : ULift.{uH, 0} ℕ =>
@@ -135,7 +136,9 @@ private theorem unitVector_mem_closedBall (n : Index.{uH}) :
   simpa only [Metric.mem_closedBall, dist_zero_right, norm_unitVector] using
     (le_refl (1 : ℝ))
 
-/-- Compactness forces each repeated coefficient to vanish in the original lp-two norm. -/
+/-- **Vanishing of repeated compact coefficients.** For a nonempty compact separable topological
+space `Y`, let `H_u = lp (fun _ : ULift ℕ => ℂ) 2` and `y_k = denseSeq Y k`. if
+`representation f` is compact on `H_u`, then `f(y_k)=0` for each `k : ℕ`. -/
 private theorem evaluation_eq_zero_of_isCompactOperator (a : C(Y, ℂ))
     (hCompact : IsCompactOperator
       (representation a : ScalarHilbert.{uH} →L[ℂ] ScalarHilbert.{uH})) (k : ℕ) :
@@ -181,7 +184,9 @@ private theorem evaluation_eq_zero_of_isCompactOperator (a : C(Y, ℂ))
   have hLarge := hsep (hφ (Nat.lt_succ_self N)).ne
   exact (not_lt_of_ge hLarge) hSmall
 
-/-- Only the zero continuous coefficient gives a compact repeated-evaluation operator. -/
+/-- **Zero coefficient of a compact evaluation operator.** For a nonempty compact separable
+topological space `Y`, let `H_u = lp (fun _ : ULift ℕ => ℂ) 2` and `y_k = denseSeq Y k`. if
+the repeated-evaluation operator `representation f` is compact, then `f : C(Y,ℂ)` is zero. -/
 theorem eq_zero_of_isCompactOperator (a : C(Y, ℂ))
     (hCompact : IsCompactOperator
       (representation a : ScalarHilbert.{uH} →L[ℂ] ScalarHilbert.{uH})) : a = 0 := by
@@ -193,11 +198,17 @@ theorem eq_zero_of_isCompactOperator (a : C(Y, ℂ))
   intro y
   exact congrFun hEqual y
 
-/-- The genuine split representation in the original compact-operator quotient. -/
+/-- **Calkin representation of continuous functions.** For a nonempty compact separable
+topological space `Y`, let `H_u = lp (fun _ : ULift ℕ => ℂ) 2` and `y_k = denseSeq Y k`. the
+unital star homomorphism `C(Y,ℂ) → Q(H_u)` is the compact-ideal class of the
+repeated-evaluation operator `π(f)`. -/
 def calkinRepresentation : C(Y, ℂ) →⋆ₐ[ℂ] CalkinAlgebra ℂ ScalarHilbert.{uH} :=
   (classStarMap (H := ScalarHilbert.{uH})).comp representation
 
-/-- Repeating every dense point makes the actual Calkin representation faithful. -/
+/-- **Faithfulness of repeated evaluations modulo compacts.** For a nonempty compact separable
+topological space `Y`, let `H_u = lp (fun _ : ULift ℕ => ℂ) 2` and `y_k = denseSeq Y k`.
+`calkinRepresentation` is injective because only `f=0` gives a compact repeated-evaluation
+operator. -/
 theorem calkinRepresentation_injective :
     Function.Injective
       (calkinRepresentation (Y := Y) : C(Y, ℂ) →⋆ₐ[ℂ] CalkinAlgebra ℂ ScalarHilbert.{uH}) := by
@@ -209,7 +220,9 @@ theorem calkinRepresentation_injective :
     rw [map_sub, hab, sub_self]
   exact sub_eq_zero.mp (eq_zero_of_isCompactOperator (a - b) hc)
 
-/-- The split Calkin representation retains the exact full range of each continuous coefficient. -/
+/-- **Spectrum of a repeated-evaluation Calkin class.** For a nonempty compact separable
+topological space `Y`, let `H_u = lp (fun _ : ULift ℕ => ℂ) 2` and `y_k = denseSeq Y k`. for
+every `f : C(Y,ℂ)`, `spectrum ℂ (calkinRepresentation f) = Set.range f`. -/
 theorem spectrum_calkinRepresentation (a : C(Y, ℂ)) :
     spectrum ℂ (calkinRepresentation a : CalkinAlgebra ℂ ScalarHilbert.{uH}) = Set.range a := by
   let φ : C(Y, ℂ) →⋆ₐ[ℂ] CalkinAlgebra ℂ ScalarHilbert.{uH} := calkinRepresentation

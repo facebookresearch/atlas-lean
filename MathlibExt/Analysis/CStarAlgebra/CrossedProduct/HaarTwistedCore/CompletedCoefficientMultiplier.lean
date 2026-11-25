@@ -15,13 +15,14 @@ public import MathlibExt.Analysis.CStarAlgebra.CrossedProduct.HaarTwistedCore.Co
 public import Mathlib.Analysis.CStarAlgebra.Multiplier
 
 /-!
-# The actual coefficient multiplier homomorphism
+# Coefficient multipliers of a C-star seminorm completion
 
-The completed original left and right actions form a double centralizer.
-Their source algebra, scalar and adjoint laws give the genuine nonunital
-star-algebra homomorphism into the ordinary multiplier algebra of the same
-seminorm completion. No multiplier carrier, coefficient map or norm estimate
-is supplied as input.
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. Let p be a C-star seminorm on the
+twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star completion and ιp its
+dense coefficient map. For a∈A, the multiplier j_p(a) has left and right components extending
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). The map a↦j_p(a) is a nonunital complex star
+homomorphism A→𝓜(ℂ,Xp) and satisfies ‖j_p(a)‖≤‖a‖.
 -/
 
 @[expose] public section
@@ -46,25 +47,55 @@ attribute [local instance] CStarSeminorm.nonUnitalCompletionCStarAlgebra
 
 variable (p : CStarSeminorm (Carrier μ α))
 
-/-- The multiplier is the literal pair of completed original coefficient actions. -/
+/-- **Double centralizer associated with a coefficient.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. Let p be a C-star seminorm on the
+twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star completion and ιp its
+dense coefficient map. For a∈A, the multiplier j_p(a) has left and right components extending
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). The pair of extended bounded complex linear maps is
+coefficientMultiplier μ α p a∈𝓜(ℂ,Xp).
+-/
 def coefficientMultiplier (a : A) : 𝓜(ℂ, p.NonUnitalCompletion) where
   fst := coefficientLeftCompletion μ α p a
   snd := coefficientRightCompletion μ α p a
   central := coefficientCompletion_central μ α p a
 
-/-- The left multiplier component agrees with every original coefficient-core value. -/
+/-- **Left coefficient multiplier on dense classes.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. Let p be a C-star seminorm on the
+twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star completion and ιp its
+dense coefficient map. For a∈A and f∈Carrier μ α, (coefficientMultiplier μ α p
+a).fst(ιp(f))=ιp(s↦a*f(s)).
+-/
 theorem coefficientMultiplier_fst_apply (a : A) (f : Carrier μ α) :
     (coefficientMultiplier μ α p a).fst (p.toNonUnitalCompletion f) =
       p.toNonUnitalCompletion (coefficientLeft μ α a f) :=
   coefficientLeftCompletion_apply μ α p a f
 
-/-- The right multiplier component agrees with every original coefficient-core value. -/
+/-- **Right coefficient multiplier on dense classes.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. Let p be a C-star seminorm on the
+twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star completion and ιp its
+dense coefficient map. For a∈A and f∈Carrier μ α, (coefficientMultiplier μ α p
+a).snd(ιp(f))=ιp(s↦f(s)*α_s(a)).
+-/
 theorem coefficientMultiplier_snd_apply (a : A) (f : Carrier μ α) :
     (coefficientMultiplier μ α p a).snd (p.toNonUnitalCompletion f) =
       p.toNonUnitalCompletion (coefficientRight μ α a f) :=
   coefficientRightCompletion_apply μ α p a f
 
-/-- The original coefficient algebra acts by its computed actual multiplier homomorphism. -/
+/-- **Coefficient homomorphism into the multiplier algebra.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. Let p be a C-star seminorm on the
+twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star completion and ιp its
+dense coefficient map. For a∈A, the multiplier j_p(a) has left and right components extending
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). The map coefficientMultiplierHom μ α p:A→𝓜(ℂ,Xp) is
+a nonunital complex star homomorphism.
+-/
 def coefficientMultiplierHom : A →⋆ₙₐ[ℂ] 𝓜(ℂ, p.NonUnitalCompletion) where
   toFun := coefficientMultiplier μ α p
   map_zero' := by
@@ -97,12 +128,28 @@ def coefficientMultiplierHom : A →⋆ₙₐ[ℂ] 𝓜(ℂ, p.NonUnitalCompleti
         star (coefficientLeftCompletion μ α p a (star x))
       simpa only [star_star] using (star_coefficientLeftCompletion μ α p a (star x)).symm
 
-/-- The constructed coefficient homomorphism is exactly the computed centralizer pair. -/
+/-- **Value of the coefficient multiplier homomorphism.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. Let p be a C-star seminorm on the
+twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star completion and ιp its
+dense coefficient map. For a∈A, the multiplier j_p(a) has left and right components extending
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). For every a∈A, coefficientMultiplierHom μ α p
+a=coefficientMultiplier μ α p a=j_p(a).
+-/
 @[simp]
 theorem coefficientMultiplierHom_apply (a : A) :
     coefficientMultiplierHom μ α p a = coefficientMultiplier μ α p a := rfl
 
-/-- The genuine coefficient multiplier retains the original coefficient norm bound. -/
+/-- **Norm bound for coefficient multipliers.**
+
+Let G be a locally compact Borel topological group with left Haar measure μ, A a nonunital
+complex C-star algebra and α a point-norm action of G on A. Let p be a C-star seminorm on the
+twisted core Carrier μ α, Xp=p.NonUnitalCompletion its separated C-star completion and ιp its
+dense coefficient map. For a∈A, the multiplier j_p(a) has left and right components extending
+L_a f(s)=a*f(s) and R_a f(s)=f(s)*α_s(a). The multiplier norm satisfies ‖coefficientMultiplier
+μ α p a‖≤‖a‖ for every a∈A.
+-/
 theorem norm_coefficientMultiplier_le (a : A) : ‖coefficientMultiplier μ α p a‖ ≤ ‖a‖ := by
   rw [← DoubleCentralizer.norm_fst]
   exact norm_coefficientLeftCompletion_le μ α p a

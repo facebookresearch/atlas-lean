@@ -1,3 +1,4 @@
-# Adjoint Domain right smul
+# Right invariance of the adjoint domain
 
-The full adjoint domain is stable under right multiplication by the coefficient algebra.
+For a dense right-module operator, `y ∈ dom T*`
+implies `y <• b ∈ dom T*` for every coefficient `b : B`.

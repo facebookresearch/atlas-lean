@@ -1,3 +1,4 @@
-# Absolute Value nonnegative
+# Positivity of the absolute value
 
-The absolute value is nonnegative in the canonical spectral order.
+`0 ≤ T.absoluteValue` in the C-star spectral order on
+`End_B(E)`.

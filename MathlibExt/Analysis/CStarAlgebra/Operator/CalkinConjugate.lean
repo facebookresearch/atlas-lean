@@ -16,16 +16,14 @@ public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.CStarAlgebra.Hom
 
 /-!
-# Actual unitary transport of Calkin classes
+# Unitary conjugation of Calkin classes
 
-The original Hilbert unitary acts by the stock `conjStarAlgEquiv` on bounded
-operators. Compactness is preserved by the stock two composition laws, so
-the existing star-ideal quotient lift gives the actual unital Calkin map.
-The quotient carrier and Hilbert dictionaries are unchanged.
+For complex Hilbert spaces `H,K` and unitary `U : H ≃ₗᵢ[ℂ] K`, conjugation on bounded operators
+is `T ↦ U T U*`. It preserves compact operators and therefore descends to the unital complex
+star-algebra map `Q(H) → Q(K)`, `[T] ↦ [U T U*]`.
 
-This constructor is needed to descend continuous functional calculus to
-the original compact-unitary Ext(X) quotient. No classification or
-unitary-equivalence theorem is supplied as an input or used as a witness.
+The descended map is continuous for the quotient C-star norms. The construction also applies to
+finite-dimensional and zero Hilbert spaces.
 -/
 
 @[expose] public section
@@ -43,7 +41,9 @@ universe uH uK
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable {K : Type uK} [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
-/-- Hilbert-unitary conjugation preserves compactness on the original operator spaces. -/
+/-- **Unitary conjugation preserves compactness.** For complex Hilbert spaces `H,K`, if `U : H
+≃ₗᵢ[ℂ] K` and `T : H →L[ℂ] H` is compact, then `U.conjStarAlgEquiv T = U T U*` is compact on
+`K`. -/
 theorem conjugate_compact (U : H ≃ₗᵢ[ℂ] K) (T : H →L[ℂ] H)
     (hT : IsCompactOperator T) : IsCompactOperator (U.conjStarAlgEquiv T) := by
   rcases hT with ⟨C, hC, hTC⟩
@@ -53,7 +53,8 @@ theorem conjugate_compact (U : H ≃ₗᵢ[ℂ] K) (T : H →L[ℂ] H)
   exact Filter.mem_of_superset (hcont.eventually hTC) fun x hx =>
     ⟨T (U.symm x), hx, rfl⟩
 
-/-- Actual unitary transport of the original Calkin classes, using the existing quotient lift. -/
+/-- **Unitary map of Calkin algebras.** For complex Hilbert spaces `H,K`, a unitary `U` gives the
+unital complex star homomorphism `[T] ↦ [U T U*]` from `Q(H)` to `Q(K)`. -/
 def conjugateStarAlgHom (U : H ≃ₗᵢ[ℂ] K) :
     CalkinAlgebra ℂ H →⋆ₐ[ℂ] CalkinAlgebra ℂ K := by
   let I := compactEndomorphismClosedStarIdeal (H := H)
@@ -77,13 +78,16 @@ def conjugateStarAlgHom (U : H ≃ₗᵢ[ℂ] K) :
         change f (algebraMap ℂ (H →L[ℂ] H) z) = algebraMap ℂ (CalkinAlgebra ℂ K) z
         exact f.toAlgHom.commutes z }
 
-/-- The descended map keeps the literal original unitary action on every operator representative. -/
+/-- **Unitary conjugation on represented classes.** For complex Hilbert spaces `H,K`,
+`conjugateStarAlgHom U (classStarMap T) = classStarMap (U.conjStarAlgEquiv T)` for every
+bounded `T` on `H`. -/
 @[simp]
 theorem conjugateStarAlgHom_classStarMap (U : H ≃ₗᵢ[ℂ] K) (T : H →L[ℂ] H) :
     conjugateStarAlgHom U (classStarMap (H := H) T) =
       classStarMap (H := K) (U.conjStarAlgEquiv T) := rfl
 
-/-- The actual Calkin transport is continuous by the canonical C-star contractivity bound. -/
+/-- **Continuity of unitary Calkin transport.** For complex Hilbert spaces `H,K`,
+`conjugateStarAlgHom U` is continuous for the quotient norms. -/
 theorem conjugateStarAlgHom_continuous (U : H ≃ₗᵢ[ℂ] K) :
     Continuous (conjugateStarAlgHom U) := by
   exact AddMonoidHomClass.continuous_of_bound (conjugateStarAlgHom U) 1 (by

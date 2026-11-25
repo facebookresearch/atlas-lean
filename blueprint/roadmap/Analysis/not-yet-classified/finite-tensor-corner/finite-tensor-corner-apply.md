@@ -1,3 +1,4 @@
-# Finite Tensor Corner apply
+# Formula for the tensor corner
 
-The corner is the literal sum of extracted entries tensor original rank-one operators.
+`finiteTensorCorner v A z` is the sum of
+`tensorMatrixCoefficient H A (v j) (v i) z ⊗ θ_(v i,v j)` over the finite frame.

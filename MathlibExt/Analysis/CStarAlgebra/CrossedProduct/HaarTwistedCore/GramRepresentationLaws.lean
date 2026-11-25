@@ -16,19 +16,17 @@ public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.LinearAlgebra.Span.Basic
 
 /-!
-# Actual coefficient and unitary representation laws on the original Gram space
+# Coefficient and unitary laws for Gram operators
 
-The computed bounded coefficient operators and isometric group operators act
-on the actual essential Hilbert space. Equality on the original source
-generators extends by their proved dense span. The literal Haar coefficient
-and group identities then give their algebra laws and covariance.
-
-The source mixed star product gives the coefficient adjoint law. The group
-norm preservation and actual inverse composition give the group adjoint law
-and unitary membership. These laws construct actual bundled representations.
-
-Strong continuity of the group orbits and the integrated identity remain
-separate prerequisites for a strongly continuous covariant model.
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The map a↦P_a is a nonunital complex star homomorphism. The
+map g↦U_g is a unitary group homomorphism, with star(U_g)=U_(g⁻¹). Their covariance is
+U_g*P_a*star(U_g)=P_(α_g(a)).
 -/
 
 @[expose] public section
@@ -57,7 +55,15 @@ variable (p : CStarSeminorm (Carrier μ α)) (H : Type uH)
 variable (ρ : p.NonUnitalCompletion →⋆ₙₐ[ℂ] (H →L[ℂ] H))
 
 omit [μ.Regular] in
-/-- The actual original-source Gram generators determine every bounded operator. -/
+/-- **Gram generators determine a bounded operator.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. If bounded complex linear operators
+Q,S:E→E satisfy Q(T(f)ξ)=S(T(f)ξ) for every core coefficient f and ξ∈E, then Q=S.
+-/
 theorem gramOperator_ext (T S : ρ.essentialSpace →L[ℂ] ρ.essentialSpace)
     (h : ∀ (f : Carrier μ α) (ξ : ρ.essentialSpace),
       T (ρ.essentialRepresentation (p.toNonUnitalCompletion f) ξ) =
@@ -71,7 +77,16 @@ theorem gramOperator_ext (T S : ρ.essentialSpace →L[ℂ] ρ.essentialSpace)
     (by rintro _ ⟨⟨f, ζ⟩, rfl⟩; exact h f ζ) hη
 
 omit [μ.Regular] in
-/-- The actual source generators determine the adjoint identity of bounded operators. -/
+/-- **Gram generator inner products determine an adjoint.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. Let Q,S:E→E be bounded complex linear
+operators. If ⟪Q(T(f)ξ),T(k)η⟫_ℂ=⟪T(f)ξ,S(T(k)η)⟫_ℂ for all core coefficients f,k and ξ,η∈E,
+then Q=star(S), the operator adjoint of S.
+-/
 theorem gramOperator_eq_star_of_inner_generators
     (T S : ρ.essentialSpace →L[ℂ] ρ.essentialSpace)
     (h : ∀ (f k : Carrier μ α) (ξ η : ρ.essentialSpace),
@@ -97,7 +112,16 @@ theorem gramOperator_eq_star_of_inner_generators
   rw [h j.1 i.1 j.2 i.2]
 
 omit [μ.Regular] in
-/-- The actual zero coefficient acts as the zero bounded operator. -/
+/-- **Zero in the Gram coefficient representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The zero coefficient acts by P_0=0.
+-/
 theorem gramCoefficientOperator_zero :
     gramCoefficientOperator μ α p H ρ (0 : A) = 0 := by
   apply gramOperator_ext μ α p H ρ
@@ -109,7 +133,16 @@ theorem gramCoefficientOperator_zero :
   rfl
 
 omit [μ.Regular] in
-/-- Original coefficient addition is preserved by the computed bounded operators. -/
+/-- **Additivity of Gram coefficient operators.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For a,b∈A, P_(a+b)=P_a+P_b.
+-/
 theorem gramCoefficientOperator_add (a b : A) :
     gramCoefficientOperator μ α p H ρ (a + b) =
       gramCoefficientOperator μ α p H ρ a + gramCoefficientOperator μ α p H ρ b := by
@@ -127,7 +160,16 @@ theorem gramCoefficientOperator_add (a b : A) :
   rfl
 
 omit [μ.Regular] in
-/-- Original complex coefficient scaling is preserved by the computed bounded operators. -/
+/-- **Complex scaling of Gram coefficient operators.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For c∈ℂ and a∈A, P_(c•a)=c•P_a.
+-/
 theorem gramCoefficientOperator_smul (c : ℂ) (a : A) :
     gramCoefficientOperator μ α p H ρ (c • a) = c • gramCoefficientOperator μ α p H ρ a := by
   apply gramOperator_ext μ α p H ρ
@@ -141,7 +183,16 @@ theorem gramCoefficientOperator_smul (c : ℂ) (a : A) :
   rfl
 
 omit [μ.Regular] in
-/-- Original coefficient multiplication is preserved by the computed bounded operators. -/
+/-- **Multiplication of Gram coefficient operators.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For a,b∈A, P_(a*b)=P_a*P_b, with operator composition on E.
+-/
 theorem gramCoefficientOperator_mul (a b : A) :
     gramCoefficientOperator μ α p H ρ (a * b) =
       gramCoefficientOperator μ α p H ρ a * gramCoefficientOperator μ α p H ρ b := by
@@ -156,7 +207,16 @@ theorem gramCoefficientOperator_mul (a b : A) :
     gramCoefficientOperator_apply_generator, coefficientLeft_mul, LinearMap.comp_apply]
 
 omit [μ.Regular] in
-/-- The actual coefficient adjoint law follows from the original mixed star-convolution product. -/
+/-- **Adjoint of a Gram coefficient operator.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For a∈A, P_star(a)=star(P_a).
+-/
 theorem gramCoefficientOperator_star (a : A) :
     gramCoefficientOperator μ α p H ρ (star a) = star (gramCoefficientOperator μ α p H ρ a) := by
   apply gramOperator_eq_star_of_inner_generators μ α p H ρ
@@ -179,7 +239,17 @@ theorem gramCoefficientOperator_star (a : A) :
     exact (convolution_coefficientLeft μ α a (star f) h).symm
   rw [hRaw]
 
-/-- The computed coefficient operators as their actual nonunital star-algebra representation. -/
+/-- **Gram coefficient star representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The nonunital complex star homomorphism
+gramCoefficientRepresentation μ α p H ρ:A→B(E) is the map a↦P_a.
+-/
 def gramCoefficientRepresentation : A →⋆ₙₐ[ℂ] (ρ.essentialSpace →L[ℂ] ρ.essentialSpace) where
   toFun := gramCoefficientOperator μ α p H ρ
   map_zero' := gramCoefficientOperator_zero μ α p H ρ
@@ -189,19 +259,47 @@ def gramCoefficientRepresentation : A →⋆ₙₐ[ℂ] (ρ.essentialSpace →L[
   map_star' := gramCoefficientOperator_star μ α p H ρ
 
 omit [μ.Regular] in
-/-- The actual bundled coefficient representation retains its computed operator. -/
+/-- **Value of the Gram coefficient representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For a∈A, gramCoefficientRepresentation μ α p H ρ
+a=gramCoefficientOperator μ α p H ρ a=P_a.
+-/
 @[simp]
 theorem gramCoefficientRepresentation_apply (a : A) :
     gramCoefficientRepresentation μ α p H ρ a = gramCoefficientOperator μ α p H ρ a := rfl
 
-/-- The actual group identity acts as the identity bounded operator. -/
+/-- **Identity in the Gram group action.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The group identity acts as U_1=1, the identity operator on E.
+-/
 theorem gramGroupOperator_one : gramGroupOperator μ α p H ρ (1 : G) = 1 := by
   apply gramOperator_ext μ α p H ρ
   intro f ξ
   rw [gramGroupOperator_apply_generator, groupLeft_one, LinearMap.id_apply]
   rfl
 
-/-- Original group multiplication is preserved by the computed bounded operators. -/
+/-- **Multiplication in the Gram group action.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For g,h∈G, U_(g*h)=U_g*U_h.
+-/
 theorem gramGroupOperator_mul (g h : G) :
     gramGroupOperator μ α p H ρ (g * h) =
       gramGroupOperator μ α p H ρ g * gramGroupOperator μ α p H ρ h := by
@@ -215,24 +313,60 @@ theorem gramGroupOperator_mul (g h : G) :
   rw [gramGroupOperator_apply_generator, gramGroupOperator_apply_generator,
     gramGroupOperator_apply_generator, groupLeft_mul, LinearMap.comp_apply]
 
-/-- The actual inverse group operator is a right inverse of the computed group operator. -/
+/-- **Right inverse of a Gram group operator.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For g∈G, U_g*U_(g⁻¹)=1 on E.
+-/
 theorem gramGroupOperator_mul_inv (g : G) :
     gramGroupOperator μ α p H ρ g * gramGroupOperator μ α p H ρ g⁻¹ = 1 := by
   rw [← gramGroupOperator_mul, mul_inv_cancel, gramGroupOperator_one]
 
-/-- The actual inverse group operator is a left inverse of the computed group operator. -/
+/-- **Left inverse of a Gram group operator.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For g∈G, U_(g⁻¹)*U_g=1 on E.
+-/
 theorem gramGroupOperator_inv_mul (g : G) :
     gramGroupOperator μ α p H ρ g⁻¹ * gramGroupOperator μ α p H ρ g = 1 := by
   rw [← gramGroupOperator_mul, inv_mul_cancel, gramGroupOperator_one]
 
-/-- The computed group norm preservation gives its actual left adjoint inverse identity. -/
+/-- **Adjoint is a left inverse of a Gram group operator.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For g∈G, star(U_g)*U_g=1 on E.
+-/
 theorem gramGroupOperator_star_mul_self (g : G) :
     star (gramGroupOperator μ α p H ρ g) * gramGroupOperator μ α p H ρ g = 1 := by
   change (gramGroupOperator μ α p H ρ g).adjoint.comp (gramGroupOperator μ α p H ρ g) = 1
   exact (ContinuousLinearMap.norm_map_iff_adjoint_comp_self _).mp
     (norm_gramGroupOperator_apply μ α p H ρ g)
 
-/-- The actual group adjoint is precisely the computed inverse group operator. -/
+/-- **Adjoint of a Gram group operator.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For g∈G, star(U_g)=U_(g⁻¹).
+-/
 theorem gramGroupOperator_star (g : G) :
     star (gramGroupOperator μ α p H ρ g) = gramGroupOperator μ α p H ρ g⁻¹ := by
   calc
@@ -244,25 +378,64 @@ theorem gramGroupOperator_star (g : G) :
         gramGroupOperator μ α p H ρ g⁻¹ := (mul_assoc _ _ _).symm
     _ = gramGroupOperator μ α p H ρ g⁻¹ := by rw [gramGroupOperator_star_mul_self, one_mul]
 
-/-- Every computed original-source group operator is genuinely unitary. -/
+/-- **Unitarity of a Gram group operator.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For g∈G, U_g is a unitary operator on E:
+star(U_g)*U_g=U_g*star(U_g)=1.
+-/
 theorem gramGroupOperator_mem_unitary (g : G) :
     gramGroupOperator μ α p H ρ g ∈ unitary (ρ.essentialSpace →L[ℂ] ρ.essentialSpace) := by
   exact ⟨gramGroupOperator_star_mul_self μ α p H ρ g,
     by rw [gramGroupOperator_star, gramGroupOperator_mul_inv]⟩
 
-/-- The computed group operators as their actual unitary monoid homomorphism. -/
+/-- **Unitary group representation from Gram operators.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. The group homomorphism gramGroupUnitaryRepresentation μ α p H
+ρ:G→unitary(B(E)) sends g to U_g.
+-/
 def gramGroupUnitaryRepresentation : G →* unitary (ρ.essentialSpace →L[ℂ] ρ.essentialSpace) where
   toFun g := ⟨gramGroupOperator μ α p H ρ g, gramGroupOperator_mem_unitary μ α p H ρ g⟩
   map_one' := Subtype.ext (gramGroupOperator_one μ α p H ρ)
   map_mul' g h := Subtype.ext (gramGroupOperator_mul μ α p H ρ g h)
 
-/-- The actual bundled unitary representation retains its computed group operator. -/
+/-- **Operator underlying the Gram unitary representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For g∈G, the bounded operator underlying
+gramGroupUnitaryRepresentation μ α p H ρ g equals gramGroupOperator μ α p H ρ g=U_g.
+-/
 @[simp]
 theorem gramGroupUnitaryRepresentation_apply_coe (g : G) :
     (gramGroupUnitaryRepresentation μ α p H ρ g : ρ.essentialSpace →L[ℂ] ρ.essentialSpace) =
       gramGroupOperator μ α p H ρ g := rfl
 
-/-- Original group-coefficient covariance is preserved by the computed bounded operators. -/
+/-- **Covariance of Gram group and coefficient operators.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For g∈G and a∈A, U_g*P_a=P_(α_g(a))*U_g.
+-/
 theorem gramGroupOperator_mul_coefficient (g : G) (a : A) :
     gramGroupOperator μ α p H ρ g * gramCoefficientOperator μ α p H ρ a =
       gramCoefficientOperator μ α p H ρ (α g a) * gramGroupOperator μ α p H ρ g := by
@@ -282,7 +455,17 @@ theorem gramGroupOperator_mul_coefficient (g : G) (a : A) :
     coefficientLeft μ α (α g a) (groupLeft μ α g f) at hRaw
   rw [hRaw]
 
-/-- The actual coefficient and unitary operators satisfy the original conjugation covariance. -/
+/-- **Conjugation covariance of the Gram representation.**
+
+Let G be a locally compact Borel topological group, μ a regular left Haar measure, A a
+nonunital complex C-star algebra and α a point-norm action. Let p be any C-star seminorm on
+the twisted core, Xp its separated completion, ιp its dense map, H a complex Hilbert space and
+ρ:Xp→B(H) a nonunital complex star homomorphism. Write E for the essential Hilbert subspace of
+ρ and T(f)=ρE(ιp(f)) for its restricted operator on E. The Gram coefficient and group
+operators P_a,U_g on E are determined by P_a(T(f)ξ)=T(s↦a*f(s))ξ and
+U_g(T(f)ξ)=T(s↦α_g(f(g⁻¹*s)))ξ. For g∈G and a∈A, U_g*P_a*star(U_g)=P_(α_g(a)), with
+coefficient map gramCoefficientRepresentation and group map gramGroupUnitaryRepresentation.
+-/
 theorem gramRepresentation_covariance (g : G) (a : A) :
     (gramGroupUnitaryRepresentation μ α p H ρ g : ρ.essentialSpace →L[ℂ] ρ.essentialSpace) *
         gramCoefficientRepresentation μ α p H ρ a *

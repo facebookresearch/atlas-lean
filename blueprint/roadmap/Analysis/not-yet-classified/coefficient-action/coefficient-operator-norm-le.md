@@ -1,3 +1,4 @@
-# Coefficient Operator norm le
+# Norm bound for coefficient multiplication
 
-The actual completed coefficient action is bounded by the original coefficient norm.
+On the Hilbert amplification of nonunital `A`,
+`‖coefficientOperator H A a‖ ≤ ‖a‖`.
