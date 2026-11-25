@@ -143,7 +143,8 @@ def convolution (H : ConvolutionDescentSource k M B P G S I Q T I₁ I₂) :
 
 variable (H : ConvolutionDescentSource k M B P G S I Q T I₁ I₂)
 
-/-- Adjoint existence is a structural property of the same already constructed real convolution. -/
+/-- The condition that the enhanced convolution defined by the given source data is closed: for
+every object $K$ of the enhanced category, the functor $L ↦ K ⋆ L$ is a left adjoint. -/
 structure ConvolutionClosedSource : Prop where
   closed : ∀ K : EnhancedCategory k M B P,
     ((convolution k M B P G S I Q T I₁ I₂ H).obj K).IsLeftAdjoint
