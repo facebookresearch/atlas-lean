@@ -102,7 +102,7 @@ private theorem exists_openNormalSubgroup_right_invariant_of_compact
   refine ⟨J, ?_⟩
   intro x h hh
   have hconj : x * h * x⁻¹ ∈ J :=
-    Subgroup.Normal.conj_mem inferInstance h hh x
+    (inferInstance : (J : Subgroup P).Normal).conj_mem h hh x
   have hpair : (x, x * h) ∈ (fun p : P × P => p.2 * p.1⁻¹) ⁻¹' U := by
     exact hWU (hJW hconj)
   have hout : c x = c (x * h) := hUrel hpair

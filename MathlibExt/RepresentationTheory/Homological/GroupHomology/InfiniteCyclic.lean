@@ -46,8 +46,8 @@ noncomputable def H1IsoOfMulEquivInt
     (k G : Type u) [CommRing k] [Group G]
     (e : G ≃* Multiplicative ℤ) :
     groupHomology (Rep.trivial k G k) 1 ≅ ModuleCat.of k k := by
-  let eInt : Additive (Abelianization G) ≃ₗ[ℤ] ℤ :=
-    (((e.abelianizationCongr.trans Abelianization.equivOfComm.symm).toAdditive).trans
+  let eInt : Additive (Group.Abelianization G) ≃ₗ[ℤ] ℤ :=
+    (((e.abelianizationCongr.trans Group.Abelianization.equivOfComm.symm).toAdditive).trans
       (AddEquiv.additiveMultiplicative ℤ)).toIntLinearEquiv
   let E : groupHomology (Rep.trivial k G k) 1 ≃+ k :=
     (H1AddEquivOfIsTrivial (Rep.trivial k G k)).trans
@@ -93,7 +93,7 @@ theorem H1IsoOfMulEquivInt_hom_H1π_single
       (e g).toAdd • a := by
   change ((H1AddEquivOfIsTrivial (Rep.trivial k G k)).trans
       ((TensorProduct.congr
-        (((e.abelianizationCongr.trans Abelianization.equivOfComm.symm).toAdditive).trans
+        (((e.abelianizationCongr.trans Group.Abelianization.equivOfComm.symm).toAdditive).trans
           (AddEquiv.additiveMultiplicative ℤ)).toIntLinearEquiv
         (LinearEquiv.refl ℤ k)).trans (TensorProduct.lid ℤ k)).toAddEquiv)
     (H1π (Rep.trivial k G k)
