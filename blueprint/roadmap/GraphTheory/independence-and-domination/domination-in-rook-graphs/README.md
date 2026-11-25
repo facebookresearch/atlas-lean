@@ -2,6 +2,7 @@
 
 - [Rook graph](rook-graph.md)
 - [Dominating sets of the rook graph](rook-graph-is-dominating-iff.md)
+- [Rook Graph is Dominating iff or](rook-graph-is-dominating-iff-or.md)
 - [Rook placements covering all rows and columns](rook-cover-count.md)
 - [Dominating rook placements](rook-dominating-count.md)
 - [Domination polynomial of the rook graph](rook-domination-polynomial.md)

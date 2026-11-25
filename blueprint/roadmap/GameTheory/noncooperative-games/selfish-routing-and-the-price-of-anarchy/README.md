@@ -4,6 +4,8 @@ Nonatomic routing games: infinitely many users each control a negligible amount 
 
 - [Nonatomic routing instance](routing-instance.md)
 - [Feasible flow for a demand vector](is-feasible.md)
+- [Exists is Feasible iff](exists-is-feasible-iff.md)
+- [Not exists sum eq of forall commodity ne](not-exists-sum-eq-of-forall-commodity-ne.md)
 - [Edge flow](edge-flow.md)
 - [Edge flows of a nonnegative flow are nonnegative](edge-flow-nonneg.md)
 - [Path latency](path-latency.md)
@@ -12,6 +14,7 @@ Nonatomic routing games: infinitely many users each control a negligible amount 
 - [Cost as a sum over paths](cost-eq-sum-path-latency-mul.md)
 - [Wardrop equilibrium](is-wardrop.md)
 - [Existence of Wardrop equilibria](exists-is-wardrop.md)
+- [Wardrop equilibria exist exactly at admissible demands](exists-is-wardrop-iff.md)
 - [Wardrop flows against a scaled demand](smul-sum-path-latency-mul-le.md)
 - [Variational inequality for Wardrop equilibria](cost-le-sum-latency-mul-edge-flow.md)
 - [Wardrop equilibria have unique edge latencies](latency-edge-flow-eq.md)

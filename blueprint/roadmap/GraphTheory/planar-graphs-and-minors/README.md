@@ -13,6 +13,7 @@ Graphs drawn in the plane and on the square lattice, crossing numbers, Euler's f
 - [Universal point sets for planar graphs](universal-point-sets-for-planar-graphs/README.md)
 - [Boundary contours in the square lattice](boundary-contours-in-the-square-lattice/README.md)
 - [Whitney's cut–cycle duality on the square lattice](whitney-s-cut-cycle-duality-on-the-square-lattic/README.md)
+- [Component halving](boruvka-halving.md)
 - [Discrete Jordan curve theorem for the square lattice](discrete-jordan-curve-theorem-for-the-square-lat/README.md)
 - [Hopf's Umlaufsatz for lattice polygons](hopf-s-umlaufsatz-for-lattice-polygons/README.md)
 - [Crossing points of the regular drawing of the complete bipartite graph](legendre-regular-crossing.md)

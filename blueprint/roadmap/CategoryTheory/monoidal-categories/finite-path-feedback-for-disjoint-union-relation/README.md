@@ -1,0 +1,15 @@
+# Finite-path feedback for disjoint-union relations
+
+- [Feedback Path](feedback-path.md)
+- [Feedback](feedback.md)
+- [Feedback Path iff](feedback-path-iff.md)
+- [Mono](mono.md)
+- [Feedback mono](feedback-mono.md)
+- [Feedback rel](feedback-rel.md)
+- [Feedback zero](feedback-zero.md)
+- [Feedback Path unfold](feedback-path-unfold.md)
+- [Least](least.md)
+- [Feedback eq empty of no exit](feedback-eq-empty-of-no-exit.md)
+- [Feedback eq blocks](feedback-eq-blocks.md)
+- [Feedback rel of no entry](feedback-rel-of-no-entry.md)
+- [Feedback tensor](feedback-tensor.md)

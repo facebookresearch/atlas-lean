@@ -25,6 +25,13 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Single-input single-output linear time-invariant system](linear-system.md)
 - [Vector field of a linear time-invariant system](field.md)
 - [Output of a linear time-invariant system](output.md)
+- [Compact-spectrum representative](compact-spectrum-representative/README.md)
+- [Discrete-time state-space trajectories](discrete-time-state-space-trajectories/README.md)
+- [LTV homogeneous transition operator](ltv-homogeneous-transition-operator/README.md)
+- [Natural-time signals: zero extension and restriction](natural-time-signals-zero-extension-and-restrict/README.md)
+- [Signal-system counterexamples](signal-system-counterexamples/README.md)
+- [SISO bridge for state-space coefficients](siso-bridge-for-state-space-coefficients/README.md)
+- [State-space coefficients](state-space-coefficients/README.md)
 
 ## Related topics
 

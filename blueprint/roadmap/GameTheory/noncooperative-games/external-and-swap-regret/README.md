@@ -1,0 +1,10 @@
+# External and swap regret
+
+- [Is Simplex](is-simplex.md)
+- [Is Simplex iff](is-simplex-iff.md)
+- [To Std Simplex](to-std-simplex.md)
+- [To Std Simplex weights](to-std-simplex-weights.md)
+- [Is Simplex weights](is-simplex-weights.md)
+- [Average Regret](average-regret.md)
+- [Expected Loss sub weighted Cumulative le external Regret](expected-loss-sub-weighted-cumulative-le.md)
+- [External Regret add round Const](external-regret-add-round-const.md)
