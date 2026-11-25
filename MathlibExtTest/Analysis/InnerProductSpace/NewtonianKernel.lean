@@ -8,16 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.Analysis.InnerProductSpace.InvNormHarmonic
+import MathlibExt.Analysis.InnerProductSpace.NewtonianKernel
 
-open Laplacian
 open MathlibExt.Analysis.Calculus.NormPowTwoSubDimHarmonicWanted
 
 -- In dimension four the kernel is the inverse square of the norm, not the inverse norm.
 example : InnerProductSpace.HarmonicOnNhd
     (fun x : EuclideanSpace ℝ (Fin 4) ↦ 1 / ‖x‖ ^ (2 : ℕ)) ({0}ᶜ) :=
   harmonicOnNhd_one_div_norm_pow_sub_two (m := 4) (by decide)
-
-example {x : EuclideanSpace ℝ (Fin 3)} (hx : x ≠ 0) :
-    Δ (fun y : EuclideanSpace ℝ (Fin 3) ↦ ‖y‖⁻¹) x = 0 :=
-  MathlibExt.Analysis.laplacian_inv_norm_eq_zero hx
