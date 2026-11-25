@@ -46,8 +46,6 @@ public import Mathlib.RingTheory.Smooth.Basic
 
 import Mathlib
 
-@[expose] public section
-
 universe u v w w' x
 
 
@@ -1436,7 +1434,7 @@ theorem main
     rw [coeff_zero]
     change (W.map θ).coeff t = 0
     rw [coeff_map]
-    exact hann _ (by simpa only [coeff_C_mul, coeff_zero] using congrArg (fun F => coeff F t) hW)
+    exact hann _ (by simpa only [coeff_C_mul, coeff_zero] using congrArg (fun F => F.coeff t) hW)
   haveI hPmax : P.IsMaximal := hP
   let Q : Ideal A[X] := P.comap ρX
   haveI hQmax : Q.IsMaximal := Ideal.comap_isMaximal_of_surjective ρX hρXs
@@ -4766,7 +4764,7 @@ theorem natDegree_stage_le (m : ℕ) (i j k : Fin (n + 1)) :
 
 theorem map_truncate_Γlim (m : ℕ) (i j k : Fin (n + 1)) :
     (Γlim p D i j k).map (WittVector.truncate (m + 1)) = (stage p D m).1 i j k := by
-  ext t : 1
+  ext t : 2
   rw [Polynomial.coeff_map, coeff_Γlim]
   split_ifs with ht
   · exact truncate_wlim p D m i j k t
