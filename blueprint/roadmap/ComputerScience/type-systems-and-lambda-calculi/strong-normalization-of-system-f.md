@@ -6,12 +6,12 @@ In Girard's System F, the second-order polymorphic lambda calculus with type abs
 
 - [Scoped terms of pure System F](system-f/scoped-pure-system-f/tm.md)
 - [Extrinsic typing of pure System F terms](system-f/the-five-typing-rules-of-pure-system-f/typing.md)
+- [One-step full reduction of System F terms](system-f/scoped-pure-system-f/full-step.md)
 
 ## Expansion
 
 This page becomes ready once these prerequisites are stated:
 
-- One-step reduction of System F terms, closed under all term and type contexts (statement prerequisite)
 - Confluence (the Church–Rosser property) of System F reduction, which with strong normalization gives the uniqueness of normal forms (proof prerequisite)
 
 ## Sources

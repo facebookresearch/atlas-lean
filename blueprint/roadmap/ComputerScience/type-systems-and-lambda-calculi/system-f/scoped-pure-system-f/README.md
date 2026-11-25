@@ -29,3 +29,4 @@
 - [Lifting a term substitution under a term lambda](lift-sub-2.md)
 - [Simultaneous term substitution in System F terms](subst-2.md)
 - [Instantiating the newest term binder of a term](instantiate-2.md)
+- [One-step full reduction of System F terms](full-step.md)

@@ -1,10 +1,14 @@
 # Item response models with a continuous latent trait
 
-An item response model with a continuous latent trait for $J$ binary items consists of a probability measure $G$ on $\mathbb R$, the ability distribution, and measurable item response functions $P_j : \mathbb R \to [0, 1]$, $j = 1, \dots, J$. A person's ability $\Theta$ has law $G$, and given $\Theta = \theta$ the responses $X_1, \dots, X_J \in \{0, 1\}$ are independent (local independence) with $\mathbb P(X_j = 1 \mid \Theta = \theta) = P_j(\theta)$. The response pattern $x \in \{0, 1\}^J$ then has probability
+An item response model with a continuous latent trait for a finite set $I$ of binary items consists of a probability measure $G$ on $\mathbb R$, the ability distribution, and measurable item response functions $P_i : \mathbb R \to [0, 1]$, $i \in I$. A person's ability $\Theta$ has law $G$, and given $\Theta = \theta$ the responses have the [law of locally independent binary responses](local-independence-response-law.md) with success probabilities $P_i(\theta)$. The response pattern $x : I \to \{0, 1\}$ then has marginal probability
 
-$$\mathbb P(X = x) = \int_{\mathbb R} \prod_{j=1}^J P_j(\theta)^{x_j} \bigl(1 - P_j(\theta)\bigr)^{1 - x_j}\, G(d\theta),$$
+$$\mathbb P(X = x) = \int_{\mathbb R} \prod_{i \in I} P_i(\theta)^{x_i} \bigl(1 - P_i(\theta)\bigr)^{1 - x_i}\, G(d\theta).$$
 
-and the conditional law of $X$ given $\Theta$ is given by the Markov kernel $\theta \mapsto \bigotimes_j \mathrm{Bernoulli}(P_j(\theta))$. The two-parameter logistic model takes $P_j(\theta) = \bigl(1 + e^{-a_j(\theta - b_j)}\bigr)^{-1}$ with discriminations $a_j > 0$ and difficulties $b_j$, and the Rasch model is the case $a_j = 1$. When $G$ is supported on finitely many points the model is a finite latent-class model whose ability law is a probability mass function on a grid.
+The [two-parameter logistic model](two-parameter-logistic-model.md) and the [Rasch model](rasch-model-response-law.md) supply the item response functions of the most common such models. When $G$ is supported on finitely many points the model is a finite latent-class model.
+
+## Depends on
+
+- [Law of locally independent binary responses](local-independence-response-law.md)
 
 ## Sources
 
