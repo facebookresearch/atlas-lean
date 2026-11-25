@@ -9,7 +9,3 @@
 - [Norm Result](norm-result.md)
 - [As Object](as-object.md)
 - [Vector Height](vector-height.md)
-- [Place Factors](place-factors-2.md)
-- [Closed Image](closed-image.md)
-- [Norm Models](norm-models.md)
-- [Frame Independent](frame-independent.md)

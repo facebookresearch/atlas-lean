@@ -4,4 +4,3 @@
 - [Cycle Sum](cycle-sum.md)
 - [Global Cycle Sum](global-cycle-sum.md)
 - [Unramified Cycle Sum](unramified-cycle-sum.md)
-- [Integral Unramified Cycle Pairing Wanted](native-point-transfer-comparison.md)

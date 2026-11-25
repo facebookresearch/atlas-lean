@@ -10,4 +10,3 @@
 - [Is Stable](is-stable.md)
 - [Is Genus Preserving Contraction](is-genus-preserving-contraction.md)
 - [Stabilization Model](stabilization-model.md)
-- [Marked Curve Stabilization Wanted](forget-and-stabilize.md)

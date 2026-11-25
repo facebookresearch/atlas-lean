@@ -10,4 +10,3 @@
 - [Crystalline Ext](crystalline-ext.md)
 - [Crystalline Ext Cochains](crystalline-ext-cochains.md)
 - [Crystalline Ext Resolution Iso](crystalline-ext-resolution-iso.md)
-- [Geometric PDCrystalline Sheaves Wanted](crystalline-structure-descent.md)

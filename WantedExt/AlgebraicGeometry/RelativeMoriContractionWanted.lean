@@ -45,19 +45,32 @@ open scoped BigOperators
 
 universe u
 
-/-- Equivalent genuine Cartier representatives give the same curve degree. -/
+/-- The degree on curves of a real combination of Cartier divisors depends only on its Weil divisor:
+for a field $k$ of characteristic zero, a normal variety $V$ over $k$ and real combinations $D$ and
+$E$ of Cartier divisors on $V$ with the same real Weil divisor, $D·C = E·C$ for every curve
+$C → V$. -/
 public theorem_wanted representative_curve_degree (k : Type u) [Field k] [CharZero k]
     (n : ℕ) (V : NormalVariety k n) (D E : CartierCombination V)
     (same : D.divisor = E.divisor) (C : Curve V.X) :
     combinationOnCurve D C = combinationOnCurve E C
 
-/-- Finite-dimensional relative numerical curve space for a projective map. -/
+/-- Finite dimensionality of relative numerical curve classes: let $k$ be an algebraically closed
+field of characteristic zero, $(X, Δ)$ a log pair over $k$, $S$ a quasi-projective $k$-scheme (one
+with an immersion into a projective space) and $q : X → S$ a projective morphism (a closed immersion
+into $\mathbb P^N × S$ over $S$). Then the real span $N_1(X/S)$ of the classes of the curves
+contracted by $q$ is finite-dimensional. -/
 public theorem_wanted relative_numerical_finite (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (n : ℕ) (P : LogPair k n) (S : Over (Spec (.of k)))
     (base : IsQuasiProjectiveBase S) (q : P.variety.X ⟶ S) (projective : IsHProjectiveOver q) :
     FiniteDimensional ℝ (RelativeN1 q)
 
-/-- Relative klt base-point-freeness with an actual ample adjoint difference. -/
+/-- The relative base-point-free theorem for klt pairs: let $k$ be an algebraically closed field of
+characteristic zero, $(X, Δ)$ a klt log pair over $k$, $S$ a quasi-projective $k$-scheme and
+$q : X → S$ a projective morphism. Let $L$ be a Cartier divisor on $X$, with its line bundle, that
+is nef over $S$ (nonnegative degree on every curve contracted by $q$), $a > 0$ a natural number and
+$D$ a real combination of Cartier divisors with Weil divisor $aL - (K_X + Δ)$ that is ample over
+$S$. Then $L$ is semiample over $S$: for some $m > 0$ the evaluation map $q^*q_*L^{⊗ m} → L^{⊗ m}$
+is an epimorphism. -/
 public theorem_wanted relative_basepoint_free (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (n : ℕ) (P : LogPair k n) (klt : IsKlt P)
     (S : Over (Spec (.of k))) (base : IsQuasiProjectiveBase S)
@@ -68,7 +81,14 @@ public theorem_wanted relative_basepoint_free (k : Type u) [Field k] [IsAlgClose
     (normalized : D.divisor = (a : ℝ) • realCast L.divisor - P.adjoint.divisor)
     (ample : IsRelativelyAmpleR q D) : IsRelativelySemiample q L.line
 
-/-- Contraction of an actual K+Delta-negative relative extremal ray. -/
+/-- The relative contraction theorem for klt pairs: let $k$ be an algebraically closed field of
+characteristic zero, $(X, Δ)$ a klt log pair over $k$ with $X$ ℚ-factorial, $S$ a quasi-projective
+$k$-scheme, $q : X → S$ a projective morphism and $v$ a class spanning an extremal ray of the
+relative cone of curves of $q$ with $(K_X + Δ)·v < 0$. Then there is a contraction of $v$ over $S$
+(`RelativeContraction P q v`): a normal integral Noetherian $k$-scheme $Y$, projective over $S$, and
+a proper projective morphism $f : X → Y$ over $S$ with geometrically connected fibres, for which
+$\mathcal O_Y → f_*\mathcal O_X$ is an isomorphism, and which contracts a curve contracted by $q$
+exactly when its class lies on the ray spanned by $v$. -/
 public def_wanted relative_contraction (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (n : ℕ) (P : LogPair k n) (klt : IsKlt P)
     (qfactorial : IsQFactorial P.variety) (S : Over (Spec (.of k)))
@@ -76,7 +96,16 @@ public def_wanted relative_contraction (k : Type u) [Field k] [IsAlgClosed k] [C
     (v : RelativeN1 q) (extremal : IsExtremal v)
     (negative : combinationOnClass q P.adjoint v < 0) : RelativeContraction P q v
 
-/-- A genuine small klt flipping contraction has the normalized log flip. -/
+/-- Existence of klt flips (Birkar–Cascini–Hacon–McKernan, Corollary 1.4.1): let $k$ be an
+algebraically closed field of characteristic zero, $(X, Δ)$ a klt log pair of dimension $n ≥ 3$ over
+$k$ with $X$ ℚ-factorial, $S$ a quasi-projective $k$-scheme, $q : X → S$ a projective morphism, $v$
+a class spanning an extremal ray of the relative cone of curves of $q$ with $(K_X + Δ)·v < 0$, and
+`C` a small contraction of $v$ over $S$, with target $Y$, such that $-(K_X + Δ)$ is ample over $Y$.
+Then there is a flip of `C` (`RelativeFlip C`): a klt log pair $(X^+, Δ^+)$ with $X^+$ ℚ-factorial,
+a small proper projective morphism $f^+ : X^+ → Y$ for which $\mathcal O_Y → f^+_*\mathcal O_{X^+}$
+is an isomorphism, and an isomorphism between open subschemes of $X$ and $X^+$ containing all
+codimension-one points and compatible with the maps to $Y$, under which $Δ^+$ is the strict
+transform of $Δ$, such that $K_{X^+} + Δ^+$ is ample over $Y$. -/
 public def_wanted relative_flip (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (n : ℕ) (dimension : 3 ≤ n) (P : LogPair k n)
     (klt : IsKlt P) (qfactorial : IsQFactorial P.variety)

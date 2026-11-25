@@ -1,7 +1,9 @@
 # Fourier Mukai
 
-`Φ_K = L pr₁* ⋙ (− ⊗ᴸ K) ⋙ R pr₂,*`, for an actual kernel on `X ×_S Y`.
+The Fourier–Mukai functor `Φ_K = L pr₁* ⋙ (− ⊗ᴸ K) ⋙ R pr₂,*` from $D(X)$ to $D(Y)$ of a kernel
+$K$ in the derived category of $X ×_S Y$, for the derived pullbacks, direct images and tensor
+products given by `HasDerivedPullbacks`, `HasDerivedPushforwards` and `HasDerivedTensors`.
 
 ## Sources
 
-- Stacks 0FYQ; AxiomMath/Stacks `FourierMukai/Basic.lean`.
+- Stacks, Tag 0FYQ.

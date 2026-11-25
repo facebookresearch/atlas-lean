@@ -38,7 +38,11 @@ namespace WantedExt.AlgebraicGeometry.AbelianVerschiebung
 open CategoryTheory CategoryTheory.MonObj _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.AbelianVerschiebung
 
-/-- Geometric Verschiebung of the actual abelian variety, in every dimension. -/
+/-- **The Verschiebung of an abelian variety over $\mathbb{F}_p$.** Let $p$ be a prime and $A$ a
+commutative group scheme over $\mathbb{F}_p$ that is proper, smooth of relative dimension $g$ and
+geometrically connected. Then there is an endomorphism $V$ of the group scheme $A$, finite and flat
+of rank $p^g$ at every point, with $V \circ F = F \circ V = [p]$, where $F$ is the Frobenius of $A$
+over $\mathbb{F}_p$ and $[p]$ is multiplication by $p$ (`VerschiebungData`). -/
 public def_wanted verschiebung
     (p : ℕ) [Fact p.Prime] (A : PrimeFieldScheme p) (g : ℕ)
     [GrpObj A] [IsCommMonObj A] [IsProper A.hom]

@@ -7,4 +7,3 @@
 - [Gram](gram.md)
 - [Lattice Pairing](lattice-pairing.md)
 - [Integral Cup Comparison](integral-cup-comparison.md)
-- [K3 Integral Lattice Wanted](integral-k3-cup-lattice.md)

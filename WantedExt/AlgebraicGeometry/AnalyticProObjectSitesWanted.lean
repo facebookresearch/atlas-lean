@@ -40,8 +40,11 @@ public theorem_wanted etaleInclusionContinuous (p : ℕ) [Fact p.Prime]
       (MathlibExt.AlgebraicGeometry.AnalyticDiamondEtaleSites.analyticEtaleTopology p G)
       (bmsTopology p G R)
 
-/-- Every full pro-object is locally represented with the original
-complete-ring and point-limit normalization. -/
+/-- For a prime $p$, a locally Noetherian analytic adic space $G$ over the $p$-adic base, a chosen
+point realization $R$ of its pro-étale site and an object $U$ of that site: a family of
+represented boundary objects $B_i$, indexed by a type in `Type 1`, with maps $f_i$ from their
+underlying pro-objects to $U$ that are BMS covering maps (`IsBMSCoverMap`) and are jointly
+surjective on points. -/
 public def_wanted representedBoundaryCover (p : ℕ) [Fact p.Prime]
     (G : AnalyticAdicSpace p) (h : IsLocallyNoetherian p G) (R : PointRealization p G)
     (U : ProEtaleSite p G) :
@@ -53,8 +56,10 @@ public def_wanted representedBoundaryGeometry (p : ℕ) [Fact p.Prime]
     (G : AnalyticAdicSpace p) (h : IsLocallyNoetherian p G) (R : PointRealization p G) :
     RepresentedBoundary.GeometryComparison p G R
 
-/-- The comparison theorem concerns the concrete restriction functor on
-all objects and all pro-morphisms of this source-normalized boundary. -/
+/-- For a prime $p$, a locally Noetherian analytic adic space $G$ over the $p$-adic base and a
+chosen point realization $R$ of its pro-étale site: restriction of sheaves of abelian groups along
+the inclusion of the represented boundary objects into the pro-étale site, from the BMS topology
+to the topology it induces on the boundary objects, is an equivalence of categories. -/
 public theorem_wanted representedBoundarySheafComparison (p : ℕ) [Fact p.Prime]
     (G : AnalyticAdicSpace p) (h : IsLocallyNoetherian p G) (R : PointRealization p G) :
     ((RepresentedBoundary.inclusion p G R).sheafPushforwardContinuous (ModuleCat.{1} ℤ)

@@ -1,5 +1,5 @@
 # Pulled Beta Ring Models
 
-The β-ring structure of the pulled-back ring sheaf, whose constants are the pulled-back
-constants. Dependents are conditional on an instance; a construction is requested in `WantedExt`
-(`ProjectiveProductSourceRequests.actual_pulled_beta_ring`).
+A β-ring structure (`BetaRingSource`) on the inverse-image ring sheaf $f^{-1}R$ on $Y$ whose
+complex scalars come from $R$: on every open $V$ of $Y$, $c ∈ ℂ$ maps to the restriction to $V$ of
+the image of the constant $c$ of $R$ under the unit $R → f_*f^{-1}R$.

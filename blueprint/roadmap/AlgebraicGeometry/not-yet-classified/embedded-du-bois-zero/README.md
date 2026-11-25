@@ -5,4 +5,3 @@
 - [Du Bois Zero](du-bois-zero.md)
 - [Du Bois Unit](du-bois-unit.md)
 - [Is Embedded Du Bois](is-embedded-du-bois.md)
-- [Embedded Du Bois Zero Wanted](embedded-model-comparison.md)

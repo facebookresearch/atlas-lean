@@ -1,6 +1,6 @@
 # Derived Functor Theory
 
-The classes `DerivedAdjunction` and `GlobalSectionsPushforward` for all morphisms of schemes,
-for statements that need them for many morphisms. (`PullbackDerivedNormalization` and
-`DerivedPullbackPasting` always hold.) Their constructions are tracked as `def_wanted` in
-`WantedExt.AlgebraicGeometry.AdicDerivedComparisonsWanted`.
+Instances of `DerivedAdjunction` and `GlobalSectionsPushforward` for every morphism of schemes:
+for each morphism, a normalized adjunction between derived inverse and direct image, and a
+normalized comparison of derived global sections of a derived direct image with derived global
+sections.

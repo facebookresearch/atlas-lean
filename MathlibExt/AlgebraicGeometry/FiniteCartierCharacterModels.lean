@@ -193,7 +193,9 @@ def geometricCharacter :
     (BaseTest R ⟶ G.obj.obj.X) →* GroupLike R (ConvolutionDual R (Coordinate R G)) :=
   (pointCharacterHom R (Coordinate R G)).comp (coordinatePointHom R G)
 
-/-- The actual dual coordinate ring comparison is supplied by completed Cartier duality. -/
+/-- For a finite locally free commutative affine group scheme $G$ over $R$: the isomorphism between
+the coordinate Hopf algebra of the Cartier dual of $G$ and the finite dual of the coordinate Hopf
+algebra of $G$ (`coordinateHopfAlgebraCartierDualIso`). -/
 def dualCoordinateIso :
     Coordinate R (cartierDual R G) ≅
       MathlibExt.FiniteLocallyFreeBicommutativeHopfAlgCat.dual (Coordinate R G) :=

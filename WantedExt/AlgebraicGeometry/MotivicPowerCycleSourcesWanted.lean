@@ -87,11 +87,15 @@ def_wanted relativePowerCycle (k H : Type) [Field k] [Group H] [Fintype H]
     (B : CycleDescent P U r Q D G R A i V z E) (d : DiagonalDescent P U r Q)
     (W : PullbackPowerBundle P U r A i V (X := X)) : RelativePowerCycle P U r Q D G R A i V z B d W
 
-/-- Exactness belongs to the original integral coefficient maps. -/
+/-- For a prime ℓ, the sequence of $\mathbb{Z}$-modules
+$0 \to \mathbb{Z} \to \mathbb{Z} \to \mathbb{Z}/\ell \to 0$, multiplication by ℓ followed by
+reduction modulo ℓ, is short exact. -/
 theorem_wanted integralCoefficientSequenceExact (ell : ℕ) [Fact ell.Prime] :
   (integralSequence ell).ShortExact
 
-/-- Exactness belongs to the native additive times-ell injection, not a ring-map injection. -/
+/-- For a prime ℓ, the sequence of $\mathbb{Z}$-modules
+$0 \to \mathbb{Z}/\ell \to \mathbb{Z}/\ell^2 \to \mathbb{Z}/\ell \to 0$, with first map
+$n \mapsto \ell n$ and second map reduction modulo ℓ, is short exact. -/
 theorem_wanted modCoefficientSequenceExact (ell : ℕ) [Fact ell.Prime] :
   (modSequence ell).ShortExact
 
@@ -107,11 +111,24 @@ variable {k : Type} [Field k]
   (B : CoefficientComplexSystem (D := D) (G := G) (P := P) (E := E)
     (C := C) (A := A) (R := R) (S := S) T N)
 
-/-- Construct exactness of the two computed coefficient-cone comparisons on every original Tate weight. -/
+/-- For a prime ℓ, a weight $q \in \mathbb{Z}$ and the given coefficient complex system `B` (over a
+field $k$, with Nisnevich sheafification and the correspondence laws and additivity): both
+coefficient sequences $\mathbb{Z} \to \mathbb{Z} \to \mathbb{Z}/\ell$ (multiplication by ℓ,
+reduction) and $\mathbb{Z}/\ell \to \mathbb{Z}/\ell^2 \to \mathbb{Z}/\ell$ ($n \mapsto \ell n$,
+reduction) induce maps of weight-$q$ motivic complexes with zero composite, and the comparison map
+from the mapping cone of the first map to the complex of the third term is a quasi-isomorphism. -/
 theorem_wanted motivicCoefficientSequenceCones (ell : ℕ) [Fact ell.Prime] (q : ℤ) :
   CoefficientConeSource B (integralSequence ell) q ∧ CoefficientConeSource B (modSequence ell) q
 
-/-- The two separately defined native boundaries agree through the original integer reduction map. -/
+/-- The mod-ℓ Bockstein is the reduction of the integral Bockstein: for a prime ℓ, the given
+coefficient complex system `B` (over a field $k$, with Nisnevich sheafification and the
+correspondence laws and additivity), the reduced free Nisnevich system `F`, a pointed space $X$,
+integers $p, q$, and cone data `I` and `M` in weight $q$ for the sequences
+$\mathbb{Z} \to \mathbb{Z} \to \mathbb{Z}/\ell$ and
+$\mathbb{Z}/\ell \to \mathbb{Z}/\ell^2 \to \mathbb{Z}/\ell$, every class $u$ in reduced motivic
+cohomology $\tilde H^{p,q}(X; \mathbb{Z}/\ell)$ satisfies $\beta(u) = \rho(\delta(u))$, where
+$\beta$ is the connecting map of the second sequence, $\delta$ that of the first, and $\rho$ is
+reduction modulo ℓ. -/
 theorem_wanted bockstein_eq_reduced_integral (ell : ℕ) [Fact ell.Prime]
     (F : ReducedFreeNisSystem k) (X : PointedSpaces (k := k)) (p q : ℤ)
     (I : CoefficientConeSource B (integralSequence ell) q)

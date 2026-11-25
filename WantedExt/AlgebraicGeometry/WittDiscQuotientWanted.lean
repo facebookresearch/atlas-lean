@@ -37,7 +37,14 @@ open _root_.CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.RelativeWittCoefficientDVRModels
 open MathlibExt.AlgebraicGeometry.WittFramingComparisonModels
 
-/-- Construct all actual framed restrictions, retaining original actions and frames. -/
+/-- Restriction of framed torsors on Witt discs: let $p$ be a prime, $k$ a field of characteristic
+$p$, `C` coefficient data making the domain $B$ a $π$-adically complete discrete valuation ring,
+finite over $W(k)$, with uniformizer $π$ and perfect residue field identified with $k$, and $G$ an
+affine, smooth, finitely presented group scheme over $B$ with geometrically connected fibres. Then
+for every map of perfect $k$-algebras $R → S$ there is a restriction functor from $G$-torsors on the
+Witt disc of $R$ with a trivialization on the punctured disc to those of $S$, preserving the torsor
+actions and the trivializations, with isomorphisms expressing compatibility with identities and
+composition (`RestrictionData`). -/
 public def_wanted framedTorsorRestrictionData
     (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p]
     (B : Type) [CommRing B] [IsDomain B] [Algebra (WittVector p k) B] (pi : B)
@@ -46,7 +53,15 @@ public def_wanted framedTorsorRestrictionData
     [LocallyOfFinitePresentation G.hom] [Smooth G.hom] [GeometricallyConnected G.hom] :
     RestrictionData p k B pi G
 
-/-- Identify the actual loop quotient with genuine punctured-framed G-torsors. -/
+/-- The Witt vector affine Grassmannian classifies framed torsors (Zhu, Lemma 1.3): let $p$ be a
+prime, $k$ a field of characteristic $p$, `C` coefficient data making the domain $B$ a $π$-adically
+complete discrete valuation ring, finite over $W(k)$, with uniformizer $π$ and perfect residue field
+identified with $k$, $G$ an affine, smooth, finitely presented group scheme over $B$ with
+geometrically connected fibres, and `D` given restriction data. Then for every perfect $k$-algebra
+$R$ there is a bijection between the $R$-points of the fpqc quotient $LG/L^+G$ and the isomorphism
+classes of $G$-torsors on the Witt disc of $R$ with a trivialization on the punctured disc. It sends
+the class of a loop $g ∈ LG(R)$ to the trivial torsor whose trivialization is left multiplication by
+$g$, and it is natural in $R$ for the restrictions of `D` (`TorsorQuotientComparison`). -/
 public def_wanted discTorsorQuotientComparison
     (p : ℕ) [Fact p.Prime] (k : Type) [Field k] [CharP k p]
     (B : Type) [CommRing B] [IsDomain B] [Algebra (WittVector p k) B] (pi : B)

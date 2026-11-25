@@ -1,3 +1,4 @@
 # Convolution Closed Source
 
-Adjoint existence is a structural property of the same already constructed real convolution.
+The condition that the enhanced convolution defined by the given source data is closed: for
+every object $K$ of the enhanced category, the functor $L ↦ K ⋆ L$ is a left adjoint.

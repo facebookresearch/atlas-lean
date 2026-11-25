@@ -1,5 +1,4 @@
 # Native Beta Inverse Compatibility
 
-The ordinary inverse image is braided monoidal for the sheafified tensor products. Dependents
-are conditional on an instance; a construction is requested in `WantedExt`
-(`ProjectiveProductSourceRequests.actual_ordinary_inverse_monoidal`).
+A braided monoidal structure on the inverse image functor along the continuous map `f` for
+sheaves of $\mathbb{C}$-vector spaces, with their sheafified tensor products.

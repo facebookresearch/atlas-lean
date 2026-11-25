@@ -7,4 +7,3 @@
 - [Smooth Proper Model](smooth-proper-model.md)
 - [Prime To Ell Alteration](prime-to-ell-alteration.md)
 - [Surjective](surjective.md)
-- [Prime To Ell Alterations Wanted](gabber-prime-to-ell-alteration.md)

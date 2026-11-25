@@ -34,7 +34,11 @@ open _root_.MathlibExt.AlgebraicGeometry.SurfaceHilbertSchemes
 
 universe u
 
-/-- Fogarty's theorem for actual length-n closed-subscheme moduli. -/
+/-- **Fogarty's smoothness of Hilbert schemes of points on a surface.** Let $k$ be an algebraically
+closed field of characteristic zero and $X$ a projective, geometrically irreducible $k$-scheme that
+is proper and smooth of relative dimension two over $k$. For every $n$, any proper $k$-scheme $H$
+with a universal family of length-$n$ closed subschemes of $X$ (`HilbertPointsModel X n`) is smooth
+of relative dimension $2n$ over $k$. -/
 public theorem_wanted hilbertPoints_smooth
     (k : Type u) [Field k] [IsAlgClosed k] [CharZero k]
     (X : Over (Spec (.of k))) [IsProper X.hom]

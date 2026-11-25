@@ -5,4 +5,3 @@
 - [Curve Determinant Data](curve-determinant-data.md)
 - [Line Comparison](line-comparison.md)
 - [Pullback Line Comparison](pullback-line-comparison.md)
-- [Positive Curve Determinants Wanted](affine-sources-2.md)

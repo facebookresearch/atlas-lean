@@ -8,4 +8,3 @@
 - [Band Restriction Laws](band-restriction-laws.md)
 - [Automorphism Restriction](automorphism-restriction.md)
 - [Banded Isom Torsor](banded-isom-torsor.md)
-- [Cameral Gerbe Family Models Wanted](native-local-gerbe.md)

@@ -1,6 +1,6 @@
 # Exterior Theory
 
-The basic laws of the displayed exterior derivative on smooth global forms:
-smoothness, linearity and `d² = 0`. A hypothesis class with no Kähler, Hodge,
-period or analytic-cycle content; its instances on smooth manifolds over `ℝ`
-or `ℂ` are requested in `ManifoldDifferentialFormsWanted`.
+For a smooth manifold $M$ modelled on a normed space $E$ over a nontrivially normed field
+$k$, an instance asserts the basic laws of the exterior derivative `exteriorDerivative`
+(computed in charts) on smooth global forms: the exterior derivative of a smooth form is smooth,
+it is $k$-linear, and $d(dα) = 0$.

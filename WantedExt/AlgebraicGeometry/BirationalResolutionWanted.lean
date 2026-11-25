@@ -43,7 +43,11 @@ open MathlibExt.AlgebraicGeometry.BirationalResolution
 
 universe u
 
-/-- Hironaka resolution, preserving every smooth open. -/
+/-- **Hironaka's resolution of singularities in characteristic zero.** Let $k$ be a field of
+characteristic zero and $X$ an integral separated $k$-scheme of finite type. Then there is a smooth
+integral $k$-scheme $\tilde X$ with a proper, locally projective, birational morphism
+$\tilde X \to X$ that is an isomorphism over every open subscheme of $X$ smooth over $k$
+(`ResolutionModel`). -/
 def_wanted resolution (k : Type u) [Field k] [CharZero k]
     (X : Over (Spec (.of k))) [IsIntegral X.left]
     [LocallyOfFiniteType X.hom] [QuasiCompact X.hom]

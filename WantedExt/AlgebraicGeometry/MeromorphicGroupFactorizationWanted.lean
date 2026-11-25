@@ -42,14 +42,22 @@ open AnalyticGroupTorsorSites AnalyticBundlePrestackModels AnalyticBundleModific
 open AnalyticMeromorphicCoordinates MeromorphicCoefficientCompletion
 open FramedMeromorphicGroupModels
 
-/-- The actual Cartier generator restricts to a unit on the actual complement. -/
+/-- Let $p$ be a prime, $E$ a field, $d : D → X$ a morphism of analytic adic spaces over $E$ and
+$U$ a puncture of $d$ (an open embedding with isomorphic stalks onto the complement of the image
+of $d$), and assume that $d$ has a Cartier atlas (`CartierAtlas`: it is a closed embedding with
+surjective stalk maps, covered by pole charts). Then for every pole chart $Q$ of $d$
+(`PoleChart`), its parameter $t$ restricts to a unit on the punctured chart of $Q$. -/
 public theorem_wanted punctured_parameter_unit
     (p : ℕ) [Fact p.Prime] (E : Type) [Field E]
     {X D : ESpace p E} (d : D ⟶ X) (U : Puncture p E d)
     (A : CartierAtlas p E d U) (Q : PoleChart p E d U) :
     IsUnit (sectionMap p E Q.puncture.map Q.parameter)
 
-/-- Finite-pole coefficients embed in the original punctured analytic ring. -/
+/-- Let $p$ be a prime, $E$ a field, $d : D → X$ a morphism of analytic adic spaces over $E$ and
+$U$ a puncture of $d$, and assume that $d$ has a Cartier atlas (`CartierAtlas`). Let $Q$ be a pole
+chart of $d$ (`PoleChart`) whose parameter $t$ restricts to a unit on the punctured chart of $Q$.
+Then the restriction map from the finite-pole coefficient ring $\mathcal{O}(Q)[1/t]$ to the
+global sections of the punctured chart is injective. -/
 public theorem_wanted meromorphic_restriction_injective
     (p : ℕ) [Fact p.Prime] (E : Type) [Field E]
     {X D : ESpace p E} (d : D ⟶ X) (U : Puncture p E d)
@@ -57,7 +65,15 @@ public theorem_wanted meromorphic_restriction_injective
     (h : IsUnit (sectionMap p E Q.puncture.map Q.parameter)) :
     Function.Injective (puncturedMap p E d U Q h)
 
-/-- The original meromorphic comparison factors through its actual A[1/t] G-points. -/
+/-- Factorization of meromorphic modifications through finite-pole coefficients: let $p$ be a
+prime, $E$ a field and $G$ a reductive group scheme over $E$, with given torsor descent data $H$
+and pullback compatibility $P$ on analytic adic spaces over $E$. Let $d : D → X$ be a morphism of
+such spaces with a puncture $U$, and $Q$ a pole chart of $d$ whose parameter $t$ restricts to a
+unit on the punctured chart, such that restriction from $\mathcal{O}(Q)[1/t]$ to the sections of
+the punctured chart is injective. For a meromorphic modification $M$ of $G$-bundles on $X$ along
+$d$ (`Modification`, `IsMeromorphic`) and integral frames of both of its bundles on $Q$: a point
+of $G$ over $\mathcal{O}(Q)[1/t]$ whose restriction to the punctured chart is the comparison
+element of $M$ in these frames (`GroupFactorization`). -/
 public def_wanted meromorphicGroupFactorization
     (p : ℕ) [Fact p.Prime] (E : Type) [Field E]
     (G : Over (Spec (.of E))) [GrpObj G]
@@ -74,7 +90,14 @@ public def_wanted meromorphicGroupFactorization
     (right : IntegralFrame p E G H d U Q M.right) :
     GroupFactorization p E G H P d U Q h M left right
 
-/-- The actual punctured restriction fixes the meromorphic G-point uniquely. -/
+/-- Uniqueness of the finite-pole factorization: let $p$ be a prime, $E$ a field and $G$ a
+reductive group scheme over $E$, with given torsor descent data $H$ and pullback compatibility $P$
+on analytic adic spaces over $E$. Let $d : D → X$ be a morphism of such spaces with a puncture
+$U$, and $Q$ a pole chart of $d$ whose parameter $t$ restricts to a unit on the punctured chart,
+such that restriction from $\mathcal{O}(Q)[1/t]$ to the sections of the punctured chart is
+injective. For every modification $M$ of $G$-bundles on $X$ along $d$ (`Modification`) with
+integral frames of both of its bundles on $Q$, any two factorizations of $M$ through
+$\mathcal{O}(Q)[1/t]$ (`GroupFactorization`) have the same point of $G$. -/
 public theorem_wanted meromorphicGroupFactorization_unique
     (p : ℕ) [Fact p.Prime] (E : Type) [Field E]
     (G : Over (Spec (.of E))) [GrpObj G]

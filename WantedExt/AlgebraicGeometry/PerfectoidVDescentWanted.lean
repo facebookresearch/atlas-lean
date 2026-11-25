@@ -35,22 +35,29 @@ open MathlibExt.AlgebraicGeometry.AffinePerfectoidVSite
 open MathlibExt.AlgebraicGeometry.PerfectoidDiamondModels
 open MathlibExt.AlgebraicGeometry.PerfectoidSiteComparison
 
-/-- The actual bounded-map affine representable satisfies v-descent. -/
+/-- Let $p$ be a prime and $P$ an affinoid perfectoid of characteristic $p$ (`Affine p`). Then the
+presheaf represented by $P$ on affinoid perfectoids of characteristic $p$ is a sheaf for the
+v-topology. -/
 public theorem_wanted affineRepresentableIsVSheaf
     (p : ℕ) [Fact p.Prime] (P : Affine p) :
     Presheaf.IsSheaf (topology p) (yoneda.obj P ⋙ liftTypes)
 
-/-- The actual uncompleted structural ring presheaf satisfies v-descent. -/
+/-- For a prime $p$, the structure presheaf $(R, R^+) \mapsto R$ on affinoid perfectoids of
+characteristic $p$ is a sheaf for the v-topology. -/
 public theorem_wanted structurePresheafIsVSheaf
     (p : ℕ) [Fact p.Prime] :
     Presheaf.IsSheaf (topology p) (structurePresheaf p)
 
-/-- The actual integral plus-ring presheaf satisfies v-descent. -/
+/-- For a prime $p$, the integral structure presheaf $(R, R^+) \mapsto R^+$ on affinoid perfectoids
+of characteristic $p$ is a sheaf for the v-topology. -/
 public theorem_wanted integralPresheafIsVSheaf
     (p : ℕ) [Fact p.Prime] :
     Presheaf.IsSheaf (topology p) (integralPresheaf p)
 
-/-- The fixed quotient map identifies pro-etale and v-quotients. -/
+/-- Let $p$ be a prime and $R \rightrightarrows X$ a representable pro-étale equivalence relation of
+perfectoid spaces of characteristic $p$ (`Relation p`). Then the canonical map from the quotient of
+$X$ by $R$ in pro-étale sheaves to the v-sheaf quotient, regarded as a pro-étale sheaf, is an
+isomorphism. -/
 public theorem_wanted quotientComparisonIsIso
     (p : ℕ) [Fact p.Prime] (R : Relation p) :
     IsIso (quotientComparison p R)

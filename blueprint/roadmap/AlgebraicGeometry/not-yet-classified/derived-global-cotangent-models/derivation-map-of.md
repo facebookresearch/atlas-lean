@@ -1,5 +1,4 @@
 # Derivation Map Of
 
-The map of global derivation spaces defined by a lift `ℓ`. Different lifts agree after
-inverting weak equivalences, and these maps are functorial there; these are requested in
-`WantedExt.AlgebraicGeometry.DerivedPullbackFunctorialityWanted`.
+The map of global derivation spaces induced by a map `ℓ` from the replacement diagram of `DE`
+to that of `DF`: the induced map of limits.

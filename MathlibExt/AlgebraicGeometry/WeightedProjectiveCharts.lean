@@ -141,11 +141,13 @@ def coordinateUnit (i : Fin (n + 1)) : (ordinaryChart k n i)ˣ :=
 def monomialWeight (i : Fin (n + 1)) (a : OtherCoordinate n i →₀ ℕ) : ℕ :=
   a.sum (fun j e ↦ w j.1 * e)
 
-/-- The fixed formula for an integer-character polynomial in a chart:
-`Σ_a c_a x^a x_i^((t-weight(a))/w_i)`. When `k` has `w_i` distinct `w_i`-th roots of unity
-(for instance `k` algebraically closed of characteristic zero, as in the Wanted chart
-comparison), every monomial of a character-`t` polynomial has `t - weight(a)` divisible by
-`w_i`, so the integer division is exact there. Over other fields `ℤ` division truncates. -/
+/-- The value in the localization $k[x_0, \dots, x_n][x_i^{-1}]$ of a polynomial
+$p = \sum_a c_a x^a$ in the coordinates other than $x_i$, at an integer character $t$: the sum
+$\sum_a c_a x^a x_i^{e(a)}$, where $\mathrm{wt}(a) = \sum_{j \ne i} w_j a_j$ is the weighted degree
+of $x^a$ and $e(a) = (t - \mathrm{wt}(a)) / w_i$ is integer division rounded down ($0$ when
+$w_i = 0$). If $k$ has $w_i$ distinct $w_i$-th roots of unity and $p$ has character $t$ for their
+action $x_j \mapsto \zeta^{w_j} x_j$, then $w_i$ divides $t - \mathrm{wt}(a)$ whenever $c_a \ne 0$,
+so the division is exact. -/
 def chartValue (i : Fin (n + 1)) (t : ℤ) (p : cyclicPolynomialRing k n i) :
     ordinaryChart k n i :=
   ∑ a ∈ p.support, algebraMap k (ordinaryChart k n i) (p.coeff a) *

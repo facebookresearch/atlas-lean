@@ -35,4 +35,3 @@
 - [Tensor Right Derived](tensor-right-derived.md)
 - [Convolution Tensor](convolution-tensor.md)
 - [Fourier Mukai Comp Iso Of Comparisons](fourier-mukai-comp-iso-of-comparisons.md)
-- [Fourier Mukai Wanted](fourier-mukai-comp-of-flat.md)

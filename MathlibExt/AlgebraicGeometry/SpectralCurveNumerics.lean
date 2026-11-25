@@ -86,20 +86,25 @@ abbrev spectralPushforward {k : Type u} [Field k]
 variable {k : Type u} [Field k] {C : Over (Spec (.of k))}
   {L : C.left.Modules} {n : ℕ} [IsProperCurve C.hom]
 
-/-- Source-covered geometric toolkit data on the actual current carriers.
-The mapped unit is fixed by the chosen injective resolution. Degree additivity of
-line bundles on the base curve (requested by
-`CurveCohomologyCalculusWanted.isDegreeAdditive`) is an explicit field; neither
-spectral genus, rank nor spectral degree is assumed by any field. -/
+/-- Hypotheses on the base curve $C$ and the spectral cover $q : S \to C$ of $P$: tensor products of
+line bundles on $C$ are line bundles and line bundles on $C$ have finite-dimensional $H^0$ and $H^1$
+(`CurveTensorEulerInputs`); the degree is additive under tensor products of line bundles on $C$; and
+the pushforward along $q$ of the chosen injective resolution of $\mathcal{O}_S$ has injective terms
+and is a resolution of $q_* \mathcal{O}_S$. -/
 structure SpectralCohomologyInputs (P : SplitSpectralCover C L n) where
   tensor : CurveTensorEulerInputs C.hom
   degreeAdditive : IsDegreeAdditive C.hom tensor
   structureResolution : MappedResolutionConditions (Scheme.Modules.pushforward P.q.left)
     (injectiveResolution (structureModule P.S.left))
 
-/-- Ordinary source-covered input for a spectral line: actual acyclicity
-of the pushed resolution and rank-one trivializations on actual finite
-preimage opens. No pushforward rank/degree conclusion is a field. -/
+/-- Hypotheses on a module $M$ on the spectral curve $S$ of a split spectral cover $P$ of degree $n$
+of a proper curve $C$ over a field, with cover $q : S \to C$ and twisting line bundle $L$: $M$ is a
+line bundle; the pushforward along $q$ of the chosen injective resolution of $M$ has injective
+terms and is a resolution of $q_* M$; and every point $x$ of $C$ has a chart (`FiniteLineChart`):
+an open neighbourhood $U$ of $x$ such that $M$ is trivial on $q^{-1}(U)$, the powers
+$(L^{-1})^{\otimes i}$ ($0 \le i < n$) of the inverse of $L$ are trivial on $U$, and the
+base-change maps $(q_* N)|_U \to (q|_{q^{-1}(U)})_* (N|_{q^{-1}(U)})$ are isomorphisms for $N = M$
+and $N = \mathcal{O}_S$. -/
 structure SpectralLineInputs (P : SplitSpectralCover C L n) (M : P.S.left.Modules) where
   line : IsLineBundle M
   resolution : MappedResolutionConditions (Scheme.Modules.pushforward P.q.left)
@@ -162,9 +167,16 @@ theorem twice_sum_fin_indices (n : ℕ) :
       push_cast
       nlinarith
 
-/-- The BNR spectral genus formula as a completed integration result.
-Its hypotheses expose covered primitive comparisons on actual objects;
-they do not assume this genus equation. -/
+/-- The Beauville–Narasimhan–Ramanan spectral genus formula: let $k$ be an algebraically closed
+field of characteristic zero, $C$ a smooth proper geometrically irreducible curve over $k$ with
+$H^0(C, \mathcal{O}_C) = k$, $L$ a line bundle on $C$, and $P$ a split spectral cover of degree
+$n > 0$: a finite flat $k$-morphism $q : S \to C$ from a smooth proper geometrically irreducible
+curve $S$, with a line bundle $L^{-1}$ inverse to $L$ and an isomorphism
+$q_* \mathcal{O}_S \cong \bigoplus_{0 \le i < n} (L^{-1})^{\otimes i}$. Assume
+$H^0(S, \mathcal{O}_S) = k$ and the hypotheses `I` (`SpectralCohomologyInputs`): line bundles on $C$
+are closed under tensor product and have finite-dimensional $H^0$ and $H^1$, the degree is additive
+on them, and the pushforward along $q$ of the chosen injective resolution of $\mathcal{O}_S$ is an
+injective resolution of $q_* \mathcal{O}_S$. Then $2(g_S - 1) = 2n(g_C - 1) + n(n - 1) \deg L$. -/
 theorem spectralGenus [IsAlgClosed k] [CharZero k] [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
     [HasConstantGlobalSections C.hom] (P : SplitSpectralCover C L n)

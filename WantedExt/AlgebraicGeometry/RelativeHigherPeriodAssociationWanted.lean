@@ -335,7 +335,15 @@ local instance originalZRestrictionAdditive :
 variable [PreservesFiniteLimits (NativeRestrictionCohomologyMaps.restrictY (Zhat p Y.left PY) (Zhat p Y.left PY) (𝟙 (Zhat p Y.left PY)))]
   [PreservesFiniteColimits (NativeRestrictionCohomologyMaps.restrictY (Zhat p Y.left PY) (Zhat p Y.left PY) (𝟙 (Zhat p Y.left PY)))]
 
-/-- Restriction of scalars from `Ẑ_p` on `X` to the inverse image of `Ẑ_p` on `Y` is exact. -/
+/-- **Restriction of scalars to the inverse image of $\hat{\mathbb{Z}}_p$ is exact.** Let
+$f : X \to Y$ be a proper smooth morphism of smooth, locally Noetherian analytic spaces over the
+base realization $B$ of $K$ (`RelativeScope`), with the given base-change and point-projection
+data of $f$, the base data `H` of the section and the instance hypotheses of the signature. Then
+restriction of scalars from $\hat{\mathbb{Z}}_p$-modules on $X$ to modules over the inverse image
+$f^{-1}\hat{\mathbb{Z}}_p$ of $\hat{\mathbb{Z}}_p$ on $Y$, along the scalar map
+$f^{-1}\hat{\mathbb{Z}}_p \to \hat{\mathbb{Z}}_p$, is exact in the sense of `ExactCochainUnit`: for
+every bounded-below complex $C^\bullet$, the canonical map from its termwise restriction to its
+right derived restriction is an isomorphism. -/
 public def_wanted integralRestrictionExact (h : RelativeScope p B X Y f) :
     ExactCochainUnit (NativeRestrictionCohomologyMaps.restrictX (baseZ (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q)) (Zhat p X.left PX) (baseZScalar (p := p) (K := K) (B := B) (X := X) (Y := Y) (f := f) (PX := PX) (PY := PY) (E := E) (Q := Q) (N := N) (PS := PS)))
 

@@ -49,27 +49,47 @@ variable (r : ℕ)
     (X : ProjectiveBundle Point 0 r (targetGenerators r))
     (T : ComplexScheme)
 
-/-- The fine stable-map groupoid is the actual two-step quotient flag,
-with both arrows fixed by coordinate adjunction and marking evaluation. -/
+/-- Fine moduli of degree-one stable lines: for $r > 0$, the projective space
+$\mathbb{P}^r_{\mathbb{C}}$ given as the projective bundle `X` of the free module of rank $r + 1$
+over a point, and a Noetherian complex scheme $T$, an equivalence between the groupoid of families
+over $T$ of one-pointed genus-zero stable maps of degree one to $\mathbb{P}^r$ and the groupoid of
+quotient flags $\mathcal{O}_T^{r+1} \to Q \to L$ (epimorphisms, $Q$ locally free of rank two, $L$ a
+line bundle), under which the flag of a family $(\pi : C \to T, s, f)$ is identified with
+$\mathcal{O}_T^{r+1} \to \pi_* f^* \mathcal{O}(1) \to s^* f^* \mathcal{O}(1)$, the coordinate
+quotient followed by evaluation at the marking. -/
 public def_wanted moduliComparison (_positive : 0 < r) [IsNoetherian T.left] :
     StableLineModuliComparison r X T
 
-/-- Arbitrary scheme base change preserves the actual degree-one direct
-image through its canonical counit-defined map. -/
+/-- Base change for the degree-one direct image: for $r > 0$, the projective space
+$\mathbb{P}^r_{\mathbb{C}}$ given as the projective bundle `X` of the free module of rank $r + 1$
+over a point, a family $(\pi : C \to T, f)$ of one-pointed genus-zero stable maps of degree one to
+$\mathbb{P}^r$ over a Noetherian complex scheme $T$, a morphism $h : T' \to T$ from a Noetherian
+complex scheme and a family $(\pi', f')$ over $T'$ identified with the pullback of the first
+(`FamilyBaseChange`), the canonical base-change map
+$h^* \pi_* f^* \mathcal{O}(1) \to \pi'_* f'^* \mathcal{O}(1)$ (adjoint to the pulled-back counit) is
+an isomorphism. -/
 public theorem_wanted quotient_base_change (_positive : 0 < r) [IsNoetherian T.left]
     (F : StableLineFamily r X T)
     (T' : ComplexScheme) [IsNoetherian T'.left] (h : T' ⟶ T)
     (F' : StableLineFamily r X T') (b : FamilyBaseChange F h F') :
     IsIso (quotientBaseChange F b)
 
-/-- Relative projective-space convexity, with the coefficient sheaf kept
-explicit and quasicoherent, kills the actual map obstruction sheaf. -/
+/-- Vanishing of the obstruction sheaf: for $r > 0$, the projective space
+$\mathbb{P}^r_{\mathbb{C}}$ given as the projective bundle `X` of the free module of rank $r + 1$
+over a point, a family $(\pi : C \to T, f)$ of one-pointed genus-zero stable maps of degree one to
+$\mathbb{P}^r$ over a Noetherian complex scheme $T$ and a quasi-coherent $\mathcal{O}_T$-module $J$,
+$R^1 \pi_* (f^* T_{\mathbb{P}^r} \otimes \pi^* J) = 0$, where $T_{\mathbb{P}^r}$ is the cokernel of
+the Euler map $\mathcal{O} \to \mathcal{O}(1)^{r+1}$. -/
 public theorem_wanted relative_map_obstruction_vanishes (_positive : 0 < r)
     [IsNoetherian T.left] (F : StableLineFamily r X T)
     (J : T.left.Modules) [J.IsQuasicoherent] : IsZero (deformationModule F 1 J)
 
-/-- The degree-zero part of the same actual deformation model has the
-expected rank of maps from a parametrized projective line into projective space. -/
+/-- The tangent sheaf of degree-one stable lines: for $r > 0$, the projective space
+$\mathbb{P}^r_{\mathbb{C}}$ given as the projective bundle `X` of the free module of rank $r + 1$
+over a point and a family $(\pi : C \to T, f)$ of one-pointed genus-zero stable maps of degree one
+to $\mathbb{P}^r$ over a Noetherian complex scheme $T$, the sheaf
+$\pi_* (f^* T_{\mathbb{P}^r} \otimes \pi^* \mathcal{O}_T)$ is locally free of rank $2r + 1$, where
+$T_{\mathbb{P}^r}$ is the cokernel of the Euler map $\mathcal{O} \to \mathcal{O}(1)^{r+1}$. -/
 public theorem_wanted relative_map_tangent_bundle (_positive : 0 < r) [IsNoetherian T.left]
     (F : StableLineFamily r X T) :
     IsBundle (deformationModule F 0 (SheafOfModules.unit T.left.ringCatSheaf)) (2 * r + 1)

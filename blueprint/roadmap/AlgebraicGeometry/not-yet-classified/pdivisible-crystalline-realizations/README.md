@@ -5,4 +5,3 @@
 - [Covariant Module](covariant-module.md)
 - [Covariant Internal Ext](covariant-internal-ext.md)
 - [Realization](realization.md)
-- [PDivisible Crystalline Realizations Wanted](covariant-dieudonne-realization.md)

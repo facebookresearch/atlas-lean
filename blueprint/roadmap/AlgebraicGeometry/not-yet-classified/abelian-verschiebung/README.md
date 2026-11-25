@@ -11,4 +11,3 @@
 - [Torsion To Kernel](torsion-to-kernel.md)
 - [Torsion To Kernel fst](torsion-to-kernel-fst.md)
 - [Hom unique](hom-unique.md)
-- [Abelian Verschiebung Wanted](verschiebung.md)

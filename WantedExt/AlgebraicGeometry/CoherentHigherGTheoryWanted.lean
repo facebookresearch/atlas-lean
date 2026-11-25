@@ -53,8 +53,11 @@ immersion. -/
 public instance_wanted openRestrictionFinitePresentation {X U : Scheme.{0}} (i : U ⟶ X)
     [IsOpenImmersion i] : OpenRestrictionFinitePresentation i
 
-/-- The actual supported coherent space is the homotopy fibre of restriction,
-with its projection equal up to homotopy to the actual inclusion. -/
+/-- Quillen's localization theorem for coherent sheaves: let $X$ be a Noetherian scheme and $U$ an
+open subscheme. Then the realization of the S-construction of coherent sheaves on $X$ whose
+restriction to $U$ is zero is homotopy equivalent to the homotopy fibre, over the base point, of the
+restriction map from the realization for $X$ to that for $U$, by a homotopy equivalence whose
+composite with the fibre projection is homotopic to the inclusion into the realization for $X$. -/
 public theorem_wanted localization (X : Scheme.{0}) [IsNoetherian X]
     (U : X.Opens) :
     ∃ e : ContinuousMap.HomotopyEquiv (supportedSpace X U)
@@ -62,8 +65,12 @@ public theorem_wanted localization (X : Scheme.{0}) [IsNoetherian X]
       Nonempty ((fiberProjection (restriction X U) (fpBase U)).comp e.toFun |>.Homotopy
         (supportedInclusion X U).hom)
 
-/-- An actual two-open covering square realizes as a homotopy pullback,
-normalized by both actual restriction maps. -/
+/-- Zariski descent for coherent G-theory: let $X$, $U$, $V$, $W$ be Noetherian schemes, with open
+immersions $i : U \to X$ and $j : V \to X$ whose images cover $X$, and open immersions $p : W \to U$
+and $q : W \to V$ forming a pullback square with $i$ and $j$. Then the realization of the
+S-construction of coherent sheaves on $X$ is homotopy equivalent to the homotopy pullback of the
+restriction maps along $p$ and $q$, by a homotopy equivalence whose composites with the two
+projections are homotopic to restriction along $i$ and along $j$. -/
 public theorem_wanted zariski_descent (X U V W : Scheme.{0})
     [IsNoetherian X] [IsNoetherian U] [IsNoetherian V] [IsNoetherian W]
     (i : U ⟶ X) (j : V ⟶ X) (p : W ⟶ U) (q : W ⟶ V)

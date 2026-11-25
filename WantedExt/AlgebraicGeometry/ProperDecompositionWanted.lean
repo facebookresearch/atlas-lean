@@ -76,21 +76,23 @@ public theorem_wanted proper_semisimplicity (X Y : ComplexScheme)
     IsSemisimplePerverse (perverseTStructure Y)
       (perverseCohomology Y i (❰properImage❱ X Y d f))
 
-/-- The perverse amplitude is bounded by the defect of semismallness
-`dim (X ×_Y X) - dim X`: perverse cohomology vanishes in degrees outside
-`[-r, r]` when `dim (X ×_Y X) ≤ d + r`. -/
+/-- Perverse amplitude of a proper direct image: let $X$ and $Y$ be complex varieties, with the
+given perverse t-structure on $Y$ (`PerverseSheafTheory Y`), $X$ smooth of relative dimension $d$
+over $ℂ$, and $f : X → Y$ proper with $\dim(X ×_Y X) ≤ d + r$. Then the perverse cohomology
+${}^pH^i(Rf_*\mathbb Q_X[d])$ vanishes for $i < -r$ and for $i > r$. -/
 public theorem_wanted proper_amplitude (X Y : ComplexScheme)
     [IsComplexVariety X] [IsComplexVariety Y] [PerverseSheafTheory Y]
     (d r : ℕ) [SmoothOfRelativeDimension d X.hom] (f : X ⟶ Y) [IsProper f.left]
     (hdefect : DefectLE f d r) (i : ℤ) (hi : i < -(r : ℤ) ∨ (r : ℤ) < i) :
     IsZero (perverseCohomology Y i (❰properImage❱ X Y d f)).obj
 
-/-- A nonzero normalized stalk of a perverse summand over a semismall
-stratum can occur only at equality in the relevance inequality.
-
-Here `s` is the stratum dimension used in the degree `-s`; the supplied
-fiber dimension is measured on the actual scheme fiber. This is the local
-support condition underlying relevant strata in the semismall theorem. -/
+/-- Relevance of the supports of the summands of a semismall direct image: let $X$ and $Y$ be
+complex varieties, with the given perverse t-structure on $Y$ (`PerverseSheafTheory Y`), $X$ smooth
+of relative dimension $d$ over $ℂ$, $f : X → Y$ proper, and $P$ a simple perverse sheaf on $Y$ that
+is a direct summand of $Rf_*\mathbb Q_X[d]$. Let $S$ be a complex variety smooth of relative
+dimension $s$ with an immersion $i : S → Y$, and $p$ a complex point of $S$ such that the stalk of
+$H^{-s}(P)$ at $i(p)$ is nonzero and the fibre of $f$ over $i(p)$ has dimension $n$. If
+$2n + s ≤ d$, then $2n + s = d$. -/
 public theorem_wanted semismall_support_relevance (X Y : ComplexScheme)
     [IsComplexVariety X] [IsComplexVariety Y] [PerverseSheafTheory Y]
     (d : ℕ) [SmoothOfRelativeDimension d X.hom] (f : X ⟶ Y) [IsProper f.left]

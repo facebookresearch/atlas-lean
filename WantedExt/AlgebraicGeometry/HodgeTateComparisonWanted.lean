@@ -41,24 +41,32 @@ namespace WantedExt.AlgebraicGeometry.HodgeTateComparison
 open _root_.CategoryTheory _root_.AlgebraicGeometry
 open MathlibExt.AlgebraicGeometry.HodgeTateComparison
 
-/-- Inverse image along `id_X × Spec 1 = 𝟙` is the identity on the rational
-pro-étale cohomology of the geometric fibre (functoriality of sheaf
-cohomology; Stacks Project, *Cohomology on Sites*, section "Functoriality of
-cohomology"). -/
+/-- For a prime $p$, a scheme $X$ over $\mathbb{Q}_p$ and $n \in \mathbb{N}$: the operator of the
+identity element of $\mathrm{Gal}(\bar{\mathbb{Q}}_p/\mathbb{Q}_p)$ on the rational pro-étale
+cohomology $H^n$ of the geometric fibre $X_{\bar{\mathbb{Q}}_p}$, inverse image along
+$\mathrm{id}_X \times \mathrm{Spec}\,1$ (`etaleGalois`), is the identity (functoriality of sheaf
+cohomology under inverse image). -/
 public theorem_wanted etaleGalois_one
     (p : ℕ) [Fact p.Prime]
     (X : Over (Spec (CommRingCat.of.{0} ℚ_[p]))) (n : ℕ) :
     etaleGalois p X 1 n = LinearMap.id
 
-/-- Inverse image along the Galois scheme automorphisms is a left action:
-`id_X × Spec (σ τ) = (id_X × Spec σ) ≫ (id_X × Spec τ)`, and inverse image
-reverses composition (same functoriality of sheaf cohomology). -/
+/-- For a prime $p$, a scheme $X$ over $ℚ_p$, elements $σ, τ$ of $\mathrm{Gal}(\bar{ℚ}_p/ℚ_p)$ and
+$n ∈ ℕ$: the operators on the rational pro-étale cohomology $H^n$ of the geometric fibre
+$X_{\bar{ℚ}_p}$ given by inverse image along $\mathrm{id}_X × \mathrm{Spec}\,σ$ (`etaleGalois`)
+form a left action: the operator of $στ$ is the operator of $σ$ composed after that of $τ$
+(functoriality of sheaf cohomology, since inverse image reverses composition). -/
 public theorem_wanted etaleGalois_mul
     (p : ℕ) [Fact p.Prime]
     (X : Over (Spec (CommRingCat.of.{0} ℚ_[p]))) (σ τ : Galois p) (n : ℕ) :
     etaleGalois p X (σ * τ) n = etaleGalois p X σ n ∘ₗ etaleGalois p X τ n
 
-/-- The geometric Hodge–Tate comparison in every cohomological degree. -/
+/-- Hodge–Tate comparison: for a prime $p$, a proper smooth scheme $X$ over $ℚ_p$ and $n ∈ ℕ$: a
+$ℂ_p$-linear isomorphism (`Comparison`) from $ℂ_p ⊗_{ℚ_p} H^n$, where $H^n$ is the rational
+pro-étale cohomology of the geometric fibre $X_{\bar{ℚ}_p}$, to
+$\bigoplus_{i=0}^{n} ℂ_p ⊗_{ℚ_p} H^{n-i}(X, Ω^i_X)$, equivariant for the actions of
+$\mathrm{Gal}(\bar{ℚ}_p/ℚ_p)$: diagonally on the source, and on the summand of degree $i$ through
+the action on $ℂ_p$ twisted by $χ^{-i}$, for $χ$ the cyclotomic character. -/
 public def_wanted hodgeTateComparison
     (p : ℕ) [Fact p.Prime]
     (X : Over (Spec (CommRingCat.of.{0} ℚ_[p])))

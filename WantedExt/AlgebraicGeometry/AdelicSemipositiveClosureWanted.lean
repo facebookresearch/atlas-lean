@@ -70,7 +70,11 @@ public theorem_wanted horizontalDegreeIndependent {Y : Scheme.{0}} (C : ModelCur
     (L : Y.Modules) (Q : Horizontal C) (H : HermitianLine (curveLine C L))
     (s t : HorizontalSection C L) : horizontalDegree C L Q H s = horizontalDegree C L Q H t
 
-/-- Native coherent cohomology supplies the finite-dimensional curve normalization. -/
+/-- Finiteness of coherent cohomology in degrees $0$ and $1$: let $k$ be a field,
+$f : Y \to \operatorname{Spec} k$ a proper morphism and $L$ a line bundle on $Y$. Then the
+cohomology groups $H^0(Y, L)$, $H^1(Y, L)$, $H^0(Y, \mathcal{O}_Y)$ and $H^1(Y, \mathcal{O}_Y)$,
+computed as right derived functors of global sections with the $k$-module structure given by $f$,
+are finite-dimensional over $k$. -/
 public theorem_wanted geometricCurveFinite {k : Type} [Field k] {Y : Scheme.{0}}
     (f : Y ⟶ Spec (.of k)) [IsProper f] (L : Y.Modules) (hL : IsLineBundle L) :
     FiniteDimensional k (cohomology f L 0) ∧ FiniteDimensional k (cohomology f L 1) ∧

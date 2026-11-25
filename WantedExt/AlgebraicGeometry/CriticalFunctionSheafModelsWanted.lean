@@ -45,7 +45,11 @@ def_wanted zeroCriticalKernelEquivalence (k P : Type) [CommRing k] [CommRing P]
         (hr : f ∈ I.radical),
         (e (criticalClass I f hd hr)).val = (squareDenominator k P I).mkQ ⟨f, hd⟩}
 
-/-- Native scalar restriction integration, normalized by every actual app map. -/
+/-- **Restriction of functions along a morphism of $k$-schemes.** For a field $k$ and a morphism
+$f : Y \to X$ of $k$-schemes: a morphism of sheaves of $k$-vector spaces
+$\mathcal{O}_X \to f_*\mathcal{O}_Y$ on the Zariski opens of $X$ (`FunctionRestriction f`) whose
+component on every open $U \subseteq X$ is the ring map $\Gamma(X, U) \to \Gamma(Y, f^{-1}U)$ of
+$f$. -/
 def_wanted nativeFunctionRestriction (k : Type) [Field k]
     (X Y : Over (Spec (.of k))) (f : Y ⟶ X) : FunctionRestriction f
 

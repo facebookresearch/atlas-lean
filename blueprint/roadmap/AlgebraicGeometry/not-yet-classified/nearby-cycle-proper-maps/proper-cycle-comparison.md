@@ -1,10 +1,13 @@
 # Proper Cycle Comparison
 
-An existence-only proper comparison of the actual cycle triangles on bounded
-constructible source complexes. The first two components are fixed by
-the actual base-change maps; monodromy is the actual deck map. The third
-(vanishing-cycle) component is only required to complete these to an
-isomorphism of triangles intertwining the vanishing monodromies: a triangle
-does not determine the map on cones, so this records the existence of a
-compatible comparison, not a canonical cone map, and no coherence under
-composition of proper maps is required.
+For a morphism $G$ from the zero fibre $A$ of $s$ on $X$ to the zero fibre $B$ of $t$ on $Y$
+(maps $g$ and $g_0$ on complex points) with the given derived data, chosen functorial resolutions
+$R_1$, $R_2$ of the exponential covers, and comparisons $E_1$, $E_2$ of these resolutions with the
+deck translation by 1 for which the nearby monodromy fixes the specialization map (`hc₁`, `hc₂`):
+an isomorphism of cycle triangles, natural in the bounded constructible complex $K$ on $X$, from
+the cycle triangle of $B$ at $Rg_* K$ to the image under $Rg_{0*}$ of the cycle triangle of $A$
+at $K$, whose first component is the base-change map of the zero-fibre square (through
+`cycleFirstIso`), whose second component is `properNearbyComparison G` (through
+`nearbyFormulaIso`) and intertwines the nearby monodromies, and whose third (vanishing-cycle)
+component intertwines the vanishing monodromies. The third component is not otherwise
+constrained.

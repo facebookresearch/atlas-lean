@@ -11,4 +11,3 @@
 - [Height Sequence](height-sequence.md)
 - [Canonical Height](canonical-height.md)
 - [Height unique](height-unique.md)
-- [Abelian Arithmetic Heights Wanted](neron-tate-height.md)

@@ -68,16 +68,18 @@ public instance_wanted derivedPushforwards_exists : HasDerivedPushforwards.{u}
 deriving both variables. Source: Stacks 06YU. -/
 public instance_wanted derivedTensors_exists : HasDerivedTensors.{u}
 
-/-- Composition of Fourier–Mukai functors on source complexes with
-quasi-coherent cohomology, in the flat special case of Stacks 0FYS.
+/-- **Composition of Fourier–Mukai functors, flat case.** Let $f : X \to S$, $g : Y \to S$
+and $h : Z \to S$ be quasi-compact, quasi-separated, flat morphisms of schemes, and let
+$K \in D(X \times_S Y)$ and $K' \in D(Y \times_S Z)$ have quasi-coherent cohomology sheaves.
+Then there is an isomorphism $\Phi_{K'}(\Phi_K(M)) \cong \Phi_{K \star K'}(M)$, natural in the
+complexes $M \in D(X)$ with quasi-coherent cohomology sheaves, where $\Phi$ is the Fourier–Mukai
+functor `fourierMukai` and
+$K \star K' = R\mathrm{pr}_{13,*}(L\mathrm{pr}_{12}^* K \otimes^L L\mathrm{pr}_{23}^* K')$ is the
+convolution `convolution` on $X \times_S Z$. Here $D$ is the unbounded derived category of sheaves
+of modules, and derived pullback, pushforward and tensor product are the total derived functors,
+assumed to exist (`HasDerivedPullbacks`, `HasDerivedPushforwards`, `HasDerivedTensors`).
 
-The tensor, pullback and pushforward operators are the conditional
-implementations in the proved core. Missing geometric comparison proofs must
-establish this natural isomorphism; it is not an assumed law of the
-existence classes.
-
-Source: Stacks 0FYS, 08IB and 08EU; AxiomMath/Stacks
-`FourierMukai/CompositionIso.lean`, `quasiCoherentFourierMukaiCompNatIso`. -/
+Source: Stacks 0FYS (flat case), 08IB and 08EU. -/
 public theorem_wanted fourierMukai_comp_of_flat {S X Y Z : Scheme.{u}}
     (f : X ⟶ S) (g : Y ⟶ S) (h : Z ⟶ S)
     [QuasiCompact f] [QuasiSeparated f] [QuasiCompact g] [QuasiSeparated g]

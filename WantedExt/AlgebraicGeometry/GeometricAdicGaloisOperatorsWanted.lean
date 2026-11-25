@@ -41,10 +41,13 @@ open MathlibExt.AlgebraicGeometry.GeometricAdicGaloisOperators
 
 universe u
 
-/-- The absolute Galois group acts continuously on `ℓ`-adic cohomology: the operators
-`galoisCohomologyOperator` form a `ℚ_ℓ`-linear representation `ρ` of `Aut_k(K)`, and every matrix
-coefficient `σ ↦ (b.repr (ρ σ v)) i`, for a basis `b` of `H^n(X_K, ℚ_ℓ)`, is continuous for the
-Krull topology. -/
+/-- **Continuity of the Galois action on ℓ-adic cohomology.** Let $\ell$ be a prime invertible in a
+field $k$, $K$ a separable closure of $k$, $X$ a proper smooth $k$-scheme, $n \in \mathbb{N}$, and
+$b$ a basis, indexed by $\{0, \dots, r - 1\}$, of $H^n(X_K, \mathbb{Q}_\ell)$ (the cohomology of the
+pro-étale sheaf $C(-, \mathbb{Q}_\ell)$ on the geometric fibre). Then the operators
+`galoisCohomologyOperator` form a representation $\rho$ of $\mathrm{Aut}_k(K)$ by
+$\mathbb{Q}_\ell$-linear maps, and for every $v$ and $i$ the coordinate
+$\sigma \mapsto (b.\mathrm{repr}(\rho(\sigma) v))_i$ is continuous for the Krull topology. -/
 public theorem_wanted galoisCohomologyOperator_coordinate_continuous
     (ell : ℕ) [Fact ell.Prime] (k K : Type u) [Field k] [Field K]
     [Algebra k K] [IsSepClosure k K]

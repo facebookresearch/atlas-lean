@@ -6,4 +6,3 @@
 - [Module Boundary Kernel](module-boundary-kernel.md)
 - [Compact Adic Cohomology](compact-adic-cohomology.md)
 - [Katz Bound](katz-bound.md)
-- [Katz Betti Bounds Wanted](katz-affine-compact-betti-bound.md)

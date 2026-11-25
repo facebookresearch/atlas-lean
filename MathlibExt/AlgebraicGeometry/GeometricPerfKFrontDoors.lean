@@ -113,7 +113,12 @@ def supportInclusion {X Y : SSet.{1}} (U : PerfectInput Y) (restriction : X ⟶ 
     IsZeroObject U.large.toStableInfinityCategory.toSSet
       ((restriction ≫ eqToHom U.normalized.symm).app (op ⦋0⦌) x))).ι
 
-/-- Fullness is requested for that same canonical source inclusion. -/
+/-- Perfect-input data for the supported objects, with a fully faithful inclusion: given perfect
+inputs $I$ for $X$ and $U$ for $Y$ (stable idempotent-complete $\infty$-categories with small
+presentations, `PerfectInput`) and a restriction map $X \to Y$, a perfect input for the full
+subcategory `supportedPerf U restriction` of objects of $X$ whose restriction is a zero object, an
+exact map from it to $I$ over the inclusion of this subcategory (`PerfectMap`), and full
+faithfulness of the exact functor between small presentations underlying this map. -/
 structure SupportedInput {X Y : SSet.{1}} (I : PerfectInput X) (U : PerfectInput Y) (restriction : X ⟶ Y) where
   input : PerfectInput (supportedPerf U restriction)
   inclusion : PerfectMap input I (supportInclusion U restriction)

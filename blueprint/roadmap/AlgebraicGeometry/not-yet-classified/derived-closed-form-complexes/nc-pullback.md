@@ -1,5 +1,5 @@
 # Nc Pullback
 
 Native limit restriction and the chosen lift `ncPullbackLift` define global NC pullback
-(`ncPullbackOf` with that lift). The choice is not canonical: it is determined up to cochain
-homotopy, and so is functoriality (see `ncPullbackOf`).
+(`ncPullbackOf` with that lift). The lift is a choice; lifts need not be unique (see
+`IsNCPullbackLift`).

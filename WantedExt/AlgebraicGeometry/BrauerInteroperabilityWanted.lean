@@ -120,9 +120,11 @@ public def_wanted source_primitive_cocycle (K : Type) [Field K] [ValuativeRel K]
 public def_wanted source_local_invariant (K : Type) [Field K] [ValuativeRel K]
     [TopologicalSpace K] [IsNonarchimedeanLocalField K] : NormalizedLocalInvariant K
 
-/-- The real invariant has the actual half-torsion subgroup of `ℚ/ℤ` as its
-target. Its inclusion fixes the value of the nonzero class to `1/2`; the
-comparison is retained as an archimedean construction obligation. -/
+/-- The Brauer group of $\mathbb{R}$ is cyclic of order two: an isomorphism of abelian groups from
+$\mathrm{Br}(\mathbb{R})$, the continuous cohomology $H^2$ of the absolute Galois group of
+$\mathbb{R}$ with coefficients in the units of the separable closure, to the subgroup
+$\{0, 1/2\}$ of $\mathbb{Q}/\mathbb{Z}$, the kernel of multiplication by $2$
+(`invariantRestriction 2`). Such an isomorphism sends the nonzero class to $1/2$. -/
 public def_wanted real_invariant_comparison :
     Br ℝ ≃+ (invariantRestriction 2).ker
 
@@ -149,11 +151,20 @@ public theorem_wanted invariant_corestriction_cocycle
     (❰source_local_invariant❱ K).val (cor.val (cocycleClass L c)) =
       (❰source_local_invariant❱ L).val (cocycleClass L c)
 
-/-- Assemble the actual residue-field source dictionaries for the zero-cycle carrier. -/
+/-- For a perfect field $k$ and a scheme $X$ of finite type over $k$: residue-field data
+(`ResidueFieldData`) at every dimension-zero point $x$ of $X$, that is, a $k$-embedding of
+$\kappa(x)$ into the separable closure of $k$ with its identifications of separable closures and
+Galois groups, and a corestriction $\mathrm{Br}(\kappa(x)) \to \mathrm{Br}(k)$ given on cocycle
+classes by the transfer formula. -/
 public def_wanted source_residue_field_data (k : Type) [Field k] [PerfectField k]
     (X : FieldScheme k) : ∀ x : ZeroPoint X, ResidueFieldData X x
 
-/-- Arithmetic evaluation factors through the existing integral rational-equivalence quotient. -/
+/-- Let $k$ be a perfect field, $X$ a smooth proper $k$-scheme and $a \in \mathrm{Br}(X)$. Then the
+evaluation of $a$ on zero-cycles (`cycleEvaluation`, for the field comparisons
+`source_field_gm_comparison` and the residue-field data `source_residue_field_data`), the sum over
+the points $x$ of a cycle, counted with multiplicity, of the corestrictions to $k$ of the images of
+$a$ in $\mathrm{Br}(\kappa(x))$, factors through rational equivalence: an additive map
+$\mathrm{CH}_0(X) \to \mathrm{Br}(k)$ that agrees with it on the class of every zero-cycle. -/
 public def_wanted zero_cycle_descent (k : Type) [Field k] [PerfectField k]
     (X : FieldScheme k) [Smooth X.scheme.hom] [IsProper X.scheme.hom]
     (a : Brauer X.scheme.left) :
@@ -165,8 +176,15 @@ public def_wanted source_chow_norm (k l : Type) [Field k] [Field l] [Algebra k l
     (E : CartesianFieldExtension X Y (algebraMap k l)) :
     NormalizedNorm X Y (algebraMap k l) E
 
-/-- The field-norm projection formula uses actual scheme pullback, integral
-Chow pushforward and the corestriction fixed on every two-cocycle class. -/
+/-- Projection formula for norms: let $l/k$ be a finite extension of perfect fields, $X$ a smooth
+proper $k$-scheme and $Y$ a smooth proper $l$-scheme with a Cartesian square `E` exhibiting
+$Y \to X$ as the base change of $X$ to $l$; let $N : \mathrm{CH}_0(Y) \to \mathrm{CH}_0(X)$ be a map
+induced by pushforward of zero-cycles, $\sigma$ a $k$-embedding of $l$ into the separable closure of
+$k$ with a `FiniteFieldPair` $P$, and $\mathrm{cor} : \mathrm{Br}(l) \to \mathrm{Br}(k)$ a
+corestriction given on cocycle classes by the transfer formula. If $b \in \mathrm{Br}(Y)$ is the
+pullback of $a \in \mathrm{Br}(X)$, then for every $z \in \mathrm{CH}_0(Y)$ the descended evaluation
+`zero_cycle_descent` of $a$ at $N(z)$ is $\mathrm{cor}$ of the descended evaluation of $b$ at
+$z$. -/
 public theorem_wanted field_norm_evaluation
     (k l : Type) [Field k] [Field l] [PerfectField k] [PerfectField l]
     [Algebra k l] [FiniteDimensional k l]
@@ -182,7 +200,12 @@ public theorem_wanted field_norm_evaluation
     (❰zero_cycle_descent❱ k X a).val (N.val z) =
       cor.val ((❰zero_cycle_descent❱ l Y b).val z)
 
-/-- The archimedean endpoint is the actual complex/real Chow norm cokernel. -/
+/-- Let $X$ be a smooth proper scheme over $\mathbb{R}$, $Y$ its base change to $\mathbb{C}$
+(Cartesian square `E`), $N : \mathrm{CH}_0(Y) \to \mathrm{CH}_0(X)$ a map induced by pushforward of
+zero-cycles, and $a \in \mathrm{Br}(X)$. Then the descended evaluation `zero_cycle_descent` of $a$
+factors through the cokernel of $N$: an additive map
+$\mathrm{CH}_0(X)/N(\mathrm{CH}_0(Y)) \to \mathrm{Br}(\mathbb{R})$ whose composite with the quotient
+map is that evaluation. -/
 public def_wanted archimedean_norm_descent
     (X : FieldScheme ℝ) [Smooth X.scheme.hom] [IsProper X.scheme.hom]
     (Y : FieldScheme ℂ) (E : CartesianFieldExtension X Y Complex.ofRealHom)
@@ -191,15 +214,20 @@ public def_wanted archimedean_norm_descent
       f.comp (normQuotientMap X Y Complex.ofRealHom E N) =
         (❰zero_cycle_descent❱ ℝ X a).val}
 
-/-- The order of the Brauer class kills its native Chow evaluation. -/
+/-- Let $k$ be a perfect field, $X$ a smooth proper $k$-scheme, $a \in \mathrm{Br}(X)$ and $n$ a
+positive integer with $n a = 0$. Then $n$ kills every value of the descended evaluation
+`zero_cycle_descent` of $a$ on $\mathrm{CH}_0(X)$. -/
 public theorem_wanted zero_cycle_evaluation_killed
     (k : Type) [Field k] [PerfectField k] (X : FieldScheme k)
     [Smooth X.scheme.hom] [IsProper X.scheme.hom] (a : Brauer X.scheme.left)
     (n : BrauerArithmeticCompletion.Modulus) (_ha : n.val • a = 0) :
     ∀ z : ChowGroup X 0, n.val • (❰zero_cycle_descent❱ k X a).val z = 0
 
-/-- Completed evaluation: projection of the completed Chow group to its `n`th inverse-limit
-coordinate, followed by the evaluation that the Brauer class induces on that quotient. -/
+/-- Let $k$ be a perfect field, $X$ a smooth proper $k$-scheme, $a \in \mathrm{Br}(X)$ and $n$ a
+positive integer with $n a = 0$. The completed evaluation
+$\varprojlim_m \mathrm{CH}_0(X)/m \to \mathrm{Br}(k)$: projection to the coordinate
+$\mathrm{CH}_0(X)/n$, followed by the map that the descended evaluation `zero_cycle_descent` of $a$,
+which $n$ kills, induces on that quotient. -/
 public def_wanted completed_zero_cycle_evaluation
     (k : Type) [Field k] [PerfectField k] (X : FieldScheme k)
     [Smooth X.scheme.hom] [IsProper X.scheme.hom] (a : Brauer X.scheme.left)
@@ -208,8 +236,13 @@ public def_wanted completed_zero_cycle_evaluation
   BrauerArithmeticCompletion.completedEvaluation (ChowGroup X 0)
     (❰zero_cycle_descent❱ k X a).val n (❰zero_cycle_evaluation_killed❱ k X a n ha)
 
-/-- The modified archimedean completion uses the same normalized norm quotient
-and the same `n`th-coordinate evaluation. -/
+/-- Let $X$ be a smooth proper scheme over $\mathbb{R}$, $Y$ its base change to $\mathbb{C}$
+(Cartesian square `E`), $N : \mathrm{CH}_0(Y) \to \mathrm{CH}_0(X)$ a map induced by pushforward of
+zero-cycles, $a \in \mathrm{Br}(X)$ and $n$ a positive integer with $n a = 0$. The completed
+evaluation $\varprojlim_m Q/m \to \mathrm{Br}(\mathbb{R})$, for
+$Q = \mathrm{CH}_0(X)/N(\mathrm{CH}_0(Y))$: projection to the coordinate $Q/n$, followed by the map
+that the evaluation `archimedean_norm_descent` of $a$ on $Q$, which $n$ kills, induces on that
+quotient. -/
 public def_wanted completed_archimedean_evaluation
     (X : FieldScheme ℝ) [Smooth X.scheme.hom] [IsProper X.scheme.hom]
     (Y : FieldScheme ℂ) (E : CartesianFieldExtension X Y Complex.ofRealHom)
@@ -227,7 +260,11 @@ public def_wanted completed_archimedean_evaluation
         rw [← AddMonoidHom.comp_apply, hcomp]
         exact ❰zero_cycle_evaluation_killed❱ ℝ X a n ha z)
 
-/-- The completion map is fixed on actual integer cycle classes. -/
+/-- Let $k$ be a perfect field, $X$ a smooth proper $k$-scheme, $a \in \mathrm{Br}(X)$ and $n$ a
+positive integer with $n a = 0$. For every zero-cycle $c$ on $X$ with integer coefficients,
+`completed_zero_cycle_evaluation` sends the image of the class of $c$ in
+$\varprojlim_m \mathrm{CH}_0(X)/m$ to `cycleEvaluation` of $c$, for the field comparisons
+`source_field_gm_comparison` and the residue-field data `source_residue_field_data`. -/
 public theorem_wanted completed_evaluation_on_cycles
     (k : Type) [Field k] [PerfectField k] (X : FieldScheme k)
     [Smooth X.scheme.hom] [IsProper X.scheme.hom] (a : Brauer X.scheme.left)

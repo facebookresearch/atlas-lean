@@ -7,4 +7,3 @@
 - [Self Intersection](self-intersection.md)
 - [Formal Cohomology Complex](formal-cohomology-complex.md)
 - [Is Formal](is-formal.md)
-- [Derived Self Intersections Wanted](self-intersection-formal.md)
