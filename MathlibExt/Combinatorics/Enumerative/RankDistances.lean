@@ -622,23 +622,15 @@ theorem upper_bound_one {n : ℕ} (π : Equiv.Perm (Fin n)) :
     rw [Finset.sum_add_distrib, sum_leftCount_eq, sum_rightCount_eq]
   omega
 
-/-- Absolute difference of naturals, truncated-subtraction form. -/
-theorem natAbs_sub_of_le {A J : ℕ} (h : J ≤ A) :
-    Int.natAbs ((A : ℤ) - (J : ℤ)) = A - J := by
-  have hnn : (0 : ℤ) ≤ (A : ℤ) - J := by omega
-  have h1 := Int.natAbs_of_nonneg hnn
-  apply Int.ofNat_inj.mp
-  omega
-
 /-- Every absolute difference splits into upward plus downward parts. -/
 theorem natAbs_sub_eq (A J : ℕ) :
     Int.natAbs ((A : ℤ) - (J : ℤ)) = (A - J) + (J - A) := by
   by_cases h : J ≤ A
-  · rw [natAbs_sub_of_le h, Nat.sub_eq_zero_of_le h, add_zero]
+  · rw [Int.natAbs_natCast_sub_natCast_of_ge h, Nat.sub_eq_zero_of_le h, add_zero]
   · have hle : A ≤ J := le_of_not_ge h
     rw [Nat.sub_eq_zero_of_le hle, zero_add]
     have hflip : ((A : ℤ) - J) = -(((J : ℤ) - A)) := by ring
-    rw [hflip, Int.natAbs_neg, natAbs_sub_of_le hle]
+    rw [hflip, Int.natAbs_neg, Int.natAbs_natCast_sub_natCast_of_ge hle]
 
 /-- Type-`A` fibers over the second coordinate fit in the downward gap:
 inversions `(i, b)` with `π b < i` are counted by `b.val - (π b).val`. -/
