@@ -8,6 +8,7 @@ Combinatorics of infinite and uncountable sets: clubs and stationary sets, parti
 - [Clubs, stationary sets and normal ideals](clubs-stationary-sets-and-normal-ideals/README.md)
 - [Diamond principle](diamond-principle/README.md)
 - [Partition calculus](partition-calculus/README.md)
+- [Pseudo-intersection and tower numbers](pseudo-intersection-and-tower-numbers/README.md)
 - [Square principle](square-principle/README.md)
 - [Ramsey ultrafilter](is-ramsey-ultrafilter.md)
 - [Δ-system](is-delta-system.md)

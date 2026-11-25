@@ -1,0 +1,3 @@
+# Energy splitting by the Schur complement without interior source
+
+Let $m$, $p$ be finite index sets and $A \in \mathbb{R}^{m \times m}$, $B \in \mathbb{R}^{m \times p}$, $D \in \mathbb{R}^{p \times p}$ with $D$ invertible and $G = \begin{pmatrix} A & B \\ B^{\top} & D \end{pmatrix}$ symmetric. If $\phi_P \in \mathbb{R}^m$ and $\phi_I \in \mathbb{R}^p$ satisfy $B^{\top} \phi_P + D \phi_I = 0$, then, with $\phi = (\phi_P, \phi_I)$, $\phi^{\top} G \phi$ the quadratic form of $G = \begin{pmatrix} A & B \\ B^{\top} & D \end{pmatrix}$ and $K = A - B D^{-1} B^{\top}$ the Schur complement, $\phi^{\top} G \phi = \phi_P^{\top} K \phi_P$.

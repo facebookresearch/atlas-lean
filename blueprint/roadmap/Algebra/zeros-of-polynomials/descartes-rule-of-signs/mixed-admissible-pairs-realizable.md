@@ -1,0 +1,5 @@
+# Shapiro's Conjecture 7 (realizability of mixed admissible pairs)
+
+This is the proposition that for every degree $d$, every sign pattern $\sigma$ of degree $d$ and all $\mathrm{pos}, \mathrm{neg} \ge 1$, if $(\mathrm{pos}, \mathrm{neg})$ is admissible for $\sigma$ by Descartes' rule of signs then it is realizable for $\sigma$. Here, with $c$ the number of sign changes of $\sigma$ and $p = d - c$, $(\mathrm{pos}, \mathrm{neg})$ is admissible when $\mathrm{pos} \le c$, $\mathrm{pos} \equiv c \pmod 2$, $\mathrm{neg} \le p$ and $\mathrm{neg} \equiv p \pmod 2$; and $(\mathrm{pos}, \mathrm{neg})$ is realizable for $\sigma$ when some real polynomial of degree $d$ whose coefficient of $x^k$ is nonzero with sign $\sigma_k$ (for every $k \le d$) has all its real roots simple, exactly $\mathrm{pos}$ of them positive and exactly $\mathrm{neg}$ negative.
+
+Source: B. Shapiro, *Problems around polynomials: the good, the bad and the ugly...*, Arnold Math. J. 1 (2015), arXiv:1503.05295, Conjecture 7 (J. Forsgård, V. Kostov, B. Shapiro).

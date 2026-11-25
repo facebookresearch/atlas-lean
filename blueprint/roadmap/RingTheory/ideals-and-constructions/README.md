@@ -5,6 +5,8 @@ Ideals and submodules under localization, Hilbert's Nullstellensatz, Gröbner ba
 - [Chinese remainder theorem for polynomial quotients](chinese-remainder-theorem-for-polynomial-quotien/README.md)
 - [Gröbner bases](gr-bner-bases/README.md)
 - [Hilbert's Nullstellensatz](hilbert-s-nullstellensatz/README.md)
+- [Ideals of points and standard monomials](ideals-of-points-and-standard-monomials/README.md)
+- [Initial ideals of determinantal ideals](initial-ideals-of-determinantal-ideals/README.md)
 - [Localization of ideals and submodules](localization-of-ideals-and-submodules/README.md)
 - [Locally integer polynomial functions](locally-integer-polynomial-functions/README.md)
 - [Products of rings and fields](products-of-rings-and-fields/README.md)

@@ -2,11 +2,13 @@
 
 Ordinary representation theory of finite groups over algebraically closed fields of characteristic zero: characters, irreducibility, Schur's lemma, multiplicities and the Wedderburn decomposition of the group algebra.
 
+- [Average dimension of fixed point spaces](average-dimension-of-fixed-point-spaces/README.md)
 - [Characters of representations](characters-of-representations/README.md)
 - [Representations of finite abelian groups](representations-of-finite-abelian-groups/README.md)
 - [Schur's lemma and multiplicities](schur-s-lemma-and-multiplicities/README.md)
 - [Wedderburn decomposition of the group algebra](wedderburn-decomposition-of-the-group-algebra/README.md)
 - [Fourier transform on finite groups](fourier-transform-on-finite-groups/README.md)
+- [Loewy series of permutation modules](loewy-series-of-permutation-modules/README.md)
 - [Dimension of an irreducible representation divides the group order](irred-dim-dvd-card.md)
 - [Maschke's theorem](maschke-decomposition.md)
 - [Brauer's induction theorem](brauer-induction-theorem.md)

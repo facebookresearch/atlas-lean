@@ -6,6 +6,7 @@ Galois theory relates a field extension to its group of automorphisms, covering 
 - [Essential dimension of symmetric groups](essential-dimension-of-symmetric-groups/README.md)
 - [Galois extensions of the real numbers](galois-extensions-of-the-real-numbers/README.md)
 - [Gauss–Wantzel theorem on constructible polygons](gauss-wantzel-theorem-on-constructible-polygons/README.md)
+- [Kummer extensions and binomials](kummer-extensions-and-binomials/README.md)
 - [Solvability by radicals](solvability-by-radicals/README.md)
 - [Extensions of prime degree with a nontrivial automorphism are Galois](is-galois-and-order-of-eq-finrank-of-fin.md)
 - [Intermediate fields of an abelian extension form a modular lattice](is-modular-lattice-intermediate-field.md)

@@ -9,6 +9,7 @@ Determinant expansions and identities, determinants of special products and expo
 - [Pan's theorem on generalized factorial matrices](generalized-factorial-matrices/README.md)
 - [Matrix determinant lemma](matrix-determinant-lemma/README.md)
 - [Determinant of the matrix exponential](matrix-exponential/README.md)
+- [Schur complements](schur-complements/README.md)
 - [Desnanot–Jacobi identity](desnanot-jacobi-identity/README.md)
 - [Jacobi's formula](jacobi-s-formula/README.md)
 - [Symmetry criterion for matrices indexed by a product](symmetry-of-matrices-indexed-by-a-product/README.md)

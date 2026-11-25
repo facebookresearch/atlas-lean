@@ -11,6 +11,7 @@ Dedekind domains and their characterizations, unique factorization of fractional
 - [Invertible fractional ideals](invertible-fractional-ideals/README.md)
 - [Prime factorization of fractional ideals](prime-factorization-of-fractional-ideals/README.md)
 - [Ring automorphisms acting on ideals](ring-automorphisms-acting-on-ideals/README.md)
+- [Generators of a principal ideal quotient avoiding a prime element](exists-not-dvd-span-singleton-eq.md)
 - [Absolute norm of an ideal](ideal-absolute-norm.md)
 - [The absolute norm of a principal ideal](ideal-absolute-norm-principal.md)
 - [The absolute norm of an ideal as a determinant](ideal-absolute-norm-det-basis-change.md)
