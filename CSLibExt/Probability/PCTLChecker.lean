@@ -195,7 +195,6 @@ and every row summing to `1`. -/
 def stochastic (P : S → S → ℚ) : Bool :=
   decide (∀ s t, 0 ≤ P s t) && decide (∀ s, ∑ t, P s t = 1)
 
-omit [DecidableEq S] in
 /-- Every genuine chain passes validation. -/
 theorem stochastic_complete (D : DTMC S) : stochastic D.P = true := by
   simp only [stochastic, Bool.and_eq_true, decide_eq_true_eq]
@@ -219,7 +218,6 @@ theorem hitProbC_eq (D : DTMC S) (n : ℕ) (s : S) :
       · rw [ite_eq_right hsA, ite_eq_right hsA]
         exact Finset.sum_congr rfl (fun t _ => by rw [ih t])
 
-omit [DecidableEq S] in
 /-- The next-step checker is exact: it returns `true` exactly when the
 one-step probability satisfies the comparison. -/
 theorem checkNext_correct (D : DTMC S) (A : Finset S) (s : S) (c : Cmp)
@@ -260,7 +258,6 @@ theorem checkBoundedUntilG_invalid (P : S → S → ℚ)
     checkBoundedUntilG P A B k s c q = false := by
   simp only [checkBoundedUntilG, h, Bool.false_eq_true, ite_false]
 
-omit [DecidableEq S] in
 /-- On a genuine chain the guarded next-step checker agrees with the
 unguarded one, hence with the semantics. -/
 theorem checkNextG_correct (D : DTMC S) (A : Finset S) (s : S) (c : Cmp)
@@ -278,14 +275,12 @@ theorem checkBoundedUntilG_correct (D : DTMC S) (k : ℕ) (s : S) (c : Cmp)
   simp only [checkBoundedUntilG, stochastic_complete, ite_true]
   exact checkBoundedUntil_correct _ _ _ _ _ _ _
 
-omit [DecidableEq S] in
 /-- A matrix passing validation is the transition matrix of a genuine
 chain. -/
 theorem stochastic_sound (P : S → S → ℚ) (h : stochastic P = true) :
     ∃ D : DTMC S, D.P = P := by
   simp only [stochastic, Bool.and_eq_true, decide_eq_true_eq] at h
-  obtain ⟨hnn, hrs⟩ := h
-  exact ⟨⟨P, hnn, hrs⟩, rfl⟩
+  exact ⟨⟨P, Matrix.mem_rowStochastic_iff_sum.mpr h⟩, rfl⟩
 
 /-- Tabulated horizon probabilities: the list of values at every
 state, in `List.finRange m` order, computed level by level. Each level

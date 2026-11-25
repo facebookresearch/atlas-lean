@@ -14,13 +14,13 @@ namespace Cslib.Probability.Tests
 
 open Cslib.Probability
 
-variable {S : Type*} [Fintype S] (D : DTMC S) (A B : Finset S)
+variable {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S) (A B : Finset S)
 
 /-- The closed one-state chain: every transition loops. -/
 def loopDTMC : DTMC (Fin 1) where
-  P := fun _ _ => 1
-  nonneg := fun _ _ => zero_le_one
-  row_sum := fun _ => by simp
+  val := fun _ _ => 1
+  property := Matrix.mem_rowStochastic_iff_sum.mpr
+    ⟨fun _ _ => zero_le_one, fun _ => by simp⟩
 
 /-- A closed nontarget self-loop has reach probability `0`. -/
 theorem reachProb_loop :
@@ -58,7 +58,7 @@ theorem bellman_loop_one :
     loopDTMC.bellman {0} ∅ (fun _ => 1) = fun _ => 1 := by
   funext s
   fin_cases s
-  unfold DTMC.bellman loopDTMC
+  unfold DTMC.bellman loopDTMC DTMC.P
   simp
 
 /-- The constant `-1` function is also a Bellman fixed point there,
@@ -67,34 +67,34 @@ theorem bellman_loop_neg_one :
     loopDTMC.bellman {0} ∅ (fun _ => -1) = fun _ => -1 := by
   funext s
   fin_cases s
-  unfold DTMC.bellman loopDTMC
+  unfold DTMC.bellman loopDTMC DTMC.P
   simp
 
 /-- The half/half branch: from `0`, move to the target `1` or the sink
 `2` with probability `1/2` each; both are absorbing. -/
 def branchDTMC : DTMC (Fin 3) where
-  P := fun s t =>
+  val := fun s t =>
     if s = 0 then (if t = 0 then 0 else 1 / 2)
     else if t = s then 1 else 0
-  nonneg := by
-    intro s t
-    fin_cases s <;> fin_cases t <;> norm_num
-  row_sum := by
-    intro s
-    fin_cases s <;> simp [Fin.sum_univ_three] <;> norm_num
+  property := by
+    refine Matrix.mem_rowStochastic_iff_sum.mpr ⟨?_, ?_⟩
+    · intro s t
+      fin_cases s <;> fin_cases t <;> norm_num
+    · intro s
+      fin_cases s <;> simp [Fin.sum_univ_three] <;> norm_num
 
 /-- The deterministic two-step chain `0 → 1 → 2`, with `2` absorbing. -/
 def chainDTMC : DTMC (Fin 3) where
-  P := fun s t =>
+  val := fun s t =>
     if s = 0 then (if t = 1 then 1 else 0)
     else if s = 1 then (if t = 2 then 1 else 0)
     else if t = 2 then 1 else 0
-  nonneg := by
-    intro s t
-    fin_cases s <;> fin_cases t <;> norm_num
-  row_sum := by
-    intro s
-    fin_cases s <;> simp [Fin.sum_univ_three]
+  property := by
+    refine Matrix.mem_rowStochastic_iff_sum.mpr ⟨?_, ?_⟩
+    · intro s t
+      fin_cases s <;> fin_cases t <;> norm_num
+    · intro s
+      fin_cases s <;> simp [Fin.sum_univ_three]
 
 /-- The half/half branch reaches the target with probability `1/2`. -/
 theorem reachProb_branch :
@@ -129,7 +129,7 @@ theorem reachProb_branch :
       rw [ite_eq_right h2B, ite_eq_right h2A'] at hs
       have hsum : (∑ t, branchDTMC.P 2 t * branchDTMC.hitProb {0, 2} {1} n t)
           = branchDTMC.hitProb {0, 2} {1} n 2 := by
-        simp [branchDTMC]
+        simp [branchDTMC, DTMC.P]
       rw [hsum, IH] at hs
       exact hs
   have hz0 : branchDTMC.hitProb {0, 2} {1} 0 0 = 0 := by
@@ -143,7 +143,7 @@ theorem reachProb_branch :
     have hsum : (∑ t, branchDTMC.P 0 t * branchDTMC.hitProb {0, 2} {1} n t)
         = 1 / 2 * branchDTMC.hitProb {0, 2} {1} n 1
           + 1 / 2 * branchDTMC.hitProb {0, 2} {1} n 2 := by
-      simp [branchDTMC, Fin.sum_univ_three]
+      simp [branchDTMC, DTMC.P, Fin.sum_univ_three]
     rw [hsum, h1 n, h2 n] at hs
     simp at hs
     linarith
@@ -200,10 +200,10 @@ theorem chain_horizons :
   rw [ite_eq_right h1B, ite_eq_right h1A'] at hs1
   have hsum0 : (∑ t, chainDTMC.P 0 t * chainDTMC.hitProb {0, 1} {2} 0 t)
       = chainDTMC.hitProb {0, 1} {2} 0 1 := by
-    simp [chainDTMC]
+    simp [chainDTMC, DTMC.P]
   have hsum1 : (∑ t, chainDTMC.P 1 t * chainDTMC.hitProb {0, 1} {2} 0 t)
       = chainDTMC.hitProb {0, 1} {2} 0 2 := by
-    simp [chainDTMC]
+    simp [chainDTMC, DTMC.P]
   rw [hsum0, hz1] at hs0
   rw [hsum1, hz2] at hs1
   have h1 : chainDTMC.hitProb {0, 1} {2} 1 0 = 0 := hs0
@@ -211,7 +211,7 @@ theorem chain_horizons :
   rw [ite_eq_right h0B, ite_eq_right h0A'] at hs0b
   have hsum0b : (∑ t, chainDTMC.P 0 t * chainDTMC.hitProb {0, 1} {2} 1 t)
       = chainDTMC.hitProb {0, 1} {2} 1 1 := by
-    simp [chainDTMC]
+    simp [chainDTMC, DTMC.P]
   rw [hsum0b, hs1] at hs0b
   have h2 : chainDTMC.hitProb {0, 1} {2} 2 0 = 1 := hs0b
   have hreach : chainDTMC.reachProb {0, 1} {2} 0 = 1 := by
@@ -245,6 +245,6 @@ example : loopDTMC.reachProb {0} ∅ 0 ≤ 2 :=
   reachProb_least loopDTMC {0} ∅ (fun _ => 2) (fun _ => by norm_num)
     (fun s => by
       fin_cases s
-      simp [DTMC.bellman, loopDTMC]) 0
+      simp [DTMC.bellman, DTMC.P, loopDTMC]) 0
 
 end Cslib.Probability.Tests

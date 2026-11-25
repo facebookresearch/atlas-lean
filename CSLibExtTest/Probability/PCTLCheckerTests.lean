@@ -20,15 +20,15 @@ open Cslib.Probability
 tests: from `0`, move to the target `1` or the sink `2` with
 probability `1/2` each; both are absorbing. -/
 def branchDTMC : DTMC (Fin 3) where
-  P := fun s t =>
+  val := fun s t =>
     if s = 0 then (if t = 0 then 0 else 1 / 2)
     else if t = s then 1 else 0
-  nonneg := by
-    intro s t
-    fin_cases s <;> fin_cases t <;> norm_num
-  row_sum := by
-    intro s
-    fin_cases s <;> simp [Fin.sum_univ_three] <;> norm_num
+  property := by
+    refine Matrix.mem_rowStochastic_iff_sum.mpr ⟨?_, ?_⟩
+    · intro s t
+      fin_cases s <;> fin_cases t <;> norm_num
+    · intro s
+      fin_cases s <;> simp [Fin.sum_univ_three] <;> norm_num
 
 /-- Comparison directions at unequal values. -/
 example : Cmp.eval .le (1 / 2 : ℚ) 1 = true :=
@@ -76,7 +76,7 @@ example : checkBoundedUntilG (fun _ _ => (0 : ℚ) : Fin 1 → Fin 1 → ℚ)
 `1/2`, computed by the rational recursion. -/
 example : branchDTMC.hitProb {0, 2} {1} 3 0 = 1 / 2 := by
   rw [← hitProbC_eq]
-  norm_num [hitProbC, Fin.sum_univ_three, branchDTMC]
+  norm_num [hitProbC, Fin.sum_univ_three, branchDTMC, DTMC.P]
 
 /-- The guarded checker confirms the branch value with the equality
 comparison at horizon `3`. -/
@@ -84,7 +84,7 @@ example : checkBoundedUntilG branchDTMC.P {0, 2} {1} 3 0 .eq (1 / 2) = true := b
   rw [checkBoundedUntilG_correct]
   show branchDTMC.hitProb {0, 2} {1} 3 0 = 1 / 2
   rw [← hitProbC_eq]
-  norm_num [hitProbC, Fin.sum_univ_three, branchDTMC]
+  norm_num [hitProbC, Fin.sum_univ_three, branchDTMC, DTMC.P]
 
 /-- Executable behavior, checked in the kernel: the guarded
 bounded-until checker on the raw branch matrix. -/

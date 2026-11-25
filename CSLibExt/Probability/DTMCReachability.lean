@@ -28,12 +28,14 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Indexed
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Pi
+public import Mathlib.LinearAlgebra.Matrix.Stochastic
 
 /-!
 # Reachability probabilities for finite Markov chains
 
 For a finite discrete-time Markov chain with rational transition
-probabilities, the probability of the until event `A U B` over a finite
+probabilities, given as an element of Mathlib's `Matrix.rowStochastic`,
+the probability of the until event `A U B` over a finite
 horizon is defined by summing path weights over first-hit paths; it is
 not defined as a Bellman solution. The horizon probabilities satisfy
 the Bellman recursion and increase with the horizon. The unbounded
@@ -52,13 +54,26 @@ open scoped Classical
 
 
 
-/-- A finite discrete-time Markov chain with rational transitions. -/
-structure DTMC (S : Type*) [Fintype S] where
-  P : S → S → ℚ
-  nonneg : ∀ s t, 0 ≤ P s t
-  row_sum : ∀ s, ∑ t, P s t = 1
+/-- A finite discrete-time Markov chain with rational transitions: a
+row-stochastic rational matrix, as an element of Mathlib's
+`Matrix.rowStochastic`. -/
+abbrev DTMC (S : Type*) [Fintype S] [DecidableEq S] : Type _ :=
+  Matrix.rowStochastic ℚ S
 
-variable {S : Type*} [Fintype S] (D : DTMC S) (A B : Finset S)
+variable {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S) (A B : Finset S)
+
+/-- The transition probabilities of a chain, from the first state to the
+second: its matrix. -/
+abbrev DTMC.P : S → S → ℚ :=
+  D.1
+
+/-- Transition probabilities are nonnegative. -/
+theorem DTMC.nonneg (s t : S) : 0 ≤ D.P s t :=
+  Matrix.nonneg_of_mem_rowStochastic D.2
+
+/-- The transition probabilities out of each state sum to `1`. -/
+theorem DTMC.row_sum (s : S) : ∑ t, D.P s t = 1 :=
+  Matrix.sum_row_of_mem_rowStochastic D.2 s
 
 
 /-- First visit to `B` along a finite path, with all earlier positions
@@ -102,14 +117,14 @@ theorem firstHit_zero_iff {S : Type*} [Fintype S]
   · intro h
     exact ⟨0, h, fun j hj => absurd hj (by simp)⟩
 
-theorem pathWeight_nonneg {S : Type*} [Fintype S] (D : DTMC S)
+theorem pathWeight_nonneg {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S)
     {n : ℕ} (p : Fin (n + 1) → S) : 0 ≤ D.pathWeight p := by
   unfold DTMC.pathWeight
   apply Finset.prod_nonneg
   intro i _
   exact D.nonneg _ _
 
-private theorem hitProb_nonneg_aux {S : Type*} [Fintype S] (D : DTMC S)
+private theorem hitProb_nonneg_aux {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S)
     (A B : Finset S) (n : ℕ) (s : S) : 0 ≤ D.hitProb A B n s := by
   unfold DTMC.hitProb
   apply Finset.sum_nonneg
@@ -118,7 +133,7 @@ private theorem hitProb_nonneg_aux {S : Type*} [Fintype S] (D : DTMC S)
   · exact pathWeight_nonneg D p
   · exact le_rfl
 
-theorem pathWeight_cons {S : Type*} [Fintype S] (D : DTMC S) (n : ℕ)
+theorem pathWeight_cons {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S) (n : ℕ)
     (s0 : S) (tail : Fin (n + 1) → S) :
     D.pathWeight (n := n + 1)
         (Fin.cons (n := n + 1) (α := fun _ : Fin (n + 1 + 1) => S) s0 tail)
@@ -209,7 +224,7 @@ theorem firstHit_cons_iff {S : Type*} [Fintype S]
         simp only [Fin.cons_succ]
         exact hpre
 
-private theorem hitProb_succ_unfold {S : Type*} [Fintype S] (D : DTMC S)
+private theorem hitProb_succ_unfold {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S)
     (A B : Finset S) (n : ℕ) (s : S) :
     D.hitProb A B (n + 1) s = ∑ tail : Fin (n + 1) → S,
       (if FirstHit A B (Fin.cons (n := n + 1)
@@ -276,7 +291,7 @@ private theorem hitProb_succ_unfold {S : Type*} [Fintype S] (D : DTMC S)
       fun h => hs0 h.1
     rw [ite_eq_right h]
 
-private theorem sum_weight_fiber {S : Type*} [Fintype S] (D : DTMC S) (n : ℕ)
+private theorem sum_weight_fiber {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S) (n : ℕ)
     (f : S → ℚ) :
     (∑ tail : Fin (n + 1) → S, f (tail 0) * D.pathWeight tail)
       = ∑ t, f t * (∑ tail : Fin (n + 1) → S,
@@ -312,7 +327,7 @@ private theorem sum_weight_fiber {S : Type*} [Fintype S] (D : DTMC S) (n : ℕ)
     exact h0
   exact hsingle.symm
 
-private theorem sum_weight_succ_unfold {S : Type*} [Fintype S] (D : DTMC S)
+private theorem sum_weight_succ_unfold {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S)
     (n : ℕ) (s : S) :
     (∑ p : Fin (n + 1 + 1) → S,
       (if p 0 = s then D.pathWeight (n := n + 1) p else (0 : ℚ)))
@@ -365,7 +380,7 @@ private theorem sum_weight_succ_unfold {S : Type*} [Fintype S] (D : DTMC S)
     intro tail _
     rw [ite_eq_right hs0]
 
-theorem sum_pathWeight_eq_one {S : Type*} [Fintype S] (D : DTMC S)
+theorem sum_pathWeight_eq_one {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S)
     (n : ℕ) (s : S) :
     (∑ p : Fin (n + 1) → S,
       (if p 0 = s then D.pathWeight p else (0 : ℚ))) = 1 := by
@@ -405,7 +420,7 @@ theorem sum_pathWeight_eq_one {S : Type*} [Fintype S] (D : DTMC S)
     rw [Finset.sum_congr rfl (fun t _ => by rw [hIH t, mul_one])]
     exact D.row_sum s
 
-private theorem sum_hit_fiber {S : Type*} [Fintype S] (D : DTMC S)
+private theorem sum_hit_fiber {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S)
     (A B : Finset S) (n : ℕ) (f : S → ℚ) :
     (∑ tail : Fin (n + 1) → S,
       (if FirstHit A B tail then f (tail 0) * D.pathWeight tail else (0 : ℚ)))
@@ -663,7 +678,7 @@ theorem DTMC.tendsto_hitProb_reachProb (s : S) :
   unfold DTMC.reachProb
   exact tendsto_atTop_ciSup hmono hbdd
 
-theorem DTMC.hitProb_cast_bdd {S : Type*} [Fintype S] (D : DTMC S)
+theorem DTMC.hitProb_cast_bdd {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S)
     (A B : Finset S) (s : S) :
     BddAbove (Set.range (fun n => (D.hitProb A B n s : ℝ))) := by
   refine ⟨1, ?_⟩
@@ -673,7 +688,7 @@ theorem DTMC.hitProb_cast_bdd {S : Type*} [Fintype S] (D : DTMC S)
     exact_mod_cast h
   simpa using hc
 
-theorem DTMC.hitProb_cast_mono {S : Type*} [Fintype S] (D : DTMC S)
+theorem DTMC.hitProb_cast_mono {S : Type*} [Fintype S] [DecidableEq S] (D : DTMC S)
     (A B : Finset S) (s : S) :
     Monotone (fun n => (D.hitProb A B n s : ℝ)) := by
   intro m n hmn
