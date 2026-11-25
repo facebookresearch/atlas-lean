@@ -47,7 +47,13 @@ def_wanted dg_cyclic_associated_graded_comparison (k : Type u) [CommRing k]
     (C : PolynomialCyclicModel M) (H : HodgeFiltrationModel C) (j : ℕ) :
   AssociatedGradedComparison H j
 
-/-- Source Hodge-to-de Rham degeneration, retaining A^i=0 for i<0. -/
+/-- Degeneration of the Hodge-to-de Rham spectral sequence for DG algebras (Kaledin, Theorem 5.5):
+let $k$ be a field of characteristic zero and $A$ a DG algebra over $k$ that is nonnegatively graded
+($A^i = 0$ for $i < 0$), proper (its cohomology is bounded and finite-dimensional in each degree)
+and homologically smooth (the given model `D` of its diagonal bimodule is perfect over the
+enveloping category). Then for every mixed Hochschild model `M`, polynomial cyclic model `C` and
+Hodge filtration model `H`, the spectral sequence of the Hodge filtration degenerates at $E_1$: its
+differentials vanish on every page $r ≥ 1$. -/
 theorem_wanted smooth_proper_nonnegative_dg_hodge_degeneration
     (k : Type u) [Field k] [CharZero k] (A : DGAlgebra k)
     (hdegree : IsNonnegativelyGraded A) (hproper : IsProperAlgebra A)
@@ -56,9 +62,14 @@ theorem_wanted smooth_proper_nonnegative_dg_hodge_degeneration
     (M : HochschildMixedModel A) (C : PolynomialCyclicModel M) (H : HodgeFiltrationModel C) :
   IsE1Degenerate H
 
-/-- Eventual page objects identify with the actual graded Hodge quotient of HC.
-This theorem records convergence of the graded objects; it does not choose an
-abutment map or claim that a normalized comparison has been constructed. -/
+/-- Convergence of the Hodge-to-de Rham spectral sequence for DG algebras (Kaledin, Theorem 5.5):
+let $k$ be a field of characteristic zero and $A$ a DG algebra over $k$ that is nonnegatively
+graded, proper and homologically smooth (for the given model `D` of its diagonal bimodule). Then for
+every mixed Hochschild model `M`, polynomial cyclic model `C` and Hodge filtration model `H`, and
+all $p, q$, there is $r ≥ 1$ such that on every page $r' ≥ r$ the $(p, q)$-term of the spectral
+sequence of the Hodge filtration is isomorphic to the graded piece $\mathrm{gr}_{-p} HC_{-(p+q)}$ of
+the Hodge filtration on cyclic homology. Only the existence of an isomorphism is asserted, not a
+particular comparison map. -/
 theorem_wanted smooth_proper_nonnegative_dg_cyclic_hodge_convergence
     (k : Type u) [Field k] [CharZero k] (A : DGAlgebra k)
     (hdegree : IsNonnegativelyGraded A) (hproper : IsProperAlgebra A)
