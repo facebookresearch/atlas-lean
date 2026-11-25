@@ -9,6 +9,7 @@
 - [Detailed balance for Metropolis–Hastings](mh-detailed-balance.md)
 - [The Metropolis–Hastings kernel is reversible](is-reversible-mh-kernel.md)
 - [The target is stationary for Metropolis–Hastings](invariant-mh-kernel.md)
+- [Metropolis–Hastings with densities is reversible](general-state-metropolis-hastings-reversibility.md)
 - [Normalizer of the conditional law](cond-norm.md)
 - [Conditional law of a coordinate](cond-law.md)
 - [Gibbs update](gibbs-step.md)

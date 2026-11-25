@@ -6,9 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
@@ -16,15 +13,12 @@ public import MathlibExt.Algebra.Homology.PartialTotalRow
 public import Mathlib.Algebra.Homology.Embedding.ExtendHomology
 
 /-!
-# Homology coordinates for signed rows
+# Homology coordinates of signed rows
 
-The vertical differential in a partial-total signed row is multiplied by the
-constant unit `ε(p)`.  Multiplication by `ε(p)^q` in chain degree `q`
-canonically removes this sign.  Combining this chain isomorphism with the
-extension homology coordinate identifies total-row homology with homology of
-the original bicomplex row.
-
-No spectral-page, Tor, or convergence statement is made.
+Multiplication by ε(p)^q in chain degree q removes the constant
+vertical differential sign ε(p). Combined with the extension homology
+comparison, this identifies total-row homology with homology of the
+original bicomplex row.
 -/
 
 @[expose] public section
