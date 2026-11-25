@@ -278,3 +278,4 @@ Topics added since this subject's fields were last revised.
 - [Equivalence](equivalence/README.md)
 - [Finite Locally Free](finite-locally-free/README.md)
 - [Hopf Spec](hopf-spec/README.md)
+- [Abelian De Rham Comparison](abelian-de-rham-comparison/README.md)

@@ -101890,6 +101890,8 @@
     "VonNeumannAlgebra.generatedBy_self": "3884d137b427199d",
     "VonNeumannAlgebra.isClosedWOT": "9ac2945de8390ac4",
     "VonNeumannAlgebra.subset_generatedBy": "08048f990502dd9b",
+    "WantedExt.AlgebraicGeometry.AbelianDeRhamComparison.abelianVariety_h1_deRham": "46d5b6ec29fa15d6",
+    "WantedExt.AlgebraicGeometry.AbelianDeRhamComparison.thetaKer_le_comap_preDeRhamGalois": "59faf0e90e9606cb",
     "WantedExt.AlgebraicGeometry.BrauerInteroperabilityWanted.completed_zero_cycle_evaluation": "55cfb252faa6b1e0",
     "WantedExt.AlgebraicGeometry.CurveCohomologyCalculusWanted.isDegreeAdditive": "751f66688d3881c0",
     "WantedExt.AlgebraicGeometry.RationalResolutionWanted.rational_isCohenMacaulay": "234becf2df6064c4",
