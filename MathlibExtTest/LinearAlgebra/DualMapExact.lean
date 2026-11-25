@@ -16,7 +16,7 @@ public import Mathlib.Algebra.Module.LinearMap.Defs
 @[expose] public section
 
 /-- Consumer with the original binders. -/
-theorem exactSource {K V₁ V₂ V₃ : Type*} [Field K]
+private theorem exactSource {K V₁ V₂ V₃ : Type*} [Field K]
     [AddCommGroup V₁] [Module K V₁] [AddCommGroup V₂] [Module K V₂]
     [AddCommGroup V₃] [Module K V₃]
     (f : V₁ →ₗ[K] V₂) (g : V₂ →ₗ[K] V₃) (h : Function.Exact f g) :
