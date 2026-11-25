@@ -10,11 +10,13 @@ module
 
 public import Mathlib.NumberTheory.Cyclotomic.PrimitiveRoots
 public import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Algebra.Order.Chebyshev
 import Mathlib.Analysis.Normed.Lp.PiLp
 import Mathlib.RingTheory.Trace.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import MathlibExt.NumberTheory.SymmetricPowerSums
 
 /-!
 # A trace metric on cyclotomic fields
@@ -409,6 +411,200 @@ theorem cyclotomicTraceNorm_isNorm (hp : p.Prime) :
   · simpa only [hnorm, map_add] using norm_add_le (T α) (T β)
   · rw [hnorm, hnorm, map_smul, norm_smul]
     rfl
+
+
+-- Factor the sum over two boxes by first summing the second vector, then the first.
+private theorem sum_piFinset_pair_prod {ι α : Type*} [Fintype ι] [DecidableEq ι]
+    (s : Finset α) (g : ι → α → α → ℚ) :
+    (∑ a ∈ Fintype.piFinset (fun _ : ι => s), ∑ b ∈ Fintype.piFinset (fun _ : ι => s),
+      ∏ k, g k (a k) (b k)) = ∏ k, ∑ x ∈ s, ∑ y ∈ s, g k x y := by
+  calc
+    _ = ∑ a ∈ Fintype.piFinset (fun _ : ι => s), ∏ k, ∑ y ∈ s, g k (a k) y :=
+      Finset.sum_congr rfl fun a _ => Finset.sum_prod_piFinset s (fun k y => g k (a k) y)
+    _ = _ := Finset.sum_prod_piFinset s (fun k x => ∑ y ∈ s, g k x y)
+
+/-- The `r`-th average power of a difference of two entries from `[-N, N]`. -/
+private def boxDiffMoment (N r : ℕ) : ℚ :=
+  (∑ x ∈ Finset.Icc (-(N : ℤ)) N, ∑ y ∈ Finset.Icc (-(N : ℤ)) N,
+    ((x : ℚ) - y) ^ r) / (2 * (N : ℚ) + 1) ^ 2
+
+private theorem boxDiffMoments (N : ℕ) :
+    boxDiffMoment N 0 = 1 ∧
+    boxDiffMoment N 2 = 2 * N * (N + 1) / 3 ∧
+    boxDiffMoment N 4 =
+      2 * (N * (N + 1) * (3 * (N : ℚ) ^ 2 + 3 * N - 1) / 15) +
+        6 * (N * (N + 1) / 3) ^ 2 := by
+  let S := Finset.Icc (-(N : ℤ)) N
+  have hcard : (S.card : ℚ) = 2 * N + 1 := by
+    have h : (S.card : ℤ) = 2 * (N : ℤ) + 1 := by
+      dsimp only [S]
+      rw [Int.card_Icc_of_le (a := -(N : ℤ)) (b := N) (by omega)]
+      ring
+    exact_mod_cast h
+  have hc : (2 * (N : ℚ) + 1) ≠ 0 := by positivity
+  obtain ⟨hodd, h₂, h₄⟩ := symmetric_power_sums N
+  have h₁ : (∑ x ∈ S, (x : ℚ) ^ 1) = 0 := by
+    exact_mod_cast hodd 1 (by decide)
+  have h₃ : (∑ x ∈ S, (x : ℚ) ^ 3) = 0 := by
+    exact_mod_cast hodd 3 (by decide)
+  have h₀ : (∑ x ∈ S, (x : ℚ) ^ 0) = 2 * N + 1 := by simp [hcard]
+  have hpair (q : ℚ) (r s : ℕ) :
+      (∑ x ∈ S, ∑ y ∈ S, q * ((x : ℚ) ^ r * (y : ℚ) ^ s)) =
+        q * (∑ x ∈ S, (x : ℚ) ^ r) * (∑ y ∈ S, (y : ℚ) ^ s) := by
+    rw [mul_assoc, Finset.sum_mul_sum]
+    simp only [Finset.mul_sum]
+  have hpair₁ (r s : ℕ) :
+      (∑ x ∈ S, ∑ y ∈ S, (x : ℚ) ^ r * (y : ℚ) ^ s) =
+        (∑ x ∈ S, (x : ℚ) ^ r) * (∑ y ∈ S, (y : ℚ) ^ s) := by
+    simpa only [one_mul] using hpair 1 r s
+  refine ⟨?_, ?_, ?_⟩
+  · unfold boxDiffMoment
+    apply (div_eq_iff (pow_ne_zero 2 hc)).2
+    change (∑ x ∈ S, ∑ y ∈ S, ((x : ℚ) - y) ^ 0) = _
+    simp only [pow_zero, Finset.sum_const, nsmul_eq_mul, mul_one, hcard, one_mul, pow_two]
+  · unfold boxDiffMoment
+    apply (div_eq_iff (pow_ne_zero 2 hc)).2
+    change (∑ x ∈ S, ∑ y ∈ S, ((x : ℚ) - y) ^ 2) = _
+    calc
+      _ = ∑ x ∈ S, ∑ y ∈ S, ((x : ℚ) ^ 2 * (y : ℚ) ^ 0 -
+          2 * ((x : ℚ) ^ 1 * (y : ℚ) ^ 1) + (x : ℚ) ^ 0 * (y : ℚ) ^ 2) := by
+        exact Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => by ring
+      _ = _ := by
+        simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib, hpair, hpair₁, h₀, h₁]
+        rw [show (∑ x ∈ S, (x : ℚ) ^ 2) = _ from h₂]
+        ring
+  · unfold boxDiffMoment
+    apply (div_eq_iff (pow_ne_zero 2 hc)).2
+    change (∑ x ∈ S, ∑ y ∈ S, ((x : ℚ) - y) ^ 4) = _
+    calc
+      _ = ∑ x ∈ S, ∑ y ∈ S, ((x : ℚ) ^ 4 * (y : ℚ) ^ 0 -
+          4 * ((x : ℚ) ^ 3 * (y : ℚ) ^ 1) + 6 * ((x : ℚ) ^ 2 * (y : ℚ) ^ 2) -
+          4 * ((x : ℚ) ^ 1 * (y : ℚ) ^ 3) + (x : ℚ) ^ 0 * (y : ℚ) ^ 4) := by
+        exact Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun y _ => by ring
+      _ = _ := by
+        simp only [Finset.sum_add_distrib, Finset.sum_sub_distrib, hpair, hpair₁, h₀, h₁, h₃]
+        rw [show (∑ x ∈ S, (x : ℚ) ^ 2) = _ from h₂,
+          show (∑ x ∈ S, (x : ℚ) ^ 4) = _ from h₄]
+        ring
+
+-- Normalizing each coordinate independently extracts the cardinality of the pair of boxes.
+private theorem sum_box_pair_pow (N m : ℕ) (e : Fin m → ℕ) :
+    (∑ a ∈ Fintype.piFinset (fun _ : Fin m => Finset.Icc (-(N : ℤ)) N),
+      ∑ b ∈ Fintype.piFinset (fun _ : Fin m => Finset.Icc (-(N : ℤ)) N),
+        ∏ k, ((a k : ℚ) - b k) ^ e k) =
+      (2 * (N : ℚ) + 1) ^ (2 * m) * ∏ k, boxDiffMoment N (e k) := by
+  let S := Finset.Icc (-(N : ℤ)) N
+  let c : ℚ := 2 * N + 1
+  have hc : c ≠ 0 := by dsimp [c]; positivity
+  calc
+    _ = ∏ k, ∑ x ∈ S, ∑ y ∈ S, ((x : ℚ) - y) ^ e k :=
+      sum_piFinset_pair_prod S (fun k x y => ((x : ℚ) - y) ^ e k)
+    _ = ∏ k, c ^ 2 * boxDiffMoment N (e k) := by
+      refine Finset.prod_congr rfl fun k _ => ?_
+      change _ = c ^ 2 * (_ / c ^ 2)
+      rw [mul_comm, div_mul_cancel₀ _ (pow_ne_zero 2 hc)]
+    _ = _ := by
+      rw [Finset.prod_mul_distrib, Finset.prod_const, Finset.card_univ, Fintype.card_fin,
+        ← pow_mul]
+
+-- A marked index contributes its second power; all other factors are one.
+private theorem prod_marked_sq {m : ℕ} (i : Fin m) (f : Fin m → ℚ) :
+    (∏ k, f k ^ (if k = i then 2 else 0 : ℕ)) = f i ^ 2 := by
+  calc
+    _ = ∏ k, if k = i then f k ^ 2 else 1 := by
+      refine Finset.prod_congr rfl fun k _ => ?_
+      by_cases h : k = i <;> simp [h]
+    _ = _ := by simp
+
+-- The coordinate pair contributes a fourth moment on the diagonal and two second moments off it.
+private theorem prod_boxDiffMoment (N m : ℕ) (i j : Fin m) :
+    (∏ k, boxDiffMoment N ((if k = i then 2 else 0) + (if k = j then 2 else 0))) =
+      if j = i then boxDiffMoment N 4 else boxDiffMoment N 2 ^ 2 := by
+  have h₀ := (boxDiffMoments N).1
+  by_cases hij : j = i
+  · subst j
+    calc
+      _ = ∏ k, if k = i then boxDiffMoment N 4 else 1 := by
+        refine Finset.prod_congr rfl fun k _ => ?_
+        by_cases h : k = i <;> simp [h, h₀]
+      _ = _ := by simp
+  · let E := boxDiffMoment N 2
+    calc
+      _ = ∏ k, (if k = i then E else 1) * (if k = j then E else 1) := by
+        refine Finset.prod_congr rfl fun k _ => ?_
+        rcases eq_or_ne k i with rfl | hi
+        · simp [Ne.symm hij, E]
+        rcases eq_or_ne k j with rfl | hj
+        · simp [hij, E]
+        · simp [hi, hj, h₀]
+      _ = _ := by
+        rw [Finset.prod_mul_distrib, ite_eq_right hij]
+        simp [E, pow_two]
+
+private theorem sum_box_sq_mul_sq (N m : ℕ) (i j : Fin m) :
+    (∑ a ∈ Fintype.piFinset (fun _ : Fin m => Finset.Icc (-(N : ℤ)) N),
+      ∑ b ∈ Fintype.piFinset (fun _ : Fin m => Finset.Icc (-(N : ℤ)) N),
+        (((a i - b i) ^ 2 * (a j - b j) ^ 2 : ℤ) : ℚ)) =
+      (2 * (N : ℚ) + 1) ^ (2 * m) *
+        (if j = i then boxDiffMoment N 4 else boxDiffMoment N 2 ^ 2) := by
+  let B := Fintype.piFinset (fun _ : Fin m => Finset.Icc (-(N : ℤ)) N)
+  -- Mark each of the two indices with an exponent of two (four if they coincide).
+  let e (k : Fin m) : ℕ := (if k = i then 2 else 0) + (if k = j then 2 else 0)
+  calc
+    _ = ∑ a ∈ B, ∑ b ∈ B, ∏ k, ((a k : ℚ) - b k) ^ e k := by
+      refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
+      simp only [Int.cast_mul, Int.cast_pow, Int.cast_sub, e, pow_add, Finset.prod_mul_distrib]
+      rw [prod_marked_sq i (fun k => (a k : ℚ) - b k),
+        prod_marked_sq j (fun k => (a k : ℚ) - b k)]
+    _ = (2 * (N : ℚ) + 1) ^ (2 * m) * ∏ k, boxDiffMoment N (e k) := sum_box_pair_pow N m e
+    _ = _ := congrArg _ (prod_boxDiffMoment N m i j)
+
+/-- **Fourth-power sum of coordinate differences over a box.** Let $p$ be a prime and $N$ a
+natural number, and let $B(p, N)$ be the set of integer vectors $a = (a_1, \dots, a_{p-1})$
+with $|a_i| \le N$ for all $i$. Then
+$$\sum_{i=1}^{p-1} \sum_{j=1}^{p-1} \sum_{a, b \in B(p, N)} (a_i - b_i)^2 (a_j - b_j)^2 =
+(2N+1)^{2(p-1)} \cdot \tfrac{2}{45} N (N+1) (p-1) (10N^2 p + 4N^2 + 10Np + 4N - 3).$$
+
+This corrects the paper's printed right side, which omits the factor $(2N+1)^{2(p-1)}$: for
+$p = 3$ and $N = 1$ the sum is $936$, while the printed right side is $104/9$. The paper's own
+proof carries the factors $(2N+1)^{2p-4}$ and $(2N+1)^{2p-6}$ in its pieces (10) and (11), and
+combining them gives the value above; the printed formula is the sum divided by
+$|B(p, N)|^2 = (2N+1)^{2(p-1)}$. The paper takes $p$ an odd prime; here only $p$ prime is
+assumed.
+
+Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
+INTEGERS 25 (2025), Article A10, Lemma 5 (`integers-2025-A10-lem-5`). -/
+theorem sum_sq_sub_mul_sq_sub_box (p : ℕ) (hp : p.Prime) (N : ℕ) :
+    ∑ i : Fin (p - 1), ∑ j : Fin (p - 1),
+      ∑ a ∈ Fintype.piFinset (fun _ : Fin (p - 1) => Finset.Icc (-(N : ℤ)) N),
+        ∑ b ∈ Fintype.piFinset (fun _ : Fin (p - 1) => Finset.Icc (-(N : ℤ)) N),
+          (((a i - b i) ^ 2 * (a j - b j) ^ 2 : ℤ) : ℚ) =
+      (2 * N + 1) ^ (2 * (p - 1)) * (2 / 45 * N * (N + 1) * ((p : ℚ) - 1) *
+        (10 * N ^ 2 * p + 4 * N ^ 2 + 10 * N * p + 4 * N - 3)) := by
+  let D := boxDiffMoment N 4
+  let E := boxDiffMoment N 2
+  -- For each i there is one diagonal term and (p - 2) off-diagonal terms.
+  have hcount (i : Fin (p - 1)) :
+      (∑ j : Fin (p - 1), if j = i then D else E ^ 2) = D + ((p : ℚ) - 2) * E ^ 2 := by
+    calc
+      _ = ∑ j : Fin (p - 1), ((if j = i then D - E ^ 2 else 0) + E ^ 2) := by
+        refine Finset.sum_congr rfl fun j _ => ?_
+        by_cases h : j = i <;> simp [h]
+      _ = _ := by
+        simp only [Finset.sum_add_distrib, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
+          Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+          Nat.cast_sub hp.one_le, Nat.cast_one]
+        ring
+  simp_rw [sum_box_sq_mul_sq, ← Finset.mul_sum]
+  change (2 * (N : ℚ) + 1) ^ (2 * (p - 1)) *
+    (∑ i : Fin (p - 1), ∑ j : Fin (p - 1), if j = i then D else E ^ 2) = _
+  simp_rw [hcount]
+  simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+    Nat.cast_sub hp.one_le, Nat.cast_one]
+  dsimp only [D, E]
+  obtain ⟨_, h₂, h₄⟩ := boxDiffMoments N
+  rw [h₂, h₄]
+  ring
 
 end
 

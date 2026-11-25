@@ -66,3 +66,27 @@ example [IsCyclotomicExtension {3} ℚ K] (x : K) :
   rw [(cyclotomicTraceNorm_isNorm Nat.prime_three).2.2]
   norm_num
   ring
+
+-- The smallest prime has only the diagonal contribution.
+example :
+    (∑ i : Fin (2 - 1), ∑ j : Fin (2 - 1),
+      ∑ a ∈ cyclotomicBox 2 1, ∑ b ∈ cyclotomicBox 2 1,
+        (((a i - b i) ^ 2 * (a j - b j) ^ 2 : ℤ) : ℚ)) = 36 := by
+  rw [cyclotomicBox, sum_sq_sub_mul_sq_sub_box (p := 2) (hp := Nat.prime_two) (N := 1)]
+  norm_num
+
+-- With two coordinates both the diagonal and off-diagonal terms contribute.
+example :
+    (∑ i : Fin (3 - 1), ∑ j : Fin (3 - 1),
+      ∑ a ∈ cyclotomicBox 3 1, ∑ b ∈ cyclotomicBox 3 1,
+        (((a i - b i) ^ 2 * (a j - b j) ^ 2 : ℤ) : ℚ)) = 936 := by
+  rw [cyclotomicBox, sum_sq_sub_mul_sq_sub_box (p := 3) (hp := Nat.prime_three) (N := 1)]
+  norm_num
+
+-- At radius zero the box contains just the zero vector, so every summand is zero.
+example (p : ℕ) (hp : p.Prime) :
+    (∑ i : Fin (p - 1), ∑ j : Fin (p - 1),
+      ∑ a ∈ cyclotomicBox p 0, ∑ b ∈ cyclotomicBox p 0,
+        (((a i - b i) ^ 2 * (a j - b j) ^ 2 : ℤ) : ℚ)) = 0 := by
+  rw [cyclotomicBox, sum_sq_sub_mul_sq_sub_box (p := p) (hp := hp) (N := 0)]
+  simp
