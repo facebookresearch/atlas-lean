@@ -20,7 +20,8 @@ import Mathlib.Tactic.Ring
 
 For a bi-infinite integer sequence `x : ℤ → ℤ`, the extended continuant
 `extendedContinuant x a b` has order `a` and start index `b`. Its recurrence in the order
-gives the entries of the westbound matrix product. For table (33) with `σ ≡ 5 (mod 6)`,
+gives the determinant identity `extendedContinuant_det` for every integer order and the entries
+of the westbound matrix product. For table (33) with `σ ≡ 5 (mod 6)`,
 `silentTerms_table_five_mod_six` evaluates the silent-term formulas.
 -/
 
@@ -212,6 +213,39 @@ public theorem extendedContinuant_neg_order (x : ℤ → ℤ) (h n : ℤ) :
   dsimp only [P, D, K, b] at hn
   ring_nf at hn ⊢
   simpa [extendedContinuant_neg_one, extendedContinuant_neg_two] using hn
+
+/-- **Determinant identity for extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be an
+integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start index
+$b$. For every integer $n$,
+$$K_n(x)_0 K_{n-2}(x)_1 - K_{n-1}(x)_1 K_{n-1}(x)_0 = (-1)^{n+1}.$$
+
+Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
+INTEGERS 26 (2026), Article A73, Corollary 2. -/
+public theorem extendedContinuant_det (x : ℤ → ℤ) (n : ℤ) :
+    extendedContinuant x n 0 * extendedContinuant x (n - 2) 1 -
+        extendedContinuant x (n - 1) 1 * extendedContinuant x (n - 1) 0 =
+      ((n + 1).negOnePow : ℤ) := by
+  let D (n : ℤ) := extendedContinuant x n 0 * extendedContinuant x (n - 2) 1 -
+    extendedContinuant x (n - 1) 1 * extendedContinuant x (n - 1) 0
+  -- Both continuants of order `n` expand with the same term `x n`, which cancels.
+  have flip (n : ℤ) : D n = -D (n - 1) := by
+    have h₀ := extendedContinuant_recurrence x n 0
+    have h₁ := extendedContinuant_recurrence x (n - 1) 1
+    rw [zero_add] at h₀
+    rw [show 1 + (n - 1) = n by ring, show n - 1 - 1 = n - 2 by ring] at h₁
+    dsimp only [D]
+    rw [show n - 1 - 1 = n - 2 by ring]
+    linear_combination extendedContinuant x (n - 2) 1 * h₀ -
+      extendedContinuant x (n - 1) 0 * h₁
+  -- So the determinant alternates in sign from its value `1` at order `-1`.
+  have base : D (-1) = ((-1 + 1 : ℤ).negOnePow : ℤ) := by
+    norm_num [D, extendedContinuant_neg_one, extendedContinuant_neg_two,
+      (extendedContinuant_neg_three_to_six x 1).1]
+  change D n = _
+  refine Int.inductionOn' n (-1) base (fun k _ ih => ?_) (fun k _ ih => ?_)
+  · rw [flip, add_sub_cancel_right, ih, Int.negOnePow_succ (k + 1), Units.val_neg]
+  · rw [flip k, Int.negOnePow_succ, Units.val_neg, neg_inj] at ih
+    rwa [sub_add_cancel]
 
 /-- **Westbound matrix product of extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be a
 bi-infinite integer sequence, write $K_a(x)_b$ for the extended continuant of order $a$ with start

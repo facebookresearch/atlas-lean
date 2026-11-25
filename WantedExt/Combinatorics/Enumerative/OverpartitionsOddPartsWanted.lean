@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Int.Interval
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.Partition.DistinctOddPartsTriangularParity
 public import MathlibExt.Combinatorics.Enumerative.Partition.OverpartitionOddSquareRecurrence
 public import MathlibExt.Combinatorics.Enumerative.Partition.OddDistinctsPentagonalRecurrence
 public import MathlibExt.Combinatorics.Enumerative.Partition.PentagonalRecurrenceParity
@@ -91,19 +92,6 @@ public def distinctEvenPartsCount (n : ℕ) : ℕ :=
   ((Finset.univ : Finset n.Partition).filter
     fun p => ∀ i ∈ p.parts, Even i → p.parts.count i = 1).card
 
-/-- **Partitions whose odd parts are distinct.** For a natural number $n$, $\mathrm{pod}(n)$ is
-the number of partitions of $n$ in which every odd part occurs exactly once; the even parts are
-unrestricted.
-
-Its generating function is
-$\sum_{n \ge 0} \mathrm{pod}(n) q^n = (-q; q^2)_\infty / (q^2; q^2)_\infty$.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, Section 3 (definition of `pod(n)` before Theorem 6). -/
-public def distinctOddPartsCount (n : ℕ) : ℕ :=
-  ((Finset.univ : Finset n.Partition).filter
-    fun p => ∀ i ∈ p.parts, Odd i → p.parts.count i = 1).card
-
 /-- **Partitions with no part congruent to 2 modulo 4.** For a natural number $n$, $P_2(n)$ is
 the number of partitions of $n$ none of whose parts is congruent to $2$ modulo $4$.
 
@@ -182,17 +170,6 @@ public theorem_wanted overpartitionOdd_eq_sum_distinctOddParts_triangular (n : �
     overpartitionOddPartsCount n =
       ∑ k ∈ (Finset.range (n + 1)).filter (fun k => k * (k + 1) / 2 ≤ n),
         distinctOddPartsCount (n - k * (k + 1) / 2)
-
-/-- **Evenness of a triangular sum of partition counts with distinct odd parts.** Let
-$\operatorname{pod}(m)$ be the number of partitions of $m$ in which no odd part is repeated. For
-every $n > 0$, the sum $\sum_{k \ge 0} \operatorname{pod}(n - k(k+1)/2)$ over the $k$ with
-$k(k+1)/2 \le n$ is even.
-
-Source: Deepthi G. and S. Chandankumar, *Linear Relations for Overpartitions into Odd
-Parts*, INTEGERS 26 (2026), Article A60, Corollary 1 (`integers-2026-A60-cor-1`). -/
-public theorem_wanted distinctOddParts_triangular_sum_even (n : ℕ) (hn : 0 < n) :
-    Even (∑ k ∈ (Finset.range (n + 1)).filter (fun k => k * (k + 1) / 2 ≤ n),
-      distinctOddPartsCount (n - k * (k + 1) / 2))
 
 /-- **Overpartitions into odd parts from overpartitions and squares.** Let $\mathrm{po}(m)$
 be the number of overpartitions of $m$ into odd parts and $\overline{p}(m)$ the number of

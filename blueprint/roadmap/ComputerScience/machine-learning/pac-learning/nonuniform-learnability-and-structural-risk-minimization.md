@@ -18,11 +18,16 @@ $m^{NUL}(\varepsilon, \delta, h) \le m^{UC}_{\mathcal{H}_{n(h)}}(\varepsilon/2, 
 This node states a precise result. A good expansion adds a page for each of the following
 prerequisites and links it under the dependency sections below:
 
-- Statement prerequisite: Uniform convergence property and eps-representative samples.
-- Proof prerequisite: VC classes have uniform convergence (upper half of the quantitative fundamental theorem).
+- Statement prerequisite: Nonuniform learnability and nonuniform learners for binary classification with the 0-1 loss.
+
+## Depends on
+
+- [Learners and agnostic PAC learnability](agnostic-pac-learning-and-uniform-convergence/learners-and-agnostic-pac-learnability.md)
+- [Uniform convergence property and eps-representative samples](agnostic-pac-learning-and-uniform-convergence/uniform-convergence-property-and-eps-representative-samples.md)
 
 ## Proof depends on
 
+- [VC classes have uniform convergence (upper half of the quantitative fundamental theorem)](../generalization-bounds-and-concentration/vc-and-natarajan-classes/vc-classes-have-uniform-convergence.md)
 - [Shattering lower bound for PAC learning](../generalization-bounds-and-concentration/shattering-lower-bound-for-pac-learning.md)
 
 ## Sources
