@@ -27,26 +27,45 @@ preserved as `eventualRepresentation` (established); the weaker
 resolved true (Chojecki with GPT-5.4 Pro, conditional on a Duke-type
 equidistribution theorem [ELMV12]). -/
 
-/-- `n = x^2 + y^2 - z^2` with `max(x^2, y^2, z^2) ≤ n`. -/
+/-- **Bounded representation by $x^2 + y^2 - z^2$.** A natural number $n$ has a bounded
+representation by $x^2 + y^2 - z^2$ if there are natural numbers $x, y, z$ with
+$n = x^2 + y^2 - z^2$ and $x^2 \le n$, $y^2 \le n$, $z^2 \le n$, where the subtraction is
+truncated subtraction of natural numbers.
+
+The truncation changes nothing: a nonzero truncated difference is the true difference, and
+$0 = 0^2 + 0^2 - 0^2$. -/
 def Erdos1148Prop (n : ℕ) : Prop :=
   ∃ x y z : ℕ, n = x ^ 2 + y ^ 2 - z ^ 2 ∧ x ^ 2 ≤ n ∧ y ^ 2 ≤ n ∧ z ^ 2 ≤ n
 
-/-- The weaker `n + 2√n` bound, reported obvious in [Va99]. -/
+/-- **Representation by $x^2 + y^2 - z^2$ with the bound $n + 2\sqrt{n}$.**
+A natural number $n$ has this representation if there are natural numbers $x, y, z$ with
+$n = x^2 + y^2 - z^2$, where the subtraction is truncated subtraction of natural numbers, and
+each of $x^2$, $y^2$, $z^2$ is at most $n + 2\sqrt{n}$ as a real number.
+
+This weaker bound is reported obvious in [Va99]. -/
 def weaker_prop (n : ℕ) : Prop :=
   ∃ x y z : ℕ, n = x ^ 2 + y ^ 2 - z ^ 2 ∧
     (x ^ 2 : ℝ) ≤ n + 2 * Real.sqrt n ∧
     (y ^ 2 : ℝ) ≤ n + 2 * Real.sqrt n ∧
     (z ^ 2 : ℝ) ≤ n + 2 * Real.sqrt n
 
-/-- Every large integer has such a representation (established). -/
+/-- **Eventual bounded representation by $x^2 + y^2 - z^2$.** The statement that every
+sufficiently large natural number $n$ can be written as $n = x^2 + y^2 - z^2$ with natural
+numbers $x, y, z$ satisfying $\max(x^2, y^2, z^2) \le n$. -/
 def eventualRepresentation : Prop :=
   ∀ᶠ n in Filter.atTop, Erdos1148Prop n
 
-/-- The weaker bound always holds (established companion). -/
+/-- **Representability of every $n$ with the bound $n + 2\sqrt{n}$.** The statement that every
+natural number $n$ can be written as $n = x^2 + y^2 - z^2$ with natural numbers $x, y, z$,
+the subtraction being truncated subtraction of natural numbers, such that each of $x^2$, $y^2$,
+$z^2$ is at most $n + 2\sqrt{n}$. -/
 def weakerBound : Prop :=
   ∀ n, weaker_prop n
 
-/--
+/-- **Every large integer is a bounded value of $x^2 + y^2 - z^2$ (Erdős Problem 1148).**
+For every sufficiently large natural number $n$ there are natural numbers $x, y, z$ with
+$n = x^2 + y^2 - z^2$ and $\max(x^2, y^2, z^2) \le n$.
+
 Resolved true: Resolved affirmatively (Chojecki with GPT-5.4 Pro via Duke-type theorem
 [ELMV12]), per erdosproblems.com/1148. Source: P. Chojecki, Bounded Representations by
 x^2+y^2-z^2, arXiv:2603.18087 (2026), https://arxiv.org/abs/2603.18087. Moved from

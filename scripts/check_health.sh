@@ -48,7 +48,7 @@ check_migrated_subjects() {
   for root in MathlibExt MathlibExtTest; do
     dest=Domains
     [[ "$root" != MathlibExtTest ]] || dest=DomainsTest
-    for subject in Biology/Demography Economics/Accounting Transport Urban; do
+    for subject in Biology Economics OperationsResearch Transport Urban; do
       old="$root/$subject"
       [[ -d "$old" ]] || continue
       first="$(find "$old" -type f -name '*.lean' -print -quit)" || return 1

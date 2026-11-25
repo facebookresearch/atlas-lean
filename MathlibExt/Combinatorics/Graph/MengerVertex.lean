@@ -1380,15 +1380,6 @@ private theorem sum_one_diff {W : Type*} [Fintype W]
     exact hothers v hv.1
   omega
 
-/-- Chains map forward along pointwise implications. -/
-private theorem isChain_mono {W : Type*} {r r' : W → W → Prop} {l : List W}
-    (h : ∀ a b, r a b → r' a b) (hc : List.IsChain r l) :
-    List.IsChain r' l := by
-  induction hc with
-  | nil => exact List.IsChain.nil
-  | singleton a => exact List.IsChain.singleton a
-  | cons_cons hr _ ih => exact List.IsChain.cons_cons (h _ _ hr) ih
-
 /-- Positive flow value reaches the sink along positive arcs. -/
 private theorem flow_pos_reachable {V : Type*} [Fintype V]
     (cap : (V × Bool) → (V × Bool) → ℕ) (S T : V × Bool)
@@ -1801,7 +1792,7 @@ private theorem flow_to_family {V : Type*} [Fintype V] [DecidableEq V]
           have h := isListStep_chain hchainL hstep
           exact h
         have hchainCap : List.IsChain (fun x y => 0 < splitCap G s t big x y) L :=
-          isChain_mono (fun a b hab => lt_of_lt_of_le hab (hf.1 a b)) hchainL
+          List.IsChain.imp (fun a b hab => lt_of_lt_of_le hab (hf.1 a b)) hchainL
         obtain ⟨l, hheadl, hlastl, hchainl, hndl, hstepsl⟩ :=
           split_chain_vertices G s t big L hchainCap hnL hhead hlast
         obtain ⟨w, hwsup⟩ := walk_of_chain G l hchainl hheadl hlastl
@@ -1875,14 +1866,22 @@ private theorem flow_to_family {V : Type*} [Fintype V] [DecidableEq V]
             exact hQuse j v hv hvs hvt
         · omega
 
-/-- Menger's theorem (vertex form): in a finite simple graph with nonadjacent vertices
-`s` and `t`, the minimum number of vertices (excluding `s` and `t`) whose removal
-separates `s` from `t` equals the maximum number of pairwise internally-disjoint `s`-`t`
-paths. Source: K. Menger, *Zur allgemeinen Kurventheorie*, Fund. Math. 10 (1927), 96–115,
-doi:10.4064/fm-10-1-96-115; statement as in https://en.wikipedia.org/wiki/Menger%27s_theorem
-(`menger-s1`).
+/-- **Menger's theorem, vertex form.** Let $G$ be a simple graph on a finite vertex set and let
+$s$ and $t$ be distinct, nonadjacent vertices of $G$. Then there is a natural number $n$ with
+the following two properties. First, there is a set $C$ of exactly $n$ vertices with
+$s \notin C$ and $t \notin C$ such that every walk from $s$ to $t$ passes through a vertex of
+$C$, and every set of vertices with these three properties has at least $n$ elements. Second,
+there are $n$ paths $P_1, \dots, P_n$ from $s$ to $t$ (walks that repeat no vertex) such that
+every vertex lying on both $P_i$ and $P_j$ for some $i \ne j$ is $s$ or $t$, and every finite
+family of paths from $s$ to $t$ with this property has at most $n$ members. Thus the minimum
+number of vertices other than $s$ and $t$ whose removal separates $s$ from $t$ equals the
+maximum number of pairwise internally disjoint paths from $s$ to $t$.
 
 Proves `Wanted` entry `menger_vertex`.
+
+Source: K. Menger, *Zur allgemeinen Kurventheorie*, Fund. Math. 10 (1927), 96–115,
+doi:10.4064/fm-10-1-96-115; statement as in https://en.wikipedia.org/wiki/Menger%27s_theorem
+(`menger-s1`).
 -/
 theorem menger_vertex :
     ∀ {V : Type*} [Fintype V] (G : SimpleGraph V) (s t : V),
@@ -1942,23 +1941,24 @@ of `menger_vertex_max_min`, follow the API proposed there, originally contribute
 `@toskua, Meta Muse`. All proofs given here are new.
 -/
 
-/-- Internally vertex-disjoint `s-t` paths: common vertex of distinct paths is `s` or `t`. -/
+/-- **Internally vertex-disjoint paths.** Let $G$ be a simple graph with vertices $s$ and $t$,
+and let $P_0, \dots, P_{n-1}$ be a family of paths from $s$ to $t$ in $G$, indexed by
+$\{0, \dots, n-1\}$. The family is internally vertex-disjoint when for all indices $i \ne j$,
+every vertex lying on both $P_i$ and $P_j$ is $s$ or $t$. -/
 def IsInternallyVertexDisjointSTPaths {V : Type*} {G : SimpleGraph V}
     {s t : V} {n : ℕ} (paths : Fin n → G.Path s t) : Prop :=
   ∀ i j, i ≠ j → ∀ v, v ∈ (paths i).val.support →
     v ∈ (paths j).val.support → v = s ∨ v = t
 
-/-- `s-t` vertex cut: `s ∉ C`, `t ∉ C`, and deleting `C` disconnects `s` from `t`. -/
+/-- **Vertex cuts separating two vertices.** Let $G$ be a simple graph on a finite vertex set, let
+$s$ and $t$ be vertices of $G$, and let $C$ be a set of vertices of $G$. Then $C$ is an $s$-$t$
+vertex cut when $s \notin C$, $t \notin C$, and $t$ is not reachable from $s$ in the graph
+obtained from $G$ by deleting every edge that has an endpoint in $C$. -/
 def IsSTVertexCut {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (s t : V) (C : Finset V) : Prop :=
   s ∉ C ∧ t ∉ C ∧
     ¬ (((⊤ : G.Subgraph).deleteVerts (↑C : Set V)).spanningCoe.Reachable s t)
-
-/-- Every path has a nodup vertex list. -/
-private theorem path_val_nodup {V : Type*} {G : SimpleGraph V} {s t : V}
-    (p : G.Path s t) : (p.val).support.Nodup :=
-  p.property.support_nodup
 
 /-- Every walk with a nodup vertex list is a path. -/
 private def path_of_nodupWalk {V : Type*} {G : SimpleGraph V} {s t : V}
@@ -2027,8 +2027,10 @@ private theorem walk_avoiding_reachable {V : Type*} (G : SimpleGraph V) (C : Fin
       · exact SimpleGraph.Subgraph.top_adj.mpr h
     exact ⟨SimpleGraph.Walk.cons h' q'⟩
 
-/-- A vertex cut is the same as a walk-hitting separator: `C` is an `s-t` vertex cut
-iff `s ∉ C`, `t ∉ C`, and every `s-t` walk meets `C`. -/
+/-- **Vertex cuts are walk separators.** Let $G$ be a simple graph on a finite vertex set, let $s$
+and $t$ be vertices of $G$, and let $C$ be a set of vertices of $G$. Then $C$ is an $s$-$t$ vertex
+cut if and only if $s \notin C$, $t \notin C$, and every walk from $s$ to $t$ in $G$ passes
+through a vertex of $C$. -/
 theorem isSTVertexCut_iff_walkSeparator {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj] (s t : V) (C : Finset V) :
     IsSTVertexCut G s t C ↔
@@ -2046,11 +2048,17 @@ theorem isSTVertexCut_iff_walkSeparator {V : Type*} [Fintype V] [DecidableEq V]
     exact (spanningWalk_avoids G C q hs v hv) hvC
 
 /--
-Finite vertex Menger max-min: for distinct nonadjacent `s,t`, max number of internally
-vertex-disjoint `s-t` paths equals min size of `s-t` vertex cut.
-Source: K. Menger, Fund. Math. 10 (1927), DOI 10.4064/fm-10-1-96-115.
+**Menger's theorem for vertex cuts and internally disjoint paths.** Let $G$ be a simple graph on a
+finite vertex set and let $s$ and $t$ be distinct, nonadjacent vertices of $G$. Then there is a
+natural number $k$ such that there exist $k$ internally vertex-disjoint paths from $s$ to $t$ and
+an $s$-$t$ vertex cut with exactly $k$ vertices, every family of internally vertex-disjoint
+paths from $s$ to $t$ has at most $k$ members, and every $s$-$t$ vertex cut has at least $k$
+vertices. In words, the maximum number of internally vertex-disjoint paths from $s$ to $t$
+equals the minimum size of an $s$-$t$ vertex cut.
 
 Proves `Wanted` entry `menger_vertex_max_min`.
+
+Source: K. Menger, Fund. Math. 10 (1927), DOI 10.4064/fm-10-1-96-115.
 -/
 theorem menger_vertex_max_min
     {V : Type*} [Fintype V] [DecidableEq V]
@@ -2071,7 +2079,7 @@ theorem menger_vertex_max_min
   · exact (isSTVertexCut_iff_walkSeparator G s t C).mpr ⟨hsC, htC, hhitC⟩
   · exact hCcard
   · intro l paths' hdisj
-    exact hmax l (fun i => (paths' i).val) (fun i => path_val_nodup (paths' i))
+    exact hmax l (fun i => (paths' i).val) (fun i => (paths' i).nodup_support)
       (fun i j hij v hvi hvj => hdisj i j hij v hvi hvj)
   · intro C' hcut
     obtain ⟨hs', ht', hhit'⟩ := (isSTVertexCut_iff_walkSeparator G s t C').mp hcut

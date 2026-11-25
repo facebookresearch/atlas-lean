@@ -29,9 +29,8 @@ mass computation reduces to Mathlib's Gaussian integral
 * `laplacian_heatKernel`, `hasDerivAt_heatKernel_time`: the two sides of the heat equation.
 * `heatKernel_hasDerivAt_time_eq_laplacian`: `∂ₜ Φ = Δ Φ` for `t > 0`.
 
-The one-dimensional statement that the convolution of `Φ` with bounded continuous data solves the
-heat equation with that initial datum is recorded as wanted in
-`WantedExt.Analysis.HeatKernelWanted`.
+The one-dimensional convolution of `Φ` with bounded continuous data solves the heat equation
+and recovers the initial datum in `MathlibExt.Analysis.PDE.HeatKernelInitialValue`.
 
 ## References
 
