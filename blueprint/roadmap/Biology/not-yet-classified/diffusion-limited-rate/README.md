@@ -2,5 +2,5 @@
 
 - [Is Steady Profile](is-steady-profile.md)
 - [Inv Beta](inv-beta.md)
-- [The diffusion-limited rate constant with an interaction potential](current-eq.md)
-- [Smoluchowski's rate constant](current-eq-smoluchowski.md)
+- [Steady radial current with an interaction potential](current-eq.md)
+- [Smoluchowski's steady radial current](current-eq-smoluchowski.md)

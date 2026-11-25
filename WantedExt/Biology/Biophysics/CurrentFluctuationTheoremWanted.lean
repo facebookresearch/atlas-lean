@@ -16,7 +16,7 @@ chosen orientation `a_l → b_l`) closes a fundamental cycle `C_l` with the tree
 back to `a_l` (Schnakenberg 1976). The affinity of the cycle is
 `𝒜_l = ln ∏_{e ∈ C_l} W(e) / W(-e)`. Let `G_l(t)` be the integrated current along chord `l` (the
 number of jumps `a_l → b_l` minus the number of jumps `b_l → a_l` up to time `t`). Then
-(equations (CFT.Q) and (FT.new.tl))
+(equations (39) and (73) of arXiv:cond-mat/0512254)
 
 * the generating function `Q(λ) = lim_{t → ∞} -(1/t) ln E[exp(-∑_l λ_l G_l(t))]` exists for every
   real `λ`, does not depend on the initial state, and satisfies `Q(λ) = Q(𝒜 - λ)`;
@@ -24,19 +24,18 @@ number of jumps `a_l → b_l` minus the number of jumps `b_l → a_l` up to time
   fluctuation theorem `P(G(t)/t ≈ α) / P(G(t)/t ≈ -α) ≈ exp(t 𝒜·α)`.
 
 The expectation is written through the tilted generator, as in the source's proof: with
-`L_λ(ω', ω) = W(ω → ω') exp(-∑_l λ_l s_l(ω, ω'))` for `ω' ≠ ω`, where `s_l(ω, ω')` is `+1` for
-the jump `a_l → b_l`, `-1` for `b_l → a_l` and `0` otherwise, and
-`L_λ(ω, ω) = -∑_{ω' ≠ ω} W(ω → ω')`, the expectation from the initial state `ω₀` is
-`∑_{ω'} (exp(t L_λ))(ω', ω₀)` (the Feynman–Kac representation); this is taken as the definition,
-as the library has no path-space measure for jump processes. `H` takes values in `[-∞, ∞]`. Not
-recorded here: the version for macroscopic currents with several mechanisms (equation
-(FT.new.gen.macro)) and the large-deviation statement about probabilities, which needs the
-Gärtner–Ellis theorem.
+`L_λ(ω', ω) = W(ω → ω') exp(-∑_l λ_l s_l(ω, ω'))` for `ω' ≠ ω`, where `s_l(ω, ω')` is `+1` for the
+jump `a_l → b_l`, `-1` for `b_l → a_l` and `0` otherwise, and `L_λ(ω, ω) = -∑_{ω' ≠ ω} W(ω → ω')`,
+the expectation from the initial state `ω₀` is `∑_{ω'} (exp(t L_λ))(ω', ω₀)` (the Feynman–Kac
+representation), which is taken as the definition. `H` takes values in `[-∞, ∞]`. Not recorded here:
+the version for macroscopic currents with several mechanisms (equation (69)) and the large-deviation
+statement about probabilities, which needs the Gärtner–Ellis theorem.
 
 Sources: D. Andrieux and P. Gaspard, "Fluctuation theorem for currents and Schnakenberg network
-theory", Journal of Statistical Physics 127 (2007) 107–131, arXiv:cond-mat/0512254, equations
-(CFT.Q) and (FT.new.tl); J. Schnakenberg, "Network theory of microscopic and macroscopic behavior
-of master equation systems", Reviews of Modern Physics 48 (1976) 571–585.
+theory", Journal of Statistical Physics 127 (2007) 107–131, arXiv:cond-mat/0512254; equation numbers
+are those of the arXiv version: equations (39) and (73); J. Schnakenberg, "Network theory of
+microscopic and macroscopic behavior of master equation systems", Reviews of Modern Physics 48
+(1976) 571–585.
 -/
 module
 
@@ -128,25 +127,25 @@ noncomputable def SchnakenbergNetwork.H (M : SchnakenbergNetwork Ω ι) (ω₀ :
   ⨆ lam : ι → ℝ, ((M.Q ω₀ lam - ∑ l, lam l * α l : ℝ) : EReal)
 
 /-- **Existence and symmetry of the current generating function** (Andrieux and Gaspard 2007,
-equation (CFT.Q)): for a valid Schnakenberg network on a finite nonempty state space with tree
-`T` (rates nonnegative, a jump allowed iff its reverse is, `T` a spanning tree of allowed jumps,
-chords listing the remaining allowed edges once each) and every real `λ`, there is `q` such that
-`-(1/t) ln E_{ω₀}[exp(-∑_l λ_l G_l(t))] → q` as `t → ∞` for every initial state `ω₀`; and
-`Q(λ) = Q(𝒜 - λ)`, where `𝒜_l` is the affinity of the fundamental cycle of chord `l`.
+equation (39) of arXiv:cond-mat/0512254): for a valid Schnakenberg network on a finite nonempty
+state space with tree `T` (rates nonnegative, a jump allowed iff its reverse is, `T` a spanning tree
+of allowed jumps, chords listing the remaining allowed edges once each) and every real `λ`, there is
+`q` such that `-(1/t) ln E_{ω₀}[exp(-∑_l λ_l G_l(t))] → q` as `t → ∞` for every initial state `ω₀`;
+and `Q(λ) = Q(𝒜 - λ)`, where `𝒜_l` is the affinity of the fundamental cycle of chord `l`.
 
-Source: Andrieux and Gaspard (2007), equation (CFT.Q). -/
+Source: Andrieux and Gaspard (2007), arXiv:cond-mat/0512254, equation (39). -/
 public theorem_wanted Q_symm [Nonempty Ω] (M : SchnakenbergNetwork Ω ι) (hM : M.Valid)
     (lam : ι → ℝ) :
     (∃ q : ℝ, ∀ ω₀, Tendsto (fun t : ℝ => -(1 / t) * Real.log (M.genFun lam t ω₀)) atTop
         (𝓝 q)) ∧
       ∀ ω₀, M.Q ω₀ lam = M.Q ω₀ (fun l => M.affinity hM.isTree l - lam l)
 
-/-- **The fluctuation theorem for currents** (Andrieux and Gaspard 2007, equation (FT.new.tl)): for
-a valid Schnakenberg network on a finite nonempty state space (as in `Q_symm`), every initial state
-`ω₀` and every `α`, the rate function satisfies `H(-α) = H(α) + 𝒜·α` in `[-∞, ∞]`, i.e.
-`H(-α) - H(α) = ∑_l 𝒜_l α_l` where finite.
+/-- **The fluctuation theorem for currents** (Andrieux and Gaspard 2007, equation (73) of
+arXiv:cond-mat/0512254): for a valid Schnakenberg network on a finite nonempty state space (as in
+`Q_symm`), every initial state `ω₀` and every `α`, the rate function satisfies `H(-α) = H(α) + 𝒜·α`
+in `[-∞, ∞]`, i.e. `H(-α) - H(α) = ∑_l 𝒜_l α_l` where finite.
 
-Source: Andrieux and Gaspard (2007), equation (FT.new.tl). -/
+Source: Andrieux and Gaspard (2007), arXiv:cond-mat/0512254, equation (73). -/
 public theorem_wanted H_neg [Nonempty Ω] (M : SchnakenbergNetwork Ω ι) (hM : M.Valid) (ω₀ : Ω)
     (α : ι → ℝ) :
     M.H ω₀ (-α) = M.H ω₀ α + ((∑ l, M.affinity hM.isTree l * α l : ℝ) : EReal)

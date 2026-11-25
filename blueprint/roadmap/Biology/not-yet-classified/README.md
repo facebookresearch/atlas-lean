@@ -14,6 +14,7 @@ Topics added since this subject's fields were last revised.
 - [Helfrich Sphere Stability](helfrich-sphere-stability/README.md)
 - [Low Dimensional Persistence](low-dimensional-persistence/README.md)
 - [Multistationarity Degree Criterion](multistationarity-degree-criterion/README.md)
+- [Nicholson Bailey](nicholson-bailey/README.md)
 - [No Common Mechanism Parsimony](no-common-mechanism-parsimony/README.md)
 - [Phylogenetic Tree Space](phylogenetic-tree-space/README.md)
 - [Rooted SPRAgreement Forest](rooted-spragreement-forest/README.md)

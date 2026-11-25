@@ -20,3 +20,8 @@ Topics added since this subject's fields were last revised.
 - [Plastic Work](plastic-work/README.md)
 - [Sinkhorn Margins](sinkhorn-margins/README.md)
 - [Two Level](two-level/README.md)
+- [Block Solution Equiv](block-solution-equiv/README.md)
+- [Gaussian Channel Diagonal Reduction](gaussian-channel-diagonal-reduction/README.md)
+- [Matched SNRQuotient](matched-snrquotient/README.md)
+- [Schur Source Energy](schur-source-energy/README.md)
+- [Schur Strict Positivity](schur-strict-positivity/README.md)

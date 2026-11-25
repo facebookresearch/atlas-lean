@@ -22,16 +22,17 @@ Theorem 3.1 states: the minimal siphons of `G` are the inclusion-minimal sets
 `{i : c_i ∈ P}` as `P` runs over the minimal primes of `I_G`; if each connected component of `G` is
 strongly connected, `I_G` can be replaced by `J_G`; and if `G` is strongly connected, by `M_G`.
 
-The ideals are read in `R = ℚ[c_1, …, c_s] / ⟨c_1 ⋯ c_s⟩`, as the source does in its Example 1.3 (it
-decomposes `I_G + ⟨E F P S₀ X Y⟩`): the minimal primes taken are those of `I_G + ⟨c_1 ⋯ c_s⟩` in
+The ideals are read in `R = ℚ[c_1, …, c_s] / ⟨c_1 ⋯ c_s⟩`, the ring the source fixes for the whole
+of Section 3 ("All our ideals will live in this ring"; its Example 1.3 decomposes
+`I_G + ⟨E F P S₀ X Y⟩`): the minimal primes taken are those of `I_G + ⟨c_1 ⋯ c_s⟩` in
 `ℚ[c_1, …, c_s]`. (In `ℚ[c_1, …, c_s]` itself a minimal prime containing no variable would give the
 empty set.) The network, its complexes, the reaction relation and weak reversibility are the shared
 ones of `MathlibExt.Dynamics.PolynomialNetworks.Deficiency`, and every species is assumed to occur
-in some complex, as in the source (an unused species `z` would be a siphon `{z}` invisible to
-`M_G`); each connected component being strongly connected is weak reversibility. Self-loops
-`src r = prod r` contribute `0` to `I_G` and `J_G`. Not recorded here: Theorem 3.2 (relevant
-siphons through the nine saturation ideals of the facets and vertex supports of the invariant
-polyhedra) and Proposition 2.1.
+in some complex, which is implicit in the source (an unused species `z` would be a siphon `{z}`
+invisible to `M_G`); each connected component being strongly connected is weak reversibility.
+Self-loops `src r = prod r` contribute `0` to `I_G` and `J_G`. Not recorded here: Theorem 3.2
+(relevant siphons through the nine saturation ideals of the facets and vertex supports of the
+invariant polyhedra) and Proposition 2.1.
 
 Sources: A. Shiu and B. Sturmfels, "Siphons in chemical reaction networks", Bulletin of
 Mathematical Biology 72 (2010) 1448–1463, arXiv:0904.4529, Theorem 3.1.
@@ -93,7 +94,7 @@ def IsMinimalVarSet (I : Ideal (MvPolynomial S ℚ)) (Z : Finset S) : Prop :=
     ∀ P ∈ (I ⊔ prodIdeal).minimalPrimes, varSet P ⊆ Z → varSet P = Z
 
 /-- Every species **occurs** in the network: it has a positive coefficient in the reactant or
-product complex of some reaction (the source's species are those of its complexes). -/
+product complex of some reaction (implicit in the source). -/
 def AllSpeciesOccur (N : ReactionNetwork S ρ) : Prop :=
   ∀ s, ∃ r, 0 < N.src r s ∨ 0 < N.prod r s
 

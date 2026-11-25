@@ -24,7 +24,9 @@ The network, its stoichiometric subspace, the mass-action field and weak reversi
 shared ones of `MathlibExt.Dynamics.PolynomialNetworks.Deficiency`. A trajectory is a function
 `x : ℝ → (S → ℝ)` with `x(0)` positive that has derivative `massActionField k (x t)` at every
 `t ≥ 0`. A system is complex balanced when it has a positive equilibrium `c` at which, for every
-complex `y`, the total rate of reactions out of `y` equals the total rate of reactions into `y`.
+complex `y`, the total rate of reactions out of `y` equals the total rate of reactions into `y`;
+this is `ReactionNetwork.IsComplexBalanced` of `Domains.Biology.Dynamics.ComplexBalanced`, where
+the Horn–Jackson theorems are proved, together with positivity of `c`.
 Positive rate constants are fixed in time here; Theorem 5.1 itself, for time-dependent rates and
 lower-endotactic networks, is not recorded.
 
@@ -35,6 +37,7 @@ Theorems 5.1 and 6.3.
 module
 
 public import Batteries.Util.ProofWanted
+public import Domains.Biology.Dynamics.ComplexBalanced
 public import MathlibExt.Dynamics.PolynomialNetworks.Deficiency
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
@@ -53,19 +56,6 @@ starting in the positive orthant: every coordinate of `x 0` is positive and `x` 
 def IsPositiveTrajectory (N : ReactionNetwork S ρ) (k : ρ → ℝ) (x : ℝ → S → ℝ) : Prop :=
   (∀ s, 0 < x 0 s) ∧ ∀ t, 0 ≤ t → HasDerivAt x (N.massActionField k (x t)) t
 
-/-- The monomial `c^y = ∏_s c_s ^ y_s`. -/
-def monomial (c : S → ℝ) (y : S → ℕ) : ℝ :=
-  ∏ s, c s ^ y s
-
-open Classical in
-/-- The mass-action system of `N` with rate constants `k` is **complex balanced** at `c`: `c` is
-positive and, for every complex `y`, `∑_{r : src r = y} k_r c^{src r} =
-∑_{r : prod r = y} k_r c^{src r}`. -/
-def IsComplexBalancedAt (N : ReactionNetwork S ρ) (k : ρ → ℝ) (c : S → ℝ) : Prop :=
-  (∀ s, 0 < c s) ∧ ∀ y : S → ℕ,
-    ∑ r ∈ Finset.univ.filter (fun r => N.src r = y), k r * monomial c (N.src r) =
-      ∑ r ∈ Finset.univ.filter (fun r => N.prod r = y), k r * monomial c (N.src r)
-
 /-- **Persistence in dimension two** (Pantea 2012, consequence of Theorem 5.1): for a weakly
 reversible network on finitely many species and reactions whose stoichiometric subspace has
 dimension `2`, positive rate constants `k`, and a forward trajectory `x` starting in the positive
@@ -81,7 +71,8 @@ public theorem_wanted persistent_of_finrank_two (N : ReactionNetwork S ρ)
 
 /-- **The global attractor conjecture in dimension three** (Pantea 2012, Theorem 6.3): for a network
 on finitely many species and reactions whose stoichiometric subspace has dimension `3`, positive
-rate constants `k` for which the system is complex balanced at some positive `c₀`, a forward
+rate constants `k` for which the system is complex balanced at some positive `c₀`
+(`N.IsComplexBalanced k c₀`), a forward
 trajectory `x` starting in the positive orthant, and a positive equilibrium `c`
 (`massActionField k c = 0`, `c` positive) in the same stoichiometric compatibility class
 (`c - x 0` in the stoichiometric subspace), `x(t) → c` as `t → ∞`.
@@ -89,7 +80,8 @@ trajectory `x` starting in the positive orthant, and a positive equilibrium `c`
 Source: Pantea (2012), Theorem 6.3. -/
 public theorem_wanted tendsto_equilibrium_of_finrank_three (N : ReactionNetwork S ρ)
     (hdim : Module.finrank ℝ N.stoichiometricSubspace = 3) (k : ρ → ℝ) (hk : ∀ r, 0 < k r)
-    (hcb : ∃ c₀, IsComplexBalancedAt N k c₀) (x : ℝ → S → ℝ) (hx : IsPositiveTrajectory N k x)
+    (hcb : ∃ c₀, (∀ s, 0 < c₀ s) ∧ N.IsComplexBalanced k c₀) (x : ℝ → S → ℝ)
+    (hx : IsPositiveTrajectory N k x)
     (c : S → ℝ) (hc : ∀ s, 0 < c s) (heq : N.massActionField k c = 0)
     (hclass : c - x 0 ∈ N.stoichiometricSubspace) :
     Tendsto x atTop (𝓝 c)
