@@ -53,8 +53,16 @@ theorem spearmanFootrule_reverse_fin_three :
 Kendall tau strictly between the two bounds (`3 < 4 < 6` above), and
 equal rankings give `0` for both distances on a nonempty type. -/
 theorem distances_fin_three_bounds :
+    kendallTau (Equiv.swap (0 : Fin 3) 2) 1 = 3 ∧
+    spearmanFootrule (Equiv.swap (0 : Fin 3) 2) 1 = 4 ∧
+    kendallTau (Equiv.swap (0 : Fin 3) 2) 1 <
+      spearmanFootrule (Equiv.swap (0 : Fin 3) 2) 1 ∧
+    spearmanFootrule (Equiv.swap (0 : Fin 3) 2) 1 <
+      2 * kendallTau (Equiv.swap (0 : Fin 3) 2) 1 ∧
     kendallTau (1 : Equiv.Perm (Fin 3)) 1 = 0 ∧
     spearmanFootrule (1 : Equiv.Perm (Fin 3)) 1 = 0 := by
-  exact ⟨kendallTau_self 1, spearmanFootrule_self 1⟩
+  rw [kendallTau_reverse_fin_three, spearmanFootrule_reverse_fin_three]
+  exact ⟨rfl, rfl, by decide, by decide, kendallTau_self 1,
+    spearmanFootrule_self 1⟩
 
 end MetaMathlibExt.Test.RankDistances
