@@ -138,6 +138,10 @@ API = "https://api.github.com"
 PIN_FILES = ("lean-toolchain", "lake-manifest.json", "lakefile.toml")
 CI_CHECK = "build"
 CI_WORKFLOW = ".github/workflows/ci.yml"
+# The job of CI_WORKFLOW that, on a pull request, decides whether CI_CHECK runs (scripts/ci_scope.py). Only a
+# pull_request run of CI_WORKFLOW may skip CI_CHECK, which then counts as passed; the skipped job has no log,
+# so this job's checkout of the same merge commit says which main CI merged the head into.
+SCOPE_JOB = "decide which checks to run"
 ACTIONS_APP_ID = 15368  # GitHub Actions
 CODEX_WORKFLOW = ".github/workflows/codex.yml"
 CODEX_LOGIN = "github-actions[bot]"
@@ -868,6 +872,17 @@ class Provenance:
         return None, "none"
 
 
+def scoped_skip(check: dict, provenance: Provenance | None) -> bool:
+    """Whether a check run is CI_CHECK skipped by a pull_request run of CI_WORKFLOW (see SCOPE_JOB), the one
+    skip of a required check that counts as passed. Without a provenance to read the run, it is not."""
+    found = DETAILS_URL.search(check.get("details_url") or "")
+    if (check.get("name") != CI_CHECK or check.get("status") != "completed" or check.get("conclusion") != "skipped"
+            or (check.get("app") or {}).get("id") != ACTIONS_APP_ID or not found or provenance is None):
+        return False
+    run = provenance.run(int(found.group(1))) or {}
+    return run.get("event") == "pull_request" and (run.get("path") or "").split("@", 1)[0] == CI_WORKFLOW
+
+
 def summarize_checks(runs: list[dict], required: list[dict], statuses: list[dict] | None = None,
                      provenance: Provenance | None = None) -> dict:
     """The latest run of each required check from the app that must report it, skipping the runs of other
@@ -896,7 +911,8 @@ def summarize_checks(runs: list[dict], required: list[dict], statuses: list[dict
             result.append({"name": context, "status": run.get("status"), "conclusion": run.get("conclusion"),
                            "run": int(found.group(1)) if found else None,
                            "url": run.get("html_url") or run.get("details_url"),
-                           "started_at": run.get("started_at"), "completed_at": run.get("completed_at")})
+                           "started_at": run.get("started_at"), "completed_at": run.get("completed_at"),
+                           "scoped": scoped_skip(run, provenance)})
             continue
         # A commit status names no app, so it can only stand in for a check that requires none.
         status = None if app_id else next((s for s in statuses or [] if s.get("context") == context), None)
@@ -944,6 +960,15 @@ def ci_run(gh: GitHub, runs: list[dict], head: str, number: int | None = None, b
     if not job_of(gh, job_id, run_id, CI_CHECK):
         info["base_error"] = f"its job {job_id} is not the {CI_CHECK} job of run {run_id}"
         return info
+    if build.get("conclusion") == "skipped":  # no log: the job that skipped it checked out the same merge
+        scopes = sorted((int(m.group(2)) for r in runs if r.get("name") == SCOPE_JOB
+                         and (r.get("app") or {}).get("id") == ACTIONS_APP_ID
+                         and (m := DETAILS_URL.search(r.get("details_url") or "")) and int(m.group(1)) == run_id),
+                        reverse=True)
+        if not scopes or not job_of(gh, scopes[0], run_id, SCOPE_JOB):
+            info["base_error"] = f"its {CI_CHECK} job was skipped, and run {run_id} has no {SCOPE_JOB} job to read"
+            return info
+        job_id = scopes[0]
     associated = run.get("pull_requests") or []  # empty for a fork: GitHub does not say whose run it is
     if associated and number is not None:
         tested = {(pr.get("base") or {}).get("ref") for pr in associated if pr.get("number") == number}
@@ -3365,7 +3390,8 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
 
     # 3. Required checks
     required = facts["checks"]["required"]
-    failed = [c for c in required if c["status"] == "completed" and c["conclusion"] != "success"]
+    failed = [c for c in required if c["status"] == "completed" and c["conclusion"] != "success"
+              and not c.get("scoped")]
     unknown = [c for c in required if c.get("provenance") == "unknown" or c["status"] == "unknown"]
     pending = [c for c in required if c["status"] not in ("completed", "unknown")]
     untied = (None if facts.get("fork") else  # the fork check says what to do
@@ -3393,7 +3419,8 @@ def evaluate(facts: dict, now: dt.datetime, max_age_hours: float = DEFAULT_MAX_A
             c["name"] + ("" if c["status"] else " (not reported)") for c in pending),
             "wait for the required checks; advisory checks such as Blueprint Pages need no waiting")
     else:
-        check("required checks", True, ", ".join(c["name"] for c in required) + " passed")
+        check("required checks", True, ", ".join(c["name"] + (" (skipped: the pull request does not need it)"
+                                                         if c.get("scoped") else "") for c in required) + " passed")
     for name in facts["checks"]["advisory_failed"]:
         warnings.append(f"the advisory check `{name}` failed on this head")
 

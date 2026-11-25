@@ -90,7 +90,39 @@ jobs:
           uvx --from "git+https://github.com/facebookresearch/autoform-bot.git@${AUTOFORM_REF}"
           autoform check blueprint --lean-root .
 
+  # On a pull request, whether it needs `build` (scripts/ci_scope.py): one that
+  # changes only graph data and documentation does not. Other runs never ask.
+  changes:
+    name: decide which checks to run
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      build: ${{ steps.decide.outputs.build }}
+    steps:
+      - name: Check out the merge commit and its base
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+          sparse-checkout: /scripts/ci_scope.py
+          sparse-checkout-cone-mode: false
+
+      - name: Decide
+        id: decide
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          # `--` ends the revisions: a file named HEAD must not make them ambiguous.
+          git diff-tree -r -z --no-commit-id --name-only HEAD^1 HEAD -- > "$RUNNER_TEMP/changed-paths"
+          python3 -I scripts/ci_scope.py "$RUNNER_TEMP/changed-paths" >> "$GITHUB_OUTPUT"
+
+  # A skipped required check counts as passed, so only a pull request can skip
+  # `build`, and only when `changes` succeeds and says it needs none. Merge
+  # groups, pushes and manual runs always build.
   build:
+    needs: changes
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.build != 'false') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     steps:
