@@ -8,9 +8,9 @@ finite second moments, `y_0 ≥ 0`, `y_0` and `y_0 ‖x_0‖` are integrable, an
 `g ≥ 0` with `g(k · x_0)` and `g(k · x_0) (k · x_0)` integrable, `E[g(k · x_0)] > 0`,
 `kᵀ Σ k > 0`, and nonzero gain `E[g(k · x_0) (k · x_0)] ≠ 0`. Then almost surely
 `STA_N → κ Σ k` with nonzero scalar
-`κ = E[g(k · x_0) (k · x_0)] / (E[g(k · x_0)] · kᵀ Σ k) ≠ 0`. This theorem allows a singular
-covariance matrix `Σ` (in which case the limit lies along `Σ k` without necessarily identifying
-`k`); when `Σ` is invertible, multiplying the limit by `Σ⁻¹` recovers the nonzero multiple `κ k`.
+`κ = E[g(k · x_0) (k · x_0)] / (E[g(k · x_0)] · kᵀ Σ k) ≠ 0`. Since `ν` is elliptically symmetric
+(`Σ = α A Aᵀ` with `A` invertible) and `kᵀ Σ k > 0` forces `α > 0`, `Σ` is invertible and
+`Σ⁻¹ STA_N` converges almost surely to the nonzero multiple `κ k` of the filter `k`.
 
 ## Sources
 
