@@ -13,7 +13,7 @@ Let $X \subseteq \mathbb{R}^n$ and $U \subseteq \mathbb{R}^m$ be open, let $f : 
 
 ## Proof depends on
 
-- [Carathéodory solutions of linear systems with locally integrable inputs](../../ordinary-differential-equations/caratheodory-solutions-of-linear-systems-with-locally-integrable-inputs.md): the solution concept and variation of constants for the variational equation
+- [Carathéodory solutions of linear systems with locally integrable inputs](../../ordinary-differential-equations/linear-systems-and-fundamental-matrices/caratheodory-solutions-of-linear-systems-with-locally-integrable-inputs.md): the solution concept and variation of constants for the variational equation
 
 ## Sources
 

@@ -12,7 +12,7 @@ Piecewise-continuous and bounded measurable inputs are special cases. The soluti
 
 ## Background
 
-- [Duhamel's formula (variation of constants)](duhamel-variation-of-constants.md): the classical case of continuous forcing
+- [Duhamel's formula (variation of constants)](../duhamel-variation-of-constants.md): the classical case of continuous forcing
 
 ## Sources
 
