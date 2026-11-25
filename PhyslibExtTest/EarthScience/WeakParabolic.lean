@@ -270,7 +270,7 @@ example
     weak_parabolic_exists_unique_conditional (t0 := 0) (t1 := 1) (κ := fun _ _ => 1)
       (kmin := 1) (kmax := 1) (F := fun _ _ => 0) (u0 := fun _ => 0) one_pos one_pos
       aestronglyMeasurable_const (Eventually.of_forall fun _ => ⟨le_rfl, le_rfl⟩)
-      MemLp.zero' MemLp.zero'
+      MemLp.zero'
       ⟨fun _ _ => 0, fun _ _ => 0, fun _ => ⟨zeroWeak, rfl, rfl⟩, MemLp.zero', MemLp.zero',
         fun _ _ => by simpa using tendsto_const_nhds, fun _ _ => by simp, by simp, by simp,
         fun _ _ => by simp⟩

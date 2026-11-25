@@ -96,9 +96,8 @@ open Set
 
 @[expose] public section
 
--- Assembled from verified worker proofs; silence the unused-variable and
--- haveI style linters for this generated file.
-set_option linter.unusedVariables false
+-- Assembled from verified worker proofs; silence the haveI style linter for this
+-- generated file.
 set_option linter.style.haveILetI false
 
 namespace EarthScience
@@ -234,7 +233,7 @@ and `MemLp` hypotheses (CORRECTED: the uncorrected statement was false):
 
 lemma parabolic_euler_step_energy
     {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin) (hτk : τ * kmin < 1)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
     (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
     (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
     {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
@@ -527,9 +526,6 @@ to a `WeakH10` limit. `Tendsto` is for the `eLpNorm` distance
 `(eLpNorm (uₙ.toFun - u.toFun) 2 μ).toReal → 0`, resp. for `weakDeriv`. -/
 
 lemma weakH10_complete (u : ℕ → WeakH10)
-    (hCauchy : ∀ ε > 0, ∃ N, ∀ n ≥ N, ∀ m ≥ N,
-      (eLpNorm ((u n).toFun - (u m).toFun) 2
-        (volume.restrict (Set.Icc 0 1))).toReal < ε)
     (hCauchy' : ∀ ε > 0, ∃ N, ∀ n ≥ N, ∀ m ≥ N,
       (eLpNorm ((u n).weakDeriv - (u m).weakDeriv) 2
         (volume.restrict (Set.Icc 0 1))).toReal < ε) :
@@ -1051,7 +1047,7 @@ noncomputable instance weakH10_completeSpace : CompleteSpace WeakH10 :=
             (volume.restrict (Set.Icc 0 1))).toReal := rfl
         _ ≤ ‖(u n) - (u m)‖ := hle
         _ < ε := hdist
-    obtain ⟨w, hToFun, hWlim⟩ := weakH10_complete u hCauchy hCauchy'
+    obtain ⟨w, hToFun, hWlim⟩ := weakH10_complete u hCauchy'
     refine ⟨w, ?_⟩
     rw [tendsto_iff_dist_tendsto_zero]
     have hAdd : Filter.Tendsto
@@ -1184,8 +1180,8 @@ lemma eulerB_integrable_kappa (κ : ℝ → ℝ) (deriv : ℝ → ℝ)
 (Set.Icc 0 1)`, `B(u,u) = ∫ u²/τ + κ (u')² ≥ min (1/τ) kmin * ‖u‖²`. -/
 
 lemma eulerB_coercive_of_aestronglyMeasurable
-    {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
+    {τ : ℝ}
+    {κ : ℝ → ℝ} {kmin kmax : ℝ}
     (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc (0 : ℝ) 1)))
     (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
     (u : WeakH10) :
@@ -1756,8 +1752,8 @@ lemma eulerRhs_bound
 
 
 lemma eulerB_clm
-    {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
+    {τ : ℝ}
+    {κ : ℝ → ℝ} {kmin kmax : ℝ}
     (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
     (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
     (hBnd : ∀ u v : WeakH10,
@@ -1917,7 +1913,7 @@ part of the file, not of the pinned statement); the norm `‖·‖` is the
 H¹ norm. -/
 
 lemma eulerRhs_clm
-    {τ : ℝ} (hτ : 0 < τ)
+    {τ : ℝ}
     {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
     {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
     (hRhs : ∀ v : WeakH10,
@@ -2272,10 +2268,8 @@ coercivity estimate (all as hypotheses). -/
 lemma parabolic_euler_step_laxMilgram
     {τ : ℝ} (hτ : 0 < τ)
     {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
-    {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
-    {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
+    {F : ℝ → ℝ}
+    {uprev : ℝ → ℝ}
     (B : WeakH10 →L[ℝ] WeakH10 →L[ℝ] ℝ)
     (hB : ∀ u v : WeakH10,
       B u v = ∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
@@ -2378,7 +2372,7 @@ lemma weakH10_kappa_intervalIntegrable (κ du dv : ℝ → ℝ)
 Euler-step equation from `B u v = L v`, for every `u v : WeakH10`. -/
 
 lemma euler_step_intervalIntegrable
-    {τ : ℝ} (hτ : 0 < τ)
+    {τ : ℝ}
     {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
     (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
     (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
@@ -2447,12 +2441,10 @@ lemma euler_step_intervalIntegrable
 
 
 lemma euler_step_identify
-    {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
-    {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
-    {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
+    {τ : ℝ}
+    {κ : ℝ → ℝ}
+    {F : ℝ → ℝ}
+    {uprev : ℝ → ℝ}
     (B : WeakH10 →L[ℝ] WeakH10 →L[ℝ] ℝ)
     (hB : ∀ u v : WeakH10,
       B u v = ∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
@@ -2519,40 +2511,12 @@ lemma euler_step_identify
 
 
 lemma parabolic_euler_step
-    {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin) (hτk : τ * kmin < 1)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
-    {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
-    {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
+    {τ : ℝ}
+    {κ : ℝ → ℝ} {kmin : ℝ}
+    {F : ℝ → ℝ}
+    {uprev : ℝ → ℝ}
     (B : WeakH10 →L[ℝ] WeakH10 →L[ℝ] ℝ)
-    (hB : ∀ u v : WeakH10,
-      B u v = ∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
-        + κ x * u.weakDeriv x * v.weakDeriv x)
     (L : WeakH10 →L[ℝ] ℝ)
-    (hL : ∀ v : WeakH10,
-      L v = ∫ x in (0 : ℝ)..1, (F x + uprev x / τ) * v.toFun x)
-    (hBnd : ∀ u v : WeakH10,
-      |∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
-          + κ x * u.weakDeriv x * v.weakDeriv x|
-        ≤ max (1 / τ) kmax * ‖u‖ * ‖v‖)
-    (hCoer : ∀ u : WeakH10,
-      min (1 / τ) kmin * ‖u‖ ^ 2
-        ≤ ∫ x in (0 : ℝ)..1, u.toFun x * u.toFun x / τ
-            + κ x * u.weakDeriv x * u.weakDeriv x)
-    (hInt : ∀ (u v : WeakH10),
-      IntervalIntegrable
-          (fun x => (u.toFun x - uprev x) / τ * v.toFun x
-            + κ x * u.weakDeriv x * v.weakDeriv x) volume 0 1
-        ∧ IntervalIntegrable
-          (fun x => u.toFun x * v.toFun x / τ
-            + κ x * u.weakDeriv x * v.weakDeriv x) volume 0 1
-        ∧ IntervalIntegrable
-          (fun x => (F x + uprev x / τ) * v.toFun x) volume 0 1
-        ∧ IntervalIntegrable
-          (fun x => uprev x / τ * v.toFun x) volume 0 1
-        ∧ IntervalIntegrable
-          (fun x => F x * v.toFun x) volume 0 1)
     (hLax : ∃ u : WeakH10, ∀ v : WeakH10, B u v = L v)
     (hIdent : ∀ (u : WeakH10), (∀ v : WeakH10, B u v = L v) →
       ∀ v : WeakH10,
@@ -2586,8 +2550,8 @@ lemma parabolic_euler_step
 /-! ## D. The Rothe sequence and its a priori bounds -/
 
 lemma kappa_avg
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
+    {t0 t1 : ℝ}
+    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ}
     (hκ_meas : AEStronglyMeasurable (Function.uncurry κ)
       (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
     (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
@@ -2711,11 +2675,10 @@ lemma kappa_avg
 
 
 lemma forcing_avg_meas
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {F : ℝ → ℝ → ℝ}
     (hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-    {a b : ℝ} (hab : a < b) (hsub : Set.Icc a b ⊆ Set.Icc t0 t1)
-    (hτ : 0 < b - a) :
+    {a b : ℝ} (hab : a < b) (hsub : Set.Icc a b ⊆ Set.Icc t0 t1) :
     AEStronglyMeasurable (fun x => (1 / (b - a)) * ∫ s in a..b, F s x)
       (volume.restrict (Set.Icc 0 1)) := by
   have hsub' : Set.Icc a b ×ˢ Set.Icc (0 : ℝ) (1 : ℝ)
@@ -2820,17 +2783,14 @@ lemma avg_sq_le {a b : ℝ} (hab : a < b) (hτ : 0 < b - a)
   have hcancel : (1 / (b - a)) * ((b - a) * c ^ 2) = c ^ 2 := by field
   rwa [hcancel] at hmul
 
-/-- Jensen norm bound for the time-averaged forcing, with measurability
-of the average as a hypothesis. -/
+/-- Jensen norm bound for the time-averaged forcing. -/
 
 lemma forcing_avg_norm
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {F : ℝ → ℝ → ℝ}
     (hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
     {a b : ℝ} (hab : a < b) (hsub : Set.Icc a b ⊆ Set.Icc t0 t1)
-    (hτ : 0 < b - a)
-    (hAvg_meas : AEStronglyMeasurable (fun x => (1 / (b - a)) * ∫ s in a..b, F s x)
-      (volume.restrict (Set.Icc 0 1))) :
+    (hτ : 0 < b - a) :
     (eLpNorm (fun x => (1 / (b - a)) * ∫ s in a..b, F s x) 2
         (volume.restrict (Set.Icc 0 1))).toReal ^ 2
       ≤ (1 / (b - a)) * ∫ s in a..b,
@@ -2940,9 +2900,9 @@ lemma rothe_slab_kappa
     {N : ℕ} (hN : 0 < N)
     (hKappaAvgThm : ∀ {t0 t1 : ℝ}, t0 < t1 →
       ∀ {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ}, 0 < kmin →
-      ∀ (hκ_meas : AEStronglyMeasurable (Function.uncurry κ)
+      ∀ (_hκ_meas : AEStronglyMeasurable (Function.uncurry κ)
         (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
-      ∀ (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
+      ∀ (_hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
         kmin ≤ κ p.1 p.2 ∧ κ p.1 p.2 ≤ kmax),
       ∀ {a b : ℝ}, a < b → Set.Icc a b ⊆ Set.Icc t0 t1 → 0 < b - a →
       AEStronglyMeasurable
@@ -3124,6 +3084,8 @@ lemma rothe_slab_forcing_memLp_aux
   simp only [h2, ENNReal.rpow_two] at hiff_final
   exact MeasureTheory.memLp_iff.mpr (hiff_final.mpr hFinal)
 
+-- Kept as stated, not used by this proof: `hFNormThm`, `hSecFinThm`.
+set_option linter.unusedVariables false in
 /-- Averaged forcing is `L²`: assembly from measurability, the norm
 bound, and section-norm finiteness (all as hypotheses). -/
 
@@ -3134,15 +3096,15 @@ lemma rothe_slab_forcing_memLp
     {N : ℕ} (hN : 0 < N)
     (hFMeasThm : ∀ {t0 t1 : ℝ}, t0 < t1 →
       ∀ {F : ℝ → ℝ → ℝ},
-      ∀ (hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
+      ∀ (_hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
       ∀ {a b : ℝ}, a < b → Set.Icc a b ⊆ Set.Icc t0 t1 → 0 < b - a →
       AEStronglyMeasurable (fun x => (1 / (b - a)) * ∫ s in a..b, F s x)
         (volume.restrict (Set.Icc 0 1)))
     (hFNormThm : ∀ {t0 t1 : ℝ}, t0 < t1 →
       ∀ {F : ℝ → ℝ → ℝ},
-      ∀ (hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
+      ∀ (_hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
       ∀ {a b : ℝ}, a < b → Set.Icc a b ⊆ Set.Icc t0 t1 → 0 < b - a →
-      ∀ (hAvg_meas : AEStronglyMeasurable (fun x => (1 / (b - a)) * ∫ s in a..b, F s x)
+      ∀ (_hAvg_meas : AEStronglyMeasurable (fun x => (1 / (b - a)) * ∫ s in a..b, F s x)
         (volume.restrict (Set.Icc 0 1))),
       (eLpNorm (fun x => (1 / (b - a)) * ∫ s in a..b, F s x) 2
           (volume.restrict (Set.Icc 0 1))).toReal ^ 2
@@ -3150,7 +3112,7 @@ lemma rothe_slab_forcing_memLp
           (eLpNorm (fun x => F s x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2)
     (hSecFinThm : ∀ {t0 t1 : ℝ}, t0 < t1 →
       ∀ {F : ℝ → ℝ → ℝ},
-      ∀ (hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
+      ∀ (_hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
       ∀ {a b : ℝ}, a < b → Set.Icc a b ⊆ Set.Icc t0 t1 →
       (∫⁻ s in Set.Ioc a b, (eLpNorm (fun x => F s x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) ^ 2
         ∂volume) < ∞)
@@ -3202,41 +3164,41 @@ lemma rothe_slab_package
     {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
     {F : ℝ → ℝ → ℝ}
     {N : ℕ} (hN : 0 < N)
-    (k : ℕ) (hk : k < N)
+    (k : ℕ)
     (hκk_meas : AEStronglyMeasurable (fun x => (1 / ((t1 - t0) / N)) * ∫ s in (t0 + k * (((t1 - t0) / N)))..(t0 + (k + 1) * (((t1 - t0) / N))), κ s x)
         (volume.restrict (Set.Icc 0 1)))
     (hκk : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)),
         kmin ≤ (1 / ((t1 - t0) / N)) * ∫ s in (t0 + k * (((t1 - t0) / N)))..(t0 + (k + 1) * (((t1 - t0) / N))), κ s x
           ∧ (1 / ((t1 - t0) / N)) * ∫ s in (t0 + k * (((t1 - t0) / N)))..(t0 + (k + 1) * (((t1 - t0) / N))), κ s x ≤ kmax)
     (hFk : MemLp (fun x => (1 / ((t1 - t0) / N)) * ∫ s in (t0 + k * (((t1 - t0) / N)))..(t0 + (k + 1) * (((t1 - t0) / N))), F s x) 2 (volume.restrict (Set.Icc 0 1)))
-        (hBndThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
+        (hBndThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (_hkmin : 0 < kmin)
+    (_hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    (_hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
     (u v : WeakH10),
     |∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
         + κ x * u.weakDeriv x * v.weakDeriv x|
       ≤ max (1 / τ) kmax * ‖u‖ * ‖v‖)
-    (hCoerThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
+    (hCoerThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (_hkmin : 0 < kmin)
+    (_hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    (_hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
     (u : WeakH10),
     min (1 / τ) kmin * ‖u‖ ^ 2
       ≤ ∫ x in (0 : ℝ)..1, u.toFun x * u.toFun x / τ
           + κ x * u.weakDeriv x * u.weakDeriv x)
-    (hRhsThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    (hRhsThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {F : ℝ → ℝ} (_hF : MemLp F 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    {uprev : ℝ → ℝ} (_huprev : MemLp uprev 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
     (v : WeakH10),
     |∫ x in (0 : ℝ)..1, (F x + uprev x / τ) * v.toFun x|
       ≤ ((eLpNorm F 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal
           + (eLpNorm uprev 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal / τ) * ‖v‖)
-    (hBclmThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
-    (hBnd : ∀ u v : WeakH10,
+    (hBclmThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (_hkmin : 0 < kmin)
+    (_hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
+    (_hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
+    (_hBnd : ∀ u v : WeakH10,
       |∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
           + κ x * u.weakDeriv x * v.weakDeriv x|
         ≤ max (1 / τ) kmax * ‖u‖ * ‖v‖),
@@ -3244,34 +3206,34 @@ lemma rothe_slab_package
       ∀ u v : WeakH10,
         B u v = ∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
           + κ x * u.weakDeriv x * v.weakDeriv x)
-    (hLclmThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
-    {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
-    (hRhs : ∀ v : WeakH10,
+    (hLclmThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {F : ℝ → ℝ} (_hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
+    {uprev : ℝ → ℝ} (_huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
+    (_hRhs : ∀ v : WeakH10,
       |∫ x in (0 : ℝ)..1, (F x + uprev x / τ) * v.toFun x|
         ≤ ((eLpNorm F 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal
             + (eLpNorm uprev 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal / τ) * ‖v‖),
     ∃ L : WeakH10 →L[ℝ] ℝ,
       ∀ v : WeakH10,
         L v = ∫ x in (0 : ℝ)..1, (F x + uprev x / τ) * v.toFun x)
-    (hLaxThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
-    {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
-    {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
+    (hLaxThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (_hkmin : 0 < kmin)
+    (_hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
+    (_hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
+    {F : ℝ → ℝ} (_hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
+    {uprev : ℝ → ℝ} (_huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
     (B : WeakH10 →L[ℝ] WeakH10 →L[ℝ] ℝ)
-    (hB : ∀ u v : WeakH10,
+    (_hB : ∀ u v : WeakH10,
       B u v = ∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
         + κ x * u.weakDeriv x * v.weakDeriv x)
     (L : WeakH10 →L[ℝ] ℝ)
-    (hL : ∀ v : WeakH10,
+    (_hL : ∀ v : WeakH10,
       L v = ∫ x in (0 : ℝ)..1, (F x + uprev x / τ) * v.toFun x)
-    (hBnd : ∀ u v : WeakH10,
+    (_hBnd : ∀ u v : WeakH10,
       |∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
           + κ x * u.weakDeriv x * v.weakDeriv x|
         ≤ max (1 / τ) kmax * ‖u‖ * ‖v‖)
-    (hCoer : ∀ u : WeakH10,
+    (_hCoer : ∀ u : WeakH10,
       min (1 / τ) kmin * ‖u‖ ^ 2
         ≤ ∫ x in (0 : ℝ)..1, u.toFun x * u.toFun x / τ
             + κ x * u.weakDeriv x * u.weakDeriv x),
@@ -3324,7 +3286,7 @@ lemma rothe_slab_assemble
     {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
     {F : ℝ → ℝ → ℝ}
     {N : ℕ} (hN : 0 < N)
-    (k : ℕ) (hk : k < N)
+    (k : ℕ)
     (hτsmall : ((t1 - t0) / N) * kmin < 1)
     (hκk_meas : AEStronglyMeasurable (fun x => (1 / ((t1 - t0) / N)) * ∫ s in (t0 + k * (((t1 - t0) / N)))..(t0 + (k + 1) * (((t1 - t0) / N))), κ s x)
         (volume.restrict (Set.Icc 0 1)))
@@ -3340,28 +3302,28 @@ lemma rothe_slab_assemble
         ∧ (∀ v : WeakH10,
           L v = ∫ x in (0 : ℝ)..1, ((fun x => (1 / ((t1 - t0) / N)) * ∫ s in (t0 + k * ((t1 - t0) / N))..(t0 + (k + 1) * ((t1 - t0) / N)), F s x) x + uprev x / ((t1 - t0) / N)) * v.toFun x)
         ∧ ∃ u : WeakH10, ∀ v : WeakH10, B u v = L v)
-        (hBndThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
+        (hBndThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (_hkmin : 0 < kmin)
+    (_hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    (_hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
     (u v : WeakH10),
     |∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
         + κ x * u.weakDeriv x * v.weakDeriv x|
       ≤ max (1 / τ) kmax * ‖u‖ * ‖v‖)
-        (hCoerThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
+        (hCoerThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (_hkmin : 0 < kmin)
+    (_hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    (_hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
     (u : WeakH10),
     min (1 / τ) kmin * ‖u‖ ^ 2
       ≤ ∫ x in (0 : ℝ)..1, u.toFun x * u.toFun x / τ
           + κ x * u.weakDeriv x * u.weakDeriv x)
-        (hIntThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
-    {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
-    {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
+        (hIntThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (_hkmin : 0 < kmin)
+    (_hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
+    (_hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
+    {F : ℝ → ℝ} (_hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
+    {uprev : ℝ → ℝ} (_huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
     (u v : WeakH10), IntervalIntegrable
         (fun x => (u.toFun x - uprev x) / τ * v.toFun x
           + κ x * u.weakDeriv x * v.weakDeriv x) volume 0 1
@@ -3374,22 +3336,22 @@ lemma rothe_slab_assemble
         (fun x => uprev x / τ * v.toFun x) volume 0 1
       ∧ IntervalIntegrable
         (fun x => F x * v.toFun x) volume 0 1)
-        (hIdentThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
-    {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
-    {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
+        (hIdentThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (_hkmin : 0 < kmin)
+    (_hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
+    (_hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
+    {F : ℝ → ℝ} (_hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
+    {uprev : ℝ → ℝ} (_huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
     (B : WeakH10 →L[ℝ] WeakH10 →L[ℝ] ℝ)
-    (hB : ∀ u v : WeakH10,
+    (_hB : ∀ u v : WeakH10,
       B u v = ∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
         + κ x * u.weakDeriv x * v.weakDeriv x)
     (L : WeakH10 →L[ℝ] ℝ)
-    (hL : ∀ v : WeakH10,
+    (_hL : ∀ v : WeakH10,
       L v = ∫ x in (0 : ℝ)..1, (F x + uprev x / τ) * v.toFun x)
     (u : WeakH10)
-    (hEq : ∀ v : WeakH10, B u v = L v)
-    (hInt : ∀ v : WeakH10,
+    (_hEq : ∀ v : WeakH10, B u v = L v)
+    (_hInt : ∀ v : WeakH10,
       IntervalIntegrable
           (fun x => (u.toFun x - uprev x) / τ * v.toFun x
             + κ x * u.weakDeriv x * v.weakDeriv x) volume 0 1
@@ -3406,42 +3368,42 @@ lemma rothe_slab_assemble
       ∫ x in (0 : ℝ)..1, (u.toFun x - uprev x) / τ * v.toFun x
         + κ x * u.weakDeriv x * v.weakDeriv x
         = ∫ x in (0 : ℝ)..1, F x * v.toFun x)
-        (hEnergyThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin) (hτk : τ * kmin < 1)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
-    {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
-    {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
+        (hEnergyThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (_hkmin : 0 < kmin) (_hτk : τ * kmin < 1)
+    (_hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
+    (_hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
+    {F : ℝ → ℝ} (_hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
+    {uprev : ℝ → ℝ} (_huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
     (u : WeakH10)
-    (hstep : ∀ v : WeakH10,
+    (_hstep : ∀ v : WeakH10,
       ∫ x in (0 : ℝ)..1, (u.toFun x - uprev x) / τ * v.toFun x
         + κ x * u.weakDeriv x * v.weakDeriv x
         = ∫ x in (0 : ℝ)..1, F x * v.toFun x), (1 - τ * kmin) * (eLpNorm u.toFun 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
         + 2 * τ * kmin * (eLpNorm u.weakDeriv 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
       ≤ (eLpNorm uprev 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
         + (τ / kmin) * (eLpNorm F 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2)
-        (hAssembleThm : ∀ {τ : ℝ} (hτ : 0 < τ)
-    {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin) (hτk : τ * kmin < 1)
-    (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
-    (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
-    {F : ℝ → ℝ} (hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
-    {uprev : ℝ → ℝ} (huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
+        (hAssembleThm : ∀ {τ : ℝ} (_hτ : 0 < τ)
+    {κ : ℝ → ℝ} {kmin kmax : ℝ} (_hkmin : 0 < kmin) (_hτk : τ * kmin < 1)
+    (_hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
+    (_hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
+    {F : ℝ → ℝ} (_hF : MemLp F 2 (volume.restrict (Set.Icc 0 1)))
+    {uprev : ℝ → ℝ} (_huprev : MemLp uprev 2 (volume.restrict (Set.Icc 0 1)))
     (B : WeakH10 →L[ℝ] WeakH10 →L[ℝ] ℝ)
-    (hB : ∀ u v : WeakH10,
+    (_hB : ∀ u v : WeakH10,
       B u v = ∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
         + κ x * u.weakDeriv x * v.weakDeriv x)
     (L : WeakH10 →L[ℝ] ℝ)
-    (hL : ∀ v : WeakH10,
+    (_hL : ∀ v : WeakH10,
       L v = ∫ x in (0 : ℝ)..1, (F x + uprev x / τ) * v.toFun x)
-    (hBnd : ∀ u v : WeakH10,
+    (_hBnd : ∀ u v : WeakH10,
       |∫ x in (0 : ℝ)..1, u.toFun x * v.toFun x / τ
           + κ x * u.weakDeriv x * v.weakDeriv x|
         ≤ max (1 / τ) kmax * ‖u‖ * ‖v‖)
-    (hCoer : ∀ u : WeakH10,
+    (_hCoer : ∀ u : WeakH10,
       min (1 / τ) kmin * ‖u‖ ^ 2
         ≤ ∫ x in (0 : ℝ)..1, u.toFun x * u.toFun x / τ
             + κ x * u.weakDeriv x * u.weakDeriv x)
-    (hInt : ∀ (u v : WeakH10),
+    (_hInt : ∀ (u v : WeakH10),
       IntervalIntegrable
           (fun x => (u.toFun x - uprev x) / τ * v.toFun x
             + κ x * u.weakDeriv x * v.weakDeriv x) volume 0 1
@@ -3454,13 +3416,13 @@ lemma rothe_slab_assemble
           (fun x => uprev x / τ * v.toFun x) volume 0 1
         ∧ IntervalIntegrable
           (fun x => F x * v.toFun x) volume 0 1)
-    (hLax : ∃ u : WeakH10, ∀ v : WeakH10, B u v = L v)
-    (hIdent : ∀ (u : WeakH10), (∀ v : WeakH10, B u v = L v) →
+    (_hLax : ∃ u : WeakH10, ∀ v : WeakH10, B u v = L v)
+    (_hIdent : ∀ (u : WeakH10), (∀ v : WeakH10, B u v = L v) →
       ∀ v : WeakH10,
         ∫ x in (0 : ℝ)..1, (u.toFun x - uprev x) / τ * v.toFun x
           + κ x * u.weakDeriv x * v.weakDeriv x
           = ∫ x in (0 : ℝ)..1, F x * v.toFun x)
-    (hEnergy : ∀ (u : WeakH10),
+    (_hEnergy : ∀ (u : WeakH10),
       (∀ v : WeakH10,
         ∫ x in (0 : ℝ)..1, (u.toFun x - uprev x) / τ * v.toFun x
           + κ x * u.weakDeriv x * v.weakDeriv x
@@ -3592,17 +3554,11 @@ inner product above), and it is complete. This statement only elaborates
 once the instances exist. -/
 
 lemma rothe_iter_exists
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ_meas : AEStronglyMeasurable (Function.uncurry κ)
-      (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-    (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
-      kmin ≤ κ p.1 p.2 ∧ κ p.1 p.2 ≤ kmax)
+    {t0 t1 : ℝ}
+    {κ : ℝ → ℝ → ℝ} {kmin : ℝ}
     {F : ℝ → ℝ → ℝ}
-    (hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
     {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    {N : ℕ} (hN : 0 < N)
-    (hτsmall : ((t1 - t0) / N) * kmin < 1)
+    {N : ℕ}
     (hOneStep : ∀ (k : ℕ), k < N → ∀ (uprev : ℝ → ℝ),
       MemLp uprev 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) →
       ∃ u : WeakH10,
@@ -3627,25 +3583,17 @@ lemma rothe_iter_exists
   exact rotheSeq_exists u0 hu0 N hOneStep
 
 
+-- Kept as stated, not used by this proof: `hFMeasThm`, `hFNormThm`.
+set_option linter.unusedVariables false in
 lemma rothe_iter_bounds
     {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    {F : ℝ → ℝ → ℝ}
-    (hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
     {N : ℕ} (hN : 0 < N)
-    (hτsmall : ((t1 - t0) / N) * kmin < 1)
     (U : ℕ → WeakH10)
-    (hEnergy : ∀ k, k < N →
-      (1 - ((t1 - t0) / N) * kmin) * (eLpNorm (U (k + 1)).toFun 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
-        + 2 * ((t1 - t0) / N) * kmin * (eLpNorm (U (k + 1)).weakDeriv 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
-        ≤ (eLpNorm (if k = 0 then u0 else (U k).toFun) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
-          + (((t1 - t0) / N) / kmin) * (eLpNorm (fun x => (1 / ((t1 - t0) / N)) * ∫ s in (t0 + k * ((t1 - t0) / N))..(t0 + (k + 1) * ((t1 - t0) / N)), F s x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2)
     (hFNormThm : ∀ {t0 t1 : ℝ}, t0 < t1 →
       ∀ {F : ℝ → ℝ → ℝ},
-      ∀ (hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
+      ∀ (_hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
       ∀ {a b : ℝ}, a < b → Set.Icc a b ⊆ Set.Icc t0 t1 → 0 < b - a →
-      ∀ (hAvg_meas : AEStronglyMeasurable (fun x => (1 / (b - a)) * ∫ s in a..b, F s x)
+      ∀ (_hAvg_meas : AEStronglyMeasurable (fun x => (1 / (b - a)) * ∫ s in a..b, F s x)
         (volume.restrict (Set.Icc 0 1))),
       (eLpNorm (fun x => (1 / (b - a)) * ∫ s in a..b, F s x) 2
           (volume.restrict (Set.Icc 0 1))).toReal ^ 2
@@ -3653,7 +3601,7 @@ lemma rothe_iter_bounds
           (eLpNorm (fun x => F s x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2)
     (hFMeasThm : ∀ {t0 t1 : ℝ}, t0 < t1 →
       ∀ {F : ℝ → ℝ → ℝ},
-      ∀ (hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
+      ∀ (_hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))),
       ∀ {a b : ℝ}, a < b → Set.Icc a b ⊆ Set.Icc t0 t1 → 0 < b - a →
       AEStronglyMeasurable (fun x => (1 / (b - a)) * ∫ s in a..b, F s x)
         (volume.restrict (Set.Icc 0 1))) :
@@ -3829,12 +3777,11 @@ lemma memLp_rothe_interp {t0 t1 : ℝ} (ht : t0 < t1) {N : ℕ} (hN : 0 < N)
   exact hFmem.congr_norm hGaesm hnorm
 
 
+-- Kept as stated, not used by this proof: `hBoundsThm`.
+set_option linter.unusedVariables false in
 lemma rothe_interp_bounds
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    {F : ℝ → ℝ → ℝ}
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    {N : ℕ} (hN : 0 < N)
+    {t0 t1 : ℝ}
+    {N : ℕ}
     (U : ℕ → WeakH10)
     (hBoundsThm : ∃ C : ℝ, 0 < C ∧
       (∀ k, k ≤ N →
@@ -3866,9 +3813,6 @@ lemma rothe_interp_bounds
 
 lemma interp_memLp_bounds
     {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    {F : ℝ → ℝ → ℝ}
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
     {N : ℕ} (hN : 0 < N)
     (U : ℕ → WeakH10)
     (hBounds : ∃ C : ℝ, 0 < C ∧
@@ -3894,7 +3838,7 @@ lemma interp_memLp_bounds
           else (U (Nat.floor ((t - t0) / ((t1 - t0) / N)) + 1)).weakDeriv x)) 2
           (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))).toReal ≤ C) := by
   obtain ⟨C', hC'pos, hsq1, hsq2⟩ :=
-    rothe_interp_bounds (κ := κ) (kmax := kmax) (F := F) ht hkmin hu0 hN U hBounds
+    rothe_interp_bounds U hBounds
   have hle : ∀ a : ℝ, 0 ≤ a → a ^ 2 ≤ C' → a ≤ C' + 1 := by
     intro a ha0 haC
     have hC2 : C' ≤ (C' + 1) ^ 2 := by nlinarith [sq_nonneg C', hC'pos]
@@ -4445,8 +4389,6 @@ lemma rectangle_integral_sum_slabs
 lemma fbar_sq_split
     {t0 t1 : ℝ} (ht : t0 < t1)
     {f g : ℝ → ℝ → ℝ}
-    (hf : MemLp (Function.uncurry f) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-    (hg : MemLp (Function.uncurry g) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
     {N : ℕ} (hN : 0 < N)
     (hMem : MemLp (fun p : ℝ × ℝ =>
       (if p.1 = t1 then (f p.1 p.2 - g p.1 p.2)
@@ -4880,7 +4822,7 @@ lemma slab_avg_sub_le_oscillation
 
 
 lemma oscillation_le_of_uniformly_continuous
-    {a b t : ℝ} {ε δ : ℝ} (hat : a ≤ t) (htb : t ≤ b) (hab : b - a < δ)
+    {a b t : ℝ} {ε : ℝ}
     {φ : ℝ → ℝ → ℝ} {x : ℝ} (hε : 0 < ε)
     (hUnif : ∀ (s : ℝ), s ∈ Set.Icc a b → |φ s x - φ t x| < ε) :
     ⨆ s ∈ Set.Icc a b, |φ s x - φ t x| ≤ ε := by
@@ -4906,6 +4848,8 @@ lemma iSup_mem_abs_le_of_forall_lt {a b t x ε : ℝ} {φ : ℝ → ℝ → ℝ}
     rw [iSup_of_empty', hEmpty]
     exact hε.le
 
+-- Kept as stated, not used by this proof: `hOscThm`.
+set_option linter.unusedVariables false in
 /-- Uniform sup bound for slab averages, from the pointwise
 estimate and the oscillation bound as hypotheses. -/
 
@@ -4928,7 +4872,7 @@ lemma slab_avg_sup_sub_le
     (hOscThm : ∀ {a b t : ℝ} {ε δ : ℝ}, a ≤ t → t ≤ b → b - a < δ → ∀ {φ : ℝ → ℝ → ℝ} {x : ℝ},
       0 < ε → (∀ (s : ℝ), s ∈ Set.Icc a b → |φ s x - φ t x| < ε) →
       ⨆ s ∈ Set.Icc a b, |φ s x - φ t x| ≤ ε)
-    (ε δ : ℝ) (hε : 0 < ε) (hδ : 0 < δ)
+    (ε δ : ℝ) (hε : 0 < ε)
     (hUnif : ∀ (t t' x : ℝ), t ∈ Set.Icc t0 t1 → t' ∈ Set.Icc t0 t1 →
       x ∈ Set.Icc (0 : ℝ) 1 → |t - t'| < δ → |φ t x - φ t' x| < ε)
     (N : ℕ) (hN : 0 < N) (hτ : (t1 - t0) / N < δ) (t x : ℝ)
@@ -5244,11 +5188,9 @@ lemma continuous_compactSupport_dense_L2
 
 
 lemma slab_avg_eventually_le_three_eps_final
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {f φ : ℝ → ℝ → ℝ}
-    (hf : MemLp (Function.uncurry f) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-    (hφ : MemLp (Function.uncurry φ) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-    (ε : ℝ) (hε : 0 < ε)
+    (ε : ℝ)
     (hTriThm : ∀ (N : ℕ), 0 < N →
       (eLpNorm (fun p : ℝ × ℝ =>
         (if p.1 = t1 then f p.1 p.2
@@ -5923,7 +5865,7 @@ lemma inner_toLp_eq_setIntegral
 weakly (pairing convergence against every `ψ ∈ L²`). -/
 
 lemma l2_weak_subsequential_limit
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (a b : ℕ → ℝ → ℝ → ℝ)
     (ha : ∀ N : ℕ, MemLp (Function.uncurry (a N)) 2
       (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
@@ -6047,9 +5989,7 @@ lemma parabolicTest_slice_weakH10
 
 lemma rothe_discrete_weak_identity
     {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    {F : ℝ → ℝ → ℝ}
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
+    {kmin kmax : ℝ}
     (hSliceThm : ∀ (φ : ℝ → ℝ → ℝ), ParabolicTest t0 t1 φ → ∀ (s : ℝ),
       ∃ v : WeakH10, v.toFun = φ s ∧ v.weakDeriv = fun x => deriv (fun y => φ s y) x)
     (N : ℕ) (hN : 0 < N) (U : ℕ → WeakH10)
@@ -6522,11 +6462,8 @@ lemma rothe_rewrite_1_back
     {t0 t1 : ℝ} (ht : t0 < t1)
     (N : ℕ) (hN : 0 < N) (U : ℕ → WeakH10)
     (φ : ℝ → ℝ → ℝ)
-    (kbar Fbar : ℕ → ℝ → ℝ)
     (hUint : ∀ k : ℕ, Integrable (U k).toFun (volume.restrict (Set.Icc (0 : ℝ) 1))
       ∧ Integrable (U k).weakDeriv (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hKint : ∀ k : ℕ, k < N → Integrable (kbar k) (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hFint : ∀ k : ℕ, k < N → Integrable (Fbar k) (volume.restrict (Set.Icc (0 : ℝ) 1)))
     (hφint : ∀ s : ℝ, Integrable (fun x => φ s x) (volume.restrict (Set.Icc (0 : ℝ) 1))
       ∧ Integrable (fun x => deriv (fun y => φ s y) x) (volume.restrict (Set.Icc (0 : ℝ) 1)))  :
     (-(∑ k ∈ Finset.range N,
@@ -6750,13 +6687,7 @@ lemma rothe_rewrite_2_of_prod_integrable
     {t0 t1 : ℝ} (ht : t0 < t1)
     (N : ℕ) (hN : 0 < N) (U : ℕ → WeakH10)
     (φ : ℝ → ℝ → ℝ)
-    (kbar Fbar : ℕ → ℝ → ℝ)
-    (hUint : ∀ k : ℕ, Integrable (U k).toFun (volume.restrict (Set.Icc (0 : ℝ) 1))
-      ∧ Integrable (U k).weakDeriv (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hKint : ∀ k : ℕ, k < N → Integrable (kbar k) (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hFint : ∀ k : ℕ, k < N → Integrable (Fbar k) (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hφint : ∀ s : ℝ, Integrable (fun x => φ s x) (volume.restrict (Set.Icc (0 : ℝ) 1))
-      ∧ Integrable (fun x => deriv (fun y => φ s y) x) (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    (kbar : ℕ → ℝ → ℝ)
     (hProd : ∀ k : ℕ, k < N → IntegrableOn
       (fun x => kbar k x * (U (k + 1)).weakDeriv x
         * deriv (fun y => φ (t0 + (k + 1 : ℝ) * ((t1 - t0) / N)) y) x)
@@ -7348,7 +7279,7 @@ lemma rothe_term1_tendsto
     {t0 t1 : ℝ} (ht : t0 < t1)
     (U : ℕ → ℕ → WeakH10)
     (φm : ℕ → ℕ) (hφm : StrictMono φm)
-    (φ : ℝ → ℝ → ℝ) (hφ : ParabolicTest t0 t1 φ)
+    (φ : ℝ → ℝ → ℝ)
     (u : ℝ → ℝ → ℝ)
     (hMemLpDeriv : MemLp (Function.uncurry (fun t x => deriv (fun s => φ s x) t)) 2
       (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
@@ -7757,13 +7688,15 @@ lemma tendsto_integral_mul_of_tendsto_eLpNorm_zero
     simpa using h
   exact hsum.congr' hEq.symm
 
+-- Kept as stated, not used by this proof: `hFbarMeasThm`.
+set_option linter.unusedVariables false in
 /-- Forcing-term passage. -/
 
 lemma rothe_term3_tendsto
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {F : ℝ → ℝ → ℝ}
     (hFMemLpThm : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-    (φm : ℕ → ℕ) (hφm : StrictMono φm)
+    (φm : ℕ → ℕ)
     (φ : ℝ → ℝ → ℝ) (hφ : ParabolicTest t0 t1 φ)
     (Fbar : ℕ → ℕ → ℝ → ℝ)
     (hAvgThm : Filter.Tendsto (fun N : ℕ =>
@@ -7811,7 +7744,7 @@ lemma rothe_term3_tendsto
 
 
 lemma rothe_term2a_strong_coeff
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {κ : ℝ → ℝ → ℝ}
     (kbar : ℕ → ℝ → ℝ)
     (hAvgThm : Filter.Tendsto (fun N : ℕ =>
@@ -7820,7 +7753,7 @@ lemma rothe_term2a_strong_coeff
       Filter.atTop (nhds 0))
     (U : ℕ → (ℝ → ℝ))
     (hBoundThm : ∃ C : ℝ, 0 < C ∧ ∀ N : ℕ,
-      eLpNorm (Function.uncurry (fun t x => U N x)) 2
+      eLpNorm (Function.uncurry (fun _t x => U N x)) 2
         (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) ≤ ENNReal.ofReal C)
     (ψN : ℕ → ℝ → ℝ → ℝ)
     (hSampleBddThm : ∃ B : ℝ, 0 < B ∧ ∀ N : ℕ, ∀ p : ℝ × ℝ,
@@ -8006,7 +7939,7 @@ lemma rothe_term2a_strong_coeff
 
 
 lemma rothe_term2b_moving_test
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {κ : ℝ → ℝ → ℝ}
     (U : ℕ → (ℝ → ℝ))
     (hBoundThm : ∃ C : ℝ, 0 < C ∧ ∀ N : ℕ,
@@ -8283,9 +8216,9 @@ lemma rothe_term2_asm_abstract_fixed
 -- theorem. The as-given text named a constant that is not in scope here.
 
 lemma rothe_term2_inst
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {κ : ℝ → ℝ → ℝ}
-    (u ux : ℝ → ℝ → ℝ)
+    (ux : ℝ → ℝ → ℝ)
     (Ugrad : ℕ → ℝ → (ℝ → ℝ))
     (slabAvg : (ℝ → ℝ → ℝ) → ℕ → (ℝ → ℝ → ℝ))
     (hSlabCoeffThm : ∀ (N : ℕ), 0 < N → ∀ t : ℝ, t ∈ Set.Icc t0 t1 →
@@ -8336,17 +8269,6 @@ lemma rothe_term2_inst
       Integrable (fun p : ℝ × ℝ => (slabAvg κ N p.1 p.2 - κ p.1 p.2) * Ugrad N p.1 p.2
         * deriv (fun y => φ p.1 y) p.2)
         (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)))
-    (hWeakUx : ∀ ψ : ℝ → ℝ → ℝ,
-        MemLp (Function.uncurry ψ) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
-        Filter.Tendsto (fun N : ℕ =>
-            ∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-              Ugrad N p.1 p.2 * ψ p.1 p.2
-                ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-          Filter.atTop (nhds (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-            ux p.1 p.2 * ψ p.1 p.2 ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))))
-    (hIntMain : Integrable (fun p : ℝ × ℝ => κ p.1 p.2 * ux p.1 p.2
-        * deriv (fun y => φ p.1 y) p.2)
-        (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)))
     (hCoeffDiffThm : Filter.Tendsto (fun N : ℕ =>
         ∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
           (slabAvg κ N p.1 p.2 - κ p.1 p.2) * ux p.1 p.2
@@ -8374,11 +8296,11 @@ lemma rothe_term2_inst
 /-- Term-2 passage, instantiated. -/
 
 lemma term2_passage
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {κ : ℝ → ℝ → ℝ}
-    (u ux : ℝ → ℝ → ℝ)
+    (ux : ℝ → ℝ → ℝ)
     (U_of : ℕ → ℕ → WeakH10)
-    (φ : ℝ → ℝ → ℝ) (hφ : ParabolicTest t0 t1 φ)
+    (φ : ℝ → ℝ → ℝ)
     (hSlabCoeffThm : ∀ (N : ℕ), 0 < N → ∀ t : ℝ, t ∈ Set.Icc t0 t1 →
       MemLp (fun x => (1 / ((t1 - t0) / N)) * ∫ s in (t0 + (Nat.floor ((t - t0) / ((t1 - t0) / N))) * ((t1 - t0) / N))..(t0 + ((Nat.floor ((t - t0) / ((t1 - t0) / N)) + 1) * ((t1 - t0) / N))), κ s x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
     (hGradWeakThm : ∀ (N : ℕ), 0 < N → ∀ t : ℝ, t ∈ Set.Icc t0 t1 →
@@ -8428,15 +8350,6 @@ lemma term2_passage
         Filter.atTop (nhds (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
           κ p.1 p.2 * ux p.1 p.2 * deriv (fun y => φf p.1 y) p.2
             ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))))
-    (hWeakUx : ∀ ψ : ℝ → ℝ → ℝ,
-        MemLp (Function.uncurry ψ) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
-        Filter.Tendsto (fun N : ℕ =>
-            ∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-              (if p.1 = t1 then (U_of N N).weakDeriv p.2 else (U_of N (Nat.floor ((p.1 - t0) / ((t1 - t0) / N)) + 1)).weakDeriv p.2)
-                * ψ p.1 p.2
-                ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-          Filter.atTop (nhds (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-            ux p.1 p.2 * ψ p.1 p.2 ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))))
     (hIntSlabThm : ∀ (N : ℕ), 0 < N →
       Integrable (fun p : ℝ × ℝ => ((1 / ((t1 - t0) / N)) * ∫ s in (t0 + (Nat.floor ((p.1 - t0) / ((t1 - t0) / N))) * ((t1 - t0) / N))..(t0 + ((Nat.floor ((p.1 - t0) / ((t1 - t0) / N)) + 1) * ((t1 - t0) / N))), κ s p.2)
         * (if p.1 = t1 then (U_of N N).weakDeriv p.2 else (U_of N (Nat.floor ((p.1 - t0) / ((t1 - t0) / N)) + 1)).weakDeriv p.2)
@@ -8451,12 +8364,12 @@ lemma term2_passage
       Filter.atTop (nhds (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
         κ p.1 p.2 * ux p.1 p.2 * deriv (fun y => φ p.1 y) p.2
           ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))) := by
-  exact rothe_term2_inst ht u ux
+  exact rothe_term2_inst ux
     (fun N t x => if t = t1 then (U_of N N).weakDeriv x
       else (U_of N (Nat.floor ((t - t0) / ((t1 - t0) / N)) + 1)).weakDeriv x)
     (fun kk N t x => (1 / ((t1 - t0) / N)) * ∫ s in (t0 + (Nat.floor ((t - t0) / ((t1 - t0) / N))) * ((t1 - t0) / N))..(t0 + ((Nat.floor ((t - t0) / ((t1 - t0) / N)) + 1) * ((t1 - t0) / N))), kk s x)
     hSlabCoeffThm φ hTerm2AsmThm hGradWeakThm hIntSlabThm hIntLimThm hIntDiffThm
-    hWeakUx hIntLimThm hCoeffDiffThm
+    hCoeffDiffThm
 
 
 
@@ -8518,7 +8431,7 @@ weak equation for the limit. -/
 
 lemma rothe_limit_combine
     {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
+    {κ : ℝ → ℝ → ℝ}
     {F : ℝ → ℝ → ℝ}
     (U : ℕ → ℕ → WeakH10)
     (kbar Fbar : ℕ → ℕ → ℝ → ℝ)
@@ -8724,27 +8637,27 @@ lemma rothe_limit_combine
 
 
 lemma rothe_limit_passage
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {κ : ℝ → ℝ → ℝ} {F : ℝ → ℝ → ℝ}
     (u ux : ℝ → ℝ → ℝ)
     (hCombineThm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      Filter.Tendsto (fun N : ℕ => rect t0 t1 (fun t x => -(u t x) * deriv (fun s => φ s x) t))
+      Filter.Tendsto (fun _N : ℕ => rect t0 t1 (fun t x => -(u t x) * deriv (fun s => φ s x) t))
         Filter.atTop (nhds (rect t0 t1 (fun t x => -(u t x) * deriv (fun s => φ s x) t))) →
-      Filter.Tendsto (fun N : ℕ => rect t0 t1 (fun t x => κ t x * ux t x * deriv (fun y => φ t y) x))
+      Filter.Tendsto (fun _ : ℕ => rect t0 t1 (fun t x => κ t x * ux t x * deriv (fun y => φ t y) x))
         Filter.atTop (nhds (rect t0 t1 (fun t x => κ t x * ux t x * deriv (fun y => φ t y) x))) →
-      Filter.Tendsto (fun N : ℕ => rect t0 t1 (fun t x => F t x * φ t x))
+      Filter.Tendsto (fun _N : ℕ => rect t0 t1 (fun t x => F t x * φ t x))
         Filter.atTop (nhds (rect t0 t1 (fun t x => F t x * φ t x))) →
       rect t0 t1 (fun t x => -(u t x) * deriv (fun s => φ s x) t)
         + rect t0 t1 (fun t x => κ t x * ux t x * deriv (fun y => φ t y) x)
         = rect t0 t1 (fun t x => F t x * φ t x))
     (hTerm1Thm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      Filter.Tendsto (fun N : ℕ => rect t0 t1 (fun t x => -(u t x) * deriv (fun s => φ s x) t))
+      Filter.Tendsto (fun _N : ℕ => rect t0 t1 (fun t x => -(u t x) * deriv (fun s => φ s x) t))
         Filter.atTop (nhds (rect t0 t1 (fun t x => -(u t x) * deriv (fun s => φ s x) t))))
     (hTerm2Thm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      Filter.Tendsto (fun N : ℕ => rect t0 t1 (fun t x => κ t x * ux t x * deriv (fun y => φ t y) x))
+      Filter.Tendsto (fun _ : ℕ => rect t0 t1 (fun t x => κ t x * ux t x * deriv (fun y => φ t y) x))
         Filter.atTop (nhds (rect t0 t1 (fun t x => κ t x * ux t x * deriv (fun y => φ t y) x))))
     (hTerm3Thm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      Filter.Tendsto (fun N : ℕ => rect t0 t1 (fun t x => F t x * φ t x))
+      Filter.Tendsto (fun _N : ℕ => rect t0 t1 (fun t x => F t x * φ t x))
         Filter.atTop (nhds (rect t0 t1 (fun t x => F t x * φ t x)))) :
     ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
       rect t0 t1 (fun t x => -(u t x) * deriv (fun s => φ s x) t)
@@ -8771,12 +8684,12 @@ lemma inner_eq_integral_of_ae_eq (μ : Measure ℝ)
 /-- Weak lower semicontinuity of the `L²` norm along Rothe slices. -/
 
 lemma rothe_slice_norm_liminf
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {u : ℝ → ℝ → ℝ} (hu : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
     (U : ℕ → ℕ → (ℝ → ℝ))
     (hU : ∀ (N : ℕ) (k : ℕ), MemLp (U N k) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (φm : ℕ → ℕ) (hφm : StrictMono φm)
+    (φm : ℕ → ℕ)
     (hWeakSliceThm : ∀ (τ : ℝ), τ ∈ Set.Icc t0 t1 → ∀ ψ : ℝ → ℝ,
       MemLp ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) →
       Filter.Tendsto (fun N : ℕ =>
@@ -8921,13 +8834,11 @@ lemma rothe_slice_norm_liminf
 
 
 lemma rothe_dissipation_liminf
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
-      kmin ≤ κ p.1 p.2 ∧ κ p.1 p.2 ≤ kmax)
+    {t0 t1 : ℝ}
+    {κ : ℝ → ℝ → ℝ}
     {ux : ℝ → ℝ → ℝ}
     (Ugrad : ℕ → ℕ → (ℝ → ℝ))
-    (φm : ℕ → ℕ) (hφm : StrictMono φm)
+    (φm : ℕ → ℕ)
     (hInterpThm : ∀ (N : ℕ) (τ : ℝ), τ ∈ Set.Icc t0 t1 →
       ((t1 - t0) / N) * ∑ j ∈ Finset.range (Nat.floor ((τ - t0) / ((t1 - t0) / N)) + 1),
           ∫ x in (0 : ℝ)..1, κ (t0 + j * ((t1 - t0) / N)) x
@@ -9023,8 +8934,8 @@ lemma tendsto_of_split_add
 /-- Equicontinuity of the pairing functions. -/
 
 lemma pairing_equicont
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    (U_of : ℕ → ℕ → WeakH10) (φ : ℕ → ℕ) (hφ : StrictMono φ)
+    {t0 t1 : ℝ}
+    (U_of : ℕ → ℕ → WeakH10) (φ : ℕ → ℕ)
     (hTimetrans : ∃ C : ℝ, 0 ≤ C ∧ ∀ (N : ℕ), 0 < N → ∀ t h : ℝ,
       t ∈ Set.Icc t0 t1 → t + h ∈ Set.Icc t0 t1 →
       (eLpNorm (fun x =>
@@ -9128,7 +9039,7 @@ lemma pairing_equicont
 
 
 lemma rothe_forcing_tendsto_asm_micro2_corrected
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {F : ℝ → ℝ → ℝ}
     (Fbar ubar : ℕ → (ℝ × ℝ) → ℝ) (u : ℝ → ℝ → ℝ)
     (hSplitThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 → ∀ N : ℕ,
@@ -9201,12 +9112,10 @@ lemma energy_asm_of_liminf
 
 lemma rothe_limit_energy_asm_fixed
     {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
-      kmin ≤ κ p.1 p.2 ∧ κ p.1 p.2 ≤ kmax)
+    {κ : ℝ → ℝ → ℝ} {kmin : ℝ} (hkmin : 0 < kmin)
     (hKappaSliceThm : ∀ t : ℝ, ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ t x)
     {F : ℝ → ℝ → ℝ}
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
+    {u0 : ℝ → ℝ}
     (U : ℕ → ℕ → (ℝ → ℝ))
     (φm : ℕ → ℕ) (hφm : StrictMono φm)
     (u ux : ℝ → ℝ → ℝ)
@@ -9595,9 +9504,9 @@ lemma rothe_bump_concentration
 
 
 lemma rothe_bump_cauchy
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (U : ℕ → ℕ → (ℝ → ℝ))
-    (φm : ℕ → ℕ) (hφm : StrictMono φm)
+    (φm : ℕ → ℕ)
     (hWeakSTThm : ∀ Ψ : ℝ → ℝ → ℝ,
       MemLp (Function.uncurry Ψ) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
       Filter.Tendsto (fun N : ℕ =>
@@ -9825,7 +9734,7 @@ lemma rothe_slice_pairing_cauchy_asm_interior
 
 
 lemma rothe_lebesgue_points
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -10465,7 +10374,7 @@ lemma rothe_lebesgue_pairing_joint
 
 
 lemma rothe_slice_limsup_bound
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (U : ℕ → ℕ → (ℝ → ℝ))
     (φm : ℕ → ℕ) (hφm : StrictMono φm)
@@ -10678,7 +10587,7 @@ lemma rothe_slice_limsup_bound
 /-- Corrected limsup bound (sqrt(C0*delta) form). -/
 
 lemma slice_limsup_corrected
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (U_of : ℕ → ℕ → WeakH10)
     (φ : ℕ → ℕ) (hφ : StrictMono φ)
@@ -10743,7 +10652,7 @@ lemma slice_limsup_corrected
           * (eLpNorm ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal := by
   refine ⟨Classical.choose hConc, (Classical.choose_spec hConc).1, ?_⟩
   intro τ hτ ψ hψ δ hδ hlo hhi L hLim
-  have hBound := rothe_slice_limsup_bound ht u (fun N k => (U_of N k).toFun) φ hφ hConc hWeakST
+  have hBound := rothe_slice_limsup_bound u (fun N k => (U_of N k).toFun) φ hφ hConc hWeakST
     hBumpEq hBumpEqU hConv τ hτ ψ hψ δ hδ hlo hhi
   have hEq : L = Classical.choose (hConv τ hτ ψ hψ) :=
     tendsto_nhds_unique hLim (Classical.choose_spec (hConv τ hτ ψ hψ))
@@ -10752,10 +10661,10 @@ lemma slice_limsup_corrected
 
 
 lemma rothe_slice_limit_ident
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (U : ℕ → ℕ → (ℝ → ℝ))
-    (φm : ℕ → ℕ) (hφm : StrictMono φm)
+    (φm : ℕ → ℕ)
     (hLimsupThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 → ∀ ψ : ℝ → ℝ,
       MemLp ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) →
       ∀ δ : ℝ, 0 < δ → τ - δ ≥ t0 → τ + δ ≤ t1 →
@@ -10839,10 +10748,10 @@ lemma rothe_slice_limit_ident
 /-- Limit identification for slice-weak. -/
 
 lemma slice_ident_asm
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (U_of : ℕ → ℕ → WeakH10)
-    (φ : ℕ → ℕ) (hφ : StrictMono φ)
+    (φ : ℕ → ℕ)
     (hLimsup : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 → ∀ ψ : ℝ → ℝ,
       MemLp ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) →
       ∀ δ : ℝ, 0 < δ → τ - δ ≥ t0 → τ + δ ≤ t1 →
@@ -10870,14 +10779,16 @@ lemma slice_ident_asm
              else (U_of (φ N) (Nat.floor ((τ - t0) / ((t1 - t0) / (φ N))) + 1)).toFun x) * ψ x)
         Filter.atTop (nhds L) →
         L = ∫ x in (0 : ℝ)..1, u τ x * ψ x := by
-  exact rothe_slice_limit_ident ht u (fun N k => (U_of N k).toFun) φ hφ hLimsup hLeb
+  exact rothe_slice_limit_ident u (fun N k => (U_of N k).toFun) φ hLimsup hLeb
 
 
+-- Kept as stated, not used by this proof: `hLebPairThm`, `hLimsupThm`.
+set_option linter.unusedVariables false in
 lemma rothe_slice_weak_final
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (U : ℕ → ℕ → (ℝ → ℝ))
-    (φm : ℕ → ℕ) (hφm : StrictMono φm)
+    (φm : ℕ → ℕ)
     (G : Set ℝ)
     (hCauchyThm : ∀ τ : ℝ, t0 < τ → τ < t1 → ∀ ψ : ℝ → ℝ,
       MemLp ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) →
@@ -10927,13 +10838,15 @@ lemma rothe_slice_weak_final
   exact hL
 
 
+-- Kept as stated, not used by this proof: `hLebPairThm`, `hLimsupThm`.
+set_option linter.unusedVariables false in
 lemma rothe_slice_weak_final_corrected
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (U : ℕ → ℕ → (ℝ → ℝ))
-    (φm : ℕ → ℕ) (hφm : StrictMono φm)
+    (φm : ℕ → ℕ)
     (G : Set ℝ)
-    (C₀ : ℝ) (hC₀ : 0 ≤ C₀)
+    (C₀ : ℝ)
     (hCauchyThm : ∀ τ : ℝ, t0 < τ → τ < t1 → ∀ ψ : ℝ → ℝ,
       MemLp ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) →
       CauchySeq (fun N : ℕ =>
@@ -10983,7 +10896,7 @@ lemma rothe_slice_weak_final_corrected
 
 
 lemma pairing_cs_bound
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -11481,7 +11394,7 @@ lemma timetrans_cs_bound
 
 
 lemma first_step_cs_bound
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (U : ℕ → ℕ → (ℝ → ℝ))
     (hMemUThm : ∀ (N : ℕ) (k : ℕ), MemLp (U N k) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
     (hStepThm : ∃ C : ℝ, 0 ≤ C ∧ ∀ (N : ℕ), 0 < N →
@@ -11551,10 +11464,12 @@ lemma integral_diff_mul_split
   simp only [sub_mul]
   exact intervalIntegral.integral_sub h1 h2
 
+-- Kept as stated, not used by this proof: `hMemThm`, `hSliceThm`.
+set_option linter.unusedVariables false in
 /-- Three-term assembly from the CS bounds. -/
 
 lemma pairing_limit_three_term_asm_fixed
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
@@ -11670,9 +11585,11 @@ lemma pairing_limit_three_term_asm_fixed
   linarith
 
 
+-- Kept as stated, not used by this proof: `hMemThm`.
+set_option linter.unusedVariables false in
 lemma init_layer_rep_value
     {t0 t1 : ℝ} (ht : t0 < t1)
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
+    {u0 : ℝ → ℝ}
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -11791,9 +11708,11 @@ lemma init_layer_rep_value
     linarith [h3, hsum]
 
 
+-- Kept as stated, not used by this proof: `hMemThm`.
+set_option linter.unusedVariables false in
 lemma init_layer_diagonal
     {t0 t1 : ℝ} (ht : t0 < t1)
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
+    {u0 : ℝ → ℝ}
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -12072,7 +11991,7 @@ lemma helper_cs_diff (a b c : ℝ → ℝ) (μ : Measure ℝ)
 /-- Good-point strong convergence of Rothe slices. -/
 
 lemma rothe_good_point_convergence_fixed
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -12307,6 +12226,8 @@ lemma exists_good_near_of_null
     exact ENNReal.ofReal_pos.mpr (sub_pos.mpr hab)
   exact not_le_of_gt hpos hmono
 
+-- Kept as stated, not used by this proof: `hMemThm`.
+set_option linter.unusedVariables false in
 /-- Good sequences with Cauchy slices. -/
 
 lemma rothe_good_cauchy_seq
@@ -12461,8 +12382,8 @@ lemma rothe_eLpNorm_toReal_eq_dist
 /-- Representative assembly from `Lp` limits + good sequences. -/
 
 lemma rothe_representative_asm
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
+    {t0 t1 : ℝ}
+    {u0 : ℝ → ℝ}
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -12651,8 +12572,7 @@ lemma rothe_representative_asm
 
 
 lemma rothe_representative_continuous_off_t0
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -12785,7 +12705,7 @@ lemma rothe_representative_continuous_off_t0
 
 
 lemma rothe_representative_slice_eq
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -13346,6 +13266,8 @@ lemma eLpNorm_diff_symm (U : ℕ → ℕ → (ℝ → ℝ)) (N a b : ℕ) :
   rw [hfun]
   rw [eLpNorm_neg]
 
+-- Kept as stated, not used by this proof: `hInterpThm`.
+set_option linter.unusedVariables false in
 /-- Time-translation estimate for Rothe interpolants. -/
 
 lemma rothe_timetrans_estimate
@@ -13722,8 +13644,10 @@ lemma rothe_timetrans_estimate
         exact Real.le_sqrt_of_sq_le hfinal_sq
 
 
+-- Kept as stated, not used by this proof: `hMemThm`, `hSliceWeakThm`.
+set_option linter.unusedVariables false in
 lemma rothe_timetrans_passage
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
       MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -13845,7 +13769,7 @@ lemma rothe_timetrans_passage
 /-- Slice pairing limit at `t0`. -/
 
 lemma slice_weak_t0_fixed2
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
     (u : ℝ → ℝ → ℝ)
     (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
@@ -14008,7 +13932,7 @@ lemma slice_weak_t0_fixed2
 
 
 lemma ae_prod_of_ae_slice
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u₁ u₂ : ℝ → ℝ → ℝ)
     (hMeasThm : AEStronglyMeasurable (fun p : ℝ × ℝ => u₁ p.1 p.2)
         (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
@@ -14374,11 +14298,9 @@ lemma fbar_sq_slab
 
 
 lemma slab_avg_sq_integral
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {f g : ℝ → ℝ → ℝ}
-    (hf : MemLp (Function.uncurry f) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-    (hg : MemLp (Function.uncurry g) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-    {N : ℕ} (hN : 0 < N)
+    {N : ℕ}
     (hSplit : (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
       ((if p.1 = t1 then (f p.1 p.2 - g p.1 p.2)
        else ((N : ℝ) / (t1 - t0)) * ∫ s in
@@ -14711,9 +14633,7 @@ lemma interp_slice_norm_weakDeriv
 
 lemma interp_eLpNorm_bounds
     {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    {F : ℝ → ℝ → ℝ}
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    {kmin : ℝ}
     (U_of : ℕ → ℕ → WeakH10)
     (hBoundsC : ∃ C : ℝ, 0 < C ∧ ∀ N : ℕ, 0 < N → ((t1 - t0) / N) * kmin < 1 →
       (∀ k, k ≤ N →
@@ -14870,10 +14790,9 @@ lemma interp_eLpNorm_bounds
 
 
 lemma interp_memLp_from_bounds
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (U_of : ℕ → ℕ → WeakH10)
-    (hToFunMemLp : ∀ h : WeakH10, MemLp h.toFun 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    {N : ℕ} (hN : 0 < N)
+    {N : ℕ}
     (hBoundTo : (eLpNorm (Function.uncurry (fun t x =>
         if t = t1 then (U_of N N).toFun x
         else (U_of N (Nat.floor ((t - t0) / ((t1 - t0) / (N : ℝ))) + 1)).toFun x)) 2
@@ -14947,9 +14866,9 @@ lemma integrable_slice_toFun_mul (U : WeakH10) (ψ : ℝ → ℝ)
 
 lemma bump_as_spacetime
     {t0 t1 : ℝ} (ht : t0 < t1)
-    (U_of : ℕ → ℕ → WeakH10) (u : ℝ → ℝ → ℝ) (φ : ℕ → ℕ) (hφ : StrictMono φ)
+    (U_of : ℕ → ℕ → WeakH10) (φ : ℕ → ℕ)
     {ψ : ℝ → ℝ} (hψ : MemLp ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    {N : ℕ} {τ : ℝ} (hτ0 : t0 < τ) (hτ1 : τ < t1) {δ : ℝ} (hδ : 0 < δ)
+    {N : ℕ} {τ : ℝ} {δ : ℝ} (hδ : 0 < δ)
     (hδ0 : t0 < τ - δ) (hδ1 : τ + δ < t1) :
     (1 / (2 * δ)) * ∫ t in (τ - δ)..(τ + δ),
         (∫ x in (0 : ℝ)..1, (if t = t1 then (U_of (φ N) (φ N)).toFun x
@@ -15203,10 +15122,10 @@ lemma bump_as_spacetime
 
 
 lemma bump_as_spacetime_u
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {w : ℝ → ℝ → ℝ} (hw : MemLp (Function.uncurry w) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
     {ψ : ℝ → ℝ} (hψ : MemLp ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    {τ : ℝ} (hτ0 : t0 < τ) (hτ1 : τ < t1) {δ : ℝ} (hδ : 0 < δ)
+    {τ : ℝ} {δ : ℝ} (hδ : 0 < δ)
     (hδ0 : t0 < τ - δ) (hδ1 : τ + δ < t1) :
     (1 / (2 * δ)) * ∫ t in (τ - δ)..(τ + δ), (∫ x in (0 : ℝ)..1, w t x * ψ x)
       = (1 / (2 * δ)) * ∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
@@ -15420,8 +15339,8 @@ lemma memLp_bumpIndicator (ψ : ℝ → ℝ) (hψ : MemLp ψ 2 (volume.restrict 
 /-- Bump-average convergence, assembled. -/
 
 lemma bump_pairing_tendsto
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    (U_of : ℕ → ℕ → WeakH10) (u : ℝ → ℝ → ℝ) (φ : ℕ → ℕ) (hφ : StrictMono φ)
+    {t0 t1 : ℝ}
+    (U_of : ℕ → ℕ → WeakH10) (u : ℝ → ℝ → ℝ) (φ : ℕ → ℕ)
     (hWeakU : ∀ ψ : ℝ → ℝ → ℝ,
         MemLp (Function.uncurry ψ) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
         Filter.Tendsto (fun N : ℕ =>
@@ -15661,7 +15580,7 @@ lemma abs_sub_le_three (a b1 b2 c : ℝ) :
 /-- Cauchy of pairings from equicontinuity + bump convergence. -/
 
 lemma slice_cauchy_asm
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (U_of : ℕ → ℕ → WeakH10) (u : ℝ → ℝ → ℝ) (φ : ℕ → ℕ) (hφ : StrictMono φ)
     {ψ : ℝ → ℝ} (hψ : MemLp ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
     {τ : ℝ} (hτ0 : t0 < τ) (hτ1 : τ < t1)
@@ -15978,8 +15897,8 @@ lemma sliceFubini {t0 t1 : ℝ} (P : ℕ → ℝ → ℝ) (Q : ℝ → ℝ)
 
 lemma integrated_ibp
     {t0 t1 : ℝ} (ht : t0 < t1)
-    (U_of : ℕ → ℕ → WeakH10) (φ : ℕ → ℕ) (hφ : StrictMono φ)
-    {ζ : ℝ → ℝ} (hζcont : Continuous ζ) (hζsupp : HasCompactSupport ζ)
+    (U_of : ℕ → ℕ → WeakH10) (φ : ℕ → ℕ)
+    {ζ : ℝ → ℝ} (hζcont : Continuous ζ)
     {N : ℕ} {v : WeakH10} :
     (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
       (if p.1 = t1 then (U_of (φ N) (φ N)).toFun p.2
@@ -16093,8 +16012,8 @@ lemma memLp_uncurry_mul (t0 t1 : ℝ) (ζ g : ℝ → ℝ)
 /-- Weak passage of the integrated IbP. -/
 
 lemma ibp_weak_passage
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    (U_of : ℕ → ℕ → WeakH10) (u ux : ℝ → ℝ → ℝ) (φ : ℕ → ℕ) (hφ : StrictMono φ)
+    {t0 t1 : ℝ}
+    (U_of : ℕ → ℕ → WeakH10) (u ux : ℝ → ℝ → ℝ) (φ : ℕ → ℕ)
     (hWeakU : ∀ ψ : ℝ → ℝ → ℝ,
         MemLp (Function.uncurry ψ) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
         Filter.Tendsto (fun N : ℕ =>
@@ -16177,7 +16096,7 @@ lemma ibp_weak_passage
 
 
 lemma ibp_rep_transfer
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (u ux : ℝ → ℝ → ℝ) (ũ : ℝ → ℝ → ℝ)
     (hIbP : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 → ∀ v : WeakH10,
       (∫ x in (0 : ℝ)..1, u τ x * v.weakDeriv x)
@@ -16219,7 +16138,7 @@ lemma ibp_rep_transfer
 
 
 lemma slice_mean_op_bounded
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     {w : ℝ → ℝ → ℝ} (hw : MemLp (Function.uncurry w) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))) :
     MemLp (fun t => ∫ x in (0 : ℝ)..1, w t x) 2 (volume.restrict (Set.Icc t0 t1))
     ∧ (eLpNorm (fun t => ∫ x in (0 : ℝ)..1, w t x) 2 (volume.restrict (Set.Icc t0 t1))).toReal
@@ -16303,7 +16222,7 @@ lemma slice_mean_op_bounded
 lemma slice_mean_zero_ae
     {t0 t1 : ℝ} (ht : t0 < t1)
     (U_of : ℕ → ℕ → WeakH10) (ux : ℝ → ℝ → ℝ)
-    (φ : ℕ → ℕ) (hφ : StrictMono φ)
+    (φ : ℕ → ℕ)
     (hMemUx : MemLp (Function.uncurry ux) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
     (hWeakUx : ∀ ψ : ℝ → ℝ → ℝ,
         MemLp (Function.uncurry ψ) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
@@ -16314,11 +16233,7 @@ lemma slice_mean_zero_ae
                 * ψ p.1 p.2
                 ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
           Filter.atTop (nhds (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-            ux p.1 p.2 * ψ p.1 p.2 ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))))
-    (hPairUx : ∀ w : ℝ → ℝ, MemLp w 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) →
-      ∃ ĝ : ℝ → ℝ, Continuous ĝ ∧
-        (fun t => ∫ x in (0 : ℝ)..1, ux t x * w x)
-          =ᵐ[volume.restrict (Set.Icc t0 t1)] ĝ) :
+            ux p.1 p.2 * ψ p.1 p.2 ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))))) :
     ∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)), (∫ x in (0 : ℝ)..1, ux t x) = 0 := by
   have hμr : volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)
       = (volume.restrict (Set.Icc t0 t1)).prod (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
@@ -16329,7 +16244,7 @@ lemma slice_mean_zero_ae
     norm_num
   have hMemM : MemLp (fun t => ∫ x in (0 : ℝ)..1, ux t x) 2
       (volume.restrict (Set.Icc t0 t1)) :=
-    (slice_mean_op_bounded ht hMemUx).1
+    (slice_mean_op_bounded hMemUx).1
   have hfunUx : ∀ t : ℝ, (∫ x, ux t x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)))
       = ∫ x in (0 : ℝ)..1, ux t x := by
     intro t
@@ -16885,7 +16800,7 @@ lemma fubini_ibp (g h V : ℝ → ℝ)
 
 
 lemma profiles_of_ibp
-    {t0 t1 : ℝ} (ht : t0 < t1)
+    {t0 t1 : ℝ}
     (ũ ux : ℝ → ℝ → ℝ)
     (hMemUx : ∀ t : ℝ, t ∈ Set.Icc t0 t1 →
       MemLp (fun x => ux t x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
@@ -17126,8 +17041,6 @@ lemma grad_rep_bad_t_fixed
         ∀ t ∈ G, (∫ x in (0 : ℝ)..1, ux t x * w x) = ĝ t)
     (hBdd : ∃ C : ℝ, 0 ≤ C ∧ ∀ t : ℝ, t ∈ Set.Icc t0 t1 →
       eLpNorm (fun x => ux t x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) ≤ ENNReal.ofReal C)
-    (hGood : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 → ∃ s : ℕ → ℝ,
-      (∀ n : ℕ, s n ∈ G) ∧ Filter.Tendsto s Filter.atTop (nhds τ))
     (hMean0 : ∀ (ĝ : ℝ → ℝ), Continuous ĝ →
       (∀ t ∈ G, (∫ x in (0 : ℝ)..1, ux t x * 1) = ĝ t) → ∀ t : ℝ, ĝ t = 0) :
     ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 → ∃ w : ℝ → ℝ,
@@ -17265,8 +17178,7 @@ lemma grad_rep_bad_t_fixed
 
 
 lemma approx_id_tendsto
-    {τ : ℝ} {ĝ : ℝ → ℝ} (hĝ : Continuous ĝ)
-    {δ : ℝ} (hδ : 0 < δ) :
+    {τ : ℝ} {ĝ : ℝ → ℝ} (hĝ : Continuous ĝ) :
     Filter.Tendsto (fun δ' : ℝ => (1 / (2 * δ')) * ∫ t in (τ - δ')..(τ + δ'), ĝ t)
       (nhdsWithin 0 (Set.Ioi 0)) (nhds (ĝ τ)) := by
   rw [Metric.tendsto_nhds]
@@ -17742,7 +17654,6 @@ theorem weak_parabolic_exists_unique_conditional
     (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
       kmin ≤ κ p.1 p.2 ∧ κ p.1 p.2 ≤ kmax)
     {F : ℝ → ℝ → ℝ}
-    (hF : MemLp (Function.uncurry F) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
     {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
     (hExist : ∃ u ux : ℝ → ℝ → ℝ,
       (∀ t, ∃ h : WeakH10, h.toFun = u t ∧ h.weakDeriv = ux t)
