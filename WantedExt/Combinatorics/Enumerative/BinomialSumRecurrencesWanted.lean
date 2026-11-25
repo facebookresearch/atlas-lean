@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.RingTheory.PowerSeries.Inverse
 public import MathlibExt.Combinatorics.Enumerative.BinomialSumRecurrences
 public import MathlibExt.Combinatorics.Enumerative.CatalanTriangleStepFive
+public import MathlibExt.Combinatorics.Enumerative.RootsOfUnityProduct
 
 /-!
 # Recurrences for step-`k` sums of binomial coefficients and Riordan arrays
@@ -29,22 +30,6 @@ namespace MetaMathlibExt
 open Polynomial
 
 @[expose] public section
-
-/-- **Roots-of-unity products of integer polynomials.** Let $f \in \mathbb{Z}[x]$ have degree
-$r$, let $k > 0$ be a natural number and let $\omega = e^{2\pi i/k}$. Then there are
-$G, T \in \mathbb{Z}[x]$ such that $G(x) = f(\omega x) f(\omega^2 x) \cdots f(\omega^{k-1} x)$
-as polynomials over $\mathbb{C}$, $T$ has degree $r$, and $f(x) G(x) = T(x^k)$.
-
-Source: Eduardo H. M. Brietzke, *Recurrence Relations for Sums of Binomial Coefficients and
-Some Generalizations*, Journal of Integer Sequences 27 (2024), Article 24.3.4, Proposition 2. -/
-public theorem_wanted rootsOfUnity_product_mul_eq_comp_pow (f : ℤ[X]) (r k : ℕ) (hk : 0 < k)
-    (hf : f.degree = r) :
-    ∃ G T : ℤ[X],
-      G.map (Int.castRingHom ℂ) =
-        ∏ j ∈ Finset.Ico 1 k,
-          (f.map (Int.castRingHom ℂ)).comp
-            (C (Complex.exp (2 * Real.pi * Complex.I / k) ^ j) * X) ∧
-      T.natDegree = r ∧ f * G = T.comp (X ^ k)
 
 /-- **Window criterion for step sums of binomial coefficients.** Let $\alpha, k, \gamma, p, s$
 be natural numbers with $\alpha > 1$, $k > 1$, $\gamma \ge 1$ and $p < k$, and let

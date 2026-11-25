@@ -52,7 +52,9 @@ def IsMixed {ι : Type*} [Fintype ι] (p : ι → ℝ) : Prop := (∀ i, 0 ≤ p
 
 /-- `p` is an **evolutionarily stable strategy** of the matrix game `A` (Maynard Smith): `p` is
 mixed and for every mixed `q ≠ p`, either `qᵀ A p < pᵀ A p`, or `qᵀ A p = pᵀ A p` and
-`qᵀ A q < pᵀ A q`. -/
+`qᵀ A q < pᵀ A q`. This is definitionally the library's predicate
+`MathlibExt.Biology.Dynamics.Replicator.IsESS` (in `Domains.Biology.Dynamics.ReplicatorStability`),
+restated here because `WantedExt` may not import `Domains`. -/
 def IsESS {ι : Type*} [Fintype ι] (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
   IsMixed p ∧ ∀ q, IsMixed q → q ≠ p →
     q ⬝ᵥ (A *ᵥ p) < p ⬝ᵥ (A *ᵥ p) ∨

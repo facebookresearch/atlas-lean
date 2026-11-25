@@ -47,24 +47,6 @@ public theorem_wanted exists_eq_of_ncard_twoGeneratorReps {c d : ℕ} (hc : 0 < 
     (hcd : c.Coprime d) (n ℓ : ℕ) (hℓ : {p : ℕ × ℕ | c * p.1 + d * p.2 = n}.ncard = ℓ) :
     ∃ x₀ < d, ∃ y₀ < c, (n : ℤ) = ((ℓ : ℤ) - 1) * c * d + c * x₀ + d * y₀
 
-/-- **Counting primes with more than $\ell$ representations.** Let $c$ and $d$ be coprime
-natural numbers with $1 < c < d$, let $\ell$ be a natural number, and put
-$g_\ell(c, d) = (\ell + 1)cd - c - d$. Write $\pi_{\ell,c,d}$ for the number of primes
-$n \le g_\ell(c, d)$ such that the equation $n = cx + dy$ has more than $\ell$ solutions
-$(x, y)$ in natural numbers. Then $\pi_{\ell,c,d}$ equals the number of primes $n$ with
-$\ell cd < n \le g_\ell(c, d)$ of the form $n = \ell cd + cx_0 + dy_0$ for some natural numbers
-$x_0 \le d$ and $y_0 \le c$.
-
-Source: Yuchen Ding and Takao Komatsu, *On a Conjecture of Ramírez Alfonsín and
-Skałba, III*, INTEGERS 25 (2025), Article A51, Lemma 3 (`integers-2025-A51-lem-3`),
-with `g_ℓ(c, d)` from equation (1). -/
-public theorem_wanted card_primes_ellNumericalSemigroup_eq {c d : ℕ} (hc : 1 < c) (hcd : c < d)
-    (hcop : c.Coprime d) (ℓ : ℕ) :
-    ((Finset.range ((ℓ + 1) * c * d - c - d + 1)).filter fun n =>
-        n.Prime ∧ ℓ < {p : ℕ × ℕ | c * p.1 + d * p.2 = n}.ncard).card =
-      ((Finset.Ioc (ℓ * c * d) ((ℓ + 1) * c * d - c - d)).filter fun n =>
-        n.Prime ∧ ∃ x₀ ≤ d, ∃ y₀ ≤ c, n = ℓ * c * d + c * x₀ + d * y₀).card
-
 /-- **Weighted count of primes in the $\ell$-numerical semigroup.** For every natural number
 $\ell$ and every $\varepsilon > 0$ there is a natural number $C$ such that the following holds
 for all coprime natural numbers $c$ and $d$ with $C \le c < d$. For a natural number $k$ put

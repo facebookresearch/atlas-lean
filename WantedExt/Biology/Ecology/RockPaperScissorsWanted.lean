@@ -49,9 +49,14 @@ losses `aᵢ` and wins `bᵢ` (indices `0, 1, 2` for strategies `1, 2, 3`). -/
 def rpsMatrix (a b : Fin 3 → ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
   !![0, -a 1, b 2; b 0, 0, -a 2; -a 0, b 1, 0]
 
-/-- `x` solves the **replicator equation** `xᵢ' = xᵢ ((A x)ᵢ - xᵀ A x)` on `[0, ∞)`. -/
+/-- `x` solves the **replicator equation** `xᵢ' = xᵢ ((A x)ᵢ - ∑ⱼ xⱼ (A x)ⱼ)` on `[0, ∞)`,
+coordinatewise. This is the condition of the library's replicator-equation predicate
+`MathlibExt.Biology.Dynamics.Replicator.IsSolution` (in
+`Domains.Biology.Dynamics.Replicator`) for the linear fitness `fun z => A *ᵥ z`, whose mean
+fitness is `∑ⱼ xⱼ (A x)ⱼ`; it is restated here because `WantedExt` may not import `Domains`. -/
 def IsSolution (A : Matrix (Fin 3) (Fin 3) ℝ) (x : ℝ → Fin 3 → ℝ) : Prop :=
-  ∀ t : ℝ, 0 ≤ t → HasDerivAt x (fun i => x t i * ((A *ᵥ x t) i - x t ⬝ᵥ (A *ᵥ x t))) t
+  ∀ i t, 0 ≤ t →
+    HasDerivAt (fun s => x s i) (x t i * ((A *ᵥ x t) i - ∑ j, x t j * (A *ᵥ x t) j)) t
 
 /-- `z` is in the **interior of the simplex** `S₃`: every `zᵢ > 0` and `∑ zᵢ = 1`. -/
 def InInterior (z : Fin 3 → ℝ) : Prop := (∀ i, 0 < z i) ∧ ∑ i, z i = 1

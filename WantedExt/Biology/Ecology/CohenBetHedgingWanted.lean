@@ -13,7 +13,7 @@ A seed bank grows by `n(t + 1) = (H Yₜ + (1 - H) s) n(t)`, where a fraction `H
 germinates and yields `Yₜ` seeds each, the rest stays dormant with survival `0 < s < 1`, and the
 yields `Yₜ` are independent and identically distributed. The long-run growth rate is
 `ρ(H) = E[log(H Y + (1 - H) s)]`. Cohen (1966), as presented by Ellner, showed that `ρ` is
-concave, strictly so when `Y` is not almost surely constant, and that its left derivative at
+concave, strictly so unless `Y = s` almost surely, and that its left derivative at
 `H = 1` is `1 - s E[1/Y]`; hence full germination is optimal if and only if `s E[1/Y] ≤ 1`, and
 bet-hedging dormancy (`H* < 1`) is favored if and only if `s E[1/Y] > 1`.
 
@@ -60,15 +60,16 @@ public theorem_wanted full_germination_optimal_iff {Ω : Type*} [MeasurableSpace
 
 /-- **Strict concavity of the long-run growth rate** (Cohen 1966; Ellner, chapter 2): under the
 hypotheses of the criterion (`μ` a probability measure, `0 < s < 1`, `Y` measurable with `Y > 0`
-and `log Y`, `1 / Y` integrable), if moreover `Y` is not almost surely constant (there is no `c`
-with `Y = c` almost everywhere), then `ρ(H) = E[log(H Y + (1 - H) s)]` is strictly concave on
-`[0, 1]`.
+and `log Y`, `1 / Y` integrable), if moreover `Y` is not almost surely equal to the dormant
+survival `s` (it is not the case that `Y = s` almost everywhere), then
+`ρ(H) = E[log(H Y + (1 - H) s)]` is strictly concave on `[0, 1]`. (If `Y = s` almost surely,
+`ρ` is the constant `log s`.)
 
 Sources: Cohen (1966); Ellner, chapter 2. -/
 public theorem_wanted growthRate_strictConcaveOn {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (s : ℝ) (hs₀ : 0 < s) (hs₁ : s < 1) (Y : Ω → ℝ)
     (hY : Measurable Y) (hpos : ∀ ω, 0 < Y ω) (hlog : Integrable (fun ω => Real.log (Y ω)) μ)
-    (hinv : Integrable (fun ω => (Y ω)⁻¹) μ) (hnc : ¬ ∃ c : ℝ, Y =ᵐ[μ] fun _ => c) :
+    (hinv : Integrable (fun ω => (Y ω)⁻¹) μ) (hns : ¬ Y =ᵐ[μ] fun _ => s) :
     StrictConcaveOn ℝ (Set.Icc 0 1) (growthRate μ Y s)
 
 end WantedExt.Biology.Ecology.CohenBetHedgingWanted
