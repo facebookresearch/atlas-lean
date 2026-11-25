@@ -7,3 +7,4 @@
 - [Spectral Integral commute](spectral-integral-commute.md)
 - [Spectral Integral is Star Normal](spectral-integral-is-star-normal.md)
 - [Tendsto spectral Integral](tendsto-spectral-integral.md)
+- [Integral Representation](mellin-gaussian-laplace-eq-parabolic-cyl.md)

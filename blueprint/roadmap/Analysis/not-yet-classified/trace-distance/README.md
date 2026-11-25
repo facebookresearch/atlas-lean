@@ -1,0 +1,16 @@
+# Trace Distance
+
+- [Trace Norm Dist](trace-norm-dist.md)
+- [Trace Norm Dist def](trace-norm-dist-def.md)
+- [Trace Dist](trace-dist.md)
+- [Trace Dist def](trace-dist-def.md)
+- [Trace Dist eq half trace Norm Dist](trace-dist-eq-half-trace-norm-dist.md)
+- [Trace Norm Dist eq two mul trace Dist](trace-norm-dist-eq-two-mul-trace-dist.md)
+- [Trace Norm Dist nonneg](trace-norm-dist-nonneg.md)
+- [Trace Dist nonneg](trace-dist-nonneg.md)
+- [Trace Norm Dist self](trace-norm-dist-self.md)
+- [Trace Dist self](trace-dist-self.md)
+- [Trace Norm Dist comm](trace-norm-dist-comm.md)
+- [Trace Dist comm](trace-dist-comm.md)
+- [Trace Norm Dist eq zero iff](trace-norm-dist-eq-zero-iff.md)
+- [Trace Dist eq zero iff](trace-dist-eq-zero-iff.md)
