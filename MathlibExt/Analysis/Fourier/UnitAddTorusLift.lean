@@ -122,7 +122,7 @@ instance (ι : Type*) [Fintype ι] : (torusMeasure ι).IsAddHaarMeasure :=
 addition is the product Haar measure. -/
 theorem eq_torusMeasure {ι : Type*} [Fintype ι] (P : Measure (UnitAddTorus ι))
     [IsProbabilityMeasure P] [P.IsAddLeftInvariant] : P = torusMeasure ι := by
-  haveI : P.IsAddHaarMeasure :=
+  have : P.IsAddHaarMeasure :=
     Measure.isAddHaarMeasure_of_isCompact_nonempty_interior P Set.univ
       isCompact_univ (by rw [interior_univ]; exact Set.univ_nonempty)
       (by rw [measure_univ]; exact one_ne_zero)
@@ -132,14 +132,14 @@ theorem eq_torusMeasure {ι : Type*} [Fintype ι] (P : Measure (UnitAddTorus ι)
 /-- The pushforward of a probability measure along a map to a unit torus
 is the product Haar measure whenever the pushforward is invariant under
 left addition. -/
-theorem map_eq_torusMeasure {A : Type*} [AddCommGroup A] [TopologicalSpace A]
+theorem map_eq_torusMeasure {A : Type*} [AddCommGroup A]
     [MeasurableSpace A] {ι : Type*} [Fintype ι] {Θ : A →+ UnitAddTorus ι}
     {P : Measure A} [IsProbabilityMeasure P] (hΘm : AEMeasurable Θ P)
     (hinv : (Measure.map Θ P).IsAddLeftInvariant) :
     Measure.map Θ P = torusMeasure ι := by
-  haveI : IsProbabilityMeasure (Measure.map Θ P) :=
+  have : IsProbabilityMeasure (Measure.map Θ P) :=
     (Measure.isProbabilityMeasure_map_iff hΘm).mpr inferInstance
-  haveI : (Measure.map Θ P).IsAddLeftInvariant := hinv
+  have : (Measure.map Θ P).IsAddLeftInvariant := hinv
   exact eq_torusMeasure _
 
 end UnitAddTorus

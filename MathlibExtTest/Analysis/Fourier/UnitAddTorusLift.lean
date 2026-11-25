@@ -49,7 +49,7 @@ example {ι : Type*} [Fintype ι] (P : Measure (UnitAddTorus ι))
     [IsProbabilityMeasure P] [P.IsAddLeftInvariant] : P = torusMeasure ι :=
   eq_torusMeasure P
 
-example {A : Type*} [AddCommGroup A] [TopologicalSpace A] [MeasurableSpace A]
+example {A : Type*} [AddCommGroup A] [MeasurableSpace A]
     {ι : Type*} [Fintype ι] {Θ : A →+ UnitAddTorus ι} {P : Measure A}
     [IsProbabilityMeasure P] (hΘm : AEMeasurable Θ P)
     (hinv : (Measure.map Θ P).IsAddLeftInvariant) :
