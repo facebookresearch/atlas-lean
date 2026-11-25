@@ -60,6 +60,15 @@ theorem AlgebraicGeometry.GeometricallyIrreducible.geometricallyConnected
   have : IrreducibleSpace X' := hg hI hS
   infer_instance
 
+-- Every geometric fiber `X ×[Y] Spec K` of a geometrically connected
+-- morphism is connected; as an instance, typeclass search supplies it.
+instance AlgebraicGeometry.GeometricallyConnected.connectedSpace_pullback
+    {X Y : Scheme.{u}} (f : X ⟶ Y) [GeometricallyConnected f]
+    (K : Type u) [Field K] (k : Spec (.of K) ⟶ Y) :
+    ConnectedSpace ↥(Limits.pullback f k) :=
+  pullback_of_geometrically
+    GeometricallyConnected.geometrically_connectedSpace K k
+
 /-- Geometric connectedness of a composite `f ≫ g` descends to `g` when
 `f` is surjective: every geometric fiber of `g` is a continuous surjective
 image of the corresponding fiber of the composite. -/
@@ -68,13 +77,10 @@ theorem AlgebraicGeometry.GeometricallyConnected.of_comp_of_surjective
     [GeometricallyConnected (f ≫ g)] [Surjective f] :
     GeometricallyConnected g := by
   refine ⟨geometrically_iff_of_isClosedUnderIsomorphisms.mpr fun K _ k ↦ ?_⟩
-  have hX : ConnectedSpace ↥(Limits.pullback (f ≫ g) k) :=
-    pullback_of_geometrically
-      (GeometricallyConnected.geometrically_connectedSpace (f := f ≫ g)) K k
   let φ : Limits.pullback (f ≫ g) k ⟶ Limits.pullback g k :=
     Limits.pullback.map (f ≫ g) k g k f (𝟙 _) (𝟙 Z)
       (Category.comp_id _) (by simp)
-  haveI : MorphismProperty.IsStableUnderComposition (@Surjective.{u}) :=
+  have : MorphismProperty.IsStableUnderComposition (@Surjective.{u}) :=
     ⟨fun {X Y Z} f g hf hg => letI := hf; letI := hg; inferInstance⟩
   have hφ : Surjective φ :=
     MorphismProperty.pullbackMap (P := @Surjective.{u}) ‹Surjective f›
