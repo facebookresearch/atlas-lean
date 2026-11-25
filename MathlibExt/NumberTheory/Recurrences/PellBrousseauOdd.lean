@@ -10,26 +10,16 @@ module
 
 public import MathlibExt.NumberTheory.PellNumberSequence
 public import MathlibExt.NumberTheory.Recurrences.KFibonacciBrousseauSums
-import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.NumberTheory.Recurrences.Internal.BrousseauSum
-import MathlibExt.NumberTheory.Recurrences.LucasBinetFormula
+import MathlibExt.NumberTheory.Recurrences.SubsequenceSecondOrderRecurrence
 
 /-! # Brousseau sums of Pell numbers along odd multiples -/
 
 namespace MetaMathlibExt
 
 namespace pell_brousseau_sum_mul_odd
-
-private lemma lucasU_eq_pellNumber (n : ℕ) :
-    lucasU ⟨2, -1, by decide⟩ n = (pellNumber n : ℤ) := by
-  induction n using Nat.twoStepInduction with
-  | zero => rfl
-  | one => rfl
-  | more n ih₀ ih₁ =>
-    rw [lucasU_add_two, ih₀, ih₁, pellNumber]
-    push_cast
-    ring
 
 private lemma pellLucas_pos (m : ℕ) : 0 < lucasV ⟨2, -1, by decide⟩ m := by
   induction m using Nat.twoStepInduction with
@@ -40,33 +30,24 @@ private lemma pellLucas_pos (m : ℕ) : 0 < lucasV ⟨2, -1, by decide⟩ m := b
       (-1) * lucasV ⟨2, -1, by decide⟩ m
     simpa only [neg_one_mul, sub_neg_eq_add] using add_pos (mul_pos (by decide) ih₁) ih₀
 
--- Odd powers of the two Pell roots have product −1, so the subsequence again has a +1 recurrence.
+-- For an odd stride, the power of the second Lucas parameter is still −1.
 private lemma pell_step (m : ℕ) (hm : Odd m) (n : ℕ) :
     (pellNumber (m * (n + 2)) : ℚ) =
       (lucasV ⟨2, -1, by decide⟩ m : ℚ) * pellNumber (m * (n + 1)) + pellNumber (m * n) := by
-  let a : ℝ := 1 + Real.sqrt 2
-  let b : ℝ := 1 - Real.sqrt 2
-  have hs : 0 < Real.sqrt 2 := Real.sqrt_pos.2 (by norm_num)
-  have hp : a * b = -1 := by
-    dsimp [a, b]
-    linear_combination -(Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2))
-  have hab : a ≠ b := by
-    dsimp [a, b]
-    linarith
-  have hB := (lucas_binet_formulas_of_field ⟨2, -1, by decide⟩ a b
-    (by norm_num [a, b]) (by simpa using hp)).1 hab
-  have hP (i : ℕ) : (pellNumber i : ℝ) = (a ^ i - b ^ i) / (a - b) := by
-    simpa only [lucasU_eq_pellNumber, Int.cast_natCast] using (hB i).1
-  have hprod : a ^ m * b ^ m = -1 := by rw [← mul_pow, hp, hm.neg_one_pow]
-  have h : (pellNumber (m * (n + 2)) : ℝ) =
-      (lucasV ⟨2, -1, by decide⟩ m : ℝ) * pellNumber (m * (n + 1)) + pellNumber (m * n) := by
-    simp only [hP, (hB m).2, pow_mul, pow_add, pow_one]
-    field_simp [sub_ne_zero.mpr hab]
-    linear_combination ((b ^ m) ^ n - (a ^ m) ^ n) * hprod
-  have hInt : (pellNumber (m * (n + 2)) : ℤ) =
-      lucasV ⟨2, -1, by decide⟩ m * pellNumber (m * (n + 1)) + pellNumber (m * n) := by
-    exact_mod_cast h
-  exact_mod_cast hInt
+  let params : LucasSequenceParams := ⟨2, -1, by decide⟩
+  let w (i : ℕ) : ℤ := pellNumber i
+  have hw (i : ℕ) : w (i + 2) = params.p * w (i + 1) - params.q * w i := by
+    change (pellNumber (i + 2) : ℤ) = 2 * pellNumber (i + 1) - (-1) * pellNumber i
+    rw [pellNumber]
+    simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, neg_one_mul, sub_neg_eq_add]
+  have hm_pos : 0 < m := by
+    obtain ⟨j, hj⟩ := hm
+    omega
+  have h := (subsequence_secondOrderRecurrence params w hw m 0 hm_pos).1 n
+  change (pellNumber (m * (n + 2) + 0) : ℤ) =
+    lucasV params m * pellNumber (m * (n + 1) + 0) - (-1 : ℤ) ^ m * pellNumber (m * n + 0) at h
+  simp only [Nat.add_zero, hm.neg_one_pow, neg_one_mul, sub_neg_eq_add] at h
+  exact_mod_cast h
 
 end pell_brousseau_sum_mul_odd
 
