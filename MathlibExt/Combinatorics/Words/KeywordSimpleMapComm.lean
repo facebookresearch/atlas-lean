@@ -262,4 +262,119 @@ public theorem keywordSimpleMap_comm_iff {m n : ℕ} (a : Fin (m + 1) → Bool)
       · exact iff_of_false (fun h => excl (applicable_self a i hI) h) (fun h => excl hI h)
       · rw [keywordSimpleMap_of_not_applicable a i u hI]
 
+namespace keywordSimpleMap_comm_iff
+
+private theorem applicable_of_ne {m n : ℕ} (a : Fin (m + 1) → Bool)
+    (i : ℕ) (u : Fin n → Bool) (h : keywordSimpleMap a i u ≠ u) : KeywordApplicable a i u := by
+  by_contra hn
+  exact h (keywordSimpleMap_of_not_applicable a i u hn)
+
+-- Complete action splits at a concatenation, with the suffix starting on the new word.
+private theorem actsCompletely_append {m n : ℕ} (a : Fin (m + 1) → Bool)
+    (l r : List ℕ) (u : Fin n → Bool) :
+    KeywordActsCompletely a (l ++ r) u ↔
+      KeywordActsCompletely a l u ∧ KeywordActsCompletely a r (keywordListApply a l u) := by
+  induction l generalizing u with
+  | nil => simp only [List.nil_append, KeywordActsCompletely, keywordListApply, true_and]
+  | cons j l ih =>
+    simp only [List.cons_append, KeywordActsCompletely, keywordListApply, ih, and_assoc]
+
+-- A list starting all its windows to the right of `k` does not change that letter.
+private theorem listApply_eq_of_lt {m n : ℕ} (a : Fin (m + 1) → Bool)
+    (l : List ℕ) (u : Fin n → Bool) (k : Fin n) (h : ∀ j ∈ l, k.val < j) :
+    keywordListApply a l u k = u k := by
+  induction l generalizing u with
+  | nil => rfl
+  | cons j l ih =>
+    have hj := h j List.mem_cons_self
+    rw [keywordListApply, ih _ (fun t ht => h t (List.mem_cons_of_mem _ ht)),
+      apply_of_not_mem a j u k (by omega)]
+
+-- If all moves act, only moves starting at `k` can flip `k` when it is a lower bound.
+private theorem listApply_eq_iff_even_count {m n : ℕ} (a : Fin (m + 1) → Bool)
+    (l : List ℕ) (u : Fin n → Bool) (k : Fin n) (hmin : ∀ j ∈ l, k.val ≤ j)
+    (hacts : KeywordActsCompletely a l u) :
+    keywordListApply a l u k = u k ↔ Even (l.count k.val) := by
+  induction l generalizing u with
+  | nil => simp [keywordListApply]
+  | cons j l ih =>
+    have hj := hmin j List.mem_cons_self
+    have ht := ih (keywordSimpleMap a j u) (fun t ht => hmin t (List.mem_cons_of_mem _ ht)) hacts.2
+    rw [keywordListApply]
+    by_cases heq : j = k.val
+    · subst j
+      have ha := applicable_of_ne a k.val u hacts.1
+      have hflip : keywordSimpleMap a k.val u k = !u k := by
+        rw [keywordSimpleMap_apply_of_applicable a k.val u ha,
+          ite_eq_left ⟨le_rfl, Nat.le_add_right _ _⟩]
+      rw [List.count_cons_self, Nat.even_add_one, ← ht, hflip, Bool.eq_not, not_not]
+    · rw [List.count_cons_of_ne heq, ← ht, apply_of_not_mem a j u k (by omega)]
+
+end keywordSimpleMap_comm_iff
+
+open keywordSimpleMap_comm_iff in
+/-- **Parity of the smallest index in a non-commuting list.** Let $a$ be a binary keyword of
+length $m + 1$, let $n$ and $i$ be natural numbers with $i < n$, and for each index $k$ let
+$\varphi_k$ be the simple map of $a$ at letter $k$ on binary words of length $n$. Let
+$l = [j_1, \dots, j_r]$ be a list of indices that are all greater than $i$, and let
+$\varphi_l = \varphi_{j_r} \circ \dots \circ \varphi_{j_1}$ be the map that applies
+$\varphi_{j_1}$ first. Suppose that $\varphi_i \circ \varphi_l \ne \varphi_l \circ \varphi_i$
+as maps on words of length $n$, and that the list $[i, j_1, \dots, j_r, i]$, applied from left
+to right, acts completely on some word of length $n$ (each map in turn changes the word). Then
+every entry $j$ of $l$ with $j \le j'$ for all entries $j'$ of $l$ occurs an even number of
+times in $l$.
+
+Source: Erik Bates, Blan Morrison, Mason Rogers, Arianna Serafini and Anav Sood,
+*A New Combinatorial Interpretation of Partial Sums of m-Step Fibonacci Numbers*,
+Journal of Integer Sequences 28 (2025), Article 25.6.6, Lemma 8
+(`jis-2025-25.6.6-lem-8`). -/
+public theorem even_count_min_of_keywordActsCompletely {m n : ℕ}
+    (a : Fin (m + 1) → Bool) (i : ℕ) (hi : i < n) (l : List ℕ) (hl : ∀ j ∈ l, i < j)
+    (hcomm : (fun u : Fin n → Bool => keywordSimpleMap a i (keywordListApply a l u)) ≠
+      fun u => keywordListApply a l (keywordSimpleMap a i u))
+    (hacts : ∃ x : Fin n → Bool, KeywordActsCompletely a (i :: (l ++ [i])) x) :
+    ∀ j ∈ l, (∀ j' ∈ l, j ≤ j') → Even (l.count j) := by
+  intro j hj hmin
+  -- If even the first possible window is disjoint, every inner map commutes with the outer one.
+  have hjwin : j ≤ i + m := by
+    by_contra h
+    have commute (s : List ℕ) (hs : ∀ k ∈ s, i + m < k) (u : Fin n → Bool) :
+        keywordSimpleMap a i (keywordListApply a s u) =
+          keywordListApply a s (keywordSimpleMap a i u) := by
+      induction s generalizing u with
+      | nil => rfl
+      | cons k s ih =>
+        have hk := hs k List.mem_cons_self
+        have hkcomm (v : Fin n → Bool) :
+            keywordSimpleMap a i (keywordSimpleMap a k v) =
+              keywordSimpleMap a k (keywordSimpleMap a i v) := by
+          by_cases hkn : k + m < n
+          · exact congrFun ((keywordSimpleMap_comm_iff a i k (by omega) hkn).2
+              (Or.inr (by omega))) v
+          · have hid (w : Fin n → Bool) : keywordSimpleMap a k w = w :=
+              keywordSimpleMap_of_not_applicable a k w (fun ha => hkn ha.choose)
+            rw [hid, hid]
+        rw [keywordListApply, keywordListApply,
+          ih (fun t ht => hs t (List.mem_cons_of_mem _ ht)), hkcomm]
+    exact hcomm (funext (commute l (fun k hk => by have := hmin k hk; omega)))
+  obtain ⟨x, hx⟩ := hacts
+  let u := keywordSimpleMap a i x
+  let v := keywordListApply a l u
+  have hfirst := applicable_of_ne a i x hx.1
+  obtain ⟨hlact, hlast⟩ := (actsCompletely_append a l [i] u).mp hx.2
+  have hfinal := applicable_of_ne a i v ((keywordActsCompletely_singleton a i v).mp hlast)
+  -- The outer window is applicable in both words, and its first letter never changes.
+  -- That letter determines which orientation of the keyword the whole window reads.
+  obtain ⟨_, b, hb⟩ := (applicable_iff a i u).mp (applicable_self a i hfirst)
+  obtain ⟨hin, c, hc⟩ := (applicable_iff a i v).mp hfinal
+  let k₀ : Fin n := ⟨i, hi⟩
+  have h₀ : v k₀ = u k₀ := listApply_eq_of_lt a l u k₀ hl
+  have horient : c = b := Bool.xor_left_inj.mp
+    ((hc k₀ 0 (by simp [k₀])).symm.trans (h₀.trans (hb k₀ 0 (by simp [k₀]))))
+  let k : Fin n := ⟨j, by omega⟩
+  let t : Fin (m + 1) := ⟨j - i, by omega⟩
+  have hkt : k.val = i + t.val := by have := hl j hj; dsimp [k, t]; omega
+  have heq : v k = u k := by rw [hc k t hkt, hb k t hkt, horient]
+  exact (listApply_eq_iff_even_count a l u k hmin hlact).mp heq
+
 end MetaMathlibExt
