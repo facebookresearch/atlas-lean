@@ -22,3 +22,4 @@ Topics added since this subject's fields were last revised.
 - [String Correlation](string-correlation/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [Winnowing Fingerprint](winnowing-fingerprint/README.md)
+- [String Overlap](string-overlap/README.md)
