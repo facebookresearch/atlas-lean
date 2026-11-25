@@ -12848,6 +12848,7 @@
   "MathlibExt/NumberTheory/NicomachusGeneralization": {"to": "NumberTheory/quadratic-forms-sums-of-squares/waring-figurate", "title": "Nicomachus's theorem and its generalizations"},
   "MathlibExt/NumberTheory/NielsenBound": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Spoof Lehmer factorizations"},
   "MathlibExt/NumberTheory/NineRegularPartitionIteration": {"to": "NumberTheory/modular-forms-q-series/partition-congruences", "title": "Regular partitions and a generalized tau function"},
+  "MathlibExt/NumberTheory/NonSecondPentagonal": {"to": "NumberTheory/integer-sequences/arithmetic-of-sequences", "title": "Complementary sequences"},
   "MathlibExt/NumberTheory/NonSophieGermainPrimes": {"to": "NumberTheory/primes-primality/special-primes", "title": "Sophie Germain primes"},
   "MathlibExt/NumberTheory/NonSquarefreeBaseTwoPseudoprime": {"to": "NumberTheory/primes-primality/primality-tests-pseudoprimes", "title": "Fermat pseudoprimes"},
   "MathlibExt/NumberTheory/NoncentralTannyDowlingPolynomial": {"to": "Combinatorics/stirling-bell-eulerian/generalized-stirling-numbers", "title": "Noncentral Whitney numbers and Tanny–Dowling polynomials"},
