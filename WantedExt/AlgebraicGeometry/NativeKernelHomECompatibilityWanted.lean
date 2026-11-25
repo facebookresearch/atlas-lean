@@ -129,7 +129,17 @@ variable [N.forget.functor.Additive]
   (ModuleExact : ExactCoefficientSource (RY n X Real First Graph) (KY X))
   (ModuleBounded : BoundedCoefficientSource (RY n X Real First Graph) (KY X) ModuleExact)
 
-/-- The proof obligation refers only to the already computed coefficient functor and actual null images. -/
+/-- The coefficient functor descends to the enhanced $\mathcal{D}$-module quotient. Let $X$ be a
+Hausdorff complex manifold of dimension $n$, with the given interface data, among them the enhanced
+module geometry `Geometry`, the boundary proper image `Boundary`, the base inverse image
+`Projection`, and the exactness `ModuleExact` and boundedness `ModuleBounded` of forgetting the
+module structure. Then the functor `moduleCoefficientQuotientInput`, from bounded objects of the
+derived category of modules over `RY` (bimodules over `RY` and the trivial monoid `KY`) in
+ind-sheaves on the ambient space of the enhanced space of $X$ to the enhanced category of
+ind-sheaves, which forgets the module structure and then applies the enhanced quotient, inverts
+every morphism whose cone lies in the smallest triangulated subcategory closed under isomorphisms
+that contains the boundary proper images `nativeBoundaryImage` and the inverse images from the base
+`nativeBaseInverse`. -/
 theorem_wanted native_module_coefficients_descend :
   ModuleCoefficientQuotientSource (RY n X Real First Graph) (KY X)
     (nativeBoundaryImage n X Real First Graph Geometry) (nativeBaseInverse n X Real First Graph Geometry)
@@ -146,9 +156,23 @@ variable (Factor : ModuleCoefficientQuotientSource (RY n X Real First Graph) (KY
     (IndSpaceSource.alpha (X := TopCat.of X))).Additive]
   (AlphaExact : ExactAlphaSource ℂ (TopCat.of X) (IndSpaceSource.alpha (X := TopCat.of X)))
 
-/-- For the given M, an objectwise isomorphism between the ringed-kernel target and the scalar
-Hom^E target of the computed O^E. Naturality in M and compatibility with the morphism of DK
-Proposition 9.5.1 are not requested. -/
+/-- For a given $M$, an isomorphism between the ringed reconstruction target and the enhanced Hom
+target of a kernel $\mathcal{K}$. Let $X$ be a Hausdorff complex manifold of dimension $n$ with the
+given interface data, $M$ an object of the derived category of modules over the ring of analytic
+differential operators on $X$, and $\mathcal{K}$ (`Kernel`) an object of the enhanced
+$\mathcal{D}$-module quotient such that the solution complex of $M$ with kernel $\mathcal{K}$ is
+bounded (`BoundedSolution`); let $S$ be its class in the enhanced category. Assume that the
+coefficient functor descends to the enhanced quotient (`Factor`, the statement of
+`native_module_coefficients_descend`), that the enhanced quotient of coefficients has a left
+adjoint, that tensoring with each bounded coefficient complex has a right adjoint, and that the
+pulled-back $\beta$-functor has a right adjoint. This constructs an isomorphism, in the derived
+category of sheaves of complex vector spaces on $X$, from `reconstructionCoefficientsTarget`, the
+underlying complex of the ringed reconstruction target of $M$ (the right adjoint of the pulled-back
+$\beta$-functor applied to the internal Hom from the left representative of $S$ to the right
+representative of $\mathcal{K}$), to `scalarHomETarget`, the enhanced Hom
+$\alpha\,R\pi_*\,R\mathcal{I}hom(L^E S, R^E K)$ from $S$ to the coefficient image $K$ of
+$\mathcal{K}$. The isomorphism is not required to be natural in $M$ or compatible with the
+reconstruction morphism `originalReconstructionMap` (D'Agnolo–Kashiwara, Proposition 9.5.1). -/
 def_wanted native_reconstruction_target_HomE_iso :
   reconstructionCoefficientsTarget n X Real First Graph Geometry N Normalize BetaExact Representatives
     Kernel CoefficientExact CoefficientBounded Boundary Projection M BoundedSolution ForgetExact ≅
