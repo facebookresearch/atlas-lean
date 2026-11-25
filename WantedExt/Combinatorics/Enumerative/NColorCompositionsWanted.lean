@@ -61,6 +61,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.NColorCompositionBinomialSum
+public import MathlibExt.Combinatorics.Enumerative.NColorCompositionThreeFibonacci
 public import MathlibExt.Combinatorics.Enumerative.NColorCompositions
 
 set_option autoImplicit false
@@ -265,18 +266,6 @@ Proposition 7. -/
 theorem_wanted trib_eq_add_one_add_sum (n : ℤ) (hn : 3 ≤ n) :
     trib n = trib (n - 1) + 1 +
       2 * ∑ i ∈ Finset.Icc 1 (n / 2 - 1), trib (n - 2 * i - 1)
-
-/-- **Fibonacci identity for n-color compositions with colors 3 and 4.** For a natural number
-$m$, let $\operatorname{cco}_{3,4}(m)$ be the number of $n$-color compositions of $m$ in which
-every part has color $3$ or $4$, and let $F_k$ be the Fibonacci numbers with $F_0 = 0$ and
-$F_1 = 1$. Then for every natural number $n \ge 3$,
-$\operatorname{cco}_{3,4}(n) + \operatorname{cco}_{3,4}(n-2) = F_{n-1}$.
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Proposition 10. -/
-theorem_wanted ccoAllowed_three_add (n : ℕ) (hn : 3 ≤ n) :
-    ccoAllowed 3 n + ccoAllowed 3 (n - 2) = Nat.fib (n - 1)
 
 /-- **Recurrence for n-color compositions avoiding two consecutive colors.** Fix a natural number
 $b \ge 1$. For an integer $m$, let $c(m)$ be the number of $n$-color compositions of $m$ in
