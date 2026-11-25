@@ -80,8 +80,9 @@ public theorem cube_sub_two_mul_cube_eq_one_iff (u v : ℤ) :
     rcases cases with hv | ⟨hv, hu⟩
     · exact Or.inl (cube_sub_two_mul_cube_eq_one_iff.of_three_dvd h
         ((ZMod.intCast_zmod_eq_zero_iff_dvd ..).mp hv))
-    · have heq := NagellLjunggren.Cubic.thue (a := 2) (b := 1) (U := -v) (V := -u)
-          (by decide) (by decide) (by linear_combination h) (by simp [hv]) (by simp [hu])
+    · have heq := NagellLjunggren.eq_of_succ_mul_cube_sub_mul_cube_eq_one
+          (a := 2) (b := 1) (U := -v) (V := -u) (by decide) (by decide)
+          (by linear_combination h) (by simp [hv]) (by simp [hu])
       have huv : u = v := by omega
       subst v
       have hc : u ^ 3 = (-1 : ℤ) ^ 3 := by linear_combination -h
