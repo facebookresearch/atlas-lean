@@ -27,3 +27,4 @@
 - [A common nonzero rescaling leaves the percentage change unchanged](asset-return-mul-mul.md)
 - [Gross return of a two-asset portfolio](portfolio-gross-return.md)
 - [Log returns do not aggregate linearly across assets](portfolio-log-return-ne-weighted-average.md)
+- [Portfolio variance and diversification across uncorrelated assets](portfolio-variance-and-diversification.md)
