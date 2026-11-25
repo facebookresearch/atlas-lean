@@ -1,3 +1,6 @@
-# Stable iff energy le flip
+# Stable states are single-flip local minima at zero threshold
 
-At zero threshold the single-bit local minimum uses Eq. [7].
+**Stable states are single-flip local minima at zero threshold** (Eq. [7]). Let `T` be a weight
+matrix that is symmetric off the diagonal (`OffDiagSymmetric T`). Then a state `v` is stable for the
+zero-threshold dynamics if and only if, for every neuron `i`, flipping bit `i` does not decrease the
+energy: `energy T v ≤ energy T (update v i (!vᵢ))`.

@@ -91,6 +91,19 @@ example (k : ℕ) : maximumNimGrundy (· / k) 0 = 0 / k := by
   rw [maximumNimGrundy_eq, maximumNimMex_eq_iff]
   simp
 
+-- At the last allowed step and largest index, the pile size can be just one above a multiple.
+example : ¬(7 : ℕ) ∣ 15 :=
+  maximumNim_not_dvd_mul_sub_of_lt 7 3 2 1 1 3 (by decide) rfl (by decide) (by decide)
+    (by decide) (by decide)
+
+-- At the excluded step `s = t`, the index `i = h` gives a multiple of the same divisor.
+example : (7 : ℕ) ∣ 3 * (7 - 2) - 1 := by decide
+
+-- At step three, the quotient stays at zero from input zero to one and rises at input two.
+example : maximumNimH 3 0 < maximumNimH 3 1 ∧ maximumNimH 3 1 < maximumNimH 3 2 :=
+  ⟨maximumNimH_strictMono 3 0 1 (by decide) (by decide),
+   maximumNimH_strictMono 3 1 2 (by decide) (by decide)⟩
+
 -- Zero iterations leave both real maps at the starting position.
 example (x : ℕ) :
     Nat.iterate (fun y : ℝ => y + y / 2) 0 (x : ℝ) = x ∧

@@ -22,6 +22,7 @@ The generalized Catalan identity gives the recurrence for the product of consecu
 (a, b)-Fibonacci numbers, which yields the weighted even-index sum by induction.
 For the even and odd sums weighted by powers of `-b`, multiplying by the discriminant
 turns each summand into a difference of weighted Lucas numbers.
+At Pell parameters, both the even and odd alternating sums telescope.
 For the sum weighted by powers of `c`, adjoining the last term gives a first-order recurrence.
 -/
 
@@ -237,6 +238,57 @@ theorem sum_neg_b_pow_fibAB_disc (a b : ℂ)
       _ = _ := by
         rw [lucasAB_zero, neg_pow, pow_succ (-1 : ℂ)]
         ring
+
+/-- **Alternating sums of Pell and Pell–Lucas numbers.** Let $(P_n)$ and $(Q_n)$ be the Pell
+and Pell–Lucas numbers, that is, the $(2, 1)$-Fibonacci and $(2, 1)$-Lucas numbers, viewed as
+complex numbers. Then for every integer $n \ge 0$,
+$$\sum_{i=0}^{n} (-1)^i P_{2i} = \frac{(-1)^n Q_{2n+1} - 2}{8}, \qquad
+\sum_{i=0}^{n} (-1)^i Q_{2i} = (-1)^n P_{2n+1} + 1,$$
+$$\sum_{i=0}^{n} (-1)^i P_{2i+1} = \frac{(-1)^n Q_{2n+2} + 2}{8}, \qquad
+\sum_{i=0}^{n} (-1)^i Q_{2i+1} = (-1)^n P_{2n+2}.$$
+
+Source: Emil Daniel Schwab, "Fibonacci Numbers
+via Dirichlet Convolution and Lucas Numbers via
+Unitary Convolution", Theorem 10(c). -/
+theorem sum_neg_one_pow_pell (n : ℕ) :
+    (∑ i ∈ Finset.range (n + 1), (-1 : ℂ) ^ i * fibAB 2 1 (2 * i) =
+      ((-1) ^ n * lucasAB 2 1 (2 * n + 1) - 2) / 8) ∧
+    (∑ i ∈ Finset.range (n + 1), (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i) =
+      (-1) ^ n * fibAB 2 1 (2 * n + 1) + 1) ∧
+    (∑ i ∈ Finset.range (n + 1),
+        (-1 : ℂ) ^ i * fibAB 2 1 (2 * i + 1) =
+      ((-1) ^ n * lucasAB 2 1 (2 * n + 2) + 2) / 8) ∧
+    (∑ i ∈ Finset.range (n + 1),
+        (-1 : ℂ) ^ i * lucasAB 2 1 (2 * i + 1) =
+      (-1) ^ n * fibAB 2 1 (2 * n + 2)) := by
+  -- Each new summand splits into the two boundary terms of the other sequence.
+  have pell (k : ℕ) : fibAB 2 1 (k + 1) =
+      (lucasAB 2 1 (k + 2) + lucasAB 2 1 k) / 8 := by
+    apply (eq_div_iff (by norm_num)).2
+    simpa only [show (2 : ℂ) ^ 2 + 4 * 1 = 8 by norm_num, one_mul] using
+      fibAB_succ_mul_discriminant 2 1 k
+  have pellLucas (k : ℕ) : lucasAB 2 1 (k + 1) =
+      fibAB 2 1 (k + 2) + fibAB 2 1 k := by
+    induction k using Nat.twoStepInduction with
+    | zero => norm_num [fibAB, lucasAB]
+    | one => norm_num [fibAB, lucasAB]
+    | more k hk hk₁ =>
+      rw [lucasAB_add_two 2 1 (k + 1), hk₁, hk, fibAB_add_two 2 1 (k + 2),
+        fibAB_add_two 2 1 k]
+      ring
+  induction n with
+  | zero => norm_num [fibAB, lucasAB]
+  | succ n ih =>
+    obtain ⟨hPe, hQe, hPo, hQo⟩ := ih
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · rw [Finset.sum_range_succ, hPe, Nat.mul_succ, pell (2 * n + 1), pow_succ]
+      ring
+    · rw [Finset.sum_range_succ, hQe, Nat.mul_succ, pellLucas (2 * n + 1), pow_succ]
+      ring
+    · rw [Finset.sum_range_succ, hPo, Nat.mul_succ, pell (2 * n + 2), pow_succ]
+      ring
+    · rw [Finset.sum_range_succ, hQo, Nat.mul_succ, pellLucas (2 * n + 2), pow_succ]
+      ring
 
 -- The stated identity assumes c ≠ 0, although the induction also works at zero.
 set_option linter.unusedVariables false in

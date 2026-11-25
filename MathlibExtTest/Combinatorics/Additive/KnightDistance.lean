@@ -10,7 +10,7 @@ module
 
 import MathlibExt.Combinatorics.Additive.KnightDistance
 
-/-! # Tests for bounded reachability by generalized knights -/
+/-! # Tests for generalized knight distance -/
 
 open MetaMathlibExt Pointwise
 
@@ -21,3 +21,15 @@ example : ∃ n : ℕ, n ≤ 39 ∧ (-5, -5) ∈ n • knightMoves 2 3 := by
 
 -- The zero-fold sumset contains the origin.
 example : (0 : ℤ × ℤ) ∈ (0 : ℕ) • knightMoves 2 3 := by simp
+
+-- At (12, 8) the sector inequality is an equality. At (12, 9) the strict
+-- second sector applies, with a nonintegral leading term. The constant is shared.
+example : ∃ M : ℝ,
+    |(pieceDistance (knightMoves 2 3) (12, 8) : ℝ) - 12 / 3| ≤ M * 3 ∧
+    |(pieceDistance (knightMoves 2 3) (12, 9) : ℝ) - (12 + 9) / (2 + 3)| ≤ M * 3 := by
+  obtain ⟨M, hM⟩ := knight_distance_asymptotics
+  have atPoint (y : ℤ) (hy : 0 ≤ y) (hyx : y ≤ 12) :=
+    hM 2 3 12 y (by decide) (by decide) (by decide) ⟨2, rfl⟩ hy hyx
+  refine ⟨M, ?_, ?_⟩
+  · simpa only [Int.cast_ofNat, Nat.cast_ofNat] using (atPoint 8 (by decide) (by decide)).1 (by decide)
+  · simpa only [Int.cast_ofNat, Nat.cast_ofNat] using (atPoint 9 (by decide) (by decide)).2 (by decide)

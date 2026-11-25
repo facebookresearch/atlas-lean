@@ -1,3 +1,6 @@
-# Energy step lt
+# Energy descent at zero threshold
 
-A zero-threshold change strictly decreases the source energy.
+**Energy descent at zero threshold** (Hopfield 1982, Eq. [7]–[8]). Let `T` be a weight matrix
+that is symmetric off the diagonal (`OffDiagSymmetric T`). Then for every neuron `i` and state `v`,
+if the zero-threshold update of neuron `i` changes the state (`step T 0 i v ≠ v`), it strictly
+decreases the energy: `energy T (step T 0 i v) < energy T v`.

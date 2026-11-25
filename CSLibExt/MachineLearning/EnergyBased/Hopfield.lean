@@ -24,6 +24,14 @@ systems with emergent collective computational abilities”, PNAS 79 (1982), 255
 Eq. [1], with ties retaining the current bit. The zero-threshold energy is Eq. [7].
 The energy with a threshold term extends that formula. The random model uses discrete
 independent attempts with a common law assigning positive mass to every neuron.
+
+Every energy, descent and convergence theorem below assumes that the weights are symmetric off
+the diagonal (`OffDiagSymmetric T`), as Hopfield's convergence argument requires.
+
+Prior formalization: P. Cipollina, M. Karatarakis and F. Wiedijk, "Formalized Hopfield Networks
+and Boltzmann Machines", arXiv:2512.07766 (LPAR-26), prove convergence under fair schedules for
+the ±1 encoding with ties resolved to +1. `exists_stable_tail` extends that result to the 0/1
+model with ties keeping the current bit. No code from that development is used.
 -/
 
 open Finset MeasureTheory ProbabilityTheory
@@ -58,6 +66,8 @@ noncomputable def energyWithThreshold {N : ℕ} (T : Fin N → Fin N → ℝ) (U
     (v : Fin N → Bool) : ℝ :=
   energy T v + ∑ i, U i * (v i).toNat
 
+/-- For any weights `T` and state `v`, the threshold energy with all thresholds zero is Hopfield's
+Eq. [7] energy: `energyWithThreshold T 0 v = energy T v`. No hypothesis on `T` is needed. -/
 @[simp] theorem energyWithThreshold_zero {N : ℕ} (T : Fin N → Fin N → ℝ) (v : Fin N → Bool) :
     energyWithThreshold T 0 v = energy T v := by
   simp [energyWithThreshold]
@@ -68,12 +78,15 @@ noncomputable def trajectory {N : ℕ} (T : Fin N → Fin N → ℝ) (U : Fin N 
   | 0 => v₀
   | k + 1 => step T U (σ k) (trajectory T U σ v₀ k)
 
-/-- The trajectory begins at its supplied initial state. -/
+/-- For any weights `T`, thresholds `U`, schedule `σ` and initial state `v₀`, the trajectory begins
+at its supplied initial state: `trajectory T U σ v₀ 0 = v₀`. -/
 @[simp] theorem trajectory_zero {N : ℕ} (T : Fin N → Fin N → ℝ) (U : Fin N → ℝ)
     (σ : ℕ → Fin N) (v₀ : Fin N → Bool) : trajectory T U σ v₀ 0 = v₀ :=
   rfl
 
-/-- Each successor state results from the next scheduled attempt. -/
+/-- For any weights `T`, thresholds `U`, schedule `σ`, initial state `v₀` and index `k`, the
+successor state results from the next scheduled attempt:
+`trajectory T U σ v₀ (k + 1) = step T U (σ k) (trajectory T U σ v₀ k)`. -/
 theorem trajectory_succ {N : ℕ} (T : Fin N → Fin N → ℝ) (U : Fin N → ℝ)
     (σ : ℕ → Fin N) (v₀ : Fin N → Bool) (k : ℕ) :
     trajectory T U σ v₀ (k + 1) = step T U (σ k) (trajectory T U σ v₀ k) :=
@@ -111,7 +124,10 @@ private theorem cost_update {N : ℕ} (T : Fin N → Fin N → ℝ) (U : Fin N �
       -(a.toNat : ℝ) * (localField T v i - U i) := by
   simp [cost, localField_update]
 
-/-- Hopfield's Eq. [8] for a unilateral change. -/
+/-- **Hopfield's Eq. [8]** for a unilateral change. Let `T` be a weight matrix that is symmetric off
+the diagonal (`OffDiagSymmetric T`). Then for every state `v`, neuron `i` and bit `a`, setting
+neuron `i` to `a` changes the zero-threshold energy by
+`energy T (update v i a) - energy T v = -(a - vᵢ) · localField T v i`, with bits read as 0/1. -/
 theorem energy_update {N : ℕ} {T : Fin N → Fin N → ℝ}
     (hT : OffDiagSymmetric T) (v : Fin N → Bool) (i : Fin N) (a : Bool) :
     energy T (Function.update v i a) - energy T v =
@@ -154,7 +170,11 @@ theorem energy_update {N : ℕ} {T : Fin N → Fin N → ℝ}
     -(1 / 2 : ℝ) * (∑ j, f v j) = -d * localField T v i
   linarith
 
-/-- The one-coordinate energy identity with arbitrary thresholds. -/
+/-- **The one-coordinate energy identity with thresholds.** Let `T` be a weight matrix that is
+symmetric off the diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then for every state `v`,
+neuron `i` and bit `a`, the difference
+`energyWithThreshold T U (update v i a) - energyWithThreshold T U v` equals
+`-(a - vᵢ) · (localField T v i - Uᵢ)`, with bits read as 0/1. -/
 theorem energyWithThreshold_update {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     (hT : OffDiagSymmetric T)
     (v : Fin N → Bool) (i : Fin N) (a : Bool) :
@@ -173,7 +193,10 @@ theorem energyWithThreshold_update {N : ℕ} {T : Fin N → Fin N → ℝ} {U : 
   unfold energyWithThreshold
   linarith
 
-/-- The threshold energy is an exact potential for the neuron costs. -/
+/-- **The threshold energy is an exact potential.** Let `T` be a weight matrix that is symmetric off
+the diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then `energyWithThreshold T U` is an
+exact potential for the neuron costs `cost T U`: every unilateral deviation changes the deviating
+neuron's cost and the energy by the same amount. -/
 theorem isExactPotential_energyWithThreshold {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     (hT : OffDiagSymmetric T) :
     IsExactPotential (S := fun _ : Fin N => Bool) (cost T U) (energyWithThreshold T U) := by
@@ -182,7 +205,9 @@ theorem isExactPotential_energyWithThreshold {N : ℕ} {T : Fin N → Fin N → 
   unfold cost
   ring
 
-/-- An update that changes the state strictly improves the updating neuron's cost. -/
+/-- For any weights `T` (no symmetry is needed), thresholds `U`, neuron `i` and state `v`: if the
+update of neuron `i` changes the state (`step T U i v ≠ v`), then it is an improving move that
+strictly lowers neuron `i`'s cost `cost T U i`. -/
 theorem improvingMove_of_step_ne {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     {i : Fin N} {v : Fin N → Bool} (h : step T U i v ≠ v) :
     ImprovingMove (S := fun _ : Fin N => Bool) (cost T U) (step T U i v) v := by
@@ -207,7 +232,9 @@ theorem improvingMove_of_step_ne {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fi
     linarith
   · exact False.elim (h rfl)
 
-/-- The dynamics and the unilateral-deviation game have the same stable states. -/
+/-- For any weights `T` (no symmetry is needed), thresholds `U` and state `v`: `v` is stable under
+every single-neuron update if and only if it is a pure Nash equilibrium of the unilateral-deviation
+game with costs `cost T U`. -/
 theorem stable_iff_isPureNash {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     (v : Fin N → Bool) :
     Stable T U v ↔ IsPureNash (S := fun _ : Fin N => Bool) (cost T U) v := by
@@ -234,7 +261,10 @@ theorem stable_iff_isPureNash {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N
     rw [← hj] at this
     exact (not_lt_of_ge this) hlt
 
-/-- A change strictly decreases the energy with thresholds. -/
+/-- **Energy descent with thresholds.** Let `T` be a weight matrix that is symmetric off the
+diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then for every neuron `i` and state `v`, if
+the update of neuron `i` changes the state (`step T U i v ≠ v`), it strictly decreases the threshold
+energy: `energyWithThreshold T U (step T U i v) < energyWithThreshold T U v`. -/
 theorem energyWithThreshold_step_lt {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     (hT : OffDiagSymmetric T) {i : Fin N}
     {v : Fin N → Bool} (h : step T U i v ≠ v) :
@@ -242,7 +272,10 @@ theorem energyWithThreshold_step_lt {N : ℕ} {T : Fin N → Fin N → ℝ} {U :
   exact (isExactPotential_energyWithThreshold hT).lt_of_improvingMove
     (improvingMove_of_step_ne h)
 
-/-- A zero-threshold change strictly decreases the source energy. -/
+/-- **Energy descent at zero threshold** (Hopfield 1982, Eq. [7]–[8]). Let `T` be a weight matrix
+that is symmetric off the diagonal (`OffDiagSymmetric T`). Then for every neuron `i` and state `v`,
+if the zero-threshold update of neuron `i` changes the state (`step T 0 i v ≠ v`), it strictly
+decreases the energy: `energy T (step T 0 i v) < energy T v`. -/
 theorem energy_step_lt {N : ℕ} {T : Fin N → Fin N → ℝ}
     (hT : OffDiagSymmetric T) {i : Fin N} {v : Fin N → Bool}
     (h : step T 0 i v ≠ v) : energy T (step T 0 i v) < energy T v := by
@@ -269,7 +302,10 @@ private theorem trajectory_energy_lt_of_change {N : ℕ} {T : Fin N → Fin N �
     energyWithThreshold_step_lt hT hk
   exact hlt.trans_le (trajectory_energy_antitone hT σ v₀ hn)
 
-/-- Any schedule makes at most `2 ^ N - 1` strict state changes. -/
+/-- **At most `2 ^ N - 1` changes.** Let `T` be a weight matrix that is symmetric off the diagonal
+(`OffDiagSymmetric T`) and `U` any thresholds. Then for every schedule `σ` and initial state `v₀`,
+the set of attempt indices at which the state changes has at most `2 ^ N - 1` elements:
+`(changeTimes T U σ v₀).encard ≤ 2 ^ N - 1`. -/
 theorem encard_changeTimes_le {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     (hT : OffDiagSymmetric T) (σ : ℕ → Fin N) (v₀ : Fin N → Bool) :
     (changeTimes T U σ v₀).encard ≤ ((2 ^ N - 1 : ℕ) : ℕ∞) := by
@@ -304,7 +340,10 @@ theorem encard_changeTimes_le {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N
       rw [Set.encard_coe_eq_coe_finsetCard, card_erase_of_mem (mem_univ v₀), card_univ]
       simp
 
-/-- Under any schedule the trajectory is eventually constant. -/
+/-- **Eventually constant trajectories.** Let `T` be a weight matrix that is symmetric off the
+diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then for every schedule `σ` and initial
+state `v₀` there is `K` such that `trajectory T U σ v₀ k = trajectory T U σ v₀ K` for every `k ≥ K`.
+-/
 theorem exists_constant_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     (hT : OffDiagSymmetric T) (σ : ℕ → Fin N) (v₀ : Fin N → Bool) :
     ∃ K, ∀ k ≥ K, trajectory T U σ v₀ k = trajectory T U σ v₀ K := by
@@ -323,7 +362,11 @@ theorem exists_constant_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N 
       not_not.mp hnot
     exact he.trans ih
 
-/-- Under a fair schedule the trajectory becomes constant at a stable state. -/
+/-- **Convergence under a fair schedule.** Let `T` be a weight matrix that is symmetric off the
+diagonal (`OffDiagSymmetric T`) and `U` any thresholds, and let `σ` be a fair schedule (every neuron
+is attempted arbitrarily late, `Fair σ`). Then for every initial state `v₀` there is `K` such that
+`trajectory T U σ v₀ K` is stable and `trajectory T U σ v₀ k = trajectory T U σ v₀ K` for every
+`k ≥ K`. -/
 theorem exists_stable_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     (hT : OffDiagSymmetric T) {σ : ℕ → Fin N}
     (hσ : Fair σ) (v₀ : Fin N → Bool) :
@@ -337,7 +380,11 @@ theorem exists_stable_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N �
   rw [hK k hk, hK (k + 1) (by omega), hi] at hs
   exact hs.symm
 
-/-- Fair-schedule stability at the source's default zero threshold. -/
+/-- **Convergence under a fair schedule at zero threshold** (Hopfield 1982). Let `T` be a weight
+matrix that is symmetric off the diagonal (`OffDiagSymmetric T`), and let `σ` be a fair schedule
+(`Fair σ`). Then for every initial state `v₀` there is `K` such that `trajectory T 0 σ v₀ K` is
+stable for the zero-threshold dynamics and `trajectory T 0 σ v₀ k = trajectory T 0 σ v₀ K` for every
+`k ≥ K`. -/
 theorem exists_stable_tail_zero {N : ℕ} {T : Fin N → Fin N → ℝ}
     (hT : OffDiagSymmetric T) {σ : ℕ → Fin N}
     (hσ : Fair σ) (v₀ : Fin N → Bool) :
@@ -345,7 +392,10 @@ theorem exists_stable_tail_zero {N : ℕ} {T : Fin N → Fin N → ℝ}
       ∀ k ≥ K, trajectory T 0 σ v₀ k = trajectory T 0 σ v₀ K := by
   exact exists_stable_tail hT hσ v₀
 
-/-- Stability is equivalent to being a weak local minimum under single-bit flips. -/
+/-- **Stable states are single-flip local minima.** Let `T` be a weight matrix that is symmetric off
+the diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then a state `v` is stable if and only
+if, for every neuron `i`, flipping bit `i` does not decrease the threshold energy:
+`energyWithThreshold T U v ≤ energyWithThreshold T U (update v i (!vᵢ))`. -/
 theorem stable_iff_energyWithThreshold_le_flip {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     (hT : OffDiagSymmetric T) (v : Fin N → Bool) :
     Stable T U v ↔
@@ -368,7 +418,10 @@ theorem stable_iff_energyWithThreshold_le_flip {N : ℕ} {T : Fin N → Fin N �
       rw [ha'] at hc
       linarith
 
-/-- At zero threshold the single-bit local minimum uses Eq. [7]. -/
+/-- **Stable states are single-flip local minima at zero threshold** (Eq. [7]). Let `T` be a weight
+matrix that is symmetric off the diagonal (`OffDiagSymmetric T`). Then a state `v` is stable for the
+zero-threshold dynamics if and only if, for every neuron `i`, flipping bit `i` does not decrease the
+energy: `energy T v ≤ energy T (update v i (!vᵢ))`. -/
 theorem stable_iff_energy_le_flip {N : ℕ} {T : Fin N → Fin N → ℝ}
     (hT : OffDiagSymmetric T) (v : Fin N → Bool) :
     Stable T 0 v ↔ ∀ i, energy T v ≤ energy T (Function.update v i (!v i)) := by
@@ -388,7 +441,10 @@ structure IIDFullSupport {N : ℕ} {Ω : Type*} [MeasurableSpace Ω]
   /-- The common law gives positive probability to each neuron. -/
   pos : ∀ i, 0 < μ {ω | σ 0 ω = i}
 
-/-- Independent attempts with a common full-support law are almost surely fair. -/
+/-- **Random schedules are almost surely fair.** Let `μ` be a probability measure and let the
+attempts `σ k` be measurable, independent and identically distributed, with a common law that gives
+positive probability to every neuron (`IIDFullSupport μ σ`). Then `μ`-almost every realized schedule
+`k ↦ σ k ω` is fair (`Fair`). No weights are involved. -/
 theorem ae_fair {N : ℕ} {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     {σ : ℕ → Ω → Fin N} [IsProbabilityMeasure μ] (hσ : IIDFullSupport μ σ) :
     ∀ᵐ ω ∂μ, Fair (fun k => σ k ω) := by
@@ -419,7 +475,12 @@ theorem ae_fair {N : ℕ} {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
       s, Set.mem_ofPred_eq] using hω
   exact ae_all_iff.2 hi
 
-/-- Independent attempts with a common full-support law almost surely reach a stable tail. -/
+/-- **Almost-sure convergence under random schedules.** Let `T` be a weight matrix that is symmetric
+off the diagonal (`OffDiagSymmetric T`) and `U` any thresholds, let `μ` be a probability measure,
+and let the attempts `σ k` be measurable, independent and identically distributed with a common
+full-support law (`IIDFullSupport μ σ`). Then for every initial state `v₀`, for `μ`-almost every `ω`
+there is `K` such that the trajectory under the schedule `k ↦ σ k ω` is stable at `K` and constant
+from `K` on. -/
 theorem ae_exists_stable_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N → ℝ}
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {σ : ℕ → Ω → Fin N}
     [IsProbabilityMeasure μ] (hT : OffDiagSymmetric T)
@@ -430,7 +491,12 @@ theorem ae_exists_stable_tail {N : ℕ} {T : Fin N → Fin N → ℝ} {U : Fin N
   filter_upwards [ae_fair hσ] with ω hω
   exact exists_stable_tail hT hω v₀
 
-/-- Almost-sure stability for the discrete random schedule at zero threshold. -/
+/-- **Almost-sure convergence under random schedules at zero threshold.** Let `T` be a weight matrix
+that is symmetric off the diagonal (`OffDiagSymmetric T`), let `μ` be a probability measure, and let
+the attempts `σ k` be measurable, independent and identically distributed with a common full-support
+law (`IIDFullSupport μ σ`). Then for every initial state `v₀`, for `μ`-almost every `ω` there is `K`
+such that the zero-threshold trajectory under the schedule `k ↦ σ k ω` is stable at `K` and constant
+from `K` on. -/
 theorem ae_exists_stable_tail_zero {N : ℕ} {T : Fin N → Fin N → ℝ}
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {σ : ℕ → Ω → Fin N}
     [IsProbabilityMeasure μ] (hT : OffDiagSymmetric T)

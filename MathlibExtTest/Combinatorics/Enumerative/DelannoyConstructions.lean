@@ -25,6 +25,16 @@ example : genDelannoyUpper 1 2 3 + genDelannoyUpper 1 2 4 = 84 := by
   rw [genDelannoyUpper_add_succ_right 1 2 3]
   decide
 
+-- The smallest positive upper index and the origin give 1 + 2 = 3.
+example : genDelannoyUpper 1 0 0 + genDelannoyUpper 1 1 0 = 3 := by
+  rw [genDelannoyUpper_add_succ_left 1 0 0 le_rfl]
+  decide
+
+-- The two upper-index-two entries are 14 and 30; their sum is D^1(3, 2).
+example : genDelannoyUpper 2 2 1 + genDelannoyUpper 2 3 1 = 44 := by
+  rw [genDelannoyUpper_add_succ_left 2 2 1 (by decide)]
+  decide
+
 -- At the first positive row and column zero, the difference is always two.
 example (k : ℕ) : (genDelannoyUpper k 1 1 : ℤ) - genDelannoyUpper k 1 0 = 2 := by
   rw [genDelannoyUpper_succ_right_sub k 1 0 le_rfl]

@@ -1,3 +1,6 @@
-# Stable iff energy With Threshold le flip
+# Stable states are single-flip local minima
 
-Stability is equivalent to being a weak local minimum under single-bit flips.
+Let `T` be a weight matrix that is symmetric off
+the diagonal (`OffDiagSymmetric T`) and `U` any thresholds. Then a state `v` is stable if and only
+if, for every neuron `i`, flipping bit `i` does not decrease the threshold energy:
+`energyWithThreshold T U v ≤ energyWithThreshold T U (update v i (!vᵢ))`.
