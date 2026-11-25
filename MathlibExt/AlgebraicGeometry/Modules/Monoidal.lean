@@ -82,14 +82,15 @@ variable {X}
     𝟙_ X.Modules = SheafOfModules.unit X.ringCatSheaf := rfl
 
 variable (X) in
-/-- Sheafification of presheaves of modules on a scheme. -/
+/-- **Sheafification on a scheme.** Sheafification of presheaves of modules on a scheme. -/
 abbrev Scheme.Modules.sheafify : X.PresheafOfModules ⥤ X.Modules :=
   SheafOfModules.sheafifyFunctor X.sheaf.obj X.ringCatSheaf.property
 
 instance : (Scheme.Modules.sheafify X).Monoidal :=
   inferInstanceAs (SheafOfModules.sheafifyFunctor X.sheaf.obj X.ringCatSheaf.property).Monoidal
 
-/-- On a scheme, `L ⊗ M` is the sheafified presheaf tensor product. By definition the source is
+/-- **Sheaf tensor product on a scheme.** On a scheme, `L ⊗ M` is the sheafified presheaf tensor
+product. By definition the source is
 `MathlibExt.AlgebraicGeometry.SchemeModulesTensor.moduleTensor X L M`. -/
 def Scheme.Modules.tensorIsoSheafify (L M : X.Modules) :
     (Scheme.Modules.sheafify X).obj (L.val ⊗ M.val) ≅ L ⊗ M :=

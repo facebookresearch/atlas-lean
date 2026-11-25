@@ -37,6 +37,7 @@ removed and the names restated in Mathlib style.
 module
 
 public import MathlibExt.AlgebraicGeometry.Modules.Monoidal
+public import MathlibExt.AlgebraicGeometry.Modules.IsFrameOn
 public import MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 public import Mathlib.AlgebraicGeometry.AffineScheme
 public import Mathlib.AlgebraicGeometry.Restrict
@@ -73,7 +74,8 @@ section Hom
 
 variable (L M : X.Modules)
 
-/-- The canonical map from the presheaf tensor product to the sheaf tensor product. -/
+/-- **Presheaf tensor product to sheaf tensor product.** The canonical map from the presheaf
+tensor product to the sheaf tensor product. -/
 def tensorSectionsHom : L.val ⊗ M.val ⟶
     (SheafOfModules.toPMod X.sheaf.obj X.ringCatSheaf.property).obj (L ⊗ M) :=
   (SheafOfModules.sheafifyAdj X.sheaf.obj X.ringCatSheaf.property).unit.app (L.val ⊗ M.val) ≫
@@ -85,9 +87,10 @@ section Sections
 
 variable {L M : X.Modules} {U : X.Opens}
 
-/-- The section of `L ⊗ M` over `U` given by sections `s` of `L` and `t` of `M`. Through
-`tensorIsoSheafify` it is `MathlibExt.AlgebraicGeometry.SheafTensorSections.tensorSection`, which
-is stated for `Scheme.{0}` and lands in `SchemeModulesTensor.moduleTensor`. -/
+/-- **Tensor product of sections.** The section of `L ⊗ M` over `U` given by sections `s` of `L`
+and `t` of `M`. Through `tensorIsoSheafify` it is
+`MathlibExt.AlgebraicGeometry.SheafTensorSections.tensorSection`, which is stated for
+`Scheme.{0}` and lands in `SchemeModulesTensor.moduleTensor`. -/
 def tensorSections (s : Γ(L, U)) (t : Γ(M, U)) : Γ(L ⊗ M, U) :=
   DFunLike.coe (α := ((L.val ⊗ M.val).obj (op U) :)) (β := fun _ => Γ(L ⊗ M, U))
     ((tensorSectionsHom L M).app (op U)).hom
@@ -126,7 +129,7 @@ lemma tensorSections_smul_right (g : Γ(X, U)) (s : Γ(L, U)) (t : Γ(M, U)) :
   rfl
 
 variable (L M U) in
-/-- `tensorSections` as a `Γ(X, U)`-bilinear map. -/
+/-- **Bilinear tensor product of sections.** `tensorSections` as a `Γ(X, U)`-bilinear map. -/
 def tensorSectionsBilin : Γ(L, U) →ₗ[Γ(X, U)] Γ(M, U) →ₗ[Γ(X, U)] Γ(L ⊗ M, U) :=
   LinearMap.mk₂ Γ(X, U) tensorSections tensorSections_add_left tensorSections_smul_left
     tensorSections_add_right tensorSections_smul_right
@@ -149,62 +152,6 @@ lemma map_homOfLE_tensorSections {V : X.Opens} (h : V ≤ U) (s : Γ(L, U)) (t :
   map_tensorSections (homOfLE h) s t
 
 end Sections
-
-section Frame
-
-variable {M : X.Modules} {U : X.Opens}
-
-/-- A section `s` of `M` over `U` is a frame on `V` when multiplication by its restrictions
-identifies the sections of the structure sheaf with those of `M` over every open
-`W ≤ U ⊓ V`. -/
-def IsFrameOn (s : Γ(M, U)) (V : X.Opens) : Prop :=
-  ∀ ⦃W : X.Opens⦄ (hWU : W ≤ U), W ≤ V →
-    Function.Bijective fun g : Γ(X, W) => g • (M.presheaf.map (homOfLE hWU).op s : Γ(M, W))
-
-namespace IsFrameOn
-
-variable {s : Γ(M, U)} {V : X.Opens}
-
-lemma bijective (h : IsFrameOn s V) {W : X.Opens} (hWU : W ≤ U) (hWV : W ≤ V) :
-    Function.Bijective fun g : Γ(X, W) => g • (M.presheaf.map (homOfLE hWU).op s : Γ(M, W)) :=
-  h hWU hWV
-
-lemma mono (h : IsFrameOn s V) {V' : X.Opens} (hV' : V' ≤ V) : IsFrameOn s V' :=
-  fun _ hWU hWV' => h hWU (hWV'.trans hV')
-
-lemma of_inf (h : IsFrameOn s (V ⊓ U)) : IsFrameOn s V :=
-  fun _ hWU hWV => h hWU (le_inf hWV hWU)
-
-lemma inf_iff : IsFrameOn s (V ⊓ U) ↔ IsFrameOn s V :=
-  ⟨of_inf, fun h => h.mono inf_le_left⟩
-
-lemma map (h : IsFrameOn s V) {U' : X.Opens} (i : U' ⟶ U) :
-    IsFrameOn (M.presheaf.map i.op s) V := by
-  intro W hWU' hWV
-  have e : M.presheaf.map (homOfLE hWU').op (M.presheaf.map i.op s) =
-      M.presheaf.map (homOfLE (hWU'.trans i.le)).op s := by
-    rw [← CategoryTheory.comp_apply, ← M.presheaf.map_comp]
-    rfl
-  simp only [e]
-  exact h (hWU'.trans i.le) hWV
-
-lemma existsUnique (h : IsFrameOn s V) {W : X.Opens} (hWU : W ≤ U) (hWV : W ≤ V) (x : Γ(M, W)) :
-    ∃! g : Γ(X, W), g • M.presheaf.map (homOfLE hWU).op s = x :=
-  (Function.bijective_iff_existsUnique _).1 (h hWU hWV) x
-
-lemma smul_eq_zero_iff (h : IsFrameOn s V) {W : X.Opens} (hWU : W ≤ U) (hWV : W ≤ V) (g : Γ(X, W)) :
-    g • M.presheaf.map (homOfLE hWU).op s = 0 ↔ g = 0 := by
-  constructor
-  · intro hg
-    apply (h hWU hWV).1
-    change g • M.presheaf.map (homOfLE hWU).op s = (0 : Γ(X, W)) • M.presheaf.map (homOfLE hWU).op s
-    rw [hg, zero_smul]
-  · rintro rfl
-    exact zero_smul _ _
-
-end IsFrameOn
-
-end Frame
 
 end AlgebraicGeometry.Scheme.Modules
 
@@ -509,7 +456,7 @@ private theorem isFrameOn_tensorSections {L M : X.Modules} {U V : X.Opens} {s : 
 
 end FrameTensor
 
-/-- The tensor product of two frames on `V` is a frame on `V`. -/
+/-- **Tensor product of frames.** The tensor product of two frames on `V` is a frame on `V`. -/
 theorem IsFrameOn.tensorSections {X : Scheme.{u}} {L M : X.Modules} {U V : X.Opens} {s : Γ(L, U)}
     {t : Γ(M, U)} (hs : IsFrameOn s V) (ht : IsFrameOn t V) :
     IsFrameOn (Modules.tensorSections s t) V :=
@@ -629,7 +576,8 @@ private noncomputable def trivializationBelow
 end FrameBridge
 
 open FrameBridge FrameTensor in
-/-- A trivialization of `M` over `U` gives a frame of `M` on `U`. -/
+/-- **Frames from trivializations.** A trivialization of `M` over `U` gives a frame of `M` on
+`U`. -/
 theorem exists_isFrameOn_of_pullback_iso_unit {X : Scheme.{u}} {M : X.Modules} (U : X.Opens)
     (eU : (Modules.pullback U.ι).obj M ≅ SheafOfModules.unit (U : Scheme.{u}).ringCatSheaf) :
     ∃ s : Γ(M, U), IsFrameOn s U := by
@@ -1176,7 +1124,8 @@ namespace MathlibExt.AlgebraicGeometry.CoherentCurveLinearSeries
 
 open _root_.AlgebraicGeometry
 
-/-- For invertible sheaves `L` and `M` on a scheme `X` and an affine open `U`, the map
+/-- **Sections of a tensor product of line bundles over an affine open.** For invertible sheaves
+`L` and `M` on a scheme `X` and an affine open `U`, the map
 `Γ(L, U) ⊗[Γ(X, U)] Γ(M, U) → Γ(L ⊗ M, U)` induced by `tensorSections` is bijective. -/
 theorem IsLineBundle.bijective_lift_tensorSectionsBilin
     {X : Scheme.{u}} {L M : X.Modules} (hL : IsLineBundle L) (hM : IsLineBundle M)
