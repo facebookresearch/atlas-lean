@@ -960,9 +960,9 @@ private theorem adeleSpace_eq_of_genusReached [IsCurveOver K F] [Nonempty (Place
     {γ : ℤ} {D₀ : Divisor K F} (h : RiemannGenusReachedAt γ D₀) :
     adeleSpace K F = adeleBdd D₀ ⊔ globalSub K F := by
   refine le_antisymm ?_ (adeleBdd_sup_globalSub_le_adeleSpace D₀)
-  rw [adeleSpace, iSup_le_iff]
-  intro D
-  refine le_trans (adeleBdd_mono (le_sup_left : D ≤ D ⊔ D₀)) ?_
+  intro α hα
+  obtain ⟨D, hαD⟩ := mem_adeleSpace_iff.mp hα
+  refine (le_trans (adeleBdd_mono (le_sup_left : D ≤ D ⊔ D₀)) ?_) hαD
   have := finiteDimensional_lSpace (K := K) (D ⊔ D₀)
   have heq : Divisor.degree (D ⊔ D₀) - ell (D ⊔ D₀) = Divisor.degree D₀ - ell D₀ :=
     (h.eq_of_ge le_sup_right).trans h.eq.symm

@@ -39,6 +39,13 @@ import Mathlib.Order.CompletePartialOrder
 This file defines `ℓ(D)`, the adelic index of specialty, Weil differentials, and the predicates
 `ConstantsAreBase` and `StichtenothGenusExists` expressing that `K` is the field of constants and
 that `deg D - ℓ(D)` is bounded above and attains its maximum.
+
+The adèle space `adeleSpace K F` is the repartition algebra `repartitions K F` of
+`MathlibExt.AlgebraicGeometry.Curve.Repartitions`, viewed as a `K`-subspace of `Place K F → F`.
+Under the identification `repartitionsEquivAdeleSpace`, the bounded repartitions `repartitionsOf D`
+and the principal repartitions correspond to `adeleBdd D` and `globalSub K F`, so `H1 D` is the
+quotient whose dimension is `indexOfSpecialty D` (`h1EquivAdeleQuotient`,
+`finrank_h1_eq_indexOfSpecialty`), and `genusFF K F = indexOfSpecialty 0`.
 -/
 
 @[expose] public section
@@ -129,20 +136,29 @@ theorem diagonal_mem_adeleBdd_iff {f : F} :
   simp only [mem_adeleBdd, diagonalHom_apply, mem_lSpace_iff]
 
 variable (K F) in
-def adeleSpace : Submodule K (Place K F → F) := ⨆ D : Divisor K F, adeleBdd D
+def adeleSpace : Submodule K (Place K F → F) :=
+  (Subalgebra.toSubmodule (repartitions K F)).restrictScalars K
 
-theorem adeleBdd_le_adeleSpace : adeleBdd D ≤ adeleSpace K F := le_iSup adeleBdd D
+theorem mem_adeleSpace_iff_mem_repartitions {α : Place K F → F} :
+    α ∈ adeleSpace K F ↔ α ∈ repartitions K F := Iff.rfl
 
-theorem diagonal_mem_adeleSpace [HasPrincipalDivisors K F] (f : F) :
-    diagonalHom K F f ∈ adeleSpace K F := by
+theorem adeleBdd_le_adeleSpace : adeleBdd D ≤ adeleSpace K F := fun α hα =>
+  mem_repartitions_of_forall_le_exp D α hα
+
+private theorem exists_diagonal_mem_adeleBdd [HasPrincipalDivisors K F] (f : F) :
+    ∃ D : Divisor K F, diagonalHom K F f ∈ adeleBdd D := by
   rcases eq_or_ne f 0 with rfl | hf
-  · rw [map_zero]; exact (adeleSpace K F).zero_mem
+  · exact ⟨0, by rw [map_zero]; exact (adeleBdd 0).zero_mem⟩
   · obtain ⟨P, hPord, _⟩ := HasPrincipalDivisors.exists_divisor (K := K) f hf
-    refine adeleBdd_le_adeleSpace (D := -P) ?_
-    intro v
+    refine ⟨-P, fun v => ?_⟩
     rw [diagonalHom_apply,
       show ((-P : Divisor K F) v) = -v.ord f by rw [Finsupp.neg_apply, hPord v]]
     exact le_of_eq (by rw [Place.ord, neg_neg, WithZero.exp_log (v.adicValuation_ne_zero hf)])
+
+theorem diagonal_mem_adeleSpace [HasPrincipalDivisors K F] (f : F) :
+    diagonalHom K F f ∈ adeleSpace K F :=
+  let ⟨_, hD⟩ := exists_diagonal_mem_adeleBdd (K := K) f
+  adeleBdd_le_adeleSpace hD
 
 variable (K F) in
 def globalSub : Submodule K (Place K F → F) := LinearMap.range (diagonalHom K F)
@@ -180,10 +196,36 @@ theorem adeleBdd_directed :
     Directed (· ≤ ·) (adeleBdd (K := K) (F := F)) := fun D E =>
   ⟨D ⊔ E, adeleBdd_mono le_sup_left, adeleBdd_mono le_sup_right⟩
 
-theorem mem_adeleSpace_iff {α : Place K F → F} :
-    α ∈ adeleSpace K F ↔ ∃ D : Divisor K F, α ∈ adeleBdd D := by
-  unfold adeleSpace
-  exact Submodule.mem_iSup_of_directed _ adeleBdd_directed
+private theorem exists_mem_adeleBdd_of_finite {α : Place K F → F}
+    (hα : {v : Place K F | ¬v.adicValuation (α v) ≤ 1}.Finite) :
+    ∃ D : Divisor K F, α ∈ adeleBdd D := by
+  classical
+  refine ⟨Finsupp.onFinset hα.toFinset
+    (fun v => if v.adicValuation (α v) ≤ 1 then 0 else -v.ord (α v)) fun v hv => ?_, fun v => ?_⟩
+  · rw [Set.Finite.mem_toFinset, Set.mem_ofPred_eq]
+    intro h
+    simp [h] at hv
+  · rw [Finsupp.onFinset_apply]
+    split_ifs with h
+    · simpa using h
+    · rw [Place.adicValuation_le_exp_iff, neg_neg]
+      exact Or.inr le_rfl
+
+private theorem exists_mem_adeleBdd_of_mem_repartitions [HasPrincipalDivisors K F]
+    {α : Place K F → F} (hα : α ∈ repartitions K F) : ∃ D : Divisor K F, α ∈ adeleBdd D := by
+  refine Algebra.adjoin_induction (p := fun β _ => ∃ D : Divisor K F, β ∈ adeleBdd D)
+    (fun β hβ => exists_mem_adeleBdd_of_finite hβ)
+    (fun f => exists_diagonal_mem_adeleBdd (K := K) f) ?_ ?_ hα
+  · rintro β γ - - ⟨D₁, h₁⟩ ⟨D₂, h₂⟩
+    exact ⟨D₁ ⊔ D₂, add_mem (adeleBdd_mono le_sup_left h₁) (adeleBdd_mono le_sup_right h₂)⟩
+  · rintro β γ - - ⟨D₁, h₁⟩ ⟨D₂, h₂⟩
+    refine ⟨D₁ + D₂, fun v => ?_⟩
+    rw [Pi.mul_apply, map_mul, Finsupp.add_apply, WithZero.exp_add]
+    exact mul_le_mul' (h₁ v) (h₂ v)
+
+theorem mem_adeleSpace_iff [HasPrincipalDivisors K F] {α : Place K F → F} :
+    α ∈ adeleSpace K F ↔ ∃ D : Divisor K F, α ∈ adeleBdd D :=
+  ⟨exists_mem_adeleBdd_of_mem_repartitions, fun ⟨_, hD⟩ => adeleBdd_le_adeleSpace hD⟩
 
 variable (K F) in
 abbrev adeleBddPrincipal (D : Divisor K F) : Submodule K (adeleSpace K F) :=
@@ -192,6 +234,68 @@ abbrev adeleBddPrincipal (D : Divisor K F) : Submodule K (adeleSpace K F) :=
 
 theorem indexOfSpecialty_eq (D : Divisor K F) :
     indexOfSpecialty D = Module.finrank K (adeleSpace K F ⧸ adeleBddPrincipal K F D) := rfl
+
+section Repartitions
+
+/-! ### The adèle space as the repartition algebra -/
+
+variable (K F) in
+def repartitionsEquivAdeleSpace : repartitions K F ≃ₗ[K] adeleSpace K F where
+  toFun α := ⟨α, α.2⟩
+  invFun α := ⟨α, α.2⟩
+  map_add' _ _ := rfl
+  map_smul' _ _ := rfl
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+@[simp]
+theorem coe_repartitionsEquivAdeleSpace (α : repartitions K F) :
+    (repartitionsEquivAdeleSpace K F α : Place K F → F) = α := rfl
+
+@[simp]
+theorem coe_repartitionsEquivAdeleSpace_symm (α : adeleSpace K F) :
+    ((repartitionsEquivAdeleSpace K F).symm α : Place K F → F) = α := rfl
+
+theorem map_repartitionsOf_repartitionsEquivAdeleSpace (D : Divisor K F) :
+    (repartitionsOf D).map (repartitionsEquivAdeleSpace K F).toLinearMap =
+      (adeleBdd D).comap (adeleSpace K F).subtype := by
+  ext α
+  rw [Submodule.mem_map_equiv, Submodule.mem_comap]
+  exact Iff.rfl
+
+theorem map_principalRepartitions_repartitionsEquivAdeleSpace :
+    (principalRepartitions K F).map (repartitionsEquivAdeleSpace K F).toLinearMap =
+      (globalSub K F).comap (adeleSpace K F).subtype := by
+  ext α
+  rw [Submodule.mem_map_equiv, Submodule.mem_comap, mem_principalRepartitions_iff,
+    coe_repartitionsEquivAdeleSpace_symm, Submodule.coe_subtype]
+  exact (exists_congr fun f => eq_comm).trans (LinearMap.mem_range (f := diagonalHom K F)).symm
+
+theorem map_repartitionsOf_sup_principalRepartitions (D : Divisor K F) :
+    (repartitionsOf D ⊔ principalRepartitions K F).map
+        (repartitionsEquivAdeleSpace K F).toLinearMap = adeleBddPrincipal K F D := by
+  rw [Submodule.map_sup, map_repartitionsOf_repartitionsEquivAdeleSpace,
+    map_principalRepartitions_repartitionsEquivAdeleSpace]
+
+def h1EquivAdeleQuotient (D : Divisor K F) :
+    H1 D ≃ₗ[K] adeleSpace K F ⧸ adeleBddPrincipal K F D :=
+  Submodule.Quotient.equiv _ _ (repartitionsEquivAdeleSpace K F)
+    (map_repartitionsOf_sup_principalRepartitions D)
+
+@[simp]
+theorem h1EquivAdeleQuotient_mk (D : Divisor K F) (α : repartitions K F) :
+    h1EquivAdeleQuotient D (Submodule.Quotient.mk α) =
+      Submodule.Quotient.mk (repartitionsEquivAdeleSpace K F α) := rfl
+
+theorem finrank_h1_eq_indexOfSpecialty (D : Divisor K F) :
+    Module.finrank K (H1 D) = indexOfSpecialty D :=
+  (h1EquivAdeleQuotient D).finrank_eq
+
+variable (K F) in
+theorem genusFF_eq_indexOfSpecialty : genusFF K F = indexOfSpecialty (0 : Divisor K F) :=
+  finrank_h1_eq_indexOfSpecialty 0
+
+end Repartitions
 
 def omegaSpace (D : Divisor K F) : Submodule K (Module.Dual K (adeleSpace K F)) :=
   (adeleBddPrincipal K F D).dualAnnihilator
@@ -450,6 +554,12 @@ def RiemannGenusBounded : Prop :=
 variable (K F) in
 def IndexOfSpecialtyFinite : Prop :=
   ∃ D₀ : Divisor K F, Module.Finite K (adeleSpace K F ⧸ adeleBddPrincipal K F D₀)
+
+theorem indexOfSpecialtyFinite_iff_exists_finite_h1 :
+    IndexOfSpecialtyFinite K F ↔ ∃ D₀ : Divisor K F, Module.Finite K (H1 D₀) :=
+  exists_congr fun D₀ =>
+    ⟨fun _ => Module.Finite.equiv (h1EquivAdeleQuotient D₀).symm,
+      fun _ => Module.Finite.equiv (h1EquivAdeleQuotient D₀)⟩
 
 end AlgebraicCurve
 
