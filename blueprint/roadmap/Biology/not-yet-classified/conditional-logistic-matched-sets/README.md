@@ -1,6 +1,5 @@
 # Conditional Logistic Matched Sets
 
-- [Expit](expit.md)
 - [Only Case Prob](only-case-prob.md)
 - [Conditional Case Prob](conditional-case-prob.md)
 - [The conditional probability is free of the intercept](conditional-case-prob-eq.md)

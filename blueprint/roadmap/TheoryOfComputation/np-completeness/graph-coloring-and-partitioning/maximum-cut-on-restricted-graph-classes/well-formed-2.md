@@ -1,0 +1,3 @@
+# Well-formed instances of WEIGHTED MAXIMUM CUT ON COGRAPHS WITH WEIGHTS 1 AND 2
+
+An instance $(n, E, K)$ is well-formed for WEIGHTED MAXIMUM CUT ON COGRAPHS WITH WEIGHTS 1 AND 2 when its list of edges (the pairs $(u, v)$ of the entries of $E$) has no repeated entries and every pair $(u, v)$ in it satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u)$ is not in it; every weight is $1$ or $2$; the graph on the vertices $0, \dots, n-1$ in which $u$ and $v$ are adjacent when $u \ne v$ and $(u, v, w)$ or $(v, u, w)$ is in $E$ for some $w$ is a cograph (the path $P_4$ on four vertices is not an induced subgraph); and $K > 0$.

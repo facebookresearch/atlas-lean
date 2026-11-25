@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # Conditional likelihood for matched case-control sets
 
 In a matched set of `M + 1` subjects with exposures `x_0, …, x_M ∈ ℝ^K`, suppose the outcomes are
-independent with `P(y_j = 1) = expit(α + β · x_j)`, where the intercept `α` is specific to the
+independent with `P(y_j = 1) = σ(α + β · x_j)`, where the intercept `α` is specific to the
 set. Given that the set contains exactly one case, the probability that the case is subject `j`
 is `exp(β · x_j) / ∑_i exp(β · x_i)`, free of `α`. With the case listed first, the conditional
 likelihood of `n` sets is `∏ exp(β · x_0) / ∑_j exp(β · x_j)`, equivalently
@@ -24,12 +24,15 @@ incidental-parameter likelihood) gives `ψ = (n₁₀ / n₀₁)²`, which overs
 the bias that conditioning removes (Breslow and Day 1980, p. 250). Concordant pairs carry no
 information about `β`.
 
+Here `σ t = 1 / (1 + exp (-t))` is the logistic function, Mathlib's `Real.sigmoid`.
+
 Sources: N. E. Breslow and N. E. Day, *Statistical Methods in Cancer Research, Vol. I: The
 Analysis of Case-Control Studies*, IARC Sci. Publ. 32 (1980), ch. 7, pp. 249–253.
 -/
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Matrix.Mul
@@ -38,16 +41,13 @@ public import Mathlib.Data.Matrix.Mul
 
 namespace WantedExt.Biology.StatisticalGenetics.ConditionalLogisticMatchedSetsWanted
 
-/-- The logistic function `expit t = 1 / (1 + exp (-t))`. -/
-noncomputable def expit (t : ℝ) : ℝ :=
-  1 / (1 + Real.exp (-t))
-
 /-- The probability that subject `j` of a matched set is the only case, when outcomes are
-independent with `P(y_i = 1) = expit(α + β · x_i)`:
-`expit(α + β · x_j) ∏_{i ≠ j} (1 - expit(α + β · x_i))`. -/
+independent with `P(y_i = 1) = σ(α + β · x_i)`:
+`σ(α + β · x_j) ∏_{i ≠ j} (1 - σ(α + β · x_i))`. Here `σ` is the logistic
+function `Real.sigmoid`. -/
 noncomputable def onlyCaseProb {M K : ℕ} (α : ℝ) (β : Fin K → ℝ) (x : Fin (M + 1) → Fin K → ℝ)
     (j : Fin (M + 1)) : ℝ :=
-  expit (α + β ⬝ᵥ x j) * ∏ i ∈ Finset.univ.erase j, (1 - expit (α + β ⬝ᵥ x i))
+  Real.sigmoid (α + β ⬝ᵥ x j) * ∏ i ∈ Finset.univ.erase j, (1 - Real.sigmoid (α + β ⬝ᵥ x i))
 
 /-- The conditional probability that subject `j` is the case, given exactly one case in the set.
 -/
@@ -57,9 +57,10 @@ noncomputable def conditionalCaseProb {M K : ℕ} (α : ℝ) (β : Fin K → ℝ
 
 /-- **The conditional probability is free of the intercept** (Breslow and Day 1980, ch. 7). For
 a matched set of `M + 1` subjects with exposures `x_i ∈ ℝ^K`, independent outcomes with
-`P(y_i = 1) = expit(α + β · x_i)`, every intercept `α ∈ ℝ` and coefficient vector `β`, the
+`P(y_i = 1) = σ(α + β · x_i)`, every intercept `α ∈ ℝ` and coefficient vector `β`, the
 probability that subject `j` is the case given exactly one case is
 `exp(β · x_j) / ∑_i exp(β · x_i)`.
+Here `σ` is the logistic function `Real.sigmoid`.
 
 Source: Breslow and Day (1980), p. 251. -/
 public theorem_wanted conditionalCaseProb_eq {M K : ℕ} (α : ℝ) (β : Fin K → ℝ)
@@ -80,10 +81,11 @@ public theorem_wanted prod_conditionalLikelihood_eq {n K : ℕ} (M : Fin n → �
       ∏ s, 1 / (1 + ∑ j : Fin (M s), Real.exp (β ⬝ᵥ (x s j.succ - x s 0)))
 
 /-- **Matching variables drop out** (Breslow and Day 1980, p. 251). For a matched set of `M + 1`
-subjects with exposures `x_i ∈ ℝ^K`, independent outcomes with `P(y_i = 1) = expit(α + β · x_i)`,
+subjects with exposures `x_i ∈ ℝ^K`, independent outcomes with `P(y_i = 1) = σ(α + β · x_i)`,
 every intercept `α`, coefficient vector `β` and vector `z ∈ ℝ^K` common to the whole set, the
 conditional probability that subject `j` is the case given exactly one case is unchanged when
 every exposure `x_i` is replaced by `x_i + z`.
+Here `σ` is the logistic function `Real.sigmoid`.
 
 Source: Breslow and Day (1980), p. 251. -/
 public theorem_wanted conditionalCaseProb_add_const {M K : ℕ} (α : ℝ) (β : Fin K → ℝ)
@@ -113,12 +115,13 @@ public theorem_wanted pairedConditionalLogLik_max {n₁₀ n₀₁ : ℕ} (h₁�
 /-- The incidental-parameter log-likelihood of the discordant pairs, with a separate nuisance
 intercept for every pair (not a valid estimating likelihood for `β`): a pair
 with the case exposed and the control unexposed contributes
-`log (expit(α + β) (1 - expit α))`, and a pair with the reverse contributes
-`log (expit α (1 - expit(α + β)))`. -/
+`log (σ(α + β) (1 - σ α))`, and a pair with the reverse contributes
+`log (σ α (1 - σ(α + β)))`. Here `σ` is the logistic
+function `Real.sigmoid`. -/
 noncomputable def perPairInterceptLogLik {n₁₀ n₀₁ : ℕ} (α₁₀ : Fin n₁₀ → ℝ)
     (α₀₁ : Fin n₀₁ → ℝ) (β : ℝ) : ℝ :=
-  (∑ i, Real.log (expit (α₁₀ i + β) * (1 - expit (α₁₀ i)))) +
-    ∑ i, Real.log (expit (α₀₁ i) * (1 - expit (α₀₁ i + β)))
+  (∑ i, Real.log (Real.sigmoid (α₁₀ i + β) * (1 - Real.sigmoid (α₁₀ i)))) +
+    ∑ i, Real.log (Real.sigmoid (α₀₁ i) * (1 - Real.sigmoid (α₀₁ i + β)))
 
 /-- **The incidental-parameter estimate is biased** (Breslow and Day 1980, p. 250). For `n₁₀ > 0`
 discordant pairs with the case exposed and `n₀₁ > 0` with the control exposed, let

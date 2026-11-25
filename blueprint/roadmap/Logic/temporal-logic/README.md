@@ -9,3 +9,10 @@ Linear and branching-time temporal logics interpreted over infinite words and tr
 - [Linear-time μ-calculus](linear-time-calculus/README.md)
 - [Model checking for computation tree logic](model-checking-for-computation-tree-logic/README.md)
 - [Model checking for linear temporal logic](model-checking-for-linear-temporal-logic/README.md)
+
+- [Continuous stochastic logic](continuous-stochastic-logic.md)
+
+- [Model-checking algorithms](model-checking-algorithms/README.md)
+- [Temporal specification](temporal-specification/README.md)
+
+- [Timed and infinite-state verification](timed-and-infinite-state-verification/README.md)
