@@ -58,7 +58,9 @@ def jacobian (r a c : ℝ) (x : ℝ × ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![r * Real.exp (-(a * x.2)), -(r * a * x.1 * Real.exp (-(a * x.2)));
      c * (1 - Real.exp (-(a * x.2))), a * c * x.1 * Real.exp (-(a * x.2))]
 
-/-- A generation preserves strictly positive populations. -/
+/-- **Positivity is preserved.** For a growth factor `r > 0`, search parameter `a > 0` and
+conversion `c > 0`, one generation maps the positive quadrant (both populations strictly positive)
+into itself. -/
 theorem mapsTo_step_positiveQuadrant {r a c : ℝ}
     (hr : 0 < r) (ha : 0 < a) (hc : 0 < c) :
     Set.MapsTo (step r a c) positiveQuadrant positiveQuadrant := by
@@ -69,13 +71,17 @@ theorem mapsTo_step_positiveQuadrant {r a c : ℝ}
   exact ⟨mul_pos (mul_pos hr hH) (Real.exp_pos _),
     mul_pos (mul_pos hc hH) (sub_pos.mpr he)⟩
 
-/-- All forward iterates preserve strictly positive populations. -/
+/-- **Positivity is preserved by all iterates.** For a growth factor `r > 0`, search parameter
+`a > 0` and conversion `c > 0`, and every number of generations `n`, the `n`-th iterate of the map
+sends the positive quadrant into itself. -/
 theorem mapsTo_iterate_step_positiveQuadrant {r a c : ℝ}
     (hr : 0 < r) (ha : 0 < a) (hc : 0 < c) (n : ℕ) :
     Set.MapsTo (step r a c)^[n] positiveQuadrant positiveQuadrant :=
   (mapsTo_step_positiveQuadrant hr ha hc).iterate n
 
-/-- The equilibrium formula gives a strictly positive fixed point. -/
+/-- **The positive equilibrium.** For a growth factor `r > 1`, search parameter `a > 0` and
+conversion `c > 0`, the point `positiveEquilibrium r a c = (r log r / ((r - 1) a c), log r / a)`
+lies in the positive quadrant and is a fixed point of the map. -/
 theorem positiveEquilibrium_spec {r a c : ℝ}
     (hr : 1 < r) (ha : 0 < a) (hc : 0 < c) :
     positiveEquilibrium r a c ∈ positiveQuadrant ∧
@@ -92,7 +98,9 @@ theorem positiveEquilibrium_spec {r a c : ℝ}
   · dsimp [positiveEquilibrium]
     field_simp [hr0.ne', ha.ne', hc.ne', (sub_pos.mpr hr).ne']
 
-/-- Any strictly positive fixed point equals the displayed equilibrium. -/
+/-- **Uniqueness of the positive equilibrium.** For a growth factor `r > 1`, search parameter
+`a > 0` and conversion `c > 0`, every fixed point `x` of the map in the positive quadrant equals
+`positiveEquilibrium r a c`. -/
 theorem eq_positiveEquilibrium_of_isFixedPt {r a c : ℝ}
     (hr : 1 < r) (ha : 0 < a) (hc : 0 < c) {x : ℝ × ℝ}
     (hx : x ∈ positiveQuadrant) (hfix : IsFixedPt (step r a c) x) :
@@ -121,7 +129,9 @@ theorem eq_positiveEquilibrium_of_isFixedPt {r a c : ℝ}
     nlinarith
   · exact hp
 
-/-- At growth factors through one, the positive quadrant has no fixed point. -/
+/-- **No positive equilibrium for `r ≤ 1`.** For a growth factor `r` with `0 < r ≤ 1`, search
+parameter `a > 0` and any conversion `c`, the map has no fixed point `x` in the positive quadrant.
+-/
 theorem not_isFixedPt_of_le_one {r a c : ℝ}
     (hr : 0 < r) (hr1 : r ≤ 1) (ha : 0 < a) {x : ℝ × ℝ}
     (hx : x ∈ positiveQuadrant) : ¬ IsFixedPt (step r a c) x := by
@@ -135,18 +145,22 @@ theorem not_isFixedPt_of_le_one {r a c : ℝ}
   intro hfix
   exact (hlt.trans_le hle).ne (congrArg Prod.fst hfix)
 
-/-- Zero host and parasitoid populations give the trivial fixed point. -/
+/-- **The trivial equilibrium.** For all real parameters `r`, `a`, `c`, the origin (zero host and
+parasitoid populations) is a fixed point of the map. No sign hypothesis is needed. -/
 theorem isFixedPt_zero (r a c : ℝ) : IsFixedPt (step r a c) 0 := by
   simp [IsFixedPt, step]
 
-/-- The population map is smooth on the real plane. -/
+/-- **Smoothness.** For all real parameters `r`, `a`, `c`, the map is `C^∞` on the whole real plane.
+No sign hypothesis is needed. -/
 theorem contDiff_step (r a c : ℝ) : ContDiff ℝ ∞ (step r a c) := by
   exact ((contDiff_const.mul contDiff_fst).mul
     ((contDiff_const.mul contDiff_snd).neg.exp)).prodMk
     ((contDiff_const.mul contDiff_fst).mul
       (contDiff_const.sub ((contDiff_const.mul contDiff_snd).neg.exp)))
 
-/-- The actual Fréchet derivative is the linear map of the displayed matrix. -/
+/-- **The derivative.** For all real parameters `r`, `a`, `c` and every point `x` of the real plane,
+the Fréchet derivative of the map at `x` is the linear map given, in the standard basis, by the
+matrix `jacobian r a c x`. No sign hypothesis is needed. -/
 theorem hasFDerivAt_step (r a c : ℝ) (x : ℝ × ℝ) :
     HasFDerivAt (step r a c)
       (Matrix.toLin (Module.Basis.finTwoProd ℝ) (Module.Basis.finTwoProd ℝ)
@@ -161,7 +175,10 @@ theorem hasFDerivAt_step (r a c : ℝ) (x : ℝ × ℝ) :
     rw [Matrix.toLin_finTwoProd_toContinuousLinearMap]
     ext <;> simp <;> ring
 
-/-- The Jacobian at the positive equilibrium in population coordinates. -/
+/-- **The Jacobian at the positive equilibrium.** For a growth factor `r > 1`, search parameter
+`a > 0` and conversion `c > 0`, the Jacobian at `positiveEquilibrium r a c` is
+`[[1, -a H*], [c (1 - 1/r), log r / (r - 1)]]`, where `H*` is the host coordinate of the
+equilibrium. -/
 theorem jacobian_positiveEquilibrium {r a c : ℝ}
     (hr : 1 < r) (ha : 0 < a) (hc : 0 < c) :
     jacobian r a c (positiveEquilibrium r a c) =
@@ -176,7 +193,8 @@ theorem jacobian_positiveEquilibrium {r a c : ℝ}
   fin_cases i <;> fin_cases j <;> simp [positiveEquilibrium] <;>
     field_simp [hr0.ne', ha.ne', hc.ne', (sub_pos.mpr hr).ne']
 
-/-- The trace of the derivative at the positive equilibrium. -/
+/-- **Trace at the positive equilibrium.** For a growth factor `r > 1`, search parameter `a > 0` and
+conversion `c > 0`, the Jacobian at `positiveEquilibrium r a c` has trace `1 + log r / (r - 1)`. -/
 theorem trace_jacobian_positiveEquilibrium {r a c : ℝ}
     (hr : 1 < r) (ha : 0 < a) (hc : 0 < c) :
     (jacobian r a c (positiveEquilibrium r a c)).trace =
@@ -184,7 +202,9 @@ theorem trace_jacobian_positiveEquilibrium {r a c : ℝ}
   rw [jacobian_positiveEquilibrium hr ha hc, Matrix.trace_fin_two]
   simp
 
-/-- The determinant of the derivative at the positive equilibrium. -/
+/-- **Determinant at the positive equilibrium.** For a growth factor `r > 1`, search parameter
+`a > 0` and conversion `c > 0`, the Jacobian at `positiveEquilibrium r a c` has determinant
+`r log r / (r - 1)`. -/
 theorem det_jacobian_positiveEquilibrium {r a c : ℝ}
     (hr : 1 < r) (ha : 0 < a) (hc : 0 < c) :
     (jacobian r a c (positiveEquilibrium r a c)).det =
@@ -208,7 +228,10 @@ private theorem log_ratio_bounds {r : ℝ} (hr : 1 < r) :
   · apply (lt_div_iff₀ (sub_pos.mpr hr)).mpr
     linarith
 
-/-- The two nonreal conjugate eigenvalues have modulus above one. -/
+/-- **Spectrum at the positive equilibrium.** For a growth factor `r > 1`, search parameter `a > 0`
+and conversion `c > 0`, the complex spectrum of the Jacobian at `positiveEquilibrium r a c` is a
+pair `{z, z̄}` of nonreal conjugate eigenvalues (`0 < Im z`) of common modulus
+`‖z‖ = ‖z̄‖ = √(r log r / (r - 1))`, and this modulus exceeds `1`. -/
 theorem spectrum_jacobian_positiveEquilibrium {r a c : ℝ}
     (hr : 1 < r) (ha : 0 < a) (hc : 0 < c) :
     ∃ z : ℂ, 0 < z.im ∧
@@ -456,8 +479,11 @@ private theorem escape_conjugate (r a c : ℝ) (x : ℝ × ℝ) (hx : x ∈ posi
     rw [hdist]
     exact (div_le_iff₀ hS0).mpr (by simpa only [mul_comm] using hnorm)
 
-/-- Strictly positive initial states arbitrarily near the positive equilibrium
-have forward iterates a fixed positive distance from it. -/
+/-- **Instability of the positive equilibrium.** For a growth factor `r > 1`, search parameter
+`a > 0` and conversion `c > 0`, there is `ε > 0` such that for every `δ > 0` some initial state `x₀`
+in the positive quadrant with `‖x₀ - positiveEquilibrium r a c‖ < δ` has a forward iterate
+`(step r a c)^[n] x₀` at distance at least `ε` from the equilibrium (the norm on the plane is the
+maximum of the coordinate norms). -/
 theorem positiveEquilibrium_lyapunovUnstable {r a c : ℝ}
     (hr : 1 < r) (ha : 0 < a) (hc : 0 < c) :
     ∃ ε > 0, ∀ δ > 0, ∃ x₀ ∈ positiveQuadrant,

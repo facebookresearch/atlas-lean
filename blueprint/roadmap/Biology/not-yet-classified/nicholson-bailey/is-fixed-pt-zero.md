@@ -1,3 +1,4 @@
-# Is Fixed Pt zero
+# The trivial equilibrium
 
-Zero host and parasitoid populations give the trivial fixed point.
+For all real parameters `r`, `a`, `c`, the origin (zero host and
+parasitoid populations) is a fixed point of the map. No sign hypothesis is needed.
