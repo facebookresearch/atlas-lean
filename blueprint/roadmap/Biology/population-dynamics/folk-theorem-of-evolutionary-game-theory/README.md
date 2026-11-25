@@ -1,6 +1,5 @@
 # Folk theorem of evolutionary game theory
 
-- [Is Nash](is-nash.md)
 - [Is Strict Nash](is-strict-nash.md)
 - [Is Lyapunov Stable](is-lyapunov-stable.md)
 - [Folk theorem (a)](replicator-field-eq-zero.md)

@@ -19,11 +19,8 @@ the boundary of `Δ`, is asymptotically stable. An interior ESS attracts every i
 statement for a regular ESS. The converse fails: the interior rest point of the four-member
 hypercycle is asymptotically stable but not an ESS.
 
-`Domains.Biology.Dynamics.ReplicatorStability` proves asymptotic stability only for an interior
-ESS (`IsESS.asymptoticallyStable` with `∀ i, 0 < p i`) and states that boundary ESS are not
-covered. `WantedExt` may not import `Domains`, so the replicator vector field, the ESS predicate
-and the stability notions are restated here with the same meaning as `Replicator.IsSolution`
-and `Replicator.IsESS`.
+The related interior-ESS development lives in `Domains.Biology.Dynamics.ReplicatorStability`;
+this module states the general boundary-ESS and global-attraction results.
 
 Sources: J. Hofbauer, P. Schuster and K. Sigmund, "A note on evolutionary stable strategies and
 game dynamics", J. Theor. Biol. 81 (1979) 609–612; P. D. Taylor and L. B. Jonker,
@@ -74,12 +71,13 @@ near `p`. -/
 def IsLocallySuperior (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
   p ∈ simplex ι ∧ ∀ᶠ x in 𝓝 p, x ∈ simplex ι → x ≠ p → x ⬝ᵥ A *ᵥ x < p ⬝ᵥ A *ᵥ x
 
-/-- `p` is **asymptotically stable** for the replicator dynamics of `A` on `Δ`: every state of
-`Δ` has a forward solution; `p` is Lyapunov stable (for every `ε > 0` there is `δ > 0` such
+/-- `p` is **asymptotically stable** for the replicator dynamics of `A` on `Δ`: `p ∈ Δ`; every
+state of `Δ` has a forward solution; `p` is Lyapunov stable (for every `ε > 0` there is `δ > 0` such
 that every solution starting in `Δ` within `δ` of `p` stays within `ε` of `p` for all `t ≥ 0`);
 and `p` is locally attracting (there is `δ > 0` such that every solution starting in `Δ` within
 `δ` of `p` converges to `p`). -/
 def IsAsymptoticallyStable (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
+  p ∈ simplex ι ∧
   (∀ x₀ ∈ simplex ι, ∃ x : ℝ → ι → ℝ, x 0 = x₀ ∧ IsReplicatorSolution A x) ∧
   (∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → ι → ℝ, IsReplicatorSolution A x → x 0 ∈ simplex ι →
       ‖x 0 - p‖ < δ → ∀ t, 0 ≤ t → ‖x t - p‖ < ε) ∧
@@ -108,8 +106,8 @@ public theorem_wanted isESS_iff_isLocallySuperior (A : Matrix ι ι ℝ) (p : ι
 
 /-- **Every ESS is asymptotically stable** (Hofbauer, Schuster and Sigmund 1979). For every
 payoff matrix `A` and every ESS `p` of `A`, interior or on the boundary of `Δ`, `p` is
-asymptotically stable for the replicator dynamics: solutions from `Δ` exist, `p` is Lyapunov
-stable on `Δ`, and `p` attracts every solution starting in `Δ` near `p`.
+asymptotically stable for the replicator dynamics: `p ∈ Δ`, solutions from `Δ` exist, `p` is
+Lyapunov stable on `Δ`, and `p` attracts every solution starting in `Δ` near `p`.
 
 Source: Hofbauer, Schuster and Sigmund (1979), corollary after D4. -/
 public theorem_wanted IsESS.isAsymptoticallyStable {A : Matrix ι ι ℝ} {p : ι → ℝ}

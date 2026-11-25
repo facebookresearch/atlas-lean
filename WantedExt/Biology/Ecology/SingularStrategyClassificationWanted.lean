@@ -89,7 +89,8 @@ strategy `x*`: if `s_yy < 0` at `(x*, x*)`, there is `δ > 0` with `s x* y < 0` 
 `y`.
 
 Source: Geritz et al. (1998), eq. (5). -/
-public theorem_wanted isLocalESS_iff {s : ℝ → ℝ → ℝ} {xs : ℝ} (h : IsSingular s xs) :
+public theorem_wanted uninvadable_of_syy_neg_and_invadable_of_syy_pos {s : ℝ → ℝ → ℝ} {xs : ℝ}
+    (h : IsSingular s xs) :
     (syy s xs xs < 0 → ∃ δ > 0, ∀ y, 0 < |y - xs| → |y - xs| < δ → s xs y < 0) ∧
       (0 < syy s xs xs → ∃ δ > 0, ∀ y, 0 < |y - xs| → |y - xs| < δ → 0 < s xs y)
 

@@ -17,11 +17,9 @@ stable) rest point is a Nash equilibrium. Part (b) follows from the asymptotic s
 every ESS (a strict Nash equilibrium is an ESS), recorded in
 `WantedExt.Biology.Ecology.BoundaryESSStabilityWanted`; it is restated here as a corollary.
 
-`Domains.Biology.Dynamics.ReplicatorStability` proves `IsESS.isNash` and the interior
-equalizer facts; parts (a), (c) and (d) are not on main. `WantedExt` may not import `Domains`,
-and `MathlibExt` has no replicator API, so the simplex, the replicator field and the solution
-predicate are reused from `WantedExt.Biology.Ecology.BoundaryESSStabilityWanted`; only the Nash
-predicates (with the meaning of `Replicator.IsNash`) and Lyapunov stability are defined here.
+The simplex, replicator field and solution predicate are shared with
+`WantedExt.Biology.Ecology.BoundaryESSStabilityWanted`. The related interior-ESS development
+lives in `Domains.Biology.Dynamics.ReplicatorStability`.
 
 Sources: J. Hofbauer and K. Sigmund, "Evolutionary game dynamics", Bull. Amer. Math. Soc.
 (N.S.) 40 (2003) 479–519, §2.3, p. 482 (statement (a)–(d)), eq. (2), p. 481.
@@ -50,12 +48,12 @@ def IsNash (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
 def IsStrictNash (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
   p ∈ simplex ι ∧ ∀ q ∈ simplex ι, q ≠ p → q ⬝ᵥ A *ᵥ p < p ⬝ᵥ A *ᵥ p
 
-/-- `p` is **Lyapunov stable** for the replicator dynamics of `A` on `Δ`: for every `ε > 0`
-there is `δ > 0` such that every solution starting in `Δ` within `δ` of `p` stays within `ε`
+/-- `p` is **Lyapunov stable** for the replicator dynamics of `A` on `Δ`: `p ∈ Δ`, and for every
+`ε > 0` there is `δ > 0` such that every solution starting in `Δ` within `δ` of `p` stays within `ε`
 of `p` for all `t ≥ 0`. -/
 def IsLyapunovStable (A : Matrix ι ι ℝ) (p : ι → ℝ) : Prop :=
-  ∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → ι → ℝ, IsReplicatorSolution A x → x 0 ∈ simplex ι →
-    ‖x 0 - p‖ < δ → ∀ t, 0 ≤ t → ‖x t - p‖ < ε
+  p ∈ simplex ι ∧ ∀ ε > 0, ∃ δ > 0, ∀ x : ℝ → ι → ℝ, IsReplicatorSolution A x →
+    x 0 ∈ simplex ι → ‖x 0 - p‖ < δ → ∀ t, 0 ≤ t → ‖x t - p‖ < ε
 
 /-- **Folk theorem (a)** (Hofbauer and Sigmund 2003, §2.3). For every payoff matrix `A` and
 every Nash equilibrium `p` of `A`, `p` is a rest point of the replicator equation:

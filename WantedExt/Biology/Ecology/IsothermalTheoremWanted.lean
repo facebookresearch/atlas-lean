@@ -18,16 +18,13 @@ stochastic `W` means that `W` is doubly stochastic (`T_j = 1`). The isothermal t
 on an isothermal graph the fixation probability of a single mutant placed at a uniformly random
 vertex is the Moran value `ρ₁ = (1 - 1/r) / (1 - 1/r^N)`.
 
-Only the "if" direction is recorded. Keller and Uğurlu re-prove it by a martingale argument and
-note that the original projection to a birth–death chain is incomplete; the "only if" direction
-and the circulation criterion for general weights are not verified by any source read for this
-module and are not stated. Strong connectivity of the weighted graph is assumed, as in the
-model: without it (for example `W = 1`) no mutant ever spreads. Fixation probabilities are
-characterized by the absorption equations of the chain on mutant sets.
+Only the "if" direction (isothermal implies Moran fixation probability) is recorded, following
+the martingale argument of Keller and Uğurlu. Strong connectivity of the weighted graph is
+assumed, as in the model: without it (for example `W = 1`) no mutant ever spreads. Fixation
+probabilities are characterized by the absorption equations of the chain on mutant sets.
 
-The well-mixed Moran fixation probability is proved in
-`Domains.Biology.PopulationGenetics.Moran` (`moranFixation`); `WantedExt` may not import
-`Domains`, so the value `ρ₁` is restated here.
+The well-mixed Moran fixation probability is defined in
+`Domains.Biology.PopulationGenetics.Moran` (`moranFixation`).
 
 Sources: E. Lieberman, C. Hauert and M. A. Nowak, "Evolutionary dynamics on graphs", Nature 433
 (2005) 312–316, p. 313 and eq. (1); F. Keller and B. Uğurlu, arXiv:2403.12598; Y. Kaveh,
@@ -70,7 +67,10 @@ def IsFixationFunction (r : ℝ) (W : Matrix (Fin N) (Fin N) ℝ)
     φ S = ∑ i, ∑ j, fitness r S i / totalFitness r S * W i j * φ (replace S i j)
 
 /-- The **Moran fixation probability** `ρ₁ = (1 - 1/r) / (1 - 1/r^N)` of a single mutant of
-fitness `r` in a well-mixed population of size `N`. -/
+fitness `r` in a well-mixed population of size `N`. The formula is the fixation probability for
+`r > 0`, `r ≠ 1` and `N ≥ 1`. The definition is total: at `r = 1` numerator and denominator
+vanish and Lean's convention `0 / 0 = 0` gives `0`, not the neutral fixation probability `1/N`
+(which is the limit as `r → 1`). -/
 noncomputable def moranFixation (r : ℝ) (N : ℕ) : ℝ :=
   (1 - r⁻¹) / (1 - r⁻¹ ^ N)
 

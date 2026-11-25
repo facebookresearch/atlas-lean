@@ -7,7 +7,7 @@ memory-one strategy `p` that is an equalizer for `σ`:
 `(1 - p₁) + p₄ ≠ 0` and
 `((1 - p₁) P + p₄ R) / ((1 - p₁) + p₄) = σ`; that is nondegenerate, in that some memory-one
 strategy `q` has `D(p, q, 1) ≠ 0`; and such that for every memory-one strategy `q` and every
-stationary distribution `v` of `M(p, q)` with `D(p, q, 1) ≠ 0`, `v · S_Y = σ`.
+stationary distribution `v` of `M(p, q)`, `v · S_Y = σ`.
 
 ## Sources
 

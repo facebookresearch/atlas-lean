@@ -7,7 +7,7 @@
 - [Is Singular](is-singular.md)
 - [Diagonal identity and the derivative of the fitness gradient](diagonal-identity-and-has-deriv-at.md)
 - [Convergence stability](convergence-stable-iff-and-gradient.md)
-- [ESS-stability](is-local-ess-iff.md)
+- [ESS-stability](uninvadable-of-syy-neg-and-invadable-of.md)
 - [Invasion potential](invades-nearby-residents.md)
 - [Mutual invasibility](mutual-invasibility.md)
 - [Evolutionary branching point](branching-point.md)
