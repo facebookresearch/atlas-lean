@@ -31,8 +31,9 @@ Resolution increases with `j` in this convention (`V_j ⊂ V_{j+1}`); texts that
 by the scale `2^j` instead write `V_{j+1} ⊂ V_j`. Functions are elements of the complex `L²(ℝ)`, and
 a dilated or translated function is described by any `L²` element almost everywhere equal to it.
 The main theorems of the paper (an orthonormal basis of integer translates of a scaling
-function, and the wavelet orthonormal basis) are recorded in
-`WantedExt.Analysis.Wavelet.MultiresolutionWanted`.
+function, and the wavelet orthonormal basis) are proved in
+`MathlibExt.Analysis.Wavelet.ScalingFunction` and
+`MathlibExt.Analysis.Wavelet.WaveletBasis`.
 -/
 
 @[expose] public section
