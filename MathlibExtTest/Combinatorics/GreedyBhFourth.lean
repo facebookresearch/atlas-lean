@@ -37,6 +37,13 @@ example (a : ℕ) (ha : IsFourthGreedyBh 2 a) : a ≤ 12 :=
 example : ¬IsFourthGreedyBh 2 13 := fun h =>
   absurd (isFourthGreedyBh_le_fourthValue 2 13 two_pos h) (by decide)
 
+-- The lower bound rejects the candidates just below the even and odd bounds.
+example : ¬ IsFourthGreedyBh 2 11 := fun h =>
+  absurd (fourthValue_le_of_isFourthGreedyBh 2 11 (by decide) h) (by decide)
+
+example : ¬ IsFourthGreedyBh 3 31 := fun h =>
+  absurd (fourthValue_le_of_isFourthGreedyBh 3 31 (by decide) h) (by decide)
+
 -- The greedy step rejects `2` after `{0, 1}` for `h = 2`, since `0 + 2 = 1 + 1`.
 example : ¬IsNextGreedyBh 2 {0, 1} 2 := by
   intro H

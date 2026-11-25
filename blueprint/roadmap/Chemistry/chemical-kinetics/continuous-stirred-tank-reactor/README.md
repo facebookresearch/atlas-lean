@@ -21,3 +21,4 @@ explicit solution relaxes exponentially to the steady concentration $Q c_{\mathr
 - [Field of the stirred-tank linear system](cstr-linear-system-field-eq.md)
 - [Output of the stirred-tank linear system has no feedthrough](cstr-linear-system-output-eq.md)
 - [The reactor field in deviation variables is the linear system's field](cstr-deviation-field-eq.md)
+- [Exact linearization remainder for a second-order stirred tank](linearization-remainder-of-a-second-order-reactor.md)

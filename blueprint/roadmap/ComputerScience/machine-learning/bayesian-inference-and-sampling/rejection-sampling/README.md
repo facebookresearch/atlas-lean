@@ -9,3 +9,5 @@
 - [Conditional on acceptance, the proposal has the target law](trial-true-div-tsum.md)
 - [Rejection sampling outputs the target law](tsum-rejections-mul-trial.md)
 - [Uniqueness for the first-step equation of rejection sampling](eq-of-first-step.md)
+
+- [Rejection ABC returns the tolerance-conditioned posterior](abc-rejection-target-law-and-zero-tolerance-disc.md)

@@ -1,0 +1,3 @@
+# Assuming a condition on a symbolic path, pruning only literal false
+
+A symbolic path is a record of a guard (a Boolean expression), a symbolic store $\sigma : \mathbb{N} \to \mathrm{AExp}$ (expressions over the initial state) and a cost $n \in \mathbb{N}$. Assuming a Boolean expression $b$ on a path $p$ with store $\sigma$ computes $b' = \operatorname{bfold}_\emptyset(b[\sigma])$, constant folding with the empty table of $b$ with $\sigma$ substituted for its variables; it fails (prunes the path) exactly when $b'$ is the literal false, and otherwise returns $p$ with guard $g \wedge b'$, where $g$ is the guard of $p$. A condition is pruned only when it folds to the literal false; no satisfiability check is made.

@@ -7,4 +7,6 @@ Amounts of substance, molar masses and composition, flows of process streams, an
 - [Composition of process streams](composition-of-process-streams/README.md)
 - [Moisture content on wet and dry bases](moisture-content-on-wet-and-dry-bases/README.md)
 - [Reaction extent, limiting reagents and yield](reaction-extent-limiting-reagents-and-yield/README.md)
+- [Process material balances](process-material-balances/README.md)
+- [Mineral-processing balances](mineral-processing-balances/README.md)
 - [Species balances over process flowsheets](species-balances-over-process-flowsheets/README.md)
