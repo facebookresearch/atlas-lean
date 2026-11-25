@@ -19,6 +19,7 @@ public import MathlibExt.NumberTheory.FloorDivisionCounts
 public import MathlibExt.NumberTheory.FloorQuotientDivisorSummatory
 public import MathlibExt.NumberTheory.FloorQuotientOddCount
 public import MathlibExt.NumberTheory.RoundQuotientOddCount
+public import MathlibExt.NumberTheory.RoundedQuotientThresholdCounts
 
 namespace MetaMathlibExt
 
@@ -116,22 +117,6 @@ public theorem_wanted ceilQuotientOddCount_asymptotic :
         C * Real.sqrt n) ∧
     Tendsto (fun n : ℕ => (ceilQuotientOddCount n : ℝ) / n) atTop
       (𝓝 (1 - Real.log 2))
-
-/-- **Counting large terms of the rounded quotient sequence.** Let $n$ be a natural number.
-Every $d$ with $1 \le d \le n$ satisfies $\lfloor n/d + 1/2 \rfloor \ge 1$, and for every
-integer $k \ge 2$ the number of $d$ with $1 \le d \le n$ and $\lfloor n/d + 1/2 \rfloor \ge k$
-is $\lfloor 2n/(2k-1) \rfloor$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Lemma 13 (`jis-2024-24.2.5-lem-13`). -/
-public theorem_wanted round_div_sequence_card_ge (n : ℕ) :
-    ((Finset.Icc 1 n).filter (fun d : ℕ => (1 : ℤ) ≤ ⌊(n : ℚ) / (d : ℚ) + 1 / 2⌋)).card
-        = n ∧
-      ∀ k : ℕ, 2 ≤ k →
-        ((Finset.Icc 1 n).filter
-            (fun d : ℕ => (k : ℤ) ≤ ⌊(n : ℚ) / (d : ℚ) + 1 / 2⌋)).card =
-          2 * n / (2 * k - 1)
 
 /-- **Divisor-sum formula for the rounding sequence parity count.** For a positive integer $k$
 and $r \in \{1, 3\}$, let $d_{r,4}(k)$ be the number of positive divisors of $k$ congruent to

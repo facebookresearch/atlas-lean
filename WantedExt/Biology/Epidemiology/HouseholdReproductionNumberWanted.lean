@@ -96,14 +96,15 @@ theorem_wanted tendsto_expectedCases_rpow_of_zero (hnH : 0 < nH) (μ : Fin nH �
 
 /-- **`R₀` as the root of the characteristic equation** (Pellis, Ball and Trapman 2012,
 Corollary 1). Let `n_H ≥ 1`, `μ_G > 0`, `μ_0 = 1` and `μ_i ≥ 0` for all `i`. Then
-`∑_{i < n_H} μ_G μ_i / λ^(i+1) = 1` has exactly one positive solution `λ`, and it is the spectral
-radius `ρ(A_{n_H})`.
+`∑_{i < n_H} μ_G μ_i / λ^(i+1) = 1` has exactly one positive solution `λ`, and every positive
+solution equals the spectral radius `ρ(A_{n_H})`.
 
 Source: Pellis, Ball and Trapman (2012), Corollary 1, Eq. (3.3). -/
 theorem_wanted existsUnique_root_eq_spectralRadius (hnH : 0 < nH) (μG : ℝ) (μ : Fin nH → ℝ)
     (hμG : 0 < μG) (hμ0 : μ ⟨0, hnH⟩ = 1) (hμ : ∀ i, 0 ≤ μ i) :
-    ∃! lam : ℝ, 0 < lam ∧ ∑ i, μG * μ i / lam ^ ((i : ℕ) + 1) = 1 ∧
-      lam = spectralRadiusReal (householdMatrix μG μ)
+    (∃! lam : ℝ, 0 < lam ∧ ∑ i, μG * μ i / lam ^ ((i : ℕ) + 1) = 1) ∧
+      ∀ lam : ℝ, 0 < lam → ∑ i, μG * μ i / lam ^ ((i : ℕ) + 1) = 1 →
+        lam = spectralRadiusReal (householdMatrix μG μ)
 
 /-- **`R₀` and `R*` have the same threshold** (Pellis, Ball and Trapman 2012, Section 3,
 p. 7). Let `n_H ≥ 1`, `μ_G > 0`, `μ_0 = 1` and `μ_i ≥ 0` for all `i`. Then

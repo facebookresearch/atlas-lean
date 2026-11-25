@@ -1,0 +1,11 @@
+# SIS extinction times on finite graphs
+
+- [Jump Rate](jump-rate.md)
+- [Sis Rate Matrix](sis-rate-matrix.md)
+- [Adj Spectral Radius](adj-spectral-radius.md)
+- [Cut Size](cut-size.md)
+- [Isoperimetric](isoperimetric.md)
+- [Die Out Constant](die-out-constant.md)
+- [Fast die-out, survival probability](prob-ne-empty-le.md)
+- [Fast die-out, expected extinction time](lintegral-extinction-time-le.md)
+- [Slow die-out](prob-extinction-time-gt-ge.md)

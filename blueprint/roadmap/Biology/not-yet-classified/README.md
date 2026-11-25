@@ -2,7 +2,10 @@
 
 Topics added since this subject's fields were last revised.
 
-- [Configuration Model SIR](configuration-model-sir/README.md)
-- [Graph SISExtinction Time](graph-sisextinction-time/README.md)
-- [Household Reproduction Number](household-reproduction-number/README.md)
-- [Power Law Contact Process](power-law-contact-process/README.md)
+- [Cherry Distribution](cherry-distribution/README.md)
+- [General Markov Flattening](general-markov-flattening/README.md)
+- [General Markov Identifiability](general-markov-identifiability/README.md)
+- [No Common Mechanism Parsimony](no-common-mechanism-parsimony/README.md)
+- [Phylogenetic Tree Space](phylogenetic-tree-space/README.md)
+- [Rooted SPRAgreement Forest](rooted-spragreement-forest/README.md)
+- [TBRAgreement Forest](tbragreement-forest/README.md)
