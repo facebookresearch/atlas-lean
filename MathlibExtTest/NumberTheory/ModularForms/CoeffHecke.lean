@@ -18,6 +18,8 @@ open scoped MatrixGroups
 
 open groupCohomology
 
+namespace MathlibExtTest.NumberTheory.ModularForms.CoeffHecke
+
 /-- Consumer with the public theorem's binders. -/
 theorem exactSource
     (N ℓ ℓ' m : ℕ) [NeZero ℓ] [NeZero ℓ'] [NeZero m] (hℓ : ℓ.Prime) (hℓN : ¬ ℓ ∣ N)
@@ -75,3 +77,5 @@ example :
   change ((ZMod.χ₄ (-1 : ZMod 4) : ℤ) : ℚ) * 1 - 1 = -2
   rw [show ZMod.χ₄ (-1 : ZMod 4) = -1 by decide]
   norm_num
+
+end MathlibExtTest.NumberTheory.ModularForms.CoeffHecke
