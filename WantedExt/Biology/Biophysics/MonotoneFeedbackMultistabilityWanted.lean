@@ -9,27 +9,28 @@ LICENSE file in the root directory of this source tree.
 /-
 # Multistability of positive feedback loops of monotone input/output systems
 
-A positivity cone `K ⊆ ℝ^n` is a closed convex pointed cone with nonempty interior; it orders
-`ℝ^n` by `x₁ ⪰ x₂ ↔ x₁ - x₂ ∈ K`, with `x₁ ≻ x₂` meaning `x₁ ⪰ x₂` and `x₁ ≠ x₂`, and
+A positivity cone `K ⊆ ℝ^n` is a closed convex pointed cone with nonempty interior; it orders `ℝ^n`
+by `x₁ ⪰ x₂ ↔ x₁ - x₂ ∈ K`, with `x₁ ≻ x₂` meaning `x₁ ⪰ x₂` and `x₁ ≠ x₂`, and
 `x₁ ≫ x₂ ↔ x₁ - x₂ ∈ int K`. A single-input single-output system `ẋ = f(x, u)`, `y = h(x)` has a
 state space `X ⊆ ℝ^n` that is the closure of an open set, an input set `U ⊆ ℝ` and an output map
-`h : X → ℝ`, with the standard order on inputs and outputs. Inputs are locally essentially
-bounded measurable functions `u : [0, ∞) → U`; `f` is differentiable, and the solution
-`φ(t, ξ, u)` from `ξ ∈ X` exists for all `t ≥ 0` and stays in `X` (forward completeness and
-invariance). The system is monotone if `ξ₁ ⪰ ξ₂` and `u₁ ≥ u₂` almost everywhere imply
-`φ(t, ξ₁, u₁) ⪰ φ(t, ξ₂, u₂)` for all `t ≥ 0`, and `h` is monotone. It has a non-degenerate
-input-to-state characteristic `k_X : U → X` if for each constant input `u`, `k_X(u)` is the
-unique globally asymptotically stable equilibrium of `ẋ = f(x, u)` on `X` and
-`det D_x f(k_X(u), u) ≠ 0`; its input/output characteristic is `k_Y = h ∘ k_X`. A map
+`h : X → ℝ`, with the standard order on inputs and outputs. Inputs are locally essentially bounded
+measurable functions `u : [0, ∞) → U`; `f` and `h` are continuously differentiable (`C¹`; the
+convergence argument linearizes the closed loop `ẋ = f(x, h(x))` and applies Hirsch's generic
+convergence theorem to it), and the solution `φ(t, ξ, u)` from `ξ ∈ X` exists for all `t ≥ 0` and
+stays in `X` (forward completeness and invariance). The system is monotone if `ξ₁ ⪰ ξ₂` and
+`u₁ ≥ u₂` almost everywhere imply `φ(t, ξ₁, u₁) ⪰ φ(t, ξ₂, u₂)` for all `t ≥ 0`, and `h` is
+monotone. It has a non-degenerate input-to-state characteristic `k_X : U → X` if for each constant
+input `u`, `k_X(u)` is the unique globally asymptotically stable equilibrium of `ẋ = f(x, u)` on `X`
+and `det D_x f(k_X(u), u) ≠ 0`; its input/output characteristic is `k_Y = h ∘ k_X`. A map
 `k : U → U` has non-degenerate fixed points if at every fixed point `k'(u)` exists and `k'(u) ≠ 1`.
 
-**Theorem (secondresult)** (Angeli–Sontag 2004). Consider a monotone single-input single-output
-system with a non-degenerate I/S and I/O static characteristic, and close the loop with the
-unitary positive feedback `u = y`. Then the equilibria of the closed loop `ẋ = f(x, h(x))` are
-in one-to-one correspondence with the fixed points of `k_Y`. Moreover, if `k_Y` has
-non-degenerate fixed points, the closed-loop system is strongly monotone, and all its
-trajectories are bounded, then for almost all initial conditions the solutions converge to the
-set of equilibria corresponding to inputs `u` with `k_Y'(u) < 1`.
+**Theorem 3** (Angeli–Sontag 2004, numbering of arXiv:q-bio/0309002). Consider a monotone
+single-input single-output system with a non-degenerate I/S and I/O static characteristic, and close
+the loop with the unitary positive feedback `u = y`. Then the equilibria of the closed loop
+`ẋ = f(x, h(x))` are in one-to-one correspondence with the fixed points of `k_Y`. Moreover, if `k_Y`
+has non-degenerate fixed points, the closed-loop system is strongly monotone, and all its
+trajectories are bounded, then for almost all initial conditions the solutions converge to the set
+of equilibria corresponding to inputs `u` with `k_Y'(u) < 1`.
 
 Encoding. Solutions are taken in integral (Carathéodory) form, and the open-loop and closed-loop
 solution maps are given as data with their defining properties (existence, invariance of `X`
@@ -46,13 +47,14 @@ feedback loops.
 
 Sources: D. Angeli, E. D. Sontag, "Multi-stability in monotone input/output systems", Systems
 Control Lett. 51 (2004) 185–202, Sections 2–3, Definitions of monotone systems and static
-characteristics, Theorem 2 (arXiv:q-bio/0309002); D. Angeli, J. E. Ferrell Jr., E. D. Sontag,
+characteristics, Theorem 3 (arXiv:q-bio/0309002); D. Angeli, J. E. Ferrell Jr., E. D. Sontag,
 "Detection of multistability, bifurcations, and hysteresis in a large class of biological
 positive-feedback systems", Proc. Natl. Acad. Sci. USA 101 (2004) 1822–1827.
 -/
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Analysis.Calculus.ContDiff.Defs
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.Analysis.Convex.Basic
@@ -97,9 +99,10 @@ noncomputable def stateJacobian (f : (Fin n → ℝ) → ℝ → Fin n → ℝ) 
 
 /-- A single-input single-output system `ẋ = f(x, u)`, `y = h(x)` with state space `X`, input set
 `U`, positivity cone `K` on states and solution map `φ t ξ u`, satisfying the source's standing
-assumptions: `X` is the closure of an open set, `f` is differentiable, and for every `ξ ∈ X` and
-every input `u` the solution `t ↦ φ t ξ u` exists on `[0, ∞)`, stays in `X`, and is the unique
-solution with these properties. -/
+assumptions: `X` is the closure of an open set, `f` (jointly in `(x, u)`) and the output map `h`
+are continuously differentiable (`C¹`), and for every `ξ ∈ X` and every input `u` the solution
+`t ↦ φ t ξ u` exists on `[0, ∞)`, stays in `X`, and is the unique solution with these
+properties. -/
 structure IOSystem (n : ℕ) where
   /-- The positivity cone ordering the states. -/
   K : Set (Fin n → ℝ)
@@ -115,7 +118,8 @@ structure IOSystem (n : ℕ) where
   φ : ℝ → (Fin n → ℝ) → (ℝ → ℝ) → Fin n → ℝ
   cone : IsPositivityCone K
   closure_interior : closure (interior X) = X
-  differentiable : Differentiable ℝ fun p : (Fin n → ℝ) × ℝ => f p.1 p.2
+  contDiff_f : ContDiff ℝ 1 (Function.uncurry f)
+  contDiff_h : ContDiff ℝ 1 h
   solution : ∀ ξ ∈ X, ∀ u, IsInput U u →
     IsSolution (fun x t => f x (u t)) ξ (fun t => φ t ξ u) ∧ ∀ t, 0 ≤ t → φ t ξ u ∈ X
   unique : ∀ ξ ∈ X, ∀ u, IsInput U u → ∀ x : ℝ → Fin n → ℝ,
@@ -152,35 +156,37 @@ differentiable and `k'(u) ≠ 1`. -/
 def HasNondegenerateFixedPoints (U : Set ℝ) (k : ℝ → ℝ) : Prop :=
   ∀ u ∈ U, k u = u → DifferentiableAt ℝ k u ∧ deriv k u ≠ 1
 
-/-- **Equilibria of the positive feedback loop** (Angeli–Sontag 2004, Theorem 2, first part).
-Let `sys` be a single-input single-output system (positivity cone `K`, state space `X` equal to
-the closure of its interior, differentiable `f`, and a solution map `φ` giving, for every `ξ ∈ X`
-and every input `u`, the unique solution from `ξ` on `[0, ∞)` that stays in `X`) that is
-monotone, with a non-degenerate input-to-state characteristic `kX` on `U` (each constant input
-`u ∈ U` has the unique globally asymptotically stable equilibrium `kX u ∈ X`, with
+/-- **Equilibria of the positive feedback loop** (Angeli–Sontag 2004, Theorem 3, first part). Let
+`sys` be a single-input single-output system (positivity cone `K`, state space `X` equal to the
+closure of its interior, `C¹` vector field `f` and output map `h`, and a solution map `φ` giving,
+for every `ξ ∈ X` and every input `u`, the unique solution from `ξ` on `[0, ∞)` that stays in `X`)
+that is monotone, with a non-degenerate input-to-state characteristic `kX` on `U` (each constant
+input `u ∈ U` has the unique globally asymptotically stable equilibrium `kX u ∈ X`, with
 `det D_x f(kX u, u) ≠ 0`), and assume `h(X) ⊆ U`. Then `u ↦ kX u` is a bijection from the fixed
-points `u ∈ U` of the input/output characteristic `kY = h ∘ kX` onto the equilibria `x ∈ X` of
-the closed loop `ẋ = f(x, h(x))`.
+points `u ∈ U` of the input/output characteristic `kY = h ∘ kX` onto the equilibria `x ∈ X` of the
+closed loop `ẋ = f(x, h(x))`.
 
-Source: D. Angeli, E. D. Sontag, Systems Control Lett. 51 (2004) 185–202, Theorem 2. -/
+Source: D. Angeli, E. D. Sontag, Systems Control Lett. 51 (2004) 185–202, Theorem 3
+(arXiv:q-bio/0309002). -/
 theorem_wanted bijOn_fixedPoints_equilibria (sys : IOSystem n) (hmono : sys.IsMonotone)
     {kX : ℝ → Fin n → ℝ} (hk : sys.IsNondegenerateCharacteristic kX)
     (hhU : ∀ x ∈ sys.X, sys.h x ∈ sys.U) :
     Set.BijOn kX {u | u ∈ sys.U ∧ sys.h (kX u) = u} {x | x ∈ sys.X ∧ sys.f x (sys.h x) = 0}
 
-/-- **Generic convergence of the positive feedback loop** (Angeli–Sontag 2004, Theorem 2, second
-part). Let `sys` be a single-input single-output system (positivity cone `K`, state space `X`
-equal to the closure of its interior, differentiable `f`, and a solution map `φ` giving, for every
-`ξ ∈ X` and every input `u`, the unique solution from `ξ` on `[0, ∞)` that stays in `X`) that is
-monotone, with a non-degenerate input-to-state characteristic `kX` on `U`; assume `h(X) ⊆ U`, and
-let `ψ t ξ` be the solution map of the closed loop `ẋ = f(x, h(x))`: for `ξ ∈ X`, `t ↦ ψ t ξ` is a
-solution on `[0, ∞)` that stays in `X`. Suppose the input/output characteristic `kY = h ∘ kX` has
-non-degenerate fixed points on `U`, the closed loop is strongly monotone (`ξ₁ - ξ₂ ∈ K` and
-`ξ₁ ≠ ξ₂` imply `ψ t ξ₁ - ψ t ξ₂ ∈ int K` for every `t > 0`), and every closed-loop trajectory
-from `X` is bounded. Then for Lebesgue-almost every `ξ ∈ X` there is a fixed point `u ∈ U` of
-`kY` with `kY'(u) < 1` such that `ψ t ξ → kX u` as `t → ∞`.
+/-- **Generic convergence of the positive feedback loop** (Angeli–Sontag 2004, Theorem 3, second
+part). Let `sys` be a single-input single-output system (positivity cone `K`, state space `X` equal
+to the closure of its interior, `C¹` vector field `f` and output map `h`, and a solution map `φ`
+giving, for every `ξ ∈ X` and every input `u`, the unique solution from `ξ` on `[0, ∞)` that stays
+in `X`) that is monotone, with a non-degenerate input-to-state characteristic `kX` on `U`; assume
+`h(X) ⊆ U`, and let `ψ t ξ` be the solution map of the closed loop `ẋ = f(x, h(x))`: for `ξ ∈ X`,
+`t ↦ ψ t ξ` is a solution on `[0, ∞)` that stays in `X`. Suppose the input/output characteristic
+`kY = h ∘ kX` has non-degenerate fixed points on `U`, the closed loop is strongly monotone
+(`ξ₁ - ξ₂ ∈ K` and `ξ₁ ≠ ξ₂` imply `ψ t ξ₁ - ψ t ξ₂ ∈ int K` for every `t > 0`), and every
+closed-loop trajectory from `X` is bounded. Then for Lebesgue-almost every `ξ ∈ X` there is a fixed
+point `u ∈ U` of `kY` with `kY'(u) < 1` such that `ψ t ξ → kX u` as `t → ∞`.
 
-Source: D. Angeli, E. D. Sontag, Systems Control Lett. 51 (2004) 185–202, Theorem 2. -/
+Source: D. Angeli, E. D. Sontag, Systems Control Lett. 51 (2004) 185–202, Theorem 3
+(arXiv:q-bio/0309002). -/
 theorem_wanted ae_tendsto_stableEquilibrium (sys : IOSystem n) (hmono : sys.IsMonotone)
     {kX : ℝ → Fin n → ℝ} (hk : sys.IsNondegenerateCharacteristic kX)
     (hhU : ∀ x ∈ sys.X, sys.h x ∈ sys.U) (ψ : ℝ → (Fin n → ℝ) → Fin n → ℝ)
