@@ -32,192 +32,52 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Complex.Basic
+public import Mathlib.Analysis.Complex.Polynomial.Basic
 public import Mathlib.Geometry.Manifold.ChartedSpace
 public import Mathlib.Geometry.Manifold.IsManifold.ExtChartAt
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 public import Mathlib.RingTheory.Kaehler.Basic
-public import Mathlib.RingTheory.LocalRing.ResidueField.Basic
-public import Mathlib.RingTheory.Valuation.Discrete.IsDiscreteValuationRing
 public import Mathlib.Topology.Connected.PathConnected
+public import MathlibExt.AlgebraicGeometry.Curve.ChartDichotomy
+public import MathlibExt.AlgebraicGeometry.Curve.LPolynomial
+
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Topology.LocallyConstant.Basic
 
 /-!
 # Complex line integrals and Abel-Jacobi vectors on an algebraic curve
 
-A place of a function field `F` over `K` is a discrete valuation subring
-of `F` containing the image of `K`. For a complex function field, a
-differential is read in a local chart at a place; `pathIntegral` is the
-difference of the values of a chosen local primitive along a path when
-such a primitive exists, and zero otherwise. The Abel-Jacobi vector of a
-place relative to a base place collects these integrals for a family of
-differentials. No path-independence assertion is made for this
-choice-based construction.
+Places, their residue fields, divisors and the curve hypothesis `IsCurveOver` come from the
+curve layer in `MathlibExt/AlgebraicGeometry/Curve/`. This file adds a uniformizer and its
+coordinate differential at a place, evaluation of functions at rational places, and, for a
+complex function field, the reading of a differential in a local chart.
+
+Evaluation into the base field takes a proof that the place is rational. Over an algebraically
+closed base, every place of a curve (`IsCurveOver`) is rational, so charts of a complex curve
+read functions through the residue map. A differential is read through its coefficient with
+respect to the coordinate differential, which requires `DCoordGenerates`; there is no fallback
+value for differentials outside that span.
+
+`pathIntegral` is the difference of the values of a chosen local primitive along a path when
+such a primitive exists, and zero otherwise. The Abel-Jacobi vector of a place relative to a
+base place collects these integrals for a family of differentials. No path-independence
+assertion is made for this choice-based construction; the zero differential and constant
+paths have zero integral.
 -/
 
 @[expose] public section
 
 noncomputable section
 
-open IsDedekindDomain WithZero IsLocalRing KaehlerDifferential
+open IsLocalRing KaehlerDifferential
 open scoped Manifold Topology
 
 namespace AlgebraicCurve
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
-/-- A place of the function field `F` over `K`: a discrete valuation
-subring of `F` containing the image of `K`. -/
-structure Place where
-  toValuationSubring : ValuationSubring F
-  algebraMap_mem' : ∀ a : K, algebraMap K F a ∈ toValuationSubring
-  ne_top' : toValuationSubring ≠ ⊤
-  isPrincipalIdealRing' : IsPrincipalIdealRing toValuationSubring
-
-theorem _root_.ValuationSubring.not_isField_of_ne_top {A : ValuationSubring F} (hA : A ≠ ⊤) :
-    ¬IsField A := by
-  intro hf
-  apply hA
-  refine SetLike.ext fun x => ⟨fun _ => ValuationSubring.mem_top x, fun _ => ?_⟩
-  by_cases hx : x ∈ A
-  · exact hx
-  ·
-
-    exfalso
-    have hx0 : x ≠ 0 := fun h => hx (h ▸ A.zero_mem)
-    have hxi : x⁻¹ ∈ A := (A.mem_or_inv_mem x).resolve_left hx
-    have hxi0 : (⟨x⁻¹, hxi⟩ : A) ≠ 0 := by
-      simp only [ne_eq, Subtype.ext_iff]
-      exact inv_ne_zero hx0
-    obtain ⟨b, hb⟩ := hf.mul_inv_cancel hxi0
-    have hb' : x⁻¹ * (b : F) = 1 := by
-      have h := congrArg (Subtype.val) hb
-      simpa using h
-    have hbx : (b : F) = x := by
-      field_simp at hb'
-      exact hb'
-    exact hx (hbx ▸ b.2)
-
 namespace Place
 
 variable {K F}
-
-theorem toValuationSubring_injective :
-    Function.Injective (toValuationSubring (K := K) (F := F)) := by
-  rintro ⟨a, _, _, _⟩ ⟨b, _, _, _⟩ (rfl : a = b)
-  rfl
-
-@[ext]
-theorem ext {v w : Place K F} (h : v.toValuationSubring = w.toValuationSubring) : v = w :=
-  toValuationSubring_injective h
-
-variable (v : Place K F)
-
-instance : IsPrincipalIdealRing v.toValuationSubring := v.isPrincipalIdealRing'
-
-instance : IsDiscreteValuationRing v.toValuationSubring where
-  not_a_field' := by
-    rw [ne_eq, ← IsLocalRing.isField_iff_maximalIdeal_eq]
-    exact ValuationSubring.not_isField_of_ne_top F v.ne_top'
-
-instance : Algebra K v.toValuationSubring :=
-  ((algebraMap K F).codRestrict v.toValuationSubring.toSubring v.algebraMap_mem').toAlgebra
-
-@[simp]
-theorem coe_algebraMap (a : K) :
-    (algebraMap K v.toValuationSubring a : F) = algebraMap K F a := rfl
-
-instance : IsScalarTower K v.toValuationSubring F :=
-  IsScalarTower.of_algebraMap_eq fun a => (v.coe_algebraMap a).symm
-
-abbrev ResidueField : Type _ := IsLocalRing.ResidueField v.toValuationSubring
-
-def deg : ℕ := Module.finrank K v.ResidueField
-
-class FiniteResidue : Prop where
-  finite : Module.Finite K v.ResidueField
-
-def heightOneSpectrum : HeightOneSpectrum v.toValuationSubring :=
-  IsDiscreteValuationRing.maximalIdeal _
-
-@[simp]
-theorem heightOneSpectrum_asIdeal :
-    v.heightOneSpectrum.asIdeal = IsLocalRing.maximalIdeal v.toValuationSubring := rfl
-
-def adicValuation : Valuation F ℤᵐ⁰ := v.heightOneSpectrum.valuation F
-
-theorem adicValuation_ne_zero {f : F} (hf : f ≠ 0) : v.adicValuation f ≠ 0 :=
-  (Valuation.ne_zero_iff _).mpr hf
-
-theorem adicValuation_coe (a : v.toValuationSubring) :
-    v.adicValuation (a : F) = v.heightOneSpectrum.intValuation a := by
-  simpa [adicValuation] using v.heightOneSpectrum.valuation_of_algebraMap (K := F) a
-
-theorem adicValuation_coe_eq_one_iff (a : v.toValuationSubring) :
-    v.adicValuation (a : F) = 1 ↔ IsUnit a := by
-  rw [v.adicValuation_coe, HeightOneSpectrum.intValuation_eq_one_iff, heightOneSpectrum_asIdeal,
-    IsLocalRing.mem_maximalIdeal, mem_nonunits_iff, not_not]
-
-theorem adicValuation_coe_irreducible {π : v.toValuationSubring} (hπ : Irreducible π) :
-    v.adicValuation (π : F) = exp (-1 : ℤ) := by
-  rw [v.adicValuation_coe]
-  exact HeightOneSpectrum.intValuation_singleton _ hπ.ne_zero
-    (by rw [heightOneSpectrum_asIdeal, hπ.maximalIdeal_eq])
-
-def ord (f : F) : ℤ := -(WithZero.log (v.adicValuation f))
-
-@[simp]
-theorem ord_zero : v.ord (0 : F) = 0 := by simp [ord]
-
-@[simp]
-theorem ord_one : v.ord (1 : F) = 0 := by simp [ord]
-
-theorem ord_mul {f g : F} (hf : f ≠ 0) (hg : g ≠ 0) :
-    v.ord (f * g) = v.ord f + v.ord g := by
-  simp only [ord, map_mul]
-  rw [WithZero.log_mul (v.adicValuation_ne_zero hf) (v.adicValuation_ne_zero hg)]
-  ring
-
-theorem ord_inv (f : F) : v.ord f⁻¹ = -v.ord f := by
-  rcases eq_or_ne f 0 with rfl | hf
-  · simp
-  · simp only [ord, map_inv₀, WithZero.log_inv, neg_neg]
-
-theorem ord_coe_unit (u : v.toValuationSubringˣ) :
-    v.ord ((u : v.toValuationSubring) : F) = 0 := by
-  simp [ord, (v.adicValuation_coe_eq_one_iff _).mpr u.isUnit]
-
-theorem ord_coe_irreducible {π : v.toValuationSubring} (hπ : Irreducible π) :
-    v.ord (π : F) = 1 := by
-  simp [ord, v.adicValuation_coe_irreducible hπ]
-
-theorem ord_zpow (f : F) (n : ℤ) : v.ord (f ^ n) = n * v.ord f := by
-  simp only [ord, map_zpow₀, WithZero.log_zpow, smul_eq_mul]
-  ring
-
-theorem ord_unit_smul_zpow (u : v.toValuationSubringˣ) {π : v.toValuationSubring}
-    (hπ : Irreducible π) (n : ℤ) :
-    v.ord (((u : v.toValuationSubring) : F) * ((π : F) ^ n)) = n := by
-  have hπF : (π : F) ≠ 0 := by
-    simpa [ne_eq, ZeroMemClass.coe_eq_zero] using hπ.ne_zero
-  have hu : ((u : v.toValuationSubring) : F) ≠ 0 := by
-    simp [ne_eq, ZeroMemClass.coe_eq_zero]
-  rw [v.ord_mul hu (zpow_ne_zero n hπF), v.ord_coe_unit u, zero_add,
-    v.ord_zpow _ _, v.ord_coe_irreducible hπ, mul_one]
-
-theorem exists_unit_mul_zpow {f : F} (hf : f ≠ 0) {π : v.toValuationSubring}
-    (hπ : Irreducible π) :
-    ∃ u : v.toValuationSubringˣ,
-      f = ((u : v.toValuationSubring) : F) * ((π : F) ^ (v.ord f)) := by
-  obtain ⟨n, u, hu⟩ :=
-    IsDiscreteValuationRing.exists_units_eq_smul_zpow_of_irreducible (K := F) hπ hf
-  rw [Units.smul_def, Algebra.smul_def] at hu
-  have hcoe : algebraMap v.toValuationSubring F (u : v.toValuationSubring)
-      = ((u : v.toValuationSubring) : F) := rfl
-  have hcoe' : algebraMap v.toValuationSubring F π = (π : F) := rfl
-  rw [hcoe, hcoe'] at hu
-  have hn : v.ord f = n := by rw [hu]; exact v.ord_unit_smul_zpow u hπ n
-  exact ⟨u, by rw [hn, hu]⟩
-
 
 variable (v : Place K F)
 
@@ -245,20 +105,20 @@ theorem dCoord_ne_zero [v.DCoordGenerates] [Nontrivial Ω[F⁄K]] : v.dCoord ≠
   rw [h0, Submodule.span_zero_singleton] at hx_mem
   exact hx hx_mem
 
-def differentialCoeff (ω : Ω[F⁄K]) : F :=
-  letI := Classical.propDecidable
-  if h : ∃ f : F, ω = f • v.dCoord then h.choose else 0
-
 theorem exists_eq_smul_dCoord [v.DCoordGenerates] (ω : Ω[F⁄K]) :
     ∃ f : F, ω = f • v.dCoord := by
   have hω : ω ∈ (⊤ : Submodule F Ω[F⁄K]) := Submodule.mem_top
   rw [← DCoordGenerates.span_eq_top (v := v), Submodule.mem_span_singleton] at hω
   exact hω.imp fun _ hf => hf.symm
 
+-- The coefficient of a differential with respect to `v.dCoord`. It is only defined when
+-- `v.dCoord` spans the differentials, so no differential is read with a fallback value.
+def differentialCoeff [v.DCoordGenerates] (ω : Ω[F⁄K]) : F :=
+  (v.exists_eq_smul_dCoord ω).choose
+
 theorem differentialCoeff_smul_dCoord [v.DCoordGenerates] (ω : Ω[F⁄K]) :
-    v.differentialCoeff ω • v.dCoord = ω := by
-  rw [differentialCoeff, dif_pos (v.exists_eq_smul_dCoord ω)]
-  exact (v.exists_eq_smul_dCoord ω).choose_spec.symm
+    v.differentialCoeff ω • v.dCoord = ω :=
+  (v.exists_eq_smul_dCoord ω).choose_spec.symm
 
 theorem differentialCoeff_unique [v.DCoordGenerates] [Nontrivial Ω[F⁄K]]
     {ω : Ω[F⁄K]} {f : F} (hf : ω = f • v.dCoord) : v.differentialCoeff ω = f := by
@@ -284,7 +144,7 @@ theorem differentialCoeff_smul [v.DCoordGenerates] [Nontrivial Ω[F⁄K]]
   v.differentialCoeff_unique
     (by rw [mul_smul, v.differentialCoeff_smul_dCoord])
 
-def ordDifferential (ω : Ω[F⁄K]) : ℤ := v.ord (v.differentialCoeff ω)
+def ordDifferential [v.DCoordGenerates] (ω : Ω[F⁄K]) : ℤ := v.ord (v.differentialCoeff ω)
 
 theorem gate_ordDifferential_dCoord [v.DCoordGenerates] [Nontrivial Ω[F⁄K]] :
     v.ordDifferential v.dCoord = 0 := by
@@ -302,38 +162,52 @@ theorem algebraMap_residueField_injective :
     Function.Injective (algebraMap K v.ResidueField) :=
   (algebraMap K v.ResidueField).injective
 
-def residueInv : v.ResidueField → K :=
-  Function.invFun (algebraMap K v.ResidueField)
+theorem isRational_of_isAlgClosed [IsAlgClosed K] [Module.Finite K v.ResidueField] :
+    v.IsRational :=
+  v.surjective_algebraMap_residueField_of_isAlgClosed
 
-theorem algebraMap_residueInv (hv : v.IsRational) (x : v.ResidueField) :
-    algebraMap K v.ResidueField (v.residueInv x) = x :=
-  Function.invFun_eq (hv x)
+-- Every place of a curve over an algebraically closed field is rational.
+theorem isRational_of_isCurveOver [IsAlgClosed K] [IsCurveOver K F] : v.IsRational :=
+  have := IsCurveOver.finiteResidueField v
+  v.isRational_of_isAlgClosed
 
-theorem residueInv_algebraMap (a : K) : v.residueInv (algebraMap K v.ResidueField a) = a :=
-  Function.leftInverse_invFun v.algebraMap_residueField_injective a
+-- At a rational place the residue map identifies the base field with the residue field.
+def residueEquiv (hv : v.IsRational) : K ≃+* v.ResidueField :=
+  RingEquiv.ofBijective (algebraMap K v.ResidueField) ⟨v.algebraMap_residueField_injective, hv⟩
 
+-- The value at a rational place of a function regular there; functions with a pole at the
+-- place are sent to `0`.
 open Classical in
-
-def evalAt (f : F) : K :=
+def evalAt (hv : v.IsRational) (f : F) : K :=
   if hf : f ∈ v.toValuationSubring then
-    v.residueInv (residue v.toValuationSubring ⟨f, hf⟩)
+    (v.residueEquiv hv).symm (residue v.toValuationSubring ⟨f, hf⟩)
   else 0
 
-theorem evalAt_of_mem {f : F} (hf : f ∈ v.toValuationSubring) :
-    v.evalAt f = v.residueInv (residue v.toValuationSubring ⟨f, hf⟩) :=
-  dif_pos hf
+theorem evalAt_of_mem (hv : v.IsRational) {f : F} (hf : f ∈ v.toValuationSubring) :
+    v.evalAt hv f = (v.residueEquiv hv).symm (residue v.toValuationSubring ⟨f, hf⟩) :=
+  dite_eq_left hf
 
 theorem algebraMap_evalAt (hv : v.IsRational) {f : F} (hf : f ∈ v.toValuationSubring) :
-    algebraMap K v.ResidueField (v.evalAt f)
+    algebraMap K v.ResidueField (v.evalAt hv f)
       = residue v.toValuationSubring (⟨f, hf⟩ : v.toValuationSubring) := by
-  rw [v.evalAt_of_mem hf]
-  exact v.algebraMap_residueInv hv _
+  rw [v.evalAt_of_mem hv hf]
+  exact (v.residueEquiv hv).apply_symm_apply _
+
+theorem hasValueAt_evalAt (hv : v.IsRational) {f : F} (hf : f ∈ v.toValuationSubring) :
+    v.HasValueAt f (v.evalAt hv f) :=
+  (v.hasValueAt_iff_residue hf _).mpr (v.algebraMap_evalAt hv hf).symm
 
 @[simp]
-theorem evalAt_one : v.evalAt (1 : F) = 1 := by
-  rw [v.evalAt_of_mem (one_mem _)]
+theorem evalAt_one (hv : v.IsRational) : v.evalAt hv (1 : F) = 1 := by
+  rw [v.evalAt_of_mem hv (one_mem _)]
   have h1 : (⟨(1 : F), one_mem _⟩ : v.toValuationSubring) = 1 := rfl
-  rw [h1, map_one, ← map_one (algebraMap K v.ResidueField), v.residueInv_algebraMap]
+  rw [h1, map_one, map_one]
+
+@[simp]
+theorem evalAt_zero (hv : v.IsRational) : v.evalAt hv (0 : F) = 0 := by
+  rw [v.evalAt_of_mem hv (zero_mem _)]
+  have h0 : (⟨(0 : F), zero_mem _⟩ : v.toValuationSubring) = 0 := rfl
+  rw [h0, map_zero, map_zero]
 
 
 theorem exists_ord_eq_one_and_dCoord_eq (v : Place K F) :
@@ -341,13 +215,6 @@ theorem exists_ord_eq_one_and_dCoord_eq (v : Place K F) :
   refine ⟨((IsDiscreteValuationRing.exists_irreducible v.toValuationSubring).choose : F), ?_, rfl⟩
   exact v.ord_coe_irreducible
     (IsDiscreteValuationRing.exists_irreducible v.toValuationSubring).choose_spec
-
-
-end Place
-
-abbrev Divisor : Type _ := Place K F →₀ ℤ
-
-namespace Place
 
 def dCoordFn (v : Place K F) : F :=
   Classical.choose v.exists_ord_eq_one_and_dCoord_eq
@@ -361,25 +228,52 @@ theorem dCoord_eq_D_dCoordFn (v : Place K F) :
 
 
 variable {F : Type*} [Field F] [Algebra ℂ F]
-variable [TopologicalSpace (Place ℂ F)] [ChartedSpace ℂ (Place ℂ F)]
+
+private theorem nontrivial_kaehlerDifferential [IsCurveOver ℂ F] : Nontrivial Ω[F⁄ℂ] :=
+  Module.nontrivial_of_finrank_pos (R := F)
+    (by rw [(IsCurveOver.kaehler_free_rank_one (K := ℂ) (F := F)).2]; exact one_pos)
+
+variable [TopologicalSpace (Place ℂ F)] [ChartedSpace ℂ (Place ℂ F)] [IsCurveOver ℂ F]
 
 def chartRead (v : Place ℂ F) (f : F) : ℂ → ℂ :=
-  fun z => Place.evalAt ((extChartAt 𝓘(ℂ, ℂ) v).symm z) f
+  fun z => ((extChartAt 𝓘(ℂ, ℂ) v).symm z).evalAt (isRational_of_isCurveOver _) f
 
 theorem chartRead_apply (v : Place ℂ F) (f : F) (z : ℂ) :
-    v.chartRead f z = Place.evalAt ((extChartAt 𝓘(ℂ, ℂ) v).symm z) f := rfl
+    v.chartRead f z =
+      ((extChartAt 𝓘(ℂ, ℂ) v).symm z).evalAt (isRational_of_isCurveOver _) f := rfl
 
-def readDifferential (v : Place ℂ F) (ω : Ω[F⁄ℂ]) : ℂ → ℂ :=
+@[simp]
+theorem chartRead_zero (v : Place ℂ F) : v.chartRead 0 = 0 := by
+  funext z
+  simp [chartRead_apply]
+
+def readDifferential (v : Place ℂ F) [v.DCoordGenerates] (ω : Ω[F⁄ℂ]) : ℂ → ℂ :=
   fun z => v.chartRead (v.differentialCoeff ω) z * deriv (v.chartRead v.dCoordFn) z
 
-theorem readDifferential_apply (v : Place ℂ F) (ω : Ω[F⁄ℂ]) (z : ℂ) :
+theorem readDifferential_apply (v : Place ℂ F) [v.DCoordGenerates] (ω : Ω[F⁄ℂ]) (z : ℂ) :
     v.readDifferential ω z =
       v.chartRead (v.differentialCoeff ω) z * deriv (v.chartRead v.dCoordFn) z := rfl
+
+-- The differential `f • v.dCoord` is read through its coefficient `f`.
+theorem readDifferential_smul_dCoord (v : Place ℂ F) [v.DCoordGenerates] (f : F) :
+    v.readDifferential (f • v.dCoord) =
+      fun z => v.chartRead f z * deriv (v.chartRead v.dCoordFn) z := by
+  have := nontrivial_kaehlerDifferential (F := F)
+  funext z
+  rw [readDifferential_apply, v.differentialCoeff_unique rfl]
+
+@[simp]
+theorem readDifferential_zero (v : Place ℂ F) [v.DCoordGenerates] :
+    v.readDifferential 0 = 0 := by
+  have := nontrivial_kaehlerDifferential (F := F)
+  funext z
+  simp [readDifferential_apply]
 
 end Place
 
 variable {F : Type*} [Field F] [Algebra ℂ F]
-variable [TopologicalSpace (Place ℂ F)] [ChartedSpace ℂ (Place ℂ F)]
+variable [TopologicalSpace (Place ℂ F)] [ChartedSpace ℂ (Place ℂ F)] [IsCurveOver ℂ F]
+variable [∀ v : Place ℂ F, v.DCoordGenerates]
 
 def IsPrimitiveAlong (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q) (g : unitInterval → ℂ) :
     Prop :=
@@ -389,7 +283,6 @@ def IsPrimitiveAlong (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q) (g :
       ∀ᶠ t in 𝓝 t₀, g t = Φ (extChartAt 𝓘(ℂ, ℂ) (γ t₀) (γ t))
 
 open Classical in
-
 def pathIntegral (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q) : ℂ :=
   if h : ∃ g, IsPrimitiveAlong ω γ g then h.choose 1 - h.choose 0 else 0
 
@@ -398,8 +291,43 @@ theorem pathIntegral_def (ω : Ω[F⁄ℂ]) {P Q : Place ℂ F} (γ : Path P Q) 
     pathIntegral ω γ = if h : ∃ g, IsPrimitiveAlong ω γ g then h.choose 1 - h.choose 0 else 0 :=
   rfl
 
-open Classical in
+private theorem pathIntegral_eq_zero_of_locallyConstant {ω : Ω[F⁄ℂ]} {P Q : Place ℂ F}
+    {γ : Path P Q}
+    (h : ∀ g, IsPrimitiveAlong ω γ g → ∀ t₀, ∀ᶠ t in 𝓝 t₀, g t = g t₀) :
+    pathIntegral ω γ = 0 := by
+  classical
+  rw [pathIntegral_def]
+  split_ifs with hg
+  · rw [sub_eq_zero]
+    exact ((IsLocallyConstant.iff_eventually_eq _).mpr
+      (h _ hg.choose_spec)).apply_eq_of_preconnectedSpace 1 0
+  · rfl
 
+theorem pathIntegral_zero {P Q : Place ℂ F} (γ : Path P Q) :
+    pathIntegral (0 : Ω[F⁄ℂ]) γ = 0 := by
+  refine pathIntegral_eq_zero_of_locallyConstant fun g hg t₀ => ?_
+  obtain ⟨Φ, hΦ, hgΦ⟩ := hg t₀
+  set x₀ := extChartAt 𝓘(ℂ, ℂ) (γ t₀) (γ t₀)
+  simp only [Place.readDifferential_zero, Pi.zero_apply] at hΦ
+  obtain ⟨ε, hε, hball⟩ := Metric.eventually_nhds_iff_ball.mp hΦ
+  have hconst : ∀ z ∈ Metric.ball x₀ ε, Φ z = Φ x₀ := fun z hz =>
+    Metric.isOpen_ball.is_const_of_deriv_eq_zero (convex_ball x₀ ε).isPreconnected
+      (fun w hw => (hball w hw).differentiableAt.differentiableWithinAt)
+      (fun w hw => (hball w hw).deriv) hz (Metric.mem_ball_self hε)
+  have hnear : ∀ᶠ t in 𝓝 t₀, extChartAt 𝓘(ℂ, ℂ) (γ t₀) (γ t) ∈ Metric.ball x₀ ε :=
+    ((continuousAt_extChartAt (γ t₀)).comp γ.continuous.continuousAt).eventually_mem
+      (Metric.ball_mem_nhds x₀ hε)
+  filter_upwards [hgΦ, hnear] with t ht htx
+  rw [ht, hconst _ htx, hgΦ.self_of_nhds]
+
+theorem pathIntegral_refl (ω : Ω[F⁄ℂ]) (P : Place ℂ F) :
+    pathIntegral ω (Path.refl P) = 0 := by
+  refine pathIntegral_eq_zero_of_locallyConstant fun g hg t₀ => ?_
+  obtain ⟨Φ, -, hgΦ⟩ := hg t₀
+  filter_upwards [hgΦ] with t ht
+  rw [ht, hgΦ.self_of_nhds, Path.refl_apply, Path.refl_apply]
+
+open Classical in
 def abelJacobiVec {n : ℕ} (b : Fin n → Ω[F⁄ℂ]) (P₀ P : Place ℂ F) : Fin n → ℂ :=
   if h : Nonempty (Path P₀ P) then fun i => pathIntegral (b i) (Classical.choice h) else 0
 
@@ -408,6 +336,15 @@ theorem abelJacobiVec_def {n : ℕ} (b : Fin n → Ω[F⁄ℂ]) (P₀ P : Place 
     abelJacobiVec b P₀ P =
       if h : Nonempty (Path P₀ P) then fun i => pathIntegral (b i) (Classical.choice h) else 0 :=
   rfl
+
+theorem abelJacobiVec_zero {n : ℕ} (P₀ P : Place ℂ F) :
+    abelJacobiVec (0 : Fin n → Ω[F⁄ℂ]) P₀ P = 0 := by
+  classical
+  rw [abelJacobiVec_def]
+  split_ifs
+  · funext i
+    exact pathIntegral_zero _
+  · rfl
 
 def abelJacobiDiv {n : ℕ} (b : Fin n → Ω[F⁄ℂ]) (P₀ : Place ℂ F) :
     Divisor ℂ F →+ (Fin n → ℂ) :=
