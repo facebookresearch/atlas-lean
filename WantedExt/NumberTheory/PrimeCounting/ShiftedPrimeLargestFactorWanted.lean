@@ -28,12 +28,15 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Baker–Harman: for every integer `a` and every `0 < θ ≤ 0.677` there is `0 < δ < 1` such that,
-for all sufficiently large real `x`, the number of primes `p ≤ x` whose shift `p + a` has largest
-prime factor `P(p + a) > x^θ` exceeds `δ x / log x`. Here `P(p + a)` is `Nat.maxPrimeFac` of
-`|p + a|`. The quantifier over all `a ∈ ℤ` is the cited lemma's as printed; Baker and Harman
-state the bound for a nonzero shift, and the extra case `a = 0` follows from the prime number
-theorem (every prime in `(x^θ, x]` qualifies, and these number `(1 + o(1)) x / log x`).
+/-- **Baker–Harman: shifted primes with a large prime factor.** For every integer $a$ and every
+real $\theta$ with $0 < \theta \le 0.677$ there is a real $\delta$ with $0 < \delta < 1$ such that,
+for all sufficiently large real $x$, the number of primes $p \le x$ for which the largest prime
+factor $P(|p + a|)$ of $|p + a|$ exceeds $x^\theta$ is greater than $\delta x / \log x$. Here
+$P(0) = 0$ and $P(1) = 1$.
+
+The statement covers every integer $a$, as the cited lemma is printed; Baker and Harman state the
+bound for a nonzero shift, and the case $a = 0$ follows from the prime number theorem, since every
+prime in $(x^\theta, x]$ qualifies and these number $(1 + o(1)) x / \log x$.
 
 Source: Noah Lebowitz-Lockard and J.C. Saunders, *Runs of Integers with Constant Values of the
 Carmichael Function*, INTEGERS 24 (2024), Article A91, Lemma 1 (`integers-2024-A91-lem-1`), quoted
@@ -46,10 +49,11 @@ public theorem_wanted exists_card_maxPrimeFac_prime_add_gt_rpow (a : ℤ) {θ : 
           p.Prime ∧ x ^ θ < (Nat.maxPrimeFac ((p : ℤ) + a).natAbs : ℝ)).card : ℝ)
 
 open scoped Classical in
-/-- With `c = 0.677`, there is `C > 0` such that for all sufficiently large real `x`,
-`x^c / log x ≤ C · #{q prime : q > x^c and q ∣ p - 1 for some prime p ≤ x}`. The congruence
-`p ≡ 1 (mod q)` is written `p % q = 1`; every such `q` is at most `x`, so the count runs over
-`q ≤ ⌊x⌋`.
+/-- **Large prime divisors of shifted primes.** There is a real number $C > 0$ such that for all
+sufficiently large real $x$ we have $x^{0.677} / \log x \le C \cdot N(x)$, where $N(x)$ is the
+number of primes $q \le x$ with $q > x^{0.677}$ such that $q \mid p - 1$ for some prime $p \le x$.
+
+The condition $q \le x$ is automatic, since $q \mid p - 1$ with $p \le x$ forces $q < x$.
 
 Source: Noah Lebowitz-Lockard and J.C. Saunders, *Runs of Integers with Constant Values of the
 Carmichael Function*, INTEGERS 24 (2024), Article A91, Lemma 2 (`integers-2024-A91-lem-2`). -/
@@ -60,14 +64,14 @@ public theorem_wanted exists_rpow_div_log_le_mul_card_prime_dvd_prime_sub_one :
           q.Prime ∧ x ^ (677 / 1000 : ℝ) < q ∧
             ∃ p ∈ Finset.range (⌊x⌋₊ + 1), p.Prime ∧ p % q = 1).card : ℝ)
 
-/-- Runs of equal Carmichael values: with `c = 0.677`, the largest `k` such that
-`λ(n + 1) = λ(n + 2) = ⋯ = λ(n + k)` for some `n` with `n + k ≤ x`, written `F_λ(x)`,
-satisfies `F_λ(x) = O((log x)^{1/c})` as `x → ∞`.
+/-- **Runs of constant Carmichael values.** For real $x$, let $F_\lambda(x)$ be the largest natural
+number $k$ for which there is a natural number $n \ge 0$ with $n + k \le x$ and
+$\lambda(n + 1) = \lambda(n + 2) = \cdots = \lambda(n + k)$ (and $0$ if there is no such $k$), where
+$\lambda$ is the Carmichael function. Then $F_\lambda(x) = O\left((\log x)^{1000/677}\right)$ as
+$x \to \infty$; that is, $F_\lambda(x) = O\left((\log x)^{1/c}\right)$ with $c = 0.677$.
 
-`F_λ(x)` follows the arXiv version (arXiv:2402.06832v4, Section 1): `F_f(x)` is the largest `k`
-for which `f(n+1) = ⋯ = f(n+k)` has a solution with `n + k ≤ x`. Here `n` ranges over `ℕ` and `λ`
-is `ArithmeticFunction.carmichael`. The admissible `k` are bounded by `x`, so `sSup` is their
-maximum.
+This follows the definition of $F_f(x)$ in the arXiv version (arXiv:2402.06832v4, Section 1):
+$F_f(x)$ is the largest $k$ for which $f(n+1) = \cdots = f(n+k)$ has a solution with $n + k \le x$.
 
 Source: Noah Lebowitz-Lockard and J.C. Saunders, *Runs of Integers with Constant Values of the
 Carmichael Function*, INTEGERS 24 (2024), Article A91, Theorem 3 (`integers-2024-A91-thm-3`). -/
@@ -78,15 +82,16 @@ public theorem_wanted carmichael_constant_run_length_isBigO :
       fun x : ℝ => Real.log x ^ ((1000 : ℝ) / 677)
 
 
-/-- Pollack–Pomerance–Treviño: the largest `k` such that `φ(n + 1) ≥ φ(n + 2) ≥ ⋯ ≥ φ(n + k)`
-for some `n` with `n + k ≤ x`, written `G_φ(x)`, satisfies
-`G_φ(x) ∼ log₃ x / log₆ x` as `x → ∞`, where `log_k` is the `k`-th iterate of the natural
-logarithm.
+/-- **Pollack–Pomerance–Treviño: nonincreasing runs of Euler's function.** For real $x$, let
+$G_\varphi(x)$ be the largest natural number $k$ for which there is a natural number $n \ge 0$ with
+$n + k \le x$ and $\varphi(n + 1) \ge \varphi(n + 2) \ge \cdots \ge \varphi(n + k)$ (and $0$ if
+there is no such $k$), where $\varphi$ is Euler's totient function. Then
+$G_\varphi(x) \sim \log_3 x / \log_6 x$ as $x \to \infty$, where $\log_j$ denotes the $j$-fold
+iterate of the natural logarithm.
 
-`G_φ(x)` follows the paper's definition (arXiv:2402.06832v4, Section 1): `G_f(x)` is the largest
-`k` for which `f(n+1) ≥ f(n+2) ≥ ⋯ ≥ f(n+k)` has a solution with `n + k ≤ x`. Here `n` ranges
-over `ℕ`, `φ` is `Nat.totient`, and the chain is written as `φ(n + i + 1) ≤ φ(n + i)` for
-`1 ≤ i < k`. The admissible `k` are bounded by `x`, so `sSup` is their maximum.
+This follows the definition of $G_f(x)$ in the paper (arXiv:2402.06832v4, Section 1): $G_f(x)$ is
+the largest $k$ for which $f(n+1) \ge f(n+2) \ge \cdots \ge f(n+k)$ has a solution with
+$n + k \le x$.
 
 Source: Noah Lebowitz-Lockard and J.C. Saunders, *Runs of Integers with Constant Values of the
 Carmichael Function*, INTEGERS 24 (2024), Article A91, Theorem 1 (`integers-2024-A91-thm-1`),

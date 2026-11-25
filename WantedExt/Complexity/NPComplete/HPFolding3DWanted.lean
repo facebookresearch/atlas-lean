@@ -16,7 +16,7 @@ NP-complete", Journal of Computational Biology 5 (1998), 27-40, doi:10.1089/cmb.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.HPFoldingWanted
 

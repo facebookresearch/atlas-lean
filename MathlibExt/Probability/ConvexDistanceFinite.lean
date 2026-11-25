@@ -37,8 +37,8 @@ induction on `N`:
   `u (2 - u) ≤ 1` conclude.
 
 The numerical lemma is proved with Taylor bounds for the exponential instead of the source's
-study of a derivative. The statement for a general probability space `(Ω, μ)` is recorded in
-`MathlibExt.Probability.ConvexDistanceWanted`.
+study of a derivative. The statement for a general probability space `(Ω, μ)` is proved in
+`MathlibExt.Probability.ConvexDistanceInequality`.
 
 ## References
 
@@ -263,16 +263,6 @@ theorem convexSupport_finite (A : Set (Fin N → Ω)) (x : Fin N → Ω) :
   refine ⟨fun i => decide (s i = 1), ?_⟩
   ext i
   rcases h01 i with h | h <;> simp [h]
-
-theorem convexSupport_nonempty {A : Set (Fin N → Ω)} (hA : A.Nonempty) (x : Fin N → Ω) :
-    (convexSupport A x).Nonempty := by
-  classical
-  obtain ⟨y, hy⟩ := hA
-  refine ⟨WithLp.toLp 2 fun i => if x i ≠ y i then 1 else 0, y, hy, fun i => ?_, fun i hi => ?_⟩
-  · by_cases h : x i ≠ y i <;> simp [h]
-  · by_cases h : x i ≠ y i
-    · simp [h] at hi
-    · exact (not_not.mp h).symm
 
 theorem exists_mem_convexHull_norm_eq {A : Set (Fin N → Ω)} (hA : A.Nonempty) (x : Fin N → Ω) :
     ∃ s ∈ convexHull ℝ (convexSupport A x), ‖s‖ = convexDistance A x := by

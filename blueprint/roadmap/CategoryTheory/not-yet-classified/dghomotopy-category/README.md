@@ -1,0 +1,68 @@
+# DGHomotopy Category
+
+## Cycles, boundaries, and homotopy classes
+
+- [Dg Cycles](dg-cycles.md)
+- [Mem dg Cycles](mem-dg-cycles.md)
+- [Dg Boundaries](dg-boundaries.md)
+- [Mem dg Boundaries](mem-dg-boundaries.md)
+- [Dg Boundaries le dg Cycles](dg-boundaries-le-dg-cycles.md)
+- [Exact At iff forall exists dg Differential eq](exact-at-iff-forall-exists-dg-differenti.md)
+- [DGHomotopy Class](dghomotopy-class.md)
+- [Dg Homotopy Class Linear Map](dg-homotopy-class-linear-map.md)
+- [Dg Homotopy Class](dg-homotopy-class.md)
+- [Dg Homotopy Class zero](dg-homotopy-class-zero.md)
+- [Dg Homotopy Class add](dg-homotopy-class-add.md)
+- [Dg Homotopy Class smul](dg-homotopy-class-smul.md)
+- [Exists dg Homotopy Class eq](exists-dg-homotopy-class-eq.md)
+- [Dg Homotopy Class eq iff](dg-homotopy-class-eq-iff.md)
+- [Dg Homotopy Class eq zero iff](dg-homotopy-class-eq-zero-iff.md)
+
+## Comparison with Mathlib's homology projection
+
+- [Dg Homotopy Class eq homologyπ](dg-homotopy-class-eq-homology.md)
+- [Map mem dg Cycles](map-mem-dg-cycles.md)
+- [Homology Map dg Homotopy Class](homology-map-dg-homotopy-class.md)
+
+## Composition on homotopy classes
+
+- [Dg Comp Zero](dg-comp-zero.md)
+- [Dg Comp Zero def](dg-comp-zero-def.md)
+- [Add dg Comp Zero](add-dg-comp-zero.md)
+- [Smul dg Comp Zero](smul-dg-comp-zero.md)
+- [Dg Comp Zero add](dg-comp-zero-add.md)
+- [Dg Comp Zero smul](dg-comp-zero-smul.md)
+- [Dg Comp Zero mem dg Cycles](dg-comp-zero-mem-dg-cycles.md)
+- [Dg Comp Zero mem dg Boundaries of left](dg-comp-zero-mem-dg-boundaries-of-left.md)
+- [Dg Comp Zero mem dg Boundaries of right](dg-comp-zero-mem-dg-boundaries-of-right.md)
+- [Dg Cycles Comp](dg-cycles-comp.md)
+- [Coe dg Cycles Comp](coe-dg-cycles-comp.md)
+- [Dg Homotopy Comp](dg-homotopy-comp.md)
+- [Dg Homotopy Comp dg Homotopy Class](dg-homotopy-comp-dg-homotopy-class.md)
+- [Dg Homotopy Comp assoc](dg-homotopy-comp-assoc.md)
+
+## The category H⁰(C)
+
+- [DGHomotopy Category](dghomotopy-category.md)
+- [Of](of.md)
+- [Underlying](underlying.md)
+- [Of surjective](of-surjective.md)
+- [Ext](ext.md)
+- [Comp def](comp-def.md)
+- [Id def](id-def.md)
+- [Hom Of](hom-of.md)
+- [Hom Of def](hom-of-def.md)
+- [Hom Of zero](hom-of-zero.md)
+- [Hom Of add](hom-of-add.md)
+- [Hom Of smul](hom-of-smul.md)
+- [Exists hom Of eq](exists-hom-of-eq.md)
+- [Hom Of neg](hom-of-neg.md)
+- [Hom Of units smul](hom-of-units-smul.md)
+- [Hom Of eq zero iff](hom-of-eq-zero-iff.md)
+- [Hom Of dg Id](hom-of-dg-id.md)
+- [Hom Of eq iff](hom-of-eq-iff.md)
+- [Hom Of comp](hom-of-comp.md)
+- [Hom Of comp eq hom Of of dg Comp eq](hom-of-comp-eq-hom-of-of-dg-comp-eq.md)
+- [Hom Of comp eq id of dg Comp eq dg Id](hom-of-comp-eq-id-of-dg-comp-eq-dg-id.md)
+- [Hom Of comp eq zero of dg Differential eq neg](hom-of-comp-eq-zero-of-dg-differential-e.md)
+- [Is Zero of iff dg Id mem dg Boundaries](is-zero-of-iff-dg-id-mem-dg-boundaries.md)

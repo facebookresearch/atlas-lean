@@ -41,8 +41,10 @@ teorth/optimizationproblems commit
 `d89b66d6b78a2de211675ee1e2deb67f427fc66a3d051adad8a740a28397e3e6`.
 -/
 
-/-- The Mahler measure of an integer polynomial: the Mahler measure of its
-image in `ℂ[X]`. -/
+/-- **Mahler measure of an integer polynomial.** The Mahler measure of $f \in \mathbb{Z}[X]$
+is the Mahler measure of its image in $\mathbb{C}[X]$. It equals
+$|a| \prod_i \max(1, |\alpha_i|)$, where $a$ is the leading coefficient of $f$ and the
+$\alpha_i$ are the complex roots of $f$ counted with multiplicity. -/
 noncomputable def intMahlerMeasure (f : Polynomial ℤ) : ℝ :=
   f.mapMahlerMeasure (Int.castRingHom ℂ)
 
@@ -50,9 +52,12 @@ theorem intMahlerMeasure_nonneg (f : Polynomial ℤ) :
     0 ≤ intMahlerMeasure f :=
   Polynomial.mahlerMeasure_nonneg _
 
-/-- A nonzero integer polynomial has Mahler measure at least `1`: its
-leading coefficient is a nonzero integer, and every root factor
-`max (1, |α|)` is at least `1`. -/
+/-- **Nonzero integer polynomials have Mahler measure at least one.** If
+$f \in \mathbb{Z}[X]$ is a nonzero polynomial, then its Mahler measure satisfies $M(f) \ge 1$.
+
+Indeed, $M(f) = |a| \prod_i \max(1, |\alpha_i|)$, where the leading coefficient $a$ of $f$ is a
+nonzero integer and the $\alpha_i$ are the complex roots of $f$ counted with multiplicity, so
+every factor is at least $1$. -/
 theorem one_le_intMahlerMeasure {f : Polynomial ℤ} (hf : f ≠ 0) :
     1 ≤ intMahlerMeasure f := by
   have hlc : f.leadingCoeff ≠ 0 := Polynomial.leadingCoeff_ne_zero.mpr hf
@@ -74,7 +79,8 @@ theorem intMahlerMeasure_C (a : ℤ) :
     Polynomial.mahlerMeasure_const]
   simp
 
-/-- Mahler measure of a linear factor `X - a` over the integers. -/
+/-- **Mahler measure of a monic linear integer polynomial.** For every integer $a$, the
+Mahler measure of the integer polynomial $X - a$ is $\max(1, |a|)$. -/
 theorem intMahlerMeasure_X_sub_C (a : ℤ) :
     intMahlerMeasure (X - C a) = max 1 ‖(a : ℝ)‖ := by
   rw [intMahlerMeasure, Polynomial.mapMahlerMeasure, Polynomial.map_sub,
@@ -86,27 +92,33 @@ theorem intMahlerMeasure_X : intMahlerMeasure (X : Polynomial ℤ) = 1 := by
   rw [h, intMahlerMeasure_X_sub_C]
   simp
 
-/-- The polynomial `X - 1` has Mahler measure `1`, on the boundary excluded
-from Lehmer's infimum. -/
+/-- **Mahler measure of $X - 1$.** The integer polynomial $X - 1$ has Mahler measure $1$.
+
+Since $1$ is not strictly larger than $1$, this value is excluded from the set whose
+infimum is Lehmer's constant. -/
 theorem intMahlerMeasure_X_sub_one :
     intMahlerMeasure (X - C (1 : ℤ)) = 1 := by
   rw [intMahlerMeasure_X_sub_C]
   simp
 
-/-- The polynomial `X - 2` has Mahler measure `2`, a concrete member of
-Lehmer's infimum set. -/
+/-- **Mahler measure of $X - 2$.** The integer polynomial $X - 2$ has Mahler measure $2$.
+
+Since $2 > 1$, this value lies in the set whose infimum is Lehmer's constant. -/
 theorem intMahlerMeasure_X_sub_two :
     intMahlerMeasure (X - C (2 : ℤ)) = 2 := by
   rw [intMahlerMeasure_X_sub_C]
   norm_num
 
-/-- The set of Mahler measures of integer polynomials that are strictly
-larger than `1`. -/
+/-- **Mahler measures above one.** This is the set of real numbers of the form $M(f)$, where
+$f \in \mathbb{Z}[X]$ is an integer polynomial whose Mahler measure $M(f)$ is strictly larger
+than $1$. -/
 def mahlerMeasuresAboveOne : Set ℝ :=
   {y | ∃ f : Polynomial ℤ, 1 < intMahlerMeasure f ∧ y = intMahlerMeasure f}
 
-/-- **Lehmer's constant** `C₄₀ₐ`: the infimum of the Mahler measures
-strictly larger than `1` among integer polynomials. -/
+/-- **Lehmer's constant.** Writing $M(f)$ for the Mahler measure of an integer polynomial $f$,
+Lehmer's constant is
+$C_{40a} = \inf \{M(f) : f \in \mathbb{Z}[X],\ M(f) > 1\}$,
+the infimum of the Mahler measures of integer polynomials that are strictly larger than $1$. -/
 noncomputable def lehmerConstant : ℝ :=
   sInf mahlerMeasuresAboveOne
 
@@ -119,31 +131,43 @@ theorem mahlerMeasuresAboveOne_bddBelow : BddBelow mahlerMeasuresAboveOne :=
     rintro y ⟨f, hf, rfl⟩
     exact le_of_lt hf⟩
 
-/-- Every Mahler measure in the defining set bounds Lehmer's constant from
-above. -/
+/-- **Lehmer's constant bounds every Mahler measure above $1$.** For every integer polynomial
+$f$ whose Mahler measure is strictly larger than $1$, Lehmer's constant is at most the Mahler
+measure of $f$. -/
 theorem lehmerConstant_le_intMahlerMeasure {f : Polynomial ℤ}
     (hf : 1 < intMahlerMeasure f) : lehmerConstant ≤ intMahlerMeasure f :=
   csInf_le mahlerMeasuresAboveOne_bddBelow ⟨f, hf, rfl⟩
 
-/-- Catalogue lower bound: `1 ≤ C₄₀ₐ`. -/
+/-- **Lehmer's constant is at least one.** Lehmer's constant $L$, the infimum of the Mahler
+measures strictly larger than $1$ of polynomials in $\mathbb{Z}[X]$, satisfies $1 \le L$.
+
+This is the lower bound recorded in the catalogue for the constant $C_{40a}$. -/
 theorem one_le_lehmerConstant : 1 ≤ lehmerConstant :=
   le_csInf mahlerMeasuresAboveOne_nonempty (by
     rintro y ⟨f, hf, rfl⟩
     exact le_of_lt hf)
 
-/-- Elementary upper bound from the witness `X - 2`: `C₄₀ₐ ≤ 2`. -/
+/-- **Lehmer's constant is at most $2$.** Lehmer's constant $C_{40a}$ satisfies
+$C_{40a} \le 2$.
+
+The witness is the integer polynomial $X - 2$, whose Mahler measure is $2$. -/
 theorem lehmerConstant_le_two : lehmerConstant ≤ 2 := by
   rw [← intMahlerMeasure_X_sub_two]
   exact lehmerConstant_le_intMahlerMeasure (by
     rw [intMahlerMeasure_X_sub_two]; norm_num)
 
-/-- Lehmer's 1933 question: there are integer polynomials with Mahler
-measure arbitrarily close to `1` from above. -/
+/-- **Lehmer's question.** The proposition that there are integer polynomials with
+Mahler measure arbitrarily close to $1$ from above: for every real $\varepsilon > 0$ there is a
+polynomial $f \in \mathbb{Z}[X]$ whose Mahler measure $M(f)$ satisfies $1 < M(f) < 1 + \varepsilon$.
+
+Lehmer asked in 1933 whether this proposition holds. -/
 def LehmerQuestion : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ f : Polynomial ℤ,
     1 < intMahlerMeasure f ∧ intMahlerMeasure f < 1 + ε
 
-/-- Lehmer's question is equivalent to Lehmer's constant being `1`. -/
+/-- **Lehmer's question in terms of Lehmer's constant.** Lehmer's constant equals $1$ if and
+only if Lehmer's question has a positive answer, that is, for every $\varepsilon > 0$ there is
+an integer polynomial whose Mahler measure lies strictly between $1$ and $1 + \varepsilon$. -/
 theorem lehmerConstant_eq_one_iff : lehmerConstant = 1 ↔ LehmerQuestion := by
   constructor
   · intro hL ε hε
@@ -157,21 +181,26 @@ theorem lehmerConstant_eq_one_iff : lehmerConstant = 1 ↔ LehmerQuestion := by
     obtain ⟨f, hf1, hf2⟩ := hQ ε hε
     linarith [lehmerConstant_le_intMahlerMeasure hf1]
 
-/-- Lehmer's 1933 example polynomial
-`X^10 + X^9 - X^7 - X^6 - X^5 - X^4 - X^3 + X + 1`, whose Mahler measure
-`1.176280...` is still the smallest known value larger than `1`. -/
+/-- **Lehmer's polynomial.** Lehmer's polynomial is the integer polynomial
+$X^{10} + X^9 - X^7 - X^6 - X^5 - X^4 - X^3 + X + 1$.
+
+Lehmer found it in 1933. Its Mahler measure $1.176280\ldots$ is still the smallest known
+Mahler measure larger than $1$. -/
 noncomputable def lehmerPolynomial : Polynomial ℤ :=
   X ^ 10 + X ^ 9 - X ^ 7 - X ^ 6 - X ^ 5 - X ^ 4 - X ^ 3 + X + 1
 
-/-- Smyth's polynomial `X^3 - X - 1`, whose Mahler measure (the plastic
-number `1.324717...`) bounds all nonreciprocal integer polynomials from
-below. -/
+/-- **Smyth's polynomial.** Smyth's polynomial is $X^3 - X - 1 \in \mathbb{Z}[X]$.
+
+Its Mahler measure is the plastic number $\theta_0 = 1.324717\ldots$, the real root of
+$X^3 - X - 1$. Smyth proved in 1971 that every polynomial $f \in \mathbb{Z}[X]$ with
+$f(0) \neq 0$ that is nonreciprocal (reversing its coefficients gives neither $f$ nor $-f$)
+has Mahler measure at least $\theta_0$. -/
 noncomputable def smythPolynomial : Polynomial ℤ :=
   X ^ 3 - X - 1
 
-/-- An integer polynomial is reciprocal when reversing its coefficients
-gives the polynomial or its negation: `f.reverse = ±f`, equivalently
-`X ^ deg f * f (1 / X) = ±f`. -/
+/-- **Reciprocal polynomial.** An integer polynomial $f$ is reciprocal when reversing its
+coefficients gives $f$ or $-f$, that is, when $X^d f(1/X) = f$ or $X^d f(1/X) = -f$, where $d$
+is the degree of $f$, taken to be $0$ when $f = 0$. -/
 def IsReciprocal (f : Polynomial ℤ) : Prop :=
   f.reverse = f ∨ f.reverse = -f
 

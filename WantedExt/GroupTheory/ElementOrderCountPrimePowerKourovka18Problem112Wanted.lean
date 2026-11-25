@@ -33,10 +33,10 @@ Element orders are `orderOf`; the identity has order `1 = p⁰`, so the conclusi
 non-identity elements (`IsPrimePow` excludes `1`).
 -/
 
-/-- Kourovka 18.112 (W. J. Shi): if a finite group `G` has the property that, for every divisor
-`d > 1` of `|G|` and every subgroup `H` of order coprime to `d`, `|H|` divides the number of
-elements of order `d`, then every element of `G` has prime-power order (the identity having order
-`1 = p⁰`). -/
+/-- **Shi's question on element-order counts (Kourovka 18.112).** The proposition that if a
+finite group $G$ has the property that, for every divisor $d > 1$ of $|G|$ and every subgroup $H$
+of $G$ whose order is coprime to $d$, $|H|$ divides the number of elements of $G$ of order $d$,
+then every non-identity element of $G$ has prime-power order. -/
 def elementOrderCountPrimePowerOrders : Prop :=
   ∀ (G : Type) [Group G] [Finite G],
     (∀ d : ℕ, 1 < d → d ∣ Nat.card G → ∀ H : Subgroup G, Nat.Coprime (Nat.card H) d →
@@ -44,10 +44,15 @@ def elementOrderCountPrimePowerOrders : Prop :=
     ∀ g : G, g ≠ 1 → IsPrimePow (orderOf g)
 
 /--
-Resolved true: the Kourovka Archive answers 18.112 "Yes, it is true", citing Buturlakin, Shen and
-Shi (2017): if for every divisor `d > 1` of `|G|` and every subgroup `H` of order coprime to `d` the
-order `|H|` divides the number of elements of order `d`, then every element of `G` has prime-power
-order. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**Counting elements of each order forces prime-power orders.** Let $G$ be a finite group such
+that for every divisor $d > 1$ of $|G|$ and every subgroup $H$ of $G$ whose order is coprime to
+$d$, the order $|H|$ divides the number of elements of $G$ of order $d$. Then every non-identity
+element of $G$ has prime-power order.
+
+Buturlakin, Shen and Shi proved this in 2017, answering Kourovka Problem 18.112 (W. J. Shi); the
+Kourovka Archive answers 18.112 "Yes, it is true".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.112
 (W. J. Shi); resolution: A. A. Buturlakin, R. Shen and W. Shi, Siberian Math. J. 58 (2017), 405-407,
 Kourovka Archive, Problem 18.112 (Yes, it is true).

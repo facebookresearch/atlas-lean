@@ -18,7 +18,7 @@ ISOMORPHISM is NP-complete"), pp. 104-106, and problem [GT48] SUBGRAPH ISOMORPHI
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
