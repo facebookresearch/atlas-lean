@@ -56,3 +56,13 @@ example (k n : ℕ) (hn : 1 ≤ n) :
     have hk : 1 ≤ 4 ^ k * n := Nat.mul_pos (Nat.pow_pos (by decide)) hn
     rw [Nat.pow_succ, Nat.mul_comm (4 ^ k) 4, Nat.mul_assoc]
     exact (metaAutomaticOne_pair_closure companion (fun _ => rfl) _ hk).1.trans ih
+
+-- The initial block is 0112; following state 1 also reaches state 3 and returns to state 0.
+example : ∃ w : ℕ → ℕ, w 0 = 0 ∧ w 1 = 1 ∧ w 2 = 1 ∧ w 3 = 2 ∧ w 6 = 3 ∧ w 7 = 0 := by
+  obtain ⟨w, h0, hstep, -⟩ := metaAutomaticOne_morphism_coding
+  have h1 : w 1 = 1 := by simpa [h0] using hstep 0 1 (by decide)
+  refine ⟨w, h0, h1, ?_, ?_, ?_, ?_⟩
+  · simpa [h0] using hstep 0 2 (by decide)
+  · simpa [h0] using hstep 0 3 (by decide)
+  · simpa [h1] using hstep 1 2 (by decide)
+  · simpa [h1] using hstep 1 3 (by decide)
