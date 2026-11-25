@@ -29,132 +29,29 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.NumberTheory.Padics.PadicNumbers
-public import Mathlib.NumberTheory.Padics.Hensel
-import Mathlib.Algebra.Polynomial.Derivative
-import Mathlib.Tactic
-import Mathlib.NumberTheory.Padics.RingHoms
+import MathlibExt.NumberTheory.Padics.HilbertSymbol.Isotropic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # Ternary isotropy over `ℚ_[p]` at odd primes
+
+The form `z ^ 2 - a * x ^ 2 - b * y ^ 2` with `‖a‖ = ‖b‖ = 1` is the case `n = 3` of
+`HilbertSymbol.diagonal_unit_isotropic`, with the unit coefficients `1, -a, -b`.
 -/
-@[expose] public section
 
-namespace P2HasseMinkPadicPort
-
-open Polynomial
-
-variable {p : ℕ} [hp : Fact p.Prime]
-
-private theorem norm_lt_one_of_toZMod_eq_zero {c : ℤ_[p]} (h : PadicInt.toZMod c = 0) : ‖c‖ < 1
-  := by
-  have : c ∈ RingHom.ker (PadicInt.toZMod (p := p)) := h
-  rw [PadicInt.ker_toZMod, IsLocalRing.mem_maximalIdeal] at this
-  exact PadicInt.mem_nonunits.mp this
-
-private theorem norm_eq_one_of_toZMod_ne_zero {c : ℤ_[p]} (h : PadicInt.toZMod c ≠ 0) : ‖c‖ = 1
-  := by
-  refine le_antisymm (PadicInt.norm_le_one c) (not_lt.mp fun hlt ↦ h ?_)
-  have : c ∈ RingHom.ker (PadicInt.toZMod (p := p)) := by
-    rw [PadicInt.ker_toZMod, IsLocalRing.mem_maximalIdeal]
-    exact PadicInt.mem_nonunits.mpr hlt
-  exact this
-
-private theorem exists_sq_eq_of_toZMod_eq_sq (hp2 : p ≠ 2) {c : ℤ_[p]} {s : ZMod p} (hs : s ≠ 0)
-    (hcs : PadicInt.toZMod c = s ^ 2) : ∃ t : ℤ_[p], t ^ 2 = c := by
-  obtain ⟨sl, hsl⟩ := ZMod.ringHom_surjective (PadicInt.toZMod (p := p)) s
-  have hslnorm : ‖sl‖ = 1 := norm_eq_one_of_toZMod_ne_zero (by rw [hsl]; exact hs)
-  have htwo : ‖(2 : ℤ_[p])‖ = 1 := by
-    have h := (PadicInt.norm_natCast_eq_one_iff (p := p) (n := 2)).mpr
-      ((Nat.coprime_primes hp.out Nat.prime_two).mpr hp2)
-    simpa using h
-
-  set F : ℤ_[p][X] := X ^ 2 - C c with hF
-  have hFeval : aeval sl F = sl ^ 2 - c := by simp [hF]
-  have hF'eval : aeval sl (derivative F) = 2 * sl := by
-    simp [hF]; norm_num
-  have hnormF' : ‖aeval sl (derivative F)‖ = 1 := by
-    rw [hF'eval, norm_mul, htwo, hslnorm, one_mul]
-  have hnormF : ‖aeval sl F‖ < 1 := by
-    rw [hFeval]
-    apply norm_lt_one_of_toZMod_eq_zero
-    rw [map_sub, map_pow, hsl, hcs, sub_self]
-  have hhens : ‖aeval sl F‖ < ‖aeval sl (derivative F)‖ ^ 2 := by
-    rw [hnormF', one_pow]; exact hnormF
-  obtain ⟨t, ht, -⟩ := hensels_lemma hhens
-  refine ⟨t, ?_⟩
-  have : aeval t F = t ^ 2 - c := by simp [hF]
-  rw [this] at ht
-  exact sub_eq_zero.mp ht
-
-end P2HasseMinkPadicPort
-
-open P2HasseMinkPadicPort Polynomial in
 /-- **Ternary isotropy over `ℚ_[p]` for odd `p`.** If `p` is an odd prime and
 `a, b` are p-adic numbers of norm `1`, then `z ^ 2 - a * x ^ 2 - b * y ^ 2 = 0`
 has a nontrivial solution in `ℚ_[p]`. -/
 public theorem Padic.exists_ternary_isotropic_of_norm_eq_one_of_ne_two
     (p : ℕ) [Fact p.Prime] (hp : p ≠ 2) (a b : ℚ_[p]) (ha : ‖a‖ = 1) (hb : ‖b‖ = 1) :
     ∃ z x y : ℚ_[p], ¬ (z = 0 ∧ x = 0 ∧ y = 0) ∧ z ^ 2 - a * x ^ 2 - b * y ^ 2 = 0 := by
-  have hpr : p.Prime := Fact.out
-
-  set a₀ : ℤ_[p] := ⟨a, ha.le⟩ with ha₀
-  set b₀ : ℤ_[p] := ⟨b, hb.le⟩ with hb₀
-  have ha₀n : ‖a₀‖ = 1 := ha
-  have hb₀n : ‖b₀‖ = 1 := hb
-  have hares : PadicInt.toZMod a₀ ≠ 0 := fun h ↦ by
-    have := norm_lt_one_of_toZMod_eq_zero h; rw [ha₀n] at this; exact lt_irrefl _ this
-  have hbres : PadicInt.toZMod b₀ ≠ 0 := fun h ↦ by
-    have := norm_lt_one_of_toZMod_eq_zero h; rw [hb₀n] at this; exact lt_irrefl _ this
-
-  have hcard : Fintype.card (ZMod p) % 2 = 1 := by
-    rw [ZMod.card]; exact hpr.eq_two_or_odd.resolve_left hp
-  have hf : (X ^ 2 - C (PadicInt.toZMod b₀) : (ZMod p)[X]).degree = 2 := by
-    rw [degree_X_pow_sub_C (by norm_num)]; rfl
-  have hg : (C (-PadicInt.toZMod a₀) * X ^ 2 : (ZMod p)[X]).degree = 2 := by
-    rw [degree_C_mul_X_pow 2 (neg_ne_zero.mpr hares)]; rfl
-  obtain ⟨z₀, x₀, hzx⟩ := FiniteField.exists_root_sum_quadratic hf hg hcard
-  simp only [eval_sub, eval_pow, eval_X, eval_C, eval_mul] at hzx
-
-  by_cases hz₀ : z₀ = 0
-  ·
-    have hx₀ : x₀ ≠ 0 := by
-      intro hx
-      apply hbres
-      rw [hz₀, hx] at hzx
-      linear_combination -hzx
-    have ha₀unit : IsUnit a₀ := PadicInt.isUnit_iff.mpr ha₀n
-    obtain ⟨u, hu⟩ := ha₀unit
-
-    set c : ℤ_[p] := -b₀ * ↑u⁻¹ with hc
-    have haures : PadicInt.toZMod a₀ * PadicInt.toZMod (↑u⁻¹ : ℤ_[p]) = 1 := by
-      rw [← map_mul, ← hu, Units.mul_inv, map_one]
-    have hcres : PadicInt.toZMod c = x₀ ^ 2 := by
-      rw [hc, map_mul, map_neg]
-      have e1 : PadicInt.toZMod b₀ = -(PadicInt.toZMod a₀ * x₀ ^ 2) := by
-        rw [hz₀] at hzx; linear_combination -hzx
-      rw [e1]
-      linear_combination (x₀ ^ 2) * haures
-    obtain ⟨w, hw⟩ := exists_sq_eq_of_toZMod_eq_sq hp hx₀ hcres
-
-    have hac : a₀ * c = -b₀ := by
-      rw [hc, hu.symm, mul_comm, mul_assoc, Units.inv_mul, mul_one]
-    have hacQ : a * ((w : ℤ_[p]) : ℚ_[p]) ^ 2 = -b := by
-      have h := congrArg (fun t : ℤ_[p] ↦ (t : ℚ_[p])) hac
-      simp only [PadicInt.coe_mul, PadicInt.coe_neg] at h
-      rw [← hw] at h
-      simpa [ha₀, hb₀] using h
-    refine ⟨0, (w : ℚ_[p]), 1, fun ⟨_, _, h1⟩ ↦ one_ne_zero h1, ?_⟩
-    linear_combination -hacQ
-  ·
-    obtain ⟨xl, hxl⟩ := ZMod.ringHom_surjective (PadicInt.toZMod (p := p)) x₀
-    set c : ℤ_[p] := a₀ * xl ^ 2 + b₀ with hc
-    have hcres : PadicInt.toZMod c = z₀ ^ 2 := by
-      rw [hc, map_add, map_mul, map_pow, hxl]
-      linear_combination -hzx
-    obtain ⟨t, ht⟩ := exists_sq_eq_of_toZMod_eq_sq hp hz₀ hcres
-    have htQ : ((t : ℤ_[p]) : ℚ_[p]) ^ 2 = a * ((xl : ℤ_[p]) : ℚ_[p]) ^ 2 + b := by
-      have h := congrArg (fun s : ℤ_[p] ↦ (s : ℚ_[p])) ht
-      simp only [PadicInt.coe_pow, hc, PadicInt.coe_add, PadicInt.coe_mul] at h
-      simpa [ha₀, hb₀] using h
-    refine ⟨(t : ℚ_[p]), (xl : ℚ_[p]), 1, fun ⟨_, _, h1⟩ ↦ one_ne_zero h1, ?_⟩
-    linear_combination htQ
+  obtain ⟨v, hv0, hv⟩ := HilbertSymbol.diagonal_unit_isotropic p hp (by decide : 2 < 3)
+    ![1, -PadicInt.mkUnits ha, -PadicInt.mkUnits hb]
+  refine ⟨v 0, v 1, v 2, fun ⟨h0, h1, h2⟩ ↦ hv0 (funext fun i ↦ ?_), ?_⟩
+  · fin_cases i
+    exacts [h0, h1, h2]
+  · simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+      Matrix.tail_cons, Matrix.head_cons, Units.val_one, Units.val_neg, PadicInt.coe_one,
+      PadicInt.coe_neg, PadicInt.mkUnits_eq, one_mul] at hv
+    linear_combination hv

@@ -42,10 +42,11 @@ module
 
 public import Mathlib.NumberTheory.Padics.PadicNumbers
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
 public import MathlibExt.NumberTheory.Padics.TernaryIsotropic
-import Mathlib.Tactic
-import Mathlib
+import Mathlib.NumberTheory.Padics.HeightOneSpectrum
+import Mathlib.NumberTheory.Padics.Hensel
+import Mathlib.NumberTheory.Padics.RingHoms
 
 /-!
 # Hilbert reciprocity for ternary forms over `ℚ`
@@ -621,9 +622,9 @@ private theorem iso_map {L : Type*} [Field L] (f : F →+* L) {A B : F} (h : Iso
 
 end FieldGeneric
 
-private def ord (p : ℕ) (a : ℤ) : ℕ := padicValInt p a
+private noncomputable def ord (p : ℕ) (a : ℤ) : ℕ := padicValInt p a
 
-private def unt (p : ℕ) (a : ℤ) : ℤ := a / (p : ℤ) ^ padicValInt p a
+private noncomputable def unt (p : ℕ) (a : ℤ) : ℤ := a / (p : ℤ) ^ padicValInt p a
 
 private theorem decomp {p : ℕ} (hp : p.Prime) {a : ℤ} (ha : a ≠ 0) :
     a = (p : ℤ) ^ ord p a * unt p a ∧ ¬ (p : ℤ) ∣ unt p a := by
@@ -648,9 +649,7 @@ private theorem ord_unt_eq {p : ℕ} (hp : p.Prime) {a u : ℤ} {k : ℕ} (hu : 
   have hord : ord p a = k := by
     unfold ord
     rw [h, padicValInt.mul hpk hu0, padicValInt.eq_zero_of_not_dvd hu, add_zero]
-    have : padicValInt p ((p : ℤ) ^ k) = padicValNat p (p ^ k) := by
-      simp [padicValInt]
-    rw [this, padicValNat.prime_pow]
+    simp [padicValInt]
   refine ⟨hord, ?_⟩
   unfold unt
   rw [show padicValInt p a = k from hord, h, Int.mul_ediv_cancel_left _ hpk]
@@ -677,13 +676,13 @@ private theorem unt_odd {a : ℤ} (ha : a ≠ 0) : ¬ (2 : ℤ) ∣ unt 2 a := b
 
 private def sgn4 (u v : ℤ) : ℤ := if χ₄ v = -1 then χ₄ u else 1
 
-private def symOdd (p : ℕ) (a b : ℤ) : ℤ :=
+private noncomputable def symOdd (p : ℕ) (a b : ℤ) : ℤ :=
   χ₄ p ^ (ord p a * ord p b) * J(unt p a | p) ^ ord p b * J(unt p b | p) ^ ord p a
 
-private def symTwo (a b : ℤ) : ℤ :=
+private noncomputable def symTwo (a b : ℤ) : ℤ :=
   sgn4 (unt 2 a) (unt 2 b) * χ₈ (unt 2 a) ^ ord 2 b * χ₈ (unt 2 b) ^ ord 2 a
 
-private def sym (p : ℕ) (a b : ℤ) : ℤ := if p = 2 then symTwo a b else symOdd p a b
+private noncomputable def sym (p : ℕ) (a b : ℤ) : ℤ := if p = 2 then symTwo a b else symOdd p a b
 
 private def sgnInf (a b : ℤ) : ℤ := if a < 0 ∧ b < 0 then -1 else 1
 
