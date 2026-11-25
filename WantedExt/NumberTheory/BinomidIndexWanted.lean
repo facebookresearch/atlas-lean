@@ -17,32 +17,13 @@ public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.LiminfLimsup
 public import MathlibExt.Combinatorics.Enumerative.TotienomialCoefficient
 public import MathlibExt.NumberTheory.BinomidAverage
+public import MathlibExt.NumberTheory.BinomidPartialSum
 public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
 public import MathlibExt.NumberTheory.PrimeDvdChoose
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Partial-sum characterization of binomid indices.** Let $\eta = (e_1, e_2, \dots)$ be a
-sequence of nonnegative integers with partial sums $s_n = e_1 + \dots + e_n$ (so $s_0 = 0$).
-Then $\eta$ is a binomid index if and only if $s_{n-k} + s_k \le s_n$ for all $k$ and $n$ with
-$1 \le k < n$. Moreover, for every $m$, if $\eta$ is the lex-minimal extension of its first $m$
-entries, then for every $n > m$
-$$s_n = \max_{1 \le k < n} (s_{n-k} + s_k),$$
-where the maximum over the empty range (for $n = 1$) is taken to be $0$.
-
-Source: Caalim and Tanaka, *Lexicographically Minimal Extension of a Finite
-Binomid Index*, INTEGERS 24 (2024), Article A53, Lemma 1
-(`integers-2024-A53-lem-1`). -/
-public theorem_wanted isBinomidIndex_iff_partialSum (η : ℕ → ℕ) :
-    (IsBinomidIndex η ↔ ∀ k n : ℕ, 1 ≤ k → k < n →
-      ∑ i ∈ Finset.range (n - k), η i + ∑ i ∈ Finset.range k, η i
-        ≤ ∑ i ∈ Finset.range n, η i) ∧
-    ∀ m : ℕ, IsLexMinimalExtensionOf η m → ∀ n : ℕ, m < n →
-      ∑ i ∈ Finset.range n, η i
-        = (Finset.Ico 1 n).sup fun k =>
-            ∑ i ∈ Finset.range (n - k), η i + ∑ i ∈ Finset.range k, η i
 
 /-- **Monotone finite binomid indices extend periodically.** Let $m \ge 1$ and let
 $e_1 \le e_2 \le \cdots \le e_m$ be nonnegative integers. Then the periodic sequence

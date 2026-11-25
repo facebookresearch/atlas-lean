@@ -10,21 +10,16 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.YoungTableaux.HookLength
+public import MathlibExt.Combinatorics.YoungTableaux.SumSYTCountSq
 public import Mathlib.Combinatorics.Enumerative.Partition.YoungDiagram
 public import Mathlib.Data.Nat.Factorial.Basic
 
 /-!
-# The hook length formula and the sum of squares of `f^λ`
+# The hook length formula
 
-Two central enumerative facts about standard Young tableaux, from Stanley, *Topics in
-Algebraic Combinatorics*, author's draft of 1 February 2013
-(https://math.mit.edu/~rstan/algcomb/algcomb.pdf; published as *Algebraic Combinatorics: Walks,
-Trees, Tableaux, and More*, Springer, 2013), Chapter 8:
-
-* the hook length formula of Frame, Robinson and Thrall (Theorem 8.1);
-* `∑_{λ ⊢ n} (f^λ)² = n!` (Corollary 8.5), which the RSK algorithm proves bijectively
-  (Theorem 8.13: RSK is a bijection between `𝔖ₙ` and pairs of standard Young tableaux of the
-  same shape `λ ⊢ n`).
+The hook length formula of Frame, Robinson and Thrall is Theorem 8.1 of Stanley,
+*Topics in Algebraic Combinatorics*, author's draft of 1 February 2013
+(https://math.mit.edu/~rstan/algcomb/algcomb.pdf).
 -/
 
 @[expose] public section
@@ -39,11 +34,5 @@ of `λ` and `h(u)` the hook length; stated here with the denominator cleared (St
 Algebraic Combinatorics*, author's draft of 1 February 2013, Theorem 8.1). -/
 theorem_wanted sytCount_mul_prod_hookLength (μ : YoungDiagram) :
     sytCount μ * ∏ c ∈ μ.cells, hookLength μ c = μ.card.factorial
-
-/-- **Sum of the squares of the numbers of standard Young tableaux.** For every `n`,
-`∑_{λ ⊢ n} (f^λ)² = n!` (Stanley, *Topics in Algebraic Combinatorics*, author's draft of
-1 February 2013, Corollary 8.5; bijectively by the RSK algorithm, Theorem 8.13). -/
-theorem_wanted sum_sytCount_sq (n : ℕ) :
-    ∑ p : n.Partition, sytCount (YoungDiagram.ofPartition p) ^ 2 = n.factorial
 
 end MathlibExt.Combinatorics.YoungTableaux.HookLengthWanted

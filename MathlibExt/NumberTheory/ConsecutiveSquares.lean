@@ -17,7 +17,8 @@ public import Mathlib.Data.Set.Card
 # Sums of consecutive squares and arithmetic polygons
 
 This module proves strict bounds on the ratio of the spans of a solution to the
-sum of consecutive squares equation. It also records the corresponding 3-4-5 triangle.
+sum of consecutive squares equation, and bounds the number of solutions with a
+fixed span. It also records the corresponding 3-4-5 triangle.
 -/
 
 namespace MetaMathlibExt
@@ -134,6 +135,141 @@ public theorem soCS_ratio_bounds (a b c : ℤ) (h : IsSoCSSolution a b c) :
       apply mul_lt_mul_of_pos_left _ (by positivity)
       dsimp [y, x] at hkx ⊢
       linarith
+
+/-- **At most $2(N - 1)$ solutions with $c - a = N$.** For every integer $N > 1$,
+there are at most $2(N - 1)$ solutions $(a, b, c)$ of the sum of consecutive squares problem
+with $c - a = N$.
+
+Source: Anderson, Woodall and Zaharescu, *Arithmetic Polygons and Sums of
+Consecutive Squares*, INTEGERS 26 (2026), Article A1, Theorem 5
+(`integers-2026-A1-thm-5`). -/
+public theorem soCS_card_le (N : ℤ) (hN : 1 < N)
+    (s : Finset (ℤ × ℤ × ℤ))
+    (hs : ∀ t ∈ s, IsSoCSSolution t.1 t.2.1 t.2.2 ∧ t.2.2 - t.1 = N) :
+    s.card ≤ 2 * (N - 1).toNat := by
+  have hfiber : ∀ ℓ ∈ s.image (fun t => t.2.1 - t.1),
+      ({t ∈ s | t.2.1 - t.1 = ℓ}).card ≤ 2 := by
+    intro ℓ hℓ
+    set F : Finset (ℤ × ℤ × ℤ) := {t ∈ s | t.2.1 - t.1 = ℓ} with hFdef
+    have hmem : ∀ {t : ℤ × ℤ × ℤ}, t ∈ F ↔ t ∈ s ∧ t.2.1 - t.1 = ℓ := by
+      intro t
+      simp [hFdef]
+    -- Triples in a fiber with the same middle coordinate coincide.
+    have heq_of : ∀ {t₁ t₂ : ℤ × ℤ × ℤ}, t₁ ∈ F → t₂ ∈ F → t₁.2.1 = t₂.2.1 →
+        t₁ = t₂ := by
+      intro t₁ t₂ h₁ h₂ hb
+      obtain ⟨ht₁s, ht₁ℓ⟩ := hmem.mp h₁
+      obtain ⟨ht₂s, ht₂ℓ⟩ := hmem.mp h₂
+      obtain ⟨_, hspan₁⟩ := hs t₁ ht₁s
+      obtain ⟨_, hspan₂⟩ := hs t₂ ht₂s
+      obtain ⟨a₁, b₁, c₁⟩ := t₁
+      obtain ⟨a₂, b₂, c₂⟩ := t₂
+      have hℓ₁ : b₁ - a₁ = ℓ := ht₁ℓ
+      have hℓ₂ : b₂ - a₂ = ℓ := ht₂ℓ
+      have hs₁ : c₁ - a₁ = N := hspan₁
+      have hs₂ : c₂ - a₂ = N := hspan₂
+      have hb' : b₁ = b₂ := hb
+      simp only [Prod.mk.injEq]
+      refine ⟨?_, hb', ?_⟩ <;> omega
+    -- The middle coordinate satisfies a quadratic equation in `ℓ` and `N`.
+    have hquad : ∀ {t : ℤ × ℤ × ℤ}, t ∈ F →
+        6 * (N - 2 * ℓ) * t.2.1 ^ 2 +
+          6 * (N ^ 2 + 2 * ℓ ^ 2 - 2 * N * ℓ + N - 2 * ℓ) * t.2.1 +
+          (2 * N ^ 3 - 4 * ℓ ^ 3 - 6 * N ^ 2 * ℓ + 6 * N * ℓ ^ 2 + 3 * N ^ 2 +
+            6 * ℓ ^ 2 - 6 * N * ℓ + N - 2 * ℓ) = 0 := by
+      intro t ht
+      obtain ⟨hts, htℓ⟩ := hmem.mp ht
+      obtain ⟨⟨ha, hab, hbc, heq⟩, hspan⟩ := hs t hts
+      have ha' : t.1 = t.2.1 - ℓ := by omega
+      have hc' : t.2.2 = t.2.1 + N - ℓ := by omega
+      unfold SoCSEq at heq
+      rw [ha', hc'] at heq
+      linear_combination -heq
+    -- Three distinct middle coordinates in a fiber are impossible.
+    have hthree : ∀ {t₁ t₂ t₃ : ℤ × ℤ × ℤ}, t₁ ∈ F → t₂ ∈ F → t₃ ∈ F →
+        t₁.2.1 ≠ t₂.2.1 → t₁.2.1 ≠ t₃.2.1 → t₂.2.1 ≠ t₃.2.1 → False := by
+      intro t₁ t₂ t₃ h₁ h₂ h₃ h₁₂ h₁₃ h₂₃
+      have hQ₁ := hquad h₁
+      have hQ₂ := hquad h₂
+      have hQ₃ := hquad h₃
+      have hℓpos : 0 < ℓ := by
+        obtain ⟨hts, htℓ⟩ := hmem.mp h₁
+        obtain ⟨⟨ha, hab, _, _⟩, _⟩ := hs t₁ hts
+        omega
+      have hdiff₁₂ : (t₁.2.1 - t₂.2.1) *
+          (6 * (N - 2 * ℓ) * (t₁.2.1 + t₂.2.1) +
+            6 * (N ^ 2 + 2 * ℓ ^ 2 - 2 * N * ℓ + N - 2 * ℓ)) = 0 := by
+        linear_combination hQ₁ - hQ₂
+      have hdiff₁₃ : (t₁.2.1 - t₃.2.1) *
+          (6 * (N - 2 * ℓ) * (t₁.2.1 + t₃.2.1) +
+            6 * (N ^ 2 + 2 * ℓ ^ 2 - 2 * N * ℓ + N - 2 * ℓ)) = 0 := by
+        linear_combination hQ₁ - hQ₃
+      rcases mul_eq_zero.mp hdiff₁₂ with h12 | hS₁₂
+      · exact h₁₂ (sub_eq_zero.mp h12)
+      rcases mul_eq_zero.mp hdiff₁₃ with h13 | hS₁₃
+      · exact h₁₃ (sub_eq_zero.mp h13)
+      have hA : 6 * (N - 2 * ℓ) * (t₂.2.1 - t₃.2.1) = 0 := by
+        linear_combination hS₁₂ - hS₁₃
+      rcases mul_eq_zero.mp hA with hA | h23'
+      · -- If the quadratic coefficient vanishes, then `N = 2 * ℓ` and the
+        -- linear coefficient is `12 * ℓ ^ 2 ≠ 0`, contradicting `hS₁₂`.
+        have hN2 : N = 2 * ℓ := by
+          have h' : N - 2 * ℓ = 0 := by
+            rcases mul_eq_zero.mp hA with h6 | hN
+            · norm_num at h6
+            · exact hN
+          omega
+        subst hN2
+        have hcontra : (12 : ℤ) * ℓ ^ 2 = 0 := by linear_combination hS₁₂
+        have hpos : (0 : ℤ) < ℓ ^ 2 := pow_pos hℓpos 2
+        omega
+      · exact h₂₃ (sub_eq_zero.mp h23')
+    -- Hence the fiber has at most two elements.
+    by_cases hF : F.Nonempty
+    · obtain ⟨x, hx⟩ := hF
+      by_cases h2 : ∃ y ∈ F, y ≠ x
+      · obtain ⟨y, hy, hxy⟩ := h2
+        have hsub : F ⊆ {x, y} := by
+          intro z hz
+          by_cases hzx : z = x
+          · simp [hzx]
+          · by_cases hzy : z = y
+            · simp [hzy]
+            · exfalso
+              apply hthree hx hy hz
+              · exact fun hb => hxy (heq_of hy hx hb.symm)
+              · exact fun hb => hzx (heq_of hz hx hb.symm)
+              · exact fun hb => hzy (heq_of hz hy hb.symm)
+        calc F.card ≤ ({x, y} : Finset (ℤ × ℤ × ℤ)).card := Finset.card_le_card hsub
+          _ ≤ 2 := Finset.card_le_two
+      · have hall : ∀ y ∈ F, y = x := by
+          intro y hy
+          by_contra hne
+          exact h2 ⟨y, hy, hne⟩
+        have hsub : F ⊆ {x} := by
+          intro z hz
+          simp only [Finset.mem_singleton]
+          exact hall z hz
+        calc F.card ≤ ({x} : Finset (ℤ × ℤ × ℤ)).card := Finset.card_le_card hsub
+          _ ≤ 2 := by simp
+    · rw [Finset.not_nonempty_iff_eq_empty] at hF
+      simp [hF]
+  have hcard := Finset.card_le_mul_card_image s 2 hfiber
+  refine hcard.trans ?_
+  have himage : s.image (fun t => t.2.1 - t.1) ⊆ Finset.Icc (1 : ℤ) (N - 1) := by
+    intro ℓ hℓ
+    rw [Finset.mem_image] at hℓ
+    obtain ⟨t, ht, rfl⟩ := hℓ
+    obtain ⟨⟨ha, hab, hbc, _⟩, hspan⟩ := hs t ht
+    simp only [Finset.mem_Icc]
+    omega
+  calc 2 * (s.image (fun t => t.2.1 - t.1)).card
+      ≤ 2 * (Finset.Icc (1 : ℤ) (N - 1)).card := by gcongr
+    _ = 2 * (N - 1).toNat := by
+        rw [Int.card_Icc]
+        congr 1
+        congr 1
+        ring
 
 /-! ### Arithmetic polygons -/
 

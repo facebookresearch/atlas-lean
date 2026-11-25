@@ -13,3 +13,6 @@
 - [Uniqueness of the extinction probability solving the backward equation](eq-extinction-prob-of-has-deriv-within-a.md)
 - [Limiting extinction probability in the supercritical case](tendsto-extinction-prob-of-lt.md)
 - [Certain extinction in the critical and subcritical cases](tendsto-extinction-prob-of-le.md)
+
+- [Compact containment and C-tightness for rescaled critical binary branching](compact-containment-and-c-tightness-for-critical.md)
+- [Feller's branching diffusion as the scaling limit of critical binary branching](feller-branching-diffusion-as-the-scaling-limit.md)

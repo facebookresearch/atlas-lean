@@ -14,7 +14,11 @@ observable ones, of which they are a special case.
 This node states a precise result. A good expansion adds a page for each of the following
 prerequisites and links it under the dependency sections below:
 
-- Statement prerequisite: Finite POMDPs.
+- Statement prerequisite: Probabilistic finite automata, the probability that one accepts a word, and the threshold emptiness problem.
+
+## Depends on
+
+- [Finite POMDPs](finite-pomdps.md)
 
 ## Sources
 
