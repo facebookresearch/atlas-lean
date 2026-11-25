@@ -12,10 +12,13 @@ LICENSE file in the root directory of this source tree.
 For `k` strings and a pairwise scoring `s` on `Option α` (`none` is a gap)
 with zero self-costs (`s x x = 0`, in particular `s none none = 0`), the triangle inequality,
 and symmetry, let the center `X c` be an input string minimizing the total optimal-pairwise
-distance `∑ⱼ D(X c, Xⱼ)` over the inputs (Gusfield's selection rule) and let `Ac` be
-the center-star multiple alignment built from optimal pairwise alignments to
-`X c`. With `V` the sum-of-pairs value and `A*` an optimal multiple alignment,
-`k * V(Ac) ≤ 2 * (k - 1) * V(A*)`, i.e. `V(Ac) / V(A*) ≤ 2 * (k - 1) / k < 2`.
+distance `∑ⱼ D(X c, Xⱼ)` over the inputs (Gusfield's selection rule) and let `Ac` be a multiple
+alignment whose projection onto the rows `c` and `i` is an optimal pairwise alignment of `X c` and
+`X i` for every `i`, as for the center-star alignment built by merging optimal pairwise alignments
+to `X c` (Lemma 3.1). With `V` the sum-of-pairs value and `A*` an optimal multiple alignment,
+`k * V(Ac) ≤ 2 * (k - 1) * V(A*)`, i.e. `V(Ac) / V(A*) ≤ 2 * (k - 1) / k < 2`. The projection
+property is the premise; the star bound `V_{ij}(Ac) ≤ D(X c, X i) + D(X c, X j)` used in the proof
+is a consequence (triangle inequality column by column) and is not assumed.
 The symmetry of `s` and the zero self-costs (which give `D(X, X) = 0`) are used by the source
 without being stated and are explicit hypotheses here.
 
@@ -104,11 +107,12 @@ a gap scoring with `s none none = 0` (`hgap`) and zero self-costs `s x x = 0` fo
 `pairDist` characterization (`hD_le`, `hD_att`), a center index `c : Fin k`
 whose input string minimizes the center total over the inputs,
 `∑ j, D (X c) (X j) ≤ ∑ j, D (X i) (X j)` for every `i : Fin k` (`hcenter`, Gusfield's selection
-rule), spoke alignments `P j` that are
-valid and attain the pairwise optima (`hspoke`), a star alignment `Ac`
-whose induced pairwise values obey the star triangle bound (`hstar`), and an
-optimal alignment `Astar` valid for `X` and minimal (`hopt`). Conclusion:
-`k * V(Ac) ≤ 2 * (k - 1) * V(Astar)`.
+rule), a multiple alignment `Ac` of `X` (`hac`) whose projection onto the center row `c` and
+each row `i` is an optimal pairwise alignment, `inducedValue s Ac c i = D (X c) (X i)` for every
+`i` (`hproj`, the center-star property of Gusfield's Lemma 3.1), and an optimal alignment `Astar`
+valid for `X` and minimal (`hopt`). Conclusion: `k * V(Ac) ≤ 2 * (k - 1) * V(Astar)`. The star
+bound `V_{ij}(Ac) ≤ D (X c) (X i) + D (X c) (X j)` is not assumed; it follows from `hproj` and the
+triangle inequality.
 
 Source: Gusfield (1993), Theorem 3.1 (via Lemma 3.1). -/
 theorem_wanted centerStar_bound (s : Option α → Option α → ℝ)
@@ -124,13 +128,9 @@ theorem_wanted centerStar_bound (s : Option α → Option α → ℝ)
       IsPairAlignmentOf A U V ∧ pairDist s U V = alignValue s A)
     (c : Fin k)
     (hcenter : ∀ i : Fin k, centerTotal s X (X c) ≤ centerTotal s X (X i))
-    (P : Fin k → PairAlignment α)
-    (hspoke : ∀ j, IsPairAlignmentOf (P j) (X c) (X j) ∧
-      pairDist s (X c) (X j) = alignValue s (P j))
     (Ac : MSAlignment α k)
     (hac : msErasesTo Ac X)
-    (hstar : ∀ i j, inducedValue s Ac i j ≤
-      alignValue s (P i) + alignValue s (P j))
+    (hproj : ∀ i, inducedValue s Ac c i = pairDist s (X c) (X i))
     (Astar : MSAlignment α k)
     (hastar : msErasesTo Astar X)
     (hopt : ∀ A' : MSAlignment α k, msErasesTo A' X →
@@ -139,7 +139,8 @@ theorem_wanted centerStar_bound (s : Option α → Option α → ℝ)
 
 /-- **Center-star ratio form** (Gusfield 1993, Theorem 3.1): same hypotheses
 as `centerStar_bound` (including `s none none = 0` and zero self-costs `s x x = 0` for every
-`x : Option α`, `hdiag`) plus positivity of the optimum (`hpos`). Conclusion:
+`x : Option α`, `hdiag`, and the projection property `hproj` of `Ac` onto the center row) plus
+positivity of the optimum (`hpos`). Conclusion:
 `V(Ac) / V(Astar) ≤ 2 * (k - 1) / k < 2`.
 
 Source: Gusfield (1993), Theorem 3.1. -/
@@ -156,13 +157,9 @@ theorem_wanted centerStar_ratio (s : Option α → Option α → ℝ)
       IsPairAlignmentOf A U V ∧ pairDist s U V = alignValue s A)
     (c : Fin k)
     (hcenter : ∀ i : Fin k, centerTotal s X (X c) ≤ centerTotal s X (X i))
-    (P : Fin k → PairAlignment α)
-    (hspoke : ∀ j, IsPairAlignmentOf (P j) (X c) (X j) ∧
-      pairDist s (X c) (X j) = alignValue s (P j))
     (Ac : MSAlignment α k)
     (hac : msErasesTo Ac X)
-    (hstar : ∀ i j, inducedValue s Ac i j ≤
-      alignValue s (P i) + alignValue s (P j))
+    (hproj : ∀ i, inducedValue s Ac c i = pairDist s (X c) (X i))
     (Astar : MSAlignment α k)
     (hastar : msErasesTo Astar X)
     (hopt : ∀ A' : MSAlignment α k, msErasesTo A' X →

@@ -7,11 +7,12 @@ a gap scoring with `s none none = 0` (`hgap`) and zero self-costs `s x x = 0` fo
 `pairDist` characterization (`hD_le`, `hD_att`), a center index `c : Fin k`
 whose input string minimizes the center total over the inputs,
 `∑ j, D (X c) (X j) ≤ ∑ j, D (X i) (X j)` for every `i : Fin k` (`hcenter`, Gusfield's selection
-rule), spoke alignments `P j` that are
-valid and attain the pairwise optima (`hspoke`), a star alignment `Ac`
-whose induced pairwise values obey the star triangle bound (`hstar`), and an
-optimal alignment `Astar` valid for `X` and minimal (`hopt`). Conclusion:
-`k * V(Ac) ≤ 2 * (k - 1) * V(Astar)`.
+rule), a multiple alignment `Ac` of `X` (`hac`) whose projection onto the center row `c` and
+each row `i` is an optimal pairwise alignment, `inducedValue s Ac c i = D (X c) (X i)` for every
+`i` (`hproj`, the center-star property of Gusfield's Lemma 3.1), and an optimal alignment `Astar`
+valid for `X` and minimal (`hopt`). Conclusion: `k * V(Ac) ≤ 2 * (k - 1) * V(Astar)`. The star
+bound `V_{ij}(Ac) ≤ D (X c) (X i) + D (X c) (X j)` is not assumed; it follows from `hproj` and the
+triangle inequality.
 
 ## Sources
 
