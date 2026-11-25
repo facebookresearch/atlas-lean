@@ -1,0 +1,347 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+-- Author: @toskua, Avocado
+module
+
+public import MathlibExt.CategoryTheory.Enriched.ZeroCompletion
+public import MathlibExt.AlgebraicTopology.ModelCategory.EnrichedZeroCompletionEvaluation
+public import MathlibExt.Topology.Category.PointedCGWH.Closed
+public import MathlibExt.Topology.Category.PointedCGWH.Zero
+
+@[expose] public section
+
+set_option autoImplicit false
+noncomputable section
+
+open CategoryTheory CategoryTheory.Limits MonoidalCategory
+open scoped MonoidalClosed ZeroObject
+
+universe u v uA
+
+namespace ZeroCompletionNativeOwner
+
+variable {A : Type uA} [EnrichedCategory PointedCGWH.{u,v} A]
+
+example (F : EnrichedFunctorCat PointedCGWH.{u,v} A)
+    (h : ∀ a, IsZero (F.toEnrichedFunctor.obj a)) : IsZero F :=
+  EnrichedZeroCompletion.diagram_isZero_of_obj_isZero F h
+
+example (F : EnrichedFunctorCat PointedCGWH.{u,v}
+    (EnrichedZeroCompletion PointedCGWH.{u,v} A)) :
+    IsZero (F.toEnrichedFunctor.obj EnrichedZeroCompletion.zero) :=
+  EnrichedZeroCompletion.diagram_added_isZero F.toEnrichedFunctor
+
+example (X : PointedCGWH.{u,v}) :
+    IsZero (EnrichedFunctorCat.Free.object (V := PointedCGWH.{u,v})
+      (EnrichedZeroCompletion.zero : EnrichedZeroCompletion PointedCGWH.{u,v} A) X) :=
+  EnrichedZeroCompletion.freeAtAdded_isZero X
+
+example (a : A) :
+    (EnrichedZeroCompletion.of a : EnrichedZeroCompletion PointedCGWH.{u,v} A) ≠
+      EnrichedZeroCompletion.zero :=
+  EnrichedZeroCompletion.of_ne_zero a
+
+end ZeroCompletionNativeOwner
+
+#check @CategoryTheory.EnrichedZeroCompletion
+#print axioms CategoryTheory.EnrichedZeroCompletion
+#check @CategoryTheory.EnrichedZeroCompletion.tensor_isZero_left
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensor_isZero_left
+#check @CategoryTheory.EnrichedZeroCompletion.tensor_isZero_right
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensor_isZero_right
+#check @CategoryTheory.EnrichedZeroCompletion.ihom_isZero_target
+#print axioms CategoryTheory.EnrichedZeroCompletion.ihom_isZero_target
+#check @CategoryTheory.EnrichedZeroCompletion.uncurry_zero
+#print axioms CategoryTheory.EnrichedZeroCompletion.uncurry_zero
+#check @CategoryTheory.EnrichedZeroCompletion.eId_eq_zero_iff
+#print axioms CategoryTheory.EnrichedZeroCompletion.eId_eq_zero_iff
+#check @CategoryTheory.EnrichedZeroCompletion.of
+#print axioms CategoryTheory.EnrichedZeroCompletion.of
+#check @CategoryTheory.EnrichedZeroCompletion.zero
+#print axioms CategoryTheory.EnrichedZeroCompletion.zero
+#check @CategoryTheory.EnrichedZeroCompletion.hom
+#print axioms CategoryTheory.EnrichedZeroCompletion.hom
+#check @CategoryTheory.EnrichedZeroCompletion.identity
+#print axioms CategoryTheory.EnrichedZeroCompletion.identity
+#check @CategoryTheory.EnrichedZeroCompletion.composition
+#print axioms CategoryTheory.EnrichedZeroCompletion.composition
+#check @CategoryTheory.EnrichedZeroCompletion.identity_comp
+#print axioms CategoryTheory.EnrichedZeroCompletion.identity_comp
+#check @CategoryTheory.EnrichedZeroCompletion.comp_identity
+#print axioms CategoryTheory.EnrichedZeroCompletion.comp_identity
+#check @CategoryTheory.EnrichedZeroCompletion.composition_assoc
+#print axioms CategoryTheory.EnrichedZeroCompletion.composition_assoc
+#check @CategoryTheory.EnrichedZeroCompletion.enrichedCategory
+#print axioms CategoryTheory.EnrichedZeroCompletion.enrichedCategory
+#check @CategoryTheory.EnrichedZeroCompletion.inclusion
+#print axioms CategoryTheory.EnrichedZeroCompletion.inclusion
+#check @CategoryTheory.EnrichedZeroCompletion.isZero_added
+#print axioms CategoryTheory.EnrichedZeroCompletion.isZero_added
+#check @CategoryTheory.EnrichedZeroCompletion.underlyingHasZeroObject
+#print axioms CategoryTheory.EnrichedZeroCompletion.underlyingHasZeroObject
+#check @CategoryTheory.EnrichedZeroCompletion.extendObj
+#print axioms CategoryTheory.EnrichedZeroCompletion.extendObj
+#check @CategoryTheory.EnrichedZeroCompletion.extendMap
+#print axioms CategoryTheory.EnrichedZeroCompletion.extendMap
+#check @CategoryTheory.EnrichedZeroCompletion.extend_identity
+#print axioms CategoryTheory.EnrichedZeroCompletion.extend_identity
+#check @CategoryTheory.EnrichedZeroCompletion.extend_composition
+#print axioms CategoryTheory.EnrichedZeroCompletion.extend_composition
+#check @CategoryTheory.EnrichedZeroCompletion.extend
+#print axioms CategoryTheory.EnrichedZeroCompletion.extend
+#check @CategoryTheory.EnrichedZeroCompletion.diagram_added_isZero
+#print axioms CategoryTheory.EnrichedZeroCompletion.diagram_added_isZero
+#check @CategoryTheory.EnrichedZeroCompletion.restrict
+#print axioms CategoryTheory.EnrichedZeroCompletion.restrict
+#check @CategoryTheory.EnrichedZeroCompletion.of_ne_zero
+#print axioms CategoryTheory.EnrichedZeroCompletion.of_ne_zero
+#check @CategoryTheory.EnrichedZeroCompletion.of_injective
+#print axioms CategoryTheory.EnrichedZeroCompletion.of_injective
+#check @CategoryTheory.EnrichedZeroCompletion.inclusion_map
+#print axioms CategoryTheory.EnrichedZeroCompletion.inclusion_map
+#check @CategoryTheory.EnrichedZeroCompletion.inclusion_map_isIso
+#print axioms CategoryTheory.EnrichedZeroCompletion.inclusion_map_isIso
+#check @CategoryTheory.EnrichedZeroCompletion.extend_obj_zero
+#print axioms CategoryTheory.EnrichedZeroCompletion.extend_obj_zero
+#check @CategoryTheory.EnrichedZeroCompletion.extend_obj_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.extend_obj_of
+#check @CategoryTheory.EnrichedZeroCompletion.extend_map_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.extend_map_of
+#check @CategoryTheory.EnrichedZeroCompletion.extend_map_zero_left
+#print axioms CategoryTheory.EnrichedZeroCompletion.extend_map_zero_left
+#check @CategoryTheory.EnrichedZeroCompletion.extend_map_zero_right
+#print axioms CategoryTheory.EnrichedZeroCompletion.extend_map_zero_right
+#check @CategoryTheory.EnrichedZeroCompletion.extendGraded
+#print axioms CategoryTheory.EnrichedZeroCompletion.extendGraded
+#check @CategoryTheory.EnrichedZeroCompletion.extendGraded_app_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.extendGraded_app_of
+#check @CategoryTheory.EnrichedZeroCompletion.extendGraded_app_zero
+#print axioms CategoryTheory.EnrichedZeroCompletion.extendGraded_app_zero
+#check @CategoryTheory.EnrichedZeroCompletion.restrictExtendedGraded
+#print axioms CategoryTheory.EnrichedZeroCompletion.restrictExtendedGraded
+#check @CategoryTheory.EnrichedZeroCompletion.restrict_extend_graded
+#print axioms CategoryTheory.EnrichedZeroCompletion.restrict_extend_graded
+#check @CategoryTheory.EnrichedZeroCompletion.extend_restrict_graded
+#print axioms CategoryTheory.EnrichedZeroCompletion.extend_restrict_graded
+#check @CategoryTheory.EnrichedZeroCompletion.gradedExtensionEquiv
+#print axioms CategoryTheory.EnrichedZeroCompletion.gradedExtensionEquiv
+#check @CategoryTheory.EnrichedZeroCompletion.gradedHomPresheafIso
+#print axioms CategoryTheory.EnrichedZeroCompletion.gradedHomPresheafIso
+#check @CategoryTheory.EnrichedZeroCompletion.extensionObject
+#print axioms CategoryTheory.EnrichedZeroCompletion.extensionObject
+#check @CategoryTheory.EnrichedZeroCompletion.extensionMap
+#print axioms CategoryTheory.EnrichedZeroCompletion.extensionMap
+#check @CategoryTheory.EnrichedZeroCompletion.extensionMap_component_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.extensionMap_component_of
+#check @CategoryTheory.EnrichedZeroCompletion.extensionMap_component_zero
+#print axioms CategoryTheory.EnrichedZeroCompletion.extensionMap_component_zero
+#check @CategoryTheory.EnrichedZeroCompletion.extension
+#print axioms CategoryTheory.EnrichedZeroCompletion.extension
+#check @CategoryTheory.EnrichedZeroCompletion.restriction
+#print axioms CategoryTheory.EnrichedZeroCompletion.restriction
+#check @CategoryTheory.EnrichedZeroCompletion.restriction_map_component
+#print axioms CategoryTheory.EnrichedZeroCompletion.restriction_map_component
+#check @CategoryTheory.EnrichedZeroCompletion.restriction_obj_fullMap
+#print axioms CategoryTheory.EnrichedZeroCompletion.restriction_obj_fullMap
+#check @CategoryTheory.EnrichedZeroCompletion.unitHom
+#print axioms CategoryTheory.EnrichedZeroCompletion.unitHom
+#check @CategoryTheory.EnrichedZeroCompletion.unitInv
+#print axioms CategoryTheory.EnrichedZeroCompletion.unitInv
+#check @CategoryTheory.EnrichedZeroCompletion.unitHom_component
+#print axioms CategoryTheory.EnrichedZeroCompletion.unitHom_component
+#check @CategoryTheory.EnrichedZeroCompletion.unitInv_component
+#print axioms CategoryTheory.EnrichedZeroCompletion.unitInv_component
+#check @CategoryTheory.EnrichedZeroCompletion.unitIso
+#print axioms CategoryTheory.EnrichedZeroCompletion.unitIso
+#check @CategoryTheory.EnrichedZeroCompletion.counitHomComponent
+#print axioms CategoryTheory.EnrichedZeroCompletion.counitHomComponent
+#check @CategoryTheory.EnrichedZeroCompletion.counitInvComponent
+#print axioms CategoryTheory.EnrichedZeroCompletion.counitInvComponent
+#check @CategoryTheory.EnrichedZeroCompletion.counitHom
+#print axioms CategoryTheory.EnrichedZeroCompletion.counitHom
+#check @CategoryTheory.EnrichedZeroCompletion.counitInv
+#print axioms CategoryTheory.EnrichedZeroCompletion.counitInv
+#check @CategoryTheory.EnrichedZeroCompletion.counitHom_component
+#print axioms CategoryTheory.EnrichedZeroCompletion.counitHom_component
+#check @CategoryTheory.EnrichedZeroCompletion.counitInv_component
+#print axioms CategoryTheory.EnrichedZeroCompletion.counitInv_component
+#check @CategoryTheory.EnrichedZeroCompletion.counitIso
+#print axioms CategoryTheory.EnrichedZeroCompletion.counitIso
+#check @CategoryTheory.EnrichedZeroCompletion.unitNatIso
+#print axioms CategoryTheory.EnrichedZeroCompletion.unitNatIso
+#check @CategoryTheory.EnrichedZeroCompletion.counitNatIso
+#print axioms CategoryTheory.EnrichedZeroCompletion.counitNatIso
+#check @CategoryTheory.EnrichedZeroCompletion.extension_triangle
+#print axioms CategoryTheory.EnrichedZeroCompletion.extension_triangle
+#check @CategoryTheory.EnrichedZeroCompletion.restriction_triangle
+#print axioms CategoryTheory.EnrichedZeroCompletion.restriction_triangle
+#check @CategoryTheory.EnrichedZeroCompletion.diagramEquivalence
+#print axioms CategoryTheory.EnrichedZeroCompletion.diagramEquivalence
+#check @CategoryTheory.EnrichedZeroCompletion.component_zero_isIso
+#print axioms CategoryTheory.EnrichedZeroCompletion.component_zero_isIso
+#check @CategoryTheory.EnrichedZeroCompletion.restriction_evaluationProperty_iff
+#print axioms CategoryTheory.EnrichedZeroCompletion.restriction_evaluationProperty_iff
+#check @CategoryTheory.EnrichedZeroCompletion.extension_evaluationProperty_iff
+#print axioms CategoryTheory.EnrichedZeroCompletion.extension_evaluationProperty_iff
+#check @CategoryTheory.EnrichedZeroCompletion.evaluationProperty_completion_eq
+#print axioms CategoryTheory.EnrichedZeroCompletion.evaluationProperty_completion_eq
+#check @CategoryTheory.EnrichedZeroCompletion.extension_hasLiftingProperty_iff
+#print axioms CategoryTheory.EnrichedZeroCompletion.extension_hasLiftingProperty_iff
+#check @CategoryTheory.EnrichedZeroCompletion.restriction_hasLiftingProperty_iff
+#print axioms CategoryTheory.EnrichedZeroCompletion.restriction_hasLiftingProperty_iff
+#check @CategoryTheory.EnrichedZeroCompletion.diagram_isZero_of_obj_isZero
+#print axioms CategoryTheory.EnrichedZeroCompletion.diagram_isZero_of_obj_isZero
+#check @CategoryTheory.EnrichedZeroCompletion.freeAtAdded_obj_isZero
+#print axioms CategoryTheory.EnrichedZeroCompletion.freeAtAdded_obj_isZero
+#check @CategoryTheory.EnrichedZeroCompletion.freeAtAdded_isZero
+#print axioms CategoryTheory.EnrichedZeroCompletion.freeAtAdded_isZero
+#check @CategoryTheory.EnrichedZeroCompletion.completion_small
+#print axioms CategoryTheory.EnrichedZeroCompletion.completion_small
+#check @CategoryTheory.EnrichedZeroCompletion.mapIndexObj
+#print axioms CategoryTheory.EnrichedZeroCompletion.mapIndexObj
+#check @CategoryTheory.EnrichedZeroCompletion.mapIndexMap
+#print axioms CategoryTheory.EnrichedZeroCompletion.mapIndexMap
+#check @CategoryTheory.EnrichedZeroCompletion.mapIndex
+#print axioms CategoryTheory.EnrichedZeroCompletion.mapIndex
+#check @CategoryTheory.EnrichedZeroCompletion.mapIndex_obj_zero
+#print axioms CategoryTheory.EnrichedZeroCompletion.mapIndex_obj_zero
+#check @CategoryTheory.EnrichedZeroCompletion.mapIndex_obj_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.mapIndex_obj_of
+#check @CategoryTheory.EnrichedZeroCompletion.mapIndex_map_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.mapIndex_map_of
+#check @CategoryTheory.EnrichedZeroCompletion.hom_zero_left_isZero
+#print axioms CategoryTheory.EnrichedZeroCompletion.hom_zero_left_isZero
+#check @CategoryTheory.EnrichedZeroCompletion.hom_zero_right_isZero
+#print axioms CategoryTheory.EnrichedZeroCompletion.hom_zero_right_isZero
+#check @CategoryTheory.EnrichedZeroCompletion.prodMergeObj
+#print axioms CategoryTheory.EnrichedZeroCompletion.prodMergeObj
+#check @CategoryTheory.EnrichedZeroCompletion.prodMerge_cases
+#print axioms CategoryTheory.EnrichedZeroCompletion.prodMerge_cases
+#check @CategoryTheory.EnrichedZeroCompletion.prodHom_isZero_left
+#print axioms CategoryTheory.EnrichedZeroCompletion.prodHom_isZero_left
+#check @CategoryTheory.EnrichedZeroCompletion.prodHom_isZero_right
+#print axioms CategoryTheory.EnrichedZeroCompletion.prodHom_isZero_right
+#check @CategoryTheory.EnrichedZeroCompletion.prodMergeMap
+#print axioms CategoryTheory.EnrichedZeroCompletion.prodMergeMap
+#check @CategoryTheory.EnrichedZeroCompletion.prodMerge
+#print axioms CategoryTheory.EnrichedZeroCompletion.prodMerge
+#check @CategoryTheory.EnrichedZeroCompletion.prodMerge_obj_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.prodMerge_obj_of
+#check @CategoryTheory.EnrichedZeroCompletion.prodMerge_map_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.prodMerge_map_of
+#check @CategoryTheory.EnrichedZeroCompletion.prodMerge_map_eq_zero_left
+#print axioms CategoryTheory.EnrichedZeroCompletion.prodMerge_map_eq_zero_left
+#check @CategoryTheory.EnrichedZeroCompletion.prodMerge_map_eq_zero_right
+#print axioms CategoryTheory.EnrichedZeroCompletion.prodMerge_map_eq_zero_right
+#check @CategoryTheory.EnrichedZeroCompletion.tensorEnrichment
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorEnrichment
+#check @CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_obj_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_obj_of
+#check @CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_obj_zero_left
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_obj_zero_left
+#check @CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_obj_zero_right
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_obj_zero_right
+#check @CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_map_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_map_of
+#check @CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_full_id
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_full_id
+#check @CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_full_comp
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorEnrichment_full_comp
+#check @CategoryTheory.EnrichedZeroCompletion.category
+#print axioms CategoryTheory.EnrichedZeroCompletion.category
+#check @CategoryTheory.EnrichedZeroCompletion.enrichedOrdinaryCategory
+#print axioms CategoryTheory.EnrichedZeroCompletion.enrichedOrdinaryCategory
+#check @CategoryTheory.EnrichedZeroCompletion.isZero_added_ordinary
+#print axioms CategoryTheory.EnrichedZeroCompletion.isZero_added_ordinary
+#check @CategoryTheory.EnrichedZeroCompletion.hasZeroObject
+#print axioms CategoryTheory.EnrichedZeroCompletion.hasZeroObject
+#check @CategoryTheory.EnrichedZeroCompletion.unit_point_interchange
+#print axioms CategoryTheory.EnrichedZeroCompletion.unit_point_interchange
+#check @CategoryTheory.EnrichedZeroCompletion.point_tensor_input
+#print axioms CategoryTheory.EnrichedZeroCompletion.point_tensor_input
+#check @CategoryTheory.EnrichedZeroCompletion.point_tensor_composition
+#print axioms CategoryTheory.EnrichedZeroCompletion.point_tensor_composition
+#check @CategoryTheory.EnrichedZeroCompletion.pointProductObj
+#print axioms CategoryTheory.EnrichedZeroCompletion.pointProductObj
+#check @CategoryTheory.EnrichedZeroCompletion.pointProductMap
+#print axioms CategoryTheory.EnrichedZeroCompletion.pointProductMap
+#check @CategoryTheory.EnrichedZeroCompletion.homTo_injective
+#print axioms CategoryTheory.EnrichedZeroCompletion.homTo_injective
+#check @CategoryTheory.EnrichedZeroCompletion.pointProduct
+#print axioms CategoryTheory.EnrichedZeroCompletion.pointProduct
+#check @CategoryTheory.EnrichedZeroCompletion.ofFunctor
+#print axioms CategoryTheory.EnrichedZeroCompletion.ofFunctor
+#check @CategoryTheory.EnrichedZeroCompletion.ofFunctor_obj
+#print axioms CategoryTheory.EnrichedZeroCompletion.ofFunctor_obj
+#check @CategoryTheory.EnrichedZeroCompletion.ofFunctor_map
+#print axioms CategoryTheory.EnrichedZeroCompletion.ofFunctor_map
+#check @CategoryTheory.EnrichedZeroCompletion.ofFunctor_map_injective
+#print axioms CategoryTheory.EnrichedZeroCompletion.ofFunctor_map_injective
+#check @CategoryTheory.EnrichedZeroCompletion.tensorOrdinary
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorOrdinary
+#check @CategoryTheory.EnrichedZeroCompletion.tensorOrdinary_obj_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorOrdinary_obj_of
+#check @CategoryTheory.EnrichedZeroCompletion.tensorOrdinary_obj_zero_left
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorOrdinary_obj_zero_left
+#check @CategoryTheory.EnrichedZeroCompletion.tensorOrdinary_obj_zero_right
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorOrdinary_obj_zero_right
+#check @CategoryTheory.EnrichedZeroCompletion.tensorOrdinary_map_ofFunctor
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorOrdinary_map_ofFunctor
+#check @CategoryTheory.EnrichedZeroCompletion.object_cases
+#print axioms CategoryTheory.EnrichedZeroCompletion.object_cases
+#check @CategoryTheory.EnrichedZeroCompletion.ofFunctor_map_surjective
+#print axioms CategoryTheory.EnrichedZeroCompletion.ofFunctor_map_surjective
+#check @CategoryTheory.EnrichedZeroCompletion.triple_cases
+#print axioms CategoryTheory.EnrichedZeroCompletion.triple_cases
+#check @CategoryTheory.EnrichedZeroCompletion.quadruple_cases
+#print axioms CategoryTheory.EnrichedZeroCompletion.quadruple_cases
+#check @CategoryTheory.EnrichedZeroCompletion.mapped_composites
+#print axioms CategoryTheory.EnrichedZeroCompletion.mapped_composites
+#check @CategoryTheory.EnrichedZeroCompletion.completionAssociator
+#print axioms CategoryTheory.EnrichedZeroCompletion.completionAssociator
+#check @CategoryTheory.EnrichedZeroCompletion.completionLeftUnitor
+#print axioms CategoryTheory.EnrichedZeroCompletion.completionLeftUnitor
+#check @CategoryTheory.EnrichedZeroCompletion.completionRightUnitor
+#print axioms CategoryTheory.EnrichedZeroCompletion.completionRightUnitor
+#check @CategoryTheory.EnrichedZeroCompletion.monoidalStruct
+#print axioms CategoryTheory.EnrichedZeroCompletion.monoidalStruct
+#check @CategoryTheory.EnrichedZeroCompletion.monoidalCategory
+#print axioms CategoryTheory.EnrichedZeroCompletion.monoidalCategory
+#check @CategoryTheory.EnrichedZeroCompletion.ofFunctor_eHom
+#print axioms CategoryTheory.EnrichedZeroCompletion.ofFunctor_eHom
+#check @CategoryTheory.EnrichedZeroCompletion.associator_eHom_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.associator_eHom_of
+#check @CategoryTheory.EnrichedZeroCompletion.leftUnitor_eHom_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.leftUnitor_eHom_of
+#check @CategoryTheory.EnrichedZeroCompletion.rightUnitor_eHom_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.rightUnitor_eHom_of
+#check @CategoryTheory.EnrichedZeroCompletion.tripleHom_isZero_left
+#print axioms CategoryTheory.EnrichedZeroCompletion.tripleHom_isZero_left
+#check @CategoryTheory.EnrichedZeroCompletion.tripleHom_isZero_right
+#print axioms CategoryTheory.EnrichedZeroCompletion.tripleHom_isZero_right
+#check @CategoryTheory.EnrichedZeroCompletion.tensorObj_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorObj_of
+#check @CategoryTheory.EnrichedZeroCompletion.tensorUnit_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.tensorUnit_of
+#check @CategoryTheory.EnrichedZeroCompletion.enrichedMonoidalData
+#print axioms CategoryTheory.EnrichedZeroCompletion.enrichedMonoidalData
+#check @CategoryTheory.EnrichedZeroCompletion.pair_cases
+#print axioms CategoryTheory.EnrichedZeroCompletion.pair_cases
+#check @CategoryTheory.EnrichedZeroCompletion.mapped_triples
+#print axioms CategoryTheory.EnrichedZeroCompletion.mapped_triples
+#check @CategoryTheory.EnrichedZeroCompletion.completionBraiding
+#print axioms CategoryTheory.EnrichedZeroCompletion.completionBraiding
+#check @CategoryTheory.EnrichedZeroCompletion.braidedCategory
+#print axioms CategoryTheory.EnrichedZeroCompletion.braidedCategory
+#check @CategoryTheory.EnrichedZeroCompletion.braiding_eHom_of
+#print axioms CategoryTheory.EnrichedZeroCompletion.braiding_eHom_of
+#check @CategoryTheory.EnrichedZeroCompletion.enrichedBraidedData
+#print axioms CategoryTheory.EnrichedZeroCompletion.enrichedBraidedData
+#check @CategoryTheory.EnrichedZeroCompletion.symmetricCategory
+#print axioms CategoryTheory.EnrichedZeroCompletion.symmetricCategory

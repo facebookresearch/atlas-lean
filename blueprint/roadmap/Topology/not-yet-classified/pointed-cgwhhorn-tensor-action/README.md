@@ -1,0 +1,15 @@
+# Pointed CGWHHorn Tensor Action
+
+- [Free Point Horn Retraction](free-point-horn-retraction.md)
+- [Free Point Horn Interval Action](free-point-horn-interval-action.md)
+- [Free Point Interval Endpoint](free-point-interval-endpoint.md)
+- [Free Point Interval Collapse](free-point-interval-collapse.md)
+- [Free Point Horn inclusion ret](free-point-horn-inclusion-ret.md)
+- [Free Point Horn Interval Action zero](free-point-horn-interval-action-zero.md)
+- [Free Point Horn Interval Action one](free-point-horn-interval-action-one.md)
+- [Free Point Horn Interval Action fix](free-point-horn-interval-action-fix.md)
+- [Free Point Horn Tensor Interval Action](free-point-horn-tensor-interval-action.md)
+- [Free Point Horn Tensor inclusion ret](free-point-horn-tensor-inclusion-ret.md)
+- [Free Point Horn Tensor Interval Action zero](free-point-horn-tensor-interval-action-z.md)
+- [Free Point Horn Tensor Interval Action one](free-point-horn-tensor-interval-action-o.md)
+- [Free Point Horn Tensor Interval Action fix](free-point-horn-tensor-interval-action-f.md)

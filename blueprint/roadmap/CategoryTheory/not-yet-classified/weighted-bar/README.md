@@ -31,3 +31,7 @@
 - [Wbar Map FIso inv ι](wbar-map-fiso-inv.md)
 - [Wbar Section Comp](wbar-section-comp.md)
 - [Wbar Section Comp ι](wbar-section-comp-2.md)
+- [Terminal Weight Index Equiv](terminal-weight-index-equiv.md)
+- [Terminal Weight Coefficient Bar Degree Iso](terminal-weight-coefficient-bar-degree-i.md)
+- [Terminal Weight Bar Complex](terminal-weight-bar-complex.md)
+- [Terminal Weight Coefficient Bar Complex Iso](terminal-weight-coefficient-bar-complex.md)
