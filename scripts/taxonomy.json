@@ -16421,6 +16421,7 @@
   "WantedExt/NumberTheory/FibonacciPiSquaredWanted": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci series for π²"},
   "WantedExt/NumberTheory/FiniteMultipleZetaLevelWanted": {"to": "NumberTheory/zeta-l-functions/multiple-zeta-values", "title": "Finite multiple zeta values of level N"},
   "WantedExt/NumberTheory/FiniteSumsFibLucasWanted": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Bernoulli–Fibonacci and Euler–Lucas double sums"},
+  "WantedExt/NumberTheory/FiniteUnitaryGroupOrderWanted": {"to": "NumberTheory/quadratic-forms-sums-of-squares", "title": "Order of the unitary group over a finite field"},
   "WantedExt/NumberTheory/FkPerfectWanted": {"to": "NumberTheory/arithmetic-functions/perfect-numbers", "title": "Near-perfect and deficient-perfect numbers"},
   "WantedExt/NumberTheory/FordTotientMultiplicityWanted": {"to": "NumberTheory/arithmetic-functions/divisor-totient-functions", "title": "Multiplicities of totient values"},
   "WantedExt/NumberTheory/FranelLandauTheoremWanted": {"to": "NumberTheory/zeta-l-functions/riemann-zeta", "title": "Franel–Landau theorem"},
