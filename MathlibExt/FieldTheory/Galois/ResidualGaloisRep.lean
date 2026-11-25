@@ -107,6 +107,12 @@ public abbrev baseChange (K : Type v) [Field K] [Algebra k K]
     exact ⟨L, hL, fun σ hσ => by
       rw [MonoidHom.coe_mk, OneHom.coe_mk, h1 σ hσ, LinearMap.baseChange_one]⟩
 
+/-- Scalar extension of a residual representation along a ring homomorphism of fields. -/
+public def baseChangeAlong {K : Type v} [Field K] (φ : k →+* K)
+    (ρ : ResidualGaloisRep k) : ResidualGaloisRep K :=
+  letI : Algebra k K := φ.toAlgebra
+  ρ.baseChange K
+
 /-- A residual representation is absolutely irreducible if its scalar
 extension to an algebraic closure of the coefficient field is irreducible. -/
 public def IsAbsolutelyIrreducible (ρ : ResidualGaloisRep k) : Prop :=

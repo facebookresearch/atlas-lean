@@ -248,6 +248,14 @@ private theorem valuation_apply_eq_of_mem_decompositionSubgroup
     rw [e]
     exact h
 
+/-- An automorphism in the decomposition subgroup of a valuation subring of an algebraic
+extension preserves the valuation of that subring. -/
+theorem ValuationSubring.valuation_map_eq_of_mem_decompositionSubgroup
+    [Algebra.IsAlgebraic K L] (A : ValuationSubring L) {σ : L ≃ₐ[K] L}
+    (hσ : σ ∈ A.decompositionSubgroup K) (z : L) :
+    A.valuation (σ z) = A.valuation z :=
+  valuation_apply_eq_of_mem_decompositionSubgroup hσ z
+
 end ValuationInvariance
 
 section MainProof
