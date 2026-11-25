@@ -56,23 +56,13 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.Algebra.Algebra.Rat
 public import Mathlib.Algebra.Field.ZMod
-public import Mathlib.Algebra.Lie.OfAssociative
-public import Mathlib.Algebra.Module.Hom
-public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
-public import Mathlib.AlgebraicGeometry.EllipticCurve.VariableChange
-public import Mathlib.Analysis.Calculus.MeanValue
-public import Mathlib.Analysis.Complex.HasPrimitives
 public import Mathlib.Analysis.Complex.UpperHalfPlane.FunctionsBoundedAtInfty
 public import Mathlib.Analysis.Complex.UpperHalfPlane.MoebiusAction
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Topology
-public import Mathlib.Data.Finite.Card
-public import Mathlib.Data.Nat.Prime.Int
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.GroupTheory.GroupAction.Quotient
 public import Mathlib.GroupTheory.Index
-public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.NumberTheory.ModularForms.ArithmeticSubgroups
 public import Mathlib.NumberTheory.ModularForms.Basic
 public import Mathlib.NumberTheory.ModularForms.BoundedAtCusp
@@ -80,22 +70,23 @@ public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.NumberTheory.ModularForms.SlashActions
 public import Mathlib.NumberTheory.ModularForms.SlashInvariantForms
-public import Mathlib.NumberTheory.ModularForms.NormTrace
-public import Mathlib.RingTheory.Coprime.Basic
-public import Mathlib.RingTheory.Int.Basic
-public import Mathlib.RingTheory.PrincipalIdealDomain
-public import Mathlib.RingTheory.RootsOfUnity.Complex
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.Group
-public import Mathlib.Tactic.IntervalCases
-public import Mathlib.Tactic.LinearCombination
 public import Mathlib.Topology.Compactification.OnePoint.ProjectiveLine
-public import MathlibExt.AlgebraicGeometry.EllipticCurve.FreyCurve
 public import MathlibExt.NumberTheory.ModularForms.CoeffHecke
-public import MathlibExt.NumberTheory.ModularForms.CupPairing.Defs
 public import MathlibExt.NumberTheory.ModularForms.CuspFormConj
 public import MathlibExt.NumberTheory.ModularForms.OldForms
+
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.Complex.HasPrimitives
+import Mathlib.Data.Nat.Prime.Int
+import Mathlib.LinearAlgebra.Matrix.Notation
+import Mathlib.NumberTheory.ModularForms.NormTrace
+import Mathlib.RingTheory.Coprime.Basic
+import Mathlib.RingTheory.PrincipalIdealDomain
+import Mathlib.RingTheory.RootsOfUnity.Complex
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Group
+import Mathlib.Tactic.LinearCombination
 
 @[expose] public section
 
@@ -737,99 +728,6 @@ theorem ModularForm.heckeT_slash_eq_self_of_mem_Gamma0 : ∀ {N : ℕ} (k : ℤ)
 
 theorem ModularForm.heckeU_slash_eq_self_of_mem_Gamma0 : ∀ {N : ℕ} (k : ℤ) {p : ℕ} (hpN : p ∣ N) {f : UpperHalfPlane → ℂ} (hf : ∀ γ ∈ (CongruenceSubgroup.Gamma0 N : Subgroup (Matrix.GeneralLinearGroup (Fin 2) ℝ)), SlashAction.map k γ f = f) (γ : Matrix.GeneralLinearGroup (Fin 2) ℝ) (hγ : γ ∈ (CongruenceSubgroup.Gamma0 N : Subgroup (Matrix.GeneralLinearGroup (Fin 2) ℝ))), SlashAction.map k γ (ModularForm.heckeU k p f) = ModularForm.heckeU k p f :=
   @PeriodMapPort.Internal.SlashInvariance.ModularForm.heckeU_slash_eq_self_of_mem_Gamma0'
-
--- ===== Definitions.Def_FLTPrelim_Modularity =====
-
-set_option autoImplicit false
-
-noncomputable section
-
-open UpperHalfPlane
-
-universe u
-
-namespace CuspForm
-
-open ModularFormClass
-
-structure IsNormalizedEigenform {N : ℕ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) 2) :
-    Prop where
-
-  qCoeff_one : qCoeff f 1 = 1
-
-  qCoeff_mul_of_coprime : ∀ m n : ℕ, m.Coprime n →
-    qCoeff f (m * n) = qCoeff f m * qCoeff f n
-
-  qCoeff_prime_pow_of_not_dvd : ∀ p r : ℕ, p.Prime → ¬ p ∣ N →
-    qCoeff f (p ^ (r + 2)) = qCoeff f p * qCoeff f (p ^ (r + 1)) - p * qCoeff f (p ^ r)
-
-  qCoeff_prime_pow_of_dvd : ∀ p r : ℕ, p.Prime → p ∣ N →
-    qCoeff f (p ^ (r + 2)) = qCoeff f p * qCoeff f (p ^ (r + 1))
-
-end CuspForm
-
-namespace WeierstrassCurve
-
-namespace Affine
-
-variable {R : Type u} [CommRing R] {W' : Affine R}
-
-def Point.toOptionPair : W'.Point → Option (R × R)
-  | .zero => none
-  | .some x y _ => Option.some (x, y)
-
-lemma Point.toOptionPair_injective :
-    Function.Injective (Point.toOptionPair (W' := W')) := by
-  rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩) h <;>
-    simp only [Point.toOptionPair, Option.some.injEq, Prod.mk.injEq, reduceCtorEq] at h
-  · rfl
-  · obtain ⟨rfl, rfl⟩ := h; rfl
-
-instance Point.instFinite [Finite R] : Finite W'.Point :=
-  Finite.of_injective _ Point.toOptionPair_injective
-
-end Affine
-
-section Card
-
-variable {F : Type u} [CommRing F] (W : WeierstrassCurve F)
-
-def card : ℕ := Nat.card W.toAffine.Point
-
-end Card
-
-def traceOfFrobenius {F : Type u} [Field F] [Finite F] (W : WeierstrassCurve F) : ℤ :=
-  (Nat.card F : ℤ) + 1 - (W.card : ℤ)
-
-def reductionMod (W : WeierstrassCurve ℤ) (p : ℕ) : WeierstrassCurve (ZMod p) :=
-  W.map (Int.castRingHom (ZMod p))
-
-def apOfModel (W : WeierstrassCurve ℤ) (p : ℕ) (hp : p.Prime) : ℤ :=
-  haveI : Fact p.Prime := ⟨hp⟩
-  (W.reductionMod p).traceOfFrobenius
-
-def IsGoodPrimeFor (W : WeierstrassCurve ℤ) (p : ℕ) : Prop :=
-  ¬ (p : ℤ) ∣ W.Δ
-
-def IsIntegralModelOf (W : WeierstrassCurve ℤ) (E : WeierstrassCurve ℚ) : Prop :=
-  ∃ C : VariableChange ℚ, C • E = W.map (Int.castRingHom ℚ)
-
-open CuspForm
-
-def IsModularModelOfLevel (W : WeierstrassCurve ℤ) (N : ℕ) : Prop :=
-  ∃ f : CuspForm (CongruenceSubgroup.Gamma0 N) 2, f.IsNormalizedEigenform ∧
-    ∀ p : ℕ, (hp : p.Prime) → W.IsGoodPrimeFor p → ¬ p ∣ N →
-      ModularFormClass.qCoeff f p = (W.apOfModel p hp : ℂ)
-
-def IsModularModel (W : WeierstrassCurve ℤ) : Prop :=
-  ∃ N : ℕ, 0 < N ∧ W.IsModularModelOfLevel N
-
-def IsModular (E : WeierstrassCurve ℚ) : Prop :=
-  ∃ W : WeierstrassCurve ℤ, W.IsIntegralModelOf E ∧ W.IsModularModel
-
-end WeierstrassCurve
-
-end
 
 -- ===== P2M.Sol.S_ModularForm_mdifferentiable_heckeT =====
 -- (shared with P2M.Sol.S_ModularForm_mdifferentiable_heckeU)
