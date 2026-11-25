@@ -104,16 +104,17 @@ private theorem geom_odd_iff_even {p e : ℕ} (hp : Odd p) :
 
 @[expose] public section
 
-/-- Full witnessed Eulerian form of an odd perfect number:
-perfectness, oddness, primality of `q`, the factorization
-`N = q ^ k * n ^ 2`, both congruences `q ≡ 1 (mod 4)`,
-`k ≡ 1 (mod 4)`, and coprimality of `q` and `n`. -/
+/-- **Eulerian form of an odd perfect number.** For natural numbers $N$, $q$, $k$ and $n$, the
+quadruple $(N, q, k, n)$ is in Eulerian form when $N$ is an odd perfect number, $q$ is prime,
+$N = q^k n^2$, $q \equiv 1 \pmod 4$, $k \equiv 1 \pmod 4$, and $q$ and $n$ are coprime. -/
 public def EulerianForm (N q k n : ℕ) : Prop :=
   Nat.Perfect N ∧ Odd N ∧ Nat.Prime q ∧ N = q ^ k * n ^ 2 ∧
     q % 4 = 1 ∧ k % 4 = 1 ∧ Nat.Coprime q n
 
-/-- `q` is an Euler prime of `N` iff some `k, n` witness the full form.
-No choice function is defined since existence of odd perfect numbers is open. -/
+/-- **Euler prime of an odd perfect number.** A natural number $q$ is an Euler prime of a natural
+number $N$ when there are natural numbers $k$ and $n$ such that $(N, q, k, n)$ is in Eulerian
+form: $N$ is an odd perfect number, $q$ is prime, $N = q^k n^2$, $q \equiv 1 \pmod 4$,
+$k \equiv 1 \pmod 4$, and $q$ and $n$ are coprime. -/
 public def IsEulerPrime (N q : ℕ) : Prop :=
   ∃ k n, EulerianForm N q k n
 
@@ -181,10 +182,11 @@ public theorem IsEulerPrime_exists_factor {N q : ℕ}
   exact ⟨k, n, EulerianForm_eq hW, EulerianForm_mod4_q hW,
     EulerianForm_mod4_k hW, EulerianForm_coprime hW⟩
 
-/-- Every odd perfect number has Euler's form: it is a prime power times a square,
-where the distinguished prime and its exponent are both congruent to one modulo
-four and the prime is coprime to the square root. Conditional; existence of odd
-perfect numbers remains open. -/
+/-- **Euler's theorem on odd perfect numbers.** Every odd perfect number $n$ can be written as
+$n = q^s m^2$ with natural numbers $q$, $s$ and $m$, where $q$ is prime, $q \equiv 1 \pmod 4$,
+$s \equiv 1 \pmod 4$, and $q$ and $m$ are coprime.
+
+The statement is conditional: whether an odd perfect number exists remains open. -/
 public theorem euler_odd_perfect_form (n : ℕ) (hodd : Odd n) (hperf : n.Perfect) :
     ∃ q s m : ℕ,
       q.Prime ∧ n = q ^ s * m ^ 2 ∧ Nat.ModEq 4 q 1 ∧

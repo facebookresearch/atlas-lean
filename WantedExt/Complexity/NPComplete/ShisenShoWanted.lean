@@ -16,7 +16,7 @@ on Information and Systems E95-D(11) (2012), 2712-2715, doi:10.1587/transinf.E95
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

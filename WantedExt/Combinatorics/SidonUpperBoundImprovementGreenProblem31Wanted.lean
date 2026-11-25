@@ -36,20 +36,30 @@ Green's own update to Problem 31: `F(N) ≤ N^{1/2} + c N^{1/4}` for all large `
 bound) is not formalized.
 -/
 
-/-- `F(N)`: the largest size of a Sidon subset of `[N] = {1, …, N}`. -/
+/-- **Largest Sidon subset of $\{1, \dots, N\}$ (Green's Problem 31).** For a natural number
+$N$, $F(N)$ is the largest cardinality of a Sidon subset of $[N] = \{1, \dots, N\}$. -/
 noncomputable def maxSidonSubsetSize (N : ℕ) : ℕ :=
   sSup {k | ∃ A : Finset ℕ, A ⊆ Finset.Icc 1 N ∧ (A : Set ℕ).IsSidon ∧ A.card = k}
 
-/-- Green's Problem 31, upper bound: Lindström's bound `F(N) ≤ N^{1/2} + N^{1/4} + O(1)` can be
-improved, in the form `F(N) ≤ N^{1/2} + c N^{1/4}` for all large `N` with a constant `c < 1`. -/
+/-- **Green's Problem 31: improving Lindström's upper bound.** Let $F(N)$ be the largest
+size of a Sidon subset of $\{1, \dots, N\}$. The statement is that there are a real constant
+$c < 1$ and a natural number $N_0$ such that $F(N) \le \sqrt{N} + c N^{1/4}$ for all $N \ge N_0$.
+
+Lindström's bound is $F(N) \le N^{1/2} + N^{1/4} + O(1)$; the statement asks for a constant
+below $1$ in the second term. -/
 def sidonUpperBoundImproved : Prop :=
   ∃ c : ℝ, c < 1 ∧ ∃ N₀ : ℕ, ∀ N, N₀ ≤ N →
     (maxSidonSubsetSize N : ℝ) ≤ Real.sqrt N + c * (N : ℝ) ^ ((1 : ℝ) / 4)
 
 /--
-Resolved true: Balogh, Füredi and Roy proved `F(N) ≤ N^{1/2} + 0.998 N^{1/4}` for all large `N`,
-improving Lindström's bound as Green's update to Problem 31 records (Carter, Hunter and O'Bryant
-later lowered the constant to `0.98183`). Source: B. Green, 100 open problems, Problem 31
+**Lindström's upper bound for Sidon sets can be improved.** Let $F(N)$ be the largest size of a
+Sidon subset of $\{1, \dots, N\}$. There are a real constant $c < 1$ and a natural number $N_0$
+such that $F(N) \le \sqrt{N} + c N^{1/4}$ for all $N \ge N_0$.
+
+Balogh, Füredi and Roy proved this with $c = 0.998$; Carter, Hunter and O'Bryant later lowered
+the constant to $0.98183$.
+
+Source: B. Green, 100 open problems, Problem 31
 (manuscript, update of December 2025),
 https://people.maths.ox.ac.uk/greenbj/papers/open-problems.pdf; resolution: J. Balogh, Z. Füredi and
 S. Roy, An upper bound on the size of Sidon sets, Amer. Math. Monthly 130 (2023), 437-445,

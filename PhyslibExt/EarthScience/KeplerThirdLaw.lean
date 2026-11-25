@@ -17,9 +17,9 @@ import Mathlib.Tactic.Ring
 
 ## i. Overview
 
-For a stipulated inverse-square circular orbit, `v² = G * M / r` and `T = 2πr / v` with `G, M, r, v
-  > 0` imply Kepler's third law `T² = 4π²r³ / (GM)`. Elliptic orbits are not covered; the circular
-  force balance is a hypothesis.
+For a stipulated inverse-square circular orbit, `v² = G * M / r` and `T = 2πr / v` with
+  `G, M, r, v > 0` imply Kepler's third law `T² = 4π²r³ / (GM)`. Elliptic orbits are not covered;
+  the circular force balance is a hypothesis.
 
 `M` is the mass of the central body, held fixed (test-particle limit: the orbiting mass is
   negligible). For two bodies of masses `m₁` and `m₂`, the same relations hold for the relative
@@ -67,7 +67,7 @@ theorem kepler_third_law {G M r v T : ℝ} (hG : 0 < G) (hM : 0 < M)
   ring
 
 set_option linter.unusedVariables false in
-/-- Circular-orbit speed: from `v ^ 2 = G * M / r` and `v > 0`,
+/-- Circular-orbit speed: for `G, M, r, v > 0` with `v ^ 2 = G * M / r`,
 `v = Real.sqrt (G * M / r)`. -/
 theorem kepler_circular_speed {G M r v : ℝ} (hG : 0 < G) (hM : 0 < M)
     (hr : 0 < r) (hv : 0 < v) (hbal : v ^ 2 = G * M / r) :

@@ -28,6 +28,7 @@ A game has an exact potential when one function on strategy profiles tracks ever
 - [Price of stability of fair cost sharing is at most H(k)](exists-is-pure-nash-network-cost-le.md)
 - [Exact potential of a finite game](is-exact-potential-2.md)
 - [Pure Nash equilibrium of a finite game](is-pure-nash-2.md)
+- [Pure equilibria of potential games as local search](pure-equilibria-of-potential-games-as-local-search.md)
 
 ## Related topics
 

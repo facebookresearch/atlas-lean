@@ -681,15 +681,19 @@ private theorem kr_exists_pos_eigenvector_of_mem_spectrum
   exact kr_exists_eigenvector_of_approx S hS_compact ρ (ne_of_gt hρpos) happ
 
 /--
-For compact Hausdorff `K`, if `T : C(K, ℝ) →L[ℝ] C(K, ℝ)` is compact, positive (`f ≥ 0 → T f ≥ 0`
-pointwise), and has `0 < spectralRadius ℝ T`, then there exists nonzero `f ≥ 0` with `T f =
-(spectralRadius ℝ T).toReal • f`. Source: M. G. Krein and M. A. Rutman,
+**Krein–Rutman theorem for $C(K)$.** Let $K$ be a compact Hausdorff space and let $T$ be a compact
+bounded linear operator on the real Banach space $C(K, \mathbb{R})$ of continuous real functions
+on $K$ that is positive: $Tf \ge 0$ pointwise whenever $f \ge 0$ pointwise. Let $r(T)$ be the
+spectral radius of $T$, the supremum of $|\lambda|$ over the real spectrum of $T$. If $r(T) > 0$,
+then there is a nonzero $f \in C(K, \mathbb{R})$ with $f \ge 0$ pointwise and $Tf = r(T) f$.
+
+Proves `Wanted` entry `krein_rutman`.
+
+Source: M. G. Krein and M. A. Rutman,
 Linear operators leaving invariant a cone in a Banach space,
 Uspekhi Mat. Nauk 3 (1948), 1–95, positive compact operator principal eigenvalue; Deimling,
 Nonlinear Functional Analysis; Lean states `C(K, ℝ)` compact positive case with spectralRadius
 eigenvector and nonnegativity.
-
-Proves `Wanted` entry `krein_rutman`.
 -/
 theorem krein_rutman
     {K : Type*} [TopologicalSpace K] [CompactSpace K] [T2Space K]
