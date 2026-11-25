@@ -464,4 +464,23 @@ public theorem flattenedStirlingRunCount_two_recursion :
         flattenedStirlingRunCount (n + 1) 2 = 2 * flattenedStirlingRunCount n 2 + 2 * n - 1 :=
   ⟨count_first, count_succ⟩
 
+/-- **Closed form for flattened Stirling permutations with two runs.** For every natural number
+$n \ge 1$, the number $|\mathrm{flat}_2(Q_{n+1})|$ of flattened Stirling permutations of order
+$n + 1$ with exactly two runs equals $3(2^n - 1) - 2n$.
+
+Source: Buck, Elder, Figueroa, Harris, Harry, Simpson, *Flattened Stirling
+Permutations*, INTEGERS 24 (2024), Article A104, Corollary 2. -/
+public theorem flattenedStirlingRunCount_two_closed (n : ℕ) (hn : 1 ≤ n) :
+    (flattenedStirlingRunCount (n + 1) 2 : ℤ) = 3 * (2 ^ n - 1) - 2 * n := by
+  obtain ⟨first, step⟩ := flattenedStirlingRunCount_two_recursion
+  induction n, hn using Nat.le_induction with
+  | base =>
+    rw [step 1 (by decide), first]
+    decide
+  | succ n hn ih =>
+    have hsub : 1 ≤ 2 * flattenedStirlingRunCount (n + 1) 2 + 2 * (n + 1) := by omega
+    rw [step (n + 1) (Nat.le_succ_of_le hn), Nat.cast_sub hsub]
+    simp only [Nat.cast_add, Nat.cast_mul, Nat.cast_ofNat, Nat.cast_one, ih, pow_succ]
+    omega
+
 end MetaMathlibExt

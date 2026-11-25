@@ -70,3 +70,5 @@
 - [For $R_0 > 1$, interior solutions converge to the endemic equilibrium](tendsto-endemic-of-lyapunov.md)
 - [Lyapunov stability of the endemic equilibrium](endemic-lyapunov-stable.md)
 - [For $R_0 > 1$, global asymptotic stability of the endemic equilibrium on the open segment](endemic-globally-asymptotically-stable.md)
+
+- [Extinction time of the stochastic logistic SIS epidemic](extinction-time-of-the-stochastic-logistic-epidemic.md)

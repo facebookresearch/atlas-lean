@@ -16,6 +16,7 @@ public import MathlibExt.Combinatorics.Enumerative.ZagierNumber
 public import MathlibExt.NumberTheory.ArithmeticFunction.BinomialPowerRealizability
 public import MathlibExt.NumberTheory.ArithmeticFunction.MoebiusGeometricGrowth
 public import MathlibExt.NumberTheory.DoldPrimePowerCongruences
+public import MathlibExt.NumberTheory.HelouTerjanianTwo
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 
@@ -105,18 +106,6 @@ public theorem_wanted choose_three_mul_modEq (n m : ℕ) (hm : 0 < m) (hmn : m <
     (3 * n).choose (3 * m) ≡ n.choose m
       [MOD 3 ^ (2 + max (padicValNat 3 m) (padicValNat 3 (n - m)) +
         padicValNat 3 (n.choose m))]
-
-/-- **Helou–Terjanian congruence for $p = 2$.** Let $m$ and $n$ be integers with $0 < m < n$.
-Then $\binom{2n}{2m} \equiv \binom{n}{m} \pmod{2^e}$, where
-$e = 1 + \max(\nu_2(m), \nu_2(n - m)) + \nu_2\big(\binom{n}{m}\big)$ and $\nu_2$ is the $2$-adic
-valuation.
-
-Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
-Sequences 27 (2024), Article 24.3.3, Lemma 26 (3) (`jis-2024-24.3.3-lem-26`). -/
-public theorem_wanted choose_two_mul_modEq (n m : ℕ) (hm : 0 < m) (hmn : m < n) :
-    (2 * n).choose (2 * m) ≡ n.choose m
-      [MOD 2 ^ (1 + max (padicValNat 2 m) (padicValNat 2 (n - m)) +
-        padicValNat 2 (n.choose m))]
 
 /-- **Binomial coefficients at multiples of a prime divisor.** Let $p$ be a prime and let
 $n \ge 1$ be an integer divisible by $p$. Then for every integer $\lambda \ge 0$ with

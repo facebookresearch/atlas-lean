@@ -48,6 +48,7 @@
 - [Posterior decoding maximizes the expected number of correctly decoded states](expected-correct-le-posterior-path.md)
 - [Scaled forward recursion: exact log-likelihood and filtering identities](scaled-forward-recursion-and-log-likelihood-with.md)
 - [Forward filtering with backward sampling draws the exact posterior path](forward-filter-backward-sample-threading-is-an-e.md)
+- [Bayesian knowledge tracing as a two-state hidden Markov model](bayesian-knowledge-tracing-as-a-hidden-markov-model.md)
 
 ## Related topics
 

@@ -49,3 +49,6 @@
 
 - [Data with no segregating sites do not identify the topology of three genes](zero-mutation-data-leave-the-local-topology-unid.md)
 - [Tajima's numerator vanishes identically for three genes](tajima-s-numerator-pathwise-zero-at-n-3-and-exac.md)
+
+- [Conditional Poisson process of mutations on the local trees of the ancestral recombination graph](conditional-mutation-ppp-on-the-measurable-tree.md)
+- [Variance of the number of segregating sites with intragenic recombination](variance-of-segregating-sites-with-intragenic-re.md)

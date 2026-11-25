@@ -11,3 +11,7 @@ Structural study of formal proofs and provability: sequent calculi, linear logic
 - [Superpolynomial lower bounds for Frege proofs](superpolynomial-lower-bounds-for-frege-proofs.md)
 
 - [Substructural sequent calculi beyond classical linear logic](substructural-calculi-beyond-classical-linear-logic.md)
+
+- [Arithmetization of syntax and the diagonal lemma](arithmetization-of-syntax-and-the-diagonal-lemma.md)
+- [Logic of bunched implications](logic-of-bunched-implications.md)
+- [Reverse mathematics](reverse-mathematics.md)

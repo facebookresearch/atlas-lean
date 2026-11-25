@@ -18,6 +18,7 @@ public import MathlibExt.NumberTheory.Digits.BinomialFormTwoPowBase
 public import MathlibExt.NumberTheory.Digits.DigitsPowAndPowAddOne
 public import MathlibExt.NumberTheory.Digits.MinBasePalindrome
 public import MathlibExt.NumberTheory.Digits.OneCOneTwoPow
+public import MathlibExt.NumberTheory.Digits.PalindromicTwoPowBinomialForm
 public import MathlibExt.NumberTheory.Digits.SmallBaseBinomialForm
 public import MathlibExt.NumberTheory.Digits.ThreeDigitBinomialForm
 public import MathlibExt.NumberTheory.Digits.ThreeDigitPalindromeTwoPow
@@ -103,24 +104,6 @@ Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Corollary 1
 (`integers-2024-A69-cor-1`). -/
 public theorem_wanted hasBinomialForm_two_pow (n x k r : ℕ) (hk : 1 ≤ k) (hn : n = x * k + r)
     (h : 2 ^ r * k.choose ((k + 1) / 2) < 2 ^ x - 1) : HasBinomialForm (2 ^ x - 1) (2 ^ n)
-
-/-- **Palindromic powers of two in a base one less than a power of two.** Let $x \ge 2$ and
-$n \ge 1$ be natural numbers, let $b = 2^x - 1$, and suppose that the base-$b$ representation
-$2^n = (c_k, \dots, c_0)_b$ is a palindrome with $k + 1$ digits. Then (1) $n > k(x - 1)$; and
-(2) if $n = kx + r$ for a natural number $r$, and either $k \le x - r$, or $3 \le k \le x - r + 1$
-and $x \ge 3$, then $c_i = 2^r \binom{k}{i}$ for $i = 0, \dots, k$, that is, the representation
-is the binomial form $2^r (\binom{k}{k}, \dots, \binom{k}{0})_b$.
-
-Source: D. L. Kreher and D. R. Stinson, *On Minimum-Base Palindromic
-Representations of Powers of 2*, INTEGERS 24 (2024), Article A69, Lemma 4
-(`integers-2024-A69-lem-4`). -/
-public theorem_wanted palindrome_two_pow_base_two_pow_sub_one (x n k : ℕ) (hx : 2 ≤ x)
-    (hn : 1 ≤ n) (hp : (Nat.digits (2 ^ x - 1) (2 ^ n)).Palindrome)
-    (hk : (Nat.digits (2 ^ x - 1) (2 ^ n)).length = k + 1) :
-    k * (x - 1) < n ∧
-      ∀ r : ℕ, n = k * x + r →
-        ((k : ℤ) ≤ (x : ℤ) - r ∨ (3 ≤ k ∧ (k : ℤ) ≤ (x : ℤ) - r + 1 ∧ 3 ≤ x)) →
-        Nat.digits (2 ^ x - 1) (2 ^ n) = (List.range (k + 1)).map fun i => 2 ^ r * k.choose i
 
 /-- **The Nagell–Ljunggren equation in natural numbers (Bugeaud–Mihăilescu).** Let $x, y, n, q$
 be natural numbers with $x \ge 2$, $y \ge 2$, $n \ge 3$ and $q \ge 2$ such that

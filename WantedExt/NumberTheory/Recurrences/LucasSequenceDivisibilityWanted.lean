@@ -14,6 +14,7 @@ import Mathlib.Tactic.NormNum.Prime
 public import Mathlib.NumberTheory.LegendreSymbol.JacobiSymbol
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PrimitiveDivisor
+public import MathlibExt.NumberTheory.Recurrences.LucasDiscriminantGcd
 public import MathlibExt.NumberTheory.Recurrences.LucasParityDivisibility
 public import MathlibExt.NumberTheory.Recurrences.LucasSequenceFirstKind
 public import MathlibExt.NumberTheory.Recurrences.NondegenerateLucasPair
@@ -187,17 +188,6 @@ public theorem_wanted not_lucasU_dvd_lucasU_of_lt
     (L : LucasSequenceParams) (hP : L.p ≠ 0) (hD : 0 < L.p ^ 2 - 4 * L.q)
     (n : ℕ) (hn : 3 ≤ n) (k : ℕ) (hk0 : 0 < k) (hkn : k < n) :
     ¬ lucasU L n ∣ lucasU L k
-
-/-- **Common divisors of $P$ and the discriminant.** Let $P$ and $Q$ be coprime integers and let
-$D = P^2 - 4Q$. Then $\gcd(P, D)$ divides $4$, and $\gcd(P, D') = 1$ for every odd integer $D'$
-dividing $D$.
-
-Source: Lawrence Somer and Michal Křížek, *On Lucas and Frobenius Pseudoprimes*,
-INTEGERS 25 (2025), Article A107, Lemma 4.9 (`integers-2025-A107-lem-4-9`). -/
-public theorem_wanted gcd_p_discr_dvd_four
-    (P Q : ℤ) (hcop : Int.gcd P Q = 1) :
-    (Int.gcd P (P ^ 2 - 4 * Q) : ℤ) ∣ 4 ∧
-      ∀ D' : ℤ, Odd D' → D' ∣ P ^ 2 - 4 * Q → Int.gcd P D' = 1
 
 /-- **Parity of $U_m$ and $U_{2m}/P$ and their coprimality to $D$.** Let $P$ and $Q$ be coprime
 integers with $P \ne 0$ and $Q \ne 0$, let $U_n$ be the Lucas sequence $U(P, Q)$, and let

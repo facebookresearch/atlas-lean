@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.Digits.BasePhiRepresentations
+public import MathlibExt.NumberTheory.Digits.BergmanLucasEvenAdd
 public import MathlibExt.NumberTheory.Digits.FibMemLucasIntervals
 public import MathlibExt.NumberTheory.LucasSequence
 
@@ -175,22 +176,6 @@ public theorem_wanted bergman_lowest_position_lucasInterval (N n : ℕ) {S : Fin
     (N ∈ Set.Icc (lucasNumber (2 * n)) (lucasNumber (2 * n + 1)) → -R = 2 * n) ∧
       (N ∈ Set.Icc (lucasNumber (2 * n + 1) + 1) (lucasNumber (2 * n + 2) - 1) →
         -R = 2 * n + 2)
-
-/-- **Bergman expansion of $L_{2n} + k$.** Let $n \ge 1$ and let $k$ be a natural number with
-$k \le L_{2n-1}$, where $L_m$ is the $m$-th Lucas number. Let $S$ and $T$ be finite sets of
-integers, each with no two consecutive elements (Bergman expansions), whose base phi values are
-$k$ and $L_{2n} + k$ respectively. Then $2n \notin S$, $-2n \notin S$, and
-$T = S \cup \{2n, -2n\}$.
-
-Source: Michel Dekking and Ad van Loon, *Counting Base Phi Representations*,
-Fibonacci Quarterly 62 (2024), Article 62-2/dekking11102023, Theorem 5.2 I,
-quoting F. M. Dekking, *How to add two numbers in base phi*
-(`fq-2024-dekking11102023-thm-5.2`). -/
-public theorem_wanted bergman_lucas_even_add (n k : ℕ) (hn : 1 ≤ n)
-    (hk : k ≤ lucasNumber (2 * n - 1)) {S T : Finset ℤ}
-    (hS : IsBergmanExpansion S) (hSk : basePhiValue S = k)
-    (hT : IsBergmanExpansion T) (hTN : basePhiValue T = (lucasNumber (2 * n) + k : ℕ)) :
-    (2 * n : ℤ) ∉ S ∧ -(2 * n : ℤ) ∉ S ∧ T = insert (2 * n : ℤ) (insert (-(2 * n : ℤ)) S)
 
 /-- **Recursive structure of Bergman expansions, odd Lucas case.** Let $n \ge 2$, let $k$ be a
 natural number, and write $L_m$ for the $m$-th Lucas number. Call a finite set of integers with no

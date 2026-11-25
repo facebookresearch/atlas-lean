@@ -5,6 +5,7 @@ random coding bound makes achievability quantitative: averaged over random codes
 probability is at most $(M - 1)^\rho e^{-N E_0(\rho, p)}$, and the exponent is positive at every
 rate below the mutual information.
 
+- [Gaussian MIMO channel](gaussian-mimo-channel/README.md)
 - [Shannon's channel coding theorem](shannon-s-channel-coding-theorem/README.md)
 - [Random coding bound and Gallager's exponent](random-coding-bound-and-gallager-s-exponent/README.md)
 
@@ -19,3 +20,5 @@ rate below the mutual information.
 - [Time-sharing convexity of the MAC achievable region](time-sharing-convexity-of-the-mac-achievable-region.md)
 - [One-shot achievability (Shannon/Feinstein/DT bounds)](one-shot-achievability.md)
 - [Polar transform: channel combining/splitting conservation](polar-transform-channel-combining-splitting-conservation.md)
+
+- [Scalar Gaussian channel](scalar-gaussian-channel/README.md)

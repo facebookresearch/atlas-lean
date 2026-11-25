@@ -20,6 +20,7 @@ public import MathlibExt.NumberTheory.FloorQuotientDivisorSummatory
 public import MathlibExt.NumberTheory.FloorQuotientOddCount
 public import MathlibExt.NumberTheory.RoundQuotientOddCount
 public import MathlibExt.NumberTheory.RoundedQuotientThresholdCounts
+public import MathlibExt.NumberTheory.ShiftedFloorThresholdCounts
 
 namespace MetaMathlibExt
 
@@ -59,21 +60,6 @@ public theorem shiftedFloorResidueCount_modulus_one (n : ℕ) (α ν : ℝ)
   unfold shiftedFloorResidueCount
   rw [Finset.filter_true_of_mem (fun k _ => by simp [Int.ModEq])]
   simp
-
-/-- **Odd floor quotients as a hyperbolic lattice-point difference.** For every natural number
-$n$, the floor sequence parity count $\mathcal{F}_n$ equals the number of integer pairs $(x, y)$
-with $x, y \ge 1$ and $n/2 < xy \le n$ minus the number of integer pairs $(x, y)$ with
-$x, y \ge 1$ and $xy \le n/2$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 4 (`jis-2024-24.2.5-prop-4`). -/
-public theorem_wanted floorQuotientOddCount_eq_hyperbolic_lattice_difference
-    (n : ℕ) :
-    (floorQuotientOddCount n : ℤ) =
-      (Nat.card {p : ℤ × ℤ // 1 ≤ p.1 ∧ 1 ≤ p.2 ∧
-          (n : ℤ) < 2 * (p.1 * p.2) ∧ p.1 * p.2 ≤ n} : ℤ) -
-        Nat.card {p : ℤ × ℤ // 1 ≤ p.1 ∧ 1 ≤ p.2 ∧ 2 * (p.1 * p.2) ≤ n}
 
 /-- **Dirichlet's asymptotic for the divisor summatory function.** Let $\tau(m)$ be the number of
 positive divisors of $m$, let $D(x) = \sum_{1 \le m \le x} \tau(m)$ for real $x$, and let
@@ -194,25 +180,6 @@ public theorem_wanted roundQuotientOddCount_asymptotic :
         C * Real.sqrt n) ∧
     Tendsto (fun n : ℕ => (roundQuotientOddCount n : ℝ) / n) atTop
       (𝓝 (Real.pi / 2 - 1))
-
-/-- **Tail counts of the shifted floor sequence.** Let $n$ be a natural number and let $\alpha$
-and $\nu$ be real numbers with $0 \le \alpha < 1$, $0 \le \nu < 1$ and $\nu \le n\alpha$. Then
-$\lfloor (n - \nu)/d + \alpha \rfloor \ge 1$ for all $n$ integers $d$ with $1 \le d \le n$, and
-for every natural number $k \ge 2$ the number of integers $d$ with $1 \le d \le n$ and
-$\lfloor (n - \nu)/d + \alpha \rfloor \ge k$ is $\lfloor (n - \nu)/(k - \alpha) \rfloor$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Lemma 24 (`jis-2024-24.2.5-lem-24`). -/
-public theorem_wanted shifted_floor_sequence_card_ge (n : ℕ) (α ν : ℝ)
-    (hα₀ : 0 ≤ α) (hα₁ : α < 1) (hν₀ : 0 ≤ ν) (hν₁ : ν < 1)
-    (hnαν : ν ≤ n * α) :
-    ((Finset.Icc 1 n).filter
-        (fun d : ℕ => (1 : ℤ) ≤ ⌊((n : ℝ) - ν) / (d : ℝ) + α⌋)).card = n ∧
-      ∀ k : ℕ, 2 ≤ k →
-        (((Finset.Icc 1 n).filter
-            (fun d : ℕ => (k : ℤ) ≤ ⌊((n : ℝ) - ν) / (d : ℝ) + α⌋)).card : ℤ) =
-          ⌊((n : ℝ) - ν) / (k - α)⌋
 
 /-- **Floor-sum formulas for the shifted floor residue counts.** Let $n$ and $m$ be natural
 numbers with $m \ge 2$, and let $\alpha$ and $\nu$ be real numbers with $0 \le \alpha < 1$,

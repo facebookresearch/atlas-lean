@@ -6,6 +6,8 @@
 - [Liouville's formula for the principal matrix solution](fundamental-matrix-liouville-det.md)
 
 - [Variation of constants for time-varying linear systems](variation-of-parameters-time-varying.md)
+- [The state-transition matrix of a time-varying system is not the exponential of the integral](state-transition-matrix-of-a-time-varying-system-is-not-the-exponential-of-the-integral.md)
+- [Carathéodory solutions of linear systems with locally integrable inputs](caratheodory-solutions-of-linear-systems-with-locally-integrable-inputs.md)
 
 ## Scalar linear relaxation
 
