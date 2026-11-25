@@ -1,6 +1,6 @@
 # Babuška–Brezzi theorem for saddle-point problems
 
-Let $V$ and $Q$ be real reflexive Banach spaces, let $a$ be a bounded bilinear form on $V \times V$ and $b$ a bounded bilinear form on $V \times Q$, and let $\ker B = \{v \in V : b(v, q) = 0 \text{ for all } q \in Q\}$. For $f \in V'$ and $g \in Q'$, consider the *saddle-point problem*: find $(u, p) \in V \times Q$ with
+Let $V$ and $Q$ be real Hilbert spaces, let $a$ be a bounded bilinear form on $V \times V$ and $b$ a bounded bilinear form on $V \times Q$, and let $\ker B = \{v \in V : b(v, q) = 0 \text{ for all } q \in Q\}$. For $f \in V'$ and $g \in Q'$, consider the *saddle-point problem*: find $(u, p) \in V \times Q$ with
 $$
 a(u, w) + b(w, p) = f(w) \quad \forall w \in V, \qquad b(u, q) = g(q) \quad \forall q \in Q.
 $$
@@ -39,6 +39,6 @@ The constants depend only on $\alpha$, $\beta$ and $\|a\|$. So a family of probl
 
 - J.-L. Guermond, course notes for Math 661 (Fall 2015), Part VII, Chapter 30 "Well-posedness and saddle point problems", Texas A&M University, <https://people.tamu.edu/~guermond/M661_FALL_2015/chap30.pdf>:
     - Section 30.2.1: Theorem 30.1, well-posedness if and only if the kernel restriction of $A$ is an isomorphism and $B$ is surjective, with proof;
-    - Section 30.2.2: Theorem 30.2 (Babuška–Brezzi), conditions (30.5)–(30.6) and the a priori estimates (30.7) with constants $c_1, \dots, c_4$;
+    - Section 30.2.2: Theorem 30.2 (Babuška–Brezzi), conditions (30.5)–(30.6) and the a priori estimates (30.7) with constants $c_1, \dots, c_4$, stated there for reflexive Banach spaces; this page states the Hilbert-space case;
     - Example 30.9: the Stokes equations.
 - D. Boffi, *Mixed finite element methods: a crash course*, Lecture 4 "Stokes, stable pairs, and the solution of saddle-point systems", CIMPA school, 2026, <https://www-dimat.unipv.it/boffi/cimpa2026/lecture4.pdf>: the uniform discrete inf-sup condition for conforming Stokes pairs, the Fortin-operator criterion, and the uniformly stable $P_2$–$P_0$ pair.

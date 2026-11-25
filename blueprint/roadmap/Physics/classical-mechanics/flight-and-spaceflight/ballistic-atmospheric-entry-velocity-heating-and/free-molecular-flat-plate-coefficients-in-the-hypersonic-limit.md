@@ -8,8 +8,9 @@ Let the *speed ratio* $s$ be the stream speed divided by the most probable therm
 
 **Theorem.** For specular reflection, as $s \to \infty$, the free-molecular flat-plate coefficients tend to the values
 $$
-C_D = 4\sin^3\alpha, \qquad C_L = 4\sin^2\alpha\cos\alpha, \qquad \frac{L}{D} = \cot\alpha.
+C_D = 4\sin^3\alpha, \qquad C_L = 4\sin^2\alpha\cos\alpha,
 $$
+and, for $0 < \alpha \le \pi/2$, the lift-to-drag ratio is $L/D = \cot\alpha$. At $\alpha = 0$ both coefficients vanish and the ratio is undefined.
 If the molecules instead lose their normal momentum and keep their tangential velocity, which is Newtonian impact theory for hypersonic continuum flow, the coefficients are half of these.
 
 **Proof in the cold-beam limit.** As $s \to \infty$, the thermal spread is negligible, and every molecule arrives with velocity $U$. The mass flux onto the plate per unit area is $\rho U\sin\alpha$, and each molecule carries normal velocity $U\sin\alpha$ toward the plate. Specular reflection reverses this, so the plate receives normal momentum $2\rho U^2\sin^2\alpha$ per unit area and time, and no tangential momentum. The normal force is $N = 2\rho U^2\sin^2\alpha\,A$, so $C_N = 4\sin^2\alpha$. Resolving along and across the stream gives $C_D = C_N\sin\alpha$ and $C_L = C_N\cos\alpha$. If the normal momentum is only destroyed rather than reversed, the transfer halves.
