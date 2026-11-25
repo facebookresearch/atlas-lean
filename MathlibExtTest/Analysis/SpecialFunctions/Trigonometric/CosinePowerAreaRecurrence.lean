@@ -37,4 +37,18 @@ example : ∃ L L' : ℝ, Tendsto (cosPowArea 4) atTop (𝓝 L) ∧
 #guard_msgs in
 #print axioms MetaMathlibExt.cosPowArea_limit_recursion
 
+-- At exponent one the sum has just the fundamental frequency.
+example : Tendsto (cosPowArea 1) atTop (𝓝 (8 / π)) := by
+  simpa [Finset.sum_range_succ] using tendsto_cosPowArea_of_odd (n := 1) (by decide)
+
+-- At exponent three the fundamental frequency has binomial coefficient three.
+example : Tendsto (cosPowArea 3) atTop (𝓝 (56 / (9 * π))) := by
+  convert tendsto_cosPowArea_of_odd (n := 3) (by decide) using 2
+  norm_num [Finset.sum_range_succ, Nat.choose_succ_succ]
+  ring
+
+/-- info: 'MetaMathlibExt.tendsto_cosPowArea_of_odd' depends on axioms: [propext, Classical.choice, Quot.sound] -/
+#guard_msgs in
+#print axioms MetaMathlibExt.tendsto_cosPowArea_of_odd
+
 end MathlibExtTest.CosinePowerAreaRecurrence

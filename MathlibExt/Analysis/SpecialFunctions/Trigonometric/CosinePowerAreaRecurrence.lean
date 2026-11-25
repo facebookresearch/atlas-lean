@@ -384,7 +384,136 @@ private lemma scaled_recursion (m : ℕ) (b r : ℝ) (h : sin b = 0 ∨ cos b = 
   field_simp [hm]
   linear_combination r * weightedCos_recursion m b h
 
+-- Expand the two complex exponentials, then take real parts.
+private lemma cos_pow_sum (n : ℕ) (x : ℝ) :
+    (2 * cos x) ^ n = ∑ j ∈ Finset.range (n + 1),
+      (n.choose j : ℝ) * cos (((n : ℝ) - 2 * j) * x) := by
+  have hEuler : Complex.exp ((-(x : ℂ)) * Complex.I) + Complex.exp ((x : ℂ) * Complex.I) =
+      ((2 * cos x : ℝ) : ℂ) := by
+    rw [← Complex.ofReal_neg, Complex.exp_ofReal_mul_I, Complex.exp_ofReal_mul_I,
+      cos_neg, sin_neg]
+    push_cast
+    ring
+  have h := congrArg Complex.re (add_pow (Complex.exp ((-(x : ℂ)) * Complex.I))
+    (Complex.exp ((x : ℂ) * Complex.I)) n)
+  rw [hEuler, ← Complex.ofReal_pow, Complex.ofReal_re, Complex.re_sum] at h
+  rw [h]
+  refine Finset.sum_congr rfl fun j hj => ?_
+  have hjn : j ≤ n := Nat.le_of_lt_succ (Finset.mem_range.mp hj)
+  rw [← Complex.exp_nat_mul, ← Complex.exp_nat_mul, ← Complex.exp_add,
+    show (j : ℂ) * (-(x : ℂ) * Complex.I) + (↑(n - j) : ℂ) * ((x : ℂ) * Complex.I) =
+      (↑(((n : ℝ) - 2 * j) * x) : ℂ) * Complex.I by push_cast [Nat.cast_sub hjn]; ring,
+    Complex.mul_re, Complex.natCast_re, Complex.natCast_im, mul_zero, sub_zero,
+    Complex.exp_ofReal_mul_I_re, mul_comm]
+
+-- The upper half contributes the same sum: reflect j to n - j.
+private lemma cos_pow_odd_sum {n : ℕ} (hn : Odd n) (x : ℝ) :
+    cos x ^ n = (2 / 2 ^ n) * ∑ j ∈ Finset.range ((n - 1) / 2 + 1),
+      (n.choose j : ℝ) * cos (((n : ℝ) - 2 * j) * x) := by
+  let m := (n - 1) / 2 + 1
+  let f (j : ℕ) := (n.choose j : ℝ) * cos (((n : ℝ) - 2 * j) * x)
+  have hn' : n + 1 = m + m := by
+    obtain ⟨k, hk⟩ := hn
+    dsimp [m]
+    omega
+  have hpair : (∑ j ∈ Finset.range m, f (m + j)) = ∑ j ∈ Finset.range m, f j := by
+    rw [← Finset.sum_range_reflect (fun j => f (m + j)) m]
+    refine Finset.sum_congr rfl fun j hj => ?_
+    have hjm := Finset.mem_range.mp hj
+    have hjn : j ≤ n := by omega
+    have hj' : m + (m - 1 - j) = n - j := by omega
+    rw [hj']
+    dsimp [f]
+    rw [Nat.choose_symm hjn, Nat.cast_sub hjn,
+      show ((n : ℝ) - 2 * ((n : ℝ) - j)) * x = -(((n : ℝ) - 2 * j) * x) by ring,
+      cos_neg]
+  have h : (2 * cos x) ^ n = 2 * ∑ j ∈ Finset.range m, f j := by
+    calc
+      _ = ∑ j ∈ Finset.range (n + 1), f j := cos_pow_sum n x
+      _ = _ := by rw [hn', Finset.sum_range_add, hpair, two_mul]
+  rw [mul_pow] at h
+  change cos x ^ n = 2 / 2 ^ n * ∑ j ∈ Finset.range m, f j
+  rw [div_mul_eq_mul_div, eq_div_iff (by positivity : (2 : ℝ) ^ n ≠ 0), mul_comm]
+  exact h
+
+private lemma integral_weighted_cos_odd {a : ℕ} (ha : Odd a) :
+    (∫ x in (0 : ℝ)..π, (π - 2 * x) * cos (a * x)) = 4 / (a : ℝ) ^ 2 := by
+  have haₙ : a ≠ 0 := by have := Nat.odd_iff.mp ha; omega
+  have ha₀ : (a : ℝ) ≠ 0 := by exact_mod_cast haₙ
+  let F (x : ℝ) := (π - 2 * x) * (sin ((a : ℝ) * x) / a) -
+    2 * cos ((a : ℝ) * x) / (a : ℝ) ^ 2
+  have hF (x : ℝ) : HasDerivAt F ((π - 2 * x) * cos ((a : ℝ) * x)) x := by
+    have hx := (hasDerivAt_id x).const_mul (a : ℝ)
+    have hs := ((hasDerivAt_sin ((a : ℝ) * x)).comp x hx).div_const (a : ℝ)
+    have hc := (((hasDerivAt_cos ((a : ℝ) * x)).comp x hx).const_mul (2 : ℝ)).div_const
+      ((a : ℝ) ^ 2)
+    have hw : HasDerivAt (fun t => π - 2 * t) (-2) x := by
+      convert (hasDerivAt_const x π).sub ((hasDerivAt_id x).const_mul (2 : ℝ)) using 1
+      · rfl
+      · norm_num
+    convert (hw.mul hs).sub hc using 1
+    · rfl
+    · simp only [Function.comp_apply, mul_one]
+      field_simp [ha₀]
+      ring
+  have hcont : Continuous (fun x : ℝ => (π - 2 * x) * cos ((a : ℝ) * x)) := by fun_prop
+  rw [integral_eq_sub_of_hasDerivAt (fun x _ => hF x) (hcont.intervalIntegrable 0 π)]
+  simp only [F, sin_nat_mul_pi, cos_nat_mul_pi, ha.neg_pow, one_pow, zero_div,
+    mul_zero, sin_zero, cos_zero, zero_sub, mul_one]
+  ring
+
+private lemma weightedCos_odd_eq {n : ℕ} (hn : Odd n) :
+    weightedCos n π = (2 / 2 ^ n) * (4 * ∑ j ∈ Finset.range ((n - 1) / 2 + 1),
+      (n.choose j : ℝ) / ((n : ℝ) - 2 * j) ^ 2) := by
+  let s := Finset.range ((n - 1) / 2 + 1)
+  let f (j : ℕ) (x : ℝ) := (n.choose j : ℝ) * ((π - 2 * x) * cos (((n : ℝ) - 2 * j) * x))
+  have hf (j : ℕ) : Continuous (f j) := by dsimp [f]; fun_prop
+  unfold weightedCos
+  calc
+    _ = ∫ x in (0 : ℝ)..π, (2 / 2 ^ n) * ∑ j ∈ s, f j x := by
+      refine integral_congr fun x _ => ?_
+      rw [cos_pow_odd_sum hn x, mul_left_comm, Finset.mul_sum]
+      congr 1
+      exact Finset.sum_congr rfl fun j _ => by dsimp [f]; ring
+    _ = (2 / 2 ^ n) * ∑ j ∈ s, ∫ x in (0 : ℝ)..π, f j x := by
+      rw [integral_const_mul, integral_finsetSum (fun j _ => (hf j).intervalIntegrable 0 π)]
+    _ = _ := by
+      rw [Finset.mul_sum _ _ (4 : ℝ)]
+      congr 1
+      refine Finset.sum_congr rfl fun j hj => ?_
+      have hj' : j < (n - 1) / 2 + 1 := Finset.mem_range.mp hj
+      have hodd : Odd (n - 2 * j) := by
+        simp only [Nat.odd_iff] at hn ⊢
+        omega
+      have hcast : ((n - 2 * j : ℕ) : ℝ) = (n : ℝ) - 2 * j := by
+        rw [Nat.cast_sub (by omega), Nat.cast_mul, Nat.cast_ofNat]
+      dsimp [f]
+      rw [integral_const_mul, ← hcast, integral_weighted_cos_odd hodd]
+      ring
+
 public section
+
+/-- **Area between $\cos^n x$ and $\cos^n(kx)$ in the limit, odd $n$.** Let $n$ be an odd natural
+number. As $k \to \infty$ through the natural numbers, the area
+$\int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$ between $\cos^n x$ and $\cos^n(kx)$ on $[0, \pi]$
+converges to
+$$\frac{8}{2^{n-1}\pi} \sum_{j=0}^{(n-1)/2} \frac{\binom{n}{j}}{(n-2j)^2}.$$
+
+Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
+Journal of Integer Sequences 28 (2025), Article 25.2.3, Theorem 1
+(`jis-2025-25.2.3-thm-1`). -/
+public theorem tendsto_cosPowArea_of_odd {n : ℕ} (hn : Odd n) :
+    Tendsto (fun k => cosPowArea n k) atTop
+      (𝓝 (8 / (2 ^ (n - 1) * π) *
+        ∑ j ∈ Finset.range ((n - 1) / 2 + 1), (n.choose j : ℝ) / ((n : ℝ) - 2 * j) ^ 2)) := by
+  have h := cosPowArea_odd_limit hn
+  have hn' : n - 1 + 1 = n := by have := Nat.odd_iff.mp hn; omega
+  have hp := pow_succ (2 : ℝ) (n - 1)
+  rw [hn'] at hp
+  rw [weightedCos_odd_eq hn, hp] at h
+  convert h using 2
+  field_simp [pi_ne_zero]
+  ring
 
 /-- **Recursion for the limiting areas between cosine powers.** For natural numbers $n$ and $k$,
 let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$. For every natural number $n \ge 3$ there
