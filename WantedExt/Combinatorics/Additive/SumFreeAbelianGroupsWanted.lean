@@ -132,22 +132,6 @@ public theorem_wanted exists_addMonoidHom_zmod_of_large_sumFree {G : Type*} [Add
     (hcard : ((1 : ℝ) / 3 + 1 / (3 * (p + 1))) * Fintype.card G < A.ncard) :
     ∃ ψ : G →+ ZMod p, ∀ a ∈ A, (ψ a).val ∈ Finset.Icc (k + 1) (2 * k + 1)
 
-/-- **Ranks of the index-two subgroups of a finite abelian 2-group.** Let $r_1, r_2$ be natural
-numbers with $r = r_1 + r_2 \ge 1$, let $\alpha_1, \dots, \alpha_{r_1} \ge 2$, and let
-$G = \mathbb{Z}_{2^{\alpha_1}} \oplus \dots \oplus \mathbb{Z}_{2^{\alpha_{r_1}}} \oplus
-\mathbb{Z}_2^{r_2}$. Then exactly $2^{r_1} - 1$ subgroups of $G$ of index $2$ have rank $r$,
-and exactly $2^r - 2^{r_1}$ subgroups of $G$ of index $2$ have rank $r - 1$, where the rank
-of a group is the minimal number of its generators.
-
-Source: Nathanaël Hassler and Andrew Treglown, *Notes on Sum-Free Sets in Abelian Groups*,
-INTEGERS 26 (2026), Article A97, Lemma 4 (`integers-2026-A97-lem-4`). -/
-public theorem_wanted ncard_index_two_addSubgroup_rank (r₁ r₂ : ℕ) (hr : 1 ≤ r₁ + r₂)
-    (α : Fin r₁ → ℕ) (hα : ∀ i, 2 ≤ α i) :
-    {H : AddSubgroup (((i : Fin r₁) → ZMod (2 ^ α i)) × (Fin r₂ → ZMod 2)) |
-        H.index = 2 ∧ AddGroup.rank H = r₁ + r₂}.ncard = 2 ^ r₁ - 1 ∧
-      {H : AddSubgroup (((i : Fin r₁) → ZMod (2 ^ α i)) × (Fin r₂ → ZMod 2)) |
-        H.index = 2 ∧ AddGroup.rank H = r₁ + r₂ - 1}.ncard = 2 ^ (r₁ + r₂) - 2 ^ r₁
-
 /-- **Almost triangle-free bound.** Let $\Gamma$ be a finite graph, let $T$ be a set of vertices
 of $\Gamma$, let $n \ge 1$ and $D \ge 1$ be integers, and let $k$ be a real number. Suppose
 that the graph $\Gamma'$ obtained from $\Gamma$ by deleting $T$ is triangle-free, has $n$
