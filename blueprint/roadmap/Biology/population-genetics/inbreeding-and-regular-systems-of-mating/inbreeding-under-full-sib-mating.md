@@ -1,11 +1,15 @@
 # Inbreeding under repeated full-sib mating
 
-In a line maintained by repeated full-sib mating (in each generation one female and one male, full
-sibs, are the parents of the next generation; no selection), let $h_t$ be the probability that the two
-gene copies of one individual of generation $t$ are not identical by descent, and $k_t$ the probability
-that a random gene copy of the female and a random gene copy of the male of generation $t$ are not
-identical by descent, both relative to a fixed base population, with given values $h_0, k_0 \in [0, 1]$
-in generation $0$. Then for $t \ge 1$
+In a line maintained by repeated full-sib mating (in each generation after the founding pair, one
+female and one male, full sibs, are the parents of the next generation; transmissions are fair and
+independent, with no selection),
+let $h_t$ be the common probability that the two gene copies of either individual of generation $t$
+are not identical by descent, and $k_t$ the probability that an independently drawn random gene
+copy of the female and one of the male are not identical by descent. Both are for a single autosomal
+locus relative to a fixed base population, with given values $h_0, k_0 \in [0, 1]$ in generation $0$.
+The common $h_0$ assumes equal within-individual probability for the two founders. The recurrence
+can be studied for any values in the unit square, whether or not a particular pedigree realizes that
+pair. Both sequences remain in $[0, 1]$, and for $t \ge 1$
 
 $$h_t = k_{t-1}, \qquad k_t = \tfrac14 h_{t-1} + \tfrac12 k_{t-1},$$
 
@@ -23,5 +27,7 @@ non-inbred and unrelated relative to the base population, $h_0 = k_0 = 1$.
 
 ## Sources
 
-- J. Felsenstein, *Theoretical Evolutionary Genetics* (GENOME 562 course text, University of Washington, version of December 2019), <https://felsenst.github.io/pgbook/pgbook.pdf>, Section V.10 "Regular Systems of Inbreeding: Full Sib Mating", equations (V-26)–(V-31),
-  pp. 234–236.
+- J. Felsenstein, [*Theoretical Evolutionary Genetics*](https://felsenst.github.io/pgbook/pgbook.pdf)
+  (GENOME 562 course text, University of Washington, December 2019), §V.10, equations
+  (V-26)–(V-32), pp. 234–237, and §V.11, equation (V-40), p. 239. The exact coefficients and
+  normalized limits follow from the two distinct characteristic roots.
