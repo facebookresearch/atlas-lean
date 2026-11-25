@@ -121,12 +121,12 @@ theorem isPullback_preimageSubspace_of_isPullback
   have hOuter0 := h_p1.paste_horiz h_b1
   have hTopEq :
       AlgebraicTopology.subspaceMap p₁
-          (fun x hx => hx : Set.MapsTo p₁ (⇑p₁ ⁻¹' (⇑b₁ ⁻¹' U)) (⇑b₁ ⁻¹' U)) ≫
+          (show Set.MapsTo p₁ (⇑p₁ ⁻¹' (⇑b₁ ⁻¹' U)) (⇑b₁ ⁻¹' U) from fun _ hx => hx) ≫
         AlgebraicTopology.subspaceMap b₁
-          (fun x hx => hx : Set.MapsTo b₁ (⇑b₁ ⁻¹' U) U) =
+          (show Set.MapsTo b₁ (⇑b₁ ⁻¹' U) U from fun _ hx => hx) =
       AlgebraicTopology.subspaceMap e₁ hMaps_e ≫
         AlgebraicTopology.subspaceMap p
-          (fun x hx => hx : Set.MapsTo p (⇑p ⁻¹' U) U) := by
+          (show Set.MapsTo p (⇑p ⁻¹' U) U from fun _ hx => hx) := by
     apply TopCat.hom_ext
     ext x
     change b₁ (p₁ x.1) = p (e₁ x.1)

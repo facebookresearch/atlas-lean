@@ -502,7 +502,6 @@ theorem tensor_assoc {m n p : ℤ}
       (K₁ := HomologicalComplex.tensorObj C₁ C₂) (K₂ := C₃)
       (F := curriedTensor C) (c := ComplexShape.up ℤ)
       (i₁ := i₁ + i₂) (i₂ := i₃) (h := h12_3)]
-    simp only [Linear.units_smul_comp]
   simp only [Category.assoc]
   rw [reassoc_of% hLeftSummand]
   simp only [tensor_v, Category.assoc, MonoidalCategory.curriedTensor_obj_obj,

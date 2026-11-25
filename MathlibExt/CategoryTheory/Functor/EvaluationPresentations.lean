@@ -99,7 +99,7 @@ theorem evaluationProductMap_naturality {F G : I ⥤ C} {A B : I → C}
     [HasProduct (fun k => (evaluationRightAdjoint C k).obj (B k))] :
     φ ≫ evaluationProductMap G B e' =
       evaluationProductMap F A e ≫
-        Pi.map (fun k => (evaluationRightAdjoint C k).map (a k)) := by
+        Limits.Pi.map (fun k => (evaluationRightAdjoint C k).map (a k)) := by
   apply Pi.hom_ext
   intro k
   have hu : φ ≫ (evaluationAdjunctionLeft C k).unit.app G =
@@ -122,9 +122,9 @@ theorem evaluationProductMap_naturality {F G : I ⥤ C} {A B : I → C}
     _ = (evaluationAdjunctionLeft C k).unit.app F ≫
         (evaluationRightAdjoint C k).map (e k ≫ a k) := by rw [w k]
     _ = (evaluationProductMap F A e ≫
-        Pi.map (fun k => (evaluationRightAdjoint C k).map (a k))) ≫
+        Limits.Pi.map (fun k => (evaluationRightAdjoint C k).map (a k))) ≫
           Pi.π (fun k => (evaluationRightAdjoint C k).obj (B k)) k := by
-      simp only [Category.assoc, Pi.map_π, evaluationProductMap_π_assoc,
+      simp only [Category.assoc, Limits.Pi.map_π, evaluationProductMap_π_assoc,
         Functor.map_comp]
 
 end Product

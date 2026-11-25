@@ -76,7 +76,8 @@ private theorem liftBaseChange_map_lie (f : L →ₗ⁅R⁆ N) (x y : S ⊗[R] L
     refine y.inductionOn ?_ ?_
     · intro t y
       simp only [LieAlgebra.ExtendScalars.bracket_tmul, LinearMap.liftBaseChange_tmul,
-        f.map_lie, smul_lie, lie_smul, smul_smul]
+        smul_lie, lie_smul, smul_smul]
+      rw [f.map_lie x y, mul_comm s t]
     · intro y y' hy hy'
       simpa only [lie_add, map_add] using congrArg₂ (· + ·) hy hy'
   · intro x x' hx hx'

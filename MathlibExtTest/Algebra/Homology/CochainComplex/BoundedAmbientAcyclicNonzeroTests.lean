@@ -17,6 +17,8 @@ public import MathlibExt.Algebra.Homology.CochainComplex.BoundedAmbientAcyclicFi
 public import MathlibExt.Algebra.Homology.CochainComplex.BoundedAmbientCofiberExactness
 public import MathlibExt.Algebra.Homology.CochainComplex.BoundedCofinality
 public import MathlibExt.CategoryTheory.ExactCategory.Abelian
+public import Mathlib.Algebra.Category.ModuleCat.Abelian
+public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import Mathlib.Algebra.Module.ULift
 public import Mathlib.Data.ZMod.Basic
 public meta import Lean.Elab.Tactic.Omega
@@ -190,8 +192,11 @@ private theorem cycle_kernel_zero : inl ≫ F.map (K.obj.d 0 (0 + 1)) = 0 := by
 private def cycle_kernel_limit :
     IsLimit (KernelFork.ofι (f := F.map (K.obj.d 0 (0 + 1))) inl cycle_kernel_zero) := by
   change IsLimit (KernelFork.ofι (f := raw.d 0 1) inl _)
-  rw [d_zero_one]
-  exact splitRow_shortExact.fIsKernel
+  let kernelLimit (d : P ⟶ N) (hd : d = snd) :
+      IsLimit (KernelFork.ofι (f := d) inl (by rw [hd]; exact inl_snd_zero)) := by
+    subst d
+    exact splitRow_shortExact.fIsKernel
+  exact kernelLimit (raw.d 0 1) d_zero_one
 
 private def cycle0Iso : cycle0.Z ≅ N :=
   cycle0.mappedIsLimit.conePointUniqueUpToIso cycle_kernel_limit

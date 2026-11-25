@@ -15,6 +15,7 @@ module
 public import MathlibExt.Algebra.Category.ModuleCat.BalancedTensor.Flat
 public import MathlibExt.Algebra.Homology.HomologicalComplex.CyclesImage
 public import Mathlib.Algebra.Category.ModuleCat.Projective
+public import Mathlib.Algebra.Category.ModuleCat.Ulift
 public import Mathlib.Algebra.Homology.ShortComplex.Exact
 public import Mathlib.Basic.UnivLE
 
@@ -80,8 +81,20 @@ theorem torBoundary_comp_boundaryTensor :
     HomologicalComplex.boundariesCyclesHomologySequence_shortExact P i j hi
   obtain ⟨hz, _⟩ := LeftDerivedDelta.LDexact_A F 0 S hS
   let e : F.leftDerived 0 ≅ F := F.leftDerivedZeroIsoSelf
-  change (LeftDerivedDelta.LDdelta F 0 S hS ≫ (e.app S.X₁).hom) ≫ F.map S.f = 0
-  rw [Category.assoc, ← e.hom.naturality S.f, ← Category.assoc, hz, zero_comp]
+  let δ : (F.leftDerived 1).obj S.X₃ ⟶ (F.leftDerived 0).obj S.X₁ :=
+    LeftDerivedDelta.LDdelta F 0 S hS
+  let a₁ : (F.leftDerived 0).obj S.X₁ ⟶ F.obj S.X₁ := (e.app S.X₁).hom
+  let a₂ : (F.leftDerived 0).obj S.X₂ ⟶ F.obj S.X₂ := (e.app S.X₂).hom
+  have he : a₁ ≫ F.map S.f = (F.leftDerived 0).map S.f ≫ a₂ := by
+    simpa only [a₁, a₂, NatIso.app_hom] using (e.hom.naturality S.f).symm
+  change (δ ≫ a₁) ≫ F.map S.f = 0
+  calc
+    _ = δ ≫ (a₁ ≫ F.map S.f) := Category.assoc δ a₁ (F.map S.f)
+    _ = δ ≫ ((F.leftDerived 0).map S.f ≫ a₂) := congrArg (fun z => δ ≫ z) he
+    _ = (δ ≫ (F.leftDerived 0).map S.f) ≫ a₂ :=
+      (Category.assoc δ ((F.leftDerived 0).map S.f) a₂).symm
+    _ = 0 ≫ a₂ := congrArg (fun z => z ≫ a₂) hz
+    _ = 0 := by simp only [zero_comp]
 
 /-- The Tor boundary and the tensor inclusion form an exact short complex. -/
 def torBoundaryTensorSequence : ShortComplex AddCommGrpCat.{v} :=
@@ -140,6 +153,9 @@ theorem torBoundary_naturality
     HomologicalComplex.boundariesCyclesHomologySequenceFunctor_map_τ₃ φ i j
   let e : F.leftDerived 0 ≅ F := F.leftDerivedZeroIsoSelf
   have hδ := LeftDerivedDelta.LDdelta_natural F 0 SL SK ψ hL hK
+  have he : (F.leftDerived 0).map ψ.τ₁ ≫ (e.app SL.X₁).hom =
+      (e.app SK.X₁).hom ≫ F.map ψ.τ₁ := by
+    simpa only [NatIso.app_hom] using e.hom.naturality ψ.τ₁
   rw [← h₃]
   change (F.leftDerived 1).map ψ.τ₃ ≫
       (LeftDerivedDelta.LDdelta F 0 SL hL ≫ (e.app SL.X₁).hom) =
@@ -149,9 +165,16 @@ theorem torBoundary_naturality
         (e.app SL.X₁).hom := by
       simpa only [Category.assoc] using
         congrArg (fun z => z ≫ (e.app SL.X₁).hom) hδ
-    _ = _ := by
-      simp only [Category.assoc]
-      rw [e.hom.naturality ψ.τ₁]
+    _ = LeftDerivedDelta.LDdelta F 0 SK hK ≫
+        ((F.leftDerived 0).map ψ.τ₁ ≫ (e.app SL.X₁).hom) :=
+      Category.assoc (LeftDerivedDelta.LDdelta F 0 SK hK)
+        ((F.leftDerived 0).map ψ.τ₁) ((e.app SL.X₁).hom)
+    _ = LeftDerivedDelta.LDdelta F 0 SK hK ≫
+        ((e.app SK.X₁).hom ≫ F.map ψ.τ₁) :=
+      congrArg (fun z => LeftDerivedDelta.LDdelta F 0 SK hK ≫ z) he
+    _ = _ :=
+      (Category.assoc (LeftDerivedDelta.LDdelta F 0 SK hK)
+        ((e.app SK.X₁).hom) (F.map ψ.τ₁)).symm
 
 section Flat
 
@@ -203,7 +226,7 @@ def torBoundaryKernelIso :
   let : Mono (torBoundary R P N i j hi) := torBoundary_mono R P N i j hi
   let : Mono k := inferInstance
   let : Epi k := (torBoundaryTensorSequence_exact R P N i j hi).epi_kernelLift
-  let : IsIso k := inferInstance
+  let : IsIso k := isIso_of_mono_of_epi k
   exact asIso k
 
 /-- The forward kernel comparison recovers the original positive Tor boundary. -/

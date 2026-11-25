@@ -69,7 +69,8 @@ private abbrev coefficientComplex (p : ℤ) : ChainComplex AddCommGrpCat.{v} ℤ
 
 /-- The native coefficient complex shifted into its original total degree. -/
 def zeroDifferentialTensorColumn (p : ℤ) : ChainComplex AddCommGrpCat.{v} ℤ :=
-  (ChainComplex.nativeShift AddCommGrpCat.{v} p).obj (coefficientComplex R A Q p)
+  (ChainComplex.nativeShift AddCommGrpCat.{v} p).obj
+    ((((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).mapHomologicalComplex c).obj Q)
 
 private abbrev columnXIso (p n q : ℤ) (h : n - p = q) :
     (zeroDifferentialTensorColumn R A Q p).X n ≅
@@ -90,7 +91,7 @@ private lemma tensorι_d (p q n : ℤ) (h : p + q = n) :
           (Q.d q (q - 1)) ≫ tensorι R A Q p (q - 1) (n - 1) (by omega)) := by
   change HomologicalComplex.ιMapBifunctor _ _ _ _ _ _ _ _ ≫
       (HomologicalComplex.mapBifunctor _ _ _ _).d _ _ = _
-  rw [HomologicalComplex.mapBifunctor.d_eq, comp_add,
+  rw [HomologicalComplex.mapBifunctor.d_eq, Preadditive.comp_add,
     HomologicalComplex.mapBifunctor.ι_D₁, HomologicalComplex.mapBifunctor.ι_D₂,
     HomologicalComplex.mapBifunctor.d₁_eq
       (by change (p - 1) + 1 = p; omega) q (n - 1) (by change (p - 1) + q = n - 1; omega),
@@ -106,8 +107,12 @@ private lemma tensorι_d (p q n : ℤ) (h : p + q = n) :
 def zeroDifferentialTensorColumnι (p : ℤ) :
     zeroDifferentialTensorColumn R A Q p ⟶ complex R (zeroDifferentialComplex R A) Q :=
   ChainComplex.ofHom
-    (fun n => (columnXIso R A Q p n (n - p) rfl).hom ≫
-      tensorι R A Q p (n - p) n (by omega)) (by
+    (fun n =>
+      (ChainComplex.nativeShiftObjXIso'
+        ((((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).mapHomologicalComplex c).obj Q)
+        p n (n - p) rfl).hom ≫
+      HomologicalComplex.ιMapBifunctor (zeroDifferentialComplex R A) Q
+        (ModuleCat.BalancedTensor.groupBifunctor R) c p (n - p) n (by omega)) (by
     intro n
     apply (cancel_epi (columnXIso R A Q p (n + 1) (n + 1 - p) rfl).inv).1
     have hs := congrArg
@@ -168,6 +173,7 @@ private def columnsCoconeIsColimit : IsColimit (columnsCocone R A Q) := by
       Category.assoc, Iso.inv_hom_id_assoc] using hp
 
 /-- The native full tensor total is the colimit of all its signed columns. -/
+@[no_expose]
 def zeroDifferentialTensorColumnsIso :
     colimit (zeroDifferentialTensorColumns R A Q) ≅
       complex R (zeroDifferentialComplex R A) Q :=
@@ -181,11 +187,11 @@ theorem ι_zeroDifferentialTensorColumnsIso_hom (p : ℤ) :
       zeroDifferentialTensorColumnι R A Q p := by
   exact colimit.isoColimitCocone_ι_hom _ ⟨p⟩
 
-private lemma down_prev (n : ℤ) : c.prev n = n + 1 :=
-  c.prev_eq' (by change n + 1 = n + 1; rfl)
+private lemma down_prev (n : ℤ) : (ComplexShape.down ℤ).prev n = n + 1 :=
+  (ComplexShape.down ℤ).prev_eq' (by change n + 1 = n + 1; rfl)
 
-private lemma down_next (n : ℤ) : c.next n = n - 1 :=
-  c.next_eq' (by change n - 1 + 1 = n; omega)
+private lemma down_next (n : ℤ) : (ComplexShape.down ℤ).next n = n - 1 :=
+  (ComplexShape.down ℤ).next_eq' (by change n - 1 + 1 = n; omega)
 
 private def columnScIso (p n q : ℤ) (h : n - p = q) :
     (zeroDifferentialTensorColumn R A Q p).sc n ≅
@@ -293,7 +299,8 @@ private def antidiagonalEquiv (n : ℤ) : {pq : ℤ × ℤ // pq.1 + pq.2 = n} �
     apply Subtype.ext
     apply Prod.ext
     · rfl
-    · have h := pq.property
+    · change n - pq.val.1 = pq.val.2
+      have h := pq.property
       omega
   right_inv _ := rfl
 
@@ -323,6 +330,7 @@ private lemma homologyAntidiagonalToColumnsIso_ι (p q n : ℤ) (h : p + q = n) 
             omega))) ⟨⟨(p, q), h⟩⟩
 
 /-- Exact coefficient tensor functors give the canonical full homology-tensor isomorphism. -/
+@[no_expose]
 def zeroDifferentialTensorHomologyIso (n : ℤ) :
     (∐ zeroDifferentialTensorHomologyFamily R A Q n) ≅
       (complex R (zeroDifferentialComplex R A) Q).homology n :=
@@ -362,6 +370,7 @@ private lemma zeroDifferentialTensorHomologyIso_ι (p q n : ℤ) (h : p + q = n)
     _ = _ := congrArg (fun f => (columnHomologyIso R A Q p n q (by omega)).inv ≫ f) hcol
 
 /-- The original coefficient tensor and cycle determine an actual cycle in the tensor total. -/
+@[no_expose]
 def zeroDifferentialTensorCyclesMap (p q n : ℤ) (h : p + q = n) :
     ((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).obj (Q.cycles q) ⟶
       (complex R (zeroDifferentialComplex R A) Q).cycles n :=
@@ -378,11 +387,21 @@ theorem zeroDifferentialTensorCyclesMap_iCycles (p q n : ℤ) (h : p + q = n) :
           (ModuleCat.BalancedTensor.groupBifunctor R) c p q n h := by
   have hq : q = n - p := by omega
   subst q
-  change _ ≫ HomologicalComplex.cyclesMap _ n ≫ _ = _
+  change
+    ((columnCyclesIso R A Q p n (n - p) rfl).inv ≫
+      HomologicalComplex.cyclesMap (zeroDifferentialTensorColumnι R A Q p) n) ≫
+        (complex R (zeroDifferentialComplex R A) Q).iCycles n =
+      ((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).map (Q.iCycles (n - p)) ≫
+        tensorι R A Q p (n - p) n (by omega)
   rw [Category.assoc, HomologicalComplex.cyclesMap_i, ← Category.assoc,
     columnCyclesIso_inv_iCycles]
-  change (_ ≫ (columnXIso R A Q p n (n - p) rfl).inv) ≫
-    ((columnXIso R A Q p n (n - p) rfl).hom ≫ tensorι R A Q p (n - p) n _) = _
+  change
+    (((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).map (Q.iCycles (n - p)) ≫
+      (columnXIso R A Q p n (n - p) rfl).inv) ≫
+        ((columnXIso R A Q p n (n - p) rfl).hom ≫
+          tensorι R A Q p (n - p) n (by omega)) =
+      ((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).map (Q.iCycles (n - p)) ≫
+        tensorι R A Q p (n - p) n (by omega)
   simp only [Category.assoc, Iso.inv_hom_id_assoc]
 
 /-- Taking the cycle class commutes with the canonical homology-tensor comparison. -/
@@ -393,7 +412,7 @@ theorem zeroDifferentialTensorHomologyIso_cycle_class (p q n : ℤ) (h : p + q =
         (zeroDifferentialTensorHomologyIso R A Q n).hom =
       zeroDifferentialTensorCyclesMap R A Q p q n h ≫
         (complex R (zeroDifferentialComplex R A) Q).homologyπ n := by
-  rw [Category.assoc, zeroDifferentialTensorHomologyIso_ι,
+  rw [zeroDifferentialTensorHomologyIso_ι,
     ← Category.assoc, columnHomologyIso_inv_quotient]
   rw [Category.assoc, HomologicalComplex.homologyπ_naturality]
   rfl
@@ -418,14 +437,28 @@ theorem zeroDifferentialTensorHomologyIso_mk (p q n : ℤ) (h : p + q = n)
   · have hc := congrArg
       (fun f => f.hom (TensorProduct.Balanced.mk ℤ R (A p) (Q.cycles q) x y))
       (zeroDifferentialTensorCyclesMap_iCycles R A Q p q n h)
-    change _ = _ at hc
-    simpa only [AddCommGrpCat.hom_comp, AddMonoidHom.comp_apply,
-      ModuleCat.BalancedTensor.groupBifunctor_obj_map_mk, mk, z] using hc
+    change
+      ((complex R (zeroDifferentialComplex R A) Q).iCycles n).hom
+          ((zeroDifferentialTensorCyclesMap R A Q p q n h).hom
+            (TensorProduct.Balanced.mk ℤ R (A p) (Q.cycles q) x y)) =
+        (tensorι R A Q p q n h).hom
+          ((((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).map (Q.iCycles q)).hom
+            (TensorProduct.Balanced.mk ℤ R (A p) (Q.cycles q) x y)) at hc
+    erw [ModuleCat.BalancedTensor.groupBifunctor_obj_map_mk] at hc
+    exact hc
   · have hc := congrArg
       (fun f => f.hom (TensorProduct.Balanced.mk ℤ R (A p) (Q.cycles q) x y))
       (zeroDifferentialTensorHomologyIso_cycle_class R A Q p q n h)
-    simpa only [AddCommGrpCat.hom_comp, AddMonoidHom.comp_apply,
-      ModuleCat.BalancedTensor.groupBifunctor_obj_map_mk, z] using hc
+    change
+      ((Sigma.ι (zeroDifferentialTensorHomologyFamily R A Q n) ⟨(p, q), h⟩ ≫
+          (zeroDifferentialTensorHomologyIso R A Q n).hom).hom)
+          ((((ModuleCat.BalancedTensor.groupBifunctor R).obj (A p)).map (Q.homologyπ q)).hom
+            (TensorProduct.Balanced.mk ℤ R (A p) (Q.cycles q) x y)) =
+        ((complex R (zeroDifferentialComplex R A) Q).homologyπ n).hom
+          ((zeroDifferentialTensorCyclesMap R A Q p q n h).hom
+            (TensorProduct.Balanced.mk ℤ R (A p) (Q.cycles q) x y)) at hc
+    erw [ModuleCat.BalancedTensor.groupBifunctor_obj_map_mk] at hc
+    exact hc
 
 end Exact
 

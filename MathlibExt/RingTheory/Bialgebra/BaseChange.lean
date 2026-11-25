@@ -75,6 +75,7 @@ private theorem insert_comul_tmul (t : T) (a : A) :
     TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul,
     TensorProduct.comul_tmul, CommSemiring.comul_apply, hinner]
   simp only [TensorProduct.tmul_sum, map_sum, _root_.TensorProduct.map_tmul,
+    LinearEquiv.coe_toLinearMap,
     TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul,
     TensorProduct.AlgebraTensorModule.tensorTensorTensorComm_tmul]
 
@@ -88,8 +89,9 @@ def cancelBaseChange : T ⊗[S] (S ⊗[R] A) ≃ₐc[T] T ⊗[R] A :=
         TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul])
       (LinearMap.map_mul_of_map_mul_tmul
         (f := (TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A).symm.toLinearMap)
-        (fun _ _ _ _ => by
-          simp only [TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul,
+        (fun t t' a a' => by
+          simp only [LinearEquiv.coe_toLinearMap,
+            TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul,
             Algebra.TensorProduct.tmul_mul_tmul, one_mul])))
     (by
       ext t a
@@ -111,22 +113,41 @@ def cancelBaseChange : T ⊗[S] (S ⊗[R] A) ≃ₐc[T] T ⊗[R] A :=
 /-- The tower comparison multiplies the two scalar coefficients and leaves the right factor. -/
 @[simp]
 theorem cancelBaseChange_tmul (t : T) (s : S) (a : A) :
-    cancelBaseChange R S T A (t ⊗ₜ[S] (s ⊗ₜ[R] a)) = (s • t) ⊗ₜ[R] a :=
-  TensorProduct.AlgebraTensorModule.cancelBaseChange_tmul R S T t a s
+    cancelBaseChange R S T A (t ⊗ₜ[S] (s ⊗ₜ[R] a)) = (s • t) ⊗ₜ[R] a := by
+  change (TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A)
+    (t ⊗ₜ[S] (s ⊗ₜ[R] a)) = _
+  exact TensorProduct.AlgebraTensorModule.cancelBaseChange_tmul R S T t a s
 
 /-- The inverse tower comparison inserts the unit of the intermediate scalar semiring. -/
 @[simp]
 theorem cancelBaseChange_symm_tmul (t : T) (a : A) :
-    (cancelBaseChange R S T A).symm (t ⊗ₜ[R] a) = t ⊗ₜ[S] ((1 : S) ⊗ₜ[R] a) :=
-  TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul R S T t a
+    (cancelBaseChange R S T A).symm (t ⊗ₜ[R] a) = t ⊗ₜ[S] ((1 : S) ⊗ₜ[R] a) := by
+  change (TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A).symm
+    (t ⊗ₜ[R] a) = _
+  exact TensorProduct.AlgebraTensorModule.cancelBaseChange_symm_tmul R S T t a
 
 /-- The underlying linear equivalence is the native tower-cancellation equivalence. -/
 @[simp]
 theorem cancelBaseChange_toLinearEquiv :
     (cancelBaseChange R S T A).toCoalgEquiv.toLinearEquiv =
       TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A := by
-  ext t s a
-  exact cancelBaseChange_tmul R S T A t s a
+  apply LinearEquiv.toLinearMap_injective
+  apply LinearMap.ext
+  intro x
+  change cancelBaseChange R S T A x =
+    (TensorProduct.AlgebraTensorModule.cancelBaseChange R S T T A) x
+  refine TensorProduct.induction_on x ?_ ?_ ?_
+  · simp only [map_zero]
+  · intro t y
+    refine TensorProduct.induction_on y ?_ ?_ ?_
+    · simp only [TensorProduct.tmul_zero, map_zero]
+    · intro s a
+      exact (cancelBaseChange_tmul R S T A t s a).trans
+        (TensorProduct.AlgebraTensorModule.cancelBaseChange_tmul R S T t a s).symm
+    · intro y y' hy hy'
+      simp only [TensorProduct.tmul_add, map_add, hy, hy']
+  · intro x y hx hy
+    simp only [map_add, hx, hy]
 
 /-- Tower cancellation is natural in morphisms of the original bialgebra: direct extension
 after cancellation equals successive extension before cancellation. -/
@@ -137,8 +158,21 @@ theorem cancelBaseChange_naturality
       (cancelBaseChange R S T B).toBialgHom.comp
         (Bialgebra.TensorProduct.map (BialgHom.id T T)
           (Bialgebra.TensorProduct.map (BialgHom.id S S) f)) := by
-  ext t s a
-  simp only [BialgHom.comp_apply, BialgEquiv.coe_toBialgHom,
-    Bialgebra.TensorProduct.map_tmul, BialgHom.id_apply, cancelBaseChange_tmul]
+  apply BialgHom.ext
+  intro x
+  change (Bialgebra.TensorProduct.map (BialgHom.id T T) f) (cancelBaseChange R S T A x) =
+    cancelBaseChange R S T B ((Bialgebra.TensorProduct.map (BialgHom.id T T)
+      (Bialgebra.TensorProduct.map (BialgHom.id S S) f)) x)
+  refine TensorProduct.induction_on x ?_ ?_ ?_
+  · simp only [map_zero]
+  · intro t y
+    refine TensorProduct.induction_on y ?_ ?_ ?_
+    · simp only [TensorProduct.tmul_zero, map_zero]
+    · intro s a
+      simp only [Bialgebra.TensorProduct.map_tmul, BialgHom.id_apply, cancelBaseChange_tmul]
+    · intro y y' hy hy'
+      simp only [TensorProduct.tmul_add, map_add, hy, hy']
+  · intro x y hx hy
+    simp only [map_add, hx, hy]
 
 end Bialgebra.TensorProduct

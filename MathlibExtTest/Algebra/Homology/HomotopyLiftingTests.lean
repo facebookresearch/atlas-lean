@@ -11,6 +11,8 @@ module
 
 public import Mathlib.Algebra.Category.ModuleCat.EnoughInjectives
 public import Mathlib.Algebra.Category.ModuleCat.Projective
+public import Mathlib.Algebra.Category.ModuleCat.Abelian
+public import Mathlib.Algebra.Homology.ShortComplex.ModuleCat
 public import Mathlib.Algebra.Module.ULift
 public import Mathlib.Data.ZMod.Basic
 public import MathlibExt.Algebra.Homology.HomotopyLifting

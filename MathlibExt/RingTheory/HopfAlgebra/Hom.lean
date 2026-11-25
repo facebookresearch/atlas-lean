@@ -48,14 +48,16 @@ theorem comp_antipode (f : A →ₐc[R] B) :
           toConv f.toLinearMap = (1 : WithConv (A →ₗ[R] B)) := by
     have h := congrArg (f.toAlgHom.convPostcomp (C := A))
       (LinearMap.antipode_mul_id (R := R) (C := A))
-    simpa only [map_mul, map_one, AlgHom.convPostcomp_apply, LinearMap.comp_id] using h
+    simpa only [map_mul, map_one, AlgHom.convPostcomp,
+      WithConv.ofConv_toConv, LinearMap.comp_id] using h
   have hright :
       toConv f.toLinearMap *
           toConv ((HopfAlgebra.antipode R (A := B)).comp f.toLinearMap) =
         (1 : WithConv (A →ₗ[R] B)) := by
     have h := congrArg (f.toCoalgHom.convPrecomp (A := B))
       (LinearMap.id_mul_antipode (R := R) (C := B))
-    simpa only [map_mul, map_one, CoalgHom.convPrecomp_apply, LinearMap.id_comp] using h
+    simpa only [map_mul, map_one, CoalgHom.convPrecomp,
+      WithConv.ofConv_toConv, LinearMap.id_comp] using h
   exact toConv_injective (left_inv_eq_right_inv hleft hright)
 
 /-- A bialgebra morphism carries the antipode of each element to the antipode of its image. -/

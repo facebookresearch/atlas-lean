@@ -113,7 +113,7 @@ def iso (F : C ⥤ D ⥤ C) :
   | 0, P, Q, e, M, N, h => by
       simpa only [List.ofFn_zero, obj] using e
   | n + 1, P, Q, e, M, N, h => by
-      simpa only [List.ofFn_succ, obj] using
+      simpa only [List.ofFn_succ, obj, Functor.uncurry] using
         (iso F ((Functor.uncurry.obj F).mapIso (Iso.prod e (h 0)))
           (fun j : Fin n => M j.succ) (fun j : Fin n => N j.succ)
           (fun j : Fin n => h j.succ))
