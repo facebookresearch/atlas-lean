@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.NumberTheory.Cyclotomic.CyclotomicUnitEigenspace
+public import MathlibExt.NumberTheory.Cyclotomic.UnitsModPowersEigenspace
 
 @[expose] public section
 
@@ -99,11 +99,11 @@ private lemma sum_inv_exponentSet_five :
 /-- At `p = 5` the Stickelberger element is `1 + 2⁻¹ = 1 + 3 = -1`, so it acts on the
 class of `1` in `ℤ / 5ℤ` as the class of `4`. Replacing the unit `2` by the identity
 would give the class of `2` instead. -/
-example : stickelbergerEnd (scalarAction 5 (ModP 5 ℤ)) (ModP.proj 5 ℤ 1) =
-    ModP.proj 5 ℤ 4 := by
+example : stickelbergerEnd (scalarAction 5 (ModN ℤ 5)) (ModN.mkQ 5 (1 : ℤ)) =
+    ModN.mkQ 5 (4 : ℤ) := by
   rw [stickelbergerEnd_scalarAction, sum_inv_exponentSet_five, neg_one_smul, ← map_neg,
-    ModP.proj_apply, ModP.proj_apply, QuotientAddGroup.eq, mem_nsmulRange]
-  exact ⟨1, by norm_num⟩
+    ModN.mkQ_eq_mkQ_iff]
+  exact ⟨-1, by norm_num⟩
 
 /-- At `p = 3` the scalar action is an `ω ^ (p - 2)` eigenvector condition, so the
 Stickelberger endomorphism acts as `eigenvalueScalar 3`. -/
@@ -116,23 +116,22 @@ example {A : Type*} [AddCommGroup A] [Module (ZMod 3) A] (a : A) :
 /-! ### The induced endomorphism of `M / pM` -/
 
 /-- The class of `1` in `ℤ / 5ℤ` is nonzero, so the next example is not vacuous. -/
-example : ModP.proj 5 ℤ 1 ≠ 0 := by
+example : ModN.mkQ 5 (1 : ℤ) ≠ 0 := by
   intro h
-  obtain ⟨y, hy⟩ := (ModP.proj_eq_zero_iff 5 ℤ).mp h
+  obtain ⟨y, hy⟩ := (ModN.mkQ_eq_zero_iff 5).mp h
   rw [nsmul_eq_mul] at hy
   push_cast at hy
   omega
 
-example : ModP.proj 5 ℤ 5 = 0 :=
-  (ModP.proj_eq_zero_iff 5 ℤ).mpr ⟨1, by norm_num⟩
+example : ModN.mkQ 5 (5 : ℤ) = 0 :=
+  (ModN.mkQ_eq_zero_iff 5).mpr ⟨1, by norm_num⟩
 
 /-- Doubling acts on representatives: it sends the class of `3` to the class of `6`,
 which is the class of `1` modulo `5`. -/
-example : ModP.mapEnd 5 (AddMonoidHom.mulLeft (2 : ℤ)) (ModP.proj 5 ℤ 3) =
-    ModP.proj 5 ℤ 1 := by
-  rw [ModP.mapEnd_proj, ModP.proj_apply, ModP.proj_apply, QuotientAddGroup.eq,
-    mem_nsmulRange]
-  exact ⟨-1, by norm_num [AddMonoidHom.coe_mulLeft]⟩
+example : modNEnd 5 (AddMonoidHom.mulLeft (2 : ℤ)) (ModN.mkQ 5 (3 : ℤ)) =
+    ModN.mkQ 5 (1 : ℤ) := by
+  rw [modNEnd_mkQ, ModN.mkQ_eq_mkQ_iff]
+  exact ⟨1, by norm_num [AddMonoidHom.coe_mulLeft]⟩
 
 /-! ### The unit action on representatives -/
 
@@ -142,17 +141,15 @@ private def negOneOne : (ℤ × ℤ)ˣ :=
 /-- Swapping the factors of `ℤ × ℤ` moves the class of the unit `(-1, 1)` modulo
 squares, so the induced unit action is not the identity on `Rˣ / (Rˣ)²`. -/
 example : unitsEnd 2 (ℤ × ℤ) RingEquiv.prodComm
-      (ModP.proj 2 _ (Additive.ofMul negOneOne)) ≠
-    ModP.proj 2 _ (Additive.ofMul negOneOne) := by
+      (ModN.mkQ 2 (Additive.ofMul negOneOne)) ≠
+    ModN.mkQ 2 (Additive.ofMul negOneOne) := by
   rw [unitsEnd_proj]
   intro h
-  rw [ModP.proj_apply, ModP.proj_apply, QuotientAddGroup.eq, mem_nsmulRange] at h
-  obtain ⟨y, hy⟩ := h
+  obtain ⟨y, hy⟩ := (ModN.mkQ_eq_mkQ_iff 2).mp h
   have h1 := congrArg (fun z : Additive (ℤ × ℤ)ˣ => ((Additive.toMul z : (ℤ × ℤ)ˣ) : ℤ × ℤ).1)
-    (eq_neg_add_iff_add_eq.mp hy)
-  have h2 : ((Additive.toMul y : (ℤ × ℤ)ˣ) : ℤ × ℤ).1 ^ 2 = -1 := by
-    simpa [negOneOne] using h1
-  nlinarith [sq_nonneg ((Additive.toMul y : (ℤ × ℤ)ˣ) : ℤ × ℤ).1]
+    (eq_sub_iff_add_eq.mp hy)
+  simp [negOneOne] at h1 <;>
+    nlinarith [sq_nonneg ((Additive.toMul y : (ℤ × ℤ)ˣ) : ℤ × ℤ).1]
 
 /-! ### The omega projector -/
 
@@ -168,13 +165,13 @@ example (i : ℕ) (a : M) :
 
 end OmegaIdempotent
 
-/-- On the cyclotomic units modulo `p`-th powers, the projector lands in the
+/-- On the units of `𝓞 (ℚ(ζ_5))` modulo fifth powers, the projector lands in the
 `ω ^ 2` eigenspace. -/
-example (a : ModP 5 (Additive (𝓞 (CyclotomicField 5 ℚ))ˣ)) :
+example (a : ModN (Additive (𝓞 (CyclotomicField 5 ℚ))ˣ) 5) :
     omegaIdempotent 5 (unitsGalAction 5) 2 a ∈ unitsOmegaEigenspace 5 2 :=
   omegaIdempotent_mem_unitsOmegaEigenspace 5 2 a
 
-example : (0 : ModP 5 (Additive (𝓞 (CyclotomicField 5 ℚ))ˣ)) ∈
+example : (0 : ModN (Additive (𝓞 (CyclotomicField 5 ℚ))ˣ) 5) ∈
     unitsOmegaEigenspace 5 2 :=
   Submodule.zero_mem _
 
