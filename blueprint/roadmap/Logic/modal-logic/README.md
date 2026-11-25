@@ -15,3 +15,5 @@ Logics of necessity and possibility interpreted on Kripke models, their axiomati
 - [Soundness and completeness of normal modal logics](soundness-and-completeness-of-normal-modal-logic/README.md)
 - [Filtration and the finite model property](filtration-and-the-finite-model-property/README.md)
 - [Standard translation of modal logic](standard-translation-of-modal-logic/README.md)
+
+- [Intuitionistic modal logics CK and IK](intuitionistic-modal-logics-ck-and-ik.md)

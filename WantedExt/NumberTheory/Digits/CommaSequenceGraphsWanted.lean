@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Digits.Defs
+public import MathlibExt.NumberTheory.Digits.CommaChildParent
 public import MathlibExt.NumberTheory.Digits.CommaParent
 
 namespace MetaMathlibExt
@@ -49,22 +50,6 @@ public theorem_wanted two_commaChildren_iff (b : ℕ) (hb : 2 ≤ b) :
       ((∃ y₁ y₂ : Fin b, y₁ ≠ y₂ ∧ IsCommaCandidate b n y₁ ∧ IsCommaCandidate b n y₂) ↔
         ∃ d i : ℕ, 1 ≤ d ∧ d ≤ b - 2 ∧
           Nat.digits b n = [b - 1 - d, d] ++ List.replicate i (b - 1) ++ [d])
-
-/-- **Recovering the parent of a comma-child.** Fix a base $b \ge 2$ and a natural number $n$.
-Call $n$ a comma-child of $k$ if $n = k + b\,(k \bmod b) + y$ for some comma candidate digit $y$
-of $k$ in base $b$. Let $f$ be the most significant base-$b$ digit of $n$ and let
-$x = (n - f) \bmod b$. If $n$ is a comma-child of a positive integer $k$, then
-$k = n - x b - f$; and if the integer $n - x b - f$ is negative, then $n$ is not a comma-child
-of any positive integer.
-
-Source: Éric Angelini, Michael S. Branicky, Giovanni Resta, N. J. A. Sloane, and
-David W. Wilson, *The Comma Sequence: A Simple Sequence with Bizarre Properties*, The Fibonacci
-Quarterly 62 (2024), no. 3, Lemma 5.3 (`fq-2024-sloane05302024-lem-5.3`). -/
-public theorem_wanted commaChild_parent_eq (b n : ℕ) (hb : 2 ≤ b) :
-    (∀ k : ℕ, 0 < k → (∃ y : Fin b, IsCommaCandidate b k y ∧ n = k + b * (k % b) + y.val) →
-      (k : ℤ) = n - ((n - commaMsd b n) % b : ℕ) * b - commaMsd b n) ∧
-    ((n : ℤ) - ((n - commaMsd b n) % b : ℕ) * b - commaMsd b n < 0 →
-      ¬ ∃ k : ℕ, 0 < k ∧ ∃ y : Fin b, IsCommaCandidate b k y ∧ n = k + b * (k % b) + y.val)
 
 /-- **Numbers that are not comma successors.** Let $b \ge 3$ and $n \ge b^2 - 1$. Then $n$ is not
 the comma successor in base $b$ of any positive integer if and only if $n = c\, b^i$ for some
