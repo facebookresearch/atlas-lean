@@ -42,9 +42,16 @@ public import Mathlib.Topology.KrullDimension
 
 A Noetherian local ring of Krull dimension at least two has an adic
 completion of Krull dimension at least two, by faithful flatness and
-going-down. In fact the two Krull dimensions are equal: one inequality is
-Krull's height theorem applied to generators of the maximal ideal, and
-the other is going-down along the faithfully flat completion map.
+going-down. In fact the two Krull dimensions are equal. The completion's
+dimension is at most the ring's: take a system of parameters of the ring, as
+many elements as its dimension spanning an ideal primary to the maximal ideal.
+A power of the completion's maximal ideal lies in the ideal spanned by their
+images, so that maximal ideal is a minimal prime over it, and Krull's height
+theorem bounds its height, which is the dimension of the completion, by the
+number of elements. The completion's dimension is at least the ring's:
+faithful flatness gives a prime of the completion over the top of a chain of
+primes of the ring, and going-down lifts the chain to one of the same length
+in the completion.
 -/
 
 @[expose] public section
@@ -74,9 +81,9 @@ theorem IsLocalRing.ringKrullDim_adicCompletion_maximalIdeal_eq
     (R : Type*) [CommRing R] [IsNoetherianRing R] [IsLocalRing R] :
     ringKrullDim (AdicCompletion (IsLocalRing.maximalIdeal R) R) = ringKrullDim R := by
   classical
-  haveI : IsNoetherianRing (AdicCompletion (IsLocalRing.maximalIdeal R) R) :=
+  have : IsNoetherianRing (AdicCompletion (IsLocalRing.maximalIdeal R) R) :=
     AdicCompletion.isNoetherianRing_of_isNoetherianRing _
-  haveI : Module.FaithfullyFlat R (AdicCompletion (IsLocalRing.maximalIdeal R) R) :=
+  have : Module.FaithfullyFlat R (AdicCompletion (IsLocalRing.maximalIdeal R) R) :=
     Module.FaithfullyFlat.of_flat_of_isLocalHom
   refine le_antisymm ?_ ?_
   · rw [← IsLocalRing.maximalIdeal_height_eq_ringKrullDim
@@ -111,14 +118,14 @@ theorem IsLocalRing.ringKrullDim_adicCompletion_maximalIdeal_eq
       refine ⟨⟨(IsLocalRing.maximalIdeal.isMaximal _).isPrime, ?_⟩, fun q hq _ => ?_⟩
       · rw [hspan, AdicCompletion.maximalIdeal_eq_map]
         exact Ideal.map_mono hsle
-      · haveI := hq.1
+      · have := hq.1
         exact (Ideal.IsPrime.pow_le_iff (Nat.succ_ne_zero N)).1 (hpow.trans hq.2)
     exact (Ideal.height_le_card_of_mem_minimalPrimes_span_finset hmin').trans
       (Nat.cast_le.2 Finset.card_image_le)
   · refine (iSup_le fun l => ?_ : Order.krullDim (PrimeSpectrum R) ≤ _)
     obtain ⟨Q, hQ⟩ := PrimeSpectrum.comap_surjective_of_faithfullyFlat
       (A := R) (B := AdicCompletion (IsLocalRing.maximalIdeal R) R) l.last
-    haveI : Q.asIdeal.LiesOver l.last.asIdeal := ⟨by rw [← hQ]; rfl⟩
+    have : Q.asIdeal.LiesOver l.last.asIdeal := ⟨by rw [← hQ]; rfl⟩
     obtain ⟨L, hL, -, -⟩ := Ideal.exists_ltSeries_of_hasGoingDown l Q.asIdeal
     rw [← hL]
     exact Order.LTSeries.length_le_krullDim L

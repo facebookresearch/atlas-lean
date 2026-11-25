@@ -13,13 +13,12 @@ public import MathlibExt.RingTheory.AdicCompletion.KrullDimension
 @[expose] public section
 
 /-- Exact-source consumer: the original binders and hypotheses. -/
-theorem exactSource
+private theorem exactSource
     (R : Type*) [CommRing R] [IsNoetherianRing R] [IsLocalRing R] :
     ringKrullDim (AdicCompletion (IsLocalRing.maximalIdeal R) R) = ringKrullDim R :=
   IsLocalRing.ringKrullDim_adicCompletion_maximalIdeal_eq R
 
-/-- Boundary instance: for a field the maximal ideal is zero, and the
-equality specializes to the completion at the zero ideal. -/
+/-- Boundary instance: the equality for a field, whose maximal ideal is zero. -/
 example (K : Type*) [Field K] :
     ringKrullDim (AdicCompletion (IsLocalRing.maximalIdeal K) K) = ringKrullDim K :=
   IsLocalRing.ringKrullDim_adicCompletion_maximalIdeal_eq K
