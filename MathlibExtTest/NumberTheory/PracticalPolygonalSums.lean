@@ -64,3 +64,10 @@ example : ¬ IsPracticalNumber 10 := by
   intro h
   have := isPracticalNumber_eq_one_or_two 10 h (by decide) (by decide)
   omega
+
+-- For square numbers, evaluating at the first admissible index bounds the coefficient from below.
+example (c : ℕ) : ∃ A : ℕ, 2 * (2 * c) ^ 2 ≤ A ∧
+    ∀ x : ℕ, 1 ≤ x → 2 * (2 * c * x) ^ 2 ≤ A * x ^ 2 := by
+  obtain ⟨A, hA⟩ := exists_two_polygonal_two_mul_le_mul_sq 4 c (by decide)
+  simp only [Nat.polygonalNumber_four] at hA
+  exact ⟨A, by simpa using hA 1 le_rfl, hA⟩

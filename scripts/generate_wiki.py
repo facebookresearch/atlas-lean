@@ -28,7 +28,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from autoform_cli.lean import index_project
-from autoform_cli.markdown import link_targets
+from autoform_cli.markdown import article_parts, link_targets, outside_fences
 from autoform_cli.status import DEFINITION_DECLARATIONS
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -1160,7 +1160,25 @@ def walk(node: Container):
             yield child
 
 
-def render_coverage(rows: list[tuple[str, str, str]]) -> str:
+def library_navigation_section(text: str) -> str:
+    """Keep authored library links; refuse ambiguous headings rather than erase them."""
+    parts = article_parts(text)
+    if any(section.title != "Library navigation" for section in parts.sections):
+        raise ValueError("Coverage authored sections belong under ## Library navigation, with lower-level headings")
+    if len(parts.sections) > 1:
+        raise ValueError("Coverage has more than one Library navigation section")
+
+    def check_unparsed_heading(line: str) -> str:
+        # A setext heading or one hidden by a comment stays in the preamble.
+        if line.strip().lstrip("#").strip().casefold() == "library navigation":
+            raise ValueError("Coverage must use a visible ## Library navigation heading")
+        return line
+
+    outside_fences(parts.statement, check_unparsed_heading)
+    return f"## Library navigation\n\n{parts.sections[0].body}\n" if parts.sections else ""
+
+
+def render_coverage(rows: list[tuple[str, str, str]], library_navigation: str = "") -> str:
     lines = [
         "---",
         "kind: coverage",
@@ -1181,6 +1199,8 @@ def render_coverage(rows: list[tuple[str, str, str]]) -> str:
         "| --- | --- | --- |",
     ]
     lines += [f"| {area} | {coverage} | {evidence} |" for area, coverage, evidence in rows]
+    if library_navigation:
+        lines += ["", library_navigation.rstrip("\n")]
     return "\n".join(lines) + "\n"
 
 
@@ -1189,6 +1209,13 @@ def render_roadmap_root(taxonomy: dict, subjects: list[str], previous: str | Non
     for region, members in regions(taxonomy, subjects).items():
         lines += ["", f"## {region}", ""]
         lines += [f"- [{taxonomy['subjects'][subject]['title']}]({subject}/README.md)" for subject in members]
+    for library, description in (
+        ("Domains", "Application-specific models and their roadmaps."),
+        ("CSLibExt", "Computer-science developments and their roadmaps."),
+        ("PhyslibExt", "Physics developments and their roadmaps."),
+    ):
+        lines += ["", f"## {library}", "", description, "",
+                  f"- [Browse {library}](../coverage/README.md#{library.lower()})"]
     return frontmatter([], previous) + "\n".join(lines) + "\n"
 
 
@@ -1352,7 +1379,9 @@ def generate(titles: dict | None = None, dependency_file: Path | None = None, re
     # The map draws one region per area, with its subjects inside.
     atlas = {"schema": "autoform-atlas/v1", "areas": regions(taxonomy, subjects)}
     files[VAULT / "atlas.json"] = json.dumps(atlas, indent=2, ensure_ascii=False) + "\n"
-    files[VAULT / "coverage" / "README.md"] = render_coverage(coverage)
+    coverage_path = VAULT / "coverage" / "README.md"
+    navigation = library_navigation_section(coverage_path.read_text(encoding="utf-8")) if coverage_path.is_file() else ""
+    files[coverage_path] = render_coverage(coverage, navigation)
     labels = {node.path: page_key(node) for node in walk(every_v2) if isinstance(node, Target) and not node.lean}
     files[PAGE_MAP] = render_page_map(files, labels)
     return files

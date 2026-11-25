@@ -14,8 +14,9 @@ public import Mathlib.Data.Nat.Log
 public import Mathlib.Data.Tree.Basic
 
 /-!
-# D-node counts and binary digit sums
+# Dyadic normalization, D-node counts and binary digit sums
 
+For `n = 2 ^ k + r` with `r < 2 ^ k`, the dyadic mantissa is the rational number `r / 2 ^ k`.
 The even and odd recurrences for D-node counts determine the Hamming weight of a positive
 integer from the counts at that integer and its successor.
 -/
@@ -23,6 +24,22 @@ integer from the counts at that integer and its successor.
 namespace MetaMathlibExt
 
 @[expose] public section
+
+/-- **Normalized form of $n = 2^k + r$.** Let $n$, $k$ and $r$ be natural numbers with $r < 2^k$
+and $n = 2^k + r$, and let $x$ be a rational number with $n = 2^k (1 + x)$. Then $x = r / 2^k$
+and $1 + x = n / 2^k$.
+
+Source: Laura Monroe, *Takagi Function Identities on Dyadic Rationals*, Journal of Integer
+Sequences 27 (2024), Article 24.2.7, Lemma 2 (`jis-2024-24.2.7-lem-2`). -/
+public theorem dyadic_mantissa_eq (n k r : ℕ) (x : ℚ) (hr : r < 2 ^ k)
+    (hn : n = 2 ^ k + r) (hx : (n : ℚ) = 2 ^ k * (1 + x)) :
+    x = r / 2 ^ k ∧ 1 + x = n / 2 ^ k := by
+  have hpow : (2 : ℚ) ^ k ≠ 0 := by exact_mod_cast (Nat.zero_lt_of_lt hr).ne'
+  have hn' : (n : ℚ) = 2 ^ k + r := by exact_mod_cast hn
+  rw [mul_comm] at hx
+  refine ⟨(eq_div_iff hpow).2 ?_, (eq_div_iff hpow).2 hx.symm⟩
+  rw [hn', add_mul, one_mul] at hx
+  exact (add_left_cancel hx).symm
 
 /-- **Number of D-nodes of the divide-and-conquer tree.** The number $\delta(n)$ of D-nodes in the
 divide-and-conquer tree on $n$ leaves (OEIS A296062) is defined by the recurrence the paper
@@ -214,7 +231,7 @@ public theorem hammingWeight_eq_dcDNodes_diff (n : ℕ) (hn : 0 < n) :
     ((Nat.digits 2 n).sum : ℚ) =
       ((dcDNodes n : ℚ) - dcDNodes (n + 1) + Nat.log 2 n) / 2 + 1 := by
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     obtain rfl | hn₂ : n = 1 ∨ 2 ≤ n := by omega
     · norm_num [dcDNodes]
     set m := n / 2 with hm

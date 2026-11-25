@@ -13,11 +13,16 @@ public import MathlibExt.Combinatorics.InfiniteWord.FibonacciWord
 import Mathlib.Data.Nat.Init
 
 /-!
-# Fibonacci and iccanobiF iterates of a
+# Fibonacci and iccanobiF iterates of a and b
 
 With `a` encoded by `true`, the Fibonacci morphism `F` and the backward morphism `B` satisfy
 `F(w)a = aB(w)`. Applying `B` to either conjugacy identity and cancelling the final `a` gives
 the identity for the next iterate.
+
+Since `B(b) = a`, the iterate `B^(k+1)(b)` is `B^k(a)`, so the identities for the iterates of `b`
+are those for the iterates of `a`, one step later. These are Propositions 4.15 and 4.16 of the
+arXiv version of Coons, Ramsey and Strungaru, *Relative Position in Binary Substitutions*
+(arXiv:2410.12173v1), which states the second without proof.
 -/
 
 namespace MetaMathlibExt
@@ -74,5 +79,44 @@ public theorem fibonacci_iccanobiF_conjugate_a (n : ℕ) (hn : 1 ≤ n) :
     have odd := step (u := [true, false]) (v := [false, true]) rfl rfl ih.1
     have even := step rfl rfl odd
     exact ⟨even, odd⟩
+
+namespace fibonacci_iccanobiF_conjugate_b
+
+/-- One iccanobiF step sends `b` to `a`, so the `(k + 1)`-st iterate of `b` is the `k`-th
+iterate of `a`. -/
+private theorem iterate_succ_false (k : ℕ) :
+    (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[k + 1]
+        [false] =
+      (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[k] [true] :=
+  Function.iterate_succ_apply _ k [false]
+
+end fibonacci_iccanobiF_conjugate_b
+
+open fibonacci_iccanobiF_conjugate_b in
+/-- **Conjugacy of the Fibonacci and iccanobiF iterates of $b$.** Let $\varrho_F'$ be the
+iccanobiF substitution $a \mapsto ba$, $b \mapsto a$, extended to finite words by concatenation,
+and for each $k$ let $g_k$ be the finite Fibonacci word $f_k$ with each $0$ written as $a$ and
+each $1$ as $b$. For every $n \ge 1$,
+
+$$ab\,g_{2n} = (\varrho_F')^{2n+1}(b)\,ba, \qquad ba\,g_{2n-1} = (\varrho_F')^{2n}(b)\,ab.$$
+
+Since $g_k = \varrho_F^k(a) = \varrho_F^{k+1}(b)$ for the Fibonacci substitution $\varrho_F$
+($a \mapsto ab$, $b \mapsto a$), this says $ab\,\varrho_F^{2n+1}(b) = (\varrho_F')^{2n+1}(b)\,ba$
+and $ba\,\varrho_F^{2n}(b) = (\varrho_F')^{2n}(b)\,ab$.
+
+Source: Michael Coons, Christopher Ramsey and Nicolae Strungaru, *Relative Position in
+Binary Substitutions*, Journal of Integer Sequences 28 (2025), Article 25.1.5, Proposition 52
+(`jis-2025-25.1.5-prop-52`). -/
+public theorem fibonacci_iccanobiF_conjugate_b (n : ℕ) (hn : 1 ≤ n) :
+    [true, false] ++ (fibWord (2 * n)).map (!·) =
+        (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[2 * n +
+        1] [false] ++ [false, true] ∧
+      [false, true] ++ (fibWord (2 * n - 1)).map (!·) =
+        (fun u : List Bool => u.flatMap fun x => if x then [false, true] else [true])^[2 *
+            n] [false] ++ [true, false] := by
+  obtain ⟨h₁, h₂⟩ := fibonacci_iccanobiF_conjugate_a n hn
+  refine ⟨h₁.trans ?_, h₂.trans ?_⟩
+  · rw [iterate_succ_false]
+  · rw [← iterate_succ_false, Nat.sub_add_cancel (by omega : 1 ≤ 2 * n)]
 
 end MetaMathlibExt

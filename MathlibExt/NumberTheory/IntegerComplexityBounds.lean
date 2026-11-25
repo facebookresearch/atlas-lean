@@ -130,4 +130,46 @@ public theorem complexity_lt_of_gt_extremal (a b m : ℕ)
     _ ≤ bound (2 * a + 3 * b) := hmono (hc.trans_le h)
     _ = 2 ^ a * 3 ^ b := bound_extremal a b ha hab
 
+/-- **The function $g$ bounds integer complexity from below.** Write $\lVert n \rVert$ for the
+integer complexity of a positive integer $n$, the least number of ones needed to write $n$ using
+$1$, $+$, $\times$ and parentheses. For a positive integer $n$, let $a$ be the largest natural
+number with $3^a \le n$, and let $g(n) = 3a$ if $n < \frac{4}{3} \cdot 3^a$, $g(n) = 3a + 1$ if
+$\frac{4}{3} \cdot 3^a \le n < 2 \cdot 3^a$, and $g(n) = 3a + 2$ if $n \ge 2 \cdot 3^a$. Then
+$g(n) \le \lVert n \rVert$ for every positive integer $n$.
+
+Source: Juan Arias de Reyna, "Complexity of Natural
+Numbers", Corollary 2. -/
+public theorem complexityLowerBoundG_le (n : ℕ) (hn : 1 ≤ n) :
+    complexityLowerBoundG n ≤ cx n := by
+  have hpow := Nat.pow_log_le_self 3 (by omega : n ≠ 0)
+  unfold complexityLowerBoundG
+  dsimp only
+  cases ha : Nat.log 3 n with
+  | zero =>
+    have hn3 : n < 3 := (Nat.log_eq_zero_iff.mp ha).resolve_right (by decide)
+    interval_cases n
+    · exact Nat.zero_le _
+    · -- Squaring an expression for two gives an expression for four.
+      change 2 ≤ cx 2
+      have hfour : 3 < cx 4 := complexity_lt_of_gt_extremal 0 1 4 (by decide)
+        (by decide) (by decide)
+      have hmul : cx 4 ≤ cx 2 + cx 2 := IntegerComplexity.complexity_mul_le 2 2
+      omega
+  | succ k =>
+    rw [ha, pow_succ] at hpow
+    rw [pow_succ]
+    have hpos : 0 < 3 ^ k := Nat.pow_pos (by decide)
+    -- Each interval starts above the extremal value for one fewer one.
+    split
+    · have h := complexity_lt_of_gt_extremal 1 k n (by decide) (by omega)
+        (by simp only [pow_one]; omega)
+      omega
+    · split
+      · have h := complexity_lt_of_gt_extremal 0 (k + 1) n (by decide) (by omega)
+          (by simp only [pow_zero, one_mul, pow_succ]; omega)
+        omega
+      · have h := complexity_lt_of_gt_extremal 2 k n (by decide) (by omega)
+          (by change 4 * 3 ^ k < n; omega)
+        omega
+
 end MathlibExt.NumberTheory.IntegerComplexityWanted

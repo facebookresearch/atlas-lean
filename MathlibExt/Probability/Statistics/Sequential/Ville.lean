@@ -70,7 +70,7 @@ theorem Supermartingale.ville_maximal_ineq
         ≤ a * μ.real {ω | a ≤ stoppedValue M τ ω} := by
           refine mul_le_mul_of_nonneg_left (measureReal_mono ?_) ha.le
           rintro ω ⟨n, hn, h⟩
-          exact stoppedValue_hittingBtwn_mem ⟨n, ⟨Nat.zero_le n, hn⟩, h⟩
+          exact stoppedValue_hittingBtwn_mem (s := Set.Ici a) ⟨n, ⟨Nat.zero_le n, hn⟩, h⟩
       _ ≤ ∫ ω, stoppedValue M τ ω ∂μ :=
           mul_meas_ge_le_integral_of_nonneg (ae_of_all _ fun ω => hnonneg _ ω)
             (integrable_stoppedValue ℕ hτ hsup.integrable hbdd) a

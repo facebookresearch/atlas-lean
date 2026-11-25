@@ -1078,8 +1078,8 @@ private theorem zagTriangle_merge_pow_left {α : Type*} [Finite α]
   let g := f * zagTriangle a b c
   let L := zagReturnTime f b
   induction r using Nat.case_strong_induction_on with
-  | hz => omega
-  | hi r ih =>
+  | zero => omega
+  | succ r ih =>
       by_cases hrz : r = 0
       · subst r
         have hab_ne : a ≠ b := fun h => hab (h.sameCycle f)
@@ -1117,8 +1117,8 @@ private theorem zagTriangle_merge_pow_middle {α : Type*} [Finite α]
   let g := f * zagTriangle a b c
   let L := zagReturnTime f c
   induction r using Nat.case_strong_induction_on with
-  | hz => omega
-  | hi r ih =>
+  | zero => omega
+  | succ r ih =>
       by_cases hrz : r = 0
       · subst r
         simp [Equiv.Perm.mul_apply]
@@ -1421,8 +1421,8 @@ private theorem zagFirstSwap_pow_between {n : ℕ}
   let H := zagCycleHit π a b hab
   let h := π * Equiv.swap a c
   induction r using Nat.case_strong_induction_on with
-  | hz => omega
-  | hi r ih =>
+  | zero => omega
+  | succ r ih =>
       by_cases hrz : r = 0
       · subst r
         calc
@@ -1597,8 +1597,8 @@ private theorem zagCutAfterSwap_same_image {n : ℕ}
       ((π * Equiv.swap a c) ^ r) a = (π ^ (t + r)) a := by
     intro r hr0 hrd
     induction r using Nat.case_strong_induction_on with
-    | hz => omega
-    | hi r ih =>
+    | zero => omega
+    | succ r ih =>
         by_cases hrz : r = 0
         · subst r
           calc
@@ -6108,7 +6108,7 @@ private theorem zagCyclePairs_cross_mul_gap
     (n + 1).choose 2 * Nat.card (ZagCyclePairs n k) =
       (n - 1).factorial * Nat.stirlingFirst (n + 1) k := by
   induction r using Nat.strong_induction_on generalizing k with
-  | h r ih =>
+  | ind r ih =>
       have hparity : Even (n - k) := ⟨r, by omega⟩
       have hpairs := zagCyclePairs_recurrence n k hn hk hkn hparity
       have hstirling := zagStirlingFirst_recurrence n k hn hk hkn

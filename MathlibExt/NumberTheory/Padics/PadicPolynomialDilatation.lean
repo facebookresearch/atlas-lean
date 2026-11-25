@@ -184,7 +184,7 @@ theorem padicPolynomialDilatation_exists (p : ℕ) [Fact p.Prime]
   have hred : Polynomial.map PadicInt.toZMod g ≠ 0 := by
     intro hcon
     apply hredj
-    have hcc := congrArg (fun r => Polynomial.coeff r j) hcon
+    have hcc := congrArg (fun r : Polynomial (ZMod p) => r.coeff j) hcon
     simpa [Polynomial.coeff_map] using hcc
   have hmap' : Polynomial.map (algebraMap (PadicInt p) (Padic p)) g
       = Polynomial.C (((p : Padic p) ^ e)⁻¹)

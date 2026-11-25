@@ -86,7 +86,7 @@ theorem map_withDensity_eq_withDensity_abs_det_jacobianMatrix_symm {d : ℕ}
 measure: the preimage under `T` of a null set is the image of a null set under `T⁻¹`, hence null. -/
 theorem quasiMeasurePreserving_of_differentiable_symm (T : E ≃ᵐ E)
     (hT : Differentiable ℝ T.symm) : QuasiMeasurePreserving T μ μ := by
-  refine ⟨T.measurable, Measure.AbsolutelyContinuous.mk fun s hs hs0 => ?_⟩
+  refine ⟨T.measurable.aemeasurable, Measure.AbsolutelyContinuous.mk fun s hs hs0 => ?_⟩
   rw [Measure.map_apply T.measurable hs, ← T.image_symm]
   exact addHaar_image_eq_zero_of_differentiableOn_of_addHaar_eq_zero μ hT.differentiableOn hs0
 

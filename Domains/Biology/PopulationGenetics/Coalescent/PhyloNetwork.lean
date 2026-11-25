@@ -56,20 +56,19 @@ open Finset
 
 namespace MathlibExt.Biology.PopulationGenetics.Coalescent
 
-/-- An **age-monotone parent-bounded routing network**: an admixture graph (rooted, acyclic,
-every non-root node with one parent (a tree node) or two parents (a reticulation node),
-proportions normalized at every non-root node) equipped with node ages. This is the routing
-skeleton of a rooted phylogenetic network with inheritance probabilities
-(Yu–Degnan–Nakhleh 2012; Zhang–Ogilvie–Drummond–Stadler 2018), without the binary
-out-degree classification, leaf labels, or strict temporal constraints of the fully binary
-notion; out-degrees are unrestricted. Node ages `time` (measured backward from the present)
-are only weakly monotone along edges: a parent is never younger than its child
-(`time v ≤ time u`, so zero-length edges are allowed; constant ages are not excluded), and
-the branch length of an edge `u → v` is `time u - time v`. This is strictly weaker than time
-consistency in the phylogenetic sense, which would in addition force tree edges to advance
-strictly in time. A lineage at `v` traces back to the parent `u` with probability
-`inherit v u = prop v u`: this vanishes off the parents and sums to `1` over the parents, so
-it is `1` at a tree node and `γ, 1 - γ` at a reticulation node. -/
+/-- An **age-monotone parent-bounded routing network**: an admixture graph on a finite set `V` of
+nodes (rooted, acyclic, every non-root node with one parent (a tree node) or two parents (a
+reticulation node), proportions normalized at every non-root node) equipped with node ages. This is
+the routing skeleton of a rooted phylogenetic network with inheritance probabilities
+(Yu–Degnan–Nakhleh 2012; Zhang–Ogilvie–Drummond–Stadler 2018), without the binary out-degree
+classification, leaf labels, or strict temporal constraints of the fully binary notion; out-degrees
+are unrestricted. Node ages `time` (measured backward from the present) are only weakly monotone
+along edges: a parent is never younger than its child (`time v ≤ time u`, so zero-length edges are
+allowed; constant ages are not excluded), and the branch length of an edge `u → v` is
+`time u - time v`. This is strictly weaker than time consistency in the phylogenetic sense, which
+would in addition force tree edges to advance strictly in time. A lineage at `v` traces back to the
+parent `u` with probability `inherit v u = prop v u`: this vanishes off the parents and sums to `1`
+over the parents, so it is `1` at a tree node and `γ, 1 - γ` at a reticulation node. -/
 structure PhyloNetwork (V : Type*) [Fintype V] extends AdmixtureGraph V where
   /-- Node ages, measured backward in time. -/
   time : V → ℝ
@@ -89,7 +88,8 @@ parent of `v` (edges run from ancestor to descendant). -/
 def toDigraph : Digraph V where
   Adj u v := u ∈ N.parents v
 
-/-- The digraph of the network (the name under which it was originally recorded). -/
+/-- The parent-to-child digraph of the network, `toDigraph`: `Adj u v` iff `u` is a parent of `v`
+(edges run from ancestor to descendant). -/
 abbrev G : Digraph V := N.toDigraph
 
 /-- Adjacency in the derived digraph is decidable once equality on `V` is. -/
@@ -147,7 +147,8 @@ theorem nonnegLengths : N.NonnegLengths := fun u v h => sub_nonneg.2 (N.time_le 
 /-- Membership in `parents v` is adjacency into `v`. -/
 theorem mem_parents {u v : V} : u ∈ N.parents v ↔ N.G.Adj u v := Iff.rfl
 
-/-- **Inheritance probabilities lie in `[0, 1]`** (`γ ∈ [0, 1]`). -/
+/-- **Inheritance probabilities are at most `1`**; with `inherit_nonneg` they lie in `[0, 1]`
+(`γ ∈ [0, 1]`). -/
 theorem inherit_le_one (v u : V) : N.inherit v u ≤ 1 :=
   N.toAdmixtureGraph.prop_le_one v u
 
@@ -157,9 +158,12 @@ theorem inherit_eq_one_sub [DecidableEq V] {v u₁ u₂ : V} (h : N.parents v = 
     (hne : u₁ ≠ u₂) : N.inherit v u₂ = 1 - N.inherit v u₁ :=
   N.toAdmixtureGraph.prop_eq_one_sub_of_parents_eq_pair h hne
 
-/-- The **reticulation routing kernel**: `k` lineages entering `v` (backward in time) move
-to parents independently, lineage `i` to `a i`, with probability `∏ i, inherit v (a i)`. This
-is the underlying admixture graph's routing kernel. -/
+/-- The **reticulation routing kernel** `∏ i, inherit v (a i)`. At a non-root node `v` it is the
+probability that `k` lineages entering `v` (backward in time) move to parents independently,
+lineage `i` to `a i`, and its row sums to `1` (`sum_routeProb`); at the root, which has no parent,
+every assignment of `k > 0` lineages has value `0` (`routeProb_root`). For `k = 0` the single empty
+assignment has probability `1`, at every node. This is the underlying admixture graph's routing
+kernel. -/
 abbrev routeProb (v : V) {k : ℕ} (a : Fin k → V) : ℝ :=
   N.toAdmixtureGraph.routeProb v a
 
@@ -199,8 +203,9 @@ theorem sum_routeProb_root {k : ℕ} (hk : 0 < k) :
 def activeGraph : Digraph V where
   Adj u v := N.G.Adj u v ∧ 0 < N.inherit v u
 
-/-- **`γ ∈ {0, 1}` gives a tree.** If every inheritance probability is `0` or `1`, the edges
-used with positive probability form a rooted tree on the nodes of the network. -/
+/-- **`γ ∈ {0, 1}` gives a tree.** If every inheritance probability is `0` or `1`, the edges used
+with positive probability form a rooted tree on the nodes of the network, rooted at the network's
+root. -/
 theorem isRootedTree_activeGraph [DecidableEq V]
     (h01 : ∀ v u, N.inherit v u = 0 ∨ N.inherit v u = 1) :
     Digraph.IsRootedTree N.activeGraph N.root := by
@@ -265,8 +270,8 @@ theorem routeProb_of_zero_one [DecidableEq V]
     change (∏ i, N.inherit v (a i)) = 0
     exact Finset.prod_eq_zero (Finset.mem_univ i) (hzero _ hi)
 
-/-- Conversely, a reticulation node with `0 < γ < 1` uses both parent edges, so the active
-graph is not a rooted tree. -/
+/-- Conversely, a reticulation node with `0 < γ < 1` uses both parent edges, so the active graph is
+not a rooted tree with root `N.root`. -/
 theorem not_isRootedTree_activeGraph [DecidableEq V] {v u₁ u₂ : V}
     (h : N.parents v = {u₁, u₂}) (hne : u₁ ≠ u₂)
     (hγ : 0 < N.inherit v u₁ ∧ N.inherit v u₁ < 1) :

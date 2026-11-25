@@ -41,7 +41,8 @@ theorem natDegree_eq_of_monic_of_l1Norm_sub_lt_one (v : AbsoluteValue K ℝ)
     have hbound := Finset.single_le_sum (s := (f - g).support)
       (f := fun i => v ((f - g).coeff i)) (fun i _ => v.nonneg _) hmem
     rw [l1Norm_def] at h
-    simpa [hcoeff] using hbound.trans_lt h
+    simp only [hcoeff] at hbound
+    simpa using hbound.trans_lt h
   · by_contra hle
     push Not at hle
     have hf0 : f.coeff g.natDegree = 0 := coeff_eq_zero_of_natDegree_lt hle
@@ -52,6 +53,7 @@ theorem natDegree_eq_of_monic_of_l1Norm_sub_lt_one (v : AbsoluteValue K ℝ)
     have hbound := Finset.single_le_sum (s := (f - g).support)
       (f := fun i => v ((f - g).coeff i)) (fun i _ => v.nonneg _) hmem
     rw [l1Norm_def] at h
-    simpa [hcoeff] using hbound.trans_lt h
+    simp only [hcoeff] at hbound
+    simpa using hbound.trans_lt h
 
 end Polynomial

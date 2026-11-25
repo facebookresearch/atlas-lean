@@ -16,7 +16,7 @@ Theoretical Computer Science 313 (2004), 473-484, doi:10.1016/j.tcs.2002.12.002.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Fin.VecNotation

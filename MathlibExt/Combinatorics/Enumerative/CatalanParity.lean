@@ -29,9 +29,9 @@ private lemma digits_two_two_mul_sum (n : ℕ) :
 private lemma padicValNat_centralBinom_two (n : ℕ) :
     padicValNat 2 n.centralBinom = (Nat.digits 2 n).sum := by
   have _hp : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-  rw [Nat.centralBinom_eq_two_mul_choose]
+  rw [Nat.centralBinom_eq_two_mul_choose, Nat.padicValNat_def]
   have hle : n ≤ 2 * n := Nat.le_mul_of_pos_left n (by norm_num)
-  have h := sub_one_mul_padicValNat_choose_eq_sub_sum_digits (p := 2) (k := n) (n := 2 * n) hle
+  have h := sub_one_mul_multiplicity_choose_eq_sub_sum_digits (p := 2) (k := n) (n := 2 * n) hle
   simp only [show (2 : ℕ) - 1 = 1 from rfl, one_mul] at h
   have hsub : 2 * n - n = n := by omega
   rw [hsub] at h
@@ -52,7 +52,8 @@ private lemma padicValNat_catalan_add (n : ℕ) :
   have h := succ_mul_catalan_eq_centralBinom n
   have h1 : (n : ℕ) + 1 ≠ 0 := by omega
   have h2 : catalan n ≠ 0 := catalan_ne_zero n
-  have hmul := padicValNat.mul (p := 2) (a := n + 1) (b := catalan n) h1 h2
+  have hmul := Nat.multiplicity_mul (p := 2) (a := n + 1) (b := catalan n) h1 h2
+  simp only [← Nat.padicValNat_def] at hmul
   rw [h, padicValNat_centralBinom_two n] at hmul
   exact hmul.symm
 
@@ -61,7 +62,8 @@ private lemma odd_iff_padicValNat_two_eq_zero (m : ℕ) (hm : m ≠ 0) :
   have _hp : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
   constructor
   · intro hod
-    apply padicValNat.eq_zero_of_not_dvd
+    rw [Nat.padicValNat_def]
+    apply multiplicity_eq_zero_of_not_dvd
     intro hdvd
     obtain ⟨k, hk⟩ := hod
     obtain ⟨j, hj⟩ := hdvd
@@ -70,20 +72,22 @@ private lemma odd_iff_padicValNat_two_eq_zero (m : ℕ) (hm : m ≠ 0) :
     rw [← Nat.not_even_iff_odd]
     intro hev
     rw [even_iff_two_dvd] at hev
-    have h1 := one_le_padicValNat_of_dvd hm hev
+    have h1 := one_le_multiplicity_of_dvd hm hev
+    rw [Nat.padicValNat_def] at h0
     omega
 
 private lemma digits_two_succ_add (n : ℕ) :
     (Nat.digits 2 n).sum + 1
       = (Nat.digits 2 (n + 1)).sum + padicValNat 2 (n + 1) := by
   have _hp : Fact (Nat.Prime 2) := ⟨Nat.prime_two⟩
-  have h1 := sub_one_mul_padicValNat_factorial (p := 2) n
-  have h2 := sub_one_mul_padicValNat_factorial (p := 2) (n + 1)
+  rw [Nat.padicValNat_def]
+  have h1 := Nat.prime_two.sub_one_mul_multiplicity_factorial (n := n)
+  have h2 := Nat.prime_two.sub_one_mul_multiplicity_factorial (n := n + 1)
   simp only [show (2 : ℕ) - 1 = 1 from rfl, one_mul] at h1 h2
   have hfact : (n + 1).factorial = (n + 1) * n.factorial := Nat.factorial_succ n
   have hne1 : (n : ℕ) + 1 ≠ 0 := by omega
   have hneF : n.factorial ≠ 0 := Nat.factorial_ne_zero n
-  have hmul := padicValNat.mul (p := 2) (a := n + 1) (b := n.factorial) hne1 hneF
+  have hmul := Nat.multiplicity_mul (p := 2) (a := n + 1) (b := n.factorial) hne1 hneF
   rw [← hfact] at hmul
   have hs1 := Nat.digit_sum_le 2 n
   have hs2 := Nat.digit_sum_le 2 (n + 1)

@@ -18,8 +18,8 @@ public import Mathlib.Order.Zorn
 /-!
 # Completeness and compactness of classical natural deduction
 
-Upstream CSLib's natural deduction has only the rules of minimal logic, with `⊥`
-an ordinary atom; classical logic is obtained by putting double-negation
+The natural deduction of CSLib v4.35, restored in `Cslib.Logic.LegacyPL`, has only the rules of
+minimal logic, with `⊥` an ordinary atom; classical logic is obtained by putting double-negation
 elimination into the theory.  This file proves that, for every theory `T` with
 an `IsClassical` instance, `T`-derivability coincides with truth-table
 consequence over the valuations that make `T` true and read `⊥` as false.
@@ -59,7 +59,7 @@ same construction gives compactness.
 
 universe u
 
-namespace Cslib.Logic.PL
+namespace Cslib.Logic.LegacyPL
 
 open Proposition Theory InferenceSystem Derivation
 
@@ -308,4 +308,4 @@ theorem boolSatisfiable_iff_forall_finset {S : Set (Proposition Atom)} :
     simp [hv] at this
   exact hcons.boolSatisfiable.mono Set.subset_union_right
 
-end Cslib.Logic.PL
+end Cslib.Logic.LegacyPL

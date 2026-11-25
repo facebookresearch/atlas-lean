@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.SquareSplittingConvolution
+public import MathlibExt.NumberTheory.SquareSplittingConvolution.DivisorProperties
+public import MathlibExt.NumberTheory.SquareSplittingConvolution.MoebiusInversion
 public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.ArithmeticFunction.Moebius
@@ -21,29 +22,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open Filter Topology Asymptotics
-
-/-- **Basic properties of the square-splitting divisor sets.** Let
-$A(n) = \{u_1 v_1^2 : u_1 \mid u(n),\ v_1 \mid v(n)\}$ be the square-splitting divisor set of
-$n$, where $u(n)$ is the squarefree part of $n$ and $n = u(n) v(n)^2$ for $n \ge 1$. Then
-(i) for every $n \ge 1$, both $1$ and $n$ belong to $A(n)$, and every element of $A(n)$ divides
-$n$; (ii) for all coprime natural numbers $m$ and $n$, $A(mn) = \{ab : a \in A(m),\ b \in A(n)\}$;
-and (iii) for every $n \ge 1$, $|A(n)| = d(u(n))\, d(v(n))$ and $|A(n)| = 2^{\omega(u(n))} d(v(n))$,
-where $d(k)$ is the number of divisors of $k$ and $\omega(k)$ is the number of distinct prime
-factors of $k$.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 1
-(`integers-2026-A56-thm-1`). -/
-public theorem_wanted squareSplitDivisors_properties :
-    (∀ n ≠ 0, 1 ∈ squareSplitDivisors n ∧ n ∈ squareSplitDivisors n ∧
-      ∀ d ∈ squareSplitDivisors n, d ∣ n) ∧
-    (∀ m n, Nat.Coprime m n → squareSplitDivisors (m * n) =
-      (squareSplitDivisors m ×ˢ squareSplitDivisors n).image fun x => x.1 * x.2) ∧
-    (∀ n ≠ 0, (squareSplitDivisors n).card =
-        (squareSplitU n).divisors.card * (squareSplitV n).divisors.card ∧
-      (squareSplitDivisors n).card =
-        2 ^ ArithmeticFunction.cardDistinctFactors (squareSplitU n) *
-          (squareSplitV n).divisors.card)
 
 /-- **Ring axioms for the square-splitting convolution.** For all complex arithmetic functions
 $f$, $g$ and $h$, the square-splitting convolution $\star$ satisfies $f \star g = g \star f$,
@@ -112,25 +90,6 @@ public theorem_wanted squareSplitMoebius_formula (m : ArithmeticFunction ℂ)
       LSeries (fun n => m n) s = ∏' p : Nat.Primes,
         (1 - ((p : ℕ) : ℂ) ^ (-s) - ((p : ℕ) : ℂ) ^ (-(2 * s)) + ((p : ℕ) : ℂ) ^ (-(3 * s))) ∧
       LSeries (fun n => m n) s = 1 / (riemannZeta s * riemannZeta (2 * s))
-
-/-- **Möbius inversion for the square-splitting convolution.** Let $\star$ be the
-square-splitting convolution, $\mathbf{1}$ the constant function $1$ on the positive integers,
-$\varepsilon$ the identity element ($\varepsilon(1) = 1$ and $\varepsilon(n) = 0$ for $n \ne 1$),
-and let $\mu_\star$ be any complex-valued arithmetic function with
-$\mathbf{1} \star \mu_\star = \varepsilon$. Then for all complex-valued arithmetic functions $f$
-and $F$, $F = \mathbf{1} \star f$ if and only if $f = \mu_\star \star F$; that is,
-$F(n) = \sum_{d \in A(n)} f(d)$ for every $n \ge 1$ if and only if
-$f(n) = \sum_{d \in A(n)} \mu_\star(d)\,F(n/d)$ for every $n \ge 1$, where $A(n)$ is the set of
-square-splitting divisors of $n$.
-
-Source: Champak Talukdar and Helen K. Saikia, *A Square-Splitting
-A-Convolution of Narkiewicz Type*, INTEGERS 26 (2026), Article A56, Theorem 4
-(`integers-2026-A56-thm-4`). -/
-public theorem_wanted squareSplit_moebius_inversion (m : ArithmeticFunction ℂ)
-    (hm : squareSplitConv (ArithmeticFunction.zeta : ArithmeticFunction ℂ) m = 1)
-    (f F : ArithmeticFunction ℂ) :
-    F = squareSplitConv (ArithmeticFunction.zeta : ArithmeticFunction ℂ) f ↔
-      f = squareSplitConv m F
 
 /-- **Inverse of a multiplicative function under the square-splitting convolution.** Let $f$ be a
 multiplicative complex arithmetic function (an arithmetic function $h$ is multiplicative when

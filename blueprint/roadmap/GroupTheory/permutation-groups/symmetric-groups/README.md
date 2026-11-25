@@ -5,3 +5,4 @@ The symmetric group of a set as a group: support, cycles and cycle decomposition
 - [The alternating group on a finite set with at least five elements is simple](alternating-group-simple.md)
 - [Cauchy's theorem: a finite group whose order is divisible by a prime p has an element of order p](cauchy-theorem-groups.md)
 - [Alternating group on a finite set](alternating-group.md)
+- [Full cycle type of a permutation of a finite set, fixed points included](permutation-cycle-type.md)

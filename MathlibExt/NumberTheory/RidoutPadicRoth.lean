@@ -40,7 +40,8 @@ private theorem ridout_padicNorm_int (l : Nat.Primes) (z : ℤ) (hz : z ≠ 0) :
 private theorem ridout_padicNorm_nat (l : Nat.Primes) (n : ℕ) (hn : n ≠ 0) :
     padicNorm l.1 (n : ℚ) =
       (((l.1 ^ padicValNat l.1 n : ℕ) : ℚ))⁻¹ := by
-  rw [padicNorm.eq_zpow_of_nonzero (by exact_mod_cast hn), padicValRat.of_nat]
+  rw [padicNorm.eq_zpow_of_nonzero (by exact_mod_cast hn), padicValRat.of_nat,
+    Nat.padicValNat_def]
   rw [zpow_neg]
   norm_cast
 
@@ -85,7 +86,8 @@ private theorem ridout_prime_power_product_dvd_nat (S : Finset Nat.Primes)
         exact (Nat.coprime_pow_primes _ _ l.2 k.2
           (Subtype.coe_ne_coe.mpr hlk)).isCoprime
       · intro l hl
-        exact_mod_cast (pow_padicValNat_dvd (p := l.1) (n := n)))
+        rw [Nat.padicValNat_def]
+        exact_mod_cast pow_multiplicity_dvd l.1 n)
 
 private theorem ridout_finite_rat_of_abs_le_of_den_le (B : ℝ) (N : ℕ) :
     Set.Finite {q : ℚ | |(q : ℝ)| ≤ B ∧ q.den ≤ N} := by
@@ -403,7 +405,7 @@ private theorem ridout_exists_value_buckets (S : Finset Nat.Primes)
       ((i.1.1 : ℝ) ^ padicValNat i.1.1 r.den) τ K hdreal
     · exact one_le_pow₀ (by exact_mod_cast i.1.2.one_le)
     · have hval : i.1.1 ^ padicValNat i.1.1 r.den ≤ r.den :=
-        Nat.le_of_dvd r.pos (pow_padicValNat_dvd (p := i.1.1) (n := r.den))
+        Nat.le_of_dvd r.pos (by rw [Nat.padicValNat_def]; exact pow_multiplicity_dvd _ _)
       have hvalR : (i.1.1 : ℝ) ^ padicValNat i.1.1 r.den ≤ r.den := by
         calc
           (i.1.1 : ℝ) ^ padicValNat i.1.1 r.den =
@@ -592,7 +594,8 @@ private theorem ridout_exists_core_bucket (ξ ε : ℝ) (hε : 0 < ε)
             hij (Subtype.ext (Nat.Primes.coe_nat_injective h))
           exact (Nat.coprime_pow_primes _ _ i.1.2 j.1.2 hpne).isCoprime
         · intro i
-          exact_mod_cast (pow_padicValNat_dvd (p := i.1.1) (n := r.den)))
+          rw [Nat.padicValNat_def]
+          exact_mod_cast pow_multiplicity_dvd i.1.1 r.den)
   · intro i
     exact (hk i).1
   · intro i

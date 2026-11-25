@@ -99,10 +99,9 @@ private theorem scalar_pos {f c : ℝ → ℝ}
   obtain ⟨r, hr, hfr⟩ := intermediate_value_Icc' ht hfc ⟨le_of_not_gt hpos, hf0.le⟩
   exact hn r hr hfr
 
-/-- LV1: `α β γ δ : ℝ` with `_hα`, `_hβ`, `_hγ`, `_hδ` encode positive parameters.
-`x y : ℝ → ℝ` and `hx`, `hy` encode both two-sided derivative equations at every
-`t` with `0 ≤ t`. `hx0`, `hy0` encode positive initial populations. The conclusion
-quantifies over the same nonnegative times and asserts positivity of both coordinates. -/
+/-- **Positivity.** Let `α, β, γ, δ > 0`, and let `x, y : ℝ → ℝ` have two-sided derivatives at every
+`t ≥ 0` with `x' = α x - β x y` and `y' = δ x y - γ y` there. If `x 0 > 0` and `y 0 > 0`, then
+`x t > 0` and `y t > 0` for every `t ≥ 0`. -/
 public theorem pos_of_pos {α β γ δ : ℝ} (_hα : 0 < α) (_hβ : 0 < β)
     (_hγ : 0 < γ) (_hδ : 0 < δ) {x y : ℝ → ℝ}
     (hx : ∀ t, 0 ≤ t → HasDerivAt x (α * x t - β * x t * y t) t)
@@ -251,11 +250,9 @@ private theorem level_bounded {α β γ δ E : ℝ}
   simpa only [Prod.norm_def, Real.norm_eq_abs, abs_of_pos hx, abs_of_pos hy,
     max_le_iff] using And.intro hxR hyR
 
-/-- LV2: `α β γ δ x₀ y₀ : ℝ` give real parameters and initial populations.
-`hα`, `hβ`, `hγ`, `hδ`, `hx₀`, `hy₀` assert their strict positivity.
-The existential conclusion provides `x y : ℝ → ℝ`, their prescribed values at
-zero, both two-sided derivative equations at every real `t`, and positivity
-of both populations at every real `t`, with no restriction on time. -/
+/-- **Global positive solution.** For `α, β, γ, δ > 0` and `x₀, y₀ > 0` there are `x, y : ℝ → ℝ`
+with `x 0 = x₀` and `y 0 = y₀`, differentiable at every real `t` with `x' = α x - β x y` and
+`y' = δ x y - γ y`, and with `x t > 0` and `y t > 0` for every real `t`, negative times included. -/
 public theorem exists_global_solution {α β γ δ x₀ y₀ : ℝ}
     (hα : 0 < α) (hβ : 0 < β) (hγ : 0 < γ) (hδ : 0 < δ)
     (hx₀ : 0 < x₀) (hy₀ : 0 < y₀) :
@@ -306,12 +303,10 @@ public theorem exists_global_solution {α β γ δ x₀ y₀ : ℝ}
   exact ⟨by simpa only [hk t, one_mul] using hx t,
     by simpa only [hk t, one_mul] using hy t⟩
 
-/-- LV3: `_hα`, `_hβ`, `_hγ`, `_hδ` encode positivity of the real parameters.
-`x y u v : ℝ → ℝ`, with `hx`, `hy`, `hu`, `hv`, encode two solutions with
-both two-sided derivative equations at every real `t ≥ 0`. `_hx0`, `_hy0`
-encode positivity of the first initial pair; `hxu`, `hyv` encode equality of
-both initial coordinates, hence positivity of the second initial pair too.
-The conclusion asserts equality of both coordinates at every nonnegative time. -/
+/-- **Uniqueness.** Let `α, β, γ, δ > 0`, and let `(x, y)` and `(u, v)` have two-sided derivatives
+at every `t ≥ 0` solving there `x' = α x - β x y` and `y' = δ x y - γ y` and the same equations for
+`(u, v)`. If `x 0 > 0`, `y 0 > 0`, `u 0 = x 0` and `v 0 = y 0`, then `x t = u t` and `y t = v t` for
+every `t ≥ 0`. -/
 public theorem eq_of_initial {α β γ δ : ℝ} (_hα : 0 < α) (_hβ : 0 < β)
     (_hγ : 0 < γ) (_hδ : 0 < δ) {x y u v : ℝ → ℝ}
     (hx : ∀ t, 0 ≤ t → HasDerivAt x (α * x t - β * x t * y t) t)
@@ -462,7 +457,7 @@ private theorem minimal_return_of_return {f : ℝ → ℝ × ℝ} {d : ℝ × �
     exact hearly' S hS (lt_of_not_ge h) hret
   let A := Icc ε S ∩ f ⁻¹' {f 0}
   have hAc : IsCompact A := isCompact_Icc.of_isClosed_subset
-    ((hc.mono (fun s hs => hε.le.trans hs.1)).preimage_isClosed_of_isClosed
+    ((hc.mono (fun s (hs : s ∈ Icc ε S) => hε.le.trans hs.1)).preimage_isClosed_of_isClosed
       isClosed_Icc isClosed_singleton) inter_subset_left
   have hAn : A.Nonempty := ⟨S, ⟨⟨hεS, le_rfl⟩, hret⟩⟩
   obtain ⟨T, hTA, hmin⟩ := hAc.exists_isMinOn hAn continuousOn_id
@@ -675,12 +670,12 @@ private theorem exists_ray_return {p q a b : ℝ → ℝ} {c : ℝ}
     apply (eq_div_iff hR0.ne').mpr
     nlinarith only [(div_eq_div_iff hR.ne' hR0.ne').mp hu.2]
 
-/-- LV4: `α β γ δ : ℝ` and `hα`, `hβ`, `hγ`, `hδ` encode positive parameters.
-`x y : ℝ → ℝ` with `hx`, `hy` encode both two-sided derivative equations at all
-nonnegative real times. `hx0`, `hy0` encode positive initial populations, and
-`hne` excludes the coexistence equilibrium. The conclusion supplies a real
-`T > 0`, simultaneous periodicity for every `t ≥ 0`, and inequality from the
-initial pair for every `s` with `0 < s < T`, encoding the least positive return. -/
+/-- **Minimal period.** Let `α, β, γ, δ > 0`, and let `x, y : ℝ → ℝ` have two-sided derivatives at
+every `t ≥ 0` with `x' = α x - β x y` and `y' = δ x y - γ y` there, `x 0 > 0`, `y 0 > 0` and
+`(x 0, y 0) ≠ (γ / δ, α / β)`, the coexistence equilibrium. Then there is `T > 0` with
+`x (t + T) = x t` and `y (t + T) = y t` for every `t ≥ 0`, and `(x s, y s) ≠ (x 0, y 0)` for every
+`s` with `0 < s < T`: `T` is the least positive time of return to the initial state, the minimal
+period. -/
 public theorem exists_minimal_period {α β γ δ : ℝ}
     (hα : 0 < α) (hβ : 0 < β) (hγ : 0 < γ) (hδ : 0 < δ) {x y : ℝ → ℝ}
     (hx : ∀ t, 0 ≤ t → HasDerivAt x (α * x t - β * x t * y t) t)

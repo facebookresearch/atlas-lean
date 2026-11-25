@@ -1125,7 +1125,7 @@ private def btBad : Set btE :=
   {z | z ≠ 0 ∧ ∃ w : FreeGroup (Fin 2), w ≠ 1 ∧ btAct w z = z}
 
 /-- The free locus: the unit ball minus the centre and the bad axes. -/
-private def btOmega : Set btE :=
+private noncomputable def btOmega : Set btE :=
   Metric.closedBall (0 : btE) 1 \ ({0} ∪ btBad)
 
 /-- Words whose reduced form starts with a given letter. -/
@@ -1959,8 +1959,7 @@ private theorem btBadAngle_countable (w v : FreeGroup (Fin 2)) (n : ℕ) (e : Bo
         abel
       exact ⟨k, htt2.symm⟩
     exact Set.Countable.mono hsub (Set.countable_range _)
-  · rw [Set.eq_empty_of_forall_notMem (fun t ht => hemp ⟨t, ht⟩)]
-    exact Set.countable_empty
+  · exact Set.countable_empty.mono fun t ht => (hemp ⟨t, ht⟩).elim
 
 /-- The bad-angle set with side conditions is countable. -/
 private theorem btBadAngle_piece (w v : FreeGroup (Fin 2)) (n : ℕ) (e : Bool) :

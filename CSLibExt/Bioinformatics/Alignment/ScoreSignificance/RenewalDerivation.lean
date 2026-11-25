@@ -282,8 +282,8 @@ private theorem real_lt_of_neg [IsProbabilityMeasure P] (F : LadderFixedPoint P 
   rw [← probReal_univ (μ := P)]
   refine measureReal_congr ?_
   filter_upwards [F.M'_nonneg] with ω hω
-  change (u < F.M' ω) = True
-  simp only [eq_iff_iff, iff_true]; linarith
+  change u < F.M' ω ↔ True
+  simp only [iff_true]; linarith
 
 end LadderFixedPoint
 
@@ -309,13 +309,15 @@ structure LadderRenewalData (P : Measure Ω) (Y : Ω → ℝ) (θ : ℝ) extends
   /-- The defective renewal equation of the all-time maximum. -/
   renewal : ∀ t, 0 ≤ t → P.real {ω | t < M' ω} = ∫ y, P.real {ω | t - y < M' ω} ∂G
 
-/-- The Cramér–Lundberg constant `C_∞ = (1 - G(ℝ)) / (θ ∫ y e^{θ y} dG(y))` of the all-time
-maximum, `P(M' > t) ~ C_∞ e^{-θ t}`. -/
+/-- The Cramér–Lundberg constant `C_∞ = (1 - G(ℝ)) / (θ ∫ y e^{θ y} dG(y))` (with `x / 0 = 0`),
+the constant of the classical asymptotic `P(M' > t) ~ C_∞ e^{-θ t}` of the all-time maximum. -/
 noncomputable def LadderRenewalData.allTimeConst {Y : Ω → ℝ} {θ : ℝ}
     (R : LadderRenewalData P Y θ) : ℝ :=
   (1 - R.G.real Set.univ) / (θ * ∫ y, y * Real.exp (θ * y) ∂R.G)
 
-/-- The excursion-height renewal constant `C = C_∞ (1 - E e^{θ D})` (Iglehart 1972). -/
+/-- The excursion-height renewal constant `C = C_∞ (1 - E e^{θ D})` (Iglehart 1972). Here
+`E e^{θ D} = ∫ e^{θ D} dP` is `0` when `e^{θ D}` is not integrable; for a probability measure and
+`θ ≥ 0` it lies in `(0, 1]`, since `D ≤ 0` almost surely (the intended case is `θ > 0`). -/
 noncomputable def LadderRenewalData.tailConst {Y : Ω → ℝ} {θ : ℝ}
     (R : LadderRenewalData P Y θ) : ℝ :=
   R.allTimeConst * (1 - ∫ ω, Real.exp (θ * R.D ω) ∂P)
@@ -423,14 +425,17 @@ structure LatticeLadderRenewalData (P : Measure Ω) (Y : Ω → ℝ) (θ h : ℝ
   /-- The defective lattice renewal equation of the all-time maximum. -/
   renewal : IsRenewalSolution g (ladderTail g) fun k => P.real {ω | (k : ℝ) * h < M' ω}
 
-/-- The lattice Cramér–Lundberg constant `C_∞ = (1 - ∑ g) / ((e^{θ h} - 1) μ_θ)` of the all-time
-maximum, `P(M' > k h) ~ C_∞ e^{-θ h k}`. -/
+/-- The lattice Cramér–Lundberg constant `C_∞ = (1 - ∑ g) / ((e^{θ h} - 1) μ_θ)` (with
+`x / 0 = 0`, and `∑ g = 0` for a non-summable `g`), the constant of the classical asymptotic
+`P(M' > k h) ~ C_∞ e^{-θ h k}` of the all-time maximum. -/
 noncomputable def LatticeLadderRenewalData.allTimeConst {Y : Ω → ℝ} {θ h : ℝ}
     (R : LatticeLadderRenewalData P Y θ h) : ℝ :=
   (1 - ∑' j, R.g j) / ((Real.exp (θ * h) - 1) * R.tiltedMean)
 
 /-- The lattice excursion-height renewal constant `C = e^{θ h} C_∞ (1 - E e^{θ D})`, in the
-normalization `P(Y > k h) ~ C e^{-θ (k + 1) h}` of `LatticeRenewalInput`. -/
+normalization `P(Y > k h) ~ C e^{-θ (k + 1) h}` of `LatticeRenewalInput`. Here
+`E e^{θ D} = ∫ e^{θ D} dP` is `0` when `e^{θ D}` is not integrable; for a probability measure and
+`θ ≥ 0` it lies in `(0, 1]`, since `D ≤ 0` almost surely (the intended case is `θ > 0`). -/
 noncomputable def LatticeLadderRenewalData.tailConst {Y : Ω → ℝ} {θ h : ℝ}
     (R : LatticeLadderRenewalData P Y θ h) : ℝ :=
   Real.exp (θ * h) * (R.allTimeConst * (1 - ∫ ω, Real.exp (θ * R.D ω) ∂P))

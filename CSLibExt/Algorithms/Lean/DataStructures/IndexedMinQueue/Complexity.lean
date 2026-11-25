@@ -93,7 +93,7 @@ private lemma siftUpTracked_depth_bound {W : Type u} [LinearOrder W] {n : Nat}
     (i : Nat) (c : Fin 5) :
     (siftUpTracked a position hcap i).time c ≤ 5 * (Nat.log2 (i + 1) + 1) := by
   induction i using Nat.strong_induction_on generalizing a position with
-  | h i ih =>
+  | ind i ih =>
     rw [siftUpTracked]
     split
     · rename_i hi
@@ -150,7 +150,7 @@ private lemma siftDownTracked_depth_bound {W : Type u} [LinearOrder W] {n : Nat}
     (siftDownTracked a position hcap i).time c ≤
       5 * (Nat.log2 a.size - Nat.log2 (i + 1) + 1) := by
   induction hm : a.size - i using Nat.strong_induction_on generalizing a position i with
-  | h m ih =>
+  | ind m ih =>
     rw [siftDownTracked]
     split
     · change 0 ≤ _

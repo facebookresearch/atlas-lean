@@ -261,16 +261,16 @@ theorem card_clause (n : ℕ) :
 
 The model's own `clauseSat`/`Satisfiable` are the finite counting model's
 native predicates. For interoperability with the library's SAT
-infrastructure, a clause converts to a canonical `Cslib.Logic.PL`
+infrastructure, a clause converts to a canonical `Cslib.Logic.LegacyPL`
 clause (literals as `(variable index, polarity)` pairs) and a formula to
-a canonical CNF formula; satisfiability agrees with `Cslib.Logic.PL.CNFSat`
+a canonical CNF formula; satisfiability agrees with `Cslib.Logic.LegacyPL.CNFSat`
 under the obvious extension of a finite assignment to all of `ℕ`. -/
 
 /-- **CNF clause of a random 3-SAT clause.** The CNF clause of a clause $c$ on $n$ variables is the
 list of literals $(i, b_i)$, one for each of the three variables $i$ of $c$ taken as a
 natural-number index, where $b_i$ is the polarity that $c$ prescribes for $i$; the literals are
 listed in some fixed order. -/
-noncomputable def toCNFClause {n : ℕ} (c : Clause n) : Cslib.Logic.PL.CNFClause :=
+noncomputable def toCNFClause {n : ℕ} (c : Clause n) : Cslib.Logic.LegacyPL.CNFClause :=
   c.1.1.toList.map (fun i => (i.val, c.1.2 i))
 
 /-- **Extension of an assignment by false.** An assignment $a$ of Boolean values to the variables
@@ -281,7 +281,7 @@ def extendAssign {n : ℕ} (a : Fin n → Bool) : ℕ → Bool :=
 
 theorem clauseSat_iff {n : ℕ} (a : Fin n → Bool) (c : Clause n) :
     clauseSat a c ↔
-      Cslib.Logic.PL.CNFClause.Satisfies (extendAssign a) (toCNFClause c) := by
+      Cslib.Logic.LegacyPL.CNFClause.Satisfies (extendAssign a) (toCNFClause c) := by
   constructor
   · rintro ⟨i, hi, hsat⟩
     refine ⟨(i.val, c.1.2 i),
@@ -311,7 +311,7 @@ of $c$, where $p_i$ is the polarity that $c$ prescribes at $i$. A CNF clause is 
 $A$ gives the variable of at least one of its literals that literal's polarity. -/
 theorem clauseSat_restrict_iff {n : ℕ} (A : ℕ → Bool) (c : Clause n) :
     clauseSat (fun i => A i.val) c ↔
-      Cslib.Logic.PL.CNFClause.Satisfies A (toCNFClause c) := by
+      Cslib.Logic.LegacyPL.CNFClause.Satisfies A (toCNFClause c) := by
   constructor
   · rintro ⟨i, hi, hsat⟩
     exact ⟨(i.val, c.1.2 i),
@@ -329,7 +329,7 @@ theorem clauseSat_restrict_iff {n : ℕ} (A : ℕ → Bool) (c : Clause n) :
 /-- **CNF formula of a random 3-SAT formula.** The CNF formula of a formula $F$ with $m$ clauses
 $F_0, \dots, F_{m-1}$ on $n$ variables is the list of the CNF clauses of $F_0, \dots, F_{m-1}$,
 in this order. -/
-noncomputable def toCNF {n m : ℕ} (F : Formula n m) : Cslib.Logic.PL.CNF :=
+noncomputable def toCNF {n m : ℕ} (F : Formula n m) : Cslib.Logic.LegacyPL.CNF :=
   (List.ofFn F).map toCNFClause
 
 /-- **Random 3-SAT satisfiability agrees with CNF satisfiability.** A formula $F$ with $m$ clauses
@@ -338,8 +338,8 @@ its three literals (variable index, polarity), is satisfiable as a CNF formula: 
 of truth values to all natural-number variable indices makes at least one literal of every
 clause true. -/
 theorem satisfiable_iff {n m : ℕ} (F : Formula n m) :
-    Satisfiable F ↔ Cslib.Logic.PL.CNFSat (toCNF F) := by
-  rw [Cslib.Logic.PL.cnfSat_iff_exists_satisfies]
+    Satisfiable F ↔ Cslib.Logic.LegacyPL.CNFSat (toCNF F) := by
+  rw [Cslib.Logic.LegacyPL.cnfSat_iff_exists_satisfies]
   constructor
   · rintro ⟨a, ha⟩
     refine ⟨extendAssign a, ?_⟩

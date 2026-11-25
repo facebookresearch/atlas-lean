@@ -6,6 +6,16 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean` (CSLib v4.35.0, commit
+`5b56df99362532c46e1175381fbbdd755bd56030`):
+Copyright (c) 2026 Christian Reitwiessner. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: Christian Reitwiessner, Samuel Schlesinger, Aviv Bar Natan
+-/
+
 module
 
 public import Cslib.Computability.Machines.Turing.MultiTape.Deterministic
@@ -16,11 +26,18 @@ public import Cslib.Computability.Machines.Turing.MultiTape.Deterministic
 CSLib defines the canonical multi-tape machine model: `Turing.MultiTapeTM k Symbol State` has a
 read-only input tape, `k` two-way infinite work tapes and a write-only output tape
 (`Cslib/Computability/Machines/Turing/MultiTape/`). Configurations (`Turing.Cfg`), the step
-function (`MultiTapeTM.step`), runs (`MultiTapeTM.runFrom`), the exact halting step
-(`MultiTapeTM.HaltsAt`), outputs (`MultiTapeTM.Computes`) and the time and space bounds of
-computation paths (`MultiTapeNTM.RunsInTime`, `MultiTapeNTM.RunsInSpace`) all live upstream. This
-file does not redefine any of them; it adds the lemmas the rest of
-`CSLibExt/Computability/Machines/Turing/MultiTape/` needs and that the pinned CSLib lacks.
+function (`MultiTapeTM.step`), runs (`MultiTapeTM.runFrom`), outputs (`MultiTapeTM.Computes`) and
+the time and space bounds of computation paths (`MultiTapeNTM.RunsInTime`,
+`MultiTapeNTM.RunsInSpace`) all live upstream. This file does not redefine any of them; it adds the
+lemmas the rest of `CSLibExt/Computability/Machines/Turing/MultiTape/` needs and that the pinned
+CSLib lacks.
+
+CSLib v4.36.0 (leanprover/cslib#1117) dropped the exact halting step `MultiTapeTM.HaltsAt`, its
+API and the run lemmas `MultiTapeTM.runFrom_succ` and `MultiTapeTM.runFrom_add`. Those of them that
+ATLAS uses are restated below, unchanged and in their original namespace, from
+`Cslib/Computability/Machines/Turing/MultiTape/Deterministic.lean` of CSLib v4.35.0 (commit
+`5b56df99362532c46e1175381fbbdd755bd56030`), whose copyright and authors are given at the top of
+this file; the others, such as `existsUnique_haltsAt`, are not.
 
 The upstream step of a machine built from a transition function (`MultiTapeTM.ofTr`) goes
 through `Classical.choose`; `stepWith tr` is the same successor written directly in terms of
@@ -48,6 +65,58 @@ through `Classical.choose`; `stepWith tr` is the same successor written directly
 @[expose] public section
 
 set_option autoImplicit false
+
+namespace Turing.MultiTapeTM
+
+variable {k : ℕ} {State Symbol : Type*} {tm : MultiTapeTM k Symbol State} {input : List Symbol}
+
+/-- One more step of a run. -/
+lemma runFrom_succ (cfg : Cfg k Symbol State input) (t : ℕ) :
+    tm.runFrom cfg (t + 1) = tm.step (tm.runFrom cfg t) :=
+  Function.iterate_succ_apply' _ _ _
+
+/-- A run splits at any intermediate step. -/
+lemma runFrom_add (cfg : Cfg k Symbol State input) (m n : ℕ) :
+    tm.runFrom cfg (m + n) = tm.runFrom (tm.runFrom cfg m) n := by
+  rw [runFrom, Nat.add_comm, Function.iterate_add_apply]
+  rfl
+
+/-- The machine `tm` started in `cfg` halts at step `t`: it is halted after `t` steps and not
+halted after any smaller number of steps. -/
+def HaltsAt (tm : MultiTapeTM k Symbol State) {input : List Symbol}
+    (cfg : Cfg k Symbol State input) (t : ℕ) : Prop :=
+  (tm.runFrom cfg t).Halted ∧ ∀ s < t, ¬(tm.runFrom cfg s).Halted
+
+namespace HaltsAt
+
+variable {cfg : Cfg k Symbol State input} {s t : ℕ}
+
+lemma halted (h : tm.HaltsAt cfg t) : (tm.runFrom cfg t).Halted := h.1
+
+lemma not_halted (h : tm.HaltsAt cfg t) (hs : s < t) : ¬(tm.runFrom cfg s).Halted := h.2 s hs
+
+/-- The halting step is the first step at which the machine is halted. -/
+lemma le_of_halted (h : tm.HaltsAt cfg t) (hs : (tm.runFrom cfg s).Halted) : t ≤ s :=
+  Nat.le_of_not_lt fun hlt => h.not_halted hlt hs
+
+/-- The halting step is unique. -/
+lemma unique (h₁ : tm.HaltsAt cfg s) (h₂ : tm.HaltsAt cfg t) : s = t :=
+  Nat.le_antisymm (h₁.le_of_halted h₂.halted) (h₂.le_of_halted h₁.halted)
+
+/-- From the halting step on, the configuration does not change. -/
+lemma runFrom_eq (h : tm.HaltsAt cfg t) (hts : t ≤ s) : tm.runFrom cfg s = tm.runFrom cfg t :=
+  runFrom_eq_of_halt tm cfg hts h.halted
+
+end HaltsAt
+
+/-- A run that is halted after `t` steps halts at some step `u ≤ t`. -/
+lemma exists_haltsAt {cfg : Cfg k Symbol State input} {t : ℕ}
+    (hhalt : (tm.runFrom cfg t).Halted) : ∃ u ≤ t, tm.HaltsAt cfg u := by
+  have hex : ∃ n, (tm.runFrom cfg n).Halted := ⟨t, hhalt⟩
+  exact ⟨Nat.find hex, Nat.find_min' hex hhalt, Nat.find_spec hex,
+    fun s hs => Nat.find_min hex hs⟩
+
+end Turing.MultiTapeTM
 
 namespace Cslib.Turing.MultiTapeTM
 

@@ -57,7 +57,7 @@ cardinal, of its abelianization $G^{\mathrm{ab}}$ viewed as a $\mathbb{Z}$-modul
 
 Source: [AMR-109-0273] (Question 2.5, PDF p. 330). -/
 noncomputable def firstBettiRank (G : Type*) [Group G] : Cardinal :=
-  Module.rank ℤ (Additive (Abelianization G))
+  Module.rank ℤ (Additive (Group.Abelianization G))
 
 /-- **Farb's positive first Betti number question for $\mathrm{Aut}(F_n)$.** The proposition that
 for every natural number $n > 3$, the automorphism group $\mathrm{Aut}(F_n)$ of the free group

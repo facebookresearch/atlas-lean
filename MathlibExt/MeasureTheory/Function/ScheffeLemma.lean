@@ -261,7 +261,8 @@ theorem uniformIntegrable_of_tendstoInMeasure_of_tendsto_eLpNorm
     UniformIntegrable f 1 μ := by
   have hL1 := tendsto_eLpNorm_one_of_tendstoInMeasure_of_tendsto_eLpNorm hf hg hfg hnorm
   exact ⟨unifIntegrable_of_tendsto_Lp le_rfl ENNReal.one_ne_top hf hg hL1,
-    eLpNorm_uniformly_bounded_of_tendsto_eLpNorm_sub hf hg hL1⟩
+    (iSup_le (eLpNorm_uniformly_bounded_of_tendsto_eLpNorm_sub hf hg hL1).choose_spec).trans_lt
+      ENNReal.coe_lt_top⟩
 
 /-- **Uniform integrability equivalences.** Let $\mu$ be a finite measure on a measurable space
 $\alpha$, let $f_n : \alpha \to \mathbb{R}$ ($n \in \mathbb{N}$) and $g : \alpha \to \mathbb{R}$ be
@@ -288,7 +289,8 @@ theorem uniformIntegrable_tfae_of_tendstoInMeasure
       (fun n => (hf n).aestronglyMeasurable) hg hUI.unifIntegrable hfg
   tfae_have 2 → 1 := fun hL1 =>
     ⟨unifIntegrable_of_tendsto_Lp le_rfl ENNReal.one_ne_top hf hg hL1,
-     eLpNorm_uniformly_bounded_of_tendsto_eLpNorm_sub hf hg hL1⟩
+     (iSup_le (eLpNorm_uniformly_bounded_of_tendsto_eLpNorm_sub hf hg hL1).choose_spec).trans_lt
+       ENNReal.coe_lt_top⟩
   tfae_have 2 → 3 := fun hL1 =>
     tendsto_eLpNorm_of_tendsto_eLpNorm_sub hg.eLpNorm_lt_top.ne hL1
   tfae_have 3 → 2 := fun hnorm =>

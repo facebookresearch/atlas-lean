@@ -17,7 +17,7 @@ problems" (1978).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Logics.Propositional.CNF.Semantics
@@ -47,7 +47,7 @@ reduction from every language in `NP`
 /-- **NOT-ALL-EQUAL 3-SAT instances.** A NOT-ALL-EQUAL 3-SAT instance is a pair $(n, \varphi)$ of
 a natural number $n$, the number of variables, and a CNF formula $\varphi$. The formula is not
 required to have three literals per clause; that is part of well-formedness. -/
-abbrev NaeThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev NaeThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- **Well-formed NOT-ALL-EQUAL 3-SAT instances.** A NOT-ALL-EQUAL 3-SAT instance $(n, \varphi)$
 is well-formed when every clause of $\varphi$ is a list of exactly three literals, repetitions
@@ -63,8 +63,8 @@ contains a literal satisfied by $v$ and a literal not satisfied by $v$. -/
 def NaeThreeSatFeasible
     (i : NaeThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    ∀ clause ∈ i.2, Cslib.Logic.PL.CNFClause.Satisfies (fun x => assign.getD x false) clause ∧
-      ∃ l ∈ clause, ¬ Cslib.Logic.PL.CNFLiteral.Satisfies (fun x => assign.getD x false) l
+    ∀ clause ∈ i.2, Cslib.Logic.LegacyPL.CNFClause.Satisfies (fun x => assign.getD x false) clause ∧
+      ∃ l ∈ clause, ¬ Cslib.Logic.LegacyPL.CNFLiteral.Satisfies (fun x => assign.getD x false) l
 
 open Classical in
 /-- **NOT-ALL-EQUAL 3-SAT as a decision problem.** The decision problem NOT-ALL-EQUAL 3-SAT

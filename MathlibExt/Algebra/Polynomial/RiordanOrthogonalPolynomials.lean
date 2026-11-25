@@ -469,22 +469,22 @@ private noncomputable def polyOfRow (L : ℕ → ℕ → ℝ) (n : ℕ) : Polyno
 /-- Coefficients of `polyOfRow` recover the row. -/
 private theorem polyOfRow_coeff (L : ℕ → ℕ → ℝ)
     (hTri : ∀ n k : ℕ, n < k → L n k = 0) (n j : ℕ) :
-    Polynomial.coeff (polyOfRow L n) j = L n j := by
-  have hSum : Polynomial.coeff (∑ k ∈ Finset.range (n + 1),
-      Polynomial.monomial k (L n k)) j =
+    (polyOfRow L n).coeff j = L n j := by
+  have hSum : (∑ k ∈ Finset.range (n + 1),
+      Polynomial.monomial k (L n k)).coeff j =
       ∑ k ∈ Finset.range (n + 1),
-        Polynomial.coeff (Polynomial.monomial k (L n k)) j := by
+        (Polynomial.monomial k (L n k)).coeff j := by
     rw [← Polynomial.lcoeff_apply, map_sum]
     apply Finset.sum_congr rfl
     intro k _
     rw [Polynomial.lcoeff_apply]
   rw [polyOfRow, hSum]
   have hEq : (∑ k ∈ Finset.range (n + 1),
-      Polynomial.coeff (Polynomial.monomial k (L n k)) j) =
+      (Polynomial.monomial k (L n k)).coeff j) =
       ∑ k ∈ Finset.range (n + 1), (if k = j then L n k else 0) := by
     apply Finset.sum_congr rfl
     intro k _
-    rw [Polynomial.coeff_monomial]
+    rw [Polynomial.coeff_monomial_apply]
   rw [hEq, Finset.sum_ite_eq']
   by_cases hj : j ∈ Finset.range (n + 1)
   · rw [ite_eq_left hj]
@@ -498,7 +498,7 @@ private theorem polyOfRow_monic (L : ℕ → ℕ → ℝ)
     (hTri : ∀ n k : ℕ, n < k → L n k = 0)
     (hDiag : ∀ n : ℕ, L n n = 1) (n : ℕ) :
     (polyOfRow L n).Monic := by
-  have hPL : ∀ k : ℕ, Polynomial.coeff (polyOfRow L n) k = L n k :=
+  have hPL : ∀ k : ℕ, (polyOfRow L n).coeff k = L n k :=
     fun k => polyOfRow_coeff L hTri n k
   have hDeg : (polyOfRow L n).natDegree = n := by
     apply le_antisymm
@@ -508,7 +508,7 @@ private theorem polyOfRow_monic (L : ℕ → ℕ → ℝ)
       exact hTri n k hk
     · by_contra hlt
       push Not at hlt
-      have h0 : Polynomial.coeff (polyOfRow L n) n = 0 :=
+      have h0 : (polyOfRow L n).coeff n = 0 :=
         Polynomial.coeff_eq_zero_of_natDegree_lt hlt
       rw [hPL n, hDiag n] at h0
       exact one_ne_zero h0
@@ -516,8 +516,8 @@ private theorem polyOfRow_monic (L : ℕ → ℕ → ℝ)
 
 /-- Coefficient of `X * p` at `k` in terms of `p`. -/
 private theorem coeff_X_mul_all (p : Polynomial ℝ) (k : ℕ) :
-    Polynomial.coeff (Polynomial.X * p) k =
-      (if k = 0 then 0 else Polynomial.coeff p (k - 1)) := by
+    (Polynomial.X * p).coeff k =
+      (if k = 0 then 0 else p.coeff (k - 1)) := by
   cases k with
   | zero =>
     rw [ite_eq_left rfl]
@@ -553,7 +553,7 @@ private theorem polyOfRow_zero (L : ℕ → ℕ → ℝ)
 /-- Favard recurrence, coefficient form on `L`. -/
 private theorem favard_L_eq (L : ℕ → ℕ → ℝ)
     (P : ℕ → Polynomial ℝ)
-    (hPL : ∀ n k : ℕ, Polynomial.coeff (P n) k = L n k)
+    (hPL : ∀ n k : ℕ, (P n).coeff k = L n k)
     (α β : ℕ → ℝ)
     (hrec : ∀ n : ℕ, P (n + 2) = (Polynomial.X - Polynomial.C (α (n + 1))) *
       P (n + 1) - Polynomial.C (β (n + 1)) * P n) :
@@ -561,7 +561,7 @@ private theorem favard_L_eq (L : ℕ → ℕ → ℝ)
       (if k = 0 then 0 else L (n + 1) (k - 1)) -
         α (n + 1) * L (n + 1) k - β (n + 1) * L n k := by
   intro n k
-  have hCoeff := congrArg (fun Q => Polynomial.coeff Q k) (hrec n)
+  have hCoeff := congrArg (fun Q : Polynomial ℝ => Q.coeff k) (hrec n)
   have hExpand : (Polynomial.X - Polynomial.C (α (n + 1))) * P (n + 1) -
       Polynomial.C (β (n + 1)) * P n =
       Polynomial.X * P (n + 1) - Polynomial.C (α (n + 1)) * P (n + 1) -
@@ -570,7 +570,7 @@ private theorem favard_L_eq (L : ℕ → ℕ → ℝ)
     Polynomial.coeff_C_mul, Polynomial.coeff_C_mul,
     coeff_X_mul_all (P (n + 1)) k] at hCoeff
   rw [hPL (n + 2) k, hPL (n + 1) k, hPL n k] at hCoeff
-  have hX : (if k = 0 then (0 : ℝ) else Polynomial.coeff (P (n + 1)) (k - 1)) =
+  have hX : (if k = 0 then (0 : ℝ) else (P (n + 1)).coeff (k - 1)) =
       (if k = 0 then 0 else L (n + 1) (k - 1)) := by
     by_cases hk : k = 0
     · rw [ite_eq_left hk, ite_eq_left hk]
@@ -665,9 +665,9 @@ private theorem polyOfRow_recurrence (L : ℕ → ℕ → ℝ)
       · rw [ite_eq_left ⟨by omega, hk⟩, ite_eq_left hk]
       · rw [ite_eq_right (by omega : ¬ (1 ≤ 2 ∧ 1 ≤ k)), ite_eq_right hk]
     rw [hLo, hLo2, hMid] at hR
-    have hCoeff : Polynomial.coeff
+    have hCoeff :
         ((Polynomial.X - Polynomial.C r) * polyOfRow L (0 + 1) -
-          Polynomial.C (s + mu) * polyOfRow L 0) k =
+          Polynomial.C (s + mu) * polyOfRow L 0).coeff k =
         (if k = 0 then 0 else L 1 (k - 1)) - r * L 1 k - (s + mu) * L 0 k := by
       have hExpand : (Polynomial.X - Polynomial.C r) * polyOfRow L (0 + 1) -
           Polynomial.C (s + mu) * polyOfRow L 0 =
@@ -679,7 +679,7 @@ private theorem polyOfRow_recurrence (L : ℕ → ℕ → ℝ)
         coeff_X_mul_all (polyOfRow L (0 + 1)) k,
         polyOfRow_coeff L hTri 1 k, polyOfRow_coeff L hTri 0 k]
       have hX : (if k = 0 then (0 : ℝ)
-          else Polynomial.coeff (polyOfRow L (0 + 1)) (k - 1)) =
+          else (polyOfRow L (0 + 1)).coeff (k - 1)) =
           (if k = 0 then 0 else L 1 (k - 1)) := by
         by_cases hk : k = 0
         · rw [ite_eq_left hk, ite_eq_left hk]
@@ -752,9 +752,9 @@ private theorem polyOfRow_recurrence (L : ℕ → ℕ → ℝ)
           ite_eq_right (by omega : ¬ m + 1 + 2 = 2)]
       · rw [ite_eq_right hk]
     rw [hK] at hR
-    have hCoeff : Polynomial.coeff
+    have hCoeff :
         ((Polynomial.X - Polynomial.C r) * polyOfRow L (m + 1 + 1) -
-          Polynomial.C s * polyOfRow L (m + 1)) k =
+          Polynomial.C s * polyOfRow L (m + 1)).coeff k =
         (if k = 0 then 0 else L (m + 1 + 1) (k - 1)) - r * L (m + 1 + 1) k -
           s * L (m + 1) k := by
       have hExpand : (Polynomial.X - Polynomial.C r) * polyOfRow L (m + 1 + 1) -
@@ -768,7 +768,7 @@ private theorem polyOfRow_recurrence (L : ℕ → ℕ → ℝ)
         polyOfRow_coeff L hTri (m + 1 + 1) k,
         polyOfRow_coeff L hTri (m + 1) k]
       have hX : (if k = 0 then (0 : ℝ)
-          else Polynomial.coeff (polyOfRow L (m + 1 + 1)) (k - 1)) =
+          else (polyOfRow L (m + 1 + 1)).coeff (k - 1)) =
           (if k = 0 then 0 else L (m + 1 + 1) (k - 1)) := by
         by_cases hk : k = 0
         · rw [ite_eq_left hk, ite_eq_left hk]
@@ -797,7 +797,7 @@ private theorem recurrence_to_orthogonal (d h : PowerSeries ℝ) (L : ℕ → �
           if N = 0 then 1 else if N = 1 then -lam else if N = 2 then -mu else 0
         else 0)) :
     ∃ P : ℕ → Polynomial ℝ,
-      (∀ n k : ℕ, Polynomial.coeff (P n) k = L n k) ∧
+      (∀ n k : ℕ, (P n).coeff k = L n k) ∧
       (∀ n : ℕ, (P n).Monic) ∧ Polynomial.IsFormallyOrthogonal P := by
   have hTri : ∀ n k : ℕ, n < k → L n k = 0 := by
     intro n k hk
@@ -852,7 +852,7 @@ private theorem recurrence_to_orthogonal (d h : PowerSeries ℝ) (L : ℕ → �
 /-- Orthogonality plus monicity forces unit diagonal on `L`. -/
 private theorem orth_diag_eq_one (L : ℕ → ℕ → ℝ)
     (P : ℕ → Polynomial ℝ)
-    (hPL : ∀ n k : ℕ, Polynomial.coeff (P n) k = L n k)
+    (hPL : ∀ n k : ℕ, (P n).coeff k = L n k)
     (hmonic : ∀ n : ℕ, (P n).Monic)
     (horth : Polynomial.IsFormallyOrthogonal P) :
     ∀ n : ℕ, L n n = 1 := by
@@ -1102,7 +1102,7 @@ private theorem orthogonal_to_recurrence (d h : PowerSeries ℝ) (L : ℕ → �
     (h0 : PowerSeries.coeff 0 h = 0)
     (hL : ∀ n k : ℕ, L n k = PowerSeries.coeff n (d * h ^ k))
     (P : ℕ → Polynomial ℝ)
-    (hPL : ∀ n k : ℕ, Polynomial.coeff (P n) k = L n k)
+    (hPL : ∀ n k : ℕ, (P n).coeff k = L n k)
     (hmonic : ∀ n : ℕ, (P n).Monic)
     (horth : Polynomial.IsFormallyOrthogonal P) :
     ∃ lam mu r s : ℝ, s ≠ 0 ∧ s + mu ≠ 0 ∧
@@ -1186,7 +1186,7 @@ private theorem orthogonal_to_recurrence (d h : PowerSeries ℝ) (L : ℕ → �
     cases m with
     | zero =>
       have h10 : L 1 0 = -(r + lam) := by
-        have hC := congrArg (fun Q => Polynomial.coeff Q 0) hp1
+        have hC := congrArg (fun Q : Polynomial ℝ => Q.coeff 0) hp1
         rw [hPL 1 0, Polynomial.coeff_sub, Polynomial.coeff_X,
           Polynomial.coeff_C] at hC
         have h1 : ¬ (1 : ℕ) = 0 := by omega
@@ -2424,7 +2424,7 @@ private theorem rco_stieltjes_mul_L_of_inverse (L Linv : ℕ → ℕ → ℝ)
     rco_inverse_diag L Linv r₁ s₁ r s h00 hTriInv hRight hProd
   intro n
   induction n using Nat.strong_induction_on with
-  | h n ih =>
+  | ind n ih =>
     intro k
     have hExpand := rco_production_right_expand L Linv r₁ s₁ r s hProd n k
     have hSum : (∑ t ∈ Finset.range (n + 2), Linv n t *
@@ -2593,7 +2593,7 @@ private theorem rco_orthogonal_iff_recurrence (d h : PowerSeries ℝ)
     (L : ℕ → ℕ → ℝ) (h0 : PowerSeries.coeff 0 h = 0)
     (hL : ∀ n k : ℕ, L n k = PowerSeries.coeff n (d * h ^ k)) :
     (∃ P : ℕ → Polynomial ℝ,
-        (∀ n k : ℕ, Polynomial.coeff (P n) k = L n k) ∧
+        (∀ n k : ℕ, (P n).coeff k = L n k) ∧
         (∀ n : ℕ, (P n).Monic) ∧ Polynomial.IsFormallyOrthogonal P) ↔
       ∃ lam mu r s : ℝ, s ≠ 0 ∧ s + mu ≠ 0 ∧
         ∀ N K : ℕ,
@@ -2708,7 +2708,7 @@ public theorem riordan_coeff_orth_equiv :
         ∀ n k : ℕ, L n k = PowerSeries.coeff n (d * h ^ k)) →
       let IsMonicOrthogonalCoeffArray :=
         ∃ P : ℕ → Polynomial ℝ,
-          (∀ n k : ℕ, Polynomial.coeff (P n) k = L n k) ∧
+          (∀ n k : ℕ, (P n).coeff k = L n k) ∧
           (∀ n : ℕ, (P n).Monic) ∧ Polynomial.IsFormallyOrthogonal P
       (IsMonicOrthogonalCoeffArray ↔
           ∃ lam mu r s : ℝ, s ≠ 0 ∧ s + mu ≠ 0 ∧
