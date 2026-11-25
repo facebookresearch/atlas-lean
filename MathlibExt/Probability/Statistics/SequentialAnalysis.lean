@@ -55,9 +55,11 @@ would have mass zero, giving every procedure zero false-alarm probability and ze
 
 The main proved statement is the closed form of the CUSUM recursion,
 `MeasureTheory.pageCusum_eq_sup`. Wald's inequalities for the SPRT are proved in
-`MathlibExt.Probability.Statistics.WaldInequalities`; the optimality theorems (the
-Wald–Wolfowitz theorem, Shiryaev's Bayesian optimality, the optimality of CUSUM under Lorden's
-criterion) are recorded in `WantedExt.Probability.Statistics.SequentialAnalysisWanted`.
+`MathlibExt.Probability.Statistics.WaldInequalities`, and its optimality, the Wald–Wolfowitz
+theorem, in `MathlibExt.Probability.Statistics.WaldWolfowitz`. Shiryaev's Bayesian optimality of
+the Shiryaev rule is proved in `MathlibExt.Probability.Statistics.ShiryaevOptimality`, and the
+optimality of CUSUM under Lorden's criterion, Moustakides' theorem, in
+`MathlibExt.Probability.Statistics.CusumOptimality`.
 
 ## References
 

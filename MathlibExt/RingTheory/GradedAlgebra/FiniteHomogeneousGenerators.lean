@@ -25,8 +25,13 @@ See https://cs.uwaterloo.ca/journals/JIS/VOL23/Braun/braun4.tex
 
 namespace MetaMathlibExt
 
-/-- Finite generating set of homogeneous elements for a finite multigraded
-polynomial module. Source: Braun-Davis, JIS 23 (2020), span 856-877;
+/-- **Finite homogeneous generating sets.** Let $K$ be a field, let $R = K[x_1, \dots, x_n]$,
+and let $M$ be a multigraded polynomial module over $R$, with degree-$\alpha$ components
+$M_\alpha$ for $\alpha \in \mathbb{Z}^n$, that is finitely generated as an $R$-module. Then
+there is a finite set $s \subseteq M$ of homogeneous elements, each lying in $M_\alpha$ for some
+$\alpha \in \mathbb{Z}^n$, that generates $M$ as an $R$-module.
+
+Source: Braun-Davis, JIS 23 (2020), span 856-877;
 see https://cs.uwaterloo.ca/journals/JIS/VOL23/Braun/braun4.tex -/
 public theorem MultigradedPolynomialModule.exists_finset_homogeneous_generators
     (K : Type*) [Field K] (n : ℕ) (M : Type*)

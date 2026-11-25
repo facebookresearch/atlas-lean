@@ -18,10 +18,12 @@ namespace MetaMathlibExt
 /-! # Prime gaps near primorials
 -/
 
-/-- Prime gaps near primorials, with only the hypotheses the argument uses: if no prime lies
-strictly between `q` and `r`, and a prime `p` satisfies
-`primorial q + 1 < p < primorial q + r ^ 2`, then `p - primorial q` is prime.
-`prime_sub_primorial_prime_of_between_consecutive_primes` is the source-shaped form. -/
+/-- **Primes just above a primorial, general form.** Let $q$ and $r$ be natural numbers such
+that no prime $s$ satisfies $q < s < r$, and let $q\#$ be the primorial of $q$, the product of
+all primes at most $q$. If $p$ is a prime with $q\# + 1 < p < q\# + r^2$, then $p - q\#$ is
+prime.
+
+Neither $q$ nor $r$ needs to be prime, and $q < r$ is not assumed. -/
 theorem prime_sub_primorial_prime_of_between_consecutive_primes_general
     {q r p : ℕ}
     (hconsecutive : ∀ s : ℕ, q < s → s < r → ¬ Nat.Prime s)
@@ -68,8 +70,10 @@ theorem prime_sub_primorial_prime_of_between_consecutive_primes_general
 
 set_option linter.unusedVariables false in
 /--
-If `q < r` are consecutive primes and a prime `p` satisfies
-`primorial q + 1 < p < primorial q + r ^ 2`, then `p - primorial q` is prime.
+**Primes just above a primorial (Čejchan–Křížek–Somer).** Let $q < r$ be consecutive primes,
+so that no prime lies strictly between them, and let $q\#$ be the primorial of $q$, the product
+of all primes at most $q$. If $p$ is a prime with $q\# + 1 < p < q\# + r^2$, then $p - q\#$ is
+prime.
 
 Source: Antonín Čejchan, Michal Křížek, and Lawrence Somer, "On Remarkable
 Properties of Primes Near Factorials and Primorials," Journal of Integer
@@ -91,8 +95,9 @@ theorem prime_sub_primorial_prime_of_between_consecutive_primes
     Nat.Prime (p - primorial q) := by
   exact prime_sub_primorial_prime_of_between_consecutive_primes_general hconsecutive hp hlower hupper
 
-/-- `prime_sub_primorial_prime_of_between_consecutive_primes` for consecutive primes packaged as
-`AreConsecutivePrimes q r`. -/
+/-- **Primes just above a primorial, for a consecutive-prime pair.** Let $q < r$ be consecutive
+primes and let $q\#$ be the primorial of $q$, the product of all primes at most $q$. If $p$ is a
+prime with $q\# + 1 < p < q\# + r^2$, then $p - q\#$ is prime. -/
 theorem AreConsecutivePrimes.prime_sub_primorial_prime {q r p : ℕ}
     (hqr : AreConsecutivePrimes q r) (hp : Nat.Prime p)
     (hlower : primorial q + 1 < p) (hupper : p < primorial q + r ^ 2) :

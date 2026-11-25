@@ -20,3 +20,4 @@
 - [The extension discriminant is a lattice discriminant](extension-discriminant-eq.md)
 - [Discriminants of tuples from $B$ lie in the extension discriminant](discr-mem-extension-discriminant.md)
 - [Localization of the extension discriminant](extension-discriminant-localization.md)
+- [Covolume of the ring of integers in the mixed space](covolume-integer-lattice.md)

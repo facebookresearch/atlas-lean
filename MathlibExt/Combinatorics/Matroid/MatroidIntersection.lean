@@ -22,11 +22,15 @@ namespace MathlibExt.Combinatorics.Matroid.MatroidIntersectionWanted
 Proves the finite matroid-intersection min-max theorem.
 -/
 
-/-- Abstract rank-function form of matroid intersection: two functions
-`r₁ r₂ : Finset α → ℕ` satisfying the rank axioms (bounded by cardinality,
-monotone, submodular) yield a common "independent" set `I ⊆ E` of size at
-least `k` whenever every cut `X ⊆ E` satisfies `k ≤ r₁ X + r₂ (E \ X)`.
-Proved by induction on `E`, via deletion and contraction. -/
+/-- **Matroid intersection for abstract rank functions.** Let $E$ be a finite subset of a type
+$\alpha$, let $k$ be a natural number, and let $r_1, r_2$ be functions from the finite subsets of
+$\alpha$ to $\mathbb{N}$ such that, for $i = 1, 2$ and all finite $X, Y \subseteq \alpha$, we have
+$r_i(X) \le |X|$, $r_i(X) \le r_i(Y)$ whenever $X \subseteq Y$, and
+$r_i(X \cap Y) + r_i(X \cup Y) \le r_i(X) + r_i(Y)$. If every $X \subseteq E$ satisfies
+$k \le r_1(X) + r_2(E \setminus X)$, then there is a set $I \subseteq E$ with
+$r_1(I) = r_2(I) = |I|$ and $|I| \ge k$.
+
+Proved by induction on $E$, via deletion and contraction. -/
 theorem exists_common_indep_of_cut_le
     {α : Type*} [DecidableEq α]
     (E : Finset α) (k : ℕ) (r₁ r₂ : Finset α → ℕ)
@@ -262,9 +266,11 @@ theorem exists_common_indep_of_cut_le
           omega
 
 /--
-Edmonds matroid intersection min-max for finite matroids on a finite type, with no assumption on
-the ground sets: there is a common independent set of size at least `k` iff every cut `X`
-satisfies `k ≤ M₁.eRk X + M₂.eRk Xᶜ`.
+**Edmonds' matroid intersection theorem.** Let $M_1$ and $M_2$ be matroids on a finite type
+$\alpha$, with arbitrary ground sets, and let $k$ be a natural number. There is a set
+$I \subseteq \alpha$ independent in both $M_1$ and $M_2$ with $|I| \ge k$ if and only if every
+$X \subseteq \alpha$ satisfies $k \le r_1(X) + r_2(\alpha \setminus X)$, where $r_i(Y)$ is the
+largest size of a subset of $Y$ independent in $M_i$.
 -/
 theorem edmonds_matroid_intersection'
     {α : Type*} [Finite α]
@@ -380,13 +386,18 @@ set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
 set_option linter.unusedVariables false in
 /--
-Edmonds matroid intersection min-max for finite matroids.
-Source: J. Edmonds, Submodular Functions, Matroids, and Certain Polyhedra, Combinatorial Structures
-and Their Applications (1970), 69–87.
+**Edmonds' matroid intersection theorem for matroids on the whole type.** Let $M_1$ and $M_2$ be
+matroids on a finite type $\alpha$, each with ground set all of $\alpha$, and let $k$ be a natural
+number. There is a set $I \subseteq \alpha$ independent in both $M_1$ and $M_2$ with $|I| \ge k$
+if and only if every $X \subseteq \alpha$ satisfies $k \le r_1(X) + r_2(\alpha \setminus X)$,
+where $r_i$ is the rank function of $M_i$.
 
-The full-ground hypotheses are not needed; see `edmonds_matroid_intersection'`.
+The hypotheses on the ground sets are not needed; the general version drops them.
 
 Proves `Wanted` entry `edmonds_matroid_intersection`.
+
+Source: J. Edmonds, Submodular Functions, Matroids, and Certain Polyhedra, Combinatorial Structures
+and Their Applications (1970), 69–87.
 -/
 theorem edmonds_matroid_intersection
     {α : Type*} [Fintype α] [DecidableEq α]
