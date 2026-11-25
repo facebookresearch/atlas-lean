@@ -43,7 +43,9 @@ open scoped Matrix BigOperators
 def flipBit (N q : ℕ) (t : Fin (2 ^ N)) : Fin (2 ^ N) :=
   ⟨(t.val ^^^ 2 ^ q) % 2 ^ N, Nat.mod_lt _ (by positivity)⟩
 
-/-- Set qubit `q` of a basis index to `b`. -/
+/-- Set qubit `q` of a basis index to `b` when `q < N`; at `q ≥ N` this
+is the identity (an out-of-range qubit of a basis index always reads
+`0`, and no bit is flipped). -/
 def setQBit (N q : ℕ) (b : Fin 2) (t : Fin (2 ^ N)) : Fin (2 ^ N) :=
   if qBit q t.val = b then t else flipBit N q t
 
@@ -876,17 +878,30 @@ theorem complexOfGRatMatrix_vDagGate :
 
 /-! ## Permutation and phase corollaries -/
 
-/-- The CNOT permutation of basis indices: flip the target when the
-control is `1`. -/
+/-- The CNOT conditional index map: flip the target when the control
+is `1`. For distinct in-range control and target this is the CNOT
+permutation of basis indices (see `cnotEquiv`). If the target equals
+the control in range, both values of that bit are sent to `0`, so
+the map is not injective and does not represent CNOT; out of range
+it degenerates to the identity. -/
 def cnotIndex (N c t : ℕ) (s : Fin (2 ^ N)) : Fin (2 ^ N) :=
   if qBit c s.val = 1 then flipBit N t s else s
 
-/-- The Toffoli permutation of basis indices: flip `c` when both controls
-`a` and `b` are `1`. -/
+/-- The Toffoli conditional index map: flip `c` when both controls
+`a` and `b` are `1`. This is an involution, hence a permutation,
+whenever the target differs from both controls (see
+`toffoliEquiv`); the controls may coincide with each other, in
+which case the map conditions on that single bit and is not a
+Toffoli gate. If the target aliases a control, the map need not be
+injective and does not represent Toffoli: with all indices in
+range, the aliased bit is only ever cleared, never set, so on
+inputs where the remaining controls read `1` both of its values
+are sent to `0`. -/
 def toffoliIndex (N a b c : ℕ) (s : Fin (2 ^ N)) : Fin (2 ^ N) :=
   if qBit a s.val = 1 ∧ qBit b s.val = 1 then flipBit N c s else s
 
-/-- The Toffoli permutation as a map on state vectors (pullback). -/
+/-- Pullback of a state vector along `toffoliIndex`; a permutation
+pullback whenever the target differs from both controls. -/
 def toffoliPerm (N a b c : ℕ) (ψ : Fin (2 ^ N) → ℂ) : Fin (2 ^ N) → ℂ :=
   fun s => ψ (toffoliIndex N a b c s)
 
@@ -1058,6 +1073,28 @@ theorem toffoliIndex_toffoliIndex {N a b c : ℕ} (hac : a ≠ c) (hbc : b ≠ c
       exact hb
     simp [ha, hb, ha', hb', flipBit_flipBit]
   · simp [h]
+
+/-- `cnotIndex` as a permutation of basis indices, for distinct
+control and target (the CNOT permutation when both are in range). -/
+def cnotEquiv (N c t : ℕ) (hct : c ≠ t) : Equiv.Perm (Fin (2 ^ N)) :=
+  Function.Involutive.toPerm (cnotIndex N c t) (cnotIndex_cnotIndex hct)
+
+@[simp]
+theorem cnotEquiv_apply (N c t : ℕ) (hct : c ≠ t) (s : Fin (2 ^ N)) :
+    cnotEquiv N c t hct s = cnotIndex N c t s :=
+  rfl
+
+/-- `toffoliIndex` as a permutation of basis indices, for a target
+distinct from both controls (the Toffoli permutation when all
+three indices are distinct and in range). -/
+def toffoliEquiv (N a b c : ℕ) (hac : a ≠ c) (hbc : b ≠ c) : Equiv.Perm (Fin (2 ^ N)) :=
+  Function.Involutive.toPerm (toffoliIndex N a b c) (toffoliIndex_toffoliIndex hac hbc)
+
+@[simp]
+theorem toffoliEquiv_apply (N a b c : ℕ) (hac : a ≠ c) (hbc : b ≠ c)
+    (s : Fin (2 ^ N)) :
+    toffoliEquiv N a b c hac hbc s = toffoliIndex N a b c s :=
+  rfl
 
 /-- Embedded `X` on a basis state. -/
 theorem applyGate_embeddedGate_xGate_single {N q p : ℕ} (hqp : q ≠ p) (hqN : q < N)
