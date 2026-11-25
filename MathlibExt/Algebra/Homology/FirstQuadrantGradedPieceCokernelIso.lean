@@ -27,9 +27,6 @@ open CategoryTheory Limits
 
 noncomputable section
 
-set_option backward.isDefEq.respectTransparency false
-set_option backward.isDefEq.respectTransparency.types false
-
 universe v u
 
 namespace HomologicalComplex₂
@@ -55,47 +52,37 @@ noncomputable def horizontalNaturalSuccCochainEvalIso (p q : ℕ) :
     horizontalFilteredSuccShortComplex K p q ≅
       (horizontalNaturalSuccCochainShortComplex K p).map
         (HomologicalComplex.eval C (ComplexShape.up ℤ)
-          (-((p + 1 : ℕ) : ℤ) - q)) :=
-  ShortComplex.isoMk
-    ((horizontalFilteredTotalComplex K p).extendXIso
-      ComplexShape.embeddingDownNat
-      (i := p + 1 + q) (i' := -((p + 1 : ℕ) : ℤ) - q)
-      (by rw [ComplexShape.embeddingDownNat_f]; push_cast; omega)).symm
-    ((horizontalFilteredTotalComplex K (p + 1)).extendXIso
-      ComplexShape.embeddingDownNat
-      (i := p + 1 + q) (i' := -((p + 1 : ℕ) : ℤ) - q)
-      (by rw [ComplexShape.embeddingDownNat_f]; push_cast; omega)).symm
-    (horizontalDirectColumnCochainXIso K (p + 1) q).symm
-    (by
-      dsimp [horizontalFilteredSuccShortComplex,
-        horizontalNaturalSuccCochainShortComplex]
-      change
-        ((horizontalFilteredTotalComplex K p).extendXIso
-            ComplexShape.embeddingDownNat
-            (i := p + 1 + q) (i' := -((p + 1 : ℕ) : ℤ) - q)
-            (by rw [ComplexShape.embeddingDownNat_f]; push_cast; omega)).inv ≫
-          (HomologicalComplex.extendMap
-            (horizontalFilteredTotalComplexMap K (Nat.le_succ p))
-            ComplexShape.embeddingDownNat).f
-              (-((p + 1 : ℕ) : ℤ) - q) =
-        horizontalFilteredTotalMap K (Nat.le_succ p) (p + 1 + q) ≫
-          ((horizontalFilteredTotalComplex K (p + 1)).extendXIso
-            ComplexShape.embeddingDownNat
-            (i := p + 1 + q) (i' := -((p + 1 : ℕ) : ℤ) - q)
-            (by rw [ComplexShape.embeddingDownNat_f]; push_cast; omega)).inv
-      rw [HomologicalComplex.extendMap_f _ _
-        (i := p + 1 + q) (i' := -((p + 1 : ℕ) : ℤ) - q)
-        (by rw [ComplexShape.embeddingDownNat_f]; push_cast; omega)]
-      simp
-      rfl)
-    (by
-      dsimp [horizontalFilteredSuccShortComplex,
-        horizontalNaturalSuccCochainShortComplex]
-      change _ ≫ horizontalNaturalDirectColumnProjection K (p + 1)
-          (-((p + 1 : ℕ) : ℤ) - q) = _
-      rw [horizontalNaturalDirectColumnProjection_eq_component K (p + 1) q]
-      dsimp [horizontalNaturalDirectColumnProjectionComponent]
-      simp)
+          (-((p + 1 : ℕ) : ℤ) - q)) := by
+  let e : (ComplexShape.down ℕ).Embedding (ComplexShape.up ℤ) :=
+    ComplexShape.embeddingDownNat
+  let N : ℕ := p + 1 + q
+  let n : ℤ := -((p + 1 : ℕ) : ℤ) - q
+  have hn : e.f N = n := by
+    dsimp only [e, N, n]
+    rw [ComplexShape.embeddingDownNat_f]
+    push_cast
+    omega
+  let S : ShortComplex C := horizontalFilteredSuccShortComplex K p q
+  let T : ShortComplex C := (horizontalNaturalSuccCochainShortComplex K p).map
+    (HomologicalComplex.eval C (ComplexShape.up ℤ) n)
+  let e₀ : S.X₁ ≅ T.X₁ := ((horizontalFilteredTotalComplex K p).extendXIso e hn).symm
+  let e₁ : S.X₂ ≅ T.X₂ :=
+    ((horizontalFilteredTotalComplex K (p + 1)).extendXIso e hn).symm
+  let e₂ : S.X₃ ≅ T.X₃ := (horizontalDirectColumnCochainXIso K (p + 1) q).symm
+  refine ShortComplex.isoMk e₀ e₁ e₂ ?_ ?_
+  · change e₀.hom ≫
+        (HomologicalComplex.extendMap
+          (horizontalFilteredTotalComplexMap K (Nat.le_succ p)) e).f n = S.f ≫ e₁.hom
+    rw [HomologicalComplex.extendMap_f _ _ hn]
+    dsimp only [e₀, e₁, S, horizontalFilteredSuccShortComplex]
+    simp only [Iso.symm_hom, Category.assoc, Iso.inv_hom_id_assoc]
+    rfl
+  · change e₁.hom ≫ horizontalNaturalDirectColumnProjection K (p + 1) n = S.g ≫ e₂.hom
+    dsimp only [n]
+    rw [horizontalNaturalDirectColumnProjection_eq_component K (p + 1) q]
+    dsimp only [e₁, e₂, S, horizontalFilteredSuccShortComplex,
+      horizontalNaturalDirectColumnProjectionComponent]
+    simp
 
 omit [HasZeroObject C] in
 /-- Before the new horizontal column appears, consecutive filtration stages
@@ -165,13 +152,16 @@ noncomputable def horizontalNaturalSuccCochainEvalSplitting
     (p : ℕ) (i : ℤ) :
     ((horizontalNaturalSuccCochainShortComplex K p).map
       (HomologicalComplex.eval C (ComplexShape.up ℤ) i)).Splitting := by
+  let S : ShortComplex (CochainComplex C ℤ) := horizontalNaturalSuccCochainShortComplex K p
+  let splittingAt (j : ℤ) : Type v :=
+    (S.map (HomologicalComplex.eval C (ComplexShape.up ℤ) j)).Splitting
   by_cases hi : i ≤ -((p + 1 : ℕ) : ℤ)
-  · let q := horizontalColumnDegree (p + 1) i
+  · let q : ℕ := horizontalColumnDegree (p + 1) i
     have hiEq : i = -((p + 1 : ℕ) : ℤ) - q :=
       horizontalColumnDegree_spec (p + 1) i hi
-    rw [hiEq]
-    exact (horizontalFilteredSuccSplitting K p q).ofIso
-      (horizontalNaturalSuccCochainEvalIso K p q)
+    let known : splittingAt (-((p + 1 : ℕ) : ℤ) - q) :=
+      (horizontalFilteredSuccSplitting K p q).ofIso (horizontalNaturalSuccCochainEvalIso K p q)
+    exact Eq.mpr (congrArg splittingAt hiEq) known
   · exact ShortComplex.Splitting.ofIsIsoOfIsZero _
       (horizontalNaturalSuccCochainMap_f_isIso_of_lt K p i (by lia))
       (horizontalDirectColumnCochain_isZero_X_of_lt K (p + 1) i (by lia))
@@ -383,18 +373,28 @@ canonically isomorphic to the direct shifted column. -/
 noncomputable def horizontalFirstPageCokernelUniqueIso (p : ℕ) :
     cokernel (horizontalFirstPageFiltrationMap K p) ≅
       horizontalDirectColumnCochain K p :=
-  IsColimit.coconePointUniqueUpToIso
-    (cokernelIsCokernel (horizontalFirstPageFiltrationMap K p))
-    (horizontalCompleteDirectColumnProjectionMapIsCokernel K p)
+  let f := horizontalFirstPageFiltrationMap K p
+  let g := horizontalCompleteDirectColumnProjectionMap K p
+  let standard : CokernelCofork f := CokernelCofork.ofπ (cokernel.π f) (cokernel.condition f)
+  let canonical : CokernelCofork f :=
+    CokernelCofork.ofπ g (horizontalFirstPageFiltrationMap_projection_zero K p)
+  let hStandard : IsColimit standard := cokernelIsCokernel f
+  let hCanonical : IsColimit canonical := horizontalCompleteDirectColumnProjectionMapIsCokernel K p
+  IsColimit.coconePointUniqueUpToIso hStandard hCanonical
 
 theorem horizontalFirstPageCokernelUniqueIso_hom (p : ℕ) :
     (horizontalFirstPageCokernelUniqueIso K p).hom =
       horizontalFirstPageCokernelToDirectColumn K p := by
   apply (cancel_epi (cokernel.π (horizontalFirstPageFiltrationMap K p))).1
+  let f := horizontalFirstPageFiltrationMap K p
+  let g := horizontalCompleteDirectColumnProjectionMap K p
+  let standard : CokernelCofork f := CokernelCofork.ofπ (cokernel.π f) (cokernel.condition f)
+  let canonical : CokernelCofork f :=
+    CokernelCofork.ofπ g (horizontalFirstPageFiltrationMap_projection_zero K p)
+  let hStandard : IsColimit standard := cokernelIsCokernel f
+  let hCanonical : IsColimit canonical := horizontalCompleteDirectColumnProjectionMapIsCokernel K p
   have hleg := IsColimit.comp_coconePointUniqueUpToIso_hom
-    (cokernelIsCokernel (horizontalFirstPageFiltrationMap K p))
-    (horizontalCompleteDirectColumnProjectionMapIsCokernel K p)
-    WalkingParallelPair.one
+    hStandard hCanonical WalkingParallelPair.one
   change cokernel.π (horizontalFirstPageFiltrationMap K p) ≫
       (horizontalFirstPageCokernelUniqueIso K p).hom =
     horizontalCompleteDirectColumnProjectionMap K p at hleg

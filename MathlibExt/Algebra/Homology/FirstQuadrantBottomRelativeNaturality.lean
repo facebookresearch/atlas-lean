@@ -32,9 +32,6 @@ open CategoryTheory Limits ComposableArrows Pretriangulated
 
 noncomputable section
 
-set_option backward.isDefEq.respectTransparency false
-set_option backward.isDefEq.respectTransparency.types false
-
 universe v u
 
 namespace HomologicalComplex₂
@@ -89,13 +86,18 @@ theorem horizontalBottomMappingConeToStage_naturality_of_bicomplex
         horizontalBottomMappingConeToStage L i =
       horizontalBottomMappingConeToStage K i ≫
         (horizontalCompleteFiltrationCochainDiagramNatTrans f).app i := by
-  let SK := horizontalBottomStageShortComplex K i
-  let SL := horizontalBottomStageShortComplex L i
-  let φ := horizontalBottomStageShortComplexMapOfBicomplex f i
-  change CochainComplex.mappingCone.map SK.f SL.f φ.τ₁ φ.τ₂
-      φ.comm₁₂.symm ≫ CochainComplex.mappingCone.descShortComplex SL =
-    CochainComplex.mappingCone.descShortComplex SK ≫ φ.τ₃
-  exact CochainComplex.mappingCone.map_descShortComplex SK SL φ
+  let SK : ShortComplex (CochainComplex C ℤ) := horizontalBottomStageShortComplex K i
+  let SL : ShortComplex (CochainComplex C ℤ) := horizontalBottomStageShortComplex L i
+  let φ : SK ⟶ SL := horizontalBottomStageShortComplexMapOfBicomplex f i
+  have hm : (horizontalCompleteFiltrationMappingConeNatTrans f).app
+        (mk₁ (horizontalBottomToStageMap i)) =
+      CochainComplex.mappingCone.map SK.f SL.f φ.τ₁ φ.τ₂ φ.comm₁₂.symm := by
+    rw [horizontalCompleteFiltrationMappingConeNatTrans_app]
+    rfl
+  rw [hm]
+  simpa only [horizontalBottomMappingConeToStage,
+    horizontalBottomStageShortComplexMapOfBicomplex_τ₃] using
+    CochainComplex.mappingCone.map_descShortComplex SK SL φ
 
 /-- Bottom-relative homology identifies naturally with complete-stage
 homology under bicomplex morphisms. -/
@@ -109,91 +111,84 @@ theorem horizontalBottomRelativeHomologyStageIso_naturality_of_bicomplex
         (horizontalCompleteFilteredTotalComplexMapOfBicomplex f i) n := by
   rw [horizontalBottomRelativeHomologyStageIso_hom,
     horizontalBottomRelativeHomologyStageIso_hom]
-  let D := mk₁ (horizontalBottomToStageMap i)
-  let m := (horizontalCompleteFiltrationMappingConeNatTrans f).app D
-  let ηi := (horizontalCompleteFiltrationCochainDiagramNatTrans f).app i
-  let stageMap := horizontalCompleteFilteredTotalComplexMapOfBicomplex f i
-  have hfac := (HomotopyCategory.homologyFunctorFactors C
-    (ComplexShape.up ℤ) (-(n : ℤ))).hom.naturality m
-  change _ =
-    (HomotopyCategory.homologyFunctorFactors C
-      (ComplexShape.up ℤ) (-(n : ℤ))).hom.app
-        ((horizontalCompleteFiltrationMappingConeFunctor K).obj D) ≫
-      HomologicalComplex.homologyMap m (-(n : ℤ)) at hfac
-  have hdesc :=
+  let D : ComposableArrows EInt 1 := mk₁ (horizontalBottomToStageMap i)
+  let MK : ComposableArrows EInt 1 ⥤ CochainComplex C ℤ :=
+    horizontalCompleteFiltrationMappingConeFunctor K
+  let ML : ComposableArrows EInt 1 ⥤ CochainComplex C ℤ :=
+    horizontalCompleteFiltrationMappingConeFunctor L
+  let m : MK.obj D ⟶ ML.obj D := (horizontalCompleteFiltrationMappingConeNatTrans f).app D
+  let t : (horizontalCompleteFiltrationCochainDiagram K).obj i ⟶
+      (horizontalCompleteFiltrationCochainDiagram L).obj i :=
+    (horizontalCompleteFiltrationCochainDiagramNatTrans f).app i
+  let stageMap : horizontalCompleteFilteredTotalComplex K i ⟶
+      horizontalCompleteFilteredTotalComplex L i :=
+    horizontalCompleteFilteredTotalComplexMapOfBicomplex f i
+  let Q : CochainComplex C ℤ ⥤ HomotopyCategory C (ComplexShape.up ℤ) :=
+    HomotopyCategory.quotient C (ComplexShape.up ℤ)
+  let Hq : HomotopyCategory C (ComplexShape.up ℤ) ⥤ C :=
+    HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) (-(n : ℤ))
+  let Hc : CochainComplex C ℤ ⥤ C :=
+    HomologicalComplex.homologyFunctor C (ComplexShape.up ℤ) (-(n : ℤ))
+  let η : Q ⋙ Hq ≅ Hc :=
+    HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) (-(n : ℤ))
+  let gK : MK.obj D ⟶ (horizontalCompleteFiltrationCochainDiagram K).obj i :=
+    horizontalBottomMappingConeToStage K i
+  let gL : ML.obj D ⟶ (horizontalCompleteFiltrationCochainDiagram L).obj i :=
+    horizontalBottomMappingConeToStage L i
+  let aK : (Q ⋙ Hq).obj (MK.obj D) ⟶ (MK.obj D).homology (-(n : ℤ)) :=
+    η.hom.app (MK.obj D)
+  let aL : (Q ⋙ Hq).obj (ML.obj D) ⟶ (ML.obj D).homology (-(n : ℤ)) :=
+    η.hom.app (ML.obj D)
+  let eK : ((horizontalCompleteFiltrationCochainDiagram K).obj i).homology (-(n : ℤ)) ⟶
+      (horizontalCompleteFilteredTotalComplex K i).homology n :=
+    ((horizontalCompleteFilteredTotalComplex K i).extendHomologyIso
+      ComplexShape.embeddingDownNat (by simp)).hom
+  let eL : ((horizontalCompleteFiltrationCochainDiagram L).obj i).homology (-(n : ℤ)) ⟶
+      (horizontalCompleteFilteredTotalComplex L i).homology n :=
+    ((horizontalCompleteFilteredTotalComplex L i).extendHomologyIso
+      ComplexShape.embeddingDownNat (by simp)).hom
+  have hfac : (Q ⋙ Hq).map m ≫ aL =
+      aK ≫ HomologicalComplex.homologyMap m (-(n : ℤ)) := by
+    simpa only [Functor.comp_map] using η.hom.naturality m
+  have hdesc : m ≫ gL = gK ≫ t :=
     horizontalBottomMappingConeToStage_naturality_of_bicomplex f i
-  have hdescH := congrArg
-    (fun k => HomologicalComplex.homologyMap k (-(n : ℤ))) hdesc
-  simp only [HomologicalComplex.homologyMap_comp] at hdescH
-  have hext := HomologicalComplex.extendHomologyIso_hom_naturality
-    (φ := stageMap)
-    (e := ComplexShape.embeddingDownNat)
-    (j := n) (j' := -(n : ℤ)) (by simp)
-  change HomologicalComplex.homologyMap ηi (-(n : ℤ)) ≫ _ =
-    _ ≫ HomologicalComplex.homologyMap stageMap n at hext
-  have hSpectral :
-      ((horizontalCompleteFiltrationSpectralObjectMap f).hom
-          (-(n : ℤ))).app D =
-        ((HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
-          HomotopyCategory.homologyFunctor C
-            (ComplexShape.up ℤ) (-(n : ℤ))).map m) := by
+  have hdescH : HomologicalComplex.homologyMap m (-(n : ℤ)) ≫
+        HomologicalComplex.homologyMap gL (-(n : ℤ)) =
+      HomologicalComplex.homologyMap gK (-(n : ℤ)) ≫
+        HomologicalComplex.homologyMap t (-(n : ℤ)) := by
+    simpa only [HomologicalComplex.homologyMap_comp] using
+      congrArg (fun g : MK.obj D ⟶ (horizontalCompleteFiltrationCochainDiagram L).obj i =>
+        HomologicalComplex.homologyMap g (-(n : ℤ))) hdesc
+  have ht : t = HomologicalComplex.extendMap stageMap ComplexShape.embeddingDownNat :=
+    horizontalCompleteFiltrationCochainDiagramNatTrans_app f i
+  have hext : HomologicalComplex.homologyMap t (-(n : ℤ)) ≫ eL =
+      eK ≫ HomologicalComplex.homologyMap stageMap n := by
+    rw [ht]
+    exact HomologicalComplex.extendHomologyIso_hom_naturality
+      (φ := stageMap) (e := ComplexShape.embeddingDownNat)
+      (j := n) (j' := -(n : ℤ)) (by simp)
+  have hSpectral : ((horizontalCompleteFiltrationSpectralObjectMap f).hom
+        (-(n : ℤ))).app D = (Q ⋙ Hq).map m := by
+    change ((HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0).shift
+        (-(n : ℤ))).map ((horizontalCompleteFiltrationTriangulatedSpectralObjectMap f).hom.app D)
+      = Hq.map (Q.map m)
+    rw [horizontalCompleteFiltrationTriangulatedSpectralObjectMap_hom_app]
     rfl
   rw [hSpectral]
-  change
-    ((HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
-        HomotopyCategory.homologyFunctor C
-          (ComplexShape.up ℤ) (-(n : ℤ))).map m) ≫
-      (HomotopyCategory.homologyFunctorFactors C
-        (ComplexShape.up ℤ) (-(n : ℤ))).hom.app
-          ((horizontalCompleteFiltrationMappingConeFunctor L).obj D) ≫
-      HomologicalComplex.homologyMap
-        (horizontalBottomMappingConeToStage L i) (-(n : ℤ)) ≫
-      ((horizontalCompleteFilteredTotalComplex L i).extendHomologyIso
-        ComplexShape.embeddingDownNat (by simp)).hom =
-    ((HomotopyCategory.homologyFunctorFactors C
-          (ComplexShape.up ℤ) (-(n : ℤ))).hom.app
-            ((horizontalCompleteFiltrationMappingConeFunctor K).obj D) ≫
-        HomologicalComplex.homologyMap
-          (horizontalBottomMappingConeToStage K i) (-(n : ℤ)) ≫
-        ((horizontalCompleteFilteredTotalComplex K i).extendHomologyIso
-          ComplexShape.embeddingDownNat (by simp)).hom) ≫
+  change (Q ⋙ Hq).map m ≫ aL ≫ HomologicalComplex.homologyMap gL (-(n : ℤ)) ≫ eL =
+    (aK ≫ HomologicalComplex.homologyMap gK (-(n : ℤ)) ≫ eK) ≫
       HomologicalComplex.homologyMap stageMap n
   calc
-    _ = (HomotopyCategory.homologyFunctorFactors C
-          (ComplexShape.up ℤ) (-(n : ℤ))).hom.app
-            ((horizontalCompleteFiltrationMappingConeFunctor K).obj D) ≫
-        HomologicalComplex.homologyMap m (-(n : ℤ)) ≫
-        HomologicalComplex.homologyMap
-          (horizontalBottomMappingConeToStage L i) (-(n : ℤ)) ≫
-        ((horizontalCompleteFilteredTotalComplex L i).extendHomologyIso
-          ComplexShape.embeddingDownNat (by simp)).hom := by
+    _ = aK ≫ HomologicalComplex.homologyMap m (-(n : ℤ)) ≫
+        HomologicalComplex.homologyMap gL (-(n : ℤ)) ≫ eL := by
       simpa only [Category.assoc] using hfac =≫
-        (HomologicalComplex.homologyMap
-          (horizontalBottomMappingConeToStage L i) (-(n : ℤ)) ≫
-        ((horizontalCompleteFilteredTotalComplex L i).extendHomologyIso
-          ComplexShape.embeddingDownNat (by simp)).hom)
-    _ = (HomotopyCategory.homologyFunctorFactors C
-          (ComplexShape.up ℤ) (-(n : ℤ))).hom.app
-            ((horizontalCompleteFiltrationMappingConeFunctor K).obj D) ≫
-        HomologicalComplex.homologyMap
-          (horizontalBottomMappingConeToStage K i) (-(n : ℤ)) ≫
-        HomologicalComplex.homologyMap ηi (-(n : ℤ)) ≫
-        ((horizontalCompleteFilteredTotalComplex L i).extendHomologyIso
-          ComplexShape.embeddingDownNat (by simp)).hom := by
-      simpa only [Category.assoc] using
-        (((HomotopyCategory.homologyFunctorFactors C
-          (ComplexShape.up ℤ) (-(n : ℤ))).hom.app
-            ((horizontalCompleteFiltrationMappingConeFunctor K).obj D) ≫=
-          hdescH) =≫
-        ((horizontalCompleteFilteredTotalComplex L i).extendHomologyIso
-          ComplexShape.embeddingDownNat (by simp)).hom)
+        (HomologicalComplex.homologyMap gL (-(n : ℤ)) ≫ eL)
+    _ = aK ≫ HomologicalComplex.homologyMap gK (-(n : ℤ)) ≫
+        HomologicalComplex.homologyMap t (-(n : ℤ)) ≫ eL := by
+      simpa only [Category.assoc] using (aK ≫= hdescH) =≫ eL
     _ = _ := by
       simpa only [Category.assoc] using
-        ((HomotopyCategory.homologyFunctorFactors C
-          (ComplexShape.up ℤ) (-(n : ℤ))).hom.app
-            ((horizontalCompleteFiltrationMappingConeFunctor K).obj D) ≫
-          HomologicalComplex.homologyMap
-            (horizontalBottomMappingConeToStage K i) (-(n : ℤ))) ≫= hext
+        (aK ≫ HomologicalComplex.homologyMap gK (-(n : ℤ))) ≫= hext
 
 end HomologicalComplex₂
 

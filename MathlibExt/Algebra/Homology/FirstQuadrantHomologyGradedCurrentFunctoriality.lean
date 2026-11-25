@@ -29,9 +29,6 @@ open CategoryTheory Limits
 
 noncomputable section
 
-set_option backward.isDefEq.respectTransparency false
-set_option backward.isDefEq.respectTransparency.types false
-
 universe v u
 
 namespace HomologicalComplex₂
@@ -50,29 +47,18 @@ theorem
     (p q : ℕ) :
     horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex
         (𝟙 K) p q = 𝟙 _ := by
-  let F := horizontalFiniteTotalHomologyFilteredObjectFunctor
-    (C := C) (p + q)
-  let e := (horizontalCompleteFiniteHomologyFiltrationDiagramIso
-    K (p + q)).app p
-  have hId := congrArg CategoryTheory.FilteredObject.Hom.natTrans
-    (F.map_id K)
-  have hIdApp :
-      ((horizontalFiniteTotalHomologyFilteredObjectFunctor
-        (C := C) (p + q)).map (𝟙 K)).natTrans.app p =
-        𝟙 ((horizontalFiniteTotalHomologyFiltration K
-          (p + q)).diagram.obj p) := by
-    have hIdApp := NatTrans.congr_app hId p
-    change ((horizontalFiniteTotalHomologyFilteredObjectFunctor
-      (C := C) (p + q)).map (𝟙 K)).natTrans.app p =
-        𝟙 ((horizontalFiniteTotalHomologyFiltration K
-          (p + q)).diagram.obj p) at hIdApp
-    exact hIdApp
-  change e.hom ≫
-    ((horizontalFiniteTotalHomologyFilteredObjectFunctor
-      (C := C) (p + q)).map (𝟙 K)).natTrans.app p ≫ e.inv = 𝟙 _
-  rw [hIdApp]
-  rw [Category.id_comp]
-  exact e.hom_inv_id
+  rw [horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_eq,
+    horizontalFiniteTotalHomologyFilteredObjectFunctor_map_natTrans_app]
+  have hId :
+      horizontalFiniteHomologyImageMapOfBicomplex (𝟙 K) (p + q) p =
+        𝟙 ((horizontalFiniteTotalHomologyFiltration K (p + q)).obj p) := by
+    simpa only [horizontalFiniteTotalHomologyFiltrationDiagramFunctor_map_app,
+      NatTrans.id_app, horizontalFiniteTotalHomologyFiltrationDiagramFunctor_obj_obj] using
+      NatTrans.congr_app
+        ((horizontalFiniteTotalHomologyFiltrationDiagramFunctor
+          (C := C) (p + q)).map_id K) p
+  simpa only [hId, Category.id_comp] using
+    Iso.hom_inv_id_app (horizontalCompleteFiniteHomologyFiltrationDiagramIso K (p + q)) p
 
 /-- Transported current-stage maps preserve composition of bicomplex
 morphisms. -/
@@ -84,24 +70,31 @@ theorem
         (f ≫ g) p q =
       horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex f p q ≫
         horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex g p q := by
-  let F := horizontalFiniteTotalHomologyFilteredObjectFunctor
-    (C := C) (p + q)
-  let eK := (horizontalCompleteFiniteHomologyFiltrationDiagramIso
-    K (p + q)).app p
-  let eL := (horizontalCompleteFiniteHomologyFiltrationDiagramIso
-    L (p + q)).app p
-  let eM := (horizontalCompleteFiniteHomologyFiltrationDiagramIso
-    M (p + q)).app p
-  have hComp := congrArg CategoryTheory.FilteredObject.Hom.natTrans
-    (F.map_comp f g)
-  have hCompApp := NatTrans.congr_app hComp p
-  change (F.map (f ≫ g)).natTrans.app p =
-    (F.map f).natTrans.app p ≫ (F.map g).natTrans.app p at hCompApp
-  change eK.hom ≫ (F.map (f ≫ g)).natTrans.app p ≫ eM.inv =
-    (eK.hom ≫ (F.map f).natTrans.app p ≫ eL.inv) ≫
-      (eL.hom ≫ (F.map g).natTrans.app p ≫ eM.inv)
-  rw [hCompApp]
-  simp only [Category.assoc, Iso.inv_hom_id_assoc]
+  rw [horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_eq (f ≫ g) p q,
+    horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_eq f p q,
+    horizontalPositiveCurrentTotalHomologyFiltrationMapOfBicomplex_eq g p q,
+    horizontalFiniteTotalHomologyFilteredObjectFunctor_map_natTrans_app (p + q) (f ≫ g),
+    horizontalFiniteTotalHomologyFilteredObjectFunctor_map_natTrans_app (p + q) f,
+    horizontalFiniteTotalHomologyFilteredObjectFunctor_map_natTrans_app (p + q) g]
+  have hComp :
+      horizontalFiniteHomologyImageMapOfBicomplex (f ≫ g) (p + q) p =
+        horizontalFiniteHomologyImageMapOfBicomplex f (p + q) p ≫
+          horizontalFiniteHomologyImageMapOfBicomplex g (p + q) p := by
+    simpa only [NatTrans.comp_app,
+      horizontalFiniteTotalHomologyFiltrationDiagramFunctor_map_app] using
+      NatTrans.congr_app
+        ((horizontalFiniteTotalHomologyFiltrationDiagramFunctor
+          (C := C) (p + q)).map_comp f g) p
+  have hCancel :
+      (horizontalCompleteFiniteHomologyFiltrationDiagramIso L (p + q)).inv.app p ≫
+        (horizontalCompleteFiniteHomologyFiltrationDiagramIso L (p + q)).hom.app p ≫
+          (horizontalFiniteHomologyImageMapOfBicomplex g (p + q) p ≫
+            (horizontalCompleteFiniteHomologyFiltrationDiagramIso M (p + q)).inv.app p) =
+      horizontalFiniteHomologyImageMapOfBicomplex g (p + q) p ≫
+        (horizontalCompleteFiniteHomologyFiltrationDiagramIso M (p + q)).inv.app p := by
+    rw [← Category.assoc, Iso.inv_hom_id_app, Category.id_comp]
+  rw [hComp]
+  simp only [Category.assoc, hCancel]
 
 end HomologicalComplex₂
 
