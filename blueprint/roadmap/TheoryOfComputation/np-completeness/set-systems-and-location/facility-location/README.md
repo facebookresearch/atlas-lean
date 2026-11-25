@@ -21,6 +21,7 @@
 - [Feasible facility location instances](facility-location-feasible.md)
 - [The FACILITY LOCATION decision problem](facility-location-dec.md)
 - [FACILITY LOCATION is NP-complete](facility-location-np-complete.md)
+- [Formulation and LP lower bound for uncapacitated facility location](facility-location-formulation-and-lp-bound.md)
 - [Well-formed instances of K-FACILITY DISPERSION](well-formed-4.md)
 - [Feasible instances of K-FACILITY DISPERSION](kfacility-dispersion-feasible.md)
 - [K-FACILITY DISPERSION as a decision problem](k-facility-dispersion-dec.md)

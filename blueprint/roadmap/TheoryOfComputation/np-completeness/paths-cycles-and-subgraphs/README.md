@@ -27,3 +27,4 @@ Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path 
 - [Undirected Hamiltonian path](undirected-hamiltonian-path/README.md)
 - [Undirected, unsplittable and quadratic-cost flows](undirected-unsplittable-and-quadratic-cost-flows/README.md)
 - [Vertex-disjoint paths in digraphs](vertex-disjoint-paths-in-digraphs/README.md)
+- [Fixed-point-free graph involutions](fixed-point-free-graph-involutions/README.md)
