@@ -18,6 +18,7 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Slack form of a system of linear inequalities](slack-form-of-a-system-of-linear-inequalities/README.md)
 - [Solving linear congruences](solving-linear-congruences/README.md)
 - [Strassen algorithm](strassen-algorithm/README.md)
+- [Lattice basis reduction](lattice-basis-reduction/README.md)
 - [Two-variable LP: feasibility under added constraints](two-variable-lp-feasibility-under-added-constrai/README.md)
 - [Lagrange-reduced pairs](lagrange-short.md)
 - [Assignment optimality from a dual certificate](assignment-optimal-of-dual.md)

@@ -24,6 +24,8 @@ PDE existence, regularity and qualitative results: Cauchy–Kovalevskaya, heat a
 - [Analytic elliptic regularity](analytic-elliptic-regularity.md)
 
 - [Global regularity of the three-dimensional Navier–Stokes equations](global-regularity-of-the-navier-stokes-equations.md)
+
+- [Optimality system for linear-quadratic elliptic optimal control](optimality-system-for-linear-quadratic-elliptic-optimal-control.md)
 - [Classical Cole–Hopf residual identity](classical-cole-hopf-residual-identity/README.md)
 - [Classical exponential-sum Cole–Hopf solutions](classical-exponential-sum-cole-hopf-solutions/README.md)
 - [Cole–Hopf on open time-space domains](cole-hopf-on-open-time-space-domains/README.md)
