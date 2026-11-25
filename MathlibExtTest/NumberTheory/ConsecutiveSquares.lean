@@ -21,6 +21,20 @@ example : 1 < (17 / 8 : ℝ) ∧ (17 / 8 : ℝ) < 1 + 2 ^ (1 / 3 : ℝ) + 2 ^ (2
   have h : IsSoCSSolution 17 34 42 := by norm_num [IsSoCSSolution, SoCSEq]
   convert soCS_ratio_bounds 17 34 42 h using 1 <;> norm_num
 
+-- The singleton set containing the 3-4-5 solution meets the bound for span 3.
+example : ({(2, 4, 5)} : Finset (ℤ × ℤ × ℤ)).card ≤ 2 * (3 - 1 : ℤ).toNat := by
+  apply soCS_card_le 3 (by norm_num) _
+  intro t ht
+  rw [Finset.mem_singleton] at ht
+  subst ht
+  exact ⟨isSoCSSolution_two_four_five, by norm_num⟩
+
+-- The empty set meets the bound for span 2.
+example : (∅ : Finset (ℤ × ℤ × ℤ)).card ≤ 2 * (2 - 1 : ℤ).toNat := by
+  apply soCS_card_le 2 (by norm_num) _
+  intro t ht
+  simp at ht
+
 -- Equal endpoints satisfy the polynomial equation and violate the solution inequalities.
 example (b : ℤ) : SoCSEq b b b ∧ ¬ IsSoCSSolution b b b := by
   constructor

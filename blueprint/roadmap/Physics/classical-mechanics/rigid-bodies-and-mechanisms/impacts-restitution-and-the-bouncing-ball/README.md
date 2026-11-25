@@ -63,3 +63,5 @@
 
 - [For e = 1, finitely many impacts occur before any time](elastic-events-finite.md)
 - [For e = 0, the ball stops after the first impact](inelastic-stops.md)
+
+- [Unilateral multibody dynamics with analytic data is well posed](unilateral-multibody-dynamics-with-analytic-data-is-well-posed.md)

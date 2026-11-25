@@ -6,5 +6,4 @@ For $x \in \{0,1\}^n$ and $B \subseteq \{1, \dots, n\}$ let $x^B$ be $x$ with th
 
 ## Sources
 
-- H. Buhrman and R. de Wolf, "Complexity measures and decision tree complexity: a survey", *Theoretical Computer Science* 288(1):21–43, 2002
-- S. Arora and B. Barak, *Computational Complexity: A Modern Approach*, Cambridge University Press, 2009
+- H. Buhrman and R. de Wolf, "Complexity measures and decision tree complexity: a survey", *Theoretical Computer Science* 288(1):21–43, 2002, <https://homepages.cwi.nl/~rdewolf/publ/qc/dectree.pdf>: Section 2.2 (the representing multilinear polynomial and degree), Section 3.1 (deterministic decision trees and $D(f)$), Section 4.1, Definition 1 (certificates, $C(f)$, $C^{(0)}(f)$, $C^{(1)}(f)$) and Section 4.2, Definition 2 (sensitivity and block sensitivity).

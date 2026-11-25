@@ -6,3 +6,5 @@
 - [Feasibility of a capacitated vehicle routing instance](cvrpfeasible.md)
 - [Capacitated vehicle routing as a decision problem](cvrp-dec.md)
 - [CAPACITATED VEHICLE ROUTING is NP-complete](cvrp-np-complete.md)
+- [Three-index vehicle formulation of capacitated vehicle routing](capacitated-vehicle-routing-arc-formulation.md)
+- [Load and time-window feasibility of a fixed route](time-window-feasibility-of-a-route.md)
