@@ -86,6 +86,123 @@ theorem exists_not_mersenneEtaCondition_of_plus (s₁ : ℤ) (hs₁ : 3 ≤ s₁
   rw [hsign.neg_one_pow] at hplus
   norm_num [mersenne, jacobiSym.one_left] at hplus
 
+set_option linter.unusedVariables false in
+/-- **Condition (etar) fails for some reduced residue when the seed is odd.** Let $s_1 \ge 3$ be
+an odd integer, let $s_1^-$ and $s_1^+$ be the odd squarefree parts of $s_1 - 2$ and $s_1 + 2$,
+and let $\Omega = \Omega(s_1^- s_1^+)$. Then the number of integers $n$ with $1 \le n < \Omega$
+and $\gcd(n, \Omega) = 1$ for which condition (etar) holds for $s_1^-$, $s_1^+$ and $n$ is not
+equal to $\varphi(\Omega)$.
+
+Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Corollary 16. -/
+theorem mersenneEtaCondition_not_all_of_odd (s₁ : ℤ) (hs₁ : 3 ≤ s₁)
+    (hodd : Odd s₁) (sm sp : ℕ) (hsm : IsOddSquarefreePart (s₁ - 2) sm)
+    (hsp : IsOddSquarefreePart (s₁ + 2) sp) :
+    {n | n ∈ Finset.Ico 1 (mersenneOmega (sm * sp)) ∧
+        n.Coprime (mersenneOmega (sm * sp)) ∧ MersenneEtaCondition sm sp n}.ncard ≠
+      Nat.totient (mersenneOmega (sm * sp)) := by
+  have hres : ∀ (N : ℤ) (k : ℕ), IsOddSquarefreePart N k → Odd N →
+      (k : ZMod 4) = ((N : ℤ) : ZMod 4) := by
+    intro N k hk hN
+    obtain ⟨hkodd, -, a, m, hm⟩ := hk
+    have ha : a = 0 := by
+      by_contra ha
+      obtain ⟨b, rfl⟩ : ∃ b, a = b + 1 := ⟨a - 1, by omega⟩
+      have h2 : (2 : ℤ) ∣ N := by
+        rw [hm]
+        exact ((dvd_pow_self (2 : ℤ) (show b + 1 ≠ 0 by omega)).mul_right _).mul_right _
+      obtain ⟨u, hu⟩ := h2
+      obtain ⟨t, ht⟩ := hN
+      omega
+    subst ha
+    have hm0 : N = (m : ℤ) ^ 2 * (k : ℤ) := by simpa using hm
+    have hm_odd : Odd m := by
+      have hoddprod : Odd ((m : ℤ) ^ 2 * (k : ℤ)) := hm0 ▸ hN
+      have h1 : Odd ((m : ℤ) ^ 2) := Int.Odd.of_mul_left hoddprod
+      rcases (Int.odd_pow (n := 2)).mp h1 with h | h
+      · exact h
+      · omega
+    have hsq : ((m : ℤ) : ZMod 4) ^ 2 = 1 := by
+      have hsq_int : (m : ℤ) ^ 2 % 4 = 1 := Int.sq_emod_four_eq_one_of_odd hm_odd
+      have hme : (m : ℤ) ^ 2 ≡ (1 : ℤ) [ZMOD 4] := by
+        rw [Int.ModEq]
+        simpa using hsq_int
+      have hcast := (ZMod.intCast_eq_intCast_iff ((m : ℤ) ^ 2) (1 : ℤ) 4).mpr hme
+      push_cast at hcast
+      exact hcast
+    have hcast : ((N : ℤ) : ZMod 4) = ((m : ℤ) : ZMod 4) ^ 2 * (k : ZMod 4) := by
+      rw [hm0]
+      push_cast
+      ring
+    rw [hcast, hsq, one_mul]
+  have hNminus : Odd (s₁ - 2) := by
+    obtain ⟨t, ht⟩ := hodd
+    exact ⟨t - 1, by omega⟩
+  have hNplus : Odd (s₁ + 2) := by
+    obtain ⟨t, ht⟩ := hodd
+    exact ⟨t + 1, by omega⟩
+  have hcast_eq : (sm : ZMod 4) = (sp : ZMod 4) := by
+    have h1 := hres (s₁ - 2) sm hsm hNminus
+    have h2 := hres (s₁ + 2) sp hsp hNplus
+    have h3 : ((s₁ - 2 : ℤ) : ZMod 4) = ((s₁ + 2 : ℤ) : ZMod 4) := by
+      apply (ZMod.intCast_eq_intCast_iff _ _ 4).mpr
+      rw [Int.ModEq]
+      omega
+    rw [h1, h2, h3]
+  have hmod4 : sm % 4 = sp % 4 := (ZMod.natCast_eq_natCast_iff sm sp 4).mp hcast_eq
+  have hsm4 : sm % 4 = 1 ∨ sm % 4 = 3 := by
+    obtain ⟨t, ht⟩ := hsm.1
+    omega
+  have hfail : ¬ MersenneEtaCondition sm sp 1 := by
+    intro h
+    rcases hsm4 with h4 | h4
+    · have hsp4 : sp % 4 = 1 := by omega
+      have hsign : Odd ((sp + 1) / 2) := Nat.odd_iff.mpr (by omega)
+      have hplus := h.2
+      rw [hsign.neg_one_pow] at hplus
+      norm_num [mersenne, jacobiSym.one_left] at hplus
+    · have hsign : Odd ((sm - 1) / 2) := Nat.odd_iff.mpr (by omega)
+      rcases h.1 with hsm1 | hminus
+      · omega
+      · rw [hsign.neg_one_pow] at hminus
+        norm_num [mersenne, jacobiSym.one_left] at hminus
+  have hoddprod : Odd (sm * sp) := hsm.1.mul hsp.1
+  have hΩ : 1 < mersenneOmega (sm * sp) := by
+    have hne : NeZero (sm * sp) := ⟨hoddprod.pos.ne'⟩
+    have hu : IsUnit (2 : ZMod (sm * sp)) :=
+      (ZMod.isUnit_iff_coprime 2 _).mpr hoddprod.coprime_two_left
+    have hpos := hu.isOfFinOrder.orderOf_pos
+    unfold mersenneOmega
+    split_ifs with h
+    · omega
+    · rw [Nat.odd_iff] at h
+      omega
+  intro hEq
+  set Ω := mersenneOmega (sm * sp) with hΩdef
+  set A : Set ℕ := {n | n ∈ Finset.Ico 1 Ω ∧ n.Coprime Ω ∧ MersenneEtaCondition sm sp n} with
+    hAdef
+  have hAB : A ⊂ {m | m < Ω ∧ Ω.Coprime m} := by
+    refine ⟨?_, ?_⟩
+    · intro n hn
+      obtain ⟨h1, h2, -⟩ := hn
+      simp only [Finset.mem_Ico] at h1
+      exact ⟨h1.2, Nat.coprime_comm.mp h2⟩
+    · intro hsub
+      have h1B : (1 : ℕ) ∈ {m | m < Ω ∧ Ω.Coprime m} := ⟨hΩ, Nat.coprime_one_right _⟩
+      have h1A : (1 : ℕ) ∈ A := hsub h1B
+      obtain ⟨h1, -, heta⟩ := h1A
+      exact hfail heta
+  have hBfin : ({m | m < Ω ∧ Ω.Coprime m} : Set ℕ).Finite := by
+    apply Set.Finite.subset (Set.finite_Iio Ω)
+    intro m hm
+    exact hm.1
+  have hlt := Set.ncard_lt_ncard hAB hBfin
+  have hBcard : ({m | m < Ω ∧ Ω.Coprime m} : Set ℕ).ncard = Nat.totient Ω := by
+    rw [Nat.totient_eq_card_lt_and_coprime]
+    rfl
+  rw [hBcard] at hlt
+  exact absurd hEq (ne_of_lt hlt)
+
 end
 
 end MetaMathlibExt
