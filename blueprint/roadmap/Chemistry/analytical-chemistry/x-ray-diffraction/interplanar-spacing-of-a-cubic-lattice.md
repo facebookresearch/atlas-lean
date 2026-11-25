@@ -7,9 +7,9 @@ $\gcd(|h|,|k|,|l|)=1$. Without this primitive-index condition, some $P_m$ contai
 planes spaced $a/2$, whereas adjacent occupied planes of $a\mathbb Z^3$ with that normal are spaced $a$. Both $a$ and $d$ are lengths. Bragg's condition for diffraction is a separate physical law, not a consequence of the lattice geometry, and noncubic metrics
 are outside this result.
 
-## Depends on
-
-## Proof depends on
+The distance is a minimum over all pairs of real points from the two planes, attained by a
+pair displaced along the normal. Occupancy is a separate condition: a level $m$ is occupied
+exactly when $\gcd(|h|,|k|,|l|)$ divides $m$ in $\mathbb{Z}$.
 
 ## Sources
 

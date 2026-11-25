@@ -9911,6 +9911,7 @@
     "Chemistry.CombustionPorts.totalHeatCapacity": "cc761357c6ec6e6a",
     "Chemistry.CombustionPorts.totalHeatCapacity_pos": "2c0b287eef0cb96b",
     "Chemistry.CombustionPorts.totalHeatCapacity_pos_of_mem_forwardFeasibleExtents": "9da7a01c9a3f933d",
+    "Chemistry.Diffraction.cubic_plane_spacing_and_occupancy": "c111c992b2be941b",
     "Chemistry.FiniteEnsembles.IsCanonical": "67cbd0682eeadae7",
     "Chemistry.FiniteEnsembles.boltzmannProb": "8fb222f962601adc",
     "Chemistry.FiniteEnsembles.boltzmannProb_combinedEnergy": "2850de0cfcb58e3d",
