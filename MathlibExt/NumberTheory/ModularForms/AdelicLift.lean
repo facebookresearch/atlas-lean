@@ -36,6 +36,7 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.NumberTheory.ModularForms.Basic
 public import Mathlib.NumberTheory.NumberField.AdeleRing
 public import MathlibExt.NumberTheory.NumberField.AdelicGL2LocalFiniteness
+public import MathlibExt.NumberTheory.NumberField.HeckeCharacter
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.NumberTheory.ModularForms.SlashInvariantForms
@@ -50,22 +51,6 @@ namespace NumberField.AdelicLevel
 
 variable (R : Type*) [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K]
   [Algebra R K] [IsFractionRing R K]
-
-/-- The archimedean projection of the adele ring. -/
-def adeleArch : AdeleRing R K →+* InfiniteAdeleRing K where
-  toFun a := a.1
-  map_one' := rfl
-  map_mul' _ _ := rfl
-  map_zero' := rfl
-  map_add' _ _ := rfl
-
-/-- The finite projection of the adele ring. -/
-def adeleFin : AdeleRing R K →+* FiniteAdeleRing R K where
-  toFun a := a.2
-  map_one' := rfl
-  map_mul' _ _ := rfl
-  map_zero' := rfl
-  map_add' _ _ := rfl
 
 /-- The archimedean component of an adelic `GL(2)` element. -/
 def glArch : GL (Fin 2) (AdeleRing R K) →* GL (Fin 2) (InfiniteAdeleRing K) :=
@@ -82,14 +67,6 @@ def glFin : GL (Fin 2) (AdeleRing R K) →* GL (Fin 2) (FiniteAdeleRing R K) :=
 @[simp] theorem glFin_apply (g : GL (Fin 2) (AdeleRing R K)) (i j : Fin 2) :
     (glFin R K g : Matrix (Fin 2) (Fin 2) (FiniteAdeleRing R K)) i j =
       ((g : Matrix (Fin 2) (Fin 2) (AdeleRing R K)) i j).2 := rfl
-
-/-- Evaluation of an infinite adele at one infinite place. -/
-def archEval (w : InfinitePlace K) : InfiniteAdeleRing K →+* w.Completion where
-  toFun a := a w
-  map_one' := rfl
-  map_mul' _ _ := rfl
-  map_zero' := rfl
-  map_add' _ _ := rfl
 
 /-- The component of an archimedean `GL(2)` element at one infinite place. -/
 def archComponent (w : InfinitePlace K) :

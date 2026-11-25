@@ -15,7 +15,7 @@ public import MathlibExt.NumberTheory.ModularForms.AdelicLift
 open NumberField
 
 /-- Consumer with the original binders for the adelic-lift relation. -/
-public theorem exactSource {M : ℕ} {g : CuspForm (CongruenceSubgroup.Gamma0 M) 2}
+private theorem exactSource {M : ℕ} {g : CuspForm (CongruenceSubgroup.Gamma0 M) 2}
     {φ : NumberField.AdelicGL2 (𝓞 ℚ) ℚ → ℂ}
     (h : CuspForm.IsAdelicLiftOf g φ) : CuspForm.IsAdelicLiftOf g φ :=
   h
