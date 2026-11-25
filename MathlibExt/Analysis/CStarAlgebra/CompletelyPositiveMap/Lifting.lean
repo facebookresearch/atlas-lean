@@ -1,0 +1,77 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Canonical
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.Basic
+public import MathlibExt.Analysis.CStarAlgebra.IdealQuotient
+
+/-!
+# Completely positive lifting from a supplied section
+
+Composition with an actual completely positive contractive quotient section
+lifts a completely positive contraction. No section is selected from an
+existence theorem, and no nuclearity or separability is assumed. The quotient
+and canonical order dictionaries are local values in the result type.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+namespace CompletelyPositiveMap
+
+universe uA uD
+
+variable {A : Type uA} {D : Type uD}
+variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra D]
+
+/-- **Lifting a CP contraction through a CP section.** Let `A,D` be nonunital complex C*-algebras and
+`J` a closed two-sided star ideal of `D`, all with spectral orders. If the quotient map `D → D/J`
+has a completely positive contractive section `s : D/J → D`, then every completely positive
+contraction `ψ : A → D/J` has a completely positive contractive lift `φ : A → D` satisfying `q(φ(a))
+= ψ(a)`. The lift is `s ∘ ψ`. -/
+theorem exists_quotientLift_of_section (J : ClosedStarIdeal D) :
+    letI : J.carrier.IsTwoSided := J.isTwoSided
+    letI : NonUnitalCStarAlgebra J.Quotient := J.quotientCStarAlgebra
+    letI : PartialOrder A := CStarAlgebra.spectralOrder A
+    letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+    letI : PartialOrder J.Quotient := CStarAlgebra.spectralOrder J.Quotient
+    letI : StarOrderedRing J.Quotient := CStarAlgebra.spectralOrderedRing J.Quotient
+    letI : PartialOrder D := CStarAlgebra.spectralOrder D
+    letI : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+    ∀ (s : Canonical J.Quotient D) (psi : Canonical A J.Quotient),
+      (∀ x, ‖s x‖ ≤ ‖x‖) →
+      (∀ x, J.quotientMap (s x) = x) →
+      (∀ a, ‖psi a‖ ≤ ‖a‖) →
+      ∃ phi : Canonical A D,
+        (∀ a, ‖phi a‖ ≤ ‖a‖) ∧
+        ∀ a, J.quotientMap (phi a) = psi a := by
+  let : J.carrier.IsTwoSided := J.isTwoSided
+  let : NonUnitalCStarAlgebra J.Quotient := J.quotientCStarAlgebra
+  let : PartialOrder A := CStarAlgebra.spectralOrder A
+  let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
+  let : PartialOrder J.Quotient := CStarAlgebra.spectralOrder J.Quotient
+  let : StarOrderedRing J.Quotient := CStarAlgebra.spectralOrderedRing J.Quotient
+  let : PartialOrder D := CStarAlgebra.spectralOrder D
+  let : StarOrderedRing D := CStarAlgebra.spectralOrderedRing D
+  intro s psi hs hsection hpsi
+  refine ⟨comp s psi, ?_, ?_⟩
+  · intro a
+    simpa only [comp_apply] using (hs (psi a)).trans (hpsi a)
+  · intro a
+    simpa only [comp_apply] using hsection (psi a)
+
+end CompletelyPositiveMap

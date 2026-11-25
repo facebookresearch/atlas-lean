@@ -18,11 +18,20 @@ public import Mathlib.Analysis.SpecialFunctions.Elliptic.Weierstrass
 
 namespace PeriodPair
 
-/-- A function is lattice-periodic for `L` when every element of the lattice is a period. -/
+/-- **Lattice-periodic functions.** Let $L$ be a pair of $\mathbb{R}$-linearly independent
+complex numbers $\omega_1, \omega_2$ with period lattice
+$\Lambda = \mathbb{Z}\omega_1 + \mathbb{Z}\omega_2$. A function $f : \mathbb{C} \to \mathbb{C}$
+is lattice-periodic for $L$ when every element of $\Lambda$ is a period of $f$, that is,
+$f(z + \omega) = f(z)$ for all $\omega \in \Lambda$ and all $z \in \mathbb{C}$. -/
 def IsLatticePeriodic (L : PeriodPair) (f : ℂ → ℂ) : Prop :=
   ∀ ω : L.lattice, f.Periodic (ω : ℂ)
 
-/-- An elliptic function for `L` is a meromorphic lattice-periodic function. -/
+/-- **Elliptic functions.** Let $L$ be a pair of $\mathbb{R}$-linearly independent complex
+numbers $\omega_1, \omega_2$ with period lattice
+$\Lambda = \mathbb{Z}\omega_1 + \mathbb{Z}\omega_2$. A function $f : \mathbb{C} \to \mathbb{C}$
+is an elliptic function for $L$ when it is meromorphic at every point of $\mathbb{C}$ and
+lattice-periodic for $L$, that is, $f(z + \omega) = f(z)$ for all $z \in \mathbb{C}$ and all
+$\omega \in \Lambda$. -/
 structure IsEllipticFunction (L : PeriodPair) (f : ℂ → ℂ) : Prop where
   meromorphic : Meromorphic f
   periodic : L.IsLatticePeriodic f

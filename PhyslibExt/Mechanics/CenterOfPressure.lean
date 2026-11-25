@@ -17,8 +17,8 @@ public import PhyslibExt.Mechanics.LinearPressurePanel
 For hydrostatic pressure with gradient `c = ρ * g > 0` on a panel
 of width `w` over depths `[a, b]`, the center of pressure (moment
 divided by force, from the shared linear-pressure panel) lies in
-`[a, b]` whenever the force is nonzero, and for the free-surface
-panel `[0, H]` it is at depth `2 * H / 3`.
+`[a, b]` for `c > 0`, `w > 0` and `0 ≤ a < b`, and for the
+free-surface panel `[0, H]` with `H > 0` it is at depth `2 * H / 3`.
 
 ## ii. Key results
 
@@ -43,8 +43,8 @@ namespace PhyslibExt.Mechanics.LinearPressurePanel
 
 /-! ## A. Center of pressure -/
 
-/-- The center of pressure lies in the panel interval when the
-force is nonzero. -/
+/-- The center of pressure lies in the panel interval `[a, b]` for `c > 0`, `w > 0` and `0 ≤ a < b`,
+which make the force positive. -/
 theorem centerOfPressure_mem {c w a b : ℝ} (hc : 0 < c) (hw : 0 < w)
     (hab : a < b) (ha : 0 ≤ a) :
     linearPressureMoment c w a b / linearPressureForce c w a b

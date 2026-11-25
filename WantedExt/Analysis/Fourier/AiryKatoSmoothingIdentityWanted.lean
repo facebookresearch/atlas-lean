@@ -48,29 +48,34 @@ open scoped FourierTransform
 
 namespace MathlibExt.Analysis.Fourier.AiryKatoSmoothingIdentityWanted
 
-/-- `u(t, x) = (2π) ^ (-1 / 2) * ∫ exp (i (t ξ ^ 3 + x ξ)) * û₀ ξ dξ`, where `û₀ ξ = (2π) ^ (-1 / 2)
-* 𝓕 u₀ (ξ / (2π)) = (2π) ^ (-1 / 2) * ∫ u₀ y * exp (-i y ξ) dy` is the unitary Fourier transform:
-the solution of the Airy equation with initial datum `u₀`. -/
+/-- **Fourier solution of the Airy equation.** For $u_0 : \mathbb{R} \to \mathbb{C}$, let
+$\widehat{u_0}(\xi) = (2\pi)^{-1/2} \int_{\mathbb{R}} u_0(y) e^{-iy\xi}\,dy$ be its unitary
+Fourier transform. The Airy solution with initial datum $u_0$ is the function
+$u : \mathbb{R}^2 \to \mathbb{C}$ given by
+$$u(t, x) = (2\pi)^{-1/2} \int_{\mathbb{R}} e^{i(t\xi^3 + x\xi)}\, \widehat{u_0}(\xi)\,d\xi,$$
+where an integral whose integrand is not integrable is taken to be $0$.
+
+For $u_0 \in C_c^\infty(\mathbb{R})$ this function solves the Airy equation
+$\partial_t u + \partial_x^3 u = 0$ with $u(0, \cdot) = u_0$. -/
 noncomputable def AirySolution (u0 : ℝ → ℂ) (t x : ℝ) : ℂ :=
   (Real.sqrt (2 * Real.pi))⁻¹ *
     ∫ ξ : ℝ,
       Complex.exp (Complex.I * (t * ξ ^ (3 : ℕ) + x * ξ)) *
         ((Real.sqrt (2 * Real.pi))⁻¹ * (𝓕 u0) (ξ / (2 * Real.pi)))
 
-/-- For all $u_0\in C_c^\infty(\mathbb{R})$, we define $u(t,x)\in C^\infty(\mathbb{R}^2)$ as follows
-\[
-u(t,x)=\frac{1}{\sqrt{2\pi}}\int_{\mathbb{R}} e^{i(t\xi^3+x\xi)}\widehat{u_0}(\xi)\,d\xi.
-\]
-Show that for all $x_0\in\mathbb{R}$, the function $t\mapsto \partial_x u(t,x_0)$ belongs to
-$L^2(\mathbb{R})$ and there exists a constant $c_0>0$ independent of $x_0$ and $u$, such that
-\[
-\int_{\mathbb{R}} |\partial_x u(t,x_0)|^2\,dt = c_0 \int_{\mathbb{R}} |u_0(x)|^2\,dx.
-\]
+/-- **Kato smoothing identity for the Airy equation.** For $u_0 : \mathbb{R} \to \mathbb{C}$ let
+$\widehat{u_0}(\xi) = (2\pi)^{-1/2} \int_{\mathbb{R}} u_0(y) e^{-iy\xi}\,dy$ be its unitary
+Fourier transform, and let
+$u(t, x) = (2\pi)^{-1/2} \int_{\mathbb{R}} e^{i(t\xi^3 + x\xi)}\, \widehat{u_0}(\xi)\,d\xi$ be
+the Airy solution with initial datum $u_0$. There is a constant $c_0 > 0$ such that for every
+smooth compactly supported $u_0 : \mathbb{R} \to \mathbb{C}$ and every $x_0 \in \mathbb{R}$, the
+function $t \mapsto \partial_x u(t, x_0)$ belongs to $L^2(\mathbb{R})$ and
+$$\int_{\mathbb{R}} |\partial_x u(t, x_0)|^2\,dt = c_0 \int_{\mathbb{R}} |u_0(x)|^2\,dx.$$
 
-Lean variant: the source's helper used Mathlib's `𝓕`, whose convention is `∫ u₀(y) e^{-2πiyξ} dy`,
-together with the unitary convention's phase and prefactor, so its initial datum was not `u₀`;
-`AirySolution` now uses the unitary transform `(2π)^{-1/2} 𝓕 u₀ (ξ / 2π)`. The two initial data
-differ by an L²-isometric rescaling, so the identity holds for both with the same `c₀`.
+The source's formalization used the transform $\int u_0(y) e^{-2\pi i y\xi}\,dy$ together with
+the unitary phase and prefactor, so its initial datum was not $u_0$ but the $L^2$-isometric
+rescaling $x \mapsto (2\pi)^{-1/2} u_0(x / 2\pi)$; the identity holds for both with the same
+$c_0$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functional analysis;
 Distributions, generalized functions, distribution spaces),
