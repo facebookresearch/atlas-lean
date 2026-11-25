@@ -17,6 +17,15 @@ import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
+/-!
+# Residues where `x ^ 2 + p ^ v * u` is not a square
+
+For a prime `p ≥ 3` and an integer `u` not divisible by `p`, the main result,
+`card_unsolvable_sq_add_primePow`, counts the `x` modulo `p ^ (v + 1)` for which
+`x ^ 2 + p ^ v * u` is not a square modulo `p ^ (v + 1)`. This is Lemma 4 of Patrick Letendre,
+*Divisors of an Integer in a Short Interval*, INTEGERS 26 (2026), Article A115.
+-/
+
 namespace MetaMathlibExt
 
 private noncomputable def pairEquiv {p : ℕ} [Fact p.Prime] (hp : 3 ≤ p)
@@ -89,11 +98,9 @@ private theorem base_field {p : ℕ} [Fact p.Prime] (hp : 3 ≤ p)
     · simp [h0, Finset.filter_eq']
     · by_cases hs : IsSquare (x ^ 2 + (u : ZMod p))
       · rw [(quadraticChar_one_iff_isSquare h0).mpr hs] at h
-        simp [h0, hs] at h ⊢
-        exact h
+        simpa [h0, hs] using h
       · rw [quadraticChar_neg_one_iff_not_isSquare.mpr hs] at h
-        simp [h0, hs] at h ⊢
-        exact h
+        simpa [h0, hs] using h
   have htotal := Finset.sum_congr rfl (fun x (_ : x ∈ (Finset.univ : Finset (ZMod p))) => hpoint x)
   simp only [Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_boole,
     Finset.sum_const, Finset.card_univ, ZMod.card, nsmul_eq_mul, hsum, hzero] at htotal
@@ -184,13 +191,10 @@ private theorem solvable_mul_iff {p : ℕ} [Fact p.Prime] (u x : ℤ) (v : ℕ) 
 
 private theorem solvable_mod (p v : ℕ) (u x : ℤ) :
     solvable p v u (x % (p : ℤ) ^ (v + 1)) ↔ solvable p v u x := by
-  have h : x % (p : ℤ) ^ (v + 1) ≡ x [ZMOD (p : ℤ) ^ (v + 1)] := by
-    simp [Int.ModEq]
+  have h : x % (p : ℤ) ^ (v + 1) ≡ x [ZMOD (p : ℤ) ^ (v + 1)] := Int.mod_modEq x _
   have h' := h.pow 2 |>.add_right ((p : ℤ) ^ v * u)
   exact ⟨fun ⟨y, hy⟩ => ⟨y, h'.symm.trans hy⟩,
     fun ⟨y, hy⟩ => ⟨y, h'.trans hy⟩⟩
-
-open scoped Classical
 
 private theorem card_filter_multiples (p n : ℕ) (hp : 0 < p) (P : ℕ → Prop) [DecidablePred P]
     (hP : ∀ x, P x → p ∣ x) :
@@ -248,6 +252,7 @@ private theorem card_filter_periodic (n k : ℕ) (hn : 0 < n) (P : ℕ → Prop)
         · simpa [mul_comm] using Nat.div_add_mod x n
     _ = _ := by simp
 
+open scoped Classical in
 private theorem count_one {p : ℕ} [Fact p.Prime] (hp : 3 ≤ p)
     (u : ℤ) (hu : ¬ (p : ℤ) ∣ u) :
     ((Finset.range (p ^ (1 + 1))).filter fun x : ℕ => ¬ solvable p 1 u x).card = p := by
@@ -258,6 +263,7 @@ private theorem count_one {p : ℕ} [Fact p.Prime] (hp : 3 ≤ p)
   rw [show p ^ (1 + 1) = p * p by ring, card_filter_multiples p p hp0 _ hP]
   simp [solvable_one_iff hp u hu]
 
+open scoped Classical in
 private theorem count_rec {p : ℕ} [Fact p.Prime] (hp : 3 ≤ p) (u : ℤ) (v : ℕ) :
     ((Finset.range (p ^ (v + 2 + 1))).filter fun x : ℕ => ¬ solvable p (v + 2) u x).card =
       p * ((Finset.range (p ^ (v + 1))).filter fun x : ℕ => ¬ solvable p v u x).card := by
@@ -295,6 +301,7 @@ private theorem solvable_zero_iff {p : ℕ} [Fact p.Prime] (u x : ℤ) :
     push_cast
     simpa [hy] using hz
 
+open scoped Classical in
 private theorem count_zero {p : ℕ} [Fact p.Prime] (hp : 3 ≤ p)
     (u : ℤ) (hu : ¬ (p : ℤ) ∣ u) :
     2 * (((Finset.range (p ^ (0 + 1))).filter fun x : ℕ =>
