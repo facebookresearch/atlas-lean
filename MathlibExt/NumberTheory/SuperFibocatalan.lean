@@ -10,13 +10,15 @@ module
 
 public import Mathlib.Algebra.MvPolynomial.Basic
 public import Mathlib.Data.Nat.Fib.Basic
+public import MathlibExt.NumberTheory.GeneralizedFibocatalanNumber
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.LinearCombination
 
 /-!
 # Fibonacci and Lucas polynomial identities for super FiboCatalan numbers
 
-This module proves the Fibonacci and Lucas cross-product identities and uses the Lucas identity
-to relate consecutive Lucas Catalan numbers after clearing denominators.
+This module proves the Fibonacci and Lucas cross-product identities and uses them to relate
+consecutive FiboCatalan numbers and consecutive Lucas Catalan numbers.
 -/
 
 public section
@@ -46,6 +48,41 @@ theorem fib_mul_sub_mul (n : ℕ) :
   rw [two_mul, Nat.fib_add_two (n := n), Nat.fib_add_two (n := n + n)]
   push_cast
   linear_combination shift n
+
+open MetaMathlibExt
+
+/-- **FiboCatalan numbers.** For a natural number $n$, the FiboCatalan number is the rational
+number $C_{n,F} = F_{2n}!/(F_n! \, F_{n+1}!)$, where $F_j$ is the $j$-th Fibonacci number and
+$F_k! = F_1 F_2 \cdots F_k$ is the Fibonacci factorial. -/
+@[expose] noncomputable def fiboCatalan (n : ℕ) : ℚ :=
+  fibonacciFactorial (2 * n) /
+    (fibonacciFactorial n * fibonacciFactorial (n + 1))
+
+/-- **An identity between consecutive FiboCatalan numbers.** Let $F_k$ be the Fibonacci
+numbers, $F_k! = F_1 F_2 \cdots F_k$ the Fibonacci factorial and
+$C_{k,F} = F_{2k}!/(F_k! \, F_{k+1}!)$ the FiboCatalan number. For every natural number $n$,
+in $\mathbb{Q}$,
+$$F_{2n+1} F_{2n} C_{n,F} - F_{n+1} F_n C_{n+1,F}
+= (-1)^n F_n F_{2n+1} \frac{F_{2n}!}{F_{n+2}! \, F_n!}.$$
+
+Source: Kendra Killpatrick, "Super FiboCatalan Numbers and
+Their Lucas Analogues", Theorem 7. -/
+theorem fiboCatalan_identity (n : ℕ) :
+    (Nat.fib (2 * n + 1) : ℚ) * (Nat.fib (2 * n) : ℚ) *
+          fiboCatalan n -
+        (Nat.fib (n + 1) : ℚ) * (Nat.fib n : ℚ) *
+          fiboCatalan (n + 1) =
+      (-1) ^ n * (Nat.fib n : ℚ) * (Nat.fib (2 * n + 1) : ℚ) *
+        (fibonacciFactorial (2 * n) /
+          (fibonacciFactorial (n + 2) * fibonacciFactorial n)) := by
+  have h : (Nat.fib (2 * n) : ℚ) * Nat.fib (n + 2) -
+      (Nat.fib (2 * n + 2) : ℚ) * Nat.fib n = (-1) ^ n * (Nat.fib n : ℚ) := by
+    exact_mod_cast fib_mul_sub_mul n
+  rw [← h]
+  simp only [fiboCatalan, Nat.mul_add, Nat.mul_one]
+  field_simp [fibonacciFactorial_ne]
+  simp only [fibonacciFactorial]
+  ring
 
 /-- **Lucas polynomials in $s$ and $t$.** The Lucas polynomials $\{n\}$, for natural numbers
 $n$, are the polynomials in two variables $s$ and $t$ with integer coefficients defined by

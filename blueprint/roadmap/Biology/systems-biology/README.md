@@ -24,5 +24,11 @@ Dynamics of biochemical reaction networks and gene regulatory circuits: mass-act
 
 - [Minimal experiments for identifiable compartmental models](minimal-experiments-for-identifiable-compartmental-models.md)
 - [Three-variable repressilator](three-variable-repressilator/README.md)
+- [CRNs as computing devices](crns-as-computing-devices.md)
+- [Gillespie propensities and the mass-action Markov chain of a reaction network](remaining-clauses-of-stochastic-chemical-reaction-networks.md)
+- [Computational power of stochastic CRNs: universal with error, limited without](computational-power-of-stochastic-crns-universal-with-error.md)
+- [Gillespie direct method (stochastic simulation algorithm)](gillespie-direct-method.md)
+- [Exactness of the SSA path law](exactness-of-the-ssa-path-law.md)
+- [Total-variation error of a finite-precision SSA step](total-variation-error-of-a-finite-precision-ssa-step.md)
 - [Multisite phosphorylation](multisite-phosphorylation/README.md)
 - [Kinetic proofreading](kinetic-proofreading/README.md)

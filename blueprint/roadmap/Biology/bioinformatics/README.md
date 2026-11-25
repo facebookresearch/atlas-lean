@@ -20,6 +20,10 @@ Algorithms and statistical models on biological sequences and data: sequence ali
 - [Approximation ratio for sorting by transpositions](approximation-ratio-for-sorting-by-transpositions.md)
 
 - [Genome rearrangements](genome-rearrangements/README.md)
+- [Time and space bounds for alignment dynamic programs](time-and-space-bounds-for-alignment-dynamic-programs.md)
+- [q-gram (seed) filtering lemma for approximate matching](q-gram-filtering-lemma-for-approximate-matching.md)
+- [Signed reversal distance: the Hannenhalli–Pevzner formula and polynomial-time sorting](remaining-clauses-of-complexity-of-reversal-distance-signed.md)
+- [Shortest common superstring via maximum-overlap Hamiltonian paths](remaining-clauses-of-shortest-common-superstring-via-maximum.md)
 - [Repeat-limited versus coverage-limited threshold for shotgun assembly](repeat-limited-vs-coverage-limited-threshold-for-optimal-shotgun-assem.md)
 - [Asymptotics of RNA secondary structure statistics](asymptotics-of-rna-secondary-structure-statistics-hofacker-schuster-st.md)
 - [Simultaneous folding, alignment and protosequence reconstruction of RNA (Sankoff)](sankoff-simultaneous-folding-and-alignment-of-n-rna-sequences.md)
