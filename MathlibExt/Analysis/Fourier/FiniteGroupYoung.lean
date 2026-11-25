@@ -36,7 +36,10 @@ and using translation invariance of the finite sums collects the
 remaining factors.
 -/
 
-/-- Convolution of complex-valued functions on a finite additive group. -/
+/-- **Convolution on a finite abelian group.** Let $G$ be a finite abelian group. The
+convolution of functions $f, g : G \to \mathbb{C}$ is the function $f * g : G \to \mathbb{C}$
+given by $(f * g)(x) = \sum_{y \in G} f(y)\,g(x - y)$, with no normalizing factor $1/|G|$,
+where $|G|$ is the number of elements of $G$. -/
 noncomputable def finGroupConv {G : Type*} [AddCommGroup G] [Fintype G] (f g : G → ℂ) :
     G → ℂ :=
   fun x => ∑ y, f y * g (x - y)
@@ -55,7 +58,9 @@ theorem finGroupConv_zero_right {G : Type*} [AddCommGroup G] [Fintype G] (f : G 
   funext x
   simp [finGroupConv_apply]
 
-/-- Convolution on a finite group of complex-valued functions is commutative. -/
+/-- **Convolution on a finite abelian group is commutative.** For a finite abelian group $G$
+and functions $f, g : G \to \mathbb{C}$, we have $f * g = g * f$, where the convolution is
+$(f * g)(x) = \sum_{y \in G} f(y)\,g(x - y)$. -/
 theorem finGroupConv_comm {G : Type*} [AddCommGroup G] [Fintype G] (f g : G → ℂ) :
     finGroupConv f g = finGroupConv g f := by
   funext x
@@ -71,7 +76,9 @@ theorem finGroupConv_comm {G : Type*} [AddCommGroup G] [Fintype G] (f g : G → 
     rw [sub_sub_cancel]
     exact mul_comm _ _
 
-/-- Convolution on a finite group of complex-valued functions is associative. -/
+/-- **Convolution on a finite abelian group is associative.** For a finite abelian group $G$
+and functions $f, g, h : G \to \mathbb{C}$, we have $(f * g) * h = f * (g * h)$, where the
+convolution is $(f * g)(x) = \sum_{y \in G} f(y)\,g(x - y)$. -/
 theorem finGroupConv_assoc {G : Type*} [AddCommGroup G] [Fintype G] (f g h : G → ℂ) :
     finGroupConv (finGroupConv f g) h = finGroupConv f (finGroupConv g h) := by
   funext x
@@ -86,7 +93,10 @@ theorem finGroupConv_assoc {G : Type*} [AddCommGroup G] [Fintype G] (f g h : G �
   change f y * g (z + y - y) * h (x - (z + y)) = f y * (g z * h (x - y - z))
   rw [add_sub_cancel_right, ← sub_add_eq_sub_sub, add_comm z y, mul_assoc]
 
-/-- The delta function at `0` is the identity for convolution. -/
+/-- **The delta function is a left identity for convolution.** Let $G$ be a finite abelian
+group and let $\delta_0 : G \to \mathbb{C}$ be the function with $\delta_0(0) = 1$ and
+$\delta_0(y) = 0$ for $y \ne 0$. Then $\delta_0 * g = g$ for every $g : G \to \mathbb{C}$,
+where the convolution is $(f * g)(x) = \sum_{y \in G} f(y)\,g(x - y)$. -/
 theorem finGroupConv_delta_left {G : Type*} [AddCommGroup G] [Fintype G] [DecidableEq G]
     (g : G → ℂ) :
     finGroupConv (fun y => if y = 0 then (1 : ℂ) else 0) g = g := by
@@ -163,9 +173,12 @@ private theorem holder_three_finset {ι : Type*} (s : Finset ι)
   exact mul_le_mul_of_nonneg_left step2
     (Real.rpow_nonneg (Finset.sum_nonneg fun i hi => Real.rpow_nonneg (hF i hi) a) _)
 
-/-- **Young's convolution inequality** on a finite abelian additive group: for
-`1 < p`, `1 < q`, `1 < r` with `1 / p + 1 / q = 1 + 1 / r`,
-`‖f * g‖_r ≤ ‖f‖_p * ‖g‖_q` in the finite-sum `ℓ^p` norms. -/
+/-- **Young's convolution inequality on a finite abelian group.** Let $G$ be a finite abelian
+group and, for $u : G \to \mathbb{C}$ and real $s > 0$, write
+$\|u\|_s = \left(\sum_{x \in G} |u(x)|^s\right)^{1/s}$. Let $f, g : G \to \mathbb{C}$ and let
+$p, q, r$ be real numbers with $p > 1$, $q > 1$, $r > 1$ and $1/p + 1/q = 1 + 1/r$. Then the
+convolution $(f * g)(x) = \sum_{y \in G} f(y)\,g(x - y)$ satisfies
+$\|f * g\|_r \le \|f\|_p \, \|g\|_q$. -/
 theorem young_convolution_finite_group {G : Type*} [AddCommGroup G] [Fintype G]
     {f g : G → ℂ} {p q r : ℝ}
     (hp : 1 < p) (hq : 1 < q) (hr : 1 < r)

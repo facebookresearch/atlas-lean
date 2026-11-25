@@ -1,0 +1,3 @@
+# Critical depth
+
+Let $S$ be a finite state space with proposal distributions $R(s, \cdot)$ and energy $V : S \to \mathbb{R}$. A state $t$ is reachable from $s$ at height $E$ when $V(s) \le E$ and some path of moves $a \to b$ with $R(a, b) \ne 0$ leads from $s$ to $t$ through states of energy at most $E$. A state $s$ is a local minimum when no state of strictly lower energy is reachable from $s$ at height $V(s)$. The depth of $s$ is the infimum, in $[0, \infty]$, of the $E > 0$ such that some state of energy below $V(s)$ is reachable from $s$ at height $V(s) + E$, and is $\infty$ when there is no such $E$. The critical depth $d^*$ is the supremum of the depths of the local minima that are not global minima, and is $0$ when there are none.

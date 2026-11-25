@@ -411,7 +411,15 @@ private lemma hasDerivAt_closed (y : ℝ) (hy0 : 0 ≤ y) (hy1 : y < 1) :
   have halg := alg_identity y hy0 hy1
   rwa [halg] at hall
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8.
+/-- **Ramanujan's closed form for $\int_0^x du/(1 + u^{10})$ (Chapter 8, Entry 14).** Put
+$a_\pm = \sqrt{6 \pm 2\sqrt5}$ and $b_\pm = \sqrt{10 \pm 2\sqrt5}$. For every real $x$ with
+$0 \le x < 1$,
+$$\int_0^x \frac{du}{1 + u^{10}} = \frac{\arctan x}{5} +
+\frac{a_+}{20} \arctan \frac{a_+ x}{2(1 - x^2)} + \frac{a_-}{20} \arctan \frac{a_- x}{2(1 - x^2)} +
+\frac{b_+}{40} \log \frac{1 + b_+ x/2 + x^2}{1 - b_+ x/2 + x^2} +
+\frac{b_-}{40} \log \frac{1 + b_- x/2 + x^2}{1 - b_- x/2 + x^2}.$$
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 8.
 Proves `Wanted` entry `ramanujan_part1_ch8_entry14_qreflection`.
 -/
 theorem ramanujan_part1_ch8_entry14_qreflection (x : ℝ) (hx0 : 0 ≤ x) (hx1 : x < 1) :

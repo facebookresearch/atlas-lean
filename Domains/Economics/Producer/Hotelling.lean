@@ -84,9 +84,9 @@ theorem hasFDerivAt_profit_eq_netSupply {ι : Type*} [Fintype ι]
   rw [← heq, Real.dotL_apply]
   exact dotProduct_comm _ _
 
-/-- Uniqueness of the optimal net supply under differentiability of profit:
-two profit-maximizing net supplies at `p₀` coincide when `π` is differentiable
-at `p₀`. -/
+/-- Uniqueness of the optimal net supply under differentiability of profit: if `π` is, near `p₀`,
+the least upper bound of the profits `p ⬝ᵥ y` over `y ∈ Y`, two profit-maximizing net supplies at
+`p₀` coincide when `π` is differentiable at `p₀`. -/
 theorem netSupply_unique_of_hasFDerivAt {ι : Type*} [Fintype ι]
     {Y : Set (ι → ℝ)} {π : (ι → ℝ) → ℝ} {p₀ y₀ y₁ : ι → ℝ}
     {π' : (ι → ℝ) →L[ℝ] ℝ}
@@ -99,8 +99,9 @@ theorem netSupply_unique_of_hasFDerivAt {ι : Type*} [Fintype ι]
   have h1 := hasFDerivAt_profit_eq_netSupply hπ hy₁ hprofit₁ hdiff
   exact dotProduct_eq _ _ (fun u => by rw [← h0 u, ← h1 u])
 
-/-- Hotelling's lemma in canonical gradient form: the derivative of the profit
-function at `p₀` is `Real.dotL y₀`. -/
+/-- Hotelling's lemma in canonical gradient form: if `π` is, near `p₀`, the least upper bound of
+the profits `p ⬝ᵥ y` over `y ∈ Y`, `y₀ ∈ Y` attains it at `p₀`, and `π` has derivative `π'` at
+`p₀`, then `π' = Real.dotL y₀`, the linear map `v ↦ y₀ ⬝ᵥ v`. -/
 theorem hasFDerivAt_profit_eq_dotL {ι : Type*} [Fintype ι]
     {Y : Set (ι → ℝ)} {π : (ι → ℝ) → ℝ} {p₀ y₀ : ι → ℝ}
     {π' : (ι → ℝ) →L[ℝ] ℝ}
@@ -147,8 +148,9 @@ theorem isProfitMax_unique_of_hasFDerivAt {ι : Type*} [Fintype ι]
   netSupply_unique_of_hasFDerivAt (eventually_isLUB_profitFn hbdd ⟨y₀, hy₀.1⟩) hy₀.1
     hy₀.profitFn_eq.symm hy₁.1 hy₁.profitFn_eq.symm hdiff
 
-/-- Hotelling's lemma for `profitFn Y` in canonical gradient form: the derivative of
-`profitFn Y` at `p₀` is `Real.dotL y₀`. -/
+/-- Hotelling's lemma for `profitFn Y` in canonical gradient form: if profit is bounded above on
+`Y` for all prices near `p₀`, `y₀` maximizes profit at `p₀`, and `profitFn Y` has derivative `π'`
+at `p₀`, then `π' = Real.dotL y₀`, the linear map `v ↦ y₀ ⬝ᵥ v`. -/
 theorem hasFDerivAt_profitFn_eq_dotL_of_isProfitMax {ι : Type*} [Fintype ι]
     {Y : Set (ι → ℝ)} {p₀ y₀ : ι → ℝ} {π' : (ι → ℝ) →L[ℝ] ℝ}
     (hbdd : ∀ᶠ p in 𝓝 p₀, BddAbove ((fun y => p ⬝ᵥ y) '' Y))

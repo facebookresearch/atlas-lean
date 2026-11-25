@@ -56,7 +56,7 @@ namespace MathlibExt.Analysis.HarmonicAnalysis.DyadicMaximal
 interval is the disjoint union of two level-`(k + 1)` intervals (T. Hytönen, *Dyadic analysis and
 weights*, lecture notes, University of Helsinki, version of 2 May 2014, §1.A, the
 collection `D_k` with `d = 1`). -/
-def dyadicInterval (k m : ℤ) : Set ℝ := Ico ((m : ℝ) / 2 ^ k) (((m : ℝ) + 1) / 2 ^ k)
+noncomputable def dyadicInterval (k m : ℤ) : Set ℝ := Ico ((m : ℝ) / 2 ^ k) (((m : ℝ) + 1) / 2 ^ k)
 
 /-- **Dyadic index.** The index `⌊x 2^k⌋` of the level-`k` dyadic interval that contains `x`
 (`mem_dyadicInterval_iff`). -/

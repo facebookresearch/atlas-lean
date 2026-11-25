@@ -1,0 +1,3 @@
+# Pairwise Markov property
+
+Let $G$ be a graph on a finite vertex set $V$, with a finite alphabet, and let $p$ be a real weight on configurations $x : V \to \alpha$ (not required to be nonnegative or to sum to $1$). For $U \subseteq V$ write $p(x_U)$ for the total weight of the configurations agreeing with $x$ on $U$. The weight $p$ has the pairwise Markov property if for any two distinct nonadjacent vertices $a, b$, with $S = V \setminus \{a, b\}$, every configuration $x$ satisfies $p(x_{\{a,b\} \cup S})\, p(x_S) = p(x_{\{a\} \cup S})\, p(x_{\{b\} \cup S})$. When $p$ is nonnegative with total weight $1$, this says that $a$ and $b$ are conditionally independent given all the other vertices.

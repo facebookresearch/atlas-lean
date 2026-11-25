@@ -18,7 +18,7 @@ Department of Computer Science, University of Colorado, Boulder (1976).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Combinatorics.Digraph.Basic
 public import Mathlib.Data.Finset.Card
 public import MathlibExt.Computability.BinaryNatEncoding

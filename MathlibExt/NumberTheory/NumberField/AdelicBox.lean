@@ -31,97 +31,14 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Basic
-public import Mathlib.NumberTheory.NumberField.AdeleRing
-public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
-public import Mathlib.Topology.Algebra.Valued.LocallyCompact
-public import MathlibExt.NumberTheory.NumberField.AdeleLocallyCompact
+public import MathlibExt.NumberTheory.NumberField.AdelicHaar
 
 @[expose] public section
 
-noncomputable section
-
 open IsDedekindDomain NumberField MeasureTheory
-open scoped RestrictedProduct Pointwise Valued
+open scoped RestrictedProduct
 
-namespace NumberField.AdelicHaar
-
-section Adele
-
-variable (R K : Type*) [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
-  [IsFractionRing R K]
-
-instance t2Space_finiteAdeleRing : T2Space (FiniteAdeleRing R K) :=
-  inferInstanceAs (T2Space (Πʳ v : HeightOneSpectrum R, [v.adicCompletion K,
-    v.adicCompletionIntegers K]))
-
-instance t2Space_infiniteAdeleRing : T2Space (InfiniteAdeleRing K) :=
-  inferInstanceAs (T2Space ((v : InfinitePlace K) → v.Completion))
-
-instance t2Space_adeleRing : T2Space (AdeleRing R K) :=
-  inferInstanceAs (T2Space (InfiniteAdeleRing K × FiniteAdeleRing R K))
-
-@[reducible] def adeleBorel : MeasurableSpace (AdeleRing R K) := borel _
-
-theorem borelSpace_adeleBorel : @BorelSpace (AdeleRing R K) _ (adeleBorel R K) :=
-  @BorelSpace.mk _ _ (adeleBorel R K) rfl
-
-variable [Module.Free ℤ R] [Module.Finite ℤ R]
-
-def adelicAddHaar [NumberField K] [LocallyCompactSpace (AdeleRing R K)] :
-    @Measure (AdeleRing R K) (adeleBorel R K) := by
-  letI := adeleBorel R K
-  haveI := borelSpace_adeleBorel R K
-  exact Measure.addHaar
-
-theorem isAddHaarMeasure_adelicAddHaar [NumberField K] [LocallyCompactSpace (AdeleRing R K)] :
-    @Measure.IsAddHaarMeasure (AdeleRing R K) _ _ (adeleBorel R K) (adelicAddHaar R K) := by
-  letI := adeleBorel R K
-  haveI := borelSpace_adeleBorel R K
-  exact Measure.isAddHaarMeasure_addHaarMeasure _
-
-end Adele
-
-section GeneralLinear
-
-variable (n : Type*) (R K : Type*) [CommRing R] [IsDedekindDomain R] [Field K] [Algebra R K]
-  [IsFractionRing R K]
-
-instance t2Space_matrix_adeleRing : T2Space (Matrix n n (AdeleRing R K)) :=
-  inferInstanceAs (T2Space (n → n → AdeleRing R K))
-
-variable [Fintype n] [DecidableEq n]
-
-instance t2Space_gl_adeleRing : T2Space (Matrix.GeneralLinearGroup n (AdeleRing R K)) :=
-  inferInstance
-
-@[reducible] def glBorel : MeasurableSpace (Matrix.GeneralLinearGroup n (AdeleRing R K)) :=
-  borel _
-
-theorem borelSpace_glBorel :
-    @BorelSpace (Matrix.GeneralLinearGroup n (AdeleRing R K)) _ (glBorel n R K) :=
-  @BorelSpace.mk _ _ (glBorel n R K) rfl
-
-variable [Module.Free ℤ R] [Module.Finite ℤ R] [NumberField K]
-
-def adelicGLHaar [IsTopologicalGroup (Matrix.GeneralLinearGroup n (AdeleRing R K))]
-    [LocallyCompactSpace (Matrix.GeneralLinearGroup n (AdeleRing R K))] :
-    @Measure (Matrix.GeneralLinearGroup n (AdeleRing R K)) (glBorel n R K) := by
-  letI := glBorel n R K
-  haveI := borelSpace_glBorel n R K
-  exact Measure.haar
-
-theorem isHaarMeasure_adelicGLHaar
-    [IsTopologicalGroup (Matrix.GeneralLinearGroup n (AdeleRing R K))]
-    [LocallyCompactSpace (Matrix.GeneralLinearGroup n (AdeleRing R K))] :
-    @Measure.IsHaarMeasure (Matrix.GeneralLinearGroup n (AdeleRing R K)) _ _ (glBorel n R K)
-      (adelicGLHaar n R K) := by
-  letI := glBorel n R K
-  haveI := borelSpace_glBorel n R K
-  exact Measure.isHaarMeasure_haarMeasure _
-
-end GeneralLinear
-
-end NumberField.AdelicHaar
+noncomputable section
 
 namespace NumberField.AdelicBox
 
@@ -167,8 +84,8 @@ theorem exists_valued_algebraMap_sub_lt (x : v.adicCompletionIntegers K)
     (t : v.adicCompletion K) (ht : t ≠ 0) :
     ∃ a : R, Valued.v (algebraMap K (v.adicCompletion K) (algebraMap R K a) -
       (x : v.adicCompletion K)) < Valued.v t := by
-  set γ : (WithZero (Multiplicative ℤ))ˣ := Units.mk0 (Valued.v t) ((Valuation.ne_zero_iff _).mpr
-    ht)
+  set γ : (WithZero (Multiplicative ℤ))ˣ :=
+    Units.mk0 (Valued.v t) ((Valuation.ne_zero_iff _).mpr ht)
     with hγ
 
   have hn : {z : v.adicCompletion K | Valued.v (z - x) < Valued.v t} ∩
@@ -359,8 +276,8 @@ omit [NumberField K] in
 
 theorem continuous_ringEquiv_mixedSpace :
     Continuous (InfiniteAdeleRing.ringEquiv_mixedSpace K) := by
-  have h : (InfiniteAdeleRing.ringEquiv_mixedSpace K : InfiniteAdeleRing K →
-    mixedEmbedding.mixedSpace K)
+  have h : (InfiniteAdeleRing.ringEquiv_mixedSpace K :
+      InfiniteAdeleRing K → mixedEmbedding.mixedSpace K)
       = fun x => (fun (w : {w : InfinitePlace K // w.IsReal}) =>
           InfinitePlace.Completion.extensionEmbeddingOfIsReal w.2 (x w.1),
         fun (w : {w : InfinitePlace K // w.IsComplex}) =>
@@ -393,11 +310,11 @@ theorem existsUnique_int_add_mem_infiniteBox (x : InfiniteAdeleRing K) :
       ZSpan.fundamentalDomain (mixedEmbedding.latticeBasis K)
     rw [key, ho']
     exact hℓ
-  · have hmem : mixedEmbedding K (o' : K) ∈ Submodule.span ℤ (Set.range
-    (mixedEmbedding.latticeBasis K)) :=
+  · have hmem : mixedEmbedding K (o' : K) ∈
+        Submodule.span ℤ (Set.range (mixedEmbedding.latticeBasis K)) :=
       (mixedEmbedding.mem_span_latticeBasis K).mpr (LinearMap.mem_range.mpr ⟨o', rfl⟩)
-    have h2 : (⟨mixedEmbedding K (o' : K), hmem⟩ : Submodule.span ℤ (Set.range
-      (mixedEmbedding.latticeBasis K)))
+    have h2 : (⟨mixedEmbedding K (o' : K), hmem⟩ :
+        Submodule.span ℤ (Set.range (mixedEmbedding.latticeBasis K)))
         +ᵥ e x ∈ ZSpan.fundamentalDomain (mixedEmbedding.latticeBasis K) := by
       have : e (algebraMap K (InfiniteAdeleRing K) (o' : K) + x) ∈
           ZSpan.fundamentalDomain (mixedEmbedding.latticeBasis K) := ho'mem
@@ -462,14 +379,14 @@ attribute [local instance] NumberField.AdelicHaar.adeleBorel
 theorem isClosed_integralFiniteAdeles :
     IsClosed (integralFiniteAdeles (𝓞 K) K) := by
   have : integralFiniteAdeles (𝓞 K) K = ⋂ v : HeightOneSpectrum (𝓞 K),
-      (fun x : FiniteAdeleRing (𝓞 K) K => x v) ⁻¹' (v.adicCompletionIntegers K : Set
-        (v.adicCompletion K)) := by
+      (fun x : FiniteAdeleRing (𝓞 K) K => x v) ⁻¹'
+        (v.adicCompletionIntegers K : Set (v.adicCompletion K)) := by
     ext x; simp [integralFiniteAdeles]
   rw [this]
   refine isClosed_iInter fun v => IsClosed.preimage ?_ (Valued.isClosed_valuationSubring _)
   exact (RestrictedProduct.continuous_eval v :
-    Continuous fun x : Πʳ w : HeightOneSpectrum (𝓞 K), [w.adicCompletion K,
-      w.adicCompletionIntegers K] => x v)
+    Continuous fun x : Πʳ w : HeightOneSpectrum (𝓞 K),
+      [w.adicCompletion K, w.adicCompletionIntegers K] => x v)
 
 open scoped Classical in
 
@@ -513,14 +430,14 @@ omit [NumberField K] in
 
 theorem properSpace_completion (v : InfinitePlace K) : ProperSpace v.Completion := by
   by_cases hv : v.IsReal
-  · exact (InfinitePlace.Completion.isometryEquivRealOfIsReal
-    hv).symm.isometry.antilipschitz.properSpace
-      (InfinitePlace.Completion.isometryEquivRealOfIsReal hv).symm.continuous
+  · have h := (InfinitePlace.Completion.isometryEquivRealOfIsReal hv).symm.isometry
+      |>.antilipschitz.properSpace
+    exact h (InfinitePlace.Completion.isometryEquivRealOfIsReal hv).symm.continuous
       (InfinitePlace.Completion.isometryEquivRealOfIsReal hv).symm.surjective
   · have hc : v.IsComplex := InfinitePlace.not_isReal_iff_isComplex.mp hv
-    exact (InfinitePlace.Completion.isometryEquivComplexOfIsComplex
-      hc).symm.isometry.antilipschitz.properSpace
-      (InfinitePlace.Completion.isometryEquivComplexOfIsComplex hc).symm.continuous
+    have h := (InfinitePlace.Completion.isometryEquivComplexOfIsComplex hc).symm.isometry
+      |>.antilipschitz.properSpace
+    exact h (InfinitePlace.Completion.isometryEquivComplexOfIsComplex hc).symm.continuous
       (InfinitePlace.Completion.isometryEquivComplexOfIsComplex hc).symm.surjective
 
 open scoped Classical in
@@ -575,28 +492,28 @@ theorem exists_isCompact_infiniteBox_subset :
   exact isCompact_univ_pi fun v => isCompact_closedBall (0 : v.Completion) r
 
 theorem isCompact_integralFiniteAdeles : IsCompact (integralFiniteAdeles (𝓞 K) K) := by
-  haveI : Fact (∀ v : HeightOneSpectrum (𝓞 K),
-      IsOpen (↑(v.adicCompletionIntegers K) : Set (v.adicCompletion K))) :=
-    ⟨fun _ => Valued.isOpen_valuationSubring _⟩
   haveI : ∀ v : HeightOneSpectrum (𝓞 K),
       CompactSpace ((v.adicCompletionIntegers K : Set (v.adicCompletion K))) := fun v =>
     IsDedekindDomain.HeightOneSpectrum.compactSpace K v
+  haveI : Fact (∀ v : HeightOneSpectrum (𝓞 K),
+      IsOpen (v.adicCompletionIntegers K : Set (v.adicCompletion K))) :=
+    ⟨fun v => Valued.isOpen_valuationSubring _⟩
   have h := isCompact_range (RestrictedProduct.isOpenEmbedding_structureMap
     (R := fun v : HeightOneSpectrum (𝓞 K) => v.adicCompletion K)
-    (A := fun v : HeightOneSpectrum (𝓞 K) => (v.adicCompletionIntegers K : Set (v.adicCompletion
-      K)))
+    (A := fun v : HeightOneSpectrum (𝓞 K) =>
+      (v.adicCompletionIntegers K : Set (v.adicCompletion K)))
     Fact.out).continuous
   rw [RestrictedProduct.range_structureMap] at h
   exact h
 
 theorem isOpen_integralFiniteAdeles : IsOpen (integralFiniteAdeles (𝓞 K) K) := by
   haveI : Fact (∀ v : HeightOneSpectrum (𝓞 K),
-      IsOpen (↑(v.adicCompletionIntegers K) : Set (v.adicCompletion K))) :=
-    ⟨fun _ => Valued.isOpen_valuationSubring _⟩
+      IsOpen (v.adicCompletionIntegers K : Set (v.adicCompletion K))) :=
+    ⟨fun v => Valued.isOpen_valuationSubring _⟩
   exact RestrictedProduct.isOpen_forall_mem
     (R := fun v : HeightOneSpectrum (𝓞 K) => v.adicCompletion K)
-    (A := fun v : HeightOneSpectrum (𝓞 K) => (v.adicCompletionIntegers K : Set (v.adicCompletion
-      K)))
+    (A := fun v : HeightOneSpectrum (𝓞 K) =>
+      (v.adicCompletionIntegers K : Set (v.adicCompletion K)))
     Fact.out
 
 theorem exists_isCompact_adelicBox_subset :
@@ -669,6 +586,7 @@ end Box
 
 end NumberField.AdelicBox
 
+open scoped Pointwise
 
 namespace NumberField.AdelicCentre
 
