@@ -27,7 +27,12 @@ namespace MetaMathlibExt
 @[expose]
 public section
 
-/-- The source's binary binomial interpolated triangle `BT(a₀,a₁,α,β;α,β)`. -/
+/-- **Binary binomial interpolated triangle.** For real numbers $a_0, a_1, \alpha, \beta$, a real
+array $(a_{n,k})_{n,k \ge 0}$ is the binary binomial interpolated triangle
+$BT(a_0, a_1, \alpha, \beta; \alpha, \beta)$ when $\alpha\beta \ne 0$, $|a_0| + |a_1| \ne 0$,
+$a_{0,0} = a_0$, $a_{1,0} = a_1$, $a_{n,0} = \alpha\, a_{n-1,0} + \beta\, a_{n-2,0}$ for every
+$n \ge 2$, and $a_{n,k} = \alpha\, a_{n,k-1} + \beta\, a_{n-1,k-1}$ for all $1 \le k \le n$.
+Entries $a_{n,k}$ with $k > n$ are not constrained. -/
 public def IsBinaryBinomialInterpolatedTriangle
     (a : ℕ → ℕ → ℝ) (a₀ a₁ α β : ℝ) : Prop :=
   α * β ≠ 0 ∧ |a₀| + |a₁| ≠ 0 ∧
@@ -36,7 +41,9 @@ public def IsBinaryBinomialInterpolatedTriangle
     ∀ n k, 1 ≤ k → k ≤ n →
       a n k = α * a n (k - 1) + β * a (n - 1) (k - 1)
 
-/-- The rising diagonal at level `n`, namely `a (n-k) k` for `0 ≤ k ≤ ⌊n/2⌋`. -/
+/-- **Rising diagonal.** For a real array $a = (a_{n,k})_{n,k \ge 0}$ and $n \ge 0$, the rising
+diagonal of $a$ at level $n$ is the finite sequence $k \mapsto a_{n-k,k}$ indexed by
+$0 \le k \le \lfloor n/2 \rfloor$. -/
 public def risingDiagonal (a : ℕ → ℕ → ℝ) (n : ℕ) : Fin (n / 2 + 1) → ℝ :=
   fun k => a (n - k) k
 
@@ -77,7 +84,11 @@ private theorem risingDiagonal_aux {a : ℕ → ℕ → ℝ} {a₀ a₁ α β : 
       rw [hstep, t1, t2]
       exact hn0.symm
 
-/-- Every rising diagonal of `BT(a₀,a₁,α,β;α,β)` is constant. -/
+/-- **Rising diagonals of a binary binomial interpolated triangle are constant.** Let
+$a_0, a_1, \alpha, \beta$ be real numbers and let $a = (a_{n,k})_{n,k \ge 0}$ be a real array that
+is the binary binomial interpolated triangle $BT(a_0, a_1, \alpha, \beta; \alpha, \beta)$. Then
+for every $n \ge 0$ the rising diagonal of $a$ at level $n$ is constant: $a_{n-i,i} = a_{n-j,j}$
+for all $0 \le i, j \le \lfloor n/2 \rfloor$. -/
 public theorem risingDiagonal_const {a : ℕ → ℕ → ℝ} {a₀ a₁ α β : ℝ}
     (h : IsBinaryBinomialInterpolatedTriangle a a₀ a₁ α β) (n : ℕ)
     (i j : Fin (n / 2 + 1)) :

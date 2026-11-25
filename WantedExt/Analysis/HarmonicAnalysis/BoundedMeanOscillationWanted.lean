@@ -13,14 +13,14 @@ public import Mathlib.MeasureTheory.Integral.Average
 public import Mathlib.MeasureTheory.Function.LocallyIntegrable
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Analysis.SpecialFunctions.Exp
+public import MathlibExt.Analysis.HarmonicAnalysis.BoundedMeanOscillation
 
 /-!
-# Bounded mean oscillation on the real line (statements)
+# Bounded mean oscillation on the real line (wanted statement)
 
 A locally integrable `f : ℝ → ℝ` has bounded mean oscillation with constant `B` when
 `⨍_I |f - f_I| ≤ B` for every bounded interval `I = [a, b]`, `a < b`, where `f_I = ⨍_I f`.
-The condition is written out in each statement below rather than packaged as a definition.
-Both statements are the one-dimensional cases of results stated on `ℝ^n` in the sources.
+The remaining statement gives the one-dimensional case of the Hardy space pairing estimate.
 -/
 
 @[expose] public section
@@ -29,20 +29,6 @@ open MeasureTheory Set
 open scoped ENNReal
 
 namespace MathlibExt.Analysis.HarmonicAnalysis.BoundedMeanOscillationWanted
-
-/-- **John–Nirenberg inequality.** There is an absolute constant `c > 0` such that for every
-locally integrable `f : ℝ → ℝ` whose mean oscillation over every bounded interval is at most
-`B > 0`, every interval `I = [a, b]` with `a < b` and every `α > 0`,
-`|{x ∈ I : |f(x) - f_I| > α}| ≤ 2 |I| exp(-α / (c B))`
-(F. John and L. Nirenberg, *On functions of bounded mean oscillation*, Comm. Pure Appl. Math.
-14 (1961), 415–426; statement as in A. K. Lerner, *A "local mean oscillation" decomposition and
-some its applications*, lecture notes, inequality (2.1), with `n = 1`). -/
-public theorem_wanted exists_volume_abs_sub_average_gt_le :
-    ∃ c : ℝ, 0 < c ∧ ∀ f : ℝ → ℝ, LocallyIntegrable f → ∀ B : ℝ, 0 < B →
-      (∀ a b : ℝ, a < b → ⨍ x in Icc a b, |f x - ⨍ y in Icc a b, f y| ≤ B) →
-      ∀ a b : ℝ, a < b → ∀ α : ℝ, 0 < α →
-        volume {x | x ∈ Icc a b ∧ α < |f x - ⨍ y in Icc a b, f y|} ≤
-          ENNReal.ofReal (2 * (b - a) * Real.exp (-α / (c * B)))
 
 /-- **Fefferman's `H¹`–`BMO` inequality.** There is an absolute constant `C > 0` such that for
 every locally integrable `b : ℝ → ℝ` whose mean oscillation over every bounded interval is at

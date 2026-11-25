@@ -51,7 +51,7 @@ def basinOfInfinity (P : Polynomial ℂ) : Set ℂ :=
   {z | Tendsto (fun n => ‖(fun w => P.eval w)^[n] z‖) atTop atTop}
 
 /-- The Julia set `J(P) = ∂A_∞(P)` of the polynomial `P`. -/
-def juliaSet (P : Polynomial ℂ) : Set ℂ :=
+noncomputable def juliaSet (P : Polynomial ℂ) : Set ℂ :=
   frontier (basinOfInfinity P)
 
 /-- `Ω ⊆ ℂ` is a John domain with center `∞`: for some `ε > 0`, every `z₁ ∈ Ω` is joined to `∞` by

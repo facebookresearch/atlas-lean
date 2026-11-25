@@ -547,7 +547,7 @@ private theorem IsVertexConnected.singletonComponentTrailCover [Fintype V]
     apply M.underlying_adj.mpr
     exact ⟨ULift.up 0, by simp [M, singletonCoverEnds]⟩
 
-private abbrev CycleCoverEdge {S : Set V}
+private noncomputable abbrev CycleCoverEdge {S : Set V}
     (p : (G.contractOutside S).square.Walk none none) :=
   p.toSubgraph.spanningCoe.edgeSet
 
@@ -6671,7 +6671,7 @@ private theorem IsVertexConnected.hasStrongSquareCycle_card
     (hG : G.IsVertexConnected 2) (hcard : Fintype.card V = n) (x : V) :
     G.HasStrongSquareCycle x := by
   induction n using Nat.strong_induction_on generalizing V with
-  | h n ih =>
+  | ind n ih =>
       classical
       have hn3 : 3 ≤ n := by
         have := hG.card_gt
@@ -6719,8 +6719,12 @@ private theorem IsVertexConnected.hasStrongSquareCycle_card
         apply c.hasStrongSquareCycle_of_componentTrailCovers hc cover k hk0 hboundK
         omega
 
-/-- Every 2-connected finite graph has a rooted Hamiltonian cycle in its square whose two
-root edges belong to the original graph. -/
+/-- **Strengthened Fleischner theorem.** Let $G$ be a finite simple graph that is
+2-vertex-connected, that is, $G$ has at least three vertices and stays connected after deleting at
+most one vertex. Let $G^2$ be the square of $G$: the graph on the same vertices in which two
+distinct vertices are adjacent if and only if they are adjacent in $G$ or have a common neighbour
+in $G$. Then for every vertex $x$ of $G$, the graph $G^2$ has a Hamiltonian cycle whose two edges
+at $x$ are edges of $G$. -/
 public theorem IsVertexConnected.hasStrongSquareCycle
     {V : Type u} [Fintype V] [DecidableEq V] {G : SimpleGraph V}
     (hG : G.IsVertexConnected 2) (x : V) : G.HasStrongSquareCycle x :=

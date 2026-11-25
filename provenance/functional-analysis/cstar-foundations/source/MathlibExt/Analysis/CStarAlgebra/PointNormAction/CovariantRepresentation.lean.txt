@@ -1,0 +1,221 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.PointNormAction
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
+
+/-!
+# Strongly continuous unitary and covariant representations
+
+This file defines explicit strongly continuous unitary representations on
+complex Hilbert spaces and covariant representations of point-norm C-star
+actions. Both representations are values rather than typeclasses, so several
+representations and actions on the same spaces may coexist.
+
+The covariant carrier is deliberately raw: it does not require the coefficient
+representation to be nondegenerate. In particular, the zero algebra
+homomorphism is permitted.
+
+The covariance convention is
+
+`U_g * π(a) * U_g⁺ = π(α_g(a))`.
+
+No ambient group action, category, integrated form, or crossed product is
+installed here.
+-/
+
+@[expose] public section
+
+open Filter
+open scoped CStarAlgebra InnerProductSpace
+
+noncomputable section
+
+universe uG uA uH uX
+
+private theorem continuous_apply_of_continuous_orbit_of_dist_eq
+    {G : Type uG} {H : Type uH} {X : Type uX}
+    [TopologicalSpace G] [PseudoMetricSpace H] [TopologicalSpace X]
+    (action : G → H → H)
+    (continuous_orbit : ∀ x, Continuous fun g ↦ action g x)
+    (dist_action : ∀ g x y, dist (action g x) (action g y) = dist x y)
+    {g : X → G} {x : X → H} (hg : Continuous g) (hx : Continuous x) :
+    Continuous fun t ↦ action (g t) (x t) := by
+  rw [continuous_iff_continuousAt]
+  intro t
+  rw [ContinuousAt, Metric.tendsto_nhds]
+  intro ε hε
+  filter_upwards
+      [(Metric.tendsto_nhds.mp hx.continuousAt) (ε / 2) (half_pos hε),
+        (Metric.tendsto_nhds.mp
+          ((continuous_orbit (x t)).comp hg).continuousAt)
+            (ε / 2) (half_pos hε)] with s hxs hgs
+  calc
+    dist (action (g s) (x s)) (action (g t) (x t)) ≤
+        dist (action (g s) (x s)) (action (g s) (x t)) +
+          dist (action (g s) (x t)) (action (g t) (x t)) :=
+      dist_triangle _ _ _
+    _ = dist (x s) (x t) +
+          dist (action (g s) (x t)) (action (g t) (x t)) := by
+      rw [dist_action]
+    _ < ε / 2 + ε / 2 := add_lt_add hxs hgs
+    _ = ε := add_halves ε
+
+/-- A unitary representation whose orbit map is continuous at every vector.
+
+This is an explicit value, not an ambient `MulAction`. -/
+structure StronglyContinuousUnitaryRepresentation
+    (G : Type uG) (H : Type uH)
+    [Group G] [TopologicalSpace G]
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] where
+  /-- The unitary representation as a monoid homomorphism. -/
+  toMonoidHom : G →* unitary (H →L[ℂ] H)
+  /-- Every vector has a continuous orbit map. -/
+  continuous_orbit : ∀ x : H,
+    Continuous fun g ↦ (toMonoidHom g : H →L[ℂ] H) x
+
+namespace StronglyContinuousUnitaryRepresentation
+
+variable {G : Type uG} {H : Type uH}
+variable [Group G] [TopologicalSpace G]
+variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- Two strongly continuous unitary representations are equal when their
+underlying monoid homomorphisms are equal. -/
+@[ext]
+theorem ext {ρ σ : StronglyContinuousUnitaryRepresentation G H}
+    (h : ρ.toMonoidHom = σ.toMonoidHom) : ρ = σ := by
+  cases ρ
+  cases σ
+  cases h
+  rfl
+
+@[macro_inline]
+instance : FunLike (StronglyContinuousUnitaryRepresentation G H) G
+    (unitary (H →L[ℂ] H)) where
+  coe ρ := ρ.toMonoidHom
+  coe_injective ρ σ h := by
+    apply ext
+    apply MonoidHom.ext
+    intro g
+    exact congrFun h g
+
+instance : MonoidHomClass (StronglyContinuousUnitaryRepresentation G H) G
+    (unitary (H →L[ℂ] H)) where
+  map_one ρ := ρ.toMonoidHom.map_one
+  map_mul ρ := ρ.toMonoidHom.map_mul
+
+@[simp]
+theorem apply_one (ρ : StronglyContinuousUnitaryRepresentation G H) (x : H) :
+    ((ρ 1 : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x = x := by
+  change ((ρ.toMonoidHom 1 : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x = x
+  rw [ρ.toMonoidHom.map_one]
+  rfl
+
+@[simp]
+theorem apply_mul (ρ : StronglyContinuousUnitaryRepresentation G H)
+    (g h : G) (x : H) :
+    ((ρ (g * h) : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x =
+      ((ρ g : unitary (H →L[ℂ] H)) : H →L[ℂ] H)
+        (((ρ h : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x) := by
+  change
+    ((ρ.toMonoidHom (g * h) : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x = _
+  rw [ρ.toMonoidHom.map_mul]
+  rfl
+
+theorem norm_apply (ρ : StronglyContinuousUnitaryRepresentation G H)
+    (g : G) (x : H) :
+    ‖((ρ g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x‖ = ‖x‖ :=
+  Unitary.norm_map (ρ g) x
+
+theorem dist_apply (ρ : StronglyContinuousUnitaryRepresentation G H)
+    (g : G) (x y : H) :
+    dist (((ρ g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x)
+        (((ρ g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) y) =
+      dist x y := by
+  simpa only [dist_eq_norm, map_sub] using ρ.norm_apply g (x - y)
+
+theorem inner_apply_apply (ρ : StronglyContinuousUnitaryRepresentation G H)
+    (g : G) (x y : H) :
+    ⟪((ρ g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x,
+        ((ρ g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) y⟫_ℂ = ⟪x, y⟫_ℂ :=
+  Unitary.inner_map_map (ρ g) x y
+
+/-- Strong orbit continuity and unitarity imply continuity when both the group
+element and vector vary. -/
+theorem continuous_apply
+    {X : Type uX} [TopologicalSpace X]
+    (ρ : StronglyContinuousUnitaryRepresentation G H)
+    {g : X → G} {x : X → H} (hg : Continuous g) (hx : Continuous x) :
+    Continuous fun t ↦
+      ((ρ (g t) : unitary (H →L[ℂ] H)) : H →L[ℂ] H) (x t) :=
+  continuous_apply_of_continuous_orbit_of_dist_eq
+    (fun g x ↦ ((ρ g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x)
+    ρ.continuous_orbit ρ.dist_apply hg hx
+
+/-- Joint continuity of a strongly continuous unitary representation. -/
+theorem continuous_action (ρ : StronglyContinuousUnitaryRepresentation G H) :
+    Continuous fun p : G × H ↦
+      ((ρ p.1 : unitary (H →L[ℂ] H)) : H →L[ℂ] H) p.2 :=
+  ρ.continuous_apply continuous_fst continuous_snd
+
+/-- The trivial strongly continuous unitary representation. -/
+def trivial (G : Type uG) (H : Type uH)
+    [Group G] [TopologicalSpace G]
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] :
+    StronglyContinuousUnitaryRepresentation G H where
+  toMonoidHom := 1
+  continuous_orbit := fun _ ↦ continuous_const
+
+@[simp]
+theorem trivial_apply (g : G) (x : H) :
+    (((trivial G H) g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) x = x :=
+  rfl
+
+end StronglyContinuousUnitaryRepresentation
+
+/-- A covariant representation of a point-norm C-star action, with covariance
+oriented as `U_g * π(a) * U_g⁺ = π(α_g(a))`. -/
+structure CovariantRepresentation
+    {G : Type uG} {A : Type uA}
+    [Group G] [TopologicalSpace G] [NonUnitalCStarAlgebra A]
+    (α : PointNormCStarAction G A) (H : Type uH)
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H] where
+  /-- The representation of the coefficient algebra. -/
+  algebra : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)
+  /-- The strongly continuous unitary representation of the group. -/
+  group : StronglyContinuousUnitaryRepresentation G H
+  /-- The literal conjugation covariance equation. -/
+  covariance : ∀ g a,
+    ((group g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) * algebra a *
+        star (((group g : unitary (H →L[ℂ] H)) : H →L[ℂ] H)) =
+      algebra (α g a)
+
+namespace CovariantRepresentation
+
+variable {G : Type uG} {A : Type uA} {H : Type uH}
+variable [Group G] [TopologicalSpace G] [NonUnitalCStarAlgebra A]
+variable [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+variable {α : PointNormCStarAction G A}
+
+/-- Covariant representations are determined by their algebra and group
+components. -/
+@[ext]
+theorem ext {π ρ : CovariantRepresentation α H}
+    (halgebra : π.algebra = ρ.algebra) (hgroup : π.group = ρ.group) : π = ρ := by
+  cases π
+  cases ρ
+  cases halgebra
+  cases hgroup
+  rfl
+
+@[simp]
+theorem covariance_apply (π : CovariantRepresentation α H) (g : G) (a : A) :
+    ((π.group g : unitary (H →L[ℂ] H)) : H →L[ℂ] H) * π.algebra a *
+        star (((π.group g : unitary (H →L[ℂ] H)) : H →L[ℂ] H)) =
+      π.algebra (α g a) :=
+  π.covariance g a
+
+end CovariantRepresentation

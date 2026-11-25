@@ -39,10 +39,13 @@ by `x ^ ξ = ∏_g (g x) ^ (ξ g)` on nonzero `x`; `ξ ∉ pℤG` means some coe
 infinite and fixed by `G`, so the statement would be trivial.
 -/
 
-/-- Kourovka 11.79 (K. N. Ponomarëv): let `G` be a finite group of automorphisms of an infinite
-field `F` of prime characteristic `p`, acting with integral powers on `Fˣ` through the group ring:
-`x ^ ξ = ∏_g (g x) ^ (ξ g)` for `ξ = ∑_g ξ g · g ∈ ℤG`. If `ξ ∉ pℤG` and a subfield `K` of `F`
-contains `x ^ ξ` for every `x ≠ 0`, then `K` contains infinitely many `G`-invariant elements. -/
+/-- **Group-ring powers and invariant elements (Kourovka 11.79).** The proposition that the
+following holds for every prime $p$, every infinite field $F$ of characteristic $p$, every finite
+group $G$ of ring automorphisms of $F$, and every element $\xi = \sum_{g \in G} \xi_g \, g$ of the
+group ring $\mathbb{Z}G$ with $\xi \notin p\mathbb{Z}G$, that is, with some integer coefficient
+$\xi_g$ not divisible by $p$. For nonzero $x \in F$ put $x^\xi = \prod_{g \in G} g(x)^{\xi_g}$.
+If a subfield $K$ of $F$ contains $x^\xi$ for every nonzero $x \in F$, then $K$ contains
+infinitely many elements $y$ with $g(y) = y$ for all $g \in G$. -/
 def subfieldContainsInfinitelyManyInvariants : Prop :=
   ∀ (p : ℕ) (F : Type) [Field F] [CharP F p], p.Prime → Infinite F →
     ∀ G : Subgroup (RingAut F), (G : Set (RingAut F)).Finite →
@@ -50,10 +53,16 @@ def subfieldContainsInfinitelyManyInvariants : Prop :=
     ∀ K : Subfield F, (∀ x : F, x ≠ 0 → (ξ.prod fun g n => ((g : RingAut F) x) ^ n) ∈ K) →
       {y : F | y ∈ K ∧ ∀ g ∈ G, g y = y}.Infinite
 
-/--
-Resolved true: the Kourovka Archive answers 11.79 "Yes" (Ponomarëv): a subfield of an infinite field
-of characteristic `p` containing all `x ^ ξ`, for a finite automorphism group `G` and `ξ ∈ ℤG \
-pℤG`, contains infinitely many `G`-invariant elements. Source: E. I. Khukhro and V. D. Mazurov
+/-- **Subfields containing all group-ring powers have infinitely many invariants.** Let $p$ be a
+prime, $F$ an infinite field of characteristic $p$, $G$ a finite group of ring automorphisms of
+$F$, and $\xi = \sum_{g \in G} \xi_g \, g$ an element of the group ring $\mathbb{Z}G$ with
+$\xi \notin p\mathbb{Z}G$, that is, with some integer coefficient $\xi_g$ not divisible by $p$.
+For nonzero $x \in F$ put $x^\xi = \prod_{g \in G} g(x)^{\xi_g}$. If a subfield $K$ of $F$
+contains $x^\xi$ for every nonzero $x \in F$, then $K$ contains infinitely many elements $y$ with
+$g(y) = y$ for all $g \in G$. This is the positive answer to Kourovka Notebook Problem 11.79,
+given by K. N. Ponomarëv (1992).
+
+Source: E. I. Khukhro and V. D. Mazurov
 (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49
 (2026), Archive of Solved Problems, Problem 11.79 (K. N. Ponomarëv); resolution: K. N. Ponomarëv,
 Siberian Math. J. 33 (1992), 1094-1099, Kourovka Archive, Problem 11.79: "Yes",

@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.GeneralizedLeastSquares
-public import MathlibExt.Biology.StatisticalGenetics.MixedModel
+public import MathlibExt.Probability.Statistics.MixedModelEquations
 public import Mathlib.Probability.Moments.Covariance
 public import Mathlib.MeasureTheory.SpecificCodomains.Pi
 

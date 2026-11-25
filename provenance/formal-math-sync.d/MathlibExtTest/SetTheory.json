@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "MathlibExtTest/SetTheory/Cardinal/SimpleGraph.lean", "disposition": "identical", "published_sha256": "c4417e4602e937a8935c31507205208d38bb690558d7a92dca0361eafbaf51a4", "upstream_sha256": "d432e5b22fd34fde07a57a580d9a7f32d001e91bd7c7a1d03652dc9e2c6d571c"}
+  ]
+}

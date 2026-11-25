@@ -53,7 +53,9 @@ private theorem hasSum_greensEigenvalues_nat :
   have hpi : Real.pi ^ 2 / 6 / Real.pi ^ 2 = 1 / 6 := by field_simp
   rwa [hpi] at h
 
-/-- The canonical Green eigenvalues are summable over positive integers. -/
+/-- **The Green's eigenvalues are summable.** The Green's eigenvalues
+$\lambda_k = 1/(k^2\pi^2)$, indexed by the positive integers $k$, form a summable family of real
+numbers. -/
 theorem summable_greensEigenvalues : Summable greensEigenvalue := by
   change Summable (fun k : ℕ+ => (1 : ℝ) / ((k : ℝ) ^ 2 * Real.pi ^ 2))
   have h := (hasSum_pnat_iff
@@ -61,12 +63,15 @@ theorem summable_greensEigenvalues : Summable greensEigenvalue := by
     (by simpa using hasSum_greensEigenvalues_nat)
   exact h.summable
 
-/-- The canonical Green eigenvalues tend to zero along the cofinite filter. -/
+/-- **The Green's eigenvalues tend to zero.** The Green's eigenvalues
+$\lambda_k = 1/(k^2\pi^2)$ tend to $0$ along the cofinite filter on the positive integers, that
+is, $\lambda_k \to 0$ as $k \to \infty$. -/
 theorem tendsto_cofinite_greensEigenvalues :
     Filter.Tendsto greensEigenvalue Filter.cofinite (nhds 0) :=
   summable_greensEigenvalues.tendsto_cofinite_zero
 
-/-- The canonical Green eigenvalue series sums to `1 / 6`. -/
+/-- **Sum of the Green's eigenvalues.** For the Green's eigenvalues $\lambda_k = 1/(k^2\pi^2)$,
+indexed by the positive integers $k$, we have $\sum_{k \ge 1} \lambda_k = 1/6$. -/
 theorem tsum_greensEigenvalues : (∑' k : ℕ+, greensEigenvalue k) = 1 / 6 := by
   have h := (hasSum_pnat_iff
     (f := fun n : ℕ => (1 : ℝ) / ((n : ℝ) ^ 2 * Real.pi ^ 2)) (a := 1 / 6)).mpr
@@ -101,13 +106,15 @@ private theorem hasSum_greensEigenvalues_sq :
   rw [hsq] at h
   simpa only [greensEigenvalue] using h
 
-/-- The squared canonical Green eigenvalue series sums to `1 / 90`. -/
+/-- **Sum of the squared Green's eigenvalues.** For the Green's eigenvalues
+$\lambda_k = 1/(k^2\pi^2)$, indexed by the positive integers $k$, we have
+$\sum_{k \ge 1} \lambda_k^2 = 1/90$. -/
 theorem tsum_greensEigenvalues_sq :
     (∑' k : ℕ+, (greensEigenvalue k) ^ 2) = 1 / 90 :=
   hasSum_greensEigenvalues_sq.tsum_eq
 
-/-- The integral of the Green's kernel along the diagonal:
-`∫₀¹ G(x, x) dx = 1 / 6`, since `G(x, x) = x * (1 - x)`. -/
+/-- **Diagonal integral of the Green's kernel.** The Green's kernel $G$ on $[0, 1]$ satisfies
+$\int_0^1 G(x, x)\,dx = 1/6$, since $G(x, x) = x(1 - x)$. -/
 theorem integral_greensKernel_diag :
     ∫ x in (0 : ℝ)..1, greensKernel x x = 1 / 6 := by
   change (∫ x in (0 : ℝ)..1, min x x * (1 - max x x)) = 1 / 6
@@ -132,14 +139,22 @@ theorem integral_greensKernel_diag :
     ((continuous_id.sub (continuous_pow 2)).intervalIntegrable 0 1)]
   norm_num
 
-/-- The canonical Green eigenvalue sum equals the canonical diagonal kernel integral. -/
+/-- **The Green's eigenvalues sum to the diagonal integral of the kernel.** The sum of the
+Green's eigenvalues $\lambda_k = 1/(k^2\pi^2)$ over the positive integers $k$ equals the integral
+of the Green's kernel $G$ along the diagonal: $\sum_{k \ge 1} \lambda_k = \int_0^1 G(x, x)\,dx$. -/
 theorem greens_eigenvalue_sum_eq_kernel_diagonal_integral :
     (∑' k : ℕ+, greensEigenvalue k) =
       ∫ x in (0 : ℝ)..1, greensKernel x x := by
   rw [tsum_greensEigenvalues, integral_greensKernel_diag]
 
-/-- A continuous Green operator has squared Hilbert–Schmidt norm `1 / 90`
-on the canonical sine Hilbert basis, enumerated by `n + 1`. -/
+/-- **Squared Hilbert–Schmidt norm of the Green's operator.** Let
+$G(x, t) = \min(x, t)\,(1 - \max(x, t))$ be the Green's kernel and let $A$ be a continuous linear
+operator on $L^2([0, 1])$ that is symmetric, $\langle Af, g \rangle = \langle f, Ag \rangle$ for
+all $f, g$, and is given by the Green's kernel, $(Af)(x) = \int_{[0, 1]} G(x, t) f(t)\, dt$ for
+almost every $x \in [0, 1]$ and every $f$. Let $(b_k)_{k \ge 1}$ be the sine Hilbert basis of
+$L^2([0, 1])$. Then the squared Hilbert–Schmidt norm of $A$ in the family $(b_{n+1})_{n \ge 0}$
+equals $1/90$, that is, $\sum_{n \ge 0} \|A b_{n+1}\|^2 = 1/90$, the sum being taken in
+$[0, \infty]$. -/
 theorem hsNormSq_greensOperator
     (A : L2UnitInterval →L[ℝ] L2UnitInterval)
     (hA_sa : ∀ f g : L2UnitInterval,

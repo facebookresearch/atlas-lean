@@ -40,20 +40,26 @@ namespace SimpleGraph
 variable {V : Type*}
 variable {G : SimpleGraph V} {C : Type*}
 
-/-- A vertex `v` is a `φ`-center of `s` if its color occurs exactly once on `s`. -/
+/-- **Center of a vertex set under a coloring.** Let $\varphi$ be a proper vertex coloring of a
+simple graph $G$, let $s$ be a set of vertices of $G$ and let $v$ be a vertex of $G$. Then $v$ is
+a $\varphi$-center of $s$ if $v \in s$ and no other vertex of $s$ has the color $\varphi(v)$. -/
 def IsPhiCenter (φ : G.Coloring C) (s : Set V) (v : V) : Prop :=
   v ∈ s ∧ ∀ w ∈ s, φ w = φ v → w = v
 
-/-- A coloring is centered if every connected induced subgraph has a center.
-Quantifying over vertex sets whose induce is connected suffices: adding all
-induced edges on the same vertices keeps a connected subgraph connected, and
-whether a color occurs exactly once depends only on the vertex set together
-with the coloring. Linear coloring and centered chromatic number are not
-defined here. -/
+/-- **Centered coloring.** A proper vertex coloring $\varphi$ of a simple graph $G$ is centered
+if, for every set $s$ of vertices of $G$ whose induced subgraph is connected, some vertex is a
+$\varphi$-center of $s$.
+
+Quantifying over vertex sets whose induced subgraph is connected suffices: adding all induced
+edges on the same vertices keeps a connected subgraph connected, and whether a color occurs
+exactly once depends only on the vertex set together with the coloring. -/
 def IsCentered (φ : G.Coloring C) : Prop :=
   ∀ s : Set V, (G.induce s).Connected → ∃ v, IsPhiCenter φ s v
 
-/-- Characterization of centers via unique existence. -/
+/-- **Centers via unique existence.** Let $\varphi$ be a proper vertex coloring of a simple graph
+$G$, let $s$ be a set of vertices of $G$ and let $v$ be a vertex of $G$. Then $v$ is a
+$\varphi$-center of $s$ if and only if $v \in s$ and there is exactly one vertex $u \in s$ with
+$\varphi(u) = \varphi(v)$. -/
 theorem isPhiCenter_iff_existsUnique (φ : G.Coloring C) (s : Set V) (v : V) :
     IsPhiCenter φ s v ↔ v ∈ s ∧ ∃! u, u ∈ s ∧ φ u = φ v := by
   constructor
@@ -67,12 +73,14 @@ theorem isPhiCenter_iff_existsUnique (φ : G.Coloring C) (s : Set V) (v : V) :
     have hv : v = u₀ := huniq v ⟨hmem, rfl⟩
     exact hw.trans hv.symm
 
-/-- Every singleton set has its point as a center. -/
+/-- **A vertex is a center of its singleton.** For every proper vertex coloring $\varphi$ of a
+simple graph $G$ and every vertex $v$ of $G$, $v$ is a $\varphi$-center of $\{v\}$. -/
 theorem isPhiCenter_singleton (φ : G.Coloring C) (v : V) :
     IsPhiCenter φ {v} v :=
   ⟨Set.mem_singleton v, fun _ hw _ => Set.mem_singleton_iff.mp hw⟩
 
-/-- An injective coloring is centered: any vertex of a connected set works. -/
+/-- **Injective colorings are centered.** Every injective proper vertex coloring of a simple graph
+is centered: any vertex of a set whose induced subgraph is connected is a center of that set. -/
 theorem isCentered_of_injective (φ : G.Coloring C)
     (hinj : Function.Injective ⇑φ) : IsCentered φ := by
   intro s hs
@@ -80,7 +88,8 @@ theorem isCentered_of_injective (φ : G.Coloring C)
   obtain ⟨v, hv⟩ := hne
   exact ⟨v, hv, fun w _ heq => hinj heq⟩
 
-/-- The tautological vertex coloring is centered. -/
+/-- **The identity coloring is centered.** For every simple graph $G$ with vertex set $V$, the
+proper vertex coloring of $G$ by $V$ that gives each vertex itself as its color is centered. -/
 theorem selfColoring_isCentered (G : SimpleGraph V) :
     IsCentered (SimpleGraph.selfColoring G) :=
   isCentered_of_injective (SimpleGraph.selfColoring G) fun _ _ h => h

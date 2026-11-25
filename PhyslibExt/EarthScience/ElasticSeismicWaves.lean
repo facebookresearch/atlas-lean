@@ -73,7 +73,7 @@ theorem elastic_p_wave_speed_sq {K μ ρ : ℝ} (hK : 0 ≤ K) (hμ : 0 ≤ μ) 
     (Real.sqrt ((K + 4 * μ / 3) / ρ)) ^ 2 = (K + 4 * μ / 3) / ρ := by
   exact Real.sq_sqrt (div_nonneg (by linarith) (le_of_lt hρ))
 
-/-- S-wave speed squared: `cS ^ 2 = μ / ρ`. -/
+/-- S-wave speed squared: `cS ^ 2 = μ / ρ`, for `μ ≥ 0`, `ρ > 0`. -/
 theorem elastic_s_wave_speed_sq {μ ρ : ℝ} (hρ : 0 < ρ) (hμ : 0 ≤ μ) :
     (Real.sqrt (μ / ρ)) ^ 2 = μ / ρ := by
   exact Real.sq_sqrt (div_nonneg hμ (le_of_lt hρ))
