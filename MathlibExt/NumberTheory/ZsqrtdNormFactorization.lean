@@ -37,7 +37,11 @@ namespace Zsqrtd
 
 variable {d : ℤ}
 
-/-- An element whose norm has prime `natAbs` is prime. -/
+/-- **Elements of $\mathbb{Z}[\sqrt{d}]$ of prime norm are prime.** Let $d$ be an integer such that
+the ring $\mathbb{Z}[\sqrt{d}]$ of formal expressions $a + b\sqrt{d}$ with $a, b \in \mathbb{Z}$
+and $\sqrt{d}^2 = d$ is a unique factorization domain, with norm
+$N(a + b\sqrt{d}) = a^2 - db^2$. If $\pi \in \mathbb{Z}[\sqrt{d}]$ and $|N(\pi)|$ is a prime
+number, then $\pi$ is prime in $\mathbb{Z}[\sqrt{d}]$. -/
 public theorem prime_of_natAbs_norm_prime [UniqueFactorizationMonoid (ℤ√d)]
     {π : ℤ√d} (h : (Zsqrtd.norm π).natAbs.Prime) : Prime π := by
   have hne : π ≠ 0 := by
@@ -61,21 +65,29 @@ public theorem prime_of_natAbs_norm_prime [UniqueFactorizationMonoid (ℤ√d)]
       exact hmn
     exact mul_left_cancel₀ h.ne_zero hcancel
 
-/-- Norms respect divisibility, on `natAbs`. -/
+/-- **The norm respects divisibility in $\mathbb{Z}[\sqrt{d}]$.** Let $d$ be an integer and let
+$N(a + b\sqrt{d}) = a^2 - db^2$ be the norm on the ring $\mathbb{Z}[\sqrt{d}]$ of formal
+expressions $a + b\sqrt{d}$ with $a, b \in \mathbb{Z}$ and $\sqrt{d}^2 = d$. If $x$ divides $y$ in
+$\mathbb{Z}[\sqrt{d}]$, then $|N(x)|$ divides $|N(y)|$. -/
 public theorem natAbs_norm_dvd_of_dvd {a b : ℤ√d} (h : a ∣ b) :
     (Zsqrtd.norm a).natAbs ∣ (Zsqrtd.norm b).natAbs := by
   obtain ⟨c, rfl⟩ := h
   rw [Zsqrtd.norm_mul, Int.natAbs_mul]
   exact dvd_mul_right _ _
 
-/-- For `d < 0`, an element of `natAbs`-norm zero is zero. -/
+/-- **Only zero has norm zero in $\mathbb{Z}[\sqrt d]$ for $d < 0$.** Let $d < 0$ be an integer and
+let $N(a + b\sqrt d) = a^2 - db^2$ be the norm on the ring $\mathbb{Z}[\sqrt d]$ of elements
+$a + b\sqrt d$ ($a, b \in \mathbb{Z}$). If $\alpha \in \mathbb{Z}[\sqrt d]$ satisfies
+$|N(\alpha)| = 0$, then $\alpha = 0$. -/
 public theorem eq_zero_of_norm_natAbs_eq_zero (hd : d < 0) {x : ℤ√d}
     (h : (Zsqrtd.norm x).natAbs = 0) : x = 0 :=
   (Zsqrtd.norm_eq_zero_iff hd x).mp (Int.natAbs_eq_zero.mp h)
 
-/-- Divisibility descends through coprime-norm cofactors: if
-`β' ∣ β₀' * γ₀` with `Nβ' ∣ u` and `Nγ₀ = v` for coprime nonzero
-`u v`, then `β' ∣ β₀'`. -/
+/-- **Cancelling a factor of coprime norm.** Let $d < 0$ be an integer such that the ring
+$\mathbb{Z}[\sqrt d]$ of elements $a + b\sqrt d$ ($a, b \in \mathbb{Z}$) is a unique factorization
+domain, and let $N(a + b\sqrt d) = a^2 - db^2$ be the norm. Let $u$ and $v$ be coprime natural
+numbers with $u \ne 0$. If $\beta, \beta_0, \gamma \in \mathbb{Z}[\sqrt d]$ satisfy
+$|N(\beta)| \mid u$, $|N(\gamma)| = v$ and $\beta \mid \beta_0\gamma$, then $\beta \mid \beta_0$. -/
 public theorem dvd_of_coprime_norms [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)]
     (hd : d < 0) {u v : ℕ} (huv : Nat.Coprime u v)
     (hu : u ≠ 0) :
@@ -148,8 +160,11 @@ public theorem dvd_of_coprime_norms [IsDomain (ℤ√d)] [UniqueFactorizationMon
       have h4 : (Zsqrtd.norm ϖ).natAbs = 1 := Nat.dvd_one.mp h3
       exact hϖprime.not_isUnit (Zsqrtd.norm_eq_one_iff.mp h4)
 
-/-- For `d < 0`, every prime of `ℤ√d` has prime-power norm, over a rational prime it
-divides. -/
+/-- **Primes of $\mathbb{Z}[\sqrt{d}]$ have prime-power norm.** Let $d < 0$ be an integer and let
+$N(a + b\sqrt{d}) = a^2 - db^2$ be the norm on the ring $\mathbb{Z}[\sqrt{d}]$ of numbers
+$a + b\sqrt{d}$ with $a, b \in \mathbb{Z}$. For every prime $\varpi$ of $\mathbb{Z}[\sqrt{d}]$
+there are a prime number $\ell$ and a natural number $s \ne 0$ such that $|N(\varpi)| = \ell^s$
+and $\varpi$ divides $\ell$ in $\mathbb{Z}[\sqrt{d}]$. -/
 public theorem prime_pow_norm_of_prime (hd : d < 0) {ϖ : ℤ√d} (hprime : Prime ϖ) :
     ∃ ℓ s : ℕ, ℓ.Prime ∧ s ≠ 0 ∧ (Zsqrtd.norm ϖ).natAbs = ℓ ^ s ∧
       ϖ ∣ (ℓ : ℤ√d) := by
@@ -193,8 +208,11 @@ public theorem prime_pow_norm_of_prime (hd : d < 0) {ϖ : ℤ√d} (hprime : Pri
     exact hn1 hseq
   exact ⟨ℓ, s, hℓprime, hs0, hseq, hℓdvd1⟩
 
-/-- Every element of norm `u * v` for coprime `u v` factors with norms
-`u` and `v`. -/
+/-- **Splitting an element along coprime norms.** Let $d < 0$ be an integer such that the ring
+$\mathbb{Z}[\sqrt d]$ of elements $a + b\sqrt d$ ($a, b \in \mathbb{Z}$) is a unique factorization
+domain, and let $N(a + b\sqrt d) = a^2 - db^2$ be the norm. Let $u$ and $v$ be coprime nonzero
+natural numbers. Every $\alpha \in \mathbb{Z}[\sqrt d]$ with $|N(\alpha)| = uv$ factors as
+$\alpha = \beta\gamma$ with $|N(\beta)| = u$ and $|N(\gamma)| = v$. -/
 public theorem exists_factor_of_coprime [UniqueFactorizationMonoid (ℤ√d)]
     (hd : d < 0) {u v : ℕ} (huv : Nat.Coprime u v)
     (hu : u ≠ 0) (hv : v ≠ 0) (α : ℤ√d)
@@ -373,8 +391,12 @@ public theorem exists_factor_of_coprime [UniqueFactorizationMonoid (ℤ√d)]
       Zsqrtd.norm_eq_one_iff.mpr w.isUnit, mul_one]
     exact hBeq
 
-/-- If the units of `ℤ√d` are enumerated by `Fin k` and every element of norm `n` is a unit
-multiple of a fixed nonzero `s` of norm `n`, then the norm-`n` fiber has `k` elements. -/
+/-- **Counting a norm class generated by one element.** Let $d$ be an integer such that the ring
+$\mathbb{Z}[\sqrt d]$ of formal sums $a + b\sqrt d$ ($a, b \in \mathbb{Z}$) is an integral domain
+with exactly $k$ units, and let $N(a + b\sqrt d) = a^2 - db^2$ be the norm. Assume that for each
+$m \in \mathbb{N}$ the set of $\alpha \in \mathbb{Z}[\sqrt d]$ with $|N(\alpha)| = m$ is finite. Let
+$n \in \mathbb{N}$ and let $s \ne 0$ satisfy $|N(s)| = n$. If every $\alpha$ with $|N(\alpha)| = n$
+equals $us$ for some unit $u$, then exactly $k$ elements $\alpha$ satisfy $|N(\alpha)| = n$. -/
 public theorem card_repr_of_shape [IsDomain (ℤ√d)]
     [∀ n : ℕ, Fintype {α : ℤ√d // (Zsqrtd.norm α).natAbs = n}]
     {k : ℕ} (unitVal unitValInv : Fin k → ℤ√d)
@@ -405,9 +427,12 @@ public theorem card_repr_of_shape [IsDomain (ℤ√d)]
   rw [Fintype.card_fin] at h
   exact h.symm
 
-/-- With the units of `ℤ√d` (`d < 0`, unique factorization) enumerated by `Fin k`, norm
-fibers multiply over coprime nonzero norms: `#N(u) * #N(v) = k * #N(u * v)`. Each fiber of
-the multiplication map consists of the `k` unit translates. -/
+/-- **Norm counts are multiplicative up to units.** Let $d < 0$ be an integer such that the ring
+$\mathbb{Z}[\sqrt d]$ of elements $a + b\sqrt d$ ($a, b \in \mathbb{Z}$) is a unique factorization
+domain with exactly $k$ units, and let $N(a + b\sqrt d) = a^2 - db^2$ be the norm. Assume that for
+each $n \in \mathbb{N}$ the set of $\alpha \in \mathbb{Z}[\sqrt d]$ with $|N(\alpha)| = n$ is
+finite, and let $r(n)$ be its size. If $u$ and $v$ are coprime nonzero natural numbers, then
+$r(u)\,r(v) = k\,r(uv)$. -/
 public theorem card_mul_of_coprime [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)]
     [∀ n : ℕ, Fintype {α : ℤ√d // (Zsqrtd.norm α).natAbs = n}]
     (hd : d < 0) {k : ℕ} (unitVal unitValInv : Fin k → ℤ√d)
@@ -532,12 +557,19 @@ public theorem card_mul_of_coprime [IsDomain (ℤ√d)] [UniqueFactorizationMono
   rw [mul_comm k _]
   exact h1
 
-/-- The norm of a power is the power of the norm. -/
+/-- **The norm of a power in $\mathbb{Z}[\sqrt{d}]$.** Let $d$ be an integer and let
+$N(a + b\sqrt{d}) = a^2 - db^2$ be the norm on the ring $\mathbb{Z}[\sqrt{d}]$ of formal
+expressions $a + b\sqrt{d}$ with $a, b \in \mathbb{Z}$ and $\sqrt{d}^2 = d$. Then
+$N(x^n) = N(x)^n$ for every $x \in \mathbb{Z}[\sqrt{d}]$ and every natural number $n$. -/
 public theorem norm_pow (x : ℤ√d) (n : ℕ) : Zsqrtd.norm (x ^ n) = Zsqrtd.norm x ^ n :=
   map_pow Zsqrtd.normMonoidHom x n
 
-/-- If `2 = ε * ρ ^ 2` for a unit `ε` and a prime `ρ` of norm `2`, every element of norm `2 ^ e`
-is a unit times `ρ ^ e`. -/
+/-- **Elements whose norm is a power of a ramified two.** Let $d < 0$ be an integer such that the
+ring $\mathbb{Z}[\sqrt d]$ of elements $a + b\sqrt d$ ($a, b \in \mathbb{Z}$) is a unique
+factorization domain, and let $N(a + b\sqrt d) = a^2 - db^2$ be the norm. Suppose
+$2 = \varepsilon\rho^2$ for a unit $\varepsilon$ and a prime $\rho$ with $|N(\rho)| = 2$. Then for
+every $e \in \mathbb{N}$, every $\alpha$ with $|N(\alpha)| = 2^e$ equals $u\rho^e$ for some unit
+$u$. -/
 public theorem exists_unit_mul_pow_of_norm_two_pow
     [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)]
     (hd : d < 0) {ρ ε : ℤ√d} (hρ : Prime ρ) (hρnorm : (Zsqrtd.norm ρ).natAbs = 2)
@@ -616,8 +648,12 @@ public theorem exists_unit_mul_pow_of_norm_two_pow
       rw [hβeq, hϖ, pow_succ']
       ring
 
-/-- If `2 = ε * ρ ^ 2` for a unit `ε` and a prime `ρ` of norm `2`, and the units are enumerated
-by `Fin k`, then exactly `k` elements have norm `2 ^ e`. -/
+/-- **Norm counts at powers of a ramified two.** Let $d < 0$ be an integer such that the ring
+$\mathbb{Z}[\sqrt d]$ of elements $a + b\sqrt d$ ($a, b \in \mathbb{Z}$) is a unique factorization
+domain with exactly $k$ units, and let $N(a + b\sqrt d) = a^2 - db^2$ be the norm. Assume that for
+each $n \in \mathbb{N}$ the set of $\alpha \in \mathbb{Z}[\sqrt d]$ with $|N(\alpha)| = n$ is
+finite, and let $r(n)$ be its size. If $2 = \varepsilon\rho^2$ for a unit $\varepsilon$ and a
+prime $\rho$ with $|N(\rho)| = 2$, then $r(2^e) = k$ for every $e \in \mathbb{N}$. -/
 public theorem card_norm_two_pow [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)]
     [∀ n : ℕ, Fintype {α : ℤ√d // (Zsqrtd.norm α).natAbs = n}]
     (hd : d < 0) {k : ℕ} (unitVal unitValInv : Fin k → ℤ√d)
@@ -629,7 +665,13 @@ public theorem card_norm_two_pow [IsDomain (ℤ√d)] [UniqueFactorizationMonoid
     (by rw [norm_pow, Int.natAbs_pow, hρnorm]) (pow_ne_zero e hρ.ne_zero)
     (exists_unit_mul_pow_of_norm_two_pow hd hρ hρnorm hε htwo e)
 
-/-- Peeling one inert prime off a nonunit of norm `q ^ f`. -/
+/-- **Peeling an inert prime off an element of norm $q^f$.** Let $d < 0$ be an integer such that
+the ring $\mathbb{Z}[\sqrt{d}]$ of numbers $a + b\sqrt{d}$ with $a, b \in \mathbb{Z}$ is a unique
+factorization domain, with norm $N(a + b\sqrt{d}) = a^2 - db^2$. Let $q$ be a natural number
+that is prime in $\mathbb{Z}[\sqrt{d}]$, let $f$ be a natural number, and let
+$\alpha \in \mathbb{Z}[\sqrt{d}]$ be nonzero and not a unit with $|N(\alpha)| = q^f$. Then
+$\alpha = wq\beta$ for some unit $w$ and some $\beta \in \mathbb{Z}[\sqrt{d}]$ with
+$q^2 \cdot |N(\beta)| = q^f$. -/
 public theorem inert_peel [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)] {q : ℕ}
     (hd : d < 0) (hqprime : Prime (q : ℤ√d))
     {f : ℕ} {α : ℤ√d} (hα : (Zsqrtd.norm α).natAbs = q ^ f)
@@ -679,7 +721,12 @@ public theorem inert_peel [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ�
     rw [Zsqrtd.norm_mul, Int.natAbs_mul, hϖnorm] at hα2
     exact hα2
 
-/-- Elements of norm `q ^ (2 * n)` for inert `q` are units times `q ^ n`. -/
+/-- **Elements of norm $q^{2n}$ over an inert prime.** Let $d < 0$ be an integer such that the
+ring $\mathbb{Z}[\sqrt{d}]$ of numbers $a + b\sqrt{d}$ with $a, b \in \mathbb{Z}$ is a unique
+factorization domain, with norm $N(a + b\sqrt{d}) = a^2 - db^2$. Let $q$ be a prime number that
+is also prime in $\mathbb{Z}[\sqrt{d}]$. Then for every natural number $n$, every
+$\alpha \in \mathbb{Z}[\sqrt{d}]$ with $|N(\alpha)| = q^{2n}$ is of the form $\alpha = uq^n$ for
+some unit $u$. -/
 public theorem inert_even [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)] {q : ℕ} [Fact q.Prime]
     (hd : d < 0) (hqprime : Prime (q : ℤ√d))
     (n : ℕ) (α : ℤ√d) (hα : (Zsqrtd.norm α).natAbs = q ^ (2 * n)) :
@@ -721,7 +768,11 @@ public theorem inert_even [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ�
     rw [hαeq, hβeq, pow_succ']
     ring
 
-/-- No element has norm `q ^ (2 * n + 1)` for inert `q`. -/
+/-- **No element has norm $q^{2n+1}$ over an inert prime.** Let $d < 0$ be an integer such that
+the ring $\mathbb{Z}[\sqrt{d}]$ of numbers $a + b\sqrt{d}$ with $a, b \in \mathbb{Z}$ is a unique
+factorization domain, with norm $N(a + b\sqrt{d}) = a^2 - db^2$. Let $q$ be a prime number that
+is also prime in $\mathbb{Z}[\sqrt{d}]$. Then for every natural number $n$, no
+$\alpha \in \mathbb{Z}[\sqrt{d}]$ satisfies $|N(\alpha)| = q^{2n+1}$. -/
 public theorem inert_odd [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)] {q : ℕ} [Fact q.Prime]
     (hd : d < 0) (hqprime : Prime (q : ℤ√d)) :
     ∀ (n : ℕ) (α : ℤ√d),
@@ -767,8 +818,13 @@ public theorem inert_odd [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√
       mul_left_cancel₀ (mul_ne_zero hq0 hq0) hnormβ
     exact ih n' (by omega) β hβ
 
-/-- For a rational prime `q` that stays prime in `ℤ√d`, with the units enumerated by `Fin k`,
-the norm-`q ^ f` fiber has `k` elements for even `f` and none for odd `f`. -/
+/-- **Norm counts at an inert prime.** Let $d < 0$ be an integer such that the ring
+$\mathbb{Z}[\sqrt d]$ of elements $a + b\sqrt d$ ($a, b \in \mathbb{Z}$) is a unique factorization
+domain with exactly $k$ units, and let $N(a + b\sqrt d) = a^2 - db^2$ be the norm. Assume that for
+each $n \in \mathbb{N}$ the set of $\alpha \in \mathbb{Z}[\sqrt d]$ with $|N(\alpha)| = n$ is
+finite, and let $r(n)$ be its size. If $q$ is a prime number that is also a prime element of
+$\mathbb{Z}[\sqrt d]$, then for every $f \in \mathbb{N}$ we have $r(q^f) = k$ when $f$ is even and
+$r(q^f) = 0$ when $f$ is odd. -/
 public theorem card_norm_inert_pow [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)]
     [∀ n : ℕ, Fintype {α : ℤ√d // (Zsqrtd.norm α).natAbs = n}]
     (hd : d < 0) {k : ℕ} (unitVal unitValInv : Fin k → ℤ√d)
@@ -810,8 +866,14 @@ public theorem card_norm_inert_pow [IsDomain (ℤ√d)] [UniqueFactorizationMono
     rw [Fintype.card_eq_zero_iff]
     exact ⟨fun ⟨α, hα⟩ => inert_odd hd hqprime t α hα⟩
 
-/-- For a rational prime `p = π * star π` with `π` and `star π` prime, every element of norm
-`p ^ e` is a unit times `π ^ j * star π ^ k` with `j + k = e`. -/
+/-- **Elements of norm $p^e$ over a split prime.** Let $d < 0$ be an integer such that the ring
+$\mathbb{Z}[\sqrt{d}]$ of numbers $a + b\sqrt{d}$ with $a, b \in \mathbb{Z}$ is a unique
+factorization domain, with norm $N(a + b\sqrt{d}) = a^2 - db^2$ and conjugation
+$\overline{a + b\sqrt{d}} = a - b\sqrt{d}$. Let $p$ be a prime number and let $\pi$ be a prime of
+$\mathbb{Z}[\sqrt{d}]$ with $N(\pi) = p$ and $p = \pi\bar{\pi}$ such that $\bar{\pi}$ is also
+prime. Then for every natural number $e$, every $\alpha \in \mathbb{Z}[\sqrt{d}]$ with
+$|N(\alpha)| = p^e$ is of the form $\alpha = u\pi^j\bar{\pi}^k$ for some unit $u$ and natural
+numbers $j, k$ with $j + k = e$. -/
 public theorem exists_unit_mul_split_pow [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)]
     (hd : d < 0) {p : ℕ} [Fact p.Prime]
     {π : ℤ√d} (hnorm : Zsqrtd.norm π = p) (hprime : Prime π)
@@ -915,8 +977,14 @@ public theorem exists_unit_mul_split_pow [IsDomain (ℤ√d)] [UniqueFactorizati
       rw [hϖ, hβeq]
       ring
 
-/-- For a rational prime `p = π * star π` with `π` and `star π` nonassociated primes, and the
-units enumerated by `Fin k`, the norm-`p ^ e` fiber has `k * (e + 1)` elements. -/
+/-- **Norm counts at a split prime.** Let $d < 0$ be an integer such that the ring
+$\mathbb{Z}[\sqrt d]$ of elements $a + b\sqrt d$ ($a, b \in \mathbb{Z}$) is a unique factorization
+domain with exactly $k$ units, and let $N(a + b\sqrt d) = a^2 - db^2$ be the norm. Assume that for
+each $n \in \mathbb{N}$ the set of $\alpha \in \mathbb{Z}[\sqrt d]$ with $|N(\alpha)| = n$ is
+finite, and let $r(n)$ be its size. Let $p$ be a prime number and $\pi \in \mathbb{Z}[\sqrt d]$
+with $N(\pi) = p$ and $p = \pi\bar\pi$, where $\overline{a + b\sqrt d} = a - b\sqrt d$. If $\pi$
+and $\bar\pi$ are prime and $\bar\pi$ is not associated to $\pi$, then $r(p^e) = k(e + 1)$ for
+every $e \in \mathbb{N}$. -/
 public theorem card_norm_split_pow [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)]
     [∀ n : ℕ, Fintype {α : ℤ√d // (Zsqrtd.norm α).natAbs = n}]
     (hd : d < 0) {k : ℕ} (unitVal unitValInv : Fin k → ℤ√d)
@@ -1060,9 +1128,13 @@ public theorem card_norm_split_pow [IsDomain (ℤ√d)] [UniqueFactorizationMono
   rw [Fintype.card_prod, Fintype.card_fin, Fintype.card_fin] at hcard
   exact hcard.symm
 
-/-- With the units of `ℤ√d` (`d < 0`, unique factorization) enumerated by `Fin k`, if the
-norm-fiber count agrees with `k * D` on prime powers for a multiplicative `D` with `D 1 = 1`,
-then it agrees with `k * D` on every nonzero argument. -/
+/-- **Norm counts determined by prime powers.** Let $d < 0$ be an integer such that the ring
+$\mathbb{Z}[\sqrt d]$ of elements $a + b\sqrt d$ ($a, b \in \mathbb{Z}$) is a unique factorization
+domain with exactly $k$ units, and let $N(a + b\sqrt d) = a^2 - db^2$ be the norm. Assume that for
+each $n \in \mathbb{N}$ the set of $\alpha \in \mathbb{Z}[\sqrt d]$ with $|N(\alpha)| = n$ is
+finite, and let $r(n)$ be its size. Let $D : \mathbb{N} \to \mathbb{Z}$ satisfy $D(1) = 1$ and
+$D(mn) = D(m)\,D(n)$ for all coprime $m, n$. If $r(p^e) = k\,D(p^e)$ for every prime $p$ and every
+$e \ge 1$, then $r(n) = k\,D(n)$ for every $n \ne 0$. -/
 public theorem card_norm_eq_mul_of_prime_pow [IsDomain (ℤ√d)] [UniqueFactorizationMonoid (ℤ√d)]
     [∀ n : ℕ, Fintype {α : ℤ√d // (Zsqrtd.norm α).natAbs = n}]
     (hd : d < 0) {k : ℕ} (unitVal unitValInv : Fin k → ℤ√d)

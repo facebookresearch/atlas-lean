@@ -1,0 +1,27 @@
+# Theta correspondence for unitary dual pairs
+
+The Weil representation and the theta correspondence for unitary dual pairs, local and global: the Stone–von Neumann theorem and the metaplectic group, splitting characters, Howe duality over p-adic and real fields and for compact dual pairs, the unramified correspondence, global theta lifts and their constant terms, Weil's convergence criterion, Siegel Eisenstein series, the Siegel–Weil formula and the Rallis inner product formula in Weil's convergent range, and the doubling method with the L-function form of the Rallis inner product formula. The regularized Siegel–Weil formula and the second-term range are not targets, except for the first-term identities used in the proof of the Siegel–Weil formula. Local statements are made over local fields of characteristic 0 where they rely on local class field theory; the Stone–von Neumann theorem and the metaplectic group are stated in characteristic different from 2, and the theorems of Gan–Takeda (characteristic different from 2) and Mínguez (any characteristic) in positive characteristic are left to pages to be added with local class field theory in positive characteristic.
+
+- [Stone–von Neumann theorem for Heisenberg groups over local fields](stone-von-neumann-theorem.md)
+- [Induction and Mackey theory for Heisenberg groups](induction-and-mackey-theory-for-heisenberg-groups.md)
+- [Metaplectic group and the local Weil representation](metaplectic-group-and-local-weil-representation.md)
+- [Explicit formulas for the Weil representation](explicit-formulas-for-the-weil-representation.md)
+- [Global Weil representation and theta functions](global-weil-representation-and-theta-functions.md)
+- [Splitting characters and the Weil representation of unitary dual pairs](weil-representation-of-unitary-dual-pairs.md)
+- [Jacquet modules of the Weil representation and degenerate principal series](jacquet-modules-of-the-weil-representation.md)
+- [Howe duality for unitary dual pairs over p-adic fields](howe-duality-over-p-adic-fields.md)
+- [Unramified theta correspondence](unramified-theta-correspondence.md)
+- [Classical invariant theory and harmonics](classical-invariant-theory-and-harmonics.md)
+- [Duality for compact dual pairs in the Fock model](howe-duality-for-compact-dual-pairs.md)
+- [Howe duality for reductive dual pairs in real symplectic groups](howe-duality-over-the-reals.md)
+- [Constant terms of theta lifts for unitary groups](constant-terms-of-theta-lifts.md)
+- [Global theta lifts of cusp forms](global-theta-lifts.md)
+- [Weil's convergence criterion for theta integrals](weil-convergence-criterion.md)
+- [Fourier coefficients and poles of Siegel Eisenstein series](fourier-coefficients-and-poles-of-siegel-eisenstein-series.md)
+- [Siegel Eisenstein series on unitary groups](siegel-eisenstein-series-on-unitary-groups.md)
+- [Functional equation and first-term identities for Siegel Eisenstein series](functional-equation-and-first-term-identities.md)
+- [Siegel–Weil formula for unitary groups in Weil's convergent range](siegel-weil-formula-convergent-range.md)
+- [Rallis inner product formula in Weil's convergent range](rallis-inner-product-formula.md)
+- [Doubling method and standard L-functions of unitary groups](doubling-method.md)
+- [Conservation relations for the local theta correspondence](conservation-relations-for-local-theta-correspondence.md)
+- [Poles of L-functions and nonvanishing of global theta lifts](poles-of-doubling-l-functions-and-nonvanishing-of-theta-lifts.md)

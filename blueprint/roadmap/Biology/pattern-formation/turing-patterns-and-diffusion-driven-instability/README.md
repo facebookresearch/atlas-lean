@@ -16,7 +16,7 @@
 
 - [Trace of the mode matrix](trace-mode-matrix.md)
 - [Determinant of the mode matrix is the dispersion polynomial](det-mode-matrix.md)
-- [Routh–Hurwitz criterion for $2 \times 2$ matrices](exists-eigenvalue-re-pos-iff.md)
+- [Real 2 × 2 matrices: an eigenvalue with Re > 0 iff tr > 0 or det < 0](exists-eigenvalue-re-pos-iff.md)
 - [Instability criterion for a Fourier mode via trace and determinant](is-unstable-mode-iff.md)
 - [Dispersion relation](fourier-mode-is-linearized-solution-iff.md)
 - [Amplitude of a Fourier mode](norm-fourier-mode-zero.md)

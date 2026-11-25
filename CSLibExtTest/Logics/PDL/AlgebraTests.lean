@@ -106,9 +106,9 @@ example : (Program.test (.imp .bot .bot) : Program Unit Unit).toRelation
   rintro ⟨s, t⟩
   exact ⟨fun h => h.1, fun h => ⟨h, fun h => h⟩⟩
 
-example : (1 : SquareRelations Nat) ≠ ⊥ := by
+example : (1 : SetRel Nat Nat) ≠ ⊥ := by
   intro h
-  have hid : (1 : SquareRelations Nat) (0, 0) := rfl
+  have hid : ((0, 0) : Nat × Nat) ∈ (1 : SetRel Nat Nat) := rfl
   rw [h] at hid
   exact hid
 
@@ -213,11 +213,11 @@ example : Sat isolatedBad (.box (.star body) guard) 0 := by
     decide
 
 /-- Test complement excludes off-diagonal pairs, unlike relation complement. -/
-example : (testSet ({0} : Set Nat))ᶜ (1, 0) := by
+example : ((1, 0) : Nat × Nat) ∈ (testSet ({0} : Set Nat))ᶜ := by
   intro h
   exact Nat.one_ne_zero h.1
 
-example : ¬ testSet ({0} : Set Nat)ᶜ (1, 0) := by
+example : ((1, 0) : Nat × Nat) ∉ testSet ({0} : Set Nat)ᶜ := by
   intro h
   exact Nat.one_ne_zero h.1
 

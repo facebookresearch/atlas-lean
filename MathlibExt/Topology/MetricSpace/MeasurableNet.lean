@@ -44,9 +44,7 @@ theorem Metric.exists_measurable_index_dist_lt {B : Type*} [PseudoMetricSpace B]
     intro k
     have hfib : (fun x => Nat.find (hex x)) ⁻¹' {k} =
         Metric.ball (u k) δ ∩ (⋃ j ∈ {i : ℕ | i < k}, Metric.ball (u j) δ)ᶜ := by
-      apply funext
-      intro x
-      apply propext
+      ext x
       constructor
       · intro hx
         have hx' : Nat.find (hex x) = k := hx

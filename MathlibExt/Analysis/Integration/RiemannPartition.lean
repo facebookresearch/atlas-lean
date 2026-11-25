@@ -70,9 +70,9 @@ Source: `v1/Atlas/RealAnalysis/targets.yaml`, Definitions (Partition),
 
 namespace MathlibExt.Analysis.Integration
 
-/-- A partition of the closed interval `[a, b]`: a strictly increasing finite
-sequence `a = x₀ < x₁ < ⋯ < xₙ = b` of points. The field `n` is the number
-of subintervals, and `points` enumerates the `n + 1` endpoints. -/
+/-- **Partition of an interval.** For real numbers $a$ and $b$, a partition of the closed interval
+$[a, b]$ consists of a natural number $n$, the number of subintervals, together with $n + 1$
+points forming a strictly increasing sequence $a = x_0 < x_1 < \dots < x_n = b$. -/
 structure Partition (a b : ℝ) where
   n : ℕ
   points : Fin (n + 1) → ℝ
@@ -82,15 +82,16 @@ structure Partition (a b : ℝ) where
 
 variable {a b : ℝ}
 
-/-- A tagged partition of `[a, b]`: a partition together with a choice of a
-tag `ξₖ ∈ [xₖ₋₁, xₖ]` in each subinterval. -/
+/-- **Tagged partition.** A tagged partition of $[a, b]$ is a partition
+$a = x_0 < x_1 < \cdots < x_n = b$ of $[a, b]$ together with a choice of a tag
+$\xi_k \in [x_{k-1}, x_k]$ in each subinterval, for $k = 1, \dots, n$. -/
 structure TaggedPartition (a b : ℝ) extends Partition a b where
   tags : Fin n → ℝ
   tag_mem : ∀ i : Fin n, points i.castSucc ≤ tags i ∧ tags i ≤ points i.succ
 
-/-- The mesh (or norm) `‖x‖` of a partition: the maximum length
-`maxₖ (xₖ - xₖ₋₁)` of its subintervals. Defined to be `0` for the trivial
-partition with `n = 0`. -/
+/-- **Mesh of a partition.** The mesh (also called the norm) of a partition
+$a = x_0 < x_1 < \dots < x_n = b$ of $[a, b]$ is the maximum subinterval length
+$\max_{1 \le k \le n} (x_k - x_{k-1})$ when $n \ge 1$, and $0$ when $n = 0$. -/
 noncomputable def Partition.mesh (P : Partition a b) : ℝ :=
   if h : P.n = 0 then 0
   else
@@ -98,30 +99,36 @@ noncomputable def Partition.mesh (P : Partition a b) : ℝ :=
       (Finset.univ_nonempty_iff.mpr ⟨⟨0, Nat.pos_of_ne_zero h⟩⟩)
       (fun i => P.points i.succ - P.points i.castSucc)
 
-/-- The underlying set `{x₀, x₁, …, xₙ}` of points of a partition. -/
+/-- **Points of a partition.** The point set of a partition $a = x_0 < x_1 < \dots < x_n = b$ of
+$[a, b]$ is the set of its points $x_0, x_1, \dots, x_n$. -/
 def Partition.pointSet (P : Partition a b) : Set ℝ :=
   Set.range P.points
 
-/-- `Q` is a refinement of `P` if every point of `P` appears in `Q`, i.e. the
-underlying point set of `P` is contained in that of `Q`. -/
+/-- **Refinement of a partition.** For partitions $P$ and $Q$ of $[a, b]$, $Q$ is a refinement of
+$P$ when every point of $P$ is a point of $Q$, that is, when the point set of $P$ is contained in
+the point set of $Q$. -/
 def Partition.IsRefinement (Q P : Partition a b) : Prop :=
   P.pointSet ⊆ Q.pointSet
 
-/-- The Riemann sum `S_f(x, ξ) = ∑ₖ f(ξₖ) (xₖ - xₖ₋₁)` of a function `f`
-with respect to a tagged partition `T`. -/
+/-- **Riemann sum.** Let $f : \mathbb{R} \to \mathbb{R}$ and let $T$ be a tagged partition of
+$[a, b]$, with points $a = x_0 < x_1 < \cdots < x_n = b$ and tags $\xi_k \in [x_{k-1}, x_k]$
+for $k = 1, \dots, n$. The Riemann sum of $f$ with respect to $T$ is
+$S_f(x, \xi) = \sum_{k=1}^{n} f(\xi_k)\,(x_k - x_{k-1})$ (an empty sum, equal to $0$, when
+$n = 0$). -/
 noncomputable def riemannSum (f : ℝ → ℝ) (T : TaggedPartition a b) : ℝ :=
   ∑ i : Fin T.n, f (T.tags i) * (T.points i.succ - T.points i.castSucc)
 
-/-- The endpoints of a partition satisfy `a ≤ b`: the first point is `a`,
-the last point is `b`, and the points are increasing. -/
+/-- **Endpoints of a partition are ordered.** If $a, b \in \mathbb{R}$ and the interval $[a, b]$
+has a partition, then $a \le b$. -/
 lemma Partition.a_le_b (P : Partition a b) : a ≤ b := by
   have hle : P.points (0 : Fin (P.n + 1)) ≤ P.points (Fin.last P.n) :=
     P.ordered.monotone (Fin.zero_le _)
   rw [P.first, P.last] at hle
   exact hle
 
-/-- If `a < b`, then any partition of `[a, b]` has at least one subinterval,
-i.e. `0 < P.n`. -/
+/-- **A partition of a nondegenerate interval has a subinterval.** If $a < b$, then every
+partition $a = x_0 < x_1 < \dots < x_n = b$ of $[a, b]$ has at least one subinterval, that is,
+$n \ge 1$. -/
 lemma Partition.n_pos_of_lt (hab : a < b) (P : Partition a b) : 0 < P.n := by
   by_contra h
   have hn : P.n = 0 := by omega
@@ -129,7 +136,8 @@ lemma Partition.n_pos_of_lt (hab : a < b) (P : Partition a b) : 0 < P.n := by
   have hP := P.last; rw [hlast] at hP
   linarith [P.first]
 
-/-- If `a < b`, then the mesh of any partition of `[a, b]` is strictly positive. -/
+/-- **The mesh is positive on a nondegenerate interval.** If $a < b$, then every partition of
+$[a, b]$ has strictly positive mesh. -/
 lemma Partition.mesh_pos_of_lt (hab : a < b) (P : Partition a b) :
     0 < P.mesh := by
   have hn : P.n ≠ 0 := (P.n_pos_of_lt hab).ne'
@@ -144,21 +152,25 @@ lemma Partition.mesh_pos_of_lt (hab : a < b) (P : Partition a b) :
         Finset.le_sup' (fun (i : Fin P.n) => P.points i.succ - P.points i.castSucc)
           (Finset.mem_univ i₀)
 
-/-- The Riemann sum over a trivial tagged partition (with `n = 0` subintervals)
-is `0`, since it is an empty sum. -/
+/-- **Riemann sum over a trivial partition.** For every function $f : \mathbb{R} \to \mathbb{R}$
+and every tagged partition of $[a, b]$ with no subintervals, the Riemann sum of $f$ is $0$, since
+it is an empty sum. -/
 lemma riemannSum_eq_zero_of_n_eq_zero (f : ℝ → ℝ) (T : TaggedPartition a b)
     (h : T.n = 0) : riemannSum f T = 0 := by
   unfold riemannSum
   have : IsEmpty (Fin T.n) := by rw [h]; infer_instance
   exact Fintype.sum_empty _
 
-/-- Each subinterval `[xᵢ, xᵢ₊₁]` of a partition has nonnegative length. -/
+/-- **Subintervals of a partition have nonnegative length.** If
+$a = x_0 < x_1 < \cdots < x_n = b$ is a partition of $[a, b]$, then $x_{i+1} - x_i \ge 0$ for
+every $i$ with $0 \le i < n$. -/
 lemma Partition.succ_sub_castSucc_nonneg (P : Partition a b) (i : Fin P.n) :
     0 ≤ P.points i.succ - P.points i.castSucc :=
   sub_nonneg.mpr (P.ordered.monotone Fin.castSucc_lt_succ.le)
 
-/-- Each subinterval length `xᵢ₊₁ - xᵢ` of a partition is bounded above by
-the partition's mesh (i.e., the maximum subinterval length). -/
+/-- **Subinterval lengths are at most the mesh.** Let $a = x_0 < x_1 < \dots < x_n = b$ be a
+partition of $[a, b]$. Then for every $i$ with $0 \le i < n$, the subinterval length
+$x_{i+1} - x_i$ is at most the mesh of the partition. -/
 lemma Partition.le_mesh (P : Partition a b) (i : Fin P.n) :
     P.points i.succ - P.points i.castSucc ≤ P.mesh := by
   have hne : P.n ≠ 0 := Fin.pos i |>.ne'
@@ -170,8 +182,9 @@ lemma Partition.le_mesh (P : Partition a b) (i : Fin P.n) :
   exact Finset.le_sup' (fun i : Fin P.n => P.points i.succ - P.points i.castSucc)
     (Finset.mem_univ i)
 
-/-- The subinterval lengths of a partition of `[a, b]` telescope to `b - a`:
-`∑ᵢ (xᵢ₊₁ - xᵢ) = b - a`. -/
+/-- **Subinterval lengths of a partition telescope.** If $a = x_0 < x_1 < \cdots < x_n = b$ is
+a partition of $[a, b]$, then the lengths of its subintervals sum to the length of the interval:
+$\sum_{i=0}^{n-1} (x_{i+1} - x_i) = b - a$. -/
 lemma Partition.sum_sub_eq (P : Partition a b) :
     ∑ i : Fin P.n, (P.points i.succ - P.points i.castSucc) = b - a := by
   set g : ℕ → ℝ := fun j => if h : j < P.n + 1 then P.points ⟨j, h⟩ else 0
@@ -188,7 +201,8 @@ lemma Partition.sum_sub_eq (P : Partition a b) :
     show (⟨0, by omega⟩ : Fin (P.n + 1)) = (0 : Fin (P.n + 1)) from Fin.ext rfl,
     P.last, P.first]
 
-/-- Every tag `ξᵢ` of a tagged partition of `[a, b]` lies in `[a, b]`. -/
+/-- **Tags of a tagged partition lie in the interval.** Every tag $\xi_k$ of a tagged partition
+of $[a, b]$ lies in $[a, b]$. -/
 lemma TaggedPartition.tag_mem_Icc (T : TaggedPartition a b) (i : Fin T.n) :
     T.tags i ∈ Set.Icc a b := by
   refine ⟨?_, ?_⟩
@@ -199,8 +213,8 @@ lemma TaggedPartition.tag_mem_Icc (T : TaggedPartition a b) (i : Fin T.n) :
       _ ≤ T.points (Fin.last T.n) := T.ordered.monotone (Fin.le_last _)
       _ = b := T.last
 
-/-- The Riemann sum of a constant function `c` over any tagged partition of
-`[a, b]` is `c * (b - a)`. -/
+/-- **Riemann sum of a constant function.** For every real constant $c$ and every tagged partition
+of $[a, b]$, the Riemann sum of the constant function $x \mapsto c$ equals $c(b - a)$. -/
 lemma riemannSum_const (c : ℝ) (T : TaggedPartition a b) :
     riemannSum (fun _ => c) T = c * (b - a) := by
   unfold riemannSum
