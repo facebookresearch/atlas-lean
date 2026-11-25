@@ -16,7 +16,7 @@ open CongruenceSubgroup
 
 
 /-- Consumer with the original binders (`Type 0`). -/
-theorem exactSource {k : Type} [CommRing k] (M : ℕ) (h6 : IsUnit (6 : k))
+private theorem exactSource {k : Type} [CommRing k] (M : ℕ) (h6 : IsUnit (6 : k))
     (A : Rep k ↥(Gamma0 M)) : Subsingleton (groupCohomology A 2) :=
   CongruenceSubgroup.subsingleton_H2_gamma0 M h6 A
 
