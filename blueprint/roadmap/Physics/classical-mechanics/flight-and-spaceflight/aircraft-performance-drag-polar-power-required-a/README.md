@@ -109,6 +109,7 @@
 - [The cruise weight reaches Wf exactly at the Breguet endurance](cruise-weight-eq-iff.md)
 - [Duration of a cruise from its initial and final weights](cruise-duration-eq.md)
 - [Range of a cruise at constant air speed](cruise-range-eq.md)
+- [Breguet range of a propeller-driven aircraft](breguet-range-of-a-propeller-driven-aircraft.md)
 - [A burn to a smaller positive weight takes positive time](breguet-duration-pos.md)
 - [Equal initial and final weights give zero endurance](breguet-duration-self.md)
 

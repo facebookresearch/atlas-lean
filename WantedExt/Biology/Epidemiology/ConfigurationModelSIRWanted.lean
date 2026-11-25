@@ -257,41 +257,41 @@ theorem_wanted tendsto_epidemicProb_deviation (d : (n : ℕ) → Fin n → ℕ)
         ε < |(finalSusceptible path : ℝ) / n - vS αS p θinf|) atTop (𝓝 0)
 
 /-- **Small outbreaks below threshold** (Janson, Luczak and Windridge 2014, Theorems 2.9(i)
-and 2.10). Assume the degree conditions (D1)–(D6) (`Conditions`) and (G1) (`SquareSumBound`),
-`β > 0`, `ρ ≥ 0`, `α_I = μ_I = 0`, and that for every `n ≥ 1` some initially infective vertex
-has nonzero degree. If `R₀ ≤ 1`, then for every `ε > 0` the probability that more than `ε n` of the
-initially susceptible vertices ever get infected (`n_S - S_∞ > ε n`) tends to `0`, on the
-configuration multigraph (`simple = false`) or on the uniform simple graph (`simple = true`).
-(`hQ` records that each epidemic rate matrix is a rate matrix.)
+and 2.10). Assume the degree conditions (D1)–(D6) (`Conditions`), `β > 0`, `ρ ≥ 0`,
+`α_I = μ_I = 0`, that for every `n ≥ 1` some initially infective vertex has nonzero degree, and
+for the simple graph (`simple = true`) also (G1) (`SquareSumBound`). If `R₀ ≤ 1`, then for every
+`ε > 0` the probability that more than `ε n` of the initially susceptible vertices ever get
+infected (`n_S - S_∞ > ε n`) tends to `0`, on the configuration multigraph (`simple = false`) or
+on the uniform simple graph (`simple = true`). (`hQ` records that each epidemic rate matrix is a
+rate matrix.)
 
 Source: Janson, Luczak and Windridge (2014), Theorems 2.9 and 2.10. -/
 theorem_wanted tendsto_epidemicProb_large_of_R0_le_one (d : (n : ℕ) → Fin n → ℕ)
     (x₀ : (n : ℕ) → Fin n → Fin 3) (p : ℕ → ℝ) (αS αR lam μ μS μR β ρ : ℝ)
-    (hcond : Conditions d x₀ p αS 0 αR lam μ μS 0 μR ρ) (hG1 : SquareSumBound d)
+    (hcond : Conditions d x₀ p αS 0 αR lam μ μS 0 μR ρ)
     (hβ : 0 < β) (hρ : 0 ≤ ρ) (hinf : ∀ n, 0 < n → ∃ i, x₀ n i = 1 ∧ 0 < d n i)
-    (simple : Bool)
+    (simple : Bool) (hG1 : simple = true → SquareSumBound d)
     (hQ : ∀ n (σ : Matching (d n)), IsRateMatrix (sirRateMatrix (mult σ) β ρ))
     (hR0 : R0 αS μ β ρ p ≤ 1) (ε : ℝ) (hε : 0 < ε) :
     Tendsto (fun n : ℕ => epidemicProb (d n) simple β ρ (hQ n) (x₀ n) fun path =>
       ε * n < (count 0 (x₀ n) : ℝ) - finalSusceptible path) atTop (𝓝 0)
 
 /-- **Large outbreaks above threshold** (Janson, Luczak and Windridge 2014, Theorems 2.9(ii)(a),
-(ii)(c) and 2.10). Assume the degree conditions (D1)–(D6) (`Conditions`) and (G1)
-(`SquareSumBound`), `β > 0`, `ρ ≥ 0`, `α_I = μ_I = 0`, and that for every `n ≥ 1` some
-initially infective vertex has nonzero degree. If `R₀ > 1`, then there is a unique
-`θ_∞ ∈ (0, 1)` with `h_I(θ_∞) = 0`, `h_I > 0` on `(θ_∞, 1)` and `h_I < 0` on `(0, θ_∞)`; and
-for every `s₀ ∈ (v_S(θ_∞), v_S(1))` there are `c > 0` and, for all large `n`, probability at
-least `c` that the number of susceptibles falls to at most `n s₀` at some time `t > 0` (a large
-outbreak), on the configuration multigraph (`simple = false`) or on the uniform simple graph
-(`simple = true`).
-(`hQ` records that each epidemic rate matrix is a rate matrix.)
+(ii)(c) and 2.10). Assume the degree conditions (D1)–(D6) (`Conditions`), `β > 0`, `ρ ≥ 0`,
+`α_I = μ_I = 0`, that for every `n ≥ 1` some initially infective vertex has nonzero degree, and
+for the simple graph (`simple = true`) also (G1) (`SquareSumBound`). If `R₀ > 1`, then there is
+a unique `θ_∞ ∈ (0, 1)` with `h_I(θ_∞) = 0`, `h_I > 0` on `(θ_∞, 1)` and `h_I < 0` on
+`(0, θ_∞)`; and for every `s₀ ∈ (v_S(θ_∞), v_S(1))` there are `c > 0` and, for all large `n`,
+probability at least `c` that the number of susceptibles falls to at most `n s₀` at some time
+`t > 0` (a large outbreak), on the configuration multigraph (`simple = false`) or on the uniform
+simple graph (`simple = true`). (`hQ` records that each epidemic rate matrix is a rate matrix.)
 
 Source: Janson, Luczak and Windridge (2014), Theorems 2.9 and 2.10. -/
 theorem_wanted eventually_epidemicProb_large_of_one_lt_R0 (d : (n : ℕ) → Fin n → ℕ)
     (x₀ : (n : ℕ) → Fin n → Fin 3) (p : ℕ → ℝ) (αS αR lam μ μS μR β ρ : ℝ)
-    (hcond : Conditions d x₀ p αS 0 αR lam μ μS 0 μR ρ) (hG1 : SquareSumBound d)
+    (hcond : Conditions d x₀ p αS 0 αR lam μ μS 0 μR ρ)
     (hβ : 0 < β) (hρ : 0 ≤ ρ) (hinf : ∀ n, 0 < n → ∃ i, x₀ n i = 1 ∧ 0 < d n i)
-    (simple : Bool)
+    (simple : Bool) (hG1 : simple = true → SquareSumBound d)
     (hQ : ∀ n (σ : Matching (d n)), IsRateMatrix (sirRateMatrix (mult σ) β ρ))
     (hR0 : 1 < R0 αS μ β ρ p) :
     ∃ θinf : ℝ, θinf ∈ Set.Ioo 0 1 ∧ hI αS μ μR β ρ p θinf = 0 ∧

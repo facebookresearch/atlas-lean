@@ -1,0 +1,4 @@
+# Algorithm analysis models
+
+- [Smoothed complexity](smoothed-complexity.md)
+- [Cost-instrumented computations](cost-instrumented-computations.md)
