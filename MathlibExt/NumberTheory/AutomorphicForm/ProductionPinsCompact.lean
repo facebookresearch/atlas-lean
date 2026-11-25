@@ -30,166 +30,149 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.MeasureTheory.Measure.MeasureSpace
-public import Mathlib.NumberTheory.NumberField.AdeleRing
-public import Mathlib.RingTheory.DedekindDomain.Basic
-public import MathlibExt.NumberTheory.NumberField.AdelicGL2LocalFiniteness
+public import MathlibExt.NumberTheory.AutomorphicForm.CarrierPins
+public import MathlibExt.NumberTheory.NumberField.AdelicLevel
 
 @[expose] public section
 
 noncomputable section
 
 /-!
-# Carrier pins for automorphic forms, and the compact level
+# Production pins for automorphic forms, and the compact level
 
-Carrier pins bundle the measure-theoretic and level data used on the
-adelic group: a measure and a fundamental set on `GL₂` over the adeles,
-a centre subgroup, a level subgroup at every ideal, a chosen local
-generator at every height-one prime, and a measure on the adele ring.
-The production pins take the centre to be the whole unit group.  The
-compact production pins intersect every level subgroup with a fixed
-finite-adelic subgroup; membership in such a level is therefore the
-conjunction of the two membership conditions, and the compact level is
-contained in the original level.
+`productionPins F D` are the carrier pins `productionPinsOf` with fundamental set `D`, level
+`levelOne (𝓞 F) F N` at every ideal `N`, the Hecke generator `heckeGen (𝓞 F) F v` at every
+height-one prime `v`, and the adelic box `adelicBox F` as the conditioning set: the measure on
+adelic `GL₂` is the Haar measure, and the measure on the adele ring is the additive Haar measure
+conditioned on the adelic box, a probability measure. The compact production pins
+`productionPinsCompact F D` intersect every level with `finiteAdelicGL2Subgroup F`, the matrices
+whose infinite part is the identity: an adelic matrix `u` lies in the compact level at `N`
+exactly when its finite part lies in `finiteLevelOne (𝓞 F) F N` and its infinite part is `1`.
+
+The source fixes the fundamental set to the centre-cut Siegel set
+`centreCutSiegelSet F (1/2) 1 (1/2) 2`, which this library does not provide yet. Both
+constructions therefore take the fundamental set `D` as an explicit parameter, and the source's
+facts about that set (it is measurable, with positive finite Haar measure) are not stated here.
 -/
 
 open IsDedekindDomain NumberField MeasureTheory
+open NumberField.AdelicHaar NumberField.AdelicLevel NumberField.AdelicBox
 
 namespace AutomorphicForm
 
-/-- Carrier pins on the adelic group of a number field: measures,
-a fundamental set, a centre subgroup, level subgroups, and local
-generators. -/
-structure CarrierPins (F : Type*) [Field F] [NumberField F] where
-  /-- The measurable space structure on adelic `GL₂`. -/
-  measurableSpaceGL : MeasurableSpace (NumberField.AdelicGL2 (𝓞 F) F)
-  /-- The measure on adelic `GL₂`. -/
-  measureGL : @Measure _ measurableSpaceGL
-  /-- The fundamental set in adelic `GL₂`. -/
-  fundamentalSet : Set (NumberField.AdelicGL2 (𝓞 F) F)
-  /-- The centre subgroup of the adele units. -/
-  centreSubgroup : Subgroup (AdeleRing (𝓞 F) F)ˣ
-  /-- The level subgroup at an ideal. -/
-  levelSubgroup : Ideal (𝓞 F) → Subgroup (NumberField.AdelicGL2 (𝓞 F) F)
-  /-- The chosen generator at a height-one prime. -/
-  localGenerator :
-    HeightOneSpectrum (𝓞 F) → NumberField.AdelicGL2 (𝓞 F) F
-  /-- The measurable space structure on the adele ring. -/
-  measurableSpaceAdele : MeasurableSpace (AdeleRing (𝓞 F) F)
-  /-- The measure on the adele ring. -/
-  measureAdele : @Measure _ measurableSpaceAdele
+variable (F : Type*) [Field F] [NumberField F] (D : Set (AdelicGL2 (𝓞 F) F))
 
-/-- Production pins from a fundamental set, level subgroups, local
-generators, an adele set, and the two measures; the centre subgroup is
-the whole unit group.  The adele set is the set on which the adele
-measure is conditioned in applications; it is not part of the pins. -/
-def productionPinsOf (F : Type*) [Field F] [NumberField F]
-    (D : Set (NumberField.AdelicGL2 (𝓞 F) F))
-    (U : Ideal (𝓞 F) → Subgroup (NumberField.AdelicGL2 (𝓞 F) F))
-    (gen : HeightOneSpectrum (𝓞 F) → NumberField.AdelicGL2 (𝓞 F) F)
-    (_B : Set (AdeleRing (𝓞 F) F))
-    (mS : MeasurableSpace (NumberField.AdelicGL2 (𝓞 F) F))
-    (μ : @Measure _ mS)
-    (nS : MeasurableSpace (AdeleRing (𝓞 F) F))
-    (ν : @Measure _ nS) : CarrierPins F where
-  measurableSpaceGL := mS
-  measureGL := μ
-  fundamentalSet := D
-  centreSubgroup := ⊤
-  levelSubgroup := U
-  localGenerator := gen
-  measurableSpaceAdele := nS
-  measureAdele := ν
+/-- The production pins with fundamental set `D`: level `levelOne (𝓞 F) F N` at every ideal
+`N`, the Hecke generators `heckeGen (𝓞 F) F v`, the Haar measure on adelic `GL₂`, and the
+additive Haar measure on the adele ring conditioned on `adelicBox F`. The source takes for `D`
+the centre-cut Siegel set `centreCutSiegelSet F (1/2) 1 (1/2) 2`. -/
+def productionPins : CarrierPins F :=
+  productionPinsOf F D (fun N => levelOne (𝓞 F) F N) (fun v => heckeGen (𝓞 F) F v)
+    (adelicBox F)
 
-@[simp]
-theorem productionPinsOf_fundamentalSet (F : Type*) [Field F]
-    [NumberField F] (D U gen B mS μ nS ν) :
-    (productionPinsOf F D U gen B mS μ nS ν).fundamentalSet = D := rfl
+@[simp] theorem productionPins_mS : (productionPins F D).mS = glBorel (Fin 2) (𝓞 F) F := rfl
 
-@[simp]
-theorem productionPinsOf_centreSubgroup (F : Type*) [Field F]
-    [NumberField F] (D U gen B mS μ nS ν) :
-    (productionPinsOf F D U gen B mS μ nS ν).centreSubgroup = ⊤ := rfl
+@[simp] theorem productionPins_μ : (productionPins F D).μ = adelicGLHaar (Fin 2) (𝓞 F) F := rfl
 
-@[simp]
-theorem productionPinsOf_levelSubgroup (F : Type*) [Field F]
-    [NumberField F] (D U gen B mS μ nS ν) :
-    (productionPinsOf F D U gen B mS μ nS ν).levelSubgroup = U := rfl
+@[simp] theorem productionPins_D : (productionPins F D).D = D := rfl
 
-@[simp]
-theorem productionPinsOf_localGenerator (F : Type*) [Field F]
-    [NumberField F] (D U gen B mS μ nS ν) :
-    (productionPinsOf F D U gen B mS μ nS ν).localGenerator = gen := rfl
+@[simp] theorem productionPins_Z :
+    (productionPins F D).Z = (⊤ : Subgroup (AdeleRing (𝓞 F) F)ˣ) := rfl
 
-/-- The compact production pins: every level subgroup of the production
-pins is intersected with a fixed finite-adelic subgroup. -/
-def productionPinsCompact (F : Type*) [Field F] [NumberField F]
-    (levelOneSubgroup :
-      Ideal (𝓞 F) → Subgroup (NumberField.AdelicGL2 (𝓞 F) F))
-    (finiteSubgroup : Subgroup (NumberField.AdelicGL2 (𝓞 F) F))
-    (D : Set (NumberField.AdelicGL2 (𝓞 F) F))
-    (gen : HeightOneSpectrum (𝓞 F) → NumberField.AdelicGL2 (𝓞 F) F)
-    (B : Set (AdeleRing (𝓞 F) F))
-    (mS : MeasurableSpace (NumberField.AdelicGL2 (𝓞 F) F))
-    (μ : @Measure _ mS)
-    (nS : MeasurableSpace (AdeleRing (𝓞 F) F))
-    (ν : @Measure _ nS) : CarrierPins F :=
-  productionPinsOf F D
-    (fun N ↦ levelOneSubgroup N ⊓ finiteSubgroup) gen B mS μ nS ν
+@[simp] theorem productionPins_U (N : Ideal (𝓞 F)) :
+    (productionPins F D).U N = levelOne (𝓞 F) F N := rfl
 
-@[simp]
-theorem productionPinsCompact_levelSubgroup (F : Type*) [Field F]
-    [NumberField F] (levelOneSubgroup finiteSubgroup D gen B mS μ nS ν)
-    (N : Ideal (𝓞 F)) :
-    (productionPinsCompact F levelOneSubgroup finiteSubgroup D gen B
-      mS μ nS ν).levelSubgroup N =
-      levelOneSubgroup N ⊓ finiteSubgroup := rfl
+@[simp] theorem productionPins_gen (v : HeightOneSpectrum (𝓞 F)) :
+    (productionPins F D).gen v = heckeGen (𝓞 F) F v := rfl
 
-/-- Membership in a compact level is the conjunction of membership in
-the original level and in the finite-adelic subgroup. -/
-theorem mem_productionPinsCompact_levelSubgroup (F : Type*) [Field F]
-    [NumberField F] (levelOneSubgroup finiteSubgroup D gen B mS μ nS ν)
-    (N : Ideal (𝓞 F)) (u : NumberField.AdelicGL2 (𝓞 F) F) :
-    u ∈ (productionPinsCompact F levelOneSubgroup finiteSubgroup D gen
-      B mS μ nS ν).levelSubgroup N ↔
-      u ∈ levelOneSubgroup N ∧ u ∈ finiteSubgroup :=
-  Subgroup.mem_inf
+@[simp] theorem productionPins_nS : (productionPins F D).nS = adeleBorel (𝓞 F) F := rfl
 
-/-- The first component of a compact-level element lies in the original
-level. -/
-theorem mem_levelOne_of_mem_productionPinsCompact (F : Type*) [Field F]
-    [NumberField F] (levelOneSubgroup finiteSubgroup D gen B mS μ nS ν)
-    (N : Ideal (𝓞 F)) {u : NumberField.AdelicGL2 (𝓞 F) F}
-    (hu : u ∈ (productionPinsCompact F levelOneSubgroup finiteSubgroup
-      D gen B mS μ nS ν).levelSubgroup N) :
-    u ∈ levelOneSubgroup N := hu.1
+@[simp] theorem productionPins_ν :
+    (productionPins F D).ν =
+      @ProbabilityTheory.cond _ (adeleBorel (𝓞 F) F) (adelicAddHaar (𝓞 F) F) (adelicBox F) :=
+  rfl
 
-/-- The second component of a compact-level element lies in the
-finite-adelic subgroup. -/
-theorem mem_finite_of_mem_productionPinsCompact (F : Type*) [Field F]
-    [NumberField F] (levelOneSubgroup finiteSubgroup D gen B mS μ nS ν)
-    (N : Ideal (𝓞 F)) {u : NumberField.AdelicGL2 (𝓞 F) F}
-    (hu : u ∈ (productionPinsCompact F levelOneSubgroup finiteSubgroup
-      D gen B mS μ nS ν).levelSubgroup N) :
-    u ∈ finiteSubgroup := hu.2
+theorem isHaarMeasure_productionPins_μ :
+    @Measure.IsHaarMeasure _ _ _ (productionPins F D).mS (productionPins F D).μ :=
+  isHaarMeasure_productionPinsOf_μ F _ _ _ _
 
-/-- Every compact level is contained in the corresponding original
-level. -/
-theorem productionPinsCompact_levelSubgroup_le (F : Type*) [Field F]
-    [NumberField F] (levelOneSubgroup finiteSubgroup D gen B mS μ nS ν)
-    (N : Ideal (𝓞 F)) :
-    (productionPinsCompact F levelOneSubgroup finiteSubgroup D gen B
-      mS μ nS ν).levelSubgroup N ≤ levelOneSubgroup N :=
+theorem isProbabilityMeasure_productionPins_ν :
+    @IsProbabilityMeasure _ (productionPins F D).nS (productionPins F D).ν :=
+  isProbabilityMeasure_productionPinsOf_ν F _ _ _ _
+    (adelicAddHaar_adelicBox_pos F).ne' (adelicAddHaar_adelicBox_lt_top F).ne
+
+/-- The compact production pins with fundamental set `D`: the production pins with the level at
+every ideal `N` intersected with `finiteAdelicGL2Subgroup F`, the adelic matrices whose infinite
+part is the identity. -/
+def productionPinsCompact : CarrierPins F :=
+  productionPinsOf F D (fun N => levelOne (𝓞 F) F N ⊓ finiteAdelicGL2Subgroup F)
+    (fun v => heckeGen (𝓞 F) F v) (adelicBox F)
+
+@[simp] theorem productionPinsCompact_mS :
+    (productionPinsCompact F D).mS = glBorel (Fin 2) (𝓞 F) F := rfl
+
+@[simp] theorem productionPinsCompact_μ :
+    (productionPinsCompact F D).μ = adelicGLHaar (Fin 2) (𝓞 F) F := rfl
+
+@[simp] theorem productionPinsCompact_D : (productionPinsCompact F D).D = D := rfl
+
+@[simp] theorem productionPinsCompact_Z :
+    (productionPinsCompact F D).Z = (⊤ : Subgroup (AdeleRing (𝓞 F) F)ˣ) := rfl
+
+@[simp] theorem productionPinsCompact_U (N : Ideal (𝓞 F)) :
+    (productionPinsCompact F D).U N = levelOne (𝓞 F) F N ⊓ finiteAdelicGL2Subgroup F := rfl
+
+@[simp] theorem productionPinsCompact_gen (v : HeightOneSpectrum (𝓞 F)) :
+    (productionPinsCompact F D).gen v = heckeGen (𝓞 F) F v := rfl
+
+@[simp] theorem productionPinsCompact_nS :
+    (productionPinsCompact F D).nS = adeleBorel (𝓞 F) F := rfl
+
+@[simp] theorem productionPinsCompact_ν :
+    (productionPinsCompact F D).ν =
+      @ProbabilityTheory.cond _ (adeleBorel (𝓞 F) F) (adelicAddHaar (𝓞 F) F) (adelicBox F) :=
+  rfl
+
+theorem productionPinsCompact_μ_eq_productionPins_μ :
+    (productionPinsCompact F D).μ = (productionPins F D).μ := rfl
+
+theorem productionPinsCompact_D_eq_productionPins_D :
+    (productionPinsCompact F D).D = (productionPins F D).D := rfl
+
+theorem productionPinsCompact_ν_eq_productionPins_ν :
+    (productionPinsCompact F D).ν = (productionPins F D).ν := rfl
+
+theorem mem_productionPinsCompact_U_iff (N : Ideal (𝓞 F)) (u : AdelicGL2 (𝓞 F) F) :
+    u ∈ (productionPinsCompact F D).U N ↔
+      glFin (𝓞 F) F u ∈ finiteLevelOne (𝓞 F) F N ∧ glArch (𝓞 F) F u = 1 := by
+  rw [productionPinsCompact_U, Subgroup.mem_inf, mem_levelOne_iff,
+    mem_finiteAdelicGL2Subgroup_iff]
+
+theorem glFin_mem_finiteLevelOne_of_mem_productionPinsCompact_U (N : Ideal (𝓞 F))
+    {u : AdelicGL2 (𝓞 F) F} (hu : u ∈ (productionPinsCompact F D).U N) :
+    glFin (𝓞 F) F u ∈ finiteLevelOne (𝓞 F) F N :=
+  ((mem_productionPinsCompact_U_iff F D N u).mp hu).1
+
+theorem glArch_eq_one_of_mem_productionPinsCompact_U (N : Ideal (𝓞 F))
+    {u : AdelicGL2 (𝓞 F) F} (hu : u ∈ (productionPinsCompact F D).U N) :
+    glArch (𝓞 F) F u = 1 :=
+  ((mem_productionPinsCompact_U_iff F D N u).mp hu).2
+
+theorem productionPinsCompact_U_eq_productionPins_U_inf (N : Ideal (𝓞 F)) :
+    (productionPinsCompact F D).U N = (productionPins F D).U N ⊓ finiteAdelicGL2Subgroup F :=
+  rfl
+
+theorem productionPinsCompact_U_le_productionPins_U (N : Ideal (𝓞 F)) :
+    (productionPinsCompact F D).U N ≤ (productionPins F D).U N :=
   inf_le_left
 
-/-- When the finite-adelic subgroup is the whole group, the compact
-level agrees with the original level. -/
-theorem productionPinsCompact_levelSubgroup_of_top (F : Type*)
-    [Field F] [NumberField F] (levelOneSubgroup D gen B mS μ nS ν)
-    (N : Ideal (𝓞 F)) :
-    (productionPinsCompact F levelOneSubgroup ⊤ D gen B
-      mS μ nS ν).levelSubgroup N = levelOneSubgroup N := by
-  simp
+theorem isHaarMeasure_productionPinsCompact_μ :
+    @Measure.IsHaarMeasure _ _ _ (productionPinsCompact F D).mS (productionPinsCompact F D).μ :=
+  isHaarMeasure_productionPins_μ F D
+
+theorem isProbabilityMeasure_productionPinsCompact_ν :
+    @IsProbabilityMeasure _ (productionPinsCompact F D).nS (productionPinsCompact F D).ν :=
+  isProbabilityMeasure_productionPins_ν F D
 
 end AutomorphicForm
 
