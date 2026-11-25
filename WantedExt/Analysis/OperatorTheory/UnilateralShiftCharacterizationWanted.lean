@@ -43,18 +43,22 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.OperatorTheory.UnilateralShiftCharacterizationWanted
 
-/-- `T` is a unilateral shift: it maps some Hilbert basis `b` by `b n ↦ b (n + 1)`. -/
+/-- **Unilateral shift operator.** A bounded linear operator $T$ on a complex inner product
+space $H$ is a unilateral shift if there is a Hilbert basis $(b_n)_{n \in \mathbb{N}}$ of $H$
+such that $T b_n = b_{n+1}$ for every $n \in \mathbb{N}$. -/
 def IsShift
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     (T : H →L[ℂ] H) : Prop :=
   ∃ b : HilbertBasis ℕ ℂ H, ∀ n : ℕ, T (b n) = b (n + 1)
 
-/-- Let $H$ be a separable Hilbert space. We say that a bounded linear operator $T : H \to H$ is a
-shift if there exists an orthonormal basis $\{e_n\}_{n=1}^{\infty}$ of $H$ such that $T(e_n) =
-e_{n+1}$ for every $n \in \mathbb{Z}_{\ge 1}$.
-Prove that a linear operator $T : H \to H$ is a shift if and only if $T$ is a Hilbert space
-isomorphism (i.e., $\langle T x, T y\rangle = \langle x, y\rangle$ for all $x, y \in H$) satisfying
-$\bigcap_{n=1}^{\infty} \mathrm{Ran}(T^n) = \{0\}$ and $\dim(\mathrm{Ran}(T))^\perp = 1$.
+/-- **Isometric characterization of the unilateral shift.** Let $H$ be a separable complex
+Hilbert space, and call a bounded linear operator $T : H \to H$ a shift if there is an
+orthonormal basis $(e_n)_{n \in \mathbb{N}}$ of $H$ with $T e_n = e_{n+1}$ for every
+$n \in \mathbb{N}$. Then a bounded linear operator $T : H \to H$ is a shift if and only if the
+following three conditions hold: $T$ is an isometry, that is,
+$\langle T x, T y \rangle = \langle x, y \rangle$ for all $x, y \in H$; the ranges of the powers
+of $T$ satisfy $\bigcap_{n \ge 1} \mathrm{Ran}(T^n) = \{0\}$; and the orthogonal complement
+$(\mathrm{Ran}\, T)^\perp$ of the range of $T$ has dimension $1$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theory; Special
 classes of linear operators), `benchmark/level2/ma_proofbench_l2_33.lean` at

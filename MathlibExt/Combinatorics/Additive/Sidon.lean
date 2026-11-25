@@ -11,8 +11,9 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.Group.Defs
-public import Mathlib.Data.Set.Basic
+public import Mathlib.Algebra.Group.Monoid
+public import Mathlib.Data.Set.Defs
+public import Mathlib.Tactic.TypeStar
 
 @[expose] public section
 

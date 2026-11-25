@@ -18,9 +18,9 @@ example (x : ℝ) : primeCountingWithin ∅ x = 0 := by
 example (P : Set ℕ) (v : ℝ) (m R : ℕ) :
     IsVPRamanujanNumber P v m R ↔
       P.Infinite ∧ P ⊆ {p : ℕ | p.Prime} ∧ 1 < v ∧
-        Minimal {R' : ℕ | ∀ x : ℝ, (R' : ℝ) ≤ x →
+        Minimal (· ∈ {R' : ℕ | ∀ x : ℝ, (R' : ℝ) ≤ x →
           (m : ℤ) ≤ (primeCountingWithin P x : ℤ) -
-            (primeCountingWithin P (x / v) : ℤ)} R :=
+            (primeCountingWithin P (x / v) : ℤ)}) R :=
   Iff.rfl
 
 #print axioms primeCountingWithin

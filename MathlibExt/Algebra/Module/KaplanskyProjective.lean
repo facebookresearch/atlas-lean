@@ -842,10 +842,12 @@ Proves the arbitrary-rank freeness of projective modules over commutative local 
 -/
 
 /--
-Every projective module over a commutative local ring is free.
-Source: I. Kaplansky, Projective Modules, Ann. Math. 68 (1958), 372-377, DOI 10.2307/1970252.
+**Kaplansky's theorem on projective modules over local rings.** Every projective module over a
+commutative local ring is free.
 
 Proves `Wanted` entry `kaplansky_projective_local_free`.
+
+Source: I. Kaplansky, Projective Modules, Ann. Math. 68 (1958), 372-377, DOI 10.2307/1970252.
 -/
 theorem kaplansky_projective_local_free
     {R : Type*} {M : Type*} [CommRing R] [IsLocalRing R]

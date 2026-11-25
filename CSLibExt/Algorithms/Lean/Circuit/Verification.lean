@@ -23,7 +23,9 @@ check and the final output check; allocation and bit-machine costs are separate.
 
 namespace Cslib.Circuits.Wire
 
-/-- The input-then-gate position of a wire in a certificate array. -/
+/-- **Certificate position of a wire.** For a wire that refers to one of $n$ inputs or one of $g$
+gates, its position in $\{0, \dots, n + g - 1\}$ is $k$ if it is input $k$ and $n + j$ if it is
+gate $j$, so the inputs come first and the gates follow. -/
 @[expose] public def toFin {i g : Nat} (wire : Wire i g) : Fin (i + g) :=
   finSumFinEquiv (Wire.equiv i g wire)
 
@@ -100,7 +102,15 @@ private def checkProgram {i : Nat} :
       let equal ← checkLine line cert
       pure (prior && equal)
 
-/-- Check a full supplied Boolean valuation, visiting every gate and argument. -/
+/-- **Boolean certificate verifier.** Let $c$ be a circuit over the Boolean signature with $n$
+inputs, $s$ gates and one output, and let $b = (b_0, \dots, b_{m-1})$ be an array of truth values,
+read as a value for each wire: input $k$ at position $k$ and gate $j$ at position $n + j$. The
+verifier is a computation with a counted cost. It first checks whether $m = n + s$, at cost $1$;
+if not, it returns false. Otherwise, for each gate $j < s$ in order, it reads the entries of $b$
+at the positions of the argument wires of gate $j$, at cost $1$ per argument, and compares the
+Boolean interpretation of the operation of gate $j$ on these values with $b_{n+j}$, at cost $1$;
+finally it reads the entry at the position of the output wire, at cost $1$. It returns true
+exactly when every comparison succeeds and that output entry is true. -/
 public def verifyBooleanCertificate {i : Nat}
     (c : Circuit booleanSignature i 1) (cert : Array Bool) : TimeM Nat Bool := do
   TimeM.tick 1
@@ -225,7 +235,13 @@ private lemma argumentCount_le {i g K : Nat} (p : Program booleanSignature i g)
       simp only [argumentCount, Nat.add_mul, Nat.one_mul]
       omega
 
-/-- Acceptance is exactly the full gate equations and true designated output. -/
+/-- **Characterization of accepted certificates.** Let $c$ be a circuit over the Boolean signature
+with $n$ inputs, $s$ gates and one output, and let $b = (b_0, \dots, b_{m-1})$ be an array of truth
+values, where an entry at a position at or beyond $m$ is read as false and the position of a wire
+is $k$ for input $k$ and $n + j$ for gate $j$. The Boolean certificate verifier accepts $b$ if and
+only if $m = n + s$, for every gate $j < s$ the Boolean interpretation of the operation of gate $j$
+applied to the entries of $b$ at the positions of its argument wires equals $b_{n+j}$, and the
+entry of $b$ at the position of the output wire is true. -/
 public theorem verifyBooleanCertificate_iff {i : Nat}
     (c : Circuit booleanSignature i 1) (cert : Array Bool) :
     (verifyBooleanCertificate c cert).ret = true ↔
@@ -237,7 +253,13 @@ public theorem verifyBooleanCertificate_iff {i : Nat}
   · simp [verifyBooleanCertificate, h, checkProgram_ret_iff, lineValue]
   · simp [verifyBooleanCertificate, h]
 
-/-- An accepted certificate agrees with the canonical trace and makes the output true. -/
+/-- **Soundness of the Boolean certificate verifier.** Let $c$ be a circuit over the Boolean
+signature with $n$ inputs, $s$ gates and one output, and let $b = (b_0, \dots, b_{m-1})$ be an array
+of truth values, where an entry at a position at or beyond $m$ is read as false and the position
+of a wire is $k$ for input $k$ and $n + j$ for gate $j$. If the Boolean certificate verifier
+accepts $b$, then, writing $x = (b_0, \dots, b_{n-1})$, the value of every wire of $c$ on input $x$
+under the Boolean interpretation equals the entry of $b$ at the position of that wire, and the
+output of $c$ on input $x$ is true. -/
 public theorem verifyBooleanCertificate_sound {i : Nat}
     (c : Circuit booleanSignature i 1) (cert : Array Bool)
     (h : (verifyBooleanCertificate c cert).ret = true) :
@@ -251,7 +273,11 @@ public theorem verifyBooleanCertificate_sound {i : Nat}
   refine ⟨hw, ?_⟩
   exact (hw (c.outputs 0)).trans ho
 
-/-- A satisfying input supplies an accepted certificate through the canonical trace. -/
+/-- **Completeness of the Boolean certificate verifier.** Let $c$ be a circuit over the Boolean
+signature with $n$ inputs, $s$ gates and one output, and let $x = (x_0, \dots, x_{n-1})$ be truth
+values on which the output of $c$ under the Boolean interpretation is true. Let $b$ be the array
+$(x_0, \dots, x_{n-1}, v_0, \dots, v_{s-1})$, where $v_j$ is the value of gate $j$ of $c$ on input
+$x$. Then $b$ has length $n + s$ and the Boolean certificate verifier accepts $b$. -/
 public theorem verifyBooleanCertificate_complete {i : Nat}
     (c : Circuit booleanSignature i 1) (input : Fin i → Bool)
     (h : c.eval booleanInterpretation input 0 = true) :
@@ -266,7 +292,11 @@ public theorem verifyBooleanCertificate_complete {i : Nat}
     exact lineValue_trace c.program input j
   · exact (getD_trace c.program input (c.outputs 0)).trans h
 
-/-- A short accepted valuation exists exactly when the circuit is satisfiable. -/
+/-- **Short accepted certificates exist exactly for satisfiable circuits.** Let $c$ be a circuit
+over the Boolean signature with $n$ inputs, $s$ gates and one output. The Boolean certificate
+verifier accepts some array of at most $n + 2s$ truth values if and only if there are truth
+values $x_0, \dots, x_{n-1}$ on which the output of $c$ under the Boolean interpretation is
+true. -/
 public theorem verifyBooleanCertificate_satisfiable_iff {i : Nat}
     (c : Circuit booleanSignature i 1) :
     (∃ cert : Array Bool, (verifyBooleanCertificate c cert).ret = true ∧
@@ -280,7 +310,10 @@ public theorem verifyBooleanCertificate_satisfiable_iff {i : Nat}
     refine ⟨Array.ofFn (Fin.addCases input (c.program.eval booleanInterpretation input)), hv, ?_⟩
     omega
 
-/-- Exact selected-event count, including the rejecting length check. -/
+/-- **Cost of the Boolean certificate verifier.** Let $c$ be a circuit over the Boolean signature
+with $n$ inputs, $s$ gates and one output, and let $b$ be an array of $m$ truth values. The cost
+counted by the Boolean certificate verifier on $b$ is $2 + s + \sum_{j < s} a_j$ if $m = n + s$,
+where $a_j$ is the number of arguments of gate $j$, and $1$ otherwise. -/
 public theorem verifyBooleanCertificate_time {i : Nat}
     (c : Circuit booleanSignature i 1) (cert : Array Bool) :
     (verifyBooleanCertificate c cert).time =
@@ -292,7 +325,10 @@ public theorem verifyBooleanCertificate_time {i : Nat}
     omega
   · simp [verifyBooleanCertificate, h]
 
-/-- A fixed fan-in bound gives a linear selected-event bound, including rejects. -/
+/-- **Linear cost of the Boolean certificate verifier.** Let $K$ be a natural number and let $c$ be
+a circuit over the Boolean signature with $n$ inputs, $s$ gates and one output in which every gate
+has at most $K$ arguments. Then for every array $b$ of truth values, the cost counted by the
+Boolean certificate verifier on $b$ is at most $2 + (K + 1)s$. -/
 public theorem verifyBooleanCertificate_time_le_of_fanInAtMost {i K : Nat}
     (c : Circuit booleanSignature i 1) (cert : Array Bool) (hfan : c.FanInAtMost K) :
     (verifyBooleanCertificate c cert).time ≤ 2 + (K + 1) * c.size := by

@@ -150,7 +150,10 @@ private lemma polynomial_isTheta : Asymptotics.IsTheta Filter.atTop
     rw [Real.norm_of_nonneg hg, Real.norm_of_nonneg (polynomial_nonneg n)]
     exact (polynomial_log_bounds hn).1
 
-/-- The total selected event count of this execution family is Θ(n³ log n). -/
+/-- **Asymptotic operation count of FASTER-APSP.** Let $\alpha$ be a type with addition,
+multiplication and zero, and for each $n$ let $W_n$ be an $n \times n$ matrix over $\alpha$. The
+total number of copy and fill assignments, scalar additions and scalar multiplications that
+FASTER-APSP performs on $W_n$ is $\Theta(n^3 \log n)$ as $n \to \infty$. -/
 public theorem fasterAPSP_time_isTheta {α : Type u} [Add α] [Mul α] [Zero α]
     (W : (n : Nat) → Vector (Vector α n) n) :
     Asymptotics.IsTheta Filter.atTop

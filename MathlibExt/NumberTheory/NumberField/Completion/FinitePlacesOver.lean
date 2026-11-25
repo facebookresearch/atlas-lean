@@ -50,14 +50,19 @@ open scoped NumberField
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- Finite places of `L` lying over the finite place `v` of `K`, as height-one
-primes of `𝓞 L` lying over `v.asIdeal`. -/
+/-- **Finite places lying over a finite place.** Let $L/K$ be an extension of number fields and
+let $v$ be a finite place of $K$, given as a height-one prime of the ring of integers
+$\mathcal{O}_K$. The finite places of $L$ lying over $v$ form the type of height-one primes $w$ of
+$\mathcal{O}_L$ that lie over $v$, that is, whose preimage in $\mathcal{O}_K$ is $v$. -/
 def placesOver (v : HeightOneSpectrum (𝓞 K)) (L : Type*) [Field L] [NumberField L]
     [Algebra K L] : Type _ :=
   { w : HeightOneSpectrum (𝓞 L) // w.asIdeal.LiesOver v.asIdeal }
 
-/-- Canonical identification of `v.placesOver L` with the primes of `𝓞 L` lying
-over `v.asIdeal`. -/
+/-- **Places over a finite place correspond to primes over it.** Let $L/K$ be an extension of
+number fields and let $v$ be a finite place of $K$, given as a height-one prime of the ring of
+integers $\mathcal{O}_K$. Sending a finite place $w$ of $L$ lying over $v$ to its prime ideal of
+$\mathcal{O}_L$ is a bijection from the finite places of $L$ lying over $v$ onto the set of prime
+ideals of $\mathcal{O}_L$ lying over $v$. -/
 noncomputable def placesOverEquivPrimesOver (v : HeightOneSpectrum (𝓞 K)) (L : Type*)
     [Field L] [NumberField L] [Algebra K L] :
     v.placesOver L ≃ v.asIdeal.primesOver (𝓞 L) :=
