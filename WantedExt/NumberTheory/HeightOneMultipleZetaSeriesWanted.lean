@@ -14,7 +14,7 @@ public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
-public import Mathlib.RingTheory.Polynomial.Pochhammer
+public import MathlibExt.NumberTheory.HeightOneMultipleZetaSeries
 public import WantedExt.NumberTheory.BernoulliStirlingHarmonicWanted
 public import WantedExt.NumberTheory.HyperharmonicEulerSumsWanted
 
@@ -32,52 +32,6 @@ function `ζ_r(s) = ζ_r(s, 1)` of (2.2) is `multipleHurwitzZeta r s`, with
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Height one multiple zeta function.** For a complex number $s$ and an integer $j \ge 0$, the
-height one multiple zeta function is
-$$\zeta(s, \{1\}^j) = \sum_{n \ge 0} (n + 1)^{-s} \sum_{T} \prod_{m \in T} \frac{1}{m},$$
-where $T$ runs over the $j$-element subsets of $\{1, \dots, n\}$. Writing $n_1 = n + 1$ and
-$T = \{n_2, \dots, n_{j+1}\}$, this is
-$\zeta(s, \{1\}^j) = \sum_{n_1 > \cdots > n_{j+1} \ge 1} n_1^{-s} (n_2 \cdots n_{j+1})^{-1}$, which
-converges for $\operatorname{Re} s > 1$.
-
-Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
-(2024), Article A43, Section 1. -/
-public noncomputable def heightOneMultipleZeta (s : ℂ) (j : ℕ) : ℂ :=
-  ∑' n : ℕ, ((n : ℂ) + 1) ^ (-s) *
-    ∑ T ∈ (Finset.Icc 1 n).powersetCard j, ∏ m ∈ T, (1 / (m : ℂ))
-
-/-- **Height one multiple zeta function of depth one.** For every complex number $s$, the height
-one multiple zeta function $\zeta(s, \{1\}^j)$ at $j = 0$ is the Dirichlet series of the Riemann
-zeta function: $\zeta(s, \{1\}^0) = \sum_{n \ge 0} (n + 1)^{-s}$.
-
-Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
-(2024), Article A43, Section 1. -/
-public theorem heightOneMultipleZeta_zero (s : ℂ) :
-    heightOneMultipleZeta s 0 = ∑' n : ℕ, ((n : ℂ) + 1) ^ (-s) := by
-  simp [heightOneMultipleZeta]
-
-/-- **Multiple Hurwitz zeta function.** For complex numbers $r$ and $s$, the multiple Hurwitz zeta
-function of order $r$, with Hurwitz parameter $a = 1$, is the Dirichlet series
-$$\zeta_r(s) = \sum_{m \ge 0} \binom{m + r - 1}{m} (m + 1)^{-s},$$
-where $\binom{m + r - 1}{m} = r (r + 1) \cdots (r + m - 1) / m!$. The series converges for
-$\operatorname{Re} r < \operatorname{Re} s$.
-
-Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
-(2024), Article A43, Section 2, Equation (2.2). -/
-public noncomputable def multipleHurwitzZeta (r s : ℂ) : ℂ :=
-  ∑' m : ℕ, (ascPochhammer ℂ m).eval r / (m.factorial : ℂ) * ((m : ℂ) + 1) ^ (-s)
-
-/-- **Multiple Hurwitz zeta function of order zero.** For every complex number $s$, the multiple
-Hurwitz zeta function of order $0$ is identically one: $\zeta_0(s) = 1$.
-
-Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
-(2024), Article A43, Section 2, Equation (2.2). -/
-public theorem multipleHurwitzZeta_zero (s : ℂ) : multipleHurwitzZeta 0 s = 1 := by
-  rw [multipleHurwitzZeta, tsum_eq_single 0]
-  · simp
-  · intro m hm
-    simp [hm]
 
 /-- **Expansion of the multiple Hurwitz zeta function in height one multiple zeta values.** Let
 $r$ and $s$ be complex numbers with $\operatorname{Re} s > 1$, $|r - 1| < |s - 1|$ and
@@ -177,23 +131,6 @@ public theorem_wanted hasSum_succ_mul_heightOneMultipleZeta_mul_pow {r s : ℂ} 
     (hr : ‖r‖ < ‖s‖) (hrs : r.re < s.re) :
     HasSum (fun j : ℕ => ((j : ℂ) + 1) * heightOneMultipleZeta (s + 1) j * r ^ j)
       (∑' m : ℕ, generalizedHyperharmonic (m + 1) 1 r * ((m : ℂ) + 1) ^ (-s))
-
-/-- **Shifted alternating series of height one multiple zeta values.** Let $k \ge -1$ and
-$p \ge 0$ be integers, write $\zeta(s, \{1\}^p)$ for the height one multiple zeta function and
-$\zeta_r(s)$ for the multiple Hurwitz zeta function of order $r$. Then the partial sums of the
-series $\nu_{k,p} = \sum_{n \ge 2} \frac{(-1)^n \, \zeta(n, \{1\}^p)}{n + k}$ converge to
-$\int_0^1 (1 - r)^{k+1} \, \zeta_r(p + 2) \, dr$.
-
-Source: Paul Thomas Young, *Series of Height One Multiple Zeta Functions*, INTEGERS 24
-(2024), Article A43, Theorem 4 (`integers-2024-A43-thm-4`). -/
-public theorem_wanted tendsto_alternating_heightOneMultipleZeta_integral (k : ℤ) (hk : -1 ≤ k)
-    (p : ℕ) :
-    Filter.Tendsto
-      (fun N : ℕ => ∑ n ∈ Finset.Ico 2 N,
-        (-1 : ℂ) ^ n / ((n : ℂ) + k) * heightOneMultipleZeta n p)
-      Filter.atTop
-      (nhds (∫ r in (0 : ℝ)..1,
-        (1 - (r : ℂ)) ^ (k + 1).toNat * multipleHurwitzZeta r ((p : ℂ) + 2)))
 
 /-- **Linear Laurent coefficient of the height one multiple zeta function.** Let $j \ge 1$ be an
 integer, write $\zeta(s, \{1\}^{j-1})$ for the height one multiple zeta function and $\zeta_r(s)$

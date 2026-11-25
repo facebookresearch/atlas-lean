@@ -12,6 +12,7 @@ import MathlibExt.Combinatorics.Enumerative.GeneralizedLeonardoLogBehavior
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Tests for log-convexity, log-concavity and reciprocal log-balancedness
@@ -83,5 +84,18 @@ example (n : ℕ) (hn : 1 ≤ n) :
     push_cast
     field_simp
     linarith
+
+-- At the first covered index the three partial sums are 2, k + 4 and 3k + 7.
+example (k : ℕ) (hk : 1 ≤ k) : 2 * (3 * (k : ℤ) + 7) ≤ (k + 4 : ℤ) ^ 2 := by
+  convert! genLeonardo_partialSum_logConcave k hk 2 (by decide) using 1 <;>
+    norm_num [Finset.sum_range_succ, genLeonardo] <;> ring
+
+-- One index earlier the log-concavity difference is negative for every positive k.
+example (k : ℕ) :
+    (∑ i ∈ Finset.range 2, genLeonardo k i) ^ 2 -
+      (∑ i ∈ Finset.range 1, genLeonardo k i) * (∑ i ∈ Finset.range 3, genLeonardo k i) =
+        -(k : ℤ) := by
+  norm_num [Finset.sum_range_succ, genLeonardo]
+  ring
 
 end MetaMathlibExt

@@ -37,12 +37,13 @@ namespace MathlibExt.Biology.Biophysics.IntegrateAndFire.Frequency
 `uinf > theta > ur`, the first-hit period of the scalar trajectory
 `u(t) = uinf - (uinf - ur) * exp (-t / tau)` from reset `ur` to
 threshold `theta` is `T = tau * log ((uinf - ur) / (uinf - theta))`,
-which is positive. This is a definition-level restatement included
-so the frequency theorem has an exact period to consume. -/
+which is positive. Outside that domain the formula follows the
+conventions `x / 0 = 0`, `log 0 = 0` and `log x = log |x|`; for
+example it is `0` when `uinf = theta`. -/
 noncomputable def lifPeriod (tau ur theta uinf : ℝ) : ℝ :=
   tau * Real.log ((uinf - ur) / (uinf - theta))
 
-/-- The period is positive on the superthreshold domain. -/
+/-- For `tau > 0`, the period is positive on the superthreshold domain `ur < theta < uinf`. -/
 lemma lifPeriod_pos {tau ur theta uinf : ℝ} (htau : 0 < tau)
     (hur : ur < theta) (hu : theta < uinf) : 0 < lifPeriod tau ur theta uinf := by
   exact (MathlibExt.Biology.Biophysics.IntegrateAndFire.FirstHit.lif_first_hit
@@ -78,9 +79,9 @@ lemma lif_frequency_strictMonoOn {tau ur theta tref : ℝ} (htau : 0 < tau)
   have hden_pos : 0 < lifPeriod tau ur theta b + tref := by linarith
   exact one_div_lt_one_div_of_lt hden_pos hden_lt
 
-/-- **Frequency increases with current.** With `uinf = urest + R * I`
-and fixed `R > 0`, the frequency is strictly increasing in current
-`I` on the superthreshold current range. -/
+/-- **Frequency increases with current.** For `tau > 0`, `ur < theta`, `tref ≥ 0`,
+`uinf = urest + R * I` and fixed `R > 0`, the frequency is strictly increasing in current `I` on the
+superthreshold current range `theta < urest + R * I`. -/
 lemma lif_frequency_current_strictMonoOn {tau ur theta tref urest R : ℝ}
     (htau : 0 < tau) (hur : ur < theta) (htref : 0 ≤ tref) (hR : 0 < R) :
     StrictMonoOn (fun I => 1 / (lifPeriod tau ur theta (urest + R * I) + tref))
