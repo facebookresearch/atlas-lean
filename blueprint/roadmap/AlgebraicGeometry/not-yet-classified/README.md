@@ -8,3 +8,4 @@ Topics added since this subject's fields were last revised.
 - [Curve Vector Bundles](curve-vector-bundles/README.md)
 - [Projectivity of complex projective space](is-projective-projective-space.md)
 - [Integral Operational Chow](integral-operational-chow/README.md)
+- [Nilp Points Factor](nilp-points-factor/README.md)
