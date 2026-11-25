@@ -471,7 +471,7 @@ after one generation of viability selection the frequency of `A` is
 * **Underdominance** (`s < 0` and `t < 0`). The equilibrium `p_e` lies in `(0, 1)` and is the only
   `p ∈ (0, 1)` with `f p = p`. If `p₀ < p_e`, then `p_n → 0`; if `p₀ > p_e`, then `p_n → 1`; and
   if `p₀ = p_e`, then `p_n = p_e` for all `n`. -/
-theorem viability_selection_regimes {wAA wAa waa p₀ : ℝ} (hp₀ : p₀ ∈ Ioo 0 1) :
+theorem viability_selection_regimes (wAA wAa waa : ℝ) {p₀ : ℝ} (hp₀ : p₀ ∈ Ioo 0 1) :
     let w : Fin 2 → Fin 2 → ℝ := ![![wAA, wAa], ![wAa, waa]]
     let wbar : ℝ → ℝ := fun p => diploidMeanFitness ![p, 1 - p] w
     let f : ℝ → ℝ := fun p => diploidSelect ![p, 1 - p] w 0

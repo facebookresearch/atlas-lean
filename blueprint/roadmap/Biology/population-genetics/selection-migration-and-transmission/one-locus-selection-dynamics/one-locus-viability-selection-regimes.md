@@ -26,8 +26,8 @@ Let $p_0 \in (0, 1)$ and $p_{n+1} = p_n'$.
 
 Whenever $w_{AA} = 1 - s$, $w_{Aa} = 1$ and $w_{aa} = 1 - t$, as in cases 2 and 3,
 $\bar w - pq(s + t) = p(1 - s) + q(1 - t)$ for every $p$, and, if $s + t \ne 0$ (as in cases 2
-and 3), $p' - p = pq(s + t)(p_e - p)/\bar w$ wherever $\bar w \ne 0$. In case 2,
-$p(1 - s) + q(1 - t) \ge 0$, so for $p \in (0, 1)$ the factor $pq(s + t)/\bar w$ lies in $(0, 1]$,
+and 3), $p' - p = pq(s + t)(p_e - p)/\bar w$ wherever $\bar w \ne 0$. In case 2, for
+$p \in (0, 1)$, $p(1 - s) + q(1 - t) \ge 0$, so the factor $pq(s + t)/\bar w$ lies in $(0, 1]$,
 and it equals $1$ exactly when $s = t = 1$, in which case $p_1 = p_e$; this gives monotone
 convergence without overshooting.
 

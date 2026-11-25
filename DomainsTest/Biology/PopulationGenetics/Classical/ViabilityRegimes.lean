@@ -35,8 +35,7 @@ example :
     diploidSelect ![1 / 2, 1 - 1 / 2] ![![1, 1], ![1, 0]] 0 - 1 / 2 =
       1 / 2 * (1 - 1 / 2) * (1 / 2 * ((1 : ℝ) - 1) + (1 - 1 / 2) * (1 - 0)) /
         diploidMeanFitness ![1 / 2, 1 - 1 / 2] ![![(1 : ℝ), 1], ![1, 0]] :=
-  (viability_selection_regimes (wAA := 1) (wAa := 1) (waa := 0) (p₀ := 1 / 2)
-    ⟨by norm_num, by norm_num⟩).1 (1 / 2)
+  (viability_selection_regimes 1 1 0 (p₀ := 1 / 2) ⟨by norm_num, by norm_num⟩).1 (1 / 2)
     (by norm_num [diploidMeanFitness, Fin.sum_univ_two])
 
 /-! ### Directional selection -/
@@ -48,15 +47,14 @@ example :
     (∀ n, f^[n] (1 / 10) ∈ Ioo 0 1) ∧ StrictMono (fun n => f^[n] (1 / 10)) ∧
       Tendsto (fun n => f^[n] (1 / 10)) atTop (𝓝 1) := by
   intro f
-  obtain ⟨-, hdir, -⟩ := viability_selection_regimes (wAA := 1) (wAa := 1 / 2) (waa := 0)
-    (p₀ := 1 / 10) ⟨by norm_num, by norm_num⟩
+  obtain ⟨-, hdir, -⟩ := viability_selection_regimes 1 (1 / 2) 0 (p₀ := 1 / 10)
+    ⟨by norm_num, by norm_num⟩
   exact (hdir le_rfl (by norm_num) (by norm_num) (by norm_num)).2.2.1 (by norm_num)
 
 /-- Boundary case `wAa = waa = 0`: only `AA` survives, so the frequency of `A` jumps to `1` in one
 generation; strict increase inside `(0, 1)` needs `wAa > 0`. -/
 example : diploidSelect ![1 / 3, 1 - 1 / 3] ![![1, 0], ![0, 0]] 0 = 1 := by
-  obtain ⟨-, hdir, -⟩ := viability_selection_regimes (wAA := 1) (wAa := 0) (waa := 0)
-    (p₀ := 1 / 3) ⟨by norm_num, by norm_num⟩
+  obtain ⟨-, hdir, -⟩ := viability_selection_regimes 1 0 0 (p₀ := 1 / 3) ⟨by norm_num, by norm_num⟩
   exact (hdir le_rfl le_rfl (by norm_num) (by norm_num)).2.2.2 rfl rfl
 
 /-! ### Overdominance -/
@@ -69,8 +67,8 @@ example :
     Monotone (fun n => f^[n] (1 / 100)) ∧ (∀ n, f^[n] (1 / 100) ≤ 2 / 3) ∧
       Tendsto (fun n => f^[n] (1 / 100)) atTop (𝓝 (2 / 3)) := by
   intro f
-  obtain ⟨-, -, h⟩ := viability_selection_regimes (wAA := 17 / 20) (wAa := 1) (waa := 7 / 10)
-    (p₀ := 1 / 100) ⟨by norm_num, by norm_num⟩
+  obtain ⟨-, -, h⟩ := viability_selection_regimes (17 / 20) 1 (7 / 10) (p₀ := 1 / 100)
+    ⟨by norm_num, by norm_num⟩
   obtain ⟨-, -, hod, -⟩ := h (3 / 20) (3 / 10) (by norm_num) rfl (by norm_num)
   obtain ⟨-, -, -, -, -, hmono, -, hlim⟩ :=
     hod (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -83,8 +81,8 @@ example :
     let f : ℝ → ℝ := fun p => diploidSelect ![p, 1 - p] ![![17 / 20, 1], ![1, 7 / 10]] 0
     Antitone (fun n => f^[n] (99 / 100)) ∧ (∀ n, 2 / 3 ≤ f^[n] (99 / 100)) := by
   intro f
-  obtain ⟨-, -, h⟩ := viability_selection_regimes (wAA := 17 / 20) (wAa := 1) (waa := 7 / 10)
-    (p₀ := 99 / 100) ⟨by norm_num, by norm_num⟩
+  obtain ⟨-, -, h⟩ := viability_selection_regimes (17 / 20) 1 (7 / 10) (p₀ := 99 / 100)
+    ⟨by norm_num, by norm_num⟩
   obtain ⟨-, -, hod, -⟩ := h (3 / 20) (3 / 10) (by norm_num) rfl (by norm_num)
   obtain ⟨-, -, -, -, -, -, hanti, -⟩ :=
     hod (by norm_num) (by norm_num) (by norm_num) (by norm_num)
@@ -95,8 +93,7 @@ example :
 /-- Boundary case `s = t = 1` (both homozygotes lethal): the factor `p q (s + t) / w̄` equals `1`
 and the population reaches `p_e = 1/2` in one generation. -/
 example : diploidSelect ![1 / 10, 1 - 1 / 10] ![![0, 1], ![1, 0]] 0 = 1 / 2 := by
-  obtain ⟨-, -, h⟩ := viability_selection_regimes (wAA := 0) (wAa := 1) (waa := 0)
-    (p₀ := 1 / 10) ⟨by norm_num, by norm_num⟩
+  obtain ⟨-, -, h⟩ := viability_selection_regimes 0 1 0 (p₀ := 1 / 10) ⟨by norm_num, by norm_num⟩
   obtain ⟨-, -, hod, -⟩ := h 1 1 (by norm_num) rfl (by norm_num)
   obtain ⟨-, -, -, -, hone, -⟩ := hod one_pos le_rfl one_pos le_rfl
   have := hone rfl rfl
@@ -118,10 +115,10 @@ example :
     Tendsto (fun n => f^[n] (3 / 5)) atTop (𝓝 0) ∧
       Tendsto (fun n => f^[n] (7 / 10)) atTop (𝓝 1) := by
   intro f
-  obtain ⟨-, -, h₁⟩ := viability_selection_regimes (wAA := 23 / 20) (wAa := 1) (waa := 13 / 10)
-    (p₀ := 3 / 5) ⟨by norm_num, by norm_num⟩
-  obtain ⟨-, -, h₂⟩ := viability_selection_regimes (wAA := 23 / 20) (wAa := 1) (waa := 13 / 10)
-    (p₀ := 7 / 10) ⟨by norm_num, by norm_num⟩
+  obtain ⟨-, -, h₁⟩ := viability_selection_regimes (23 / 20) 1 (13 / 10) (p₀ := 3 / 5)
+    ⟨by norm_num, by norm_num⟩
+  obtain ⟨-, -, h₂⟩ := viability_selection_regimes (23 / 20) 1 (13 / 10) (p₀ := 7 / 10)
+    ⟨by norm_num, by norm_num⟩
   obtain ⟨-, -, -, hud₁⟩ := h₁ (-3 / 20) (-3 / 10) (by norm_num) rfl (by norm_num)
   obtain ⟨-, -, -, hud₂⟩ := h₂ (-3 / 20) (-3 / 10) (by norm_num) rfl (by norm_num)
   obtain ⟨-, -, hlow, -⟩ := hud₁ (by norm_num) (by norm_num)
@@ -133,8 +130,8 @@ example :
     let f : ℝ → ℝ := fun p => diploidSelect ![p, 1 - p] ![![23 / 20, 1], ![1, 13 / 10]] 0
     ∀ n, f^[n] (2 / 3) = 2 / 3 := by
   intro f
-  obtain ⟨-, -, h⟩ := viability_selection_regimes (wAA := 23 / 20) (wAa := 1) (waa := 13 / 10)
-    (p₀ := 2 / 3) ⟨by norm_num, by norm_num⟩
+  obtain ⟨-, -, h⟩ := viability_selection_regimes (23 / 20) 1 (13 / 10) (p₀ := 2 / 3)
+    ⟨by norm_num, by norm_num⟩
   obtain ⟨-, -, -, hud⟩ := h (-3 / 20) (-3 / 10) (by norm_num) rfl (by norm_num)
   obtain ⟨-, -, -, -, hfix⟩ := hud (by norm_num) (by norm_num)
   have hpe : (-3 / 10 : ℝ) / (-3 / 20 + -3 / 10) = 2 / 3 := by norm_num
