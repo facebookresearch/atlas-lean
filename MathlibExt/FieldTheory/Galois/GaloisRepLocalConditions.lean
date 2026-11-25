@@ -35,7 +35,7 @@ public import MathlibExt.RingTheory.Valuation.LiesOverPrime
 
 @[expose] public section
 
-universe u
+universe u v
 
 namespace GaloisRepAdic
 
@@ -80,14 +80,14 @@ set `S`: cyclotomic determinant, ordinary at `p`, and unramified at
 every prime outside `S`. -/
 public def ordinaryCondition (𝒪 : Type u) [CommRing 𝒪] (p : ℕ)
     (S : Finset ℕ) :
-    ∀ ⦃A : Type u⦄ [CommRing A] [IsLocalRing A] [Algebra 𝒪 A],
+    ∀ ⦃A : Type v⦄ [CommRing A] [IsLocalRing A] [Algebra 𝒪 A],
       GaloisRepAdic A → Prop :=
   fun _A _ _ _ ρ => ρ.DetIsCyclotomic p ∧ ρ.IsOrdinaryAt p ∧
     ∀ q : ℕ, q.Prime → q ∉ S → ρ.IsUnramifiedAt q
 
 /-- The ordinary condition unfolds to its three clauses. -/
 theorem ordinaryCondition_def (𝒪 : Type u) [CommRing 𝒪] (p : ℕ)
-    (S : Finset ℕ) {A : Type u} [CommRing A] [IsLocalRing A]
+    (S : Finset ℕ) {A : Type v} [CommRing A] [IsLocalRing A]
     [Algebra 𝒪 A] (ρ : GaloisRepAdic A) :
     ordinaryCondition 𝒪 p S ρ ↔
       ρ.DetIsCyclotomic p ∧ ρ.IsOrdinaryAt p ∧
@@ -99,14 +99,14 @@ together with unipotent inertia at every prime of `S` other
 than `p`. -/
 public def minimalOrdinaryCondition (𝒪 : Type u) [CommRing 𝒪]
     (p : ℕ) (S : Finset ℕ) :
-    ∀ ⦃A : Type u⦄ [CommRing A] [IsLocalRing A] [Algebra 𝒪 A],
+    ∀ ⦃A : Type v⦄ [CommRing A] [IsLocalRing A] [Algebra 𝒪 A],
       GaloisRepAdic A → Prop :=
   fun _A _ _ _ ρ => ordinaryCondition 𝒪 p S ρ ∧
     ∀ q ∈ S, q.Prime → q ≠ p → ρ.IsUnipotentOnInertiaAt q
 
 /-- The minimal ordinary condition unfolds to its two clauses. -/
 theorem minimalOrdinaryCondition_def (𝒪 : Type u) [CommRing 𝒪]
-    (p : ℕ) (S : Finset ℕ) {A : Type u} [CommRing A] [IsLocalRing A]
+    (p : ℕ) (S : Finset ℕ) {A : Type v} [CommRing A] [IsLocalRing A]
     [Algebra 𝒪 A] (ρ : GaloisRepAdic A) :
     minimalOrdinaryCondition 𝒪 p S ρ ↔
       ordinaryCondition 𝒪 p S ρ ∧

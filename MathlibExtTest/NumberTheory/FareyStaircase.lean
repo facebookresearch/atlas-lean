@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.FareyStaircase
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 /-! # Tests for Farey staircases and harmonic blocks -/
@@ -49,3 +50,17 @@ example : Tendsto (fun n : ℕ => ∑ k ∈ Finset.Icc n (2 * n), (1 / k : ℝ))
   filter_upwards [eventually_gt_atTop 0] with n hn
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn
   simp [integral_inv_of_pos, hn', Nat.cast_mul, ne_of_gt hn']
+
+-- At the origin the limit is the negative of the function value.
+example {f : ℝ → ℝ} {f' : ℝ} (hf : HasDerivAt f f' 0) :
+    Tendsto (fun l : ℝ => (l⁻¹ * f 0 - f 0) / (l - 1)) (nhdsWithin 1 {1}ᶜ)
+      (nhds (-f 0)) := by
+  simpa using tendsto_dilation_quotient hf
+
+-- The dilation derivative of the square function is the square function itself.
+example (x : ℝ) :
+    Tendsto (fun l : ℝ => (l⁻¹ * (l * x) ^ 2 - x ^ 2) / (l - 1)) (nhdsWithin 1 {1}ᶜ)
+      (nhds (x ^ 2)) := by
+  convert tendsto_dilation_quotient (hasDerivAt_pow 2 x) using 2
+  push_cast
+  ring

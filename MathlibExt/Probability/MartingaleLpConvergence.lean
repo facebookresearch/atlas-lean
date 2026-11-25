@@ -132,7 +132,8 @@ private lemma uniformIntegrable_one_of_eLpNorm_bdd {p : ℝ≥0∞} (hp : 1 < p)
     {R : ℝ≥0} (hbdd : ∀ n, eLpNorm (f n) p μ ≤ R) :
     UniformIntegrable f 1 μ := by
   have hp1 : (1 : ℝ≥0∞) ≤ p := hp.le
-  refine ⟨?_, R, fun n => (eLpNorm_le_eLpNorm_of_exponent_le hp1).trans (hbdd n)⟩
+  refine ⟨?_, (iSup_le fun n => (eLpNorm_le_eLpNorm_of_exponent_le hp1).trans
+    (hbdd n)).trans_lt ENNReal.coe_lt_top⟩
   refine unifIntegrable_of_eLpNorm_restrict_le (p := 1) (C := R)
     (r := 1 - 1 / p.toReal) ?_ ?_
   · have h1p : (1 : ℝ) < p.toReal := by
@@ -366,9 +367,10 @@ theorem Martingale.tendsto_eLpNorm_limitProcess_of_eLpNorm_bdd {p : ℝ≥0∞} 
     (eLpNorm_le_eLpNorm_of_exponent_le hp1).trans (hbdd n)
   have hUI1 : UniformIntegrable f 1 μ :=
     uniformIntegrable_one_of_eLpNorm_bdd hp hp_top hf_ae hbdd
-  have hae := hmart.submartingale.ae_tendsto_limitProcess hR1
+  have hae := hmart.submartingale.ae_tendsto_limitProcess
+    ((iSup_le hR1).trans_lt ENNReal.coe_lt_top)
   have hX_memLp : MemLp (ℱ.limitProcess f μ) p μ :=
-    hmart.submartingale.memLp_limitProcess hbdd
+    hmart.submartingale.memLp_limitProcess ((iSup_le hbdd).trans_lt ENNReal.coe_lt_top)
   have hX_meas : StronglyMeasurable[⨆ n, ℱ n] (ℱ.limitProcess f μ) :=
     Filtration.stronglyMeasurable_limitProcess
   have hrepr : ∀ n, f n =ᵐ[μ] μ[ℱ.limitProcess f μ | ℱ n] := fun n =>

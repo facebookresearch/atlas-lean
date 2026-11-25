@@ -45,45 +45,50 @@ variable {R : Type r} {S : Type s} {K : Type v} [CommRing R]
   [CommRing S] [Field K] [DecidableEq K] {W' : Affine R}
   [Algebra R S] [Algebra R K] [Algebra S K] [IsScalarTower R S K]
 
-/-- The Galois action and scalar multiplication on torsion
-commute. -/
-instance instSMulCommClassAlgEquivZModTorsionBy (n : ℕ) :
-    SMulCommClass (K ≃ₐ[S] K) (ZMod n)
-      (Submodule.torsionBy ℤ (W'⁄K).Point n) where
-  smul_comm σ c x :=
-    ZMod.map_smul
-      (DistribSMul.toAddMonoidHom
-        (Submodule.torsionBy ℤ (W'⁄K).Point n) σ) c x
-
-variable (S) in
-/-- The Galois representation on `n`-torsion, as module
-endomorphisms. -/
-noncomputable def galoisRepModuleEnd (W' : Affine R) (n : ℕ) :
-    (K ≃ₐ[S] K) →*
-      Module.End (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n) :=
-  DistribMulAction.toModuleEnd (ZMod n)
-    (Submodule.torsionBy ℤ (W'⁄K).Point n)
-
-/-- The endomorphism attached to `σ` acts as `σ` does on points. -/
-@[simp] theorem galoisRepModuleEnd_apply (W' : Affine R) (n : ℕ)
-    (σ : K ≃ₐ[S] K)
-    (x : Submodule.torsionBy ℤ (W'⁄K).Point n) :
-    galoisRepModuleEnd S W' n σ x = σ • x :=
-  rfl
-
 variable (S) in
 /-- The trace of a Galois element in the representation on
-`n`-torsion. -/
-noncomputable def galoisTrace (W' : Affine R) (n : ℕ) (σ : K ≃ₐ[S] K) :
-    ZMod n :=
-  LinearMap.trace (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n)
-    (galoisRepModuleEnd S W' n σ)
+`n`-torsion, computed in a basis `b` exhibiting the `n`-torsion as a
+free `ZMod n`-module of rank two.
 
-theorem galoisTrace_def (W' : Affine R) (n : ℕ) (σ : K ≃ₐ[S] K) :
-    galoisTrace S W' n σ =
+The basis is the hypothesis that makes this a trace of a
+two-dimensional representation, as for the `n`-torsion over a
+separably closed field in which `n` is invertible. Unlike the source,
+which applies `LinearMap.trace` to an arbitrary torsion module, this
+definition is not available when the `n`-torsion has no such basis:
+there `LinearMap.trace` would return its fallback value `0`. The
+value does not depend on the basis (`galoisTrace_eq_trace`). -/
+noncomputable def galoisTrace (W' : Affine R) (n : ℕ)
+    (b : Module.Basis (Fin 2) (ZMod n)
+      (Submodule.torsionBy ℤ (W'⁄K).Point n))
+    (σ : K ≃ₐ[S] K) : ZMod n :=
+  Matrix.trace (LinearMap.toMatrix b b (galoisRepModuleEnd S W' n σ))
+
+theorem galoisTrace_def (W' : Affine R) (n : ℕ)
+    (b : Module.Basis (Fin 2) (ZMod n)
+      (Submodule.torsionBy ℤ (W'⁄K).Point n))
+    (σ : K ≃ₐ[S] K) :
+    galoisTrace S W' n b σ =
+      Matrix.trace (LinearMap.toMatrix b b (galoisRepModuleEnd S W' n σ)) :=
+  rfl
+
+/-- The trace computed in a basis is the basis-free trace of the
+endomorphism. -/
+theorem galoisTrace_eq_trace (W' : Affine R) (n : ℕ)
+    (b : Module.Basis (Fin 2) (ZMod n)
+      (Submodule.torsionBy ℤ (W'⁄K).Point n))
+    (σ : K ≃ₐ[S] K) :
+    galoisTrace S W' n b σ =
       LinearMap.trace (ZMod n) (Submodule.torsionBy ℤ (W'⁄K).Point n)
         (galoisRepModuleEnd S W' n σ) :=
-  rfl
+  (LinearMap.trace_eq_matrix_trace (ZMod n) b _).symm
+
+/-- The trace does not depend on the chosen basis. -/
+theorem galoisTrace_congr_basis (W' : Affine R) (n : ℕ)
+    (b b' : Module.Basis (Fin 2) (ZMod n)
+      (Submodule.torsionBy ℤ (W'⁄K).Point n))
+    (σ : K ≃ₐ[S] K) :
+    galoisTrace S W' n b σ = galoisTrace S W' n b' σ := by
+  rw [galoisTrace_eq_trace, galoisTrace_eq_trace]
 
 end WeierstrassCurve.Affine.Point
 

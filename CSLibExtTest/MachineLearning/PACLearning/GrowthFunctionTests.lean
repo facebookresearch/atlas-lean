@@ -40,7 +40,7 @@ noncomputable def intervalClass : ConceptClass ℝ Bool :=
     (Classical.propDecidable (a ≤ x ∧ x ≤ b))}
 
 /-- The two constant concepts. -/
-def twoConstClass (α : Type*) : ConceptClass α Bool :=
+noncomputable def twoConstClass (α : Type*) : ConceptClass α Bool :=
   ↑({fun _ : α => false, fun _ : α => true} : Finset (α → Bool))
 
 /-- Every singleton is shattered by thresholds. -/

@@ -12,6 +12,7 @@ public import Mathlib.Data.Int.Interval
 public import Mathlib.Data.Nat.Squarefree
 public import Mathlib.Data.Rat.Floor
 import Mathlib.Algebra.Field.ZMod
+import Mathlib.Algebra.Order.Archimedean.Basic
 import Mathlib.Tactic.IntervalCases
 
 /-!
@@ -19,7 +20,8 @@ import Mathlib.Tactic.IntervalCases
 
 For a squarefree modulus, the largest prime factor bounds the length of a progression
 with fixed positive difference in any reduced residue window. For twice an odd prime `p`,
-the absolute least reduced residues form a progression of length `p - 1`.
+the absolute least reduced residues form a progression of length `p - 1`. For a prime `p` congruent
+to three modulo four, the least value of the longest progression length is `(p + 1) / 2`.
 -/
 
 namespace MetaMathlibExt
@@ -243,6 +245,82 @@ public theorem absLeastAPLength_two_mul_prime {p : ℕ} (hp : p.Prime) (hp2 : p 
       omega
     · change a.natAbs.Coprime (2 * p)
       exact ha.natAbs.coprime_two_right.mul_right hcop.symm
+
+namespace isLeast_longestAPLength_prime_of_mod_four_eq_three
+
+-- All points of the window except its unique multiple of p are reduced residues.
+private theorem window_except_multiple (m : ℤ) {p : ℕ} (hp : p.Prime) :
+    ∃ z : ℤ, ∀ x : ℤ, m < x → x ≤ m + p → x ≠ z → x ∈ reducedResidueWindow m p := by
+  have h : ∃! j : ℤ, (p : ℤ) * j ∈ Set.Ioc m (m + p) := by
+    simpa only [zsmul_eq_mul, Int.cast_id, zero_add, mul_comm] using
+      existsUnique_add_zsmul_mem_Ioc (show (0 : ℤ) < p by exact_mod_cast hp.pos) 0 m
+  obtain ⟨j, _, hj⟩ := h
+  refine ⟨p * j, fun x hx hx' hne => ?_⟩
+  refine Finset.mem_filter.mpr ⟨Finset.mem_Icc.mpr ⟨by omega, hx'⟩, ?_⟩
+  change x.natAbs.Coprime p
+  apply (hp.coprime_iff_not_dvd.mpr ?_).symm
+  intro hdiv
+  obtain ⟨k, rfl⟩ := Int.natCast_dvd.mpr hdiv
+  exact hne (congrArg ((p : ℤ) * ·) (hj k ⟨hx, hx'⟩))
+
+private theorem lower_bound (m : ℤ) {p k : ℕ} (hp : p.Prime) (hpk : p = 4 * k + 3) :
+    2 * k + 2 ≤ longestAPLength m p := by
+  obtain ⟨z, hmem⟩ := window_except_multiple m hp
+  unfold longestAPLength
+  refine le_csSup ⟨p, fun _ ⟨_, _, hd, h⟩ => apLength_le hd h⟩ ?_
+  -- Use a consecutive block on the longer side, or the odd positions in the centered case.
+  rcases lt_trichotomy z (m + 2 * k + 2) with h | h | h
+  · refine ⟨m + 2 * k + 2, 1, one_pos, fun i hi => ?_⟩
+    apply hmem <;> push_cast <;> omega
+  · refine ⟨m + 1, 2, by decide, fun i hi => ?_⟩
+    apply hmem <;> push_cast <;> omega
+  · refine ⟨m + 1, 1, one_pos, fun i hi => ?_⟩
+    apply hmem <;> push_cast <;> omega
+
+private theorem centered_upper_bound {p k : ℕ} (hp : p.Prime) (hpk : p = 4 * k + 3) :
+    longestAPLength (-(2 * (k : ℤ) + 2)) p ≤ 2 * k + 2 := by
+  apply csSup_le'
+  rintro s ⟨b, d, hd, h⟩
+  by_contra! hs
+  have hfirst := (Finset.mem_Icc.mp (Finset.mem_filter.mp (h 0 (by omega))).1).1
+  have hlast := (Finset.mem_Icc.mp (Finset.mem_filter.mp (h (2 * k + 2) hs)).1).2
+  push_cast at hfirst hlast
+  -- A step of two or more would already put this term outside the window.
+  have hd1 : d = 1 := by
+    by_contra hne
+    have hmul := mul_le_mul_of_nonneg_left (show (2 : ℤ) ≤ d by omega)
+      (show (0 : ℤ) ≤ 2 * k + 2 by positivity)
+    omega
+  subst d
+  -- With step one the progression must pass through zero.
+  have hb : b ≤ 0 := by omega
+  have hi : (-b).toNat < s := by omega
+  have hzero := (Finset.mem_filter.mp (h (-b).toNat hi)).2
+  apply hp.ne_one
+  simpa [Int.toNat_of_nonneg (neg_nonneg.mpr hb)] using hzero
+
+end isLeast_longestAPLength_prime_of_mod_four_eq_three
+
+open isLeast_longestAPLength_prime_of_mod_four_eq_three in
+/-- **Minimum longest progression length modulo a prime $p \equiv 3 \pmod 4$.** Let $p$ be a prime
+with $p \equiv 3 \pmod 4$. For an integer $m$ let $f_m(p)$ be the length of the longest arithmetic
+progression with positive common difference contained in the set $R_m(p)$ of integers $a$ with
+$m + 1 \le a \le m + p$ and $\gcd(a, p) = 1$. Then the least value of $f_m(p)$ over all integers
+$m$ is $(p + 1) / 2$.
+
+Source: Chaninat Phothila, Natthakan Thoket and Narakorn Rompurk Kanasri, *Length of the Longest
+Arithmetic Progressions in a Certain Reduced Residue System*, INTEGERS 26 (2026), Article A6,
+Theorem 3 (`integers-2026-A6-thm-3`). -/
+public theorem isLeast_longestAPLength_prime_of_mod_four_eq_three {p : ℕ} (hp : p.Prime)
+    (h4 : p % 4 = 3) :
+    IsLeast (Set.range fun m : ℤ => longestAPLength m p) ((p + 1) / 2) := by
+  let k := p / 4
+  have hpk : p = 4 * k + 3 := by dsimp [k]; omega
+  rw [show (p + 1) / 2 = 2 * k + 2 by omega]
+  constructor
+  · exact ⟨_, le_antisymm (centered_upper_bound hp hpk) (lower_bound _ hp hpk)⟩
+  · rintro _ ⟨m, rfl⟩
+    exact lower_bound m hp hpk
 
 end
 

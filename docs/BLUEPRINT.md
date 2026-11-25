@@ -44,7 +44,7 @@ These rules apply to any PR that changes the graph: `blueprint/roadmap/`,
 `scripts/taxonomy.json`, `scripts/wiki-sync.json`, `scripts/card-moves.jsonl` or
 `scripts/mathgraph-map.jsonl`. They add only what ATLAS
 needs to AutoformBot's
-[blueprint format](https://github.com/facebookresearch/autoform-bot/blob/6126f7fce521c0040796d0b67d952d36ee051f3f/autoform_cli/reference/blueprint-format.md),
+[blueprint format](https://github.com/facebookresearch/autoform-bot/blob/b1fe52ba726bb675d9c974203fce427fe4927ff9/autoform_cli/reference/blueprint-format.md),
 at the commit in `.github/autoform-ref`; where ATLAS needs something the
 format lacks, open an AutoformBot issue rather than diverge.
 
@@ -73,16 +73,47 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   against that source as a linked page is reviewed against its declaration.
 - **Leave no gaps.** A planned page writes its own `## Depends on` and
   `## Proof depends on`: nothing else records its prerequisites, and they
-  count toward its readiness. A planned page is never a task. It links a
+  count toward its readiness. It links a
   declaration only once that declaration states what the page does and its
   Lean records the page's prerequisites (see
   [Expanding a node](#expanding-a-node)). Until then it stays unlinked, even
   if a declaration for it already exists; once linked it drops its own
   dependency sections.
+- **Count what is not yet in Lean.** A planned page that states a result is a
+  statement not yet in Lean, and Autoform counts it as one once it has a
+  `kind`, which `lean-facts` gives it at build time: a held page takes that of
+  the declaration it holds back, as a linked page would get it (a
+  `theorem_wanted` is a theorem), except that a page stating a result held back
+  as a definition (a `def` of a proposition, say) records `theorem` or `lemma`,
+  which it takes instead; any other page that builds with no Lean link takes
+  the kind its annotation records, as
+  `"extensions": {"org.atlas-wiki": {"kind": "theorem"}}` (or `lemma`, `def`,
+  `abbrev`, `instance`, `structure`, `class`, `inductive` or `opaque`). A held
+  definition may so become a theorem, never a held theorem a definition:
+  `lean-facts` refuses any other kind a held page records, and any value that
+  is not a kind, such as a misspelt one. A page
+  whose row still names a declaration of this project in a Lean link, as a
+  reference, gets none, as Autoform would take that declaration for the
+  page's own. Its readiness is Autoform's, from the prerequisites it lists:
+  ready to state, planned, or not ready when marked `not_ready`; its topic does
+  not read fully proved while it remains, and once ready it is a task. So such
+  a page lists under `## Depends on` every page its statement uses, planned
+  ones included. A page whose main statement defines an object, and which
+  also proves results about it, records a definition kind and counts once; it
+  links a declaration only once that declaration states the whole page (Leave
+  no gaps), and its results count each only on pages of their own. A page
+  whose main statement is a result records `theorem` or `lemma`, even if it
+  first defines notation. An exposition records no kind, as
+  Autoform's format gives it no declaration, and nothing counts it. A page
+  whose result the Lean states under a declaration it does not link is
+  relinked to it rather than given a kind.
 - **One page per result.** Search the vault and pinned Mathlib before adding a
   page, and link an existing one instead of restating it. Pages for documented
   declarations come from `sync_wiki.py declarations`, then may be edited; a
-  hand-written second page splits the node in two.
+  hand-written second page splits the node in two. When Lean states the same
+  result more than once, the page credits one declaration and its row lists the
+  others under `duplicates`, which get no page and whose uses count as uses of
+  the page ([Maintaining articles](#maintaining-articles)).
 - **Prose is timeless.** Don't describe the library's state ("the Lean proof",
   "not formalized yet"): it goes stale as the Lean changes, and the site shows
   status already.
@@ -102,7 +133,8 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   status, so a folder still to expand does not look finished.
 - **An expansion replaces the node** with pages beside it that together cover
   its mathematics at a sensible granularity, deletes the node's page and
-  annotation (its `id` is never reused), and repoints every link to it. A new
+  annotation (its `id` is never reused) and records its retirement in the move
+  ledger, and repoints every link to it. A new
   page that is still high-level is a new marked node. Follow
   [Expanding a node](#expanding-a-node), which says when a new page may
   become a wanted statement.
@@ -131,6 +163,25 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   topic is not a taxonomy change; it is recorded in `scripts/card-moves.jsonl`
   ([Cards](#cards)).
 
+### Library navigation
+
+The roadmap root also has `Domains`, `CSLibExt`, and `PhyslibExt` entry points.
+They link to the authored `## Library navigation` section at the end of
+`blueprint/coverage/README.md`, whose links lead to canonical roadmap articles.
+These are code-library navigation, not mathematical regions, extra result nodes,
+or library-filtered progress totals. Mathematical subjects can contain results
+from several code libraries; classify an implemented entry by its actual source
+module, not its declaration namespace or subject. Label planned destinations
+and related prerequisites separately from implemented entries.
+
+The coverage table remains generated. `generate_wiki.generate()` preserves only
+the authored library-navigation section when it generates coverage, including
+when `sync_wiki.refresh_catalog()` refreshes the catalog. Keep the section's
+three library headings at level three and any grouping below them. Use the exact
+`## Library navigation` heading. Regeneration rejects additional level-two
+sections and unparsed library-navigation headings before writing the catalog.
+Do not edit generated counts or add another `Library navigation` section.
+
 ### Cards
 
 - **A card is a folder whose folder page's annotation carries a card record**
@@ -147,7 +198,9 @@ and by its reviewers ([REVIEWING.md](../REVIEWING.md#wiki-and-graph-prs)).
   edge is derived from the statements, with witnesses, which keeps the card
   map honest about what uses what.
 - **A move that retires an address goes into `scripts/card-moves.jsonl`,**
-  and a page gets an `id` before it moves. `scripts/cards.py check` must pass.
+  and a page gets an `id` before it moves; so does the retirement of a card or
+  of a statement page, with what replaces it. `scripts/cards.py check` must
+  pass.
 - **A planned page may record its counterparts,** the Mathlib or ATLAS
   declarations that state its result or a close form, with how each compares
   ([cards.md](cards.md#counterparts)). Each is verified clause by clause against
@@ -205,8 +258,8 @@ pages for one declaration (`duplicate-lean-target`). `autoform work` lists the
 tasks once `lean-facts` has run. The wiki build writes that list, with the
 commit and the Autoform pin, to `tasks.json`: the site publishes it after each
 `main` build, at <https://facebookresearch.github.io/atlas-lean/tasks.json>, and
-every run keeps it as the `tasks` artifact. CONTRIBUTING.md says how to
-[pick a task](../CONTRIBUTING.md#picking-a-task).
+every build of the wiki keeps it as the `tasks` artifact. CONTRIBUTING.md says
+how to [pick a task](../CONTRIBUTING.md#picking-a-task).
 
 ### Procedures
 
@@ -223,10 +276,14 @@ record it in `scripts/card-moves.jsonl` instead ([Cards](#cards)).
 
 1. Add the new pages beside the node and list them on the folder page. Move
    the node's prose and sources to the folder page or the new pages.
-2. Delete the node's page and annotation. Repoint every link to it, under
-   `## Depends on`, `## Proof depends on` or `## Informally uses`, to the new
-   pages that link actually needs. `autoform check` fails on a link left under
-   the first two but only warns under `## Informally uses`.
+2. Delete the node's page and annotation, and append the retirement row to
+   `scripts/card-moves.jsonl`, `{"statement": "<its id>", "page": "<its
+   path>", "replaced_by": "<the id of the new page or folder page a reader
+   should go to>"}` ([cards.md](cards.md#move-ledger)), so that its address
+   keeps leading somewhere and its id is never reused. Repoint every link to
+   it, under `## Depends on`, `## Proof depends on` or `## Informally uses`, to
+   the new pages that link actually needs. `autoform check` fails on a link
+   left under the first two but only warns under `## Informally uses`.
 3. Give each new page the node's prerequisites it still needs; order among new
    planned pages goes in their own `## Depends on`.
 4. Make a low-level page a `theorem_wanted` or `def_wanted` statement, with a
@@ -293,6 +350,7 @@ python scripts/extract_v2_lean_dependencies.py \
 python scripts/sync_wiki.py lean-facts build/lean-dependencies.json \
   --registry build/mathlib-registry.json
 autoform check blueprint --lean-root .
+python scripts/cards.py moves build/card-moves.json
 python scripts/cards.py rollup build/cards.json \
   --dependencies build/lean-dependencies.json \
   --registry build/mathlib-registry.json
@@ -479,15 +537,49 @@ design>", "issue": <number>}`, where `issue` is the issue, or a list of
 issues, that tracks the Lean fix; a declaration private by design has none, and
 its marker goes once the declaration is public. When a declaration has several
 problems, `reason` names the one in its statement. `declarations` gives a held
-declaration no page and lists it as held. A marker that names no declaration,
-sits on a linked row, names a declaration the Lean index does not resolve, or
-holds back a declaration that another row links or holds is reported as an
-error, and the run then writes nothing. The build's own steps (the extraction,
+declaration no page and lists it as held; `lean-facts` gives the held page the
+declaration's kind, or the theorem kind a page stating a result held back as a
+definition records, so it counts as a statement not yet in Lean
+([Writing pages](#writing-pages)), private by design or not, unless
+its marker is one `declarations` reports below, such as one naming a declaration
+the Lean index does not resolve or that an earlier row holds back, whatever kind
+the row records. In `declarations`, a marker that names no declaration, sits on a
+linked row, names a declaration the Lean index does not resolve, or holds back
+a declaration that another row links or holds is reported as an error, and the
+run then writes nothing. The build's own steps (the extraction,
 `lean-facts` and the cards) likewise refuse, before writing, a held row that
 credits a declaration, of this project or of Mathlib, and a held declaration
 that another row credits. Relink the page once every listed issue
 is fixed and the declaration states what the page does: restore its `object`
 and remove `held`.
+
+When Lean states a page's result in several declarations, the page credits one
+of them, and its row lists the others under `org.atlas-wiki`, as `"duplicates":
+["<Lean name>", ...]`. A duplicate is no credit: the row still credits one
+declaration. `declarations` gives a duplicate no page and lists it as a
+duplicate. The extraction counts another page's use of a duplicate as a use of
+the page's declaration, so that page depends on the page. To the declaration
+itself, its duplicate is part of it. The page depends on what the duplicate
+uses, as for an undocumented declaration, and never on itself. Where the
+declaration names the duplicate itself, it also names what the duplicate names,
+a Mathlib-credited declaration included. The row's own `object` credits a
+declaration of this project, and the end that credits it names it itself: one
+the links folder's defaults fill in counts for none, and so does one only a
+reference names. An unlinked, planned, held or Mathlib-credited row lists none.
+Each name is given once, and holds no control character, as no Lean name does.
+It is not the row's own declaration, and no other row links it, holds it back or
+lists it. `declarations` reports any
+other list as an error and then writes nothing; a pull request's run stops only
+on a list its changes break, as for a held marker. The extraction also writes
+nothing when a page stands for a duplicate, when two private declarations share
+the name of a duplicate or of the page's declaration, or when its dump lacks
+either of them while the Lean sources still declare it, whatever became of the
+other. A Lean change that deletes or renames a duplicate, or the page's
+declaration, fails no build: the extraction warns, naming both, and a use of the
+duplicate then counts for no page. `declarations` and `lean-facts` list such a
+stale entry for an editor. A pull request's run stops on one its changes add or
+change, such as a duplicate listed on a row whose declaration the Lean no longer
+has. Drop the entry, or relink the page, keeping the row's article id.
 
 `scripts/wiki-sync.json` is the
 reviewed docstring-digest baseline. Removed declarations' articles are kept
@@ -536,7 +628,8 @@ Mathlib link on a row without it is a reference, which leaves the page's own
 declaration its credit. The build reads every row as Autoform does, over the
 links folder's defaults: a link with no `uri` is a Lean link to this project,
 and a link with a `uri` but no `type` is no Lean link at all. The defaults never
-set `kind` or `status`, which the build derives for each page from the Lean. A
+set `kind` or `status`, which the build derives for each page from the Lean (or,
+for a page with no Lean link, as [Writing pages](#writing-pages) says). A
 page's own declaration is its Lean link to this project with role `states`, or
 its only such link when none has a role, never the first by position. A link of
 another type (PDF, HTML, LaTeX, generic) is a reference, whatever its role; so
@@ -568,17 +661,21 @@ definition's body and an inductive type's constructors count as its
 statement): one it reaches only through other constants gives the page no edge
 to it. `extract_v2_lean_dependencies.py --registry` writes that registry beside
 an unchanged `build/lean-dependencies.json`, with the digest of the credited
-names, of the dump and of that extraction, and Mathlib's revision. `lean-facts`
-and the cards take the registry only beside the extraction it was written with;
-like that extraction, it holds only for the dump and the checkout it was made
-from, which they cannot check, so the wiki job makes all three in one run. Before
+names, of the rows' `duplicates` lists, of the dump and of that extraction,
+Mathlib's revision, and a format of its own. `lean-facts` and the cards take the
+registry only beside the extraction it was written with, and only for their
+checkout's credited names and `duplicates` lists: a `duplicates` edit can change
+the bridges and leave the extraction as it was. Like that extraction, it holds
+only for the dump and the checkout it was made from, which they cannot check
+otherwise, so the wiki job makes all three in one run. Before
 it writes either file, the extractor
 refuses a dump that is not in the current format, was made at another Mathlib,
 is not one whole stream (its header first, its footer last, rows between), has a
 row unlike those the dump writes, or does not answer exactly the listed names.
 `lean-facts --registry` checks that the registry is
-well formed, was made from the checkout's credited names at its Mathlib, that
-its found and missing names split them, that each of its edges joins a
+well formed, in the current format, and was made from the checkout's credited
+names and `duplicates` lists at its Mathlib, that
+its found and missing names split those names, that each of its edges joins a
 declaration a page credits to one it found and none is both kept and left out,
 and that a module a row names is the declaration's, before it writes anything;
 with or without the registry, it also stops when the extraction has no row for a
@@ -589,7 +686,8 @@ are dependencies among the wiki's pages: a page with none has no prerequisite
 among them. A credited name the build does not find in a Mathlib module, or
 that is a declaration of the project, unlinks the page with a warning, as a
 removed ATLAS declaration does: its Lean link, kind, status and `mathlib` flag
-go, so the page no longer shows as in Mathlib, and its other links stay. A row
+go, so the page no longer shows as in Mathlib, and its other links stay; it then
+takes only a kind its row records ([Writing pages](#writing-pages)). A row
 that names no module is looked for only in the modules the build imports. A
 Mathlib bump that moves a credited declaration to another module stops
 `lean-facts`, which names the new module, until the row names it: the bump
@@ -628,32 +726,68 @@ each folder page lists its children too. `hooks/trim_pages.py` publishes the
 renderer's notices for moved explorer URLs as bare redirects and collapses the
 theme's indentation, `hooks/title_only_search.py` keeps one title record per
 page in the search index, and `hooks/card_pages.py` shows each card on its
-folder page and keeps every address the card move ledger retired leading to its
-page ([cards.md](cards.md#reading)), with `theme/stylesheets/atlas-cards.css`.
+folder page, from card data of the commit being built, and keeps every address
+the card move ledger retired leading to its page, with the ledger check's
+receipt of that commit and with or without card data
+([cards.md](cards.md#reading)), with `theme/stylesheets/atlas-cards.css`.
 
 ## GitHub Actions and publication
 
 `Blueprint Pages` runs on `main` once a day at 03:17 UTC and on manual runs
-(**Actions → Blueprint Pages → Run workflow**), and on
-PRs that touch the wiki: `blueprint/`, the wiki scripts and
-their tests, `scripts/check_public_references.py`, which the importer imports,
-`scripts/taxonomy.json`, `scripts/wiki-sync.json`,
-`scripts/mathgraph-map.jsonl`, the site
-configuration (`mkdocs.yml`, `theme/`, `hooks/`), this document,
-`docs/mathgraph-import.md`, the workflow, the `Graph sync` workflow,
-`.github/autoform-ref`, or the toolchain pins (`lean-toolchain`,
-`lake-manifest.json`, `lakefile.toml`). A Lean-only PR skips it, because
+(**Actions → Blueprint Pages → Run workflow**), and builds the site on each. It
+starts on every PR too, but its first job, `decide whether to build`, lets the
+build run only when the PR's merge commit changes, compared with its first
+parent, what builds and checks the site: the scripts its jobs run and their
+tests, `scripts/check_public_references.py`, which the importer imports, the
+site configuration (`mkdocs.yml`, `theme/`, `hooks/`), the documents the build
+reads (`docs/mathgraph-import.md`, whose JSON schemas a test of the importer
+compares with the importer's, and `docs/mathlib-layer.md`, which the Mathlib
+layer job copies into its artifact), the workflows, which its tests read,
+`.github/autoform-ref`, the toolchain pins (`lean-toolchain`,
+`lake-manifest.json`, `lakefile.toml`, or a `lakefile.lean`, which Lake would
+prefer), or a Python toolchain file uv would read from the root
+(`.python-version`, `.python-versions`, `uv.toml`, `pyproject.toml`, or an
+environment in `.venv/`); a `.gitattributes` file anywhere counts too, since it
+can change how the checkout writes what the build reads, and so does a file
+committed where the build writes or fetches its outputs (`build/`, `site/`,
+`mathlib-graph/` and the like), and so does a `publication.json` or
+`manifest.json` anywhere, in any letter case, file or directory, which can make
+Autoform leave its directory out of the Lean source index. It also lets it run
+when the PR changes the wiki (`blueprint/`), whose pages, annotations and site
+inputs it builds and checks, or one of the two ledgers its checks compare with
+the PR's base commit, the import map `scripts/mathgraph-map.jsonl`
+([The map](mathgraph-import.md#the-map)) and the card move ledger
+`scripts/card-moves.jsonl` ([Move ledger](cards.md#move-ledger)). Only a PR's
+build checks the wiki's moves and card retirements since that base against the
+move ledger, and fails on a Mathlib source link that disagrees with its title:
+`main`'s runs have no base commit and report such a link without failing
+([mathlib-pages.md](mathlib-pages.md)). The job reads the PR's whole diff: a
+`paths` filter would be matched against its first 300 changed files only, so a
+PR with more changed files outside the list, Lean files say, could hide a listed
+file after them. On any other PR, the build's jobs are skipped and
+`test the site scripts` runs the build's unit tests alone, in a few minutes, so
+that PRs that change only Lean library files, `scripts/taxonomy.json` or
+`scripts/wiki-sync.json` do not wait about 50 minutes for the build, while the
+tests that read such files still run: some check the committed taxonomy as the
+wiki, the Mathlib layer's strict join and the Mathlib pages read it.
 `lean-facts` turns a renamed or deleted declaration into an unlinked page rather
-than a failure; `main` still builds the whole wiki once a day, and `Graph sync`
-checks every PR's declarations. Merge groups skip
-it too: it is not a required check, so a merge-group run could not stop a merge,
-and CI's required build already imports every v2 module together
-(`scripts/check_declaration_collisions.sh`). Do not make
-`build the wiki` a required status check: a workflow that `paths` skips never
-reports on that PR, so a required check would block every PR it skips. Making
-it requirable would need a first job that checks the changed paths and a
-job-level `if` on the wiki job. Its unique `build the wiki` check must succeed
-before deployment. Tests, Lean compilation, dependency extraction, rendering,
+than a failure, CI's `check the graph` checks the graph as committed,
+`Graph sync` checks every PR's declarations, and `main`'s daily build checks the
+whole wiki, its site and its cards as they stand, a failure there being fixed on
+`main`.
+With write access, build and check a branch before it merges with
+`gh workflow run blueprint-pages.yml --ref <branch>`, or pick the branch under
+**Run workflow**: the run builds the branch as a run of `main` does, without a
+base commit, but skips what only publication needs (packing the wiki job's
+site for GitHub Pages, keeping the full site, the Pages uploads and the
+deployments, below). Merge groups do not run the workflow at all: it is not a
+required check, so a merge-group run could not stop a merge, and CI's required
+build already imports every v2 module together
+(`scripts/check_declaration_collisions.sh`). Do not make `build the wiki` a
+required status check: merge groups never report it, so a required check would
+hold every merge group until the queue's timeout removed it. Its unique
+`build the wiki` check must succeed before deployment. Tests, Lean compilation,
+dependency extraction, rendering,
 and strict site checks run in one read-only job from one checkout. The job
 restores the builds CI saves from `main`, under CI's keys: the `lake-build-*`
 build of the commit a PR is tested against, else `main`'s newest, and the
@@ -669,10 +803,11 @@ the full site` publishes that job's full site, packed for GitHub Pages ([The
 GitHub Pages copy](#the-github-pages-copy)). Before either site is uploaded,
 `scripts/pages_size.sh` measures it as the upload packs it and refuses an
 archive over 950 MB, 5% below 10^9 bytes, since GitHub Pages publishes sites of
-up to 1 GB. The wiki job derives the card data its site shows itself, after
-`lean-facts` and before rendering, in a step that fails closed: a card error
-leaves the site exactly as it is without cards and fails `check the cards` only
-([cards.md](cards.md#reading)). The only write-capable jobs are the two Pages
+up to 1 GB. The wiki job checks the move ledger its site serves and derives the
+card data its site shows itself, after `lean-facts` and before rendering, in two
+steps that fail closed: a card error leaves the site without cards but with its
+moved addresses, and fails `check the cards` only; an invalid ledger leaves it
+without either ([cards.md](cards.md#reading)). The only write-capable jobs are the two Pages
 deployment jobs; they run no Lean or Python package code. Each first reads the
 commit of the site GitHub Pages serves, from its newest successful deployment,
 and publishes only if it is the run's commit or one of its ancestors;
@@ -701,7 +836,9 @@ Publication is disabled until a repository maintainer:
    for the reason above.
 
 Only successful `main` builds publish. PRs, merge groups, and manual runs on
-other branches never upload a Pages artifact or request deployment. Every
+other branches never upload a Pages artifact or request deployment: the first
+job compares the run's ref with `refs/heads/main` exactly, since an
+expression's `==` ignores case and would take a branch `Main` for `main`. Every
 successful build keeps the built site for a day as the `blueprint-site`
 artifact, which `build the Mathlib pages` reads; `main`'s can be downloaded or
 mirrored. Successful `main` builds also keep the site with its Mathlib pages

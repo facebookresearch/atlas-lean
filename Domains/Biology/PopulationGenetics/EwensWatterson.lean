@@ -200,7 +200,7 @@ theorem sum_cycleTypeWeight_eq_stirlingFirst (n k : ℕ) :
   have hpoly : (∑ j ∈ range (n + 1), C (W j) * X ^ j : ℝ[X]) =
       ∑ j ∈ range (n + 1), C (n.stirlingFirst j : ℝ) * X ^ j := by
     apply eq_of_infinite_eval_eq
-    refine Set.Infinite.mono (fun θ (hθ : 0 < θ) => ?_) (Set.Ioi_infinite 0)
+    refine Set.Infinite.mono (s := Set.Ioi 0) (fun θ (hθ : 0 < θ) => ?_) (Set.Ioi_infinite 0)
     simp only [Set.mem_ofPred_eq, eval_finsetSum, eval_mul, eval_C, eval_pow, eval_X]
     have h := sum_ewensProb_eq_sum θ n
     rw [sum_ewensProb θ hθ n, eq_div_iff (ascPochhammer_pos n θ hθ).ne', one_mul,

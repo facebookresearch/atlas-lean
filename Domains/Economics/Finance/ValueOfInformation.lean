@@ -84,8 +84,8 @@ private theorem diag_commit_inner {Ω : Type*} [Fintype Ω] [DecidableEq Ω]
   rw [h_eq]
   simp
 
-/-- With diagonal evidence weights, the gain from information is the real option value
-minus the best commitment. -/
+/-- With nonnegative state weights `p` and diagonal evidence weights, the gain from information is
+the real option value minus the best commitment. -/
 theorem evii_diagonal_eq_optionValue_sub {α Ω : Type*} [Fintype Ω] [DecidableEq Ω]
     {actions : Finset α} {hne : actions.Nonempty}
     (p : Ω → ℝ) (hp : ∀ ω, 0 ≤ p ω) (U : α → Ω → ℝ) :
@@ -120,7 +120,7 @@ theorem evii_diagonal_eq_optionValue_sub {α Ω : Type*} [Fintype Ω] [Decidable
   exact h_commit a
 
 /-- **Expected value of perfect information is nonnegative** (Raiffa and
-Schlaifer, Chapter 4, Section 5), as the diagonal special case. -/
+Schlaifer, Chapter 4, Section 5) for nonnegative state weights `p`, as the diagonal special case. -/
 theorem evpi_nonneg {α Ω : Type*} [Fintype Ω]
     {actions : Finset α} {hne : actions.Nonempty}
     {p : Ω → ℝ} (hp : ∀ ω, 0 ≤ p ω) {U : α → Ω → ℝ} :

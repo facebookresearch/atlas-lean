@@ -103,7 +103,8 @@ floor bridge by monotonicity of `rpow` in both base and exponent.
 /-- The subtype of nonzero ideals of bounded absolute norm is finite. -/
 noncomputable instance instFiniteIdealsBoundedAbsNorm (M : ℕ) :
     Finite {I : Ideal (𝓞 K) // I ≠ ⊥ ∧ Ideal.absNorm I ≤ M} :=
-  ((Ideal.finite_setOfPred_absNorm_le M).subset fun _ hI => hI.2).to_subtype
+  ((Ideal.finite_setOfPred_absNorm_le M).subset
+    (t := {I : Ideal (𝓞 K) | I ≠ ⊥ ∧ Ideal.absNorm I ≤ M}) fun _ hI => hI.2).to_subtype
 
 /-- Prime ideals of `𝓞 K` lying above rational primes `p ≤ M`, bundled by `p`. -/
 private abbrev primeFibers (M : ℕ) :=

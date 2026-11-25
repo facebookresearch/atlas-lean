@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Cslib.Computability.Machines.Turing.SingleTape.NonDeterministic
+public import Cslib.Foundations.Semantics.LTS.SetImage
 public import CSLibExt.Computability.Machines.Turing.SingleTape.Bridge
 public import MathlibExt.Computability.RE
 public import Mathlib.Basic.Finite.Sum

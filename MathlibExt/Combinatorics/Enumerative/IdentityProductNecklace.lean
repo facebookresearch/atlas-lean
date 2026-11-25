@@ -218,7 +218,7 @@ private lemma orbSet_congr (G : Type*) [Group G]
   exact orbSet_shift_eq G n g y
 
 /-- The quotient-to-orbit-set map. -/
-private def neckQuot (G : Type*) [Group G] (n : ℕ) [NeZero n] :
+private noncomputable def neckQuot (G : Type*) [Group G] (n : ℕ) [NeZero n] :
     Quotient (AddAction.orbitRel (ZMod n)
       {x : Fin n → G // (List.ofFn x).prod = 1}) → Set (Fin n → G) :=
   fun q => orbSet G n q.out.val
@@ -711,7 +711,7 @@ private lemma fiber_count (G : Type*) [Group G] [Fintype G] [DecidableEq G]
     have hce : Fintype.card {a : Fin d → G // (List.ofFn a).prod = g}
         = (Finset.univ.filter
           (fun a : Fin d → G => (List.ofFn a).prod = g)).card :=
-      Fintype.card_ofFinset _ (fun a => by
+      Fintype.card_ofFinset (p := {a : Fin d → G | (List.ofFn a).prod = g}) _ (fun a => by
         constructor
         · intro h
           exact (Finset.mem_filter.mp h).2
@@ -728,7 +728,7 @@ private lemma fiber_count (G : Type*) [Group G] [Fintype G] [DecidableEq G]
   have hLHS : Fintype.card {a : Fin d → G // ((List.ofFn a).prod) ^ e = 1}
       = (Finset.univ.filter
         (fun a : Fin d → G => ((List.ofFn a).prod) ^ e = 1)).card :=
-    Fintype.card_ofFinset _ (fun a => by
+    Fintype.card_ofFinset (p := {a : Fin d → G | (List.ofFn a).prod ^ e = 1}) _ (fun a => by
       constructor
       · intro h
         exact (Finset.mem_filter.mp h).2

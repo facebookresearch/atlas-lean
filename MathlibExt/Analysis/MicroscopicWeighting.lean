@@ -43,7 +43,9 @@ noncomputable def distanceMatrix (X : Type*) [Fintype X] [MetricSpace X] :
     Matrix X X ℝ :=
   Matrix.of fun i j => dist i j
 
-/-- The inverse similarity matrix applied to the all-ones vector. -/
+/-- For a finite metric space $X$ and a real scale $t$, let $S_t$ be the similarity matrix.
+The weighting is the vector $S_t^{-1}\mathbf{1}$, where $\mathbf{1}$ is the all-ones vector
+and the matrix inverse is taken to be zero when $S_t$ is singular. -/
 noncomputable def weighting (X : Type*) [Fintype X] [DecidableEq X] [MetricSpace X]
     (t : ℝ) : X → ℝ :=
   (similarityMatrix X t)⁻¹ *ᵥ 1
@@ -53,7 +55,9 @@ def HasMicroscopicWeighting (X : Type*) [Fintype X] [DecidableEq X]
     [MetricSpace X] : Prop :=
   ∃ w : X → ℝ, Filter.Tendsto (weighting X) (nhdsWithin 0 (Set.Ioi 0)) (nhds w)
 
-/-- A gauging has total mass one and constant potential under `M`. -/
+/-- For a finite set $X$ and a real $X \times X$ matrix $M$, a vector $g : X \to \mathbb R$
+is a gauging at potential $c \in \mathbb R$ if $\sum_{i\in X}g(i)=1$ and
+$(Mg)(i)=c$ for every $i\in X$. -/
 def IsGauging (X : Type*) [Fintype X] (M : Matrix X X ℝ) (g : X → ℝ)
     (c : ℝ) : Prop :=
   ∑ i, g i = 1 ∧ M *ᵥ g = Function.const X c
@@ -62,7 +66,10 @@ def IsGauging (X : Type*) [Fintype X] (M : Matrix X X ℝ) (g : X → ℝ)
 def HasFiniteConcentration (X : Type*) [Fintype X] (M : Matrix X X ℝ) : Prop :=
   ∃ g c, IsGauging X M g c
 
-/-- The proposed equivalence for all nonempty finite metric spaces. -/
+/-- This is the proposition that, for every nonempty finite metric space `X` with decidable
+equality, `HasMicroscopicWeighting X ↔ HasFiniteConcentration X (distanceMatrix X)`.
+It asks whether the weighting has a finite limit as the scale tends to zero from above
+exactly when the distance matrix admits a gauging at some real potential. -/
 def microscopicWeightingIff : Prop :=
   ∀ (X : Type*) [Fintype X] [DecidableEq X] [Nonempty X] [MetricSpace X],
     HasMicroscopicWeighting X ↔ HasFiniteConcentration X (distanceMatrix X)

@@ -52,9 +52,9 @@ theorem modiglianiMiller_II {E D rA rD rE : ℝ} (hE : E ≠ 0)
   field_simp
   linarith
 
-/-- Weighted-average cost of capital form: under the same accounting identity and a
-nonzero total firm value, the value-weighted average of the equity and debt returns
-is the asset return. -/
+/-- Weighted-average cost of capital form: under the accounting identity
+`(E + D) * rA = E * rE + D * rD` and a nonzero total firm value `E + D`, the value-weighted
+average of the equity and debt returns is the asset return. -/
 theorem wacc_eq_assetReturn {E D rA rD rE : ℝ} (hV : E + D ≠ 0)
     (haccount : (E + D) * rA = E * rE + D * rD) :
     (E / (E + D)) * rE + (D / (E + D)) * rD = rA := by

@@ -13,7 +13,7 @@ public import MathlibExt.RingTheory.DiscreteValuationRing.FiniteFreeEmbedding
 @[expose] public section
 
 -- Exact-source consumer, with the original binders.
-theorem exactSource
+private theorem exactSource
     {𝒪 : Type} [CommRing 𝒪] [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪]
     [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪] [Finite (IsLocalRing.ResidueField 𝒪)]
     [CharZero 𝒪]
@@ -29,7 +29,7 @@ theorem exactSource
   IsDiscreteValuationRing.exists_algHom_pi_of_module_finite_free T
 
 -- Higher-universe consumer: the same statement one universe up.
-theorem exactSourceUniverse
+private theorem exactSourceUniverse
     {𝒪 : Type 1} [CommRing 𝒪] [IsDomain 𝒪] [IsDiscreteValuationRing 𝒪]
     [IsAdicComplete (IsLocalRing.maximalIdeal 𝒪) 𝒪] [Finite (IsLocalRing.ResidueField 𝒪)]
     [CharZero 𝒪]

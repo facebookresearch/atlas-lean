@@ -38,7 +38,9 @@ and an exact oracle.
 ## Informally uses
 
 - [Canonical polar factor of a rectangular matrix](../../../../LinearAlgebra/matrix-decompositions/polar-decomposition/polar-decomposition-theorem/rectangular-polar-factor.md):
-  mathematical prerequisite, the update direction $P(M_t)$ and its invariance under positive scaling.
+  mathematical prerequisite, the update direction $P(M_t)$.
+- [Properties of the canonical polar factor](../../../../LinearAlgebra/matrix-decompositions/polar-decomposition/polar-decomposition-theorem/canonical-polar-factor-properties.md):
+  mathematical prerequisite, the invariance of $P(M_t)$ under positive scaling.
 - [Duality of the spectral and nuclear norms](../../../../LinearAlgebra/matrix-decompositions/singular-value-decomposition/duality-of-the-spectral-and-nuclear-norms/spectral-norm-dual-nuclear-norm.md):
   mathematical prerequisite, which identifies $-\rho P(M_t)$ as the minimizer of a linear function
   over the spectral-norm ball.

@@ -202,7 +202,7 @@ convention `x / 0 = 0` makes the half-width `0`, so the interval is the single p
 intended domain is `n ≥ 1`. Its exact coverage under i.i.d. normal sampling of `n ≥ 2`
 observations, with the sample mean, the sample standard deviation and the Student-t quantile, is
 `tInterval_coverage`. -/
-def tInterval (xbar s : ℝ) (n : ℕ) (tcrit : ℝ) : Set ℝ :=
+noncomputable def tInterval (xbar s : ℝ) (n : ℕ) (tcrit : ℝ) : Set ℝ :=
   Set.Icc (xbar - tHalfWidth s n tcrit) (xbar + tHalfWidth s n tcrit)
 
 /-- A value lies in the t-interval iff it is within one half-width of the mean (pure algebra). -/

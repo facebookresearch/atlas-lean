@@ -18,7 +18,7 @@ module
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Computability.Complexity
 public import MathlibExt.Computability.BinaryNatEncoding
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Computability.Complexity.Classes
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 
@@ -49,11 +49,11 @@ is rejected. -/
 noncomputable def majSatDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := List Bool × Cslib.Logic.PL.CNF) x with
+      (α := List Bool × Cslib.Logic.LegacyPL.CNF) x with
   | some i => decide (
       (∀ clause ∈ i.2, ∀ l ∈ clause, l.1 < i.1.length) ∧
       2 * Set.ncard {a : Fin i.1.length → Bool |
-        Cslib.Logic.PL.CNF.Satisfies
+        Cslib.Logic.LegacyPL.CNF.Satisfies
           (fun v => if h : v < i.1.length then a ⟨v, h⟩ else false) i.2} > 2 ^ i.1.length)
   | none => false
 

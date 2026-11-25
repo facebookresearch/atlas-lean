@@ -57,18 +57,21 @@ namespace EarthScience
 depth `h`, with discharge per unit width `q` and gravity `g`:
 depth plus velocity head, `h + q^2 / (2 * g * h^2)`. Physically
 meaningful for `0 < g` and `0 < h`; outside that range the formula
-uses Lean's totalized division. -/
+uses Lean's totalized division: with `x / 0 = 0` it is `h` when
+`g = 0` or `h = 0`. -/
 noncomputable def rectangularSpecificEnergy (q g h : ℝ) : ℝ :=
   h + q ^ 2 / (2 * g * h ^ 2)
 
 /-- Critical depth for discharge per unit width `q` and gravity `g`:
 `(q ^ 2 / g) ^ (1 / 3)`, the specific-energy minimizer of
 `EarthScience.specific_energy_unique_minimum`. Physical for `0 < q`,
-`0 < g`. -/
+`0 < g`. With `x / 0 = 0`, `0 ^ y = 0` for `y ≠ 0` and
+`x ^ y = |x| ^ y * cos (π y)` for `x < 0`, it is `0` when `q = 0` or
+`g = 0`, and `|q ^ 2 / g| ^ (1 / 3) / 2` when `g < 0` and `q ≠ 0`. -/
 noncomputable def rectangularCriticalDepth (q g : ℝ) : ℝ :=
   (q ^ 2 / g) ^ (1 / 3 : ℝ)
 
-/-- The critical depth cubes to `q ^ 2 / g`. -/
+/-- For positive gravity `g`, the critical depth cubes to `q ^ 2 / g`. -/
 lemma rectangularCriticalDepth_cube {q g : ℝ} (hg : 0 < g) :
     (rectangularCriticalDepth q g) ^ 3 = q ^ 2 / g := by
   unfold rectangularCriticalDepth

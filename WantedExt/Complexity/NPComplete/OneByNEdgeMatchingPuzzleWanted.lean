@@ -22,7 +22,7 @@ doi:10.1007/978-3-642-22953-4_10 (NP-hardness for a `1 × n` target, as cited by
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.EdgeMatchingPuzzleWanted

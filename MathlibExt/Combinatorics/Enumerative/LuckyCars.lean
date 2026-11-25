@@ -10,8 +10,14 @@ module
 
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Data.Finset.Max
+public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 public import MathlibExt.Combinatorics.Enumerative.ParkingFunction
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Data.List.OfFn
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Positivity
+import MathlibExt.Probability.BertrandBallot
 
 /-!
 # Lucky cars in parking functions
@@ -117,5 +123,145 @@ def BallotPath (k ℓ : ℕ) : Type :=
   { w : List Bool // w.length = k + ℓ ∧ w.count true = ℓ ∧
     ∀ m : ℕ, m ≤ w.length →
       (w.take m).count false ≤ (w.take m).count true }
+
+private theorem count_take_ofFn {n : ℕ} (f : Fin n → Bool) (m : ℕ) (b : Bool) :
+    ((List.ofFn f).take m).count b =
+      (Finset.univ.filter fun i => i.val < m ∧ f i = b).card := by
+  induction n generalizing m with
+  | zero => simp
+  | succ n ih =>
+    cases m with
+    | zero => simp
+    | succ m =>
+      rw [List.ofFn_succ, List.take_succ_cons, List.count_cons, ih]
+      simp only [Finset.card_filter, Fin.sum_univ_succ, Fin.val_zero, Fin.val_succ,
+        Nat.zero_lt_succ, true_and, Nat.succ_lt_succ_iff, beq_iff_eq]
+      exact Nat.add_comm _ _
+
+private def StrictBallotWord (n p : ℕ) : Type :=
+  { f : Fin n → Bool //
+    (Finset.univ.filter fun i => f i = true).card = p ∧
+    ∀ j : Fin n, (Finset.univ.filter fun i => i ≤ j ∧ f i = false).card <
+      (Finset.univ.filter fun i => i ≤ j ∧ f i = true).card }
+
+private theorem strictBallotWord_iff {n p : ℕ} (f : Fin n → Bool) :
+    ((Finset.univ.filter fun i => f i = true).card = p ∧
+      ∀ j : Fin n, (Finset.univ.filter fun i => i ≤ j ∧ f i = false).card <
+        (Finset.univ.filter fun i => i ≤ j ∧ f i = true).card) ↔
+    (List.ofFn f).count true = p ∧
+      ∀ m : ℕ, 0 < m → m ≤ n →
+        ((List.ofFn f).take m).count false < ((List.ofFn f).take m).count true := by
+  have htotal := count_take_ofFn f n true
+  rw [List.take_of_length_le (by simp)] at htotal
+  simp only [Fin.is_lt, true_and] at htotal
+  rw [htotal]
+  refine and_congr_right fun _ => ?_
+  have hprefix (j : Fin n) (b : Bool) :
+      ((List.ofFn f).take (j.val + 1)).count b =
+        (Finset.univ.filter fun i => i ≤ j ∧ f i = b).card := by
+    simpa only [Nat.lt_succ_iff, Fin.le_iff_val_le_val] using
+      count_take_ofFn f (j.val + 1) b
+  constructor
+  · intro hf m hm hmn
+    let j : Fin n := ⟨m - 1, by omega⟩
+    have hj : j.val + 1 = m := by dsimp [j]; omega
+    rw [← hj, hprefix, hprefix]
+    exact hf j
+  · intro hf j
+    rw [← hprefix, ← hprefix]
+    exact hf (j.val + 1) (by omega) (by omega)
+
+private theorem ofFn_get_cast {w : List Bool} {n : ℕ} (hw : w.length = n) :
+    List.ofFn (fun i : Fin n => w.get (Fin.cast hw.symm i)) = w := by
+  subst n
+  exact List.ofFn_get w
+
+-- Prepending an up step makes all nonempty prefixes strictly positive.
+private noncomputable def ballotPathEquiv (k ℓ : ℕ) :
+    BallotPath k ℓ ≃ StrictBallotWord (k + ℓ + 1) (ℓ + 1) := by
+  let prepend (w : BallotPath k ℓ) : Fin (k + ℓ + 1) → Bool :=
+    Fin.cons true (fun i => w.val.get (Fin.cast w.property.1.symm i))
+  have hprepend (w : BallotPath k ℓ) : List.ofFn (prepend w) = true :: w.val := by
+    change List.ofFn (Fin.cons true fun i => w.val.get (Fin.cast w.property.1.symm i)) = _
+    rw [List.ofFn_cons, ofFn_get_cast w.property.1]
+  let toStrict (w : BallotPath k ℓ) : StrictBallotWord (k + ℓ + 1) (ℓ + 1) := by
+    refine ⟨prepend w, (strictBallotWord_iff _).2 ?_⟩
+    obtain ⟨hw, hc, hp⟩ := w.property
+    rw [hprepend]
+    refine ⟨by simp [hc], ?_⟩
+    intro m hm hlen
+    obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.ne_of_gt hm)
+    simpa [List.take_succ_cons, Nat.lt_succ_iff] using hp m (by omega)
+  refine Equiv.ofBijective toStrict ⟨?_, ?_⟩
+  · intro a b hab
+    have he := congrArg (fun w : StrictBallotWord (k + ℓ + 1) (ℓ + 1) =>
+      List.ofFn w.val) hab
+    change List.ofFn (prepend a) = List.ofFn (prepend b) at he
+    rw [hprepend, hprepend] at he
+    exact Subtype.ext (List.cons.inj he).2
+  · rintro ⟨f, hf⟩
+    obtain ⟨hc, hp⟩ := (strictBallotWord_iff f).1 hf
+    have hhead : f 0 = true := by
+      have hfirst := hp 1 (by omega) (by omega)
+      rw [List.ofFn_succ, List.take_succ_cons] at hfirst
+      cases h : f 0 <;> simp_all
+    have hcons : List.ofFn f = true :: List.ofFn (Fin.tail f) := by
+      rw [List.ofFn_succ, hhead]
+      rfl
+    rw [hcons] at hc hp
+    let w : BallotPath k ℓ := ⟨List.ofFn (Fin.tail f), List.length_ofFn, by simpa using hc, by
+      intro m hm
+      simpa [List.take_succ_cons, Nat.lt_succ_iff] using
+        hp (m + 1) (by omega) (by simpa using hm)⟩
+    refine ⟨w, Subtype.ext (List.ofFn_injective ?_)⟩
+    change List.ofFn (prepend w) = List.ofFn f
+    rw [hprepend, hcons]
+
+private theorem card_ballotPath_zero (ℓ : ℕ) : Nat.card (BallotPath 0 ℓ) = 1 := by
+  have hrep (w : BallotPath 0 ℓ) : w.val = List.replicate ℓ true := by
+    obtain ⟨hw, hc, _⟩ := w.property
+    have hw' : w.val.length = ℓ := by simpa using hw
+    exact List.eq_replicate_iff.mpr ⟨hw', fun b hb =>
+      (List.count_eq_length.mp (hc.trans hw'.symm) b hb).symm⟩
+  let _ : Subsingleton (BallotPath 0 ℓ) :=
+    ⟨fun a b => Subtype.ext ((hrep a).trans (hrep b).symm)⟩
+  let _ : Nonempty (BallotPath 0 ℓ) :=
+    ⟨⟨List.replicate ℓ true, by simp [List.count_replicate]⟩⟩
+  exact Nat.card_unique
+
+/-- **Number of ballot paths.** For natural numbers $k \le \ell$, the number of lattice paths
+from $(0,0)$ to $(k, \ell)$ with unit up and right steps that stay on or above the line $y = x$
+is $\frac{\ell - k + 1}{\ell + 1} \binom{k + \ell}{k}$.
+
+Source: Steve Butler et al., "Lucky Cars and Lucky Spots in
+Parking Functions", Lemma 21. -/
+theorem card_ballotPath (k ℓ : ℕ) (h : k ≤ ℓ) :
+    (Nat.card (BallotPath k ℓ) : ℚ) =
+      ((ℓ - k + 1 : ℚ) / (ℓ + 1)) * Nat.choose (k + ℓ) k := by
+  by_cases hk : k = 0
+  · subst k
+    rw [card_ballotPath_zero]
+    simp [div_self (show (ℓ : ℚ) + 1 ≠ 0 by positivity)]
+  have hs : Nat.card (StrictBallotWord ((ℓ + 1) + k) (ℓ + 1)) * ((ℓ + 1) + k) =
+      (ℓ + 1 - k) * Nat.choose ((ℓ + 1) + k) k := by
+    unfold StrictBallotWord
+    rw [Nat.card_eq_fintype_card, Fintype.card_subtype]
+    exact MetaMathlibExt.bertrand_ballot (ℓ + 1) k (by omega) (by omega)
+  have hn : (ℓ + 1) + k = k + ℓ + 1 := by omega
+  rw [hn, ← Nat.card_congr (ballotPathEquiv k ℓ)] at hs
+  -- Removing the extra step changes the binomial factor and its denominator.
+  have hc := Nat.choose_mul_succ_eq (k + ℓ) k
+  rw [show k + ℓ + 1 - k = ℓ + 1 by omega] at hc
+  have he : Nat.card (BallotPath k ℓ) * (ℓ + 1) =
+      (ℓ + 1 - k) * Nat.choose (k + ℓ) k := by
+    apply Nat.eq_of_mul_eq_mul_right (show 0 < k + ℓ + 1 by omega)
+    calc
+      _ = (Nat.card (BallotPath k ℓ) * (k + ℓ + 1)) * (ℓ + 1) := by ac_rfl
+      _ = (ℓ + 1 - k) * (Nat.choose (k + ℓ + 1) k * (ℓ + 1)) := by rw [hs, mul_assoc]
+      _ = _ := by rw [← hc, mul_assoc]
+  have heq : (Nat.card (BallotPath k ℓ) : ℚ) * ((ℓ : ℚ) + 1) =
+      (↑(ℓ + 1 - k) : ℚ) * (Nat.choose (k + ℓ) k : ℚ) := by exact_mod_cast he
+  rw [div_mul_eq_mul_div, eq_div_iff (show (ℓ : ℚ) + 1 ≠ 0 by positivity)]
+  simpa [Nat.cast_sub (show k ≤ ℓ + 1 by omega), sub_add_eq_add_sub] using heq
 
 end MathlibExt.Combinatorics.Enumerative.LuckyCarsWanted

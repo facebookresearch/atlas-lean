@@ -17,7 +17,7 @@ open scoped TensorProduct
 
 universe u
 
-theorem exactSource
+private theorem exactSource
     (E : Sheaf Scheme.fppfTopology.{u} AddCommGrpCat.{u + 1})
     (R A : Type u) [CommRing R] [CommRing A] [Algebra R A]
     [Module.FaithfullyFlat R A] [Algebra.FinitePresentation R A]

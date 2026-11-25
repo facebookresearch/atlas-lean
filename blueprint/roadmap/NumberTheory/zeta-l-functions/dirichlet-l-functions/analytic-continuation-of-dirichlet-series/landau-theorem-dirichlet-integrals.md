@@ -10,8 +10,9 @@ $$F(s) = \int_1^\infty A(x) x^{-s} \, dx$$
 is holomorphic on the half-plane $\operatorname{Re} s > \sigma_c$, and it does not extend to a
 holomorphic function on any neighbourhood of $s = \sigma_c$.
 
-It extends Landau's theorem that a Dirichlet series with non-negative coefficients has a
-singularity at the real point of its abscissa of convergence, which concerns the summatory functions
+It extends
+[Landau's theorem that a Dirichlet series with non-negative coefficients](landau-theorem-dirichlet-series.md)
+has a singularity at the real point of its abscissa of convergence, which concerns the summatory functions
 $A(x) = \sum_{n \le x} a_n$ of non-negative sequences.
 
 ## Sources

@@ -81,7 +81,12 @@ jobs:
                   require(type(event["number"]) is int and event["number"] == pr["number"])
                   require(pr["base"]["repo"]["full_name"] == repository)
                   base, head = sha(pr["base"]["sha"]), sha(pr["head"]["sha"])
-                  require(ref("refs/heads/" + pr["base"]["ref"]) == os.environ["GITHUB_REF"])
+                  base_ref = ref("refs/heads/" + pr["base"]["ref"])
+                  # A run for a PR into a non-default branch can carry the
+                  # default branch's ref; either way the scanner below is the
+                  # default branch and the range comes from the PR's API record.
+                  default_ref = "refs/heads/" + event["repository"]["default_branch"]
+                  require(os.environ["GITHUB_REF"] in (base_ref, default_ref))
                   number = str(pr["number"])
               else:
                   raise ValueError("unsupported event")

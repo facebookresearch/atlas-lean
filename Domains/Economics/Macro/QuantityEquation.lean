@@ -38,10 +38,10 @@ Atlas roadmap target MA05.T01.
 
 namespace MathlibExt.Economics.Macro.QuantityEquation
 
-/-- Velocity of money, DEFINED consistently as `P * Y / M`: nominal output
-divided by the money supply (source clause: "velocity defined consistently").
-This is a definition, not a behavioural claim; it does not assert velocity is
-constant. -/
+/-- Velocity of money, DEFINED consistently as `P * Y / M`: nominal output divided by the money
+supply (source clause: "velocity defined consistently"). This is a definition, not a behavioural
+claim; it does not assert velocity is constant. With the convention `x / 0 = 0`, `V = 0` when
+`M = 0`. -/
 noncomputable def quantityVelocity (M P Y : ℝ) : ℝ :=
   P * Y / M
 

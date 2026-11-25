@@ -17,7 +17,9 @@ public import Mathlib.RingTheory.PowerSeries.Expand
 public import MathlibExt.Combinatorics.Enumerative.Partition.Overpartition
 public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorInverseConvolution
 public import MathlibExt.RingTheory.PowerSeries.PowerRecursion
+public import MathlibExt.RingTheory.PowerSeries.PowerRecursionZPow
 public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorProduct
+public import MathlibExt.RingTheory.PowerSeries.SeriesDivisorPowRecursion
 
 /-!
 # Glaisher's divisors and infinite products: wishlist
@@ -110,24 +112,6 @@ public theorem_wanted series_divisor_calculus {R : Type*} [CommRing R]
         (if m ∣ i then (m : R) * s (i / m) else 0) * coeff (n - i) (expand m hm A)) ∧
     (∀ m n : ℕ, (n : R) * coeff n (A ^ m) =
       ∑ i ∈ Finset.Icc 1 n, (m : R) * s i * coeff (n - i) (A ^ m))
-
-/-- **Coefficient recursion for powers of a power series.** Let $R$ be a commutative ring, let
-$A$ be a formal power series over $R$ with coefficients $a(k)$, and let $s : \mathbb{N} \to R$
-satisfy $k\,a(k) = \sum_{i=1}^{k} s(i)\,a(k-i)$ for every $k \ge 0$ (that is, $s$ is a
-series-divisor of $A$). For natural numbers $m$ and $k$, write $a_m(k)$ for the coefficient of
-$q^k$ in $A^m$. Then for all natural numbers $m$ and $n$,
-$n\,a_m(n) = m \sum_{j=1}^{n} s(j)\,a_m(n-j)$.
-
-Source: in Corollary 4 the printed summand `σ^A(i)` is read as `σ^A(j)` (the summation index).
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Corollary 4
-(`jis-2024-24.1.6-cor-4`). -/
-public theorem_wanted series_divisor_pow_recursion {R : Type*} [CommRing R]
-    (A : PowerSeries R) (s : ℕ → R)
-    (hA : ∀ n : ℕ, (n : R) * coeff n A = ∑ i ∈ Finset.Icc 1 n, s i * coeff (n - i) A)
-    (m n : ℕ) :
-    (n : R) * coeff n (A ^ m) = (m : R) * ∑ j ∈ Finset.Icc 1 n, s j * coeff (n - j) (A ^ m)
 
 /-- **Glaisher's divisor functions as series-divisors.** Let $n$ be a natural number. For a
 positive integer $m$, write $\sigma(m)$ for the sum of the divisors of $m$, $d_B(m)$ and
@@ -242,25 +226,6 @@ public theorem_wanted glaisher_theta_divisor_recursions (n : ℕ) (hn : 0 < n) :
     4 * ∑ j ∈ Finset.Icc 1 n, (dF j) * σ₁ (2 * n + 1 - 2 * j) = (n : ℤ) * σ₁ (2 * n + 1) ∧
     16 * ∑ j ∈ Finset.Ioo 0 n, (dD j) * σtilde₃ (n - j) = (dD n) - (n : ℤ) * σtilde₃ n ∧
     8 * ∑ j ∈ Finset.Icc 1 n, (dF j) * σbar₃ (n + 1 - j) = (n : ℤ) * σbar₃ (n + 1)
-
-/-- **Power recursion lemma for nonzero integer exponents.** Let $K$ be a field of characteristic
-zero, let $A$ be an invertible formal power series in $K[[X]]$, and let $u$ and $v$ be nonzero
-integers. Write $a_u(k)$ and $a_v(k)$ for the coefficients of $X^k$ in $A^u$ and $A^v$. Then for
-every natural number $n$,
-
-$$\sum_{k=0}^{n} \left(n - \left(\frac{u}{v} + 1\right) k\right) a_u(n-k)\, a_v(k) = 0.$$
-
-Invertibility of $A$ is assumed so that the negative powers $A^u$, $A^v$ make sense.
-
-Source: Hartosh Singh Bal and Gaurav Bhatnagar, *Glaisher's Divisors and Infinite
-Products*, Journal of Integer Sequences 27 (2024), Article 24.1.6, Lemma 17
-(`jis-2024-24.1.6-lem-17`). -/
-public theorem_wanted power_coeff_convolution_zpow {K : Type*} [Field K] [CharZero K]
-    (A : (PowerSeries K)ˣ) (u v : ℤ) (hu : u ≠ 0) (hv : v ≠ 0) (n : ℕ) :
-    ∑ k ∈ Finset.range (n + 1),
-      ((n : K) - ((u : K) / v + 1) * k) *
-        coeff (n - k) ((A ^ u : (PowerSeries K)ˣ) : PowerSeries K) *
-        coeff k ((A ^ v : (PowerSeries K)ˣ) : PowerSeries K) = 0
 
 /-- **Six divisor-function identities from the power recursion lemma.** Let $n \ge 1$ be a
 natural number. Write $\sigma(m)$ for the sum of the positive divisors of $m$,
