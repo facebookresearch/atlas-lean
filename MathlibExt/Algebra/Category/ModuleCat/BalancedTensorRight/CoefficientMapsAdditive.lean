@@ -76,7 +76,7 @@ theorem tensorCoefficientTransformation_add (f g : B →ₗ[R] B')
 
 /-- Original R-linear maps commuting with the actual outer action form an additive group. -/
 def coefficientMapGroup : AddSubgroup (B →ₗ[R] B') where
-  carrier f := ∀ (t : Sᵐᵒᵖ) (x : B), f (t • x) = t • f x
+  carrier := fun (f : B →ₗ[R] B') => ∀ (t : Sᵐᵒᵖ) (x : B), f (t • x) = t • f x
   zero_mem' := by
     intro t x
     simp only [LinearMap.zero_apply, smul_zero]
