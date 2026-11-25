@@ -56,7 +56,7 @@ private theorem fg_of_image_le {A A' : Subalgebra k F} (φ : F →+* F)
     (hB : ∀ b ∈ B, φ b ∈ M') :
     B.FG := by
   classical
-  haveI : IsNoetherian A' M' := isNoetherian_of_fg_of_noetherian M' hM'
+  have : IsNoetherian A' M' := isNoetherian_of_fg_of_noetherian M' hM'
   let P : Submodule A' F :=
     { carrier := φ '' (B : Set F)
       add_mem' := by
@@ -124,12 +124,12 @@ private theorem fg_toSubmodule_integralClosure_of_isSeparable
     (E : IntermediateField 𝓚 F) [FiniteDimensional 𝓚 E]
     [Algebra.IsSeparable 𝓚 E] :
     (Subalgebra.toSubmodule (integralClosure 𝓐 E)).FG := by
-  haveI : UniqueFactorizationMonoid 𝓐 := hx.uniqueFactorizationMonoid_adjoin
-  haveI : IsIntegrallyClosed 𝓐 := inferInstance
-  haveI : IsNoetherianRing 𝓐 := isNoetherianRing_adjoin x
-  letI : Algebra 𝓐 (integralClosure 𝓐 E) := Subalgebra.algebra (integralClosure 𝓐 E)
-  letI : SMul 𝓐 (integralClosure 𝓐 E) := Algebra.toSMul
-  haveI : IsScalarTower 𝓐 (integralClosure 𝓐 E) E :=
+  have : UniqueFactorizationMonoid 𝓐 := hx.uniqueFactorizationMonoid_adjoin
+  have : IsIntegrallyClosed 𝓐 := inferInstance
+  have : IsNoetherianRing 𝓐 := isNoetherianRing_adjoin x
+  let : Algebra 𝓐 (integralClosure 𝓐 E) := Subalgebra.algebra (integralClosure 𝓐 E)
+  let : SMul 𝓐 (integralClosure 𝓐 E) := Algebra.toSMul
+  have : IsScalarTower 𝓐 (integralClosure 𝓐 E) E :=
     IsScalarTower.subalgebra' 𝓐 E E (integralClosure 𝓐 E)
   exact Module.Finite.iff_fg.mp (IsIntegralClosure.finite 𝓐 𝓚 E (integralClosure 𝓐 E))
 
@@ -248,12 +248,12 @@ private theorem fg_toSubmodule_integralClosure [IsAlgClosed k]
     (Subalgebra.toSubmodule (integralClosure 𝓐 F)).FG := by
   obtain ⟨N, hNfg, hN⟩ := exists_fg_of_isSeparable x hx (separableClosure 𝓚 F)
   obtain ⟨p, e, hp, hpe⟩ := exists_pow_mem_separableClosure (k := k) x
-  haveI := hp
+  have := hp
   have hq0 : 0 < p ^ e := pow_pos (expChar_pos F p) e
   let φ : F →+* F := iterateFrobenius F p e
   have hφ : ∀ f : F, φ f = f ^ p ^ e := fun f => iterateFrobenius_def p e f
   obtain ⟨M', hM'fg, hNM'⟩ := exists_fg_adjoin_pow_of_fg x (p ^ e) hq0 N hNfg
-  haveI : IsNoetherianRing (Algebra.adjoin k ({x ^ p ^ e} : Set F)) :=
+  have : IsNoetherianRing (Algebra.adjoin k ({x ^ p ^ e} : Set F)) :=
     isNoetherianRing_adjoin (x ^ p ^ e)
   refine fg_of_image_le φ φ.injective ?_ M' hM'fg _ ?_
   · intro a' ha'
