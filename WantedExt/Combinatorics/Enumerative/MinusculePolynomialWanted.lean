@@ -88,14 +88,6 @@ public theorem_wanted minusculePolynomialA_gamma_positive (n : ℕ) :
     ∃ γ : ℕ → ℕ, minusculePolynomialA n =
       ∑ k ∈ Finset.range (n / 2 + 1), C (γ k : ℚ) * X ^ k * (1 + X) ^ (n - 2 * k)
 
-/-- **Bourn–Erickson formula for the minuscule polynomials at one.** For every integer $n \ge 1$,
-the type-A minuscule polynomial $N_n$ satisfies $N_n(1) = (n - 1)\, 2^{2n-3}$.
-
-Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
-Integer Sequences 28 (2025), Article 25.1.2, Corollary 11. -/
-public theorem_wanted minusculePolynomialA_eval_one (n : ℕ) (hn : 1 ≤ n) :
-    (minusculePolynomialA n).eval 1 = ((n : ℚ) - 1) * 2 ^ ((2 * n : ℤ) - 3)
-
 /-- **Bender's central limit theorem for polynomials with non-positive real zeros.** For each
 natural number $n$ let $r_{n,0}, \dots, r_{n,n-1}$ be non-negative real numbers, and let $a(n,k)$
 be the coefficient of $x^k$ in the real polynomial $A_n(x) = \prod_{i<n} (x + r_{n,i})$. Put

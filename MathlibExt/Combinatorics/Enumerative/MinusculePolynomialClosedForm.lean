@@ -108,4 +108,28 @@ public theorem minusculePolynomialA_comp_sq (n : ℕ) :
   simp only [map_mul, map_sub, map_add, map_one, map_ofNat, map_natCast] at h ⊢
   linear_combination X * (X ^ 2) ^ k * h
 
+/-- **Bourn–Erickson formula for the minuscule polynomials at one.** For every integer $n \ge 1$,
+the type-A minuscule polynomial $N_n$ satisfies $N_n(1) = (n - 1)\, 2^{2n-3}$.
+
+Source: Ding and Zeng, *Some New Results on the Minuscule Polynomials of Type A*, Journal of
+Integer Sequences 28 (2025), Article 25.1.2, Corollary 11. -/
+public theorem minusculePolynomialA_eval_one (n : ℕ) (hn : 1 ≤ n) :
+    (minusculePolynomialA n).eval 1 = ((n : ℚ) - 1) * 2 ^ ((2 * n : ℤ) - 3) := by
+  have h := congrArg (eval (1 : ℚ)) (minusculePolynomialA_comp_sq n)
+  simp only [eval_mul, eval_C, eval_X, eval_comp, eval_pow, eval_sub, eval_add, eval_one,
+    one_pow, mul_one, one_add_one_eq_two, sub_self, zero_pow (show 2 * n ≠ 0 by omega),
+    zero_pow (show 2 * n + 2 ≠ 0 by omega), add_zero, sub_zero] at h
+  rw [pow_add (2 : ℚ) (2 * n) 2] at h
+  have hpow : (2 : ℚ) ^ (2 * n : ℕ) = 2 ^ ((2 * n : ℤ) - 3) * 8 := by
+    calc
+      _ = (2 : ℚ) ^ (((2 * n : ℤ) - 3) + 3) := by
+        rw [sub_add_cancel, ← zpow_natCast]
+        push_cast
+        rfl
+      _ = _ := by
+        rw [zpow_add₀ (by norm_num : (2 : ℚ) ≠ 0)]
+        norm_num
+  rw [hpow] at h
+  linear_combination h / 16
+
 end MetaMathlibExt
