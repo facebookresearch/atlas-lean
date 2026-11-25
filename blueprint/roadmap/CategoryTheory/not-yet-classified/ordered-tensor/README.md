@@ -1,0 +1,15 @@
+# Ordered Tensor
+
+- [Obj](obj.md)
+- [Map](map.md)
+- [Obj zero](obj-zero.md)
+- [Obj succ](obj-succ.md)
+- [Map id](map-id.md)
+- [Map comp](map-comp.md)
+- [Functor](functor.md)
+- [Iso](iso.md)
+- [Obj congr](obj-congr.md)
+- [Congr Iso](congr-iso.md)
+- [Singleton Iso](singleton-iso.md)
+- [Singleton Iso hom](singleton-iso-hom.md)
+- [Singleton Iso naturality](singleton-iso-naturality.md)

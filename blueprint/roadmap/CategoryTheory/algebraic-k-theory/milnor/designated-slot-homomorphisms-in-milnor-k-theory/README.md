@@ -1,0 +1,16 @@
+# Designated-slot homomorphisms in Milnor K-theory
+
+- [Symbol Slot Degree](symbol-slot-degree.md)
+- [Symbol Slot Degree eq length](symbol-slot-degree-eq-length.md)
+- [Symbol Slot Degree Element](symbol-slot-degree-element.md)
+- [Symbol Slot Degree Element coe](symbol-slot-degree-element-coe.md)
+- [Symbol Slot Degree Element one](symbol-slot-degree-element-one.md)
+- [Symbol Slot Degree Element mul](symbol-slot-degree-element-mul.md)
+- [Symbol Slot Hom](symbol-slot-hom.md)
+- [Symbol Slot Hom apply](symbol-slot-hom-apply.md)
+- [Symbol Slot Hom mul](symbol-slot-hom-mul.md)
+- [Symbol Slot Hom one](symbol-slot-hom-one.md)
+- [Symbol Slot Hom inv](symbol-slot-hom-inv.md)
+- [Symbol Slot Hom div](symbol-slot-hom-div.md)
+- [Symbol Slot Hom pow](symbol-slot-hom-pow.md)
+- [Symbol Slot Hom zpow](symbol-slot-hom-zpow.md)

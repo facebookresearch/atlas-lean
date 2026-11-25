@@ -1,0 +1,15 @@
+# Degree maps for Milnor K-theory
+
+- [Tensor Map Graded Alg Hom](tensor-map-graded-alg-hom.md)
+- [Tensor Map Graded Alg Hom to Alg Hom](tensor-map-graded-alg-hom-to-alg-hom.md)
+- [Tensor Map Graded Alg Hom apply](tensor-map-graded-alg-hom-apply.md)
+- [Tensor Map Degree](tensor-map-degree.md)
+- [Tensor Map Degree coe](tensor-map-degree-coe.md)
+- [Tensor Map mem degree](tensor-map-mem-degree.md)
+- [Tensor Map degree le](tensor-map-degree-le.md)
+- [Map mem degree](map-mem-degree.md)
+- [Map Degree](map-degree.md)
+- [Map Degree apply](map-degree-apply.md)
+- [Map Degree id](map-degree-id.md)
+- [Map Degree comp](map-degree-comp.md)
+- [Map Degree comp apply](map-degree-comp-apply.md)

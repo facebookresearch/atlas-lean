@@ -11,3 +11,7 @@ Topics added since this subject's fields were last revised.
 - [Integral Root Coinvariants](integral-root-coinvariants/README.md)
 - [Perfect Normal Closure](perfect-normal-closure/README.md)
 - [Sum](sum/README.md)
+- [Central Extension](central-extension/README.md)
+- [Generators](generators/README.md)
+- [Normalized Cocycle Extension](normalized-cocycle-extension/README.md)
+- [Subgroup Closure Commutation](subgroup-closure-commutation/README.md)

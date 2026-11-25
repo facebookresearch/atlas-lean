@@ -67,5 +67,6 @@ Topics added since this subject's fields were last revised.
 - [Summation](summation/README.md)
 - [Termination](termination/README.md)
 - [Tree CSP](tree-csp/README.md)
+- [Union Prod](union-prod/README.md)
 - [Verma Pearl Forward](verma-pearl-forward/README.md)
 - [Vertical Cells Connectivity](vertical-cells-connectivity/README.md)

@@ -1,0 +1,18 @@
+# Stable matrix diagram for K₁ matrix invariance
+
+- [Equiv Fin Matrix](equiv-fin-matrix.md)
+- [Prod Equiv Fin](prod-equiv-fin.md)
+- [Fin Prod Matrix Equiv](fin-prod-matrix-equiv.md)
+- [Fin Succ Sum Equiv](fin-succ-sum-equiv.md)
+- [Fin Succ Prod Decomp](fin-succ-prod-decomp.md)
+- [One Mul Fin Congr](one-mul-fin-congr.md)
+- [Cast Succ Mul](cast-succ-mul.md)
+- [Fin Prod Matrix Equiv val](fin-prod-matrix-equiv-val.md)
+- [Fin Succ Prod Decomp symm apply inl](fin-succ-prod-decomp-symm-apply-inl.md)
+- [Fin Succ Prod Decomp symm apply inr](fin-succ-prod-decomp-symm-apply-inr.md)
+- [Matrix GLMul Equiv](matrix-glmul-equiv.md)
+- [Matrix GLIso](matrix-gliso.md)
+- [Matrix Block Stabilization](matrix-block-stabilization.md)
+- [Matrix Finite GLDiagram](matrix-finite-gldiagram.md)
+- [Scaled Base Finite GLDiagram](scaled-base-finite-gldiagram.md)
+- [Scaled Base Finite GLDiagram map succ](scaled-base-finite-gldiagram-map-succ.md)

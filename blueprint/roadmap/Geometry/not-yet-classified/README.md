@@ -6,3 +6,4 @@ Topics added since this subject's fields were last revised.
 - [Limiting Hodge Structures](limiting-hodge-structures/README.md)
 - [Rational Hodge Structures](rational-hodge-structures/README.md)
 - [Rotations](rotations/README.md)
+- [Sphere Stereographic](sphere-punctured-two-homeo.md)
