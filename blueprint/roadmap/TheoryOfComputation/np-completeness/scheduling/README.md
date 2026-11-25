@@ -2,10 +2,14 @@
 
 Single-machine, parallel-machine, flow-shop, precedence-constrained and resource-constrained scheduling with deadlines, tardiness or weighted completion objectives.
 
+- [Graph balancing with makespan 2](graph-balancing-with-makespan-2/README.md)
+- [In-tree time lags with release dates](in-tree-time-lags-with-release-dates/README.md)
 - [Job sequencing with deadlines and profits](job-sequencing-with-deadlines-and-profits/README.md)
+- [Parallel batching of in-trees with release dates](parallel-batching-of-in-trees-with-release-dates/README.md)
 - [Parallel machine scheduling](parallel-machine-scheduling/README.md)
 - [Parallel machine scheduling with deadlines](parallel-machine-scheduling-with-deadlines/README.md)
 - [Precedence-constrained multiprocessor scheduling](precedence-constrained-multiprocessor-scheduling/README.md)
+- [Precedence-constrained scheduling of forests on dedicated processors](precedence-constrained-scheduling-of-forests-on/README.md)
 - [Resource-constrained project scheduling](resource-constrained-project-scheduling/README.md)
 - [Scheduling with release times and deadlines](scheduling-with-release-times-and-deadlines/README.md)
 - [Sequencing with costs and set-up times](sequencing-with-costs-and-set-up-times/README.md)

@@ -1,0 +1,15 @@
+# Generalized FreeCell
+
+- [Card](card.md)
+- [Instances of GENERALIZED FREECELL](free-cell-instance.md)
+- [State](state.md)
+- [The n-deck](deck.md)
+- [Red cards](is-red.md)
+- [Matches](matches.md)
+- [Pickup](pickup.md)
+- [Drop](drop.md)
+- [Move](move.md)
+- [Well-formed GENERALIZED FREECELL instances](well-formed.md)
+- [Feasible GENERALIZED FREECELL instances](free-cell-feasible.md)
+- [GENERALIZED FREECELL as a decision problem](free-cell-dec.md)
+- [GENERALIZED FREECELL is NP-complete](free-cell-np-complete.md)
