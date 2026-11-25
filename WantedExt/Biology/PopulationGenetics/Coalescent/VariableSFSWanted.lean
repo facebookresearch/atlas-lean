@@ -37,24 +37,12 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Probability.Survival.MeanWaitingTime
+public import Domains.Biology.PopulationGenetics.Coalescent.VariableSFSExistsNeAeFirstCoalMeanEq
 
 @[expose] public section
 
 namespace MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFSWanted
 
 open MeasureTheory ProbabilityTheory
-
-/-- **Non-identifiability of general histories** (Myers, Fefferman & Patterson 2008): there
-are two measurable population-size functions, bounded between positive constants, that differ
-on a set of positive Lebesgue measure in `[0, ∞)` and have the same expected first-coalescence
-time `c_m` for every `m ≥ 2` (hence the same expected SFS for every sample size).
-
-Source: Myers, Fefferman & Patterson (2008). -/
-theorem_wanted exists_ne_ae_firstCoalMean_eq :
-    ∃ η₁ η₂ : ℝ → ℝ, Measurable η₁ ∧ Measurable η₂ ∧
-      (∃ a b : ℝ, 0 < a ∧ ∀ s, a ≤ η₁ s ∧ η₁ s ≤ b ∧ a ≤ η₂ s ∧ η₂ s ≤ b) ∧
-      ¬ (η₁ =ᵐ[volume.restrict (Set.Ici 0)] η₂) ∧
-      ∀ m : ℕ, 2 ≤ m → meanWaitingTime (fun t => (η₁ t)⁻¹) (m.choose 2) =
-        meanWaitingTime (fun t => (η₂ t)⁻¹) (m.choose 2)
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFSWanted

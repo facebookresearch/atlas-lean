@@ -16854,6 +16854,7 @@
   "Domains/Biology/Omics/Normalization": {"to": "Probability/linear-models-multivariate", "title": "Centred log-ratio transform of compositional data"},
   "Domains/Biology/Omics/Pseudobulk": {"to": "Probability/linear-models-multivariate", "title": "Random-intercept models and the design effect"},
   "Domains/Biology/PopulationGenetics/Coalescent/PhyloNetwork": {"to": "Biology/population-structure", "title": "Admixture graphs"},
+  "Domains/Biology/PopulationGenetics/Coalescent/VariableSFSExistsNeAeFirstCoalMeanEq": {"to": "Biology/coalescent-theory", "title": "Site frequency spectrum under variable population size"},
   "Domains/Biology/PopulationGenetics/Diffusion/LabelSymmetry": {"to": "Biology/population-genetics/diffusion-theory", "title": "Fixation and absorption in the Wright–Fisher diffusion"},
   "Domains/Biology/PopulationGenetics/Diffusion/OccupationStability": {"to": "Biology/population-genetics/diffusion-theory", "title": "Absorption of the neutral Wright–Fisher martingale problem"},
   "Domains/Biology/StatisticalGenetics/AssociationTests/Calibration": {"to": "Probability/hypothesis-testing", "title": "Fisher's exact test"},
