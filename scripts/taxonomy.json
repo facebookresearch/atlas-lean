@@ -11655,6 +11655,7 @@
   "MathlibExt/GameTheory/MeanFieldEquilibrium": {"to": "GameTheory/noncooperative-games", "title": "Mean field games"},
   "MathlibExt/GameTheory/MeanFieldEquilibriumExistence": {"to": "GameTheory/noncooperative-games", "title": "Mean field games"},
   "MathlibExt/GameTheory/MeanFieldGameSystem": {"to": "GameTheory/noncooperative-games", "title": "Mean field games"},
+  "MathlibExt/GameTheory/MechanismDesign/BilateralTrade": {"to": "GameTheory/mechanism-design", "title": "Bilateral trade"},
   "MathlibExt/GameTheory/MechanismDesign/RevelationPrinciple": {"to": "GameTheory/mechanism-design", "title": "Revelation principle"},
   "MathlibExt/GameTheory/MechanismDesign/SingleParameter": {"to": "GameTheory/mechanism-design", "title": "Myerson's lemma and revenue equivalence"},
   "MathlibExt/GameTheory/MechanismDesign/VCG": {"to": "GameTheory/mechanism-design", "title": "Vickrey–Clarke–Groves mechanisms"},

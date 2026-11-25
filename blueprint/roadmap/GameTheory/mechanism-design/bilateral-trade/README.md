@@ -1,4 +1,4 @@
-# Bilateral Trade
+# Bilateral trade
 
 - [Bilateral Mechanism](bilateral-mechanism.md)
 - [Buyer Util](buyer-util.md)
