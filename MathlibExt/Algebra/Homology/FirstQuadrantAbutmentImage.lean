@@ -251,18 +251,6 @@ theorem horizontalCanonicalAbutmentCokernelSequence_exact (p q : ℕ) :
     (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ))
       (-((p + q : ℕ) : ℤ) + 1)
 
-private theorem horizontalCanonicalAbutmentCokernelSequence_epi (p q : ℕ) :
-    Epi (horizontalCanonicalAbutmentCokernelSequence K p q).g := by
-  exact inferInstanceAs
-    (Epi ((horizontalCompleteFiltrationSpectralObject K).cokernelSequenceE
-      (horizontalCanonicalAbutmentLowerMap p)
-      (horizontalCanonicalAbutmentMiddleMap p)
-      (horizontalCanonicalAbutmentUpperMap p q)
-      (horizontalCanonicalAbutmentLowerCompositeMap p)
-      (horizontalCanonicalAbutmentLower_comp_middle p)
-      (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ))
-      (-((p + q : ℕ) : ℤ) + 1)).g)
-
 /-- The cokernel of the two incoming maps is the canonical finite abutment
 term. -/
 noncomputable def horizontalCanonicalAbutmentCokernelIso (p q : ℕ) :
@@ -273,7 +261,16 @@ noncomputable def horizontalCanonicalAbutmentCokernelIso (p q : ℕ) :
   let S : ShortComplex C := horizontalCanonicalAbutmentCokernelSequence K p q
   have hS : S.Exact :=
     horizontalCanonicalAbutmentCokernelSequence_exact K p q
-  let _ : Epi S.g := horizontalCanonicalAbutmentCokernelSequence_epi K p q
+  letI : Epi S.g := by
+    exact inferInstanceAs
+      (Epi ((horizontalCompleteFiltrationSpectralObject K).cokernelSequenceE
+        (horizontalCanonicalAbutmentLowerMap p)
+        (horizontalCanonicalAbutmentMiddleMap p)
+        (horizontalCanonicalAbutmentUpperMap p q)
+        (horizontalCanonicalAbutmentLowerCompositeMap p)
+        (horizontalCanonicalAbutmentLower_comp_middle p)
+        (-((p + q + 1 : ℕ) : ℤ)) (-((p + q : ℕ) : ℤ))
+        (-((p + q : ℕ) : ℤ) + 1)).g)
   let canonical : CokernelCofork S.f := CokernelCofork.ofπ S.g S.zero
   let standard : CokernelCofork S.f :=
     CokernelCofork.ofπ (cokernel.π S.f) (cokernel.condition S.f)
