@@ -39,3 +39,19 @@ example :
     · norm_num [Set.mem_prod, Set.mem_Ioo]
   have h := (antidiagonal_triangle_bijOn huv).mapsTo ⟨htriangle, hinterior⟩
   convert h using 1 <;> norm_num [u, v]
+
+-- The reflection preserves the closed parallelogram for the coprime pair (2, 5).
+example :
+    (fun p : ℝ × ℝ => (3 - p.1, 5 - p.2)) '' stdCleanParallelogram 2 5 =
+      stdCleanParallelogram 2 5 := by
+  have h := (stdCleanParallelogram_symmetry (a := 2) (n := 5) (by decide) (by decide) (by decide)).1
+  norm_num at h
+  exact h
+
+-- The ambient isometry preserves the maximum of the two coordinate distances.
+example (p q : ℝ × ℝ) :
+    dist ((3 - p.1, 5 - p.2) : ℝ × ℝ) (3 - q.1, 5 - q.2) =
+      max |p.1 - q.1| |p.2 - q.2| := by
+  have h := (stdCleanParallelogram_symmetry (a := 2) (n := 5) (by decide) (by decide) (by decide)).2
+  norm_num at h
+  exact (h.dist_eq p q).trans (by simp only [Prod.dist_eq, Real.dist_eq])
