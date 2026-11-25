@@ -29,19 +29,15 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.Data.Nat.Squarefree
 public import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
-public import Mathlib.NumberTheory.Divisors
 public import Mathlib.RingTheory.Algebraic.Basic
 public import Mathlib.RingTheory.LaurentSeries
-public import Mathlib.RingTheory.PowerSeries.Inverse
-public import Mathlib.RingTheory.PowerSeries.PiTopology
+public import MathlibExt.NumberTheory.ArithmeticFunction.DedekindPsi
+public import MathlibExt.NumberTheory.ModularForms.JCoefficientBound
 
 @[expose] public section
 
 noncomputable section
-
-open scoped PowerSeries.WithPiTopology
 
 open PowerSeries HahnSeries IntermediateField
 
@@ -137,104 +133,12 @@ theorem qExpandₐ_apply (f : LaurentSeries ℚ) : qExpandₐ N f = qExpand ℚ 
 
 end RatAlgebra
 
-section JFunction
-
-def eisenstein4 : PowerSeries ℤ :=
-  PowerSeries.mk fun n => if n = 0 then 1 else 240 * ∑ d ∈ n.divisors, (d : ℤ) ^ 3
-
-@[simp]
-theorem constantCoeff_eisenstein4 : PowerSeries.constantCoeff eisenstein4 = 1 := by
-  rw [← PowerSeries.coeff_zero_eq_constantCoeff]
-  simp [eisenstein4]
-
-def etaProd : PowerSeries ℤ :=
-  ∏' n : ℕ, (1 - PowerSeries.X ^ (n + 1))
-
-theorem constantCoeff_etaProd : PowerSeries.constantCoeff etaProd = 1 := by
-  rw [etaProd]
-  simp [(PowerSeries.WithPiTopology.multipliable_one_sub_X_pow ℤ).map_tprod _
-    (PowerSeries.WithPiTopology.continuous_constantCoeff ℤ)]
-
-def dedekindEtaUnit : PowerSeries ℤ := etaProd ^ 24
-
-theorem constantCoeff_dedekindEtaUnit : PowerSeries.constantCoeff dedekindEtaUnit = 1 := by
-  rw [dedekindEtaUnit, map_pow, constantCoeff_etaProd, one_pow]
-
-def dedekindEtaUnitInv : PowerSeries ℤ := dedekindEtaUnit.invOfUnit 1
-
-theorem dedekindEtaUnit_mul_inv : dedekindEtaUnit * dedekindEtaUnitInv = 1 :=
-  PowerSeries.mul_invOfUnit _ _ (by rw [constantCoeff_dedekindEtaUnit]; rfl)
-
-theorem constantCoeff_dedekindEtaUnitInv :
-    PowerSeries.constantCoeff dedekindEtaUnitInv = 1 := by
-  have h := congrArg (PowerSeries.constantCoeff (R := ℤ)) dedekindEtaUnit_mul_inv
-  rwa [map_mul, constantCoeff_dedekindEtaUnit, one_mul, map_one] at h
-
-def jNum : PowerSeries ℤ := eisenstein4 ^ 3 * dedekindEtaUnitInv
-
-@[simp]
-theorem constantCoeff_jNum : PowerSeries.constantCoeff jNum = 1 := by
-  rw [jNum, map_mul, map_pow, constantCoeff_eisenstein4, constantCoeff_dedekindEtaUnitInv,
-    one_pow, one_mul]
-
-def jNumQ : PowerSeries ℚ := jNum.map (Int.castRingHom ℚ)
-
-@[simp]
-theorem constantCoeff_jNumQ : PowerSeries.constantCoeff jNumQ = 1 := by
-  rw [← PowerSeries.coeff_zero_eq_constantCoeff, jNumQ, PowerSeries.coeff_map,
-    PowerSeries.coeff_zero_eq_constantCoeff, constantCoeff_jNum]
-  simp
-
-def jq : LaurentSeries ℚ :=
-  HahnSeries.single (-1 : ℤ) 1 * HahnSeries.ofPowerSeries ℤ ℚ jNumQ
-
-theorem ofPowerSeries_coeff_of_neg {R : Type*} [Semiring R] (f : PowerSeries R) {k : ℤ}
-    (hk : k < 0) : (HahnSeries.ofPowerSeries ℤ R f).coeff k = 0 := by
-  rw [HahnSeries.ofPowerSeries_apply]
-  refine HahnSeries.embDomain_notin_range ?_
-  rintro ⟨m, rfl⟩
-  exact absurd hk (not_lt.mpr (Int.natCast_nonneg m))
-
-theorem jq_pow (n : ℕ) :
-    jq ^ n = HahnSeries.single (-(n : ℤ)) 1 * HahnSeries.ofPowerSeries ℤ ℚ (jNumQ ^ n) := by
-  have h : n • (-1 : ℤ) = -(n : ℤ) := by simp
-  rw [jq, mul_pow, HahnSeries.single_pow, one_pow, h, ← map_pow]
-
-theorem coeff_jq_pow_self (n : ℕ) : (jq ^ n).coeff (-(n : ℤ)) = 1 := by
-  rw [jq_pow, HahnSeries.coeff_single_mul, one_mul, sub_neg_eq_add, neg_add_cancel,
-    show (0 : ℤ) = ((0 : ℕ) : ℤ) from rfl, HahnSeries.ofPowerSeries_apply_coeff,
-    PowerSeries.coeff_zero_eq_constantCoeff, map_pow, constantCoeff_jNumQ, one_pow]
-
-theorem coeff_jq_pow_of_lt {n : ℕ} {m : ℤ} (hm : m < -(n : ℤ)) : (jq ^ n).coeff m = 0 := by
-  rw [jq_pow, HahnSeries.coeff_single_mul, one_mul]
-  exact ofPowerSeries_coeff_of_neg _ (by omega)
-
-@[simp]
-theorem coeff_jq_neg_one : jq.coeff (-1 : ℤ) = 1 := by
-  have h := coeff_jq_pow_self 1
-  simpa using h
-
-theorem coeff_jq_of_lt {k : ℤ} (hk : k < -1) : jq.coeff k = 0 := by
-  have h := coeff_jq_pow_of_lt (n := 1) (m := k) (by simpa using hk)
-  simpa using h
-
-theorem jq_ne_zero : jq ≠ 0 := fun h => by simpa [h] using coeff_jq_neg_one
-
-end JFunction
-
 def jqN (N : ℕ) [NeZero N] : LaurentSeries ℚ := qExpand ℚ N jq
 
 @[simp]
 theorem jqN_one : jqN 1 = jq := qExpand_one_apply jq
 
 section NamedInputs
-
-def dedekindPsi (N : ℕ) : ℕ := ∑ d ∈ N.divisors with Squarefree d, N / d
-
-@[simp]
-theorem dedekindPsi_one : dedekindPsi 1 = 1 := by
-  rw [dedekindPsi, Nat.divisors_one, Finset.filter_singleton, if_pos squarefree_one]
-  simp
 
 def evalAtJ : Polynomial ℤ →+* LaurentSeries ℚ :=
   (Polynomial.aeval (R := ℤ) jq).toRingHom
@@ -249,7 +153,7 @@ structure ModularPolynomialData (N : ℕ) [NeZero N] : Type where
 
   monic : Φ.Monic
 
-  natDegree_eq : Φ.natDegree = dedekindPsi N
+  natDegree_eq : Φ.natDegree = ArithmeticFunction.dedekindPsi N
 
   eval_eq_zero : Φ.eval₂ evalAtJ (jqN N) = 0
 

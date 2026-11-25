@@ -25,8 +25,8 @@ example : modularPolynomialDataOne.Φ = Polynomial.X - Polynomial.C Polynomial.X
 
 example : modularPolynomialDataOne.Φ.Monic := modularPolynomialDataOne.monic
 
-example : modularPolynomialDataOne.Φ.natDegree = dedekindPsi 1 :=
+example : modularPolynomialDataOne.Φ.natDegree = ArithmeticFunction.dedekindPsi 1 :=
   modularPolynomialDataOne.natDegree_eq
 
 /-- Boundary check: the degree function records level one correctly. -/
-example : dedekindPsi 1 = 1 := dedekindPsi_one
+example : ArithmeticFunction.dedekindPsi 1 = 1 := ArithmeticFunction.dedekindPsi_one
