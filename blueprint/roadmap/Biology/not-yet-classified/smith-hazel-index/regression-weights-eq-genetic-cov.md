@@ -1,3 +1,5 @@
-# Regression Weights eq genetic Cov
+# The index coefficients in genetic form
 
-K3. The canonical weights in genetic covariance form.
+**The index coefficients in genetic form** (Hazel 1943). Let `μ` be a probability measure on `Ω`
+and `M` a Smith–Hazel model on `n` traits under `μ`. Then
+`M.regressionWeights = M.phenotypicCov⁻¹ *ᵥ (M.geneticCov *ᵥ M.economic)`.

@@ -1,3 +1,3 @@
 # Residual Cov
 
-The actual residual covariance matrix.
+The residual covariance matrix, with entries `cov[E_i, E_j; μ]`.

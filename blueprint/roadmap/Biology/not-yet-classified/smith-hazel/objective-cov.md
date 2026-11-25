@@ -1,3 +1,3 @@
 # Objective Cov
 
-The covariance vector `c` of each phenotype coordinate with aggregate breeding value.
+The phenotype–objective covariance vector `c`, with entries `cov[X_i, H; μ]`.

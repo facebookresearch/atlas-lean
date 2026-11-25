@@ -1,3 +1,4 @@
 # Standardized Upper Event
 
-The upper event at standardized threshold `z`.
+The standardized upper event `{ω | μ[f] + z * populationSD μ f ≤ f ω}`: the outcomes whose
+score is at least `z` population standard deviations above the population mean.

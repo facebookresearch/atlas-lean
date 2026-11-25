@@ -1,3 +1,5 @@
-# Variance aggregate
+# Variance of the aggregate breeding value
 
-B1. The variance of the actual objective is the genetic quadratic form.
+**Variance of the aggregate breeding value** (Hazel 1943). Let `μ` be a probability measure on
+`Ω` and `M` a Smith–Hazel model on `n` traits under `μ`. Then
+`Var[M.aggregate; μ] = M.economic ⬝ᵥ (M.geneticCov *ᵥ M.economic)`.

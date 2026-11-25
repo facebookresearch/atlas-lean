@@ -1,3 +1,3 @@
 # Phenotypic Cov
 
-The actual phenotypic covariance matrix `P`.
+The phenotypic covariance matrix `P`, with entries `cov[X_i, X_j; μ]`.

@@ -4,6 +4,8 @@
 - [BQP is contained in PSPACE](bqp-subset-pspace.md)
 - [BPP is contained in BQP](bpp-subset-bqp.md)
 
+- [Gottesman–Knill theorem](gottesmanknill-theorem.md)
+
 ## Related topics
 
 - [Bounded-error probabilistic classes RP and BPP](../bounded-error-probabilistic-classes-rp-and-bpp/README.md): the classical counterpart, contained in BQP.

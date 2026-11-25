@@ -6,10 +6,21 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Domains.Biology.StatisticalGenetics.SmithHazelIndex
-import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Independence
-import Mathlib.MeasureTheory.Constructions.Pi
-import Mathlib.Tactic
+module
+
+public import Domains.Biology.StatisticalGenetics.SmithHazelIndex
+public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Independence
+public import Mathlib.MeasureTheory.Constructions.Pi
+public import Mathlib.Tactic
+import Mathlib.Algebra.Order.Star.Real
+
+/-! # Smith–Hazel genetic gain tests on a concrete Gaussian model
+
+Builds an explicit jointly Gaussian model on `Fin 5 → ℝ` and checks the genetic-gain formulas,
+the zero-covariance cases and the generic Gaussian response results on it.
+-/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix
 open MathlibExt.Probability.Causality.MissingData (inverseMillsRatio inverseMillsRatio_pos)

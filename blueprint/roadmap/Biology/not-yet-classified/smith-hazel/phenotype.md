@@ -1,3 +1,3 @@
 # Phenotype
 
-Phenotype is the sum of additive value and residual.
+The phenotype vector `X = A + E`, the sum of additive breeding values and residuals.

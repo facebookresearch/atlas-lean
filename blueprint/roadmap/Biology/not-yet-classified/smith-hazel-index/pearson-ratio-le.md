@@ -1,3 +1,7 @@
-# Pearson Ratio le
+# Upper bound on the correlation
 
-K1. Sharp upper bound for signed correlation.
+**Upper bound on the correlation** (Hazel 1943). Let `μ` be a probability measure on `Ω` and `M`
+a Smith–Hazel model on `n` traits under `μ`, with `Var[M.aggregate; μ] > 0` and
+`M.objectiveCov ≠ 0`. For every nonzero coefficient vector `b`,
+`pearsonRatio μ (M.index b) M.aggregate ≤ √(c ⬝ᵥ w) / σ_H`, where `c = M.objectiveCov`,
+`w = M.regressionWeights` and `σ_H = populationSD μ M.aggregate`.

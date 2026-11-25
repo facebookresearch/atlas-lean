@@ -1,3 +1,4 @@
-# Variance phenotype pos
+# Positive phenotypic variances
 
-The actual variance of each phenotype coordinate is positive.
+For any measure `μ`, any Smith–Hazel model `M` under `μ`
+and any trait `i`, the phenotype `X_i` has positive variance `Var[X_i; μ] > 0`.

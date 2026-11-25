@@ -1,3 +1,3 @@
 # Population SD
 
-Population standard deviation, computed from the actual variance.
+The population standard deviation `√Var[f; μ]` of a real function `f` under the measure `μ`.

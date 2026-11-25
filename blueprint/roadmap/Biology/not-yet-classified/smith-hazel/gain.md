@@ -1,4 +1,5 @@
 # Gain
 
-Genetic gain is the selected mean of the aggregate breeding value minus
-its population mean. The event fixes the threshold in index standard deviations.
+The genetic gain from truncation selection on the index `I_b` at standardized threshold `z`:
+the mean of `H` among the outcomes whose index is at least `z` index standard deviations above
+its mean, minus the population mean of `H`.

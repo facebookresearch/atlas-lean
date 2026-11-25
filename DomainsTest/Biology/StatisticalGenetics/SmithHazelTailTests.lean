@@ -6,13 +6,23 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Domains.Biology.StatisticalGenetics.SmithHazelIndex
-import Domains.Biology.StatisticalGenetics.SmithHazel
-import MathlibExt.Probability.Causality.MissingData.GaussianSelection
-import MathlibExt.Probability.Distributions.GaussianCdf
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Normed.Module.FiniteDimension
-import Mathlib.Probability.Distributions.Gaussian.Multivariate
+module
+
+public import Domains.Biology.StatisticalGenetics.SmithHazelIndex
+public import Domains.Biology.StatisticalGenetics.SmithHazel
+public import MathlibExt.Probability.Causality.MissingData.GaussianSelection
+public import MathlibExt.Probability.Distributions.GaussianCdf
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
+
+/-! # Smith–Hazel truncation tests
+
+Checks the selected proportion, the intensity of selection and the standardization of a Gaussian
+index score for an explicit model.
+-/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix SmithHazel
 open MathlibExt.Probability.Causality.MissingData (inverseMillsRatio)
@@ -136,37 +146,37 @@ theorem score_variance_pos : 0 < Var[score; ν] := by
 
 theorem standardized_score_law :
     HasLaw (standardizedValue ν score) (gaussianReal 0 1) ν :=
-  SmithHazel.hasLaw_standardizedValue score_gaussian score_variance_pos
+  ProbabilityTheory.hasLaw_standardizedValue score_gaussian score_variance_pos
 
 theorem median_event_measure :
     ν.real (standardizedUpperEvent ν score 0) = 1 / 2 := by
-  rw [SmithHazel.measureReal_standardizedUpperEvent score_gaussian score_variance_pos,
+  rw [ProbabilityTheory.measureReal_standardizedUpperEvent score_gaussian score_variance_pos,
     neg_zero, cdf_gaussianReal_zero]
 
 theorem nonzero_event_measure :
     ν.real (standardizedUpperEvent ν score 1) = cdf (gaussianReal 0 1) (-1) :=
-  SmithHazel.measureReal_standardizedUpperEvent score_gaussian score_variance_pos 1
+  ProbabilityTheory.measureReal_standardizedUpperEvent score_gaussian score_variance_pos 1
 
 theorem positive_cut_tail_bounds :
     0 < cdf (gaussianReal 0 1) (-1) ∧ cdf (gaussianReal 0 1) (-1) < 1 := by
-  have h := SmithHazel.gaussianUpperTail_mem_Ioo 1
+  have h := ProbabilityTheory.gaussianUpperTail_mem_Ioo 1
   exact ⟨h.1, h.2⟩
 
 theorem negative_cut_tail_bounds :
     0 < cdf (gaussianReal 0 1) 1 ∧ cdf (gaussianReal 0 1) 1 < 1 := by
-  have h := SmithHazel.gaussianUpperTail_mem_Ioo (-1)
+  have h := ProbabilityTheory.gaussianUpperTail_mem_Ioo (-1)
   simpa only [neg_neg] using And.intro h.1 h.2
 
 theorem nonzero_conditional_integral :
     (∫ x, standardizedValue ν score x ∂ν[|standardizedUpperEvent ν score 1]) =
       inverseMillsRatio (-1) :=
-  SmithHazel.integral_cond_standardizedValue
+  ProbabilityTheory.integral_cond_standardizedValue
     score_measurable score_gaussian score_variance_pos 1
 
 theorem reflected_density_upper_tail :
     inverseMillsRatio (-1) =
       gaussianPDFReal 0 1 1 / cdf (gaussianReal 0 1) (-1) :=
-  SmithHazel.inverseMillsRatio_neg_eq_pdf_div_upperTail 1
+  ProbabilityTheory.inverseMillsRatio_neg_eq_pdf_div_upperTail 1
 
 theorem constant_score_variance : Var[(fun _ : ℝ => (2 : ℝ)); ν] = 0 := by
   have h := variance_const_add (X := fun _ : ℝ => 0) (μ := ν)

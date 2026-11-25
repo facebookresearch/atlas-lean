@@ -1,3 +1,3 @@
 # Genetic Cov
 
-The actual additive genetic covariance matrix `G`.
+The additive genetic covariance matrix `G`, with entries `cov[A_i, A_j; μ]`.

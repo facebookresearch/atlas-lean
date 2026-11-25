@@ -1,3 +1,3 @@
 # Regression Weights
 
-Canonical regression coefficients, defined by the inverse phenotype covariance.
+The index coefficients `w = P⁻¹ c`, the regression coefficients of `H` on `X`.

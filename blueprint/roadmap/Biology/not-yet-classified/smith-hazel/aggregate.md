@@ -1,3 +1,3 @@
 # Aggregate
 
-Aggregate breeding value `H`, the economic objective in Hazel's equation (2).
+The aggregate breeding value `H = a ⬝ᵥ A`, the economic objective of Hazel's equation (2).

@@ -1,3 +1,3 @@
 # Heritability
 
-Narrow-sense heritability of one trait, the additive variance over the phenotype variance.
+The narrow-sense heritability `G_ii / P_ii` of trait `i`.

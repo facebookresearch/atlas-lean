@@ -6,13 +6,24 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Domains.Biology.StatisticalGenetics.SmithHazel
-import Mathlib.Algebra.Order.Star.Real
-import Mathlib.Analysis.Normed.Module.FiniteDimension
-import Mathlib.Probability.Distributions.Gaussian.Multivariate
-import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Independence
+module
 
-import Domains.Biology.StatisticalGenetics.SmithHazelIndex
+public import Domains.Biology.StatisticalGenetics.SmithHazel
+public import Mathlib.Algebra.Order.Star.Real
+public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.Probability.Distributions.Gaussian.Multivariate
+public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Independence
+
+public import Domains.Biology.StatisticalGenetics.SmithHazelIndex
+
+/-! # Smith–Hazel index tests on explicit covariance matrices
+
+Applies the index covariance, correlation-bound, normal-equation and diagonal-case theorems of
+`Domains.Biology.StatisticalGenetics.SmithHazelIndex` to explicit two- and three-trait models,
+including degenerate and zero-covariance cases.
+-/
+
+@[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix SmithHazel
 open scoped BigOperators Matrix RealInnerProductSpace

@@ -1,3 +1,3 @@
 # Index
 
-Linear phenotype score `I_b`, Hazel's equation (4).
+The index `I_b = b ⬝ᵥ X` with coefficient vector `b`, Hazel's equation (4).
