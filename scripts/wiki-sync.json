@@ -53616,6 +53616,7 @@
     "MathlibExt.Biology.PopulationGenetics.IslandModel.islandStep_iterate_sub": "adb5d188005b94b9",
     "MathlibExt.Biology.PopulationGenetics.IslandModel.tendsto_islandEquilibrium": "0a1aa6ad67551087",
     "MathlibExt.Biology.PopulationGenetics.IslandModel.tendsto_islandStep_iterate": "181f56dd16957fc4",
+    "MathlibExt.Biology.PopulationGenetics.Levene.protected_polymorphism": "6cd4d35e3938cb6a",
     "MathlibExt.Biology.PopulationGenetics.Linkage.alleleFreqFst": "b4ba2b0581c73bb7",
     "MathlibExt.Biology.PopulationGenetics.Linkage.alleleFreqFst_recombine": "4ec9f84e78d783c7",
     "MathlibExt.Biology.PopulationGenetics.Linkage.alleleFreqSnd": "78d49c07655c1376",
