@@ -14,6 +14,7 @@ module
 
 public import MathlibExt.Algebra.Lie.UniversalEnveloping.Bialgebra
 public import Mathlib.Algebra.Algebra.Opposite
+public import Mathlib.Algebra.Algebra.Subalgebra.Lattice
 public import Mathlib.RingTheory.HopfAlgebra.Convolution
 public import Mathlib.RingTheory.HopfAlgebra.Primitive
 
@@ -61,10 +62,10 @@ theorem adjoin_range_ι : Algebra.adjoin R (Set.range (ι R : L → U)) = ⊤ :=
   calc
     Algebra.adjoin R (Set.range (ι R : L → U)) = (mkAlgHom R L).range := by
       symm
-      rw [← Algebra.map_top, ← TensorAlgebra.adjoin_range_ι R (M := L),
+      rw [← Algebra.map_top, ← TensorAlgebra.adjoin_range_ι (R := R) (M := L),
         AlgHom.map_adjoin, Set.image_range]
       rfl
-    _ = ⊤ := AlgHom.range_eq_top.mpr hsurj
+    _ = ⊤ := (AlgHom.range_eq_top (mkAlgHom R L)).mpr hsurj
 
 /-- The signed Lie generators extend to an algebra map into the opposite algebra. -/
 def antipodeToOpposite : U →ₐ[R] Uᵐᵒᵖ :=
@@ -130,7 +131,7 @@ theorem antipode_involutive : Function.Involutive (HopfAlgebra.antipode R (A := 
   intro a
   have ha : a ∈ Algebra.adjoin R (Set.range (ι R : L → U)) := by
     rw [adjoin_range_ι]
-    exact Subalgebra.mem_top
+    exact Algebra.mem_top
   induction ha using Algebra.adjoin_induction with
   | mem a ha =>
       obtain ⟨x, rfl⟩ := ha

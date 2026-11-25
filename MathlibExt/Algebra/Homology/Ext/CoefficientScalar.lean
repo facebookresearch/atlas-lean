@@ -104,32 +104,39 @@ theorem precompOfCoefficientScalar_apply {X X' Y : C}
     precompOfCoefficientScalar ρ k n x = (mk₀ k).comp x (zero_add n) := rfl
 
 /-- Native Ext carrier transport is linear for the same coefficient action. -/
-def coefficientSizeEquiv [HasExt.{w'} C] [HasDerivedCategory.{wD} C]
-    {Y : C} (ρ : S →+* End Y) (X : C) (n : ℕ) :
-    letI : Module S (Ext.{w} X Y n) := coefficientModule.{w, v, u, s} ρ X n
-    letI : Module S (Ext.{w'} X Y n) := coefficientModule.{w', v, u, s} ρ X n
-    Ext.{w} X Y n ≃ₗ[S] Ext.{w'} X Y n := by
-  letI : Module S (Ext.{w} X Y n) := coefficientModule.{w, v, u, s} ρ X n
-  letI : Module S (Ext.{w'} X Y n) := coefficientModule.{w', v, u, s} ρ X n
+def coefficientSizeEquiv.{derivedU, sourceU, targetU, homU, objU, scalarU}
+    {C : Type objU} [Category.{homU} C] [Abelian C]
+    [HasExt.{sourceU} C] [HasExt.{targetU} C] [HasDerivedCategory.{derivedU} C]
+    {S : Type scalarU} [Semiring S] {Y : C} (ρ : S →+* End Y) (X : C) (n : ℕ) :
+    letI : Module S (Ext.{sourceU} X Y n) :=
+      coefficientModule.{sourceU, homU, objU, scalarU} ρ X n
+    letI : Module S (Ext.{targetU} X Y n) :=
+      coefficientModule.{targetU, homU, objU, scalarU} ρ X n
+    Ext.{sourceU} X Y n ≃ₗ[S] Ext.{targetU} X Y n := by
+  letI : Module S (Ext.{sourceU} X Y n) :=
+    coefficientModule.{sourceU, homU, objU, scalarU} ρ X n
+  letI : Module S (Ext.{targetU} X Y n) :=
+    coefficientModule.{targetU, homU, objU, scalarU} ρ X n
   refine
-    { sizeEquiv.{wD, w, w', v, u} X Y n with
+    { sizeEquiv.{derivedU, sourceU, targetU, homU, objU} X Y n with
       map_smul' := ?_ }
   intro s x
-  change sizeEquiv.{wD, w, w', v, u} X Y n
+  change sizeEquiv.{derivedU, sourceU, targetU, homU, objU} X Y n
       (x.comp (mk₀ (ρ s).asHom) (add_zero n)) =
-    (sizeEquiv.{wD, w, w', v, u} X Y n x).comp (mk₀ (ρ s).asHom) (add_zero n)
+    (sizeEquiv.{derivedU, sourceU, targetU, homU, objU} X Y n x).comp
+      (mk₀ (ρ s).asHom) (add_zero n)
   rw [sizeEquiv_comp, sizeEquiv_mk₀]
 
 @[simp]
 theorem coefficientSizeEquiv_apply [HasExt.{w'} C] [HasDerivedCategory.{wD} C]
     {Y : C} (ρ : S →+* End Y) (X : C) (n : ℕ) (x : Ext.{w} X Y n) :
-    (coefficientSizeEquiv ρ X n x : Ext.{w'} X Y n) =
+    (coefficientSizeEquiv.{wD, w, w', v, u, s} ρ X n x : Ext.{w'} X Y n) =
       sizeEquiv.{wD, w, w', v, u} X Y n x := rfl
 
 @[simp]
 theorem coefficientSizeEquiv_symm_apply [HasExt.{w'} C] [HasDerivedCategory.{wD} C]
     {Y : C} (ρ : S →+* End Y) (X : C) (n : ℕ) (x : Ext.{w'} X Y n) :
-    ((coefficientSizeEquiv ρ X n).symm x : Ext.{w} X Y n) =
+    ((coefficientSizeEquiv.{wD, w, w', v, u, s} ρ X n).symm x : Ext.{w} X Y n) =
       sizeEquiv.{wD, w', w, v, u} X Y n x := rfl
 
 end CategoryTheory.Abelian.Ext

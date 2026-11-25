@@ -65,7 +65,7 @@ instance instIsCocomm : Coalgebra.IsCocomm R U where
 
 /-- The Lie generators as a Lie morphism into the primitive Lie algebra. -/
 def ιPrimitive : L →ₗ⁅R⁆ P where
-  __ := (ι R).toLinearMap.codRestrict P.toSubmodule
+  __ := (ι R).toLinearMap.codRestrict (Bialgebra.primitiveLieSubalgebra R U).toSubmodule
     (fun x => (Bialgebra.mem_primitiveLieSubalgebra R U).mpr (isPrimitiveElem_ι R L x))
   map_lie' := by
     intro x y
@@ -78,7 +78,7 @@ theorem coe_ιPrimitive (x : L) : (ιPrimitive R L x : U) = ι R x :=
   rfl
 
 /-- Including the primitive-valued generators recovers the original generator Lie morphism. -/
-theorem ιPrimitive_incl : P.incl.comp (ιPrimitive R L) = ι R := by
+theorem ιPrimitive_incl : (Bialgebra.primitiveLieSubalgebra R U).incl.comp (ιPrimitive R L) = ι R := by
   apply LieHom.ext
   intro x
   rfl

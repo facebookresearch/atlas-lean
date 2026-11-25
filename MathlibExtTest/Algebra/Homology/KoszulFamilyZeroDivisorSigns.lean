@@ -90,9 +90,7 @@ private theorem boundary_nonzero : boundary ≠ 0 := by
   intro hzero
   have h := congrArg (fun z : K.X 1 => (exteriorPower.oneEquiv R M z) i1) hzero
   rw [boundary_coordinate_one] at h
-  have hmap : exteriorPower.oneEquiv R M (0 : ⋀[R]^1 M) = 0 :=
-    (exteriorPower.oneEquiv R M).map_zero
-  rw [hmap] at h
+  simp only [map_zero, Pi.zero_apply] at h
   change (3 : R) = 0 at h
   exact (by decide : (3 : R) ≠ 0) h
 

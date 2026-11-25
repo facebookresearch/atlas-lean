@@ -114,7 +114,7 @@ private lemma x_ne_zero : x ≠ 0 := by
 private lemma dilation_two_ne_zero : (dilation 2).primitiveLieMap x ≠ 0 := by
   intro hx
   have hxA : dilation 2 (x : A) = 0 := by
-    simpa only [BialgHom.primitiveLieMap_apply] using
+    simpa only [BialgHom.primitiveLieMap_apply, LieSubalgebra.coe_zero] using
       congrArg (fun y : P => (y : A)) hx
   have h := congrArg evaluateAtOne hxA
   rw [evaluateAtOne_dilation, map_zero] at h
@@ -132,7 +132,9 @@ example : x ≠ 0 := x_ne_zero
 
 example : (dilation 2).primitiveLieMap x = (2 : R) • x := by
   apply Subtype.ext
-  simpa only [BialgHom.primitiveLieMap_apply] using dilation_ι 2 1
+  change dilation 2 (SymmetricAlgebra.ι R R 1) =
+    (2 : R) • SymmetricAlgebra.ι R R 1
+  exact dilation_ι 2 1
 
 example : (dilation 2).primitiveLieMap x ≠ 0 := dilation_two_ne_zero
 
@@ -201,7 +203,6 @@ private def matrixEvaluate : MatrixU →ₐ[R] MatrixLie :=
 private theorem matrixCommutator_value :
     matrixEvaluate (⁅matrixPrimitive01, matrixPrimitive10⁆ : MatrixU) =
       Matrix.single (0 : Fin 2) 0 (1 : R) - Matrix.single (1 : Fin 2) 1 (1 : R) := by
-  rw [LieSubalgebra.coe_bracket]
   change UniversalEnvelopingAlgebra.lift R (LieHom.id : MatrixLie →ₗ⁅R⁆ MatrixLie)
       ⁅UniversalEnvelopingAlgebra.ι R matrixE01, UniversalEnvelopingAlgebra.ι R matrixE10⁆ = _
   simp only [LieRing.of_associative_ring_bracket, map_sub, map_mul,

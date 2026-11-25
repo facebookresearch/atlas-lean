@@ -138,7 +138,7 @@ variable {R : Type r} {S : Type s} [Semiring R] [CommSemiring S] (σ : R →+* S
 def semilinearHomCoeffFunctor (σ : R →+* S) (M : SemimoduleCat.{vM} R) :
     SemimoduleCat.{vN} S ⥤ SemimoduleCat.{max vM vN} S where
   obj N := of S (M →ₛₗ[σ] N)
-  map {N N'} f := ofHom (LinearMap.llcomp S M N N' f.hom)
+  map {N N'} f := ofHom (LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ) S M N N' f.hom)
   map_id N := by
     apply SemimoduleCat.hom_ext
     apply LinearMap.ext
@@ -153,6 +153,8 @@ def semilinearHomCoeffFunctor (σ : R →+* S) (M : SemimoduleCat.{vM} R) :
     apply LinearMap.ext
     intro x
     rfl
+
+attribute [local implicit_reducible] semilinearHomCoeffFunctor
 
 instance semilinearHomCoeffFunctor_preservesZero (M : SemimoduleCat.{vM} R) :
     (semilinearHomCoeffFunctor σ M : SemimoduleCat.{vN} S ⥤
@@ -198,11 +200,15 @@ def semilinearHomFunctor (σ : R →+* S) : (SemimoduleCat.{vM} R)ᵒᵖ ⥤
     intro x
     rfl
 
+attribute [local implicit_reducible] semilinearHomFunctor
+
 /-- Semilinear Hom in the source, at a fixed independently sized coefficient. -/
 def semilinearHomSourceFunctor (σ : R →+* S) (N : SemimoduleCat.{vN} S) :
     (SemimoduleCat.{vM} R)ᵒᵖ ⥤ SemimoduleCat.{max vM vN} S :=
   semilinearHomFunctor σ ⋙
     (evaluation (SemimoduleCat.{vN} S) (SemimoduleCat.{max vM vN} S)).obj N
+
+attribute [local implicit_reducible] semilinearHomSourceFunctor
 
 instance semilinearHomSourceFunctor_preservesZero (N : SemimoduleCat.{vN} S) :
     (semilinearHomSourceFunctor σ N : (SemimoduleCat.{vM} R)ᵒᵖ ⥤
@@ -245,8 +251,9 @@ def semilinearHomCoeffTensorIso (M : SemimoduleCat.{vM} R) (U : SemimoduleCat.{v
       apply SemimoduleCat.hom_ext
       change
         (TensorProduct.rTensorHomToHomRTensor σ M N' U).comp
-            ((LinearMap.llcomp S M N N' g.hom).rTensor U) =
-          (LinearMap.llcomp S M (N ⊗[S] U) (N' ⊗[S] U) (g.hom.rTensor U)).comp
+            ((LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ) S M N N' g.hom).rTensor U) =
+          (LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ)
+             S M (N ⊗[S] U) (N' ⊗[S] U) (g.hom.rTensor U)).comp
             (TensorProduct.rTensorHomToHomRTensor σ M N U)
       exact TensorProduct.rTensorHomToHomRTensor_postcomp σ M N (U := U) g.hom)
 
@@ -267,6 +274,8 @@ def semilinearHomSourceTensorIso (N : SemimoduleCat.{vN} S) (U : SemimoduleCat.{
           (LinearMap.lcompₛₗ S (N ⊗[S] U) σ k.unop.hom).comp
             (TensorProduct.rTensorHomToHomRTensor σ M.unop N U)
       exact TensorProduct.rTensorHomToHomRTensor_precomp σ M.unop N (U := U) k.unop.hom)
+
+attribute [local implicit_reducible] semilinearHomCoeffTensorIso semilinearHomSourceTensorIso
 
 @[simp]
 theorem semilinearHomCoeffTensorIso_hom_apply (M : SemimoduleCat.{vM} R)
@@ -317,7 +326,7 @@ theorem semilinearMapLinearEquiv_symm_apply (M : ModuleCat.{vM} R) (N : ModuleCa
 def semilinearHomCoeffFunctor (σ : R →+* S) (M : ModuleCat.{vM} R) :
     ModuleCat.{vN} S ⥤ ModuleCat.{max vM vN} S where
   obj N := of S (M →ₛₗ[σ] N)
-  map {N N'} f := ofHom (LinearMap.llcomp S M N N' f.hom)
+  map {N N'} f := ofHom (LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ) S M N N' f.hom)
   map_id N := by
     apply ModuleCat.hom_ext
     apply LinearMap.ext
@@ -332,6 +341,8 @@ def semilinearHomCoeffFunctor (σ : R →+* S) (M : ModuleCat.{vM} R) :
     apply LinearMap.ext
     intro x
     rfl
+
+attribute [local implicit_reducible] semilinearHomCoeffFunctor
 
 instance semilinearHomCoeffFunctor_additive (M : ModuleCat.{vM} R) :
     (semilinearHomCoeffFunctor σ M : ModuleCat.{vN} S ⥤
@@ -387,11 +398,15 @@ def semilinearHomFunctor (σ : R →+* S) : (ModuleCat.{vM} R)ᵒᵖ ⥤
     intro x
     rfl
 
+attribute [local implicit_reducible] semilinearHomFunctor
+
 /-- The source-variable Hom functor at an independently sized coefficient module. -/
 def semilinearHomSourceFunctor (σ : R →+* S) (N : ModuleCat.{vN} S) :
     (ModuleCat.{vM} R)ᵒᵖ ⥤ ModuleCat.{max vM vN} S :=
   semilinearHomFunctor σ ⋙
     (evaluation (ModuleCat.{vN} S) (ModuleCat.{max vM vN} S)).obj N
+
+attribute [local implicit_reducible] semilinearHomSourceFunctor
 
 instance semilinearHomSourceFunctor_additive (N : ModuleCat.{vN} S) :
     (semilinearHomSourceFunctor σ N : (ModuleCat.{vM} R)ᵒᵖ ⥤
@@ -433,8 +448,9 @@ def semilinearHomCoeffTensorIso (M : ModuleCat.{vM} R) (U : ModuleCat.{vU} S)
       apply ModuleCat.hom_ext
       change
         (TensorProduct.rTensorHomToHomRTensor σ M N' U).comp
-            ((LinearMap.llcomp S M N N' g.hom).rTensor U) =
-          (LinearMap.llcomp S M (N ⊗[S] U) (N' ⊗[S] U) (g.hom.rTensor U)).comp
+            ((LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ) S M N N' g.hom).rTensor U) =
+          (LinearMap.llcomp (σ₁₂ := σ) (σ₁₃ := σ)
+             S M (N ⊗[S] U) (N' ⊗[S] U) (g.hom.rTensor U)).comp
             (TensorProduct.rTensorHomToHomRTensor σ M N U)
       exact TensorProduct.rTensorHomToHomRTensor_postcomp σ M N (U := U) g.hom)
 
@@ -456,6 +472,8 @@ def semilinearHomSourceTensorIso (N : ModuleCat.{vN} S) (U : ModuleCat.{vU} S)
           (LinearMap.lcompₛₗ S (N ⊗[S] U) σ k.unop.hom).comp
             (TensorProduct.rTensorHomToHomRTensor σ M.unop N U)
       exact TensorProduct.rTensorHomToHomRTensor_precomp σ M.unop N (U := U) k.unop.hom)
+
+attribute [local implicit_reducible] semilinearHomCoeffTensorIso semilinearHomSourceTensorIso
 
 @[simp]
 theorem semilinearHomCoeffTensorIso_hom_apply (M : ModuleCat.{vM} R)
