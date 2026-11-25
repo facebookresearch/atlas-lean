@@ -1,0 +1,3 @@
+# The gap of the population criterion is a Kullback–Leibler divergence
+
+For a log-likelihood $\ell_\theta(x)$ and observations $X_0, X_1, \dots$ on a probability space, write $Q(\theta) = \mathbb{E}[\ell_\theta(X_0)]$ for the population criterion. Let $(\mu_\theta)$ be a family with $\mu_{\theta_0}$, $\mu_\theta$ probability measures, $X_0$ almost everywhere measurable with law $\mu_{\theta_0}$, $\ell_{\theta_0}$ and $\ell_\theta$ $\mu_{\theta_0}$-integrable, $\mu_{\theta_0} \ll \mu_\theta$, and $\ell_{\theta_0} - \ell_\theta = \log\frac{d\mu_{\theta_0}}{d\mu_\theta}$ $\mu_{\theta_0}$-almost everywhere. Then $Q(\theta_0) - Q(\theta) = \mathrm{KL}(\mu_{\theta_0} \,\|\, \mu_\theta)$.

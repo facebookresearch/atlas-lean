@@ -5,6 +5,7 @@ Probability in high dimension and on geometric objects: log-concave and uniform 
 - [Angular synchronization](angular-synchronization/README.md)
 - [Beardwood–Halton–Hammersley theorem](beardwood-halton-hammersley-theorem/README.md)
 - [Bernoulli conjecture](bernoulli-conjecture/README.md)
+- [Finite-class learning bounds](finite-class-learning-bounds/README.md)
 - [Singularity of random Bernoulli matrices](singularity-of-random-bernoulli-matrices/README.md)
 - [Singularity of random sign matrices](singularity-of-random-sign-matrices/README.md)
 - [Supermodularity of entropy power](supermodularity-of-entropy-power/README.md)

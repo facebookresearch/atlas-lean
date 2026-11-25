@@ -1,0 +1,3 @@
+# Deterministic core of Wald's consistency argument
+
+For a log-likelihood $\ell_\theta(x)$, $\theta$ in a pseudometric space, and observations $X_0, X_1, \dots$ on a measure space with measure $P$ (expectations are integrals against $P$), write $Q(\theta) = \mathbb{E}[\ell_\theta(X_0)]$. Let $\mathcal C$ be a Wald cover of $S$ away from $\theta_0$ at radius $\varepsilon$. Along a sample path on which the averages $\frac1n\sum_{i<n}u(X_i)$ converge to $\mathbb{E}[u(X_0)]$ for every $(B, u) \in \mathcal C$ and $\frac1n\sum_{i<n}\ell_{\theta_0}(X_i) \to Q(\theta_0)$, every sequence $\hat\theta_n \in S$ with average log-likelihood at least that of $\theta_0$ is eventually within $\varepsilon$ of $\theta_0$.

@@ -5,6 +5,7 @@ Bayesian inference and nonparametric priors: the Dirichlet process and stick-bre
 - [Dirichlet process](dirichlet-process/README.md)
 - [Blackwell–MacQueen urn](blackwell-macqueen-urn/README.md)
 - [Infinite mixture models](infinite-mixture-models/README.md)
+- [Predictive values of diagnostic tests](predictive-values-of-diagnostic-tests/README.md)
 - [Indian buffet process](indian-buffet-process/README.md)
 - [Bayesian inverse problems](bayesian-inverse-problems/README.md)
 - [Function-space MCMC](function-space-mcmc/README.md)

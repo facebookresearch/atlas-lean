@@ -1,0 +1,7 @@
+# Asymptotic normality of maximum likelihood, vector parameter
+
+Let $E$ be a finite-dimensional real inner product space, $\nu$ a measure, $p_\theta$ ($\theta \in E$) densities with respect to $\nu$, $P_\theta = p_\theta\,\nu$, $s_\theta = \nabla_\theta\log p_\theta$ the score and $I(\theta)$ the Fisher information operator. Let $X_0, X_1, \dots$ be mutually independent observations with law $P_{\theta_0}$. Assume that for some $\delta > 0$ the score is differentiable in $\theta$ on the ball $B(\theta_0, \delta)$ for every $x$, with $\|\dot s_\theta(x) - \dot s_{\theta_0}(x)\| \le M(x)\|\theta - \theta_0\|$ there for a measurable $P_{\theta_0}$-integrable $M$. Assume $s_{\theta_0}$ is measurable with $\int\|s_{\theta_0}\|^2dP_{\theta_0} < \infty$ and $\int s_{\theta_0}\,dP_{\theta_0} = 0$. Assume $\dot s_{\theta_0}$ is strongly measurable and integrable with $\int\dot s_{\theta_0}\,dP_{\theta_0} = -I(\theta_0)$ (the information identity). Let $\hat\theta_n$ be almost everywhere measurable estimators with $\hat\theta_n \to \theta_0$ in probability that solve the likelihood equation $\sum_{i<n}s_{\hat\theta_n}(X_i) = 0$ with probability tending to $1$. Assume $I(\theta_0)$ is invertible and let $Z$ be a random vector with $\langle Z, t\rangle \sim \mathcal N(0, \langle I(\theta_0)^{-1}t, t\rangle)$. Then $\sqrt n(\hat\theta_n - \theta_0)$ converges in distribution to $Z$.
+
+## Sources
+
+- Cramér (1946), §33.3; Lehmann & Casella (1998), Theorem 6.5.1; van der Vaart (1998), Theorem 5.41.

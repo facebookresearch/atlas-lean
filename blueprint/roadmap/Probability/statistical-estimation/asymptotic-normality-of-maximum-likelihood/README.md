@@ -4,12 +4,14 @@
 
 - [Product of a distributionally convergent and a vanishing sequence](mul-tendsto-in-measure-zero.md)
 - [Convergence to zero in probability by domination on likely events](tendsto-in-measure-zero-of-abs-le.md)
+- [Sums of sequences tending to zero in probability](tendsto-in-measure-add-zero.md)
 
 ## Asymptotic normality of the MLE
 
 - [Score function](score.md)
 - [Fisher information is the second moment of the score](integral-score-sq.md)
 - [Central limit theorem for the score](tendsto-in-distribution-score.md)
+- [Second-order Taylor bound](abs-sub-sub-mul-deriv-le.md)
 - [Asymptotic normality of a consistent root of an estimating equation](tendsto-in-distribution-sqrt-mul-sub-of.md)
 - [Asymptotic normality of consistent roots of the likelihood equation](tendsto-in-distribution-sqrt-mul-sub-of-2.md)
 - [Fisher information of the affine Gaussian location family](fisher-information-gaussian-pdfreal-affi.md)

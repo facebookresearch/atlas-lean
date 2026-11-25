@@ -1,0 +1,3 @@
+# Almost sure validity of the bootstrap for a multivariate mean
+
+Let $E$ be a finite-dimensional real inner product space and $X_0, X_1, \dots$ pairwise independent, identically distributed, square-integrable random vectors in $E$ on a probability space; let $Z$ be a centred Gaussian vector with $\langle Z, t\rangle \sim \mathcal N(0, \operatorname{Var}\langle X_0, t\rangle)$ for all $t$. For a realized data sequence $x = (X_i(\omega))_i$ let $\bar x_n$ be the sample mean and $\bar x^*_n$ the bootstrap mean under the bootstrap world of $x$. Then for almost every $\omega$, under the bootstrap world of $x$, $\sqrt n\,(\bar x^*_n - \bar x_n)$ converges in distribution to $Z$. The covariance may be singular.

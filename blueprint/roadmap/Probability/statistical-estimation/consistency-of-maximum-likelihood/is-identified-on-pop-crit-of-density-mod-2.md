@@ -1,0 +1,3 @@
+# Identifiability of the expected log-likelihood from identifiable densities
+
+Let $\nu$ be a $\sigma$-finite measure, $P_\theta$ the measure with density $p_\theta$ with respect to $\nu$, $K$ a parameter set containing $\theta_0$, and for $\theta \in K$ let $P_\theta$ be a probability measure with $p_\theta$ measurable and $\nu$-almost everywhere positive. Let $X_0, X_1, \dots$ be observations on a probability space with $X_0$ almost everywhere measurable of law $P_{\theta_0}$, and suppose $\log p_\theta$ is $P_{\theta_0}$-integrable for $\theta \in K$. If $p_\theta = p_{\theta_0}$ $\nu$-almost everywhere with $\theta \in K$ forces $\theta = \theta_0$, then $\theta_0$ is the unique maximizer on $K$ of $\theta \mapsto \mathbb{E}[\log p_\theta(X_0)]$.

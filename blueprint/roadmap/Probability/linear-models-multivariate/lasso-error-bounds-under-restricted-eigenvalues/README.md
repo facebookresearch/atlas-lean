@@ -26,6 +26,9 @@ who proved bounds of this kind for the Lasso and the Dantzig selector together.
 - [Slow rate for the Lasso prediction error](lasso-prediction-error-le-slow.md)
 - [Fast rate for the Lasso prediction error](lasso-prediction-error-le-fast.md)
 
+## Fixed-design Lasso basic inequality
+
+
 ## Related topics
 
 - [Exact recovery by basis pursuit](../exact-recovery-by-basis-pursuit/README.md)

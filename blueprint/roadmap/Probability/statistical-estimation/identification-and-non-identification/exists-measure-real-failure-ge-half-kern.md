@@ -1,0 +1,3 @@
+# Two-point lower bound for randomized estimators
+
+Let $(P_\theta)_{\theta \in \Theta}$ be observation laws on a measurable space and $\tau : \Theta \to \mathbb{R}$ an estimand. Let $\theta, \theta'$ have the same probability law $P_\theta = P_{\theta'}$ and $|\tau(\theta) - \tau(\theta')| > 2\varepsilon$ with $\varepsilon \ge 0$. Then for every Markov kernel $\kappa$ from the observation space to $\mathbb{R}$ (a randomized estimator), $\int\kappa\,dP_\theta$ gives $\{y : |y - \tau(\theta)| > \varepsilon\}$ probability at least $1/2$, or $\int\kappa\,dP_{\theta'}$ gives $\{y : |y - \tau(\theta')| > \varepsilon\}$ probability at least $1/2$.
