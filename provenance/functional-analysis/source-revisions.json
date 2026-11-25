@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "directory": "provenance/functional-analysis/residual-analysis",
+      "source_revision": "f386092a56f2b7b2f57a83548b841f93c6addd31",
+      "file_count": 56,
+      "source_content_binding": "Original SHA-256 and literal snapshot rows. Six changes to noncomment export text record canonical cutoff reuse, grid import normalization and four native compatibility repairs. Later documentation wrapping preserves kernel-checked noncomment code, words and formulas; original archives and source revision are unchanged."
+    },
+    {
+      "directory": "provenance/functional-analysis/kernel-spectral-tensor-apis",
+      "source_revision": "632b19d0721122e67fcdd66ab75bd37a9f89de86",
+      "documentation_revision": "bd599a2704f61645eea9650a5caa8da7f27b9c44",
+      "file_count": 8,
+      "source_content_binding": "Eight readable .lean.txt originals and source/export/Git-blob hashes."
+    }
+  ]
+}

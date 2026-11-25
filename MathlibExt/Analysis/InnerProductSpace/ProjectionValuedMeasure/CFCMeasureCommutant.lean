@@ -1,0 +1,86 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure.CFCMeasureProjectionValued
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Commute
+
+/-!
+# Commutants of the computed spectral measure
+
+An operator commuting with a normal operator and its adjoint balances the
+normal operator's regular complex coefficient measures. The resulting equality
+of matrix coefficients transfers this commutation to every value of the
+computed spectral measure, including its zero value on nonmeasurable sets.
+-/
+
+@[expose] public section
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+noncomputable section
+open MeasureTheory Set
+open scoped CStarAlgebra InnerProductSpace
+namespace MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure
+universe uH
+variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- Let `H` be a complete complex inner product space, let `T : H →L[ℂ] H` be star-normal,
+and let `D : H →L[ℂ] H` commute with both `T` and `T.adjoint`. For vectors `g h : H`, the regular
+complex coefficient measure of `(D g,h)` on the actual spectrum `spectrum ℂ T` equals the
+coefficient measure of `(g,D.adjoint h)` determined by the same continuous functional calculus. -/
+theorem normalCFCCoefficientMeasure_commutant_balance
+    (T : H →L[ℂ] H) (hT : IsStarNormal T) (D : H →L[ℂ] H)
+    (hTD : Commute T D) (hstarTD : Commute (star T) D) (g h : H) :
+    normalCFCCoefficientMeasure T hT (D g) h =
+      normalCFCCoefficientMeasure T hT g (D.adjoint h) := by
+  apply MathlibExt.MeasureTheory.complexIntegralDual_injective
+  ext f
+  rw [normalCFCCoefficientMeasure_represents, normalCFCCoefficientMeasure_represents]
+  have hf := hTD.cfcHom hT hstarTD f
+  have hvalue : cfcHom hT f (D g) = D (cfcHom hT f g) :=
+    congrArg (fun A : H →L[ℂ] H => A g) hf.eq
+  rw [hvalue]
+  exact (ContinuousLinearMap.adjoint_inner_left D (cfcHom hT f g) h).symm
+
+/-- Let `H` be a complete complex inner product space, let `T : H →L[ℂ] H` be star-normal,
+and let `D : H →L[ℂ] H` commute with both `T` and `T.adjoint`. For every subset `s` of the actual
+complex spectrum of `T`, the operator `D` commutes with the computed spectral value
+`normalCFCPVM T hT s` on `H`. -/
+theorem normalCFCPVM_commute_of_commute
+    (T : H →L[ℂ] H) (hT : IsStarNormal T) (D : H →L[ℂ] H)
+    (hTD : Commute T D) (hstarTD : Commute (star T) D) (s : Set (spectrum ℂ T)) :
+    Commute D (normalCFCPVM T hT s) := by
+  change D * normalCFCCoefficientOperator T hT s = normalCFCCoefficientOperator T hT s * D
+  by_cases hs : MeasurableSet s
+  · apply ContinuousLinearMap.ext
+    intro g
+    apply ext_inner_left ℂ
+    intro h
+    change ⟪h, D (normalCFCCoefficientOperator T hT s g)⟫_ℂ =
+      ⟪h, normalCFCCoefficientOperator T hT s (D g)⟫_ℂ
+    calc
+      _ = ⟪D.adjoint h, normalCFCCoefficientOperator T hT s g⟫_ℂ :=
+        (ContinuousLinearMap.adjoint_inner_left D (normalCFCCoefficientOperator T hT s g) h).symm
+      _ = (normalCFCCoefficientMeasure T hT g (D.adjoint h) :
+          ComplexMeasure (spectrum ℂ T)) s :=
+        normalCFCCoefficientOperator_coefficient T hT s hs g (D.adjoint h)
+      _ = (normalCFCCoefficientMeasure T hT (D g) h : ComplexMeasure (spectrum ℂ T)) s :=
+        (congrArg (fun mu : MathlibExt.MeasureTheory.RegularComplexMeasure (spectrum ℂ T) =>
+          (mu : ComplexMeasure (spectrum ℂ T)) s)
+          (normalCFCCoefficientMeasure_commutant_balance T hT D hTD hstarTD g h)).symm
+      _ = ⟪h, normalCFCCoefficientOperator T hT s (D g)⟫_ℂ :=
+        (normalCFCCoefficientOperator_coefficient T hT s hs (D g) h).symm
+  · rw [normalCFCCoefficientOperator_not_measurable T hT s hs, mul_zero, zero_mul]
+
+end MathlibExt.Analysis.InnerProductSpace.ProjectionValuedMeasure
+
+end
