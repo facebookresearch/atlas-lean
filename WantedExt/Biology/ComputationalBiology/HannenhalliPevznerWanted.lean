@@ -36,9 +36,11 @@ number of hurdles, all of them superhurdles.
 **Theorem 5** (Hannenhalli–Pevzner 1999). `d(π) = b(π) - c(π) + h(π) + 1` if `π` is a fortress,
 and `d(π) = b(π) - c(π) + h(π)` otherwise.
 
-The theorem is stated as the existence of `d` with `d = b - c + h + [fortress]` that is attained
-by a sorting sequence and is a lower bound for every sorting sequence. Theorem 6 (the algorithm
-Reversal_Sort sorts optimally in `O(n^4)` time) is not stated.
+Signed permutations, signed reversals, the breakpoint count `b(π)`, the unsigned image and the
+reversal distance are the canonical `SValid`, `srevBlock`, `sbreaks`, `dbl` and `sdist` of
+`CSLibExt.Bioinformatics.Rearrangement.SortingByReversals` (lists over `ℤ`, zero-based positions),
+where `sbreaks_eq_ubreaks_dbl_of_valid` relates `b(π)` to the breakpoints of the unsigned image.
+Theorem 6 (the algorithm Reversal_Sort sorts optimally in `O(n^4)` time) is not stated.
 
 Sources: S. Hannenhalli and P. A. Pevzner, "Transforming cabbage into turnip: polynomial
 algorithm for sorting signed permutations by reversals", J. ACM 46(1):1-27, 1999,
@@ -47,6 +49,7 @@ doi:10.1145/300515.300516, Theorem 5.
 module
 
 public import Batteries.Util.ProofWanted
+public import CSLibExt.Bioinformatics.Rearrangement.SortingByReversals
 public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Fin
@@ -60,41 +63,12 @@ public import Mathlib.Logic.Relation
 
 namespace WantedExt.Biology.ComputationalBiology.HannenhalliPevznerWanted
 
-/-- `π` is a signed permutation of `1, …, n`: the absolute values of its entries are a
-permutation of `1, …, n` (so no entry is `0` and each absolute value occurs once). -/
-def IsSignedPerm (n : ℕ) (π : List ℤ) : Prop :=
-  (π.map Int.natAbs).Perm ((List.range n).map (· + 1))
+open Cslib.Bioinformatics.Rearrangement.SortingByReversals
 
-/-- The identity signed permutation `(+1, …, +n)`. -/
-def identity (n : ℕ) : List ℤ :=
-  (List.range n).map fun i => (i : ℤ) + 1
-
-/-- The reversal `ρ(i, j)` (0-based positions `i ≤ j`): reverse the block in positions
-`i, …, j` and change the sign of each of its entries. -/
-def reversal (π : List ℤ) (i j : ℕ) : List ℤ :=
-  π.take i ++ (((π.drop i).take (j + 1 - i)).reverse.map fun x => -x) ++ π.drop (j + 1)
-
-/-- At most `m` reversals `ρ(i, j)` with `i ≤ j < n`, applied in order, turn `π` into the
-identity, so `d(π) ≤ m`. -/
-def SortsWithin (n : ℕ) (π : List ℤ) (m : ℕ) : Prop :=
-  ∃ ops : List (ℕ × ℕ), ops.length ≤ m ∧ (∀ o ∈ ops, o.1 ≤ o.2 ∧ o.2 < n) ∧
-    ops.foldl (fun l o => reversal l o.1 o.2) π = identity n
-
-/-- The framed permutation `[0, π_1, …, π_n, n + 1]`. -/
-def framed (n : ℕ) (π : List ℤ) : List ℤ :=
-  0 :: π ++ [(n : ℤ) + 1]
-
-/-- The number `b(π)` of breakpoints: positions `0 ≤ t ≤ n` of the framed permutation with
-`π_{t+1} - π_t ≠ 1`. -/
-def breakpoints (n : ℕ) (π : List ℤ) : ℕ :=
-  ((List.range (n + 1)).filter fun t =>
-    (framed n π).getD (t + 1) 0 - (framed n π).getD t 0 ≠ 1).length
-
-/-- The unsigned image `[0, …, 2n + 1]`: `+x` becomes `2x - 1, 2x` and `-x` becomes
-`2x, 2x - 1`. -/
+/-- The unsigned image `[0, u_1, …, u_{2n}, 2n + 1]` as natural numbers: the doubling `dbl π`
+(`+x` becomes `2x - 1, 2x` and `-x` becomes `2x, 2x - 1`) framed by `0` and `2n + 1`. -/
 def image (n : ℕ) (π : List ℤ) : List ℕ :=
-  0 :: π.flatMap (fun x => if 0 < x then [2 * x.natAbs - 1, 2 * x.natAbs]
-    else [2 * x.natAbs, 2 * x.natAbs - 1]) ++ [2 * n + 1]
+  (0 :: dbl π ++ [((2 * n + 1 : ℕ) : ℤ)]).map Int.toNat
 
 /-- The position of the value `v` in the unsigned image. -/
 def pos (n : ℕ) (π : List ℤ) (v : ℕ) : ℕ :=
@@ -193,14 +167,12 @@ def IsFortress (n : ℕ) (π : List ℤ) : Prop :=
 
 open Classical in
 /-- **Hannenhalli–Pevzner duality** (1999, Theorem 5). For every signed permutation `π` of
-`1, …, n` there is `d` with `d = b(π) - c(π) + h(π) + 1` if `π` is a fortress and
-`d = b(π) - c(π) + h(π)` otherwise, such that some sequence of at most `d` reversals sorts `π`
-and every sequence of reversals sorting `π` has at least `d` reversals; that is, `d(π) = d`.
+`1, …, n` (`SValid n π`), the reversal distance `sdist n π` equals `b(π) - c(π) + h(π) + 1` if `π`
+is a fortress and `b(π) - c(π) + h(π)` otherwise, where `b(π) = sbreaks n π`.
 
 Source: S. Hannenhalli and P. A. Pevzner, J. ACM 46 (1999) 1-27, Theorem 5. -/
-theorem_wanted reversalDistance_eq (n : ℕ) {π : List ℤ} (hπ : IsSignedPerm n π) :
-    ∃ d : ℕ, (d : ℤ) = (breakpoints n π : ℤ) - cycles n π + hurdles n π +
-        (if IsFortress n π then 1 else 0) ∧
-      SortsWithin n π d ∧ ∀ m, SortsWithin n π m → d ≤ m
+theorem_wanted sdist_eq (n : ℕ) {π : List ℤ} (hπ : SValid n π) :
+    (sdist n π hπ : ℤ) = (sbreaks n π : ℤ) - cycles n π + hurdles n π +
+      (if IsFortress n π then 1 else 0)
 
 end WantedExt.Biology.ComputationalBiology.HannenhalliPevznerWanted

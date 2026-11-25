@@ -4,6 +4,7 @@ Reconstruction of evolutionary trees from sequence data: substitution models, li
 
 - [Counting binary phylogenetic trees](../../Combinatorics/elementary-enumeration/counting-binary-phylogenetic-trees/README.md)
 - [Felsenstein's pruning algorithm](felsenstein-s-pruning-algorithm/README.md)
+- [Identifiability of latent structure models](identifiability-of-latent-structure-models/README.md)
 - [Jukes–Cantor model](jukes-cantor-model/README.md)
 - [Maximum-likelihood ancestral reconstruction](maximum-likelihood-ancestral-reconstruction/README.md)
 - [Neighbor joining](neighbor-joining/README.md)

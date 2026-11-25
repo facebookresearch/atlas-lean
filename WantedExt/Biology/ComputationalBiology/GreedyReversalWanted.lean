@@ -9,13 +9,12 @@ LICENSE file in the root directory of this source tree.
 /-
 # The greedy breakpoint algorithm for unsigned sorting by reversals
 
-An unsigned permutation `π` of `1, …, n` is framed by `π_0 = 0` and `π_{n+1} = n + 1` and
-written as the list `[π_0, …, π_{n+1}]`. A reversal `(i, j)` with `1 ≤ i < j ≤ n` reverses the
-block `π_i … π_j`. A breakpoint is an adjacent pair `(π_t, π_{t+1})`, `0 ≤ t ≤ n`, whose values
-do not differ by one; `φ(π)` is the number of breakpoints. A strip is a maximal run of positions
-without breakpoints; a strip is decreasing if its values decrease, where a single element is a
-decreasing strip unless it is `π_0` or `π_{n+1}`. `OPT(π)` is the least number of reversals that
-sort `π`.
+An unsigned permutation `π` of `1, …, n` is framed by `π_0 = 0` and `π_{n+1} = n + 1`. A reversal
+`(i, j)` with `1 ≤ i < j ≤ n` reverses the block `π_i … π_j`. A breakpoint is an adjacent pair
+`(π_t, π_{t+1})`, `0 ≤ t ≤ n`, whose values do not differ by one; `φ(π)` is the number of
+breakpoints. A strip is a maximal run of positions without breakpoints; a strip is decreasing if its
+values decrease, where a single element is a decreasing strip unless it is `π_0` or `π_{n+1}`.
+`OPT(π)` is the least number of reversals that sort `π`.
 
 The greedy algorithm repeatedly chooses a reversal removing the most breakpoints, preferring,
 among those, one whose result has a decreasing strip.
@@ -28,9 +27,15 @@ at most `φ(π)` reversals.
 
 A greedy run is any sequence of reversals in which each reversal is a greedy choice at a
 permutation other than the identity; every choice the algorithm may make is covered. Theorem 1
-is stated as: every greedy run has at most `φ(π)` reversals (so every greedy run can be continued
-until it reaches the identity), and some greedy run reaches the identity. The `O(n²)` time and
+is stated as: every greedy run has at most `φ(π)` reversals, and some greedy run reaches the
+identity. The `O(n²)` time and
 `O(n)` space bounds, and the paper's exact branch-and-bound algorithm, are not stated.
+
+Unsigned permutations, block reversals, the framed breakpoint count `φ` and the reversal distance
+are the canonical `UValid`, `revBlock`, `ubreaks` and `udist` of
+`CSLibExt.Bioinformatics.Rearrangement.SortingByReversals` (lists over `ℤ`, zero-based positions:
+the block `π_i … π_j` is `revBlock π (i - 1) (j - 1)`), where `ubreaks_eq_zero_iff` shows that the
+identity is the only unsigned permutation without breakpoints.
 
 Sources: J. Kececioglu and D. Sankoff, "Exact and approximation algorithms for sorting by
 reversals, with application to genome rearrangement", Algorithmica 13(1-2):180-210, 1995,
@@ -39,90 +44,84 @@ doi:10.1007/BF01188586, Theorem 1 and Corollary 1.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Data.List.Perm.Basic
-public import Mathlib.Data.Int.Basic
+public import CSLibExt.Bioinformatics.Rearrangement.SortingByReversals
 
 @[expose] public section
 
 namespace WantedExt.Biology.ComputationalBiology.GreedyReversalWanted
 
-/-- `F` is a framed permutation of `1, …, n`: a permutation of `[0, 1, …, n + 1]` with first
-entry `0` and last entry `n + 1`. -/
-def IsFramedPerm (n : ℕ) (F : List ℕ) : Prop :=
-  F.Perm (List.range (n + 2)) ∧ F.getD 0 0 = 0 ∧ F.getD (n + 1) 0 = n + 1
+open Cslib.Bioinformatics.Rearrangement.SortingByReversals
 
-/-- The identity framed permutation `[0, 1, …, n + 1]`. -/
-def identity (n : ℕ) : List ℕ :=
-  List.range (n + 2)
+/-- The identity permutation `[1, …, n]`. -/
+def identity (n : ℕ) : List ℤ :=
+  (List.Icc 1 n).map Int.ofNat
+
+/-- The framed list `[0, π_1, …, π_n, n + 1]`. -/
+def framed (n : ℕ) (π : List ℤ) : List ℤ :=
+  0 :: π ++ [Int.ofNat (n + 1)]
 
 /-- The values `x` and `y` differ by one. -/
-def IsAdj (x y : ℕ) : Prop :=
-  x + 1 = y ∨ y + 1 = x
+def IsAdj (x y : ℤ) : Prop :=
+  (y - x).natAbs = 1
 
-instance (x y : ℕ) : Decidable (IsAdj x y) := by unfold IsAdj; infer_instance
+instance (x y : ℤ) : Decidable (IsAdj x y) := by unfold IsAdj; infer_instance
 
-/-- The number `φ(F)` of breakpoints: positions `t` with `t + 1 < |F|` whose values `F_t` and
-`F_{t+1}` do not differ by one. -/
-def breakpoints (F : List ℕ) : ℕ :=
-  ((List.range (F.length - 1)).filter fun t => ¬ IsAdj (F.getD t 0) (F.getD (t + 1) 0)).length
-
-/-- A reversal `(i, j)` of a framed permutation of `1, …, n`: `1 ≤ i < j ≤ n`. -/
+/-- A reversal of an unsigned permutation of `1, …, n`, in zero-based positions: `i < j < n`, so
+the block has at least two elements (a one-element reversal changes nothing). -/
 def IsReversal (n : ℕ) (r : ℕ × ℕ) : Prop :=
-  1 ≤ r.1 ∧ r.1 < r.2 ∧ r.2 ≤ n
-
-/-- Reverse the block in positions `i, …, j`. -/
-def reversal (F : List ℕ) (r : ℕ × ℕ) : List ℕ :=
-  F.take r.1 ++ ((F.drop r.1).take (r.2 + 1 - r.1)).reverse ++ F.drop (r.2 + 1)
+  r.1 < r.2 ∧ r.2 < n
 
 /-- The number of breakpoints removed by the reversal `r` (negative if it creates some). -/
-def removal (F : List ℕ) (r : ℕ × ℕ) : ℤ :=
-  (breakpoints F : ℤ) - breakpoints (reversal F r)
+def removal (n : ℕ) (π : List ℤ) (r : ℕ × ℕ) : ℤ :=
+  (ubreaks n π : ℤ) - ubreaks n (revBlock π r.1 r.2)
 
-/-- The framed permutation `F` of `1, …, n` has a decreasing strip: some position `1 ≤ t ≤ n`
-is a strip of a single element (breakpoints on both sides), or has `F_{t+1} + 1 = F_t` (it lies
-in a decreasing strip of length at least two). -/
-def HasDecreasingStrip (n : ℕ) (F : List ℕ) : Prop :=
+/-- `π` has a decreasing strip: some framed position `1 ≤ t ≤ n` is a strip of a single element
+(breakpoints on both sides), or has `π_{t+1} + 1 = π_t` (it lies in a decreasing strip of length
+at least two). -/
+def HasDecreasingStrip (n : ℕ) (π : List ℤ) : Prop :=
   ∃ t, 1 ≤ t ∧ t ≤ n ∧
-    ((¬ IsAdj (F.getD (t - 1) 0) (F.getD t 0) ∧ ¬ IsAdj (F.getD t 0) (F.getD (t + 1) 0)) ∨
-      F.getD (t + 1) 0 + 1 = F.getD t 0)
+    ((¬ IsAdj ((framed n π).getD (t - 1) 0) ((framed n π).getD t 0) ∧
+        ¬ IsAdj ((framed n π).getD t 0) ((framed n π).getD (t + 1) 0)) ∨
+      (framed n π).getD (t + 1) 0 + 1 = (framed n π).getD t 0)
 
-/-- `r` is a greedy choice at `F`: a reversal removing the most breakpoints among all reversals,
+/-- `r` is a greedy choice at `π`: a reversal removing the most breakpoints among all reversals,
 whose result has a decreasing strip whenever some reversal removing equally many breakpoints
 leaves a decreasing strip. -/
-def IsGreedyChoice (n : ℕ) (F : List ℕ) (r : ℕ × ℕ) : Prop :=
-  IsReversal n r ∧ (∀ r', IsReversal n r' → removal F r' ≤ removal F r) ∧
-    ((∃ r', IsReversal n r' ∧ removal F r' = removal F r ∧
-      HasDecreasingStrip n (reversal F r')) → HasDecreasingStrip n (reversal F r))
+def IsGreedyChoice (n : ℕ) (π : List ℤ) (r : ℕ × ℕ) : Prop :=
+  IsReversal n r ∧ (∀ r', IsReversal n r' → removal n π r' ≤ removal n π r) ∧
+    ((∃ r', IsReversal n r' ∧ removal n π r' = removal n π r ∧
+      HasDecreasingStrip n (revBlock π r'.1 r'.2)) →
+        HasDecreasingStrip n (revBlock π r.1 r.2))
 
-/-- A greedy run from `F`: a sequence of reversals, each a greedy choice at a permutation that
-is not the identity. -/
-inductive GreedyRun (n : ℕ) : List ℕ → List (ℕ × ℕ) → Prop where
-  | nil (F : List ℕ) : GreedyRun n F []
-  | cons (F : List ℕ) (r : ℕ × ℕ) (rest : List (ℕ × ℕ)) :
-      F ≠ identity n → IsGreedyChoice n F r → GreedyRun n (reversal F r) rest →
-        GreedyRun n F (r :: rest)
+/-- A greedy run from `π`: a sequence of reversals, each a greedy choice at a permutation that is
+not the identity. -/
+inductive GreedyRun (n : ℕ) : List ℤ → List (ℕ × ℕ) → Prop where
+  | nil (π : List ℤ) : GreedyRun n π []
+  | cons (π : List ℤ) (r : ℕ × ℕ) (rest : List (ℕ × ℕ)) :
+      π ≠ identity n → IsGreedyChoice n π r → GreedyRun n (revBlock π r.1 r.2) rest →
+        GreedyRun n π (r :: rest)
 
-/-- The result of applying the reversals `rs` in order to `F`. -/
-def applyAll (F : List ℕ) (rs : List (ℕ × ℕ)) : List ℕ :=
-  rs.foldl reversal F
+/-- The result of applying the reversals `rs` in order to `π`. -/
+def applyAll (π : List ℤ) (rs : List (ℕ × ℕ)) : List ℤ :=
+  rs.foldl (fun l r => revBlock l r.1 r.2) π
 
 /-- **The greedy algorithm sorts within `φ(π)` reversals** (Kececioglu–Sankoff 1995,
-Theorem 1). For every framed permutation `F` of `1, …, n`, every greedy run from `F` has at
-most `φ(F)` reversals, and some greedy run from `F` ends at the identity.
+Theorem 1). For every unsigned permutation `π` of `1, …, n` (`UValid n π`), every greedy run
+from `π` has at most `ubreaks n π` reversals, and some greedy run from `π` ends at the
+identity.
 
 Source: J. Kececioglu and D. Sankoff, Algorithmica 13 (1995) 180-210, Theorem 1. -/
-theorem_wanted greedyRun_length_le_and_sorts (n : ℕ) {F : List ℕ} (hF : IsFramedPerm n F) :
-    (∀ rs, GreedyRun n F rs → rs.length ≤ breakpoints F) ∧
-      ∃ rs, GreedyRun n F rs ∧ applyAll F rs = identity n
+theorem_wanted greedyRun_length_le_and_sorts (n : ℕ) {π : List ℤ} (hπ : UValid n π) :
+    (∀ rs, GreedyRun n π rs → rs.length ≤ ubreaks n π) ∧
+      ∃ rs, GreedyRun n π rs ∧ applyAll π rs = identity n
 
 /-- **The greedy algorithm is a 2-approximation** (Kececioglu–Sankoff 1995, Corollary 1). For
-every framed permutation `F` of `1, …, n`, every greedy run `rs` from `F` and every sequence
-`ops` of reversals sorting `F`, `|rs| ≤ 2 |ops|`.
+every unsigned permutation `π` of `1, …, n` (`UValid n π`) and every greedy run `rs` from `π`,
+`|rs| ≤ 2 udist n π`, twice the reversal distance.
 
 Source: J. Kececioglu and D. Sankoff, Algorithmica 13 (1995) 180-210, Corollary 1. -/
-theorem_wanted greedyRun_length_le_two_mul (n : ℕ) {F : List ℕ} (hF : IsFramedPerm n F)
-    {rs : List (ℕ × ℕ)} (hrs : GreedyRun n F rs) {ops : List (ℕ × ℕ)}
-    (hops : ∀ r ∈ ops, IsReversal n r) (hsort : applyAll F ops = identity n) :
-    rs.length ≤ 2 * ops.length
+theorem_wanted greedyRun_length_le_two_mul_udist (n : ℕ) {π : List ℤ} (hπ : UValid n π)
+    {rs : List (ℕ × ℕ)} (hrs : GreedyRun n π rs) :
+    rs.length ≤ 2 * udist n π hπ
 
 end WantedExt.Biology.ComputationalBiology.GreedyReversalWanted

@@ -37,6 +37,7 @@ Sources: V. Bafna and P. A. Pevzner, "Sorting by transpositions", SIAM J. Discre
 module
 
 public import Batteries.Util.ProofWanted
+public import WantedExt.Complexity.NPComplete.SortingByTranspositionsWanted
 public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Algebra.Order.Group.Nat
@@ -54,21 +55,19 @@ entry `0` and last entry `n + 1`. -/
 def IsFramedPerm (n : ℕ) (p : List ℕ) : Prop :=
   p.Perm (List.range (n + 2)) ∧ p.getD 0 0 = 0 ∧ p.getD (n + 1) 0 = n + 1
 
-/-- The transposition `ρ(i, j, k)`: exchange the block in positions `i, …, j - 1` with the block
-in positions `j, …, k - 1`. -/
-def transposition (l : List ℕ) (i j k : ℕ) : List ℕ :=
-  l.take i ++ (l.drop j).take (k - j) ++ (l.drop i).take (j - i) ++ l.drop k
-
 /-- A valid transposition `(i, j, k)` of a framed permutation of `1, …, n`:
 `1 ≤ i < j < k ≤ n + 1`. -/
 def IsValidTransposition (n : ℕ) (o : ℕ × ℕ × ℕ) : Prop :=
   1 ≤ o.1 ∧ o.1 < o.2.1 ∧ o.2.1 < o.2.2 ∧ o.2.2 ≤ n + 1
 
 /-- At most `m` valid transpositions, applied in order, turn `p` into the identity
-`[0, 1, …, n + 1]`, so `d(p) ≤ m`. -/
+`[0, 1, …, n + 1]`, so `d(p) ≤ m`. Uses
+`MetaMathlibExt.Complexity.NPComplete.SortingByTranspositions.transposition`. -/
 def SortsWithin (n : ℕ) (p : List ℕ) (m : ℕ) : Prop :=
   ∃ ops : List (ℕ × ℕ × ℕ), ops.length ≤ m ∧ (∀ o ∈ ops, IsValidTransposition n o) ∧
-    ops.foldl (fun l o => transposition l o.1 o.2.1 o.2.2) p = List.range (n + 2)
+    ops.foldl (fun l o =>
+      MetaMathlibExt.Complexity.NPComplete.SortingByTranspositions.transposition
+        l o.1 o.2.1 o.2.2) p = List.range (n + 2)
 
 /-- The successor of black edge `i` in its alternating cycle: the position of `p_{i-1} + 1`. -/
 def cycleSucc (p : List ℕ) (i : ℕ) : ℕ :=
