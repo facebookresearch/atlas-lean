@@ -143,7 +143,10 @@ def homologyCochainRepresentative {R : Type u} [CommRing R] (K : Cochains R) (n 
     (c : K.homology n) : K.X n :=
   (K.iCycles n).hom (homologyCycleRepresentative K n c)
 
-/-- The actual cycle inclusion proves closure, with no requested proof or independent representative normalization. -/
+/-- For a commutative ring $R$, a cochain complex $K$ of $R$-modules indexed by $\mathbb{Z}$, an
+integer $n$ and a class $c \in H^n(K)$, the chosen representative
+`homologyCochainRepresentative K n c` of $c$ in $K^n$ is a cocycle: the differential
+$K^n \to K^{n+1}$ sends it to $0$. -/
 theorem homologyCochainRepresentative_closed {R : Type u} [CommRing R] (K : Cochains R) (n : ℤ)
     (c : K.homology n) : (K.d n (n + 1)).hom (homologyCochainRepresentative K n c) = 0 := by
   exact congrArg (fun a => a.hom (homologyCycleRepresentative K n c)) (K.iCycles_d n (n + 1))
