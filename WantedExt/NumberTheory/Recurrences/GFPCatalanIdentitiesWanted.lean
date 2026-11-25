@@ -39,6 +39,7 @@ public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Data.Nat.Choose.AlternatingRowSums
 public import MathlibExt.Data.Nat.Choose.AlternatingShiftedSum
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
+public import MathlibExt.NumberTheory.Recurrences.EvenBinomialAlternatingSum
 public import MathlibExt.NumberTheory.Recurrences.FloorPowBinomialSum
 public import MathlibExt.NumberTheory.Recurrences.GFPFibSumChoose
 public import MathlibExt.NumberTheory.Recurrences.GFPLucasCatalan
@@ -81,21 +82,6 @@ public theorem_wanted choose_sub_sub_one_eq_two_zpow_mul_sum {m n : ℕ} (hmn : 
     ((n - m - 1).choose m : ℚ) =
       (2 : ℚ) ^ (2 * (m : ℤ) - n + 1) *
         ∑ j ∈ Icc m ((n - 1) / 2), (j.choose m : ℚ) * (n.choose (2 * j + 1) : ℚ)
-
-/-- **Binomial coefficients of even lower index as an alternating sum.** For natural numbers $n$
-and $k$ with $k < \lfloor n/2 \rfloor$,
-$$\binom{n}{2k} = n \sum_{i=k}^{\lfloor n/2 \rfloor} \frac{(-1)^{i-k}}{n-i} \, 2^{n-2i-1}
-  \binom{n-i}{i} \binom{i}{k},$$
-an identity of rational numbers in which the exponent $n-2i-1$ may be $-1$.
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Lemma 3.2 (3) (`fq-2024-florez11012023-lem-3.2`). -/
-public theorem_wanted choose_two_mul_eq_alternating_sum {n k : ℕ} (hk : k < n / 2) :
-    (n.choose (2 * k) : ℚ) =
-      n * ∑ i ∈ Icc k (n / 2),
-        (-1) ^ (i - k) / ((n : ℚ) - i) * (2 : ℚ) ^ ((n : ℤ) - 2 * i - 1) *
-          ((n - i).choose i : ℚ) * (i.choose k : ℚ)
 
 /-- **Catalan identity for Fibonacci-type generalized Fibonacci polynomials.** Let $d$ and $g$ be
 polynomials with integer coefficients, and let $F_n$ be the generalized Fibonacci polynomials

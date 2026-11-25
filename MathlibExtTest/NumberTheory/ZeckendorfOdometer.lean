@@ -49,3 +49,38 @@ example :
     (by intro i hi; rw [hr]; interval_cases i <;> decide)
   rw [hr] at h
   exact h.2 6 (by decide) (by decide)
+
+-- Adding `F₉ = 34` to a sequence with zeros at indices `6` and `7` leaves the digits at
+-- indices `2`, `3` and `4` unchanged, even though the `1` at index `8` carries upwards:
+-- `F₈ + F₉ = F₁₀`.
+example :
+    let x := fun i : ℕ => decide (i = 2 ∨ i = 4 ∨ i = 8)
+    zeckOdometer^[34] x 2 = true ∧ zeckOdometer^[34] x 3 = false ∧
+      zeckOdometer^[34] x 4 = true := by
+  intro x
+  have hx : x ∈ zeckAdic := by
+    refine ⟨rfl, rfl, fun i => ?_⟩
+    simp only [x, decide_eq_false_iff_not]
+    omega
+  have hr : Nat.zeckendorf 34 = [9] :=
+    Nat.zeckendorf_sum_fib (l := [9]) (by unfold List.IsZeckendorfRep; decide)
+  have h := zeckOdometer_iterate_low_digits hx (ℓ := 6) (r := 34) (by decide)
+    (by decide) (by decide)
+    (by intro j hj1 hj2; rw [hr]; simp only [List.mem_singleton]; omega)
+  exact ⟨(h 2 (by decide) (by decide)).trans (by decide),
+    (h 3 (by decide) (by decide)).trans (by decide),
+    (h 4 (by decide) (by decide)).trans (by decide)⟩
+
+-- With no shift, the low digits are unchanged for every window.
+example :
+    let x := fun i : ℕ => decide (i = 2 ∨ i = 8)
+    zeckOdometer^[0] x 2 = true ∧ zeckOdometer^[0] x 3 = false := by
+  intro x
+  have hx : x ∈ zeckAdic := by
+    refine ⟨rfl, rfl, fun i => ?_⟩
+    simp only [x, decide_eq_false_iff_not]
+    omega
+  have h := zeckOdometer_iterate_low_digits hx (ℓ := 5) (r := 0) (by decide)
+    (by decide) (by decide) (by intro j _ _; simp)
+  exact ⟨(h 2 (by decide) (by decide)).trans (by decide),
+    (h 3 (by decide) (by decide)).trans (by decide)⟩
