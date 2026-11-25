@@ -38,30 +38,15 @@ import Mathlib.MeasureTheory.Measure.Real
 /-!
 # Ornstein–Weiss `ℤᵈ` Rokhlin lemma (Ornstein–Weiss, 1987)
 
-§109 of Knill's *Some Fundamental Theorems in Mathematics* (additional
-statement). The multidimensional Rokhlin lemma: for every free
+For every dimension `d ≥ 1`, every free
 measure-preserving `ℤᵈ`-action `T` on a standard Borel probability
 space, every box size `N ≥ 1`, and every `ε > 0`, there is a measurable
 base `B` such that the translates `T v '' B` for `v ∈ [0, N)ᵈ` are
-pairwise disjoint and their union has measure at least `1 − ε`.
+pairwise disjoint and their union has measure at least `1 − ε`. Knill discusses this
+multidimensional extension in §109 of *Some Fundamental Theorems in Mathematics*.
 
-Mathlib has `MeasurePreserving`, `IsProbabilityMeasure`,
-`Set.PairwiseDisjoint`, `Fintype.piFinset`, `Finset.Ico`, and
-`StandardBorelSpace`, but **no Ornstein–Weiss lemma**, no free
-measure-preserving `ℤᵈ`-actions, no multidimensional Rokhlin towers.
-The Challenge ships two small helper definitions (`IsFreeAction` and
-`boxShape`).
-
-Three hypotheses beyond the classical Rokhlin lemma:
-
-* `1 ≤ d` rules out the degenerate `d = 0` case.
-* The identity axiom `T 0 = id` is imposed explicitly; the homomorphism
-  axiom alone only forces `T 0` to be idempotent. Together with the
-  homomorphism axiom this also gives bijectivity of each `T v` via
-  `T (-v) ∘ T v = T 0 = id`.
-* `[StandardBorelSpace Ω]` rules out the countable-cocountable
-  σ-algebra defect (see the §109 Rokhlin lemma PR for the
-  one-dimensional version of this counterexample).
+The action laws give each `T v` the inverse `T (-v)`. The standard Borel hypothesis
+provides a countable family of measurable sets separating points.
 
 ## Proof
 

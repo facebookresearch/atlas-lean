@@ -1,20 +1,14 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
--/
-
-/-
-Portions of this file are adapted from:
-
-`CompactnessAndDegeneracy.lean` (OpenAI, ten-proofs):
 Copyright (c) OpenAI.
 Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
 Authors: OpenAI
-The adaptation covers the Hamming graph construction, its counting estimates, and the
-extremal lower bound along a sequence of vertex counts.
+
+Adapted from `CompactnessAndDegeneracy.lean` in https://github.com/openai/ten-proofs
+at commit 94bc0feb6a9ff12c7d31d6de640a725c9d43d2b6.
+This file retains the degeneracy argument and omits the compactness and Erdős Problem 180 results.
+It uses MathlibExt's `SimpleGraph.IsDegenerate` and Mathlib's `Real.binEntropy` and
+`SimpleGraph.extremalNumber`. The final step transports the counterexample to the arbitrary vertex
+universe of `EP146.DegenerateExtremalClaim`.
 -/
 
 module
