@@ -100,8 +100,9 @@ def continuousModulePresheaf : Scheme.{u}ᵒᵖ ⥤ ModuleCat.{u + 1} R where
   map_id U := by ext a x; rfl
   map_comp f g := by ext a x; rfl
 
-/-- Forgetting the module structure gives Mathlib's presheaf of continuous maps, which is an fpqc
-sheaf. -/
+/-- The identity isomorphism between the presheaf of `R`-modules `U ↦ C(U, M)` on schemes,
+composed with the forgetful functor to types, and the presheaf of continuous maps `U ↦ C(U, M)`
+(`continuousMapPresheaf M`). -/
 def continuousModuleForgetIso :
     continuousModulePresheaf R M ⋙ forget (ModuleCat.{u + 1} R) ≅
       continuousMapPresheaf.{u + 1, u} M := Iso.refl _
