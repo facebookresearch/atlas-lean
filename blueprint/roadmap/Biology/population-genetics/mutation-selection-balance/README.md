@@ -47,6 +47,8 @@
 - [Background selection reduces the effective size to the mutation-free class](background-selection-deterministic-reduction-fac.md)
 
 - [Almost-sure repeated clicking of a finite mutation ratchet](muller-s-ratchet-model-and-almost-sure-clicking.md)
+
+- [Fates of a duplicated gene in a finite duplication–degeneration–complementation model](gene-duplicate-fates-in-a-finite-ddc-style-model.md)
 - [The mutational load with epistatic gene interactions](multilocus-epistatic-mutation-load.md)
 - [Deterministic and stochastic descriptions of mutation–selection balance](mutation-selection-drift-comparisons.md)
 - [Mutation load in finite populations](finite-population-mutation-load.md)

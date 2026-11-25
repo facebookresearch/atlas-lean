@@ -30,3 +30,5 @@ Continuous-time processes with continuous paths or independent increments: the c
 - [Rough paths and path signatures](../../Analysis/rough-paths-and-path-signatures/README.md): the
   pathwise theory of controlled differential equations; Brownian motion with its Lévy area is the
   basic example of a rough path that is not of bounded variation.
+
+- [Stochastic differential equations](stochastic-differential-equations/README.md)

@@ -10,7 +10,7 @@ with terminal value the indicator of $\{1\}$ at $t = T$; and running the process
 
 ## Depends on
 
-- [Deterministic time change for a changing population size](../../../../Biology/population-genetics/effective-population-size/diffusion-time-change-for-a-changing-population-size.md)
+- [Time-changed neutral diffusion under deterministic population-size change: construction and fixation](../fixation-and-absorption-in-the-wright-fisher-dif/time-changed-neutral-diffusion-under-determinist.md)
 - [Fixation probability in a population of changing size](../../../../Biology/population-genetics/diffusion-theory/fixation-and-absorption-in-the-wright-fisher-dif/fixation-probability-in-a-population-of-changing-size.md)
 
 ## Expansion

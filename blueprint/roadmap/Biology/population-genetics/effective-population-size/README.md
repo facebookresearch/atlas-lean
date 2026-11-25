@@ -11,7 +11,8 @@
 - [Variance and inbreeding effective sizes differ when population size changes](variance-versus-inbreeding-effective-size-can-di.md)
 
 - [Effective size for an X-linked locus](effective-size-for-x-linked-loci.md)
-- [Deterministic time change for a changing population size](diffusion-time-change-for-a-changing-population-size.md)
+
+- [Consistency of the linkage-disequilibrium estimator of effective population size under a calibration hypothesis](ld-based-effective-size-estimator-definition-and.md)
 - [Decay of heterozygosity under a changing population size](decay-of-heterozygosity-in-the-time-changed-diffusion.md)
 - [Coalescent effective size and failure of binary universality](effective-size-universality-and-counterexamples.md)
 - [Effective versus census population size in the fixation probability](effective-versus-census-population-size.md)

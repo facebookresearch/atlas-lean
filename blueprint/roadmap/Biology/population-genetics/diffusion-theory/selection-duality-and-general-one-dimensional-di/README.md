@@ -84,6 +84,11 @@
 - [Positive recurrence and convergence of the ancestral selection graph line count](asg-line-count-positive-recurrence-and-convergen.md)
 - [Fixation probability via the ancestral selection graph line count](fixation-probability-from-the-asg.md)
 
+- [Accessible endpoints give almost sure exit with finite mean exit time](finite-accessibility-integrals-at-both-endpoints.md)
+- [Green function, occupation times and mean exit times of a one-dimensional diffusion](green-function-occupation-times-and-mean-exit-ti.md)
+- [Hitting probabilities equal scale ratios when both endpoints are accessible](hitting-probabilities-equal-scale-ratios-under-a.md)
+- [Scale function and exit probabilities for one-dimensional diffusions (process level)](scale-function-and-exit-probabilities-for-one-di.md)
+
 ## Further results
 
 - [Fixation probabilities under frequency-dependent selection](frequency-dependent-selection.md)

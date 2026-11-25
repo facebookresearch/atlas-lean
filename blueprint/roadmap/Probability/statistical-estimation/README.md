@@ -25,4 +25,4 @@ Point estimation theory and confidence sets: bias, risk and mean squared error, 
 - [Data assimilation](data-assimilation/README.md)
 - [Hidden Markov and latent structure models](hidden-markov-and-latent-structure-models/README.md)
 - [Capture–recapture and species richness](capture-recapture-and-species-richness/README.md)
-- [Ratios, tolerance distributions and agreement](ratio-tolerance-and-agreement-estimators/README.md)
+- [Ratios and tolerance distributions](ratio-and-tolerance-estimators/README.md)

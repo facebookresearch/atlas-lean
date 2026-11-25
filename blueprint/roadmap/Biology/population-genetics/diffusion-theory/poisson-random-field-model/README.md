@@ -15,5 +15,8 @@
 - [Expected number of sites derived in the whole neutral sample](expected-sfs-neutral-self.md)
 - [Expected number of segregating sites in a neutral sample](sum-expected-sfs-neutral.md)
 - [Expected pairwise diversity of a neutral sample is θ](sum-pairwise-diversity-expected-sfs-neut.md)
+
+- [The Poisson random field as the stationary limit of immigrating Wright–Fisher diffusions](poisson-random-field-as-the-stationary-limit-of.md)
+- [Diffusion observables averaged over a distribution of fitness effects](averages-over-a-distribution-of-fitness-effects.md)
 - [Site-frequency counts in the Poisson random field are independent Poisson](independent-poisson-site-counts.md)
 - [Fixation flux and divergence in the Poisson random field](fixation-flux-and-divergence.md)

@@ -6,7 +6,7 @@ With a changing population size, the age of an allele observed today at frequenc
 
 - [Mean age of an allele at a given frequency](../../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/mean-age.md)
 - [Symmetry of the mean age in the selection coefficient](../../../../Biology/population-genetics/diffusion-theory/allele-age-and-the-maruyama-effect/mean-age-neg.md)
-- [Deterministic time change for a changing population size](../../../../Biology/population-genetics/effective-population-size/diffusion-time-change-for-a-changing-population-size.md)
+- [Time-changed neutral diffusion under deterministic population-size change: construction and fixation](../fixation-and-absorption-in-the-wright-fisher-dif/time-changed-neutral-diffusion-under-determinist.md)
 
 ## Expansion
 

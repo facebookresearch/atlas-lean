@@ -1,6 +1,5 @@
 # Ancestral recombination graph
 
-- [Marginal genealogies of the ancestral recombination graph are Kingman coalescents](marginal-genealogies-of-the-ancestral-recombination-graph.md)
 - [Tree-sequence simplification](simplification-correctness.md)
 - [Duality between site and branch statistics](site-versus-branch-statistics.md)
 - [msprime's segment representation of Hudson's algorithm](msprime-algorithm-refinement.md)
