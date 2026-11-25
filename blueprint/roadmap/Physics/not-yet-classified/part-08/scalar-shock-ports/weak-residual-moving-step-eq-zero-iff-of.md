@@ -1,0 +1,3 @@
+# A test with nonzero interface integral detects the jump condition
+
+Let $f : \mathbb{R} \to \mathbb{R}$ be a flux, and let $u(t, x) = u_L$ for $x < c t$ and $u(t, x) = u_R$ otherwise be the step moving at speed $c$. Let $\varphi$ be a smooth function of $(t, x)$ vanishing outside a bounded rectangle $[T_0, T_1] \times [X_0, X_1]$, with time and space partial derivatives $\varphi_t$ and $\varphi_x$, such that $\int_{\mathbb{R}} \varphi(t, c t)\,dt \ne 0$. Then the weak residual $\iint_{\mathbb{R}^2} \big(u\, \varphi_t + f(u)\, \varphi_x\big)\,dt\,dx$ vanishes if and only if $c (u_R - u_L) = f(u_R) - f(u_L)$.
