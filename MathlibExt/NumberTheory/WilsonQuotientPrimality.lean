@@ -162,4 +162,51 @@ theorem exists_int_eq_wilsonQuotientZ_two_mul_sub_one_modEq_zero_iff
       push_cast
       simp [hfac, hq, hprev]
 
+private theorem wilsonQuotientZ_of_even (n : ℕ) (hn : 1 ≤ n) (heven : Even n) :
+    wilsonQuotientZ n = 1 := by
+  let f (k : ℕ) : ℚ := (-1) ^ k * ((k.factorial : ℚ) * ((n - 1 - k).factorial : ℚ))
+  have hodd : Odd (n - 1) := by
+    obtain ⟨j, hj⟩ := heven
+    exact ⟨j - 1, by omega⟩
+  -- Reflect the range: the factorials swap and the sign changes.
+  have hflip (k : ℕ) (hk : k ∈ Finset.range n) : f (n - 1 - k) = -f k := by
+    have hk' := Finset.mem_range.mp hk
+    have hsub : n - 1 - (n - 1 - k) = k := by omega
+    have hadd : n - 1 - k + k = n - 1 := by omega
+    have hkk : Even (k + k) := ⟨k, rfl⟩
+    have hsign : (-1 : ℚ) ^ (n - 1 - k) = -((-1 : ℚ) ^ k) := by
+      calc
+        _ = (-1 : ℚ) ^ (n - 1 - k) * (-1) ^ (k + k) := by rw [hkk.neg_one_pow, mul_one]
+        _ = (-1 : ℚ) ^ (n - 1) * (-1) ^ k := by rw [pow_add _ k k, ← mul_assoc, ← pow_add, hadd]
+        _ = _ := by rw [hodd.neg_one_pow, neg_one_mul]
+    simp only [f, hsub, hsign, neg_mul]
+    rw [mul_comm ((n - 1 - k).factorial : ℚ) (k.factorial : ℚ)]
+  have hsum : (∑ k ∈ Finset.range n, f k) = 0 := by
+    have h := calc
+      (∑ k ∈ Finset.range n, f k) = ∑ k ∈ Finset.range n, f (n - 1 - k) :=
+        (Finset.sum_range_reflect f n).symm
+      _ = ∑ k ∈ Finset.range n, -f k := Finset.sum_congr rfl hflip
+      _ = -(∑ k ∈ Finset.range n, f k) := Finset.sum_neg_distrib f
+    linarith only [h]
+  have hnR : (n : ℚ) ≠ 0 := by exact_mod_cast (show n ≠ 0 by omega)
+  simp only [wilsonQuotientZ, wilsonQuotientM, Nat.sub_right_comm n _ 1]
+  change (∑ k ∈ Finset.range n, (1 + f k) / (n : ℚ)) = 1
+  simp only [div_eq_mul_inv, ← Finset.sum_mul, Finset.sum_add_distrib, Finset.sum_const,
+    Finset.card_range, nsmul_eq_mul, mul_one, hsum, add_zero]
+  exact mul_inv_cancel₀ hnR
+
+/-- **The Wilson quotient sum is an integer.** For every natural number $n \ge 1$, Morozov's
+Wilson quotient sum $Z(n)$ is an integer.
+
+Source: Ivan V. Morozov, "On Quotients of a More General
+Theorem of Wilson", Theorem 1. -/
+theorem exists_int_eq_wilsonQuotientZ
+    (n : ℕ) (hn : 1 ≤ n) :
+    ∃ z : ℤ, (z : ℚ) = wilsonQuotientZ n := by
+  rcases Nat.even_or_odd n with heven | ⟨k, hk⟩
+  · exact ⟨1, by simpa using (wilsonQuotientZ_of_even n hn heven).symm⟩
+  · obtain ⟨z, hz, _⟩ :=
+      exists_int_eq_wilsonQuotientZ_two_mul_sub_one_modEq_zero_iff (k + 1) (by omega)
+    exact ⟨z, by simpa only [show 2 * (k + 1) - 1 = n by omega] using hz⟩
+
 end MathlibExt.NumberTheory.WilsonQuotientsWanted
