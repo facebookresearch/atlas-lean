@@ -23,3 +23,7 @@ Smooth dynamics studies differentiable maps and flows: hyperbolicity, stable man
 - [Number of linkage classes of a reaction network](num-linkage-classes.md)
 - [Deficiency of a chemical reaction network](deficiency.md)
 - [Weakly reversible reaction network](is-weakly-reversible.md)
+
+## Research directions
+
+- [Finiteness of planar central configurations of six bodies](finiteness-of-six-body-central-configurations.md)
