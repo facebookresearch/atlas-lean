@@ -6,6 +6,7 @@ Topics added since this subject's fields were last revised.
 - [Hecke Algebra](hecke-algebra/README.md)
 - [Hecke Local](hecke-local/README.md)
 - [Hecke Operator](hecke-operator/README.md)
+- [Level NStructure](level-nstructure/README.md)
 - [Period Map Hecke](period-map-hecke/README.md)
 - [Projective Northcott](projective-northcott/README.md)
 - [Gross–Zagier–Kolyvagin, rank-one implication](rank-eq-one-of-simple-zero-l-series.md)
