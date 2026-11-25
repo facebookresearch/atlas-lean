@@ -37,9 +37,10 @@ import Mathlib.Topology.Algebra.OpenSubgroup
 /-!
 # Kernels of representations of the absolute Galois group of `ℚ`
 
-A homomorphism from `Gal(ℚ̄/ℚ)` to a finite group whose kernel contains the
-fixing subgroup of a finite intermediate field is the kernel of the fixing
-subgroup of a finite Galois intermediate field.
+If the kernel of a homomorphism from `Gal(ℚ̄/ℚ)` to a finite group contains
+the fixing subgroup of a finite intermediate field, then that kernel is the
+fixing subgroup of a finite Galois intermediate field, whose degree over `ℚ`
+divides the order of the group.
 -/
 
 @[expose] public section
@@ -54,11 +55,11 @@ theorem GaloisRep.exists_intermediateField_isGalois_fixingSubgroup_eq_ker
     ∃ F : IntermediateField ℚ (AlgebraicClosure ℚ), FiniteDimensional ℚ F ∧ IsGalois ℚ F ∧
       F.fixingSubgroup = ρ.ker ∧ Module.finrank ℚ F ∣ Nat.card G := by
   classical
-  haveI hnorm : Normal ℚ (AlgebraicClosure ℚ) := inferInstance
-  haveI hsep : Algebra.IsSeparable ℚ (AlgebraicClosure ℚ) :=
+  have hnorm : Normal ℚ (AlgebraicClosure ℚ) := inferInstance
+  have hsep : Algebra.IsSeparable ℚ (AlgebraicClosure ℚ) :=
     ⟨fun x => (minpoly.irreducible (Algebra.IsIntegral.isIntegral x)).separable⟩
-  haveI : IsGalois ℚ (AlgebraicClosure ℚ) := IsGalois.mk
-  haveI := hM
+  have : IsGalois ℚ (AlgebraicClosure ℚ) := IsGalois.mk
+  have := hM
   have hopen : IsOpen ((ρ.ker :
       Subgroup (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)) :
       Set (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)) :=
@@ -72,11 +73,11 @@ theorem GaloisRep.exists_intermediateField_isGalois_fixingSubgroup_eq_ker
   have hfix : F.fixingSubgroup = ρ.ker := InfiniteGalois.fixingSubgroup_fixedField H
   have hfg : FiniteDimensional ℚ F ∧ IsGalois ℚ F :=
     (InfiniteGalois.isOpen_and_normal_iff_finite_and_isGalois F).mp
-      ⟨by show IsOpen (F.fixingSubgroup :
+      ⟨by change IsOpen (F.fixingSubgroup :
           Set (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ)); rw [hfix]; exact hopen,
        by rw [hfix]; exact MonoidHom.normal_ker ρ⟩
-  haveI : FiniteDimensional ℚ F := hfg.1
-  haveI : IsGalois ℚ F := hfg.2
+  have : FiniteDimensional ℚ F := hfg.1
+  have : IsGalois ℚ F := hfg.2
   refine ⟨F, hfg.1, hfg.2, hfix, ?_⟩
   have hk : (AlgEquiv.restrictNormalHom (F := ℚ) (K₁ := AlgebraicClosure ℚ) F).ker = ρ.ker :=
     (IntermediateField.restrictNormalHom_ker F).trans hfix
