@@ -32,6 +32,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import MathlibExt.Combinatorics.BridgeTorchParityInterpolation
 public import MathlibExt.Combinatorics.BridgeTorchReturnInequality
+public import MathlibExt.Combinatorics.BridgeTorchThreeInitialValues
 public import MathlibExt.Combinatorics.BridgeTorchThreeUpperBound
 public import MathlibExt.Combinatorics.BridgeTorchTwo
 public import MathlibExt.Combinatorics.BridgeTorchWeights
@@ -156,17 +157,6 @@ public theorem_wanted scheduleCost_two_lower_bound (n : ℕ) (hn : 3 ≤ n) (σ 
         4 * ((returnCrossings σ).countP fun A => decide (A.card = 2) : ℕ) +
         3 * ((forwardCrossings σ).countP fun A => decide (A.card = 1) : ℕ) ≤
       scheduleCost σ
-
-/-- **Initial values for capacity three.** Let $T_3(n)$ be the optimal crossing time of $n$
-people with crossing times $1, \dots, n$ on a bridge of capacity $3$ with one torch. Then
-$T_3(1) = 1$, $T_3(2) = 2$, $T_3(3) = 3$, $T_3(4) = 7$, $T_3(5) = 9$ and $T_3(6) = 14$.
-
-Source: Thang Pang Ern and Gerard Sayson, *Some Generalizations of the Bridge
-and Torch Problem*, Journal of Integer Sequences 29 (2026), Article 26.5.6,
-Proposition 8 (`jis-2026-26.5.6-prop-8`). -/
-public theorem_wanted bridgeTime_three_initial_values :
-    bridgeTime 3 1 = 1 ∧ bridgeTime 3 2 = 2 ∧ bridgeTime 3 3 = 3 ∧ bridgeTime 3 4 = 7 ∧
-      bridgeTime 3 5 = 9 ∧ bridgeTime 3 6 = 14
 
 /-- **Optimal capacity-3 schedules with fastest single returns.** Let $n \ge 1$ and consider the
 people $1, \dots, n$, person $i$ having crossing time $i$, on a bridge of capacity $3$ with one

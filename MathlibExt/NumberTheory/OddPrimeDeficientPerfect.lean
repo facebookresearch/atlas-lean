@@ -12,10 +12,11 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.NumberTheory.Divisors
 
-/-! # Odd primes and deficient-perfect numbers
+/-! # Primes and deficient-perfect numbers
 
 A prime's only proper divisor is one. The deficient-perfect equation would then
-make the prime divide two, which excludes every odd prime.
+make the prime divide two, which excludes every odd prime. For the prime two,
+the equation holds with `ℓ = 1` for every exponent `k`.
 -/
 
 set_option autoImplicit false
@@ -37,6 +38,21 @@ $\sigma_k(n) = \sum_{e \mid n} e^k$. The number $n$ is $[k,\ell]$-deficient-perf
 divisor $d$ of $n$ with $d < n$ such that $\sigma_k(n) + d^k = n^k + \ell n$. -/
 def IsKLDeficientPerfect (k l n : ℕ) : Prop :=
   ∃ d, KLDeficientPerfectWith k l n d
+
+/-- **$2$ is $[k,1]$-deficient-perfect.** For every natural number $k$, the number $2$ is
+$[k,1]$-deficient-perfect.
+
+The divisor is $d = 1$, since $1 + 2^k + 1^k = 2^k + 1 \cdot 2$.
+
+Source: Flora Jeba S, Anirban Roy, Pankaj Jyoti Mahanta,
+and Manjil P. Saikia, "On Near `F_k`-Perfect and Deficient
+`F_k`-Perfect Numbers", Corollary 1. -/
+theorem isKLDeficientPerfect_two (k : ℕ) :
+    IsKLDeficientPerfect k 1 2 := by
+  refine ⟨1, one_dvd 2, by decide, ?_⟩
+  have h1 : (1 : ℕ) ∉ ({2} : Finset ℕ) := by decide
+  simp only [Nat.prime_two.divisors, Finset.sum_insert h1, Finset.sum_singleton, one_pow, one_mul]
+  omega
 
 /-- **Odd primes are not $[k,\ell]$-deficient-perfect.** Let $p$ be an odd prime. Then for all
 natural numbers $k$ and $\ell$, $p$ is not $[k,\ell]$-deficient-perfect.
