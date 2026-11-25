@@ -41,7 +41,9 @@ namespace Gromov
 
 variable {n k l : ℕ} {M : Type*} [TopologicalSpace M]
 
--- Coordinate charts in the complex-analytic maximal atlas, small enough for the local frames.
+/-- **Finite complex coordinate cover.** This is a family of `k` open partial homeomorphisms
+from `M` to complex `n`-space. The `compatible` condition places each chart in the maximal
+complex-analytic atlas of the given charted space, and the chart sources cover `M`. -/
 structure ChartCover (n k : ℕ) (M : Type*) [TopologicalSpace M]
     [ChartedSpace (Fin n → ℂ) M] where
   chart : Fin k → OpenPartialHomeomorph M (Fin n → ℂ)
@@ -50,7 +52,11 @@ structure ChartCover (n k : ℕ) (M : Type*) [TopologicalSpace M]
 
 variable [ChartedSpace (Fin n → ℂ) M]
 
--- Restrict on both sides of the coordinate pushforward: no chart is assumed globally injective.
+/-- **Smooth positive volume measure.** The measure on `M` has a smooth, strictly positive real
+density on each chart target. The `map_restrict` condition says that pushing the measure
+restricted to the chart source forward by the chart gives Lebesgue measure weighted by that
+density and restricted to the chart target. On a complex manifold with its Borel measurable
+space, these densities describe a positive volume form for the complex orientation. -/
 structure PositiveVolume [MeasurableSpace M] (U : ChartCover n k M) where
   measure : Measure M
   density : Fin k → (Fin n → ℂ) → ℝ
@@ -59,7 +65,13 @@ structure PositiveVolume [MeasurableSpace M] (U : ChartCover n k M) where
   map_restrict : ∀ i, (measure.restrict (U.chart i).source).map (U.chart i) =
     (volume.withDensity fun z ↦ ENNReal.ofReal (density i z)).restrict (U.chart i).target
 
--- `transition a i j` takes the fiber coordinate in frame `i` to the one in frame `j`.
+/-- **Hermitian holomorphic line bundles in local frames.** In a family of `l` lines, the scalar
+`transition a i j x` takes the fiber coordinate of line `a` from frame `i` to frame `j`.
+On each chart overlap it is holomorphic in chart coordinates and nonzero. The `cocycle`
+condition says that on a triple overlap the change from `i` through `j` to `h` equals
+the change from `i` to `h`. The weight of each frame is its smooth positive norm.
+The `metric_compatible` condition says that the norm of the transition scalar times
+the weight in frame `j` equals the weight in frame `i`. -/
 structure HermitianLines (U : ChartCover n k M) (l : ℕ) where
   transition : Fin l → Fin k → Fin k → M → ℂ
   transition_analytic : ∀ a i j,
@@ -80,7 +92,11 @@ structure HermitianLines (U : ChartCover n k M) (l : ℕ) where
 
 variable {U : ChartCover n k M} {H : HermitianLines U l} {m : Fin l → ℕ}
 
--- Global holomorphic sections are exactly the compatible tuples in the local tensor frames.
+/-- **Holomorphic section of a tensor product of line-bundle powers.** For a multidegree `m`
+of nonnegative integers, the section is represented by a holomorphic scalar in each local
+tensor frame. The `compatible` condition says that, on an overlap, the scalar in frame `j`
+is the scalar in frame `i` times the product of the line transitions from `i` to `j`,
+with transition `a` raised to the power `m a`. -/
 structure Section (H : HermitianLines U l) (m : Fin l → ℕ) where
   coord : Fin k → M → ℂ
   analytic : ∀ i,
@@ -88,7 +104,10 @@ structure Section (H : HermitianLines U l) (m : Fin l → ℕ) where
   compatible : ∀ i j x, x ∈ (U.chart i).source → x ∈ (U.chart j).source →
     coord j x = (∏ a, H.transition a i j x ^ m a) * coord i x
 
--- Compatibility of the metrics and coordinates makes the result independent of the chart.
+/-- **Pointwise norm in the tensor product metric.** In any frame whose chart contains `x`,
+multiply the complex norm of the section coordinate by the product of the frame weights
+at `x`, with weight `a` raised to the power `m a`. The section and metric compatibility
+conditions make this value independent of the chosen chart. -/
 def Section.pointwiseNorm (s : Section H m) (x : M) : ℝ :=
   let i := (U.covers x).choose
   ‖s.coord i x‖ * ∏ a, H.weight a i x ^ m a
