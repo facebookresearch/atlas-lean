@@ -64,7 +64,7 @@ example : Finite 𝓀[v.adicCompletion ℚ] := inferInstance
 
 /-- Openness of the adic completion integers. -/
 example : IsOpen (↑(v.adicCompletionIntegers ℚ) : Set (v.adicCompletion ℚ)) :=
-  HeightOneSpectrum.isOpen_adicCompletionIntegers ℚ v
+  Valued.isOpen_valuationSubring _
 
 /-- Local compactness of the completion over `ℚ`, by instance search. -/
 example : LocallyCompactSpace (v.adicCompletion ℚ) := inferInstance
@@ -82,8 +82,7 @@ example : Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers ℚ)) ∧
     CompactSpace (Valued.integer (v.adicCompletion ℚ)) ∧
     IsOpen (↑(v.adicCompletionIntegers ℚ) : Set (v.adicCompletion ℚ)) ∧
     ProperSpace (v.adicCompletion ℚ) :=
-  ⟨inferInstance, inferInstance,
-    HeightOneSpectrum.isOpen_adicCompletionIntegers ℚ v, inferInstance⟩
+  ⟨inferInstance, inferInstance, Valued.isOpen_valuationSubring _, inferInstance⟩
 
 end HeightOneSpectrumTest
 

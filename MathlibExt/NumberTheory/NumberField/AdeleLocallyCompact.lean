@@ -97,11 +97,6 @@ instance finite_residueField_valued (v : HeightOneSpectrum (𝓞 K)) :
     Finite 𝓀[v.adicCompletion K] :=
   inferInstanceAs (Finite (IsLocalRing.ResidueField (v.adicCompletionIntegers K)))
 
-/-- The adic completion integers are open in the adic completion. -/
-theorem isOpen_adicCompletionIntegers (v : HeightOneSpectrum (𝓞 K)) :
-    IsOpen (↑(v.adicCompletionIntegers K) : Set (v.adicCompletion K)) :=
-  Valued.isOpen_valuationSubring _
-
 /-- The adic completion integers form a compact space. -/
 noncomputable instance compactSpace (v : HeightOneSpectrum (𝓞 K)) :
     CompactSpace (Valued.integer (v.adicCompletion K)) := by
