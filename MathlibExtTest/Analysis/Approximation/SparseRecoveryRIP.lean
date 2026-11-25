@@ -30,6 +30,33 @@ example {k : ι} (hk : k ∉ S) (hx : ∀ j ∉ S, j ≠ k → x j = 0) :
       simp [hx j (mem_compl.mp hj) hjk]
   simpa only [htail] using sum_abs_sub_le_of_hasRIP hs hΦ hδ hfeas hmin hS
 
+-- Noisy recovery with a vanishing tail: the error is at most the noise term.
+example {y z : Fin m → ℝ} (hy : y = Φ *ᵥ x + z) {ε : ℝ}
+    (hz : √(∑ i, z i ^ 2) ≤ ε) (hfeasN : √(∑ i, (y - Φ *ᵥ xhat) i ^ 2) ≤ ε)
+    (hminN : ∀ w : ι → ℝ, √(∑ i, (y - Φ *ᵥ w) i ^ 2) ≤ ε → ∑ j, |xhat j| ≤ ∑ j, |w j|)
+    (hx : ∀ j ∉ S, x j = 0) :
+    √(∑ j, (xhat j - x j) ^ 2) ≤
+      2 * (2 * √(1 + δ) / (1 - δ)) / (1 - √2 * δ / (1 - δ)) * ε := by
+  have htail : ∑ j ∈ Sᶜ, |x j| = 0 :=
+    sum_eq_zero fun j hj => by simp [hx j (mem_compl.mp hj)]
+  have hbound := sqrt_sum_sq_sub_le_of_hasRIP_of_noisy hs hΦ hδ hy hz hfeasN hminN hS
+  rw [htail, mul_zero, zero_add] at hbound
+  exact hbound
+
+-- A single omitted coefficient plus noise controls the noisy recovery error.
+example {k : ι} (hk : k ∉ S) (hx : ∀ j ∉ S, j ≠ k → x j = 0)
+    {y z : Fin m → ℝ} (hy : y = Φ *ᵥ x + z) {ε : ℝ}
+    (hz : √(∑ i, z i ^ 2) ≤ ε) (hfeasN : √(∑ i, (y - Φ *ᵥ xhat) i ^ 2) ≤ ε)
+    (hminN : ∀ w : ι → ℝ, √(∑ i, (y - Φ *ᵥ w) i ^ 2) ≤ ε → ∑ j, |xhat j| ≤ ∑ j, |w j|) :
+    √(∑ j, (xhat j - x j) ^ 2) ≤
+      2 * (1 + √2 * δ / (1 - δ)) / (1 - √2 * δ / (1 - δ)) / √s * |x k| +
+        2 * (2 * √(1 + δ) / (1 - δ)) / (1 - √2 * δ / (1 - δ)) * ε := by
+  have htail : ∑ j ∈ Sᶜ, |x j| = |x k| :=
+    sum_eq_single_of_mem k (mem_compl.mpr hk) fun j hj hjk => by
+      simp [hx j (mem_compl.mp hj) hjk]
+  simpa only [htail] using
+    sqrt_sum_sq_sub_le_of_hasRIP_of_noisy hs hΦ hδ hy hz hfeasN hminN hS
+
 -- If the tail vanishes, every coordinate of the minimizer agrees with the signal.
 example (hx : ∀ j ∉ S, x j = 0) : xhat = x := by
   have htail : ∑ j ∈ Sᶜ, |x j| = 0 :=

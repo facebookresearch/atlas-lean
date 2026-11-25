@@ -110,3 +110,55 @@ example : squareConductor 3 ≤ 300 := by
   omega
 
 end MetaMathlibExt.conductor_powers_le
+
+namespace MetaMathlibExt.conductor_union_le
+
+/-- The conductor of `⟨2, 3⟩` is at most `2`: the Dutch–Rickett bound with `A = {2}`,
+`B = {3}` and `t = 2`, whose right-hand conductors are bounded by `0` and `2`. -/
+example : sInf {m : ℕ | ∀ j ≥ m, j ∈ AddSubmonoid.closure ({2, 3} : Set ℕ)} ≤ 2 := by
+  have h₁ : sInf {m : ℕ | ∀ j ≥ m, j ∈ AddSubmonoid.closure
+      ((fun a => a / 2) '' ({2} : Set ℕ) ∪ {3})} = 0 := by
+    refine le_antisymm (Nat.sInf_le ?_) (Nat.zero_le _)
+    intro j _
+    have hmem : (1 : ℕ) ∈ AddSubmonoid.closure
+        ((fun a => a / 2) '' ({2} : Set ℕ) ∪ {3}) :=
+      AddSubmonoid.subset_closure (Or.inl ⟨2, rfl, by norm_num⟩)
+    simpa [nsmul_eq_mul] using
+      (AddSubmonoid.closure ((fun a => a / 2) '' ({2} : Set ℕ) ∪ {3})).nsmul_mem hmem j
+  have h₂ : sInf {m : ℕ | ∀ j ≥ m, j ∈ AddSubmonoid.closure
+      (({3} : Set ℕ) ∪ {2})} ≤ 2 := by
+    refine Nat.sInf_le ?_
+    intro j hj
+    obtain ⟨a, b, hab⟩ :=
+      Nat.exists_add_mul_eq_of_gcd_dvd_of_mul_pred_le 2 3 j (by simp) (by exact hj)
+    rw [← hab]
+    refine add_mem ?_ ?_
+    · simpa [nsmul_eq_mul] using
+        (AddSubmonoid.closure (({3} : Set ℕ) ∪ {2})).nsmul_mem
+          (AddSubmonoid.subset_closure (Or.inr rfl)) a
+    · simpa [nsmul_eq_mul] using
+        (AddSubmonoid.closure (({3} : Set ℕ) ∪ {2})).nsmul_mem
+          (AddSubmonoid.subset_closure (Or.inl rfl)) b
+  have h := conductor_union_le ({2} : Set ℕ) {3} ⟨2, rfl⟩ ⟨3, rfl⟩
+    (by
+      intro g hg
+      have h2 := hg 2 (Or.inl rfl)
+      have h3 := hg 3 (Or.inr rfl)
+      obtain rfl | rfl := (Nat.dvd_prime Nat.prime_two).mp h2
+      · rfl
+      · exact absurd h3 (by decide))
+    2
+    (by
+      intro a ha
+      rw [Set.mem_singleton_iff] at ha
+      subst ha
+      exact dvd_refl 2)
+  have hset : ({2} : Set ℕ) ∪ {3} = {2, 3} := by
+    ext x
+    constructor
+    · rintro (rfl | rfl) <;> simp
+    · rintro (rfl | rfl) <;> simp
+  rw [hset, h₁] at h
+  omega
+
+end MetaMathlibExt.conductor_union_le

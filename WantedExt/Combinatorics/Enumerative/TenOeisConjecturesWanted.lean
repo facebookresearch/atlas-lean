@@ -22,6 +22,7 @@ and Corollary 19 stay blocked (see the source audit table).
 
 Proved in `MathlibExt.Combinatorics.Enumerative.FriedAlternatingBinomialIdentity`, which this
 module imports: Lemma 1 (`fried_alternating_binomial_identity`).
+Lemma 11 is proved in `MathlibExt.Combinatorics.Enumerative.CeilCotSingleton`.
 Theorem 13 (A285273) is proved in `MathlibExt.Combinatorics.Enumerative.RepeatingDecimalRatio`.
 `exists_sq_near_triangular_beatty_sqrt_two` (triangular numbers near squares along `⌊n√2⌋`) is
 proved in `MathlibExt.Combinatorics.Enumerative.TriangularNearSquareBeattySqrtTwo`, which this
@@ -44,6 +45,7 @@ public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.Divisors
 public import Mathlib.Topology.Connected.Clopen
 public import MathlibExt.Combinatorics.AP.Basic
+public import MathlibExt.Combinatorics.Enumerative.CeilCotSingleton
 public import MathlibExt.Combinatorics.Enumerative.FriedAlternatingBinomialIdentity
 public import MathlibExt.Combinatorics.Enumerative.RepeatingDecimalRatio
 public import MathlibExt.Combinatorics.Enumerative.TriangularNearSquareBeattySqrtTwo
@@ -159,18 +161,6 @@ public theorem_wanted ncard_ceil_cot_le_eq_two_mul_sub_singletons (r : ℕ) (hr 
     let g : ℕ → ℤ := fun m => ⌈Real.cot (Real.pi / (2 * m))⌉
     let mult : ℕ → ℕ := fun j => {m : ℕ | 1 ≤ m ∧ g m = j}.ncard
     {m : ℕ | 2 ≤ m ∧ g m ≤ r}.ncard = 2 * r - ((Finset.Icc 1 r).filter fun j => mult j = 1).card
-
-/-- **Values taken once by the ceiling of $\cot(\pi/(2m))$.** For $m \ge 1$ let
-$g(m) = \lceil \cot(\pi/(2m)) \rceil$. Let $r \ge 1$ and $m \ge 2$ be integers. Then $m$ is the
-only integer $m' \ge 1$ with $g(m') = r$ if and only if $g(m-1) = r - 1$, $g(m) = r$ and
-$g(m+1) = r + 1$.
-
-Source: Sela Fried, *Proofs of Ten Conjectures From the OEIS*, Journal of Integer Sequences 29
-(2026), Article 26.1.8, Lemma 11 (`jis-2026-26.1.8-lem-11`). -/
-public theorem_wanted ceil_cot_singleton_iff (r m : ℕ) (hr : 1 ≤ r) (hm : 2 ≤ m) :
-    let g : ℕ → ℤ := fun m => ⌈Real.cot (Real.pi / (2 * m))⌉
-    {m' : ℕ | 1 ≤ m' ∧ g m' = r} = {m} ↔
-      g (m - 1) = (r : ℤ) - 1 ∧ g m = r ∧ g (m + 1) = (r : ℤ) + 1
 
 /-- **Jeffery's conjecture on singletons of $\lfloor \cot(\pi/(2m)) \rfloor$.** Let
 $f(m) = \lfloor \cot(\pi / (2m)) \rfloor$ for nonzero integers $m$. Let $a_1 < a_2 < \cdots$ list

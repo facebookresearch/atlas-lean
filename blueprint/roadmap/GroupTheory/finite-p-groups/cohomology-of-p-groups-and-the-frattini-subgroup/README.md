@@ -1,5 +1,10 @@
 # Cohomology of p-groups and the Frattini subgroup
 
+- [UT5 Pred](ut5-pred.md)
+- [Lower](lower.md)
+- [X Mat](x-mat.md)
+- [Y Mat](y-mat.md)
+- [Coord Equiv](coord-equiv.md)
 - [Centre of the Frattini subgroup](in-frattini-center.md)
 - [Vanishing first cohomology of $G/\Phi(G)$ in $Z(\Phi(G))$](frattini-center-h1-trivial.md)
 - [Kourovka Problem 17.2 (a non-abelian $p$-group with trivial $H^1$)](nonabelian-pgroup-frattini-center-h1-tri.md)

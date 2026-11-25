@@ -8,9 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.TangentCone.Real
 import MathlibExt.NumberTheory.Digits.SzuszVolkmannCounterexample
 
-/-! # Integer values and monotonicity of Campbell's interpolation -/
+/-! # Integer values, monotonicity, and differentiability of Campbell's interpolation -/
 
 open MetaMathlibExt
 
@@ -52,3 +55,19 @@ example {m n : ℕ} (hm : 1 ≤ m) (hmn : m ≤ n) : campbellH2 m ≤ campbellH2
   rw [← floor_campbellF_eq_campbellH2.1 m hm, ← floor_campbellF_eq_campbellH2.1 n (hm.trans hmn)]
   exact Nat.floor_le_floor (campbellF_monotoneOn (Set.mem_Ici.2 (Nat.cast_nonneg m))
     (Set.mem_Ici.2 (Nat.cast_nonneg n)) (by exact_mod_cast hmn))
+
+-- At ten, differentiability makes the slope on the initial linear piece the two-sided derivative.
+example : deriv campbellF 10 = 10 := by
+  have hd := campbellF_differentiableOn.differentiableAt
+    (Ioi_mem_nhds (by norm_num : (0 : ℝ) < 10))
+  have hx : (10 : ℝ) ∈ Set.Icc (19 / 2) 10 := ⟨by norm_num, le_rfl⟩
+  apply (uniqueDiffOn_Icc (by norm_num : (19 / 2 : ℝ) < 10) 10 hx).eq_deriv _
+    hd.hasDerivAt.hasDerivWithinAt
+  have h : HasDerivAt (fun x : ℝ => 10 * x - 90) 10 10 := by
+    simpa using ((hasDerivAt_id' (10 : ℝ)).const_mul 10).sub_const 90
+  exact h.hasDerivWithinAt.congr_of_mem
+    (fun t ht => campbellF_of_mem (by linarith [ht.1]) ht.2) hx
+
+-- The integral remains differentiable where its piecewise-linear integrand changes slope.
+example : DifferentiableAt ℝ campbellF (100 - 1 / 10) :=
+  campbellF_differentiableOn.differentiableAt (Ioi_mem_nhds (by norm_num))

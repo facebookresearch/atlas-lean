@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.Log
+public import MathlibExt.Combinatorics.Enumerative.GijswijtBlockWordCurlingNumber
 public import MathlibExt.Combinatorics.Enumerative.GijswijtProperPrefixes
 
 /-!
@@ -97,19 +98,6 @@ Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of In
 public theorem_wanted gijswijtGlueConcat_blockIndex {m n : ℕ} (hm : 1 ≤ m) (hmn : m + 1 ≤ n) :
     gijswijtGlueConcat m (gijswijtBlockIndex m n) =
       gijswijtBlock (m + 1) (gijswijtBlockIndex (m + 1) n)
-
-/-- **Curling number of block words with a maximal exponent.** Let $m \ge 1$ and $u \ge 1$, and
-let $a_1, \dots, a_{u-1} \in \{0, \dots, m+1\}$ with $a_i = m + 1$ for some $1 \le i \le u - 1$.
-Writing $B_t = B_t^{(m+1)}$ for the blocks of the $(m+1)$th order Gijswijt sequence $A^{(m+1)}$,
-the string $P = B_{u-1}^{a_{u-1}} \cdots B_2^{a_2} B_1^{a_1}$ has curling number
-$\mathcal{C}(P) = m + 1$.
-
-Source: Levi van de Pol, *The Growth Rate of Gijswijt's Sequence*, Journal of Integer Sequences
-28 (2025), Article 25.4.6, Lemma 12 (`jis-2025-25.4.6-lem-12`). -/
-public theorem_wanted curlingNumber_blockWord_of_max {m u : ℕ} (hm : 1 ≤ m) (hu : 1 ≤ u)
-    (a : ℕ → ℕ) (ha : ∀ i, 1 ≤ i → i < u → a i ≤ m + 1)
-    (hmax : ∃ i, 1 ≤ i ∧ i < u ∧ a i = m + 1) :
-    curlingNumber (gijswijtBlockWord (m + 1) u a) = m + 1
 
 /-- **Curling number of block words with small exponents.** Let $m \ge 1$ and $u \ge 2$, and let
 $a_1, \dots, a_{u-1} \in \{0, \dots, m\}$ with $a_1 \ne 0$. Writing $B_t = B_t^{(m+1)}$ for the

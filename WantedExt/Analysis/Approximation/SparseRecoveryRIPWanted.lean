@@ -64,23 +64,4 @@ theorem_wanted sqrt_sum_sq_sub_le_of_hasRIP {ι : Type*} [Fintype ι] [Decidable
     √(∑ j, (xhat j - x j) ^ 2) ≤
       2 * (1 + √2 * δ / (1 - δ)) / (1 - √2 * δ / (1 - δ)) / √s * ∑ j ∈ Sᶜ, |x j|
 
-/-- **Noisy recovery** (E. J. Candès, *The restricted isometry property and its implications for
-compressed sensing*, C. R. Acad. Sci. Paris, Ser. I 346 (2008) 589–592, Theorem 1.3, eq. (8)):
-let `s ≥ 1` and let `Φ` have the restricted isometry property of order `2 s` with a constant
-`δ < √2 - 1`. Observe `y = Φ x + z` with `‖z‖₂ ≤ ε`, and let `xhat` be a solution of
-`min ‖x̃‖₁` subject to `‖y - Φ x̃‖₂ ≤ ε` (problem (7)). Then
-`‖xhat - x‖₂ ≤ C₀ s^{-1/2} ‖x - x_s‖₁ + C₁ ε` with `ρ = √2 δ / (1 - δ)`,
-`α = 2 √(1 + δ) / (1 - δ)`, `C₀ = 2 (1 + ρ) / (1 - ρ)` and `C₁ = 2 α / (1 - ρ)`; here
-`‖x - x_s‖₁` is replaced by `∑_{j ∉ S} |x j|` for an arbitrary set `S` of at most `s` indices,
-an equivalent formulation since `x_s` is the best `s`-term approximation of `x`. -/
-theorem_wanted sqrt_sum_sq_sub_le_of_hasRIP_of_noisy {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {m : ℕ} {Φ : Matrix (Fin m) ι ℝ} {s : ℕ} (hs : 1 ≤ s) {δ : ℝ} (hΦ : HasRIP Φ (2 * s) δ)
-    (hδ : δ < √2 - 1) {x xhat : ι → ℝ} {y z : Fin m → ℝ} (hy : y = Φ *ᵥ x + z) {ε : ℝ}
-    (hz : √(∑ i, z i ^ 2) ≤ ε) (hfeas : √(∑ i, (y - Φ *ᵥ xhat) i ^ 2) ≤ ε)
-    (hmin : ∀ w : ι → ℝ, √(∑ i, (y - Φ *ᵥ w) i ^ 2) ≤ ε → ∑ j, |xhat j| ≤ ∑ j, |w j|)
-    {S : Finset ι} (hS : #S ≤ s) :
-    √(∑ j, (xhat j - x j) ^ 2) ≤
-      2 * (1 + √2 * δ / (1 - δ)) / (1 - √2 * δ / (1 - δ)) / √s * ∑ j ∈ Sᶜ, |x j| +
-        2 * (2 * √(1 + δ) / (1 - δ)) / (1 - √2 * δ / (1 - δ)) * ε
-
 end MathlibExt.Analysis.Approximation.SparseRecoveryRIPWanted

@@ -46,19 +46,6 @@ public theorem_wanted locallyNilpotentAt_zero_classification :
         {u | ∃ p : ℤ[X], p ≠ 0 ∧ u = X * p} ∪
         {u | ∃ (a : ℤ) (p : ℤ[X]), a ≠ 0 ∧ p.eval 0 = -1 ∧ u = (X - C a) * p}
 
-/-- **Polynomials locally nilpotent but not nilpotent at $0$.** A polynomial $u \in \mathbb{Z}[x]$
-of degree at least $1$ is locally nilpotent at $0$ and not nilpotent at $0$ if and only if either
-$u = x + b$ for some integer $b \ne 0$, or $u = ax + b$ for some integers $a$ and $b$ with
-$b \ne 0$ such that $a$ has at least one prime divisor and every prime divisor of $a$ divides $b$.
-
-Source: Sayak Sengupta, *Locally Nilpotent Polynomials over Z*, INTEGERS 24 (2024),
-Article A13, Corollary 4.5. -/
-public theorem_wanted locallyNilpotent_not_nilpotentAt_zero :
-    {u : ℤ[X] | 0 < u.natDegree ∧ IsWeaklyLocallyNilpotentAt u 0 ∅ ∧ ¬ IsNilpotentAt u 0} =
-      {u | ∃ b : ℤ, b ≠ 0 ∧ u = X + C b} ∪
-        {u | ∃ a b : ℤ, b ≠ 0 ∧ (∃ p : ℕ, p.Prime ∧ (p : ℤ) ∣ a) ∧
-          (∀ p : ℕ, p.Prime → (p : ℤ) ∣ a → (p : ℤ) ∣ b) ∧ u = C a * X + C b}
-
 /-- **Linear polynomials weakly locally nilpotent but not nilpotent at $1$.** Let $A$ be a finite
 set of primes, and let $c$ range over the positive integers all of whose prime factors lie in $A$.
 A polynomial $u \in \mathbb{Z}[x]$ of degree $1$ is weakly locally nilpotent at $1$ outside $A$ and
