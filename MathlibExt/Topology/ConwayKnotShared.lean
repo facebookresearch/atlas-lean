@@ -16,7 +16,8 @@ Copyright 2026 Lean FRO, LLC.
 Authors: Kim Morrison (benchmark submitter) and lean-eval contributors.
 
 The adapted portions are the shared knot, isotopy, sliceness and braid closure definitions,
-including the Conway polyline. Their names and definitions are preserved in this move.
+including the Conway polyline. The simplicity theorem and both sliceness statements use the
+same `conwayKnot` of type `PLKnot`.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -29,15 +30,6 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-This neutral helper module is shared by the Piccirillo and
-Conway-topologically-slice wanted entries, so both theorems speak about
-the same `PLKnot` type and the same concrete `conwayKnot`. The
-definitions are the trusted (non-hole) helpers from leanprover/lean-eval
-at commit 38361be884302c7edce1908c4aef8296eb2cb27e (modules
-`LeanEval.KnotTheory.ConwayKnot`, `LeanEval.KnotTheory.Piccirillo`, and
-`LeanEval.Topology.ConwayTopologicallySlice`), distributed under the
-Apache License, Version 2.0; unchanged apart from the namespace.
 -/
 module
 
