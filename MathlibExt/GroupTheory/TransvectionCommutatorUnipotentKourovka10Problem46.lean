@@ -13,31 +13,28 @@ import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 import Mathlib.Tactic.NoncommRing
 
 /-!
-# Double commutators with transvections (Kourovka Notebook Problem 10.46)
+# Double commutators with elementary transvections (Kourovka Notebook Problem 10.46)
 
-Kourovka Notebook, Problem 10.46 (V. M. Petechuk), marked solved: let `R` be an associative ring
-with identity. Prove that for every `σ ∈ GLₙ(R)`, `n ≥ 3`, there exist transvections `τ₁, τ₂` such
-that `[[σ, τ₁], τ₂]` is a unipotent element.
+Petechuk asks whether, for every associative ring `R` with identity and every `σ ∈ GLₙ(R)`
+with `n ≥ 3`, there exist transvections `τ₁, τ₂` such that `[[σ, τ₁], τ₂]` is unipotent.
 
-The theorem `doubleCommutatorWithTransvectionsUnipotent_refuted` proves that the question, with
-transvections read as elementary transvections, has a negative answer: some `σ ∈ GL₃(ℤ)` admits
-no elementary transvections `τ₁, τ₂` such that `[[σ, τ₁], τ₂]` is unipotent.
+The theorem `doubleCommutatorWithTransvectionsUnipotent_refuted` gives a matrix `σ ∈ GL₃(ℤ)`
+for which every pair of elementary transvections has nonunipotent double commutator. An elementary
+transvection has the form `1 + r eᵢⱼ` with `i ≠ j` and `r ≠ 0`. Ruling out these pairs alone
+does not settle Petechuk's question for general transvections.
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 10.46 (V. M. Petechuk). UnsolvedMath record
 UM-00700661 (`KOU-10.46`), dataset ulamai/UnsolvedMath v1.8.0.
 
-Transvections are read as the elementary transvections `1 + r eᵢⱼ` (`i ≠ j`, `r ≠ 0`); every notion
-of transvection over a ring contains them, and the resolving counterexample excludes all nonidentity
-unipotent matrices. Unipotent means that `g - 1` is nilpotent. `R` is nontrivial: over the zero ring
-there are no transvections. The commutator is `[x, y] = x y x⁻¹ y⁻¹`; the convention `x⁻¹ y⁻¹ x y`
+Unipotent means that `g - 1` is nilpotent. The ring is assumed nontrivial since the zero ring has
+no elementary transvections. The commutator is `[x, y] = x y x⁻¹ y⁻¹`. The convention `x⁻¹ y⁻¹ x y`
 gives an equivalent statement, since unipotence is invariant under conjugation and inversion and
 inverses of elementary transvections are elementary transvections.
 
 ## Proof
 
-The proof does not use Muliarchyk's ring `k⟨xᵢⱼ, yᵢⱼ⟩ / (XY = YX = I)`: with elementary
-transvections an integer matrix already gives a counterexample. Take
+Take the integer matrix
 `σ = !![-5, 2, -4; -4, 5, -2; 2, 3, 3]`, whose inverse is
 `σ⁻¹ = !![-21, 18, -16; -8, 7, -6; 22, -19, 17]`.
 
@@ -65,13 +62,13 @@ position $(i, j)$ and $0$ elsewhere. -/
 def IsElementaryTransvection {R : Type*} [Ring R] {n : ℕ} (τ : GL (Fin n) R) : Prop :=
   ∃ (i j : Fin n) (r : R), i ≠ j ∧ r ≠ 0 ∧ (τ : Matrix (Fin n) (Fin n) R) = 1 + Matrix.single i j r
 
-/-- **Petechuk's double commutator question (Kourovka 10.46).** The statement that for every
-nontrivial associative ring $R$ with identity, every $n \ge 3$ and every
-$\sigma \in \mathrm{GL}_n(R)$ there are elementary transvections
+/-- **Petechuk's question restricted to elementary transvections (Kourovka 10.46).**
+The statement that for every nontrivial associative ring $R$ with identity, every $n \ge 3$ and
+every $\sigma \in \mathrm{GL}_n(R)$ there are elementary transvections
 $\tau_1, \tau_2 \in \mathrm{GL}_n(R)$ such that $[[\sigma, \tau_1], \tau_2]$ is unipotent, that
 is, $[[\sigma, \tau_1], \tau_2] - 1$ is a nilpotent matrix, where $[x, y] = x y x^{-1} y^{-1}$.
 
-In the problem, transvections are read as elementary transvections. -/
+Petechuk's original question allows general transvections. -/
 def doubleCommutatorWithTransvectionsUnipotent : Prop :=
   ∀ (R : Type) [Ring R] [Nontrivial R] (n : ℕ), 3 ≤ n → ∀ σ : GL (Fin n) R,
     ∃ τ₁ τ₂ : GL (Fin n) R, IsElementaryTransvection τ₁ ∧ IsElementaryTransvection τ₂ ∧

@@ -16,7 +16,7 @@ namespace MathlibExtTest.GroupTheory.TransvectionCommutatorUnipotentKourovka10Pr
 
 open MathlibExt.GroupTheory.TransvectionCommutatorUnipotentKourovka10Problem46Wanted
 
--- The negative answer to Petechuk's question.
+-- Restricting both transvections to elementary ones gives a negative answer.
 example : ¬ doubleCommutatorWithTransvectionsUnipotent :=
   doubleCommutatorWithTransvectionsUnipotent_refuted
 
