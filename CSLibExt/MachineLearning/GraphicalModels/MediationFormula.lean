@@ -165,19 +165,11 @@ def NoiseCondIndep (μ : (k : Fin n) → StdSimplex ℝ (U k)) {A B C : Type*} [
       noiseProb μ (fun u => fC u = c) =
     noiseProb μ (fun u => fA u = a ∧ fC u = c) * noiseProb μ (fun u => fB u = b ∧ fC u = c)
 
-private theorem med_aux_sum_noiseWeight (μ : (k : Fin n) → StdSimplex ℝ (U k)) :
-    ∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support), noiseWeight μ u = 1 := by
-  unfold noiseWeight
-  rw [← Finset.prod_univ_sum]
-  have h : ∀ k, ∑ j ∈ (μ k).weights.support, (μ k).weights j = 1 :=
-    fun k => (μ k).total
-  simp [h]
-
 /-- The expectation of a constant is that constant (from `sum_noiseWeight_eq_one`). -/
 theorem noiseExpect_const (μ : (k : Fin n) → StdSimplex ℝ (U k)) (c : ℝ) :
     noiseExpect μ (fun _ => c) = c := by
   unfold noiseExpect
-  rw [← Finset.sum_mul, med_aux_sum_noiseWeight, one_mul]
+  rw [← Finset.sum_mul, sum_noiseWeight_eq_one, one_mul]
 
 /-- **Average natural direct effect** `NDE(x, x*; Y) = E(Y_{x, Z_{x*}}) - E(Y_{x*})` (P01,
 Definition 5, eq. (6)), for treatment `t`, mediator `m`, outcome `y` read by `g`. -/
@@ -896,68 +888,6 @@ private theorem med_aux_noiseProb_eq_zero_of_subset (μ : (k : Fin n) → StdSim
   rw [hq0] at hle
   exact le_antisymm hle hnonneg
 
-private theorem med_aux_lawMean_eq_noiseCondExpect (M : FiniteSCM α n U)
-    (μ : (k : Fin n) → StdSimplex ℝ (U k)) (g : α → ℝ) (y : Fin n)
-    (E : (Fin n → α) → Prop) [DecidablePred E] :
-    lawMean (M.inducedLaw μ) g y E =
-      noiseCondExpect μ (fun u => g (M.solve u y)) (fun u => E (M.solve u)) := by
-  classical
-  letI := Classical.typeDecidableEq α
-  unfold lawMean noiseCondExpect noiseExpect
-  have hden : lawProb (M.inducedLaw μ) E = noiseProb μ (fun u => E (M.solve u)) :=
-    lawProb_inducedLaw M μ E
-  have hnum : (∑ v with E v, (M.inducedLaw μ v) * g (v y)) =
-      ∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support),
-        noiseWeight μ u * (if E (M.solve u) then g (M.solve u y) else 0) := by
-    unfold inducedLaw
-    calc ∑ v with E v, (∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support),
-          (if M.solve u = v then noiseWeight μ u else 0)) * g (v y)
-        = ∑ v with E v, ∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support),
-            ((if M.solve u = v then noiseWeight μ u else 0) * g (v y)) := by
-          apply Finset.sum_congr rfl
-          intro v _
-          rw [Finset.sum_mul]
-      _ = ∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support),
-            ∑ v with E v, ((if M.solve u = v then noiseWeight μ u else 0) * g (v y)) := by
-          rw [Finset.sum_comm]
-      _ = ∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support),
-            (if E (M.solve u) then noiseWeight μ u * g (M.solve u y) else 0) := by
-          apply Finset.sum_congr rfl
-          intro u _
-          by_cases hE : E (M.solve u)
-          · have hmem : M.solve u ∈ Finset.univ.filter (fun v => E v) := by
-              simp [hE]
-            have h0 : ∀ b ∈ Finset.univ.filter (fun v => E v), b ≠ M.solve u →
-                ((if M.solve u = b then noiseWeight μ u else 0) * g (b y)) = 0 := by
-              intro b _ hb
-              have hne : M.solve u ≠ b := Ne.symm hb
-              simp [hne]
-            have hsum := Finset.sum_eq_single_of_mem (M.solve u) hmem h0
-            have hf : ((if M.solve u = M.solve u then noiseWeight μ u else 0) *
-                g (M.solve u y)) = noiseWeight μ u * g (M.solve u y) := by
-              simp
-            rw [hsum, hf, if_pos hE]
-          · have h0 : ∀ b ∈ Finset.univ.filter (fun v => E v),
-                ((if M.solve u = b then noiseWeight μ u else 0) * g (b y)) = 0 := by
-              intro b hb
-              simp at hb
-              have hne : M.solve u ≠ b := by
-                intro hcontra
-                apply hE
-                rw [hcontra]
-                exact hb
-              simp [hne]
-            have hsum : (∑ v ∈ Finset.univ.filter (fun v => E v),
-                ((if M.solve u = v then noiseWeight μ u else 0) * g (v y))) = 0 :=
-              Finset.sum_eq_zero h0
-            rw [hsum, if_neg hE]
-      _ = ∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support),
-            noiseWeight μ u * (if E (M.solve u) then g (M.solve u y) else 0) := by
-          apply Finset.sum_congr rfl
-          intro u _
-          by_cases hE : E (M.solve u) <;> simp [hE]
-  rw [hnum, hden]
-
 private theorem med_aux_noiseExpect_if_eq_sum (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (Y : ((k : Fin n) → U k) → α) (E : ((k : Fin n) → U k) → Prop)
     [DecidablePred E] (g : α → ℝ) :
@@ -1284,7 +1214,7 @@ theorem nde_eq_mediationFormulaNDE (M : FiniteSCM α n U)
       noiseCondExpect μ (fun u => g (M.solve u y))
         (fun u => M.solve u t = x ∧ M.solve u m = z ∧
           (fun i : W => M.solve u i) = w) := by
-    have h := med_aux_lawMean_eq_noiseCondExpect M μ g y
+    have h := med_aux_lawMean_inducedLaw M μ g y
       (fun v => v t = x ∧ v m = z ∧ (fun i : W => v i) = w)
     simpa using h
   have hLMxstar : lawMean (M.inducedLaw μ) g y
@@ -1292,7 +1222,7 @@ theorem nde_eq_mediationFormulaNDE (M : FiniteSCM α n U)
       noiseCondExpect μ (fun u => g (M.solve u y))
         (fun u => M.solve u t = xstar ∧ M.solve u m = z ∧
           (fun i : W => M.solve u i) = w) := by
-    have h := med_aux_lawMean_eq_noiseCondExpect M μ g y
+    have h := med_aux_lawMean_inducedLaw M μ g y
       (fun v => v t = xstar ∧ v m = z ∧ (fun i : W => v i) = w)
     simpa using h
   have hLP1 : lawProb (M.inducedLaw μ)
@@ -1469,7 +1399,7 @@ theorem nie_eq_mediationFormulaNIE (M : FiniteSCM α n U)
       noiseCondExpect μ (fun u => g (M.solve u y))
         (fun u => M.solve u t = xstar ∧ M.solve u m = z ∧
           (fun i : W => M.solve u i) = w) := by
-    have h := med_aux_lawMean_eq_noiseCondExpect M μ g y
+    have h := med_aux_lawMean_inducedLaw M μ g y
       (fun v => v t = xstar ∧ v m = z ∧ (fun i : W => v i) = w)
     simpa using h
   have hLPx : lawProb (M.inducedLaw μ)
@@ -1557,12 +1487,6 @@ theorem nie_eq_mediationFormulaNIE (M : FiniteSCM α n U)
       (hXY z) (hZY z) hCNe hDNe hHNe
     rw [hCE, hMed_x, hMed_xstar]
 
-private theorem med_aux_sum_noiseWeight_eq_one (μ : (k : Fin n) → StdSimplex ℝ (U k)) :
-    ∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support), noiseWeight μ u = 1 := by
-  have h := noiseExpect_const μ 1
-  unfold noiseExpect at h
-  simpa using h
-
 private theorem med_aux_noiseProb_eq_one_of_forall (μ : (k : Fin n) → StdSimplex ℝ (U k))
     {p : ((k : Fin n) → U k) → Prop} [DecidablePred p] (h : ∀ u, p u) :
     noiseProb μ p = 1 := by
@@ -1571,7 +1495,7 @@ private theorem med_aux_noiseProb_eq_one_of_forall (μ : (k : Fin n) → StdSimp
       Fintype.piFinset (fun k => (μ k).weights.support) :=
     Finset.filter_true_of_mem (fun u _ => h u)
   rw [hfilter]
-  exact med_aux_sum_noiseWeight_eq_one μ
+  exact sum_noiseWeight_eq_one μ
 
 private theorem med_aux_lawProb_congr (P : (Fin n → α) → ℝ)
     {E1 E2 : (Fin n → α) → Prop} [DecidablePred E1] [DecidablePred E2]
