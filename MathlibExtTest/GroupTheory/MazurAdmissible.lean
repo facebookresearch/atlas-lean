@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.GroupTheory.MazurAdmissible
+import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 
 @[expose] public section
 
@@ -80,3 +81,71 @@ example {M : Type*} [AddCommGroup M]
     (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) (x : M) :
     ((⟨DistribMulAction.toAddAut _ M, h⟩ : OpenAction M).φ σ).toAdd x = σ • x :=
   rfl
+
+/-- `ZMod p` with the trivial action has the one-step chain `⊥ ≤ ⊤` with its step tagged
+trivial, so it is Mazur admissible at `p`, and `filtAlpha` counts that step. -/
+example (p : ℕ) :
+    ∃ c : AdmissibleChain p (trivialAction (ZMod p)), filtLength c = 1 ∧ filtAlpha c = 1 := by
+  refine ⟨
+    { n := 1
+      step := ![⊥, ⊤]
+      hbot := rfl
+      htop := rfl
+      hmono := fun i => by fin_cases i; exact bot_le
+      tag := fun _ => true
+      hcard := fun i => ?_
+      hact := fun i => ?_ }, rfl, rfl⟩
+  · fin_cases i
+    show Nat.card (↥(⊤ : AddSubgroup (ZMod p)) ⧸ (⊥ : AddSubgroup (ZMod p)).addSubgroupOf ⊤) = p
+    rw [AddSubgroup.bot_addSubgroupOf, Nat.card_congr QuotientAddGroup.quotientBot.toEquiv,
+      AddSubgroup.card_top, Nat.card_zmod]
+  · intro σ x _
+    simp [trivialAction]
+
+/-- For a prime `p`, each subgroup of an admissible chain is stable under the action, so the
+chain is a filtration by Galois submodules. -/
+example {M : Type*} [AddCommGroup M] {p : ℕ} (hp : p.Prime) {Φ : OpenAction M}
+    (c : AdmissibleChain p Φ) (i : Fin (c.n + 1))
+    (σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) {x : M} (hx : x ∈ c.step i) :
+    (Φ.φ σ).toAdd x ∈ c.step i := by
+  induction i using Fin.cases with
+  | zero =>
+    rw [c.hbot, AddSubgroup.mem_bot] at hx
+    rw [hx, map_zero]
+    exact zero_mem _
+  | succ i =>
+    have hle := c.hmono i
+    have h := c.hact i
+    split_ifs at h with htag
+    · simpa using add_mem (hle (h σ x hx)) hx
+    · have : NeZero p := ⟨hp.ne_zero⟩
+      obtain ⟨ζ, hζ⟩ := HasEnoughRootsOfUnity.exists_isPrimitiveRoot (AlgebraicClosure ℚ) p
+      obtain ⟨a, -, ha⟩ := hζ.eq_pow_of_pow_eq_one (ξ := σ ζ)
+        (by rw [← map_pow, hζ.pow_eq_one, map_one])
+      simpa using add_mem (hle (h σ ζ hζ a ha.symm x hx)) (nsmul_mem hx a)
+
+/-- For `p = 2` a step of order `2` is trivial exactly when it is cyclotomic: `-1` is the only
+primitive square root of unity, and every Galois element fixes it. So for `p = 2` the tags of a
+chain, and with them `filtAlpha`, are a free choice. -/
+example {M : Type*} [AddCommGroup M] (Φ : OpenAction M) {A B : AddSubgroup M}
+    (hcard : Nat.card (↥B ⧸ A.addSubgroupOf B) = 2) :
+    IsTrivialStep Φ A B ↔ IsCyclotomicStep 2 Φ A B := by
+  have h2 : ∀ x ∈ B, 2 • x ∈ A := by
+    intro x hx
+    have h := card_nsmul_eq_zero' (G := ↥B ⧸ A.addSubgroupOf B)
+      (x := ((⟨x, hx⟩ : B) : ↥B ⧸ A.addSubgroupOf B))
+    rw [hcard, ← QuotientAddGroup.mk_nsmul, QuotientAddGroup.eq_zero_iff,
+      AddSubgroup.mem_addSubgroupOf] at h
+    simpa using h
+  constructor
+  · intro h σ ζ hζ a ha x hx
+    obtain rfl := hζ.eq_neg_one_of_two_right
+    rw [map_neg, map_one, eq_comm,
+      neg_one_pow_eq_neg_one_iff_odd (by norm_num : (-1 : AlgebraicClosure ℚ) ≠ 1)] at ha
+    obtain ⟨k, rfl⟩ := ha
+    have := A.sub_mem (h σ x hx) (A.nsmul_mem (h2 x hx) k)
+    convert this using 1
+    rw [add_nsmul, one_nsmul, mul_nsmul]
+    abel
+  · intro h σ x hx
+    simpa using h σ (-1) (IsPrimitiveRoot.neg_one 0 (by norm_num)) 1 (by simp) x hx
