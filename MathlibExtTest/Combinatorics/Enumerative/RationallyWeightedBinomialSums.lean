@@ -152,6 +152,21 @@ example : ∑ k ∈ Finset.range (2 + 1),
   apply (sum_pow_mul_choose_mul_secondOrder 2 (-1) (fun k ↦ (k : ℝ)) hW 2 5).trans
   norm_num [Finset.sum_range_succ, Nat.stirlingSecond, Nat.descFactorial]
 
+-- Exponent zero retains the nonzero L₀ term and recovers the unweighted Lucas sum.
+example (N : ℕ) : ∑ k ∈ Finset.range (N + 1), N.choose k * lucasNumber k = lucasNumber (2 * N) := by
+  simpa using sum_pow_mul_choose_mul_lucasNumber N 0
+
+-- At N = 0 the exponent-zero sum is L₀ = 2, but a positive exponent gives zero.
+example : ∑ k ∈ Finset.range (0 + 1), k ^ (0 : ℕ) * (0 : ℕ).choose k * lucasNumber k = 2 :=
+  (sum_pow_mul_choose_mul_lucasNumber 0 0).trans (by decide)
+
+example : ∑ k ∈ Finset.range (0 + 1), k ^ (1 : ℕ) * (0 : ℕ).choose k * lucasNumber k = 0 :=
+  (sum_pow_mul_choose_mul_lucasNumber 0 1).trans (by decide)
+
+-- At N = 2 and r = 5, orders above two vanish even when the index 2N - i truncates.
+example : ∑ k ∈ Finset.range (2 + 1), k ^ (5 : ℕ) * (2 : ℕ).choose k * lucasNumber k = 98 :=
+  (sum_pow_mul_choose_mul_lucasNumber 2 5).trans (by decide)
+
 -- At x = r = 0, the constant coefficient survives by the convention 0^0 = 1.
 example (a : ℕ → ℝ) :
     ∑ k ∈ Finset.range (2 + 1), (k : ℝ) ^ (0 : ℕ) * a k * (0 : ℝ) ^ k = a 0 := by
