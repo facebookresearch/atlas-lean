@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Data.Nat.Choose.Basic
+public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.Combinatorics.Enumerative.Hypersequence
 public import MathlibExt.NumberTheory.LucasSequence
 import Mathlib.Algebra.BigOperators.Intervals
@@ -148,6 +149,81 @@ public theorem lucas_add_two_mul_eq_sum_choose {r : ℕ} (hr : 1 ≤ r) (n : ℕ
   obtain ⟨h₁, h₂⟩ := hypersequence_eq_sum_choose (fun k ↦ (lucasNumber k : ℂ)) hr n
   rw [hcast] at h₁ h₂
   rw [lucasNumber_shift_eq_hypersequence_add_sum]
+  constructor
+  · congr 1
+    exact_mod_cast h₁
+  · congr 1
+    exact_mod_cast h₂
+
+-- The Fibonacci recurrence telescopes over the positive indices of a shifted prefix.
+private theorem fib_add_two_eq_sum (m n : ℕ) :
+    Nat.fib (n + m + 2) = Nat.fib (m + 2) + ∑ j ∈ range n, Nat.fib (j + 1 + m) := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    calc
+      Nat.fib (n + 1 + m + 2) = Nat.fib (n + m + 2) + Nat.fib (n + 1 + m) := by
+        rw [Nat.fib_add_two, show n + 1 + m + 1 = n + m + 2 by omega, add_comm]
+      _ = _ := by rw [ih, sum_range_succ, add_assoc]
+
+-- Parisse's hyperfibonacci formula, rearranged to avoid subtracting natural values.
+private theorem fib_shift_eq_hypersequence_add_sum (r n : ℕ) :
+    Nat.fib (n + 2 * r) = hypersequence Nat.fib r n +
+      ∑ k ∈ range r, (n + k - 1).choose k * Nat.fib (2 * (r - k)) := by
+  have hzero (s : ℕ) : hypersequence Nat.fib s 0 = 0 := by
+    induction s with
+    | zero => exact Nat.fib_zero
+    | succ s ih => simpa only [hypersequence_succ, Nat.zero_add, sum_range_one] using ih
+  have hchoose (n k : ℕ) : ∑ j ∈ range n, (j + k).choose k = (n + k).choose (k + 1) := by
+    cases n with
+    | zero => rw [sum_range_zero, Nat.zero_add, Nat.choose_eq_zero_of_lt (Nat.lt_succ_self k)]
+    | succ n =>
+      simpa only [Nat.succ_eq_add_one, Nat.add_right_comm n k 1] using
+        Nat.sum_range_add_choose n k
+  induction r generalizing n with
+  | zero => simp [hypersequence]
+  | succ r ih =>
+    calc
+      Nat.fib (n + 2 * (r + 1)) =
+          Nat.fib (2 * r + 2) + ∑ j ∈ range n, Nat.fib (j + 1 + 2 * r) := by
+        rw [show n + 2 * (r + 1) = n + 2 * r + 2 by omega, fib_add_two_eq_sum]
+      _ = Nat.fib (2 * r + 2) + (hypersequence Nat.fib (r + 1) n +
+          ∑ k ∈ range r, (n + k).choose (k + 1) * Nat.fib (2 * (r - k))) := by
+        simp_rw [ih, show ∀ j k : ℕ, j + 1 + k - 1 = j + k by omega]
+        rw [sum_add_distrib, hypersequence_succ, sum_range_succ', hzero, add_zero]
+        congr 2
+        rw [sum_comm]
+        simp_rw [← sum_mul, hchoose]
+      _ = _ := by
+        rw [sum_range_succ']
+        simp only [Nat.choose_zero_right, one_mul, Nat.sub_zero, Nat.add_sub_add_right,
+          show ∀ k : ℕ, n + (k + 1) - 1 = n + k by omega,
+          show 2 * (r + 1) = 2 * r + 2 by omega]
+        ac_rfl
+
+/-- **Fibonacci numbers as binomially weighted sums.** Let $F_k$ denote the $k$th Fibonacci
+number. For every natural number $r \ge 1$ and every natural number $n$,
+$$F_{n+2r} = \sum_{k=0}^{n} \binom{n + r - 1 - k}{r - 1} F_k +
+\sum_{k=0}^{r-1} \binom{n + k - 1}{k} F_{2(r-k)}$$
+and
+$$F_{n+2r} = \sum_{k=0}^{n} \binom{r + k - 1}{k} F_{n-k} +
+\sum_{k=0}^{r-1} \binom{n + k - 1}{k} F_{2(r-k)}.$$
+
+Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
+INTEGERS 24 (2024), Article A70, Corollary 1 (`integers-2024-A70-cor-1`). -/
+public theorem fib_add_two_mul_eq_sum_choose {r : ℕ} (hr : 1 ≤ r) (n : ℕ) :
+    Nat.fib (n + 2 * r) = ∑ k ∈ range (n + 1), (n + r - 1 - k).choose (r - 1) * Nat.fib k +
+        ∑ k ∈ range r, (n + k - 1).choose k * Nat.fib (2 * (r - k)) ∧
+      Nat.fib (n + 2 * r) = ∑ k ∈ range (n + 1), (r + k - 1).choose k * Nat.fib (n - k) +
+        ∑ k ∈ range r, (n + k - 1).choose k * Nat.fib (2 * (r - k)) := by
+  have hcast (s m : ℕ) : hypersequence (fun k ↦ (Nat.fib k : ℂ)) s m =
+      ((hypersequence Nat.fib s m : ℕ) : ℂ) := by
+    induction s generalizing m with
+    | zero => rfl
+    | succ s ih => simp only [hypersequence_succ, ih, Nat.cast_sum]
+  obtain ⟨h₁, h₂⟩ := hypersequence_eq_sum_choose (fun k ↦ (Nat.fib k : ℂ)) hr n
+  rw [hcast] at h₁ h₂
+  rw [fib_shift_eq_hypersequence_add_sum]
   constructor
   · congr 1
     exact_mod_cast h₁

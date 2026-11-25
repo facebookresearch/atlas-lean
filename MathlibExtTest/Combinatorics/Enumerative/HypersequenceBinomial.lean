@@ -44,3 +44,17 @@ example : lucasNumber (0 + 2 * 3) = 18 := by
 example : lucasNumber (2 + 2 * 3) = 47 := by
   rw [(lucas_add_two_mul_eq_sum_choose (r := 3) (by decide) 2).2]
   norm_num [sum_range_succ, Nat.choose, lucasNumber]
+
+-- At generation one the forward Fibonacci formula is a prefix sum plus F₂.
+example (n : ℕ) : Nat.fib (n + 2) = (∑ k ∈ range (n + 1), Nat.fib k) + 1 := by
+  simpa [sum_range_one] using (fib_add_two_mul_eq_sum_choose (r := 1) (by decide) n).1
+
+-- At n = 0, all positive-index correction terms vanish.
+example : Nat.fib (0 + 2 * 3) = 8 := by
+  rw [(fib_add_two_mul_eq_sum_choose (r := 3) (by decide) 0).1]
+  decide
+
+-- The reversed formula also has nonconstant weights in both sums.
+example : Nat.fib (2 + 2 * 3) = 21 := by
+  rw [(fib_add_two_mul_eq_sum_choose (r := 3) (by decide) 2).2]
+  decide

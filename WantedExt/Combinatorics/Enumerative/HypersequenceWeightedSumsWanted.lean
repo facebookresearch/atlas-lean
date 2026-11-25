@@ -70,22 +70,6 @@ public theorem_wanted hyperFibonacci_eq_fib_sub_sum (r n : ℕ) :
     (hyperFibonacci r n : ℤ) =
       Nat.fib (n + 2 * r) - ∑ k ∈ range r, ((n + k - 1).choose k * Nat.fib (2 * (r - k)) : ℕ)
 
-/-- **Fibonacci numbers as binomially weighted sums.** Let $F_k$ denote the $k$th Fibonacci
-number. For every natural number $r \ge 1$ and every natural number $n$,
-$$F_{n+2r} = \sum_{k=0}^{n} \binom{n + r - 1 - k}{r - 1} F_k +
-\sum_{k=0}^{r-1} \binom{n + k - 1}{k} F_{2(r-k)}$$
-and
-$$F_{n+2r} = \sum_{k=0}^{n} \binom{r + k - 1}{k} F_{n-k} +
-\sum_{k=0}^{r-1} \binom{n + k - 1}{k} F_{2(r-k)}.$$
-
-Source: Daniele Parisse, *On Hypersequences of an Arbitrary Sequence and Their Weighted Sums*,
-INTEGERS 24 (2024), Article A70, Corollary 1 (`integers-2024-A70-cor-1`). -/
-public theorem_wanted fib_add_two_mul_eq_sum_choose {r : ℕ} (hr : 1 ≤ r) (n : ℕ) :
-    Nat.fib (n + 2 * r) = ∑ k ∈ range (n + 1), (n + r - 1 - k).choose (r - 1) * Nat.fib k +
-        ∑ k ∈ range r, (n + k - 1).choose k * Nat.fib (2 * (r - k)) ∧
-      Nat.fib (n + 2 * r) = ∑ k ∈ range (n + 1), (r + k - 1).choose k * Nat.fib (n - k) +
-        ∑ k ∈ range r, (n + k - 1).choose k * Nat.fib (2 * (r - k))
-
 /-- **Recurrence for the hyperfibonacci numbers.** Let $F^{(r)}_n$ denote the hyperfibonacci
 numbers. For all natural numbers $r$ and $n$, $F^{(r)}_0 = 0$, $F^{(r)}_1 = 1$, and
 $F^{(r+1)}_{n+2} = F^{(r+1)}_{n+1} + F^{(r+1)}_n + \binom{n+r+1}{r}$.
