@@ -20,6 +20,7 @@ public import MathlibExt.Combinatorics.Words.BalancedNestedXor
 public import MathlibExt.Combinatorics.Words.CobhamUniformMorphism
 public import MathlibExt.Combinatorics.Words.MetaAutomaticOne
 public import MathlibExt.Combinatorics.Words.MetaAutomaticTwo
+public import MathlibExt.Combinatorics.Words.MetaAutomaticTwoAffine
 public import MathlibExt.Combinatorics.Words.RegularSequence
 public import MathlibExt.Combinatorics.Words.ThueMorseQuarto
 
@@ -121,30 +122,6 @@ public theorem_wanted metaAutomaticOne_morphism_coding :
       (∀ n r, r < 4 → w (4 * n + r) =
         ([[0, 1, 1, 2], [1, 2, 3, 0], [2, 3, 0, 1], [3, 0, 2, 3]].getD (w n) []).getD r 0) ∧
       ∀ n, metaAutomaticOne n = decide (w n % 2 = 1)
-
-/-- **Pair recurrence and $4$-automaticity of $\mathcal{M}_2$.** Read the meta-automatic
-sequence $\mathcal{M}_2$ as taking values in $\{0, 1\}$, write $\oplus$ for addition modulo $2$,
-and let $s(n) = (\mathcal{M}_2(n), \mathcal{M}_2(2n + \mathcal{M}_2(n)))$. For every $n \ge 0$,
-writing $s(n) = (x, y)$, we have $s(4n) = (y, x \oplus y)$, $s(4n+1) = (y \oplus 1, x \oplus y)$,
-$s(4n+2) = (y \oplus 1, x \oplus y \oplus 1)$ and $s(4n+3) = (y, x \oplus y \oplus 1)$.
-Moreover, $\mathcal{M}_2$ is $4$-automatic, and it is computed by a four-state automaton: there
-are maps $\delta : \{0, 1, 2, 3\} \times \{0, 1, 2, 3\} \to \{0, 1, 2, 3\}$ and
-$\tau : \{0, 1, 2, 3\} \to \{0, 1\}$ such that for every $n$, $\mathcal{M}_2(n) = \tau(q)$, where
-$q$ is the state reached from the state $0$ by reading the base-$4$ digits of $n$ with $\delta$,
-most significant digit first (for $n = 0$ no digit is read, so $q = 0$).
-
-Source: John M. Campbell and Benoît Cloitre, *Meta-Automatic Sequences*, Journal of
-Integer Sequences 29 (2026), Article 26.4.1, Theorem 20 (`jis-2026-26.4.1-thm-20`). -/
-public theorem_wanted metaAutomaticTwo_affine (s : ℕ → Bool × Bool)
-    (hs : ∀ m, s m = (metaAutomaticTwo m,
-      metaAutomaticTwo (2 * m + (metaAutomaticTwo m).toNat))) :
-    (∀ n, s (4 * n) = ((s n).2, xor (s n).1 (s n).2) ∧
-      s (4 * n + 1) = (!(s n).2, xor (s n).1 (s n).2) ∧
-      s (4 * n + 2) = (!(s n).2, !xor (s n).1 (s n).2) ∧
-      s (4 * n + 3) = ((s n).2, !xor (s n).1 (s n).2)) ∧
-    IsKAutomaticSequence 4 metaAutomaticTwo ∧
-    ∃ δ : Fin 4 → Fin 4 → Fin 4, ∃ τ : Fin 4 → Bool, ∀ n,
-      metaAutomaticTwo n = τ ((Nat.digits 4 n).reverse.foldl (fun q d => δ q (Fin.ofNat 4 d)) 0)
 
 /-- **A four-state automaton computing $\mathcal{M}_2$.** Let
 $\delta : \{0, 1, 2, 3\} \times \{0, 1, 2, 3\} \to \{0, 1, 2, 3\}$ be the map for which the word
