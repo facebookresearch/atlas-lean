@@ -105,8 +105,8 @@ def TestPair.IsTransversal (P : TestPair (X := X)) : Prop :=
   ∀ (Ω : GeometricField) (u : Spec (.of Ω.carrier) ⟶ P.U.left),
     P.IsTransversalAt C Ω u
 
-/-- The pointwise image is separately required to be the actual closed cone;
-the finite-image lemma and its constructor remain source obligations. -/
+/-- Closed conical subsets of the cotangent bundle $T^*U$ whose support is the image of
+$C \times_X U$ under the differential $dh : T^*X \times_X U \to T^*U$ of $h : U \to X$. -/
 abbrev ClosedPullImage {U : Over (Spec (.of k))} (h : U ⟶ X)
     (D : PullbackDifferential X h) (BU : CotangentBundle U) :=
   {CU : ClosedCone U BU // CU.support = pullImageSupport C h D BU}

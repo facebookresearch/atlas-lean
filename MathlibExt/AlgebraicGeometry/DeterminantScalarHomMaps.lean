@@ -79,8 +79,13 @@ theorem scalarHomMap_normalization (a : M →ₛₗ[g] M') (ha : IsScalarExtensi
     (b : N →ₛₗ[g] N') (f : M →ₗ[R] N) (x : M) :
     scalarHomMap a ha b f (a x) = b (f x) := scalarHomLift_apply a ha b f x
 
-/-- Completed-source scalar-extension property of the fixed Hom map when
-the source module is finite projective. -/
+/-- The proposition that extension of scalars commutes with Hom out of a finite projective module:
+for a ring map $g : R \to S$, a finite projective $R$-module $M$, an $R$-module $N$, and
+$g$-semilinear maps $a : M \to M'$ and $b : N \to N'$ exhibiting the $S$-modules $M'$ and $N'$ as
+the scalar extensions of $M$ and $N$ (`IsScalarExtension`), the $g$-semilinear map
+$\operatorname{Hom}_R(M, N) \to \operatorname{Hom}_S(M', N')$ sending $f$ to the unique $S$-linear
+map $f'$ with $f' \circ a = b \circ f$ (`scalarHomMap`) exhibits $\operatorname{Hom}_S(M', N')$ as
+the scalar extension of $\operatorname{Hom}_R(M, N)$. -/
 structure ScalarHomExtension [Module.Finite R M] [Module.Projective R M]
     (a : M →ₛₗ[g] M') (ha : IsScalarExtension g a)
     (b : N →ₛₗ[g] N') (hb : IsScalarExtension g b) : Prop where

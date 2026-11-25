@@ -47,9 +47,9 @@ instance globalSections_additive (k : Type) [Field k] (Z : TopCat.{0}) :
     (globalSections k Z).Additive where
   map_add := by intro A B f g; rfl
 
-/-- An actual bounded-below complex of injective sheaves resolving the
-specified geometric complex. These are toolbox data, not a replacement for
-the geometric complex. -/
+/-- An injective resolution of a complex $K$ of sheaves of $k$-vector spaces on $Z$: a complex $I$
+of sheaves (`complex`) with injective terms (`injective`), zero in negative degrees (`negative`),
+and a quasi-isomorphism $K \to I$ (`comparison`, `quasiIso`). -/
 structure InjectiveCochainResolution (k : Type) [Field k] (Z : TopCat.{0})
     (K : CochainComplex (TopCat.Sheaf (ModuleCat.{0} k) Z) ℤ) where
   complex : CochainComplex (TopCat.Sheaf (ModuleCat.{0} k) Z) ℤ

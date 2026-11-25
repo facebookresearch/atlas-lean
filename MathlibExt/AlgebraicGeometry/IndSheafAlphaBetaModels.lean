@@ -56,7 +56,8 @@ def alphaGeneratorUnit (S : AlphaSource k X) :
   (Ind.yoneda (C := CompactSheaf k X)).leftKanExtensionUnit
     (alphaGenerators k X)
 
-/-- Beta existence is left-adjoint existence for this exact alpha. -/
+/-- The condition that the functor `alpha k X S` from ind-sheaves to sheaves on $X$ is a right
+adjoint, that is, has a left adjoint. -/
 structure BetaSource (S : AlphaSource k X) : Prop where
   adjoint : (alpha k X S).IsRightAdjoint
 
