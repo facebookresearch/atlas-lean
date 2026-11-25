@@ -32,12 +32,12 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure
-public import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 public import MathlibExt.AlgebraicGeometry.EllipticCurve.FrobeniusTrace
 public import MathlibExt.RingTheory.Valuation.LiesOverPrime
 import Mathlib.Algebra.CharP.Reduced
 import Mathlib.FieldTheory.Galois.Infinite
 import Mathlib.FieldTheory.Galois.Profinite
+import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 import Mathlib.RingTheory.Invariant.Profinite
 import Mathlib.RingTheory.Valuation.LocalSubring
 import MathlibExt.RingTheory.Valuation.IntegralRepresentation
