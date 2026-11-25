@@ -30,7 +30,7 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.NumberTheory.AutomorphicForm.WhittakerCoefficient
+public import MathlibExt.NumberTheory.NumberField.GlobalAddChar
 public import MathlibExt.NumberTheory.NumberField.AdelicBox
 public import Mathlib.Analysis.Normed.Group.Bounded
 public import Mathlib.Analysis.SpecificLimits.Basic
@@ -38,8 +38,6 @@ public import Mathlib.Analysis.Complex.Circle
 public import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.ConvexBody
 public import Mathlib.RingTheory.ClassGroup.Basic
 public import MathlibExt.NumberTheory.NumberField.FiniteAdeleDensity
-
-@[expose] public section
 
 open IsDedekindDomain NumberField MeasureTheory AutomorphicForm Filter Topology
 open NumberField.mixedEmbedding

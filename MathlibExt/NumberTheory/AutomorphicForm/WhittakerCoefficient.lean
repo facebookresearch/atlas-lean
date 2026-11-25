@@ -29,6 +29,7 @@ module
 
 public import MathlibExt.NumberTheory.AutomorphicForm.CarrierPins
 public import MathlibExt.NumberTheory.AutomorphicForm.ConstantTerm
+public import MathlibExt.NumberTheory.NumberField.GlobalAddChar
 
 @[expose] public section
 
@@ -40,26 +41,6 @@ noncomputable section
 namespace AutomorphicForm
 
 variable (F : Type*) [Field F] [NumberField F]
-
-/-- An additive character of the adele ring is principal-invariant when it
-is trivial on the diagonally embedded field. -/
-public def IsPrincipalInvariantAddChar (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) : Prop :=
-  ∀ α : F, ψ (algebraMap F (AdeleRing (𝓞 F) F) α) = 1
-
-/-- A global additive character of the adele ring: continuous, nontrivial,
-and trivial on the diagonally embedded field. -/
-public structure IsGlobalAddChar (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) : Prop where
-  principalInvariant : IsPrincipalInvariantAddChar F ψ
-  continuous : Continuous ψ
-  nontrivial : ψ ≠ 1
-
-public theorem isPrincipalInvariantAddChar_one :
-    IsPrincipalInvariantAddChar F (1 : AddChar (AdeleRing (𝓞 F) F) ℂ) :=
-  fun _ => rfl
-
-public theorem not_isGlobalAddChar_one :
-    ¬ IsGlobalAddChar F (1 : AddChar (AdeleRing (𝓞 F) F) ℂ) :=
-  fun h => h.nontrivial rfl
 
 /-- The `α`-th Whittaker coefficient of `φ` at `g`, integrated against the
 pinned measure on the adeles. -/

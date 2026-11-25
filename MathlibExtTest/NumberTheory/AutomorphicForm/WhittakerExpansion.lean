@@ -48,6 +48,11 @@ example
       (φ g) :=
   AutomorphicForm.hasSum_whittakerCoefficient F D U gen ψ hψ φ g hcont hsum
 
+-- Importing the Whittaker expansion keeps Mathlib's measurable-space instance on quotients:
+-- the instance removal in `WhittakerExpansion` is local to its section.
+example {α : Type*} [MeasurableSpace α] (s : Setoid α) :
+    (inferInstance : MeasurableSpace (Quotient s)) = Quotient.instMeasurableSpace := rfl
+
 -- Boundary example: the summability hypothesis matters. For the zero
 -- function every coefficient vanishes, and the expansion is the empty sum;
 -- the constant-term coefficient of a nonzero constant function is that

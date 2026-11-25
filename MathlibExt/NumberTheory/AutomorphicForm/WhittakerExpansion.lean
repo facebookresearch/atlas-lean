@@ -38,10 +38,6 @@ public import Mathlib.MeasureTheory.Function.AEEqOfIntegral
 public import Mathlib.Topology.Metrizable.Urysohn
 public import Mathlib.LinearAlgebra.Countable
 
-@[expose] public section
-
-
-
 open IsDedekindDomain NumberField MeasureTheory
 open NumberField.AdelicBox NumberField.AdelicHaar
 
@@ -541,6 +537,9 @@ scoped instance instSecondCountableAQuot : SecondCountableTopology (AQuot F) :=
   QuotientAddGroup.isOpenQuotientMap_mk.isQuotientMap.secondCountableTopology
     QuotientAddGroup.isOpenQuotientMap_mk.isOpenMap
 
+-- Local to this section: an erased attribute is not exported, and Lean restores Mathlib's
+-- quotient instance at `end Topology`, so importers keep it. `section Bridge` below is nested
+-- here so that it uses the same Borel structure on `AQuot F`.
 attribute [-instance] Quotient.instMeasurableSpace
 
 scoped instance instMeasurableSpaceAQuot : MeasurableSpace (AQuot F) := borel _
@@ -558,12 +557,8 @@ theorem polishSpace_of_compact_t2_secondCountable
   haveI : CompleteSpace X := complete_of_compact
   infer_instance
 
-end Topology
-
 section Bridge
 variable (ψ : AddChar (AdeleRing (𝓞 F) F) ℂ) (hψ : IsGlobalAddChar F ψ)
-
-attribute [-instance] Quotient.instMeasurableSpace
 
 attribute [local instance] NumberField.AdelicBox.isProbabilityMeasure_cond_adelicBox
 
@@ -852,6 +847,8 @@ theorem ae_eq_zero_cond_of_forall_integral_eq_zero
     _ = 0 := hRiesz
 
 end Bridge
+
+end Topology
 
 end D2Bricks
 
