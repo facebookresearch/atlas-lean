@@ -42,23 +42,41 @@ namespace MazurAdmissible
 
 /-- An open action of the absolute Galois group of `ℚ` on an additive
 commutative group `M`, given by a monoid homomorphism into `AddAut M`
-whose kernel is open for the Krull topology. -/
+whose kernel is open for the Krull topology. Mathlib makes `AddAut M` an
+additive group, so the homomorphism takes values in
+`Multiplicative (AddAut M)`, as `DistribMulAction.toAddAut` does. -/
 structure OpenAction (M : Type*) [AddCommGroup M] where
-  /-- The action, as a function into the additive automorphism group. -/
-  φ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) → AddAut M
-  /-- The identity acts trivially. -/
-  map_one : φ 1 = 0
-  /-- The action respects multiplication in the Galois group. -/
-  map_mul : ∀ σ τ, φ (σ * τ) = φ σ + φ τ
+  /-- The action, as a monoid homomorphism into the additive automorphism group. -/
+  φ : (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) →* Multiplicative (AddAut M)
   /-- The kernel of the action is open. -/
-  hker : IsOpen {σ | φ σ = 0}
+  hker : IsOpen (φ.ker : Set (AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ))
 
 variable {M : Type*} [AddCommGroup M]
+
+namespace OpenAction
+
+variable (Φ : OpenAction M)
+
+/-- The identity acts trivially. -/
+theorem map_one : (Φ.φ 1).toAdd = 0 := by
+  rw [_root_.map_one, toAdd_one]
+
+/-- The action respects multiplication in the Galois group. -/
+theorem map_mul (σ τ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ) :
+    (Φ.φ (σ * τ)).toAdd = (Φ.φ σ).toAdd + (Φ.φ τ).toAdd := by
+  rw [_root_.map_mul, toAdd_mul]
+
+/-- The set of Galois elements that act as the identity is open. -/
+theorem isOpen_setOf_toAdd_eq_zero : IsOpen {σ | (Φ.φ σ).toAdd = 0} := by
+  simpa only [MonoidHom.coe_ker, Set.preimage, Set.mem_singleton_iff, toAdd_eq_zero]
+    using Φ.hker
+
+end OpenAction
 
 /-- A step `A ≤ B` is trivial for `Φ` if every Galois element fixes `B`
 pointwise modulo `A`. -/
 def IsTrivialStep (Φ : OpenAction M) (A B : AddSubgroup M) : Prop :=
-  ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, ∀ x ∈ B, Φ.φ σ x - x ∈ A
+  ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ, ∀ x ∈ B, (Φ.φ σ).toAdd x - x ∈ A
 
 /-- A step `A ≤ B` is cyclotomic of level `p` for `Φ` if a Galois element
 sending a primitive `p`-th root of unity `ζ` to `ζ ^ a` acts on `B` as
@@ -66,7 +84,7 @@ multiplication by `a` modulo `A`. -/
 def IsCyclotomicStep (p : ℕ) (Φ : OpenAction M) (A B : AddSubgroup M) : Prop :=
   ∀ σ : AlgebraicClosure ℚ ≃ₐ[ℚ] AlgebraicClosure ℚ,
     ∀ ζ : AlgebraicClosure ℚ, IsPrimitiveRoot ζ p → ∀ a : ℕ, σ ζ = ζ ^ a →
-      ∀ x ∈ B, Φ.φ σ x - a • x ∈ A
+      ∀ x ∈ B, (Φ.φ σ).toAdd x - a • x ∈ A
 
 /-- An admissible chain of length `n` in `M`: a chain of subgroups from
 `⊥` to `⊤` in which each successive quotient has cardinality `p` and
