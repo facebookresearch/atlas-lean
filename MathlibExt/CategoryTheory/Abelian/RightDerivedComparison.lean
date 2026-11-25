@@ -20,6 +20,7 @@ no Stacks package is imported.
 module
 
 public import Mathlib.Algebra.Homology.ShortComplex.PreservesHomology
+public import MathlibExt.Algebra.Homology.HomologicalComplex.MapHomologyIso
 public import Mathlib.CategoryTheory.Abelian.RightDerived
 public import Mathlib.CategoryTheory.Preadditive.Injective.Preserves
 
@@ -83,19 +84,6 @@ namespace CategoryTheory.Functor
 
 variable {A : Type*} [Category* A] [Abelian A] [HasInjectiveResolutions A]
   {B : Type*} [Category* B] [Abelian B] {B' : Type*} [Category* B'] [Abelian B']
-
-/-- A functor preserving homology commutes with the homology functors on homological
-complexes: `E.mapHomologicalComplex c ⋙ homologyFunctor B' c i ≅ homologyFunctor B c i ⋙ E`.
-
-Both sides are, definitionally, `HomologicalComplex.shortComplexFunctor` followed by a
-comparison of short-complex homology, so this is `ShortComplex.homologyFunctorIso E`
-whiskered on the left. -/
-def mapHomologicalComplexHomologyIso (E : B ⥤ B') [E.Additive] [E.PreservesHomology]
-    {ι : Type*} (c : ComplexShape ι) (i : ι) :
-    E.mapHomologicalComplex c ⋙ HomologicalComplex.homologyFunctor B' c i ≅
-      HomologicalComplex.homologyFunctor B c i ⋙ E :=
-  Functor.isoWhiskerLeft (HomologicalComplex.shortComplexFunctor B c i)
-    (ShortComplex.homologyFunctorIso E)
 
 /-- A functor preserving homology commutes with the homology functors on homotopy
 categories.  The isomorphism is lifted through the quotient functor from

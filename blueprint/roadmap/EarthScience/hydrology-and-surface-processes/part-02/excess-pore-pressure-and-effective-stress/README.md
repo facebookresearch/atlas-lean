@@ -18,3 +18,4 @@ exerts on a face.
 - [Round trip between the two effective-stress conventions](effective-stress-round-trip.md)
 - [Effective-stress traction adds the pore pressure to the total traction](effective-stress-traction.md)
 - [At zero pore pressure the effective stress is the total stress](effective-stress-zero-pore-pressure.md)
+- [Cyclic soil response and liquefaction](cyclic-soil-response-and-liquefaction.md)
