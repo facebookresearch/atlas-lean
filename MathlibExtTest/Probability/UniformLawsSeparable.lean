@@ -15,7 +15,7 @@ public import MathlibExt.Probability.UniformLawsSeparable
 
 Threshold classes instantiate the measurability theorems; the constant
 (zero) class checks that every functional evaluates to zero on a closed
-sample; `#print axioms` audits each of the eight production theorems.
+sample; `#print axioms` audits each of the nine production theorems.
 -/
 
 open MeasureTheory Filter Topology
@@ -52,6 +52,15 @@ example : Measurable (empRademacher
     (fun t : ℝ => fun z : ℝ => if z ≤ t then (1 : ℝ) else 0)
     (n := 1) (fun _ => true)) :=
   measurable_empRademacher_of_pointwiseSeparable
+    (fun t => threshold_measurable t)
+    (fun t z => threshold_mem_Icc t z)
+    pointwiseSeparable_threshold (fun _ => true)
+
+/-- Threshold class at sample size one has measurable swapped ghost sums. -/
+example : Measurable (fun p : (Fin 1 → ℝ) × (Fin 1 → ℝ) =>
+    swappedGhost (fun t : ℝ => fun z : ℝ => if z ≤ t then (1 : ℝ) else 0)
+      (n := 1) (fun _ => true) p.1 p.2) :=
+  measurable_swappedGhost_of_pointwiseSeparable
     (fun t => threshold_measurable t)
     (fun t z => threshold_mem_Icc t z)
     pointwiseSeparable_threshold (fun _ => true)
@@ -186,6 +195,7 @@ example : empRademacher
 #print axioms measurable_uniformDeviation_of_pointwiseSeparable
 #print axioms measurable_ghostDeviation_of_pointwiseSeparable
 #print axioms measurable_empRademacher_of_pointwiseSeparable
+#print axioms measurable_swappedGhost_of_pointwiseSeparable
 #print axioms pointwiseSeparable_threshold
 
 end UniformLawsWanted

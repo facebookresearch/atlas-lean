@@ -106,25 +106,20 @@ private theorem ciSup_eq_subtype {f : ι → ℝ}
   by_cases hι : Nonempty ι
   · have ⟨i0⟩ := hι
     apply le_antisymm
-    · have := hι
-      refine ciSup_le fun i => ?_
+    · refine ciSup_le fun i => ?_
       obtain ⟨seq, hmem, hconv⟩ := hlim i
       refine le_of_tendsto hconv (Eventually.of_forall fun m => ?_)
       exact le_ciSup hbddS ⟨seq m, hmem m⟩
     · by_cases hs : Nonempty s
-      · have := hs
-        refine ciSup_le fun j => ?_
+      · refine ciSup_le fun j => ?_
         exact le_ciSup hbddI j.1
       · rw [not_nonempty_iff] at hs
-        have := hs
         have hRHS : (⨆ j : s, f ↑j) = 0 :=
           ciSup_isEmpty_eq_zero fun j : s => f ↑j
         rw [hRHS]
         calc (0 : ℝ) ≤ f i0 := hnonneg i0
           _ ≤ ⨆ i, f i := le_ciSup hbddI i0
   · rw [not_nonempty_iff] at hι
-    have := hι
-    have : IsEmpty s := ⟨fun j => IsEmpty.false j.1⟩
     have hL : (⨆ i, f i) = 0 := ciSup_isEmpty_eq_zero f
     have hR : (⨆ j : s, f ↑j) = 0 :=
       ciSup_isEmpty_eq_zero fun j : s => f ↑j
@@ -351,7 +346,7 @@ theorem measurable_uniformDeviation_of_pointwiseSeparable
     (hsep : PointwiseSeparable F) {n : ℕ} (hn : 1 ≤ n) :
     Measurable (uniformDeviation P F hn) := by
   obtain ⟨s, hs, hdense⟩ := hsep
-  have := hs.to_subtype
+  have hcount := hs.to_subtype
   have heq : ∀ x : Fin n → 𝓧, uniformDeviation P F hn x =
       uniformDeviation P (fun j : s => F ↑j) hn x :=
     fun x => uniformDeviation_eq_subclass hF hFbound hdense hn x
@@ -369,7 +364,7 @@ theorem measurable_ghostDeviation_of_pointwiseSeparable
     Measurable (fun p : (Fin n → 𝓧) × (Fin n → 𝓧) =>
       ghostDeviation F p.1 p.2) := by
   obtain ⟨s, hs, hdense⟩ := hsep
-  have := hs.to_subtype
+  have hcount := hs.to_subtype
   have heq : ∀ p : (Fin n → 𝓧) × (Fin n → 𝓧),
       ghostDeviation F p.1 p.2 =
         ghostDeviation (fun j : s => F ↑j) p.1 p.2 :=
@@ -397,7 +392,7 @@ theorem measurable_empRademacher_of_pointwiseSeparable
     (hsep : PointwiseSeparable F) {n : ℕ} (t : Fin n → Bool) :
     Measurable (empRademacher F t) := by
   obtain ⟨s, hs, hdense⟩ := hsep
-  have := hs.to_subtype
+  have hcount := hs.to_subtype
   have heq : ∀ x : Fin n → 𝓧, empRademacher F t x =
       empRademacher (fun j : s => F ↑j) t x :=
     fun x => empRademacher_eq_subclass hFbound hdense t x
@@ -416,6 +411,37 @@ theorem measurable_empRademacher_of_pointwiseSeparable
   show Measurable fun x : Fin n → 𝓧 =>
     (if t k then (1 : ℝ) else -1) * F ↑j (x k)
   exact Measurable.const_mul ((hF ↑j).comp (measurable_pi_apply k)) _
+
+/-- Measurability of the swapped ghost sums for a pointwise
+separable class. -/
+theorem measurable_swappedGhost_of_pointwiseSeparable
+    (hF : ∀ i, Measurable (F i))
+    (hFbound : ∀ i z, F i z ∈ Set.Icc (0 : ℝ) 1)
+    (hsep : PointwiseSeparable F) {n : ℕ} (t : Fin n → Bool) :
+    Measurable (fun p : (Fin n → 𝓧) × (Fin n → 𝓧) =>
+      swappedGhost F t p.1 p.2) := by
+  obtain ⟨s, hs, hdense⟩ := hsep
+  have hcount := hs.to_subtype
+  have heq : ∀ p : (Fin n → 𝓧) × (Fin n → 𝓧),
+      swappedGhost F t p.1 p.2 =
+        swappedGhost (fun j : s => F ↑j) t p.1 p.2 :=
+    fun p => swappedGhost_eq_subclass hFbound hdense t p.1 p.2
+  rw [funext heq]
+  simp only [swappedGhost]
+  apply Measurable.iSup
+  intro j
+  show Measurable fun p : (Fin n → 𝓧) × (Fin n → 𝓧) =>
+    |(1 / (n : ℝ)) * ∑ k, (if t k then (1 : ℝ) else -1) *
+      (F ↑j (p.1 k) - F ↑j (p.2 k))|
+  apply Measurable.abs
+  refine Measurable.const_mul ?_ (1 / (n : ℝ))
+  refine Finset.measurable_sum Finset.univ fun k _ => ?_
+  show Measurable fun p : (Fin n → 𝓧) × (Fin n → 𝓧) =>
+    (if t k then (1 : ℝ) else -1) * (F ↑j (p.1 k) - F ↑j (p.2 k))
+  refine Measurable.const_mul ?_ _
+  refine Measurable.sub ?_ ?_
+  · exact (hF ↑j).comp ((measurable_pi_apply k).comp measurable_fst)
+  · exact (hF ↑j).comp ((measurable_pi_apply k).comp measurable_snd)
 
 /-- Threshold classes on `ℝ` are pointwise separable. -/
 theorem pointwiseSeparable_threshold :
