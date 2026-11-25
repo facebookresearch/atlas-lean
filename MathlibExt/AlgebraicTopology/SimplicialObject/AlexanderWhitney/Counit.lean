@@ -112,7 +112,10 @@ private lemma rightCounitTerm_last_aux (X : SimplicialObject C)
         n 0 n (Nat.add_zero n) := by
   have hq : q = 0 := by omega
   subst q
-  simp [backFace]
+  have hunit : backFace (𝟙_ (SimplicialObject C)) h = 𝟙 (𝟙_ C) := by
+    dsimp only [backFace, SimplicialObject.δ₀Iter]
+    rfl
+  simp [hunit]
 
 private lemma rightCounitTerm_last (X : SimplicialObject C) (n : ℕ) :
     rightCounitTerm X n (Fin.last n) =
@@ -162,8 +165,10 @@ theorem alternatingMap_left_counit (X : SimplicialObject C) :
     ChainComplex.single₀ObjXSelf, Iso.refl_inv, id_whiskerRight,
     Iso.hom_inv_id_assoc]
   rw [Fintype.sum_eq_single (0 : Fin (n + 1))]
-  · simp [frontFace]
-    rfl
+  · have hback : backFace X (p := 0) (q := n) (n := n) (Nat.zero_add n) =
+        𝟙 (X.obj (Opposite.op (SimplexCategory.mk n))) := by
+      simpa only [backFace] using X.δ₀Iter_zero n
+    simp [frontFace, hback, Category.assoc]
   · intro x hx
     rcases x with ⟨x, hxlt⟩
     have hxval : x ≠ 0 := by
