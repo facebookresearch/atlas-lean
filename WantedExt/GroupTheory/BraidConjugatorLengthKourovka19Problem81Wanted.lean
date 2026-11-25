@@ -37,25 +37,42 @@ length of any word representing the same free group element. A polynomial bound 
 (m + 1)^d` with `C, d` depending on `n`.
 -/
 
-/-- The braid in `B_{n+1}` represented by a braid word, an element of the free group on the
-standard generators `σ₁, …, σₙ`; `B_{n+1}` is the Artin group of the Coxeter matrix of type `Aₙ`
-(MathlibExt). -/
+/-- **The braid represented by a braid word.** For $n \in \mathbb{N}$, let $B_{n+1}$ be the braid
+group on $n + 1$ strands, realized as the Artin group of the Coxeter matrix of type $A_n$, with
+standard generators $\sigma_1, \dots, \sigma_n$. A braid word is an element of the free group on
+$\sigma_1, \dots, \sigma_n$; the braid it represents is its image under the group homomorphism from
+this free group to $B_{n+1}$ that sends each $\sigma_i$ to the generator $\sigma_i$ of $B_{n+1}$. -/
 def braidOf (n : ℕ) : FreeGroup (Fin n) →* (CoxeterMatrix.A n).ArtinGroup :=
   FreeGroup.lift (CoxeterMatrix.ArtinGroup.of (CoxeterMatrix.A n))
 
-/-- Kourovka 19.81 (V. Shpilrain), the stronger question: in each braid group `B_{n+1}`, two
-conjugate braids represented by braid words of length at most `m` have a conjugating braid word of
-length bounded by a polynomial in `m` (here `C (m + 1)^d`, with `C` and `d` depending on `n`); word
-length is the length of the freely reduced word. -/
+/-- **Polynomially short conjugators in braid groups.** The proposition (the stronger question of
+Kourovka Problem 19.81, V. Shpilrain) that for every $n \in \mathbb{N}$ there are natural numbers
+$C$ and $d$ with the following property. Let $B_{n+1}$ be the braid group on $n + 1$ strands,
+realized as the Artin group of the Coxeter matrix of type $A_n$, with standard generators
+$\sigma_1, \dots, \sigma_n$; a braid word is an element of the free group on
+$\sigma_1, \dots, \sigma_n$, and its length $|u|$ is the length of its freely reduced form. For all
+braid words $u$ and $v$ whose braids are conjugate in $B_{n+1}$ there is a braid word $w$ with
+$|w| \le C (\max(|u|, |v|) + 1)^d$ such that $w u w^{-1}$ and $v$ represent the same braid. -/
 def braidPolynomialConjugatorLength : Prop :=
   ∀ n : ℕ, ∃ C d : ℕ, ∀ u v : FreeGroup (Fin n), IsConj (braidOf n u) (braidOf n v) →
     ∃ w : FreeGroup (Fin n), w.norm ≤ C * (max u.norm v.norm + 1) ^ d ∧
       braidOf n (w * u * w⁻¹) = braidOf n v
 
 /--
-Resolved true: the Kourovka Archive answers the stronger question of 19.81 "Yes, there is such a
-conjugator, even for any mapping class groups", citing Tao's linearly bounded conjugator property
-for mapping class groups (Theorem B: a conjugator of length at most `K(|f| + |g|)`). Source: E. I.
+**Braid groups have polynomially short conjugators.** For $n \in \mathbb{N}$, let $B_{n+1}$ be
+the braid group on $n + 1$ strands, realized as the Artin group of the Coxeter matrix of type
+$A_n$, with standard generators $\sigma_1, \dots, \sigma_n$. A braid word is an element of the
+free group on $\sigma_1, \dots, \sigma_n$, and its length $|u|$ is the length of its freely reduced
+form. For every $n$ there are natural numbers $C$ and $d$ such that for all braid words $u$ and $v$
+whose braids are conjugate in $B_{n+1}$ there is a braid word $w$ with
+$|w| \le C (\max(|u|, |v|) + 1)^d$ such that $w u w^{-1}$ and $v$ represent the same braid.
+
+This answers the stronger question of Kourovka Problem 19.81 positively: the Kourovka Archive
+answers "Yes, there is such a conjugator, even for any mapping class groups", citing Tao's
+linearly bounded conjugator property for mapping class groups (Theorem B: a conjugator of length
+at most $K(|f| + |g|)$).
+
+Source: E. I.
 Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
 issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 19.81 (V. Shpilrain);
 resolution: J. Tao, Linearly bounded conjugator property for mapping class groups, Geom. Funct.

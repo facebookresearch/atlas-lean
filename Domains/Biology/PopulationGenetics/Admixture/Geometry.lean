@@ -60,7 +60,7 @@ open FStatistics
 
 variable {Ω P : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {p : P → Ω → ℝ}
 
-/-- `f4 A B C D = ⟪pA - pB, pC - pD⟫` in `L²(μ)`. -/
+/-- For square-integrable frequencies, `f4 A B C D = ⟪pA - pB, pC - pD⟫` in `L²(μ)`. -/
 theorem f4_eq_inner (hp : ∀ X, MemLp (p X) 2 μ) (A B C D : P) :
     f4 μ p A B C D =
       ⟪(hp A).toLp (p A) - (hp B).toLp (p B), (hp C).toLp (p C) - (hp D).toLp (p D)⟫ := by
@@ -73,25 +73,26 @@ theorem f4_eq_inner (hp : ∀ X, MemLp (p X) 2 μ) (A B C D : P) :
   rw [h1, h2, Pi.sub_apply, Pi.sub_apply, hA, hB, hC, hD, RCLike.inner_apply, conj_trivial,
     mul_comm]
 
-/-- `f3 C A B = ⟪pC - pA, pC - pB⟫` in `L²(μ)`. -/
+/-- For square-integrable frequencies, `f3 C A B = ⟪pC - pA, pC - pB⟫` in `L²(μ)`. -/
 theorem f3_eq_inner (hp : ∀ X, MemLp (p X) 2 μ) (C A B : P) :
     f3 μ p C A B =
       ⟪(hp C).toLp (p C) - (hp A).toLp (p A), (hp C).toLp (p C) - (hp B).toLp (p B)⟫ :=
   f4_eq_inner hp C A C B
 
-/-- `f2 X Y = ‖pX - pY‖²` in `L²(μ)`. -/
+/-- For square-integrable frequencies, `f2 X Y = ‖pX - pY‖²` in `L²(μ)`. -/
 theorem f2_eq_norm_sq (hp : ∀ X, MemLp (p X) 2 μ) (X Y : P) :
     f2 μ p X Y = ‖(hp X).toLp (p X) - (hp Y).toLp (p Y)‖ ^ 2 := by
   rw [f2_eq_f4, f4_eq_inner hp, real_inner_self_eq_norm_sq]
 
-/-- Cauchy–Schwarz for f-statistics: `f4(A, B; C, D)² ≤ f2(A, B) f2(C, D)`. -/
+/-- Cauchy–Schwarz for f-statistics of square-integrable frequencies:
+`f4(A, B; C, D)² ≤ f2(A, B) f2(C, D)`. -/
 theorem sq_f4_le_f2_mul_f2 (hp : ∀ X, MemLp (p X) 2 μ) (A B C D : P) :
     f4 μ p A B C D ^ 2 ≤ f2 μ p A B * f2 μ p C D := by
   rw [f4_eq_inner hp, f2_eq_norm_sq hp, f2_eq_norm_sq hp, ← mul_pow, ← sq_abs]
   exact pow_le_pow_left₀ (abs_nonneg _) (abs_real_inner_le_norm _ _) 2
 
-/-- Equality case of Cauchy–Schwarz: `f4² = f2 f2` iff `pA - pB = 0` in `L²(μ)` or
-`pC - pD` is a real multiple of `pA - pB` in `L²(μ)`. -/
+/-- Equality case of Cauchy–Schwarz, for square-integrable frequencies: `f4² = f2 f2` iff
+`pA - pB = 0` in `L²(μ)` or `pC - pD` is a real multiple of `pA - pB` in `L²(μ)`. -/
 theorem sq_f4_eq_f2_mul_f2_iff (hp : ∀ X, MemLp (p X) 2 μ) (A B C D : P) :
     f4 μ p A B C D ^ 2 = f2 μ p A B * f2 μ p C D ↔
       (hp A).toLp (p A) - (hp B).toLp (p B) = 0 ∨
@@ -101,8 +102,8 @@ theorem sq_f4_eq_f2_mul_f2_iff (hp : ∀ X, MemLp (p X) 2 μ) (A B C D : P) :
     sq_eq_sq₀ (abs_nonneg _) (by positivity), ← Real.norm_eq_abs]
   exact (norm_inner_eq_norm_tfae ℝ _ _).out 1 3
 
-/-- Thales criterion for `f3`: `f3(C; A, B) < 0` iff `pC` lies in the open `L²(μ)` ball whose
-diameter is the segment `[pA, pB]`. -/
+/-- Thales criterion for `f3`, for square-integrable frequencies: `f3(C; A, B) < 0` iff `pC` lies
+in the open `L²(μ)` ball whose diameter is the segment `[pA, pB]`. -/
 theorem f3_neg_iff_mem_ball (hp : ∀ X, MemLp (p X) 2 μ) (C A B : P) :
     f3 μ p C A B < 0 ↔
       (hp C).toLp (p C) ∈ ball (midpoint ℝ ((hp A).toLp (p A)) ((hp B).toLp (p B)))

@@ -1,0 +1,5 @@
+# Runner labels that are not GitHub's own: the organization's larger runners,
+# which bump-cache.yml uses.
+self-hosted-runner:
+  labels:
+    - 64-core-ubuntu

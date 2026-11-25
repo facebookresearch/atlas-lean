@@ -222,7 +222,7 @@ private lemma colSum_diagonal_mul (p : ι → ℝ) (A : Matrix ι ι ℝ) (j : �
 omit [DecidableEq ι] in
 private lemma rowSum_mul {A B : Matrix ι ι ℝ} (hA : ∀ i, ∑ j, A i j = 1)
     (hB : ∀ i, ∑ j, B i j = 1) (i : ι) : ∑ j, (A * B) i j = 1 := by
-  simp only [mul_apply]
+  simp only [Matrix.mul_apply]
   rw [Finset.sum_comm]
   simp [← Finset.mul_sum, hB, hA]
 
@@ -259,13 +259,13 @@ theorem paralinear_threePoint {p : ι → ℝ} (hp : ∀ i, 0 < p i) {M N : Matr
     rw [transpose_mul, diagonal_transpose]
   have r1 : ∀ x, ∑ z, (Mᵀ * diagonal p * N) x z = (p ᵥ* M) x := fun x => by
     rw [hT]
-    simp only [mul_apply, transpose_apply]
+    simp only [Matrix.mul_apply, transpose_apply]
     rw [Finset.sum_comm]
     simp only [← Finset.mul_sum, hNrow, mul_one]
     exact colSum_diagonal_mul p M x
   have c1 : ∀ z, ∑ x, (Mᵀ * diagonal p * N) x z = (p ᵥ* N) z := fun z => by
     rw [hT]
-    simp only [mul_apply, transpose_apply]
+    simp only [Matrix.mul_apply, transpose_apply]
     rw [Finset.sum_comm]
     simp only [← Finset.sum_mul]
     simp only [vecMul, dotProduct]
@@ -324,11 +324,11 @@ theorem paralinear_pathProd {p : ι → ℝ} (hp : ∀ i, 0 < p i) {M : ℕ → 
       (pathProd M n).det ≠ 0 := by
     intro n
     induction n with
-    | zero => exact ⟨fun i j => by simp [pathProd, one_apply]; split_ifs <;> norm_num,
-        fun i => by simp [pathProd, one_apply], by simp [pathProd]⟩
+    | zero => exact ⟨fun i j => by simp [pathProd, Matrix.one_apply]; split_ifs <;> norm_num,
+        fun i => by simp [pathProd, Matrix.one_apply], by simp [pathProd]⟩
     | succ n ih =>
       refine ⟨fun i j => ?_, rowSum_mul ih.2.1 (hrow n), ?_⟩
-      · simp only [pathProd, mul_apply]
+      · simp only [pathProd, Matrix.mul_apply]
         exact Finset.sum_nonneg fun k _ => mul_nonneg (ih.1 i k) (hM n k j)
       · simp only [pathProd, det_mul]
         exact mul_ne_zero ih.2.2 (hdet n)

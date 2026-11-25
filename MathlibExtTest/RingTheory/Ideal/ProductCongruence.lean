@@ -13,7 +13,7 @@ public import MathlibExt.RingTheory.Ideal.ProductCongruence
 @[expose] public section
 
 /-- Consumer with the original binders, including `R : Type`. -/
-theorem exactSource
+private theorem exactSource
     (q : ℕ) [Fact q.Prime]
     (R : Type) [CommRing R] (𝔪 : Ideal R) (hq : ((q : ℕ) : R) ∈ 𝔪)
     (x₀ x₁ : R) (hx₀ : x₀ ∈ 𝔪) (hx₁ : x₁ ∈ 𝔪)
