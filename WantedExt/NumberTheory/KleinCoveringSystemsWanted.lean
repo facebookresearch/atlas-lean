@@ -80,24 +80,6 @@ public theorem_wanted lcm_moduli_ge_5040_of_distinct_covering_min_six
     (hdist : Set.InjOn Prod.snd (classes : Set (ℤ × ℕ))) (hmin : ∀ c ∈ classes, 6 ≤ c.2)
     (hsix : ∃ c ∈ classes, c.2 = 6) : 5040 ≤ classes.lcm Prod.snd
 
-/-- **Merging the p classes whose modulus is divisible by a prime power.** Let $C$ be a
-covering system with positive moduli: a finite set of congruences $x \equiv r \pmod m$ with
-$r \in \mathbb{Z}$ and $m \ge 1$ such that every integer satisfies at least one of them. Let $p$
-be a prime and $a \ge 1$, and suppose exactly $p$ congruences of $C$ have modulus divisible by
-$p^a$, with moduli $p^a m_1, \dots, p^a m_p$. Then for some $r \in \mathbb{Z}$, replacing these
-$p$ congruences by the single congruence $x \equiv r \pmod{p^{a-1} \operatorname{lcm}(m_1,
-\dots, m_p)}$ still gives a covering system.
-
-Source: Jonah Klein, *On a Conjecture of Krukenberg and a Problem of Dalton and Trifonov*,
-INTEGERS 26 (2026), Article A38, Lemma 2 (`integers-2026-A38-lem-2`), quoting Dalton–Trifonov,
-Corollary 9. -/
-public theorem_wanted exists_isCoveringSystem_merge_prime_power (classes : Finset (ℤ × ℕ))
-    (hcov : Int.IsCoveringSystem classes) (hpos : ∀ c ∈ classes, 0 < c.2) {p a : ℕ}
-    (hp : p.Prime) (ha : 0 < a) (hcard : (classes.filter fun c => p ^ a ∣ c.2).card = p) :
-    ∃ r : ℤ, Int.IsCoveringSystem
-      (insert (r, p ^ (a - 1) * (classes.filter fun c => p ^ a ∣ c.2).lcm fun c => c.2 / p ^ a)
-        (classes.filter fun c => ¬ p ^ a ∣ c.2))
-
 /-- **Replacing the largest prime factor of the modulus set.** Let $m, L \in \mathbb{N}$, let
 $p \ge m$ be a prime with $p \nmid L$, let $q > p$ be the largest prime dividing $L$, and write
 $\nu_q(L)$ for the exponent of $q$ in $L$. Suppose there are residues $r_d \in \mathbb{Z}$, one
