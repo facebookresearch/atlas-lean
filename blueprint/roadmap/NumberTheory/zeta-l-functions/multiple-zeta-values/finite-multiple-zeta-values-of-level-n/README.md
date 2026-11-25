@@ -4,6 +4,7 @@
 - [Colored finite multiple harmonic sum of the empty index](colored-finite-mzv-zero.md)
 - [Sums over a subinterval of $(0, p)$ as colored finite multiple zeta values](sum-ioo-eq-pow-mul-colored-finite-mzv.md)
 - [Level-$12$ colored finite zeta values and Bernoulli numbers](two-mul-colored-finite-mzv-twelve.md)
+- [Fermat's Last Theorem for a regular prime](flt-regular.md)
 - [Kummer's theorem for regular primes](fermat-last-theorem-for-of-regular.md)
 - [Wieferich's criterion for the first case of Fermat's Last Theorem](fermat-first-case-of-not-is-wieferich-pr.md)
 - [Skula–Dobson–Ichimura congruence for the Fermat quotient of $2$](fermat-quotient-two-mul-eq-neg-sum.md)

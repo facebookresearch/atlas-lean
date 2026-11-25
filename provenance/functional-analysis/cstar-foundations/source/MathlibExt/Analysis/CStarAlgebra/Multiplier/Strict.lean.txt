@@ -1,0 +1,930 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.Multiplier
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
+public import Mathlib.Analysis.LocallyConvex.WithSeminorms
+public import Mathlib.Topology.Algebra.UniformFilterBasis
+public import Mathlib.Topology.UniformSpace.Equiv
+
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+import Mathlib.Analysis.Normed.Operator.Mul
+import Mathlib.Tactic.Ring
+
+/-!
+# The strict topology on multiplier algebras
+
+This file puts the strict uniformity and topology on Mathlib's existing
+`DoubleCentralizer ℂ A` carrier.  Both structures are explicit values: importing this module does
+not replace the multiplier algebra's norm topology or norm uniformity.
+
+The strict seminorm indexed by `a : A` is
+
+`T ↦ ‖aT‖ + ‖Ta‖ = ‖T.snd a‖ + ‖T.fst a‖`.
+
+The file also supplies bounded strict completeness, closure of the self-adjoint and positive
+contraction loci under the corresponding strict limits, and transport along star-algebra
+equivalences of coefficient algebras.  There is deliberately no multiplier map attached to an
+arbitrary star homomorphism.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open Filter Set
+open scoped CStarAlgebra MultiplierAlgebra Topology
+
+namespace DoubleCentralizer
+
+universe uA uB uC uX
+
+variable {A : Type uA} [NonUnitalCStarAlgebra A]
+variable {X : Type uX}
+
+/-! ## Evaluation seminorms -/
+
+/-- Evaluation of the right-centralizer component at `a`.  In multiplier notation this is
+left multiplication of the multiplier by the coefficient: `aT = T.snd a`. -/
+def strictLeftEval (a : A) : 𝓜(ℂ, A) →L[ℂ] A :=
+  LinearMap.mkContinuous
+    { toFun := fun T => T.snd a
+      map_add' := fun _ _ => rfl
+      map_smul' := fun _ _ => rfl }
+    ‖a‖ fun T => by
+      calc
+        ‖T.snd a‖ ≤ ‖T.snd‖ * ‖a‖ := T.snd.le_opNorm a
+        _ = ‖a‖ * ‖T‖ := by rw [T.norm_snd]; ring
+
+/-- Evaluation of the left-centralizer component at `a`.  In multiplier notation this is right
+multiplication of the multiplier by the coefficient: `Ta = T.fst a`. -/
+def strictRightEval (a : A) : 𝓜(ℂ, A) →L[ℂ] A :=
+  LinearMap.mkContinuous
+    { toFun := fun T => T.fst a
+      map_add' := fun _ _ => rfl
+      map_smul' := fun _ _ => rfl }
+    ‖a‖ fun T => by
+      calc
+        ‖T.fst a‖ ≤ ‖T.fst‖ * ‖a‖ := T.fst.le_opNorm a
+        _ = ‖a‖ * ‖T‖ := by rw [T.norm_fst]; ring
+
+@[simp]
+theorem strictLeftEval_apply (a : A) (T : 𝓜(ℂ, A)) : strictLeftEval a T = T.snd a :=
+  rfl
+
+@[simp]
+theorem strictRightEval_apply (a : A) (T : 𝓜(ℂ, A)) : strictRightEval a T = T.fst a :=
+  rfl
+
+/-- The strict seminorm associated to one coefficient. -/
+def strictSeminorm (a : A) : Seminorm ℂ 𝓜(ℂ, A) :=
+  (normSeminorm ℂ A).comp (strictLeftEval a).toLinearMap +
+    (normSeminorm ℂ A).comp (strictRightEval a).toLinearMap
+
+/-- The coefficient-indexed family of strict seminorms. -/
+abbrev strictSeminormFamily : SeminormFamily ℂ 𝓜(ℂ, A) A :=
+  strictSeminorm
+
+@[simp]
+theorem strictSeminorm_apply (a : A) (T : 𝓜(ℂ, A)) :
+    strictSeminorm a T = ‖T.snd a‖ + ‖T.fst a‖ :=
+  rfl
+
+/-! ## Explicit strict uniform and topological structures -/
+
+/-- The strict uniformity.  This is an explicit value, not an instance. -/
+@[instance_reducible]
+def strictUniformSpace (A : Type uA) [NonUnitalCStarAlgebra A] : UniformSpace 𝓜(ℂ, A) :=
+  (strictSeminormFamily (A := A)).moduleFilterBasis.toAddGroupFilterBasis.uniformSpace
+
+/-- The topology induced by the strict uniformity.  This is an explicit value, not an instance. -/
+@[instance_reducible]
+def strictTopology (A : Type uA) [NonUnitalCStarAlgebra A] : TopologicalSpace 𝓜(ℂ, A) :=
+  (strictUniformSpace A).toTopologicalSpace
+
+/-- The strict neighborhood filter of a multiplier. -/
+def strictNhds (T : 𝓜(ℂ, A)) : Filter 𝓜(ℂ, A) :=
+  @nhds 𝓜(ℂ, A) (strictTopology A) T
+
+/-- Convergence for the strict topology. -/
+def StrictTendsto {X : Type uX} (f : X → 𝓜(ℂ, A)) (l : Filter X) (T : 𝓜(ℂ, A)) : Prop :=
+  Tendsto f l (strictNhds T)
+
+/-- Continuity into the strict topology. -/
+def StrictContinuous {X : Type uX} [TopologicalSpace X] (f : X → 𝓜(ℂ, A)) : Prop :=
+  @Continuous X 𝓜(ℂ, A) _ (strictTopology A) f
+
+/-- Cauchy filters for the strict uniformity. -/
+def StrictCauchy (F : Filter 𝓜(ℂ, A)) : Prop :=
+  @Cauchy 𝓜(ℂ, A) (strictUniformSpace A) F
+
+/-- Cauchy sequences for the strict uniformity. -/
+def StrictCauchySeq (T : ℕ → 𝓜(ℂ, A)) : Prop :=
+  StrictCauchy (Filter.map T atTop)
+
+theorem strictUniformSpace_isUniformAddGroup :
+    @IsUniformAddGroup 𝓜(ℂ, A) (strictUniformSpace A) _ :=
+  (strictSeminormFamily (A := A)).moduleFilterBasis.toAddGroupFilterBasis.isUniformAddGroup
+
+/-- The topology induced by `strictUniformSpace` is the usual seminorm-family topology. -/
+theorem strictTopology_eq_moduleFilterBasis :
+    strictTopology A = (strictSeminormFamily (A := A)).moduleFilterBasis.topology :=
+  rfl
+
+theorem strict_withSeminorms :
+    @WithSeminorms ℂ 𝓜(ℂ, A) A _ _ _
+      (strictSeminormFamily (A := A)) (strictTopology A) :=
+  by
+    let _ : TopologicalSpace 𝓜(ℂ, A) := strictTopology A
+    exact ⟨strictTopology_eq_moduleFilterBasis (A := A)⟩
+
+/-- The strict seminorms separate multipliers. -/
+theorem exists_strictSeminorm_ne_zero (T : 𝓜(ℂ, A)) (hT : T ≠ 0) :
+    ∃ a : A, strictSeminorm a T ≠ 0 := by
+  by_contra! h
+  apply hT
+  apply DoubleCentralizer.ext ℂ A T 0
+  apply Prod.ext
+  · apply ContinuousLinearMap.ext
+    intro a
+    have ha := h a
+    obtain ⟨hsnd, hfst⟩ :=
+      (add_eq_zero_iff_of_nonneg (norm_nonneg _) (norm_nonneg _)).mp ha
+    exact norm_eq_zero.mp hfst
+  · apply ContinuousLinearMap.ext
+    intro a
+    have ha := h a
+    obtain ⟨hsnd, hfst⟩ :=
+      (add_eq_zero_iff_of_nonneg (norm_nonneg _) (norm_nonneg _)).mp ha
+    exact norm_eq_zero.mp hsnd
+
+/-- The explicit strict topology is separated. -/
+theorem strictT2Space : @T2Space 𝓜(ℂ, A) (strictTopology A) := by
+  let _ : TopologicalSpace 𝓜(ℂ, A) := strictTopology A
+  let _ : IsTopologicalAddGroup 𝓜(ℂ, A) := strict_withSeminorms.isTopologicalAddGroup
+  let _ : T1Space 𝓜(ℂ, A) :=
+    WithSeminorms.T1_of_separating strict_withSeminorms exists_strictSeminorm_ne_zero
+  infer_instance
+
+/-! ## Convergence and Cauchy characterizations -/
+
+/-- Strict convergence is exactly pointwise norm convergence of both centralizer components. -/
+theorem strictTendsto_iff {X : Type uX} (f : X → 𝓜(ℂ, A)) (l : Filter X) (T : 𝓜(ℂ, A)) :
+    StrictTendsto f l T ↔
+      ∀ a : A,
+        Tendsto (fun x => (f x).fst a) l (𝓝 (T.fst a)) ∧
+          Tendsto (fun x => (f x).snd a) l (𝓝 (T.snd a)) := by
+  let _ : TopologicalSpace 𝓜(ℂ, A) := strictTopology A
+  change Tendsto f l (𝓝 T) ↔ _
+  rw [
+    (strict_withSeminorms (A := A)).tendsto_nhds f T]
+  constructor
+  · intro h a
+    constructor
+    · rw [Metric.tendsto_nhds]
+      intro ε hε
+      filter_upwards [h a ε hε] with x hx
+      rw [strictSeminorm_apply] at hx
+      have hx' : ‖(f x - T).fst a‖ < ε :=
+        lt_of_le_of_lt (le_add_of_nonneg_left (norm_nonneg _)) hx
+      rw [dist_eq_norm]
+      change ‖(f x).fst a - T.fst a‖ < ε
+      change ‖(f x).fst a - T.fst a‖ < ε at hx'
+      exact hx'
+    · rw [Metric.tendsto_nhds]
+      intro ε hε
+      filter_upwards [h a ε hε] with x hx
+      rw [strictSeminorm_apply] at hx
+      have hx' : ‖(f x - T).snd a‖ < ε :=
+        lt_of_le_of_lt (le_add_of_nonneg_right (norm_nonneg _)) hx
+      rw [dist_eq_norm]
+      change ‖(f x).snd a - T.snd a‖ < ε
+      change ‖(f x).snd a - T.snd a‖ < ε at hx'
+      exact hx'
+  · intro h a ε hε
+    have hfst := (Metric.tendsto_nhds.mp (h a).1) (ε / 2) (half_pos hε)
+    have hsnd := (Metric.tendsto_nhds.mp (h a).2) (ε / 2) (half_pos hε)
+    filter_upwards [hfst, hsnd] with x hfst hsnd
+    simp only [dist_eq_norm] at hfst hsnd
+    rw [strictSeminorm_apply]
+    change ‖(f x).snd a - T.snd a‖ + ‖(f x).fst a - T.fst a‖ < ε
+    simpa only [add_halves] using add_lt_add hsnd hfst
+
+theorem strictTendsto_fst {X : Type uX} {f : X → 𝓜(ℂ, A)} {l : Filter X}
+    {T : 𝓜(ℂ, A)} (h : StrictTendsto f l T) (a : A) :
+    Tendsto (fun x => (f x).fst a) l (𝓝 (T.fst a)) :=
+  (strictTendsto_iff f l T).1 h a |>.1
+
+theorem strictTendsto_snd {X : Type uX} {f : X → 𝓜(ℂ, A)} {l : Filter X}
+    {T : 𝓜(ℂ, A)} (h : StrictTendsto f l T) (a : A) :
+    Tendsto (fun x => (f x).snd a) l (𝓝 (T.snd a)) :=
+  (strictTendsto_iff f l T).1 h a |>.2
+
+/-- Strict Cauchy filters are exactly filters whose two evaluation filters are norm-Cauchy at
+every coefficient. -/
+theorem strictCauchy_iff (F : Filter 𝓜(ℂ, A)) :
+    StrictCauchy F ↔
+      ∀ a : A,
+        Cauchy (Filter.map (fun T : 𝓜(ℂ, A) => T.fst a) F) ∧
+          Cauchy (Filter.map (fun T : 𝓜(ℂ, A) => T.snd a) F) := by
+  let _ : UniformSpace 𝓜(ℂ, A) := strictUniformSpace A
+  let _ : IsUniformAddGroup 𝓜(ℂ, A) := strictUniformSpace_isUniformAddGroup
+  rw [StrictCauchy, IsUniformAddGroup.cauchy_iff_tendsto]
+  constructor
+  · rintro ⟨hF, h⟩ a
+    let _ : F.NeBot := hF
+    have h' : StrictTendsto (fun p : 𝓜(ℂ, A) × 𝓜(ℂ, A) => p.1 - p.2)
+        (F ×ˢ F) 0 := h
+    have hf := (strictTendsto_iff _ _ _).1 h' a
+    constructor
+    · rw [IsUniformAddGroup.cauchy_map_iff_tendsto]
+      refine ⟨hF, ?_⟩
+      convert hf.1 using 1
+    · rw [IsUniformAddGroup.cauchy_map_iff_tendsto]
+      refine ⟨hF, ?_⟩
+      convert hf.2 using 1
+  · intro h
+    have hF : F.NeBot := by
+      have := (h 0).1.1
+      rwa [Filter.map_neBot_iff] at this
+    let _ : F.NeBot := hF
+    refine ⟨hF, ?_⟩
+    apply (strictTendsto_iff _ _ _).2
+    intro a
+    constructor
+    · have ha := (IsUniformAddGroup.cauchy_map_iff_tendsto F
+          (fun T : 𝓜(ℂ, A) => T.fst a) |>.mp (h a).1).2
+      convert ha using 1
+    · have ha := (IsUniformAddGroup.cauchy_map_iff_tendsto F
+          (fun T : 𝓜(ℂ, A) => T.snd a) |>.mp (h a).2).2
+      convert ha using 1
+
+/-! ## Strict continuity of the algebraic operations -/
+
+theorem strictTendsto_const (T : 𝓜(ℂ, A)) (l : Filter X) :
+    StrictTendsto (fun _ : X => T) l T := by
+  apply (strictTendsto_iff _ _ _).2
+  intro a
+  exact ⟨tendsto_const_nhds, tendsto_const_nhds⟩
+
+theorem StrictTendsto.add {f g : X → 𝓜(ℂ, A)} {l : Filter X} {S T : 𝓜(ℂ, A)}
+    (hf : StrictTendsto f l S) (hg : StrictTendsto g l T) :
+    StrictTendsto (fun x => f x + g x) l (S + T) := by
+  apply (strictTendsto_iff _ _ _).2
+  intro a
+  exact ⟨(strictTendsto_fst hf a).add (strictTendsto_fst hg a),
+    (strictTendsto_snd hf a).add (strictTendsto_snd hg a)⟩
+
+theorem StrictTendsto.neg {f : X → 𝓜(ℂ, A)} {l : Filter X} {T : 𝓜(ℂ, A)}
+    (hf : StrictTendsto f l T) : StrictTendsto (fun x => -f x) l (-T) := by
+  apply (strictTendsto_iff _ _ _).2
+  intro a
+  exact ⟨(strictTendsto_fst hf a).neg, (strictTendsto_snd hf a).neg⟩
+
+theorem StrictTendsto.sub {f g : X → 𝓜(ℂ, A)} {l : Filter X} {S T : 𝓜(ℂ, A)}
+    (hf : StrictTendsto f l S) (hg : StrictTendsto g l T) :
+    StrictTendsto (fun x => f x - g x) l (S - T) := by
+  simpa only [sub_eq_add_neg] using hf.add hg.neg
+
+theorem StrictTendsto.star {f : X → 𝓜(ℂ, A)} {l : Filter X} {T : 𝓜(ℂ, A)}
+    (hf : StrictTendsto f l T) : StrictTendsto (fun x => star (f x)) l (star T) := by
+  apply (strictTendsto_iff _ _ _).2
+  intro a
+  constructor
+  · simpa only [star_fst, starₗᵢ_apply] using
+      Filter.Tendsto.star
+        (strictTendsto_snd hf ((starₗᵢ ℂ : A ≃ₗᵢ⋆[ℂ] A) a))
+  · simpa only [star_snd, starₗᵢ_apply] using
+      Filter.Tendsto.star
+        (strictTendsto_fst hf ((starₗᵢ ℂ : A ≃ₗᵢ⋆[ℂ] A) a))
+
+theorem StrictTendsto.mul_left (S : 𝓜(ℂ, A)) {f : X → 𝓜(ℂ, A)} {l : Filter X}
+    {T : 𝓜(ℂ, A)} (hf : StrictTendsto f l T) :
+    StrictTendsto (fun x => S * f x) l (S * T) := by
+  apply (strictTendsto_iff _ _ _).2
+  intro a
+  constructor
+  · simpa only [mul_fst, mul_apply_eq_comp, Function.comp_def] using
+      (S.fst.continuous.tendsto (T.fst a)).comp (strictTendsto_fst hf a)
+  · simpa only [mul_snd, mul_apply_eq_comp, Function.comp_def] using
+      (strictTendsto_snd hf (S.snd a))
+
+theorem StrictTendsto.mul_right (S : 𝓜(ℂ, A)) {f : X → 𝓜(ℂ, A)} {l : Filter X}
+    {T : 𝓜(ℂ, A)} (hf : StrictTendsto f l T) :
+    StrictTendsto (fun x => f x * S) l (T * S) := by
+  apply (strictTendsto_iff _ _ _).2
+  intro a
+  constructor
+  · simpa only [mul_fst, mul_apply_eq_comp] using strictTendsto_fst hf (S.fst a)
+  · have h := (S.snd.continuous.tendsto (T.snd a)).comp (strictTendsto_snd hf a)
+    change Tendsto (fun x => S.snd ((f x).snd a)) l (nhds (S.snd (T.snd a))) at h
+    simpa only [mul_snd, mul_apply_eq_comp] using h
+
+theorem strictContinuous_const [TopologicalSpace X] (T : 𝓜(ℂ, A)) :
+    StrictContinuous (fun _ : X => T) := by
+  let _ : TopologicalSpace (DoubleCentralizer ℂ A) := strictTopology A
+  exact continuous_const
+
+theorem strictContinuous_add :
+    @Continuous (𝓜(ℂ, A) × 𝓜(ℂ, A)) 𝓜(ℂ, A)
+      (@instTopologicalSpaceProd 𝓜(ℂ, A) 𝓜(ℂ, A) (strictTopology A) (strictTopology A))
+      (strictTopology A) (fun p => p.1 + p.2) := by
+  let _ : TopologicalSpace 𝓜(ℂ, A) := strictTopology A
+  rw [continuous_iff_continuousAt]
+  intro p
+  exact (show StrictTendsto (fun q : 𝓜(ℂ, A) × 𝓜(ℂ, A) => q.1) (𝓝 p) p.1 from
+    continuousAt_fst).add (show StrictTendsto
+      (fun q : 𝓜(ℂ, A) × 𝓜(ℂ, A) => q.2) (𝓝 p) p.2 from continuousAt_snd)
+
+theorem strictContinuous_neg :
+    @Continuous 𝓜(ℂ, A) 𝓜(ℂ, A) (strictTopology A) (strictTopology A) Neg.neg := by
+  let _ : TopologicalSpace 𝓜(ℂ, A) := strictTopology A
+  rw [continuous_iff_continuousAt]
+  intro T
+  apply (strictTendsto_iff _ _ _).2
+  intro a
+  exact ⟨((strictTendsto_iff _ _ _).1 tendsto_id a).1.neg,
+    ((strictTendsto_iff _ _ _).1 tendsto_id a).2.neg⟩
+
+theorem strictContinuous_star :
+    @Continuous 𝓜(ℂ, A) 𝓜(ℂ, A) (strictTopology A) (strictTopology A) star := by
+  let _ : TopologicalSpace 𝓜(ℂ, A) := strictTopology A
+  rw [continuous_iff_continuousAt]
+  intro T
+  exact (show StrictTendsto (fun S : 𝓜(ℂ, A) => star S) (𝓝 T) (star T) from
+    (show StrictTendsto (fun S : 𝓜(ℂ, A) => S) (𝓝 T) T from tendsto_id).star)
+
+theorem strictContinuous_mul_left (S : 𝓜(ℂ, A)) :
+    @Continuous 𝓜(ℂ, A) 𝓜(ℂ, A) (strictTopology A) (strictTopology A)
+      (fun T => S * T) := by
+  let _ : TopologicalSpace 𝓜(ℂ, A) := strictTopology A
+  rw [continuous_iff_continuousAt]
+  intro T
+  exact (show StrictTendsto (fun U : 𝓜(ℂ, A) => U) (𝓝 T) T from tendsto_id).mul_left S
+
+theorem strictContinuous_mul_right (S : 𝓜(ℂ, A)) :
+    @Continuous 𝓜(ℂ, A) 𝓜(ℂ, A) (strictTopology A) (strictTopology A)
+      (fun T => T * S) := by
+  let _ : TopologicalSpace 𝓜(ℂ, A) := strictTopology A
+  rw [continuous_iff_continuousAt]
+  intro T
+  exact (show StrictTendsto (fun U : 𝓜(ℂ, A) => U) (𝓝 T) T from tendsto_id).mul_right S
+
+/-! ## Bounded strict completeness -/
+
+private theorem exists_component_limits (F : Filter 𝓜(ℂ, A)) (hF : StrictCauchy F) :
+    ∃ L R : A → A,
+      (∀ a, Tendsto (fun T : 𝓜(ℂ, A) => T.fst a) F (𝓝 (L a))) ∧
+      (∀ a, Tendsto (fun T : 𝓜(ℂ, A) => T.snd a) F (𝓝 (R a))) := by
+  let _ : F.NeBot := hF.1
+  have hc := (strictCauchy_iff F).1 hF
+  choose L hL using fun a => (cauchy_map_iff_exists_tendsto.mp (hc a).1)
+  choose R hR using fun a => (cauchy_map_iff_exists_tendsto.mp (hc a).2)
+  exact ⟨L, R, hL, hR⟩
+
+private theorem exists_strictLimit_of_cauchy_of_eventually_norm_le
+    (F : Filter 𝓜(ℂ, A)) (hF : StrictCauchy F)
+    (hbounded : ∃ C : ℝ, ∀ᶠ T in F, ‖T‖ ≤ C) :
+    ∃ T : 𝓜(ℂ, A), Tendsto id F (strictNhds T) := by
+  rcases hbounded with ⟨C, hC⟩
+  rcases exists_component_limits F hF with ⟨L, R, hL, hR⟩
+  let _ : F.NeBot := hF.1
+  let Llin : A →ₗ[ℂ] A :=
+    { toFun := L
+      map_add' := fun a b => by
+        apply tendsto_nhds_unique (hL (a + b))
+        simpa only [map_add] using (hL a).add (hL b)
+      map_smul' := fun c a => by
+        apply tendsto_nhds_unique (hL (c • a))
+        simpa only [map_smul, RingHom.id_apply] using (hL a).const_smul c }
+  let Rlin : A →ₗ[ℂ] A :=
+    { toFun := R
+      map_add' := fun a b => by
+        apply tendsto_nhds_unique (hR (a + b))
+        simpa only [map_add] using (hR a).add (hR b)
+      map_smul' := fun c a => by
+        apply tendsto_nhds_unique (hR (c • a))
+        simpa only [map_smul, RingHom.id_apply] using (hR a).const_smul c }
+  have hLbound (a : A) : ‖L a‖ ≤ max C 0 * ‖a‖ := by
+    apply le_of_tendsto (hL a).norm
+    filter_upwards [hC] with T hTC
+    calc
+      ‖T.fst a‖ ≤ ‖T.fst‖ * ‖a‖ := T.fst.le_opNorm a
+      _ = ‖T‖ * ‖a‖ := by rw [T.norm_fst]
+      _ ≤ max C 0 * ‖a‖ := by gcongr; exact hTC.trans (le_max_left _ _)
+  have hRbound (a : A) : ‖R a‖ ≤ max C 0 * ‖a‖ := by
+    apply le_of_tendsto (hR a).norm
+    filter_upwards [hC] with T hTC
+    calc
+      ‖T.snd a‖ ≤ ‖T.snd‖ * ‖a‖ := T.snd.le_opNorm a
+      _ = ‖T‖ * ‖a‖ := by rw [T.norm_snd]
+      _ ≤ max C 0 * ‖a‖ := by gcongr; exact hTC.trans (le_max_left _ _)
+  let Lclm : A →L[ℂ] A := Llin.mkContinuous (max C 0) hLbound
+  let Rclm : A →L[ℂ] A := Rlin.mkContinuous (max C 0) hRbound
+  have hcentral (a b : A) : Rclm a * b = a * Lclm b := by
+    change R a * b = a * L b
+    have heq : (fun T : 𝓜(ℂ, A) => T.snd a * b) = fun T => a * T.fst b := by
+      funext T
+      exact T.central a b
+    have hleft := (hR a).mul_const b
+    rw [heq] at hleft
+    apply tendsto_nhds_unique hleft
+    exact (hL b).const_mul a
+  let T₀ : 𝓜(ℂ, A) := ⟨(Lclm, Rclm), hcentral⟩
+  refine ⟨T₀, ?_⟩
+  apply (strictTendsto_iff _ _ _).2
+  intro a
+  exact ⟨hL a, hR a⟩
+
+/-- A norm-bounded strict-Cauchy filter has a unique strict limit.  The bound is one eventual
+uniform bound, not a coefficient-dependent collection of bounds. -/
+theorem existsUnique_strictLimit_of_cauchy_of_eventually_norm_le
+    (F : Filter 𝓜(ℂ, A)) (hF : StrictCauchy F)
+    (hbounded : ∃ C : ℝ, ∀ᶠ T in F, ‖T‖ ≤ C) :
+    ∃! T : 𝓜(ℂ, A), Tendsto id F (strictNhds T) := by
+  obtain ⟨T, hT⟩ := exists_strictLimit_of_cauchy_of_eventually_norm_le F hF hbounded
+  refine ⟨T, hT, fun S hS => ?_⟩
+  let _ : F.NeBot := hF.1
+  apply DoubleCentralizer.ext ℂ A S T
+  apply Prod.ext <;> apply ContinuousLinearMap.ext <;> intro a
+  · exact tendsto_nhds_unique ((strictTendsto_iff _ _ _).1 hS a).1
+      ((strictTendsto_iff _ _ _).1 hT a).1
+  · exact tendsto_nhds_unique ((strictTendsto_iff _ _ _).1 hS a).2
+      ((strictTendsto_iff _ _ _).1 hT a).2
+
+/-- A globally norm-bounded strict-Cauchy sequence has a unique strict limit. -/
+theorem existsUnique_strictLimit_of_strictCauchySeq
+    (T : ℕ → 𝓜(ℂ, A)) (hT : StrictCauchySeq T)
+    (hbounded : ∃ C : ℝ, ∀ n : ℕ, ‖T n‖ ≤ C) :
+    ∃! T₀ : 𝓜(ℂ, A), StrictTendsto T atTop T₀ := by
+  rcases hbounded with ⟨C, hC⟩
+  obtain ⟨T₀, hlim, huniq⟩ :=
+    existsUnique_strictLimit_of_cauchy_of_eventually_norm_le
+      (Filter.map T atTop) hT ⟨C, (eventually_map.2 <| Eventually.of_forall hC)⟩
+  refine ⟨T₀, ?_, fun S hS => huniq S ?_⟩
+  · change Tendsto T atTop (strictNhds T₀)
+    simpa only [StrictTendsto, tendsto_map'_iff, Function.id_comp] using hlim
+  · change Tendsto id (Filter.map T atTop) (strictNhds S)
+    simpa only [StrictTendsto, tendsto_map'_iff, Function.id_comp] using hS
+
+/-! ## Coefficient absorption -/
+
+/-- The canonical coefficient homomorphism into the multiplier algebra is an isometry. -/
+theorem coeHom_isometry : Isometry
+    (DoubleCentralizer.coeHom (𝕜 := ℂ) (A := A)) :=
+  AddMonoidHomClass.isometry_of_norm _ fun a => by
+    calc
+      ‖DoubleCentralizer.coeHom (𝕜 := ℂ) a‖ =
+          ‖(DoubleCentralizer.coeHom (𝕜 := ℂ) a).fst‖ :=
+        (DoubleCentralizer.norm_fst _).symm
+      _ = ‖a‖ := by
+        simp only [DoubleCentralizer.coeHom_apply, DoubleCentralizer.coe_fst,
+          ContinuousLinearMap.opNorm_mul_apply]
+
+/-- The canonical coefficient homomorphism into the multiplier algebra is injective. -/
+theorem coeHom_injective : Function.Injective
+    (DoubleCentralizer.coeHom (𝕜 := ℂ) (A := A)) :=
+  coeHom_isometry.injective
+
+/-- Multiplying a multiplier by an embedded coefficient is again an embedded coefficient. -/
+theorem mul_coe (T : DoubleCentralizer ℂ A) (a : A) :
+    T * DoubleCentralizer.coeHom (𝕜 := ℂ) a =
+      DoubleCentralizer.coeHom (𝕜 := ℂ) (T.fst a) := by
+  have left_regular {x y : A} (hxy : ∀ z : A, z * x = z * y) : x = y := by
+    rw [← sub_eq_zero]
+    apply star_mul_self_eq_zero.mp
+    rw [mul_sub, hxy (star (x - y)), sub_self]
+  apply DoubleCentralizer.ext ℂ A
+  apply Prod.ext
+  · apply ContinuousLinearMap.ext
+    intro b
+    change T.fst (a * b) = T.fst a * b
+    apply left_regular
+    intro z
+    calc
+      z * T.fst (a * b) = T.snd z * (a * b) := (T.central z (a * b)).symm
+      _ = (T.snd z * a) * b := (mul_assoc _ _ _).symm
+      _ = (z * T.fst a) * b := by rw [T.central z a]
+      _ = z * (T.fst a * b) := mul_assoc _ _ _
+  · apply ContinuousLinearMap.ext
+    intro b
+    change T.snd b * a = b * T.fst a
+    exact T.central b a
+
+/-- Coefficient multiplication in the normal form of the multiplier inclusion.
+The named `mul_coe` equation retains its explicit homomorphism interface. -/
+@[simp]
+theorem mul_coe_normalized (T : DoubleCentralizer ℂ A) (a : A) :
+    T * DoubleCentralizer.coe ℂ a = DoubleCentralizer.coe ℂ (T.fst a) :=
+  mul_coe T a
+
+/-! ## Order-closed strict limits -/
+
+section OrderClosure
+
+/-- The coefficient spectral order, used locally in order-closed strict-limit proofs. -/
+local instance coefficientPartialOrder : PartialOrder A := CStarAlgebra.spectralOrder A
+local instance coefficientStarOrderedRing : StarOrderedRing A :=
+  CStarAlgebra.spectralOrderedRing A
+/-- The multiplier spectral order, used locally in order-closed strict-limit proofs. -/
+local instance multiplierPartialOrder : PartialOrder 𝓜(ℂ, A) :=
+  CStarAlgebra.spectralOrder 𝓜(ℂ, A)
+local instance multiplierStarOrderedRing : StarOrderedRing 𝓜(ℂ, A) :=
+  CStarAlgebra.spectralOrderedRing 𝓜(ℂ, A)
+
+/-- Self-adjoint multipliers are closed under strict limits along nontrivial filters. -/
+theorem isSelfAdjoint_of_strictTendsto {X : Type uX} {l : Filter X} [l.NeBot]
+    (T : X → 𝓜(ℂ, A)) (T₀ : 𝓜(ℂ, A)) (hT : StrictTendsto T l T₀)
+    (hself : ∀ᶠ i in l, IsSelfAdjoint (T i)) : IsSelfAdjoint T₀ := by
+  have hstar : StrictTendsto (fun i => star (T i)) l (star T₀) := hT.star
+  have hstar' : StrictTendsto (fun i => star (T i)) l T₀ := by
+    apply hT.congr'
+    exact hself.mono fun _ hi => hi.symm
+  apply DoubleCentralizer.ext ℂ A (star T₀) T₀
+  apply Prod.ext <;> apply ContinuousLinearMap.ext <;> intro a
+  · exact tendsto_nhds_unique (strictTendsto_fst hstar a) (strictTendsto_fst hstar' a)
+  · exact tendsto_nhds_unique (strictTendsto_snd hstar a) (strictTendsto_snd hstar' a)
+
+/-- Positivity in a multiplier algebra is detected by all coefficient compressions. -/
+theorem nonneg_iff_coe_star_mul_self {T : 𝓜(ℂ, A)} (hT : IsSelfAdjoint T := by cfc_tac) :
+    0 ≤ T ↔ ∀ a : A,
+      0 ≤ star (DoubleCentralizer.coeHom (𝕜 := ℂ) a) * T *
+        DoubleCentralizer.coeHom (𝕜 := ℂ) a := by
+  constructor
+  · intro h a
+    exact star_left_conjugate_nonneg h _
+  · intro h
+    -- The canonical coefficient ideal is essential.  Functional calculus of the negative part
+    -- gives a nonzero negative compression if `T` has negative spectrum, contradicting `h`.
+    rw [CStarAlgebra.nonneg_iff_isSelfAdjoint_and_negPart_eq_zero]
+    refine ⟨hT, ?_⟩
+    let n : DoubleCentralizer ℂ A := T⁻
+    let s : DoubleCentralizer ℂ A := CFC.sqrt n
+    have hn : 0 ≤ n := CFC.negPart_nonneg T
+    have hnself : IsSelfAdjoint n := IsSelfAdjoint.of_nonneg hn
+    have hs : 0 ≤ s := CFC.sqrt_nonneg n
+    have hsself : IsSelfAdjoint s := IsSelfAdjoint.of_nonneg hs
+    let p : DoubleCentralizer ℂ A := T⁺
+    have hpself : IsSelfAdjoint p := IsSelfAdjoint.of_nonneg (CFC.posPart_nonneg T)
+    have hss : s * s = n := CFC.sqrt_mul_sqrt_self n hn
+    have hsp : s * p = 0 := by
+      apply star_mul_self_eq_zero.mp
+      calc
+        star (s * p) * (s * p) = p * (s * s) * p := by
+          simp only [star_mul, hsself.star_eq, hpself.star_eq, mul_assoc]
+        _ = p * n * p := by rw [hss]
+        _ = 0 := by
+          dsimp only [p, n]
+          rw [CFC.posPart_mul_negPart, zero_mul]
+    have hsn : s * n * s = n * n := by
+      calc
+        s * n * s = s * (s * s) * s := by rw [hss]
+        _ = (s * s) * (s * s) := by simp only [mul_assoc]
+        _ = n * n := by rw [hss]
+    have hsTs : s * T * s = -(n * n) := by
+      rw [← CFC.posPart_sub_negPart T hT]
+      change s * (p - n) * s = -(n * n)
+      rw [mul_sub, sub_mul, hsp, zero_mul, hsn, zero_sub]
+    have hn_fst (b : A) : n.fst b = 0 := by
+      let cb : DoubleCentralizer ℂ A := DoubleCentralizer.coeHom (𝕜 := ℂ) b
+      let a : A := s.fst b
+      have hcoe : DoubleCentralizer.coeHom (𝕜 := ℂ) a = s * cb := by
+        dsimp only [a, cb]
+        exact (mul_coe s b).symm
+      have hcompression := h a
+      have hcompression_eq :
+          star (DoubleCentralizer.coeHom (𝕜 := ℂ) a) * T *
+              DoubleCentralizer.coeHom (𝕜 := ℂ) a =
+            -(star (n * cb) * (n * cb)) := by
+        rw [hcoe]
+        calc
+          star (s * cb) * T * (s * cb) = star cb * (s * T * s) * cb := by
+            simp only [star_mul, hsself.star_eq, mul_assoc]
+          _ = star cb * (-(n * n)) * cb := by rw [hsTs]
+          _ = -(star cb * (n * n) * cb) := by simp only [mul_neg, neg_mul]
+          _ = -(star (n * cb) * (n * cb)) := by
+            simp only [star_mul, hnself.star_eq, mul_assoc]
+      have hnonpos :
+          star (DoubleCentralizer.coeHom (𝕜 := ℂ) a) * T *
+              DoubleCentralizer.coeHom (𝕜 := ℂ) a ≤ 0 := by
+        rw [hcompression_eq]
+        exact neg_nonpos.mpr (star_mul_self_nonneg _)
+      have hzero := le_antisymm hnonpos hcompression
+      have hsquare : star (n * cb) * (n * cb) = 0 := by
+        rw [hcompression_eq] at hzero
+        exact neg_eq_zero.mp hzero
+      have hncb : n * cb = 0 :=
+        star_mul_self_eq_zero.mp hsquare
+      apply coeHom_injective
+      rw [map_zero, ← mul_coe]
+      exact hncb
+    apply norm_eq_zero.mp
+    rw [← n.norm_fst]
+    have hnfst : n.fst = 0 := by
+      apply ContinuousLinearMap.ext
+      exact hn_fst
+    rw [hnfst, norm_zero]
+
+/-- A strict limit of eventually positive multipliers along a nontrivial filter is positive. -/
+theorem nonneg_of_strictTendsto {X : Type uX} {l : Filter X} [l.NeBot]
+    (T : X → 𝓜(ℂ, A)) (T₀ : 𝓜(ℂ, A)) (hT : StrictTendsto T l T₀)
+    (hpos : ∀ᶠ i in l, 0 ≤ T i) :
+    0 ≤ T₀ := by
+  have hself : IsSelfAdjoint T₀ :=
+    isSelfAdjoint_of_strictTendsto T T₀ hT (hpos.mono fun _ => IsSelfAdjoint.of_nonneg)
+  apply (nonneg_iff_coe_star_mul_self hself).2
+  intro a
+  let c' : DoubleCentralizer ℂ A := DoubleCentralizer.coeHom (𝕜 := ℂ) a
+  have compression_eq (S : DoubleCentralizer ℂ A) :
+      star c' * S * c' =
+        DoubleCentralizer.coeHom (𝕜 := ℂ) (star a * S.fst a) := by
+    rw [mul_coe]
+    congr 1
+    simp only [mul_fst, mul_apply_eq_comp, star_fst, c',
+      DoubleCentralizer.coeHom_apply, DoubleCentralizer.coe_snd,
+      ContinuousLinearMap.flip_apply, ContinuousLinearMap.mul_apply', star_mul, star_star]
+  have hcoeff : Tendsto (fun i => star a * (T i).fst a) l
+      (nhds (star a * T₀.fst a)) := (strictTendsto_fst hT a).const_mul (star a)
+  have hnorm' : Tendsto (fun i => star c' * T i * c') l
+      (nhds (star c' * T₀ * c')) := by
+    have hc' := coeHom_isometry.continuous.tendsto (star a * T₀.fst a) |>.comp hcoeff
+    simpa only [compression_eq, Function.comp_def] using hc'
+  exact ge_of_tendsto hnorm' (hpos.mono fun _ hi => star_left_conjugate_nonneg hi c')
+
+/-- Positive contractions are closed under strict limits along nontrivial filters. -/
+theorem mem_Icc_of_strictTendsto {X : Type uX} {l : Filter X} [l.NeBot]
+    (T : X → 𝓜(ℂ, A)) (T₀ : 𝓜(ℂ, A)) (hT : StrictTendsto T l T₀)
+    (hcontract : ∀ᶠ i in l, T i ∈ Set.Icc 0 1) : T₀ ∈ Set.Icc 0 1 := by
+  constructor
+  · exact nonneg_of_strictTendsto T T₀ hT (hcontract.mono fun _ => And.left)
+  · rw [← sub_nonneg]
+    exact nonneg_of_strictTendsto (fun i => 1 - T i) (1 - T₀)
+      ((strictTendsto_const (1 : 𝓜(ℂ, A)) l).sub hT)
+      (hcontract.mono fun _ hi => sub_nonneg.mpr hi.2)
+
+/-- Sequence form of `isSelfAdjoint_of_strictTendsto`. -/
+theorem isSelfAdjoint_of_strictTendsto_seq (T : ℕ → DoubleCentralizer ℂ A)
+    (T₀ : DoubleCentralizer ℂ A) (hT : StrictTendsto T atTop T₀)
+    (hself : ∀ n, IsSelfAdjoint (T n)) : IsSelfAdjoint T₀ :=
+  isSelfAdjoint_of_strictTendsto T T₀ hT (Eventually.of_forall hself)
+
+/-- Sequence form of `nonneg_of_strictTendsto`. -/
+theorem nonneg_of_strictTendsto_seq (T : ℕ → DoubleCentralizer ℂ A)
+    (T₀ : DoubleCentralizer ℂ A) (hT : StrictTendsto T atTop T₀)
+    (hpos : ∀ n, 0 ≤ T n) : 0 ≤ T₀ :=
+  nonneg_of_strictTendsto T T₀ hT (Eventually.of_forall hpos)
+
+/-- Sequence form of `mem_Icc_of_strictTendsto`. -/
+theorem mem_Icc_of_strictTendsto_seq (T : ℕ → DoubleCentralizer ℂ A)
+    (T₀ : DoubleCentralizer ℂ A) (hT : StrictTendsto T atTop T₀)
+    (hcontract : ∀ n, T n ∈ Set.Icc 0 1) : T₀ ∈ Set.Icc 0 1 :=
+  mem_Icc_of_strictTendsto T T₀ hT (Eventually.of_forall hcontract)
+
+end OrderClosure
+
+/-! ## Transport along coefficient equivalences -/
+
+/-- The non-unital star homomorphism underlying transport of multipliers along a coefficient
+star-algebra equivalence. -/
+noncomputable def congrHom {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) : 𝓜(ℂ, A) →⋆ₙₐ[ℂ] 𝓜(ℂ, B) := by
+  let eCLM : A →L[ℂ] B := LinearMap.mkContinuous
+    { toFun := e
+      map_add' := map_add e
+      map_smul' := map_smul e }
+    1 fun a => by simp [StarAlgEquiv.norm_map]
+  let eSymmCLM : B →L[ℂ] A := LinearMap.mkContinuous
+    { toFun := e.symm
+      map_add' := map_add e.symm
+      map_smul' := map_smul e.symm }
+    1 fun b => by simp [StarAlgEquiv.norm_map]
+  exact
+    { toFun T :=
+      { fst := eCLM.comp (T.fst.comp eSymmCLM)
+        snd := eCLM.comp (T.snd.comp eSymmCLM)
+        central := fun x y => by
+          change e (T.snd (e.symm x)) * y = x * e (T.fst (e.symm y))
+          simpa only [map_mul, StarAlgEquiv.apply_symm_apply] using
+            congrArg e (T.central (e.symm x) (e.symm y)) }
+      map_zero' := by
+        apply DoubleCentralizer.ext ℂ B
+        apply Prod.ext <;> apply ContinuousLinearMap.ext <;> intro b <;>
+          simp [eCLM, eSymmCLM]
+      map_add' S T := by
+        apply DoubleCentralizer.ext ℂ B
+        apply Prod.ext <;> apply ContinuousLinearMap.ext <;> intro b <;>
+          simp [eCLM, eSymmCLM, ContinuousLinearMap.comp_apply]
+      map_smul' c T := by
+        apply DoubleCentralizer.ext ℂ B
+        apply Prod.ext <;> apply ContinuousLinearMap.ext <;> intro b <;>
+          simp [eCLM, eSymmCLM, ContinuousLinearMap.comp_apply]
+      map_mul' S T := by
+        apply DoubleCentralizer.ext ℂ B
+        apply Prod.ext <;> apply ContinuousLinearMap.ext <;> intro b <;>
+          simp [eCLM, eSymmCLM, ContinuousLinearMap.comp_apply]
+      map_star' T := by
+        apply DoubleCentralizer.ext ℂ B
+        apply Prod.ext <;> apply ContinuousLinearMap.ext <;> intro b
+        · change e (star (T.snd (star (e.symm b)))) =
+            star (e (T.snd (e.symm (star b))))
+          simp only [map_star]
+        · change e (star (T.fst (star (e.symm b)))) =
+            star (e (T.fst (e.symm (star b))))
+          simp only [map_star] }
+
+@[simp]
+theorem congrHom_apply_fst {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) (T : 𝓜(ℂ, A)) (b : B) :
+    (congrHom e T).fst b = e (T.fst (e.symm b)) :=
+  by simp [congrHom]
+
+@[simp]
+theorem congrHom_apply_snd {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) (T : 𝓜(ℂ, A)) (b : B) :
+    (congrHom e T).snd b = e (T.snd (e.symm b)) :=
+  by simp [congrHom]
+
+/-- Transport multipliers along a star-algebra equivalence of coefficient algebras. -/
+noncomputable def congr {B : Type uB} [NonUnitalCStarAlgebra B] (e : A ≃⋆ₐ[ℂ] B) :
+    𝓜(ℂ, A) ≃⋆ₐ[ℂ] 𝓜(ℂ, B) := by
+  refine StarAlgEquiv.ofBijective (congrHom e) ⟨?_, ?_⟩
+  · intro S T h
+    have h' := congrArg (congrHom e.symm) h
+    apply DoubleCentralizer.ext ℂ A
+    apply Prod.ext <;> apply ContinuousLinearMap.ext <;> intro a
+    · simpa using congrArg (fun U : 𝓜(ℂ, A) => U.fst a) h'
+    · simpa using congrArg (fun U : 𝓜(ℂ, A) => U.snd a) h'
+  · intro T
+    refine ⟨congrHom e.symm T, ?_⟩
+    apply DoubleCentralizer.ext ℂ B
+    apply Prod.ext <;> apply ContinuousLinearMap.ext <;> intro b <;> simp
+
+@[simp]
+theorem congr_apply_fst {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) (T : 𝓜(ℂ, A)) (b : B) :
+    (DoubleCentralizer.congr e T).fst b = e (T.fst (e.symm b)) :=
+  by change (congrHom e T).fst b = _; simp
+
+@[simp]
+theorem congr_apply_snd {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) (T : 𝓜(ℂ, A)) (b : B) :
+    (DoubleCentralizer.congr e T).snd b = e (T.snd (e.symm b)) :=
+  by change (congrHom e T).snd b = _; simp
+
+theorem congr_coeHom {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) (a : A) :
+    DoubleCentralizer.congr e (DoubleCentralizer.coeHom (𝕜 := ℂ) a) =
+      DoubleCentralizer.coeHom (𝕜 := ℂ) (e a) := by
+  ext b <;> simp [congr_apply_fst, congr_apply_snd]
+
+/-- Transport of an embedded coefficient in the actual coefficient-coercion normal form.
+The named `congr_coeHom` equation retains its explicit homomorphism interface. -/
+@[simp]
+theorem congr_coe {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) (a : A) :
+    DoubleCentralizer.congr e (DoubleCentralizer.coe ℂ a) =
+      DoubleCentralizer.coe ℂ (e a) := by
+  simpa only [DoubleCentralizer.coeHom_apply] using congr_coeHom e a
+
+@[simp]
+theorem congr_refl :
+    DoubleCentralizer.congr (StarAlgEquiv.refl ℂ A) = StarAlgEquiv.refl ℂ 𝓜(ℂ, A) := by
+  ext T a <;> simp [congr_apply_fst, congr_apply_snd]
+
+@[simp]
+theorem congr_trans {B : Type uB} {C : Type uC}
+    [NonUnitalCStarAlgebra B] [NonUnitalCStarAlgebra C]
+    (e : A ≃⋆ₐ[ℂ] B) (f : B ≃⋆ₐ[ℂ] C) :
+    DoubleCentralizer.congr (e.trans f) =
+      (DoubleCentralizer.congr e).trans (DoubleCentralizer.congr f) := by
+  ext T a <;> simp [congr_apply_fst, congr_apply_snd]
+
+@[simp]
+theorem congr_symm {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) :
+    (DoubleCentralizer.congr e).symm = DoubleCentralizer.congr e.symm := by
+  ext T a
+  · rw [congr_apply_fst]
+    change ((DoubleCentralizer.congr e).symm T).fst a = e.symm (T.fst (e a))
+    apply e.injective
+    have h := congrArg (fun U : DoubleCentralizer ℂ B => U.fst (e a))
+      ((DoubleCentralizer.congr e).apply_symm_apply T)
+    rw [congr_apply_fst, StarAlgEquiv.symm_apply_apply] at h
+    exact h.trans (e.apply_symm_apply _).symm
+  · rw [congr_apply_snd]
+    change ((DoubleCentralizer.congr e).symm T).snd a = e.symm (T.snd (e a))
+    apply e.injective
+    have h := congrArg (fun U : DoubleCentralizer ℂ B => U.snd (e a))
+      ((DoubleCentralizer.congr e).apply_symm_apply T)
+    rw [congr_apply_snd, StarAlgEquiv.symm_apply_apply] at h
+    exact h.trans (e.apply_symm_apply _).symm
+
+theorem strictContinuous_congr {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) :
+    @Continuous 𝓜(ℂ, A) 𝓜(ℂ, B) (strictTopology A) (strictTopology B)
+      (DoubleCentralizer.congr e) := by
+  let _ : TopologicalSpace 𝓜(ℂ, A) := strictTopology A
+  let _ : TopologicalSpace 𝓜(ℂ, B) := strictTopology B
+  change Continuous (DoubleCentralizer.congr e)
+  rw [continuous_iff_continuousAt]
+  intro T
+  apply (strictTendsto_iff _ _ _).2
+  intro b
+  constructor
+  · simpa only [congr_apply_fst, strictNhds, Function.comp_def, id_eq] using
+      ((map_continuous e).tendsto _ |>.comp
+        (((strictTendsto_iff _ _ _).1 tendsto_id (e.symm b)).1))
+  · simpa only [congr_apply_snd, strictNhds, Function.comp_def, id_eq] using
+      ((map_continuous e).tendsto _ |>.comp
+        (((strictTendsto_iff _ _ _).1 tendsto_id (e.symm b)).2))
+
+/-- A coefficient star equivalence is a uniform equivalence for the strict uniformities. -/
+noncomputable def strictCongr {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) :
+    let _ : UniformSpace 𝓜(ℂ, A) := strictUniformSpace A
+    let _ : UniformSpace 𝓜(ℂ, B) := strictUniformSpace B
+    𝓜(ℂ, A) ≃ᵤ 𝓜(ℂ, B) := by
+  let _ : UniformSpace 𝓜(ℂ, A) := strictUniformSpace A
+  let _ : UniformSpace 𝓜(ℂ, B) := strictUniformSpace B
+  let _ : IsUniformAddGroup 𝓜(ℂ, A) := strictUniformSpace_isUniformAddGroup
+  let _ : IsUniformAddGroup 𝓜(ℂ, B) := strictUniformSpace_isUniformAddGroup
+  exact
+    { toEquiv := (DoubleCentralizer.congr e).toEquiv
+      uniformContinuous_toFun :=
+        uniformContinuous_of_continuousAt_zero (DoubleCentralizer.congr e)
+          (strictContinuous_congr e).continuousAt
+      uniformContinuous_invFun :=
+        by
+          rw [show (DoubleCentralizer.congr e).invFun =
+              DoubleCentralizer.congr e.symm by
+            funext T
+            exact DFunLike.congr_fun (congr_symm e) T]
+          exact uniformContinuous_of_continuousAt_zero (DoubleCentralizer.congr e.symm)
+            (strictContinuous_congr e.symm).continuousAt }
+
+theorem strictTendsto_congr_iff {B : Type uB} [NonUnitalCStarAlgebra B]
+    {X : Type uX} (e : A ≃⋆ₐ[ℂ] B) (f : X → 𝓜(ℂ, A)) (l : Filter X) (T : 𝓜(ℂ, A)) :
+    StrictTendsto (fun x => DoubleCentralizer.congr e (f x)) l
+      (DoubleCentralizer.congr e T) ↔ StrictTendsto f l T := by
+  constructor
+  · intro h
+    apply (strictTendsto_iff _ _ _).2
+    intro a
+    have ha := (strictTendsto_iff _ _ _).1 h (e a)
+    constructor
+    · simpa only [congr_apply_fst, StarAlgEquiv.symm_apply_apply,
+          Function.comp_def] using
+        (map_continuous e.symm).tendsto _ |>.comp ha.1
+    · simpa only [congr_apply_snd, StarAlgEquiv.symm_apply_apply,
+          Function.comp_def] using
+        (map_continuous e.symm).tendsto _ |>.comp ha.2
+  · intro h
+    apply (strictTendsto_iff _ _ _).2
+    intro b
+    have hb := (strictTendsto_iff _ _ _).1 h (e.symm b)
+    constructor
+    · simpa only [congr_apply_fst, Function.comp_def] using
+        (map_continuous e).tendsto _ |>.comp hb.1
+    · simpa only [congr_apply_snd, Function.comp_def] using
+        (map_continuous e).tendsto _ |>.comp hb.2
+
+theorem strictCauchy_map_congr_iff {B : Type uB} [NonUnitalCStarAlgebra B]
+    (e : A ≃⋆ₐ[ℂ] B) (F : Filter 𝓜(ℂ, A)) :
+    StrictCauchy (A := B) (Filter.map (DoubleCentralizer.congr e) F) ↔ StrictCauchy F := by
+  let _ : UniformSpace 𝓜(ℂ, A) := strictUniformSpace A
+  let _ : UniformSpace 𝓜(ℂ, B) := strictUniformSpace B
+  exact (DoubleCentralizer.strictCongr e).isUniformInducing.cauchy_map_iff
+
+@[simp]
+theorem strictCongr_refl :
+    let _ : UniformSpace (DoubleCentralizer ℂ A) := strictUniformSpace A
+    let _ : UniformSpace (DoubleCentralizer ℂ A) := strictUniformSpace A
+    DoubleCentralizer.strictCongr (StarAlgEquiv.refl ℂ A) = UniformEquiv.refl 𝓜(ℂ, A) := by
+  dsimp only
+  let _ : UniformSpace (DoubleCentralizer ℂ A) := strictUniformSpace A
+  apply UniformEquiv.ext
+  intro T
+  exact DFunLike.congr_fun congr_refl T
+
+@[simp]
+theorem strictCongr_trans {B : Type uB} {C : Type uC}
+    [NonUnitalCStarAlgebra B] [NonUnitalCStarAlgebra C]
+    (e : A ≃⋆ₐ[ℂ] B) (f : B ≃⋆ₐ[ℂ] C) :
+    let _ : UniformSpace (DoubleCentralizer ℂ A) := strictUniformSpace A
+    let _ : UniformSpace (DoubleCentralizer ℂ B) := strictUniformSpace B
+    let _ : UniformSpace (DoubleCentralizer ℂ C) := strictUniformSpace C
+    DoubleCentralizer.strictCongr (e.trans f) =
+      (DoubleCentralizer.strictCongr e).trans (DoubleCentralizer.strictCongr f) := by
+  dsimp only
+  let _ : UniformSpace (DoubleCentralizer ℂ A) := strictUniformSpace A
+  let _ : UniformSpace (DoubleCentralizer ℂ B) := strictUniformSpace B
+  let _ : UniformSpace (DoubleCentralizer ℂ C) := strictUniformSpace C
+  apply UniformEquiv.ext
+  intro T
+  exact DFunLike.congr_fun (congr_trans e f) T
+
+end DoubleCentralizer
+
+end

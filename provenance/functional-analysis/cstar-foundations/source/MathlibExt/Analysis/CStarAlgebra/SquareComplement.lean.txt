@@ -1,0 +1,61 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Order
+public import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Commute
+
+/-!
+# The computed norm-square complement in a C-star algebra
+
+The positive CFC square root of the norm-square scalar minus the adjoint
+square supplies an actual complement. It also remains in any commutant
+containing both the original element and its adjoint. No nonzero-algebra or
+supplied square-complement premise is needed.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+namespace CStarAlgebra
+
+universe u
+
+variable {D : Type u} [CStarAlgebra D] [PartialOrder D] [StarOrderedRing D]
+
+/-- The positive CFC square root of the original norm-square scalar minus the adjoint square. -/
+def normSquareComplement (a : D) : D :=
+  CFC.sqrt (algebraMap ℝ D (‖a‖ ^ 2) - star a * a)
+
+/-- The computed square complement is positive in the actual C-star order. -/
+theorem normSquareComplement_nonneg (a : D) : 0 ≤ normSquareComplement a :=
+  CFC.sqrt_nonneg _
+
+/-- The original adjoint square and computed complement square sum to the norm-square scalar. -/
+theorem star_mul_self_add_normSquareComplement (a : D) :
+    star a * a + star (normSquareComplement a) * normSquareComplement a =
+      algebraMap ℝ D (‖a‖ ^ 2) := by
+  have hd : 0 ≤ algebraMap ℝ D (‖a‖ ^ 2) - star a * a :=
+    sub_nonneg.mpr (CStarAlgebra.star_mul_le_algebraMap_norm_sq a)
+  have hSquare : star (normSquareComplement a) * normSquareComplement a =
+      algebraMap ℝ D (‖a‖ ^ 2) - star a * a := by
+    rw [(normSquareComplement_nonneg a).star_eq]
+    exact CFC.sqrt_mul_sqrt_self _ hd
+  rw [add_comm (star a * a) _, hSquare]
+  exact sub_add_cancel _ _
+
+/-- CFC keeps the computed complement in any commutant containing the element and its adjoint. -/
+theorem normSquareComplement_commute (a b : D)
+    (hab : Commute a b) (hstarab : Commute (star a) b) :
+    Commute (normSquareComplement a) b := by
+  have hSquare : Commute (star a * a) b := hstarab.mul_left hab
+  have hd : Commute (algebraMap ℝ D (‖a‖ ^ 2) - star a * a) b :=
+    (Algebra.commute_algebraMap_left (‖a‖ ^ 2) b).sub_left hSquare
+  simpa only [normSquareComplement, CFC.sqrt] using hd.cfcₙ_nnreal NNReal.sqrt
+
+end CStarAlgebra
