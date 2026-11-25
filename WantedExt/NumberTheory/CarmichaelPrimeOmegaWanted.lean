@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Set.Card
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 public import Mathlib.NumberTheory.CarmichaelNumber
+public import MathlibExt.Combinatorics.Additive.ZeroSumSubsequenceCount
 
 /-!
 # Carmichael numbers with a prime number of prime factors
@@ -42,25 +43,6 @@ public theorem_wanted infinite_carmichael_prime_cardFactors_of_heathBrown
     (hHB : ∃ C : ℝ, ∀ d : ℕ, 2 ≤ d → ∀ c : ℕ, Nat.Coprime c d →
       ∃ p : ℕ, p.Prime ∧ p ≡ c [MOD d] ∧ (p : ℝ) ≤ C * d * Real.log d ^ 2) :
     {n : ℕ | n.IsCarmichael ∧ (ArithmeticFunction.cardFactors n).Prime}.Infinite
-
-/-- **Alford–Granville–Pomerance count of zero-sum subsequences.** Let $G$ be an abelian group
-and let $n$ be the least natural number $m$ such that every sequence of $m$ elements of $G$ has a
-nonempty subsequence with product $1$ (the Davenport constant of $G$). Let $r$ and $t$ be natural
-numbers with $n < t < r$. Then for every sequence $s_1, \dots, s_r$ of elements of $G$, the number
-$M$ of sets $S \subseteq \{1, \dots, r\}$ with $t - n \le |S| \le t$ and $\prod_{i \in S} s_i = 1$
-satisfies $\binom{r}{t} \le \binom{r}{n} M$.
-
-Source: Thomas Wright, *Carmichael Numbers with a Prime Number of Prime Factors*, INTEGERS 24
-(2024), Article A97, Proposition 1 (`integers-2024-A97-prop-1`), quoting Alford, Granville,
-and Pomerance, Theorem 2.1. -/
-public theorem_wanted choose_le_choose_mul_card_prod_eq_one {G : Type*} [CommGroup G]
-    [DecidableEq G] (n : ℕ)
-    (hn : IsLeast {m : ℕ | ∀ s : Fin m → G, ∃ S : Finset (Fin m), S.Nonempty ∧
-      ∏ i ∈ S, s i = 1} n)
-    (r t : ℕ) (hrt : t < r) (htn : n < t) (s : Fin r → G) :
-    r.choose t ≤ r.choose n *
-      (Finset.univ.filter fun S : Finset (Fin r) =>
-        t - n ≤ S.card ∧ S.card ≤ t ∧ ∏ i ∈ S, s i = 1).card
 
 /-- **Linnik's theorem with exponent 5.2 (Xylouris).** There is a real constant $C$ such that for
 every natural number $d \ge 1$ and every natural number $c$ coprime to $d$, there is a prime

@@ -40,7 +40,14 @@ Shiryaev's formulation: a geometric prior on the change point, the false-alarm p
 - [Closed form of the CUSUM statistic](page-cusum-eq-sup.md)
 - [CUSUM alarm time](cusum-time.md)
 - [Lorden's worst-case detection delay](lorden-delay.md)
+- [Page's CUSUM statistic is adapted](adapted-page-cusum.md)
+- [The CUSUM alarm is a stopping time](is-stopping-time-cusum-time.md)
 - [Moustakides' theorem: optimality of CUSUM under Lorden's criterion](cusum-time-lorden-delay-le.md)
+
+## Sequential monitoring of a defect rate
+
+- [Sequential test of a defect rate](sequential-test-of-a-defect-rate.md)
+- [Run length of a sequential alarm](run-length-of-a-sequential-alarm.md)
 
 ## Related topics
 
