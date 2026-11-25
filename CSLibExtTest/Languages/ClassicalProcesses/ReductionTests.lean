@@ -232,24 +232,23 @@ theorem comm_tensor_right_step :
           (.emptyInput (.var 0) ((.link (.const 0) (.const 1) : Proc TestAtom).liftAt 0)))) :=
   Step.commTensorRight _ _ _ _ _ (by decide)
 
-/-- Boundary of both tensor commutations: when both output branches are
-constant-only `⊤` continuations, the cut variable is free in neither
-branch, so both `κ⊗` side conditions fail on the same shape and neither
-rule applies (a `⊤` continuation could hold the cut channel only through
-its context). -/
-theorem comm_tensor_side_conditions_fail :
+/-- The two halves of the tensor-commutation side conditions on a
+constant-only `⊤` continuation: the cut variable is free in it in neither
+position, but it absorbs, so it can still receive the cut. -/
+theorem comm_tensor_top_branch_guards :
     PiCalculus.Name.var 1 ∉
       (Proc.emptyChoice (.const 0) : Proc TestAtom).freeNames ∧
     PiCalculus.Name.var 0 ∉
-      (Proc.emptyChoice (.const 0) : Proc TestAtom).freeNames := by
+      (Proc.emptyChoice (.const 0) : Proc TestAtom).freeNames ∧
+    (Proc.emptyChoice (.const 0) : Proc TestAtom).absorbs = true := by
   decide
 
-/-- A typed tensor-commutation redex outside both `κ⊗` rules: the `⊤`
-continuation holds the cut channel through its context, so neither
-syntactic side condition holds, although derivation-level `κ⊗` would
-push the cut into the `⊤` branch to expose the outer `output`. Recorded
-as the boundary for deadlock-freedom (Theorem 2) work. -/
-theorem top_owned_tensor_redex_typed :
+/-- A typed tensor-commutation redex whose cut channel is held by the
+`⊤` continuation through its context: the channel is free in neither
+output branch, and the right commuting conversion pushes the cut into the
+absorbing `⊤` branch, exposing the outer `output` as the derivation-level
+`κ⊗` does. -/
+theorem top_owned_tensor_redex_steps :
     HasType
       ((((∅ : Context TestAtom).insert (.const 2) propA.dual).insert (.const 0) .top).insert
         (.const 1) (.tensor propA .one))
@@ -260,8 +259,15 @@ theorem top_owned_tensor_redex_typed :
     PiCalculus.Name.var 1 ∉
       (Proc.link (.var 0) (.const 2) : Proc TestAtom).freeNames ∧
     PiCalculus.Name.var 0 ∉
-      (Proc.emptyChoice (.const 0) : Proc TestAtom).freeNames := by
-  refine ⟨?_, by decide, by decide⟩
+      (Proc.emptyChoice (.const 0) : Proc TestAtom).freeNames ∧
+    Step (Atom := TestAtom) (.cut .bot
+        (.output (PiCalculus.liftName 0 (.const 1)) (.link (.var 0) (.const 2))
+          (.emptyChoice (.const 0)))
+        (.emptyOutput (.var 0)))
+      (.output (.const 1) (.link (.var 0) (.const 2))
+        (.cut .bot (.emptyChoice (.const 0)) (.emptyOutput (.var 0)))) := by
+  refine ⟨?_, by decide, by decide,
+    Step.commTensorRight .bot (.const 1) (.link (.var 0) (.const 2)) _ _ (Or.inr rfl)⟩
   have hp : HasType ((Context.lift ((∅ : Context TestAtom).insert (PiCalculus.Name.const 2)
       propA.dual)).insert (.var 0) propA) (.link (.var 0) (.const 2)) := by
     convert HasType.ax (w := .var 0) (x := .const 2) (a := propA.dual) (by decide) using 1
@@ -396,6 +402,54 @@ theorem assoc_counterexample_reduct_not_typed (Γ : Context TestAtom) :
       at hq
     cases hq with
     | «with» hb _ _ => exact bot_cut_outer_core_not_typed _ hb
+
+/-- Guarded associativity still excludes the counterexample: its middle
+component neither uses the outer cut channel nor absorbs, and no
+structural equivalence relates the typed counterexample to its bare
+image, which steps to an untypable process. -/
+theorem assoc_counterexample_excluded :
+    ¬ (PiCalculus.Name.var 1 ∈
+        (Proc.choice (.var 0) (.emptyOutput (.var 0)) (.emptyOutput (.var 0)) :
+          Proc TestAtom).freeNames ∨
+      (Proc.choice (.var 0) (.emptyOutput (.var 0)) (.emptyOutput (.var 0)) :
+          Proc TestAtom).absorbs = true) ∧
+    ¬ Cong assocCounterexample
+        (.cut (.oplus .bot .bot)
+          (.selectLeft (.var 0) (.emptyChoice (.const 0)))
+          (.cut .bot (.choice (.var 1) (.emptyOutput (.var 1)) (.emptyOutput (.var 1)))
+            (.emptyOutput (.var 0)))) := by
+  refine ⟨by decide, fun h => ?_⟩
+  exact assoc_counterexample_reduct_not_typed _
+    (HasType.preservation (h.hasType_iff.mp assoc_counterexample_typed)
+      assoc_counterexample_steps)
+
+/-- A `⊤` middle component owning both cut channels admits associativity:
+both sides of this instance are typed by the same `⊤` channel. -/
+theorem cong_assoc_top_owned :
+    Cong (Atom := TestAtom)
+      (.cut .bot (.cut .one ((.emptyOutput (.var 0) : Proc TestAtom).liftAt 1)
+          (.emptyChoice (.const 0)))
+        (.emptyOutput (.var 0)))
+      (.cut .one (.emptyOutput (.var 0))
+        (.cut .bot ((.emptyChoice (.const 0) : Proc TestAtom).rename (PiCalculus.swapNameAt 0))
+          ((.emptyOutput (.var 0) : Proc TestAtom).liftAt 1))) :=
+  Cong.assoc _ _ _ _ _ (Or.inr rfl) (Or.inr rfl)
+
+/-- Absorption needs `⊤` on every branch of a choice: with one `⊤` branch
+and one `1` branch the choice does not absorb, and it cannot take on an
+extra unused channel. -/
+theorem choice_one_top_branch_not_absorbs :
+    (Proc.choice (.var 0) (.emptyChoice (.var 0)) (.emptyOutput (.var 0)) :
+        Proc TestAtom).absorbs = false ∧
+    ¬ HasType
+        (((∅ : Context TestAtom).insert (.var 0) (.«with» .top .one)).insert (.const 0) .bot)
+        (.choice (.var 0) (.emptyChoice (.var 0)) (.emptyOutput (.var 0))) := by
+  refine ⟨by decide, fun h => ?_⟩
+  have h₀ : HasType ((∅ : Context TestAtom).insert (.var 0) (.«with» .top .one))
+      (.choice (.var 0) (.emptyChoice (.var 0)) (.emptyOutput (.var 0))) :=
+    HasType.«with» (HasType.top Finmap.notMem_empty) HasType.one Finmap.notMem_empty
+  have habs := (h₀.insert_iff_absorbs (k := .const 0) (by decide) (by decide) .bot).mp h
+  exact absurd habs (by decide)
 
 /-- An empty-output process cut against an empty output at `⊥`, with the
 first component depending on an outer channel, is not typable: this is
