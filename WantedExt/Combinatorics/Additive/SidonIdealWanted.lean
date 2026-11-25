@@ -15,6 +15,7 @@ public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Constructions
+public import MathlibExt.Combinatorics.Additive.SidonGreedyDensity
 public import MathlibExt.Combinatorics.Additive.SidonIdeal
 
 /-!
@@ -56,17 +57,6 @@ Corollary 2 (`integers-2025-A91-cor-2`). -/
 public theorem_wanted sidonIdeal_isFSigma :
     ∃ F : ℕ → Set (ℕ → Bool), (∀ k, IsClosed (F k)) ∧
       {f : ℕ → Bool | {n | f n = true} ∈ sidonIdeal} = ⋃ k, F k
-
-/-- **Mian–Chowla lower bound for an infinite Sidon set.** There exist a Sidon set
-$A \subseteq \mathbb{N}$ and a real constant $c > 0$ such that
-$|A \cap \{1, \dots, n\}| > c\, n^{1/3}$ for every natural number $n \ge 1$.
-
-Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
-Theorem 3 (`integers-2025-A91-thm-3`), item 1, quoting A. M. Mian and S. Chowla,
-*On the B₂ sequences of Sidon*, Proc. Nat. Acad. Sci. India Sect. A 14 (1944). -/
-public theorem_wanted exists_isSidon_card_gt_cbrt :
-    ∃ A : Set ℕ, A.IsSidon ∧ ∃ c : ℝ, 0 < c ∧
-      ∀ n : ℕ, 1 ≤ n → c * (n : ℝ) ^ ((1 : ℝ) / 3) < (A ∩ Set.Icc 1 n).ncard
 
 /-- **Ajtai–Komlós–Szemerédi lower bound for an infinite Sidon set.** There exist a Sidon set
 $A \subseteq \mathbb{N}$ and a real constant $c > 0$ such that
