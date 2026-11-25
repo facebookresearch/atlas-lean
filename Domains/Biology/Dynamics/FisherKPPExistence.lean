@@ -91,14 +91,14 @@ theorem exists_isFront_of_le {D r c : ℝ} (hD : 0 < D) (hr : 0 < r)
   exact MathlibExt.Analysis.ODE.PlanarShooting.exists_isFront_of_unstableBranch hD hr hc
     ⟨U, V, hode, hq, hU, hV⟩
 
-/-- **The minimal-speed front.** At the critical speed `c = 2 √(r D)` a strictly decreasing
-front exists. -/
+/-- **The minimal-speed front.** For `D, r > 0`, at the critical speed `c = 2 √(r D)` a strictly
+decreasing front exists. -/
 theorem exists_isFront_two_mul_sqrt {D r : ℝ} (hD : 0 < D) (hr : 0 < r) :
     ∃ U U' : ℝ → ℝ, IsFront D r (2 * √(r * D)) U U' ∧ StrictAnti U :=
   exists_isFront_of_le hD hr le_rfl
 
-/-- **KPP existence, squared form.** For a nonnegative speed with `4 r D ≤ c²` a strictly
-decreasing front exists. -/
+/-- **KPP existence, squared form.** For `D, r > 0` and a nonnegative speed with `4 r D ≤ c²` a
+strictly decreasing front exists. -/
 theorem exists_isFront_of_sq_le {D r c : ℝ} (hD : 0 < D) (hr : 0 < r) (hc0 : 0 ≤ c)
     (hc : 4 * r * D ≤ c ^ 2) : ∃ U U' : ℝ → ℝ, IsFront D r c U U' ∧ StrictAnti U := by
   refine exists_isFront_of_le hD hr ?_
@@ -180,7 +180,7 @@ private lemma antitone_energy {D r c : ℝ} {U V : ℝ → ℝ} (hD : 0 < D) (hr
     show -(r * U z * (1 - U z)) ≤ 0
     linarith
 
-/-- Along a front, `U' → 0` at `-∞`: the orbit leaves the saddle `(1, 0)`. -/
+/-- For `D, r > 0`, along a front `U' → 0` at `-∞`: the orbit leaves the saddle `(1, 0)`. -/
 theorem tendsto_deriv_atBot_of_isFront {D r c : ℝ} {U V : ℝ → ℝ} (hD : 0 < D) (hr : 0 < r)
     (h : IsFront D r c U V) : Tendsto V atBot (𝓝 0) := by
   have hφ := antitone_energy hD hr h
@@ -215,7 +215,7 @@ theorem tendsto_deriv_atBot_of_isFront {D r c : ℝ} {U V : ℝ → ℝ} (hD : 0
         exact hz
     rwa [hl0] at hV
 
-/-- Along a front, `U' → 0` at `+∞`: the orbit enters the node `(0, 0)`. -/
+/-- For `D, r > 0`, along a front `U' → 0` at `+∞`: the orbit enters the node `(0, 0)`. -/
 theorem tendsto_deriv_atTop_of_isFront {D r c : ℝ} {U V : ℝ → ℝ} (hD : 0 < D) (hr : 0 < r)
     (h : IsFront D r c U V) : Tendsto V atTop (𝓝 0) := by
   have hφ := antitone_energy hD hr h
@@ -249,8 +249,9 @@ theorem tendsto_deriv_atTop_of_isFront {D r c : ℝ} {U V : ℝ → ℝ} (hD : 0
         exact hz
     rwa [hl0] at hV
 
-/-- **A front is a heteroclinic orbit** of `U' = V`, `V' = -(c V + r U (1 - U)) / D`: the
-phase-plane curve `(U, V)` runs from the saddle `(1, 0)` at `-∞` to the node `(0, 0)` at `+∞`. -/
+/-- **A front is a heteroclinic orbit** (for `D, r > 0`) of `U' = V`,
+`V' = -(c V + r U (1 - U)) / D`: the phase-plane curve `(U, V)` runs from the saddle `(1, 0)` at
+`-∞` to the node `(0, 0)` at `+∞`. -/
 theorem tendsto_heteroclinic_of_isFront {D r c : ℝ} {U V : ℝ → ℝ} (hD : 0 < D) (hr : 0 < r)
     (h : IsFront D r c U V) :
     Tendsto (fun z => (U z, V z)) atBot (𝓝 (1, 0)) ∧
@@ -258,7 +259,8 @@ theorem tendsto_heteroclinic_of_isFront {D r c : ℝ} {U V : ℝ → ℝ} (hD : 
   ⟨h.2.2.1.prodMk_nhds (tendsto_deriv_atBot_of_isFront hD hr h),
     h.2.2.2.prodMk_nhds (tendsto_deriv_atTop_of_isFront hD hr h)⟩
 
-/-- **A front of positive speed has `U' < 0` everywhere**, so it is strictly decreasing. -/
+/-- **A front of positive speed has `U' < 0` everywhere** (for `D, r > 0`), so it is strictly
+decreasing. -/
 theorem deriv_neg_of_isFront {D r c : ℝ} {U V : ℝ → ℝ} (hD : 0 < D) (hr : 0 < r) (hc : 0 < c)
     (h : IsFront D r c U V) (z : ℝ) : V z < 0 := by
   have hV0 := tendsto_deriv_atBot_of_isFront hD hr h
@@ -284,8 +286,8 @@ theorem deriv_neg_of_isFront {D r c : ℝ} {U V : ℝ → ℝ} (hD : 0 < D) (hr 
   have h2 := hψ (show z - 1 < z by linarith)
   exact neg_of_mul_neg_right (h2.trans_le h1) (exp_pos _).le
 
-/-- **A front at a speed `c ≥ 2 √(r D)` lies in the open trapping triangle** with vertices
-`(0, 0)`, `(1, 0)`, `(1, -c / (2 D))` at every point `z`. -/
+/-- **A front at a speed `c ≥ 2 √(r D)` lies in the open trapping triangle** (for `D, r > 0`) with
+vertices `(0, 0)`, `(1, 0)`, `(1, -c / (2 D))` at every point `z`. -/
 theorem mem_trappingTriangle_of_isFront {D r c : ℝ} {U V : ℝ → ℝ} (hD : 0 < D) (hr : 0 < r)
     (hc : 2 * √(r * D) ≤ c) (h : IsFront D r c U V) (z : ℝ) :
     (U z, V z) ∈ trappingTriangle D c := by

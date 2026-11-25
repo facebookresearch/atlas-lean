@@ -24,11 +24,11 @@ Networks*, Cambridge University Press 2016, corrected online version of 19 Augus
 Section 4.2, Kirchhoff's Effective Resistance Formula). The source proves the weighted version,
 `P[e ∈ T] = c(e) R(e⁻ ↔ e⁺)` for the spanning tree drawn with probability proportional to the
 product of its conductances, with Wilson's algorithm. The imported unit-conductance case is
-proved by edge deletion and Cramer's rule. This module records the weighted formula and the
-weighted matrix-tree theorem
-`Ξ(G) = det Δ_G^{(x)}` (Lyons and Peres, Section 4.4, the paragraph before Exercise 4.16), of which
+proved by edge deletion and Cramer's rule. This module records the weighted formula; the
+weighted matrix-tree theorem `Ξ(G) = det Δ_G^{(x)}` (Lyons and Peres, Section 4.4, the paragraph
+before Exercise 4.16), of which
 `MathlibExt.Combinatorics.SimpleGraph.MatrixTreeWanted.kirchhoff_matrix_tree_lapMatrix` is the
-unit-conductance case.
+unit-conductance case, is proved in the imported module.
 
 Conductances are a function `c : Sym2 V → ℝ` on the edges of `G`; the network is the multigraph of
 darts of `G` with conductance `c(d.edge) / 2` on the dart `d`, so that its Laplacian is the network
@@ -55,20 +55,5 @@ theorem_wanted weighted_spanningTree_adj_div {V : Type*} [Fintype V] [DecidableE
         (∑ᶠ T : {T : G.Subgraph // IsSpanningTree T}, ∏ᶠ e ∈ T.1.edgeSet, c e) =
       c s(u, v) * EndpointMapMultigraph.effectiveResistance (fun d : G.Dart => d.fst)
         (fun d : G.Dart => d.snd) (fun d => c d.edge / 2) u v
-
-/-- **Weighted matrix-tree theorem.** In a finite simple graph `G` with conductances `c` on its
-edges, the weighted spanning-tree sum `Ξ(G) = ∑_T ∏_{e ∈ T} c(e)` equals `det Δ_G^{(x)}` for every
-vertex `x`, where `Δ_G` is the network Laplacian (`c(x, y)` summed into the diagonal, `-c(x, y)`
-off it) and `Δ_G^{(x)}` strikes the row and column of `x` (R. Lyons and Y. Peres, *Probability on
-Trees and Networks*, Cambridge University Press 2016, corrected online version of
-19 August 2026, Section 4.4, the paragraph before Exercise 4.16, stated there for simple networks;
-the network Laplacian is that of Exercise 2.62). The network Laplacian is the Laplacian of the
-dart multigraph with conductance `c(d.edge) / 2` on the dart `d`. -/
-theorem_wanted weighted_matrix_tree {V : Type*} [Fintype V] [DecidableEq V]
-    (G : _root_.SimpleGraph V) [DecidableRel G.Adj] (c : Sym2 V → ℝ) (x : V) :
-    (∑ᶠ T : {T : G.Subgraph // IsSpanningTree T}, ∏ᶠ e ∈ T.1.edgeSet, c e) =
-      ((EndpointMapMultigraph.laplacian (fun d : G.Dart => d.fst) (fun d : G.Dart => d.snd)
-        (fun d => c d.edge / 2)).submatrix (Subtype.val : {y : V // y ≠ x} → V)
-          (Subtype.val : {y : V // y ≠ x} → V)).det
 
 end MathlibExt.GraphTheory.KirchhoffEffectiveResistanceWanted

@@ -43,6 +43,7 @@ public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.RingTheory.PowerSeries.Log
 public import MathlibExt.Combinatorics.Enumerative.SignedStirlingFirst
 public import MathlibExt.NumberTheory.Bernoulli.BernoulliSecondKindStirling
+public import MathlibExt.NumberTheory.Bernoulli.WeightedStirlingSum
 
 set_option autoImplicit false
 
@@ -205,25 +206,6 @@ theorem_wanted sum_signed_stirlingSecond_div_eq (n k : ℕ)
         ((n - 1).factorial : ℚ) / k.factorial *
         ∑ l ∈ Finset.range (n - k + 1),
           ((-1 : ℚ) ^ l / l.factorial) * MetaMathlibExt.bernoulliSecond l
-
-/-- **Weighted alternating sums of Stirling numbers of the second kind.** For natural numbers
-$r \ge 1$ and $n$, write $S(n,k)$ for the Stirling numbers of the second kind, $c(r,j)$ for the
-unsigned Stirling numbers of the first kind, and $B_m$ for the Bernoulli numbers with
-$B_1 = -\tfrac12$. Then, in $\mathbb{Q}$,
-$$
-\sum_{k=0}^{n} (-1)^k \frac{k!}{k+r} S(n,k) = \frac{1}{(r-1)!} \sum_{k=0}^{r-1} c(r,k+1) B_{n+k}.
-$$
-
-Source: Bakir Farhi, "Formulas Involving Bernoulli and
-Stirling Numbers of Both Kinds", Theorem 17. -/
-theorem_wanted sum_stirlingSecond_div_add (r n : ℕ)
-    (hr : 1 ≤ r) :
-    ∑ k ∈ Finset.range (n + 1), (-1 : ℚ) ^ k *
-        ((k.factorial : ℚ) / (k + r)) *
-        (Nat.stirlingSecond n k : ℚ) =
-      (1 / ((r - 1).factorial : ℚ)) *
-        ∑ k ∈ Finset.range r,
-          (Nat.stirlingFirst r (k + 1) : ℚ) * bernoulli (n + k)
 
 /-- **Sums of signed Stirling numbers of the first kind with shifted reciprocal weights.** Let
 $s(m, j)$ be the signed Stirling numbers of the first kind, $S(m, j)$ the Stirling numbers of
