@@ -178,8 +178,8 @@ theorem tendsto_gibbs_globalMinSet [Nonempty S] :
     rw [PMF.toOuterMeasure_apply_fintype, Finset.sum_filter]
     refine Finset.sum_congr rfl fun x _ => ?_
     by_cases hx : x ∈ globalMinSet V
-    · simp only [Set.indicator_of_mem hx, if_pos hx]
-    · simp only [Set.indicator_of_notMem hx, if_neg hx]
+    · simp only [Set.indicator_of_mem hx, ite_eq_left hx]
+    · simp only [Set.indicator_of_notMem hx, ite_eq_right hx]
   have hsum1 : ∀ T : ℝ, ∑ x : S, (gibbs V T) x = 1 := by
     intro T
     calc ∑ x : S, (gibbs V T) x = ∑' x : S, (gibbs V T) x := (tsum_fintype _).symm

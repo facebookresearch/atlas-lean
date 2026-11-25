@@ -288,7 +288,7 @@ private lemma ae_levelInvariant {μ : Measure Ω} [IsProbabilityMeasure μ] {n :
     have hterm := (Finset.sum_eq_zero_iff_of_nonneg hnonneg).mp hsum ps hpsF
     have hbad1 : badIndicator n k (ps.getD (n - k) []) = 1 := by
       unfold badIndicator
-      rw [if_neg hkbad]
+      rw [ite_eq_right hkbad]
     rwa [hbad1, mul_one] at hterm
   have haeBad : ∀ᵐ ω ∂μ, τ ω ∉ F.filter (fun ps =>
       ¬ ∀ k ∈ Finset.Icc 2 n, levelInvariant n k (ps.getD (n - k) [])) := by

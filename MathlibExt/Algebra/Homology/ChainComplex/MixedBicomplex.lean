@@ -142,7 +142,7 @@ theorem mixedHorizontalComponent_eq (p n q : ℕ) (h : n + (p + 1) = q) :
     apply Subtype.ext
     change q - (p + 1) = n
     rw [← h, Nat.add_sub_cancel]
-  rw [mixedHorizontalComponent, dif_pos hpq]
+  rw [mixedHorizontalComponent, dite_eq_left hpq]
   exact congrArg component hIndex
 
 omit [HasZeroObject C] in
@@ -195,7 +195,7 @@ private theorem mixedHorizontalComponent_comm (p q : ℕ) :
       rw [mixedHorizontalComponent_eq K H p 0 (p + 1) (by omega),
         mixedColumn_d_eq K p 1 0 (p + 1) p (by omega) (by omega)]
       have hz : mixedHorizontalComponent K H p p = 0 :=
-        dif_neg (by omega)
+        dite_eq_right (by omega)
       rw [hz, comp_zero]
       simp only [Category.assoc, Iso.inv_hom_id_assoc, Nat.zero_add]
       rw [← Category.assoc (H.hom 0 1), Linear.comp_units_smul,

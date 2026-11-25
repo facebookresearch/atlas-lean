@@ -453,7 +453,7 @@ private lemma coboundary_of_vanish_uni [Finite F] {c : SL(2, F) → A} (hc : IsC
     by_cases hv : v = 0
     · subst hv
       simp [sec_zero, c_one, Matrix.mulVec_zero]
-    · rw [if_neg hv, add_zero]
+    · rw [ite_eq_right hv, add_zero]
       obtain ⟨a, ha⟩ := exists_mul_sec g hv
       have h : c (g * sec v) = c (sec ((g : Matrix (Fin 2) (Fin 2) F) *ᵥ v) * uni a) := by
         rw [ha]

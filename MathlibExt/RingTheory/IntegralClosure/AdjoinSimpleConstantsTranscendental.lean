@@ -476,8 +476,8 @@ private theorem mem_span_RSet_of_adjoin_simple_transcendental
   set Q : ℕ → (↥F)[X] := fun k => if h : k ∈ Finset.range n then qd k h else 1 with hQ
   have hQ0 : ∀ k, Q k ≠ 0 := by
     intro k; by_cases h : k ∈ Finset.range n
-    · simp only [hQ, dif_pos h]; exact hqd0 k h
-    · simp only [hQ, dif_neg h]; exact one_ne_zero
+    · simp only [hQ, dite_eq_left h]; exact hqd0 k h
+    · simp only [hQ, dite_eq_right h]; exact one_ne_zero
   set D : (↥F)[X] := ∏ k ∈ Finset.range n, Q k with hD
   have hD0 : D ≠ 0 := Finset.prod_ne_zero_iff.mpr fun k _ => hQ0 k
   set Dv : K := Polynomial.aeval c' D with hDv
@@ -487,7 +487,7 @@ private theorem mem_span_RSet_of_adjoin_simple_transcendental
   have hbW : ∀ k ∈ Finset.range n, Dv ^ (n - k) * (P.coeff k) ∈
       Set.range ⇑(rfPolyEval F t S c) := by
     intro k hk
-    have hQk : Q k = qd k hk := by simp only [hQ, dif_pos hk]
+    have hQk : Q k = qd k hk := by simp only [hQ, dite_eq_left hk]
     obtain ⟨A₁, hA₁⟩ := hqdW k hk
     obtain ⟨B₁, hB₁⟩ := evalF_mem_range_rfPolyEval F t S htS (c := c)
       ((∏ j ∈ (Finset.range n).erase k, Q j) * D ^ (n - k - 1))
@@ -527,7 +527,7 @@ private theorem mem_span_RSet_of_adjoin_simple_transcendental
     rw [show (∑ k ∈ Finset.range n, ψ (algebraMap _ _ (BB k) * m ^ k)) =
         ∑ k ∈ Finset.range n, (Dv ^ (n - k) * (P.coeff k)) * y ^ k from
       Finset.sum_congr rfl fun k hk => by
-        rw [map_mul, map_pow, hm, hψalg]; simp only [hBB, dif_pos hk]; rw [hB k hk]]
+        rw [map_mul, map_pow, hm, hψalg]; simp only [hBB, dite_eq_left hk]; rw [hB k hk]]
     exact hyrel
 
   have hmint : IsIntegral ((↥(RFa F t S))[X]) m := by

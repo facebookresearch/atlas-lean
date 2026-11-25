@@ -35,4 +35,4 @@ example (N : ℕ) (x : LaurentSeries ℂ) (τ : ℍ)
             ((qExpansion 1 (p.2.1 : ℍ → ℂ) : PowerSeries ℂ) : LaurentSeries ℂ)) :
     ModularCurve.realize N x τ = 0 := by
   classical
-  simp only [ModularCurve.realize, dif_neg hnex]
+  simp only [ModularCurve.realize, dite_eq_right hnex]

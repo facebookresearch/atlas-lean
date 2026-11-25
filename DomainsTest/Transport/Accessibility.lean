@@ -46,7 +46,7 @@ example : thresholdOpportunitySum ({0} : Finset (Fin 1)) (fun _ : Fin 1 => (5 : 
   refine ⟨?_, ?_, ?_⟩
   · simp [thresholdOpportunitySum, thresholdContribution]
   · simp only [thresholdOpportunitySum, thresholdContribution]
-    rw [if_pos (by norm_num : (2 : NNReal) ≤ 3), Finset.sum_singleton]
+    rw [ite_eq_left (by norm_num : (2 : NNReal) ≤ 3), Finset.sum_singleton]
   · exact thresholdOpportunitySum_mono _ _ _ (by intro i _; norm_num) (by norm_num)
 
 /-- Missing travel time contributes zero. -/

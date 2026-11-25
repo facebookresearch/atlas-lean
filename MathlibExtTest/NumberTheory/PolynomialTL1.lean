@@ -66,7 +66,7 @@ example : IsPolyTFamily concreteS concreteT := by
         ((X ^ (l - 1)).hasDerivAt_aeval x))
     simp only [TIntegrand, concreteS, map_sub, map_mul, map_pow,
       aeval_C, aeval_X]
-    simp only [concreteT, hl0, if_false]
+    simp only [concreteT, hl0, ite_false]
     field_simp
     rw [Real.sq_sqrt hx.le]
     simp

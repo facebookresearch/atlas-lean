@@ -158,9 +158,9 @@ private theorem joint_cutOut_eq_of_agree {α : Type*} {n : ℕ} [Fintype α] [No
       (fun i : M.pa j => v (Fin.castLE j.2.le i)) := by
     funext i
     by_cases h : Fin.castLE j.2.le i.1 ∈ Z
-    · simp only [dif_pos h]
+    · simp only [dite_eq_left h]
       exact (hv _ h).symm
-    · simp only [dif_neg h]
+    · simp only [dite_eq_right h]
   simp only [cutOut, hfun]
 
 /-- The `cutOut` marginal over a set containing `Z` equals the original marginal. -/
@@ -182,7 +182,7 @@ private theorem cpt_cutOut_mutilate {α : Type*} {n : ℕ} [Fintype α] [Nonempt
     ((b.mutilateSet X x).cutOut Z x).cpt j (fun j' => w (Fin.castLE j.2.le j')) =
       b.cpt j (fun i : b.pa j => if _ : Fin.castLE j.2.le i.1 ∈ Z then x (Fin.castLE j.2.le i.1)
         else w (Fin.castLE j.2.le i.1)) := by
-  simp only [cutOut, mutilateSet, dif_neg hjX]
+  simp only [cutOut, mutilateSet, dite_eq_right hjX]
 
 /-- The `cutOut` table at `j ∈ X` in a mutilated network is the point mass. -/
 private theorem cpt_cutOut_mutilate_mem {α : Type*} {n : ℕ} [Fintype α] [Nonempty α]
@@ -190,7 +190,7 @@ private theorem cpt_cutOut_mutilate_mem {α : Type*} {n : ℕ} [Fintype α] [Non
     (X Z : Finset (Fin n)) (x : Fin n → α) (j : Fin n) (hjX : j ∈ X)
     (u : ((b.mutilateSet X x).cutOut Z x).pa j → α) :
     ((b.mutilateSet X x).cutOut Z x).cpt j u = Convexity.StdSimplex.single (x j) := by
-  simp only [cutOut, mutilateSet, dif_pos hjX]
+  simp only [cutOut, mutilateSet, dite_eq_left hjX]
 
 /-- Summing the `Z`-coordinates against fixed tables gives `1`. -/
 private theorem fiber_sum_eq_one {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
@@ -261,10 +261,10 @@ private theorem fiber_sum_univ {α : Type*} {n : ℕ} [Fintype α] [DecidableEq 
     intro D F hF
     set e' : α × (Z' → α) → (↥(insert z Z') → α) :=
       fun p w => if h : w.1 = z then p.1 else p.2 ⟨w.1, (mem_insert.1 w.2).resolve_left h⟩ with he'
-    have he'_pos : ∀ p w (h : w.1 = z), e' p w = p.1 := fun p w h => dif_pos h
+    have he'_pos : ∀ p w (h : w.1 = z), e' p w = p.1 := fun p w h => dite_eq_left h
     have he'_neg : ∀ p w (h : w.1 ≠ z),
         e' p w = p.2 ⟨w.1, (mem_insert.1 w.2).resolve_left h⟩ :=
-      fun p w h => dif_neg h
+      fun p w h => dite_eq_right h
     have himg' : (univ : Finset (↥(insert z Z') → α)) =
         (univ : Finset (α × (Z' → α))).image e' := by
       ext δ
@@ -334,8 +334,8 @@ private theorem marginal_cutOut_eq_mutilate {α : Type*} {n : ℕ} [Fintype α] 
   set N : BayesNet α n := M.cutOut Z x with hN
   set P : BayesNet α n := b.mutilateSet (X ∪ Z) x with hP
   set g : (Fin n → α) → (Fin n → α) := fun v j => if j ∈ Z then x j else v j with hg
-  have hg_pos : ∀ v j (hj : j ∈ Z), g v j = x j := fun v j hj => dif_pos hj
-  have hg_neg : ∀ v j (hj : j ∉ Z), g v j = v j := fun v j hj => dif_neg hj
+  have hg_pos : ∀ v j (hj : j ∈ Z), g v j = x j := fun v j hj => dite_eq_left hj
+  have hg_neg : ∀ v j (hj : j ∉ Z), g v j = v j := fun v j hj => dite_eq_right hj
   have hSXZ : ∀ j ∈ S ∪ X, j ∉ Z := fun j hj hJZ => (mem_union.1 hj).elim
     (fun hjS => disjoint_left.1 hSZ hjS hJZ) (fun hjX => disjoint_left.1 hXZ hjX hJZ)
   have hmemSX : ∀ j ∈ S ∪ X, j ∈ S ∪ (X ∪ Z) := fun j hj => (mem_union.1 hj).elim
@@ -374,8 +374,8 @@ private theorem marginal_cutOut_eq_mutilate {α : Type*} {n : ℕ} [Fintype α] 
   have hv₀Z : ∀ j ∈ Z, v₀ j = x j :=
     fun j hjZ => hv₀agree j (mem_union_right _ (mem_union_right _ hjZ))
   set e : (Z → α) → (Fin n → α) := fun δ j => if h : j ∈ Z then δ ⟨j, h⟩ else v₀ j with he
-  have he_pos : ∀ δ j (hj : j ∈ Z), e δ j = δ ⟨j, hj⟩ := fun δ j hj => dif_pos hj
-  have he_neg : ∀ δ j (hj : j ∉ Z), e δ j = v₀ j := fun δ j hj => dif_neg hj
+  have he_pos : ∀ δ j (hj : j ∈ Z), e δ j = δ ⟨j, hj⟩ := fun δ j hj => dite_eq_left hj
+  have he_neg : ∀ δ j (hj : j ∉ Z), e δ j = v₀ j := fun δ j hj => dite_eq_right hj
   simp only [filter_filter]
   have hfibeq : univ.filter (fun v : Fin n → α => (∀ i ∈ S ∪ X, v i = x i) ∧ g v = v₀) =
       univ.image e := by
@@ -462,8 +462,8 @@ private theorem marginal_cutOut_eq_mutilate {α : Type*} {n : ℕ} [Fintype α] 
           else v₀ (Fin.castLE k.2.le i.1)) = b.paVal k v₀ := by
       funext i
       by_cases h : Fin.castLE k.2.le i.1 ∈ Z
-      · simp only [dif_pos h]; exact (hv₀Z _ h).symm
-      · simp only [dif_neg h]; exact rfl
+      · simp only [dite_eq_left h]; exact (hv₀Z _ h).symm
+      · simp only [dite_eq_right h]; exact rfl
     rw [hpa, hN', hfun]
   have hFG : ∀ k (hk : k ∉ X ∪ Z),
       (N.cpt k (N.paVal k v₀)).weights (v₀ k) =
@@ -501,10 +501,10 @@ private theorem marginal_cutOut_eq_mutilate {α : Type*} {n : ℕ} [Fintype α] 
         by_contra hC
         exact hnf (mem_filter.2 ⟨mem_univ j, hC⟩)
       have hag : v₀ j = x j := hv₀agree j (mem_union_right _ hjXZ)
-      simp only [if_pos hjXZ, if_pos hag]
+      simp only [ite_eq_left hjXZ, ite_eq_left hag]
     rw [(Finset.prod_subset hsubP hfP).symm]
     refine prod_congr rfl fun j hj => ?_
-    rw [if_neg (mem_filter.1 hj).2]
+    rw [ite_eq_right (mem_filter.1 hj).2]
   have hNZ : (∏ k ∈ univ \ Z, (N.cpt k (N.paVal k v₀)).weights (v₀ k)) = P.joint v₀ := by
     rw [hNC]
     exact (prod_congr rfl fun k hk => hFG k (mem_filter.1 hk).2).trans hPside.symm

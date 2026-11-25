@@ -256,11 +256,12 @@ private theorem exists_basis_eq_span_cons_uniformizer_smul {R : Type*} [CommRing
     rintro _ ⟨i, rfl⟩
     refine Fin.cases ?_ (fun j => ?_) i
     · show (if (0 : Fin (n + 1)) = 0 then ϖ else 1) • b 0 ∈ N
-      rw [if_pos rfl, hb, show v 0 = m from rfl, hmemN, map_smul, hφm, smul_eq_mul, mul_one, h𝔪]
+      rw [ite_eq_left rfl, hb, show v 0 = m from rfl, hmemN, map_smul, hφm, smul_eq_mul, mul_one,
+        h𝔪]
       exact Ideal.mem_span_singleton_self ϖ
     · show (if j.succ = 0 then ϖ else 1) • b j.succ ∈ N
-      rw [if_neg (Fin.succ_ne_zero j), one_smul, hb, show v j.succ = (bK j : M) from rfl, hmemN,
-        LinearMap.mem_ker.mp (bK j).2]
+      rw [ite_eq_right (Fin.succ_ne_zero j), one_smul, hb, show v j.succ = (bK j : M) from rfl,
+        hmemN, LinearMap.mem_ker.mp (bK j).2]
       exact Ideal.zero_mem _
 
 private theorem range_map_subtype_eq_maximalIdeal_smul_top {R : Type*} [CommRing R] [IsDomain R]

@@ -78,7 +78,7 @@ example : marginal (chain2.mutilateSet (∅ ∪ ∅) (fun _ => true)).joint
     refine prod_eq_one fun j _ => ?_
     by_cases hj : j ∈ (∅ ∪ ∅ : Finset (Fin 2))
     · rcases mem_union.1 hj with h | h <;> exact (notMem_empty j h).elim
-    · simp only [if_neg hj]
+    · simp only [ite_eq_right hj]
       rw [hcpt]
       simp [Convexity.StdSimplex.single]
   have hj0 : (chain2.mutilateSet ∅ (fun _ => true)).joint (fun _ => true) = 1 := by
@@ -86,7 +86,7 @@ example : marginal (chain2.mutilateSet (∅ ∪ ∅) (fun _ => true)).joint
     refine prod_eq_one fun j _ => ?_
     by_cases hj : j ∈ (∅ : Finset (Fin 2))
     · exact (notMem_empty j hj).elim
-    · simp only [if_neg hj]
+    · simp only [ite_eq_right hj]
       rw [hcpt]
       simp [Convexity.StdSimplex.single]
   have hnn1 : ∀ v, 0 ≤ (chain2.mutilateSet (∅ ∪ ∅) (fun _ => true)).joint v :=

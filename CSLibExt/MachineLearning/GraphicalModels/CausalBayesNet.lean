@@ -110,7 +110,7 @@ parent sets.) -/
 noncomputable def intervene (k : Fin n) (a : α) : BayesNet α n where
   pa j := if j = k then ∅ else b.pa j
   cpt j z := if h : j = k then StdSimplex.single a
-    else b.cpt j fun i => z ⟨i.1, by rw [if_neg h]; exact i.2⟩
+    else b.cpt j fun i => z ⟨i.1, by rw [ite_eq_right h]; exact i.2⟩
 
 omit [Nonempty α] in
 /-- The parents of the intervened node are deleted. -/

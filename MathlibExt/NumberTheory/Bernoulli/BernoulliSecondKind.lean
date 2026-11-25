@@ -90,7 +90,7 @@ public theorem bernoulliSecond_div_factorial_eq (n : ℕ) (hn : 1 ≤ n) :
       -∑ k ∈ Finset.range n, (bernoulliSecond k / (k.factorial : ℚ)) *
         ((-1 : ℚ) ^ (n - k) / (n - k + 1)) := by
   have h := sum_antidiagonal_bernoulliSecondPowerSeries_coeff n
-  rw [if_neg (show n ≠ 0 by omega)] at h
+  rw [ite_eq_right (show n ≠ 0 by omega)] at h
   have hsplit : (∑ x ∈ Finset.antidiagonal n,
         (PowerSeries.coeff x.1) bernoulliSecondPowerSeries *
           ((-1 : ℚ) ^ x.2 / (x.2 + 1))) =

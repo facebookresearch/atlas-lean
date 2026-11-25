@@ -68,12 +68,12 @@ private theorem sum_sq_aux {n : ℕ} {k : Fin (n + 1)} (s : ℚ) (hs : s ^ 2 = 1
     intro j
     by_cases hj : j = k
     · subst hj
-      simp only [eq_self_iff_true, if_true]
+      simp only [eq_self_iff_true, ite_true]
       abel
-    · simp only [hj, if_false, add_zero]
+    · simp only [hj, ite_false, add_zero]
   simp_rw [hC]
   rw [Finset.sum_add_distrib, Finset.sum_ite_eq']
-  simp only [Finset.mem_univ, if_true]
+  simp only [Finset.mem_univ, ite_true]
   rw [hB, ht, hA, h0, sub_zero]
   field_simp
   ring
@@ -83,13 +83,13 @@ theorem sum_sq_stereoSnap {n : ℕ} (w : Fin (n + 1) → ℚ) (k : Fin (n + 1)) 
     ∑ j, stereoSnap w k j ^ 2 = 1 := by
   have hs : (if 0 ≤ w k then (1 : ℚ) else -1) ^ 2 = 1 := by
     by_cases h : (0 : ℚ) ≤ w k
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       norm_num
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       norm_num
   have ht : (fun j => if j = k then (0 : ℚ)
       else w j / (1 + (if 0 ≤ w k then (1 : ℚ) else -1) * w k)) k = 0 := by
-    simp only [eq_self_iff_true, if_true]
+    simp only [eq_self_iff_true, ite_true]
   exact sum_sq_aux (if 0 ≤ w k then (1 : ℚ) else -1) hs
     (fun j => if j = k then (0 : ℚ)
       else w j / (1 + (if 0 ≤ w k then (1 : ℚ) else -1) * w k)) ht _ rfl
@@ -111,9 +111,9 @@ private theorem stereoSnap_eq_self_aux {n : ℕ} {z : Fin (n + 1) → ℚ} {k : 
     intro i
     by_cases hi : i = k
     · subst hi
-      simp only [htk, eq_self_iff_true, if_true, sub_self]
+      simp only [htk, eq_self_iff_true, ite_true, sub_self]
       norm_num
-    · simp only [hi, if_false, htj i hi, sub_zero]
+    · simp only [hi, ite_false, htj i hi, sub_zero]
   have hsum : ∑ i, (z i / (1 + s * z k)) ^ 2 = 1 / (1 + s * z k) ^ 2 := by
     have h1 : ∀ i : Fin (n + 1),
         (z i / (1 + s * z k)) ^ 2 = (z i ^ 2) * (1 / (1 + s * z k) ^ 2) := by
@@ -124,7 +124,7 @@ private theorem stereoSnap_eq_self_aux {n : ℕ} {z : Fin (n + 1) → ℚ} {k : 
     rw [hr]
     simp_rw [htsq]
     rw [Finset.sum_sub_distrib, Finset.sum_ite_eq']
-    simp only [Finset.mem_univ, if_true]
+    simp only [Finset.mem_univ, ite_true]
     rw [hsum]
     field_simp
   have hmul : (1 + r) * (1 + s * z k) ^ 2 = 2 * (1 + s * z k) := by
@@ -139,7 +139,7 @@ private theorem stereoSnap_eq_self_aux {n : ℕ} {z : Fin (n + 1) → ℚ} {k : 
   funext j
   by_cases hj : j = k
   · subst hj
-    simp only [eq_self_iff_true, if_true]
+    simp only [eq_self_iff_true, ite_true]
     rw [div_eq_iff h1r_ne]
     have e : (s * (1 - r)) * (1 + s * z j) ^ 2
         = (z j * (1 + r)) * (1 + s * z j) ^ 2 := by
@@ -147,7 +147,7 @@ private theorem stereoSnap_eq_self_aux {n : ℕ} {z : Fin (n + 1) → ℚ} {k : 
         add_mul, one_mul, div_mul_cancel₀ _ hD2]
       linear_combination (2 * z j + s * z j ^ 2 - z j ^ 3) * hs
     exact mul_right_cancel₀ hD2 e
-  · simp only [hj, if_false]
+  · simp only [hj, ite_false]
     rw [htj j hj, div_eq_iff h1r_ne]
     have e1 : (2 * (z j / (1 + s * z k))) * (1 + s * z k) = 2 * z j := by
       rw [mul_assoc, div_mul_cancel₀ _ hD]
@@ -164,26 +164,26 @@ theorem stereoSnap_eq_self {n : ℕ} {z : Fin (n + 1) → ℚ} (hz : ∑ j, z j 
     (k : Fin (n + 1)) : stereoSnap z k = z := by
   have hs : (if 0 ≤ z k then (1 : ℚ) else -1) ^ 2 = 1 := by
     by_cases h : (0 : ℚ) ≤ z k
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       norm_num
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       norm_num
   have hD : (1 : ℚ) + (if 0 ≤ z k then (1 : ℚ) else -1) * z k ≠ 0 := by
     by_cases h : (0 : ℚ) ≤ z k
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       have hpos : (0 : ℚ) < 1 + 1 * z k := by linarith
       exact ne_of_gt hpos
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have hpos : (0 : ℚ) < 1 + -1 * z k := by linarith
       exact ne_of_gt hpos
   have htk : (fun j => if j = k then (0 : ℚ)
       else z j / (1 + (if 0 ≤ z k then (1 : ℚ) else -1) * z k)) k = 0 := by
-    simp only [eq_self_iff_true, if_true]
+    simp only [eq_self_iff_true, ite_true]
   have htj : ∀ j, j ≠ k → (fun j => if j = k then (0 : ℚ)
         else z j / (1 + (if 0 ≤ z k then (1 : ℚ) else -1) * z k)) j
       = z j / (1 + (if 0 ≤ z k then (1 : ℚ) else -1) * z k) := by
     intro j hj
-    simp only [hj, if_false]
+    simp only [hj, ite_false]
   exact stereoSnap_eq_self_aux hz (if 0 ≤ z k then (1 : ℚ) else -1) hs
     (fun j => if j = k then (0 : ℚ)
       else z j / (1 + (if 0 ≤ z k then (1 : ℚ) else -1) * z k)) htk htj hD _ rfl
@@ -209,7 +209,7 @@ private theorem abs_le_foldl {n : ℕ} (w : Fin (n + 1) → ℚ) :
     intro b
     rw [List.foldl_cons]
     by_cases h : |w b| < |w hd|
-    · simp only [h, if_true]
+    · simp only [h, ite_true]
       have ihhd := ih hd
       constructor
       · exact le_trans (le_of_lt h) ihhd.1
@@ -221,7 +221,7 @@ private theorem abs_le_foldl {n : ℕ} (w : Fin (n + 1) → ℚ) :
           exact ihhd.1
         | inr hxtl =>
           exact ihhd.2 x hxtl
-    · simp only [h, if_false]
+    · simp only [h, ite_false]
       have ihb := ih b
       have hle : |w hd| ≤ |w b| := le_of_not_gt h
       constructor
@@ -486,10 +486,10 @@ private theorem dist_circle_aux {k : Fin 2} {z : EuclideanSpace ℝ (Fin 2)} (hz
     exact mul_ne_zero hDzne hDzne
   set P : Fin 2 → ℝ := fun j => if j = k then 0 else z j / (1 + s * z k) with hP
   set Rz : ℝ := ∑ i, P i ^ 2 with hRz
-  have hPk : P k = 0 := by simp only [hP, eq_self_iff_true, if_true]
+  have hPk : P k = 0 := by simp only [hP, eq_self_iff_true, ite_true]
   have hPj : ∀ j, j ≠ k → P j = z j / (1 + s * z k) := by
     intro j hj
-    simp only [hP, hj, if_false]
+    simp only [hP, hj, ite_false]
   have hRznn : (0 : ℝ) ≤ Rz := by
     rw [hRz]
     exact Finset.sum_nonneg (fun i _ => sq_nonneg _)
@@ -505,9 +505,9 @@ private theorem dist_circle_aux {k : Fin 2} {z : EuclideanSpace ℝ (Fin 2)} (hz
     intro i
     by_cases hi : i = k
     · subst hi
-      simp only [hPk, eq_self_iff_true, if_true, sub_self]
+      simp only [hPk, eq_self_iff_true, ite_true, sub_self]
       norm_num
-    · simp only [hi, if_false, hPj i hi, sub_zero]
+    · simp only [hi, ite_false, hPj i hi, sub_zero]
   have hsumz : ∑ i, (z i / (1 + s * z k)) ^ 2 = 1 / (1 + s * z k) ^ 2 := by
     have h1 : ∀ i : Fin 2,
         (z i / (1 + s * z k)) ^ 2 = (z i ^ 2) * (1 / (1 + s * z k) ^ 2) := by
@@ -518,7 +518,7 @@ private theorem dist_circle_aux {k : Fin 2} {z : EuclideanSpace ℝ (Fin 2)} (hz
     rw [hRz]
     simp_rw [htsqz]
     rw [Finset.sum_sub_distrib, Finset.sum_ite_eq']
-    simp only [Finset.mem_univ, if_true]
+    simp only [Finset.mem_univ, ite_true]
     rw [hsumz]
     field_simp
   have hmulz : (1 + Rz) * (1 + s * z k) ^ 2 = 2 * (1 + s * z k) := by
@@ -551,10 +551,10 @@ private theorem dist_circle_aux {k : Fin 2} {z : EuclideanSpace ℝ (Fin 2)} (hz
     linarith [hcan]
   have hdiffXk : X k - z k
       = s * (1 - R) / (1 + R) - s * (1 - Rz) / (1 + Rz) := by
-    rw [hX k, if_pos rfl, hzk]
+    rw [hX k, ite_eq_left rfl, hzk]
   have hdiffXj : ∀ j, j ≠ k → X j - z j = 2 * T j / (1 + R) - 2 * P j / (1 + Rz) := by
     intro j hj
-    rw [hX j, if_neg hj, hzj j hj]
+    rw [hX j, ite_eq_right hj, hzj j hj]
   have hC : ∀ j : Fin 2, (X j - z j) ^ 2
       = (2 * T j / (1 + R) - 2 * P j / (1 + Rz)) ^ 2
         + (if j = k then (s * (1 - R) / (1 + R) - s * (1 - Rz) / (1 + Rz)) ^ 2
@@ -562,10 +562,10 @@ private theorem dist_circle_aux {k : Fin 2} {z : EuclideanSpace ℝ (Fin 2)} (hz
     intro j
     by_cases hj : j = k
     · subst hj
-      simp only [eq_self_iff_true, if_true]
+      simp only [eq_self_iff_true, ite_true]
       rw [hdiffXk]
       abel
-    · simp only [hj, if_false]
+    · simp only [hj, ite_false]
       rw [hdiffXj j hj, add_zero]
   have hTk0 : (2 * T k / (1 + R) - 2 * P k / (1 + Rz)) ^ 2 = 0 := by
     rw [hTk, hPk]
@@ -579,7 +579,7 @@ private theorem dist_circle_aux {k : Fin 2} {z : EuclideanSpace ℝ (Fin 2)} (hz
       have hsub : ∀ i : Fin 2, ((X - z) i) = (X i - z i) := fun i => by simp
       simp_rw [hsub, hC]
       rw [Finset.sum_add_distrib, Finset.sum_ite_eq']
-      simp only [Finset.mem_univ, if_true]
+      simp only [Finset.mem_univ, ite_true]
       rw [hTk0, sub_zero, add_comm]
     have hA : (s * (1 - R) / (1 + R) - s * (1 - Rz) / (1 + Rz)) ^ 2
         = 4 * (Rz - R) ^ 2 / ((1 + R) * (1 + Rz)) ^ 2 := by
@@ -693,9 +693,9 @@ private theorem dist_circle_aux {k : Fin 2} {z : EuclideanSpace ℝ (Fin 2)} (hz
       intro j
       by_cases hj : j = k
       · subst hj
-        simp only [hTk, hPk, eq_self_iff_true, if_true]
+        simp only [hTk, hPk, eq_self_iff_true, ite_true]
         norm_num
-      · simp only [hj, if_false]
+      · simp only [hj, ite_false]
         exact hTPsq j hj
     have hle : (∑ j, (T j - P j) ^ 2) ≤ ∑ j, (if j = k then (0 : ℝ) else (3 * δ / 2) ^ 2) :=
       Finset.sum_le_sum (fun j _ => hpt j)
@@ -708,7 +708,7 @@ private theorem dist_circle_aux {k : Fin 2} {z : EuclideanSpace ℝ (Fin 2)} (hz
         · simp [hj]
       simp_rw [hpt2]
       rw [Finset.sum_sub_distrib, Finset.sum_ite_eq']
-      simp only [Finset.mem_univ, if_true]
+      simp only [Finset.mem_univ, ite_true]
       rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
       have h2n : ((2 : ℕ) : ℝ) = 2 := by norm_num
       rw [h2n]
@@ -753,34 +753,34 @@ theorem dist_stereoSnap_le_circle {z : EuclideanSpace ℝ (Fin 2)} (hz : ‖z‖
   have hs2 : sQ ^ 2 = 1 := by
     rw [hsQ]
     by_cases h : (0 : ℚ) ≤ w k
-    · rw [if_pos h]; norm_num
-    · rw [if_neg h]; norm_num
+    · rw [ite_eq_left h]; norm_num
+    · rw [ite_eq_right h]; norm_num
   have hs : ((sQ : ℚ) : ℝ) ^ 2 = 1 := by
     rw [hsQ]
     by_cases h : (0 : ℚ) ≤ w k
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       push_cast
       norm_num
-    · simp only [if_neg h]
+    · simp only [ite_eq_right h]
       push_cast
       norm_num
   have hsgnQ : sQ * w k = |w k| := by
     rw [hsQ]
     by_cases h : (0 : ℚ) ≤ w k
-    · rw [if_pos h, one_mul, abs_of_nonneg h]
-    · rw [if_neg h]
+    · rw [ite_eq_left h, one_mul, abs_of_nonneg h]
+    · rw [ite_eq_right h]
       have hneg : w k < 0 := lt_of_not_ge h
       rw [abs_of_neg hneg]
       ring
   have hwk : (0 : ℝ) ≤ ((sQ : ℚ) : ℝ) * ((w k : ℚ) : ℝ) := by
     rw [hsQ]
     by_cases h : (0 : ℚ) ≤ w k
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       have hR : (0 : ℝ) ≤ ((w k : ℚ) : ℝ) := by exact_mod_cast h
       have h1 : (((1 : ℚ)) : ℝ) = 1 := by norm_cast
       rw [h1, one_mul]
       exact hR
-    · simp only [if_neg h]
+    · simp only [ite_eq_right h]
       push_neg at h
       have hR : ((w k : ℚ) : ℝ) < 0 := by exact_mod_cast h
       have hm1 : (((-1 : ℚ)) : ℝ) = -1 := by norm_cast
@@ -793,7 +793,7 @@ theorem dist_stereoSnap_le_circle {z : EuclideanSpace ℝ (Fin 2)} (hz : ‖z‖
   have hTj : ∀ j : Fin 2, j ≠ k → (((TQ j : ℚ)) : ℝ) = ((w j : ℚ) : ℝ) / (((DQ : ℚ)) : ℝ) := by
     intro j hj
     rw [hTQ]
-    simp only [hj, if_false]
+    simp only [hj, ite_false]
     exact_mod_cast rfl
   have hX : ∀ j : Fin 2, (toEuclid (stereoSnap w k)) j
       = (if j = k then ((sQ : ℚ) : ℝ) * (1 - ((RQ : ℚ) : ℝ)) / (1 + ((RQ : ℚ) : ℝ))
@@ -803,16 +803,16 @@ theorem dist_stereoSnap_le_circle {z : EuclideanSpace ℝ (Fin 2)} (hz : ‖z‖
     by_cases hj : j = k
     · subst hj
       show ((if j = j then sQ * (1 - RQ) / (1 + RQ) else 2 * TQ j / (1 + RQ) : ℚ) : ℝ) = _
-      simp only [eq_self_iff_true, if_true]
+      simp only [eq_self_iff_true, ite_true]
       norm_cast
     · show ((if j = k then sQ * (1 - RQ) / (1 + RQ) else 2 * TQ j / (1 + RQ) : ℚ) : ℝ) = _
-      simp only [hj, if_false]
+      simp only [hj, ite_false]
       norm_cast
   exact dist_circle_aux hz (fun j => ((w j : ℚ) : ℝ))
     ((sQ : ℚ) : ℝ) hs
     (((DQ : ℚ)) : ℝ) (by rw [hDQ]; push_cast; ring_nf)
     (fun j => (((TQ j : ℚ)) : ℝ))
-    (by rw [hTQ]; simp only [eq_self_iff_true, if_true]; norm_num) hTj
+    (by rw [hTQ]; simp only [eq_self_iff_true, ite_true]; norm_num) hTj
     (((RQ : ℚ)) : ℝ)
     (by rw [hRQ]; push_cast; simp only [])
     (toEuclid (stereoSnap w k)) hX δ hδ hw hkR hwk
@@ -927,10 +927,10 @@ private theorem dist_three_sphere_aux {k : Fin 4} {z : EuclideanSpace ℝ (Fin 4
     exact mul_ne_zero hDzne hDzne
   set P : Fin 4 → ℝ := fun j => if j = k then 0 else z j / (1 + s * z k) with hP
   set Rz : ℝ := ∑ i, P i ^ 2 with hRz
-  have hPk : P k = 0 := by simp only [hP, eq_self_iff_true, if_true]
+  have hPk : P k = 0 := by simp only [hP, eq_self_iff_true, ite_true]
   have hPj : ∀ j, j ≠ k → P j = z j / (1 + s * z k) := by
     intro j hj
-    simp only [hP, hj, if_false]
+    simp only [hP, hj, ite_false]
   have hRznn : (0 : ℝ) ≤ Rz := by
     rw [hRz]
     exact Finset.sum_nonneg (fun i _ => sq_nonneg _)
@@ -946,9 +946,9 @@ private theorem dist_three_sphere_aux {k : Fin 4} {z : EuclideanSpace ℝ (Fin 4
     intro i
     by_cases hi : i = k
     · subst hi
-      simp only [hPk, eq_self_iff_true, if_true, sub_self]
+      simp only [hPk, eq_self_iff_true, ite_true, sub_self]
       norm_num
-    · simp only [hi, if_false, hPj i hi, sub_zero]
+    · simp only [hi, ite_false, hPj i hi, sub_zero]
   have hsumz : ∑ i, (z i / (1 + s * z k)) ^ 2 = 1 / (1 + s * z k) ^ 2 := by
     have h1 : ∀ i : Fin 4,
         (z i / (1 + s * z k)) ^ 2 = (z i ^ 2) * (1 / (1 + s * z k) ^ 2) := by
@@ -959,7 +959,7 @@ private theorem dist_three_sphere_aux {k : Fin 4} {z : EuclideanSpace ℝ (Fin 4
     rw [hRz]
     simp_rw [htsqz]
     rw [Finset.sum_sub_distrib, Finset.sum_ite_eq']
-    simp only [Finset.mem_univ, if_true]
+    simp only [Finset.mem_univ, ite_true]
     rw [hsumz]
     field_simp
   have hmulz : (1 + Rz) * (1 + s * z k) ^ 2 = 2 * (1 + s * z k) := by
@@ -992,10 +992,10 @@ private theorem dist_three_sphere_aux {k : Fin 4} {z : EuclideanSpace ℝ (Fin 4
     linarith [hcan]
   have hdiffXk : X k - z k
       = s * (1 - R) / (1 + R) - s * (1 - Rz) / (1 + Rz) := by
-    rw [hX k, if_pos rfl, hzk]
+    rw [hX k, ite_eq_left rfl, hzk]
   have hdiffXj : ∀ j, j ≠ k → X j - z j = 2 * T j / (1 + R) - 2 * P j / (1 + Rz) := by
     intro j hj
-    rw [hX j, if_neg hj, hzj j hj]
+    rw [hX j, ite_eq_right hj, hzj j hj]
   have hC : ∀ j : Fin 4, (X j - z j) ^ 2
       = (2 * T j / (1 + R) - 2 * P j / (1 + Rz)) ^ 2
         + (if j = k then (s * (1 - R) / (1 + R) - s * (1 - Rz) / (1 + Rz)) ^ 2
@@ -1003,10 +1003,10 @@ private theorem dist_three_sphere_aux {k : Fin 4} {z : EuclideanSpace ℝ (Fin 4
     intro j
     by_cases hj : j = k
     · subst hj
-      simp only [eq_self_iff_true, if_true]
+      simp only [eq_self_iff_true, ite_true]
       rw [hdiffXk]
       abel
-    · simp only [hj, if_false]
+    · simp only [hj, ite_false]
       rw [hdiffXj j hj, add_zero]
   have hTk0 : (2 * T k / (1 + R) - 2 * P k / (1 + Rz)) ^ 2 = 0 := by
     rw [hTk, hPk]
@@ -1020,7 +1020,7 @@ private theorem dist_three_sphere_aux {k : Fin 4} {z : EuclideanSpace ℝ (Fin 4
       have hsub : ∀ i : Fin 4, ((X - z) i) = (X i - z i) := fun i => by simp
       simp_rw [hsub, hC]
       rw [Finset.sum_add_distrib, Finset.sum_ite_eq']
-      simp only [Finset.mem_univ, if_true]
+      simp only [Finset.mem_univ, ite_true]
       rw [hTk0, sub_zero, add_comm]
     have hA : (s * (1 - R) / (1 + R) - s * (1 - Rz) / (1 + Rz)) ^ 2
         = 4 * (Rz - R) ^ 2 / ((1 + R) * (1 + Rz)) ^ 2 := by
@@ -1124,7 +1124,7 @@ private theorem dist_three_sphere_aux {k : Fin 4} {z : EuclideanSpace ℝ (Fin 4
       · simp [hj]
     simp_rw [hsplit]
     rw [Finset.sum_sub_distrib, Finset.sum_ite_eq']
-    simp only [Finset.mem_univ, if_true]
+    simp only [Finset.mem_univ, ite_true]
     have hexp : ∀ j : Fin 4, ((1 + s * z k) + |z j|) ^ 2
         = (1 + s * z k) ^ 2 + |z j| * (2 * (1 + s * z k)) + |z j| ^ 2 := by
       intro j; ring
@@ -1167,9 +1167,9 @@ private theorem dist_three_sphere_aux {k : Fin 4} {z : EuclideanSpace ℝ (Fin 4
       intro j
       by_cases hj : j = k
       · subst hj
-        simp only [hTk, hPk, eq_self_iff_true, if_true]
+        simp only [hTk, hPk, eq_self_iff_true, ite_true]
         norm_num
-      · simp only [hj, if_false]
+      · simp only [hj, ite_false]
         exact hTPsq4 j hj
     have hle : (∑ j, (T j - P j) ^ 2)
         ≤ ∑ j, (if j = k then (0 : ℝ)
@@ -1183,7 +1183,7 @@ private theorem dist_three_sphere_aux {k : Fin 4} {z : EuclideanSpace ℝ (Fin 4
       intro j
       by_cases hj : j = k
       · simp [hj]
-      · simp only [hj, if_false]
+      · simp only [hj, ite_false]
     simp_rw [hfactor] at hle
     rw [← Finset.sum_mul] at hle
     have hfac_nn : (0 : ℝ) ≤ δ ^ 2 / ((D * (1 + s * z k)) ^ 2) :=
@@ -1267,34 +1267,34 @@ theorem dist_stereoSnap_le_three_sphere {z : EuclideanSpace ℝ (Fin 4)} (hz : �
   have hs2 : sQ ^ 2 = 1 := by
     rw [hsQ]
     by_cases h : (0 : ℚ) ≤ w k
-    · rw [if_pos h]; norm_num
-    · rw [if_neg h]; norm_num
+    · rw [ite_eq_left h]; norm_num
+    · rw [ite_eq_right h]; norm_num
   have hs : ((sQ : ℚ) : ℝ) ^ 2 = 1 := by
     rw [hsQ]
     by_cases h : (0 : ℚ) ≤ w k
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       push_cast
       norm_num
-    · simp only [if_neg h]
+    · simp only [ite_eq_right h]
       push_cast
       norm_num
   have hsgnQ : sQ * w k = |w k| := by
     rw [hsQ]
     by_cases h : (0 : ℚ) ≤ w k
-    · rw [if_pos h, one_mul, abs_of_nonneg h]
-    · rw [if_neg h]
+    · rw [ite_eq_left h, one_mul, abs_of_nonneg h]
+    · rw [ite_eq_right h]
       have hneg : w k < 0 := lt_of_not_ge h
       rw [abs_of_neg hneg]
       ring
   have hwk : (0 : ℝ) ≤ ((sQ : ℚ) : ℝ) * ((w k : ℚ) : ℝ) := by
     rw [hsQ]
     by_cases h : (0 : ℚ) ≤ w k
-    · simp only [if_pos h]
+    · simp only [ite_eq_left h]
       have hR : (0 : ℝ) ≤ ((w k : ℚ) : ℝ) := by exact_mod_cast h
       have h1 : (((1 : ℚ)) : ℝ) = 1 := by norm_cast
       rw [h1, one_mul]
       exact hR
-    · simp only [if_neg h]
+    · simp only [ite_eq_right h]
       push_neg at h
       have hR : ((w k : ℚ) : ℝ) < 0 := by exact_mod_cast h
       have hm1 : (((-1 : ℚ)) : ℝ) = -1 := by norm_cast
@@ -1307,7 +1307,7 @@ theorem dist_stereoSnap_le_three_sphere {z : EuclideanSpace ℝ (Fin 4)} (hz : �
   have hTj : ∀ j : Fin 4, j ≠ k → (((TQ j : ℚ)) : ℝ) = ((w j : ℚ) : ℝ) / (((DQ : ℚ)) : ℝ) := by
     intro j hj
     rw [hTQ]
-    simp only [hj, if_false]
+    simp only [hj, ite_false]
     exact_mod_cast rfl
   have hX : ∀ j : Fin 4, (toEuclid (stereoSnap w k)) j
       = (if j = k then ((sQ : ℚ) : ℝ) * (1 - ((RQ : ℚ) : ℝ)) / (1 + ((RQ : ℚ) : ℝ))
@@ -1317,16 +1317,16 @@ theorem dist_stereoSnap_le_three_sphere {z : EuclideanSpace ℝ (Fin 4)} (hz : �
     by_cases hj : j = k
     · subst hj
       show ((if j = j then sQ * (1 - RQ) / (1 + RQ) else 2 * TQ j / (1 + RQ) : ℚ) : ℝ) = _
-      simp only [eq_self_iff_true, if_true]
+      simp only [eq_self_iff_true, ite_true]
       norm_cast
     · show ((if j = k then sQ * (1 - RQ) / (1 + RQ) else 2 * TQ j / (1 + RQ) : ℚ) : ℝ) = _
-      simp only [hj, if_false]
+      simp only [hj, ite_false]
       norm_cast
   exact dist_three_sphere_aux hz (fun j => ((w j : ℚ) : ℝ))
     ((sQ : ℚ) : ℝ) hs
     (((DQ : ℚ)) : ℝ) (by rw [hDQ]; push_cast; ring_nf)
     (fun j => (((TQ j : ℚ)) : ℝ))
-    (by rw [hTQ]; simp only [eq_self_iff_true, if_true]; norm_num) hTj
+    (by rw [hTQ]; simp only [eq_self_iff_true, ite_true]; norm_num) hTj
     (((RQ : ℚ)) : ℝ)
     (by rw [hRQ]; push_cast; simp only [])
     (toEuclid (stereoSnap w k)) hX δ hδ hw hkR hwk

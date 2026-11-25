@@ -1125,30 +1125,30 @@ theorem BranchingType.Branches.PermEquiv.lookup_rel {S L : Type}
         by_cases e1 : label = l1
         · by_cases e2 : label = l2
           · exact absurd (e1.symm.trans e2) hne
-          · simp only [BranchingType.Branches.lookup, if_pos e1, if_neg e2]
+          · simp only [BranchingType.Branches.lookup, ite_eq_left e1, ite_eq_right e2]
             exact Option.Rel.some (BranchingType.PermEquiv.refl h1)
         · by_cases e2 : label = l2
-          · simp only [BranchingType.Branches.lookup, if_neg e1, if_pos e2]
+          · simp only [BranchingType.Branches.lookup, ite_eq_right e1, ite_eq_left e2]
             exact Option.Rel.some (BranchingType.PermEquiv.refl h2)
-          · simp only [BranchingType.Branches.lookup, if_neg e1, if_neg e2]
+          · simp only [BranchingType.Branches.lookup, ite_eq_right e1, ite_eq_right e2]
             cases ht : t.lookup label with
             | none => exact Option.Rel.none
             | some v =>
               exact Option.Rel.some (BranchingType.PermEquiv.refl v)
       · intro lb hd hd' tail h _ih
         by_cases e : label = lb
-        · simp only [BranchingType.Branches.lookup, if_pos e]
+        · simp only [BranchingType.Branches.lookup, ite_eq_left e]
           exact Option.Rel.some (Relation.EqvGen.rel _ _ h)
-        · simp only [BranchingType.Branches.lookup, if_neg e]
+        · simp only [BranchingType.Branches.lookup, ite_eq_right e]
           cases ht : tail.lookup label with
           | none => exact Option.Rel.none
           | some v =>
             exact Option.Rel.some (BranchingType.PermEquiv.refl v)
       · intro lb hd tail tail' _h ih
         by_cases e : label = lb
-        · simp only [BranchingType.Branches.lookup, if_pos e]
+        · simp only [BranchingType.Branches.lookup, ite_eq_left e]
           exact Option.Rel.some (BranchingType.PermEquiv.refl hd)
-        · simp only [BranchingType.Branches.lookup, if_neg e]
+        · simp only [BranchingType.Branches.lookup, ite_eq_right e]
           exact ih
     intro h
     induction h with

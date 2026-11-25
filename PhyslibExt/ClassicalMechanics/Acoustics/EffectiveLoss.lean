@@ -124,7 +124,7 @@ theorem effectivePowerTransmission_two_patch_eq {τ1 τ2 A I0 : ℝ}
     (fun i _ => rfl)]
   have hA' : A ≠ 0 := ne_of_gt hA
   have e1 : (fun i : Fin 2 => if i = 0 then τ1 else τ2) 1 = τ2 :=
-    if_neg (by decide)
+    ite_eq_right (by decide)
   simp only [Fin.sum_univ_two, e1]
   field_simp
   split_ifs <;> ring

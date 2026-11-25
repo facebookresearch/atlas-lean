@@ -288,11 +288,11 @@ noncomputable def liftFun
 
 omit [Fact p.Prime] in
 theorem liftFun_of_le {next} {n : ℕ} {m : torsionBy ℤ M ((p ^ n : ℕ) : ℤ)} {k : ℕ} (hk : n ≤ k) :
-    liftFun next n m k = (liftAux next n m (k - n) : M) := if_pos hk
+    liftFun next n m k = (liftAux next n m (k - n) : M) := ite_eq_left hk
 
 omit [Fact p.Prime] in
 theorem liftFun_of_lt {next} {n : ℕ} {m : torsionBy ℤ M ((p ^ n : ℕ) : ℤ)} {k : ℕ} (hk : k < n) :
-    liftFun next n m k = ((p ^ (n - k) : ℕ) : ℤ) • (m : M) := if_neg (not_le.mpr hk)
+    liftFun next n m k = ((p ^ (n - k) : ℕ) : ℤ) • (m : M) := ite_eq_right (not_le.mpr hk)
 
 omit [Fact p.Prime] in
 theorem coe_liftAux_congr {next} {n : ℕ} {m : torsionBy ℤ M ((p ^ n : ℕ) : ℤ)} {j j' : ℕ} (h : j =

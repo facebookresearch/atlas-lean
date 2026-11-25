@@ -293,7 +293,7 @@ private theorem coeff_finsuppProd_fvec_pow {d m : τ →₀ ℕ} (hdm : d.degree
   have hcc : ∀ s, ∀ e : τ →₀ ℕ, e.degree < 2 →
       coeff e (fvec p k τ s) = coeff e (C (p : WittVector p k) * X s) := by
     intro s e he
-    rw [fvec, map_add, add_eq_left, coeff_X_pow, if_neg]
+    rw [fvec, map_add, add_eq_left, coeff_X_pow, ite_eq_right]
     intro h
     subst h
     rw [Finsupp.degree_single] at he
@@ -309,11 +309,11 @@ private theorem coeff_subst_fvec {θ : MvPowerSeries τ (WittVector p k)} {n : �
     (hθ : ∀ e : τ →₀ ℕ, e.degree < n → coeff e θ = 0) {d : τ →₀ ℕ} (hd : d.degree ≤ n) :
     coeff d (subst (fvec p k τ) θ) = (p : WittVector p k) ^ d.degree * coeff d θ := by
   rw [coeff_subst hasSubst_fvec, finsum_eq_single _ d]
-  · rw [coeff_finsuppProd_fvec_pow rfl, if_pos rfl, smul_eq_mul, mul_comm]
+  · rw [coeff_finsuppProd_fvec_pow rfl, ite_eq_left rfl, smul_eq_mul, mul_comm]
   · intro m hm
     rcases lt_trichotomy m.degree d.degree with hlt | heq | hgt
     · rw [hθ m (by omega), zero_smul]
-    · rw [coeff_finsuppProd_fvec_pow heq.symm, if_neg (Ne.symm hm), smul_zero]
+    · rw [coeff_finsuppProd_fvec_pow heq.symm, ite_eq_right (Ne.symm hm), smul_zero]
     · rw [coeff_finsuppProd_pow_eq_zero_of_degree_lt constantCoeff_fvec hgt,
         smul_zero]
 
@@ -428,7 +428,7 @@ private def pdiv (x : WittVector p k) : WittVector p k :=
 private theorem pdiv_spec {x : WittVector p k} (h : ∃ y : WittVector p k, x = (p : WittVector p k)
   * y) :
     x = (p : WittVector p k) * pdiv x := by
-  rw [pdiv, dif_pos h]
+  rw [pdiv, dite_eq_left h]
   exact h.choose_spec
 
 private def corr (θ : MvPowerSeries τ (WittVector p k)) (n : ℕ) : MvPowerSeries τ (WittVector p k)
@@ -444,7 +444,7 @@ private theorem coeff_corr (θ : MvPowerSeries τ (WittVector p k)) (n : ℕ) (d
 
 private theorem coeff_corr_of_ne {θ : MvPowerSeries τ (WittVector p k)} {n : ℕ} {d : τ →₀ ℕ}
     (hd : d.degree ≠ n + 2) : coeff d (corr θ n) = 0 := by
-  rw [coeff_corr, if_neg hd]
+  rw [coeff_corr, ite_eq_right hd]
 
 private def approx (c : τ → WittVector p k) : ℕ → MvPowerSeries τ (WittVector p k)
   | 0 => ∑ s, C (c s) * X s
@@ -465,16 +465,16 @@ private theorem coeff_approx_zero_of_degree_ne_one (c : τ → WittVector p k) {
     (hd : d.degree ≠ 1) : coeff d (approx c 0) = 0 := by
   rw [coeff_approx_zero]
   refine Finset.sum_eq_zero fun s _ => ?_
-  rw [if_neg]
+  rw [ite_eq_right]
   rintro rfl
   exact hd (Finsupp.degree_single s 1)
 
 private theorem coeff_single_approx_zero (c : τ → WittVector p k) (t : τ) :
     coeff (Finsupp.single t 1) (approx c 0) = c t := by
   rw [coeff_approx_zero, Finset.sum_eq_single t]
-  · rw [if_pos rfl]
+  · rw [ite_eq_left rfl]
   · intro s _ hst
-    rw [if_neg]
+    rw [ite_eq_right]
     intro h
     exact hst (Finsupp.single_left_injective one_ne_zero h).symm
   · intro h
@@ -545,7 +545,7 @@ private theorem coeff_defect_approx (c : τ → WittVector p k) (n : ℕ) {e : �
     · rw [IH (by omega), coeff_subst_fvec hκ (le_of_lt hlt), hκ e hlt, mul_zero, mul_zero,
         sub_self, add_zero]
     · have hedeg : e.degree = n + 2 := by omega
-      rw [coeff_subst_fvec hκ (le_of_eq hedeg), hedeg, coeff_corr, if_pos hedeg]
+      rw [coeff_subst_fvec hκ (le_of_eq hedeg), hedeg, coeff_corr, ite_eq_left hedeg]
       set u : (WittVector p k)ˣ := (isUnit_one_sub_pow (p := p) (k := k) n).unit with hu
       have hu' : (u : WittVector p k) = 1 - (p : WittVector p k) ^ (n + 1) := rfl
       have hdiv := pdiv_spec (exists_coeff_defect_eq_mul θ e)

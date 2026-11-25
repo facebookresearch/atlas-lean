@@ -273,16 +273,16 @@ theorem exists_not_strictMonoOn_of_le_two_mul {Δ η : ℝ} (hΔ : 0 < Δ) (hη 
     have hle : Δ / 2 ≤ η := by linarith
     show |if k = 0 then Δ / 2 else -(Δ / 2)| ≤ η
     rcases hk01 with rfl | rfl
-    · have hif0 : (if (0 : ℤ) = 0 then Δ / 2 else -(Δ / 2)) = Δ / 2 := if_pos rfl
+    · have hif0 : (if (0 : ℤ) = 0 then Δ / 2 else -(Δ / 2)) = Δ / 2 := ite_eq_left rfl
       rw [hif0, abs_of_nonneg hnn]
       exact hle
     · have hif1 : (if (1 : ℤ) = 0 then Δ / 2 else -(Δ / 2)) = -(Δ / 2) :=
-        if_neg (by norm_num)
+        ite_eq_right (by norm_num)
       rw [hif1, abs_neg, abs_of_nonneg hnn]
       exact hle
   · intro hmono
-    have hif0 : (if (0 : ℤ) = 0 then Δ / 2 else -(Δ / 2)) = Δ / 2 := if_pos rfl
-    have hif1 : (if (1 : ℤ) = 0 then Δ / 2 else -(Δ / 2)) = -(Δ / 2) := if_neg (by norm_num)
+    have hif0 : (if (0 : ℤ) = 0 then Δ / 2 else -(Δ / 2)) = Δ / 2 := ite_eq_left rfl
+    have hif1 : (if (1 : ℤ) = 0 then Δ / 2 else -(Δ / 2)) = -(Δ / 2) := ite_eq_right (by norm_num)
     have h0 : (0 : ℤ) ∈ Icc (0 : ℤ) 1 := mem_Icc.mpr ⟨le_refl _, by norm_num⟩
     have h1m : (1 : ℤ) ∈ Icc (0 : ℤ) 1 := mem_Icc.mpr ⟨by norm_num, le_refl _⟩
     have h01 := hmono h0 h1m (by norm_num : (0 : ℤ) < 1)

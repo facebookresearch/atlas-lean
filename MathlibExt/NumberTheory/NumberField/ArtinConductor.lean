@@ -161,17 +161,17 @@ private theorem conductorExponent_eq_zero_of_isUnramifiedAt
   have hsw : swanConductor ψ v = 0 := by
     unfold swanConductor
     refine finsum_eq_zero_of_forall_eq_zero fun i ↦ ?_
-    rw [if_pos, mul_zero]
+    rw [ite_eq_left, mul_zero]
     intro σ hσ
     exact h σ (ramificationGroup_succ_le v i hσ)
-  rw [conductorExponent, if_pos h, hsw]
+  rw [conductorExponent, ite_eq_left h, hsw]
   simp
 
 private theorem one_le_conductorExponent_of_not_isUnramifiedAt
     (ψ : (M ≃ₐ[K] M) →* ℂˣ) (v : HeightOneSpectrum (𝓞 K))
     (h : ¬ IsUnramifiedAt (K := K) (M := M) ψ v) :
     1 ≤ conductorExponent ψ v := by
-  rw [conductorExponent, if_neg h]
+  rw [conductorExponent, ite_eq_right h]
   exact Nat.le_add_right 1 _
 
 private theorem exists_ne_zero_forall_mem

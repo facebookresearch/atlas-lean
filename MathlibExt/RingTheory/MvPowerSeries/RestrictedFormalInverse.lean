@@ -251,7 +251,7 @@ private theorem coeff_subst_sub_mem (p : R) (i : Fin d) (φi : MvPowerSeries (Fi
   rw [finsum_eq_sum_of_support_subset f1 hS1, finsum_eq_sum_of_support_subset f2 hS2]
 
   have hind : coeff n (E i) = ∑ m ∈ S, if m = Finsupp.single i 1 then coeff n (E i) else 0 := by
-    rw [Finset.sum_ite_eq' S, if_pos hSi]
+    rw [Finset.sum_ite_eq' S, ite_eq_left hSi]
   rw [hind, ← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
   refine Ideal.sum_mem _ fun m _ => ?_
 
@@ -261,7 +261,7 @@ private theorem coeff_subst_sub_mem (p : R) (i : Fin d) (φi : MvPowerSeries (Fi
     have hm : m = 0 := (Finsupp.degree_eq_zero_iff m).mp (by omega)
     subst hm
     rw [Finsupp.prod_zero_index, Finsupp.prod_zero_index, sub_self, zero_add,
-      if_neg (Ne.symm (Finsupp.single_ne_zero.mpr one_ne_zero))]
+      ite_eq_right (Ne.symm (Finsupp.single_ne_zero.mpr one_ne_zero))]
     exact Ideal.zero_mem _
   rcases Nat.lt_or_ge m.degree 2 with h2 | h2
   ·
@@ -270,12 +270,13 @@ private theorem coeff_subst_sub_mem (p : R) (i : Fin d) (φi : MvPowerSeries (Fi
       Finsupp.prod_single_index (h := fun j e => H j ^ e) (pow_zero _), pow_one, pow_one, hlin,
       Pi.sub_apply, map_sub]
     by_cases hik : i = k
-    · subst hik; rw [if_pos rfl, if_pos rfl]; ring_nf; exact Ideal.zero_mem _
-    · rw [if_neg hik, if_neg (fun h => hik (Finsupp.single_left_injective one_ne_zero h).symm)]
+    · subst hik; rw [ite_eq_left rfl, ite_eq_left rfl]; ring_nf; exact Ideal.zero_mem _
+    · rw [ite_eq_right hik,
+        ite_eq_right (fun h => hik (Finsupp.single_left_injective one_ne_zero h).symm)]
       ring_nf; exact Ideal.zero_mem _
   ·
-    rw [if_neg (fun h => by rw [h, Finsupp.degree_single] at h2; omega), add_zero, ← mul_sub, ←
-      map_sub]
+    rw [ite_eq_right (fun h => by rw [h, Finsupp.degree_single] at h2; omega), add_zero, ← mul_sub,
+      ← map_sub]
     have hT := finsuppProd_sub_sub_sum_mem_sq (coefIdeal (Fin d) (p ^ r)) (H - E) H
       (fun j => by rw [Pi.sub_apply, sub_sub_cancel_left]; exact (neg_mem (hE j))) m
     set T := ∑ j ∈ m.support, ((m j : ℕ) : MvPowerSeries (Fin d) R) * H j ^ (m j - 1) *

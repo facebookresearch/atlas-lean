@@ -397,7 +397,7 @@ noncomputable def busyBeaverOnes (n : ℕ) : ℕ :=
 theorem haltTime_le_busyBeaverSteps {n : ℕ} (M : Machine n) (h : Halts M) :
     haltTime M h ≤ busyBeaverSteps n := by
   have h1 : stepsOf M = haltTime M h := by
-    rw [stepsOf, dif_pos h]
+    rw [stepsOf, dite_eq_left h]
   rw [busyBeaverSteps, ← h1]
   exact Finset.le_sup (Finset.mem_univ M)
 
@@ -413,19 +413,19 @@ theorem busyBeaverSteps_le_of_forall_le {n B : ℕ}
   apply Finset.sup_le
   intro M _hM
   by_cases h : Halts M
-  · have h1 : stepsOf M = haltTime M h := by rw [stepsOf, dif_pos h]
+  · have h1 : stepsOf M = haltTime M h := by rw [stepsOf, dite_eq_left h]
     rw [h1]
     exact hB M h
-  · have h1 : stepsOf M = 0 := by rw [stepsOf, dif_neg h]
+  · have h1 : stepsOf M = 0 := by rw [stepsOf, dite_eq_right h]
     rw [h1]
     exact Nat.zero_le B
 
 theorem scoreOf_le_stepsOf {n : ℕ} (M : Machine n) :
     scoreOf M ≤ stepsOf M := by
   by_cases h : Halts M
-  · rw [scoreOf, stepsOf, dif_pos h, dif_pos h]
+  · rw [scoreOf, stepsOf, dite_eq_left h, dite_eq_left h]
     exact onesAt_le_steps M _
-  · rw [scoreOf, stepsOf, dif_neg h, dif_neg h]
+  · rw [scoreOf, stepsOf, dite_eq_right h, dite_eq_right h]
 
 /-- **The Busy Beaver score is at most the shift.** For every $n \in \mathbb{N}$, Rado's score
 function $\Sigma$ and Rado's shift function $S$ satisfy $\Sigma(n) \le S(n)$: the largest number
@@ -503,7 +503,7 @@ theorem embedMachine_castSucc {n : ℕ} (M : Machine n) (q : Fin n)
     embedMachine M (Fin.castSucc q) s =
       ((M q s).1, (M q s).2.1, (M q s).2.2.map Fin.castSucc) := by
   unfold embedMachine
-  rw [dif_pos (show (Fin.castSucc q).val < n from q.isLt)]
+  rw [dite_eq_left (show (Fin.castSucc q).val < n from q.isLt)]
   rfl
 
 theorem embedConfig_step {n : ℕ} (M : Machine n) (c : Config n) :
@@ -529,7 +529,7 @@ theorem embedConfig_initial {n : ℕ} (hn : 0 < n) :
     embedConfig (initial n) = initial (n + 1) := by
   rw [embedConfig, initial, initial]
   congr 1
-  rw [initialState, initialState, dif_pos hn, dif_pos (Nat.succ_pos n)]
+  rw [initialState, initialState, dite_eq_left hn, dite_eq_left (Nat.succ_pos n)]
   rfl
 
 theorem embedConfig_run {n : ℕ} (hn : 0 < n) (M : Machine n) (t : ℕ) :
@@ -604,13 +604,13 @@ theorem busyBeaverSteps_mono (n : ℕ) :
     apply Finset.sup_le
     intro M _hM
     by_cases h : Halts M
-    · have hsteps : stepsOf M = haltTime M h := by rw [stepsOf, dif_pos h]
+    · have hsteps : stepsOf M = haltTime M h := by rw [stepsOf, dite_eq_left h]
       have hembed : stepsOf (embedMachine M) = haltTime M h := by
-        rw [stepsOf, dif_pos ((halts_embed (Nat.succ_pos n) M).mpr h)]
+        rw [stepsOf, dite_eq_left ((halts_embed (Nat.succ_pos n) M).mpr h)]
         exact haltTime_embed (Nat.succ_pos n) M h
       rw [hsteps, ← hembed]
       exact Finset.le_sup (Finset.mem_univ _)
-    · have hsteps : stepsOf M = 0 := by rw [stepsOf, dif_neg h]
+    · have hsteps : stepsOf M = 0 := by rw [stepsOf, dite_eq_right h]
       rw [hsteps]
       exact Nat.zero_le _
 
@@ -628,7 +628,7 @@ theorem busyBeaverOnes_mono (n : ℕ) :
     by_cases h : Halts M
     · have hscore : scoreOf (embedMachine M) = scoreOf M := by
         rw [scoreOf, scoreOf,
-          dif_pos ((halts_embed (Nat.succ_pos n) M).mpr h), dif_pos h,
+          dite_eq_left ((halts_embed (Nat.succ_pos n) M).mpr h), dite_eq_left h,
           haltTime_embed (Nat.succ_pos n) M h]
         have hrun : run (embedMachine M) (haltTime M h) =
             embedConfig (run M (haltTime M h)) := by
@@ -637,7 +637,7 @@ theorem busyBeaverOnes_mono (n : ℕ) :
         rfl
       rw [← hscore]
       exact Finset.le_sup (Finset.mem_univ _)
-    · have hscore : scoreOf M = 0 := by rw [scoreOf, dif_neg h]
+    · have hscore : scoreOf M = 0 := by rw [scoreOf, dite_eq_right h]
       rw [hscore]
       exact Nat.zero_le _
 
@@ -780,7 +780,7 @@ theorem busyBeaverOnes_one : busyBeaverOnes 1 = 1 := by
     have htime : haltTime (fun _ _ => (1, Move.right, none) : Machine 1) hM =
         1 := haltTime_one_of_halts hM
     have hscore : scoreOf (fun _ _ => (1, Move.right, none) : Machine 1) = 1 := by
-      rw [scoreOf, dif_pos hM, htime]
+      rw [scoreOf, dite_eq_left hM, htime]
       have htape : (run (fun _ _ => (1, Move.right, none) : Machine 1) 1).tape
           (0 : ℤ) = 1 := by
         rw [run_one]

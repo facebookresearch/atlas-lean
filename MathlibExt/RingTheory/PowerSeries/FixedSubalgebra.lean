@@ -86,7 +86,7 @@ private theorem algHom_ext_of_map_X_eq [IsNoetherianRing W] [IsLocalRing W]
     obtain ⟨g, hg⟩ : (X : W⟦X⟧) ^ N ∣ f - (p : W⟦X⟧) := by
       rw [X_pow_dvd_iff]
       intro m hm'
-      rw [map_sub, hp, Polynomial.coeff_coe, coeff_trunc, if_pos hm', sub_self]
+      rw [map_sub, hp, Polynomial.coeff_coe, coeff_trunc, ite_eq_left hm', sub_self]
     have hf : f = (p : W⟦X⟧) + X ^ N * g := by rw [← hg]; ring
     have e : φ f - ψ f = φ X ^ N * (φ g - ψ g) := by
       rw [hf, map_add, map_add, algHom_coe_polynomial, algHom_coe_polynomial, h, map_mul, map_mul,
@@ -135,8 +135,8 @@ private theorem constantCoeff_mem_and_coeff_one_notMem [IsLocalRing W] (τ : W�
     rw [map_add, map_add, coeff_C, coeff_C_mul, coeff_X, coeff_X_pow_mul']
     rcases Nat.lt_or_ge n 2 with hn | hn
     · interval_cases n <;> simp
-    · rw [if_neg (by omega), if_neg (by omega), if_pos hn, coeff_mk, mul_zero, zero_add, zero_add,
-        Nat.sub_add_cancel hn]
+    · rw [ite_eq_right (by omega), ite_eq_right (by omega), ite_eq_left hn, coeff_mk, mul_zero,
+        zero_add, zero_add, Nat.sub_add_cancel hn]
   have e1 : (X : W⟦X⟧) = C (coeff 0 s) + C (coeff 1 s) * τ X + τ X ^ 2 * τ (mk fun p => coeff (p +
     2) s) := by
     conv_lhs => rw [← τ.apply_symm_apply X, ← hs, hsplit]
@@ -155,8 +155,8 @@ private theorem constantCoeff_mem_and_coeff_one_notMem [IsLocalRing W] (τ : W�
       (IsLocalRing.residue W (coeff 1 s)) * t) := by ring
     have r2 : ((X : k⟦X⟧) ^ 2 * t) ^ 2 * red (τ (mk fun p => coeff (p + 2) s)) =
         X ^ 2 * (X ^ 2 * t ^ 2 * red (τ (mk fun p => coeff (p + 2) s))) := by ring
-    rw [r1, r2, map_add, map_add, coeff_C, if_neg one_ne_zero, coeff_X_pow_mul', if_neg (by omega),
-      coeff_X_pow_mul', if_neg (by omega)]
+    rw [r1, r2, map_add, map_add, coeff_C, ite_eq_right one_ne_zero, coeff_X_pow_mul',
+      ite_eq_right (by omega), coeff_X_pow_mul', ite_eq_right (by omega)]
     ring
   rw [h3] at e2
   exact one_ne_zero e2
@@ -305,14 +305,14 @@ private theorem exists_sum_subst_mul_X_pow (u : W⟦X⟧) (hu0 : constantCoeff u
     · rw [Finset.sum_eq_single (⟨n, hn⟩ : Fin m)]
       · simp
       · intro b _ hb
-        rw [if_neg]
+        rw [ite_eq_right]
         intro h; apply hb; exact Fin.ext h.symm
       · intro h; exact absurd (Finset.mem_univ _) h
     · rw [hdeg k n (not_lt.1 hn)]
       symm
       apply Finset.sum_eq_zero
       intro i _
-      rw [if_neg]
+      rw [ite_eq_right]
       intro h; exact hn (h ▸ i.2)
 
   let c : Fin m → W⟦X⟧ := fun i => PowerSeries.mk fun k => (r k).coeff i
@@ -325,7 +325,7 @@ private theorem exists_sum_subst_mul_X_pow (u : W⟦X⟧) (hu0 : constantCoeff u
     obtain ⟨K', rfl⟩ := Nat.exists_eq_succ_of_ne_zero hK.ne'
     rw [subst_coe hus, Polynomial.aeval_eq_sum_range' (natDegree_trunc_lt (c i) K')]
     refine Finset.sum_congr rfl fun k hk => ?_
-    rw [coeff_trunc, if_pos (Finset.mem_range.1 hk), coeff_mk]
+    rw [coeff_trunc, ite_eq_left (Finset.mem_range.1 hk), coeff_mk]
   have hSK : ∀ K, 0 < K → ∑ i : Fin m, ((trunc K (c i) : Polynomial W) : W⟦X⟧).subst u * X ^
     (i : ℕ) = f - q K * u ^ K := by
     intro K hK
@@ -346,7 +346,7 @@ private theorem exists_sum_subst_mul_X_pow (u : W⟦X⟧) (hu0 : constantCoeff u
     rw [coeff_subst' hus, coeff_subst' hus]
     refine finsum_congr fun d => ?_
     by_cases hd : d < n + 1
-    · rw [Polynomial.coeff_coe, coeff_trunc, if_pos hd]
+    · rw [Polynomial.coeff_coe, coeff_trunc, ite_eq_left hd]
     · rw [hpow d j (by omega), smul_zero, smul_zero]
   ext n
   have h1 : coeff n (∑ i : Fin m, (c i).subst u * X ^ (i : ℕ)) =
@@ -384,7 +384,7 @@ private theorem exists_sum_subst_mul_X_pow_range
   obtain ⟨c, hc⟩ := exists_sum_subst_mul_X_pow u hu0 m hum hmm f
   refine ⟨fun i => if h : i < m then c ⟨i, h⟩ else 0, ?_⟩
   rw [hc, Finset.sum_range]
-  exact Finset.sum_congr rfl fun i _ => by simp only [dif_pos i.2]
+  exact Finset.sum_congr rfl fun i _ => by simp only [dite_eq_left i.2]
 
 end dvr
 
@@ -463,7 +463,7 @@ theorem PowerSeries.nonempty_algEquiv_of_forall_mem_iff_forall_apply_eq
       have := congrArg constantCoeff hred0
       rw [← coeff_zero_eq_constantCoeff_apply, hred_def, coeff_map,
         coeff_zero_eq_constantCoeff_apply] at this
-      rw [this, ← coeff_zero_eq_constantCoeff_apply, coeff_X_pow_mul', if_neg (by omega)]
+      rw [this, ← coeff_zero_eq_constantCoeff_apply, coeff_X_pow_mul', ite_eq_right (by omega)]
     rw [hu_def, map_sub, hred0, hred_def, map_C, hc, map_zero, sub_zero]
   have hu_ne : u.map (IsLocalRing.residue W) ≠ 0 := by
     rw [hred]
@@ -477,7 +477,7 @@ theorem PowerSeries.nonempty_algEquiv_of_forall_mem_iff_forall_apply_eq
         rw [zero_add] at e
         rw [e, coeff_zero_eq_constantCoeff_apply]
         exact hV
-      · rw [coeff_X_pow_mul', if_neg (by omega)]
+      · rw [coeff_X_pow_mul', ite_eq_right (by omega)]
     rw [hord, ENat.toNat_coe]
 
   have ha : HasSubst u := HasSubst.of_constantCoeff_zero' hu0
@@ -538,7 +538,7 @@ theorem PowerSeries.nonempty_algEquiv_of_forall_mem_iff_forall_apply_eq
     have h0 := congrArg (fun Q : Polynomial W⟦X⟧ => Q.coeff 0) hP0
     simp only [hP, Polynomial.coeff_sub, Polynomial.finsetSum_coeff, Polynomial.coeff_C_mul_X_pow,
       Polynomial.coeff_C_zero, Polynomial.coeff_zero] at h0
-    rw [Finset.sum_ite_eq (Finset.range m) 0 (fun i => Φ (c i)), if_pos
+    rw [Finset.sum_ite_eq (Finset.range m) 0 (fun i => Φ (c i)), ite_eq_left
       (Finset.mem_range.mpr hm1)] at h0
     exact sub_eq_zero.mp h0
 

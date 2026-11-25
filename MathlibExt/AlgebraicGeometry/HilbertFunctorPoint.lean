@@ -280,7 +280,7 @@ private theorem Psi'_map (p : MvPolynomial (Fin (n + 1)) A) (hp : p.IsHomogeneou
     intro s hs
     have hsd : s.degree = d := degree_eq_of_mem_support hp hs
     rw [Psi'_monomial]
-    simp only [v, dif_pos hsd]
+    simp only [v, dite_eq_left hsd]
     rw [TensorProduct.smul_tmul', smul_eq_mul, mul_one,
       show algebraMap A B (p.coeff s) = p.coeff s • (1 : B) by rw [Algebra.smul_def, mul_one],
       TensorProduct.smul_tmul, ← Submodule.Quotient.mk_smul]
@@ -312,7 +312,7 @@ private noncomputable def Psi (hI : ∀ p ∈ I, ∀ d : ℕ, homogeneousCompone
     have hqI : (q : MvPolynomial (Fin (n + 1)) B) ∈ I' (B := B) I := by simpa using hq
     have hqd : (q : MvPolynomial (Fin (n + 1)) B).IsHomogeneous d := q.2
     have hcomp : homogeneousComponent d (q : MvPolynomial (Fin (n + 1)) B) = q :=
-      homogeneousComponent_of_mem (m := d) q.2 |>.trans (if_pos rfl)
+      homogeneousComponent_of_mem (m := d) q.2 |>.trans (ite_eq_left rfl)
     rw [LinearMap.mem_ker, LinearMap.coe_comp, Function.comp_apply, Submodule.coe_subtype, ← hcomp]
     exact T_le_ker I d (homogeneousComponent_mem_T I hI hqI d))
 
@@ -359,7 +359,7 @@ private theorem E_Psi (hI : ∀ p ∈ I, ∀ d : ℕ, homogeneousComponent d p �
     intro s hs
     have hsd : s.degree = d := degree_eq_of_mem_support hq hs
     rw [Psi'_monomial]
-    simp only [v, dif_pos hsd]
+    simp only [v, dite_eq_left hsd]
     rw [map_smul, E_tmul, one_smul, ← Submodule.Quotient.mk_smul]
     congr 1
     apply Subtype.ext

@@ -110,10 +110,10 @@ private lemma carrollSplit_bijective (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     by_cases ha : Fin.succAbove p a = q
     · by_cases hb : Fin.succAbove p b = q
       · exact Fin.succAbove_right_injective (ha.trans hb.symm)
-      · simp only [carrollSplit, dif_pos ha, dite_eq_right hb] at hab
+      · simp only [carrollSplit, dite_eq_left ha, dite_eq_right hb] at hab
         exact absurd hab Sum.inr_ne_inl
     · by_cases hb : Fin.succAbove p b = q
-      · simp only [carrollSplit, dite_eq_right ha, dif_pos hb] at hab
+      · simp only [carrollSplit, dite_eq_right ha, dite_eq_left hb] at hab
         exact absurd hab Sum.inl_ne_inr
       · simp only [carrollSplit, dite_eq_right ha, dite_eq_right hb] at hab
         simp only [Sum.inl.injEq] at hab
@@ -139,7 +139,7 @@ private lemma carrollSplit_bijective (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     | inr k =>
       obtain ⟨a, ha⟩ := Fin.exists_succAbove_eq hqp
       refine ⟨a, ?_⟩
-      simp only [carrollSplit, dif_pos ha]
+      simp only [carrollSplit, dite_eq_left ha]
       exact congrArg Sum.inr (Subsingleton.elim _ _)
 
 private noncomputable def carrollSplitEquiv (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
@@ -150,7 +150,7 @@ private lemma carrollSplitEquiv_inr (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     (hq : q = i ∨ q = j) (hqp : q ≠ p) (a : Fin (m + 1))
     (h : Fin.succAbove p a = q) :
     carrollSplitEquiv i j p q hp hq hqp a = Sum.inr 0 := by
-  simp only [carrollSplitEquiv, Equiv.ofBijective_apply, carrollSplit, dif_pos h]
+  simp only [carrollSplitEquiv, Equiv.ofBijective_apply, carrollSplit, dite_eq_left h]
 
 private lemma carrollSplitEquiv_inl (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     (hq : q = i ∨ q = j) (hqp : q ≠ p) (a : Fin (m + 1))
@@ -180,13 +180,13 @@ private def carrollFull (hij : i ≠ j) :
     | inl x =>
       have e : carrollFwd i j (Sum.inl x) = x.val := rfl
       rw [e]
-      simp only [carrollBwd, dif_pos x.prop]
+      simp only [carrollBwd, dite_eq_left x.prop]
     | inr k =>
       fin_cases k <;> simp [carrollFwd, carrollBwd, hij, Ne.symm hij]) (by
     intro k
     by_cases h : k ≠ i ∧ k ≠ j
     · have e : carrollBwd i j k = Sum.inl ⟨k, h⟩ := by
-        simp only [carrollBwd, dif_pos h]
+        simp only [carrollBwd, dite_eq_left h]
       have e2 : carrollFwd i j (Sum.inl ⟨k, h⟩) = k := rfl
       rw [e, e2]
     · have e : carrollBwd i j k =

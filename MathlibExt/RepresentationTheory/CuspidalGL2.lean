@@ -149,8 +149,8 @@ private theorem charpoly_ind_inv (g : GL2 q) :
     Finsupp.basisSingleOne_repr, LinearEquiv.refl_apply, ind_single, Finsupp.single_apply,
     inv_smul_eq_iff]
   by_cases hij : i = g • j
-  · rw [if_pos hij, if_pos hij.symm]
-  · rw [if_neg hij, if_neg (Ne.symm hij)]
+  · rw [ite_eq_left hij, ite_eq_left hij.symm]
+  · rw [ite_eq_right hij, ite_eq_right (Ne.symm hij)]
 
 private theorem unipotent_mul (s t : ZMod q) :
     unipotent q s * unipotent q t = unipotent q (s + t) := by

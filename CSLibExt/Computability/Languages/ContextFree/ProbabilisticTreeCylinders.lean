@@ -547,7 +547,7 @@ theorem cylinder_mass_active {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (t : CGTr
       have hmass : BinaryTreeAddressLaw.cylinder_mass p (CGTree.leaf.activeAddresses u)
           (CGTree.leaf.branchAssignment u) = ENNReal.ofReal (1 - p) := by
         simp only [CGTree.activeAddresses_leaf, BinaryTreeAddressLaw.cylinder_mass,
-          Finset.prod_singleton, if_neg hnt]
+          Finset.prod_singleton, ite_eq_right hnt]
       rw [hmass, hw]
   | node l r ihl ihr =>
       intro u
@@ -577,7 +577,8 @@ theorem cylinder_mass_active {p : ℝ} (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (t : CGTr
       simp only [BinaryTreeAddressLaw.cylinder_mass] at ihL ihR
       simp only [CGTree.activeAddresses_node, BinaryTreeAddressLaw.cylinder_mass,
         Finset.prod_insert hun, Finset.prod_union hdisj]
-      rw [Finset.prod_congr rfl hpointL, Finset.prod_congr rfl hpointR, if_pos hu_true, ihL, ihR]
+      rw [Finset.prod_congr rfl hpointL, Finset.prod_congr rfl hpointR, ite_eq_left hu_true, ihL,
+        ihR]
       have hw : (CGTree.node l r).weight p (1 - p) =
           p * l.weight p (1 - p) * r.weight p (1 - p) := rfl
       rw [hw, ENNReal.ofReal_mul

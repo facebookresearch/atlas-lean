@@ -901,7 +901,7 @@ theorem derives_gen_activate : ∀ w : List Γ,
           LBABoundary.ofHead_eq_both rfl rfl
         simp only [encodeCfg, LinearBoundedAutomaton.initCfg, List.map_cons,
           List.map_nil, List.length_cons, List.length_nil, Nat.zero_add,
-          Nat.zero_lt_succ, if_true, encodeCellsAux,
+          Nat.zero_lt_succ, ite_true, encodeCellsAux,
           cellTupleSym, hbnd]
       rw [htarget]
       exact hstep
@@ -1027,19 +1027,19 @@ theorem getElem_encodeCfg {w : List Γ} {cfg : LBAConfig Q Γ} {i : ℕ}
   have hget := getElem_encodeCellsAux (w := w) (tape := cfg.tape)
     (h := if cfg.head < w.length then some cfg.head else none) (q := cfg.state)
     (start := 0) (total := w.length) hlen hi
-  rw [if_pos hhead] at hget
+  rw [ite_eq_left hhead] at hget
   have hgoal : (encodeCfg M w cfg)[i]'(by rw [length_encodeCfg hl]; exact hi) =
       cellTupleSym ((encodeCellsAux w cfg.tape
         (if cfg.head < w.length then some cfg.head else none) cfg.state 0 w.length)[i]'
         (by rw [length_encodeCellsAux hlen]; exact hi)) := by
     simp only [encodeCfg, List.getElem_map]
-  rw [hgoal, if_pos hhead, hget]
+  rw [hgoal, ite_eq_left hhead, hget]
   by_cases hihead : i = cfg.head
   · subst hihead
-    simp only [cellTupleSym, if_pos rfl, Nat.zero_add]
+    simp only [cellTupleSym, ite_eq_left rfl, Nat.zero_add]
   · have hne1 : (some cfg.head : Option ℕ) ≠ some i := by simp [Ne.symm hihead]
     have hne2 : i ≠ cfg.head := hihead
-    simp only [cellTupleSym, if_neg hne1, if_neg hne2, Nat.zero_add]
+    simp only [cellTupleSym, ite_eq_right hne1, ite_eq_right hne2, Nat.zero_add]
 
 omit _instDecidableEqQ _instDecidableEqG _instFintypeQ _instFintypeG in
 /-- One step preserves the tape length. -/
@@ -1146,7 +1146,7 @@ theorem derives_encodeCfg_step {w : List Γ} {c c' : LBAConfig Q Γ}
     rw [hset]
     apply derives_set_single (hi := by rw [hlen']; exact hhead_w)
     rw [getElem_encodeCfg hl hhead_w (by rw [← hl]; exact hhead)]
-    simp only [if_pos rfl]
+    simp only [ite_eq_left rfl]
     exact mem_rule_sim_stay (q := c.state) (q' := q') (read := (c.tape[c.head]?).join)
       (write := b') (orig := w[c.head]'hhead_w)
       (bnd := LBABoundary.ofHead c.head w.length) hmem
@@ -1210,7 +1210,7 @@ theorem derives_encodeCfg_step {w : List Γ} {c c' : LBAConfig Q Γ}
     apply derives_set_two (hi := by rw [hlen']; omega)
     rw [getElem_encodeCfg hl hhead_w (by rw [← hl]; exact hhead),
       getElem_encodeCfg hl hhead_w (by rw [← hl]; exact hhead1)]
-    simp only [if_pos rfl, if_neg (show c.head + 1 ≠ c.head by omega)]
+    simp only [ite_eq_left rfl, ite_eq_right (show c.head + 1 ≠ c.head by omega)]
     exact mem_rule_sim_right (q := c.state) (q' := q')
       (read := (c.tape[c.head]?).join) (write := b') (orig := w[c.head]'hhead_w)
       (orig₂ := w[c.head + 1]'hhead1_w) (cur₂ := ((c.tape[c.head + 1]?).join))
@@ -1279,7 +1279,7 @@ theorem derives_encodeCfg_step {w : List Γ} {c c' : LBAConfig Q Γ}
       (hi := by rw [hlen']; omega) (hj := by omega)
     rw [getElem_encodeCfg hl hhead_w (by rw [← hl]; exact hhead1),
       getElem_encodeCfg hl hhead_w (by rw [← hl]; exact hhead)]
-    simp only [if_neg (show c.head - 1 ≠ c.head by omega), if_pos rfl]
+    simp only [ite_eq_right (show c.head - 1 ≠ c.head by omega), ite_eq_left rfl]
     exact mem_rule_sim_left (q := c.state) (q' := q')
       (read := (c.tape[c.head]?).join) (write := b') (orig := w[c.head]'hhead_w)
       (orig₂ := w[c.head - 1]'hheadm1_w) (cur₂ := ((c.tape[c.head - 1]?).join))

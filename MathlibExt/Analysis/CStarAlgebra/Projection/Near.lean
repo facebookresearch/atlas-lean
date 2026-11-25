@@ -56,7 +56,7 @@ theorem projectionCut_mul_self (x : ℝ) :
 theorem norm_projectionCut_sub_le (x : ℝ) :
     ‖projectionCut x - x‖ ≤ 2 * ‖x * x - x‖ := by
   by_cases hhalf : x ≤ 1 / 2
-  · rw [projectionCut, if_pos hhalf]
+  · rw [projectionCut, ite_eq_left hhalf]
     by_cases hx : 0 ≤ x
     · have hdef : x * x - x ≤ 0 := by nlinarith
       simp only [zero_sub, norm_neg, Real.norm_eq_abs,
@@ -67,7 +67,7 @@ theorem norm_projectionCut_sub_le (x : ℝ) :
       simp only [zero_sub, norm_neg, Real.norm_eq_abs,
         abs_of_nonpos hx', abs_of_nonneg hdef]
       nlinarith [sq_nonneg x]
-  · rw [projectionCut, if_neg hhalf]
+  · rw [projectionCut, ite_eq_right hhalf]
     have hx : 1 / 2 < x := lt_of_not_ge hhalf
     by_cases hone : x ≤ 1
     · have hsub : 0 ≤ 1 - x := sub_nonneg.mpr hone
@@ -88,12 +88,12 @@ theorem projectionCut_continuousAt {x : ℝ} (hx : x ≠ 1 / 2) :
       · exact hlt
       · exact False.elim (hx heq)
     have heq : projectionCut =ᶠ[𝓝 x] (fun _ : ℝ => 0) :=
-      (eventually_lt_nhds hlt).mono fun y hy => by simp only [projectionCut, if_pos hy.le]
+      (eventually_lt_nhds hlt).mono fun y hy => by simp only [projectionCut, ite_eq_left hy.le]
     exact (continuousAt_const : ContinuousAt (fun _ : ℝ => (0 : ℝ)) x).congr heq.symm
   · have hlt : 1 / 2 < x := lt_of_not_ge hhalf
     have heq : projectionCut =ᶠ[𝓝 x] (fun _ : ℝ => 1) :=
       (eventually_gt_nhds hlt).mono fun y hy => by
-        simp only [projectionCut, if_neg (not_le.mpr hy)]
+        simp only [projectionCut, ite_eq_right (not_le.mpr hy)]
     exact (continuousAt_const : ContinuousAt (fun _ : ℝ => (1 : ℝ)) x).congr heq.symm
 
 universe u

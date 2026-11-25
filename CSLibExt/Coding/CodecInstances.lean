@@ -37,7 +37,7 @@ def Hamming74.encoding : Computability.Encoding (Fin 4 → ZMod 2) (ZMod 2) :=
         none,
     decode_encode := fun m => by
       have hl : (List.ofFn (Hamming74.encode m)).length = 7 := List.length_ofFn
-      rw [dif_pos hl]
+      rw [dite_eq_left hl]
       congr 1
       have : (fun i : Fin 7 => (List.ofFn (Hamming74.encode m))[i.val]'(by omega)) =
           Hamming74.encode m := by
@@ -54,7 +54,7 @@ theorem Hamming74.encoding_encode_length (m : Fin 4 → ZMod 2) : (Hamming74.enc
 /-- Decoding any 7-bit vector returns its corrected message. -/
 theorem Hamming74.encoding_decode_ofFn (y : Fin 7 → ZMod 2) : Hamming74.encoding.decode (List.ofFn y) = some (Hamming74.message (Hamming74.decode y)) := by
   show (if h : (List.ofFn y).length = 7 then _ else none) = _
-  rw [dif_pos List.length_ofFn]
+  rw [dite_eq_left List.length_ofFn]
   congr 2
 
 /-- Decoding a codeword with at most one corrupted bit recovers the message. -/
@@ -72,7 +72,7 @@ noncomputable def CRC.encoding {F : Type*} [Field F] (g : F[X]) (hg : g ≠ 0) :
       else
         none,
     decode_encode := fun m => by
-      rw [ofCoeffList_reverse_coeffList, if_pos (CRC.dvd_encode g m)]
+      rw [ofCoeffList_reverse_coeffList, ite_eq_left (CRC.dvd_encode g m)]
       congr 1
       ext i
       rw [coeff_ofCoeffList, List.getD_eq_getElem?_getD, List.getElem?_drop,
@@ -109,7 +109,7 @@ noncomputable def ReedSolomon.encoding {F : Type*} [Field F] [DecidableEq F] {n 
         none,
     decode_encode := fun p => by
       have hl : (List.ofFn (ReedSolomon.encode α p.1)).length = n := List.length_ofFn
-      rw [dif_pos hl]
+      rw [dite_eq_left hl]
       have : (fun i : Fin n => (List.ofFn (ReedSolomon.encode α p.1))[i.val]'(by omega)) =
           ReedSolomon.encode α p.1 + 0 := by
         funext i
@@ -127,7 +127,7 @@ theorem ReedSolomon.encoding_encode_length {F : Type*} [Field F] [DecidableEq F]
 theorem ReedSolomon.encoding_decode_ofFn_encode_add {F : Type*} [Field F] [DecidableEq F] {n k : ℕ} {α : Fin n → F} (hα : Function.Injective α) (hkn : k ≤ n) (S : ReedSolomon.KeySolver α k ((n - k) / 2)) (p : {p : F[X] // p.degree < k}) {err : Fin n → F} (herr : hammingNorm err ≤ (n - k) / 2) : (ReedSolomon.encoding hα hkn S).decode (List.ofFn (ReedSolomon.encode α p.1 + err)) = some p := by
   classical
   show (if h : (List.ofFn (ReedSolomon.encode α p.1 + err)).length = n then _ else none) = _
-  rw [dif_pos List.length_ofFn]
+  rw [dite_eq_left List.length_ofFn]
   have : (fun i : Fin n => (List.ofFn (ReedSolomon.encode α p.1 + err))[i.val]'(by simp)) =
       ReedSolomon.encode α p.1 + err := by
     funext i
@@ -141,7 +141,7 @@ theorem ReedSolomon.encoding_decode_ofFn_eq_none_iff {F : Type*} [Field F] [Deci
     have h := Nat.div_mul_le_self (n - k) 2
     omega
   show (if h : (List.ofFn y).length = n then _ else none) = none ↔ _
-  rw [dif_pos List.length_ofFn]
+  rw [dite_eq_left List.length_ofFn]
   have hfun : (fun i : Fin n => (List.ofFn y)[i.val]'(by simp)) = y := by
     funext i
     exact List.getElem_ofFn ..
@@ -156,7 +156,7 @@ theorem ReedSolomon.encoding_decode_ofFn_eq_none_iff {F : Type*} [Field F] [Deci
     have hcon : ¬ ∀ q : F[X], q.degree < k → (n - k) / 2 < hammingDist y (ReedSolomon.encode α q) :=
       fun h => not_lt_of_ge hle (h p hp)
     show (if hp : p.degree < k then some (⟨p, hp⟩ : { p : F[X] // p.degree < k }) else none) = none ↔ _
-    rw [dif_pos hp]
+    rw [dite_eq_left hp]
     simp [hcon]
 
 end Cslib.CodingTheory

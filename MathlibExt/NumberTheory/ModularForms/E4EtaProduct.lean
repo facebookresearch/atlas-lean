@@ -113,10 +113,10 @@ private theorem coe_heckeDiagMatrix_smul {p : ℕ} (hp : p ≠ 0) (τ : UpperHal
   simp [UpperHalfPlane.num, UpperHalfPlane.denom, val_heckeDiagMatrix hp]
 
 private theorem σ_heckeMatrix (p j : ℕ) : UpperHalfPlane.σ (heckeMatrix p j) = .refl ℝ ℂ := by
-  rw [UpperHalfPlane.σ, if_pos (det_heckeMatrix_pos p j)]
+  rw [UpperHalfPlane.σ, ite_eq_left (det_heckeMatrix_pos p j)]
 
 private theorem σ_heckeDiagMatrix (p : ℕ) : UpperHalfPlane.σ (heckeDiagMatrix p) = .refl ℝ ℂ := by
-  rw [UpperHalfPlane.σ, if_pos (det_heckeDiagMatrix_pos p)]
+  rw [UpperHalfPlane.σ, ite_eq_left (det_heckeDiagMatrix_pos p)]
 
 private theorem slash_heckeMatrix_apply (k : ℤ) {p : ℕ} (hp : p ≠ 0) (j : ℕ) (f : UpperHalfPlane →
   ℂ)
@@ -273,7 +273,7 @@ private lemma dvd_primeSel {c d : ℤ} {p : ℕ} (hc : c ≠ 0) (hp : p.Prime)
   have hmem : p ∈ c.natAbs.primeFactors :=
     Nat.mem_primeFactors.mpr ⟨hp, natCast_dvd_int.mp hpc, Int.natAbs_ne_zero.mpr hc⟩
   have h := Finset.dvd_prod_of_mem (fun q : ℕ => if q ∣ d.natAbs then 1 else q) hmem
-  simp only [if_neg (fun hcontra => hpd (natCast_dvd_int.mpr hcontra))] at h
+  simp only [ite_eq_right (fun hcontra => hpd (natCast_dvd_int.mpr hcontra))] at h
   exact h
 
 private lemma not_dvd_primeSel {c d : ℤ} {p : ℕ} (hp : p.Prime) (hpd : (p : ℤ) ∣ d) :
@@ -281,9 +281,9 @@ private lemma not_dvd_primeSel {c d : ℤ} {p : ℕ} (hp : p.Prime) (hpd : (p : 
   intro hdvd
   obtain ⟨q, hq, hpq⟩ := (Nat.Prime.prime hp).dvd_finsetProd_iff _ |>.mp hdvd
   by_cases hqd : q ∣ d.natAbs
-  · rw [if_pos hqd] at hpq
+  · rw [ite_eq_left hqd] at hpq
     exact hp.one_lt.ne' (Nat.dvd_one.mp hpq)
-  · rw [if_neg hqd] at hpq
+  · rw [ite_eq_right hqd] at hpq
     have hq' : q.Prime := (Nat.mem_primeFactors.mp hq).1
     exact hqd (((Nat.prime_dvd_prime_iff_eq hp hq').mp hpq) ▸ natCast_dvd_int.mp hpd)
 
@@ -306,7 +306,7 @@ private theorem exists_coprime_lift (N : ℕ) [NeZero N] {c₀ d₀ : ℤ}
     rw [hγ_def] at hpγ
     by_cases h : c₀ = 0
     · simp [h]
-    · rwa [if_neg h] at hpγ
+    · rwa [ite_eq_right h] at hpγ
   refine ⟨γ, d₀ + (primeSel γ d₀ : ℤ) * (N : ℤ), ?_, hγc, ?_⟩
   · by_contra hne
     obtain ⟨p, pp, hpdvd⟩ := Nat.exists_prime_and_dvd hne
@@ -525,7 +525,7 @@ private theorem coeff_mul_of_cong {m : ℕ} {G : PowerSeries ℤ} (hG : Cong m G
   have : G = 1 + PowerSeries.X ^ (m + 1) * K := by rw [← hK]; ring
   rw [this, mul_add, mul_one, map_add, ← mul_assoc, mul_comm H, mul_assoc,
     PowerSeries.coeff_X_pow_mul',
-    if_neg (by omega), add_zero]
+    ite_eq_right (by omega), add_zero]
 
 private theorem coeff_prod_pow_eq (a m : ℕ) (s : Finset ℕ) (hs : Finset.range (m + 1) ⊆ s) :
     PowerSeries.coeff m ((∏ n ∈ s, ((1 : PowerSeries ℤ) - PowerSeries.X ^ (n + 1))) ^ a) =
@@ -1492,14 +1492,14 @@ private theorem hasSum_coeff_expand (k : ℕ) (hk : k ≠ 0) (G : PowerSeries �
   have hoff : ∀ n ∉ Set.range i,
       PowerSeries.coeff n (PowerSeries.expand k hk (G.map (Int.castRingHom ℂ))) * q ^ n = 0 := by
     intro n hn
-    rw [PowerSeries.coeff_expand, if_neg, zero_mul]
+    rw [PowerSeries.coeff_expand, ite_eq_right, zero_mul]
     rintro ⟨m, rfl⟩
     exact hn ⟨m, rfl⟩
   refine (hi.hasSum_iff hoff).mp ?_
   convert h using 1
   funext m
   simp only [Function.comp_apply, i]
-  rw [PowerSeries.coeff_expand, if_pos (dvd_mul_right k m), Nat.mul_div_cancel_left m
+  rw [PowerSeries.coeff_expand, ite_eq_left (dvd_mul_right k m), Nat.mul_div_cancel_left m
     (Nat.pos_of_ne_zero hk),
     PowerSeries.coeff_map, pow_mul]
   rfl
@@ -1656,7 +1656,7 @@ private theorem coeff_mul_of_cong {m : ℕ} {G : PowerSeries ℤ} (hG : Cong m G
   have : G = 1 + PowerSeries.X ^ (m + 1) * K := by rw [← hK]; ring
   rw [this, mul_add, mul_one, map_add, ← mul_assoc, mul_comm H, mul_assoc,
     PowerSeries.coeff_X_pow_mul',
-    if_neg (by omega), add_zero]
+    ite_eq_right (by omega), add_zero]
 
 private theorem coeff_prod_eq (m : ℕ) (s : Finset ℕ) (hs : Finset.range (m + 1) ⊆ s) :
     PowerSeries.coeff m (∏ n ∈ s, ((1 : PowerSeries ℤ) - PowerSeries.X ^ (n + 1))) =

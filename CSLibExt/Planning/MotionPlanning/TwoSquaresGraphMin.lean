@@ -812,10 +812,10 @@ private lemma step_mid (a b : Vtx) (ha : a ≠ .s) (hb : b ≠ .t)
     extra a b + (H a - H b) ≤ dist (coord a) (coord b) := by
   have ho : outExtra a b = 0 := by
     simp only [outExtra]
-    exact if_neg (fun h => ha h.1)
+    exact ite_eq_right (fun h => ha h.1)
   have hi : inExtra a b = 0 := by
     simp only [inExtra]
-    exact if_neg (fun h => hb h.1)
+    exact ite_eq_right (fun h => hb h.1)
   have he : extra a b = 0 := by simp only [extra, ho, hi, add_zero]
   have h1 : (coord b) 0 - (coord a) 0 ≤ dist (coord a) (coord b) := by
     have h := le_trans (le_abs_self ((coord b) 0 - (coord a) 0))
@@ -833,10 +833,10 @@ private lemma step_s_row (b : Vtx) (hadj : VisAdj (coord .s) (coord b)) :
   · -- `.s`: trivial loop.
     have ho : outExtra .s .s = 0 := by
       simp only [outExtra]
-      exact if_neg (by decide)
+      exact ite_eq_right (by decide)
     have hi : inExtra .s .s = 0 := by
       simp only [inExtra]
-      exact if_neg (by decide)
+      exact ite_eq_right (by decide)
     have he : extra .s .s = 0 := by simp only [extra, ho, hi, add_zero]
     rw [he, sub_self, dist_self, zero_add]
   · -- `.t`: not adjacent.
@@ -844,10 +844,10 @@ private lemma step_s_row (b : Vtx) (hadj : VisAdj (coord .s) (coord b)) :
   · -- `.A`: edge of length `√5/2`.
     have ho : outExtra .s .A = c := by
       simp only [outExtra]
-      exact if_pos (by decide)
+      exact ite_eq_left (by decide)
     have hi : inExtra .s .A = 0 := by
       simp only [inExtra]
-      exact if_neg (by decide)
+      exact ite_eq_right (by decide)
     have he : extra .s .A = c := by simp only [extra, ho, hi, add_zero]
     rw [he, Hs, HA, dist_sA]
     simp only [c]
@@ -859,10 +859,10 @@ private lemma step_s_row (b : Vtx) (hadj : VisAdj (coord .s) (coord b)) :
   · -- `.D`: edge of length `√5/2`.
     have ho : outExtra .s .D = c := by
       simp only [outExtra]
-      exact if_pos (by decide)
+      exact ite_eq_left (by decide)
     have hi : inExtra .s .D = 0 := by
       simp only [inExtra]
-      exact if_neg (by decide)
+      exact ite_eq_right (by decide)
     have he : extra .s .D = c := by simp only [extra, ho, hi, add_zero]
     rw [he, Hs, HD, dist_sD]
     simp only [c]
@@ -884,10 +884,10 @@ private lemma step_col_t (a : Vtx) (ha : a ≠ .s) (hadj : VisAdj (coord a) (coo
   · -- `.t`: trivial loop.
     have ho : outExtra .t .t = 0 := by
       simp only [outExtra]
-      exact if_neg (by decide)
+      exact ite_eq_right (by decide)
     have hi : inExtra .t .t = 0 := by
       simp only [inExtra]
-      exact if_neg (by decide)
+      exact ite_eq_right (by decide)
     have he : extra .t .t = 0 := by simp only [extra, ho, hi, add_zero]
     rw [he, sub_self, dist_self, zero_add]
   · -- `.A`: not adjacent.
@@ -903,10 +903,10 @@ private lemma step_col_t (a : Vtx) (ha : a ≠ .s) (hadj : VisAdj (coord a) (coo
   · -- `.F`: edge of length `√5/2`.
     have ho : outExtra .F .t = 0 := by
       simp only [outExtra]
-      exact if_neg (by decide)
+      exact ite_eq_right (by decide)
     have hi : inExtra .F .t = c := by
       simp only [inExtra]
-      exact if_pos (by decide)
+      exact ite_eq_left (by decide)
     have he : extra .F .t = c := by simp only [extra, ho, hi, zero_add]
     rw [he, HF, Ht, dist_Ft]
     simp only [c]
@@ -914,10 +914,10 @@ private lemma step_col_t (a : Vtx) (ha : a ≠ .s) (hadj : VisAdj (coord a) (coo
   · -- `.P`: edge of length `√5/2`.
     have ho : outExtra .P .t = 0 := by
       simp only [outExtra]
-      exact if_neg (by decide)
+      exact ite_eq_right (by decide)
     have hi : inExtra .P .t = c := by
       simp only [inExtra]
-      exact if_pos (by decide)
+      exact ite_eq_left (by decide)
     have he : extra .P .t = c := by simp only [extra, ho, hi, zero_add]
     rw [he, HP, Ht, dist_Pt]
     simp only [c]
@@ -951,9 +951,9 @@ private lemma outTotal_nonneg (l : List Vtx) : 0 ≤ outTotal l := by
       have he : 0 ≤ outExtra a b := by
         simp only [outExtra]
         by_cases h : a = .s ∧ a ≠ b
-        · rw [if_pos h]
+        · rw [ite_eq_left h]
           exact c_nonneg
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
       show 0 ≤ outExtra a b + outTotal (b :: rest)
       exact add_nonneg he ih
 
@@ -971,9 +971,9 @@ private lemma inTotal_nonneg (l : List Vtx) : 0 ≤ inTotal l := by
       have he : 0 ≤ inExtra a b := by
         simp only [inExtra]
         by_cases h : b = .t ∧ a ≠ b
-        · rw [if_pos h]
+        · rw [ite_eq_left h]
           exact c_nonneg
-        · rw [if_neg h]
+        · rw [ite_eq_right h]
       show 0 ≤ inExtra a b + inTotal (b :: rest)
       exact add_nonneg he ih
 
@@ -1006,14 +1006,14 @@ private lemma outTotal_ge (l : List Vtx) :
       · subst hb
         have ho : outExtra .s .s = 0 := by
           simp only [outExtra]
-          exact if_neg (by decide)
+          exact ite_eq_right (by decide)
         have hrest : c ≤ outTotal (.s :: rest) := ih rfl hlast
         show c ≤ outExtra .s .s + outTotal (.s :: rest)
         rw [ho, zero_add]
         exact hrest
       · have ho : outExtra .s b = c := by
           simp only [outExtra]
-          exact if_pos ⟨trivial, fun h => hb h.symm⟩
+          exact ite_eq_left ⟨trivial, fun h => hb h.symm⟩
         have hn : 0 ≤ outTotal (b :: rest) := outTotal_nonneg _
         show c ≤ outExtra .s b + outTotal (b :: rest)
         rw [ho]
@@ -1038,7 +1038,7 @@ private lemma inTotal_ge (l : List Vtx) :
       by_cases h : b = .t ∧ a ≠ b
       · have hi : inExtra a b = c := by
           simp only [inExtra]
-          exact if_pos h
+          exact ite_eq_left h
         have hn : 0 ≤ inTotal (b :: rest) := inTotal_nonneg _
         show c ≤ inExtra a b + inTotal (b :: rest)
         rw [hi]
@@ -1049,7 +1049,7 @@ private lemma inTotal_ge (l : List Vtx) :
           exact h ⟨rfl, hxt⟩
         have hi0 : inExtra a b = 0 := by
           simp only [inExtra]
-          exact if_neg h
+          exact ite_eq_right h
         have hrest : c ≤ inTotal (b :: rest) := ih hlast b rfl hb
         show c ≤ inExtra a b + inTotal (b :: rest)
         rw [hi0, zero_add]

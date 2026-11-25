@@ -68,7 +68,7 @@ private noncomputable def antiCorrelatedPMF : PMF (Fin 2 → Bool) :=
         (fun _ => ENNReal.ofReal (1 / 2 : ℝ))]
       rw [Finset.sum_ite_eq' Finset.univ pattern01
         (fun _ => ENNReal.ofReal (1 / 2 : ℝ))]
-      simp only [Finset.mem_univ, if_true]
+      simp only [Finset.mem_univ, ite_true]
       rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
       have h12 : (1 / 2 : ℝ) + 1 / 2 = 1 := by norm_num
       rw [h12, ENNReal.ofReal_one])
@@ -105,9 +105,9 @@ private theorem antiCorrelated_toReal (x : Fin 2 → Bool) :
     simp [antiCorrelatedPMF]
   rw [hx]
   by_cases h : x = pattern10 ∨ x = pattern01
-  · simp only [if_pos h]
+  · simp only [ite_eq_left h]
     exact ENNReal.toReal_ofReal (by norm_num)
-  · simp only [if_neg h]
+  · simp only [ite_eq_right h]
     simp
 
 /-- Mass of pattern `10` under the anti-correlated law. -/
@@ -171,7 +171,7 @@ private theorem test_antiCorrelated_moments :
     rw [Finset.sum_add_distrib]
     rw [Finset.sum_ite_eq' Finset.univ pattern10 (fun _ => (1 / 2 : ℝ))]
     rw [Finset.sum_ite_eq' Finset.univ pattern01 (fun _ => (1 / 2 : ℝ))]
-    simp only [Finset.mem_univ, if_true]
+    simp only [Finset.mem_univ, ite_true]
     norm_num
   have hmean0 : ∫ x, (if x 0 then (1 : ℝ) else 0)
       ∂antiCorrelatedPMF.toMeasure = 1 / 2 := by
@@ -259,7 +259,7 @@ private theorem test_antiCorrelated_moments :
     rw [Finset.sum_add_distrib]
     rw [Finset.sum_ite_eq' Finset.univ pattern10 (fun _ => (-1 / 8 : ℝ))]
     rw [Finset.sum_ite_eq' Finset.univ pattern01 (fun _ => (-1 / 8 : ℝ))]
-    simp only [Finset.mem_univ, if_true]
+    simp only [Finset.mem_univ, ite_true]
     norm_num
   exact ⟨hmass10, hmass01, hreal10, hreal01, hsum, hmean0, hmean1, hprod, hcov⟩
 

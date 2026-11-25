@@ -118,26 +118,26 @@ private theorem cas2_piece₁ (a b : Fin 3) :
         if b = i then E a j * E j i else 0) =
       ∑ j : Fin 3, E a j * E j b := by
   rw [Finset.sum_comm]
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 private theorem cas2_piece₂ (a b : Fin 3) :
     (∑ i : Fin 3, ∑ j : Fin 3,
         if j = a then E i b * E j i else 0) =
       ∑ i : Fin 3, E i b * E a i := by
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 private theorem cas2_piece₃ (a b : Fin 3) :
     (∑ i : Fin 3, ∑ j : Fin 3,
         if b = j then E i j * E a i else 0) =
       ∑ i : Fin 3, E i b * E a i := by
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 private theorem cas2_piece₄ (a b : Fin 3) :
     (∑ i : Fin 3, ∑ j : Fin 3,
         if i = a then E i j * E j b else 0) =
       ∑ j : Fin 3, E a j * E j b := by
   rw [Finset.sum_comm]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 private theorem mul_casimir2 (hE : IsBracketFamily E) (a b : Fin 3) :
     E a b * casimir2 E = casimir2 E * E a b := by
@@ -173,7 +173,7 @@ private theorem mul_casimir1 (hE : IsBracketFamily E) (a b : Fin 3) :
   have hsum := Finset.sum_congr (s₁ := (Finset.univ : Finset (Fin 3))) rfl fun i _ =>
     cas1_summand hE a b i
   simp only [Finset.sum_add_distrib, Finset.sum_ite_eq, Finset.sum_ite_eq',
-    Finset.mem_univ, if_true] at hsum
+    Finset.mem_univ, ite_true] at hsum
   rw [hA, hB]
   exact add_right_cancel hsum
 
@@ -196,9 +196,9 @@ private theorem cas3_piece₁ (a b : Fin 3) :
         (if b = i then E a j * (E j k * E k i) else 0)) =
       ∑ j : Fin 3, ∑ k : Fin 3, E a j * (E j k * E k b) := by
   rw [Finset.sum_eq_single b]
-  · simp only [if_true]
+  · simp only [ite_true]
   · intro i _ hi
-    simp only [hi.symm, if_false, Finset.sum_const_zero]
+    simp only [hi.symm, ite_false, Finset.sum_const_zero]
   · intro h
     exact absurd (Finset.mem_univ b) h
 
@@ -208,7 +208,7 @@ private theorem cas3_piece₂ (a b : Fin 3) :
       ∑ i : Fin 3, ∑ k : Fin 3, E i b * (E a k * E k i) := by
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.sum_comm]
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 private theorem cas3_piece₃ (a b : Fin 3) :
     (∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
@@ -216,28 +216,28 @@ private theorem cas3_piece₃ (a b : Fin 3) :
       ∑ i : Fin 3, ∑ k : Fin 3, E i b * (E a k * E k i) := by
   refine Finset.sum_congr rfl fun i _ => ?_
   rw [Finset.sum_comm]
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 private theorem cas3_piece₄ (a b : Fin 3) :
     (∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
         (if k = a then E i j * (E j b * E k i) else 0)) =
       ∑ i : Fin 3, ∑ j : Fin 3, E i j * (E j b * E a i) := by
-  simp only [Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true]
 
 private theorem cas3_piece₅ (a b : Fin 3) :
     (∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
         (if b = k then E i j * (E j k * E a i) else 0)) =
       ∑ i : Fin 3, ∑ j : Fin 3, E i j * (E j b * E a i) := by
-  simp only [Finset.sum_ite_eq, Finset.mem_univ, if_true]
+  simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 private theorem cas3_piece₆ (a b : Fin 3) :
     (∑ i : Fin 3, ∑ j : Fin 3, ∑ k : Fin 3,
         (if i = a then E i j * (E j k * E k b) else 0)) =
       ∑ j : Fin 3, ∑ k : Fin 3, E a j * (E j k * E k b) := by
   rw [Finset.sum_eq_single a]
-  · simp only [if_true]
+  · simp only [ite_true]
   · intro i _ hi
-    simp only [hi, if_false, Finset.sum_const_zero]
+    simp only [hi, ite_false, Finset.sum_const_zero]
   · intro h
     exact absurd (Finset.mem_univ a) h
 

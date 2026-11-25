@@ -81,7 +81,7 @@ theorem inducedPair_ne_none_none {k : ℕ} {A : MSAlignment k α} {i j : Fin k}
   rw [inducedPair, List.mem_filterMap] at hc
   obtain ⟨col, -, hcol⟩ := hc
   by_cases hcond : ((col i).isSome || (col j).isSome) = true
-  · simp only [hcond, eq_self_iff_true, if_true] at hcol
+  · simp only [hcond, eq_self_iff_true, ite_true] at hcol
     have hceq : (col i, col j) = c := Option.some.inj hcol
     intro hnone
     subst hnone
@@ -89,7 +89,7 @@ theorem inducedPair_ne_none_none {k : ℕ} {A : MSAlignment k α} {i j : Fin k}
     have hj0 : col j = none := congrArg Prod.snd hceq
     rw [hi0, hj0] at hcond
     simp at hcond
-  · simp only [hcond, Bool.false_eq_true, if_false] at hcol
+  · simp only [hcond, Bool.false_eq_true, ite_false] at hcol
     exact absurd hcol.symm (Option.some_ne_none _)
 
 /-- **Letters of the first row of an induced alignment.** For a multiple alignment $A$ of $k$
@@ -190,7 +190,7 @@ theorem alignmentScore_inducedPair {k : ℕ} {A : MSAlignment k α} (i j : Fin k
                 simp [hi, hj]
               have e1 : inducedPair (col :: A') i j = inducedPair A' i j := by
                 simp only [inducedPair, List.filterMap_cons, hcond,
-                  Bool.false_eq_true, if_false]
+                  Bool.false_eq_true, ite_false]
               have e2 : ((col :: A').map
                   (fun c => columnScore σ gap (c i, c j))).sum =
                   (A'.map (fun c => columnScore σ gap (c i, c j))).sum := by
@@ -203,7 +203,7 @@ theorem alignmentScore_inducedPair {k : ℕ} {A : MSAlignment k α} (i j : Fin k
               have e1 : inducedPair (col :: A') i j =
                   (col i, col j) :: inducedPair A' i j := by
                 simp only [inducedPair, List.filterMap_cons, hcond,
-                  eq_self_iff_true, if_true]
+                  eq_self_iff_true, ite_true]
               have escore : alignmentScore σ gap
                     ((col i, col j) :: inducedPair A' i j) =
                   columnScore σ gap (col i, col j) +
@@ -217,7 +217,7 @@ theorem alignmentScore_inducedPair {k : ℕ} {A : MSAlignment k α} (i j : Fin k
           have e1 : inducedPair (col :: A') i j =
               (col i, col j) :: inducedPair A' i j := by
             simp only [inducedPair, List.filterMap_cons, hcond,
-              eq_self_iff_true, if_true]
+              eq_self_iff_true, ite_true]
           have escore : alignmentScore σ gap
                 ((col i, col j) :: inducedPair A' i j) =
               columnScore σ gap (col i, col j) +

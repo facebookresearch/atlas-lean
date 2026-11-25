@@ -116,7 +116,7 @@ private theorem exists_forall_valuation_sub_lt (T : Finset (HeightOneSpectrum (�
   obtain ⟨c, hc⟩ := exists_forall_intValuation_sub_lt T' t δ hδ
   refine ⟨algebraMap (𝓞 K) K c / algebraMap (𝓞 K) K s, fun v hv => ?_, fun v hv => ?_⟩
   · have h1 := hc v (Finset.mem_union_left _ hv)
-    simp only [t, δ, if_pos hv] at h1
+    simp only [t, δ, ite_eq_left hv] at h1
     have h2 : algebraMap (𝓞 K) K c / algebraMap (𝓞 K) K s - b v =
         algebraMap (𝓞 K) K (c - r v) / algebraMap (𝓞 K) K s := by
       rw [map_sub, sub_div, hr v hv, Algebra.smul_def, mul_div_cancel_left₀ _ hsK]
@@ -125,7 +125,7 @@ private theorem exists_forall_valuation_sub_lt (T : Finset (HeightOneSpectrum (�
   · rw [map_div₀, val_algebraMap, val_algebraMap]
     by_cases hv' : v ∈ T'
     · have h1 := hc v hv'
-      simp only [t, δ, if_neg hv, sub_zero, one_mul] at h1
+      simp only [t, δ, ite_eq_right hv, sub_zero, one_mul] at h1
       exact (div_le_one₀ (hvs v)).mpr h1.le
     · have h3 : v.intValuation s = 1 := by
         refine le_antisymm (v.intValuation_le_one _) (not_lt.mp fun h => hv' ?_)

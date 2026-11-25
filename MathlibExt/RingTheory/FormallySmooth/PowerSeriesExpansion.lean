@@ -80,7 +80,8 @@ private theorem X_pow_succ_dvd_X_pow_mul_iff {n : ℕ} {y : R⟦X⟧} :
   constructor
   · intro h
     have h' := (X_pow_dvd_iff.mp h) n (Nat.lt_succ_self n)
-    rwa [coeff_X_pow_mul', if_pos le_rfl, Nat.sub_self, coeff_zero_eq_constantCoeff_apply] at h'
+    rwa [coeff_X_pow_mul', ite_eq_left le_rfl, Nat.sub_self,
+      coeff_zero_eq_constantCoeff_apply] at h'
   · intro h
     obtain ⟨z, rfl⟩ := X_dvd_iff.mpr h
     exact ⟨z, by ring⟩
@@ -227,7 +228,8 @@ private theorem constantCoeff_theta {D : A →ₗ[R] R} (hD : IsPointDerivation 
 private theorem coeff_one_theta {D : A →ₗ[R] R} (hD : IsPointDerivation e D) (a : A) :
     coeff 1 (theta e hD a) = D a := by
   have h1 := coeff_eq_of_mk_eq (show 1 < 2 by norm_num) (mk_two_theta e hD a)
-  rwa [map_add, coeff_C_mul, coeff_one_X, coeff_C, if_neg one_ne_zero, zero_add, mul_one] at h1
+  rwa [map_add, coeff_C_mul, coeff_one_X, coeff_C, ite_eq_right one_ne_zero, zero_add,
+    mul_one] at h1
 
 end Lift
 

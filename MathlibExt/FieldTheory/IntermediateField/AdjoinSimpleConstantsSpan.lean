@@ -385,8 +385,8 @@ private theorem mem_span_RSet_of_adjoin_simple (hBS : B ⊆ S) {c : ℂ} (hc : I
   have hYeval : ∀ r ∈ s, Y.eval (id r) = zf r := by
     intro r hr
     have hr' : r ∈ roots := Multiset.mem_toFinset.mp hr
-    simp only [zf, dif_pos hr', id, hZ2 r hr', Y, Polynomial.eval_finsetSum, Polynomial.eval_mul,
-      Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
+    simp only [zf, dite_eq_left hr', id, hZ2 r hr', Y, Polynomial.eval_finsetSum,
+      Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
   have hY : Y = Lagrange.interpolate s id zf :=
     Lagrange.eq_interpolate_of_eval_eq zf (Set.injOn_id _) hYdeg hYeval
   have hYcoeff : ∀ i : Fin pb.dim, Y.coeff i = (y i : K) := by
@@ -395,7 +395,7 @@ private theorem mem_span_RSet_of_adjoin_simple (hBS : B ⊆ S) {c : ℂ} (hc : I
     rw [Finset.sum_eq_single i]
     · simp
     · intro j _ hji
-      rw [if_neg (fun h ↦ hji (Fin.ext h.symm))]
+      rw [ite_eq_right (fun h ↦ hji (Fin.ext h.symm))]
     · intro h; exact absurd (Finset.mem_univ i) h
 
   have hZ4 : ∀ i : Fin pb.dim, IsIntegral ↥(TRng F B) (y i : K) := by
@@ -405,7 +405,7 @@ private theorem mem_span_RSet_of_adjoin_simple (hBS : B ⊆ S) {c : ℂ} (hc : I
     rw [Polynomial.coeff_C_mul]
     refine IsIntegral.mul ?_ (isIntegral_coeff_lagrangeBasis F hsconst hr _)
     have hr' : r ∈ roots := Multiset.mem_toFinset.mp hr
-    simp only [zf, dif_pos hr']
+    simp only [zf, dite_eq_left hr']
     exact hZ1 r hr'
 
   have hZ5 : ∀ i : Fin pb.dim, (y i : K) ∈ RSet F B S := fun i ↦ ⟨(y i).2, hZ4 i⟩

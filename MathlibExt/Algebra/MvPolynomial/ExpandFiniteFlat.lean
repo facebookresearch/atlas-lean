@@ -173,12 +173,12 @@ private lemma coeff_expand_mul_bvec [DecidableEq (σ → Fin p)]
   rw [show (bvec (R := R) r : MvPolynomial σ R) = monomial (ofRes p r) 1 from rfl,
     coeff_mul_monomial', mul_one]
   by_cases hr : modP hp e = r
-  · rw [if_pos hr]
+  · rw [ite_eq_left hr]
     have hle : ofRes p r ≤ e := ((le_and_dvd_iff hp e r).mpr hr).1
-    rw [if_pos hle]
+    rw [ite_eq_left hle]
     subst hr
     rw [sub_ofRes_modP hp e, coeff_expand_smul _ hp.ne']
-  · rw [if_neg hr]
+  · rw [ite_eq_right hr]
     split_ifs with hle
     · have hnot : ¬ ∀ i, p ∣ (e - ofRes p r) i :=
         fun h => hr ((le_and_dvd_iff hp e r).mp ⟨hle, h⟩)
@@ -204,7 +204,7 @@ private lemma coeff_Ψ (c : (σ → Fin p) → MvPolynomial σ R) (e : σ →₀
   classical
   rw [show Ψ c = ∑ r, expand p (c r) * bvec r from rfl, coeff_sum]
   simp_rw [coeff_expand_mul_bvec hp]
-  rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ _)]
+  rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_univ _)]
 
 private lemma Ψ_eq_zero (c : (σ → Fin p) → MvPolynomial σ R) (h : Ψ c = 0) :
     ∀ r, c r = 0 := by
@@ -230,17 +230,17 @@ private lemma Ψ_surjective (s : MvPolynomial σ R) :
         intro hd
         apply hb
         rw [← decomp hp b, ← decomp hp e, hmod, hd]
-      rw [if_pos hmod, coeff_monomial, if_neg hdiv]
-    · rw [if_neg hmod]
+      rw [ite_eq_left hmod, coeff_monomial, ite_eq_right hdiv]
+    · rw [ite_eq_right hmod]
       simp
   · intro hmem
     show ((if modP hp e = modP hp e then monomial (divP p e) (s.coeff e)
       else 0).coeff (divP p e)) = 0
-    rw [if_pos rfl, coeff_monomial, if_pos rfl]
+    rw [ite_eq_left rfl, coeff_monomial, ite_eq_left rfl]
     exact notMem_support_iff.mp hmem
   · show ((if modP hp e = modP hp e then monomial (divP p e) (s.coeff e)
       else 0).coeff (divP p e)) = s.coeff e
-    rw [if_pos rfl, coeff_monomial, if_pos rfl]
+    rw [ite_eq_left rfl, coeff_monomial, ite_eq_left rfl]
 
 end
 

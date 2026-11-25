@@ -208,8 +208,8 @@ private lemma map_mem_initIdeal (h𝔪 : Ideal.span (Set.range t) = 𝔪) {G : M
       isHomogeneous_map _ hG)]
   by_cases hnm : n = m
   · subst hnm
-    exact ⟨G, hG, by rw [if_pos rfl], hev⟩
-  · exact ⟨0, isHomogeneous_zero _ _ _, by rw [if_neg hnm, map_zero], by simp⟩
+    exact ⟨G, hG, by rw [ite_eq_left rfl], hev⟩
+  · exact ⟨0, isHomogeneous_zero _ _ _, by rw [ite_eq_right hnm, map_zero], by simp⟩
 
 private lemma homogeneousComponent_mem_initIdeal (h𝔪 : Ideal.span (Set.range t) = 𝔪)
     {Q : MvPolynomial σ (A ⧸ 𝔪)} (hQ : Q ∈ initIdeal 𝔪 t I h𝔪) (m : ℕ) :
@@ -218,9 +218,9 @@ private lemma homogeneousComponent_mem_initIdeal (h𝔪 : Ideal.span (Set.range 
   rw [homogeneousComponent_of_mem (homogeneousComponent_mem m Q)]
   by_cases hnm : n = m
   · subst hnm
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
     exact hQ n
-  · exact ⟨0, isHomogeneous_zero _ _ _, by rw [if_neg hnm, map_zero], by simp⟩
+  · exact ⟨0, isHomogeneous_zero _ _ _, by rw [ite_eq_right hnm, map_zero], by simp⟩
 
 private theorem exists_fg_le_and_forall_le_sup_pow (𝔪 : Ideal A) (h𝔪 : 𝔪.FG)
     [IsNoetherianRing (A ⧸ 𝔪)] (I : Ideal A) :
@@ -267,7 +267,7 @@ private theorem exists_fg_le_and_forall_le_sup_pow (𝔪 : Ideal A) (h𝔪 : �
       MvPolynomial.map π F = Fb p ∧ y ∈ I ∧ m' ∈ 𝔪 ^ (p.2 + 1) ∧ eval t F = y + m' := by
     intro p hp
     obtain ⟨F, hFh, hFmap, hFev⟩ := hFb_mem p hp p.2
-    rw [homogeneousComponent_of_mem (hFb_hom p), if_pos rfl] at hFmap
+    rw [homogeneousComponent_of_mem (hFb_hom p), ite_eq_left rfl] at hFmap
     obtain ⟨y, hy, m', hm', h⟩ := Submodule.mem_sup.mp hFev
     exact ⟨F, y, m', hFh, hFmap, hy, hm', h.symm⟩
   choose! F y m' hFh hFmap hyI hm'𝔪 hFev using hgen
@@ -295,7 +295,7 @@ private theorem exists_fg_le_and_forall_le_sup_pow (𝔪 : Ideal A) (h𝔪 : �
         ∑ p ∈ T with p.2 ≤ m, homogeneousComponent (m - p.2) (l p) * Fb p := by
       have h1 : homogeneousComponent m (MvPolynomial.map π G) = MvPolynomial.map π G := by
         rw [homogeneousComponent_of_mem (show MvPolynomial.map π G ∈
-          homogeneousSubmodule s (A ⧸ 𝔪) m from isHomogeneous_map _ hGh), if_pos rfl]
+          homogeneousSubmodule s (A ⧸ 𝔪) m from isHomogeneous_map _ hGh), ite_eq_left rfl]
       rw [← h1, ← hlG, map_sum, Finset.sum_filter]
       refine Finset.sum_congr rfl fun p _ => ?_
       rw [smul_eq_mul, homogeneousComponent_mul_right _ (hFb_hom p)]

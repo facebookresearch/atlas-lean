@@ -1151,7 +1151,7 @@ private theorem residue_X_pow_injective :
   rw [IsLocalRing.residue_eq_zero_iff,
     IsLocalization.AtPrime.to_map_mem_maximal_iff (RX R) (primeX R), Ideal.mem_map_C_iff] at h1
   have h2 := h1 m
-  rw [coeff_sub, coeff_X_pow, coeff_X_pow, if_pos rfl, if_neg hmn, sub_zero] at h2
+  rw [coeff_sub, coeff_X_pow, coeff_X_pow, ite_eq_left rfl, ite_eq_right hmn, sub_zero] at h2
   exact (IsLocalRing.maximalIdeal.isMaximal R).ne_top
     ((Ideal.eq_top_iff_one _).mpr h2)
 

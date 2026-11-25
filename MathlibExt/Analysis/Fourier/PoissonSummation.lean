@@ -140,7 +140,7 @@ private theorem coe_basisFun_equivFun_symm (n : d → ℤ) :
     Pi.basisFun_apply]
   ext j
   simp only [intVec, Finset.sum_apply, Pi.smul_apply, Pi.single_apply,
-    smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]
+    smul_ite, smul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   simp [zsmul_eq_mul]
 
 private theorem mFourierCoeff_eq_piFourierIntegral (f : C((d → ℝ), ℂ))

@@ -363,10 +363,10 @@ private noncomputable def tailCoeff (N n : ℕ) : ℝ →L[ℝ] ℝ :=
 
 private theorem tailCoeff_bound (N n : ℕ) : ‖tailCoeff N n‖ ≤ weight N := by
   by_cases h : n < N
-  · simp only [tailCoeff, if_pos h, norm_zero]
+  · simp only [tailCoeff, ite_eq_left h, norm_zero]
     dsimp [weight]
     positivity
-  · rw [tailCoeff, if_neg h, norm_smul, ContinuousLinearMap.norm_id, mul_one,
+  · rw [tailCoeff, ite_eq_right h, norm_smul, ContinuousLinearMap.norm_id, mul_one,
       Real.norm_eq_abs, abs_of_nonneg (by dsimp [weight]; positivity)]
     exact pow_le_pow_of_le_one (by norm_num) (by norm_num) (by omega)
 

@@ -115,7 +115,7 @@ theorem norm_ancillaBlock_le_one {o : κ} {U : Matrix (κ × ι) (κ × ι) ℂ}
         refine (Fintype.sum_eq_single (o, i) ?_).trans ?_
         · intro q hq
           simp [hq]
-        · simp only [eq_self_iff_true, if_true, one_mul]
+        · simp only [eq_self_iff_true, ite_true, one_mul]
       simp only [hinner]
       have houter : (∑ p : κ × ι, if p = (o, j) then U (o, i) p * 1 else U (o, i) p * 0)
           = U (o, i) (o, j) := by
@@ -218,9 +218,9 @@ private theorem star_projEncoding {P : Matrix ι ι ℂ} (hP : IsStarProjection 
     (if a = b then P i j else (1 - P) i j)
   by_cases hab : a = b
   · subst hab
-    rw [if_pos rfl, if_pos rfl]
+    rw [ite_eq_left rfl, ite_eq_left rfl]
     exact hPentry i j
-  · rw [if_neg (fun h => hab h.symm), if_neg hab]
+  · rw [ite_eq_right (fun h => hab h.symm), ite_eq_right hab]
     exact hQentry i j
 
 theorem projEncoding_mem_unitaryGroup {P : Matrix ι ι ℂ} (hP : IsStarProjection P) :
@@ -247,29 +247,29 @@ theorem projEncoding_mem_unitaryGroup {P : Matrix ι ι ℂ} (hP : IsStarProject
         (if c = (0 : Fin 2) then P k j else (1 - P) k j)) =
         (if ((0 : Fin 2), i) = ((0 : Fin 2), j) then (1 : ℂ) else 0)
     rw [Fin.sum_univ_two]
-    simp only [eq_self_iff_true, if_true, h01, h10, if_false]
+    simp only [eq_self_iff_true, ite_true, h01, h10, ite_false]
     simp only [← Matrix.mul_apply, hPP, hQQ]
     by_cases h : i = j
     · rw [h]
       show P j j + (1 - P) j j = (if ((0 : Fin 2), j) = ((0 : Fin 2), j) then (1 : ℂ) else 0)
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       show P j j + ((if j = j then (1 : ℂ) else 0) - P j j) = 1
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       ring
     · show P i j + (1 - P) i j = (if ((0 : Fin 2), i) = ((0 : Fin 2), j) then (1 : ℂ) else 0)
       have hne : ((0 : Fin 2), i) ≠ ((0 : Fin 2), j) := fun he => h (congrArg Prod.snd he)
-      rw [if_neg hne]
+      rw [ite_eq_right hne]
       show P i j + ((if i = j then (1 : ℂ) else 0) - P i j) = 0
-      rw [if_neg h]
+      rw [ite_eq_right h]
       ring
   · show (∑ c : Fin 2, ∑ k : ι,
         (if (0 : Fin 2) = c then P i k else (1 - P) i k) *
         (if c = (1 : Fin 2) then P k j else (1 - P) k j)) =
         (if ((0 : Fin 2), i) = ((1 : Fin 2), j) then (1 : ℂ) else 0)
     have hne : ((0 : Fin 2), i) ≠ ((1 : Fin 2), j) := fun he => h01 (congrArg Prod.fst he)
-    rw [if_neg hne]
+    rw [ite_eq_right hne]
     rw [Fin.sum_univ_two]
-    simp only [eq_self_iff_true, if_true, h01, h10, if_false]
+    simp only [eq_self_iff_true, ite_true, h01, h10, ite_false]
     simp only [← Matrix.mul_apply, hPQ, hQP]
     show (0 : Matrix ι ι ℂ) i j + (0 : Matrix ι ι ℂ) i j = (0 : ℂ)
     show (0 : ℂ) + (0 : ℂ) = (0 : ℂ)
@@ -279,9 +279,9 @@ theorem projEncoding_mem_unitaryGroup {P : Matrix ι ι ℂ} (hP : IsStarProject
         (if c = (0 : Fin 2) then P k j else (1 - P) k j)) =
         (if ((1 : Fin 2), i) = ((0 : Fin 2), j) then (1 : ℂ) else 0)
     have hne : ((1 : Fin 2), i) ≠ ((0 : Fin 2), j) := fun he => h10 (congrArg Prod.fst he)
-    rw [if_neg hne]
+    rw [ite_eq_right hne]
     rw [Fin.sum_univ_two]
-    simp only [eq_self_iff_true, if_true, h01, h10, if_false]
+    simp only [eq_self_iff_true, ite_true, h01, h10, ite_false]
     simp only [← Matrix.mul_apply, hPQ, hQP]
     show (0 : Matrix ι ι ℂ) i j + (0 : Matrix ι ι ℂ) i j = (0 : ℂ)
     show (0 : ℂ) + (0 : ℂ) = (0 : ℂ)
@@ -291,20 +291,20 @@ theorem projEncoding_mem_unitaryGroup {P : Matrix ι ι ℂ} (hP : IsStarProject
         (if c = (1 : Fin 2) then P k j else (1 - P) k j)) =
         (if ((1 : Fin 2), i) = ((1 : Fin 2), j) then (1 : ℂ) else 0)
     rw [Fin.sum_univ_two]
-    simp only [eq_self_iff_true, if_true, h01, h10, if_false]
+    simp only [eq_self_iff_true, ite_true, h01, h10, ite_false]
     simp only [← Matrix.mul_apply, hPP, hQQ]
     by_cases h : i = j
     · rw [h]
       show (1 - P) j j + P j j = (if ((1 : Fin 2), j) = ((1 : Fin 2), j) then (1 : ℂ) else 0)
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       show ((if j = j then (1 : ℂ) else 0) - P j j) + P j j = 1
-      rw [if_pos rfl]
+      rw [ite_eq_left rfl]
       ring
     · show (1 - P) i j + P i j = (if ((1 : Fin 2), i) = ((1 : Fin 2), j) then (1 : ℂ) else 0)
       have hne : ((1 : Fin 2), i) ≠ ((1 : Fin 2), j) := fun he => h (congrArg Prod.snd he)
-      rw [if_neg hne]
+      rw [ite_eq_right hne]
       show ((if i = j then (1 : ℂ) else 0) - P i j) + P i j = 0
-      rw [if_neg h]
+      rw [ite_eq_right h]
       ring
 
 /-- Scaled projections: `α • P` has the `(α, 1, 0)` encoding `projEncoding P`. -/
@@ -313,7 +313,7 @@ theorem isBlockEncoding_smul_projection {P : Matrix ι ι ℂ} (hP : IsStarProje
   have hblock : ancillaBlock (0 : Fin 2) (projEncoding P) = P := by
     ext i j
     show (if (0 : Fin 2) = 0 then P i j else (1 - P) i j) = P i j
-    rw [if_pos rfl]
+    rw [ite_eq_left rfl]
   refine ⟨projEncoding_mem_unitaryGroup hP, ?_, hα, le_refl 0⟩
   rw [hblock]
   simp
@@ -352,8 +352,8 @@ theorem ancillaBlock_ancillaMul (oκ : κ) (oμ : μ) (U : Matrix (κ × ι) (κ
         ((if k = oκ then (1 : ℂ) else 0) * V (m, i'') (oμ, j))) else 0) := by
     intro m
     by_cases hm : oμ = m
-    · rw [if_pos hm]
-      simp only [hm, eq_self_iff_true, if_true, one_mul]
+    · rw [ite_eq_left hm]
+      simp only [hm, eq_self_iff_true, ite_true, one_mul]
     · simp [hm]
   simp only [hcollapse_m]
   have hcollapse_k : ∀ k : κ, (∑ i'' : ι, U (oκ, i) (k, i'') *
@@ -361,18 +361,18 @@ theorem ancillaBlock_ancillaMul (oκ : κ) (oμ : μ) (U : Matrix (κ × ι) (κ
       (if k = oκ then (∑ i'' : ι, U (oκ, i) (k, i'') * V (oμ, i'') (oμ, j)) else 0) := by
     intro k
     by_cases hk : k = oκ
-    · rw [if_pos hk]
-      simp only [hk, eq_self_iff_true, if_true, one_mul]
+    · rw [ite_eq_left hk]
+      simp only [hk, eq_self_iff_true, ite_true, one_mul]
     · simp [hk]
   refine (Fintype.sum_eq_single oμ ?_).trans ?_
   · intro m hm
-    rw [if_neg (fun h => hm h.symm)]
-  · rw [if_pos rfl]
+    rw [ite_eq_right (fun h => hm h.symm)]
+  · rw [ite_eq_left rfl]
     simp only [hcollapse_k]
     refine (Fintype.sum_eq_single oκ ?_).trans ?_
     · intro k hk
-      rw [if_neg hk]
-    · rw [if_pos rfl]
+      rw [ite_eq_right hk]
+    · rw [ite_eq_left rfl]
 
 theorem ancillaMul_mem_unitaryGroup {U : Matrix (κ × ι) (κ × ι) ℂ}
     {V : Matrix (μ × ι) (μ × ι) ℂ} (hU : U ∈ Matrix.unitaryGroup (κ × ι) ℂ)

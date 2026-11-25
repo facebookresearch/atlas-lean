@@ -615,7 +615,7 @@ theorem overlapAdd_aliases_of_short_fft (Q : ℕ) [NeZero Q] (N L M : ℕ)
       simp [hnot]
     · intro h0
       exact absurd (Finset.mem_range.mpr hbc) h0
-    · rw [if_pos (by omega)]
+    · rw [ite_eq_left (by omega)]
       simp only [zero_mul, Nat.sub_zero]
       unfold blockFrame
       simp only [hn0Q, ↓reduceIte]

@@ -77,7 +77,7 @@ lemma det_heckeDiagMatrix_pos (d : ℕ) : 0 < ((heckeDiagMatrix d).det : ℝ) :=
 /-- The diagonal rescaling matrix has trivial `σ`-factor. -/
 lemma σ_heckeDiagMatrix (d : ℕ) :
     UpperHalfPlane.σ (heckeDiagMatrix d) = .refl ℝ ℂ := by
-  rw [UpperHalfPlane.σ, if_pos (det_heckeDiagMatrix_pos d)]
+  rw [UpperHalfPlane.σ, ite_eq_left (det_heckeDiagMatrix_pos d)]
 
 /-- The determinant of the diagonal rescaling matrix is the rescaling
 factor. -/

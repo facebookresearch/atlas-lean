@@ -28,7 +28,7 @@ public theorem kroneckerSym_mul_of_odd (D : ℤ) (m n : ℕ) (hm : Odd m)
   have hperm : (m * n).primeFactorsList.Perm
       (m.primeFactorsList ++ n.primeFactorsList) :=
     Nat.perm_primeFactorsList_mul hm0 hn0
-  simp only [kroneckerSym, hmn, if_false, hm0, hn0]
+  simp only [kroneckerSym, hmn, ite_false, hm0, hn0]
   have hmap : ((m * n).primeFactorsList.map (kroneckerAtPrime D)).Perm
       ((m.primeFactorsList ++ n.primeFactorsList).map (kroneckerAtPrime D)) :=
     hperm.map (kroneckerAtPrime D)

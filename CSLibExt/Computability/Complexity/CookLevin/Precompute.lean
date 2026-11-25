@@ -679,7 +679,7 @@ theorem cprog_run (k : Polynomial ℕ) (c e d n : ℕ) (v : Bool) (o : List Bool
   refine (emitS (M := cprog k c e d) (self := .p1) rfl _ _ _).bud ?_
   obtain ⟨vh, rh⟩ := horner_run (M := cprog k c e d) (b := s N) (acc := s P) (q := s Q)
     (ad := s AD) (t := s TMP) (coeffs k) (mk := hlab) (exit := .x1)
-    (fun i hi q => by rw [show hlab i q = PL.hr ⟨i, hi⟩ q from dif_pos hi]; rfl) (by decide)
+    (fun i hi q => by rw [show hlab i q = PL.hr ⟨i, hi⟩ q from dite_eq_left hi]; rfl) (by decide)
     (coeffs k).length 0 (by omega)
     (update (F0 n) (s P) (0 + F0 n (s P))) (by simp [F0]) (by simp [F0]) (by simp [F0]) v o
   rw [List.drop_zero] at rh

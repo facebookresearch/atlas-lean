@@ -100,7 +100,7 @@ public theorem divChiSum_prime_pow_two (e : ℕ) : divChiSum (2 ^ e) = 1 := by
     have hmod : (2 ^ (c + 1)) % 2 = 0 := by
       rw [Nat.pow_mod]
       norm_num
-    rw [ZMod.χ₄_nat_eq_if_mod_four, if_pos hmod]
+    rw [ZMod.χ₄_nat_eq_if_mod_four, ite_eq_left hmod]
   · intro h
     simp at h
 
@@ -124,7 +124,7 @@ public theorem divChiSum_prime_pow_split {p e : ℕ} (hp : p.Prime)
       rw [Nat.odd_iff] at hodd
       omega
     have hm4 : (p ^ j) % 4 = 1 := pow_mod_four_eq_one_of h
-    rw [ZMod.χ₄_nat_eq_if_mod_four, if_neg hm2, if_pos hm4]
+    rw [ZMod.χ₄_nat_eq_if_mod_four, ite_eq_right hm2, ite_eq_left hm4]
   rw [Finset.sum_congr rfl hall]
   simp
 
@@ -163,15 +163,15 @@ public theorem divChiSum_prime_pow_inert {q f : ℕ} (hp : q.Prime)
       rw [Nat.pow_mod, Nat.pow_mod, h]
     rw [pow_three_mod_four] at hm4
     by_cases hj : Even j
-    · rw [if_pos hj] at hm4
-      rw [ZMod.χ₄_nat_eq_if_mod_four, if_neg hm2, if_pos hm4, hj.neg_one_pow]
-    · rw [if_neg hj] at hm4
+    · rw [ite_eq_left hj] at hm4
+      rw [ZMod.χ₄_nat_eq_if_mod_four, ite_eq_right hm2, ite_eq_left hm4, hj.neg_one_pow]
+    · rw [ite_eq_right hj] at hm4
       have hodd' : Odd j := by
         rcases Nat.even_or_odd j with h | h
         · exact absurd h hj
         · exact h
-      rw [ZMod.χ₄_nat_eq_if_mod_four, if_neg hm2,
-        if_neg (by omega : (q ^ j) % 4 ≠ 1)]
+      rw [ZMod.χ₄_nat_eq_if_mod_four, ite_eq_right hm2,
+        ite_eq_right (by omega : (q ^ j) % 4 ≠ 1)]
       rw [hodd'.neg_one_pow]
   rw [Finset.sum_congr rfl hall]
   exact sum_neg_one_pow_range f

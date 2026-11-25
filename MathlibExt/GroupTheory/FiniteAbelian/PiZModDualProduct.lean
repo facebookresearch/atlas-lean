@@ -183,11 +183,11 @@ private theorem prod_gcd_prime_pow (hp : ∀ i, (p i).Prime) (r : ℕ) (hr : r.P
   rw [← Finset.prod_pow_eq_pow_sum]
   refine Finset.prod_congr rfl fun i _ => ?_
   by_cases h : p i = r
-  · rw [if_pos h, h]
+  · rw [ite_eq_left h, h]
     rcases le_total k (e i) with hk | hk
     · rw [min_eq_left hk, Nat.gcd_eq_left (pow_dvd_pow r hk)]
     · rw [min_eq_right hk, Nat.gcd_eq_right (pow_dvd_pow r hk)]
-  · rw [if_neg h, pow_zero]
+  · rw [ite_eq_right h, pow_zero]
     exact Nat.Coprime.pow _ _ ((Nat.coprime_primes hr (hp i)).mpr (Ne.symm h))
 
 private theorem S_succ (r k : ℕ) : S p e r (k + 1) = S p e r k + cge p e r (k + 1) := by
@@ -195,11 +195,11 @@ private theorem S_succ (r k : ℕ) : S p e r (k + 1) = S p e r k + cge p e r (k 
   rw [Finset.card_filter, ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases h : p i = r
-  · simp only [h, true_and, if_true]
+  · simp only [h, true_and, ite_true]
     by_cases hk : k + 1 ≤ e i
-    · rw [if_pos hk, min_eq_left hk, min_eq_left (Nat.le_of_succ_le hk)]
+    · rw [ite_eq_left hk, min_eq_left hk, min_eq_left (Nat.le_of_succ_le hk)]
     · have hle : e i ≤ k := Nat.lt_succ_iff.mp (Nat.lt_of_not_le hk)
-      rw [if_neg hk, add_zero, min_eq_right (Nat.le_succ_of_le hle), min_eq_right hle]
+      rw [ite_eq_right hk, add_zero, min_eq_right (Nat.le_succ_of_le hle), min_eq_right hle]
   · simp [h]
 
 private theorem cge_eq (r k : ℕ) : cge p e r k = ceq p e r k + cge p e r (k + 1) := by

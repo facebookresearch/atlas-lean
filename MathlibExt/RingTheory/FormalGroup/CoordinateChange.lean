@@ -141,7 +141,7 @@ private theorem coeff_single_one_subst_powerSeries {τ : Type} [DecidableEq τ] 
     rcases Nat.lt_or_gt_of_ne hd with h | h
     · have h0 : d = 0 := by omega
       subst h0
-      rw [pow_zero, MvPowerSeries.coeff_one, if_neg (Finsupp.single_ne_zero.mpr one_ne_zero),
+      rw [pow_zero, MvPowerSeries.coeff_one, ite_eq_right (Finsupp.single_ne_zero.mpr one_ne_zero),
           smul_zero]
     · rw [(flatTwo_pow A hA d (by omega)).2 i, smul_zero]
 
@@ -186,7 +186,7 @@ private theorem coeff_single_one_subst_fin_two {τ : Type} [DecidableEq τ] (i :
           rcases Nat.eq_zero_or_pos (d 0) with e0 | e0 <;> rcases Nat.eq_zero_or_pos (d 1) with e1
               | e1
           · rw [e0, e1, pow_zero, pow_zero, one_mul, MvPowerSeries.coeff_one,
-              if_neg (Finsupp.single_ne_zero.mpr one_ne_zero)]
+              ite_eq_right (Finsupp.single_ne_zero.mpr one_ne_zero)]
           · exact absurd ⟨e0, by omega⟩ hd10
           · exact absurd ⟨by omega, e1⟩ hd01
           · have : d 0 = 1 := by omega
@@ -412,7 +412,7 @@ private theorem coeff_single_one_substX (i s : Fin 2) (φ : PowerSeries R) :
   · subst h
     simp [Finsupp.single_eq_same]
   · have h1 : (Finsupp.single i 1 : Fin 2 →₀ ℕ) s = 0 := by simp [h]
-    rw [h1, if_neg, if_neg h]
+    rw [h1, ite_eq_right, ite_eq_right h]
     rw [Finsupp.single_zero]
     exact Finsupp.single_ne_zero.mpr one_ne_zero
 

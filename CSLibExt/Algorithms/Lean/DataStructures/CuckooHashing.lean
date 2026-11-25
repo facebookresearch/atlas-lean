@@ -746,7 +746,7 @@ private theorem stored_replace1_elim (table : CuckooHashing K V m h1 h2)
         exact absurd (valid.1 i _ _ hi).symm same
       · exact Or.inr ⟨Or.inl ⟨i, hi⟩, hother⟩
   · by_cases dup : slotHasKey (table.table2.get (h2 key)) key = true
-    · rw [if_pos dup] at hi
+    · rw [ite_eq_left dup] at hi
       by_cases same : h2 key = i
       · subst i
         rw [get_set_self] at hi
@@ -756,7 +756,7 @@ private theorem stored_replace1_elim (table : CuckooHashing K V m h1 h2)
         · subst hother
           exact absurd (valid.2 i _ _ hi).symm same
         · exact Or.inr ⟨Or.inr ⟨i, hi⟩, hother⟩
-    · rw [if_neg dup] at hi
+    · rw [ite_eq_right dup] at hi
       by_cases hother : other = key
       · subst hother
         have hi2 : i = h2 other := valid.2 i _ _ hi
@@ -857,9 +857,9 @@ public theorem valid_insert (table : CuckooHashing K V m h1 h2) (key : K) (value
       exact (Option.some.inj inserted).symm
     subst hUpdated
     by_cases dup : slotHasKey (table.table2.get (h2 key)) key = true
-    · rw [if_pos dup]
+    · rw [ite_eq_left dup]
       exact valid_clear2 _ (h2 key) (valid_update1 table key value valid)
-    · rw [if_neg dup]
+    · rw [ite_eq_right dup]
       exact valid_update1 table key value valid
   · by_cases hasSecond : slotHasKey (table.table2.get (h2 key)) key = true
     · have hUpdated : updated =
@@ -1068,7 +1068,7 @@ public theorem stored_insert_iff_of_ne (table : CuckooHashing K V m h1 h2)
           other otherValue :=
         stored_update1_of_stored_ne table (h1 key) (some (key, value)) stored notAtFirst
       by_cases dup : slotHasKey (table.table2.get (h2 key)) key = true
-      · rw [if_pos dup]
+      · rw [ite_eq_left dup]
         obtain ⟨v₁, hv₁⟩ := slotHasKey_iff.mp dup
         have notAtSecond : table.table2.get (h2 key) ≠ some (other, otherValue) := by
           rw [hv₁]
@@ -1078,7 +1078,7 @@ public theorem stored_insert_iff_of_ne (table : CuckooHashing K V m h1 h2)
           (⟨table.table1.set (h1 key).val (some (key, value)) (h1 key).isLt,
             table.table2⟩ : CuckooHashing K V m h1 h2)
           (h2 key) none step1 notAtSecond
-      · rw [if_neg dup]
+      · rw [ite_eq_right dup]
         exact step1
   · by_cases hasSecond : slotHasKey (table.table2.get (h2 key)) key = true
     · have hUpdated : updated =

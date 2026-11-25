@@ -27,7 +27,7 @@ so the divisibility hypothesis in the coefficient formula matters. -/
 example {d R M : ℕ} [NeZero M] (hdRM : d * R ∣ M) (k : ℤ)
     (f : CuspForm (Gamma0 R) k) {n : ℕ} (hn : ¬ d ∣ n) :
     ModularFormClass.qCoeff (CuspForm.rescaleLin hdRM k f) n = 0 := by
-  rw [CuspForm.qCoeff_rescaleLin, if_neg hn]
+  rw [CuspForm.qCoeff_rescaleLin, ite_eq_right hn]
 
 universe u v
 

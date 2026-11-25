@@ -20,12 +20,12 @@ example : Nat.powerfulPart 1 = 1 := Nat.powerfulPart_one
 -- Pointwise factorization API: exponents at least two are kept.
 example (n p : ℕ) (h : 2 ≤ n.factorization p) :
     (Nat.powerfulPart n).factorization p = n.factorization p := by
-  rw [Nat.powerfulPart_factorization, if_pos h]
+  rw [Nat.powerfulPart_factorization, ite_eq_left h]
 
 -- Pointwise factorization API: exponents below two are erased.
 example (n p : ℕ) (h : n.factorization p < 2) :
     (Nat.powerfulPart n).factorization p = 0 := by
-  rw [Nat.powerfulPart_factorization, if_neg (by omega)]
+  rw [Nat.powerfulPart_factorization, ite_eq_right (by omega)]
 
 -- Divisibility API.
 example (n : ℕ) : Nat.powerfulPart n ∣ n := Nat.powerfulPart_dvd n

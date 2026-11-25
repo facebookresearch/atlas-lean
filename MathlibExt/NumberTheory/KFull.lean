@@ -75,13 +75,13 @@ public theorem powerfulPart_factorization (n p : ℕ) :
       Nat.prime_of_mem_primeFactors (Finset.mem_of_mem_filter q hq)
     by_cases hqp : q = p
     · subst hqp
-      rw [if_pos rfl, Nat.factorization_pow_self hqprime]
-    · rw [if_neg hqp, Nat.factorization_pow, Finsupp.smul_apply,
-        hqprime.factorization, Finsupp.single_apply, if_neg hqp,
+      rw [ite_eq_left rfl, Nat.factorization_pow_self hqprime]
+    · rw [ite_eq_right hqp, Nat.factorization_pow, Finsupp.smul_apply,
+        hqprime.factorization, Finsupp.single_apply, ite_eq_right hqp,
         smul_eq_mul, mul_zero]
   rw [Finset.sum_congr rfl hterm, Finset.sum_ite_eq']
   by_cases hp2 : 2 ≤ n.factorization p
-  · rw [if_pos hp2]
+  · rw [ite_eq_left hp2]
     have hn0 : n ≠ 0 := by
       rintro rfl
       simp at hp2
@@ -96,11 +96,11 @@ public theorem powerfulPart_factorization (n p : ℕ) :
     have hpmem : p ∈ n.primeFactors.filter (fun q => 2 ≤ n.factorization q) := by
       rw [Finset.mem_filter]
       exact ⟨Nat.mem_primeFactors.mpr ⟨hprime, hdvd, hn0⟩, hp2⟩
-    rw [if_pos hpmem]
-  · rw [if_neg hp2]
+    rw [ite_eq_left hpmem]
+  · rw [ite_eq_right hp2]
     have hnotmem : p ∉ n.primeFactors.filter (fun q => 2 ≤ n.factorization q) :=
       fun h => hp2 (Finset.mem_filter.mp h).2
-    rw [if_neg hnotmem]
+    rw [ite_eq_right hnotmem]
 
 /-- **The powerful part of $n$ divides $n$.** For every natural number $n$, the powerful part
 of $n$ divides $n$. -/

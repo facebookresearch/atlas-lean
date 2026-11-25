@@ -148,7 +148,7 @@ theorem qary_johnson_bound (S : Finset (Fin n → α)) (y : Fin n → α) {d e :
         (if c₁ j = c₂ j then (1 : ℤ) else 0) := by
     intro j c₁ c₂
     by_cases h : c₁ j = c₂ j
-    · rw [if_pos h, ← h]
+    · rw [ite_eq_left h, ← h]
       have hterm : ∀ a : α,
           ((if c₁ j = a then (1 : ℤ) else 0) *
             (if c₁ j = a then (1 : ℤ) else 0)) =
@@ -156,15 +156,15 @@ theorem qary_johnson_bound (S : Finset (Fin n → α)) (y : Fin n → α) {d e :
         intro a
         by_cases ha : c₁ j = a <;> simp [ha]
       simp_rw [hterm]
-      rw [Finset.sum_ite_eq, if_pos (Finset.mem_univ (c₁ j))]
-    · rw [if_neg h]
+      rw [Finset.sum_ite_eq, ite_eq_left (Finset.mem_univ (c₁ j))]
+    · rw [ite_eq_right h]
       have h0 : ∀ a ∈ (Finset.univ : Finset α),
           ((if c₁ j = a then (1 : ℤ) else 0) *
             (if c₂ j = a then (1 : ℤ) else 0)) = 0 := by
         intro a _
         by_cases ha : c₁ j = a
-        · rw [if_pos ha, if_neg (fun h2 => h (ha.trans h2.symm)), mul_zero]
-        · rw [if_neg ha, zero_mul]
+        · rw [ite_eq_left ha, ite_eq_right (fun h2 => h (ha.trans h2.symm)), mul_zero]
+        · rw [ite_eq_right ha, zero_mul]
       calc (∑ a ∈ (Finset.univ : Finset α),
               ((if c₁ j = a then (1 : ℤ) else 0) *
                 (if c₂ j = a then (1 : ℤ) else 0)))
@@ -433,9 +433,9 @@ theorem qary_johnson_bound (S : Finset (Fin n → α)) (y : Fin n → α) {d e :
     intro c₁ hc₁ c₂ hc₂
     by_cases h : c₁ = c₂
     · subst h
-      rw [if_pos rfl, hammingDist_self, Nat.cast_zero]
+      rw [ite_eq_left rfl, hammingDist_self, Nat.cast_zero]
       linarith
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have hle : (d : ℤ) ≤ (hammingDist c₁ c₂ : ℤ) := by
         exact_mod_cast hdist c₁ hc₁ c₂ hc₂ h
       linarith
@@ -457,7 +457,7 @@ theorem qary_johnson_bound (S : Finset (Fin n → α)) (y : Fin n → α) {d e :
       have hs1 : (∑ c₂ ∈ S, ((n : ℤ) - d)) = (S.card : ℤ) * ((n : ℤ) - d) := by
         rw [Finset.sum_const, nsmul_eq_mul]
       have hs2 : (∑ c₂ ∈ S, (if c₁ = c₂ then (d : ℤ) else 0)) = (d : ℤ) := by
-        rw [Finset.sum_ite_eq, if_pos hc₁]
+        rw [Finset.sum_ite_eq, ite_eq_left hc₁]
       rw [Finset.sum_add_distrib]
       simp only [hs1, hs2]
     have houter : (∑ c₁ ∈ S, ∑ c₂ ∈ S,

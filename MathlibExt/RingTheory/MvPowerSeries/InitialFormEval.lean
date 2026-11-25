@@ -87,10 +87,10 @@ private theorem initialForm_X_zero_mul {W : Type u} [CommRing W] (d : ℕ)
   rw [Finset.sum_range_succ', Finset.mul_sum]
   have h0 : MvPowerSeries.coeff (Finsupp.single (0 : Fin 2) 0 +
       Finsupp.single (1 : Fin 2) (d + 1 - 0)) (MvPowerSeries.X 0 * b) = 0 := by
-    rw [coeff_X_mul', if_neg (by simp)]
+    rw [coeff_X_mul', ite_eq_right (by simp)]
   rw [h0, zero_mul, zero_mul, add_zero]
   refine Finset.sum_congr rfl fun i _ => ?_
-  rw [coeff_X_mul', if_pos (by simp)]
+  rw [coeff_X_mul', ite_eq_left (by simp)]
   have hsub : Finsupp.single (0 : Fin 2) (i + 1) +
         Finsupp.single (1 : Fin 2) (d + 1 - (i + 1)) - Finsupp.single 0 1 =
       Finsupp.single (0 : Fin 2) i + Finsupp.single (1 : Fin 2) (d - i) := by
@@ -105,11 +105,11 @@ private theorem initialForm_X_one_mul {W : Type u} [CommRing W] (d : ℕ)
   rw [Finset.sum_range_succ, Finset.mul_sum]
   have hlast : MvPowerSeries.coeff (Finsupp.single (0 : Fin 2) (d + 1) +
       Finsupp.single (1 : Fin 2) (d + 1 - (d + 1))) (MvPowerSeries.X 1 * b) = 0 := by
-    rw [coeff_X_mul', if_neg (by simp)]
+    rw [coeff_X_mul', ite_eq_right (by simp)]
   rw [hlast, zero_mul, zero_mul, add_zero]
   refine Finset.sum_congr rfl fun i hi => ?_
   have hid : i ≤ d := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
-  rw [coeff_X_mul', if_pos (by simp; omega)]
+  rw [coeff_X_mul', ite_eq_left (by simp; omega)]
   have hsub : Finsupp.single (0 : Fin 2) i +
         Finsupp.single (1 : Fin 2) (d + 1 - i) - Finsupp.single 1 1 =
       Finsupp.single (0 : Fin 2) i + Finsupp.single (1 : Fin 2) (d - i) := by
@@ -129,7 +129,7 @@ private theorem mem_span_X_of_coeff_zero {W : Type u} [CommRing W]
     ext m
     rw [map_add, coeff_X_mul', coeff_X_mul']
     by_cases h0 : 1 ≤ m 0
-    · rw [if_pos h0]
+    · rw [ite_eq_left h0]
       have heq : MvPowerSeries.coeff (m - Finsupp.single 0 1) f₀ =
           MvPowerSeries.coeff m f := by
         show MvPowerSeries.coeff (m - Finsupp.single 0 1 + Finsupp.single 0 1) f =
@@ -137,26 +137,26 @@ private theorem mem_span_X_of_coeff_zero {W : Type u} [CommRing W]
         rw [tsub_add_cancel_of_le (Finsupp.single_le_iff.mpr h0)]
       rw [heq]
       by_cases h1 : 1 ≤ m 1
-      · rw [if_pos h1]
+      · rw [ite_eq_left h1]
         have hz : MvPowerSeries.coeff (m - Finsupp.single 1 1) f₁ = 0 := by
           show (if ((m - Finsupp.single (1 : Fin 2) 1 : Fin 2 →₀ ℕ) 0) = 0
             then MvPowerSeries.coeff (m - Finsupp.single 1 1 + Finsupp.single 1 1) f
             else 0) = 0
-          rw [if_neg]; simp; omega
+          rw [ite_eq_right]; simp; omega
         rw [hz, add_zero]
-      · rw [if_neg h1, add_zero]
-    · rw [if_neg h0, zero_add]
+      · rw [ite_eq_right h1, add_zero]
+    · rw [ite_eq_right h0, zero_add]
       push Not at h0
       have hm0 : m 0 = 0 := by omega
       by_cases h1 : 1 ≤ m 1
-      · rw [if_pos h1]
+      · rw [ite_eq_left h1]
         show MvPowerSeries.coeff m f =
           if ((m - Finsupp.single (1 : Fin 2) 1 : Fin 2 →₀ ℕ) 0) = 0
             then MvPowerSeries.coeff (m - Finsupp.single 1 1 + Finsupp.single 1 1) f
             else 0
-        rw [if_pos (by simp [hm0]),
+        rw [ite_eq_left (by simp [hm0]),
           tsub_add_cancel_of_le (Finsupp.single_le_iff.mpr h1)]
-      · rw [if_neg h1]
+      · rw [ite_eq_right h1]
         have hm : m = 0 := by ext s; fin_cases s <;> simp <;> omega
         rw [hm]; exact hf
   rw [hdec]
