@@ -48,6 +48,16 @@ example : genDelannoyUpper 2 2 1 + genDelannoyUpper 2 3 1 = 44 := by
   rw [genDelannoyUpper_add_succ_left 2 2 1 (by decide)]
   decide
 
+-- At the least positive upper index, the difference gives the index-zero family.
+example (m n : ℕ) : (genDelannoyUpper 1 (m + 1) n : ℤ) - genDelannoyUpper 1 m n =
+    genDelannoyUpper 0 (m + 1) n :=
+  genDelannoyUpper_succ_left_sub 1 m n le_rfl
+
+-- The adjacent entries 14 and 30 have difference 16, the index-one entry at (3, 1).
+example : (genDelannoyUpper 2 3 1 : ℤ) - genDelannoyUpper 2 2 1 = 16 := by
+  rw [genDelannoyUpper_succ_left_sub 2 2 1 (by decide)]
+  decide
+
 -- At the first positive row and column zero, the difference is always two.
 example (k : ℕ) : (genDelannoyUpper k 1 1 : ℤ) - genDelannoyUpper k 1 0 = 2 := by
   rw [genDelannoyUpper_succ_right_sub k 1 0 le_rfl]
