@@ -21,8 +21,8 @@ Problem 1) and Section 1 ("The decision version of the gene-duplication problem 
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
-public import MathlibExt.Biology.Phylogenetics.UnrootedTreeCount
+public import CSLibExt.Computability.Complexity.Defs
+public import MathlibExt.Combinatorics.Enumerative.UnrootedBinaryTreeCount
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

@@ -25,31 +25,52 @@ divisors have lower density at least `1 - ε`.
 
 namespace MathlibExt.NumberTheory.ErdosProblem851Wanted
 
-/-- At most `r` distinct prime divisors for `n : ℕ` (source EP-851 [Erdős Problems]). -/
+/-- **Natural numbers with at most $r$ distinct prime factors.** For natural numbers $n$ and $r$,
+$n$ has at most $r$ distinct prime factors when $n = 0$ or at most $r$ distinct primes divide $n$;
+the number $0$ is counted as having no prime factors.
+
+Source: EP-851 [Erdős Problems]. -/
 def HasAtMostRPrimeFactors (n r : ℕ) : Prop :=
   n.primeFactors.card ≤ r
 
-/-- Representability as `2 ^ k + n` with `k ≥ 0` and `n` having at most `r`
-prime divisors (source EP-851 [Erdős Problems]). -/
+/-- **Sums of a power of two and a number with few prime factors.** For a natural number $r$, a
+natural number $m$ is of this form when $m = 2^k + n$ for some natural numbers $k$ and $n$ such
+that $n = 0$ or at most $r$ distinct primes divide $n$.
+
+Source: EP-851 [Erdős Problems]. -/
 def Representable (r m : ℕ) : Prop :=
   ∃ k n : ℕ, m = 2 ^ k + n ∧ HasAtMostRPrimeFactors n r
 
-/-- Representability as `2 ^ k + p` with `p` prime (Romanoff's theorem in
-EP-851 [Erdős Problems]). -/
+/-- **Sums of a power of two and a prime.** A natural number $m$ is of this form when
+$m = 2^k + p$ for some natural number $k$ and some prime $p$.
+
+Source: Romanoff's theorem in EP-851 [Erdős Problems]. -/
 def PrimeRepresentable (m : ℕ) : Prop :=
   ∃ k p : ℕ, m = 2 ^ k + p ∧ p.Prime
 
-/-- Erdős Problem #851: Romanoff's positive-density theorem together with the
-resolved question that, for every `ε > 0`, some bound `r` makes the integers
-`2 ^ k + n` with at most `r` distinct prime divisors have lower density at
-least `1 - ε` (source EP-851 [Erdős Problems]). -/
+/-- **Erdős Problem 851.** The proposition asserts two things. First, the set of natural numbers
+of the form $2^k + p$, with $k$ a natural number and $p$ prime, has positive lower density
+(Romanoff's theorem). Second, for every real number $\varepsilon > 0$ there is a natural number
+$r$ such that the set of natural numbers of the form $2^k + n$, with $k$ and $n$ natural numbers
+and with $n = 0$ or at most $r$ distinct primes dividing $n$, has lower density at least
+$1 - \varepsilon$.
+
+Source: EP-851 [Erdős Problems]. -/
 noncomputable def Statement : Prop :=
   0 < Set.lowerDensity {m | PrimeRepresentable m} ∧
     ∀ (ε : ℝ), ε > 0 → ∃ r : ℕ, 1 - ε ≤ Set.lowerDensity {m | Representable r m}
 
 /--
-Resolved true: Romanoff proved the positive-density clause in 1934; Price and GPT-5.2 Pro proved
-the near-one density statement affirmatively in 2026. Source: Lean proof of Erdős Problem 851,
+**Erdős Problem 851 is true.** The set of natural numbers of the form $2^k + p$, with $k$ a natural
+number and $p$ prime, has positive lower density. Moreover, for every real number
+$\varepsilon > 0$ there is a natural number $r$ such that the set of natural numbers of the form
+$2^k + n$, with $k$ and $n$ natural numbers and with $n = 0$ or at most $r$ distinct primes dividing
+$n$, has lower density at least $1 - \varepsilon$.
+
+Romanoff proved the positive-density clause in 1934; Price and GPT-5.2 Pro proved the near-one
+density statement affirmatively in 2026.
+
+Source: Lean proof of Erdős Problem 851,
 pinned revision 8822f7ddef30fadbd92e1c6ab4ed897af356af5e,
 https://github.com/plby/lean-proofs/blob/8822f7ddef30fadbd92e1c6ab4ed897af356af5e/src/latest/ErdosProblems/Erdos851.lean#L37;
 Yuchen Ding and Wenguang Zhai, A generalization of the Romanoff theorem, arXiv:2401.15892v3

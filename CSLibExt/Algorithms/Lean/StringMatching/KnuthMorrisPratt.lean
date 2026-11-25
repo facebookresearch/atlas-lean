@@ -6,13 +6,20 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
+/-
+Portions of this file are adapted from:
+
+`Batteries/Data/Array/Match.lean` (Batteries, commit `66e469188fe07963e5cf666c7d4433f45b8131c5`):
+Copyright (c) 2023 F. G. Dorais. All rights reserved.
+Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
+Authors: F. G. Dorais
+-/
+
 module
 
-public import Batteries.Data.Array.Match
 public import Batteries.Data.List.Basic
 public import CSLibExt.Algorithms.Lean.StringMatching.Basic
 public import Cslib.Algorithms.Lean.TimeM
-import all Batteries.Data.Array.Match
 
 import Batteries.Data.List.Lemmas
 
@@ -27,10 +34,14 @@ array access, arithmetic, and control flow are free.
 
 `kmpSearch` is opaque to downstream modules; its timed construction and scan recursors are private.
 The kernel-checked semantic bridge uses transparent `List.dropInfix?`. No equality is claimed with
-the pinned opaque Batteries matcher, whose empty-pattern behavior also differs from this API.
+the Batteries matcher, whose empty-pattern behavior also differs from this API.
 The prefix-table representation and operations adapt `Array.PrefixTable`,
 `Array.PrefixTable.step`, `Array.PrefixTable.extend`, and `Array.mkPrefixTable` from Batteries
-revision `f2effa3d803fda822b1f97b806c47cf2adfbcbc2`.
+revision `f2effa3d803fda822b1f97b806c47cf2adfbcbc2`. Batteries v4.36.0 moved
+`Batteries.Data.Array.Match` to the separate package `fgdorais/batteries-kmp`, so these definitions,
+with the `Inhabited` instance and `Array.PrefixTable.size`, are copied below from Batteries revision
+`66e469188fe07963e5cf666c7d4433f45b8131c5` (Copyright (c) 2023 F. G. Dorais, Apache License,
+Version 2.0). Changes: explicit binders for `autoImplicit false`.
 
 ## References
 
@@ -38,6 +49,73 @@ revision `f2effa3d803fda822b1f97b806c47cf2adfbcbc2`.
   *SIAM Journal on Computing* 6(2), 323–350 (1977), DOI 10.1137/0206024.
 -/
 set_option autoImplicit false
+
+public section
+
+namespace Array
+
+universe u
+
+/-- Prefix table for the Knuth-Morris-Pratt matching algorithm
+
+  This is an array of the form `t = [(x₀,n₀), (x₁,n₁), (x₂, n₂), ...]` where for each `i`, `nᵢ` is
+  the length of the longest proper prefix of `xs = [x₀,x₁,...,xᵢ]` which is also a suffix of `xs`.
+-/
+structure PrefixTable (α : Type u) extends Array (α × Nat) where
+  /-- Validity condition to help with termination proofs -/
+  valid {i : Nat} : (h : i < toArray.size) → toArray[i].2 ≤ i
+
+variable {α : Type u}
+
+instance : Inhabited (PrefixTable α) where
+  default := ⟨#[], nofun⟩
+
+/-- Returns the size of the prefix table -/
+abbrev PrefixTable.size (t : PrefixTable α) := t.toArray.size
+
+/-- Transition function for the KMP matcher
+
+  Assuming we have an input `xs` with a suffix that matches the pattern prefix `t.pattern[:len]`
+  where `len : Fin (t.size+1)`. Then `xs.push x` has a suffix that matches the pattern prefix
+  `t.pattern[:t.step x len]`. If `len` is as large as possible then `t.step x len` will also be
+  as large as possible.
+-/
+def PrefixTable.step [BEq α] (t : PrefixTable α) (x : α) : Fin (t.size+1) → Fin (t.size+1)
+  | ⟨k, hk⟩ =>
+    let cont := fun () =>
+      match k with
+      | 0 => ⟨0, Nat.zero_lt_succ _⟩
+      | k + 1 =>
+        have h2 : k < t.size := Nat.lt_of_succ_lt_succ hk
+        let k' := t.toArray[k].2
+        have hk' : k' < k + 1 := Nat.lt_succ_of_le (t.valid h2)
+        step t x ⟨k', Nat.lt_trans hk' hk⟩
+    if hsz : k < t.size then
+      if x == t.toArray[k].1 then
+        ⟨k+1, Nat.succ_lt_succ hsz⟩
+      else cont ()
+    else cont ()
+termination_by k => k.val
+
+/-- Extend a prefix table by one element
+
+  If `t` is the prefix table for `xs` then `t.extend x` is the prefix table for `xs.push x`.
+-/
+def PrefixTable.extend [BEq α] (t : PrefixTable α) (x : α) : PrefixTable α where
+  toArray := t.toArray.push (x, t.step x ⟨t.size, Nat.lt_succ_self _⟩)
+  valid _ := by
+    rw [Array.getElem_push]
+    split
+    · exact t.valid ..
+    · next h => exact Nat.le_trans (Nat.lt_succ_iff.1 <| Fin.isLt ..) (Nat.not_lt.1 h)
+
+/-- Make prefix table from a pattern array -/
+def mkPrefixTable [BEq α] (xs : Array α) : PrefixTable α := xs.foldl (·.extend) default
+
+end Array
+
+end
+
 namespace Cslib.Algorithms.Lean.TimeM
 universe u
 variable {α : Type u}
@@ -87,8 +165,24 @@ private def timedScan [BEq α] (table : Array.PrefixTable α) (offset : Nat)
       else
         timedScan table (offset + 1) next xs
 
-/-- Returns the first zero-based occurrence of `pattern` in `text`, charging only symbol
-comparisons. The empty pattern occurs at offset zero with cost zero. -/
+/-- **Knuth–Morris–Pratt search.** For lists $p$ (the pattern) and $t$ (the text) over a type
+with a boolean equality, KMP search for $p$ in $t$ returns either a zero-based offset or no
+offset, together with a cost: the number of symbol comparisons it makes. If $p$ is empty, it
+returns the offset $0$ at cost $0$. Otherwise it first builds the prefix table of $p$, a list of
+entries each pairing a symbol with a failure value. The transition of a table from a state $s$
+on a symbol $x$ is defined as follows. If $s$ is less than the number of entries and $x$ equals the
+symbol of entry $s$ (counting from $0$), the result is $s + 1$. Otherwise the result is $0$ when
+$s = 0$, and when $s > 0$ it is the transition from the failure value of entry $s - 1$ on $x$.
+Starting from the empty table, each symbol $x$ of $p$ in turn is appended as a new entry, with
+failure value the transition of the current table on $x$ from the state equal to its number of
+entries. The search then reads $t$ from the left, starting in state $0$ and moving to the
+transition of the table on each symbol read. The first time the state equals $|p|$, after $j$
+symbols have been read, it returns the offset $j - |p|$. If this never happens, it returns no
+offset. The cost counts every equality test between two symbols, both while the table is built
+and while $t$ is scanned. List operations, array access and arithmetic cost nothing.
+
+When the boolean equality is lawful, the returned offset is the least offset at which $p$ occurs
+in $t$, and no offset is returned exactly when $p$ does not occur in $t$. -/
 public def kmpSearch [BEq α] (pattern text : List α) : TimeM Nat (Option Nat) :=
   match pattern with
   | [] => pure (some 0)
@@ -105,7 +199,7 @@ private theorem ret_timedStep [BEq α] (table : Array.PrefixTable α) (x : α)
     (state : Fin (table.size + 1)) :
     (timedStep table x state).ret = table.step x state := by
   induction hstate : state.val using Nat.strong_induction_on generalizing state with
-  | h k ih =>
+  | ind k ih =>
       obtain ⟨state, hstateSize⟩ := state
       simp only at hstate
       subst k
@@ -175,7 +269,8 @@ namespace Array
 
 universe u
 
-/-- The KMP prefix table has one entry for every pattern symbol. -/
+/-- **Size of the KMP prefix table.** For every pattern $p$, the KMP prefix table of $p$ has
+exactly as many entries as $p$ has symbols, one for each symbol of $p$. -/
 @[simp]
 theorem mkPrefixTable_size {α : Type u} [BEq α] (pattern : List α) :
     (mkPrefixTable pattern.toArray).size = pattern.length := by
@@ -186,7 +281,10 @@ theorem mkPrefixTable_size {α : Type u} [BEq α] (pattern : List α) :
   rw [hdefault, Nat.zero_add] at h
   exact h
 
-/-- Reading the first component of each prefix-table entry recovers the pattern. -/
+/-- **The KMP prefix table stores the pattern.** Each entry of the Knuth–Morris–Pratt prefix
+table is a pair consisting of a symbol and a failure length. For every type with a Boolean
+equality test and every list $p$ over it, the list of first components of the entries of the
+prefix table built from $p$, read in order, equals $p$. -/
 theorem mkPrefixTable_symbols {α : Type u} [BEq α] (pattern : List α) :
     (mkPrefixTable pattern.toArray).toArray.toList.map Prod.fst = pattern := by
   rw [mkPrefixTable, List.foldl_toArray]
@@ -251,7 +349,7 @@ private lemma step_spec_aux [BEq α] [LawfulBEq α]
       ∀ k, k ≤ pattern.length →
         (pattern.take k).IsSuffix (consumed ++ [x]) → k ≤ next.val := by
   induction hstate : state.val using Nat.strong_induction_on generalizing state consumed with
-  | h stateValue ih =>
+  | ind stateValue ih =>
       obtain ⟨state, hstateSize⟩ := state
       simp only at hstate
       subst stateValue
@@ -681,7 +779,11 @@ private theorem kmpSearch_none_sound [BEq α] [LawfulBEq α]
       exact (kmpSearch_cons_correct head tail text).2 hresult
         (offset + (head :: tail).length) hsuffix.1 hsuffix.2
 
-/-- KMP returns an offset exactly when it is the least offset matching the pattern. -/
+/-- **KMP returns the first match.** Let $p$ and $t$ be lists over a type with a lawful boolean
+equality, and write $|t|$ for the length of $t$. For every natural number $i$, KMP search for
+$p$ in $t$ returns the offset $i$ if and only if $p$ matches $t$ at $i$ and at no $j < i$, where
+$p$ matches $t$ at $i$ when $i \le |t|$ and $p$ is a prefix of the list obtained from $t$ by
+dropping its first $i$ elements. -/
 theorem kmpSearch_eq_some_iff [BEq α] [LawfulBEq α]
     (pattern text : List α) (offset : Nat) :
     (kmpSearch pattern text).ret = some offset ↔
@@ -703,7 +805,11 @@ theorem kmpSearch_eq_some_iff [BEq α] [LawfulBEq α]
         subst found
         rfl
 
-/-- KMP returns no offset exactly when no bounded offset matches the pattern. -/
+/-- **KMP finds no match exactly when no offset matches.** For lists $p$ and $t$ over a type
+with a lawful boolean equality, write $|t|$ for the length of $t$. KMP search for $p$ in $t$
+returns no offset if and only if there is no natural number $i$ at which $p$ matches $t$, where
+$p$ matches $t$ at $i$ when $i \le |t|$ and $p$ is a prefix of the list obtained from $t$ by
+dropping its first $i$ elements. -/
 theorem kmpSearch_eq_none_iff [BEq α] [LawfulBEq α]
     (pattern text : List α) :
     (kmpSearch pattern text).ret = none ↔
@@ -716,7 +822,10 @@ theorem kmpSearch_eq_none_iff [BEq α] [LawfulBEq α]
     | some offset =>
         exact False.elim (hnone offset (kmpSearch_some_sound pattern text offset hresult).1)
 
-/-- KMP returns no offset exactly when the pattern is not an infix of the text. -/
+/-- **KMP finds no match exactly when the pattern does not occur.** For lists $p$ (the pattern)
+and $t$ (the text) over a type with a lawful boolean equality, KMP search for $p$ in $t$ returns
+no offset if and only if $p$ is not a contiguous sublist of $t$, that is, there are no lists
+$u$, $v$ with $t = u \, p \, v$ (concatenation). -/
 theorem kmpSearch_eq_none_iff_not_isInfix [BEq α] [LawfulBEq α]
     (pattern text : List α) :
     (kmpSearch pattern text).ret = none ↔ ¬pattern.IsInfix text := by
@@ -778,7 +887,11 @@ private theorem dropInfix?_map_length_eq_some_iff [BEq α] [LawfulBEq α]
     exact ⟨(text.take offset, suffix), hdrop, by
       simp [List.length_take, Nat.min_eq_left hmatch.1]⟩
 
-/-- For a nonempty pattern, KMP agrees with the start-offset projection of `List.dropInfix?`. -/
+/-- **KMP search agrees with the first-infix split.** Let $p$ and $t$ be lists over a type
+with a lawful boolean equality, with $p$ nonempty. Let the first-infix split of $t$ by $p$ be
+the pair $(u, v)$ with $t = u \, p \, v$ (concatenation) and $u$ as short as possible, or
+nothing if $p$ does not occur in $t$. Then the value returned by KMP search for $p$ in $t$ is
+the length of $u$ if the split exists, and no offset otherwise. -/
 theorem kmpSearch_eq_dropInfix?_map_length [BEq α] [LawfulBEq α]
     (pattern text : List α) (hpattern : pattern ≠ []) :
     (kmpSearch pattern text).ret =
@@ -794,7 +907,7 @@ private theorem timedStep_time_add_ret_le [BEq α]
     (timedStep table x state).time +
         (timedStep table x state).ret.val ≤ state.val + 2 := by
   induction hstate : state.val using Nat.strong_induction_on generalizing state with
-  | h stateValue ih =>
+  | ind stateValue ih =>
       obtain ⟨state, hstateSize⟩ := state
       simp only at hstate
       subst stateValue
@@ -929,7 +1042,10 @@ private theorem timedBuild_time_le [BEq α] (pattern : List α) :
   have hdefault : failurePotential (default : Array.PrefixTable α) = 0 := rfl
   omega
 
-/-- KMP uses at most twice the combined pattern and text lengths in symbol comparisons. -/
+/-- **KMP search makes linearly many comparisons.** For any pattern $p$ and text $t$, lists over
+a type with a boolean equality, KMP search for $p$ in $t$ makes at most $2|p| + 2|t|$ symbol
+comparisons in total, those made while building the prefix table included, where $|p|$ and
+$|t|$ are the lengths of $p$ and $t$. -/
 theorem kmpSearch_time_le [BEq α] (pattern text : List α) :
     (kmpSearch pattern text).time ≤ 2 * pattern.length + 2 * text.length := by
   cases pattern with
@@ -953,7 +1069,12 @@ namespace Array
 
 universe u
 
-/-- Each failure entry is the longest proper prefix that is also a suffix. -/
+/-- **The KMP failure function.** Let $p$ be a pattern of length $n$ over a type with a lawful
+boolean equality, and write $p_{<k}$ for its prefix of length $k$. Each entry of the KMP prefix
+table of $p$ pairs a symbol of $p$ with a failure value. For every $q < n$, the failure value
+$f$ of entry $q$ (counting from $0$) is the length of the longest proper prefix of $p_{<q+1}$
+that is also a suffix of $p_{<q+1}$: $f \le q$, $p_{<f}$ is a suffix of $p_{<q+1}$, and every
+$k \le q$ such that $p_{<k}$ is a suffix of $p_{<q+1}$ satisfies $k \le f$. -/
 theorem mkPrefixTable_failure_spec {α : Type u} [BEq α] [LawfulBEq α]
     (pattern : List α) (q : Nat) (hq : q < pattern.length) :
     let table := mkPrefixTable pattern.toArray
@@ -966,7 +1087,14 @@ theorem mkPrefixTable_failure_spec {α : Type u} [BEq α] [LawfulBEq α]
       ∀ k, k ≤ q → (pattern.take k).IsSuffix (pattern.take (q + 1)) → k ≤ failure :=
   Cslib.Algorithms.Lean.TimeM.prefixTable_failure_spec_internal pattern q hq
 
-/-- The KMP transition returns the longest pattern prefix that is a suffix after one symbol. -/
+/-- **Correctness of the KMP transition.** Let $p$ be a pattern of length $n$ over a type with
+a lawful boolean equality, and write $p_{<k}$ for its prefix of length $k$. Let $c$ be a list,
+$x$ a symbol, and $cx$ the list $c$ followed by $x$. Suppose the state $s \le n$ is the length
+of the longest prefix of $p$ that is a suffix of $c$: $p_{<s}$ is a suffix of $c$, and every
+$k \le n$ such that $p_{<k}$ is a suffix of $c$ satisfies $k \le s$. Then the state $s'$ that
+the transition of the KMP prefix table of $p$ produces from $s$ on reading $x$ is the length of
+the longest prefix of $p$ that is a suffix of $cx$: $s' \le n$, $p_{<s'}$ is a suffix of $cx$,
+and every $k \le n$ such that $p_{<k}$ is a suffix of $cx$ satisfies $k \le s'$. -/
 theorem mkPrefixTable_step_spec {α : Type u} [BEq α] [LawfulBEq α]
     (pattern consumed : List α) (x : α)
     (state : Fin ((mkPrefixTable pattern.toArray).size + 1))
@@ -990,7 +1118,8 @@ universe u
 
 variable {α : Type u}
 
-/-- The empty pattern occurs at offset zero without any symbol comparisons. -/
+/-- **KMP search on the empty pattern.** For every text $t$, KMP search for the empty pattern in
+$t$ returns offset $0$ at cost $0$, that is, without any symbol comparisons. -/
 @[simp]
 theorem kmpSearch_nil_pattern [BEq α] (text : List α) :
     kmpSearch [] text = pure (some 0) := by

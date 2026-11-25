@@ -13,7 +13,7 @@ $$\operatorname{app}(\operatorname{graph}(f), x) = f(x) \quad \text{for all } x 
 ## Background
 
 - [Scott's graph theorem, part (ii)](subset-graph-app.md): the other half of the retraction.
-- Soundness of a β-contraction in the graph model: this theorem applied to λ-terms.
+- [Soundness of a β-contraction in the graph model](../../../ComputerScience/programming-language-semantics/models-of-the-untyped-lambda-calculus/denote-eq-of-beta.md): this theorem applied to λ-terms.
 
 ## Sources
 

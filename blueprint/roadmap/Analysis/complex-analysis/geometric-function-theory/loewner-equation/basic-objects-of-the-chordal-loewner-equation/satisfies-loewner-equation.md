@@ -1,0 +1,3 @@
+# Loewner equation without domain restriction
+
+Let $W : \mathbb{R} \to \mathbb{R}$ be a driving function. A family $(g_t)_{t \in \mathbb{R}}$ of maps $\mathbb{C} \to \mathbb{C}$ satisfies the Loewner equation without domain restriction if $g_0(z) = z$ for every $z \in \mathbb{C}$ and, for every $z \in \mathbb{C}$ and every $t \ge 0$, $t \mapsto g_t(z)$ is differentiable at $t$ with $\partial_t g_t(z) = 2/(g_t(z) - W(t))$, the value of the [Loewner vector field](loewner-field.md), with the convention $2/0 = 0$ when $g_t(z) = W(t)$. Compare the [maximal chordal Loewner evolution](satisfies-maximal-loewner-equation.md), where $z$ ranges over the unswallowed domain $D_t$.

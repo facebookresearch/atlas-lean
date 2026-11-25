@@ -1,0 +1,17 @@
+# Throwback sequences
+
+- [Kozar's conjecture on the throwback sequence](kozar-throwback-recurrence.md)
+- [Throwback operation](throwback.md)
+- [Throwback sequence](throwback-sequence.md)
+- [Throwback of the integers from 3 on](throwback-examples.md)
+- [Partial placement sequences](partial-placement.md)
+- [First partial placement sequence of the integers from 3 on](partial-placement-zero-examples.md)
+- [Each term eventually settles or leads infinitely often](throwback-final-position-or-frequently-l.md)
+- [Every term recurs in the throwback sequence](throwback-sequence-infinite-eq.md)
+- [Recursive bound on the time to become leader](throwback-leader-time-le.md)
+- [Limiting frequencies in throwback sequences](throwback-sequence-limiting-frequency.md)
+- [Every term has a nonzero limiting frequency](throwback-sequence-limiting-frequency-ne.md)
+- [Partial placement sequences are periodic](partial-placement-periodic.md)
+- [Throwback sequences of increasing sequences are uniformly recurrent](throwback-sequence-uniformly-recurrent.md)
+- [Minimal complete blocks of partial placements match configurations](partial-placement-minimal-complete-block.md)
+- [Perfect mixing for consecutive integers](throwback-consecutive-perfect-mixing.md)

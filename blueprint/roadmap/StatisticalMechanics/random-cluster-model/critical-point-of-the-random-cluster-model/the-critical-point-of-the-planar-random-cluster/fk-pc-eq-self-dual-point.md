@@ -1,0 +1,3 @@
+# $p_c(q)$ equals the self-dual point if percolation starts there, $q \ge 1$
+
+Let $q \ge 1$ and let $p_{sd}(q) = \sqrt{q}/(1 + \sqrt{q})$ be the [self-dual point](../the-self-dual-point-of-the-planar-random-cluster/self-dual-point.md). If $\theta^1(r, q) = 0$ for every $r \in (0, 1)$ with $r < p_{sd}(q)$, and $\theta^1(r, q) > 0$ for every $r \in (0, 1)$ with $r > p_{sd}(q)$, then $p_c(q) = p_{sd}(q)$. Here $p_c(q)$ is the [critical point](../the-critical-point-of-the-random-cluster-model/fk-pc.md) $\sup\{p \in (0, 1) : \theta^1(p, q) = 0\}$ of $\mathbb{Z}^2$ and $\theta^1$ is the [wired percolation probability](../the-critical-point-of-the-random-cluster-model/fk-theta.md) on $\mathbb{Z}^2$.

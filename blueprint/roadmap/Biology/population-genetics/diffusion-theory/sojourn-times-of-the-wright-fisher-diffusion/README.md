@@ -1,0 +1,20 @@
+# Sojourn times of the Wright–Fisher diffusion
+
+- [Mean absorption time of the Wright–Fisher diffusion with selection](selection-mean-absorption-time.md)
+- [The mean absorption time under selection solves L_σ T = −1](generator-selection-mean-absorption-time.md)
+- [Mean absorption time under selection vanishes at frequency zero](selection-mean-absorption-time-left.md)
+- [Mean absorption time under selection vanishes at frequency one](selection-mean-absorption-time-right.md)
+- [Mean absorption time under selection is continuous up to the boundary](continuous-on-selection-mean-absorption.md)
+- [Relabeling symmetry of the sojourn density under selection](selection-green-neg-one-sub.md)
+- [Relabeling symmetry of the mean absorption time under selection](selection-mean-absorption-time-neg-one-s.md)
+- [Without selection the mean absorption time is the Kimura–Ohta time](selection-mean-absorption-time-zero.md)
+- [Weak-selection limit of the mean absorption time](tendsto-selection-mean-absorption-time-z.md)
+- [Neutral Wright–Fisher Green's function](neutral-green.md)
+- [Neutral Green's function as a two-solution Green kernel](neutral-green-eq-green-kernel.md)
+- [Green's representation for the neutral Wright–Fisher diffusion](generator-integral-neutral-green.md)
+- [Sojourn integral vanishes for an absent allele](integral-neutral-green-left.md)
+- [Sojourn integral vanishes for a fixed allele](integral-neutral-green-right.md)
+- [Mean absorption time as a sojourn integral](integral-neutral-green.md)
+
+- [Occupation times and mean absorption time of the Wright–Fisher diffusion with selection](occupation-time-formula-and-mean-absorption-time.md)
+- [Feynman–Kac formula with killing for the Wright–Fisher diffusion](feynman-kac-formula-with-killing.md)

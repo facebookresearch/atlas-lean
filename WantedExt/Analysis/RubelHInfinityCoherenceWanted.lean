@@ -36,19 +36,30 @@ values. Analyticity is witnessed by an ambient function differentiable on
 the ball and agreeing on the disc.
 -/
 
-/-- The open unit disc as a type. -/
+/-- **The open unit disc.** The open unit disc
+$\mathbb{D} = \{z \in \mathbb{C} : |z| < 1\}$, the open ball of radius $1$ about $0$ in
+$\mathbb{C}$, taken as a space in its own right whose points are the points of the disc. -/
 abbrev Disc : Type := ↥(Metric.ball (0 : ℂ) 1)
 
-/-- H∞ membership for disc functions ([AMR-022-5024], Problem 5.24):
-agrees on the disc with an ambient function differentiable there, and
-bounded on the disc. -/
+/-- **Membership in $H^\infty$ of the unit disc.** A complex-valued function $f$ on the open unit
+disc $\mathbb{D}$ belongs to $H^\infty$ when there is a function $F : \mathbb{C} \to \mathbb{C}$
+that is complex differentiable on $\mathbb{D}$ and satisfies $f(z) = F(z)$ for every
+$z \in \mathbb{D}$, and there is a real number $C \ge 0$ with $|f(z)| \le C$ for every
+$z \in \mathbb{D}$.
+
+Source: [AMR-022-5024], Research Problems in Function Theory, Problem 5.24. -/
 def IsHInf (f : Disc → ℂ) : Prop :=
   (∃ F : ℂ → ℂ, DifferentiableOn ℂ F (Metric.ball (0 : ℂ) 1) ∧
     ∀ z : Disc, f z = F z.val) ∧
     ∃ C : ℝ, 0 ≤ C ∧ ∀ z : Disc, ‖f z‖ ≤ C
 
-/-- The ring H∞ of bounded analytic functions on the unit disc, as a subring
-of `Disc → ℂ` ([AMR-022-5024], Problem 5.24). -/
+/-- **The ring $H^\infty$ as a subring of functions on the disc.** $H^\infty$ is the subring of
+the ring of all complex-valued functions on the open unit disc $\mathbb{D}$, under pointwise
+addition and multiplication, consisting of the functions that belong to $H^\infty$: those that
+agree on $\mathbb{D}$ with a function $\mathbb{C} \to \mathbb{C}$ complex differentiable on
+$\mathbb{D}$ and are bounded on $\mathbb{D}$.
+
+Source: [AMR-022-5024], Research Problems in Function Theory, Problem 5.24. -/
 def HInfinitySubring : Subring (Disc → ℂ) where
   carrier := {f | IsHInf f}
   zero_mem' := by
@@ -95,7 +106,11 @@ def HInfinitySubring : Subring (Disc → ℂ) where
       calc ‖(-f) z‖ = ‖f z‖ := by rw [Pi.neg_apply, norm_neg]
         _ ≤ C := hb z
 
-/-- The carrier type of H∞ ([AMR-022-5024], Problem 5.24). -/
+/-- **Elements of $H^\infty$.** The space whose points are the members of the subring $H^\infty$
+of complex-valued functions on the open unit disc $\mathbb{D}$, that is, the bounded functions
+on $\mathbb{D}$ that agree on $\mathbb{D}$ with a function complex differentiable there.
+
+Source: [AMR-022-5024], Research Problems in Function Theory, Problem 5.24. -/
 def HInfinity : Type := ↥HInfinitySubring
 
 /-- Commutative ring structure on H∞ inherited from its subring construction
@@ -103,16 +118,28 @@ def HInfinity : Type := ↥HInfinitySubring
 instance : CommRing HInfinity :=
   inferInstanceAs (CommRing ↥HInfinitySubring)
 
-/-- Rubel problem 5.24 ([AMR-022-5024], Research Problems in Function Theory):
-is the intersection of two finitely generated ideals in H∞ finitely
-generated? -/
+/-- **Rubel's problem on intersections of finitely generated ideals in $H^\infty$.** The
+statement that for any two finitely generated ideals $I$ and $J$ of the commutative ring
+$H^\infty$ of bounded holomorphic functions on the open unit disc, the intersection $I \cap J$ is
+finitely generated.
+
+Rubel asked whether this statement is true.
+
+Source: [AMR-022-5024], Research Problems in Function Theory, Problem 5.24 (L. A. Rubel). -/
 def RubelProblem524 : Prop :=
   ∀ I J : Ideal HInfinity, I.FG → J.FG → (I ⊓ J).FG
 
 /--
-Resolved true: McVoy and Rubel (J. Funct. Anal. 21 (1976) 76-87) proved that H∞ of the unit disc
-is a coherent ring: the intersection of two finitely generated ideals is finitely generated.
-Restated in Mortini, arXiv:1606.05568, and Hayman-Lingham Update 5.24. Source: R. Mortini,
+**McVoy–Rubel theorem on finitely generated ideals of $H^\infty$.** For any two finitely
+generated ideals $I$ and $J$ of the commutative ring $H^\infty$ of bounded holomorphic functions
+on the open unit disc, the intersection $I \cap J$ is finitely generated. This answers Rubel's
+Problem 5.24 positively.
+
+Resolved by McVoy and Rubel (J. Funct. Anal. 21 (1976) 76-87), who proved that $H^\infty$ of the
+unit disc is a coherent ring. Restated in Mortini, arXiv:1606.05568, and Hayman-Lingham
+Update 5.24.
+
+Source: R. Mortini,
 Noncoherent uniform algebras in C^n (2016), arXiv:1606.05568, https://arxiv.org/abs/1606.05568.
 Moved from `OpenConjectures/Analysis/RubelHInfinityCoherence`.
 -/

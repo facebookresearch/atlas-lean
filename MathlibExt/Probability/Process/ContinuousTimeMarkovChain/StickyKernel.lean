@@ -57,6 +57,10 @@ All algebraic identities below hold for every real `c` and `π`; probabilistic m
   `Cov(f X, g Y) = c Cov_π(f, g)`.
 * `covariance_indicator_stickyKernel_two`: on two states with `π = (α, 1 - α)` and
   `c = (1 - r)^n`, the ancestry-indicator covariance is `α (1 - α) (1 - r)^n`.
+* `twoStateRate_eq_equalInputRate`, `ctmcTransition_twoStateRate`: the two-state generator with
+  rate `λ₀` out of state `0` and `λ₁` out of state `1` is the equal-input generator with total
+  rate `Λ = λ₀ + λ₁` and `π = (λ₁ / Λ, λ₀ / Λ)`, so its transition function is the sticky
+  kernel with persistence `e^{-Λ x}`.
 
 ## References
 
@@ -281,6 +285,36 @@ theorem covariance_indicator_stickyKernel_two (α r : ℝ) (n : ℕ) :
   rw [covariance_stickyKernel]
   simp [π, I, Fin.sum_univ_two]
   ring
+
+/-- **Two-state generators are equal-input generators.** The generator of the two-state chain
+that leaves state `0` at rate `λ₀` and state `1` at rate `λ₁` is the equal-input generator with
+total rate `Λ = λ₀ + λ₁` and `π = (λ₁ / Λ, λ₀ / Λ)`, provided `Λ ≠ 0`. The identity is
+algebraic: it holds for all real rates with `Λ ≠ 0`, and the matrix is a rate matrix when
+`λ₀, λ₁ ≥ 0`. With nonnegative rates and `Λ = 0`, both rates vanish and the generator is
+`0`; `π` is then undefined and this statement does not apply. -/
+theorem twoStateRate_eq_equalInputRate {l₀ l₁ : ℝ} (hΛ : l₀ + l₁ ≠ 0) :
+    !![-l₀, l₀; l₁, -l₁] =
+      equalInputRate ![l₁ / (l₀ + l₁), l₀ / (l₀ + l₁)] (l₀ + l₁) := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [equalInputRate, equalInput, Matrix.sub_apply] <;>
+    field_simp <;> ring
+
+/-- **Transition function of the two-state chain.** For the two-state generator with rates
+`λ₀` (out of state `0`) and `λ₁` (out of state `1`), total rate `Λ = λ₀ + λ₁ ≠ 0` and
+`π = (λ₁ / Λ, λ₀ / Λ)`, the transition function at `x` is the sticky kernel with persistence
+`e^{-Λ x}`: `P x i j = e^{-Λ x} [i = j] + (1 - e^{-Λ x}) π j`. The identity holds for all real
+`x`; it is a transition probability for `λ₀, λ₁ ≥ 0` and `x ≥ 0`. The case `Λ = 0` is separate
+and not covered here: with nonnegative rates both rates then vanish, the generator is `0` and
+the transition function is `exp (x • 0) = 1`, and `π` is not defined by the quotient. -/
+theorem ctmcTransition_twoStateRate {l₀ l₁ : ℝ} (hΛ : l₀ + l₁ ≠ 0) (x : ℝ) :
+    ctmcTransition !![-l₀, l₀; l₁, -l₁] x =
+      stickyKernel ![l₁ / (l₀ + l₁), l₀ / (l₀ + l₁)] (Real.exp (-((l₀ + l₁) * x))) := by
+  have hπ : ∑ i, ![l₁ / (l₀ + l₁), l₀ / (l₀ + l₁)] i = 1 := by
+    simp [Fin.sum_univ_two]
+    field_simp
+    ring
+  rw [twoStateRate_eq_equalInputRate hΛ, ctmcTransition_equalInputRate hπ]
 
 end DecidableEq
 

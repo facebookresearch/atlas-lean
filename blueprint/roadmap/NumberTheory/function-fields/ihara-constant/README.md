@@ -1,0 +1,15 @@
+# Ihara constant
+
+- [Normalized Ihara ratio](ihara-ratio.md)
+- [Abstract Ihara constant of a sequence](ihara-constant-of.md)
+- [Eventual ratio bounds bound the abstract Ihara constant](ihara-constant-of-le-of-eventually-ratio.md)
+- [Lower bound for the Ihara constant from the normalized ratios](le-ihara-constant-of-of-frequently-ratio.md)
+- [Linear upper bound on a normalized ratio](ihara-ratio-le-of-le-mul.md)
+- [Lower bound for one normalized Ihara ratio](le-ihara-ratio-of-mul-le.md)
+- [Eventual linear upper bound on the abstract Ihara constant](ihara-constant-of-le-of-eventually-le.md)
+- [Eventual affine upper bound on the abstract Ihara constant](ihara-constant-of-le-of-eventually-le-ad.md)
+- [Lower bound for the Ihara constant from a linear bound](le-ihara-constant-of-of-frequently-le.md)
+- [Monotonicity of the normalized ratio](ihara-ratio-mono.md)
+- [Monotonicity of the abstract Ihara constant](ihara-constant-of-mono-of-eventually-le.md)
+- [The abstract Ihara constant ignores finitely many values](ihara-constant-of-congr.md)
+- [Agreement from an index onward preserves the abstract Ihara constant](ihara-constant-of-eq-of-eventually-eq.md)

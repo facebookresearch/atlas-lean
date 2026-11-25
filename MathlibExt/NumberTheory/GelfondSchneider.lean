@@ -2167,10 +2167,14 @@ private noncomputable abbrev gs_K (a b c : ℂ) : IntermediateField ℚ ℂ :=
   IntermediateField.adjoin ℚ ({a, b, c} : Set ℂ)
 
 /--
-The every-value complex form of Gelfond–Schneider. If `a` and `b` are algebraic, `a ≠ 1`,
-`b` is not rational, and `z` is any logarithm of `a`, then `exp (b * z)` is transcendental.
-The hypothesis `exp z = a` already implies `a ≠ 0`. Taking
-`z = log a + n * (2 * π * I)` recovers every integer-indexed logarithm branch.
+**Gelfond–Schneider theorem for every value of a complex power.** Let $a, b \in \mathbb{C}$
+be algebraic over $\mathbb{Q}$ with $a \neq 1$ and $b \notin \mathbb{Q}$, and let $z \in \mathbb{C}$
+satisfy $e^z = a$. Then $e^{bz}$ is transcendental over $\mathbb{Q}$.
+
+The hypothesis $e^z = a$ already implies $a \neq 0$. Taking $z = \log a + 2 \pi i n$, where
+$\log a$ is the principal logarithm and $n$ is an integer, recovers every branch of $a^b$.
+
+Proves `Wanted` entry `gelfondSchneider_complex_exp`.
 
 Source: A. O. Gelfond, *Sur le septième problème de Hilbert* (1934), and T. Schneider,
 *Transzendenzuntersuchungen periodischer Funktionen I. Transzendenz von Potenzen*, J. Reine
@@ -2178,8 +2182,6 @@ Angew. Math. 172 (1935), 65–69, DOI 10.1515/crll.1935.172.65. Explicit arbitra
 principal-branch applications occur in arXiv:2311.11127v1, arXiv:2607.23662v1, and
 arXiv:2608.17545v1. The Lean formalization in arXiv:2603.24823v1 states only the principal
 `Complex.cpow` value; this declaration records the arbitrary-logarithm form.
-
-Proves `Wanted` entry `gelfondSchneider_complex_exp`.
 -/
 theorem gelfondSchneider_complex_exp :
     ∀ {a b z : ℂ}, IsAlgebraic ℚ a → IsAlgebraic ℚ b → a ≠ 1 →
@@ -2444,12 +2446,14 @@ theorem gelfondSchneider_complex_exp :
   exact gs_arith_final hH hd1 hmdef hK hL hM hsMr hXr hU hLo
 
 /--
-`Real.rpow` specialization of Gelfond–Schneider: if `α β : ℝ` satisfy `0 < α`, `α ≠ 1`,
-`IsAlgebraic ℚ α`, `IsAlgebraic ℚ β` and `Irrational β`, then `Real.rpow α β` is transcendental
-over `ℚ`. Source: A. O. Gelfond, Sur le septième problème de Hilbert, Dokl. Akad. Nauk SSSR 2
-(1934) 1–6 and T. Schneider 1935 independent; textbook in Baker, Transcendental Number Theory
+**Gelfond–Schneider theorem for real powers.** Let $\alpha$ and $\beta$ be real numbers that
+are algebraic over $\mathbb{Q}$, with $\alpha > 0$, $\alpha \neq 1$ and $\beta$ irrational. Then
+the real power $\alpha^\beta$ is transcendental over $\mathbb{Q}$.
 
 Proves `Wanted` entry `gelfondSchneider_real_rpow`.
+
+Source: A. O. Gelfond, Sur le septième problème de Hilbert, Dokl. Akad. Nauk SSSR 2
+(1934) 1–6 and T. Schneider 1935 independent; textbook in Baker, Transcendental Number Theory
 -/
 theorem gelfondSchneider_real_rpow :
     ∀ (α β : ℝ), 0 < α → α ≠ 1 → IsAlgebraic ℚ α → IsAlgebraic ℚ β →

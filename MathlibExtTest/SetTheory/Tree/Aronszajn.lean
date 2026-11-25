@@ -12,7 +12,6 @@ Author: Nam Trang, Steven Warner
 module
 
 public import MathlibExt.SetTheory.Tree.Aronszajn
-public import Mathlib.SetTheory.Cardinal.Aleph
 
 @[expose] public section
 

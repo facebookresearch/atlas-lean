@@ -71,8 +71,12 @@ variable [IsLocalHom (algebraMap A B)] [IsLocalHom (algebraMap A C)]
 
 namespace DVRResidue
 
-/-- For a finite etale local DVR extension, every residue-field algebra homomorphism into a
-maximal-adically complete local DVR lifts uniquely. -/
+/-- **Algebra maps from an étale DVR extension into a complete one match residue-field maps.**
+Let $A$, $B$, $C$ be discrete valuation rings, with $B$ and $C$ finite $A$-algebras whose structure
+maps are local homomorphisms, $B$ étale over $A$, and $C$ complete and separated for its
+maximal-ideal-adic topology. Write $\kappa(R)$ for the residue field of a local ring $R$. Then
+sending an $A$-algebra homomorphism $B \to C$ to the $\kappa(A)$-algebra homomorphism
+$\kappa(B) \to \kappa(C)$ it induces is a bijection. -/
 theorem residueFieldMapAlgHom_bijective_of_isAdicComplete
     [Algebra.Etale A B]
     [IsAdicComplete (IsLocalRing.maximalIdeal C) C] :
@@ -82,8 +86,13 @@ theorem residueFieldMapAlgHom_bijective_of_isAdicComplete
     HenselianLocalRing.of_isAdicComplete_maximalIdeal C
   exact residueFieldMapAlgHom_bijective
 
-/-- An equivalence of residue fields between finite etale maximal-adically complete local DVR
-extensions lifts to an algebra equivalence, compatibly in both directions. -/
+/-- **Lifting residue-field isomorphisms between complete étale DVR extensions.** Let $A$, $B$, $C$
+be discrete valuation rings, with $B$ and $C$ finite $A$-algebras whose structure maps are local
+homomorphisms, both étale over $A$, and both complete and separated for their maximal-ideal-adic
+topologies. Write $\kappa(R)$ for the residue field of a local ring $R$. Then every
+$\kappa(A)$-algebra isomorphism $e \colon \kappa(B) \to \kappa(C)$ lifts to an $A$-algebra
+isomorphism $e' \colon B \to C$: the map that $e'$ induces on residue fields is $e$, and the map
+that $e'^{-1}$ induces is $e^{-1}$. -/
 theorem exists_algEquiv_lift_residueField_of_isAdicComplete
     [Algebra.Etale A B] [Algebra.Etale A C]
     [IsAdicComplete (IsLocalRing.maximalIdeal B) B]

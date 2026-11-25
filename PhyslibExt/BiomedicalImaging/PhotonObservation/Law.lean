@@ -163,4 +163,12 @@ lemma photon_not_identify_of_kernel {ι κ : Type*} [Fintype ι] [Fintype κ]
   exact hne (hInj hx hxv hlaw.symm)
 
 
+/-- Equal design measurements give equal transmitted rates. -/
+lemma transmittedRate_eq_of_mulVec_eq {ι κ : Type*} [Fintype κ]
+    (I0 : ι → ℝ≥0) (A : Matrix ι κ ℝ) (x y : κ → ℝ)
+    (h : A *ᵥ x = A *ᵥ y) (j : ι) :
+    transmittedRate I0 A x j = transmittedRate I0 A y j := by
+  unfold transmittedRate
+  rw [h]
+
 end PhyslibExt.BiomedicalImaging.PhotonObservation

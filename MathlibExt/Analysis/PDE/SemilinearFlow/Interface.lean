@@ -49,7 +49,7 @@ for nonlinearities defined on fractional power spaces `X^α`; it is not needed f
 Mathlib (v4.35.0) has no C₀, analytic, or sectorial semigroups and no Laplacian on a bounded
 domain. Atlas only has the bounded-operator variation-of-constants formula
 (`MathlibExt.Analysis.ODE.Duhamel`) and the Fourier-mode linear analysis in
-`MathlibExt.Biology.Dynamics.TuringPatterns`. A bounded generator is the finite-dimensional/ODE
+`Domains.Biology.Dynamics.TuringPatterns`. A bounded generator is the finite-dimensional/ODE
 case (`isC0Semigroup_exp`). It does not cover the Neumann Laplacian, which is unbounded, so
 the interface below asks only for strong continuity.
 

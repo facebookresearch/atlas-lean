@@ -53,9 +53,11 @@ open Set Filter Topology
 
 variable {𝕜 E : Type*} [RCLike 𝕜] [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 
-/-- **Weakly convergent sequences are norm-bounded.** If `f (u n) → f x`
-for every continuous linear functional `f`, then the norms `‖u n‖` are
-uniformly bounded. -/
+/-- **Weakly convergent sequences are norm-bounded.** Let $E$ be a normed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $(u_n)_{n \in \mathbb{N}}$ be a sequence in $E$
+and let $x \in E$. If $f(u_n) \to f(x)$ as $n \to \infty$ for every continuous linear
+functional $f \colon E \to \mathbb{K}$, then the norms are bounded above: there is a real
+number $C$ with $\|u_n\| \le C$ for all $n$. -/
 theorem bddAbove_norm_range_of_forall_tendsto {u : ℕ → E} {x : E}
     (h : ∀ f : StrongDual 𝕜 E, Tendsto (fun n => f (u n)) atTop (𝓝 (f x))) :
     BddAbove (Set.range fun n => ‖u n‖) := by
@@ -82,8 +84,11 @@ theorem bddAbove_norm_range_of_forall_tendsto {u : ℕ → E} {x : E}
   rw [← hnorm]
   exact hC n
 
-/-- **Weak lower semicontinuity of the norm.** If `u n` converges weakly
-to `x`, then `‖x‖ ≤ liminf ‖u n‖`. -/
+/-- **Weak lower semicontinuity of the norm.** Let $E$ be a normed space over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $(u_n)_{n \in \mathbb{N}}$ be a sequence in $E$
+and let $x \in E$. If $f(u_n) \to f(x)$ as $n \to \infty$ for every continuous linear
+functional $f \colon E \to \mathbb{K}$, that is, $u_n$ converges weakly to $x$, then
+$\|x\| \le \liminf_{n \to \infty} \|u_n\|$. -/
 theorem norm_le_liminf_norm_of_forall_tendsto {u : ℕ → E} {x : E}
     (h : ∀ f : StrongDual 𝕜 E, Tendsto (fun n => f (u n)) atTop (𝓝 (f x))) :
     ‖x‖ ≤ liminf (fun n => ‖u n‖) atTop := by
@@ -101,9 +106,11 @@ theorem norm_le_liminf_norm_of_forall_tendsto {u : ℕ → E} {x : E}
     _ ≤ 1 * ‖u n‖ := by gcongr
     _ = ‖u n‖ := one_mul _
 
-/-- **Bounded operators preserve weak convergence.** If `u n` converges
-weakly to `x`, then `T (u n)` converges weakly to `T x` for every bounded
-linear operator `T`. -/
+/-- **Bounded operators preserve weak convergence.** Let $E$ and $F$ be normed spaces over
+$\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T \colon E \to F$ be a continuous linear map,
+let $(u_n)_{n \in \mathbb{N}}$ be a sequence in $E$ and let $x \in E$. If $f(u_n) \to f(x)$ for
+every continuous linear functional $f \colon E \to \mathbb{K}$, then $g(T u_n) \to g(T x)$ for
+every continuous linear functional $g \colon F \to \mathbb{K}$. -/
 theorem tendsto_apply_of_forall_tendsto {F : Type*} [NormedAddCommGroup F] [NormedSpace 𝕜 F]
     {u : ℕ → E} {x : E} (T : E →L[𝕜] F)
     (h : ∀ f : StrongDual 𝕜 E, Tendsto (fun n => f (u n)) atTop (𝓝 (f x))) :
@@ -111,7 +118,11 @@ theorem tendsto_apply_of_forall_tendsto {F : Type*} [NormedAddCommGroup F] [Norm
   intro g
   simpa using h (g.comp T)
 
-/-- Weak convergence in `toWeakSpace` form implies the all-functionals form. -/
+/-- **Weak convergence gives convergence under every functional.** Let $E$ be a normed space
+over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $(u_n)_{n \in \mathbb{N}}$ be a sequence in
+$E$ and let $x \in E$. If $u_n \to x$ in the weak topology of $E$ (the topology induced by all
+continuous linear functionals $E \to \mathbb{K}$), then $f(u_n) \to f(x)$ as $n \to \infty$ for
+every continuous linear functional $f \colon E \to \mathbb{K}$. -/
 theorem forall_tendsto_of_tendsto_weakSpace {u : ℕ → E} {x : E}
     (h : Tendsto (fun n => toWeakSpace 𝕜 E (u n)) atTop (𝓝 (toWeakSpace 𝕜 E x))) :
     ∀ f : StrongDual 𝕜 E, Tendsto (fun n => f (u n)) atTop (𝓝 (f x)) := by
@@ -121,7 +132,11 @@ theorem forall_tendsto_of_tendsto_weakSpace {u : ℕ → E} {x : E}
       congrFun (congrArg DFunLike.coe hab) f
   exact (WeakBilin.tendsto_iff_forall_eval_tendsto (topDualPairing 𝕜 E).flip hinj).mp h
 
-/-- The all-functionals form implies weak convergence in `toWeakSpace` form. -/
+/-- **Convergence under every functional gives weak convergence.** Let $E$ be a normed space
+over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $(u_n)_{n \in \mathbb{N}}$ be a sequence in
+$E$ and let $x \in E$. If $f(u_n) \to f(x)$ as $n \to \infty$ for every continuous linear
+functional $f \colon E \to \mathbb{K}$, then $u_n \to x$ in the weak topology of $E$ (the
+topology induced by all continuous linear functionals $E \to \mathbb{K}$). -/
 theorem tendsto_weakSpace_of_forall_tendsto {u : ℕ → E} {x : E}
     (h : ∀ f : StrongDual 𝕜 E, Tendsto (fun n => f (u n)) atTop (𝓝 (f x))) :
     Tendsto (fun n => toWeakSpace 𝕜 E (u n)) atTop (𝓝 (toWeakSpace 𝕜 E x)) := by
@@ -131,19 +146,31 @@ theorem tendsto_weakSpace_of_forall_tendsto {u : ℕ → E} {x : E}
       congrFun (congrArg DFunLike.coe hab) f
   exact (WeakBilin.tendsto_iff_forall_eval_tendsto (topDualPairing 𝕜 E).flip hinj).mpr h
 
-/-- Boundedness of weakly convergent sequences, `toWeakSpace` form. -/
+/-- **Weakly convergent sequences are norm-bounded (weak topology form).** Let $E$ be a
+normed space over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $(u_n)_{n \in \mathbb{N}}$ be
+a sequence in $E$ and let $x \in E$. If $u_n \to x$ in the weak topology of $E$ (the topology
+induced by all continuous linear functionals $E \to \mathbb{K}$), then there is a real number
+$C$ with $\|u_n\| \le C$ for all $n$. -/
 theorem bddAbove_norm_range_of_tendsto_weakSpace {u : ℕ → E} {x : E}
     (h : Tendsto (fun n => toWeakSpace 𝕜 E (u n)) atTop (𝓝 (toWeakSpace 𝕜 E x))) :
     BddAbove (Set.range fun n => ‖u n‖) :=
   bddAbove_norm_range_of_forall_tendsto (forall_tendsto_of_tendsto_weakSpace h)
 
-/-- Weak lower semicontinuity of the norm, `toWeakSpace` form. -/
+/-- **Weak lower semicontinuity of the norm (weak topology form).** Let $E$ be a normed space
+over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $(u_n)_{n \in \mathbb{N}}$ be a sequence in
+$E$ and let $x \in E$. If $u_n \to x$ in the weak topology of $E$ (the topology induced by all
+continuous linear functionals $E \to \mathbb{K}$), then
+$\|x\| \le \liminf_{n \to \infty} \|u_n\|$. -/
 theorem norm_le_liminf_norm_of_tendsto_weakSpace {u : ℕ → E} {x : E}
     (h : Tendsto (fun n => toWeakSpace 𝕜 E (u n)) atTop (𝓝 (toWeakSpace 𝕜 E x))) :
     ‖x‖ ≤ liminf (fun n => ‖u n‖) atTop :=
   norm_le_liminf_norm_of_forall_tendsto (forall_tendsto_of_tendsto_weakSpace h)
 
-/-- Preservation of weak convergence by bounded operators, `toWeakSpace` form. -/
+/-- **Bounded operators preserve weak convergence (weak topology form).** Let $E$ and $F$ be
+normed spaces over $\mathbb{K} = \mathbb{R}$ or $\mathbb{C}$, let $T \colon E \to F$ be a
+continuous linear map, let $(u_n)_{n \in \mathbb{N}}$ be a sequence in $E$ and let $x \in E$.
+If $u_n \to x$ in the weak topology of $E$, then $T u_n \to T x$ in the weak topology of $F$;
+here the weak topology of a space is the one induced by its continuous linear functionals. -/
 theorem tendsto_weakSpace_apply_of_tendsto_weakSpace {F : Type*}
     [NormedAddCommGroup F] [NormedSpace 𝕜 F] {u : ℕ → E} {x : E} (T : E →L[𝕜] F)
     (h : Tendsto (fun n => toWeakSpace 𝕜 E (u n)) atTop (𝓝 (toWeakSpace 𝕜 E x))) :

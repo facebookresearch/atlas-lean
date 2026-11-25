@@ -1,7 +1,7 @@
 name = "atlas"
 version = "0.1.0"
 keywords = ["math", "formalization"]
-defaultTargets = ["MathlibExt", "CSLibExt", "PhyslibExt", "WantedExt"]
+defaultTargets = ["MathlibExt", "CSLibExt", "PhyslibExt", "Domains", "WantedExt"]
 testDriver = "MathlibExtTest"
 
 [leanOptions]
@@ -15,17 +15,17 @@ weak.linter.style.header = false
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.35.0"
+rev = "v4.36.0"
 
 [[require]]
 name = "cslib"
 scope = "leanprover"
-rev = "v4.35.0"
+rev = "v4.36.0"
 
 [[require]]
 name = "Physlib"
 git = "https://github.com/leanprover-community/physlib"
-rev = "v4.35.0"
+rev = "v4.36.0"
 
 # Reusable, proved mathematics that extends Mathlib.
 [[lean_lib]]
@@ -41,6 +41,11 @@ globs = ["CSLibExt.+"]
 [[lean_lib]]
 name = "PhyslibExt"
 globs = ["PhyslibExt.+"]
+
+# Proved domain models built on the mathematics, CS, and physics libraries.
+[[lean_lib]]
+name = "Domains"
+globs = ["Domains.+"]
 
 # Established results whose Lean implementation or proof is deferred.
 [[lean_lib]]
@@ -58,6 +63,12 @@ leanOptions = { weak.linter.mathlibStandardSet = false, weak.linter.privateModul
 [[lean_lib]]
 name = "CSLibExtTest"
 globs = ["CSLibExtTest.+"]
+leanOptions = { weak.linter.mathlibStandardSet = false, weak.linter.privateModule = false, pp.mvars.anonymous = false }
+
+# Tests and diagnostics for domain models.
+[[lean_lib]]
+name = "DomainsTest"
+globs = ["DomainsTest.+"]
 leanOptions = { weak.linter.mathlibStandardSet = false, weak.linter.privateModule = false, pp.mvars.anonymous = false }
 
 # Tests and diagnostics for PhyslibExt.

@@ -1,0 +1,15 @@
+# Geometric-progression-free sets of Hurwitz quaternions
+
+- [Number of Hurwitz quaternions of a given norm](card-hurwitz-norm-eq.md)
+- [Counting Hurwitz quaternions of bounded norm](card-hurwitz-norm-le-asymptotic.md)
+- [Density of Hurwitz quaternions whose norm has prescribed prime exponents](density-hurwitz-norm-valuations-in.md)
+- [Density of Hurwitz quaternions with norm in Rankin's greedy set](density-hurwitz-norm-in-rankin-greedy.md)
+- [Upper density of Hurwitz quaternions with norms in a lacunary union of intervals](upper-density-hurwitz-norm-in-interval-u.md)
+- [Many disjoint geometric progressions among Hurwitz quaternions](disjoint-progressions-hurwitz-card.md)
+- [Upper bound for geometric-progression-free Hurwitz sets](upper-density-le-of-hurwitz-gp-free.md)
+- [Bounds on the supremum of upper densities of geometric-progression-free Hurwitz sets](s-sup-upper-density-hurwitz-gp-free-boun.md)
+- [Squarefree norms and the lower density of the quaternion greedy set](quaternion-greedy-squarefree-norm-and-lo.md)
+- [The quaternion greedy set is not determined by norms](quaternion-greedy-ne-norm-preimage.md)
+- [The quaternion greedy set and the norm preimage of Rankin's set differ infinitely](quaternion-greedy-diff-rankin-infinite.md)
+- [Hurwitz quaternions of square norm that are not a unit times a square](exists-hurwitz-norm-sq-not-unit-mul-sq.md)
+- [Quaternions of prime-square norm separating the greedy set from Rankin's set](quaternion-greedy-mem-of-not-unit-mul-sq.md)

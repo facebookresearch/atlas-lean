@@ -1,0 +1,16 @@
+# Hilbert projection theorem
+
+- [Existence and uniqueness of the nearest point](exists-unique-nearest-point-of-complete.md)
+- [Totalized existence of the convex projection](exists-convex-projection-spec.md)
+- [Nearest-point projection onto a convex set](convex-projection.md)
+- [Defining property of the convex projection](convex-projection-spec.md)
+- [The convex projection lies in the set](convex-projection-mem.md)
+- [The convex projection minimizes the distance to the set](convex-projection-norm-eq-i-inf.md)
+- [Variational inequality for the convex projection](convex-projection-variational.md)
+- [Nearest points coincide with the convex projection](convex-projection-eq-of-is-nearest-point.md)
+- [The convex projection fixes the points of the set](convex-projection-eq-self-of-mem.md)
+- [Idempotence of the convex projection](convex-projection-idem.md)
+- [Nonexpansiveness of nearest-point selection](norm-sub-le-of-is-nearest-point.md)
+- [Firm nonexpansiveness of nearest-point selection](norm-sub-sq-add-norm-sub-sq-le-of-is-nea.md)
+- [The convex projection is $1$-Lipschitz](lipschitz-with-convex-projection.md)
+- [Firm nonexpansiveness of the convex projection](convex-projection-firmly-nonexpansive.md)

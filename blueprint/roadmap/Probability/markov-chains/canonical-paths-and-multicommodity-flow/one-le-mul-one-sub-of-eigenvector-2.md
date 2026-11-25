@@ -1,0 +1,3 @@
+# Sinclair's Theorem 5′: flows bound the spectral gap
+
+Let $P$ have unit row sums and satisfy detailed balance with respect to a probability vector $\pi > 0$, and let $f$ be a [multicommodity flow](multicommodity-flow.md) whose elongated load on every oriented edge is at most $B\,\pi(u)P(u,v)$. Then every real eigenvalue $\mu \ne 1$ of $P$ satisfies $1 \le B(1-\mu)$; with $B = \bar\rho(f)$ this is $\lambda_1 \le 1 - 1/\bar\rho(f)$, Theorem 5′ of A. Sinclair, *Improved bounds for mixing rates of Markov chains and multicommodity flow*, Combinatorics, Probability and Computing 1 (1992), 351–370. Flows can beat canonical paths: Sinclair's example of the random walk on $K_{2,N-2}$ has a flow with $\rho(f) = O(1)$ while every choice of canonical paths has $\rho = \Omega(N)$.

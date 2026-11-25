@@ -1,0 +1,3 @@
+# Free limit at most wired limit along a common subsequence, $q \ge 1$
+
+Let $d \in \mathbb{N}$, $0 < p < 1$, $q \ge 1$, $\psi : \mathbb{N} \to \mathbb{N}$, and let $\nu_0, \nu_1$ be probability measures on configurations of $\mathbb{Z}^d$ (assignments of open/closed states to all unordered pairs of sites) such that the [free box measures](../finite-and-infinite-volume-fk-measures-on-d/free-finite-measure.md) $\phi^0_{\Lambda_{\psi(n)},p,q}$ converge weakly to $\nu_0$ and the [wired box measures](../finite-and-infinite-volume-fk-measures-on-d/wired-finite-measure.md) $\phi^1_{\Lambda_{\psi(n)},p,q}$ converge weakly to $\nu_1$. Then $\nu_0(A) \le \nu_1(A)$ for every increasing event $A$ that is both open and closed.

@@ -41,18 +41,27 @@ affirmative answer; the matching-cut may be empty (then the graph is already
 disconnected); graphs are finite with at least two vertices (matching cuts
 need two sides; the singleton refutes the unguarded form). -/
 
-/-- Average degree via the canonical edge count. -/
+/-- **Average degree of a finite graph.** For a simple graph $G$ on a finite vertex set $V$ with
+edge set $E$, the average degree of $G$ is the rational number $2|E|/|V|$; it equals $0$ when $V$
+is empty. -/
 noncomputable def avgDegree {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj] : ℚ :=
   (2 * G.edgeFinset.card : ℚ) / Fintype.card V
 
-/-- `G` has a matching-cut: a matching subgraph whose deletion disconnects. -/
+/-- **Matching cut.** A simple graph $G$ has a matching cut if some matching $M$ of $G$, that is,
+a set of pairwise disjoint edges of $G$, is such that deleting the edges of $M$ from $G$ leaves
+two vertices $u$ and $v$ that are not joined by any path. The matching may be empty, in which
+case this says that $G$ itself has two vertices not joined by any path. -/
 def HasMatchingCut {V : Type*} (G : SimpleGraph V) : Prop :=
   ∃ H : G.Subgraph, H.IsMatching ∧
     ∃ u v : V, ¬ (G.deleteEdges H.edgeSet).Reachable u v
 
-/-- [OPG-37364] For every real `d` there is `g` such that every finite graph with at least two
-vertices, average degree below `d` and girth at least `g` has a matching-cut. -/
+/-- **Matching cut and girth question, affirmative form.** For every real number $d$ there is a
+natural number $g$ such that every simple graph $G$ on a finite vertex set with at least two
+vertices, whose average degree is less than $d$ and whose girth is at least $g$, has a matching
+cut. An acyclic graph has infinite girth, so it meets the girth bound for every $g$.
+
+Source: [OPG-37364], Open Problem Garden, "Matching cut and girth". -/
 def conjecture : Prop :=
   ∀ d : ℝ, ∃ g : ℕ, ∀ (V : Type*) [Fintype V] [Nontrivial V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj],
@@ -60,12 +69,17 @@ def conjecture : Prop :=
     ((g : ℕ∞) ≤ G.egirth) →
     HasMatchingCut G
 
-/--
-Resolved false: The question has a negative answer: Feghali, Lucke, Paulusma and Ries
-(arXiv:2212.12317, Lemma 5) construct, for every g, a connected 14-regular bipartite graph of
-girth at least g with no matching cut, and note that this answers the Open Problem Garden
-question in the negative. With d = 15 these graphs refute the affirmative statement registered
-here. Source: C. Feghali, F. Lucke, D. Paulusma and B. Ries, Matching Cuts in Graphs of High
+/-- **Negative answer to the matching cut and girth question.** It is not the case that for
+every real number $d$ there is a natural number $g$ such that every simple graph on a finite
+vertex set with at least two vertices, average degree less than $d$ and girth at least $g$ has a
+matching cut. That is, there is a real number $d$ such that for every natural number $g$ some
+simple graph on a finite vertex set with at least two vertices, average degree less than $d$ and
+girth at least $g$ has no matching cut.
+
+Feghali, Lucke, Paulusma and Ries (Lemma 5) construct, for every $g$, a connected 14-regular
+bipartite graph of girth at least $g$ with no matching cut; these graphs give $d = 15$.
+
+Source: C. Feghali, F. Lucke, D. Paulusma and B. Ries, Matching Cuts in Graphs of High
 Girth and H-Free Graphs, ISAAC 2023, arXiv:2212.12317, https://arxiv.org/abs/2212.12317. Moved
 from `OpenConjectures/Combinatorics/MatchingCutGirth`.
 -/

@@ -14,4 +14,4 @@ Any family satisfying the closure hypothesis that contains a set other than `∅
 
 ## Background
 
-- Banach–Mazur game theorem: the characterisation of the winners of the Banach–Mazur game, recorded there for intervals of the reals.
+- [Banach–Mazur game theorem](../../../Topology/descriptive-set-theory/banach-mazur-game/banach-mazur-winning-strategy-characteri.md): the characterisation of the winners of the Banach–Mazur game, recorded there for intervals of the reals.
