@@ -35,15 +35,16 @@ equivalent recurrence (13) from the paper,
 
 The integers `u_k` are the coefficients in Proposition 1: `u_k` is
 the coefficient of `x^{k-1}` in
-`(1 + 502x + x²)/((1 - x)(1 - 398x + x²))`, defined here directly
-as a formal power series coefficient over `ℚ`.
+`(1 + 502x + x²)/((1 - x)(1 - 398x + x²))`, defined directly as a
+formal power series coefficient over `ℚ` in
+`MathlibExt.NumberTheory.NicomachusGeneralization`, together with
+its closed form and its recurrence.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.RingTheory.PowerSeries.Basic
-public import Mathlib.RingTheory.PowerSeries.Inverse
+public import MathlibExt.NumberTheory.NicomachusGeneralization
 
 set_option autoImplicit false
 
@@ -122,17 +123,6 @@ def nicomachusAlpha : ℕ → ℚ
   | (k + 2) => (15 + 7 * nicomachusAlpha (k + 1)) /
       (13 + 6 * nicomachusAlpha (k + 1))
 
-/-- **The Kim–Stolarsky integers $u_k$.** For a natural number $k$, $u_k$ is the coefficient of
-$x^{k-1}$ in the power series expansion over $\mathbb{Q}$ of
-$$\frac{1 + 502x + x^2}{(1 - x)(1 - 398x + x^2)}.$$
-For $k \ge 1$ these are the integers $u_k$ of Proposition 1 of Kim and Stolarsky; for $k = 0$ the
-exponent $k - 1$ is read as $0$, so $u_0 = u_1 = 1$. -/
-noncomputable def nicomachusU (k : ℕ) : ℚ :=
-  PowerSeries.coeff (k - 1)
-    ((1 + 502 * PowerSeries.X + PowerSeries.X ^ 2) *
-      ((1 - PowerSeries.X) *
-        (1 - 398 * PowerSeries.X + PowerSeries.X ^ 2))⁻¹)
-
 /-- **Generalized Nicomachus identity, odd case.** Let $L_{m,o}$ be the odd-case cube sum,
 $R_{m,o}$ the odd-case square and $P_{m,o}$ the odd-case polynomial. For every natural number
 $m \ge 2$ and every real number $x$,
@@ -156,31 +146,6 @@ theorem_wanted nicomachusLEven_sub_REven_eq (m : ℕ) (hm : 2 ≤ m)
     (x : ℝ) :
     nicomachusLEven m x - nicomachusREven m x =
       x * nicomachusPEven m x - x ^ 2 + x ^ 3
-
-/-- **Closed form for the Kim–Stolarsky integers $u_k$.** Let $u_k$ be the coefficient of
-$x^{k-1}$ in the power series expansion of $(1 + 502x + x^2)/((1 - x)(1 - 398x + x^2))$. For every
-integer $k \ge 1$,
-$$u_k = \frac{5(10 - 3\sqrt{11})^{2k-1} + 5(10 + 3\sqrt{11})^{2k-1} - 56}{44}.$$
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, "A Balanced
-Three or More-term Generalization of Nicomachus' Identity", Proposition 1. -/
-theorem_wanted nicomachusU_eq_closedForm (k : ℕ) (hk : 1 ≤ k) :
-    (nicomachusU k : ℝ) =
-      (5 * (10 - 3 * Real.sqrt 11) ^ (2 * k - 1) +
-        5 * (10 + 3 * Real.sqrt 11) ^ (2 * k - 1) - 56) / 44
-
-/-- **Recurrence for the Kim–Stolarsky integers $u_k$.** Let $u_k$ be the coefficient of
-$x^{k-1}$ in the power series expansion of $(1 + 502x + x^2)/((1 - x)(1 - 398x + x^2))$. For every
-integer $k \ge 1$,
-$$u_{k+1} = 252 + 199u_k + 30\sqrt{(3 + 2u_k)(23 + 22u_k)}.$$
-
-Source: Seon-Hong Kim and Kenneth B. Stolarsky, "A Balanced
-Three or More-term Generalization of Nicomachus' Identity", Proposition 1. -/
-theorem_wanted nicomachusU_succ_eq (k : ℕ) (hk : 1 ≤ k) :
-    (nicomachusU (k + 1) : ℝ) =
-      252 + 199 * (nicomachusU k : ℝ) +
-        30 * Real.sqrt ((3 + 2 * (nicomachusU k : ℝ)) *
-          (23 + 22 * (nicomachusU k : ℝ)))
 
 /-- **The convergents $\alpha_k$ in terms of the integers $u_k$.** Let $\alpha_k$ be the
 Kim–Stolarsky convergents, with $\alpha_1 = 1$ and

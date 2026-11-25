@@ -93,6 +93,10 @@ theorem sum_sq_centroid_le (x : ι → E) (s : Finset ι) (c : E) :
   have : 0 ≤ (s.card : ℝ) * ‖centroid x s - c‖ ^ 2 := by positivity
   linarith
 
+/-- The centroid of the empty finset is the zero vector. -/
+theorem centroid_empty (x : ι → E) : centroid x ∅ = 0 := by
+  simp [centroid]
+
 /-- **Nearest-center assignment.** Given points $x_i$ ($i \in \iota$) in a normed additive
 commutative group $E$ and centers $c_0, \dots, c_{k-1} \in E$, an assignment
 $a : \iota \to \{0, \dots, k-1\}$ assigns every point to a nearest center when
@@ -134,12 +138,30 @@ theorem cost_eq_sum_clusters (x : ι → E) (a : ι → Fin k) (c : Fin k → E)
   refine sum_congr rfl fun j _ => sum_congr rfl fun i hi => ?_
   rw [(mem_filter.1 hi).2]
 
+omit [InnerProductSpace ℝ E] in
+/-- Centers at unassigned clusters do not affect the cost. -/
+theorem cost_congr_centers (x : ι → E) (a : ι → Fin k) (c c' : Fin k → E)
+    (h : ∀ i, c (a i) = c' (a i)) : cost x a c = cost x a c' := by
+  unfold cost
+  apply sum_congr rfl
+  intro i _
+  rw [h i]
+
 /-- **The centroid update step.** Let $x_i$ ($i \in \iota$, a finite type) be points in a real
 inner product space and let $a$ assign each point $i$ to a cluster $a(i) \in \{0, \dots, k-1\}$.
 The updated centers send each cluster $j$ to the centroid of the points $x_i$ with $a(i) = j$.
 A cluster with no points gets the center $0$, which does not affect the $k$-means cost of $a$. -/
 noncomputable def centers (x : ι → E) (a : ι → Fin k) : Fin k → E :=
   fun j => centroid x (univ.filter fun i => a i = j)
+
+/-- If no point is assigned to cluster `j`, the updated center is the zero vector. -/
+theorem centers_eq_zero_of_forall_ne (x : ι → E) (a : ι → Fin k) (j : Fin k)
+    (h : ∀ i, a i ≠ j) : centers x a j = 0 := by
+  have hfilter : (univ.filter fun i => a i = j) = ∅ :=
+    filter_false_of_mem fun i _ hi => h i hi
+  change centroid x (univ.filter fun i => a i = j) = 0
+  rw [hfilter]
+  exact centroid_empty x
 
 /-- **The update step never increases the cost**: for a fixed assignment, the centroids are the
 best centers. -/

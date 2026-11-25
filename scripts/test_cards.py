@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+import hashlib
 import importlib.util
 import io
 import json
@@ -69,7 +70,8 @@ class Vault(unittest.TestCase):
         self.addCleanup(shutil.rmtree, self.tmp)
         vault = self.tmp / "blueprint"
         for one in (patch.object(wiki, "ROOT", self.tmp), patch.object(wiki, "VAULT", vault),
-                    patch.object(wiki, "ROADMAP", vault / "roadmap")):
+                    patch.object(wiki, "ROADMAP", vault / "roadmap"),
+                    patch.object(cards.sync, "LINKS", vault / "links")):
             one.start()
             self.addCleanup(one.stop)
         self.rows: list[dict] = []
@@ -137,6 +139,18 @@ class Vault(unittest.TestCase):
 
     def ledger_file(self) -> None:
         (wiki.ROOT / "scripts" / cards.MOVES).touch()
+
+    def mathlib_page(self, relative: str, number: int, name: str, depends: tuple[str, ...] = (),
+                     kind: str = "theorem") -> None:
+        # The row as lean-facts leaves it: Mathlib's kind of the declaration, from the registry.
+        mathlib = {"object": [{"type": "lean", "uri": cards.sync.MATHLIB, "location": {"declaration": name}}],
+                   "extensions": {"org.autoform": {"mathlib": True}}, "kind": kind}
+        here = Path(relative).parent
+        text = f"# {Path(relative).stem}\n\nA Mathlib statement.\n"
+        if depends:
+            text += "\n## Depends on\n\n" + "".join(
+                f"- [{Path(t).stem}]({Path('/'.join(['..'] * len(here.parts)), t).as_posix()})\n" for t in depends)
+        self.page(relative, text, {"id": af(number), **mathlib})
 
     def run_check(self, **options) -> tuple[list[str], list[str]]:
         self.write()
@@ -276,7 +290,8 @@ class Origins(Vault):
         # Mathlib-credited pages and their edges come with the registry of a later version; until then an edge
         # that reaches or leaves one is never shown as checked.
         g = "Algebra/groups"
-        mathlib = {"object": [{"type": "lean", "uri": cards.MATHLIB, "location": {"declaration": "Mathlib.thing"}}],
+        mathlib = {"object": [{"type": "lean", "uri": cards.sync.MATHLIB,
+                               "location": {"declaration": "Mathlib.thing"}}],
                    "extensions": {"org.autoform": {"mathlib": True}}}
         self.page(f"{g}/m/m-main.md", f"# m\n\nA Mathlib statement.\n\n## Depends on\n\n- [b](../b/b-main.md)\n",
                   {"id": af(30), **mathlib})
@@ -288,6 +303,402 @@ class Origins(Vault):
                       "checked against the extraction", errors)
         self.assertIn(f"{g}/m/m-main: a Mathlib-credited page lists a statement dependency on {g}/b/b-main; "
                       "nothing here can check it", errors)
+
+    def test_the_registry_vouches_for_bridge_and_mathlib_edges(self) -> None:
+        g = "Algebra/groups"
+        self.mathlib_page(f"{g}/n/n-main.md", 40, "Mathlib.other")
+        self.mathlib_page(f"{g}/m/m-main.md", 30, "Mathlib.thing", depends=(f"{g}/n/n-main.md",))
+        self.leaf(f"{g}/a/a-main.md", 10, statement=(f"{g}/m/m-main.md",))
+        for folder, number, main in (("a", 1, 10), ("m", 3, 30), ("n", 4, 40)):
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        self.write()
+        self.ledger_file()
+        registry = self.registry({"Ext.a_main": {"statement": ["Mathlib.thing"], "proof": []}},
+                                 {"Mathlib.thing": {"statement": ["Mathlib.other"], "proof": []},
+                                  "Mathlib.other": {"statement": [], "proof": []}})
+        self.assertEqual(cards.check(dependencies=self.extraction(), registry=registry)[0], [])
+        result = cards.rollup(self.extraction(), registry=registry)
+        self.assertEqual({(e["from"], e["to"]): e["origins"] for e in result["uses"]},
+                         {(af(1), af(3)): {"bridge": 1}, (af(3), af(4)): {"mathlib": 1}})
+        # Each way a difference is an error.
+        lacking = {**registry, "bridges": {}}
+        self.assertIn(f"{g}/a/a-main: its statement dependency on the Mathlib-credited {g}/m/m-main is not in the "
+                      "registry", cards.check(dependencies=self.extraction(), registry=lacking)[0])
+        extra = self.registry(registry["bridges"], {"Mathlib.thing": {"statement": [], "proof": []},
+                                                    "Mathlib.other": {"statement": ["Mathlib.thing"], "proof": []}})
+        errors = cards.check(dependencies=self.extraction(), registry=extra)[0]
+        self.assertIn(f"{g}/n/n-main: the registry records a statement dependency on the Mathlib-credited {g}/m/m-main, "
+                      "which the page lacks", errors)
+        self.assertIn(f"{g}/m/m-main: its statement dependency on the Mathlib-credited {g}/n/n-main is not in the "
+                      "registry", errors)
+
+    def test_a_registry_no_consumer_may_act_on_fails_the_check(self) -> None:
+        # One bridge both kept and left out, or a bridge to a declaration the registry does not find: the strict check
+        # refuses the registry (sync_wiki.registry_problems, as lean-facts does), and rollup leaves no card data.
+        g = "Algebra/groups"
+        self.mathlib_page(f"{g}/m/m-main.md", 30, "Mathlib.thing")
+        self.leaf(f"{g}/a/a-main.md", 10, statement=(f"{g}/m/m-main.md",))
+        for folder, number, main in (("a", 1, 10), ("m", 3, 30)):
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        self.write()
+        self.ledger_file()
+        good = self.registry({"Ext.a_main": {"statement": ["Mathlib.thing"], "proof": []}},
+                             {"Mathlib.thing": {"statement": [], "proof": []}})
+        self.assertEqual(cards.check(dependencies=self.extraction(), registry=good)[0], [])
+        both = {**good, "left_out": {"Ext.a_main": {"statement": [], "proof": ["Mathlib.thing"]}}}
+        absent = {**good, "bridges": {"Ext.a_main": {"statement": ["Mathlib.thing", "Mathlib.absent"], "proof": []}}}
+        dependencies, given = self.tmp / "lean-dependencies.json", self.tmp / "registry.json"
+        dependencies.write_text(json.dumps(self.extraction()))
+        output = self.tmp / "build" / "cards.json"
+        for registry, message in (
+                (both, "the registry both keeps and leaves out the bridge Ext.a_main -> Mathlib.thing"),
+                (absent, "the registry's bridges entry for Ext.a_main names Mathlib.absent, which it does not find")):
+            with self.subTest(message=message):
+                self.assertIn(message, cards.check(dependencies=self.extraction(), registry=registry)[0])
+                given.write_text(json.dumps(registry))
+                output.parent.mkdir(parents=True, exist_ok=True)
+                output.write_text("{}")
+                with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+                    status = cards.run(["rollup", str(output), "--dependencies", str(dependencies), "--registry",
+                                        str(given)])
+                self.assertEqual((status, output.exists()), (1, False))
+
+    def test_a_registry_made_for_other_duplicates_lists_fails_the_check(self) -> None:
+        # The registry was made before a-main's row listed Ext.a_twin as a duplicate, an edit that can change its
+        # bridges and leave the extraction as it was: the strict check refuses it (sync_wiki.registry_problems, as
+        # lean-facts does), and rollup leaves no card data. A registry made for the rows as they are passes.
+        g = "Algebra/groups"
+        self.mathlib_page(f"{g}/m/m-main.md", 30, "Mathlib.thing")
+        self.leaf(f"{g}/a/a-main.md", 10, statement=(f"{g}/m/m-main.md",))
+        for folder, number, main in (("a", 1, 10), ("m", 3, 30)):
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        self.write()
+        self.ledger_file()
+        bridges = {"Ext.a_main": {"statement": ["Mathlib.thing"], "proof": []}}
+        mathlib = {"Mathlib.thing": {"statement": [], "proof": []}}
+        stale = self.registry(bridges, mathlib)
+        self.assertEqual(cards.check(dependencies=self.extraction(), registry=stale)[0], [])
+        row = next(row for row in self.rows if row["subject"][0]["uri"].endswith("/a/a-main.md"))
+        row["extensions"] = {"org.atlas-wiki": {"duplicates": ["Ext.a_twin"]}}
+        self.write()
+        message = "the registry was made for other duplicates lists than the checkout's"
+        self.assertTrue(any(message in error
+                            for error in cards.check(dependencies=self.extraction(), registry=stale)[0]))
+        dependencies, given = self.tmp / "lean-dependencies.json", self.tmp / "registry.json"
+        dependencies.write_text(json.dumps(self.extraction()))
+        digest = hashlib.sha256(dependencies.read_bytes()).hexdigest()
+        given.write_text(json.dumps({**stale, "inputs": {**stale["inputs"], "extraction_sha256": digest}}))
+        output = self.tmp / "build" / "cards.json"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text("{}")
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as errors:
+            status = cards.run(["rollup", str(output), "--dependencies", str(dependencies), "--registry", str(given)])
+        self.assertEqual((status, output.exists()), (1, False))
+        self.assertIn(message, errors.getvalue())
+        self.assertEqual(cards.check(dependencies=self.extraction(), registry=self.registry(bridges, mathlib))[0], [])
+
+    def test_a_registry_given_is_checked_whatever_it_holds(self) -> None:
+        # `--registry` naming a file that holds JSON null, a list or no JSON at all, or a registry whose tables are of
+        # another type, is no run without a registry, even where no edge reaches Mathlib: check and rollup refuse it
+        # with an error, before anything reads its tables (no traceback), and the rollup leaves no card data.
+        g = "Algebra/groups"
+        self.leaf(f"{g}/a/a-main.md", 10)
+        self.card(f"{g}/a", 1, 10, ["a-main"])
+        self.write()
+        self.ledger_file()
+        dependencies, given = self.tmp / "lean-dependencies.json", self.tmp / "registry.json"
+        dependencies.write_text(json.dumps(self.extraction()))
+        output = self.tmp / "build" / "cards.json"
+        good = {**self.registry({}, {}), "inputs": {**self.registry({}, {})["inputs"],
+                                                    "extraction_sha256": hashlib.sha256(dependencies.read_bytes())
+                                                    .hexdigest()}}
+        malformed = {table: json.dumps({**good, table: other}) for table, other in (
+            ("mathlib", []), ("bridges", []), ("left_out", []), ("inputs", []), ("missing", {}), ("project", {}))}
+        output.parent.mkdir(parents=True, exist_ok=True)
+        for held, message in (("null", f"error: --registry {given}"), ("[]", f"error: --registry {given}"),
+                              ("{not json", f"error: --registry {given}"),
+                              *((text, "the registry is not one extract_v2_lean_dependencies.py --registry writes")
+                                for text in malformed.values())):
+            with self.subTest(held=held[:40]):
+                given.write_text(held)
+                output.write_text("{}")
+                with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as errors:
+                    checked = cards.run(["check", "--dependencies", str(dependencies), "--registry", str(given)])
+                    rolled = cards.run(["rollup", str(output), "--dependencies", str(dependencies), "--registry",
+                                        str(given)])
+                self.assertEqual((checked, rolled, output.exists()), (1, 1, False))
+                self.assertIn(message, errors.getvalue())
+                self.assertNotIn("Traceback", errors.getvalue())
+                # The check, called with the registry, reports its form and reads no table.
+                if held in malformed.values():
+                    self.assertEqual(cards.check(dependencies=self.extraction(), registry=json.loads(held))[0],
+                                     ["the registry is not one extract_v2_lean_dependencies.py --registry writes"])
+        given.write_text(json.dumps(good))
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as errors:
+            self.assertEqual(cards.run(["rollup", str(output), "--dependencies", str(dependencies), "--registry",
+                                        str(given)]), 0, errors.getvalue())
+        self.assertTrue(output.exists())
+        # A refused invocation leaves no card data either: a registry with no extraction to check it against.
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(cards.run(["rollup", str(output), "--registry", str(given)]), 2)
+        self.assertFalse(output.exists())
+
+    def test_a_credited_page_without_its_row_in_the_extraction_fails_the_strict_check(self) -> None:
+        # An extraction made before a page credited its declaration: the page's declaration has no row, so the page
+        # would show no prerequisites. The strict check names it; an extraction with the row, edges or none, passes.
+        g = "Algebra/groups"
+        self.leaf(f"{g}/a/a-main.md", 10)
+        self.leaf(f"{g}/b/b-main.md", 20, statement=(f"{g}/a/a-main.md",))
+        for folder, number, main in (("a", 1, 10), ("b", 2, 20)):
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        self.write()
+        self.ledger_file()
+        stale = {"articles": {"Ext.a_main": {"statement": [], "proof": []}}}
+        self.assertIn(f"{g}/b/b-main: credits Ext.b_main, which the extraction has no row for; it was made for another "
+                      "state of the wiki", cards.check(dependencies=stale)[0])
+        self.assertEqual(cards.check(dependencies=self.extraction())[0], [])
+
+    def test_the_site_shows_a_mathlib_credited_main_and_its_edges(self) -> None:
+        # The wiki job's rollup, with the build's registry, gives the site the card data hooks/card_pages.py shows: a
+        # card headed by a Mathlib-credited statement shows it in Mathlib, and each edge the registry vouches for says
+        # how it is known, `bridge` from an ATLAS declaration and `Mathlib` between two Mathlib ones.
+        g = "Algebra/groups"
+        self.mathlib_page(f"{g}/n/n-main.md", 40, "Mathlib.other")
+        self.mathlib_page(f"{g}/m/m-main.md", 30, "Mathlib.thing", depends=(f"{g}/n/n-main.md",))
+        self.leaf(f"{g}/a/a-main.md", 10, statement=(f"{g}/m/m-main.md",))
+        for folder, number, main in (("a", 1, 10), ("m", 3, 30), ("n", 4, 40)):
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        self.write()
+        self.ledger_file()
+        registry = self.registry({"Ext.a_main": {"statement": ["Mathlib.thing"], "proof": []}},
+                                 {"Mathlib.thing": {"statement": ["Mathlib.other"], "proof": []},
+                                  "Mathlib.other": {"statement": [], "proof": []}})
+        dependencies, registry_file = self.tmp / "lean-dependencies.json", self.tmp / "mathlib-registry.json"
+        dependencies.write_text(json.dumps(self.extraction()))
+        registry["inputs"]["extraction_sha256"] = hashlib.sha256(dependencies.read_bytes()).hexdigest()
+        registry_file.write_text(json.dumps(registry))
+        output = self.tmp / "build" / "cards.json"
+        rollup = ["rollup", str(output), "--dependencies", str(dependencies), "--registry", str(registry_file)]
+        # A registry made with another extraction is refused, and so is an output that is an input or a symbolic
+        # link, before anything is touched.
+        other = self.tmp / "other-registry.json"
+        other.write_text(json.dumps({**registry, "inputs": {**registry["inputs"], "extraction_sha256": "e" * 64}}))
+        (self.tmp / "link.json").symlink_to(self.tmp / "elsewhere.json")
+        base = self.tmp / "base" / "links"
+        base.mkdir(parents=True)
+        (base / "Algebra.jsonl").write_text("")
+        history = ["--base-ledger", str(self.tmp / "ledger.jsonl"), "--base-links", str(base), "--renames",
+                   str(self.tmp / "renames.tsv")]
+        vault = {path: path.read_bytes() for path in wiki.VAULT.rglob("*") if path.is_file()}
+        for argv, status, message in (
+                (rollup[:4] + ["--registry", str(other)], 1, f"the registry was not made with {dependencies}"),
+                (["rollup", str(registry_file)] + rollup[2:], 2, "are one file"),
+                (["rollup", str(self.tmp / "link.json")] + rollup[2:], 2, "is a symbolic link"),
+                (["rollup", str(cards.links_dir() / "_defaults.json")] + rollup[2:], 2, "is inside blueprint/"),
+                (["rollup", str(wiki.ROADMAP / g / "a" / "a-main.md")] + rollup[2:], 2, "is inside blueprint/"),
+                (["rollup", str(base / "new.json")] + rollup[2:] + history, 2, "is inside --base-links")):
+            with self.subTest(argv=argv[1]), contextlib.redirect_stdout(io.StringIO()), \
+                    contextlib.redirect_stderr(io.StringIO()) as errors:
+                self.assertEqual(cards.run(argv), status)
+                self.assertIn(message, errors.getvalue())
+        self.assertEqual(json.loads(registry_file.read_text()), registry)
+        self.assertEqual({path: path.read_bytes() for path in wiki.VAULT.rglob("*") if path.is_file()}, vault)
+        self.assertEqual(sorted(path.name for path in base.iterdir()), ["Algebra.jsonl"])
+        self.assertFalse(output.exists())
+        # Its temporary file takes a name no file has.
+        output.parent.mkdir()
+        bystander = output.with_name(f".{output.name}.partial")
+        bystander.write_text("someone else's\n")
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as errors:
+            status = cards.run(rollup)
+        self.assertEqual((status, errors.getvalue()), (0, ""))
+        self.assertEqual((bystander.read_text(), sorted(path.name for path in output.parent.iterdir())),
+                         ("someone else's\n", [".cards.json.partial", "cards.json"]))
+        hook = load_hook()
+        site = hook.build(json.loads(output.read_text()), site_index(hook), "", self.tmp / "site-src")
+        blocks = {name: site.blocks[f"roadmap/{g}/{name}/index.html"] for name in "amn"}
+        for name in "mn":
+            self.assertIn('atlas-card-mathlib">in Mathlib</span>', blocks[name])
+        self.assertIn('atlas-card-fully_proved">fully proved</span>', blocks["a"])
+        self.assertIn('title="From an ATLAS declaration to a Mathlib one">bridge</span>', blocks["a"])
+        self.assertIn('title="Between two Mathlib declarations">Mathlib</span>', blocks["m"])
+
+    def test_one_owner_for_the_loader_the_extractor_and_the_check(self) -> None:
+        # T states its page and also names a helper H (`uses`) and a sibling checkout's H: neither is an article, so
+        # T's statement reaches the Mathlib-credited R through H, with Autoform's loader, the extractor and the check:
+        # a statement bridge reached only through another constant, listed apart, which the page does not show.
+        from scripts import extract_v2_lean_dependencies as extract
+        from scripts.test_extract_v2_lean_dependencies import PIN, credited, framed, row, with_mathlib
+        g = "Algebra/groups"
+        self.mathlib_page(f"{g}/r/r-main.md", 30, "Mathlib.R")
+        self.leaf(f"{g}/t/t-main.md", 40)
+        self.rows[-1]["object"] = [{"location": {"declaration": "Ext.t_main"}, "role": "states"},
+                                   {"location": {"declaration": "Ext.H"}, "role": "uses"},
+                                   {"type": "lean", "uri": "../../../sibling", "location": {"declaration": "Ext.H"},
+                                    "role": "uses"}]
+        # The subject spelled with a percent-encoded hyphen is the same page, as Autoform reads it.
+        self.rows[-1]["subject"] = [{"type": "generic", "uri": f"../roadmap/{g}/t/t%2Dmain.md"}]
+        self.write()
+        self.ledger_file()
+        with patch.object(extract, "BLUEPRINT", wiki.VAULT):
+            self.assertEqual(extract.article_manifest(), {"Ext.t_main"})
+            dump_rows = [with_mathlib(row("Ext.t_main", "theorem", ["Ext.H"], []), [], []),
+                         with_mathlib(row("Ext.H", "theorem", [], []), ["Mathlib.R"], []),
+                         credited("Mathlib.R", "theorem", [], [])]
+            dump, names = self.tmp / "dump.jsonl", self.tmp / "names.txt"
+            dump.write_text("".join(json.dumps(r) + "\n" for r in framed(dump_rows)))
+            credited_names, problems = cards.sync.credited_mathlib({wiki.VAULT / "links": self.rows})
+            self.assertEqual(problems, [])
+            names.write_text(cards.sync.names_text(credited_names))
+            output, registry_file = self.tmp / "deps.json", self.tmp / "registry.json"
+            with patch.object(extract, "mathlib_revision", lambda: PIN), \
+                    patch("sys.argv", ["extract", str(dump), str(output), "--registry", str(registry_file),
+                                       "--names", str(names)]):
+                self.assertEqual(extract.main(), 0)
+        registry = json.loads(registry_file.read_text())
+        self.assertEqual((registry["bridges"], registry["left_out"]),
+                         ({}, {"Ext.t_main": {"statement": ["Mathlib.R"], "proof": []}}))
+        with patch.object(cards.sync, "mathlib_revision", lambda: PIN):
+            self.assertEqual(cards.check(dependencies=json.loads(output.read_text()), registry=registry)[0], [])
+
+    def test_a_row_autoform_leaves_out_stops_the_extractor_and_the_cards(self) -> None:
+        # A row about part of its page, which Autoform leaves out: the extractor and the cards name it and stop, as the
+        # sync does, rather than leave the page's article out unsaid.
+        from scripts import extract_v2_lean_dependencies as extract
+        g = "Algebra/groups"
+        self.leaf(f"{g}/t/t-main.md", 40)
+        self.rows[-1]["subject"] = [{"type": "generic", "uri": f"../roadmap/{g}/t/t-main.md#statement"}]
+        self.write()
+        self.ledger_file()
+        message = f"a row of Algebra.jsonl about ../roadmap/{g}/t/t-main.md#statement is one Autoform leaves out"
+        with patch.object(extract, "BLUEPRINT", wiki.VAULT):
+            with self.assertRaises(ValueError) as raised:
+                extract.article_manifest()
+            self.assertIn(message, str(raised.exception))
+            with patch("sys.argv", ["extract", str(self.tmp / "dump.jsonl"), str(self.tmp / "deps.json")]), \
+                    patch("sys.stderr", new_callable=io.StringIO) as err:
+                self.assertEqual(extract.main(), 1)
+            self.assertIn(message, err.getvalue())
+        self.assertFalse((self.tmp / "deps.json").exists())
+        with patch("sys.stdout", new_callable=io.StringIO), patch("sys.stderr", new_callable=io.StringIO) as err:
+            self.assertEqual(cards.run(["check"]), 1)
+        self.assertIn(f"error: {message}", err.getvalue())
+
+    def registry(self, bridges: dict, mathlib: dict, missing: tuple[str, ...] = (), kind: str = "theorem",
+                 proposition: bool = True) -> dict:
+        """A registry as extract_v2_lean_dependencies.py writes it for the vault's committed rows."""
+        files = {cards.sync.LINKS: list(cards.read_annotations().values())}
+        credited, _ = cards.sync.credited_mathlib(files)
+        digest = hashlib.sha256(cards.sync.names_text(credited).encode("utf-8")).hexdigest()
+        aliases = cards.sync.extract.aliases_digest(cards.sync.listed_duplicates(files)[0])
+        return {"bridges": bridges, "left_out": {}, "mutual": [], "missing": list(missing), "project": [],
+                "mathlib": {name: {"module": "Mathlib.X", "kind": kind, "proposition": proposition, **entry}
+                            for name, entry in mathlib.items()},
+                "inputs": {"names_sha256": digest, "requested": len(credited), "dump_sha256": "d" * 64,
+                           "mathlib_rev": None, "aliases_sha256": aliases, "format": cards.sync.REGISTRY_FORMAT}}
+
+    def mathlib_cards(self) -> str:
+        g = "Algebra/groups"
+        self.mathlib_page(f"{g}/m/m-main.md", 30, "Mathlib.thing")
+        self.leaf(f"{g}/a/a-main.md", 10, statement=(f"{g}/m/m-main.md",))
+        for folder, number, main in (("a", 1, 10), ("m", 3, 30)):
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        self.write()
+        self.ledger_file()
+        return g
+
+    def test_one_page_per_mathlib_declaration_and_a_registry_row_for_each(self) -> None:
+        g = self.mathlib_cards()
+        bridges = {"Ext.a_main": {"statement": ["Mathlib.thing"], "proof": []}}
+        registry = self.registry(bridges, {"Mathlib.thing": {"statement": [], "proof": []}})
+        self.assertEqual(cards.check(dependencies=self.extraction(), registry=registry)[0], [])
+        # A second card whose main credits the same declaration.
+        self.mathlib_page(f"{g}/twin/twin-main.md", 31, "Mathlib.thing")
+        self.card(f"{g}/twin", 5, 31, ["twin-main"])
+        self.write()
+        self.assertIn(f"{g}/m/m-main.md and {g}/twin/twin-main.md both credit the Mathlib declaration Mathlib.thing; "
+                      "a declaration has one page", cards.check(dependencies=self.extraction(), registry=registry)[0])
+
+    def test_a_credited_name_the_registry_does_not_answer(self) -> None:
+        self.mathlib_cards()
+        # The registry was made for the same names but has no row for the declaration: it cannot vouch for it.
+        registry = self.registry({}, {})
+        self.assertIn("the registry's found and missing names do not split the checkout's credited names",
+                      cards.check(dependencies=self.extraction(), registry=registry)[0])
+        # A registry made for another list of names is refused as a whole.
+        other = self.registry({}, {"Mathlib.thing": {"statement": [], "proof": []}})
+        other = {**other, "inputs": {**other["inputs"], "names_sha256": "0" * 64}}
+        self.assertIn("the registry was made for another list of credited Mathlib names than the checkout's; make the "
+                      "dump and the registry from `sync_wiki.py mathlib-names` of this checkout",
+                      cards.check(dependencies=self.extraction(), registry=other)[0])
+
+    def test_an_edge_to_a_declaration_no_page_credits_is_an_error(self) -> None:
+        self.mathlib_cards()
+        bridges = {"Ext.a_main": {"statement": ["Mathlib.thing", "Mathlib.unknown"], "proof": []},
+                   "Ext.nowhere": {"statement": ["Mathlib.thing"], "proof": []}}
+        errors = cards.check(dependencies=self.extraction(),
+                             registry=self.registry(bridges, {"Mathlib.thing": {"statement": [], "proof": []}}))[0]
+        self.assertIn("the registry records Ext.a_main -> Mathlib.unknown, and Mathlib.unknown credits no statement "
+                      "page", errors)
+        self.assertIn("the registry records the dependencies of Ext.nowhere, which credits no statement page", errors)
+
+    def test_mathlib_s_kind_decides_what_a_mathlib_main_can_head(self) -> None:
+        g = self.mathlib_cards()
+        bridges = {"Ext.a_main": {"statement": ["Mathlib.thing"], "proof": []}}
+        definition = self.registry(bridges, {"Mathlib.thing": {"statement": [], "proof": []}}, kind="def",
+                                   proposition=False)
+        # The page's kind follows the registry, as lean-facts writes it; the card is a result card.
+        self.rows = [{**row, "kind": "def"} if row["subject"][0]["uri"].endswith("m/m-main.md") else row
+                     for row in self.rows]
+        self.write()
+        self.assertIn(f"{g}/m: a result card's main statement {g}/m/m-main is Mathlib's Mathlib.thing, which does "
+                      "not state a proposition",
+                      cards.check(dependencies=self.extraction(), registry=definition)[0])
+        # A page whose kind is not the registry's was not written from it.
+        theorem = self.registry(bridges, {"Mathlib.thing": {"statement": [], "proof": []}})
+        self.assertIn(f"{g}/m/m-main: its kind is 'def', but the registry finds Mathlib.thing a `theorem`; run "
+                      "sync_wiki.py lean-facts with this registry",
+                      cards.check(dependencies=self.extraction(), registry=theorem)[0])
+
+    def test_each_page_keeps_the_declaration_its_committed_row_credits(self) -> None:
+        g = "Algebra/groups"
+        self.mathlib_page(f"{g}/n/n-main.md", 40, "Mathlib.other")
+        self.mathlib_page(f"{g}/m/m-main.md", 30, "Mathlib.thing")
+        for folder, number, main in (("m", 3, 30), ("n", 4, 40)):
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        self.write()
+        self.ledger_file()
+        registry = self.registry({}, {"Mathlib.thing": {"statement": [], "proof": []},
+                                      "Mathlib.other": {"statement": [], "proof": []}})
+        self.assertEqual(cards.check(dependencies=self.extraction(), registry=registry)[0], [])
+        # The committed rows credited the two declarations the other way round.
+        committed = {page: json.loads(json.dumps(row)) for page, row in cards.read_annotations().items()}
+        for row in committed.values():
+            for end in row.get("object", []):
+                name = end["location"]["declaration"]
+                end["location"]["declaration"] = {"Mathlib.thing": "Mathlib.other",
+                                                  "Mathlib.other": "Mathlib.thing"}.get(name, name)
+        errors = cards.check(dependencies=self.extraction(), registry=registry, committed=committed)[0]
+        self.assertIn(f"{g}/m/m-main: the build credits Mathlib.thing, but its committed row credits Mathlib.other",
+                      errors)
+
+    def test_a_mathlib_main_needs_the_registry_s_proposition_flag(self) -> None:
+        self.mathlib_cards()
+        bridges = {"Ext.a_main": {"statement": ["Mathlib.thing"], "proof": []}}
+        registry = self.registry(bridges, {"Mathlib.thing": {"statement": [], "proof": []}})
+        del registry["mathlib"]["Mathlib.thing"]["proposition"]
+        self.assertTrue(any("the registry's mathlib entry for Mathlib.thing is malformed" in error
+                            for error in cards.check(dependencies=self.extraction(), registry=registry)[0]))
+
+    def test_a_mathlib_page_never_depends_on_a_project_page(self) -> None:
+        g = "Algebra/groups"
+        self.leaf(f"{g}/b/b-main.md", 20)
+        self.mathlib_page(f"{g}/m/m-main.md", 30, "Mathlib.thing", depends=(f"{g}/b/b-main.md",))
+        self.write()
+        self.ledger_file()
+        registry = self.registry({}, {"Mathlib.thing": {"statement": [], "proof": []}})
+        self.assertIn(f"{g}/m/m-main: a Mathlib-credited page lists a statement dependency on {g}/b/b-main; nothing "
+                      "here can check it", cards.check(dependencies=self.extraction(), registry=registry)[0])
 
     def test_a_link_lean_facts_dropped_is_stale_not_planned(self) -> None:
         g = "Algebra/groups"
@@ -303,27 +714,89 @@ class Origins(Vault):
         self.assertEqual(result["cards"][0]["supporting"]["stale"], 1)
         self.assertEqual(result["cards"][0]["supporting"]["page_only"], 0)
 
-    def test_a_legacy_row_counts_only_when_the_extraction_resolves_it(self) -> None:
+    def test_no_credit_overrides_a_held_marker_in_the_cards(self) -> None:
+        # A held row that credits a declaration, and a page that links a held declaration: the check reports both,
+        # as the extraction and lean-facts refuse them, so no rollup shows a held page proved.
+        g = "Algebra/groups"
+        held = lambda name: {"org.atlas-wiki": {"held": {"declaration": name, "reason": "vacuous", "issue": 1}}}
+        self.leaf(f"{g}/a/a-main.md", 10, row={"extensions": held("Ext.a_main")})
+        self.leaf(f"{g}/b/b-main.md", 20)
+        self.leaf(f"{g}/c/c-main.md", 30, facts=None, row={"extensions": held("Ext.b_main")})
+        for folder, number, main in (("a", 1, 10), ("b", 2, 20), ("c", 3, 30)):
+            self.card(f"{g}/{folder}", number, main, [f"{folder}-main"])
+        errors = self.run_check()[0]
+        self.assertIn(f"{g}/a/a-main.md: it holds Ext.a_main back but is linked to Ext.a_main", errors)
+        self.assertIn(f"{g}/c/c-main.md: it holds Ext.b_main back, which {g}/b/b-main.md links", errors)
+
+    def test_a_row_whose_page_is_gone_stops_the_rollup(self) -> None:
         g = "Algebra/groups"
         self.leaf(f"{g}/a/a-main.md", 10)
-        for stem, number in (("found", 11), ("lost", 12)):
-            self.leaf(f"{g}/a/{stem}.md", number, facts=None,
-                      row={"extensions": {"org.atlas-wiki": {"module": "Ext.Legacy", "name": stem}}})
-        self.card(f"{g}/a", 1, 10, ["a-main", "found", "lost"])
+        self.card(f"{g}/a", 1, 10, ["a-main"])
+        self.rows.append({"subject": [{"type": "generic", "uri": f"../roadmap/{g}/a/gone.md"}], "id": af(11)})
         self.write()
         self.ledger_file()
+        dependencies = self.tmp / "lean-dependencies.json"
+        dependencies.write_text(json.dumps(self.extraction()))
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as errors:
+            status = cards.run(["rollup", str(self.tmp / "cards.json"), "--dependencies", str(dependencies)])
+        self.assertEqual(status, 1)
+        self.assertIn(f"{g}/a/gone.md: its row names a page that does not exist; remove the row or restore the page",
+                      errors.getvalue())
+
+    def test_a_legacy_row_counts_only_once_lean_facts_gave_it_its_lean_link(self) -> None:
+        # Two rows an earlier sync wrote with a module and a name: lean-facts resolved `found` through the Lean index
+        # and gave its build row the declaration's Lean link, and did not resolve `lost`. The cards read the build
+        # rows: `found` counts as ATLAS credit and `lost` is stale, whatever the extraction holds.
+        g = "Algebra/groups"
+        hint = lambda stem: {"org.atlas-wiki": {"module": "Ext.Legacy", "name": stem}}
+        self.leaf(f"{g}/a/a-main.md", 10)
+        self.leaf(f"{g}/a/found.md", 11, facts=None, row={"extensions": hint("found")})
+        self.leaf(f"{g}/a/lost.md", 12, facts=None, row={"extensions": hint("lost")})
+        self.card(f"{g}/a", 1, 10, ["a-main", "found", "lost"])
+        self.write()
+        committed = cards.read_annotations()
+        found = next(page for page in committed if page.name == "found.md")
+        self.rows[[row["subject"][0]["uri"] for row in self.rows].index(f"../roadmap/{g}/a/found.md")].update(
+            object=[{"location": {"declaration": "Ext.Legacy.found"}, "role": "states"}], **THEOREM)
+        self.write()
+        self.ledger_file()
+        self.assertEqual(cards.declaration(cards.read_annotations()[found]), "Ext.Legacy.found")
         extraction = self.extraction()
         extraction["articles"]["Ext.Legacy.found"] = {"module": "Ext.Legacy", "statement": [], "proof": []}
-        errors, warnings = cards.check(dependencies=extraction)
+        errors, warnings = cards.check(dependencies=extraction, committed=committed)
         self.assertEqual(errors, [])
-        self.assertIn(f"{g}/a/lost: its module-and-name row names no compiled declaration; it counts as stale, not "
-                      "as credited", warnings)
-        result = cards.rollup(extraction)
+        self.assertIn(f"{g}/a/lost: its module-and-name row names no declaration the Lean index resolves, so "
+                      "lean-facts gave it no Lean link; it counts as stale, not as credited", warnings)
+        result = cards.rollup(extraction, committed=committed)
         self.assertEqual((result["pages"][f"{g}/a/found"]["credit"], result["pages"][f"{g}/a/found"]["stale"]),
                          ("atlas", False))
         self.assertEqual((result["pages"][f"{g}/a/lost"]["credit"], result["pages"][f"{g}/a/lost"]["stale"]),
                          ("none", True))
         self.assertEqual(result["cards"][0]["supporting"]["stale"], 1)
+
+    def test_a_legacy_row_and_an_explicit_one_never_share_a_declaration(self) -> None:
+        # Build rows in which one page credits Ext.a_main and another got Ext.a_main's Lean link from a committed
+        # module and name: the strict check refuses them and no rollup credits both (lean-facts and the extraction
+        # refuse such rows first, with the Lean index).
+        g = "Algebra/groups"
+        self.leaf(f"{g}/a/a-main.md", 10)
+        self.leaf(f"{g}/b/b-main.md", 20, facts=None, row={"extensions": {
+            "org.atlas-wiki": {"module": "Ext", "name": "a_main"}}})
+        self.card(f"{g}/a", 1, 10, ["a-main"])
+        self.card(f"{g}/b", 2, 20, ["b-main"])
+        self.write()
+        committed = cards.read_annotations()
+        self.rows[[row["subject"][0]["uri"] for row in self.rows].index(f"../roadmap/{g}/b/b-main.md")].update(
+            object=[{"location": {"declaration": "Ext.a_main"}, "role": "states"}], **THEOREM)
+        self.write()
+        self.ledger_file()
+        extraction = self.extraction()
+        message = (f"{g}/a/a-main and {g}/b/b-main (by the module and name an earlier sync wrote) both stand for the "
+                   "declaration Ext.a_main of this project; a declaration has one page")
+        self.assertIn(message, cards.check(dependencies=extraction, committed=committed)[0])
+        with self.assertRaises(ValueError) as raised:
+            cards.rollup(extraction, committed=committed)
+        self.assertIn(message, str(raised.exception))
 
     def test_a_walk_never_passes_through_a_folder_page(self) -> None:
         # A folder page's hand-written link is no statement's dependency: it is counted as reaching a folder, and
@@ -382,7 +855,8 @@ class Integrity(Vault):
     def setUp(self) -> None:
         super().setUp()
         self.g = g = "Algebra/groups"
-        mathlib = {"object": [{"type": "lean", "uri": cards.MATHLIB, "location": {"declaration": "Mathlib.thing"}}],
+        mathlib = {"object": [{"type": "lean", "uri": cards.sync.MATHLIB,
+                               "location": {"declaration": "Mathlib.thing"}}],
                    "extensions": {"org.autoform": {"mathlib": True}}}
         self.page(f"{g}/m/m-main.md", "# m\n\nA Mathlib statement.\n", {"id": af(30), **mathlib})
         self.leaf(f"{g}/c/c-main.md", 40)
@@ -449,6 +923,216 @@ class Integrity(Vault):
                          ["the extraction records Ext.lost, which credits no statement page"])
 
 
+class LegacyRows(Vault):
+    """A row an earlier sync wrote with only a module and a name, `{"module": "Local", "name": "mark"}`, through the
+    real Lean index, the extractor, lean-facts and the strict cards, run as the wiki job runs them on a committed
+    vault. The Lean index decides, once: a row it resolves to one declaration gets that declaration's Lean link in
+    the build, which Autoform and the cards then read; one it does not resolve credits nothing and is stale."""
+
+    g = "Algebra/groups"
+    entry = "Algebra/groups/topic/entry"
+    hint = {"module": "Local", "name": "mark"}
+
+    def build(self, local: str, row: dict, twin: dict | None = None) -> None:
+        g = self.g
+        (wiki.ROOT / "Local.lean").write_text(local)
+        (wiki.ROOT / "Ext.lean").write_text("namespace Ext\ndef_wanted blocked : Prop\nend Ext\n")
+        (wiki.ROOT / "Other.lean").write_text("namespace Elsewhere\ntheorem mark : True := trivial\nend Elsewhere\n")
+        self.leaf(f"{self.entry}.md", 10, facts=None, row=row)
+        self.card(f"{g}/topic", 1, 10, ["entry"])
+        if twin is not None:
+            self.leaf(f"{g}/second/twin.md", 40, facts=None, row=twin)
+            self.card(f"{g}/second", 4, 40, ["twin"])
+        self.leaf(f"{g}/block/blocked.md", 20)
+        self.card(f"{g}/block", 2, 20, ["blocked"], kind="concept")
+        self.mathlib_page(f"{g}/ref/External.md", 30, "M.Ref")
+        self.card(f"{g}/ref", 3, 30, ["External"])
+        self.ledger_file()
+        self.write()
+        git = lambda *argv: subprocess.run(["git", "-C", str(wiki.ROOT), *argv], check=True, capture_output=True)
+        git("init", "-q")
+        git("add", ".")
+        git("-c", "user.name=fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "vault")
+
+    def dump(self) -> list[dict]:
+        """The dump of the Lean sources as they are: a row for each declaration, and the credited M.Ref."""
+        from scripts.test_extract_v2_lean_dependencies import credited, row, with_mathlib
+        local = (wiki.ROOT / "Local.lean").read_text()
+        blocked = "Ext.blocked" in local
+        rows = [{**with_mathlib(row("Ext.blocked", "def", [], []), [], []), "module": "Ext"},
+                {**with_mathlib(row("Elsewhere.mark", "theorem", [], []), [], []), "module": "Other"},
+                credited("M.Ref", "theorem", [], [])]
+        if "namespace North" in local:
+            rows.append({**with_mathlib(row("North.mark", "theorem", ["Ext.blocked"] if blocked else [], []), [],
+                                        ["M.Ref"] if blocked else [], direct=["M.Ref"] if blocked else []),
+                         "module": "Local"})
+        if "namespace South" in local:
+            rows.append({**with_mathlib(row("South.mark", "theorem", [], []), [], []), "module": "Local"})
+        return rows
+
+    def extract(self) -> tuple[int, str]:
+        from scripts import extract_v2_lean_dependencies as extract
+        from scripts.test_extract_v2_lean_dependencies import PIN, framed
+        dump, names = self.tmp / "dump.jsonl", self.tmp / "names.txt"
+        dump.write_text("".join(json.dumps(r) + "\n" for r in framed(self.dump())))
+        names.write_text(cards.sync.names_text(cards.sync.credited_mathlib(cards.sync.read_annotations())[0]))
+        with patch.object(extract, "BLUEPRINT", wiki.VAULT), patch.object(extract, "mathlib_revision", lambda: PIN), \
+                patch("sys.argv", ["extract", str(dump), str(self.tmp / "deps.json"), "--registry",
+                                   str(self.tmp / "registry.json"), "--names", str(names)]), \
+                contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as errors:
+            return extract.main(), errors.getvalue()
+
+    def consume(self) -> tuple[int, int, dict | None, str]:
+        """lean-facts, then the strict rollup, as the wiki job runs them: their statuses, the card data and what they
+        printed on stderr."""
+        from scripts.test_extract_v2_lean_dependencies import PIN
+        deps, registry, output = self.tmp / "deps.json", self.tmp / "registry.json", self.tmp / "build" / "cards.json"
+        with patch.object(cards.sync, "mathlib_revision", lambda: PIN), \
+                contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as errors:
+            synced = cards.sync.main(["lean-facts", str(deps), "--registry", str(registry)])
+            rolled = cards.run(["rollup", str(output), "--dependencies", str(deps), "--registry", str(registry)])
+        return synced, rolled, json.loads(output.read_text()) if output.exists() else None, errors.getvalue()
+
+    def row(self) -> dict:
+        return cards.read_annotations()[(wiki.ROADMAP / f"{self.entry}.md").resolve()]
+
+    def test_a_resolved_row_gets_its_lean_link_and_its_status(self) -> None:
+        # North.mark is proved, then stated with its proof unfinished on a real blocker: the build row gets
+        # North.mark's Lean link, its edges, and Autoform's status for it, as a row with that Lean link does.
+        for local, state in (("namespace North\ntheorem mark : True := trivial\nend North\n", "fully_proved"),
+                             ("namespace North\ntheorem mark : Ext.blocked := by sorry\nend North\n", "stated")):
+            with self.subTest(state=state):
+                self.setUp()
+                self.build(local, {"extensions": {"org.atlas-wiki": dict(self.hint)}})
+                self.assertEqual(self.extract(), (0, ""))
+                synced, rolled, data, errors = self.consume()
+                self.assertEqual((synced, rolled), (0, 0), errors)
+                self.assertEqual(self.row()["object"], [{"location": {"declaration": "North.mark"}, "role": "states"}])
+                page = data["pages"][self.entry]
+                self.assertEqual((page["credit"], page["stale"], page["state"]), ("atlas", False, state))
+                if state == "stated":
+                    self.assertEqual(sorted(tuple(e["origins"].items()) for e in data["uses"]),
+                                     [(("bridge", 1),), (("compiled", 1),)])
+
+    def test_an_ambiguous_row_stays_stale_beside_a_page_of_one_candidate(self) -> None:
+        # Local.lean declares North.mark and South.mark, so the hint names no one declaration; another page credits
+        # North.mark. The row credits nothing and is stale, and nothing reports a duplicate: the extraction's articles,
+        # among which North.mark alone of the two, decide nothing.
+        local = "namespace North\ntheorem mark : True := trivial\nend North\nnamespace South\ntheorem mark : True := " \
+                "trivial\nend South\n"
+        self.build(local, {"extensions": {"org.atlas-wiki": dict(self.hint)}},
+                   twin={"object": [{"location": {"declaration": "North.mark"}}]})
+        self.assertEqual(self.extract(), (0, ""))
+        synced, rolled, data, errors = self.consume()
+        self.assertEqual((synced, rolled), (0, 0), errors)
+        self.assertNotIn("object", self.row())
+        self.assertEqual((data["pages"][self.entry]["credit"], data["pages"][self.entry]["stale"]), ("none", True))
+        self.assertNotIn("a declaration has one page", errors)
+
+    def test_a_row_that_holds_back_what_its_hint_names_is_refused(self) -> None:
+        # A held marker for North.mark beside a hint the index resolves to North.mark: the extraction refuses it, and
+        # so does lean-facts, given the extraction made before the marker was added, without writing anything.
+        self.build("namespace North\ntheorem mark : True := trivial\nend North\n",
+                   {"extensions": {"org.atlas-wiki": dict(self.hint)}})
+        self.assertEqual(self.extract(), (0, ""))
+        rows = cards.sync.read_annotations()
+        entry = next(row for group in rows.values() for row in group
+                     if cards.sync.subject_path(row) == (wiki.ROADMAP / f"{self.entry}.md").resolve())
+        entry["extensions"]["org.atlas-wiki"]["held"] = {"declaration": "North.mark", "reason": "false", "issue": 42}
+        cards.sync.write_annotations(rows)
+        subprocess.run(["git", "-C", str(wiki.ROOT), "-c", "user.name=fixture", "-c",
+                        "user.email=fixture@example.invalid", "commit", "-qam", "held"], check=True)
+        message = (f"{self.entry}.md (by the module and name an earlier sync wrote): it holds North.mark back but is "
+                   "linked to North.mark")
+        status, errors = self.extract()
+        self.assertEqual(status, 1)
+        self.assertIn(message, errors)
+        before = {path: path.read_bytes() for path in wiki.VAULT.rglob("*") if path.is_file()}
+        synced, _, _, errors = self.consume()
+        self.assertEqual(synced, 1)
+        self.assertIn(message, errors)
+        self.assertEqual({path: path.read_bytes() for path in wiki.VAULT.rglob("*") if path.is_file()}, before)
+
+    def test_a_held_row_without_a_hint_stays_held(self) -> None:
+        held = {"declaration": "North.mark", "reason": "false", "issue": 42}
+        self.build("namespace North\ntheorem mark : True := trivial\nend North\n",
+                   {"extensions": {"org.atlas-wiki": {"held": held}}})
+        self.assertEqual(self.extract()[0], 0)
+        synced, rolled, data, errors = self.consume()
+        self.assertEqual((synced, rolled), (0, 0), errors)
+        page = data["pages"][self.entry]
+        self.assertEqual((page["credit"], page["held"]), ("none", True))
+
+    def test_a_declaration_named_twice_stops_the_extraction(self) -> None:
+        # The hint resolves to North.mark, which another page credits by its Lean link, or by another such hint.
+        for twin in ({"object": [{"location": {"declaration": "North.mark"}}]},
+                     {"extensions": {"org.atlas-wiki": dict(self.hint)}}):
+            with self.subTest(twin=twin):
+                self.setUp()
+                self.build("namespace North\ntheorem mark : True := trivial\nend North\n",
+                           {"extensions": {"org.atlas-wiki": dict(self.hint)}}, twin=twin)
+                status, errors = self.extract()
+                self.assertEqual(status, 1)
+                self.assertIn("stand for the declaration North.mark of this project; a declaration has one page",
+                              errors)
+
+    def test_a_checkout_an_earlier_run_synced_is_refused_and_a_clean_one_gives_the_result(self) -> None:
+        # North.mark alone matches the module and name, and a first run links it. Then a commit changes only the
+        # Lean: South.mark beside North.mark (the module and name now match two), or in its place. On the checkout
+        # the first run synced, whose Lean link would read as authored, lean-facts refuses before it writes anything;
+        # the clean checkout of that commit, its blueprint/ restored, gives no owner and a stale page, or South.mark
+        # proved.
+        from scripts import extract_v2_lean_dependencies as extract
+        north = "namespace North\ntheorem mark : True := trivial\nend North\n"
+        south = "namespace South\ntheorem mark : True := trivial\nend South\n"
+        git = lambda *argv: subprocess.run(["git", "-C", str(wiki.ROOT), *argv], check=True, capture_output=True)
+
+        def run() -> tuple:
+            with patch.object(extract, "BLUEPRINT", wiki.VAULT):
+                manifest = sorted(name for name in extract.article_manifest() if name.endswith(".mark"))
+            self.assertEqual(self.extract(), (0, ""))
+            synced, rolled, data, errors = self.consume()
+            self.assertEqual((synced, rolled), (0, 0), errors)
+            page = data["pages"][self.entry]
+            return manifest, self.row().get("object"), page["credit"], page["stale"], page["state"]
+
+        for local, owner in ((north + south, None), (south, "South.mark")):
+            with self.subTest(owner=owner):
+                self.setUp()
+                self.build(north, {"extensions": {"org.atlas-wiki": dict(self.hint)}})
+                link = lambda name: [{"location": {"declaration": name}, "role": "states"}]
+                self.assertEqual(run(), (["North.mark"], link("North.mark"), "atlas", False, "fully_proved"))
+                (wiki.ROOT / "Local.lean").write_text(local)
+                git("add", "Local.lean")
+                git("-c", "user.name=fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "Lean")
+                synced = {path: path.read_bytes() for path in wiki.VAULT.rglob("*") if path.is_file()}
+                self.assertEqual(self.extract()[0], 0)
+                status, _, _, errors = self.consume()
+                self.assertEqual(status, 1)
+                self.assertIn("blueprint/ is not as committed", errors)
+                self.assertEqual({path: path.read_bytes() for path in wiki.VAULT.rglob("*") if path.is_file()}, synced)
+                git("checkout", "-q", "HEAD", "--", "blueprint")
+                self.assertEqual(run(), ([owner], link(owner), "atlas", False, "fully_proved") if owner
+                                 else ([], None, "none", True, "can_state"))
+
+    def test_a_removed_declaration_leaves_the_row_stale(self) -> None:
+        # North.mark is removed after an extraction was made: lean-facts gives the row no Lean link, and the strict
+        # check refuses the old extraction, which records North.mark for no page; the fresh one leaves the page stale.
+        self.build("namespace North\ntheorem mark : True := trivial\nend North\n",
+                   {"extensions": {"org.atlas-wiki": dict(self.hint)}})
+        self.assertEqual(self.extract(), (0, ""))
+        (wiki.ROOT / "Local.lean").write_text("")
+        synced, rolled, data, errors = self.consume()
+        self.assertEqual((synced, rolled, data), (0, 1, None))
+        self.assertIn("the extraction records North.mark, which credits no statement page", errors)
+        self.assertNotIn("object", self.row())
+        subprocess.run(["git", "-C", str(wiki.ROOT), "checkout", "-q", "--", "blueprint"], check=True)
+        self.assertEqual(self.extract(), (0, ""))
+        synced, rolled, data, errors = self.consume()
+        self.assertEqual((synced, rolled), (0, 0), errors)
+        self.assertEqual((data["pages"][self.entry]["credit"], data["pages"][self.entry]["stale"]), ("none", True))
+
+
 class Progress(Vault):
     def test_the_main_statement_is_not_counted_among_the_supporting_ones(self) -> None:
         g = "Algebra/groups"
@@ -470,6 +1154,21 @@ class Progress(Vault):
         # Autoform finds the page ready to state, as for every page-only leaf; a reader sees a planned page.
         self.assertEqual((card["main"]["state"], card["main"]["headline"]), ("can_state", "page_only"))
         self.assertEqual((card["supporting"]["total"], card["supporting"]["fully_proved"]), (1, 1))
+
+    def test_a_planned_statement_with_a_kind_reads_as_its_state(self) -> None:
+        # A planned page that counts as a statement not yet in Lean has the kind lean-facts gave it (docs/BLUEPRINT.md,
+        # Writing pages): a task once ready, it reads as Autoform's state, not as page only.
+        g = "Algebra/groups"
+        self.leaf(f"{g}/a/helper.md", 11)
+        self.leaf(f"{g}/a/a-main.md", 10, facts=None, statement=(f"{g}/a/helper.md",), row={"kind": "theorem"})
+        self.leaf(f"{g}/a/planned.md", 12, facts=None, row={"kind": "def"})
+        self.leaf(f"{g}/a/untyped.md", 13, facts=None)
+        self.card(f"{g}/a", 1, 10, ["a-main", "helper", "planned", "untyped"])
+        card = self.rollup()["cards"][0]
+        self.assertEqual((card["main"]["state"], card["main"]["headline"]), ("can_state", "can_state"))
+        supporting = card["supporting"]
+        self.assertEqual((supporting["total"], supporting["fully_proved"], supporting["can_state"],
+                          supporting["page_only"]), (3, 1, 1, 1))
 
     def test_markers_come_before_states(self) -> None:
         g = "Algebra/groups"
@@ -548,18 +1247,38 @@ class Check(Vault):
         self.assert_found("a concept card's main statement Algebra/groups/a/a-main is a `theorem`", errors)
         self.assert_found("a result card's main statement Algebra/groups/d/d-def is a `def`", errors)
 
-    def test_a_mathlib_main_statement_matches_the_card_kind_too(self) -> None:
-        # A Mathlib-credited main with the kind lean-facts gave it, under a card of the other kind.
-        mathlib = {"object": [{"type": "lean", "uri": cards.MATHLIB, "location": {"declaration": "Mathlib.thm"}}],
+    def test_a_mathlib_main_statement_without_the_registry(self) -> None:
+        # Without the build's registry, a kind lean-facts gave still has to fit; with no kind, a warning.
+        mathlib = {"object": [{"type": "lean", "uri": cards.sync.MATHLIB, "location": {"declaration": "Mathlib.thm"}}],
                    "extensions": {"org.autoform": {"mathlib": True}}, "kind": "theorem"}
         self.page(f"{self.g}/m/m-main.md", "# m\n\nA Mathlib theorem.\n", {"id": af(40), **mathlib})
         self.card(f"{self.g}/m", 4, 40, ["m-main"], kind="concept")
-        self.assert_found("a concept card's main statement Algebra/groups/m/m-main is a `theorem`", self.errors())
+        self.write()
+        self.assertIn(f"{self.g}/m: a concept card's main statement Algebra/groups/m/m-main is a `theorem`",
+                      cards.check()[0])
+        mathlib.pop("kind")
+        self.page(f"{self.g}/m/m-main.md", "# m\n\nA Mathlib theorem.\n", {"id": af(40), **mathlib})
+        self.write()
+        errors, warnings = cards.check()[:2]
+        self.assertFalse([error for error in errors if "m-main" in error], errors)
+        self.assertTrue(any("the kind of the Mathlib main statement Algebra/groups/m/m-main is unknown without the "
+                            "build's registry" in warning for warning in warnings), warnings)
 
     def test_a_page_only_main_statement_is_classified_by_its_editors(self) -> None:
         self.leaf(f"{self.g}/p/p-main.md", 30, facts=None)
         self.card(f"{self.g}/p", 3, 30, ["p-main"], kind="concept")
         self.assertEqual(self.errors(), [])
+
+    def test_a_planned_main_statement_with_a_kind_matches_the_card_kind(self) -> None:
+        # A planned main that counts as a statement not yet in Lean has the kind lean-facts gave it, which has to fit
+        # the card as a credited main's kind does.
+        self.leaf(f"{self.g}/p/p-main.md", 30, facts=None, row={"kind": "def"})
+        self.card(f"{self.g}/p", 3, 30, ["p-main"], kind="result")
+        self.leaf(f"{self.g}/q/q-main.md", 31, facts=None, row={"kind": "theorem"})
+        self.card(f"{self.g}/q", 4, 31, ["q-main"], kind="result")
+        errors = self.errors()
+        self.assert_found("a result card's main statement Algebra/groups/p/p-main is a `def`", errors)
+        self.assertFalse([error for error in errors if "q-main" in error], errors)
 
     def test_supports_point_outside_the_card(self) -> None:
         self.card(f"{self.g}/a", 1, 10, ["a-main", "a-lemma"], supports=[af(11), af(20), af(99)])
@@ -659,11 +1378,12 @@ class Check(Vault):
         self.assert_found(f"`supports` names {af(77)}, whose page {self.g}/x/ghost is missing", self.errors())
 
     def test_supports_name_statement_pages_autoform_reads(self) -> None:
-        # A real file with an annotation that Autoform does not read as a statement, beside a real statement page.
-        self.page(f"{self.g}/x/other.txt", "Not a statement.\n", {"id": af(78)})
+        # A real file with an annotation that Autoform does not read as a statement (a hidden page, which its loader
+        # passes over), beside a real statement page.
+        self.page(f"{self.g}/x/.other.md", "# Not a statement\n", {"id": af(78)})
         self.card(f"{self.g}/a", 1, 10, ["a-main", "a-lemma"], supports=[af(78), af(20)])
         errors = self.errors()
-        self.assert_found(f"`supports` names {af(78)}, whose file {self.g}/x/other.txt is no statement page "
+        self.assert_found(f"`supports` names {af(78)}, whose file {self.g}/x/.other.md is no statement page "
                           "Autoform reads", errors)
         self.assertFalse(any(af(20) in error or "d/d-def" in error for error in errors), errors)
 
@@ -1031,7 +1751,7 @@ class Moves(Vault):
         moves.write_text(json.dumps({"card": af(7), "folder": f"{g}/a", "replaced_by": af(1)}) + "\n")
         self.assertEqual(cards.check(base_annotations=base)[0], [])
         moves.write_text("")
-        self.assertTrue(any("only a retired card's replacement takes its address" in error
+        self.assertTrue(any("only a retired card's or statement's final replacement takes its address" in error
                             for error in cards.check(base_annotations=base)[0]))
 
     def test_git_s_rename_speaks_for_an_id_nothing_else_found(self) -> None:
@@ -1135,6 +1855,242 @@ class InMathlib(Vault):
         self.assertTrue(any("not the pinned" in error for error in errors), errors)
 
 
+class Counterparts(Vault):
+    """A planned statement page may record its counterparts (docs/cards.md#counterparts): data only, which the check
+    verifies in form and place and nothing else reads."""
+
+    RECORDS = [{"mathlib": "MeasureTheory.dominated", "relation": "weaker",
+                "needs": [{"mathlib": "MeasureTheory.limit_integrable"}, {"atlas": "Ext.b_main"}]},
+               {"atlas": "Ext.a_main", "relation": "variant"}, {"mathlib": "Matrix.det_apply'", "relation": "stronger"},
+               {"mathlib": "«odd name».x", "relation": "same"},
+               # One name in both libraries names two declarations, and `«a.b».c` (two components) is not `a.b.c`.
+               {"atlas": "Matrix.det_apply'", "relation": "variant"},
+               {"mathlib": "a.b.c", "relation": "variant"}, {"mathlib": "«a.b».c", "relation": "variant"},
+               # Only Lean's own `_root_` component is the source-only prefix.
+               {"mathlib": "root_.Matrix.det", "relation": "variant"}]
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.g = "Algebra/groups"
+        self.leaf(f"{self.g}/a/a-main.md", 10)
+        self.leaf(f"{self.g}/a/p.md", 12, facts=None)
+        self.card(f"{self.g}/a", 1, 10, ["a-main", "p"])
+
+    def row(self, name: str) -> dict:
+        return next(row for row in self.rows if row["subject"][0]["uri"].endswith(f"/{name}"))
+
+    def record(self, name: str, counterpart: object) -> None:
+        self.row(name).setdefault("extensions", {}).setdefault("org.atlas-wiki", {})["counterpart"] = counterpart
+
+    def test_verified_counterparts_pass(self) -> None:
+        self.record("p.md", self.RECORDS)
+        self.assertEqual(self.run_check(), ([], []))
+
+    def test_each_malformed_counterpart_is_reported(self) -> None:
+        relations = "same, stronger, weaker, variant"
+        cases = {
+            "not a list": ({"mathlib": "M.a", "relation": "same"}, "`counterpart` must be a non-empty list of records"),
+            "an empty list": ([], "`counterpart` must be a non-empty list of records"),
+            "a record that is no object": (["M.a"], "`counterpart` record 1 is not an object"),
+            "two declarations": ([{"mathlib": "M.a", "atlas": "Ext.a", "relation": "same"}],
+                                 "`counterpart` record 1 names two declarations; give exactly one of `mathlib` and "
+                                 "`atlas`"),
+            "no declaration": ([{"relation": "same"}], "`counterpart` record 1 names no declaration"),
+            "a name with a space": ([{"mathlib": "M.a b", "relation": "same"}],
+                                    "`counterpart` record 1: `mathlib` is 'M.a b', not a Lean name"),
+            "a name opening with a digit": ([{"mathlib": "M.1a", "relation": "same"}], "not a Lean name"),
+            "a name that is no text": ([{"atlas": 7, "relation": "same"}], "`atlas` is 7, not a Lean name"),
+            "no relation": ([{"mathlib": "M.a"}], f"`counterpart` record 1 has no `relation`; give one of {relations}"),
+            "an unknown relation": ([{"mathlib": "M.a", "relation": "equivalent"}],
+                                    f"`relation` is 'equivalent'; expected one of {relations}"),
+            "an unknown key": ([{"mathlib": "M.a", "relation": "same", "note": "x"}],
+                               "`counterpart` record 1 has the unknown key `note`"),
+            "a declaration twice": ([{"mathlib": "M.a", "relation": "same"}, {"mathlib": "M.a", "relation": "weaker"}],
+                                    "`counterpart` names mathlib M.a twice"),
+            "needs that is no list": ([{"mathlib": "M.a", "relation": "weaker", "needs": "M.b"}],
+                                      "`needs` must be a non-empty list of declarations"),
+            "empty needs": ([{"mathlib": "M.a", "relation": "weaker", "needs": []}],
+                            "`needs` must be a non-empty list of declarations"),
+            "a plain name in needs": (
+                [{"mathlib": "M.a", "relation": "weaker", "needs": ["M.b"]}],
+                "`counterpart` record 1, `needs` entry 1 is not an object naming one declaration"),
+            "two declarations in a needs entry": (
+                [{"mathlib": "M.a", "relation": "weaker", "needs": [{"mathlib": "M.b", "atlas": "Ext.b"}]}],
+                "`needs` entry 1 names two declarations"),
+            "a bad name in needs": ([{"mathlib": "M.a", "relation": "weaker", "needs": [{"mathlib": "M b"}]}],
+                                    "`needs` entry 1: `mathlib` is 'M b', not a Lean name"),
+            "an unknown key in needs": ([{"mathlib": "M.a", "relation": "weaker",
+                                          "needs": [{"mathlib": "M.b", "why": "x"}]}],
+                                        "`needs` entry 1 has the unknown key `why`"),
+            "needs naming one twice": ([{"mathlib": "M.a", "relation": "weaker",
+                                         "needs": [{"atlas": "Ext.b"}, {"atlas": "Ext.b"}]}],
+                                       "`needs` names atlas Ext.b twice"),
+            "needs naming its own": ([{"mathlib": "M.a", "relation": "weaker", "needs": [{"mathlib": "M.a"}]}],
+                                     "`needs` names the record's own declaration, mathlib M.a"),
+            # Lean's quotes change no name: `Matrix.«det»` is `Matrix.det`.
+            "a declaration twice, quoted once": (
+                [{"mathlib": "Matrix.det", "relation": "same"}, {"mathlib": "Matrix.«det»", "relation": "weaker"}],
+                "`counterpart` names mathlib Matrix.det twice (once as Matrix.«det»)"),
+            "needs naming one twice, quoted once": (
+                [{"mathlib": "M.a", "relation": "weaker", "needs": [{"atlas": "Ext.b"}, {"atlas": "«Ext».«b»"}]}],
+                "`needs` names atlas Ext.b twice (once as «Ext».«b»)"),
+            "needs naming its own, quoted": (
+                [{"mathlib": "M.a", "relation": "weaker", "needs": [{"mathlib": "M.«a»"}]}],
+                "`needs` names the record's own declaration, mathlib M.a (as M.«a»)"),
+            # `_root_.` is a prefix only Lean source writes: `_root_.Matrix.det` is `Matrix.det`.
+            "a `_root_.` prefix": ([{"mathlib": "_root_.Matrix.det", "relation": "same"}],
+                                   "`counterpart` record 1: `mathlib` is '_root_.Matrix.det'; write the full name "
+                                   "without `_root_.`"),
+            "a quoted `_root_.` prefix": ([{"atlas": "«_root_».Ext.a", "relation": "same"}],
+                                          "`atlas` is '«_root_».Ext.a'; write the full name without `_root_.`"),
+            "a `_root_.` prefix in needs": (
+                [{"mathlib": "M.a", "relation": "weaker", "needs": [{"atlas": "_root_.Ext.b"}]}],
+                "`counterpart` record 1, `needs` entry 1: `atlas` is '_root_.Ext.b'; write the full name without "
+                "`_root_.`"),
+        }
+        for case, (counterpart, message) in cases.items():
+            with self.subTest(case=case):
+                self.record("p.md", counterpart)
+                errors = self.run_check()[0]
+                self.assertTrue(any(f"{self.g}/a/p: " in error and message in error for error in errors),
+                                (message, errors))
+                self.assertTrue(all(error.startswith(f"{self.g}/a/p: ") for error in errors), errors)
+
+    def test_a_counterpart_belongs_on_a_planned_statement_page(self) -> None:
+        linked = ("a counterpart belongs on a planned page, whose annotation links no Lean declaration; this one links "
+                  "one")
+        mathlib = {"type": "lean", "uri": cards.sync.MATHLIB, "location": {"declaration": "M.q"}}
+        pages = {
+            # A page linked to a declaration of this project, through the folder defaults.
+            "credited": ("q.md", {"object": [{"location": {"declaration": "Ext.q"}}]}, linked),
+            # A Lean link that credits nothing is still a link.
+            "a reference": ("q.md", {"object": [{"location": {"declaration": "Ext.q"}, "role": "uses"}]}, linked),
+            "Mathlib-credited": ("q.md", {"object": [mathlib], "extensions": {"org.autoform": {"mathlib": True}}},
+                                 linked),
+            "another repository": ("q.md", {"object": [{"type": "lean", "uri": "https://github.com/x/y",
+                                                         "location": {"declaration": "Y.q"}}]}, linked),
+            "an earlier sync's module and name": ("q.md", {"extensions": {"org.atlas-wiki": {"module": "Ext",
+                                                                                             "name": "q"}}}, linked),
+            # Planned pages: references of other types, and a page that holds its declaration back.
+            "a PDF and an HTML reference": ("q.md", {"object": [{"type": "pdf", "uri": "https://e.org/b.pdf"},
+                                                                 {"type": "html", "uri": "https://e.org/n.html",
+                                                                  "role": "states"}]}, None),
+            "held": ("q.md", {"extensions": {"org.atlas-wiki": {"held": {"declaration": "Ext.q", "reason": "false",
+                                                                         "issue": 1}}}}, None),
+        }
+        for case, (name, fields, message) in pages.items():
+            with self.subTest(case=case):
+                self.rows = [row for row in self.rows if not row["subject"][0]["uri"].endswith("/q.md")]
+                self.page(f"{self.g}/a/{name}", "# q\n\nA statement.\n",
+                          {"id": af(13), **json.loads(json.dumps(fields))})
+                self.record(name, self.RECORDS[:1])
+                errors = self.run_check()[0]
+                if message is None:
+                    self.assertFalse(any("counterpart" in error for error in errors), errors)
+                else:
+                    self.assertIn(f"{self.g}/a/q: {message}", errors)
+        self.rows = [row for row in self.rows if not row["subject"][0]["uri"].endswith("/q.md")]
+        # A folder page, a card's or not, and a card record hold none.
+        self.record("a/README.md", self.RECORDS[:1])
+        self.record("groups/README.md", self.RECORDS[:1])
+        errors = self.run_check()[0]
+        for folder in (f"{self.g}/a", self.g):
+            self.assertIn(f"{folder}: a counterpart belongs on a planned statement page, not on a folder page", errors)
+        del self.row("a/README.md")["extensions"]["org.atlas-wiki"]["counterpart"]
+        del self.row("groups/README.md")["extensions"]["org.atlas-wiki"]["counterpart"]
+        self.row("a/README.md")["extensions"]["org.atlas-wiki"]["card"]["counterpart"] = self.RECORDS[:1]
+        errors = self.run_check()[0]
+        self.assertIn(f"{self.g}/a: a card records no counterpart; a counterpart belongs on a planned statement page's "
+                      "annotation (docs/cards.md#counterparts)", errors)
+        self.assertFalse(any("unknown card key `counterpart`" in error for error in errors), errors)
+
+    def test_names_are_compared_as_lean_reads_them(self) -> None:
+        self.assertEqual(cards.name_components("Matrix.«det»"), ("Matrix", "det"))
+        self.assertEqual(cards.name_components("«a.b».c"), ("a.b", "c"))
+        self.assertEqual(cards.name_components("a.b.c"), ("a", "b", "c"))
+        self.assertEqual(cards.name_components("«odd name».x'"), ("odd name", "x'"))
+
+    def test_a_counterpart_belongs_on_a_statement_page_autoform_reads(self) -> None:
+        # A row whose page is missing (an orphan) or one Autoform's loader passes over (a hidden page): the check
+        # and so the strict rollup refuse its counterpart, with or without a card in the vault.
+        self.page(f"{self.g}/a/.hidden.md", "# Hidden\n\nA statement.\n", {"id": af(15)})
+        self.record(".hidden.md", self.RECORDS[:1])
+        self.rows.append({"subject": [{"type": "generic", "uri": f"../roadmap/{self.g}/a/no-file.md"}], "id": af(16),
+                          "extensions": {"org.atlas-wiki": {"counterpart": self.RECORDS[:1]}}})
+        missing = f"{self.g}/a/no-file: a counterpart belongs on a statement page Autoform reads; its page is missing"
+        hidden = (f"{self.g}/a/.hidden: a counterpart belongs on a statement page Autoform reads; Autoform does not "
+                  f"read {self.g}/a/.hidden.md as one")
+        errors = self.run_check()[0]
+        self.assertIn(missing, errors)
+        self.assertIn(hidden, errors)
+        self.ledger_file()
+        with self.assertRaises(ValueError) as raised:
+            cards.rollup(self.extraction())
+        self.assertIn(missing, str(raised.exception))
+        # Without a card, the check still loads Autoform's graph for them.
+        self.rows = [row for row in self.rows if not row["subject"][0]["uri"].endswith("/a/README.md")]
+        errors = self.run_check()[0]
+        self.assertIn(missing, errors)
+        self.assertIn(hidden, errors)
+
+    def test_the_links_folder_s_defaults_give_no_counterpart(self) -> None:
+        # Defaults would give a counterpart to every row, a credited or a folder page's included: the check names the
+        # defaults file, whether the counterpart there is well formed or not, and the rows' own are checked as ever.
+        def message(path: str) -> str:
+            return (f"blueprint/links/_defaults.json sets `counterpart` at `{path}`, which would give every row that "
+                    "counterpart; a counterpart belongs on a planned statement page's own row: remove it from the "
+                    "defaults")
+
+        defaults = wiki.VAULT / "links" / "_defaults.json"
+        own = 'extensions["org.atlas-wiki"]'
+        cases = [({"counterpart": [{"mathlib": "M b"}]}, f'{own}["counterpart"]'),
+                 ({"counterpart": self.RECORDS[:1]}, f'{own}["counterpart"]'),
+                 # Inside a card record too, which the defaults would give the vault's card, and at any depth.
+                 ({"card": {"counterpart": self.RECORDS[:1]}}, f'{own}["card"]["counterpart"]'),
+                 ({"card": {"seeds": [{"counterpart": self.RECORDS[:1]}]}},
+                  f'{own}["card"]["seeds"][0]["counterpart"]')]
+        self.ledger_file()
+        for extension, path in cases:
+            with self.subTest(path=path):
+                defaults.write_text(json.dumps({"object": {"type": "lean", "uri": "../.."},
+                                                "extensions": {"org.atlas-wiki": extension}}))
+                self.assertEqual(self.run_check()[0], [message(path)])
+                with self.assertRaises(ValueError) as raised:
+                    cards.rollup(self.extraction())
+                self.assertIn(message(path), str(raised.exception))
+        defaults.write_text('{"object": {"type": "lean", "uri": "../.."}}\n')
+        self.assertEqual(self.run_check(), ([], []))
+
+    def test_a_committed_link_is_a_link_though_lean_facts_dropped_it(self) -> None:
+        # The build's row is planned (lean-facts unlinked a declaration the Lean no longer has), but the authors
+        # committed the counterpart beside that link.
+        self.record("p.md", self.RECORDS[:1])
+        self.write()
+        annotations = cards.read_annotations()
+        committed = {page: json.loads(json.dumps(row)) for page, row in annotations.items()}
+        page = next(page for page in committed if page.name == "p.md")
+        committed[page]["object"] = [{"location": {"declaration": "Ext.gone"}}]
+        errors = cards.check(annotations, committed=committed)[0]
+        self.assertIn(f"{self.g}/a/p: a counterpart belongs on a planned page, whose annotation links no Lean "
+                      "declaration; this one links one", errors)
+        self.assertEqual(cards.check(annotations)[0], [])
+
+    def test_counterparts_change_no_derived_data(self) -> None:
+        # Counterparts naming credited declarations, Ext.b_main of another card among them, make no edge and change
+        # no status: the rollup is the same, byte for byte.
+        self.leaf(f"{self.g}/b/b-main.md", 20)
+        self.leaf(f"{self.g}/a/r.md", 14, facts=None, statement=(f"{self.g}/a/a-main.md",))
+        self.card(f"{self.g}/b", 2, 20, ["b-main"])
+        self.rows = [row for row in self.rows if not row["subject"][0]["uri"].endswith("/a/README.md")]
+        self.card(f"{self.g}/a", 1, 10, ["a-main", "p", "r"])
+        before = json.dumps(self.rollup(), sort_keys=True)
+        self.record("p.md", self.RECORDS)
+        self.record("r.md", [{"atlas": "Ext.b_main", "relation": "same"}])
+        after = self.rollup()
+        self.assertEqual(json.dumps(after, sort_keys=True), before)
+        self.assertEqual(after["uses"], [])
+
+
 class Arguments(Vault):
     def test_the_history_options_go_together(self) -> None:
         self.write()
@@ -1203,6 +2159,524 @@ class SiteData(Vault):
         self.assertEqual(sorted(site.blocks), [f"roadmap/{self.g}/{name}/index.html" for name in ("a", "b")])
         self.assertIn('<dt>Uses</dt><dd><details><summary><a href="../b/index.html">', site.blocks[
             f"roadmap/{self.g}/a/index.html"])
+
+
+class LedgerCheck(Vault):
+    """`scripts/cards.py moves` checks the move ledger alone, with check_moves and no base, and on success writes the
+    receipt hooks/card_pages.py keeps the moved addresses with: the commit, digests of the very ledger and annotation
+    bytes it checked, and the cards it can list (docs/cards.md#move-ledger). A history of every kind: a folder renamed
+    with its page, and a page moved out of card 7, which is retired in favour of card 1."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.g = g = "Algebra/groups"
+        self.output = self.tmp / "build" / "card-moves.json"
+        self.leaf(f"{g}/c/c-main.md", 10)
+        self.leaf(f"{g}/c/x.md", 11)
+        self.card(f"{g}/c", 1, 10, ["c-main", "x"])
+        self.folder(f"{g}/new/README.md", "New", ["kept.md"], {"id": af(50)})
+        self.leaf(f"{g}/new/kept.md", 12)
+        self.rows_of_ledger = [{"folder": f"{g}/old", "to": f"{g}/new", "article_id": af(50)},
+                               {"page": f"{g}/old/kept", "to": f"{g}/new/kept", "article_id": af(12)},
+                               {"page": f"{g}/z/x", "to": f"{g}/c/x", "article_id": af(11)},
+                               {"card": af(7), "folder": f"{g}/z", "replaced_by": af(1)}]
+        self.git("init", "-q")
+
+    def git(self, *arguments: str) -> str:
+        return subprocess.run(["git", "-C", str(self.tmp), "-c", "user.name=Test", "-c", "user.email=test@example.com",
+                               "-c", "commit.gpgsign=false", *arguments], check=True, capture_output=True,
+                              text=True).stdout
+
+    def check(self, *rows: dict, ledger: str | None = None) -> tuple[int, str, dict | None]:
+        """Write the vault and the ledger (``rows``, or the text ``ledger``; the setUp history by default), commit
+        them, and run the moves check: its exit status, its errors and the receipt it wrote."""
+        self.write()
+        moves = wiki.ROOT / "scripts" / cards.MOVES
+        moves.write_text(ledger if ledger is not None else
+                         "".join(json.dumps(row) + "\n" for row in (rows or self.rows_of_ledger)))
+        self.git("add", "-A")
+        self.git("commit", "-q", "--allow-empty", "-m", "change")
+        errors = io.StringIO()
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(errors):
+            status = cards.run(["moves", str(self.output)])
+        return status, errors.getvalue(), json.loads(self.output.read_text()) if self.output.exists() else None
+
+    def assertRefused(self, *rows: dict, error: str) -> None:
+        status, errors, made = self.check(*rows)
+        self.assertEqual((status, made), (1, None), errors)
+        self.assertIn(error, errors)
+
+    def test_a_valid_ledger_gets_its_receipt(self) -> None:
+        status, errors, made = self.check()
+        self.assertEqual((status, errors), (0, ""))
+        ledger = (wiki.ROOT / "scripts" / cards.MOVES).read_bytes()
+        self.assertEqual(made, {"schema": "atlas-card-moves/v2", "commit": self.git("rev-parse", "HEAD").strip(),
+                                "ledger_sha256": hashlib.sha256(ledger).hexdigest(),
+                                "annotations_sha256": cards.links_digest(cards.links_snapshot()),
+                                "cards": {af(1): f"{self.g}/c"}, "cards_complete": True,
+                                "replacements": {af(1): {"kind": "folder", "node": f"{self.g}/c"}}})
+        # The digest of the annotations is the one the hook recomputes from the files, unparsed.
+        self.assertEqual(made["annotations_sha256"], load_hook().links_digest(cards.links_dir()))
+        # A deliberately empty ledger is a ledger with no row.
+        status, errors, made = self.check(ledger="")
+        self.assertEqual((status, errors, made["ledger_sha256"]), (0, "", hashlib.sha256(b"").hexdigest()))
+
+    def test_a_missing_ledger_gets_no_receipt(self) -> None:
+        self.check()
+        (wiki.ROOT / "scripts" / cards.MOVES).unlink()
+        errors = io.StringIO()
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(errors):
+            self.assertEqual(cards.run(["moves", str(self.output)]), 1)
+        self.assertFalse(self.output.exists())
+        self.assertIn("card-moves.jsonl: missing", errors.getvalue())
+
+    def test_an_invalid_ledger_gets_no_receipt(self) -> None:
+        g = self.g
+        # The folder x moved to b as card 7, retired at b in favour of card 1, while the unrelated card 2 holds b.
+        self.leaf(f"{g}/b/b-main.md", 20)
+        self.card(f"{g}/b", 2, 20, ["b-main"])
+        self.assertRefused({"folder": f"{g}/x", "to": f"{g}/b", "article_id": af(7)},
+                           {"card": af(7), "folder": f"{g}/b", "replaced_by": af(1)},
+                           error=f"the retired card {af(7)}'s address {g}/b is held by another article")
+        # Two folder rows whose ids differ between adjacent hops, both retired at the end.
+        self.assertRefused({"folder": f"{g}/x", "to": f"{g}/y", "article_id": af(7)},
+                           {"folder": f"{g}/y", "to": f"{g}/z", "article_id": af(8)},
+                           {"card": af(7), "folder": f"{g}/z", "replaced_by": af(1)},
+                           {"card": af(8), "folder": f"{g}/z", "replaced_by": af(1)},
+                           error=f"{g}/x moved as {af(7)} to {g}/y, which moved on as {af(8)}")
+        # An old page address an unrelated live folder now holds.
+        self.folder(f"{g}/p/README.md", "P", [], {"id": af(60)})
+        self.assertRefused({"page": f"{g}/p", "to": f"{g}/c/x", "article_id": af(11)},
+                           error=f"{g}/p moved as a page, and another article's folder now holds the address")
+        # A declassified folder that keeps its retired card's id, replaced by no card.
+        self.folder(f"{g}/d/README.md", "D", [], {"id": af(9)})
+        self.assertRefused({"card": af(9), "folder": f"{g}/d", "replaced_by": af(8)},
+                           error=f"the retired card {af(9)} is replaced by {af(8)}, which is no card")
+        # A retired id that is no article id.
+        self.assertRefused({"card": "af_bad", "folder": f"{g}/z", "replaced_by": af(1)},
+                           error="`card` and `replaced_by` are article ids")
+        # A page row whose target is another article: x is 11, the row says 2, card 2's folder.
+        self.assertRefused({"page": f"{g}/q", "to": f"{g}/c/x", "article_id": af(2)},
+                           error=f"{g}/q ends at {g}/c/x, but {af(2)} is {g}/b")
+
+    def test_a_malformed_id_the_ledger_does_not_name_is_left_alone(self) -> None:
+        # Unrelated pages with an id that is a list or null, and an unrelated card whose id is a list: the moves stand,
+        # and the receipt leaves that card out of its list, which is then incomplete.
+        g = self.g
+        self.leaf(f"{g}/u/listed.md", 0, row={"id": []})
+        self.leaf(f"{g}/u/null.md", 0, row={"id": None})
+        self.leaf(f"{g}/e/e-main.md", 30)
+        self.card(f"{g}/e", 0, 30, ["e-main"], row={"id": ["af"]})
+        status, errors, made = self.check()
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual((made["cards"], made["cards_complete"]), ({af(1): f"{g}/c"}, False))
+
+    def test_a_malformed_id_the_ledger_needs_is_refused(self) -> None:
+        # The renamed folder's page has an id that is a list, so no article is the one its row names.
+        uris = [row["subject"][0]["uri"] for row in self.rows]
+        self.rows[uris.index(f"../roadmap/{self.g}/new/README.md")]["id"] = []
+        self.assertRefused(error=f"the folder {self.g}/old ends at {self.g}/new, but {af(50)} is no folder page")
+
+    def test_an_id_the_ledger_names_needs_one_article(self) -> None:
+        # Another article with the id of the replacement card, or of a moved page: never the last one read.
+        g = self.g
+        for number, holder in ((1, f"{g}/other/README.md"), (11, f"{g}/other/copy.md")):
+            with self.subTest(number=number):
+                self.setUp()
+                if holder.endswith("README.md"):
+                    self.folder(holder, "Other", [], {"id": af(number)})
+                else:
+                    self.leaf(holder, number)
+                self.assertRefused(error=f"{af(number)}, which the ledger names, is the id of 2 articles")
+
+    def test_an_id_the_ledger_does_not_name_may_be_shared(self) -> None:
+        # Two unrelated cards with one id: the moves stand, and the receipt lists neither, so its list is incomplete.
+        g = self.g
+        for name in ("e", "f"):
+            self.leaf(f"{g}/{name}/{name}-main.md", 30 if name == "e" else 31)
+            self.card(f"{g}/{name}", 40, 30 if name == "e" else 31, [f"{name}-main"])
+        status, errors, made = self.check()
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual((made["cards"], made["cards_complete"]), ({af(1): f"{g}/c"}, False))
+
+    def moves(self, output: Path | None = None) -> tuple[int, str]:
+        """Run the moves check on the working tree as it is, committing nothing: its exit status and its errors."""
+        errors = io.StringIO()
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(errors):
+            status = cards.run(["moves", str(output or self.output)])
+        return status, errors.getvalue()
+
+    def test_a_failed_check_leaves_no_receipt(self) -> None:
+        # A receipt, then annotations changed in the working tree only, at the same commit and ledger, so that the
+        # check fails: no receipt is left, and the earlier one is not the hook's to accept.
+        self.assertEqual(self.check()[0], 0)
+        earlier = self.output.read_bytes()
+        head, ledger = self.git("rev-parse", "HEAD"), (wiki.ROOT / "scripts" / cards.MOVES).read_bytes()
+        uris = [row["subject"][0]["uri"] for row in self.rows]
+        self.rows[uris.index(f"../roadmap/{self.g}/c/x.md")]["id"] = af(13)
+        self.write()
+        status, errors = self.moves()
+        self.assertEqual((status, self.output.exists()), (1, False))
+        self.assertIn(f"{self.g}/z/x ends at {self.g}/c/x, but {af(11)} is no statement page", errors)
+        self.assertEqual((self.git("rev-parse", "HEAD"), (wiki.ROOT / "scripts" / cards.MOVES).read_bytes()),
+                         (head, ledger))
+        self.output.write_bytes(earlier)
+        hook = load_hook()
+        with self.assertRaises(hook.CardDataError) as refused:
+            hook.read_receipt(self.tmp, ledger)
+        self.assertIn("is the check of other annotations", str(refused.exception))
+
+    def test_an_address_held_by_an_article_with_no_id_is_not_free(self) -> None:
+        # Card 7, renamed to z and retired there in favour of card 1; z holds a folder page with no id, with a row or
+        # without one: its old addresses would lead to an article no one can name instead of card 1.
+        g = self.g
+        rows = [{"folder": f"{g}/x", "to": f"{g}/z", "article_id": af(7)}, *self.rows_of_ledger]
+        self.folder(f"{g}/z/README.md", "Z", [])
+        status, errors, made = self.check(*rows)
+        self.assertEqual((status, made), (1, None))
+        self.assertIn(f"the retired card {af(7)}'s address {g}/z is held by an article with no id", errors)
+        self.rows.pop()
+        status, errors, made = self.check(*rows)
+        self.assertEqual((status, made), (1, None))
+        self.assertIn(f"the retired card {af(7)}'s address {g}/z is held by an article with no id", errors)
+
+    def test_a_retired_card_s_address_may_keep_its_folder_or_take_its_replacement(self) -> None:
+        g = self.g
+        # Declassified: the folder stays, a plain folder with the card's own id.
+        self.folder(f"{g}/z/README.md", "Z", [], {"id": af(7)})
+        status, errors, made = self.check()
+        self.assertEqual((status, errors), (0, ""))
+        # Replaced in place: card 9, a new card with its own id, at the retired card's address.
+        self.setUp()
+        self.leaf(f"{g}/z/z-main.md", 40)
+        self.card(f"{g}/z", 9, 40, ["z-main"])
+        rows = [*self.rows_of_ledger[:3], {"card": af(7), "folder": f"{g}/z", "replaced_by": af(9)}]
+        status, errors, made = self.check(*rows)
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual(made["cards"], {af(1): f"{g}/c", af(9): f"{g}/z"})
+
+    def test_a_card_in_a_folder_the_site_cannot_serve(self) -> None:
+        # An unrelated card in a folder named like a page: the receipt leaves it out and is incomplete, so the site
+        # keeps every moved address and shows no card.
+        g = self.g
+        self.leaf(f"{g}/draft.md/d-main.md", 30)
+        self.card(f"{g}/draft.md", 5, 30, ["d-main"])
+        status, errors, made = self.check()
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual((made["cards"], made["cards_complete"]), ({af(1): f"{g}/c"}, False))
+        hook = load_hook()
+        nodes = []
+        for page in sorted(wiki.ROADMAP.rglob("*.md")):
+            if page.is_file():
+                node = cards.node_id(page)
+                nodes.append({"id": node, "kind": "scope", "route": f"../roadmap/{node}/index.html", "title": node}
+                             if page.name == "README.md" else
+                             {"id": node, "kind": "node", "route": f"../roadmap/{node}.html", "title": node})
+        docs = self.tmp / "site-src"
+        (docs / "dependencies").mkdir(parents=True)
+        (docs / "dependencies" / "index.json").write_text(json.dumps({"schema": hook.INDEX_SCHEMA, "nodes": nodes}))
+        site, unshown, unkept = hook.assemble(self.tmp, docs)
+        self.assertEqual((unkept, site.addresses, site.blocks), (None, 4, {}))
+        self.assertIn("there is no build/cards.json", unshown)
+        with self.assertRaises(hook.CardDataError):
+            hook.agree({af(1): f"{g}/c", af(5): f"{g}/draft.md"}, made["cards"], made["cards_complete"])
+        # A card a retirement needs, in such a folder: no address could lead to it, so there is no receipt.
+        self.leaf(f"{g}/r.md/r-main.md", 40)
+        self.card(f"{g}/r.md", 9, 40, ["r-main"])
+        status, errors, made = self.check(*self.rows_of_ledger,
+                                          {"card": af(8), "folder": f"{g}/y", "replaced_by": af(9)})
+        self.assertEqual((status, made), (1, None))
+        self.assertIn(f"the retired card {af(8)} is replaced by {af(9)}, whose folder {g}/r.md is no address the site "
+                      "serves", errors)
+
+    def test_the_receipt_names_a_commit(self) -> None:
+        # Before the first commit, HEAD names none.
+        self.write()
+        (wiki.ROOT / "scripts" / cards.MOVES).write_text("".join(json.dumps(row) + "\n" for row in self.rows_of_ledger))
+        status, errors = self.moves()
+        self.assertEqual((status, self.output.exists()), (1, False))
+        self.assertIn("is no Git checkout: the receipt names the commit it checks", errors)
+
+    def test_the_hook_and_the_check_share_one_address_predicate(self) -> None:
+        hook = load_hook()
+        for value in ("A/b", "A/b.md", "A/b.md/c", "A/./b", "A/../b", "/A/b", "A//b", "A/b/", "", "roadmap", "A/b.mdx",
+                      "A/.b", "A/b c", "A/%2E%2E/b"):
+            with self.subTest(value):
+                self.assertEqual(hook.valid_address(value), cards.valid_address(value))
+
+    def test_the_output_is_a_file_of_its_own(self) -> None:
+        self.check()
+        earlier = self.output.read_bytes()
+        link = self.tmp / "build" / "link.json"
+        link.symlink_to(self.output)
+        folder = self.tmp / "build" / "folder"
+        folder.mkdir()
+        alias = self.tmp / "build" / "defaults.json"
+        os.link(cards.links_dir() / "_defaults.json", alias)
+        for output, said in ((cards.links_dir() / "out.json", "is inside blueprint/"),
+                             (wiki.ROOT / "scripts" / cards.MOVES, "are one file"),
+                             (alias, "and the links file _defaults.json are one file"),
+                             (link, "is a symbolic link"), (folder, "is there but is no regular file")):
+            with self.subTest(said):
+                errors = io.StringIO()
+                with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(errors):
+                    self.assertEqual(cards.run(["moves", str(output)]), 2)
+                self.assertIn(said, errors.getvalue())
+        self.assertEqual((self.output.read_bytes(), link.is_symlink(), folder.is_dir()), (earlier, True, True))
+        self.assertTrue((wiki.ROOT / "scripts" / cards.MOVES).is_file())
+        for argv in (["moves"], ["moves", str(self.output), "extra"], ["moves", "--dependencies"]):
+            with self.subTest(argv=argv), contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(cards.run(argv), 2)
+
+    def test_the_snapshot_reads_as_read_annotations(self) -> None:
+        # From the bytes read once: the page of each row, its defaults merged in, as read_annotations finds it; and
+        # the digest covers the defaults file, regular or not.
+        defaults = {"object": {"type": "lean", "uri": "../.."},
+                    "subject": {"type": "generic", "uri": "../roadmap/README.md"}}
+        (cards.links_dir() / "_defaults.json").write_text(json.dumps(defaults))
+        self.rows.append({"id": af(70)})
+        self.write()
+        snapshot = cards.links_snapshot()
+        self.assertEqual(cards.snapshot_annotations(snapshot), cards.read_annotations())
+        hook = load_hook()
+        digests = set()
+        for kind in ("regular", "absent", "directory", "symbolic link"):
+            with self.subTest(kind):
+                defaults = cards.links_dir() / "_defaults.json"
+                if defaults.is_dir() and not defaults.is_symlink():
+                    defaults.rmdir()
+                else:
+                    defaults.unlink(missing_ok=True)
+                if kind == "regular":
+                    defaults.write_text("{}")
+                elif kind == "directory":
+                    defaults.mkdir()
+                elif kind == "symbolic link":
+                    (self.tmp / "elsewhere.json").write_text("{}")
+                    defaults.symlink_to(self.tmp / "elsewhere.json")
+                cards.sync.folder_template.cache_clear()
+                snapshot = cards.links_snapshot()
+                self.assertEqual(cards.snapshot_annotations(snapshot), cards.read_annotations())
+                digests.add(cards.links_digest(snapshot))
+                self.assertEqual(cards.links_digest(snapshot), hook.links_digest(cards.links_dir()))
+        # A directory and a symbolic link are both a defaults file that is no regular file, which Autoform cannot use.
+        self.assertEqual(len(digests), 3)
+
+
+class StatementRetirement(Vault):
+    """A statement page an expansion replaces is retired by a row of its own, `{"statement": <its id>, "page": <its
+    last address>, "replaced_by": <the id of a live statement page or folder page>}` (docs/cards.md#move-ledger),
+    which the ledger check follows to the live article that replaces it. The history: the node g/node, af_...014,
+    expanded into g/node-a (af_...015) and g/node-b (af_...016), beside card 1 at g/c."""
+
+    git, check, assertRefused = LedgerCheck.git, LedgerCheck.check, LedgerCheck.assertRefused
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.g = g = "Algebra/groups"
+        self.output = self.tmp / "build" / "card-moves.json"
+        self.leaf(f"{g}/c/c-main.md", 10)
+        self.leaf(f"{g}/c/x.md", 11)
+        self.card(f"{g}/c", 1, 10, ["c-main", "x"])
+        self.leaf(f"{g}/node-a.md", 21, facts=None)
+        self.leaf(f"{g}/node-b.md", 22, facts=None)
+        self.rows_of_ledger = [{"statement": af(20), "page": f"{g}/node", "replaced_by": af(21)}]
+        self.git("init", "-q")
+
+    def remove(self, relative: str) -> None:
+        """Delete a page and its row."""
+        (wiki.ROADMAP / relative).unlink()
+        self.rows = [row for row in self.rows if row["subject"][0]["uri"] != f"../roadmap/{relative}"]
+
+    def test_a_retirement_gets_its_receipt(self) -> None:
+        g = self.g
+        status, errors, made = self.check()
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual(made["replacements"], {af(21): {"kind": "page", "node": f"{g}/node-a"}})
+        # With a card's retirement too: each retirement's replacement.
+        status, errors, made = self.check({"page": f"{g}/z/x", "to": f"{g}/c/x", "article_id": af(11)},
+                                          {"card": af(7), "folder": f"{g}/z", "replaced_by": af(1)},
+                                          *self.rows_of_ledger)
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual(made["replacements"], {af(1): {"kind": "folder", "node": f"{g}/c"},
+                                                af(21): {"kind": "page", "node": f"{g}/node-a"}})
+
+    def test_replacements_are_followed_through_later_retirements(self) -> None:
+        # node-a, which replaced the node, is retired in turn, for node-b: both lead to node-b. A statement may also
+        # be replaced by a card that is retired later, for card 1.
+        g = self.g
+        self.remove(f"{g}/node-a.md")
+        status, errors, made = self.check(*self.rows_of_ledger,
+                                          {"statement": af(21), "page": f"{g}/node-a", "replaced_by": af(22)})
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual(made["replacements"], {af(22): {"kind": "page", "node": f"{g}/node-b"}})
+        status, errors, made = self.check({"statement": af(20), "page": f"{g}/node", "replaced_by": af(7)},
+                                          {"card": af(7), "folder": f"{g}/z", "replaced_by": af(1)})
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual(made["replacements"], {af(1): {"kind": "folder", "node": f"{g}/c"}})
+
+    def test_an_invalid_retirement_gets_no_receipt(self) -> None:
+        g = self.g
+        retire = self.rows_of_ledger[0]
+        # The retired id is still a page's.
+        self.leaf(f"{g}/again.md", 20, facts=None)
+        self.assertRefused(error=f"the retired statement {af(20)} is still the id of {g}/again")
+        self.remove(f"{g}/again.md")
+        # Replacements that go round, and one that ends at no live page or folder.
+        self.assertRefused(retire, {"statement": af(21), "page": f"{g}/node-a", "replaced_by": af(20)},
+                           error=f"the replacements of {af(20)} go round")
+        self.assertRefused({**retire, "replaced_by": af(99)},
+                           error=f"the retired statement {af(20)} is replaced by {af(99)}, which is no live page or "
+                                 "folder")
+        # Another article at the retired address, with an id or without one.
+        self.leaf(f"{g}/node.md", 23, facts=None)
+        self.assertRefused(error=f"the retired statement {af(20)}'s address {g}/node is held by another article")
+        self.rows[-1].pop("id")
+        self.assertRefused(error=f"the retired statement {af(20)}'s address {g}/node is held by an article with no "
+                                 "id")
+        self.remove(f"{g}/node.md")
+        # The address moved too, or was a retired card's; the statement retired twice, or as a card too; a malformed
+        # row.
+        self.assertRefused(retire, {"page": f"{g}/node", "to": f"{g}/node-b", "article_id": af(22)},
+                           error=f"{g}/node is the last address of the retired statement {af(20)} and moved")
+        self.assertRefused(retire, {"card": af(7), "folder": f"{g}/node", "replaced_by": af(1)},
+                           error=f"{g}/node is the last address of the retired statement {af(20)} and moved or was a "
+                                 "retired card's too")
+        self.assertRefused(retire, retire, error=f"the statement {af(20)} is already retired")
+        self.assertRefused(retire, {"card": af(20), "folder": f"{g}/z", "replaced_by": af(1)},
+                           error=f"{af(20)} is retired both as a card and as a statement")
+        self.assertRefused({**retire, "statement": "af_20"}, error="`statement` and `replaced_by` are article ids")
+        self.assertRefused({**retire, "page": f"{g}/node.md"},
+                           error="an address is a path below roadmap/ without `.md`")
+        # A page row that ends where its statement was not retired.
+        self.assertRefused({"page": f"{g}/older", "to": f"{g}/elsewhere", "article_id": af(20)}, retire,
+                           error=f"the page {g}/older ends at {g}/elsewhere, but its statement {af(20)} was retired at "
+                                 f"{g}/node")
+
+    def test_the_replacement_may_live_at_the_address(self) -> None:
+        # A new statement page with its own id at the node's address, or a folder there: the node expanded into a
+        # folder of its own name, whose folder page replaces it.
+        g = self.g
+        self.leaf(f"{g}/node.md", 24, facts=None)
+        status, errors, made = self.check({**self.rows_of_ledger[0], "replaced_by": af(24)})
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual(made["replacements"], {af(24): {"kind": "page", "node": f"{g}/node"}})
+        self.remove(f"{g}/node.md")
+        self.folder(f"{g}/node/README.md", "Node", ["part.md"], {"id": af(25)})
+        self.leaf(f"{g}/node/part.md", 26, facts=None)
+        status, errors, made = self.check({**self.rows_of_ledger[0], "replaced_by": af(25)})
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual(made["replacements"], {af(25): {"kind": "folder", "node": f"{g}/node"}})
+
+    def test_since_the_base_a_gone_statement_needs_a_move_or_its_retirement(self) -> None:
+        # The base had the node, with its id; the change deleted it for node-a and node-b. Without the retirement row
+        # the node is gone with no row; with it, the change passes, even where Git calls node-a a rename of the node.
+        g = self.g
+        self.write()
+        base = cards.read_annotations()
+        for path in ((wiki.ROADMAP / f"{g}/node-a.md").resolve(), (wiki.ROADMAP / f"{g}/node-b.md").resolve()):
+            base.pop(path)
+        base[(wiki.ROADMAP / f"{g}/node.md").resolve()] = {
+            "subject": [{"type": "generic", "uri": f"../roadmap/{g}/node.md"}], "id": af(20)}
+        moves = wiki.ROOT / "scripts" / cards.MOVES
+        moves.write_text("")
+        self.assertIn(f"{cards.MOVES}: {g}/node ({af(20)}) is gone, and no row moves it; an article keeps its address "
+                      "or moves with its row", cards.check(base_annotations=base)[0])
+        moves.write_text(json.dumps(self.rows_of_ledger[0]) + "\n")
+        self.assertEqual(cards.check(base_annotations=base)[0], [])
+        self.assertEqual(cards.check(base_annotations=base, renames=[(f"{g}/node.md", f"{g}/node-a.md")])[0], [])
+        # The row names the address the statement had at that point, and an article the base had as a page.
+        moves.write_text(json.dumps({**self.rows_of_ledger[0], "page": f"{g}/elsewhere"}) + "\n")
+        self.assertIn(f"{cards.MOVES}:1: the statement {af(20)} is at {g}/node, not {g}/elsewhere",
+                      cards.check(base_annotations=base)[0])
+        moves.write_text(json.dumps({"statement": af(1), "page": f"{g}/c", "replaced_by": af(21)}) + "\n")
+        self.assertIn(f"{cards.MOVES}:1: {af(1)} was no statement page at the base commit",
+                      cards.check(base_annotations=base)[0])
+
+    def test_an_address_has_one_owner(self) -> None:
+        # Two statements retired at the vacant g/gone in favour of different live articles, in either order, and two
+        # cards retired at one folder likewise: two owners, no receipt, whatever the order.
+        g = self.g
+        twenty = {"statement": af(20), "page": f"{g}/gone", "replaced_by": af(21)}
+        thirty = {"statement": af(30), "page": f"{g}/gone", "replaced_by": af(22)}
+        for rows in ((twenty, thirty), (thirty, twenty)):
+            with self.subTest(rows=rows):
+                self.assertRefused(*rows, error=f"{g}/gone is the last address of the retired statement "
+                                                f"{rows[0]['statement']}, replaced by {rows[0]['replaced_by']}, and of "
+                                                f"{rows[1]['statement']}; an address has one owner")
+        self.leaf(f"{g}/d/d-main.md", 40)
+        self.card(f"{g}/d", 2, 40, ["d-main"])
+        self.assertRefused({"card": af(7), "folder": f"{g}/z", "replaced_by": af(1)},
+                           {"card": af(8), "folder": f"{g}/z", "replaced_by": af(2)},
+                           error=f"{g}/z is the last address of the retired card {af(7)}, replaced by {af(1)}, and of "
+                                 f"{af(8)}; an address has one owner")
+        # One history at the address: 20 replaced in place by 30, which is retired there in turn, for 22.
+        status, errors, made = self.check({**twenty, "replaced_by": af(30)}, thirty)
+        self.assertEqual((status, errors), (0, ""))
+        self.assertEqual(made["replacements"], {af(22): {"kind": "page", "node": f"{g}/node-b"}})
+
+    def test_a_replacement_moves_into_the_retired_address_only_after_the_retirement(self) -> None:
+        # The base had the node (20) and node-a (21); the change retires the node for node-a, then moves node-a into
+        # the node's address. The retirement frees the address first; the move before it finds the node still there.
+        g = self.g
+        self.remove(f"{g}/node-a.md")
+        self.leaf(f"{g}/node.md", 21, facts=None)
+        self.write()
+        base = cards.read_annotations()
+        base[(wiki.ROADMAP / f"{g}/node.md").resolve()] = {
+            "subject": [{"type": "generic", "uri": f"../roadmap/{g}/node.md"}], "id": af(20)}
+        base[(wiki.ROADMAP / f"{g}/node-a.md").resolve()] = {
+            "subject": [{"type": "generic", "uri": f"../roadmap/{g}/node-a.md"}], "id": af(21)}
+        retire = {"statement": af(20), "page": f"{g}/node", "replaced_by": af(21)}
+        move = {"page": f"{g}/node-a", "to": f"{g}/node", "article_id": af(21)}
+        moves = wiki.ROOT / "scripts" / cards.MOVES
+        moves.write_text(json.dumps(retire) + "\n" + json.dumps(move) + "\n")
+        self.assertEqual(cards.check(base_annotations=base)[0], [])
+        moves.write_text(json.dumps(move) + "\n" + json.dumps(retire) + "\n")
+        self.assertIn(f"{cards.MOVES}:1: {g}/node already holds another article", cards.check(base_annotations=base)[0])
+        # The snapshot alone, as the moves check reads it, cannot tell the order, and accepts both.
+        for rows in ((retire, move), (move, retire)):
+            with self.subTest(rows=rows):
+                status, errors, made = self.check(*rows)
+                self.assertEqual((status, errors), (0, ""))
+
+    def test_the_replacement_in_place_takes_the_address_since_the_base(self) -> None:
+        g = self.g
+        self.leaf(f"{g}/node.md", 24, facts=None)
+        self.write()
+        base = cards.read_annotations()
+        base[(wiki.ROADMAP / f"{g}/node.md").resolve()]["id"] = af(20)
+        moves = wiki.ROOT / "scripts" / cards.MOVES
+        moves.write_text(json.dumps({**self.rows_of_ledger[0], "replaced_by": af(24)}) + "\n")
+        self.assertEqual(cards.check(base_annotations=base)[0], [])
+        moves.write_text(json.dumps({**self.rows_of_ledger[0], "replaced_by": af(21)}) + "\n")
+        self.assertTrue(any(f"{g}/node was {af(20)} and now holds {af(24)}" in error
+                            for error in cards.check(base_annotations=base)[0]))
+
+
+class RealLinks(unittest.TestCase):
+    """On the checkout's own blueprint/links/, where it has one: the moves check reads the annotations as
+    read_annotations does, and the hook computes the receipt's digest of them."""
+
+    def test_the_real_links_read_alike(self) -> None:
+        if not any(cards.links_dir().glob("*.jsonl")):
+            self.skipTest("this checkout has no blueprint/links/")
+        snapshot = cards.links_snapshot()
+        self.assertEqual(cards.snapshot_annotations(snapshot), cards.read_annotations())
+        self.assertEqual(cards.links_digest(snapshot), load_hook().links_digest(cards.links_dir()))
+
+
+class RealCards(unittest.TestCase):
+    """On the checkout's own cards: the check refuses a card that the taxonomy makes a subject, a field or a
+    subfield. A PR that changes only scripts/taxonomy.json skips the card job, so its unit tests hold the committed
+    cards to the committed taxonomy with the same rule."""
+
+    def test_no_real_card_is_a_folder_of_the_taxonomy(self) -> None:
+        if not any(cards.links_dir().glob("*.jsonl")):
+            self.skipTest("this checkout has no blueprint/links/")
+        folders = cards.card_folders(cards.read_annotations())
+        self.assertEqual({folder.as_posix(): structure for folder in folders
+                          if (structure := cards.structural(folder)) is not None}, {})
 
 
 class SiteHistory(Vault):
@@ -1405,14 +2879,14 @@ class SiteHistory(Vault):
 
 class Workflow(unittest.TestCase):
     def test_the_card_inputs_exist_and_trigger_the_check(self) -> None:
-        # The wiki job's workflow test leaves these to the card job, so that no card file can fail the wiki job.
+        # The wiki job's workflow test leaves the card files' presence on disk to the card job.
         import yaml
 
-        from scripts.test_blueprint_workflow import CARD_INPUTS
+        from scripts.test_blueprint_workflow import CARD_INPUTS, build_paths
 
         root = Path(__file__).resolve().parent.parent
         workflow = yaml.safe_load((root / ".github" / "workflows" / "blueprint-pages.yml").read_text())
-        paths = workflow[True]["pull_request"]["paths"]
+        paths = build_paths(workflow)
         for path in CARD_INPUTS:
             self.assertIn(path, paths)
             self.assertTrue((root / path).is_file(), path)

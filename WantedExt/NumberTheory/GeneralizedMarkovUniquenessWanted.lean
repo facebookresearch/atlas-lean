@@ -12,44 +12,18 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
-public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
-public import Mathlib.LinearAlgebra.Matrix.Trace
+public import MathlibExt.LinearAlgebra.Matrix.SpecialLinearGroupTrace
+public import MathlibExt.NumberTheory.GeneralizedMarkovCharacteristic
+public import MathlibExt.NumberTheory.GeneralizedMarkovCongruence
+public import MathlibExt.NumberTheory.GeneralizedMarkovDiscriminant
+public import MathlibExt.NumberTheory.GeneralizedMarkovEquation
+public import MathlibExt.NumberTheory.GeneralizedSecondMarkovVieta
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Finset
-
-/-- **Generalized Markov triple.** For a natural number $k$, a $k$-generalized Markov triple
-is a triple $(a, b, c)$ of positive integers satisfying the $k$-generalized Markov equation
-$\mathrm{GME}(k)$:
-$$a^2 + b^2 + c^2 + k(bc + ca + ab) = (3 + 3k)abc.$$
-For $k = 0$ these are the classical Markov triples.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 1.2. -/
-public def IsGenMarkovTriple (k a b c : ℕ) : Prop :=
-  0 < a ∧ 0 < b ∧ 0 < c ∧
-    a ^ 2 + b ^ 2 + c ^ 2 + k * (b * c + c * a + a * b) = (3 + 3 * k) * a * b * c
-
-/-- **$(1, 1, 1)$ is a generalized Markov triple.** For every natural number $k$, the triple
-$(1, 1, 1)$ is a $k$-generalized Markov triple.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 1.2. -/
-public theorem isGenMarkovTriple_one_one_one (k : ℕ) : IsGenMarkovTriple k 1 1 1 := by
-  refine ⟨Nat.one_pos, Nat.one_pos, Nat.one_pos, ?_⟩
-  ring
-
-/-- **The Markov triple $(1, 1, 2)$.** The triple $(1, 1, 2)$ is a $0$-generalized Markov
-triple, that is, a classical Markov triple: $1^2 + 1^2 + 2^2 = 3 \cdot 1 \cdot 1 \cdot 2$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 1.1. -/
-public theorem isGenMarkovTriple_zero_one_one_two : IsGenMarkovTriple 0 1 1 2 := by
-  refine ⟨Nat.one_pos, Nat.one_pos, Nat.two_pos, ?_⟩
-  norm_num
 
 /-- **Generalized Markov number.** Let $k$ be a natural number. A natural number $b$ is a
 $k$-generalized Markov number when there are natural numbers $a$ and $c$ such that
@@ -86,25 +60,6 @@ public theorem HasUniqueMaxGenMarkovTriple.isGenMarkovNumber {k b : ℕ}
     (h : HasUniqueMaxGenMarkovTriple k b) : IsGenMarkovNumber k b := by
   obtain ⟨a, c, h, -⟩ := h
   exact ⟨a, c, h⟩
-
-/-- **Number of solutions of $x^2 + kx + 1 \equiv 0 \pmod b$.** For natural numbers $k$ and
-$b$, this is the number of integers $x$ with $0 \le x < b$ such that $b$ divides
-$x^2 + kx + 1$. For $b = 0$ it is $0$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 1.5. -/
-public def genMarkovCongruenceCount (k b : ℕ) : ℕ :=
-  ((range b).filter fun x => b ∣ x ^ 2 + k * x + 1).card
-
-/-- **The congruence $x^2 + 1 \equiv 0 \pmod 5$ has two solutions.** Exactly two integers $x$
-with $0 \le x < 5$ satisfy $x^2 + 1 \equiv 0 \pmod 5$.
-
-They are $x = 2$ and $x = 3$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Theorem 1.2. -/
-public theorem genMarkovCongruenceCount_zero_five : genMarkovCongruenceCount 0 5 = 2 := by
-  decide
 
 /-- **Uniqueness criterion via the congruence $x^2 + kx + 1 \equiv 0 \pmod{b}$.** Let $k$ be a
 natural number and let $b$ be a $k$-generalized Markov number with $b \ne 1$ and $b \ne k + 2$.
@@ -185,73 +140,6 @@ public theorem_wanted IsGenMarkovTriple.pairwise_coprime {k a b c : ℕ}
     (h : IsGenMarkovTriple k a b c) :
     Nat.Coprime a b ∧ Nat.Coprime b c ∧ Nat.Coprime a c
 
-/-- **The generalized Markov equation and the generalized second Markov equation.** Let
-$k \in \mathbb{N}$ and let $a, b, c$ be rational numbers. Put $x = (3 + 3k)a - k$,
-$y = (3 + 3k)b - k$ and $z = (3 + 3k)c - k$. Then
-$a^2 + b^2 + c^2 + k(bc + ca + ab) = (3 + 3k)abc$ if and only if
-$x^2 + y^2 + z^2 + (k^2 + 2k)(x + y + z) + 2k^3 + 3k^2 = xyz$. The first equation is the
-$k$-generalized Markov equation $\mathrm{GME}(k)$ and the second the $k$-generalized second
-Markov equation $\mathrm{GSME}(k)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 2.4. -/
-public theorem_wanted genMarkov_iff_genSecondMarkov (k : ℕ) (a b c : ℚ) :
-    a ^ 2 + b ^ 2 + c ^ 2 + k * (b * c + c * a + a * b) = (3 + 3 * k) * a * b * c ↔
-      let x := (3 + 3 * k) * a - k
-      let y := (3 + 3 * k) * b - k
-      let z := (3 + 3 * k) * c - k
-      x ^ 2 + y ^ 2 + z ^ 2 + ((k : ℚ) ^ 2 + 2 * k) * (x + y + z) + 2 * (k : ℚ) ^ 3 +
-          3 * (k : ℚ) ^ 2 = x * y * z
-
-/-- **Vieta jumping for the second generalized Markov equation.** Let $k$ be a natural number
-and let $a, b, c$ be integers with
-
-$$a^2 + b^2 + c^2 + (k^2 + 2k)(a + b + c) + 2k^3 + 3k^2 = abc.$$
-
-Then the triples $(a, ab - c - k^2 - 2k, b)$ and $(b, bc - a - k^2 - 2k, c)$ satisfy the same
-equation.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 2.6. -/
-public theorem_wanted genSecondMarkov_vieta (k : ℕ) {a b c : ℤ}
-    (h : a ^ 2 + b ^ 2 + c ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (a + b + c) + 2 * (k : ℤ) ^ 3 +
-      3 * (k : ℤ) ^ 2 = a * b * c) :
-    (let c' := a * b - c - (k : ℤ) ^ 2 - 2 * k;
-      a ^ 2 + c' ^ 2 + b ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (a + c' + b) + 2 * (k : ℤ) ^ 3 +
-        3 * (k : ℤ) ^ 2 = a * c' * b) ∧
-    (let a' := b * c - a - (k : ℤ) ^ 2 - 2 * k;
-      b ^ 2 + a' ^ 2 + c ^ 2 + ((k : ℤ) ^ 2 + 2 * k) * (b + a' + c) + 2 * (k : ℤ) ^ 3 +
-        3 * (k : ℤ) ^ 2 = b * a' * c)
-
-/-- **Trace identities in $\mathrm{SL}(2, \mathbb{Z})$.** For all $A, B \in \mathrm{SL}(2,
-\mathbb{Z})$ we have $\operatorname{tr} A = \operatorname{tr} A^{-1}$,
-$\operatorname{tr}(AB) = \operatorname{tr} A \cdot \operatorname{tr} B -
-\operatorname{tr}(AB^{-1})$, and $A^2 = (\operatorname{tr} A) A - I$, where $I$ is the
-identity matrix.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 3.6 (citing Aigner, Lemma 4.2). -/
-public theorem_wanted specialLinearGroup_two_trace_identities
-    (A B : Matrix.SpecialLinearGroup (Fin 2) ℤ) :
-    Matrix.trace (A : Matrix (Fin 2) (Fin 2) ℤ) =
-        Matrix.trace ((A⁻¹ : Matrix.SpecialLinearGroup (Fin 2) ℤ) : Matrix (Fin 2) (Fin 2) ℤ) ∧
-      Matrix.trace ((A * B : Matrix.SpecialLinearGroup (Fin 2) ℤ) :
-          Matrix (Fin 2) (Fin 2) ℤ) =
-        Matrix.trace (A : Matrix (Fin 2) (Fin 2) ℤ) * Matrix.trace (B : Matrix (Fin 2) (Fin 2) ℤ) -
-          Matrix.trace ((A * B⁻¹ : Matrix.SpecialLinearGroup (Fin 2) ℤ) :
-            Matrix (Fin 2) (Fin 2) ℤ) ∧
-      (A : Matrix (Fin 2) (Fin 2) ℤ) ^ 2 =
-        Matrix.trace (A : Matrix (Fin 2) (Fin 2) ℤ) • (A : Matrix (Fin 2) (Fin 2) ℤ) - 1
-
-/-- **At most two solutions of $x^2 + kx + 1 \equiv 0$ modulo a prime.** For every prime $p$
-and every $k \in \mathbb{N}$, at most two integers $x$ with $0 \le x < p$ satisfy
-$x^2 + kx + 1 \equiv 0 \pmod p$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 4.9. -/
-public theorem_wanted genMarkovCongruenceCount_prime_le_two {p : ℕ} (hp : p.Prime) (k : ℕ) :
-    genMarkovCongruenceCount k p ≤ 2
-
 /-- **At most two solutions of $x^2 + kx + 1 \equiv 0$ modulo an odd prime power.** Let $p$
 be an odd prime, let $m \ge 2$ and let $k \in \mathbb{N}$ with $k^2 - 4 \not\equiv 0 \pmod p$.
 Then at most two integers $x$ with $0 \le x < p^m$ satisfy
@@ -281,16 +169,6 @@ Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numb
 Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 4.14. -/
 public theorem_wanted mod_four_eq_two_of_four_dvd_genMarkovNumber {k b : ℕ}
     (hb : IsGenMarkovNumber k b) (h4 : 4 ∣ b) : k % 4 = 2
-
-/-- **Large odd primes do not divide $k^2 - 4$.** Let $p$ be an odd prime and $k$ a natural
-number. If either $k \ge 4$ is even and $p > k/2 + 1$, or $k$ is odd and $p > k + 2$, then $p$
-does not divide $k^2 - 4$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Proposition 4.15. -/
-public theorem_wanted not_dvd_sq_sub_four_of_large_prime {k p : ℕ} (hp : p.Prime)
-    (hp2 : p ≠ 2) (h : (4 ≤ k ∧ Even k ∧ k / 2 + 1 < p) ∨ (Odd k ∧ k + 2 < p)) :
-    ¬ (p : ℤ) ∣ (k : ℤ) ^ 2 - 4
 
 /-- **Discriminant condition for prime-power generalized Markov numbers.** Let $p$ be an odd
 prime and $m \ge 2$, and suppose that some $k$-generalized Markov number $b$ equals $p^m$ or
@@ -364,74 +242,6 @@ public theorem_wanted markov_eq_of_characteristic_number_eq {m m₂ m₃ n₂ n�
     (m₂ = n₂ ∧ m₃ = n₃) ∨ (m₂ = n₃ ∧ m₃ = n₂)
 
 /-! ### Part 2: Markov trees, generalized Cohn trees, Farey tree and fraction labeling -/
-
-/-- **Vieta jumping of generalized Markov triples.** For a natural number $k$, the left Vieta
-jumping sends a triple $(a, b, c)$ of natural numbers to
-$(a, \lfloor (a^2 + kab + b^2)/c \rfloor, b)$ and the right Vieta jumping sends it to
-$(b, \lfloor (b^2 + kbc + c^2)/a \rfloor, c)$, where division by $0$ gives $0$. The left jumping
-is indexed by the boolean value false and the right one by true.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 2. -/
-public def genMarkovVieta (k : ℕ) : Bool → ℕ × ℕ × ℕ → ℕ × ℕ × ℕ
-  | false, (a, b, c) => (a, (a ^ 2 + k * a * b + b ^ 2) / c, b)
-  | true, (a, b, c) => (b, (b ^ 2 + k * b * c + c ^ 2) / a, c)
-
-/-- **The wide generalized Markov tree.** Fix a natural number $k$. The wide $k$-generalized
-Markov tree $\mathrm{WMT}(k)$ is the binary tree of triples of natural numbers with root
-$(1, 1, 1)$ in which a vertex $(a, b, c)$ has left child
-$(a, \lfloor (a^2 + kab + b^2)/c \rfloor, b)$ and right child
-$(b, \lfloor (b^2 + kbc + c^2)/a \rfloor, c)$, the left and right Vieta jumpings. For a path $w$,
-a finite sequence of left and right steps, the vertex of $\mathrm{WMT}(k)$ at $w$ is the triple
-reached from the root by taking the steps of $w$ in order; the empty path gives the root.
-
-The quotients are divisions of natural numbers, rounded down, with division by $0$ giving $0$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 2. -/
-public def wideGenMarkovTree (k : ℕ) (w : List Bool) : ℕ × ℕ × ℕ :=
-  w.foldl (fun t d => genMarkovVieta k d t) (1, 1, 1)
-
-/-- **Generalized Markov tree.** For a natural number $k$ and a finite sequence $w$ of left and
-right steps, the vertex of the $k$-generalized Markov tree $MT(k)$ at $w$ is the vertex of the
-wide $k$-generalized Markov tree $WMT(k)$ reached from its root by one left step followed by the
-steps of $w$ in order. Thus $MT(k)$ is the full subtree of $WMT(k)$ rooted at the left child of
-the root.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 2. -/
-public def genMarkovTree (k : ℕ) (w : List Bool) : ℕ × ℕ × ℕ :=
-  wideGenMarkovTree k (false :: w)
-
-/-- **Children in the wide generalized Markov tree are Vieta jumpings.** For every natural
-number $k$, every path $w$ and every direction $d$ (left or right), the vertex of the wide
-$k$-generalized Markov tree $\mathrm{WMT}(k)$ at the path $w$ followed by one step in direction
-$d$ is the image of the vertex at $w$ under the Vieta jumping in direction $d$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 2. -/
-public theorem wideGenMarkovTree_append_singleton (k : ℕ) (w : List Bool) (d : Bool) :
-    wideGenMarkovTree k (w ++ [d]) = genMarkovVieta k d (wideGenMarkovTree k w) := by
-  simp [wideGenMarkovTree, List.foldl_append]
-
-/-- **Root of the generalized Markov tree.** For every natural number $k$, the root of the
-$k$-generalized Markov tree $MT(k)$, its vertex at the empty path, is $(1, k + 2, 1)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 4. -/
-public theorem genMarkovTree_nil (k : ℕ) : genMarkovTree k [] = (1, k + 2, 1) := by
-  simp only [genMarkovTree, wideGenMarkovTree, List.foldl_cons, List.foldl_nil, genMarkovVieta]
-  congr 2
-  rw [Nat.div_one]
-  ring
-
-/-- **Left child of the root of the classical Markov tree.** For $k = 0$, the vertex of the
-Markov tree $MT(0)$ reached from the root by one left step is $(1, 5, 2)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 2. -/
-public theorem genMarkovTree_zero_false : genMarkovTree 0 [false] = (1, 5, 2) := by
-  decide
 
 /-- **Generalized Markov triples in the wide Markov tree.** Let $k$ be a natural number. Every
 vertex of the wide $k$-generalized Markov tree $\mathrm{WMT}(k)$ is a $k$-generalized Markov
@@ -874,28 +684,6 @@ public theorem_wanted IsGenCohnTriple.existsUnique_mem_genCohnTree {k a b c : �
     {P Q R : Matrix (Fin 2) (Fin 2) ℤ} (h : IsGenCohnTriple k P Q R a b c) (hab : a < b)
     (hcb : c < b) : ∃! p : ℤ × List Bool, genCohnTree k p.1 p.2 = (P, Q, R)
 
-/-- **The Farey tree.** Write a fraction $n/d$, with $n$ and $d$ natural numbers, for the pair
-$(n, d)$, so that $1/0$ stands for $\infty$. The Farey tree $\mathrm{FT}$ is the infinite binary
-tree of triples of fractions with root $(0/1, 1/1, 1/0)$ in which a vertex $(a/b, c/d, e/f)$
-has left child $(a/b, (a+c)/(b+d), c/d)$ and right child $(c/d, (c+e)/(d+f), e/f)$. For a path
-$w$, a finite sequence of left and right moves, this gives the vertex of $\mathrm{FT}$ reached
-from the root by making the moves of $w$ in order.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 3.2. -/
-public def fareyTree (w : List Bool) : (ℕ × ℕ) × (ℕ × ℕ) × (ℕ × ℕ) :=
-  w.foldl (fun T d => match d, T with
-    | false, (x, y, _) => (x, (x.1 + y.1, x.2 + y.2), y)
-    | true, (_, y, z) => (y, (y.1 + z.1, y.2 + z.2), z)) ((0, 1), (1, 1), (1, 0))
-
-/-- **Left child of the root of the Farey tree.** The left child of the root $(0/1, 1/1, 1/0)$
-of the Farey tree is $(0/1, 1/2, 1/1)$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Section 4. -/
-public theorem fareyTree_false : fareyTree [false] = ((0, 1), (1, 2), (1, 1)) := by
-  decide
-
 /-- **Farey triples.** Write a pair $(a, b)$ of natural numbers as the fraction $a/b$, so that
 $1/0$ is allowed. Three such fractions $(a/b, c/d, e/f)$ form a Farey triple if
 $\gcd(a, b) = \gcd(c, d) = \gcd(e, f) = 1$ and
@@ -1038,24 +826,6 @@ public theorem_wanted genMarkovUniqueness_iff_label_injective (k : ℕ) :
       ∀ q q' m, q.1 ≤ q.2 → q'.1 ≤ q'.2 → IsGenMarkovLabel k q m → IsGenMarkovLabel k q' m →
         q = q'
 
-/-- **Characteristic number.** For natural numbers $m_r$, $m_t$, $m_s$, a natural number $x$ is
-a characteristic number of $(m_r, m_t, m_s)$ when $0 < x < m_t/2$ and
-$m_r x \equiv \pm m_s \pmod{m_t}$, that is, $m_t$ divides $m_r x - m_s$ or $m_r x + m_s$ in
-$\mathbb{Z}$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 4.3. -/
-public def IsGenMarkovCharNumber (mr mt ms x : ℕ) : Prop :=
-  0 < x ∧ 2 * x < mt ∧ ((mt : ℤ) ∣ mr * x - ms ∨ (mt : ℤ) ∣ mr * x + ms)
-
-/-- **Characteristic number of $(1, 5, 2)$.** The number $2$ is a characteristic number of
-$(m_r, m_t, m_s) = (1, 5, 2)$: indeed $0 < 2 < 5/2$ and $1 \cdot 2 \equiv 2 \pmod 5$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Definition 4.3. -/
-public theorem isGenMarkovCharNumber_one_five_two : IsGenMarkovCharNumber 1 5 2 2 := by
-  refine ⟨by norm_num, by norm_num, Or.inl ⟨0, by norm_num⟩⟩
-
 /-- **Positive corner entry of the generalized Cohn tree for $\ell = -k$.** Let $k$ be a natural
 number and $w$ a path, and suppose that the middle fraction $n/d$ of the vertex of the Farey
 tree at $w$ satisfies $0 < n < d$. Then the $(1,1)$-entry of the middle matrix of the vertex of
@@ -1084,24 +854,6 @@ public theorem_wanted genCohnTree_neg_snd_eq (k : ℕ) (w : List Bool)
       (genCohnTree k (-k) w).2.1 0 0 = u ∧
       (genCohnTree k (-k) w).2.1 0 1 = (genMarkovTree k w).2.1 ∧
       (genCohnTree k (-k) w).2.1 1 1 = (3 + 3 * k) * ((genMarkovTree k w).2.1 : ℤ) - u - k
-
-/-- **The characteristic number solves $m_r x \equiv m_s \pmod{m_t}$.** Let $k \in \mathbb{N}$,
-let $w$ be a finite sequence of left and right moves, let $(r, t, s)$ be the vertex of the
-Farey tree at $w$, and let $(m_r, m_t, m_s)$ be the vertex of the $k$-generalized Markov tree
-$\mathrm{MT}(k)$ at $w$. Write $t = n/d$. If $0 < n < d$ and $u$ is a characteristic number
-of $(m_r, m_t, m_s)$, then $m_t$ divides $m_r u - m_s$ in $\mathbb{Z}$, that is,
-$m_r u \equiv m_s \pmod{m_t}$.
-
-Of the two congruences $m_r x \equiv \pm m_s \pmod{m_t}$ allowed in the definition of a
-characteristic number, the one with the plus sign holds.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Corollary 4.6. -/
-public theorem_wanted genMarkovCharNumber_dvd_sub (k : ℕ) (w : List Bool)
-    (ht : 0 < (fareyTree w).2.1.1) (ht1 : (fareyTree w).2.1.1 < (fareyTree w).2.1.2) (u : ℕ)
-    (hu : IsGenMarkovCharNumber (genMarkovTree k w).1 (genMarkovTree k w).2.1
-      (genMarkovTree k w).2.2 u) :
-    ((genMarkovTree k w).2.1 : ℤ) ∣ (genMarkovTree k w).1 * u - (genMarkovTree k w).2.2
 
 /-- **The characteristic number solves $x^2 + kx + 1 \equiv 0 \pmod{m_t}$.** Let
 $k \in \mathbb{N}$, let $w$ be a finite sequence of left and right moves, let $(r, t, s)$ be

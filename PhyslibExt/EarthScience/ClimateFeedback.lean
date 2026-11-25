@@ -80,7 +80,8 @@ references. No nonlinear tipping or empirical sensitivity claim is made.
 namespace EarthScience
 
 
-/-- Scalar relaxation: `T(t) = F/lambda + (T0 - F/lambda)*exp(-lambda*t/C)`
+/-- Scalar relaxation: for `C > 0` and `lambda > 0`,
+`T(t) = F/lambda + (T0 - F/lambda)*exp(-lambda*t/C)`
 satisfies `T(0) = T0` and `HasDerivAt T ((F - lambda*T(t))/C) t`,
 i.e. `C*T' = F - lambda*T`. -/
 theorem scalar_relaxation {C F lam T0 : ℝ} (hC : 0 < C) (hlam : 0 < lam) (t : ℝ) :
@@ -125,10 +126,10 @@ theorem two_box_equilibrium {F lam gam Ts Td : ℝ} (hlam : 0 < lam) (hgam : 0 <
     rw [hTeq, hTs]
   exact ⟨hTs, hTd⟩
 
-/-- Anomaly energy: if `xs, xd` satisfy the anomaly ODEs
-`Cs*xs' = -lam*xs - gam*(xs - xd)` and `Cd*xd' = gam*(xs - xd)`,
+/-- Anomaly energy: for `Cs, Cd > 0`, if `xs, xd` satisfy the anomaly ODEs
+`Cs*xs' = -lam*xs - gam*(xs - xd)` and `Cd*xd' = gam*(xs - xd)` at `t`,
 then `E(t) = (Cs*xs^2 + Cd*xd^2)/2` has derivative
-`-lam*xs^2 - gam*(xs - xd)^2`. -/
+`-lam*xs^2 - gam*(xs - xd)^2` at `t`. -/
 theorem anomaly_energy_hasDerivAt {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd)
     (xs xd : ℝ → ℝ) (t : ℝ)
     (hxs : HasDerivAt xs ((-lam * xs t - gam * (xs t - xd t)) / Cs) t)
@@ -158,9 +159,9 @@ theorem anomaly_energy_hasDerivAt {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 
   ring
 
 /-- Anomaly-energy dissipation bound (algebraic, pointwise in the state):
-with `c = min (2*lam/(Cs + 2*Cd)) (gam/Cd)`,
+for `Cs, Cd, lam, gam > 0` and with `c = min (2*lam/(Cs + 2*Cd)) (gam/Cd)`,
 `-lam*xs^2 - gam*(xs-xd)^2 <= -c * (Cs*xs^2 + Cd*xd^2)/2`
-for all `xs, xd`, and `c > 0` when `lam, gam > 0`. -/
+for all `xs, xd`, and `c > 0`. -/
 lemma anomaly_energy_dissipation_bound {Cs Cd lam gam xs xd : ℝ}
     (hCs : 0 < Cs) (hCd : 0 < Cd) (hlam : 0 < lam) (hgam : 0 < gam) :
     0 < min (2 * lam / (Cs + 2 * Cd)) (gam / Cd) ∧
@@ -182,7 +183,7 @@ lemma anomaly_energy_dissipation_bound {Cs Cd lam gam xs xd : ℝ}
   nlinarith [hxd, e1, e2, sq_nonneg xs, sq_nonneg (xs - xd),
     mul_nonneg hc0 hCd.le, mul_nonneg hc0 hCs.le, hc0, hCs.le, hCd.le]
 
-/-- Anomaly-energy decay: if `xs, xd` satisfy the anomaly ODEs
+/-- Anomaly-energy decay: for `Cs, Cd, lam, gam > 0`, if `xs, xd` satisfy the anomaly ODEs
 `Cs*xs' = -lam*xs - gam*(xs - xd)` and `Cd*xd' = gam*(xs - xd)` at `t`,
 then `E(t) = (Cs*xs^2 + Cd*xd^2)/2` satisfies `E'(t) <= -c * E(t)` with
 `c = min (2*lam/(Cs + 2*Cd)) (gam/Cd) > 0`. Combines
@@ -201,8 +202,8 @@ theorem anomaly_energy_decay {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd)
   rw [(anomaly_energy_hasDerivAt hCs hCd xs xd t hxs hxd).deriv]
   exact hbound.trans_eq (by ring)
 
-/-- Anomaly-energy exponential bound: if `xs, xd` satisfy the anomaly ODEs
-`Cs*xs' = -lam*xs - gam*(xs - xd)` and `Cd*xd' = gam*(xs - xd)` at every
+/-- Anomaly-energy exponential bound: for `Cs, Cd, lam, gam > 0`, if `xs, xd` satisfy the
+anomaly ODEs `Cs*xs' = -lam*xs - gam*(xs - xd)` and `Cd*xd' = gam*(xs - xd)` at every
 `t >= 0`, with derivatives taken within `[0, ∞)` (so only the forward
 trajectory matters, and `t = 0` needs only a right derivative), then
 `E(t) = (Cs*xs^2 + Cd*xd^2)/2` satisfies `E(t) <= exp(-c*t) * E(0)` for

@@ -59,8 +59,12 @@ open IsDedekindDomain
 
 namespace ValuationBijection
 
-/-- A valuation `w` on `L` extends the `𝔭`-adic valuation of `K` up to
-equivalence: the restriction has the same valuation ring as `v_𝔭`.
+/-- **Valuations extending a prime-adic valuation.** Let $A$ be a Dedekind domain with fraction
+field $K$, let $L$ be a field extension of $K$, and let $\mathfrak{p}$ be a height-one prime of $A$.
+A valuation $w$ on $L$ with values in the multiplicative group $\mathbb{Z}$ with a zero adjoined
+extends the $\mathfrak{p}$-adic valuation of $K$ when its restriction to $K$ is equivalent to the
+$\mathfrak{p}$-adic valuation of $K$.
+
 This relation does not record an extension index or a normalization. -/
 def extendsValuation
     (A : Type*) [CommRing A] [IsDedekindDomain A]
@@ -81,12 +85,18 @@ variable (B : Type*) [CommRing B] [IsDedekindDomain B]
   [Algebra A B] [Algebra B L] [IsScalarTower A B L]
   [IsIntegralClosure B A L] [IsFractionRing B L]
 
-/-- The set of height-one primes of `B` lying over `𝔭`. -/
+/-- **Height-one primes above a prime.** Let $A$ and $B$ be Dedekind domains with $B$ an
+$A$-algebra, and let $\mathfrak{p}$ be a height-one prime of $A$. The primes above $\mathfrak{p}$
+form the set of height-one primes $\mathfrak{q}$ of $B$ lying over $\mathfrak{p}$, that is, whose
+preimage in $A$ is $\mathfrak{p}$. -/
 def primesAbove (𝔭 : HeightOneSpectrum A) : Set (HeightOneSpectrum B) :=
   {𝔮 : HeightOneSpectrum B | 𝔮.asIdeal.LiesOver 𝔭.asIdeal}
 
 set_option linter.unusedSectionVars false in
-/-- Membership in `𝔭` is detected by the image in a prime `𝔮` above `𝔭`. -/
+/-- **Membership in a prime is detected by a prime lying over it.** Let $A$ and $B$ be Dedekind
+domains with $B$ an $A$-algebra, let $\mathfrak{p}$ be a height-one prime of $A$, and let
+$\mathfrak{q}$ be a height-one prime of $B$ lying over $\mathfrak{p}$. Then for every $a \in A$,
+$a \in \mathfrak{p}$ if and only if the image of $a$ in $B$ lies in $\mathfrak{q}$. -/
 lemma mem_of_liesOver (𝔭 : HeightOneSpectrum A) (𝔮 : HeightOneSpectrum B)
     (hlo : 𝔮.asIdeal.LiesOver 𝔭.asIdeal) (a : A) :
     a ∈ 𝔭.asIdeal ↔ algebraMap A B a ∈ 𝔮.asIdeal := by
@@ -94,8 +104,12 @@ lemma mem_of_liesOver (𝔭 : HeightOneSpectrum A) (𝔮 : HeightOneSpectrum B)
 
 set_option maxHeartbeats 800000 in
 set_option linter.unusedSectionVars false in
-/-- If `𝔮` lies over `𝔭`, the restriction of its adic valuation is
-equivalent to `v_𝔭`. This is the forward equivalence-class statement. -/
+/-- **The adic valuation of a prime lying over extends the adic valuation below.** Let $A$ be a
+Dedekind domain with fraction field $K$, let $L$ be a finite separable extension of $K$, and let
+$B$ be a Dedekind domain that is the integral closure of $A$ in $L$ and has fraction field $L$.
+If $\mathfrak{q}$ is a height-one prime of $B$ lying over a height-one prime $\mathfrak{p}$ of
+$A$, then the $\mathfrak{q}$-adic valuation of $L$ extends the $\mathfrak{p}$-adic valuation of
+$K$: its restriction to $K$ is equivalent to the $\mathfrak{p}$-adic valuation of $K$. -/
 theorem valuation_extends_of_liesOver
     (𝔭 : HeightOneSpectrum A) (𝔮 : HeightOneSpectrum B)
     (hlo : 𝔮.asIdeal.LiesOver 𝔭.asIdeal) :
@@ -159,9 +173,12 @@ theorem valuation_extends_of_liesOver
     exact (mem_of_liesOver A B 𝔭 𝔮 hlo n).not.symm
 
 set_option maxHeartbeats 800000 in
-/-- An integer-valued valuation on `L` whose valuation ring contains `B`
-and whose strict unit ball in `B` is `𝔮` is equivalent to the `𝔮`-adic
-valuation. The prime constructed in the surjectivity proof has these properties. -/
+/-- **A valuation centered at a height-one prime is equivalent to its adic valuation.** Let $B$ be
+a Dedekind domain with fraction field $L$, let $\mathfrak{q}$ be a height-one prime of $B$, and let
+$w$ be a valuation on $L$ with values in the multiplicative group $\mathbb{Z}$ with a zero adjoined.
+Suppose that $w(b) \le 1$ for every $b \in B$, and that for every $b \in B$ we have
+$b \in \mathfrak{q}$ if and only if $w(b) < 1$. Then the $\mathfrak{q}$-adic valuation of $L$ is
+equivalent to $w$. -/
 theorem dvr_overring_equiv
     {B' : Type*} [CommRing B'] [IsDedekindDomain B']
     {L' : Type*} [Field L'] [Algebra B' L'] [IsFractionRing B' L']
@@ -221,9 +238,14 @@ theorem dvr_overring_equiv
 
 set_option maxHeartbeats 800000 in
 set_option linter.unusedSectionVars false in
-/-- Every integer-valued valuation on `L` extending `v_𝔭` up to
-equivalence is equivalent to `v_𝔮` for a prime `𝔮` of `B` over `𝔭`.
-The prime is the strict unit-ball ideal `{b ∈ B | w b < 1}`. -/
+/-- **Each extension of a prime-adic valuation comes from some prime above.** Let $A$ be a
+Dedekind domain with fraction field $K$, let $L$ be a finite separable extension of $K$, and let
+$B$ be a Dedekind domain that is the integral closure of $A$ in $L$ and has fraction field $L$.
+Let $\mathfrak{p}$ be a height-one prime of $A$, and let $w$ be a valuation on $L$ with values in
+the multiplicative group $\mathbb{Z}$ with a zero adjoined whose restriction to $K$ is equivalent
+to the $\mathfrak{p}$-adic valuation of $K$. Then there is a height-one prime $\mathfrak{q}$ of $B$
+lying over $\mathfrak{p}$ such that the $\mathfrak{q}$-adic valuation of $L$ is equivalent
+to $w$. -/
 theorem valuation_surjective_of_extends
     (𝔭 : HeightOneSpectrum A)
     (w : Valuation L (WithZero (Multiplicative ℤ)))
@@ -323,10 +345,19 @@ theorem valuation_surjective_of_extends
         ((Valuation.isEquiv_iff_val_lt_one.mp hw).mp h2)
   exact ⟨𝔮, h𝔮_over, dvr_overring_equiv 𝔮 w hB (fun b => hI_mem b)⟩
 
-/-- Height-one primes above `𝔭` classify the equivalently extending
-integer-valued valuations up to `IsEquiv`: equivalent prime-adic valuations
-come from the same prime, and every extending valuation has a prime-adic
-representative. No normalization or ramification-index equality is asserted. -/
+/-- **Each extension of a prime-adic valuation comes from exactly one prime above.** Let $A$ be a
+Dedekind domain with fraction field $K$, let $L$ be a finite separable extension of $K$, and let
+$B$ be a Dedekind domain that is the integral closure of $A$ in $L$ and has fraction field $L$.
+Let $\mathfrak{p}$ be a height-one prime of $A$, and consider valuations on $L$ with values in the
+multiplicative group $\mathbb{Z}$ with a zero adjoined. Then (1) if $\mathfrak{q}_1$ and
+$\mathfrak{q}_2$ are height-one primes of $B$ lying over $\mathfrak{p}$ whose adic valuations on
+$L$ are equivalent, then $\mathfrak{q}_1 = \mathfrak{q}_2$; and (2) every such valuation $w$ on $L$
+whose restriction to $K$ is equivalent to the $\mathfrak{p}$-adic valuation of $K$ is equivalent
+to the $\mathfrak{q}$-adic valuation of $L$ for some height-one prime $\mathfrak{q}$ of $B$ lying
+over $\mathfrak{p}$.
+
+Valuations are compared only up to equivalence; no normalization or ramification index is
+asserted. -/
 theorem extending_valuation_bijection_primes_above (𝔭 : HeightOneSpectrum A) :
     (∀ 𝔮₁ 𝔮₂ : HeightOneSpectrum B,
       𝔮₁ ∈ primesAbove A B 𝔭 →

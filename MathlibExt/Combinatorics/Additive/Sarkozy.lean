@@ -26,7 +26,7 @@ import Mathlib.Topology.Algebra.Monoid
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Algebra.Order.GroupWithZero.Basic
 import Mathlib.Analysis.InnerProductSpace.Defs
-import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Analysis.InnerProductSpace.Completion
 import Mathlib.LinearAlgebra.Finsupp.Defs
@@ -1094,7 +1094,7 @@ private lemma sarkozy_vdc_corr_stable {E : Type*} [SeminormedAddCommGroup E]
         ring
 
 /-- Hilbert-space van der Corput lemma (N8): vanishing lag-correlations kill the mean. -/
-private lemma sarkozy_vdc_tendsto {E : Type*} [SeminormedAddCommGroup E]
+lemma sarkozy_vdc_tendsto {E : Type*} [SeminormedAddCommGroup E]
     [InnerProductSpace ℝ E] (x : ℕ → E) (C : ℝ) (hC : 0 ≤ C)
     (hx : ∀ n, ‖x n‖ ≤ C)
     (hcorr : ∀ d : ℕ, 1 ≤ d → Filter.Tendsto

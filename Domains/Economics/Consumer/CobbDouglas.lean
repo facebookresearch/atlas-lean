@@ -46,13 +46,16 @@ namespace MathlibExt.Economics.Consumer
 
 open Matrix
 
-/-- The normalized two-good Cobb–Douglas utility `u(x) = x₀ ^ α * x₁ ^ (1 - α)`
-(real powers; the exponents `α` and `1 - α` sum to one). -/
+/-- The normalized two-good Cobb–Douglas utility `u(x) = x₀ ^ α * x₁ ^ (1 - α)` (real powers; the
+exponents `α` and `1 - α` sum to one). It is defined for all real `α` and `x`, with the conventions
+`0 ^ 0 = 1`, `0 ^ t = 0` for `t ≠ 0` and `s ^ t = |s| ^ t * cos (π t)` for `s < 0`; the intended
+domain is `0 < α < 1` and `x₀, x₁ ≥ 0`. -/
 noncomputable def cobbDouglas (α : ℝ) (x : Fin 2 → ℝ) : ℝ :=
   x 0 ^ α * x 1 ^ (1 - α)
 
-/-- The Cobb–Douglas budget-share bundle: spend the share `α` of wealth on good `0`
-and `1 - α` on good `1`, i.e. `x₀ = α w / p₀` and `x₁ = (1 - α) w / p₁`. -/
+/-- The Cobb–Douglas budget-share bundle: spend the share `α` of wealth on good `0` and `1 - α` on
+good `1`, i.e. `x₀ = α w / p₀` and `x₁ = (1 - α) w / p₁`. A share over a zero price is `0`, by the
+convention `t / 0 = 0`. -/
 noncomputable def cobbDouglasDemand (α : ℝ) (p : Fin 2 → ℝ) (w : ℝ) : Fin 2 → ℝ :=
   ![α * w / p 0, (1 - α) * w / p 1]
 
@@ -197,7 +200,7 @@ theorem isMarshallianDemand_cobbDouglas {α w : ℝ} {p : Fin 2 → ℝ} (hα₀
           mul_le_mul_of_nonneg_left hZle hudnn
       _ = cobbDouglas α (cobbDouglasDemand α p w) := mul_one _
 
-/-- The expenditure shares of the Cobb–Douglas demand are the exponents:
+/-- With positive prices, the expenditure shares of the Cobb–Douglas demand are the exponents:
 `p₀ x₀ = α w` and `p₁ x₁ = (1 - α) w`. -/
 theorem cobbDouglasDemand_shares {α w : ℝ} {p : Fin 2 → ℝ} (hp : ∀ i, 0 < p i) :
     p 0 * cobbDouglasDemand α p w 0 = α * w ∧

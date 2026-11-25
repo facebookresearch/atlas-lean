@@ -95,11 +95,12 @@ open SiteFrequencySpectrum VariableSFS
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω}
 
-/-- **Conditional moments of the site frequency spectrum given the genealogy.** Given the
-genealogy σ-algebra `m`, the counts `ξ i` (sites whose derived allele is carried by exactly `i`
-sample copies) are independent Poisson variables with means `(θ / 2) L i`, where `L i` is the
-total length of the branches subtending exactly `i` copies. Only the first two conditional
-moments are recorded:
+/-- **Conditional moments of the site frequency spectrum given the genealogy.** In the
+infinite-sites model, given the genealogy σ-algebra `m`, the counts `ξ i` (sites whose derived
+allele is carried by exactly `i` sample copies) are independent Poisson variables with means
+`(θ / 2) L i`, where `L i` is the total length of the branches subtending exactly `i` copies.
+The structure records only the first two conditional moments of such counts, which do not
+determine a conditional Poisson law or conditional independence:
 
 * `E[ξ_i | m] = (θ / 2) L_i`;
 * `E[ξ_i ξ_j | m] = (θ / 2)² L_i L_j + δ_{ij} (θ / 2) L_i` (conditional covariance
@@ -107,7 +108,10 @@ moments are recorded:
   mutation counts are conditionally independent; a Poisson count has variance equal to its
   mean),
 
-together with square integrability of the counts and of the branch lengths. -/
+together with square integrability of the counts and of the branch lengths. The conditional
+expectation is `0` by convention unless `m ≤ mΩ`, `μ.trim` is σ-finite and the function is
+integrable; the moment and covariance formulas derived from it take `μ` a probability measure
+and `m ≤ mΩ`, while the results that establish it need not. -/
 structure SFSCondMoments (μ : Measure Ω) (m : MeasurableSpace Ω) (θ : ℝ)
     (ξ L : ℕ → Ω → ℝ) : Prop where
   /-- Each count is square integrable. -/
@@ -125,14 +129,16 @@ namespace SFSCondMoments
 variable {μ : Measure Ω} [IsProbabilityMeasure μ] {m : MeasurableSpace Ω} {θ : ℝ}
   {ξ L : ℕ → Ω → ℝ}
 
-/-- The mean of a count is `(θ / 2)` times the mean branch length of its class. -/
+/-- Under a probability measure, for `m ≤ mΩ` and counts with `SFSCondMoments`, the mean of a
+count is `(θ / 2)` times the mean branch length of its class. -/
 theorem integral_count (h : SFSCondMoments μ m θ ξ L) (hm : m ≤ mΩ) (i : ℕ) :
     μ[ξ i] = θ / 2 * μ[L i] := by
   rw [← integral_condExp hm, integral_congr_ae (h.condExp_count i), integral_const_mul]
 
-/-- **Covariance of two SFS entries** (Fu 1995): by the law of total covariance,
-`Cov(ξ_i, ξ_j) = δ_{ij} (θ / 2) E L_i + (θ / 2)² Cov(L_i, L_j)`. For `i ≠ j` the covariance
-comes entirely from the covariance of the branch lengths. -/
+/-- **Covariance of two SFS entries** (Fu 1995): under a probability measure, for `m ≤ mΩ` and
+counts with `SFSCondMoments`, by the law of total covariance
+`Cov(ξ_i, ξ_j) = δ_{ij} (θ / 2) E L_i + (θ / 2)² Cov(L_i, L_j)` for all `i, j`. For `i ≠ j` the
+covariance comes entirely from the covariance of the branch lengths. -/
 theorem covariance_count (h : SFSCondMoments μ m θ ξ L) (hm : m ≤ mΩ) (i j : ℕ) :
     cov[ξ i, ξ j; μ] =
       (if i = j then θ / 2 * μ[L i] else 0) + (θ / 2) ^ 2 * cov[L i, L j; μ] := by
@@ -152,7 +158,8 @@ theorem covariance_count (h : SFSCondMoments μ m θ ξ L) (hm : m ≤ mΩ) (i j
   rw [hprod, h.integral_count hm i, h.integral_count hm j]
   ring
 
-/-- **Covariance of two linear SFS statistics**:
+/-- **Covariance of two linear SFS statistics**: under a probability measure, for `m ≤ mΩ`,
+counts with `SFSCondMoments` and sums over a finite set `s`,
 `Cov(∑ a_i ξ_i, ∑ b_j ξ_j) = (θ / 2) ∑ a_i b_i E L_i + (θ / 2)² Cov(∑ a_i L_i, ∑ b_j L_j)`.
 The branch-length covariance matrix enters only through the covariance of the *same* linear
 combinations of the branch lengths. -/
@@ -174,7 +181,8 @@ theorem covariance_sum (h : SFSCondMoments μ m θ ξ L) (hm : m ≤ mΩ) (s : F
   · refine sum_congr rfl fun i _ => sum_congr rfl fun j _ => ?_
     ring
 
-/-- **Variance of a linear SFS statistic**:
+/-- **Variance of a linear SFS statistic**: under a probability measure, for `m ≤ mΩ`, counts
+with `SFSCondMoments` and sums over a finite set `s`,
 `Var(∑ a_i ξ_i) = (θ / 2) ∑ a_i² E L_i + (θ / 2)² Var(∑ a_i L_i)`. -/
 theorem variance_sum (h : SFSCondMoments μ m θ ξ L) (hm : m ≤ mΩ) (s : Finset ℕ)
     (a : ℕ → ℝ) :
@@ -192,7 +200,8 @@ theorem variance_sum (h : SFSCondMoments μ m θ ξ L) (hm : m ≤ mΩ) (s : Fin
 end SFSCondMoments
 
 /-- The variance of a linear combination of branch lengths, expanded into the branch-length
-covariance matrix: `Var(∑ c_i L_i) = ∑_i ∑_j c_i c_j Cov(L_i, L_j)`. -/
+covariance matrix: under a probability measure, for square-integrable `L i` and sums over a
+finite set `s`, `Var(∑ c_i L_i) = ∑_i ∑_j c_i c_j Cov(L_i, L_j)`. -/
 theorem variance_sum_eq_sum_covariance {μ : Measure Ω} [IsProbabilityMeasure μ]
     {L : ℕ → Ω → ℝ} (hL : ∀ i, MemLp (L i) 2 μ) (s : Finset ℕ) (c : ℕ → ℝ) :
     Var[fun ω => ∑ i ∈ s, c i * L i ω; μ] =
@@ -209,7 +218,8 @@ theorem variance_sum_eq_sum_covariance {μ : Measure Ω} [IsProbabilityMeasure �
 /-! ### Weights of Watterson's, Tajima's and the `D`-numerator statistics -/
 
 /-- The coefficient of `ξ_i` in Tajima's `D` numerator `θ_π - S / a₁` written on the SFS:
-`i (n - i) / C(n, 2) - 1 / a₁`. -/
+`i (n - i) / C(n, 2) - 1 / a₁`, with `n - i` a real difference; meaningful for `n ≥ 2` and
+`1 ≤ i ≤ n - 1`. With `x / 0 = 0` and `0⁻¹ = 0` it is `0` for `n ≤ 1`. -/
 noncomputable def tajimaNumWeight (n i : ℕ) : ℝ :=
   ((n : ℝ) - i) / (n.choose 2 : ℝ) * i - (tajimaA1 n)⁻¹
 
@@ -257,7 +267,7 @@ private lemma sum_piWeight {n : ℕ} (hn : 2 ≤ n) :
     ring
   rw [← sum_div, hs, Nat.cast_choose_two, div_self (by rw [← Nat.cast_choose_two]; exact hC.ne')]
 
-/-- The `θ`-linear coefficient of `Var θ_π` from the SFS:
+/-- The `θ`-linear coefficient of `Var θ_π` from the SFS: for `n ≥ 2`,
 `∑_{i=1}^{n-1} ((n - i) / C(n, 2))² i = b₁ = (n + 1) / (3 (n - 1))` (Tajima 1983). -/
 theorem sum_piWeight_sq_mul {n : ℕ} (hn : 2 ≤ n) :
     ∑ i ∈ Ico 1 n, (((n : ℝ) - i) / (n.choose 2 : ℝ)) ^ 2 * i = tajimaB1 n := by
@@ -273,8 +283,9 @@ theorem sum_piWeight_sq_mul {n : ℕ} (hn : 2 ≤ n) :
   field_simp
   ring
 
-/-- The `θ`-linear coefficient of the variance of Tajima's `D` numerator from the SFS:
-`∑_{i=1}^{n-1} w_i² / i = c₁ = b₁ - 1 / a₁` with `w_i = tajimaNumWeight n i` (Tajima 1989). -/
+/-- The `θ`-linear coefficient of the variance of Tajima's `D` numerator from the SFS: for
+`n ≥ 2`, `∑_{i=1}^{n-1} w_i² / i = c₁ = b₁ - 1 / a₁` with `w_i = tajimaNumWeight n i`
+(Tajima 1989). -/
 theorem sum_tajimaNumWeight_sq_div {n : ℕ} (hn : 2 ≤ n) :
     ∑ i ∈ Ico 1 n, tajimaNumWeight n i ^ 2 / i = tajimaC1 n := by
   have hC := choose_two_cast_pos hn
@@ -315,9 +326,12 @@ private lemma half_mul_integral_sfsLength (hT : ∀ k, Measurable (K.T k))
   exact integral_sfs K hT hτ hτ_law h_indep (fun j => (h.memLp_count j).integrable one_le_two)
     h.condExp_count (mem_Ico.1 hi).1 (mem_Ico.1 hi).2
 
-/-- Under Kingman's coalescent with a random-joining block-size history, each branch-length
-class `L_i = sfsLength n i τ T` is square integrable (the block counts are a.s. bounded, the
-holding times are exponential). -/
+/-- Under a probability measure, for Kingman holding times and a block-size history `τ`,
+measurable for the discrete σ-algebra, with the random-joining law from `n` singletons (no
+independence needed), each branch-length class `L_i = sfsLength n i τ T` is square integrable
+(the block counts are a.s. bounded, the holding times are exponential). Here `sfsLength` reads
+an entry missing from `τ` as the empty list, which contributes `0`, and `n - 1` is `0` for
+`n = 0`. -/
 theorem memLp_sfsLength (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
     (i : ℕ) : MemLp (fun ω => sfsLength n i (τ ω) (fun k => K.T k ω)) 2 μ := by
@@ -343,8 +357,12 @@ theorem memLp_sfsLength (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     exact single_le_sum (f := g) (fun _ _ => by positivity) hω
   exact hbd.fun_mul (K.memLp_T hk)
 
-/-- Build `SFSCondMoments` for the Kingman genealogy: square integrability of the branch-length
-classes is automatic (`memLp_sfsLength`). -/
+/-- Build `SFSCondMoments` for the Kingman genealogy: under a probability measure, with `τ`
+measurable for the discrete σ-algebra and with the random-joining law from `n` singletons,
+square-integrable counts with the two conditional moments satisfy `SFSCondMoments`; square
+integrability of the branch-length classes is automatic (`memLp_sfsLength`). The holding times
+need not be measurable, so the genealogy σ-algebra need not lie in `mΩ`; the two conditional
+expectations then follow the zero convention. -/
 theorem sfsCondMoments_kingman (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
     (hξ2 : ∀ i, MemLp (ξ i) 2 μ)
@@ -361,12 +379,15 @@ theorem sfsCondMoments_kingman (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
       (fun i ω => sfsLength n i (τ ω) (fun k => K.T k ω)) :=
   ⟨hξ2, memLp_sfsLength hτ hτ_law, hξ, hξξ⟩
 
-/-- **Covariance of SFS entries under Kingman's coalescent** (Fu 1995): with the genealogy
-(holding times `K.T` and an independent random-joining block-size history `τ`) and the
-conditionally Poisson counts of `SFSCondMoments`,
-`Cov(ξ_i, ξ_j) = δ_{ij} θ / i + (θ / 2)² Cov(L_i, L_j)` for `1 ≤ i ≤ n - 1`, where
+/-- **Covariance of SFS entries under Kingman's coalescent** (Fu 1995): under a probability
+measure, with the genealogy (measurable holding times `K.T` and an independent block-size
+history `τ`, measurable for the discrete σ-algebra, with the random-joining law from `n`
+singletons) and counts with the first two conditional moments of independent Poisson counts
+(`SFSCondMoments`),
+`Cov(ξ_i, ξ_j) = δ_{ij} θ / i + (θ / 2)² Cov(L_i, L_j)` for `1 ≤ i ≤ n - 1` and every `j`, where
 `L_i = sfsLength n i τ T` and the diagonal term is Fu's expected spectrum
-(`SiteFrequencySpectrum.integral_sfs`). Fu's `σ_{ij}` is `Cov(L_i, L_j) / 4`. -/
+(`SiteFrequencySpectrum.integral_sfs`). If also `1 ≤ j ≤ n - 1`, Fu's `σ_{ij}` is
+`Cov(L_i, L_j) / 4`. -/
 theorem covariance_count_kingman (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -382,7 +403,10 @@ theorem covariance_count_kingman (hT : ∀ k, Measurable (K.T k))
   rw [h.covariance_count (sup_le hτ (measurable_pi_iff.2 hT).comap_le),
     half_mul_integral_sfsLength hT hτ hτ_law h_indep h hi]
 
-/-- **Variance of a linear SFS statistic under Kingman's coalescent**:
+/-- **Variance of a linear SFS statistic under Kingman's coalescent**: under a probability
+measure, with measurable holding times `K.T`, an independent block-size history `τ`, measurable
+for the discrete σ-algebra, with the random-joining law from `n` singletons, and counts with
+`SFSCondMoments` given the genealogy,
 `Var(∑_{i=1}^{n-1} a_i ξ_i) = θ ∑_i a_i² / i + (θ / 2)² Var(∑_i a_i L_i)`. The second-order
 term needs exactly the variance of the same linear combination of the branch lengths
 `L_i = sfsLength n i τ T`, i.e. `∑_{i,j} a_i a_j Cov(L_i, L_j)`
@@ -406,7 +430,9 @@ theorem variance_sum_kingman (hT : ∀ k, Measurable (K.T k))
   rw [mul_left_comm, half_mul_integral_sfsLength hT hτ hτ_law h_indep h hi]
   ring
 
-/-- **Variance of Watterson's estimator from the SFS** (`n ≥ 2`):
+/-- **Variance of Watterson's estimator from the SFS** (`n ≥ 2`): under the hypotheses of
+`variance_sum_kingman` (a probability measure, measurable Kingman holding times, an independent
+random-joining history `τ` measurable for the discrete σ-algebra, counts with `SFSCondMoments`),
 `Var(S / a₁) = θ / a₁ + (θ / (2 a₁))² Var(∑_i L_i)` with `S = ∑_{i=1}^{n-1} ξ_i`. Watterson's
 estimator needs, of the branch-length covariances, only `Var(∑_i L_i) = ∑_{i,j} Cov(L_i, L_j)`,
 the variance of the total length of the branches subtending `1, …, n - 1` copies. -/
@@ -436,9 +462,13 @@ theorem variance_watterson_kingman (hn : 2 ≤ n) (hT : ∀ k, Measurable (K.T k
   rw [hs]
   field_simp
 
-/-- **Variance of a weighted SFS estimator** (Achaz 2009): for `θ_ω = ∑_i ω_i i ξ_i`,
-`Var θ_ω = θ ∑_i ω_i² i + (θ / 2)² Var(∑_i ω_i i L_i)`; the branch-length term is
-`∑_{i,j} ω_i ω_j i j Cov(L_i, L_j)` (Fu's `σ_{ij} = Cov(L_i, L_j) / 4`). -/
+/-- **Variance of a weighted SFS estimator** (Achaz 2009): under the hypotheses of
+`variance_sum_kingman` (a probability measure, measurable Kingman holding times, an independent
+random-joining history `τ` measurable for the discrete σ-algebra, counts with `SFSCondMoments`),
+for `θ_ω = ∑_i ω_i i ξ_i`,
+`Var θ_ω = θ ∑_i ω_i² i + (θ / 2)² Var(∑_i ω_i i L_i)`; the variance in the second term is
+`∑_{i,j} ω_i ω_j i j Cov(L_i, L_j)`, and Fu's `σ_{ij}` is `Cov(L_i, L_j) / 4` for
+`1 ≤ i, j ≤ n - 1`. -/
 theorem variance_thetaWeighted_kingman (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -459,9 +489,12 @@ theorem variance_thetaWeighted_kingman (hT : ∀ k, Measurable (K.T k))
   have : (i : ℝ) ≠ 0 := by have := (mem_Ico.1 hi).1; positivity
   field_simp
 
-/-- **Variance of Tajima's `θ_π` from the SFS** (Tajima 1983, `n ≥ 2`):
-`Var θ_π = b₁ θ + (θ / 2)² Var(∑_i i (n - i) L_i / C(n, 2))`. The branch-length term needs the
-covariances `Cov(L_i, L_j)` weighted by `i (n - i) j (n - j) / C(n, 2)²`. -/
+/-- **Variance of Tajima's `θ_π` from the SFS** (Tajima 1983, `n ≥ 2`): under the hypotheses
+of `variance_sum_kingman` (a probability measure, measurable Kingman holding times, an
+independent random-joining history `τ` measurable for the discrete σ-algebra, counts with
+`SFSCondMoments`), `Var θ_π = b₁ θ + (θ / 2)² Var(∑_i i (n - i) L_i / C(n, 2))`. The
+branch-length term needs the covariances `Cov(L_i, L_j)` weighted by
+`i (n - i) j (n - j) / C(n, 2)²`. -/
 theorem variance_thetaPi_kingman (hn : 2 ≤ n) (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)
@@ -485,12 +518,14 @@ private lemma tajimaNum_eq (X : ℕ → Ω → ℝ) :
   refine sum_congr rfl fun i _ => ?_
   ring
 
-/-- **Variance of Tajima's `D` numerator from the SFS** (Tajima 1989, `n ≥ 2`):
-`Var(θ_π - S / a₁) = c₁ θ + (θ / 2)² Var(∑_i w_i L_i)` with
+/-- **Variance of Tajima's `D` numerator from the SFS** (Tajima 1989, `n ≥ 2`): under the
+hypotheses of `variance_sum_kingman` (a probability measure, measurable Kingman holding times,
+an independent random-joining history `τ` measurable for the discrete σ-algebra, counts with
+`SFSCondMoments`), `Var(θ_π - S / a₁) = c₁ θ + (θ / 2)² Var(∑_i w_i L_i)` with
 `w_i = i (n - i) / C(n, 2) - 1 / a₁` (`tajimaNumWeight`). The `θ`-linear coefficient is
-Tajima's `c₁` (`sum_tajimaNumWeight_sq_div`); the `θ²` coefficient needs exactly the
-covariances `Cov(L_i, L_j)` weighted by `w_i w_j` (`variance_sum_eq_sum_covariance`), i.e. the
-combination that Tajima's `c₂` evaluates (Tajima 1989; not proved here). -/
+Tajima's `c₁` (`sum_tajimaNumWeight_sq_div`); the `θ²` coefficient is
+`(1/4) ∑_{i,j} w_i w_j Cov(L_i, L_j)` (`variance_sum_eq_sum_covariance`), the combination that
+Tajima's `c₂` evaluates (Tajima 1989). -/
 theorem variance_tajimaNumerator_kingman (hn : 2 ≤ n) (hT : ∀ k, Measurable (K.T k))
     (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     (hτ_law : ∀ ps, μ.real (τ ⁻¹' {ps}) = randomJoining (n - 1) (List.replicate n 1) ps)

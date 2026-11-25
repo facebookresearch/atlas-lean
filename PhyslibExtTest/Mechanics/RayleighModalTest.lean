@@ -560,16 +560,18 @@ private noncomputable def peakPhi : Matrix (Fin 1) (Fin 1) ℝ := Matrix.of fun 
 
 /-- The witness basis is mass-orthonormal. -/
 private lemma peak_hMPhi : peakPhiᵀ * peakM4 * peakPhi = 1 := by
-  ext i j; fin_cases i; fin_cases j; simp [peakM4, peakPhi, Matrix.mul_apply]; norm_num
+  ext i j; fin_cases i; fin_cases j
+  simp [peakM4, peakPhi, Matrix.mul_apply, -Matrix.transpose_of]; norm_num
 
 /-- The witness basis diagonalizes the (equal) stiffness with modal value `1`. -/
 private lemma peak_hKPhi : peakPhiᵀ * peakM4 * peakPhi = diagonal (fun _ => 1) := by
-  ext i j; fin_cases i; fin_cases j; simp [peakM4, peakPhi, Matrix.mul_apply]; norm_num
+  ext i j; fin_cases i; fin_cases j
+  simp [peakM4, peakPhi, Matrix.mul_apply, -Matrix.transpose_of]; norm_num
 
 /-- Mass-weighted participation of the witness is `Γ = 2`. -/
 private lemma peak_part4 : participation peakM4 peakPhi (fun _ => 1) = fun _ => 2 := by
   funext j; simp [participation, peakM4, peakPhi, Matrix.mulVec, dotProduct,
-    Matrix.mul_apply]; norm_num
+    Matrix.mul_apply, -Matrix.transpose_of]; norm_num
 
 /-- Mass weighting matters: with a nonzero base load the modal load is
 `-(Γ * ag)` with `Γ = 2`; the unweighted transport `Φᵀ r` is `1 / 2`, and
