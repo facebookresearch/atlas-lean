@@ -32,7 +32,9 @@ half-edges to `v_S(θ_t)`, `Î_t`, `R̂_t = 1 - v_S(θ_t) - Î_t` and `h_S(θ_t)
 treat few initial infectives (`α_I = μ_I = 0`): with
 `R₀ = (β / (ρ + β)) (α_S / μ) ∑ (k - 1) k p_k`, the outbreak infects `o_p(n)` vertices if
 `R₀ ≤ 1`, while if `R₀ > 1` the number of susceptibles falls below `n s₀` with probability
-bounded away from `0`, for every `s₀ ∈ (v_S(θ_∞), α_S)`.
+bounded away from `0`, for every `s₀ ∈ (v_S(θ_∞), α_S)`. On the multigraph these hold without
+(G1) (the remark after Theorem 2.9); when `(p_k)` has no second moment, `R₀ = ∞` and the epidemic
+is supercritical (end of Section 7), so `R₀` is taken with values in `[0, ∞]`.
 
 The statements below cover these conclusions for the vertex counts and the susceptible
 half-edges; the source's convergence of the free infective and recovered half-edge counts, which
@@ -58,7 +60,7 @@ public import Mathlib.GroupTheory.Perm.Basic
 namespace WantedExt.Biology.Epidemiology.ConfigurationModelSIRWanted
 
 open MeasureTheory ProbabilityTheory Finset Filter Topology
-open scoped NNReal
+open scoped NNReal ENNReal
 
 /-! ### The random graphs -/
 
@@ -195,9 +197,12 @@ noncomputable def infectiveLimit (αS αI μ μR β ρ : ℝ) (p : ℕ → ℝ) 
   Real.exp (-ρ * t) * αI + ∫ s in (0 : ℝ)..t, Real.exp (-ρ * (t - s)) *
     (β * hI αS μ μR β ρ p (θ s) * hS αS p (θ s) / (μ * θ s ^ 2))
 
-/-- `R₀ = (β / (ρ + β)) (α_S / μ) ∑_k (k - 1) k p_k` (Eq. (2.23)). -/
-noncomputable def R0 (αS μ β ρ : ℝ) (p : ℕ → ℝ) : ℝ :=
-  β / (ρ + β) * (αS / μ) * ∑' k : ℕ, ((k : ℝ) - 1) * k * p k
+/-- `R₀ = (β / (ρ + β)) (α_S / μ) ∑_k (k - 1) k p_k` (Eq. (2.23)), with values in `[0, ∞]`:
+the terms `(k - 1) k p_k` are nonnegative for a degree law `p ≥ 0`, so the sum is `∞` exactly when
+`(p_k)` has no second moment, and then `R₀ = ∞` (Janson, Luczak and Windridge 2014, end of
+Section 7); when the second moment is finite, `R₀` is the real number of Eq. (2.23). -/
+noncomputable def R0 (αS μ β ρ : ℝ) (p : ℕ → ℝ) : ℝ≥0∞ :=
+  ENNReal.ofReal (β / (ρ + β) * (αS / μ)) * ∑' k : ℕ, ENNReal.ofReal (((k : ℝ) - 1) * k * p k)
 
 /-- The number `S_∞` of vertices that are still susceptible at the end of the epidemic (the
 counts of susceptibles never increase). -/
@@ -259,7 +264,8 @@ theorem_wanted tendsto_epidemicProb_deviation (d : (n : ℕ) → Fin n → ℕ)
 /-- **Small outbreaks below threshold** (Janson, Luczak and Windridge 2014, Theorems 2.9(i)
 and 2.10). Assume the degree conditions (D1)–(D6) (`Conditions`), `β > 0`, `ρ ≥ 0`,
 `α_I = μ_I = 0`, that for every `n ≥ 1` some initially infective vertex has nonzero degree, and
-for the simple graph (`simple = true`) also (G1) (`SquareSumBound`). If `R₀ ≤ 1`, then for every
+for the simple graph (`simple = true`) also (G1) (`SquareSumBound`). If `R₀ ≤ 1` (so in
+particular `(p_k)` has a finite second moment; `R₀` takes values in `[0, ∞]`), then for every
 `ε > 0` the probability that more than `ε n` of the initially susceptible vertices ever get
 infected (`n_S - S_∞ > ε n`) tends to `0`, on the configuration multigraph (`simple = false`) or
 on the uniform simple graph (`simple = true`). (`hQ` records that each epidemic rate matrix is a
@@ -279,7 +285,8 @@ theorem_wanted tendsto_epidemicProb_large_of_R0_le_one (d : (n : ℕ) → Fin n 
 /-- **Large outbreaks above threshold** (Janson, Luczak and Windridge 2014, Theorems 2.9(ii)(a),
 (ii)(c) and 2.10). Assume the degree conditions (D1)–(D6) (`Conditions`), `β > 0`, `ρ ≥ 0`,
 `α_I = μ_I = 0`, that for every `n ≥ 1` some initially infective vertex has nonzero degree, and
-for the simple graph (`simple = true`) also (G1) (`SquareSumBound`). If `R₀ > 1`, then there is
+for the simple graph (`simple = true`) also (G1) (`SquareSumBound`). If `R₀ > 1` in `[0, ∞]`
+(including `R₀ = ∞`, when `(p_k)` has no second moment), then there is
 a unique `θ_∞ ∈ (0, 1)` with `h_I(θ_∞) = 0`, `h_I > 0` on `(θ_∞, 1)` and `h_I < 0` on
 `(0, θ_∞)`; and for every `s₀ ∈ (v_S(θ_∞), v_S(1))` there are `c > 0` and, for all large `n`,
 probability at least `c` that the number of susceptibles falls to at most `n s₀` at some time

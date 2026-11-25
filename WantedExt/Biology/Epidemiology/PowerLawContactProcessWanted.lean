@@ -16,9 +16,10 @@ resulting multigraph is conditioned to be simple. On it runs the contact process
 vertex recovers at rate `1`, and a healthy vertex becomes infected at rate `λ` times its number
 of infected neighbours. Their Theorem 1: if `p_k ~ C k^(-α)` with `α > 3` and every degree is
 at least `3`, then for every `λ > 0` there is `p(λ) > 0` such that, started from all vertices
-infected, the infected fraction stays at least `p(λ)` up to time `exp(n^(1-δ))` with
-probability tending to `1`, for every `δ > 0` (probability over the graph and the process
-together). Hence the critical value of the contact process on these graphs is `0`.
+infected, for every `δ > 0`, `inf_{t ≤ exp(n^(1-δ))} P(|ξ_t| / n ≥ p(λ)) → 1` as `n → ∞`: at
+each time up to `exp(n^(1-δ))`, the infected fraction is at least `p(λ)` with probability tending
+to `1`, uniformly in the time (probability over the graph and the process together). Hence the
+critical value of the contact process on these graphs is `0`.
 
 Given the degree sequence `d` of a simple graph `G`, the uniform pairing produces `G` in exactly
 `∏ d_i!` of the `(2m - 1)!!` pairings of the `2m = ∑ d_i` half-edges, so the law above gives a
@@ -71,8 +72,11 @@ noncomputable def nswWeight (p : ℕ → ℝ) (G : SimpleGraph V) : ℝ :=
   (∏ i, p (G.degree i) * ((G.degree i).factorial : ℝ)) /
     ((∑ i, G.degree i) - 1).doubleFactorial
 
-/-- The law of the Newman–Strogatz–Watts random graph on `Fin n` with degree law `p`: the mass
-`nswWeight p G` normalized over all simple graphs on `Fin n`. -/
+/-- The normalized weight `nswWeight p G / ∑ H, nswWeight p H` of a simple graph `G` on `Fin n`
+under the Newman–Strogatz–Watts model with degree law `p`. When the total weight
+`∑ H : SimpleGraph (Fin n), nswWeight p H` is positive (i.e. admissible simple graphs exist for
+`n` and `p`), this defines a probability law on `SimpleGraph (Fin n)` (otherwise Lean's `x / 0 = 0`
+convention makes it identically zero). -/
 noncomputable def nswLaw (p : ℕ → ℝ) (n : ℕ) (G : SimpleGraph (Fin n)) : ℝ :=
   nswWeight p G / ∑ H : SimpleGraph (Fin n), nswWeight p H
 

@@ -29,7 +29,7 @@ strictly dominant simple root since `μ_0 > 0`).
 
 The household process is a Galton–Watson process in the households, whose offspring number has
 mean `R*`; its survival criterion is `MathlibExt.Probability.BranchingProcess.GaltonWatson`
-(`extinctionProb_eq_one_iff`). `survives_iff_one_lt_R0` combines it with the threshold link.
+(`extinctionProb_eq_one_iff`). `extinctionProb_lt_one_iff` combines it with the threshold link.
 The source's critical vaccination fraction `1 - 1/R₀` for birth thinning is not stated: deleting
 infections inside a household need not scale `μ_i` by `(1 - p)^i`.
 
@@ -106,12 +106,12 @@ theorem_wanted existsUnique_root_eq_spectralRadius (hnH : 0 < nH) (μG : ℝ) (�
       ∀ lam : ℝ, 0 < lam → ∑ i, μG * μ i / lam ^ ((i : ℕ) + 1) = 1 →
         lam = spectralRadiusReal (householdMatrix μG μ)
 
-/-- **`R₀` and `R*` have the same threshold** (Pellis, Ball and Trapman 2012, Section 3,
-p. 7). Let `n_H ≥ 1`, `μ_G > 0`, `μ_0 = 1` and `μ_i ≥ 0` for all `i`. Then
+/-- **`R₀` and `R*` have the same threshold** (Pellis, Ball and Trapman 2012, Section 2.3).
+Let `n_H ≥ 1`, `μ_G > 0`, `μ_0 = 1` and `μ_i ≥ 0` for all `i`. Then
 `ρ(A_{n_H}) < 1 ↔ R* < 1`, `ρ(A_{n_H}) = 1 ↔ R* = 1` and `1 < ρ(A_{n_H}) ↔ 1 < R*`, where
 `R* = μ_G ∑_i μ_i`.
 
-Source: Pellis, Ball and Trapman (2012), p. 7. -/
+Source: Pellis, Ball and Trapman (2012), Section 2.3. -/
 theorem_wanted spectralRadius_threshold (hnH : 0 < nH) (μG : ℝ) (μ : Fin nH → ℝ)
     (hμG : 0 < μG) (hμ0 : μ ⟨0, hnH⟩ = 1) (hμ : ∀ i, 0 ≤ μ i) :
     (spectralRadiusReal (householdMatrix μG μ) < 1 ↔ householdR μG μ < 1) ∧
@@ -119,13 +119,13 @@ theorem_wanted spectralRadius_threshold (hnH : 0 < nH) (μG : ℝ) (μ : Fin nH 
       (1 < spectralRadiusReal (householdMatrix μG μ) ↔ 1 < householdR μG μ)
 
 /-- **Survival of the household process iff `R₀ > 1`** (Pellis, Ball and Trapman 2012,
-Section 2.1 and p. 7). Let `n_H ≥ 1`, `μ_G > 0`, `μ_0 = 1` and `μ_i ≥ 0` for all `i`, and let
+Section 2.1 and Section 2.3). Let `n_H ≥ 1`, `μ_G > 0`, `μ_0 = 1` and `μ_i ≥ 0` for all `i`, and let
 `ν` be a probability law on `ℕ` for the number of households infected by one household, with
 mean `R* = μ_G ∑_i μ_i` and `ν{1} ≠ 1`. Then the Galton–Watson process of infected households
 with offspring law `ν` survives with positive probability (its extinction probability is
 `< 1`) if and only if `1 < ρ(A_{n_H})`, the household `R₀`.
 
-Source: Pellis, Ball and Trapman (2012), Section 2.1, property 1, and p. 7. -/
+Source: Pellis, Ball and Trapman (2012), Section 2.1, property 1, and Section 2.3. -/
 theorem_wanted extinctionProb_lt_one_iff (hnH : 0 < nH) (μG : ℝ) (μ : Fin nH → ℝ)
     (hμG : 0 < μG) (hμ0 : μ ⟨0, hnH⟩ = 1) (hμ : ∀ i, 0 ≤ μ i) (ν : Measure ℕ)
     [IsProbabilityMeasure ν] (hmean : GaltonWatson.mean ν = ENNReal.ofReal (householdR μG μ))
