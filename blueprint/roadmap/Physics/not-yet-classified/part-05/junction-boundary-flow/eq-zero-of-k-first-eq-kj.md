@@ -1,0 +1,3 @@
+# Spillback
+
+Consider a road network with links $e$ running from a tail junction to a head junction, commodities $c$, and turning flows $q_{c,e,e'} \ge 0$ that vanish unless link $e$ ends where link $e'$ starts. Suppose the receiving constraint holds at every link $e'$: the total turning flow into $e'$, summed over commodities and incoming links, is at most the supply $\min\big(w_{e'}(k_{j,e'} - k_{e'}),\ \mathrm{cap}_{e'}\big)$ of its first cell with density $k_{e'}$, where $w$ is the wave speed, $k_j$ the jam density and $\mathrm{cap}$ the triangular-diagram capacity. If the first cell of $e'$ is at jam density, $k_{e'} = k_{j,e'}$, then every turning flow $q_{c,e,e'}$ into $e'$ is zero.
