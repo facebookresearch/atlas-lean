@@ -28,6 +28,11 @@
 - [The coefficient √(x(1 − x)) is 1/2-Hölder on the unit interval](abs-sqrt-mul-one-sub-sub-le.md)
 - [Lipschitz bound for the selection–mutation drift on the unit interval](abs-genic-drift-sub-le.md)
 
+## Several alleles
+
+- [Generator of the K-allele Wright–Fisher diffusion with mutation and genic selection](k-allele-wright-fisher-generator-on-the-simplex.md)
+- [The Dirichlet law is stationary for parent-independent mutation](dirichlet-stationary-law-for-parent-independent.md)
+
 ## Further stationary laws
 
 - [Stationary law of the multi-allele diffusion with diploid selection](diploid-selection-potential.md)

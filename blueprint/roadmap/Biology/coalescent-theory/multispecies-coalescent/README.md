@@ -89,6 +89,14 @@
 - [The four-species anomaly zone](caterpillar-exists-anomalous-iff.md)
 - [No anomalous gene trees on the balanced four-species tree](balanced-no-anomaly.md)
 
+## Five or more species: anomaly zones
+
+- [The five-taxon caterpillar species tree has an anomaly zone](five-taxon-anomaly-zone-for-the-caterpillar-shap.md)
+- [The five-taxon pseudocaterpillar species tree has an anomaly zone](five-taxon-anomaly-zone-for-the-pseudocaterpilla.md)
+- [The five-taxon balanced species tree has an anomaly zone](five-taxon-anomaly-zone-for-the-balanced-shape.md)
+- [An anomalous root subtree makes the whole species tree anomalous](extension-lemma-anomaly-persists-when-adding-a-t.md)
+- [Every species tree with at least five species has an anomaly zone](every-species-tree-with-5-species-has-an-anomaly.md)
+
 ## Unrooted quartets
 
 - [Gene tree displaying a quartet split](displays-split.md)

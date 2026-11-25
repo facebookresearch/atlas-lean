@@ -4,4 +4,8 @@
 - [Lotka–Volterra first integral](has-deriv-at-first-integral.md)
 - [Positive solutions lie on level curves](first-integral-eq.md)
 - [The coexistence equilibrium minimizes the first integral](first-integral-equilibrium-le.md)
+- [Positive initial populations stay positive for t ≥ 0](pos-of-pos.md)
+- [Positive initial populations have a positive solution on all of ℝ](exists-global-solution.md)
+- [Lotka–Volterra solutions with the same positive start agree for t ≥ 0](eq-of-initial.md)
+- [Non-equilibrium positive solutions are periodic with a least period](exists-minimal-period.md)
 - [Rosenzweig–MacArthur model: the paradox of enrichment](rosenzweig-macarthur-hopf-threshold-paradox-of-enrichment-and-chengs-u.md)

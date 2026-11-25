@@ -15,6 +15,7 @@
 - [Linkage disequilibrium after one generation of recombination](linkage-diseq-recombine.md)
 - [Linkage disequilibrium after $t$ generations](linkage-diseq-iterate.md)
 - [Linkage disequilibrium tends to zero](tendsto-linkage-diseq-iterate.md)
+- [Two-locus haplotype frequencies are identified by genotype frequencies](two-locus-haplotype-frequencies-are-identified-b.md)
 
 ## Haldane's map function
 
@@ -26,6 +27,7 @@
 - [Distant loci are unlinked in the limit](tendsto-haldane-at-top.md)
 - [Inverse Haldane map function recovers map distance](neg-half-log-haldane.md)
 - [Every recombination fraction below one half is attained](haldane-neg-half-log.md)
+- [Kosambi's map function](kosambi-map-function.md)
 
 ## Multiallelic two-locus linkage disequilibrium
 

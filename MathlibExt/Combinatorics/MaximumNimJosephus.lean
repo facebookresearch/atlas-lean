@@ -345,6 +345,29 @@ theorem maximumNimGrundy_div_eq_of_dvd (k x : ℕ) (hk : 2 ≤ k)
   rw [Finset.eq_of_subset_of_card_le hsub (by rw [hcard, Finset.card_range])]
   exact ⟨Finset.notMem_range_self, fun n hn => Finset.mem_range.mpr hn⟩
 
+/-- **A Maximum Nim non-divisibility lemma for $s < t$.** Let $k, n, t, h, s, i$ be natural
+numbers with $h \ge 1$, $k = nt + h$, $h \le n$ and $s < t$. If $1 \le i \le n$, then $k$ does
+not divide $n(k - s) - i$.
+
+The hypotheses force $n \ge 1$, $s < k$ and $i \le n(k - s)$, so both subtractions are ordinary
+differences of natural numbers.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 4(i) (`integers-2024-G5-lem-4`). -/
+public theorem maximumNim_not_dvd_mul_sub_of_lt (k n t h s i : ℕ)
+    (hh : 1 ≤ h)
+    (hdecomp : k = n * t + h) (hhn : h ≤ n) (hst : s < t)
+    (hi : 1 ≤ i) (hin : i ≤ n) :
+    ¬k ∣ n * (k - s) - i := by
+  have hoffset : n * s + i < k := calc
+    n * s + i ≤ n * (s + 1) := by rw [Nat.mul_succ]; exact Nat.add_le_add_left hin _
+    _ ≤ n * t := Nat.mul_le_mul_left n hst
+    _ < k := by omega
+  have hle : n * s + i ≤ n * k :=
+    hoffset.le.trans (Nat.le_mul_of_pos_left k (hh.trans hhn))
+  rw [Nat.mul_sub, Nat.sub_sub, Nat.dvd_sub_iff_right hle (Nat.dvd_mul_left k n)]
+  exact Nat.not_dvd_of_pos_of_lt (by omega) hoffset
+
 /-- **The Maximum Nim map $h_k$.** For natural numbers $k$ and $x$, let
 $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$. The paper takes $k \ge 2$; for $k \le 1$ the definition
 gives $h_k(x) = x + 1$, because $k - 1$ is truncated to $0$ and $\lfloor x/0 \rfloor$ is taken to
@@ -353,6 +376,18 @@ be $0$.
 Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
         INTEGERS 24 (2024), Article G5, Definition 3.1. -/
 public def maximumNimH (k x : ℕ) : ℕ := x + x / (k - 1) + 1
+
+/-- **The Maximum Nim map $h_k$ is strictly increasing.** Let $k \ge 2$ be a natural number and
+let $h_k$ be the map $x \mapsto x + \lfloor x/(k-1) \rfloor + 1$ on the natural numbers. For all
+natural numbers $x$ and $x'$ with $x < x'$, we have $h_k(x) < h_k(x')$.
+
+Source: Shoei Takahashi, Hikaru Manabe, Ryohei Miyadera, *Maximum Nim and the Josephus Problem*,
+        INTEGERS 24 (2024), Article G5, Lemma 6(i) (`integers-2024-G5-lem-6`). -/
+public theorem maximumNimH_strictMono (k x x' : ℕ) (hk : 2 ≤ k) (hxx' : x < x') :
+    maximumNimH k x < maximumNimH k x' := by
+  have hdiv : x / (k - 1) ≤ x' / (k - 1) :=
+    Nat.div_le_div hxx'.le le_rfl (by omega)
+  exact Nat.succ_lt_succ (Nat.add_lt_add_of_lt_of_le hxx' hdiv)
 
 /-- **Linear bounds on h_k and their iterates.** Let $k \ge 2$ be a natural number, let
 $h_k(x) = x + \lfloor x/(k-1) \rfloor + 1$ on natural numbers, and define the real maps

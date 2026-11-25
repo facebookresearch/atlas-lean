@@ -13,5 +13,6 @@ Distribution-free and semiparametric methods: empirical distribution functions (
 - [Nelson–Aalen estimator and Greenwood's formula](nelson-aalen-estimator-and-greenwood-s-formula/README.md)
 - [Potential outcomes and causal identification](potential-outcomes-and-causal-identification/README.md)
 - [U-statistics](u-statistics/README.md)
+- [Reliability and monitoring](reliability-and-monitoring/README.md)
 - [Sensitivity analysis for unmeasured confounding](sensitivity-analysis-for-unmeasured-confounding/README.md)
 - [Partial identification bounds](partial-identification-bounds/README.md)

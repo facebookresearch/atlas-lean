@@ -42,3 +42,10 @@
 - [Product moment of the two coalescence times, path form](lintegral-coalescence-time-a-mul-coalesc.md)
 - [Covariance of the coalescence times, path form](covariance-coalescence-times.md)
 - [Duality between the two-locus diffusion and the coalescent with recombination](two-locus-diffusion-coalescent-duality.md)
+- [The ancestral line count with recombination is positive recurrent](lineage-count-birth-death-chain-rho-0-positive-r.md)
+- [Coalescence records encode a sequence of local trees exactly](tree-sequence-encoding-represents-local-trees-ex.md)
+
+## Sequentially Markov approximations
+
+- [Pairwise sequentially Markov coalescents SMC and SMC′](sequentially-markov-coalescent-smc-smc-pairwise.md)
+- [SMC′ matches the two-locus covariance to first order and SMC does not](smc-vs-smc-vs-arg-first-order-two-locus-covarian.md)
