@@ -338,24 +338,6 @@ public theorem_wanted gibonacci_add_gibonacci_eq_lucas_combination
     (G : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j) (k r : ℤ) :
     G (k + r + 1) + G (k + r - 1) = L k * G (r + 1) + L (k - 1) * G r
 
-/-- **Seed form of a Lucas-type product identity for two gibonacci sequences.** Let
-$G, H : \mathbb{Z} \to \mathbb{R}$, written $j \mapsto G_j$ and $j \mapsto H_j$, satisfy
-$G_{j+2} = G_{j+1} + G_j$ and $H_{j+2} = H_{j+1} + H_j$ for every integer $j$. Then for all
-integers $k$ and $r$,
-$$
-G_0 (H_{r+k} + H_{r+k-2}) + G_1 (H_{r+k+1} + H_{r+k-1}) =
-G_r (H_k + H_{k-2}) + G_{r+1} (H_{k+1} + H_{k-1}).
-$$
-
-Source: Kunle Adegoke, *Fibonacci Identities via Fibonacci Functions*, Journal of
-Integer Sequences 27 (2024), Article 24.6.2, Proposition 29
-(`jis-2024-24.6.2-prop-29`). -/
-public theorem_wanted gibonacci_seed_lucas_like_identity
-    (G H : ℤ → ℝ) (hG : ∀ j : ℤ, G (j + 2) = G (j + 1) + G j)
-    (hH : ∀ j : ℤ, H (j + 2) = H (j + 1) + H j) (k r : ℤ) :
-    G 0 * (H (r + k) + H (r + k - 2)) + G 1 * (H (r + k + 1) + H (r + k - 1)) =
-      G r * (H k + H (k - 2)) + G (r + 1) * (H (k + 1) + H (k - 1))
-
 /-- **Hoggatt–Bicknell-type binomial sum with Fibonacci cubes.** Let $F_m$ denote the Fibonacci
 numbers, extended to all integers $m$ by $F_{-m} = (-1)^{m+1} F_m$. If
 $G : \mathbb{Z} \to \mathbb{R}$ satisfies $G_{j+2} = G_{j+1} + G_j$ for every integer $j$, then
