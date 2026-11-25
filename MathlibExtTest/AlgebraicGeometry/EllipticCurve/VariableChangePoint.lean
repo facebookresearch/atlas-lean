@@ -53,4 +53,104 @@ example {K : Type*} [Field K] [DecidableEq K]
     WeierstrassCurve.Affine.Point.vcInvFun C W (0 : W.Point) = 0 :=
   WeierstrassCurve.Affine.Point.vcInvFun_zero
 
+/-! ### Concrete coordinates and sums over `ZMod 5`
+
+`change` has `u = 1` and `s = t = 0`, so it cannot tell the `u`, `s` and `t` terms of the
+coordinate formulas apart; `change₂` uses nonzero values for all four parameters. -/
+
+/-- The variable change `(u, r, s, t) = (2, 1, 3, 4)` over `ZMod 5`. -/
+private def change₂ : VariableChange (ZMod 5) :=
+  ⟨⟨2, 3, by decide, by decide⟩, 1, 3, 4⟩
+
+/-- The forward maps are `x = u² x' + r` and `y = u³ y' + u² s x' + t`: they send `(1, 3)` to
+`(0, 0)` and `(4, 1)` to `(2, 0)`. -/
+example : Affine.vcX change₂ 1 = 0 ∧ Affine.vcY change₂ 1 3 = 0 ∧
+    Affine.vcX change₂ 4 = 2 ∧ Affine.vcY change₂ 4 1 = 0 := by
+  decide
+
+/-- The inverse maps are `x' = u⁻² (x - r)` and `y' = u⁻³ (y - t - s (x - r))`: they send
+`(0, 0)` to `(1, 3)` and `(2, 0)` to `(4, 1)`. -/
+example : Affine.vcXInv change₂ 0 = 1 ∧ Affine.vcYInv change₂ 0 0 = 3 ∧
+    Affine.vcXInv change₂ 2 = 4 ∧ Affine.vcYInv change₂ 2 0 = 1 := by
+  decide
+
+/-- The variable change `(u, r, s, t) = (2, 1, 3, 4)` over `ℚ`. Over `ZMod 5` every unit
+satisfies `u ^ 4 = 1`, so `u²` and `u⁻²` agree there; over `ℚ` they differ. -/
+private def changeℚ : VariableChange ℚ :=
+  ⟨⟨2, 2⁻¹, by norm_num, by norm_num⟩, 1, 3, 4⟩
+
+/-- Over `ℚ`, the maps send `(2, 1)` to `(9, 36)` and back. -/
+example : Affine.vcX changeℚ 2 = 9 ∧ Affine.vcY changeℚ 2 1 = 36 ∧
+    Affine.vcXInv changeℚ 9 = 2 ∧ Affine.vcYInv changeℚ 9 36 = 1 := by
+  norm_num [changeℚ, Affine.vcX, Affine.vcY, Affine.vcXInv, Affine.vcYInv]
+
+/-- The point `(0, 0)` of `curve`. -/
+private def p₀₀ : curve.toAffine.Point :=
+  .some 0 0 (by rw [Affine.nonsingular_iff', Affine.equation_iff']; decide)
+
+/-- The point `(2, 0)` of `curve`. -/
+private def p₂₀ : curve.toAffine.Point :=
+  .some 2 0 (by rw [Affine.nonsingular_iff', Affine.equation_iff']; decide)
+
+/-- The point `(3, 0)` of `curve`. -/
+private def p₃₀ : curve.toAffine.Point :=
+  .some 3 0 (by rw [Affine.nonsingular_iff', Affine.equation_iff']; decide)
+
+/-- The point `(1, 3)` of the transformed curve `change₂ • curve`. -/
+private def q₁₃ : (change₂ • curve).toAffine.Point :=
+  .some 1 3 (by rw [Affine.nonsingular_iff', Affine.equation_iff']; decide)
+
+/-- The point `(4, 1)` of the transformed curve `change₂ • curve`. -/
+private def q₄₁ : (change₂ • curve).toAffine.Point :=
+  .some 4 1 (by rw [Affine.nonsingular_iff', Affine.equation_iff']; decide)
+
+/-- The point `(3, 0)` of the transformed curve `change₂ • curve`. -/
+private def q₃₀ : (change₂ • curve).toAffine.Point :=
+  .some 3 0 (by rw [Affine.nonsingular_iff', Affine.equation_iff']; decide)
+
+/-- On `curve`, the chord through `(0, 0)` and `(2, 0)` has slope `0` and meets the curve again
+at `(3, 0)`, so `(0, 0) + (2, 0) = (3, 0)`. -/
+private theorem p₀₀_add_p₂₀ : p₀₀ + p₂₀ = p₃₀ := by
+  have hL : curve.toAffine.slope 0 2 0 0 = 0 := by
+    rw [Affine.slope_of_X_ne (by decide : (0 : ZMod 5) ≠ 2), sub_self, zero_div]
+  rw [p₀₀, p₂₀, p₃₀,
+    Affine.Point.add_some (by decide : ¬((0 : ZMod 5) = 2 ∧
+      (0 : ZMod 5) = curve.toAffine.negY 2 0)),
+    Affine.Point.some.injEq, hL]
+  decide
+
+/-- On `change₂ • curve`, the chord through `(1, 3)` and `(4, 1)` has slope `1`, and
+`(1, 3) + (4, 1) = (3, 0)`. -/
+private theorem q₁₃_add_q₄₁ : q₁₃ + q₄₁ = q₃₀ := by
+  have hL : (change₂ • curve).toAffine.slope 1 4 3 1 = 1 := by
+    rw [Affine.slope_of_X_ne (by decide : (1 : ZMod 5) ≠ 4),
+      div_eq_iff (by decide : (1 - 4 : ZMod 5) ≠ 0)]
+    decide
+  rw [q₁₃, q₄₁, q₃₀,
+    Affine.Point.add_some (by decide : ¬((1 : ZMod 5) = 4 ∧
+      (3 : ZMod 5) = (change₂ • curve).toAffine.negY 4 1)),
+    Affine.Point.some.injEq, hL]
+  decide
+
+/-- The additive equivalence sends the point `(1, 3)` of the transformed curve to `(0, 0)`. -/
+example : Affine.Point.variableChangeAddEquiv change₂ curve.toAffine q₁₃ = p₀₀ := by
+  simp only [Affine.Point.variableChangeAddEquiv_apply, q₁₃, p₀₀, Affine.Point.vcFun,
+    Affine.Point.some.injEq]
+  decide
+
+/-- The inverse of the additive equivalence sends the point `(2, 0)` of `curve` to `(4, 1)`. -/
+example : (Affine.Point.variableChangeAddEquiv change₂ curve.toAffine).symm p₂₀ = q₄₁ := by
+  simp only [Affine.Point.variableChangeAddEquiv_symm_apply, p₂₀, q₄₁, Affine.Point.vcInvFun,
+    Affine.Point.some.injEq]
+  decide
+
+/-- The additive equivalence carries the sum `(1, 3) + (4, 1)` on the transformed curve to the sum
+`(0, 0) + (2, 0)` on `curve`; both sums are computed from the chord formulas above, not from
+additivity of the equivalence. -/
+example : Affine.Point.variableChangeAddEquiv change₂ curve.toAffine (q₁₃ + q₄₁) = p₀₀ + p₂₀ := by
+  rw [q₁₃_add_q₄₁, p₀₀_add_p₂₀]
+  simp only [Affine.Point.variableChangeAddEquiv_apply, q₃₀, p₃₀, Affine.Point.vcFun,
+    Affine.Point.some.injEq]
+  decide
+
 end MathlibExtTest.AlgebraicGeometry.EllipticCurve.VariableChangePoint

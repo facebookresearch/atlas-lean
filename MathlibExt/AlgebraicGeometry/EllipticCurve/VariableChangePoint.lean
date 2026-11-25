@@ -273,7 +273,7 @@ theorem nonsingular_variableChange_iff (x' y' : K) :
     (C • W).toAffine.Nonsingular x' y' ↔ W.Nonsingular (vcX C x') (vcY C x' y') := by
   rw [nonsingular_iff', nonsingular_iff', equation_variableChange_iff x' y']
   refine and_congr_right fun _ => not_iff_not.mp ?_
-  push_neg
+  push Not
   exact partials_zero_iff x' y'
 
 private lemma vcX_injective : Function.Injective (vcX C) := by
@@ -380,7 +380,7 @@ end Formulas
 
 section PointEquiv
 
-variable [DecidableEq K] (C : VariableChange K) (W : WeierstrassCurve.Affine K)
+variable (C : VariableChange K) (W : WeierstrassCurve.Affine K)
 
 namespace Point
 
@@ -425,11 +425,7 @@ lemma vcFun_rightInverse : Function.RightInverse (vcInvFun C W) (vcFun C W) := b
   · simp only [vcFun, vcInvFun]
     exact some_eq_some (vcX_vcXInv x) (vcY_vcYInv x y)
 
-variable (C W) in
-/-- The equivalence between points of the transformed curve and points of
-the original curve induced by a variable change. -/
-noncomputable def variableChangeEquiv : (C • W).toAffine.Point ≃ W.Point :=
-  ⟨vcFun C W, vcInvFun C W, vcFun_leftInverse, vcFun_rightInverse⟩
+variable [DecidableEq K]
 
 /-- Applying a variable change to coordinates preserves addition of points. -/
 theorem vcFun_add (P Q : (C • W).toAffine.Point) :
@@ -440,7 +436,7 @@ theorem vcFun_add (P Q : (C • W).toAffine.Point) :
   · rfl
   by_cases hxy : x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂
   · rw [add_of_Y_eq hxy.1 hxy.2, vcFun_zero]
-    show (0 : W.Point) = Point.some (vcX C x₁) (vcY C x₁ y₁) _ +
+    change (0 : W.Point) = Point.some (vcX C x₁) (vcY C x₁ y₁) _ +
       Point.some (vcX C x₂) (vcY C x₂ y₂) _
     have hxyW := (yeq_variableChange_iff (W := W) x₁ x₂ y₁ y₂).mpr hxy
     exact (add_of_Y_eq hxyW.1 hxyW.2).symm
@@ -449,19 +445,39 @@ theorem vcFun_add (P Q : (C • W).toAffine.Point) :
       fun h => hxy ((yeq_variableChange_iff x₁ x₂ y₁ y₂).mp h)
     have hslope := slope_variableChange (W := W) x₁ x₂ y₁ y₂ h₁.1 h₂.1 hxy
     rw [add_some hxy]
-    show Point.some _ _ _ = Point.some (vcX C x₁) (vcY C x₁ y₁) _ +
+    change Point.some _ _ _ = Point.some (vcX C x₁) (vcY C x₁ y₁) _ +
       Point.some (vcX C x₂) (vcY C x₂ y₂) _
     rw [add_some hxyW]
     refine some_eq_some ?_ ?_
     · rw [hslope, addX_variableChange]
     · rw [hslope, addY_variableChange]
 
+variable (C W) in
+/-- The additive equivalence between points of the transformed curve and points
+of the original curve induced by a variable change: it applies the variable change
+to the coordinates of affine points and fixes the point at infinity. -/
+def variableChangeAddEquiv : (C • W).toAffine.Point ≃+ W.Point where
+  toFun := vcFun C W
+  invFun := vcInvFun C W
+  left_inv := vcFun_leftInverse
+  right_inv := vcFun_rightInverse
+  map_add' := vcFun_add
+
+@[simp]
+lemma variableChangeAddEquiv_apply (P : (C • W).toAffine.Point) :
+    variableChangeAddEquiv C W P = vcFun C W P :=
+  rfl
+
+@[simp]
+lemma variableChangeAddEquiv_symm_apply (P : W.Point) :
+    (variableChangeAddEquiv C W).symm P = vcInvFun C W P :=
+  rfl
+
 /-- Applying the inverse variable change to coordinates preserves addition
 of points. -/
 public theorem vcInvFun_add (P Q : W.Point) :
-    vcInvFun C W (P + Q) = vcInvFun C W P + vcInvFun C W Q := by
-  apply vcFun_leftInverse.injective
-  rw [vcFun_add, vcFun_rightInverse P, vcFun_rightInverse Q, vcFun_rightInverse (P + Q)]
+    vcInvFun C W (P + Q) = vcInvFun C W P + vcInvFun C W Q :=
+  (variableChangeAddEquiv C W).symm.map_add P Q
 
 end Point
 
