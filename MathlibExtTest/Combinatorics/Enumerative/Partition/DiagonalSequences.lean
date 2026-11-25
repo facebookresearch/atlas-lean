@@ -12,6 +12,15 @@ import MathlibExt.Combinatorics.Enumerative.Partition.DiagonalSequences
 
 namespace MetaMathlibExt
 
+-- The empty partition has no columns, for any choice of the multiplicities.
+example (s : ℕ → ℕ) : conjugateParts ↑(diagonalMaxPartition 0 s) = 0 :=
+  conjugateParts_diagonalMaxPartition 0 s
+
+-- The gaps in the paper's four-row example include both a unit gap and repeated column heights.
+example : conjugateParts ↑([8, 6, 4, 3] : List ℕ) = ↑([4, 4, 4, 3, 2, 2, 1, 1] : List ℕ) := by
+  simpa only [diagonalMaxPartition_four_example, diagonalMinPartition_four_example] using
+    conjugateParts_diagonalMaxPartition 4 (fun k => [0, 1, 1, 0, 2].getD k 0)
+
 -- Adding a cell to the empty staircase gives a singleton class.
 example (p : Nat.Partition 1) : (diagonalClass p).card = 1 := by
   apply Finset.card_eq_one.mpr

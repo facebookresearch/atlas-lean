@@ -15,8 +15,7 @@ polynomially bounded span.
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Combinatorics.Additive.CovBySMul
+public import MathlibExt.Combinatorics.PolynomialFreimanRuzsaBinary
 
 @[expose] public section
 
@@ -68,38 +67,6 @@ Marton, arXiv:2311.05762 (November 2023), https://arxiv.org/abs/2311.05762. Move
 public theorem_wanted conjecture_holds : conjecture
 
 /-! ## Optimization Problems constant 18a -/
-
-/-- **The binary vector space $\mathbb{F}_2^n$.** For a natural number $n$, the ambient space
-$\mathbb{F}_2^n$ of all functions from $\{0, 1, \dots, n - 1\}$ to the two-element field
-$\mathbb{F}_2 = \mathbb{Z}/2\mathbb{Z}$.
-
-Source: Optimization Problems constant 18a. -/
-abbrev BinaryAmbientSpace (n : ℕ) := Fin n → ZMod 2
-
-/--
-**Admissible asymptotic coset-cover exponents.** A real number $C$ is an admissible asymptotic
-coset-cover exponent if for every real $\varepsilon > 0$ there is a real $K_0 \ge 1$ such that
-for every real $K \ge K_0$, every $n \in \mathbb{N}$ and every nonempty finite set
-$A \subseteq \mathbb{F}_2^n$ with $|A + A| \le K|A|$, there is an $\mathbb{F}_2$-linear subspace
-$H$ of $\mathbb{F}_2^n$ with $|H| \le |A|$ such that $A$ is covered by at most $K^{C + \varepsilon}$
-translates of $H$: there is a finite set $F \subseteq \mathbb{F}_2^n$ with
-$|F| \le K^{C + \varepsilon}$ and $A \subseteq F + H$.
-
-This makes the source's bound of $K^{C + o(1)}$ translates uniform: once $K$ is large enough,
-the same bound works in every dimension and for every nonempty set of doubling at most $K$.
-
-Source: Optimization Problems constant 18a, with the uniform asymptotic
-quantifiers made explicit. -/
-def IsAsymptoticCosetCoverExponent (C : ℝ) : Prop :=
-  ∀ ε : ℝ, 0 < ε →
-    ∃ K₀ : ℝ, 1 ≤ K₀ ∧
-      ∀ K : ℝ, K₀ ≤ K →
-        ∀ (n : ℕ) (A : Finset (BinaryAmbientSpace n)), A.Nonempty →
-          ((A + A).card : ℝ) ≤ K * (A.card : ℝ) →
-            ∃ H : Submodule (ZMod 2) (BinaryAmbientSpace n),
-              Nat.card H ≤ A.card ∧
-                CovByVAdd (BinaryAmbientSpace n) (Real.rpow K (C + ε))
-                  (A : Set (BinaryAmbientSpace n)) (H : Set (BinaryAmbientSpace n))
 
 /-- **The set of admissible coset-cover exponents.** This is the set of all real numbers $C$
 that are admissible asymptotic coset-cover exponents: for every real $\varepsilon > 0$ there is a
@@ -175,15 +142,6 @@ Source: J.-J. Liao, arXiv:2404.09639, Theorem 1.2 and the implication `C ≤ C' 
 def liao2024SimplifiedUpperBound11 : Prop :=
   IsAsymptoticCosetCoverExponent 11
 
-/-- **Statement of the basis-vector lower bound.** The proposition that every admissible
-asymptotic coset-cover exponent $C$ satisfies $C \ge 1$.
-
-The obstruction comes from sets of basis vectors.
-
-Source: Optimization Problems constant 18a. -/
-def basisVectorsLowerBound1 : Prop :=
-  ∀ C : ℝ, IsAsymptoticCosetCoverExponent C → 1 ≤ C
-
 /-- **The least coset-cover exponent is attained.** The set of admissible asymptotic coset-cover
 exponents has a least element, namely its infimum $C^*$ (the Marton cover exponent): $C^*$ is
 itself admissible, and $C^* \le C$ for every admissible asymptotic coset-cover exponent $C$.
@@ -217,13 +175,5 @@ of $H$.
 Source: J.-J. Liao, arXiv:2404.09639, Theorem 1.2 and the implication `C ≤ C' + 1`. -/
 public theorem_wanted liao2024SimplifiedUpperBound11_holds :
   liao2024SimplifiedUpperBound11
-
-/-- **Basis-vector lower bound for coset-cover exponents.** Every admissible asymptotic
-coset-cover exponent $C$ satisfies $C \ge 1$.
-
-The obstruction comes from sets of basis vectors.
-
-Source: Optimization Problems constant 18a. -/
-public theorem_wanted basisVectorsLowerBound1_holds : basisVectorsLowerBound1
 
 end MathlibExt.Combinatorics.PolynomialFreimanRuzsaBinaryWanted

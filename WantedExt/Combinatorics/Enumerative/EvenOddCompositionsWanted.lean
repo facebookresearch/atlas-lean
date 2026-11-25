@@ -14,6 +14,8 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.EvenOddCompositions
+public import MathlibExt.Combinatorics.Enumerative.SignedLargePartCompositions
 
 namespace MetaMathlibExt
 
@@ -23,61 +25,6 @@ namespace MetaMathlibExt
 (odd). Compositions are Mathlib's `Composition`, partitions are
 `Nat.Partition`, and partitions into distinct parts are
 `Nat.Partition.distincts`. -/
-
-open Classical in
-/-- **Signed count of compositions.** For a natural number $N$ and a property $P$ of compositions
-of $N$, the signed count of the compositions of $N$ satisfying $P$ is the number of them with an
-odd number of parts minus the number with an even number of parts. Equivalently, it is the sum
-of $(-1)^{\ell(c) + 1}$ over all compositions $c$ of $N$ satisfying $P$, where $\ell(c)$ is the
-number of parts of $c$.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Section 1. -/
-public noncomputable def compositionOddMinusEven (N : ℕ) (P : Composition N → Prop) : ℤ :=
-  ∑ c : Composition N, if P c then (-1) ^ (c.length + 1) else 0
-
-/-- **Signed count of the compositions of zero.** The only composition of $0$ is the empty one,
-which has no parts and so is even. Hence the signed count of all compositions of $0$, the number
-of odd compositions minus the number of even ones, is $-1$.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Section 1. -/
-public theorem compositionOddMinusEven_zero_true :
-    compositionOddMinusEven 0 (fun _ => True) = -1 := by
-  have h : ∀ c : Composition 0, c = Composition.ones 0 := fun c =>
-    Composition.eq_ones_iff.2 fun i hi => by
-      have h1 := c.blocks_pos hi
-      have h2 : i ≤ c.blocks.sum := List.le_sum_of_mem hi
-      rw [c.blocks_sum] at h2
-      omega
-  rw [compositionOddMinusEven,
-    Fintype.sum_eq_single (Composition.ones 0) fun c hc => absurd (h c) hc]
-  simp
-
-/-- **Huang's placement condition for small parts.** Let $k$ be a natural number. A finite
-sequence $(a_0, \dots, a_{\ell - 1})$ of natural numbers satisfies the placement condition for $k$
-when every entry $a_i < k$ has a preceding entry and a following entry, the preceding entry
-satisfies $a_{i-1} \ge k$, and the following entry $a_{i+1}$ is either the last entry (that is,
-$i + 2 = \ell$) or satisfies $a_{i+1} > k$.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 15. -/
-public def IsHuangSmallPartPlacement (k : ℕ) (L : List ℕ) : Prop :=
-  ∀ (i a : ℕ), L[i]? = some a → a < k →
-    0 < i ∧ (∃ b, L[i - 1]? = some b ∧ k ≤ b) ∧
-      ∃ c, L[i + 1]? = some c ∧ (i + 2 = L.length ∨ k < c)
-
-/-- **Sequences without small parts satisfy Huang's placement condition.** If every entry of a
-finite sequence of natural numbers is at least $k$, then the sequence satisfies Huang's placement
-condition for $k$, vacuously.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 15. -/
-public theorem isHuangSmallPartPlacement_of_forall_le {k : ℕ} {L : List ℕ}
-    (h : ∀ a ∈ L, k ≤ a) : IsHuangSmallPartPlacement k L := by
-  intro i a hi ha
-  have := h a (List.mem_of_getElem? hi)
-  omega
 
 /-- **Legendre's identity for partitions into distinct parts.** For a natural number $n$, let
 $E(n)$ and $O(n)$ be the numbers of partitions of $n$ into distinct parts with an even and an
@@ -92,20 +39,6 @@ public theorem_wanted sum_distincts_neg_one_pow_card (n : ℕ) :
         ∑ p ∈ Nat.Partition.distincts n, (-1 : ℤ) ^ p.parts.card = (-1) ^ j) ∧
       ((∀ j : ℕ, 2 * n ≠ j * (3 * j + 1) ∧ 2 * n ≠ j * (3 * j - 1)) →
         ∑ p ∈ Nat.Partition.distincts n, (-1 : ℤ) ^ p.parts.card = 0)
-
-/-- **Signed count of compositions with parts greater than one.** For every $n \ge 0$, among the
-compositions of $n + 1$ whose parts are all greater than $1$, the number with an odd number of
-parts minus the number with an even number of parts is $(-1)^j$ if $n = 3j + 1$ or $n = 3j + 2$
-for some $j \ge 0$, and $0$ otherwise.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 5
-(`jis-2024-24.6.5-thm-5`). -/
-public theorem_wanted compositionOddMinusEven_parts_gt_one (n : ℕ) :
-    (∀ j : ℕ, n = 3 * j + 1 ∨ n = 3 * j + 2 →
-        compositionOddMinusEven (n + 1) (fun c => ∀ a ∈ c.blocks, 1 < a) = (-1) ^ j) ∧
-      ((∀ j : ℕ, n ≠ 3 * j + 1 ∧ n ≠ 3 * j + 2) →
-        compositionOddMinusEven (n + 1) (fun c => ∀ a ∈ c.blocks, 1 < a) = 0)
 
 /-- **Signed count of compositions with parts at least $k$.** Let $k, n \ge 1$. Among the
 compositions of $n + k - 1$ whose parts are all at least $k$, the number with an odd number of
@@ -225,22 +158,6 @@ public theorem_wanted card_partition_franklin (k m n : ℕ) (hk : 1 ≤ k) :
         (p.parts.toFinset.filter fun a => k ≤ p.parts.count a).card = m).card
       = (Finset.univ.filter fun p : n.Partition =>
         (p.parts.toFinset.filter fun a => k ∣ a).card = m).card
-
-/-- **Huang's Franklin-type identity for compositions.** Let $k \ge 1$, $m \ge 0$ and $n \ge 1$.
-The number of compositions of $n$ with exactly $m$ parts not congruent to $1$ modulo $k$, all of
-which are greater than $k$, equals the number of compositions of $n + k - 1$ with exactly $m$
-parts less than $k$ in which every part less than $k$ is preceded by a part at least $k$ and is
-followed by a part that is either the last part or greater than $k$.
-
-Source: Jia Huang, *Even and Odd Compositions with Restricted Parts*, Journal
-of Integer Sequences 27 (2024), Article 24.6.5, Theorem 15 (Huang)
-(`jis-2024-24.6.5-thm-15`). -/
-public theorem_wanted card_composition_huang_franklin (k m n : ℕ) (hk : 1 ≤ k) (hn : 1 ≤ n) :
-    Nat.card {c : Composition n //
-        (c.blocks.filter fun a => a % k ≠ 1 % k).length = m ∧
-          ∀ a ∈ c.blocks, a % k ≠ 1 % k → k < a}
-      = Nat.card {c : Composition (n + k - 1) //
-        (c.blocks.filter fun a => a < k).length = m ∧ IsHuangSmallPartPlacement k c.blocks}
 
 /-- **Signed count of Huang's compositions, binomial form.** Let $k, n \ge 1$ and $m \ge 0$.
 Among the compositions of $n + k - 1$ with exactly $m$ parts less than $k$ in which every part

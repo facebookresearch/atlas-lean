@@ -162,7 +162,7 @@ private lemma isCompactSystem_closedCompactCylinders {ι : Type*} {α : ι → T
     intro i
     refine hTclosed.inter ?_
     rw [Set.dissipate_def]
-    exact isClosed_biInter fun j _ ↦ hCclosed j
+    exact isClosed_iInter fun j ↦ isClosed_iInter fun _ ↦ hCclosed j
   have hEcompact0 : IsCompact (Set.univ.pi K ∩ Set.dissipate C 0) :=
     hTcompact.of_isClosed_subset (hEclosed 0) Set.inter_subset_left
   obtain ⟨x, hx⟩ := IsCompact.nonempty_iInter_of_sequence_nonempty_isCompact_isClosed

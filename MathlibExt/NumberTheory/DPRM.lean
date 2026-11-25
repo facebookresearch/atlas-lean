@@ -1529,7 +1529,7 @@ private theorem dp_bq_dioph {α : Type} (S : Set (Option (Option α) → ℕ))
     intro v
     simp only [hp]
     exact dp_bq_iff m p F G hF hG hpFG v
-  refine Dioph.ext ?_ (fun v => (hrw v).symm)
+  refine Dioph.ext (S := {v | _}) ?_ (fun v => (hrw v).symm)
   have hxW : Dioph.DiophFn
       (fun w : (Option α) ⊕ (Fin 3 ⊕ Fin m) → ℕ => w (Sum.inl none)) :=
     Dioph.proj_dioph _
@@ -1623,7 +1623,7 @@ private theorem dp_bq_dioph {α : Type} (S : Set (Option (Option α) → ℕ))
       (1 + w (Sum.inr (Sum.inl 1)) *
         (dpBQ_Q m F G (fun o => w (Sum.inl o)) (w (Sum.inr (Sum.inl 0))))!)
       ∣ ((w (Sum.inr (Sum.inr i))).descFactorial (w (Sum.inr (Sum.inl 0)) + 1))} := by
-    apply dp_dioph_fin_forall
+    apply dp_dioph_fin_forall (S := fun i => {w | _})
     intro i
     exact Dioph.dvd_dioph h1ct (Dioph.diophFn_comp dp_descFactorial_diophFn
       [fun w : (Option α) ⊕ (Fin 3 ⊕ Fin m) → ℕ => w (Sum.inr (Sum.inr i)),

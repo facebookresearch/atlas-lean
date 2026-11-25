@@ -9,9 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Combinatorics.SimpleGraph.Basic
+public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.Data.Nat.ModEq
 public import MathlibExt.GameTheory.SpragueGrundy
+import Mathlib.Tactic.FinCases
 
 /-!
 # Impartial two-player `(k+1:k)`-pebbling games on `K_3` and `C_4`
@@ -23,7 +24,8 @@ and `C_4`*, Journal of Integer Sequences 27 (2024), Article 24.5.8.
 A legal move removes `k+1` pebbles from one vertex and adds `k` to an adjacent vertex.
 The total decreases by one, so it ranks the positions in the normal-play game.
 On the triangle we construct a reply that lowers the common bound on the three piles.
-For the four-cycle we define the residue classes of positions used in the paper.
+On the four-cycle, moves preserve two unions of mod-three patterns, and symmetric replies
+preserve each of the five patterns.
 -/
 
 namespace MetaMathlibExt
@@ -295,6 +297,99 @@ Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (
 Article 24.5.8, Section 3 (definition of `\hat X_{aabb}`). -/
 public def C4PatternAABBHat (a : Fin 4 → ℕ) : Prop :=
   ∃ i : Fin 4, (i = 0 ∨ i = 1) ∧ a i ≡ a (i + 1) [MOD 3] ∧ a (i + 2) ≡ a (i - 1) [MOD 3]
+
+/-- **Invariance of the mod-$3$ pattern classes under symmetric replies on $C_4$.** Consider the
+$(2:1)$-pebbling game on the cycle $C_4$ with vertices $v_0, v_1, v_2, v_3$, indices read modulo
+$4$, and let $a = (a_0, a_1, a_2, a_3)$ be a position with $a_i$ pebbles on $v_i$. Let $j$ be an
+index with $a_j \ge 2$, let $\varepsilon \in \{1, -1\}$, and let $b$ be the position obtained from
+$a$ by the move from $v_j$ to $v_{j+\varepsilon}$, which removes two pebbles from $v_j$ and adds
+one pebble to $v_{j+\varepsilon}$. Let $c$ be obtained from $b$ either by the move from $v_{j+2}$
+to $v_{j-\varepsilon}$, where $b_{j+2} \ge 2$, or by the move from $v_{j-\varepsilon}$ to
+$v_{j+2}$, where $b_{j-\varepsilon} \ge 2$. Then for each of the sets $X_{aaab}$, $X_{abab}$,
+$X_{aabc}$, $X_{abac}$ and $\hat X_{aabb}$, if $a$ lies in the set, then so does $c$.
+
+Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
+Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
+Article 24.5.8, Lemma 14. -/
+public theorem c4Pattern_invariant_rotationalSymmetric_reflectional (a : Fin 4 → ℕ)
+    (j ε : Fin 4) (hε : ε = 1 ∨ ε = -1) (hj : 2 ≤ a j) (c : Fin 4 → ℕ)
+    (hc : (2 ≤ pebblingStep 1 a j (j + ε) (j + 2) ∧
+        c = pebblingStep 1 (pebblingStep 1 a j (j + ε)) (j + 2) (j - ε)) ∨
+      (2 ≤ pebblingStep 1 a j (j + ε) (j - ε) ∧
+        c = pebblingStep 1 (pebblingStep 1 a j (j + ε)) (j - ε) (j + 2))) :
+    (C4PatternAAAB a → C4PatternAAAB c) ∧ (C4PatternABAB a → C4PatternABAB c) ∧
+      (C4PatternAABC a → C4PatternAABC c) ∧ (C4PatternABAC a → C4PatternABAC c) ∧
+      (C4PatternAABBHat a → C4PatternAABBHat c) := by
+  -- A legal step adds one modulo three at each endpoint.
+  let bump (s t i : Fin 4) : ℕ := if i = s ∨ i = t then 1 else 0
+  have step (p : Fin 4 → ℕ) (s t i : Fin 4) (hs : 2 ≤ p s) :
+      pebblingStep 1 p s t i ≡ p i + bump s t i [MOD 3] := by
+    by_cases ht : i = t
+    · subst i
+      simp [pebblingStep, bump, Nat.ModEq]
+    by_cases hi : i = s
+    · subst i
+      simp [pebblingStep, bump, ht, Nat.ModEq]
+      omega
+    simp [pebblingStep, bump, ht, hi, Nat.ModEq]
+  -- The opposite edges cover every vertex exactly once in either reply direction.
+  have cover : ∀ j ε i : Fin 4, ε = 1 ∨ ε = -1 →
+      bump j (j + ε) i + bump (j + 2) (j - ε) i = 1 := by decide
+  let b := pebblingStep 1 a j (j + ε)
+  have shift (i : Fin 4) : c i ≡ a i + 1 [MOD 3] := by
+    have reply (s t : Fin 4) (hs : 2 ≤ b s)
+        (hcover : bump j (j + ε) i + bump s t i = 1) :
+        pebblingStep 1 b s t i ≡ a i + 1 [MOD 3] := by
+      simpa only [Nat.add_assoc, hcover] using
+        (step b s t i hs).trans ((step a j (j + ε) i hj).add_right (bump s t i))
+    obtain ⟨hs, rfl⟩ | ⟨hs, rfl⟩ := hc
+    · exact reply _ _ hs (cover j ε i hε)
+    · apply reply _ _ hs
+      simpa only [bump, or_comm] using cover j ε i hε
+  have pair (i k : Fin 4) : c i ≡ c k [MOD 3] ↔ a i ≡ a k [MOD 3] :=
+    ⟨fun h => ((shift i).symm.trans (h.trans (shift k))).add_right_cancel' 1,
+      fun h => (shift i).trans ((h.add_right 1).trans (shift k).symm)⟩
+  simp only [C4PatternAAAB, C4PatternABAB, C4PatternAABC, C4PatternABAC, C4PatternAABBHat,
+    pair, imp_self, and_self]
+
+/-- **Closure of the mod-$3$ pattern classes under moves on $C_4$.** Let $a$ and $b$ be
+distributions of pebbles on the vertices of the $4$-cycle $C_4$ such that $b$ is obtained from $a$
+by one $(2:1)$-pebbling move, that is, by removing two pebbles from a vertex holding at least two
+pebbles and adding one pebble to an adjacent vertex. If $a \in \hat X_{aabb} \cup X_{abac}$, then
+$b \in \hat X_{aabb} \cup X_{abac}$; and if $a \in X_{aaab} \cup X_{abab} \cup X_{aabc}$, then
+$b \in X_{aaab} \cup X_{abab} \cup X_{aabc}$.
+
+Source: Barker, DeStefano, Fiorini, Gohn, Miller, Roeder, and Wong, *Generalized Impartial
+Two-player Pebbling Games on `K_3` and `C_4`*, Journal of Integer Sequences 27 (2024),
+Article 24.5.8, Lemma 15. -/
+public theorem c4Pattern_closed_under_moves (a b : Fin 4 → ℕ)
+    (hb : b ∈ pebblingMoves (SimpleGraph.cycleGraph 4) 1 a) :
+    ((C4PatternAABBHat a ∨ C4PatternABAC a) → (C4PatternAABBHat b ∨ C4PatternABAC b)) ∧
+      ((C4PatternAAAB a ∨ C4PatternABAB a ∨ C4PatternAABC a) →
+        (C4PatternAAAB b ∨ C4PatternABAB b ∨ C4PatternAABC b)) := by
+  let balanced (p : Fin 4 → ℕ) := p 0 + p 2 ≡ p 1 + p 3 [MOD 3]
+  let classes (p : Fin 4 → ℕ) :=
+    ((C4PatternAABBHat p ∨ C4PatternABAC p) ↔ balanced p) ∧
+      ((C4PatternAAAB p ∨ C4PatternABAB p ∨ C4PatternAABC p) ↔ ¬ balanced p)
+  -- Classify the 81 possible residue vectors by the sums on the two opposite pairs.
+  have finiteClasses : ∀ r : Fin 4 → Fin 3, classes (fun i => (r i).val) := by
+    dsimp only [classes, balanced, C4PatternAABBHat, C4PatternABAC, C4PatternAAAB,
+      C4PatternABAB, C4PatternAABC]
+    decide
+  have classify (p : Fin 4 → ℕ) : classes p := by
+    have h := finiteClasses (fun i => Fin.ofNat 3 (p i))
+    simpa only [classes, balanced, C4PatternAABBHat, C4PatternABAC, C4PatternAAAB,
+      C4PatternABAB, C4PatternAABC, Fin.val_ofNat, Nat.ModEq, Nat.mod_mod, ← Nat.add_mod]
+      using h
+  -- Each edge meets both pairs, and subtracting two or adding one has the same effect mod 3.
+  have preserved : balanced b ↔ balanced a := by
+    obtain ⟨s, t, hadj, hs, rfl⟩ := (mem_pebblingMoves _ _ _ _).1 hb
+    fin_cases s <;> fin_cases t <;> try exact absurd hadj (by decide)
+    all_goals
+      simp [balanced, pebblingStep, Function.update, Nat.ModEq] at hs ⊢
+      omega
+  rw [(classify a).1, (classify b).1, (classify a).2, (classify b).2, preserved]
+  exact ⟨id, id⟩
 
 /-- **The set $Y_{aabc}$ of $C_4$ positions.** A position $a = (a_0, a_1, a_2, a_3)$ of
 natural-number pebble counts on the vertices $v_0, v_1, v_2, v_3$ of $C_4$, with indices read

@@ -638,9 +638,9 @@ against the pages, which may have moved since; without `--base`, the lines are
 checked alone.
 
 Blueprint Pages runs `--check-map` right after the wiki tests: on a pull request
-that touches a path in its filter, the map among them, with the base commit as
-`--base`, and on its runs of `main` without. Blueprint Pages is not a required
-check
+that changes one of the paths that let its build run, the map among them, with
+the base commit as `--base`, and on its runs of `main` without. Blueprint Pages
+is not a required check
 ([GitHub Actions and publication](BLUEPRINT.md#github-actions-and-publication)):
 it reports a map that fails these checks, but does not by itself stop a merge.
 

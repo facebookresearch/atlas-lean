@@ -154,6 +154,45 @@ public theorem lip_eq_zero_of_infinite_zeros {U : Set ℤ} {f : U → ℤ}
   rw [lt_abs]
   omega
 
+/-- **Locally integer polynomial functions on an infinite set form a domain.** For every infinite
+$U \subseteq \mathbb{Z}$, the ring $\mathrm{LIP}(U)$ of locally integer polynomial functions
+$U \to \mathbb{Z}$ is an integral domain.
+
+Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
+Article A41, Lemma 4 (`integers-2025-A41-lem-4`). -/
+public theorem lipSubring_isDomain {U : Set ℤ} (hU : U.Infinite) :
+    IsDomain (lipSubring U) := by
+  have := hU.to_subtype
+  refine (isDomain_iff_noZeroDivisors_and_nontrivial _).mpr ⟨⟨?_⟩, inferInstance⟩
+  intro f g hfg
+  have hcover : (Set.univ : Set U) ⊆ {x | f.val x = 0} ∪ {x | g.val x = 0} := by
+    intro x _
+    exact mul_eq_zero.mp (congrArg (fun h : lipSubring U => h.val x) hfg)
+  obtain hf | hg := Set.infinite_union.mp (Set.infinite_univ.mono hcover)
+  · exact Or.inl (Subtype.ext (lip_eq_zero_of_infinite_zeros f.property hf))
+  · exact Or.inr (Subtype.ext (lip_eq_zero_of_infinite_zeros g.property hg))
+
+/-- **$\mathrm{LIP}(\mathbb{Z})$ is closed under the discrete derivative.** If $f$ lies in
+$\mathrm{LIP}(\mathbb{Z})$, the ring of locally integer polynomial functions
+$\mathbb{Z} \to \mathbb{Z}$, then so does the function $x \mapsto f(x) - f(x - 1)$.
+
+Source: Alexander Borisov, *Locally Integer Polynomial Functions*, INTEGERS 25 (2025),
+Article A41, Theorem 5 (`integers-2025-A41-thm-5`). -/
+public theorem lip_univ_sub_shift {f : ↥(Set.univ : Set ℤ) → ℤ}
+    (hf : f ∈ lipSubring Set.univ) :
+    (fun x => f x - f ⟨(x : ℤ) - 1, Set.mem_univ _⟩) ∈ lipSubring Set.univ := by
+  rw [mem_lipSubring_iff]
+  intro S
+  let shift (x : (Set.univ : Set ℤ)) : (Set.univ : Set ℤ) :=
+    ⟨(x : ℤ) - 1, Set.mem_univ _⟩
+  obtain ⟨p, hp⟩ := mem_lipSubring_iff.mp hf (S ∪ S.image shift)
+  refine ⟨p - p.comp (X - C 1), ?_⟩
+  intro x hx
+  have hshift : shift x ∈ S ∪ S.image shift :=
+    Finset.mem_union_right _ (Finset.mem_image_of_mem shift hx)
+  rw [eval_sub, eval_comp, eval_sub, eval_X, eval_C, hp x (Finset.mem_union_left _ hx)]
+  exact congrArg (f x - ·) (hp (shift x) hshift)
+
 end
 
 end MetaMathlibExt

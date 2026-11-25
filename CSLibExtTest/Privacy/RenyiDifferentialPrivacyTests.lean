@@ -12,6 +12,7 @@ public import CSLibExt.Privacy.RenyiDifferentialPrivacy
 public import Cslib.Probability.PMF
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Monad
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Fintype.BigOperators
@@ -183,5 +184,29 @@ theorem test_moment_bind_le :
 #print axioms renyiDiv_prodJoint
 #print axioms isApproxDP_of_isRDP
 #print axioms approx_event_of_renyi
+
+noncomputable def stage2 : Bool → Bool → PMF Bool :=
+  fun d y => if y then Mtest d else (Mtest d).bind (fun _ => Q0)
+
+theorem stage2_true (d : Bool) : stage2 d true = Mtest d := by simp [stage2]
+
+theorem stage2_false (d : Bool) :
+    stage2 d false = (Mtest d).bind (fun _ => Q0) := by simp [stage2]
+
+theorem test_stage2_isRDP (y : Bool) :
+    IsRDP (fun d => stage2 d y) adjTest 2 (Real.log 2) := by
+  cases y
+  · simp_rw [stage2_false]
+    exact isRDP_bind test_isRDP (fun _ => Q0)
+  · simp_rw [stage2_true]
+    exact test_isRDP
+
+theorem test_isRDP_bind_adaptive :
+    IsRDP (fun d => (Mtest d).bind (fun y => (stage2 d y).map (fun z => (y, z))))
+      adjTest 2 (Real.log 2 + Real.log 2) :=
+  isRDP_bind_adaptive test_isRDP (Real.log_nonneg (by norm_num)) test_stage2_isRDP
+
+#print axioms isRDP_bind_adaptive
+#print axioms test_isRDP_bind_adaptive
 
 end CSLibExtTest.Privacy.RenyiDifferentialPrivacyTests

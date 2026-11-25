@@ -17,7 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.FinitelyPresentedGroup
-public import WantedExt.GroupTheory.WordProblemSolvableShared
+public import MathlibExt.GroupTheory.WordProblemSolvableShared
 
 @[expose] public section
 
@@ -33,7 +33,7 @@ v1.8.0.
 invariant under left and right multiplication. Finitely presented is Mathlib's
 `Group.IsFinitelyPresented`; the word problem for a finite generating family `gens : Fin k → G` is
 the set of words spelling `1`, insoluble when not computable: the shared predicate
-`WordProblemSolvable (FreeGroup.lift gens)` of `WantedExt.GroupTheory.WordProblemSolvableShared`
+`WordProblemSolvable (FreeGroup.lift gens)` of `MathlibExt.GroupTheory.WordProblemSolvableShared`
 fails.
 -/
 

@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Geometry.MovingSofa
+public import MathlibExt.Geometry.MovingSofaHammersley
+public import MathlibExt.Geometry.MovingSofaHammersleyLower
 
 /-!
 # Moving sofa catalogue bounds: unproved public requests
@@ -30,14 +31,6 @@ open scoped ENNReal
 
 namespace MovingSofaWanted
 
-/-- **Hammersley's upper bound for the moving sofa constant.** The moving sofa constant, the
-supremum of the areas of connected Lebesgue-measurable planar shapes that a continuous rigid motion
-can carry through the right-angled corridor of width $1$, is at most $2\sqrt{2}$.
-
-Source: catalogue line 13, attributed to Hammersley (1968). Primary not retained. -/
-public theorem_wanted hammersley_upper :
-    MovingSofa.optimalArea ≤ ENNReal.ofReal (2 * Real.sqrt 2)
-
 /-- **Kallus–Romik upper bound for the moving sofa constant.** The moving sofa constant, the
 supremum of the areas of connected Lebesgue-measurable planar shapes that a continuous rigid motion
 can carry through the right-angled corridor of width $1$, is at most $2.37$.
@@ -45,14 +38,6 @@ can carry through the right-angled corridor of width $1$, is at most $2.37$.
 Source: catalogue line 14, Kallus-Romik (2018). Numerical certificate not retained. -/
 public theorem_wanted kallus_romik_upper :
     MovingSofa.optimalArea ≤ ENNReal.ofReal ((237 : ℝ) / 100)
-
-/-- **Hammersley's lower bound for the moving sofa constant.** The moving sofa constant, the
-supremum of the areas of connected Lebesgue-measurable planar shapes that a continuous rigid motion
-can carry through the right-angled corridor of width $1$, is at least $\pi/2 + 2/\pi$.
-
-Source: catalogue line 21, Hammersley (1968). Construction not retained. -/
-public theorem_wanted hammersley_lower :
-    ENNReal.ofReal (Real.pi / 2 + 2 / Real.pi) ≤ MovingSofa.optimalArea
 
 /-- **Gerver's lower bound for the moving sofa constant.** The moving sofa constant, the
 supremum of the areas of connected Lebesgue-measurable planar shapes that a continuous rigid motion

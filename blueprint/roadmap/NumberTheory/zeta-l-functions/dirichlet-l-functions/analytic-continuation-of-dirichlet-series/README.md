@@ -22,4 +22,5 @@
 - [Limit of the linear asymptotic continuation times $s - 1$ at $1$](tendsto-sub-one-mul-linear-asymptotic-di.md)
 - [Meromorphy of the linear asymptotic continuation on a half-plane](meromorphic-on-linear-asymptotic-dirichl.md)
 - [Convergence of the Dirichlet series to the linear asymptotic continuation](tendsto-linear-asymptotic-dirichlet-cont.md)
+- [Landau's theorem on Dirichlet series with non-negative coefficients](landau-theorem-dirichlet-series.md)
 - [Landau's theorem on Dirichlet integrals with non-negative integrands](landau-theorem-dirichlet-integrals.md)

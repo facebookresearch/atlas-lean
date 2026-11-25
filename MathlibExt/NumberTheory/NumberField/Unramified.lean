@@ -15,6 +15,7 @@ public import Mathlib.FieldTheory.IntermediateField.Basic
 public import Mathlib.RingTheory.Smooth.Fiber
 public import Mathlib.RingTheory.Smooth.IntegralClosure
 public import Mathlib.RingTheory.DedekindDomain.Instances
+import Mathlib.RingTheory.Flat.TorsionFree
 
 @[expose] public section
 

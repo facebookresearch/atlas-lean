@@ -246,7 +246,7 @@ private theorem hd_deg_le_of_bij {Fq : Type*} [Field Fq] [Fintype Fq]
   push Not at hcon
   have hdivdeg : (Polynomial.X ^ Fintype.card Fq - Polynomial.X :
       Polynomial Fq).natDegree = Fintype.card Fq :=
-    FiniteField.X_pow_card_sub_X_natDegree_eq Fq (Nat.lt_of_succ_le hq)
+    Polynomial.natDegree_X_pow_sub_X (Nat.lt_of_succ_le hq)
   have hmodlt : ((f ^ t) % (Polynomial.X ^ Fintype.card Fq - Polynomial.X :
       Polynomial Fq)).natDegree < Fintype.card Fq := by
     have hne : (Polynomial.X ^ Fintype.card Fq - Polynomial.X :

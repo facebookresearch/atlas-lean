@@ -1,56 +1,12 @@
 /-
-# Absolutely continuous functions map null sets to null sets
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
 
-Copyright (c) 2026 OpenBMB
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-Attribution and modification notice: the statement below is taken from openbmb/ma-proofbench at
-commit 31bab4c78fd1b0c464e767d62e9202163d1e9029, `benchmark/level1/ma_proofbench_l1_75.lean`
-(MA-ProofBench, L. Pu et al., *MA-ProofBench: A Two-Tiered Evaluation of LLMs for Theorem
-Proving in Mathematical Analysis*, arXiv:2606.13782; byte-identical to the Hugging Face dataset
-openbmb/MA-ProofBench), distributed under the MIT License above. Changes made: converted
-`theorem ma_proofbench_l1_75 … := by sorry` into the Batteries `theorem_wanted`
-`volume_image_eq_zero_of_absolutelyContinuous`; moved the informal problem statement docstring
-onto it and placed the declarations in namespace
-`MathlibExt.MeasureTheory.AbsContLusinNPropertyWanted`; replaced `import Mathlib` by `public
-import Mathlib` under the module system.
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import MathlibExt.MeasureTheory.Function.AbsContLusinNProperty
 
-@[expose] public section
-
-namespace MathlibExt.MeasureTheory.AbsContLusinNPropertyWanted
-
-/-- **Absolutely continuous functions have the Lusin N property.** Let $f : \mathbb{R} \to
-\mathbb{R}$ be absolutely continuous on every closed bounded interval $[a, b]$. Then $f$ maps
-Lebesgue null sets to null sets: for every set $s \subseteq \mathbb{R}$ of Lebesgue outer measure
-zero, the image $f(s)$ has Lebesgue outer measure zero.
-
-Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Real functions; Functions of
-one variable), `benchmark/level1/ma_proofbench_l1_75.lean` at openbmb/ma-proofbench@31bab4c.
--/
-public theorem_wanted volume_image_eq_zero_of_absolutelyContinuous
-    (f : ℝ → ℝ) (hf : ∀ a b : ℝ, AbsolutelyContinuousOnInterval f a b) :
-    ∀ s : Set ℝ, MeasureTheory.volume s = 0 → MeasureTheory.volume (f '' s) = 0
-
-end MathlibExt.MeasureTheory.AbsContLusinNPropertyWanted
+/-! # Compatibility import for the Lusin N property of absolutely continuous functions -/

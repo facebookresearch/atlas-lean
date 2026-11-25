@@ -83,7 +83,7 @@ private theorem favard_rev_key (R : Type*) [Field R] (p : ℕ → Polynomial R)
       (i ≠ j → L (p i * p j) = 0) ∧ (i = j → L (p i * p j) ≠ 0) := by
     intro T
     induction T using Nat.strong_induction_on with
-    | h T outer =>
+    | ind T outer =>
       intro i
       induction i with
       | zero =>

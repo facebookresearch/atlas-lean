@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Data.Set.Card
+import Mathlib.Algebra.BigOperators.Intervals
 import Mathlib.Algebra.Order.Interval.Finset.Basic
 import Mathlib.Combinatorics.Enumerative.Partition.YoungDiagram
 import Mathlib.Data.Finset.NatAntidiagonal
@@ -253,6 +254,71 @@ theorem vnArrangementCount_singleton (k : ℕ) (a : ℤ) : vnArrangementCount k 
   rw [vnArrangementCount, h, Set.ncard_singleton]
 
 end
+
+/-! ## Conjugating the maximal partition -/
+
+namespace conjugateParts_diagonalMaxPartition
+
+private theorem sup_cons_map_add (rows : Multiset ℕ) (d : ℕ) :
+    (d ::ₘ rows.map (d + ·)).sup = d + rows.sup := by
+  induction rows using Multiset.induction_on with
+  | empty => simp
+  | cons a rows ih =>
+    rw [Multiset.map_cons, Multiset.cons_swap d, Multiset.sup_cons, ih, Multiset.sup_cons]
+    omega
+
+-- The first d columns meet every row. Later columns have their original heights.
+private theorem conjugateParts_cons_map_add (rows : Multiset ℕ) (d : ℕ) :
+    conjugateParts (d ::ₘ rows.map (d + ·)) =
+      Multiset.replicate d (rows.card + 1) + conjugateParts rows := by
+  rw [conjugateParts, sup_cons_map_add, Multiset.range_add, Multiset.map_add, Multiset.map_map]
+  apply congrArg₂ (· + ·)
+  · calc
+      _ = (Multiset.range d).map (fun _ => rows.card + 1) := by
+        apply Multiset.map_congr rfl
+        intro j hj
+        have hjd := Multiset.mem_range.mp hj
+        simp [Multiset.countP_cons_of_pos _ hjd, Multiset.countP_map,
+          show ∀ a : ℕ, j < d + a from fun a => by omega]
+      _ = _ := by simp
+  · apply Multiset.map_congr rfl
+    intro j _
+    simpa [Multiset.countP_cons, Multiset.countP_map] using
+      (Multiset.countP_eq_card_filter (j < ·) rows).symm
+
+private theorem diagonalMaxPartition_succ (q : ℕ) (s : ℕ → ℕ) :
+    (↑(diagonalMaxPartition (q + 1) s) : Multiset ℕ) =
+      (s (q + 1) + 1) ::ₘ (↑(diagonalMaxPartition q s) : Multiset ℕ).map (s (q + 1) + 1 + ·) := by
+  simp only [diagonalMaxPartition, ← Multiset.map_coe, Multiset.coe_range, Multiset.range_succ,
+    Multiset.map_cons, Multiset.map_map, Finset.Icc_self, Finset.sum_singleton]
+  congr 1
+  · omega
+  · apply Multiset.map_congr rfl
+    intro j hj
+    have hjq := Multiset.mem_range.mp hj
+    rw [Finset.sum_Icc_succ_top (by omega : j + 1 ≤ q + 1)]
+    dsimp
+    omega
+
+end conjugateParts_diagonalMaxPartition
+
+open conjugateParts_diagonalMaxPartition in
+/-- **Conjugate of a partition with prescribed gaps between its parts.** Let $q \ge 0$ and let
+$s_1, \dots, s_q$ be natural numbers. The conjugate of the partition $\bar\alpha$ with parts
+$\bar\alpha_i = q - i + 1 + \sum_{k=i}^{q} s_k$ for $1 \le i \le q$ is the partition
+$\underline{\alpha} = (q^{(s_q + 1)}, (q-1)^{(s_{q-1} + 1)}, \dots, 1^{(s_1 + 1)})$, where
+$v^{(r)}$ means $r$ copies of $v$; the parts are compared as multisets.
+
+Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
+INTEGERS 25 (2025), Article A60, Proposition 2. -/
+public theorem conjugateParts_diagonalMaxPartition (q : ℕ) (s : ℕ → ℕ) :
+    conjugateParts ↑(diagonalMaxPartition q s) = ↑(diagonalMinPartition q s) := by
+  induction q with
+  | zero => rfl
+  | succ q ih =>
+    rw [diagonalMaxPartition_succ, conjugateParts_cons_map_add, ih]
+    simp [diagonalMinPartition, List.range_succ, diagonalMaxPartition, ← Multiset.coe_add,
+      Multiset.coe_replicate]
 
 /-! ## A diagonal class of prescribed size -/
 

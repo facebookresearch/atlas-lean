@@ -8,11 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Group.TypeTags.Finite
 public import Mathlib.Data.Nat.Totient
 public import Mathlib.Data.Set.Card
 public import Mathlib.Data.ZMod.Basic
 public import MathlibExt.Combinatorics.Enumerative.TupleRotationOrbit
-import Mathlib.Algebra.Group.TypeTags.Finite
 import Mathlib.GroupTheory.SpecificGroups.Cyclic
 import MathlibExt.Combinatorics.Enumerative.IdentityProductNecklace
 
@@ -43,6 +43,23 @@ finite cyclic group of order `a` has `gcd(a, e)` elements (`IsCyclic.card_powMon
 
 namespace MetaMathlibExt
 
+/-- **Counting solutions of $x^b = 1$ in a cyclic group.** For natural numbers $a \ge 1$ and
+$b$, the cyclic group of order $a$ has exactly $\gcd(a, b)$ elements $x$ with $x^b = 1$.
+
+The paper takes $b$ positive; for $b = 0$ both sides equal $a$.
+
+Source: Darij Grinberg and Peter Mao, *Necklaces over a Group with Identity Product*,
+Journal of Integer Sequences 29 (2026), Article 26.4.6, Lemma 12
+(`jis-2026-26.4.6-lem-12`). -/
+public theorem card_pow_eq_one_zmod (a b : ℕ) [NeZero a] :
+    Fintype.card {x : Multiplicative (ZMod a) // x ^ b = 1} = Nat.gcd a b := by
+  rw [← Nat.card_eq_fintype_card]
+  have h := IsCyclic.card_powMonoidHom_ker (G := Multiplicative (ZMod a)) b
+  rw [Nat.card_eq_fintype_card (α := Multiplicative (ZMod a)), Fintype.card_multiplicative,
+    ZMod.card] at h
+  rw [← h]
+  exact Nat.card_congr (Equiv.subtypeEquivRight fun x => by simp [MonoidHom.mem_ker])
+
 namespace identityProductNecklace_count_pi_cyclic
 
 /-- Rotating the indices `m` times by `finRotate n` adds `m` to them, modulo `n`. -/
@@ -70,22 +87,15 @@ private theorem tupleRotationOrbit_eq_shifts {α : Type*} {n : ℕ} (hn : 0 < n)
     exact ⟨m, funext fun i =>
       (hm i).trans (congrArg x (Fin.ext (finRotate_pow_apply_val m i).symm))⟩
 
-/-- The cyclic group of order `a ≥ 1` has `gcd(a, b)` elements `x` with `x ^ b = 1`. -/
-private theorem card_pow_eq_one_multiplicative_zmod (a b : ℕ) [NeZero a] :
-    Nat.card {x : Multiplicative (ZMod a) // x ^ b = 1} = Nat.gcd a b := by
-  have h := IsCyclic.card_powMonoidHom_ker (G := Multiplicative (ZMod a)) b
-  rw [Nat.card_eq_fintype_card (α := Multiplicative (ZMod a)), Fintype.card_multiplicative,
-    ZMod.card] at h
-  rw [← h]
-  exact Nat.card_congr (Equiv.subtypeEquivRight fun x => by simp [MonoidHom.mem_ker])
-
 /-- In `C_{k_1} × ⋯ × C_{k_m}`, the equation `g ^ e = 1` has `∏ i, gcd(k_i, e)` solutions. -/
 private theorem card_pow_eq_one_pi {m : ℕ} (k : Fin m → ℕ) [∀ i, NeZero (k i)] (e : ℕ) :
     Nat.card {g : ∀ i, Multiplicative (ZMod (k i)) // g ^ e = 1} = ∏ i, Nat.gcd (k i) e := by
   rw [Nat.card_congr ((Equiv.subtypeEquivRight fun g => ?_).trans
     (Equiv.subtypePiEquivPi (p := fun i (x : Multiplicative (ZMod (k i))) => x ^ e = 1))),
     Nat.card_pi]
-  · exact Finset.prod_congr rfl fun i _ => card_pow_eq_one_multiplicative_zmod (k i) e
+  · refine Finset.prod_congr rfl fun i _ => ?_
+    rw [Nat.card_eq_fintype_card]
+    exact card_pow_eq_one_zmod (k i) e
   · simp [funext_iff]
 
 end identityProductNecklace_count_pi_cyclic

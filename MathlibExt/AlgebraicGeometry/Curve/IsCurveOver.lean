@@ -33,6 +33,7 @@ module
 
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import Mathlib.RingTheory.Kaehler.Basic
+public import MathlibExt.AlgebraicGeometry.Curve.DivisorClassGroup
 public import MathlibExt.AlgebraicGeometry.Curve.Place
 
 import Mathlib.FieldTheory.IntermediateField.Adjoin.Basic
@@ -46,7 +47,21 @@ import Mathlib.RingTheory.Unramified.Basic
 import Mathlib.RingTheory.Unramified.Field
 import Mathlib.RingTheory.Etale.Field
 
+/-!
+# Function fields of curves
+
+`IsCurveOver K F`, defined in `MathlibExt.AlgebraicGeometry.Curve.LPolynomial`, says that every
+nonzero element of `F` has a degree-zero principal divisor, residue fields of places are finite
+over `K`, and the Kähler differentials of `F / K` are free of rank one. This file derives the
+instances `HasPrincipalDivisors K F`, `Module.Finite K v.ResidueField` and the Kähler instances from
+it, and shows that every place has degree one over an algebraically closed field. Over a perfect
+field it shows that `F` is transcendental over `K` and, when `F` is essentially of finite type
+over `K`, that `F` has transcendence degree one.
+-/
+
 @[expose] public section
+
+noncomputable section
 
 open KaehlerDifferential
 
@@ -56,76 +71,16 @@ universe u v
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 
-/-- A divisor on the curve with function field `F` over `K`: a finitely
-supported integer combination of places. -/
-abbrev Divisor := Place K F →₀ ℤ
-
-namespace Divisor
-
-variable {K F}
-
-/-- The degree of a divisor, weighted by the degrees of its places. -/
-noncomputable def degree : Divisor K F →+ ℤ :=
-  Finsupp.liftAddHom fun v => AddMonoidHom.mulRight (v.deg : ℤ)
-
-@[simp]
-theorem degree_single (v : Place K F) (n : ℤ) :
-    degree (Finsupp.single v n) = n * v.deg := by
-  simp [degree]
-
-/-- The subgroup of divisors of degree zero. -/
-noncomputable def degZero : AddSubgroup (Divisor K F) := degree.ker
-
-theorem mem_degZero {D : Divisor K F} :
-    D ∈ degZero (K := K) (F := F) ↔ degree D = 0 :=
-  Iff.rfl
-
-/-- A divisor is principal if it is the divisor of orders of a single
-nonzero function at every place. -/
-def IsPrincipal (D : Divisor K F) : Prop :=
-  ∃ f : F, f ≠ 0 ∧ ∀ v : Place K F, D v = v.ord f
-
-/-- The subgroup of principal divisors. -/
-def principal : AddSubgroup (Divisor K F) where
-  carrier := {D | IsPrincipal D}
-  zero_mem' := ⟨1, one_ne_zero, fun v => by simp⟩
-  add_mem' := by
-    rintro D E ⟨f, hf, hD⟩ ⟨g, hg, hE⟩
-    exact ⟨f * g, mul_ne_zero hf hg, fun v => by
-      rw [Finsupp.add_apply, hD v, hE v, v.ord_mul hf hg]⟩
-  neg_mem' := by
-    rintro D ⟨f, hf, hD⟩
-    exact ⟨f⁻¹, inv_ne_zero hf, fun v => by
-      rw [Finsupp.neg_apply, hD v, v.ord_inv]⟩
-
-theorem mem_principal {D : Divisor K F} :
-    D ∈ principal (K := K) (F := F) ↔ IsPrincipal D :=
-  Iff.rfl
-
-end Divisor
-
-/-- Every nonzero function has a principal divisor of degree zero. This is
-the function-field analogue of the product formula. -/
-class HasPrincipalDivisors : Prop where
-  /-- The divisor of orders of `f` has degree zero. -/
-  exists_divisor : ∀ f : F, f ≠ 0 → ∃ D : Divisor K F,
-    (∀ v : Place K F, D v = v.ord f) ∧ Divisor.degree D = 0
-
-/-- `F` is the function field of a curve over `K`: principal divisors
-behave as for a curve, every residue field is finite over `K`, and the
-module of Kähler differentials is free of rank one over `F`. -/
-class IsCurveOver : Prop extends HasPrincipalDivisors K F where
-  /-- Every residue field is finite over `K`. -/
-  finiteResidue : ∀ v : Place K F, Module.Finite K v.ResidueField
-  /-- The Kähler differentials are free of rank one. -/
-  kaehler_free_rank_one : Module.Free F Ω[F⁄K] ∧ Module.finrank F Ω[F⁄K] = 1
-
 namespace IsCurveOver
 
 variable {K F}
 
-theorem hasPrincipalDivisors [h : IsCurveOver K F] : HasPrincipalDivisors K F :=
-  h.toHasPrincipalDivisors
+instance (priority := 100) toHasPrincipalDivisors [IsCurveOver K F] :
+    HasPrincipalDivisors K F :=
+  ⟨IsCurveOver.exists_divisor⟩
+
+theorem hasPrincipalDivisors [IsCurveOver K F] : HasPrincipalDivisors K F :=
+  inferInstance
 
 theorem finite_residueField [IsCurveOver K F] (v : Place K F) :
     Module.Finite K v.ResidueField :=
@@ -133,6 +88,10 @@ theorem finite_residueField [IsCurveOver K F] (v : Place K F) :
 
 instance instFiniteResidue [IsCurveOver K F] (v : Place K F) : v.FiniteResidue :=
   ⟨IsCurveOver.finiteResidue v⟩
+
+instance instFiniteResidueField [IsCurveOver K F] (v : Place K F) :
+    Module.Finite K v.ResidueField :=
+  IsCurveOver.finiteResidue v
 
 instance instFreeKaehler [h : IsCurveOver K F] : Module.Free F Ω[F⁄K] :=
   h.kaehler_free_rank_one.1
@@ -151,14 +110,12 @@ variable {K F}
 
 theorem deg_eq_one_of_isAlgClosed_of_finite [IsAlgClosed K] (v : Place K F)
     [Module.Finite K v.ResidueField] : v.deg = 1 := by
-  have : Algebra.IsIntegral K v.ResidueField :=
-    Algebra.IsIntegral.of_finite K v.ResidueField
+  have : Algebra.IsIntegral K v.ResidueField := Algebra.IsIntegral.of_finite K v.ResidueField
   have hbij : Function.Bijective (algebraMap K v.ResidueField) :=
     IsAlgClosed.algebraMap_bijective_of_isIntegral
-  show Module.finrank K v.ResidueField = 1
+  change Module.finrank K v.ResidueField = 1
   rw [← Module.finrank_self K]
-  exact ((AlgEquiv.ofBijective (Algebra.ofId K v.ResidueField)
-    hbij).toLinearEquiv.finrank_eq).symm
+  exact ((AlgEquiv.ofBijective (Algebra.ofId K v.ResidueField) hbij).toLinearEquiv.finrank_eq).symm
 
 end Place
 
@@ -166,8 +123,8 @@ namespace IsCurveOver
 
 variable {K F}
 
-theorem deg_eq_one_of_isAlgClosed [IsAlgClosed K] [IsCurveOver K F]
-    (v : Place K F) : v.deg = 1 :=
+theorem deg_eq_one_of_isAlgClosed [IsAlgClosed K] [IsCurveOver K F] (v : Place K F) :
+    v.deg = 1 :=
   haveI : Module.Finite K v.ResidueField := IsCurveOver.finiteResidue v
   v.deg_eq_one_of_isAlgClosed_of_finite
 
@@ -292,37 +249,6 @@ theorem trdeg_eq_one_of_perfectField [PerfectField K]
     [Algebra.EssFiniteType K F] [IsCurveOver K F] :
     Algebra.trdeg K F = 1 :=
   IsCurveOver.trdeg_eq_one trdeg_le_one
-
-/-- A curve over a perfect field admits a separating transcendental
-element: some `t` transcendental over `K` such that `F` is finite and
-separable over `K⟮t⟯`. -/
-theorem exists_separating_transcendental [PerfectField K]
-    [Algebra.EssFiniteType K F] [IsCurveOver K F] :
-    ∃ t : F, Transcendental K t ∧ FiniteDimensional K⟮t⟯ F ∧
-      Algebra.IsSeparable K⟮t⟯ F := by
-  obtain ⟨s, hs, hsep⟩ :=
-    exists_isTranscendenceBasis_and_isSeparable_of_perfectField K F
-  have hcard : s.card = 1 := by
-    have htr := hs.cardinalMk_eq_trdeg
-    rw [Cardinal.mk_coe_finset,
-      IsCurveOver.trdeg_eq_one_of_perfectField] at htr
-    exact_mod_cast htr
-  obtain ⟨t, rfl⟩ := Finset.card_eq_one.mp hcard
-  have htr : Transcendental K t := by
-    have h1 := hs.1
-    rw [show ((↑) : (↑({t} : Finset F)) → F) = fun _ => t from
-      funext fun x => (Finset.mem_singleton.mp x.2).symm ▸ rfl] at h1
-    exact (algebraicIndependent_unique_type_iff
-      (ι := (↑({t} : Finset F)))).mp h1
-  have heq : IntermediateField.adjoin K (↑({t} : Finset F) : Set F) = K⟮t⟯ := by
-    rw [Finset.coe_singleton]
-  haveI hsep' : Algebra.IsSeparable K⟮t⟯ F :=
-    Algebra.IsSeparable.of_equiv_equiv
-      (IntermediateField.equivOfEq heq).toRingEquiv (RingEquiv.refl F)
-      (RingHom.ext fun _ => rfl)
-  haveI : Algebra.EssFiniteType K⟮t⟯ F :=
-    Algebra.EssFiniteType.of_comp K K⟮t⟯ F
-  exact ⟨t, htr, Algebra.finite_of_essFiniteType_of_isAlgebraic, hsep'⟩
 
 end IsCurveOver
 

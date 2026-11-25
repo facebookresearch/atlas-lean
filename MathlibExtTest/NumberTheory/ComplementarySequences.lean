@@ -62,3 +62,16 @@ example :
   have result := nthNonValue_eq_interleave f (by decide) hgap α hα Nat.sqrt hh
   refine ⟨(result 1 (by decide)).trans ?_, (result 7 (by decide)).trans ?_,
     (result 8 (by decide)).trans ?_⟩ <;> norm_num [f]
+
+-- For squares plus one, the count at 1 is zero even though f 0 = 1.
+-- At 3 and 4 the count is one. Only at 4 does the candidate hit the next value, 5.
+example :
+    let f := fun m : ℕ => m ^ 2 + 1
+    nthNonValue f 1 = 1 ∧ nthNonValue f 3 = 4 ∧ nthNonValue f 4 = 6 := by
+  let f (m : ℕ) := m ^ 2 + 1
+  have hgap (m : ℕ) (_ : 1 ≤ m) : f m + m ≤ f (m + 1) := by
+    dsimp [f]
+    nlinarith
+  have result := nthNonValue_eq_one_step f (by decide) hgap
+  exact ⟨(result 1 (by decide)).trans (by decide), (result 3 (by decide)).trans (by decide),
+    (result 4 (by decide)).trans (by decide)⟩
