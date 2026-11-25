@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Probability.PCTLChecker
 public import Mathlib.Tactic.NormNum
+meta import CSLibExt.Probability.PCTLChecker
 
 namespace Cslib.Probability.CheckerTests
 
@@ -120,5 +121,28 @@ example (i : Fin 3) :
     lookupTab branchDTMC.P {0, 2} {1} 3 i =
       hitProbC branchDTMC.P {0, 2} {1} 3 i :=
   lookupTab_eq _ _ _ _ _
+
+/-- A chain on `Bool`, a state type other than `Fin m`: from `false`,
+move to the target `true` or stay, with probability `1/2` each; `true`
+is absorbing. -/
+def boolP : Bool → Bool → ℚ :=
+  fun s t => if s then (if t then 1 else 0) else 1 / 2
+
+/-- The tabulated horizon-`2` until probability from `false` on the
+`Bool` chain is `1 - (1/2)^2`, computed in the kernel. -/
+example : hitProbTab boolP {false} {true} 2 false = 3 / 4 := by
+  decide +kernel
+
+/-- The guarded bounded-until checker on the `Bool` chain, executed in
+the kernel. -/
+example : checkBoundedUntilG boolP {false} {true} 2 false .eq (3 / 4) = true := by
+  decide +kernel
+
+/- A horizon out of reach of the reference recursion, which would make
+about `7^40` recursive calls here: the compiled guarded checker on the
+uniform chain on `Fin 8`, where the target `0` is reached from `1`
+within `40` steps with probability exactly `1 - (7/8)^40`. -/
+#guard checkBoundedUntilG (fun _ _ : Fin 8 => (1 / 8 : ℚ)) (Finset.univ.erase 0) {0} 40 1
+  .eq (1 - (7 / 8) ^ 40)
 
 end Cslib.Probability.CheckerTests

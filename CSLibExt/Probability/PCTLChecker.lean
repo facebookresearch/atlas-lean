@@ -15,7 +15,10 @@ public import CSLibExt.Probability.DTMCReachability
 
 A computable rational recursion evaluates the horizon probabilities of
 `DTMCReachability` exactly; it agrees with the first-hit path-sum
-definition on every genuine chain. The next-step probability is, by
+definition on every genuine chain. The checkers evaluate it by
+tabulation, one Bellman pass per horizon over a list of the states:
+about `k * m^2` rational operations for `m` states and horizon `k`.
+The next-step probability is, by
 definition, the one-step sum of transition probabilities into the
 target set. Threshold comparisons (five directions, against rational
 thresholds) are decided on those values. Guarded entry points first
@@ -35,12 +38,111 @@ variable {S : Type*} [Fintype S] [DecidableEq S] (A B : Finset S)
 the Bellman recursion. Its agreement with the path-sum definition is
 `hitProbC_eq`. This is the reference recursion: it recomputes
 sub-horizons for every state, so its cost is exponential in the
-horizon; it is not memoized. -/
+horizon; it is not memoized, and the checkers evaluate the tabulated
+`hitProbTab` instead. -/
 def hitProbC (P : S → S → ℚ) (A B : Finset S) : ℕ → S → ℚ
   | 0 => fun s => if s ∈ B then 1 else 0
   | (n + 1) => fun s =>
       if s ∈ B then 1 else if s ∉ A then 0
         else ∑ t, P s t * hitProbC P A B n t
+
+private theorem foldl_add_map_sum {α : Type*} (l : List α)
+    (g : α → ℚ) :
+    l.foldl (fun acc x => acc + g x) 0 = (l.map g).sum := by
+  have h1 : (l.map g).sum = List.foldl (fun x1 x2 => x1 + x2) 0 (l.map g) :=
+    List.sum_eq_foldl
+  have h2 : List.foldl (fun x1 x2 => x1 + x2) 0 (l.map g)
+      = l.foldl (fun acc x => acc + g x) 0 :=
+    List.foldl_map
+  rw [h1, h2]
+
+omit [Fintype S] [DecidableEq S] in
+private theorem zip_map_eq (P : S → S → ℚ) (s : S) (f : S → ℚ)
+    (l : List S) :
+    ((l.zip (l.map f)).map (fun p : S × ℚ => P s p.1 * p.2))
+      = l.map (fun t => P s t * f t) := by
+  induction l with
+  | nil => simp
+  | cons hd tl ih =>
+    simp only [List.map_cons, List.zip_cons_cons, List.map_cons, ih]
+
+omit [DecidableEq S] in
+private theorem fold_zip_sum (P : S → S → ℚ) (s : S) (f : S → ℚ)
+    (l : {l : List S // l.Nodup ∧ ∀ t, t ∈ l}) :
+    (l.1.zip (l.1.map f)).foldl (fun acc p => acc + P s p.1 * p.2) 0
+      = ∑ t, P s t * f t := by
+  classical
+  rw [foldl_add_map_sum, zip_map_eq P s f l.1, ← List.sum_toFinset _ l.2.1]
+  congr 1
+  ext t
+  simp only [List.mem_toFinset, Finset.mem_univ, l.2.2 t]
+
+/-- Tabulated horizon probabilities over a list of all states, each
+listed once: the values at the listed states, in order, computed level
+by level. Each level is computed once from the previous list, so
+compiled evaluation takes about `k * m^2` rational operations for `m`
+states. -/
+def hitTabOn (P : S → S → ℚ) (A B : Finset S)
+    (l : {l : List S // l.Nodup ∧ ∀ s, s ∈ l}) : ℕ → List ℚ
+  | 0 => l.1.map fun s => if s ∈ B then 1 else 0
+  | (n + 1) =>
+    let v := hitTabOn P A B l n
+    l.1.map fun s =>
+      if s ∈ B then 1 else if s ∉ A then 0
+      else (l.1.zip v).foldl (fun acc p => acc + P s p.1 * p.2) 0
+
+/-- The tabulated list is the reference recursion evaluated at every
+listed state. -/
+theorem hitTabOn_eq_map (P : S → S → ℚ) (A B : Finset S)
+    (l : {l : List S // l.Nodup ∧ ∀ s, s ∈ l}) (k : ℕ) :
+    hitTabOn P A B l k = l.1.map (hitProbC P A B k) := by
+  induction k with
+  | zero => simp only [hitTabOn, hitProbC]
+  | succ n ih =>
+    simp only [hitTabOn, hitProbC]
+    rw [ih]
+    congr 1
+    funext s
+    by_cases hsB : s ∈ B
+    · simp [hsB]
+    · by_cases hsA : s ∈ A
+      · simp only [hsB, hsA, ite_false, not_true_eq_false]
+        exact fold_zip_sum P s (hitProbC P A B n) l
+      · simp [hsB, hsA]
+
+/-- Looking a state up in the tabulated list, at its position in the
+state list, gives the reference recursion. -/
+theorem hitTabOn_getD_idxOf (P : S → S → ℚ) (A B : Finset S)
+    (l : {l : List S // l.Nodup ∧ ∀ s, s ∈ l}) (k : ℕ) (s : S) :
+    (hitTabOn P A B l k).getD (l.1.idxOf s) 0 = hitProbC P A B k s := by
+  have h : l.1.idxOf s < l.1.length := List.idxOf_lt_length_of_mem (l.2.2 s)
+  rw [hitTabOn_eq_map, List.getD_eq_getElem?_getD, List.getElem?_map,
+    List.getElem?_eq_getElem h, List.getElem_idxOf h]
+  rfl
+
+/-- Tabulated horizon probabilities for any finite state type: the
+states are listed once through `Fintype.truncFinBijection`, and the
+value at `s` is read from `hitTabOn`, so compiled evaluation takes
+about `k * m^2` rational operations for `m` states. The value does not
+depend on the listing: it is the reference recursion
+(`hitProbTab_eq`). -/
+def hitProbTab (P : S → S → ℚ) (A B : Finset S) (k : ℕ) (s : S) : ℚ :=
+  Trunc.lift
+    (fun f : {f : Fin (Fintype.card S) → S // Function.Bijective f} =>
+      let l : {l : List S // l.Nodup ∧ ∀ t, t ∈ l} :=
+        ⟨List.ofFn f.1, List.nodup_ofFn.mpr f.2.1,
+          fun t => List.mem_ofFn.mpr (f.2.2 t)⟩
+      (hitTabOn P A B l k).getD (l.1.idxOf s) 0)
+    (fun _ _ => (hitTabOn_getD_idxOf P A B _ k s).trans
+      (hitTabOn_getD_idxOf P A B _ k s).symm)
+    (Fintype.truncFinBijection S)
+
+/-- The tabulated horizon probability is the reference recursion. -/
+theorem hitProbTab_eq (P : S → S → ℚ) (A B : Finset S) (k : ℕ) (s : S) :
+    hitProbTab P A B k s = hitProbC P A B k s := by
+  unfold hitProbTab
+  induction Fintype.truncFinBijection S using Trunc.ind
+  exact hitTabOn_getD_idxOf P A B _ k s
 
 /-- Threshold comparisons for probabilistic formulae. -/
 inductive Cmp where
@@ -76,10 +178,17 @@ def checkNext (P : S → S → ℚ) (A : Finset S) (s : S) (c : Cmp) (q : ℚ) :
   c.eval (∑ t ∈ A, P s t) q
 
 /-- Exact-rational check of a bounded-until threshold formula over
-horizon `k`. -/
+horizon `k`, on the tabulated value `hitProbTab`. -/
 def checkBoundedUntil (P : S → S → ℚ) (A B : Finset S) (k : ℕ) (s : S)
     (c : Cmp) (q : ℚ) : Bool :=
-  c.eval (hitProbC P A B k s) q
+  c.eval (hitProbTab P A B k s) q
+
+/-- The bounded-until checker decides the comparison on the reference
+recursion, for every rational matrix. -/
+theorem checkBoundedUntil_eq (P : S → S → ℚ) (A B : Finset S) (k : ℕ)
+    (s : S) (c : Cmp) (q : ℚ) :
+    checkBoundedUntil P A B k s c q = c.eval (hitProbC P A B k s) q := by
+  rw [checkBoundedUntil, hitProbTab_eq]
 
 /-- Decidable validation of a raw rational matrix: nonnegative entries
 and every row summing to `1`. -/
@@ -125,7 +234,7 @@ theorem checkBoundedUntil_correct (D : DTMC S) (k : ℕ) (s : S) (c : Cmp)
     (q : ℚ) :
     checkBoundedUntil D.P A B k s c q = true ↔
       c.holds (D.hitProb A B k s) q := by
-  simp only [checkBoundedUntil, hitProbC_eq]
+  simp only [checkBoundedUntil_eq, hitProbC_eq]
   exact cmp_eval_correct _ _ _
 
 /-- Guarded next-step checker: invalid matrices are rejected. -/
@@ -178,46 +287,13 @@ theorem stochastic_sound (P : S → S → ℚ) (h : stochastic P = true) :
   obtain ⟨hnn, hrs⟩ := h
   exact ⟨⟨P, hnn, hrs⟩, rfl⟩
 
-private theorem foldl_add_map_sum {α : Type*} (l : List α)
-    (g : α → ℚ) :
-    l.foldl (fun acc x => acc + g x) 0 = (l.map g).sum := by
-  have h1 : (l.map g).sum = List.foldl (fun x1 x2 => x1 + x2) 0 (l.map g) :=
-    List.sum_eq_foldl
-  have h2 : List.foldl (fun x1 x2 => x1 + x2) 0 (l.map g)
-      = l.foldl (fun acc x => acc + g x) 0 :=
-    List.foldl_map
-  rw [h1, h2]
-
-private theorem zip_map_eq {m : ℕ} (P : Fin m → Fin m → ℚ) (i : Fin m)
-    (f : Fin m → ℚ) (l : List (Fin m)) :
-    ((l.zip (l.map f)).map (fun p : Fin m × ℚ => P i p.1 * p.2))
-      = l.map (fun x => P i x * f x) := by
-  induction l with
-  | nil => simp
-  | cons hd tl ih =>
-    simp only [List.map_cons, List.zip_cons_cons, List.map_cons, ih]
-
-private theorem fold_zip_sum {m : ℕ} (P : Fin m → Fin m → ℚ) (i : Fin m)
-    (f : Fin m → ℚ) :
-    ((List.finRange m).zip ((List.finRange m).map f)).foldl
-      (fun acc p => acc + P i p.1 * p.2) 0
-      = ∑ t, P i t * f t := by
-  rw [foldl_add_map_sum]
-  rw [zip_map_eq P i f (List.finRange m)]
-  rw [← Fin.sum_univ_def]
-
 /-- Tabulated horizon probabilities: the list of values at every
 state, in `List.finRange m` order, computed level by level. Each level
 is computed once from the previous list, so compiled evaluation takes
 about `k * m^2` rational operations. -/
 def hitTab {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m)) :
-    ℕ → List ℚ
-  | 0 => (List.finRange m).map fun i => if i ∈ B then 1 else 0
-  | (n + 1) =>
-    let v := hitTab P A B n
-    (List.finRange m).map fun i =>
-      if i ∈ B then 1 else if i ∉ A then 0
-      else ((List.finRange m).zip v).foldl (fun acc p => acc + P i p.1 * p.2) 0
+    ℕ → List ℚ :=
+  hitTabOn P A B ⟨List.finRange m, List.nodup_finRange m, List.mem_finRange⟩
 
 /-- The tabulated value at a state. -/
 def lookupTab {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
@@ -228,29 +304,15 @@ def lookupTab {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
 theorem hitTab_length {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
     (k : ℕ) : (hitTab P A B k).length = m := by
   induction k with
-  | zero => simp only [hitTab, List.length_map, List.length_finRange]
-  | succ n ih => simp only [hitTab, List.length_map, List.length_finRange]
+  | zero => simp only [hitTab, hitTabOn, List.length_map, List.length_finRange]
+  | succ n ih => simp only [hitTab, hitTabOn, List.length_map, List.length_finRange]
 
 /-- The tabulated list is exactly the reference recursion evaluated at
 every state. -/
 theorem hitTab_eq_map {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
     (k : ℕ) :
-    hitTab P A B k = (List.finRange m).map (fun i => hitProbC P A B k i) := by
-  induction k with
-  | zero =>
-    simp only [hitTab, hitProbC]
-  | succ n ih =>
-    simp only [hitTab, hitProbC]
-    rw [ih]
-    congr 1
-    funext i
-    by_cases hiB : i ∈ B
-    · simp [hiB]
-    · simp [hiB]
-      by_cases hiA : i ∈ A
-      · simp [hiA]
-        exact fold_zip_sum P i (fun t => hitProbC P A B n t)
-      · simp [hiA]
+    hitTab P A B k = (List.finRange m).map (fun i => hitProbC P A B k i) :=
+  hitTabOn_eq_map P A B _ k
 
 /-- Looking up a state in the table gives the reference recursion. -/
 theorem lookupTab_eq {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
