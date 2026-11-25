@@ -1,0 +1,3 @@
+# Hadamard differentiability of the survival map
+
+Let $P$ be a product-integral map on $\ell^\infty([0, \tau])$, $P(A)(t) = \prod_{(0,t]}(1 + dA)$, given as a hypothesis together with Duhamel operators $\Psi$ on a total-variation domain $D$ satisfying the Duhamel equation, a uniform bound, continuity on a class $S$ whose uniform closure contains $C[0, \tau]$, and the product formula on pure-jump integrators. If $-\Lambda \in D$, the survival map $A \mapsto P(-A)$ is Hadamard differentiable at $\Lambda$ along $\{A : -A \in D\}$, tangentially to $\{h : -h \in \overline S\}$, with derivative $h \mapsto -\Psi(-\Lambda, -\Lambda)h$.

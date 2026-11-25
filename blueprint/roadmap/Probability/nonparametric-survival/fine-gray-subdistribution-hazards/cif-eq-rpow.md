@@ -1,0 +1,3 @@
+# Fine–Gray cumulative-incidence regression in baseline form
+
+Let $T$ be a measurable failure time and $\{J = c\}$ a measurable cause event, with laws $P_x$ indexed by covariates $x$ satisfying proportional subdistribution hazards for cause $c$ with baseline hazard $\lambda_0$ and coefficient $\beta$. Fix $x$ with $P_x$ and $P_0$ probability measures under which $T > 0$ almost surely, and $t \ge 0$; suppose the cumulative incidence $F_c(\cdot; x)$ is continuous on $[0, t]$, differentiable on $(0, t)$ with an interval-integrable derivative, and $F_c(t; x) < 1$, and likewise for covariate $0$. Then $F_c(t; x) = 1 - (1 - F_c(t; 0))^{e^{\langle\beta, x\rangle}}$.

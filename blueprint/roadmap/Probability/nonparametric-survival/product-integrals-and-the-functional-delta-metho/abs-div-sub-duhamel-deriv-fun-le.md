@@ -1,0 +1,3 @@
+# Quantitative Hadamard estimate for the product integral
+
+A function $A$ is controlled on $[a, b]$ by a nondecreasing $V$ if $|A(x) - A(y)| \le V(x) - V(y)$ for $a \le y \le x \le b$; write $P(A)(y, x] = \prod_{(y,x]}(1 + dA)$ for the product integral. For $A$ with a control of total increase at most $M$, a direction $h$ approximated within $\delta$ by a controlled $g$, $t > 0$ and $k$ with $A + tk$ controlled, the difference quotient $t^{-1}(P(A + tk)(a, b] - P(A)(a, b])$ differs from the Duhamel integral in direction $h$ by an explicit amount controlled by $\sup|k - h|$, $\delta$ and $e^{2M}$.
