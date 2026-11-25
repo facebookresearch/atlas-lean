@@ -4,9 +4,9 @@ For $g : \{0,1\}^n \times \{0,1\}^n \to \{0,1\}$ and a set $S$ of inputs, the *d
 $\left| \mathbb{E}_{x,y}\left[\chi_S(x, y)\,(-1)^{g(x,y)}\right] \right|$, the expectation over uniform inputs, that is, the difference between the measures
 of $S \cap g^{-1}(0)$ and $S \cap g^{-1}(1)$.
 
-- **Discrepancy bound.** If every rectangle $A \times B$ has discrepancy at most $\gamma$ with respect to $g$, then every deterministic protocol
+- **Discrepancy bound.** If every rectangle $A \times B$ has discrepancy at most $\gamma$ with respect to $g$, then for every $0 \le \varepsilon < \frac12$, every deterministic protocol
   whose output equals $g$ except on an $\varepsilon$ fraction of uniformly random inputs communicates at least $\log_2 \frac{1 - 2\varepsilon}{\gamma}$ bits.
-  The same bound holds for public-coin protocols with error at most $\varepsilon$ on every input, since some fixing of the random string errs on
+  The same bound holds, for the same range of $\varepsilon$, for public-coin protocols with error at most $\varepsilon$ on every input, since some fixing of the random string errs on
   at most an $\varepsilon$ fraction of inputs.
 - **Inner product.** For $\mathrm{IP}_n(x, y) = \sum_i x_i y_i \bmod 2$, every rectangle has discrepancy at most $2^{-n/2}$.
 
