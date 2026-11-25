@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.Partition.ExtremalDiagonalSequences
+public import MathlibExt.Combinatorics.Enumerative.Partition.VnArrangementCountConsecutive
 public import Mathlib.Data.Nat.Choose.Multinomial
 public import Mathlib.Data.Int.Interval
 
@@ -198,16 +199,6 @@ INTEGERS 25 (2025), Article A60, Proposition 6. -/
 public theorem_wanted vnArrangementCount_one_eq_prod (t : ℕ) (b : ℕ → ℕ) :
     vnArrangementCount 1 (∑ i ∈ Finset.range (t + 1), Multiset.replicate (b i) (i : ℤ)) =
       ∏ i ∈ Finset.range t, (b i + b (i + 1)).choose (b i)
-
-/-- **Vn-arrangements of consecutive integers.** For every integer $a$ and every natural number
-$t \ge 1$, the set $\{a, a + 1, \dots, a + t - 1\}$ of $t$ consecutive integers has exactly
-$2^{t-1}$ vn-arrangements, that is, orderings $(v_1, \dots, v_t)$ of its elements with
-$v_{i+1} - v_i \le 1$ for all $i$.
-
-Source: Michael Neubauer and Harmony Vargas, *Diagonal Sequences of Integer Partitions*,
-INTEGERS 25 (2025), Article A60, Corollary 5. -/
-public theorem_wanted vnArrangementCount_consecutive (a : ℤ) (t : ℕ) (ht : 1 ≤ t) :
-    vnArrangementCount 1 (Finset.Ico a (a + t)).val = 2 ^ (t - 1)
 
 /-- **Counting $k$-vn-arrangements of a multiset.** Let $k \le t$ be natural numbers, let
 $b_0, b_1, \dots$ be natural numbers, and let $M$ be the multiset of integers containing $b_i$
