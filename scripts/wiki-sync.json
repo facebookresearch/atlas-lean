@@ -45981,6 +45981,8 @@
 "MathlibExt.Combinatorics.ErdosProblem750Wanted.conjecture_holds": "73037b061bcf3920",
 "MathlibExt.Combinatorics.ErdosProblem751Wanted.conjecture": "d24019a3c598bde6",
 "MathlibExt.Combinatorics.ErdosProblem751Wanted.conjecture_refuted": "562ec16c45d6665f",
+"MathlibExt.Combinatorics.ErdosProblem751Wanted.exists_cycleLengths_lt_le_add_two_of_not_colorable": "9ae65b046daf46d3",
+"MathlibExt.Combinatorics.ErdosProblem751Wanted.exists_cycleLengths_lt_le_add_two_of_three_le_minDegree": "cc8a0c6f0fdc207b",
 "MathlibExt.Combinatorics.ErdosProblem760Wanted.conjecture": "5c399f7181734c9d",
 "MathlibExt.Combinatorics.ErdosProblem760Wanted.conjecture_holds": "15041ae0b0e3d8b2",
 "MathlibExt.Combinatorics.ErdosProblem794Wanted.conjecture": "2e326f9b913a8a97",
