@@ -13,32 +13,12 @@ public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
+public import MathlibExt.Analysis.Calculus.TaylorCoefficientComposition
 public import MathlibExt.NumberTheory.MultipleZeta.Series
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Faà di Bruno's formula for Taylor coefficients.** Let $f, g : \mathbb{R} \to \mathbb{R}$,
-let $a \in \mathbb{R}$ and let $n$ be a natural number. Suppose that $g$ is $n$ times continuously
-differentiable on a neighbourhood of $a$ and that $f$ is $n$ times continuously differentiable on a
-neighbourhood of $g(a)$. For a partition $\pi$ of $n$, let $m_i(\pi)$ be the number of parts of
-$\pi$ equal to $i$, and let $\ell(\pi) = m_1(\pi) + \cdots + m_n(\pi)$ be its number of parts. Then
-$$\frac{(f \circ g)^{(n)}(a)}{n!} = \sum_{\pi} \frac{\ell(\pi)!}{\prod_{i=1}^{n} m_i(\pi)!} \cdot
-\frac{f^{(\ell(\pi))}(g(a))}{\ell(\pi)!} \cdot
-\prod_{i=1}^{n} \Bigl(\frac{g^{(i)}(a)}{i!}\Bigr)^{m_i(\pi)},$$
-where the sum runs over all partitions $\pi$ of $n$.
-
-Source: Serge Iovleff, *About Some Nested Sums of Reciprocal Squared Numbers*, INTEGERS 26
-(2026), Article A114, Corollary 1 (quoted as Corollary 4 from the paper's reference [8]). -/
-public theorem_wanted taylorCoeff_comp_eq_sum_partitions (f g : ℝ → ℝ) (a : ℝ) (n : ℕ)
-    (hf : ContDiffAt ℝ n f (g a)) (hg : ContDiffAt ℝ n g a) :
-    iteratedDeriv n (f ∘ g) a / n.factorial =
-      ∑ π : Nat.Partition n,
-        ((π.parts.card.factorial : ℝ) /
-            ∏ i ∈ Finset.Icc 1 n, ((π.parts.count i).factorial : ℝ)) *
-          (iteratedDeriv π.parts.card f (g a) / π.parts.card.factorial) *
-          ∏ i ∈ Finset.Icc 1 n, (iteratedDeriv i g a / i.factorial) ^ π.parts.count i
 
 /-- **Nested sums of reciprocal odd squares.** For every natural number $k$,
 $$\sum_{i_1 \ge i_2 \ge \cdots \ge i_k \ge 1} \prod_{j=1}^{k} \frac{1}{(2 i_j - 1)^2} =

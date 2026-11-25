@@ -1,5 +1,11 @@
 # Faà di Bruno's formula and nested sums of reciprocal squares
 
+- [To Partition](to-partition.md)
+- [Prod part Size eq](prod-part-size-eq.md)
+- [To Partition extend Left parts](to-partition-extend-left-parts.md)
+- [To Partition extend Middle parts](to-partition-extend-middle-parts.md)
+- [Extend Left eq iff](extend-left-eq-iff.md)
+- [Extend Middle eq iff](extend-middle-eq-iff.md)
 - [Faà di Bruno's formula for Taylor coefficients](taylor-coeff-comp-eq-sum-partitions.md)
 - [Nested sums of reciprocal odd squares](tsum-weakly-decreasing-prod-inv-odd-sq-e.md)
 - [Nested sums of reciprocal squares](star-value-replicate-two-eq.md)
