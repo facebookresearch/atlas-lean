@@ -35,15 +35,15 @@ public import Mathlib.RingTheory.LaurentSeries
 
 open HahnSeries
 
-namespace ModularCurve
+namespace LaurentSeries
 
-section QExpand
+section Expand
 
 variable {R : Type*} [CommRing R]
 
-/-- The `q`-expansion map on Laurent series: it replaces `q ^ k` by
-`q ^ (N * k)`, stretching the exponents by `N`. -/
-public noncomputable def qExpand (R : Type*) [CommRing R] (N : ℕ) [NeZero N] :
+/-- The expansion map on Laurent series: it replaces `X ^ k` by
+`X ^ (N * k)`, stretching the exponents by `N`. -/
+public noncomputable def expand (R : Type*) [CommRing R] (N : ℕ) [NeZero N] :
     LaurentSeries R →+* LaurentSeries R :=
   HahnSeries.embDomainRingHom (AddMonoidHom.mulLeft (N : ℤ))
     (mul_right_injective₀ (by exact_mod_cast NeZero.ne N))
@@ -53,55 +53,55 @@ public noncomputable def qExpand (R : Type*) [CommRing R] (N : ℕ) [NeZero N] :
 variable (N : ℕ) [NeZero N]
 
 @[simp]
-public theorem qExpand_coeff_mul (f : LaurentSeries R) (k : ℤ) :
-    (qExpand R N f).coeff ((N : ℤ) * k) = f.coeff k :=
+public theorem coeff_expand_mul (f : LaurentSeries R) (k : ℤ) :
+    (expand R N f).coeff ((N : ℤ) * k) = f.coeff k :=
   HahnSeries.embDomain_coeff
 
-public theorem qExpand_coeff_of_not_dvd (f : LaurentSeries R) {k : ℤ}
+public theorem coeff_expand_of_not_dvd (f : LaurentSeries R) {k : ℤ}
     (hk : ¬ (N : ℤ) ∣ k) :
-    (qExpand R N f).coeff k = 0 := by
+    (expand R N f).coeff k = 0 := by
   refine HahnSeries.embDomain_of_notMem_range ?_
   rintro ⟨m, rfl⟩
   exact hk ⟨m, rfl⟩
 
 @[simp]
-public theorem qExpand_single (k : ℤ) (r : R) :
-    qExpand R N (HahnSeries.single k r) = HahnSeries.single ((N : ℤ) * k) r :=
+public theorem expand_single (k : ℤ) (r : R) :
+    expand R N (HahnSeries.single k r) = HahnSeries.single ((N : ℤ) * k) r :=
   HahnSeries.embDomain_single
 
 @[simp]
-public theorem qExpand_C (r : R) : qExpand R N (HahnSeries.C r) = HahnSeries.C r :=
+public theorem expand_C (r : R) : expand R N (HahnSeries.C r) = HahnSeries.C r :=
   HahnSeries.embDomainRingHom_C
 
-public theorem qExpand_injective : Function.Injective (qExpand R N) :=
+public theorem expand_injective : Function.Injective (expand R N) :=
   HahnSeries.embDomain_injective
 
-public theorem qExpand_one_apply (f : LaurentSeries R) : qExpand R 1 f = f := by
+public theorem expand_one_apply (f : LaurentSeries R) : expand R 1 f = f := by
   ext k
   have h : ((1 : ℕ) : ℤ) * k = k := by simp
   conv_lhs => rw [← h]
-  rw [qExpand_coeff_mul]
+  rw [coeff_expand_mul]
 
-public theorem qExpand_qExpand (M : ℕ) [NeZero M] (f : LaurentSeries R) :
-    qExpand R M (qExpand R N f) = qExpand R (M * N) f := by
+public theorem expand_expand (M : ℕ) [NeZero M] (f : LaurentSeries R) :
+    expand R M (expand R N f) = expand R (M * N) f := by
   ext k
   by_cases hk : ((M : ℤ) * N) ∣ k
   · obtain ⟨m, rfl⟩ := hk
     trans f.coeff m
-    · rw [show (M : ℤ) * N * m = (M : ℤ) * ((N : ℤ) * m) by ring, qExpand_coeff_mul,
-        qExpand_coeff_mul]
+    · rw [show (M : ℤ) * N * m = (M : ℤ) * ((N : ℤ) * m) by ring, coeff_expand_mul,
+        coeff_expand_mul]
     · rw [show (M : ℤ) * N * m = (((M * N : ℕ) : ℤ)) * m by push_cast; ring,
-        qExpand_coeff_mul]
-  · rw [qExpand_coeff_of_not_dvd (M * N) f (by push_cast; exact hk)]
+        coeff_expand_mul]
+  · rw [coeff_expand_of_not_dvd (M * N) f (by push_cast; exact hk)]
     by_cases hkM : (M : ℤ) ∣ k
     · obtain ⟨m, rfl⟩ := hkM
-      rw [qExpand_coeff_mul M _ m]
-      refine qExpand_coeff_of_not_dvd N _ ?_
+      rw [coeff_expand_mul M _ m]
+      refine coeff_expand_of_not_dvd N _ ?_
       rintro ⟨c, hc⟩
       exact hk ⟨c, by rw [hc]; ring⟩
-    · exact qExpand_coeff_of_not_dvd M _ hkM
+    · exact coeff_expand_of_not_dvd M _ hkM
 
-end QExpand
+end Expand
 
 section Decimate
 
@@ -136,7 +136,7 @@ whose index is divisible by `p`, reindexed by division by `p`. This is the
 series-level operator whose compatibility with the differential of a
 `q`-expansion function field defines the Frobenius pushforward on
 differentials. -/
-public noncomputable def qDecimate : LaurentSeries K →ₗ[K] LaurentSeries K where
+public noncomputable def decimate : LaurentSeries K →ₗ[K] LaurentSeries K where
   toFun x := HahnSeries.ofSuppBddBelow (fun k : ℤ => x.coeff ((p : ℤ) * k))
     (bddBelow_support_decimate K p x)
   map_add' x y := by
@@ -147,18 +147,18 @@ public noncomputable def qDecimate : LaurentSeries K →ₗ[K] LaurentSeries K w
     simp only [HahnSeries.coeff_ofSuppBddBelow, HahnSeries.coeff_smul, RingHom.id_apply]
 
 @[simp]
-public theorem coeff_qDecimate (x : LaurentSeries K) (k : ℤ) :
-    (qDecimate K p x).coeff k = x.coeff ((p : ℤ) * k) := by
-  simp only [qDecimate, LinearMap.coe_mk, AddHom.coe_mk, HahnSeries.coeff_ofSuppBddBelow]
+public theorem coeff_decimate (x : LaurentSeries K) (k : ℤ) :
+    (decimate K p x).coeff k = x.coeff ((p : ℤ) * k) := by
+  simp only [decimate, LinearMap.coe_mk, AddHom.coe_mk, HahnSeries.coeff_ofSuppBddBelow]
 
 end Semiring
 
-/-- Decimation undoes `q`-expansion by the same factor. -/
-public theorem qDecimate_qExpand [CommRing K] (x : LaurentSeries K) :
-    qDecimate K p (qExpand K p x) = x := by
+/-- Decimation undoes expansion by the same factor. -/
+public theorem decimate_expand [CommRing K] (x : LaurentSeries K) :
+    decimate K p (expand K p x) = x := by
   ext k
-  rw [coeff_qDecimate, qExpand_coeff_mul]
+  rw [coeff_decimate, coeff_expand_mul]
 
 end Decimate
 
-end ModularCurve
+end LaurentSeries
