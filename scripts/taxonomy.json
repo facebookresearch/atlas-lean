@@ -9233,6 +9233,7 @@
   "MathlibExt/Algebra/MvPolynomial/Stable": {"to": "Algebra/zeros-of-polynomials", "title": "Stable polynomials"},
   "MathlibExt/Algebra/MvPolynomial/SymmetricPolynomialInCoefficients": {"to": "Algebra/polynomials", "title": "Fundamental theorem of symmetric polynomials"},
   "MathlibExt/Algebra/Octonion/StructureConstants": {"to": "Algebra/algebraic-identities", "title": "Degen's eight-square identity"},
+  "MathlibExt/Algebra/Order/Floor/HalfShift": {"to": "Algebra/ordered-algebraic-structures/archimedean-and-floor", "title": "Floor and ceiling of a quotient plus one half"},
   "MathlibExt/Algebra/Order/Kleene": {"to": "ComputerScience/program-logics-and-verification", "title": "Kleene algebra with tests"},
   "MathlibExt/Algebra/PatchingDatum": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Taylor–Wiles patching"},
   "MathlibExt/Algebra/PointDerivations": {"to": "RingTheory/algebras-and-differentials", "title": "Point derivations"},
