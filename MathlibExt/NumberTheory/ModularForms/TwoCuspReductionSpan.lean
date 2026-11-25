@@ -40,6 +40,7 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.LinearAlgebra.TensorProduct.Tower
 public import MathlibExt.NumberTheory.ModularForms.GammaH
 public import MathlibExt.NumberTheory.ModularForms.AtkinLehnerSlash
+public import MathlibExt.NumberTheory.ModularForms.CuspFormConj
 public import MathlibExt.NumberTheory.ModularForms.OldForms
 public import Mathlib.Algebra.Module.ZMod
 public import Mathlib.Algebra.Module.Torsion.Basic
@@ -50,18 +51,6 @@ noncomputable section
 
 open CongruenceSubgroup UpperHalfPlane
 open scoped MatrixGroups ModularForm TensorProduct
-
-/-- The `n`-th coefficient of the `q`-expansion of a function on the upper
-half-plane, using the period `1` parameter `q = exp (2πiτ)`. -/
-public noncomputable def ModularFormClass.qCoeff (f : ℍ → ℂ) (n : ℕ) : ℂ :=
-  (UpperHalfPlane.qExpansion 1 f).coeff n
-
-/-- The `q`-expansion coefficient is, by definition, the corresponding
-coefficient of the `q`-expansion power series. -/
-@[simp]
-public theorem ModularFormClass.qCoeff_eq (f : ℍ → ℂ) (n : ℕ) :
-    ModularFormClass.qCoeff f n = (UpperHalfPlane.qExpansion 1 f).coeff n :=
-  rfl
 
 namespace CongruenceSubgroup
 
@@ -505,27 +494,69 @@ end HeckeRing
 section Lattice
 
 variable (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) (k : ℤ) (p : ℕ)
-  (A : Subring ℂ)
+  (W : ModularForm.AtkinLehnerDatum M p) (A : Subring ℂ)
 
-/-- The set of cusp forms all of whose Hecke translates, and all of whose
-Atkin-Lehner translates at `p`, have `q`-expansion coefficients in `A` at
-every cusp. -/
+/-- The cusp forms `f` such that, for every `t` in the Hecke ring, the
+`q`-expansion coefficients of `t f` and of its Atkin-Lehner slash by `W` lie
+in `A`: integrality at the cusp `∞` and at its image under the Atkin-Lehner
+matrix of `W`. The datum `W` records a factorization `M = p * R` with `p` and
+`R` coprime, so it exists only when `p` exactly divides `M`; it is an argument
+rather than a quantified variable, so the condition cannot hold vacuously
+for want of a datum. -/
 public def twoCuspIntegralSet : Set (CuspForm (CongruenceSubgroup.GammaH M H) k) :=
-  {f | ∀ t ∈ heckeRingH M H k, ∀ (W : ModularForm.AtkinLehnerDatum M p) (n : ℕ),
+  {f | ∀ t ∈ heckeRingH M H k, ∀ n : ℕ,
     ModularFormClass.qCoeff (⇑(t f)) n ∈ A ∧
       ModularFormClass.qCoeff (ModularForm.alSlash W k ⇑(t f)) n ∈ A}
 
 public theorem mem_twoCuspIntegralSet_iff
     (f : CuspForm (CongruenceSubgroup.GammaH M H) k) :
-    f ∈ twoCuspIntegralSet M H k p A ↔
-      ∀ t ∈ heckeRingH M H k, ∀ (W : ModularForm.AtkinLehnerDatum M p) (n : ℕ),
+    f ∈ twoCuspIntegralSet M H k p W A ↔
+      ∀ t ∈ heckeRingH M H k, ∀ n : ℕ,
         ModularFormClass.qCoeff (⇑(t f)) n ∈ A ∧
           ModularFormClass.qCoeff (ModularForm.alSlash W k ⇑(t f)) n ∈ A :=
   Iff.rfl
 
+-- Two Atkin-Lehner data at `p` share the bottom row `(M, p)` of their matrices, so the
+-- matrices differ by a translation `!![1, m; 0, 1]` in `Gamma1 M`, under which cusp forms
+-- for `GammaH M H` are invariant.
+variable {M H k p} in
+private theorem alSlash_congr_datum (W' : ModularForm.AtkinLehnerDatum M p)
+    (f : CuspForm (CongruenceSubgroup.GammaH M H) k) :
+    ModularForm.alSlash W' k ⇑f = ModularForm.alSlash W k ⇑f := by
+  have hR : W'.R = W.R :=
+    (Nat.eq_of_mul_eq_mul_left W.q_pos (W.hM.symm.trans W'.hM)).symm
+  have hb := W.bezout
+  have hb' := W'.bezout
+  rw [hR] at hb'
+  let γ : SL(2, ℤ) :=
+    ⟨!![1, W.a * W'.b - W'.a * W.b; 0, 1], by simp [Matrix.det_fin_two_of]⟩
+  have hγ : γ ∈ CongruenceSubgroup.GammaH M H :=
+    CongruenceSubgroup.gamma1_le_gammaH M H
+      ((CongruenceSubgroup.Gamma1_mem M γ).mpr ⟨by simp [γ], by simp [γ], by simp [γ]⟩)
+  have hmat : W'.mat = (γ : Matrix (Fin 2) (Fin 2) ℤ) * W.mat := by
+    ext i j
+    fin_cases i <;> fin_cases j <;>
+      simp [γ, ModularForm.AtkinLehnerDatum.mat, Matrix.mul_apply, Fin.sum_univ_two, hR]
+    · linear_combination (↑p * W.a) * hb' - (↑p * W'.a) * hb
+    · linear_combination W.b * hb' - W'.b * hb
+  have hGL : W'.alGL = Matrix.SpecialLinearGroup.mapGL ℝ γ * W.alGL := by
+    apply Units.ext
+    rw [Units.val_mul, ModularForm.AtkinLehnerDatum.alGL_coe,
+      ModularForm.AtkinLehnerDatum.alGL_coe, Matrix.SpecialLinearGroup.mapGL_coe_matrix, hmat,
+      Matrix.map_mul]
+    rfl
+  rw [ModularForm.alSlash_def, ModularForm.alSlash_def, hGL, SlashAction.slash_mul,
+    SlashInvariantFormClass.slash_action_eq f _ (Subgroup.mem_map_of_mem _ hγ)]
+
+-- The set does not depend on the Bezout coefficients that `W` records.
+public theorem twoCuspIntegralSet_congr_datum (W' : ModularForm.AtkinLehnerDatum M p) :
+    twoCuspIntegralSet M H k p W A = twoCuspIntegralSet M H k p W' A :=
+  Set.ext fun f => forall₂_congr fun t _ => forall_congr' fun n => by
+    rw [alSlash_congr_datum W W' (t f)]
+
 public theorem zero_mem_twoCuspIntegralSet :
-    (0 : CuspForm (CongruenceSubgroup.GammaH M H) k) ∈ twoCuspIntegralSet M H k p A := by
-  intro t _ W n
+    (0 : CuspForm (CongruenceSubgroup.GammaH M H) k) ∈ twoCuspIntegralSet M H k p W A := by
+  intro t _ n
   have h0 : ModularFormClass.qCoeff (0 : ℍ → ℂ) n = 0 := by
     simp [ModularFormClass.qCoeff, UpperHalfPlane.qExpansion_zero]
   have hW : ModularForm.alSlash W k (0 : ℍ → ℂ) = 0 := by
@@ -534,37 +565,41 @@ public theorem zero_mem_twoCuspIntegralSet :
   · rw [map_zero, CuspForm.coe_zero, h0]; exact A.zero_mem
   · rw [map_zero, CuspForm.coe_zero, hW, h0]; exact A.zero_mem
 
-variable {M H k p A} in
+variable {M H k p W A} in
 public theorem heckeRingH_apply_mem_twoCuspIntegralSet
     {t : CuspForm (CongruenceSubgroup.GammaH M H) k →ₗ[ℂ]
       CuspForm (CongruenceSubgroup.GammaH M H) k}
     (ht : t ∈ heckeRingH M H k)
     {f : CuspForm (CongruenceSubgroup.GammaH M H) k}
-    (hf : f ∈ twoCuspIntegralSet M H k p A) :
-    t f ∈ twoCuspIntegralSet M H k p A := by
-  intro t' ht' W n
+    (hf : f ∈ twoCuspIntegralSet M H k p W A) :
+    t f ∈ twoCuspIntegralSet M H k p W A := by
+  intro t' ht' n
   have hmul : t' * t ∈ heckeRingH M H k := (heckeRingH M H k).mul_mem ht' ht
-  exact hf (t' * t) hmul W n
+  exact hf (t' * t) hmul n
 
 /-- The two-cusp integral lattice: the `A`-span of the two-cusp integral
 cusp forms inside all cusp forms. -/
 public def twoCuspLattice :
     Submodule A (CuspForm (CongruenceSubgroup.GammaH M H) k) :=
-  Submodule.span A (twoCuspIntegralSet M H k p A)
+  Submodule.span A (twoCuspIntegralSet M H k p W A)
 
 public theorem twoCuspIntegralSet_subset_twoCuspLattice :
-    twoCuspIntegralSet M H k p A ⊆
-      (twoCuspLattice M H k p A : Set (CuspForm (CongruenceSubgroup.GammaH M H) k)) :=
+    twoCuspIntegralSet M H k p W A ⊆
+      (twoCuspLattice M H k p W A : Set (CuspForm (CongruenceSubgroup.GammaH M H) k)) :=
   Submodule.subset_span
 
-variable {M H k p A} in
+public theorem twoCuspLattice_congr_datum (W' : ModularForm.AtkinLehnerDatum M p) :
+    twoCuspLattice M H k p W A = twoCuspLattice M H k p W' A :=
+  congrArg (Submodule.span A) (twoCuspIntegralSet_congr_datum M H k p W A W')
+
+variable {M H k p W A} in
 public theorem heckeRingH_apply_mem_twoCuspLattice
     {t : CuspForm (CongruenceSubgroup.GammaH M H) k →ₗ[ℂ]
       CuspForm (CongruenceSubgroup.GammaH M H) k}
     (ht : t ∈ heckeRingH M H k)
     {f : CuspForm (CongruenceSubgroup.GammaH M H) k}
-    (hf : f ∈ twoCuspLattice M H k p A) :
-    t f ∈ twoCuspLattice M H k p A := by
+    (hf : f ∈ twoCuspLattice M H k p W A) :
+    t f ∈ twoCuspLattice M H k p W A := by
   induction hf using Submodule.span_induction with
   | mem x hx => exact Submodule.subset_span (heckeRingH_apply_mem_twoCuspIntegralSet ht hx)
   | zero => rw [map_zero]; exact Submodule.zero_mem _
@@ -574,11 +609,10 @@ public theorem heckeRingH_apply_mem_twoCuspLattice
         rw [Subring.smul_def, Subring.smul_def, LinearMap.map_smul]]
       exact Submodule.smul_mem _ a hx
 
-variable {M H k p A} in
-
+variable {M H k p W A} in
 /-- A Hecke operator, viewed as an endomorphism of the two-cusp lattice. -/
 public def twoCuspEnd (t : heckeRingH M H k) :
-    twoCuspLattice M H k p A →ₗ[A] twoCuspLattice M H k p A where
+    twoCuspLattice M H k p W A →ₗ[A] twoCuspLattice M H k p W A where
   toFun x := ⟨(t : CuspForm (CongruenceSubgroup.GammaH M H) k →ₗ[ℂ] _) x,
     heckeRingH_apply_mem_twoCuspLattice t.2 x.2⟩
   map_add' x y := Subtype.ext (by simp)
@@ -587,8 +621,8 @@ public def twoCuspEnd (t : heckeRingH M H k) :
       LinearMap.map_smul])
 
 @[simp] public theorem coe_twoCuspEnd_apply (t : heckeRingH M H k)
-    (x : twoCuspLattice M H k p A) :
-    ((twoCuspEnd t x : twoCuspLattice M H k p A) :
+    (x : twoCuspLattice M H k p W A) :
+    ((twoCuspEnd t x : twoCuspLattice M H k p W A) :
       CuspForm (CongruenceSubgroup.GammaH M H) k) =
       (t : CuspForm (CongruenceSubgroup.GammaH M H) k →ₗ[ℂ] _) x :=
   rfl
@@ -598,56 +632,56 @@ end Lattice
 section Reduction
 
 variable (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) (k : ℤ) (p : ℕ)
-  (A : Subring ℂ) (I : Ideal A)
+  (W : ModularForm.AtkinLehnerDatum M p) (A : Subring ℂ) (I : Ideal A)
 
 /-- The reduction of the two-cusp lattice modulo an ideal `I` of `A`: the
 quotient of the lattice by `I` times the lattice. -/
 public def TwoCuspForms : Type :=
-  twoCuspLattice M H k p A ⧸ (I • ⊤ : Submodule A (twoCuspLattice M H k p A))
+  twoCuspLattice M H k p W A ⧸ (I • ⊤ : Submodule A (twoCuspLattice M H k p W A))
 
-public instance instAddCommGroupTwoCuspForms : AddCommGroup (TwoCuspForms M H k p A I) :=
+public instance instAddCommGroupTwoCuspForms : AddCommGroup (TwoCuspForms M H k p W A I) :=
   inferInstanceAs (AddCommGroup
-    (twoCuspLattice M H k p A ⧸ (I • ⊤ : Submodule A (twoCuspLattice M H k p A))))
+    (twoCuspLattice M H k p W A ⧸ (I • ⊤ : Submodule A (twoCuspLattice M H k p W A))))
 
-public instance instModuleTwoCuspForms : Module A (TwoCuspForms M H k p A I) :=
+public instance instModuleTwoCuspForms : Module A (TwoCuspForms M H k p W A I) :=
   inferInstanceAs (Module A
-    (twoCuspLattice M H k p A ⧸ (I • ⊤ : Submodule A (twoCuspLattice M H k p A))))
+    (twoCuspLattice M H k p W A ⧸ (I • ⊤ : Submodule A (twoCuspLattice M H k p W A))))
 
 public instance instModuleQuotientTwoCuspForms :
-    Module (A ⧸ I) (TwoCuspForms M H k p A I) :=
+    Module (A ⧸ I) (TwoCuspForms M H k p W A I) :=
   inferInstanceAs (Module (A ⧸ I)
-    (twoCuspLattice M H k p A ⧸ (I • ⊤ : Submodule A (twoCuspLattice M H k p A))))
+    (twoCuspLattice M H k p W A ⧸ (I • ⊤ : Submodule A (twoCuspLattice M H k p W A))))
 
 public instance instIsScalarTowerSelfTwoCuspForms :
-    IsScalarTower A A (TwoCuspForms M H k p A I) :=
+    IsScalarTower A A (TwoCuspForms M H k p W A I) :=
   inferInstanceAs (IsScalarTower A A
-    (twoCuspLattice M H k p A ⧸ (I • ⊤ : Submodule A (twoCuspLattice M H k p A))))
+    (twoCuspLattice M H k p W A ⧸ (I • ⊤ : Submodule A (twoCuspLattice M H k p W A))))
 
 public instance instIsScalarTowerTwoCuspForms :
-    IsScalarTower A (A ⧸ I) (TwoCuspForms M H k p A I) :=
+    IsScalarTower A (A ⧸ I) (TwoCuspForms M H k p W A I) :=
   ⟨fun a b x => by
     obtain ⟨c, rfl⟩ := Ideal.Quotient.mk_surjective b
     exact mul_smul a c x⟩
 
-variable {M H k p A} in
+variable {M H k p W A} in
 /-- Reduction of a lattice element modulo `I`: the quotient map. -/
 public def twoCuspReduce :
-    twoCuspLattice M H k p A →ₗ[A] TwoCuspForms M H k p A I :=
-  (I • ⊤ : Submodule A (twoCuspLattice M H k p A)).mkQ
+    twoCuspLattice M H k p W A →ₗ[A] TwoCuspForms M H k p W A I :=
+  (I • ⊤ : Submodule A (twoCuspLattice M H k p W A)).mkQ
 
 public theorem twoCuspReduce_surjective :
     Function.Surjective (twoCuspReduce (M := M) (H := H) (k := k) (p := p)
-      (A := A) I) :=
+      (W := W) (A := A) I) :=
   Submodule.mkQ_surjective _
 
-variable {M H k p A} in
+variable {M H k p W A} in
 public theorem ker_twoCuspReduce :
-    LinearMap.ker (twoCuspReduce (M := M) (H := H) (k := k) (p := p) (A := A) I) =
-      (I • ⊤ : Submodule A (twoCuspLattice M H k p A)) :=
+    LinearMap.ker (twoCuspReduce (M := M) (H := H) (k := k) (p := p) (W := W) (A := A) I) =
+      (I • ⊤ : Submodule A (twoCuspLattice M H k p W A)) :=
   Submodule.ker_mkQ _
 
-public theorem twoCuspReduce_eq_zero_iff (x : twoCuspLattice M H k p A) :
-    twoCuspReduce I x = 0 ↔ x ∈ (I • ⊤ : Submodule A (twoCuspLattice M H k p A)) :=
+public theorem twoCuspReduce_eq_zero_iff (x : twoCuspLattice M H k p W A) :
+    twoCuspReduce I x = 0 ↔ x ∈ (I • ⊤ : Submodule A (twoCuspLattice M H k p W A)) :=
   Submodule.Quotient.mk_eq_zero _
 
 end Reduction
@@ -655,6 +689,7 @@ end Reduction
 section IntTwoCusp
 
 variable (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) (p : ℕ)
+  (W : ModularForm.AtkinLehnerDatum M p)
 
 /-- The ideal of the integers generated by `p`, inside the bottom subring
 of `ℂ`. -/
@@ -667,22 +702,22 @@ public theorem natCast_mem_intIdeal : (p : (⊥ : Subring ℂ)) ∈ intIdeal p :
 /-- The mod-`p` two-cusp forms of weight two: the two-cusp lattice over the
 integers, reduced modulo `p`. -/
 public def IntTwoCuspForms : Type :=
-  TwoCuspForms M H 2 p (⊥ : Subring ℂ) (intIdeal p)
+  TwoCuspForms M H 2 p W (⊥ : Subring ℂ) (intIdeal p)
 
 public instance instAddCommGroupIntTwoCuspForms :
-    AddCommGroup (IntTwoCuspForms M H p) :=
+    AddCommGroup (IntTwoCuspForms M H p W) :=
   inferInstanceAs (AddCommGroup
-    (TwoCuspForms M H 2 p (⊥ : Subring ℂ) (intIdeal p)))
+    (TwoCuspForms M H 2 p W (⊥ : Subring ℂ) (intIdeal p)))
 
 /-- The reduction of the two-cusp lattice modulo `p` has exponent `p`. -/
-public theorem IntTwoCuspForms.nsmul_eq_zero (x : IntTwoCuspForms M H p) :
+public theorem IntTwoCuspForms.nsmul_eq_zero (x : IntTwoCuspForms M H p W) :
     p • x = 0 := by
-  change p • (x : TwoCuspForms M H 2 p (⊥ : Subring ℂ) (intIdeal p)) = 0
-  obtain ⟨y, rfl⟩ := twoCuspReduce_surjective M H 2 p (⊥ : Subring ℂ) (intIdeal p) x
+  change p • (x : TwoCuspForms M H 2 p W (⊥ : Subring ℂ) (intIdeal p)) = 0
+  obtain ⟨y, rfl⟩ := twoCuspReduce_surjective M H 2 p W (⊥ : Subring ℂ) (intIdeal p) x
   have h : p • twoCuspReduce (intIdeal p) y = twoCuspReduce (intIdeal p) (p • y) :=
-    (map_nsmul (twoCuspReduce (M := M) (H := H) (k := 2) (p := p)
+    (map_nsmul (twoCuspReduce (M := M) (H := H) (k := 2) (p := p) (W := W)
       (A := (⊥ : Subring ℂ)) (intIdeal p)) p y).symm
-  refine h.trans ((twoCuspReduce_eq_zero_iff (M := M) (H := H) (k := 2) (p := p)
+  refine h.trans ((twoCuspReduce_eq_zero_iff (M := M) (H := H) (k := 2) (p := p) (W := W)
     (A := (⊥ : Subring ℂ)) (intIdeal p) (p • y)).mpr ?_)
   rw [← Nat.cast_smul_eq_nsmul (⊥ : Subring ℂ)]
   exact Submodule.smul_mem_smul (natCast_mem_intIdeal p) Submodule.mem_top
@@ -690,52 +725,53 @@ public theorem IntTwoCuspForms.nsmul_eq_zero (x : IntTwoCuspForms M H p) :
 variable [Fact p.Prime]
 
 public instance instModuleZModIntTwoCuspForms :
-    Module (ZMod p) (IntTwoCuspForms M H p) :=
-  AddCommGroup.zmodModule (IntTwoCuspForms.nsmul_eq_zero M H p)
+    Module (ZMod p) (IntTwoCuspForms M H p W) :=
+  AddCommGroup.zmodModule (IntTwoCuspForms.nsmul_eq_zero M H p W)
 
 /-- Reduction modulo `p` of a two-cusp lattice element, as an additive
 map into the mod-`p` two-cusp forms. -/
 public def intTwoCuspReduce :
-    twoCuspLattice M H 2 p (⊥ : Subring ℂ) →+ IntTwoCuspForms M H p :=
-  (twoCuspReduce (M := M) (H := H) (k := 2) (p := p) (A := (⊥ : Subring ℂ))
+    twoCuspLattice M H 2 p W (⊥ : Subring ℂ) →+ IntTwoCuspForms M H p W :=
+  (twoCuspReduce (M := M) (H := H) (k := 2) (p := p) (W := W) (A := (⊥ : Subring ℂ))
     (intIdeal p)).toAddMonoidHom
 
 public theorem intTwoCuspReduce_apply
-    (x : twoCuspLattice M H 2 p (⊥ : Subring ℂ)) :
-    intTwoCuspReduce M H p x =
+    (x : twoCuspLattice M H 2 p W (⊥ : Subring ℂ)) :
+    intTwoCuspReduce M H p W x =
       (twoCuspReduce (intIdeal p) x :
-        TwoCuspForms M H 2 p (⊥ : Subring ℂ) (intIdeal p)) :=
+        TwoCuspForms M H 2 p W (⊥ : Subring ℂ) (intIdeal p)) :=
   rfl
 
 public theorem intTwoCuspReduce_surjective :
-    Function.Surjective (intTwoCuspReduce M H p) :=
-  twoCuspReduce_surjective M H 2 p (⊥ : Subring ℂ) (intIdeal p)
+    Function.Surjective (intTwoCuspReduce M H p W) :=
+  twoCuspReduce_surjective M H 2 p W (⊥ : Subring ℂ) (intIdeal p)
 
 end IntTwoCusp
 
 section SpanTop
 
 variable (p : ℕ) [Fact p.Prime] (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ)
+  (W : ModularForm.AtkinLehnerDatum M p)
 
 private theorem span_intTwoCuspReduce_eq_top :
-    Submodule.span (ZMod p) {y : IntTwoCuspForms M H p |
+    Submodule.span (ZMod p) {y : IntTwoCuspForms M H p W |
         ∃ (f : CuspForm (CongruenceSubgroup.GammaH M H) 2)
-          (hf : f ∈ twoCuspIntegralSet M H 2 p (⊥ : Subring ℂ)),
-          y = intTwoCuspReduce M H p
-            ⟨f, twoCuspIntegralSet_subset_twoCuspLattice M H 2 p ⊥ hf⟩} = ⊤ := by
+          (hf : f ∈ twoCuspIntegralSet M H 2 p W (⊥ : Subring ℂ)),
+          y = intTwoCuspReduce M H p W
+            ⟨f, twoCuspIntegralSet_subset_twoCuspLattice M H 2 p W ⊥ hf⟩} = ⊤ := by
   rw [eq_top_iff]
   rintro x -
-  obtain ⟨y, rfl⟩ := intTwoCuspReduce_surjective M H p x
+  obtain ⟨y, rfl⟩ := intTwoCuspReduce_surjective M H p W x
   have htop : (Submodule.span (⊥ : Subring ℂ)
-      (((↑) : ↥(twoCuspLattice M H 2 p (⊥ : Subring ℂ)) →
+      (((↑) : ↥(twoCuspLattice M H 2 p W (⊥ : Subring ℂ)) →
         CuspForm (CongruenceSubgroup.GammaH M H) 2) ⁻¹'
-        twoCuspIntegralSet M H 2 p (⊥ : Subring ℂ)) :
-      Submodule (⊥ : Subring ℂ) ↥(twoCuspLattice M H 2 p (⊥ : Subring ℂ))) = ⊤ :=
+        twoCuspIntegralSet M H 2 p W (⊥ : Subring ℂ)) :
+      Submodule (⊥ : Subring ℂ) ↥(twoCuspLattice M H 2 p W (⊥ : Subring ℂ))) = ⊤ :=
     Submodule.span_span_coe_preimage
   have hy : y ∈ Submodule.span (⊥ : Subring ℂ)
-      (((↑) : ↥(twoCuspLattice M H 2 p (⊥ : Subring ℂ)) →
+      (((↑) : ↥(twoCuspLattice M H 2 p W (⊥ : Subring ℂ)) →
         CuspForm (CongruenceSubgroup.GammaH M H) 2) ⁻¹'
-        twoCuspIntegralSet M H 2 p (⊥ : Subring ℂ)) := by
+        twoCuspIntegralSet M H 2 p W (⊥ : Subring ℂ)) := by
     rw [htop]; trivial
   induction hy using Submodule.span_induction with
   | mem y hy => exact Submodule.subset_span ⟨y, hy, rfl⟩
@@ -752,22 +788,22 @@ modulo `p` of the two-cusp integral weight-two cusp forms span the whole
 scalar extension of the mod-`p` two-cusp forms. -/
 public theorem span_tmul_intTwoCuspReduce_eq_top
     (K : Type*) [Field K] [Algebra (ZMod p) K] :
-    Submodule.span K {x : K ⊗[ZMod p] IntTwoCuspForms M H p |
+    Submodule.span K {x : K ⊗[ZMod p] IntTwoCuspForms M H p W |
         ∃ (f : CuspForm (CongruenceSubgroup.GammaH M H) 2)
-          (hf : f ∈ twoCuspIntegralSet M H 2 p (⊥ : Subring ℂ)),
-          x = (1 : K) ⊗ₜ[ZMod p] intTwoCuspReduce M H p
-            ⟨f, twoCuspIntegralSet_subset_twoCuspLattice M H 2 p ⊥ hf⟩} = ⊤ := by
-  have hset : {x : K ⊗[ZMod p] IntTwoCuspForms M H p |
+          (hf : f ∈ twoCuspIntegralSet M H 2 p W (⊥ : Subring ℂ)),
+          x = (1 : K) ⊗ₜ[ZMod p] intTwoCuspReduce M H p W
+            ⟨f, twoCuspIntegralSet_subset_twoCuspLattice M H 2 p W ⊥ hf⟩} = ⊤ := by
+  have hset : {x : K ⊗[ZMod p] IntTwoCuspForms M H p W |
         ∃ (f : CuspForm (CongruenceSubgroup.GammaH M H) 2)
-          (hf : f ∈ twoCuspIntegralSet M H 2 p (⊥ : Subring ℂ)),
-          x = (1 : K) ⊗ₜ[ZMod p] intTwoCuspReduce M H p
-            ⟨f, twoCuspIntegralSet_subset_twoCuspLattice M H 2 p ⊥ hf⟩} =
-      TensorProduct.mk (ZMod p) K (IntTwoCuspForms M H p) 1 ''
-        {y : IntTwoCuspForms M H p |
+          (hf : f ∈ twoCuspIntegralSet M H 2 p W (⊥ : Subring ℂ)),
+          x = (1 : K) ⊗ₜ[ZMod p] intTwoCuspReduce M H p W
+            ⟨f, twoCuspIntegralSet_subset_twoCuspLattice M H 2 p W ⊥ hf⟩} =
+      TensorProduct.mk (ZMod p) K (IntTwoCuspForms M H p W) 1 ''
+        {y : IntTwoCuspForms M H p W |
           ∃ (f : CuspForm (CongruenceSubgroup.GammaH M H) 2)
-            (hf : f ∈ twoCuspIntegralSet M H 2 p (⊥ : Subring ℂ)),
-            y = intTwoCuspReduce M H p
-              ⟨f, twoCuspIntegralSet_subset_twoCuspLattice M H 2 p ⊥ hf⟩} := by
+            (hf : f ∈ twoCuspIntegralSet M H 2 p W (⊥ : Subring ℂ)),
+            y = intTwoCuspReduce M H p W
+              ⟨f, twoCuspIntegralSet_subset_twoCuspLattice M H 2 p W ⊥ hf⟩} := by
     ext x
     constructor
     · rintro ⟨f, hf, rfl⟩
