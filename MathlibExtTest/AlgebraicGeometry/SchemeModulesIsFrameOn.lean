@@ -23,7 +23,7 @@ example {X : AlgebraicGeometry.Scheme.{u}} {M : X.Modules} {U V : X.Opens}
     (hWU : W ≤ U) (hWV : W ≤ V) :
     Nonempty ((AlgebraicGeometry.Scheme.Modules.pullback W.ι).obj M ≅
       SheafOfModules.unit (W : AlgebraicGeometry.Scheme.{u}).ringCatSheaf) :=
-  AlgebraicGeometry.Scheme.Modules.IsFrameOn.nonempty_pullback_iso_unit_monoidalV2
+  AlgebraicGeometry.Scheme.Modules.IsFrameOn.nonempty_pullback_iso_unit
     h W hWU hWV
 
 /-- Boundary example: the frame hypothesis cannot be dropped. The zero

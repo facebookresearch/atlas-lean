@@ -120,7 +120,7 @@ private def smulSectionHom (W : X.Opens) (N : X.Modules) (τ : Γ(N, W)) :
             N.presheaf.map (homOfLE (image_le W W'.unop)).op τ :
               Γ(N, W.ι ''ᵁ W'.unop))
         map_add' := fun a b => by
-          show secX W W'.unop (a + b) •
+          change secX W W'.unop (a + b) •
               (N.presheaf.map (homOfLE (image_le W W'.unop)).op τ :
                 Γ(N, W.ι ''ᵁ W'.unop)) =
             secX W W'.unop a •
@@ -131,7 +131,7 @@ private def smulSectionHom (W : X.Opens) (N : X.Modules) (τ : Γ(N, W)) :
                 Γ(N, W.ι ''ᵁ W'.unop))
           exact add_smul (secX W W'.unop a) (secX W W'.unop b) _
         map_smul' := fun r a => by
-          show secX W W'.unop (r * a) •
+          change secX W W'.unop (r * a) •
               (N.presheaf.map (homOfLE (image_le W W'.unop)).op τ :
                 Γ(N, W.ι ''ᵁ W'.unop)) =
             secX W W'.unop r • (secX W W'.unop a •
@@ -142,7 +142,7 @@ private def smulSectionHom (W : X.Opens) (N : X.Modules) (τ : Γ(N, W)) :
          apply ModuleCat.hom_ext
          apply LinearMap.ext
          intro a
-         show secX W W''.unop
+         change secX W W''.unop
                (X.presheaf.map (W.ι.opensFunctor.map i.unop).op
                  (secX W W'.unop a)) •
              N.presheaf.map (homOfLE (image_le W W''.unop)).op τ =
@@ -200,7 +200,7 @@ end FramePullback
 /-- A local frame trivializes the pullback of a sheaf of modules to any
 smaller open contained in both the domain of the section and the open on
 which it is a frame. -/
-public theorem IsFrameOn.nonempty_pullback_iso_unit_monoidalV2
+public theorem IsFrameOn.nonempty_pullback_iso_unit
     {M : X.Modules} {U V : X.Opens} {s : Γ(M, U)}
     (h : IsFrameOn s V) (W : X.Opens) (hWU : W ≤ U) (hWV : W ≤ V) :
     Nonempty ((Modules.pullback W.ι).obj M ≅
