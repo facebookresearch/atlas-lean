@@ -1,3 +1,3 @@
 # Two Level
 
-- [Is Two Level](is-two-level.md)
+- [Two-level matrix](is-two-level.md)

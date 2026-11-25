@@ -1,4 +1,3 @@
-# Is Two Level
+# Two-level matrix
 
-A matrix is two-level on the coordinate pair `i, j` when it agrees with
-the identity outside the corresponding two-by-two coordinate block.
+A square matrix $M$ is two-level on a pair of distinct indices $i \ne j$ when $M_{kl}$ equals the corresponding identity-matrix entry for every pair $(k, l)$ outside the $2 \times 2$ block with $k, l \in \{i, j\}$.
