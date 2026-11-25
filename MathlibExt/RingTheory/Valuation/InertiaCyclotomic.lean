@@ -746,9 +746,10 @@ private theorem map_restrictNormalHom_inertiaSubgroupIn_eq_inertia (hp : p.Prime
 
 variable [FiniteDimensional ℚ L]
 
-/-- For a finite Galois subextension `L` of `ℚ̄ / ℚ`, the center of `A` on `𝓞 L` is a
-maximal ideal containing `p` and cut out by `A.valuation < 1`, and its inertia group is the
-image of the inertia subgroup of `A` under restriction. -/
+/-- Let `A` be a valuation subring of `ℚ̄` lying over a prime `p`, and let `L` be a finite Galois
+subextension of `ℚ̄ / ℚ`. Then `𝓞 L` lies in `A`, its center `{x ∈ 𝓞 L | A.valuation x < 1}` is
+a maximal ideal containing `p`, and the inertia group of the center is the image of the inertia
+subgroup of `A` under restriction to `L`. -/
 public theorem exists_isMaximal_inertia_eq_map_restrictNormalHom (hp : p.Prime)
     (hA : A.LiesOverPrime p) :
     ∃ Q : Ideal (𝓞 L), Q.IsMaximal ∧ (p : 𝓞 L) ∈ Q ∧

@@ -47,11 +47,13 @@ import Mathlib.FieldTheory.Galois.IsGaloisGroup
 import Mathlib.LinearAlgebra.FreeModule.IdealQuotient
 import Mathlib.NumberTheory.NumberField.Basic
 import Mathlib.NumberTheory.RamificationInertia.Galois
-import Mathlib.RingTheory.Polynomial.Content
 import Mathlib.Tactic.LinearCombination
 import MathlibExt.RingTheory.Valuation.Henselian
 import MathlibExt.RingTheory.Valuation.InertiaCyclotomic
+import MathlibExt.RingTheory.Valuation.RatCastMem
+import MathlibExt.RingTheory.Valuation.ResidueChar
 import MathlibExt.RingTheory.Valuation.ResidueField
+import MathlibExt.RingTheory.Valuation.ResidueFieldRoots
 
 /-!
 # The valuation ring of the inertia fixed field
@@ -61,7 +63,9 @@ be the subfield of `ℚ̄` fixed by the inertia subgroup of `A`, with valuation 
 `O = A ∩ k₀`. We prove:
 
 * `ValuationSubring.isDiscreteValuationRing_comap_fixedField_inertiaSubgroupIn`: `O` is a
-  discrete valuation ring and `q` is a uniformizer of it;
+  discrete valuation ring;
+* `ValuationSubring.irreducible_natCast_comap_fixedField_inertiaSubgroupIn`: `q` is a
+  uniformizer of `O`;
 * `ValuationSubring.henselianLocalRing_comap_fixedField_inertiaSubgroupIn`: for any valuation
   subring of an algebraically closed field, the comap to the inertia fixed field is Henselian;
 * `ValuationSubring.exists_residue_algebraMap_fixedField_inertiaSubgroupIn_eq`: every residue
@@ -86,49 +90,16 @@ section Arithmetic
 
 variable (q : ℕ) [Fact q.Prime] (A : ValuationSubring (AlgebraicClosure ℚ))
 
-omit [Fact q.Prime] in
 private theorem algebraMap_rat_mem_of_den_coprime (hA : A.LiesOverPrime q)
     (r : ℚ) (hr : r.den.Coprime q) : algebraMap ℚ (AlgebraicClosure ℚ) r ∈ A := by
-  rw [← ValuationSubring.valuation_le_one_iff]
-  have hq : A.valuation ((q : ℕ) : AlgebraicClosure ℚ) < 1 :=
-    (ValuationSubring.mem_nonunits_iff A).mp hA
-  have hint : ∀ n : ℤ, A.valuation (n : AlgebraicClosure ℚ) ≤ 1 := fun n => by
-    rw [ValuationSubring.valuation_le_one_iff]; exact intCast_mem A.toSubring n
-  have hnat : ∀ n : ℕ, A.valuation (n : AlgebraicClosure ℚ) ≤ 1 := fun n => by
-    rw [ValuationSubring.valuation_le_one_iff]; exact natCast_mem A.toSubring n
-  have hden : A.valuation (r.den : AlgebraicClosure ℚ) = 1 := by
-    apply le_antisymm (hnat r.den)
-    by_contra hlt; rw [not_le] at hlt
-    have hg : Int.gcd (r.den : ℤ) (q : ℤ) = 1 := by
-      rw [Int.gcd_natCast_natCast]; exact hr
-    have hab : (r.den : ℤ) * Int.gcdA (r.den : ℤ) (q : ℤ) +
-        (q : ℤ) * Int.gcdB (r.den : ℤ) (q : ℤ) = 1 := by
-      have := Int.gcd_eq_gcd_ab (r.den : ℤ) (q : ℤ)
-      rw [hg] at this; exact_mod_cast this.symm
-    have hcast : (r.den : AlgebraicClosure ℚ) *
-        (Int.gcdA (r.den : ℤ) (q : ℤ) : AlgebraicClosure ℚ) +
-        ((q : ℕ) : AlgebraicClosure ℚ) *
-        (Int.gcdB (r.den : ℤ) (q : ℤ) : AlgebraicClosure ℚ) = 1 := by
-      exact_mod_cast congrArg (fun z : ℤ => (z : AlgebraicClosure ℚ)) hab
-    have h1 : A.valuation (1 : AlgebraicClosure ℚ) < 1 := by
-      rw [← hcast]
-      refine lt_of_le_of_lt (Valuation.map_add _ _ _) (max_lt ?_ ?_)
-      · rw [Valuation.map_mul]
-        calc A.valuation (r.den : AlgebraicClosure ℚ) *
-              A.valuation (Int.gcdA (r.den : ℤ) (q : ℤ) : AlgebraicClosure ℚ)
-            ≤ A.valuation (r.den : AlgebraicClosure ℚ) * 1 := by gcongr; exact hint _
-          _ < 1 := by rw [mul_one]; exact hlt
-      · rw [Valuation.map_mul]
-        calc A.valuation ((q : ℕ) : AlgebraicClosure ℚ) *
-              A.valuation (Int.gcdB (r.den : ℤ) (q : ℤ) : AlgebraicClosure ℚ)
-            ≤ A.valuation ((q : ℕ) : AlgebraicClosure ℚ) * 1 := by gcongr; exact hint _
-          _ < 1 := by rw [mul_one]; exact hq
-    simp at h1
-  have hr' : algebraMap ℚ (AlgebraicClosure ℚ) r
-      = (r.num : AlgebraicClosure ℚ) / (r.den : AlgebraicClosure ℚ) := by
-    rw [eq_ratCast, Rat.cast_def]
-  rw [hr', map_div₀, hden, div_one]
-  exact hint r.num
+  rcases eq_or_ne r 0 with rfl | hr0
+  · simp
+  have hnd : ¬ q ∣ r.den := fun h =>
+    (Fact.out : q.Prime).ne_one (Nat.Coprime.eq_one_of_dvd hr.symm h)
+  rw [eq_ratCast, ratCast_mem_iff_padicValRat_nonneg A Fact.out
+    ((ValuationSubring.mem_nonunits_iff A).mp hA) hr0, padicValRat_def,
+    multiplicity_eq_zero_of_not_dvd hnd, Nat.cast_zero, sub_zero]
+  exact Int.natCast_nonneg _
 
 private theorem valuation_intCast_eq_pow (hA : A.LiesOverPrime q) (n : ℤ) (hn : n ≠ 0) :
     ∃ k : ℕ, A.valuation ((n : ℤ) : AlgebraicClosure ℚ)
@@ -295,19 +266,6 @@ section KeyValuation
 
 attribute [local instance] Ideal.Quotient.field
 
-private theorem isIntegral_int_of_injective {R S : Type*} [CommRing R] [CommRing S]
-    (f : R →+* S) (hf : Function.Injective f) {y : R} (hy : IsIntegral ℤ (f y)) :
-    IsIntegral ℤ y := by
-  obtain ⟨p, hpm, hp0⟩ := hy
-  refine ⟨p, hpm, hf ?_⟩
-  rw [map_zero, Polynomial.hom_eval₂,
-    show f.comp (algebraMap ℤ R) = algebraMap ℤ S from RingHom.ext_int _ _]
-  exact hp0
-
-private theorem le_of_mul_le_mul_right₀' {Γ : Type*} [LinearOrderedCommGroupWithZero Γ]
-    {a b c : Γ} (hc : c ≠ 0) (h : a * c ≤ b * c) : a ≤ b := by
-  simpa [mul_inv_cancel_right₀ hc] using mul_le_mul' h (le_refl c⁻¹)
-
 private theorem exists_mul_eq_mul_of_notMem_sq {D : Type*} [CommRing D] [IsDedekindDomain D]
     (P : Ideal D) {π a : D} (hπ : π ∈ P) (hπ2 : π ∉ P ^ 2) (ha : a ∈ P) :
     ∃ s ∉ P, ∃ b, s * a = π * b := by
@@ -428,7 +386,7 @@ private theorem valuation_eq_pow_of_step {D : Type*} [CommRing D]
           _ ≤ A.valuation (φ a) := ha
           _ = A.valuation (φ π) * A.valuation (φ b) := hab
           _ = A.valuation (φ b) * A.valuation (φ π) := mul_comm _ _
-      obtain ⟨m, hm⟩ := ih b (le_of_mul_le_mul_right₀' hπ0 h')
+      obtain ⟨m, hm⟩ := ih b (le_of_mul_le_mul_right h' (zero_lt_iff.mpr hπ0))
       exact ⟨m + 1, by rw [hab, hm, pow_succ, mul_comm]⟩
     · refine ⟨0, ?_⟩
       rw [pow_zero]
@@ -473,10 +431,10 @@ private theorem valuation_le_of_forall_inertia_fix (q : ℕ) [hq : Fact q.Prime]
     rw [hEdef, IntermediateField.mem_fixedField_iff]
     exact hfixQ
   have hintF : IsIntegral ℤ (⟨(d : AlgebraicClosure ℚ) * x, hxF⟩ : F) :=
-    isIntegral_int_of_injective (algebraMap F (AlgebraicClosure ℚ))
-      (algebraMap F (AlgebraicClosure ℚ)).injective hint
+    (isIntegral_algHom_iff (algebraMap F (AlgebraicClosure ℚ)).toIntAlgHom
+      (algebraMap F (AlgebraicClosure ℚ)).injective).mp hint
   have hintE : IsIntegral ℤ (⟨⟨(d : AlgebraicClosure ℚ) * x, hxF⟩, hyE⟩ : E) :=
-    isIntegral_int_of_injective (algebraMap E F) (algebraMap E F).injective hintF
+    (isIntegral_algHom_iff (algebraMap E F).toIntAlgHom (algebraMap E F).injective).mp hintF
   set a : 𝓞 E := ⟨⟨⟨(d : AlgebraicClosure ℚ) * x, hxF⟩, hyE⟩, hintE⟩ with hadef
   set QE : Ideal (𝓞 E) := Q.under (𝓞 E) with hQEdef
   let φ : 𝓞 E →+* AlgebraicClosure ℚ :=
@@ -512,7 +470,8 @@ private theorem valuation_le_of_forall_inertia_fix (q : ℕ) [hq : Fact q.Prime]
         A.valuation x * A.valuation ((q : ℕ) : AlgebraicClosure ℚ) ^ k := by
       rw [one_mul, mul_comm, hprod]
       exact h1
-    have h3 : 1 ≤ A.valuation x := le_of_mul_le_mul_right₀' (pow_ne_zero k hvq0) h2
+    have h3 : 1 ≤ A.valuation x :=
+      le_of_mul_le_mul_right h2 (zero_lt_iff.mpr (pow_ne_zero k hvq0))
     exact absurd hx1 (not_lt.mpr h3)
   · obtain ⟨j, rfl⟩ : ∃ j, m = k + (j + 1) := ⟨m - k - 1, by omega⟩
     have hxj : A.valuation x = A.valuation ((q : ℕ) : AlgebraicClosure ℚ) ^ (j + 1) := by
@@ -721,7 +680,8 @@ public theorem isDiscreteValuationRing_comap_fixedField_inertiaSubgroupIn :
   rw [hbot, Ideal.mem_bot] at hmem
   exact hirr.ne_zero hmem
 
-/-- The prime `q` is a uniformizer of the valuation ring of the inertia fixed field. -/
+/-- For a valuation subring `A` of `ℚ̄` lying over a prime `q`, the prime `q` is a uniformizer
+of the valuation ring of the subfield of `ℚ̄` fixed by the inertia subgroup of `A`. -/
 public theorem irreducible_natCast_comap_fixedField_inertiaSubgroupIn :
     Irreducible ((q : ℕ) :
       A.comap (algebraMap (IntermediateField.fixedField (A.inertiaSubgroupIn ℚ))
@@ -926,45 +886,6 @@ private theorem exists_residue_apply_eq {L : Type*} [Field L] [Algebra ℚ L]
   have h2 := RingEquiv.congr_fun (MonoidHom.mem_ker.mp hd) (residue A a)
   simpa using h2
 
-private theorem charP_residueField_of_liesOverPrime {L : Type*} [Field L]
-    (A : ValuationSubring L) {q : ℕ} (hq : q.Prime) (hA : A.LiesOverPrime q) :
-    CharP (ResidueField A) q := by
-  refine (CharP.charP_iff_prime_eq_zero hq).mpr ?_
-  have hmem : ((q : A)) ∈ maximalIdeal A := by
-    rw [← ValuationSubring.coe_mem_nonunits_iff]; exact_mod_cast hA
-  have : residue A (q : A) = 0 := (residue_eq_zero_iff _).mpr hmem
-  simpa using this
-
-private theorem exists_int_poly_map_ne_zero {L : Type*} [Field L] [CharZero L] [Algebra ℚ L]
-    (A : ValuationSubring L) {q : ℕ} (hq : q.Prime) (a : A) (ha : IsAlgebraic ℚ (a : L)) :
-    ∃ f : ℤ[X], f.map (Int.castRingHom (ZMod q)) ≠ 0 ∧ eval₂ (Int.castRingHom A) a f = 0 := by
-  have : Fact q.Prime := ⟨hq⟩
-  obtain ⟨p, hp0, hp⟩ := (IsFractionRing.isAlgebraic_iff ℤ ℚ L).mpr ha
-  refine ⟨p.primPart, ?_, ?_⟩
-  · intro h0
-    have hdvd : C (q : ℤ) ∣ p.primPart := by
-      rw [C_dvd_iff_dvd_coeff]
-      intro n
-      have := congrArg (fun f => f.coeff n) h0
-      simp only [coeff_map, coeff_zero, Int.coe_castRingHom,
-        ZMod.intCast_zmod_eq_zero_iff_dvd] at this
-      exact this
-    have := p.isPrimitive_primPart (q : ℤ) hdvd
-    exact (Nat.prime_iff_prime_int.mp hq).not_isUnit this
-  · have h1 : aeval (a : L) p = aeval (a : L) (C p.content) * aeval (a : L) p.primPart := by
-      rw [← map_mul, ← p.eq_C_content_mul_primPart]
-    rw [hp, aeval_C, eq_comm, mul_eq_zero] at h1
-    have hc : algebraMap ℤ L p.content ≠ 0 := by
-      rw [Ne, map_eq_zero_iff _ (algebraMap ℤ L).injective_int, content_eq_zero_iff]
-      exact hp0
-    have h2 : aeval (a : L) p.primPart = 0 := h1.resolve_left hc
-    apply Subtype.val_injective
-    change A.subtype (eval₂ (Int.castRingHom A) a p.primPart) = ((0 : A) : L)
-    rw [Polynomial.hom_eval₂,
-      show A.subtype.comp (Int.castRingHom A) = algebraMap ℤ L from RingHom.ext_int _ _,
-      ← aeval_def, ZeroMemClass.coe_zero]
-    exact h2
-
 end Residue
 
 section ResidueSurjective
@@ -985,7 +906,7 @@ public theorem exists_residue_algebraMap_fixedField_inertiaSubgroupIn_eq
           y.2⟩ = x := by
   classical
   have hchar : CharP (ResidueField A) q :=
-    charP_residueField_of_liesOverPrime A (Fact.out) hA
+    charP_residueField_of_liesOverPrime A q hA
   have hq : q.Prime := Fact.out
   let red' : A.comap (algebraMap κ₀ (AlgebraicClosure ℚ)) → ResidueField A :=
     fun y => residue A ⟨algebraMap κ₀ (AlgebraicClosure ℚ) (y : κ₀), y.2⟩
@@ -1043,16 +964,13 @@ public theorem exists_residue_algebraMap_fixedField_inertiaSubgroupIn_eq
   have halgL : ∀ b : AlgebraicClosure ℚ, IsAlgebraic ℚ b := fun b =>
     (Algebra.IsIntegral.isIntegral (R := ℚ) b).isAlgebraic
   have : Algebra.IsAlgebraic (ZMod q) k' := by
-    refine ⟨fun z => ?_⟩
-    obtain ⟨y, hy⟩ := z.2
-    obtain ⟨f, hf0, hf⟩ := exists_int_poly_map_ne_zero A hq ⟨_, y.2⟩ (halgL _)
-    refine ⟨f.map (Int.castRingHom (ZMod q)), hf0, ?_⟩
-    apply k'.subtype.injective
-    rw [map_zero, aeval_def, Polynomial.hom_eval₂, eval₂_map,
-      show (k'.subtype.comp (algebraMap (ZMod q) k')).comp (Int.castRingHom (ZMod q)) =
-        (residue A).comp (Int.castRingHom A) from RingHom.ext_int _ _]
-    have hz : k'.subtype z = residue A ⟨_, y.2⟩ := hy.symm
-    rw [hz, ← Polynomial.hom_eval₂, hf, map_zero]
+    let : Algebra (ZMod q) (ResidueField A) := ZMod.algebra _ q
+    have := algebra_isAlgebraic_zmod_residueField_of_isAlgebraic_rat (AlgebraicClosure ℚ) A q
+    exact Algebra.IsAlgebraic.of_injective
+      { k'.subtype with
+        commutes' := fun r => RingHom.congr_fun (Subsingleton.elim
+          (k'.subtype.comp (algebraMap (ZMod q) k')) (algebraMap (ZMod q) (ResidueField A))) r }
+      k'.subtype.injective
   have : PerfectField k' := Algebra.IsAlgebraic.perfectField (K := ZMod q)
   obtain ⟨a, rfl⟩ := residue_surjective x
   have haint : IsIntegral ℚ (a : AlgebraicClosure ℚ) := (halgL _).isIntegral
@@ -1176,8 +1094,8 @@ variable (A : ValuationSubring (AlgebraicClosure ℚ)) {q : ℕ} [Fact q.Prime]
 private theorem isLocalHom_inertiaFixedIncl : IsLocalHom (inertiaFixedIncl (K := ℚ) A) :=
   ⟨fun o ho => (isUnit_iff_isUnit_inertiaFixedIncl A o).mpr ho⟩
 
-/-- The residue field of the valuation ring of the inertia fixed field is algebraically
-closed. -/
+/-- For a valuation subring `A` of `ℚ̄` lying over a prime, the residue field of the valuation
+ring of the subfield of `ℚ̄` fixed by the inertia subgroup of `A` is algebraically closed. -/
 public theorem isAlgClosed_residueField_comap_fixedField_inertiaSubgroupIn
     (hA : A.LiesOverPrime q) :
     IsAlgClosed (ResidueField
