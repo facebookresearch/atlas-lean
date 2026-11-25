@@ -49,3 +49,20 @@ example : (32 : ℤ) ∈ chuFamilyKLT 2 2 2 := by
 example : (56 : ℤ) ∈ chuFamilyKLT 2 2 2 := by
   simpa using chuFamilyKLT_mem_block_starts (k := 2) (l := 2) (t := 2)
     (by decide) (by decide) (by decide) 2 1 (by decide) (by decide)
+
+-- The public theorem applies at the smallest positive parameter.
+example :
+    let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock 1 ++ chuBlock 2 ++ [1, 1])
+    (A + A).card = (A - A).card :=
+  chu_family_balanced (k := 1) (by decide)
+
+-- Check both counts independently, not just their equality.
+set_option maxRecDepth 2048 in
+example :
+    let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock 1 ++ chuBlock 2 ++ [1, 1])
+    (A + A).card = 49 ∧ (A - A).card = 49 := by decide
+
+set_option maxRecDepth 2048 in
+example :
+    let A := setOfConsecutiveDifferences 0 ([1, 1, 2] ++ chuBlock 2 ++ chuBlock 3 ++ [1, 1])
+    (A + A).card = 61 ∧ (A - A).card = 61 := by decide
