@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.NumberTheory.Real.Irrational
 public import MathlibExt.Combinatorics.Additive.CoprimeDenominatorProgressions
 public import MathlibExt.Combinatorics.Additive.HalfIntegerProgressions
+public import MathlibExt.Combinatorics.Additive.IntegerStartProgressions
 public import MathlibExt.Combinatorics.Additive.IrrationalStartProgressions
 public import MathlibExt.Combinatorics.Additive.IrrationalStepProgressions
 
@@ -206,19 +207,6 @@ public theorem_wanted not_isMSTDSet_intervalAP_real_rat_diff_of_le (n m : ℕ) (
     (hd : d = s + (p : ℝ) / q)
     (hqd : q * d ≤ (n : ℝ) - 1) (hx : (n : ℝ) - 1 < x) (hm : q ≤ m) :
     ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet x m d)
-
-/-- **Interval plus integer progression starting inside the interval is not MSTD.** Let
-$I_n = \{0, 1, \dots, n - 1\}$ and $J(x, m, d) = \{x + id : i = 0, 1, \dots, m\}$, as finite
-sets of reals. For natural numbers $n \ge 3$, $m \ge 2$, $d \ge 2$ and $x \le n - 1$, the set
-$I_n \cup J(x, m, d)$ is not an MSTD set.
-
-Source: Manish Kumar, Mohan, and Ram Krishna Pandey, *The Union of Two Arithmetic Progressions
-with Different Common Differences Is Not an MSTD Set*, INTEGERS 26 (2026), Article A58, Lemma 14
-(`integers-2026-A58-lem-14`). -/
-public theorem_wanted not_isMSTDSet_intervalAP_nat_of_le_sub_one (n m d x : ℕ) (hn : 3 ≤ n)
-    (hm : 2 ≤ m) (hd : 2 ≤ d)
-    (hx : x ≤ n - 1) :
-    ¬ IsMSTDSet (realIntervalSet n ∪ realAPSet (x : ℝ) m (d : ℝ))
 
 /-- **An interval and an overlapping progression with small integer step are not MSTD.** Let
 $n \ge 3$, $m \ge 2$ and $d$ be natural numbers with $2 \le d \le n - 1$, and let $x$ be a real
