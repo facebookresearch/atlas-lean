@@ -38,8 +38,10 @@ public import Mathlib.RingTheory.Norm.Basic
 For a basis `b` of a commutative algebra `A` over `R`, a linear form
 `τ` on `A`, and `c : A`, scaling the first factor in the pairing
 `(i, j) ↦ τ (b i * b j)` by `c` multiplies its determinant by the
-norm of `c`: the scaled matrix is the product of the left-multiplication
-matrix of `c` with the unscaled matrix.
+norm of `c`. Column `i` of `Algebra.leftMulMatrix b c` holds the
+coordinates of `c * b i`, so the scaled matrix is
+`(Algebra.leftMulMatrix b c).transpose * U`, where `U` is the unscaled
+matrix, and transposing does not change the determinant.
 -/
 
 @[expose] public section
