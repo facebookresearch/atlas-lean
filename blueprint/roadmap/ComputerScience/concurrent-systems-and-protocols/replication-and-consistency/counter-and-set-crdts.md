@@ -5,6 +5,11 @@ The G-Counter, whose state at each replica is a vector of per-replica counts wit
 ## Depends on
 
 - [Monotonic semilattice objects](monotonic-semilattice-objects.md)
+- [Strong eventual consistency](strong-eventual-consistency.md)
+
+## Proof depends on
+
+- [Convergence of state-based CRDTs](convergence-of-state-based-crdts.md)
 
 ## Sources
 
