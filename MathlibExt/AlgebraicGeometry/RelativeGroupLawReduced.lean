@@ -54,115 +54,27 @@ public import Mathlib.RingTheory.Derivation.Basic
 /-!
 # Reducedness and smoothness of relative group laws in characteristic zero
 
-A scheme with a relative group law over a field of characteristic zero is
-reduced, and its structure morphism is smooth. Over an algebraically closed
-field, reducedness follows from reducedness of the stalk at the identity,
-because translation by a closed point moves the identity stalk to the stalk
-at that point. Reducedness of the identity stalk in characteristic zero is
-proved through derivations: a tangent functional at the identity, viewed as
-a dual-number point, is translated by the group law to a derivation of the
-stalk, and a Noetherian local ring with enough derivations is reduced.
--/
+A scheme that is locally of finite type over a field of characteristic zero
+and carries a relative group law is reduced, and its structure morphism is
+smooth. Smoothness needs the finite-type hypothesis, since a smooth morphism
+is locally of finite presentation. Over an algebraically closed field,
+reducedness of such a scheme follows from reducedness of the stalk at the
+identity, because translation by a closed point moves the identity stalk to
+the stalk at that point. Reducedness of the identity stalk in characteristic
+zero is proved through derivations: a tangent functional at the identity,
+viewed as a dual-number point, is translated by the group law to a derivation
+of the stalk, and a Noetherian local ring with enough derivations is reduced.
 
-@[expose] public section
+Base change of relative group laws, used to pass to an algebraic closure, is
+in `MathlibExt.AlgebraicGeometry.RelativeGroupLaw`. The auxiliary
+declarations of the proofs are private to this file.
+-/
 
 open CategoryTheory CategoryTheory.Limits AlgebraicGeometry
 
 universe u
 
 namespace AlgebraicGeometry
-
-namespace RelativeGroupLaw
-
-/-- The scheme obtained by base changing a scheme over `Spec R` along
-`ι : Spec R' ⟶ Spec R`. -/
-noncomputable abbrev baseChangeScheme {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
-    (ι : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
-    (f : A ⟶ Spec (CommRingCat.of R)) : Scheme.{u} :=
-  pullback f ι
-
-/-- The structure morphism of a base-changed scheme. -/
-noncomputable abbrev baseChangeStr {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
-    (ι : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
-    (f : A ⟶ Spec (CommRingCat.of R)) :
-    baseChangeScheme ι f ⟶ Spec (CommRingCat.of R') :=
-  pullback.snd f ι
-
-noncomputable def baseChangePointToBase {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
-    (ι : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
-    {f : A ⟶ Spec (CommRingCat.of R)} {T : Scheme.{u}}
-    {t' : T ⟶ Spec (CommRingCat.of R')}
-    (x : Over.mk t' ⟶ Over.mk (baseChangeStr ι f)) :
-    Over.mk (t' ≫ ι) ⟶ Over.mk f :=
-  Over.homMk (x.left ≫ pullback.fst f ι) (by
-    have hw : x.left ≫ pullback.snd f ι = t' := x.w
-    show x.left ≫ pullback.fst f ι ≫ f = t' ≫ ι
-    rw [pullback.condition, ← Category.assoc, hw])
-
-noncomputable def baseChangePointOfBase {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
-    (ι : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
-    {f : A ⟶ Spec (CommRingCat.of R)} {T : Scheme.{u}}
-    {t' : T ⟶ Spec (CommRingCat.of R')}
-    (y : Over.mk (t' ≫ ι) ⟶ Over.mk f) :
-    Over.mk t' ⟶ Over.mk (baseChangeStr ι f) :=
-  Over.homMk (pullback.lift y.left t' y.w) (pullback.lift_snd _ _ _)
-
-theorem baseChangePointToBase_ofBase {R : Type u} [CommRing R]
-    {R' : Type u} [CommRing R']
-    (ι : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
-    {f : A ⟶ Spec (CommRingCat.of R)} {T : Scheme.{u}}
-    {t' : T ⟶ Spec (CommRingCat.of R')}
-    (y : Over.mk (t' ≫ ι) ⟶ Over.mk f) :
-    baseChangePointToBase ι (baseChangePointOfBase ι y) = y :=
-  Over.OverMorphism.ext (pullback.lift_fst _ _ _)
-
-theorem baseChangePointOfBase_toBase {R : Type u} [CommRing R]
-    {R' : Type u} [CommRing R']
-    (ι : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
-    {f : A ⟶ Spec (CommRingCat.of R)} {T : Scheme.{u}}
-    {t' : T ⟶ Spec (CommRingCat.of R')}
-    (x : Over.mk t' ⟶ Over.mk (baseChangeStr ι f)) :
-    baseChangePointOfBase ι (baseChangePointToBase ι x) = x := by
-  apply Over.OverMorphism.ext
-  apply pullback.hom_ext
-  · simp [baseChangePointOfBase, baseChangePointToBase]
-  · have hw : x.left ≫ pullback.snd f ι = t' := x.w
-    simp [baseChangePointOfBase, baseChangePointToBase, hw]
-
-/-- The base change of a relative group law along a morphism of base
-schemes. -/
-noncomputable def baseChange {R : Type u} [CommRing R] {R' : Type u} [CommRing R']
-    (ι : Spec (CommRingCat.of R') ⟶ Spec (CommRingCat.of R)) {A : Scheme.{u}}
-    {f : A ⟶ Spec (CommRingCat.of R)} (G : RelativeGroupLaw R f) :
-    RelativeGroupLaw R' (baseChangeStr ι f) where
-  mul t' x y :=
-    baseChangePointOfBase ι (G.mul _ (baseChangePointToBase ι x) (baseChangePointToBase ι y))
-  one t' := baseChangePointOfBase ι (G.one _)
-  inv t' x := baseChangePointOfBase ι (G.inv _ (baseChangePointToBase ι x))
-  mul_assoc t' x y z := by
-    simp only [baseChangePointToBase_ofBase, G.mul_assoc]
-  one_mul t' x := by
-    simp only [baseChangePointToBase_ofBase, G.one_mul, baseChangePointOfBase_toBase]
-  mul_one t' x := by
-    simp only [baseChangePointToBase_ofBase, G.mul_one, baseChangePointOfBase_toBase]
-  inv_mul_cancel t' x := by
-    simp only [baseChangePointToBase_ofBase, G.inv_mul_cancel]
-  mul_natural t t' ψ hψ x y := by
-    apply Over.OverMorphism.ext
-    apply pullback.hom_ext
-    · have h := congrArg (fun φ => φ.left)
-        (G.mul_natural (t ≫ ι) (t' ≫ ι) ψ (by rw [← Category.assoc, hψ])
-          (baseChangePointToBase ι x) (baseChangePointToBase ι y))
-      simp only [Over.comp_left, Over.homMk_left, baseChangePointOfBase,
-        pullback.lift_fst, Category.assoc] at h ⊢
-      rw [h]
-      congr 1 <;> exact Over.OverMorphism.ext (by
-        simp only [Over.comp_left, Over.homMk_left, Category.assoc])
-    · simp only [Over.comp_left, Over.homMk_left, baseChangePointOfBase,
-        Category.assoc, pullback.lift_snd]
-      exact hψ
-
-end RelativeGroupLaw
 
 namespace HomogRedAux
 
@@ -762,11 +674,11 @@ public theorem isReduced_of_isReduced_stalk_one_of_isAlgClosed
   exact isReduced_of_injective (β.hom.stalkMap _).hom
     ((ConcreteCategory.isIso_iff_bijective _).1 hst).1
 
-/-- At the identity of a relative group law over a field, every element of
-the stalk differs from a constant by an element of the maximal ideal, and
-every cotangent functional at the identity lifts to a derivation of the
-stalk. -/
-theorem forall_exists_sub_algebraMap_mem_and_exists_derivation_stalk_one
+/-- At the identity of a relative group law on a scheme locally of finite type
+over a field, every element of the stalk differs from a constant by an element
+of the maximal ideal, and every cotangent functional at the identity lifts to
+a derivation of the stalk. -/
+public theorem forall_exists_sub_algebraMap_mem_and_exists_derivation_stalk_one
     (k : Type u) [Field k] {G : Scheme.{u}} (g : G ⟶ Spec (CommRingCat.of k))
     [LocallyOfFiniteType g] (L : RelativeGroupLaw k g) :
     let e : ↥G := (L.one (𝟙 (Spec (CommRingCat.of k)))).left (IsLocalRing.closedPoint k)
@@ -793,8 +705,8 @@ theorem forall_exists_sub_algebraMap_mem_and_exists_derivation_stalk_one
   rw [halg]
   exact RelativeGroupLawDerivationAux.sub_ι_ρ₀_mem k g L a
 
-/-- The stalk at the identity of a relative group law over a field of
-characteristic zero is reduced. -/
+/-- The stalk at the identity of a relative group law on a scheme locally of
+finite type over a field of characteristic zero is reduced. -/
 public theorem isReduced_stalk_one_of_charZero
     (k : Type u) [Field k] [CharZero k] {G : Scheme.{u}}
     (g : G ⟶ Spec (CommRingCat.of k)) [LocallyOfFiniteType g]
@@ -809,8 +721,8 @@ public theorem isReduced_stalk_one_of_charZero
   haveI : IsLocallyNoetherian G := LocallyOfFiniteType.isLocallyNoetherian g
   exact IsLocalRing.isReduced_of_forall_exists_derivation_of_charZero k (G.presheaf.stalk e) hk hder
 
-/-- A scheme with a relative group law over a field of characteristic zero
-is reduced. -/
+/-- A scheme locally of finite type over a field of characteristic zero that
+carries a relative group law is reduced. -/
 public theorem isReduced_of_charZero
     (k : Type u) [Field k] [CharZero k] {G : Scheme.{u}}
     (g : G ⟶ Spec (CommRingCat.of k)) [LocallyOfFiniteType g]
@@ -834,8 +746,10 @@ public theorem isReduced_of_charZero
   haveI : IsReduced (pullback g ι) := hred
   exact IsSchemeTheoreticallyDominant.isReduced (pullback.fst g ι)
 
-/-- A scheme with a relative group law over a field of characteristic zero
-is smooth over the field. -/
+/-- A scheme locally of finite type over a field of characteristic zero that
+carries a relative group law is smooth over the field. The finite-type
+hypothesis cannot be dropped, since a smooth morphism is locally of finite
+presentation. -/
 public theorem smooth_of_charZero
     (k : Type u) [Field k] [CharZero k] {G : Scheme.{u}}
     (g : G ⟶ Spec (CommRingCat.of k)) [LocallyOfFiniteType g]
