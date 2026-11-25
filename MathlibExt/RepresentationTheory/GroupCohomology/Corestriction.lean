@@ -169,7 +169,7 @@ theorem cor₂_d₁₂ (u : H → A) :
     rw [← map_mul, ← map_mul, hx]; exact congrArg _ (τ.mul_σ q g)
   rw [show x * (g * h) = x * g * h from (mul_assoc _ _ _).symm, hab, inv_mul_cancel_left,
     d₁₂_hom_apply,
-    ← Module.End.mul_apply, hgσ, Module.End.mul_apply, ← map_sub, ← map_add]
+    ← mul_apply_eq_comp, hgσ, mul_apply_eq_comp, ← map_sub, ← map_add]
   rfl
 
 theorem cor₂_mem_cocycles₂ {u : H × H → A}
@@ -200,7 +200,7 @@ theorem cor₂_mem_cocycles₂ {u : H × H → A}
     rw [← map_mul, ← map_mul, hx]; exact congrArg _ (τ.mul_σ q g)
   rw [show x * (g * h) = x * g * h from (mul_assoc _ _ _).symm,
     show x * g * h * j = x * g * (h * j) from mul_assoc _ _ _,
-    hab, habc, hbc, ← Module.End.mul_apply, hgσ, Module.End.mul_apply]
+    hab, habc, hbc, ← mul_apply_eq_comp, hgσ, mul_apply_eq_comp]
   simp only [mul_inv_rev, mul_assoc, inv_mul_cancel_left, ← map_add]
   congr 1
   have hu' := hu (τ.lam (x * g)) (τ.lam (x' * h))
@@ -216,7 +216,6 @@ lemma cor₂_smul (c : k) (u : H × H → A) : cor₂ A τ (c • u) = c • cor
   simp only [cor₂_apply, Pi.smul_apply, map_smul, Finset.smul_sum]
 
 omit [H.FiniteIndex] in
-
 lemma res_mem_cocycles₂ {f : G × G → A} (hf : f ∈ cocycles₂ A) :
     (fun hh : H × H => f ((hh.1 : G), (hh.2 : G))) ∈ cocycles₂ (Rep.res H.subtype A) := by
   rw [mem_cocycles₂_iff] at hf ⊢
