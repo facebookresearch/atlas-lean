@@ -52,6 +52,7 @@ def IsStationaryPlay (q : Fin T → K → K → ℝ) (p : Fin T → K → ℝ) :
   (∀ t j, IsSimplex (q t j)) ∧ (∀ t, IsSimplex (p t)) ∧
     ∀ t i, p t i = ∑ j, p t j * q t j i
 
+omit [DecidableEq K] [Nonempty K] in
 /-- Under stationarity, the master's expected loss is the sum over the
 copies of their expected losses against their scaled loss sequences
 (the equality of (2) and the left side of (6) in the lecture proof). -/
@@ -95,12 +96,14 @@ theorem swapRegret_le_sum_externalRegret_scaled (q : Fin T → K → K → ℝ)
   simp only [hδstar, hC2, Finset.sum_sub_distrib]
   exact sub_le_sub_left hmain _
 
+omit [DecidableEq K] in
 /-- **Existence of a stationary play.** If every copy plays a distribution
 at every time, some master play is stationary for the copies'
 recommendations. -/
 theorem exists_isStationaryPlay (q : Fin T → K → K → ℝ)
     (hq : ∀ t j, IsSimplex (q t j)) :
     ∃ p : Fin T → K → ℝ, IsStationaryPlay q p := by
+  classical
   have hstat : ∀ t, ∃ π : K → ℝ, IsSimplex π ∧
       Matrix.vecMul π (Matrix.of (fun j i => q t j i)) = π := by
     intro t
