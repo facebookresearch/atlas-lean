@@ -89,7 +89,7 @@ private theorem hopfKer_bialgHomId {R A : Type*} [CommRing R] [CommRing A] [Bial
     hopfKer (BialgHom.id R A) = ⊥ := by
   refine le_antisymm (fun a ha => ?_) bot_le
   have h := congrArg (fun z => TensorProduct.lid R A (Coalgebra.counit.rTensor A z))
-    (coaction_eq_of_mem _ ha)
+    (show coaction (BialgHom.id R A) a = a ⊗ₜ[R] 1 from ha)
   simp only [coaction_apply, BialgHom.id_toAlgHom, Algebra.TensorProduct.map_id, AlgHom.coe_id,
     id_eq, Coalgebra.rTensor_counit_comul, TensorProduct.lid_tmul, one_smul,
     LinearMap.rTensor_tmul] at h
@@ -142,12 +142,15 @@ private theorem single_gen_mem_hopfKer_counit {k : Type*} [CommRing k] :
   simp
 
 /-- Negative membership: `g` is not coinvariant for the identity map, whose coaction is the
-comultiplication: `Δ g = g ⊗ g ≠ g ⊗ 1`. -/
+comultiplication: `Δ g = g ⊗ g ≠ g ⊗ 1`. Membership is read straight from the definition of
+`hopfKer` as an equalizer, not through `mem_hopfKer_iff`. -/
 example {k : Type*} [CommRing k] [Nontrivial k] :
     single gen (1 : k) ∉ hopfKer (BialgHom.id k (MonoidAlgebra k (Multiplicative (ZMod 2)))) := by
-  rw [mem_hopfKer_iff, coaction_apply, (isGroupLikeElem_single_one gen).comul_eq_tmul_self,
-    Algebra.TensorProduct.map_tmul]
-  simpa using single_gen_tmul_single_gen_ne
+  intro h
+  have h' : coaction (BialgHom.id k _) (single gen (1 : k)) = single gen (1 : k) ⊗ₜ[k] 1 := h
+  rw [coaction_apply, (isGroupLikeElem_single_one gen).comul_eq_tmul_self,
+    Algebra.TensorProduct.map_tmul] at h'
+  exact single_gen_tmul_single_gen_ne (by simpa using h')
 
 /-- The balancing relation `(1 * g) ⊗ 1 - 1 ⊗ (g * 1) = g ⊗ 1 - 1 ⊗ g` of the coinvariant `g` is
 killed by the canonical map of the counit. -/
