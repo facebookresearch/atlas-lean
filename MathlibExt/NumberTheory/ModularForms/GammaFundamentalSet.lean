@@ -76,7 +76,7 @@ private theorem volume_re_eq_zero (c : ℝ) : volume {z : ℂ | z.re = c} = 0 :=
 private theorem volume_normSq_eq_one : volume {z : ℂ | Complex.normSq z = 1} = 0 := by
   have hsub : {z : ℂ | Complex.normSq z = 1} ⊆ Metric.sphere (0 : ℂ) 1 := by
     intro z hz
-    simp only [Set.mem_setOf_eq] at hz
+    simp only [Set.mem_ofPred_eq] at hz
     simp only [Metric.mem_sphere, dist_zero_right]
     nlinarith [Complex.normSq_eq_norm_sq z, norm_nonneg z]
   exact measure_mono_null hsub (Measure.addHaar_sphere volume 0 1)
@@ -86,14 +86,14 @@ private theorem volume_fd_diff_fdo : volume (𝒟 \ 𝒟ᵒ) = 0 := by
   apply measure_mono_null (t := {z : ℂ | Complex.normSq z = 1} ∪
     ({z : ℂ | z.re = 1 / 2} ∪ {z : ℂ | z.re = -(1 / 2)}))
   · rintro w ⟨z, ⟨⟨hn, hr⟩, hz⟩, rfl⟩
-    simp only [ModularGroup.fdo, Set.mem_setOf_eq, not_and_or, not_lt] at hz
+    simp only [ModularGroup.fdo, Set.mem_ofPred_eq, not_and_or, not_lt] at hz
     rcases hz with hz | hz
     · exact Or.inl (le_antisymm hz hn)
     · right
       have habs : |z.re| = 1 / 2 := le_antisymm hr hz
       rcases abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2) |>.mp habs with h | h
-      · exact Or.inl (by simp only [Set.mem_setOf_eq, UpperHalfPlane.coe_re]; exact h)
-      · exact Or.inr (by simp only [Set.mem_setOf_eq, UpperHalfPlane.coe_re]; exact h)
+      · exact Or.inl (by simp only [Set.mem_ofPred_eq, UpperHalfPlane.coe_re]; exact h)
+      · exact Or.inr (by simp only [Set.mem_ofPred_eq, UpperHalfPlane.coe_re]; exact h)
   · refine measure_union_null volume_normSq_eq_one (measure_union_null ?_ ?_) <;>
       exact volume_re_eq_zero _
 

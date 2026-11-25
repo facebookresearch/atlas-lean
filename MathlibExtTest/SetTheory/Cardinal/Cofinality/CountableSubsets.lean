@@ -47,7 +47,7 @@ theorem countableSubsets_eq_univ_iff.{u} (α : Type u) :
   · intro h
     haveI := h
     ext x
-    simp only [CountableSubsets, Set.mem_setOf_eq, Set.mem_univ, iff_true]
+    simp only [CountableSubsets, Set.mem_ofPred_eq, Set.mem_univ, iff_true]
     exact Set.to_countable x
 
 -- Logic 39: Club in $[X]^\omega$

@@ -56,7 +56,7 @@ private theorem piece_eq_range (T : Finset ι) :
       Set.range (inclusion R A (le_principal_compl T)) := by
   rw [range_inclusion]
   ext y
-  simp only [piece, Set.mem_setOf_eq, eventually_principal, Set.mem_compl_iff,
+  simp only [piece, Set.mem_ofPred_eq, eventually_principal, Set.mem_compl_iff,
     Finset.mem_coe]
 
 private theorem iUnion_piece :

@@ -105,7 +105,7 @@ def FlexiblePermutationStable (G : Type*) [Group G] : Prop :=
 /-- **Metabelian groups.** Let $G$ be a group and let $G' = [G, G]$ be its commutator subgroup.
 Then $G$ is metabelian when its second derived subgroup $G'' = [G', G']$ is trivial. -/
 def Metabelian (G : Type*) [Group G] : Prop :=
-  derivedSeries G 2 = ⊥
+  Subgroup.derivedSeries G 2 = ⊥
 
 theorem normalizedHammingDistance_self (n : ℕ) (σ : Equiv.Perm (Fin n)) :
     normalizedHammingDistance n σ σ = 0 := by

@@ -541,14 +541,14 @@ private theorem lintegral_enorm_inv_gaussianReal {m : ℝ} {v : ℝ≥0} (hv : v
     exact hni ⟨measurable_inv.aestronglyMeasurable,
       hasFiniteIntegral_iff_enorm.2 (lt_top_iff_ne_top.2 h)⟩
   rw [gaussianReal_of_var_ne_zero m hv,
-    lintegral_withDensity_eq_lintegral_mul _ (measurable_gaussianPDF m v) measurable_inv.enorm]
+    lintegral_withDensity_eq_lintegral_mul _ (measurable_gaussianPDF m v) measurable_inv.eNorm]
   refine top_le_iff.1 (le_trans ?_ (setLIntegral_le_lintegral (Set.Ioc (0 : ℝ) 1) _))
   calc (∞ : ℝ≥0∞) = ENNReal.ofReal c * ∫⁻ x in Set.Ioc (0 : ℝ) 1, ‖x⁻¹‖ₑ := by
         rw [hinf, ENNReal.mul_top (ENNReal.ofReal_pos.2 hc0).ne']
     _ = ∫⁻ x in Set.Ioc (0 : ℝ) 1, ENNReal.ofReal c * ‖x⁻¹‖ₑ :=
-        (lintegral_const_mul _ measurable_inv.enorm).symm
+        (lintegral_const_mul _ measurable_inv.eNorm).symm
     _ ≤ ∫⁻ x in Set.Ioc (0 : ℝ) 1, (gaussianPDF m v * fun y : ℝ => ‖y⁻¹‖ₑ) x :=
-        setLIntegral_mono ((measurable_gaussianPDF m v).mul measurable_inv.enorm) fun x hx =>
+        setLIntegral_mono ((measurable_gaussianPDF m v).mul measurable_inv.eNorm) fun x hx =>
           mul_le_mul_left (ENNReal.ofReal_le_ofReal (hbound x hx)) _
 
 /-- A ratio with a Gaussian denominator has no first moment (a classical fact, recalled in the
@@ -563,10 +563,10 @@ theorem lintegral_enorm_div_eq_top {μ : Measure Ω} [IsProbabilityMeasure μ] {
     funext ω
     rw [div_eq_mul_inv, enorm_mul]
   have hind' : IndepFun (fun ω => ‖N ω‖ₑ) (fun ω => ‖(D ω)⁻¹‖ₑ) μ :=
-    hind.comp measurable_enorm measurable_inv.enorm
+    hind.comp measurable_enorm measurable_inv.eNorm
   have hDi : AEMeasurable (fun ω => ‖(D ω)⁻¹‖ₑ) μ := hD.aemeasurable.inv.enorm
   rw [hsplit, lintegral_mul_eq_lintegral_mul_lintegral_of_indepFun'' hN.enorm hDi hind',
-    hD.lintegral_comp (f := fun x => ‖x⁻¹‖ₑ) measurable_inv.enorm.aemeasurable,
+    hD.lintegral_comp (f := fun x => ‖x⁻¹‖ₑ) measurable_inv.eNorm.aemeasurable,
     lintegral_enorm_inv_gaussianReal hv]
   refine ENNReal.mul_top ?_
   rw [Ne, lintegral_eq_zero_iff' hN.enorm]

@@ -111,7 +111,7 @@ private theorem mem_of_forall_coeff_eq_zero_of_forall_monomial_mem (N : ℕ) (I 
     with hD
   have hmemD : ∀ y, y ∈ D ↔ y.degree = N := by
     intro y
-    simp only [hD, Finset.mem_filter, Set.Finite.mem_toFinset, Set.mem_setOf_eq,
+    simp only [hD, Finset.mem_filter, Set.Finite.mem_toFinset, Set.mem_ofPred_eq,
       and_iff_right_iff_imp]
     intro h; exact h.le
 

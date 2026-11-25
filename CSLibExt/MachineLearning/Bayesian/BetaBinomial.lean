@@ -182,7 +182,7 @@ theorem binomialKernel_comp_betaMeasure (ha : 0 < a) (hb : 0 < b) {n k : ℕ} :
       ENNReal.ofReal (n.choose k * (beta (a + k) (b + (n - k : ℕ)) / beta a b)) := by
   have := isProbabilityMeasureBeta (α := a + k) (β := b + (n - k : ℕ)) (by positivity)
     (by positivity)
-  rw [← withDensity_univ_eq_comp, withDensity_binomialKernel ha hb, Measure.smul_apply,
+  rw [← withDensity_univ_eq_comp, withDensity_binomialKernel ha hb, smul_apply,
     measure_univ, smul_eq_mul, mul_one]
 
 /-- **Beta–binomial conjugacy.** Let $a, b > 0$ be real and $k \le n$ natural numbers. For the

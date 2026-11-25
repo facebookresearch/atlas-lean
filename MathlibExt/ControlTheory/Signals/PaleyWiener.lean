@@ -210,13 +210,13 @@ theorem norm_rep_le {B : ℝ} {g : ℝ → ℂ} (hB : 0 < B) (hg : MemLp g 2 vol
       positivity
     have hae : AEStronglyMeasurable (fun ν => ‖g ν‖ * 1)
         (volume.restrict (Set.Ioc (-B) B)) := hInt1.aestronglyMeasurable
-    have h1e := eLpNorm_one_eq_lintegral_enorm hae
+    have h1e := eLpNorm_one_eq_lintegral_eNorm hae
     have h2e := ofReal_integral_eq_lintegral_ofReal hInt1 hnonneg
     have h3e : (∫⁻ ν, ‖‖g ν‖ * 1‖ₑ ∂(volume.restrict (Set.Ioc (-B) B)))
         = ∫⁻ ν, ENNReal.ofReal (‖g ν‖ * 1) ∂(volume.restrict (Set.Ioc (-B) B)) := by
       apply lintegral_congr_ae
       filter_upwards with ν
-      rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (by positivity)]
+      rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (by positivity)]
     rw [h1e, h3e, ← h2e, ENNReal.toReal_ofReal (MeasureTheory.integral_nonneg_of_ae hnonneg)]
   have hfin1 : eLpNorm (fun ν => ‖g ν‖) 2 (volume.restrict (Set.Ioc (-B) B)) ≠ ⊤ :=
     ne_of_lt h1.eLpNorm_lt_top

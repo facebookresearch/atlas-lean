@@ -250,8 +250,8 @@ theorem integral_obsVec_popKM :
     ∫ ω, obsVec t₂ (XKM 0 ω) ∂seqKM = (2⁻¹ : ℝ) • (obsVec t₂ a₂ + obsVec t₂ b₂) := by
   rw [← integral_map (measurePreserving_XKM 0).measurable.aemeasurable
     (measurable_obsVec t₂).aestronglyMeasurable, (measurePreserving_XKM 0).map_eq]
-  rw [popKM, integral_smul_measure, integral_add_measure (integrable_dirac enorm_lt_top)
-    (integrable_dirac enorm_lt_top), integral_dirac, integral_dirac]
+  rw [popKM, integral_smul_measure, integral_add_measure (integrable_dirac eNorm_lt_top)
+    (integrable_dirac eNorm_lt_top), integral_dirac, integral_dirac]
   simp
 
 theorem XKM_hyps :
@@ -273,7 +273,7 @@ theorem XKM_hyps :
       rw [ae_iff, popKM]
       have hS : MeasurableSet {o : ℝ × ℝ | ¬ o.1 ∈ Set.range t₂} :=
         (measurable_fst (Set.finite_range t₂).measurableSet).compl
-      simp only [Measure.smul_apply, Measure.add_apply, Measure.dirac_apply' _ hS]
+      simp only [smul_apply, add_apply, Measure.dirac_apply' _ hS]
       simp [Set.indicator, a₂, b₂, t₂]
     exact (measurePreserving_XKM i).quasiMeasurePreserving.ae hpop
   · rw [integral_obsVec_popKM]

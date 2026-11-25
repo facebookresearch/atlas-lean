@@ -54,7 +54,7 @@ theorem u5_arcs : ∀ x y : U5, D5.Adj x y ↔
 example : {(x, y) : U5 × U5 | D5.Adj x y}
     = {(u1, u2), (u2, u4), (u3, u1), (u4, u3)} := by
   ext ⟨x, y⟩
-  simp only [Set.mem_setOf_eq, Set.mem_insert_iff, Set.mem_singleton_iff, Prod.mk.injEq]
+  simp only [Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff, Prod.mk.injEq]
   exact u5_arcs x y
 
 end MathlibExtTest.Combinatorics.Digraph.DirectedCayley

@@ -628,7 +628,7 @@ theorem treeCylinder_node (l r : CGTree) :
         (BinaryTreeAddressLaw.shiftLeft ⁻¹' treeCylinder l) ∩
           (BinaryTreeAddressLaw.shiftRight ⁻¹' treeCylinder r) := by
   ext ω
-  simp only [Set.mem_inter_iff, BinaryTreeAddressLaw.branchAt, Set.mem_setOf_eq,
+  simp only [Set.mem_inter_iff, BinaryTreeAddressLaw.branchAt, Set.mem_ofPred_eq,
     Set.mem_preimage, mem_treeCylinder]
   constructor
   · intro h
@@ -720,7 +720,7 @@ theorem treeCylinder_leaf :
     · exact hval
     · exact (hnt hval).elim
   ext ω
-  simp only [mem_treeCylinder, BinaryTreeAddressLaw.leafAt, Set.mem_setOf_eq,
+  simp only [mem_treeCylinder, BinaryTreeAddressLaw.leafAt, Set.mem_ofPred_eq,
     CGTree.activeAddresses_leaf, Finset.mem_singleton]
   constructor
   · intro h

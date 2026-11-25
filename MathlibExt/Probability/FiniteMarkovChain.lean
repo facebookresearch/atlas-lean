@@ -84,7 +84,7 @@ instance finiteChainKernel.isMarkovKernel {M : ℕ} (P : StochasticMatrix M) :
       have h := congrFun
         (Measure.coe_finsetSum Finset.univ
           (fun j => ENNReal.ofReal (P.prob x j) • Measure.dirac j)) Set.univ
-      simp only [Finset.sum_apply, Measure.smul_apply, smul_eq_mul,
+      simp only [Finset.sum_apply, smul_apply, smul_eq_mul,
         Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one] at h
       exact h
     rw [hsum, ← ENNReal.ofReal_sum_of_nonneg (fun j _ => P.nonneg x j), P.row_sum x,
@@ -100,7 +100,7 @@ theorem finiteChainKernel_apply {M : ℕ} (P : StochasticMatrix M) (x : Fin (M +
       = ∑ j, ENNReal.ofReal (P.prob x j) * (Measure.dirac j ↑B) := by
     have h := congrFun (Measure.coe_finsetSum Finset.univ
       (fun j => ENNReal.ofReal (P.prob x j) • Measure.dirac j)) ↑B
-    simp only [Finset.sum_apply, Measure.smul_apply, smul_eq_mul] at h
+    simp only [Finset.sum_apply, smul_apply, smul_eq_mul] at h
     exact h
   rw [h1]
   have h2 : ∀ j, Measure.dirac j ↑B = if j ∈ B then (1 : ℝ≥0∞) else 0 := by

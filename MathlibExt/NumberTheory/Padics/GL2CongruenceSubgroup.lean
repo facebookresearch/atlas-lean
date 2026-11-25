@@ -229,19 +229,19 @@ public def gl2CongruenceSubgroup (n : ℕ) : Subgroup (GL (Fin 2) ℚ_[p]) where
     (∀ i j, ‖(((g⁻¹ : GL (Fin 2) ℚ_[p]) : Matrix (Fin 2) (Fin 2) ℚ_[p]) - 1) i j‖
       ≤ (p : ℝ) ^ (-(n : ℤ)))}
   one_mem' := by
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     refine ⟨fun i j => ?_, fun i j => ?_⟩ <;>
     · simp only [inv_one, Units.val_one, sub_self, Matrix.zero_apply, norm_zero]
       exact le_of_lt (radius_pos p n)
   inv_mem' := by
     intro g hg
-    simp only [Set.mem_setOf_eq] at hg ⊢
+    simp only [Set.mem_ofPred_eq] at hg ⊢
     refine ⟨hg.2, ?_⟩
     rw [inv_inv]
     exact hg.1
   mul_mem' := by
     intro g h hg hh
-    simp only [Set.mem_setOf_eq] at hg hh ⊢
+    simp only [Set.mem_ofPred_eq] at hg hh ⊢
     obtain ⟨hg1, hg2⟩ := hg
     obtain ⟨hh1, hh2⟩ := hh
     have hgentry : ∀ i j, ‖(g : Matrix (Fin 2) (Fin 2) ℚ_[p]) i j‖ ≤ 1 :=
@@ -317,7 +317,7 @@ public theorem isOpen_coe_gl2CongruenceSubgroup (n : ℕ) :
               ((p : ℝ) ^ (-(n : ℤ)))}) := by
     ext g
     simp only [SetLike.mem_coe, mem_gl2CongruenceSubgroup_iff, Set.mem_inter_iff,
-      Set.mem_iInter, Set.mem_setOf_eq, Metric.mem_closedBall, dist_eq_norm, Matrix.sub_apply]
+      Set.mem_iInter, Set.mem_ofPred_eq, Metric.mem_closedBall, dist_eq_norm, Matrix.sub_apply]
   rw [hchar]
   refine IsOpen.inter ?_ ?_
   · refine isOpen_iInter_of_finite fun i => isOpen_iInter_of_finite fun j => ?_

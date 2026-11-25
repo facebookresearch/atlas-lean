@@ -131,7 +131,7 @@ noncomputable def uniformS3 : Measure S3 := (6 : ℝ≥0∞)⁻¹ • Measure.co
 
 instance : IsProbabilityMeasure uniformS3 := by
   constructor
-  norm_num [uniformS3, Measure.smul_apply, Measure.count_univ,
+  norm_num [uniformS3, smul_apply, Measure.count_univ,
     ENat.card_eq_coe_fintype_card, Fintype.card_perm, Nat.factorial]
   exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)
 

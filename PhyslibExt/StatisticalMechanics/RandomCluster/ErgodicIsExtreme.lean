@@ -139,7 +139,7 @@ lemma eeu_ergodic_summand_eq
   have hνμ : ν₁ ≪ μ :=
     (Measure.absolutelyContinuous_smul ha.ne').trans (Measure.absolutelyContinuous_of_le hle)
   obtain ⟨c, hc⟩ := eq_smul_of_absolutelyContinuous hμ hν₁ hνμ
-  have h1 : ν₁ Set.univ = c • μ Set.univ := by rw [← Measure.smul_apply, ← hc]
+  have h1 : ν₁ Set.univ = c • μ Set.univ := by rw [← smul_apply, ← hc]
   simp only [measure_univ, smul_eq_mul, mul_one] at h1
   rw [hc, ← h1, one_smul]
 

@@ -162,7 +162,7 @@ instance : CompleteSpace pkg.decCodom.X₁ := pkg.decCodom.isTopCompl.isClosed.c
 
 instance : CompleteSpace pkg.decDom.X₀ :=
   have := pkg.decDom.finite_X₀
-  FiniteDimensional.complete ℝ _
+  FiniteDimensional.completeSpace ℝ _
 
 /-- The ansatz `(z, p, w) ↦ (z + w, p)`: a state is a kernel component `z ∈ X₀` plus an essential
 component `w ∈ X₁`, together with the parameter `p`. -/
@@ -761,7 +761,7 @@ criticality hypothesis; the Turing-specific content is the kernel and range comp
 theorem isFredholm_modeOperator :
     (modeOperator J du d κ).IsFredholm :=
   ⟨(modeOperator J du d κ).isStrictMap_of_finiteDimensional,
-    Submodule.closed_of_finiteDimensional _, inferInstance, Submodule.CoFG.of_finite,
+    Submodule.isClosed_of_finiteDimensional _, inferInstance, Submodule.CoFG.of_finite,
     Submodule.ClosedComplemented.of_finiteDimensional _⟩
 
 /-- **Simple kernel, index zero.** For every Fredholm package of the coefficient linearization at a

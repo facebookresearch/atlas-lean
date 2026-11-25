@@ -722,8 +722,8 @@ private lemma bochnerApprox_isProbabilityMeasure_and_support {f : ℝ → ℂ}
     have h1 : (bochnerApprox f h N) Set.univ
         = ∑ r ∈ Finset.range (2 * N),
           ENNReal.ofReal (bochnerWeight f h N r) := by
-      simp only [bochnerApprox, MeasureTheory.Measure.finsetSum_apply,
-        MeasureTheory.Measure.smul_apply]
+      simp only [bochnerApprox, sum_apply,
+        smul_apply]
       apply Finset.sum_congr rfl
       intro r _
       rw [MeasureTheory.Measure.dirac_apply_of_mem (Set.mem_univ _)]
@@ -758,11 +758,11 @@ private lemma bochnerApprox_isProbabilityMeasure_and_support {f : ℝ → ℂ}
           mul_le_mul_of_nonneg_right hle (le_of_lt hh)
       _ = Real.pi * ((N : ℝ) * h) := by ring
   rw [ae_iff]
-  simp only [bochnerApprox, MeasureTheory.Measure.finsetSum_apply]
+  simp only [bochnerApprox, sum_apply]
   trans ∑ _r ∈ Finset.range (2 * N), (0 : ENNReal)
   · apply Finset.sum_congr rfl
     intro r hr
-    rw [MeasureTheory.Measure.smul_apply, smul_eq_mul]
+    rw [smul_apply, smul_eq_mul]
     have hmem : bochnerNode h N r ∉ {x : ℝ | ¬|x| ≤ Real.pi / h} := by
       simp only [Set.mem_ofPred_eq]
       exact not_not_intro (hξ r hr)

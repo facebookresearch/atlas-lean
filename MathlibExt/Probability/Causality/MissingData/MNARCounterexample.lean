@@ -197,8 +197,8 @@ theorem map_obsRY_constOutcomeLaw :
 
 private lemma integral_half_dirac_add (f : Bool × ℝ → ℝ) (a b : Bool × ℝ) :
     ∫ z, f z ∂((2⁻¹ : ENNReal) • (Measure.dirac a + Measure.dirac b)) = (f a + f b) / 2 := by
-  rw [integral_smul_measure, integral_add_measure (integrable_dirac enorm_lt_top)
-    (integrable_dirac enorm_lt_top), integral_dirac, integral_dirac]
+  rw [integral_smul_measure, integral_add_measure (integrable_dirac eNorm_lt_top)
+    (integrable_dirac eNorm_lt_top), integral_dirac, integral_dirac]
   simp [ENNReal.toReal_inv]
   ring
 

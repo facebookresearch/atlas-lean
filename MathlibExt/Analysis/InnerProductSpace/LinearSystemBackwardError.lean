@@ -92,7 +92,7 @@ theorem isLeast_norm_of_not_isUnit_sub [FiniteDimensional 𝕜 F] [Nontrivial F]
     IsLeast {t : ℝ | ∃ E : F →L[𝕜] F, ¬ IsUnit ((A : F →L[𝕜] F) - E) ∧ ‖E‖ = t}
       ‖(↑A⁻¹ : F →L[𝕜] F)‖⁻¹ := by
   have : ProperSpace F := FiniteDimensional.proper_rclike 𝕜 F
-  have : CompleteSpace F := FiniteDimensional.complete 𝕜 F
+  have : CompleteSpace F := FiniteDimensional.completeSpace 𝕜 F
   set Z : F →L[𝕜] F := ↑A⁻¹
   have hZpos : 0 < ‖Z‖ := Units.norm_pos A⁻¹
   refine ⟨?_, ?_⟩

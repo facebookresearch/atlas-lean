@@ -134,7 +134,7 @@ private theorem hasDerivAt_tanh (x : ℝ) : HasDerivAt tanh (1 / cosh x ^ 2) x :
 theorem lipschitzWith_tanh : LipschitzWith 1 tanh := by
   refine lipschitzWith_of_nnnorm_deriv_le (fun x => (hasDerivAt_tanh x).differentiableAt)
     fun x => ?_
-  rw [(hasDerivAt_tanh x).deriv, ← NNReal.coe_le_coe, coe_nnnorm, NNReal.coe_one,
+  rw [(hasDerivAt_tanh x).deriv, ← NNReal.coe_le_coe, coe_nnNorm, NNReal.coe_one,
     Real.norm_eq_abs, abs_of_pos (by positivity)]
   rw [div_le_one (by positivity)]
   nlinarith [one_le_cosh x]

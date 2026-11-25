@@ -522,7 +522,7 @@ theorem boundedVariationOn_polynomial_eval (p : Polynomial ℝ) (hab : a ≤ b) 
       fun x hx => by
         rw [Polynomial.deriv]
         refine NNReal.coe_le_coe.1 ?_
-        rw [coe_nnnorm, Real.coe_toNNReal']
+        rw [coe_nnNorm, Real.coe_toNNReal']
         exact (hC x hx).trans (le_max_left _ _)
   have := hlip.locallyBoundedVariationOn a b ⟨le_rfl, hab⟩ ⟨hab, le_rfl⟩
   rwa [Set.inter_self] at this

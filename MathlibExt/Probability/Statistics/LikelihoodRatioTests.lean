@@ -136,8 +136,8 @@ theorem gaussianReal_map_max_zero_sq :
   rw [← gaussianReal_map_sq]
   have hsq : Measurable (fun x : ℝ => x ^ 2) := by fun_prop
   ext s hs
-  rw [Measure.map_apply (by fun_prop) hs, Measure.add_apply, Measure.smul_apply,
-    Measure.smul_apply, Measure.map_apply hsq hs, smul_eq_mul, smul_eq_mul]
+  rw [Measure.map_apply (by fun_prop) hs, add_apply, smul_apply,
+    smul_apply, Measure.map_apply hsq hs, smul_eq_mul, smul_eq_mul]
   have hpre : (fun x : ℝ => max x 0 ^ 2) ⁻¹' s =
       (Set.Iic 0 ∩ {_x | (0 : ℝ) ∈ s}) ∪ ((fun x : ℝ => x ^ 2) ⁻¹' s ∩ Set.Ioi 0) := by
     ext x

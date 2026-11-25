@@ -65,7 +65,7 @@ example (f : X → ℂ) (hf : Measurable f)
     (h₂ : ∀ x, f x ≠ 0 → ∫⁻ a, w₂ (a • x) ∂τ = 1) :
     ∫⁻ x, ‖f x‖ₑ ^ 2 * w₁ x ∂μ = ∫⁻ x, ‖f x‖ₑ ^ 2 * w₂ x ∂μ := by
   apply lintegral_mul_eq_of_normalized_smul τ μ hact hμ
-    (hf.enorm.pow_const 2) (fun a x => by simp only [hfi]) hw₁ hw₂
+    (hf.eNorm.pow_const 2) (fun a x => by simp only [hfi]) hw₁ hw₂
   · exact fun x hx => h₁ x (fun h => hx (by simp [h]))
   · exact fun x hx => h₂ x (fun h => hx (by simp [h]))
 

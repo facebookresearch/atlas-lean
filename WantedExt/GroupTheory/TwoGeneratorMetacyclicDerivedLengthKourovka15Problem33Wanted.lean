@@ -45,7 +45,7 @@ metacyclic has derived length at most $2$, that is, its second derived subgroup 
 trivial. -/
 def twoGeneratorMetacyclicMetabelian : Prop :=
   ∀ (G : Type) [Group G] [Finite G], IsPGroup 2 G →
-    (∀ x y : G, IsMetacyclic (Subgroup.closure ({x, y} : Set G))) → derivedSeries G 2 = ⊥
+    (∀ x y : G, IsMetacyclic (Subgroup.closure ({x, y} : Set G))) → Subgroup.derivedSeries G 2 = ⊥
 
 /--
 **Finite $2$-groups with metacyclic $2$-generator subgroups are metabelian (Kourovka

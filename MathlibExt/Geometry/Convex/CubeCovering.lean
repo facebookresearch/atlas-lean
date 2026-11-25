@@ -39,7 +39,7 @@ coordinate $i$. -/
 theorem coordinateCube_eq_absSet (n : ℕ) :
     coordinateCube n = {x : EuclideanSpace ℝ (Fin n) | ∀ i, |x i| ≤ 1} := by
   ext x
-  simp only [coordinateCube, Set.mem_setOf_eq, Set.mem_Icc, abs_le]
+  simp only [coordinateCube, Set.mem_ofPred_eq, Set.mem_Icc, abs_le]
 
 /-- **Affine cube.** A set $K \subseteq \mathbb{R}^n$ is an affine cube if $K = e([-1, 1]^n)$ for
 some affine bijection $e : \mathbb{R}^n \to \mathbb{R}^n$, where $[-1, 1]^n$ is the coordinate cube

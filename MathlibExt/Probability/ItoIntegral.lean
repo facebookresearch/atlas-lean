@@ -320,7 +320,7 @@ private theorem norm_toL2_sub_sq (H K : ElementaryIntegrand F) {P : Measure Ω} 
         K.toProcess (Real.toNNReal u) ω) ^ 2) ∂P) := by
     rw [integrandDist, ← lintegral_lintegral_ofReal hfm hfb (fun _ _ ↦ sq_nonneg _)]
     refine lintegral_congr fun ω ↦ setLIntegral_congr_fun measurableSet_Ioc fun u _ ↦ ?_
-    rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
+    rw [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
   rw [hdist, ENNReal.toReal_ofReal (integral_nonneg fun ω ↦
     intervalIntegral.integral_nonneg (NNReal.coe_nonneg t) fun u _ ↦ sq_nonneg _)]
   -- pathwise expansion
@@ -384,7 +384,7 @@ theorem integrandDist_ne_top (H K : ElementaryIntegrand F) {P : Measure Ω} [IsF
         K.toProcess (Real.toNNReal u) ω) ^ 2) ∂P) := by
     rw [integrandDist, ← lintegral_lintegral_ofReal hfm hfb (fun _ _ ↦ sq_nonneg _)]
     refine lintegral_congr fun ω ↦ setLIntegral_congr_fun measurableSet_Ioc fun u _ ↦ ?_
-    rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
+    rw [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
   rw [this]
   exact ENNReal.ofReal_ne_top
 
@@ -411,20 +411,20 @@ theorem integrandDist_le {P : Measure Ω} {X Y Z : ℝ≥0 → Ω → ℝ}
     integrandDist P X Y t ≤ 2 * integrandDist P X Z t + 2 * integrandDist P Y Z t := by
   have hpt : ∀ x y z : ℝ, ‖x - y‖ₑ ^ 2 ≤ 2 * ‖x - z‖ₑ ^ 2 + 2 * ‖y - z‖ₑ ^ 2 := by
     intro x y z
-    simp only [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
+    simp only [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
     rw [← ENNReal.ofReal_ofNat 2, ← ENNReal.ofReal_mul (by norm_num),
       ← ENNReal.ofReal_mul (by norm_num), ← ENNReal.ofReal_add (by positivity) (by positivity)]
     exact ENNReal.ofReal_le_ofReal (by nlinarith [sq_nonneg (x + y - 2 * z)])
   have hin : ∀ {U V : ℝ≥0 → Ω → ℝ}, (Measurable fun p : ℝ × Ω ↦ U p.1.toNNReal p.2) →
       (Measurable fun p : ℝ × Ω ↦ V p.1.toNNReal p.2) → ∀ ω,
       Measurable fun u : ℝ ↦ ‖U u.toNNReal ω - V u.toNNReal ω‖ₑ ^ 2 :=
-    fun hU hV ω ↦ (((hU.sub hV).comp (measurable_id.prodMk measurable_const)).enorm).pow_const 2
+    fun hU hV ω ↦ (((hU.sub hV).comp (measurable_id.prodMk measurable_const)).eNorm).pow_const 2
   have hout : ∀ {U V : ℝ≥0 → Ω → ℝ}, (Measurable fun p : ℝ × Ω ↦ U p.1.toNNReal p.2) →
       (Measurable fun p : ℝ × Ω ↦ V p.1.toNNReal p.2) →
       Measurable fun ω ↦ ∫⁻ u in Set.Ioc (0 : ℝ) t, ‖U u.toNNReal ω - V u.toNNReal ω‖ₑ ^ 2 :=
     fun {U V} hU hV ↦ Measurable.lintegral_prod_right' (ν := volume.restrict (Set.Ioc (0 : ℝ) t))
       (f := fun p : Ω × ℝ ↦ ‖U p.2.toNNReal p.1 - V p.2.toNNReal p.1‖ₑ ^ 2)
-      ((((hU.sub hV).comp measurable_swap).enorm).pow_const 2)
+      ((((hU.sub hV).comp measurable_swap).eNorm).pow_const 2)
   calc integrandDist P X Y t
       ≤ ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, 2 * ‖X u.toNNReal ω - Z u.toNNReal ω‖ₑ ^ 2 +
           2 * ‖Y u.toNNReal ω - Z u.toNNReal ω‖ₑ ^ 2) ∂P :=
@@ -633,7 +633,7 @@ theorem tendsto_integrandDist_riemann {F : Filtration ℝ≥0 mΩ} {P : Measure 
   calc integrandDist P (ElementaryIntegrand.riemann F g t n).toProcess (fun u _ ↦ g u) t
       ≤ ∫⁻ _ω, (∫⁻ _u in Set.Ioc (0 : ℝ) t, ENNReal.ofReal (η ^ 2)) ∂P := by
         refine lintegral_mono fun ω ↦ setLIntegral_mono measurable_const fun u hu ↦ ?_
-        rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _)]
+        rw [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _)]
         refine ENNReal.ofReal_le_ofReal (pow_le_pow_left₀ (abs_nonneg _) ?_ 2)
         have := abs_toProcess_riemann_sub_le (F := F) (ω := ω) hδg
           ((Nat.zero_le N).trans_lt hn) hmesh hu
@@ -774,7 +774,7 @@ private theorem integrandDist_eq_eLpNorm_sq_aux {P : Measure Ω} [IsFiniteMeasur
   have h := eLpNorm_nnreal_pow_eq_lintegral (μ := P.prod (volume.restrict (Set.Ioc (0 : ℝ) t)))
     (p := 2) two_ne_zero hm.aestronglyMeasurable
   simp only [NNReal.coe_ofNat, ENNReal.rpow_two, ENNReal.coe_ofNat] at h
-  rw [h, lintegral_prod _ (hm.enorm.pow_const 2).aemeasurable]
+  rw [h, lintegral_prod _ (hm.eNorm.pow_const 2).aemeasurable]
   rfl
 
 /-- The integrand distance on `(0, t]` is the square of the `L²` seminorm on
@@ -905,7 +905,7 @@ theorem lintegral_itoIntegral_sq {F : Filtration ℝ≥0 mΩ} {P : Measure Ω} {
         (Filter.Eventually.of_forall fun _ ↦ sq_nonneg _)]
     refine lintegral_congr_ae ?_
     filter_upwards [itoIntegral_ae_eq P F B H t] with ω hω
-    rw [hω, Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
+    rw [hω, Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
   have hrhs : ∫⁻ ω, (∫⁻ u in Set.Ioc (0 : ℝ) t, ‖H u.toNNReal ω‖ₑ ^ 2) ∂P = NH ^ 2 := by
     have := integrandDist_eq_eLpNorm_sq (P := P) (Y := fun _ _ ↦ 0) hHm
       (measurable_restrictIoc h0m t)

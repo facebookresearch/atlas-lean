@@ -713,7 +713,7 @@ theorem krein_rutman
       by_contra hc
       push Not at hc
       have hlt : ‖T‖ < ‖k‖ := by
-        rw [← coe_nnnorm T, ← coe_nnnorm k]
+        rw [← coe_nnNorm T, ← coe_nnNorm k]
         exact NNReal.coe_lt_coe.mpr hc
       have hmem : k ∈ resolventSet ℝ T :=
         spectrum.mem_resolventSet_of_norm_lt (a := T) (k := k) hlt

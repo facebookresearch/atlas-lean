@@ -24,7 +24,7 @@ noncomputable def sparseLaw : Measure ℝ :=
 
 instance sparseLaw_probability : IsProbabilityMeasure sparseLaw where
   measure_univ := by
-    simp only [sparseLaw, Measure.add_apply, Measure.smul_apply, measure_univ,
+    simp only [sparseLaw, add_apply, smul_apply, measure_univ,
       smul_eq_mul, mul_one]
     norm_cast
     norm_num
@@ -66,7 +66,7 @@ lemma sparseLaw_thirdMoment : (∫ x, |x| ^ 3 ∂sparseLaw) = 100 := by
   norm_num
 
 lemma sparseLaw_zero : sparseLaw {0} = ((9999 / 10000 : ℝ≥0) : ENNReal) := by
-  norm_num [sparseLaw, Measure.add_apply, Measure.smul_apply]
+  norm_num [sparseLaw, add_apply, smul_apply]
 
 lemma allZero_probability :
     (Measure.infinitePi (fun _ : ℕ ↦ sparseLaw))

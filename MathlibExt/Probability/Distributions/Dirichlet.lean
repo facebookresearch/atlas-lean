@@ -421,7 +421,7 @@ theorem withDensity_prod_pow_dirichletMeasure {n : ℕ} {α : Fin (n + 1) → �
   have hZk := multiBeta_pos (α := fun i ↦ α i + k i)
     (fun i ↦ by have := hα i; positivity) (Nat.succ_ne_zero n)
   ext s hs
-  rw [withDensity_apply _ hs, Measure.smul_apply, smul_eq_mul, ← lintegral_indicator hs,
+  rw [withDensity_apply _ hs, smul_apply, smul_eq_mul, ← lintegral_indicator hs,
     ← lintegral_indicator_one hs,
     lintegral_dirichletMeasure α ((measurable_prod_ofReal_pow k).indicator hs),
     lintegral_dirichletMeasure _ (f := s.indicator 1) (measurable_one.indicator hs)]
@@ -464,7 +464,7 @@ theorem lintegral_dirichletMeasure_apply {n : ℕ} {α : Fin (n + 1) → ℝ} (h
   have hmass := congrArg (fun μ : Measure (Fin (n + 1) → ℝ) ↦ μ univ)
     (withDensity_prod_pow_dirichletMeasure hα k)
   simp only [withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ, hprod,
-    Measure.smul_apply, measure_univ, smul_eq_mul, mul_one] at hmass
+    smul_apply, measure_univ, smul_eq_mul, mul_one] at hmass
   rw [hmass]
   congr 1
   have hA : 0 < ∑ j, α j := Finset.sum_pos (fun j _ ↦ hα j) Finset.univ_nonempty

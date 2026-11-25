@@ -227,7 +227,7 @@ noncomputable def shockP : Measure Bool :=
 /-- `shockP` is a probability measure. -/
 instance : IsProbabilityMeasure shockP := by
   constructor
-  simp only [shockP, Measure.smul_apply, Measure.add_apply, measure_univ, smul_eq_mul]
+  simp only [shockP, smul_apply, add_apply, measure_univ, smul_eq_mul]
   rw [one_add_one_eq_two, ENNReal.inv_mul_cancel two_ne_zero ENNReal.ofNat_ne_top]
 
 /-- The shock `ε = ±1`. -/

@@ -192,14 +192,14 @@ theorem norm_ringInverse_sub_smul_one_le {A : H →L[ℂ] H} [IsStarNormal A] {z
     have h := Metric.infDist_le_dist_of_mem (s := spectrum ℂ A) hw (x := z)
     rwa [dist_eq_norm] at h
   have hdnn : (Real.toNNReal d) ≤ ‖z - w‖₊ := by
-    rw [← NNReal.coe_le_coe, Real.coe_toNNReal d (le_of_lt hdpos), coe_nnnorm]
+    rw [← NNReal.coe_le_coe, Real.coe_toNNReal d (le_of_lt hdpos), coe_nnNorm]
     exact hdw
   have hle : ‖R‖₊ ≤ Real.toNNReal (d⁻¹) := by
     rw [hnorm, ← ht₀w, nnnorm_inv, Real.toNNReal_inv]
     exact (inv_le_inv₀ (nnnorm_pos.mpr hzw) (Real.toNNReal_pos.mpr hdpos)).mpr hdnn
   have hle' : ‖R‖ ≤ d⁻¹ := by
     rw [← NNReal.coe_le_coe] at hle
-    rw [coe_nnnorm, Real.coe_toNNReal (d⁻¹) (inv_nonneg.mpr (le_of_lt hdpos))] at hle
+    rw [coe_nnNorm, Real.coe_toNNReal (d⁻¹) (inv_nonneg.mpr (le_of_lt hdpos))] at hle
     exact hle
   exact hle'
 

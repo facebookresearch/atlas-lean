@@ -494,7 +494,7 @@ private lemma integrableOn_tilted_tail (hθ : ∫ y, exp (θ * y) ∂G = 1) (hG 
     _ < ∞ := by
         refine lt_of_le_of_lt (lintegral_mono fun y => ?_) hidP.2
         simp only
-        rw [Real.enorm_eq_ofReal_abs]
+        rw [Real.eNorm_eq_ofReal_abs]
         exact ENNReal.ofReal_le_ofReal (le_abs_self y)
 
 /-- **The Cramér–Lundberg pair is admissible.** Let `G` be a finite measure on

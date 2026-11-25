@@ -111,15 +111,15 @@ private theorem scheffe_lintegral_eq {α : Type*} {m : MeasurableSpace α} {μ :
   have hψ_ne_top : ∫⁻ x, ψ x ∂μ ≠ ⊤ := by
     have : (fun x => ‖f n x - g x‖ₑ) = (fun x => ‖(f n - g) x‖ₑ) := by
       ext; simp [Pi.sub_apply]
-    rw [this, ← eLpNorm_one_eq_lintegral_enorm ((hfm n).sub hgm)]
+    rw [this, ← eLpNorm_one_eq_lintegral_eNorm ((hfm n).sub hgm)]
     exact ((eLpNorm_sub_le le_rfl).trans_lt
       (ENNReal.add_lt_top.mpr ⟨hfn, hg.eLpNorm_lt_top⟩)).ne
   rw [lintegral_sub' hψ_meas hψ_ne_top (Eventually.of_forall fun x => enorm_sub_le),
       lintegral_add_left' (hfm n).enorm,
-      ← eLpNorm_one_eq_lintegral_enorm (f := f n) (hfm n),
-      ← eLpNorm_one_eq_lintegral_enorm (f := g) hgm]
+      ← eLpNorm_one_eq_lintegral_eNorm (f := f n) (hfm n),
+      ← eLpNorm_one_eq_lintegral_eNorm (f := g) hgm]
   congr 1
-  exact (eLpNorm_one_eq_lintegral_enorm ((hfm n).sub hgm)).symm
+  exact (eLpNorm_one_eq_lintegral_eNorm ((hfm n).sub hgm)).symm
 
 /-- **Scheffé's lemma.** Let $\mu$ be a measure on a measurable space $\alpha$, let
 $f_n : \alpha \to \mathbb{R}$ ($n \in \mathbb{N}$) be $\mu$-almost everywhere strongly measurable,
@@ -139,7 +139,7 @@ theorem scheffe_lemma {α : Type*} {m : MeasurableSpace α} {μ : Measure α}
   have hn_tendsto_ae := scheffe_hn_tendsto_ae hae
   have C_le : eLpNorm g 1 μ + eLpNorm g 1 μ ≤ ∫⁻ x, liminf (hn · x) atTop ∂μ :=
     (show eLpNorm g 1 μ + eLpNorm g 1 μ = ∫⁻ x, (‖g x‖ₑ + ‖g x‖ₑ) ∂μ by
-      rw [eLpNorm_one_eq_lintegral_enorm hgm, lintegral_add_left' hgm.enorm]).symm ▸
+      rw [eLpNorm_one_eq_lintegral_eNorm hgm, lintegral_add_left' hgm.enorm]).symm ▸
     lintegral_mono_ae (hn_tendsto_ae.mono fun x hx => hx.liminf_eq ▸ le_refl _)
   have h_hn_meas : ∀ n, AEMeasurable (hn n) μ := fun n =>
     ((hfm n).enorm.add hgm.enorm).sub ((hfm n).sub hgm).enorm

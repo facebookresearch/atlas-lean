@@ -55,7 +55,7 @@ private lemma weight_nonneg (θ : ℝ × (Fin d → ℝ) × ℝ) : 0 ≤ weight 
 
 private lemma enorm_weight (θ : ℝ × (Fin d → ℝ) × ℝ) :
     ‖θ.1‖ₑ * (∑ j, ‖θ.2.1 j‖ₑ + ‖θ.2.2‖ₑ) = ENNReal.ofReal (weight θ) := by
-  simp only [weight, Real.enorm_eq_ofReal_abs]
+  simp only [weight, Real.eNorm_eq_ofReal_abs]
   rw [ENNReal.ofReal_mul (abs_nonneg _),
     ENNReal.ofReal_add (Finset.sum_nonneg fun _ _ => abs_nonneg _) (abs_nonneg _),
     ENNReal.ofReal_sum_of_nonneg fun _ _ => abs_nonneg _]
@@ -78,7 +78,7 @@ private lemma abs_reluNeuron_le {x : Fin d → ℝ} (hx : x ∈ unitCube d)
 
 private lemma enorm_reluNeuron_le {x : Fin d → ℝ} (hx : x ∈ unitCube d)
     (θ : ℝ × (Fin d → ℝ) × ℝ) : ‖reluNeuron θ x‖ₑ ≤ ENNReal.ofReal (weight θ) := by
-  rw [Real.enorm_eq_ofReal_abs]
+  rw [Real.eNorm_eq_ofReal_abs]
   exact ENNReal.ofReal_le_ofReal (abs_reluNeuron_le hx θ)
 
 private lemma continuous_reluNeuron :
@@ -273,7 +273,7 @@ theorem barron_direct_approximation {d : ℕ} (f : (Fin d → ℝ) → ℝ)
     have hmeas : Measurable (Function.uncurry h) := by
       refine (((hFm.comp measurable_snd).sub ((Finset.measurable_sum _ fun k _ =>
         continuous_reluNeuron.measurable.comp (measurable_snd.prodMk
-          ((measurable_pi_apply k).comp measurable_fst))).const_mul _)).enorm).pow_const 2
+          ((measurable_pi_apply k).comp measurable_fst))).const_mul _)).eNorm).pow_const 2
     calc ∫⁻ ω, E ω ∂P = ∫⁻ ω, ∫⁻ x, h ω x ∂μ ∂P := lintegral_congr fun ω => hEh ω
       _ = ∫⁻ x, ∫⁻ ω, h ω x ∂P ∂μ := lintegral_lintegral_swap hmeas.aemeasurable
       _ ≤ ∫⁻ _x, (m : ℝ≥0∞)⁻¹ * M2 ∂μ := by
@@ -283,7 +283,7 @@ theorem barron_direct_approximation {d : ℕ} (f : (Fin d → ℝ) → ℝ)
           gcongr
           rw [hM2_def, second_moment_eq]
           refine lintegral_mono fun θ => ?_
-          rw [Real.enorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _),
+          rw [Real.eNorm_eq_ofReal_abs, ← ENNReal.ofReal_pow (abs_nonneg _),
             ← ENNReal.ofReal_pow (weight_nonneg θ)]
           exact ENNReal.ofReal_le_ofReal (pow_le_pow_left₀ (abs_nonneg _)
             (abs_reluNeuron_le hx θ) 2)

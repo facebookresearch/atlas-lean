@@ -93,7 +93,7 @@ and Roth, 2014, Definition 2.4 with `δ = 0`). -/
 theorem differentiallyPrivate_zero_iff_le_smul :
     DifferentiallyPrivate Adj M ε 0 ↔
       ∀ ⦃x y : X⦄, Adj x y → M x ≤ ENNReal.ofReal (Real.exp ε) • M y := by
-  simp only [DifferentiallyPrivate, add_zero, Measure.le_iff, Measure.smul_apply, smul_eq_mul]
+  simp only [DifferentiallyPrivate, add_zero, Measure.le_iff, smul_apply, smul_eq_mul]
 
 /-- **Post-processing by a measurable map.** If `M` is `(ε, δ)`-differentially private and
 `f : Ω → Ω'` is measurable, then `x ↦ f_* (M x)` is `(ε, δ)`-differentially private (Dwork and

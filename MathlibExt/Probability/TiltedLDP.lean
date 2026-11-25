@@ -102,7 +102,7 @@ theorem tiltedMeasure_apply (μ : ℕ → Measure X) (F : X → ℝ) (n : ℕ) {
     (hA : MeasurableSet A) :
     tiltedMeasure μ F n A = (∫⁻ x, ENNReal.ofReal (Real.exp (n * F x)) ∂(μ n))⁻¹ *
       ∫⁻ x in A, ENNReal.ofReal (Real.exp (n * F x)) ∂(μ n) := by
-  rw [tiltedMeasure, Measure.smul_apply, withDensity_apply _ hA, smul_eq_mul]
+  rw [tiltedMeasure, smul_apply, withDensity_apply _ hA, smul_eq_mul]
 
 end Def
 

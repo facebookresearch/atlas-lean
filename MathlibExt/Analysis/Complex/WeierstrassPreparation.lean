@@ -165,7 +165,7 @@ private theorem wprep_hasSum_arc_integral_changeOrigin
         simpa [Prod.norm_mk] using hcov θ (Set.uIoc_subset_uIcc hθ)
       have g2 : ‖((0 : V), circleMap c R θ - ζ₁)‖₊ ≤ s :=
         NNReal.coe_le_coe.mpr hyleR
-      rw [mem_eball_zero_iff, enorm_eq_nnnorm]
+      rw [mem_eball_zero_iff, eNorm_eq_nnNorm]
       calc ((‖((0 : V), circleMap c R θ - ζ₁)‖₊ : ℝ≥0) : ℝ≥0∞)
           ≤ ((s : ℝ≥0) : ℝ≥0∞) := ENNReal.coe_le_coe.mpr g2
         _ < p.radius := hs_lt_radius
@@ -247,7 +247,7 @@ private theorem wprep_hasSum_arc_integral_changeOrigin
     have hmem : (h, (0 : ℂ)) ∈
         Metric.eball (0 : V × ℂ) (r - ‖((0 : V), circleMap c R θ - ζ₁)‖₊) := by
       have g1 : ‖(h, (0 : ℂ))‖₊ < s := by
-        rw [← NNReal.coe_lt_coe, coe_nnnorm, h10]
+        rw [← NNReal.coe_lt_coe, coe_nnNorm, h10]
         exact hh
       have g2 : ‖((0 : V), circleMap c R θ - ζ₁)‖₊ ≤ s :=
         NNReal.coe_le_coe.mpr hyle
@@ -260,7 +260,7 @@ private theorem wprep_hasSum_arc_integral_changeOrigin
       have g5 : ((‖(h, (0 : ℂ))‖₊ : ℝ≥0) : ℝ≥0∞) +
           ((‖((0 : V), circleMap c R θ - ζ₁)‖₊ : ℝ≥0) : ℝ≥0∞) < r :=
         lt_of_lt_of_le g4 (le_of_lt hss)
-      rw [mem_eball_zero_iff, enorm_eq_nnnorm, lt_tsub_iff_right]
+      rw [mem_eball_zero_iff, eNorm_eq_nnNorm, lt_tsub_iff_right]
       exact g5
     have hsum := hco.hasSum hmem
     have hcenter : (v₀, ζ₁) + ((0 : V), circleMap c R θ - ζ₁) + (h, 0)
@@ -312,7 +312,7 @@ private theorem wprep_analyticAt_arc_integral
         rw [ENNReal.coe_add]
         exact le_add_of_nonneg_right zero_le
       exact lt_of_le_of_lt h1 (lt_of_lt_of_le hss hH.r_le)
-    rw [mem_eball_zero_iff, enorm_eq_nnnorm]
+    rw [mem_eball_zero_iff, eNorm_eq_nnNorm]
     calc ((‖((0 : V), circleMap c R θ - ζ₁)‖₊ : ℝ≥0) : ℝ≥0∞)
         ≤ ((s : ℝ≥0) : ℝ≥0∞) := ENNReal.coe_le_coe.mpr g2
       _ < p.radius := hs_lt
@@ -415,7 +415,7 @@ private theorem wprep_analyticAt_arc_integral
   have hHB : HasFPowerSeriesOnBall (fun v => ∫ θ in θ₁..θ₂,
       deriv (circleMap c R) θ • H (v, circleMap c R θ)) Q v₀ ↑s := by
     refine ⟨hrad_Q, by exact_mod_cast hs0, fun {y} hy => ?_⟩
-    rw [mem_eball_zero_iff, enorm_eq_nnnorm] at hy
+    rw [mem_eball_zero_iff, eNorm_eq_nnNorm] at hy
     have hyR : ‖y‖ < (s:ℝ) := by
       have h2 : ‖y‖₊ < s := by exact_mod_cast hy
       exact_mod_cast h2
@@ -1646,7 +1646,7 @@ private theorem wprep_implicit
         (fun x : E × (Fin d → ℂ) => fun m : Fin d =>
           ∮ ζ in C((0 : ℂ), ρ), f (x.1, ζ) * ζ ^ (m : ℕ) /
             (ζ ^ d + ∑ j : Fin d, x.2 j * ζ ^ (j : ℕ))) (z, ψ z) = 0 := by
-  have := FiniteDimensional.complete ℂ E
+  have := FiniteDimensional.completeSpace ℂ E
   have hG : AnalyticAt ℂ (fun x : E × (Fin d → ℂ) => fun m : Fin d =>
       ∮ ζ in C((0 : ℂ), ρ), f (x.1, ζ) * ζ ^ (m : ℕ) /
         (ζ ^ d + ∑ j : Fin d, x.2 j * ζ ^ (j : ℕ))) (0, 0) :=

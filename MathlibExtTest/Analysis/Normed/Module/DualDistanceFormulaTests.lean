@@ -99,7 +99,7 @@ example : Metric.infDist ((0, 1) : ℝ × ℝ)
 
 /-- The `x`-axis is closed, as the span of a single vector. -/
 example : IsClosed ((Submodule.span ℝ ({(1, 0)} : Set (ℝ × ℝ))) : Set (ℝ × ℝ)) :=
-  Submodule.closed_of_finiteDimensional _
+  Submodule.isClosed_of_finiteDimensional _
 
 /-- `(0, 1)` is not on the `x`-axis. -/
 example : ((0, 1) : ℝ × ℝ) ∉ Submodule.span ℝ ({(1, 0)} : Set (ℝ × ℝ)) := by
@@ -114,7 +114,7 @@ example : ∃ f : (ℝ × ℝ) →L[ℝ] ℝ,
     (∀ s ∈ Submodule.span ℝ ({(1, 0)} : Set (ℝ × ℝ)), f s = 0) ∧ ‖f‖ = 1 ∧
       f (0, 1) = 1 := by
   have hclosed : IsClosed ((Submodule.span ℝ ({(1, 0)} : Set (ℝ × ℝ))) : Set (ℝ × ℝ)) :=
-    Submodule.closed_of_finiteDimensional _
+    Submodule.isClosed_of_finiteDimensional _
   have hnot : ((0, 1) : ℝ × ℝ) ∉ Submodule.span ℝ ({(1, 0)} : Set (ℝ × ℝ)) := by
     intro h
     obtain ⟨c, hc⟩ := (Submodule.mem_span_singleton).mp h

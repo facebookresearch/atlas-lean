@@ -71,7 +71,7 @@ def finitelyGeneratedLinearConjugacySeparable : Prop :=
 /-- Kourovka 2.16(e) (M. I. Kargapolov): every finitely generated metabelian group is conjugacy
 separable. -/
 def finitelyGeneratedMetabelianConjugacySeparable : Prop :=
-  ∀ (G : Type) [Group G], Group.FG G → derivedSeries G 2 = ⊥ → IsConjugacySeparable G
+  ∀ (G : Type) [Group G], Group.FG G → Subgroup.derivedSeries G 2 = ⊥ → IsConjugacySeparable G
 
 /--
 Resolved true: the Kourovka Archive answers 2.16(a) "Yes" (Remeslennikov; Formanek): polycyclic

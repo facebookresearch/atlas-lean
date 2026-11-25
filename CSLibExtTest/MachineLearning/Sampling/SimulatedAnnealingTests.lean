@@ -173,7 +173,7 @@ theorem twoWell_depths : IsHajekLocalMin twoWellR twoWellV 2 ∧
         _ ≤ ENNReal.ofReal E := ENNReal.ofReal_le_ofReal hE
     exact le_antisymm hle hge
   have h0min : (0 : Fin 3) ∈ globalMinSet twoWellV := by
-    simp only [globalMinSet, Set.mem_setOf_eq]
+    simp only [globalMinSet, Set.mem_ofPred_eq]
     intro t
     fin_cases t <;> norm_num [twoWellV]
   have h1nlocal : ¬ IsHajekLocalMin twoWellR twoWellV 1 := by
@@ -184,7 +184,7 @@ theorem twoWell_depths : IsHajekLocalMin twoWellR twoWellV 2 ∧
     exact ⟨a10, by norm_num [twoWellV]⟩
   have h2nglob : (2 : Fin 3) ∉ globalMinSet twoWellV := by
     intro h
-    simp only [globalMinSet, Set.mem_setOf_eq] at h
+    simp only [globalMinSet, Set.mem_ofPred_eq] at h
     have hle := h 0
     simp only [twoWellV] at hle
     norm_num at hle
@@ -1355,7 +1355,7 @@ theorem fig1_globalMinSet : globalMinSet fig1V = {0, 1, 2} := by
   have hv1 : fig1V 1 = 1 := by norm_num [fig1V]
   have hv2 : fig1V 2 = 1 := by norm_num [fig1V]
   ext s
-  simp only [globalMinSet, Set.mem_setOf_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
+  simp only [globalMinSet, Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
   · intro h
     have hle : fig1V s ≤ 1 := by rw [← hv0]; exact h 0

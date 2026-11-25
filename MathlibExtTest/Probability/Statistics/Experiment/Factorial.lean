@@ -174,8 +174,8 @@ example :
   have hfactor : ∀ (i : Fin 2) (a : Fin 4),
       0 < (bernoulliCell (fun _ _ => (1 / 4 : ℝ)) i) {a} := by
     intro i a
-    rw [bernoulliCell, MathlibExt.Probability.weightLaw, Measure.finsetSum_apply]
-    simp only [Measure.smul_apply]
+    rw [bernoulliCell, MathlibExt.Probability.weightLaw, sum_apply]
+    simp only [smul_apply]
     have hnn : ∀ c ∈ (Finset.univ : Finset (Fin 4)),
         0 ≤ (ENNReal.ofReal ((fun _ _ => (1 / 4 : ℝ)) i c)) • (Measure.dirac c {a}) :=
       fun c _ => zero_le

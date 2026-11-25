@@ -97,7 +97,7 @@ theorem finrank_adicCompletion_le :
     exact ⟨1 ⊗ₜ l, by simp [Φ, Algebra.algHom]⟩
   have h_surjective : Function.Surjective Φ := by
     rw [← Set.range_eq_univ, ← Φ.coe_range,
-      ← Φ.range.closed_of_finiteDimensional.closure_eq]
+      ← Φ.range.isClosed_of_finiteDimensional.closure_eq]
     exact h_dense.closure_range
   calc
     Module.finrank (v.adicCompletion K) (w.adicCompletion L) ≤

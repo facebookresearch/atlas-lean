@@ -399,7 +399,7 @@ private theorem summable_norm_schwartz_intVec (g : SchwartzMap (d → ℝ) ℂ) 
   rw [Filter.eventually_cofinite]
   refine Set.Finite.subset (s := {(0 : d → ℤ)}) (Set.finite_singleton _) ?_
   intro n hn
-  simp only [Set.mem_setOf_eq, Set.mem_singleton_iff] at hn ⊢
+  simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff] at hn ⊢
   by_contra hne
   apply hn
   have hne0 : intVec (d := d) n ≠ 0 := by
@@ -432,7 +432,7 @@ private theorem summable_one_add_norm_intVec_inv_pow {N : ℕ} (hN : Fintype.car
   rw [Filter.eventually_cofinite]
   refine Set.Finite.subset (s := {(0 : d → ℤ)}) (Set.finite_singleton _) ?_
   intro n hn
-  simp only [Set.mem_setOf_eq, Set.mem_singleton_iff] at hn ⊢
+  simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff] at hn ⊢
   by_contra hne
   apply hn
   have hne0 : intVec (d := d) n ≠ 0 := by

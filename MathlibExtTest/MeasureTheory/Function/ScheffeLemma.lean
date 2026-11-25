@@ -72,11 +72,11 @@ example (hfm : ∀ n, AEStronglyMeasurable (f n) μ)
   have hf_memLp : ∀ n, MemLp (f n) 1 μ := fun n => memLp_one_iff_integrable.mpr (hf_int n)
   have hnorm : Tendsto (fun n => eLpNorm (f n) 1 μ) atTop (𝓝 (eLpNorm g 1 μ)) := by
     have e1 : ∀ n, eLpNorm (f n) 1 μ = ENNReal.ofReal (∫ ω, (|f n ω|) ∂μ) := fun n => by
-      rw [eLpNorm_one_eq_lintegral_enorm (hf_memLp n).aestronglyMeasurable,
+      rw [eLpNorm_one_eq_lintegral_eNorm (hf_memLp n).aestronglyMeasurable,
         ← ofReal_integral_norm_eq_lintegral_enorm (hf_int n)]
       simp only [Real.norm_eq_abs]
     have e2 : eLpNorm g 1 μ = ENNReal.ofReal (∫ ω, (|g ω|) ∂μ) := by
-      rw [eLpNorm_one_eq_lintegral_enorm hg.aestronglyMeasurable,
+      rw [eLpNorm_one_eq_lintegral_eNorm hg.aestronglyMeasurable,
         ← ofReal_integral_norm_eq_lintegral_enorm hg_int]
       simp only [Real.norm_eq_abs]
     rw [show (fun n => eLpNorm (f n) 1 μ) = fun n => ENNReal.ofReal (∫ ω, (|f n ω|) ∂μ) from
@@ -87,7 +87,7 @@ example (hfm : ∀ n, AEStronglyMeasurable (f n) μ)
   have hto : Tendsto (fun n => (eLpNorm (f n - g) 1 μ).toReal) atTop (𝓝 0) :=
     (ENNReal.tendsto_toReal_zero_iff hne).mpr hL1
   have eto : ∀ n, (eLpNorm (f n - g) 1 μ).toReal = ∫ ω, (|f n ω - g ω|) ∂μ := fun n => by
-    rw [eLpNorm_one_eq_lintegral_enorm ((hf_memLp n).sub hg).aestronglyMeasurable,
+    rw [eLpNorm_one_eq_lintegral_eNorm ((hf_memLp n).sub hg).aestronglyMeasurable,
       ← ofReal_integral_norm_eq_lintegral_enorm ((hf_int n).sub hg_int),
       ENNReal.toReal_ofReal (integral_nonneg (fun ω => norm_nonneg _))]
     simp only [Real.norm_eq_abs, Pi.sub_apply]

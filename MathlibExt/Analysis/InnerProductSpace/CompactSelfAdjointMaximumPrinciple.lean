@@ -242,7 +242,7 @@ private theorem exists_next_pair {T : H →L[𝕜] H} {pad : Bool}
             rw [Submodule.orthogonal_orthogonal_eq_closure] at h2
             rw [h2]
             simp
-          rw [← (Submodule.closed_of_finiteDimensional K).submodule_topologicalClosure_eq]
+          rw [← (Submodule.isClosed_of_finiteDimensional K).submodule_topologicalClosure_eq]
           exact h1
         have hfinH : FiniteDimensional 𝕜 H := by
           have h2 : FiniteDimensional 𝕜 ↥(⊤ : Submodule 𝕜 H) := by

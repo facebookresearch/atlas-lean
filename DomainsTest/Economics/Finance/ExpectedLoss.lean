@@ -89,7 +89,7 @@ private theorem bool_dirac_false_single :
     Set.indicator_of_notMem hnem]
 
 private theorem boolMeasure_univ : boolMeasure Set.univ = 1 := by
-  simp only [boolMeasure, Measure.add_apply, Measure.smul_apply,
+  simp only [boolMeasure, add_apply, smul_apply,
     bool_dirac_true_univ, bool_dirac_false_univ]
   simp only [smul_eq_mul, mul_one]
   have hadd : ENNReal.ofReal (1/4 : ℝ) + ENNReal.ofReal (3/4 : ℝ) =
@@ -104,7 +104,7 @@ private instance : IsProbabilityMeasure boolMeasure where
 
 private theorem boolMeasure_default :
     boolMeasure boolDefault = ENNReal.ofReal (1/4 : ℝ) := by
-  simp only [boolMeasure, boolDefault, Measure.add_apply, Measure.smul_apply,
+  simp only [boolMeasure, boolDefault, add_apply, smul_apply,
     bool_dirac_true_single, bool_dirac_false_single]
   simp only [smul_eq_mul, mul_one, mul_zero, add_zero]
 

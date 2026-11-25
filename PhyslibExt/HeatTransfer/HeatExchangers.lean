@@ -296,7 +296,7 @@ lemma IsParallelFlowSolution.eq_closedForm {Ch Cc K L Thi Tci : ℝ} {Th Tc : �
       have h1 : -(parallelDecayRate Ch Cc K) * x - -(parallelDecayRate Ch Cc K) * y =
           -(parallelDecayRate Ch Cc K) * (x - y) := by ring
       rw [h1, norm_mul]
-      exact le_of_eq (by rw [coe_nnnorm])
+      exact le_of_eq (by rw [coe_nnNorm])
     have hf : ContinuousOn (fun x => Th x - Tc x) (Set.Icc 0 L) :=
       fun x hx => (hD_at x hx).continuousWithinAt
     have hf' : ∀ t ∈ Set.Ico (0 : ℝ) L, HasDerivWithinAt (fun x => Th x - Tc x)
@@ -905,7 +905,7 @@ lemma IsCounterflowSolution.eq_closedForm {Ch Cc K L Thi Tci : ℝ} {Th Tc : ℝ
       have hyz : -counterflowRate Ch Cc K * y - -counterflowRate Ch Cc K * z =
           -counterflowRate Ch Cc K * (y - z) := by ring
       rw [hyz, norm_mul]
-      exact le_of_eq (by rw [coe_nnnorm])
+      exact le_of_eq (by rw [coe_nnNorm])
     have hf : ContinuousOn (fun y => Th y - Tc y) (Set.Icc 0 L) :=
       fun y hy => (hD y hy).continuousWithinAt
     have hf' : ∀ t ∈ Set.Ico (0 : ℝ) L, HasDerivWithinAt (fun y => Th y - Tc y)

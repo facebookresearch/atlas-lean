@@ -310,7 +310,7 @@ theorem isFiniteMeasure_expFamily (hθ : -1 < θ) :
     IsFiniteMeasure (ENNReal.ofReal (1 + θ)⁻¹ • expMeasure (1 + θ)) := by
   have := isProbabilityMeasure_expMeasure (show 0 < 1 + θ by linarith)
   refine ⟨?_⟩
-  rw [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  rw [smul_apply, measure_univ, smul_eq_mul, mul_one]
   exact ENNReal.ofReal_lt_top
 
 /-- The family lives on `[0, ∞)`. -/
@@ -340,7 +340,7 @@ theorem measureReal_univ_expFamily (hθ : -1 < θ) :
     (ENNReal.ofReal (1 + θ)⁻¹ • expMeasure (1 + θ)).real univ = (1 + θ)⁻¹ := by
   have hr : 0 < 1 + θ := by linarith
   have := isProbabilityMeasure_expMeasure hr
-  rw [measureReal_def, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one,
+  rw [measureReal_def, smul_apply, measure_univ, smul_eq_mul, mul_one,
     ENNReal.toReal_ofReal (inv_nonneg.2 hr.le)]
 
 /-- **Unconditional Cramér–Lundberg limit for the `Exp(1)` tilted family.** For

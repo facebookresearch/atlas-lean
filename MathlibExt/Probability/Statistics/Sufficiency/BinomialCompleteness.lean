@@ -112,10 +112,10 @@ theorem binomial_ae_eq_zero_of_eq_zero_on_Iic (n : ℕ) (p : ↥unitInterval)
     (u : ℕ → ℝ) (hu : ∀ k, k ≤ n → u k = 0) :
     u =ᵐ[ProbabilityTheory.binomial n p] 0 := by
   have hnull : ProbabilityTheory.binomial n p (Set.Ioi n) = 0 := by
-    rw [ProbabilityTheory.binomial_eq_sum_dirac, Measure.finsetSum_apply]
+    rw [ProbabilityTheory.binomial_eq_sum_dirac, sum_apply]
     apply Finset.sum_eq_zero
     intro k hk
-    rw [Measure.smul_apply]
+    rw [smul_apply]
     have hk' : k ∉ Set.Ioi n :=
       fun h => not_le_of_gt (Set.mem_Ioi.mp h) (Finset.mem_Iic.mp hk)
     rw [Measure.dirac_apply, Set.indicator_of_notMem hk']

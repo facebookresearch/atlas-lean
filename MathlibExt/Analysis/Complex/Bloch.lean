@@ -236,7 +236,7 @@ theorem bloch
     rw [ContinuousLinearEquiv.coe_coe, hLsymm y, norm_mul, hMinv, mul_comm]
   set n : NNReal := ‖(↑L.symm : ℂ →L[ℂ] ℂ)‖₊ with hndef
   have hleR0 : (n : ℝ) ≤ M⁻¹ := by
-    rw [hndef, coe_nnnorm]
+    rw [hndef, coe_nnNorm]
     exact hop
   have hnne : n ≠ 0 := by
     rw [hndef, ne_eq, nnnorm_eq_zero]
@@ -278,7 +278,7 @@ theorem bloch
     simp only [hcdef, NNReal.coe_mk]
   have hbndh : ∀ x ∈ S, ‖deriv (f - ⇑L) x‖₊ ≤ c := by
     intro x hx
-    rw [hderiv_eq x hx, ← NNReal.coe_le_coe, coe_nnnorm, hcR]
+    rw [hderiv_eq x hx, ← NNReal.coe_le_coe, coe_nnNorm, hcR]
     exact h4 x hx
   have hlip : LipschitzOnWith c (f - ⇑L) S :=
     hSconv.lipschitzOnWith_of_nnnorm_deriv_le hdiffh hbndh

@@ -134,14 +134,14 @@ private theorem withDensity_withDensity' {𝓧 : Type*} [MeasurableSpace 𝓧] (
 
 private theorem binaryPrior_apply_false (pi0 pi1 : ℝ) :
     binaryPrior pi0 pi1 {false} = ENNReal.ofReal pi0 := by
-  simp only [binaryPrior, ENNReal.smul_def, ENNReal.ofNNReal_toNNReal, Measure.add_apply,
-    Measure.smul_apply, smul_eq_mul]
+  simp only [binaryPrior, ENNReal.smul_def, ENNReal.ofNNReal_toNNReal, add_apply,
+    smul_apply, smul_eq_mul]
   simp
 
 private theorem binaryPrior_apply_true (pi0 pi1 : ℝ) :
     binaryPrior pi0 pi1 {true} = ENNReal.ofReal pi1 := by
-  simp only [binaryPrior, ENNReal.smul_def, ENNReal.ofNNReal_toNNReal, Measure.add_apply,
-    Measure.smul_apply, smul_eq_mul]
+  simp only [binaryPrior, ENNReal.smul_def, ENNReal.ofNNReal_toNNReal, add_apply,
+    smul_apply, smul_eq_mul]
   simp
 
 private theorem marginal_eq_withDensity {𝓧 : Type*} [MeasurableSpace 𝓧]
@@ -319,7 +319,7 @@ private theorem isProbabilityMeasure_binaryPrior (pi0 pi1 : ℝ) (hpi0 : 0 < pi0
     (hpi1 : 0 < pi1) (hpi : pi0 + pi1 = 1) : IsProbabilityMeasure (binaryPrior pi0 pi1) := by
   refine ⟨?_⟩
   have hsum : binaryPrior pi0 pi1 Set.univ = ENNReal.ofReal pi0 + ENNReal.ofReal pi1 := by
-    simp [binaryPrior_eq_ofReal_smul, Measure.add_apply, Measure.smul_apply]
+    simp [binaryPrior_eq_ofReal_smul, add_apply, smul_apply]
   rw [hsum, ← ENNReal.ofReal_add hpi0.le hpi1.le, hpi, ENNReal.ofReal_one]
 
 private theorem avgRisk_binaryShiftedLoss_ne_top {𝓧 : Type*} [MeasurableSpace 𝓧]

@@ -567,7 +567,7 @@ private theorem kh_ebridge (N : ℕ) (a : Fin N → ℝ) (Ω : Type*) [Measurabl
       = ∫⁻ ω, ENNReal.ofReal (|∑ i, a i * ε i ω| ^ p) ∂μ := by
     apply MeasureTheory.lintegral_congr
     intro ω
-    rw [Real.enorm_eq_ofReal_abs,
+    rw [Real.eNorm_eq_ofReal_abs,
       ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hp.le]
   rw [hcongr, ← ENNReal.toReal_rpow,
     ← MeasureTheory.integral_eq_lintegral_of_nonneg_ae hpos hSint]
@@ -737,7 +737,7 @@ theorem khintchine_inequality :
             (kh_S_meas N a Ω ε hmeas).aemeasurable.enorm
           have hetop : ∀ ω, ‖(∑ i, a i * ε i ω)‖ₑ ≠ ⊤ := by
             intro ω
-            rw [Real.enorm_eq_ofReal_abs]
+            rw [Real.eNorm_eq_ofReal_abs]
             exact ENNReal.ofReal_ne_top
           have hHoelder := ENNReal.lintegral_mul_norm_pow_le (μ := μ)
             (f := fun ω => ‖(∑ i, a i * ε i ω)‖ₑ ^ p)
@@ -779,7 +779,7 @@ theorem khintchine_inequality :
                 = ∫⁻ ω, ENNReal.ofReal (|∑ i, a i * ε i ω| ^ p) ∂μ := by
               apply MeasureTheory.lintegral_congr
               intro ω
-              rw [Real.enorm_eq_ofReal_abs,
+              rw [Real.eNorm_eq_ofReal_abs,
                 ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hp.le]
             rw [hc1,
               ← MeasureTheory.ofReal_integral_eq_lintegral_ofReal hIntp hposp]
@@ -807,7 +807,7 @@ theorem khintchine_inequality :
                 = ∫⁻ ω, ENNReal.ofReal (|∑ i, a i * ε i ω| ^ (4 : ℝ)) ∂μ := by
               apply MeasureTheory.lintegral_congr
               intro ω
-              rw [Real.enorm_eq_ofReal_abs,
+              rw [Real.eNorm_eq_ofReal_abs,
                 ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) hpos4.le]
             rw [hc2,
               ← MeasureTheory.ofReal_integral_eq_lintegral_ofReal hInt4
@@ -850,7 +850,7 @@ theorem khintchine_inequality :
                 = ∫⁻ ω, ENNReal.ofReal ((∑ i, a i * ε i ω) ^ 2) ∂μ := by
               apply MeasureTheory.lintegral_congr
               intro ω
-              rw [Real.enorm_eq_ofReal_abs,
+              rw [Real.eNorm_eq_ofReal_abs,
                 ENNReal.ofReal_rpow_of_nonneg (abs_nonneg _) (by norm_num),
                 Real.rpow_two, sq_abs]
             rw [hc1,

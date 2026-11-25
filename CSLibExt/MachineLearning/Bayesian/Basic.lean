@@ -90,7 +90,7 @@ theorem withDensity_univ_eq_comp [MeasurableSingletonClass 𝓧] (κ : Kernel Θ
 theorem bayesPosterior_apply (κ : Kernel Θ 𝓧) (μ : Measure Θ) (x : 𝓧) {s : Set Θ}
     (hs : MeasurableSet s) :
     bayesPosterior κ μ x s = ((κ ∘ₘ μ) {x})⁻¹ * ∫⁻ θ in s, κ θ {x} ∂μ := by
-  rw [bayesPosterior, Measure.smul_apply, withDensity_apply _ hs, smul_eq_mul]
+  rw [bayesPosterior, smul_apply, withDensity_apply _ hs, smul_eq_mul]
 
 /-- **Evidence times posterior is the joint mass.** Let $\mathcal X$ be a measurable space with
 measurable singletons, $\kappa$ a Markov kernel from a measurable space $\Theta$ to $\mathcal X$

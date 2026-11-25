@@ -121,7 +121,7 @@ example :
       ∂(Measure.dirac (![(0 : ℝ), 1 / 2] : Fin 2 → ℝ) +
         Measure.dirac (![(1 / 2 : ℝ), 0] : Fin 2 → ℝ))) = 0 := by
   constructor <;>
-    rw [integral_add_measure (integrable_dirac enorm_lt_top) (integrable_dirac enorm_lt_top),
+    rw [integral_add_measure (integrable_dirac eNorm_lt_top) (integrable_dirac eNorm_lt_top),
       integral_dirac, integral_dirac] <;>
     norm_num [Fin.prod_univ_two]
 

@@ -68,7 +68,7 @@ theorem one_period_fundamental_theorem_asset_pricing_general
   have hSconv : Convex ℝ (↑(LinearMap.range T) : Set (Ω → ℝ)) :=
     (LinearMap.range T).convex
   have hSclosed : IsClosed (↑(LinearMap.range T) : Set (Ω → ℝ)) :=
-    @Submodule.closed_of_finiteDimensional _ _ _ _ _ _ _ _ _ _ (LinearMap.range T) hfin
+    @Submodule.isClosed_of_finiteDimensional _ _ _ _ _ _ _ _ _ _ (LinearMap.range T) hfin
   have hΔconv : Convex ℝ Δ := by
     intro x hx y hy a b ha hb hab
     obtain ⟨hx0, hx1⟩ := hx

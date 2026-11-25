@@ -96,11 +96,11 @@ def lgd4 : Fin 4 → ℝ :=
 
 /-- `μ4` is a probability measure: four states of mass `1 / 4` each. -/
 instance : IsProbabilityMeasure μ4 := ⟨by
-  simp [μ4, MeasureTheory.Measure.smul_apply, smul_eq_mul, ENNReal.inv_mul_cancel]⟩
+  simp [μ4, smul_apply, smul_eq_mul, ENNReal.inv_mul_cancel]⟩
 
 /-- Each state has mass `1 / 4`. -/
 lemma μ4_singleton (a : Fin 4) : μ4 {a} = 1 / 4 := by
-  simp [μ4, MeasureTheory.Measure.smul_apply, smul_eq_mul]
+  simp [μ4, smul_apply, smul_eq_mul]
 
 /-- The default event as a disjoint union of its two states. -/
 lemma D4_eq_union : D4 = ({0} : Set (Fin 4)) ∪ {1} := by
@@ -149,7 +149,7 @@ factorization theorem, so the value above is independently checked. -/
 example : expectedLoss μ4 D4 ead4 lgd4 = 45 := by
   unfold expectedLoss
   rw [MeasureTheory.integral_fintype Integrable.of_finite]
-  simp [Fin.sum_univ_four, μ4, D4, ead4, lgd4, MeasureTheory.Measure.smul_apply,
+  simp [Fin.sum_univ_four, μ4, D4, ead4, lgd4, smul_apply,
     smul_eq_mul, MeasureTheory.Measure.real]
   norm_num
 

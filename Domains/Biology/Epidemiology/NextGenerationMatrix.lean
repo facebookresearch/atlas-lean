@@ -280,7 +280,7 @@ theorem isHurwitz_sub_iff_R0_lt_one {F V : Matrix ι ι ℝ} (hF : ∀ i j, 0 �
   · intro hH
     let _ : NormedRing (Matrix ι ι ℂ) := Matrix.linftyOpNormedRing
     let _ : NormedAlgebra ℂ (Matrix ι ι ℂ) := Matrix.linftyOpNormedAlgebra
-    have _ : CompleteSpace (Matrix ι ι ℂ) := FiniteDimensional.complete ℂ _
+    have _ : CompleteSpace (Matrix ι ι ℂ) := FiniteDimensional.completeSpace ℂ _
     refine spectralRadius_lt_of_forall_quasispectrum_lt fun ν hν => ?_
     rw [quasispectrum_eq_spectrum_union_zero, Set.mem_union, Set.mem_singleton_iff] at hν
     rcases hν with hν | rfl

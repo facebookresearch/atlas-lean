@@ -204,8 +204,8 @@ private theorem integral_abs_le_L2 {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : 
     [IsProbabilityMeasure P] {f : Ω → ℝ} (hf : MemLp f 2 P) :
     ENNReal.ofReal (∫ ω, |f ω| ∂P) ≤ eLpNorm f 2 P := by
   have h1 : ENNReal.ofReal (∫ ω, |f ω| ∂P) = eLpNorm f 1 P := by
-    rw [eLpNorm_one_eq_lintegral_enorm hf.aestronglyMeasurable]
-    simp only [Real.enorm_eq_ofReal_abs]
+    rw [eLpNorm_one_eq_lintegral_eNorm hf.aestronglyMeasurable]
+    simp only [Real.eNorm_eq_ofReal_abs]
     exact ofReal_integral_eq_lintegral_ofReal (hf.integrable (by norm_num)).abs
       (Eventually.of_forall fun _ ↦ abs_nonneg _)
   rw [h1]

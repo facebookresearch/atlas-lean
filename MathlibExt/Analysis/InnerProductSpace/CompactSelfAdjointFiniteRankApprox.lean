@@ -190,7 +190,7 @@ theorem exists_finiteRank_approx {T : H →L[𝕜] H} (hT : IsSelfAdjoint T)
     intro hμ0
     rw [hμ0, norm_zero] at hμS
     exact absurd hμS.2 (not_le_of_gt hε)
-  have : CompleteSpace ↥E := (Submodule.closed_of_finiteDimensional E).completeSpace_coe
+  have : CompleteSpace ↥E := (Submodule.isClosed_of_finiteDimensional E).completeSpace_coe
   set P : H →L[𝕜] H := E.starProjection with hPdef
   set Q : H →L[𝕜] H := Eᗮ.starProjection with hQdef
   set F : H →L[𝕜] H := P ∘L T ∘L P with hFdef

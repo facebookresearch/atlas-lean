@@ -157,7 +157,7 @@ theorem exists_unit_vector_far {u : ℕ → E}
   set P : Submodule 𝕜 E := Submodule.span 𝕜 (u '' Set.Iio n) with hP
   have hPfin : (u '' Set.Iio n).Finite := (Set.finite_Iio n).image u
   have : FiniteDimensional 𝕜 P := FiniteDimensional.span_of_finite 𝕜 hPfin
-  have hclosed : IsClosed (P : Set E) := Submodule.closed_of_finiteDimensional P
+  have hclosed : IsClosed (P : Set E) := Submodule.isClosed_of_finiteDimensional P
   have hd : 0 < Metric.infDist (u n) (P : Set E) :=
     (hclosed.notMem_iff_infDist_pos ⟨0, P.zero_mem⟩).mp (hnotmem n)
   obtain ⟨z, hz, hdist⟩ := (Metric.infDist_lt_iff ⟨0, P.zero_mem⟩).mp

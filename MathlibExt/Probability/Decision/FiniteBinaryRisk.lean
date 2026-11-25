@@ -160,7 +160,7 @@ theorem finiteBinaryRisk_eq_avgRisk
     ring
   have hpi_false : (ENNReal.ofReal (1 - π) • Measure.dirac false
         + ENNReal.ofReal π • Measure.dirac true) {false} = ENNReal.ofReal (1 - π) := by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∈ ({false} : Set Bool) := by simp
     have h2 : true ∉ ({false} : Set Bool) := by simp
@@ -168,7 +168,7 @@ theorem finiteBinaryRisk_eq_avgRisk
     simp only [Pi.one_apply, smul_eq_mul, mul_one, mul_zero, add_zero]
   have hpi_true : (ENNReal.ofReal (1 - π) • Measure.dirac false
         + ENNReal.ofReal π • Measure.dirac true) {true} = ENNReal.ofReal π := by
-    rw [Measure.add_apply, Measure.smul_apply, Measure.smul_apply]
+    rw [add_apply, smul_apply, smul_apply]
     simp only [Measure.dirac_apply]
     have h1 : false ∉ ({true} : Set Bool) := by simp
     have h2 : true ∈ ({true} : Set Bool) := by simp

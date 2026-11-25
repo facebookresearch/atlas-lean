@@ -69,7 +69,7 @@ theorem rescaleCutoff {G : Type*} [Group G] (U : Set G) (T : Subgroup G)
     [MeasurableSpace T] (τ : Measure T) (S : Finset G) (c : ENNReal) (y : G) :
     doubleCosetCutoff U T (c • τ) S y = c.toReal⁻¹ * doubleCosetCutoff U T τ S y := by
   classical
-  simp only [doubleCosetCutoff, Measure.smul_apply, smul_eq_mul,
+  simp only [doubleCosetCutoff, smul_apply, smul_eq_mul,
     ENNReal.toReal_mul, mul_inv_rev, Finset.mul_sum]
   apply Finset.sum_congr rfl
   intro s hs

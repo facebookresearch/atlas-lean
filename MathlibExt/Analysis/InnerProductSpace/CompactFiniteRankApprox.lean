@@ -67,7 +67,7 @@ theorem exists_finiteRank_approx (T : H →L[𝕜] H)
   classical
   set M : Submodule 𝕜 H := Submodule.span 𝕜 t with hMdef
   have hMfin : FiniteDimensional 𝕜 M := FiniteDimensional.span_of_finite 𝕜 htfin
-  have hMcomp : CompleteSpace M := FiniteDimensional.complete 𝕜 M
+  have hMcomp : CompleteSpace M := FiniteDimensional.completeSpace 𝕜 M
   set F : H →L[𝕜] H := M.starProjection ∘L T with hFdef
   have hrange : LinearMap.range (F : H →ₗ[𝕜] H) ≤ M := by
     rintro y ⟨x, rfl⟩

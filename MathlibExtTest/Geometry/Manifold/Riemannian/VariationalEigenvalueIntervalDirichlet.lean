@@ -121,7 +121,7 @@ private lemma mass_pos_vol :
     isOpen_Ioo.measurableSet
   have hone : ((‖(1 : ℝ)‖ₑ ^ 2 : ℝ≥0∞)) = 1 := by
     have e1 : ‖(1 : ℝ)‖ₑ = ENNReal.ofReal 1 := by
-      rw [Real.enorm_eq_ofReal_abs, abs_one]
+      rw [Real.eNorm_eq_ofReal_abs, abs_one]
     rw [e1]
     simp
   have hle : ∀ x : ℝ, (Set.Ioo (3 / 4 : ℝ) (5 / 4 : ℝ)).indicator
@@ -192,7 +192,7 @@ private lemma mass_ofReal_vol :
   have hpt : ∀ x : ℝ, (‖(⇑testSmooth : ℝ → ℝ) x‖ₑ ^ 2 : ℝ≥0∞) =
       ENNReal.ofReal (((⇑testSmooth : ℝ → ℝ) x) ^ 2) := by
     intro (x : ℝ)
-    rw [Real.enorm_eq_ofReal_abs _,
+    rw [Real.eNorm_eq_ofReal_abs _,
       ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
   have hfun : (fun x : ℝ => (‖(⇑testSmooth : ℝ → ℝ) x‖ₑ ^ 2 : ℝ≥0∞)) =
       (fun x : ℝ => ENNReal.ofReal (((⇑testSmooth : ℝ → ℝ) x) ^ 2)) :=
@@ -259,8 +259,8 @@ private lemma energy_ofReal_vol :
       Subtype.ext (hn.trans (Real.norm_eq_abs _).symm)
     have he : (‖fderiv ℝ (⇑testSmooth : ℝ → ℝ) x‖ₑ : ℝ≥0∞) =
         ‖(deriv (⇑testSmooth : ℝ → ℝ) x : ℝ)‖ₑ := by
-      rw [enorm_eq_nnnorm, enorm_eq_nnnorm, hnn]
-    rw [he, Real.enorm_eq_ofReal_abs _,
+      rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, hnn]
+    rw [he, Real.eNorm_eq_ofReal_abs _,
       ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
   have hfun : (fun x : ℝ => (‖fderiv ℝ (⇑testSmooth : ℝ → ℝ) x‖ₑ ^ 2 : ℝ≥0∞)) =
       (fun x : ℝ => ENNReal.ofReal ((deriv (⇑testSmooth : ℝ → ℝ) x) ^ 2)) :=
@@ -327,7 +327,7 @@ theorem dirichletEigenvalue_lt_top :
       rw [hsq]
       exact integral_const_mul _ _
     have hc2 : ((‖c‖ₑ ^ 2 : ℝ≥0∞)) = ENNReal.ofReal (c ^ 2) := by
-      rw [Real.enorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c),
+      rw [Real.eNorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c),
         sq_abs]
     have hpt : (∫⁻ x, ‖⇑(c • testSmooth :
         C^∞⟮𝓘(ℝ, ℝ), ℝ; 𝓘(ℝ, ℝ), ℝ⟯) x‖ₑ ^ 2 ∂volume) =
@@ -338,7 +338,7 @@ theorem dirichletEigenvalue_lt_top :
           ENNReal.ofReal ((⇑(c • testSmooth :
             C^∞⟮𝓘(ℝ, ℝ), ℝ; 𝓘(ℝ, ℝ), ℝ⟯) x) ^ 2) := by
         intro (x : ℝ)
-        rw [Real.enorm_eq_ofReal_abs _,
+        rw [Real.eNorm_eq_ofReal_abs _,
           ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
       have hfe : (fun x : ℝ => (‖⇑(c • testSmooth :
           C^∞⟮𝓘(ℝ, ℝ), ℝ; 𝓘(ℝ, ℝ), ℝ⟯) x‖ₑ ^ 2 : ℝ≥0∞)) =
@@ -434,8 +434,8 @@ theorem dirichletEigenvalue_lt_top :
           Subtype.ext (hn.trans (Real.norm_eq_abs _).symm)
         have he : (‖fderiv ℝ (⇑u : ℝ → ℝ) x‖ₑ : ℝ≥0∞) =
             ‖(deriv (⇑u : ℝ → ℝ) x : ℝ)‖ₑ := by
-          rw [enorm_eq_nnnorm, enorm_eq_nnnorm, hnn]
-        rw [he, Real.enorm_eq_ofReal_abs _,
+          rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, hnn]
+        rw [he, Real.eNorm_eq_ofReal_abs _,
           ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
       have hint : Integrable (fun x : ℝ => (deriv (⇑u : ℝ → ℝ) x) ^ 2)
           volume := by
@@ -457,7 +457,7 @@ theorem dirichletEigenvalue_lt_top :
           ofReal_integral_eq_lintegral_ofReal hint hnn
         rw [hf3, ← hof2]
       have hc2 : ((‖c‖ₑ ^ 2 : ℝ≥0∞)) = ENNReal.ofReal (c ^ 2) := by
-        rw [Real.enorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c),
+        rw [Real.eNorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c),
           sq_abs]
       rw [hvec_u, hof, hval, ENNReal.ofReal_mul (sq_nonneg c), ← hc2,
         ← energy_ofReal_vol]
@@ -467,13 +467,13 @@ theorem dirichletEigenvalue_lt_top :
         exact ne_of_gt (abs_pos.mpr hcne)
       have hpos : (0 : ℝ≥0∞) < ‖c‖ₑ ^ 2 := by
         have heq : ((‖c‖ₑ ^ 2 : ℝ≥0∞)) = ENNReal.ofReal (|c| ^ 2) := by
-          rw [Real.enorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c)]
+          rw [Real.eNorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c)]
         rw [heq]
         exact ENNReal.ofReal_pos.mpr hcabs
       exact ne_of_gt hpos
     have haT : (‖c‖ₑ ^ 2 : ℝ≥0∞) ≠ ⊤ := by
       have heq : ((‖c‖ₑ ^ 2 : ℝ≥0∞)) = ENNReal.ofReal (c ^ 2) := by
-        rw [Real.enorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c),
+        rw [Real.eNorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c),
           sq_abs]
       rw [heq]
       exact ENNReal.ofReal_lt_top.ne
@@ -528,13 +528,13 @@ theorem dirichletEigenvalue_lt_top :
         exact ne_of_gt (abs_pos.mpr hcne)
       have hpos : (0 : ℝ≥0∞) < ‖c‖ₑ ^ 2 := by
         have heq : ((‖c‖ₑ ^ 2 : ℝ≥0∞)) = ENNReal.ofReal (|c| ^ 2) := by
-          rw [Real.enorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c)]
+          rw [Real.eNorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c)]
         rw [heq]
         exact ENNReal.ofReal_pos.mpr hcabs
       exact ne_of_gt hpos
     have haT : (‖c‖ₑ ^ 2 : ℝ≥0∞) < ⊤ := by
       have heq : ((‖c‖ₑ ^ 2 : ℝ≥0∞)) = ENNReal.ofReal (c ^ 2) := by
-        rw [Real.enorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c),
+        rw [Real.eNorm_eq_ofReal_abs c, ← ENNReal.ofReal_pow (abs_nonneg c),
           sq_abs]
       rw [heq]
       exact ENNReal.ofReal_lt_top
@@ -588,7 +588,7 @@ private lemma mass_eq_real (u : C^∞⟮𝓘(ℝ, ℝ), ℝ; 𝓘(ℝ, ℝ), ℝ
   have hpt : ∀ x : ℝ, (‖(⇑u : ℝ → ℝ) x‖ₑ ^ 2 : ℝ≥0∞) =
       ENNReal.ofReal (((⇑u : ℝ → ℝ) x) ^ 2) := by
     intro (x : ℝ)
-    rw [Real.enorm_eq_ofReal_abs _,
+    rw [Real.eNorm_eq_ofReal_abs _,
       ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
   have hfun : (fun x : ℝ => (‖(⇑u : ℝ → ℝ) x‖ₑ ^ 2 : ℝ≥0∞)) =
       (fun x : ℝ => ENNReal.ofReal (((⇑u : ℝ → ℝ) x) ^ 2)) :=
@@ -639,8 +639,8 @@ private lemma energy_eq_real (u : C^∞⟮𝓘(ℝ, ℝ), ℝ; 𝓘(ℝ, ℝ), �
       Subtype.ext (hn.trans (Real.norm_eq_abs _).symm)
     have he : (‖fderiv ℝ (⇑u : ℝ → ℝ) x‖ₑ : ℝ≥0∞) =
         ‖(deriv (⇑u : ℝ → ℝ) x : ℝ)‖ₑ := by
-      rw [enorm_eq_nnnorm, enorm_eq_nnnorm, hnn]
-    rw [he, Real.enorm_eq_ofReal_abs _,
+      rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, hnn]
+    rw [he, Real.eNorm_eq_ofReal_abs _,
       ← ENNReal.ofReal_pow (abs_nonneg _), sq_abs]
   have hfun : (fun x : ℝ => (‖fderiv ℝ (⇑u : ℝ → ℝ) x‖ₑ ^ 2 : ℝ≥0∞)) =
       (fun x : ℝ => ENNReal.ofReal ((deriv (⇑u : ℝ → ℝ) x) ^ 2)) :=

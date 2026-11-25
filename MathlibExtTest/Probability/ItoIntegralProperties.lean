@@ -207,13 +207,13 @@ example (hB : IsBrownianReal B P) (hBF : Adapted F B)
   · have h := (itoIntegral_isometry_sub hB hBF hInd (isProgressive_const F 1)
       (isProgressive_const F 2) 1 (const_energy_ne_top 1 1)
         (const_energy_ne_top 2 1)).2
-    norm_num [Real.enorm_eq_ofReal_abs] at h
-    simpa [Real.enorm_eq_ofReal_abs] using h
+    norm_num [Real.eNorm_eq_ofReal_abs] at h
+    simpa [Real.eNorm_eq_ofReal_abs] using h
   · have h := (itoIntegral_isometry_sub hB hBF hInd (isProgressive_const F 1)
       (isProgressive_const F 2) 2 (const_energy_ne_top 1 2)
         (const_energy_ne_top 2 2)).2
-    norm_num [Real.enorm_eq_ofReal_abs] at h
-    simpa [Real.enorm_eq_ofReal_abs] using h
+    norm_num [Real.eNorm_eq_ofReal_abs] at h
+    simpa [Real.eNorm_eq_ofReal_abs] using h
 
 /-- A progressive integrand supported at time `0` and after `t`; it is zero on `(0, t]`. -/
 noncomputable def outsideIoc (t : ℝ≥0) : ℝ≥0 → Ω → ℝ :=

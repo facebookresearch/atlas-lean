@@ -85,7 +85,7 @@ theorem grossOutput_mono_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq
     x ≤ x' := by
   let _ : NormedRing (Matrix ι ι ℂ) := Matrix.linftyOpNormedRing
   let _ : NormedAlgebra ℂ (Matrix ι ι ℂ) := Matrix.linftyOpNormedAlgebra
-  have _ : CompleteSpace (Matrix ι ι ℂ) := FiniteDimensional.complete ℂ _
+  have _ : CompleteSpace (Matrix ι ι ℂ) := FiniteDimensional.completeSpace ℂ _
   have hnorm : ‖A.map (algebraMap ℝ ℂ)‖₊ < 1 := by
     rw [Matrix.linfty_opNNNorm_def]
     apply (Finset.sup_lt_iff (show (⊥ : NNReal) < 1 from zero_lt_one)).mpr
@@ -94,7 +94,7 @@ theorem grossOutput_mono_of_rowSum_lt_one {ι : Type*} [Fintype ι] [DecidableEq
     have hentry : ∀ j, ((‖(A.map (algebraMap ℝ ℂ)) i j‖₊ : NNReal) : ℝ) = A i j := by
       intro j
       have h1 : ‖algebraMap ℝ ℂ (A i j)‖ = |A i j| := by simp
-      rw [coe_nnnorm, Matrix.map_apply, h1, abs_of_nonneg (hA0 i j)]
+      rw [coe_nnNorm, Matrix.map_apply, h1, abs_of_nonneg (hA0 i j)]
     rw [← NNReal.coe_lt_coe, NNReal.coe_sum, NNReal.coe_one]
     calc (∑ j, ((‖(A.map (algebraMap ℝ ℂ)) i j‖₊ : NNReal) : ℝ)) = ∑ j, A i j :=
             Finset.sum_congr rfl fun j _ => hentry j

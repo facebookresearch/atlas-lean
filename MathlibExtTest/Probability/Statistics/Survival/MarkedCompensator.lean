@@ -214,7 +214,7 @@ example : ¬ ∀ B : Set Bool, MeasurableSet B →
       (Measure.dirac ()) := by
   intro hM
   have h2 : ∀ B t ω, (((2 : ℝ≥0∞) • Ad t ω) B).toReal = 2 * Nd B t ω := fun B t ω => by
-    rw [Measure.smul_apply, smul_eq_mul, ENNReal.toReal_mul, Ad_apply]; norm_num
+    rw [smul_apply, smul_eq_mul, ENNReal.toReal_mul, Ad_apply]; norm_num
   have hmart : ∀ B : Set Bool, MeasurableSet B →
       Martingale (fun t ω => Nd B t ω - (Ad t ω B).toReal) ℱd (Measure.dirac ()) := fun B _ => by
     have : (fun t ω => Nd B t ω - (Ad t ω B).toReal) = 0 := by
@@ -224,7 +224,7 @@ example : ¬ ∀ B : Set Bool, MeasurableSet B →
     (N := Nd) (A := Ad) (A' := fun t ω => (2 : ℝ≥0∞) • Ad t ω)
     (fun t ω => inferInstance)
     (fun t ω => ⟨by
-      rw [Measure.smul_apply, smul_eq_mul]
+      rw [smul_apply, smul_eq_mul]
       exact ENNReal.mul_lt_top (by simp) (measure_lt_top _ _)⟩)
     hmart hM
     (fun _ _ _ => measurable_unit _) (fun _ _ _ => measurable_unit _)

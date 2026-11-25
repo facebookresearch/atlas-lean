@@ -216,7 +216,7 @@ noncomputable def symmetricBernoulliLaw : Measure ℝ :=
 /-- The two actual atom masses add to one. -/
 instance symmetricBernoulli_probability : IsProbabilityMeasure symmetricBernoulliLaw where
   measure_univ := by
-    simp only [symmetricBernoulliLaw, Measure.add_apply, Measure.smul_apply,
+    simp only [symmetricBernoulliLaw, add_apply, smul_apply,
       measure_univ, smul_eq_mul, mul_one]
     norm_cast
     norm_num
@@ -261,7 +261,7 @@ variance $1$ and finite third absolute moment, and it is concentrated on the two
 $-1$ and $1$. -/
 theorem symmetricBernoulli_isBernoulli : IsBernoulliLaw symmetricBernoulliLaw := by
   refine ⟨symmetricBernoulli_isStandardized, -1, 1, by norm_num, ?_⟩
-  norm_num [symmetricBernoulliLaw, Measure.add_apply, Measure.smul_apply]
+  norm_num [symmetricBernoulliLaw, add_apply, smul_apply]
 
 /-- **Third absolute moment of the symmetric Bernoulli law.** The third absolute moment
 $\int |x|^3 \, d\mu(x)$ of the symmetric Bernoulli law $\mu$ equals $1$. -/

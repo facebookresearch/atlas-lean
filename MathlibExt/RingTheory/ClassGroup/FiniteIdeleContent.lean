@@ -158,7 +158,7 @@ private theorem finite_support_expAt (x : (FiniteAdeleRing R K)ˣ) :
   rw [Filter.eventually_cofinite] at hboth
   refine hboth.subset ?_
   intro v hv
-  simp only [Set.mem_setOf_eq] at hv ⊢
+  simp only [Set.mem_ofPred_eq] at hv ⊢
   intro hcon
   exact hv (expAt_eq_zero_of_integral R K
     ((mem_adicCompletionIntegers R K v).mp hcon.1)
@@ -178,7 +178,7 @@ private lemma mulSupport_zpow_subset (e : HeightOneSpectrum R → ℤ) :
       {v | e v ≠ 0} := by
   intro v hv
   simp only [Function.mem_mulSupport] at hv
-  simp only [Set.mem_setOf_eq]
+  simp only [Set.mem_ofPred_eq]
   intro h0
   exact hv (by rw [h0, zpow_zero])
 

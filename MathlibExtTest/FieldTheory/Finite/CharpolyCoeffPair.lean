@@ -64,7 +64,7 @@ example :
       {y : ZMod 2 | -(LinearMap.charpoly (Algebra.lmul (ZMod 2) (ZMod 2) y)).coeff 2 = 0 ∧
           (LinearMap.charpoly (Algebra.lmul (ZMod 2) (ZMod 2) y)).coeff 1 = 0} = ∅ := by
     ext y
-    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false, not_and]
+    simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and]
     intro _
     have hdeg : (LinearMap.charpoly (Algebra.lmul (ZMod 2) (ZMod 2) y)).natDegree = 1 := by
       rw [LinearMap.charpoly_natDegree, Module.finrank_self]

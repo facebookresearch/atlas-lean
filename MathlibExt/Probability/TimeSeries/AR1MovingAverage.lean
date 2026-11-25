@@ -211,7 +211,7 @@ private theorem ar1MA_term_eLpNorm {Ω : Type*} [MeasurableSpace Ω] {μ : Measu
     eLpNorm (fun ω => ρ ^ k * ε (t - (k : ℤ)) ω) 2 μ =
       ENNReal.ofReal (|ρ| ^ k) * eLpNorm (ε 0) 2 μ := by
   have h1 : (fun ω => ρ ^ k * ε (t - (k : ℤ)) ω) = (ρ ^ k) • ε (t - (k : ℤ)) := rfl
-  rw [h1, eLpNorm_const_smul, Real.enorm_eq_ofReal_abs, abs_pow, hNorm]
+  rw [h1, eLpNorm_const_smul, Real.eNorm_eq_ofReal_abs, abs_pow, hNorm]
 
 /-- Each truncated moving-average sum is square integrable. -/
 private theorem ar1MAPartial_memLp {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}

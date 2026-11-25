@@ -419,8 +419,8 @@ theorem immersionAt_of_injective_mfderiv
     (hn : 1 ≤ n) (hfn : ∀ᶠ y in 𝓝 x, ContMDiffAt I J n f y)
     (hderiv : Function.Injective (mfderiv I J f x)) :
     IsImmersionAt I J n f x := by
-  let _ : CompleteSpace E := FiniteDimensional.complete 𝕜 E
-  let _ : CompleteSpace E'' := FiniteDimensional.complete 𝕜 E''
+  let _ : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
+  let _ : CompleteSpace E'' := FiniteDimensional.completeSpace 𝕜 E''
   change Function.Injective (mfderiv I J f x : E →L[𝕜] E'') at hderiv
   apply Manifold.IsImmersionAt.of_injective_mfderiv_of_closedComplemented_range
     (E := E) (E' := E'') hn hfn hderiv

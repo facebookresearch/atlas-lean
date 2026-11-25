@@ -52,7 +52,7 @@ example :
   intro hID
   have hprob : IsProbabilityMeasure μ := by
     dsimp only [μ]
-    rw [isProbabilityMeasure_iff, Measure.smul_apply, Measure.add_apply]
+    rw [isProbabilityMeasure_iff, smul_apply, add_apply]
     norm_num
     exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)
   have hne : charFun μ Real.pi ≠ 0 := by

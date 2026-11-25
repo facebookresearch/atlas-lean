@@ -149,12 +149,12 @@ noncomputable def pm : Measure ℝ :=
 
 instance : IsProbabilityMeasure pm := by
   constructor
-  simp only [pm, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  simp only [pm, add_apply, smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_add (by norm_num) (by norm_num)]
   norm_num
 
 theorem integral_pm (f : ℝ → ℝ) : ∫ y, f y ∂pm = 1 / 4 * f 1 + 3 / 4 * f (-1) := by
-  have hi : ∀ a : ℝ, Integrable f (Measure.dirac a) := fun a => integrable_dirac enorm_lt_top
+  have hi : ∀ a : ℝ, Integrable f (Measure.dirac a) := fun a => integrable_dirac eNorm_lt_top
   rw [pm, integral_add_measure ((hi 1).smul_measure ENNReal.ofReal_ne_top)
       ((hi (-1)).smul_measure ENNReal.ofReal_ne_top),
     integral_smul_measure, integral_smul_measure, integral_dirac, integral_dirac,
@@ -175,8 +175,8 @@ theorem cramerScores_pm :
   integrable := by
     have h : Integrable id (Ppm.map fun x : ℕ → ℝ => x 0) := by
       rw [Measure.infinitePi_map_eval]
-      exact (integrable_dirac enorm_lt_top).smul_measure ENNReal.ofReal_ne_top |>.add_measure
-        ((integrable_dirac enorm_lt_top).smul_measure ENNReal.ofReal_ne_top)
+      exact (integrable_dirac eNorm_lt_top).smul_measure ENNReal.ofReal_ne_top |>.add_measure
+        ((integrable_dirac eNorm_lt_top).smul_measure ENNReal.ofReal_ne_top)
     exact h.comp_measurable (measurable_pi_apply 0)
   integral_neg := by
     have h := integral_map (μ := Ppm) (φ := fun x : ℕ → ℝ => x 0)

@@ -52,7 +52,7 @@ hypothesis is discharged from the definitions below. -/
 def fairCoin : Measure Bool := (2 : ℝ≥0∞)⁻¹ • (Measure.dirac true + Measure.dirac false)
 
 instance : IsProbabilityMeasure fairCoin := ⟨by
-  simp only [fairCoin, Measure.smul_apply, Measure.add_apply, measure_univ, smul_eq_mul]
+  simp only [fairCoin, smul_apply, add_apply, measure_univ, smul_eq_mul]
   rw [one_add_one_eq_two, ENNReal.inv_mul_cancel (by norm_num) (by norm_num)]⟩
 
 /-- The sign of a coin: `true ↦ 1`, `false ↦ -1`. -/
@@ -141,7 +141,7 @@ theorem tendstoInDistribution_rademacher :
   · -- (a): every squared increment is `1 / n ≤ 1`
     refine (lintegral_mono (g := fun _ => (1 : ℝ≥0∞)) fun ω => iSup₂_le fun k _ => ?_).trans
       (by simp)
-    rw [Real.enorm_eq_ofReal_abs, abs_rademacherArray, ← ENNReal.ofReal_pow (by positivity),
+    rw [Real.eNorm_eq_ofReal_abs, abs_rademacherArray, ← ENNReal.ofReal_pow (by positivity),
       ENNReal.ofReal_le_one, div_pow, Real.sq_sqrt (Nat.cast_nonneg n), one_pow]
     rcases Nat.eq_zero_or_pos n with h | h
     · simp [h]
@@ -243,7 +243,7 @@ example (I : Finset Unit) :
     (fun _ x => x) (fun _ => measurable_id) (fun J c => ?_) I
   · refine (lintegral_mono (g := fun _ => (1 : ℝ≥0∞)) fun ω => iSup₂_le fun k _ => ?_).trans
       (by simp)
-    rw [Real.enorm_eq_ofReal_abs, abs_rademacherArray, ← ENNReal.ofReal_pow (by positivity),
+    rw [Real.eNorm_eq_ofReal_abs, abs_rademacherArray, ← ENNReal.ofReal_pow (by positivity),
       ENNReal.ofReal_le_one, div_pow, Real.sq_sqrt (Nat.cast_nonneg n), one_pow]
     rcases Nat.eq_zero_or_pos n with h | h
     · simp [h]
@@ -312,7 +312,7 @@ example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMea
     (fun n s => ?_) (fun s => (s : ℝ)) (fun s => ?_) Z hZm hZ I
   · refine (lintegral_mono (g := fun _ => (1 : ℝ≥0∞)) fun ω => iSup₂_le fun k _ => ?_).trans
       (by simp)
-    rw [Real.enorm_eq_ofReal_abs, abs_rademacherArray, ← ENNReal.ofReal_pow (by positivity),
+    rw [Real.eNorm_eq_ofReal_abs, abs_rademacherArray, ← ENNReal.ofReal_pow (by positivity),
       ENNReal.ofReal_le_one, div_pow, Real.sq_sqrt (Nat.cast_nonneg n), one_pow]
     rcases Nat.eq_zero_or_pos n with h | h
     · simp [h]

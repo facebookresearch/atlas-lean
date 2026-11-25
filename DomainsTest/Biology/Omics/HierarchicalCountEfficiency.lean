@@ -104,7 +104,7 @@ noncomputable def ν : Measure Bool :=
   (2 / 3 : ENNReal) • Measure.dirac false + (1 / 3 : ENNReal) • Measure.dirac true
 
 instance : IsProbabilityMeasure ν := ⟨by
-  simp only [ν, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  simp only [ν, add_apply, smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [ENNReal.div_add_div_same]; norm_num; exact ENNReal.div_self (by norm_num) (by norm_num)⟩
 
 /-- The count read from one coordinate. -/
@@ -283,11 +283,11 @@ private lemma integrable_μW {E : Type*} [NormedAddCommGroup E] (F : ℕ → E) 
   refine ((Integrable.smul_measure ?_ ENNReal.ofReal_ne_top).add_measure
     (Integrable.smul_measure ?_ ENNReal.ofReal_ne_top)).add_measure
     (Integrable.smul_measure ?_ ENNReal.ofReal_ne_top) <;>
-  exact integrable_dirac enorm_lt_top
+  exact integrable_dirac eNorm_lt_top
 
 private lemma integral_μW {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (F : ℕ → E) : ∫ k, F k ∂μW = pW0 • F 0 + pW1 • F 1 + pW3 • F 3 := by
-  have i := fun c (k : ℕ) => (integrable_dirac (a := k) (f := F) enorm_lt_top).smul_measure
+  have i := fun c (k : ℕ) => (integrable_dirac (a := k) (f := F) eNorm_lt_top).smul_measure
     (c := ENNReal.ofReal c) ENNReal.ofReal_ne_top
   unfold μW
   rw [integral_add_measure ((i _ _).add_measure (i _ _)) (i _ _),
@@ -298,7 +298,7 @@ private lemma integral_μW {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E
 
 instance : IsProbabilityMeasure μW := ⟨by
   unfold μW
-  simp only [Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  simp only [add_apply, smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_add pW0_pos.le pW1_pos.le,
     ← ENNReal.ofReal_add (by linarith [pW0_pos, pW1_pos]) pW3_pos.le]
   simp only [pW0]; ring_nf; simp⟩

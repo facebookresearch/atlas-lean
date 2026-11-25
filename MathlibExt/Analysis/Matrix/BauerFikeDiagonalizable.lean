@@ -85,7 +85,7 @@ theorem exists_norm_sub_le_of_mem_spectrum_add {n : Type*} [Fintype n] [Decidabl
     (V : (Matrix n n ℂ)ˣ) (lam : n → ℂ) (E : Matrix n n ℂ) {μ : ℂ}
     (hμ : μ ∈ spectrum ℂ ((V : Matrix n n ℂ) * Matrix.diagonal lam * (↑V⁻¹ : Matrix n n ℂ) + E)) :
     ∃ i, ‖μ - lam i‖ ≤ ‖(V : Matrix n n ℂ)‖ * ‖(↑V⁻¹ : Matrix n n ℂ)‖ * ‖E‖ := by
-  have : CompleteSpace (Matrix n n ℂ) := FiniteDimensional.complete ℂ (Matrix n n ℂ)
+  have : CompleteSpace (Matrix n n ℂ) := FiniteDimensional.completeSpace ℂ (Matrix n n ℂ)
   set K := ‖(V : Matrix n n ℂ)‖ * ‖(↑V⁻¹ : Matrix n n ℂ)‖ * ‖E‖
   rcases isEmpty_or_nonempty n with hn | hn
   · -- `0 × 0` matrices: every element is a unit, so the spectrum is empty.

@@ -44,7 +44,7 @@ lemma measureReal_half_dirac_add {α : Type*} [MeasurableSpace α] [MeasurableSi
 lemma integrable_half_dirac_add {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α]
     (f : α → ℝ) (a b : α) :
     Integrable f ((2⁻¹ : ENNReal) • (Measure.dirac a + Measure.dirac b)) :=
-  ((integrable_dirac enorm_lt_top).add_measure (integrable_dirac enorm_lt_top)).smul_measure
+  ((integrable_dirac eNorm_lt_top).add_measure (integrable_dirac eNorm_lt_top)).smul_measure
     (by simp)
 
 /-! ### The δ-shift -/

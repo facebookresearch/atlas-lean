@@ -81,7 +81,7 @@ theorem almostDisjointModNS_agree_at_zero :
     · exact ⟨x, show (0 : Ordinal) < x.1 from pos_iff_ne_zero.mpr hx, le_rfl⟩
   · rw [Set.disjoint_left]
     intro α hα hlt
-    simp only [Set.mem_setOf_eq, decide_eq_true_eq] at hα
+    simp only [Set.mem_ofPred_eq, decide_eq_true_eq] at hα
     have h : (0 : Ordinal) < α.1 := hlt
     rw [hα] at h
     exact lt_irrefl _ h

@@ -105,8 +105,8 @@ instance (n : ℕ) : IsProbabilityMeasure (μUnif n) := by
     simp
   have hdirac : ∀ a : BoolCube n, MeasureTheory.Measure.dirac a Set.univ = 1 :=
     fun a => MeasureTheory.Measure.dirac_apply_of_mem (Set.mem_univ a)
-  simp only [μUnif, MeasureTheory.Measure.uniformOfFinset, MeasureTheory.Measure.finsetSum_apply,
-    MeasureTheory.Measure.smul_apply, hdirac, mul_one]
+  simp only [μUnif, MeasureTheory.Measure.uniformOfFinset, sum_apply,
+    smul_apply, hdirac, mul_one]
   rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, smul_eq_mul, mul_one]
   exact ENNReal.mul_inv_cancel hcard0 hcardTop
 
@@ -132,7 +132,7 @@ theorem coinMeasure_isProbability : IsProbabilityMeasure coinMeasure := by
   have hdirac : ∀ b : Bool, MeasureTheory.Measure.dirac b Set.univ = 1 :=
     fun b => MeasureTheory.Measure.dirac_apply_of_mem (Set.mem_univ b)
   simp only [coinMeasure, MeasureTheory.Measure.uniformOfFinset,
-    MeasureTheory.Measure.finsetSum_apply, MeasureTheory.Measure.smul_apply, hdirac, mul_one]
+    sum_apply, smul_apply, hdirac, mul_one]
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_bool, nsmul_eq_mul, smul_eq_mul,
     mul_one]
   exact ENNReal.mul_inv_cancel (by norm_num) (by norm_num)

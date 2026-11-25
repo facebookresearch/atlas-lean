@@ -158,7 +158,7 @@ theorem dirichletEnergy_const (I : ModelWithCorners ℝ E H) {M : Type uM}
     fun (x : M) => Subtype.ext (hreal0 x)
   have h0 : ∀ x : M, (‖mvfderiv I (fun _ => c) x‖ₑ : ℝ≥0∞) = 0 := by
     intro (x : M)
-    rw [hder x, enorm_eq_nnnorm, hnn0 x]
+    rw [hder x, eNorm_eq_nnNorm, hnn0 x]
     simp
   have hfun : (fun x : M => (‖mvfderiv I (fun _ => c) x‖ₑ ^ 2 : ℝ≥0∞)) =
       fun _ => 0 := by
@@ -306,7 +306,7 @@ theorem variationalEigenvalue_zero_eq_zero (I : ModelWithCorners ℝ E H)
       rw [h1x, smul_eq_mul, mul_one]
     have hcabs : (0 : ℝ) < |c| := abs_pos.mpr hcne
     have hof : (0 : ℝ≥0∞) < ENNReal.ofReal |c| := ENNReal.ofReal_pos.mpr hcabs
-    have he : ‖c‖ₑ = ENNReal.ofReal |c| := Real.enorm_eq_ofReal_abs c
+    have he : ‖c‖ₑ = ENNReal.ofReal |c| := Real.eNorm_eq_ofReal_abs c
     have hcpos : (0 : ℝ≥0∞) < ‖c‖ₑ := by rw [he]; exact hof
     have hsqpos : (0 : ℝ≥0∞) < ‖c‖ₑ ^ 2 := by
       rw [pow_two]; exact ENNReal.mul_pos (ne_of_gt hcpos) (ne_of_gt hcpos)
@@ -420,7 +420,7 @@ theorem mass_pos_lt_top_of_mem_smoothTestSubmodule {E' : Type*}
       (‖((⇑u : M → ℝ) x)‖ₑ ^ 2) := by
     intro x
     have hr : (‖((⇑u : M → ℝ) x)‖ₑ) = ENNReal.ofReal |((⇑u : M → ℝ) x)| :=
-      Real.enorm_eq_ofReal_abs _
+      Real.eNorm_eq_ofReal_abs _
     rw [← sq_abs ((⇑u : M → ℝ) x), ENNReal.ofReal_pow (abs_nonneg _) 2, ← hr]
   have hmass : (∫⁻ x : M, (‖((⇑u : M → ℝ) x)‖ₑ ^ 2) ∂μ) =
       ENNReal.ofReal (∫ x : M, (((⇑u : M → ℝ) x) ^ 2 : ℝ) ∂μ) := by
@@ -476,11 +476,11 @@ theorem dirichletEnergy_vectorSpace {F : Type uF} [NormedAddCommGroup F]
       le_antisymm hleR hleL
     have hcoe : ((‖mvfderiv 𝓘(ℝ, F) u x‖₊ : ℝ≥0) : ℝ) =
         ((‖fderiv ℝ u x‖₊ : ℝ≥0) : ℝ) := by
-      rw [coe_nnnorm, coe_nnnorm, hnorm]
+      rw [coe_nnNorm, coe_nnNorm, hnorm]
     have hnn : ‖mvfderiv 𝓘(ℝ, F) u x‖₊ = ‖fderiv ℝ u x‖₊ :=
       Subtype.ext hcoe
     have henorm : (‖mvfderiv 𝓘(ℝ, F) u x‖ₑ : ℝ≥0∞) = ‖fderiv ℝ u x‖ₑ := by
-      rw [enorm_eq_nnnorm, enorm_eq_nnnorm, hnn]
+      rw [eNorm_eq_nnNorm, eNorm_eq_nnNorm, hnn]
     rw [henorm]
   have hfun : (fun x : F => (‖mvfderiv 𝓘(ℝ, F) u x‖ₑ ^ 2 : ℝ≥0∞)) =
       (fun x : F => (‖fderiv ℝ u x‖ₑ ^ 2 : ℝ≥0∞)) := funext h_eq

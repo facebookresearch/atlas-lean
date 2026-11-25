@@ -74,7 +74,7 @@ theorem exists_valued_sub_algebraMap_lt (x t : v.adicCompletion K) (ht : t ≠ 0
     ∃ c : K, Valued.v (x - algebraMap K (v.adicCompletion K) c) < Valued.v t := by
   obtain ⟨_, hz, c, rfl⟩ := mem_closure_iff_nhds.mp
     (HeightOneSpectrum.denseRange_algebraMap (K := K) (v := v) x) _ (ball_mem_nhds R K v x t ht)
-  exact ⟨c, by rwa [Set.mem_setOf_eq, Valuation.map_sub_swap] at hz⟩
+  exact ⟨c, by rwa [Set.mem_ofPred_eq, Valuation.map_sub_swap] at hz⟩
 
 theorem exists_valued_algebraMap_sub_lt (x : v.adicCompletionIntegers K)
     (t : v.adicCompletion K) (ht : t ≠ 0) :
@@ -93,7 +93,7 @@ theorem exists_valued_algebraMap_sub_lt (x : v.adicCompletionIntegers K)
   have hyγ : Valued.v (algebraMap K (v.adicCompletion K) y - (x : v.adicCompletion K)) < γ := by
     rw [hγ, Units.val_mk0]; exact hzγ
   have hz1 : Valued.v (algebraMap K (v.adicCompletion K) y - (x : v.adicCompletion K)) < 1 := by
-    have := hz1; rwa [Set.mem_setOf_eq, Valuation.map_one] at this
+    have := hz1; rwa [Set.mem_ofPred_eq, Valuation.map_one] at this
   have hy1 : Valued.v (algebraMap K (v.adicCompletion K) y - (x : v.adicCompletion K)) < 1 := hz1
 
   have hyint : v.valuation K y ≤ 1 := by

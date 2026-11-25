@@ -202,8 +202,8 @@ lemma fvMeasure_univ (η : ConfigSpace (Site d)) (n : ℕ)
     (B : Finset (Sym2 (Site d))) (β h : ℝ) :
     (fvMeasure η n B β h) Set.univ = 1 := by
   unfold fvMeasure
-  rw [Measure.finsetSum_apply _ _ _]
-  simp only [Measure.smul_apply, Measure.dirac_apply' _ MeasurableSet.univ, Set.mem_univ,
+  rw [sum_apply _ _ _]
+  simp only [smul_apply, Measure.dirac_apply' _ MeasurableSet.univ, Set.mem_univ,
     Set.indicator_of_mem, Pi.one_apply, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg (fun τ _ => fvProb_nonneg η n B β h τ),
     fvProb_sum_eq_one η n B β h, ENNReal.ofReal_one]

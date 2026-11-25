@@ -53,7 +53,7 @@ example (μ ν : ProbabilityMeasure ℝ) :
     wasserstein 2 (μ.map ((-3 : ℝ) • ·)) (ν.map ((-3 : ℝ) • ·)) = 3 * wasserstein 2 μ ν := by
   rw [wasserstein_map_smul two_pos]
   congr 1
-  simp [Real.enorm_eq_ofReal_abs]
+  simp [Real.eNorm_eq_ofReal_abs]
 
 /-- Lemma 8.7 with a non-degenerate first pair and second pair of equal means:
 the hypotheses are jointly satisfiable. -/

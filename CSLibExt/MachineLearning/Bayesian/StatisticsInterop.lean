@@ -101,7 +101,7 @@ theorem posterior_sharedSeqLaw_bayesPosterior (n N : ℕ) (α : Fin (n + 1) → 
     div_pos (multiBeta_pos hαk (Nat.succ_ne_zero n)) (multiBeta_pos hα (Nat.succ_ne_zero n))
   have hev : (categoricalSeqKernel n N ∘ₘ dirichletMeasure α) {s} =
       ENNReal.ofReal (multiBeta (fun i ↦ α i + counts s i) / multiBeta α) := by
-    rw [← withDensity_univ_eq_comp, withDensity_categoricalSeqKernel hα, Measure.smul_apply,
+    rw [← withDensity_univ_eq_comp, withDensity_categoricalSeqKernel hα, smul_apply,
       measure_univ, smul_eq_mul, mul_one]
   have hev0 : (categoricalSeqKernel n N ∘ₘ dirichletMeasure α) {s} ≠ 0 := by
     rw [hev]

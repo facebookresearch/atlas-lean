@@ -184,7 +184,7 @@ theorem norm_sub_le_exp_mul_of_primitive_le
     (hq : ∀ t ∈ Set.Icc 0 T, |∫ u in (0 : ℝ)..t, (s u - d u)| ≤ Q)
     (t : ℝ) (ht : t ∈ Set.Icc 0 T) :
     ‖x t - y t‖ ≤ Real.exp (‖A‖ * T) * (‖x₀ - y₀‖ + ‖b‖ * Q) := by
-  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   have hec : ContinuousOn (fun r => x r - y r) (Icc 0 T) :=
     (continuousOn_of_eq_add_integral hT hxi hx).sub (continuousOn_of_eq_add_integral hT hyi hy)
   have key : ∀ t ∈ Icc 0 T,
@@ -281,7 +281,7 @@ theorem switched_averaged_error_le
       ∫ u in (0 : ℝ)..t, (A (y u) + (d u) • b + c u))
     (t : ℝ) (ht : t ∈ Set.Icc 0 T) :
     ‖x t - y t‖ ≤ Real.exp (‖A‖ * T) * (‖x₀ - y₀‖ + ‖b‖ * ε * (1 + (Ld : ℝ) * T / 2)) := by
-  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   have hsmul : ∀ {g : ℝ → ℝ}, IntervalIntegrable g volume 0 T →
       IntervalIntegrable (fun u => g u • b) volume 0 T := fun h =>
     ⟨h.1.smul_const _, h.2.smul_const _⟩
@@ -310,7 +310,7 @@ theorem switched_averaged_error_le_of_constDuty_sharp
       ∫ u in (0 : ℝ)..t, (A (y u) + c₀ • b + c u))
     (t : ℝ) (ht : t ∈ Set.Icc 0 T) :
     ‖x t - y t‖ ≤ Real.exp (‖A‖ * T) * (‖x₀ - y₀‖ + ‖b‖ * (c₀ * (1 - c₀) * ε)) := by
-  have : CompleteSpace E := FiniteDimensional.complete ℝ E
+  have : CompleteSpace E := FiniteDimensional.completeSpace ℝ E
   have hxi := intervalIntegrable_of_eq_add_integral A c hc hT
     (fun u => pwmSignal ε (fun _ => c₀) u • b)
     ⟨(intervalIntegrable_pwmSignal ε _ 0 T).1.smul_const _,

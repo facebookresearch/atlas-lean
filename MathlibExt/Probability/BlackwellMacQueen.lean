@@ -78,7 +78,7 @@ variable {X : Type*} [MeasurableSpace X]
 theorem measurable_polyaUrnPredictive (α : ℝ) (H : Measure X) (n : ℕ) :
     Measurable fun xs : Fin n → X ↦ polyaUrnPredictive α H xs := by
   refine Measure.measurable_of_measurable_coe _ fun A hA ↦ ?_
-  simp only [polyaUrnPredictive, Measure.smul_apply, Measure.add_apply, Measure.finsetSum_apply,
+  simp only [polyaUrnPredictive, smul_apply, add_apply, sum_apply,
     smul_eq_mul]
   refine measurable_const.mul (measurable_const.add (Finset.measurable_sum _ fun i _ ↦ ?_))
   exact (Measure.measurable_coe hA).comp (Measure.measurable_dirac.comp (measurable_pi_apply i))
@@ -117,8 +117,8 @@ private theorem measurable_map_snoc (α : ℝ) (H : Measure X) [SFinite H] (n : 
           ∑ i, ((fun p : (Fin n → X) × X ↦ Fin.snoc (α := fun _ ↦ X) p.1 p.2) ⁻¹' S).indicator
             1 (xs, xs i)) := fun xs ↦ by
     rw [Measure.map_apply (measurable_snoc xs) hS]
-    simp only [polyaUrnPredictive, Measure.smul_apply, Measure.add_apply,
-      Measure.finsetSum_apply, smul_eq_mul]
+    simp only [polyaUrnPredictive, smul_apply, add_apply,
+      sum_apply, smul_eq_mul]
     congr 2
     refine Finset.sum_congr rfl fun i _ ↦ ?_
     rw [Measure.dirac_apply' _ (measurable_snoc xs hS)]
@@ -257,7 +257,7 @@ private theorem setLIntegral_polyaUrnPredictive_snoc_comm (α : ℝ) (H : Measur
     intro B C hB hC
     have hpt : ∀ x, polyaUrnPredictive α H (Fin.snoc (α := fun _ ↦ X) xs x) C =
         (ENNReal.ofReal (α + (n + 1)))⁻¹ * (M C + C.indicator 1 x) := fun x ↦ by
-      rw [polyaUrnPredictive_snoc, Measure.smul_apply, Measure.add_apply,
+      rw [polyaUrnPredictive_snoc, smul_apply, add_apply,
         Measure.dirac_apply' _ hC, smul_eq_mul]
     simp_rw [hpt]
     rw [show polyaUrnPredictive α H xs = (ENNReal.ofReal (α + n))⁻¹ • M from rfl,

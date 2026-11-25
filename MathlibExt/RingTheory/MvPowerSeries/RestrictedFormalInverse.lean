@@ -322,7 +322,7 @@ private theorem Restricted.sub {p : R} {f g : MvPowerSeries (Fin d) R} (hf : Res
 private theorem restricted_coe (p : R) (χ : MvPolynomial (Fin d) R) :
     Restricted p (χ : MvPowerSeries (Fin d) R) := fun N => by
   refine Filter.eventually_cofinite.mpr (χ.support.finite_toSet.subset fun n hn => ?_)
-  rw [Set.mem_setOf_eq, MvPolynomial.coeff_coe] at hn
+  rw [Set.mem_ofPred_eq, MvPolynomial.coeff_coe] at hn
   by_contra h
   exact hn (by rw [MvPolynomial.notMem_support_iff.mp h]; exact Ideal.zero_mem _)
 

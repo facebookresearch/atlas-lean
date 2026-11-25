@@ -133,7 +133,7 @@ private theorem tendsto_smul_pow_zero (a : Matrix ι ι ℂ) {r : ℝ≥0} (hr :
     Tendsto (fun n : ℕ => ((r : ℂ)⁻¹) ^ n • a ^ n) atTop (𝓝 0) := by
   let _ : NormedRing (Matrix ι ι ℂ) := Matrix.linftyOpNormedRing
   let _ : NormedAlgebra ℂ (Matrix ι ι ℂ) := Matrix.linftyOpNormedAlgebra
-  have _ : CompleteSpace (Matrix ι ι ℂ) := FiniteDimensional.complete ℂ _
+  have _ : CompleteSpace (Matrix ι ι ℂ) := FiniteDimensional.completeSpace ℂ _
   obtain ⟨r', hρr, hr1⟩ := ENNReal.lt_iff_exists_nnreal_btwn.1 h
   have hr1' : r' < r := by exact_mod_cast hr1
   have hev : ∀ᶠ n : ℕ in atTop, (‖a ^ n‖₊ : ℝ≥0∞) ^ (1 / n : ℝ) < r' :=
@@ -298,7 +298,7 @@ private theorem exists_one_sub_smul_nonneg {A : Matrix ι ι ℝ} (hA : A.IsNons
       exact mul_nonpos_of_nonneg_of_nonpos (by positivity) this
   · let _ : NormedRing (Matrix ι ι ℂ) := Matrix.linftyOpNormedRing
     let _ : NormedAlgebra ℂ (Matrix ι ι ℂ) := Matrix.linftyOpNormedAlgebra
-    have _ : CompleteSpace (Matrix ι ι ℂ) := FiniteDimensional.complete ℂ _
+    have _ : CompleteSpace (Matrix ι ι ℂ) := FiniteDimensional.completeSpace ℂ _
     have hcC : ((1 / c : ℝ) : ℂ) ≠ 0 := by exact_mod_cast (by positivity : (1 / c : ℝ) ≠ 0)
     have hB : (1 - (1 / c) • A).map (algebraMap ℝ ℂ) =
         algebraMap ℂ (Matrix ι ι ℂ) 1 - (Units.mk0 _ hcC) • a := by
@@ -335,7 +335,7 @@ private theorem exists_one_sub_smul_nonneg {A : Matrix ι ι ℝ} (hA : A.IsNons
         rw [hnorm] at h2
         nlinarith [mul_pos hcinv hμre]
       have : ‖1 - ((1 / c : ℝ) : ℂ) * μ‖ < 1 := (sq_lt_one_iff₀ (norm_nonneg _)).1 hns
-      rw [← NNReal.coe_lt_coe, coe_nnnorm]
+      rw [← NNReal.coe_lt_coe, coe_nnNorm]
       simpa using this
     · rw [Set.mem_singleton_iff] at hν
       simp [hν]

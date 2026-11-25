@@ -74,7 +74,7 @@ example : (1 / 2 : ℝ≥0∞) * volume {x | 1 / 2 < dyadicMaximalFunction f₀ 
 
 example : ∀ᵐ x, dyadicMaximalFunction f₀ x ≤ 1 / 2 → ‖f₀ x‖ₑ ≤ 1 / 2 :=
   (calderon_zygmund (f := f₀)
-    (measurable_const.indicator measurableSet_Ico).enorm.aemeasurable
+    (measurable_const.indicator measurableSet_Ico).eNorm.aemeasurable
     (by rw [lintegral_f₀]; exact ENNReal.one_ne_top)
     (by simp)).2.1
 
@@ -88,7 +88,7 @@ theorem lintegral_f₀_sq : ∫⁻ y, ‖f₀ y‖ₑ ^ (2 : ℝ) = 1 := by
 integrable. -/
 example : ∫⁻ x, dyadicMaximalFunction f₀ x ^ (2 : ℝ) ≠ ∞ := by
   refine ne_top_of_le_ne_top ?_ (lintegral_rpow_dyadicMaximalFunction_le
-    (measurable_const.indicator measurableSet_Ico).enorm.aemeasurable (by norm_num : (1 : ℝ) < 2))
+    (measurable_const.indicator measurableSet_Ico).eNorm.aemeasurable (by norm_num : (1 : ℝ) < 2))
   rw [lintegral_f₀_sq, mul_one]
   exact ENNReal.ofReal_ne_top
 

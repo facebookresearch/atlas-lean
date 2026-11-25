@@ -231,10 +231,10 @@ private theorem kappaOfVec_apply
           if (q : ConfigSpace E × ConfigSpace E) ∈ A then ENNReal.ofReal (c q) else 0 := by
   have hA : MeasurableSet A := DiscreteMeasurableSpace.forall_measurableSet _
   unfold kappaOfVec
-  rw [Measure.finsetSum_apply]
+  rw [sum_apply]
   apply Finset.sum_congr rfl
   intro q _
-  rw [Measure.smul_apply, Measure.dirac_apply' _ hA, smul_eq_mul]
+  rw [smul_apply, Measure.dirac_apply' _ hA, smul_eq_mul]
   by_cases hq : (q : ConfigSpace E × ConfigSpace E) ∈ A <;> simp [hq]
 
 /-- `kappaOfVec c` is a finite measure. -/

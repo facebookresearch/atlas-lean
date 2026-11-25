@@ -175,14 +175,14 @@ section HeckeSubgroup
   one_mem' := by simp
   mul_mem' := by
     intro a b ha hb
-    simp only [Set.mem_setOf_eq] at *
+    simp only [Set.mem_ofPred_eq] at *
     have h : (ℓ : ℤ) ∣ (a.1 * b.1) 0 1 := by
       rw [(Matrix.two_mul_expl a.1 b.1).2.1]
       exact dvd_add (hb.mul_left _) (ha.mul_right _)
     exact h
   inv_mem' := by
     intro a ha
-    simp only [Set.mem_setOf_eq] at *
+    simp only [Set.mem_ofPred_eq] at *
     rw [Matrix.SpecialLinearGroup.SL2_inv_expl a]
     simpa using ha
 

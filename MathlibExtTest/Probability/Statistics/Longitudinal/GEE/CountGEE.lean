@@ -119,12 +119,12 @@ theorem integral_twoPoint {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
     (f : (Unit → ℝ) → F) :
     ∫ y, f y ∂twoPoint = (2⁻¹ : ℝ) • (f (fun _ => 0) + f (fun _ => 2)) := by
   rw [twoPoint, integral_smul_measure,
-    integral_add_measure (integrable_dirac enorm_lt_top) (integrable_dirac enorm_lt_top),
+    integral_add_measure (integrable_dirac eNorm_lt_top) (integrable_dirac eNorm_lt_top),
     integral_dirac, integral_dirac]
   simp
 
 theorem memLp_twoPoint (t : Unit) : MemLp (fun y : Unit → ℝ => y t) 2 twoPoint :=
-  ((memLp_dirac enorm_lt_top).add_measure (memLp_dirac enorm_lt_top)).smul_measure (by simp)
+  ((memLp_dirac eNorm_lt_top).add_measure (memLp_dirac eNorm_lt_top)).smul_measure (by simp)
 
 theorem integrable_twoPoint (t : Unit) : Integrable (fun y : Unit → ℝ => y t) twoPoint :=
   (memLp_twoPoint t).integrable one_le_two
@@ -159,7 +159,7 @@ theorem integrable_compProd_twoPoint {F : Type*} [NormedAddCommGroup F]
     (f : (Unit → ℝ) × (Unit → ℝ) → F) :
     Integrable f (Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint) := by
   rw [compProd_twoPoint]
-  exact ((integrable_dirac enorm_lt_top).add_measure (integrable_dirac enorm_lt_top)).smul_measure
+  exact ((integrable_dirac eNorm_lt_top).add_measure (integrable_dirac eNorm_lt_top)).smul_measure
     (by simp)
 
 theorem integral_compProd_twoPoint {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
@@ -167,7 +167,7 @@ theorem integral_compProd_twoPoint {F : Type*} [NormedAddCommGroup F] [NormedSpa
     ∫ z, f z ∂(Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint) =
       (2⁻¹ : ℝ) • (f (x₀, fun _ => 0) + f (x₀, fun _ => 2)) := by
   rw [compProd_twoPoint, integral_smul_measure,
-    integral_add_measure (integrable_dirac enorm_lt_top) (integrable_dirac enorm_lt_top),
+    integral_add_measure (integrable_dirac eNorm_lt_top) (integrable_dirac eNorm_lt_top),
     integral_dirac, integral_dirac]
   simp
 

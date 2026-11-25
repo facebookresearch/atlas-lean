@@ -70,7 +70,7 @@ private theorem poly_eq_of_forall_ne_zero (p q : K[X]) (h : ∀ s : K, s ≠ 0 �
     apply Polynomial.eq_zero_of_infinite_isRoot
     apply hinf.mono
     intro s hs
-    simp only [Set.mem_setOf_eq, IsRoot.def, eval_sub, h s hs, sub_self]
+    simp only [Set.mem_ofPred_eq, IsRoot.def, eval_sub, h s hs, sub_self]
   exact sub_eq_zero.mp h0
 
 private theorem eq_X_pow_of_mul : ∀ (N : ℕ) (p : K[X]), p.natDegree ≤ N →

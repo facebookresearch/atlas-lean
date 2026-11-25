@@ -112,7 +112,7 @@ theorem infinite_tail_masses :
     infiniteTailMeasure (Set.Ioi (0 : ℝ)) = 1 ∧
     infiniteTailMeasure Set.univ = ⊤ := by
   refine ⟨?_, ?_, ?_⟩ <;>
-    norm_num [infiniteTailMeasure, Measure.add_apply, Measure.smul_apply,
+    norm_num [infiniteTailMeasure, add_apply, smul_apply,
       Measure.dirac_apply, smul_eq_mul]
 
 /-- The real projection loses the infinite left mass, leaving a positive denominator

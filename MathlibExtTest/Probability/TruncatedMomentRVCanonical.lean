@@ -104,7 +104,7 @@ example :
     combinedTail (Measure.dirac (-1 : ℝ) + Measure.dirac (1 : ℝ)) 1 = 0 := by
   refine ⟨tailGe_eq_combinedTail_add_atoms _ (by norm_num), ?_, ?_⟩ <;>
     norm_num [combinedTail, rightTail, leftTail, tailGe,
-      Measure.add_apply, Measure.dirac_apply]
+      add_apply, Measure.dirac_apply]
 
 -- Zero mass is finite and is not a probability law.
 example : tailGe (0 : Measure ℝ) 1 = combinedTail (0 : Measure ℝ) 1 +

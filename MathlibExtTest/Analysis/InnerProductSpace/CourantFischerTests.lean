@@ -195,7 +195,7 @@ noncomputable def testAxis : Submodule ℝ (EuclideanSpace ℝ (Fin 2)) :=
   Submodule.span ℝ {EuclideanSpace.single 0 1}
 
 instance : CompleteSpace testAxis :=
-  FiniteDimensional.complete (𝕜 := ℝ) (E := ↥testAxis)
+  FiniteDimensional.completeSpace (𝕜 := ℝ) (E := ↥testAxis)
 
 instance : testAxis.HasOrthogonalProjection :=
   Submodule.HasOrthogonalProjection.ofCompleteSpace (K := testAxis)

@@ -44,7 +44,7 @@ private lemma upperTail_four_fairCoin_eq (k : ℕ) :
       ∑ j ∈ ({0, 1, 2, 3, 4} : Finset ℕ), if k ≤ j then (4 : ℕ).choose j / (16 : ℝ) else 0 := by
   rw [upperTail, binomial_eq_sum_dirac, measureReal_def, Measure.coe_finsetSum, Finset.sum_apply,
     show Iic 4 = ({0, 1, 2, 3, 4} : Finset ℕ) by decide]
-  simp only [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply' _ (.of_discrete)]
+  simp only [smul_apply, smul_eq_mul, Measure.dirac_apply' _ (.of_discrete)]
   rw [ENNReal.toReal_sum fun j _ => ENNReal.mul_ne_top ENNReal.ofReal_ne_top
     (by unfold Set.indicator; split_ifs <;> simp)]
   refine Finset.sum_congr rfl fun j hj => ?_

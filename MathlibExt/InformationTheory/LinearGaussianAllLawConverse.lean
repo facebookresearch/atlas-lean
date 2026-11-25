@@ -419,7 +419,7 @@ theorem measureMutualInformation_dirac_compProd_noiseKernel_le {ι κ : Type*} [
           inferInstance⟩ : ProbabilityMeasure (EuclideanSpace ℝ κ × EuclideanSpace ℝ ι)) ≤
       ENNReal.ofReal
         (Real.log ((R + H * (0 : Matrix κ κ ℝ) * Hᵀ).det / R.det) / (2 * Real.log 2)) := by
-  have hMem : MemLp id 2 (Measure.dirac c) := memLp_dirac enorm_lt_top
+  have hMem : MemLp id 2 (Measure.dirac c) := memLp_dirac eNorm_lt_top
   have hK0 : ∀ a b, cov[fun x : EuclideanSpace ℝ κ => x a, fun x => x b; Measure.dirac c]
       = (0 : Matrix κ κ ℝ) a b := by
     intro a b
@@ -450,12 +450,12 @@ theorem measureMutualInformation_twoPoint_compProd_noiseKernel_le {ι κ : Type*
     norm_num at h12r
   have hIntSmul : ∀ (f : EuclideanSpace ℝ κ → ℝ) (p : EuclideanSpace ℝ κ),
       Integrable f ((1 / 2 : ℝ≥0∞) • Measure.dirac p) :=
-    fun f p => (((memLp_dirac enorm_lt_top : MemLp f 2 (Measure.dirac p)).integrable
+    fun f p => (((memLp_dirac eNorm_lt_top : MemLp f 2 (Measure.dirac p)).integrable
       (by simp)).smul_measure h12)
   have hMem : MemLp id 2 ρ := by
     rw [hρ]
-    exact ((memLp_dirac enorm_lt_top).smul_measure h12).add_measure
-      ((memLp_dirac enorm_lt_top).smul_measure h12)
+    exact ((memLp_dirac eNorm_lt_top).smul_measure h12).add_measure
+      ((memLp_dirac eNorm_lt_top).smul_measure h12)
   have hcoordMem : ∀ i, MemLp (fun x : EuclideanSpace ℝ κ => x i) 2 ρ :=
     fun i => hMem.eval_piLp i
   have hmean : ∀ i, ∫ x, x i ∂ρ = c i := by
@@ -588,7 +588,7 @@ theorem not_measureMutualInformation_noiseless_le :
   have hBilinDirac : ∀ (z) (x y : EuclideanSpace ℝ (Fin 1)),
       ProbabilityTheory.covarianceBilin (Measure.dirac z) x y = 0 := by
     intro z x y
-    have hMem : MemLp id 2 (Measure.dirac z) := memLp_dirac enorm_lt_top
+    have hMem : MemLp id 2 (Measure.dirac z) := memLp_dirac eNorm_lt_top
     rw [ProbabilityTheory.covarianceBilin_apply_eq_cov hMem]
     simp only [ProbabilityTheory.covariance, integral_dirac]
     rw [sub_self, zero_mul]

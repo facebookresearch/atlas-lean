@@ -46,7 +46,7 @@ example (T : EuclideanSpace 𝕜 (Fin 2) →L[𝕜] EuclideanSpace 𝕜 (Fin 2))
     IsClosed (LinearMap.range (ContinuousLinearMap.adjoint T).toLinearMap :
       Set (EuclideanSpace 𝕜 (Fin 2))) := by
   apply (ContinuousLinearMap.isClosed_range_adjoint_iff T).mp
-  exact Submodule.closed_of_finiteDimensional _
+  exact Submodule.isClosed_of_finiteDimensional _
 
 /-- The kernel-complement restriction does not change the range. -/
 example (S : E →L[𝕜] E) :

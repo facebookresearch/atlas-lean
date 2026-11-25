@@ -84,9 +84,9 @@ lemma measOfMass_apply (μ : ConfigSpace E → ℝ) (A : Set (ConfigSpace E)) :
       = ∑ ω : ConfigSpace E, if ω ∈ A then ENNReal.ofReal (μ ω) else 0 := by
   have hA : MeasurableSet A := DiscreteMeasurableSpace.forall_measurableSet _
   unfold measOfMass
-  rw [Measure.finsetSum_apply]
+  rw [sum_apply]
   refine Finset.sum_congr rfl (fun ω _ => ?_)
-  rw [Measure.smul_apply, Measure.dirac_apply' _ hA, smul_eq_mul]
+  rw [smul_apply, Measure.dirac_apply' _ hA, smul_eq_mul]
   by_cases hω : ω ∈ A <;> simp [hω]
 
 /-- `measOfMass μ` is a finite measure. -/

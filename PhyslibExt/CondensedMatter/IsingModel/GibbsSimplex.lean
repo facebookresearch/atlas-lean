@@ -130,8 +130,8 @@ lemma trim_smul {Ω : Type*} {m mΩ : MeasurableSpace Ω}
     (μ : @Measure Ω mΩ) (hm : m ≤ mΩ) (a : ℝ≥0∞) :
     (a • μ).trim hm = a • (μ.trim hm) :=
   @Measure.ext _ m _ _ (fun s hs => by
-    rw [Measure.smul_apply, trim_measurableSet_eq hm hs, trim_measurableSet_eq hm hs,
-      Measure.smul_apply])
+    rw [smul_apply, trim_measurableSet_eq hm hs, trim_measurableSet_eq hm hs,
+      smul_apply])
 
 /-! ## B. Measurability -/
 
@@ -204,8 +204,8 @@ lemma meas_fvMeasure_coe (n : ℕ) (B : Finset (Sym2 (Site d))) (β h : ℝ)
           ENNReal.ofReal (fvProb η n B β h τ) * (Measure.dirac (glue η τ)) s) := by
     funext η
     unfold fvMeasure
-    rw [Measure.finsetSum_apply]
-    simp only [Measure.smul_apply, smul_eq_mul]
+    rw [sum_apply]
+    simp only [smul_apply, smul_eq_mul]
   rw [heq]
   refine Finset.measurable_sum _ (fun τ _ => ?_)
   exact (ENNReal.measurable_ofReal.comp (meas_fvProb n B β h τ)).mul (meas_dirac_glue n τ hs)

@@ -82,10 +82,10 @@ theorem isProbabilityMeasure_lossLaw {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
     IsProbabilityMeasure (lossLaw p X) := by
   refine ⟨?_⟩
   unfold lossLaw
-  rw [MeasureTheory.Measure.finsetSum_apply]
+  rw [sum_apply]
   have hdirac : ∀ a : ℝ, (Measure.dirac a) univ = 1 :=
     fun a => Measure.dirac_apply_of_mem (mem_univ a)
-  simp only [MeasureTheory.Measure.smul_apply, hdirac, smul_eq_mul, mul_one]
+  simp only [smul_apply, hdirac, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg (fun i _ => hp i), hp1, ENNReal.ofReal_one]
 
 /-- For nonnegative weights `p` summing to one, the cdf of the loss law at `x` is the total
@@ -98,10 +98,10 @@ theorem cdf_lossLaw_eq {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
   have hsum : (lossLaw p X) (Iic x) =
       ∑ ω ∈ Finset.univ.filter (fun ω => X ω ≤ x), ENNReal.ofReal (p ω) := by
     unfold lossLaw
-    rw [MeasureTheory.Measure.finsetSum_apply, Finset.sum_filter]
+    rw [sum_apply, Finset.sum_filter]
     apply Finset.sum_congr rfl
     intro ω _
-    rw [MeasureTheory.Measure.smul_apply]
+    rw [smul_apply]
     by_cases hx : X ω ≤ x
     · have hmem : X ω ∈ Iic x := hx
       simp [Measure.dirac_apply_of_mem hmem, hx]

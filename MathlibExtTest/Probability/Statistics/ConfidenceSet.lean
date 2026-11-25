@@ -212,7 +212,7 @@ example :
     have h0 : (Measure.dirac false) {true} = 0 :=
       (dirac_eq_zero_iff_not_mem hmeas).mpr (by simp)
     unfold fairCoin
-    rw [measureReal_def, Measure.smul_apply, Measure.add_apply, h1, h0, add_zero,
+    rw [measureReal_def, smul_apply, add_apply, h1, h0, add_zero,
       smul_eq_mul, mul_one]
     simp
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
@@ -249,7 +249,7 @@ example :
     have h0 : (Measure.dirac false) {true} = 0 :=
       (dirac_eq_zero_iff_not_mem hmeas).mpr (by simp)
     unfold fairCoin
-    rw [measureReal_def, Measure.smul_apply, Measure.add_apply, h1, h0, add_zero,
+    rw [measureReal_def, smul_apply, add_apply, h1, h0, add_zero,
       smul_eq_mul, mul_one]
     simp
   refine ⟨?_, ?_, ?_⟩
@@ -338,7 +338,7 @@ example : ∃ (α : ℝ), (0 : ℝ) < α ∧ α ≤ 1 / 2 ∧
     ENNReal.ofReal (1 / 2) • Measure.dirac 0 + ENNReal.ofReal (1 / 2) • Measure.dirac 1 with hP
   have hc0 : (0 : ℝ) ≤ 1 / 2 := by norm_num
   have hPuniv : P Set.univ = 1 := by
-    rw [hP, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul, smul_eq_mul,
+    rw [hP, add_apply, smul_apply, smul_apply, smul_eq_mul, smul_eq_mul,
       Measure.dirac_apply_of_mem (Set.mem_univ (0 : Fin 4)),
       Measure.dirac_apply_of_mem (Set.mem_univ (1 : Fin 4)), mul_one,
       ← ENNReal.ofReal_add hc0 hc0]
@@ -349,7 +349,7 @@ example : ∃ (α : ℝ), (0 : ℝ) < α ∧ α ≤ 1 / 2 ∧
   have h01 : (0 : Fin 4) ≠ 1 := by decide
   have hm0 : P.real ({0} : Set (Fin 4)) = 1 / 2 := by
     have h0 : P {0} = ENNReal.ofReal (1 / 2) := by
-      rw [hP, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul, smul_eq_mul,
+      rw [hP, add_apply, smul_apply, smul_apply, smul_eq_mul, smul_eq_mul,
         Measure.dirac_apply_of_mem (Set.mem_singleton (0 : Fin 4)),
         Measure.dirac_apply (1 : Fin 4) ({0} : Set (Fin 4)),
         Set.indicator_of_notMem (by simp) _]
@@ -358,7 +358,7 @@ example : ∃ (α : ℝ), (0 : ℝ) < α ∧ α ≤ 1 / 2 ∧
     rw [h0, ENNReal.toReal_ofReal hc0]
   have hm1 : P.real ({1} : Set (Fin 4)) = 1 / 2 := by
     have h1 : P {1} = ENNReal.ofReal (1 / 2) := by
-      rw [hP, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul, smul_eq_mul,
+      rw [hP, add_apply, smul_apply, smul_apply, smul_eq_mul, smul_eq_mul,
         Measure.dirac_apply (0 : Fin 4) ({1} : Set (Fin 4)),
         Set.indicator_of_notMem (by simp) _,
         Measure.dirac_apply_of_mem (Set.mem_singleton (1 : Fin 4))]

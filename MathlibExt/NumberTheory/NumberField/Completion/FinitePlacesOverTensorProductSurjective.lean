@@ -233,7 +233,7 @@ theorem completionTensorProductMap_surjective :
   let _ : FiniteDimensional (v.adicCompletion K) s := inferInstance
   have hsClosed : IsClosed (s : Set ((w : v.placesOver L) →
       w.val.adicCompletion L)) := by
-    exact Submodule.closed_of_finiteDimensional
+    exact Submodule.isClosed_of_finiteDimensional
       (𝕜 := v.adicCompletion K)
       (E := ((w : v.placesOver L) → w.val.adicCompletion L)) s
   have hDense : DenseRange f :=

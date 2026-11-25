@@ -133,7 +133,7 @@ theorem spectralRadius_le_one_of_rowSum_le_one [Nonempty n] {K : Matrix n n ℝ}
   classical
   let _ : NormedRing (Matrix n n ℂ) := Matrix.linftyOpNormedRing
   let _ : NormedAlgebra ℂ (Matrix n n ℂ) := Matrix.linftyOpNormedAlgebra
-  have _ : CompleteSpace (Matrix n n ℂ) := FiniteDimensional.complete ℂ _
+  have _ : CompleteSpace (Matrix n n ℂ) := FiniteDimensional.completeSpace ℂ _
   have _ : NormOneClass (Matrix n n ℂ) := Matrix.linfty_opNormOneClass
   refine (spectralRadius_le_nnnorm _).trans ?_
   have : ‖K.map (algebraMap ℝ ℂ)‖₊ ≤ 1 := by

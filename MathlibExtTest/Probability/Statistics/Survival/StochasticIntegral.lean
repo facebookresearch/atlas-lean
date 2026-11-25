@@ -237,7 +237,7 @@ noncomputable def boolP : Measure Bool := (2⁻¹ : ℝ≥0∞) • Measure.coun
 
 instance : IsProbabilityMeasure boolP :=
   ⟨by
-    simp only [boolP, Measure.smul_apply, smul_eq_mul, Measure.count_univ]
+    simp only [boolP, smul_apply, smul_eq_mul, Measure.count_univ]
     simp [ENNReal.inv_mul_cancel]⟩
 
 /-- The cumulative hazard `α = (0, 1/2, 1/2, …)`: hazard `1/2` at step `1`, none afterwards. -/

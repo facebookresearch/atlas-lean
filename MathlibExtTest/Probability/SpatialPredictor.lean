@@ -33,8 +33,8 @@ noncomputable def twoPoint : MeasureTheory.Measure Bool :=
 
 instance : MeasureTheory.IsProbabilityMeasure twoPoint := by
   refine ⟨?_⟩
-  simp [twoPoint, MeasureTheory.Measure.add_apply,
-    MeasureTheory.Measure.smul_apply, ENNReal.inv_two_add_inv_two]
+  simp [twoPoint, add_apply,
+    smul_apply, ENNReal.inv_two_add_inv_two]
 
 /-- Constant family on `Unit`: predictor mean equals target mean. -/
 example : ∫ _ω : Unit, (∑ i : Fin 1, (fun _ : Fin 1 => (1 : ℝ)) i

@@ -779,7 +779,7 @@ theorem countLaw_singleton [Finite S] (p : (S → ℕ) → ℝ) (x : S → ℕ) 
     countLaw p {x} = ENNReal.ofReal (p x) := by
   classical
   rw [countLaw, Measure.sum_apply _ (measurableSet_singleton x)]
-  simp only [Measure.smul_apply, Measure.dirac_apply' _ (measurableSet_singleton x),
+  simp only [smul_apply, Measure.dirac_apply' _ (measurableSet_singleton x),
     Set.indicator, Set.mem_singleton_iff, Pi.one_apply, smul_eq_mul, mul_ite, mul_one,
     mul_zero]
   exact tsum_ite_eq x _
@@ -788,7 +788,7 @@ theorem isProbabilityMeasure_countLaw {p : (S → ℕ) → ℝ} (hp : ∀ x, 0 �
     IsProbabilityMeasure (countLaw p) := by
   constructor
   rw [countLaw, Measure.sum_apply _ MeasurableSet.univ]
-  simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  simp only [smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_tsum_of_nonneg hp h1.summable, h1.tsum_eq, ENNReal.ofReal_one]
 
 /-- Integrals against `countLaw p` are the weighted sums `∑ₓ p x f x`. -/

@@ -30,7 +30,7 @@ private noncomputable def bernMeas (θ : Bool) : Measure Bool :=
 private instance isProbabilityMeasure_bernMeas (θ : Bool) : IsProbabilityMeasure (bernMeas θ) :=
   ⟨by
     cases θ <;> simp only [bernMeas, Bool.false_eq_true, ite_true, ite_false,
-      Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one] <;>
+      add_apply, smul_apply, measure_univ, smul_eq_mul, mul_one] <;>
     rw [ENNReal.div_add_div_same] <;> norm_num [ENNReal.div_self]⟩
 
 /-- The Bernoulli family as probability measures. -/

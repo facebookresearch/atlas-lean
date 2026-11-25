@@ -32,7 +32,7 @@ private lemma sq_ofReal_abs (x : ℝ) : ENNReal.ofReal |x| ^ 2 = ENNReal.ofReal 
 theorem layer_energy (f : ℝ) :
     ‖(3 / 5 : ℝ) * f‖ₑ ^ 2 + ∑' _ : Unit, ‖(4 / 5 : ℝ) * |f|‖ₑ ^ 2 = ‖f‖ₑ ^ 2 := by
   simp only [tsum_fintype, Finset.univ_unique, Finset.sum_singleton,
-    Real.enorm_eq_ofReal_abs, sq_ofReal_abs]
+    Real.eNorm_eq_ofReal_abs, sq_ofReal_abs]
   rw [← ENNReal.ofReal_add (sq_nonneg _) (sq_nonneg _)]
   congr 1
   rw [mul_pow, mul_pow, sq_abs]

@@ -45,7 +45,7 @@ noncomputable def ν : Measure (Bool × Bool) := (4 : ENNReal)⁻¹ • Measure.
 
 instance : IsProbabilityMeasure ν := ⟨by
   have h4 : ((4 : ℕ) : ENNReal) = 4 := by norm_num
-  simp only [ν, Measure.smul_apply, Measure.count_univ, ENat.card_eq_coe_fintype_card,
+  simp only [ν, smul_apply, Measure.count_univ, ENat.card_eq_coe_fintype_card,
     Fintype.card_prod, Fintype.card_bool, smul_eq_mul]
   norm_num
   exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)⟩

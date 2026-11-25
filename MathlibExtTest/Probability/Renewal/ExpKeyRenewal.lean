@@ -201,7 +201,7 @@ example {θ : ℝ} : Tendsto (fun t => exp (θ * t) * Zθ θ t) atTop (𝓝 (1 +
 example : (Gθ 1).real univ = 1 / 2 := by
   have := isProbabilityMeasure_expMeasure (show (0 : ℝ) < 1 + 1 by norm_num)
   show (ENNReal.ofReal (1 + 1 : ℝ)⁻¹ • expMeasure (1 + 1)).real univ = 1 / 2
-  rw [measureReal_def, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one,
+  rw [measureReal_def, smul_apply, measure_univ, smul_eq_mul, mul_one,
     ENNReal.toReal_ofReal (by norm_num)]
   norm_num
 

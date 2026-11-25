@@ -385,7 +385,7 @@ theorem submersionAt_of_surjective_mfderiv
     (hn : 1 ≤ n) (hfn : ∀ᶠ y in 𝓝 x, ContMDiffAt I J n f y)
     (hderiv : Function.Surjective (mfderiv I J f x)) :
     IsSubmersionAt I J n f x := by
-  let _ : CompleteSpace E := FiniteDimensional.complete 𝕜 E
+  let _ : CompleteSpace E := FiniteDimensional.completeSpace 𝕜 E
   exact Manifold.IsSubmersionAt.of_surjective_mfderiv hn hfn hderiv
 
 end MathlibExt.Geometry.Manifold.SubmersionOfSurjectiveMFDerivWanted

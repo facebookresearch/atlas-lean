@@ -113,7 +113,7 @@ noncomputable def coin : Measure Bool := (2 : ℝ≥0∞)⁻¹ • (Measure.dira
 
 instance : IsProbabilityMeasure coin := by
   constructor
-  rw [coin, Measure.smul_apply, Measure.add_apply, measure_univ, measure_univ, one_add_one_eq_two,
+  rw [coin, smul_apply, add_apply, measure_univ, measure_univ, one_add_one_eq_two,
     smul_eq_mul, ENNReal.inv_mul_cancel two_ne_zero ENNReal.ofNat_ne_top]
 
 theorem integral_coin (f : Bool → ℝ) : ∫ ω, f ω ∂coin = (f true + f false) / 2 := by
@@ -219,7 +219,7 @@ theorem coin_event_prob : coin {ω | eventInd (tc 1 ω) (dc 1 ω) 0 0 = 1} = 2�
   have hset : {ω | eventInd (tc 1 ω) (dc 1 ω) 0 0 = 1} = {true} := by
     ext ω
     cases ω <;> simp [eventInd, tc, dc]
-  rw [hset, coin, Measure.smul_apply, Measure.add_apply,
+  rw [hset, coin, smul_apply, add_apply,
     Measure.dirac_apply_of_mem (Set.mem_singleton true),
     Measure.dirac_apply' _ (measurableSet_singleton true)]
   simp
@@ -232,7 +232,7 @@ noncomputable def unif3 : Measure (Fin 3) :=
 
 instance : IsProbabilityMeasure unif3 := by
   constructor
-  rw [unif3, Measure.smul_apply, Measure.add_apply, Measure.add_apply, measure_univ, measure_univ,
+  rw [unif3, smul_apply, add_apply, add_apply, measure_univ, measure_univ,
     measure_univ, smul_eq_mul, show (1 : ℝ≥0∞) + 1 + 1 = 3 by norm_num,
     ENNReal.inv_mul_cancel (by norm_num) ENNReal.ofNat_ne_top]
 
@@ -345,7 +345,7 @@ theorem prob_scoreIncr_fin3_ne_zero :
   have hset : {ω | scoreIncr (t3 2 ω) (d3 2 ω) (z3 2 ω) 0 0 ≠ 0} = {0, 1} := by
     ext ω
     fin_cases ω <;> simp [scoreIncr_fin3]
-  rw [hset, unif3, Measure.smul_apply, Measure.add_apply, Measure.add_apply]
+  rw [hset, unif3, smul_apply, add_apply, add_apply]
   simp [Measure.dirac_apply', Set.indicator]
   rw [ENNReal.div_eq_inv_mul, one_add_one_eq_two, mul_comm]
 

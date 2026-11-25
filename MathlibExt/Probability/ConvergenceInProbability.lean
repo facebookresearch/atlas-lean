@@ -68,7 +68,7 @@ theorem tendstoInMeasure_iff_tendsto_measure_abs_sub
       apply measure_mono
       intro ω hω
       simp only [Set.mem_ofPred_eq] at hω ⊢
-      rw [Real.enorm_eq_ofReal_abs]
+      rw [Real.eNorm_eq_ofReal_abs]
       exact ENNReal.ofReal_le_ofReal (le_of_lt hω)
   · intro hconv
     rw [tendstoInMeasure_iff_enorm]
@@ -82,7 +82,7 @@ theorem tendstoInMeasure_iff_tendsto_measure_abs_sub
       apply measure_mono
       intro ω hω
       simp only [Set.mem_ofPred_eq] at hω ⊢
-      rw [Real.enorm_eq_ofReal_abs] at hω
+      rw [Real.eNorm_eq_ofReal_abs] at hω
       have h1 : δ ≤ |X n ω - Y ω| :=
         ENNReal.toReal_le_of_le_ofReal (abs_nonneg _) hω
       linarith

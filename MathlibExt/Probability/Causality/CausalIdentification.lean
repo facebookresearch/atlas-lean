@@ -598,7 +598,7 @@ theorem setIntegral_inter_eq_propensity_mul [IsFiniteMeasure μ] {T : Set Ω}
   have hmeas : (μ.restrict (T ∩ A)).map Y =
       ENNReal.ofReal (propensity μ T X x) • (μ.restrict A).map Y := by
     ext B hB
-    rw [Measure.map_apply hY hB, Measure.smul_apply, Measure.map_apply hY hB,
+    rw [Measure.map_apply hY hB, smul_apply, Measure.map_apply hY hB,
       Measure.restrict_apply (hY hB), Measure.restrict_apply (hY hB), smul_eq_mul,
       ← ofReal_measureReal, ← ofReal_measureReal, ← ENNReal.ofReal_mul he]
     congr 1

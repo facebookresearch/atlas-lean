@@ -240,7 +240,7 @@ noncomputable def μ₀ : Measure Ω₀ := (4⁻¹ : ℝ≥0∞) • Measure.cou
 
 instance : IsProbabilityMeasure μ₀ :=
   ⟨by
-    simp only [μ₀, Measure.smul_apply, smul_eq_mul, Measure.count_univ]
+    simp only [μ₀, smul_apply, smul_eq_mul, Measure.count_univ]
     rw [show (ENat.card Ω₀ : ℝ≥0∞) = 4 by simp [ENat.card_eq_coe_fintype_card]]
     exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)⟩
 

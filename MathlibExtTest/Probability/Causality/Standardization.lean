@@ -41,7 +41,7 @@ instance : IsProbabilityMeasure testMu := ⟨by
     rw [← Finset.coe_univ, Measure.count_apply_finset]
     simp
   unfold testMu
-  rw [Measure.smul_apply, smul_eq_mul, hcount]
+  rw [smul_apply, smul_eq_mul, hcount]
   exact ENNReal.inv_mul_cancel (by norm_num) (by norm_num)
 ⟩
 
@@ -111,7 +111,7 @@ theorem condIndepDiscrete_of_comp {Ω 𝒳 β : Type*} [MeasurableSpace Ω] [Mea
 theorem testMu_single (a : Fin 8) : testMu.real {a} = 1 / 8 := by
   have h : testMu {a} = (8 : ℝ≥0∞)⁻¹ := by
     unfold testMu
-    rw [Measure.smul_apply, smul_eq_mul, Measure.count_singleton, mul_one]
+    rw [smul_apply, smul_eq_mul, Measure.count_singleton, mul_one]
   unfold Measure.real
   rw [h]
   norm_num [ENNReal.toReal_inv]

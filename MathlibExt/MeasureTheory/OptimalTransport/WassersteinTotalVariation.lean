@@ -91,9 +91,9 @@ theorem wasserstein_one_le_mul_totalVariationDist {X : Type*} [PseudoEMetricSpac
     exact ne_top_of_le_ne_top (measure_ne_top μ' univ) this
   have hab : β univ = a := by
     have h1 : α univ + m univ = 1 := by
-      rw [← Measure.add_apply, hμ]; exact measure_univ
+      rw [← add_apply, hμ]; exact measure_univ
     have h2 : β univ + m univ = 1 := by
-      rw [← Measure.add_apply, hν]; exact measure_univ
+      rw [← add_apply, hν]; exact measure_univ
     exact (ENNReal.add_left_inj hm_fin).1 (h2.trans h1.symm)
   have ha_fin : a ≠ ∞ := by
     have : a ≤ μ' univ := by rw [← hμ]; simp [a]

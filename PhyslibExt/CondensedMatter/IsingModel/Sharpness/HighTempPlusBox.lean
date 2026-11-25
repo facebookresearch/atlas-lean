@@ -311,7 +311,7 @@ lemma integral_gvMeasure_eq_sum (eta : ConfigSpace (Site d))
     rw [integral_smul_measure, integral_dirac, smul_eq_mul,
       ENNReal.toReal_ofReal (gvProb_nonneg eta Lambda beta h tau)]
   · intro tau _
-    exact (integrable_dirac (by simp [enorm_eq_nnnorm])).smul_measure (by simp)
+    exact (integrable_dirac (by simp [eNorm_eq_nnNorm])).smul_measure (by simp)
 
 lemma spinProd_sourcePair {V : Type*} [Fintype V] [DecidableEq V]
     (tau : ConfigSpace V) (a b : V) :

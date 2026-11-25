@@ -75,7 +75,7 @@ lemma gec_convexSummand_eq_on_clopen {μ ν₁ ν₂ : Measure (ConfigSpace E)} 
   set α := a.toReal with hα
   set β := b.toReal with hβ
   have hμA : μ A = a * ν₁ A + b * ν₂ A := by
-    rw [hconv]; simp [Measure.add_apply, Measure.smul_apply]
+    rw [hconv]; simp [add_apply, smul_apply]
   have hreal : p = α * p₁ + β * p₂ := by
     rw [hp, hp1, hp2, hα, hβ]
     unfold Measure.real
@@ -122,7 +122,7 @@ lemma gec_min_extreme [Countable E] {μ ν₁ ν₂ : Measure (ConfigSpace E)} {
       s ≠ ⊤ → t ≠ ⊤ → μ = s • w₁ + t • w₂ → μ ≼c w₁ → μ ≼c w₂ → w₁ ≼c μ := by
     intro w₁ w₂ s t hw1 hw2 hs ht hst hsT htT hcv hm1 hm2 A hAcl hAu
     have hμA : μ A = s * w₁ A + t * w₂ A := by
-      rw [hcv]; simp [Measure.add_apply, Measure.smul_apply]
+      rw [hcv]; simp [add_apply, smul_apply]
     have hreal : μ.real A = s.toReal * w₁.real A + t.toReal * w₂.real A := by
       unfold Measure.real
       rw [hμA, ENNReal.toReal_add (ENNReal.mul_ne_top hsT (measure_ne_top w₁ A))

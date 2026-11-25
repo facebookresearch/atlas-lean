@@ -435,7 +435,7 @@ theorem isProbabilityMeasure_caseControl [IsProbabilityMeasure μ] (hLm : Measur
     ring
   have hfin : (caseControl μ L t P) Set.univ ≠ ∞ := by
     unfold caseControl
-    simp [Measure.add_apply, ENNReal.mul_eq_top, measure_ne_top]
+    simp [add_apply, ENNReal.mul_eq_top, measure_ne_top]
   rw [← ENNReal.ofReal_toReal hfin, ← Measure.real_def, h1, ENNReal.ofReal_one]
 
 /-- Cases have mass `P` under the case-control law, when `μ` is a probability measure, `L` is

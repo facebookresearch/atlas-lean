@@ -211,7 +211,7 @@ private theorem lintegral_enorm_indicator_le
     ∫⁻ a in {ω | n < T ω}, ‖X n a‖ₑ ∂μ ≤
       (∫⁻ a, ‖X 0 a‖ₑ ∂μ) * μ {ω | n < T ω} := by
   simp_rw [show ∀ (g : ℕ → Ω → ℝ) (k : ℕ) (a : Ω), ‖g k a‖ₑ = .ofReal ‖g k a‖ from
-    fun g k a => by rw [Real.enorm_eq_ofReal_abs, Real.norm_eq_abs]]
+    fun g k a => by rw [Real.eNorm_eq_ofReal_abs, Real.norm_eq_abs]]
   have hint_norm : Integrable (fun ω => ‖X 0 ω‖) μ := hX_int.norm
   have hiid_norm : ∀ i j, IdentDistrib (fun ω => ‖X i ω‖) (fun ω => ‖X j ω‖) μ μ :=
     fun i j => (hX_iid i j).comp measurable_norm

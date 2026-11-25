@@ -243,7 +243,7 @@ theorem tailLaw_le {a : ℕ → ℝ} (ha : Antitone a) (h0 : Tendsto a atTop (�
       ∑' n, ENNReal.ofReal ({n | m ≤ n}.indicator (fun n => a n - a (n + 1)) n) := by
     rw [tailLaw, Measure.sum_apply _ (.of_discrete)]
     refine tsum_congr fun n => ?_
-    rw [Measure.smul_apply, Measure.dirac_apply' _ (.of_discrete), smul_eq_mul]
+    rw [smul_apply, Measure.dirac_apply' _ (.of_discrete), smul_eq_mul]
     by_cases hn : m ≤ n
     · simp [Set.indicator_of_mem (show n ∈ {n | m ≤ n} from hn)]
     · simp [Set.indicator_of_notMem (show n ∉ {n | m ≤ n} from hn)]

@@ -240,8 +240,8 @@ theorem rayleighQuotient_testFunction {n : ℕ}
             ‖fderiv ℝ (f : EuclideanSpace ℝ (Fin n) → ℝ) x‖ₑ := by
           rw [show (‖fderiv ℝ (f : EuclideanSpace ℝ (Fin n) → ℝ) x‖ : ℝ) =
             (((‖fderiv ℝ (f : EuclideanSpace ℝ (Fin n) → ℝ) x‖₊ : ℝ≥0)) : ℝ)
-            by rw [coe_nnnorm]]
-          rw [ENNReal.ofReal_coe_nnreal, enorm_eq_nnnorm]
+            by rw [coe_nnNorm]]
+          rw [ENNReal.ofReal_coe_nnreal, eNorm_eq_nnNorm]
         rw [ENNReal.ofReal_pow hnn 2, h1]
       rw [hbase]
       exact congrArg _ (funext hpt)
@@ -258,7 +258,7 @@ theorem rayleighQuotient_testFunction {n : ℕ}
           ENNReal.ofReal (|(f : EuclideanSpace ℝ (Fin n) → ℝ) x| ^ 2) =
             (‖(f : EuclideanSpace ℝ (Fin n) → ℝ) x‖ₑ ^ 2) := by
         intro x
-        rw [ENNReal.ofReal_pow (abs_nonneg _) 2, ← Real.enorm_eq_ofReal_abs _]
+        rw [ENNReal.ofReal_pow (abs_nonneg _) 2, ← Real.eNorm_eq_ofReal_abs _]
       rw [hbase]
       exact congrArg _ (funext hpt)
     have henergy_eq : dirichletEnergy 𝓘(ℝ, EuclideanSpace ℝ (Fin n))

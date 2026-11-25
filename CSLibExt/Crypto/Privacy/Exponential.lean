@@ -89,7 +89,7 @@ theorem expMechanism_apply (ε Δ : ℝ) (u : X → R → ℝ) (x : X) (S : Set 
     ENNReal.ofReal_sum_of_nonneg fun r _ ↦ Set.indicator_nonneg
       (fun r _ ↦ expMechProb_nonneg ε Δ u x r) r]
   refine Finset.sum_congr rfl fun r _ ↦ ?_
-  rw [Measure.smul_apply, Measure.dirac_apply, smul_eq_mul]
+  rw [smul_apply, Measure.dirac_apply, smul_eq_mul]
   by_cases hr : r ∈ S <;> simp [hr]
 
 /-- The exponential mechanism is a probability measure on `R` (Dwork and Roth, 2014,

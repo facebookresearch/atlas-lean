@@ -66,7 +66,7 @@ public theorem exists_ne_zero_forall_mul_apply_mem_adicCompletionIntegers_of_isC
         {y : FiniteAdeleRing R K | ∀ v : HeightOneSpectrum R,
           y v ∈ HeightOneSpectrum.adicCompletionIntegers K v} := by
       ext y
-      simp only [U, Set.mem_preimage, Set.mem_setOf_eq]
+      simp only [U, Set.mem_preimage, Set.mem_ofPred_eq]
     rw [hU]
     apply IsOpen.preimage (continuous_const_mul _)
     exact RestrictedProduct.isOpen_forall_mem

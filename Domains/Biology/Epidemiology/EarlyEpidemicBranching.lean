@@ -579,8 +579,8 @@ variable (ν : Measure ℕ) [IsProbabilityMeasure ν] (N : ℕ) [NeZero N]
 theorem isProbabilityMeasure_uniformOfFinset_univ :
     IsProbabilityMeasure (Measure.uniformOfFinset (univ : Finset (Fin N))) := by
   refine ⟨?_⟩
-  rw [Measure.uniformOfFinset, Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one, sum_const, card_univ,
+  rw [Measure.uniformOfFinset, sum_apply]
+  simp only [smul_apply, measure_univ, smul_eq_mul, mul_one, sum_const, card_univ,
     Fintype.card_fin, nsmul_eq_mul]
   exact ENNReal.mul_inv_cancel (Nat.cast_ne_zero.2 (NeZero.ne N)) (ENNReal.natCast_ne_top N)
 

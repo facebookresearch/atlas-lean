@@ -134,7 +134,7 @@ noncomputable def coin : Measure Bool :=
 
 instance : IsProbabilityMeasure coin :=
   ⟨by
-    simp only [coin, Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+    simp only [coin, add_apply, smul_apply, measure_univ, smul_eq_mul, mul_one]
     rw [ENNReal.add_halves]⟩
 
 /-- For a fair-coin base measure, `Var(G({true})) = (1/2)(1/2)/(α + 1)`; with `α = 1` this

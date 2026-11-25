@@ -71,8 +71,8 @@ theorem rademacherMeasure_singleton (x : ℤˣ) :
       simp [Units.ext_iff]
     rw [h_eq]
     exact h_coe (measurableSet_singleton _)
-  rw [rademacherMeasure, Measure.uniformOfFinset, Measure.finsetSum_apply]
-  simp_rw [Measure.smul_apply, Measure.dirac_apply' _ hs]
+  rw [rademacherMeasure, Measure.uniformOfFinset, sum_apply]
+  simp_rw [_root_.smul_apply, Measure.dirac_apply' _ hs]
   rcases Int.units_eq_one_or x with rfl | rfl <;> simp [Set.indicator]
 
 /-- **Rademacher family.** Let $\mu$ be a measure on a measurable space $\Omega$. A family

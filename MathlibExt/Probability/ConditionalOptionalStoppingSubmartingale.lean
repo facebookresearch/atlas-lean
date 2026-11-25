@@ -218,11 +218,11 @@ private theorem eLpNorm_predictablePart_le (hsub : Submartingale f ℱ μ)
     (integrable_predictablePart hsub n).aestronglyMeasurable
   have heq : eLpNorm (predictablePart f ℱ μ n) 1 μ
       = ENNReal.ofReal (∫ ω, predictablePart f ℱ μ n ω ∂μ) := by
-    rw [eLpNorm_one_eq_lintegral_enorm hA_sm,
+    rw [eLpNorm_one_eq_lintegral_eNorm hA_sm,
       ofReal_integral_eq_lintegral_ofReal (integrable_predictablePart hsub n) hA_nonneg]
     refine lintegral_congr_ae ?_
     filter_upwards [hA_nonneg] with ω hω
-    rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg hω]
+    rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg hω]
   rw [heq, integral_predictablePart hsub n]
   calc ENNReal.ofReal (∫ ω, f n ω ∂μ - ∫ ω, f 0 ω ∂μ)
       ≤ ENNReal.ofReal (∫ ω, |f n ω| ∂μ + |∫ ω, f 0 ω ∂μ|) := by
@@ -243,10 +243,10 @@ private theorem eLpNorm_predictablePart_le (hsub : Submartingale f ℱ μ)
         have hfn : ENNReal.ofReal (∫ ω, |f n ω| ∂μ) = eLpNorm (f n) 1 μ := by
           rw [ofReal_integral_eq_lintegral_ofReal (hsub.integrable n).abs
               (Filter.Eventually.of_forall fun ω => abs_nonneg _),
-            eLpNorm_one_eq_lintegral_enorm (hsub.integrable n).aestronglyMeasurable]
+            eLpNorm_one_eq_lintegral_eNorm (hsub.integrable n).aestronglyMeasurable]
           refine lintegral_congr_ae ?_
           filter_upwards with ω
-          simp [Real.enorm_eq_ofReal_abs]
+          simp [Real.eNorm_eq_ofReal_abs]
         rw [hfn]
         exact hR n
 
@@ -293,7 +293,7 @@ private theorem uniformIntegrable_predictablePart (hsub : Submartingale f ℱ μ
     filter_upwards [hconv, hmono, hsub.predictablePart_nonneg] with ω hω hmonoω hnnω
     have hleω : A n ω ≤ Alim ω := hmonoω.ge_of_tendsto hω n
     have hnn : 0 ≤ A n ω := hnnω n
-    rw [Real.enorm_eq_ofReal_abs, Real.enorm_eq_ofReal_abs,
+    rw [Real.eNorm_eq_ofReal_abs, Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg hnn, abs_of_nonneg (le_trans hnn hleω)]
     exact ENNReal.ofReal_le_ofReal hleω
   refine ⟨(hUI_const.1).ae_mono (fun n => (integrable_predictablePart hsub n).aestronglyMeasurable)

@@ -133,7 +133,7 @@ private theorem integral_le_eLpNorm_one {g : Ω → ℝ} (hg : Integrable g μ)
         (ae_of_all _ (fun _ => le_abs_self _))
     _ = (eLpNorm g 1 μ).toReal := by
         rw [integral_norm_eq_lintegral_enorm hg.aestronglyMeasurable,
-          eLpNorm_one_eq_lintegral_enorm hg.aestronglyMeasurable]
+          eLpNorm_one_eq_lintegral_eNorm hg.aestronglyMeasurable]
     _ ≤ (C : ℝ) := ENNReal.toReal_mono (by simp) hC
 
 /-- The expectation of each term of the predictable part is uniformly
@@ -172,7 +172,7 @@ private theorem integral_predictablePart_le (hsub : Submartingale f ℱ μ) {C :
       calc ‖∫ ω, f 0 ω ∂μ‖ ≤ ∫ ω, ‖f 0 ω‖ ∂μ := norm_integral_le_integral_norm _
         _ = (eLpNorm (f 0) 1 μ).toReal := by
             rw [integral_norm_eq_lintegral_enorm (hsub.integrable 0).aestronglyMeasurable,
-              eLpNorm_one_eq_lintegral_enorm (hsub.integrable 0).aestronglyMeasurable]
+              eLpNorm_one_eq_lintegral_eNorm (hsub.integrable 0).aestronglyMeasurable]
         _ ≤ (C : ℝ) := ENNReal.toReal_mono (by simp) (hC 0)
     linarith [abs_le.mp habs]
   linarith
@@ -227,12 +227,13 @@ private theorem predictablePartSup_spec (hsub : Submartingale f ℱ μ) {C : ℝ
           ENNReal.toReal_mono hfinω (le_iSup (fun m => ENNReal.ofReal (predictablePart f ℱ μ m ω)) n)
       _ = predictablePartSup f ℱ μ ω := rfl
   have heLpNormLe : eLpNorm (predictablePartSup f ℱ μ) 1 μ ≤ ENNReal.ofReal (2 * (C : ℝ)) := by
-    rw [eLpNorm_one_eq_lintegral_enorm measurable_predictablePartSup.aestronglyMeasurable]
+    rw [eLpNorm_one_eq_lintegral_eNorm measurable_predictablePartSup.aestronglyMeasurable]
     have hEq : ∫⁻ ω, ‖predictablePartSup f ℱ μ ω‖ₑ ∂μ =
         ∫⁻ ω, ⨆ n, ENNReal.ofReal (predictablePart f ℱ μ n ω) ∂μ := by
       refine lintegral_congr_ae ?_
       filter_upwards [hfin] with ω hfinω
-      rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (predictablePartSup_nonneg (f := f) (ℱ := ℱ) (μ := μ) ω)]
+      rw [Real.eNorm_eq_ofReal_abs,
+        abs_of_nonneg (predictablePartSup_nonneg (f := f) (ℱ := ℱ) (μ := μ) ω)]
       show ENNReal.ofReal ((⨆ n, ENNReal.ofReal (predictablePart f ℱ μ n ω)).toReal) =
         ⨆ n, ENNReal.ofReal (predictablePart f ℱ μ n ω)
       rw [ENNReal.ofReal_toReal hfinω]
@@ -261,19 +262,19 @@ private theorem uniformIntegrable_predictablePart (hsub : Submartingale f ℱ μ
         linarith
       rw [hA_eq_fun]
       exact (hsub.integrable n).sub (integrable_martingalePart (fun k => hsub.integrable k) n)
-    rw [eLpNorm_one_eq_lintegral_enorm (hae n)]
+    rw [eLpNorm_one_eq_lintegral_eNorm (hae n)]
     have hEq : ∫⁻ ω, ‖predictablePart f ℱ μ n ω‖ₑ ∂μ =
         ∫⁻ ω, ENNReal.ofReal (predictablePart f ℱ μ n ω) ∂μ := by
       refine lintegral_congr_ae ?_
       filter_upwards [hsub.predictablePart_nonneg] with ω hω
-      rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (hω n)]
+      rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (hω n)]
     rw [hEq, ← ofReal_integral_eq_lintegral_ofReal (hA_int)
       (hsub.predictablePart_nonneg.mono fun ω hω => hω n)]
     exact ENNReal.ofReal_le_ofReal (integral_predictablePart_le hsub hC n)
   refine ⟨UnifIntegrable.ae_mono (unifIntegrable_const le_rfl ENNReal.one_ne_top hMemLp) hae
       (fun n => ?_), (iSup_le hBound).trans_lt ENNReal.coe_lt_top⟩
   · filter_upwards [hsub.predictablePart_nonneg, hle] with ω hω hleω
-    rw [Real.enorm_eq_ofReal_abs, abs_of_nonneg (hω n), Real.enorm_eq_ofReal_abs,
+    rw [Real.eNorm_eq_ofReal_abs, abs_of_nonneg (hω n), Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (predictablePartSup_nonneg (f := f) (ℱ := ℱ) (μ := μ) ω)]
     exact ENNReal.ofReal_le_ofReal (hleω n)
 
@@ -311,7 +312,7 @@ private theorem uniformIntegrable_stoppedProcess_predictablePart
   · filter_upwards [hsub.predictablePart_nonneg, hle] with ω hω hleω
     have hstop : stoppedProcess (predictablePart f ℱ μ) τ n ω =
         predictablePart f ℱ μ (min (↑n : WithTop ℕ) (τ ω)).untopA ω := rfl
-    rw [hstop, Real.enorm_eq_ofReal_abs, abs_of_nonneg (hω _), Real.enorm_eq_ofReal_abs,
+    rw [hstop, Real.eNorm_eq_ofReal_abs, abs_of_nonneg (hω _), Real.eNorm_eq_ofReal_abs,
       abs_of_nonneg (predictablePartSup_nonneg (f := f) (ℱ := ℱ) (μ := μ) ω)]
     exact ENNReal.ofReal_le_ofReal (hleω _)
   · calc eLpNorm (stoppedProcess (predictablePart f ℱ μ) τ n) 1 μ

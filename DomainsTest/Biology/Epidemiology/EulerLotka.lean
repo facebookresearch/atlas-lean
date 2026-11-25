@@ -32,7 +32,7 @@ open MathlibExt.Biology.Epidemiology.EulerLotka
 -- renewal equation with `R = e`.
 example : ∀ t, 1 * exp (1 / 2 * t) =
     exp 1 * ∫ a, 1 * exp (1 / 2 * (t - a)) ∂(Measure.dirac (2 : ℝ)) := by
-  rw [renewal_exp_iff_reproductionNumber _ _ one_ne_zero (integrable_dirac enorm_lt_top),
+  rw [renewal_exp_iff_reproductionNumber _ _ one_ne_zero (integrable_dirac eNorm_lt_top),
     reproductionNumber_dirac]
   norm_num
 

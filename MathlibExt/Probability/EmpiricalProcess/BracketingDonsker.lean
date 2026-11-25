@@ -233,7 +233,7 @@ private lemma measure_le_empiricalProcess_le (hlaw : ∀ k, HasLaw (X k) μ P)
     simp only [Set.mem_ofPred_eq, empiricalProcess]
     rw [inv_mul_eq_div, le_div_iff₀ hs]
   have hc' : (((‖c - -c‖₊ / 2) ^ 2 : ℝ≥0) : ℝ) = c ^ 2 := by
-    simp only [NNReal.coe_pow, NNReal.coe_div, coe_nnnorm, Real.norm_eq_abs, sub_neg_eq_add]
+    simp only [NNReal.coe_pow, NNReal.coe_div, coe_nnNorm, Real.norm_eq_abs, sub_neg_eq_add]
     rw [abs_of_nonneg (by linarith)]
     norm_num
   rw [hset, ← ofReal_measureReal]

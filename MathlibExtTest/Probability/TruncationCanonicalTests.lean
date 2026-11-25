@@ -61,7 +61,7 @@ theorem finite_nonprobability_top :
 theorem finite_mass_two_mean :
     (∫ ω, truncatedRV (fun (_ : ℕ) (_ : ℝ) => (2 : ℝ)) 2 0 ω
       ∂(Measure.dirac (0 : ℝ) + Measure.dirac (0 : ℝ))) = 4 := by
-  norm_num [truncatedRV_apply, integral_const, measureReal_def, Measure.add_apply]
+  norm_num [truncatedRV_apply, integral_const, measureReal_def, add_apply]
 
 /-- Bounded canonical truncations need not be integrable on an infinite measure. -/
 theorem infinite_measure_not_integrable :

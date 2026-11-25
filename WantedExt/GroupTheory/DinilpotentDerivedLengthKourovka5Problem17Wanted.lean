@@ -42,7 +42,7 @@ nilpotent of classes at most `α` and `β` (`γ_(α+1)(A) = γ_(β+1)(B) = 1`), 
 def dinilpotentDerivedLengthBound : Prop :=
   ∀ (G : Type) [Group G] [Finite G] (A B : Subgroup G) (α β : ℕ),
     (A : Set G) * (B : Set G) = Set.univ → A.lowerCentralSeries α = ⊥ →
-      B.lowerCentralSeries β = ⊥ → derivedSeries G (α + β) = ⊥
+      B.lowerCentralSeries β = ⊥ → Subgroup.derivedSeries G (α + β) = ⊥
 
 /--
 Resolved false: the Kourovka Archive answers 5.17 "Not always", citing Cossey and Stonehewer, On the

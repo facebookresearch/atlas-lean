@@ -63,7 +63,7 @@ noncomputable def fairCoin : Measure Bool :=
 
 instance : IsProbabilityMeasure fairCoin := by
   constructor
-  simp only [fairCoin, Measure.add_apply, Measure.smul_apply, smul_eq_mul,
+  simp only [fairCoin, add_apply, smul_apply, smul_eq_mul,
     Measure.dirac_apply_of_mem (Set.mem_univ _)]
   rw [← two_mul, mul_one, one_div]
   exact ENNReal.mul_inv_cancel (by positivity) (by simp)

@@ -406,12 +406,12 @@ private def torsionSub (n : ℕ) (D : Type*) [AddCommGroup D] : AddSubgroup D wh
   carrier := {y | n • y = 0}
   add_mem' := by
     intro a b ha hb
-    simp only [Set.mem_setOf_eq] at ha hb ⊢
+    simp only [Set.mem_ofPred_eq] at ha hb ⊢
     rw [nsmul_add, ha, hb, add_zero]
-  zero_mem' := by simp only [Set.mem_setOf_eq, nsmul_zero]
+  zero_mem' := by simp only [Set.mem_ofPred_eq, nsmul_zero]
   neg_mem' := by
     intro a ha
-    simp only [Set.mem_setOf_eq] at ha ⊢
+    simp only [Set.mem_ofPred_eq] at ha ⊢
     rw [neg_nsmul, ha, neg_zero]
 
 private theorem mem_torsionSub {n : ℕ} {D : Type*} [AddCommGroup D] (y : D) : y ∈ torsionSub n D
