@@ -180,9 +180,9 @@ element at each place, raised to the divisor coefficient at that place.
 The value is multiplicative in the divisor only where the element has nonzero
 values. If `f` has the value `0` at `v` (a zero of `f`, or a pole, where
 `Place.evalAt` gives `0`), then `[v]` and `-[v]` both evaluate to `0`, since
-`0⁻¹ = 0`, while their sum evaluates to `1`. `WeilReciprocity` evaluates each
-function only on the divisor of the other, whose support carries none of its
-zeros or poles. -/
+`0⁻¹ = 0`, while their sum evaluates to `1`. `WeilReciprocity` evaluates each of
+its two nonzero functions only on the divisor of the other, whose support
+carries none of its zeros or poles. -/
 noncomputable def evalFun (f : F) (D : CurveDivisor (Place K F))
     (hD : ∀ v ∈ D.support, v.IsRational) : K :=
   ∏ v ∈ D.support.attach, (v : Place K F).evalAt (hD v v.2) f ^ D v
@@ -217,9 +217,11 @@ end CurveDivisor
 namespace AlgebraicCurve
 
 variable (K F : Type*) [Field K] [Field F] [Algebra K F] in
-/-- The Weil reciprocity statement for principal divisors with disjoint
-support at rational places: evaluating one principal divisor against the
-other function agrees in both orders. -/
+/-- Weil reciprocity at rational places: for nonzero `f` and `g` in `F` whose
+principal divisors have disjoint supports consisting of rational places,
+evaluating `f` on the divisor of `g` agrees with evaluating `g` on the divisor
+of `f`. Both functions must be nonzero: `Place.ord 0 = 0`, so the zero function
+has the zero divisor, and for `f = 0` the two sides can be `0` and `1`. -/
 def WeilReciprocity : Prop :=
   ∀ (f g : F) (Df Dg : CurveDivisor (Place K F)), f ≠ 0 → g ≠ 0 →
     (∀ v : Place K F, Df v = v.ord f) → (∀ v : Place K F, Dg v = v.ord g) →

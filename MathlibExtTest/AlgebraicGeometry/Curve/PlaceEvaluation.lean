@@ -41,7 +41,8 @@ example (K F : Type*) [Field K] [Field F] [Algebra K F] :
     Prop :=
   WeilReciprocity K F
 
--- The statement applies to principal divisors whose supports are rational.
+-- The statement applies to nonzero functions whose principal divisors have disjoint
+-- supports of rational places.
 example (h : WeilReciprocity K F) {f g : F} (hf : f ≠ 0) (hg : g ≠ 0)
     {Df Dg : CurveDivisor (Place K F)} (hDf : ∀ w : Place K F, Df w = w.ord f)
     (hDg : ∀ w : Place K F, Dg w = w.ord g)
