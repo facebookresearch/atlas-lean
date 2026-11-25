@@ -200,12 +200,5 @@ theorem stageTransitionFrom_add (n k l : ℕ)
     stageMapFrom_add, NonUnitalStarAlgHom.comp_assoc]
   rfl
 
-#print axioms stageTransitionRepresentativeFrom
-#print axioms stageTransitionRepresentativeFrom_respects
-#print axioms stageTransitionFrom
-#print axioms stageTransitionFrom_zero
-#print axioms stageTransitionFrom_one
-#print axioms stageTransitionFromReassoc
-#print axioms stageTransitionFrom_add
 
 end IteratedAsymptoticAlgebra

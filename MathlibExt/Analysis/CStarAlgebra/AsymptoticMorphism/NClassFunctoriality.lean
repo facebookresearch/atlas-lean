@@ -359,11 +359,5 @@ theorem alphaNextClass_classOf (n : ℕ)
       classOf (n + 1) (alphaNextRepresentative n φ) :=
   rfl
 
-#print axioms precompClass
-#print axioms postcompClass
-#print axioms endpointHom_comp_postcompPathMap
-#print axioms alphaNextRepresentative
-#print axioms alphaNextRepresentative_respects
-#print axioms alphaNextClass
 
 end IteratedAsymptoticAlgebra

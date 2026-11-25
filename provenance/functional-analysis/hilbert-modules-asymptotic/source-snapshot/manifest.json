@@ -1,0 +1,1856 @@
+{
+  "schema": "atlas.mathlibext-source-snapshot.v1",
+  "library": "MathlibExt",
+  "encoding": "UTF-8 JSON Lines with literal source_text strings; standard JSON escaping only",
+  "source_version": "This immutable pre-adaptation source version is identified by the listed file and chunk SHA256 hashes.",
+  "file_count": 202,
+  "original_source_lines": 38036,
+  "original_bytes": 1741277,
+  "chunks": [
+    {
+      "file": "part-0001.jsonl",
+      "sha256": "66089fe5df064951879e507dcfd94ab121d7201c279b58df3a13692fde54561f",
+      "bytes": 521852,
+      "rows": 64
+    },
+    {
+      "file": "part-0002.jsonl",
+      "sha256": "0d52204b7091230bf4a93204fc0a1c421e72a1d422b0a5555df965675a6ea0dc",
+      "bytes": 617058,
+      "rows": 64
+    },
+    {
+      "file": "part-0003.jsonl",
+      "sha256": "b4e7c24a37724a0d35a049439ab885b2dbf5187a1bf0dde0a530b6f7d8e915b3",
+      "bytes": 619204,
+      "rows": 64
+    },
+    {
+      "file": "part-0004.jsonl",
+      "sha256": "85d7724ea0660bce828cd52410c8cee3dabbbfd64e39dc2047e932054951aaa2",
+      "bytes": 65457,
+      "rows": 10
+    }
+  ],
+  "files": [
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/AsymptoticAlgebra.lean",
+      "original_sha256": "1a6e35fe2c8b506a9df075c921d862e9623ef4633f47bb91c0a2a6e3700b5bc9",
+      "original_bytes": 7884,
+      "original_lines": 178,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/AsymptoticAlgebraFunctor.lean",
+      "original_sha256": "ae7c8b914f024e3a91db1f0e6c654914efdd5f83458ab8b1562480585964cc84",
+      "original_bytes": 4148,
+      "original_lines": 115,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/AsymptoticAlgebraMap.lean",
+      "original_sha256": "3bb962e0904a98f31df979f5880cb8e3aecbf06bc3ffa5ad59c70b2d018fc8f6",
+      "original_bytes": 7738,
+      "original_lines": 202,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Basic.lean",
+      "original_sha256": "58deb7ad4e58fc6e79a1181730183c81615de1712671bf6b5c5c7b3989315da8",
+      "original_bytes": 8789,
+      "original_lines": 234,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Bounds.lean",
+      "original_sha256": "c9d83093c12383ee834e9ad6caaac2a07db22ec1c5397eb1b297f2edaa0470b9",
+      "original_bytes": 15413,
+      "original_lines": 348,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/CompletelyPositive.lean",
+      "original_sha256": "0b10ad495bd1b51de72945b59d297f69cb3d9c25a7a5428bfa797ff56b61800c",
+      "original_bytes": 9457,
+      "original_lines": 246,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/CompletelyPositiveFunctoriality.lean",
+      "original_sha256": "f176aad073345d5b62a68696abb1934305d47abedb17169e5307263549e2ffb0",
+      "original_bytes": 6645,
+      "original_lines": 184,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/CompletelyPositiveHomotopy.lean",
+      "original_sha256": "ff7f7894ca7c4722a792f64c0cd0440643c0be0b0e8c8341172d3b38306cd504",
+      "original_bytes": 5169,
+      "original_lines": 131,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/CompletelyPositiveHomotopyEquivalence.lean",
+      "original_sha256": "94a40a41baee1fa3d8416cfb2b615458ff9d19df0e424254f89c9d820801181e",
+      "original_bytes": 5541,
+      "original_lines": 174,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/CompletelyPositiveHomotopyForgetful.lean",
+      "original_sha256": "97bdd8a3169233d38b7f78e992a6cb4092d8e8721d80a223eebc8d1906b0e481",
+      "original_bytes": 1388,
+      "original_lines": 52,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/CompletelyPositiveHomotopyGluing.lean",
+      "original_sha256": "6e128e857afe0d0400a89db26063319d5cb4e0756e5a032781be64097bd8cc40",
+      "original_bytes": 1852,
+      "original_lines": 58,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 11,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/CompletelyPositivePostcomp.lean",
+      "original_sha256": "d6d7883cd9a9309f30313d72196084dca2c289b38e98571347c499e70a356129",
+      "original_bytes": 2863,
+      "original_lines": 82,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 12,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/CompletelyPositiveSlice.lean",
+      "original_sha256": "eea54a04a5bb458dc87e2f246148b2d4a0dcc177b5c749577171d7dcdc1e2ec5",
+      "original_bytes": 6583,
+      "original_lines": 149,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 13,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/CompositionCriterion.lean",
+      "original_sha256": "c56a82dc1e97a7846fb79645186817e2ed80870b88add473c7ace063bd9df6a7",
+      "original_bytes": 2007,
+      "original_lines": 52,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 14,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Correspondence.lean",
+      "original_sha256": "0b0be64f64708dba0e7600faf734199c0a24987da018ce5b2d8d482864c17116",
+      "original_bytes": 8460,
+      "original_lines": 208,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 15,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/CorrespondenceFunctoriality.lean",
+      "original_sha256": "86a763de9ee784df930ebf35c0a7df4a723db3a306687676049f7e2ec8f3a899",
+      "original_bytes": 2565,
+      "original_lines": 77,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 16,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/FullTimePullback.lean",
+      "original_sha256": "e9855a5ce5557b7b67d72abfb75afa44b8deb7f11a1fc10549e55eab8d639a32",
+      "original_bytes": 10146,
+      "original_lines": 263,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 17,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Functoriality.lean",
+      "original_sha256": "10550ceb6c9761e1ba7d235bcaaa8e24e429f90df47dcee3cd3000a23755eccc",
+      "original_bytes": 12116,
+      "original_lines": 324,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 18,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Homotopy.lean",
+      "original_sha256": "52186816d806b8f405181c80fde13c7831ad1410624ce10c51afa84f6ff352ae",
+      "original_bytes": 7872,
+      "original_lines": 225,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 19,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/InitialEvaluationKernel.lean",
+      "original_sha256": "4eb3879ff96d7171885977a3f7bd9fe75c0ed04ad71630af02a289014bb65a6a",
+      "original_bytes": 24858,
+      "original_lines": 538,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 20,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/IteratedAlgebra.lean",
+      "original_sha256": "14729c1e9f5de36209eb55b8714bc1e45935925ada670135e788c476af91f81f",
+      "original_bytes": 18713,
+      "original_lines": 525,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 21,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/IteratedMatchingPaths.lean",
+      "original_sha256": "58f4e05cc16fc1a26aff9e26fcfe924d4622e9032d5519a79a84d28f9619da91",
+      "original_bytes": 8216,
+      "original_lines": 218,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 22,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/IteratedSplitPullback.lean",
+      "original_sha256": "fd3a831f8568243b0436ff7a4fe2a9c17203812adfed41a2cd29799e806e13a7",
+      "original_bytes": 11038,
+      "original_lines": 282,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 23,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/NClassAlphaStageCompatibility.lean",
+      "original_sha256": "0717351299940e7fb3d83740993a1c881adb4a269e9a3b893bdb337ea261ebd2",
+      "original_bytes": 6557,
+      "original_lines": 174,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 24,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/NClassDirectLimit.lean",
+      "original_sha256": "64e9ad16ca86baa0084637be299787cb32f3386a741156015d151b56b03ef27f",
+      "original_bytes": 11140,
+      "original_lines": 293,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 25,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/NClassFunctoriality.lean",
+      "original_sha256": "12951480deafd6439e877d6352b7f58daa2e5dd2b3c7ee648195731c4596c339",
+      "original_bytes": 13917,
+      "original_lines": 361,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 26,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/NClassStageTransition.lean",
+      "original_sha256": "f72010dbdbc205accb106b2ac6a04105ddb229a34c4b837c0fd86e3ad878df0c",
+      "original_bytes": 7478,
+      "original_lines": 203,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 27,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/NHomotopy.lean",
+      "original_sha256": "03725c17c6b02c6b3bbb4f64a09773745bb9209cf38fcbda3f82d8bfe766742f",
+      "original_bytes": 9484,
+      "original_lines": 259,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 28,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Normalization.lean",
+      "original_sha256": "6ec1bca000a64ccf50129e496b1e6a1ab5a4c084cb5d2eb87387a0e3d535255a",
+      "original_bytes": 4106,
+      "original_lines": 118,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 29,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Prod.lean",
+      "original_sha256": "070be38684b35a67ff5db41bbf01aafe309f876ce311955503209d81d40e1290",
+      "original_bytes": 2422,
+      "original_lines": 59,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 30,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Reparametrization.lean",
+      "original_sha256": "943d635774773d1cb4d896e61e29d8b38b20c2f19d8cb70104ef12084756d5ac",
+      "original_bytes": 1682,
+      "original_lines": 55,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 31,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/RepresentativeProduct.lean",
+      "original_sha256": "4eafd6667e6f2881bbe76d0dd4810576326af4fbe61ba7753cb6d37b7ab1994b",
+      "original_bytes": 4524,
+      "original_lines": 133,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 32,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/SplitPullback.lean",
+      "original_sha256": "0eeb686e6fa302581785b9ce19b664dbd4565ba0307874acda759f1b5b83a942",
+      "original_bytes": 15985,
+      "original_lines": 383,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 33,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Suspension.lean",
+      "original_sha256": "4fda17ef9b7c07c1e502ddc5ddb840cf95d6cb8280f7041c19685934a59775a2",
+      "original_bytes": 5937,
+      "original_lines": 146,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 34,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/TailDensity.lean",
+      "original_sha256": "bd5f3467782a9d6ae39281e42b8f83549334376001f5462111c05e4cc5bb2be3",
+      "original_bytes": 7592,
+      "original_lines": 177,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 35,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/TailIdeals.lean",
+      "original_sha256": "6e0294cfab3702ed8a2c81fde0f7689c5e149aaab007afe35b746a962228d75a",
+      "original_bytes": 10072,
+      "original_lines": 256,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 36,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Uniform.lean",
+      "original_sha256": "7d2d5a135c66d0f3f93864cceceaaebf7085740dbea4c4dac3d7d85e0085028d",
+      "original_bytes": 2042,
+      "original_lines": 55,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 37,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/Unitization.lean",
+      "original_sha256": "153ff90ffa8242668d5235fc34afa1adf48c7217a41df3b5fc5e47c45cb96339",
+      "original_bytes": 5164,
+      "original_lines": 140,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 38,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/AsymptoticMorphism/ZeroAtInfty.lean",
+      "original_sha256": "7e704ea468bf1feedd0f304a54acf4f48a7c3e9a3d949544c576038a021e4d00",
+      "original_bytes": 13668,
+      "original_lines": 282,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 39,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/CanonicalHaarRegularModel.lean",
+      "original_sha256": "556578c1bd257363a6a985d1663c4c121e82cc541af39f07a47c1bbb3f5de239",
+      "original_bytes": 4646,
+      "original_lines": 96,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 40,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/CanonicalReducedAlgebra.lean",
+      "original_sha256": "881c2563c8c959244088d0982801e4ec3fa2cac115e0184c9faab269b07d114c",
+      "original_bytes": 6036,
+      "original_lines": 120,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 41,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/FullToCanonicalReducedAlgebra.lean",
+      "original_sha256": "775b4cf68e25d91544af3e4bc05e27ba9aee0006d937328f3cf6f9f7144c23b3",
+      "original_bytes": 3619,
+      "original_lines": 77,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 42,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarCovariantSeminorm.lean",
+      "original_sha256": "de47a5692ccb32cbed75a76e65ccad00ea5101f1037154558c76866be27ce327",
+      "original_bytes": 2713,
+      "original_lines": 67,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 43,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarDualAction.lean",
+      "original_sha256": "75db5a1c14324c8f298ffba3ba6eb5cab9180434d7e77395eb94a49a6e7ebb99",
+      "original_bytes": 4795,
+      "original_lines": 108,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 44,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarEssentialCovariantRepresentation.lean",
+      "original_sha256": "5661f28921410a581214792e70396a447ce628543614620d68ab58776deba49e",
+      "original_bytes": 4945,
+      "original_lines": 101,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 45,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarIntegratedForm.lean",
+      "original_sha256": "9dd6a063ee9891b760c2d0846bf4d1cd989579ed9c81fdcefde2cfafe1033925",
+      "original_bytes": 15218,
+      "original_lines": 286,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 46,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarIntegratedMultiplierActions.lean",
+      "original_sha256": "ddd2ae9855deb13bcc3856aad6e827f48c68a06cd879e3a0213acf49302488d3",
+      "original_bytes": 8366,
+      "original_lines": 171,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 47,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarL1IntegratedForm.lean",
+      "original_sha256": "cc6bf0264abf79c9458ac8d4044c4651a7e9bfd509fdf7e156a6e53d37fa5970",
+      "original_bytes": 11473,
+      "original_lines": 220,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 48,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarMaximalIntegratedForm.lean",
+      "original_sha256": "108c8b35d6c83196f08addfb39676b4e4821a1baca91c1b002a3a30c6547eeaa",
+      "original_bytes": 4514,
+      "original_lines": 91,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 49,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarRegularCoefficientFaithful.lean",
+      "original_sha256": "67bf03312be9f2773fb7cd7d146be291781fc039ff383291c6bc9db665d981be",
+      "original_bytes": 4220,
+      "original_lines": 97,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 50,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarRegularCovariantModel.lean",
+      "original_sha256": "3a60112677d70c395acc721faf80d127495ff16efde660341b6f228fe4d0cfa3",
+      "original_bytes": 10742,
+      "original_lines": 213,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 51,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/Basic.lean",
+      "original_sha256": "d80bfc4ff632c1fa765d19ce7e347f329d253ad5498c6830cef7c16ec386a7bd",
+      "original_bytes": 3800,
+      "original_lines": 108,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 52,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CharacterCompletion.lean",
+      "original_sha256": "be8081db845e31677f7a552894345680af56aa6028410d5b24c18ede3e88ec80",
+      "original_bytes": 5447,
+      "original_lines": 113,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 53,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CharacterContinuity.lean",
+      "original_sha256": "d75fd5caa19e9ba2de3cc2ddf882d76e52fe11d46e8a5a06c064ff76422377d1",
+      "original_bytes": 7795,
+      "original_lines": 152,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 54,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CharacterModulation.lean",
+      "original_sha256": "716fccc6fa100045951e106467c23ff5af66670bf101a3ab9e3dc68eff1af719",
+      "original_bytes": 7550,
+      "original_lines": 164,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 55,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CharacterSeminorm.lean",
+      "original_sha256": "ff519a30992e84c56fcb1c5af2b8f2c111572f3e696a456b31bd23c795e8f45e",
+      "original_bytes": 2894,
+      "original_lines": 68,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 56,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CoefficientNondegenerate.lean",
+      "original_sha256": "2a932cb9c645f7f9c6ebcf6a2ed6dfc3721f53145a7ea3bd8bfb95ef20a9adc6",
+      "original_bytes": 10308,
+      "original_lines": 211,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 57,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CompletedCoefficientActions.lean",
+      "original_sha256": "c5b196c23d9bea77d4a0d8d701d4d19f1153f7d053ccb5be97393ab34d07a1de",
+      "original_bytes": 12480,
+      "original_lines": 252,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 58,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CompletedCoefficientMultiplier.lean",
+      "original_sha256": "74ee469ebf519eb02d68e51108f6243d029f67c9250e0a76656e4ff0d47178ba",
+      "original_bytes": 4306,
+      "original_lines": 104,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 59,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CompletedGroupActions.lean",
+      "original_sha256": "aa338152a63ffc4d741e7e94831aeb3ac4b47fc8c74eadaf81725f2fdfca5a20",
+      "original_bytes": 8489,
+      "original_lines": 173,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 60,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CompletedGroupMultiplier.lean",
+      "original_sha256": "aeead9af06e465a00651def99d0ab2b3796b2373d7b15279f487bd1f4037f9d4",
+      "original_bytes": 5432,
+      "original_lines": 123,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 61,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CompletedMultiplierPair.lean",
+      "original_sha256": "5e1c38424bea720b7d820a9536098c42aaa87879728e65c1bd7156be2c633f07",
+      "original_bytes": 8188,
+      "original_lines": 156,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 62,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/CompletedMultiplierStrict.lean",
+      "original_sha256": "3a7cb2ba3f06345e88b0265a944e0f4eb5540cf9303509dae58106bcd33521f4",
+      "original_bytes": 9995,
+      "original_lines": 198,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 63,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/Convolution.lean",
+      "original_sha256": "21df3630e2759ad9ccffd2dd1460655e1049139d824707fcd585c9a560ba83fd",
+      "original_bytes": 16572,
+      "original_lines": 335,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 64,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/ConvolutionCurve.lean",
+      "original_sha256": "38853c36aa9cd1a63f0fb4e723d7c1e2a26423982cb2702c69ee010f1dbcfdb9",
+      "original_bytes": 16032,
+      "original_lines": 281,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/ConvolutionSeminormIntegral.lean",
+      "original_sha256": "c1f9527ed1d9ede212017f79746812c6d63141c9abdd44d7acd20dc27803a269",
+      "original_bytes": 6418,
+      "original_lines": 114,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/DiscreteCoefficients.lean",
+      "original_sha256": "e0ec324ffe434be802e1517fbdfe5bc978dbe8523e33b1430ff0b2dc69740180",
+      "original_bytes": 2026,
+      "original_lines": 69,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/FiniteHilbertGramCoefficient.lean",
+      "original_sha256": "7d3f15674f343f2d79bba45e93659334b33a49858307ccafb09e16e680f94089",
+      "original_bytes": 9699,
+      "original_lines": 185,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/FullCoefficientEmbedding.lean",
+      "original_sha256": "7408f67e39a0779e0015f21d411eeb282a1b3b51a78d91ca921bd0abff92a297",
+      "original_bytes": 10355,
+      "original_lines": 199,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/FullCovariantSeminorm.lean",
+      "original_sha256": "54ef3d224fb27ce0b0d84d6c4e4705830354628383c963d3c9075e5802da5a7b",
+      "original_bytes": 5950,
+      "original_lines": 129,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/GramCovariantRepresentation.lean",
+      "original_sha256": "688d65e4b6a086e529d7e9a4246072ddd230134e65d3d3c1d5539c8e43d1b5df",
+      "original_bytes": 11351,
+      "original_lines": 227,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/GramIntegratedIdentity.lean",
+      "original_sha256": "d92b15a3a61059c08c80cd1e852555547e5a8c9c83ef00a3615d70b585210cc2",
+      "original_bytes": 11533,
+      "original_lines": 215,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/GramOperatorExtension.lean",
+      "original_sha256": "acaac054d88d8e0ccf2a75e0348af161bfec7afff8cbc890ebe3c06c73efb944",
+      "original_bytes": 12206,
+      "original_lines": 236,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/GramRepresentationLaws.lean",
+      "original_sha256": "31cd851ff1f0bdf457136109fe5c59a6c9d6a3b612630aff7a5c2f3d911f3a52",
+      "original_bytes": 14449,
+      "original_lines": 290,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/Involution.lean",
+      "original_sha256": "39955c825661cce6e3cfc48aa3b3433d40b4866326de6046ae683b04d5beb06a",
+      "original_bytes": 6711,
+      "original_lines": 152,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 11,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/L1Completion.lean",
+      "original_sha256": "077013674564977bc5b0bd58c81ac9f2e86410e7ab9e265f3b03072073479389",
+      "original_bytes": 12541,
+      "original_lines": 231,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 12,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/L1Gauge.lean",
+      "original_sha256": "d9819352a732c2ea8930b4f58f44dbef41065dbcda2571b7d4b78bea8c24ceb6",
+      "original_bytes": 3812,
+      "original_lines": 100,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 13,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/L1Seminorm.lean",
+      "original_sha256": "369d246863528b55e81415ff1d19c9e91bf4ad9bfc2102d9d2b1045d0526af84",
+      "original_bytes": 8141,
+      "original_lines": 170,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 14,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/L1ToSeminormCompletion.lean",
+      "original_sha256": "2a5cff9a5a571b4685a4670d65b6d08298ac6c058fd0f8db66d949ac4233cbdc",
+      "original_bytes": 9979,
+      "original_lines": 175,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 15,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/L1Translation.lean",
+      "original_sha256": "ee3f6b564b2ea75d998ab2626aaea92855865f20e14acffc3611931cc82a250a",
+      "original_bytes": 4647,
+      "original_lines": 109,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 16,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/MaximalSeminorm.lean",
+      "original_sha256": "d6454fc40774629498c339a498354fe433349795fb4cec5156964f08d7938163",
+      "original_bytes": 4363,
+      "original_lines": 102,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 17,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/MultiplierActions.lean",
+      "original_sha256": "78bbbf35d1ecd284ffe577ff1df2a76b2d0678be230b6c41166eebf635ca402d",
+      "original_bytes": 24478,
+      "original_lines": 569,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 18,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/Ring.lean",
+      "original_sha256": "c719b70398add229fc0efbf2551b8791064301a3c2b7ed77f43bec9b2aade890",
+      "original_bytes": 2224,
+      "original_lines": 62,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 19,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/SeminormCoefficientActions.lean",
+      "original_sha256": "ea2c534fcb0200ee4242a525cc9f4df656ba8bd73e6b72b88006a453ea4cc220",
+      "original_bytes": 10998,
+      "original_lines": 226,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 20,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/SeminormGramGroupActions.lean",
+      "original_sha256": "a235743e92e3e0ac2c950d4bf820b2071c1f8d5b2587e765c4d480dc7ae19f38",
+      "original_bytes": 4941,
+      "original_lines": 103,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 21,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/SeminormGroupActions.lean",
+      "original_sha256": "a8ddc1e019af33c49767f687482862512b3e10a7ccdc023246ccde33dae9ec59",
+      "original_bytes": 4309,
+      "original_lines": 91,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 22,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/HaarTwistedCore/StarRing.lean",
+      "original_sha256": "70e52809ebe7f3b3c6ccc928df451c50bff9471d580e74d62cb89b923b39fc24",
+      "original_bytes": 5413,
+      "original_lines": 113,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 23,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/IntegratedOperator.lean",
+      "original_sha256": "b203517d25465d96afa68ca3dd0efc41b353991349ddd6c7a81342744de9a48d",
+      "original_bytes": 5546,
+      "original_lines": 127,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 24,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/CrossedProduct/TransformationRegularModel.lean",
+      "original_sha256": "eb857dcd2fd12a499b6eb8e6df10f169a1435637e3e9bb18086127dd26e6eb31",
+      "original_bytes": 4004,
+      "original_lines": 89,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 25,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/DirectLimit/Completion.lean",
+      "original_sha256": "a1f7488b957fd66d453b09c9639e33c5006175ff679cf5f5677dc580bff60d82",
+      "original_bytes": 12708,
+      "original_lines": 304,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 26,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Extension/AsymptoticLift.lean",
+      "original_sha256": "44aa1d36371c55457eec5dc14d7238f4508d5542d329d6873e4e16692b2b0675",
+      "original_bytes": 6078,
+      "original_lines": 137,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 27,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Extension/Busby.lean",
+      "original_sha256": "14cba7995b3e9c12f68ad83c61c7f0bbcac7113ca673e22b9deb8b974a82cb33",
+      "original_bytes": 11779,
+      "original_lines": 313,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 28,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Extension/DiagonalLift.lean",
+      "original_sha256": "7ee1b9cc6218d0cb9bb23a1323c795fb691a8e66020547b521bd4395dc86fb73",
+      "original_bytes": 2863,
+      "original_lines": 77,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 29,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Extension/Pullback.lean",
+      "original_sha256": "432da8cf9090de5f81d05851239af775defc3cd7b2536274c3dfa3dcdacbed2f",
+      "original_bytes": 4609,
+      "original_lines": 126,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 30,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Extension/Separable.lean",
+      "original_sha256": "78f073565fdd06adfb9a4940e040cb988f704f11c30871abfab46542ecfcdc32",
+      "original_bytes": 2652,
+      "original_lines": 71,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 31,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Extension/StableClass.lean",
+      "original_sha256": "de5245336fbbe4f6abfb4ed122ba21edbabd2e189d3c376f002a1885314edace",
+      "original_bytes": 10538,
+      "original_lines": 264,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 32,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Extension/StableSum/AsymptoticLift.lean",
+      "original_sha256": "24c2426ea26ab40334ec5f14bdfcf8ea0aada69ab63b46356587de6ed7f6bb01",
+      "original_bytes": 4690,
+      "original_lines": 98,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 33,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Extension/StableSum/Basic.lean",
+      "original_sha256": "ee69bb2204d22bf90a6b198b34135b028ef6b20533aec33d488618852ad10652",
+      "original_bytes": 4697,
+      "original_lines": 118,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 34,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Extension/StableSum/Calculus.lean",
+      "original_sha256": "a6faf3d38109552666741eb91c390e2c6c0e3e39966d810c454953c39b59b8c4",
+      "original_bytes": 14062,
+      "original_lines": 354,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 35,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Extension/StableSum/Equivalence.lean",
+      "original_sha256": "fdd3f733e42874248abfaf4046439b628e8664f1b26fe300581161ba1de4b35f",
+      "original_bytes": 4770,
+      "original_lines": 117,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 36,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Group/Reduced.lean",
+      "original_sha256": "95b93e04c58f7095e2c666c9e5375835b71561d5a9835367cc280935907e438b",
+      "original_bytes": 40188,
+      "original_lines": 1112,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 37,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Adjointable/CommutingSquareComplement.lean",
+      "original_sha256": "ffb5cecc8dfe004a3b27512857fd75593943bfe6600be130a2a1b7029c7e62fd",
+      "original_bytes": 2308,
+      "original_lines": 61,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 38,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Adjointable/Completion.lean",
+      "original_sha256": "385f70f60b3dd653b65bead378d57520fdb9f1932fe289c9b74dd76d471e237b",
+      "original_bytes": 6047,
+      "original_lines": 143,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 39,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Adjointable/GramBound.lean",
+      "original_sha256": "47859f105f73ea9f07678356b73c785c5db55beef72e6896c9c6f00a24c7be97",
+      "original_bytes": 4774,
+      "original_lines": 111,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 40,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Calkin.lean",
+      "original_sha256": "fa497192d626750e07d6f5ce0221b9e98f5ad1458698e90992d1f741909b0e2a",
+      "original_bytes": 14189,
+      "original_lines": 334,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 41,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Compact/Multiplier.lean",
+      "original_sha256": "5da746f9ce8c4628ecbb9c6c6bf43d89a24872834254f6c89dcddfcb5adf4dea",
+      "original_bytes": 4698,
+      "original_lines": 97,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 42,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Covector.lean",
+      "original_sha256": "d2ecefabbba7943876a751d9fed72688d9d4e90445b97bb0121495420f27e35a",
+      "original_bytes": 2254,
+      "original_lines": 62,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 43,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/DirectSum.lean",
+      "original_sha256": "016674e80843b7a8a5525367611e39fa5b09f99721f0fa376bfb87d696b05bb7",
+      "original_bytes": 265,
+      "original_lines": 13,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 44,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/DirectSum/Algebraic.lean",
+      "original_sha256": "2f9cbf86a65ad4788936f65144743b0f17ee7bf83255114efe91fe631890032a",
+      "original_bytes": 18191,
+      "original_lines": 477,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 45,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/DirectSum/AlgebraicDiagonal.lean",
+      "original_sha256": "c376307b03944619b47df2e230cfdc17228a726e51039bf04dd697a4c868a48d",
+      "original_bytes": 5896,
+      "original_lines": 131,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 46,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/DirectSum/AlgebraicDiagonal/Bounded.lean",
+      "original_sha256": "dbb11945493c3ee683528e3e07465311b668cc009760fba08bba00065217d3ad",
+      "original_bytes": 6159,
+      "original_lines": 137,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 47,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/DirectSum/Completion.lean",
+      "original_sha256": "5f254861d905a3050ca9065727e62b291142f0bc45689fb7331be63e3bb2fd54",
+      "original_bytes": 7704,
+      "original_lines": 184,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 48,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/DirectSum/CutProjection.lean",
+      "original_sha256": "ff6cc0fb8ef1adabf4334b78648db0440c38487bbed54bea06858e40a9d38f85",
+      "original_bytes": 15091,
+      "original_lines": 359,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 49,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/DirectSum/Diagonal.lean",
+      "original_sha256": "c727ac1a4bcc9f774de474869491d96f467b49b804a75eabc0548f8ac2a02c6e",
+      "original_bytes": 6916,
+      "original_lines": 145,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 50,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/DirectSum/Generation.lean",
+      "original_sha256": "6ba4e1d7877d8dc842890078c68507be2db1804c1b41d0bfd20fb4113c33c19b",
+      "original_bytes": 4014,
+      "original_lines": 104,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 51,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/DirectSum/Grading.lean",
+      "original_sha256": "563d44409e3eb897a6403f4dc49ddf7fd5b13e639f67e09d15c47fade382faca",
+      "original_bytes": 13234,
+      "original_lines": 335,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 52,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/GenerationUnitary.lean",
+      "original_sha256": "3d364ae472632e493c9a87b0fe1e20494163bd19a992e4caaffb2279a6e29038",
+      "original_bytes": 2613,
+      "original_lines": 73,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 53,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/AlgebraicTensorHom.lean",
+      "original_sha256": "64de28091bfb21472b8746926fc9dbe0e122026274a282db89e39257d18bcece",
+      "original_bytes": 17279,
+      "original_lines": 294,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 54,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/Basic.lean",
+      "original_sha256": "b8177ca71034ee3b71192886331e2d9102f9813151b00b31f60b78899ed62ede",
+      "original_bytes": 18762,
+      "original_lines": 311,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 55,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/CoefficientAction.lean",
+      "original_sha256": "e83c02a3c410f0904fd03c0b1d52018666f29214f8a6d17a047187001a6d59a6",
+      "original_bytes": 12696,
+      "original_lines": 212,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 56,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/CoefficientHom.lean",
+      "original_sha256": "554b401343e3516d097b80d5be22bc5776af665f33843f03ffa9badde0554567",
+      "original_bytes": 12734,
+      "original_lines": 224,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 57,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/CompactCompression.lean",
+      "original_sha256": "9edaeed9dd353f3fe9fc0fc2ea72e150d792b7bef7117a739c5c12b8be9058f2",
+      "original_bytes": 6132,
+      "original_lines": 129,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 58,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/CompactImage.lean",
+      "original_sha256": "b3e81daf5fe91178c731ea3f904b29a09d649638bc149567a1c6ce279ec0d1dc",
+      "original_bytes": 16760,
+      "original_lines": 277,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 59,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/CompactRangeDense.lean",
+      "original_sha256": "2e8b5602db6be462c9f2aa072aa296181b59c38cd91e4909219bfbb860f4cc50",
+      "original_bytes": 13639,
+      "original_lines": 247,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 60,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/ElementaryCompacts.lean",
+      "original_sha256": "15df7d87c2574beae33521f5b91f00425f92850960305a7385e491b051434794",
+      "original_bytes": 17499,
+      "original_lines": 286,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 61,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/FiniteMatrixTensor.lean",
+      "original_sha256": "ebc146c36a2eaf258f4f834cf3db0a235246687f6a366cc1840a26239b20e156",
+      "original_bytes": 7064,
+      "original_lines": 155,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 62,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/FiniteTensorCorner.lean",
+      "original_sha256": "44276c49bd5e32d27fb23e85a99d154f3088456343eaa209cfe1f39c0625b0b1",
+      "original_bytes": 4267,
+      "original_lines": 91,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 63,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/HilbertAction.lean",
+      "original_sha256": "fb53b1de60a95ac1ea6a26513a7e23eb8706dfa710b970fa74f36727584f6b7b",
+      "original_bytes": 17266,
+      "original_lines": 283,
+      "snapshot_file": "part-0002.jsonl",
+      "snapshot_line": 64,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/HilbertHom.lean",
+      "original_sha256": "06dd98fd722caceee78482337ac4cda609c0ffa2cff2e6511988db870e060b40",
+      "original_bytes": 14832,
+      "original_lines": 263,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/InducedComparison.lean",
+      "original_sha256": "111b4f53ae5316a63faa24b41f7b69169abdccbad86463a53d4ba18e8b29e716",
+      "original_bytes": 7301,
+      "original_lines": 131,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/InducedCompletion.lean",
+      "original_sha256": "807e3d2ba4fdc1d2a42a1cca41caebf9923d1e3cff558e1e06ccf113bf270157",
+      "original_bytes": 8314,
+      "original_lines": 140,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/MatrixCoefficients.lean",
+      "original_sha256": "c545b189523fd2561a8c3c865488a58822e1a2d891edc882b3203cd3567ceb38",
+      "original_bytes": 9355,
+      "original_lines": 173,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/PureCrossNorm.lean",
+      "original_sha256": "baacf8a617d79b539ea63b13ec6273bfc8850d81662537e54554d216a950dd41",
+      "original_bytes": 8139,
+      "original_lines": 153,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/RawInjectivity.lean",
+      "original_sha256": "a2a4f10768aae943e48330021e58939e32743cc4c2d3a080e08f2414f92e2ba7",
+      "original_bytes": 8664,
+      "original_lines": 160,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/HilbertAmplification/ScalarRepresentation.lean",
+      "original_sha256": "92da3b2a878c9a332d1a23c8587b3c08d5a77d2bb3c19238f02abeaed4a6a0bc",
+      "original_bytes": 1945,
+      "original_lines": 54,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/InternalTensorProduct/BaseChange.lean",
+      "original_sha256": "55711fc14df25aa0edb48908de757f7a0cd2cc8d86e751fa86ffd88c1dbbd027",
+      "original_bytes": 8825,
+      "original_lines": 180,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/InternalTensorProduct/GeneralGeneration.lean",
+      "original_sha256": "02de1b4cb22ff66223159df1ee91b1073ddb9186bc228ebbd985e8da1b8761ee",
+      "original_bytes": 5789,
+      "original_lines": 133,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/InternalTensorProduct/GradedIterated.lean",
+      "original_sha256": "8cd41e8b6d7cc65332fb1836ab21fc3f5a5bca62befa64276ee95b49ef2f07e2",
+      "original_bytes": 8055,
+      "original_lines": 144,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/InternalTensorProduct/Iterated.lean",
+      "original_sha256": "07bf938b043c951c6fbddfe147f5d19f1e64cb4e704b265ee612f831c5144634",
+      "original_bytes": 32859,
+      "original_lines": 457,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 11,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/InternalTensorProduct/Iterated/Left.lean",
+      "original_sha256": "88ea63a8f48f65bbe62e7cdd28f0cec649e6839d382d6cb8df3ae0cb162b29c1",
+      "original_bytes": 28022,
+      "original_lines": 387,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 12,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/InternalTensorProduct/MapRight.lean",
+      "original_sha256": "088ea10f988cb8ffae6354f8d2666267c855ef705f7898e4d6f12d00cdcfe351",
+      "original_bytes": 12176,
+      "original_lines": 245,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 13,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/InternalTensorProduct/MapRight/Bounded.lean",
+      "original_sha256": "e7e458d65676b3aab8cca8a8599a99924334e1ad5c54759a36d18ed7135dd556",
+      "original_bytes": 10276,
+      "original_lines": 196,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 14,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/InternalTensorProduct/MapRight/Completion.lean",
+      "original_sha256": "5a5ff18b74b7a3fab0b80691dbbe986472d4e6e1fee03d93a1dc4bf81fc88a58",
+      "original_bytes": 14197,
+      "original_lines": 225,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 15,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/InternalTensorProduct/ModelComparison/Right.lean",
+      "original_sha256": "68307e6a521e53579eeaa9d2e39f029e4a5c90f32c00f6ea1328e2afce242eeb",
+      "original_bytes": 4535,
+      "original_lines": 84,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 16,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/InternalTensorProduct/Semilinear/Functoriality.lean",
+      "original_sha256": "0129fac0d99dbe901f35d9e844e12b46d0927f29ae8a8b3342664d61aaa7bd08",
+      "original_bytes": 11641,
+      "original_lines": 240,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 17,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Matrix/Compact.lean",
+      "original_sha256": "2cac3ade934457afdf8ec38aa64d7b4a461d687a1af4941f5fe3138c78770261",
+      "original_bytes": 7938,
+      "original_lines": 183,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 18,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Matrix/StandardCompact.lean",
+      "original_sha256": "33ebfc6ee4d1455a5c79036d1df76bcb95b9fb399e42b9fbb553382309961e25",
+      "original_bytes": 21931,
+      "original_lines": 446,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 19,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Morita.lean",
+      "original_sha256": "a979900ba02bcfa4f7fa2b39941ff1903b897ce5edd38dd46eb197ca7a8e0efa",
+      "original_bytes": 2086,
+      "original_lines": 61,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 20,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/PolarDecomposition.lean",
+      "original_sha256": "f15576ff9716d3f031f564e4511ad66a0cd5a41fcd1e8d162f7a2d951be9f65f",
+      "original_bytes": 8925,
+      "original_lines": 228,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 21,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/RectangularAdjoint.lean",
+      "original_sha256": "8a5d5f28dd80282bbc72f81c275f4d0e548255828d463f70ec81a163607429c0",
+      "original_bytes": 9122,
+      "original_lines": 218,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 22,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/RectangularPartial.lean",
+      "original_sha256": "7ed2317d75c4aa274bd0079f5b0b4923e61b76c970259d60d035fc273de9bb9a",
+      "original_bytes": 2375,
+      "original_lines": 68,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 23,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Regular.lean",
+      "original_sha256": "ae69899bd2c02b265c9dedf76c4ca381fe0422b00a0c1a08af49c3689fc00d8c",
+      "original_bytes": 7463,
+      "original_lines": 184,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 24,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Regular/PartialBridge.lean",
+      "original_sha256": "deccef4359f7b10bc7eae6f22be2fe0c643a1ccacc53c3f5725f433b14038a9b",
+      "original_bytes": 5832,
+      "original_lines": 142,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 25,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/RightSubmodule.lean",
+      "original_sha256": "c11b84251f981df8509feb69396ee3bd2d7b56aabb3b8aaa0da8a14acea9c261",
+      "original_bytes": 5669,
+      "original_lines": 189,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 26,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/ScalarRight.lean",
+      "original_sha256": "91ac4f73beca70c6a55b2aeadc0b7c279b3999a313174d7b403f3fd7e90bf40f",
+      "original_bytes": 13156,
+      "original_lines": 304,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 27,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/ScalarRight/Adjointable.lean",
+      "original_sha256": "3e7209a86d26310a627cea9bcd90d1d61b69d3755700855741b70cbe2ffce1de",
+      "original_bytes": 12778,
+      "original_lines": 252,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 28,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/ScalarRight/AdjointableEquiv.lean",
+      "original_sha256": "5351a981b5490a6b49465e64e3cab4dddc35ba53fa7f578c8bb560ce63857786",
+      "original_bytes": 9599,
+      "original_lines": 190,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 29,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/ScalarRight/AdjointableForget.lean",
+      "original_sha256": "2e6d626954f88862fa271ee6343d6318e881e0ca93642894c128ff918f659bb0",
+      "original_bytes": 2956,
+      "original_lines": 69,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 30,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/ScalarRight/AdjointableIsometry.lean",
+      "original_sha256": "5cb2cf0aa189af4e60d0c71e1db0631f396d9fa480913312db1827fa2502384b",
+      "original_bytes": 12715,
+      "original_lines": 254,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 31,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/ScalarRight/AdjointableLaws.lean",
+      "original_sha256": "31c2708cc5ef696a3f0e66159e722533ad16ef48f7dcabb7d3598ab502a52090",
+      "original_bytes": 7182,
+      "original_lines": 151,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 32,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/ScalarRight/Calkin.lean",
+      "original_sha256": "7732c01eb2076f4db80637e95a1f666861ad6a50b35384d643a863ca7f9f91c5",
+      "original_bytes": 27641,
+      "original_lines": 539,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 33,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/ScalarRight/Compact.lean",
+      "original_sha256": "546168119c659d47f6c1f8f46e7fd77122d1d67cf63fd609c7e0b281dc5d6b5c",
+      "original_bytes": 7265,
+      "original_lines": 142,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 34,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Standard/CoordinateAdjoints.lean",
+      "original_sha256": "d0e0dceb1fe3fea0e205e6b3ab7f21624a111bafefd0f24fbd77cd6697e1b69b",
+      "original_bytes": 10041,
+      "original_lines": 201,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 35,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Standard/FiniteCoordinateAdjoints.lean",
+      "original_sha256": "fedac062491ee655887cc629c05440daa0e8840d63f0496c2c09c7b95b414835",
+      "original_bytes": 4339,
+      "original_lines": 96,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 36,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Standard/FiniteInclusion.lean",
+      "original_sha256": "9ac2f21a6a082ba52fe6449903b7111e0046ee7d7d17ade6a7e55999b9cf3e8e",
+      "original_bytes": 17548,
+      "original_lines": 342,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 37,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/StandardEquiv.lean",
+      "original_sha256": "b4cd16708a89c8d4337b3e784847ba3d8788ae130ea6d44ec9dfa15f506187cd",
+      "original_bytes": 25174,
+      "original_lines": 621,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 38,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/StandardStabilization.lean",
+      "original_sha256": "8a65d42bcbd77993d94d271a607dba15b1742607d1950911be46ffdc72683ae4",
+      "original_bytes": 1774,
+      "original_lines": 53,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 39,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/StandardStabilization/CoefficientCorner.lean",
+      "original_sha256": "795d53515cb5963cd31d511fc6c459951ab8281e1fcaf09ccc32e868c2b8385f",
+      "original_bytes": 4988,
+      "original_lines": 96,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 40,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Module/Unitary/Dense.lean",
+      "original_sha256": "8ae528a71b63f74bbf6a26ed282e2985afd7e2bde8de9a4e0f3037a691e50cf8",
+      "original_bytes": 5105,
+      "original_lines": 141,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 41,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Multiplier/IdealInvariant.lean",
+      "original_sha256": "38702fac009c01dfe2f753128cdf66c96acc93ae7c145e259a9150093eb01878",
+      "original_bytes": 4297,
+      "original_lines": 89,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 42,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Multiplier/Quotient.lean",
+      "original_sha256": "cb56cadaa92efac7795a976c06c07f404e17ba8a3b2ce2572fd8e1328e86c085",
+      "original_bytes": 8071,
+      "original_lines": 151,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 43,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Multiplier/QuotientFunctor.lean",
+      "original_sha256": "5b1e5b58e69b7c6ffb9bac8df2c110ba58f9dbbdf8b555d453f7a92d8143ea9c",
+      "original_bytes": 6938,
+      "original_lines": 138,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 44,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Operator/CalkinConjugate.lean",
+      "original_sha256": "77180154c1858469202f41f14641308d0b555e9975a10ea54a4465a690de1e57",
+      "original_bytes": 3577,
+      "original_lines": 87,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 45,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Operator/CalkinOrthogonalSpectrum.lean",
+      "original_sha256": "9df2159230ec1be1b349365557dc9ed8d37e1297984d01a5ccf909feaa270dfd",
+      "original_bytes": 9804,
+      "original_lines": 188,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 46,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Operator/CalkinOrthogonalSum.lean",
+      "original_sha256": "50bc97268a0fe78369408ed6a8a3a7eb945e431172b9f086fc19a329cd44b268",
+      "original_bytes": 10636,
+      "original_lines": 227,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 47,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Operator/CalkinPullback.lean",
+      "original_sha256": "758932a91af5c6827d0aa9eb307c06a11fc28d4e51027084ad8ac2b1e54f9e50",
+      "original_bytes": 13033,
+      "original_lines": 249,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 48,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Operator/EssentiallyNormal.lean",
+      "original_sha256": "8936fd966420cc18d1c01257672016496981522717b87dcd2c405bd2f7b65a92",
+      "original_bytes": 3110,
+      "original_lines": 76,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 49,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Operator/FredholmCalkin.lean",
+      "original_sha256": "311ea8eb201a14f0608e103c78c0bfe77e011cb41d1de8f6071ebae9d3e39f03",
+      "original_bytes": 14423,
+      "original_lines": 350,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 50,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Operator/RepeatedEvaluationCalkin.lean",
+      "original_sha256": "8e312bf5f52a6ce8ebaa601f7020b70955d41542c7f60865a63666578d546d19",
+      "original_bytes": 10466,
+      "original_lines": 220,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 51,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Operator/ScalarCompacts.lean",
+      "original_sha256": "993236f0c7537bc746b60d026630ad103ab3aa9e6bad973641cd0086b923e77b",
+      "original_bytes": 4970,
+      "original_lines": 115,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 52,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/PointNormAction/AutomorphismHomotopy.lean",
+      "original_sha256": "281fb3908ed6a8f6b7c7e2c06cba38a527d67a0c458baea65d6e0014ae25600a",
+      "original_bytes": 12199,
+      "original_lines": 348,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 53,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/PointNormAction/C0Translation.lean",
+      "original_sha256": "e40ecd90ee498400a1edf7e620b3e84d809407d0364eeb0368d1cba277541eff",
+      "original_bytes": 4932,
+      "original_lines": 119,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 54,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/PointNormAction/EssentialCovariantRepresentation.lean",
+      "original_sha256": "7fdd566189f3a58b7183b958eb29b1058071ff80629c6b4363cab7fa09372fe7",
+      "original_bytes": 8520,
+      "original_lines": 178,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 55,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/FiniteSquareSubmodule.lean",
+      "original_sha256": "d364ab2b149eec41a58d8d0292b9c0b79dbabe6b2f73753d62c69080c2a4af77",
+      "original_bytes": 11171,
+      "original_lines": 245,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 56,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/FiniteStarDomain.lean",
+      "original_sha256": "0596d221162f4952e94edcffd4a0079c79d0827eeba3f2f3de2c3cd833a5a004",
+      "original_bytes": 2780,
+      "original_lines": 71,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 57,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/FiniteValueRelations.lean",
+      "original_sha256": "e2dd7059524c612a408b720b1e65bb61e157ca682ba0da0697e85053b369648e",
+      "original_bytes": 6982,
+      "original_lines": 150,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 58,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/GNSCoefficientPositive.lean",
+      "original_sha256": "b950c1fcdd1bff701a482998c0ecc9c14ebeaf2ffc3d13959256d1c8b8625ac8",
+      "original_bytes": 3628,
+      "original_lines": 83,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 59,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/GNSCompletion.lean",
+      "original_sha256": "43ab125e9a6cddb6c4840fa0afebc567531f05dcd3e4867c2893a9695c2aed1e",
+      "original_bytes": 6084,
+      "original_lines": 137,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 60,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/GNSLeftAdjoint.lean",
+      "original_sha256": "f9b5036e10f68215c96e6ffb7e68b6588be81e4726567811a3cec5ed7d89edb2",
+      "original_bytes": 5397,
+      "original_lines": 109,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 61,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/GNSLeftOperator.lean",
+      "original_sha256": "8865f74027d21370570c56f428caafd9831120b6b2e9705c34078d9c194b14ed",
+      "original_bytes": 4929,
+      "original_lines": 104,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 62,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/GNSLeftRepresentation.lean",
+      "original_sha256": "4b13b3f484922eaa495ca2c00d7c65d6d844a02e9502fa80f60e83cc540921d0",
+      "original_bytes": 6033,
+      "original_lines": 140,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 63,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/GNSLeftUnital.lean",
+      "original_sha256": "81ccbb086f975845d329aa8e8f5cdac94258109803ab97bdf12d2c061e8f3dc5",
+      "original_bytes": 2759,
+      "original_lines": 75,
+      "snapshot_file": "part-0003.jsonl",
+      "snapshot_line": 64,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/GNSPositiveFunctional.lean",
+      "original_sha256": "9271447b48144282344234c84e59844d4a3916208a52858b005e57eb4841c66e",
+      "original_bytes": 3273,
+      "original_lines": 84,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/PositiveCompression.lean",
+      "original_sha256": "99c3f426711dae62ebd4ca6044f803840c459c8ec9046396b8657ae404a2e10e",
+      "original_bytes": 3944,
+      "original_lines": 95,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 2,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/PreGNSNorm.lean",
+      "original_sha256": "811ea5954833069f3a2fdb331dbbda7958e53f5ef826f4a6eddb2f745713df22",
+      "original_bytes": 4478,
+      "original_lines": 104,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 3,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/PreInnerProduct.lean",
+      "original_sha256": "fda1192cd7845f7e5d412b68f43f31b07a8c82f6e4562a0f806aae4fa57989ee",
+      "original_bytes": 18399,
+      "original_lines": 349,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 4,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/PreTomita.lean",
+      "original_sha256": "a357db62b4afc80e5fc3d322a39522c1da587b90e7f7afc16e8fc71cd67c571d",
+      "original_bytes": 6609,
+      "original_lines": 140,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 5,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/PreTomitaPartialMap.lean",
+      "original_sha256": "d264260f0127115df0a63e7346463f81f761e1e4669a07a951d6708781428658",
+      "original_bytes": 4660,
+      "original_lines": 112,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 6,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/Scaling.lean",
+      "original_sha256": "54beccf08d04082466248a2bc78986c0498a98b9eed4371616a281d6754135d5",
+      "original_bytes": 2652,
+      "original_lines": 78,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 7,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/TomitaCoreAlgebra.lean",
+      "original_sha256": "2a65f7d1e7ffe00bb65e5eacf9001e418b3021fcbc75ef9a608652ac7403c68f",
+      "original_bytes": 8539,
+      "original_lines": 180,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 8,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/TomitaCoreGeneratedAlgebra.lean",
+      "original_sha256": "88e1e8e38d3782767993fc90e800d97feb60578e3dd5d082f7e94a3536847374",
+      "original_bytes": 4850,
+      "original_lines": 110,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 9,
+      "snapshot_adaptations": []
+    },
+    {
+      "original_path": "MathlibExt/Analysis/CStarAlgebra/Weight/TomitaCoreLeftRepresentation.lean",
+      "original_sha256": "e1ea9f8d602b3261747f39b0eeef5982cc02491c02cdb1edfe8bab19d4877d7e",
+      "original_bytes": 4622,
+      "original_lines": 107,
+      "snapshot_file": "part-0004.jsonl",
+      "snapshot_line": 10,
+      "snapshot_adaptations": []
+    }
+  ],
+  "adaptation_scope": "snapshot_adaptations concerns the archive bytes only; production adaptations are recorded separately in the batch provenance manifest."
+}

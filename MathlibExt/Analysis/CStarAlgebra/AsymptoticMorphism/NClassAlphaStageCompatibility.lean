@@ -172,11 +172,5 @@ theorem precompClass_comp_alphaNextClass (n : ℕ)
     stageTransition_classOf,
     alphaNextRepresentative_precomp_constantHom]
 
-#print axioms alphaNextRepresentative_precomp
-#print axioms alphaNextClass_precomp
-#print axioms alphaNextRepresentative_postcomp
-#print axioms alphaNextClass_postcomp
-#print axioms alphaNextRepresentative_precomp_constantHom
-#print axioms precompClass_comp_alphaNextClass
 
 end IteratedAsymptoticAlgebra
