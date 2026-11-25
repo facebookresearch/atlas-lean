@@ -59888,6 +59888,7 @@
 "MathlibExt.GameTheory.PotentialGame.IsExactPotential.lt_of_improvingMove": "50b52bf71ec4e5b0",
 "MathlibExt.GameTheory.PotentialGame.IsExactPotential.wellFounded_improvingMove": "206d7df8828d79f0",
 "MathlibExt.GameTheory.PotentialGame.IsPureNash": "44a098356fb28b9f",
+"MathlibExt.GameTheory.Regret.averageRegret": "fe4a31c33973b685",
 "MathlibExt.GameTheory.Regret.cumulativeLoss": "53b8d59791e2fa7d",
 "MathlibExt.GameTheory.Regret.exists_isStationaryPlay": "230b60637fc0bd1d",
 "MathlibExt.GameTheory.Regret.exists_stationaryPlay_swapRegret_le_card_mul": "3d1687157cb6f645",
