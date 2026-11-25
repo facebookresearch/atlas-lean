@@ -2,6 +2,9 @@
 
 Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear systems and fundamental matrices, stability and Lyapunov's indirect method, Sturm–Liouville and boundary value problems with their Green's operators and eigenfunctions, oscillation and comparison theorems.
 
+- [Compact invariant sets and global existence](compact-invariant-sets-and-global-existence/README.md)
+- [Global existence in regular sublevels](exists-forward-solution-of-compact-regul.md)
+- [Global polynomial solutions in compact sublevels](exists-forward-solution-of-compact-suble.md)
 - [Green's operator of the Dirichlet Laplacian on \[0, 1\]](green-s-operator-of-the-dirichlet-laplacian-on-0/README.md)
 - [Mechanical and engineering models](mechanical-and-engineering-models/README.md)
 - [Hyperbolic motions in the N-body problem](hyperbolic-motions-in-the-n-body-problem/README.md)
@@ -10,6 +13,8 @@ Existence and uniqueness (Cauchy–Peano, Picard, maximal solutions), linear sys
 - [Linear systems and fundamental matrices](linear-systems-and-fundamental-matrices/README.md)
 - [One-parameter groups of matrices](one-parameter-groups-of-matrices/README.md)
 - [Picard iteration](picard-iteration/README.md)
+- [Regular sublevel invariance](regular-sublevel-invariance/README.md)
+- [Polynomial regular-sublevel invariance](maps-to-sublevel-of-mk-derivation-nonpos.md)
 - [Sturm–Liouville Dirichlet problem](sturm-liouville-dirichlet-problem/README.md)
 - [Cauchy–Peano existence theorem](cauchy-peano-exists.md)
 - [Comparison principle for the Dirichlet problem on $(0, 1)$](bvp-comparison.md)
