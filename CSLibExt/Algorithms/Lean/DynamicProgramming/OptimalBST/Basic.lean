@@ -61,7 +61,16 @@ private theorem dummyDepths_length {n : Nat} (tree : BinaryTree (Fin n))
   | node key left right ihLeft ihRight =>
     simp [dummyDepths, ihLeft, ihRight]
 
-/-- CLRS search cost, including every successful key and every unsuccessful dummy. -/
+/-- **Expected search cost of a binary search tree.** Let $R$ be an additive commutative monoid,
+let $n$ be a natural number, and let $p_0, \dots, p_{n-1} \in R$ (key weights) and
+$q_0, \dots, q_n \in R$ (dummy-key weights) be given. Let $T$ be a binary tree whose nodes are
+labelled by elements of $\{0, \dots, n-1\}$ and whose inorder traversal is $0, 1, \dots, n-1$, so
+each key labels exactly one node and $T$ has exactly $n + 1$ empty subtrees. The depth of a node
+or empty subtree is its distance from the root, the root having depth $0$; write $d(k)$ for the
+depth of the node labelled $k$ and $\ell_0, \dots, \ell_n$ for the depths of the empty subtrees
+listed from left to right. The expected search cost of $T$ is
+$$\sum_{k=0}^{n-1} (d(k) + 1) \cdot p_k + \sum_{i=0}^{n} (\ell_i + 1) \cdot q_i,$$
+where $m \cdot x$ denotes the $m$-fold sum of $x$ in $R$. -/
 public def expectedSearchCost [AddCommMonoid R] (n : Nat)
     (p : Vector R n) (q : Vector R (n + 1))
     (tree : BinaryTree (Fin n))
@@ -126,7 +135,20 @@ private def execute [AddCommMonoid R] [LinearOrder R]
       root := root.set a (root[a].set (b - 1) (some chosen))
   return (e, w, root, candidateCount)
 
-/-- CLRS OPTIMAL-BST with saved `e`, saved `w`, saved earliest roots, and candidate-event time. -/
+/-- **Optimal binary search tree procedure.** Let $R$ be a linearly ordered additive commutative
+monoid in which addition is monotone, let $n$ be a natural number, and let
+$p_0, \dots, p_{n-1}, q_0, \dots, q_n \in R$. The procedure (CLRS OPTIMAL-BST, with keys indexed
+from $0$) fills a cost table $e$ of size $(n+1) \times (n+1)$, an auxiliary weight table $w$ of
+the same size, and a root table of size $n \times n$ with entries in $\{0, \dots, n-1\}$ or
+empty; all entries start as $0$ or empty. First it sets $e[a][a] = w[a][a] = q_a$ for
+$a = 0, \dots, n$. Then for $\ell = 1, \dots, n$ in increasing order and, for each $\ell$, for
+$a = 0, \dots, n - \ell$ in increasing order, with $b = a + \ell$, it sets
+$w[a][b] = w[a][b-1] + p_{b-1} + q_b$ and examines the candidate roots $r = a, \dots, b-1$ in
+increasing order, replacing the current best only when the candidate value
+$e[a][r] + e[r+1][b] + w[a][b]$ is strictly smaller. It stores the resulting minimum in $e[a][b]$
+and the earliest minimizing $r$ at position $(a, b-1)$ of the root table. The procedure returns
+the cost table $e$ and the root table, with running time equal to the total number of candidate
+roots examined. -/
 public def optimalBST [AddCommMonoid R] [LinearOrder R]
     [IsOrderedAddMonoid R] {n : Nat} (p : Vector R n)
     (q : Vector R (n + 1)) : TimeM Nat

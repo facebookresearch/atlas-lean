@@ -718,11 +718,13 @@ private theorem ore_aux {W : Type*} [Fintype W] [DecidableEq W] :
         · rw [SimpleGraph.Walk.length_transfer q hprem]; exact hqlen
 
 /--
-Ore's theorem (1960): a finite simple graph with ≥3 vertices is Hamiltonian if for every pair of
-distinct nonadjacent vertices the degree sum is at least the number of vertices.
-Source: O. Ore, Note on Hamilton Circuits, Amer. Math. Monthly 67 (1960), 55, DOI 10.2307/2308928.
+**Ore's theorem.** Let $G$ be a simple graph on a finite vertex set $V$ with $|V| \ge 3$. If
+$\deg u + \deg v \ge |V|$ for every pair of distinct nonadjacent vertices $u$ and $v$, then $G$
+is Hamiltonian.
 
 Proves `Wanted` entry `ore`.
+
+Source: O. Ore, Note on Hamilton Circuits, Amer. Math. Monthly 67 (1960), 55, DOI 10.2307/2308928.
 -/
 theorem ore {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]

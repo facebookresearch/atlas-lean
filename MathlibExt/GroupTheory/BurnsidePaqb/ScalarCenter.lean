@@ -27,7 +27,10 @@ namespace BurnsidePaqb
 variable {G : Type*} [Group G] [Fintype G]
 
 omit [Fintype G] in
-/-- If `‖χ g‖` attains the degree, all characteristic roots of `ρ g` coincide. -/
+/-- **Characters of full absolute value have equal eigenvalues.** Let $G$ be a finite group,
+$V$ a nonzero finite-dimensional complex vector space and $\rho$ an irreducible representation of
+$G$ on $V$ with character $\chi$. If $g \in G$ satisfies $|\chi(g)| = \dim V$, then any two roots
+of the characteristic polynomial of $\rho(g)$ are equal. -/
 theorem all_roots_eq_of_norm_eq {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] [Nontrivial V] [Finite G] (ρ : Representation ℂ G V)
     [Representation.IsIrreducible ρ] (g : G)
@@ -43,7 +46,10 @@ theorem all_roots_eq_of_norm_eq {V : Type*} [AddCommGroup V] [Module ℂ V]
   exact (lt_irrefl _) hlt
 
 omit [Fintype G] in
-/-- If all characteristic roots of `ρ g` equal `μ₀`, then `ρ g` is the scalar `μ₀`. -/
+/-- **Elements with a single eigenvalue act as scalars.** Let $G$ be a finite group, $V$ a nonzero
+finite-dimensional complex vector space, $\rho$ a representation of $G$ on $V$, $g \in G$ and
+$\mu_0 \in \mathbb{C}$. If every root of the characteristic polynomial of $\rho(g)$ equals
+$\mu_0$, then $\rho(g) = \mu_0 \cdot \mathrm{id}_V$. -/
 theorem eq_smul_one_of_all_roots_eq {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] [Nontrivial V] [Finite G] (ρ : Representation ℂ G V) (g : G)
     (μ₀ : ℂ) (hall : ∀ μ ∈ (ρ g).charpoly.roots, μ = μ₀) :
@@ -118,7 +124,9 @@ theorem eq_smul_one_of_all_roots_eq {V : Type*} [AddCommGroup V] [Module ℂ V]
   rw [hcalc] at haeval
   exact sub_eq_zero.mp haeval
 
-/-- The scalar center: elements acting by scalar matrices. -/
+/-- **Scalar center of a representation.** Let $\rho$ be a representation of a group $G$ on a
+nonzero complex vector space $V$. The scalar center of $\rho$ is the subgroup of $G$ consisting of
+the elements $g$ such that $\rho(g) = c \cdot \mathrm{id}_V$ for some $c \in \mathbb{C}$. -/
 noncomputable def charCenter {V : Type*} [AddCommGroup V] [Module ℂ V] [Nontrivial V]
     (ρ : Representation ℂ G V) : Subgroup G where
   carrier := { g | ∃ c : ℂ, (ρ g : Module.End ℂ V) = c • 1 }
@@ -161,28 +169,36 @@ instance charCenter_normal {V : Type*} [AddCommGroup V] [Module ℂ V] [Nontrivi
     rw [hmul, hc, hsc, h1]
 
 omit [Fintype G] in
-/-- Membership unfolds to the scalar-action property. -/
+/-- **Membership in the scalar center.** Let $\rho$ be a representation of a group $G$ on a nonzero
+complex vector space $V$. An element $g \in G$ lies in the scalar center of $\rho$ if and only if
+$\rho(g) = c \cdot \mathrm{id}_V$ for some $c \in \mathbb{C}$. -/
 theorem mem_charCenter_iff {V : Type*} [AddCommGroup V] [Module ℂ V] [Nontrivial V]
     (ρ : Representation ℂ G V) (g : G) :
     g ∈ charCenter ρ ↔ ∃ c : ℂ, (ρ g : Module.End ℂ V) = c • 1 :=
   Iff.rfl
 
 omit [Fintype G] in
-/-- A scalar action puts an element in the scalar center. -/
+/-- **Elements acting by a scalar lie in the scalar center.** Let $\rho$ be a representation of a
+group $G$ on a nonzero complex vector space $V$. If $g \in G$ and $c \in \mathbb{C}$ satisfy
+$\rho(g) = c \cdot \mathrm{id}_V$, then $g$ lies in the scalar center of $\rho$. -/
 theorem mem_charCenter_of_eq_smul {V : Type*} [AddCommGroup V] [Module ℂ V]
     [Nontrivial V] (ρ : Representation ℂ G V) (g : G) (c : ℂ)
     (hc : (ρ g : Module.End ℂ V) = c • 1) : g ∈ charCenter ρ :=
   ⟨c, hc⟩
 
 omit [Fintype G] in
-/-- An element of the scalar center acts by some scalar. -/
+/-- **Elements of the scalar center act by scalars.** Let $\rho$ be a representation of a group $G$
+on a nonzero complex vector space $V$. If $g$ lies in the scalar center of $\rho$, then there is
+$c \in \mathbb{C}$ with $\rho(g) = c \cdot \mathrm{id}_V$. -/
 theorem exists_eq_smul_of_mem_charCenter {V : Type*} [AddCommGroup V] [Module ℂ V]
     [Nontrivial V] (ρ : Representation ℂ G V) (g : G) (h : g ∈ charCenter ρ) :
     ∃ c : ℂ, (ρ g : Module.End ℂ V) = c • 1 :=
   h
 
 omit [Fintype G] in
-/-- A nonlinear irreducible representation has proper scalar center. -/
+/-- **The scalar center of a nonlinear irreducible representation is proper.** Let $\rho$ be an
+irreducible representation of a group $G$ on a finite-dimensional complex vector space $V$ with
+$\dim V > 1$. Then the scalar center of $\rho$ is a proper subgroup of $G$. -/
 theorem charCenter_proper_of_nonlinear {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] [Nontrivial V] (ρ : Representation ℂ G V)
     [Representation.IsIrreducible ρ] (h : 1 < Module.finrank ℂ V) :
@@ -224,7 +240,10 @@ theorem charCenter_proper_of_nonlinear {V : Type*} [AddCommGroup V] [Module ℂ 
   exact hbot (eq_bot_or_eq_top S |>.resolve_right htopS)
 
 omit [Fintype G] in
-/-- Elements of the scalar center attain the norm bound. -/
+/-- **Elements of the scalar center have character of full absolute value.** Let $G$ be a finite
+group, $V$ a nonzero finite-dimensional complex vector space and $\rho$ a representation of $G$
+on $V$ with character $\chi$. If $g$ lies in the scalar center of $\rho$, then
+$|\chi(g)| = \dim V$. -/
 theorem norm_eq_of_mem_charCenter {V : Type*} [AddCommGroup V] [Module ℂ V]
     [FiniteDimensional ℂ V] [Nontrivial V] [Finite G] (ρ : Representation ℂ G V)
     (g : G) (h : g ∈ charCenter ρ) :

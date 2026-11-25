@@ -19,7 +19,7 @@ there is no infinite cluster at `p = 1/2`.
 The repository proves `0 < p_c(2)` (`StatMech.Percolation.pc_pos`), `p_c(2) < 1`
 (`StatMech.Percolation.pc_two_lt_one_via_fk` in PhyslibExt) and the sharpness of the phase
 transition (`StatMech.Percolation.sharp_phase_transition_pc`); the uniqueness of the infinite
-cluster, used in the proof of `θ_2(1/2) = 0`, is itself recorded as wanted
+cluster, used in the proof of `θ_2(1/2) = 0`, is the Burton–Keane theorem
 (`MathlibExt.Probability.Percolation.BurtonKeaneWanted.burton_keane_bernoulli`).
 
 ## Main statements

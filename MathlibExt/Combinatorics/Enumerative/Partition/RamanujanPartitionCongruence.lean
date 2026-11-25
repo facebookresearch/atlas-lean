@@ -201,7 +201,7 @@ private theorem prod_one_add_mul_pow_eq_sum_gaussBinom {R : Type*}
               gaussBinom Q (M + 1) k * Q ^ (k.choose 2) * x ^ k :=
             hRHS.symm
 
-/-- Twice the triangular number `(a + 1).choose 2` is `a * (a + 1)`. -/
+/-- **Twice a triangular number.** For every natural number $a$, $2\binom{a+1}{2} = a(a+1)$. -/
 theorem two_mul_choose_two_succ (a : ℕ) : 2 * (a + 1).choose 2 = a * (a + 1) := by
   have h := Nat.choose_two_right (a + 1)
   have hpred : (a + 1) - 1 = a := Nat.add_sub_cancel a 1
@@ -256,15 +256,18 @@ private theorem five_dvd_two_mul_add_one_of_pentagonal_add_triangle
     simpa using hfin
   rwa [ZMod.natCast_eq_zero_iff] at hzero
 
-/-- Jacobi's cube series in `ℤ⟦X⟧`, with `(-1) ^ t * (2 * t + 1)` at index
-`(t + 1).choose 2` and `0` elsewhere. -/
+/-- **Jacobi's cube series.** Jacobi's cube series is the formal power series
+$J(X) = \sum_{t \ge 0} (-1)^t (2t+1) X^{t(t+1)/2}$ in $\mathbb{Z}[[X]]$: for each natural
+number $t$ its coefficient at the triangular number $t(t+1)/2$ is $(-1)^t (2t+1)$, and all its
+other coefficients are $0$. -/
 noncomputable def jacobiCubeSeries : PowerSeries ℤ :=
   PowerSeries.mk fun b =>
     ∑ t ∈ Finset.range (b + 1),
       (if (t + 1).choose 2 = b then (-1 : ℤ) ^ t * (2 * t + 1) else 0)
 
-/-- The coefficient of `jacobiCubeSeries` at the triangular index `(t + 1).choose 2`
-is `(-1) ^ t * (2 * t + 1)`. -/
+/-- **Coefficients of Jacobi's cube series at triangular numbers.** Let $J(X)$ be Jacobi's cube
+series. For every natural number $t$, the coefficient of $X^{t(t+1)/2}$ in $J(X)$ is
+$(-1)^t (2t+1)$. -/
 theorem coeff_jacobiCubeSeries_triangle (t : ℕ) :
     PowerSeries.coeff ((t + 1).choose 2) jacobiCubeSeries = (-1 : ℤ) ^ t * (2 * t + 1) := by
   unfold jacobiCubeSeries
@@ -293,7 +296,9 @@ theorem coeff_jacobiCubeSeries_triangle (t : ℕ) :
       omega
   rw [hsum, ite_eq_left rfl]
 
-/-- Coefficients of `jacobiCubeSeries` vanish away from triangular indices `(t + 1).choose 2`. -/
+/-- **Vanishing coefficients of Jacobi's cube series.** Let $J(X)$ be Jacobi's cube series. If a
+natural number $b$ is not of the form $t(t+1)/2$ for any natural number $t$, then the coefficient
+of $X^b$ in $J(X)$ is $0$. -/
 theorem coeff_jacobiCubeSeries_eq_zero {b : ℕ} (hb : ∀ t : ℕ, (t + 1).choose 2 ≠ b) :
     PowerSeries.coeff b jacobiCubeSeries = 0 := by
   unfold jacobiCubeSeries
@@ -1221,7 +1226,9 @@ private theorem qPochFin_sq_eq_sum_gaussBinom (n : ℕ) :
           have hlt : m < n + 1 := Finset.mem_range.mp hm
           omega)
 
-/-- Jacobi's cube identity, formal: `E^3 = J` in `ℤ⟦X⟧`. -/
+/-- **Jacobi's cube identity.** Let $E(X) = \sum_{k \in \mathbb{Z}} (-1)^k X^{k(3k-1)/2}$ be
+Euler's pentagonal series and $J(X) = \sum_{t \ge 0} (-1)^t (2t+1) X^{t(t+1)/2}$ Jacobi's cube
+series, both in $\mathbb{Z}[[X]]$. Then $E(X)^3 = J(X)$. -/
 theorem pentagonalSeries_pow_three :
     PowerSeries.pentagonalSeries ℤ ^ 3 = jacobiCubeSeries := by
   ext d
@@ -1353,8 +1360,11 @@ private theorem five_dvd_coeff_pentagonalSeries_pow_four (m : ℕ) :
     rw [hE0, zero_mul]
     exact dvd_zero _
 
-/-- Frobenius transfer for a general prime: vanishing of `E^(p-1)`
-coefficients forces the partition congruence. -/
+/-- **Partition congruences from a power of Euler's series.** Let $p$ be a prime, let $r < p$ be
+a natural number, and let $E(X) = \sum_{k \in \mathbb{Z}} (-1)^k X^{k(3k-1)/2}$ be Euler's
+pentagonal series in $\mathbb{Z}[[X]]$. If $p$ divides the coefficient of $X^{pm+r}$ in
+$E(X)^{p-1}$ for every natural number $m$, then $p$ divides the number of partitions of $pm + r$
+for every natural number $m$. -/
 theorem dvd_partitionFunction_of_dvd_coeff_pentagonalSeries_pow
     (p r : ℕ) [Fact (Nat.Prime p)] (hr : r < p)
     (hvan : ∀ m : ℕ, (p : ℤ)
@@ -1459,12 +1469,13 @@ theorem dvd_partitionFunction_of_dvd_coeff_pentagonalSeries_pow
   rw [hcoeff] at hP0
   simpa [partitionFunction] using (ZMod.natCast_eq_zero_iff _ _).mp hP0
 
-/-- Ramanujan's partition congruence modulo 5 (Bal–Bhatnagar, JIS 27 (2024),
-Art. 24.1.6, lines 801–804): the number of unordered partitions of `5 * m + 4`
-is divisible by 5 for every `m : ℕ`.
-Live source: https://cs.uwaterloo.ca/journals/JIS/VOL27/Bhatnagar/bhat4.tex
+/-- **Ramanujan's congruence modulo 5.** For every natural number $m$, the number of partitions
+of $5m + 4$ is divisible by $5$.
 
 Proves `Wanted` entry `ramanujan_partition_congruence_mod_five`.
+
+Source: Hartosh Singh Bal and Gaurav Bhatnagar, JIS 27 (2024), Art. 24.1.6, lines 801–804.
+Live source: https://cs.uwaterloo.ca/journals/JIS/VOL27/Bhatnagar/bhat4.tex
 -/
 theorem ramanujan_partition_congruence_mod_five (m : ℕ) :
     Fintype.card (Nat.Partition (5 * m + 4)) ≡ 0 [MOD 5] := by
@@ -1577,16 +1588,17 @@ private theorem seven_dvd_coeff_pentagonalSeries_pow_six (m : ℕ) :
     rw [hJ0, zero_mul]
     exact dvd_zero _
 
-/-- Ramanujan's partition congruence modulo 7: the number of unordered partitions of
-`7 * m + 5` is divisible by 7 for every `m : ℕ`.
+/-- **Ramanujan's congruence modulo 7.** For every natural number $m$, the number of partitions
+of $7m + 5$ is divisible by $7$.
+
+Proves `Wanted` entry `ramanujan_partition_congruence_mod_seven`.
+
 Source: S. Ramanujan, "Some properties of p(n), the number of partitions of n",
 Proceedings of the Cambridge Philosophical Society 19 (1919), 207–210,
 where the congruence is stated and proved.
 The proof follows Ramanujan's argument there: the sixth power of Euler's product
 is the square of Jacobi's cube series, and a sum of two squares divisible by 7
 has both terms divisible by 7.
-
-Proves `Wanted` entry `ramanujan_partition_congruence_mod_seven`.
 -/
 theorem ramanujan_partition_congruence_mod_seven (m : ℕ) :
     Fintype.card (Nat.Partition (7 * m + 5)) ≡ 0 [MOD 7] := by

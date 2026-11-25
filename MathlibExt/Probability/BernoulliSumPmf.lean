@@ -59,47 +59,66 @@ open scoped ENNReal NNReal Topology Nat
 
 namespace ProbabilityTheory
 
-/-- `IsBernoulliRV X μ p` means that `p ∈ [0,1]` and `X : Ω → ℕ` has Mathlib's
-Bernoulli law `bernoulliMeasure 1 0 p` under `μ`. The law includes almost-everywhere
-measurability and gives mass `p` to `1` and `1 - p` to `0`, with no mass elsewhere. -/
+/-- **Bernoulli random variable.** Let $\mu$ be a measure on a measurable space $\Omega$, let
+$X : \Omega \to \mathbb{N}$ and let $p$ be a real number. Then $X$ is a Bernoulli random
+variable with parameter $p$ under $\mu$ when $0 \le p \le 1$, $X$ is $\mu$-almost everywhere
+measurable, and the pushforward of $\mu$ along $X$ is the Bernoulli distribution
+$p\,\delta_1 + (1 - p)\,\delta_0$ on $\mathbb{N}$, which gives mass $p$ to $1$, mass $1 - p$
+to $0$ and no mass elsewhere. -/
 def IsBernoulliRV {Ω : Type*} [MeasurableSpace Ω]
     (X : Ω → ℕ) (μ : Measure Ω) (p : ℝ) : Prop :=
   ∃ hp : p ∈ Set.Icc (0 : ℝ) 1, HasLaw X (bernoulliMeasure 1 0 ⟨p, hp⟩) μ
 
 variable {Ω : Type*} [MeasurableSpace Ω] {X : Ω → ℕ} {μ : Measure Ω} {p : ℝ}
 
-/-- A Bernoulli parameter is nonnegative. -/
+/-- **Bernoulli parameters are nonnegative.** If $X$ is a Bernoulli random variable with
+parameter $p$ under a measure $\mu$, then $0 \le p$. -/
 lemma IsBernoulliRV.nonneg (hX : IsBernoulliRV X μ p) : 0 ≤ p := by
   rcases hX with ⟨hp, _⟩
   exact hp.1
 
-/-- A Bernoulli parameter is at most one. -/
+/-- **Bernoulli parameters are at most one.** If $X$ is a Bernoulli random variable with
+parameter $p$ under a measure $\mu$, then $p \le 1$. -/
 lemma IsBernoulliRV.le_one (hX : IsBernoulliRV X μ p) : p ≤ 1 := by
   rcases hX with ⟨hp, _⟩
   exact hp.2
 
-/-- The real-parameter predicate supplies the standard Nat-valued Bernoulli law. -/
+/-- **Law of a Bernoulli random variable.** If $X : \Omega \to \mathbb{N}$ is a Bernoulli random
+variable with parameter $p$ under a measure $\mu$, then $X$ is $\mu$-almost everywhere
+measurable and its law under $\mu$, the pushforward of $\mu$ along $X$, is the Bernoulli
+distribution $p\,\delta_1 + (1 - p)\,\delta_0$ on $\mathbb{N}$. -/
 lemma IsBernoulliRV.hasLaw (hX : IsBernoulliRV X μ p) :
     HasLaw X (bernoulliMeasure 1 0 ⟨p, hX.nonneg, hX.le_one⟩) μ := by
   rcases hX with ⟨hp, hLaw⟩
   exact hLaw
 
-/-- A Bernoulli variable has mass `1 - p` at zero. -/
+/-- **Probability that a Bernoulli variable equals zero.** If $X : \Omega \to \mathbb{N}$ is a
+Bernoulli random variable with parameter $p$ under a measure $\mu$, then
+$\mu(\{\omega : X(\omega) = 0\}) = 1 - p$, as an extended nonnegative real. -/
 lemma IsBernoulliRV.measure_zero (hX : IsBernoulliRV X μ p) :
     μ (X ⁻¹' {0}) = ENNReal.ofReal (1 - p) := by
   have h := hX.hasLaw.measure_eq (p := fun n : ℕ => n = 0) (measurableSet_singleton 0)
   simpa [Set.preimage_singleton, bernoulliMeasure_apply, ENNReal.coe_nnreal_eq] using h
 
-/-- A Bernoulli variable has mass `p` at one. -/
+/-- **Probability that a Bernoulli variable equals one.** If $X : \Omega \to \mathbb{N}$ is a
+Bernoulli random variable with parameter $p$ under a measure $\mu$, then
+$\mu(\{\omega : X(\omega) = 1\}) = p$, as an extended nonnegative real. -/
 lemma IsBernoulliRV.measure_one (hX : IsBernoulliRV X μ p) :
     μ (X ⁻¹' {1}) = ENNReal.ofReal p := by
   have h := hX.hasLaw.measure_eq (p := fun n : ℕ => n = 1) (measurableSet_singleton 1)
   simpa [Set.preimage_singleton, bernoulliMeasure_apply, ENNReal.coe_nnreal_eq] using h
 
-/-- Probability mass function of a sum of independent (possibly nonidentical) Bernoulli random
-variables: if `X₁, …, X_m` are independent with `X_i ∼ Bernoulli(p_i)`, then for any `j ∈ ℕ`,
-`P(∑ X_i = j) = ∑_{A ⊆ [m], |A| = j} ∏_{i ∈ A} p_i · ∏_{i ∉ A} (1 - p_i)` (the
-`j`-th elementary symmetric polynomial in `(p_i)` weighted by the complementary product). -/
+/-- **Distribution of a sum of independent Bernoulli variables.** Let $\mu$ be a probability
+measure on a measurable space $\Omega$, let $m \in \mathbb{N}$, and let
+$X_1, \dots, X_m : \Omega \to \mathbb{N}$ be measurable, mutually independent random variables
+such that each $X_i$ is a Bernoulli random variable with real parameter $p_i$ under $\mu$.
+Then for every $j \in \mathbb{N}$ the probability that $X_1 + \dots + X_m = j$ equals
+
+$$
+\sum_{A \subseteq \{1, \dots, m\},\ |A| = j} \ \prod_{i \in A} p_i \prod_{i \notin A} (1 - p_i).
+$$
+
+This is the Poisson binomial distribution. -/
 theorem bernoulli_sum_pmf
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {m : ℕ} {X : Fin m → Ω → ℕ} {p : Fin m → ℝ}
@@ -217,9 +236,12 @@ theorem bernoulli_sum_pmf
   rw [← Finset.prod_union disjoint_sdiff_self_right,
     Finset.union_sdiff_of_subset (Finset.subset_univ A)]
 
-/-- Probability mass function of a sum of independent *identically distributed*
-Bernoulli variables: if `X₁, …, X_m` are independent with `X_i ∼ Bernoulli(p)`,
-then `P(∑ X_i = j) = C(m, j) p ^ j (1 - p) ^ (m - j)`, the binomial pmf. -/
+/-- **Binomial distribution of a sum of i.i.d. Bernoulli variables.** Let $\mu$ be a
+probability measure on a measurable space $\Omega$, let $m \in \mathbb{N}$, let $p$ be a real
+number, and let $X_1, \dots, X_m : \Omega \to \mathbb{N}$ be measurable, mutually independent
+random variables, each a Bernoulli random variable with parameter $p$ under $\mu$. Then for
+every $j \in \mathbb{N}$ the probability that $X_1 + \dots + X_m = j$ is
+$\binom{m}{j} p^j (1 - p)^{m - j}$, where the exponent $m - j$ is taken to be $0$ when $j > m$. -/
 theorem bernoulli_sum_pmf_iid
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {m : ℕ} {X : Fin m → Ω → ℕ} {p : ℝ}

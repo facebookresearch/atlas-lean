@@ -50,7 +50,13 @@ namespace Cslib.Decidability
 
 open Cslib.Language Grammar
 
-/-- **Whether two context-free languages intersect is undecidable** (`OVERLAP_CFG`). -/
+/-- **Whether two context-free languages intersect is undecidable.** There is an alphabet $T$,
+with decidable equality and a primitive recursive encoding into $\mathbb{N}$, such that no
+multi-stack machine decides (in the sense of TM2-decidability), for a pair $(G_1, G_2)$ of
+encoded context-free grammars over $T$, whether some word lies in both $L(G_1)$ and $L(G_2)$,
+where $L(G)$ is the language of $G$.
+
+$T$ is not required to be finite. This is Sipser's problem $\mathit{OVERLAP}_{\mathit{CFG}}$. -/
 theorem exists_not_tm2Decidable_overlap :
     ∃ (T : Type) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Decidable fun g : EncodedCFG T × EncodedCFG T ↦
@@ -60,7 +66,13 @@ theorem exists_not_tm2Decidable_overlap :
   exact ⟨α ⊕ ℕ, inferInstance, inferInstance, fun hd ↦
     h (tm2Decidable_of_manyOneReducible manyOneReducible_pcp_inter hd)⟩
 
-/-- **Whether two context-free languages are disjoint is undecidable.** -/
+/-- **Whether two context-free languages are disjoint is undecidable.** There is an alphabet $T$,
+with decidable equality and a primitive recursive encoding into $\mathbb{N}$, such that no
+multi-stack machine decides (in the sense of TM2-decidability), for a pair $(G_1, G_2)$ of
+encoded context-free grammars over $T$, whether no word lies in both $L(G_1)$ and $L(G_2)$,
+where $L(G)$ is the language of $G$.
+
+$T$ is not required to be finite. -/
 theorem exists_not_tm2Decidable_disjoint :
     ∃ (T : Type) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Decidable fun g : EncodedCFG T × EncodedCFG T ↦
@@ -69,7 +81,13 @@ theorem exists_not_tm2Decidable_disjoint :
   refine ⟨T, inferInstance, inferInstance, fun hd ↦ h ?_⟩
   simpa only [not_forall, not_not] using hd.not
 
-/-- **Whether a context-free grammar is ambiguous is undecidable** (`AMBIG_CFG`). -/
+/-- **Whether a context-free grammar is ambiguous is undecidable.** There is an alphabet $T$,
+with decidable equality and a primitive recursive encoding into $\mathbb{N}$, such that no
+multi-stack machine decides (in the sense of TM2-decidability), for an encoded context-free
+grammar $G$ over $T$, whether $G$ is ambiguous, that is, whether some word has two different
+leftmost derivations from the start nonterminal of $G$.
+
+$T$ is not required to be finite. This is Sipser's problem $\mathit{AMBIG}_{\mathit{CFG}}$. -/
 theorem exists_not_tm2Decidable_isAmbiguous :
     ∃ (T : Type) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Decidable fun g : EncodedCFG T ↦ IsAmbiguous g.toCFG := by
@@ -78,8 +96,12 @@ theorem exists_not_tm2Decidable_isAmbiguous :
   exact ⟨α ⊕ ℕ, inferInstance, inferInstance, fun hd ↦
     h (tm2Decidable_of_manyOneReducible manyOneReducible_pcp_isAmbiguous hd)⟩
 
-/-- **Whether a context-free grammar generates every word is undecidable** (`ALL_CFG`), over a
-finite alphabet. -/
+/-- **Whether a context-free grammar generates every word is undecidable.** There is a finite
+alphabet $T$, with decidable equality and a primitive recursive encoding into $\mathbb{N}$, such
+that no multi-stack machine decides (in the sense of TM2-decidability), for an encoded
+context-free grammar $G$ over $T$, whether every word over $T$ lies in the language of $G$.
+
+This is Sipser's problem $\mathit{ALL}_{\mathit{CFG}}$. -/
 theorem exists_not_tm2Decidable_univ :
     ∃ (T : Type) (_ : Fintype T) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Decidable fun g : EncodedCFG T ↦ ∀ w, w ∈ g.language := by
@@ -94,7 +116,11 @@ section AllWords
 
 variable {T : Type} [Fintype T] [DecidableEq T]
 
-/-- The grammar `S → a S | ε` (for every letter `a`), generating every word. -/
+/-- **Grammar of all words.** For a finite alphabet $T$, the encoded context-free grammar over $T$
+whose start nonterminal is $S = 0$ and whose productions are $S \to \varepsilon$ and $S \to a S$
+for every letter $a \in T$.
+
+It generates every word over $T$. -/
 noncomputable def allWordsCFG : EncodedCFG T :=
   ⟨0, (0, []) :: (Finset.univ : Finset T).toList.map fun a ↦ (0, [Sum.inr a, Sum.inl 0])⟩
 
@@ -116,7 +142,12 @@ theorem mem_language_allWordsCFG (w : List T) : w ∈ (allWordsCFG (T := T)).lan
 
 end AllWords
 
-/-- **Equivalence of context-free grammars is undecidable** (`EQ_CFG`), over a finite alphabet. -/
+/-- **Equivalence of context-free grammars is undecidable.** There is a finite alphabet $T$, with
+decidable equality and a primitive recursive encoding into $\mathbb{N}$, such that no multi-stack
+machine decides (in the sense of TM2-decidability), for a pair $(G_1, G_2)$ of encoded
+context-free grammars over $T$, whether $L(G_1) = L(G_2)$, where $L(G)$ is the language of $G$.
+
+This is Sipser's problem $\mathit{EQ}_{\mathit{CFG}}$. -/
 theorem exists_not_tm2Decidable_language_eq :
     ∃ (T : Type) (_ : Fintype T) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Decidable fun g : EncodedCFG T × EncodedCFG T ↦ g.1.language = g.2.language := by
@@ -127,7 +158,11 @@ theorem exists_not_tm2Decidable_language_eq :
   · exact Set.ext fun w ↦ ⟨fun _ ↦ mem_language_allWordsCFG w, fun _ ↦ hg w⟩
   · exact (congrArg (w ∈ ·) hg).mpr (mem_language_allWordsCFG w)
 
-/-- **Inclusion of context-free languages is undecidable**, over a finite alphabet. -/
+/-- **Inclusion of context-free languages is undecidable.** There is a finite alphabet $T$, with
+decidable equality and a primitive recursive encoding into $\mathbb{N}$, such that no multi-stack
+machine decides (in the sense of TM2-decidability), for a pair $(G_1, G_2)$ of encoded
+context-free grammars over $T$, whether $L(G_1) \subseteq L(G_2)$, where $L(G)$ is the language
+of $G$. -/
 theorem exists_not_tm2Decidable_language_le :
     ∃ (T : Type) (_ : Fintype T) (_ : Primcodable T) (_ : DecidableEq T),
       ¬TM2Decidable fun g : EncodedCFG T × EncodedCFG T ↦ g.1.language ≤ g.2.language := by

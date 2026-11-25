@@ -44,8 +44,10 @@ namespace Dickson
 
 open scoped BigOperators Pointwise Polynomial
 
-/-- The map on projective general linear groups induced by an injective ring homomorphism is
-injective. -/
+/-- **Injective ring maps induce injective maps of $\mathrm{PGL}_n$.** Let $f : R \to S$ be an
+injective homomorphism of commutative rings and let $n$ be a finite index set. Then the
+homomorphism $\mathrm{PGL}_n(R) \to \mathrm{PGL}_n(S)$ induced by applying $f$ to matrix entries
+is injective, where $\mathrm{PGL}_n(R)$ denotes $\mathrm{GL}_n(R)$ modulo its center. -/
 theorem projGenLinGroup_map_injective {n R S : Type*} [Fintype n] [DecidableEq n]
     [CommRing R] [CommRing S] (f : R →+* S) (hf : Function.Injective f) :
     Function.Injective (Matrix.ProjGenLinGroup.map (n := n) f) := by
@@ -86,7 +88,8 @@ private lemma dicksonWild_card_center_GL_two (F : Type*) [Field F] [Fintype F] :
         Nat.card Fˣ := Nat.card_congr (MonoidHom.ofInjective hscalar).symm
     _ = Fintype.card F - 1 := by rw [Nat.card_units, Nat.card_eq_fintype_card]
 
-/-- Over a finite field `F`, the group `PGL₂(F)` has order `|F| (|F|² - 1)`. -/
+/-- **Order of $\mathrm{PGL}_2$ over a finite field.** If $F$ is a finite field with $q$ elements,
+then the projective general linear group $\mathrm{PGL}_2(F)$ has order $q(q^2 - 1)$. -/
 theorem card_projGenLinGroup_fin_two (F : Type*) [Field F] [Fintype F] :
     Nat.card (Matrix.ProjGenLinGroup (Fin 2) F) =
       Fintype.card F * (Fintype.card F ^ 2 - 1) := by
@@ -148,8 +151,9 @@ private lemma dicksonWild_card_center_SL_two (p : ℕ) (F : Type*) [Field F] [Fi
       (0 : Fin 2)).toEquiv]
   simpa using (IsPrimitiveRoot.neg_one p hp2).card_rootsOfUnity
 
-/-- Over a finite field `F` of odd characteristic, `PSL₂(F)` has order
-`|F| (|F|² - 1) / 2`. -/
+/-- **Order of $\mathrm{PSL}_2$ over a finite field of odd characteristic.** Let $F$ be a finite
+field with $q$ elements whose characteristic $p$ is not $2$. Then the projective special linear
+group $\mathrm{PSL}_2(F)$ has order $q(q^2 - 1)/2$. -/
 theorem card_projectiveSpecialLinearGroup_fin_two (p : ℕ) (F : Type*)
     [Field F] [Fintype F] [CharP F p] (hp2 : p ≠ 2) :
     Nat.card (Matrix.ProjectiveSpecialLinearGroup (Fin 2) F) =
@@ -954,8 +958,9 @@ private lemma dicksonWild_two_mul_card_le_orbits_mul_card
           rw [mul_comm, Nat.div_mul_cancel hdvd]
     _ = Fintype.card (MulAction.orbitRel.Quotient G X) * Fintype.card G := by simp
 
-/-- A finite-order element of `PGL₂` in odd characteristic whose order is divisible by the
-characteristic has order equal to the characteristic. -/
+/-- **Elements of $\mathrm{PGL}_2$ of order divisible by the characteristic.** Let $p$ be an odd
+prime and let $F$ be a field of characteristic $p$. If an element $g$ of $\mathrm{PGL}_2(F)$ has
+finite order and $p$ divides the order of $g$, then the order of $g$ is $p$. -/
 theorem orderOf_eq_char_of_char_dvd
     {p : ℕ} [Fact (Nat.Prime p)] [Fact (2 < p)] {F : Type*} [Field F] [CharP F p]
     (g : Matrix.ProjGenLinGroup (Fin 2) F) (hfinite : orderOf g ≠ 0)
@@ -2529,7 +2534,7 @@ private lemma card_quadraticFiber_le_two {F : Type*} [Field F] (c : F) :
       Nat.card_le_card_of_injective toRoot hinj
     _ = (q.rootSet F).ncard := Nat.card_coe_set_eq _
     _ ≤ q.natDegree := Polynomial.ncard_rootSet_le q F
-    _ = 2 := Polynomial.natDegree_X_pow_sub_C
+    _ = 2 := Polynomial.natDegree_X_pow_sub_C c
 
 private lemma card_le_mul_card_of_fiber_le {A B : Type*} [Finite A] [Finite B]
     (f : A → B) (n : ℕ) (hfiber : ∀ b, Nat.card {a : A // f a = b} ≤ n) :
@@ -2997,13 +3002,13 @@ private lemma dicksonWild_distinct_sylow_inf_eq_bot
       exact (hcomm ⟨a, ha⟩ ⟨b, hb⟩).symm
     · exact Subgroup.centralizer_le_normalizer _
   have hsupP : (P : Subgroup G) ⊔ (Q : Subgroup G) = P := by
-    apply P.is_maximal'
+    apply P.maximal_isPGroup.eq_of_ge
     · exact P.isPGroup'.to_sup_of_normal_right' Q.isPGroup' hPnormQ
     · exact le_sup_left
   have hQP : (Q : Subgroup G) ≤ P := by
     rw [← hsupP]
     exact le_sup_right
-  have hSubgroups : (P : Subgroup G) = Q := Q.is_maximal' P.isPGroup' hQP
+  have hSubgroups : (P : Subgroup G) = Q := Q.maximal_isPGroup.eq_of_ge P.isPGroup' hQP
   exact hPQ (Sylow.ext hSubgroups)
 
 private lemma dicksonWild_card_dvd_of_fixedPointFree_action
@@ -3169,13 +3174,13 @@ private lemma dicksonWild_sylow_eq_of_common_fixedPoint
       exact (hcomm ⟨a, ha⟩ ⟨b, hb⟩).symm
     · exact Subgroup.centralizer_le_normalizer _
   have hsupP : (P : Subgroup G) ⊔ (Q : Subgroup G) = P := by
-    apply P.is_maximal'
+    apply P.maximal_isPGroup.eq_of_ge
     · exact P.isPGroup'.to_sup_of_normal_right' Q.isPGroup' hPnormQ
     · exact le_sup_left
   have hQP : (Q : Subgroup G) ≤ P := by
     rw [← hsupP]
     exact le_sup_right
-  have hSubgroups : (P : Subgroup G) = Q := Q.is_maximal' P.isPGroup' hQP
+  have hSubgroups : (P : Subgroup G) = Q := Q.maximal_isPGroup.eq_of_ge P.isPGroup' hQP
   exact Sylow.ext hSubgroups
 
 private lemma dicksonWild_mem_normalizer_iff_fixedPoint
@@ -6535,21 +6540,29 @@ variable (p : ℕ) [Fact (Nat.Prime p)]
 
 variable [Fact (2 < p)]
 
-/-- **Dickson's classification**, wild case: a finite subgroup of `PGL₂` over
-an algebraic closure of `𝔽_p` (odd `p`), of order divisible by `p`, is a
-Frobenius group with a faithful action that fixes no nonzero vector, `PSL₂` or
-`PGL₂` over a finite subfield, or (for `p = 3`) `A₅`. The first alternative
-records the group-theoretic consequences of the scalar-root action rather than
-constructing the scalar embedding itself.
+/-- **Dickson's classification, wild case.** Let $p$ be an odd prime, let $K$ be an algebraic
+closure of $\mathbb{F}_p$, and let $G$ be a finite subgroup of $\mathrm{PGL}_2(K)$ whose order
+is divisible by $p$. Then at least one of the following holds. (a) There are natural numbers
+$m \ge 1$ and $t$ with $t$ coprime to $p$ and $t \mid p^m - 1$, and an injective homomorphism
+$\varphi$ from the cyclic group $\mathbb{Z}/t\mathbb{Z}$ to the automorphism group of the
+additive group $\mathbb{F}_p^m$ such that $\varphi(c)$ fixes no nonzero vector of
+$\mathbb{F}_p^m$ for every $c \ne 0$, and $G$ is isomorphic to the semidirect product
+$\mathbb{F}_p^m \rtimes_\varphi \mathbb{Z}/t\mathbb{Z}$. (b) $G$ is isomorphic to
+$\mathrm{PSL}_2(\mathbb{F}_{p^m})$ for some $m \ge 1$, where $\mathbb{F}_{p^m}$ is the field
+with $p^m$ elements. (c) $G$ is isomorphic to $\mathrm{PGL}_2(\mathbb{F}_{p^m})$ for some
+$m \ge 1$. (d) $p = 3$ and $G$ is isomorphic to the alternating group $A_5$.
 
-Source: L. E. Dickson, *Linear Groups with an Exposition of the Galois Field
-Theory*, Teubner (1901).
+In the source, the first case is a group of maps $z \mapsto az + b$ with $a$ a root of unity;
+only the resulting abstract group structure is recorded here.
+
+Proof: We follow X. Faber, *Finite p-irregular subgroups of $\mathrm{PGL}_2(k)$*,
+arXiv:1112.1999, §6, using the Sylow normal form, exceptional-orbit count, and projective-line
+actions to identify the $\mathrm{PSL}_2$, $\mathrm{PGL}_2$, and $A_5$ cases.
 
 Proves `Wanted` entry `classification_wild`.
 
-Proof: We follow X. Faber, *Finite p-irregular subgroups of PGL₂(k)*,
-arXiv:1112.1999, §6, using the Sylow normal form, exceptional-orbit count, and projective-line
-actions to identify the `PSL₂`, `PGL₂`, and `A₅` cases.
+Source: L. E. Dickson, *Linear Groups with an Exposition of the Galois Field
+Theory*, Teubner (1901).
 -/
 theorem classification_wild (G : Subgroup (PGL p)) [Finite G]
     (hG_p : p ∣ Nat.card G) :

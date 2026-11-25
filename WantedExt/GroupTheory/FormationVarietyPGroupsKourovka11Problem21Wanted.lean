@@ -38,12 +38,17 @@ in `𝔉` iff it satisfies `W`. The prime `p` is universally quantified, so the 
 counterexample for some prime.
 -/
 
-/-- A class of groups: a predicate on groups in `Type`. -/
+/-- **Classes of groups.** A class of groups is a predicate on groups: it assigns to every group
+$G$ (in the lowest universe of types) a proposition, read as "$G$ belongs to the class". No
+closure under isomorphism is required. -/
 abbrev GroupClass : Type 1 := ∀ (G : Type) [Group G], Prop
 
-/-- `F` is a formation of finite groups: a nonempty, isomorphism-closed class of finite groups
-closed under homomorphic images and under subdirect products (if `G / M` and `G / N` lie in `F`,
-then so does `G / (M ⊓ N)`). -/
+/-- **Formations of finite groups.** A class $\mathfrak F$ of groups is a formation when every group
+in $\mathfrak F$ is finite, $\mathfrak F$ contains at least one group, $\mathfrak F$ is closed under
+isomorphism, $\mathfrak F$ is closed under quotients (if $G \in \mathfrak F$ and $N$ is a normal
+subgroup of $G$, then $G/N \in \mathfrak F$), and $\mathfrak F$ is closed under subdirect products:
+if $G$ is a finite group with normal subgroups $M$ and $N$ such that $G/M \in \mathfrak F$ and
+$G/N \in \mathfrak F$, then $G/(M \cap N) \in \mathfrak F$. -/
 structure IsFormation (F : GroupClass) : Prop where
   finite : ∀ (G : Type) [Group G], F G → Finite G
   nonempty : ∃ (G : Type) (_ : Group G), F G
@@ -52,15 +57,20 @@ structure IsFormation (F : GroupClass) : Prop where
   subdirect : ∀ (G : Type) [Group G] [Finite G] (M N : Subgroup G) [M.Normal] [N.Normal],
     F (G ⧸ M) → F (G ⧸ N) → F (G ⧸ (M ⊓ N))
 
-/-- `G` satisfies every law in `W`: each `w ∈ W`, a word in the free group on countably many
-letters, maps to `1` under every homomorphism to `G`. The groups satisfying `W` form the variety
-defined by `W`, and every variety arises this way. -/
+/-- **Groups satisfying a set of laws.** Let $W$ be a set of words in the free group on countably
+many generators $x_0, x_1, x_2, \dots$. A group $G$ satisfies the laws in $W$ when every
+homomorphism from this free group to $G$ sends every $w \in W$ to $1$. The groups satisfying $W$
+form the variety defined by $W$, and every variety arises this way. -/
 def SatisfiesLaws (W : Set (FreeGroup ℕ)) (G : Type) [Group G] : Prop :=
   ∀ w ∈ W, ∀ f : FreeGroup ℕ →* G, f w = 1
 
-/-- Kourovka 11.21 (A. F. Vasil'yev): for every prime `p`, every subformation `F` of the formation
-`𝔑_p` of all finite `p`-groups has the form `𝔑_p ∩ 𝔐` for a variety `𝔐`: some set of laws `W`
-holds in a finite `p`-group exactly when the group lies in `F`. -/
+/-- **Kourovka Problem 11.21 (Vasil'yev's question on formations of $p$-groups).** The proposition
+that for every prime $p$ and every formation $\mathfrak F$ all of whose members are $p$-groups (a
+subformation of the formation $\mathfrak N_p$ of all finite $p$-groups), there is a set $W$ of laws,
+words in the free group on countably many generators, such that a finite $p$-group lies in
+$\mathfrak F$ if and only if it satisfies every law in $W$. In other words, every such
+$\mathfrak F$ equals $\mathfrak N_p \cap \mathfrak M$ for the variety $\mathfrak M$ defined by
+$W$. -/
 def subformationOfPGroupsIsVarietal : Prop :=
   ∀ p : ℕ, p.Prime → ∀ F : GroupClass, IsFormation F →
     (∀ (G : Type) [Group G], F G → IsPGroup p G) →
@@ -68,12 +78,22 @@ def subformationOfPGroupsIsVarietal : Prop :=
       (F G ↔ SatisfiesLaws W G)
 
 /--
-Resolved false: the Kourovka Archive answers 11.21 "No, it is not true" (A. N. Krasil'nikov):
-formations of finite `p`-groups correspond bijectively to varieties of pro-`p` groups, there are
-continuously many varieties of nilpotent pro-`p` groups of class at most 6 (Zubkov), hence
-continuously many formations of finite `p`-groups of class at most 6, while a formation `𝔑_p ∩ 𝔐` of
-such groups equals `𝔑_p ∩ (𝔐 ∩ 𝔑_6)` and there are only countably many varieties of nilpotent groups
-of class at most 6 (all finitely based). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
+**Kourovka Problem 11.21 has a negative answer.** There are a prime $p$ and a formation
+$\mathfrak F$ all of whose members are $p$-groups such that for every set $W$ of laws, words in the
+free group on countably many generators, some finite $p$-group lies in $\mathfrak F$ and fails a
+law in $W$, or satisfies every law in $W$ and does not lie in $\mathfrak F$. Thus $\mathfrak F$ is
+not of the form $\mathfrak N_p \cap \mathfrak M$ for any variety $\mathfrak M$, where
+$\mathfrak N_p$ is the formation of all finite $p$-groups.
+
+The Kourovka Archive answers 11.21 "No, it is not true" (A. N. Krasil'nikov): formations of finite
+$p$-groups correspond bijectively to varieties of pro-$p$ groups, there are continuously many
+varieties of nilpotent pro-$p$ groups of class at most $6$ (Zubkov), hence continuously many
+formations of finite $p$-groups of class at most $6$, while such a formation of the form
+$\mathfrak N_p \cap \mathfrak M$ equals $\mathfrak N_p \cap (\mathfrak M \cap \mathfrak N_6)$, where
+$\mathfrak N_6$ is the variety of nilpotent groups of class at most $6$, and there are only
+countably many varieties of nilpotent groups of class at most $6$ (all finitely based).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
 Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of
 Solved Problems, Problem 11.21 (A. F. Vasil'yev); resolution: A. N. Krasil'nikov, letter of 17 July
 1998, using A. N. Zubkov, Siberian Math. J. 29, no. 3 (1988), 491-494, Kourovka Archive, Problem
