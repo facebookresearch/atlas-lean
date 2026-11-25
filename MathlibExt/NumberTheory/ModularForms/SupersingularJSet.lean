@@ -83,24 +83,31 @@ public noncomputable def nuTwo (N : ℕ) : ℕ := Nat.card {x : ZMod N // x ^ 2 
 /-- The number of roots of `x ^ 2 + x + 1` in `ZMod N`. -/
 public noncomputable def nuThree (N : ℕ) : ℕ := Nat.card {x : ZMod N // x ^ 2 + x + 1 = 0}
 
-/-- The Eichler mass `(p - 1) * ψ(N) / 12` of level `N` in prime characteristic `p`, where `ψ` is
-the Dedekind psi function `ArithmeticFunction.dedekindPsi`. For a level `N ≥ 1` not divisible by
-`p`, Eichler's mass formula (J. Voight, *Quaternion Algebras*, Theorem 25.3.18 and
-Remark 42.3.10) says that the supersingular points of `X₀(N)` over an algebraic closure of
-`ZMod p`, each weighted by `2 / |Aut|`, have total mass `eichlerMass N p`; this file does not
-prove it. Defined for prime `p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out
-of scope. -/
+/-- The Eichler mass of level `N` in prime characteristic `p`, defined as `(p - 1) * ψ(N) / 12`,
+where `ψ` is the Dedekind psi function `ArithmeticFunction.dedekindPsi`. The hypothesis
+`[Fact p.Prime]` makes `ZMod p` the field with `p` elements (`ZMod (p ^ n)` is not a field for
+`n > 1`).
+
+Eichler's mass formula with the Deuring correspondence (J. Voight, *Quaternion Algebras*,
+Theorem 25.3.18 and Remark 42.3.10) states that, for a level `N ≥ 1` not divisible by `p`, it
+equals the sum of `2 / |Aut(E, C)|` over the supersingular points `(E, C)` of `X₀(N)` over an
+algebraic closure of `ZMod p`. Here `C` is a cyclic subgroup of `E` of order `N`, and `Aut(E, C)`
+is the group of the automorphisms of `E` that map `C` onto itself, not the group `Aut(E)` of all
+automorphisms of `E` that `autWeight` uses; the two agree at level `1`. -/
 public noncomputable def eichlerMass (N p : ℕ) [Fact p.Prime] : ℚ :=
   ((p : ℚ) - 1) * (ArithmeticFunction.dedekindPsi N : ℚ) / 12
 
-/-- The supersingular count formula of level `N` in prime characteristic `p`: the Eichler mass plus
-the `ν₂`, `ν₃` corrections, with `nuTwo` and `nuThree` evaluated at the level `N` and in the prime
-field `ZMod p`. For a level `N ≥ 1` not divisible by `p` it is Eichler's class number formula for
-an Eichler order of level `N` in the quaternion algebra over `ℚ` ramified at `p` and `∞`, hence,
-by the Deuring correspondence, the number of supersingular points of `X₀(N)` over an algebraic
-closure of `ZMod p` (J. Voight, *Quaternion Algebras*, Theorem 30.1.5 and Remark 42.3.10); this
-file does not prove it. Defined for prime fields `ZMod p` only: prime-power fields `𝔽_q` with
-`q = p ^ n`, `n > 1`, are out of scope. -/
+/-- The supersingular count formula of level `N` in prime characteristic `p`, defined as
+`eichlerMass N p + (2 - ν₂(p)) * ν₂(N) / 4 + (2 - ν₃(p)) * ν₃(N) / 3`, where `ν₂ = nuTwo` and
+`ν₃ = nuThree` count the roots of `x ^ 2 + 1` and of `x ^ 2 + x + 1` in `ZMod N` and in the field
+`ZMod p`. The hypothesis `[Fact p.Prime]` makes `ZMod p` the field with `p` elements
+(`ZMod (p ^ n)` is not a field for `n > 1`).
+
+For a level `N ≥ 1` not divisible by `p`, Eichler's class number formula (J. Voight, *Quaternion
+Algebras*, Theorem 30.1.5) gives this value as the class number of an Eichler order of level `N`
+in the quaternion algebra over `ℚ` ramified at `p` and `∞`, which by the Deuring correspondence
+(Remark 42.3.10 there) is the number of supersingular points `(E, C)` of `X₀(N)` over an algebraic
+closure of `ZMod p`, counted without weights. -/
 public noncomputable def ssCountFormula (N p : ℕ) [Fact p.Prime] : ℚ :=
   eichlerMass N p + (2 - (nuTwo p : ℚ)) * (nuTwo N : ℚ) / 4
     + (2 - (nuThree p : ℚ)) * (nuThree N : ℚ) / 3
@@ -113,17 +120,21 @@ public theorem ssCountFormula_eq (N p : ℕ) [Fact p.Prime] :
       + (2 - (nuThree p : ℚ)) * (nuThree N : ℚ) / 3 :=
   rfl
 
-/-- The automorphism weight of a supersingular `j`-invariant in prime characteristic `p`: half the
-order of the automorphism group of an elliptic curve `E` over an algebraic closure of `ZMod p`
-with `j`-invariant `j`, that is, the order of `Aut E / {±1}`. It is `12` in characteristic `2` at
-`j = 0` (`|Aut E| = 24`), `6` in characteristic `3` at `j = 0` (`|Aut E| = 12`), `3` at `j = 0`
-(`|Aut E| = 6`) and `2` at `j = 1728` (`|Aut E| = 4`) in characteristic greater than `3`, and `1`
-otherwise (`|Aut E| = 2`); see J. H. Silverman, *The Arithmetic of Elliptic Curves*, 2nd ed.,
-Theorem III.10.1. So `1 / autWeight p j` is the normalized weight `2 / |Aut E|`, and in this
-normalization the Eichler mass formula (J. Voight, *Quaternion Algebras*, (42.3.9)) reads
-`∑ 1 / autWeight p j = eichlerMass 1 p`, the sum running over the supersingular `j`. This file
-computes neither the automorphism groups nor the mass formula. Defined for prime fields `ZMod p`
-only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope. -/
+/-- The automorphism weight of `j : ZMod p` in prime characteristic `p`, defined by cases: `12` in
+characteristic `2` at `j = 0`, `6` in characteristic `3` at `j = 0`, `3` at `j = 0` and `2` at
+`j = 1728` in characteristic greater than `3`, and `1` otherwise. The hypothesis `[Fact p.Prime]`
+makes `ZMod p` the field with `p` elements (`ZMod (p ^ n)` is not a field for `n > 1`).
+
+These values are half the order of `Aut(E)`, the group of all automorphisms of an elliptic curve
+`E` over an algebraic closure of `ZMod p` with `j`-invariant `j`, that is, the order of
+`Aut(E) / {±1}`: `|Aut(E)|` is `24`, `12`, `6`, `4` and `2` in the five cases (J. H. Silverman,
+*The Arithmetic of Elliptic Curves*, 2nd ed., Theorem III.10.1). So `1 / autWeight p j` is the
+weight `2 / |Aut(E)|`, and the level-one mass formula `∑ 1 / |Aut(E)| = (p - 1) / 24`
+(J. Voight, *Quaternion Algebras*, (42.3.9)) reads `∑ 1 / autWeight p j = eichlerMass 1 p`, the
+sum running over the supersingular `j` (for `p ≤ 13` all of them lie in `ZMod p`; a supersingular
+`j` outside `ZMod p` is neither `0` nor `1728`, so its term is `1`). At a level `N > 1` the weights
+of `eichlerMass N p` use the automorphisms `Aut(E, C)` of `E` that preserve a cyclic subgroup `C`
+of order `N` instead. -/
 public def autWeight (p : ℕ) [Fact p.Prime] (j : ZMod p) : ℕ :=
   if p = 2 then (if j = 0 then 12 else 1)
   else if p = 3 then (if j = 0 then 6 else 1)
@@ -194,14 +205,16 @@ public theorem ssPolyEleven_monic : ssPolyEleven.Monic := by
   exact Polynomial.monic_prod_of_monic _ _ fun a _ => Polynomial.monic_X_sub_C a
 
 /-- The coefficient `A` of the short Weierstrass equation `y ^ 2 = x ^ 3 + A * x + B` of the
-model curve `ssModel p j` attached to `j : ZMod p`, with `B = ssModelB p j`. Defined for prime
-fields `ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope. -/
+model curve `ssModel p j` attached to `j : ZMod p`, with `B = ssModelB p j`. The hypothesis
+`[Fact p.Prime]` makes `ZMod p` the field with `p` elements (`ZMod (p ^ n)` is not a field for
+`n > 1`). -/
 public def ssModelA (p : ℕ) [Fact p.Prime] (j : ZMod p) : ZMod p :=
   if j = 0 then 0 else if j = 1728 then 1 else 3 * j * (1728 - j)
 
 /-- The coefficient `B` of the short Weierstrass equation `y ^ 2 = x ^ 3 + A * x + B` of the
-model curve `ssModel p j` attached to `j : ZMod p`, with `A = ssModelA p j`. Defined for prime
-fields `ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope. -/
+model curve `ssModel p j` attached to `j : ZMod p`, with `A = ssModelA p j`. The hypothesis
+`[Fact p.Prime]` makes `ZMod p` the field with `p` elements (`ZMod (p ^ n)` is not a field for
+`n > 1`). -/
 public def ssModelB (p : ℕ) [Fact p.Prime] (j : ZMod p) : ZMod p :=
   if j = 0 then 1 else if j = 1728 then 0 else 2 * j * (1728 - j) ^ 2
 
@@ -213,8 +226,9 @@ field `ZMod p` attached to `j : ZMod p`. For `p > 3` it is an elliptic curve wit
 (`ssModel_j`). It is not a model in characteristic `2` or `3`, where its discriminant vanishes
 for every `j`: in characteristic `2` the discriminant of every short Weierstrass equation does,
 and in characteristic `3` the coefficient `ssModelA 3 j` is `0`. In every characteristic,
-`WeierstrassCurve.ofJ j` is an elliptic curve with `j`-invariant `j`. Defined for prime fields
-`ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are out of scope. -/
+`WeierstrassCurve.ofJ j` is an elliptic curve with `j`-invariant `j`. The hypothesis
+`[Fact p.Prime]` makes `ZMod p` the field with `p` elements (`ZMod (p ^ n)` is not a field for
+`n > 1`). -/
 public def ssModel (p : ℕ) [Fact p.Prime] (j : ZMod p) : WeierstrassCurve (ZMod p) :=
   ⟨0, 0, 0, ssModelA p j, ssModelB p j⟩
 
@@ -270,8 +284,8 @@ public theorem ssModel_j (p : ℕ) [Fact p.Prime] [Fact (3 < p)] (j : ZMod p) :
     ring
 
 /-- The number of affine points on `y ^ 2 = x ^ 3 + A * x + B` over the prime field `ZMod p`.
-Defined for prime fields `ZMod p` only: prime-power fields `𝔽_q` with `q = p ^ n`, `n > 1`, are
-out of scope. -/
+The hypothesis `[Fact p.Prime]` makes `ZMod p` the field with `p` elements (`ZMod (p ^ n)` is not
+a field for `n > 1`). -/
 public def affinePointCount (p : ℕ) [Fact p.Prime] (A B : ZMod p) : ℕ :=
   (Finset.univ.filter fun P : ZMod p × ZMod p => P.2 ^ 2 = P.1 ^ 3 + A * P.1 + B).card
 
