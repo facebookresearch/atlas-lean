@@ -243,20 +243,24 @@ public theorem card_stabilizer_smul (g : G) (d : 𝒯.Dart) :
   exact Subgroup.card_map_of_injective (MulAut.conj g).injective
 
 variable (G) in
-/-- The width of a quotient edge: the size of a dart stabilizer. -/
-public def stabWidth (e : QuotEdge G 𝒯) : ℕ+ :=
-  Nat.toPNat' (Nat.card (stabilizer G e.out))
+/-- The width of a quotient edge: the order of the stabilizer of a dart
+representing it. Dart stabilizers are required to be finite, so the width is
+the stabilizer's cardinality itself. -/
+public def stabWidth [∀ d : 𝒯.Dart, Finite (stabilizer G d)]
+    (e : QuotEdge G 𝒯) : ℕ+ :=
+  ⟨Nat.card (stabilizer G e.out), Nat.card_pos⟩
 
-public theorem stabWidth_mk (d : 𝒯.Dart) :
+public theorem stabWidth_mk [∀ d : 𝒯.Dart, Finite (stabilizer G d)]
+    (d : 𝒯.Dart) :
     stabWidth G 𝒯 (Quotient.mk'' d) =
-      Nat.toPNat' (Nat.card (stabilizer G d)) :=
-  congrArg Nat.toPNat' (Nat.card_congr
+      ⟨Nat.card (stabilizer G d), Nat.card_pos⟩ :=
+  PNat.eq (Nat.card_congr
     (stabilizerEquivStabilizerOfOrbitRel
       (Quotient.mk_out (s := orbitRel G 𝒯.Dart) d)).toEquiv)
 
 variable (G) in
 /-- Degeneracy data of the quotient graph. -/
-public def quotientDegeneracyData :
+public def quotientDegeneracyData [∀ d : 𝒯.Dart, Finite (stabilizer G d)] :
     DegeneracyData (QuotEdge G 𝒯) (QuotVert G W) where
   a := Quotient.map' (fun d : 𝒯.Dart => d.fst)
     (by rintro _ b ⟨g, rfl⟩; exact ⟨g, rfl⟩)
@@ -272,7 +276,8 @@ public def quotientReversal : QuotEdge G 𝒯 → QuotEdge G 𝒯 :=
 
 variable (G) in
 /-- The formal monodromy pairing matrix of the quotient graph. -/
-public def formalU [Fintype (QuotEdge G 𝒯)] [DecidableEq (QuotEdge G 𝒯)]
+public def formalU [∀ d : 𝒯.Dart, Finite (stabilizer G d)]
+    [Fintype (QuotEdge G 𝒯)] [DecidableEq (QuotEdge G 𝒯)]
     [Fintype (QuotVert G W)] [DecidableEq (QuotVert G W)] :
     Matrix (QuotEdge G 𝒯) (QuotEdge G 𝒯) ℤ :=
   (degeneracyMatrix (quotientDegeneracyData G 𝒯).b).transpose *
@@ -344,8 +349,9 @@ public def periodLattice : Submodule ℤ P.TorusPoints :=
 public abbrev JacPoints : Type :=
   P.TorusPoints ⧸ P.periodLattice
 
-/-- The subgroup of the period lattice mapping to torsion in the
-Jacobian. -/
+/-- The preimage in the torus of the torsion subgroup of the Jacobian:
+the points whose class modulo the period lattice is torsion. It contains the
+period lattice. -/
 public def U : Submodule ℤ P.TorusPoints :=
   (Submodule.torsion ℤ P.JacPoints).comap P.periodLattice.mkQ
 
