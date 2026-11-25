@@ -986,17 +986,6 @@ public theorem_wanted sum_neg_one_pow_sub_choose_gammaBinom (n : ℕ) (v : ℝ) 
       ∑ k ∈ range (n / 2 + 1),
         (n.choose (2 * k) : ℂ) * ((2 * k).choose k : ℂ) * (gammaBinom ((2 * k + v) / 2) k)⁻¹
 
-/-- **Alternating sum of $\binom{n}{k} 2^{2k}/(k+1)$.** For every natural number $n$, the
-following identity holds in $\mathbb{Q}$:
-$$\sum_{k=0}^{n} (-1)^{n-k} \binom{n}{k} \frac{2^{2k}}{k+1}
-= \sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} \frac{2^{2k}}{2k+1}.$$
-
-Source: Kunle Adegoke, *A Short Proof of Knuth's Old Sum, Generalizations and Related
-Sums*, INTEGERS 26 (2026), Article A19, Proposition 6 (`integers-2026-A19-prop-6`). -/
-public theorem_wanted sum_neg_one_pow_sub_choose_four_pow_div_succ (n : ℕ) :
-    ∑ k ∈ range (n + 1), (-1 : ℚ) ^ (n - k) * (n.choose k : ℚ) * 2 ^ (2 * k) / (k + 1) =
-      ∑ k ∈ range (n / 2 + 1), (n.choose (2 * k) : ℚ) * 2 ^ (2 * k) / (2 * k + 1)
-
 /-- **Alternating sum of $\binom{n}{k} \frac{2(2k+1)}{k+2} C_k$.** Let
 $C_k = \frac{1}{k+1}\binom{2k}{k}$ denote the $k$-th Catalan number. For every natural number
 $n$, the following identity holds in $\mathbb{Q}$:
