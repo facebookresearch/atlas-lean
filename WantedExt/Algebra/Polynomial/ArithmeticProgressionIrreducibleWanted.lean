@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionAuxiliaryFloor
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionAuxiliaryRoot
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionPolynomial
 public import MathlibExt.Algebra.Polynomial.ArithmeticProgressionRootPower
@@ -127,21 +128,6 @@ public theorem_wanted arithProgPoly_floor_lam_pow_eq {m a d : ℕ} (hm : 2 ≤ m
     (lam : ℝ) (hlam : 0 < lam)
     (hG : (a : ℝ) * lam ^ (m + 2) + ((a : ℝ) - d) * lam ^ (m + 1) -
       ((a : ℝ) + (m + 1) * d) * lam - ((a : ℝ) + m * d) = 0) :
-    ⌊(a : ℝ) * lam ^ p⌋ = (a : ℤ) + p * d - 1
-
-/-- **Exact floors at powers of the auxiliary root (all exponents).** Let $m \ge 2$, let $a$, $d$
-be positive integers with $m^2 d^2 < 8a$, and let $\lambda > 0$ be a real number with
-$a \lambda^{m+2} + (a - d) \lambda^{m+1} - (a + (m + 1)d) \lambda - (a + md) = 0$. Then
-$\lfloor a \lambda^p \rfloor = a + pd - 1$ for every integer $p$ with $1 \le p \le m - 1$.
-
-Source: Hiroaki Kakuma, *Irreducibility of Polynomials with Coefficients in a Positive
-Arithmetic Progression*, INTEGERS 26 (2026), Article A92, Proposition 5, second statement
-(`integers-2026-A92-prop-5`). -/
-public theorem_wanted arithProgPoly_floor_lam_pow_eq_of_eight {m a d : ℕ} (hm : 2 ≤ m)
-    (ha : 0 < a) (hd : 0 < d) (had : m ^ 2 * d ^ 2 < 8 * a) (lam : ℝ) (hlam : 0 < lam)
-    (hG : (a : ℝ) * lam ^ (m + 2) + ((a : ℝ) - d) * lam ^ (m + 1) -
-      ((a : ℝ) + (m + 1) * d) * lam - ((a : ℝ) + m * d) = 0) (p : ℕ) (hp1 : 1 ≤ p)
-    (hpm : p ≤ m - 1) :
     ⌊(a : ℝ) * lam ^ p⌋ = (a : ℤ) + p * d - 1
 
 /-- **Reducible quadratics with coefficients in an arithmetic progression.** Let $d \ge 2$ be an
