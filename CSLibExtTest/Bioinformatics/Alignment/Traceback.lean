@@ -58,4 +58,35 @@ example : argmaxCell [[], []] = (0, 0) := by decide +kernel
 /-- Ties keep the first largest entry. -/
 example : argmaxCell [[-2, -1], [-1]] = (0, 1) := by decide +kernel
 
+/-- Diagonal, up, diagonal, left, diagonal: an optimal alignment of score `4`. -/
+example : nwTraceback s (-1) [1, 2, 3, 5] [1, 3, 4, 5] =
+    [(some 1, some 1), (some 2, none), (some 3, some 3), (none, some 4), (some 5, some 5)] := by
+  decide +kernel
+
+/-! Compiled runs. The tracebacks read the table and the letters as arrays, in constant time per
+step, so the long skewed inputs below run in time linear in their length (indexing the lists would
+make them quadratic). -/
+
+#guard nwTraceback s (-1) [1, 2, 3, 5] [1, 3, 4, 5] ==
+  [(some 1, some 1), (some 2, none), (some 3, some 3), (none, some 4), (some 5, some 5)]
+
+-- The same alignment, read back locally between the mismatched ends.
+#guard swTraceback s (-1) [9, 1, 2, 3, 5, 9] [8, 1, 3, 4, 5, 8] ==
+  ((1, 5), (1, 5),
+    [(some 1, some 1), (some 2, none), (some 3, some 3), (none, some 4), (some 5, some 5)])
+
+-- An empty first sequence: `10⁶` steps along the top border.
+#guard nwTraceback s (-1) [] (List.replicate 1000000 1) == List.replicate 1000000 (none, some 1)
+
+-- An empty second sequence: `10⁵` steps along the left border.
+#guard nwTraceback s (-1) (List.replicate 100000 2) [] == List.replicate 100000 (some 2, none)
+
+-- A one-letter first sequence: one diagonal step, then `10⁵ - 1` steps along the top border.
+#guard nwTraceback s (-1) [1] (List.replicate 100000 1) ==
+  List.replicate 99999 (none, some 1) ++ [(some 1, some 1)]
+
+-- A positive gap: the local traceback walks `10⁵ - 1` cells left along row `1`.
+#guard swTraceback s 1 [5] (List.replicate 100000 7) ==
+  ((0, 1), (1, 100000), (some 5, none) :: List.replicate 99999 (none, some 7))
+
 end CSLibExtTest.Bioinformatics.Alignment.Traceback

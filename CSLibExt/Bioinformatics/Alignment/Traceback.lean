@@ -21,6 +21,12 @@ then left) and emit the column. The global traceback runs from the last cell to 
 one starts at a largest cell (`argmaxCell`) and stops at the first cell equal to `0`. Gaps are
 linear, as in `SequenceAlignment`.
 
+## Cost model
+
+The tracebacks convert the table and the two sequences to arrays once, in time linear in their
+size, and then read each cell and letter in constant time: after the `O(|xs| |ys|)` table, their at
+most `|xs| + |ys|` steps cost `O(|xs| + |ys|)`.
+
 ## References
 
 * S. B. Needleman and C. D. Wunsch, J. Mol. Biol. 48 (1970), 443–453.
@@ -35,8 +41,9 @@ namespace Cslib.Bioinformatics.Alignment.Traceback
 
 open Cslib.Algorithms.Lean
 
-/-- The entry `T[i][j]` of a table stored as a list of rows (`0` outside the table). -/
-def cell (T : List (List ℤ)) (i j : ℕ) : ℤ := (T.getD i []).getD j 0
+/-- The entry `T[i][j]` of a table stored as an array of rows, read in constant time (`0` outside
+the table). -/
+def cell (T : Array (Array ℤ)) (i j : ℕ) : ℤ := (T.getD i #[]).getD j 0
 
 /-- Every row `F[0], …, F[|xs|]` of the Needleman–Wunsch table, row `0` being `j * gap`. -/
 def nwTable {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) : List (List ℤ) :=
@@ -49,8 +56,9 @@ def swTable {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) 
 
 /-- Global traceback from cell `(i, j)` with fuel `n`; `acc` holds the columns already emitted.
 Interior cells step diagonally if `T[i-1][j-1] + σ` gives the cell, else up if `T[i-1][j] + gap`
-does, else left. -/
-def nwTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : List (List ℤ)) (xs ys : List α) :
+does, else left. The table and the sequences are arrays, so a step reads its cells and letters in
+constant time. -/
+def nwTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Array ℤ)) (xs ys : Array α) :
     ℕ → ℕ → ℕ → Alignment α → Alignment α
   | 0, _, _, acc => acc
   | _ + 1, 0, 0, acc => acc
@@ -74,9 +82,10 @@ def nwTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : List (List
     | _, _ => acc
 
 /-- **Needleman–Wunsch traceback**: the alignment read back from the full table, from cell
-`(|xs|, |ys|)` to cell `(0, 0)`. -/
+`(|xs|, |ys|)` to cell `(0, 0)`. The table and the sequences are converted to arrays once. -/
 def nwTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) : Alignment α :=
-  nwTraceAux σ gap (nwTable σ gap xs ys) xs ys (xs.length + ys.length) xs.length ys.length []
+  nwTraceAux σ gap ((nwTable σ gap xs ys).map List.toArray).toArray xs.toArray ys.toArray
+    (xs.length + ys.length) xs.length ys.length []
 
 /-- The position `(i, j)` of a first largest entry of a table, scanning rows top to bottom and
 each row left to right; `(0, 0)` when the table has no entry. -/
@@ -92,8 +101,8 @@ def argmaxCell (T : List (List ℤ)) : ℕ × ℕ :=
     (none : Option ((ℕ × ℕ) × ℤ))).map Prod.fst).getD (0, 0)
 
 /-- Local traceback: stop at a cell equal to `0` or on the border and return its position and the
-emitted columns; otherwise step as in `nwTraceAux`. -/
-def swTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : List (List ℤ)) (xs ys : List α) :
+emitted columns; otherwise step as in `nwTraceAux`, in constant time per step. -/
+def swTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : Array (Array ℤ)) (xs ys : Array α) :
     ℕ → ℕ → ℕ → Alignment α → ℕ × ℕ × Alignment α
   | 0, i, j, acc => (i, j, acc)
   | _ + 1, 0, j, acc => (0, j, acc)
@@ -112,12 +121,14 @@ def swTraceAux {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (T : List (List
 
 /-- **Smith–Waterman traceback**: start at a largest cell `(i₁, j₁)` of the full table and trace
 back to the first cell `(i₀, j₀)` equal to `0`. The result is `((i₀, i₁), (j₀, j₁), A)`: the
-alignment `A` of the infixes `(xs.take i₁).drop i₀` and `(ys.take j₁).drop j₀`. -/
+alignment `A` of the infixes `(xs.take i₁).drop i₀` and `(ys.take j₁).drop j₀`. The table and the
+sequences are converted to arrays once. -/
 def swTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) :
     (ℕ × ℕ) × (ℕ × ℕ) × Alignment α :=
   let T := swTable σ gap xs ys
   let e := argmaxCell T
-  let r := swTraceAux σ gap T xs ys (e.1 + e.2) e.1 e.2 []
+  let r := swTraceAux σ gap (T.map List.toArray).toArray xs.toArray ys.toArray
+    (e.1 + e.2) e.1 e.2 []
   ((r.1, e.1), (r.2.1, e.2), r.2.2)
 
 private theorem scan_rows {α β : Type*} (f : List α → β) (step : β → α → β)
@@ -161,27 +172,29 @@ theorem swTable_eq {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : Li
     (fun row a => SmithWaterman.nextRow σ gap a ys row)
     (fun px a => SmithWaterman.nextRow_eq σ gap a px ys) xs []
 
+/-- A table stored as a list of rows, as the array of rows that the tracebacks read. -/
+private def tab (T : List (List ℤ)) : Array (Array ℤ) := (T.map List.toArray).toArray
+
 private theorem cell_get (T : List (List ℤ)) (i j : ℕ)
-    (hi : i < T.length) (hj : j < T[i].length) : cell T i j = T[i][j] := by
-  simp only [cell, List.getD, List.getElem?_eq_getElem hi, Option.getD_some,
-    List.getElem?_eq_getElem hj]
+    (hi : i < T.length) (hj : j < T[i].length) : cell (tab T) i j = T[i][j] := by
+  simp [cell, tab, hi, hj]
 
 private theorem cell_prefix {α : Type*} (f : List α → List α → ℤ)
     (xs ys : List α) (i j : ℕ) (hi : i ≤ xs.length) (hj : j ≤ ys.length) :
-    cell (xs.inits.map fun px => ys.inits.map (f px)) i j =
+    cell (tab (xs.inits.map fun px => ys.inits.map (f px))) i j =
       f (xs.take i) (ys.take j) := by
   rw [cell_get _ i j (by simp; omega) (by simp; omega)]
   simp
 
 private theorem cell_nw {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
     (xs ys : List α) (i j : ℕ) (hi : i ≤ xs.length) (hj : j ≤ ys.length) :
-    cell (nwTable σ gap xs ys) i j = nwScore σ gap (xs.take i) (ys.take j) := by
+    cell (tab (nwTable σ gap xs ys)) i j = nwScore σ gap (xs.take i) (ys.take j) := by
   rw [nwTable_eq]
   exact cell_prefix (nwScore σ gap) xs ys i j hi hj
 
 private theorem cell_sw {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
     (xs ys : List α) (i j : ℕ) (hi : i ≤ xs.length) (hj : j ≤ ys.length) :
-    cell (swTable σ gap xs ys) i j = swCellScore σ gap (xs.take i) (ys.take j) := by
+    cell (tab (swTable σ gap xs ys)) i j = swCellScore σ gap (xs.take i) (ys.take j) := by
   rw [swTable_eq]
   exact cell_prefix (swCellScore σ gap) xs ys i j hi hj
 
@@ -204,10 +217,10 @@ private theorem cons_alignment {α : Type*} (a b : Option α)
 
 private theorem nw_step {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
     (xs ys : List α) (i j : ℕ) (hi : i < xs.length) (hj : j < ys.length) :
-    cell (nwTable σ gap xs ys) (i + 1) (j + 1) =
-      max (max (cell (nwTable σ gap xs ys) i j + σ xs[i] ys[j])
-        (cell (nwTable σ gap xs ys) i (j + 1) + gap))
-        (cell (nwTable σ gap xs ys) (i + 1) j + gap) := by
+    cell (tab (nwTable σ gap xs ys)) (i + 1) (j + 1) =
+      max (max (cell (tab (nwTable σ gap xs ys)) i j + σ xs[i] ys[j])
+        (cell (tab (nwTable σ gap xs ys)) i (j + 1) + gap))
+        (cell (tab (nwTable σ gap xs ys)) (i + 1) j + gap) := by
   rw [cell_nw σ gap xs ys (i + 1) (j + 1) (by omega) (by omega),
     cell_nw σ gap xs ys i j (by omega) (by omega),
     cell_nw σ gap xs ys i (j + 1) (by omega) (by omega),
@@ -220,11 +233,11 @@ private theorem nw_worker {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
     (n i j : ℕ) (hi : i ≤ e) (hj : j ≤ f) (hn : i + j ≤ n)
     (acc : Alignment α) (hacc : IsAlignment acc ((xs.take e).drop i)
       ((ys.take f).drop j)) :
-    IsAlignment (nwTraceAux σ gap (nwTable σ gap xs ys) xs ys n i j acc)
+    IsAlignment (nwTraceAux σ gap (tab (nwTable σ gap xs ys)) xs.toArray ys.toArray n i j acc)
       (xs.take e) (ys.take f) ∧
       alignmentScore σ gap
-        (nwTraceAux σ gap (nwTable σ gap xs ys) xs ys n i j acc) =
-        cell (nwTable σ gap xs ys) i j + alignmentScore σ gap acc := by
+        (nwTraceAux σ gap (tab (nwTable σ gap xs ys)) xs.toArray ys.toArray n i j acc) =
+        cell (tab (nwTable σ gap xs ys)) i j + alignmentScore σ gap acc := by
   induction n generalizing i j acc with
   | zero =>
     have h0 : i = 0 ∧ j = 0 := by omega
@@ -248,14 +261,14 @@ private theorem nw_worker {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
             ((xs.take e).drop 0) ((ys.take f).drop j) := by
           rw [drop_step ys f j hf (by omega)]
           simpa using cons_alignment none (some ys[j]) acc _ _ (by simp) hacc
-        have hs : cell (nwTable σ gap xs ys) 0 (j + 1) =
-            cell (nwTable σ gap xs ys) 0 j + gap := by
+        have hs : cell (tab (nwTable σ gap xs ys)) 0 (j + 1) =
+            cell (tab (nwTable σ gap xs ys)) 0 j + gap := by
           rw [cell_nw σ gap xs ys 0 (j + 1) (by omega) (by omega),
             cell_nw σ gap xs ys 0 j (by omega) (by omega)]
           simp [nwScore_nil_left, List.length_take, Nat.min_eq_left (by omega : j ≤ ys.length),
             Nat.min_eq_left (by omega : j + 1 ≤ ys.length)]
           ring
-        simp only [nwTraceAux, List.getElem?_eq_getElem hb]
+        simp only [nwTraceAux, List.getElem?_toArray, List.getElem?_eq_getElem hb]
         obtain ⟨hA, hS⟩ := ih 0 j (by omega) (by omega) (by omega) _ ha
         refine ⟨hA, ?_⟩
         rw [hS, hs]
@@ -269,14 +282,14 @@ private theorem nw_worker {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
             ((xs.take e).drop i) ((ys.take f).drop 0) := by
           rw [drop_step xs e i he (by omega)]
           simpa using cons_alignment (some xs[i]) none acc _ _ (by simp) hacc
-        have hs : cell (nwTable σ gap xs ys) (i + 1) 0 =
-            cell (nwTable σ gap xs ys) i 0 + gap := by
+        have hs : cell (tab (nwTable σ gap xs ys)) (i + 1) 0 =
+            cell (tab (nwTable σ gap xs ys)) i 0 + gap := by
           rw [cell_nw σ gap xs ys (i + 1) 0 (by omega) (by omega),
             cell_nw σ gap xs ys i 0 (by omega) (by omega)]
           simp [nwScore_nil_right, List.length_take, Nat.min_eq_left (by omega : i ≤ xs.length),
             Nat.min_eq_left (by omega : i + 1 ≤ xs.length)]
           ring
-        simp only [nwTraceAux, List.getElem?_eq_getElem hx]
+        simp only [nwTraceAux, List.getElem?_toArray, List.getElem?_eq_getElem hx]
         obtain ⟨hA, hS⟩ := ih i 0 (by omega) (by omega) (by omega) _ ha
         refine ⟨hA, ?_⟩
         rw [hS, hs]
@@ -296,7 +309,8 @@ private theorem nw_worker {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
             ((xs.take e).drop (i + 1)) ((ys.take f).drop j) := by
           rw [drop_step ys f j hf (by omega)]
           simpa using cons_alignment none (some ys[j]) acc _ _ (by simp) hacc
-        simp only [nwTraceAux, List.getElem?_eq_getElem hx, List.getElem?_eq_getElem hy]
+        simp only [nwTraceAux, List.getElem?_toArray, List.getElem?_eq_getElem hx,
+          List.getElem?_eq_getElem hy]
         split
         · rename_i hs
           obtain ⟨hA, hS⟩ := ih i j (by omega) (by omega) (by omega) _ hd
@@ -313,11 +327,11 @@ private theorem nw_worker {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
             simp [alignmentScore, columnScore]
             omega
           · rename_i hnu
-            have hs : cell (nwTable σ gap xs ys) (i + 1) (j + 1) =
-                cell (nwTable σ gap xs ys) (i + 1) j + gap := by
+            have hs : cell (tab (nwTable σ gap xs ys)) (i + 1) (j + 1) =
+                cell (tab (nwTable σ gap xs ys)) (i + 1) j + gap := by
               have h := nw_step σ gap xs ys i j hx hy
               simp only [max_def] at h
-              split at h <;> (try split at h) <;> omega
+              split at h <;> split at h <;> omega
             obtain ⟨hA, hS⟩ := ih (i + 1) j (by omega) (by omega) (by omega) _ hl
             refine ⟨hA, ?_⟩
             rw [hS, hs]
@@ -330,7 +344,7 @@ theorem isAlignment_nwTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ
   have h := nw_worker σ gap xs ys xs.length ys.length le_rfl le_rfl
     (xs.length + ys.length) xs.length ys.length le_rfl le_rfl le_rfl []
     (by simp [IsAlignment])
-  simpa [nwTraceback] using h.1
+  simpa [nwTraceback, tab] using h.1
 
 /-- **The global traceback attains the table value**, for every `σ` and `gap`. -/
 theorem alignmentScore_nwTraceback {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs ys : List α) :
@@ -338,9 +352,9 @@ theorem alignmentScore_nwTraceback {α : Type*} (σ : α → α → ℤ) (gap : 
   have h := nw_worker σ gap xs ys xs.length ys.length le_rfl le_rfl
     (xs.length + ys.length) xs.length ys.length le_rfl le_rfl le_rfl []
     (by simp [IsAlignment])
+  rw [cell_nw σ gap xs ys xs.length ys.length le_rfl le_rfl] at h
   rw [NeedlemanWunsch.nwTab_eq_nwScore]
-  simpa [nwTraceback, cell_nw σ gap xs ys xs.length ys.length le_rfl le_rfl,
-    alignmentScore_nil] using h.2
+  simpa [nwTraceback, tab, alignmentScore_nil] using h.2
 
 /-- **The global traceback is an optimal global alignment**: no alignment of `xs` and `ys`
 scores more. -/
@@ -352,10 +366,10 @@ theorem alignmentScore_le_nwTraceback {α : Type*} (σ : α → α → ℤ) (gap
 
 private theorem sw_step {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
     (xs ys : List α) (i j : ℕ) (hi : i < xs.length) (hj : j < ys.length) :
-    cell (swTable σ gap xs ys) (i + 1) (j + 1) =
-      max 0 (max (max (cell (swTable σ gap xs ys) i j + σ xs[i] ys[j])
-        (cell (swTable σ gap xs ys) i (j + 1) + gap))
-        (cell (swTable σ gap xs ys) (i + 1) j + gap)) := by
+    cell (tab (swTable σ gap xs ys)) (i + 1) (j + 1) =
+      max 0 (max (max (cell (tab (swTable σ gap xs ys)) i j + σ xs[i] ys[j])
+        (cell (tab (swTable σ gap xs ys)) i (j + 1) + gap))
+        (cell (tab (swTable σ gap xs ys)) (i + 1) j + gap)) := by
   rw [cell_sw σ gap xs ys (i + 1) (j + 1) (by omega) (by omega),
     cell_sw σ gap xs ys i j (by omega) (by omega),
     cell_sw σ gap xs ys i (j + 1) (by omega) (by omega),
@@ -368,11 +382,11 @@ private theorem sw_worker {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
     (n i j : ℕ) (hi : i ≤ e) (hj : j ≤ f) (hn : i + j ≤ n)
     (acc : Alignment α) (hacc : IsAlignment acc ((xs.take e).drop i)
       ((ys.take f).drop j)) :
-    let r := swTraceAux σ gap (swTable σ gap xs ys) xs ys n i j acc
+    let r := swTraceAux σ gap (tab (swTable σ gap xs ys)) xs.toArray ys.toArray n i j acc
     r.1 ≤ i ∧ r.2.1 ≤ j ∧
       IsAlignment r.2.2 ((xs.take e).drop r.1) ((ys.take f).drop r.2.1) ∧
       alignmentScore σ gap r.2.2 =
-        cell (swTable σ gap xs ys) i j + alignmentScore σ gap acc := by
+        cell (tab (swTable σ gap xs ys)) i j + alignmentScore σ gap acc := by
   induction n generalizing i j acc with
   | zero =>
     have h0 : i = 0 ∧ j = 0 := by omega
@@ -413,11 +427,11 @@ private theorem sw_worker {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
             ((xs.take e).drop (i + 1)) ((ys.take f).drop j) := by
           rw [drop_step ys f j hf (by omega)]
           simpa using cons_alignment none (some ys[j]) acc _ _ (by simp) hacc
-        by_cases hz : cell (swTable σ gap xs ys) (i + 1) (j + 1) = 0
+        by_cases hz : cell (tab (swTable σ gap xs ys)) (i + 1) (j + 1) = 0
         · simp only [swTraceAux, ite_eq_left hz]
           refine ⟨le_rfl, le_rfl, hacc, ?_⟩
           rw [hz, zero_add]
-        · simp only [swTraceAux, ite_eq_right hz,
+        · simp only [swTraceAux, ite_eq_right hz, List.getElem?_toArray,
             List.getElem?_eq_getElem hx, List.getElem?_eq_getElem hy]
           split
           · rename_i hs
@@ -435,11 +449,11 @@ private theorem sw_worker {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
               simp [alignmentScore, columnScore]
               omega
             · rename_i hnu
-              have hs : cell (swTable σ gap xs ys) (i + 1) (j + 1) =
-                  cell (swTable σ gap xs ys) (i + 1) j + gap := by
+              have hs : cell (tab (swTable σ gap xs ys)) (i + 1) (j + 1) =
+                  cell (tab (swTable σ gap xs ys)) (i + 1) j + gap := by
                 have h := sw_step σ gap xs ys i j hx hy
                 simp only [max_def] at h
-                split at h <;> (try split at h) <;> (try split at h) <;> omega
+                split at h <;> split at h <;> split at h <;> omega
               obtain ⟨hri, hrj, hA, hS⟩ := ih (i + 1) j (by omega) (by omega) (by omega) _ hl
               refine ⟨by omega, by omega, hA, ?_⟩
               rw [hS, hs]
@@ -511,14 +525,14 @@ private theorem argmax_spec (T : List (List ℤ)) (m n : ℕ)
     (hrows : T.length = m + 1) (hcols : ∀ row ∈ T, row.length = n + 1) :
     (argmaxCell T).1 ≤ m ∧ (argmaxCell T).2 ≤ n ∧
       ∀ i j, i ≤ m → j ≤ n →
-        cell T i j ≤ cell T (argmaxCell T).1 (argmaxCell T).2 := by
+        cell (tab T) i j ≤ cell (tab T) (argmaxCell T).1 (argmaxCell T).2 := by
   let update := fun (best : Option ((ℕ × ℕ) × ℤ)) (rowi : List ℤ × ℕ) =>
     rowi.1.zipIdx.foldl
       (fun best vj => match best with
         | some b => if b.2 < vj.1 then some ((rowi.2, vj.2), vj.1) else best
         | none => some ((rowi.2, vj.2), vj.1)) best
   let P := fun b : Option ((ℕ × ℕ) × ℤ) =>
-    ∀ r, b = some r → r.1.1 ≤ m ∧ r.1.2 ≤ n ∧ r.2 = cell T r.1.1 r.1.2
+    ∀ r, b = some r → r.1.1 ≤ m ∧ r.1.2 ≤ n ∧ r.2 = cell (tab T) r.1.1 r.1.2
   have hvalid : P (T.zipIdx.foldl update none) := by
     apply List.foldlRecOn
     · intro r hr
@@ -538,7 +552,7 @@ private theorem argmax_spec (T : List (List ℤ)) (m n : ℕ)
         simp only [Nat.zero_add, Nat.sub_zero] at hvj hval
         have hei : rowi.2 ≤ m := by omega
         have hej : vj.2 ≤ n := by omega
-        have hcell : cell T rowi.2 vj.2 = vj.1 := by
+        have hcell : cell (tab T) rowi.2 vj.2 = vj.1 := by
           rw [cell_get T rowi.2 vj.2 hri (by simpa [← hrow] using hvj)]
           simpa [hrow] using hval.symm
         cases b with
@@ -558,7 +572,7 @@ private theorem argmax_spec (T : List (List ℤ)) (m n : ℕ)
     (fun b a => (row_best_bounds a b).1)
     (fun b a v hv => (row_best_bounds a b).2 v hv) T.zipIdx none
   have hentry : ∀ i j, i ≤ m → j ≤ n →
-      ∃ r, T.zipIdx.foldl update none = some r ∧ cell T i j ≤ r.2 := by
+      ∃ r, T.zipIdx.foldl update none = some r ∧ cell (tab T) i j ≤ r.2 := by
     intro i j hi hj
     have hir : i < T.length := by omega
     have hjr : j < T[i].length := by
@@ -586,7 +600,7 @@ private theorem sw_maximum {α : Type*} (σ : α → α → ℤ) (gap : ℤ)
     (xs ys : List α) :
     let e := argmaxCell (swTable σ gap xs ys)
     e.1 ≤ xs.length ∧ e.2 ≤ ys.length ∧
-      cell (swTable σ gap xs ys) e.1 e.2 = SmithWaterman.swTab σ gap xs ys := by
+      cell (tab (swTable σ gap xs ys)) e.1 e.2 = SmithWaterman.swTab σ gap xs ys := by
   have hrows : (swTable σ gap xs ys).length = xs.length + 1 := by
     simp [swTable_eq]
   have hcols : ∀ row ∈ swTable σ gap xs ys, row.length = ys.length + 1 := by
@@ -626,7 +640,9 @@ theorem swTraceback_spec {α : Type*} (σ : α → α → ℤ) (gap : ℤ) (xs y
     (e.1 + e.2) e.1 e.2 le_rfl le_rfl le_rfl [] (by simp [IsAlignment])
   change _ ≤ e.1 ∧ e.1 ≤ xs.length ∧ _ ≤ e.2 ∧ e.2 ≤ ys.length ∧ _
   refine ⟨hw.1, hm.1, hw.2.1, hm.2.1, hw.2.2.1, ?_⟩
-  simpa [swTraceback, e, alignmentScore_nil, hm.2.2] using hw.2.2.2
+  have hs := hw.2.2.2
+  simp only [e, hm.2.2, alignmentScore_nil, add_zero] at hs
+  simpa [swTraceback, e, tab] using hs
 
 /-- **The local traceback is an optimal local alignment** (`gap ≤ 0`): no alignment of any pair
 of infixes of `xs` and `ys` scores more. -/
