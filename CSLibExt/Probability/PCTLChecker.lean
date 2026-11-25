@@ -206,16 +206,6 @@ private theorem fold_zip_sum {m : ℕ} (P : Fin m → Fin m → ℚ) (i : Fin m)
   rw [zip_map_eq P i f (List.finRange m)]
   rw [← Fin.sum_univ_def]
 
-/-- One tabulated Bellman step on a list of per-state values, in
-`List.finRange m` order. The input list must have one entry per state
-(`v.length = m`, as `hitTab` maintains); the zip with the state list
-would otherwise truncate. -/
-def tabStep {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
-    (v : List ℚ) : List ℚ :=
-  (List.finRange m).map fun i =>
-    if i ∈ B then 1 else if i ∉ A then 0
-    else ((List.finRange m).zip v).foldl (fun acc p => acc + P i p.1 * p.2) 0
-
 /-- Tabulated horizon probabilities: the list of values at every
 state, in `List.finRange m` order, computed level by level. Each level
 is computed once from the previous list, so compiled evaluation takes
@@ -223,24 +213,23 @@ about `k * m^2` rational operations. -/
 def hitTab {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m)) :
     ℕ → List ℚ
   | 0 => (List.finRange m).map fun i => if i ∈ B then 1 else 0
-  | (n + 1) => tabStep P A B (hitTab P A B n)
+  | (n + 1) =>
+    let v := hitTab P A B n
+    (List.finRange m).map fun i =>
+      if i ∈ B then 1 else if i ∉ A then 0
+      else ((List.finRange m).zip v).foldl (fun acc p => acc + P i p.1 * p.2) 0
 
 /-- The tabulated value at a state. -/
 def lookupTab {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
     (k : ℕ) (i : Fin m) : ℚ :=
   (hitTab P A B k).getD i.val 0
 
-/-- A tabulated step always produces one entry per state. -/
-theorem tabStep_length {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
-    (v : List ℚ) : (tabStep P A B v).length = m := by
-  simp [tabStep]
-
 /-- The tabulated list has one entry per state. -/
 theorem hitTab_length {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin m))
     (k : ℕ) : (hitTab P A B k).length = m := by
   induction k with
   | zero => simp only [hitTab, List.length_map, List.length_finRange]
-  | succ n ih => simp only [hitTab, tabStep, List.length_map, List.length_finRange]
+  | succ n ih => simp only [hitTab, List.length_map, List.length_finRange]
 
 /-- The tabulated list is exactly the reference recursion evaluated at
 every state. -/
@@ -251,7 +240,7 @@ theorem hitTab_eq_map {m : ℕ} (P : Fin m → Fin m → ℚ) (A B : Finset (Fin
   | zero =>
     simp only [hitTab, hitProbC]
   | succ n ih =>
-    simp only [hitTab, tabStep, hitProbC]
+    simp only [hitTab, hitProbC]
     rw [ih]
     congr 1
     funext i
