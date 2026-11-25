@@ -78,8 +78,17 @@ variable
   (P : ∀ {X Y : ComplexScheme} [IsComplexVariety X] [IsComplexVariety Y]
     (f : X ⟶ Y) [IsProper f.left], ProperPullback (spaceMap f))
 
-/-- Actual Chow-to-Borel–Moore maps normalized on smooth proper presentations.
-This is specified input data; its existence is not asserted here. -/
+/-- A Chow-to-Borel–Moore cycle map for the given dualizing complexes `D` and proper pullbacks `P`.
+Its data are a purity isomorphism $D_X \cong \mathbb{Q}[2d]$ between the dualizing complex of $X$
+and the shifted constant sheaf on its analytification, for every smooth proper projective complex
+variety $X$ of dimension $d$; and, for every proper projective complex variety $X$ and every $r$, a
+$\mathbb{Q}$-linear map from the rational Chow group of $r$-cycles on $X$ to the Borel–Moore
+homology of $X$ in degree $2r$. It is normalized on smooth proper presentations: when $X$ is
+moreover Noetherian and smooth of dimension $d$, the fundamental $d$-cycle of $X$ maps to the
+fundamental class given by the purity of $X$; and for a proper map $f : X \to Y$ of proper
+projective complex varieties with $X$ Noetherian and smooth of dimension $r$, the pushforward of the
+fundamental $r$-cycle of $X$ maps to the Borel–Moore pushforward along `P f` of the fundamental
+class of $X$. -/
 structure CycleMap where
   /-- A compatible selected purity, relative to which fundamental classes
   and their traces are interpreted. -/
@@ -154,9 +163,13 @@ also available as `BettiCycleRealization.cohomologyCast`. -/
 
 export BettiRealization (cohomologyCast)
 
-/-- The ordinary product compatibility is anchored to an actual transverse
-smooth closed intersection. Full singular intersection machinery is not
-silently assumed. The existence of a realization is not asserted here. -/
+/-- A cycle realization: a cycle map (`CycleMap`) for the given `D` and `P` that is compatible with
+products on transverse smooth closed intersections. Let $X$ be a smooth proper projective complex
+variety of dimension $d$ and $Y \to X$, $Z \to X$ closed immersions, with $Y$ and $Z$ Noetherian and
+smooth of dimensions $r$ and $s$, whose intersection $Y \times_X Z$ is Noetherian and smooth of
+dimension $t$, where $r + s = d + t$. Then the cup product of the cohomology classes
+(`CycleMap.cohomologyClass`, through the purity of $X$) of the pushed-forward fundamental cycles of
+$Y$ and $Z$ is the cohomology class of the pushed-forward fundamental cycle of $Y \times_X Z$. -/
 structure CycleRealization where
   /-- The selected actual cycle map and its fundamental normalizations. -/
   toCycleMap : CycleMap D P

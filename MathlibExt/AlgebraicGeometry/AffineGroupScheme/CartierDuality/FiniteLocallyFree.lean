@@ -155,8 +155,7 @@ noncomputable def
       (CommRingCat.of R)).congrFullSubcategory
         (finiteLocallyFreeCommAffineGroupSchemeProperty_inverseImage R)
 
-namespace
-  finiteLocallyFreeBicommutativeHopfAlgCatOpEquivFiniteLocallyFreeCommAffineGroupSchemeCat
+namespace finiteLocallyFreeBicommutativeHopfAlgCatOpEquivFiniteLocallyFreeCommAffineGroupSchemeCat
 
 /-- The restricted equivalence followed by the finite-locally-free inclusion is the unrestricted
 equivalence applied after forgetting the property proofs. This isomorphism isolates the
@@ -250,8 +249,7 @@ noncomputable def rightOpInverseCompιIso (R : Type u) [CommRing R] :
     { hom := e.inv.leftOp
       inv := e.hom.leftOp }
 
-end
-  finiteLocallyFreeBicommutativeHopfAlgCatOpEquivFiniteLocallyFreeCommAffineGroupSchemeCat
+end finiteLocallyFreeBicommutativeHopfAlgCatOpEquivFiniteLocallyFreeCommAffineGroupSchemeCat
 
 namespace FiniteLocallyFreeCommAffineGroupSchemeCat
 
