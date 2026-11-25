@@ -500,11 +500,25 @@ theorem stableCornerAt_eq_stage (G : J ⥤ ℕ) (r : J) :
     stableCornerAt.{t} k A M G =
       Morita.cornerChainMapAt.{t} k A M (Fin (G.obj r + 1)) 0 ≫
         colimit.ι (G ⋙ finiteDiagramAt.{t} k A M) r := by
-  change (constantColimitIsoAt.{t} (J := J) k A M).inv ≫
-      colimMap (Functor.whiskerLeft G (cornerNatAt.{t} k A M)) = _
-  rw [constantColimitIsoAt_inv_eq_ι k A M r]
-  simpa only [colimMap_eq] using
-    ι_colimMap (Functor.whiskerLeft G (cornerNatAt.{t} k A M)) r
+  let X : ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
+    chainComplex k A (ULift.{max u v w t} M)
+  let F : J ⥤ ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
+    (Functor.const J).obj X
+  let K : J ⥤ ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
+    G ⋙ finiteDiagramAt.{t} k A M
+  let τ : F ⟶ K := Functor.whiskerLeft G (cornerNatAt.{t} k A M)
+  let c : ColimitCocone F := ⟨constCocone J X, isColimitConstCocone J X⟩
+  let e : colimit F ≅ X := colimit.isoColimitCocone c
+  have he : e.inv = colimit.ι F r := by
+    apply (cancel_mono e.hom).mp
+    calc
+      e.inv ≫ e.hom = 𝟙 X := e.inv_hom_id
+      _ = colimit.ι F r ≫ e.hom := by
+        symm
+        exact colimit.isoColimitCocone_ι_hom c r
+  change e.inv ≫ colimMap τ = τ.app r ≫ colimit.ι K r
+  rw [he]
+  simpa only [colimMap_eq] using ι_colimMap τ r
 
 /-- The stable corner followed by trace is the identity chain map. -/
 theorem stableCornerAt_comp_trace (G : J ⥤ ℕ) :
@@ -523,14 +537,19 @@ variable [HasExactColimitsOfShape J (ModuleCat.{max u v w t} k)]
 def stableHomologyIsoAt (G : J ⥤ ℕ) (n : ℕ) :
     (stableComplexAt.{t} k A M G).homology n ≅
       (chainComplex k A (ULift.{max u v w t} M)).homology n :=
+  let K : J ⥤ ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
+    G ⋙ finiteDiagramAt.{t} k A M
+  let H : ChainComplex (ModuleCat.{max u v w t} k) ℕ ⥤
+      ModuleCat.{max u v w t} k :=
+    HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
+      (ComplexShape.down ℕ) n
   let X : ModuleCat.{max u v w t} k :=
-    (chainComplex k A (ULift.{max u v w t} M)).homology n
+    H.obj (chainComplex k A (ULift.{max u v w t} M))
+  let e : K ⋙ H ≅ (Functor.const J).obj X := traceHomologyNatIsoAt.{t} k A M G n
   let c : ColimitCocone ((Functor.const J).obj X) :=
     ⟨constCocone J X, isColimitConstCocone J X⟩
   HomologicalComplex.homologyColimitIso (C := ModuleCat.{max u v w t} k)
-      (G ⋙ finiteDiagramAt.{t} k A M) n ≪≫
-    (colim (J := J) (C := ModuleCat.{max u v w t} k)).mapIso
-      (traceHomologyNatIsoAt.{t} k A M G n) ≪≫
+      K n ≪≫ HasColimit.isoOfNatIso e ≪≫
     colimit.isoColimitCocone c
 
 /-- The chosen homology comparison is the homology map of the actual colimit trace. -/
@@ -539,31 +558,29 @@ theorem stableHomologyIsoAt_hom (G : J ⥤ ℕ) (n : ℕ) :
       HomologicalComplex.homologyMap (stableTraceAt.{t} k A M G) n := by
   let K : J ⥤ ChainComplex (ModuleCat.{max u v w t} k) ℕ :=
     G ⋙ finiteDiagramAt.{t} k A M
+  let H : ChainComplex (ModuleCat.{max u v w t} k) ℕ ⥤
+      ModuleCat.{max u v w t} k :=
+    HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
+      (ComplexShape.down ℕ) n
   let X : ModuleCat.{max u v w t} k :=
-    (chainComplex k A (ULift.{max u v w t} M)).homology n
+    H.obj (chainComplex k A (ULift.{max u v w t} M))
+  let e : K ⋙ H ≅ (Functor.const J).obj X := traceHomologyNatIsoAt.{t} k A M G n
   let c : ColimitCocone ((Functor.const J).obj X) :=
     ⟨constCocone J X, isColimitConstCocone J X⟩
   change (HomologicalComplex.homologyColimitIso (C := ModuleCat.{max u v w t} k) K n ≪≫
-      (colim (J := J) (C := ModuleCat.{max u v w t} k)).mapIso
-        (traceHomologyNatIsoAt.{t} k A M G n) ≪≫ colimit.isoColimitCocone c).hom = _
+       HasColimit.isoOfNatIso e ≪≫ colimit.isoColimitCocone c).hom = _
   apply (cancel_epi (HomologicalComplex.homologyColimitIso
     (C := ModuleCat.{max u v w t} k) K n).inv).1
   simp only [Iso.trans_hom, Iso.inv_hom_id_assoc]
   apply colimit.hom_ext
   intro r
-  have hl : colimit.ι (K ⋙
-        HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
-          (ComplexShape.down ℕ) n) r ≫
-      ((colim (J := J) (C := ModuleCat.{max u v w t} k)).mapIso
-        (traceHomologyNatIsoAt.{t} k A M G n)).hom ≫
+  have hl : colimit.ι (K ⋙ H) r ≫ (HasColimit.isoOfNatIso e).hom ≫
       (colimit.isoColimitCocone c).hom =
       HomologicalComplex.homologyMap (traceChainMapAt.{t} k A M (Fin (G.obj r + 1))) n := by
-    rw [Functor.mapIso_hom, ← colimMap_eq, ι_colimMap_assoc,
-      colimit.isoColimitCocone_ι_hom, constCocone_ι, NatTrans.id_app, Category.comp_id,
-      traceHomologyNatIsoAt_hom_app]
-  have hr : colimit.ι (K ⋙
-        HomologicalComplex.homologyFunctor (ModuleCat.{max u v w t} k)
-          (ComplexShape.down ℕ) n) r ≫
+     rw [HasColimit.ι_isoOfNatIso_hom_assoc,
+       colimit.isoColimitCocone_ι_hom, constCocone_ι, NatTrans.id_app, Category.comp_id]
+     exact traceHomologyNatIsoAt_hom_app.{t} k A M G n r
+  have hr : colimit.ι (K ⋙ H) r ≫
       (HomologicalComplex.homologyColimitIso (C := ModuleCat.{max u v w t} k) K n).inv ≫
       HomologicalComplex.homologyMap (stableTraceAt.{t} k A M G) n =
       HomologicalComplex.homologyMap (traceChainMapAt.{t} k A M (Fin (G.obj r + 1))) n := by
