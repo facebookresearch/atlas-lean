@@ -109,4 +109,25 @@ example (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) (a : Fin 0 → ℤ√d) :
 
 #print axioms strictlyPrimitive_prod
 
+-- The comparison of the negative Pell sequences holds for every index, for
+-- `d = 2` with fundamental solution `(1, 1)`.
+example (n : ℕ) : negPellG 2 n ≤ negPellF 2 n :=
+  (negPellG_le_negPellF 2 (by norm_num) ⟨1, 1, by norm_num⟩ n).1
+
+-- At `n = 0` the inequality is strict: `g_0 = 0` while `f_0 = 1`.
+example : ¬(negPellF 2 0 = negPellG 2 0) := by
+  intro h
+  have hiff := (negPellG_le_negPellF 2 (by norm_num) ⟨1, 1, by norm_num⟩ 0).2.mp h
+  omega
+
+-- The equality case `d = 2`, `n = 1`: both coordinates are `1`.
+example : negPellF 2 1 = negPellG 2 1 :=
+  (negPellG_le_negPellF 2 (by norm_num) ⟨1, 1, by norm_num⟩ 1).2.mpr ⟨rfl, rfl⟩
+
+-- Another value of `d`: `x^2 - 5 y^2 = -1` has solution `(2, 1)`.
+example (n : ℕ) : negPellG 5 n ≤ negPellF 5 n :=
+  (negPellG_le_negPellF 5 (by norm_num) ⟨2, 1, by norm_num⟩ n).1
+
+#print axioms negPellG_le_negPellF
+
 end MetaMathlibExt
