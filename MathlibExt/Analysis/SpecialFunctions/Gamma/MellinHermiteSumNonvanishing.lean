@@ -48,7 +48,7 @@ private theorem eventually_sum_mul_ne_zero {ι α : Type*} (S : Finset ι) (d : 
     (hL : ∑ T ∈ S, d T * κ T ≠ 0) :
     ∀ᶠ x in l, ∑ T ∈ S, d T * G T x ≠ 0 := by
   have hsum : Tendsto (fun x => ∑ T ∈ S, d T * (G T x / G T₀ x)) l (𝓝 (∑ T ∈ S, d T * κ T)) :=
-    tendsto_finset_sum _ fun T hT => (hlim T hT).const_mul (d T)
+    tendsto_finsetSum _ fun T hT => (hlim T hT).const_mul (d T)
   have hne : ∀ᶠ x in l, ∑ T ∈ S, d T * (G T x / G T₀ x) ≠ 0 := hsum.eventually_ne hL
   filter_upwards [hne, hG₀] with x h1 h2
   have : ∑ T ∈ S, d T * G T x = G T₀ x * ∑ T ∈ S, d T * (G T x / G T₀ x) := by
