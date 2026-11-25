@@ -53,7 +53,14 @@ theorem_wanted actual_alpha_additive [CompactSheafSource k X] (A : AlphaSource k
 theorem_wanted actual_alpha_exact [CompactSheafSource k X]
     (A : AlphaSource k X) [(alpha k X A).Additive] : ExactAlphaSource k X A
 
-/-- Full faithfulness of beta is an output about the actual native unit. -/
+/-- **Full faithfulness of $\beta$ from sheaves to ind-sheaves.** Let $k$ be a field and $X$ a
+Hausdorff, locally compact, σ-compact space. Let $\alpha$ be the functor from ind-sheaves
+(ind-objects of compactly supported sheaves of $k$-vector spaces on $X$) to sheaves of $k$-vector
+spaces given by the left Kan extension, along the Ind-Yoneda embedding, of the inclusion of
+compactly supported sheaves (assumed to exist), and let $\beta$ be a left adjoint of $\alpha$
+(assumed to exist). Then for every sheaf $F$ of $k$-vector spaces on $X$, the unit
+$F \to \alpha \beta F$ of the adjunction is an isomorphism (equivalently, $\beta$ is fully
+faithful). -/
 theorem_wanted actual_beta_unit_iso (A : AlphaSource k X) (B : BetaSource k X A)
     (F : OrdinarySheaf k X) : IsIso ((betaAlphaAdjunction k X A B).unit.app F)
 
