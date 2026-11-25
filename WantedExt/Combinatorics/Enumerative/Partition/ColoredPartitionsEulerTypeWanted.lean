@@ -34,24 +34,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Constant-block partitions and double compositions.** For $n \ge 0$, count the pairs
-$(A, P)$ where $A$ is a multiset of $n$ positive integers whose distinct elements are exactly
-$1, \dots, k$ for some $k \ge 0$, and $P$ is a partition of $A$ into constant blocks, that is,
-a multiset of nonempty multisets, each with all its elements equal, whose sum is $A$. The number
-of such pairs equals the number $d_c(n)$ of double compositions of $n$, that is, compositions of
-$n$ in which each summand $m$ is colored by a partition of $m$:
-$$d_c(n) = \sum_{(c_1, \dots, c_r)} p(c_1) \cdots p(c_r),$$
-where the sum runs over all compositions $(c_1, \dots, c_r)$ of $n$ and $p(m)$ is the number of
-partitions of $m$.
-
-Source: Beimar J. Naranjo and José L. Ramírez, *On Colored Partitions and Euler-Type
-Identities*, INTEGERS 26 (2026), Article A20, Theorem 4 (`integers-2026-A20-thm-4`). -/
-public theorem_wanted ncard_constantBlockPartitions_eq_doubleCompositions (n : ℕ) :
-    {P : Multiset (Multiset ℕ) |
-        (∀ b ∈ P, ∃ x c : ℕ, 0 < c ∧ b = Multiset.replicate c x) ∧ P.join.card = n ∧
-          ∃ k : ℕ, P.join.toFinset = Finset.Icc 1 k}.ncard =
-      ∑ c : Composition n, (c.blocks.map fun m => Fintype.card (Nat.Partition m)).prod
-
 /-- **Generalized Euler partition theorem.** Let $S$ be a set of compositions (finite sequences
 of positive integers) such that doubling every summand of a member of $S$ gives a member of $S$,
 and halving every summand of a member of $S$ whose summands are all even gives a member of $S$.
