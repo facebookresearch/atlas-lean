@@ -68,6 +68,7 @@ theorem cyclicFullExterior_pure (n : ℕ) (a : Fin (n + 1) → A) :
         (PiTensorProduct.tprod k (a ∘ σ)) := by
   rw [cyclicFullExterior, exteriorPower.alternatingMapLinearEquiv_apply_ιMulti,
     cyclicFullAlternating, MultilinearMap.alternatization_apply]
+  rfl
 
 /-- The ordered tail sum, before establishing its exterior descent. -/
 def cyclicTailSum (n : ℕ) (a : Fin (n + 1) → A) : (Cλ k A).X n :=

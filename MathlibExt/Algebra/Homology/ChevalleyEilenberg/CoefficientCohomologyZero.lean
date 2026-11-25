@@ -36,7 +36,7 @@ universe u u' v w w' w'' v'
 
 namespace ChevalleyEilenberg
 
-attribute [local implicit_reducible] leftCoefficientCochainComplex HomologicalComplex.homologyFunctor
+attribute [local implicit_reducible] leftCoefficientCochainComplex
 
 variable (R : Type u) [CommRing R]
   (L : Type v) [LieRing L] [LieAlgebra R L]
