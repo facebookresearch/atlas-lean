@@ -113,9 +113,12 @@ variable {α : Type*}
 /-- A **selection diagram** (Pearl–Bareinboim 2014, Definition 4) on the nodes `0, …, n - 1`,
 listed in a topological order as for `BayesNet`: the causal diagram `pa` shared by the source and
 target domains, and the set `sel` of nodes that receive a selection arrow `S → V_i`. The absence
-of a selection arrow at a node encodes that its mechanism is the same in both domains. One
-selection node pointing into every node of `sel` gives the same d-separations as one selection
-node per node of `sel`. -/
+of a selection arrow at a node encodes that its mechanism is the same in both domains. A single
+merged selection node pointing into every node of `sel` can only open more trails than one
+selection node per node of `sel` (it adds forks through `S` between selected nodes), so
+d-separation from the merged `S` implies the corresponding separation with separate selection
+nodes; `SAdmissible` below is this merged-node condition, which is sufficient for the transport
+formula. -/
 structure SelectionDiagram (n : ℕ) where
   /-- The parents of node `k` in the shared causal diagram, among the nodes `0, …, k - 1`. -/
   pa : (k : Fin n) → Finset (Fin k)
@@ -221,9 +224,11 @@ variable {n : ℕ} {D : SelectionDiagram n}
 
 /-- The **selection network** of a domain pair on `n + 1` nodes: node `0` is the selection node
 `S` with prior `selPrior a c`; node `j.succ` has the target table of `j` when `j ∈ D.sel` and
-`S = c`, and the source table of `j` otherwise. Conditioning on `S = c` gives the target and on
-`S = a` the source (Pearl–Bareinboim 2014, §4.1 and footnote 16); its graph is that of
-`D.toNet`. (Adapted from the private definition `switchNet_r3` of `DoCalculus.lean`.) -/
+`S = c`, and the source table of `j` otherwise. For `a ≠ c`, conditioning on `S = c` gives the
+target and on `S = a` the source (Pearl–Bareinboim 2014, §4.1 and footnote 16); if `a = c` the
+`S = c` branch is selected at every selected node and the network does not encode the source,
+so every bridge lemma below assumes `a ≠ c`. Its graph is that of `D.toNet`. (Adapted from the
+private definition `switchNet_r3` of `DoCalculus.lean`.) -/
 noncomputable def selNet [DecidableEq α] (M : DomainPair α D) (a c : α) :
     BayesNet α (n + 1) where
   pa := D.augPa
@@ -1100,20 +1105,23 @@ variable {n : ℕ} (D : SelectionDiagram n)
 
 /-- **The target effect is transportable** (Pearl–Bareinboim 2014, Definition 5 and the first
 clause of Corollary 1): under the hypotheses of `DomainPair.transport_formula` on `D`, the target
-effect `P*(y | do(x))` is determined by the source law under `do(X = x)` and the target
-observational law, on the class of domain pairs inducing `D` with overlap. -/
+effect `P*(y | do(x))` is determined by exactly the quantities the formula consumes: the source
+interventional marginals on `Y ∪ Z` and on `Z` at each `z`, and the target observational
+`Z`-marginal at each `z` — not by the complete joints, so latent coordinates outside `X`, `Y`
+and `Z` are never compared. The class is the domain pairs inducing `D` with overlap. -/
 theorem identifiedOn_transport [Fintype α] [Nonempty α] {X Y Z : Finset (Fin n)}
     (x : Fin n → α) (hXY : Disjoint X Y) (hXZ : Disjoint X Z) (hYZ : Disjoint Y Z)
     (hadm : D.SAdmissible X Y Z) (hpre : D.PreTreatment X Z) :
     IdentifiedOn
       {M : DomainPair α D | ∀ z : Z → α, marginal M.target.joint ↑Z (fill Z x z) ≠ 0 →
         marginal M.source.joint ↑Z (fill Z x z) ≠ 0}
-      (fun M => ((M.source.mutilateSet X x).joint, M.target.joint))
+      (fun M => ((fun z : Z → α => (marginal (M.source.mutilateSet X x).joint ↑(Y ∪ Z)
+            (fill Z x z), marginal (M.source.mutilateSet X x).joint ↑Z (fill Z x z))),
+        fun z : Z → α => marginal M.target.joint ↑Z (fill Z x z)))
       (fun M => marginal (M.target.mutilateSet X x).joint ↑Y x) := by
   refine IdentifiedOn.of_eq_comp
-    (F := fun p : ((Fin n → α) → ℝ) × ((Fin n → α) → ℝ) =>
-      ∑ z : Z → α, marginal p.1 ↑(Y ∪ Z) (fill Z x z) / marginal p.1 ↑Z (fill Z x z) *
-        marginal p.2 ↑Z (fill Z x z)) (fun M hM => ?_)
+    (F := fun p : ((Z → α) → ℝ × ℝ) × ((Z → α) → ℝ) =>
+      ∑ z : Z → α, (p.1 z).1 / (p.1 z).2 * p.2 z) (fun M hM => ?_)
   exact M.transport_formula x hXY hXZ hYZ hadm hpre hM
 
 end SelectionDiagram
