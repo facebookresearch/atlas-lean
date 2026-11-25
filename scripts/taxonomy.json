@@ -12764,6 +12764,7 @@
   "MathlibExt/NumberTheory/JosephusFixedSuccCases": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/KFibonacciAlternatingBinomial": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/KFibonacciBinomialTruncation": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
+  "MathlibExt/NumberTheory/KFibonacciTruncatedRecurrence": {"to": "NumberTheory/linear-recurrences/higher-order-sequences", "title": "k-generalized Fibonacci numbers"},
   "MathlibExt/NumberTheory/JosephusHighExtremal": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/JosephusThreeHighExtremalRecurrences": {"to": "NumberTheory/integer-sequences/iterated-self-referential", "title": "Josephus problem"},
   "MathlibExt/NumberTheory/KFull": {"to": "NumberTheory/arithmetic-functions/special-integer-classes", "title": "Powerful and k-full numbers"},
