@@ -37,7 +37,8 @@ public import Mathlib.NumberTheory.ModularForms.Basic
 public import Mathlib.NumberTheory.NumberField.AdeleRing
 public import MathlibExt.NumberTheory.NumberField.AdelicGL2LocalFiniteness
 public import MathlibExt.NumberTheory.NumberField.HeckeCharacter
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.NumberTheory.ModularForms.SlashInvariantForms
 
@@ -82,7 +83,7 @@ def idealBound (N : Ideal R) (v : HeightOneSpectrum R) :
 theorem idealBound_of_ne_bot {N : Ideal R} (hN : N ≠ ⊥) (v : HeightOneSpectrum R) :
     idealBound R N v =
       WithZero.exp (-((Associates.mk v.asIdeal).count (Associates.mk N).factors : ℤ)) :=
-  if_neg hN
+  ite_eq_right hN
 
 theorem idealBound_le_one (N : Ideal R) (v : HeightOneSpectrum R) :
     idealBound R N v ≤ 1 := by
@@ -107,7 +108,7 @@ theorem zero_mem_idealBall (N : Ideal R) :
   fun v => by
     have h : (0 : FiniteAdeleRing R K) v = 0 := rfl
     rw [h, map_zero]
-    exact zero_le'
+    exact zero_le
 
 theorem add_mem_integralFiniteAdeles {x y : FiniteAdeleRing R K}
     (hx : x ∈ integralFiniteAdeles R K) (hy : y ∈ integralFiniteAdeles R K) :
@@ -132,7 +133,7 @@ theorem add_mem_idealBall {N : Ideal R} {x y : FiniteAdeleRing R K}
 theorem mul_mem_idealBall_left {N : Ideal R} {x y : FiniteAdeleRing R K}
     (hx : x ∈ integralFiniteAdeles R K) (hy : y ∈ idealBall R K N) :
     x * y ∈ idealBall R K N := fun v => by
-  show Valued.v (x v * y v) ≤ idealBound R N v
+  change Valued.v (x v * y v) ≤ idealBound R N v
   rw [map_mul]
   calc Valued.v (x v) * Valued.v (y v) ≤ 1 * idealBound R N v :=
         mul_le_mul' (valued_apply_le_one hx v) (hy v)
