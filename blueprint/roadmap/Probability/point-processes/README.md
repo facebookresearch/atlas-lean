@@ -5,3 +5,5 @@ Poisson processes on the line and Poisson point processes on general spaces (arr
 - [Poisson point processes](poisson-point-processes/README.md)
 - [Poisson processes](poisson-processes/README.md)
 - [Stationary random functions](stationary-random-functions/README.md)
+
+- [Cluster spacing in Hegselmann–Krause dynamics](cluster-spacing-in-hegselmann-krause-dynamics.md)
