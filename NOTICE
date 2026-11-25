@@ -307,3 +307,10 @@ Files:
   MathlibExtTest/CategoryTheory/CategoryBar/SimplicialReplacementTests.lean
 
 Authors: @toskua, Avocado
+
+Files:
+  MathlibExt/Topology/Convenient/StdSimplex.lean
+  MathlibExt/Topology/Convenient/StdSimplexHornLocus.lean
+  MathlibExt/Topology/Convenient/StdSimplexHornRetract.lean
+
+Author: @toskua, Avocado
