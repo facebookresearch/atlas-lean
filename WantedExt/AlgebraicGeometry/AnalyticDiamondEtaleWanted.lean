@@ -30,26 +30,42 @@ open MathlibExt.AlgebraicGeometry.AnalyticTateAdicModels
 open MathlibExt.AlgebraicGeometry.AnalyticAdicDiamondification
 open MathlibExt.AlgebraicGeometry.AnalyticDiamondEtaleSites
 
-/-- Actual analytic etale maps retain representable etaleness under diamondification. -/
+/-- Let $p$ be a prime and $R$ an affine realization (the chosen affinoid models of affine
+perfectoid untilts that define diamondification). Then the diamondification functor
+`diamondFunctor p R` sends every étale morphism of analytic adic spaces (étale on affinoid charts)
+to a representable étale morphism of v-sheaves. -/
 public theorem_wanted etalePreservation (p : ℕ) [Fact p.Prime]
     (R : AffineRealization p) : PreservesEtale p R
 
-/-- The prescribed etale-site functor is an equivalence. -/
+/-- Let $p$ be a prime, $R$ an affine realization whose diamondification preserves étale morphisms
+($h$), and $Y$ an analytic adic space. Then the functor `etaleDiamondification p R Y h`, from the
+étale site of $Y$ to the representable-étale site of the diamond of $Y$, is an equivalence of
+categories. -/
 public theorem_wanted etaleEquivalence (p : ℕ) [Fact p.Prime]
     (R : AffineRealization p) (Y : AnalyticAdicSpace p) (h : PreservesEtale p R) :
     (etaleDiamondification p R Y h).IsEquivalence
 
-/-- Actual etale covers satisfy the continuity required by native inverse image. -/
+/-- Let $p$ be a prime, $R$ an affine realization whose diamondification preserves étale morphisms
+($h$), and $Y$ an analytic adic space. Then the functor `etaleDiamondification p R Y h` is
+continuous from the étale topology of $Y$ (jointly surjective families of étale maps) to the étale
+topology of the diamond of $Y$ (jointly epimorphic families of representable étale maps):
+restriction along it sends sheaves to sheaves. -/
 public theorem_wanted etaleContinuity (p : ℕ) [Fact p.Prime]
     (R : AffineRealization p) (Y : AnalyticAdicSpace p) (h : PreservesEtale p R) :
     (etaleDiamondification p R Y h).IsContinuous (analyticEtaleTopology p Y)
       (diamondEtaleTopology p ((diamondFunctor p R).obj Y))
 
-/-- Finite etaleness is preserved on the actual whole affinoid inverse images. -/
+/-- Let $p$ be a prime and $R$ an affine realization. Then `diamondFunctor p R` sends every finite
+étale morphism of analytic adic spaces (finite étale over the whole inverse image of every affinoid
+chart) to a representable finite étale morphism of v-sheaves (every pullback to an affine perfectoid
+space is empty or a finite étale affine). -/
 public theorem_wanted finiteEtalePreservation (p : ℕ) [Fact p.Prime]
     (R : AffineRealization p) : PreservesFiniteEtale p R
 
-/-- The actual finite-etale site comparison is an equivalence. -/
+/-- Let $p$ be a prime, $R$ an affine realization whose diamondification preserves finite étale
+morphisms ($h$), and $Y$ an analytic adic space. Then the functor
+`finiteEtaleDiamondification p R Y h`, from finite étale spaces over $Y$ to representable finite
+étale v-sheaves over the diamond of $Y$, is an equivalence of categories. -/
 public theorem_wanted finiteEtaleEquivalence (p : ℕ) [Fact p.Prime]
     (R : AffineRealization p) (Y : AnalyticAdicSpace p) (h : PreservesFiniteEtale p R) :
     (finiteEtaleDiamondification p R Y h).IsEquivalence
