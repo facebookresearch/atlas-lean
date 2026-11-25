@@ -20,6 +20,18 @@ The maximum size of a Sidon subset of `{1, …, N}` is at most
 `√N + c * N ^ (1 / 4)` for some constant `c < 1` and all sufficiently large `N`.
 The proof uses the two-window method of Carter, Hunter and O'Bryant
 (https://arxiv.org/abs/2310.20032).
+
+## Record carried over from the retired `WantedExt/Combinatorics/SidonUpperBoundImprovementGreenProblem31Wanted.lean`
+
+Source: B. Green, 100 open problems, Problem 31 (manuscript, update of December 2025),
+https://people.maths.ox.ac.uk/greenbj/papers/open-problems.pdf. UnsolvedMath record UM-00000162
+(`GREEN-074`), dataset ulamai/UnsolvedMath v1.8.0.
+
+`F(N)` is the largest size of a Sidon subset of `{1, …, N}` (MathlibExt `Set.IsSidon`: all pairwise
+sums distinct up to order). The target is the improvement of Lindström's upper bound recorded in
+Green's own update to Problem 31: `F(N) ≤ N^{1/2} + c N^{1/4}` for all large `N` with a constant `c
+< 1`. The open-ended part of the problem (further improvements, and any improvement of the lower
+bound) is not formalized.
 -/
 
 @[expose] public section
