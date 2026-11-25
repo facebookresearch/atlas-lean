@@ -50,29 +50,6 @@ public theorem_wanted count_arch_tops_calkinWilfRow (k : ℕ) (hk : 2 ≤ k) :
         euclidPPosition V.1 V.2 && p == (2 * V.1 + V.2, V.1 + V.2)) : ℤ) =
       2 ^ (k - 2) + 2 * (-1) ^ k
 
-/-- **Levels of the branches of an arch.** On numerator–denominator pairs write
-$s(x, y) = (x, x + y)$ for the son and $t(x, y) = (x + y, y)$ for the daughter of a vertex of the
-Calkin–Wilf tree. Let $a, b, c, d, k$ be natural numbers with $0 < b < a$ and $0 < c < d$. Then
-$t(s^k(a - b, b))$, the daughter of the $k$-fold son of $(a - b, b)$, has first entry
-$(k+1)a - kb$ and second entry $ka - (k-1)b$, and $s(t^k(c, d - c))$, the son of the $k$-fold
-daughter of $(c, d - c)$, has first entry $kd - (k-1)c$ and second entry $(k+1)d - kc$, the
-right-hand sides computed in the integers.
-
-When $a/b$ and $c/d$ are the left and right tops of an arch, these pairs are level $k$ (level $0$
-the top) of its left branch, which descends by nieces, and of its right branch, which descends by
-nephews; the formulas hold without the arch-top hypothesis.
-
-Source: Michael A. Jones and Brittany C. Ohlinger, *Self-Similar Structure of P-Positions
-of the Game Euclid*, The Fibonacci Quarterly 62.1 (2024), Lemma 5.1. -/
-public theorem_wanted arch_branch_levels (a b c d k : ℕ) (hb : 0 < b) (hab : b < a) (hc : 0 < c)
-    (hcd : c < d) :
-    let s : ℕ × ℕ → ℕ × ℕ := fun p => (p.1, p.1 + p.2)
-    let t : ℕ × ℕ → ℕ × ℕ := fun p => (p.1 + p.2, p.2)
-    let L := t (s^[k] (a - b, b))
-    let R := s (t^[k] (c, d - c))
-    ((L.1 : ℤ) = (k + 1) * a - k * b ∧ (L.2 : ℤ) = k * a - (k - 1) * b) ∧
-      ((R.1 : ℤ) = k * d - (k - 1) * c ∧ (R.2 : ℤ) = (k + 1) * d - k * c)
-
 /-- **The Fibonacci arches.** Let $F_j$ be the Fibonacci numbers with $F_0 = F_1 = 1$ and
 $F_{j+2} = F_{j+1} + F_j$. Call a pair $(a, b)$ of natural numbers a P-position when the Euclid
 P-position test returns true at $(a, b)$, read it as the vertex $a/b$ of the Calkin–Wilf tree, and

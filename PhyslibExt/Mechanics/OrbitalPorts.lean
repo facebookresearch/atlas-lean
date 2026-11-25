@@ -210,12 +210,14 @@ def speedSq (v : Fin 3 → ℝ) : ℝ := v ⬝ᵥ v
 noncomputable def radius (x : Fin 3 → ℝ) : ℝ := Real.sqrt (x ⬝ᵥ x)
 
 /-- Specific energy `E = |v|² / 2 - μ / r` of the state `(x, v)`. At the collision point `x = 0`
-Lean's convention `μ / 0 = 0` gives a meaningless value. -/
+the convention `μ / 0 = 0` gives `E = |v|² / 2`; the intended domain is `x ≠ 0`. -/
 noncomputable def specificEnergy (μ : ℝ) (x v : Fin 3 → ℝ) : ℝ :=
   speedSq v / 2 - μ / radius x
 
-/-- Energy-defined semi-major axis `a = -μ / (2 E)`. It is a length only for `E < 0`; at `E = 0`
-(parabolic) Lean's convention `x / 0 = 0` gives the meaningless value `0`. -/
+/-- Energy-defined semi-major axis `a = -μ / (2 E)`. It is a positive length for `μ > 0` and
+`E < 0`, negative for `μ > 0` and `E > 0`, and `0` for `μ = 0`; at `E = 0` (for example a parabolic
+state, `μ > 0`, `x ≠ 0`) the convention `c / 0 = 0` gives the meaningless value `0`. At `x = 0` the
+energy `E` is its conventional value `|v|² / 2`. -/
 noncomputable def semiMajorAxis (μ : ℝ) (x v : Fin 3 → ℝ) : ℝ :=
   -μ / (2 * specificEnergy μ x v)
 
@@ -240,8 +242,9 @@ lemma visViva {μ : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x
   field_simp
   ring
 
-/-- A parabolic state (`E = 0`) has no finite semi-major axis: `-μ / (2 E)` is the junk value
-`0`, so `a > 0` fails and `E < 0` cannot be weakened to `E ≤ 0`. -/
+/-- A state with `E = 0` (for example a parabolic state, with `μ > 0` and `x ≠ 0`) has no finite
+semi-major axis: `-μ / (2 E)` is the junk value `0`, so `a > 0` fails and `E < 0` cannot be
+weakened to `E ≤ 0`. -/
 lemma semiMajorAxis_of_specificEnergy_eq_zero {μ : ℝ} {x v : Fin 3 → ℝ}
     (hE : specificEnergy μ x v = 0) :
     semiMajorAxis μ x v = 0 ∧ ¬ 0 < semiMajorAxis μ x v := by
@@ -324,6 +327,7 @@ lemma speedSq_tangentialImpulse {v : Fin 3 → ℝ} (hv : v ≠ 0) (Δv : ℝ) :
   linear_combination (-(Real.sqrt (v ⬝ᵥ v) + Δv) ^ 2) * hsq
 
 /-- A tangential impulse multiplies the specific angular momentum `x ⨯₃ v` by `1 + Δv / |v|`.
+At `v = 0` the convention `Δv / 0 = 0` makes the factor `1`, and both sides are `0`.
 The identity holds for all `x`, `v` and `Δv` and by itself gives no orbital plane: there is none
 when `x ⨯₃ v = 0` (a radial state, or `v = 0`) or when the factor vanishes (`Δv = -|v|` brings
 the body to rest). When both are nonzero, the new specific angular momentum is a nonzero
@@ -335,9 +339,9 @@ lemma cross_tangentialImpulse (x v : Fin 3 → ℝ) (Δv : ℝ) :
   nth_rewrite 1 [← one_smul ℝ (x ⨯₃ v)]
   rw [← add_smul]
 
-/-- Vis-viva after one tangential impulse at the fixed state: if the post-impulse energy is
-negative, `(|v| + Δv)² = μ (2 / r - 1 / a')` for the post-impulse semi-major axis `a'`, that is
-`1 / a' = 2 / r - (|v| + Δv)² / μ`. -/
+/-- Vis-viva after one tangential impulse at the fixed state: for `μ > 0`, `r > 0` and `v ≠ 0`,
+if the post-impulse energy is negative, `(|v| + Δv)² = μ (2 / r - 1 / a')` for the post-impulse
+semi-major axis `a'`, that is `1 / a' = 2 / r - (|v| + Δv)² / μ`. -/
 lemma visViva_tangentialImpulse {μ Δv : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < μ) (hr : 0 < radius x)
     (hv : v ≠ 0) (hE : specificEnergy μ x (tangentialImpulse v Δv) < 0) :
     (Real.sqrt (speedSq v) + Δv) ^ 2
@@ -354,9 +358,9 @@ lemma visViva_tangentialImpulse {μ Δv : ℝ} {x v : Fin 3 → ℝ} (hμ : 0 < 
   field_simp at hvv ⊢
   linear_combination hvv
 
-/-- At circular speed, `|v|² = μ / r`, a tangential impulse with negative post-impulse energy
-keeps `a' = r` only if it keeps the speed (`Δv = 0`) or reverses the velocity
-(`Δv = -2 |v|`). Only the speed enters: the statement holds for a circular state
+/-- At circular speed, `|v|² = μ / r` with `μ > 0` and `r > 0`, a tangential impulse with
+negative post-impulse energy gives `a' = r` if and only if it keeps the velocity (`Δv = 0`) or
+reverses it (`Δv = -2 |v|`). Only the speed enters: the statement holds for a circular state
 (`semiMajorAxis_of_circular`) and for a radial state at circular speed alike. No transfer
 cost or optimality is claimed. -/
 lemma semiMajorAxis_tangentialImpulse_eq_radius_iff {μ Δv : ℝ} {x v : Fin 3 → ℝ}
@@ -533,8 +537,9 @@ to hours `s = 1 / 3600`), a coordinate of dimension `L^a T^b` is multiplied by `
 lengths by `l`, times by `s`, speeds by `l / s`, the gravitational parameter (`L³ T⁻²`) by
 `l ^ 3 / s ^ 2`. In the new units the state at the new time `τ` is the old state at `τ / s`. -/
 
-/-- The premises are preserved by a change of units with the gravitational parameter scaled by
-`l ^ 3 / s ^ 2` and the radius by `l`. -/
+/-- For `l, s > 0` new length and time units per old unit, the premises are preserved by the
+change of units `τ ↦ l • r (τ / s)`, `τ ↦ (l / s) • v (τ / s)`, with the gravitational parameter
+scaled by `l ^ 3 / s ^ 2` and the radius by `l`. -/
 lemma IsCircularOrbit.unitChange {μ R l s : ℝ} {r v : ℝ → ℂ} (h : IsCircularOrbit μ R r v)
     (hl : 0 < l) (hs : 0 < s) :
     IsCircularOrbit (l ^ 3 / s ^ 2 * μ) (l * R) (fun τ => l • r (τ / s))
@@ -579,8 +584,8 @@ lemma IsCircularOrbit.unitChange {μ R l s : ℝ} {r v : ℝ → ℂ} (h : IsCir
     rw [hscalv] at hsmulv
     exact hsmulv
 
-/-- Wrong time units are rejected: a change of time unit (`s ≠ 1`) that leaves out the factor
-`s⁻²` of the gravitational parameter gives no circular orbit. -/
+/-- Wrong time units are rejected: for `l, s > 0`, a change of time unit (`s ≠ 1`) that leaves out
+the factor `s⁻²` of the gravitational parameter gives no circular orbit. -/
 lemma IsCircularOrbit.not_wrong_time_unit {μ R l s : ℝ} {r v : ℝ → ℂ}
     (h : IsCircularOrbit μ R r v) (hl : 0 < l) (hs : 0 < s) (hs1 : s ≠ 1) :
     ¬ IsCircularOrbit (l ^ 3 * μ) (l * R) (fun τ => l • r (τ / s))
@@ -613,8 +618,8 @@ lemma IsCircularOrbit.not_wrong_time_unit {μ R l s : ℝ} {r v : ℝ → ℂ}
     · linarith
   exact hs1 hs1eq
 
-/-- Consistent speed and period units: under the change of units the circular speed `√(μ / R)`
-scales by `l / s` and the period `2 π R / √(μ / R)` by `s`. -/
+/-- Consistent speed and period units: for `μ, R, l, s > 0`, under the change of units the
+circular speed `√(μ / R)` scales by `l / s` and the period `2 π R / √(μ / R)` by `s`. -/
 lemma speed_period_unitChange {μ R l s : ℝ} (hμ : 0 < μ) (hR : 0 < R) (hl : 0 < l)
     (hs : 0 < s) :
     Real.sqrt (l ^ 3 / s ^ 2 * μ / (l * R)) = l / s * Real.sqrt (μ / R) ∧
@@ -663,7 +668,8 @@ lemma spatialState_dotProduct_normal (Q : Matrix.specialOrthogonalGroup (Fin 3) 
   simp only [spatialState, bodyToInertialVec_dotProduct, planarToBody]
   simp
 
-/-- The planar-to-spatial map commutes with time derivatives. -/
+/-- The planar-to-spatial map commutes with time derivatives: if `z` has derivative `w` at `t`,
+then `spatialState Q z` has derivative `Q (Re w, Im w, 0)` at `t`. -/
 lemma hasDerivAt_spatialState (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) {z : ℝ → ℂ}
     {w : ℂ} {t : ℝ} (hz : HasDerivAt z w t) :
     HasDerivAt (spatialState Q z) (bodyToInertialVec Q (planarToBody w)) t := by
@@ -737,12 +743,13 @@ lemma IsCircularOrbit.hasDerivAt_spatialVelocity {μ R : ℝ} {r v : ℝ → ℂ
 /-! ## G. The eccentricity vector and the energy identity -/
 
 /-- Eccentricity vector `e = (v ⨯₃ h) / μ - x / r` of the state `(x, v)`, with `h = x ⨯₃ v` the
-specific angular momentum and `r = |x|`. Declared for `μ > 0` and `r > 0`; at `x = 0` or `μ = 0`
-Lean's convention `1 / 0 = 0` gives a meaningless value. -/
+specific angular momentum and `r = |x|`. Declared for `μ > 0` and `r > 0`; with the convention
+`1 / 0 = 0` it is `-x / r` when `μ = 0` and `r > 0`, and `0` at `x = 0`. -/
 noncomputable def eccentricityVector (μ : ℝ) (x v : Fin 3 → ℝ) : Fin 3 → ℝ :=
   (1 / μ) • (v ⨯₃ (x ⨯₃ v)) - (1 / radius x) • x
 
-/-- Eccentricity `|e| = √(e ⬝ᵥ e)`, the Euclidean length of the eccentricity vector. -/
+/-- Eccentricity `|e| = √(e ⬝ᵥ e)`, the Euclidean length of the eccentricity vector. By the
+conventions of `eccentricityVector` it is `1` when `μ = 0` and `r > 0`, and `0` at `x = 0`. -/
 noncomputable def eccentricity (μ : ℝ) (x v : Fin 3 → ℝ) : ℝ :=
   Real.sqrt (eccentricityVector μ x v ⬝ᵥ eccentricityVector μ x v)
 
@@ -1042,7 +1049,8 @@ lemma radius_spatialState_planarPath (Q : Matrix.specialOrthogonalGroup (Fin 3) 
   ring
 
 /-- **Energy in the upstream normalization.** The planar energy `vx² + vy² - 2 μ / √(x² + y²)` is
-twice the specific energy `|V|² / 2 - μ / |X|` of the spatial state: the factor two is kept. -/
+twice the specific energy `|V|² / 2 - μ / |X|` of the spatial state: the factor two is kept. At a
+time where `x = y = 0` the convention `c / 0 = 0` makes both sides `vx² + vy²`. -/
 lemma two_mul_specificEnergy_spatialState (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ) (μ : ℝ)
     (x y vx vy : ℝ → ℝ) (t : ℝ) :
     2 * specificEnergy μ (spatialState Q (planarPath x y) t)
@@ -1058,7 +1066,7 @@ lemma two_mul_specificEnergy_spatialState (Q : Matrix.specialOrthogonalGroup (Fi
 
 /-- **Energy transport.** Equal planar energies at `t₀` and `t₁`, in the upstream normalization
 (the conclusion of the upstream energy conservation lemma), give equal specific energies of the
-spatial states. -/
+spatial states. At a time where `x = y = 0` both energies use the convention `c / 0 = 0`. -/
 lemma specificEnergy_spatialState_eq_of_energy_eq (Q : Matrix.specialOrthogonalGroup (Fin 3) ℝ)
     (μ : ℝ) {x y vx vy : ℝ → ℝ} {t₀ t₁ : ℝ}
     (hE : vx t₀ ^ 2 + vy t₀ ^ 2 - 2 * μ / Real.sqrt (x t₀ ^ 2 + y t₀ ^ 2) =

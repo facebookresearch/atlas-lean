@@ -42,6 +42,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.NumberTheory.Harmonic.Defs
 public import Mathlib.RingTheory.Binomial
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
+public import MathlibExt.NumberTheory.GouldReciprocalBinomial
 public import MathlibExt.NumberTheory.RamanujanBinomialSine
 public import MathlibExt.NumberTheory.RamanujanHarmonicIdentity
 
@@ -108,23 +109,5 @@ theorem_wanted sum_two_pow_choose_sub_mul_cos_pow_sin
           Real.cos θ ^ ν * Real.sin ((ν : ℝ) * θ) =
       (2 : ℝ) ^ (n + k) * Real.cos θ ^ (n + k) *
         Real.sin (((n : ℝ) - (k : ℝ)) * θ)
-
-/-- **Gould's reciprocal binomial identity (Alzer–Kwong, Lemma 4).** Let $N$ be a natural number
-and $x$ a real number with $x \ne \nu$ for every $\nu \in \{0, 1, \dots, N\}$. Then
-$$
-\sum_{\nu=0}^{N} \frac{(-1)^\nu}{x - \nu} \binom{N}{\nu} = \frac{(-1)^N}{(x - N) \binom{x}{N}},
-$$
-where $\binom{x}{N} = x(x-1)\cdots(x-N+1)/N!$ is the generalized binomial coefficient.
-
-Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
-Combinatorial Identity Involving Harmonic Numbers",
-Lemma 4. -/
-theorem_wanted sum_neg_one_pow_div_mul_choose_eq
-    (N : ℕ) (x : ℝ)
-    (hx : ∀ ν ∈ Finset.Icc 0 N, x ≠ (ν : ℝ)) :
-    ∑ ν ∈ Finset.Icc 0 N,
-        ((-1 : ℝ) ^ ν / (x - (ν : ℝ))) *
-          (Nat.choose N ν : ℝ) =
-      (-1 : ℝ) ^ N / ((x - (N : ℝ)) * Ring.choose x N)
 
 end MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted

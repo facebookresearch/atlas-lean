@@ -25,8 +25,7 @@ suitable `ρ` when `R < I(p; W)` (`GallagerExponent.exists_gallagerE0_sub_pos`).
 maximum-likelihood decoder with any tie-breaking rule then has maximal error at most
 `4 exp(-N (E₀ - ρ R))`, which tends to `0`.
 
-The statement was first recorded as wanted in `WantedExt.InformationTheory.ChannelCodingWanted`,
-which keeps the two converses.
+The statement was first recorded as wanted in `WantedExt.InformationTheory.ChannelCodingWanted`.
 
 * `measureReal_pi_le_mlErrorProb`: for a maximum-likelihood decoder `g`, the product-measure
   probability that `g` errs on message `m` is at most `mlErrorProb W C m`.

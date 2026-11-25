@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Enumerative.InversionSequencePatternSets
+public import MathlibExt.Combinatorics.Enumerative.InversionSequenceWilf201210
 public import Mathlib.Combinatorics.Enumerative.Catalan.Basic
 
 /-!
@@ -128,19 +128,6 @@ public theorem_wanted invSeq_wilf_010_102_120_five_classes :
     invSeqAvoidCount ({![0, 1, 0], ![1, 1, 0], ![1, 0, 2], ![1, 2, 0], ![2, 1, 0]}
         : Set (Fin 3 → ℕ)) =
       invSeqAvoidCount ({![0, 1, 0], ![1, 0, 1], ![1, 0, 2], ![1, 2, 0], ![2, 0, 1]}
-          : Set (Fin 3 → ℕ))
-
-/-- **I-Wilf equivalence of $\{010, 100, 101, 120, 201\}$ and $\{010, 100, 101, 120, 210\}$.**
-Write length-3 patterns as digit strings ($101$ is the pattern $(1, 0, 1)$) and let $|I_n(B)|$ be
-the number of inversion sequences of length $n$ that avoid every pattern in the set $B$. Then for
-every $n \ge 0$, $|I_n(\{010, 100, 101, 120, 201\})| = |I_n(\{010, 100, 101, 120, 210\})|$.
-
-Source: Toufik Mansour, *Inversion Sequences Avoiding a Set of Length-3 Patterns*, INTEGERS 24
-(2024), Article A76, Theorem 11 (`integers-2024-A76-thm-11`). -/
-public theorem_wanted invSeq_wilf_010_100_101_120_201_210 :
-    invSeqAvoidCount ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 2, 0], ![2, 0, 1]}
-        : Set (Fin 3 → ℕ)) =
-      invSeqAvoidCount ({![0, 1, 0], ![1, 0, 0], ![1, 0, 1], ![1, 2, 0], ![2, 1, 0]}
           : Set (Fin 3 → ℕ))
 
 /-- **Five I-Wilf-equivalent sets of six patterns containing $000$, $010$ and $120$.** Write

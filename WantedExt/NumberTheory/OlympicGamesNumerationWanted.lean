@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import Mathlib.NumberTheory.Rayleigh
-public import MathlibExt.NumberTheory.LucasSequence
+public import MathlibExt.NumberTheory.BronzeMetallicIdentities
 public import MathlibExt.NumberTheory.OddFibonacciGoldenRatio
 public import MathlibExt.NumberTheory.OddFibonacciRepresentation
 public import MathlibExt.NumberTheory.PellLucasSequence
@@ -89,95 +89,6 @@ theorem_wanted exists_pell_halfCompanion_representation (R : ℕ → ℕ)
       a 1 ≤ 2 ∧ (a 1 = 2 → a 2 = 0) ∧ (∀ k, a (2 * k + 1) ≤ 3 ∧ a (2 * k) ≤ 1) ∧
       (∀ k, 1 ≤ k → a (2 * k + 1) = 3 → a (2 * k) = 0 ∧ a (2 * k + 2) = 0) ∧
       (∀ k, 1 ≤ k → a (2 * k + 1) = 3 → a (2 * k - 1) < 3 ∧ a (2 * k + 3) < 3)
-
-/-- **Bronze Lucas parameters.** The bronze Lucas parameters are the Lucas sequence parameters
-$(P, Q) = (3, -1)$. The Lucas sequence $U(3, -1)$ is the sequence of bronze numbers $B_n$, with
-$B_0 = 0$, $B_1 = 1$ and $B_{n+2} = 3B_{n+1} + B_n$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4 (bronze numbers). -/
-def bronzeLucasParams : LucasSequenceParams where
-  p := 3
-  q := -1
-  q_ne_zero := by decide
-
-/-- **Recurrence of the bronze numbers.** Let $B_n$ be the bronze numbers, the terms of the Lucas
-sequence $U(3, -1)$. For every natural number $n$, $B_{n+2} = 3B_{n+1} + B_n$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4 (bronze numbers). -/
-theorem lucasU_bronzeLucasParams_add_two (n : ℕ) :
-    lucasU bronzeLucasParams (n + 2) =
-      3 * lucasU bronzeLucasParams (n + 1) + lucasU bronzeLucasParams n := by
-  simp [lucasU, bronzeLucasParams]
-
-/-- **The first bronze numbers.** Let $B_n$ be the bronze numbers, the terms of the Lucas sequence
-$U(3, -1)$. Then $B_0, B_1, B_2, B_3, B_4, B_5$ are $0, 1, 3, 10, 33, 109$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4 (bronze numbers). -/
-theorem lucasU_bronzeLucasParams_values :
-    (List.range 6).map (lucasU bronzeLucasParams) = [0, 1, 3, 10, 33, 109] := by
-  decide
-
-/-- **Companion bronze numbers of the first type.** Let $B_n$ denote the bronze numbers, the
-Lucas sequence $U(3, -1)$: $B_0 = 0$, $B_1 = 1$ and $B_{n+2} = 3B_{n+1} + B_n$. For every
-natural number $n$, the $n$-th companion bronze number of the first type is the integer
-$C_n = B_{n+1} - 2B_n$.
-
-Thus $C_0 = C_1 = 1$, $C_{n+2} = 3C_{n+1} + C_n$, and $C_n = B_n + B_{n-1}$ for $n \ge 1$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4 (companion bronze
-numbers of the first type). -/
-def bronzeCompanionFirst (n : ℕ) : ℤ :=
-  lucasU bronzeLucasParams (n + 1) - 2 * lucasU bronzeLucasParams n
-
-/-- **Companion bronze numbers of the second type.** Let $B_n$ denote the bronze numbers, the
-Lucas sequence $U(3, -1)$: $B_0 = 0$, $B_1 = 1$ and $B_{n+2} = 3B_{n+1} + B_n$. For every
-natural number $n$, the $n$-th companion bronze number of the second type is the integer
-$D_n = B_{n+1} - B_n$.
-
-Thus $D_0 = 1$, $D_1 = 2$, $D_{n+2} = 3D_{n+1} + D_n$, and $D_n = 2B_n + B_{n-1}$ for $n \ge 1$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4 (companion bronze
-numbers of the second type). -/
-def bronzeCompanionSecond (n : ℕ) : ℤ :=
-  lucasU bronzeLucasParams (n + 1) - lucasU bronzeLucasParams n
-
-/-- **Recurrence for the companion bronze numbers of the first type.** For every natural number
-$n$, the companion bronze numbers $C_n$ of the first type satisfy $C_{n+2} = 3C_{n+1} + C_n$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4. -/
-theorem bronzeCompanionFirst_add_two (n : ℕ) :
-    bronzeCompanionFirst (n + 2) = 3 * bronzeCompanionFirst (n + 1) + bronzeCompanionFirst n := by
-  simp only [bronzeCompanionFirst, lucasU_bronzeLucasParams_add_two (n + 1),
-    lucasU_bronzeLucasParams_add_two n]
-  ring
-
-/-- **Recurrence for the companion bronze numbers of the second type.** For every natural number
-$n$, the companion bronze numbers $D_n$ of the second type satisfy $D_{n+2} = 3D_{n+1} + D_n$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4. -/
-theorem bronzeCompanionSecond_add_two (n : ℕ) :
-    bronzeCompanionSecond (n + 2) = 3 * bronzeCompanionSecond (n + 1) + bronzeCompanionSecond n := by
-  simp only [bronzeCompanionSecond, lucasU_bronzeLucasParams_add_two (n + 1),
-    lucasU_bronzeLucasParams_add_two n]
-  ring
-
-/-- **Initial companion bronze numbers.** The companion bronze numbers $C_n$ of the first type
-satisfy $(C_0, C_1, C_2, C_3, C_4) = (1, 1, 4, 13, 43)$, and the companion bronze numbers $D_n$
-of the second type satisfy $(D_0, D_1, D_2, D_3, D_4) = (1, 2, 7, 23, 76)$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Section 4. -/
-theorem bronzeCompanion_values :
-    (List.range 5).map bronzeCompanionFirst = [1, 1, 4, 13, 43] ∧
-      (List.range 5).map bronzeCompanionSecond = [1, 2, 7, 23, 76] := by
-  decide
 
 /-- **Moves of the Beatty octal game.** Let $\alpha$ and $\beta$ be real numbers. In the Beatty
 octal game for $\alpha$ and $\beta$, a move takes a heap of $n$ tokens to a heap of $m$ tokens
@@ -308,37 +219,6 @@ theorem_wanted silverGame_pPositions (P : Set ℕ)
       x = 0 ∨ ∃ k, x = pellNumber (2 * k + 1) ∨ x = pellLucasSequence (2 * k + 2)) :
     (∀ x y, x ∈ P → beattyOctalMove (1 + Real.sqrt 2) ((2 + Real.sqrt 2) / 2) x y → y ∉ P) ∧
       ∀ x, x ∉ P → ∃ y, beattyOctalMove (1 + Real.sqrt 2) ((2 + Real.sqrt 2) / 2) x y ∧ y ∈ P
-
-/-- **Metallic identities for the bronze numbers.** Let $\alpha = (3 + \sqrt{13})/2$,
-$\beta = (5 + \sqrt{13})/6$ and $\gamma = (\sqrt{13} - 3)/2$, let $B_n$ be the bronze numbers,
-and let $C_n$ and $D_n$ be the companion bronze numbers of the first and second type. For every
-natural number $k$, the following hold in $\mathbb{R}$:
-(1) $B_{2k+1}\alpha = B_{2k+2} + \gamma^{2k+1}$;
-(2) $C_{2k}\alpha = C_{2k+1} + \frac{13 + \sqrt{13}}{2\sqrt{13}}\gamma^{2k}$;
-(3) $D_{2k}\alpha = D_{2k+1} + \frac{13 - \sqrt{13}}{2\sqrt{13}}\gamma^{2k}$;
-(4) $3B_{2k+1}\beta = C_{2k+2} + \frac{13 - 3\sqrt{13}}{2\sqrt{13}}\gamma^{2k}$;
-(5) $(B_{2k+1} + C_{2k+2})\beta = D_{2k+2} + \frac{65 - 17\sqrt{13}}{6\sqrt{13}}\gamma^{2k}$;
-(6) $D_{2k}\beta = B_{2k+1} + \frac{13 - \sqrt{13}}{6\sqrt{13}}\gamma^{2k}$.
-
-Source: Michael Fisher, Keith Hazen, and Craig Tennenhouse, *Olympic Games: Three Impartial
-Games with Infinite Octal Codes*, INTEGERS 24 (2024), Article G3, Proposition 3. -/
-theorem_wanted bronze_mul_metallic_identities (k : ℕ) :
-    let α : ℝ := (3 + Real.sqrt 13) / 2
-    let β : ℝ := (5 + Real.sqrt 13) / 6
-    let γ : ℝ := (Real.sqrt 13 - 3) / 2
-    (lucasU bronzeLucasParams (2 * k + 1) : ℝ) * α =
-        lucasU bronzeLucasParams (2 * k + 2) + γ ^ (2 * k + 1) ∧
-      (bronzeCompanionFirst (2 * k) : ℝ) * α = bronzeCompanionFirst (2 * k + 1) +
-        (13 + Real.sqrt 13) / (2 * Real.sqrt 13) * γ ^ (2 * k) ∧
-      (bronzeCompanionSecond (2 * k) : ℝ) * α = bronzeCompanionSecond (2 * k + 1) +
-        (13 - Real.sqrt 13) / (2 * Real.sqrt 13) * γ ^ (2 * k) ∧
-      (3 * lucasU bronzeLucasParams (2 * k + 1) : ℝ) * β = bronzeCompanionFirst (2 * k + 2) +
-        (13 - 3 * Real.sqrt 13) / (2 * Real.sqrt 13) * γ ^ (2 * k) ∧
-      ((lucasU bronzeLucasParams (2 * k + 1) + bronzeCompanionFirst (2 * k + 2) : ℤ) : ℝ) * β =
-        bronzeCompanionSecond (2 * k + 2) +
-          (65 - 17 * Real.sqrt 13) / (6 * Real.sqrt 13) * γ ^ (2 * k) ∧
-      (bronzeCompanionSecond (2 * k) : ℝ) * β = lucasU bronzeLucasParams (2 * k + 1) +
-        (13 - Real.sqrt 13) / (6 * Real.sqrt 13) * γ ^ (2 * k)
 
 /-- **Mixed bronze numeration.** Let $B_n$ be the bronze numbers ($B_0 = 0$, $B_1 = 1$,
 $B_{n+2} = 3B_{n+1} + B_n$, the Lucas sequence $U(3, -1)$), and let $C_n = B_{n+1} - 2B_n$ and
