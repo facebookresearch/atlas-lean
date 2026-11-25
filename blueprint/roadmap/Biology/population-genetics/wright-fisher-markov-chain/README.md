@@ -21,3 +21,5 @@
 - [Finite Wright–Fisher chain is absorbed almost surely](measure-markov-chain-measure-exists-abso.md)
 - [Fixation probability of the finite Wright–Fisher chain](measure-real-markov-chain-measure-exists.md)
 - [Loss probability of an allele in the finite Wright–Fisher chain](measure-real-markov-chain-measure-exists-2.md)
+
+- [Fixation probability with selection in the finite Wright–Fisher model](fixation-probability-with-selection-in-the-finite-chain.md)

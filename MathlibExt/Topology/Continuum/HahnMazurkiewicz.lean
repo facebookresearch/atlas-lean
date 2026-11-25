@@ -1269,12 +1269,15 @@ private theorem hm_gap_fill {X : Type*} [MetricSpace X]
   exact (hFC t.val t.prop).trans (hGeq t)
 
 /--
-Every nonempty compact connected locally connected second-countable Hausdorff space is a
-continuous surjective image of `unitInterval`. Source: H. Hahn, Jahresber. DMV 23 (1914); S.
-Mazurkiewicz, Fund. Math. 1 (1920) (announcement 1913); Willard, General Topology; Munkres,
-Topology 2nd ed., second-countable Hausdorff compact formulation.
+**Hahn–Mazurkiewicz theorem.** Let $X$ be a nonempty topological space that is compact,
+connected, locally connected, Hausdorff and second countable. Then there is a continuous
+surjection from the closed unit interval $[0,1]$ onto $X$.
 
 Proves `Wanted` entry `hahnMazurkiewicz`.
+
+Source: H. Hahn, Jahresber. DMV 23 (1914); S.
+Mazurkiewicz, Fund. Math. 1 (1920) (announcement 1913); Willard, General Topology; Munkres,
+Topology 2nd ed., second-countable Hausdorff compact formulation.
 -/
 public theorem hahnMazurkiewicz
     {X : Type*} [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]

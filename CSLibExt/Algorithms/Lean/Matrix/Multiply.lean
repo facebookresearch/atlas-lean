@@ -273,16 +273,23 @@ private theorem scanRows_zero_inner {α : Type u} [Add α] [Mul α] {p r : Nat}
     rw [ih]
     apply TimeM.ext <;> simp [Vector.get_eq_getElem]
 
-/-- Add the rectangular product `A * B` to the saved incoming accumulator `C`.
-The increasing `i-j-k` traversal charges one scalar multiplication and one scalar
-addition at each actual cell update. -/
+/-- **Rectangular matrix accumulation.** Let $\alpha$ be a type with an addition and a
+multiplication, and let $A$, $B$, $C$ be $p \times q$, $q \times r$ and $p \times r$ matrices over
+$\alpha$, stored as vectors of rows. Rectangular matrix accumulation adds the product $AB$ to the
+accumulator $C$: for $i < p$, then $j < r$, then $k < q$, each in increasing order, it replaces
+$C_{ij}$ by $C_{ij} + A_{ik} B_{kj}$. It returns the final matrix together with a cost pair
+(scalar multiplications, scalar additions), charging one of each for every such update. -/
 public def rectangularMatrixAccumulate {α : Type u} [Add α] [Mul α]
     {p q r : Nat} (A : _root_.Vector (_root_.Vector α q) p)
     (B : _root_.Vector (_root_.Vector α r) q) (C : _root_.Vector (_root_.Vector α r) p) :
     TimeM (Nat × Nat) (_root_.Vector (_root_.Vector α r) p) :=
   scanRows A B p 0 (by omega) (pure C)
 
-/-- Square specialization of `rectangularMatrixAccumulate`, with no extra traversal. -/
+/-- **Square matrix accumulation.** Let $\alpha$ be a type with an addition and a multiplication,
+and let $A$, $B$, $C$ be $n \times n$ matrices over $\alpha$, stored as vectors of rows. Square
+matrix accumulation on $A$, $B$, $C$ is rectangular matrix accumulation on $A$, $B$, $C$ with all
+three dimensions equal to $n$: it adds $AB$ to the accumulator $C$ and returns the result with
+its cost pair (scalar multiplications, scalar additions). -/
 public def matrixAccumulate {α : Type u} [Add α] [Mul α] {n : Nat}
     (A B C : _root_.Vector (_root_.Vector α n) n) :
     TimeM (Nat × Nat) (_root_.Vector (_root_.Vector α n) n) :=
@@ -290,7 +297,11 @@ public def matrixAccumulate {α : Type u} [Add α] [Mul α] {n : Nat}
 
 @[expose] public section
 
-/-- Every output entry is its incoming accumulator plus the canonical finite product sum. -/
+/-- **Entries of rectangular matrix accumulation.** Let $\alpha$ be a commutative additive monoid
+with a multiplication, and let $A$, $B$, $C$ be $p \times q$, $q \times r$ and $p \times r$
+matrices over $\alpha$, stored as vectors of rows. For all $i < p$ and $j < r$, the $(i, j)$ entry
+of the matrix returned by rectangular matrix accumulation on $A$, $B$, $C$ is
+$C_{ij} + \sum_{k < q} A_{ik} B_{kj}$. -/
 theorem rectangularMatrixAccumulate_apply {α : Type u} [AddCommMonoid α] [Mul α]
     {p q r : Nat} (A : _root_.Vector (_root_.Vector α q) p)
     (B : _root_.Vector (_root_.Vector α r) q) (C : _root_.Vector (_root_.Vector α r) p)
@@ -300,7 +311,11 @@ theorem rectangularMatrixAccumulate_apply {α : Type u} [AddCommMonoid α] [Mul 
   simpa [rectangularMatrixAccumulate, i.isLt, prefixProduct] using
     scanRows_spec A B p 0 (by omega) C (pure C) (by simp) i j
 
-/-- The saved vector output refines accumulation using canonical matrix multiplication. -/
+/-- **Rectangular matrix accumulation computes $C + AB$.** Let $\alpha$ be a commutative additive
+monoid with a multiplication, and let $A$, $B$, $C$ be $p \times q$, $q \times r$ and $p \times r$
+matrices over $\alpha$, stored as vectors of rows. The matrix returned by rectangular matrix
+accumulation on $A$, $B$, $C$ equals $C + AB$, where $AB$ is the matrix product,
+$(AB)_{ij} = \sum_{k < q} A_{ik} B_{kj}$. -/
 theorem rectangularMatrixAccumulate_ret {α : Type u} [AddCommMonoid α] [Mul α]
     {p q r : Nat} (A : _root_.Vector (_root_.Vector α q) p)
     (B : _root_.Vector (_root_.Vector α r) q) (C : _root_.Vector (_root_.Vector α r) p) :
@@ -310,7 +325,11 @@ theorem rectangularMatrixAccumulate_ret {α : Type u} [AddCommMonoid α] [Mul α
   ext i j
   exact rectangularMatrixAccumulate_apply A B C i j
 
-/-- Exact multiplication and accumulator-addition counts of the actual rectangular run. -/
+/-- **Operation count of rectangular matrix accumulation.** Let $\alpha$ be a type with an
+addition and a multiplication, and let $A$, $B$, $C$ be $p \times q$, $q \times r$ and
+$p \times r$ matrices over $\alpha$. Rectangular matrix accumulation on $A$, $B$, $C$ has cost
+$(pqr, pqr)$: it charges exactly $pqr$ scalar multiplications and exactly $pqr$ scalar
+additions. -/
 theorem rectangularMatrixAccumulate_time {α : Type u} [Add α] [Mul α]
     {p q r : Nat} (A : _root_.Vector (_root_.Vector α q) p)
     (B : _root_.Vector (_root_.Vector α r) q) (C : _root_.Vector (_root_.Vector α r) p) :
@@ -318,14 +337,20 @@ theorem rectangularMatrixAccumulate_time {α : Type u} [Add α] [Mul α]
   simpa [rectangularMatrixAccumulate, Nat.mul_right_comm] using
     scanRows_time A B p 0 (by omega) (pure C)
 
-/-- A zero inner dimension preserves the entire incoming accumulator at zero scalar cost. -/
+/-- **Rectangular matrix accumulation with zero inner dimension.** Let $\alpha$ be a type with an
+addition and a multiplication. If $A$ is a $p \times 0$ matrix, $B$ a $0 \times r$ matrix and $C$
+a $p \times r$ matrix over $\alpha$, then rectangular matrix accumulation on $A$, $B$, $C$ returns
+$C$ unchanged at cost $(0, 0)$. -/
 theorem rectangularMatrixAccumulate_zero_inner {α : Type u} [Add α] [Mul α]
     {p r : Nat} (A : _root_.Vector (_root_.Vector α 0) p)
     (B : _root_.Vector (_root_.Vector α r) 0) (C : _root_.Vector (_root_.Vector α r) p) :
     rectangularMatrixAccumulate A B C = (pure C : TimeM (Nat × Nat) _) := by
   exact scanRows_zero_inner A B p 0 (by omega) (pure C)
 
-/-- Square accumulation returns the incoming matrix plus its canonical square product. -/
+/-- **Square matrix accumulation computes $C + AB$.** Let $\alpha$ be a commutative additive
+monoid with a multiplication, and let $A$, $B$, $C$ be $n \times n$ matrices over $\alpha$, stored
+as vectors of rows. The matrix returned by square matrix accumulation on $A$, $B$, $C$ equals
+$C + AB$, where $AB$ is the matrix product, $(AB)_{ij} = \sum_{k < n} A_{ik} B_{kj}$. -/
 theorem matrixAccumulate_ret {α : Type u} [AddCommMonoid α] [Mul α] {n : Nat}
     (A B C : _root_.Vector (_root_.Vector α n) n) :
     Matrix.of (fun i j => ((matrixAccumulate A B C).ret.get i).get j) =
@@ -333,7 +358,10 @@ theorem matrixAccumulate_ret {α : Type u} [AddCommMonoid α] [Mul α] {n : Nat}
         Matrix.of (fun i k => (A.get i).get k) * Matrix.of (fun k j => (B.get k).get j) :=
   rectangularMatrixAccumulate_ret A B C
 
-/-- The square wrapper emits exactly `n^3` ticks in each scalar-operation component. -/
+/-- **Operation count of square matrix accumulation.** Let $\alpha$ be a type with an addition
+and a multiplication, and let $A$, $B$, $C$ be $n \times n$ matrices over $\alpha$. Square matrix
+accumulation on $A$, $B$, $C$ has cost $(n^3, n^3)$: it charges exactly $n^3$ scalar
+multiplications and exactly $n^3$ scalar additions. -/
 theorem matrixAccumulate_time {α : Type u} [Add α] [Mul α] {n : Nat}
     (A B C : _root_.Vector (_root_.Vector α n) n) :
     (matrixAccumulate A B C).time = (n ^ 3, n ^ 3) := by

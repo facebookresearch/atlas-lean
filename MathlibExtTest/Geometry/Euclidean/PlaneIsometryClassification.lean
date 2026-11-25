@@ -71,7 +71,7 @@ private theorem rot180_isRotation : IsRotation rot180 := by
     norm_num at h2
 
 /-- The `x`-axis, as a submodule of the plane. -/
-private abbrev xAxis : Submodule ℝ Plane :=
+private noncomputable abbrev xAxis : Submodule ℝ Plane :=
   ℝ ∙ (EuclideanSpace.single (0 : Fin 2) (1 : ℝ))
 
 /-- The `x`-axis has finrank `1`, so its orthogonal complement also has

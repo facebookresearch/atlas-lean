@@ -37,25 +37,40 @@ open MeasureTheory Set
 
 namespace MoserConvexWormCoverConstant
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Parameter interval of unit arcs.** Planar arcs are parametrized by the closed unit interval
+$[0, 1]$ of real numbers.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 abbrev ArcParameter := Set.Icc (0 : ℝ) 1
 
-/-- A continuous parametrized planar curve of metric length exactly one. Source: Optimization
+/-- **Unit arc.** A unit arc is a continuous map $\gamma$ from the closed interval $[0, 1]$ to
+the complex plane whose length, the total variation of $\gamma$ on $[0, 1]$, equals $1$.
+
+Source: Optimization
 Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc adaptation.
 -/
 structure UnitArc where
   path : C(ArcParameter, ℂ)
   length_eq_one : eVariationOn path Set.univ = 1
 
-/-- Rotation followed by translation, with neither reflection nor rescaling. Source:
+/-- **Direct rigid motion of the plane.** For a real angle $\theta$ and a complex number
+$\tau$, the motion with angle $\theta$ and translation $\tau$ sends $z \in \mathbb{C}$ to
+$e^{i\theta} z + \tau$: a rotation about the origin by $\theta$ followed by translation by
+$\tau$, with neither reflection nor rescaling.
+
+Source:
 Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc adaptation.
 -/
 noncomputable def move (angle : ℝ) (translation z : ℂ) : ℂ :=
   Complex.exp (angle * Complex.I) * z + translation
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Direct rigid motions of the plane are isometries.** For every real angle $\theta$ and every
+complex number $\tau$, the map $z \mapsto e^{i\theta} z + \tau$ of the complex plane is an
+isometry: it preserves the distance $|z - w|$ between any two points $z, w \in \mathbb{C}$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem move_isometry (angle : ℝ) (translation : ℂ) : Isometry (move angle translation) := by
@@ -63,13 +78,20 @@ theorem move_isometry (angle : ℝ) (translation : ℂ) : Isometry (move angle t
   intro z w
   simp [move, dist_eq_norm, ← mul_sub]
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Straight path.** The straight path is the continuous map from the interval $[0, 1]$ to
+the complex plane that sends each $t \in [0, 1]$ to $t$ viewed as a complex number; it traces
+the segment from $0$ to $1$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 noncomputable def straightPath : C(ArcParameter, ℂ) :=
   ⟨fun t => (t.1 : ℂ), Complex.continuous_ofReal.comp continuous_subtype_val⟩
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The identity on the unit interval has total variation one.** The total variation of the
+inclusion $[0, 1] \to \mathbb{R}$, $t \mapsto t$, over the whole interval $[0, 1]$ equals $1$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem parameter_variation :
@@ -85,7 +107,11 @@ theorem parameter_variation :
     (Subtype.val : ArcParameter → ℝ) (fun _ _ _ _ h => h)
   simpa [Function.comp_def, himage, eVariationOn_id_Icc] using h
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The straight segment has length one.** The path $[0, 1] \to \mathbb{C}$, $t \mapsto t$,
+which traces the segment from $0$ to $1$ on the real axis, has total variation (length) exactly
+$1$ over $[0, 1]$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem straightPath_length : eVariationOn straightPath Set.univ = 1 := by
@@ -100,7 +126,11 @@ theorem straightPath_length : eVariationOn straightPath Set.univ = 1 := by
       (Set.mem_univ _) (Set.mem_univ _)
     simpa [a, b, straightPath, edist_dist, Complex.dist_eq] using h
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Straight unit arc.** The straight unit arc is the unit arc whose curve is the straight
+path $t \mapsto t$ from $[0, 1]$ to the complex plane, which traces the segment from $0$ to $1$
+and has length $1$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 noncomputable def straightUnitArc : UnitArc := ⟨straightPath, straightPath_length⟩
@@ -110,14 +140,26 @@ Source: Optimization Problems, constant 13a (frozen 2c1968cd); interval-arc adap
 -/
 instance : Nonempty UnitArc := ⟨straightUnitArc⟩
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Sets that cover every unit arc.** A set $\Omega \subseteq \mathbb{C}$ covers every
+unit arc when for every unit arc $\gamma : [0, 1] \to \mathbb{C}$, that is, every continuous map
+whose total variation (length) is exactly $1$, there are an angle $\theta \in \mathbb{R}$ and a
+translation $\tau \in \mathbb{C}$ such that $e^{i\theta} \gamma(t) + \tau \in \Omega$ for every
+$t \in [0, 1]$.
+
+Only rotations followed by translations are allowed; reflections and rescalings are not.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 def CoversEveryUnitArc (Ω : Set ℂ) : Prop :=
   ∀ arc : UnitArc, ∃ angle : ℝ, ∃ translation : ℂ,
     ∀ t : ArcParameter, move angle translation (arc.path t) ∈ Ω
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Sets covering every unit arc are nonempty.** If a set $\Omega \subseteq \mathbb{C}$
+covers every unit arc, that is, contains a rotated and translated copy of every continuous curve
+$[0, 1] \to \mathbb{C}$ of length exactly one, then $\Omega$ is nonempty.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem CoversEveryUnitArc.nonempty {Ω : Set ℂ} (h : CoversEveryUnitArc Ω) : Ω.Nonempty := by
@@ -125,62 +167,110 @@ theorem CoversEveryUnitArc.nonempty {Ω : Set ℂ} (h : CoversEveryUnitArc Ω) :
   let t : ArcParameter := ⟨0, by constructor <;> norm_num⟩
   exact ⟨_, h t⟩
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The empty set does not cover every unit arc.** The empty set
+$\emptyset \subseteq \mathbb{C}$ does not cover every unit arc: not every continuous curve
+$\gamma : [0, 1] \to \mathbb{C}$ of length exactly $1$ can be mapped into $\emptyset$ by a
+rotation followed by a translation.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem empty_not_covers : ¬ CoversEveryUnitArc (∅ : Set ℂ) := by
   intro h
   exact Set.not_nonempty_empty h.nonempty
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Convex universal covers.** A set $\Omega \subseteq \mathbb{C}$ is a convex universal cover
+when it is nonempty, convex (as a subset of the real plane $\mathbb{C} \cong \mathbb{R}^2$), and
+covers every unit arc: for every continuous curve $\gamma : [0, 1] \to \mathbb{C}$ of length
+exactly $1$ there are $\theta \in \mathbb{R}$ and $\tau \in \mathbb{C}$ with
+$e^{i\theta} \gamma(t) + \tau \in \Omega$ for all $t \in [0, 1]$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 def IsConvexUniversalCover (Ω : Set ℂ) : Prop :=
   Ω.Nonempty ∧ Convex ℝ Ω ∧ CoversEveryUnitArc Ω
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Universal covers.** A set $\Omega \subseteq \mathbb{C}$ is a universal cover when it is
+nonempty and covers every unit arc: for every continuous curve $\gamma : [0, 1] \to \mathbb{C}$
+of length exactly $1$ there are $\theta \in \mathbb{R}$ and $\tau \in \mathbb{C}$ with
+$e^{i\theta} \gamma(t) + \tau \in \Omega$ for all $t \in [0, 1]$. Neither convexity nor
+measurability of $\Omega$ is required.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 def IsUniversalCover (Ω : Set ℂ) : Prop :=
   Ω.Nonempty ∧ CoversEveryUnitArc Ω
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Convex universal covers are null-measurable.** If $\Omega \subseteq \mathbb{C}$ is a
+convex universal cover of unit arcs, then $\Omega$ is a null-measurable set for Lebesgue measure
+on $\mathbb{C}$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem IsConvexUniversalCover.nullMeasurableSet {Ω : Set ℂ}
     (h : IsConvexUniversalCover Ω) : NullMeasurableSet Ω volume :=
   h.2.1.nullMeasurableSet volume
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Convex universal covers are universal covers.** Every convex universal cover
+$\Omega \subseteq \mathbb{C}$ is a universal cover.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem IsConvexUniversalCover.isUniversalCover {Ω : Set ℂ}
     (h : IsConvexUniversalCover Ω) : IsUniversalCover Ω :=
   ⟨h.1, h.2.2⟩
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Areas of convex universal covers.** The set of convex cover areas is the set of all values
+$\operatorname{vol}(\Omega) \in [0, \infty]$, where $\Omega \subseteq \mathbb{C}$ ranges over the
+convex universal covers and $\operatorname{vol}$ is Lebesgue measure on
+$\mathbb{C} \cong \mathbb{R}^2$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 noncomputable def convexCoverAreas : Set ENNReal :=
   {a | ∃ Ω : Set ℂ, IsConvexUniversalCover Ω ∧ volume Ω = a}
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Areas of universal covers.** The set of values $\lambda(\Omega) \in [0, \infty]$, where
+$\Omega \subseteq \mathbb{C}$ ranges over the universal covers and $\lambda$ is Lebesgue measure on
+$\mathbb{C} \cong \mathbb{R}^2$, applied as an outer measure since $\Omega$ need not be
+measurable.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 noncomputable def coverAreas : Set ENNReal :=
   {a | ∃ Ω : Set ℂ, IsUniversalCover Ω ∧ volume Ω = a}
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Infimal area of convex universal covers.** The convex cover area infimum is the infimum in
+$[0, \infty]$ of the set of convex cover areas, that is, the infimum of the Lebesgue areas of all
+convex universal covers $\Omega \subseteq \mathbb{C}$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 noncomputable def convexCoverAreaInfimum : ENNReal := sInf convexCoverAreas
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Infimal area of a universal cover.** The infimum in $[0, \infty]$ of the areas
+$\lambda(\Omega)$ of the universal covers $\Omega \subseteq \mathbb{C}$, where $\lambda$ is
+Lebesgue measure on $\mathbb{C} \cong \mathbb{R}^2$, applied as an outer measure since $\Omega$
+need not be measurable.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 noncomputable def coverAreaInfimum : ENNReal := sInf coverAreas
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The closed unit disk covers every unit arc.** For every continuous curve
+$\gamma : [0, 1] \to \mathbb{C}$ of length exactly $1$ there are an angle $\theta \in \mathbb{R}$
+and a translation $c \in \mathbb{C}$ such that $|e^{i\theta}\gamma(t) + c| \le 1$ for every
+$t \in [0, 1]$; that is, the closed disk of radius $1$ centred at $0$ covers every unit arc.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem closedBall_one_covers : CoversEveryUnitArc (Metric.closedBall (0 : ℂ) 1) := by
@@ -196,27 +286,43 @@ theorem closedBall_one_covers : CoversEveryUnitArc (Metric.closedBall (0 : ℂ) 
     simpa only [edist_dist, ENNReal.toReal_ofReal dist_nonneg, ENNReal.toReal_one] using hd
   simpa [Metric.mem_closedBall, move, Complex.dist_eq, sub_eq_add_neg] using hd'
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The closed unit disk is a convex universal cover.** The closed disk
+$\{z \in \mathbb{C} : |z| \le 1\}$ is a convex universal cover: it is nonempty, convex, and covers
+every unit arc.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem closedBall_one_isConvexUniversalCover :
     IsConvexUniversalCover (Metric.closedBall (0 : ℂ) 1) := by
   refine ⟨⟨0, by simp⟩, convex_closedBall _ _, closedBall_one_covers⟩
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The set of convex cover areas is nonempty.** The set of convex cover areas, the Lebesgue
+areas of all convex universal covers in $\mathbb{C}$, is nonempty; that is, some convex universal
+cover exists.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem convexCoverAreas_nonempty : convexCoverAreas.Nonempty :=
   ⟨volume (Metric.closedBall (0 : ℂ) 1), _, closedBall_one_isConvexUniversalCover, rfl⟩
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The set of universal cover areas is nonempty.** The set of values
+$\lambda(\Omega) \in [0, \infty]$, where $\Omega \subseteq \mathbb{C}$ ranges over the universal
+covers and $\lambda$ is Lebesgue outer measure on $\mathbb{C} \cong \mathbb{R}^2$, is nonempty.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem coverAreas_nonempty : coverAreas.Nonempty :=
   ⟨volume (Metric.closedBall (0 : ℂ) 1), _,
     closedBall_one_isConvexUniversalCover.isUniversalCover, rfl⟩
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The infimal area of convex universal covers is finite.** The convex cover area infimum, the
+infimum in $[0, \infty]$ of the Lebesgue areas of all convex universal covers in $\mathbb{C}$, is
+not $\infty$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem convexCoverAreaInfimum_ne_top : convexCoverAreaInfimum ≠ ⊤ := by
@@ -224,7 +330,11 @@ theorem convexCoverAreaInfimum_ne_top : convexCoverAreaInfimum ≠ ⊤ := by
     sInf_le ⟨_, closedBall_one_isConvexUniversalCover, rfl⟩
   exact ne_top_of_le_ne_top (by simp [Complex.volume_closedBall]) h
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The infimal area of universal covers is finite.** The cover area infimum, the infimum in
+$[0, \infty]$ of the Lebesgue areas of all universal covers in $\mathbb{C}$ (nonempty sets that
+cover every unit arc, not necessarily convex), is not $\infty$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem coverAreaInfimum_ne_top : coverAreaInfimum ≠ ⊤ := by
@@ -232,29 +342,52 @@ theorem coverAreaInfimum_ne_top : coverAreaInfimum ≠ ⊤ := by
     sInf_le ⟨_, closedBall_one_isConvexUniversalCover.isUniversalCover, rfl⟩
   exact ne_top_of_le_ne_top (by simp [Complex.volume_closedBall]) h
 
-/-- The real infimal area; finiteness is proved before this projection is used. Source:
+/-- **Moser's convex worm cover constant.** The convex worm cover constant is the real number
+obtained from the convex cover area infimum, the infimum in $[0, \infty]$ of the Lebesgue areas of
+all convex universal covers in $\mathbb{C}$, by the conversion $[0, \infty] \to \mathbb{R}$ that
+is the identity on finite values and sends $\infty$ to $0$.
+
+That infimum is finite, so the constant equals the infimal area itself.
+
+Source:
 Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc adaptation.
 -/
 noncomputable def convexWormCoverConstant : ℝ := convexCoverAreaInfimum.toReal
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Nonconvex worm cover constant.** The nonconvex worm cover constant is the real number
+obtained from the cover area infimum, the infimum in $[0, \infty]$ of the Lebesgue outer measures
+of all universal covers of unit arcs (nonempty sets $\Omega \subseteq \mathbb{C}$ containing a
+rotated and translated copy of every continuous curve of length one), by converting it to a
+real number. The conversion would send $\infty$ to $0$, but this infimum is finite.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 noncomputable def nonconvexWormCoverConstant : ℝ := coverAreaInfimum.toReal
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The convex worm cover constant is nonnegative.** The convex worm cover constant is at
+least $0$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem convexWormCoverConstant_nonneg : 0 ≤ convexWormCoverConstant :=
   ENNReal.toReal_nonneg
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Nonnegativity of the nonconvex worm cover constant.** The nonconvex worm cover constant
+is greater than or equal to $0$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem nonconvexWormCoverConstant_nonneg : 0 ≤ nonconvexWormCoverConstant :=
   ENNReal.toReal_nonneg
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **The nonconvex worm cover constant is at most the convex one.** The nonconvex worm cover
+constant (the infimal area of universal covers of unit arcs) is less than or equal to the convex
+worm cover constant (the infimal area of convex universal covers of unit arcs).
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem nonconvex_le_convex : nonconvexWormCoverConstant ≤ convexWormCoverConstant := by
@@ -263,25 +396,40 @@ theorem nonconvex_le_convex : nonconvexWormCoverConstant ≤ convexWormCoverCons
   rintro a ⟨Ω, hΩ, rfl⟩
   exact sInf_le ⟨Ω, hΩ.isUniversalCover, rfl⟩
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Disk of radius one half.** The closed disk $\{z \in \mathbb{C} : |z| \le 1/2\}$ of
+radius $1/2$ centred at $0$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 noncomputable def halfDisk : Set ℂ :=
   {z | ‖z‖ ≤ (1 : ℝ) / 2}
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Semidisk of radius one half.** The closed upper half-disk
+$\{z \in \mathbb{C} : |z| \le 1/2,\ \operatorname{Im} z \ge 0\}$ of radius $1/2$ centred at $0$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 noncomputable def halfSemidisk : Set ℂ :=
   {z | ‖z‖ ≤ (1 : ℝ) / 2 ∧ 0 ≤ z.im}
 
-/-- A centered orientation of the closed radius-one, thirty-degree sector. Source: Optimization
+/-- **Wetzel's sector.** This is the closed circular sector of radius $1$ and opening angle
+$30^\circ$ with apex at the origin, placed symmetrically about the positive real axis: the set
+of complex numbers $z$ with $|z| \le 1$, $\operatorname{Re} z \ge 0$ and
+$|\operatorname{Im} z| \le \tan(\pi/12) \operatorname{Re} z$.
+
+Source: Optimization
 Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc adaptation.
 -/
 noncomputable def wetzelSector : Set ℂ :=
   {z | ‖z‖ ≤ 1 ∧ 0 ≤ z.re ∧ |z.im| ≤ Real.tan (Real.pi / 12) * z.re}
 
-/-- Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
+/-- **Covers give upper bounds on the nonconvex worm cover constant.** Let $r \ge 0$ be a real
+number. If some set $\Omega \subseteq \mathbb{C}$ is a universal cover of unit arcs whose
+Lebesgue outer measure is at most $r$, then the nonconvex worm cover constant is at most $r$.
+
+Source: Optimization Problems, constant 13a (frozen 2c1968cd); source-specific interval-arc
 adaptation.
 -/
 theorem nonconvexUpperBound_of_cover {r : ℝ} (hr : 0 ≤ r)

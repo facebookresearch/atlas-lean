@@ -30,9 +30,11 @@ nonpositivity of `bₙ` to T. Kaluza, Satz 3.
 
 namespace MathlibExt.Algebra.PowerSeries.KaluzaCoefficientBoundsWanted
 
-/-- Positive log-convex coefficients hypothesis for Kaluza's inverse-coefficient
-bounds: every coefficient of `f` is strictly positive and
-`(coeff (n+1) f)^2 ≤ coeff n f * coeff (n+2) f` for every `n`.
+/-- **Positive log-convex coefficients.** A real formal power series $f = \sum_n a_n X^n$ has
+positive log-convex coefficients if $a_n > 0$ for every natural number $n$ and
+$a_{n+1}^2 \le a_n a_{n+2}$ for every natural number $n$. This is the hypothesis of Kaluza's
+bounds for the coefficients of the reciprocal series.
+
 Source: László Tóth, *Alternating Sums Concerning Multiplicative Arithmetic
 Functions*, Journal of Integer Sequences 20, Lemma `lemma_Kaluza`,
 `https://cs.uwaterloo.ca/journals/JIS/VOL20/Toth/toth25.tex`, lines 553–562, file sha256
@@ -44,14 +46,18 @@ def HasPositiveLogConvexCoefficients (f : PowerSeries ℝ) : Prop :=
       (PowerSeries.coeff (n + 1) f) ^ 2 ≤
         PowerSeries.coeff n f * PowerSeries.coeff (n + 2) f
 
-/-- Every coefficient of a series with positive log-convex coefficients is positive. -/
+/-- **Coefficients of a positive log-convex series are positive.** If a real formal power series
+$f$ has positive log-convex coefficients, then the coefficient of $X^n$ in $f$ is strictly
+positive for every natural number $n$. -/
 theorem HasPositiveLogConvexCoefficients.coeff_pos {f : PowerSeries ℝ}
     (hf : HasPositiveLogConvexCoefficients f) (n : ℕ) : 0 < PowerSeries.coeff n f := by
   cases n with
   | zero => exact hf.1
   | succ n => exact (hf.2 n).1
 
-/-- The log-convexity inequality `aₙ₊₁² ≤ aₙ aₙ₊₂`. -/
+/-- **Log-convexity of the coefficients.** If a real formal power series $f = \sum_n a_n X^n$
+has positive log-convex coefficients, then $a_{n+1}^2 \le a_n a_{n+2}$ for every natural
+number $n$. -/
 theorem HasPositiveLogConvexCoefficients.sq_coeff_succ_le {f : PowerSeries ℝ}
     (hf : HasPositiveLogConvexCoefficients f) (n : ℕ) :
     (PowerSeries.coeff (n + 1) f) ^ 2 ≤ PowerSeries.coeff n f * PowerSeries.coeff (n + 2) f :=
@@ -233,12 +239,13 @@ private theorem kaluza_aux (a b : ℕ → ℝ) (ha0 : 0 < a 0)
           exact le_of_mul_le_mul_left (by rwa [mul_zero]) (mul_pos (hapos N) (hapos 0))
       exact ⟨hlower, hupper⟩
 
-/-- Combined Kaluza inverse-coefficient bounds: under
-`HasPositiveLogConvexCoefficients f`, the formal reciprocal `f⁻¹` satisfies
-`b₀ = a₀⁻¹` with `b₀ > 0`, and for every `n ≥ 1`,
-`-aₙ / a₀² ≤ bₙ ≤ 0`, where `aₙ` and `bₙ` are the coefficients of `f`
-and of the formal power-series reciprocal `f⁻¹`. This is a formal reciprocal
-with no analytic convergence assumptions.
+/-- **Kaluza's bounds for the coefficients of a reciprocal power series.** Let
+$f = \sum_n a_n X^n$ be a real formal power series with positive log-convex coefficients, and
+let $f^{-1} = \sum_n b_n X^n$ be its reciprocal in the ring of formal power series. Then
+$b_0 = a_0^{-1}$, $b_0 > 0$, and $-a_n / a_0^2 \le b_n \le 0$ for every $n \ge 1$.
+
+The reciprocal is formal; no convergence is assumed.
+
 Source: László Tóth, *Alternating Sums Concerning Multiplicative Arithmetic
 Functions*, Journal of Integer Sequences 20, Lemma `lemma_Kaluza`,
 `https://cs.uwaterloo.ca/journals/JIS/VOL20/Toth/toth25.tex`, lines 553–562, file sha256

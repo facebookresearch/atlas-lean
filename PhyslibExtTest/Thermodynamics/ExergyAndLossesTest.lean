@@ -52,6 +52,18 @@ mass flow, so `NTU = 3` and effectiveness `3/4`):
 * at the turbine inlet `1500 K` both are at `750 K`: the bypass recovers nothing and a connected
   exchanger moves no heat;
 * every result of section D applies to it.
+
+A cold-air property table (the section C model `cp T` tabulated every `300 K` from `300 K` to
+`1500 K`, with envelope `1/2 J/kg`):
+
+* at the section C fixture ports (`300`, `750`, `1350` and `675 K`) it certifies the heat added
+  in `[602699, 602701] J/kg`, the heat rejected in `[753373/2, 753377/2] J/kg` and the net work in
+  `[452021/2, 452029/2] J/kg`, widths exactly `4 ε` and `8 ε`, so every model within the
+  envelope does positive net work there;
+* it certifies nothing just past either end, at `300 - 1/1000 K` and `1500 + 1/1000 K`, nor at
+  `250 K` or `1600 K`, and a port outside the table leaves the heat and the work uncertified;
+* every result of section E applies to it, including the section C link and the separately
+  declared solver and physical-model errors.
 -/
 
 @[expose] public section
@@ -627,5 +639,177 @@ example :
     (braytonLossyCompressedTemp 300 (2187 / 128) 287 (2009 / 2) (5 / 6))
   exact braytonRegen_reversal_of_isCounterflowSolution (UA := 6027 / 2) (L := 1) (by norm_num)
     (by norm_num) (by norm_num) regen_bypass_lt hsol
+
+/-! ## Property-table enclosure -/
+
+open _root_.MathlibExt.Analysis.Numerical.Certified
+
+/-- Fixture table: the cold-air enthalpy `cp T` of section C, `cp = 2009/2 J/(kg K)`, tabulated
+every `300 K` from `300 K` to `1500 K`, with a supplied envelope of `1/2 J/kg`. -/
+def coldAirTable : PropertyTable where
+  nodes := [(300, 301350), (600, 602700), (900, 904050), (1200, 1205400), (1500, 1506750)]
+  sorted := by decide
+  temp_pos := by decide
+  envelope := 1 / 2
+  envelope_nonneg := by norm_num
+
+/-- **Fixture: nonzero width and nonzero work.** At the section C fixture ports `T₁ = 300 K`,
+`T₂ = 750 K`, `T₃ = 1350 K`, `T₄ = 675 K`, the cold-air table certifies the heat added in
+`[602699, 602701] J/kg` and the net work in `[452021/2, 452029/2] J/kg`, widths `2` and `4`
+(`4 ε` and `8 ε`) around the section C values `602700` and `452025/2`; so every declared model
+within the envelope does strictly positive net work at these ports. -/
+lemma coldAirTable_fixture_ports :
+    coldAirTable.heatInEnclosure 750 1350 = some ⟨602699, 602701⟩ ∧
+      coldAirTable.netWorkEnclosure 300 750 1350 675 = some ⟨452021 / 2, 452029 / 2⟩ ∧
+      ∀ h : ℝ → ℝ, coldAirTable.WithinEnvelope h → 0 < (h 1350 - h 675) - (h 750 - h 300) := by
+  have hw : coldAirTable.netWorkEnclosure 300 750 1350 675 = some ⟨452021 / 2, 452029 / 2⟩ := by
+    norm_num [PropertyTable.netWorkEnclosure, PropertyTable.lookup, coldAirTable, tableInterp,
+      RatInterval.sub, RatInterval.ofCenter]
+  refine ⟨by norm_num [PropertyTable.heatInEnclosure, PropertyTable.lookup, coldAirTable,
+    tableInterp, RatInterval.sub, RatInterval.ofCenter], hw, fun h htab => ?_⟩
+  have h3 := (PropertyTable.netWorkEnclosure_encloses htab hw).1.1
+  push_cast at h3
+  linarith
+
+/-- **Fixture: no value outside the table.** The cold-air table certifies nothing above `1500 K`
+or below `300 K`, so a turbine inlet at `1600 K` leaves the net work uncertified. -/
+lemma coldAirTable_fixture_outOfRange :
+    coldAirTable.lookup 1600 = none ∧ coldAirTable.lookup 250 = none ∧
+      coldAirTable.netWorkEnclosure 300 750 1600 675 = none := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- The cold-air model `cp T` of section C lies within the fixture envelope: the table
+interpolates it exactly. -/
+private lemma coldAirTable_withinEnvelope : coldAirTable.WithinEnvelope fun T => 2009 / 2 * T := by
+  intro T q hq
+  simp only [coldAirTable, tableInterp] at hq ⊢
+  split_ifs at hq <;> simp only [Option.some.injEq] at hq <;> subst_vars <;> push_cast <;>
+    ring_nf <;> norm_num
+
+private lemma coldAirTable_heatIn :
+    coldAirTable.heatInEnclosure 750 1350 = some ⟨602699, 602701⟩ :=
+  coldAirTable_fixture_ports.1
+
+private lemma coldAirTable_heatOut :
+    coldAirTable.heatOutEnclosure 300 675 = some ⟨753373 / 2, 753377 / 2⟩ := by
+  norm_num [PropertyTable.heatOutEnclosure, PropertyTable.lookup, coldAirTable, tableInterp,
+    RatInterval.sub, RatInterval.ofCenter]
+
+private lemma coldAirTable_netWork :
+    coldAirTable.netWorkEnclosure 300 750 1350 675 = some ⟨452021 / 2, 452029 / 2⟩ :=
+  coldAirTable_fixture_ports.2.1
+
+private lemma coldAir_compressedTemp : ((750 : ℚ) : ℝ) =
+    braytonLossyCompressedTemp ((300 : ℚ) : ℝ) (2187 / 128) 287 (2009 / 2) (5 / 6) := by
+  simp only [braytonLossyCompressedTemp, braytonTempRatio_air]
+  norm_num
+
+private lemma coldAir_expandedTemp : ((675 : ℚ) : ℝ) =
+    braytonLossyExpandedTemp ((1350 : ℚ) : ℝ) (2187 / 128) 287 (2009 / 2) (9 / 10) := by
+  simp only [braytonLossyExpandedTemp, braytonTempRatio_air]
+  norm_num
+
+/- `lookup_encloses`: the certified value at `750 K` encloses the cold-air enthalpy
+`753375 J/kg`. -/
+example : (RatInterval.ofCenter 753375 (1 / 2)).Encloses 753375 := by
+  have h := PropertyTable.lookup_encloses coldAirTable_withinEnvelope
+    (show coldAirTable.lookup 750 = some (RatInterval.ofCenter 753375 (1 / 2)) by
+      norm_num [PropertyTable.lookup, coldAirTable, tableInterp])
+  convert h using 1
+  norm_num
+
+/- `width_of_lookup_eq_some`: width exactness, each port value is `2 ε = 1 J/kg` wide. -/
+example : (RatInterval.ofCenter 753375 (1 / 2)).width = 1 := by
+  have h : coldAirTable.lookup 750 = some (RatInterval.ofCenter 753375 (1 / 2)) := by
+    norm_num [PropertyTable.lookup, coldAirTable, tableInterp]
+  rw [PropertyTable.width_of_lookup_eq_some h]
+  norm_num [coldAirTable]
+
+/- `lookup_eq_none_iff`: just past either end of the table there is no certified value, and
+those temperatures are out of range, while both end nodes are in range. -/
+example : coldAirTable.lookup (300 - 1 / 1000) = none ∧
+    coldAirTable.lookup (1500 + 1 / 1000) = none ∧ ¬ coldAirTable.InRange (300 - 1 / 1000) ∧
+    ¬ coldAirTable.InRange (1500 + 1 / 1000) ∧ coldAirTable.InRange 300 ∧
+    coldAirTable.InRange 1500 := by
+  have hlo : coldAirTable.lookup (300 - 1 / 1000) = none := by
+    norm_num [PropertyTable.lookup, coldAirTable, tableInterp]
+  have hhi : coldAirTable.lookup (1500 + 1 / 1000) = none := by
+    norm_num [PropertyTable.lookup, coldAirTable, tableInterp]
+  refine ⟨hlo, hhi, PropertyTable.lookup_eq_none_iff.1 hlo, PropertyTable.lookup_eq_none_iff.1 hhi,
+    ⟨(300, 301350), by simp [coldAirTable], (300, 301350), by simp [coldAirTable], le_rfl, le_rfl⟩,
+    ⟨(1500, 1506750), by simp [coldAirTable], (1500, 1506750), by simp [coldAirTable], le_rfl,
+      le_rfl⟩⟩
+
+/- `InRange.pos`: a temperature between two nodes is a positive absolute temperature. -/
+example : (0 : ℚ) < 675 :=
+  PropertyTable.InRange.pos (tab := coldAirTable)
+    ⟨(600, 602700), by simp [coldAirTable], (900, 904050), by simp [coldAirTable], by norm_num,
+      by norm_num⟩
+
+/- `heatInEnclosure_encloses`: the certified heat added encloses the cold-air value
+`602700 J/kg`, with width exactly `4 ε = 2 J/kg`. -/
+example : (⟨602699, 602701⟩ : RatInterval).Encloses 602700 ∧
+    (⟨602699, 602701⟩ : RatInterval).width = 2 := by
+  obtain ⟨h1, h2⟩ := PropertyTable.heatInEnclosure_encloses coldAirTable_withinEnvelope
+    coldAirTable_heatIn
+  refine ⟨?_, ?_⟩
+  · convert h1 using 1
+    norm_num
+  · rw [h2]
+    norm_num [coldAirTable]
+
+/- `heatOutEnclosure_encloses`: the certified heat rejected encloses the cold-air value
+`753375/2 J/kg`, with width exactly `4 ε = 2 J/kg`. -/
+example : (⟨753373 / 2, 753377 / 2⟩ : RatInterval).Encloses (753375 / 2) ∧
+    (⟨753373 / 2, 753377 / 2⟩ : RatInterval).width = 2 := by
+  obtain ⟨h1, h2⟩ := PropertyTable.heatOutEnclosure_encloses coldAirTable_withinEnvelope
+    coldAirTable_heatOut
+  refine ⟨?_, ?_⟩
+  · convert h1 using 1
+    norm_num
+  · rw [h2]
+    norm_num [coldAirTable]
+
+/- `netWorkEnclosure_encloses`: the certified net work is exactly `8 ε = 4 J/kg` wide. -/
+example : (⟨452021 / 2, 452029 / 2⟩ : RatInterval).width = 4 := by
+  rw [(PropertyTable.netWorkEnclosure_encloses coldAirTable_withinEnvelope coldAirTable_netWork).2]
+  norm_num [coldAirTable]
+
+/- `portEnclosures_eq_none_iff`: a turbine inlet above the table leaves the heat added and the
+net work uncertified, while in-range ports certify the heat rejected. -/
+example : coldAirTable.heatInEnclosure 750 1600 = none ∧
+    coldAirTable.netWorkEnclosure 300 750 1600 675 = none ∧
+    coldAirTable.heatOutEnclosure 300 675 ≠ none := by
+  have h1600 : ¬ coldAirTable.InRange 1600 :=
+    PropertyTable.lookup_eq_none_iff.1 coldAirTable_fixture_outOfRange.1
+  obtain ⟨hin, -, hw⟩ := PropertyTable.portEnclosures_eq_none_iff (tab := coldAirTable)
+    (T₁ := 300) (T₂ := 750) (T₃ := 1600) (T₄ := 675)
+  refine ⟨hin.2 (Or.inr h1600), hw.2 (Or.inr (Or.inr (Or.inl h1600))), ?_⟩
+  rw [coldAirTable_heatOut]
+  exact Option.some_ne_none _
+
+/- `encloses_sub_ofCenter_of_errors`: with a solver error of `3 J/kg` and a physical-model error
+of `5 J/kg`, declared separately, the certified heat added widened by `8 J/kg` encloses a physical
+value `602707 J/kg` that the property interval alone does not. -/
+example : (RatInterval.sub ⟨602699, 602701⟩ (RatInterval.ofCenter 0 (3 + 5))).Encloses 602707 ∧
+    ¬ (⟨602699, 602701⟩ : RatInterval).Encloses 602707 := by
+  refine ⟨encloses_sub_ofCenter_of_errors (x := 602700) (x' := 602702)
+    ⟨by norm_num, by norm_num⟩ (by norm_num) (by norm_num), ?_⟩
+  rw [RatInterval.encloses_iff]
+  norm_num
+
+/- `braytonLossy_encloses`: at the section C fixture loop the three certified intervals contain
+the heats and the net work of section C. -/
+example :
+    (⟨602699, 602701⟩ : RatInterval).Encloses
+        (braytonLossyHeatIn 300 1350 (2187 / 128) 287 (2009 / 2) (5 / 6)) ∧
+      (⟨753373 / 2, 753377 / 2⟩ : RatInterval).Encloses
+        (braytonLossyHeatOut 300 1350 (2187 / 128) 287 (2009 / 2) (9 / 10)) ∧
+      (⟨452021 / 2, 452029 / 2⟩ : RatInterval).Encloses
+        (braytonLossyNetWork 300 1350 (2187 / 128) 287 (2009 / 2) (5 / 6) (9 / 10)) := by
+  have h := braytonLossy_encloses coldAirTable_withinEnvelope coldAir_compressedTemp
+    coldAir_expandedTemp coldAirTable_heatIn coldAirTable_heatOut coldAirTable_netWork
+  push_cast at h
+  exact h
 
 end PhyslibExtTest.Thermodynamics.ExergyAndLosses

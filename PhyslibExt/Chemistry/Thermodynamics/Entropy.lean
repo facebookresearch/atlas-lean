@@ -121,16 +121,17 @@ and `Tc ≤ Th`. -/
 noncomputable def carnotEfficiency (Tc Th : ℝ) : ℝ := 1 - Tc / Th
 
 /-- An isothermal leg with heat `Q = n * R * T * log (V₂ / V₁)` absorbs positive heat
-for an expansion leg: `0 < Q` needs `V₁ < V₂`. Applied to the hot leg (`V₁ < V₂`) and the
-cold leg (`V₄ < V₃`, with the rejected heat counted positive). -/
+for an expansion leg: for positive `n`, `R`, `T` and `V₁`, `V₁ < V₂` gives `0 < Q`. Applied to
+the hot leg (`V₁ < V₂`) and the cold leg (`V₄ < V₃`, with the rejected heat counted positive). -/
 lemma carnot_heat_pos {n R T V1 V2 : ℝ} (hn : 0 < n) (hR : 0 < R) (hT : 0 < T)
     (hV1 : 0 < V1) (hexp : V1 < V2) : 0 < n * R * T * Real.log (V2 / V1) := by
   have hL : 0 < Real.log (V2 / V1) := Real.log_pos ((one_lt_div hV1).mpr hexp)
   exact mul_pos (mul_pos (mul_pos hn hR) hT) hL
 
-/-- The adiabatic legs of a reversible ideal-gas Carnot cycle force equal volume ratios:
-from the MODEL hypotheses `Th * V₂ ^ k = Tc * V₃ ^ k` and `Tc * V₄ ^ k = Th * V₁ ^ k` with
-`k = R / cv`, `V₂ / V₁ = V₃ / V₄`. The adiabatic relations themselves are model inputs, not
+/-- The adiabatic legs of a reversible ideal-gas Carnot cycle force equal volume ratios: for
+`0 < Tc < Th`, positive `R`, `cv` and volumes, from the MODEL hypotheses
+`Th * V₂ ^ k = Tc * V₃ ^ k` and `Tc * V₄ ^ k = Th * V₁ ^ k` with `k = R / cv`,
+`V₂ / V₁ = V₃ / V₄`. The adiabatic relations themselves are model inputs, not
 derived from the first law here. Route: `Real.log` of both relations (`Real.log_mul`,
 `Real.log_rpow`), added (`linear_combination`), the factor `k ≠ 0` cancelled
 (`mul_left_cancel₀`), and injectivity of `Real.log` on positives (`Real.log_injOn_pos`). -/
@@ -161,7 +162,8 @@ lemma carnot_volume_ratio {Tc Th V1 V2 V3 V4 R cv : ℝ}
     exact hsub
   exact Real.log_injOn_pos (div_pos hV2 hV1) (div_pos hV3 hV4) hlog
 
-/-- For the reversible cycle, both isothermal heats are positive and the rejected-to-absorbed
+/-- For the reversible cycle (`0 < Tc < Th`, positive `n`, `R`, `V₁`, `V₄` and equal volume
+ratios `V₂ / V₁ = V₃ / V₄`), both isothermal heats are positive and the rejected-to-absorbed
 heat ratio equals the temperature ratio: with `Qh = n * R * Th * log (V₂ / V₁)` and
 `Qc = n * R * Tc * log (V₃ / V₄)`, `0 < Qh ∧ 0 < Qc ∧ Qc / Qh = Tc / Th`. Positivity of
 the heats needs the expansion hypotheses `V₁ < V₂` and `V₄ < V₃`. -/
@@ -209,7 +211,7 @@ lemma carnot_cycle_efficiency {Tc Th n R V1 V2 V3 V4 Qh Qc cv : ℝ}
   rfl
 
 /-- The second-law bound: any engine between reservoirs at `0 < Tc ≤ Th`, with heat absorbed
-`Qh`, heat rejected `Qc`, work `W = Qh - Qc` (first law) and the Clausius inequality
+`Qh > 0`, heat rejected `Qc`, work `W = Qh - Qc` (first law) and the Clausius inequality
 `Qh / Th - Qc / Tc ≤ 0` as the second-law input (LAW), satisfies
 `W / Qh ≤ carnotEfficiency Tc Th`. The Clausius inequality is a model hypothesis, not a
 theorem derived in this module. -/
@@ -226,7 +228,8 @@ lemma engine_efficiency_le_carnotEfficiency {Qh Qc W Tc Th : ℝ}
   linarith
 
 /-- A reversible engine attains the Carnot efficiency: between reservoirs at `0 < Tc ≤ Th`,
-with `W = Qh - Qc` and the Clausius relation as an equality, `W / Qh = carnotEfficiency Tc Th`. -/
+with heat absorbed `Qh > 0`, `W = Qh - Qc` and the Clausius relation as an equality,
+`W / Qh = carnotEfficiency Tc Th`. -/
 lemma engine_efficiency_eq_carnotEfficiency {Qh Qc W Tc Th : ℝ}
     (hTc : 0 < Tc) (hT : Tc ≤ Th) (hQh : 0 < Qh)
     (hW : W = Qh - Qc) (hClausius : Qh / Th - Qc / Tc = 0) :
@@ -274,7 +277,8 @@ lemma idealGasEntropyChange_totalCV {n cv R T1 V1 T2 V2 CV : ℝ} (hCV : CV = n 
   unfold idealGasEntropyChange
   rw [hCV]
 
-/-- Additivity (state-function property): `ΔS(1→2) + ΔS(2→3) = ΔS(1→3)`. -/
+/-- Additivity (state-function property), for positive temperatures and volumes:
+`ΔS(1→2) + ΔS(2→3) = ΔS(1→3)`. -/
 lemma idealGasEntropyChange_add {n cv R T1 V1 T2 V2 T3 V3 : ℝ}
     (hT1 : 0 < T1) (hT2 : 0 < T2) (hT3 : 0 < T3)
     (hV1 : 0 < V1) (hV2 : 0 < V2) (hV3 : 0 < V3) :
@@ -299,10 +303,10 @@ lemma idealGasEntropyChange_isothermal {n cv R T1 V1 T2 V2 : ℝ} (hT : T2 = T1)
   · rw [div_self hT1, Real.log_one]
     ring
 
-/-- Isothermal expansion increases entropy: if `T₂ = T₁` and `V₁ < V₂` then `0 < ΔS`. The
-temperature term vanishes for every `T₁` (`idealGasEntropyChange_isothermal`), so the proof needs
-no temperature hypothesis; `0 < T₁` keeps the lemma at physical states, as for the other lemmas
-that read `ΔS` physically. -/
+/-- Isothermal expansion increases entropy: for positive `n`, `R` and `V₁`, if `T₂ = T₁` and
+`V₁ < V₂` then `0 < ΔS`. The temperature term vanishes for every `T₁`
+(`idealGasEntropyChange_isothermal`), so the proof needs no temperature hypothesis; `0 < T₁`
+keeps the lemma at physical states, as for the other lemmas that read `ΔS` physically. -/
 lemma idealGasEntropyChange_isothermal_pos {n cv R T1 V1 T2 V2 : ℝ}
     (hn : 0 < n) (hR : 0 < R) (_hT1 : 0 < T1) (hV1 : 0 < V1)
     (hT : T2 = T1) (hexp : V1 < V2) :
@@ -310,7 +314,7 @@ lemma idealGasEntropyChange_isothermal_pos {n cv R T1 V1 T2 V2 : ℝ}
   rw [idealGasEntropyChange_isothermal hT]
   exact mul_pos (mul_pos hn hR) (Real.log_pos ((one_lt_div hV1).mpr hexp))
 
-/-- Reversible-adiabatic case: for positive temperatures and volumes, if
+/-- Reversible-adiabatic case: for `0 < cv` and positive temperatures and volumes, if
 `T₂ / T₁ = (V₁ / V₂) ^ (R / cv)` (the adiabatic relation for constant `cv`) then `ΔS = 0`.
 Route: `Real.log` algebra (`Real.log_div`, `Real.log_rpow`), then `field_simp` and `ring`. -/
 lemma idealGasEntropyChange_adiabatic {n cv R T1 V1 T2 V2 : ℝ}
@@ -327,7 +331,7 @@ lemma idealGasEntropyChange_adiabatic {n cv R T1 V1 T2 V2 : ℝ}
   field_simp
   ring
 
-/-- Sign reversal: `ΔS(1→2) = -ΔS(2→1)`. -/
+/-- Sign reversal, for positive temperatures and volumes: `ΔS(1→2) = -ΔS(2→1)`. -/
 lemma idealGasEntropyChange_symm {n cv R T1 V1 T2 V2 : ℝ}
     (hT1 : 0 < T1) (hT2 : 0 < T2) (hV1 : 0 < V1) (hV2 : 0 < V2) :
     idealGasEntropyChange n cv R T1 V1 T2 V2
@@ -379,8 +383,9 @@ lemma entropyOfMixing_nonneg {ι : Type*} [Fintype ι] {n R : ℝ} {x : ι → �
     0 ≤ entropyOfMixing n R x :=
   mul_nonneg (mul_nonneg hn hR) (FiniteEnsembles.shannonEntropy_nonneg hx hsum)
 
-/-- The ideal entropy of mixing vanishes exactly for a single component: for `0 < n` and
-`0 < R`, `entropyOfMixing n R x = 0 ↔ ∃ i, x i = 1 ∧ ∀ j, j ≠ i → x j = 0`. Since
+/-- The ideal entropy of mixing vanishes exactly for a single component: for `0 < n`, `0 < R`
+and mole fractions `x` (`0 ≤ x i`, `∑ i, x i = 1`),
+`entropyOfMixing n R x = 0 ↔ ∃ i, x i = 1 ∧ ∀ j, j ≠ i → x j = 0`. Since
 `n * R ≠ 0`, this is the equality case `FiniteEnsembles.shannonEntropy_eq_zero_iff` of the
 Shannon entropy. -/
 lemma entropyOfMixing_eq_zero_iff {ι : Type*} [Fintype ι] {n R : ℝ} {x : ι → ℝ}
@@ -425,10 +430,10 @@ noncomputable def absoluteEntropy {ι : Type*} (Cp : ℝ → ℝ) (trans : Finse
     (Tt : ι → ℝ) (dH : ι → ℝ) (T : ℝ) : ℝ :=
   (∫ t in (0:ℝ)..T, Cp t / t) + ∑ k ∈ trans.filter (fun k => Tt k ≤ T), dH k / Tt k
 
-/-- Third-law convention: `S(0) = 0` (empty integral plus empty transition sum). No
-integrability hypothesis is needed: on the degenerate interval `0..0` every function is
-interval integrable (`IntervalIntegrable.refl`), so this `0` is the genuine integral, not a junk
-value. -/
+/-- Third-law convention: for positive transition temperatures, `S(0) = 0` (empty integral plus
+empty transition sum). No integrability hypothesis is needed: on the degenerate interval `0..0`
+every function is interval integrable (`IntervalIntegrable.refl`), so this `0` is the genuine
+integral, not a junk value. -/
 lemma absoluteEntropy_zero {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
     (Tt : ι → ℝ) (dH : ι → ℝ) (hTt : ∀ k ∈ trans, 0 < Tt k) :
     absoluteEntropy Cp trans Tt dH 0 = 0 := by
