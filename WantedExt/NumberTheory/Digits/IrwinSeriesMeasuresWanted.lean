@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import MathlibExt.Analysis.Series.RiemannRearrangement
 public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasures
+public import MathlibExt.NumberTheory.Digits.IrwinSeriesMeasuresLocalMass
 public import MathlibExt.NumberTheory.Digits.OrdinaryMomentRecurrence
 
 namespace MetaMathlibExt
@@ -262,36 +263,6 @@ public theorem_wanted integral_irwinMeasure_zero
         ∑ a ∈ Finset.range b,
           if a = d then 0 else
             ∫ x in Set.Ico (0 : ℝ) 1, f (a + x) ∂irwinMeasure b d 0 hd
-
-/-- **Local structure of the Irwin measures on open intervals.** Let $b > 1$ and $d < b$ be
-natural numbers, and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and
-digit $d$ with index $k$. Let $x \in [0, 1)$ have base-$b$ depth $l$, that is, $l$ is the least
-natural number such that $b^l x$ is an integer; let $X$ be a string of $l$ base-$b$ digits, read
-most significant digit first, whose value $n(X)$ satisfies $n(X)/b^l = x$; and let $j$ be the
-number of occurrences of $d$ in $X$. Let $l' \ge l$ be a natural number, put $j' = j$ if $d > 0$
-and $j' = j + l' - l$ if $d = 0$, and let $U \subseteq (x, x + b^{-l'})$. Then for every natural
-number $k$: if $k < j'$ then $\mu_k(U) = 0$, and if $k \ge j'$ then, as real numbers,
-$\mu_k(U) = b^{-l'} \mu_{k-j'}(b^{l'} U - b^{l'} x)$, where $b^{l'} U - b^{l'} x$ is the image
-of $U$ under $y \mapsto b^{l'} y - b^{l'} x$.
-
-Source: Jean-François Burnol,
-*Measures for the Summation of Irwin Series*, INTEGERS 26 (2026), Article A11,
-Lemma 2. -/
-public theorem_wanted irwinMeasure_open_local_mass
-    (b d : ℕ) (hb : 1 < b) (hd : d < b) (x : ℝ) (l : ℕ)
-    (hx : x ∈ Set.Ico (0 : ℝ) 1) (hdepth : HasBaseDepth b x l)
-    (X : List (Fin b)) (hXlen : X.length = l)
-    (hXval : normalizedStringValue b X = x) (j : ℕ)
-    (hj : j = X.count ⟨d, hd⟩) (l' : ℕ) (hll' : l ≤ l')
-    (U : Set ℝ)
-    (hU : U ⊆ Set.Ioo x (x + (b : ℝ) ^ (-(l' : ℤ)))) (k : ℕ) :
-    (k < (if 0 < d then j else j + l' - l) →
-      irwinMeasure b d k hd U = 0) ∧
-    ((if 0 < d then j else j + l' - l) ≤ k →
-      (irwinMeasure b d k hd U).toReal =
-        (b : ℝ) ^ (-(l' : ℤ)) *
-          (irwinMeasure b d (k - (if 0 < d then j else j + l' - l)) hd
-            (affineScaleSet b l' x U)).toReal)
 
 /-- **Local structure of the Irwin measures on half-open intervals.** Let $b > 1$ and $d < b$ be
 natural numbers, and for each natural number $k$ let $\mu_k$ be the Irwin measure of base $b$ and

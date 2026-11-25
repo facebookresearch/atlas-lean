@@ -13,6 +13,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.Combinatorics.Sequences.ThrowbackFrequency
+public import MathlibExt.Combinatorics.Sequences.ThrowbackPerfectMixing
 public import MathlibExt.Combinatorics.Sequences.ThrowbackRecurrence
 public import MathlibExt.Combinatorics.Sequences.ThrowbackUniformRecurrence
 
@@ -115,21 +116,6 @@ public theorem_wanted partialPlacement_minimal_complete_blocks_iff_configuration
     (∀ k l : ℕ, block k = block l ↔
       ∀ i ≤ n, ∀ p, (((throwback id)^[k] X) p = X i ↔ ((throwback id)^[l] X) p = X i)) ∧
       ∀ z : ℤ, ∃ k : ℕ, block z = block k
-
-/-- **Perfect mixing for consecutive integers.** Let $m \ge 1$ and $n \ge 0$, let
-$X = (m, m + 1, m + 2, \dots)$, and let $\tau$ be the throwback. Then the positions of the terms
-$m, m + 1, \dots, m + n$ in $\tau^k(X)$ are different for different $k$ with
-$0 \le k < (m + 1)^{n + 1}$: for $0 \le k < l < (m + 1)^{n + 1}$, some $m + i$ with $i \le n$
-occupies different positions in $\tau^k(X)$ and $\tau^l(X)$. Moreover, each of
-$m, m + 1, \dots, m + n$ occupies the same positions in $\tau^{(m+1)^{n+1}}(X)$ as in $X$.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Theorem 9 (`jis-2025-25.5.1-thm-9`). -/
-public theorem_wanted throwback_consecutive_perfect_mixing (m n : ℕ) (hm : 0 < m) :
-    let Y : ℕ → ℕ → ℕ := fun k => (throwback id)^[k] (fun i => m + i)
-    (∀ i ≤ n, ∀ p, (Y ((m + 1) ^ (n + 1)) p = m + i ↔ Y 0 p = m + i)) ∧
-      ∀ k l, k < l → l < (m + 1) ^ (n + 1) →
-        ¬ ∀ i ≤ n, ∀ p, (Y k p = m + i ↔ Y l p = m + i)
 
 end
 
