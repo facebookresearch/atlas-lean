@@ -10807,6 +10807,7 @@
   "MathlibExt/Combinatorics/Enumerative/KNaplesParkingInt": {"to": "Combinatorics/parking-functions", "title": "k-Naples parking functions"},
   "MathlibExt/Combinatorics/Enumerative/KBoxPaths": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "k-box paths and skew Dyck paths"},
   "MathlibExt/Combinatorics/Enumerative/KBoxReturnGF": {"to": "Combinatorics/catalan-numbers-lattice-paths/dyck-paths-lattice-walks", "title": "k-box paths and skew Dyck paths"},
+  "MathlibExt/Combinatorics/Enumerative/KingPermutationPatterns": {"to": "Combinatorics/permutations/permutation-patterns", "title": "King permutations"},
   "MathlibExt/Combinatorics/Enumerative/KlamkinBinomialReciprocal": {"to": "Combinatorics/binomial-coefficients/binomial-sums", "title": "Sums of reciprocals of binomial coefficients"},
   "MathlibExt/Combinatorics/Enumerative/LGridDominoTilings": {"to": "Combinatorics/tilings-board-placements", "title": "Domino tilings of L-shaped grids"},
   "MathlibExt/Combinatorics/Enumerative/LahNumber": {"to": "Combinatorics/stirling-bell-eulerian/stirling-lah-numbers", "title": "Lah numbers"},
