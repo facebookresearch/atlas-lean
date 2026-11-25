@@ -99,6 +99,29 @@ example {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) {p : 
     (n : ℕ) : ModularFormClass.qCoeff (heckeU k p ⇑f) n = ModularFormClass.qCoeff ⇑f (n * p) :=
   ModularFormClass.qCoeff_heckeU f (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N) hp n
 
+/-! Regularity at `i∞` of `T_p f` and `U_p f`, for a cusp form `f` on `Γ₀(N)`, through the
+public lemmas of the period-map module. -/
+
+example {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) (p : ℕ) :
+    Function.Periodic (heckeT k p ⇑f ∘ UpperHalfPlane.ofComplex) 1 :=
+  periodic_heckeT_comp_ofComplex k p (SlashInvariantFormClass.periodic_comp_ofComplex f
+    (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N))
+
+example {N : ℕ} {k : ℤ} (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) (p : ℕ) :
+    UpperHalfPlane.IsBoundedAtImInfty (heckeU k p ⇑f) :=
+  have : Fact (IsCusp OnePoint.infty (CongruenceSubgroup.Gamma0 N : Subgroup (GL (Fin 2) ℝ))) :=
+    ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos
+      (CongruenceSubgroup.one_mem_strictPeriods_Gamma0 N)⟩
+  isBoundedAtImInfty_heckeU k p (ModularFormClass.bdd_at_infty f)
+
+/-- Translating by `1` permutes the points `(τ + j) / 3`, `j < 3`, up to a translate by `1`,
+which a `1`-periodic function does not see. -/
+example {f : UpperHalfPlane → ℂ}
+    (hf : Function.Periodic (f ∘ UpperHalfPlane.ofComplex) 1) (τ : UpperHalfPlane) :
+    ∑ j ∈ Finset.range 3, f (heckeUpperMatrix 3 j • ((1 : ℝ) +ᵥ τ))
+      = ∑ j ∈ Finset.range 3, f (heckeUpperMatrix 3 j • τ) :=
+  sum_heckeUpperMatrix_smul_vadd three_ne_zero hf τ
+
 /-! The Hecke operators on cusp forms act by `heckeT` and `heckeU` on the underlying
 functions. -/
 

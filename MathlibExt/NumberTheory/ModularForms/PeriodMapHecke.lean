@@ -329,6 +329,117 @@ end ModularForm
 
 end
 
+-- ===== Regularity of heckeU and heckeT at i∞ =====
+
+namespace UpperHalfPlane
+
+open Function
+
+/-- A function `f` on `ℍ` such that `f ∘ ofComplex` has period `1` takes the same value at two
+points whose images in `ℂ` differ by a natural number. -/
+theorem apply_eq_of_coe_eq_add_nat {f : ℍ → ℂ} (hf : Periodic (f ∘ ofComplex) 1) {τ₁ τ₂ : ℍ}
+    (m : ℕ) (h : (τ₁ : ℂ) = τ₂ + m) : f τ₁ = f τ₂ := by
+  have h1 : (f ∘ ofComplex) ((τ₂ : ℂ) + m) = (f ∘ ofComplex) (τ₂ : ℂ) := by
+    have := hf.nat_mul m
+    rw [mul_one] at this
+    exact this (τ₂ : ℂ)
+  simp only [comp_apply] at h1
+  rw [← h, ofComplex_apply, ofComplex_apply] at h1
+  exact h1
+
+end UpperHalfPlane
+
+namespace ModularForm
+
+open UpperHalfPlane Function
+open scoped MatrixGroups
+
+/-- The lower-left entry of `heckeUpperMatrix p j` is `0`, also for `p = 0`, where the matrix is
+the identity. -/
+theorem heckeUpperMatrix_one_zero (p j : ℕ) :
+    ((heckeUpperMatrix p j : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) 1 0 = 0 := by
+  rcases eq_or_ne p 0 with rfl | hp
+  · simp
+  · rw [val_heckeUpperMatrix hp]; rfl
+
+/-- The lower-left entry of `heckeDiagMatrix p` is `0`, also for `p = 0`, where the matrix is the
+identity. -/
+theorem heckeDiagMatrix_one_zero (p : ℕ) :
+    ((heckeDiagMatrix p : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) 1 0 = 0 := by
+  rcases eq_or_ne p 0 with rfl | hp
+  · simp
+  · rw [val_heckeDiagMatrix hp]; rfl
+
+/-- `heckeU k p` sends a function bounded at `i∞` to one bounded at `i∞`. -/
+theorem isBoundedAtImInfty_heckeU {f : ℍ → ℂ} (k : ℤ) (p : ℕ) (hf : IsBoundedAtImInfty f) :
+    IsBoundedAtImInfty (heckeU k p f) :=
+  Finset.sum_induction _ (fun g : ℍ → ℂ => IsBoundedAtImInfty g)
+    (fun _ _ ha hb => ha.add hb) UpperHalfPlane.zero_form_isBoundedAtImInfty
+    (fun j _ => hf.slash k (heckeUpperMatrix_one_zero p j))
+
+/-- `heckeT k p` sends a function bounded at `i∞` to one bounded at `i∞`. -/
+theorem isBoundedAtImInfty_heckeT {f : ℍ → ℂ} (k : ℤ) (p : ℕ) (hf : IsBoundedAtImInfty f) :
+    IsBoundedAtImInfty (heckeT k p f) :=
+  (isBoundedAtImInfty_heckeU k p hf).add (hf.slash k (heckeDiagMatrix_one_zero p))
+
+/-- For `p ≠ 0`, `heckeUpperMatrix p j` sends `1 +ᵥ τ` to the image of `τ` under
+`heckeUpperMatrix p (j + 1)`. -/
+theorem heckeUpperMatrix_smul_vadd {p : ℕ} (hp : p ≠ 0) (j : ℕ) (τ : ℍ) :
+    heckeUpperMatrix p j • ((1 : ℝ) +ᵥ τ) = heckeUpperMatrix p (j + 1) • τ := by
+  apply UpperHalfPlane.ext
+  rw [coe_heckeUpperMatrix_smul hp, coe_heckeUpperMatrix_smul hp, coe_vadd]
+  push_cast
+  ring
+
+/-- For `p ≠ 0`, the images of `τ` under `heckeUpperMatrix p p` and `heckeUpperMatrix p 0`
+differ by `1`. -/
+theorem coe_heckeUpperMatrix_smul_self {p : ℕ} (hp : p ≠ 0) (τ : ℍ) :
+    ((heckeUpperMatrix p p • τ : ℍ) : ℂ) = (heckeUpperMatrix p 0 • τ : ℍ) + (1 : ℕ) := by
+  have hp' : (p : ℂ) ≠ 0 := by exact_mod_cast hp
+  rw [coe_heckeUpperMatrix_smul hp, coe_heckeUpperMatrix_smul hp]
+  field_simp
+  push_cast
+  ring
+
+/-- For `p ≠ 0`, the image of `1 +ᵥ τ` under `heckeDiagMatrix p` is the image of `τ` plus `p`. -/
+theorem coe_heckeDiagMatrix_smul_vadd {p : ℕ} (hp : p ≠ 0) (τ : ℍ) :
+    ((heckeDiagMatrix p • ((1 : ℝ) +ᵥ τ) : ℍ) : ℂ) = (heckeDiagMatrix p • τ : ℍ) + (p : ℕ) := by
+  rw [coe_heckeDiagMatrix_smul hp, coe_heckeDiagMatrix_smul hp, coe_vadd]
+  push_cast
+  ring
+
+/-- For `p ≠ 0` and `f` with `f ∘ ofComplex` of period `1`, summing `f` over the images of
+`1 +ᵥ τ` under `heckeUpperMatrix p j`, `j < p`, gives the sum over the images of `τ`. -/
+theorem sum_heckeUpperMatrix_smul_vadd {f : ℍ → ℂ} {p : ℕ} (hp : p ≠ 0)
+    (hf : Periodic (f ∘ ofComplex) 1) (τ : ℍ) :
+    ∑ j ∈ Finset.range p, f (heckeUpperMatrix p j • ((1 : ℝ) +ᵥ τ))
+      = ∑ j ∈ Finset.range p, f (heckeUpperMatrix p j • τ) := by
+  simp only [heckeUpperMatrix_smul_vadd hp]
+  have h0 := Finset.sum_range_succ' (fun j => f (heckeUpperMatrix p j • τ)) p
+  have h1 := Finset.sum_range_succ (fun j => f (heckeUpperMatrix p j • τ)) p
+  rw [apply_eq_of_coe_eq_add_nat hf 1 (coe_heckeUpperMatrix_smul_self hp τ)] at h1
+  exact add_right_cancel (h0.symm.trans h1)
+
+/-- If `f ∘ ofComplex` has period `1`, so does `heckeU k p f ∘ ofComplex`. -/
+theorem periodic_heckeU_comp_ofComplex {f : ℍ → ℂ} (k : ℤ) (p : ℕ)
+    (hf : Periodic (f ∘ ofComplex) 1) : Periodic (heckeU k p f ∘ ofComplex) 1 := by
+  refine periodic_comp_ofComplex (h := 1) fun τ ↦ ?_
+  by_cases hp : p = 0
+  · simp only [hp, heckeU_zero_left, Pi.zero_apply]
+  · rw [heckeU_apply k hp, heckeU_apply k hp, sum_heckeUpperMatrix_smul_vadd hp hf]
+
+/-- If `f ∘ ofComplex` has period `1`, so does `heckeT k p f ∘ ofComplex`. -/
+theorem periodic_heckeT_comp_ofComplex {f : ℍ → ℂ} (k : ℤ) (p : ℕ)
+    (hf : Periodic (f ∘ ofComplex) 1) : Periodic (heckeT k p f ∘ ofComplex) 1 := by
+  refine periodic_comp_ofComplex (h := 1) fun τ ↦ ?_
+  by_cases hp : p = 0
+  · simp only [hp, heckeT_zero_left]
+    exact apply_eq_of_coe_eq_add_nat hf 1 (by rw [coe_vadd]; push_cast; ring)
+  · rw [heckeT_apply k hp, heckeT_apply k hp, sum_heckeUpperMatrix_smul_vadd hp hf,
+      apply_eq_of_coe_eq_add_nat hf p (coe_heckeDiagMatrix_smul_vadd hp τ)]
+
+end ModularForm
+
 end
 
 -- ===== P2M.Sol.S_ModularForm_heckeT_slash_eq_self_of_mem_Gamma0 =====
@@ -731,24 +842,6 @@ namespace M4cP1W2
 
 open ModularForm ModularFormClass
 
-section Matrices
-
-variable (p j : ℕ)
-
-theorem heckeUpperMatrix_one_zero :
-    ((heckeUpperMatrix p j : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) 1 0 = 0 := by
-  rcases eq_or_ne p 0 with rfl | hp
-  · simp
-  · rw [val_heckeUpperMatrix hp]; rfl
-
-theorem heckeDiagMatrix_one_zero :
-    ((heckeDiagMatrix p : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) 1 0 = 0 := by
-  rcases eq_or_ne p 0 with rfl | hp
-  · simp
-  · rw [val_heckeDiagMatrix hp]; rfl
-
-end Matrices
-
 section Regularity
 
 variable {f : ℍ → ℂ} (k : ℤ) (p : ℕ)
@@ -760,16 +853,6 @@ theorem mdifferentiable_heckeU (hf : MDiff f) : MDiff (heckeU k p f) :=
 theorem mdifferentiable_heckeT (hf : MDiff f) : MDiff (heckeT k p f) :=
   (mdifferentiable_heckeU k p hf).add (hf.slash k _)
 
-theorem isBoundedAtImInfty_heckeU (hf : IsBoundedAtImInfty f) :
-    IsBoundedAtImInfty (heckeU k p f) :=
-  Finset.sum_induction _ (fun g : ℍ → ℂ => IsBoundedAtImInfty g)
-    (fun _ _ ha hb => ha.add hb) UpperHalfPlane.zero_form_isBoundedAtImInfty
-    (fun j _ => hf.slash k (heckeUpperMatrix_one_zero p j))
-
-theorem isBoundedAtImInfty_heckeT (hf : IsBoundedAtImInfty f) :
-    IsBoundedAtImInfty (heckeT k p f) :=
-  (isBoundedAtImInfty_heckeU k p hf).add (hf.slash k (heckeDiagMatrix_one_zero p))
-
 theorem isZeroAtImInfty_heckeU (hf : IsZeroAtImInfty f) :
     IsZeroAtImInfty (heckeU k p f) :=
   Finset.sum_induction _ (fun g : ℍ → ℂ => IsZeroAtImInfty g)
@@ -780,88 +863,6 @@ theorem isZeroAtImInfty_heckeT (hf : IsZeroAtImInfty f) :
     IsZeroAtImInfty (heckeT k p f) :=
   (isZeroAtImInfty_heckeU k p hf).add (hf.slash k (heckeDiagMatrix_one_zero p))
 
-theorem apply_eq_of_coe_eq_add_nat (hf : Periodic (f ∘ ofComplex) 1) {τ₁ τ₂ : ℍ} (m : ℕ)
-    (h : (τ₁ : ℂ) = τ₂ + m) : f τ₁ = f τ₂ := by
-  have h1 : (f ∘ ofComplex) ((τ₂ : ℂ) + m) = (f ∘ ofComplex) (τ₂ : ℂ) := by
-    have := hf.nat_mul m
-    rw [mul_one] at this
-    exact this (τ₂ : ℂ)
-  simp only [comp_apply] at h1
-  rw [← h, ofComplex_apply, ofComplex_apply] at h1
-  exact h1
-
-variable {p} in
-
-theorem heckeUpperMatrix_smul_vadd (hp : p ≠ 0) (j : ℕ) (τ : ℍ) :
-    heckeUpperMatrix p j • ((1 : ℝ) +ᵥ τ) = heckeUpperMatrix p (j + 1) • τ := by
-  apply UpperHalfPlane.ext
-  rw [coe_heckeUpperMatrix_smul hp, coe_heckeUpperMatrix_smul hp, coe_vadd]
-  push_cast
-  ring
-
-variable {p} in
-
-theorem coe_heckeUpperMatrix_smul_self (hp : p ≠ 0) (τ : ℍ) :
-    ((heckeUpperMatrix p p • τ : ℍ) : ℂ) = (heckeUpperMatrix p 0 • τ : ℍ) + (1 : ℕ) := by
-  have hp' : (p : ℂ) ≠ 0 := by exact_mod_cast hp
-  rw [coe_heckeUpperMatrix_smul hp, coe_heckeUpperMatrix_smul hp]
-  field_simp
-  push_cast
-  ring
-
-variable {p} in
-
-theorem coe_heckeDiagMatrix_smul_vadd (hp : p ≠ 0) (τ : ℍ) :
-    ((heckeDiagMatrix p • ((1 : ℝ) +ᵥ τ) : ℍ) : ℂ) = (heckeDiagMatrix p • τ : ℍ) + (p : ℕ) := by
-  rw [coe_heckeDiagMatrix_smul hp, coe_heckeDiagMatrix_smul hp, coe_vadd]
-  push_cast
-  ring
-
-variable {p} in
-theorem sum_heckeUpperMatrix_smul_vadd (hp : p ≠ 0) (hf : Periodic (f ∘ ofComplex) 1) (τ : ℍ) :
-    ∑ j ∈ Finset.range p, f (heckeUpperMatrix p j • ((1 : ℝ) +ᵥ τ))
-      = ∑ j ∈ Finset.range p, f (heckeUpperMatrix p j • τ) := by
-  simp only [heckeUpperMatrix_smul_vadd hp]
-  have h0 := Finset.sum_range_succ' (fun j => f (heckeUpperMatrix p j • τ)) p
-  have h1 := Finset.sum_range_succ (fun j => f (heckeUpperMatrix p j • τ)) p
-  rw [apply_eq_of_coe_eq_add_nat hf 1 (coe_heckeUpperMatrix_smul_self hp τ)] at h1
-  exact add_right_cancel (h0.symm.trans h1)
-
-theorem heckeU_vadd (hf : Periodic (f ∘ ofComplex) 1) (τ : ℍ) :
-    heckeU k p f ((1 : ℝ) +ᵥ τ) = heckeU k p f τ := by
-  by_cases hp : p = 0
-  · simp only [hp, heckeU_zero_left, Pi.zero_apply]
-  · rw [heckeU_apply k hp, heckeU_apply k hp, sum_heckeUpperMatrix_smul_vadd hp hf]
-
-theorem heckeT_vadd (hf : Periodic (f ∘ ofComplex) 1) (τ : ℍ) :
-    heckeT k p f ((1 : ℝ) +ᵥ τ) = heckeT k p f τ := by
-  by_cases hp : p = 0
-  · simp only [hp, heckeT_zero_left]
-    exact apply_eq_of_coe_eq_add_nat hf 1 (by rw [coe_vadd]; push_cast; ring)
-  · rw [heckeT_apply k hp, heckeT_apply k hp, sum_heckeUpperMatrix_smul_vadd hp hf,
-      apply_eq_of_coe_eq_add_nat hf p (coe_heckeDiagMatrix_smul_vadd hp τ)]
-
-theorem periodic_comp_ofComplex_of_vadd {g : ℍ → ℂ} (hg : ∀ τ : ℍ, g ((1 : ℝ) +ᵥ τ) = g τ) :
-    Periodic (g ∘ ofComplex) 1 := by
-  intro w
-  by_cases hw : 0 < im w
-  · have hw' : 0 < im (w + 1) := by simp [hw]
-    simp only [comp_apply, ofComplex_apply_of_im_pos hw', ofComplex_apply_of_im_pos hw]
-    convert hg ⟨w, hw⟩ using 2
-    apply UpperHalfPlane.ext
-    simp [add_comm]
-  · have hw1 : im (w + 1) ≤ 0 := by simpa using hw
-    have hw0 : im w ≤ 0 := not_lt.mp hw
-    simp only [comp_apply, ofComplex_apply_eq_of_im_nonpos hw1 hw0]
-
-theorem periodic_heckeU_comp_ofComplex (hf : Periodic (f ∘ ofComplex) 1) :
-    Periodic (heckeU k p f ∘ ofComplex) 1 :=
-  periodic_comp_ofComplex_of_vadd (heckeU_vadd k p hf)
-
-theorem periodic_heckeT_comp_ofComplex (hf : Periodic (f ∘ ofComplex) 1) :
-    Periodic (heckeT k p f ∘ ofComplex) 1 :=
-  periodic_comp_ofComplex_of_vadd (heckeT_vadd k p hf)
-
 end Regularity
 
 section Uniqueness
@@ -871,22 +872,6 @@ theorem qExpansion_coeff_unique' {g : ℍ → ℂ} (hcont : Continuous g) {c : �
     (hs : ∀ τ : ℍ, HasSum (fun m ↦ c m • Periodic.qParam 1 τ ^ m) (g τ)) (m : ℕ) :
     c m = (qExpansion 1 g).coeff m :=
   UpperHalfPlane.qExpansion_coeff_unique (ContinuousMap.mk g hcont) one_pos hg hs m
-
-variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
-
-theorem hasSum_qCoeff [ModularFormClass F Γ k] (f : F) (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) (τ : ℍ) :
-    HasSum (fun m ↦ qCoeff f m • Periodic.qParam 1 τ ^ m) (f τ) := by
-  haveI : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
-  exact hasSum_qExpansion one_pos (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ)
-    (holo f) (bdd_at_infty f) τ
-
-theorem eq_of_forall_qCoeff_eq [ModularFormClass F Γ k] {f g : F} (hΓ : (1 : ℝ) ∈ Γ.strictPeriods)
-    (h : ∀ n : ℕ, qCoeff f n = qCoeff g n) : f = g := by
-  refine DFunLike.ext f g fun τ => ?_
-  have hf := hasSum_qCoeff f hΓ τ
-  have hg := hasSum_qCoeff g hΓ τ
-  simp only [h] at hf
-  exact hf.unique hg
 
 end Uniqueness
 
