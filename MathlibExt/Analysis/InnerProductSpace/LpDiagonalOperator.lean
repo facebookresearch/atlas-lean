@@ -68,11 +68,16 @@ private theorem exists_nonneg_bound {a : ι → 𝕜} (hbdd : ∃ C, ∀ i, ‖a
   obtain ⟨C, hC⟩ := hbdd
   exact ⟨max C 0, le_max_right _ _, fun i => (hC i).trans (le_max_left _ _)⟩
 
-/-- Applying a scalar multiple of an `ℓ²` element pointwise. -/
+/-- **Scalar multiplication on $\ell^2$ is pointwise.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$. For every $c \in \mathbb{K}$, every $x \in \ell^2(\iota, \mathbb{K})$ and every
+$i \in \iota$, the $i$-th coordinate of $c x$ is $(c x)_i = c \, x_i$. -/
 theorem lp_smul_apply (c : 𝕜) (x : ℓ²(ι, 𝕜)) (i : ι) : (c • x) i = c * x i :=
   rfl
 
-/-- The pointwise product of a bounded sequence with an `ℓ²` sequence is in `ℓ²`. -/
+/-- **Bounded multipliers preserve $\ell^2$.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$. If
+$a : \iota \to \mathbb{K}$ is bounded, that is, $|a_i| \le C$ for some real $C$ and all $i$, then
+for every $x \in \ell^2(\iota, \mathbb{K})$ the sequence $(a_i x_i)_{i \in \iota}$ lies in
+$\ell^2(\iota, \mathbb{K})$, that is, the family $(|a_i x_i|^2)_{i \in \iota}$ is summable. -/
 theorem memℓp_diagonal (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C)
     (x : ℓ²(ι, 𝕜)) : Memℓp (fun i => a i * x i) 2 := by
   obtain ⟨C, hC0, hC⟩ := exists_nonneg_bound hbdd
@@ -80,8 +85,15 @@ theorem memℓp_diagonal (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C
   simp only [norm_mul, RCLike.norm_ofReal, abs_of_nonneg hC0]
   exact mul_le_mul_of_nonneg_right (hC i) (norm_nonneg _)
 
-/-- The existing bounded Hilbert-basis diagonal operator in the identity coordinates of `ℓ²`.
-The bound is normalized so that empty index types also admit a nonnegative bound. -/
+/-- **Diagonal operator on ℓ².** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let $\iota$ be
+a type and let $a : \iota \to \mathbb{K}$ be a bounded sequence, that is, $\|a_i\| \le C$ for some
+real $C$ and all $i \in \iota$. The diagonal operator $D_a$ with coefficients $a$ is the bounded
+linear operator on $\ell^2(\iota, \mathbb{K})$ that sends $x$ to the sequence
+$(a_i x_i)_{i \in \iota}$.
+
+It is defined as the Hilbert-basis diagonal operator for the standard Hilbert basis of
+$\ell^2(\iota, \mathbb{K})$, using the bound $\max(C, 0)$ for a chosen bound $C$, so that empty
+index types also admit a nonnegative bound. -/
 noncomputable abbrev diagonalCLM (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C) :
     ℓ²(ι, 𝕜) →L[𝕜] ℓ²(ι, 𝕜) :=
   MathlibExt.Analysis.InnerProductSpace.HilbertBasisDiagonal.diagonalOperator
@@ -89,7 +101,11 @@ noncomputable abbrev diagonalCLM (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i�
     (C := max hbdd.choose 0)
     (fun i => (hbdd.choose_spec i).trans (le_max_left _ _))
 
-/-- Pointwise action of the shared diagonal operator. -/
+/-- **Coordinates of a diagonal operator on ℓ².** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $\iota$ be a type, let $a : \iota \to \mathbb{K}$ be a bounded sequence and let
+$D_a$ be the diagonal operator on $\ell^2(\iota, \mathbb{K})$ with coefficients $a$. For every
+$x \in \ell^2(\iota, \mathbb{K})$ and every $i \in \iota$, the $i$-th coordinate of $D_a x$ is
+$a_i x_i$. -/
 theorem diagonalCLM_apply (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C)
     (x : ℓ²(ι, 𝕜)) (i : ι) :
     diagonalCLM a hbdd x i = a i * x i := by
@@ -101,18 +117,30 @@ theorem diagonalCLM_apply (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ 
   rw [← b.repr_apply_apply] at h
   exact h
 
-/-- Compatibility projection of the shared bounded operator to a linear map. -/
+/-- **Diagonal operator on ℓ² as a linear map.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $\iota$ be a type and let $a : \iota \to \mathbb{K}$ be a bounded sequence. This
+is the diagonal operator on $\ell^2(\iota, \mathbb{K})$ with coefficients $a$, regarded as a
+$\mathbb{K}$-linear map $\ell^2(\iota, \mathbb{K}) \to \ell^2(\iota, \mathbb{K})$ by forgetting
+its continuity. -/
 noncomputable abbrev diagonalLinMap (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C) :
     ℓ²(ι, 𝕜) →ₗ[𝕜] ℓ²(ι, 𝕜) :=
   (diagonalCLM a hbdd).toLinearMap
 
-/-- Pointwise action of the diagonal linear map. -/
+/-- **Coordinates of the diagonal linear map on ℓ².** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $\iota$ be a type and let $a : \iota \to \mathbb{K}$ be a bounded sequence. For
+every $x \in \ell^2(\iota, \mathbb{K})$ and every $i \in \iota$, the diagonal operator with
+coefficients $a$, regarded as a linear map, sends $x$ to a sequence whose $i$-th coordinate is
+$a_i x_i$. -/
 theorem diagonalLinMap_apply (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C)
     (x : ℓ²(ι, 𝕜)) (i : ι) :
     diagonalLinMap a hbdd x i = a i * x i :=
   diagonalCLM_apply a hbdd x i
 
-/-- The diagonal operator is bounded by any uniform bound on its coefficients. -/
+/-- **Pointwise bound for diagonal operators.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$,
+let $a : \iota \to \mathbb{K}$ be bounded, and let $D_a$ be the diagonal operator
+$x \mapsto (a_i x_i)_{i \in \iota}$ on $\ell^2(\iota, \mathbb{K})$, viewed as a linear map. If
+$C \ge 0$ and $|a_i| \le C$ for every $i \in \iota$, then $\|D_a x\| \le C \|x\|$ for every
+$x \in \ell^2(\iota, \mathbb{K})$. -/
 theorem norm_diagonalLinMap_le (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C)
     {C : ℝ} (hC0 : 0 ≤ C) (hC : ∀ i, ‖a i‖ ≤ C) (x : ℓ²(ι, 𝕜)) :
     ‖diagonalLinMap a hbdd x‖ ≤ C * ‖x‖ := by
@@ -126,7 +154,12 @@ theorem norm_diagonalLinMap_le (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖
     _ = C * ‖x‖ := by
         rw [norm_smul, RCLike.norm_ofReal, abs_of_nonneg hC0]
 
-/-- The diagonal operator acts on a basis vector by scalar multiplication. -/
+/-- **Diagonal operators on standard basis vectors.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $\iota$ be a type, let $a : \iota \to \mathbb{K}$ be a bounded sequence and let
+$D_a$ be the diagonal operator on $\ell^2(\iota, \mathbb{K})$ with coefficients $a$. For
+$i \in \iota$ let $e_i \in \ell^2(\iota, \mathbb{K})$ be the sequence equal to $1$ at $i$ and $0$
+elsewhere. Then for every $i \in \iota$ and every $c \in \mathbb{K}$ we have
+$D_a(c\,e_i) = a_i \, (c\,e_i)$. -/
 theorem diagonalCLM_single [DecidableEq ι] (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C)
     (i : ι) (c : 𝕜) :
     diagonalCLM a hbdd (lp.single 2 i c) = a i • lp.single 2 i c := by
@@ -138,12 +171,18 @@ theorem diagonalCLM_single [DecidableEq ι] (a : ι → 𝕜) (hbdd : ∃ C, ∀
     simp [lp.single_apply, Pi.single_eq_same, smul_eq_mul]
   · simp [lp.single_apply, Pi.single_eq_of_ne h, smul_eq_mul]
 
-/-- The diagonal operator with coefficients `1` is the identity. -/
+/-- **The diagonal operator with all coefficients one is the identity.** Let $\mathbb{K}$ be
+$\mathbb{R}$ or $\mathbb{C}$ and let $\iota$ be a type. The diagonal operator on
+$\ell^2(\iota, \mathbb{K})$ whose coefficients all equal $1$ is the identity operator. -/
 theorem diagonalCLM_one : diagonalCLM (fun _ : ι => (1 : 𝕜)) ⟨1, fun _ => by simp⟩ = 1 := by
   ext x i
   simp [diagonalCLM_apply]
 
-/-- Composition of diagonal operators multiplies the coefficients. -/
+/-- **Composition of diagonal operators.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let
+$\iota$ be a type, and for a bounded sequence $c : \iota \to \mathbb{K}$ let $D_c$ be the diagonal
+operator on $\ell^2(\iota, \mathbb{K})$ with coefficients $c$. For bounded sequences
+$a, b : \iota \to \mathbb{K}$, we have $D_b \circ D_a = D_{ba}$, where $ba$ is the pointwise
+product $i \mapsto b_i a_i$. -/
 theorem diagonalCLM_comp (a b : ι → 𝕜) (ha : ∃ C, ∀ i, ‖a i‖ ≤ C)
     (hb : ∃ C, ∀ i, ‖b i‖ ≤ C) :
     diagonalCLM b hb ∘L diagonalCLM a ha =
@@ -157,7 +196,11 @@ theorem diagonalCLM_comp (a b : ι → 𝕜) (ha : ∃ C, ∀ i, ‖a i‖ ≤ C
   simp only [ContinuousLinearMap.comp_apply, diagonalCLM_apply]
   rw [mul_assoc]
 
-/-- Difference of diagonal operators has the difference of the coefficients. -/
+/-- **Difference of diagonal operators.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let
+$\iota$ be a type, and for a bounded sequence $c : \iota \to \mathbb{K}$ let $D_c$ be the diagonal
+operator on $\ell^2(\iota, \mathbb{K})$ with coefficients $c$. For bounded sequences
+$a, b : \iota \to \mathbb{K}$, we have $D_a - D_b = D_{a - b}$, where $a - b$ is the sequence
+$i \mapsto a_i - b_i$. -/
 theorem diagonalCLM_sub (a b : ι → 𝕜) (ha : ∃ C, ∀ i, ‖a i‖ ≤ C)
     (hb : ∃ C, ∀ i, ‖b i‖ ≤ C) :
     diagonalCLM a ha - diagonalCLM b hb =
@@ -171,13 +214,20 @@ theorem diagonalCLM_sub (a b : ι → 𝕜) (ha : ∃ C, ∀ i, ‖a i‖ ≤ C)
   simp only [sub_apply, diagonalCLM_apply, lp.coeFn_sub, Pi.sub_apply]
   rw [sub_mul]
 
-/-- The operator norm of a diagonal operator is at most any uniform coefficient bound. -/
+/-- **Operator norm bound for diagonal operators.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $a : \iota \to \mathbb{K}$ be bounded, and let $D_a$ be the diagonal operator
+$x \mapsto (a_i x_i)_{i \in \iota}$ on $\ell^2(\iota, \mathbb{K})$. If $C \ge 0$ and $|a_i| \le C$
+for every $i \in \iota$, then the operator norm satisfies $\|D_a\| \le C$. -/
 theorem norm_diagonalCLM_le (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C)
     {C : ℝ} (hC0 : 0 ≤ C) (hC : ∀ i, ‖a i‖ ≤ C) :
     ‖diagonalCLM a hbdd‖ ≤ C :=
   ContinuousLinearMap.opNorm_le_bound _ hC0 (fun x => norm_diagonalLinMap_le a hbdd hC0 hC x)
 
-/-- The operator norm of a diagonal operator is the supremum of the coefficient norms. -/
+/-- **Operator norm of a diagonal operator.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let
+$a : \iota \to \mathbb{K}$ be bounded, and let $D_a$ be the diagonal operator
+$x \mapsto (a_i x_i)_{i \in \iota}$ on $\ell^2(\iota, \mathbb{K})$. Then the operator norm of $D_a$
+is $\|D_a\| = \sup_{i \in \iota} |a_i|$, where the supremum is taken to be $0$ when $\iota$ is
+empty. -/
 theorem norm_diagonalCLM (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C) :
     ‖diagonalCLM a hbdd‖ = ⨆ i, ‖a i‖ := by
   classical
@@ -221,7 +271,10 @@ theorem norm_diagonalCLM (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C
       simp only [hsup', hrange, Real.sSup_empty]
     rw [hsup]
 
-/-- The adjoint of a diagonal operator is the diagonal operator with conjugate coefficients. -/
+/-- **Adjoint of a diagonal operator.** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let
+$\iota$ be a type and let $a : \iota \to \mathbb{K}$ be a bounded sequence. The adjoint of the
+diagonal operator $D_a$ on $\ell^2(\iota, \mathbb{K})$ with coefficients $a$ is the diagonal
+operator with the conjugate coefficients $i \mapsto \overline{a_i}$. -/
 theorem adjoint_diagonalCLM (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C) :
     (diagonalCLM a hbdd)† =
       diagonalCLM (fun i => star (a i)) (by
@@ -235,7 +288,10 @@ theorem adjoint_diagonalCLM (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ �
   rw [diagonalCLM_apply, diagonalCLM_apply, ← smul_eq_mul, ← smul_eq_mul,
     inner_smul_left, inner_smul_right, starRingEnd_apply, star_star]
 
-/-- A diagonal operator is self-adjoint iff every coefficient is real (star-invariant). -/
+/-- **Self-adjoint diagonal operators on $\ell^2$.** Let $\mathbb{K}$ be $\mathbb{R}$ or
+$\mathbb{C}$, let $a : \iota \to \mathbb{K}$ be bounded, and let $D_a$ be the diagonal operator
+$x \mapsto (a_i x_i)_{i \in \iota}$ on $\ell^2(\iota, \mathbb{K})$. Then $D_a$ is self-adjoint if
+and only if $\overline{a_i} = a_i$, that is, $a_i$ is real, for every $i \in \iota$. -/
 theorem isSelfAdjoint_diagonalCLM_iff (a : ι → 𝕜) (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C) :
     IsSelfAdjoint (diagonalCLM a hbdd) ↔ ∀ i, star (a i) = a i := by
   classical
@@ -471,8 +527,11 @@ private theorem tendsto_of_isCompactOperator_diagonalCLM {a : ι → 𝕜}
       rw [dist_eq_norm]
       exact separation_diagonalCLM_single hbdd hε hu_inj hu_mem hmn)
 
-/-- Compactness of a diagonal operator is equivalent to vanishing of its coefficients
-at infinity. -/
+/-- **Compact diagonal operators on ℓ².** Let $\mathbb{K}$ be $\mathbb{R}$ or $\mathbb{C}$, let
+$\iota$ be a type and let $a : \iota \to \mathbb{K}$ be a bounded sequence. The diagonal operator
+on $\ell^2(\iota, \mathbb{K})$ with coefficients $a$ is compact if and only if $a$ tends to $0$
+along the cofinite filter on $\iota$, that is, for every $\varepsilon > 0$ only finitely many
+$i \in \iota$ satisfy $\|a_i\| \ge \varepsilon$. -/
 theorem isCompactOperator_diagonalCLM_iff {a : ι → 𝕜}
     (hbdd : ∃ C, ∀ i, ‖a i‖ ≤ C) :
     IsCompactOperator (diagonalCLM a hbdd) ↔ Tendsto a cofinite (𝓝 0) :=

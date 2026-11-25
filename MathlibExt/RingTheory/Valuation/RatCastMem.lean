@@ -94,16 +94,16 @@ private theorem valuation_intCast_eq_pow_padicValInt {K : Type*} [Field K]
     (A : ValuationSubring K) {q : ℕ} (hq : q.Prime) (hA : A.valuation (q : K) < 1)
     {z : ℤ} (hz : z ≠ 0) : A.valuation (z : K) = A.valuation (q : K) ^ padicValInt q z := by
   haveI : Fact q.Prime := ⟨hq⟩
-  set v : ℕ := padicValNat q z.natAbs with hv
+  set v : ℕ := multiplicity q z.natAbs with hv
   have hn0 : z.natAbs ≠ 0 := Int.natAbs_ne_zero.mpr hz
-  have hdvd : q ^ v ∣ z.natAbs := pow_padicValNat_dvd
+  have hdvd : q ^ v ∣ z.natAbs := pow_multiplicity_dvd q z.natAbs
   obtain ⟨c, hc⟩ := hdvd
   have hqc : ¬(q : ℤ) ∣ (c : ℤ) := by
     intro h
     have h' : q ∣ c := Int.natCast_dvd_natCast.mp h
     obtain ⟨d, rfl⟩ := h'
     have : q ^ (v + 1) ∣ z.natAbs := ⟨d, by rw [hc]; ring⟩
-    exact pow_succ_padicValNat_not_dvd hn0 this
+    exact pow_succ_multiplicity_not_dvd hn0 this
   have hcval : A.valuation ((c : ℤ) : K) = 1 :=
     A.valuation_intCast_eq_one_of_not_dvd hq hA hqc
   have habs : A.valuation (z : K) = A.valuation ((z.natAbs : ℤ) : K) := by

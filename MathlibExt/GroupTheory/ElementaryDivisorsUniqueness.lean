@@ -273,15 +273,11 @@ private theorem multiset_eq_of_threshold_card {n m : ℕ} {e : Fin n → ℕ} {f
     rw [← h1] at h2
     exact (Nat.add_right_cancel h2).symm
 
-/-- **Uniqueness of elementary divisors.** Two decompositions of the same finite
-abelian group into cyclic groups of prime-power order have the same number of
-factors and the same multiset of exponents.
-
-This is the book's uniqueness lemma for the `p`-primary torsion subgroup: the
-existence of such a decomposition is Mathlib's
-`AddCommGroup.equiv_directSum_zmod_of_finite`, and batch 24 gives existence in
-invariant-factor form (`AddCommGroup.equiv_directSum_invariant_factors_of_finite`); neither
-states uniqueness. -/
+/-- **Uniqueness of elementary divisors.** Let $p$ be a prime and let $A$ be an abelian group.
+If $A \cong \bigoplus_{i=1}^{n} \mathbb{Z}/p^{e_i}\mathbb{Z}$ and
+$A \cong \bigoplus_{j=1}^{m} \mathbb{Z}/p^{f_j}\mathbb{Z}$ for positive integers
+$e_1, \dots, e_n$ and $f_1, \dots, f_m$, then $n = m$ and the multisets
+$\{e_1, \dots, e_n\}$ and $\{f_1, \dots, f_m\}$ are equal. -/
 theorem elementary_divisors_unique {p : ℕ} (hp : p.Prime) {n m : ℕ}
     {e : Fin n → ℕ} {f : Fin m → ℕ} (he : ∀ i, 0 < e i) (hf : ∀ i, 0 < f i)
     {A : Type*} [AddCommGroup A]

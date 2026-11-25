@@ -51,7 +51,10 @@ abbrev PlanePolynomial : Type := MvPolynomial (Fin 2) ℂ
 /-- A point of the affine complex plane. -/
 abbrev AffinePoint : Type := Fin 2 → ℂ
 
-/-- Translate a polynomial so that the point `a` moves to the origin. -/
+/-- **Translate of a plane polynomial.** For a polynomial $f \in \mathbb{C}[x_1, x_2]$ and a
+point $a = (a_1, a_2) \in \mathbb{C}^2$, the translate of $f$ by $a$ is the polynomial
+$f(x_1 + a_1, x_2 + a_2)$, obtained by substituting $x_i + a_i$ for $x_i$. It moves the point $a$
+to the origin. -/
 noncomputable def shifted (f : PlanePolynomial) (a : AffinePoint) : PlanePolynomial :=
   MvPolynomial.aeval (fun i => MvPolynomial.X i + MvPolynomial.C (a i)) f
 
@@ -84,7 +87,8 @@ theorem shifted_eq_zero_iff {f : PlanePolynomial} {a : AffinePoint} :
   · rintro rfl
     simp [shifted]
 
-/-- The total degree of one monomial exponent vector. -/
+/-- **Total degree of a monomial.** The total degree of the exponent vector
+$m = (m_0, m_1)$ of a monomial $X_0^{m_0} X_1^{m_1}$ in two variables is $m_0 + m_1$. -/
 def monomialDegree (m : Fin 2 →₀ ℕ) : ℕ :=
   ∑ i, m i
 
@@ -101,9 +105,10 @@ theorem monomialDegree_eq_zero_iff {m : Fin 2 →₀ ℕ} :
   · rintro rfl
     simp [monomialDegree]
 
-/-- The multiplicity of a plane polynomial at a point: the least total degree
-occurring after translating the point to the origin. It is totalized to `0`
-for the zero polynomial; applications below exclude that case. -/
+/-- **Multiplicity of a plane polynomial at a point.** For a polynomial
+$f \in \mathbb{C}[X_0, X_1]$ and a point $a = (a_0, a_1) \in \mathbb{C}^2$, the multiplicity
+of $f$ at $a$ is the least total degree of a monomial occurring with nonzero coefficient in
+the translated polynomial $f(X_0 + a_0, X_1 + a_1)$. For the zero polynomial it is $0$. -/
 noncomputable def multiplicity (f : PlanePolynomial) (a : AffinePoint) : ℕ :=
   if h : (shifted f a).support.Nonempty then
     ((shifted f a).support.image monomialDegree).min'
@@ -150,20 +155,35 @@ theorem shifted_X_sub_C (a : AffinePoint) :
     shifted (MvPolynomial.X 0 - MvPolynomial.C (a 0)) a = MvPolynomial.X 0 := by
   simp [shifted]
 
-/-- A coordinate line through a point has multiplicity one there. -/
+/-- **The first-coordinate line through a point has multiplicity one there.** For every point
+$a = (a_0, a_1) \in \mathbb{C}^2$, the polynomial $X_0 - a_0 \in \mathbb{C}[X_0, X_1]$, which
+defines the line through $a$ on which the first coordinate is constant, has multiplicity $1$
+at $a$. -/
 theorem multiplicity_X_sub_C (a : AffinePoint) :
     multiplicity (MvPolynomial.X 0 - MvPolynomial.C (a 0)) a = 1 := by
   simp only [multiplicity, shifted_X_sub_C, MvPolynomial.support_X]
   simp [monomialDegree]
 
-/-- The degree-over-multiplicity ratios tested by one ten-point configuration. -/
+/-- **Seshadri ratios of ten points.** For a configuration $x = (x_0, \dots, x_9)$ of ten
+points of $\mathbb{C}^2$, not necessarily distinct, the Seshadri ratios of $x$ are the real
+numbers $\deg f / \sum_{i=0}^{9} \operatorname{mult}_{x_i} f$, where $f$ ranges over the
+nonzero polynomials in $\mathbb{C}[X_0, X_1]$ with
+$\sum_{i=0}^{9} \operatorname{mult}_{x_i} f > 0$, $\deg f$ is the total degree of $f$, and
+$\operatorname{mult}_{x_i} f$ is the multiplicity of $f$ at $x_i$. -/
 def seshadriRatios (x : Fin 10 → AffinePoint) : Set ℝ :=
   {r | ∃ f : PlanePolynomial, f ≠ 0 ∧
     0 < ∑ i, multiplicity f (x i) ∧
     r = (f.totalDegree : ℝ) / ((∑ i, multiplicity f (x i) : ℕ) : ℝ)}
 
-/-- The Seshadri constant of one affine ten-point configuration, totalized by
-the real infimum. -/
+/-- **Seshadri constant of ten affine points.** For a configuration
+$x = (x_0, \dots, x_9)$ of ten points of $\mathbb{C}^2$, not necessarily distinct, the
+affine Seshadri constant of $x$ is the infimum of the ratios
+$\deg f / \sum_{i=0}^{9} \operatorname{mult}_{x_i} f$ over all nonzero polynomials
+$f \in \mathbb{C}[X_0, X_1]$ with $\sum_{i=0}^{9} \operatorname{mult}_{x_i} f > 0$, where
+$\deg f$ is the total degree of $f$ and $\operatorname{mult}_{x_i} f$ is the multiplicity
+of $f$ at $x_i$.
+
+The set of these ratios is nonempty and bounded below by $0$. -/
 noncomputable def affineSeshadriConstant (x : Fin 10 → AffinePoint) : ℝ :=
   sInf (seshadriRatios x)
 
@@ -180,8 +200,12 @@ theorem affineSeshadriConstant_nonneg (x : Fin 10 → AffinePoint) :
     0 ≤ affineSeshadriConstant x :=
   Real.sInf_nonneg (fun _ hr => seshadriRatios_nonneg hr)
 
-/-- A coordinate line through the first point bounds every affine
-configuration's Seshadri constant by one. -/
+/-- **The affine Seshadri constant is at most one.** For every configuration
+$x = (x_0, \dots, x_9)$ of ten points of $\mathbb{C}^2$, not necessarily distinct, the
+affine Seshadri constant of $x$ is at most $1$.
+
+The bound comes from the polynomial $X_0 - c \in \mathbb{C}[X_0, X_1]$, where $c$ is the first
+coordinate of $x_0$: it has total degree $1$ and multiplicity $1$ at $x_0$. -/
 theorem affineSeshadriConstant_le_one (x : Fin 10 → AffinePoint) :
     affineSeshadriConstant x ≤ 1 := by
   let f : PlanePolynomial := MvPolynomial.X 0 - MvPolynomial.C ((x 0) 0)
@@ -210,13 +234,22 @@ theorem affineSeshadriConstant_le_one (x : Fin 10 → AffinePoint) :
     exact_mod_cast hdeg.trans hsum
   exact (csInf_le (bddBelow_seshadriRatios x) hmem).trans hratio
 
-/-- The generic ten-point Seshadri constant, modeled in an affine chart as
-the supremum over injective ten-point configurations. -/
+/-- **Generic ten-point Seshadri constant.** The generic ten-point Seshadri constant is the
+supremum, over all configurations $x = (x_0, \dots, x_9)$ of ten pairwise distinct points
+of $\mathbb{C}^2$, of the affine Seshadri constant of $x$.
+
+This models the Seshadri constant of ten very general points of $\mathbb{P}^2$ in one
+affine chart. -/
 noncomputable def genericSeshadriConstant : ℝ :=
   sSup {r | ∃ x : Fin 10 → AffinePoint, Function.Injective x ∧
     r = affineSeshadriConstant x}
 
-/-- The ten-point multi-point Seshadri constant `C₇₄` in the affine-chart model. -/
+/-- **Ten-point Seshadri constant.** The ten-point Seshadri constant is the generic
+ten-point Seshadri constant: the supremum, over all configurations of ten pairwise distinct
+points of $\mathbb{C}^2$, of their affine Seshadri constants.
+
+It models the catalogue constant $C_{74}$, the Seshadri constant of $\mathbb{P}^2$ at ten
+very general points, in one affine chart. -/
 noncomputable def seshadriConstant10 : ℝ :=
   genericSeshadriConstant
 

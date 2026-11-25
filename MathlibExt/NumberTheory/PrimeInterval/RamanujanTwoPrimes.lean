@@ -14,11 +14,12 @@ public import MathlibExt.NumberTheory.PrimeInterval.Breusch
 
 namespace MathlibExt.NumberTheory.BreuschWanted
 
-/-- Ramanujan's two-primes refinement of Bertrand's postulate: for `n ≥ 6`
-there are two distinct primes in the open interval `(n, 2 * n)`.
+/-- **Ramanujan's two-primes refinement of Bertrand's postulate.** For every natural number
+$n \ge 6$ there are primes $p$ and $q$ with $n < p < q < 2n$; that is, the open interval
+$(n, 2n)$ contains two distinct primes.
 
-For `n ≥ 48`, this follows by applying `breusch_prime_interval` at `n` and
-`9n/8`. The remaining finite range is checked by kernel reduction.
+For $n \ge 48$ this follows from Breusch's theorem applied at $n$ and at $9n/8$; the remaining
+finitely many cases are checked by direct computation.
 
 Source: Nathaniel Benjamin, Grant Fickes, Eugene Fiorini,
 Edgar Jaramillo Rodriguez, Eric Jovinelly, and Tony W. H. Wong, "Primes

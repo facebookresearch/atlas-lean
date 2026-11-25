@@ -149,9 +149,13 @@ private theorem factorial_lt_sqrt_mul_pow_div_exp (n : ℕ) (hn : 2 ≤ n) :
         Real.exp 1 ^ (m + 2 - 1) := by
         rw [show m + 2 - 1 = m + 1 by omega, he]; field_simp
 
-/-- The second inequality of ATLAS `NumberTheoryI` Corollary 14.26, as a
-statement about the degree `n` and the number `s` of complex places:
-the Minkowski-type term strictly exceeds the exponential term. -/
+/-- **Comparison of the Minkowski and exponential discriminant bounds.** Let $n$ and $s$ be
+natural numbers with $n \ne 0$ and $2s \le n$, and let $e$ be Euler's number. Then
+$$\frac{1}{e^2 n} \left(\frac{\pi e^2}{4}\right)^n <
+\left(\frac{n^n}{n!}\right)^2 \left(\frac{\pi}{4}\right)^{2s}.$$
+
+Source: ATLAS `NumberTheoryI` Corollary 14.26 (second inequality), with $n$ the degree of a
+number field and $s$ its number of complex places. -/
 theorem pow_div_factorial_sq_mul_pi_div_four_pow_gt (n s : ℕ) (hn : n ≠ 0)
     (hs : 2 * s ≤ n) :
     (1 / (Real.exp 1 ^ 2 * n)) * ((Real.pi * Real.exp 1 ^ 2) / 4) ^ n
@@ -232,8 +236,11 @@ theorem pow_div_factorial_sq_mul_pi_div_four_pow_gt (n s : ℕ) (hn : n ≠ 0)
       _ < ((n : ℝ) ^ n / (Nat.factorial n : ℝ)) ^ 2 * (Real.pi / 4) ^ n := by
           exact mul_lt_mul_of_pos_right hsq' (pow_pos hpi_pos _)
 
-/-- The first inequality of ATLAS `NumberTheoryI` Corollary 14.26:
-the Minkowski-type term is at most `|D_K|`. This is Mathlib's
+/-- **Minkowski's lower bound for the discriminant.** Let $K$ be a number field of degree
+$n = [K : \mathbb{Q}]$ with $s$ complex places and discriminant $d_K$. Then
+$$|d_K| \ge \left(\frac{n^n}{n!}\right)^2 \left(\frac{\pi}{4}\right)^{2s}.$$
+
+Source: ATLAS `NumberTheoryI` Corollary 14.26 (first inequality); this is Mathlib's
 `NumberField.abs_discr_ge'`, restated in the form used by the book. -/
 theorem middle_term_le_abs_discr (K : Type*) [Field K] [NumberField K] :
     (((Module.finrank ℚ K : ℝ) ^ (Module.finrank ℚ K) /
@@ -259,10 +266,12 @@ theorem middle_term_le_abs_discr (K : Type*) [Field K] [NumberField K] :
   rw [hmid]
   exact h
 
-/-- ATLAS `NumberTheoryI` Corollary 14.26 (second inequality): the
-absolute discriminant of a number field of degree `n` exceeds
-`(π e ^ 2 / 4) ^ n / (e ^ 2 * n)`, so it grows at least exponentially
-in the degree. -/
+/-- **Exponential lower bound for the discriminant.** Let $K$ be a number field of degree
+$n = [K : \mathbb{Q}]$ and discriminant $d_K$, and let $e$ be Euler's number. Then
+$$|d_K| > \frac{1}{e^2 n} \left(\frac{\pi e^2}{4}\right)^n,$$
+so the absolute discriminant grows at least exponentially in the degree.
+
+Source: ATLAS `NumberTheoryI` Corollary 14.26 (second inequality). -/
 theorem abs_discr_gt_exp_term (K : Type*) [Field K] [NumberField K] :
     (1 / (Real.exp 1 ^ 2 * Module.finrank ℚ K)) *
       ((Real.pi * Real.exp 1 ^ 2) / 4) ^ (Module.finrank ℚ K) <

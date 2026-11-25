@@ -17,7 +17,7 @@ open MeasureTheory
 universe u v
 
 /-- Exact-source consumer, with the original binders and explicit universes. -/
-theorem exactSource
+private theorem exactSource
     {G : Type u} [AddGroup G] [TopologicalSpace G] [IsTopologicalAddGroup G]
     [LocallyCompactSpace G] [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G]
     (μ : MeasureTheory.Measure G) [μ.IsAddHaarMeasure]

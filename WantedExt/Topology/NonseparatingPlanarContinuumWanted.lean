@@ -43,24 +43,38 @@ Clause list (every item appears in the formal text below):
 - Status: posed as a question-Prop; the file asserts no answer.
 -/
 
-/-- Has the fixed point property (OPG-37295, node ID 37295): every
-continuous map from `K` into itself has a fixed point. -/
+/-- **Fixed point property.** A subset $K$ of the Euclidean plane $\mathbb{R}^2$ has the fixed
+point property when every continuous map $f \colon K \to K$ has a fixed point, that is, a point
+$x \in K$ with $f(x) = x$.
+
+Source: Open Problem Garden, node ID 37295,
+http://www.openproblemgarden.org/op/nonseparating_planar_continuum. -/
 def HasFixedPointProperty (K : Set (EuclideanSpace ℝ (Fin 2))) : Prop :=
   ∀ f : (↥K → ↥K), Continuous f → ∃ x : ↥K, f x = x
 
-/-- Nonseparating planar continuum conjecture (OPG-37295, node ID
-37295): any path-connected, compact set in the plane which does not
-separate the plane has the fixed point property. Stated as a
-proposition. -/
+/-- **Nonseparating planar continuum conjecture.** The conjecture asserts that every nonempty,
+compact, path-connected subset $K$ of the Euclidean plane $\mathbb{R}^2$ whose complement
+$\mathbb{R}^2 \setminus K$ is connected (that is, $K$ does not separate the plane) has the fixed
+point property: every continuous map $f \colon K \to K$ has a point $x \in K$ with $f(x) = x$.
+
+Source: Open Problem Garden, node ID 37295,
+http://www.openproblemgarden.org/op/nonseparating_planar_continuum. -/
 def conjecture : Prop :=
   ∀ K : Set (EuclideanSpace ℝ (Fin 2)),
     IsCompact K → IsPathConnected K → IsConnected Kᶜ → HasFixedPointProperty K
 
 /--
-Resolved true: Hagopian (A fixed-point theorem for plane continua, Bull. AMS 77 (1971), 351-354;
-addendum 1972) proved that every arcwise connected nonseparating plane continuum has the fixed
-point property; path-connected compact plane sets are arcwise connected, so the Lean statement
-holds. Source: A. M. Blokh, R. J. Fokkink, J. C. Mayer, L. G. Oversteegen, E. D. Tymchatyn,
+**Path-connected nonseparating plane continua have the fixed point property.** Let $K$ be a
+nonempty, compact, path-connected subset of the Euclidean plane $\mathbb{R}^2$ whose complement
+$\mathbb{R}^2 \setminus K$ is connected. Then $K$ has the fixed point property: every continuous
+map $f \colon K \to K$ has a point $x \in K$ with $f(x) = x$.
+
+This answers the nonseparating planar continuum conjecture in the affirmative. Hagopian (A
+fixed-point theorem for plane continua, Bull. AMS 77 (1971), 351-354; addendum 1972) proved that
+every arcwise connected nonseparating plane continuum has the fixed point property, and compact
+path-connected subsets of the plane are arcwise connected.
+
+Source: A. M. Blokh, R. J. Fokkink, J. C. Mayer, L. G. Oversteegen, E. D. Tymchatyn,
 Fixed point theorems for plane continua with applications, Mem. Amer. Math. Soc. 224 (2013), no.
 1053, arXiv:1004.0214 (citing C. L. Hagopian, Bull. Amer. Math. Soc. 77 (1971), 351-354),
 https://arxiv.org/abs/1004.0214. Moved from

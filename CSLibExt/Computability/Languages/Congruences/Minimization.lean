@@ -39,13 +39,18 @@ universe u v
 
 variable {Symbol : Type u} {State : Type v}
 
-/-- Reading `x` from a state transforms its continuation language by the left quotient by `x`. -/
+/-- **Left quotients of continuation languages.** Let $M$ be a DFA, write $\delta^*(q, x)$ for
+the state $M$ reaches from the state $q$ by reading the word $x$, and let $L_M(q)$ be the
+language of words accepted by $M$ when started in $q$. For every state $q$ and every word $x$,
+the left quotient $\{z : xz \in L_M(q)\}$ of $L_M(q)$ by $x$ equals $L_M(\delta^*(q, x))$. -/
 theorem leftQuotient_acceptsFrom (M : DFA Symbol State) (q : State) (x : List Symbol) :
     (M.acceptsFrom q).leftQuotient x = M.acceptsFrom (M.evalFrom q x) := by
   ext z
   simp only [Language.mem_leftQuotient, DFA.mem_acceptsFrom, DFA.evalFrom_of_append]
 
-/-- The semantic state reached by a word in `M`. -/
+/-- **Residual reached by a word.** For a DFA $M$ and a word $x$, the minimized state of $x$ is the
+language accepted by $M$ starting from the state that $M$ reaches on reading $x$ from its start
+state, viewed as an element of the reachable residuals of $M$. -/
 def minimizedState (M : DFA Symbol State) (x : List Symbol) : reachableResiduals M :=
   ⟨M.acceptsFrom (M.eval x), ⟨x, rfl⟩⟩
 
@@ -68,8 +73,10 @@ theorem minimizedState_eq_iff_nerodeRel (M : DFA Symbol State) {x y : List Symbo
     minimizedState M x = minimizedState M y ↔ nerodeRel M.accepts x y := by
   rw [minimizedState_eq_iff_stateEquivalent, nerodeRel_iff_stateEquivalent]
 
-/-- The range of left quotients and the reachable continuation languages are the same semantic
-state space. -/
+/-- **Left quotients as reachable residuals.** Let $M$ be a DFA accepting the language $L$. The
+set of left quotients $\{z : xz \in L\}$ of $L$ by words $x$ equals the set of reachable
+residuals of $M$ (the languages accepted by $M$ from the states it reaches from its start
+state). The bijection from the first set to the second sends each language to itself. -/
 noncomputable def leftQuotientEquivReachableResiduals (M : DFA Symbol State) :
     Set.range M.accepts.leftQuotient ≃ reachableResiduals M where
   toFun q := ⟨q.val, by
@@ -93,12 +100,22 @@ theorem leftQuotientEquivReachableResiduals_symm_val (M : DFA Symbol State)
     ((leftQuotientEquivReachableResiduals M).symm q).val = q.val :=
   rfl
 
-/-- The canonical residual-language DFA, presented using reachable continuation languages of `M`.
-This is a reindexing of Mathlib's `Language.toDFA`, not a second implementation. -/
+/-- **Minimized DFA.** Let $M$ be a DFA accepting the language $L$. The minimized DFA of $M$
+has as states the reachable residuals of $M$, that is, the languages accepted by $M$ from the
+states it reaches from its start state. Its start state is $L$; on a letter $a$ it moves from
+a state $K$ to the left quotient $\{z : az \in K\}$; and its accepting states are those that
+contain the empty word.
+
+It is the canonical automaton of $L$, whose states are the left quotients of $L$, with each
+state renamed to the same language viewed as a reachable residual of $M$. -/
 noncomputable def minimizedDFA (M : DFA Symbol State) : DFA Symbol (reachableResiduals M) :=
   DFA.reindex (leftQuotientEquivReachableResiduals M) M.accepts.toDFA
 
-/-- Evaluation in Mathlib's residual-language DFA reaches the left quotient by the input word. -/
+/-- **States reached in the residual-language DFA.** For every language $L$ and every word $x$, the
+state that the residual-language DFA of $L$ reaches on reading $x$ is the left quotient
+$x^{-1}L = \{z : xz \in L\}$. This automaton has the left quotients of $L$ as states, start state
+$L$, transition from $K$ on a letter $a$ to $a^{-1}K$, and accepts $K$ when $K$ contains the empty
+word. -/
 @[simp]
 theorem toDFA_eval_val (L : Language Symbol) (x : List Symbol) :
     (L.toDFA.eval x).val = L.leftQuotient x := by
@@ -108,15 +125,21 @@ theorem toDFA_eval_val (L : Language Symbol) (x : List Symbol) :
       rw [DFA.eval_append_singleton, Language.step_toDFA, ih,
         Language.leftQuotient_append]
 
-/-- Reindexing exposes exactly the existing residual-language evaluation. -/
+/-- **Evaluation in the minimized DFA agrees with the left-quotient automaton.** Let $M$ be a
+DFA accepting the language $L$, and consider the automaton whose states are the left quotients
+of $L$, with start state $L$, moving from $K$ on a letter $a$ to $\{z : az \in K\}$. For every
+word $x$, the state that the minimized DFA of $M$ reaches on $x$, carried to the left quotients
+of $L$ by the bijection that sends each language to itself, is the state that this automaton
+reaches on $x$. -/
 @[simp]
 theorem minimizedDFA_eval_equiv (M : DFA Symbol State) (x : List Symbol) :
     (leftQuotientEquivReachableResiduals M).symm ((minimizedDFA M).eval x) =
       M.accepts.toDFA.eval x := by
   simp [minimizedDFA]
 
-/-- Evaluating the minimized presentation reaches the source automaton's continuation language
-after the same word. -/
+/-- **States reached in the minimized DFA.** For every DFA $M$ and every word $x$, the state that
+the minimized DFA of $M$ reaches on $x$ is the language accepted by $M$ from the state that $M$
+reaches on $x$. -/
 @[simp]
 theorem minimizedDFA_eval (M : DFA Symbol State) (x : List Symbol) :
     (minimizedDFA M).eval x = minimizedState M x := by
@@ -125,8 +148,9 @@ theorem minimizedDFA_eval (M : DFA Symbol State) (x : List Symbol) :
   simpa only [leftQuotientEquivReachableResiduals_symm_val, toDFA_eval_val,
     minimizedState_val, Language.leftQuotient_accepts_apply] using h
 
-/-- A transition in the minimized presentation takes the left quotient of the represented
-continuation language by the input letter. -/
+/-- **Transitions of the minimized DFA.** Let $M$ be a DFA. For every reachable residual $K$ of
+$M$ (a state of the minimized DFA of $M$) and every letter $a$, the minimized DFA of $M$ moves
+from $K$ on input $a$ to the left quotient $\{z : az \in K\}$ of $K$ by $a$. -/
 @[simp]
 theorem minimizedDFA_step_val (M : DFA Symbol State) (q : reachableResiduals M) (a : Symbol) :
     ((minimizedDFA M).step q a).val = q.val.leftQuotient [a] := by
@@ -135,21 +159,27 @@ theorem minimizedDFA_step_val (M : DFA Symbol State) (q : reachableResiduals M) 
   rw [leftQuotientEquivReachableResiduals_val, Language.step_toDFA]
   rfl
 
-/-- The transition reached from a semantic state represented by `x` is the semantic state
-represented by appending the input letter. -/
+/-- **Transitions of the minimized DFA on reached states.** Let $M$ be a DFA, and for a word $x$
+let $[x]$ be the language accepted by $M$ from the state that $M$ reaches on $x$. For every word
+$x$ and every letter $a$, the minimized DFA of $M$ moves from the state $[x]$ on input $a$ to the
+state $[xa]$. -/
 @[simp]
 theorem minimizedDFA_step_minimizedState (M : DFA Symbol State) (x : List Symbol) (a : Symbol) :
     (minimizedDFA M).step (minimizedState M x) a = minimizedState M (x ++ [a]) := by
   apply Subtype.ext
   rw [minimizedDFA_step_val, minimizedState_append]
 
-/-- The reindexed minimized automaton recognizes exactly the original language. -/
+/-- **The minimized DFA accepts the same language.** For every DFA $M$, the minimized DFA of $M$
+accepts exactly the language accepted by $M$. -/
 @[simp]
 theorem minimizedDFA_accepts (M : DFA Symbol State) :
     (minimizedDFA M).accepts = M.accepts := by
   simp [minimizedDFA]
 
-/-- Mathlib's residual-language DFA is accessible. -/
+/-- **The residual-language DFA is accessible.** For every language $L$, the residual-language DFA
+of $L$ is accessible. This automaton has as states the left quotients $x^{-1}L = \{z : xz \in L\}$
+for words $x$, start state $L$, transition from $K$ on a letter $a$ to $a^{-1}K$, and accepts $K$
+when $K$ contains the empty word. -/
 theorem toDFA_accessible (L : Language Symbol) : Accessible L.toDFA := by
   intro q
   obtain ⟨x, hx⟩ := q.property
@@ -157,7 +187,8 @@ theorem toDFA_accessible (L : Language Symbol) : Accessible L.toDFA := by
   rw [toDFA_eval_val]
   exact hx
 
-/-- The reachable-residual presentation remains accessible after reindexing. -/
+/-- **The minimized DFA is accessible.** For every DFA $M$, every state of the minimized DFA of
+$M$ is reached from its start state by reading some word. -/
 theorem minimizedDFA_accessible (M : DFA Symbol State) : Accessible (minimizedDFA M) := by
   intro q
   obtain ⟨x, hx⟩ := toDFA_accessible M.accepts
@@ -165,19 +196,30 @@ theorem minimizedDFA_accessible (M : DFA Symbol State) : Accessible (minimizedDF
   refine ⟨x, ?_⟩
   rw [minimizedDFA, DFA.eval_reindex, hx, Equiv.apply_symm_apply]
 
-/-- The states of the minimized presentation are exactly the Nerode classes of the accepted
-language. -/
+/-- **Nerode classes and reachable residuals.** For a DFA $M$ accepting the language $L$, there is a
+bijection from the Nerode classes of $L$ to the reachable residuals of $M$; it sends the class of a
+word $x$ to the left quotient $x^{-1}L = \{z : xz \in L\}$. -/
 noncomputable def nerodeClassEquivMinimizedState (M : DFA Symbol State) :
     NerodeClass M.accepts ≃ reachableResiduals M :=
   nerodeClassEquivReachableResiduals M rfl
 
-/-- Semantic minimization is idempotent at the level of state spaces. -/
+/-- **Reachable residuals of the minimized DFA.** Let $M$ be a DFA accepting the language $L$.
+The reachable residuals of the minimized DFA of $M$ and the reachable residuals of $M$ both form
+the set of left quotients $x^{-1}L = \{z : xz \in L\}$ of $L$ by words $x$, and this is the
+bijection from the first set to the second that sends each language to itself.
+
+It is built as the composite of the bijections from the Nerode classes of $L$ to both sets, each
+sending the class of a word $x$ to $x^{-1}L$; so minimizing the minimized DFA again gives the
+same state space. -/
 noncomputable def minimizedStateEquivIterated (M : DFA Symbol State) :
     reachableResiduals (minimizedDFA M) ≃ reachableResiduals M :=
   (nerodeClassEquivReachableResiduals (minimizedDFA M) (minimizedDFA_accepts M)).symm.trans
     (nerodeClassEquivMinimizedState M)
 
-/-- When finite, the semantic presentation attains the universal Nerode lower bound. -/
+/-- **When finite, the minimized DFA has as many states as there are Nerode classes.** Let $M$
+be a DFA accepting the language $L$. If the set of reachable residuals of $M$ (the states of the
+minimized DFA of $M$) and the set of Nerode classes of $L$ are both finite, then they have the
+same number of elements. -/
 theorem minimizedDFA_card_eq_nerode (M : DFA Symbol State) [Fintype (reachableResiduals M)]
     [Fintype (NerodeClass M.accepts)] :
     Fintype.card (reachableResiduals M) = Fintype.card (NerodeClass M.accepts) := by
