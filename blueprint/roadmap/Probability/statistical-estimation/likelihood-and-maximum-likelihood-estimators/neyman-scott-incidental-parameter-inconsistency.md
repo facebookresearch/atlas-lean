@@ -1,6 +1,6 @@
 # Neyman–Scott inconsistency with incidental parameters
 
-Let $y_{it} = \alpha_i + u_{it}$, $t = 1, \dots, T$, $i = 1, \dots, n$, with $u_{it}$ i.i.d. $N(0, \sigma^2)$ and one incidental mean $\alpha_i$ per group. The joint maximum-likelihood estimator of the structural parameter $\sigma^2$ is
+Let $y_{it} = \alpha_i + u_{it}$, $t = 1, \dots, T$, $i = 1, \dots, n$, with an integer $T \ge 2$, $u_{it}$ i.i.d. $N(0, \sigma^2)$ with $\sigma^2 > 0$, and one incidental mean $\alpha_i$ per group. (For $T = 1$ every within-group residual vanishes and the likelihood is unbounded as the variance tends to $0$.) The joint maximum-likelihood estimator of the structural parameter $\sigma^2$ is
 
 $$\hat\sigma^2 = \frac{1}{nT} \sum_{i=1}^n \sum_{t=1}^T (y_{it} - \bar y_i)^2 \sim \frac{\sigma^2}{nT}\, \chi^2_{n(T-1)},$$
 

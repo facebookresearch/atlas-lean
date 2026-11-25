@@ -1,6 +1,6 @@
 # Coalescent effective size and failure of binary universality
 
-For a Cannings model with $N$ haploid individuals and exchangeable offspring numbers $\nu_1, \dots, \nu_N$, the probability that two lineages coalesce in one generation is
+For a Cannings model with $N \ge 2$ haploid individuals and exchangeable offspring numbers $\nu_1, \dots, \nu_N$, the probability that two lineages coalesce in one generation is
 
 $$c_N = \frac{E[\nu_1(\nu_1 - 1)]}{N - 1}$$
 

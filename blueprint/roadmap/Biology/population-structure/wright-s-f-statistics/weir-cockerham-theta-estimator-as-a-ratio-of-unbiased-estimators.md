@@ -1,6 +1,6 @@
 # Weir–Cockerham estimator of F_ST as a ratio of unbiased estimators
 
-Sample $n_i$ alleles from each of $r$ populations, let $\tilde p_{iu}$ be the sample frequency of allele $A_u$ in population $i$ and $\bar p_u$ the sample-size-weighted average, and suppose that within populations the sample frequencies have multinomial moments, and among populations the frequencies $p_{iu}$ have mean $p_u$ and variance $p_u(1 - p_u)\theta$ with no coancestry between populations. With the mean squares
+Sample $n_i \ge 1$ alleles from each of $r \ge 2$ populations, with $n_i \ge 2$ for at least one $i$,, let $\tilde p_{iu}$ be the sample frequency of allele $A_u$ in population $i$ and $\bar p_u$ the sample-size-weighted average, and suppose that within populations the sample frequencies have multinomial moments, and among populations the frequencies $p_{iu}$ have mean $p_u$ and variance $p_u(1 - p_u)\theta$ with no coancestry between populations. With the mean squares
 
 $$\mathrm{MSP}_u = \frac{1}{r - 1}\sum_{i=1}^r n_i (\tilde p_{iu} - \bar p_u)^2, \qquad \mathrm{MSG}_u = \frac{1}{\sum_i (n_i - 1)} \sum_{i=1}^r n_i\, \tilde p_{iu}(1 - \tilde p_{iu}),$$
 
