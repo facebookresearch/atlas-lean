@@ -56,8 +56,9 @@ namespace MathlibExt.Economics.Consumer
 
 open Matrix
 
-/-- The indirect utility `v(p, w) = sup {u x | x ∈ B(p, w)}`. As a real supremum it is
-meaningful only when the supremum exists. -/
+/-- The indirect utility `v(p, w) = sup {u x | x ∈ B(p, w)}`. As a real supremum it is meaningful
+only when the supremum exists. For an empty or unbounded-above set the real supremum is `0` by
+convention. -/
 noncomputable def indirectUtility {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) : ℝ :=
   sSup (u '' budgetSet X p w)
@@ -65,10 +66,11 @@ noncomputable def indirectUtility {ι : Type*} [Fintype ι] (u : (ι → ℝ) �
 -- Preserve the welfare spelling while sharing the canonical expenditure declaration.
 export MathlibExt.Economics.ExpenditureFunction (expenditure)
 
-/-- The compensating variation of a price change `p⁰ → p¹` at wealth `w`, with the frozen
-sign `CV = e(p⁰, u⁰) - e(p¹, u⁰)` at the fixed baseline utility `u⁰ = v(p⁰, w)`: the wealth
-that can be taken from the consumer after the change while keeping baseline utility
-(positive for a welfare gain). -/
+/-- The compensating variation of a price change `p⁰ → p¹` at wealth `w`, with the frozen sign
+`CV = e(p⁰, u⁰) - e(p¹, u⁰)` at the fixed baseline utility `u⁰ = v(p⁰, w)`: the wealth that can be
+taken from the consumer after the change while keeping baseline utility (positive for a welfare
+gain). The expenditure function is a real infimum, `0` for an empty set or one unbounded below, and
+the indirect utility a real supremum, `0` for an empty set or one unbounded above. -/
 noncomputable def compensatingVariation {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p₀ p₁ : ι → ℝ) (w : ℝ) : ℝ :=
   expenditure u X p₀ (indirectUtility u X p₀ w) - expenditure u X p₁ (indirectUtility u X p₀ w)

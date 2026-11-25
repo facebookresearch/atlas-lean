@@ -18,9 +18,11 @@ frequencies grow geometrically they behave almost like independent random variab
 them has mean zero unless a signed sum $\pm r_{k_1} \pm \dots \pm r_{k_j}$ of their frequencies vanishes,
 and geometric growth makes such cancellations rare, so their normalized sums are asymptotically Gaussian with variance
 $1/2$. Lacunary series are a model case of dependent sequences that still obey the classical limit laws
-of probability. Kac's Problem 161 of the Scottish Book asks for the same conclusion under the condition
-$r_n - (r_0 + \dots + r_{n-1}) \to +\infty$; its statement for all integer sequences is false, since the
-constant sequence $-1$ satisfies that condition, and it is held back.
+of probability. Kac's Problem 161 of the Scottish Book asks whether the same conclusion holds for
+sequences of positive integers with $r_n - (r_0 + \dots + r_{n-1}) \to +\infty$. This condition
+differs from the Hadamard-gap condition above: $r_n = 2^n$ has Hadamard gaps with $q = 2$ but does not
+satisfy it. For arbitrary integer sequences the answer is no: the constant sequence $r_k = -1$
+satisfies the condition, but its normalized sum $-\sqrt{n} \sin(2 \pi x)$ is not asymptotically normal.
 
 ## Statements
 

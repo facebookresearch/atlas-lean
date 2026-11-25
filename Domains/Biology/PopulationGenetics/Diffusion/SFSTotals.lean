@@ -70,14 +70,13 @@ private theorem sum_two_mul_sub_Ico (n : ℕ) (hn : 2 ≤ n) :
   ring
 
 /-- Expected total number of segregating sites (Watterson's formula, with the
-sum explicit): in the neutral infinite-sites model, the sum of
+sum explicit; an expected count for `θ ≥ 0`): in the neutral infinite-sites model, the sum of
 `expectedSFS θ 0 n i` over the segregating classes `1 ≤ i < n` equals `θ`
 times the harmonic sum over those classes. The monomorphic class `i = n` is
-excluded, matching `expectedSFS_neutral`. The class `i = 0` is also excluded:
-there the integrand is not integrable and the model has an infinite expected
-number of ancestral-monomorphic sites; separately, Lean assigns its arbitrary
-junk value `0` to a non-integrable real integral, so that Lean value is not an
-expectation result. -/
+excluded, matching `expectedSFS_neutral`. The class `i = 0` is also excluded: for
+`θ ≠ 0` its integrand has a `θ / x` singularity and is not integrable (for `θ > 0` the model has an
+infinite expected number of ancestral-monomorphic sites), while for `θ = 0` it is identically zero;
+Lean assigns the value `0` to a non-integrable real integral, which is not an expectation result. -/
 theorem sum_expectedSFS_neutral (θ : ℝ) (n : ℕ) :
     ∑ i ∈ Finset.Ico 1 n,
         MathlibExt.Biology.PopulationGenetics.Diffusion.expectedSFS θ 0 n i
@@ -93,7 +92,8 @@ theorem sum_expectedSFS_neutral (θ : ℝ) (n : ℕ) :
 /-- Expected pairwise diversity from the neutral spectrum: each segregating
 class `i` contributes its expected site count weighted by the probability
 that two distinct sampled gene copies differ at a site of that class; the
-total is the neutral expected pairwise diversity `θ`. -/
+total, for `n ≥ 2`, is the neutral expected pairwise diversity `θ` (an expectation for
+`θ ≥ 0`). -/
 theorem sum_pairwiseDiversity_expectedSFS_neutral (θ : ℝ) (n : ℕ) (hn : 2 ≤ n) :
     ∑ i ∈ Finset.Ico 1 n,
         (2 * (i : ℝ) * ((n : ℝ) - (i : ℝ)) / ((n : ℝ) * ((n : ℝ) - 1)))

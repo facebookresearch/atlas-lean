@@ -21,24 +21,11 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
-public import MathlibExt.NumberTheory.DistinctMultiplesInterval
+public import MathlibExt.NumberTheory.DistinctMultiplesIntervalMul
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **An inequality between diagonal and shifted interval lengths.** For natural numbers $n$ and
-$m$, let $f(n, m)$ be the least natural number $L$ such that the interval $(m, m + L]$ contains
-distinct multiples of $1, \dots, n$. Then for all positive integers $k$ and $n$,
-$kn + f(kn, kn) \le k^2 n + f(n, k^2 n)$.
-
-Source: Wouter van Doorn, *On the Length of an Interval That Contains Distinct Multiples of the
-First n Positive Integers*, INTEGERS 26 (2026), Article A7, Lemma 2
-(`integers-2026-A7-lem-2`). -/
-public theorem_wanted distinctMultiplesIntervalLength_mul_le {k n : ℕ} (hk : 0 < k)
-    (hn : 0 < n) :
-    k * n + distinctMultiplesIntervalLength (k * n) (k * n) ≤
-      k ^ 2 * n + distinctMultiplesIntervalLength n (k ^ 2 * n)
 
 /-- **Erdős–Pomerance bounds for the diagonal interval length.** For natural numbers $n$ and $m$,
 let $f(n, m)$ be the least natural number $L$ such that the interval $(m, m + L]$ contains

@@ -11,6 +11,8 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Height.NumberField
+public import MathlibExt.NumberTheory.EllipticCurveNaiveHeightLowerBounds
+public import MathlibExt.NumberTheory.EllipticCurveNaiveHeightUnitCoeff
 
 /-!
 # Lower bounds for the naive height of rational points on elliptic curves
@@ -29,27 +31,6 @@ primitive integer representative; here it is Mathlib's `Height.mulHeight ![b₁,
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Height lower bounds on $y^2 = x^3 + ax + b$ when $a = \pm 1$ or $b = \pm 1$.** Let
-$a, b \in \mathbb{Z}$ with $4a^3 + 27b^2 \ne 0$, and for $u, v \in \mathbb{Q}$ let
-$H(u, v) = \max(|U|, |V|, |W|)$, where $U, V, W$ are coprime integers with
-$(U : V : W) = (u : v : 1)$. Consider the rational solutions $(u, v)$ of $v^2 = u^3 + au + b$.
-(a) If $a = \pm 1$ and $b \notin \{0, 1, -1\}$, every solution has $H(u, v) \ge (|b|/5)^{1/3}$.
-(b) If $a \notin \{0, 1, -1\}$ and $b = -1$, every solution has $H(u, v) \ge (|a|/5)^{1/3}$.
-(c) If $a \notin \{0, 1, -1\}$ and $b = 1$, every solution with $H(u, v) < (|a|/5)^{1/3}$ is
-$(0, 1)$ or $(0, -1)$.
-
-Source: Dimitrios Poulakis, *Lower Bounds for the Height of Rational Points of Elliptic
-Curves*, INTEGERS 25 (2025), Article A66, Theorem 2 (`integers-2025-A66-thm-2`). -/
-public theorem_wanted naiveHeight_lower_bound_of_unit_coeff (a b : ℤ)
-    (hE : 4 * a ^ 3 + 27 * b ^ 2 ≠ 0) :
-    ((a = 1 ∨ a = -1) → b ≠ 0 → b ≠ 1 → b ≠ -1 → ∀ u v : ℚ, v ^ 2 = u ^ 3 + a * u + b →
-        ¬ Height.mulHeight ![u, v, 1] < (|(b : ℝ)| / 5) ^ ((1 : ℝ) / 3)) ∧
-      (a ≠ 0 → a ≠ 1 → a ≠ -1 → b = -1 → ∀ u v : ℚ, v ^ 2 = u ^ 3 + a * u + b →
-        ¬ Height.mulHeight ![u, v, 1] < (|(a : ℝ)| / 5) ^ ((1 : ℝ) / 3)) ∧
-      (a ≠ 0 → a ≠ 1 → a ≠ -1 → b = 1 → ∀ u v : ℚ, v ^ 2 = u ^ 3 + a * u + b →
-        Height.mulHeight ![u, v, 1] < (|(a : ℝ)| / 5) ^ ((1 : ℝ) / 3) →
-          u = 0 ∧ (v = 1 ∨ v = -1))
 
 /-- **Height lower bounds on $y^2 = x^3 + ax + b$ when $b = \pm a$, $b = 0$ or $a = 0$.** Let
 $a, b \in \mathbb{Z}$ with $4a^3 + 27b^2 \ne 0$, and for $u, v \in \mathbb{Q}$ let
@@ -91,21 +72,6 @@ public theorem_wanted naiveHeight_lt_sqrt_mul_naiveHeight_x_rpow (a b : ℤ) (ha
     (hP : v ^ 2 = u ^ 3 + a * u - b) :
     Height.mulHeight ![u, v, 1] <
       Real.sqrt (1 + |(a : ℝ)|) * Height.mulHeight ![u, 1] ^ ((3 : ℝ) / 2)
-
-/-- **Height lower bound on $y^2 = x^3 + ax + b$ when $|a|$ is small.** Let $a, b \in \mathbb{Z}$
-with $ab \ne 0$ and $4a^3 + 27b^2 \ne 0$, let $\lVert p \rVert = \sqrt{2 + a^2 + b^2}$, and suppose
-$1 + |a| < \lVert p \rVert^{1/2}/1.782$. For $u, v \in \mathbb{Q}$ let
-$H(u, v) = \max(|U|, |V|, |W|)$, where $U, V, W$ are coprime integers with
-$(U : V : W) = (u : v : 1)$. Then every rational solution $(u, v)$ of $v^2 = u^3 + au + b$ with
-$uv \ne 0$ satisfies $H(u, v) > \lVert p \rVert^{1/6}/1.634$.
-
-Source: Dimitrios Poulakis, *Lower Bounds for the Height of Rational Points of Elliptic
-Curves*, INTEGERS 25 (2025), Article A66, Corollary 1 (`integers-2025-A66-cor-1`). -/
-public theorem_wanted naiveHeight_gt_of_small_linear_coeff (a b : ℤ) (hab : a * b ≠ 0)
-    (hE : 4 * a ^ 3 + 27 * b ^ 2 ≠ 0)
-    (hsmall : 1 + |(a : ℝ)| < Real.sqrt (2 + a ^ 2 + b ^ 2) ^ ((1 : ℝ) / 2) / 1.782) (u v : ℚ)
-    (huv : u * v ≠ 0) (hP : v ^ 2 = u ^ 3 + a * u + b) :
-    Real.sqrt (2 + a ^ 2 + b ^ 2) ^ ((1 : ℝ) / 6) / 1.634 < Height.mulHeight ![u, v, 1]
 
 end
 

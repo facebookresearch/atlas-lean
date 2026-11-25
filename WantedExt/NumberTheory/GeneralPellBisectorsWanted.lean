@@ -13,168 +13,12 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.Diophantine.NegativePellRational
 public import MathlibExt.NumberTheory.GeneralPellBisectors
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-open Classical in
-/-- **Second coordinate of the fundamental negative Pell solution.** For a natural number $d$,
-$Y$ is the least positive integer $y$ such that $x^2 - d y^2 = -1$ for some integer $x$, and
-$Y = 0$ when there is no such $y$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (23)-(24)
-(`integers-2024-A111-prop-5`). -/
-noncomputable def negPellFundY (d : ℕ) : ℕ :=
-  if h : ∃ y : ℕ, 0 < y ∧ ∃ x : ℕ, x ^ 2 + 1 = d * y ^ 2 then Nat.find h else 0
-
-/-- **First coordinate of the fundamental negative Pell solution.** For a natural number $d$, let
-$Y$ be the least positive integer $y$ such that $x^2 - d y^2 = -1$ for some integer $x$, or $0$
-if there is no such $y$. Then $X = \lfloor \sqrt{d Y^2 - 1} \rfloor$, where $d Y^2 - 1$ is read
-as $0$ when $d Y^2 = 0$. So $X$ is the nonnegative integer with $X^2 - d Y^2 = -1$ when a solution
-exists, and $X = 0$ otherwise.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (23)-(24)
-(`integers-2024-A111-prop-5`). -/
-noncomputable def negPellFundX (d : ℕ) : ℕ :=
-  Nat.sqrt (d * negPellFundY d ^ 2 - 1)
-
-open Classical in
-/-- **The fundamental negative Pell solution solves the equation.** Let $d$ be a natural number
-such that $x^2 - d y^2 = -1$ has a solution in a natural number $x$ and a positive integer $y$.
-Then the fundamental solution $(X, Y)$, the one with the least positive $y$, satisfies $Y > 0$
-and $X^2 + 1 = d Y^2$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (24)
-(`integers-2024-A111-prop-5`). -/
-theorem negPellFund_spec {d : ℕ} (h : ∃ y : ℕ, 0 < y ∧ ∃ x : ℕ, x ^ 2 + 1 = d * y ^ 2) :
-    0 < negPellFundY d ∧ negPellFundX d ^ 2 + 1 = d * negPellFundY d ^ 2 := by
-  have hY : negPellFundY d = Nat.find h := by simp [negPellFundY, h]
-  obtain ⟨hpos, x, hx⟩ := Nat.find_spec h
-  rw [← hY] at hpos hx
-  refine ⟨hpos, ?_⟩
-  have : d * negPellFundY d ^ 2 - 1 = x ^ 2 := by omega
-  simp only [negPellFundX, this, Nat.sqrt_eq']
-  exact hx
-
-open Classical in
-/-- **Minimality of the fundamental negative Pell solution.** Let $d$ be a natural number and let
-$Y$ be the second coordinate of its fundamental negative Pell solution. If $y$ is a positive
-integer such that $x^2 - d y^2 = -1$ for some natural number $x$, then $Y \le y$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (24)
-(`integers-2024-A111-prop-5`). -/
-theorem negPellFundY_le {d y : ℕ} (hy : 0 < y) (hx : ∃ x : ℕ, x ^ 2 + 1 = d * y ^ 2) :
-    negPellFundY d ≤ y := by
-  have h : ∃ y : ℕ, 0 < y ∧ ∃ x : ℕ, x ^ 2 + 1 = d * y ^ 2 := ⟨y, hy, hx⟩
-  have hY : negPellFundY d = Nat.find h := by simp [negPellFundY, h]
-  rw [hY]
-  exact Nat.find_min' h ⟨hy, hx⟩
-
-open Classical in
-/-- **The fundamental solution of the negative Pell equation for d = 2.** The least positive
-integer $y$ such that $x^2 - 2 y^2 = -1$ for some integer $x$ is $Y = 1$, and the corresponding
-first coordinate is $X = 1$; that is, the fundamental solution for $d = 2$ is $(1, 1)$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (23)-(24)
-(`integers-2024-A111-prop-5`). -/
-theorem negPellFund_two : negPellFundY 2 = 1 ∧ negPellFundX 2 = 1 := by
-  have h : ∃ y : ℕ, 0 < y ∧ ∃ x : ℕ, x ^ 2 + 1 = 2 * y ^ 2 := ⟨1, by norm_num, 1, by norm_num⟩
-  have hY : negPellFundY 2 = 1 := by
-    simp only [negPellFundY, h, dite_true]
-    rw [Nat.find_eq_iff]
-    exact ⟨⟨by norm_num, 1, by norm_num⟩, fun n hn ⟨hn0, _⟩ => by omega⟩
-  refine ⟨hY, ?_⟩
-  simp [negPellFundX, hY]
-
-/-- **First coordinates of the powers of the fundamental negative Pell solution.** For a natural
-number $d$, let $Y$ be the least positive integer $y$ such that $x^2 - d y^2 = -1$ for some
-integer $x$, let $X$ be the nonnegative integer with $X^2 - d Y^2 = -1$, and set $X = Y = 0$
-when there is no such $y$. In the ring $\mathbb{Z}[\sqrt{d}]$ of formal expressions
-$a + b \sqrt{d}$ with $a, b \in \mathbb{Z}$ and $(\sqrt{d})^2 = d$, put
-$\varepsilon = X + Y \sqrt{d}$. For $n \ge 0$, $f_n$ is the integer such that
-$\varepsilon^n = f_n + g_n \sqrt{d}$ for some integer $g_n$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (23)
-(`integers-2024-A111-prop-5`). -/
-noncomputable def negPellF (d n : ℕ) : ℤ :=
-  ((⟨negPellFundX d, negPellFundY d⟩ : ℤ√(d : ℤ)) ^ n).re
-
-/-- **Second coordinates of the powers of the fundamental negative Pell solution.** For a natural
-number $d$, let $Y$ be the least positive integer $y$ such that $x^2 - d y^2 = -1$ for some
-integer $x$, let $X$ be the nonnegative integer with $X^2 - d Y^2 = -1$, and set $X = Y = 0$
-when there is no such $y$. In the ring $\mathbb{Z}[\sqrt{d}]$ of formal expressions
-$a + b \sqrt{d}$ with $a, b \in \mathbb{Z}$ and $(\sqrt{d})^2 = d$, put
-$\varepsilon = X + Y \sqrt{d}$. For $n \ge 0$, $g_n$ is the integer such that
-$\varepsilon^n = f_n + g_n \sqrt{d}$ for some integer $f_n$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (23)
-(`integers-2024-A111-prop-5`). -/
-noncomputable def negPellG (d n : ℕ) : ℤ :=
-  ((⟨negPellFundX d, negPellFundY d⟩ : ℤ√(d : ℤ)) ^ n).im
-
-/-- **Initial values of the negative Pell sequences.** For every natural number $d$, the
-sequences $f_n$ and $g_n$ of the negative Pell equation $x^2 - d y^2 = -1$ satisfy $f_0 = 1$ and
-$g_0 = 0$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (23)
-(`integers-2024-A111-prop-5`). -/
-@[simp]
-theorem negPellF_zero_negPellG_zero (d : ℕ) : negPellF d 0 = 1 ∧ negPellG d 0 = 0 := by
-  simp [negPellF, negPellG]
-
-/-- **Recurrence for the negative Pell sequences.** Let $d$ be a natural number, let $(X, Y)$ be the
-solution of $x^2 - d y^2 = -1$ in natural numbers with least positive $Y$ (with $X = Y = 0$ if
-there is none), and define integers $f_n, g_n$ by $(X + Y\sqrt{d})^n = f_n + g_n\sqrt{d}$,
-computed formally with $(\sqrt{d})^2 = d$. Then for every $n \ge 0$,
-$$f_{n+1} = f_n X + d g_n Y, \qquad g_{n+1} = f_n Y + g_n X.$$
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (23)
-(`integers-2024-A111-prop-5`). -/
-theorem negPell_succ (d n : ℕ) :
-    negPellF d (n + 1) = negPellF d n * negPellFundX d + d * negPellG d n * negPellFundY d ∧
-      negPellG d (n + 1) = negPellF d n * negPellFundY d + negPellG d n * negPellFundX d := by
-  simp [negPellF, negPellG, pow_succ]
-
-/-- **The negative Pell sequences for d = 2 at n = 1.** Let $(X, Y)$ be the solution of
-$x^2 - 2y^2 = -1$ in natural numbers with the least positive $Y$, and for each $n$ let $f_n$ and
-$g_n$ be the integers with $(X + Y\sqrt 2)^n = f_n + g_n \sqrt 2$. Then $f_1 = g_1 = 1$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 5, (23)
-(`integers-2024-A111-prop-5`). -/
-theorem negPellF_two_one : negPellF 2 1 = 1 ∧ negPellG 2 1 = 1 := by
-  simp [negPellF, negPellG, negPellFund_two]
-
-/-- **Angle bisectors satisfy the bisector equation.** Let $a, b, c$ be real numbers with
-$|a| \ne |b|$ and $c \ne 0$, and suppose that the lines $y = cx$ and $y = -c^{-1} x$ both bisect
-the angles between the lines $y = ax$ and $y = bx$, that is,
-$$
-\frac{|a - c|}{\sqrt{a^2 + 1}} = \frac{|b - c|}{\sqrt{b^2 + 1}} \quad\text{and}\quad
-\frac{|a + c^{-1}|}{\sqrt{a^2 + 1}} = \frac{|b + c^{-1}|}{\sqrt{b^2 + 1}}.
-$$
-Then $(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1)$.
-
-A line $y = sx$ bisects the angles between $y = ax$ and $y = bx$ exactly when the point $(1, s)$
-is equidistant from both lines, that is, when $|a - s| / \sqrt{a^2 + 1} = |b - s| / \sqrt{b^2 + 1}$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 1(a)
-(`integers-2024-A111-prop-1`). -/
-public theorem_wanted bisector_slope_equation (a b c : ℝ) (hab : |a| ≠ |b|) (hc : c ≠ 0)
-    (hbis : |a - c| / √(a ^ 2 + 1) = |b - c| / √(b ^ 2 + 1))
-    (hbis' : |a + c⁻¹| / √(a ^ 2 + 1) = |b + c⁻¹| / √(b ^ 2 + 1)) :
-    (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)
 
 /-- **Rational solutions of the bisector equation.** Let $a, b, c$ be rational numbers with
 $|a| \ne |b|$ and $(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1)$. Then there are a square-free
@@ -304,15 +148,6 @@ public theorem_wanted generalPell_finitely_many_classes (d : ℤ) (hd₀ : 0 < d
       ∀ x y : ℤ, x ^ 2 - d * y ^ 2 = z → ∃ p ∈ s, ∃ n : ℤ, ∃ σ : ℤ√d, (σ = 1 ∨ σ = -1) ∧
         (⟨x, y⟩ : ℤ√d) = σ * ((ε ^ n : Pell.Solution₁ d) : ℤ√d) * ⟨p.1, p.2⟩
 
-/-- **Rational solvability of the negative Pell equation.** For a positive squarefree integer
-$d$, the equation $x^2 - d y^2 = -1$ has a rational solution if and only if no prime divisor of
-$d$ is congruent to $3$ modulo $4$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 5 (`integers-2024-A111-thm-5`). -/
-public theorem_wanted negPell_rat_solvable_iff (d : ℕ) (hd : 0 < d) (hsq : Squarefree d) :
-    (∃ x y : ℚ, x ^ 2 - d * y ^ 2 = -1) ↔ ∀ p : ℕ, p.Prime → p ∣ d → p % 4 ≠ 3
-
 /-- **Basic properties of the negative Pell sequences.** Let $d > 1$ be a natural number such that
 $x^2 - d y^2 = -1$ has an integral solution, let $(X, Y)$ be its solution in natural numbers with
 least positive $Y$, and define integers $f_n, g_n$ by $(X + Y\sqrt{d})^n = f_n + g_n\sqrt{d}$.
@@ -395,21 +230,6 @@ public theorem_wanted negPell_sum_difference_formulas (d : ℕ)
         (if n % 2 = 0 then 2 * negPellF d m * negPellG d n
           else 2 * negPellG d m * negPellF d n)
 
-/-- **Comparison of the negative Pell sequences.** Let $d > 1$ be a natural number such that
-$x^2 - d y^2 = -1$ has an integer solution, let $(X, Y)$ be its fundamental solution (the one with
-$X, Y > 0$ and $Y$ least), and write $(X + Y \sqrt{d})^n = f_n + g_n \sqrt{d}$. Then for every
-$n \ge 0$, $g_n \le f_n$, with equality if and only if $d = 2$ and $n = 1$.
-
-Only the first sentence of the source's corollary is stated here: its second sentence, printed as
-$f_1 \ge d - 1$ with a displaced square root sign, fails when read literally at $d = 5$, where
-$f_1 = 2$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Corollary 2, first sentence
-(`integers-2024-A111-cor-2`). -/
-public theorem_wanted negPellG_le_negPellF (d : ℕ) (hd : 1 < d)
-    (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (n : ℕ) :
-    negPellG d n ≤ negPellF d n ∧ (negPellF d n = negPellG d n ↔ d = 2 ∧ n = 1)
 
 /-- **Coprimality of the negative Pell sequences.** Let $d > 1$ be a natural number such that
 $x^2 - d y^2 = -1$ has an integral solution, let $(X, Y)$ be its solution in natural numbers with
@@ -472,17 +292,6 @@ Rational Slopes*, INTEGERS 24 (2024), Article A111, Lemma 1(c), first sentence
 (`integers-2024-A111-lem-1`). -/
 public theorem_wanted even_of_abs_sq_sub_mul_sq_four_mod_eight (d z : ℤ) (hd : d % 8 = 1)
     (hz : z % 8 = 4) (x y : ℤ) (h : |x ^ 2 - d * y ^ 2| = z) : Even x ∧ Even y
-
-/-- **Solutions of |x² − dy²| = z are even when d ≡ 5 and z ≡ 0 (mod 8).** Let $d$ and $z$ be
-integers with $d \equiv 5 \pmod 8$ and $z \equiv 0 \pmod 8$. If integers $x$ and $y$ satisfy
-$|x^2 - dy^2| = z$, then $x$ and $y$ are both even.
-
-The paper also assumes $z > 1$; this is not needed.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Lemma 1(d) (`integers-2024-A111-lem-1`). -/
-public theorem_wanted even_of_abs_sq_sub_mul_sq_zero_mod_eight (d z : ℤ) (hd : d % 8 = 5)
-    (hz : z % 8 = 0) (x y : ℤ) (h : |x ^ 2 - d * y ^ 2| = z) : Even x ∧ Even y
 
 open Classical in
 /-- **Primes with strictly primitive representations.** For an integer $d$, $S(d)$ is the set of
@@ -619,67 +428,6 @@ public theorem_wanted bisector_equation_form_two (l m n : ℤ) (hlm : |l| ≠ |m
     ∀ c ∈ ({((l : ℚ) * m - n ^ 2) / ((l + m) * n), -(((l : ℚ) + m) * n) / (l * m - n ^ 2)} :
         Set ℚ), (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)
 
-/-- **Rational solutions of the bisector equation for square-free $d > 1$.** Let $d > 1$ be a
-square-free integer and let $a, b, c$ be rational numbers with $|a| \ne |b|$ and
-$$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1).$$
-Suppose there are rational numbers $u, v$ with $a^2 - d u^2 = -1$ and $b^2 - d v^2 = -1$. Then
-there are rational numbers $a_2, b_2$ with $a^2 - d a_2^2 = -1$ and $b^2 - d b_2^2 = -1$ such
-that either $a_2 + b_2 \ne 0$ and $c = (a b_2 + a_2 b) / (a_2 + b_2)$, or $a b_2 + a_2 b \ne 0$
-and $c = -(a_2 + b_2) / (a b_2 + a_2 b)$.
-
-In terms of $\alpha = a + a_2 \sqrt{d}$ and $\beta = b + b_2 \sqrt{d}$, which have norm $-1$, and
-the conjugation $'$ of $\mathbb{Q}(\sqrt{d})$, the first quotient is
-$(\alpha\beta - (\alpha\beta)') / (\alpha + \beta - (\alpha + \beta)')$.
-
-Source: the theorem's second part (the factorization of $\alpha, \beta$ through $\eta$, $\xi_p$
-and $S(d)$) is not formalized.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 1(ii), first
-sentence (`integers-2024-A111-thm-1`). -/
-public theorem_wanted bisector_equation_rat_solution_negPell (d : ℤ) (hd : 1 < d)
-    (hsq : Squarefree d) (a b c : ℚ) (hab : |a| ≠ |b|)
-    (h : (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1))
-    (ha : ∃ a₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1) (hb : ∃ b₂ : ℚ, b ^ 2 - d * b₂ ^ 2 = -1) :
-    ∃ a₂ b₂ : ℚ, a ^ 2 - d * a₂ ^ 2 = -1 ∧ b ^ 2 - d * b₂ ^ 2 = -1 ∧
-      ((a₂ + b₂ ≠ 0 ∧ c = (a * b₂ + a₂ * b) / (a₂ + b₂)) ∨
-        (a * b₂ + a₂ * b ≠ 0 ∧ c = -(a₂ + b₂) / (a * b₂ + a₂ * b)))
-
-/-- **Bisector-equation solutions from two solutions of $x^2 - d y^2 = -1$.** Let $d$ be an integer
-and let $a, a_2, b, b_2$ be rational numbers with $a^2 - d a_2^2 = -1$ and $b^2 - d b_2^2 = -1$.
-If $a_2 + b_2 \ne 0$, then $c = (a b_2 + a_2 b) / (a_2 + b_2)$ satisfies
-$$(a - c)^2 (b^2 + 1) = (b - c)^2 (a^2 + 1),$$
-and if $a b_2 + a_2 b \ne 0$, then $c = -(a_2 + b_2) / (a b_2 + a_2 b)$ satisfies it as well.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 1, converse
-for (3) (`integers-2024-A111-thm-1`). -/
-public theorem_wanted bisector_equation_form_three (d : ℤ) (a a₂ b b₂ : ℚ)
-    (ha : a ^ 2 - d * a₂ ^ 2 = -1) (hb : b ^ 2 - d * b₂ ^ 2 = -1) :
-    (a₂ + b₂ ≠ 0 → let c := (a * b₂ + a₂ * b) / (a₂ + b₂)
-      (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1)) ∧
-    (a * b₂ + a₂ * b ≠ 0 → let c := -(a₂ + b₂) / (a * b₂ + a₂ * b)
-      (a - c) ^ 2 * (b ^ 2 + 1) = (b - c) ^ 2 * (a ^ 2 + 1))
-
-/-- **Products of strictly primitive solutions.** Let $d > 1$ be a square-free integer. Write
-elements of $\mathbb{Z}[\sqrt{d}]$ as $u + v\sqrt{d}$ with integers $u, v$, and let
-$N(u + v\sqrt{d}) = u^2 - d v^2$ be the norm. Let $p_1, \dots, p_r$ be distinct primes and
-$n_1, \dots, n_r$ natural numbers, and suppose that each $a_i = u_i + v_i\sqrt{d}$ satisfies
-$|N(a_i)| = p_i^{n_i}$ with $u_i$ and $d v_i$ coprime. Then $a = a_1 \cdots a_r = u + v\sqrt{d}$
-satisfies $|N(a)| = p_1^{n_1} \cdots p_r^{n_r}$ with $u$ and $d v$ coprime; that is, $a$ gives a
-strictly primitive solution of $|x^2 - d y^2| = p_1^{n_1} \cdots p_r^{n_r}$.
-
-The sign $\pm$ in the source's equation (13) is dropped; negation preserves both conclusions.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 3(a)
-(`integers-2024-A111-prop-3`). -/
-public theorem_wanted strictlyPrimitive_prod (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) {r : ℕ}
-    (p : Fin r → ℕ) (hp : ∀ i, (p i).Prime) (hinj : Function.Injective p) (n : Fin r → ℕ)
-    (a : Fin r → ℤ√d) (ha : ∀ i, IsCoprime (a i).re (d * (a i).im))
-    (hN : ∀ i, |(a i).norm| = (p i : ℤ) ^ n i) :
-    IsCoprime (∏ i, a i).re (d * (∏ i, a i).im) ∧ |(∏ i, a i).norm| = ∏ i, (p i : ℤ) ^ n i
-
 /-- **Powers of strictly primitive solutions.** Let $d > 1$ be a square-free integer, $p$ an odd
 prime, and $m, n > 0$ natural numbers. Write elements of $\mathbb{Z}[\sqrt{d}]$ as $u + v\sqrt{d}$
 with integers $u, v$, and let $N(u + v\sqrt{d}) = u^2 - d v^2$ be the norm. If
@@ -698,19 +446,6 @@ public theorem_wanted strictlyPrimitive_pow (d : ℤ) (hd : 1 < d) (hsq : Square
     (hp : p.Prime) (hp2 : p ≠ 2) (m n : ℕ) (hm : 0 < m) (hn : 0 < n) (a : ℤ√d)
     (ha : IsCoprime a.re (d * a.im)) (hN : |a.norm| = (p : ℤ) ^ m) :
     IsCoprime (a ^ n).re (d * (a ^ n).im) ∧ |(a ^ n).norm| = (p : ℤ) ^ (m * n)
-
-/-- **Negating the value of a strictly primitive solution.** Let $d > 1$ be a square-free integer
-such that $x^2 - d y^2 = -1$ has an integral solution, and let $z \ne 0$ be an integer. If
-$x^2 - d y^2 = z$ has an integral solution with $x$ and $d y$ coprime, then so does
-$x^2 - d y^2 = -z$.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Proposition 4
-(`integers-2024-A111-prop-4`). -/
-public theorem_wanted strictlyPrimitive_neg (d : ℤ) (hd : 1 < d) (hsq : Squarefree d) (z : ℤ)
-    (hz : z ≠ 0) (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1)
-    (h : ∃ x y : ℤ, IsCoprime x (d * y) ∧ x ^ 2 - d * y ^ 2 = z) :
-    ∃ x y : ℤ, IsCoprime x (d * y) ∧ x ^ 2 - d * y ^ 2 = -z
 
 /-- **Strictly primitive solutions modulo p and splitting of p.** Let $d > 1$ be a square-free
 integer, let $K$ be a number field of degree $2$ over $\mathbb{Q}$ containing an element $s$ with

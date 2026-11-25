@@ -58,7 +58,7 @@ abbrev Amb (n : ℕ) : Type := EuclideanSpace ℝ (Fin n)
 /-- **Unit sphere in Euclidean space.** For a natural number $n$, the unit sphere
 $S^{n-1} \subseteq \mathbb{R}^n$ is the set of points of $\mathbb{R}^n$ at Euclidean distance $1$
 from the origin. -/
-abbrev Sph (n : ℕ) : Set (Amb n) := sphere (0 : Amb n) 1
+noncomputable abbrev Sph (n : ℕ) : Set (Amb n) := sphere (0 : Amb n) 1
 
 /-- **Model hyperplane.** For $n \ge 1$, the model hyperplane in $\mathbb{R}^n$ is the set of
 points $x = (x_0, \dots, x_{n-1})$ whose first coordinate $x_0$ is $0$. It is the local model for

@@ -18,13 +18,14 @@ import Mathlib.Tactic.FieldSimp
 
 ## i. Overview
 
-For a beam span `L ≠ 0` under constant load `w`, integrating the
-four Hermite shape functions (in `ξ = x / L`: deflection,
-rotation, deflection, rotation) against `w` over `[0, L]` gives
-the consistent nodal load vector
+For a beam span `L ≠ 0` under constant load `w`, the oriented
+integrals over `0..L` of `w` times the four Hermite shape
+functions (in `ξ = x / L`: deflection, rotation, deflection,
+rotation) are the consistent nodal load vector
 `(w * L / 2, w * L ^ 2 / 12, w * L / 2, -w * L ^ 2 / 12)`. The
-vertical entries sum to the total load `w * L`; the moment
-entries are equal in magnitude and opposite in sign.
+moment entries are equal in magnitude and opposite in sign; in
+the physical reading `L > 0` the vertical entries sum to the
+total load `w * L`.
 
 ## ii. Key results
 
@@ -54,14 +55,15 @@ open intervalIntegral
 namespace HermiteCubic
 
 /-- Consistent load vector for a uniform span load. For span
-`L ≠ 0` and constant load `w`, integrating the four Hermite shape
-functions (in `ξ = x / L`, in the interleaved nodal order
-`[v₁, θ₁, v₂, θ₂]`: end-1 deflection, end-1 rotation, end-2
-deflection, end-2 rotation) against `w` over `[0, L]` gives the
+`L ≠ 0` and constant load `w`, the oriented integrals over `0..L`
+of `w` times the four Hermite shape functions (in `ξ = x / L`, in
+the interleaved nodal order `[v₁, θ₁, v₂, θ₂]`: end-1 deflection,
+end-1 rotation, end-2 deflection, end-2 rotation) are the
 consistent nodal load vector
-`(w * L / 2, w * L ^ 2 / 12, w * L / 2, -w * L ^ 2 / 12)`: the two
-vertical entries sum to the total load `w * L`, and the moment
-entries are equal in magnitude and opposite in sign. -/
+`(w * L / 2, w * L ^ 2 / 12, w * L / 2, -w * L ^ 2 / 12)`. The
+moment entries are equal in magnitude and opposite in sign; in the
+physical reading `L > 0` the two vertical entries sum to the total
+load `w * L`. -/
 theorem hermite_consistent_loads {w L : ℝ} (hL : L ≠ 0) :
     (∫ x in (0 : ℝ)..L, w * (1 - 3 * (x / L) ^ 2 + 2 * (x / L) ^ 3)
       = w * L / 2)

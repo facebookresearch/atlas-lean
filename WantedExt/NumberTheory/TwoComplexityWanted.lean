@@ -33,114 +33,15 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Analysis.SpecialFunctions.Log.Base
-public import Mathlib.Data.Nat.Find
 public import Mathlib.Order.Interval.Finset.Nat
+public import MathlibExt.NumberTheory.TwoComplexityMax
+public import MathlibExt.NumberTheory.TwoComplexitySum
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.TwoComplexityWanted
-
-/-- **Numbers built from copies of $l$.** For natural numbers $l$, $k$ and $n$, the number $n$
-can be built from $k$ copies of $l$ when $n$ is the value of an expression that uses exactly $k$
-copies of $l$, combined by addition and multiplication with arbitrary parentheses. Inductively,
-$l$ is built from $1$ copy, and if $x$ is built from $a$ copies and $y$ from $b$ copies, then
-$x + y$ and $x y$ are built from $a + b$ copies. -/
-inductive CanBuild (l : ℕ) : ℕ → ℕ → Prop
-  | base : CanBuild l 1 l
-  | add {a b x y : ℕ} : CanBuild l a x → CanBuild l b y →
-      CanBuild l (a + b) (x + y)
-  | mul {a b x y : ℕ} : CanBuild l a x → CanBuild l b y →
-      CanBuild l (a + b) (x * y)
-
-/-- **The $l$-complexity of a natural number.** For natural numbers $l$ and $n$, the
-$l$-complexity $\|n\|_l$ of $n$ is the least number $k$ such that $n$ can be built from $k$
-copies of $l$ using addition and multiplication (with arbitrary parentheses), and
-$\|n\|_l = 0$ if $n$ cannot be built from copies of $l$ at all. -/
-noncomputable def complexityL (l n : ℕ) : ℕ := by
-  classical
-  exact if h : ∃ k, CanBuild l k n then Nat.find h else 0
-
-/-- **Every build uses at least one copy.** If $n$ can be obtained from $k$ copies of $l$ using
-addition and multiplication, then $k \ge 1$. -/
-theorem CanBuild.one_le {l k n : ℕ} (h : CanBuild l k n) : 1 ≤ k := by
-  induction h with
-  | base => exact Nat.le_refl 1
-  | add _ _ iha _ => exact Nat.le_add_right_of_le iha
-  | mul _ _ iha _ => exact Nat.le_add_right_of_le iha
-
-/-- **A buildable number is built from as many copies as its $l$-complexity.** For natural
-numbers $l$ and $n$, if $n$ can be built from some number of copies of $l$ using addition and
-multiplication, then $n$ can be built in this way from $c$ copies of $l$, where $c$ is the
-$l$-complexity of $n$. -/
-theorem complexityL_spec {l n : ℕ} (h : ∃ k, CanBuild l k n) :
-    CanBuild l (complexityL l n) n := by
-  classical
-  unfold complexityL
-  rw [dif_pos h]
-  exact Nat.find_spec h
-
-/-- **The $l$-complexity is at most the size of any build.** For natural numbers $l$, $k$ and
-$n$, if $n$ can be built from $k$ copies of $l$ using addition and multiplication, then the
-$l$-complexity of $n$ is at most $k$. -/
-theorem complexityL_min_le {l n k : ℕ} (h : CanBuild l k n) :
-    complexityL l n ≤ k := by
-  classical
-  unfold complexityL
-  rw [dif_pos ⟨k, h⟩]
-  exact Nat.find_min' ⟨k, h⟩ h
-
-/-- **The $l$-complexity vanishes exactly on numbers that cannot be built.** For natural
-numbers $l$ and $n$, the $l$-complexity of $n$ is $0$ if and only if there is no $k$ such that
-$n$ can be built from $k$ copies of $l$ using addition and multiplication. -/
-theorem complexityL_eq_zero_iff {l n : ℕ} :
-    complexityL l n = 0 ↔ ¬ ∃ k, CanBuild l k n := by
-  classical
-  by_cases h : ∃ k, CanBuild l k n
-  · constructor
-    · intro h0
-      have hspec := complexityL_spec h
-      rw [h0] at hspec
-      exact absurd hspec.one_le (by simp)
-    · intro hne
-      exact absurd h hne
-  · simp [complexityL, h]
-
-/-- **Zhang's four exceptional forms.** For natural numbers $m$ and $n$, $n$ has one of the four
-exceptional forms for $m$ when one of the following holds:
-(a) $n = 2^m + 2^{m_2} + 2^{m_3}$ for some natural numbers $m > m_2 > m_3 \ge 1$;
-(b) $n = 2^m + 2^{m_2} + 2^{m_3} + 2^{m_4}$ for some natural numbers $m > m_2 > m_3 > m_4 \ge 2$
-with $m + m_4 = m_2 + m_3$;
-(c) $n = 2^m + 2^{m-3} + 2^{m_2} + 2^{m_2 - 1}$ for some natural number $m_2$ with
-$m \ge m_2 + 3 \ge 6$;
-(d) $m \ge 10$ and $n = 2^m + 2^{m-5} + 2^{m-6} + 2^{m-7}$.
-
-These are the forms of Corollary 3 and Theorem 1(2) of Zhang's paper, which concern even $n$
-with $2^m < n \le 2^{m+1}$ and 2-complexity $m + 2$. -/
-def twoComplexityAddTwoForm (m n : ℕ) : Prop :=
-  (∃ m2 m3 : ℕ, m2 < m ∧ m3 < m2 ∧ 1 ≤ m3 ∧
-    n = 2 ^ m + 2 ^ m2 + 2 ^ m3) ∨
-  (∃ m2 m3 m4 : ℕ, m2 < m ∧ m3 < m2 ∧ m4 < m3 ∧ 2 ≤ m4 ∧
-    m + m4 = m2 + m3 ∧
-    n = 2 ^ m + 2 ^ m2 + 2 ^ m3 + 2 ^ m4) ∨
-  (∃ m2 : ℕ, m2 + 3 ≤ m ∧ 6 ≤ m2 + 3 ∧
-    n = 2 ^ m + 2 ^ (m - 3) + 2 ^ m2 + 2 ^ (m2 - 1)) ∨
-  (10 ≤ m ∧
-    n = 2 ^ m + 2 ^ (m - 5) + 2 ^ (m - 6) + 2 ^ (m - 7))
-
-/-- **The largest number built from $m$ copies of $l$.** Let $l > 1$ and $m \ge 1$ be natural
-numbers. Then $l^m$ can be built from exactly $m$ copies of $l$ using addition and
-multiplication, and every natural number that can be built from $m$ copies of $l$ in this way
-is at most $l^m$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Lemma 1. -/
-theorem_wanted canBuild_max (l m : ℕ) (hl : 1 < l)
-    (hm : 1 ≤ m) :
-    CanBuild l m (l ^ m) ∧
-      ∀ n : ℕ, CanBuild l m n → n ≤ l ^ m
 
 /-- **Logarithmic bounds for the $l$-complexity.** Write $\|n\|_l$ for the $l$-complexity of
 $n$. Let $l > 1$ be a natural number and let $n$ be a positive multiple of $l$. Then
@@ -173,16 +74,6 @@ theorem_wanted complexityL_two_pow_and_add (m1 m2 : ℕ)
     complexityL 2 (2 ^ m1) = m1 ∧
       complexityL 2 (2 ^ m1 + 2 ^ m2) = m1 + 1
 
-/-- **An upper bound for the 2-complexity of a sum of distinct powers of two.** Write
-$\|n\|_2$ for the $2$-complexity of $n$. Let $S$ be a nonempty finite set of positive integers
-with $k$ elements and largest element $m_1$. Then $\|\sum_{e \in S} 2^e\|_2 \le m_1 + k - 1$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Lemma 3. -/
-theorem_wanted complexityL_sum_two_pow_le (s : Finset ℕ)
-    (hs : ∀ e ∈ s, 1 ≤ e) (hne : s.Nonempty) :
-    complexityL 2 (∑ e ∈ s, 2 ^ e) ≤ s.max' hne + s.card - 1
-
 /-- **Logarithmic bounds for the 2-complexity (Zhang's Lemma 3(3)).** Write $\|n\|_2$ for the
 2-complexity of $n$: the least number of copies of $2$ from which $n$ can be built using addition
 and multiplication, and $0$ if $n$ cannot be built. For every even natural number $n \ge 1$,
@@ -194,20 +85,6 @@ theorem_wanted logb_two_bounds (n : ℕ) (h2n : 2 ∣ n)
     (hn : 1 ≤ n) :
     Real.logb 2 n ≤ (complexityL 2 n : ℝ) ∧
       (complexityL 2 n : ℝ) ≤ 2 * Real.logb 2 n - 1
-
-/-- **A lower bound for the 2-complexity outside sums of two powers of two.** Write
-$\|n\|_2$ for the $2$-complexity of $n$. Let $n$ be a positive even integer that cannot be
-written as $2^a + 2^b$ with natural numbers $a \le b$. Then $\log_2 n + 1 \le \|n\|_2$.
-
-Since $n$ is even, the hypothesis says that $n$ is neither a power of $2$ nor a sum of two
-distinct powers of $2$.
-
-Source: Pengcheng Zhang, "The 2-Complexity of Even Positive
-Integers", Corollary 2. -/
-theorem_wanted logb_two_add_one_le (n : ℕ) (h2n : 2 ∣ n)
-    (hn : 1 ≤ n)
-    (hform : ¬ ∃ a b : ℕ, a ≤ b ∧ n = 2 ^ a + 2 ^ b) :
-    Real.logb 2 n + 1 ≤ (complexityL 2 n : ℝ)
 
 /-- **Adding a small multiple of $l$ to a multiple of $l^2$.** Write $\|n\|_l$ for the
 $l$-complexity of $n$. Let $l > 1$, let $b \ge 1$ be a multiple of $l^2$, let $a$ be a natural

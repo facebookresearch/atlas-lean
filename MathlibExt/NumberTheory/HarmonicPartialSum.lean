@@ -137,7 +137,7 @@ theorem harmonic_partial_sum_not_int
   have hSne : ((n + 1 : ℕ) : ℚ) * (harmonic n - 1) ≠ 0 := mul_ne_zero hcast hH1
   have hV2 := padicValRat_two_harmonic_sub_one hn
   have hvalS : padicValRat 2 (((n + 1 : ℕ) : ℚ) * (harmonic n - 1))
-      = (((padicValNat 2 (n + 1) : ℕ)) : ℤ)
+      = (((multiplicity 2 (n + 1) : ℕ)) : ℤ)
         + -((((Nat.log 2 n : ℕ))) : ℤ) := by
     rw [padicValRat.mul hcast hH1, padicValRat.of_nat, hV2]
   by_cases hpow : ∃ m, n + 1 = 2 ^ m
@@ -210,7 +210,7 @@ theorem harmonic_partial_sum_not_int
             calc 2 * p = p * 2 := by ring
             _ ≤ p * mm := Nat.mul_le_mul_left p hmm2
           omega
-        have h0 : padicValNat p j = 0 := padicValNat.eq_zero_of_not_dvd hndvd
+        have h0 : multiplicity p j = 0 := multiplicity_eq_zero_of_not_dvd hndvd
         simp [padicValRat.inv, padicValRat.of_nat, h0]
       have hRest : 0 ≤ padicValRat p
           (∑ j ∈ (Finset.Icc 2 n).erase p, ((j : ℚ))⁻¹) :=
@@ -243,7 +243,7 @@ theorem harmonic_partial_sum_not_int
         rcases h12 with rfl | rfl
         · exact absurd rfl hpP.ne_one
         · omega
-      have h0 : padicValNat p (n + 1) = 0 := padicValNat.eq_zero_of_not_dvd hndvd
+      have h0 : multiplicity p (n + 1) = 0 := multiplicity_eq_zero_of_not_dvd hndvd
       have hn1v : padicValRat p ((((n + 1 : ℕ))) : ℚ) = 0 := by
         rw [padicValRat.of_nat, h0, Nat.cast_zero]
       have hvalSp : padicValRat p ((((n + 1 : ℕ)) : ℚ) * (harmonic n - 1)) = -1 := by
@@ -258,15 +258,15 @@ theorem harmonic_partial_sum_not_int
       rw [hkk] at hcastI
       exact (padicNorm.not_int_of_not_padic_int p hnormp) hcastI
   · -- Otherwise the `2`-adic valuation of the sum is negative.
-    have htk : padicValNat 2 (n + 1) < Nat.log 2 n := by
+    have htk : multiplicity 2 (n + 1) < Nat.log 2 n := by
       by_contra hc
-      have hkt : Nat.log 2 n ≤ padicValNat 2 (n + 1) := not_lt.mp hc
+      have hkt : Nat.log 2 n ≤ multiplicity 2 (n + 1) := not_lt.mp hc
       have h2k : 2 ^ Nat.log 2 n ≤ n := Nat.pow_log_le_self 2 (by omega)
       have hnk : n < 2 ^ (Nat.log 2 n + 1) := by
         have hlt2 := Nat.lt_pow_succ_log_self one_lt_two n
         rwa [Nat.succ_eq_add_one] at hlt2
       have hdvd : 2 ^ Nat.log 2 n ∣ n + 1 :=
-        (pow_dvd_pow 2 hkt).trans pow_padicValNat_dvd
+        (pow_dvd_pow 2 hkt).trans (pow_multiplicity_dvd _ _)
       obtain ⟨m', hm'⟩ := hdvd
       have hXpos : 0 < 2 ^ Nat.log 2 n := by positivity
       have hm'0 : m' ≠ 0 := by
@@ -287,14 +287,14 @@ theorem harmonic_partial_sum_not_int
       exact hpow ⟨Nat.log 2 n + 1, hm'.trans (pow_succ 2 (Nat.log 2 n)).symm⟩
     have hnorm : 1 < padicNorm 2 ((((n + 1 : ℕ)) : ℚ) * (harmonic n - 1)) := by
       rw [padicNorm.eq_zpow_of_nonzero hSne, hvalS]
-      have hexp : -((((padicValNat 2 (n + 1) : ℕ)) : ℤ)
+      have hexp : -((((multiplicity 2 (n + 1) : ℕ)) : ℤ)
           + -((((Nat.log 2 n : ℕ))) : ℤ))
-          = ((((Nat.log 2 n - padicValNat 2 (n + 1) : ℕ))) : ℤ) := by
+          = ((((Nat.log 2 n - multiplicity 2 (n + 1) : ℕ))) : ℤ) := by
         rw [Nat.cast_sub htk.le]
         ring
       rw [hexp, zpow_natCast]
       exact one_lt_pow₀ one_lt_two
-        (by omega : Nat.log 2 n - padicValNat 2 (n + 1) ≠ 0)
+        (by omega : Nat.log 2 n - multiplicity 2 (n + 1) ≠ 0)
     intro hcon
     obtain ⟨kk, hkk⟩ := hcon
     have hcastI : ((kk : ℤ) : ℚ).isInt = true := by
