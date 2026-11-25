@@ -15,6 +15,7 @@ public import MathlibExt.Combinatorics.Enumerative.AscentSequenceQuadruplePatter
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.List.GetD
 import Mathlib.Data.Set.Finite.List
+import Mathlib.RingTheory.PowerSeries.Inverse
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
@@ -2383,5 +2384,356 @@ public theorem quadrupleUSet_quadrupleVSet_card_formulas :
     push_cast at this
     linarith
   rw [Nat.cast_add, hA, Nat.cast_sum]
+
+namespace QuadrupleRecurrence
+
+/- We work in integer formal power series so that the signed recurrence is recovered directly
+from the coefficients. The pieces of `U` are binomial diagonals indexed by the number of
+descents. Multiplying by `(1 - 2*x)^2 - x^3` telescopes their partial sums. Only finitely many
+pieces affect a given coefficient. -/
+
+open Finset PowerSeries
+
+local notation "x" => (PowerSeries.X : PowerSeries ℤ)
+local notation "D" => (1 - 2 * x)
+local notation "E" => (1 - x)
+
+/-- The weighted binomial diagonal with coefficients `choose (r + j) r * b^j`. -/
+private def diagonal (b : ℤ) (r : ℕ) : PowerSeries ℤ :=
+  PowerSeries.mk fun j => (Nat.choose (r + j) r : ℤ) * b ^ j
+
+private theorem coeff_x_mul (F : PowerSeries ℤ) (n : ℕ) :
+    coeff n (x * F) = if 1 ≤ n then coeff (n - 1) F else 0 := by
+  simpa only [pow_one] using coeff_X_pow_mul' F 1 n
+
+private theorem diagonal_zero (b : ℤ) : (1 - C b * x) * diagonal b 0 = 1 := by
+  ext n
+  rw [sub_mul, one_mul, mul_assoc]
+  simp only [map_sub, coeff_C_mul, coeff_x_mul, diagonal, coeff_mk, Nat.choose_zero_right,
+    Nat.cast_one, one_mul, coeff_one]
+  cases n with
+  | zero => simp
+  | succ n => simp [pow_succ, mul_comm]
+
+private theorem diagonal_succ (b : ℤ) (r : ℕ) :
+    (1 - C b * x) * diagonal b (r + 1) = diagonal b r := by
+  ext n
+  rw [sub_mul, one_mul, mul_assoc]
+  simp only [map_sub, coeff_C_mul, coeff_x_mul, diagonal, coeff_mk]
+  cases n with
+  | zero => simp
+  | succ n =>
+    simp only [show 1 ≤ n + 1 by omega, ite_true, Nat.add_sub_cancel,
+      ← Nat.add_assoc, Nat.add_right_comm r 1 n, Nat.choose_succ_succ, Nat.cast_add, pow_succ b n]
+    ring
+
+private theorem two_mul_diagonal (r : ℕ) : D * diagonal 2 (r + 1) = diagonal 2 r :=
+  by simpa using diagonal_succ 2 r
+
+local notation "U" => PowerSeries.mk (fun n => (Set.ncard (quadrupleUSet n 1) : ℤ))
+local notation "V" => PowerSeries.mk (fun n => (Set.ncard (quadrupleVSet n 1) : ℤ))
+
+/-- The contribution with `k + 1` descents starts at length `3*k + 6`. -/
+private noncomputable def piece (k : ℕ) : PowerSeries ℤ :=
+  x ^ (3 * k + 6) * (diagonal 2 (2 * k + 1) + x * diagonal 2 (2 * k + 2))
+
+private theorem coeff_piece (n k : ℕ) (h : 3 * k + 6 ≤ n) :
+    coeff n (piece k) =
+      (Nat.choose (n - (k + 1) - 4) (2 * (k + 1)) * 2 ^ (n - 3 * (k + 1) - 4) +
+       Nat.choose (n - (k + 1) - 4) (2 * (k + 1) - 1) * 2 ^ (n - 3 * (k + 1) - 3) : ℕ) := by
+  simp only [piece, coeff_X_pow_mul', ite_eq_left h, map_add, coeff_x_mul, diagonal, coeff_mk,
+    Nat.cast_add, Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat]
+  rw [show 2 * k + 1 + (n - (3 * k + 6)) = n - (k + 1) - 4 by omega,
+    show 2 * k + 1 = 2 * (k + 1) - 1 by omega,
+    show n - (3 * k + 6) = n - 3 * (k + 1) - 3 by omega]
+  rw [add_comm]
+  congr 1
+  split_ifs with hj
+  · rw [show 2 * k + 2 + (n - 3 * (k + 1) - 3 - 1) = n - (k + 1) - 4 by omega,
+      show 2 * k + 2 = 2 * (k + 1) by omega,
+      show n - 3 * (k + 1) - 3 - 1 = n - 3 * (k + 1) - 4 by omega]
+  · rw [Nat.choose_eq_zero_of_lt (by omega), Nat.cast_zero, zero_mul]
+
+private theorem coeff_piece_eq_zero (n k : ℕ) (h : n < 3 * k + 6) :
+    coeff n (piece k) = 0 := by
+  simp [piece, coeff_X_pow_mul', not_le.mpr h]
+
+private theorem coeff_U_truncation (n N : ℕ) (hN : n ≤ N) :
+    coeff n U = coeff n (∑ k ∈ range (N + 1), piece k) := by
+  rw [map_sum, coeff_mk]
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · rw [quadrupleUSet_zero, Set.ncard_empty, Nat.cast_zero]
+    exact (sum_eq_zero fun k _ => coeff_piece_eq_zero 0 k (by omega)).symm
+  · rw [quadrupleUSet_quadrupleVSet_card_formulas.1 n hn, Nat.cast_sum]
+    let s := (range (N + 1)).filter fun k => 3 * k + 6 ≤ n
+    trans ∑ k ∈ s, coeff n (piece k)
+    · refine sum_bij' (fun k _ => k - 1) (fun k _ => k + 1) ?_ ?_ ?_ ?_ ?_
+      · intro k hk
+        simp only [mem_Icc] at hk
+        simp only [s, mem_filter, mem_range]
+        omega
+      · intro k hk
+        simp only [s, mem_filter, mem_range] at hk
+        simp only [mem_Icc]
+        omega
+      · intro k hk
+        simp only [mem_Icc] at hk
+        omega
+      · intro k _
+        omega
+      · intro k hk
+        simp only [mem_Icc] at hk
+        rw [coeff_piece n (k - 1) (by omega), show k - 1 + 1 = k by omega]
+    · apply sum_subset (filter_subset _ _)
+      intro k hk h
+      exact coeff_piece_eq_zero n k (by simpa [s, hk] using h)
+
+private theorem piece_step (k : ℕ) : D ^ 2 * piece (k + 1) = x ^ 3 * piece k := by
+  have h₁ : D * diagonal 2 (2 * (k + 1) + 1) = diagonal 2 (2 * k + 2) := by
+    rw [show 2 * (k + 1) + 1 = (2 * k + 2) + 1 by omega, two_mul_diagonal]
+  have h₂ : D * diagonal 2 (2 * (k + 1) + 2) = diagonal 2 (2 * k + 3) := by
+    rw [show 2 * (k + 1) + 2 = (2 * k + 3) + 1 by omega, two_mul_diagonal]
+  have h₃ : D * diagonal 2 (2 * k + 3) = diagonal 2 (2 * k + 2) := two_mul_diagonal _
+  unfold piece
+  rw [show 3 * (k + 1) + 6 = 3 + (3 * k + 6) by omega, pow_add]
+  calc
+    _ = x ^ 3 * x ^ (3 * k + 6) *
+        (D * (D * diagonal 2 (2 * (k + 1) + 1)) +
+          x * (D * (D * diagonal 2 (2 * (k + 1) + 2)))) := by ring
+    _ = _ := by rw [h₁, h₂, h₃, two_mul_diagonal]; ring
+
+private theorem piece_initial : D * (D ^ 2 * piece 0) = E * x ^ 6 := by
+  have h₁ := two_mul_diagonal 0
+  have h₂ := two_mul_diagonal 1
+  have h₀ : D * diagonal 2 0 = 1 := by simpa using diagonal_zero 2
+  simp only [piece, Nat.mul_zero, Nat.zero_add]
+  calc
+    _ = x ^ 6 * (D * (D * (D * diagonal 2 1)) + x * (D * (D * (D * diagonal 2 2)))) := by ring
+    _ = _ := by rw [h₂, h₁, h₀]; ring
+
+private theorem piece_telescope (N : ℕ) :
+    (D ^ 2 - x ^ 3) * (∑ k ∈ range (N + 1), piece k) = D ^ 2 * piece 0 - x ^ 3 * piece N := by
+  induction N with
+  | zero => simp [sub_mul]
+  | succ N ih =>
+    rw [sum_range_succ, mul_add, ih, sub_mul, piece_step]
+    ring
+
+private theorem coeff_mul_range (F G : PowerSeries ℤ) (n : ℕ) :
+    coeff n (F * G) = ∑ i ∈ range (n + 1), coeff i F * coeff (n - i) G := by
+  rw [coeff_mul]
+  exact Nat.sum_antidiagonal_eq_sum_range_succ (fun i j => coeff i F * coeff j G) n
+
+private theorem mul_U : (D ^ 2 - x ^ 3) * U = D ^ 2 * piece 0 := by
+  ext n
+  have h : coeff n ((D ^ 2 - x ^ 3) * U) =
+      coeff n ((D ^ 2 - x ^ 3) * (∑ k ∈ range (n + 1), piece k)) := by
+    simp only [coeff_mul_range]
+    apply sum_congr rfl
+    intro i hi
+    rw [coeff_U_truncation (n - i) n (Nat.sub_le _ _)]
+  rw [h, piece_telescope, map_sub, sub_eq_self]
+  unfold piece
+  rw [← mul_assoc, ← pow_add, coeff_X_pow_mul', ite_eq_right (by omega)]
+
+private theorem U_series : (D * (1 - 3 * x + x ^ 2)) * U = x ^ 6 := by
+  have hE : E ≠ 0 := by
+    intro h
+    have := congrArg constantCoeff h
+    simp at this
+  have h := congrArg (fun P : PowerSeries ℤ => D * P) mul_U
+  change D * ((D ^ 2 - x ^ 3) * U) = D * (D ^ 2 * piece 0) at h
+  rw [piece_initial] at h
+  apply mul_left_cancel₀ hE
+  convert h using 1
+  ring
+
+
+/-- The convolution kernel with coefficient `n` in degree `n`. -/
+private noncomputable def weight : PowerSeries ℤ := x * diagonal 1 1
+
+private theorem coeff_weight (n : ℕ) : coeff n weight = (n : ℤ) := by
+  rw [weight, coeff_x_mul]
+  cases n with
+  | zero => simp
+  | succ n => simp [diagonal, Nat.choose_one_right, add_comm]
+
+private theorem coeff_mul_weight (F : PowerSeries ℤ) (n : ℕ) :
+    coeff n (F * weight) = ∑ i ∈ range n, coeff i F * ↑(n - i) := by
+  simp only [coeff_mul_range, coeff_weight, sum_range_succ, Nat.sub_self, Nat.cast_zero,
+    mul_zero, add_zero]
+
+private theorem weight_mul : E ^ 2 * weight = x := by
+  have h₁ : E * diagonal 1 1 = diagonal 1 0 := by simpa using diagonal_succ 1 0
+  have h₀ : E * diagonal 1 0 = 1 := by simpa using diagonal_zero 1
+  calc
+    _ = x * (E * (E * diagonal 1 1)) := by unfold weight; ring
+    _ = _ := by rw [h₁, h₀, mul_one]
+
+private theorem coeff_V_base (n : ℕ) :
+    coeff n ((x ^ 5 * diagonal 2 0) * weight) =
+      ((∑ a ∈ Icc 2 (n - 4), 2 ^ (a - 2) * (n - a - 3) : ℕ) : ℤ) := by
+  rw [coeff_mul_weight, Nat.cast_sum]
+  simp only [coeff_X_pow_mul', diagonal, coeff_mk, Nat.zero_add, Nat.choose_zero_right,
+    Nat.cast_one, one_mul]
+  let s := (range n).filter fun i => 5 ≤ i
+  trans ∑ i ∈ s, (2 : ℤ) ^ (i - 5) * ↑(n - i)
+  · dsimp only [s]
+    rw [sum_filter]
+    apply sum_congr rfl
+    intro i _
+    split_ifs <;> simp
+  · refine sum_bij' (fun i _ => i - 3) (fun a _ => a + 3) ?_ ?_ ?_ ?_ ?_
+    · intro i hi
+      simp only [s, mem_filter, mem_range] at hi
+      simp only [mem_Icc]
+      omega
+    · intro a ha
+      simp only [mem_Icc] at ha
+      simp only [s, mem_filter, mem_range]
+      omega
+    · intro i hi
+      simp only [s, mem_filter, mem_range] at hi
+      omega
+    · intro a _
+      omega
+    · intro i hi
+      simp only [s, mem_filter, mem_range] at hi
+      rw [Nat.cast_mul, Nat.cast_pow, Nat.cast_ofNat,
+        show i - 3 - 2 = i - 5 by omega, show n - (i - 3) - 3 = n - i by omega]
+
+private def vTerm (a k : ℕ) : ℕ :=
+  Nat.choose (a - 2) (2 * k) * 2 ^ (a - 2 * k - 2) +
+    Nat.choose (a - 2) (2 * k - 1) * 2 ^ (a - 2 * k - 1)
+
+/-- In the positive-descent sum for `V`, put `m = a + k + 2`. The binomial term is then
+the term of `U` at length `m` with `k` descents; its weight is `n - m`. -/
+private theorem V_sum_reindex (n : ℕ) :
+    (∑ a ∈ Icc 2 (n - 4), ∑ k ∈ Icc 1 (min (n - 3 - a) ((a - 1) / 2)),
+        vTerm a k * (n - k - a - 2)) =
+      ∑ m ∈ range n, ∑ k ∈ Icc 1 (m / 3 - 1), vTerm (m - k - 2) k * (n - m) := by
+  simp only [sum_sigma']
+  refine sum_bij' (fun q _ => ⟨q.1 + q.2 + 2, q.2⟩) (fun q _ => ⟨q.1 - q.2 - 2, q.2⟩)
+    ?_ ?_ ?_ ?_ ?_
+  · rintro ⟨a, k⟩ h
+    simp only [mem_sigma, mem_Icc, mem_range, le_min_iff] at h ⊢
+    omega
+  · rintro ⟨m, k⟩ h
+    simp only [mem_sigma, mem_Icc, mem_range, le_min_iff] at h ⊢
+    omega
+  · rintro ⟨a, k⟩ _
+    rw [show a + k + 2 - k - 2 = a by omega]
+  · rintro ⟨m, k⟩ h
+    simp only [mem_sigma, mem_range, mem_Icc] at h
+    change (⟨m - k - 2 + k + 2, k⟩ : Σ _ : ℕ, ℕ) = ⟨m, k⟩
+    rw [show m - k - 2 + k + 2 = m by omega]
+  · rintro ⟨a, k⟩ _
+    simp only
+    rw [show n - k - a - 2 = n - (a + k + 2) by omega,
+      show a + k + 2 - k - 2 = a by omega]
+
+private theorem U_sum (m : ℕ) :
+    (quadrupleUSet m 1).ncard = ∑ k ∈ Icc 1 (m / 3 - 1), vTerm (m - k - 2) k := by
+  rcases Nat.eq_zero_or_pos m with rfl | hm
+  · simp [quadrupleUSet_zero]
+  · rw [quadrupleUSet_quadrupleVSet_card_formulas.1 m hm]
+    apply sum_congr rfl
+    intro k _
+    unfold vTerm
+    rw [show m - k - 2 - 2 = m - k - 4 by omega,
+      show m - k - 2 - 2 * k - 2 = m - 3 * k - 4 by omega,
+      show m - k - 2 - 2 * k - 1 = m - 3 * k - 3 by omega]
+
+private theorem V_zero : quadrupleVSet 0 1 = ∅ := by
+  ext w
+  simp [quadrupleVSet, weakAscentAvoiders, List.length_eq_zero_iff, List.getD]
+
+private theorem V_convolution : V = (x ^ 5 * diagonal 2 0) * weight + U * weight := by
+  ext n
+  rw [map_add, coeff_V_base, coeff_mul_weight, coeff_mk]
+  simp only [coeff_mk, ← Nat.cast_mul, ← Nat.cast_sum, ← Nat.cast_add, Int.ofNat_inj]
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  · simp [V_zero]
+  · rw [quadrupleUSet_quadrupleVSet_card_formulas.2.1 n hn]
+    congr 1
+    change (∑ a ∈ Icc 2 (n - 4), ∑ k ∈ Icc 1 (min (n - 3 - a) ((a - 1) / 2)),
+      vTerm a k * (n - k - a - 2)) = _
+    rw [V_sum_reindex]
+    simp only [U_sum, sum_mul]
+
+/-- The convolution formula for `V` gives the same series as the telescoping formula for `U`. -/
+private theorem V_eq_U : V = U := by
+  have h₀ : D * diagonal 2 0 = 1 := by simpa using diagonal_zero 2
+  have hD : D ≠ 0 := by
+    intro h
+    have := congrArg constantCoeff h
+    simp at this
+  have hE : E ≠ 0 := by
+    intro h
+    have := congrArg constantCoeff h
+    simp at this
+  apply mul_left_cancel₀ (mul_ne_zero hD (pow_ne_zero 2 hE))
+  calc
+    _ = (x ^ 5 * (D * diagonal 2 0) + D * U) * (E ^ 2 * weight) := by
+      rw [V_convolution]
+      ring
+    _ = _ := by
+      rw [h₀, weight_mul, mul_one]
+      calc
+        _ = x ^ 6 + D * U * x := by ring
+        _ = _ := by rw [← U_series]; ring
+
+private theorem recurrence_of_series (f : ℕ → ℕ)
+    (h : (D * (1 - 3 * x + x ^ 2)) * PowerSeries.mk (fun n => (f n : ℤ)) = x ^ 6)
+    (n : ℕ) (hn : 7 ≤ n) :
+    (f n : ℤ) = 5 * f (n - 1) - 7 * f (n - 2) + 2 * f (n - 3) := by
+  have hpoly : D * (1 - 3 * x + x ^ 2) =
+      1 - C 5 * x + C 7 * x ^ 2 - C 2 * x ^ 3 := by
+    simp only [map_ofNat]
+    ring
+  rw [hpoly] at h
+  have hh := congrArg (coeff n) h
+  simp only [sub_mul, add_mul, one_mul, mul_assoc, map_sub, map_add, coeff_C_mul,
+    coeff_x_mul, coeff_X_pow_mul', ite_eq_left (show 1 ≤ n by omega),
+    ite_eq_left (show 2 ≤ n by omega), ite_eq_left (show 3 ≤ n by omega), coeff_mk,
+    coeff_X_pow, ite_eq_right (show n ≠ 6 by omega)] at hh
+  omega
+
+private theorem u_initial : (∀ j ≤ 5, (quadrupleUSet j 1).ncard = 0) ∧
+    (quadrupleUSet 6 1).ncard = 1 := by
+  constructor
+  · intro j hj
+    rcases Nat.eq_zero_or_pos j with rfl | hp
+    · simp [quadrupleUSet_zero]
+    · rw [quadrupleUSet_quadrupleVSet_card_formulas.1 j hp,
+        show j / 3 - 1 = 0 by omega]
+      simp
+  · rw [quadrupleUSet_quadrupleVSet_card_formulas.1 6 (by decide)]
+    decide
+
+private theorem counts_eq (n : ℕ) : (quadrupleVSet n 1).ncard = (quadrupleUSet n 1).ncard := by
+  simpa only [coeff_mk, Int.ofNat_inj] using congrArg (coeff n) V_eq_U
+
+end QuadrupleRecurrence
+
+open QuadrupleRecurrence in
+/-- **Recurrence for $|U_{n,1}|$ and $|V_{n,1}|$ (Lemma 2).** Let $f$ be either of the
+sequences $u_n = |U_{n,1}|$ and $v_n = |V_{n,1}|$. Then $f_j = 0$ for every $j \le 5$,
+$f_6 = 1$, and $f_n = 5 f_{n-1} - 7 f_{n-2} + 2 f_{n-3}$ for every $n \ge 7$.
+
+Source: David Callan and Toufik Mansour, *Ascent Sequences and Weak Ascent Sequences
+Avoiding a Quadruple of Length-3 Patterns*, INTEGERS 25 (2025), Article A80,
+Lemma 2 (`integers-2025-A80-lem-2`). -/
+public theorem quadrupleUSet_quadrupleVSet_recurrence :
+    ∀ f ∈ [fun n => (quadrupleUSet n 1).ncard, fun n => (quadrupleVSet n 1).ncard],
+      (∀ j ≤ 5, f j = 0) ∧ f 6 = 1 ∧
+        ∀ n, 7 ≤ n → (f n : ℤ) = 5 * f (n - 1) - 7 * f (n - 2) + 2 * f (n - 3) := by
+  intro f hf
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hf
+  rcases hf with rfl | rfl
+  · exact ⟨u_initial.1, u_initial.2, recurrence_of_series _ U_series⟩
+  · refine ⟨fun j hj => (counts_eq j).trans (u_initial.1 j hj),
+      (counts_eq 6).trans u_initial.2, recurrence_of_series _ ?_⟩
+    simpa only [V_eq_U] using U_series
 
 end MetaMathlibExt
