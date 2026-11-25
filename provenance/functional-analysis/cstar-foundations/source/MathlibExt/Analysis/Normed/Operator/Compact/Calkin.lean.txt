@@ -1,0 +1,358 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.Normed.Algebra.NonUnitalSubalgebra.Quotient
+public import Mathlib.Algebra.Algebra.NonUnitalSubalgebra
+public import Mathlib.Analysis.Normed.Operator.Compact.FiniteDimension
+public import Mathlib.Analysis.Normed.Operator.NormedSpace
+public import Mathlib.Topology.Algebra.Algebra
+
+/-!
+# The Banach-space Calkin algebra
+
+The compact endomorphisms of a normed space form a two-sided nonunital
+subalgebra of its continuous linear endomorphisms.  When the space is
+complete, this ideal is closed, so its canonical normed-module quotient is a
+unital normed algebra.  Its unit is the class of the identity operator.
+
+The quotient carrier and multiplication here are exactly
+`NonUnitalSubalgebra.Quotient`; no second quotient construction is introduced.
+In particular, the quotient can be the zero ring: for finite-dimensional
+spaces every continuous linear endomorphism is compact.
+
+The closest existing Mathlib APIs are `compactOperator`, which only bundles
+compact maps as a submodule, and quotients by algebraic ideals.  Neither gives
+the canonical normed-module quotient of the compact endomorphisms in the
+possibly noncommutative endomorphism algebra.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open NonUnitalSubalgebra
+
+variable {𝕜 E : Type*} [NontriviallyNormedField 𝕜]
+  [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+
+/-- The two-sided nonunital subalgebra of compact continuous linear
+endomorphisms. -/
+def compactEndomorphismIdeal : NonUnitalSubalgebra 𝕜 (E →L[𝕜] E) :=
+  (compactOperator (RingHom.id 𝕜) E E).toNonUnitalSubalgebra fun T U hT _hU => by
+    have hTU := hT.comp_clm U
+    rw [← ContinuousLinearMap.coe_comp] at hTU
+    exact hTU
+
+@[simp]
+theorem mem_compactEndomorphismIdeal (T : E →L[𝕜] E) :
+    T ∈ compactEndomorphismIdeal (𝕜 := 𝕜) (E := E) ↔ IsCompactOperator T :=
+  Iff.rfl
+
+@[simp]
+theorem coe_compactEndomorphismIdeal :
+    (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E) : Set (E →L[𝕜] E)) =
+      {T : E →L[𝕜] E | IsCompactOperator T} :=
+  rfl
+
+@[simp]
+theorem compactEndomorphismIdeal_toSubmodule :
+    (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)).toSubmodule =
+      compactOperator (RingHom.id 𝕜) E E :=
+  rfl
+
+/-- Compact endomorphisms absorb arbitrary continuous linear endomorphisms on
+both sides.  For left multiplication compactness is preserved by
+postcomposition; for right multiplication it is preserved by
+precomposition. -/
+instance compactEndomorphismIdeal_isTwoSided :
+    IsTwoSided (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)) where
+  mul_mem_left T {K} hK := by
+    have hTK := hK.clm_comp T
+    rw [← ContinuousLinearMap.coe_comp] at hTK
+    exact hTK
+  mul_mem_right {K} hK T := by
+    have hKT := hK.comp_clm T
+    rw [← ContinuousLinearMap.coe_comp] at hKT
+    exact hKT
+
+/-- The compact endomorphisms of a Banach space form a closed set in the
+operator norm. -/
+instance compactEndomorphismIdeal_isClosed [CompleteSpace E] :
+    IsClosed (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E) : Set (E →L[𝕜] E)) :=
+  isClosed_setOfPred_isCompactOperator
+
+/-- Closedness of the compact endomorphisms, in the exact submodule form used
+by the neutral quotient norm. -/
+instance compactOperator_isClosed [CompleteSpace E] :
+    IsClosed (compactOperator (RingHom.id 𝕜) E E : Set (E →L[𝕜] E)) :=
+  isClosed_setOfPred_isCompactOperator
+
+/-- Closedness in the exact `.toSubmodule` spelling. This instance is kept
+separate because typeclass search does not unfold the compact-ideal wrapper. -/
+instance compactEndomorphismIdeal_toSubmodule_isClosed [CompleteSpace E] :
+    IsClosed
+      ((compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)).toSubmodule : Set (E →L[𝕜] E)) :=
+  compactOperator_isClosed
+
+variable (𝕜 E) in
+/-- The Banach-space Calkin algebra: continuous linear endomorphisms modulo
+compact endomorphisms, on the canonical neutral quotient carrier. -/
+abbrev CalkinAlgebra :=
+  (E →L[𝕜] E) ⧸ compactOperator (RingHom.id 𝕜) E E
+
+namespace CalkinAlgebra
+
+/-- The direct carrier spelling is definitionally the neutral quotient of the
+compact endomorphism ideal. -/
+theorem eq_compactEndomorphismIdeal_quotient :
+    CalkinAlgebra 𝕜 E =
+      NonUnitalSubalgebra.Quotient
+        (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)) :=
+  rfl
+
+section Complete
+
+variable [CompleteSpace E]
+
+/-- The genuinely unital ring structure on the Calkin algebra.  This does not
+assert nontriviality: in finite dimension the unit equals zero. -/
+instance instRing : Ring (CalkinAlgebra 𝕜 E) := by
+  let hNormed : NormedAddCommGroup (CalkinAlgebra 𝕜 E) :=
+    Submodule.Quotient.normedAddCommGroup
+      (M := E →L[𝕜] E) (R := 𝕜)
+      (compactOperator (RingHom.id 𝕜) E E)
+  letI : NormedAddCommGroup (CalkinAlgebra 𝕜 E) := hNormed
+  letI : Mul (CalkinAlgebra 𝕜 E) :=
+    NonUnitalSubalgebra.Quotient.quotientMul
+      (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E))
+  letI : One (CalkinAlgebra 𝕜 E) :=
+    ⟨Submodule.Quotient.mk (1 : E →L[𝕜] E)⟩
+  letI : NatCast (CalkinAlgebra 𝕜 E) :=
+    ⟨fun n ↦ Submodule.Quotient.mk (n : E →L[𝕜] E)⟩
+  letI : IntCast (CalkinAlgebra 𝕜 E) :=
+    ⟨fun z ↦ Submodule.Quotient.mk (z : E →L[𝕜] E)⟩
+  letI : Pow (CalkinAlgebra 𝕜 E) ℕ :=
+    ⟨fun q n ↦ npowRec n q⟩
+  let ring : Ring (CalkinAlgebra 𝕜 E) := fast_instance%
+    Function.Surjective.ring
+      (fun T : E →L[𝕜] E ↦
+        (Submodule.Quotient.mk T : CalkinAlgebra 𝕜 E))
+      (Submodule.Quotient.mk_surjective
+        (compactOperator (RingHom.id 𝕜) E E))
+      rfl rfl (fun _ _ ↦ rfl) (fun _ _ ↦ rfl) (fun _ ↦ rfl)
+      (fun _ _ ↦ rfl) (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
+      (fun T n ↦ by
+        induction n with
+        | zero => rfl
+        | succ n ih =>
+            rw [pow_succ]
+            change (Submodule.Quotient.mk (T ^ n * T) : CalkinAlgebra 𝕜 E) =
+              npowRec n (Submodule.Quotient.mk T : CalkinAlgebra 𝕜 E) *
+                (Submodule.Quotient.mk T : CalkinAlgebra 𝕜 E)
+            change (Submodule.Quotient.mk (T ^ n) : CalkinAlgebra 𝕜 E) *
+                (Submodule.Quotient.mk T : CalkinAlgebra 𝕜 E) =
+              npowRec n (Submodule.Quotient.mk T : CalkinAlgebra 𝕜 E) *
+                (Submodule.Quotient.mk T : CalkinAlgebra 𝕜 E)
+            rw [ih]
+            rfl)
+      (fun _ ↦ rfl) (fun _ ↦ rfl)
+  exact ring
+
+/-- The scalar action inherited from the submodule quotient is compatible
+with Calkin multiplication. -/
+instance instAlgebra : Algebra 𝕜 (CalkinAlgebra 𝕜 E) :=
+  Algebra.ofModule
+    (by
+      rintro c ⟨T⟩ ⟨U⟩
+      change Submodule.Quotient.mk ((c • T) * U) =
+        Submodule.Quotient.mk (c • (T * U))
+      rw [smul_mul_assoc])
+    (by
+      rintro c ⟨T⟩ ⟨U⟩
+      change Submodule.Quotient.mk (T * (c • U)) =
+        Submodule.Quotient.mk (c • (T * U))
+      rw [mul_smul_comm])
+
+/-- The quotient norm and neutral quotient multiplication make the Calkin
+algebra a normed ring when the underlying space is complete.  No
+`NormOneClass` is asserted. -/
+instance instNormedRing : NormedRing (CalkinAlgebra 𝕜 E) where
+  __ : Ring (CalkinAlgebra 𝕜 E) := instRing
+  __ : NormedAddCommGroup (CalkinAlgebra 𝕜 E) :=
+    Submodule.Quotient.normedAddCommGroup
+      (M := E →L[𝕜] E) (R := 𝕜)
+      (compactOperator (RingHom.id 𝕜) E E)
+  norm_mul_le := NonUnitalSubalgebra.Quotient.norm_mul_le
+    (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E))
+
+/-- The normed algebra structure uses the canonical quotient norm and scalar
+action. -/
+instance instNormedAlgebra : NormedAlgebra 𝕜 (CalkinAlgebra 𝕜 E) where
+  __ : NormedSpace 𝕜 (CalkinAlgebra 𝕜 E) :=
+    Submodule.Quotient.normedSpace
+      (M := E →L[𝕜] E) (R := 𝕜)
+      (compactOperator (RingHom.id 𝕜) E E) 𝕜
+  __ : Algebra 𝕜 (CalkinAlgebra 𝕜 E) := instAlgebra
+
+@[simp]
+theorem one_eq_class_id :
+    (1 : CalkinAlgebra 𝕜 E) =
+      Submodule.Quotient.mk (ContinuousLinearMap.id 𝕜 E) :=
+  rfl
+
+/-- The continuous unital algebra projection onto the Calkin algebra. -/
+def classMap : (E →L[𝕜] E) →A[𝕜] CalkinAlgebra 𝕜 E where
+  toFun := fun T ↦ (Submodule.Quotient.mk T : CalkinAlgebra 𝕜 E)
+  map_zero' := rfl
+  map_one' := rfl
+  map_add' _ _ := rfl
+  map_mul' _ _ := rfl
+  commutes' c := by
+    change
+      (Submodule.Quotient.mk (algebraMap 𝕜 (E →L[𝕜] E) c) : CalkinAlgebra 𝕜 E) =
+        (Submodule.Quotient.mk (algebraMap 𝕜 (E →L[𝕜] E) c) : CalkinAlgebra 𝕜 E)
+    rfl
+  cont := ((compactOperator (RingHom.id 𝕜) E E).mkQL).continuous
+
+/-- Explicit representative conversion. It is not a simp rule: class-map
+heads are retained so algebraic and zero/compactness rules have stable normal forms. -/
+theorem classMap_apply (T : E →L[𝕜] E) :
+    classMap (𝕜 := 𝕜) (E := E) T = Submodule.Quotient.mk T :=
+  rfl
+
+/-- The unital class map agrees definitionally, pointwise, with the neutral
+nonunital quotient projection. -/
+theorem classMap_eq_quotient_mk (T : E →L[𝕜] E) :
+    classMap (𝕜 := 𝕜) (E := E) T =
+      NonUnitalSubalgebra.Quotient.mk
+        (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)) T :=
+  rfl
+
+/-- The class map is onto. -/
+theorem classMap_surjective :
+    Function.Surjective (classMap (𝕜 := 𝕜) (E := E)) :=
+  Submodule.Quotient.mk_surjective
+    (compactOperator (RingHom.id 𝕜) E E)
+
+@[simp]
+theorem classMap_mul (T U : E →L[𝕜] E) :
+    classMap (𝕜 := 𝕜) (E := E) (T * U) =
+      classMap (𝕜 := 𝕜) (E := E) T *
+        classMap (𝕜 := 𝕜) (E := E) U :=
+  rfl
+
+@[simp]
+theorem classMap_smul (c : 𝕜) (T : E →L[𝕜] E) :
+    classMap (𝕜 := 𝕜) (E := E) (c • T) =
+      c • classMap (𝕜 := 𝕜) (E := E) T :=
+  rfl
+
+@[simp]
+theorem classMap_one :
+    classMap (𝕜 := 𝕜) (E := E) (1 : E →L[𝕜] E) = 1 :=
+  rfl
+
+@[simp]
+theorem classMap_eq_zero_iff (T : E →L[𝕜] E) :
+    classMap (𝕜 := 𝕜) (E := E) T = 0 ↔ IsCompactOperator T :=
+  Submodule.Quotient.mk_eq_zero
+    (compactOperator (RingHom.id 𝕜) E E)
+
+/-- The canonical quotient norm makes the class map norm-nonincreasing. -/
+theorem norm_classMap_le (T : E →L[𝕜] E) :
+    ‖classMap (𝕜 := 𝕜) (E := E) T‖ ≤ ‖T‖ :=
+  Submodule.Quotient.norm_mk_le
+    (compactOperator (RingHom.id 𝕜) E E) T
+
+end Complete
+
+end CalkinAlgebra
+
+section FiniteDimension
+
+variable [CompleteSpace 𝕜] [LocallyCompactSpace 𝕜]
+
+theorem one_mem_compactEndomorphismIdeal_iff :
+    (1 : E →L[𝕜] E) ∈ compactEndomorphismIdeal (𝕜 := 𝕜) (E := E) ↔
+      FiniteDimensional 𝕜 E := by
+  change IsCompactOperator (ContinuousLinearMap.id 𝕜 E : E → E) ↔
+    FiniteDimensional 𝕜 E
+  simpa only [ContinuousLinearMap.coe_id'] using
+    (isCompactOperator_id_iff_finiteDimensional (𝕜 := 𝕜) (E := E))
+
+/-- Every endomorphism is compact exactly in finite dimension, stated on the
+underlying compact-operator submodule. -/
+theorem compactEndomorphismIdeal_toSubmodule_eq_top_iff :
+    (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)).toSubmodule = ⊤ ↔
+      FiniteDimensional 𝕜 E := by
+  constructor
+  · intro htop
+    apply one_mem_compactEndomorphismIdeal_iff.mp
+    change (1 : E →L[𝕜] E) ∈
+      (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)).toSubmodule
+    rw [htop]
+    exact Submodule.mem_top
+  · intro hfinite
+    apply top_unique
+    intro T _hT
+    have hOne :
+        (1 : E →L[𝕜] E) ∈ compactEndomorphismIdeal (𝕜 := 𝕜) (E := E) :=
+      one_mem_compactEndomorphismIdeal_iff.mpr hfinite
+    have hT := IsTwoSided.mul_mem_left T hOne
+    rw [mul_one] at hT
+    exact hT
+
+/-- The raw compact-operator submodule is top exactly in finite dimension. -/
+@[simp]
+theorem compactOperator_eq_top_iff_finiteDimensional :
+    compactOperator (RingHom.id 𝕜) E E = ⊤ ↔ FiniteDimensional 𝕜 E := by
+  simpa only [compactEndomorphismIdeal_toSubmodule] using
+    (compactEndomorphismIdeal_toSubmodule_eq_top_iff (𝕜 := 𝕜) (E := E))
+
+/-- Every endomorphism is compact exactly in finite dimension. -/
+@[simp]
+theorem compactEndomorphismIdeal_eq_top_iff :
+    compactEndomorphismIdeal (𝕜 := 𝕜) (E := E) = ⊤ ↔
+      FiniteDimensional 𝕜 E := by
+  rw [← NonUnitalAlgebra.toSubmodule_eq_top]
+  exact compactEndomorphismIdeal_toSubmodule_eq_top_iff
+
+namespace CalkinAlgebra
+
+/-- The Calkin algebra is a singleton exactly when the underlying space is
+finite-dimensional. -/
+theorem subsingleton_iff_finiteDimensional :
+    Subsingleton (CalkinAlgebra 𝕜 E) ↔ FiniteDimensional 𝕜 E :=
+  calc
+    Subsingleton (CalkinAlgebra 𝕜 E) ↔
+        (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)).toSubmodule = ⊤ :=
+      Submodule.Quotient.subsingleton_iff
+    _ ↔ FiniteDimensional 𝕜 E :=
+      compactEndomorphismIdeal_toSubmodule_eq_top_iff
+
+/-- In finite dimension the Calkin algebra is the zero quotient. -/
+theorem subsingleton_of_finiteDimensional [FiniteDimensional 𝕜 E] :
+    Subsingleton (CalkinAlgebra 𝕜 E) :=
+  subsingleton_iff_finiteDimensional.mpr inferInstance
+
+/-- The Calkin algebra is nontrivial exactly when the underlying space is not
+finite-dimensional. -/
+theorem nontrivial_iff_not_finiteDimensional :
+    Nontrivial (CalkinAlgebra 𝕜 E) ↔ ¬ FiniteDimensional 𝕜 E :=
+  calc
+    Nontrivial (CalkinAlgebra 𝕜 E) ↔
+        (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)).toSubmodule ≠ ⊤ :=
+      Submodule.Quotient.nontrivial_iff
+    _ ↔ ¬ FiniteDimensional 𝕜 E :=
+      not_congr compactEndomorphismIdeal_toSubmodule_eq_top_iff
+
+/-- An infinite-dimensional normed space has a nontrivial Calkin algebra. -/
+theorem nontrivial_of_not_finiteDimensional
+    (hE : ¬ FiniteDimensional 𝕜 E) : Nontrivial (CalkinAlgebra 𝕜 E) :=
+  nontrivial_iff_not_finiteDimensional.mpr hE
+
+end CalkinAlgebra
+
+end FiniteDimension
