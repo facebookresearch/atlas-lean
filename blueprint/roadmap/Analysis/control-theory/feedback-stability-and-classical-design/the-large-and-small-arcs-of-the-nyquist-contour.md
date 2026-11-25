@@ -10,7 +10,7 @@ Let $L = n/d$ be a proper rational function with real coefficients and coprime $
 
 ## Background
 
-- [Argument principle on a piecewise-smooth Jordan contour](../complex-analysis/cauchy-theory/argument-principle/argument-principle-on-a-piecewise-smooth-jordan-contour.md): the counting formula applied on the Nyquist contour
+- [Argument principle on a piecewise-smooth Jordan contour](../../complex-analysis/cauchy-theory/argument-principle/argument-principle-on-a-piecewise-smooth-jordan-contour.md): the counting formula applied on the Nyquist contour
 
 ## Sources
 

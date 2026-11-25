@@ -3,7 +3,6 @@
 Mathematical control theory of finite-dimensional systems: controllability of linear systems (controllability Gramian, Kalman rank condition, Hautus test), pole placement and stabilisation by state feedback, Lie-bracket conditions for nonlinear controllability, Brockett's obstruction to continuous feedback stabilisation and the return method; system identification by recursive least squares and the capability and limits of feedback for uncertain discrete-time systems. Optimal control and dynamic programming are under Convex analysis and calculus of variations and Computer science.
 
 - [Controllability of linear systems](controllability-of-linear-systems/README.md)
-- [Minimum-fuel space trajectories](minimum-fuel-space-trajectories/README.md)
 - [Pole placement](pole-placement/README.md)
 - [Nonlinear controllability and stabilisation](nonlinear-controllability-and-stabilisation/README.md)
 - [Recursive least squares](recursive-least-squares/README.md)
@@ -20,11 +19,7 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Advisory and handoff criteria for human-in-the-loop controllers](advisory-handoff-contract-criteria.md)
 - [Human-in-the-loop controller model](human-in-the-loop-controller-model.md)
 - [Conditional correctness of prescient advisories (safety case)](conditional-correctness-of-prescient-advisories.md)
-- [Model predictive control](model-predictive-control/README.md)
-- [Robust and H-infinity control](robust-and-h-infinity-control/README.md)
-- [Adaptive control](adaptive-control/README.md)
-- [Nyquist's stability theorem](nyquist-s-stability-theorem.md)
-- [The large and small arcs of the Nyquist contour](the-large-and-small-arcs-of-the-nyquist-contour.md)
+- [Optimal, robust and adaptive control](optimal-robust-and-adaptive-control/README.md)
 
 ## Single-input single-output linear systems
 

@@ -9,7 +9,7 @@ The result does not claim $\hat\theta(t) \to \theta$: parameter convergence need
 ## Proof depends on
 
 - [Barbălat's lemma](barbalat-s-lemma.md): convergence of $e^2$ to $0$
-- [Solutions of locally Lipschitz ODEs that leave every compact set](../../ordinary-differential-equations/maximal-solutions-and-global-existence/ode-maximal-solution-exit-compact.md): global existence from boundedness
+- [Solutions of locally Lipschitz ODEs that leave every compact set](../../../ordinary-differential-equations/maximal-solutions-and-global-existence/ode-maximal-solution-exit-compact.md): global existence from boundedness
 
 ## Sources
 
