@@ -6,3 +6,4 @@ Arithmetic circuits over a field and the complexity of algebraic problems: matri
 - [Integer multiplication in time O(n log n)](integer-multiplication-in-time-o-n-log-n/README.md)
 - [Arithmetic circuits for matrix multiplication](arithmetic-circuits-for-matrix-multiplication/README.md)
 - [Matrix multiplication exponent](matrix-multiplication-exponent/README.md)
+- [Valiant's VP versus VNP conjecture](valiant-s-vp-versus-vnp-conjecture.md)

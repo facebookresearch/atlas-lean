@@ -1,0 +1,15 @@
+# Canonical Base Change
+
+- [Canonical Base Change Map](canonical-base-change-map.md)
+- [Canonical Base Change Map tendsto](canonical-base-change-map-tendsto.md)
+- [Canonical Base Change Map factor](canonical-base-change-map-factor.md)
+- [Canonical Base Change Map inner](canonical-base-change-map-inner.md)
+- [Norm canonical Base Change Map le](norm-canonical-base-change-map-le.md)
+- [Canonical Base Change Map right smul](canonical-base-change-map-right-smul.md)
+- [Canonical Base Change Map pure](canonical-base-change-map-pure.md)
+- [Canonical Base Change Map dense Range of surjective](canonical-base-change-map-dense-range-of.md)
+- [Map Left Star Alg Hom canonical Base Change Map](map-left-star-alg-hom-canonical-base-cha.md)
+- [Map Left Star Alg Hom rank One base Change](map-left-star-alg-hom-rank-one-base-chan.md)
+- [Map Left Star Alg Hom mem compact base Change](map-left-star-alg-hom-mem-compact-base-c.md)
+- [Base Change Compact Hom](base-change-compact-hom.md)
+- [Base Change Compact Hom apply](base-change-compact-hom-apply.md)
