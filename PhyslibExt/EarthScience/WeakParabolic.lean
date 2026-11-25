@@ -821,9 +821,6 @@ instance : Module ℝ WeakH10 where
     · exact smul_zero c
 
 
-instance weakH10_fact_one_le_two : Fact (1 ≤ (2 : ENNReal)) := ⟨one_le_two⟩
-
-
 theorem weakH10_toFun_memLp (u : WeakH10) :
     MemLp u.toFun 2 (volume.restrict (Set.Icc 0 1)) := by
   have := weakH10_meas_finite
@@ -5270,228 +5267,6 @@ theorem slab_avg_eventually_le_three_eps_final
   linarith [hT, hA', hN, hφsmall]
 
 
-theorem eLpNorm_const_one_aux :
-    eLpNorm (fun _ => (1 : ℝ)) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) = 1 := by
-  have hvol : (volume.restrict (Set.Icc (0 : ℝ) 1)) Set.univ = 1 := by
-    simp [Real.volume_Icc]
-  have hμ : volume.restrict (Set.Icc (0 : ℝ) 1) ≠ 0 := by
-    intro h
-    rw [h] at hvol
-    simp at hvol
-  rw [eLpNorm_const _ two_ne_zero hμ, hvol]
-  simp
-
-
-theorem energyHyp_false
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ}
-    (hEnergyThm : ∀ (w wx : ℝ → ℝ → ℝ),
-      (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-        (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-            -(w p.1 p.2) * deriv (fun s => φ s p.2) p.1
-              ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-          + (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-            κ p.1 p.2 * wx p.1 p.2 * deriv (fun y => φ p.1 y) p.2
-              ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-          = 0) →
-      ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
-        (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) = 0) :
-    False := by
-  set tstar : ℝ := (t0 + t1) / 2 with htstar
-  have hts_lo : t0 < tstar := by simp [htstar]; linarith
-  have hts_hi : tstar < t1 := by simp [htstar]; linarith
-  have hts_mem : tstar ∈ Set.Icc t0 t1 := ⟨le_of_lt hts_lo, le_of_lt hts_hi⟩
-  have hHom : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-          (-(if p.1 = tstar then (1 : ℝ) else 0)) * deriv (fun s => φ s p.2) p.1
-            ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-        + (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-          κ p.1 p.2 * (0 : ℝ) * deriv (fun y => φ p.1 y) p.2
-            ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-        = 0 := by
-    intro φ hφ
-    have hF : ∀ p : ℝ × ℝ, p.1 ≠ tstar →
-        ((-(if p.1 = tstar then (1 : ℝ) else 0)) * deriv (fun s => φ s p.2) p.1) = 0 := by
-      intro p hp
-      simp [hp]
-    have hmeasS : MeasurableSet ({tstar} ×ˢ (Set.univ : Set ℝ)) :=
-      MeasurableSet.prod (measurableSet_singleton tstar) MeasurableSet.univ
-    have hmeasR : MeasurableSet (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1) :=
-      MeasurableSet.prod measurableSet_Icc measurableSet_Icc
-    have hvol0 : volume ({tstar} ×ˢ (Set.univ : Set ℝ)) = 0 := by
-      rw [Measure.volume_eq_prod, Measure.prod_prod, Real.volume_singleton, zero_mul]
-    have hnull : ((volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)).restrict
-        (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)) ({tstar} ×ˢ (Set.univ : Set ℝ)) = 0 := by
-      rw [Measure.restrict_apply hmeasS, Measure.restrict_apply (hmeasS.inter hmeasR)]
-      exact measure_mono_null (Set.inter_subset_left.trans Set.inter_subset_left) hvol0
-    have hA : (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-        (-(if p.1 = tstar then (1 : ℝ) else 0)) * deriv (fun s => φ s p.2) p.1
-          ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))) = 0 := by
-      have hae : ∀ᵐ p ∂(((volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)).restrict
-          (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1))),
-          ((-(if p.1 = tstar then (1 : ℝ) else 0)) * deriv (fun s => φ s p.2) p.1) = 0 := by
-        rw [ae_iff]
-        refine measure_mono_null ?hsub hnull
-        intro p hp
-        simp only [Set.mem_ofPred_eq, Set.mem_prod, Set.mem_singleton_iff] at hp ⊢
-        refine ⟨?_, Set.mem_univ _⟩
-        by_contra hne
-        exact hp (hF p hne)
-      exact integral_eq_zero_of_ae hae
-    have hB : (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-        κ p.1 p.2 * (0 : ℝ) * deriv (fun y => φ p.1 y) p.2
-          ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))) = 0 := by
-      have hfun : (fun p : ℝ × ℝ => κ p.1 p.2 * (0 : ℝ) * deriv (fun y => φ p.1 y) p.2) = 0 := by
-        funext p
-        simp
-      rw [hfun]
-      exact integral_zero _ _
-    rw [hA, hB, add_zero]
-  have hId := hEnergyThm (fun t x => if t = tstar then (1 : ℝ) else 0)
-    (fun _ _ => (0 : ℝ)) hHom tstar hts_mem
-  have h2 : eLpNorm (fun x : ℝ => if tstar = tstar then (1 : ℝ) else 0) 2
-      (volume.restrict (Set.Icc (0 : ℝ) 1)) = 0 := hId
-  have e1 : eLpNorm (fun x : ℝ => if tstar = tstar then (1 : ℝ) else 0) 2
-      (volume.restrict (Set.Icc (0 : ℝ) 1)) = 1 := by
-    have hfun : (fun x : ℝ => if tstar = tstar then (1 : ℝ) else 0)
-        = (fun _ => (1 : ℝ)) := by
-      funext x
-      simp
-    rw [hfun]
-    exact eLpNorm_const_one_aux
-  rw [e1] at h2
-  exact one_ne_zero h2
-
-
-theorem energyId_hyp_false
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ}
-    (hEnergyIdThm : ∀ (w wx : ℝ → ℝ → ℝ),
-      (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-        ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-            (-w t x * deriv (fun s => φ s x) t + κ t x * wx t x * deriv (fun y => φ t y) x) = 0) →
-      ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
-        (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
-          + 2 * ∫ t in t0..τ, ∫ x in (0 : ℝ)..1, κ t x * (wx t x) ^ 2
-          = (eLpNorm (fun x => w t0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2) :
-    False := by
-  set tstar : ℝ := (t0 + t1) / 2 with htstar
-  have hts_lo : t0 < tstar := by simp [htstar]; linarith
-  have hts_hi : tstar < t1 := by simp [htstar]; linarith
-  have hts_mem : tstar ∈ Set.Icc t0 t1 := ⟨le_of_lt hts_lo, le_of_lt hts_hi⟩
-  have ht0_ne : t0 ≠ tstar := ne_of_lt hts_lo
-  have hHom : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-        (-(fun t x => if t = tstar then (1 : ℝ) else 0) t x * deriv (fun s => φ s x) t
-          + κ t x * (fun _ _ => (0 : ℝ)) t x * deriv (fun y => φ t y) x) = 0 := by
-    intro φ hφ
-    have hJ : ∀ t : ℝ, t ≠ tstar →
-        (∫ x in (0 : ℝ)..1, (-(fun t x => if t = tstar then (1 : ℝ) else 0) t x
-          * deriv (fun s => φ s x) t
-          + κ t x * (fun _ _ => (0 : ℝ)) t x * deriv (fun y => φ t y) x)) = 0 := by
-      intro t htne
-      have hzero : (fun x => (-(fun t x => if t = tstar then (1 : ℝ) else 0) t x
-          * deriv (fun s => φ s x) t
-          + κ t x * (fun _ _ => (0 : ℝ)) t x * deriv (fun y => φ t y) x)) = 0 := by
-        funext x
-        simp [htne]
-      rw [hzero]
-      exact intervalIntegral.integral_zero
-    have hnull : (volume.restrict (Set.Ioc t0 t1)) {tstar} = 0 := by
-      rw [Measure.restrict_apply (measurableSet_singleton tstar)]
-      exact measure_mono_null Set.inter_subset_left Real.volume_singleton
-    have hae : ∀ᵐ t ∂(volume.restrict (Set.Ioc t0 t1)),
-        (∫ x in (0 : ℝ)..1, (-(fun t x => if t = tstar then (1 : ℝ) else 0) t x
-          * deriv (fun s => φ s x) t
-          + κ t x * (fun _ _ => (0 : ℝ)) t x * deriv (fun y => φ t y) x)) = 0 := by
-      rw [ae_iff]
-      refine measure_mono_null ?hsub hnull
-      intro t ht
-      simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff] at ht ⊢
-      by_contra hne
-      exact ht (hJ t hne)
-    rw [intervalIntegral.integral_of_le ht.le]
-    exact integral_eq_zero_of_ae hae
-  have hId := hEnergyIdThm (fun t x => if t = tstar then (1 : ℝ) else 0)
-    (fun _ _ => (0 : ℝ)) hHom tstar hts_mem
-  have hdiss : (∫ t in t0..tstar, ∫ x in (0 : ℝ)..1, κ t x * (0 : ℝ) ^ 2) = 0 := by
-    have h0 : (fun t : ℝ => ∫ x in (0 : ℝ)..1, κ t x * (0 : ℝ) ^ 2) = 0 := by
-      funext t
-      have h0' : (fun x : ℝ => κ t x * (0 : ℝ) ^ 2) = 0 := by
-        funext x
-        simp
-      rw [h0']
-      exact intervalIntegral.integral_zero
-    rw [h0]
-    exact intervalIntegral.integral_zero
-  have h2 : (eLpNorm (fun x : ℝ => if tstar = tstar then (1 : ℝ) else 0) 2
-        (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
-        + 2 * (∫ t in t0..tstar, ∫ x in (0 : ℝ)..1, κ t x * (0 : ℝ) ^ 2)
-      = (eLpNorm (fun x : ℝ => if t0 = tstar then (1 : ℝ) else 0) 2
-        (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2 := hId
-  have eA : (eLpNorm (fun x : ℝ => if tstar = tstar then (1 : ℝ) else 0) 2
-      (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2 = 1 := by
-    have hfun : (fun x : ℝ => if tstar = tstar then (1 : ℝ) else 0)
-        = (fun _ => (1 : ℝ)) := by
-      funext x
-      simp
-    rw [hfun, eLpNorm_const_one_aux, ENNReal.toReal_one]
-    norm_num
-  have eB : (eLpNorm (fun x : ℝ => if t0 = tstar then (1 : ℝ) else 0) 2
-      (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2 = 0 := by
-    have hfun : (fun x : ℝ => if t0 = tstar then (1 : ℝ) else 0) = 0 := by
-      funext x
-      simp [ht0_ne]
-    rw [hfun, eLpNorm_zero, ENNReal.toReal_zero]
-    norm_num
-  rw [hdiss, eA, eB] at h2
-  norm_num at h2
-
-
-theorem weak_parabolic_unique_asm
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin : ℝ} (hkmin : 0 < kmin)
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
-    (u1 ux1 u2 ux2 : ℝ → ℝ → ℝ)
-    (hWeak1Thm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-          -(u1 p.1 p.2) * deriv (fun s => φ s p.2) p.1
-            ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-        + (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-          κ p.1 p.2 * ux1 p.1 p.2 * deriv (fun y => φ p.1 y) p.2
-            ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-        = 0)
-    (hWeak2Thm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-          -(u2 p.1 p.2) * deriv (fun s => φ s p.2) p.1
-            ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-        + (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-          κ p.1 p.2 * ux2 p.1 p.2 * deriv (fun y => φ p.1 y) p.2
-            ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-        = 0)
-    (hSubThm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-          -((u1 p.1 p.2 - u2 p.1 p.2)) * deriv (fun s => φ s p.2) p.1
-            ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-        + (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-          κ p.1 p.2 * (ux1 p.1 p.2 - ux2 p.1 p.2) * deriv (fun y => φ p.1 y) p.2
-            ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-        = 0)
-    (hEnergyThm : ∀ (w wx : ℝ → ℝ → ℝ),
-      (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-        (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-            -(w p.1 p.2) * deriv (fun s => φ s p.2) p.1
-              ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-          + (∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-            κ p.1 p.2 * wx p.1 p.2 * deriv (fun y => φ p.1 y) p.2
-              ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
-          = 0) →
-      ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
-        (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) = 0) :
-    Set.EqOn (fun p : ℝ × ℝ => u1 p.1 p.2) (fun p : ℝ × ℝ => u2 p.1 p.2)
-      (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1) := by
-  exact False.elim (energyHyp_false ht hEnergyThm)
-
 theorem parabolicTest_deriv_memLp
     {t0 t1 : ℝ}
     (φ : ℝ → ℝ → ℝ) (hφ : ParabolicTest t0 t1 φ) :
@@ -5611,51 +5386,6 @@ theorem parabolicTest_deriv_memLp
   have hunc2 : MemLp (Function.uncurry (fun t x => deriv (fun y => φ t y) x)) 2
       (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) := hmem2
   exact ⟨hcont1, hcont2, hunc1, hunc2⟩
-/-- Uniqueness from product uniqueness + energy identity + Fubini. -/
-
-theorem weak_parabolic_unique_final
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin : ℝ} (hkmin : 0 < kmin)
-    (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
-      kmin ≤ κ p.1 p.2)
-    {F : ℝ → ℝ → ℝ}
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
-    (u ux : ℝ → ℝ → ℝ)
-    (hProfileThm : ∀ t, ∃ h : WeakH10, h.toFun = u t ∧ h.weakDeriv = ux t)
-    (hWeakThm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-          (-u t x * deriv (fun s => φ s x) t + κ t x * ux t x * deriv (fun y => φ t y) x)
-        = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x)
-    (hInitU : (eLpNorm (fun x => u t0 x - u0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) = 0)
-    (hEnergyIdThm : ∀ (w wx : ℝ → ℝ → ℝ),
-      (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-        ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-            (-w t x * deriv (fun s => φ s x) t + κ t x * wx t x * deriv (fun y => φ t y) x) = 0) →
-      ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
-        (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
-          + 2 * ∫ t in t0..τ, ∫ x in (0 : ℝ)..1, κ t x * (wx t x) ^ 2
-          = (eLpNorm (fun x => w t0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2)
-    (hFubiniThm : ∀ (g : ℝ → ℝ → ℝ),
-      Integrable (Function.uncurry g)
-        (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)) →
-      (∫ t in t0..t1, ∫ x in (0 : ℝ)..1, g t x)
-        = ∫ p in Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1,
-            g p.1 p.2 ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1))) :
-    ∀ u' ux' : ℝ → ℝ → ℝ,
-      (∀ t, ∃ h : WeakH10, h.toFun = u' t ∧ h.weakDeriv = ux' t) →
-      (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-        ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-            (-u' t x * deriv (fun s => φ s x) t + κ t x * ux' t x * deriv (fun y => φ t y) x)
-          = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x) →
-      Filter.Tendsto (fun t => (eLpNorm (fun x => u' t x - u0 x) 2
-          (volume.restrict (Set.Icc 0 1))).toReal) (nhdsWithin t0 (Set.Ioi t0)) (nhds 0) →
-      ∀ t ∈ Set.Ioo t0 t1, Set.EqOn (u' t) (u t) (Set.Icc 0 1) := by
-  intro u' ux' hProf' hWeak' hTendsto t htmem
-  exact False.elim (energyId_hyp_false ht hEnergyIdThm)
-
-
-
-
 noncomputable def slabLeft (t0 t1 : ℝ) (N : ℕ) (t : ℝ) : ℝ :=
   t0 + (Nat.floor ((t - t0) / ((t1 - t0) / N)) : ℝ) * ((t1 - t0) / N)
 
@@ -7825,12 +7555,6 @@ theorem rothe_term1_tendsto
 noncomputable def slabSampleFn (t0 t1 : ℝ) (N : ℕ) (g : ℝ → ℝ → ℝ) (p : ℝ × ℝ) : ℝ :=
   if p.1 = t1 then g t1 p.2
   else g (slabRight t0 t1 N p.1) p.2
-
-
-instance holderTriple_two_two_one : (2 : ENNReal).HolderTriple 2 1 :=
-  NNReal.HolderTriple.coe_ennreal (r := 1) (by norm_num)
-    (NNReal.HolderTriple.mk (p := 2) (q := 2) (by ext; push_cast; norm_num) (by norm_num)
-      (by norm_num))
 
 
 theorem norm_integral_mul_le_eLpNorm_toReal_mul_toReal
@@ -11272,86 +10996,6 @@ theorem rothe_slice_weak_final_corrected
   exact hL
 
 
-theorem exists_smooth_bump (t0 t1 : ℝ) (ht : t0 < t1) :
-    ∃ η : ℝ → ℝ, ContDiff ℝ (((⊤ : ℕ∞)) : WithTop ℕ∞) η ∧ HasCompactSupport η ∧
-      (∀ t : ℝ, η t ≠ 0 → t0 < t ∧ t < t1) ∧ ∃ tstar : ℝ, η tstar ≠ 0 := by
-  have hm : (t0 + t1) / 2 ∈ Set.Ioo t0 t1 := by
-    rw [Set.mem_Ioo]
-    constructor <;> linarith
-  have hs : IsClosed (Set.Ioo t0 t1)ᶜ := isOpen_Ioo.isClosed_compl
-  have htsingle : IsClosed ({(t0 + t1) / 2} : Set ℝ) := isClosed_singleton
-  have hd : Disjoint (Set.Ioo t0 t1)ᶜ ({(t0 + t1) / 2} : Set ℝ) := by
-    rw [Set.disjoint_left]
-    intro x hxs hxm
-    rw [Set.mem_singleton_iff] at hxm
-    subst hxm
-    exact hxs hm
-  obtain ⟨f, h0, h1, -⟩ :=
-    exists_contMDiffMap_zero_one_of_isClosed (modelWithCornersSelf ℝ ℝ) hs htsingle hd
-      (n := ⊤)
-  have hsupp_sub : Function.support ⇑f ⊆ Set.Ioo t0 t1 := by
-    intro x hx
-    rw [Function.mem_support] at hx
-    by_contra hxIoo
-    exact hx (h0 hxIoo)
-  have hcompact : HasCompactSupport ⇑f :=
-    HasCompactSupport.of_support_subset_isCompact isCompact_Icc
-      (hsupp_sub.trans Set.Ioo_subset_Icc_self)
-  have hmem : ∀ t : ℝ, ⇑f t ≠ 0 → t0 < t ∧ t < t1 := by
-    intro t ht0
-    exact Set.mem_Ioo.mp (hsupp_sub (Function.mem_support.mpr ht0))
-  have hne : ⇑f ((t0 + t1) / 2) ≠ 0 := by
-    have hfm : ⇑f ((t0 + t1) / 2) = 1 := h1 (Set.mem_singleton _)
-    rw [hfm]
-    exact one_ne_zero
-  exact ⟨⇑f, f.contMDiff.contDiff, hcompact, hmem, (t0 + t1) / 2, hne⟩
-
-/-- A `WeakH10` element nonzero outside `(0, 1)` (only `[0, 1]` is constrained). -/
-
-theorem exists_H10_nonzero_outside : ∃ v : WeakH10, v.toFun 2 ≠ 0 := by
-  refine ⟨⟨fun x => if x = 2 then (1 : ℝ) else 0, fun _ => 0, MemLp.zero', ?_, ?_⟩, ?_⟩
-  · intro x hx
-    obtain ⟨hx0, hx1⟩ := Set.mem_Icc.mp hx
-    have hx2 : x ≠ 2 := by linarith
-    simp [hx2]
-  · simp
-  · show (if (2 : ℝ) = 2 then (1 : ℝ) else 0) ≠ 0
-    simp
-
-/-- Pairing reps for `H¹₀` test functions. -/
-
-theorem pairing_rep_H10
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    {F : ℝ → ℝ → ℝ}
-    (u ux : ℝ → ℝ → ℝ)
-    (hWeakEqThm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-          (-u t x * deriv (fun s => φ s x) t + κ t x * ux t x * deriv (fun y => φ t y) x)
-        = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x)
-    (hTestProdThm : ∀ (η : ℝ → ℝ) (v : WeakH10),
-      ContDiff ℝ (((⊤ : ℕ∞)) : WithTop ℕ∞) η → HasCompactSupport η →
-      (∀ t : ℝ, η t ≠ 0 → t0 < t ∧ t < t1) →
-      ParabolicTest t0 t1 (fun t x => η t * v.toFun x))
-    (hIntThm : ∀ (v : WeakH10),
-      Integrable (fun t => ∫ x in (0 : ℝ)..1,
-        (-κ t x * ux t x * v.weakDeriv x + F t x * v.toFun x))
-        (volume.restrict (Set.Icc t0 t1))) :
-    ∀ v : WeakH10,
-      ∃ ĝ : ℝ → ℝ, Continuous ĝ ∧
-        (fun t => ∫ x in (0 : ℝ)..1, u t x * v.toFun x)
-          =ᵐ[volume.restrict (Set.Icc t0 t1)] ĝ := by
-  intro v
-  exfalso
-  obtain ⟨η, hηsmooth, hηcompact, hηsupp, tstar, hηne⟩ := exists_smooth_bump t0 t1 ht
-  obtain ⟨vbad, hvbad⟩ := exists_H10_nonzero_outside
-  obtain ⟨-, -, hsupp⟩ := hTestProdThm η vbad hηsmooth hηcompact hηsupp
-  have hne : η tstar * vbad.toFun 2 ≠ 0 := mul_ne_zero hηne hvbad
-  have hcon := hsupp tstar 2 hne
-  have h21 : (2 : ℝ) < 1 := hcon.2.2.2
-  norm_num at h21
-
-
 theorem pairing_cs_bound
     {t0 t1 : ℝ} (ht : t0 < t1)
     (u : ℝ → ℝ → ℝ)
@@ -11620,10 +11264,6 @@ theorem pairing_reps_cauchy
           (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal) < ε := by
     linarith [hdn, hdm]
   exact le_of_lt (lt_of_le_of_lt hle2 hlt2)
-
-
-instance holderTriple_two : ENNReal.HolderTriple 2 2 1 where
-  inv_add_inv_eq_inv := by rw [ENNReal.inv_two_add_inv_two, inv_one]
 
 
 theorem weakH10_memLp_toFun (w : WeakH10) :
@@ -14458,210 +14098,6 @@ theorem slice_weak_t0_fixed2
   exact lt_trans h123 h34
 
 
-theorem rothe_construction_asm
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
-    (u : ℝ → ℝ → ℝ)
-    (hMemThm : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
-      MemLp (fun x => u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (G : Set ℝ)
-    (hRepAsmThm : ∃ ũ : ℝ → ℝ → ℝ,
-      (fun p : ℝ × ℝ => ũ p.1 p.2)
-        =ᵐ[volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)]
-        (fun p : ℝ × ℝ => u p.1 p.2))
-    (hSliceWeakThm : ∀ τ : ℝ, τ ∈ G → t0 < τ → τ < t1 → ∀ ψ : ℝ → ℝ,
-      MemLp ψ 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) →
-      Filter.Tendsto (fun N : ℕ =>
-          ∫ x in (0 : ℝ)..1, u τ x * ψ x)
-        Filter.atTop (nhds (∫ x in (0 : ℝ)..1, u τ x * ψ x)))
-    (hContOffThm : ∀ ũ : ℝ → ℝ → ℝ,
-      (fun p : ℝ × ℝ => ũ p.1 p.2)
-        =ᵐ[volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)]
-        (fun p : ℝ × ℝ => u p.1 p.2) →
-      ContinuousOn (fun t => ũ t) (Set.Ioo t0 t1))
-    (hInitDiagThm : ∀ v : ℝ → ℝ,
-      MemLp v 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) →
-      ∀ ĝ : ℝ → ℝ, Continuous ĝ →
-      (fun t => ∫ x in (0 : ℝ)..1, u t x * v x)
-        =ᵐ[volume.restrict (Set.Icc t0 t1)] ĝ →
-      ĝ t0 = ∫ x in (0 : ℝ)..1, u0 x * v x) :
-    ∃ ũ : ℝ → ℝ → ℝ,
-      (∀ t : ℝ, t ∈ Set.Icc t0 t1 → ContinuousAt (fun s => ũ s) t) ∧
-      (fun p : ℝ × ℝ => ũ p.1 p.2)
-        =ᵐ[volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)]
-        (fun p : ℝ × ℝ => u p.1 p.2) ∧
-      (eLpNorm (fun x => ũ t0 x - u0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) = 0 := by
-  classical
-  obtain ⟨c, hc⟩ := Set.nonempty_Ioo.mpr ht
-  set ũ : ℝ → ℝ → ℝ := fun s x => u s x + (if s = c ∧ x = 0 then (1 : ℝ) else 0) with hũ
-  have hae : (fun p : ℝ × ℝ => ũ p.1 p.2)
-      =ᵐ[volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)]
-      (fun p : ℝ × ℝ => u p.1 p.2) := by
-    have hsub : {p : ℝ × ℝ | ¬(ũ p.1 p.2 = u p.1 p.2)} ⊆ {(c, (0 : ℝ))} := by
-      intro p hp
-      simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff] at hp ⊢
-      by_contra hne
-      apply hp
-      have hcond : ¬(p.1 = c ∧ p.2 = 0) := by
-        rintro ⟨h1, h2⟩
-        exact hne (Prod.ext h1 h2)
-      simp [hũ, hcond]
-    have hnull : volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1) {(c, (0 : ℝ))} = 0 :=
-      measure_singleton _
-    show ∀ᵐ (p : ℝ × ℝ) ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)),
-      ũ p.1 p.2 = u p.1 p.2
-    rw [ae_iff]
-    exact measure_mono_null hsub hnull
-  have hcont_u := hContOffThm u (Filter.EventuallyEq.refl _ _)
-  have hcont_ũ := hContOffThm ũ hae
-  have hwu : ContinuousWithinAt (fun s : ℝ => u s 0) (Set.Ioo t0 t1) c :=
-    (continuousWithinAt_pi.mp (hcont_u c hc)) 0
-  have hwũ : ContinuousWithinAt (fun s : ℝ => ũ s 0) (Set.Ioo t0 t1) c :=
-    (continuousWithinAt_pi.mp (hcont_ũ c hc)) 0
-  have hsubc := hwũ.sub hwu
-  have heq : ((fun s : ℝ => ũ s 0) - (fun s : ℝ => u s 0))
-      = (fun s : ℝ => if s = c then (1 : ℝ) else 0) := by
-    funext s
-    simp only [Pi.sub_apply, hũ]
-    by_cases h : s = c
-    · simp [h, add_sub_cancel_left]
-    · simp [h]
-  rw [heq] at hsubc
-  have hnbhd : Set.Ioo t0 t1 ∈ nhds c := IsOpen.mem_nhds isOpen_Ioo hc
-  have hcon : ContinuousAt (fun s : ℝ => if s = c then (1 : ℝ) else 0) c :=
-    hsubc.continuousAt hnbhd
-  have h1 : Filter.Tendsto (fun s : ℝ => if s = c then (1 : ℝ) else 0) (nhdsWithin c {c}ᶜ) (nhds 1) := by
-    have hcon' : Filter.Tendsto (fun s : ℝ => if s = c then (1 : ℝ) else 0) (nhds c)
-        (nhds ((fun s : ℝ => if s = c then (1 : ℝ) else 0) c)) := hcon
-    simpa using hcon'.mono_left nhdsWithin_le_nhds
-  have h0 : Filter.Tendsto (fun s : ℝ => if s = c then (1 : ℝ) else 0) (nhdsWithin c {c}ᶜ) (nhds 0) := by
-    have heq0 : (fun s : ℝ => if s = c then (1 : ℝ) else 0) =ᶠ[nhdsWithin c {c}ᶜ] (fun _ => (0 : ℝ)) := by
-      filter_upwards [self_mem_nhdsWithin] with s hs
-      simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hs
-      show (if s = c then (1 : ℝ) else 0) = 0
-      simp [hs]
-    exact (Filter.tendsto_congr' heq0).mpr tendsto_const_nhds
-  have h01 : (0 : ℝ) = 1 := tendsto_nhds_unique h0 h1
-  exact absurd h01 zero_ne_one
-
-
-theorem weak_parabolic_sub
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ}
-    {F : ℝ → ℝ → ℝ}
-    (u₁ ux₁ u₂ ux₂ : ℝ → ℝ → ℝ)
-    (hIntThm : ∀ (u ux : ℝ → ℝ → ℝ),
-      ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      Integrable (fun t : ℝ => ∫ x in (0 : ℝ)..1,
-          (-u t x * deriv (fun s => φ s x) t + κ t x * ux t x * deriv (fun y => φ t y) x))
-        (volume.restrict (Set.Icc t0 t1))
-      ∧ Integrable (fun t : ℝ => ∫ x in (0 : ℝ)..1, F t x * φ t x)
-        (volume.restrict (Set.Icc t0 t1))
-      ∧ ∀ t : ℝ, Integrable (fun x : ℝ =>
-          (-u t x * deriv (fun s => φ s x) t + κ t x * ux t x * deriv (fun y => φ t y) x))
-        (volume.restrict (Set.Icc (0 : ℝ) 1))
-      ∧ ∀ t : ℝ, Integrable (fun x : ℝ => F t x * φ t x)
-        (volume.restrict (Set.Icc (0 : ℝ) 1)))
-    (hWeak1 : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-          (-u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x)
-        = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x)
-    (hWeak2 : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-          (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x)
-        = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x) :
-    ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-          (-(u₁ t x - u₂ t x) * deriv (fun s => φ s x) t
-            + κ t x * (ux₁ t x - ux₂ t x) * deriv (fun y => φ t y) x) = 0 := by
-  intro φ hφ
-  obtain ⟨hInt1o, -, hAll1⟩ := hIntThm u₁ ux₁ φ hφ
-  obtain ⟨hInt2o, -, hAll2⟩ := hIntThm u₂ ux₂ φ hφ
-  have h01 : (0 : ℝ) ≤ 1 := by norm_num
-  have htt : t0 ≤ t1 := ht.le
-  have hInner1 : ∀ t : ℝ, IntervalIntegrable (fun x : ℝ =>
-      (-u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x))
-      volume (0 : ℝ) 1 := by
-    intro t
-    have hOn : IntegrableOn (fun x : ℝ =>
-        (-u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x))
-        (Set.uIcc (0 : ℝ) 1) volume := by
-      rw [Set.uIcc_of_le h01]
-      exact (hAll1 t).1
-    exact hOn.intervalIntegrable
-  have hInner2 : ∀ t : ℝ, IntervalIntegrable (fun x : ℝ =>
-      (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x))
-      volume (0 : ℝ) 1 := by
-    intro t
-    have hOn : IntegrableOn (fun x : ℝ =>
-        (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x))
-        (Set.uIcc (0 : ℝ) 1) volume := by
-      rw [Set.uIcc_of_le h01]
-      exact (hAll2 t).1
-    exact hOn.intervalIntegrable
-  have hOuter1 : IntervalIntegrable (fun t : ℝ => ∫ x in (0 : ℝ)..1,
-      (-u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x))
-      volume t0 t1 := by
-    have hOn : IntegrableOn (fun t : ℝ => ∫ x in (0 : ℝ)..1,
-        (-u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x))
-        (Set.uIcc t0 t1) volume := by
-      rw [Set.uIcc_of_le htt]
-      exact hInt1o
-    exact hOn.intervalIntegrable
-  have hOuter2 : IntervalIntegrable (fun t : ℝ => ∫ x in (0 : ℝ)..1,
-      (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x))
-      volume t0 t1 := by
-    have hOn : IntegrableOn (fun t : ℝ => ∫ x in (0 : ℝ)..1,
-        (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x))
-        (Set.uIcc t0 t1) volume := by
-      rw [Set.uIcc_of_le htt]
-      exact hInt2o
-    exact hOn.intervalIntegrable
-  have hEq : ∀ t : ℝ, (∫ x in (0 : ℝ)..1,
-      (-(u₁ t x - u₂ t x) * deriv (fun s => φ s x) t
-        + κ t x * (ux₁ t x - ux₂ t x) * deriv (fun y => φ t y) x))
-      = (∫ x in (0 : ℝ)..1,
-        (-u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x))
-        - (∫ x in (0 : ℝ)..1,
-        (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x)) := by
-    intro t
-    have hPt : (fun x : ℝ => (-(u₁ t x - u₂ t x) * deriv (fun s => φ s x) t
-        + κ t x * (ux₁ t x - ux₂ t x) * deriv (fun y => φ t y) x))
-        = (fun x : ℝ => (-u₁ t x * deriv (fun s => φ s x) t
-          + κ t x * ux₁ t x * deriv (fun y => φ t y) x)
-          - (-u₂ t x * deriv (fun s => φ s x) t
-          + κ t x * ux₂ t x * deriv (fun y => φ t y) x)) := by
-      funext x
-      ring
-    rw [hPt]
-    exact intervalIntegral.integral_sub (hInner1 t) (hInner2 t)
-  have hOuterEq : (fun t : ℝ => ∫ x in (0 : ℝ)..1,
-      (-(u₁ t x - u₂ t x) * deriv (fun s => φ s x) t
-        + κ t x * (ux₁ t x - ux₂ t x) * deriv (fun y => φ t y) x))
-      = (fun t : ℝ => (∫ x in (0 : ℝ)..1,
-        (-u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x))
-        - (∫ x in (0 : ℝ)..1,
-        (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x))) :=
-    funext hEq
-  calc ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-        (-(u₁ t x - u₂ t x) * deriv (fun s => φ s x) t
-          + κ t x * (ux₁ t x - ux₂ t x) * deriv (fun y => φ t y) x)
-      = ∫ t in t0..t1, ((∫ x in (0 : ℝ)..1,
-        (-u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x))
-        - (∫ x in (0 : ℝ)..1,
-        (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x))) := by
-        rw [hOuterEq]
-    _ = (∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-        (-u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x))
-        - (∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-        (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x)) :=
-        intervalIntegral.integral_sub hOuter1 hOuter2
-    _ = (∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x)
-        - (∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x) := by
-        rw [hWeak1 φ hφ, hWeak2 φ hφ]
-    _ = 0 := sub_self _
-
-
 theorem ae_prod_of_ae_slice
     {t0 t1 : ℝ} (ht : t0 < t1)
     (u₁ u₂ : ℝ → ℝ → ℝ)
@@ -14704,57 +14140,6 @@ theorem ae_prod_of_ae_slice
     exact hτSlice
   rw [lintegral_congr_ae hsec]
   simp
-
-
-theorem weak_parabolic_unique_of_energy
-    {t0 t1 : ℝ} (ht : t0 < t1)
-    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
-    (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
-      kmin ≤ κ p.1 p.2 ∧ κ p.1 p.2 ≤ kmax)
-    (u₁ ux₁ u₂ ux₂ : ℝ → ℝ → ℝ)
-    (hHomogThm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-          (-(u₁ t x - u₂ t x) * deriv (fun s => φ s x) t
-            + κ t x * (ux₁ t x - ux₂ t x) * deriv (fun y => φ t y) x) = 0)
-    (hEnergyIdThm : ∀ (w wx : ℝ → ℝ → ℝ),
-      (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
-        ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
-            (-w t x * deriv (fun s => φ s x) t + κ t x * wx t x * deriv (fun y => φ t y) x) = 0) →
-      (eLpNorm (fun x => w t0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0 →
-      ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
-        (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
-          + 2 * ∫ t in t0..τ, ∫ x in (0 : ℝ)..1, κ t x * (wx t x) ^ 2 = 0)
-    (hInitThm : (eLpNorm (fun x => u₁ t0 x - u₂ t0 x) 2
-      (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0) :
-    ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
-      (eLpNorm (fun x => u₁ τ x - u₂ τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0 := by
-  have hEq : (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1) : Measure (ℝ × ℝ))
-      = (volume.restrict (Set.Icc t0 t1)).prod (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
-    rw [Measure.volume_eq_prod, ← Measure.prod_restrict]
-  rw [hEq] at hκ
-  have hκ_ae : ∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)),
-      ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ t x ∧ κ t x ≤ kmax :=
-    Measure.ae_ae_of_ae_prod hκ
-  intro τ hτ
-  obtain ⟨hτlo, hτhi⟩ := Set.mem_Icc.mp hτ
-  have hEq2 := hEnergyIdThm (fun t x => u₁ t x - u₂ t x) (fun t x => ux₁ t x - ux₂ t x)
-    hHomogThm hInitThm τ hτ
-  have hA : 0 ≤ (eLpNorm (fun x => u₁ τ x - u₂ τ x) 2
-      (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2 :=
-    sq_nonneg _
-  have hinner_ae : ∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)),
-      0 ≤ ∫ x in (0 : ℝ)..1, κ t x * (ux₁ t x - ux₂ t x) ^ 2 := by
-    filter_upwards [hκ_ae] with t ht
-    apply intervalIntegral.integral_nonneg_of_ae_restrict zero_le_one
-    filter_upwards [ht] with x hx
-    exact mul_nonneg (le_trans hkmin.le hx.1) (sq_nonneg _)
-  have hB : 0 ≤ ∫ t in t0..τ, ∫ x in (0 : ℝ)..1, κ t x * (ux₁ t x - ux₂ t x) ^ 2 := by
-    apply intervalIntegral.integral_nonneg_of_ae_restrict hτlo
-    exact ae_restrict_of_ae_restrict_of_subset (Set.Icc_subset_Icc le_rfl hτhi) hinner_ae
-  have h2B : 0 ≤ 2 * ∫ t in t0..τ, ∫ x in (0 : ℝ)..1, κ t x * (ux₁ t x - ux₂ t x) ^ 2 :=
-    mul_nonneg zero_le_two hB
-  have hZero := ((add_eq_zero_iff_of_nonneg hA h2B).mp hEq2).1
-  exact sq_eq_zero_iff.mp hZero
 
 
 theorem sq_integral_le_mul_integral_sq
@@ -18183,16 +17568,330 @@ theorem iterated_eq_product
   simp only [← integral_Icc_eq_integral_Ioc]
   rw [hProd, Measure.restrict_restrict hS, Set.inter_self]
 
-/-- Weak parabolic existence and uniqueness, conditional on the two remaining
-assembly inputs: the existence data (the Rothe-limit weak equation, profiles,
-time continuity, pointwise initial data, and energy estimate) and the energy
-identity for homogeneous solutions. The existence data is proved by the
-Rothe-limit assembly (chain + weak-equation passage + profiles); the energy
-identity needs Steklov / time-mollifier machinery and is a follow-up.
-Uniqueness is stated on the open interval: the closed-interval version is
-false at the endpoints (a solution redefined at `t0`, `t1` keeps the weak
-equation and initial-data limit but breaks pointwise equality).
-Test functions are C^∞ (`ContDiff` at `∞`), not analytic (`⊤` = `ω`). -/
+/-- Triangle inequality for `L²(0,1)` distances, read through `ENNReal.toReal`. -/
+private lemma eLpNorm_sub_toReal_le_add {f g h : ℝ → ℝ}
+    (hf : MemLp f 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    (hg : MemLp g 2 (volume.restrict (Set.Icc (0 : ℝ) 1)))
+    (hh : MemLp h 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) :
+    (eLpNorm (fun x => f x - g x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal
+      ≤ (eLpNorm (fun x => f x - h x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal
+        + (eLpNorm (fun x => h x - g x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal := by
+  have hfh : MemLp (fun x => f x - h x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := hf.sub hh
+  have hhg : MemLp (fun x => h x - g x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := hh.sub hg
+  have hsplit : (fun x => f x - g x) = (fun x => f x - h x) + (fun x => h x - g x) := by
+    funext x
+    simp only [Pi.add_apply]
+    ring
+  rw [hsplit, ← ENNReal.toReal_add hfh.eLpNorm_ne_top hhg.eLpNorm_ne_top]
+  exact ENNReal.toReal_mono (ENNReal.add_ne_top.mpr ⟨hfh.eLpNorm_ne_top, hhg.eLpNorm_ne_top⟩)
+    (eLpNorm_add_le one_le_two)
+
+/-- For `u` and `ux` in `L²` on the rectangle and `κ` a.e. bounded and a.e. strongly
+measurable, the integrand of the weak equation is integrable on the rectangle for every
+test function. -/
+lemma weak_parabolic_integrand_integrable
+    {t0 t1 : ℝ} {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ}
+    (hκ_meas : AEStronglyMeasurable (Function.uncurry κ)
+      (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
+    (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
+      kmin ≤ κ p.1 p.2 ∧ κ p.1 p.2 ≤ kmax)
+    {u ux : ℝ → ℝ → ℝ}
+    (hu : MemLp (Function.uncurry u) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
+    (hux : MemLp (Function.uncurry ux) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
+    {φ : ℝ → ℝ → ℝ} (hφ : ParabolicTest t0 t1 φ) :
+    Integrable (fun p : ℝ × ℝ => -u p.1 p.2 * deriv (fun s => φ s p.2) p.1
+        + κ p.1 p.2 * ux p.1 p.2 * deriv (fun y => φ p.1 y) p.2)
+      (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) := by
+  obtain ⟨hc1, hc2, -, -⟩ := parabolicTest_deriv_memLp φ hφ
+  have hRm : MeasurableSet (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1) :=
+    measurableSet_Icc.prod measurableSet_Icc
+  have hRc : IsCompact (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1) := isCompact_Icc.prod isCompact_Icc
+  have : IsFiniteMeasure (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)) :=
+    ⟨by rw [Measure.restrict_apply_univ]; exact hRc.measure_lt_top⟩
+  have hbd : ∀ {f : ℝ × ℝ → ℝ}, Continuous f →
+      MemLp f ∞ (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)) := by
+    intro f hf
+    obtain ⟨C, hC⟩ := hRc.exists_bound_of_continuousOn hf.continuousOn
+    exact memLp_top_of_bound hf.aestronglyMeasurable C
+      ((ae_restrict_iff' hRm).mpr (Eventually.of_forall hC))
+  have hκ_top : MemLp (Function.uncurry κ) ∞
+      (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)) :=
+    memLp_top_of_bound hκ_meas (max |kmin| |kmax|) (hκ.mono fun p hp => by
+      rw [Real.norm_eq_abs]
+      exact abs_le_max_abs_abs hp.1 hp.2)
+  have h1 : MemLp (fun p : ℝ × ℝ => -u p.1 p.2 * deriv (fun s => φ s p.2) p.1) 2
+      (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)) :=
+    hu.neg.fun_mul (hbd hc1)
+  have h2' : MemLp (fun p : ℝ × ℝ => κ p.1 p.2 * ux p.1 p.2) 2
+      (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)) :=
+    hκ_top.fun_mul hux
+  have h2 : MemLp (fun p : ℝ × ℝ => κ p.1 p.2 * ux p.1 p.2 * deriv (fun y => φ p.1 y) p.2) 2
+      (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1)) :=
+    h2'.fun_mul (hbd hc2)
+  exact (h1.add h2).integrable one_le_two
+
+/-- Two solutions of the weak equation with the same forcing differ by a solution of the
+homogeneous equation, provided both weak integrands are integrable on the rectangle
+(`weak_parabolic_integrand_integrable` gives this when `u` and `ux` are in `L²` there). -/
+lemma weak_parabolic_sub
+    {t0 t1 : ℝ} (ht : t0 < t1) {κ F : ℝ → ℝ → ℝ}
+    (u₁ ux₁ u₂ ux₂ : ℝ → ℝ → ℝ)
+    (hInt₁ : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
+      Integrable (fun p : ℝ × ℝ => -u₁ p.1 p.2 * deriv (fun s => φ s p.2) p.1
+        + κ p.1 p.2 * ux₁ p.1 p.2 * deriv (fun y => φ p.1 y) p.2)
+        (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
+    (hInt₂ : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
+      Integrable (fun p : ℝ × ℝ => -u₂ p.1 p.2 * deriv (fun s => φ s p.2) p.1
+        + κ p.1 p.2 * ux₂ p.1 p.2 * deriv (fun y => φ p.1 y) p.2)
+        (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
+    (hWeak1 : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
+      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
+          (-u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x)
+        = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x)
+    (hWeak2 : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
+      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
+          (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x)
+        = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x) :
+    ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
+      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
+          (-(u₁ t x - u₂ t x) * deriv (fun s => φ s x) t
+            + κ t x * (ux₁ t x - ux₂ t x) * deriv (fun y => φ t y) x) = 0 := by
+  intro φ hφ
+  have hI₁ := hInt₁ φ hφ
+  have hI₂ := hInt₂ φ hφ
+  have e1 := iterated_eq_product ht (fun t x =>
+    -u₁ t x * deriv (fun s => φ s x) t + κ t x * ux₁ t x * deriv (fun y => φ t y) x) hI₁
+  have e2 := iterated_eq_product ht (fun t x =>
+    -u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x) hI₂
+  have hfun : (fun t x => -(u₁ t x - u₂ t x) * deriv (fun s => φ s x) t
+        + κ t x * (ux₁ t x - ux₂ t x) * deriv (fun y => φ t y) x)
+      = fun t x => (-u₁ t x * deriv (fun s => φ s x) t
+          + κ t x * ux₁ t x * deriv (fun y => φ t y) x)
+        - (-u₂ t x * deriv (fun s => φ s x) t + κ t x * ux₂ t x * deriv (fun y => φ t y) x) := by
+    funext t x
+    ring
+  have e3 := iterated_eq_product ht (fun t x => -(u₁ t x - u₂ t x) * deriv (fun s => φ s x) t
+        + κ t x * (ux₁ t x - ux₂ t x) * deriv (fun y => φ t y) x)
+    (by rw [hfun]; exact hI₁.sub hI₂)
+  have hfun' : (fun p : ℝ × ℝ => -(u₁ p.1 p.2 - u₂ p.1 p.2) * deriv (fun s => φ s p.2) p.1
+        + κ p.1 p.2 * (ux₁ p.1 p.2 - ux₂ p.1 p.2) * deriv (fun y => φ p.1 y) p.2)
+      = fun p : ℝ × ℝ => (-u₁ p.1 p.2 * deriv (fun s => φ s p.2) p.1
+          + κ p.1 p.2 * ux₁ p.1 p.2 * deriv (fun y => φ p.1 y) p.2)
+        - (-u₂ p.1 p.2 * deriv (fun s => φ s p.2) p.1
+          + κ p.1 p.2 * ux₂ p.1 p.2 * deriv (fun y => φ p.1 y) p.2) := by
+    funext p
+    ring
+  rw [e3, hfun', integral_sub hI₁.restrict hI₂.restrict, ← e1, ← e2, hWeak1 φ hφ, hWeak2 φ hφ,
+    sub_self]
+
+/-- Symmetry of the `L²` distance, for functions written pointwise. -/
+private lemma eLpNorm_fun_sub_comm (f g : ℝ → ℝ) (μ : Measure ℝ) :
+    eLpNorm (fun x => f x - g x) 2 μ = eLpNorm (fun x => g x - f x) 2 μ :=
+  eLpNorm_sub_comm f g 2 μ
+
+/-- If `w` satisfies the energy identity on `[t0, t1]` and vanishes at `t0` in `L²(0,1)`,
+then it vanishes in `L²(0,1)` at every time of `[t0, t1]`: the dissipation
+`∫∫ κ (∂ₓw)²` is nonnegative because `κ ≥ kmin > 0`. -/
+lemma weak_parabolic_unique_of_energy
+    {t0 t1 : ℝ} {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
+    (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
+      kmin ≤ κ p.1 p.2 ∧ κ p.1 p.2 ≤ kmax)
+    (w wx : ℝ → ℝ → ℝ)
+    (hEnergy : ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
+      (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
+        + 2 * ∫ t in t0..τ, ∫ x in (0 : ℝ)..1, κ t x * (wx t x) ^ 2
+        = (eLpNorm (fun x => w t0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2)
+    (hInit : (eLpNorm (fun x => w t0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0) :
+    ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
+      (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0 := by
+  have hEq : (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc (0 : ℝ) 1) : Measure (ℝ × ℝ))
+      = (volume.restrict (Set.Icc t0 t1)).prod (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
+    rw [Measure.volume_eq_prod, ← Measure.prod_restrict]
+  rw [hEq] at hκ
+  have hκ_ae : ∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)),
+      ∀ᵐ x ∂(volume.restrict (Set.Icc (0 : ℝ) 1)), kmin ≤ κ t x ∧ κ t x ≤ kmax :=
+    Measure.ae_ae_of_ae_prod hκ
+  intro τ hτ
+  obtain ⟨hτlo, hτhi⟩ := Set.mem_Icc.mp hτ
+  have hE := hEnergy τ hτ
+  rw [hInit] at hE
+  have hinner_ae : ∀ᵐ t ∂(volume.restrict (Set.Icc t0 t1)),
+      0 ≤ ∫ x in (0 : ℝ)..1, κ t x * (wx t x) ^ 2 := by
+    filter_upwards [hκ_ae] with t ht
+    apply intervalIntegral.integral_nonneg_of_ae_restrict zero_le_one
+    filter_upwards [ht] with x hx
+    exact mul_nonneg (le_trans hkmin.le hx.1) (sq_nonneg _)
+  have hB : 0 ≤ ∫ t in t0..τ, ∫ x in (0 : ℝ)..1, κ t x * (wx t x) ^ 2 := by
+    apply intervalIntegral.integral_nonneg_of_ae_restrict hτlo
+    exact ae_restrict_of_ae_restrict_of_subset (Set.Icc_subset_Icc le_rfl hτhi) hinner_ae
+  have hA : 0 ≤ (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal :=
+    ENNReal.toReal_nonneg
+  have hsq : (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
+      = 0 := by
+    nlinarith
+  exact (pow_eq_zero_iff two_ne_zero).mp hsq
+
+/-- **Uniqueness of time-continuous weak solutions** on `(0, 1)`.
+
+Let `(u, ux)` and `(u', ux')` solve the weak equation with the same forcing `F`, both with
+profiles in `H¹₀(0,1)`, both in `L²` on the rectangle, and both continuous in time with
+values in `L²(0,1)` on `[t0, t1]`. Suppose `u t0 = u0` in `L²(0,1)` and `u' t → u0` in
+`L²(0,1)` as `t → t0⁺`. If the energy identity `hEnergyIdThm` holds for the solutions of
+the homogeneous equation in this class, then `u' t = u t` on `[0, 1]` for every time
+`t ∈ [t0, t1]`. -/
+theorem weak_parabolic_unique_final
+    {t0 t1 : ℝ} (ht : t0 < t1)
+    {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
+    (hκ_meas : AEStronglyMeasurable (Function.uncurry κ)
+      (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
+    (hκ : ∀ᵐ p ∂(volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)),
+      kmin ≤ κ p.1 p.2 ∧ κ p.1 p.2 ≤ kmax)
+    {F : ℝ → ℝ → ℝ}
+    {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
+    (u ux : ℝ → ℝ → ℝ)
+    (hProfileThm : ∀ t, ∃ h : WeakH10, h.toFun = u t ∧ h.weakDeriv = ux t)
+    (hu : MemLp (Function.uncurry u) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
+    (hux : MemLp (Function.uncurry ux) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)))
+    (hContThm : ∀ s ∈ Set.Icc t0 t1, Filter.Tendsto
+      (fun t => (eLpNorm (fun x => u t x - u s x) 2 (volume.restrict (Set.Icc 0 1))).toReal)
+      (nhdsWithin s (Set.Icc t0 t1)) (nhds 0))
+    (hWeakThm : ∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
+      ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
+          (-u t x * deriv (fun s => φ s x) t + κ t x * ux t x * deriv (fun y => φ t y) x)
+        = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x)
+    (hInitU : (eLpNorm (fun x => u t0 x - u0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))) = 0)
+    (hEnergyIdThm : ∀ (w wx : ℝ → ℝ → ℝ),
+      (∀ t, ∃ h : WeakH10, h.toFun = w t ∧ h.weakDeriv = wx t) →
+      MemLp (Function.uncurry w) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
+      MemLp (Function.uncurry wx) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
+      (∀ s ∈ Set.Icc t0 t1, Filter.Tendsto
+        (fun t => (eLpNorm (fun x => w t x - w s x) 2 (volume.restrict (Set.Icc 0 1))).toReal)
+        (nhdsWithin s (Set.Icc t0 t1)) (nhds 0)) →
+      (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
+        ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
+            (-w t x * deriv (fun s => φ s x) t + κ t x * wx t x * deriv (fun y => φ t y) x) = 0) →
+      ∀ τ : ℝ, τ ∈ Set.Icc t0 t1 →
+        (eLpNorm (fun x => w τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2
+          + 2 * ∫ t in t0..τ, ∫ x in (0 : ℝ)..1, κ t x * (wx t x) ^ 2
+          = (eLpNorm (fun x => w t0 x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal ^ 2) :
+    ∀ u' ux' : ℝ → ℝ → ℝ,
+      (∀ t, ∃ h : WeakH10, h.toFun = u' t ∧ h.weakDeriv = ux' t) →
+      MemLp (Function.uncurry u') 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
+      MemLp (Function.uncurry ux') 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
+      (∀ s ∈ Set.Icc t0 t1, Filter.Tendsto
+        (fun t => (eLpNorm (fun x => u' t x - u' s x) 2 (volume.restrict (Set.Icc 0 1))).toReal)
+        (nhdsWithin s (Set.Icc t0 t1)) (nhds 0)) →
+      (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
+        ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
+            (-u' t x * deriv (fun s => φ s x) t + κ t x * ux' t x * deriv (fun y => φ t y) x)
+          = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x) →
+      Filter.Tendsto (fun t => (eLpNorm (fun x => u' t x - u0 x) 2
+          (volume.restrict (Set.Icc 0 1))).toReal) (nhdsWithin t0 (Set.Ioi t0)) (nhds 0) →
+      ∀ t ∈ Set.Icc t0 t1, Set.EqOn (u' t) (u t) (Set.Icc 0 1) := by
+  intro u' ux' hProf' hu' hux' hCont' hWeak' hInit' τ hτ
+  have hmem : ∀ t, MemLp (u t) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := fun t => by
+    obtain ⟨h, hh, -⟩ := hProfileThm t
+    rw [← hh]
+    exact weakH10_toFun_memLp h
+  have hmem' : ∀ t, MemLp (u' t) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) := fun t => by
+    obtain ⟨h, hh, -⟩ := hProf' t
+    rw [← hh]
+    exact weakH10_toFun_memLp h
+  have hProfW : ∀ t, ∃ h : WeakH10,
+      h.toFun = (fun x => u' t x - u t x) ∧ h.weakDeriv = (fun x => ux' t x - ux t x) := by
+    intro t
+    obtain ⟨h, hh1, hh2⟩ := hProfileThm t
+    obtain ⟨h', hh1', hh2'⟩ := hProf' t
+    refine ⟨h' - h, ?_, ?_⟩
+    · change h'.toFun - h.toFun = _
+      rw [hh1, hh1']
+      rfl
+    · change h'.weakDeriv - h.weakDeriv = _
+      rw [hh2, hh2']
+      rfl
+  have hContW : ∀ s ∈ Set.Icc t0 t1, Filter.Tendsto
+      (fun t => (eLpNorm (fun x => (u' t x - u t x) - (u' s x - u s x)) 2
+        (volume.restrict (Set.Icc 0 1))).toReal) (nhdsWithin s (Set.Icc t0 t1)) (nhds 0) := by
+    intro s hs
+    have hsum := (hCont' s hs).add (hContThm s hs)
+    rw [add_zero] at hsum
+    refine squeeze_zero (fun t => ENNReal.toReal_nonneg) (fun t => ?_) hsum
+    have h1 : MemLp (fun x => u' t x - u' s x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
+      (hmem' t).sub (hmem' s)
+    have h2 : MemLp (fun x => u t x - u s x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
+      (hmem t).sub (hmem s)
+    have hsplit : (fun x => (u' t x - u t x) - (u' s x - u s x))
+        = (fun x => u' t x - u' s x) - (fun x => u t x - u s x) := by
+      funext x
+      simp only [Pi.sub_apply]
+      ring
+    rw [hsplit, ← ENNReal.toReal_add h1.eLpNorm_ne_top h2.eLpNorm_ne_top]
+    exact ENNReal.toReal_mono (ENNReal.add_ne_top.mpr ⟨h1.eLpNorm_ne_top, h2.eLpNorm_ne_top⟩)
+      (eLpNorm_sub_le one_le_two)
+  have hHom := weak_parabolic_sub ht u' ux' u ux
+    (fun φ hφ => weak_parabolic_integrand_integrable hκ_meas hκ hu' hux' hφ)
+    (fun φ hφ => weak_parabolic_integrand_integrable hκ_meas hκ hu hux hφ) hWeak' hWeakThm
+  have hInit'0 : (eLpNorm (fun x => u' t0 x - u0 x) 2
+      (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0 := by
+    have ht0 : t0 ∈ Set.Icc t0 t1 := ⟨le_rfl, ht.le⟩
+    have := left_nhdsWithin_Ioo_neBot ht
+    have hA := (hCont' t0 ht0).mono_left (nhdsWithin_mono t0 Set.Ioo_subset_Icc_self)
+    have hB := hInit'.mono_left
+      (nhdsWithin_mono t0 (Set.Ioo_subset_Ioi_self : Set.Ioo t0 t1 ⊆ Set.Ioi t0))
+    have hsum := hA.add hB
+    rw [add_zero] at hsum
+    refine le_antisymm (ge_of_tendsto hsum (Eventually.of_forall fun t => ?_)) ENNReal.toReal_nonneg
+    have hle := eLpNorm_sub_toReal_le_add (hmem' t0) hu0 (hmem' t)
+    rwa [eLpNorm_fun_sub_comm (u' t0) (u' t)] at hle
+  have hW0 : (eLpNorm (fun x => u' t0 x - u t0 x) 2
+      (volume.restrict (Set.Icc (0 : ℝ) 1))).toReal = 0 := by
+    have hle := eLpNorm_sub_toReal_le_add (hmem' t0) (hmem t0) hu0
+    rw [hInit'0, eLpNorm_fun_sub_comm u0 (u t0), hInitU, ENNReal.toReal_zero, add_zero] at hle
+    exact le_antisymm hle ENNReal.toReal_nonneg
+  have hE := hEnergyIdThm (fun t x => u' t x - u t x) (fun t x => ux' t x - ux t x) hProfW
+    (hu'.sub hu) (hux'.sub hux) hContW hHom
+  have hzero := weak_parabolic_unique_of_energy hkmin hκ (fun t x => u' t x - u t x)
+    (fun t x => ux' t x - ux t x) hE hW0 τ hτ
+  have hmemW : MemLp (fun x => u' τ x - u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
+    (hmem' τ).sub (hmem τ)
+  have hnorm : eLpNorm (fun x => u' τ x - u τ x) 2 (volume.restrict (Set.Icc (0 : ℝ) 1)) = 0 :=
+    ((ENNReal.toReal_eq_zero_iff _).mp hzero).resolve_right hmemW.eLpNorm_ne_top
+  have hae := (eLpNorm_eq_zero_iff two_ne_zero).mp hnorm
+  obtain ⟨h, hh1, -⟩ := hProfileThm τ
+  obtain ⟨h', hh1', -⟩ := hProf' τ
+  have hc : ContinuousOn (fun x => u' τ x - u τ x) (Set.Icc 0 1) := by
+    have hc' := (WeakH10_continuousOn h').sub (WeakH10_continuousOn h)
+    rw [hh1, hh1'] at hc'
+    exact hc'
+  have heq := Measure.eqOn_Icc_of_ae_eq (μ := volume) zero_ne_one hae hc continuousOn_const
+  intro x hx
+  have hx0 : u' τ x - u τ x = 0 := heq hx
+  linarith
+
+/-- **Existence and uniqueness of weak solutions of `∂ₜu = ∂ₓ(κ ∂ₓu) + F` on `(0, 1)`,
+conditional on two inputs.**
+
+The equation is posed on `(t0, t1) × (0, 1)` with zero boundary values, a diffusivity `κ`
+that is a.e. strongly measurable with `0 < kmin ≤ κ ≤ kmax` a.e., and initial data
+`u0 ∈ L²(0,1)`. A solution is a pair `(u, ux)` with profiles `u t ∈ H¹₀(0,1)` of weak
+derivative `ux t` (`WeakH10`), `u` and `ux` in `L²` on the rectangle, `t ↦ u t`
+continuous into `L²(0,1)` on `[t0, t1]`, and the weak equation against every
+`ParabolicTest` function (C^∞, `ContDiff` at `∞`, not analytic: `⊤ = ω`).
+
+The two inputs are explicit hypotheses:
+- `hExist`, the existence data: a solution with `u t0 = u0` in `L²(0,1)`, with
+  `u t → u0` in `L²(0,1)` as `t → t0⁺`, and with the energy estimate;
+- `hEnergyId`, the energy identity `‖w τ‖² + 2 ∫_{t0}^{τ} ∫ κ (∂ₓw)² = ‖w t0‖²` for
+  every solution `w` of the homogeneous equation in the same class. It is the energy
+  identity of weak solutions (Evans, §5.9.2, Theorem 3, used as in §7.1.2), which holds
+  for every such `κ`; this module does not prove it.
+
+The theorem returns the solution with all of its data, including `u t0 = u0`, and its
+uniqueness: every solution of the class with `u' t → u0` as `t → t0⁺` agrees with it on
+`[0, 1]` at every time of `[t0, t1]`. Time continuity is what makes `hEnergyId`
+satisfiable: changing a solution at a single time keeps the weak equation, and the
+identity without that restriction fails (`PhyslibExtTest.EarthScience.WeakParabolic`
+records the counterexample). -/
 theorem weak_parabolic_exists_unique_conditional
     {t0 t1 : ℝ} (ht : t0 < t1)
     {κ : ℝ → ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
@@ -18205,6 +17904,11 @@ theorem weak_parabolic_exists_unique_conditional
     {u0 : ℝ → ℝ} (hu0 : MemLp u0 2 (volume.restrict (Set.Icc 0 1)))
     (hExist : ∃ u ux : ℝ → ℝ → ℝ,
       (∀ t, ∃ h : WeakH10, h.toFun = u t ∧ h.weakDeriv = ux t)
+      ∧ MemLp (Function.uncurry u) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
+      ∧ MemLp (Function.uncurry ux) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
+      ∧ (∀ s ∈ Set.Icc t0 t1, Filter.Tendsto
+          (fun t => (eLpNorm (fun x => u t x - u s x) 2 (volume.restrict (Set.Icc 0 1))).toReal)
+          (nhdsWithin s (Set.Icc t0 t1)) (nhds 0))
       ∧ (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
           ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
               (-u t x * deriv (fun s => φ s x) t + κ t x * ux t x * deriv (fun y => φ t y) x)
@@ -18222,6 +17926,12 @@ theorem weak_parabolic_exists_unique_conditional
               + kmin * ∫ s in t0..t,
                 (eLpNorm (fun x => u s x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2))
     (hEnergyId : ∀ (w wx : ℝ → ℝ → ℝ),
+      (∀ t, ∃ h : WeakH10, h.toFun = w t ∧ h.weakDeriv = wx t) →
+      MemLp (Function.uncurry w) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
+      MemLp (Function.uncurry wx) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
+      (∀ s ∈ Set.Icc t0 t1, Filter.Tendsto
+        (fun t => (eLpNorm (fun x => w t x - w s x) 2 (volume.restrict (Set.Icc 0 1))).toReal)
+        (nhdsWithin s (Set.Icc t0 t1)) (nhds 0)) →
       (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
         ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
             (-w t x * deriv (fun s => φ s x) t + κ t x * wx t x * deriv (fun y => φ t y) x) = 0) →
@@ -18231,12 +17941,18 @@ theorem weak_parabolic_exists_unique_conditional
           = (eLpNorm (fun x => w t0 x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2) :
     ∃ u ux : ℝ → ℝ → ℝ,
       (∀ t, ∃ h : WeakH10, h.toFun = u t ∧ h.weakDeriv = ux t)
+      ∧ MemLp (Function.uncurry u) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
+      ∧ MemLp (Function.uncurry ux) 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1))
+      ∧ (∀ s ∈ Set.Icc t0 t1, Filter.Tendsto
+          (fun t => (eLpNorm (fun x => u t x - u s x) 2 (volume.restrict (Set.Icc 0 1))).toReal)
+          (nhdsWithin s (Set.Icc t0 t1)) (nhds 0))
       ∧ (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
           ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
               (-u t x * deriv (fun s => φ s x) t + κ t x * ux t x * deriv (fun y => φ t y) x)
             = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x)
       ∧ Filter.Tendsto (fun t => (eLpNorm (fun x => u t x - u0 x) 2
             (volume.restrict (Set.Icc 0 1))).toReal) (nhdsWithin t0 (Set.Ioi t0)) (nhds 0)
+      ∧ (eLpNorm (fun x => u t0 x - u0 x) 2 (volume.restrict (Set.Icc 0 1))) = 0
       ∧ (∀ t ∈ Set.Icc t0 t1,
           (eLpNorm (fun x => u t x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2
             + 2 * kmin * ∫ s in t0..t,
@@ -18248,17 +17964,21 @@ theorem weak_parabolic_exists_unique_conditional
                 (eLpNorm (fun x => u s x) 2 (volume.restrict (Set.Icc 0 1))).toReal ^ 2)
       ∧ ∀ u' ux' : ℝ → ℝ → ℝ,
         (∀ t, ∃ h : WeakH10, h.toFun = u' t ∧ h.weakDeriv = ux' t) →
+        MemLp (Function.uncurry u') 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
+        MemLp (Function.uncurry ux') 2 (volume.restrict (Set.Icc t0 t1 ×ˢ Set.Icc 0 1)) →
+        (∀ s ∈ Set.Icc t0 t1, Filter.Tendsto
+          (fun t => (eLpNorm (fun x => u' t x - u' s x) 2 (volume.restrict (Set.Icc 0 1))).toReal)
+          (nhdsWithin s (Set.Icc t0 t1)) (nhds 0)) →
         (∀ φ : ℝ → ℝ → ℝ, ParabolicTest t0 t1 φ →
           ∫ t in t0..t1, ∫ x in (0 : ℝ)..1,
               (-u' t x * deriv (fun s => φ s x) t + κ t x * ux' t x * deriv (fun y => φ t y) x)
             = ∫ t in t0..t1, ∫ x in (0 : ℝ)..1, F t x * φ t x) →
         Filter.Tendsto (fun t => (eLpNorm (fun x => u' t x - u0 x) 2
             (volume.restrict (Set.Icc 0 1))).toReal) (nhdsWithin t0 (Set.Ioi t0)) (nhds 0) →
-        ∀ t ∈ Set.Ioo t0 t1, Set.EqOn (u' t) (u t) (Set.Icc 0 1) := by
-  obtain ⟨u, ux, hProf, hWeak, hInit, hInitU, hEnergy⟩ := hExist
-  refine ⟨u, ux, hProf, hWeak, hInit, hEnergy, ?_⟩
-  intro u' ux' hProf' hWeak' hInit'
-  exact weak_parabolic_unique_final ht hkmin (hκ.mono fun p hp => hp.1) hu0
-    u ux hProf hWeak hInitU hEnergyId (iterated_eq_product ht) u' ux' hProf' hWeak' hInit'
+        ∀ t ∈ Set.Icc t0 t1, Set.EqOn (u' t) (u t) (Set.Icc 0 1) := by
+  obtain ⟨u, ux, hProf, hu, hux, hCont, hWeak, hInit, hInitU, hEnergy⟩ := hExist
+  exact ⟨u, ux, hProf, hu, hux, hCont, hWeak, hInit, hInitU, hEnergy,
+    weak_parabolic_unique_final ht hkmin hκ_meas hκ hu0 u ux hProf hu hux hCont hWeak hInitU
+      hEnergyId⟩
 
 end EarthScience
