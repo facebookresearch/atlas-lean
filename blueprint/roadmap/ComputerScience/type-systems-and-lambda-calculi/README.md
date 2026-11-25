@@ -16,6 +16,10 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [Lambda calculus with references](lambda-calculus-with-references/README.md)
 - [Syntax with binders](syntax-with-binders/README.md)
 
+- [Gödel's System T](system-t/README.md)
+- [Type soundness](type-soundness/README.md)
+- [Normalization and logical relations](normalization-and-logical-relations/README.md)
+- [Advanced type systems](advanced-type-systems/README.md)
 - [Curry–Howard correspondence for implicational logic](curry-howard-correspondence-for-implicational-logic.md)
 - [Typed terms give natural-deduction derivations](typed-terms-give-natural-deduction-derivations.md)
 - [Strong normalization of System F](strong-normalization-of-system-f.md)
