@@ -41,12 +41,21 @@ namespace MathlibExt.NumberTheory.BreuschWanted.Internal
 
 open Nat Finset
 
-/-- Continuous `G`-function: Möbius-weighted floors at real `x`. -/
+/-- **Continuous Breusch function.** For real $x$, the continuous Breusch function is the
+integer
+
+$$G(x) = \sum_{d \mid 210} \mu(d) \left( \lfloor 2100x/d \rfloor - \lfloor 1890x/d \rfloor -
+\lfloor 210x/d \rfloor \right),$$
+
+where $d$ ranges over the positive divisors of $210$, $\mu$ is the Möbius function, and each
+floor is the natural-number floor, which is $0$ for negative arguments. -/
 noncomputable def G9r (x : ℝ) : ℤ := w9.toFinset.sum (fun q : ℕ × ℤ =>
   q.2 * ((Int.ofNat ⌊((10*Q9:ℕ):ℝ)*x/(q.1:ℝ)⌋₊)
     - (Int.ofNat ⌊((9*Q9:ℕ):ℝ)*x/(q.1:ℝ)⌋₊) - (Int.ofNat ⌊((Q9:ℕ):ℝ)*x/(q.1:ℝ)⌋₊)))
 
-/-- Real floor of a quotient equals the `Nat` quotient. -/
+/-- **Floor of a quotient of natural numbers.** For all natural numbers $a$ and $b$, the floor of
+the real number $a / b$ equals the quotient of $a$ by $b$ in integer division. When $b = 0$ both
+sides are $0$, since division by zero gives $0$ in both the reals and the natural numbers. -/
 lemma nat_floor_nat_div (a b : ℕ) : ⌊((a:ℝ))/((b:ℝ))⌋₊ = a / b := by
   by_cases hb : b = 0
   · subst hb; simp
@@ -66,7 +75,8 @@ lemma nat_floor_nat_div (a b : ℕ) : ⌊((a:ℝ))/((b:ℝ))⌋₊ = a / b := by
       push_cast at hc ⊢
       linarith [hc, hmodR]
 
-/-- Remainder bound for multiples of a divisor. -/
+/-- **Remainder bound for common multiples.** Let $a$, $b$, $d$ be natural numbers with $b > 0$,
+$d > 0$, $d \mid b$ and $d \mid a$. Then the remainder of $a$ modulo $b$ is at most $b - d$. -/
 lemma nat_mod_le_of_dvd (a b d : ℕ) (hb : 0 < b) (_hd0 : 0 < d)
     (hdb : d ∣ b) (hda : d ∣ a) : a % b ≤ b - d := by
   have hdvdmod : d ∣ a % b := (Nat.dvd_mod_iff hdb).mpr hda
@@ -80,7 +90,9 @@ lemma nat_mod_le_of_dvd (a b d : ℕ) (hb : 0 < b) (_hd0 : 0 < d)
   have hle := Nat.le_of_dvd hpos hsub
   omega
 
-/-- Floors at multiples match grid floors for `m ∣ 210`. -/
+/-- **Real floors at divisors of 210 agree with grid floors.** Let $C$ and $L$ be positive natural
+numbers, let $m$ be a divisor of $210$ with $C \mid mL$, and let $x \ge 0$ be a real number. Then
+$\lfloor Cx/m \rfloor = \lfloor C \lfloor Lx \rfloor / (mL) \rfloor$. -/
 lemma floor_grid_match (C L : ℕ) (hC : 0 < C) (hL : 0 < L) (m : ℕ) (hm : m ∣ 210)
     (hCmL : C ∣ m * L) (x : ℝ) (hx : 0 ≤ x) :
     ⌊((C:ℕ):ℝ)*x/(m:ℝ)⌋₊ = C*⌊((L:ℕ):ℝ)*x⌋₊/(m*L) := by
@@ -143,7 +155,9 @@ lemma floor_grid_match (C L : ℕ) (hC : 0 < C) (hL : 0 < L) (m : ℕ) (hm : m �
 
 -- One-period shift of a single div term. Needs m ∣ C (true for C ∈ {2100,1890,210}
 -- when m ∣ 210, since 210 ∣ C).
-/-- One-period shift identity for a single div term. -/
+/-- **Shifting a floor quotient by one period.** Let $C$ and $m$ be natural numbers with $m > 0$
+and $m \mid C$. Then for every natural number $j$,
+$\lfloor C(j + 18900)/(18900m) \rfloor = \lfloor Cj/(18900m) \rfloor + C/m$. -/
 lemma div_shift189 (C m : ℕ) (hmC : m ∣ C) (hm0 : 0 < m) (j : ℕ) :
     (C*(j+18900))/(m*18900) = C*j/(m*18900) + C/m := by
   have hdm : C/m*m = C := Nat.div_mul_cancel hmC
@@ -155,7 +169,8 @@ lemma div_shift189 (C m : ℕ) (hmC : m ∣ C) (hm0 : 0 < m) (j : ℕ) :
   rw [hC, Nat.add_mul_div_right _ _ (Nat.mul_pos hm0 (by norm_num))]
 
 -- G9 is 18900-periodic: each C/m shift is integral and 10-9-1 cancels.
-/-- `G9` is invariant under shifting by one period `18900`. -/
+/-- **One-period shift of $G_9$.** For every natural number $j$, the grid $G$-function for $k = 9$
+satisfies $G_9(j + 18900) = G_9(j)$. -/
 lemma G9_shift (j : ℕ) : G9 (j + 18900) = G9 j := by
   have hterm : ∀ q ∈ w9.toFinset, G9term q (j+18900) = G9term q j := by
     intro q hq
@@ -185,20 +200,24 @@ lemma G9_shift (j : ℕ) : G9 (j + 18900) = G9 j := by
   rw [e1, e2]
   exact Finset.sum_congr rfl hterm
 
-/-- Iterated form of grid periodicity. -/
+/-- **Periodicity of $G_9$ in multiples of $18900$.** For all natural numbers $o$ and $r$, the
+grid $G$-function for $k = 9$ satisfies $G_9(18900\,o + r) = G_9(r)$. -/
 lemma G9_period_iter (o r : ℕ) : G9 (18900*o + r) = G9 r := by
   induction o with
   | zero => simp
   | succ o ih =>
     rw [show 18900*(o+1)+r = (18900*o+r)+18900 by ring, G9_shift, ih]
 
-/-- `G9 j` depends only on `j % 18900`. -/
+/-- **$G_9$ depends only on the residue modulo $18900$.** For every natural number $j$, the grid
+$G$-function for $k = 9$ satisfies $G_9(j) = G_9(j \bmod 18900)$. -/
 lemma G9_eq_mod (j : ℕ) : G9 j = G9 (j % 18900) := by
   conv_lhs => rw [← Nat.div_add_mod j 18900]
   exact G9_period_iter _ _
 
 -- Continuous-to-grid identity via floor_grid_match (L = 18900).
-/-- The continuous `G9r` equals the grid `G9` at `⌊18900 * x⌋₊`. -/
+/-- **The continuous Breusch function agrees with the grid function.** For every real
+$x \ge 0$, the continuous Breusch function $G$ and the Breusch grid function $G_9$ satisfy
+$G(x) = G_9(\lfloor 18900x \rfloor)$. -/
 lemma G9r_eq_grid (x : ℝ) (hx : 0 ≤ x) : G9r x = G9 ⌊(18900:ℝ)*x⌋₊ := by
   have hterm : ∀ q ∈ w9.toFinset,
       q.2 * ((Int.ofNat ⌊((10*Q9:ℕ):ℝ)*x/(q.1:ℝ)⌋₊)
@@ -222,20 +241,24 @@ lemma G9r_eq_grid (x : ℝ) (hx : 0 ≤ x) : G9r x = G9 ⌊(18900:ℝ)*x⌋₊ :
   exact Finset.sum_congr rfl hterm
 
 -- Small-grid certificates.
-/-- `G9` vanishes below `9`. -/
+/-- **The Breusch grid function vanishes below 9.** For every natural number $j < 9$, the
+Breusch grid function $G_9$ satisfies $G_9(j) = 0$. -/
 theorem G9_zero9 : ∀ j < 9, G9 j = 0 := by decide
-/-- `G9 9 = 1`. -/
+/-- **Value of $G_9$ at $9$.** The grid $G$-function for $k = 9$ satisfies $G_9(9) = 1$. -/
 theorem G9_at9 : G9 9 = 1 := by decide
-/-- `G9 ≤ 1` below `10`. -/
+/-- **Bound $G_9 \le 1$ below $10$.** For every natural number $j < 10$, the grid $G$-function for
+$k = 9$ satisfies $G_9(j) \le 1$. -/
 theorem G9_small_le1 : ∀ j < 10, G9 j ≤ 1 := by decide
 
 -- Consequences of the grid certificate for the continuous function.
-/-- Global bound `G9r x ≤ 3` for `x ≥ 0`. -/
+/-- **The continuous Breusch function is at most 3.** For every real $x \ge 0$, the continuous
+Breusch function $G$ satisfies $G(x) \le 3$. -/
 theorem G9r_le3 (x : ℝ) (hx : 0 ≤ x) : G9r x ≤ 3 := by
   rw [G9r_eq_grid x hx, G9_eq_mod]
   exact M9_le _ (Nat.mod_lt _ (by norm_num))
 
-/-- `G9r` vanishes on `[0, 1 / 2100)`. -/
+/-- **The continuous Breusch function vanishes near zero.** For every real $x$ with
+$0 \le x < 1/2100$, the continuous Breusch function $G$ satisfies $G(x) = 0$. -/
 theorem G9r_vanish (x : ℝ) (hx0 : 0 ≤ x) (hx : x < 1 / ((10 * Q9 : ℕ) : ℝ)) :
     G9r x = 0 := by
   have h10 : ((10 * Q9 : ℕ) : ℝ) = 2100 := by rw [Q9_eq]; norm_num
@@ -247,7 +270,9 @@ theorem G9r_vanish (x : ℝ) (hx0 : 0 ≤ x) (hx : x < 1 / ((10 * Q9 : ℕ) : �
     linarith
   exact G9_zero9 _ hj
 
-/-- Level `G9r ≥ 1` forces `x ≥ 279 / 18900`. -/
+/-- **Level-$1$ threshold for the continuous Breusch function.** Let $Q_9 = 210$. For every real
+$x \ge 1/(9 Q_9) = 1/1890$, if the continuous Breusch function $G$ satisfies $G(x) \ge 1$, then
+$x \ge 279/18900$. -/
 theorem G9r_level1 (x : ℝ) (hx : 1 / ((9 * Q9 : ℕ) : ℝ) ≤ x) (h : 1 ≤ G9r x) :
     (279 : ℝ) / 18900 ≤ x := by
   have h9 : ((9 * Q9 : ℕ) : ℝ) = 1890 := by rw [Q9_eq]; norm_num
@@ -282,7 +307,9 @@ theorem G9r_level1 (x : ℝ) (hx : 1 / ((9 * Q9 : ℕ) : ℝ) ≤ x) (h : 1 ≤ 
   have hkeyR : (279 : ℝ) ≤ ((⌊(18900 : ℝ) * x⌋₊ : ℕ):ℝ) := by exact_mod_cast key
   linarith
 
-/-- Level `G9r ≥ 2` forces `x ≥ 657 / 18900`. -/
+/-- **Level-$2$ threshold for the continuous Breusch function.** Let $Q_9 = 210$. For every real
+$x \ge 1/(9 Q_9) = 1/1890$, if the continuous Breusch function $G$ satisfies $G(x) \ge 2$, then
+$x \ge 657/18900$. -/
 theorem G9r_level2 (x : ℝ) (hx : 1 / ((9 * Q9 : ℕ) : ℝ) ≤ x) (h : 2 ≤ G9r x) :
     (657 : ℝ) / 18900 ≤ x := by
   have h9 : ((9 * Q9 : ℕ) : ℝ) = 1890 := by rw [Q9_eq]; norm_num
@@ -307,7 +334,9 @@ theorem G9r_level2 (x : ℝ) (hx : 1 / ((9 * Q9 : ℕ) : ℝ) ≤ x) (h : 2 ≤ 
   have hkeyR : (657 : ℝ) ≤ ((⌊(18900 : ℝ) * x⌋₊ : ℕ):ℝ) := by exact_mod_cast key
   linarith
 
-/-- Level `G9r ≥ 3` forces `x ≥ 963 / 18900`. -/
+/-- **Level-$3$ threshold for the continuous Breusch function.** Let $Q_9 = 210$. For every real
+$x \ge 1/(9 Q_9) = 1/1890$, if the continuous Breusch function $G$ satisfies $G(x) \ge 3$, then
+$x \ge 963/18900$. -/
 theorem G9r_level3 (x : ℝ) (hx : 1 / ((9 * Q9 : ℕ) : ℝ) ≤ x) (h : 3 ≤ G9r x) :
     (963 : ℝ) / 18900 ≤ x := by
   have h9 : ((9 * Q9 : ℕ) : ℝ) = 1890 := by rw [Q9_eq]; norm_num
@@ -332,14 +361,19 @@ theorem G9r_level3 (x : ℝ) (hx : 1 / ((9 * Q9 : ℕ) : ℝ) ≤ x) (h : 3 ≤ 
   have hkeyR : (963 : ℝ) ≤ ((⌊(18900 : ℝ) * x⌋₊ : ℕ):ℝ) := by exact_mod_cast key
   linarith
 
-/-- Real floors of `Nat` quotients as integer casts. -/
+/-- **Integer cast of the floor of a quotient of natural numbers.** For natural numbers $t$ and
+$d$, the floor of the real number $t/d$, as an integer, equals the natural-number quotient of $t$
+by $d$ (rounded down), as an integer. Both sides are $0$ when $d = 0$, since division by zero is
+$0$ for both real numbers and natural numbers. -/
 lemma intFloor_cast (t d : ℕ) :
     (Int.ofNat ⌊((t : ℕ) : ℝ) / ((d : ℕ) : ℝ)⌋₊ : ℤ) = ((t / d : ℕ) : ℤ) := by
   rw [nat_floor_nat_div]
   exact Int.ofNat_eq_natCast _
 
 -- Nat divs in Legendre sums equal the G9r floors.
-/-- `N10` Legendre terms as `G9r` floors. -/
+/-- **Legendre terms of $N_{10}$ as real floors.** Let $m \ge 1$ divide $Q_9 = 210$, and let
+$p \ge 2$, $n$ and $j$ be natural numbers. Write $N_{10}(m, n) = 10n \cdot (Q_9/m)$.
+Then $\lfloor N_{10}(m, n)/p^j \rfloor$ equals the floor of the real number $10 Q_9 (n/p^j)/m$. -/
 lemma floor_N10 {m n p j : ℕ} (hm : 1 ≤ m) (hd : m ∣ Q9) (hp2 : 2 ≤ p) :
     ((N10m m n / p ^ j : ℕ) : ℤ)
       = Int.ofNat ⌊((10*Q9:ℕ):ℝ)*((n : ℝ) / (((p ^ j : ℕ)) : ℝ))/((m : ℕ) : ℝ)⌋₊ := by
@@ -358,7 +392,9 @@ lemma floor_N10 {m n p j : ℕ} (hm : 1 ≤ m) (hd : m ∣ Q9) (hp2 : 2 ≤ p) :
   rw [he]
   exact (intFloor_cast _ _).symm
 
-/-- `N9` Legendre terms as `G9r` floors. -/
+/-- **Legendre terms of $N_9$ as real floors.** Let $m \ge 1$ divide $Q_9 = 210$, and let
+$p \ge 2$, $n$ and $j$ be natural numbers. Write $N_9(m, n) = 9n \cdot (Q_9/m)$.
+Then $\lfloor N_9(m, n)/p^j \rfloor$ equals the floor of the real number $9 Q_9 (n/p^j)/m$. -/
 lemma floor_N9 {m n p j : ℕ} (hm : 1 ≤ m) (hd : m ∣ Q9) (hp2 : 2 ≤ p) :
     ((N9m m n / p ^ j : ℕ) : ℤ)
       = Int.ofNat ⌊((9*Q9:ℕ):ℝ)*((n : ℝ) / (((p ^ j : ℕ)) : ℝ))/((m : ℕ) : ℝ)⌋₊ := by
@@ -377,7 +413,9 @@ lemma floor_N9 {m n p j : ℕ} (hm : 1 ≤ m) (hd : m ∣ Q9) (hp2 : 2 ≤ p) :
   rw [he]
   exact (intFloor_cast _ _).symm
 
-/-- `N1` Legendre terms as `G9r` floors. -/
+/-- **Legendre terms of $N_1$ as real floors.** Let $m \ge 1$ divide $Q_9 = 210$, and let
+$p \ge 2$, $n$ and $j$ be natural numbers. Write $N_1(m, n) = n \cdot (Q_9/m)$.
+Then $\lfloor N_1(m, n)/p^j \rfloor$ equals the floor of the real number $Q_9 (n/p^j)/m$. -/
 lemma floor_N1 {m n p j : ℕ} (hm : 1 ≤ m) (hd : m ∣ Q9) (hp2 : 2 ≤ p) :
     ((N1m m n / p ^ j : ℕ) : ℤ)
       = Int.ofNat ⌊((Q9:ℕ):ℝ)*((n : ℝ) / (((p ^ j : ℕ)) : ℝ))/((m : ℕ) : ℝ)⌋₊ := by
@@ -397,14 +435,21 @@ lemma floor_N1 {m n p j : ℕ} (hm : 1 ≤ m) (hd : m ∣ Q9) (hp2 : 2 ≤ p) :
   exact (intFloor_cast _ _).symm
 
 -- Legendre in integers.
-/-- Legendre formula for factorial valuations as integer sums. -/
+/-- **Legendre's formula with integer summands.** Let $p$ be a prime and let $N$ and $b$ be
+natural numbers with $\lfloor \log_p N \rfloor < b$, where $\lfloor \log_p N \rfloor$ is taken to
+be $0$ when $N = 0$. Then the exponent of $p$ in $N!$, as an integer, equals
+$\sum_{j=1}^{b-1} \lfloor N / p^j \rfloor$. -/
 lemma legendre_sum9 {N p b : ℕ} (hp : p.Prime) (h : Nat.log p N < b) :
     (((N)!.factorization p : ℤ)) = ∑ j ∈ Finset.Ico 1 b, ((N / p ^ j : ℕ) : ℤ) := by
   have hnat := Nat.factorization_factorial hp h
   exact_mod_cast hnat
 
 -- Valuation of a ratio factor in integers (no truncation).
-/-- Valuation of a ratio factor as a difference of valuations. -/
+/-- **Valuation of a factorial ratio as a difference of valuations.** Let $Q = 210$, let
+$m \ge 1$ be a divisor of $Q$, and let $n$, $p$ be natural numbers. Write $N = n \cdot (Q/m)$
+and $R_m(n) = (10N)! / ((9N)! \, N!)$. Then, as integers,
+$v_p(R_m(n)) = v_p((10N)!) - v_p((9N)!) - v_p(N!)$, where $v_p(k)$ is the exponent of $p$
+in the prime factorization of $k$ (zero when $p$ is not prime). -/
 lemma vp_ratio9 {m n p : ℕ} (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
     ((ratio9 m n).factorization p : ℤ)
       = (((N10m m n)!.factorization p : ℤ) - ((N9m m n)!.factorization p : ℤ)
@@ -427,19 +472,29 @@ lemma vp_ratio9 {m n p : ℕ} (hm1 : 1 ≤ m) (hd : m ∣ Q9) :
   ring
 
 -- Single-factor valuation term.
-/-- Single-factor `p`-adic valuation contribution. -/
+/-- **One divisor's contribution to the valuation.** For a pair $(m, \varepsilon)$ of a natural
+number $m$ and an integer $\varepsilon$, and natural numbers $p$ and $n$, let
+$a = \lfloor 210/m \rfloor$ (so $a = 0$ when $m = 0$). The term is the integer
+$\varepsilon\bigl(v_p((10na)!) - v_p((9na)!) - v_p((na)!)\bigr)$, where $v_p(k)$ is the exponent
+of $p$ in the prime factorization of $k$ (zero when $p$ is not prime). -/
 def nu9term (q : ℕ × ℤ) (p n : ℕ) : ℤ :=
   q.2 * (((N10m q.1 n)!.factorization p : ℤ)
     - ((N9m q.1 n)!.factorization p : ℤ)
     - ((N1m q.1 n)!.factorization p : ℤ))
 
 -- Total p-adic valuation of F(n).
-/-- Total `p`-adic valuation of the weighted product `F_9(n)`. -/
+/-- **The $p$-adic valuation of the weighted product.** For natural numbers $p$ and $n$,
+$\nu_p(n)$ is the integer
+$\sum_{d \mid 210} \mu(d)\bigl(v_p((2100n/d)!) - v_p((1890n/d)!) -
+v_p((210n/d)!)\bigr)$, where $\mu$ is the Möbius function and $v_p(m)$ is the exponent of $p$
+in the prime factorization of $m$ (zero when $p$ is not prime). -/
 def nu9 (p n : ℕ) : ℤ :=
   w9.toFinset.sum (fun q : ℕ × ℤ => nu9term q p n)
 
 -- Vanishing of G9r(n/p^j) for large p^j.
-/-- `G9r (n / p ^ j)` vanishes for `p ^ j > 10 * Q9 * n`. -/
+/-- **The continuous Breusch function vanishes at small ratios.** Let $p$ be a prime and let
+$n \ge 1$ and $j$ be natural numbers. If $p^j > 2100n$, then the continuous Breusch function
+$G$ satisfies $G(n/p^j) = 0$. -/
 lemma G9r_vanish_of {n p j : ℕ} (hp : p.Prime) (hn : 1 ≤ n)
     (h : 10 * Q9 * n < p ^ j) : G9r ((n : ℝ) / (((p ^ j : ℕ)) : ℝ)) = 0 := by
   apply G9r_vanish
@@ -462,7 +517,14 @@ lemma G9r_vanish_of {n p j : ℕ} (hp : p.Prime) (hn : 1 ≤ n)
     linarith [hcast, hcomm]
 
 -- The ν-identity: total valuation = Σ_j G9r(n/p^j).
-/-- Valuation identity: `nu9` is a sum of `G9r` values. -/
+/-- **Valuation identity for the weighted product.** Write $v_p(m)$ for the exponent of $p$ in $m$
+and $\mu$ for the Möbius function, and set
+$\nu_p(n) = \sum_{d \mid 210} \mu(d)\bigl(v_p((2100n/d)!) - v_p((1890n/d)!) -
+v_p((210n/d)!)\bigr)$ and, for real $x \ge 0$,
+$G(x) = \sum_{d \mid 210} \mu(d)\bigl(\lfloor 2100x/d \rfloor - \lfloor 1890x/d \rfloor -
+\lfloor 210x/d \rfloor\bigr)$. If $p$ is a prime and $n$, $b$ are natural numbers with
+$\lfloor \log_p (2100n) \rfloor < b$, where the floor of the logarithm is taken to be $0$ when
+$n = 0$, then $\nu_p(n) = \sum_{j=1}^{b-1} G(n/p^j)$. -/
 lemma nu9_eq_sum_G {p n b : ℕ} (hp : p.Prime)
     (hb : Nat.log p (10 * Q9 * n) < b) :
     nu9 p n = ∑ j ∈ Finset.Ico 1 b, G9r ((n : ℝ) / (((p ^ j : ℕ)) : ℝ)) := by
@@ -499,7 +561,13 @@ lemma nu9_eq_sum_G {p n b : ℕ} (hp : p.Prime)
   rw [floor_N10 hm hd hp2, floor_N9 hm hd hp2, floor_N1 hm hd hp2]
 
 -- For p^2 > 10Qn, only j = 1 contributes.
-/-- For `p ^ 2 > 10 * Q9 * n`, only `j = 1` contributes. -/
+/-- **Single-term valuation identity for large primes.** Write $v_p(m)$ for the exponent of $p$
+in $m$ and $\mu$ for the Möbius function, and set
+$\nu_p(n) = \sum_{d \mid 210} \mu(d)\bigl(v_p((2100n/d)!) - v_p((1890n/d)!) -
+v_p((210n/d)!)\bigr)$ and, for real $x \ge 0$,
+$G(x) = \sum_{d \mid 210} \mu(d)\bigl(\lfloor 2100x/d \rfloor - \lfloor 1890x/d \rfloor -
+\lfloor 210x/d \rfloor\bigr)$. If $p$ is a prime and $n \ge 1$ is a natural number with
+$2100n < p^2$, then $\nu_p(n) = G(n/p)$. -/
 lemma nu9_eq_single {p n : ℕ} (hp : p.Prime) (hn : 1 ≤ n)
     (hbig : 10 * Q9 * n < p ^ 2) : nu9 p n = G9r ((n : ℝ) / (((p : ℕ)) : ℝ)) := by
   set b : ℕ := Nat.log p (10 * Q9 * n) + 2 with hb_def
@@ -519,10 +587,13 @@ lemma nu9_eq_single {p n : ℕ} (hp : p.Prime) (hn : 1 ≤ n)
     exact G9r_vanish_of hp hn h
   rw [hzero, add_zero, pow_one]
 
-/-- `10 * Q9 * n = 2100 * n`. -/
+/-- **Value of $10Qn$.** Let $Q = 210$ be the truncation modulus. For every natural number $n$,
+$10 \cdot Q \cdot n = 2100n$. -/
 lemma U9_10Q9 (n : ℕ) : 10 * Q9 * n = 2100 * n := by rw [Q9_eq]
 
-/-- Logarithm of `K` via its prime factorization. -/
+/-- **Logarithm of a natural number from its factorization.** For every nonzero natural number
+$K$, $\log K = \sum_{p} v_p(K) \log p$, where $p$ runs over the prime divisors of $K$ and
+$v_p(K)$ is the exponent of $p$ in the prime factorization of $K$. -/
 lemma U9_log_fact (K : ℕ) (hK : K ≠ 0) :
     Real.log ((K : ℕ) : ℝ) =
       ∑ p ∈ K.factorization.support, ((K.factorization p : ℕ) : ℝ) * Real.log ((p : ℕ) : ℝ) := by
@@ -544,7 +615,10 @@ lemma U9_log_fact (K : ℕ) (hK : K ≠ 0) :
     have hp0 : (p : ℕ) ≠ 0 := ne_of_gt hpp.pos
     exact pow_ne_zero _ (by exact_mod_cast hp0)
 
-/-- Ratio factors involve only primes `≤ 2100 * n`. -/
+/-- **Bound on the prime factors of the ratio factors.** Let $(m, \mu)$ be an entry of the
+divisor table $w_9$ (so $m$ divides $210$ and $\mu$ is the Möbius value of $m$), let $n$ be a
+natural number and put $d = 210/m$. Then every prime factor of $(10nd)!/((9nd)!\,(nd)!)$ is at
+most $2100n$. -/
 lemma U9_supp_sub (q : ℕ × ℤ) (hq : q ∈ w9) (n : ℕ) :
     (ratio9 q.1 n).factorization.support ⊆ Nat.primesBelow (2100 * n + 1) := by
   intro p hp
@@ -566,7 +640,11 @@ lemma U9_supp_sub (q : ℕ × ℤ) (hq : q ∈ w9) (n : ℕ) :
   rw [Nat.mem_primesBelow]
   exact ⟨by omega, hpp⟩
 
-/-- Single valuation term against the ratio factorization. -/
+/-- **Valuation term of one binomial factor.** Let $Q = 210$, let $m \ge 1$ be a divisor of $Q$,
+let $w$ be an integer, and let $p$ and $n$ be natural numbers. Put $N = n \cdot (Q/m)$ and
+$R = (10N)!/((9N)!\,N!)$. For a natural number $a$, write $v_p(a)$ for the exponent of $p$ in
+the prime factorization of $a$ (zero when $p$ is not prime). Then
+$w \, (v_p((10N)!) - v_p((9N)!) - v_p(N!)) = w \, v_p(R)$. -/
 lemma U9_nu9term_eq (q : ℕ × ℤ) (p n : ℕ) (hm1 : 1 ≤ q.1) (hd : q.1 ∣ Q9) :
     ((nu9term q p n : ℤ) : ℝ)
       = (q.2 : ℝ) * (((ratio9 q.1 n).factorization p : ℕ) : ℝ) := by
@@ -575,7 +653,12 @@ lemma U9_nu9term_eq (q : ℕ × ℤ) (p n : ℕ) (hm1 : 1 ≤ q.1) (hd : q.1 ∣
   rw [← h, Int.cast_mul]
   simp
 
-/-- Vanishing single valuation term off the support. -/
+/-- **Valuation terms vanish off the prime support.** Let $m \ge 1$ be a divisor of $Q_9 = 210$,
+let $\mu$ be an integer, let $p$ and $n$ be natural numbers, and put $d = 210/m$. For a natural
+number $k$ write $v_p(k)$ for the exponent of $p$ in the prime factorization of $k$ (zero when
+$p$ is not prime). If $v_p\bigl((10nd)!/((9nd)!\,(nd)!)\bigr) = 0$, then the valuation term
+$\mu\,\bigl(v_p((10nd)!) - v_p((9nd)!) - v_p((nd)!)\bigr)$ of the pair $(m, \mu)$ at $p$ and $n$
+is $0$. -/
 lemma U9_nu9term_zero (q : ℕ × ℤ) (p n : ℕ) (hm1 : 1 ≤ q.1) (hd : q.1 ∣ Q9)
     (h0 : (ratio9 q.1 n).factorization p = 0) : nu9term q p n = 0 := by
   unfold nu9term
@@ -583,7 +666,12 @@ lemma U9_nu9term_zero (q : ℕ × ℤ) (p n : ℕ) (hm1 : 1 ≤ q.1) (hd : q.1 �
   rw [h0, Nat.cast_zero] at h
   rw [← h, mul_zero]
 
-/-- One weighted log-factor as a prime sum. -/
+/-- **A weighted log-factor as a sum over primes.** Let $(m, \mu)$ be an entry of the divisor
+table $w_9$ (so $m$ divides $210$ and $\mu$ is the Möbius value of $m$), let $n \ge 1$ be a
+natural number, put $d = 210/m$ and $R = (10nd)!/((9nd)!\,(nd)!)$, and for a prime $p$ write
+$\nu_p = \mu\,\bigl(v_p((10nd)!) - v_p((9nd)!) - v_p((nd)!)\bigr)$, where $v_p(k)$ is the
+exponent of $p$ in the prime factorization of $k$. Then $\mu \log R$ equals the sum of
+$\nu_p \log p$ over all primes $p \le 2100n$. -/
 lemma U9_q_expand (q : ℕ × ℤ) (hq : q ∈ w9) (n : ℕ) (hn : 1 ≤ n) :
     (q.2 : ℝ) * Real.log ((ratio9 q.1 n : ℕ) : ℝ)
       = ∑ p ∈ Nat.primesBelow (2100 * n + 1),
@@ -613,7 +701,13 @@ lemma U9_q_expand (q : ℕ × ℤ) (hq : q ∈ w9) (n : ℕ) (hn : 1 ≤ n) :
           Finsupp.notMem_support_iff.mp hpnot
         rw [U9_nu9term_zero q p n hm1 hd h0, Int.cast_zero, zero_mul]
 
-/-- `logF9` as a weighted prime-logarithm sum. -/
+/-- **Prime factorization of $\log F_9(n)$.** Let $n \ge 1$ be a natural number. For each divisor
+$m$ of $210$ put $N_m = 210n/m$, let $\mu$ be the Möbius function, and let
+$F_9(n) = \prod_{m \mid 210} \binom{10N_m}{N_m}^{\mu(m)}$. For a prime $p$ let $v_p$ denote the
+$p$-adic valuation and put
+$\nu_9(p, n) = \sum_{m \mid 210} \mu(m) (v_p((10N_m)!) - v_p((9N_m)!) - v_p(N_m!))$, the
+$p$-adic valuation of $F_9(n)$. Then $\log F_9(n) = \sum_{p \le 2100n} \nu_9(p, n) \log p$, where
+$p$ runs over the primes at most $2100n$. -/
 lemma U9_bridge (n : ℕ) (hn : 1 ≤ n) :
     logF9 n = ∑ p ∈ Nat.primesBelow (2100 * n + 1),
       ((nu9 p n : ℤ) : ℝ) * Real.log ((p : ℕ) : ℝ) := by
@@ -630,14 +724,18 @@ lemma U9_bridge (n : ℕ) (hn : 1 ≤ n) :
   unfold nu9
   rw [Int.cast_sum, Finset.sum_mul]
 
-/-- Logarithms of primes are nonnegative. -/
+/-- **Logarithms of primes are nonnegative.** For every prime $p$, $\log p \ge 0$. -/
 lemma U9_logp_nonneg {p : ℕ} (hp : p.Prime) : 0 ≤ Real.log ((p : ℕ) : ℝ) := by
   have h1 : (1 : ℝ) ≤ ((p : ℕ) : ℝ) := by
     have h2 : (2 : ℝ) ≤ ((p : ℕ) : ℝ) := by exact_mod_cast hp.two_le
     linarith
   exact Real.log_nonneg h1
 
-/-- Integer `G9r` values are bounded by their `toNat` cast. -/
+/-- **$G$ is at most its positive part.** For real $y$ let
+$G(y) = \sum_{m \mid 210} \mu(m) (\lfloor 2100y/m \rfloor_+ - \lfloor 1890y/m \rfloor_+ -
+\lfloor 210y/m \rfloor_+)$, where $\mu$ is the Möbius function and
+$\lfloor t \rfloor_+ = \max(\lfloor t \rfloor, 0)$. For every real number $x$,
+$G(x) \le \max(G(x), 0)$. -/
 lemma U9_G_toNat (x : ℝ) : ((G9r x : ℤ) : ℝ) ≤ ((((G9r x).toNat : ℕ)) : ℝ) := by
   rcases le_total (G9r x) 0 with h | h
   · rw [Int.toNat_eq_zero.mpr h, Nat.cast_zero]
@@ -646,14 +744,16 @@ lemma U9_G_toNat (x : ℝ) : ((G9r x : ℤ) : ℝ) ≤ ((((G9r x).toNat : ℕ)) 
       rw [← Int.cast_natCast, Int.toNat_of_nonneg h]
     rw [e]
 
-/-- Truncated `G9r` values are at most `3`. -/
+/-- **The truncated continuous Breusch function is at most 3.** For every real $x \ge 0$, the
+continuous Breusch function $G$ satisfies $\max(G(x), 0) \le 3$. -/
 lemma U9_toNat_le3 (x : ℝ) (hx : 0 ≤ x) : (G9r x).toNat ≤ 3 := by
   have h := G9r_le3 x hx
   have h2 := Int.toNat_le_toNat h
   have h3 : (3 : ℤ).toNat = 3 := rfl
   rwa [h3] at h2
 
-/-- Truncation lower bounds lift back to integers. -/
+/-- **Positive lower bounds on a truncation lift to the integer.** Let $z$ be an integer and let
+$i \ge 1$ be a natural number. If $i \le \max(z, 0)$, then $i \le z$. -/
 lemma U9_of_toNat {z : ℤ} {i : ℕ} (hi : 1 ≤ i) (h : i ≤ z.toNat) :
     (i : ℤ) ≤ z := by
   have hz : 0 ≤ z := by
@@ -665,7 +765,10 @@ lemma U9_of_toNat {z : ℤ} {i : ℕ} (hi : 1 ≤ i) (h : i ≤ z.toNat) :
   have h2 : ((i : ℕ) : ℤ) ≤ ((z.toNat : ℕ) : ℤ) := by exact_mod_cast h
   rwa [e] at h2
 
-/-- Layer-cake decomposition of a truncated sum over levels `1..3`. -/
+/-- **Layer-cake decomposition with three levels.** Let $B$ be a finite set of natural numbers,
+let $M : \mathbb{N} \to \mathbb{N}$ and $c : \mathbb{N} \to \mathbb{R}$, and suppose $M(p) \le 3$
+for every $p \in B$. Then
+$\sum_{p \in B} M(p) c(p) = \sum_{i=1}^{3} \sum_{p \in B,\, M(p) \ge i} c(p)$. -/
 lemma U9_layercake (B : Finset ℕ) (M : ℕ → ℕ) (c : ℕ → ℝ)
     (hM : ∀ p ∈ B, M p ≤ 3) :
     ∑ p ∈ B, ((M p : ℕ) : ℝ) * c p
@@ -706,7 +809,8 @@ lemma U9_layercake (B : Finset ℕ) (M : ℕ → ℕ) (c : ℕ → ℝ)
   intro i _
   rw [Finset.sum_filter]
 
-/-- A level lower bound converts to a prime upper bound. -/
+/-- **A level bound turns into a bound on the prime.** Let $n \ge 1$ be a natural number, $p$ a
+prime and $j \ge 1$ a real number. If $j / 18900 \le n / p$, then $p \le 18900\,n / j$. -/
 lemma U9_ple_of_G (n p : ℕ) (_hn : 1 ≤ n) (hp : p.Prime)
     (jm : ℝ) (hjm : 1 ≤ jm)
     (hlvl : jm / 18900 ≤ (n : ℝ) / ((p : ℕ) : ℝ)) :
@@ -724,7 +828,9 @@ lemma U9_ple_of_G (n p : ℕ) (_hn : 1 ≤ n) (hp : p.Prime)
   rw [le_div_iff₀ hjm0]
   linarith [hcross]
 
-/-- Primes `≤ 1890 * n` give `n / p ≥ 1 / 1890`. -/
+/-- **Primes up to $1890n$ have $n/p \ge 1/1890$.** Let $Q = 210$ be the truncation modulus, let
+$n \ge 1$ be a natural number and let $p$ be a prime with $p \le 1890 n$. Then
+$1/(9Q) \le n/p$, where $9Q = 1890$. -/
 lemma U9_xlo (n p : ℕ) (_hn : 1 ≤ n) (hp : p.Prime) (hle : p ≤ 1890 * n) :
     1 / (((9 * Q9 : ℕ)) : ℝ) ≤ (n : ℝ) / ((p : ℕ) : ℝ) := by
   have h9Q : (((9 * Q9 : ℕ)) : ℝ) = 1890 := by
@@ -737,28 +843,41 @@ lemma U9_xlo (n p : ℕ) (_hn : 1 ≤ n) (hp : p.Prime) (hle : p ≤ 1890 * n) :
   have hleR : ((p : ℕ) : ℝ) ≤ 1890 * (n : ℝ) := by exact_mod_cast hle
   linarith [hleR]
 
-/-- Level-1 primes are at most `18900 * n / 279`. -/
+/-- **Upper bound for primes where a Möbius-weighted floor sum is at least 1.** For real
+$x \ge 0$ let $G(x) = \sum_{m \mid 210} \mu(m)\bigl(\lfloor 2100x/m \rfloor -
+\lfloor 1890x/m \rfloor - \lfloor 210x/m \rfloor\bigr)$, where $\mu$ is the Möbius function.
+Let $n \ge 1$ be a natural number and $p \le 1890n$ a prime. If $G(n/p) \ge 1$, then
+$p \le 18900n/279$. -/
 lemma U9_ple1 (n p : ℕ) (hn : 1 ≤ n) (hp : p.Prime)
     (hle : p ≤ 1890 * n) (hG : (1 : ℤ) ≤ G9r ((n : ℝ) / ((p : ℕ) : ℝ))) :
     ((p : ℕ) : ℝ) ≤ 18900 * (n : ℝ) / 279 := by
   apply U9_ple_of_G n p hn hp 279 (by norm_num)
   exact G9r_level1 _ (U9_xlo n p hn hp hle) hG
 
-/-- Level-2 primes are at most `18900 * n / 657`. -/
+/-- **Upper bound for primes where a Möbius-weighted floor sum is at least 2.** For real
+$x \ge 0$ let $G(x) = \sum_{m \mid 210} \mu(m)\bigl(\lfloor 2100x/m \rfloor -
+\lfloor 1890x/m \rfloor - \lfloor 210x/m \rfloor\bigr)$, where $\mu$ is the Möbius function.
+Let $n \ge 1$ be a natural number and $p \le 1890n$ a prime. If $G(n/p) \ge 2$, then
+$p \le 18900n/657$. -/
 lemma U9_ple2 (n p : ℕ) (hn : 1 ≤ n) (hp : p.Prime)
     (hle : p ≤ 1890 * n) (hG : (2 : ℤ) ≤ G9r ((n : ℝ) / ((p : ℕ) : ℝ))) :
     ((p : ℕ) : ℝ) ≤ 18900 * (n : ℝ) / 657 := by
   apply U9_ple_of_G n p hn hp 657 (by norm_num)
   exact G9r_level2 _ (U9_xlo n p hn hp hle) hG
 
-/-- Level-3 primes are at most `18900 * n / 963`. -/
+/-- **Upper bound for primes where a Möbius-weighted floor sum is at least 3.** For real
+$x \ge 0$ let $G(x) = \sum_{m \mid 210} \mu(m)\bigl(\lfloor 2100x/m \rfloor -
+\lfloor 1890x/m \rfloor - \lfloor 210x/m \rfloor\bigr)$, where $\mu$ is the Möbius function.
+Let $n \ge 1$ be a natural number and $p \le 1890n$ a prime. If $G(n/p) \ge 3$, then
+$p \le 18900n/963$. -/
 lemma U9_ple3 (n p : ℕ) (hn : 1 ≤ n) (hp : p.Prime)
     (hle : p ≤ 1890 * n) (hG : (3 : ℤ) ≤ G9r ((n : ℝ) / ((p : ℕ) : ℝ))) :
     ((p : ℕ) : ℝ) ≤ 18900 * (n : ℝ) / 963 := by
   apply U9_ple_of_G n p hn hp 963 (by norm_num)
   exact G9r_level3 _ (U9_xlo n p hn hp hle) hG
 
-/-- The primorial as a product over `primesBelow`. -/
+/-- **The primorial as a product of primes.** For every natural number $k$, the primorial $k\#$
+equals the product of all primes $p$ with $p < k + 1$. -/
 lemma U9_primorial_eq (k : ℕ) :
     primorial k = ∏ p ∈ Nat.primesBelow (k + 1), p := by
   have hset : Nat.primesBelow (k + 1)
@@ -768,7 +887,8 @@ lemma U9_primorial_eq (k : ℕ) :
   unfold primorial
   rw [hset]
 
-/-- Prime-log sum bounded by the `3.4` primorial estimate. -/
+/-- **Chebyshev-type bound for the sum of prime logarithms.** For every real number $Y \ge 0$,
+the sum of $\log p$ over all primes $p \le \lfloor Y \rfloor$ is at most $Y \log 3.4$. -/
 lemma U9_theta_le (Y : ℝ) (hY : 0 ≤ Y) :
     ∑ p ∈ Nat.primesBelow (⌊Y⌋₊ + 1), Real.log ((p : ℕ) : ℝ)
       ≤ Y * Real.log 3.4 := by
@@ -795,7 +915,13 @@ lemma U9_theta_le (Y : ℝ) (hY : 0 ≤ Y) :
   rw [hlog]
   exact hlogle
 
-/-- One level layer bounded via the primorial estimate. -/
+/-- **Prime-logarithm bound for one level of $G$.** For real $x \ge 0$ let
+$G(x) = \sum_{m \mid 210} \mu(m) (\lfloor 2100x/m \rfloor - \lfloor 1890x/m \rfloor -
+\lfloor 210x/m \rfloor)$, where $\mu$ is the Möbius function. Let $n \ge 1$ be a natural number,
+let $B$ be a finite set of primes $p$ with $p \le 1890n$, let $i \ge 1$ be a natural number, and
+let $j \ge 1$ be a real number with $18900n/j \ge 0$. Suppose that every prime $p \le 1890n$ with
+$G(n/p) \ge i$ satisfies $p \le 18900n/j$. Then the sum of $\log p$ over the $p \in B$ with
+$\max(G(n/p), 0) \ge i$ is at most $(18900n/j) \log 3.4$. -/
 lemma U9_Bi_le (n : ℕ) (_hn : 1 ≤ n) (B : Finset ℕ)
     (hBmem : ∀ p ∈ B, p.Prime ∧ p ≤ 1890 * n)
     (i : ℕ) (hi : 1 ≤ i) (jm : ℝ) (_hjm : 1 ≤ jm)
@@ -826,7 +952,17 @@ lemma U9_Bi_le (n : ℕ) (_hn : 1 ≤ n) (B : Finset ℕ)
           exact U9_logp_nonneg (Nat.mem_primesBelow.mp hp).2)
     _ ≤ 18900 * (n : ℝ) / jm * Real.log 3.4 := U9_theta_le _ hYnn
 
-/-- Large-square prime contribution bounded by the `c_9` term. -/
+/-- **Contribution of primes with $p^2 > 2100n$.** Write $v_p(m)$ for the exponent of $p$ in $m$
+and $\mu$ for the Möbius function, and set
+$\nu_p(n) = \sum_{d \mid 210} \mu(d)\bigl(v_p((2100n/d)!) - v_p((1890n/d)!) -
+v_p((210n/d)!)\bigr)$. For every natural number $n \ge 1$, the sum of $\nu_p(n) \log p$ over the
+primes $p \le 1890n$ with $p^2 > 2100n$ satisfies
+
+$$
+\sum_{\substack{p \le 1890n \text{ prime} \\ p^2 > 2100n}} \nu_p(n) \log p \le
+\left(\frac{18900}{279} + \frac{18900}{657} + \frac{18900}{963}\right) n \log 3.4.
+$$
+-/
 lemma U9_B_le (n : ℕ) (hn : 1 ≤ n) :
     ∑ p ∈ ((Nat.primesBelow (2100 * n + 1)).filter (fun p => p ≤ 1890 * n)).filter
       (fun p => 2100 * n < p ^ 2),
@@ -919,7 +1055,11 @@ lemma U9_B_le (n : ℕ) (hn : 1 ≤ n) :
     _ = (18900 / 279 + 18900 / 657 + 18900 / 963 : ℝ) * (n : ℝ) * Real.log 3.4 :=
         hcoef
 
-/-- One small-square prime term bounded by `3 * log (2100 * n)`. -/
+/-- **Bound for one small-square prime term.** Let $n \ge 1$ be a natural number and let $p$ be a
+prime with $p^2 \le 2100n$. For each divisor $m$ of $210$ put $N_m = 210n/m$, let $\mu$ be the
+Möbius function and $v_p$ the $p$-adic valuation, and put
+$\nu_9(p, n) = \sum_{m \mid 210} \mu(m) (v_p((10N_m)!) - v_p((9N_m)!) - v_p(N_m!))$. Then
+$\nu_9(p, n) \log p \le 3 \log(2100n)$. -/
 lemma U9_Cterm_le (n p : ℕ) (hn : 1 ≤ n) (hp : p.Prime)
     (_hleX : p ^ 2 ≤ 2100 * n) :
     ((nu9 p n : ℤ) : ℝ) * Real.log ((p : ℕ) : ℝ)
@@ -997,7 +1137,8 @@ lemma U9_Cterm_le (n p : ℕ) (hn : 1 ≤ n) (hp : p.Prime)
     _ ≤ 3 * Real.log (((2100 * n : ℕ)) : ℝ) :=
         mul_le_mul_of_nonneg_left hlogLp (by norm_num)
 
-/-- Few small-square primes: count bounded by `√(2100 * n) / 3`. -/
+/-- **Counting small-square primes.** Let $n \ge 1$ be a natural number and let $C$ be a finite
+set of primes $p$ with $p^2 \le 2100n$. Then $C$ has at most $\sqrt{2100n}/3$ elements. -/
 lemma U9_Ccard_le (n : ℕ) (hn : 1 ≤ n) (C : Finset ℕ)
     (hC : ∀ p ∈ C, p.Prime ∧ p ^ 2 ≤ 2100 * n) :
     (C.card : ℝ) ≤ Real.sqrt (((2100 * n : ℕ)) : ℝ) / 3 := by
@@ -1033,7 +1174,12 @@ lemma U9_Ccard_le (n : ℕ) (hn : 1 ≤ n) (C : Finset ℕ)
     exact_mod_cast hcard
   linarith [hcardR, hpi]
 
-/-- Small-square prime contribution bounded by the square-root term. -/
+/-- **Contribution of the small-square primes.** Let $n \ge 1$ be a natural number. For each
+divisor $m$ of $210$ put $N_m = 210n/m$, let $\mu$ be the Möbius function, and for a prime $p$
+with $p$-adic valuation $v_p$ put
+$\nu_9(p, n) = \sum_{m \mid 210} \mu(m) (v_p((10N_m)!) - v_p((9N_m)!) - v_p(N_m!))$. Then the
+sum of $\nu_9(p, n) \log p$ over the primes $p \le 1890n$ with $p^2 \le 2100n$ is at most
+$\sqrt{2100n} \log(2100n)$. -/
 lemma U9_C_le (n : ℕ) (hn : 1 ≤ n) :
     ∑ p ∈ ((Nat.primesBelow (2100 * n + 1)).filter (fun p => p ≤ 1890 * n)).filter
       (fun p => ¬ 2100 * n < p ^ 2),
@@ -1071,7 +1217,16 @@ lemma U9_C_le (n : ℕ) (hn : 1 ≤ n) :
         rw [hXeq]
         ring
 
-/-- Upper bound for `logF9 n` assuming no prime in `(1890 * n, 2100 * n]`. -/
+/-- **Upper bound for $\log F_9(n)$ when $(1890n, 2100n]$ has no prime.** Let $n \ge 1$ be a
+natural number such that no prime $p$ satisfies $1890n < p \le 2100n$, and let
+$\log F_9(n) = \sum_{d \mid 210} \mu(d) \log \frac{(2100n/d)!}{(1890n/d)!\,(210n/d)!}$, where $\mu$
+is the Möbius function. Then
+
+$$
+\log F_9(n) \le \left(\frac{18900}{279} + \frac{18900}{657} + \frac{18900}{963}\right) n \log 3.4
+\;+\; \sqrt{2100n}\,\log(2100n).
+$$
+-/
 theorem logF9_upper (n : ℕ) (hn : 1 ≤ n)
     (hA : ∀ p : ℕ, p.Prime → 1890 * n < p → p ≤ 2100 * n → False) :
     logF9 n ≤ (18900 / 279 + 18900 / 657 + 18900 / 963 : ℝ) * n * Real.log 3.4

@@ -19,7 +19,7 @@ switching networks", SIAM Journal on Computing 10(4) (1981), 702-712, doi:10.113
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 

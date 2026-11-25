@@ -19,7 +19,7 @@ doi:10.1023/B:JOSH.0000036858.59787.c2.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.UnitFlowShopTransportationDelaysWanted

@@ -203,9 +203,11 @@ private def fiberEquiv (n : ℕ) (hn : 0 < n) (b : ℕ)
     rw [ZMod.val_natCast_of_lt hlt, Nat.mul_div_cancel_left _ hbpos]
     exact hcast_v k
 
-/-- Morgado's formula over `Nat.unitaryDivisors`: for `0 < n`, the number of regular residues
-`m : ZMod n` (those for which `m ^ 2 * x = m` is solvable) is `∑ d ∈ n.unitaryDivisors, φ d`.
-`morgado_card_regular_modulo` is the source-shaped form. -/
+/-- **Morgado's formula as a sum over unitary divisors.** For every positive integer $n$, the
+number of residue classes $m \in \mathbb{Z}/n\mathbb{Z}$ for which the equation $m^2 x = m$ has a
+solution $x \in \mathbb{Z}/n\mathbb{Z}$ equals the sum of $\varphi(d)$ over the unitary divisors
+$d$ of $n$ (the positive divisors $d$ of $n$ with $\gcd(d, n/d) = 1$), where $\varphi$ is Euler's
+totient function. -/
 theorem ncard_regular_eq_sum_totient_unitaryDivisors (n : ℕ) (hn : 0 < n) :
     Set.ncard {m : ZMod n | ∃ x : ZMod n, m ^ 2 * x = m} =
       ∑ d ∈ n.unitaryDivisors, Nat.totient d := by
@@ -272,13 +274,14 @@ theorem ncard_regular_eq_sum_totient_unitaryDivisors (n : ℕ) (hn : 0 < n) :
   · intro d hd
     exact Nat.div_div_self (Nat.dvd_of_mem_unitaryDivisors hd) hn.ne'
 
-/-- Morgado's formula for the number of regular residues modulo `n`
-(equation `eq:2`).
+/-- **Morgado's formula for the number of regular residues.** Let $n$ be a positive integer. Call
+a residue class $m \in \mathbb{Z}/n\mathbb{Z}$ regular if the equation $m^2 x = m$ has a solution
+$x \in \mathbb{Z}/n\mathbb{Z}$, and let $\varrho(n)$ be the number of regular residue classes. Let
+$U(n)$ be the set of positive divisors $d$ of $n$ with $\gcd(d, n/d) = 1$. Then
+$$\varrho(n) = \sum_{d \in U(n)} \varphi(d),$$
+where $\varphi$ is Euler's totient function.
 
-For each `n`, an integer `m` is regular modulo `n` when the congruence
-`m ^ 2 * x = m` has a solution; `ϱ(n)` counts the residue classes with this
-property (OEIS `A055653`). A divisor `d ∣ n` is unitary iff
-`Nat.Coprime d (n / d)`; the sum is `∑ d udiv n, Nat.totient d`.
+The sequence $\varrho(1), \varrho(2), \ldots$ is OEIS A055653.
 
 Source: Klaus Dohmen and Mandy Lange-Geisler, "On the Number of Regular
 Integers Modulo n and Its Significance for Cryptography", Journal of Integer

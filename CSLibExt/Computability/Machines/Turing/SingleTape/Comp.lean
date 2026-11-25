@@ -43,20 +43,42 @@ namespace Cslib.Turing.SingleTapeTM
 
 variable {Symbol : Type} [Inhabited Symbol] [Fintype Symbol] (tm1 tm2 : SingleTapeTM Symbol)
 
-/-- A configuration of the first machine as one of the composite: a halted first machine is the
-second machine at its start state. (Upstream's private `toCompCfg_left`.) -/
+/-- **Embedding the first machine's configurations into a composite.** Let $M_1$ and $M_2$ be
+single-tape Turing machines over the same alphabet, and let $M$ be their composite, whose states
+are the disjoint union of those of $M_1$ and of $M_2$: $M$ starts in the start state of $M_1$ and
+runs $M_1$, where $M_1$ would halt it enters the start state of $M_2$ instead, and it then runs
+$M_2$ and halts where $M_2$ halts. A configuration of $M_1$ with tape $t$ is sent to the
+configuration of $M$ with the same tape $t$ whose state is the copy of $q$ if $M_1$ is in state
+$q$, and the start state of $M_2$ if $M_1$ has halted.
+
+Source: public version of upstream CSLib's private `toCompCfg_left`. -/
 def compCfgLeft (c : tm1.Cfg) : (compComputer tm1 tm2).Cfg :=
   ⟨some (c.state.elim (.inr tm2.q₀) .inl), c.BiTape⟩
 
-/-- A configuration of the second machine as one of the composite. (Upstream's private
-`toCompCfg_right`.) -/
+/-- **Embedding the second machine's configurations into a composite.** Let $M_1$ and $M_2$ be
+single-tape Turing machines over the same alphabet, and let $M$ be their composite, whose states
+are the disjoint union of those of $M_1$ and of $M_2$: $M$ starts in the start state of $M_1$ and
+runs $M_1$, where $M_1$ would halt it enters the start state of $M_2$ instead, and it then runs
+$M_2$ and halts where $M_2$ halts. A configuration of $M_2$ with tape $t$ is sent to the
+configuration of $M$ with the same tape $t$ whose state is the copy of $q$ if $M_2$ is in state
+$q$, and which is halted if $M_2$ has halted.
+
+Source: public version of upstream CSLib's private `toCompCfg_right`. -/
 def compCfgRight (c : tm2.Cfg) : (compComputer tm1 tm2).Cfg :=
   ⟨c.state.map .inr, c.BiTape⟩
 
 variable {tm1 tm2}
 
-/-- A step of the first machine is a step of the composite (upstream's private
-`map_toCompCfg_left_step`, as a relation). -/
+/-- **The composite simulates steps of the first machine.** Let $M_1$ and $M_2$ be single-tape
+Turing machines over the same alphabet, and let $M$ be their composite, whose states are the
+disjoint union of those of $M_1$ and of $M_2$: $M$ starts in the start state of $M_1$ and runs
+$M_1$, where $M_1$ would halt it enters the start state of $M_2$ instead, and it then runs $M_2$
+and halts where $M_2$ halts. Let $\iota_1$ send a configuration of $M_1$ to the configuration of
+$M$ with the same tape whose state is the copy of the state of $M_1$, or the start state of $M_2$
+if $M_1$ has halted. If $M_1$ moves from a configuration $c$ to a configuration $c'$ in one step,
+then $M$ moves from $\iota_1(c)$ to $\iota_1(c')$ in one step.
+
+Source: upstream CSLib's private `map_toCompCfg_left_step`, stated as a relation. -/
 theorem transitionRelation_compCfgLeft {c c' : tm1.Cfg} (h : tm1.TransitionRelation c c') :
     (compComputer tm1 tm2).TransitionRelation (compCfgLeft tm1 tm2 c) (compCfgLeft tm1 tm2 c') := by
   obtain ⟨s, t⟩ := c
@@ -70,8 +92,17 @@ theorem transitionRelation_compCfgLeft {c c' : tm1.Cfg} (h : tm1.TransitionRelat
     simp only [TransitionRelation, step, compCfgLeft, Option.elim_some, compComputer, hM]
     cases q' <;> rfl
 
-/-- The composite steps from a configuration of the second machine as the second machine does
-(upstream's private `map_toCompCfg_right_step`). -/
+/-- **Step function of a composite on configurations of the second machine.** Let $M_1$ and $M_2$
+be single-tape Turing machines over the same alphabet, and let $M$ be their composite, whose
+states are the disjoint union of those of $M_1$ and of $M_2$: $M$ starts in the start state of
+$M_1$ and runs $M_1$, where $M_1$ would halt it enters the start state of $M_2$ instead, and it
+then runs $M_2$ and halts where $M_2$ halts. Let $\iota_2$ send a configuration of $M_2$ to the
+configuration of $M$ with the same tape whose state is the copy of the state of $M_2$, halted if
+$M_2$ has halted. For every configuration $c$ of $M_2$: if $M_2$ moves from $c$ to $c'$ in one
+step, then $M$ moves from $\iota_2(c)$ to $\iota_2(c')$ in one step, and if $c$ has no successor
+in $M_2$, then $\iota_2(c)$ has no successor in $M$.
+
+Source: upstream CSLib's private `map_toCompCfg_right_step`. -/
 theorem step_compCfgRight (c : tm2.Cfg) :
     (compComputer tm1 tm2).step (compCfgRight tm1 tm2 c) =
       (tm2.step c).map (compCfgRight tm1 tm2) := by
@@ -84,15 +115,30 @@ theorem step_compCfgRight (c : tm2.Cfg) :
     rw [e]
     cases q' <;> simp only [step, compComputer, hM, Option.map_some] <;> rfl
 
-/-- A step of the second machine is a step of the composite. -/
+/-- **The composite simulates steps of the second machine.** Let $M_1$ and $M_2$ be single-tape
+Turing machines over the same alphabet, and let $M$ be their composite, whose states are the
+disjoint union of those of $M_1$ and of $M_2$: $M$ starts in the start state of $M_1$ and runs
+$M_1$, where $M_1$ would halt it enters the start state of $M_2$ instead, and it then runs $M_2$
+and halts where $M_2$ halts. Let $\iota_2$ send a configuration of $M_2$ to the configuration of
+$M$ with the same tape whose state is the copy of the state of $M_2$, halted if $M_2$ has halted.
+If $M_2$ moves from a configuration $c$ to a configuration $c'$ in one step, then $M$ moves from
+$\iota_2(c)$ to $\iota_2(c')$ in one step. -/
 theorem transitionRelation_compCfgRight {c c' : tm2.Cfg} (h : tm2.TransitionRelation c c') :
     (compComputer tm1 tm2).TransitionRelation (compCfgRight tm1 tm2 c)
       (compCfgRight tm1 tm2 c') := by
   simp only [TransitionRelation, step_compCfgRight] at h ⊢
   rw [h, Option.map_some]
 
-/-- Runs of the composite from a configuration of the second machine are runs of the second
-machine. -/
+/-- **Runs of a composite from configurations of the second machine.** Let $M_1$ and $M_2$ be
+single-tape Turing machines over the same alphabet, and let $M$ be their composite, whose states
+are the disjoint union of those of $M_1$ and of $M_2$: $M$ starts in the start state of $M_1$ and
+runs $M_1$, where $M_1$ would halt it enters the start state of $M_2$ instead, and it then runs
+$M_2$ and halts where $M_2$ halts. Let $\iota_2$ send a configuration of $M_2$ to the
+configuration of $M$ with the same tape whose state is the copy of the state of $M_2$, halted if
+$M_2$ has halted. If $c$ is a configuration of $M_2$ and $M$ moves from $\iota_2(c)$ to a
+configuration $d$ in finitely many (possibly zero) steps, then there is a configuration $c'$ of
+$M_2$ such that $M_2$ moves from $c$ to $c'$ in finitely many (possibly zero) steps and
+$d = \iota_2(c')$. -/
 theorem exists_of_reflTransGen_compCfgRight {c : tm2.Cfg} {d : (compComputer tm1 tm2).Cfg}
     (h : ReflTransGen (compComputer tm1 tm2).TransitionRelation (compCfgRight tm1 tm2 c) d) :
     ∃ c', ReflTransGen tm2.TransitionRelation c c' ∧ d = compCfgRight tm1 tm2 c' := by
@@ -104,22 +150,43 @@ theorem exists_of_reflTransGen_compCfgRight {c : tm2.Cfg} {d : (compComputer tm1
     obtain ⟨c'', hc'', rfl⟩ := Option.map_eq_some_iff.mp hstep
     exact ⟨c'', hc'.tail hc'', rfl⟩
 
-/-- **Outputs compose**: if `tm1` outputs `b` on `a` and `tm2` outputs `c` on `b`, the composite
-outputs `c` on `a`. -/
+/-- **Outputs compose.** Let $M_1$ and $M_2$ be single-tape Turing machines over the same
+alphabet, and let $M$ be their composite, whose states are the disjoint union of those of $M_1$
+and of $M_2$: $M$ starts in the start state of $M_1$ and runs $M_1$, where $M_1$ would halt it
+enters the start state of $M_2$ instead, and it then runs $M_2$ and halts where $M_2$ halts. Say
+that a machine outputs a word $w$ on a word $v$ when, started in its start state on a tape
+holding $v$, it reaches the halted configuration whose tape holds exactly $w$, with the head at
+the start of $w$. For all words $a$, $b$, $c$: if $M_1$ outputs $b$ on $a$ and $M_2$ outputs $c$
+on $b$, then $M$ outputs $c$ on $a$. -/
 theorem Outputs.compComputer {a b c : List Symbol} (h₁ : tm1.Outputs a b)
     (h₂ : tm2.Outputs b c) : (compComputer tm1 tm2).Outputs a c :=
   (h₁.lift (compCfgLeft tm1 tm2) fun _ _ ↦ transitionRelation_compCfgLeft).trans
     (h₂.lift (compCfgRight tm1 tm2) fun _ _ ↦ transitionRelation_compCfgRight)
 
-/-- **Timed outputs compose**, with the time bounds added. -/
+/-- **Timed outputs compose.** Let $M_1$ and $M_2$ be single-tape Turing machines over the same
+alphabet, and let $M$ be their composite, whose states are the disjoint union of those of $M_1$
+and of $M_2$: $M$ starts in the start state of $M_1$ and runs $M_1$, where $M_1$ would halt it
+enters the start state of $M_2$ instead, and it then runs $M_2$ and halts where $M_2$ halts. Say
+that a machine outputs a word $w$ on a word $v$ within $t$ steps when, started in its start state
+on a tape holding $v$, it reaches in at most $t$ steps the halted configuration whose tape holds
+exactly $w$, with the head at the start of $w$. For all words $a$, $b$, $c$ and all natural
+numbers $t_1$, $t_2$: if $M_1$ outputs $b$ on $a$ within $t_1$ steps and $M_2$ outputs $c$ on $b$
+within $t_2$ steps, then $M$ outputs $c$ on $a$ within $t_1 + t_2$ steps. -/
 theorem OutputsWithinTime.compComputer {a b c : List Symbol} {t₁ t₂ : ℕ}
     (h₁ : tm1.OutputsWithinTime a b t₁) (h₂ : tm2.OutputsWithinTime b c t₂) :
     (compComputer tm1 tm2).OutputsWithinTime a c (t₁ + t₂) :=
   (h₁.map (compCfgLeft tm1 tm2) fun _ _ ↦ transitionRelation_compCfgLeft).trans
     (h₂.map (compCfgRight tm1 tm2) fun _ _ ↦ transitionRelation_compCfgRight)
 
-/-- **Halting of a composite**: if `tm1` outputs `b` on `a`, the composite halts on `a` exactly
-when `tm2` halts on `b`. -/
+/-- **Halting of a composite.** Let $M_1$ and $M_2$ be single-tape Turing machines over the same
+alphabet, and let $M$ be their composite, whose states are the disjoint union of those of $M_1$
+and of $M_2$: $M$ starts in the start state of $M_1$ and runs $M_1$, where $M_1$ would halt it
+enters the start state of $M_2$ instead, and it then runs $M_2$ and halts where $M_2$ halts. Say
+that a machine outputs a word $w$ on a word $v$ when, started in its start state on a tape
+holding $v$, it reaches the halted configuration whose tape holds exactly $w$, with the head at
+the start of $w$. For all words $a$ and $b$ such that $M_1$ outputs $b$ on $a$: $M$, started in
+its start state on a tape holding $a$, halts if and only if $M_2$, started in its start state on
+a tape holding $b$, halts. -/
 theorem haltsOn_compComputer_iff {a b : List Symbol} (h₁ : tm1.Outputs a b) :
     (compComputer tm1 tm2).HaltsOn a ↔ tm2.HaltsOn b := by
   have hmid : ReflTransGen (compComputer tm1 tm2).TransitionRelation

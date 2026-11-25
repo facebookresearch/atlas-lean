@@ -49,8 +49,8 @@ sea-level response theorem.
 
 namespace EarthScience
 
-/-- Flotation: weight balance `ρw * d = ρi * H` gives submerged depth
-`d = (ρi / ρw) * H`, with `0 < d < H` and submerged fraction `ρi / ρw`. -/
+/-- Flotation: for `0 < ρi < ρw` and `H > 0`, weight balance `ρw * d = ρi * H` gives submerged
+depth `d = (ρi / ρw) * H`, with `0 < d < H` and submerged fraction `ρi / ρw`. -/
 theorem flotation_submerged_fraction {ρi ρw H d : ℝ} (hρi : 0 < ρi) (hρw : ρi < ρw)
     (hH : 0 < H) (hbal : ρw * d = ρi * H) :
     d = (ρi / ρw) * H ∧ 0 < d ∧ d < H ∧ d / H = ρi / ρw := by
@@ -77,7 +77,8 @@ theorem flotation_submerged_fraction {ρi ρw H d : ℝ} (hρi : 0 < ρi) (hρw 
   exact ⟨hd, hd_pos, hd_lt, hfrac_eq⟩
 
 set_option linter.unusedVariables false in
-/-- Flotation boundary: equal densities give a fully submerged prism. -/
+/-- Flotation boundary: equal densities give a fully submerged prism: for `ρ > 0` and `H > 0`,
+the weight balance `ρ * d = ρ * H` gives `d = H`. -/
 theorem flotation_equal_density {ρ H d : ℝ} (hρ : 0 < ρ) (hH : 0 < H)
     (hbal : ρ * d = ρ * H) :
     d = H := by
