@@ -20,11 +20,13 @@ One seller owns an item and has cost `s ∈ [0, 1]` for parting with it; one buy
 has value `b ∈ [0, 1]` for it. A deterministic mechanism chooses whether trade
 occurs and two prices: what the buyer pays and what the seller receives. This
 file proves the dominant-strategy form of the Myerson--Satterthwaite theorem:
-no mechanism is simultaneously ex-post efficient (trade iff `b > s`),
+no mechanism is simultaneously ex-post efficient (trade whenever `b > s`, none
+whenever `b < s`),
 dominant-strategy incentive compatible for both sides, ex-post individually
 rational, and weakly budget-balanced. The reason is the threshold-payment
 argument of Myerson's lemma in this two-agent setting: efficiency, DSIC and IR
-force the buyer to pay `s` and the seller to receive `b` whenever trade occurs,
+force the buyer to pay `s` and the seller to receive `b` at interior trade
+profiles `0 < s < b < 1`,
 leaving a deficit of `b - s > 0`. The posted-price mechanism is the positive
 control: it is DSIC, ex-post IR and weakly budget-balanced, but never efficient.
 
@@ -71,10 +73,13 @@ def SellerDSIC (M : BilateralMechanism) : Prop :=
   ∀ b ∈ Set.Icc (0 : ℝ) 1, ∀ c ∈ Set.Icc (0 : ℝ) 1, ∀ r ∈ Set.Icc (0 : ℝ) 1,
     sellerUtil M c b r ≤ sellerUtil M c b c
 
-/-- Ex-post efficiency for reports in `[0, 1]`: trade occurs if and only if the
-reported buyer value exceeds the reported seller cost. -/
+/-- Ex-post efficiency for reports in `[0, 1]`: trade is required when the
+reported buyer value strictly exceeds the reported seller cost, and forbidden
+when it is strictly below it. At equality both outcomes maximize welfare, so the
+allocation is unconstrained there. -/
 def Efficient (M : BilateralMechanism) : Prop :=
-  ∀ s ∈ Set.Icc (0 : ℝ) 1, ∀ b ∈ Set.Icc (0 : ℝ) 1, M.alloc s b = 1 ↔ s < b
+  ∀ s ∈ Set.Icc (0 : ℝ) 1, ∀ b ∈ Set.Icc (0 : ℝ) 1,
+    (s < b → M.alloc s b = 1) ∧ (b < s → M.alloc s b = 0)
 
 /-- Ex-post individual rationality for types in `[0, 1]`: truthful participation
 gives both sides nonnegative utility at every report profile. -/
@@ -89,125 +94,124 @@ def WeaklyBudgetBalanced (M : BilateralMechanism) : Prop :=
     M.alloc s b = 1 → M.paySeller s b ≤ M.payBuyer s b
 
 /-- **Threshold price for the buyer.** In an efficient, buyer-DSIC, ex-post IR
-mechanism, whenever trade occurs at reports `(s, b)` with `s < b`, the buyer pays
-exactly `s`. -/
+mechanism, whenever trade occurs at reports `(s, b)` with `0 < s < b`, the buyer
+pays exactly `s`. The interior hypothesis `0 < s` is essential: with tie-neutral
+efficiency, DSIC and IR do not pin the price at the boundary `s = 0`. -/
 theorem payBuyer_eq_of_lt (M : BilateralMechanism) (hE : Efficient M)
     (hD : BuyerDSIC M) (hIR : ExPostIR M) {s b : ℝ}
-    (hs : s ∈ Set.Icc (0 : ℝ) 1) (hb : b ∈ Set.Icc (0 : ℝ) 1) (h : s < b) :
+    (hs : s ∈ Set.Icc (0 : ℝ) 1) (hb : b ∈ Set.Icc (0 : ℝ) 1)
+    (hs0 : 0 < s) (h : s < b) :
     M.payBuyer s b = s := by
-  have hZero : ∀ s b : ℝ, s ∈ Set.Icc (0:ℝ) 1 → b ∈ Set.Icc (0:ℝ) 1 →
-      ¬ s < b → M.alloc s b = 0 := by
-    intro s b hs hb hnb
-    rcases M.alloc_mem s b with h0 | h1
-    · exact h0
-    · exfalso
-      have hlt := (hE s hs b hb).mp h1
-      exact hnb hlt
-  have hConst : ∀ r : ℝ, r ∈ Set.Icc (0:ℝ) 1 → s < r →
-      M.payBuyer s r = M.payBuyer s b := by
+  obtain ⟨hs_lo, hs_hi⟩ := Set.mem_Icc.mp hs
+  obtain ⟨hb_lo, hb_hi⟩ := Set.mem_Icc.mp hb
+  have hconst : ∀ r ∈ Set.Icc (0 : ℝ) 1, s < r → M.payBuyer s r = M.payBuyer s b := by
     intro r hr hsr
-    have hr1 : M.alloc s r = 1 := (hE s hs r hr).mpr hsr
-    have hb1 : M.alloc s b = 1 := (hE s hs b hb).mpr h
-    have d1 := hD s hs b hb r hr
-    have d2 := hD s hs r hr b hb
-    simp only [buyerUtil, hr1, hb1, one_mul] at d1 d2
+    have halloc_r : M.alloc s r = 1 := (hE s hs r hr).1 hsr
+    have halloc_b : M.alloc s b = 1 := (hE s hs b hb).1 h
+    have h1 := hD s hs b hb r hr
+    have h2 := hD s hs r hr b hb
+    simp only [buyerUtil, halloc_r, halloc_b, one_mul] at h1 h2
+    have hle1 : M.payBuyer s b ≤ M.payBuyer s r := by linarith
+    have hle2 : M.payBuyer s r ≤ M.payBuyer s b := by linarith
+    exact le_antisymm hle2 hle1
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have hmax : max (M.payBuyer s b) 0 < s := max_lt_iff.mpr ⟨hlt, hs0⟩
+    obtain ⟨v, hv_lo, hv_hi⟩ := exists_between hmax
+    have hpay_lt_v : M.payBuyer s b < v :=
+      lt_of_le_of_lt (le_max_left _ _) hv_lo
+    have h0v : (0 : ℝ) < v := lt_of_le_of_lt (le_max_right _ _) hv_lo
+    have hv_mem : v ∈ Set.Icc (0 : ℝ) 1 :=
+      Set.mem_Icc.mpr ⟨le_of_lt h0v, le_trans (le_of_lt hv_hi) hs_hi⟩
+    have halloc_sv : M.alloc s v = 0 := (hE s hs v hv_mem).2 hv_hi
+    have halloc_sb : M.alloc s b = 1 := (hE s hs b hb).1 h
+    have hdsic := hD s hs v hv_mem b hb
+    simp only [buyerUtil, halloc_sb, halloc_sv, one_mul, zero_mul] at hdsic
     linarith
-  have hLower : s ≤ M.payBuyer s b := by
-    have hss0 : M.alloc s s = 0 := hZero s s hs hs (lt_irrefl s)
-    have hb1 : M.alloc s b = 1 := (hE s hs b hb).mpr h
-    have d0 := hD s hs s hs b hb
-    simp only [buyerUtil, hss0, hb1, zero_mul, one_mul] at d0
+  · have hmin : s < min b (M.payBuyer s b) := lt_min_iff.mpr ⟨h, hgt⟩
+    obtain ⟨r, hr_lo, hr_hi⟩ := exists_between hmin
+    have hr_lt_b : r < b := lt_of_lt_of_le hr_hi (min_le_left _ _)
+    have hr_lt_pay : r < M.payBuyer s b := lt_of_lt_of_le hr_hi (min_le_right _ _)
+    have hr_mem : r ∈ Set.Icc (0 : ℝ) 1 :=
+      Set.mem_Icc.mpr
+        ⟨le_trans hs_lo (le_of_lt hr_lo), le_trans (le_of_lt hr_lt_b) hb_hi⟩
+    have halloc_sr : M.alloc s r = 1 := (hE s hs r hr_mem).1 hr_lo
+    have hir := (hIR s hs r hr_mem).1
+    simp only [buyerUtil, halloc_sr, one_mul] at hir
+    have hconst_r := hconst r hr_mem hr_lo
     linarith
-  have hUpper : M.payBuyer s b ≤ s := by
-    by_contra hcon
-    have hlt : s < M.payBuyer s b := not_le.mp hcon
-    have hmin : s < min b (M.payBuyer s b) := lt_min h hlt
-    obtain ⟨r, hsr, hrmin⟩ := exists_between hmin
-    have hrb : r < b := lt_of_lt_of_le hrmin (min_le_left _ _)
-    have hrpay : r < M.payBuyer s b := lt_of_lt_of_le hrmin (min_le_right _ _)
-    obtain ⟨hs0, _⟩ := Set.mem_Icc.mp hs
-    obtain ⟨_, hb1le⟩ := Set.mem_Icc.mp hb
-    have hr0 : (0:ℝ) ≤ r := by linarith
-    have hr1le : r ≤ 1 := by linarith
-    have hr : r ∈ Set.Icc (0:ℝ) 1 := Set.mem_Icc.mpr ⟨hr0, hr1le⟩
-    have hconst := hConst r hr hsr
-    have hr1alloc : M.alloc s r = 1 := (hE s hs r hr).mpr hsr
-    have hir := (hIR s hs r hr).1
-    simp only [buyerUtil, hr1alloc, one_mul] at hir
-    rw [hconst] at hir
-    linarith
-  exact le_antisymm hUpper hLower
 
 /-- **Threshold receipt for the seller.** In an efficient, seller-DSIC, ex-post IR
-mechanism, whenever trade occurs at reports `(s, b)` with `s < b`, the seller
-receives exactly `b`. -/
+mechanism, whenever trade occurs at reports `(s, b)` with `s < b < 1`, the seller
+receives exactly `b`. The interior hypothesis `b < 1` is essential: with tie-neutral
+efficiency, DSIC and IR do not pin the receipt at the boundary `b = 1`. -/
 theorem paySeller_eq_of_lt (M : BilateralMechanism) (hE : Efficient M)
     (hD : SellerDSIC M) (hIR : ExPostIR M) {s b : ℝ}
-    (hs : s ∈ Set.Icc (0 : ℝ) 1) (hb : b ∈ Set.Icc (0 : ℝ) 1) (h : s < b) :
+    (hs : s ∈ Set.Icc (0 : ℝ) 1) (hb : b ∈ Set.Icc (0 : ℝ) 1)
+    (hb1 : b < 1) (h : s < b) :
     M.paySeller s b = b := by
-  have hZero : ∀ s b : ℝ, s ∈ Set.Icc (0:ℝ) 1 → b ∈ Set.Icc (0:ℝ) 1 →
-      ¬ s < b → M.alloc s b = 0 := by
-    intro s b hs hb hnb
-    rcases M.alloc_mem s b with h0 | h1
-    · exact h0
-    · exfalso
-      have hlt := (hE s hs b hb).mp h1
-      exact hnb hlt
-  have hConst : ∀ c : ℝ, c ∈ Set.Icc (0:ℝ) 1 → c < b →
-      M.paySeller c b = M.paySeller s b := by
+  obtain ⟨hs_lo, hs_hi⟩ := Set.mem_Icc.mp hs
+  obtain ⟨hb_lo, hb_hi⟩ := Set.mem_Icc.mp hb
+  have hconst : ∀ c ∈ Set.Icc (0 : ℝ) 1, c < b → M.paySeller c b = M.paySeller s b := by
     intro c hc hcb
-    have hc1 : M.alloc c b = 1 := (hE c hc b hb).mpr hcb
-    have hs1 : M.alloc s b = 1 := (hE s hs b hb).mpr h
-    have d1 := hD b hb s hs c hc
-    have d2 := hD b hb c hc s hs
-    simp only [sellerUtil, hc1, hs1, one_mul] at d1 d2
+    have halloc_cb : M.alloc c b = 1 := (hE c hc b hb).1 hcb
+    have halloc_sb : M.alloc s b = 1 := (hE s hs b hb).1 h
+    have h1 := hD b hb c hc s hs
+    have h2 := hD b hb s hs c hc
+    simp only [sellerUtil, halloc_cb, halloc_sb, one_mul] at h1 h2
+    have hle1 : M.paySeller s b ≤ M.paySeller c b := by linarith
+    have hle2 : M.paySeller c b ≤ M.paySeller s b := by linarith
+    exact le_antisymm hle2 hle1
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have hmax : max s (M.paySeller s b) < b := max_lt_iff.mpr ⟨h, hlt⟩
+    obtain ⟨c, hc_lo, hc_hi⟩ := exists_between hmax
+    have hs_lt_c : s < c := lt_of_le_of_lt (le_max_left _ _) hc_lo
+    have hpay_lt_c : M.paySeller s b < c :=
+      lt_of_le_of_lt (le_max_right _ _) hc_lo
+    have hc_mem : c ∈ Set.Icc (0 : ℝ) 1 :=
+      Set.mem_Icc.mpr
+        ⟨le_trans hs_lo (le_of_lt hs_lt_c), le_trans (le_of_lt hc_hi) hb_hi⟩
+    have halloc_cb : M.alloc c b = 1 := (hE c hc_mem b hb).1 hc_hi
+    have hir := (hIR c hc_mem b hb).2
+    simp only [sellerUtil, halloc_cb, one_mul] at hir
+    have hconst_c := hconst c hc_mem hc_hi
     linarith
-  have hUpper : M.paySeller s b ≤ b := by
-    have hbb0 : M.alloc b b = 0 := hZero b b hb hb (lt_irrefl b)
-    have hsb1 : M.alloc s b = 1 := (hE s hs b hb).mpr h
-    have d0 := hD b hb b hb s hs
-    simp only [sellerUtil, hbb0, hsb1, zero_mul, one_mul] at d0
+  · have hmin : b < min (M.paySeller s b) 1 := lt_min_iff.mpr ⟨hgt, hb1⟩
+    obtain ⟨c, hc_lo, hc_hi⟩ := exists_between hmin
+    have hc_lt_pay : c < M.paySeller s b := lt_of_lt_of_le hc_hi (min_le_left _ _)
+    have hc_lt_1 : c < 1 := lt_of_lt_of_le hc_hi (min_le_right _ _)
+    have hc_mem : c ∈ Set.Icc (0 : ℝ) 1 :=
+      Set.mem_Icc.mpr ⟨le_trans hb_lo (le_of_lt hc_lo), le_of_lt hc_lt_1⟩
+    have halloc_cb : M.alloc c b = 0 := (hE c hc_mem b hb).2 hc_lo
+    have halloc_sb : M.alloc s b = 1 := (hE s hs b hb).1 h
+    have hdsic := hD b hb c hc_mem s hs
+    simp only [sellerUtil, halloc_sb, halloc_cb, one_mul, zero_mul] at hdsic
     linarith
-  have hLower : b ≤ M.paySeller s b := by
-    by_contra hcon
-    have hlt : M.paySeller s b < b := not_le.mp hcon
-    have hmax : max s (M.paySeller s b) < b := max_lt h hlt
-    obtain ⟨c, hcmax, hcb⟩ := exists_between hmax
-    have hpayc : M.paySeller s b < c :=
-      lt_of_le_of_lt (le_max_right _ _) hcmax
-    obtain ⟨hs0, _⟩ := Set.mem_Icc.mp hs
-    obtain ⟨_, hb1le⟩ := Set.mem_Icc.mp hb
-    have hc0 : (0:ℝ) ≤ c := by
-      have hsc : s < c := lt_of_le_of_lt (le_max_left _ _) hcmax
-      linarith
-    have hc1le : c ≤ 1 := by linarith
-    have hc : c ∈ Set.Icc (0:ℝ) 1 := Set.mem_Icc.mpr ⟨hc0, hc1le⟩
-    have hconst := hConst c hc hcb
-    have hc1alloc : M.alloc c b = 1 := (hE c hc b hb).mpr hcb
-    have hir := (hIR c hc b hb).2
-    simp only [sellerUtil, hc1alloc, one_mul] at hir
-    rw [hconst] at hir
-    linarith
-  exact le_antisymm hUpper hLower
 
 /-- **Dominant-strategy bilateral-trade impossibility** (Myerson–Satterthwaite,
 dominant-strategy form). No bilateral-trade mechanism on `[0, 1]` types is
 simultaneously ex-post efficient, DSIC for both sides, ex-post individually
-rational, and weakly budget-balanced: efficiency forces the buyer to pay `s` and
-the seller to receive `b` on trade, a deficit of `b - s > 0`. -/
+rational, and weakly budget-balanced: at an interior trade profile
+`0 < s < b < 1`, efficiency forces the buyer to pay `s` and the seller to
+receive `b`, a deficit of `b - s > 0`. -/
 theorem not_exists_efficient_dsic_ir_wbb :
     ¬ ∃ M : BilateralMechanism, Efficient M ∧ BuyerDSIC M ∧ SellerDSIC M ∧
       ExPostIR M ∧ WeaklyBudgetBalanced M := by
   intro hex
-  obtain ⟨M, hE, hBD, hSD, hIR, hWBB⟩ := hex
-  have hs : (0:ℝ) ∈ Set.Icc (0:ℝ) 1 := Set.mem_Icc.mpr ⟨le_refl 0, zero_le_one⟩
-  have hb : (1:ℝ) ∈ Set.Icc (0:ℝ) 1 := Set.mem_Icc.mpr ⟨zero_le_one, le_refl 1⟩
-  have h01 : (0:ℝ) < 1 := zero_lt_one
-  have hPayB := payBuyer_eq_of_lt M hE hBD hIR hs hb h01
-  have hPayS := paySeller_eq_of_lt M hE hSD hIR hs hb h01
-  have hall : M.alloc 0 1 = 1 := (hE 0 hs 1 hb).mpr h01
-  have hle := hWBB 0 hs 1 hb hall
-  rw [hPayB, hPayS] at hle
+  obtain ⟨M, hE, hDb, hDs, hIR, hWBB⟩ := hex
+  have hs : (1 / 4 : ℝ) ∈ Set.Icc (0 : ℝ) 1 :=
+    Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩
+  have hb : (3 / 4 : ℝ) ∈ Set.Icc (0 : ℝ) 1 :=
+    Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩
+  have hs0 : (0 : ℝ) < 1 / 4 := by norm_num
+  have hb1 : (3 / 4 : ℝ) < 1 := by norm_num
+  have hlt : (1 / 4 : ℝ) < 3 / 4 := by norm_num
+  have hpayB := payBuyer_eq_of_lt M hE hDb hIR hs hb hs0 hlt
+  have hpayS := paySeller_eq_of_lt M hE hDs hIR hs hb hb1 hlt
+  have halloc : M.alloc (1 / 4) (3 / 4) = 1 := (hE _ hs _ hb).1 hlt
+  have hwbb := hWBB _ hs _ hb halloc
+  rw [hpayB, hpayS] at hwbb
   linarith
 
 /-- The posted-price mechanism at price `p`: trade occurs if and only if the
@@ -225,86 +229,58 @@ theorem postedPrice_buyerDSIC {p : ℝ} :
     BuyerDSIC (postedPrice p) := by
   intro s hs v hv r hr
   simp only [buyerUtil, postedPrice]
-  by_cases hsp : s ≤ p
-  · by_cases hpv : p ≤ v
-    · by_cases hpr : p ≤ r
-      · simp [hsp, hpv, hpr]
-      · simp [hsp, hpv, hpr]
-    · by_cases hpr : p ≤ r
-      · simp only [hsp, hpv, hpr, and_true, and_false, ite_true, ite_false,
-          zero_mul, one_mul]
-        have hvp : v < p := not_le.mp hpv
-        linarith
-      · simp [hsp, hpv, hpr]
-  · simp [hsp]
+  by_cases hs_le : s ≤ p <;> by_cases hr_le : p ≤ r <;> by_cases hv_le : p ≤ v <;>
+    simp [hs_le, hr_le, hv_le]; linarith
 
 /-- The posted-price mechanism is DSIC for the seller. -/
 theorem postedPrice_sellerDSIC {p : ℝ} :
     SellerDSIC (postedPrice p) := by
   intro b hb c hc r hr
   simp only [sellerUtil, postedPrice]
-  by_cases hpb : p ≤ b
-  · by_cases hcp : c ≤ p
-    · by_cases hrp : r ≤ p
-      · simp [hpb, hcp, hrp]
-      · simp [hpb, hcp, hrp]
-    · by_cases hrp : r ≤ p
-      · simp only [hpb, hcp, hrp, and_true, ite_true, ite_false, zero_mul,
-          one_mul]
-        have hpc : p < c := not_le.mp hcp
-        linarith
-      · simp [hpb, hcp, hrp]
-  · simp [hpb]
+  by_cases hb_le : p ≤ b <;> by_cases hr_le : r ≤ p <;> by_cases hc_le : c ≤ p <;>
+    simp [hb_le, hr_le, hc_le]; linarith
 
 /-- The posted-price mechanism is ex-post individually rational. -/
 theorem postedPrice_exPostIR {p : ℝ} :
     ExPostIR (postedPrice p) := by
   intro s hs b hb
   simp only [buyerUtil, sellerUtil, postedPrice]
-  by_cases h : s ≤ p ∧ p ≤ b
-  · obtain ⟨hsp, hpb⟩ := h
-    simp [hsp, hpb]
-  · simp [h]
+  by_cases h : s ≤ p ∧ p ≤ b <;> simp [h]
 
 /-- The posted-price mechanism is weakly budget-balanced (both sides use `p`). -/
 theorem postedPrice_weaklyBudgetBalanced {p : ℝ} :
     WeaklyBudgetBalanced (postedPrice p) := by
-  intro s hs b hb hall
-  simp only [postedPrice]
-  exact le_refl p
+  intro s hs b hb halloc
+  simp [postedPrice]
 
 /-- No posted-price mechanism with price in `[0, 1]` is ex-post efficient:
 some gains from trade are always left unrealized. -/
 theorem postedPrice_not_efficient {p : ℝ} (hp : p ∈ Set.Icc (0 : ℝ) 1) :
     ¬ Efficient (postedPrice p) := by
-  intro hE
-  obtain ⟨hp0, hp1⟩ := Set.mem_Icc.mp hp
-  by_cases hlt : p < 1
-  · have hs0 : (0:ℝ) ≤ (p + 1) / 2 := by linarith
-    have hs1 : (p + 1) / 2 ≤ 1 := by linarith
-    have hs : (p + 1) / 2 ∈ Set.Icc (0:ℝ) 1 := Set.mem_Icc.mpr ⟨hs0, hs1⟩
-    have hb : (1:ℝ) ∈ Set.Icc (0:ℝ) 1 := Set.mem_Icc.mpr ⟨zero_le_one, le_refl 1⟩
-    have hsb : (p + 1) / 2 < 1 := by linarith
-    have hiff := hE _ hs _ hb
-    simp only [postedPrice] at hiff
-    have hnle : ¬ (p + 1) / 2 ≤ p := by linarith
-    have hcond : ¬ ((p + 1) / 2 ≤ p ∧ p ≤ (1:ℝ)) := fun h => hnle h.1
-    rw [ite_eq_right hcond] at hiff
-    exact zero_ne_one (hiff.mpr hsb)
-  · have hp_eq : p = 1 := by
-      have hge : 1 ≤ p := not_lt.mp hlt
-      linarith
-    have hs : (0:ℝ) ∈ Set.Icc (0:ℝ) 1 := Set.mem_Icc.mpr ⟨le_refl 0, zero_le_one⟩
-    have hb : (1:ℝ)/2 ∈ Set.Icc (0:ℝ) 1 := Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
-    have hsb : (0:ℝ) < 1/2 := by linarith
-    have hiff := hE _ hs _ hb
-    simp only [postedPrice] at hiff
-    rw [hp_eq] at hiff
-    have hcond : ¬ ((0:ℝ) ≤ 1 ∧ (1:ℝ) ≤ 1/2) := by
-      intro h
-      obtain ⟨_, h2⟩ := h
-      linarith
-    rw [ite_eq_right hcond] at hiff
-    exact zero_ne_one (hiff.mpr hsb)
+  obtain ⟨hp0_le, hp1_le⟩ := Set.mem_Icc.mp hp
+  by_cases hp0 : p = 0
+  · subst hp0
+    intro hE
+    have hs : (1 / 2 : ℝ) ∈ Set.Icc (0 : ℝ) 1 :=
+      Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩
+    have hb : (1 : ℝ) ∈ Set.Icc (0 : ℝ) 1 :=
+      Set.mem_Icc.mpr ⟨by norm_num, by norm_num⟩
+    have hlt : (1 / 2 : ℝ) < 1 := by norm_num
+    have h1 := (hE _ hs _ hb).1 hlt
+    simp only [postedPrice] at h1
+    norm_num at h1
+  · intro hE
+    have hne : (0 : ℝ) ≠ p := fun h => hp0 h.symm
+    have hpos : (0 : ℝ) < p := lt_of_le_of_ne hp0_le hne
+    have hs : (0 : ℝ) ∈ Set.Icc (0 : ℝ) 1 := Set.mem_Icc.mpr ⟨le_refl 0, zero_le_one⟩
+    have hb : p / 2 ∈ Set.Icc (0 : ℝ) 1 :=
+      Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
+    have hlt : (0 : ℝ) < p / 2 := by linarith
+    have h1 := (hE _ hs _ hb).1 hlt
+    simp only [postedPrice] at h1
+    have hlt2 : p / 2 < p := by linarith
+    have hcond2 : ¬ p ≤ p / 2 := not_le_of_gt hlt2
+    have hcond : ¬ ((0 : ℝ) ≤ p ∧ p ≤ p / 2) := fun h => hcond2 h.2
+    simp [hcond] at h1
 
 end MathlibExt.GameTheory.MechanismDesign.BilateralTrade
