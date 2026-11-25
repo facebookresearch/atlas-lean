@@ -11,6 +11,7 @@ public import Mathlib.Combinatorics.SimpleGraph.LapMatrix
 public import Mathlib.Analysis.Matrix.Spectrum
 public import Mathlib.Analysis.Matrix.PosDef
 public import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Analysis.Matrix.Order
 
 /-!
 # Epsilon-light vertex subsets
@@ -48,8 +49,9 @@ Batson, Spielman and Srivastava. With `k = ⌊ε n / 50⌋ ≥ 1` (a single vert
 * **Induction.** Starting from the empty set and the barrier `ε / 2` (the source starts from a
   single vertex), `k` steps give `|S| = k` and `A_S ≺ ε`.
 
-The spectral facts come from a small functional calculus `U diag (f ∘ λ) Uᵀ` built on Mathlib's
-spectral theorem for Hermitian matrices.
+We use Mathlib's continuous functional calculus for Hermitian matrices. In an eigenbasis of
+`A`, the trace of `f(A) B` is a sum of the eigenvalues of `f(A)` weighted by the corresponding
+diagonal entries of `B`.
 
 ## References
 
@@ -104,70 +106,55 @@ private lemma eU_transpose_mul (hA : A.IsHermitian) : (eU hA)ᵀ * eU hA = 1 := 
   have h := mem_unitaryGroup_iff'.mp hA.eigenvectorUnitary.2
   rwa [star_eq_conjTranspose, conjTranspose_eq_transpose_of_trivial] at h
 
-private lemma eU_mul_transpose (hA : A.IsHermitian) : eU hA * (eU hA)ᵀ = 1 := by
-  have h := mem_unitaryGroup_iff.mp hA.eigenvectorUnitary.2
-  rwa [star_eq_conjTranspose, conjTranspose_eq_transpose_of_trivial] at h
-
-/-- Functional calculus for a symmetric real matrix: `f` applied to the eigenvalues. -/
-private noncomputable def fc (hA : A.IsHermitian) (f : ℝ → ℝ) : Matrix ι ι ℝ :=
-  eU hA * diagonal (fun i => f (hA.eigenvalues i)) * (eU hA)ᵀ
-
 private lemma fc_congr (hA : A.IsHermitian) {f g : ℝ → ℝ}
-    (h : ∀ i, f (hA.eigenvalues i) = g (hA.eigenvalues i)) : fc hA f = fc hA g := by
-  simp only [fc, h]
+    (h : ∀ i, f (hA.eigenvalues i) = g (hA.eigenvalues i)) : hA.cfc f = hA.cfc g := by
+  rw [← hA.cfc_eq, ← hA.cfc_eq]
+  apply cfc_congr
+  rw [hA.spectrum_real_eq_range_eigenvalues]
+  exact fun _ ⟨i, hi⟩ => hi ▸ h i
 
 private lemma fc_mul (hA : A.IsHermitian) (f g : ℝ → ℝ) :
-    fc hA f * fc hA g = fc hA (fun x => f x * g x) := by
-  simp only [fc]
-  calc eU hA * diagonal (fun i => f (hA.eigenvalues i)) * (eU hA)ᵀ *
-        (eU hA * diagonal (fun i => g (hA.eigenvalues i)) * (eU hA)ᵀ)
-      = eU hA * diagonal (fun i => f (hA.eigenvalues i)) * ((eU hA)ᵀ * eU hA) *
-        diagonal (fun i => g (hA.eigenvalues i)) * (eU hA)ᵀ := by
-          simp only [Matrix.mul_assoc]
-    _ = _ := by
-          rw [eU_transpose_mul, Matrix.mul_one, Matrix.mul_assoc (eU hA), diagonal_mul_diagonal]
+    hA.cfc f * hA.cfc g = hA.cfc (fun x => f x * g x) := by
+  simpa only [hA.cfc_eq] using (cfc_mul f g A (A.finite_real_spectrum.continuousOn _)
+    (A.finite_real_spectrum.continuousOn _)).symm
 
-private lemma fc_const (hA : A.IsHermitian) (c : ℝ) : fc hA (fun _ => c) = c • 1 := by
-  simp only [fc]
-  rw [← smul_one_eq_diagonal]
-  rw [Matrix.mul_smul, Matrix.mul_one, Matrix.smul_mul, eU_mul_transpose]
+private lemma fc_const (hA : A.IsHermitian) (c : ℝ) : hA.cfc (fun _ => c) = c • 1 := by
+  rw [← hA.cfc_eq, cfc_const c A hA.isSelfAdjoint, Algebra.algebraMap_eq_smul_one]
 
-private lemma fc_id (hA : A.IsHermitian) : fc hA (fun x => x) = A := by
-  conv_rhs => rw [hA.spectral_theorem]
-  simp [fc, eU, Unitary.conjStarAlgAut_apply, star_eq_conjTranspose]
+private lemma fc_id (hA : A.IsHermitian) : hA.cfc (fun x => x) = A :=
+  (hA.cfc_eq _).symm.trans (cfc_id' ℝ A hA.isSelfAdjoint)
 
 private lemma fc_sub (hA : A.IsHermitian) (f g : ℝ → ℝ) :
-    fc hA (fun x => f x - g x) = fc hA f - fc hA g := by
-  simp only [fc]
-  rw [← Matrix.sub_mul, ← Matrix.mul_sub, diagonal_sub]
+    hA.cfc (fun x => f x - g x) = hA.cfc f - hA.cfc g := by
+  simpa only [hA.cfc_eq] using cfc_sub f g A (A.finite_real_spectrum.continuousOn _)
+    (A.finite_real_spectrum.continuousOn _)
 
 private lemma fc_add (hA : A.IsHermitian) (f g : ℝ → ℝ) :
-    fc hA (fun x => f x + g x) = fc hA f + fc hA g := by
-  simp only [fc]
-  rw [← Matrix.add_mul, ← Matrix.mul_add, diagonal_add]
+    hA.cfc (fun x => f x + g x) = hA.cfc f + hA.cfc g := by
+  simpa only [hA.cfc_eq] using cfc_add A f g (A.finite_real_spectrum.continuousOn _)
+    (A.finite_real_spectrum.continuousOn _)
 
 private lemma fc_smul (hA : A.IsHermitian) (c : ℝ) (f : ℝ → ℝ) :
-    fc hA (fun x => c * f x) = c • fc hA f := by
-  simp only [fc]
-  rw [show (diagonal fun i => c * f (hA.eigenvalues i)) =
-      c • diagonal (fun i => f (hA.eigenvalues i)) by
-    ext i j; simp [diagonal]]
-  rw [Matrix.mul_smul, Matrix.smul_mul]
+    hA.cfc (fun x => c * f x) = c • hA.cfc f := by
+  simpa only [hA.cfc_eq] using cfc_const_mul c f A (A.finite_real_spectrum.continuousOn _)
 
-private lemma fc_transpose (hA : A.IsHermitian) (f : ℝ → ℝ) : (fc hA f)ᵀ = fc hA f := by
-  simp [fc, transpose_mul, Matrix.mul_assoc]
+private lemma fc_isHermitian (hA : A.IsHermitian) (f : ℝ → ℝ) : (hA.cfc f).IsHermitian := by
+  rw [← hA.cfc_eq]
+  exact cfc_predicate f A
 
-private lemma fc_isHermitian (hA : A.IsHermitian) (f : ℝ → ℝ) : (fc hA f).IsHermitian := by
-  rw [IsHermitian, conjTranspose_eq_transpose_of_trivial, fc_transpose]
+private lemma fc_transpose (hA : A.IsHermitian) (f : ℝ → ℝ) : (hA.cfc f)ᵀ = hA.cfc f := by
+  simpa only [← conjTranspose_eq_transpose_of_trivial] using (fc_isHermitian hA f).eq
 
+open scoped MatrixOrder in
 private lemma fc_posSemidef (hA : A.IsHermitian) {f : ℝ → ℝ}
-    (hf : ∀ i, 0 ≤ f (hA.eigenvalues i)) : (fc hA f).PosSemidef := by
-  have h := (PosSemidef.diagonal (R := ℝ) (d := fun i => f (hA.eigenvalues i))
-    (fun i => hf i)).mul_mul_conjTranspose_same (eU hA)
-  rwa [conjTranspose_eq_transpose_of_trivial] at h
+    (hf : ∀ i, 0 ≤ f (hA.eigenvalues i)) : (hA.cfc f).PosSemidef := by
+  rw [← hA.cfc_eq, ← nonneg_iff_posSemidef]
+  apply cfc_nonneg
+  rw [hA.spectrum_real_eq_range_eigenvalues]
+  exact fun _ ⟨i, hi⟩ => hi ▸ hf i
 
 private lemma fc_inv (hA : A.IsHermitian) {f g : ℝ → ℝ}
-    (h : ∀ i, f (hA.eigenvalues i) * g (hA.eigenvalues i) = 1) : (fc hA f)⁻¹ = fc hA g := by
+    (h : ∀ i, f (hA.eigenvalues i) * g (hA.eigenvalues i) = 1) : (hA.cfc f)⁻¹ = hA.cfc g := by
   apply inv_eq_right_inv
   rw [fc_mul, fc_congr hA (g := fun _ => 1) h, fc_const, one_smul]
 
@@ -175,33 +162,13 @@ private lemma fc_inv (hA : A.IsHermitian) {f g : ℝ → ℝ}
 private noncomputable def dg (hA : A.IsHermitian) (B : Matrix ι ι ℝ) (i : ι) : ℝ :=
   ((eU hA)ᵀ * B * eU hA) i i
 
-/-- The `i`-th eigenvector. -/
-private noncomputable def ev (hA : A.IsHermitian) (i : ι) : ι → ℝ := fun j => eU hA j i
-
-private lemma dg_eq (hA : A.IsHermitian) (B : Matrix ι ι ℝ) (i : ι) :
-    dg hA B i = ev hA i ⬝ᵥ (B *ᵥ ev hA i) := by
-  simp only [dg, ev, Matrix.mul_apply, Matrix.transpose_apply, dotProduct, mulVec,
-    Finset.sum_mul, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  exact Finset.sum_congr rfl fun j _ => Finset.sum_congr rfl fun k _ => by ring
-
 private lemma dg_one (hA : A.IsHermitian) (i : ι) : dg hA 1 i = 1 := by
   simp [dg, eU_transpose_mul]
 
-private lemma dg_fc (hA : A.IsHermitian) (f : ℝ → ℝ) (i : ι) :
-    dg hA (fc hA f) i = f (hA.eigenvalues i) := by
-  have : (eU hA)ᵀ * fc hA f * eU hA = diagonal (fun i => f (hA.eigenvalues i)) := by
-    simp only [fc]
-    calc (eU hA)ᵀ * (eU hA * diagonal (fun i => f (hA.eigenvalues i)) * (eU hA)ᵀ) * eU hA
-        = ((eU hA)ᵀ * eU hA) * diagonal (fun i => f (hA.eigenvalues i)) *
-          ((eU hA)ᵀ * eU hA) := by simp only [Matrix.mul_assoc]
-      _ = _ := by rw [eU_transpose_mul, Matrix.one_mul, Matrix.mul_one]
-  simp [dg, this]
-
 private lemma dg_nonneg (hA : A.IsHermitian) {B : Matrix ι ι ℝ} (hB : B.PosSemidef) (i : ι) :
     0 ≤ dg hA B i := by
-  rw [dg_eq]
-  simpa using hB.dotProduct_mulVec_nonneg (ev hA i)
+  simpa only [dg, ← conjTranspose_eq_transpose_of_trivial] using
+    (hB.conjTranspose_mul_mul_same (eU hA)).diag_nonneg (i := i)
 
 private lemma dg_sub (hA : A.IsHermitian) (B C : Matrix ι ι ℝ) (i : ι) :
     dg hA (B - C) i = dg hA B i - dg hA C i := by
@@ -213,63 +180,42 @@ private lemma dg_le_of_posSemidef_sub (hA : A.IsHermitian) {B C : Matrix ι ι �
   rw [dg_sub] at this
   linarith
 
-private lemma ev_ne_zero (hA : A.IsHermitian) (i : ι) : ev hA i ≠ 0 := by
-  intro h
-  have h1 := dg_one hA i
-  rw [dg_eq, h] at h1
-  simp at h1
-
 private lemma trace_fc_mul (hA : A.IsHermitian) (f : ℝ → ℝ) (B : Matrix ι ι ℝ) :
-    (fc hA f * B).trace = ∑ i, f (hA.eigenvalues i) * dg hA B i := by
-  simp only [fc, dg]
+    (hA.cfc f * B).trace = ∑ i, f (hA.eigenvalues i) * dg hA B i := by
+  change (eU hA * diagonal (fun i => f (hA.eigenvalues i)) * (eU hA)ᵀ * B).trace = _
+  unfold dg
   rw [show eU hA * diagonal (fun i => f (hA.eigenvalues i)) * (eU hA)ᵀ * B =
       eU hA * (diagonal (fun i => f (hA.eigenvalues i)) * ((eU hA)ᵀ * B)) by
     simp only [Matrix.mul_assoc], trace_mul_comm, Matrix.mul_assoc]
   simp only [trace, diag_apply, diagonal_mul, Matrix.mul_assoc]
 
 private lemma trace_fc (hA : A.IsHermitian) (f : ℝ → ℝ) :
-    (fc hA f).trace = ∑ i, f (hA.eigenvalues i) := by
+    (hA.cfc f).trace = ∑ i, f (hA.eigenvalues i) := by
   have := trace_fc_mul hA f 1
   simpa [dg_one] using this
 
+open scoped MatrixOrder
+
 private lemma fc_posDef (hA : A.IsHermitian) {f : ℝ → ℝ}
-    (hf : ∀ i, 0 < f (hA.eigenvalues i)) : (fc hA f).PosDef := by
-  have hinj : Function.Injective (eU hA).vecMul := by
-    intro x y hxy
-    have := congrArg (fun z => z ᵥ* (eU hA)ᵀ) hxy
-    simpa [vecMul_vecMul, eU_mul_transpose] using this
-  have h := (PosDef.diagonal (R := ℝ) (d := fun i => f (hA.eigenvalues i))
-    (fun i => hf i)).mul_mul_conjTranspose_same hinj
-  rwa [conjTranspose_eq_transpose_of_trivial] at h
-
-private lemma dg_self (hA : A.IsHermitian) (i : ι) : dg hA A i = hA.eigenvalues i := by
-  have := dg_fc hA (fun x => x) i
-  rwa [fc_id] at this
-
-private lemma dg_smul_one (hA : A.IsHermitian) (c : ℝ) (i : ι) : dg hA (c • 1) i = c := by
-  have := dg_fc hA (fun _ => c) i
-  rwa [fc_const] at this
+    (hf : ∀ i, 0 < f (hA.eigenvalues i)) : (hA.cfc f).PosDef := by
+  rw [← hA.cfc_eq, ← isStrictlyPositive_iff_posDef,
+    cfc_isStrictlyPositive_iff f A (A.finite_real_spectrum.continuousOn _) hA.isSelfAdjoint,
+    hA.spectrum_real_eq_range_eigenvalues]
+  exact fun _ ⟨i, hi⟩ => hi ▸ hf i
 
 private lemma eigenvalues_lt_of_posDef (hA : A.IsHermitian) {c : ℝ} (h : (c • 1 - A).PosDef)
     (i : ι) : hA.eigenvalues i < c := by
-  have h1 : dg hA (c • 1 - A) i = c - hA.eigenvalues i := by
-    rw [dg_sub, dg_smul_one, dg_self]
-  have h2 : 0 < dg hA (c • 1 - A) i := by
-    rw [dg_eq]
-    simpa using h.dotProduct_mulVec_pos (ev_ne_zero hA i)
-  linarith
+  have hpos : (hA.cfc (fun x => c - x)).PosDef := by rwa [fc_sub, fc_const, fc_id]
+  rw [← hA.cfc_eq, ← isStrictlyPositive_iff_posDef,
+    cfc_isStrictlyPositive_iff _ A (A.finite_real_spectrum.continuousOn _) hA.isSelfAdjoint] at hpos
+  exact sub_pos.mp (hpos _ (hA.eigenvalues_mem_spectrum_real i))
 
 private lemma eigenvalues_le_of_posSemidef (hA : A.IsHermitian) {c : ℝ}
     (h : (c • 1 - A).PosSemidef) (i : ι) : hA.eigenvalues i ≤ c := by
-  have h1 : dg hA (c • 1 - A) i = c - hA.eigenvalues i := by
-    rw [dg_sub, dg_smul_one, dg_self]
-  have h2 := dg_nonneg hA h i
-  linarith
-
-private lemma eigenvalues_nonneg' (hA : A.IsHermitian) (h : A.PosSemidef) (i : ι) :
-    0 ≤ hA.eigenvalues i := by
-  have h2 := dg_nonneg hA h i
-  rwa [dg_self] at h2
+  have hnonneg : (hA.cfc (fun x => c - x)).PosSemidef := by rwa [fc_sub, fc_const, fc_id]
+  rw [← hA.cfc_eq, ← nonneg_iff_posSemidef,
+    cfc_nonneg_iff _ A (A.finite_real_spectrum.continuousOn _) hA.isSelfAdjoint] at hnonneg
+  exact sub_nonneg.mp (hnonneg _ (hA.eigenvalues_mem_spectrum_real i))
 
 end FunctionalCalculus
 
@@ -294,8 +240,8 @@ private lemma barrier_step {M B : Matrix ι ι ℝ} (hM : M.PosDef) (hB : B.PosS
   set τ := (M⁻¹ * B).trace with hτdef
   have hMh : M.IsHermitian := hM.isHermitian
   have hpos : ∀ i, 0 < hMh.eigenvalues i := fun i => hM.eigenvalues_pos i
-  set R := fc hMh (fun x => Real.sqrt x) with hRdef
-  set Ri := fc hMh (fun x => (Real.sqrt x)⁻¹) with hRidef
+  set R := hMh.cfc (fun x => Real.sqrt x) with hRdef
+  set Ri := hMh.cfc (fun x => (Real.sqrt x)⁻¹) with hRidef
   have hsq : ∀ i, Real.sqrt (hMh.eigenvalues i) ≠ 0 := fun i =>
     (Real.sqrt_pos.mpr (hpos i)).ne'
   have hRRi : R * Ri = 1 := by
@@ -307,7 +253,7 @@ private lemma barrier_step {M B : Matrix ι ι ℝ} (hM : M.PosDef) (hB : B.PosS
   have hRR : R * R = M := by
     rw [hRdef, fc_mul, fc_congr hMh (g := fun x => x)
       (fun i => Real.mul_self_sqrt (hpos i).le), fc_id]
-  have hMinv : M⁻¹ = fc hMh (fun x => x⁻¹) := by
+  have hMinv : M⁻¹ = hMh.cfc (fun x => x⁻¹) := by
     conv_lhs => rw [← fc_id hMh]
     exact fc_inv hMh (fun i => mul_inv_cancel₀ (hpos i).ne')
   have hRiRi : Ri * Ri = M⁻¹ := by
@@ -323,7 +269,7 @@ private lemma barrier_step {M B : Matrix ι ι ℝ} (hM : M.PosDef) (hB : B.PosS
   have hXh : X.IsHermitian := hX.isHermitian
   have htrX : X.trace = τ := by
     rw [hXdef, hτdef, ← hRiRi, trace_mul_comm, ← Matrix.mul_assoc]
-  have hev0 : ∀ i, 0 ≤ hXh.eigenvalues i := fun i => eigenvalues_nonneg' hXh hX i
+  have hev0 : ∀ i, 0 ≤ hXh.eigenvalues i := fun i => hX.eigenvalues_nonneg i
   have hevτ : ∀ i, hXh.eigenvalues i ≤ τ := by
     intro i
     have htr : X.trace = ∑ j, hXh.eigenvalues j := by
@@ -332,7 +278,7 @@ private lemma barrier_step {M B : Matrix ι ι ℝ} (hM : M.PosDef) (hB : B.PosS
     rw [← htrX, htr]
     exact Finset.single_le_sum (fun j _ => hev0 j) (Finset.mem_univ i)
   have h1τ : 0 < 1 - τ := by linarith
-  have h1X : 1 - X = fc hXh (fun x => 1 - x) := by
+  have h1X : 1 - X = hXh.cfc (fun x => 1 - x) := by
     rw [fc_sub, fc_const, fc_id, one_smul]
   have h1Xpd : (1 - X).PosDef := by
     rw [h1X]
@@ -351,7 +297,7 @@ private lemma barrier_step {M B : Matrix ι ι ℝ} (hM : M.PosDef) (hB : B.PosS
     have := h1Xpd.conjTranspose_mul_mul_same hRinj
     rwa [conjTranspose_eq_transpose_of_trivial, hRt] at this
   · -- the inverse of `M - B`
-    have hinv1X : (1 - X)⁻¹ = fc hXh (fun x => (1 - x)⁻¹) := by
+    have hinv1X : (1 - X)⁻¹ = hXh.cfc (fun x => (1 - x)⁻¹) := by
       rw [h1X]
       exact fc_inv hXh fun i => mul_inv_cancel₀ (by linarith [hevτ i])
     have hMBinv : (M - B)⁻¹ = Ri * (1 - X)⁻¹ * Ri := by
@@ -369,8 +315,8 @@ private lemma barrier_step {M B : Matrix ι ι ℝ} (hM : M.PosDef) (hB : B.PosS
     -- `(1 - X)⁻¹ ≤ 1 + (1 - τ)⁻¹ X`
     have hle : (1 + (1 - τ)⁻¹ • X - (1 - X)⁻¹).PosSemidef := by
       rw [hinv1X]
-      have : 1 + (1 - τ)⁻¹ • X - fc hXh (fun x => (1 - x)⁻¹) =
-          fc hXh (fun x => 1 + (1 - τ)⁻¹ * x - (1 - x)⁻¹) := by
+      have : 1 + (1 - τ)⁻¹ • X - hXh.cfc (fun x => (1 - x)⁻¹) =
+          hXh.cfc (fun x => 1 + (1 - τ)⁻¹ * x - (1 - x)⁻¹) := by
         rw [fc_sub, fc_add, fc_smul, fc_const, fc_id, one_smul]
       rw [this]
       refine fc_posSemidef hXh fun i => ?_
@@ -449,7 +395,7 @@ private lemma potential_estimates {A : Matrix ι ι ℝ} (hA : A.PosSemidef) {k 
             ((Fintype.card ι : ℝ) - k) / (u + δ) ^ 2) := by
   have hAh : A.IsHermitian := hA.isHermitian
   set lam := hAh.eigenvalues with hlam
-  have hl0 : ∀ i, 0 ≤ lam i := fun i => eigenvalues_nonneg' hAh hA i
+  have hl0 : ∀ i, 0 ≤ lam i := fun i => hA.eigenvalues_nonneg i
   have hlu : ∀ i, lam i < u := fun i => eigenvalues_lt_of_posDef hAh hPD i
   have hcount : (Finset.univ.filter (fun i => lam i ≠ 0)).card ≤ k := by
     have h := hAh.rank_eq_card_non_zero_eigs
@@ -458,17 +404,17 @@ private lemma potential_estimates {A : Matrix ι ι ℝ} (hA : A.PosSemidef) {k 
   set N : ℝ := (Fintype.card ι : ℝ) with hN
   set v := u + δ with hv
   have hv0 : 0 < v := by positivity
-  have hfc : ∀ c : ℝ, fc hAh (fun x => c - x) = c • 1 - A := fun c => by
+  have hfc : ∀ c : ℝ, hAh.cfc (fun x => c - x) = c • 1 - A := fun c => by
     rw [fc_sub, fc_const, fc_id]
   have hinv : ∀ c : ℝ, (∀ i, lam i < c) →
-      (c • (1 : Matrix ι ι ℝ) - A)⁻¹ = fc hAh (fun x => (c - x)⁻¹) := fun c hc => by
+      (c • (1 : Matrix ι ι ℝ) - A)⁻¹ = hAh.cfc (fun x => (c - x)⁻¹) := fun c hc => by
     rw [← hfc]
     exact fc_inv hAh fun i => mul_inv_cancel₀ (sub_pos.mpr (hc i)).ne'
   have hlv : ∀ i, lam i < v := fun i => by linarith [hlu i]
   have hMinv := hinv v hlv
   have hUinv := hinv u hlu
   have hM2 : (v • (1 : Matrix ι ι ℝ) - A)⁻¹ * (v • 1 - A)⁻¹ =
-      fc hAh (fun x => (v - x)⁻¹ * (v - x)⁻¹) := by
+      hAh.cfc (fun x => (v - x)⁻¹ * (v - x)⁻¹) := by
     rw [hMinv, fc_mul]
   -- traces as sums
   have htrM : (v • (1 : Matrix ι ι ℝ) - A)⁻¹.trace = ∑ i, (v - lam i)⁻¹ := by
@@ -572,10 +518,10 @@ private lemma trace_mul_nonneg {P Q : Matrix ι ι ℝ} (hP : P.PosSemidef) (hQ 
     0 ≤ (P * Q).trace := by
   classical
   have hPh := hP.isHermitian
-  have : P * Q = fc hPh (fun x => x) * Q := by rw [fc_id]
+  have : P * Q = hPh.cfc (fun x => x) * Q := by rw [fc_id]
   rw [this, trace_fc_mul]
   exact Finset.sum_nonneg fun i _ =>
-    mul_nonneg (eigenvalues_nonneg' hPh hP i) (dg_nonneg hPh hQ i)
+    mul_nonneg (hP.eigenvalues_nonneg i) (dg_nonneg hPh hQ i)
 
 /-- A positive semidefinite matrix below the identity has trace at most its rank. -/
 private lemma trace_le_rank {A : Matrix ι ι ℝ} (hA : A.PosSemidef) (h1 : (1 - A).PosSemidef) :
@@ -1058,11 +1004,11 @@ private lemma exists_light_perturbed (G : SimpleGraph V) [DecidableRel G.Adj] {�
   have hpos : ∀ i, 0 < hLh.eigenvalues i := fun i => hLηpd.eigenvalues_pos i
   have hsq : ∀ i, Real.sqrt (hLh.eigenvalues i) ≠ 0 := fun i =>
     (Real.sqrt_pos.mpr (hpos i)).ne'
-  set W := fc hLh (fun x => (Real.sqrt x)⁻¹) with hW
-  set W' := fc hLh (fun x => Real.sqrt x) with hW'
+  set W := hLh.cfc (fun x => (Real.sqrt x)⁻¹) with hW
+  set W' := hLh.cfc (fun x => Real.sqrt x) with hW'
   have hWt : Wᵀ = W := fc_transpose hLh _
   have hWLW : W * Lη * W = 1 := by
-    have : W * Lη * W = W * fc hLh (fun x => x) * W := by rw [fc_id]
+    have : W * Lη * W = W * hLh.cfc (fun x => x) * W := by rw [fc_id]
     rw [this, hW, fc_mul, fc_mul]
     rw [fc_congr hLh (g := fun _ => 1) (fun i => by
       rw [mul_comm _ (Real.sqrt _)⁻¹, ← mul_assoc, ← mul_inv, Real.mul_self_sqrt (hpos i).le,

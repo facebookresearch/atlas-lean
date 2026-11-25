@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
 import Mathlib.Analysis.SpecialFunctions.Log.Summable
 import Mathlib.NumberTheory.EulerProduct.DirichletLSeries
@@ -81,7 +82,12 @@ private lemma mean_eq (n : ℕ) :
     rw [coe_zeta_mul_apply]
     exact gcdSumMean_eq_sum_totient_div n.succ_pos
 
-private lemma mean_mul {m n : ℕ} (h : m.Coprime n) :
+/-- **Multiplicativity of the mean gcd-sum function.** For coprime natural numbers $m$ and $n$,
+the mean gcd-sum function satisfies $A(mn) = A(m)A(n)$.
+
+Source: Pillai's divisor-sum formula `gcdSumMean_eq_sum_totient_div` and multiplicativity of
+Euler's totient. -/
+public theorem gcdSumMean_mul_of_coprime {m n : ℕ} (h : m.Coprime n) :
     gcdSumMean (m * n) = gcdSumMean m * gcdSumMean n := by
   have hr : totientRatio.IsMultiplicative := by
     refine ⟨by simp [totientRatio], fun {m n} h => ?_⟩
@@ -89,7 +95,12 @@ private lemma mean_mul {m n : ℕ} (h : m.Coprime n) :
     simp [totientRatio, Nat.totient_mul h, mul_div_mul_comm]
   simpa only [mean_eq] using (isMultiplicative_zeta.natCast.mul hr).2 h
 
-private lemma mean_prime_pow {p : ℕ} (hp : p.Prime) (k : ℕ) :
+/-- **Mean gcd-sum at a prime power.** For every prime $p$ and every nonnegative integer $k$,
+the mean gcd-sum function satisfies $A(p^k) = 1 + k(1 - 1/p)$.
+
+Source: Pillai's divisor-sum formula `gcdSumMean_eq_sum_totient_div`, summed over the powers
+of $p$. -/
+public theorem gcdSumMean_prime_pow {p : ℕ} (hp : p.Prime) (k : ℕ) :
     gcdSumMean (p ^ k) = 1 + k * (1 - (p : ℝ)⁻¹) := by
   rw [gcdSumMean_eq_sum_totient_div (pow_pos hp.pos _), Nat.sum_divisors_prime_pow hp]
   induction k with
@@ -127,7 +138,8 @@ private noncomputable def meanSquare : ArithmeticFunction ℝ :=
   ⟨fun n => gcdSumMean n ^ 2, by simp [gcdSumMean]⟩
 
 private lemma meanSquare_mult : meanSquare.IsMultiplicative :=
-  ⟨by simp [meanSquare, gcdSumMean_one], fun {m n} h => by simp [meanSquare, mean_mul h, mul_pow]⟩
+  ⟨by simp [meanSquare, gcdSumMean_one], fun {m n} h => by
+    simp [meanSquare, gcdSumMean_mul_of_coprime h, mul_pow]⟩
 
 private noncomputable def twist (f : ArithmeticFunction ℝ) {s : ℂ} (hs : s ≠ 0) :
     ArithmeticFunction ℂ :=
@@ -147,9 +159,14 @@ private lemma twist_prime_pow (f : ArithmeticFunction ℝ) {s : ℂ} (hs : s ≠
   simp only [twist, coe_mk, map_pow]
   rfl
 
--- Each positive integer gives a different finite set of prime-exponent pairs.
--- Bounding the sum over all finite sets therefore bounds the full multiplicative series.
-private lemma summable_of_prime_power_bound {F : ArithmeticFunction ℂ} (hF : F.IsMultiplicative)
+/-- **Absolute summability from bounds at prime powers.** Let $F$ be a multiplicative complex
+arithmetic function. Suppose $b,d$ are nonnegative summable sequences and
+$|F(p^{k+1})| \le b(p)d(k)$ for every prime $p$ and every $k \ge 0$. Then $\sum_n |F(n)|$ is
+finite.
+
+Source: Unique prime factorization embeds positive integers into finite sets of prime-exponent
+pairs. Mathlib's `summable_finsetProd_of_summable_nonneg` bounds the sum over those sets. -/
+public theorem summable_of_prime_power_bound {F : ArithmeticFunction ℂ} (hF : F.IsMultiplicative)
     {b d : ℕ → ℝ} (hb : Summable b) (hd : Summable d)
     (hb₀ : ∀ n, 0 ≤ b n) (hd₀ : ∀ n, 0 ≤ d n)
     (h : ∀ p k : ℕ, p.Prime → ‖F (p ^ (k + 1))‖ ≤ b p * d k) :
@@ -213,7 +230,7 @@ private lemma meanSquare_summable {s : ℂ} (hs : 1 < s.re) :
     (Real.summable_nat_rpow.mpr (show -s.re < -1 by linarith)) (fun n => by positivity)
   intro p k hp
   change |gcdSumMean (p ^ (k + 1)) ^ 2| * _ ≤ _
-  rw [abs_of_nonneg (sq_nonneg _), mean_prime_pow hp]
+  rw [abs_of_nonneg (sq_nonneg _), gcdSumMean_prime_pow hp]
   obtain ⟨hu₀, hu₁⟩ := inv_prime_bounds hp
   rw [mul_comm ((p : ℝ) ^ (-s.re))]
   apply mul_le_mul_of_nonneg_right _ (by positivity)
@@ -335,7 +352,7 @@ public theorem LSeries_gcdSumMean_sq_eq_riemannZeta_pow_four_div :
     have hx : ‖(p : ℂ) ^ (-s)‖ < 1 := by
       rw [norm_natCast_cpow_of_pos p.prop.pos, neg_re]
       exact Real.rpow_lt_one_of_one_lt_of_neg (by exact_mod_cast p.prop.one_lt) (by linarith)
-    simp only [meanSquare, ArithmeticFunction.coe_mk, mean_prime_pow p.prop, ofReal_pow,
+    simp only [meanSquare, ArithmeticFunction.coe_mk, gcdSumMean_prime_pow p.prop, ofReal_pow,
       ofReal_add, ofReal_one, ofReal_mul, ofReal_natCast, ofReal_sub, correction_prime_pow p.prop,
       show -(2 * s) = (2 : ℕ) * (-s) by push_cast; ring, cpow_nat_mul]
     exact local_identity (p.val : ℝ)⁻¹ hx

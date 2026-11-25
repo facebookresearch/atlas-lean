@@ -21,7 +21,9 @@ For every natural number `k`, the Dirichlet series of the `k`-th power of the me
 function `A` is `ζ(s) ^ (2 ^ k) G_k(s)` for `Re s > 1`, where the Dirichlet series `G_k(s)`
 converges absolutely for `Re s > 1/2`, and `G_k(s) ζ(2s) ^ (4 ^ k - 3 ^ k - (2 ^ k).choose 2)` is,
 for `Re s > 1`, the sum of a Dirichlet series that converges absolutely for `Re s > 1/3`
-(`LSeries_gcdSumMean_pow_eq_riemannZeta_pow_mul`).
+(`LSeries_gcdSumMean_pow_eq_riemannZeta_pow_mul`). Datt, Soni and Sankaranarayanan attribute
+this factorization to Isao Kiuchi and Yuki Tsuruta, *Mean Square Estimates for GCD-Sum
+Functions*, INTEGERS 25 (2025), Article A53.
 
 The proof takes for `G_k` the series of the Dirichlet convolution `μ ^ (2 ^ k) * A_k`, where
 `A_k(n) = A(n) ^ k` and `μ ^ (2 ^ k)` is a convolution power of the Möbius function, and for the
@@ -36,47 +38,10 @@ because `3 ^ k + (2 ^ k).choose 2 ≤ 4 ^ k`.
 
 namespace MetaMathlibExt.LSeries_gcdSumMean_pow_eq_riemannZeta_pow_mul
 
-open ArithmeticFunction Complex
+open ArithmeticFunction Complex GcdSumMeanSquare
 open scoped ArithmeticFunction.Moebius ArithmeticFunction.zeta
 
 /-! ### The mean gcd-sum function at prime powers -/
-
--- `totientRatio`, `mean_mul`, `mean_prime_pow` and `inv_prime_bounds` repeat private lemmas of
--- `MathlibExt/NumberTheory/ArithmeticFunction/GcdSumMeanSquare.lean`.
-
-private noncomputable def totientRatio : ArithmeticFunction ℝ :=
-  ⟨fun n => (n.totient : ℝ) / n, by simp⟩
-
-private lemma mean_mul {m n : ℕ} (h : m.Coprime n) :
-    gcdSumMean (m * n) = gcdSumMean m * gcdSumMean n := by
-  have hmean (n : ℕ) : gcdSumMean n = ((zeta : ArithmeticFunction ℝ) * totientRatio) n := by
-    cases n with
-    | zero => simp [gcdSumMean]
-    | succ n =>
-      rw [coe_zeta_mul_apply]
-      exact gcdSumMean_eq_sum_totient_div n.succ_pos
-  have hr : totientRatio.IsMultiplicative := by
-    refine ⟨by simp [totientRatio], fun {m n} h => ?_⟩
-    change ((m * n).totient : ℝ) / (m * n : ℕ) = _
-    simp [totientRatio, Nat.totient_mul h, mul_div_mul_comm]
-  simpa only [hmean] using (isMultiplicative_zeta.natCast.mul hr).2 h
-
-private lemma mean_prime_pow {p : ℕ} (hp : p.Prime) (k : ℕ) :
-    gcdSumMean (p ^ k) = 1 + k * (1 - (p : ℝ)⁻¹) := by
-  rw [gcdSumMean_eq_sum_totient_div (pow_pos hp.pos _), Nat.sum_divisors_prime_pow hp]
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    rw [Finset.sum_range_succ, ih, Nat.totient_prime_pow_succ hp]
-    have hp' : (p : ℝ) ≠ 0 := by exact_mod_cast hp.ne_zero
-    push_cast [Nat.cast_sub hp.one_le]
-    rw [pow_succ]
-    field_simp
-    ring
-
-private lemma inv_prime_bounds {p : ℕ} (hp : p.Prime) :
-    0 ≤ (p : ℝ)⁻¹ ∧ (p : ℝ)⁻¹ ≤ 1 :=
-  ⟨by positivity, inv_le_one_of_one_le₀ (by exact_mod_cast hp.one_le)⟩
 
 /-- The `k`-th power of the mean gcd-sum function, as a complex arithmetic function. -/
 private noncomputable def meanPow (k : ℕ) : ArithmeticFunction ℂ :=
@@ -89,12 +54,12 @@ private lemma meanPow_apply {k n : ℕ} (hn : n ≠ 0) :
 private lemma meanPow_mult (k : ℕ) : (meanPow k).IsMultiplicative := by
   refine IsMultiplicative.iff_ne_zero.mpr ⟨?_, fun {m n} hm hn h => ?_⟩
   · simp [meanPow_apply one_ne_zero, gcdSumMean_one]
-  · rw [meanPow_apply (mul_ne_zero hm hn), meanPow_apply hm, meanPow_apply hn, mean_mul h,
-      mul_pow, ofReal_mul]
+  · rw [meanPow_apply (mul_ne_zero hm hn), meanPow_apply hm, meanPow_apply hn,
+      gcdSumMean_mul_of_coprime h, mul_pow, ofReal_mul]
 
 private lemma meanPow_prime_pow (k : ℕ) {p : ℕ} (hp : p.Prime) (e : ℕ) :
     meanPow k (p ^ e) = (((1 + e * (1 - (p : ℝ)⁻¹)) ^ k : ℝ) : ℂ) := by
-  rw [meanPow_apply (pow_ne_zero e hp.ne_zero), mean_prime_pow hp]
+  rw [meanPow_apply (pow_ne_zero e hp.ne_zero), gcdSumMean_prime_pow hp]
 
 private lemma meanPow_prime (k : ℕ) {p : ℕ} (hp : p.Prime) :
     meanPow k p = (((2 - (p : ℝ)⁻¹) ^ k : ℝ) : ℂ) := by
@@ -109,7 +74,8 @@ private lemma meanPow_prime_sq (k : ℕ) {p : ℕ} (hp : p.Prime) :
 
 private lemma norm_meanPow_prime_pow_le (k : ℕ) {p : ℕ} (hp : p.Prime) (e : ℕ) :
     ‖meanPow k (p ^ e)‖ ≤ ((e : ℝ) + 1) ^ k := by
-  obtain ⟨hu₀, hu₁⟩ := inv_prime_bounds hp
+  have hu₀ : 0 ≤ (p : ℝ)⁻¹ := by positivity
+  have hu₁ : (p : ℝ)⁻¹ ≤ 1 := inv_le_one_of_one_le₀ (by exact_mod_cast hp.one_le)
   have h₀ : 0 ≤ 1 + e * (1 - (p : ℝ)⁻¹) := by
     have : 0 ≤ (e : ℝ) * (1 - (p : ℝ)⁻¹) := mul_nonneg (Nat.cast_nonneg e) (by linarith)
     linarith
@@ -290,55 +256,6 @@ private lemma lseries_pow_mul {X F : ArithmeticFunction ℂ} {s : ℂ} (hX : LSe
 
 /-! ### Absolute convergence from bounds at prime powers -/
 
--- `twist` and `summable_of_prime_power_bound` adapt private lemmas of
--- `MathlibExt/NumberTheory/ArithmeticFunction/GcdSumMeanSquare.lean` to complex-valued functions.
-
-private noncomputable def twist (F : ArithmeticFunction ℂ) {s : ℂ} (hs : s ≠ 0) :
-    ArithmeticFunction ℂ :=
-  ⟨fun n => F n * riemannZetaSummandHom hs n, by simp⟩
-
-private lemma twist_mult {F : ArithmeticFunction ℂ} (hF : F.IsMultiplicative)
-    {s : ℂ} (hs : s ≠ 0) : (twist F hs).IsMultiplicative := by
-  refine ⟨by simp [twist, hF.1], fun {m n} h => ?_⟩
-  simp [twist, hF.2 h, mul_mul_mul_comm]
-
-private lemma twist_term (F : ArithmeticFunction ℂ) {s : ℂ} (hs : s ≠ 0) (n : ℕ) :
-    twist F hs n = LSeries.term F s n := by
-  simp [twist, riemannZetaSummandHom, LSeries.term_of_ne_zero' hs, cpow_neg, div_eq_mul_inv]
-
-private lemma twist_prime_pow (F : ArithmeticFunction ℂ) {s : ℂ} (hs : s ≠ 0) (p k : ℕ) :
-    twist F hs (p ^ k) = F (p ^ k) * ((p : ℂ) ^ (-s)) ^ k := by
-  simp only [twist, coe_mk, map_pow]
-  rfl
-
--- Each positive integer gives a different finite set of prime-exponent pairs.
--- Bounding the sum over all finite sets therefore bounds the full multiplicative series.
-private lemma summable_of_prime_power_bound {F : ArithmeticFunction ℂ} (hF : F.IsMultiplicative)
-    {b d : ℕ → ℝ} (hb : Summable b) (hd : Summable d)
-    (hb₀ : ∀ n, 0 ≤ b n) (hd₀ : ∀ n, 0 ≤ d n)
-    (h : ∀ p k : ℕ, p.Prime → ‖F (p ^ (k + 1))‖ ≤ b p * d k) :
-    Summable (fun n => ‖F n‖) := by
-  let w (q : ℕ × ℕ) := b q.1 * d (q.2 - 1)
-  have hd' : Summable (fun e : ℕ => d (e - 1)) := (summable_nat_add_iff 1).mp (by simpa)
-  have hw : Summable w := hb.mul_of_nonneg hd' hb₀ (fun k => hd₀ _)
-  have hall := summable_finsetProd_of_summable_nonneg (f := w)
-    (fun q => mul_nonneg (hb₀ _) (hd₀ _)) hw
-  let graph (n : ℕ) := (n + 1).factorization.graph
-  have hinj : Function.Injective graph := by
-    intro m n hmn
-    exact Nat.succ.inj (Nat.factorization_inj m.succ_ne_zero n.succ_ne_zero
-      (Finsupp.graph_inj.mp hmn))
-  apply (summable_nat_add_iff 1).mp
-  refine (hall.comp_injective hinj).of_nonneg_of_le (fun _ => norm_nonneg _) (fun n => ?_)
-  change ‖F (n + 1)‖ ≤ ∏ q ∈ (n + 1).factorization.graph, w q
-  rw [hF.multiplicative_factorization F n.succ_ne_zero, Finsupp.prod, norm_prod,
-    Finsupp.graph, Finset.prod_map]
-  apply Finset.prod_le_prod₀ (fun _ _ => norm_nonneg _)
-  intro p hp
-  obtain ⟨k, hk⟩ := Nat.exists_eq_succ_of_ne_zero (Finsupp.mem_support_iff.mp hp)
-  change ‖F (p ^ _)‖ ≤ b p * d ((n + 1).factorization p - 1)
-  simpa [hk] using h p k (Nat.prime_of_mem_primeFactors hp)
-
 /-- A multiplicative function whose values at prime powers `p ^ e` grow polynomially in `e`, and
 are `O(1/p)` for `0 < e < j`, has an absolutely convergent L-series for `Re s > 1/j`. -/
 private lemma lseriesSummable_of_bound {F : ArithmeticFunction ℂ} (hF : F.IsMultiplicative)
@@ -371,9 +288,14 @@ private lemma lseriesSummable_of_bound {F : ArithmeticFunction ℂ} (hF : F.IsMu
     push_cast
     rw [pow_add]
     field_simp
-  refine (summable_of_prime_power_bound (twist_mult hF hs₀) hb hd
-    (fun n => by positivity) (fun e => by positivity) fun p e hp => ?_).of_norm.congr
-    (twist_term F hs₀)
+  let w := riemannZetaSummandHom hs₀
+  have hw : ArithmeticFunction.IsMultiplicative w.toZeroHom :=
+    ⟨w.map_one, fun {m n} _ => w.map_mul m n⟩
+  have hterm n : F.pmul w.toZeroHom n = LSeries.term F s n := by
+    change F n * (n : ℂ) ^ (-s) = LSeries.term F s n
+    rw [LSeries.term_of_ne_zero' hs₀, cpow_neg, div_eq_mul_inv]
+  refine (summable_of_prime_power_bound (hF.pmul hw) hb hd (fun _ => by positivity)
+    (fun _ => by positivity) fun p e hp => ?_).of_norm.congr hterm
   have hp0 : (0 : ℝ) < p := by exact_mod_cast hp.pos
   obtain ⟨y, hy⟩ : ∃ y : ℝ, y = (p : ℝ) ^ (-s.re) := ⟨_, rfl⟩
   have hy₀ : 0 < y := by
@@ -383,8 +305,11 @@ private lemma lseriesSummable_of_bound {F : ArithmeticFunction ℂ} (hF : F.IsMu
     rw [hy, hr]
     exact Real.rpow_le_rpow_of_nonpos two_pos (by exact_mod_cast hp.two_le) (by linarith)
   have hy₁ : y ≤ 1 := hyr.trans hr₁.le
-  have hnorm : ‖twist F hs₀ (p ^ (e + 1))‖ = ‖F (p ^ (e + 1))‖ * y ^ (e + 1) := by
-    rw [twist_prime_pow, norm_mul, norm_pow, norm_natCast_cpow_of_pos hp.pos, neg_re, hy]
+  have hnorm : ‖F.pmul w.toZeroHom (p ^ (e + 1))‖ = ‖F (p ^ (e + 1))‖ * y ^ (e + 1) := by
+    change ‖F _ * w (p ^ (e + 1))‖ = _
+    rw [map_pow w, norm_mul, norm_pow]
+    change _ * ‖(p : ℂ) ^ (-s)‖ ^ _ = _
+    rw [norm_natCast_cpow_of_pos hp.pos, neg_re, hy]
   have hb₁ : (p : ℝ) ^ (-1 - s.re) = (p : ℝ)⁻¹ * y := by
     rw [hy, sub_eq_add_neg, Real.rpow_add hp0, Real.rpow_neg_one]
   have hb₂ : (p : ℝ) ^ (-(j * s.re)) = y ^ j := by
@@ -493,7 +418,8 @@ private lemma norm_hFun_prime_pow_le (k : ℕ) {p : ℕ} (hp : p.Prime) (e : ℕ
 
 private lemma norm_gFun_prime_le (k : ℕ) {p : ℕ} (hp : p.Prime) :
     ‖gFun k p‖ ≤ bound k * (p : ℝ)⁻¹ := by
-  obtain ⟨hu₀, hu₁⟩ := inv_prime_bounds hp
+  have hu₀ : 0 ≤ (p : ℝ)⁻¹ := by positivity
+  have hu₁ : (p : ℝ)⁻¹ ≤ 1 := inv_le_one_of_one_le₀ (by exact_mod_cast hp.one_le)
   set u := (p : ℝ)⁻¹ with hu
   have hval : gFun k p = (((2 - u) ^ k - 2 ^ k : ℝ) : ℂ) := by
     rw [gFun, (moebius_pow_mul_apply (meanPow_mult k) hp _).1, meanPow_prime k hp, ← hu]
@@ -511,7 +437,8 @@ private lemma norm_gFun_prime_le (k : ℕ) {p : ℕ} (hp : p.Prime) :
 
 private lemma norm_hFun_prime_sq_le (k : ℕ) {p : ℕ} (hp : p.Prime) :
     ‖hFun k (p ^ 2)‖ ≤ bound k * (p : ℝ)⁻¹ := by
-  obtain ⟨hu₀, hu₁⟩ := inv_prime_bounds hp
+  have hu₀ : 0 ≤ (p : ℝ)⁻¹ := by positivity
+  have hu₁ : (p : ℝ)⁻¹ ≤ 1 := inv_le_one_of_one_le₀ (by exact_mod_cast hp.one_le)
   set u := (p : ℝ)⁻¹ with hu
   have hEC : ((4 ^ k - 3 ^ k - (2 ^ k).choose 2 : ℕ) : ℂ) + ((2 ^ k).choose 2 : ℕ) =
       2 ^ k * 2 ^ k - 3 ^ k := by

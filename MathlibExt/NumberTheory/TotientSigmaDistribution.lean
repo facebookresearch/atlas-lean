@@ -25,10 +25,23 @@ import MathlibExt.NumberTheory.PollackPomeranceSieve
 /-!
 # Large values of the totient of the divisor sum
 
-We bound the count of positive integers for which `φ(σ(n)) ≥ n / f(n)` and show it is `o(x)`.
-For prime moduli congruent to 3 modulo 4, each even nonprincipal character has nontrivial
-square. This gives a uniform lower bound for the reciprocal sum of primes in the residue
-class −1, which lets the sieve force many small primes to divide the divisor sum.
+For a positive nondecreasing function `f` growing more slowly than the fourth iterated logarithm,
+`card_totient_sigma_ge_div_isBigO` bounds the count of positive integers up to `x` satisfying
+`φ(σ(n)) ≥ n / f(n)` and shows that this count is `o(x)`.
+
+For each small prime `p ≡ 3 mod 4`, a character estimate gives a lower bound for the sum of
+reciprocals of primes `r ≡ -1 mod p`. When such an `r` divides `n` exactly once,
+`p` divides `σ(n)`. The Pollack–Pomerance sieve bounds the count of integers avoiding these
+primes `r`, and summing over square divisors bounds the other exceptions. Outside the exceptional
+set, the small prime divisors bound `φ(σ(n)) / σ(n)` from above. Summing `σ(n) / n` then gives
+the counting bound.
+
+## References
+
+* A. B. Dixit and S. Bhattacharjee, *On the Distribution of φ(σ(n))*, INTEGERS 24 (2024),
+  Article A65, Theorem 2 (Theorem 1.2 in [the preprint](https://arxiv.org/abs/2408.01936)).
+* P. Pollack and C. Pomerance, *Phi, primorials, and Poisson*, Illinois J. Math. 64 (2020),
+  319–330, Lemma 3 ([preprint](https://arxiv.org/abs/2001.06727)).
 -/
 
 open Filter Finset Complex MeasureTheory Asymptotics
