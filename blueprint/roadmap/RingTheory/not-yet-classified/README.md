@@ -42,4 +42,5 @@ Topics added since this subject's fields were last revised.
 - [Semiperfect Crystalline Period Rings](semiperfect-crystalline-period-rings/README.md)
 - [Semiperfect Crystalline Residues](semiperfect-crystalline-residues/README.md)
 - [Semiperfect Witt PDEnvelopes](semiperfect-witt-pdenvelopes/README.md)
+- [Subst Basis](subst-basis/README.md)
 - [Is Base Change Span](span-range-eq-top.md)
