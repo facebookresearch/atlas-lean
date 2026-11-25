@@ -63,7 +63,7 @@ example : (∀ v : Fin 2, 0 ≤ ((![10, 0] + (incidenceMatrix
     (s := ![1, 2]) (r := ![3, 0])
     (fun v => by fin_cases v <;> norm_num)
     (fun v => by fin_cases v <;> norm_num)
-    (fun e => by fin_cases e <;> norm_num)
+    (fun e => by fin_cases e; norm_num)
     (fun v => by fin_cases v <;> norm_num)
     (fun v => by
       fin_cases v <;>

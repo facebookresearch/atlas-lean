@@ -323,7 +323,7 @@ lemma ons_KWmatDecorationWeightedPhase_scaleMiddle_rankTwo
       (1 : Fin 3) ∈
         ons_decChainPathIndices (d₁.2 + 2) d₂.2 <;>
     by_cases harr : ons_dirStep L d₁.2 d₁.1 = site <;>
-    simp_all [ons_KWmatDecorationWeightedPhase] <;> ring
+    simp_all [ons_KWmatDecorationWeightedPhase]; ring
 
 /-! ## C. The augmented matrix -/
 

@@ -538,7 +538,6 @@ lemma ons_outsideConnector_vertices_dropLast_eq
   repeat' first
     | apply congrArg₂ List.append <;> try rfl
     | apply List.map_congr_left
-      apply Prod.ext <;> simp <;> ring
   all_goals
     first
     | rw [← List.map_eq_flatMap, List.map_map]

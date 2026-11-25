@@ -143,7 +143,7 @@ example : |smallSignalRemainder (fun v : Fin 1 → ℝ => (v 0) ^ 2) 0
       _ = 2 * ‖u‖ := by ring
   exact smallSignal_remainder_le_of_hessian_bound _ 2 _ _ _ _ _
     isOpen_univ (Set.subset_univ _) hC2.contDiffOn hM
-    (by simp [Set.mem_Icc, Pi.le_def] <;> norm_num)
-    (by simp [Set.mem_Icc, Pi.le_def] <;> norm_num)
+    (by simp [Set.mem_Icc, Pi.le_def])
+    (by simp [Set.mem_Icc, Pi.le_def]; norm_num)
 
 end PhyslibExtTest.Electronics.OperatingPointLinearization

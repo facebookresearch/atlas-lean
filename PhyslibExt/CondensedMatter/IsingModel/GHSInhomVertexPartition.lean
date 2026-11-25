@@ -63,7 +63,7 @@ noncomputable def ghsiGhostCoupling (K : Sym2 V → ℝ) (hf : V → ℝ)
     | some x, none => 2 * hf x
     | none, some y => 2 * hf y
     | none, none => 0,
-    by rintro (_ | x) (_ | y) <;> simp only [] <;> rw [Sym2.eq_swap]⟩ e
+    by rintro (_ | x) (_ | y) <;> simp only []; rw [Sym2.eq_swap]⟩ e
 
 omit [Fintype V] [DecidableEq V] in
 @[simp] lemma ghsiGhostCoupling_some_some (K : Sym2 V → ℝ) (hf : V → ℝ)

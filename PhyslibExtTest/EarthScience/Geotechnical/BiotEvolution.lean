@@ -53,7 +53,7 @@ example : biotStorage (1 : Matrix (Fin 1) (Fin 1) ℝ)
     (1 : Matrix (Fin 1) (Fin 1) ℝ)
     (0 : Matrix (Fin 1) (Fin 1) ℝ) = 1 := by
   ext i j
-  fin_cases i <;> fin_cases j <;> simp [biotStorage]
+  fin_cases i; fin_cases j; simp [biotStorage]
 
 /-- Unit storage from `C = 1`, `K⁻¹ = 1` is positive definite
 through the storage positivity lemma. -/
@@ -65,14 +65,14 @@ example : (biotStorage (1 : Matrix (Fin 1) (Fin 1) ℝ)
       have h : (1 : Matrix (Fin 1) (Fin 1) ℝ)
           = Matrix.diagonal (fun _ => 1) := by
         ext i j
-        fin_cases i <;> fin_cases j <;> simp
+        fin_cases i; fin_cases j; simp
       rw [h]
       exact Matrix.PosSemidef.diagonal (fun _ => zero_le_one))
     (by
       have h : (1 : Matrix (Fin 1) (Fin 1) ℝ)
           = Matrix.diagonal (fun _ => 1) := by
         ext i j
-        fin_cases i <;> fin_cases j <;> simp
+        fin_cases i; fin_cases j; simp
       rw [h]
       exact Matrix.PosDef.diagonal (fun _ => one_pos))
 
@@ -90,7 +90,7 @@ example : ∃ u : ℝ → Fin 1 → ℝ, ∃ p : ℝ → Fin 1 → ℝ,
             (0 : Matrix (Fin 1) (Fin 1) ℝ)
           = Matrix.diagonal (fun _ => 1) := by
         ext i j
-        fin_cases i <;> fin_cases j <;> simp [biotStorage]
+        fin_cases i; fin_cases j; simp [biotStorage]
       rw [h]
       exact Matrix.PosDef.diagonal (fun _ => one_pos))
     0 0
@@ -111,7 +111,7 @@ example : ∃ p : ℝ → Fin 1 → ℝ, p 0 = ![2]
             (1 : Matrix (Fin 1) (Fin 1) ℝ)
           = Matrix.diagonal (fun _ => 1) := by
         ext i j
-        fin_cases i <;> fin_cases j <;> simp [biotStorage]
+        fin_cases i; fin_cases j; simp [biotStorage]
       rw [h]
       exact Matrix.PosDef.diagonal (fun _ => one_pos))
     0 ![2]
@@ -124,7 +124,7 @@ example : ∃ p : ℝ → Fin 1 → ℝ, p 0 = ![2]
         (0 : Matrix (Fin 1) (Fin 1) ℝ)
         (1 : Matrix (Fin 1) (Fin 1) ℝ) = 1 := by
     ext i j
-    fin_cases i <;> fin_cases j <;> simp [biotStorage]
+    fin_cases i; fin_cases j; simp [biotStorage]
   rw [hS] at h
   simpa using h
 

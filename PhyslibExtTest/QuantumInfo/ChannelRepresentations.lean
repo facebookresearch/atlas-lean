@@ -47,7 +47,6 @@ theorem id_exists_kraus :
         ∑ k, (K k).conjTranspose * (K k) = 1 := by
   first
     | exact exists_kraus_of_cptpMap (CPTPMap.id (dIn := Fin 2))
-    | exact exists_kraus_of_cptpMap
 
 /-- The singleton identity Kraus family is complete, gives the identity channel
 through `ofKraus`, and through the backward direction of

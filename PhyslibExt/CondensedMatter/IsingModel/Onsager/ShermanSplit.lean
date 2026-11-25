@@ -415,7 +415,7 @@ private lemma list_count_eq_sum_indicator (e : E) (l : List E) :
   | nil => rfl
   | cons x xs ih =>
       rw [List.count_cons, List.map_cons, List.sum_cons, ih]
-      by_cases hx : x = e <;> simp [hx, beq_iff_eq] <;> omega
+      by_cases hx : x = e <;> simp [hx, beq_iff_eq]; omega
 
 lemma ons_count_ofFn_eq_visitCount (e : E) {n : ℕ} (v : Fin n → E) :
     (List.ofFn v).count e = Fintype.card {k : Fin n // v k = e} := by

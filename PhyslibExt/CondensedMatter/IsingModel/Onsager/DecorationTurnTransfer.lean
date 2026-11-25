@@ -87,12 +87,10 @@ lemma ons_internalMicroDirections_turn
               simp only [List.isChain_cons_cons, List.IsChain.singleton,
                 and_true] at hchain
               fin_cases a
-              all_goals try fin_cases p₁
+              all_goals fin_cases p₁
               all_goals
                 first
                 | decide
-                | exfalso; revert hchain; decide
-                | norm_num [ons_portLineAdj, Fin.add_def] at hchain
           | cons p₂ ps =>
               cases ps with
               | nil =>
@@ -101,15 +99,11 @@ lemma ons_internalMicroDirections_turn
                   simp only [List.nodup_cons, List.mem_cons,
                     not_or] at hnodup
                   fin_cases a
-                  all_goals try fin_cases p₁
-                  all_goals try fin_cases p₂
+                  all_goals fin_cases p₁
+                  all_goals fin_cases p₂
                   all_goals
                     first
                     | decide
-                    | exfalso; revert hchain; decide
-                    | exfalso; revert hnodup; decide
-                    | norm_num [ons_portLineAdj, Fin.add_def] at hchain
-                    | norm_num [Fin.add_def] at hnodup
               | cons p₃ ps =>
                   cases ps with
                   | nil =>
@@ -118,16 +112,15 @@ lemma ons_internalMicroDirections_turn
                       simp only [List.nodup_cons, List.mem_cons,
                         not_or] at hnodup
                       fin_cases a
-                      all_goals try fin_cases p₁
-                      all_goals try fin_cases p₂
-                      all_goals try fin_cases p₃
+                      all_goals fin_cases p₁
+                      all_goals fin_cases p₂
+                      all_goals fin_cases p₃
                       all_goals
                         first
                         | decide
                         | exfalso; revert hchain; decide
                         | exfalso; revert hnodup; decide
                         | norm_num [ons_portLineAdj, Fin.add_def] at hchain
-                        | norm_num [Fin.add_def] at hnodup
                   | cons p₄ ps =>
                       have hlen := hnodup.length_le_card
                       simp at hlen

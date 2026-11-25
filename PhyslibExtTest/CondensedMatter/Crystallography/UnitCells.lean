@@ -206,7 +206,7 @@ lemma faceMid_mem_translate (ha : 0 < (1 : ℝ)) :
         simp [BravaisLattice.primitiveVector, BravaisLattice.simpleCubic, faceMid,
           ← sub_eq_add_neg, ← WithLp.toLp_sub, WithLp.ofLp_toLp, Pi.sub_apply,
           Matrix.col_apply, Matrix.one_apply, one_smul, Matrix.vecHead,
-          Matrix.vecTail] <;>
+          Matrix.vecTail];
         norm_num
     rwa [WithLp.toLp_ofLp, WithLp.toLp_ofLp] at h1
   exact ⟨-faceMid, (BravaisLattice.wignerSeitzCell_neg_mem _ _).mpr (faceMid_mem ha), h0⟩

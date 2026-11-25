@@ -58,7 +58,7 @@ noncomputable def M : DriftModel μ4 (Fin 2) (Fin 6) where
 theorem weight_X :
     M.weight 2 = (3 / 4 : ℝ) • M.weight 3 + (1 - 3 / 4 : ℝ) • M.weight 5 := by
   ext e
-  fin_cases e <;> simp [M] <;> norm_num
+  fin_cases e <;> simp [M]
 
 theorem f4_B : f4 μ4 M.freq 0 1 4 5 = 1 / 16 := by
   rw [M.f4_freq]

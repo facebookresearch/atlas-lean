@@ -164,7 +164,7 @@ theorem law_objective_posterior_match {d K : ℕ}
         rw [hLreal k', ← ENNReal.ofReal_mul (θ.2.weight_pos k').le]
         have hj : joint θ x k' = θ.1.weight k' * bernPMF (θ.1.prob k') x := rfl
         rw [hj]
-      first | rw [tsum_fintype] | rw [← tsum_fintype]
+      first | rw [tsum_fintype]
       rw [Finset.sum_congr rfl (fun k' _ => hsum k'),
         ← ENNReal.ofReal_sum_of_nonneg (fun k' _ => (joint_pos θ x k').le)]
       have hmarg : (∑ k' : Fin K, joint θ x k')

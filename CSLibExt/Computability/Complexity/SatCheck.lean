@@ -194,7 +194,7 @@ theorem ret_run (v : Bool) (St : ∀ _ : K, List Sym) (val p s : Bool) (hV : St 
   refine ⟨val == p, Run.single ?_⟩
   cases val <;> cases p <;> cases s <;>
     simp [prog, drv, TM2.stepAux, hV, hP, hF, update_idem, update_comm (show K.F ≠ K.V by decide),
-      update_comm (show K.F ≠ K.P by decide)] <;> rfl
+      update_comm (show K.F ≠ K.P by decide)]
 
 theorem drop_run (bs : List Bool) (R : List Sym) (hR : R.head?.bind Sym.bit? = none) :
     ∀ (v : Bool) (St : ∀ _ : K, List Sym), St .T = bs.map Sym.bit ++ R →

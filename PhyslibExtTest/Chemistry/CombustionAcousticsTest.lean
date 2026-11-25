@@ -179,7 +179,6 @@ example :
     convert h2 using 1
     · first
       | (ext s; simp)
-      | norm_num
     · first
       | (ext s; simp)
       | norm_num
@@ -188,7 +187,6 @@ example :
     convert h1 using 1
     · first
       | (ext s; simp)
-      | norm_num
     · first
       | (ext s; simp)
       | norm_num
@@ -219,7 +217,6 @@ example :
     convert h2 using 1
     · first
       | (ext s; simp)
-      | norm_num
     · first
       | (ext s; simp)
       | norm_num
@@ -228,7 +225,6 @@ example :
     convert h1 using 1
     · first
       | (ext s; simp)
-      | norm_num
     · first
       | (ext s; simp)
       | norm_num
@@ -292,13 +288,6 @@ example :
     convert h using 1
     · first
       | (funext s; simp)
-      | (simp only [id_eq]
-         rw [show Real.sqrt 2 / 2 * (Real.cos (Real.sqrt 2 * t) *
-              (Real.sqrt 2 * 1))
-            = Real.cos (Real.sqrt 2 * t) * ((Real.sqrt 2 * Real.sqrt 2) / 2)
-            by ring,
-          Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
-         norm_num)
     · first
       | (funext s; simp)
       | (simp only [id_eq]
@@ -342,7 +331,6 @@ example :
     convert h using 1
     · first
       | (funext s; simp)
-      | simp
     · first
       | (funext s; simp)
       | simp
@@ -377,7 +365,6 @@ example :
     convert h3 using 1
     · first
       | (funext s; simp only [id_eq]; congr 1; ring)
-      | (simp only [id_eq]; ring_nf)
     · first
       | (funext s; simp only [id_eq]; congr 1; ring)
       | (simp only [id_eq]; ring_nf)

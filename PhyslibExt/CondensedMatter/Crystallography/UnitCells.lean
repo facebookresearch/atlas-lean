@@ -420,19 +420,19 @@ lemma simpleCubic_lattice_le_fcc (a : ℝ) (ha : 0 < a) :
     congr 1
     ext i
     fin_cases i <;> simp [faceCenteredCubic, simpleCubic, Matrix.mulVec, dotProduct,
-      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply] <;> ring
+      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply]
   · refine ((faceCenteredCubic a ha).mem_lattice_iff _).mpr ⟨![1, -1, 1], ?_⟩
     rw [latticeVector_apply, primitiveVector]
     congr 1
     ext i
     fin_cases i <;> simp [faceCenteredCubic, simpleCubic, Matrix.mulVec, dotProduct,
-      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply] <;> ring
+      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply]
   · refine ((faceCenteredCubic a ha).mem_lattice_iff _).mpr ⟨![1, 1, -1], ?_⟩
     rw [latticeVector_apply, primitiveVector]
     congr 1
     ext i
     fin_cases i <;> simp [faceCenteredCubic, simpleCubic, Matrix.mulVec, dotProduct,
-      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply] <;> ring
+      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply]
 
 /-- The simple cubic lattice of side `a` is a sublattice of the body-centred cubic lattice:
 each cubic edge is an integer combination of BCC primitive vectors. -/
@@ -448,19 +448,19 @@ lemma simpleCubic_lattice_le_bcc (a : ℝ) (ha : 0 < a) :
     congr 1
     ext i
     fin_cases i <;> simp [bodyCenteredCubic, simpleCubic, Matrix.mulVec, dotProduct,
-      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply] <;> ring
+      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply]
   · refine ((bodyCenteredCubic a ha).mem_lattice_iff _).mpr ⟨![1, 0, 1], ?_⟩
     rw [latticeVector_apply, primitiveVector]
     congr 1
     ext i
     fin_cases i <;> simp [bodyCenteredCubic, simpleCubic, Matrix.mulVec, dotProduct,
-      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply] <;> ring
+      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply]
   · refine ((bodyCenteredCubic a ha).mem_lattice_iff _).mpr ⟨![1, 1, 0], ?_⟩
     rw [latticeVector_apply, primitiveVector]
     congr 1
     ext i
     fin_cases i <;> simp [bodyCenteredCubic, simpleCubic, Matrix.mulVec, dotProduct,
-      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply] <;> ring
+      Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply]
 
 /-- **FCC has 4 lattice points per conventional cubic cell**, as a quotient count, by the general
 theorem. The conventional cell is the cube (basis matrix `a • 1`); the FCC primitive vectors are

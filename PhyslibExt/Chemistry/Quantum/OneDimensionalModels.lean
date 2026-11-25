@@ -223,10 +223,8 @@ private lemma hasDerivAt_affine (c L : ℝ) (x : ℝ) :
   have h0 := ((hasDerivAt_const x c).mul (hasDerivAt_id x)).div_const L
   convert h0 using 1
   all_goals try funext y
-  all_goals try simp only [Pi.mul_apply, id_eq, zero_mul, mul_zero, mul_one, one_mul,
+  all_goals simp only [Pi.mul_apply, id_eq, zero_mul, mul_zero, mul_one, one_mul,
     zero_add, add_zero, sub_zero, zero_sub, sub_self, neg_zero]
-  all_goals try field_simp
-  all_goals try ring
 
 /-- Derivative of `sin` of the affine inner function
 (Mathlib `HasDerivAt.sin`). -/
@@ -235,10 +233,6 @@ private lemma hasDerivAt_sin_affine (c L : ℝ) (x : ℝ) :
       (Real.cos (c * x / L) * (c / L)) x := by
   have h0 := (hasDerivAt_affine c L x).sin
   convert h0 using 1
-  all_goals try funext y
-  all_goals try simp only [Pi.mul_apply, id_eq]
-  all_goals try field_simp
-  all_goals try ring
 
 /-- Derivative of `cos` of the affine inner function
 (Mathlib `HasDerivAt.cos`). -/
@@ -247,10 +241,6 @@ private lemma hasDerivAt_cos_affine (c L : ℝ) (x : ℝ) :
       (-Real.sin (c * x / L) * (c / L)) x := by
   have h0 := (hasDerivAt_affine c L x).cos
   convert h0 using 1
-  all_goals try funext y
-  all_goals try simp only [Pi.mul_apply, id_eq]
-  all_goals try field_simp
-  all_goals try ring
 
 /-- First derivative of the box function (pointwise). -/
 private lemma box_deriv_first (n : ℕ) (L : ℝ) (x : ℝ) :
@@ -264,10 +254,6 @@ private lemma box_deriv_first (n : ℕ) (L : ℝ) (x : ℝ) :
     have h1 := ((hasDerivAt_affine (↑n * Real.pi) L x).sin.const_mul
       (Real.sqrt (2 / L)))
     convert h1 using 1
-    all_goals try funext y
-    all_goals try simp only [Pi.mul_apply, id_eq]
-    all_goals try field_simp
-    all_goals try ring
   have h := h0.deriv
   rw [show boxFunction n L
     = (fun x => Real.sqrt (2 / L) * Real.sin (↑n * Real.pi * x / L)) from rfl]
@@ -292,10 +278,6 @@ private lemma box_deriv_second (n : ℕ) (L : ℝ) (x : ℝ) :
     have h1 := (((hasDerivAt_affine (↑n * Real.pi) L x).cos.const_mul
       (↑n * Real.pi / L)).const_mul (Real.sqrt (2 / L)))
     convert h1 using 1
-    all_goals try funext y
-    all_goals try simp only [Pi.mul_apply, id_eq]
-    all_goals try field_simp
-    all_goals try ring
   have h := h0.deriv
   exact h.trans (by ring)
 
@@ -342,7 +324,6 @@ lemma box_dirichlet_right (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
   have hL' : L ≠ 0 := ne_of_gt hL
   have harg : ↑n * Real.pi * L / L = ↑n * Real.pi := by
     field_simp
-    try ring
   rw [harg, Real.sin_nat_mul_pi n, mul_zero]
 
 /-- Smooth Dirichlet carrier for the box states: real-valued `C²` functions on `ℝ` vanishing
@@ -405,10 +386,9 @@ lemma cos_integral_pos (m : ℕ) (L : ℝ) (hm : 1 ≤ m) (hL : 0 < L) :
     have h0 := (hasDerivAt_sin_affine (↑m * Real.pi) L x).const_mul
       (L / (↑m * Real.pi))
     convert h0 using 1
-    all_goals try funext y
-    all_goals try simp only [Pi.mul_apply, id_eq]
-    all_goals try field_simp
-    all_goals try ring
+    try funext y
+    try simp only [Pi.mul_apply, id_eq]
+    try field_simp
   have hint : IntervalIntegrable
       (fun x => Real.cos (↑m * Real.pi * x / L)) MeasureTheory.volume 0 L := by
     have hc : Continuous (fun x => Real.cos (↑m * Real.pi * x / L)) := by
@@ -420,7 +400,6 @@ lemma cos_integral_pos (m : ℕ) (L : ℝ) (hm : 1 ≤ m) (hL : 0 < L) :
     intervalIntegral.integral_eq_sub_of_hasDerivAt (fun x _ => hF x) hint
   have hargL : ↑m * Real.pi * L / L = ↑m * Real.pi := by
     field_simp
-    try ring
   have harg0 : ↑m * Real.pi * 0 / L = 0 := by ring
   rw [hFTC, hargL, harg0, Real.sin_nat_mul_pi m, Real.sin_zero, mul_zero,
     sub_zero]
@@ -479,7 +458,6 @@ lemma box_orthonormality_diag (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     rw [h]
     simp only [sub_zero, smul_eq_mul]
     field_simp
-    try ring
   have eCos : (∫ x in (0:ℝ)..L, (1 / L)
       * Real.cos (2 * (↑n * Real.pi * x / L))) = 0 := by
     have hfun2 : (fun x : ℝ => (1 / L)
@@ -669,13 +647,12 @@ lemma osc_eigen_0 (x : ℝ) :
     have h0 :=
       (((hasDerivAt_pow 2 y).neg.div_const 2).exp.const_mul oscC0)
     convert h0 using 1
-    all_goals try funext z
-    all_goals try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
+    try funext z
+    try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
       Pi.mul_apply, Pi.add_apply, Pi.sub_apply, Pi.neg_apply, id_eq, zero_mul,
       mul_zero, mul_one, one_mul, zero_add, add_zero, sub_zero, zero_sub,
       sub_self, neg_zero]
-    all_goals try field_simp
-    all_goals try ring
+    try field_simp
   have hg1 : ∀ y : ℝ, HasDerivAt
       (fun x : ℝ => -(x * (oscC0 * Real.exp (-(x ^ 2) / 2))))
       (((y ^ 2 - 1)) * (oscC0 * Real.exp (-(y ^ 2) / 2))) y := by
@@ -684,12 +661,12 @@ lemma osc_eigen_0 (x : ℝ) :
         (((hasDerivAt_pow 2 y).neg.div_const 2).exp.const_mul oscC0)).neg
     convert h0 using 1
     all_goals try funext z
-    all_goals try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
+    all_goals simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
       Pi.mul_apply, Pi.add_apply, Pi.sub_apply, Pi.neg_apply, id_eq, zero_mul,
       mul_zero, mul_one, one_mul, zero_add, add_zero, sub_zero, zero_sub,
       sub_self, neg_zero]
-    all_goals try field_simp
-    all_goals try ring
+    try field_simp
+    try ring
   have hF1 : deriv oscFun0
       = fun x : ℝ => ↑(-(x * (oscC0 * Real.exp (-(x ^ 2) / 2)))) := by
     funext y
@@ -727,12 +704,12 @@ lemma osc_eigen_1 (x : ℝ) :
         (Real.sqrt 2 * oscC0))
     convert h0 using 1
     all_goals try funext z
-    all_goals try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
+    all_goals simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
       Pi.mul_apply, Pi.add_apply, Pi.sub_apply, Pi.neg_apply, id_eq, zero_mul,
       mul_zero, mul_one, one_mul, zero_add, add_zero, sub_zero, zero_sub,
       sub_self, neg_zero]
-    all_goals try field_simp
-    all_goals try ring
+    try field_simp
+    try ring
   have hg1 : ∀ y : ℝ, HasDerivAt
       (fun x : ℝ => (Real.sqrt 2 * oscC0)
         * ((1 - x ^ 2) * Real.exp (-(x ^ 2) / 2)))
@@ -744,13 +721,13 @@ lemma osc_eigen_1 (x : ℝ) :
         (((hasDerivAt_pow 2 y).neg.div_const 2).exp)).const_mul
         (Real.sqrt 2 * oscC0))
     convert h0 using 1
-    all_goals try funext z
-    all_goals try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
+    try funext z
+    try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
       Pi.mul_apply, Pi.add_apply, Pi.sub_apply, Pi.neg_apply, id_eq, zero_mul,
       mul_zero, mul_one, one_mul, zero_add, add_zero, sub_zero, zero_sub,
       sub_self, neg_zero]
-    all_goals try field_simp
-    all_goals try ring
+    try field_simp
+    try ring
   have hF1 : deriv oscFun1 = fun x : ℝ => ↑(((Real.sqrt 2 * oscC0)
       * ((1 - x ^ 2) * Real.exp (-(x ^ 2) / 2))) : ℝ) := by
     funext y
@@ -768,7 +745,7 @@ lemma osc_eigen_1 (x : ℝ) :
     Complex.ofReal_neg, Complex.ofReal_pow, Complex.ofReal_one,
     Complex.ofReal_zero]
   push_cast
-  try ring
+  ring
 
 /-- Oscillator second excited state `ψ_2` in `ħ = m = ω = 1` units. -/
 noncomputable def oscFun2 (x : ℝ) : ℂ :=
@@ -792,13 +769,13 @@ lemma osc_eigen_2 (x : ℝ) :
         (((hasDerivAt_pow 2 y).neg.div_const 2).exp)).const_mul
         ((1 / Real.sqrt 2) * oscC0))
     convert h0 using 1
-    all_goals try funext z
-    all_goals try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
+    try funext z
+    try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
       Pi.mul_apply, Pi.add_apply, Pi.sub_apply, Pi.neg_apply, id_eq, zero_mul,
       mul_zero, mul_one, one_mul, zero_add, add_zero, sub_zero, zero_sub,
       sub_self, neg_zero]
-    all_goals try field_simp
-    all_goals try ring
+    try field_simp
+    try ring
   have hg1 : ∀ y : ℝ, HasDerivAt
       (fun x : ℝ => ((1 / Real.sqrt 2) * oscC0)
         * ((5 * x - 2 * x ^ 3) * Real.exp (-(x ^ 2) / 2)))
@@ -812,13 +789,13 @@ lemma osc_eigen_2 (x : ℝ) :
         ((1 / Real.sqrt 2) * oscC0))
     convert h0 using 1
     all_goals try funext z
-    all_goals try simp only [show (3:ℕ) - 1 = 2 from by decide,
+    all_goals simp only [show (3:ℕ) - 1 = 2 from by decide,
       show (2:ℕ) - 1 = 1 from by decide, pow_one, Nat.cast_ofNat,
       Pi.mul_apply, Pi.add_apply, Pi.sub_apply, Pi.neg_apply, id_eq, zero_mul,
       mul_zero, mul_one, one_mul, zero_add, add_zero, sub_zero, zero_sub,
       sub_self, neg_zero]
-    all_goals try field_simp
-    all_goals try ring
+    try field_simp
+    try ring
   have hF1 : deriv oscFun2 = fun x : ℝ => ↑((((1 / Real.sqrt 2) * oscC0)
       * ((5 * x - 2 * x ^ 3) * Real.exp (-(x ^ 2) / 2))) : ℝ) := by
     funext y
@@ -836,7 +813,7 @@ lemma osc_eigen_2 (x : ℝ) :
     Complex.ofReal_neg, Complex.ofReal_pow, Complex.ofReal_one,
     Complex.ofReal_zero]
   push_cast
-  try ring
+  ring
 
 /-- Base Gaussian integral `∫ x, exp (-x^2) = √π` (Mathlib
 `integral_gaussian`). -/
@@ -875,7 +852,6 @@ lemma osc_orthonormality_00 : ∫ x : ℝ, oscFun0 x * oscFun0 x = 1 := by
     ne_of_gt (Real.sqrt_pos.mpr Real.pi_pos)
   have hreal : (1 / Real.sqrt Real.pi : ℝ) * Real.sqrt Real.pi = 1 := by
     field_simp
-    try ring
   rw [hfun, integral_complex_ofReal, hcm, gaussian_moment_zero, hreal,
     Complex.ofReal_one]
 
@@ -1182,7 +1158,6 @@ lemma osc_orthonormality_11 : ∫ x : ℝ, oscFun1 x * oscFun1 x = 1 := by
     have hpi : Real.sqrt Real.pi ≠ 0 :=
       ne_of_gt (Real.sqrt_pos.mpr Real.pi_pos)
     field_simp
-    try ring
   rw [hfun, integral_complex_ofReal, hcm, gaussian_moment_two, hreal,
     Complex.ofReal_one]
 
@@ -1401,7 +1376,6 @@ lemma osc_orthonormality_22 : ∫ x : ℝ, oscFun2 x * oscFun2 x = 1 := by
     have hpi : Real.sqrt Real.pi ≠ 0 :=
       ne_of_gt (Real.sqrt_pos.mpr Real.pi_pos)
     field_simp
-    try ring
   rw [hfun, integral_complex_ofReal, hcm, hsplit, gaussian_moment_four,
     gaussian_moment_two, gaussian_moment_zero, hS, hreal, Complex.ofReal_one]
 
@@ -1441,28 +1415,20 @@ lemma ladder_commutator_pointwise_of_hasDerivAt (f : ℝ → ℂ) (df ddf : ℂ)
   have hAf : HasDerivAt (fun x : ℝ => ↑x * f x) (1 * f x + ↑x * df) x := by
     have h0 := (hasDerivAt_coe_id x).mul hf
     convert h0 using 1
-    all_goals try funext y
-    all_goals try simp only [Pi.mul_apply]
-    all_goals try field_simp
-    all_goals try ring
   have hCre : HasDerivAt (creFun f)
       ((1 * f x + ↑x * df - ddf) / ↑(Real.sqrt 2)) x := by
     have h0 := (hAf.sub hf').div_const (↑(Real.sqrt 2))
     convert h0 using 1
-    all_goals try funext y
-    all_goals try simp only [creFun, annFun, Pi.mul_apply, Pi.add_apply, Pi.sub_apply,
+    try funext y
+    try simp only [creFun, annFun, Pi.mul_apply, Pi.add_apply, Pi.sub_apply,
       id_eq]
-    all_goals try field_simp
-    all_goals try ring
   have hAnn : HasDerivAt (annFun f)
       ((1 * f x + ↑x * df + ddf) / ↑(Real.sqrt 2)) x := by
     have h0 := (hAf.add hf').div_const (↑(Real.sqrt 2))
     convert h0 using 1
-    all_goals try funext y
-    all_goals try simp only [creFun, annFun, Pi.mul_apply, Pi.add_apply, Pi.sub_apply,
+    try funext y
+    try simp only [creFun, annFun, Pi.mul_apply, Pi.add_apply, Pi.sub_apply,
       id_eq]
-    all_goals try field_simp
-    all_goals try ring
   have hCrev : deriv (creFun f) x
       = (1 * f x + ↑x * df - ddf) / ↑(Real.sqrt 2) := hCre.deriv
   have hAnnv : deriv (annFun f) x
@@ -1607,11 +1573,10 @@ lemma box_moment_x (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
       intro x
       have h0 := (hasDerivAt_pow 2 x).div_const 2
       convert h0 using 1
-      all_goals try funext y
-      all_goals try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one,
+      try funext y
+      try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one,
         Nat.cast_ofNat, Pi.mul_apply, id_eq]
-      all_goals try field_simp
-      all_goals try ring
+      try field_simp
     have hintX : IntervalIntegrable (fun x : ℝ => x)
         MeasureTheory.volume 0 L :=
       continuous_id.intervalIntegrable 0 L
@@ -1625,7 +1590,6 @@ lemma box_moment_x (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
       intervalIntegral.integral_const_mul _ _
     rw [hcm, eX]
     field_simp
-    try ring
   have eK : (∫ x in (0:ℝ)..L, (x / L)
       * Real.cos (2 * (↑n * Real.pi * x / L))) = 0 := by
     have hfunK : (fun x : ℝ => (x / L)
@@ -1661,10 +1625,6 @@ lemma box_moment_x (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
         have h0 :=
           ((hasDerivAt_affine (↑n * Real.pi) L x).const_mul 2).sin
         convert h0 using 1
-        all_goals try funext y
-        all_goals try simp only [Pi.mul_apply, id_eq]
-        all_goals try field_simp
-        all_goals try ring
       have hcos2 : HasDerivAt
           (fun x : ℝ => Real.cos (2 * (↑n * Real.pi * x / L)))
           (-Real.sin (2 * (↑n * Real.pi * x / L))
@@ -1672,10 +1632,6 @@ lemma box_moment_x (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
         have h0 :=
           ((hasDerivAt_affine (↑n * Real.pi) L x).const_mul 2).cos
         convert h0 using 1
-        all_goals try funext y
-        all_goals try simp only [Pi.mul_apply, id_eq]
-        all_goals try field_simp
-        all_goals try ring
       have h0 : HasDerivAt
           (fun x : ℝ => x * Real.sin (2 * (↑n * Real.pi * x / L))
               / ((2 * ↑n) * Real.pi / L)
@@ -1687,11 +1643,11 @@ lemma box_moment_x (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
           (hcos2.div_const (((2 * ↑n) * Real.pi / L) ^ 2))
         convert h00 using 1
         all_goals try funext y
-        all_goals try simp only [Pi.mul_apply, Pi.add_apply, id_eq, zero_mul, mul_zero,
+        all_goals simp only [Pi.mul_apply, Pi.add_apply, id_eq, zero_mul, mul_zero,
           mul_one, one_mul, zero_add, add_zero, sub_zero, zero_sub, sub_self,
           neg_zero]
-        all_goals try field_simp
-        all_goals try ring
+        try field_simp
+        try ring
       exact h0
     have hintG : IntervalIntegrable
         (fun x : ℝ => x * Real.cos (2 * (↑n * Real.pi * x / L)))
@@ -1714,10 +1670,8 @@ lemma box_moment_x (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     have eL : 2 * (↑n * Real.pi * L / L) = ↑(2 * n) * Real.pi := by
       push_cast
       field_simp
-      try ring
     have eL2 : 2 * (↑n * Real.pi * L / L) = 2 * (↑n * Real.pi) := by
       field_simp
-      try ring
     have hcosL : Real.cos (2 * (↑n * Real.pi * L / L)) = 1 := by
       rw [eL2]
       have h1 := Real.cos_two_mul (↑n * Real.pi)
@@ -1791,11 +1745,10 @@ lemma box_moment_x2 (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
       intro x
       have h0 := (hasDerivAt_pow 3 x).div_const 3
       convert h0 using 1
-      all_goals try funext y
-      all_goals try simp only [show (3:ℕ) - 1 = 2 from by decide, Nat.cast_ofNat,
+      try funext y
+      try simp only [show (3:ℕ) - 1 = 2 from by decide, Nat.cast_ofNat,
         Pi.mul_apply, id_eq]
-      all_goals try field_simp
-      all_goals try ring
+      try field_simp
     have hintX : IntervalIntegrable (fun x : ℝ => x ^ 2)
         MeasureTheory.volume 0 L := by
       have hcX : Continuous (fun x : ℝ => x ^ 2) := by
@@ -1811,7 +1764,6 @@ lemma box_moment_x2 (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
       intervalIntegral.integral_const_mul _ _
     rw [hcm, eX]
     field_simp
-    try ring
   have eK : (∫ x in (0:ℝ)..L, (x ^ 2 / L)
       * Real.cos (2 * (↑n * Real.pi * x / L)))
       = (1 / L) * (2 * L / (((2 * ↑n) * Real.pi / L) ^ 2)) := by
@@ -1851,10 +1803,6 @@ lemma box_moment_x2 (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
         have h0 :=
           ((hasDerivAt_affine (↑n * Real.pi) L x).const_mul 2).sin
         convert h0 using 1
-        all_goals try funext y
-        all_goals try simp only [Pi.mul_apply, id_eq]
-        all_goals try field_simp
-        all_goals try ring
       have hcos2 : HasDerivAt
           (fun x : ℝ => Real.cos (2 * (↑n * Real.pi * x / L)))
           (-Real.sin (2 * (↑n * Real.pi * x / L))
@@ -1862,10 +1810,6 @@ lemma box_moment_x2 (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
         have h0 :=
           ((hasDerivAt_affine (↑n * Real.pi) L x).const_mul 2).cos
         convert h0 using 1
-        all_goals try funext y
-        all_goals try simp only [Pi.mul_apply, id_eq]
-        all_goals try field_simp
-        all_goals try ring
       have h0 : HasDerivAt
           (fun x : ℝ => x ^ 2 * Real.sin (2 * (↑n * Real.pi * x / L))
               / ((2 * ↑n) * Real.pi / L)
@@ -1881,12 +1825,12 @@ lemma box_moment_x2 (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
           ((hsin2.const_mul 2).div_const (((2 * ↑n) * Real.pi / L) ^ 3))
         convert h00 using 1
         all_goals try funext y
-        all_goals try simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one,
+        all_goals simp only [show (2:ℕ) - 1 = 1 from by decide, pow_one,
           Nat.cast_ofNat, Pi.mul_apply, Pi.add_apply, Pi.sub_apply, id_eq,
           zero_mul, mul_zero, mul_one, one_mul, zero_add, add_zero, sub_zero,
           zero_sub, sub_self, neg_zero]
-        all_goals try field_simp
-        all_goals try ring
+        try field_simp
+        try ring
       exact h0
     have hintH : IntervalIntegrable
         (fun x : ℝ => x ^ 2 * Real.cos (2 * (↑n * Real.pi * x / L)))
@@ -1913,10 +1857,8 @@ lemma box_moment_x2 (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     have eL : 2 * (↑n * Real.pi * L / L) = ↑(2 * n) * Real.pi := by
       push_cast
       field_simp
-      try ring
     have eL2 : 2 * (↑n * Real.pi * L / L) = 2 * (↑n * Real.pi) := by
       field_simp
-      try ring
     have hcosL : Real.cos (2 * (↑n * Real.pi * L / L)) = 1 := by
       rw [eL2]
       have h1 := Real.cos_two_mul (↑n * Real.pi)
@@ -1932,7 +1874,6 @@ lemma box_moment_x2 (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     ring
   rw [hsub, eC, eK]
   field_simp
-  try ring
 
 /-! ## Section D: free-electron polyene model. -/
 
@@ -1992,7 +1933,6 @@ lemma polyene_wavelength_closed_form (k : ℕ) (a m ħ c : ℝ) (hk : 1 ≤ k)
   unfold polyeneWavelength
   rw [hgap_eq, hHπ]
   field_simp
-  try ring
 
 /-! ## Section E: explicit deferrals (visible; never silent).
 

@@ -68,14 +68,14 @@ private lemma qW1_support : ∀ c e e', mHead e ≠ mTail e' → qMerge c e e' =
 
 private lemma qW1_feasible : IsSupplyFeasible mTail mHead one3 one3 kj6 kOpen qMerge := by
   intro e'
-  fin_cases e' <;> ((try simp only [Finset.sum_filter]) <;> simp only [qMerge, mHead, mTail, one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  fin_cases e' <;> ((simp only [Finset.sum_filter]) <;> simp only [qMerge, mHead, mTail, one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 /-- Merge values: node 1 balances `3 = 3` (nonzero), and link 2 takes exactly its supply `3`. -/
 private lemma merge_conservation_value :
     (∑ e with mHead e = 1, ∑ c, linkOutflow qMerge c e) = 3 ∧
     (∑ e with mTail e = 1, ∑ c, linkInflow qMerge c e) = 3 := by
-  constructor <;> ((try simp only [Finset.sum_filter]) <;> simp only [linkOutflow, linkInflow, qMerge, mHead, mTail, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  constructor <;> ((simp only [Finset.sum_filter]) <;> simp only [linkOutflow, linkInflow, qMerge, mHead, mTail, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 private lemma merge_conservation : (∑ e with mHead e = 1, ∑ c, linkOutflow qMerge c e) =
@@ -86,7 +86,7 @@ private lemma merge_supply_tight :
     ∑ c, linkInflow qMerge c 2 ≤ supply (one3 2) (one3 2) (kj6 2) (kOpen 2) ∧
     ∑ c, linkInflow qMerge c 2 = supply (one3 2) (one3 2) (kj6 2) (kOpen 2) := by
   refine ⟨sum_linkInflow_le_supply qW1_support qW1_feasible 2, ?_⟩
-  ((try simp only [Finset.sum_filter]) <;> simp only [linkInflow, qMerge, one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  ((try simp only [Finset.sum_filter]); simp only [linkInflow, qMerge, one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique]; norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 /-! Oversubscription. Flows `2` and `2` into supply `3`: rejected, though each input alone
@@ -99,7 +99,7 @@ private lemma over_rejected : ¬ IsSupplyFeasible mTail mHead one3 one3 kj6 kOpe
   intro h
   have h2 := h 2
   revert h2
-  ((try simp only [Finset.sum_filter]) <;> simp only [qOver, mHead, mTail, one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  ((simp only [Finset.sum_filter]); simp only [qOver, mHead, mTail, one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique]; norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 private lemma over_each_fits : qOver 0 0 2 ≤ supply 1 1 6 3 ∧ qOver 1 1 2 ≤ supply 1 1 6 3 := by
@@ -115,8 +115,8 @@ noncomputable def qPair (a b : ℝ) : Unit → Fin 3 → Fin 3 → ℝ := fun _ 
 private lemma qPair_feasible {a b : ℝ} (hab : a + b ≤ 3) :
     IsSupplyFeasible mTail mHead one3 one3 kj6 kOpen (qPair a b) := by
   intro e'
-  fin_cases e' <;> ((try simp only [Finset.sum_filter]) <;> simp only [qPair, mHead, mTail, one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
-      Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]) <;>
+  fin_cases e' <;> ((simp only [Finset.sum_filter]) <;> simp only [qPair, mHead, mTail, one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+      Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]);
     linarith
 
 private lemma qPair_support (a b : ℝ) : ∀ c e e', mHead e ≠ mTail e' → qPair a b c e e' = 0 := by
@@ -149,7 +149,7 @@ private lemma diverge_fractions :
 
 /-- Endpoint: a zero-outflow link has all fractions `0`, so they sum to `0`, not `1`. -/
 private lemma diverge_zero_outflow_endpoint : ∑ e', turningFraction qDiverge () 1 e' = 0 := by
-  ((try simp only [Finset.sum_filter]) <;> simp only [turningFraction, linkOutflow, qDiverge, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  ((try simp only [Finset.sum_filter]); simp only [turningFraction, linkOutflow, qDiverge, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique]; norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 /-- Fractions sum to one on positive outflow (corollary of T4). -/
@@ -175,7 +175,7 @@ private lemma fractions_not_summing_rejected (q : Unit → Fin 3 → Fin 3 → �
   have h1 := sum_turningFraction_eq_one hnn hpos
   rw [h] at h1
   revert h1
-  ((try simp only [Finset.sum_filter]) <;> simp only [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  ((try simp only [Finset.sum_filter]); simp only [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique]; norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 /-- Control C4 (T4 without nonnegativity): flows `1, -1` give outflow `0` and break T4. -/
@@ -183,7 +183,7 @@ noncomputable def qSigned : Unit → Fin 3 → Fin 3 → ℝ := fun _ e e' =>
   if e = 0 ∧ e' = 1 then 1 else if e = 0 ∧ e' = 2 then -1 else 0
 
 private lemma signed_breaks_factorization : turningFraction qSigned () 0 1 * linkOutflow qSigned () 0 ≠ qSigned () 0 1 := by
-  ((try simp only [Finset.sum_filter]) <;> simp only [turningFraction, linkOutflow, qSigned, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  ((try simp only [Finset.sum_filter]); simp only [turningFraction, linkOutflow, qSigned, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique]; norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 /-! ## Spillback and the absence of a FIFO claim (diverge, link 2 jammed). -/
@@ -199,7 +199,7 @@ private lemma qW4_support : ∀ c e e', dHead e ≠ dTail e' → qJam c e e' = 0
 
 private lemma qW4_feasible : IsSupplyFeasible dTail dHead one3 one3 kj6 kJam qJam := by
   intro e'
-  fin_cases e' <;> ((try simp only [Finset.sum_filter]) <;> simp only [qJam, dHead, dTail, one3, kj6, kJam, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  fin_cases e' <;> ((simp only [Finset.sum_filter]) <;> simp only [qJam, dHead, dTail, one3, kj6, kJam, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 private lemma jam_spillback (c : Fin 2) (e : Fin 3) : qJam c e 2 = 0 :=
@@ -220,7 +220,7 @@ private lemma cancel_feasible_nonzero :
     (∀ c e e', mHead e ≠ mTail e' → qCancel c e e' = 0) ∧ qCancel () 0 2 ≠ 0 := by
   refine ⟨?_, ?_, by simp [qCancel]⟩
   · intro e'
-    fin_cases e' <;> ((try simp only [Finset.sum_filter]) <;> simp only [qCancel, mHead, mTail, one3, kj6, kJam, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+    fin_cases e' <;> ((simp only [Finset.sum_filter]) <;> simp only [qCancel, mHead, mTail, one3, kj6, kJam, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
   · intro c e e' h
     fin_cases e <;> fin_cases e' <;> simp_all [qCancel, mHead, mTail]
@@ -233,7 +233,7 @@ private lemma offJunction_feasible_nonzero :
     IsSupplyFeasible mTail mHead one3 one3 kj6 kJam qOffJunction ∧ qOffJunction () 2 2 ≠ 0 := by
   refine ⟨?_, by simp [qOffJunction]⟩
   intro e'
-  fin_cases e' <;> ((try simp only [Finset.sum_filter]) <;> simp only [qOffJunction, mHead, mTail, one3, kj6, kJam, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  fin_cases e' <;> ((simp only [Finset.sum_filter]) <;> simp only [qOffJunction, mHead, mTail, one3, kj6, kJam, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 /-! ## Support controls for T1 and T2. -/
@@ -245,7 +245,7 @@ noncomputable def qTeleport : Unit → Fin 3 → Fin 3 → ℝ := fun _ e e' =>
 private lemma teleport_conservation_fails :
     (∑ e with mHead e = 3, ∑ c, linkOutflow qTeleport c e) = 1 ∧
     (∑ e with mTail e = 3, ∑ c, linkInflow qTeleport c e) = 0 := by
-  constructor <;> ((try simp only [Finset.sum_filter]) <;> simp only [linkOutflow, linkInflow, qTeleport, mHead, mTail, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  constructor <;> ((simp only [Finset.sum_filter]) <;> simp only [linkOutflow, linkInflow, qTeleport, mHead, mTail, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 /-- tight junction-local constraint plus an off-junction self-turn into link 2: feasible,
@@ -258,11 +258,11 @@ private lemma unbounded_bound_fails :
     ∑ c, linkInflow qUnbounded c 2 = 4 ∧ supply (one3 2) (one3 2) (kj6 2) (kOpen 2) = 3 := by
   refine ⟨?_, ?_, ?_⟩
   · intro e'
-    fin_cases e' <;> ((try simp only [Finset.sum_filter]) <;> simp only [qUnbounded, mHead, mTail, one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+    fin_cases e' <;> ((simp only [Finset.sum_filter]) <;> simp only [qUnbounded, mHead, mTail, one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
-  · ((try simp only [Finset.sum_filter]) <;> simp only [linkInflow, qUnbounded, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  · ((try simp only [Finset.sum_filter]); simp only [linkInflow, qUnbounded, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique]; norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
-  · ((try simp only [Finset.sum_filter]) <;> simp only [one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  · ((try simp only [Finset.sum_filter]); simp only [one3, kj6, kOpen, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique]; norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 /-! ## Commodity accounting: per-commodity conservation from T1 at `C = Unit`. -/
@@ -279,7 +279,7 @@ private lemma merge_perCommodity :
     (∑ e with mHead e = 1, linkOutflow qMerge 0 e) = 1 ∧
     (∑ e with mTail e = 1, linkInflow qMerge 0 e) = 1 ∧
     (∑ e with mHead e = 1, linkOutflow qMerge 1 e) = 2 := by
-  refine ⟨?_, ?_, ?_⟩ <;> ((try simp only [Finset.sum_filter]) <;> simp only [linkOutflow, linkInflow, qMerge, mHead, mTail, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  refine ⟨?_, ?_, ?_⟩ <;> ((simp only [Finset.sum_filter]) <;> simp only [linkOutflow, linkInflow, qMerge, mHead, mTail, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 /-! ## Sign conventions against the owners. -/
@@ -402,11 +402,11 @@ private lemma loop_values :
     (∑ e with lHead e = 0, ∑ c, linkOutflow qLoop c e) = 5 ∧
     (∑ e with lTail e = 0, ∑ c, linkInflow qLoop c e) = 5 := by
   refine ⟨?_, ?_, ?_⟩
-  · rw [incidenceMatrix_mulVec_turningFlow]; ((try simp only [Finset.sum_filter]) <;> simp only [linkInflow, linkOutflow, qLoop, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  · rw [incidenceMatrix_mulVec_turningFlow]; ((try simp only [Finset.sum_filter]); simp only [linkInflow, linkOutflow, qLoop, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique]; norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
-  · ((try simp only [Finset.sum_filter]) <;> simp only [linkOutflow, qLoop, lHead, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  · ((simp only [Finset.sum_filter]); simp only [linkOutflow, qLoop, lHead, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique]; norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
-  · ((try simp only [Finset.sum_filter]) <;> simp only [linkInflow, qLoop, lTail, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique] <;> norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
+  · ((simp only [Finset.sum_filter]); simp only [linkInflow, qLoop, lTail, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Fin.sum_univ_one, Fintype.sum_unique]; norm_num [Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_three, Finset.mem_filter,
       Finset.mem_univ, true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
 
 
@@ -423,7 +423,7 @@ noncomputable def qS (a : ℝ) : Unit → Fin 2 → Fin 2 → ℝ := fun _ e e' 
 
 private lemma series_feasible : IsSupplyFeasible sTail sHead one2 one2 kj2 kS (qS 2) := by
   intro e'
-  fin_cases e' <;> ((try simp only [Finset.sum_filter]) <;> simp only [qS, sHead, sTail, one2, kj2,
+  fin_cases e' <;> ((simp only [Finset.sum_filter]) <;> simp only [qS, sHead, sTail, one2, kj2,
     kS, supply, capacity, Finset.sum_filter, Fin.sum_univ_two, Fintype.sum_unique] <;>
     norm_num [Finset.sum_filter, Fin.sum_univ_two, Finset.mem_filter, Finset.mem_univ,
       true_and, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])

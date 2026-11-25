@@ -936,7 +936,7 @@ theorem step_agree (M : FinTM2) (c : M.Cfg) :
     stepI M c = applyEff c.stk (sitStep M c.l c.var (winC M c)) := by
   obtain ⟨l, v, S⟩ := c
   cases l with
-  | none => simp [stepI, TM2.step, sitStep, applyEff]; try rfl
+  | none => simp [stepI, TM2.step, sitStep, applyEff]; rfl
   | some l =>
       simp only [stepI, TM2.step, Option.getD_some, sitStep]
       have := eff_agree (depth M) S (M.m l) v (fun _ => []) (fun _ => 0)
@@ -1076,7 +1076,7 @@ theorem table_agree (H : ℕ) (c : M.Cfg) (hc : E.Good c)
   have hr := E.res_sitIdx c hc
   have hs := step_agree M c
   refine ⟨?_, fun k _ j _ => ?_⟩
-  · rw [hs]; simp only [code, na, hr]; try rfl
+  · rw [hs]; simp only [code, na, hr]; rfl
   · have hpl := E.pl_le (E.sitIdx c) k
     have hcn := E.cn_le (E.sitIdx c) k
     unfold pl at hpl; unfold cn at hcn
@@ -1313,7 +1313,7 @@ theorem decRow_enc (H : ℕ) (c : M.Cfg) (hc : E.Good c) (hh : ∀ k, (c.stk k).
   refine decS_of_list _ _ 0 H (fun i => ?_) (hh k)
   rw [Nat.zero_add]
   first | exact (congrArg (E.decO k) (E.cell_kc ⟨l, v,
-      S⟩ k i)).trans (E.decO_cell _ hc k i) | (erw [E.cell_kc]; exact E.decO_cell _ hc k i)
+      S⟩ k i)).trans (E.decO_cell _ hc k i)
 
 /-- **C1b (decoding a well-formed row loses nothing).** Let $E$ be an encoding of a machine $M$
 with $K$ numbered stacks and $A_0$ (label, state) codes, let $H \in \mathbb{N}$, let $n < A_0$,
@@ -2995,7 +2995,7 @@ theorem runI_of_iterate (M : FinTM2) : ∀ (n : ℕ) (c c' : M.Cfg),
     | none => rw [hs, iterate_bind_none] at h; exact absurd h (by simp)
     | some c1 =>
       rw [hs] at h
-      rw [runI_succ', show stepI M c = c1 by simp [stepI, hs]; try rfl]
+      rw [runI_succ', show stepI M c = c1 by simp [stepI, hs]; rfl]
       exact runI_of_iterate M n c1 c' h
 
 theorem runI_add (M : FinTM2) (c : M.Cfg) (a : ℕ) : ∀ b, runI M c (a + b) = runI M (runI M c a) b
@@ -3013,7 +3013,7 @@ theorem runI_halted (M : FinTM2) (c : M.Cfg) (hc : c.l = none) : ∀ t, runI M c
     rw [runI, runI_halted M c hc t]
     obtain ⟨l, v, S⟩ := c
     subst hc
-    simp [stepI, TM2.step]; try rfl
+    simp [stepI, TM2.step]; rfl
 
 /-- **The idle-extended run stays at the halting configuration.** Let $M$ be a machine, $s$ a
 word over its input alphabet and $l'$ a list over its output alphabet. Suppose that $M$, started

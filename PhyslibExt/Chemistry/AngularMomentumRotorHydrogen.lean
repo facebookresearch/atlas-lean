@@ -220,9 +220,9 @@ theorem lOne_commutators (hbar : ℝ) :
   all_goals simp [Ring.lie_def, lOneLx, lOneLy, lOneLz, Matrix.mul_apply,
     Matrix.sub_apply, Matrix.smul_apply, Fin.sum_univ_three,
     Matrix.cons_val_zero, Matrix.cons_val_one]
-  all_goals (try field_simp [hs0])
+  all_goals (field_simp [hs0])
   all_goals ring_nf
-  all_goals (try simp only [hsq, hsq_mul, hI, Complex.I_mul_I])
+  all_goals (simp only [hsq, hsq_mul, hI, Complex.I_mul_I])
   all_goals ring
 
 /-- l = 1 Casimir: `L^2 = 2 * hbar^2 * 1` (l(l+1) = 2). -/
@@ -252,9 +252,9 @@ theorem lOne_casimir (hbar : ℝ) :
     Matrix.smul_apply, Matrix.one_apply, Fin.sum_univ_three,
     Matrix.cons_val_zero, Matrix.cons_val_one, pow_two, h10, h20, h21, h01,
     h02, h12]
-  all_goals (try field_simp [hs0])
+  all_goals (field_simp [hs0])
   all_goals ring_nf
-  all_goals (try simp only [hsq, hsq_mul, hI, Complex.I_mul_I])
+  all_goals (simp only [hsq, hsq_mul, hI, Complex.I_mul_I])
   all_goals ring
 
 /-! ## B. Irreducibility -/
@@ -477,7 +477,7 @@ theorem rigidRotorEnergy_spacing {hbar I : ℝ} (hI : I ≠ 0) (J : ℕ) :
     rigidRotorEnergy hbar I (J + 1) - rigidRotorEnergy hbar I J =
       hbar ^ 2 * ((J + 1 : ℕ) : ℝ) / I := by
   have h2I : (2 : ℝ) * I ≠ 0 := mul_ne_zero (by norm_num) hI
-  unfold rigidRotorEnergy <;> push_cast <;> field_simp [hI, h2I] <;> ring
+  unfold rigidRotorEnergy; push_cast; field_simp [hI, h2I]; ring
 
 /-- Rigid-rotor degeneracy: the magnetic quantum numbers `m ∈ {-J, ..., J}` number
 `2 * J + 1`; a case of Mathlib's `Int.card_Icc`. -/
@@ -503,8 +503,7 @@ theorem l1_Lz_eigenvalues (hbar : ℝ) :
     simp [lOneLz, Matrix.smul_apply, Pi.smul_apply, Pi.zero_apply,
       Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one,
       Pi.single_eq_same, Pi.single_eq_of_ne, h10, h20, h21, h01, h02, h12,
-      smul_eq_mul] <;>
-    ring
+      smul_eq_mul]
 
 /-- At the north pole, `Y_10 = sqrt 3 * Y_00`. -/
 lemma sphericalHarmonic10_at_pole (φ : ℝ) :
@@ -518,7 +517,7 @@ lemma sphericalHarmonic10_at_pole (φ : ℝ) :
 lemma rigidRotorEnergy_l1 {hbar I : ℝ} (hI : I ≠ 0) :
     rigidRotorEnergy hbar I 1 = hbar ^ 2 / I := by
   have h2I : (2 : ℝ) * I ≠ 0 := mul_ne_zero (by norm_num) hI
-  unfold rigidRotorEnergy <;> norm_num <;> field_simp [hI, h2I] <;> ring
+  unfold rigidRotorEnergy; norm_num; field_simp [hI, h2I]
 
 /-! ## D. Hydrogen-like atom -/
 
@@ -582,7 +581,7 @@ lemma sum_range_odd_eq_sq (n : ℕ) :
     ∑ l ∈ Finset.range n, (2 * l + 1) = n ^ 2 := by
   induction n with
   | zero => decide
-  | succ k ih => rw [Finset.sum_range_succ, ih] <;> ring
+  | succ k ih => rw [Finset.sum_range_succ, ih]; ring
 
 /-- Hydrogen degeneracy: the level with principal quantum number `n : ℕ+` has orbital quantum
 numbers `l < n`, each with `2 l + 1` magnetic sublevels, so `n ^ 2` orbital states
@@ -602,8 +601,8 @@ theorem radialResidual_1s {r : ℝ} (hr : r ≠ 0) :
     radialResidual 1 0 (hydrogenRadial10 r) (hydrogenRadial10' r)
       (hydrogenRadial10 r) r = (-1 / 2) * hydrogenRadial10 r := by
   have hr2 : (2 : ℝ) * r ^ 2 ≠ 0 := mul_ne_zero (by norm_num) (by positivity)
-  unfold radialResidual hydrogenRadial10 hydrogenRadial10' <;>
-    field_simp [hr, hr2] <;> ring
+  unfold radialResidual hydrogenRadial10 hydrogenRadial10';
+    field_simp [hr, hr2]; ring
 
 /-- 2s eigen-equation, algebraic form: at every `r ≠ 0`, the radial residual at
 `Z = 1, l = 0` is `(-1/8) * R`. -/
@@ -613,8 +612,8 @@ theorem radialResidual_2s {r : ℝ} (hr : r ≠ 0) :
   have hsqrt2 : Real.sqrt 2 ≠ 0 := ne_of_gt (Real.sqrt_pos.2 (by norm_num))
   have h2s : (2 : ℝ) * Real.sqrt 2 ≠ 0 := mul_ne_zero (by norm_num) hsqrt2
   have hr2 : (2 : ℝ) * r ^ 2 ≠ 0 := mul_ne_zero (by norm_num) (by positivity)
-  unfold radialResidual hydrogenRadial20 hydrogenRadial20' hydrogenRadial20'' <;>
-    field_simp [hr, hr2, h2s] <;> ring
+  unfold radialResidual hydrogenRadial20 hydrogenRadial20' hydrogenRadial20'';
+    field_simp [hr, hr2, h2s]; ring
 
 /-- 2p eigen-equation, algebraic form: at every `r ≠ 0`, the radial residual at
 `Z = 1, l = 1` is `(-1/8) * R`. -/
@@ -624,8 +623,8 @@ theorem radialResidual_2p {r : ℝ} (hr : r ≠ 0) :
   have hsqrt6 : Real.sqrt 6 ≠ 0 := ne_of_gt (Real.sqrt_pos.2 (by norm_num))
   have h2s : (2 : ℝ) * Real.sqrt 6 ≠ 0 := mul_ne_zero (by norm_num) hsqrt6
   have hr2 : (2 : ℝ) * r ^ 2 ≠ 0 := mul_ne_zero (by norm_num) (by positivity)
-  unfold radialResidual hydrogenRadial21 hydrogenRadial21' hydrogenRadial21'' <;>
-    field_simp [hr, hr2, h2s] <;> ring
+  unfold radialResidual hydrogenRadial21 hydrogenRadial21' hydrogenRadial21'';
+    field_simp [hr, hr2, h2s]; ring
 
 /-- 1s derivatives: `R_10' = -R_10` and `(R_10')' = R_10`, via `HasDerivAt`. -/
 lemma hydrogenRadial_deriv_1s (r : ℝ) :
@@ -638,7 +637,7 @@ lemma hydrogenRadial_deriv_1s (r : ℝ) :
     simp only [hydrogenRadial10, hydrogenRadial10']
     convert h3 using 1
     · funext y
-      simp only [hydrogenRadial10, Pi.neg_apply, id_eq] <;> ring
+      simp only [hydrogenRadial10, Pi.neg_apply, id_eq]
     · simp only [Pi.neg_apply, id_eq]
       ring
   · have h1 := (hasDerivAt_id r).neg
@@ -647,7 +646,7 @@ lemma hydrogenRadial_deriv_1s (r : ℝ) :
     simp only [hydrogenRadial10', hydrogenRadial10]
     convert h3 using 1
     · funext y
-      simp only [hydrogenRadial10', Pi.neg_apply, id_eq] <;> ring
+      simp only [hydrogenRadial10', Pi.neg_apply, id_eq]
     · simp only [Pi.neg_apply, id_eq]
       ring
 
@@ -670,7 +669,7 @@ lemma hydrogenRadial_deriv_2s (r : ℝ) :
     convert hfin using 1
     · funext y
       simp only [hydrogenRadial20, div_eq_mul_inv, Pi.mul_apply, Pi.sub_apply,
-        Pi.neg_apply, id_eq] <;> ring
+        Pi.neg_apply, id_eq]
     · simp only [Pi.mul_apply, Pi.sub_apply, Pi.neg_apply, id_eq]
       ring
   · have hneg := (hasDerivAt_id r).neg
@@ -688,7 +687,7 @@ lemma hydrogenRadial_deriv_2s (r : ℝ) :
     convert hfin using 1
     · funext y
       simp only [hydrogenRadial20', div_eq_mul_inv, Pi.mul_apply, Pi.sub_apply,
-        Pi.neg_apply, id_eq] <;> ring
+        Pi.neg_apply, id_eq]
     · simp only [Pi.mul_apply, Pi.sub_apply, Pi.neg_apply, id_eq]
       ring
 
@@ -709,7 +708,7 @@ lemma hydrogenRadial_deriv_2p (r : ℝ) :
     convert hfin using 1
     · funext y
       simp only [hydrogenRadial21, div_eq_mul_inv, Pi.mul_apply, Pi.neg_apply,
-        id_eq] <;> ring
+        id_eq]
     · simp only [Pi.mul_apply, Pi.neg_apply, id_eq]
       ring
   · have hneg := (hasDerivAt_id r).neg
@@ -727,7 +726,7 @@ lemma hydrogenRadial_deriv_2p (r : ℝ) :
     convert hfin using 1
     · funext y
       simp only [hydrogenRadial21', div_eq_mul_inv, Pi.mul_apply, Pi.sub_apply,
-        Pi.neg_apply, id_eq] <;> ring
+        Pi.neg_apply, id_eq]
     · simp only [Pi.mul_apply, Pi.sub_apply, Pi.neg_apply, id_eq]
       ring
 
@@ -791,7 +790,7 @@ lemma principalShells_capacity (N : ℕ) :
       (N : ℝ) * ((N : ℝ) + 1) * (2 * (N : ℝ) + 1) / 3 := by
   induction N with
   | zero =>
-      rw [Finset.Icc_eq_empty (by norm_num : ¬ (1 : ℕ) ≤ 0), Finset.sum_empty] <;>
+      rw [Finset.Icc_eq_empty (by norm_num : ¬ (1 : ℕ) ≤ 0), Finset.sum_empty];
         norm_num
   | succ k ih =>
       have hset : Finset.Icc 1 (k + 1) = insert (k + 1) (Finset.Icc 1 k) := by
@@ -801,11 +800,11 @@ lemma principalShells_capacity (N : ℕ) :
       have hmem : (k + 1) ∉ Finset.Icc 1 k := by
         simp only [Finset.mem_Icc]
         omega
-      rw [hset, Finset.sum_insert hmem, ih] <;> push_cast <;> ring
+      rw [hset, Finset.sum_insert hmem, ih]; push_cast; ring
 
 /-- For `e ≤ 2 * g` electrons, Hund's unpaired count never exceeds the number `g` of
 degenerate orbitals. -/
 lemma hundUnpaired_le_g {e g : ℕ} (he : e ≤ 2 * g) : hundUnpaired e g ≤ g := by
-  unfold hundUnpaired <;> omega
+  unfold hundUnpaired; omega
 
 end PhyslibExt.Chemistry.AngularMomentumRotorHydrogen

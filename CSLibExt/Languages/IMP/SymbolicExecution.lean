@@ -447,7 +447,7 @@ private theorem loop_mono (k : Nat) (g : BExp)
                 have hm' : ∃ m, m ∈ body (Path.tick q0) ∧
                     Leaf.done q ∈
                       Leaf.bind (fun r => loop k g body f1 r) m := by
-                  try exact hm
+                  exact hm
                 obtain ⟨m, hml, hqm⟩ := hm'
                 cases m with
                 | done r =>

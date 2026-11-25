@@ -48,7 +48,7 @@ example :
     ¬ Set.InjOn (fun x : Fin 2 → ℝ =>
       photonLaw (fun _ => (1 : ℝ≥0)) ![![1, 0]] x) Set.univ :=
   photon_not_identify_of_kernel ![![1, 0]] Set.univ
-    (by intro h; have hh := congrFun h 1; simp at hh) (by ext j; fin_cases j <;> simp [Matrix.mulVec, dotProduct]) (Set.mem_univ 0)
+    (by intro h; have hh := congrFun h 1; simp at hh) (by ext j; fin_cases j; simp [Matrix.mulVec, dotProduct]) (Set.mem_univ 0)
     (Set.mem_univ (0 + ![0, 1]))
 
 end PhyslibExtTest.BiomedicalImaging.PhotonObservation.Law

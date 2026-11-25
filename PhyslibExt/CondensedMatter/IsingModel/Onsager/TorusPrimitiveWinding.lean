@@ -297,8 +297,7 @@ lemma ons_outgoingBoundaryCoeff_dartRev
   rcases d with ⟨p, mu⟩
   fin_cases mu <;>
     simp [ons_outgoingBoundaryCoeff, ons_signedHorizontalBoundary,
-      ons_signedVerticalBoundary, ons_dartRev, ons_dirStep] <;>
-    ring
+      ons_signedVerticalBoundary, ons_dartRev, ons_dirStep]
 
 lemma ons_fin4_sum_eq_two
     (f : Fin 4 → ℤ) (a b : Fin 4) (hab : a ≠ b)

@@ -82,7 +82,7 @@ public def tableVacant : PerfectHashing Nat Nat idHash where
 private theorem tableVacant_valid : Valid tableVacant := by
   apply Valid.mk_of_placed
   intro i j key value h
-  fin_cases i <;> fin_cases j <;> simp_all [tableVacant, idHash, Vector.get] <;> omega
+  fin_cases i; fin_cases j <;> simp_all [tableVacant, idHash, Vector.get]; omega
 
 example : Valid tableVacant := tableVacant_valid
 

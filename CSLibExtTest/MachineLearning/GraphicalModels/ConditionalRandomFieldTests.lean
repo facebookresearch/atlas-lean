@@ -99,7 +99,7 @@ private theorem asym_viterbiTab_one_zero :
     apply le_antisymm
     · apply Finset.sup'_le
       intro i _
-      fin_cases i <;> simp <;> norm_num
+      fin_cases i <;> simp; norm_num
     · calc (12 : ℚ) = (fun s' => (if s' = 0 then (4 : ℚ) else 1) *
           (if s' = 0 ∧ True then 3 else 1)) 0 := by norm_num
         _ ≤ _ := Finset.le_sup'
@@ -121,7 +121,7 @@ private theorem asym_viterbiTab_one_one :
     apply le_antisymm
     · apply Finset.sup'_le
       intro i _
-      fin_cases i <;> simp <;> norm_num
+      fin_cases i <;> simp
     · calc (4 : ℚ) = (fun s' => (if s' = 0 then (4 : ℚ) else 1) *
           (if s' = 0 ∧ (1 : Fin 2) = 0 then 3 else 1)) 0 := by norm_num
         _ ≤ _ := Finset.le_sup'

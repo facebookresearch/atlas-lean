@@ -63,7 +63,7 @@ example : ∃ ψ : Fin 2 → ℝ, ∃ π : Fin 2 → ℝ, (∀ ω : Fin 2, 0 < �
         = ∑ k : Fin 2, (fun _ => ![2, -1] : Fin 1 → Fin 2 → ℝ) a k
           * (![![3, 1], ![1, 1]] : Fin 2 → Fin 2 → ℝ) k ω := by
     intro a ω
-    fin_cases a <;> fin_cases ω <;> simp [Fin.sum_univ_two] <;> norm_num
+    fin_cases a; fin_cases ω <;> simp [Fin.sum_univ_two] <;> norm_num
   have hNA : NoFundedArbitrage (fun _ => ![5, 1] : Fin 1 → Fin 2 → ℝ)
       (fun _ => (1 : ℝ) : Fin 1 → ℝ) 2 := by
     rintro ⟨h, hnonneg, ω, hpos⟩

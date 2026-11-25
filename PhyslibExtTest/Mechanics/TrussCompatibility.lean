@@ -86,7 +86,7 @@ example : (axialCompatibilityUnit r3 ![0] ![1] *ᵥ u6) 0 = 2 := by
   have hrow : axialCompatibilityUnit r3 ![0] ![1]
       = (4 : ℝ)⁻¹ • axialCompatibility r3 ![0] ![1] := by
     ext e q
-    fin_cases e <;> simp [axialCompatibilityUnit, hL]
+    fin_cases e; simp [axialCompatibilityUnit, hL]
   rw [hrow, Matrix.smul_mulVec]
   have h8 : (axialCompatibility r3 ![0] ![1] *ᵥ u6) 0 = 8 := by
     rw [axialCompatibility_mulVec_apply]
@@ -120,7 +120,7 @@ example : ((axialCompatibility r3 ![0] ![1] * S6)ᵀ
     * Matrix.diagonal (![1] : Fin 1 → ℝ)
     * (axialCompatibility r3 ![0] ![1] * S6)).PosSemidef :=
   supported_posSemidef r3 ![0] ![1] S6 (![1] : Fin 1 → ℝ)
-    (by intro i; fin_cases i <;> norm_num)
+    (by intro i; fin_cases i; norm_num)
 
 /-! ## B. Supported virtual work -/
 
@@ -1720,7 +1720,7 @@ private lemma supportedBsF :
     axialCompatibility rF ![0, 1] ![1, 2] * SF = !![2, 0; 1, -1] := by
   ext e f
   fin_cases e <;> fin_cases f <;>
-    simp [Matrix.mul_apply, axialCompatibility, SF, Matrix.of_apply] <;>
+    simp [Matrix.mul_apply, axialCompatibility, SF, Matrix.of_apply];
     norm_num
 
 /-- W1 as a truss: the separation-form elastic

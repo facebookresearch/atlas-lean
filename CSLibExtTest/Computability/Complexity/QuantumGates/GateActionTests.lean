@@ -38,12 +38,10 @@ theorem toffoli_three_check :
   · decide
   · rw [applyCircuit_toffoliGates_single]
     · congr 1
-      all_goals (first | decide | rfl)
-    all_goals (first | decide | exact xGate_unitary | exact zGate_unitary | exact vGate_unitary | exact vDagGate_unitary)
+    all_goals (first | decide)
   · rw [applyCircuit_toffoliGates_single]
     · congr 1
-      all_goals (first | decide | rfl)
-    all_goals (first | decide | exact xGate_unitary | exact zGate_unitary | exact vGate_unitary | exact vDagGate_unitary)
+    all_goals (first | decide)
 
 /-- Nonvacuity at `N = 5` with out-of-order indices `a = 4, b = 0, c = 2`:
 `17 = 10001₂` has both controls set, so qubit `2` flips to `21 = 10101₂`;
@@ -55,12 +53,10 @@ theorem toffoli_five_check :
   refine ⟨by decide, ?_, ?_⟩
   · rw [applyCircuit_toffoliGates_single]
     · congr 1
-      all_goals (first | decide | rfl)
-    all_goals (first | decide | exact xGate_unitary | exact zGate_unitary | exact vGate_unitary | exact vDagGate_unitary)
+    all_goals (first | decide)
   · rw [applyCircuit_toffoliGates_single]
     · congr 1
-      all_goals (first | decide | rfl)
-    all_goals (first | decide | exact xGate_unitary | exact zGate_unitary | exact vGate_unitary | exact vDagGate_unitary)
+    all_goals (first | decide)
 
 /-- Both placement branches of an embedded `X` (`q > p` and `q < p`), and
 both CNOT orientations, on basis states at `N = 3`. -/
@@ -70,22 +66,18 @@ theorem embedded_and_cnot_check :
       applyGate 3 (controlledGate xGate 0 2) (Pi.single 1 1) = Pi.single 5 1 ∧
       applyGate 3 (controlledGate xGate 2 0) (Pi.single 1 1) = Pi.single 1 1 := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · first | rw [applyGate_embeddedGate_xGate_single] | rw [applyGate_embeddedGate_single] | rw [applyGate_embeddedGate_xGate]
+  · first | rw [applyGate_embeddedGate_xGate_single]
     · congr 1
-      all_goals (first | decide | rfl)
-    all_goals (first | decide | exact xGate_unitary | exact zGate_unitary | exact vGate_unitary | exact vDagGate_unitary)
-  · first | rw [applyGate_embeddedGate_xGate_single] | rw [applyGate_embeddedGate_single] | rw [applyGate_embeddedGate_xGate]
+    all_goals (first | decide)
+  · first | rw [applyGate_embeddedGate_xGate_single]
     · congr 1
-      all_goals (first | decide | rfl)
-    all_goals (first | decide | exact xGate_unitary | exact zGate_unitary | exact vGate_unitary | exact vDagGate_unitary)
-  · first | rw [applyGate_cnot_single] | rw [applyGate_controlledGate_single] | rw [applyGate_controlledGate_xGate_single] | rw [applyGate_cnot]
+    all_goals (first | decide)
+  · first | rw [applyGate_cnot_single]
     · congr 1
-      all_goals (first | decide | rfl)
-    all_goals (first | decide | exact xGate_unitary | exact zGate_unitary | exact vGate_unitary | exact vDagGate_unitary)
-  · first | rw [applyGate_cnot_single] | rw [applyGate_controlledGate_single] | rw [applyGate_controlledGate_xGate_single] | rw [applyGate_cnot]
+    all_goals (first | decide)
+  · first | rw [applyGate_cnot_single]
     · congr 1
-      all_goals (first | decide | rfl)
-    all_goals (first | decide | exact xGate_unitary | exact zGate_unitary | exact vGate_unitary | exact vDagGate_unitary)
+    all_goals (first | decide)
 
 /-- Swap exchanges the outer qubits at `N = 3`, and `Z` phases the
 `1` branch: at the basis state `1`, an embedded `Z` at qubit `0` has
@@ -203,8 +195,6 @@ theorem locality_check (s : Fin (2 ^ 3)) (hs : qBit 2 s.val ≠ 0) :
           (first | exact hwf1 | exact hwf2 | decide |
             (refine ⟨hwf1, ?_, ?_⟩ <;> decide) | (refine ⟨hwf2, ?_, ?_⟩ <;> decide)))
       | (intro t ht; by_cases h : t = 3 <;>
-          (first | (subst h; exact (ht (by decide)).elim) | exact Pi.single_eq_of_ne h 1))
-      | (intro t ht; by_cases h : t = 3 <;>
-          (first | (subst h; decide) | exact absurd (Pi.single_eq_of_ne h 1) ht)))
+          (first | (subst h; exact (ht (by decide)).elim) | exact Pi.single_eq_of_ne h 1)))
 
 end Cslib.Complexity.Classes.Tests

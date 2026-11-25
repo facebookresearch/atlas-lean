@@ -28,7 +28,7 @@ def branchDTMC : DTMC (Fin 3) where
     · intro s t
       fin_cases s <;> fin_cases t <;> norm_num
     · intro s
-      fin_cases s <;> simp [Fin.sum_univ_three] <;> norm_num
+      fin_cases s <;> simp [Fin.sum_univ_three]; norm_num
 
 /-- Comparison directions at unequal values. -/
 example : Cmp.eval .le (1 / 2 : ℚ) 1 = true :=

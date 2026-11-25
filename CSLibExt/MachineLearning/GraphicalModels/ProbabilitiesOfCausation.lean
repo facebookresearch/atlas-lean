@@ -1065,7 +1065,7 @@ private theorem poc_aux_marg_cond (p : CfLaw) (hp : IsCfLaw p) (i j k : Bool) :
 
 private theorem poc_aux_prod_eq (a : Bool × Bool) (i j : Bool) :
     (a.1 = i ∧ a.2 = j) ↔ a = (i, j) := by
-  cases a <;> simp
+  cases a; simp
 
 private theorem poc_aux_coord (p : CfLaw) (hp : IsCfLaw p) (i j k : Bool) :
     ((poc_aux_M.cfLaw (poc_aux_mu p hp) 1 2) i j k) = p i j k := by

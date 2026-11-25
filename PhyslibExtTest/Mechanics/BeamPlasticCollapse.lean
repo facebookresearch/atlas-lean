@@ -98,7 +98,7 @@ private theorem W2_kinematic : uniformLoadWork 2 ⬝ᵥ ![2 / 2] = 1 ∧
   exact h
 
 private theorem W2b_rotations : hingeRotation 2 *ᵥ ![1] = ![-1, 2, -1] := by
-  ext i; fin_cases i <;> simp [hingeRotation, Matrix.mulVec, dotProduct] <;> norm_num
+  ext i; fin_cases i <;> simp [hingeRotation, Matrix.mulVec, dotProduct]; norm_num
 
 /-- T4 integrated with the canonical owner theorem (no binder left). -/
 private theorem W3_isGreatest_integrated :

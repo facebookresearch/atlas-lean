@@ -426,13 +426,13 @@ lemma ons_torus_neighborFinset_steps (L : ℕ) [Fact (2 < L)]
   constructor
   · rintro (⟨hx, hy | hy⟩ | ⟨hy, hx | hx⟩)
     · right; right; right
-      apply Prod.ext <;> simp [ons_dirStep, hx] <;> linear_combination -hy
+      apply Prod.ext <;> simp [ons_dirStep, hx]; linear_combination -hy
     · right; left
-      apply Prod.ext <;> simp [ons_dirStep, hx] <;> linear_combination -hy
+      apply Prod.ext <;> simp [ons_dirStep, hx]; linear_combination -hy
     · right; right; left
-      apply Prod.ext <;> simp [ons_dirStep, hy] <;> linear_combination -hx
+      apply Prod.ext <;> simp [ons_dirStep, hy]; linear_combination -hx
     · left
-      apply Prod.ext <;> simp [ons_dirStep, hy] <;> linear_combination -hx
+      apply Prod.ext <;> simp [ons_dirStep, hy]; linear_combination -hx
   · rintro (h | h | h | h)
     · have hx := congrArg Prod.fst h
       have hy := congrArg Prod.snd h
@@ -466,7 +466,7 @@ lemma ons_dirStep_injective (L : ℕ) [Fact (2 < L)]
   fin_cases mu <;> fin_cases nu <;>
     simp [ons_dirStep, Prod.ext_iff, h1] at h ⊢ <;>
     try {exfalso; apply h2; linear_combination h} <;>
-    try {exfalso; apply h2; linear_combination -h}
+    {exfalso; apply h2; linear_combination -h}
 
 lemma ons_torus_neighbor_sum_eq_direction_sum (L : ℕ) [Fact (2 < L)]
     (v : ZMod L × ZMod L) (f : (ZMod L × ZMod L) → ZMod 2) :

@@ -99,7 +99,7 @@ lemma ons_weightedSpinCharacterSum_scaleEdge
             ∏ f ∈ F, weight f else 0)) := by
       apply Finset.sum_congr rfl
       intro F hF
-      by_cases he : edge ∈ F <;> simp [he] <;> ring
+      by_cases he : edge ∈ F <;> simp [he]; ring
     _ = (∑ F ∈ evenSubgraphs (onsTorusGraph L),
         (ons_spinCharacter a b (ons_evenHomology L F) : ℂ) *
           if edge ∈ F then 0 * ∏ f ∈ F, weight f else ∏ f ∈ F, weight f) +

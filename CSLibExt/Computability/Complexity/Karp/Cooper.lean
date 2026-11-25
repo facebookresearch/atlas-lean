@@ -2392,7 +2392,7 @@ theorem coopLits_len_le (ls : List (ℕ × Bool)) (o : ℕ) (s : CoopSt) :
     have h1 := coopLit_len_le_add2 l o s
     have h2 := ih (coopLit l o s).2 (coopLit l o s).1
     simp only [List.length_cons] at h2 ⊢
-    try omega
+    omega
 
 theorem coopClause_len_le (C : CNFClause) (s : CoopSt) :
     (coopClause C s).nodes.length ≤ s.nodes.length + 2 + 2 * C.length := by

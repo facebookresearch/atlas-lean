@@ -42,7 +42,7 @@ example : (20 : ℝ) = (20 - 13)
       else if i = 1 then 18 else if i = 2 then 14 else 13)
     (by norm_num) (by norm_num) (by norm_num)
     (by intro i _; norm_num) (by intro i _; norm_num)
-    (by norm_num) (by intro i hi; interval_cases i <;> norm_num)
+    (by norm_num) (by intro i hi; interval_cases i; norm_num)
     (by norm_num)
   simpa using h
 

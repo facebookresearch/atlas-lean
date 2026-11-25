@@ -1016,7 +1016,7 @@ theorem static_optimality (xs : ℕ → α) {t : BinaryTree α} (hord : BinarySe
       rw [mul_one]
       exact hwq i (BinarySearchTree.mem_inorder.mp hi)
     rw [h1, ← sum_range_eq_sum_inorder xs hord m hmem (fun _ => 1)]
-    all_goals simp
+    simp
   have key := access_sequence_le_weighted hw xs hord m hmem
   rw [hWm] at key
   have hF : ∀ F : ℝ → ℝ, ((BinarySearchTree.inorder t).map (fun i => F (w i))).sum =

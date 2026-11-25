@@ -78,7 +78,7 @@ lemma sourceStep_flags (x y : Array Bool) (m w : Nat) (i : Fin m)
   simp only [TimeM.ret_bind]
   split_ifs <;> cases previous <;>
     simp_all only [graphRead, TimeM.ret_bind, TimeM.ret_pure]
-  all_goals split_ifs <;> simp_all only [↓reduceIte, TimeM.ret_pure, Bool.false_eq_true]
+  split_ifs <;> simp_all only [↓reduceIte, TimeM.ret_pure, Bool.false_eq_true]
 
 lemma sourceStep_prefix_yield_info (x y : Array Bool) (m w : Nat) (i : Fin m)
     (vs : List (Fin m)) (hsize : y.size = m * w)

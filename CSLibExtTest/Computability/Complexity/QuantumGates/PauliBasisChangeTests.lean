@@ -29,7 +29,7 @@ theorem omegaH_conj_zGate_entry_00 :
       complexOfGRatMatrix omegaH) 0 0 = 0 := by
   simp [Matrix.mul_apply, Matrix.star_apply, Fin.sum_univ_two, complexOfGRatMatrix,
     omegaH, zGate, toComplex_gaussRatEnc, Matrix.of_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff] <;> norm_num
+    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff]
 
 /-- Entry (0, 1) of the X basis-change identity. -/
 theorem omegaH_conj_zGate_entry_01 :
@@ -37,7 +37,7 @@ theorem omegaH_conj_zGate_entry_01 :
       complexOfGRatMatrix omegaH) 0 1 = 1 := by
   simp [Matrix.mul_apply, Matrix.star_apply, Fin.sum_univ_two, complexOfGRatMatrix,
     omegaH, zGate, toComplex_gaussRatEnc, Matrix.of_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff] <;> norm_num
+    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff]; norm_num
 
 /-- Entry (1, 0) of the X basis-change identity. -/
 theorem omegaH_conj_zGate_entry_10 :
@@ -45,7 +45,7 @@ theorem omegaH_conj_zGate_entry_10 :
       complexOfGRatMatrix omegaH) 1 0 = 1 := by
   simp [Matrix.mul_apply, Matrix.star_apply, Fin.sum_univ_two, complexOfGRatMatrix,
     omegaH, zGate, toComplex_gaussRatEnc, Matrix.of_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff] <;> norm_num
+    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff]; norm_num
 
 /-- Entry (1, 1) of the X basis-change identity. -/
 theorem omegaH_conj_zGate_entry_11 :
@@ -53,7 +53,7 @@ theorem omegaH_conj_zGate_entry_11 :
       complexOfGRatMatrix omegaH) 1 1 = 0 := by
   simp [Matrix.mul_apply, Matrix.star_apply, Fin.sum_univ_two, complexOfGRatMatrix,
     omegaH, zGate, toComplex_gaussRatEnc, Matrix.of_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff] <;> norm_num
+    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff]; norm_num
 
 /-- Entry (0, 0) of the Y basis-change identity. -/
 theorem omegaH_sDag_conj_zGate_entry_00 :
@@ -62,7 +62,7 @@ theorem omegaH_sDag_conj_zGate_entry_00 :
       (complexOfGRatMatrix omegaH * complexOfGRatMatrix sDagGate)) 0 0 = 0 := by
   simp [Matrix.mul_apply, Matrix.star_apply, Fin.sum_univ_two, complexOfGRatMatrix,
     omegaH, zGate, sDagGate, toComplex_gaussRatEnc, Matrix.of_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff] <;> norm_num
+    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff]
 
 /-- Entry (0, 1) of the Y basis-change identity. -/
 theorem omegaH_sDag_conj_zGate_entry_01 :
@@ -72,7 +72,7 @@ theorem omegaH_sDag_conj_zGate_entry_01 :
       -Complex.I := by
   simp [Matrix.mul_apply, Matrix.star_apply, Fin.sum_univ_two, complexOfGRatMatrix,
     omegaH, zGate, sDagGate, toComplex_gaussRatEnc, Matrix.of_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff] <;> norm_num
+    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff]; norm_num
 
 /-- Entry (1, 0) of the Y basis-change identity. -/
 theorem omegaH_sDag_conj_zGate_entry_10 :
@@ -82,7 +82,7 @@ theorem omegaH_sDag_conj_zGate_entry_10 :
       Complex.I := by
   simp [Matrix.mul_apply, Matrix.star_apply, Fin.sum_univ_two, complexOfGRatMatrix,
     omegaH, zGate, sDagGate, toComplex_gaussRatEnc, Matrix.of_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff] <;> norm_num
+    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff]; norm_num
 
 /-- Entry (1, 1) of the Y basis-change identity. -/
 theorem omegaH_sDag_conj_zGate_entry_11 :
@@ -91,7 +91,7 @@ theorem omegaH_sDag_conj_zGate_entry_11 :
       (complexOfGRatMatrix omegaH * complexOfGRatMatrix sDagGate)) 1 1 = 0 := by
   simp [Matrix.mul_apply, Matrix.star_apply, Fin.sum_univ_two, complexOfGRatMatrix,
     omegaH, zGate, sDagGate, toComplex_gaussRatEnc, Matrix.of_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff] <;> norm_num
+    Matrix.cons_val_zero, Matrix.cons_val_one, Complex.ext_iff]; norm_num
 
 #print axioms omegaH_conj_zGate
 #print axioms omegaH_sDag_conj_zGate

@@ -68,7 +68,7 @@ example : trigammaIncrement 1 3 = 49 / 36 := by
 example : countHessian 1 !₂[1, 1] 1 !₂[1, 0] = !₂[-1, 1 / 2] := by
   ext i
   fin_cases i <;> simp [countHessian, trigammaIncrement]
-  all_goals norm_num
+  norm_num
 
 example : HasFDerivAt (fun t => countScore 1 t 1) (countHessian 1 !₂[1, 1] 1) !₂[1, 1] :=
   hasFDerivAt_countScore zero_le_one (by simp) (by simp) 1
@@ -87,7 +87,7 @@ example : ¬ IsUnit (countFisherInfo 1 1 1 (1 / 2)) := by
   have h0 : countFisherInfo 1 1 1 (1 / 2) !₂[1, 1] = 0 := by
     ext i
     fin_cases i <;> simp [countFisherInfo]
-    all_goals norm_num
+    norm_num
   have := MathlibExt.Probability.Statistics.VectorInference.inverse_apply_apply h !₂[1, 1]
   rw [h0, map_zero] at this
   have h1 := congrArg (fun v : E₂ => v 0) this

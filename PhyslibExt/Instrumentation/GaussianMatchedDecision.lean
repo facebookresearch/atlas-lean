@@ -444,8 +444,8 @@ private lemma log_four_thirds_gt : (-1/2 : ℝ) < Real.log (4/3 : ℝ) := by
 private lemma fin_one_inv : !![(1:ℝ)]⁻¹ = !![(1:ℝ)] := by
   have hRS : !![(1:ℝ)] * !![(1:ℝ)] = 1 := by
     ext i j
-    fin_cases i <;> fin_cases j <;>
-      simp [Matrix.mul_apply, Fin.sum_univ_one, Matrix.one_apply] <;> norm_num
+    fin_cases i; fin_cases j;
+      simp [Matrix.mul_apply, Fin.sum_univ_one, Matrix.one_apply]
   have hU : IsUnit !![(1:ℝ)].det := Matrix.isUnit_det_of_right_inverse hRS
   have hSR : !![(1:ℝ)]⁻¹ * !![(1:ℝ)] = 1 := by
     apply Matrix.nonsing_inv_mul

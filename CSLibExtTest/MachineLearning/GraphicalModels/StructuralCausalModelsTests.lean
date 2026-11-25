@@ -800,7 +800,7 @@ noncomputable def ca04t03_xorμ0 : StdSimplex ℝ Bool where
   weights := Finsupp.single true (1/4 : ℝ) + Finsupp.single false (3/4 : ℝ)
   nonneg := by
     intro x
-    cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply] <;> norm_num
+    cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply]; norm_num
   total := by
     (simp [Finsupp.sum_add_index, Finsupp.sum_single_index]; norm_num)
 
@@ -808,7 +808,7 @@ noncomputable def ca04t03_xorμ1 : StdSimplex ℝ Bool where
   weights := Finsupp.single true (1/3 : ℝ) + Finsupp.single false (2/3 : ℝ)
   nonneg := by
     intro x
-    cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply] <;> norm_num
+    cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply]; norm_num
   total := by
     (simp [Finsupp.sum_add_index, Finsupp.sum_single_index]; norm_num)
 
@@ -999,14 +999,10 @@ noncomputable def ca05t04_nd_coin : StdSimplex ℝ Bool where
   weights := Finsupp.single true (1/2 : ℝ) + Finsupp.single false (1/2 : ℝ)
   nonneg := by
     intro x
-    cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply] <;> norm_num
+    cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply]
   total := by
     first
       | (simp [Finsupp.sum_add_index, Finsupp.sum_single_index]; norm_num)
-      | (simp [Finsupp.sum_add_index', Finsupp.sum_single_index]; norm_num)
-      | (rw [Finsupp.sum_fintype (fun _ => rfl)]
-         simp [Fintype.sum_bool, Finsupp.add_apply, Finsupp.single_apply]
-         norm_num)
 
 /-- Test noise laws: a fair coin at every node. -/
 noncomputable def ca05t04_nd_μ : (k : Fin 3) → StdSimplex ℝ Bool :=
