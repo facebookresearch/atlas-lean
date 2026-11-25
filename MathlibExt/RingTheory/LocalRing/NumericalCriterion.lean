@@ -42,7 +42,8 @@ import Mathlib.RingTheory.Nilpotent.Lemmas
 Two inputs to the numerical criterion for a surjection of algebras over a
 base ring `𝒪` equipped with sections to `𝒪`: the cotangent space can only
 shrink under a compatible surjection, the congruence ideal can only grow,
-and for a finite reduced algebra the congruence ideal is nonzero.
+and, when `𝒪` is a domain, the congruence ideal of a module-finite, reduced,
+Noetherian algebra is nonzero.
 -/
 
 @[expose] public section
@@ -76,8 +77,8 @@ public theorem AlgHom.length_cotangent_le_and_congruenceIdeal_le_of_surjective
     obtain ⟨r, rfl⟩ := hφ t
     rw [smul_eq_mul, ← map_mul, ← smul_eq_mul, hx r ((hmem r).mpr ht), map_zero]
 
-/-- The congruence ideal of a finite reduced `𝒪`-algebra with a section
-to `𝒪` is nonzero. -/
+/-- Over a domain `𝒪`, the congruence ideal of a module-finite, reduced,
+Noetherian `𝒪`-algebra with a section to `𝒪` is nonzero. -/
 public theorem AlgHom.congruenceIdeal_ne_bot_of_isReduced
     {𝒪 : Type*} {T : Type*} [CommRing 𝒪] [IsDomain 𝒪]
     [CommRing T] [Algebra 𝒪 T] [Module.Finite 𝒪 T] [IsNoetherianRing T] [IsReduced T]
