@@ -14,3 +14,7 @@
 - [Cohomology Scalar](cohomology-scalar.md)
 - [Canonical Ell Adic Module](canonical-ell-adic-module.md)
 - [Rational Cohomology](rational-cohomology.md)
+- [Integral Finite](integral-finite.md)
+- [Rational Finite](rational-finite.md)
+- [Integral Vanish](integral-vanish.md)
+- [Rational Vanish](rational-vanish.md)

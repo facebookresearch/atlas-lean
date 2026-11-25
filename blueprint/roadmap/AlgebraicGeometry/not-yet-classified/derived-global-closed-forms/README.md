@@ -23,3 +23,8 @@
 - [Space Weak Equivalences](space-weak-equivalences.md)
 - [Space Q](space-q.md)
 - [Affine Closed Form Normalization](affine-closed-form-normalization.md)
+- [Derived affine de Rham system](derived-affine-de-rham-system.md)
+- [Weighted negative cyclic diagram](weighted-negative-cyclic-diagram.md)
+- [Global closed form realization](global-closed-form-realization.md)
+- [Sized space homotopy limit kan](sized-space-homotopy-limit-kan.md)
+- [Derived affine closed form normalization](derived-affine-closed-form-normalization.md)

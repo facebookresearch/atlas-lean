@@ -12,3 +12,7 @@
 - [Frame Envelope Retraction](frame-envelope-retraction.md)
 - [Interval Induction](interval-induction.md)
 - [Endpoint Induction Unit](endpoint-induction-unit.md)
+- [Native restriction composite identity](native-restriction-composite-identity.md)
+- [Native moduli simplex module](native-moduli-simplex-module.md)
+- [Native frame envelope retraction](native-frame-envelope-retraction.md)
+- [Native endpoint induction unit quasi isomorphism](native-endpoint-induction-unit-quasi-iso.md)

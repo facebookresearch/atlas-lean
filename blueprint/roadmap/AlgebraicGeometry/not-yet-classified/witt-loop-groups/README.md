@@ -1,0 +1,18 @@
+# Witt Loop Groups
+
+- [Scalar Map](scalar-map.md)
+- [Scalar Map naturality](scalar-map-naturality.md)
+- [Integral Test](integral-test.md)
+- [Rational Test](rational-test.md)
+- [Integral Map](integral-map.md)
+- [Fraction Map scalar](fraction-map-scalar.md)
+- [Rational Map](rational-map.md)
+- [Integral Tests](integral-tests.md)
+- [Localization](localization.md)
+- [Rational Tests](rational-tests.md)
+- [Localizations](localizations.md)
+- [Positive Loops](positive-loops.md)
+- [Loops](loops.md)
+- [Positive To Loop](positive-to-loop.md)
+- [Fpqc Precoverage](fpqc-precoverage.md)
+- [Fpqc Topology](fpqc-topology.md)

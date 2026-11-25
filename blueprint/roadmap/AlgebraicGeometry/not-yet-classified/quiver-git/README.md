@@ -15,3 +15,4 @@
 - [Is Subrepresentation](is-subrepresentation.md)
 - [Subrepresentation Weight](subrepresentation-weight.md)
 - [Numerically Semistable](numerically-semistable.md)
+- [Quiver GITWanted](king-numerical-criterion.md)

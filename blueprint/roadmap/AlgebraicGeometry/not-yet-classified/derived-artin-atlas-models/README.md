@@ -10,3 +10,5 @@
 - [Is Geometric](is-geometric-2.md)
 - [Is Derived Artin](is-derived-artin-2.md)
 - [Is Derived Artin](is-derived-artin-3.md)
+- [Derived artin product](derived-artin-product.md)
+- [Derived artin homotopy pullback](derived-artin-homotopy-pullback.md)
