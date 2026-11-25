@@ -68,3 +68,31 @@ example : HasWeightedZeroSum (squareSet (4 ^ 4)) (fun _ : Fin 1 => (16 : ZMod (4
   refine ⟨fun _ => 1, fun _ => ⟨1, isUnit_one, by simp⟩, ?_⟩
   have hcast : (ZMod.cast (16 : ZMod (4 ^ 4)) : ZMod (4 ^ 2)) = 0 := by decide
   simp [hcast]
+
+open scoped Pointwise
+
+-- Positive scaling at an odd prime: the reduced unit squares are exactly `1`, `4`, and `7`.
+example : ((9 : ZMod 81) • unitSquareSet 81).ncard = 3 := by
+  have hunit (u : ZMod 9) : IsUnit u ↔ u.val.Coprime 9 := by
+    rw [← ZMod.isUnit_iff_coprime, ZMod.natCast_zmod_val]
+  have htab : ∀ x : ZMod 9,
+      (∃ u : ZMod 9, u.val.Coprime 9 ∧ x = u ^ 2) ↔ x ∈ ({1, 4, 7} : Finset (ZMod 9)) := by
+    decide +kernel
+  have hs : unitSquareSet 9 = (({1, 4, 7} : Finset (ZMod 9)) : Set (ZMod 9)) := by
+    ext x
+    simpa only [unitSquareSet, Set.mem_ofPred_eq, hunit, Finset.mem_coe] using htab x
+  have h := ncard_scale_unitSquares_primePower 3 4 1 (by decide) (by decide)
+  change ((9 : ZMod 81) • unitSquareSet 81).ncard = (unitSquareSet 9).ncard at h
+  calc
+    _ = (unitSquareSet 9).ncard := h
+    _ = 3 := by
+      simpa only [hs, Set.ncard_coe_finset] using
+        (show ({1, 4, 7} : Finset (ZMod 9)).card = 3 by decide)
+
+-- The largest allowed scale at an even prime reduces to modulus two.
+example : ((4 : ZMod 8) • unitSquareSet 8).ncard = (unitSquareSet 2).ncard :=
+  ncard_scale_unitSquares_primePower 2 3 1 (by decide) (by decide)
+
+-- The zero exponent and zero scale reduce to the identity on residues modulo one.
+example : ((1 : ZMod 1) • unitSquareSet 1).ncard = (unitSquareSet 1).ncard :=
+  ncard_scale_unitSquares_primePower 2 0 0 (by decide) (by decide)

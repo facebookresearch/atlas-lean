@@ -53,9 +53,9 @@ attribute [local instance] HasDerivedCategory.standard
 
 variable (E : Type) [CommRing E] [TopologicalSpace E] [IsTopologicalRing E]
 
-/-- Sheaves of modules over the continuous coefficient ring have enough injectives, for every
-scheme. Tracked as `theorem_wanted`
-(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.moduleInjectives`). -/
+/-- For a topological commutative ring $E$, the category of sheaves of modules over the
+continuous coefficient ring `E_X` on the small pro-étale site of a scheme $X$ has enough
+injectives: an instance of this class asserts it for every scheme $X$. -/
 class ModuleInjectives : Prop where
   enoughInjectives (X : Scheme) : EnoughInjectives (ModuleSheaf E X)
 
@@ -210,9 +210,11 @@ def normalizedExtensionUnit (K : Cochains E X) :
     (derivedPullback E j).map
       ((extensionByZero E j).rightDerivedFunctorPlusUnit.app K)
 
-/-- The adjunction between derived extension by zero and derived restriction along an open
-immersion, with the expected unit on every complex. Its construction is tracked as `def_wanted`
-(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.openDerivedAdjunction`). -/
+/-- For an open immersion $j$ along which restriction (inverse image) and extension by zero (its
+left adjoint) exist and are exact, with enough injectives (`ModuleInjectives`): an adjunction
+between derived extension by zero and derived restriction along $j$ whose unit, on every
+bounded-below complex, is the expected unit `normalizedExtensionUnit` (the underived unit
+applied degreewise, followed by the units of the derived functors). -/
 class OpenDerivedAdjunction where
   adjunction : derivedExtensionByZero E j ⊣ derivedPullback E j
   unit_normalization : ∀ K : Cochains E X,
@@ -353,9 +355,11 @@ def normalizedImageUnit (K : Cochains E Y) : DerivedCategory.Plus.Q.obj K ⟶
       ((pullback E f).mapCochainComplexPlus.obj K) ≫
     (derivedPushforward E f).map ((pullback E f).rightDerivedFunctorPlusUnit.app K)
 
-/-- The adjunction between derived inverse and direct image, with the expected unit on every
-complex. Its construction is tracked as `def_wanted`
-(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.imageDerivedAdjunction`). -/
+/-- For a morphism of schemes $f$ whose inverse image (the left adjoint of direct image) exists
+and is exact, with enough injectives (`ModuleInjectives`): an adjunction between derived inverse
+image and derived direct image along $f$ whose unit, on every bounded-below complex, is the
+expected unit `normalizedImageUnit` (the underived unit applied degreewise, followed by the units
+of the derived functors). -/
 class ImageDerivedAdjunction where
   adjunction : derivedPullback E f ⊣ derivedPushforward E f
   unit_normalization : ∀ K : Cochains E Y,
@@ -376,9 +380,11 @@ def refinementSitePasting :
     eqToIso (congrArg (fun g : X ⟶ c.ambient ↦
       ProEtaleCohomologyFunctoriality.baseChange g) r.open_square)
 
-/-- The composition of direct images along the refinement, agreeing on sections with the pasting
-of base changes. Its construction is tracked as `def_wanted`
-(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.ringedRefinementPasting`). -/
+/-- For a refinement $r$ of a compactification $c$ of $f$ by another one $d$: an isomorphism from
+the direct image along the open immersion of $d$ followed by the direct image along $r$ to the
+direct image along the open immersion of $c$ which, on sections over every object of the
+pro-étale site of the ambient scheme of $c$, is restriction along the inverse of the pasting of
+base changes `refinementSitePasting`. -/
 class RingedRefinementPasting where
   pushforwardIso : pushforward E d.openMap ⋙ pushforward E r.map ≅ pushforward E c.openMap
   sections_normalization : ∀ (M : ModuleSheaf E X) (U : c.ambient.ProEt)
@@ -486,9 +492,13 @@ def extensionRefinementMap (K : Derived E X) :
       (derivedRefinementPasting E r).comparison.inv.app
         ((derivedExtensionByZero E c.openMap).obj K))
 
-/-- Open base change: the exchange map is an isomorphism for every complex. Tracked as
-`theorem_wanted`
-(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.refinementExchange`). -/
+/-- For a refinement $r$ of a compactification $c$ of $f$ by another one $d$, with enough injectives
+(`ModuleInjectives`), with inverse images along the open immersions of $c$ and $d$ and along $r$
+that exist and are exact, with exact extensions by zero along both open immersions, and with the
+given comparison data (`RingedRefinementPasting` for $r$ and `OpenDerivedAdjunction` along both
+open immersions): the condition that the open exchange map `extensionRefinementMap`
+$j_{d!} K ⟶ r^* j_{c!} K$ is an isomorphism for every object $K$ of the bounded-below derived
+category of $X$. -/
 class RefinementExchange : Prop where
   mapIsIso (K : Derived E X) : IsIso (extensionRefinementMap E r K)
 
@@ -523,9 +533,11 @@ def baseChangeTerminalIso :
   (IsTerminal.isTerminalObj (ProEtaleCohomologyFunctoriality.baseChange p) _
     terminalIsTerminal).uniqueUpToIso terminalIsTerminal
 
-/-- Global sections of a direct image are global sections, through the base change of the terminal
-object. Its construction is tracked as `def_wanted` (`WantedExt.AlgebraicGeometry.`
-`AdicDerivedCompactSupportsWanted.sectionsPushforwardNormalization`). -/
+/-- For a morphism of schemes $p : X ⟶ Y$, with enough injectives (`ModuleInjectives`): an
+isomorphism from global sections on $Y$ of direct images along $p$ to global sections on $X$
+which, on every module $M$, is the restriction map of $M$ along the canonical isomorphism from the
+terminal object of the pro-étale site of $X$ to the base change of the terminal object of that of
+$Y$ (`baseChangeTerminalIso`). -/
 class SectionsPushforwardNormalization where
   ordinary : pushforward E p ⋙ sections E Y ≅ sections E X
   sections_normalization : ∀ (M : ModuleSheaf E X)
@@ -552,9 +564,13 @@ def compositeSectionsUnit (K : Cochains E X) :
   (sections E Y).rightDerivedFunctorPlusUnit.app ((pushforward E p).mapCochainComplexPlus.obj K) ≫
     (derivedSections E Y).map ((pushforward E p).rightDerivedFunctorPlusUnit.app K)
 
-/-- Derived global sections of a derived direct image are the derived functor of the composite,
-compatibly with the units. Its construction is tracked as `def_wanted`
-(`WantedExt.AlgebraicGeometry.AdicDerivedCompactSupportsWanted.sectionsDerivedNormalization`). -/
+/-- For a morphism of schemes $p : X ⟶ Y$, with enough injectives (`ModuleInjectives`) and a given
+normalized comparison of global sections `SectionsPushforwardNormalization` for $p$: an
+isomorphism from the right derived functor of direct image along $p$ followed by global sections
+on $Y$ to derived direct image followed by derived global sections, compatible with the units: on
+every bounded-below complex, the derived unit of the composite followed by this isomorphism is
+`compositeSectionsUnit` (the derived unit of global sections, then derived global sections of
+the derived unit of direct image). -/
 class SectionsDerivedNormalization where
   comparison : (pushforward E p ⋙ sections E Y).rightDerivedFunctorPlus ≅
     derivedPushforward E p ⋙ derivedSections E Y
