@@ -12878,6 +12878,7 @@
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanProductDifference": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Rogers–Ramanujan–Slater functions of order eighteen"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanPsiFChi": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Ramanujan's continued fractions of order sixteen"},
   "MathlibExt/NumberTheory/ModularForms/JacobiTheta/RamanujanSummability": {"to": "NumberTheory/modular-forms-q-series/theta-q-series-partitions", "title": "Ramanujan's theta function"},
+  "MathlibExt/NumberTheory/ModularForms/LatticeDiscriminantEta": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Jacobi's product formula for the discriminant of a lattice"},
   "MathlibExt/NumberTheory/ModularForms/MeromorphicAtCusps": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Modular functions"},
   "MathlibExt/NumberTheory/ModularForms/ModularFunction": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Modular functions"},
   "MathlibExt/NumberTheory/ModularForms/ModularGroupParabolic": {"to": "NumberTheory/modular-forms-q-series/modular-forms", "title": "Modular group and congruence subgroups"},
