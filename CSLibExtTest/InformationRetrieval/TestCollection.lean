@@ -89,6 +89,6 @@ theorem fixture_precisionAt_r2 :
 theorem fixture_precisionAt_mem_Icc :
     precisionAt (fixture.relevant ()) r1 ∈
       Set.Icc (0 : ℝ) 1 :=
-  TestCollection.precisionAt_relevant_mem_Icc fixture () r1
+  precisionAt_mem_Icc (fixture.relevant ()) r1
 
 end Cslib.InformationRetrieval

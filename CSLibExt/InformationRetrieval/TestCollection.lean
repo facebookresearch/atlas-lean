@@ -9,8 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.InformationRetrieval.PrecisionAt
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.Interval.Set.Basic
 
 /-!
 # Test collections for ad hoc retrieval evaluation
@@ -69,11 +67,5 @@ theorem TestCollection.not_relevant_of_judged_nonrelevant {N : ℕ} {Q : Type*}
     ¬ T.relevant q d := by
   rw [TestCollection.relevant_iff, h]
   simp
-
-/-- Precision at a cutoff over `relevant` lies in `[0, 1]`. -/
-theorem TestCollection.precisionAt_relevant_mem_Icc {N k : ℕ} {Q : Type*}
-    (T : TestCollection N Q) (q : Q) (r : Fin k → Fin N) :
-    precisionAt (T.relevant q) r ∈ Set.Icc (0 : ℝ) 1 :=
-  precisionAt_mem_Icc (T.relevant q) r
 
 end Cslib.InformationRetrieval
