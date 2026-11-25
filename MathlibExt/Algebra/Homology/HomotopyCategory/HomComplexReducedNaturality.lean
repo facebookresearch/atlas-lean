@@ -337,7 +337,7 @@ public theorem annihilatorComplexMap_proof_irrel
     AddCommGrpCat.ofHom f)
     (annihilatorMap_proof_irrel η ε η' ε' a c b vmap hpre hpre' hpost hpost' n)
 
-/-- Source-variable and target-variable square transports commute.  -/
+/-- Source-variable and target-variable square transports commute. -/
 public theorem annihilatorComplexMap_source_target_commute
     (η : U ⟶ C) (ε : A ⟶ V) (η' : U' ⟶ C') (ε' : A' ⟶ V')
     (a : U' ⟶ U) (c : C' ⟶ C) (b : A ⟶ A') (vmap : V ⟶ V')
