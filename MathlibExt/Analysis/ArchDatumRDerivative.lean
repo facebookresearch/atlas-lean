@@ -1187,21 +1187,6 @@ namespace ArchWhittakerGrowth
 
 variable {𝕜 : Type} [RCLike 𝕜]
 
-section packaging
-
-variable {E F G : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
-  [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F] [NormedAddCommGroup G]
-      [NormedSpace ℝ G]
-
-end packaging
-
-section constants
-
-variable {F G : Type} [NormedAddCommGroup F] [NormedSpace ℝ F] [NormedAddCommGroup G]
-    [NormedSpace ℝ G]
-
-end constants
-
 private def invertibleCoords (𝕜 : Type) [RCLike 𝕜] : Set (Fin 2 → Fin 2 → 𝕜) :=
     {A | (Matrix.of A).det ≠ 0}
 
