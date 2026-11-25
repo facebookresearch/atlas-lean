@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.LurothBorelBernstein
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.ENNReal
 
@@ -35,35 +36,6 @@ open scoped ENNReal
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **First Lüroth digit.** For a real number $x$, the first Lüroth digit of $x$ is the natural
-number $d_1(x) = \lfloor 1/x \rfloor + 1$, where $\lfloor \cdot \rfloor$ is the floor truncated
-at $0$ and $1/0 = 0$. For $x \in (0, 1]$ this is the usual digit and is at least $2$; for
-$x \le 0$ and for $x > 1$ it equals $1$.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2. -/
-noncomputable def lurothDigit (x : ℝ) : ℕ :=
-  ⌊1 / x⌋₊ + 1
-
-/-- **Lüroth map.** For a real number $x$ with first Lüroth digit $d = d_1(x)$, the Lüroth
-map is $L(x) = d(d - 1)x - (d - 1)$.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2. -/
-noncomputable def lurothMap (x : ℝ) : ℝ :=
-  (lurothDigit x : ℝ) * ((lurothDigit x : ℝ) - 1) * x - ((lurothDigit x : ℝ) - 1)
-
-/-- **Lüroth digits.** For a real number $x$ and $n \ge 1$, the $n$-th Lüroth digit of $x$ is
-$d_n(x) = d_1(L^{n-1}(x))$, where $d_1$ is the first Lüroth digit, $L$ is the Lüroth map and
-$L^{n-1}$ is its $(n-1)$-fold iterate ($L^0$ is the identity).
-
-The digit sequence is indexed from $0$: its term of index $k$ is $d_1(L^k(x)) = d_{k+1}(x)$.
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Section 2. -/
-noncomputable def lurothDigitSeq (x : ℝ) (k : ℕ) : ℕ :=
-  lurothDigit (lurothMap^[k] x)
 
 /-- **First Lüroth digit of 1.** The first Lüroth digit of $1$ is $d_1(1) = 2$.
 
@@ -128,22 +100,6 @@ Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Proposit
 public theorem_wanted volume_lurothCylinder {n : ℕ} (c : Fin n → ℕ) :
     volume {x ∈ Set.Ioc (0 : ℝ) 1 | ∀ j : Fin n, lurothDigitSeq x j = c j} =
       ∏ j, ENNReal.ofReal (1 / ((c j : ℝ) * ((c j : ℝ) - 1)))
-
-/-- **Borel–Bernstein theorem for Lüroth digits.** Let $(\Psi(n))_{n \ge 0}$ be a sequence of
-positive reals, write $d_k(x)$ for the $k$-th Lüroth digit of $x$, and let $E$ be the set of
-$x \in (0, 1]$ such that $d_{n+1}(x) \ge \Psi(n)$ for infinitely many $n$. If
-$\sum_{n \ge 0} 1 / \Psi(n) < \infty$ then $E$ has Lebesgue measure $0$, and if
-$\sum_{n \ge 0} 1 / \Psi(n) = \infty$ then $E$ has Lebesgue measure $1$.
-
-The paper quotes this result from Jager and de Vroedt (its reference [3]).
-
-Source: Dmitry Kleinbock and Yuqing Zhang, *Metrical Properties of Functions of
-Consecutive Digits in Lüroth Series*, INTEGERS 24 (2024), Article A67, Theorem 1
-(`integers-2024-A67-thm-1`). -/
-public theorem_wanted volume_lurothDigit_ge_zero_one (Ψ : ℕ → ℝ) (hΨ : ∀ n, 0 < Ψ n) :
-    let E := {x ∈ Set.Ioc (0 : ℝ) 1 | ∃ᶠ n in atTop, Ψ n ≤ lurothDigitSeq x n}
-    (Summable (fun n => (Ψ n)⁻¹) → volume E = 0) ∧
-      (¬ Summable (fun n => (Ψ n)⁻¹) → volume E = 1)
 
 /-- **Zero-one law for weighted products of consecutive Lüroth digits.** Let $m \ge 1$, let
 $t_0, \dots, t_{m-1}$ be positive reals, let $T = \max_i t_i$ and let $\ell$ be the number of

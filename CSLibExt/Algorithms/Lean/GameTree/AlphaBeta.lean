@@ -150,8 +150,19 @@ private theorem max_rec (a b v m L r : α) (hab : a ≤ b)
     (ih : max a (min b v) = max a (min b m)) (hr : max a v ≤ r)
     (h : max (max a v) (min b r) = max (max a v) (min b L)) :
     max a (min b r) = max a (min b (max m L)) := by
-  simp only [max_def, min_def] at *
-  split_ifs at * <;> order
+  rcases le_total b (max a v) with hb | hb
+  · rw [min_eq_left (hb.trans hr), max_eq_right hab]
+    refine le_antisymm ?_ (max_le hab (min_le_left _ _))
+    calc b ≤ max a (min b v) := by
+          rcases le_max_iff.mp hb with h' | h'
+          · exact le_max_of_le_left h'
+          · exact le_max_of_le_right (le_min le_rfl h')
+      _ = max a (min b m) := ih
+      _ ≤ max a (min b (max m L)) := max_le_max le_rfl (min_le_min le_rfl (le_max_left _ _))
+  · have hlo : max a v ≤ min b r := le_min hb hr
+    rw [max_eq_right hlo] at h
+    rw [max_eq_right ((le_max_left a v).trans hlo), h, min_max_distrib_left, ← max_assoc, ← ih,
+      min_eq_right ((le_max_right a v).trans hb)]
 
 private theorem min_cut (a b v m L : α) (hab : a ≤ b)
     (ih : max a (min b v) = max a (min b m)) (hc : min b v ≤ a) :

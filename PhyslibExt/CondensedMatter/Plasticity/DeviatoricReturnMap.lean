@@ -19,8 +19,8 @@ public import Mathlib.Analysis.Matrix.Order
 Stresses and strains are real `3 × 3` matrices (no Voigt or Mandel
 vector), with tension-positive Cauchy stress. The metric is Mathlib's
 matrix inner product at the identity weight,
-`Matrix.toMatrixNormedAddCommGroup 1 Matrix.PosDef.one` and
-`Matrix.toMatrixInnerProductSpace 1 Matrix.PosDef.one.posSemidef`, so
+`Matrix.toMatrixNormedAddCommGroup (Fin 3) 1 Matrix.PosDef.one` and
+`Matrix.toMatrixInnerProductSpace (Fin 3) 1 Matrix.PosDef.one.posSemidef`, so
 `⟪A, B⟫_ℝ = ∑ i, ∑ j, A i j * B i j`: the full double contraction
 `A : B`, in which each off-diagonal shear pair of a symmetric tensor is
 counted twice. These Frobenius structures are scoped instances in the
@@ -97,11 +97,11 @@ open Elasticity
 
 /-- Full Frobenius norm on `3 × 3` real matrices, `‖A‖ = √(A * 1 * Aᴴ).trace`. -/
 noncomputable scoped instance frobeniusNormedAddCommGroup : NormedAddCommGroup 𝕄 :=
-  Matrix.toMatrixNormedAddCommGroup 1 Matrix.PosDef.one
+  Matrix.toMatrixNormedAddCommGroup (Fin 3) 1 Matrix.PosDef.one
 
 /-- Full Frobenius inner product on `3 × 3` real matrices, `⟪A, B⟫ = (B * 1 * Aᴴ).trace`. -/
 noncomputable scoped instance frobeniusInnerProductSpace : InnerProductSpace ℝ 𝕄 :=
-  Matrix.toMatrixInnerProductSpace 1 Matrix.PosDef.one.posSemidef
+  Matrix.toMatrixInnerProductSpace (Fin 3) 1 Matrix.PosDef.one.posSemidef
 
 /-- Uniform structure of the Frobenius norm, preferred over the entrywise matrix uniformity. -/
 noncomputable scoped instance (priority := high) frobeniusUniformSpace : UniformSpace 𝕄 :=
@@ -109,7 +109,7 @@ noncomputable scoped instance (priority := high) frobeniusUniformSpace : Uniform
 
 /-- The Frobenius inner product space sits over the Frobenius normed group (instance check). -/
 example : (NormedAddCommGroup.toSeminormedAddCommGroup : SeminormedAddCommGroup 𝕄) =
-    Matrix.toMatrixSeminormedAddCommGroup 1 Matrix.PosDef.one.posSemidef :=
+    Matrix.toMatrixSeminormedAddCommGroup (Fin 3) 1 Matrix.PosDef.one.posSemidef :=
   rfl
 
 /-- Admissible deviatoric stresses: symmetric trace-free `3 × 3` matrices. -/

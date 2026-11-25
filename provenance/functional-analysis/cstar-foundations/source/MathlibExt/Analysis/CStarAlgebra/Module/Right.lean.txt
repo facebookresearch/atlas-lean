@@ -1,0 +1,575 @@
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.Module.Defs
+
+import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
+
+/-!
+# Right actions on C-star modules
+
+A `CStarModule A E` uses a left action by `A`.  A right C-star module over `B`
+is therefore represented canonically by `CStarModule Bᵐᵒᵖ E`, using the
+existing right-action notation
+
+`x <• b = MulOpposite.op b • x`.
+
+This file derives the right-action and `B`-valued inner-product API without
+introducing a second module class or an `SMul B E` instance.  The coefficient
+and carrier universes are independent.  Completeness is not part of the
+pre-Hilbert-module signatures.
+
+The self module `B` over `B` is available only through the
+`CStarModule.Right` scope.  Importing this module does not install that
+instance globally.
+-/
+
+@[expose] public section
+
+open scoped RightActions
+
+namespace CStarModule
+
+universe uB uE
+
+section Inner
+
+variable {B : Type uB} {E : Type uE}
+variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
+variable [AddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E] [Norm E]
+variable [CStarModule Bᵐᵒᵖ E]
+
+/-- The `B`-valued inner product of a right C-star module represented as a
+`CStarModule Bᵐᵒᵖ E`. -/
+def rightInner (x y : E) : B :=
+  MulOpposite.unop (inner Bᵐᵒᵖ x y)
+
+@[simp]
+theorem rightInner_add_right (x y z : E) :
+    rightInner (B := B) x (y + z) =
+      rightInner (B := B) x y + rightInner (B := B) x z := by
+  simp [rightInner]
+
+@[simp]
+theorem rightInner_add_left (x y z : E) :
+    rightInner (B := B) (x + y) z =
+      rightInner (B := B) x z + rightInner (B := B) y z := by
+  simp [rightInner]
+
+@[simp]
+theorem rightInner_zero_right (x : E) : rightInner (B := B) x 0 = 0 := by
+  simp [rightInner]
+
+@[simp]
+theorem rightInner_zero_left (x : E) : rightInner (B := B) 0 x = 0 := by
+  simp [rightInner]
+
+@[simp]
+theorem rightInner_neg_right (x y : E) :
+    rightInner (B := B) x (-y) = -rightInner (B := B) x y := by
+  simp [rightInner]
+
+@[simp]
+theorem rightInner_neg_left (x y : E) :
+    rightInner (B := B) (-x) y = -rightInner (B := B) x y := by
+  simp [rightInner]
+
+@[simp]
+theorem rightInner_sub_right (x y z : E) :
+    rightInner (B := B) x (y - z) =
+      rightInner (B := B) x y - rightInner (B := B) x z := by
+  simp [rightInner]
+
+@[simp]
+theorem rightInner_sub_left (x y z : E) :
+    rightInner (B := B) (x - y) z =
+      rightInner (B := B) x z - rightInner (B := B) y z := by
+  simp [rightInner]
+
+@[simp]
+theorem rightInner_smul_right (c : ℂ) (x y : E) :
+    rightInner (B := B) x (c • y) = c • rightInner (B := B) x y := by
+  simp [rightInner]
+
+@[simp]
+theorem rightInner_smul_left (c : ℂ) (x y : E) :
+    rightInner (B := B) (c • x) y = star c • rightInner (B := B) x y := by
+  simp [rightInner]
+
+@[simp]
+theorem star_rightInner (x y : E) :
+    star (rightInner (B := B) x y) = rightInner (B := B) y x := by
+  rw [rightInner, rightInner, ← MulOpposite.unop_star,
+    CStarModule.star_inner]
+
+/-- The inner product is right-linear in its second vector. -/
+@[simp]
+theorem rightInner_right_smul (x y : E) (b : B) :
+    rightInner (B := B) x (y <• b) = rightInner (B := B) x y * b := by
+  simp [rightInner]
+
+/-- Moving a right coefficient out of the first vector conjugates it. -/
+@[simp]
+theorem rightInner_left_smul (x y : E) (b : B) :
+    rightInner (B := B) (x <• b) y = star b * rightInner (B := B) x y := by
+  simp [rightInner]
+
+/-- Vectors are determined by all right-module inner products against them. -/
+theorem ext_rightInner {x y : E}
+    (h : ∀ z : E, rightInner (B := B) z x = rightInner (B := B) z y) : x = y := by
+  rw [← sub_eq_zero]
+  apply (CStarModule.inner_self (A := Bᵐᵒᵖ)).mp
+  have hu : rightInner (B := B) (x - y) (x - y) = 0 := by
+    rw [rightInner_sub_right, h (x - y), sub_self]
+  apply MulOpposite.unop_injective
+  simpa [rightInner] using hu
+
+/-! ## Derived right-action laws -/
+
+@[simp]
+theorem right_smul_mul (x : E) (b c : B) :
+    (x <• b) <• c = x <• (b * c) := by
+  apply ext_rightInner (B := B)
+  intro y
+  rw [rightInner_right_smul, rightInner_right_smul,
+    rightInner_right_smul, mul_assoc]
+
+@[simp]
+theorem add_right_smul (x y : E) (b : B) :
+    (x + y) <• b = x <• b + y <• b := by
+  apply ext_rightInner (B := B)
+  intro z
+  rw [rightInner_right_smul, rightInner_add_right,
+    rightInner_add_right, rightInner_right_smul,
+    rightInner_right_smul, add_mul]
+
+@[simp]
+theorem right_smul_add (x : E) (b c : B) :
+    x <• (b + c) = x <• b + x <• c := by
+  apply ext_rightInner (B := B)
+  intro z
+  rw [rightInner_right_smul, rightInner_add_right,
+    rightInner_right_smul, rightInner_right_smul, mul_add]
+
+@[simp]
+theorem zero_right_smul (b : B) : (0 : E) <• b = 0 := by
+  apply ext_rightInner (B := B)
+  intro z
+  rw [rightInner_right_smul, rightInner_zero_right, zero_mul]
+
+@[simp]
+theorem right_smul_zero (x : E) : x <• (0 : B) = 0 := by
+  apply ext_rightInner (B := B)
+  intro z
+  rw [rightInner_right_smul, mul_zero, rightInner_zero_right]
+
+@[simp]
+theorem smul_right_smul (c : ℂ) (x : E) (b : B) :
+    (c • x) <• b = c • (x <• b) := by
+  apply ext_rightInner (B := B)
+  intro y
+  rw [rightInner_right_smul, rightInner_smul_right,
+    rightInner_smul_right, rightInner_right_smul, smul_mul_assoc]
+
+@[simp]
+theorem right_smul_smul (x : E) (c : ℂ) (b : B) :
+    x <• (c • b) = c • (x <• b) := by
+  apply ext_rightInner (B := B)
+  intro y
+  rw [rightInner_right_smul, rightInner_smul_right,
+    rightInner_right_smul, mul_smul_comm]
+
+@[simp]
+theorem rightInner_right_smul_self (x : E) (b : B) :
+    rightInner (B := B) (x <• b) (x <• b) =
+      star b * rightInner (B := B) x x * b := by
+  simp [mul_assoc]
+
+theorem norm_rightInner_self (x : E) :
+    ‖rightInner (B := B) x x‖ = ‖x‖ ^ 2 := by
+  rw [rightInner, MulOpposite.norm_unop]
+  exact (CStarModule.norm_sq_eq (A := Bᵐᵒᵖ) (x := x)).symm
+
+/-- Right multiplication is bounded by the product of the vector and
+coefficient norms. -/
+theorem norm_right_smul_le (x : E) (b : B) :
+    ‖x <• b‖ ≤ ‖x‖ * ‖b‖ := by
+  refine (sq_le_sq₀ (CStarModule.norm_nonneg Bᵐᵒᵖ (E := E) (x := x <• b))
+    (mul_nonneg (CStarModule.norm_nonneg Bᵐᵒᵖ (E := E) (x := x))
+      (norm_nonneg b))).mp ?_
+  rw [CStarModule.norm_sq_eq (A := Bᵐᵒᵖ)]
+  change ‖rightInner (B := B) (x <• b) (x <• b)‖ ≤ (‖x‖ * ‖b‖) ^ 2
+  rw [rightInner_right_smul_self]
+  calc
+    ‖star b * rightInner (B := B) x x * b‖ ≤
+        ‖star b * rightInner (B := B) x x‖ * ‖b‖ :=
+      norm_mul_le _ _
+    _ ≤ (‖star b‖ * ‖rightInner (B := B) x x‖) * ‖b‖ :=
+      mul_le_mul_of_nonneg_right (norm_mul_le _ _) (norm_nonneg _)
+    _ = (‖x‖ * ‖b‖) ^ 2 := by
+      rw [norm_star, norm_rightInner_self (B := B)]
+      ring
+
+/-- Right multiplication as a complex-bilinear map, without installing an
+ambient `SMul B E`.  This construction is available at the pre-Hilbert level. -/
+def rightSMulLinear : E →ₗ[ℂ] B →ₗ[ℂ] E where
+  toFun x :=
+    { toFun := fun b ↦ x <• b
+      map_add' := right_smul_add x
+      map_smul' := right_smul_smul x }
+  map_add' x y := by
+    ext b
+    exact add_right_smul x y b
+  map_smul' c x := by
+    ext b
+    exact smul_right_smul c x b
+
+@[simp]
+theorem rightSMulLinear_apply (x : E) (b : B) :
+    rightSMulLinear (B := B) x b = x <• b :=
+  rfl
+
+
+section InnerCovariance
+
+variable {C : Type*} {F : Type*}
+variable [NonUnitalCStarAlgebra C] [PartialOrder Cᵐᵒᵖ]
+variable [AddCommGroup F] [Module ℂ F] [Norm F]
+  [SMul Cᵐᵒᵖ F] [CStarModule Cᵐᵒᵖ F]
+
+/-- Right-inner covariance forces coefficient semilinearity. The vector map
+need not be linear, continuous or bijective; the coefficient map needs only
+multiplication and star preservation. -/
+theorem map_right_smul_of_map_rightInner
+    {S : Type*} [FunLike S B C] [MulHomClass S B C] [StarHomClass S B C]
+    (σ : S) (U : E → F)
+    (hinner : ∀ x y : E,
+      CStarModule.rightInner (B := C) (U x) (U y) =
+        σ (CStarModule.rightInner (B := B) x y))
+    (x : E) (b : B) :
+    U (x <• b) = U x <• σ b := by
+  let d : F := U (x <• b) - U x <• σ b
+  let q : C :=
+    σ (star b) * σ (CStarModule.rightInner (B := B) x x) * σ b
+  have h11 : CStarModule.rightInner (B := C)
+      (U (x <• b)) (U (x <• b)) = q := by
+    dsimp only [q]
+    rw [hinner, CStarModule.rightInner_right_smul_self, map_mul, map_mul]
+  have h12 : CStarModule.rightInner (B := C)
+      (U (x <• b)) (U x <• σ b) = q := by
+    dsimp only [q]
+    rw [CStarModule.rightInner_right_smul, hinner,
+      CStarModule.rightInner_left_smul, map_mul]
+  have h21 : CStarModule.rightInner (B := C)
+      (U x <• σ b) (U (x <• b)) = q := by
+    dsimp only [q]
+    rw [CStarModule.rightInner_left_smul, hinner,
+      CStarModule.rightInner_right_smul, ← map_star, map_mul, ← mul_assoc]
+  have h22 : CStarModule.rightInner (B := C)
+      (U x <• σ b) (U x <• σ b) = q := by
+    dsimp only [q]
+    rw [CStarModule.rightInner_right_smul_self, hinner, ← map_star]
+  have hdd : CStarModule.rightInner (B := C) d d = 0 := by
+    dsimp only [d]
+    calc
+      CStarModule.rightInner (B := C)
+          (U (x <• b) - U x <• σ b)
+          (U (x <• b) - U x <• σ b) =
+        (CStarModule.rightInner (B := C) (U (x <• b)) (U (x <• b)) -
+          CStarModule.rightInner (B := C) (U (x <• b)) (U x <• σ b)) -
+        (CStarModule.rightInner (B := C) (U x <• σ b) (U (x <• b)) -
+          CStarModule.rightInner (B := C) (U x <• σ b) (U x <• σ b)) := by
+            rw [CStarModule.rightInner_sub_left,
+              CStarModule.rightInner_sub_right,
+              CStarModule.rightInner_sub_right]
+      _ = (q - q) - (q - q) := by rw [h11, h12, h21, h22]
+      _ = 0 := by simp only [sub_self]
+  have hd : d = 0 := by
+    apply (CStarModule.inner_self (A := Cᵐᵒᵖ)).mp
+    apply MulOpposite.unop_injective
+    simpa [CStarModule.rightInner] using hdd
+  exact sub_eq_zero.mp hd
+
+/-- Right-inner covariance and preservation of coefficient norms imply
+preservation of vector norms, without linearity or completeness. -/
+theorem norm_map_of_map_rightInner
+    (σ : B → C) (U : E → F)
+    (hσnorm : ∀ b : B, ‖σ b‖ = ‖b‖)
+    (hinner : ∀ x y : E,
+      CStarModule.rightInner (B := C) (U x) (U y) =
+        σ (CStarModule.rightInner (B := B) x y))
+    (x : E) : ‖U x‖ = ‖x‖ := by
+  apply (sq_eq_sq₀
+    (CStarModule.norm_nonneg Cᵐᵒᵖ (E := F) (x := U x))
+    (CStarModule.norm_nonneg Bᵐᵒᵖ (E := E) (x := x))).mp
+  calc
+    ‖U x‖ ^ 2 =
+        ‖CStarModule.rightInner (B := C) (U x) (U x)‖ :=
+      (CStarModule.norm_rightInner_self (B := C) (U x)).symm
+    _ = ‖σ (CStarModule.rightInner (B := B) x x)‖ := by
+      rw [hinner]
+    _ = ‖CStarModule.rightInner (B := B) x x‖ :=
+      hσnorm (CStarModule.rightInner (B := B) x x)
+    _ = ‖x‖ ^ 2 := CStarModule.norm_rightInner_self (B := B) x
+
+/-- Right-inner covariance and coefficient injectivity imply vector-map
+injectivity; no additivity or continuity is required. -/
+theorem injective_of_map_rightInner
+    (σ : B → C) (U : E → F)
+    (hσinjective : Function.Injective σ)
+    (hinner : ∀ x y : E,
+      CStarModule.rightInner (B := C) (U x) (U y) =
+        σ (CStarModule.rightInner (B := B) x y)) :
+    Function.Injective U := by
+  intro x y hxy
+  apply CStarModule.ext_rightInner (B := B)
+  intro z
+  apply hσinjective
+  calc
+    σ (CStarModule.rightInner (B := B) z x) =
+        CStarModule.rightInner (B := C) (U z) (U x) :=
+      (hinner z x).symm
+    _ = CStarModule.rightInner (B := C) (U z) (U y) := by rw [hxy]
+    _ = σ (CStarModule.rightInner (B := B) z y) := hinner z y
+
+end InnerCovariance
+
+end Inner
+
+section Polarization
+
+variable {B : Type uB} {E : Type uE}
+variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
+variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
+variable [CStarModule Bᵐᵒᵖ E]
+
+/-- The complex polarization identity for a right C-star-module inner
+product. -/
+theorem rightInner_polarization (x y : E) :
+    (4 : ℂ) • rightInner (B := B) x y =
+      (rightInner (B := B) (x + y) (x + y) -
+        rightInner (B := B) (x - y) (x - y)) -
+      Complex.I •
+        (rightInner (B := B) (x + Complex.I • y) (x + Complex.I • y) -
+          rightInner (B := B) (x - Complex.I • y) (x - Complex.I • y)) := by
+  simp only [rightInner_add_left, rightInner_add_right,
+    rightInner_sub_left, rightInner_sub_right,
+    rightInner_smul_left, rightInner_smul_right]
+  module_nf
+  rw [Complex.I_sq]
+  norm_num
+
+private theorem norm_rightInner_le_four_of_norm_eq_one (x y : E)
+    (hx : ‖x‖ = 1) (hy : ‖y‖ = 1) :
+    ‖rightInner (B := B) x y‖ ≤ 4 := by
+  let q : E → B := fun z ↦ rightInner (B := B) z z
+  have hxyAdd : ‖x + y‖ ≤ 2 := by
+    calc
+      ‖x + y‖ ≤ ‖x‖ + ‖y‖ := norm_add_le x y
+      _ = 2 := by rw [hx, hy]; norm_num
+  have hxySub : ‖x - y‖ ≤ 2 := by
+    calc
+      ‖x - y‖ ≤ ‖x‖ + ‖y‖ := norm_sub_le x y
+      _ = 2 := by rw [hx, hy]; norm_num
+  have hIY : ‖Complex.I • y‖ = 1 := by
+    rw [norm_smul, Complex.norm_I, hy]
+    norm_num
+  have hxyIAdd : ‖x + Complex.I • y‖ ≤ 2 := by
+    calc
+      ‖x + Complex.I • y‖ ≤ ‖x‖ + ‖Complex.I • y‖ :=
+        norm_add_le _ _
+      _ = 2 := by rw [hx, hIY]; norm_num
+  have hxyISub : ‖x - Complex.I • y‖ ≤ 2 := by
+    calc
+      ‖x - Complex.I • y‖ ≤ ‖x‖ + ‖Complex.I • y‖ :=
+        norm_sub_le _ _
+      _ = 2 := by rw [hx, hIY]; norm_num
+  have hq (z : E) (hz : ‖z‖ ≤ 2) : ‖q z‖ ≤ 4 := by
+    change ‖rightInner (B := B) z z‖ ≤ 4
+    rw [norm_rightInner_self]
+    nlinarith [norm_nonneg z]
+  have hsum :
+      ‖(q (x + y) - q (x - y)) -
+        Complex.I • (q (x + Complex.I • y) - q (x - Complex.I • y))‖ ≤ 16 := by
+    calc
+      _ ≤ ‖q (x + y) - q (x - y)‖ +
+          ‖Complex.I • (q (x + Complex.I • y) - q (x - Complex.I • y))‖ :=
+        norm_sub_le _ _
+      _ = ‖q (x + y) - q (x - y)‖ +
+          ‖q (x + Complex.I • y) - q (x - Complex.I • y)‖ := by
+        rw [norm_smul, Complex.norm_I, one_mul]
+      _ ≤ (‖q (x + y)‖ + ‖q (x - y)‖) +
+          (‖q (x + Complex.I • y)‖ + ‖q (x - Complex.I • y)‖) := by
+        gcongr <;> exact norm_sub_le _ _
+      _ ≤ 16 := by
+        have h1 := hq (x + y) hxyAdd
+        have h2 := hq (x - y) hxySub
+        have h3 := hq (x + Complex.I • y) hxyIAdd
+        have h4 := hq (x - Complex.I • y) hxyISub
+        linarith
+  have hfour : 4 * ‖rightInner (B := B) x y‖ ≤ 16 := by
+    calc
+      4 * ‖rightInner (B := B) x y‖ =
+          ‖(4 : ℂ) • rightInner (B := B) x y‖ := by
+        rw [norm_smul]
+        norm_num
+      _ = ‖(q (x + y) - q (x - y)) -
+          Complex.I • (q (x + Complex.I • y) - q (x - Complex.I • y))‖ := by
+        rw [rightInner_polarization]
+      _ ≤ 16 := hsum
+  linarith
+
+/-- A polarization-based norm bound for the right inner product that does
+not require a `StarOrderedRing` instance on the chosen coefficient order. -/
+theorem norm_rightInner_le_four_mul (x y : E) :
+    ‖rightInner (B := B) x y‖ ≤ 4 * ‖x‖ * ‖y‖ := by
+  by_cases hx : ‖x‖ = 0
+  · have hx' : x = 0 := norm_eq_zero.mp hx
+    simp [hx']
+  by_cases hy : ‖y‖ = 0
+  · have hy' : y = 0 := norm_eq_zero.mp hy
+    simp [hy']
+  have hxpos : 0 < ‖x‖ := lt_of_le_of_ne (norm_nonneg x) (Ne.symm hx)
+  have hypos : 0 < ‖y‖ := lt_of_le_of_ne (norm_nonneg y) (Ne.symm hy)
+  let xn : E := ((‖x‖ : ℂ)⁻¹) • x
+  let yn : E := ((‖y‖ : ℂ)⁻¹) • y
+  have hxn : ‖xn‖ = 1 := by
+    simp [xn, norm_smul, hx]
+  have hyn : ‖yn‖ = 1 := by
+    simp [yn, norm_smul, hy]
+  have hunit := norm_rightInner_le_four_of_norm_eq_one
+    (B := B) xn yn hxn hyn
+  have hnorm :
+      ‖rightInner (B := B) xn yn‖ =
+        ‖rightInner (B := B) x y‖ / (‖x‖ * ‖y‖) := by
+    simp only [xn, yn, rightInner_smul_left, rightInner_smul_right,
+      norm_smul, norm_star]
+    simp [div_eq_mul_inv, mul_assoc, mul_comm]
+  rw [hnorm] at hunit
+  have h := (div_le_iff₀ (mul_pos hxpos hypos)).mp hunit
+  nlinarith
+
+end Polarization
+
+section Unital
+
+variable {B : Type uB} {E : Type uE}
+variable [CStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
+variable [AddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E] [Norm E]
+variable [CStarModule Bᵐᵒᵖ E]
+
+@[simp]
+theorem right_smul_one (x : E) : x <• (1 : B) = x := by
+  apply ext_rightInner (B := B)
+  intro y
+  rw [rightInner_right_smul, mul_one]
+
+end Unital
+
+section Continuous
+
+variable {B : Type uB} {E : Type uE}
+variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
+variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
+variable [CStarModule Bᵐᵒᵖ E]
+
+/-- The jointly continuous complex-bilinear right action. -/
+noncomputable def rightSMulCLM : E →L[ℂ] B →L[ℂ] E :=
+  (rightSMulLinear (B := B)).mkContinuous₂ 1 fun x b ↦ by
+    simpa using norm_right_smul_le x b
+
+@[simp]
+theorem rightSMulCLM_apply (x : E) (b : B) :
+    rightSMulCLM (B := B) x b = x <• b :=
+  rfl
+
+@[continuity, fun_prop]
+theorem continuous_right_smul :
+    Continuous fun p : E × B ↦ p.1 <• p.2 := by
+  change Continuous fun p : E × B ↦ (rightSMulCLM (B := B) p.1) p.2
+  exact (rightSMulCLM (B := B)).continuous₂
+
+theorem continuous_right_smul_const (b : B) :
+    Continuous fun x : E ↦ x <• b := by
+  exact ((rightSMulCLM (B := B)).flip b).continuous
+
+theorem continuous_const_right_smul (x : E) :
+    Continuous fun b : B ↦ x <• b := by
+  exact (rightSMulCLM (B := B) x).continuous
+
+/-- The right-module inner product is jointly continuous. -/
+@[continuity, fun_prop]
+theorem continuous_rightInner [StarOrderedRing Bᵐᵒᵖ] :
+    Continuous fun p : E × E ↦ rightInner (B := B) p.1 p.2 :=
+  MulOpposite.continuous_unop.comp CStarModule.continuous_inner
+
+/-- The right-module inner product is continuous in its first vector. -/
+theorem continuous_rightInner_left [StarOrderedRing Bᵐᵒᵖ] (y : E) :
+    Continuous fun x : E ↦ rightInner (B := B) x y :=
+  continuous_rightInner.comp (continuous_id.prodMk continuous_const)
+
+/-- The right-module inner product is continuous in its second vector. -/
+theorem continuous_rightInner_right [StarOrderedRing Bᵐᵒᵖ] (x : E) :
+    Continuous fun y : E ↦ rightInner (B := B) x y :=
+  continuous_rightInner.comp (continuous_const.prodMk continuous_id)
+
+end Continuous
+
+/-! ## The coefficient algebra as a right module over itself -/
+
+namespace Right
+
+universe u
+
+variable {B : Type u} [NonUnitalCStarAlgebra B]
+variable [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
+
+/-- The canonical right self-module, with inner product `op (star x * y)`. -/
+@[instance_reducible]
+def selfModule : CStarModule Bᵐᵒᵖ B where
+  inner x y := MulOpposite.op (star x * y)
+  inner_add_right := by
+    intro x y z
+    simp [mul_add]
+  inner_self_nonneg := by
+    intro x
+    simp
+  inner_self := by
+    intro x
+    simp
+  inner_op_smul_right := by
+    intro a x y
+    apply MulOpposite.unop_injective
+    simp [mul_assoc]
+  inner_smul_right_complex := by
+    intro c x y
+    apply MulOpposite.unop_injective
+    simp [mul_smul_comm]
+  star_inner := by
+    intro x y
+    simp
+  norm_eq_sqrt_norm_inner_self := by
+    intro x
+    change ‖x‖ = √‖star x * x‖
+    rw [← sq_eq_sq₀ (norm_nonneg _) (by positivity)]
+    simpa [sq] using Eq.symm (CStarRing.norm_star_mul_self (x := x))
+
+/-- Scoped activation of the canonical right self-module. -/
+scoped instance instSelfModule : CStarModule Bᵐᵒᵖ B := selfModule
+
+local instance : CStarModule Bᵐᵒᵖ B := selfModule
+
+@[simp]
+theorem rightInner_self (x y : B) : rightInner (B := B) x y = star x * y :=
+  rfl
+
+omit [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ] in
+@[simp]
+theorem right_smul_self (x b : B) : x <• b = x * b :=
+  rfl
+
+end Right
+
+end CStarModule

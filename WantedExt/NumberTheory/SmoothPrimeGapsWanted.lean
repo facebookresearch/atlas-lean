@@ -9,8 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.HardyLittlewoodPrimeTuple
-public import Mathlib.NumberTheory.SmoothNumbers
+public import MathlibExt.NumberTheory.SmoothPrimeGaps
 public import WantedExt.NumberTheory.PrimeGapBoundsHypotheses
 
 /-!
@@ -32,25 +31,6 @@ conditional bound in `WantedExt/NumberTheory/PrimeGapBoundsWanted.lean`.
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Difference-smooth sets of integers.** Let $y$ be a natural number. A finite set $H$ of
-integers is difference $y$-smooth if for all distinct $h, h' \in H$ every prime factor of
-$h - h'$ is at most $y$.
-
-Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
-INTEGERS 25 (2025), Article A44, Definition 3. -/
-def IsDifferenceSmooth (y : ℕ) (H : Finset ℤ) : Prop :=
-  ∀ a ∈ H, ∀ b ∈ H, a ≠ b → (a - b).natAbs ∈ Nat.smoothNumbers (y + 1)
-
-/-- **One-element sets are difference smooth.** For every natural number $y$ and every integer
-$a$, the set $\{a\}$ is difference $y$-smooth.
-
-Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
-INTEGERS 25 (2025), Article A44, Definition 3. -/
-theorem isDifferenceSmooth_singleton (y : ℕ) (a : ℤ) : IsDifferenceSmooth y {a} := by
-  intro b hb c hc hbc
-  rw [Finset.mem_singleton] at hb hc
-  exact absurd (hb.trans hc.symm) hbc
 
 /-- **Infinitely many prime pairs with $47$-smooth difference.** There are infinitely many pairs
 of primes $p > q$ such that every prime factor of $p - q$ is at most $47$.
@@ -108,17 +88,6 @@ Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
 INTEGERS 25 (2025), Article A44, Theorem 5 (`integers-2025-A44-thm-5`). -/
 public theorem_wanted exists_admissible_differenceSmooth (k : ℕ) :
     ∃ H : Finset ℤ, H.card = k ∧ IsAdmissibleFinset H ∧ IsDifferenceSmooth k H
-
-/-- **Admissible sets are not difference smooth at small bounds.** Let $H$ be an admissible
-finite set of $k \ge 2$ integers, let $z \le k$ be a prime and let $\ell < z$ be a natural
-number. Then $H$ is not difference $\ell$-smooth. Equivalently, $H$ is not difference
-$\ell$-smooth for any $\ell$ less than the largest prime at most $k$.
-
-Source: Carol Wu, *On Smooth Gaps between Primes Using the Maynard-Tao Sieve*,
-INTEGERS 25 (2025), Article A44, Proposition 1 (`integers-2025-A44-prop-1`). -/
-public theorem_wanted not_isDifferenceSmooth_of_isAdmissibleFinset (H : Finset ℤ)
-    (hk : 2 ≤ H.card) (hH : IsAdmissibleFinset H) (z : ℕ) (hz : z.Prime) (hzk : z ≤ H.card)
-    (ℓ : ℕ) (hℓ : ℓ < z) : ¬ IsDifferenceSmooth ℓ H
 
 end
 

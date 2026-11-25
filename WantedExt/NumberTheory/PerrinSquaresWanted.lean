@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.Height.NumberField
 public import Mathlib.NumberTheory.Real.Irrational
 public import MathlibExt.NumberTheory.ContinuedFractions.BestApproximation
+public import MathlibExt.NumberTheory.ContinuedFractions.BoundedPartialQuotients
 public import MathlibExt.NumberTheory.PerrinSequence
 
 namespace MetaMathlibExt
@@ -170,29 +171,6 @@ public theorem_wanted matveev_two_logs_complex_lower_bound
     Real.exp (-(9.20483 * 10 ^ 11 * (Module.finrank ℚ K : ℝ) ^ 2 * A₁ * A₂ *
         (1 + Real.log (Module.finrank ℚ K : ℝ)) * (1 + Real.log (2 * B)))) <
       ‖f η₁ ^ b₁ * f η₂ ^ b₂ - 1‖
-
-/-- **Lower bound for $|x - p/q|$ from bounded partial quotients.** Let $x$ be an irrational real
-number with continued fraction expansion $[a_0; a_1, a_2, \dots]$, where $a_0 = \lfloor x \rfloor$,
-and with convergents $p_k / q_k$. Let $M \ge 1$ and $N \ge 0$ be integers with
-$q_N \le M < q_{N+1}$, and let $a$ be a real number with $a \ge a_j$ for every $0 \le j \le N + 1$.
-Then
-
-$$\left|x - \frac{p}{q}\right| > \frac{1}{(a + 2) q^2}$$
-
-for all integers $p$ and $q$ with $0 < q < M$.
-
-The source takes $a$ to be the maximum of $a_0, \dots, a_{N+1}$; since the bound weakens as $a$
-grows, the two forms are equivalent.
-
-Source: Karen J. Sacanamboy, Eric F. Bravo, and Jhon J. Bravo, *Perrin Squares
-Which Are Again Perrin*, INTEGERS 25 (2025), Article A70, Lemma 3
-(`integers-2025-A70-lem-3`). -/
-public theorem_wanted one_div_partialQuotient_bound_lt_abs_sub {x : ℝ} (hx : Irrational x)
-    {M N : ℕ} (hM : 0 < M) (hNM : (GenContFract.of x).dens N ≤ M)
-    (hMN : (M : ℝ) < (GenContFract.of x).dens (N + 1)) {aM : ℝ} (ha0 : (⌊x⌋ : ℝ) ≤ aM)
-    (ha : ∀ j ≤ N, ∀ b : ℝ, (GenContFract.of x).partDens.get? j = some b → b ≤ aM)
-    {p q : ℤ} (hq : 0 < q) (hqM : q < M) :
-    1 / ((aM + 2) * (q : ℝ) ^ 2) < |x - p / q|
 
 end
 

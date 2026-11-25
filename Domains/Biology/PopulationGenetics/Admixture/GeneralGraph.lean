@@ -17,7 +17,7 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Algebra.BigOperators.Ring.Finset
 
 /-!
-# The cut lemma for admixture-graph lineage probabilities
+# The cut lemma for admixture-graph lineage visit weights
 
 Soraggi and Wiuf's general admixture graphs allow a node to have any finite
 set of parents, with edge proportions summing to `1`. Atlas's current
@@ -28,8 +28,9 @@ below is stated directly for an abstract finite parent relation and a
 restriction.
 
 If an antichain `S` meets every root-ward parent chain from `X` to the root,
-then the probabilities that the lineage of `X` visits the nodes of `S` sum to
-`1`. The singleton cut `{root}` is the existing statement that every lineage
+then the visit weights of the nodes of `S` from `X` sum to `1`; for nonnegative
+proportions they are the probabilities that the lineage of `X` visits these
+nodes. The singleton cut `{root}` is the existing statement that every lineage
 reaches the root.
 
 This file does not introduce a generalized graph structure. It supplies the
@@ -85,17 +86,21 @@ private theorem visit_eq_zero_of_ne_of_not_transGen {V : Type*} [DecidableEq V]
     exact htrans.tail hYmem
   rw [ih Y hYmem hYne hYnot, mul_zero]
 
-/-- **Cut lemma for lineage visit probabilities**.
+/-- **Cut lemma for signed lineage visit weights**.
 
 Let `parents X` be the (finite, possibly more than two) parents of node `X`, with well-founded
-parent relation, and let `prop X Y` be admixture proportions summing to `1` over the parents of
-every non-root node. Let `visit X c` satisfy the first-step equation of the probability that the
-lineage of `X`, traced toward the root, passes through `c`:
-`visit X c = 1` if `X = c`, else `∑ Y ∈ parents X, prop X Y * visit Y c`.
+parent relation, and let `prop X Y` be real weights (no sign condition is needed), such as
+admixture proportions, summing to `1` over the parents of every non-root node. Let the visit
+weights `visit X c` satisfy the first-step equation
+`visit X c = 1` if `X = c`, else `∑ Y ∈ parents X, prop X Y * visit Y c`
+(for nonnegative `prop` and a root without parents, the equation of the probability that the
+lineage of `X`, traced toward the root, passes through `c`).
 
 If `S` is an antichain for the ancestor relation (no element of `S` is a proper ancestor of
 another) and `S` separates `X` from `root` (every root-ward parent chain from `X` to `root` meets
-`S`), then the visit probabilities of `X` across the cut sum to `1`. -/
+`S`), then the visit weights of `X` across the cut sum to `1`. With signed `prop` they need not be
+probabilities: parent weights `2` and `-1`, each parent a child of the root, give visit weights
+`2` and `-1` on the cut formed by the two parents. -/
 theorem sum_visit_eq_one_of_isAntichain_of_separates {V : Type*} [DecidableEq V]
     (root : V) (parents : V → Finset V) (prop : V → V → ℝ) (visit : V → V → ℝ)
     (wf : WellFounded fun Y X => Y ∈ parents X)
@@ -171,9 +176,10 @@ end MathlibExt.Biology.PopulationGenetics.Admixture
 
 namespace MathlibExt.Biology.PopulationGenetics.AdmixtureGraph
 
-/-- The cut lemma for an Atlas admixture graph: if the antichain `S` meets
-every root-ward parent chain from `X` to the root, then the probabilities that
-the lineage of `X` visits a node of `S` sum to `1`. -/
+/-- The cut lemma for an admixture graph: if the antichain `S` meets every
+root-ward parent chain from `X` to the root, then the visit weights of the nodes
+of `S` from `X` sum to `1`; as admixture proportions are nonnegative, these are
+the probabilities that the lineage of `X` visits the nodes of `S`. -/
 theorem sum_visit_cut_eq_one {V : Type*} [DecidableEq V]
     (G : AdmixtureGraph V) (S : Finset V) (X : V)
     (hanti : IsAntichain (Relation.TransGen fun Y X => Y ∈ G.parents X) (S : Set V))

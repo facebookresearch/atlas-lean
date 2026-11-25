@@ -45,37 +45,14 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.ArithmeticFunction.AbundancyIndexDiv
 public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientRadical
+public import MathlibExt.NumberTheory.ArithmeticFunction.PrimitiveNondeficientTwoPowMulPrime
+public import MathlibExt.NumberTheory.OddTwoPrimeFactorsDeficient
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PrimitiveNondeficientWanted
-
-/-- **Even primitive non-deficient numbers with two prime factors.** Let $p$ be an odd prime and
-$a$ a natural number. Then $2^a p$ is primitive non-deficient if and only if
-$2^a < p \le 2^{a+1} - 1$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma
-(label `Classificationofprimitivenondeficientwhenkis2`), first
-part. -/
-theorem_wanted isPrimitiveNondeficient_two_pow_mul_prime_iff
-    (a p : ℕ) (hp : p.Prime) (hpo : p ≠ 2) :
-    IsPrimitiveNondeficient (2 ^ a * p) ↔
-      2 ^ a < p ∧ p ≤ 2 ^ (a + 1) - 1
-
-/-- **Odd numbers with two prime factors are deficient.** If $n$ is an odd natural number with
-exactly two distinct prime divisors, then $\sigma(n) < 2n$, where $\sigma(n)$ is the sum of the
-positive divisors of $n$.
-
-Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
-Always Have a Small Component?", Lemma
-(label `Classificationofprimitivenondeficientwhenkis2`), second
-part. -/
-theorem_wanted deficient_of_odd_card_primeFactors_eq_two
-    (n : ℕ) (hno : Odd n) (hk : n.primeFactors.card = 2) :
-    ∑ d ∈ Nat.divisors n, d < 2 * n
 
 /-- **Small component for odd primitive non-deficient numbers with three or four prime factors.**
 Let $n$ be an odd primitive non-deficient number with exactly $3$ or exactly $4$ distinct prime

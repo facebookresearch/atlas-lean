@@ -1,0 +1,3 @@
+# Locality of the critical probability for expander sequences
+
+For an infinite, connected, locally finite, vertex-transitive graph $G$, let $p_c(G)$ be the critical probability of Bernoulli bond percolation and $\rho(G) = \limsup_n p_{2n}(o, o)^{1/(2n)}$ the spectral radius of simple random walk. Graphs $G_n$ converge locally to $G$ if for every $r$, for all large $n$, every ball of radius $r$ in $G_n$ is isomorphic to every ball of radius $r$ in $G$ by an isomorphism matching the centres. The claim (Benjamini's Open problem 5.10) is that if such graphs $G_n$ satisfy $\rho(G_n) \le c$ for all large $n$ and some $c < 1$, and converge locally to such a graph $G$, then $p_c(G_n) \to p_c(G)$.

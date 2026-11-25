@@ -48,7 +48,7 @@ example : LinearCode.syndrome H ![1, 1, 0, 0, 0, 0, 0] = ![1, 1, 0] := by decide
 
 example : errorPos ![1, 1, 0] = some 2 := by decide
 
-example : decode (encode ![1, 0, 1, 1] + ![1, 1, 0, 0, 0, 0, 0]) ∈ code :=
+example : decode (encode ![1, 0, 1, 1] + ![1, 1, 0, 0, 0, 0, 0]) ∈ Hamming74.code :=
   decode_mem_code _
 
 /-- The code has 16 codewords and minimum distance 3. -/
@@ -66,10 +66,11 @@ example : errorPos ![0, 0, 0] = none := by decide
 
 /-- Perfection: every word has exactly one codeword within distance 1, and the decoder finds a
 nearest codeword. -/
-example (y : Fin 7 → ZMod 2) : ∃! c, c ∈ code ∧ hammingDist y c ≤ 1 :=
+example (y : Fin 7 → ZMod 2) : ∃! c, c ∈ Hamming74.code ∧ hammingDist y c ≤ 1 :=
   existsUnique_hammingDist_le_one y
 
-example (y c : Fin 7 → ZMod 2) (hc : c ∈ code) : hammingDist y (decode y) ≤ hammingDist y c :=
+example (y c : Fin 7 → ZMod 2) (hc : c ∈ Hamming74.code) :
+    hammingDist y (decode y) ≤ hammingDist y c :=
   hammingDist_decode_le y hc
 
 end Cslib.CodingTheory.Hamming74Tests
