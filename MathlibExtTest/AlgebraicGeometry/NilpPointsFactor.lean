@@ -14,20 +14,22 @@ public import MathlibExt.AlgebraicGeometry.NilpPointsFactor
 
 open CategoryTheory AlgebraicGeometry
 
-/-- `Scheme.pointsOver` acts on morphisms by precomposition with their `Spec`. -/
-example {𝒪 : Type} [CommRing 𝒪] {X : Scheme.{0}} (f : X ⟶ Spec (CommRingCat.of 𝒪))
-    {B B' : CommAlgCat.{0} 𝒪} (g : B ⟶ B') (φ : (Scheme.pointsOver f).obj B) :
+universe u
+
+/-- `Scheme.pointsOver` acts on morphisms by precomposition with their `Spec`, in any universe. -/
+example {𝒪 : Type u} [CommRing 𝒪] {X : Scheme.{u}} (f : X ⟶ Spec (CommRingCat.of 𝒪))
+    {B B' : CommAlgCat.{u} 𝒪} (g : B ⟶ B') (φ : (Scheme.pointsOver f).obj B) :
     ((Scheme.pointsOver f).map g φ).1 = Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ φ.1 := by
   simp
 
 /-- `Scheme.pointsOver` is a functor, so the standard functor lemmas apply to it. -/
-example {𝒪 : Type} [CommRing 𝒪] {X : Scheme.{0}} (f : X ⟶ Spec (CommRingCat.of 𝒪))
-    (B : CommAlgCat.{0} 𝒪) : (Scheme.pointsOver f).map (𝟙 B) = 𝟙 _ :=
+example {𝒪 : Type u} [CommRing 𝒪] {X : Scheme.{u}} (f : X ⟶ Spec (CommRingCat.of 𝒪))
+    (B : CommAlgCat.{u} 𝒪) : (Scheme.pointsOver f).map (𝟙 B) = 𝟙 _ :=
   (Scheme.pointsOver f).map_id B
 
 /-- `Scheme.pointsOver.mapHom` composes points with the morphism of schemes. -/
-example {𝒪 : Type} [CommRing 𝒪] {X Y : Scheme.{0}} (fX : X ⟶ Spec (CommRingCat.of 𝒪))
-    (fY : Y ⟶ Spec (CommRingCat.of 𝒪)) (h : X ⟶ Y) (w : h ≫ fY = fX) {B : CommAlgCat.{0} 𝒪}
+example {𝒪 : Type u} [CommRing 𝒪] {X Y : Scheme.{u}} (fX : X ⟶ Spec (CommRingCat.of 𝒪))
+    (fY : Y ⟶ Spec (CommRingCat.of 𝒪)) (h : X ⟶ Y) (w : h ≫ fY = fX) {B : CommAlgCat.{u} 𝒪}
     (φ : (Scheme.pointsOver fX).obj B) :
     ((Scheme.pointsOver.mapHom fX fY h w).app B φ).1 = φ.1 ≫ h := by
   simp
@@ -41,11 +43,9 @@ example {𝒪 : Type} [CommRing 𝒪] [IsNoetherianRing 𝒪] (π : 𝒪)
     (hover : ∀ g : G, (ρ g).asIso.hom ≫ fM = fM)
     (p : M ⟶ X) (hp : p ≫ f = fM) (hρp : ∀ g : G, (ρ g).asIso.hom ≫ p = p)
     (hint : IsIntegralHom p) (haff : IsAffineHom p)
-    (hsurj : Function.Surjective p.base)
-    (hsec : ∀ V : X.Opens, Function.Injective (p.app V))
-    (hinv : ∀ V : X.Opens, Set.range (p.app V) =
-      {s | ∀ g : G, (ρ g).asIso.hom.appLE (p ⁻¹ᵁ V) (p ⁻¹ᵁ V)
-        (by rw [← Scheme.Hom.comp_preimage, hρp g]) s = s})
+    (hsec : Function.Injective p.appTop.hom)
+    (hinv : Set.range p.appTop.hom =
+      {s | ∀ g : G, (ρ g).asIso.hom.appTop.hom s = s})
     (T : Scheme.{0}) (t : T ⟶ Spec (CommRingCat.of 𝒪))
     (u : ∀ B : CommAlgCat.{0} 𝒪,
       IsNilpotent (algebraMap 𝒪 B π) → (Scheme.pointsOver fM).obj B →
@@ -92,5 +92,5 @@ example {𝒪 : Type} [CommRing 𝒪] [IsNoetherianRing 𝒪] (π : 𝒪)
               (hB : IsNilpotent (algebraMap 𝒪 B π))
               (z : (Scheme.pointsOver f).obj B), u' B hB z = ubar B hB z :=
   AlgebraicGeometry.Scheme.existsUnique_nilpPoints_factor_of_quotient_of_isAffine_of_isAffine_of_isNoetherianRing
-    π fM f hlft hlftX ρ hover p hp hρp hint haff hsurj hsec hinv T t u hu_nat
+    π fM f hlft hlftX ρ hover p hp hρp hint haff hsec hinv T t u hu_nat
     hu_inv hX hT

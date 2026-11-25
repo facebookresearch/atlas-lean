@@ -57,19 +57,22 @@ open scoped Pointwise
 
 namespace AlgebraicGeometry
 
-variable {𝒪 : Type} [CommRing 𝒪]
+universe u
 
-noncomputable abbrev Scheme.specOver (B : Type) [CommRing B] [Algebra 𝒪 B] : Spec (.of B) ⟶ Spec (.of 𝒪) :=
+variable {𝒪 : Type u} [CommRing 𝒪]
+
+noncomputable abbrev Scheme.specOver (B : Type u) [CommRing B] [Algebra 𝒪 B] :
+    Spec (.of B) ⟶ Spec (.of 𝒪) :=
   Spec.map (CommRingCat.ofHom (algebraMap 𝒪 B))
 
-theorem Scheme.specMap_algHom_comp_specOver {B : Type} [CommRing B] [Algebra 𝒪 B] {B' : Type} [CommRing B']
-    [Algebra 𝒪 B'] (g : B →ₐ[𝒪] B') :
+theorem Scheme.specMap_algHom_comp_specOver {B : Type u} [CommRing B] [Algebra 𝒪 B]
+    {B' : Type u} [CommRing B'] [Algebra 𝒪 B'] (g : B →ₐ[𝒪] B') :
     Spec.map (CommRingCat.ofHom g.toRingHom) ≫ Scheme.specOver (𝒪 := 𝒪) B = Scheme.specOver B' := by
   rw [Scheme.specOver, Scheme.specOver, ← Spec.map_comp, ← CommRingCat.ofHom_comp, AlgHom.toRingHom_eq_coe,
     AlgHom.comp_algebraMap]
 
-noncomputable def Scheme.pointsOver {X : Scheme.{0}} (f : X ⟶ Spec (.of 𝒪)) :
-    CommAlgCat.{0} 𝒪 ⥤ Type where
+noncomputable def Scheme.pointsOver {X : Scheme.{u}} (f : X ⟶ Spec (.of 𝒪)) :
+    CommAlgCat.{u} 𝒪 ⥤ Type u where
   obj B := { φ : Spec (.of B) ⟶ X // φ ≫ f = Scheme.specOver B }
   map g := TypeCat.ofHom fun φ => ⟨Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ φ.1, by
     rw [Category.assoc, φ.2, Scheme.specMap_algHom_comp_specOver]⟩
@@ -85,12 +88,12 @@ noncomputable def Scheme.pointsOver {X : Scheme.{0}} (f : X ⟶ Spec (.of 𝒪))
     simp only [AlgHom.toRingHom_eq_coe]
     rw [AlgHom.comp_toRingHom, CommRingCat.ofHom_comp, Spec.map_comp, Category.assoc]
 
-@[simp] theorem Scheme.pointsOver_map_val {X : Scheme.{0}} (f : X ⟶ Spec (.of 𝒪))
-    {B B' : CommAlgCat.{0} 𝒪} (g : B ⟶ B') (φ : (Scheme.pointsOver f).obj B) :
+@[simp] theorem Scheme.pointsOver_map_val {X : Scheme.{u}} (f : X ⟶ Spec (.of 𝒪))
+    {B B' : CommAlgCat.{u} 𝒪} (g : B ⟶ B') (φ : (Scheme.pointsOver f).obj B) :
     ((Scheme.pointsOver f).map g φ).1 = Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ φ.1 :=
   rfl
 
-noncomputable def Scheme.pointsOver.mapHom {X Y : Scheme.{0}} (fX : X ⟶ Spec (.of 𝒪))
+noncomputable def Scheme.pointsOver.mapHom {X Y : Scheme.{u}} (fX : X ⟶ Spec (.of 𝒪))
     (fY : Y ⟶ Spec (.of 𝒪)) (h : X ⟶ Y) (w : h ≫ fY = fX) :
     Scheme.pointsOver fX ⟶ Scheme.pointsOver fY where
   app B := TypeCat.ofHom fun φ => ⟨φ.1 ≫ h, by rw [Category.assoc, w, φ.2]⟩
@@ -101,8 +104,8 @@ noncomputable def Scheme.pointsOver.mapHom {X Y : Scheme.{0}} (fX : X ⟶ Spec (
       Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ (φ.1 ≫ h)
     rw [Category.assoc]
 
-@[simp] theorem Scheme.pointsOver.mapHom_app_val {X Y : Scheme.{0}} (fX : X ⟶ Spec (.of 𝒪))
-    (fY : Y ⟶ Spec (.of 𝒪)) (h : X ⟶ Y) (w : h ≫ fY = fX) {B : CommAlgCat.{0} 𝒪}
+@[simp] theorem Scheme.pointsOver.mapHom_app_val {X Y : Scheme.{u}} (fX : X ⟶ Spec (.of 𝒪))
+    (fY : Y ⟶ Spec (.of 𝒪)) (h : X ⟶ Y) (w : h ≫ fY = fX) {B : CommAlgCat.{u} 𝒪}
     (φ : (Scheme.pointsOver fX).obj B) :
     ((Scheme.pointsOver.mapHom fX fY h w).app B φ).1 = φ.1 ≫ h :=
   rfl
@@ -768,10 +771,8 @@ theorem AlgebraicGeometry.Scheme.existsUnique_nilpPoints_factor_of_quotient_of_i
     (hlft : LocallyOfFiniteType fM) (hlftX : LocallyOfFiniteType f)
     {G : Type} [Group G] [Finite G] (ρ : G →* Aut M) (hover : ∀ g : G, (ρ g).asIso.hom ≫ fM = fM)
     (p : M ⟶ X) (hp : p ≫ f = fM) (hρp : ∀ g : G, (ρ g).asIso.hom ≫ p = p)
-    (hint : IsIntegralHom p) (haff : IsAffineHom p) (hsurj : Function.Surjective p.base)
-    (hsec : ∀ V : X.Opens, Function.Injective (p.app V))
-    (hinv : ∀ V : X.Opens, Set.range (p.app V) =
-      {s | ∀ g : G, (ρ g).asIso.hom.appLE (p ⁻¹ᵁ V) (p ⁻¹ᵁ V) (by rw [← Scheme.Hom.comp_preimage, hρp g]) s = s})
+    (hint : IsIntegralHom p) (haff : IsAffineHom p) (hsec : Function.Injective p.appTop.hom)
+    (hinv : Set.range p.appTop.hom = {s | ∀ g : G, (ρ g).asIso.hom.appTop.hom s = s})
     (T : Scheme.{0}) (t : T ⟶ Spec (CommRingCat.of 𝒪))
     (u : ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) →
       (Scheme.pointsOver fM).obj B → (Scheme.pointsOver t).obj B)
@@ -841,25 +842,14 @@ theorem AlgebraicGeometry.Scheme.existsUnique_nilpPoints_factor_of_quotient_of_i
   have hintp : p.appTop.hom.IsIntegral := hint.isIntegral_app ⊤ (isAffineOpen_top X)
   haveI : Algebra.IsIntegral Γ(X, ⊤) Γ(M, ⊤) := ⟨fun a => hintp a⟩
   haveI : Module.Finite Γ(X, ⊤) Γ(M, ⊤) := Algebra.IsIntegral.finite
-  have hinj : Function.Injective (algebraMap Γ(X, ⊤) Γ(M, ⊤)) := hsec ⊤
+  have hinj : Function.Injective (algebraMap Γ(X, ⊤) Γ(M, ⊤)) := hsec
   have hinvA : ∀ a : Γ(M, ⊤), (∀ g : G, g • a = a) → a ∈ Set.range (algebraMap Γ(X, ⊤) Γ(M, ⊤)) := by
     intro a ha
-    have : a ∈ Set.range (p.app ⊤) := by
-      rw [hinv ⊤]
+    have : a ∈ Set.range p.appTop.hom := by
+      rw [hinv]
       intro g
       have h1 := ha g⁻¹
       rw [sectionsAction_smul, inv_inv] at h1
-      rw [show (ρ g).asIso.hom.appLE (p ⁻¹ᵁ ⊤) (p ⁻¹ᵁ ⊤) (by rw [← Scheme.Hom.comp_preimage, hρp g]) = (ρ g).asIso.hom.appTop by
-        have hU : (p ⁻¹ᵁ (⊤ : X.Opens)) = ⊤ := TopologicalSpace.Opens.map_top p.base
-        simp only [TopologicalSpace.Opens.map_top, Scheme.Hom.appLE,
-          Scheme.Hom.appTop]
-        rw [← CategoryTheory.Category.comp_id
-          (Scheme.Hom.app (ρ g).asIso.hom (⊤ : M.Opens))]
-        congr 1
-        calc M.presheaf.map (CategoryTheory.homOfLE _).op
-            = M.presheaf.map (𝟙 (Opposite.op (⊤ : M.Opens))) :=
-              congrArg _ (Subsingleton.elim _ _)
-          _ = 𝟙 _ := M.presheaf.map_id _]
       exact h1
     exact this
 
