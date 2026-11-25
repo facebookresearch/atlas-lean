@@ -1,0 +1,74 @@
+name: Text linters
+
+# Mathlib's text-based style linters (`lake exe lint-style`): characters outside
+# its Unicode allowlist, a space before a semicolon, adaptation notes and module
+# names. This job reports their errors on the lines that a pull request adds
+# (scripts/check_text_linters.py), so existing code does not fail it. It reads
+# source text only, so it needs no build of the libraries.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  text-linters:
+    name: text linters
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The test merge and its first parent, the commit it is tested against.
+          fetch-depth: 2
+
+      - name: Test the check
+        run: |
+          set -euo pipefail
+          python3 -m unittest discover -s scripts -p test_lean_changes.py -v
+          python3 -m unittest discover -s scripts -p test_check_text_linters.py -v
+
+      - name: Decide what to lint
+        id: scope
+        run: |
+          set -euo pipefail
+          if git diff --quiet HEAD^1 HEAD -- 'MathlibExt/*.lean' 'CSLibExt/*.lean' \
+              'PhyslibExt/*.lean' 'Domains/*.lean' 'WantedExt/*.lean'; then
+            echo "This pull request changes no Lean file of the production libraries."
+            echo "lint=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "lint=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install elan v4.2.4
+        if: steps.scope.outputs.lint == 'true'
+        run: |
+          set -euo pipefail
+          installer_dir="${RUNNER_TEMP}/elan-installer"
+          archive="${installer_dir}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$installer_dir"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --tlsv1.2 \
+            https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
+            --output "$archive"
+          echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
+            | sha256sum --check --strict
+          tar xzf "$archive" -C "$installer_dir"
+          "$installer_dir/elan-init" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      # `lint-style` is a Mathlib executable, built from the Mathlib cache.
+      - name: Fetch Mathlib cache
+        if: steps.scope.outputs.lint == 'true'
+        run: lake exe cache get
+
+      - name: Report text-lint errors on added lines
+        if: steps.scope.outputs.lint == 'true'
+        run: python3 scripts/check_text_linters.py --base HEAD^1
