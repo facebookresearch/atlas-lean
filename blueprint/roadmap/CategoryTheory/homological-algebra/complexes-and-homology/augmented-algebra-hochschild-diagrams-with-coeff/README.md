@@ -1,0 +1,15 @@
+# Augmented-algebra Hochschild diagrams with coefficients
+
+- [Complex](complex.md)
+- [Map](map.md)
+- [Functor](functor.md)
+- [Map tprod](map-tprod.md)
+- [Terminal Algebra](terminal-algebra.md)
+- [Terminal Complex](terminal-complex.md)
+- [To Terminal](to-terminal.md)
+- [To Terminal naturality](to-terminal-naturality.md)
+- [Augmentation Nat](augmentation-nat.md)
+- [Simplicial Diagram](simplicial-diagram.md)
+- [Simplicial Augmentation](simplicial-augmentation.md)
+- [Simplicial Diagram map tprod](simplicial-diagram-map-tprod.md)
+- [Simplicial Augmentation tprod](simplicial-augmentation-tprod.md)

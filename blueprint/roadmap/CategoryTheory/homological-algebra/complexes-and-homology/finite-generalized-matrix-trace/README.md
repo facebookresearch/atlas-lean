@@ -1,0 +1,18 @@
+# Finite generalized matrix trace
+
+- [Corner Linear](corner-linear.md)
+- [Matrix Tensor Equiv](matrix-tensor-equiv.md)
+- [Matrix Tensor Equiv tmul](matrix-tensor-equiv-tmul.md)
+- [Generalized Trace](generalized-trace.md)
+- [Generalized Trace tmul tprod](generalized-trace-tmul-tprod.md)
+- [Corner Tensor](corner-tensor.md)
+- [Generalized Trace corner tprod](generalized-trace-corner-tprod.md)
+- [Generalized Trace comp corner Tensor](generalized-trace-comp-corner-tensor.md)
+- [Generalized Trace zero](generalized-trace-zero.md)
+- [Generalized Trace of is Empty](generalized-trace-of-is-empty.md)
+- [Generalized Trace naturality](generalized-trace-naturality.md)
+- [Trace Weight](trace-weight.md)
+- [Generalized Trace scaled weight](generalized-trace-scaled-weight.md)
+- [Matrix word entry](matrix-word-entry.md)
+- [Trace Weight eq trace product](trace-weight-eq-trace-product.md)
+- [Generalized Trace scaled](generalized-trace-scaled.md)

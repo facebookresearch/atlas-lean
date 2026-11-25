@@ -1,0 +1,16 @@
+# The two original word coordinates in reduced unitization normalization
+
+- [Unitization Regular Inclusion](unitization-regular-inclusion.md)
+- [Unitization Even Word](unitization-even-word.md)
+- [Unitization Odd Word](unitization-odd-word.md)
+- [Unitization Even Word tprod](unitization-even-word-tprod.md)
+- [Unitization Odd Word tprod](unitization-odd-word-tprod.md)
+- [Unitization Scalar Projector quotient zero](unitization-scalar-projector-quotient-ze.md)
+- [Unitization Normalized Scalar Projector f succ](unitization-normalized-scalar-projector.md)
+- [Unitization Even Word projector](unitization-even-word-projector.md)
+- [Unitization Odd Word projector](unitization-odd-word-projector.md)
+- [Unitization Even Word d](unitization-even-word-d.md)
+- [Unitization Insertion signed last](unitization-insertion-signed-last.md)
+- [Unitization Insertion full d succ](unitization-insertion-full-d-succ.md)
+- [Unitization Odd Word d succ](unitization-odd-word-d-succ.md)
+- [Unitization Odd Word d zero](unitization-odd-word-d-zero.md)

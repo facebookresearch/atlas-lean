@@ -9,4 +9,5 @@ Set theory studies membership, cardinality, ordinals, infinity, and foundational
 - [Infinite games and determinacy](determinacy/README.md)
 - [Sets, functions and relations](sets-functions-relations/README.md)
 - [Finite sets and finite types](finite-sets/README.md)
+- [Lists and multisets](lists-and-multisets/README.md)
 - [Axiomatic set theory and models of ZFC](axiomatic-set-theory/README.md)

@@ -1,0 +1,18 @@
+# Polynomial free/forget adjunction for commutative algebras
+
+- [Free](free.md)
+- [Free obj carrier](free-obj-carrier.md)
+- [Free map hom](free-map-hom.md)
+- [Free map X](free-map-x.md)
+- [Free map C](free-map-c.md)
+- [Free Unit](free-unit.md)
+- [Free Unit app apply](free-unit-app-apply.md)
+- [Free Counit](free-counit.md)
+- [Free Counit app hom](free-counit-app-hom.md)
+- [Free Counit app X](free-counit-app-x.md)
+- [Free Counit app C](free-counit-app-c.md)
+- [Free Forget Adjunction](free-forget-adjunction.md)
+- [Free Forget Adjunction unit](free-forget-adjunction-unit.md)
+- [Free Forget Adjunction counit](free-forget-adjunction-counit.md)
+- [Free Forget Adjunction hom Equiv apply](free-forget-adjunction-hom-equiv-apply.md)
+- [Free Forget Adjunction hom Equiv symm hom](free-forget-adjunction-hom-equiv-symm-ho.md)

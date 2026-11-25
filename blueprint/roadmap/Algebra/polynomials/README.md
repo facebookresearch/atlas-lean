@@ -10,6 +10,7 @@ Univariate and multivariate polynomials and formal power series as algebraic obj
 - [Deep power-sum congruences](deep-power-sum-congruences/README.md)
 - [Denominators of rational polynomials](denominators-of-rational-polynomials/README.md)
 - [Finite rational polynomial families determined by natural values](finite-rational-polynomial-families-determined-b/README.md)
+- [Homogeneous projection under multiplication by a polynomial variable](homogeneous-projection-under-multiplication-by-a/README.md)
 - [Irreducibility criteria for integer polynomials](irreducibility-criteria-for-integer-polynomials/README.md)
 - [Mestre's square decomposition](mestre-s-square-decomposition/README.md)
 - [Mixed partial derivatives of polynomials](mixed-partial-derivatives-of-polynomials/README.md)

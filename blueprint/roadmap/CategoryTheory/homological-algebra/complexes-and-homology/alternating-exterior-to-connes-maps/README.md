@@ -1,0 +1,17 @@
+# Alternating exterior-to-Connes maps
+
+- [Cyclic Multilinear](cyclic-multilinear.md)
+- [Cyclic Full Alternating](cyclic-full-alternating.md)
+- [Cyclic Full Exterior](cyclic-full-exterior.md)
+- [Cyclic Full Exterior pure](cyclic-full-exterior-pure.md)
+- [Cyclic Tail Sum](cyclic-tail-sum.md)
+- [Cyclic Full Exterior eq factor tail](cyclic-full-exterior-eq-factor-tail.md)
+- [Cyclic Full Exterior zero pure](cyclic-full-exterior-zero-pure.md)
+- [Cyclic Full Exterior natural](cyclic-full-exterior-natural.md)
+- [Cyclic Exterior](cyclic-exterior.md)
+- [Cyclic Exterior full](cyclic-exterior-full.md)
+- [Cyclic Exterior pure](cyclic-exterior-pure.md)
+- [Cyclic Exterior natural](cyclic-exterior-natural.md)
+- [Cyclic Exterior Weibel](cyclic-exterior-weibel.md)
+- [Cyclic Exterior Weibel pure](cyclic-exterior-weibel-pure.md)
+- [Cyclic Exterior Weibel natural](cyclic-exterior-weibel-natural.md)

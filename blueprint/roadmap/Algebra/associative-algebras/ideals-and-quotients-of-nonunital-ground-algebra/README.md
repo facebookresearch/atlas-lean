@@ -1,0 +1,15 @@
+# Ideals and quotients of nonunital ground algebras
+
+- [Algebra](algebra.md)
+- [Subtype Hom](subtype-hom.md)
+- [Quotient Linear Map](quotient-linear-map.md)
+- [Quotient Linear Map mul](quotient-linear-map-mul.md)
+- [Quotient Map](quotient-map.md)
+- [Quotient Map eq zero](quotient-map-eq-zero.md)
+- [Quotient Map inclusion](quotient-map-inclusion.md)
+- [Quotient Map comp inclusion](quotient-map-comp-inclusion.md)
+- [Quotient Map surjective](quotient-map-surjective.md)
+- [KSplit](ksplit.md)
+- [Map Quotient](map-quotient.md)
+- [Map Quotient quotient Map](map-quotient-quotient-map.md)
+- [Map Ideal](map-ideal.md)

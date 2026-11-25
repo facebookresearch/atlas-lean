@@ -1,0 +1,18 @@
+# Arbitrary-variable polynomial Koszul resolution
+
+- [Polynomial Variables exact cycles](polynomial-variables-exact-cycles.md)
+- [Polynomial Complex](polynomial-complex.md)
+- [Polynomial Complex projective](polynomial-complex-projective.md)
+- [Polynomial Complex free](polynomial-complex-free.md)
+- [Polynomial Complex exact At](polynomial-complex-exact-at.md)
+- [Polynomial Quotient Augmentation quasi Iso](polynomial-quotient-augmentation-quasi-i.md)
+- [Polynomial Quotient Projective Resolution](polynomial-quotient-projective-resolutio.md)
+- [Polynomial Ideal eq ker Constant Coeff](polynomial-ideal-eq-ker-constant-coeff.md)
+- [Polynomial Constants](polynomial-constants.md)
+- [Polynomial Target](polynomial-target.md)
+- [Polynomial Quotient Ring Equiv](polynomial-quotient-ring-equiv.md)
+- [Polynomial Quotient Equiv](polynomial-quotient-equiv.md)
+- [Polynomial Quotient Target Iso](polynomial-quotient-target-iso.md)
+- [Polynomial Augmentation](polynomial-augmentation.md)
+- [Polynomial Augmentation apply](polynomial-augmentation-apply.md)
+- [Polynomial Projective Resolution](polynomial-projective-resolution.md)

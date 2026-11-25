@@ -1,0 +1,17 @@
+# Ideal-count subcomplexes and graded quotients
+
+- [Naive Lower Word Filtration le](naive-lower-word-filtration-le.md)
+- [Naive Lower Word Filtration d](naive-lower-word-filtration-d.md)
+- [Naive Stage D](naive-stage-d.md)
+- [Naive Lower Stage D](naive-lower-stage-d.md)
+- [Naive Filtered Word Complex](naive-filtered-word-complex.md)
+- [Naive Lower Word Complex](naive-lower-word-complex.md)
+- [Naive Filtered Word Complex d val](naive-filtered-word-complex-d-val.md)
+- [Naive Filtered Word Inclusion](naive-filtered-word-inclusion.md)
+- [Naive Lower Word Inclusion](naive-lower-word-inclusion.md)
+- [Naive Filtered Word Map](naive-filtered-word-map.md)
+- [Naive Layer D](naive-layer-d.md)
+- [Naive Associated Word Complex](naive-associated-word-complex.md)
+- [Naive Associated Word Projection](naive-associated-word-projection.md)
+- [Naive Associated Word Complex d projection](naive-associated-word-complex-d-projecti.md)
+- [Naive Lower Word Inclusion projection](naive-lower-word-inclusion-projection.md)

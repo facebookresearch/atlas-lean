@@ -1,0 +1,16 @@
+# Matrix coefficient bimodules
+
+- [Left Module](left-module.md)
+- [Right Module](right-module.md)
+- [Left Module self eq](left-module-self-eq.md)
+- [Right Module self eq](right-module-self-eq.md)
+- [Commute](commute.md)
+- [Left Tower](left-tower.md)
+- [Right Tower](right-tower.md)
+- [Bar](bar.md)
+- [Complex](complex.md)
+- [Obj Iso](obj-iso.md)
+- [Face](face.md)
+- [Face first tprod](face-first-tprod.md)
+- [Face inner tprod](face-inner-tprod.md)
+- [Face last tprod](face-last-tprod.md)

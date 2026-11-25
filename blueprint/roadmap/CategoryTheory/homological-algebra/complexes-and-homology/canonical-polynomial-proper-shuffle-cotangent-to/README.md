@@ -1,0 +1,17 @@
+# Canonical polynomial proper-shuffle cotangent totals
+
+- [Resolution](resolution.md)
+- [Diagram](diagram.md)
+- [Cotangent Diagram](cotangent-diagram.md)
+- [Augmentation](augmentation.md)
+- [«variables»](variables.md)
+- [Augmentation column quasi Iso](augmentation-column-quasi-iso.md)
+- [Bicomplex](bicomplex.md)
+- [Cotangent Bicomplex](cotangent-bicomplex.md)
+- [Bicomplex Map](bicomplex-map.md)
+- [Bicomplex Map f](bicomplex-map-f.md)
+- [Total Complex](total-complex.md)
+- [Cotangent Total Complex](cotangent-total-complex.md)
+- [Total Map](total-map.md)
+- [Total Homology Iso](total-homology-iso.md)
+- [Total Homology Iso hom](total-homology-iso-hom.md)

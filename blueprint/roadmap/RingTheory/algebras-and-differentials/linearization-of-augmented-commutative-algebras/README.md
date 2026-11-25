@@ -1,0 +1,15 @@
+# Linearization of augmented commutative algebras
+
+- [Cotangent Algebra](cotangent-algebra.md)
+- [Cotangent Scalar Tower](cotangent-scalar-tower.md)
+- [Cotangent](cotangent.md)
+- [Cotangent Tensor](cotangent-tensor.md)
+- [Cotangent augmentation compat](cotangent-augmentation-compat.md)
+- [Cotangent Map](cotangent-map.md)
+- [Cotangent Map id](cotangent-map-id.md)
+- [Cotangent Map comp](cotangent-map-comp.md)
+- [Cotangent Functor](cotangent-functor.md)
+- [Cotangent hom ext](cotangent-hom-ext.md)
+- [Cotangent Derivations](cotangent-derivations.md)
+- [Cotangent Hom Equiv Derivation](cotangent-hom-equiv-derivation.md)
+- [Cotangent Derivation Value](cotangent-derivation-value.md)

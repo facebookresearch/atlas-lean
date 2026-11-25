@@ -1,0 +1,16 @@
+# Nonunital bar complexes with coefficients
+
+- [Bar Complex](bar-complex.md)
+- [Bar Complex X](bar-complex-x.md)
+- [Bar Complex d](bar-complex-d.md)
+- [Bar Contraction Of Left Unit](bar-contraction-of-left-unit.md)
+- [Bar Contraction Of Left Unit hom](bar-contraction-of-left-unit-hom.md)
+- [Bar Complex acyclic of left Unit](bar-complex-acyclic-of-left-unit.md)
+- [Is HUnital](is-hunital.md)
+- [Is HUnital of left Unit](is-hunital-of-left-unit.md)
+- [Bar Algebra Complex Map](bar-algebra-complex-map.md)
+- [Bar Coefficient Map](bar-coefficient-map.md)
+- [Bar Algebra Map](bar-algebra-map.md)
+- [Bar Joint Map](bar-joint-map.md)
+- [Bar Joint Map f](bar-joint-map-f.md)
+- [Bar Joint Map tprod](bar-joint-map-tprod.md)

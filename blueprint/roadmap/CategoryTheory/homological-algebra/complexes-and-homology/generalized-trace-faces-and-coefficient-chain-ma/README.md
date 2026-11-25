@@ -1,0 +1,16 @@
+# Generalized trace faces and coefficient chain maps
+
+- [Matrix tensor ext](matrix-tensor-ext.md)
+- [Product mul Adjacent](product-mul-adjacent.md)
+- [Trace face first](trace-face-first.md)
+- [Trace face inner](trace-face-inner.md)
+- [Trace face last](trace-face-last.md)
+- [Trace face comm](trace-face-comm.md)
+- [Trace boundary comm](trace-boundary-comm.md)
+- [Trace Linear Lift](trace-linear-lift.md)
+- [Trace Linear Lift down](trace-linear-lift-down.md)
+- [Trace Linear Lift boundary comm](trace-linear-lift-boundary-comm.md)
+- [Trace Chain Map](trace-chain-map.md)
+- [Trace Chain Map f](trace-chain-map-f.md)
+- [Trace Chain Map f tprod](trace-chain-map-f-tprod.md)
+- [Corner Chain Map comp trace](corner-chain-map-comp-trace.md)

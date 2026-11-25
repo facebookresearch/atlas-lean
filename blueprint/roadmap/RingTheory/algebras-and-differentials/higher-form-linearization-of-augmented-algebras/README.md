@@ -1,0 +1,15 @@
+# Higher-form linearization of augmented algebras
+
+- [Cotangent Higher Level](cotangent-higher-level.md)
+- [Cotangent Higher Exterior Iso](cotangent-higher-exterior-iso.md)
+- [Cotangent Higher Map](cotangent-higher-map.md)
+- [Cotangent Higher Functor](cotangent-higher-functor.md)
+- [Cotangent Higher Exterior Nat Iso](cotangent-higher-exterior-nat-iso.md)
+- [Cotangent Higher Tensor](cotangent-higher-tensor.md)
+- [Cotangent Higher Exterior Iso tensor](cotangent-higher-exterior-iso-tensor.md)
+- [Cotangent Higher Map tensor](cotangent-higher-map-tensor.md)
+- [Cotangent Higher Map zero eq weight Zero](cotangent-higher-map-zero-eq-weight-zero.md)
+- [Cotangent Higher Map zero tmul](cotangent-higher-map-zero-tmul.md)
+- [Cotangent Higher One Nat Iso](cotangent-higher-one-nat-iso.md)
+- [Cotangent Higher One Nat Iso tensor](cotangent-higher-one-nat-iso-tensor.md)
+- [Cotangent Higher hom ext succ](cotangent-higher-hom-ext-succ.md)
