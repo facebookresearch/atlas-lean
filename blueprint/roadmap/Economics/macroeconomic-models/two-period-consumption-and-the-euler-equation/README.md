@@ -9,3 +9,4 @@
 - [Consumption Euler equation at an interior optimum](euler-equation.md)
 - [Euler equation with β(1 + r) = 1 equalizes consumption](eq-of-euler-of-discount-mul-gross-eq-one.md)
 - [Consumption smoothing when β(1 + r) = 1](consumption-eq-of-discount-mul-gross-eq.md)
+- [Present bias produces a preference reversal that exponential discounting excludes](present-bias-and-preference-reversal.md)
