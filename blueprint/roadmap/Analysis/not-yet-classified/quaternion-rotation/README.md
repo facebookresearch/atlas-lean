@@ -1,8 +1,8 @@
 # Quaternion Rotation
 
-- [Pure Im](pure-im.md)
-- [Im Coords](im-coords.md)
-- [Im Basis](im-basis.md)
+- [Pure imaginary quaternions](pure-im.md)
+- [Imaginary coordinates of a quaternion](im-coords.md)
+- [Imaginary basis of the quaternions](im-basis.md)
 - [Rot Matrix](rot-matrix.md)
 - [Quaternion rotation matrix: transpose times itself](rot-matrix-transpose-mul-self.md)
 - [Exists linear Isometry conj](exists-linear-isometry-conj.md)

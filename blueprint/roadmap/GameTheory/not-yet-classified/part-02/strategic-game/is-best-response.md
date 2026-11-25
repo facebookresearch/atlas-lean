@@ -1,5 +1,3 @@
-# Is Best Response
+# Best response
 
-`s` is a best response of player `i` to the profile `σ`: with the other
-players' strategies in `σ` held fixed, no strategy `t` of player `i` gives `i`
-a higher payoff than `s`.
+In a strategic game with payoffs $u_i$, a strategy $s$ of player $i$ is a best response to a strategy profile $\sigma$ when $u_i(\sigma_{-i}, t) \le u_i(\sigma_{-i}, s)$ for every strategy $t$ of player $i$, where $(\sigma_{-i}, t)$ is $\sigma$ with player $i$'s strategy replaced by $t$.

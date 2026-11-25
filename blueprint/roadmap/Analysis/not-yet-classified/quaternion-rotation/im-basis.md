@@ -1,3 +1,3 @@
-# Im Basis
+# Imaginary basis of the quaternions
 
-Explicit imaginary basis vectors `i, j, k`, indexed by `Fin 3`.
+The imaginary basis vectors of the real quaternions $\mathbb{H}$, indexed by $\{0, 1, 2\}$: index $0$ gives $i$, index $1$ gives $j$ and index $2$ gives $k$.

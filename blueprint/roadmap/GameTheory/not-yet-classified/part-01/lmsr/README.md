@@ -1,6 +1,6 @@
 # LMSR
 
-- [Lmsr Cost](lmsr-cost.md)
+- [LMSR cost function](lmsr-cost.md)
 - [LMSR price](lmsr-price.md)
 - [Worst-case loss of the LMSR market maker](lmsr-loss-le.md)
 - [The LMSR instantaneous price is the derivative of the cost](deriv-update-lmsr-cost.md)

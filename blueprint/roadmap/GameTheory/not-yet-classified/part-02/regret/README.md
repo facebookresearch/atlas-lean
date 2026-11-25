@@ -1,6 +1,6 @@
 # Regret
 
-- [Cumulative Loss](cumulative-loss.md)
+- [Cumulative loss](cumulative-loss.md)
 - [Expected loss](expected-loss.md)
 - [External regret](external-regret.md)
 - [Swap regret](swap-regret.md)

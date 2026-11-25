@@ -1,3 +1,3 @@
-# Pure Im
+# Pure imaginary quaternions
 
-Pure imaginary quaternions: the kernel of the real part.
+The real subspace of quaternions with real part $0$, that is, the kernel of the real-part map.

@@ -1,5 +1,5 @@
 # Halving
 
-- [Version Space](version-space.md)
+- [Version space](version-space.md)
 - [Halving algorithm prediction](halving-predict.md)
 - [Halving mistake bound](halving-mistakes-bound.md)

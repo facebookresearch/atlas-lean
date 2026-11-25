@@ -1,3 +1,3 @@
 # Supporting Gradient
 
-- [Is Supporting Gradient](is-supporting-gradient.md)
+- [Supporting gradient](is-supporting-gradient.md)

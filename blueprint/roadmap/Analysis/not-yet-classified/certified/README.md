@@ -7,7 +7,7 @@
 - [Interval addition](add.md)
 - [Interval negation](neg.md)
 - [Interval subtraction](sub.md)
-- [Round Out](round-out.md)
+- [Outward rounding of a rational interval](round-out.md)
 
 ## F. Provenance records
 

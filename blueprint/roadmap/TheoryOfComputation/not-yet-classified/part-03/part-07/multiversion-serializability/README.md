@@ -1,5 +1,5 @@
 # Multiversion Serializability
 
 - [Is Interpretation](is-interpretation.md)
-- [Serial](serial.md)
+- [Serial schedule](serial.md)
 - [Multiversion serializability](multiversion-serializability-feasible.md)

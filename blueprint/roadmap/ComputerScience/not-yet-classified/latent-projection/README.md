@@ -6,7 +6,7 @@
 
 ## ADMG
 
-- [C Component](c-component.md)
+- [C-component](c-component.md)
 
 ## Bayes Net
 

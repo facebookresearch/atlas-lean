@@ -1,7 +1,7 @@
 # Tree CSP
 
 - [Rooted Order](rooted-order.md)
-- [Is Tree Arcs](is-tree-arcs.md)
+- [Constraint arcs along a parent map](is-tree-arcs.md)
 
 ## The DAC pass
 

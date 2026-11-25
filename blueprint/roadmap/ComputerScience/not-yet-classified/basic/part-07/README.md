@@ -5,4 +5,4 @@
 - [Total one-step result of a STRIPS operator](result.md)
 - [STRIPS task as a labelled transition system](to-lts.md)
 - [Executes iff mtr](executes-iff-mtr.md)
-- [To Result LTS](to-result-lts.md)
+- [Total result transition system of a STRIPS task](to-result-lts.md)
