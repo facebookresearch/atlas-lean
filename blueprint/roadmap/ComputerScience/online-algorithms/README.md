@@ -11,3 +11,4 @@ Algorithms that act on a request sequence without knowing the future, and compet
 - [Online bipartite matching](online-bipartite-matching/README.md)
 - [Ski rental competitive](ski-rental-competitive/README.md)
 - [Ski rental problem](ski-rental-problem/README.md)
+- [Paging and k server](paging-and-k-server/README.md)

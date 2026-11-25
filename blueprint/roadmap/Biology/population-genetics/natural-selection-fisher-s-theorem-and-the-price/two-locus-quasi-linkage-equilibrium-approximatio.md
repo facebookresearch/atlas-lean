@@ -11,7 +11,8 @@ $$I(p)=\bigl[\max(-p_Ap_B,\,-p_ap_b),\ \min(p_Ap_b,\,p_ap_B)\bigr].$$
 1. $|\Phi_{p,\varepsilon}(D)-\Phi_{p,\varepsilon}(D')|\le(1-r_0)(1+K\varepsilon)\,|D-D'|$ for $D,D'\in I(p)$, and $\Phi_{p,\varepsilon}$ has a unique fixed point $D^*(p,\varepsilon)\in I(p)$;
 2. $|D^*(p,\varepsilon)|\le K\varepsilon/r_0$;
 3. for every initial state and every $t\ge T(\varepsilon)=\lceil K'\log(1/\varepsilon)/r_0\rceil$,
-$$|D_t-D^*(p_t,\varepsilon)|\le K''\varepsilon^2 .$$
+
+    $$|D_t-D^*(p_t,\varepsilon)|\le K''\varepsilon^2 .$$
 
 Part (b) is the two-locus form of Nagylaki's quasi-linkage-equilibrium regime: after a time of order $\log(1/\varepsilon)$ generations, linkage disequilibrium is of order $\varepsilon$ and tracks a slowly varying quasi-equilibrium value with error of order $\varepsilon^2$.
 

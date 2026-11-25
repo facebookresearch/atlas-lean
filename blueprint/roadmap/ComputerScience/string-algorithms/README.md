@@ -12,3 +12,4 @@ Exact pattern matching (naive, finite automaton, Knuth-Morris-Pratt, Boyer-Moore
 - [Z algorithm](z-algorithm/README.md)
 - [Aho–Corasick: semantic specification of the state and the reports](aho-corasick-semantic-specification-of-the-state/README.md)
 - [Boyer–Moore string-search algorithm](boyer-moore-string-search-algorithm/README.md)
+- [String matching specifications](string-matching-specifications/README.md)

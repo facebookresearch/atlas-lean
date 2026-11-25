@@ -14,4 +14,5 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Williams: NEXP is not contained in ACC0](williams-nexp-not-in-acc0.md)
 - [Razborov: majority is not in AC0[mod 2]](razborov-majority-not-in-ac0-mod-two.md)
 - [Unbounded fan-in circuits](unbounded-fan-in-circuits/README.md)
+- [Constant depth circuit lower bounds](constant-depth-circuit-lower-bounds/README.md)
 - [Boolean formulas: substitution, depth and size](boolean-formulas-substitution-depth-and-size/README.md)
