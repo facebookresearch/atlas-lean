@@ -12,17 +12,22 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.GroupTheory.FreeGroup.Basic
 public import Mathlib.LinearAlgebra.Matrix.ProjectiveSpecialLinearGroup
 public import Mathlib.LinearAlgebra.UnitaryGroup
+import Mathlib.Analysis.CStarAlgebra.Basic
+import Mathlib.Analysis.CStarAlgebra.Matrix
+import Mathlib.GroupTheory.Commutator.Basic
 import Mathlib.GroupTheory.FreeGroup.Reduce
+import Mathlib.LinearAlgebra.Matrix.FiniteDimensional
 import Mathlib.LinearAlgebra.Matrix.Trace
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.Group
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NoncommRing
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 
 /-!
-# A non-surjective word map on the real projective special linear group
+# Non-surjective word maps on the real projective special linear group and the rotation group
 
 An explicit word has positive trace on all lifts to `SL(2, ℝ)`. Its projective word map
 therefore misses the class of a trace-zero matrix, answering Kourovka Problem 16.68(a).
@@ -32,6 +37,11 @@ Let `a` be the first input and `b` its conjugate by the second. Write `x = (tr a
 `(1 + x * (s - 2) * (2 - r))² + r - 1`. If `r < 2`, the commutator trace bound for
 elliptic real matrices forces `4 ≤ x`, so `s - 2 ≥ 2 - r`. This gives positivity in the
 only case where the square alone does not suffice.
+
+For `SO(3, ℝ)`, we use Thom's commutator estimate in the operator norm. A finite cover
+gives a uniform bound on the first positive power of a rotation within distance `1 / 4`
+of the identity. Iterated commutators give a nontrivial word with uniformly small image,
+which therefore misses a half-turn, answering Kourovka Problem 16.68(c).
 -/
 
 @[expose] public section
@@ -288,5 +298,243 @@ theorem psl2RealWordMapsSurjective_refuted : ¬ psl2RealWordMapsSurjective := by
     change wordMap _ w (q a, q y) = _ at huv
     simpa [wordMap, w, witness, letters] using huv
   exact (trace_witness_pos a y).ne' (trace_zero_of_mk_eq _ j (by simp [j, tr, trace_fin_two]) hq)
+
+/-! ### Small word maps on the rotation group -/
+
+open scoped commutatorElement Matrix.Norms.L2Operator
+
+private abbrev Word := FreeGroup (Fin 2)
+private abbrev SO := specialOrthogonalGroup (Fin 3) ℝ
+private abbrev Mat := Matrix (Fin 3) (Fin 3) ℝ
+
+-- Record the first and last generators, ignoring the signs of their letters.
+private def Ends (w : Word) (i j : Fin 2) : Prop :=
+  w.toWord.head?.map Prod.fst = some i ∧ w.toWord.getLast?.map Prod.fst = some j
+
+private theorem Ends.ne_one {w : Word} {i j : Fin 2} (h : Ends w i j) : w ≠ 1 := by
+  rintro rfl
+  simp [Ends] at h
+
+private theorem Ends.inv {w : Word} {i j : Fin 2} (h : Ends w i j) : Ends w⁻¹ j i := by
+  simpa [Ends, FreeGroup.invRev, Option.map_map, Function.comp_def] using h.symm
+
+private theorem Ends.mul {u v : Word} {i j k l : Fin 2}
+    (hu : Ends u i j) (hv : Ends v k l) (hjk : j ≠ k) : Ends (u * v) i l := by
+  have hr : FreeGroup.IsReduced (u.toWord ++ v.toWord) := by
+    apply List.IsChain.append FreeGroup.isReduced_toWord FreeGroup.isReduced_toWord
+    intro a ha b hb hab
+    change u.toWord.getLast? = some a at ha
+    change v.toWord.head? = some b at hb
+    have h₁ := hu.2
+    have h₂ := hv.1
+    rw [ha] at h₁
+    rw [hb] at h₂
+    exact (hjk ((Option.some.inj h₁).symm.trans (hab.trans (Option.some.inj h₂)))).elim
+  have h₁ := mt FreeGroup.toWord_eq_nil_iff.mp hu.ne_one
+  have h₂ := mt FreeGroup.toWord_eq_nil_iff.mp hv.ne_one
+  simpa only [Ends, FreeGroup.toWord_mul, hr.reduce_eq, List.head?_append_of_ne_nil _ h₁,
+    List.getLast?_append_of_ne_nil _ h₂] using And.intro hu.1 hv.2
+
+private theorem ends_pow (i : Fin 2) (n : ℕ) : Ends (FreeGroup.of i ^ (n + 1)) i i := by
+  simp only [Ends, FreeGroup.toWord_of_pow, ← List.head?_reverse, List.reverse_replicate]
+  simp [List.replicate_succ]
+
+-- Conjugate the commutator so that the next step can again join separated reduced words.
+private def joinWords (u v : Word) : Word :=
+  let x := FreeGroup.of (0 : Fin 2)
+  let y := FreeGroup.of (1 : Fin 2)
+  (x * y) * ⁅u, y * v * y⁻¹⁆ * (x * y)⁻¹
+
+private theorem ends_join {u v : Word} (hu : Ends u 0 0) (hv : Ends v 0 0) :
+    Ends (joinWords u v) 0 0 := by
+  let x := FreeGroup.of (0 : Fin 2)
+  let y := FreeGroup.of (1 : Fin 2)
+  have hx : Ends x 0 0 := by simp [Ends, x]
+  have hy : Ends y 1 1 := by simp [Ends, y]
+  have hy₂ : Ends (y ^ 2) 1 1 := ends_pow 1 1
+  have h : joinWords u v =
+      x * y * u * y * v * y⁻¹ * u⁻¹ * y * v⁻¹ * (y ^ 2)⁻¹ * x⁻¹ := by
+    dsimp [joinWords, x, y, commutatorElement_def]
+    group
+  rw [h]
+  -- Consecutive factors in the expanded product meet at distinct generators.
+  repeat' first | apply Ends.mul | assumption | apply Ends.inv | decide
+
+private noncomputable def displacement (a : SO) : ℝ := ‖a.val - 1‖
+
+private lemma orthogonal_unitary (a : SO) : a.val ∈ unitary Mat := a.prop.1
+
+private theorem displacement_le_two (a : SO) : displacement a ≤ 2 := by
+  have h := norm_sub_le a.val (1 : Mat)
+  simpa [displacement, CStarRing.norm_of_mem_unitary (orthogonal_unitary a), one_add_one_eq_two]
+    using h
+
+private theorem displacement_conj (a b : SO) : displacement (a * b * a⁻¹) = displacement b := by
+  have h : (a * b * a⁻¹).val - 1 = a.val * (b.val - 1) * a⁻¹.val := by
+    have he : a.val * a⁻¹.val = 1 := congrArg Subtype.val (mul_inv_cancel a)
+    rw [mul_sub, mul_one, sub_mul, he]
+    rfl
+  rw [displacement, h, CStarRing.norm_mul_mem_unitary _ (orthogonal_unitary _),
+    CStarRing.norm_mem_unitary_mul _ (orthogonal_unitary _), displacement]
+
+private theorem displacement_comm (a b : SO) :
+    displacement ⁅a, b⁆ ≤ 2 * displacement a * displacement b := by
+  have h : (⁅a, b⁆.val - 1) * (b * a).val = a.val * b.val - b.val * a.val := by
+    rw [sub_mul, one_mul, ← Submonoid.coe_mul]
+    congr 1
+    change (⁅a, b⁆ * (b * a)).val = (a * b).val
+    apply congrArg Subtype.val
+    rw [commutatorElement_def]
+    group
+  rw [displacement, ← CStarRing.norm_mul_mem_unitary _ (orthogonal_unitary (b * a)), h]
+  have e : a.val * b.val - b.val * a.val =
+      (a.val - 1) * (b.val - 1) - (b.val - 1) * (a.val - 1) := by noncomm_ring
+  rw [e]
+  refine (norm_sub_le _ _).trans ((add_le_add (norm_mul_le _ _) (norm_mul_le _ _)).trans ?_)
+  dsimp only [displacement]
+  linarith only [mul_comm ‖a.val - 1‖ ‖b.val - 1‖]
+
+private theorem displacement_join (f : Word →* SO) (u v : Word) :
+    displacement (f (joinWords u v)) ≤ 2 * displacement (f u) * displacement (f v) := by
+  let y := f (FreeGroup.of 1)
+  have h := displacement_comm (f u) (y * f v * y⁻¹)
+  rw [displacement_conj] at h
+  simpa only [joinWords, map_mul, map_inv, map_commutatorElement, displacement_conj] using h
+
+-- A finite cover of the unit ball bounds the number of separated powers of any rotation.
+private theorem exists_small_power : ∃ N : ℕ, ∀ a : SO, ∃ k < N,
+    displacement (a ^ (k + 1)) ≤ 1 / 4 := by
+  classical
+  let : ProperSpace Mat := FiniteDimensional.proper ℝ Mat
+  obtain ⟨t, _, ht, hcover⟩ := (isCompact_closedBall (0 : Mat) 1).finite_cover_balls
+    (show (0 : ℝ) < 1 / 8 by norm_num)
+  let := ht.fintype
+  let N := Fintype.card t
+  refine ⟨N, fun a => ?_⟩
+  have h (i : Fin (N + 1)) : ∃ c : t, dist (a ^ (i : ℕ)).val c.val < 1 / 8 := by
+    have hball : (a ^ (i : ℕ)).val ∈ Metric.closedBall (0 : Mat) 1 := by
+      rw [Metric.mem_closedBall, dist_zero_right, CStarRing.norm_of_mem_unitary
+        (orthogonal_unitary _)]
+    obtain ⟨c, hc, hm⟩ := Set.mem_iUnion₂.mp (hcover hball)
+    exact ⟨⟨c, hc⟩, hm⟩
+  choose c hc using h
+  obtain ⟨i, j, hij, he⟩ := Fintype.exists_ne_map_eq_of_card_lt c (by simp [N])
+  wlog hle : i < j generalizing i j
+  · exact this j i hij.symm he.symm (lt_of_le_of_ne (le_of_not_gt hle) hij.symm)
+  have hd := dist_triangle (a ^ (j : ℕ)).val (c i).val (a ^ (i : ℕ)).val
+  rw [dist_comm (c i).val] at hd
+  have hj := hc j
+  rw [← he] at hj
+  have hdist : ‖(a ^ (j : ℕ)).val - (a ^ (i : ℕ)).val‖ ≤ 1 / 4 := by
+    rw [← dist_eq_norm]
+    linarith [hc i]
+  obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_lt (show (i : ℕ) < j from hle)
+  refine ⟨k, by omega, ?_⟩
+  rw [displacement, ← CStarRing.norm_mul_mem_unitary _ (orthogonal_unitary (a ^ (i : ℕ))),
+    sub_mul, one_mul, ← Submonoid.coe_mul, ← pow_add]
+  rwa [show k + 1 + (i : ℕ) = j by omega]
+
+-- Arbitrarily small word maps on the rotations satisfying a given condition.
+private def SmallOn (P : SO → Prop) : Prop :=
+  ∀ ε : ℝ, 0 < ε → ∃ w : Word, Ends w 0 0 ∧
+    ∀ f : Word →* SO, P (f (FreeGroup.of 0)) → displacement (f w) ≤ ε
+
+-- Once a power is small, taking a commutator with a conjugate of it halves displacement.
+private theorem smallOn_power (k : ℕ) :
+    SmallOn (fun a => displacement (a ^ (k + 1)) ≤ 1 / 4) := by
+  let u : Word := FreeGroup.of 0 ^ (k + 1)
+  have hu : Ends u 0 0 := ends_pow 0 k
+  have shrink (m : ℕ) : ∃ w : Word, Ends w 0 0 ∧ ∀ f : Word →* SO,
+      displacement (f u) ≤ 1 / 4 → displacement (f w) ≤ (1 / 2 : ℝ) ^ m := by
+    induction m with
+    | zero => exact ⟨u, hu, fun _ hf => by simpa using hf.trans (by norm_num : (1 / 4 : ℝ) ≤ 1)⟩
+    | succ m ih =>
+      obtain ⟨w, hw, h⟩ := ih
+      refine ⟨joinWords w u, ends_join hw hu, fun f hf => (displacement_join f w u).trans ?_⟩
+      calc
+        _ ≤ 2 * (1 / 2 : ℝ) ^ m * (1 / 4) := by
+          gcongr <;> first | exact norm_nonneg _ | exact h f hf
+        _ = _ := by rw [pow_succ]; ring
+  intro ε hε
+  obtain ⟨m, hm⟩ := exists_pow_lt_of_lt_one hε (by norm_num : (1 / 2 : ℝ) < 1)
+  obtain ⟨w, hw, h⟩ := shrink m
+  exact ⟨w, hw, fun f hf => (h f (by simpa [u] using hf)).trans hm.le⟩
+
+private theorem smallOn_or {P Q : SO → Prop} (hP : SmallOn P) (hQ : SmallOn Q) :
+    SmallOn (fun a => P a ∨ Q a) := by
+  intro ε hε
+  obtain ⟨u, hu, h₁⟩ := hP (ε / 4) (by positivity)
+  obtain ⟨v, hv, h₂⟩ := hQ (ε / 4) (by positivity)
+  refine ⟨joinWords u v, ends_join hu hv, fun f h => (displacement_join f u v).trans ?_⟩
+  have hn (a : SO) : 0 ≤ displacement a := norm_nonneg _
+  rcases h with h | h
+  · calc
+      _ ≤ 2 * (ε / 4) * 2 :=
+        mul_le_mul (mul_le_mul_of_nonneg_left (h₁ f h) (by norm_num))
+          (displacement_le_two _) (hn _) (by positivity)
+      _ = ε := by ring
+  · calc
+      _ ≤ 2 * 2 * (ε / 4) :=
+        mul_le_mul (mul_le_mul_of_nonneg_left (displacement_le_two _) (by norm_num))
+          (h₂ f h) (hn _) (by norm_num)
+      _ = ε := by ring
+
+-- Combine the first N power conditions into a single word.
+private theorem smallOn_powers (N : ℕ) :
+    SmallOn (fun a => ∃ k < N, displacement (a ^ (k + 1)) ≤ 1 / 4) := by
+  induction N with
+  | zero =>
+    exact fun _ _ => ⟨_, ends_pow 0 0, by simp⟩
+  | succ N ih =>
+    simpa only [Nat.lt_succ_iff, le_iff_lt_or_eq, or_and_right, exists_or, exists_eq_left]
+      using smallOn_or ih (smallOn_power N)
+
+private theorem half_turn : ∃ a : SO, 0 < displacement a := by
+  let d : Fin 3 → ℝ := ![-1, -1, 1]
+  have h : diagonal d ∈ specialOrthogonalGroup (Fin 3) ℝ := by
+    rw [mem_specialOrthogonalGroup_iff, mem_orthogonalGroup_iff, diagonal_transpose,
+      diagonal_mul_diagonal, diagonal_eq_one, det_diagonal, Fin.prod_univ_three]
+    constructor
+    · funext i
+      fin_cases i <;> norm_num [d]
+    · norm_num [d]
+  refine ⟨⟨_, h⟩, norm_pos_iff.mpr (sub_ne_zero.mpr ?_)⟩
+  intro he
+  have he₀ := congrArg (fun m : Mat => m 0 0) he
+  norm_num [d] at he₀
+
+/--
+**Some nontrivial word map on $\mathrm{SO}(3, \mathbb{R})$ is not surjective (Kourovka 16.68(c)).**
+There is a nontrivial element $w$ of the free group $F_2$ on two generators whose word map
+$\mathrm{SO}(3, \mathbb{R}) \times \mathrm{SO}(3, \mathbb{R}) \to \mathrm{SO}(3, \mathbb{R})$,
+$(x, y) \mapsto w(x, y)$, is not surjective. That is, Mycielski's question has a negative answer
+for $\mathrm{SO}(3, \mathbb{R})$.
+
+The Kourovka Notebook (21st issue) answers 16.68 negatively for $\mathrm{SO}(3, \mathbb{R})$,
+noting that this follows from Thom (2013), whose Corollary 1.2 gives, for every
+$\varepsilon > 0$, a nontrivial word $w$ with $\|1 - w(u, v)\| \le \varepsilon$ for all unitary
+$u, v$, in particular for all $u, v \in \mathrm{SO}(3, \mathbb{R})$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 16.68 (J. Mycielski); resolution:
+Nilradical v1.0.0, Word maps on PSL2: real and complex cases, result notes (21 September 2026); A.
+Thom, Convergent sequences in discrete groups, Canad. Math. Bull. 56 (2013), 424-433, Nilradical,
+Theorem 1 (every w ≠ 1 in F_2 induces a surjective map PSL_2(K)² → PSL_2(K) for K algebraically
+closed of characteristic 0) and Theorem 2 (an explicit W ≠ 1 with tr W(A, B) > 7/4 for all A, B ∈
+SL_2(ℝ)); Thom, Corollary 1.2 (for every n and ε > 0 a word w ≠ 1 with ‖1 - w(u, v)‖ ≤ ε for all u,
+v ∈ U(n)), for SO(3, ℝ); the Kourovka Notebook (21st issue) marks 16.68 solved (AI solution
+confirmed by A. Thom; SO(3, ℝ) from Thom 2013),
+https://kourovkanotebookorg.wordpress.com/wp-content/uploads/2026/09/nilradical-kourovka-16-68-69.pdf.
+-/
+theorem so3WordMapsSurjective_refuted : ¬ so3WordMapsSurjective := by
+  obtain ⟨N, hN⟩ := exists_small_power
+  obtain ⟨r, hr⟩ := half_turn
+  obtain ⟨w, hw, h⟩ := smallOn_powers N (displacement r / 2) (by positivity)
+  intro hs
+  obtain ⟨⟨a, b⟩, hab⟩ := hs w hw.ne_one r
+  have hbound := h (FreeGroup.lift ![a, b]) (by simpa using hN a)
+  change displacement (wordMap SO w (a, b)) ≤ _ at hbound
+  rw [hab] at hbound
+  linarith
 
 end MathlibExt.GroupTheory.WordMapsSurjectivityKourovka16Problem68Wanted
