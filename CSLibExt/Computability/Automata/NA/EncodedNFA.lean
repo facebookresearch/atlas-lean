@@ -43,8 +43,11 @@ namespace Cslib.Automata
 
 open Cslib.Decidability
 
-/-- A nondeterministic finite automaton with ε-moves as data: natural-number states, start and
-accepting states, transitions `((s, a), t)` and ε-moves `(s, t)`. -/
+/-- **Encoded NFA.** An encoded NFA over an alphabet $\alpha$ is a nondeterministic finite
+automaton with ε-moves given as data, with natural numbers as states: a list of start states, a
+list of accepting states, a list of transitions $((s, a), t)$, meaning that on the letter $a$ the
+state $s$ may move to $t$, and a list of ε-moves $(s, t)$, meaning that the state $s$ may move to
+$t$ without reading a letter. -/
 structure EncodedNFA (α : Type*) where
   /-- The start states. -/
   start : List ℕ
@@ -61,7 +64,11 @@ variable {α : Type*}
 
 /-! ## Semantics -/
 
-/-- The Mathlib ε-NFA an encoding denotes, with states `ℕ`. -/
+/-- **The ε-NFA of an encoded NFA.** An encoded NFA $N$ over $\alpha$ denotes the ε-NFA over
+$\alpha$ with state set $\mathbb{N}$ whose start states are the start states listed in $N$, whose
+accepting states are the accepting states listed in $N$, and in which a state $s$ may move to $t$
+on a letter $a$ exactly when $((s, a), t)$ is a transition of $N$, and without reading a letter
+exactly when $(s, t)$ is an ε-move of $N$. -/
 def toεNFA (N : EncodedNFA α) : εNFA α ℕ where
   step s o := match o with
     | some a => {t | ((s, a), t) ∈ N.trans}
@@ -69,19 +76,27 @@ def toεNFA (N : EncodedNFA α) : εNFA α ℕ where
   start := {s | s ∈ N.start}
   accept := {s | s ∈ N.accept}
 
-/-- The language of an encoded NFA. -/
+/-- **Language of an encoded NFA.** The language of an encoded NFA $N$ over an alphabet $\alpha$
+is the language accepted by the ε-NFA that $N$ denotes, whose states are the natural numbers:
+the words $w$ over $\alpha$ such that some accepting state of $N$ is among the states reached on
+$w$ from the start states of $N$, with ε-moves allowed before, between and after the letters. -/
 def language (N : EncodedNFA α) : Language α :=
   N.toεNFA.accepts
 
-/-- The states an encoding mentions as start states or as targets. -/
+/-- **States an encoded NFA mentions as start states or targets.** For an encoded NFA $N$, this is
+the list of the start states of $N$, followed by the targets $t$ of its transitions $((s, a), t)$,
+followed by the targets $t$ of its ε-moves $(s, t)$. -/
 def states (N : EncodedNFA α) : List ℕ :=
   N.start ++ N.trans.map Prod.snd ++ N.eps.map Prod.snd
 
-/-- The ε-move relation. -/
+/-- **ε-move relation.** For an encoded NFA $N$, the ε-move relation holds between states $s$ and
+$t$ exactly when $(s, t)$ is one of the ε-moves of $N$. -/
 def EpsRel (N : EncodedNFA α) (s t : ℕ) : Prop :=
   (s, t) ∈ N.eps
 
-/-- **The ε-closure is reachability along ε-moves.** -/
+/-- **The ε-closure is reachability along ε-moves.** For an encoded NFA $N$, a set $X$ of natural
+numbers and a natural number $t$, $t$ lies in the ε-closure of $X$ in the ε-NFA that $N$ denotes
+if and only if $t$ is reachable from some $u \in X$ by a sequence of zero or more ε-moves of $N$. -/
 theorem mem_εClosure_iff {N : EncodedNFA α} {X : Set ℕ} {t : ℕ} :
     t ∈ N.toεNFA.εClosure X ↔ ∃ u ∈ X, Relation.ReflTransGen N.EpsRel u t := by
   constructor
@@ -96,7 +111,9 @@ theorem mem_εClosure_iff {N : EncodedNFA α} {X : Set ℕ} {t : ℕ} :
     | refl => exact N.toεNFA.subset_εClosure X hu
     | tail _ hst ih => exact N.toεNFA.mem_εClosure_of_mem_step hst ih
 
-/-- The targets of the ε-moves from `s`. -/
+/-- **ε-successors of a state.** For an encoded NFA $N$ and a state $s$, the ε-successors of $s$
+are the list of the targets $t$ of the ε-moves $(s, t)$ of $N$, in the order in which these
+ε-moves are listed. -/
 def epsNext (N : EncodedNFA α) (s : ℕ) : List ℕ :=
   N.eps.filterMap fun e => cond (decide (e.1 = s)) (some e.2) none
 
@@ -113,7 +130,10 @@ theorem mem_epsNext {N : EncodedNFA α} {s t : ℕ} : t ∈ N.epsNext s ↔ N.Ep
   · intro he
     exact ⟨_, he, by simp⟩
 
-/-- The ε-closure of a list of states, by a search from each of them. -/
+/-- **ε-closure of a list of states.** For an encoded NFA $N$ and a list $S$ of states, the
+ε-closure of $S$ is a list whose members are exactly the states reachable from some state of $S$
+by finitely many ε-moves of $N$ (zero moves included), computed by a search from each state of
+$S$. -/
 def closure (N : EncodedNFA α) (S : List ℕ) : List ℕ :=
   S.flatMap fun s => EncodedDFA.reachN s N.epsNext (s :: N.states)
 
@@ -141,19 +161,29 @@ theorem mem_closure_iff_εClosure {N : EncodedNFA α} {S : List ℕ} {t : ℕ} :
 
 variable [DecidableEq α]
 
-/-- One letter step from a list of states, before the ε-closure. -/
+/-- **Letter step of an encoded NFA.** For an encoded NFA $N$, a list $S$ of states and a letter
+$a$, the letter step lists the target $t$ of every transition $((s, a), t)$ of $N$ with $s \in S$,
+in the order of the transition list of $N$, without taking the ε-closure. -/
 def letterStep (N : EncodedNFA α) (S : List ℕ) (a : α) : List ℕ :=
   N.trans.filterMap fun e => cond (memB S e.1.1 && decide (e.1.2 = a)) (some e.2) none
 
-/-- One step on a list of states: the letter step, then the ε-closure. -/
+/-- **One step of an encoded NFA on a list of states.** For an encoded NFA $N$, a list $S$ of
+states and a letter $a$, the list of states reached from $S$ on $a$: the ε-closure, computed as a
+list, of the list of states $t$ such that $((s, a), t)$ is a transition of $N$ for some $s$ in
+$S$. -/
 def stepList (N : EncodedNFA α) (S : List ℕ) (a : α) : List ℕ :=
   N.closure (N.letterStep S a)
 
-/-- The states reached on `w`. -/
+/-- **Run of an encoded NFA.** For an encoded NFA $N$ and a word $w = a_1 \cdots a_n$, the run of
+$N$ on $w$ is the list of states obtained by starting from the ε-closure of the start states of
+$N$ and, for each letter $a_i$ in turn, taking the letter step on $a_i$ and then the ε-closure. -/
 def run (N : EncodedNFA α) (w : List α) : List ℕ :=
   w.foldl N.stepList (N.closure N.start)
 
-/-- **Membership test**: some state reached on `w` accepts. -/
+/-- **Membership test for encoded NFAs.** For an encoded NFA $N$ and a word $w$, the membership
+test is the Boolean that is true exactly when some state reached on $w$ is an accepting state of
+$N$. The states reached on $w$ are computed from the ε-closure of the start states by, for each
+letter of $w$ in turn, following the transitions on that letter and taking the ε-closure. -/
 def acceptsB (N : EncodedNFA α) (w : List α) : Bool :=
   (N.run w).any (memB N.accept)
 
@@ -174,7 +204,10 @@ theorem mem_letterStep {N : EncodedNFA α} {S : List ℕ} {a : α} {t : ℕ} :
   · rintro ⟨s, hs, he⟩
     exact ⟨((s, a), t), he, by simp [memB_iff.2 hs]⟩
 
-/-- **The states reached are those of Mathlib's `εNFA.eval`.** -/
+/-- **The run of an encoded NFA agrees with ε-NFA evaluation.** For an encoded NFA $N$, a word $w$
+and a natural number $t$, $t$ is among the states in the run of $N$ on $w$ if and only if $t$ is
+among the states that the ε-NFA denoted by $N$ reaches on $w$ from its start states, with ε-moves
+allowed before, between and after the letters. -/
 theorem mem_run_iff {N : EncodedNFA α} {w : List α} {t : ℕ} :
     t ∈ N.run w ↔ t ∈ N.toεNFA.eval w := by
   induction w using List.reverseRecOn generalizing t with
@@ -190,7 +223,8 @@ theorem mem_run_iff {N : EncodedNFA α} {w : List α} {t : ℕ} :
       · rintro ⟨s, hs, u, hsu, hut⟩
         exact ⟨u, ⟨s, ih.2 hs, hsu⟩, hut⟩
 
-/-- **Correctness of the membership test.** -/
+/-- **Correctness of the NFA membership test.** For an encoded NFA $N$ and a word $w$, the
+membership test returns true on $w$ if and only if $w$ belongs to the language of $N$. -/
 theorem acceptsB_iff {N : EncodedNFA α} {w : List α} : N.acceptsB w = true ↔ w ∈ N.language := by
   rw [acceptsB, List.any_eq_true]
   simp only [memB_iff, mem_run_iff]
@@ -207,7 +241,9 @@ instance decidableMemLanguage (N : EncodedNFA α) (w : List α) : Decidable (w �
 /-! ## Emptiness -/
 
 omit [DecidableEq α] in
-/-- The states reached by some word are closed under ε-moves. -/
+/-- **The states reached on a word are closed under ε-moves.** Let $N$ be an encoded NFA and $w$ a
+word. If $u$ is one of the states that the ε-NFA denoted by $N$ can be in after reading $w$, and
+$N$ has an ε-move from $u$ to $v$, then $v$ is also one of these states. -/
 theorem eval_epsRel {N : EncodedNFA α} {w : List α} {u v : ℕ} (hu : u ∈ N.toεNFA.eval w)
     (huv : N.EpsRel u v) : v ∈ N.toεNFA.eval w := by
   induction w using List.reverseRecOn with
@@ -217,7 +253,9 @@ theorem eval_epsRel {N : EncodedNFA α} {w : List α} {u v : ℕ} (hu : u ∈ N.
       obtain ⟨s, hs, hsu⟩ := hu
       exact ⟨s, hs, N.toεNFA.mem_εClosure_of_mem_step huv hsu⟩
 
-/-- The successors of `s` along transitions on any letter and along ε-moves. -/
+/-- **Successors of a state in an encoded NFA.** For an encoded NFA $N$ and a state $s$, this is the
+list of the targets $t$ of the transitions $((s, a), t)$ of $N$ on any letter $a$, followed by the
+targets $t$ of the ε-moves $(s, t)$ of $N$, each in the order of the corresponding list of $N$. -/
 def next (N : EncodedNFA α) (s : ℕ) : List ℕ :=
   N.trans.filterMap (fun e => cond (decide (e.1.1 = s)) (some e.2) none) ++ N.epsNext s
 
@@ -238,12 +276,18 @@ theorem mem_next {N : EncodedNFA α} {s t : ℕ} :
   · rintro ⟨a, he⟩
     exact ⟨_, he, by simp⟩
 
-/-- The states reachable from some start state. -/
+/-- **Reachable states of an encoded NFA.** For an encoded NFA $N$, this is the list, found by a
+search from each start state of $N$ in turn through the start states of $N$ and the targets of
+its transitions and ε-moves, of the states reachable from a start state of $N$ by zero or more
+moves, each a transition of $N$ on some letter or an ε-move of $N$. -/
 def reachable (N : EncodedNFA α) : List ℕ :=
   N.start.flatMap fun s => EncodedDFA.reachN s N.next N.states
 
 omit [DecidableEq α] in
-/-- **The reachable states are those some word can lead to.** -/
+/-- **The reachable states are those some word can lead to.** For an encoded NFA $N$ and a natural
+number $t$, $t$ is among the reachable states of $N$ if and only if there is a word $w$ such that
+$t$ is among the states that the ε-NFA denoted by $N$ reaches on $w$ from its start states, with
+ε-moves allowed before, between and after the letters. -/
 theorem mem_reachable_iff {N : EncodedNFA α} {t : ℕ} :
     t ∈ N.reachable ↔ ∃ w, t ∈ N.toεNFA.eval w := by
   have hB : ∀ s ∈ N.states, ∀ u ∈ N.next s, u ∈ N.states := fun s _ u hu => by
@@ -286,7 +330,10 @@ theorem mem_reachable_iff {N : EncodedNFA α} {t : ℕ} :
         obtain ⟨s, hs, h⟩ := ih hu
         exact ⟨s, hs, (h.tail (mem_next.2 (.inl ⟨a, hv⟩))).trans (hmono hvt)⟩
 
-/-- **Emptiness test**: no reachable state accepts. -/
+/-- **Emptiness test for encoded NFAs.** For an encoded NFA $N$, the emptiness test is the
+Boolean that is true exactly when no state in the list of reachable states of $N$ is an
+accepting state of $N$; the reachable states are those reachable from a start state of $N$ by
+zero or more moves, each a transition on some letter or an ε-move. -/
 def isEmptyB (N : EncodedNFA α) : Bool :=
   N.reachable.all fun s => !memB N.accept s
 
@@ -390,7 +437,8 @@ theorem exists_language_eq_εNFA [Finite α] {σ : Type*} [Finite σ] (M : εNFA
       List.mem_map.2 ⟨t, by simpa using ht, rfl⟩, hx, (hpath x s (f t)).2 ⟨t, rfl, hp⟩⟩
 
 omit [DecidableEq α] in
-/-- **Every finite NFA has an encoding** (with no ε-moves needed). -/
+/-- **Every finite NFA has an encoding.** An NFA over a finite alphabet with finitely many states
+has an encoded NFA with the same language. -/
 theorem exists_language_eq [Finite α] {σ : Type*} [Finite σ] (M : NFA α σ) :
     ∃ N : EncodedNFA α, N.language = M.accepts := by
   obtain ⟨N, hN⟩ := exists_language_eq_εNFA M.toεNFA
@@ -400,7 +448,10 @@ theorem exists_language_eq [Finite α] {σ : Type*} [Finite σ] (M : NFA α σ) 
 
 section Computable
 
-/-- Encoded NFAs as tuples. -/
+/-- **Encoded NFAs as tuples.** The bijection between encoded NFAs over $\alpha$ and quadruples
+consisting of a list of natural numbers, a list of natural numbers, a list of elements of
+$(\mathbb{N} \times \alpha) \times \mathbb{N}$ and a list of pairs of natural numbers, which sends
+an encoded NFA to its start states, accepting states, transitions and ε-moves. -/
 def equivProd : EncodedNFA α ≃ List ℕ × List ℕ × List ((ℕ × α) × ℕ) × List (ℕ × ℕ) where
   toFun N := (N.start, N.accept, N.trans, N.eps)
   invFun p := ⟨p.1, p.2.1, p.2.2.1, p.2.2.2⟩
@@ -499,7 +550,10 @@ theorem primrec_isEmptyB : Primrec (isEmptyB (α := α)) :=
     Primrec₂.right)) primrec_reachable
 
 omit [DecidableEq α] in
-/-- **Sipser, Theorem 4.2**: membership for NFAs (A_NFA) is decidable by a multi-stack machine. -/
+/-- **Membership for NFAs is decidable.** For every alphabet $\alpha$ with a primitive recursive
+encoding, the property of a pair $(N, w)$, where $N$ is an encoded NFA (with ε-moves) over
+$\alpha$ and $w$ is a word over $\alpha$, that $w$ is in the language of $N$ is decidable by a
+multi-stack machine. This is Sipser, Theorem 4.2: the problem $A_{\mathrm{NFA}}$ is decidable. -/
 theorem tm2Decidable_mem_language :
     TM2Decidable fun p : EncodedNFA α × List α => p.2 ∈ p.1.language := by
   classical
@@ -507,7 +561,9 @@ theorem tm2Decidable_mem_language :
     (computablePred_of_primrec_bool primrec_acceptsB fun _ => acceptsB_iff)
 
 omit [DecidableEq α] in
-/-- Emptiness for NFAs (E_NFA) is decidable by a multi-stack machine. -/
+/-- **Emptiness of NFAs is decidable.** For every alphabet $\alpha$ with a primitive recursive
+encoding, the property of an encoded NFA $N$ (with ε-moves) over $\alpha$ that its language is
+empty is decidable by a multi-stack machine. This is the problem $E_{\mathrm{NFA}}$. -/
 theorem tm2Decidable_language_eq_zero : TM2Decidable fun N : EncodedNFA α => N.language = 0 :=
   tm2Decidable_iff_computablePred.2
     (computablePred_of_primrec_bool primrec_isEmptyB fun _ => isEmptyB_iff)

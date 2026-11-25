@@ -1,0 +1,3 @@
+# Feasible instances of PARTITIONED GRAPH ISOMORPHISM
+
+Let $G$ be the graph on the vertices $0, \dots, n-1$ and $H$ the graph on the vertices $0, \dots, m-1$ in which $u$ and $v$ are adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$, respectively in $F$. An instance $(n, E, m, F, K)$ is feasible for PARTITIONED GRAPH ISOMORPHISM when there are spanning subgraphs $G_0, \dots, G_{K-1}$ of $G$ and $H_0, \dots, H_{K-1}$ of $H$, each family with pairwise disjoint edge sets whose union is the edge set of $G$, respectively of $H$ (parts may have no edges), such that $G_k$ is isomorphic to $H_k$ for every $k$. Each $G_k$ keeps all $n$ vertices and each $H_k$ all $m$ vertices, so when $K > 0$ feasibility forces $n = m$.

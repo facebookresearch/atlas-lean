@@ -79,7 +79,9 @@ private theorem eq_one_of_forall_infinitePlace_norm_sub_one_lt_one
     have hw := h w
     rw [← map_one (algebraMap K w.Completion), ← map_sub] at hw
     have hco : algebraMap K w.Completion ((k : K) - 1) =
-        (↑((WithAbs.equiv w.1).symm ((k : K) - 1)) : w.Completion) := rfl
+        (↑((WithAbs.equiv w.1).symm ((k : K) - 1)) : w.Completion) := by
+      rw [AbsoluteValue.Completion.algebraMap_def, WithAbs.algebraMap_right_apply,
+        Algebra.algebraMap_self_apply, WithAbs.equiv_symm_apply]
     rw [hco, NumberField.InfinitePlace.Completion.norm_coe] at hw
     simpa using hw
   have hk0 : k - 1 = 0 := by
@@ -90,7 +92,10 @@ private theorem eq_one_of_forall_infinitePlace_norm_sub_one_lt_one
     exact (not_lt_of_ge hge) (hall w₀)
   exact sub_eq_zero.mp hk0
 
-/-- The principal ideles of a number field form a discrete subgroup of its idele group. -/
+/-- **The principal ideles are discrete.** For a number field $K$, the subgroup of principal
+ideles is discrete in the idele group of $K$, where the idele group carries the product of the
+product topology at the infinite places and the restricted-product topology at the finite
+places. -/
 public theorem principalIdeles_discrete :
     DiscreteTopology (principalIdeles (𝓞 K) K) := by
   rw [discreteTopology_iff_isOpen_singleton_one]

@@ -18,3 +18,5 @@
 - [Cryptomania](cryptomania.md)
 - [Exactly one of Impagliazzo's five worlds holds](exactly-one-world.md)
 - [Impagliazzo's five worlds](impagliazzo-five-worlds.md)
+
+- [Does average-case hardness of NP imply one-way functions?](does-average-case-hardness-of-np-imply-one-way-functions.md)

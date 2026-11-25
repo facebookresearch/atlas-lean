@@ -24,7 +24,7 @@ attributed to Proskurowski and Sysło).
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import MathlibExt.Combinatorics.SimpleGraph.CycleCover
 public import MathlibExt.Combinatorics.SimpleGraph.Domination
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity

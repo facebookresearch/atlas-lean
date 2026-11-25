@@ -15,3 +15,4 @@
 - [Primitive words of given content](primitive-words-of-content.md)
 - [Lyndon words are primitive](is-primitive-word-of-is-lyndon-word.md)
 - [Witt's formula for the number of Lyndon words of given content](card-lyndon-words-of-content-eq-witt-mul.md)
+- [Radford's theorem: the shuffle algebra is a polynomial algebra on the Lyndon words](radford-shuffle-algebra-polynomial.md)
