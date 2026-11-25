@@ -19,6 +19,20 @@ import Mathlib.Tactic.Ring
 The three-copy complex of Duval, Goeckner, Klivans and Martin refutes the Stanley–Garsia
 partitionability conjecture. We verify Reisner's criterion over the rationals by sparse column
 elimination and rule out facet intervals on the faces used in their combinatorial obstruction.
+
+## Record carried over from the retired `WantedExt/Combinatorics/CohenMacaulayPartitionabilityAMR156Problem0005Wanted.lean`
+
+Source: R. P. Stanley, Positivity Problems and Conjectures in Algebraic Combinatorics (1999),
+Problem 6 (Stanley–Garsia partitionability conjecture). UnsolvedMath record UM-00801179
+(`AMR-156-0005`), dataset ulamai/UnsolvedMath v1.8.0.
+
+Finite abstract simplicial complexes on the vertex set `ℕ`, links and reduced rational Betti numbers
+are those of `WantedExt/Combinatorics/RationalSimplicialHomologyShared.lean`. Cohen–Macaulay over
+`ℚ` is Reisner's criterion: `H̃_i(link F; ℚ) = 0` for `i < dim link F` (degrees above the dimension
+vanish automatically). Partitionable: the faces are partitioned into intervals `[r F, F]` indexed by
+the facets. Duval–Goeckner–Klivans–Martin take Reisner's criterion over an arbitrary field;
+Cohen–Macaulayness over any field implies it over `ℚ` (universal coefficients: vanishing mod `p`
+forces the integral homology to be finite), and their complexes are built from shellable balls.
 -/
 
 @[expose] public section

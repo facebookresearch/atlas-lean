@@ -25,6 +25,23 @@ points into nine residue classes.
 This simplex occurs in Sam Payne, *Ehrhart series and lattice triangulations*, Example 4.2
 with $(b,k,r)=(3,2,0)$. Translate by $f=(e_1+\cdots+e_6)/3$ and use the lattice basis
 $f,e_2+f,\ldots,e_6+f$ to obtain the vertices above. <https://arxiv.org/abs/math/0702052>
+
+## Record carried over from the retired `WantedExt/Combinatorics/HibiSymmetricHStarUnimodalOWR741Problem003Wanted.lean`
+
+Source: C. A. Athanasiadis, On the unimodality of h*-vectors, in Ehrhart Quasipolynomials: Algebra,
+Combinatorics, and Geometry, Oberwolfach Reports 1 (2004), no. 39, p. 2078, Conjecture 2, DOI
+10.4171/OWR/2004/39. UnsolvedMath record UM-30000109 (`OWR-741-003`), dataset ulamai/UnsolvedMath
+v1.8.0.
+
+A `d`-dimensional integral polytope is taken full-dimensional in `ℝ^d`, the convex hull of a finite
+set of integer points with nonempty interior; every `d`-dimensional integral polytope is lattice
+equivalent to one (and Mustaţă-Payne's polytope, a lattice polytope for the lattice `ℤ⁶ + ℤ f`,
+becomes one in a basis of that lattice). The `h*`-polynomial is `MetaMathlibExt.IsHStarPolynomial`
+(the source's identity `∑ i(P, r) t^r = h*(t) / (1 - t)^{d+1}`) and unimodality is
+`MetaMathlibExt.IsUnimodal`, both reused from
+`WantedExt.Combinatorics.WeightedProjectiveSimplexIDPWanted`. Conjecture 1 of the same abstract
+(standard Gorenstein `R_P` implies unimodal `h*`) is already stated as
+`conjectureGorensteinIDPUnimodal` in the OpenConjectures entry `IntegerDecompositionUnimodalHStar`.
 -/
 
 @[expose] public section
