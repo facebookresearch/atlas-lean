@@ -161,3 +161,8 @@
 - [Covariance of the coalescence times of two disjoint pairs](covariance-pair-coal-time-disjoint.md)
 - [Mean overlap of the paths of two disjoint pairs](integral-pair-path-overlap-disjoint.md)
 - [Covariance of the pairwise differences of two disjoint pairs](covariance-pair-diff-disjoint.md)
+
+- [Candidate and visible local-tree changes along the chromosome](candidate-vs-visible-local-tree-changes-expected.md)
+- [Finitely many breakpoints and a jointly measurable local-tree field](finitely-many-breakpoints-and-a-jointly-measurab.md)
+- [General Markov mutation along branches and the law of sample types](general-markov-mutation-along-branches-and-sampl.md)
+- [Marked whole-chromosome ARG on [0,1) with homogeneous recombination: construction](marked-whole-chromosome-arg-on-0-1-with-homogene.md)

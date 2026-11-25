@@ -20,7 +20,9 @@ import Mathlib.Tactic.Ring
 
 For a bi-infinite integer sequence `x : ℤ → ℤ`, the extended continuant
 `extendedContinuant x a b` has order `a` and start index `b`. Its recurrence in the order
-gives the entries of the westbound matrix product.
+gives the determinant identity `extendedContinuant_det` for every integer order and the entries
+of the westbound matrix product. For table (33) with `σ ≡ 5 (mod 6)`,
+`silentTerms_table_five_mod_six` evaluates the silent-term formulas.
 -/
 
 namespace MetaMathlibExt
@@ -212,6 +214,39 @@ public theorem extendedContinuant_neg_order (x : ℤ → ℤ) (h n : ℤ) :
   ring_nf at hn ⊢
   simpa [extendedContinuant_neg_one, extendedContinuant_neg_two] using hn
 
+/-- **Determinant identity for extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be an
+integer sequence and write $K_a(x)_b$ for its extended continuant of order $a$ with start index
+$b$. For every integer $n$,
+$$K_n(x)_0 K_{n-2}(x)_1 - K_{n-1}(x)_1 K_{n-1}(x)_0 = (-1)^{n+1}.$$
+
+Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
+INTEGERS 26 (2026), Article A73, Corollary 2. -/
+public theorem extendedContinuant_det (x : ℤ → ℤ) (n : ℤ) :
+    extendedContinuant x n 0 * extendedContinuant x (n - 2) 1 -
+        extendedContinuant x (n - 1) 1 * extendedContinuant x (n - 1) 0 =
+      ((n + 1).negOnePow : ℤ) := by
+  let D (n : ℤ) := extendedContinuant x n 0 * extendedContinuant x (n - 2) 1 -
+    extendedContinuant x (n - 1) 1 * extendedContinuant x (n - 1) 0
+  -- Both continuants of order `n` expand with the same term `x n`, which cancels.
+  have flip (n : ℤ) : D n = -D (n - 1) := by
+    have h₀ := extendedContinuant_recurrence x n 0
+    have h₁ := extendedContinuant_recurrence x (n - 1) 1
+    rw [zero_add] at h₀
+    rw [show 1 + (n - 1) = n by ring, show n - 1 - 1 = n - 2 by ring] at h₁
+    dsimp only [D]
+    rw [show n - 1 - 1 = n - 2 by ring]
+    linear_combination extendedContinuant x (n - 2) 1 * h₀ -
+      extendedContinuant x (n - 1) 0 * h₁
+  -- So the determinant alternates in sign from its value `1` at order `-1`.
+  have base : D (-1) = ((-1 + 1 : ℤ).negOnePow : ℤ) := by
+    norm_num [D, extendedContinuant_neg_one, extendedContinuant_neg_two,
+      (extendedContinuant_neg_three_to_six x 1).1]
+  change D n = _
+  refine Int.inductionOn' n (-1) base (fun k _ ih => ?_) (fun k _ ih => ?_)
+  · rw [flip, add_sub_cancel_right, ih, Int.negOnePow_succ (k + 1), Units.val_neg]
+  · rw [flip k, Int.negOnePow_succ, Units.val_neg, neg_inj] at ih
+    rwa [sub_add_cancel]
+
 /-- **Westbound matrix product of extended continuants.** Let $x : \mathbb{Z} \to \mathbb{Z}$ be a
 bi-infinite integer sequence, write $K_a(x)_b$ for the extended continuant of order $a$ with start
 index $b$, and put $M_i = \begin{pmatrix} 0 & 1 \\ 1 & -x_{-i} \end{pmatrix}$. Then for every
@@ -285,6 +320,120 @@ public theorem not_silent_of_even (x z : ℤ → ℤ) (σ : ℕ) (hσ : Even σ)
   have east := extendedContinuant_recurrence z 1 0
   norm_num [extendedContinuant_neg_one, extendedContinuant_zero] at east hdet
   linarith
+
+-- Reflect the order to turn the right-end recurrence into a left-end recurrence.
+private theorem silentTerms_table_five_mod_six.leftRecurrence (x : ℤ → ℤ) (a b : ℤ) :
+    extendedContinuant x a b =
+      x b * extendedContinuant x (a - 1) (b + 1) + extendedContinuant x (a - 2) (b + 2) := by
+  have reflect (j : ℤ) :
+      extendedContinuant x (a - j) (b + j) =
+        ((1 - a + j).negOnePow : ℤ) * extendedContinuant x (-a - 4 + j) (b + a + 2) := by
+    convert extendedContinuant_neg_order x (b + j) (j - a) using 1 <;> ring_nf
+  have r := extendedContinuant_recurrence x (-a - 2) (b + a + 2)
+  have h₀ := reflect 0
+  have h₁ := reflect 1
+  have h₂ := reflect 2
+  simp only [sub_zero, add_zero] at h₀
+  rw [show 1 - a + 2 = (1 - a + 1) + 1 by ring, Int.negOnePow_succ, Int.negOnePow_succ,
+    neg_neg] at h₂
+  rw [Int.negOnePow_succ, Units.val_neg] at h₁
+  rw [h₀, h₁, h₂]
+  ring_nf at r ⊢
+  rw [r]
+  ring
+
+set_option linter.unusedVariables false in
+/-- **Silent-term formulas on table (33), case $\sigma \equiv 5 \pmod 6$.** Let $\sigma \ge 7$ be
+an integer with $\sigma \equiv 5 \pmod 6$, let $c_1 \ne c_2$ be integers, and let
+$x : \mathbb{Z} \to \mathbb{Z}$ be a bi-infinite integer sequence with $x_{-3} = x_0 + c_1$,
+$x_{-2} = 1$, $x_{-1} = -1$ and, for all integers $4 \le m \le \sigma - 3$, $x_{-m} = -1$ if
+$m \equiv 2 \pmod 3$ and $x_{-m} = 1$ otherwise. Write $K_a(x)_b$ for the extended continuant of
+order $a$ with start index $b$, and put $z_0 = x_0 + c_2$ and
+$w = -K_{\sigma-5}(x)_{-\sigma+3} - z_0 K_{\sigma-4}(x)_{-\sigma+3}$. Then $w \ne 0$ and
+$-1 + K_{\sigma-6}(x)_{-\sigma+4} + z_0 K_{\sigma-5}(x)_{-\sigma+4} = (1 + c_2 - c_1) w$.
+
+So formula (29) of Theorem 7, with $z_0 = x_0 + c_2$, gives $x_{-\sigma+1} = w \ne 0$ and
+$x_{-\sigma+2} = 1 + c_2 - c_1$.
+
+Source: Dixon J. Jones, *Extended Continuants and Bi-infinite Periodic Continued Fractions*,
+INTEGERS 26 (2026), Article A73, Proposition 3 (case `σ ≡ 5 mod 6`). -/
+public theorem silentTerms_table_five_mod_six (x : ℤ → ℤ) (σ : ℤ) (hσ : σ % 6 = 5)
+    (h7 : 7 ≤ σ) (c₁ c₂ : ℤ) (hc : c₁ ≠ c₂) (h3 : x (-3) = x 0 + c₁) (h2 : x (-2) = 1)
+    (h1 : x (-1) = -1)
+    (htab : ∀ m : ℤ, 4 ≤ m → m ≤ σ - 3 → x (-m) = if m % 3 = 2 then -1 else 1) :
+    -extendedContinuant x (σ - 5) (-σ + 3) - (x 0 + c₂) * extendedContinuant x (σ - 4) (-σ + 3)
+        ≠ 0 ∧
+      -1 + extendedContinuant x (σ - 6) (-σ + 4) +
+          (x 0 + c₂) * extendedContinuant x (σ - 5) (-σ + 4) =
+        (1 + c₂ - c₁) * (-extendedContinuant x (σ - 5) (-σ + 3) -
+          (x 0 + c₂) * extendedContinuant x (σ - 4) (-σ + 3)) := by
+  let z := x 0 + c₂
+  let F (m : ℤ) := extendedContinuant x (m - 2) (-m) + z * extendedContinuant x (m - 1) (-m)
+  have step (m : ℤ) : F m = x (-m) * F (m - 1) + F (m - 2) := by
+    dsimp only [F]
+    rw [silentTerms_table_five_mod_six.leftRecurrence x (m - 2) (-m),
+      silentTerms_table_five_mod_six.leftRecurrence x (m - 1) (-m)]
+    ring_nf
+  have f₀ : F 0 = z := by
+    simp [F, extendedContinuant_neg_two, extendedContinuant_neg_one]
+  have f₁ : F 1 = 1 - z := by
+    norm_num [F, extendedContinuant_neg_one, extendedContinuant_zero, h1]
+    ring
+  have f₂ : F 2 = 1 := by
+    have h := step 2
+    norm_num [h2, f₁, f₀] at h
+    omega
+  let t := 1 + c₁ - c₂
+  have f₃ : F 3 = t := by
+    have h := step 3
+    norm_num [h3, f₂, f₁, z] at h
+    dsimp [t]
+    omega
+  have table (m : ℤ) (hm : 4 ≤ m) (hle : m ≤ σ - 3) :
+      F m = (if m % 3 = 2 then -1 else 1) * F (m - 1) + F (m - 2) := by
+    rw [step m, htab m hm hle]
+  -- In each row the coefficients 1, -1, 1 send the pair (q, p) to (-q, p).
+  have rowEnd (m : ℤ) (hm : 3 ≤ m) (hmod : m % 3 = 0) (hle : m + 2 ≤ σ - 3) :
+      F (m + 1) = F m + F (m - 1) ∧ F (m + 2) = -F (m - 1) := by
+    have r₁ := table (m + 1) (by omega) (by omega)
+    have r₂ := table (m + 2) (by omega) hle
+    rw [ite_eq_right (show (m + 1) % 3 ≠ 2 by omega), one_mul] at r₁
+    rw [ite_eq_left (show (m + 2) % 3 = 2 by omega), neg_one_mul] at r₂
+    grind
+  have rows (n : ℕ) (hn : 3 * (n : ℤ) + 5 ≤ σ - 3) :
+      F (3 * n + 4) = t + (-1 : ℤ) ^ n ∧ F (3 * n + 5) = -(-1 : ℤ) ^ n := by
+    induction n with
+    | zero =>
+      have h := rowEnd 3 (by decide) (by decide) (by omega)
+      norm_num at h ⊢
+      grind
+    | succ n ih =>
+      obtain ⟨p, q⟩ := ih (by omega)
+      have r := table (3 * n + 6) (by omega) (by omega)
+      rw [ite_eq_right (show (3 * (n : ℤ) + 6) % 3 ≠ 2 by omega), one_mul] at r
+      have h := rowEnd (3 * n + 6) (by omega) (by omega) (by omega)
+      simp only [Nat.cast_succ, pow_succ]
+      grind
+  obtain ⟨k, hk⟩ : ∃ k : ℕ, σ = 6 * (k : ℤ) + 11 := ⟨((σ - 11) / 6).toNat, by omega⟩
+  obtain ⟨u, v⟩ := rows (2 * k + 1) (by omega)
+  have hsign : (-1 : ℤ) ^ (2 * k + 1) = -1 := (show Odd (2 * k + 1) from ⟨k, rfl⟩).neg_one_pow
+  rw [hsign] at u v
+  have hu : F (σ - 4) = t - 1 := by
+    rw [show σ - 4 = 3 * ((2 * k + 1 : ℕ) : ℤ) + 4 by omega, u]
+    ring
+  have hv : F (σ - 3) = 1 := by
+    rw [show σ - 3 = 3 * ((2 * k + 1 : ℕ) : ℤ) + 5 by omega, v]
+    decide
+  have hleft : -1 + F (σ - 4) = (1 + c₂ - c₁) * -F (σ - 3) := by
+    rw [hu, hv]
+    dsimp [t]
+    ring
+  have hne : -F (σ - 3) ≠ 0 := by rw [hv]; decide
+  dsimp only [F, z] at hleft hne
+  constructor
+  · convert hne using 1
+    ring_nf
+  · convert hleft using 1 <;> ring_nf
 
 end
 

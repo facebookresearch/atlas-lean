@@ -28,40 +28,13 @@ public import Mathlib.Algebra.Polynomial.AlgebraMap
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Topology.Algebra.InfiniteSum.Defs
 public import MathlibExt.NumberTheory.GeneralizedFibonacciPolynomial
+public import MathlibExt.NumberTheory.Recurrences.GibonacciPolynomialRatioTelescoping
 
 namespace MetaMathlibExt
 
 open Polynomial
 
 @[expose] public section
-
-/-- **A telescoping series of powers of gibonacci polynomial ratios.** Let $x > 0$ be real, let
-$\alpha = (x + \sqrt{x^2 + 4})/2$, and let $g_n$ be either the Fibonacci polynomials $f_n(x)$,
-given by $f_0 = 0$ and $f_1 = 1$, or the Lucas polynomials $l_n(x)$, given by $l_0 = 2$ and
-$l_1 = x$, where both satisfy $z_{n+2} = x z_{n+1} + z_n$. Let $k$, $r$, $t$, $\lambda$ be positive
-integers and $p$ a natural number with $t \le 2p$. Then the series
-$$\sum_{n=1}^{\infty} \left[ \left( \frac{g_{(2pn+t-2p)k+r}}{g_{(2pn+t-2p)k}} \right)^{\lambda} -
-\left( \frac{g_{(2pn+t)k+r}}{g_{(2pn+t)k}} \right)^{\lambda} \right]$$
-converges unconditionally, and its sum is
-$\left( g_{tk+r} / g_{tk} \right)^{\lambda} - \alpha^{\lambda r}$.
-
-The source takes $x$ to be an integer; the statement is made for real $x > 0$, which contains the
-positive integers.
-
-Source: Thomas Koshy, *Sums Involving a Family of Gibonacci Polynomial Squares:
-Generalizations*, The Fibonacci Quarterly 62 (2024), Article koshy11112023, Lemma 2.1
-(`fq-2024-koshy11112023-lem-2.1`). -/
-public theorem_wanted hasSum_gibonacciPoly_pow_ratio_telescoping (g : ℕ → ℤ[X])
-    (hg : g = generalizedFibonacciPolynomial 0 1 X 1 ∨ g = generalizedFibonacciPolynomial 2 X X 1)
-    {x : ℝ} (hx : 0 < x) {k p r t m : ℕ} (hk : 0 < k) (hr : 0 < r) (ht : 0 < t) (hm : 0 < m)
-    (htp : t ≤ 2 * p) :
-    HasSum (fun n : ℕ =>
-        (aeval x (g ((2 * p * (n + 1) + t - 2 * p) * k + r)) /
-            aeval x (g ((2 * p * (n + 1) + t - 2 * p) * k))) ^ m -
-          (aeval x (g ((2 * p * (n + 1) + t) * k + r)) /
-            aeval x (g ((2 * p * (n + 1) + t) * k))) ^ m)
-      ((aeval x (g (t * k + r)) / aeval x (g (t * k))) ^ m -
-        ((x + Real.sqrt (x ^ 2 + 4)) / 2) ^ (m * r))
 
 /-- **Series over a family of Fibonacci polynomial squares.** Let $x > 0$ be real, let
 $\alpha = (x + \sqrt{x^2 + 4})/2$, and let $f_n = f_n(x)$ be the Fibonacci polynomials, given by
