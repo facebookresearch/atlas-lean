@@ -12,7 +12,9 @@ public import Mathlib.Data.Nat.Factorial.Basic
 public import MathlibExt.NumberTheory.TribonacciPadicValInt
 public import MathlibExt.NumberTheory.TribonacciSequenceWithInitialValues001
 import Mathlib.Data.Nat.Choose.Factorization
-import Mathlib.Tactic
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # The Brocard–Ramanujan equation has no Tribonacci solutions
