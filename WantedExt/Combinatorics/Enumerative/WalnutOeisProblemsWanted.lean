@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.Log
 import Mathlib.Data.List.Infix
 public import MathlibExt.Combinatorics.Enumerative.AntiTribonacci
+public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumGap
 public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumPalindromeLimit
 
 /-!
@@ -101,16 +102,6 @@ public theorem_wanted mem_greedySubsumfree_iff {z : ℕ} (hz : 0 < z) :
     (z ∈ greedySubsumfreeBelow 1 4 5 (z + 1) ↔
       z ∈ ({1, 9, 25} : Finset ℕ) ∨ z % 43 ∈ ({4, 5, 6, 7, 8, 26, 27, 28, 29} : Finset ℕ))
 
-
-/-- **The last gap of size one between unsums.** Let $a_1 < a_2 < \cdots$ be the unsums
-(OEIS A260317), and for $i \ge 0$ let $g_i = a_{i+2} - a_{i+1}$ be the $i$-th gap between
-consecutive unsums, counted from zero. Then $g_9 = 1$, and $g_i \ne 1$ for every $i \ge 10$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Lemma 1 (`jis-2025-25.3.8-lem-1`). -/
-public theorem_wanted upperWythoffUnsumGap_ne_one :
-    upperWythoffUnsumGap 9 = 1 ∧ ∀ i, 10 ≤ i → upperWythoffUnsumGap i ≠ 1
 
 /-- **Digit sums between markers are two less than Fibonacci numbers.** For every $j$, the digit
 sum of the $j$-th word between markers of the unsum gap sequence, plus $2$, is a Fibonacci
