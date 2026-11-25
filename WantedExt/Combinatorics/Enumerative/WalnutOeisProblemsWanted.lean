@@ -14,6 +14,7 @@ public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.Log
 import Mathlib.Data.List.Infix
 public import MathlibExt.Combinatorics.Enumerative.AntiTribonacci
+public import MathlibExt.Combinatorics.Enumerative.TernaryCoefficientShape
 public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumGap
 public import MathlibExt.Combinatorics.Enumerative.UpperWythoffUnsumPalindromeLimit
 
@@ -68,20 +69,6 @@ Section 6. -/
 public theorem greedySubsumfreeBelow_one_two_three :
     greedySubsumfreeBelow 1 2 3 26 = {1, 2, 3, 4, 5, 13, 14, 15, 25} := by
   decide +kernel
-
-/-- **Hajdu–Tijdeman–Varga theorem on $(x-1)^c (x+1)^d$ modulo $3$.** Let $c$ and $d$ be natural
-numbers. If none of the coefficients of $x^0, x^1, \dots, x^{c+d}$ in the integer polynomial
-$(x-1)^c (x+1)^d$ is divisible by $3$, then there are natural numbers $i > j$ such that $c + d + 1$
-equals $3^j$, $2 \cdot 3^j$, $3^i + 3^j$ or $2 \cdot 3^i + 3^j$.
-
-Source: Bosma, Bruin, Fokkink, Grube, Reuijl, and Tromp, *Using Walnut to Solve
-Problems from the OEIS*, Journal of Integer Sequences 28 (2025), Article 25.3.8,
-Theorem 10 (`jis-2025-25.3.8-thm-10`), citing Hajdu, Tijdeman, and Varga. -/
-public theorem_wanted coeff_not_dvd_three_shape (c d : ℕ)
-    (h : ∀ k ≤ c + d,
-      ¬ (3 : ℤ) ∣ (((Polynomial.X - 1) ^ c * (Polynomial.X + 1) ^ d : Polynomial ℤ)).coeff k) :
-    ∃ i j : ℕ, j < i ∧ (c + d + 1 = 3 ^ j ∨ c + d + 1 = 2 * 3 ^ j ∨
-      c + d + 1 = 3 ^ i + 3 ^ j ∨ c + d + 1 = 2 * 3 ^ i + 3 ^ j)
 
 /-- **Membership in three greedy 3-subsumfree sequences.** For $x < y < z$, the greedy
 $3$-subsumfree sequence $S_{x,y,z}$ consists of $x$, $y$, $z$ and every $m > z$ that is not the
