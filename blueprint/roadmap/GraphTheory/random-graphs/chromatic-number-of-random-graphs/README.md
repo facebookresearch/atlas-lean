@@ -6,6 +6,9 @@ For constant edge probability $p$, Bollobás (1988) proved that $\chi(G(n, p)) =
 - [Erdős Problem 625](conjecture.md)
 - [Chromatic minus cochromatic number of a random graph tends to infinity](conjecture-holds.md)
 - [Chromatic number of dense random graphs (Bollobás)](tendsto-measure-real-chromatic-number-ne.md)
+- [Proportion of graphs with small list chromatic number](small-list-chromatic-proportion.md)
+- [Erdős Problem 799 (list chromatic number of almost all graphs)](list-chromatic-number-sublinear-almost-a.md)
+- [Resolution of Erdős Problem 799](list-chromatic-number-sublinear-almost-a-2.md)
 
 ## Related topics
 

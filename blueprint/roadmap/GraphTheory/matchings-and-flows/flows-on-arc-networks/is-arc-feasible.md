@@ -1,0 +1,3 @@
+# Feasible flow on an arc network
+
+Let $V$ and $E$ be finite sets and let each arc $e \in E$ run from its tail $t(e) \in V$ to its head $h(e) \in V$; parallel arcs and loops are allowed. Let $B$ be the signed incidence matrix of the network, $B_{ve} = [h(e) = v] - [t(e) = v]$, where $[P]$ is $1$ if $P$ holds and $0$ otherwise. Given arc capacities $u : E \to \mathbb{R}$ and vertices $s, t \in V$, a function $f : E \to \mathbb{R}$ is an arc-feasible $s$-$t$ flow if $0 \le f(e) \le u(e)$ for every arc $e$ and $(Bf)_v = 0$ for every vertex $v \ne s, t$, that is, the flow into $v$ equals the flow out of $v$. No sign condition on $u$ and no condition $s \ne t$ is part of the definition.

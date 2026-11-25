@@ -11,6 +11,8 @@
 - [The perfect-graph decision problem](perfect-graph-problem.md)
 - [Edmonds's question: an NP description of perfect graphs](conjecture.md)
 - [Perfect graphs have an NP description](conjecture-holds.md)
+- [Fox's conjecture on pure pairs in perfect graphs](perfect-graphs-have-large-pure-pairs.md)
+- [Perfect graphs have large pure pairs](perfect-graphs-have-large-pure-pairs-hol.md)
 
 ## Related topics
 

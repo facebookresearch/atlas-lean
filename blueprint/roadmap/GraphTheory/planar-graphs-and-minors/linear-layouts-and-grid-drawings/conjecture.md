@@ -1,0 +1,3 @@
+# Book thickness of once-subdivided graphs
+
+The statement that there is a function $f : \mathbb{N} \to \mathbb{N}$ such that for all simple graphs $G$ and $G'$ on finite vertex sets, where $G'$ is obtained from $G$ by subdividing every edge exactly once, and every natural number $k$, if $G'$ has a $k$-page book embedding then $G$ has an $f(k)$-page book embedding: the book thickness of a finite graph is bounded by a function of the book thickness of its once-subdivided graph. A $k$-page book embedding orders the vertices along a spine and puts the edges on $k$ pages so that crossing edges are on different pages. This is the once-subdivided case of a conjecture of Blankenship and Oporowski.

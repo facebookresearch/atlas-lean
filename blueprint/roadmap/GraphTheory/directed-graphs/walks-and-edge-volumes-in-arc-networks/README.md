@@ -1,0 +1,16 @@
+# Walks and edge volumes in arc networks
+
+- [Walk in an arc network as a list of arcs](is-arc-walk.md)
+- [The first arc of a walk leaves its origin](arc-walk-tail-head.md)
+- [The arc of a one-arc walk enters its destination](arc-walk-single-head.md)
+- [Dropping the first arc of a walk](arc-walk-tail-of-cons.md)
+- [Node balance of a walk's traversal counts](incidence-matrix-mul-vec-count.md)
+- [The empty walk](walk-nil.md)
+- [One-arc walks](walk-singleton.md)
+- [Prepending an arc that meets the walk](walk-cons.md)
+- [Appending an arc to a walk](walk-snoc.md)
+- [Dropping the first arc of a walk](walk-tail.md)
+- [Decomposing a walk at its first arc](walk-cons-pair.md)
+- [Prepending an arc to a walk](walk-cons-mk.md)
+- [Splitting a concatenated walk](walk-append.md)
+- [Concatenating two walks](walk-append-mk.md)

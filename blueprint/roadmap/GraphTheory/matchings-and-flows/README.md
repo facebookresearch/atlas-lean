@@ -3,6 +3,9 @@
 Matchings and factors in graphs, stable matchings, and flows in networks, including Kőnig's theorem, Berge's lemma and the max-flow min-cut theorem.
 
 - [Berge's lemma](berge-s-lemma/README.md)
+- [Circular flow numbers](circular-flow-numbers/README.md)
+- [Flow polynomials](flow-polynomials/README.md)
+- [Flows on arc networks](flows-on-arc-networks/README.md)
 - [Kőnig's theorem](k-nig-s-theorem/README.md)
 - [Matching cuts](matching-cuts/README.md)
 - [Matching polytope](matching-polytope/README.md)

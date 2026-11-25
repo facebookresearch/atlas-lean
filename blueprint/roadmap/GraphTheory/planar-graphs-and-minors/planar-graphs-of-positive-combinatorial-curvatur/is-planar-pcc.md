@@ -1,0 +1,3 @@
+# Planar graph of positive combinatorial curvature
+
+Let $G$ be a simple graph on a finite vertex set $V$, with darts (ordered pairs $(u, v)$ of adjacent vertices) and a permutation $\rho$ of the darts. The pair $(G, \rho)$ is a planar PCC graph when $\rho$ is a rotation system of $G$, $G$ is connected with $|V| - |E| + F = 2$ (an embedding in the sphere), the combinatorial curvature $1 - \deg(v)/2 + \sum 1/|f|$ is positive at every vertex (the sum over the corners at $v$), every vertex has degree at least $3$, and $(G, \rho)$ is neither a prism nor an antiprism. Here faces, their sizes and $F$ are computed from the face permutation $(u, v) \mapsto \rho(v, u)$.
