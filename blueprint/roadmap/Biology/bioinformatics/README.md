@@ -2,6 +2,9 @@
 
 Algorithms and statistical models on biological sequences and data: sequence alignment, genome assembly, motifs, RNA secondary structure, clustering and network reconstruction.
 
+- [The $q$-gram of a word at an offset](q-gram.md)
+- [Words within Hamming distance $k$ share an aligned $q$-gram](exists-q-gram-eq-of-mul-lt.md)
+- [An exhaustive $q$-gram filter loses no pair within Hamming distance $k$](set-of-hamming-dist-le-subset.md)
 - [Sequence alignment](sequence-alignment/README.md)
 - [ARACNE gene network reconstruction](aracne-gene-network-reconstruction/README.md)
 - [ChromHMM chromatin-state model](chromhmm-chromatin-state-model/README.md)
