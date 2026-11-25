@@ -28,7 +28,9 @@ Lemma 1 bounds the solution of the Stein equation: for `h : ℕ → [0, 1]` and
 `f = S(h - E h(Z))`, `‖Δ f‖ ≤ (1 - e^{-λ})/λ` and `‖f‖ ≤ 1 ∧ 1.4 λ^{-1/2}`.
 
 Here `I` is nonempty and countable (`W` is a countable sum of indicators, a random element of
-`ℕ∞` that is finite almost surely since `λ < ∞`; its law on `ℕ` is taken through `ENat.toNat`).
+`ℕ∞` that is finite almost surely since `λ < ∞`; its law on `ℕ` is taken as the law of
+`W.toNat`, where `ENat.toNat` sends `⊤` to `0`, a null event here, and likewise for the block sums
+`W_j`).
 The coefficients `b₁, b₂, b₃, b₃'` are taken in `[0, ∞]`, so infinite sums are allowed, and the
 total-variation norms are twice the largest difference over measurable sets. The strict
 inequality of Theorem 1 holds as printed because `b₁ ≥ ∑ p_α² > 0`. Not recorded here: the
@@ -137,8 +139,10 @@ noncomputable def lam (P : Measure Ω) (X : I → Ω → ℕ) : ℝ :=
 noncomputable def W (X : I → Ω → ℕ) (ω : Ω) : ℕ∞ :=
   ∑' a, (X a ω : ℕ∞)
 
-/-- The law of `W` on `ℕ` (`W` is finite almost surely). -/
-noncomputable def lawW (P : Measure Ω) (X : I → Ω → ℕ) : Measure ℕ :=
+/-- The law on `ℕ` of `W.toNat`, the image of `W` under `ENat.toNat`, which sends `⊤` to `0`.
+In the dependent Bernoulli setting `λ = E W < ∞`, so `W < ⊤` almost surely and this is the law of
+`W`; for arbitrary `P` and `X` it is only the law of `W.toNat`. -/
+noncomputable def lawWToNat (P : Measure Ω) (X : I → Ω → ℕ) : Measure ℕ :=
   P.map fun ω => (W X ω).toNat
 
 /-- `b₁ = ∑_α ∑_{β ∈ B_α} p_α p_β`. -/
@@ -177,13 +181,14 @@ public theorem_wanted b₃'_le_b₃ (P : Measure Ω) [IsProbabilityMeasure P] (X
 /-- **Poisson approximation for the number of occurrences** (Arratia, Goldstein and Gordon 1989,
 Theorem 1, first part): in the dependent Bernoulli setting under a probability measure
 (nonempty countable `I`, measurable `X_α ∈ {0, 1}`, every `p_α > 0`, `λ = ∑ p_α < ∞`,
-`α ∈ B_α`; then `λ > 0`), with `Z` Poisson of mean `λ`,
+`α ∈ B_α`; then `λ > 0`), with `Z` Poisson of mean `λ` and `L(W)` the law of `W.toNat` (equal to
+the law of `W`, as `W < ⊤` almost surely),
 `‖L(W) - L(Z)‖ ≤ 2[(b₁ + b₂)(1 - e^{-λ})/λ + b₃'(1 ∧ 1.4 λ^{-1/2})] ≤ 2(b₁ + b₂ + b₃)`.
 
 Source: Arratia, Goldstein and Gordon (1989), Theorem 1. -/
-public theorem_wanted tvNorm_lawW_poisson_le (P : Measure Ω) [IsProbabilityMeasure P]
+public theorem_wanted tvNorm_lawWToNat_poisson_le (P : Measure Ω) [IsProbabilityMeasure P]
     (X : I → Ω → ℕ) (B : I → Set I) (hX : BernoulliSetting P X B) :
-    ENNReal.ofReal (tvNorm (lawW P X) (poissonMeasure (lam P X).toNNReal)) ≤
+    ENNReal.ofReal (tvNorm (lawWToNat P X) (poissonMeasure (lam P X).toNNReal)) ≤
         2 * ((b₁ P X B + b₂ P X B) *
             ENNReal.ofReal ((1 - Real.exp (-lam P X)) / lam P X) +
           b₃' P X B * ENNReal.ofReal (min 1 (1.4 / Real.sqrt (lam P X)))) ∧
@@ -213,7 +218,8 @@ public theorem_wanted abs_prob_W_eq_zero_sub_exp_le (P : Measure Ω) [IsProbabil
 the dependent Bernoulli setting under a probability measure (nonempty countable `I`, measurable
 `X_α ∈ {0, 1}`, every `p_α > 0`, `λ = ∑ p_α < ∞`, `α ∈ B_α`), for a partition of `I` into
 `d ≥ 1` nonempty parts `I(j) = part⁻¹(j)` with `W_j = ∑_{α ∈ I(j)} X_α` and
-`λ_j = ∑_{α ∈ I(j)} p_α`, the law of `(W_1, …, W_d)` and the law of independent Poisson
+`λ_j = ∑_{α ∈ I(j)} p_α`, the law of `(W_1, …, W_d)` (each `W_j` taken through `ENat.toNat`, which
+sends `⊤` to `0`; `W_j < ⊤` almost surely) and the law of independent Poisson
 variables of means `λ_1, …, λ_d` satisfy
 `‖L(W_1, …, W_d) - L(Z_1, …, Z_d)‖ ≤ 2(1 ∧ 1.4 (min_j λ_j)^{-1/2})(2b₁ + 2b₂ + b₃)`.
 

@@ -15,24 +15,14 @@ public import Mathlib.Data.Nat.Factorial.DoubleFactorial
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.ArcsinQuotientDerivatives
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CotangentLimit
 public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.HalfPeriodSineSumEven
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosineAlternatingIntegralLimit
+public import MathlibExt.Analysis.SpecialFunctions.Trigonometric.CosinePowerAreaRecurrence
 
 namespace MetaMathlibExt
 
 @[expose] public section
 
 open Real Filter Topology
-
-/-- **Area between powers of cosines.** For natural numbers $n$ and $k$, the area between the
-curves $y = \cos^n x$ and $y = \cos^n(kx)$ on $[0, \pi]$ is
-$A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$, where $\cos^n x$ means $(\cos x)^n$.
-
-The paper's $A_n$ is the limit of $A_n(k)$ as $k \to \infty$ (Eq. (1)), with $k$ running over
-the natural numbers.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Eq. (1). -/
-public noncomputable def cosPowArea (n k : ℕ) : ℝ :=
-  ∫ x in (0 : ℝ)..π, |cos x ^ n - cos (k * x) ^ n|
 
 /-- **The area between cosine powers vanishes for exponent zero.** For natural numbers $n$ and
 $k$, let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$ be the area between $\cos^n x$ and
@@ -87,20 +77,6 @@ public theorem_wanted tendsto_cosPowArea_of_even (n : ℕ) :
     (n % 4 = 0 → Tendsto (fun k => cosPowArea n k) atTop
       (𝓝 (16 / (2 ^ n * π) * ∑ j ∈ Finset.range ((n - 4) / 4 + 1),
         (n.choose (2 * j + 1) : ℝ) / ((n : ℝ) / 2 - (2 * j + 1)) ^ 2)))
-
-/-- **Recursion for the limiting areas between cosine powers.** For natural numbers $n$ and $k$,
-let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$. For every natural number $n \ge 3$ there
-are real numbers $L$ and $L'$ such that $A_n(k) \to L$ and $A_{n-2}(k) \to L'$ as $k \to \infty$
-through the natural numbers, and $L = \frac{n-1}{n} L' + \frac{c}{n^2 \pi}$, where $c = 8$ if $n$
-is odd and $c = 16$ if $n$ is even.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Theorem 3
-(`jis-2025-25.2.3-thm-3`). -/
-public theorem_wanted cosPowArea_limit_recursion {n : ℕ} (hn : 3 ≤ n) :
-    ∃ L L' : ℝ, Tendsto (fun k => cosPowArea n k) atTop (𝓝 L) ∧
-      Tendsto (fun k => cosPowArea (n - 2) k) atTop (𝓝 L') ∧
-      L = ((n : ℝ) - 1) / n * L' + (if Odd n then 8 else 16) / ((n : ℝ) ^ 2 * π)
 
 /-- **Limiting area between cosine powers via double factorials.** For natural numbers $n$ and
 $k$, let $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$. As $k \to \infty$ through the natural
@@ -173,24 +149,6 @@ public theorem_wanted tendsto_sum_integral_cos_sub_cos_even_odd {q : ℕ} (hq : 
         ∫ x in ((l : ℝ) * 2 * π / ((2 * m : ℝ) + 1))..((l : ℝ) * 2 * π / ((2 * m : ℝ) - 1)),
           (cos (q * x) - cos (q * (2 * m : ℝ) * x)))) atTop
       (𝓝 (8 / ((q : ℝ) ^ 2 * π)))
-
-/-- **Alternating integral sums of $\cos qx - \cos qkx$ for even $q$ and even $k$.** Let $q$ be an
-even natural number, for each natural number $m$ put $k = 2m$, and let
-$f(x) = \cos(qx) - \cos(qkx)$. Then, as $m \to \infty$,
-$$\sum_{\ell=1}^{m} \left(\int_{(\ell-1)\pi/(k-1)}^{\ell\pi/(k+1)} f(x)\,dx -
-\int_{\ell\pi/(k+1)}^{\ell\pi/(k-1)} f(x)\,dx\right)$$
-tends to $0$ if $q \equiv 0 \pmod 4$ and to $16/(q^2\pi)$ if $q \equiv 2 \pmod 4$.
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Lemma 12
-(`jis-2025-25.2.3-lem-12`). -/
-public theorem_wanted tendsto_sum_integral_cos_sub_cos_even_even {q : ℕ} (hq : Even q) :
-    Tendsto (fun m : ℕ => ∑ l ∈ Finset.Icc 1 m,
-      ((∫ x in (((l : ℝ) - 1) * π / ((2 * m : ℝ) - 1))..((l : ℝ) * π / ((2 * m : ℝ) + 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x))) -
-        ∫ x in ((l : ℝ) * π / ((2 * m : ℝ) + 1))..((l : ℝ) * π / ((2 * m : ℝ) - 1)),
-          (cos (q * x) - cos (q * (2 * m : ℝ) * x)))) atTop
-      (𝓝 (if q % 4 = 0 then 0 else 16 / ((q : ℝ) ^ 2 * π)))
 
 end
 
