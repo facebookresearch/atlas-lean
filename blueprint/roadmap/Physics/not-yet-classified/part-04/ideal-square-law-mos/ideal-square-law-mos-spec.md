@@ -1,7 +1,9 @@
 # Ideal square-law nMOS drain current
 
 Let $\beta > 0$. For overdrive voltage $u$ and drain-source voltage $V$, let the drain current be
+
 $$I(u, V) = \begin{cases} 0 & u \le 0,\\ \beta\,(uV - V^2/2) & u > 0,\ V \le u,\\ \beta u^2/2 & u > 0,\ V > u. \end{cases}$$
+
 Write $I_{\mathrm{tri}}(u, V) = \beta(uV - V^2/2)$ and $I_{\mathrm{sat}}(u) = \beta u^2/2$. Then:
 
 1. $I(u, V) = 0$ for $V \ge 0$, $u \le 0$; $I(u, V) = I_{\mathrm{tri}}(u, V)$ for $0 \le V \le u$, $u > 0$; $I(u, V) = I_{\mathrm{sat}}(u)$ for $0 < u \le V$.

@@ -8,4 +8,5 @@ Let $L > 0$, $C > 0$, $R > 0$ and $V_{\mathrm{in}} \in \mathbb{R}$, let $s, i, v
 - $t \mapsto s(t) V_{\mathrm{in}} i(t) - v(t)^2/R$ is interval integrable on $[a, b]$.
 
 If moreover $i(T) = i(0)$ and $v(T) = v(0)$, then
+
 $$E(T) - E(0) = 0 \qquad\text{and}\qquad \int_0^T \left( s(t)\, V_{\mathrm{in}}\, i(t) - \frac{v(t)^2}{R} \right) dt = 0.$$

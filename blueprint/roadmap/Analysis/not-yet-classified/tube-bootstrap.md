@@ -1,7 +1,9 @@
 # Tube bootstrap for perturbed trajectories
 
 Let $E$ be a real normed space, $v : \mathbb{R} \times E \to E$ a time-dependent field, $f, g, g' : \mathbb{R} \to E$, $K \ge 0$, and $\varepsilon, \delta, m, T \in \mathbb{R}$ with $T \ge 0$, $\varepsilon \ge 0$ and $m > 0$. Write $\overline{B}(f(t), m)$ for the closed ball of radius $m$ about $f(t)$ and
+
 $$\beta(x) = \begin{cases} \delta e^{Kx} + \dfrac{\varepsilon}{K}\big(e^{Kx} - 1\big), & K \ne 0,\\ \delta + \varepsilon x, & K = 0 \end{cases}$$
+
 for the Gronwall bound. Assume:
 
 - $\beta(T) < m$;
@@ -12,4 +14,5 @@ for the Gronwall bound. Assume:
 - $\|f(0) - g(0)\| \le \delta$.
 
 Then for every $t \in [0, T]$,
+
 $$g(t) \in \overline{B}(f(t), m) \quad\text{and}\quad \|f(t) - g(t)\| \le \beta(t).$$

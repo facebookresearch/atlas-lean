@@ -4,4 +4,5 @@ Let $n$ and $m$ be finite index sets, and let $A \in \mathbb{R}^{n\times n}$, $B
 
 1. $x$ is differentiable and, for every $t$, $x'(t) = A x(t) + B y(t) + f(t)$ and $C x(t) + D y(t) + g(t) = 0$;
 2. $x$ is differentiable and, for every $t$,
-$$x'(t) = (A - B D^{-1} C)\, x(t) + f(t) - B D^{-1} g(t), \qquad y(t) = -D^{-1}\bigl(C x(t) + g(t)\bigr).$$
+
+    $$x'(t) = (A - B D^{-1} C)\, x(t) + f(t) - B D^{-1} g(t), \qquad y(t) = -D^{-1}\bigl(C x(t) + g(t)\bigr).$$
