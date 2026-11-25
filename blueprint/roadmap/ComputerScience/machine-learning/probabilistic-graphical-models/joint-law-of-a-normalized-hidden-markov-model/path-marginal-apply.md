@@ -1,0 +1,3 @@
+# Hidden-path marginal of the joint distribution is the path prior
+
+Let $h$ be a hidden Markov model with finite state set $S$, finite observation set $O$ and real weights: initial weights $\pi(s)$, transition weights $a(s, s')$ and emission weights $b(s, o)$. Assume $h$ is normalized: $\pi \ge 0$ with $\sum_s \pi(s) = 1$, $a \ge 0$ with $\sum_{s'} a(s, s') = 1$ for every $s$, and $b \ge 0$ with $\sum_o b(s, o) = 1$ for every $s$ (zero entries allowed). For every $t \in \mathbb{N}$ and path $z \in S^{t+1}$, the hidden-path marginal of the joint distribution at horizon $t$ has the same mass at $z$ as the hidden-path distribution: the observations sum out.

@@ -1,0 +1,3 @@
+# Two-squares visibility graph
+
+Consider the closed squares $O_1 = [0,1] \times [0,1]$ and $O_2 = [2,3] \times [0,1]$ in the Euclidean plane $\mathbb{R}^2$ and the free set $G = \mathbb{R}^2 \setminus \operatorname{int}(O_1 \cup O_2)$. The ten graph vertices and their coordinates are $s = (-1, \tfrac12)$, $t = (4, \tfrac12)$, and the obstacle corners $A = (0,0)$, $B = (1,0)$, $C = (1,1)$, $D = (0,1)$, $E = (2,0)$, $F = (3,0)$, $P = (3,1)$, $Q = (2,1)$. The visibility graph is the simple graph on these ten vertices in which $u$ and $v$ are adjacent when $u \neq v$ and the closed segment between their coordinates lies in $G$. It is loopless by construction.

@@ -36,6 +36,18 @@ A randomized algorithm (a *mechanism*) is differentially private when changing o
 - [The Gaussian mechanism](gaussian-mechanism-differentially-privat.md)
 - [Transfer theorem for adaptive data analysis](differentially-private-transfer.md)
 
+## Discrete pure differential privacy
+
+- [Replace-one adjacency](replace-one.md)
+- [Replace-one adjacency is reflexive](refl.md)
+- [Replace-one adjacency is symmetric](symm.md)
+- [Pure differential privacy for discrete mechanisms](is-dp.md)
+- [Event-level pure differential privacy](is-dpevent.md)
+- [Pointwise and event-level pure differential privacy agree](is-dp-iff-is-dpevent.md)
+- [Deterministic post-processing of a mechanism](post-process.md)
+- [Pure differential privacy is preserved by deterministic post-processing](is-dp-post-process.md)
+- [A database-independent mechanism is 0-differentially private](is-dp-const.md)
+
 ## Related topics
 
 - [Laplace and exponential mechanisms](../laplace-and-exponential-mechanisms/README.md): the basic mechanisms that achieve pure differential privacy, built on this definition.

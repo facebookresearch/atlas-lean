@@ -11,3 +11,5 @@ Location, counting and multiplicity of the zeros of polynomials: real-rootedness
 - [Taylor expansion and double roots](taylor-expansion-and-double-roots/README.md)
 - [A polynomial over an integral domain has at most as many roots as its degree](card-roots-le-degree.md)
 - [Auerbach's problem on zero sets of real polynomials](auerbach-polynomial-zero-set-separates-i.md)
+- [Descent of a unique common root](mem-range-of-unique-common-root.md)
+- [Roots of a weighted bivariate polynomial lie near prescribed branches](exists-branch-near-root.md)

@@ -2,6 +2,7 @@
 
 Lie algebras and their structure and representations, free Lie algebras, Poisson algebras, and racks and quandles.
 
+- [Casimir elements of gl(3)](casimir-elements-of-gl-3/README.md)
 - [Levi decomposition](levi-decomposition/README.md)
 - [Ado's theorem](ado-s-theorem/README.md)
 - [Poisson algebras and Poisson ideals](poisson-algebras-and-poisson-ideals/README.md)

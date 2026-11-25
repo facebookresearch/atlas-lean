@@ -1,0 +1,5 @@
+# Shortest walk around two squares has length 3 + √5
+
+Consider the closed squares $O_1 = [0,1] \times [0,1]$ and $O_2 = [2,3] \times [0,1]$ in the Euclidean plane $\mathbb{R}^2$ and the free set $G = \mathbb{R}^2 \setminus \operatorname{int}(O_1 \cup O_2)$. The ten graph vertices and their coordinates are $s = (-1, \tfrac12)$, $t = (4, \tfrac12)$, and the obstacle corners $A = (0,0)$, $B = (1,0)$, $C = (1,1)$, $D = (0,1)$, $E = (2,0)$, $F = (3,0)$, $P = (3,1)$, $Q = (2,1)$. The visibility graph is the simple graph on these vertices in which two distinct vertices are adjacent when the closed segment between their coordinates lies in $G$. Weight a walk by the Euclidean length of the polyline through the coordinates of its vertices. Then $3 + \sqrt5$ is the least weight of a walk from $s$ to $t$: some walk from $s$ to $t$ has weight $3 + \sqrt5$, and every walk from $s$ to $t$ has weight at least $3 + \sqrt5$.
+
+The minimum is attained by the walk $s, D, P, t$ over the tops of the squares, of weight $\tfrac{\sqrt5}{2} + 3 + \tfrac{\sqrt5}{2}$.

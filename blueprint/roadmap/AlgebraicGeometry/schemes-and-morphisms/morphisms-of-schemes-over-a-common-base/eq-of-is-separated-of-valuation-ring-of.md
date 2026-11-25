@@ -1,0 +1,3 @@
+# Points of a separated scheme over a valuation ring are determined generically
+
+Let $R$ be a commutative ring and $f : J \to \operatorname{Spec} R$ a separated morphism of schemes. Let $A$ be a valuation ring (an integral domain) that is an $R$-algebra, and let $K$ be a field of fractions of $A$. Let $x, y : \operatorname{Spec} A \to J$ be morphisms over $\operatorname{Spec} R$, that is, $f \circ x = f \circ y$ is the morphism $\operatorname{Spec} A \to \operatorname{Spec} R$ induced by the algebra map $R \to A$. If $x$ and $y$ agree after composing with the morphism $\operatorname{Spec} K \to \operatorname{Spec} A$ induced by $A \to K$, then $x = y$.

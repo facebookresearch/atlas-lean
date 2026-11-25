@@ -1,0 +1,17 @@
+# Approximate max-divergence decomposition on finite spaces
+
+- [Approximate max-divergence bound](approx-max-div-le.md)
+- [Pure max-divergence bound](max-div-le.md)
+- [Excess set of one distribution over another](excess-set.md)
+- [Excess mass of one distribution over another](excess-mass.md)
+- [Capped envelope of a distribution](cap-envelope.md)
+- [Mixing coefficient of the repaired distribution](repair-coeff.md)
+- [Repaired masses](repair-fun.md)
+- [Repaired distribution](repair-pmf.md)
+- [Approximate max-divergence yields a nearby pure bound](exists-repair-of-approx.md)
+- [A nearby pure bound gives approximate max-divergence](approx-of-exists-repair.md)
+- [Approximate max-divergence with zero delta is pure](max-div-of-approx-zero.md)
+- [Approximate differential privacy gives approximate max-divergence bounds](approx-max-div-le-of-is-approx-dp.md)
+- [Approximate max-divergence bounds give approximate differential privacy](is-approx-dp-of-forall-approx-max-div-le.md)
+- [Repairing the output distribution of a private mechanism](exists-repair-of-is-approx-dp.md)
+- [Two-sided approximate max-divergence and simultaneous repair](approx-max-div-le-both-iff-exists-repair.md)

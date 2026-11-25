@@ -8,6 +8,7 @@ Noncommutative rings and finite-dimensional associative algebras, including divi
 - [Splitting of quaternion algebras](splitting-of-quaternion-algebras/README.md)
 - [Amitsur–Levitzki theorem](amitsur-levitzki.md)
 - [Burnside's theorem on matrix algebras](burnside-matrix.md)
+- [Centralizer of a non-scalar rational quaternion](commute-iff-exists-eq-smul-one-add-smul.md)
 - [Frobenius theorem on real division algebras](frobenius-real-division-algebra.md)
 - [Skolem–Noether theorem](skolem-noether.md)
 - [Weyl algebra of polynomial differential operators](weyl-algebra.md)

@@ -1,0 +1,16 @@
+# Configuration spaces for motion planning
+
+- [Membership in the obstacle region](mem-c-obs.md)
+- [Membership in free space](mem-c-free.md)
+- [Obstacle region is monotone in the obstacles](c-obs-mono.md)
+- [Free space is antitone in the obstacles](c-free-anti.md)
+- [Obstacle region with no obstacles](c-obs-empty.md)
+- [Free space with no obstacles](c-free-empty.md)
+- [Obstacle region of a union of obstacles](c-obs-union.md)
+- [Solution of a path problem](is-solution.md)
+- [Solvable path problem](solvable.md)
+- [Planar placement of a rigid body](planar-placement.md)
+- [Collision of a planar rigid body](mem-c-obs-planar-placement.md)
+- [Planar configuration space is path-connected](path-connected-space-planar.md)
+- [The Euclidean plane](plane.md)
+- [Standard orientation of the plane](plane-orientation.md)

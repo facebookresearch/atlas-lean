@@ -7,3 +7,4 @@
 - [Variable changes biject rational points](point-equiv.md)
 - [Variable changes preserve the point count](nat-card-point-eq.md)
 - [The ideal of a point on a Weierstrass curve is nonzero](xyideal-ne-bot.md)
+- [Point ideals on a Weierstrass curve determine the point](xyideal-eq-xyideal-iff.md)
