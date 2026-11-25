@@ -1,5 +1,6 @@
 # Independent set on restricted graph classes
 
+- [Graph P](graph-p.md)
 - [Well-formed instances of INDEPENDENT SET ON BANNER-FREE GRAPHS](well-formed.md)
 - [INDEPENDENT SET ON BANNER-FREE GRAPHS as a decision problem](independent-set-banner-free-dec.md)
 - [INDEPENDENT SET ON BANNER-FREE GRAPHS is NP-complete](independent-set-banner-free-np-complete.md)
@@ -23,6 +24,7 @@
 - [Well-formed instances of INDEPENDENT SET ON PURE-3-DIR GRAPHS](well-formed-7.md)
 - [INDEPENDENT SET ON PURE-3-DIR GRAPHS as a decision problem](independent-set-pure-three-dir-dec.md)
 - [INDEPENDENT SET ON PURE-3-DIR GRAPHS is NP-complete](independent-set-pure-three-dir-np-comple.md)
+- [With Thickness](with-thickness.md)
 - [Well-formed instances of INDEPENDENT SET ON GRAPHS OF THICKNESS AT MOST k](well-formed-8.md)
 - [INDEPENDENT SET ON GRAPHS OF THICKNESS AT MOST k as a decision problem](independent-set-thickness-dec.md)
 - [INDEPENDENT SET ON GRAPHS OF THICKNESS AT MOST k is NP-complete](independent-set-thickness-np-complete.md)
@@ -32,6 +34,7 @@
 - [Well-formed instances of INDEPENDENT SET ON PLANAR 2-SUBDIVISIONS](well-formed-10.md)
 - [INDEPENDENT SET ON PLANAR 2-SUBDIVISIONS as a decision problem](independent-set-two-subdivision-planar-d.md)
 - [INDEPENDENT SET ON PLANAR 2-SUBDIVISIONS is NP-complete](independent-set-two-subdivision-planar-n.md)
+- [Instances of INDEPENDENT SET on triangle-free graphs](triangle-free-independent-set-instance.md)
 - [Well-formed instances of INDEPENDENT SET ON TRIANGLE-FREE GRAPHS](well-formed-11.md)
 - [Feasible independent set instances](triangle-free-independent-set-feasible.md)
 - [INDEPENDENT SET ON TRIANGLE-FREE GRAPHS as a decision problem](triangle-free-independent-set-dec.md)

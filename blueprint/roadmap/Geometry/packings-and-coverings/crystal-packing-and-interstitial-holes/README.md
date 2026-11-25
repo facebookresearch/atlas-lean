@@ -2,6 +2,9 @@
 
 ## A. Atomic packing factor
 
+- [Numerical bounds for √2](sqrt2-bounds.md)
+- [Numerical bounds for √3](sqrt3-bounds.md)
+- [Numerical bounds for √(3/2)](sqrt32-bounds.md)
 - [Atomic packing factor expression](atomic-packing-factor-raw.md)
 - [Atomic packing factor](atomic-packing-factor.md)
 - [The packing factor on its domain](atomic-packing-factor-eq-raw.md)

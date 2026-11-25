@@ -1,6 +1,7 @@
 # Special scheduling models
 
 - [Instances of CODE GENERATION ON A ONE-REGISTER MACHINE](code-generation-on-aone-register-machine.md)
+- [Digraph of a CODE GENERATION ON A ONE-REGISTER MACHINE instance](graph.md)
 - [Well-formed instances of CODE GENERATION ON A ONE-REGISTER MACHINE](well-formed.md)
 - [One-register machine instructions](instruction.md)
 - [One-register machine states](machine-state.md)
@@ -15,6 +16,8 @@
 - [COUPLED TASK SCHEDULING as a decision problem](coupled-task-scheduling-dec.md)
 - [COUPLED TASK SCHEDULING is NP-complete](coupled-task-scheduling-np-complete.md)
 - [Instances of EARLINESS-TARDINESS WITH A RESTRICTIVE COMMON DUE DATE](earliness-tardiness-restrictive-common-d.md)
+- [Job](job.md)
+- [Processing times of jobs](processing-time.md)
 - [Single-machine schedules by real completion times](is-schedule.md)
 - [Well-formed instances of EARLINESS-TARDINESS WITH A RESTRICTIVE COMMON DUE DATE](well-formed-3.md)
 - [Feasible instances of EARLINESS-TARDINESS WITH A RESTRICTIVE COMMON DUE DATE](earliness-tardiness-restrictive-common-d-2.md)
@@ -34,6 +37,8 @@
 - [FIXED-INTERVAL SCHEDULING ON ELIGIBLE MACHINES is NP-complete](fixed-interval-scheduling-eligible-machi-4.md)
 - [Instances of FIXED-START SCHEDULING ON TWO MACHINE TYPES, MACHINE COST](fixed-start-two-machine-types-cost-insta.md)
 - [Well-formed instances of FIXED-START SCHEDULING ON TWO MACHINE TYPES, MACHINE COST](well-formed-6.md)
+- [Release dates of tasks](release.md)
+- [Duration](duration.md)
 - [Feasible instances of FIXED-START SCHEDULING ON TWO MACHINE TYPES, MACHINE COST](fixed-start-two-machine-types-cost-feasi.md)
 - [FIXED-START SCHEDULING ON TWO MACHINE TYPES, MACHINE COST as a decision problem](fixed-start-two-machine-types-cost-dec.md)
 - [FIXED-START SCHEDULING ON TWO MACHINE TYPES, MACHINE COST is NP-complete](fixed-start-two-machine-types-cost-np-co.md)

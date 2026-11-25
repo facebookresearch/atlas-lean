@@ -1,5 +1,6 @@
 # Holomorphic dynamics on projective space
 
+- [Polynomial lift map $\mathbb{C}^{k+1} \to \mathbb{C}^{k+1}$](lift-map.md)
 - [Homogeneous lifts of holomorphic self-maps of projective space](is-holomorphic-self-map-lift.md)
 - [Repelling periodic points of self-maps of projective space](has-repelling-periodic-point.md)
 - [Sibony’s question on repelling periodic points of endomorphisms of ℙᵏ](every-endomorphism-has-repelling-periodi.md)

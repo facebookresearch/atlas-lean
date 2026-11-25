@@ -8,5 +8,7 @@
 - [Sums of $2^k/k$ and $2^k/k^2$ over $1 \le k \le p - 1$](sum-two-pow-div.md)
 - [Sum of $H_k 2^k / k$ over $1 \le k \le p - 1$ modulo $p$](sum-harmonic-two-pow-div.md)
 - [Sum of the Delannoy triangle entries in rows $0$ to $p - 1$ modulo $p$](sum-delannoy.md)
+- [Central trinomial coefficients as generalized central trinomial coefficients](central-trinomial-eq-generalized-central.md)
+- [Sum of generalized central trinomial coefficients over powers of $m$ modulo $p$](sum-generalized-central-trinomial-div-po.md)
 - [Reflection congruence for binomial coefficients modulo a prime](choose-add-choose-mod.md)
 - [A binomial sum through central Delannoy numbers](sum-choose-choose-binomial-power-seq.md)

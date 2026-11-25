@@ -1,6 +1,7 @@
 # Coalition formation
 
 - [Instances of CORE STABLE PARTITION IN HEDONIC GAMES](hedonic-core-stable-partition-instance.md)
+- [Listed coalitions of a player](listing.md)
 - [Well-formed instances of CORE STABLE PARTITION IN HEDONIC GAMES](well-formed.md)
 - [Strict preference between coalitions](prefers.md)
 - [Core stable partitions](is-core-stable.md)
