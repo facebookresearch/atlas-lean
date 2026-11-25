@@ -18,7 +18,9 @@ assumes an exclusive worktree that nothing else changes while it runs: it detect
 refuses or reports an incomplete rollback, but it does not promise immunity to concurrent mutation. Existing statement
 pages are never changed, the planned pages an earlier import wrote among them, nor a line of the map: an existing file
 changes only by the items a folder page gains (sync_wiki.add_to_listing, or after the page's own list where the sync
-would only append, each checked as the sync checks its edits) and by rows appended to a links file and to the map.
+would only append, each checked as the sync checks its edits), by rows added to a links file where the sync adds them
+(sync_wiki.inserted: each right after the row whose page's path comes last before its own, wherever that row stands)
+and by rows appended to the map.
 Symbolic links are refused on every repository path the importer writes or removes, and on the files whose content it
 reads, each checked on the path then opened (see symlink_on): a manifest in the repository, the links files,
 scripts/taxonomy.json, the card move ledger, the map, the folder pages it edits or whose part copies it refreshes, the
@@ -787,7 +789,7 @@ def mathlib_problems(rows: list[Row]) -> list[str]:
 
 def written_credit_problems(rows: list[Row], pages: dict, annotations: dict[Path, list[dict]]) -> list[str]:
     """What sync_wiki's credit check finds in the links folder as the change would leave it, its current rows and the
-    rows the change appends (credit_problems), and each new page whose row would credit otherwise than its manifest row
+    rows the change adds (credit_problems), and each new page whose row would credit otherwise than its manifest row
     says (page_owner): its Mathlib declaration and module for a Mathlib-credited row, nothing for a planned one."""
     files = sync.read_annotations()
     after = {path: [*files.get(path, []), *annotations.get(path, [])] for path in {*files, *annotations}}
@@ -1659,8 +1661,9 @@ def make_plan(manifest: Path, digest: str) -> Plan:
             report += [("line", f"{repo_path(parent)}: {line}", "copies the part's new item, as "
                         "sync_wiki.with_part_lists keeps a part's list") for line in lines]
 
-    def append(path: Path, rows_out: list[dict], why_row) -> None:
-        text = "".join(json.dumps(entry, ensure_ascii=False) + "\n" for entry in rows_out)
+    def add(path: Path, rows_out: list[dict], why_row, place) -> None:
+        """Add *rows_out* to the JSON lines file *path*, each as json.dumps writes it, where *place* (the file's bytes,
+        empty when it is not there yet, and the rows) puts them: a file that is not there yet is made of them alone."""
         report.extend(("line", f"{repo_path(path)}: {json.dumps(entry, ensure_ascii=False)}", why_row(entry))
                       for entry in rows_out)
         unsafe = symlink_problem(path)
@@ -1668,16 +1671,34 @@ def make_plan(manifest: Path, digest: str) -> Plan:
             problems.append(unsafe or f"{repo_path(path)} is not a file")
         elif os.path.lexists(path):
             old = path.read_bytes()
-            edits[path] = (old, old + b"\n" * bool(old and not old.endswith(b"\n")) + text.encode("utf-8"))
+            edits[path] = (old, place(old, rows_out))
         else:
-            creates[path] = text
+            creates[path] = place(b"", rows_out).decode("utf-8")
             report.append(("file", repo_path(path), "a new file for the rows below"))
+
+    def appended(old: bytes, rows_out: list[dict]) -> bytes:
+        """*old* and *rows_out* after it, a line feed ending *old* first if it has none."""
+        return (old + b"\n" * bool(old and not old.endswith(b"\n"))
+                + "".join(json.dumps(entry, ensure_ascii=False) + "\n" for entry in rows_out).encode("utf-8"))
+
+    def inserted(old: bytes, rows_out: list[dict]) -> bytes:
+        """The links file *old* with *rows_out* where the sync puts rows (sync_wiki.inserted), with the links folder's
+        current defaults. On an unchanged, valid checkout the file's content raises no error here: read_wiki has read
+        every links file as the sync does (sync_wiki.read_annotations, which decodes it as UTF-8 and parses each of its
+        rows) and each row's subject (sync_wiki.subject_path, the read_subject that row_order makes), stopping the run
+        otherwise, and the rows the importer adds are its own. A failing stat, open or read, as of the folder's
+        defaults, and a file changed while the importer runs are not covered."""
+        return sync.inserted(old.decode("utf-8"), rows_out).encode("utf-8")
 
     if any(row.data["kind"] == "mathlib" for row in rows):
         problems += written_credit_problems(rows, pages, annotations)
+    # A links file takes each row where the sync puts one (sync_wiki.inserted): right after the row whose page's path
+    # comes last before its own, wherever that row stands, or first if none does. The map only grows at its end.
     for path, rows_out in annotations.items():
-        append(path, rows_out, lambda entry: f"the annotation of blueprint/{entry['subject'][0]['uri'][3:]}")
-    append(MAP, [map_row(row, pages) for row in rows], lambda entry: f"the map row of {entry['key']}")
+        add(path, rows_out, lambda entry: f"the annotation of blueprint/{entry['subject'][0]['uri'][3:]}, right after "
+            "the row whose page's path comes last before its own, wherever that row stands, or first if none does",
+            inserted)
+    add(MAP, [map_row(row, pages) for row in rows], lambda entry: f"the map row of {entry['key']}, at its end", appended)
     if MAP in creates or MAP in edits:
         written = edits[MAP][1] if MAP in edits else creates[MAP].encode("utf-8")
         problems += [f"the map the change would write is refused: {problem}"
@@ -1991,7 +2012,7 @@ def print_plan(plan: Plan, applied: bool) -> None:
     kinds = Counter(row.data["kind"] for row in plan.rows)
     print(f"Manifest {plan.manifest}: SHA-256 {plan.digest}, {len(plan.rows)} rows ({kinds['planned']} planned, "
           f"{kinds['mathlib']} Mathlib-credited)")
-    for section, title in (("folder", "Folders to create"), ("file", "Files to create"), ("line", "Lines to append")):
+    for section, title in (("folder", "Folders to create"), ("file", "Files to create"), ("line", "Lines to add")):
         entries = [(item, rule) for kind, item, rule in plan.report if kind == section]
         print(f"\n{title}: {len(entries)}")
         for item, rule in entries:
