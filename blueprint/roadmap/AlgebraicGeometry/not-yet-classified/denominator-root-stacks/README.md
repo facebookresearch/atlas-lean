@@ -11,7 +11,3 @@
 - [Root Reindexing](root-reindexing.md)
 - [Model](model.md)
 - [Prime To Characteristics](prime-to-characteristics.md)
-- [Df Comparison Pullback](df-comparison-pullback.md)
-- [Denominator Root Stack](denominator-root-stack.md)
-- [Denominator Root Artin](denominator-root-artin.md)
-- [Denominator Root Deligne Mumford](denominator-root-deligne-mumford.md)

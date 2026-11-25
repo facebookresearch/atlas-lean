@@ -23,7 +23,3 @@
 - [Categorical Weak Equivalences](categorical-weak-equivalences.md)
 - [Categorical Q](categorical-q.md)
 - [Affine Perf Normalization](affine-perf-normalization.md)
-- [Affine dg scalar system](affine-dg-scalar-system.md)
-- [Affine dg module fibration](affine-dg-module-fibration.md)
-- [Native cocartesian section quasicategory](native-cocartesian-section-quasicategory.md)
-- [Derived affine perfect normalization](derived-affine-perfect-normalization.md)

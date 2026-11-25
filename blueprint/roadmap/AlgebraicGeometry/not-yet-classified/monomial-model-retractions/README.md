@@ -10,5 +10,3 @@
 - [Extended Discrepancy](extended-discrepancy.md)
 - [Has Discrepancy Charts](has-discrepancy-charts.md)
 - [Divisorial Realization](divisorial-realization.md)
-- [Monomial Retraction](monomial-retraction-2.md)
-- [Divisorial discrepancy](divisorial-discrepancy.md)

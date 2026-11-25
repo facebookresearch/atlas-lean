@@ -11,4 +11,3 @@
 - [Scalars On Cohomology](scalars-on-cohomology.md)
 - [Scalars On Cohomology comp trace](scalars-on-cohomology-comp-trace.md)
 - [Trace Free Cohomology](trace-free-cohomology.md)
-- [The trace map of a vector bundle](bundle-trace.md)

@@ -14,4 +14,3 @@
 - [Compact Reductions Commute](compact-reductions-commute.md)
 - [Compact Finite Limit](compact-finite-limit.md)
 - [Compact Support Limit Comparison](compact-support-limit-comparison.md)
-- [Compactly supported ℓ-adic cohomology as a limit of finite levels](compact-support-limit-comparison-bijecti.md)

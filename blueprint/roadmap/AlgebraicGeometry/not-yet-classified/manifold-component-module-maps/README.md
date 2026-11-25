@@ -8,5 +8,3 @@
 - [Assemble Components](assemble-components.md)
 - [Component Assembly Unit](component-assembly-unit.md)
 - [Restrict Operator](restrict-operator.md)
-- [Native manifold finite component partition](native-manifold-finite-component-partiti.md)
-- [Native component module assembly is Iso](native-component-module-assembly-is-iso.md)

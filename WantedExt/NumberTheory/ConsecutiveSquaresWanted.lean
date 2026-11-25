@@ -76,18 +76,6 @@ Consecutive Squares*, INTEGERS 26 (2026), Article A1, Theorem 3
 public theorem_wanted soCS_even_span_infinite :
     {t : ℤ × ℤ × ℤ | IsSoCSSolution t.1 t.2.1 t.2.2 ∧ Even (t.2.2 - t.1)}.Infinite
 
-/-- **At most $2(N - 1)$ solutions with $c - a = N$.** For every integer $N > 1$,
-there are at most $2(N - 1)$ solutions $(a, b, c)$ of the sum of consecutive squares problem
-with $c - a = N$.
-
-Source: Anderson, Woodall and Zaharescu, *Arithmetic Polygons and Sums of
-Consecutive Squares*, INTEGERS 26 (2026), Article A1, Theorem 5
-(`integers-2026-A1-thm-5`). -/
-public theorem_wanted soCS_card_le (N : ℤ) (hN : 1 < N)
-    (s : Finset (ℤ × ℤ × ℤ))
-    (hs : ∀ t ∈ s, IsSoCSSolution t.1 t.2.1 t.2.2 ∧ t.2.2 - t.1 = N) :
-    s.card ≤ 2 * (N - 1).toNat
-
 /-- **No finitely many planes contain all solutions.** Let $S$ be a finite set of affine planes
 $ux + vy + wz = t$ in $\mathbb{R}^3$, with $u, v, w, t$ real and $(u, v, w) \ne (0, 0, 0)$. Then
 some solution $(a, b, c)$ of the sum of consecutive squares problem lies on none of the planes in

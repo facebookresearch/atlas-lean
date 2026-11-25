@@ -8,6 +8,3 @@
 - [Log Base Change](log-base-change.md)
 - [Basicized Base Change](basicized-base-change.md)
 - [Monoid Map](monoid-map.md)
-- [Field Extension Ghost Comparison](field-extension-ghost-comparison.md)
-- [Geometric Basicization](geometric-basicization.md)
-- [Basicization Base Change](basicization-base-change.md)

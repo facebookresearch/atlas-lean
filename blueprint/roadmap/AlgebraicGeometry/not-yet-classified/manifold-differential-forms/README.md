@@ -13,4 +13,3 @@
 - [D To Closed](d-to-closed.md)
 - [De Rham H2](de-rham-h2.md)
 - [Class Of Closed Two Form](class-of-closed-two-form.md)
-- [Linearity and Stokes' theorem for the chart integral of top forms](integration-theory.md)

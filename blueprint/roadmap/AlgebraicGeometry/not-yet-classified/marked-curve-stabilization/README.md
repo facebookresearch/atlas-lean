@@ -10,4 +10,3 @@
 - [Is Stable](is-stable.md)
 - [Is Genus Preserving Contraction](is-genus-preserving-contraction.md)
 - [Stabilization Model](stabilization-model.md)
-- [Stabilization after forgetting the last marking](forget-and-stabilize.md)

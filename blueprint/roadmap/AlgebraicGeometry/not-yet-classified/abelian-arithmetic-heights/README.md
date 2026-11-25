@@ -11,4 +11,3 @@
 - [Height Sequence](height-sequence.md)
 - [Canonical Height](canonical-height.md)
 - [Height unique](height-unique.md)
-- [The Néron–Tate height of an abelian variety over a number field](neron-tate-height.md)

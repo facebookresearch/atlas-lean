@@ -16,6 +16,3 @@
 - [Is Locally Of Finite Presentation](is-locally-of-finite-presentation.md)
 - [Is Locally Of Finite Presentation Stack](is-locally-of-finite-presentation-stack.md)
 - [Is Smooth](is-smooth.md)
-- [Derived stack natural path](derived-stack-natural-path.md)
-- [Derived stack product](derived-stack-product.md)
-- [Derived stack homotopy pullback](derived-stack-homotopy-pullback.md)
