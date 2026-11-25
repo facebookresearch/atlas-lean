@@ -35,23 +35,32 @@ without forming the quotient: every `g i g⁻¹ i⁻¹` lies in `O(G)`. For fini
 (Glauberman's Z*-theorem).
 -/
 
-/-- `O(G)`: the join of all normal subgroups of `G` all of whose elements have odd order. In a
-periodic group this join is again a normal subgroup consisting of elements of odd order, so it is
-the largest such subgroup. -/
+/-- **Odd core from normal subgroups of odd-order elements.** For a group $G$, $O(G)$ is the join,
+in the lattice of subgroups of $G$, of all normal subgroups $N$ of $G$ such that every element of
+$N$ has finite odd order. In a periodic group this join is again a normal subgroup consisting of
+elements of odd order, so it is the largest such subgroup. -/
 def oddCore (G : Type*) [Group G] : Subgroup G :=
   sSup {N : Subgroup G | N.Normal ∧ ∀ x ∈ N, Odd (orderOf x)}
 
-/-- Kourovka 11.13 (A. V. Borovik): if `G` is a periodic group and `i` an involution of `G` such
-that `i ^ g * i` has odd order for every `g ∈ G`, then the image of `i` in `G / O(G)` is central,
-i.e. every commutator `g * i * g⁻¹ * i⁻¹` lies in `O(G)`. -/
+/-- **Borovik's question on involutions with odd-order products (Kourovka 11.13).** For a group
+$G$, let $O(G)$ be the join of all normal subgroups of $G$ all of whose elements have odd order.
+This is the statement that for every periodic group $G$ and every involution $i \in G$ such that
+$g^{-1} i g i$ has odd order for every $g \in G$, the image of $i$ in $G / O(G)$ is central, that
+is, $g i g^{-1} i^{-1} \in O(G)$ for every $g \in G$. -/
 def periodicInvolutionCentralModOddCore : Prop :=
   ∀ (G : Type) [Group G], (∀ g : G, IsOfFinOrder g) → ∀ i : G, orderOf i = 2 →
     (∀ g : G, Odd (orderOf (g⁻¹ * i * g * i))) → ∀ g : G, g * i * g⁻¹ * i⁻¹ ∈ oddCore G
 
 /--
-Resolved false: the Kourovka Archive answers 11.13 "No, not always" (Durakov and Sozutov): some
-periodic group has an involution `i` with every `i^g i` of odd order whose image in `G / O(G)` is
-not central (for finite groups the answer is yes by Glauberman's Z*-theorem). Source: E. I. Khukhro
+**A periodic counterexample to Borovik's question (Kourovka 11.13).** For a group $G$, let $O(G)$
+be the join of all normal subgroups of $G$ all of whose elements have odd order. There exist a
+periodic group $G$ and an involution $i \in G$ such that $g^{-1} i g i$ has odd order for every
+$g \in G$, but the image of $i$ in $G / O(G)$ is not central: $g i g^{-1} i^{-1} \notin O(G)$ for
+some $g \in G$. This answers Kourovka Problem 11.13 in the negative.
+
+For finite groups the answer is yes, by Glauberman's $Z^*$-theorem.
+
+Source: E. I. Khukhro
 and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.13 (A. V. Borovik); resolution: E.
 B. Durakov and A. I. Sozutov, Algebra and Logic 52, no. 5 (2013), 422-425, Kourovka Archive, Problem

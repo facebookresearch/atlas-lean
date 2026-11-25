@@ -57,19 +57,16 @@ example : expansionOriginalKernel (((0, 0), (0, 0))) 0 0 0 0 = 37 := by
   decide
 
 set_option maxRecDepth 100000 in
-set_option maxHeartbeats 1000000 in
 example : gridValue {0, 1} {0} expansionTensor (fun _ => expansionKernelLeft) = 210 := by
-  decide
+  decide +kernel
 
 set_option maxRecDepth 100000 in
-set_option maxHeartbeats 1000000 in
 example : gridValue {0, 1} {0} expansionTensor (fun _ => expansionKernelRight) = 840 := by
-  decide
+  decide +kernel
 
 set_option maxRecDepth 100000 in
-set_option maxHeartbeats 1000000 in
 example : gridValue {0, 1} {0} expansionTensor expansionOriginalKernel = 1050 := by
-  decide
+  decide +kernel
 
 example :
     gridValue {0, 1} {0} expansionTensor expansionOriginalKernel =
@@ -119,9 +116,8 @@ example :
 def zeroExpansionKernel (_x _y _u _v : Nat) : ℤ := 0
 
 set_option maxRecDepth 100000 in
-set_option maxHeartbeats 1000000 in
 example : gridValue {0, 1} {0} expansionTensor (fun _ => zeroExpansionKernel) = 0 := by
-  decide
+  decide +kernel
 
 example :
     (Fintype.piFinset

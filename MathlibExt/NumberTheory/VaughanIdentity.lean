@@ -262,10 +262,21 @@ private lemma double_swap {R : Type*} [CommRing R] (μ Λ : ArithmeticFunction R
   · intro a ha
     rfl
 
-/-- Vaughan's identity with only the hypotheses the argument uses: for any `U` and any `V < n`,
-with `Λ = μ * logW` (`hLambda`) and `μ` the Dirichlet inverse of `1` (`hMu`), `Λ n` is the
-truncated `μ * log` sum minus the `μ_{≤U} * Λ_{≤V} * 1` double sum plus the
-`μ_{>U} * Λ_{>V} * 1` double sum. `vaughan_identity` is the source-shaped form. -/
+/-- **Vaughan's identity in a commutative ring.** Let $R$ be a commutative ring, let $\mu$ and
+$\Lambda$ be arithmetic functions with values in $R$ (so $\mu(0) = \Lambda(0) = 0$), and let
+$L : \mathbb{N} \to R$ be any function. Suppose that for every natural number $m$,
+$\sum_{d \mid m} \mu(d)$ is $1$ if $m = 1$ and $0$ otherwise, and
+$\Lambda(m) = \sum_{d \mid m} \mu(d) \, L(m/d)$, where both sums run over the $d$ with
+$0 \le d \le m$ and $d \mid m$. Then for all natural numbers $U$, $V$ and $n$ with $V < n$,
+
+$$\Lambda(n) = \sum_{b \mid n,\ b \le U} \mu(b) \, L(n/b) -
+\sum_{b \mid n,\ b \le U} \ \sum_{c \le V,\ bc \mid n} \mu(b) \, \Lambda(c) +
+\sum_{b \mid n,\ b > U} \ \sum_{c > V,\ bc \mid n} \mu(b) \, \Lambda(c),$$
+
+where $b$ and $c$ range over $0, 1, \dots, n$.
+
+When $R = \mathbb{R}$, $\mu$ is the Möbius function, $L = \log$ and $\Lambda$ is the von Mangoldt
+function, the hypotheses hold and this is the classical Vaughan identity. -/
 theorem vaughan_identity_general {R : Type*} [CommRing R]
     (μ Λ : ArithmeticFunction R) (logW : ℕ → R)
     (U V n : ℕ) (hn : V < n)
@@ -429,12 +440,22 @@ theorem vaughan_identity_general {R : Type*} [CommRing R]
               μ b * Λ c) := by linear_combination hcancel
 
 set_option linter.unusedVariables false in
-/-- Vaughan's identity, statement id `vaughan-identity-s1`: the von Mangoldt function `Λ`,
-characterized by the Dirichlet convolution `Λ = μ * log` (`hLambda`) with `μ`
-the Möbius function (Dirichlet inverse of `1`, `hMu`) and `logW` the logarithm,
-at `n > V` with parameters `U`, `V ≥ 1` decomposes into the type-I truncated
-`μ * log` sum minus the type-II `μ_{≤U} * Λ_{≤V} * 1` double sum plus the
-type-II `μ_{>U} * Λ_{>V} * 1` double sum.
+/-- **Vaughan's identity.** Let $R$ be a commutative ring, let $\mu$ and $\Lambda$ be arithmetic
+functions with values in $R$ (so $\mu(0) = \Lambda(0) = 0$), and let $L : \mathbb{N} \to R$ be
+any function. Suppose that for every natural number $m$, $\sum_{d \mid m} \mu(d)$ is $1$ if
+$m = 1$ and $0$ otherwise, and $\Lambda(m) = \sum_{d \mid m} \mu(d) \, L(m/d)$, where both sums
+run over the $d$ with $0 \le d \le m$ and $d \mid m$. Then for all natural numbers $U \ge 1$,
+$V \ge 1$ and $n > V$,
+
+$$\Lambda(n) = \sum_{b \mid n,\ b \le U} \mu(b) \, L(n/b) -
+\sum_{b \mid n,\ b \le U} \ \sum_{c \le V,\ bc \mid n} \mu(b) \, \Lambda(c) +
+\sum_{b \mid n,\ b > U} \ \sum_{c > V,\ bc \mid n} \mu(b) \, \Lambda(c),$$
+
+where $b$ and $c$ range over $0, 1, \dots, n$.
+
+When $R = \mathbb{R}$, $\mu$ is the Möbius function, $L = \log$ and $\Lambda$ is the von Mangoldt
+function, the hypotheses hold and this is the classical Vaughan identity.
+
 Source: https://en.wikipedia.org/wiki/Vaughan%27s_identity
 It follows from `vaughan_identity_general`; the hypotheses `hU` and `hV` are unused and keep the
 source's shape.

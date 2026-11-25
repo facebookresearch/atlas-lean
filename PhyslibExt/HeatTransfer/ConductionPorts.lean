@@ -12,7 +12,7 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
-public import MathlibExt.Biology.Biophysics.MembraneCable
+public import MathlibExt.Analysis.ODE.SteadyCableTransfer
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
@@ -44,7 +44,7 @@ model; it is not claimed to be thermodynamic stored energy.
 
 Section D treats a straight fin (conductivity `k`, cross-section `A`,
 perimeter `P`, film coefficient `h`, length `L`) as the steady passive
-cable of `MathlibExt.Biology.Biophysics.MembraneCable`: the temperature
+cable of `MathlibExt.Analysis.ODE.SteadyCableTransfer`: the temperature
 excess `θ = T - Ta` is the voltage, the conducted heat rate `q` (in the
 `+x` direction) is the axial current, `ri = 1 / (k A)` and
 `rm = 1 / (h P)`. The existing sealed-end and transfer solutions then

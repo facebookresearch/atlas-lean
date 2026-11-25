@@ -19,7 +19,7 @@ Operations Research Letters 1 (1982), 194-197, doi:10.1016/0167-6377(82)90039-6.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import Mathlib.Basic.Real.Basic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

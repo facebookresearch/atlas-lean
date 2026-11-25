@@ -8,10 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.GroupTheory.Perm.Basic
 public import MathlibExt.Probability.ProbabilityMassFunction.Expectation
+import Mathlib.GroupTheory.Perm.Fin
 import Mathlib.Tactic.Ring
 
 /-!
@@ -190,5 +192,58 @@ theorem expectENN_permInversionCount_toReal :
   · simp
   · push_cast
     norm_num
+
+private theorem permInversionCount_decomposeFin'Symm {m : ℕ}
+    (p : Fin (m + 2)) (σ : Equiv.Perm (Fin (m + 1))) :
+    permInversionCount (Equiv.Perm.decomposeFin'Symm p σ) =
+      p.val + permInversionCount σ := by
+  let τ := Equiv.Perm.decomposeFin'Symm p σ
+  -- The first position is inverted with exactly the values strictly below `p`.
+  have hfirst : (∑ j : Fin (m + 2), if 0 < j ∧ τ j < τ 0 then (1 : ℕ) else 0) = p.val := by
+    have h (j : Fin (m + 2)) : (0 < j ∧ τ j < τ 0) ↔ τ j < τ 0 := by
+      refine ⟨And.right, fun hj => ⟨Fin.pos_iff_ne_zero.mpr ?_, hj⟩⟩
+      rintro rfl
+      exact lt_irrefl _ hj
+    simp_rw [h]
+    rw [Equiv.sum_comp τ (fun v => if v < τ 0 then (1 : ℕ) else 0), Finset.sum_boole]
+    have hIio : (Finset.univ.filter fun v => v < τ 0) = Finset.Iio (τ 0) := by
+      ext v
+      simp
+    rw [hIio, Fin.card_Iio]
+    simp [τ]
+  -- The increasing embedding `p.succAbove` preserves inversions in the tail.
+  change permInversionCount τ = _
+  simp only [permInversionCount, permInversions, Finset.card_filter, Fintype.sum_prod_type]
+  rw [Fin.sum_univ_succ (n := m + 1), hfirst]
+  congr 1
+  refine Finset.sum_congr rfl fun i _ => ?_
+  rw [Fin.sum_univ_succ (n := m + 1)]
+  simp [τ]
+
+open Polynomial in
+/-- **Generating function of inversions** (Stanley, *Enumerative Combinatorics*, Vol. 1,
+2nd ed., Corollary 1.3.13, equation (1.30)). For every `n`, the polynomial
+`∑_{σ ∈ S_n} q ^ inv(σ)` over the permutations of `Fin n` is
+`∏_{k = 0}^{n - 1} (1 + q + ⋯ + q ^ k) = (1 + q)(1 + q + q ^ 2) ⋯ (1 + q + ⋯ + q ^ (n - 1))`. -/
+theorem sum_X_pow_permInversionCount (n : ℕ) :
+    ∑ σ : Equiv.Perm (Fin n), (X : ℕ[X]) ^ permInversionCount σ =
+      ∏ k ∈ Finset.range n, ∑ i ∈ Finset.range (k + 1), (X : ℕ[X]) ^ i := by
+  induction n with
+  | zero => simp [permInversionCount, permInversions]
+  | succ n ih =>
+    cases n with
+    | zero =>
+      have hz (σ : Equiv.Perm (Fin 1)) : permInversionCount σ = 0 := by
+        have he : permInversions σ = ∅ := by
+          ext ⟨i, j⟩
+          simp [permInversions, Subsingleton.elim i j]
+        simp [permInversionCount, he]
+      simp [hz, Finset.sum_range_succ]
+    | succ m =>
+      rw [← Equiv.Perm.decomposeFin'.symm.sum_comp
+        (fun σ : Equiv.Perm (Fin (m + 2)) => (X : ℕ[X]) ^ permInversionCount σ)]
+      simp only [Fintype.sum_prod_type, Equiv.Perm.decomposeFin'_symm,
+        permInversionCount_decomposeFin'Symm, pow_add, ← Finset.mul_sum, ih, ← Finset.sum_mul]
+      rw [Fin.sum_univ_eq_sum_range, Finset.prod_range_succ _ (m + 1), mul_comm]
 
 end MetaMathlibExt

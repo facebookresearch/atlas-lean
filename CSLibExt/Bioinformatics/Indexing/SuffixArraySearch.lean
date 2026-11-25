@@ -151,7 +151,7 @@ theorem lowerBound_spec (p : ℕ → Bool) (lo hi : ℕ) (hlo : lo ≤ hi)
       (∀ i, lowerBound p lo hi ≤ i → i < hi → p i = false) := by
   generalize hn : hi - lo = n
   induction n using Nat.strong_induction_on generalizing lo hi with
-  | h n ih =>
+  | ind n ih =>
       by_cases h : lo < hi
       · have hmidlo : lo ≤ (lo + hi) / 2 := by omega
         have hmidhi : (lo + hi) / 2 < hi := by omega
@@ -185,7 +185,7 @@ theorem lowerBoundSteps_le (p : ℕ → Bool) (lo hi : ℕ) :
     lowerBoundSteps p lo hi ≤ Nat.log 2 (hi - lo) + 1 := by
   generalize hn : hi - lo = n
   induction n using Nat.strong_induction_on generalizing lo hi with
-  | h n ih =>
+  | ind n ih =>
       rw [← hn]
       by_cases h : lo < hi
       · rw [lowerBoundSteps, dite_eq_left h]

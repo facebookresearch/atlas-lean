@@ -1,6 +1,6 @@
 # Complex-balanced concentrations
 
-Let $N$ be a [chemical reaction network](reaction-network.md) with finite species set $S$ and finite reaction set $\rho$. Concentrations $c \in \mathbb{R}^S$ are complex balanced for rate constants
+Let $N$ be a [chemical reaction network](../../../Dynamics/smooth-dynamics/reaction-network.md) with finite species set $S$ and finite reaction set $\rho$. Concentrations $c \in \mathbb{R}^S$ are complex balanced for rate constants
 $k \in \mathbb{R}^\rho$ when, for every $z \in \mathbb{N}^S$, the total [mass-action rate](rate.md) of the
 reactions with source complex $z$ equals the total rate of the reactions with product complex $z$:
 
