@@ -11,12 +11,8 @@
 
 - [Axial Displacement](axial-displacement.md)
 - [Twist Angle](twist-angle.md)
-- [The uniform-load displacement solves the fixed-fixed bar problem](is-fixed-fixed-solution-axial-displaceme.md)
 - [Displacement of a uniformly loaded fixed-fixed bar](eq-on-axial-displacement.md)
-- [The twist angle solves the fixed-fixed shaft problem](is-fixed-fixed-solution-twist-angle.md)
 - [Twist of a uniformly loaded fixed-fixed shaft](eq-on-twist-angle.md)
-- [Axial Displacement dimension](axial-displacement-dimension.md)
-- [Twist Angle dimension](twist-angle-dimension.md)
 - [Scaled bar displacement solves the unit Dirichlet problem](is-classical-solution-axial-displacement.md)
 
 ## C. Boundary example
@@ -28,7 +24,6 @@
 
 - [Cantilever Deflection](cantilever-deflection.md)
 - [Is Cantilever Solution](is-cantilever-solution.md)
-- [The cantilever deflection satisfies the beam equation](cantilever-deflection-iterated-deriv-fou.md)
 - [Zero deflection at the clamped end of a cantilever](cantilever-deflection-zero.md)
 - [The cantilever deflection has zero slope at the clamped end](deriv-cantilever-deflection-zero.md)
 - [Zero bending moment at the free end of a cantilever](cantilever-deflection-moment-right.md)
@@ -41,7 +36,6 @@
 
 ## F. Clamped-free cantilever: tip-force term and boundary example
 
-- [Cantilever Deflection load zero](cantilever-deflection-load-zero.md)
 - [A clamped-clamped profile is not a cantilever solution](cosine-profile-fails-moment.md)
 
 ## G. Fixed-traction bar and shaft: load path, existence and uniqueness
@@ -52,14 +46,8 @@
 - [Strain of the fixed-traction displacement](deriv-within-fixed-traction-displacement.md)
 - [The fixed-traction strain decreases at the rate of the load](deriv-within-fixed-traction-strain.md)
 - [Existence for the fixed-traction bar problem](is-fixed-traction-solution-fixed-tractio.md)
-- [Axial Force eq](axial-force-eq.md)
 - [The fixed-traction solution is the constructed displacement](eq-on-fixed-traction-displacement.md)
 - [Uniqueness for the fixed-traction bar problem](eq-on-3.md)
-- [Twist of a shaft fixed at one end](twist.md)
-
-## H. Fixed-traction bar: uniform load
-
-- [Fixed Traction Displacement const](fixed-traction-displacement-const.md)
 
 ## I. Boundary example: two free ends
 
@@ -77,13 +65,9 @@
 
 ## K. Thin closed rectangular cell: compatibility, shear stress and rigidity
 
-- [Is Closed Cell Compatible](is-closed-cell-compatible.md)
 - [Wall Shear Stress](wall-shear-stress.md)
-- [Closed Cell Torsion Constant](closed-cell-torsion-constant.md)
-- [Twist rate under the compatibility law](is-closed-cell-compatible-iff.md)
 - [Shear stress](wall-shear-stress-eq.md)
 - [The torsion constant is Bredt's](closed-cell-torsion-constant-eq.md)
-- [Effective torsional rigidity](torque-eq-rigidity-mul-twist-rate.md)
 
 ## L. Simply supported beam: existence and uniqueness
 

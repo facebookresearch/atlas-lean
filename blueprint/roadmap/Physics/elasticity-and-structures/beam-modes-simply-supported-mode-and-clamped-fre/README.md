@@ -1,18 +1,15 @@
 # Beam modes: simply supported mode and clamped-free mode in physical units
 
-- [Beam Mode](beam-mode.md)
 - [Modal frequency of a simply supported beam](beam-freq.md)
 - [A beam mode vanishes at the left support](beam-mode-zero-left.md)
 - [A beam mode vanishes at the right support](beam-mode-zero-right.md)
 - [Second spatial derivative of a beam mode](beam-mode-iterated-deriv-two.md)
 - [Fourth spatial derivative of a beam mode](beam-mode-iterated-deriv-four.md)
 - [Second time derivative of a beam mode](beam-mode-iterated-deriv-two-time.md)
-- [Simply supported beam modes have zero end curvature](beam-mode-curvature-zero.md)
 - [Beam Freq sq](beam-freq-sq.md)
 - [Simply supported modes solve the beam equation](beam-mode-beam-equation.md)
 - [Beam Mode Energy](beam-mode-energy.md)
 - [Energy of a simply supported beam mode](beam-mode-energy-eq.md)
-- [Energy of a simply supported beam mode is conserved](beam-mode-energy-conserved.md)
 
 ## B.1. The characteristic function and the boundary matrix
 
@@ -23,7 +20,6 @@
 - [Mode Family iterated Deriv four](mode-family-iterated-deriv-four.md)
 - [Mode Family traces](mode-family-traces.md)
 - [Clamped Free Matrix det](clamped-free-matrix-det.md)
-- [Exists is Clamped Free iff](exists-is-clamped-free-iff.md)
 
 ## B.2. The least positive root
 
@@ -36,14 +32,10 @@
 
 ## B.3. The mode and its frequency
 
-- [Cantilever Mode](cantilever-mode.md)
 - [Cantilever Mode eq mode Family](cantilever-mode-eq-mode-family.md)
 - [Clamped-free mode shapes satisfy the boundary conditions](is-clamped-free-cantilever-mode.md)
-- [Clamped-free mode shapes are nonzero](cantilever-mode-tip-ne-zero.md)
 - [Cantilever Freq](cantilever-freq.md)
-- [Clamped-free modes solve the beam equation](cantilever-mode-beam-equation.md)
 - [Cantilever Freq length scaling](cantilever-freq-length-scaling.md)
-- [Cantilever First Mode](cantilever-first-mode.md)
 
 ## B.4. The old root bracket
 

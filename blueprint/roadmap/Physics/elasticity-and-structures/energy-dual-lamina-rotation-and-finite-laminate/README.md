@@ -19,21 +19,17 @@
 
 - [Work duality of the stress and strain rotation maps](stress-map-transpose-mul-strain-map.md)
 - [Stress Map eq transpose inv](stress-map-eq-transpose-inv.md)
-- [Stress Map mul Vec dot Product strain Map mul Vec](stress-map-mul-vec-dot-product-strain-ma.md)
 
 ## D. Stiffness congruence
 
 - [Orthotropic Stiffness](orthotropic-stiffness.md)
 - [Global Stiffness](global-stiffness.md)
-- [Stress Map mul Vec eq iff eq global Stiffness](stress-map-mul-vec-eq-iff-eq-global-stif.md)
 - [Dot Product global Stiffness mul Vec](dot-product-global-stiffness-mul-vec.md)
 - [Global Stiffness pos Def](global-stiffness-pos-def.md)
 
 ## E. The opposite MATERIAL-to-GLOBAL convention
 
-- [Strain Map inv](strain-map-inv.md)
 - [Global Stiffness eq inv congr](global-stiffness-eq-inv-congr.md)
-- [Inv congr strain Map](inv-congr-strain-map.md)
 
 ## F. Ply geometry and the laminate stiffnesses
 
@@ -43,7 +39,6 @@
 - [Coupling stiffness of a laminate](coupling-stiffness.md)
 - [Bending stiffness of a laminate](bending-stiffness.md)
 - [Abd Matrix](abd-matrix.md)
-- [Is Reflected Stack](is-reflected-stack.md)
 
 ## G. Through-thickness integration: the resultants
 
@@ -55,8 +50,6 @@
 
 ## H. Block energy and positive definiteness
 
-- [Abd Matrix energy eq](abd-matrix-energy-eq.md)
-- [Abd Matrix pos Def](abd-matrix-pos-def.md)
 - [Positive energy of a laminate](abd-matrix-energy-pos.md)
 
 ## I. Reflected stacks

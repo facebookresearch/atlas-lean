@@ -14,12 +14,8 @@
 
 ## C. Divergence pressure
 
-- [Divergence Pressure pos](divergence-pressure-pos.md)
-- [Effective Stiffness eq zero iff](effective-stiffness-eq-zero-iff.md)
-- [Effective Stiffness pos iff](effective-stiffness-pos-iff.md)
 - [No nonzero twist below the divergence pressure](eq-zero-of-restoring-moment-eq-zero.md)
 - [Every twist balances at the divergence pressure](restoring-moment-divergence-pressure.md)
-- [Neutral twist at the divergence pressure](exists-neutral-displacement.md)
 
 ## D. Nonpositive and zero aerodynamic factor
 
@@ -28,11 +24,8 @@
 
 ## E. The circulatory pilot model and its structural ports
 
-- [Circulatory J](circulatory-j.md)
 - [Circulatory Force](circulatory-force.md)
 - [Circulatory Residual](circulatory-residual.md)
-- [Circulatory Residual eq ports](circulatory-residual-eq-ports.md)
-- [Has Deriv At energy](has-deriv-at-energy.md)
 
 ## F. The nonsymmetric circulatory load
 
@@ -65,7 +58,3 @@
 
 - [Unloaded response eq](unloaded-response-eq.md)
 - [Without aerodynamic load every solution decays](unloaded-tendsto-zero.md)
-
-## J. The three witnesses
-
-- [Circulatory witnesses](circulatory-witnesses.md)

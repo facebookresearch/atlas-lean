@@ -7,8 +7,6 @@
 - [Slope of the clamped-clamped buckling mode](deriv-clamped-clamped-mode.md)
 - [Curvature of the clamped-clamped buckling mode](iterated-deriv-two-clamped-clamped-mode.md)
 - [Fourth derivative of the clamped-clamped buckling mode](iterated-deriv-four-clamped-clamped-mode.md)
-- [Clamped-clamped buckling mode](clamped-clamped-column-equation.md)
-- [Clamped-clamped Euler column eigenpair](clamped-clamped-eigenpair.md)
 
 ## B. The clamped-free mode
 
@@ -19,8 +17,6 @@
 - [Curvature of the clamped-free buckling mode](iterated-deriv-two-clamped-free-mode.md)
 - [Third derivative of the clamped-free buckling mode](iterated-deriv-three-clamped-free-mode.md)
 - [Fourth derivative of the clamped-free buckling mode](iterated-deriv-four-clamped-free-mode.md)
-- [Clamped-free buckling mode](clamped-free-column-equation.md)
-- [Clamped-free Euler column eigenpair](clamped-free-eigenpair.md)
 
 ## C. The pinned-pinned energy threshold
 
