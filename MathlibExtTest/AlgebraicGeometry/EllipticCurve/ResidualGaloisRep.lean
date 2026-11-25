@@ -14,7 +14,16 @@ public import MathlibExt.AlgebraicGeometry.EllipticCurve.ResidualGaloisRep
 
 open WeierstrassCurve WeierstrassCurve.Affine WeierstrassCurve.Affine.Point
 
+/-- Importing the module adds no `DecidableEq` instance on `AlgebraicClosure ℚ`: the classical
+instance the point API needs is local to the module, and importers choose their own (below,
+with `open Classical in`). -/
+example : True := by
+  fail_if_success
+    have : DecidableEq (AlgebraicClosure ℚ) := inferInstance
+  trivial
+
 -- Source consumer with the original binders.
+open Classical in
 example (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
     (hcard : Nat.card
       (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point p) = p ^ 2)
@@ -29,6 +38,7 @@ example (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
 
 -- Unfolding consumer: unramifiedness of the attached representation
 -- means inertia acts trivially on every `p`-torsion point.
+open Classical in
 example (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
     (hcard : Nat.card
       (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point p) = p ^ 2)
@@ -47,6 +57,7 @@ example (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
   exact h1
 
 -- The attached representation is two-dimensional over `ZMod p`.
+open Classical in
 example (W : WeierstrassCurve ℚ) (p : ℕ) [Fact p.Prime]
     (hcard : Nat.card
       (Submodule.torsionBy ℤ (W⁄(AlgebraicClosure ℚ)).Point p) = p ^ 2)
