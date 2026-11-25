@@ -12398,6 +12398,7 @@
   "MathlibExt/NumberTheory/Bernoulli/KummerCongruence": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Kummer's congruences"},
   "MathlibExt/NumberTheory/Bernoulli/OddRadical": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Denominators of Bernoulli polynomials"},
   "MathlibExt/NumberTheory/Bernoulli/PolyBernoulliDuality": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Poly-Bernoulli numbers"},
+  "MathlibExt/NumberTheory/Bernoulli/PolyBernoulliPoly": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Bernoulli identities via Stirling and harmonic numbers"},
   "MathlibExt/NumberTheory/Bernoulli/PolyBernoulliSymmetricExponentialGeneratingFunction": {"to": "NumberTheory/special-numbers/euler-genocchi-poly-bernoulli", "title": "Poly-Bernoulli numbers"},
   "MathlibExt/NumberTheory/Bernoulli/SumModPrime": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Bernoulli identities via Stirling and harmonic numbers"},
   "MathlibExt/NumberTheory/Bernoulli/TruncatedSumModPrime": {"to": "NumberTheory/special-numbers/bernoulli-numbers", "title": "Bernoulli identities via Stirling and harmonic numbers"},

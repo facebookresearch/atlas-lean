@@ -43,16 +43,10 @@ import Mathlib.MeasureTheory.Measure.Haar.Basic
 /-!
 # Complete reducibility for compact groups
 
-`compact_group_semisimple`: a continuous representation of a compact topological
-group on a finite-dimensional real vector space is semisimple (every
-subrepresentation has a `G`-invariant complement). This is the unitarian trick:
-averaging an inner product over Haar measure produces a `G`-invariant inner
-product. Mathlib has `IsSemisimpleRepresentation` and Maschke's theorem (finite
-groups) but no compact-group / Peter–Weyl result. Category-(b) candidate from
-§21 of the Knill survey.
-
-Here we average the conjugates of a projection onto the subrepresentation. The averaged
-projection is equivariant, so its kernel is an invariant complement.
+For a continuous representation of a compact group on a finite-dimensional real vector space,
+`compact_group_semisimple` gives every subrepresentation an invariant complement. Averaging
+the conjugates of a projection onto the subrepresentation over normalized Haar measure gives
+an equivariant projection. Its kernel is the complement.
 -/
 
 namespace MathlibExt.GroupTheory.CompactGroupSemisimpleWanted

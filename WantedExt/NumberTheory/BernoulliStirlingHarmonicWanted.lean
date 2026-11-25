@@ -9,11 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.Bernoulli.PolyBernoulliDuality
+public import MathlibExt.NumberTheory.Bernoulli.PolyBernoulliPoly
 public import MathlibExt.NumberTheory.Bernoulli.SumModPrime
 public import MathlibExt.NumberTheory.Bernoulli.TruncatedSumModPrime
 public import MathlibExt.NumberTheory.Bernoulli.WeightedSum
-public import MathlibExt.NumberTheory.HeightOneMultipleZetaMulNat
 public import WantedExt.NumberTheory.EulerPolynomialFormulasWanted
 public import WantedExt.NumberTheory.GobelSequenceWanted
 public import Mathlib.NumberTheory.Harmonic.Defs
@@ -31,41 +30,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
-
-/--
-**Poly-Bernoulli polynomials at zero.** For every natural number $n$ and every integer $k$, the
-poly-Bernoulli polynomial of degree $n$ and order $k$ evaluated at $0$ equals the
-poly-Bernoulli number of index $n$ and order $k$: $B_n^{(k)}(0) = B_n^{(k)}$.
-
-Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, definition of
-poly-Bernoulli polynomials before Corollary 3.
--/
-public theorem polyBernoulliPoly_zero (n : ℕ) (p : ℤ) :
-    polyBernoulliPoly n p 0 = polyBernoulli n p := by
-  rw [polyBernoulliPoly, Finset.sum_range_succ]
-  have hzero :
-      (∑ i ∈ Finset.range n,
-        (n.choose i : ℚ) * polyBernoulli i p * (0 : ℚ) ^ (n - i)) = 0 := by
-    apply Finset.sum_eq_zero
-    intro i hi
-    have hin : i < n := Finset.mem_range.mp hi
-    have hsub : n - i ≠ 0 := by omega
-    simp [hsub]
-  rw [hzero]
-  simp
-
-/--
-**Poly-Bernoulli polynomials of degree zero.** For every integer $k$ and every rational number
-$x$, the poly-Bernoulli polynomial of degree $0$ and order $k$ satisfies $B_0^{(k)}(x) = 1$.
-
-Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
-Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, definition of
-poly-Bernoulli polynomials before Corollary 3.
--/
-public theorem polyBernoulliPoly_zero_index (p : ℤ) (x : ℚ) :
-    polyBernoulliPoly 0 p x = 1 := by
-  simp [polyBernoulliPoly, polyBernoulli]
 
 /--
 **Bernoulli numbers from Stirling and harmonic numbers.** Let $j < n$ be natural numbers. Write

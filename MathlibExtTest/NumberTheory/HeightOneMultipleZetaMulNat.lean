@@ -52,12 +52,6 @@ example (s : ℂ) (hs : 1 < s.re) :
   have h := (hasSum_heightOneMultipleZeta_mul_nat_pow 1).2 s hs
   simpa [hcast] using h
 
--- A concrete value of the moved poly-Bernoulli polynomial.
-example : polyBernoulliPoly 2 (-(2 : ℤ)) (-1) = 7 := by
-  unfold polyBernoulliPoly polyBernoulli
-  norm_num [Finset.sum_range_succ, Nat.stirlingSecond_self,
-    Nat.stirlingSecond_one_right]
-
 -- The first identity applied at `n = 2` and `s = 4`.
 example : HasSum (fun j : ℕ => heightOneMultipleZeta 4 j * (2 : ℂ) ^ j)
     (1 / (Nat.factorial 2 : ℂ) *

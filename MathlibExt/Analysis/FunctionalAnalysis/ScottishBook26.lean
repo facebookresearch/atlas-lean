@@ -28,7 +28,7 @@ import Mathlib.Topology.MetricSpace.PiNat
 /-!
 # Mazur and Orlicz's Scottish Book Problem 26
 
-A closed subspace of a countable product of Banach spaces provides a sequence of linear
+A closed subspace of a countable product of Banach spaces provides a sequence of continuous linear
 functionals converging uniformly to zero on bounded sets but on no neighborhood of zero.
 Partition the entries of a bounded sequence into infinite blocks indexed by `k`. In addition
 to the supremum norm, control the entries in each block with the weight `n + 1` at index `n`.
@@ -169,8 +169,8 @@ private theorem row_bounds {R : Set space} (hR : IsBoundedSet space R) (i : ℕ)
     exact fun x hx => hR x _ hx tendsto_one_div_add_atTop_nhds_zero_nat
   exact (NormedSpace.image_isVonNBounded_iff ℝ).mp (hb.image (proj i))
 
-private def functional (n : ℕ) : space →ₗ[ℝ] ℝ :=
-  (block n + 1 : ℝ)⁻¹ • (lp.evalₗ _ ⊤ n).comp (proj 0).toLinearMap
+private def functional (n : ℕ) : space →L[ℝ] ℝ :=
+  (block n + 1 : ℝ)⁻¹ • (lp.evalCLM ℝ _ ⊤ n).comp (proj 0)
 
 private theorem abs_functional (n : ℕ) (x : space) :
     |functional n x| = |x.val 0 n| / (block n + 1 : ℝ) := by
@@ -248,7 +248,8 @@ negative. M. Eidelheit, June 4, 1938."
 -/
 theorem foBoundedUniformNeighborhood_refuted : ¬ ScottishBookProblem26Claim := by
   intro claim
-  obtain ⟨U, hU, h0, hu⟩ := claim space space_typeFo functional uniform_on_bounded
+  obtain ⟨U, hU, h0, hu⟩ :=
+    claim space space_typeFo (fun n => (functional n).toLinearMap) uniform_on_bounded
   let a (k : ℕ) : ℝ := 1 / (k + 1 : ℝ)
   have ha (k : ℕ) : 0 < a k := by
     dsimp [a]
@@ -257,7 +258,7 @@ theorem foBoundedUniformNeighborhood_refuted : ¬ ScottishBookProblem26Claim := 
   choose N hN using fun k => hu (a k / (k + 1 : ℝ)) (div_pos (ha k) (by positivity))
   obtain ⟨k, hk⟩ := ((spikes_tendsto N).eventually_mem (hU.mem_nhds h0)).exists
   have h := hN k (Nat.pair k (N k)) (Nat.right_le_pair ..) _ hk
-  rw [abs_functional] at h
+  rw [ContinuousLinearMap.coe_coe, abs_functional] at h
   simp (disch := positivity) [spike, block, a, abs_of_pos] at h
 
 end

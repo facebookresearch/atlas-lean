@@ -40,7 +40,9 @@ A solvable group acts on the subsets of the eight-point affine space over `ZMod 
 translations of the Boolean cube and affine coordinate permutations with cyclic linear part.
 Its 2-closure permits every affine coordinate permutation and has `PSL(3, 2)` as a quotient.
 
-## Record carried over from the retired `WantedExt/GroupTheory/TwoClosureSolvableCompositionFactorsKourovka19Problem67Wanted.lean`
+## Record from the retired wanted module
+
+`WantedExt/GroupTheory/TwoClosureSolvableCompositionFactorsKourovka19Problem67Wanted.lean`
 
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 19.67 (I.
@@ -50,7 +52,7 @@ Ponomarenko). UnsolvedMath record UM-00701615 (`KOU-19.67`), dataset ulamai/Unso
 subgroup it generates, which it already is). A composition factor of `G⁽²⁾` is a simple group onto
 which a subnormal subgroup maps; "alternating" means isomorphic to some `alternatingGroup (Fin n)`.
 `IsCompositionFactor` is the shared definition in
-`WantedExt/GroupTheory/KourovkaNotebookShared.lean`.
+`MathlibExt/GroupTheory/KourovkaCompositionFactor.lean`.
 -/
 
 @[expose] public section
