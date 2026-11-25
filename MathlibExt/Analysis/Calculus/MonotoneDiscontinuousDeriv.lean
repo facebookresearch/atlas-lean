@@ -375,7 +375,7 @@ nondecreasing function $f : \mathbb{R} \to \mathbb{R}$ that is differentiable at
 whose derivative $f'$ is not continuous.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level I (Real functions; Functions of
-one variable), `benchmark/level1/ma_proofbench_l1.lean` at openbmb/ma-proofbench@31bab4c.
+one variable), `benchmark/level1/ma_proofbench_l1_92.lean` at openbmb/ma-proofbench@31bab4c.
 -/
 theorem exists_monotone_differentiable_not_continuous_deriv :
     ∃ f : ℝ → ℝ,

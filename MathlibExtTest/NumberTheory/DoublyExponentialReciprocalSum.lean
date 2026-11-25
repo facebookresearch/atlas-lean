@@ -20,5 +20,15 @@ example : pseudoGreedyGap 2 0 = -(1 / 2 : ℝ) := by
 example : pseudoGreedyRemainder 3 1 = 2 := by
   norm_num [pseudoGreedyRemainder, Int.floor_eq_iff]
 
+-- Starting at 3, the recurrence puts the next rounding input exactly at 3/2.
+example : (pseudoGreedyExpansion 3 1 : ℝ) + pseudoGreedyGap 3 1 = 3 / 2 := by
+  have ha : pseudoGreedyExpansion 3 0 = 1 := by
+    norm_num [pseudoGreedyExpansion, pseudoGreedyRemainder, Int.floor_eq_iff]
+  have hg : pseudoGreedyGap 3 0 = 1 / 3 := by
+    norm_num [pseudoGreedyGap, ha, pseudoGreedyRemainder]
+  have h := pseudoGreedyExpansion_succ_eq (r := 3) (by norm_num) 0
+  rw [ha, hg] at h
+  linarith
+
 example : HasSum (fun n => 1 / (pseudoGreedyExpansion 3 n : ℝ)) 3 :=
   hasSum_one_div_pseudoGreedyExpansion (by norm_num)

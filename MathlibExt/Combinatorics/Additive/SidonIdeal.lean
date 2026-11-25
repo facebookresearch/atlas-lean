@@ -12,8 +12,10 @@ public import Mathlib.Data.Nat.Nth
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Filter.Cofinite
 public import MathlibExt.Combinatorics.Additive.Sidon
+import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import Mathlib.Data.Fin.Tuple.Basic
 import Mathlib.Data.Finset.Card
+import Mathlib.Data.Fintype.Sigma
 import Mathlib.Data.Set.Finite.Lattice
 
 /-!
@@ -57,6 +59,113 @@ public theorem isWeakSidonSet_of_isSidon {A : Set ℕ} (h : A.IsSidon) :
   rcases h a ha b hb c hc d hd habcd with ⟨h1, -⟩ | ⟨h1, h2⟩
   · exact h1
   · omega
+
+private def SidonIdeal.leftEndpoint (A : Set ℕ) (n l : ℕ) : Prop :=
+  l < n ∧ l ∈ A ∧ ∃ r ∈ A, n < r ∧ l + r = n + n
+
+-- A midpoint gets the opposite color from its left endpoint. The recursion decreases on ℕ,
+-- so it colors an infinite set as well as a finite one.
+open Classical in
+private noncomputable def SidonIdeal.partitionColor (A : Set ℕ) (n : ℕ) : Bool :=
+  if h : ∃ l, SidonIdeal.leftEndpoint A n l then
+    !(SidonIdeal.partitionColor A h.choose)
+  else false
+termination_by n
+decreasing_by exact h.choose_spec.1
+
+private theorem SidonIdeal.partitionColor_ne {A : Set ℕ} (hA : IsWeakSidonSet A)
+    {l n r : ℕ} (hl : l ∈ A) (hr : r ∈ A) (hln : l < n) (hnr : n < r)
+    (hadd : l + r = n + n) : SidonIdeal.partitionColor A n ≠ SidonIdeal.partitionColor A l := by
+  have hex : ∃ a, SidonIdeal.leftEndpoint A n a := ⟨l, hln, hl, r, hr, hnr, hadd⟩
+  have hleft : hex.choose = l := by
+    obtain ⟨ha, haA, b, hbA, hb, hab⟩ := hex.choose_spec
+    exact hA _ haA _ hbA _ hl _ hr (ha.trans hb) (hln.trans hnr) (hab.trans hadd.symm)
+  have hcolor : SidonIdeal.partitionColor A n = !(SidonIdeal.partitionColor A l) := by
+    conv_lhs => rw [SidonIdeal.partitionColor, dite_eq_left hex, hleft]
+  rw [hcolor]
+  cases SidonIdeal.partitionColor A l <;> decide
+
+/-- **Weak Sidon sets split into two Sidon sets.** Every weak Sidon set $A \subseteq \mathbb{N}$ is
+the union of two disjoint Sidon sets $B$ and $C$.
+
+Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
+Theorem 1 (`integers-2025-A91-thm-1`). -/
+public theorem exists_partition_isSidon_of_isWeakSidonSet {A : Set ℕ}
+    (hA : IsWeakSidonSet A) :
+    ∃ B C : Set ℕ, B ∪ C = A ∧ Disjoint B C ∧ B.IsSidon ∧ C.IsSidon := by
+  let cell (e : Bool) : Set ℕ := {n | n ∈ A ∧ SidonIdeal.partitionColor A n = e}
+  have hsid (e : Bool) : (cell e).IsSidon := by
+    have ordered {a b c d : ℕ} (ha : a ∈ cell e) (hb : b ∈ cell e)
+        (hc : c ∈ cell e) (hd : d ∈ cell e) (hab : a ≤ b) (hcd : c ≤ d)
+        (hsum : a + b = c + d) : a = c := by
+      by_cases hab' : a = b
+      · by_cases hcd' : c = d
+        · omega
+        · exact False.elim (SidonIdeal.partitionColor_ne hA hc.1 hd.1
+            (show c < a by omega) (show a < d by omega) (by omega) (ha.2.trans hc.2.symm))
+      · by_cases hcd' : c = d
+        · exact False.elim (SidonIdeal.partitionColor_ne hA ha.1 hb.1
+            (show a < c by omega) (show c < b by omega) (by omega) (hc.2.trans ha.2.symm))
+        · exact hA a ha.1 b hb.1 c hc.1 d hd.1 (lt_of_le_of_ne hab hab')
+            (lt_of_le_of_ne hcd hcd') hsum
+    intro a ha b hb c hc d hd hsum
+    rcases le_total a b with hab | hba <;> rcases le_total c d with hcd | hdc
+    · have heq := ordered ha hb hc hd hab hcd hsum
+      exact Or.inl ⟨heq, by omega⟩
+    · have heq := ordered ha hb hd hc hab hdc (by omega)
+      exact Or.inr ⟨heq, by omega⟩
+    · have heq := ordered hb ha hc hd hba hcd (by omega)
+      exact Or.inr ⟨by omega, heq⟩
+    · have heq := ordered hb ha hd hc hba hdc (by omega)
+      exact Or.inl ⟨by omega, heq⟩
+  refine ⟨cell false, cell true, ?_, ?_, hsid false, hsid true⟩
+  · ext n
+    change (n ∈ A ∧ SidonIdeal.partitionColor A n = false) ∨
+      (n ∈ A ∧ SidonIdeal.partitionColor A n = true) ↔ n ∈ A
+    cases SidonIdeal.partitionColor A n <;> simp
+  · exact Set.disjoint_left.2 fun _ h₀ h₁ => Bool.false_ne_true (h₀.2.symm.trans h₁.2)
+
+private theorem SidonIdeal.isSidon_of_double_le {A : Set ℕ} (h0 : 0 ∉ A)
+    (double_le : ∀ {x y}, x ∈ A → y ∈ A → x < y → 2 * x ≤ y) : A.IsSidon := by
+  have pos {x : ℕ} (hx : x ∈ A) : 0 < x := Nat.pos_of_ne_zero fun e => h0 (e ▸ hx)
+  have max_mem {x y : ℕ} (hx : x ∈ A) (hy : y ∈ A) : max x y ∈ A :=
+    max_rec (fun _ => hx) (fun _ => hy)
+  have sum_lt_of_max_lt {x y z w : ℕ} (hx : x ∈ A) (hy : y ∈ A) (hz : z ∈ A)
+      (hw : w ∈ A) (hlt : max x y < max z w) : x + y < z + w := by
+    calc
+      x + y ≤ 2 * max x y := by
+        rw [two_mul]
+        exact Nat.add_le_add (le_max_left _ _) (le_max_right _ _)
+      _ ≤ max z w := double_le (max_mem hx hy) (max_mem hz hw) hlt
+      _ < z + w := by
+        rw [max_lt_iff]
+        exact ⟨Nat.lt_add_of_pos_right (pos hw), Nat.lt_add_of_pos_left (pos hz)⟩
+  intro a ha b hb c hc d hd hsum
+  have hmax : max a b = max c d := le_antisymm
+    (le_of_not_gt fun hlt => (sum_lt_of_max_lt hc hd ha hb hlt).ne hsum.symm)
+    (le_of_not_gt fun hlt => (sum_lt_of_max_lt ha hb hc hd hlt).ne hsum)
+  rcases max_choice a b with hab | hab <;> rcases max_choice c d with hcd | hcd <;>
+    rw [hab, hcd] at hmax <;> omega
+
+/-- **Positive sets whose elements at least double are Sidon.** Let $A \subseteq \mathbb{N}$ with
+$0 \notin A$, and write $A(n)$ for the $n$-th element of $A$ in increasing order, counting from
+$n = 0$, with $A(n) = 0$ when $A$ has at most $n$ elements. If $2 A(n) \le A(n+1)$ for every
+$n \in \mathbb{N}$, then $A$ is a Sidon set.
+
+The hypotheses force $A$ to be empty or infinite, so the source's standing assumption that $A$
+is infinite is not needed.
+
+Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
+Lemma 1 (`integers-2025-A91-lem-1`). -/
+public theorem isSidon_of_two_mul_nth_le {A : Set ℕ} (h0 : 0 ∉ A)
+    (h : ∀ n, 2 * Nat.nth (· ∈ A) n ≤ Nat.nth (· ∈ A) (n + 1)) : A.IsSidon := by
+  apply SidonIdeal.isSidon_of_double_le h0
+  -- The indices obtained from membership are in bounds even if `A` is finite.
+  intro x y hx hy hxy
+  obtain ⟨i, hi, rfl⟩ := Nat.exists_lt_card_nth_eq hx
+  obtain ⟨j, hj, rfl⟩ := Nat.exists_lt_card_nth_eq hy
+  have hij : i < j := lt_of_not_ge fun hji => hxy.not_ge (Nat.nth_le_nth' hji hi)
+  exact (h i).trans (Nat.nth_le_nth' (Nat.succ_le_of_lt hij) hj)
 
 /-- **Ideal generated by a property.** Let $P$ be a property of subsets of $\mathbb{N}$. The ideal
 generated by $P$ is the family of all sets $A \subseteq \mathbb{N}$ that are contained in the union
@@ -286,6 +395,107 @@ public theorem sidonIdeal_subset_lacunaryIdeal :
     · exact ⟨S j, Set.Subset.rfl, SidonIdeal.isGapLacunarySet_of_infinite h (hS j)⟩
   choose B hsub hgap using cover
   exact ⟨n, B, hgap, hA.trans (Set.iUnion_mono hsub)⟩
+
+private theorem SidonIdeal.mem_sidonIdeal_of_isAlmostThinSet {A : Set ℕ}
+    (h : IsAlmostThinSet A) : A ∈ sidonIdeal := by
+  obtain ⟨hA, α, hα, hratio⟩ := h
+  let a := Nat.nth (· ∈ A)
+  have ha : StrictMono a := Nat.nth_strictMono hA
+  obtain ⟨n₀, hn₀⟩ := eventually_atTop.1 hratio
+  let N := max 1 n₀
+  have apos {n : ℕ} (hn : N ≤ n) : 0 < a n :=
+    (Nat.zero_le (a 0)).trans_lt (ha (by dsimp [N] at hn; omega))
+  have ratio (n : ℕ) (hn : N ≤ n) : (a n : ℝ) / a (n + 1) ≤ α :=
+    hn₀ n ((le_max_right 1 n₀).trans hn)
+  have cast_pos {n : ℕ} (hn : N ≤ n) : (0 : ℝ) < a n := by exact_mod_cast apos hn
+  have hαpos : 0 < α := (div_pos (cast_pos le_rfl)
+    (cast_pos (Nat.le_succ N))).trans_le (ratio N le_rfl)
+  let r := α⁻¹
+  have hr : 1 < r := (one_lt_inv₀ hαpos).2 hα
+  have step (n : ℕ) (hn : N ≤ n) : (a n : ℝ) * r ≤ a (n + 1) := by
+    have hm := (div_le_iff₀ (cast_pos (hn.trans (Nat.le_succ n)))).1 (ratio n hn)
+    simpa [r, div_eq_mul_inv, mul_comm] using (div_le_iff₀ hαpos).2
+      (by simpa [mul_comm] using hm : (a n : ℝ) ≤ (a (n + 1) : ℝ) * α)
+  have grow (n : ℕ) (hn : N ≤ n) (j : ℕ) : (a n : ℝ) * r ^ j ≤ a (n + j) := by
+    induction j with
+    | zero => simp
+    | succ j ih =>
+      rw [pow_succ, ← mul_assoc]
+      exact (mul_le_mul_of_nonneg_right ih (zero_le_one.trans hr.le)).trans
+        (step (n + j) (by omega))
+  obtain ⟨k, hk⟩ := pow_unbounded_of_one_lt (2 : ℝ) hr
+  have hkpos : 0 < k := by
+    by_contra! hz
+    have hkzero : k = 0 := by omega
+    simp [hkzero] at hk
+  -- Cover the finite prefix by singletons. In each residue class of the tail,
+  -- moving to the next index multiplies the value by at least two.
+  let R (j : Fin k) : Set ℕ := Set.range fun u : ℕ => a (N + j + k * u)
+  have hR (j : Fin k) : (R j).IsSidon := by
+    apply SidonIdeal.isSidon_of_double_le
+    · rintro ⟨u, hu⟩
+      exact (apos (show N ≤ N + (j : ℕ) + k * u by omega)).ne' hu
+    · rintro _ _ ⟨u, rfl⟩ ⟨v, rfl⟩ hlt
+      have huv : u < v := by
+        by_contra! hvu
+        exact hlt.not_ge (ha.monotone (Nat.add_le_add_left (Nat.mul_le_mul_left k hvu) _))
+      have hn : N ≤ N + (j : ℕ) + k * u := by omega
+      have hend : N + (j : ℕ) + k * u + k ≤ N + (j : ℕ) + k * v := by
+        simpa [Nat.mul_succ, Nat.add_assoc] using
+          Nat.add_le_add_left (Nat.mul_le_mul_left k (Nat.succ_le_of_lt huv)) (N + (j : ℕ))
+      have hdouble : (2 : ℝ) * a (N + j + k * u) ≤ a (N + j + k * v) := calc
+        2 * (a (N + j + k * u) : ℝ) ≤ (a (N + j + k * u) : ℝ) * r ^ k := by
+          rw [mul_comm (2 : ℝ)]
+          exact mul_le_mul_of_nonneg_left hk.le (cast_pos hn).le
+        _ ≤ a (N + j + k * u + k) := grow _ hn k
+        _ ≤ a (N + j + k * v) := by exact_mod_cast ha.monotone hend
+      exact_mod_cast hdouble
+  let S := Fin.append (fun j : Fin N => ({a j} : Set ℕ)) R
+  refine ⟨N + k, S, fun j => ?_, ?_⟩
+  · refine Fin.addCases (fun i => ?_) (fun i => ?_) j
+    · dsimp [S]
+      rw [Fin.append_left]
+      rintro x rfl y rfl z rfl w rfl _
+      exact Or.inl ⟨rfl, rfl⟩
+    · simpa [S] using hR i
+  · intro x hx
+    have hrange : Set.range a = A := Nat.range_nth_of_infinite hA
+    obtain ⟨i, rfl⟩ := hrange.symm ▸ hx
+    by_cases hi : i < N
+    · let j : Fin N := ⟨i, hi⟩
+      refine Set.mem_iUnion.2 ⟨Fin.castAdd k j, ?_⟩
+      rw [show S (Fin.castAdd k j) = ({a j} : Set ℕ) from Fin.append_left _ _ j]
+      exact Set.mem_singleton _
+    · let j : Fin k := ⟨(i - N) % k, Nat.mod_lt _ hkpos⟩
+      have heq : N + (j : ℕ) + k * ((i - N) / k) = i := by
+        have hdiv := Nat.mod_add_div (i - N) k
+        dsimp [j]
+        omega
+      refine Set.mem_iUnion.2 ⟨Fin.natAdd N j, ?_⟩
+      simpa [S] using (show a i ∈ R j from ⟨(i - N) / k, congrArg a heq⟩)
+
+/-- **The almost thin ideal is contained in the Sidon ideal.** Every set $A \subseteq \mathbb{N}$
+that is contained in a finite union of almost thin sets is contained in a finite union of Sidon
+sets; that is, the ideal generated by the almost thin sets is contained in the Sidon ideal.
+
+Source: Andrzej Nowik, *On the Sidon Ideal*, INTEGERS 25 (2025), Article A91,
+Theorem 4 (`integers-2025-A91-thm-4`). -/
+public theorem almostThinIdeal_subset_sidonIdeal :
+    generatedIdeal IsAlmostThinSet ⊆ sidonIdeal := by
+  classical
+  rintro A ⟨n, S, hS, hA⟩
+  have hm (i : Fin n) : S i ∈ sidonIdeal := SidonIdeal.mem_sidonIdeal_of_isAlmostThinSet (hS i)
+  choose k T hT hST using hm
+  let e := Fintype.equivFin (Σ i : Fin n, Fin (k i))
+  let U (p : Σ i : Fin n, Fin (k i)) : Set ℕ := T p.1 p.2
+  refine ⟨_, fun j => U (e.symm j), fun j => hT _ _, ?_⟩
+  intro x hx
+  obtain ⟨i, hi⟩ := Set.mem_iUnion.1 (hA hx)
+  obtain ⟨j, hj⟩ := Set.mem_iUnion.1 (hST i hi)
+  let p : Σ i : Fin n, Fin (k i) := ⟨i, j⟩
+  refine Set.mem_iUnion.2 ⟨e p, ?_⟩
+  rw [e.symm_apply_apply]
+  exact hj
 
 end
 

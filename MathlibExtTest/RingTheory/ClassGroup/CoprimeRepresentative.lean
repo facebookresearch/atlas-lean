@@ -23,12 +23,6 @@ example (c : ClassGroup A) (a : Ideal A) (ha : a ≠ ⊥) :
   obtain ⟨⟨I, hI⟩, hc, hcop⟩ := ClassGroup.exists_mk0_eq_and_isCoprime c ha
   exact ⟨I, mem_nonZeroDivisors_iff_ne_zero.mp hI, hc, hcop⟩
 
-example (c : ClassGroup A) (a : Ideal A) (ha : a ≠ ⊥) :
-    ∃ (I : Ideal A) (hI : I ≠ ⊥),
-      ClassGroup.mk0 ⟨I, mem_nonZeroDivisors_iff_ne_zero.mpr hI⟩ = c ∧
-        IsCoprime I a :=
-  MetaMathlibExt.ClassGroup.exists_mk0_eq_and_isCoprime c a ha
-
 example (I a : Ideal A) (hI : I ≠ ⊥) (ha : a ≠ ⊥) :
     ∃ J : Ideal A, IsCoprime J a ∧ Submodule.IsPrincipal (I * J) := by
   exact Ideal.exists_isCoprime_mul_isPrincipal I a hI ha

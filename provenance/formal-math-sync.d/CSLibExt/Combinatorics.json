@@ -1,0 +1,5 @@
+{
+  "rows": [
+    {"path": "CSLibExt/Combinatorics/RandomThreeSat.lean", "backport": "pending", "disposition": "diverged", "published_sha256": "b4a4032396f67a1330bc91923a230bba1c152fe7372239f045ac049aabcb922c", "rationale": "Restate docstrings to match the Lean statements (Atlas wiki audit, #988). Also: ATLAS-side edit for the v4.36.0 toolchain bump: it now refers to the declarations formerly in the namespace `Cslib.Logic.PL` by their names in `Cslib.Logic.LegacyPL`, because CSLib v4.36.0 declares its new `Proposition` as `Cslib.Logic.PL.Proposition`; formal-math needs the same renaming when it moves to v4.36.0.", "upstream_commit": "dae8b8c6b1c233ae74a7b8a97171be1da306fc23", "upstream_sha256": "20b0133b993086c42005c6bb5816c95afaa5a4d33eb4600544d4ac89ced81988"}
+  ]
+}

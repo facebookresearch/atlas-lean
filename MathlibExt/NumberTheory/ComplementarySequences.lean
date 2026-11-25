@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Nat.Nth
 public import Mathlib.Data.Nat.NthRoot.Defs
@@ -25,6 +26,8 @@ A positive integer strictly between two successive pyramidal numbers has a known
 pyramidal predecessors. Integer cube root bounds locate the two possible gaps containing the
 requested term of the complementary sequence. More generally, an interleaving function
 locates the gap containing the requested term for any sequence with sufficiently large gaps.
+Rounding $\sqrt{2n}$ to the nearest integer locates the gap of the triangular numbers containing
+the $n$-th non-triangular number.
 -/
 
 namespace MetaMathlibExt
@@ -219,6 +222,72 @@ public theorem nthNonValue_pyramidal_two_case_le_eight (k : ℕ) (hk : 3 ≤ k)
       have hcoef : d + 3 ≤ 3 * (r + 3) := by omega
       nlinarith only [he, hhi, Nat.mul_le_mul_left (r + 3) hcoef]
 
+private theorem nthNonValue_eq_one_step.exists_strictMono_extension (f : ℕ → ℕ)
+    (hf1 : 1 ≤ f 1) (hgap : ∀ m, 1 ≤ m → f m + m ≤ f (m + 1)) :
+    ∃ g : ℕ → ℕ, g 0 = 0 ∧ (∀ m, 1 ≤ m → g m = f m) ∧ StrictMono g := by
+  -- The gap-counting lemma uses zero as the left endpoint before the first positive value.
+  let g := Function.update f 0 0
+  have gzero : g 0 = 0 := Function.update_self ..
+  have gpos (m : ℕ) (hm : 1 ≤ m) : g m = f m := Function.update_of_ne (by omega) 0 f
+  have hg : StrictMono g := by
+    apply strictMono_nat_of_lt_succ
+    intro m
+    cases m with
+    | zero =>
+      rw [gzero, gpos 1 le_rfl]
+      omega
+    | succ m =>
+      rw [gpos _ (by omega), gpos _ (by omega)]
+      have := hgap (m + 1) (by omega)
+      omega
+  exact ⟨g, gzero, gpos, hg⟩
+
+/-- **Complementary sequences from one evaluation of the counting function.** Let
+$f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all
+$m \ge 1$, let $C(x)$ be the number of $m$ with $1 \le m \le x$ and $f(m) \le x$, and for
+$n \ge 1$ let $f_P(n)$ be the $n$-th positive integer that is not a value $f(m)$ with $m \ge 1$.
+Then for every $n \ge 1$, $f_P(n) = n + C(n) + 1$ if $f(C(n) + 1) \le n + C(n)$, and
+$f_P(n) = n + C(n)$ otherwise.
+
+Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
+Article A95, Theorem 2. -/
+public theorem nthNonValue_eq_one_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
+    (hgap : ∀ m, 1 ≤ m → f m + m ≤ f (m + 1)) (n : ℕ) (hn : 1 ≤ n) :
+    let C : ℕ → ℕ := fun x => ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card
+    nthNonValue f n = if f (C n + 1) ≤ n + C n then n + C n + 1 else n + C n := by
+  intro C
+  obtain ⟨g, gzero, gpos, hg⟩ := nthNonValue_eq_one_step.exists_strictMono_extension f hf1 hgap
+  -- The indices counted at n form the initial interval from 1 to k.
+  obtain ⟨k, hk, hnext⟩ := Nat.exists_not_and_succ_of_not_zero_of_exists
+    (p := fun m => n < g m) (by simp [gzero]) ⟨n + 1, (Nat.lt_succ_self n).trans_le hg.le_apply⟩
+  have hlast : g k ≤ n := le_of_not_gt hk
+  have hindex (m : ℕ) : g m ≤ n ↔ m ≤ k :=
+    ⟨fun h => Nat.lt_succ_iff.mp (hg.lt_iff_lt.mp (h.trans_lt hnext)),
+      fun h => (hg.monotone h).trans hlast⟩
+  have hC : C n = k := by
+    have hset : ((Finset.Icc 1 n).filter fun m => f m ≤ n) = Finset.Icc 1 k := by
+      ext m
+      simp only [Finset.mem_filter, Finset.mem_Icc, and_assoc]
+      refine and_congr_right fun hm => ?_
+      rw [← gpos m hm, hindex]
+      exact and_iff_right_of_imp fun h => h.trans (hg.le_apply.trans hlast)
+    change ((Finset.Icc 1 n).filter _).card = k
+    simp [hset]
+  have heq : nthNonValue f n = nthNonValue g n := by
+    simp +contextual only [nthNonValue, gpos]
+  rw [heq, hC, ← gpos (k + 1) (by omega)]
+  split_ifs with h
+  · -- The next value is skipped, and the gap after it contains n + k + 1.
+    rw [Nat.add_assoc]
+    apply nthNonValue_of_gap hg gzero (by omega)
+    have hstep := hgap (k + 1) (by omega)
+    rw [← gpos _ (by omega), ← gpos _ (by omega)] at hstep
+    omega
+  · apply nthNonValue_of_gap hg gzero _ (by omega)
+    cases k with
+    | zero => simpa [gzero] using (show 0 < n by omega)
+    | succ k => omega
+
 /-- **Complementary sequences from an interleaving function.** Let
 $f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$,
 and for $n \ge 1$ let $f_P(n)$ be the $n$-th positive integer that is not a value $f(m)$ with
@@ -241,21 +310,7 @@ public theorem nthNonValue_eq_interleave (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
       if f (h n + 1) ≤ n + h n then n + h n + 1
       else if n + h n ≤ f (h n) then n + h n - 1
       else n + h n := by
-  -- The gap-counting lemma uses zero as the left endpoint before the first positive value.
-  let g := Function.update f 0 0
-  have gzero : g 0 = 0 := Function.update_self ..
-  have gpos (m : ℕ) (hm : 1 ≤ m) : g m = f m := Function.update_of_ne (by omega) 0 f
-  have hg : StrictMono g := by
-    apply strictMono_nat_of_lt_succ
-    intro m
-    cases m with
-    | zero =>
-      rw [gzero, gpos 1 le_rfl]
-      omega
-    | succ m =>
-      rw [gpos _ (by omega), gpos _ (by omega)]
-      have := hgap (m + 1) (by omega)
-      omega
+  obtain ⟨g, gzero, gpos, hg⟩ := nthNonValue_eq_one_step.exists_strictMono_extension f hf1 hgap
   have heq : nthNonValue f n = nthNonValue g n := by
     simp +contextual only [nthNonValue, gpos]
   rw [heq]
@@ -286,6 +341,43 @@ public theorem nthNonValue_eq_interleave (f : ℕ → ℕ) (hf1 : 1 ≤ f 1)
     rw [gpos _ (by omega)]
     omega
   · apply nthNonValue_of_gap hg gzero <;> rw [gpos _ (by omega)] <;> omega
+
+/-- **Formula for the $n$-th non-triangular number.** For every integer $n \ge 1$, the $n$-th
+smallest positive integer that is not a triangular number $j(j+1)/2$ with $j \ge 1$ is
+$n + \lfloor \sqrt{2n} + 1/2 \rfloor$.
+
+Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
+Article A95, Corollary 3. -/
+public theorem nthNonValue_triangular_eq_round (n : ℕ) (hn : 1 ≤ n) :
+    nthNonValue (fun j => j * (j + 1) / 2) n = n + ⌊Real.sqrt (2 * n) + 1 / 2⌋₊ := by
+  set s := ⌊Real.sqrt (2 * n) + 1 / 2⌋₊
+  have hn' : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  have hsqrt1 : 1 ≤ Real.sqrt (2 * n) := (Real.le_sqrt' one_pos).mpr (by linarith)
+  have hs1 : (1 : ℝ) ≤ s := by exact_mod_cast Nat.le_floor (by push_cast; linarith)
+  have hfl : (s : ℝ) ≤ Real.sqrt (2 * n) + 1 / 2 := Nat.floor_le (by linarith)
+  have hfu : Real.sqrt (2 * n) + 1 / 2 < s + 1 := Nat.lt_floor_add_one _
+  -- Rounding gives (s - 1/2)² ≤ 2n < (s + 1/2)², so s(s - 1) < 2n ≤ s(s + 1).
+  have hlo : ((s : ℝ) - 1 / 2) ^ 2 ≤ 2 * n :=
+    (Real.le_sqrt (by linarith) (by linarith)).mp (by linarith)
+  have hhi : (2 * n : ℝ) < ((s : ℝ) + 1 / 2) ^ 2 := (Real.sqrt_lt' (by linarith)).mp (by linarith)
+  have hlo' : s * s < 2 * n + s := by
+    have : ((s * s : ℕ) : ℝ) < 2 * n + s := by push_cast; nlinarith
+    exact_mod_cast this
+  have hhi' : 2 * n < s * s + s + 1 := by
+    have : ((2 * n : ℕ) : ℝ) < s * s + s + 1 := by push_cast; nlinarith
+    exact_mod_cast this
+  -- Hence n + s lies strictly between the s-th and (s + 1)-st triangular numbers.
+  have hmono : StrictMono (fun j : ℕ => j * (j + 1) / 2) := by
+    apply strictMono_nat_of_lt_succ
+    intro j
+    ring_nf
+    omega
+  clear_value s
+  apply nthNonValue_of_gap hmono (by simp)
+  · rw [Nat.mul_add_one]
+    omega
+  · rw [show (s + 1) * (s + 1 + 1) = s * s + 3 * s + 2 by ring]
+    omega
 
 end
 

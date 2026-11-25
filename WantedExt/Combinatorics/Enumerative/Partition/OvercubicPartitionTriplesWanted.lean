@@ -9,8 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.RingTheory.PowerSeries.Inverse
-public import MathlibExt.Combinatorics.Enumerative.Partition.QEulerProduct
+public import MathlibExt.Combinatorics.Enumerative.Partition.OvercubicPartitionTriples
 
 /-!
 # Congruences for overcubic partition triples
@@ -34,57 +33,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 local notation "𝔣" => qEulerProduct
-
-/-- **The overcubic partition triple series.** The generating function of overcubic partition
-triples is the integer power series $f_4^3 / (f_1^6 f_2^3)$ in $q$, where
-$f_k = \prod_{j \ge 1} (1 - q^{kj})$; the inverse of $f_1^6 f_2^3$ exists because its constant
-coefficient is $1$.
-
-Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
-Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Section 1; the
-same generating function is quoted from this paper by Saikia and Sarma (arXiv:2411.00013,
-eq. (2)) and by Chen, Jin, and Yao (arXiv:2504.06941, eq. (1.1)). -/
-noncomputable def overcubicTripleSeries : ℤ⟦X⟧ :=
-  𝔣 4 ^ 3 * invOfUnit (𝔣 1 ^ 6 * 𝔣 2 ^ 3) 1
-
-/-- **Number of overcubic partition triples.** For a natural number $n$, $\mathrm{bt}(n)$, the
-number of overcubic partition triples of $n$, is defined as the integer coefficient of $q^n$ in
-the power series $f_4^3 / (f_1^6 f_2^3)$, where $f_k = \prod_{j \ge 1} (1 - q^{kj})$.
-
-Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
-Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Section 1. -/
-noncomputable def overcubicTripleCount (n : ℕ) : ℤ :=
-  coeff n overcubicTripleSeries
-
-/-- **Generating function for overcubic partition triples.** For $k \ge 1$ let
-$f_k = \prod_{m \ge 1} (1 - q^{km})$, and let $\mathrm{bt}(n)$, the number of overcubic partition
-triples of $n$, be the coefficient of $q^n$ in $f_4^3/(f_1^6 f_2^3)$. Then, as integer power
-series in $q$,
-$$f_1^6 f_2^3 \sum_{n \ge 0} \mathrm{bt}(n) q^n = f_4^3.$$
-
-Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
-Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Section 1. -/
-theorem overcubicTripleCount_generatingFunction :
-    𝔣 1 ^ 6 * 𝔣 2 ^ 3 * PowerSeries.mk overcubicTripleCount = 𝔣 4 ^ 3 := by
-  have hmk : PowerSeries.mk overcubicTripleCount = overcubicTripleSeries := by
-    ext n
-    simp [overcubicTripleCount]
-  have hc : constantCoeff (𝔣 1 ^ 6 * 𝔣 2 ^ 3) = ((1 : ℤˣ) : ℤ) := by
-    simp [constantCoeff_qEulerProduct (le_refl 1),
-      constantCoeff_qEulerProduct (by norm_num : 1 ≤ 2)]
-  rw [hmk, overcubicTripleSeries, mul_left_comm, mul_invOfUnit _ _ hc, mul_one]
-
-/-- **Overcubic partition triples of $0$.** The number $\mathrm{bt}(0)$ of overcubic partition
-triples of $0$ equals $1$.
-
-Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
-Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Section 1. -/
-theorem overcubicTripleCount_zero : overcubicTripleCount 0 = 1 := by
-  have h := congrArg (coeff 0) overcubicTripleCount_generatingFunction
-  simp only [coeff_zero_eq_constantCoeff, map_mul, map_pow,
-    constantCoeff_qEulerProduct (le_refl 1), constantCoeff_qEulerProduct (by norm_num : 1 ≤ 2),
-    constantCoeff_qEulerProduct (by norm_num : 1 ≤ 4), one_pow, one_mul] at h
-  simpa using h
 
 /-- **The 2-dissection of $f_1^2$.** For $k \ge 1$ let $f_k = \prod_{m \ge 1} (1 - q^{km})$, an
 integer power series in $q$. Then
@@ -143,21 +91,6 @@ public theorem_wanted overcubicTripleCount_congruences_odd_args (n α : ℕ) :
       overcubicTripleCount (72 * n + 33) ≡ 0 [ZMOD 8] ∧
       overcubicTripleCount (72 * n + 57) ≡ 0 [ZMOD 8] ∧
       overcubicTripleCount (8 * 9 ^ (α + 2) * n + 33 * 9 ^ (α + 1)) ≡ 0 [ZMOD 8]
-
-/-- **Overcubic partition triples of $24n+1$ modulo $4$.** For $k \ge 1$ let
-$f_k = \prod_{j \ge 1} (1 - q^{kj})$, and let $\mathrm{bt}(m)$ be the number of overcubic
-partition triples of $m$, the coefficient of $q^m$ in $f_4^3 / (f_1^6 f_2^3)$. For every natural
-number $n$, $\mathrm{bt}(24n+1) \equiv 2 c_n \pmod 4$, where $c_n$ is the coefficient of $q^n$
-in $f_1$; equivalently, $\sum_{n \ge 0} \mathrm{bt}(24n+1) q^n \equiv 2 f_1 \pmod 4$
-coefficientwise.
-
-This is the case $\alpha = 0$ of the paper's statement.
-
-Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
-Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Theorem 2,
-eq. (7), case `α = 0` (`integers-2024-A80-thm-2`). -/
-public theorem_wanted overcubicTripleCount_twentyFour_mul_add_one (n : ℕ) :
-    overcubicTripleCount (24 * n + 1) ≡ 2 * coeff n (𝔣 1) [ZMOD 4]
 
 /-- **Congruences for overcubic partition triples at arguments congruent to 2 modulo 4.** Let
 $\mathrm{bt}(n)$ be the number of overcubic partition triples of $n$. For all natural numbers $n$
@@ -241,23 +174,6 @@ Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Th
 eq. (31), case `α = 0` (`integers-2024-A80-thm-9`). -/
 public theorem_wanted overcubicTripleCount_oneHundredNinetyTwo_mul_add_eight (n : ℕ) :
     overcubicTripleCount (192 * n + 8) ≡ 2 * coeff n (𝔣 1) [ZMOD 4]
-
-/-- **Congruences for overcubic partition triples at multiples of 16.** Let $\mathrm{bt}(n)$ be the
-number of overcubic partition triples of $n$. For all natural numbers $n$ and $\alpha$, each of
-$\mathrm{bt}(64n+48)$, $\mathrm{bt}(128n+80)$, $\mathrm{bt}(128n+96)$, $\mathrm{bt}(256n+160)$ and
-$\mathrm{bt}(256 \cdot 2^{\alpha} n + 192)$ is divisible by $4$, and
-$\mathrm{bt}(256n+32) \equiv \mathrm{bt}(128n+16) \pmod 4$.
-
-Source: S. Shivaprasada Nayaka, B. N. Dharmendra, and M. C. Mahesh Kumar, *Divisibility
-Properties for Overcubic Partition Triples*, INTEGERS 24 (2024), Article A80, Theorem 11,
-eqs. (33)-(38) (`integers-2024-A80-thm-11`). -/
-public theorem_wanted overcubicTripleCount_congruences_sixteen_mul_args (n α : ℕ) :
-    overcubicTripleCount (64 * n + 48) ≡ 0 [ZMOD 4] ∧
-      overcubicTripleCount (128 * n + 80) ≡ 0 [ZMOD 4] ∧
-      overcubicTripleCount (128 * n + 96) ≡ 0 [ZMOD 4] ∧
-      overcubicTripleCount (256 * n + 160) ≡ 0 [ZMOD 4] ∧
-      overcubicTripleCount (256 * n + 32) ≡ overcubicTripleCount (128 * n + 16) [ZMOD 4] ∧
-      overcubicTripleCount (256 * 2 ^ α * n + 192) ≡ 0 [ZMOD 4]
 
 end
 

@@ -14,3 +14,6 @@
 - [Positivity of the Herbrand quotient](herbrand-quotient-pos.md)
 - [Herbrand quotients agree when Tate cohomology in degrees $0$ and $-1$ is in bijection](herbrand-quotient-congr.md)
 - [Multiplicativity of the Herbrand quotient in short exact sequences](herbrand-quotient-mul-of-short-exact.md)
+- [Herbrand quotients agree across a map with finite kernel and cokernel](herbrand-quotient-finite-kernel-cokernel.md)
+- [Herbrand quotients of lattices in a real representation of a cyclic group](herbrand-quotient-of-lattices.md)
+- [Tate cohomology groups of a finite group](tate-cohomology.md)

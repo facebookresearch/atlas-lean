@@ -1,0 +1,17 @@
+# Base change for finite-family Koszul complexes
+
+- [Mapped Family](mapped-family.md)
+- [Family Module Base Change Alg Equiv](family-module-base-change-alg-equiv.md)
+- [Family Module Base Change Equiv](family-module-base-change-equiv.md)
+- [Family Functional base Change](family-functional-base-change.md)
+- [Family Ideal map](family-ideal-map.md)
+- [Family Base Change Target Complex](family-base-change-target-complex.md)
+- [Family Base Change Target Complex X](family-base-change-target-complex-x.md)
+- [Family Base Change Target Complex d succ](family-base-change-target-complex-d-succ.md)
+- [Family Base Change Component Equiv](family-base-change-component-equiv.md)
+- [Family Base Change Component Iso](family-base-change-component-iso.md)
+- [Family Base Change Iso](family-base-change-iso.md)
+- [Family Base Change Iso hom f](family-base-change-iso-hom-f.md)
+- [Family Quotient Base Change Alg Equiv](family-quotient-base-change-alg-equiv.md)
+- [Family Quotient Base Change Equiv](family-quotient-base-change-equiv.md)
+- [Family augmentation Linear base Change](family-augmentation-linear-base-change.md)

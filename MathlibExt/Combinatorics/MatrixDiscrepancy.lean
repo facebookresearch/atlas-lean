@@ -242,3 +242,90 @@ def UniformRectangularBound : Prop :=
 end
 
 end MatrixDiscrepancy
+
+namespace KomlosDiscrepancyWanted
+
+open MatrixDiscrepancy
+
+/-- **Equivalence of the square and rectangular Komlós formulations (statement).** The statement
+that the uniform discrepancy bound for vectors in the unit ball holds if and only if the Komlós
+constant is finite.
+
+Source: optimization catalogue C24a, line 26, and AIM Problem 1.05. For rectangular instances,
+zero-padding to a square matrix preserves the column bounds, and restricting its signing to the
+original columns preserves every original row sum. -/
+def constantFormulationEquivalence : Prop :=
+  UniformRectangularBound ↔ komlosConstant < ⊤
+
+/-- **The square and rectangular Komlós formulations are equivalent.** The following two
+conditions are equivalent. (a) There is a real constant $C > 0$ such that for all natural numbers
+$n$ and $d$ and all vectors $v_1, \dots, v_n \in \mathbb{R}^d$ of Euclidean norm at most $1$,
+writing $v_{ij}$ for the $j$-th coordinate of $v_i$, there are signs
+$\varepsilon_1, \dots, \varepsilon_n \in \{-1, 1\}$ with
+$\left|\sum_{i=1}^{n} \varepsilon_i v_{ij}\right| \le C$ for every coordinate index $j$. (b) The
+Komlós constant, the supremum over all $n \ge 1$ of the discrepancy of real $n \times n$ matrices
+whose columns all have Euclidean norm at most $1$, is finite.
+
+Source: optimization catalogue C24a, line 26, and AIM Problem 1.05. -/
+theorem constantFormulationEquivalence_holds : constantFormulationEquivalence := by
+  change UniformRectangularBound ↔ komlosConstant < ⊤
+  rw [komlosConstant_lt_top_iff_uniform]
+  constructor
+  · rintro ⟨C, hC, hrect⟩
+    refine ⟨C, hC, fun n _ ↦ (dimensionConstant_le_iff n _).2 ?_⟩
+    intro A hA
+    obtain ⟨ε, hε, hrow⟩ := hrect n n (fun j i ↦ A i j) hA
+    let x : Fin n → Fin 2 := fun j ↦ if ε j = -1 then 0 else 1
+    have hx (j : Fin n) : signValue (x j) = ε j := by
+      rcases hε j with h | h <;> norm_num [x, signValue, h]
+    apply (discrepancy_le_signing A x).trans
+    apply ENNReal.ofReal_le_ofReal
+    refine (pi_norm_le_iff_of_nonneg hC.le).2 fun i ↦ ?_
+    simpa [Matrix.mulVec, dotProduct, Real.norm_eq_abs, hx, mul_comm] using hrow i
+  · rintro ⟨C, hC, hsquare⟩
+    refine ⟨C, hC, fun n d v hv ↦ ?_⟩
+    -- Put the vectors in the first `n` columns, with their coordinates in the first `d` rows.
+    let N := max 1 (max n d)
+    have hn : n ≤ N := (le_max_left n d).trans (le_max_right 1 (max n d))
+    have hd : d ≤ N := (le_max_right n d).trans (le_max_right 1 (max n d))
+    let row := Fin.castLEEmb hd
+    let col := Fin.castLEEmb hn
+    have outside {k : ℕ} (hk : k ≤ N) {i : Fin N}
+        (hi : i ∉ Set.range (Fin.castLEEmb hk)) : ¬ (i : ℕ) < k := by
+      intro hik
+      exact hi ⟨⟨i, hik⟩, Fin.ext rfl⟩
+    let A : Matrix (Fin N) (Fin N) ℝ := fun i j ↦
+      if hj : (j : ℕ) < n then
+        if hi : (i : ℕ) < d then v ⟨j, hj⟩ ⟨i, hi⟩ else 0
+      else 0
+    have hA : ColumnAdmissible A := by
+      intro j
+      by_cases hj : (j : ℕ) < n
+      · calc
+          ∑ i, (A i j) ^ 2 = ∑ i : Fin d, (v ⟨j, hj⟩ i) ^ 2 := by
+            symm
+            apply Fintype.sum_of_injective row row.injective
+            · intro i hi
+              simp [A, hj, outside hd hi]
+            · intro i
+              simp [A, hj, row, i.isLt]
+          _ ≤ 1 := hv ⟨j, hj⟩
+      · simp [A, hj]
+    have hdisc := (dimensionConstant_le_iff N _).1 (hsquare N (le_max_left _ _)) A hA
+    obtain ⟨x, hx⟩ := (discrepancy_le_iff A _).1 hdisc
+    -- Restrict the square signing to the original columns.
+    refine ⟨fun j ↦ signValue (x (col j)), fun j ↦ ?_, fun i ↦ ?_⟩
+    · by_cases h : x (col j) = 0 <;> simp [signValue, h]
+    have hsum :
+        ∑ j : Fin n, signValue (x (col j)) * v j i =
+          ∑ j : Fin N, A (row i) j * signValue (x j) := by
+      apply Fintype.sum_of_injective col col.injective
+      · intro j hj
+        simp [A, outside hn hj]
+      · intro j
+        simp [A, row, col, i.isLt, j.isLt, mul_comm]
+    rw [hsum, ← Real.norm_eq_abs]
+    exact (norm_le_pi_norm (A.mulVec (fun j ↦ signValue (x j))) (row i)).trans
+      ((ENNReal.ofReal_le_ofReal_iff hC.le).1 hx)
+
+end KomlosDiscrepancyWanted

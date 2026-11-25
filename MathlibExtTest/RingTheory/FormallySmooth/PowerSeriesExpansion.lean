@@ -17,7 +17,7 @@ set_option autoImplicit false
 universe u v
 
 -- Exact-source consumer, with the original binders.
-theorem exactSource
+private theorem exactSource
     {R : Type u} {A : Type v} [CommRing R] [CommRing A] [Algebra R A]
     [Algebra.FormallySmooth R A]
     (e : A →ₐ[R] R) [Module.Free R (RingHom.ker e.toRingHom).Cotangent]

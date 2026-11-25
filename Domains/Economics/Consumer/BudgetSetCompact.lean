@@ -68,7 +68,7 @@ theorem nonnegBudgetSet_subset_Icc {ι : Type*} [Fintype ι] {p : ι → ℝ} {w
   calc x i * p i = p i * x i := mul_comm _ _
     _ ≤ w := h2
 
-/-- **Budget sets are compact** under strictly positive prices. -/
+/-- **Nonnegative budget sets are compact** under strictly positive prices. -/
 theorem isCompact_nonnegBudgetSet {ι : Type*} [Fintype ι] {p : ι → ℝ} {w : ℝ}
     (hp : ∀ i, 0 < p i) : IsCompact (nonnegBudgetSet p w) := by
   have hmul : ∀ i : ι, Continuous fun x : ι → ℝ => p i * x i :=

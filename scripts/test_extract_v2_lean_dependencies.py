@@ -11,6 +11,7 @@ import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from scripts import extract_v2_lean_dependencies as extract
@@ -21,12 +22,22 @@ def row(name: str, kind: str, type_uses: list[str], value_uses: list[str]) -> di
             "type": type_uses, "value": value_uses}
 
 
-def run_extract(rows: list[dict], articles: list[str]) -> dict:
+def sources(declared: set[str] | None) -> dict:
+    """How a test patches extract.lean_index: an index declaring *declared*, or, given none, one no test may read."""
+    if declared is None:
+        return {"side_effect": AssertionError("read the Lean sources")}
+    return {"return_value": SimpleNamespace(declarations=set(declared))}
+
+
+def run_extract(rows: list[dict], articles: list[str], duplicates: dict[str, str] | None = None,
+                declared: set[str] | None = None) -> dict:
     with tempfile.TemporaryDirectory() as directory:
         dump = Path(directory) / "dump.jsonl"
         dump.write_text("".join(json.dumps(r) + "\n" for r in rows))
         output = Path(directory) / "lean-dependencies.json"
         with patch.object(extract, "article_manifest", lambda: set(articles)), \
+                patch.object(extract, "article_aliases", lambda: dict(duplicates or {})), \
+                patch.object(extract, "lean_index", **sources(declared)), \
                 patch("sys.argv", ["extract", str(dump), str(output)]):
             assert extract.main() == 0
         return json.loads(output.read_text())["articles"]
@@ -83,6 +94,7 @@ class MissingRows(unittest.TestCase):
             dump.write_text(json.dumps(row("MathlibExt.T.bar", "def", [], [])) + "\n")
             output = Path(directory) / "lean-dependencies.json"
             with patch.object(extract, "article_manifest", lambda: {"MathlibExt.T.bar", "CategoryTheory.foo"}), \
+                    patch.object(extract, "article_aliases", dict), \
                     patch("sys.argv", ["extract", str(dump), str(output)]):
                 self.assertEqual(extract.main(), 0)
             extracted = json.loads(output.read_text())
@@ -126,6 +138,172 @@ class Mutual(unittest.TestCase):
         self.assertEqual(extract.mutual_groups(edges), [["a", "b", "c"]])
 
 
+class Duplicates(unittest.TestCase):
+    """A declaration a page's row lists as a duplicate states the page's result again (sync_wiki.duplicate_names): any
+    other article's way stops at it as at the page's own declaration, and a use of it is a use of that article; for
+    that article it is part of the article, which depends on what it uses."""
+
+    def test_an_article_that_uses_only_the_duplicate_depends_on_its_article(self) -> None:
+        # C and its duplicate c define one function, c by a body that uses the article X. A's statement names c, and
+        # B's proof reaches c through the hidden theorem h: both depend on C, and neither on X.
+        rows = [row("X", "def", [], []), row("C", "def", [], []), row("c", "def", [], ["X"]),
+                row("h", "theorem", [], ["c"]), row("A", "theorem", ["c"], []), row("B", "theorem", [], ["h"])]
+        found = run_extract(rows, ["X", "C", "A", "B"], {"c": "C"})
+        self.assertEqual((found["A"]["statement"], found["A"]["proof"]), (["C"], []))
+        self.assertEqual((found["B"]["statement"], found["B"]["proof"]), ([], ["C"]))
+        # Unlisted, c is a hidden definition like any other, and its body leads to X.
+        found = run_extract(rows, ["X", "C", "A", "B"])
+        self.assertEqual((found["A"]["statement"], found["B"]["proof"]), (["X"], ["X"]))
+
+    def test_an_article_depends_on_what_its_own_duplicate_uses(self) -> None:
+        # C is proved through its duplicate c, whose proof uses the page B: C's proof depends on B, as it did before c
+        # was listed, and never on C. So it does when c's statement is part of C's, and when C reaches c through the
+        # hidden theorem h. Another article, E, which uses c, still depends on C only.
+        cases = {
+            "C's proof uses c": ([row("B", "def", [], []), row("c", "theorem", [], ["B"]),
+                                  row("C", "theorem", [], ["c"])], ([], ["B"])),
+            "C's statement uses c": ([row("A", "def", [], []), row("B", "def", [], []),
+                                      row("c", "theorem", ["A"], ["B"]), row("C", "theorem", ["c"], [])], (["A"], [])),
+            "C's proof reaches c through h": ([row("B", "def", [], []), row("c", "theorem", [], ["B"]),
+                                               row("h", "theorem", [], ["c"]), row("C", "theorem", [], ["h"])],
+                                              ([], ["B"])),
+        }
+        for case, (rows, edges) in cases.items():
+            with self.subTest(case=case):
+                articles = [r["name"] for r in rows if r["name"] not in ("c", "h")]
+                found = run_extract(rows, articles, {"c": "C"})
+                self.assertEqual((found["C"]["statement"], found["C"]["proof"]), edges)
+                self.assertEqual(found["C"], run_extract(rows, articles)["C"])
+        rows = [row("B", "def", [], []), row("c", "theorem", [], ["B"]), row("C", "theorem", [], ["c"]),
+                row("E", "theorem", [], ["c"])]
+        found = run_extract(rows, ["B", "C", "E"], {"c": "C"})
+        self.assertEqual((found["C"]["proof"], found["E"]["proof"]), (["B"], ["C"]))
+
+    def test_an_article_and_its_own_duplicate_that_use_each_other_end(self) -> None:
+        # C and its duplicate c use each other, so do c and C's second duplicate d, and so do c and the hidden theorem
+        # h: C depends on the page B, which c's proof uses, and never on itself.
+        cases = {
+            "C and c": ([row("B", "def", [], []), row("c", "theorem", [], ["C", "B"]), row("C", "theorem", [], ["c"])],
+                        {"c": "C"}),
+            "c and d": ([row("B", "def", [], []), row("c", "theorem", [], ["d"]), row("d", "theorem", [], ["c", "B"]),
+                         row("C", "theorem", [], ["c"])], {"c": "C", "d": "C"}),
+            "c and h": ([row("B", "def", [], []), row("h", "theorem", [], ["c"]), row("c", "theorem", [], ["h", "B"]),
+                         row("C", "theorem", [], ["h"])], {"c": "C"}),
+        }
+        for case, (rows, duplicates) in cases.items():
+            with self.subTest(case=case):
+                found = run_extract(rows, ["B", "C"], duplicates)
+                self.assertEqual((found["C"]["statement"], found["C"]["proof"]), ([], ["B"]))
+
+    def test_a_private_duplicate_is_read_by_its_source_name(self) -> None:
+        # The dump names a declaration outside a module's public section by its private name.
+        rows = [row("C", "def", [], []), {**row("_private.MathlibExt.T.0.c", "def", [], []), "private": True},
+                row("A", "theorem", ["_private.MathlibExt.T.0.c"], [])]
+        self.assertEqual(run_extract(rows, ["C", "A"], {"c": "C"})["A"]["statement"], ["C"])
+
+    def test_a_duplicate_the_dump_cannot_count_as_its_article_stops_the_extraction(self) -> None:
+        # A use of a duplicate counts as a use of its article only when a constant of the dump, one only, has the name
+        # of each and no page stands for the duplicate. A row the dump lacks for a name the Lean sources still declare
+        # means an incomplete dump: the extraction writes nothing, rather than follow the duplicate's own uses.
+        def private(name: str, module: str, type_uses: list[str], value_uses: list[str]) -> dict:
+            return {**row(f"_private.{module}.0.{name}", "theorem", type_uses, value_uses), "module": module,
+                    "private": True}
+
+        twins = [private("Ext.twin", "MathlibExt.T", [], []), private("Ext.twin", "MathlibExt.U", [], [])]
+        cases = {
+            "the duplicate without a row": ({"C"}, {"Ext.gone": "C"}, [row("C", "def", [], [])], {"C", "Ext.gone"},
+                                            "the compiled dependency dump has no row for Ext.gone, and the Lean "
+                                            "sources declare it: make the dump again"),
+            "its article without a row": ({"C", "A"}, {"c": "C"}, [row("c", "def", [], ["X"]), row("X", "def", [], []),
+                                                                   row("A", "theorem", ["c"], [])], {"C", "c", "A"},
+                                          "the compiled dependency dump has no row for C, and the Lean sources declare "
+                                          "it: make the dump again"),
+            "a page standing for the duplicate": ({"C", "c"}, {"c": "C"}, [row("C", "def", [], []),
+                                                                           row("c", "def", [], [])], None,
+                                                  "a page stands for c"),
+            "two private constants of the duplicate's name": (
+                {"C", "A", "B"}, {"Ext.twin": "C"},
+                [row("C", "def", [], []), *twins, row("A", "theorem", [], ["_private.MathlibExt.T.0.Ext.twin"]),
+                 row("B", "theorem", [], ["_private.MathlibExt.U.0.Ext.twin"])], None,
+                "the compiled dependency dump has several private constants named Ext.twin, which one name cannot tell "
+                "apart: _private.MathlibExt.T.0.Ext.twin, _private.MathlibExt.U.0.Ext.twin"),
+            "two private constants of the article's name": (
+                {"Ext.twin", "A"}, {"c": "Ext.twin"}, [row("c", "def", [], []), *twins, row("A", "theorem", ["c"], [])],
+                None, "the compiled dependency dump has several private constants named Ext.twin, which one name "
+                      "cannot tell apart: _private.MathlibExt.T.0.Ext.twin, _private.MathlibExt.U.0.Ext.twin"),
+        }
+        for case, (manifest, aliases, rows, declared, message) in cases.items():
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                dump = Path(directory) / "dump.jsonl"
+                dump.write_text("".join(json.dumps(r) + "\n" for r in rows))
+                output = Path(directory) / "lean-dependencies.json"
+                with patch.object(extract, "article_manifest", lambda: set(manifest)), \
+                        patch.object(extract, "article_aliases", lambda: dict(aliases)), \
+                        patch.object(extract, "lean_index", **sources(declared)), \
+                        patch("sys.argv", ["extract", str(dump), str(output)]), \
+                        redirect_stderr(io.StringIO()) as errors, redirect_stdout(io.StringIO()):
+                    self.assertEqual(extract.main(), 1)
+                self.assertFalse(output.exists())
+                name, article = next(iter(aliases.items()))
+                self.assertIn(f"error: the wiki lists {name} as a duplicate of {article}, but {message}",
+                              errors.getvalue())
+
+    def test_each_end_the_dump_lacks_is_judged_on_its_own(self) -> None:
+        # The dump lacks both C and its duplicate c. The Lean deleted c; while it still declares C, which P's proof
+        # uses, the dump is incomplete, and the extraction writes nothing, whatever became of c. Once the Lean deleted
+        # both, it warns, naming both, and builds.
+        cases = {"C declared": ([row("P", "theorem", [], ["C"])], {"C", "P"}, 1,
+                                "error: the wiki lists c as a duplicate of C, but the compiled dependency dump has no "
+                                "row for C, and the Lean sources declare it: make the dump again"),
+                 "both deleted": ([row("P", "theorem", [], [])], {"P"}, 0,
+                                  "warning: the Lean no longer declares c, which the wiki lists as a duplicate of C, "
+                                  "nor C: the entry counts for nothing; drop it from the row's `duplicates`")}
+        for case, (rows, declared, status, message) in cases.items():
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as directory:
+                dump = Path(directory) / "dump.jsonl"
+                dump.write_text("".join(json.dumps(r) + "\n" for r in rows))
+                output = Path(directory) / "lean-dependencies.json"
+                with patch.object(extract, "article_manifest", lambda: {"C", "P"}), \
+                        patch.object(extract, "article_aliases", lambda: {"c": "C"}), \
+                        patch.object(extract, "lean_index", **sources(declared)), \
+                        patch("sys.argv", ["extract", str(dump), str(output)]), \
+                        redirect_stderr(io.StringIO()) as errors, redirect_stdout(io.StringIO()):
+                    self.assertEqual(extract.main(), status, errors.getvalue())
+                self.assertEqual(output.exists(), status == 0)
+                self.assertIn(message, errors.getvalue())
+                self.assertNotIn("no longer declares c, which the wiki lists as a duplicate of C: ", errors.getvalue())
+
+    def test_a_duplicate_the_lean_no_longer_declares_is_left_out_with_a_warning(self) -> None:
+        # The Lean deleted Ext.gone, which C's row lists: a Lean change, which fails no build. The extraction warns,
+        # naming both, and the edges are those of a wiki without the entry.
+        rows = [row("C", "def", [], []), row("A", "theorem", ["C"], [])]
+        with redirect_stderr(io.StringIO()) as errors:
+            found = run_extract(rows, ["C", "A"], {"Ext.gone": "C"}, declared={"C", "A"})
+        self.assertEqual(found, run_extract(rows, ["C", "A"]))
+        self.assertIn("warning: the Lean no longer declares Ext.gone, which the wiki lists as a duplicate of C: the "
+                      "entry counts for nothing; drop it from the row's `duplicates`", errors.getvalue())
+
+    def test_a_duplicate_whose_article_the_lean_no_longer_declares_still_stops_the_way(self) -> None:
+        # The Lean deleted C, and its duplicate c, whose body uses X, stays. A, which uses only c, depends on no page
+        # through it: neither on C, which is gone, nor on X, which c's body uses. The extraction warns, naming both.
+        rows = [row("X", "def", [], []), row("c", "def", [], ["X"]), row("A", "theorem", ["c"], ["c"])]
+        with redirect_stderr(io.StringIO()) as errors:
+            found = run_extract(rows, ["C", "A", "X"], {"c": "C"}, declared={"c", "A", "X"})
+        self.assertEqual((found["A"]["statement"], found["A"]["proof"]), ([], []))
+        self.assertIn("warning: the Lean no longer declares C, whose page lists c as a duplicate: a use of c counts "
+                      "for no page; relink the page or drop the entry", errors.getvalue())
+        # Unlisted, c is a hidden definition, and A depends on X through it.
+        self.assertEqual(run_extract(rows, ["C", "A", "X"])["A"]["statement"], ["X"])
+
+    def test_an_article_that_is_no_article_is_named_as_such(self) -> None:
+        # With both rows compiled, an article missing from the manifest is no repair of the dump's.
+        alias, problems, warnings = extract.resolve_aliases({"c": "C"}, {"A"}, {"A": {}, "C": {}, "c": {}},
+                                                            lambda name: True)
+        self.assertEqual((alias, problems, warnings), ({}, [
+            "the wiki lists c as a duplicate of C, but C is not among the articles, so a use of c could count for no "
+            "page"], []))
+
+
 PIN = "a" * 40
 
 
@@ -137,7 +315,8 @@ def framed(rows: list[dict], rev: str = PIN) -> list[dict]:
 
 
 def run_registry(rows: list[dict], articles: list[str], names: list[str] | None = None,
-                 status: int = 0, frame=framed) -> tuple[dict, dict]:
+                 status: int = 0, frame=framed, duplicates: dict[str, str] | None = None,
+                 declared: set[str] | None = None) -> tuple[dict, dict]:
     with tempfile.TemporaryDirectory() as directory:
         dump = Path(directory) / "dump.jsonl"
         dump.write_text("".join(json.dumps(r) + "\n" for r in frame(rows)))
@@ -149,6 +328,8 @@ def run_registry(rows: list[dict], articles: list[str], names: list[str] | None 
         names_file.write_text("".join(f"{name}\n" if name in plain else f"{name}\tMathlib.T\n" for name in asked))
         output, registry = Path(directory) / "lean-dependencies.json", Path(directory) / "registry.json"
         with patch.object(extract, "article_manifest", lambda: set(articles)), \
+                patch.object(extract, "article_aliases", lambda: dict(duplicates or {})), \
+                patch.object(extract, "lean_index", **sources(declared)), \
                 patch.object(extract, "mathlib_revision", lambda: PIN), \
                 patch("sys.argv", ["extract", str(dump), str(output), "--registry", str(registry),
                                    "--names", str(names_file)]):
@@ -183,6 +364,7 @@ def extract_files(rows: list[dict], articles: set[str], *options: str, found: li
             f"{r['name']}\n" if r.get("module_given") is False else f"{r['name']}\tMathlib.T\n" for r in registered))
         output, registry = Path(directory) / "out" / "lean-dependencies.json", Path(directory) / "registry.json"
         with patch.object(extract, "article_manifest", lambda: set(articles)), \
+                patch.object(extract, "article_aliases", dict), \
                 patch.object(extract, "mathlib_revision", lambda: PIN), \
                 patch("sys.argv", ["extract", str(dump), str(output), "--registry", str(registry), "--names",
                                    str(names), *options]), \
@@ -428,6 +610,7 @@ class Registry(unittest.TestCase):
                 errors.seek(0)
                 errors.truncate()
                 with patch.object(extract, "article_manifest", lambda: {"T"}), \
+                        patch.object(extract, "article_aliases", dict), \
                         patch.object(extract, "mathlib_revision", lambda: PIN), \
                         patch("sys.argv", ["extract", str(dump), str(output), "--registry", str(registry_file),
                                            "--names", str(names)]), \
@@ -670,6 +853,7 @@ class Registry(unittest.TestCase):
             for output, registry_file, message in cases:
                 with self.subTest(output=output.name, registry=registry_file.name), \
                         patch.object(extract, "article_manifest", lambda: {"T"}), \
+                        patch.object(extract, "article_aliases", dict), \
                         patch.object(extract, "mathlib_revision", lambda: PIN), \
                         patch("sys.argv", ["extract", str(dump), str(output), "--registry", str(registry_file),
                                            "--names", str(names)]), \
@@ -778,6 +962,117 @@ class BridgeConvention(unittest.TestCase):
         found = self.registry(rows, ["T"])
         self.assertEqual((found["bridges"], found["left_out"]), ({}, {"T": {"statement": [], "proof": ["M.p", "M.q"]}}))
 
+    def test_a_bridge_through_a_duplicate_is_its_article_s(self) -> None:
+        # C's type names M.space itself; its duplicate c, the same result, names M.space in its type and M.fubini in
+        # its proof. A's statement uses c and the hidden definition h, whose statement reaches M.measure, and A's proof
+        # uses c and names M.space itself. A depends on C, whose bridge M.space is: what c reaches neither takes
+        # M.space for A's statement, which names it not, from A's own proof bridge, nor counts again for A as left
+        # out. What h reaches stays left out, as A names none of it.
+        rows = [with_mathlib(row("C", "theorem", [], []), ["M.space"], [], type_direct=["M.space"]),
+                with_mathlib(row("c", "theorem", [], []), ["M.space"], ["M.fubini"], direct=["M.fubini"],
+                             type_direct=["M.space"]),
+                with_mathlib(row("h", "def", [], []), ["M.measure"], [], [], type_direct=["M.measure"]),
+                with_mathlib(row("A", "theorem", ["c", "h"], ["c"]), [], ["M.space"], direct=["M.space"]),
+                *(credited(name, "theorem", [], []) for name in ("M.fubini", "M.measure", "M.space"))]
+        with redirect_stdout(io.StringIO()):
+            output, found = run_registry(rows, ["C", "A"], duplicates={"c": "C"})
+        self.assertEqual(output["articles"]["A"]["statement"], ["C"])
+        # The registry records which duplicates its edges count as their articles.
+        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b'[["C",["c"]]]').hexdigest())
+        self.assertEqual(found["bridges"], {"A": {"statement": [], "proof": ["M.space"]},
+                                            "C": {"statement": ["M.space"], "proof": []}})
+        self.assertEqual(found["left_out"], {"A": {"statement": ["M.measure"], "proof": []}})
+        # Unlisted, c's statement takes M.space for A's statement: A keeps no bridge, and all c reaches is left out.
+        with redirect_stdout(io.StringIO()):
+            _, found = run_registry(rows, ["C", "A"])
+        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b"[]").hexdigest())
+        self.assertEqual(found["bridges"], {"C": {"statement": ["M.space"], "proof": []}})
+        self.assertEqual(found["left_out"], {"A": {"statement": ["M.measure", "M.space"], "proof": ["M.fubini"]}})
+
+    def test_an_article_bridges_to_what_its_own_duplicate_names(self) -> None:
+        # C states and proves its result through its duplicate c, whose type names M.space and whose proof names
+        # M.fubini: c is part of C, so C bridges to both, by kind, and leaves none out. When C's proof reaches its
+        # duplicate only through the hidden theorem h, C's proof names neither: what it reaches through h is left out.
+        duplicate = with_mathlib(row("c", "theorem", [], []), ["M.space"], ["M.fubini"], direct=["M.fubini"],
+                                 type_direct=["M.space"])
+        mathlib = [credited(name, "theorem", [], []) for name in ("M.fubini", "M.space")]
+        rows = [duplicate, with_mathlib(row("C", "theorem", ["c"], ["c"]), [], []), *mathlib]
+        with redirect_stdout(io.StringIO()):
+            _, found = run_registry(rows, ["C"], duplicates={"c": "C"})
+        self.assertEqual((found["bridges"], found["left_out"]),
+                         ({"C": {"statement": ["M.space"], "proof": ["M.fubini"]}}, {}))
+        rows = [duplicate, with_mathlib(row("h", "theorem", [], ["c"]), [], []),
+                with_mathlib(row("C", "theorem", [], ["h"]), [], []), *mathlib]
+        with redirect_stdout(io.StringIO()):
+            _, found = run_registry(rows, ["C"], duplicates={"c": "C"})
+        self.assertEqual((found["bridges"], found["left_out"]),
+                         ({}, {"C": {"statement": [], "proof": ["M.fubini", "M.space"]}}))
+
+    def test_only_a_duplicate_the_article_names_itself_names_for_it(self) -> None:
+        # C lists c and d as duplicates. C names c, c names d, and d's type names M.s and its proof M.p: C reaches both
+        # through c, but names neither, so both are left out, by kind. When C names d itself as well, it bridges to
+        # each, once.
+        mathlib = [credited(name, "theorem", [], []) for name in ("M.p", "M.s")]
+        duplicates = [with_mathlib(row("c", "theorem", ["d"], ["d"]), [], []),
+                      with_mathlib(row("d", "theorem", [], []), ["M.s"], ["M.p"], direct=["M.p"], type_direct=["M.s"])]
+        for named, bridges, left_out in ((["c"], {}, {"C": {"statement": ["M.s"], "proof": ["M.p"]}}),
+                                         (["c", "d"], {"C": {"statement": ["M.s"], "proof": ["M.p"]}}, {})):
+            with self.subTest(named=named):
+                rows = [with_mathlib(row("C", "theorem", named, named), [], []), *duplicates, *mathlib]
+                with redirect_stdout(io.StringIO()):
+                    _, found = run_registry(rows, ["C"], duplicates={"c": "C", "d": "C"})
+                self.assertEqual((found["bridges"], found["left_out"]), (bridges, left_out))
+
+    def test_the_registry_records_the_duplicates_lists_it_was_made_for(self) -> None:
+        # C's proof uses the hidden theorem h, which names M itself. Listed as C's duplicate, h is part of C, and M
+        # becomes a proof bridge, while the extraction stays byte for byte the same, its digest with it. The registry
+        # records the lists it was made for, as the rows give them (sync_wiki.listed_duplicates), in a format of its
+        # own, so that a consumer can refuse it after a `duplicates` edit (sync_wiki.registry_problems).
+        rows = [with_mathlib(row("C", "theorem", [], ["h"]), [], []),
+                with_mathlib(row("h", "theorem", [], []), [], ["M"], direct=["M"]), credited("M", "theorem", [], [])]
+        with redirect_stdout(io.StringIO()):
+            unlisted, before = run_registry(rows, ["C"])
+            listed, after = run_registry(rows, ["C"], duplicates={"h": "C"})
+        self.assertEqual(unlisted, listed)
+        self.assertEqual(before["inputs"]["extraction_sha256"], after["inputs"]["extraction_sha256"])
+        self.assertEqual(((before["bridges"], before["left_out"]), (after["bridges"], after["left_out"])),
+                         (({}, {"C": {"statement": [], "proof": ["M"]}}),
+                          ({"C": {"statement": [], "proof": ["M"]}}, {})))
+        self.assertEqual((before["inputs"]["aliases_sha256"], after["inputs"]["aliases_sha256"]),
+                         (hashlib.sha256(b"[]").hexdigest(), hashlib.sha256(b'[["C",["h"]]]').hexdigest()))
+        self.assertEqual((before["inputs"]["format"], extract.REGISTRY_FORMAT), (6, 6))
+        self.assertNotEqual(extract.REGISTRY_FORMAT, extract.DUMP_FORMAT["format"])
+
+    def test_the_duplicates_digest_spells_each_list_one_way_only(self) -> None:
+        # One `name<TAB>article` line per duplicate let a tab and a line feed in a name, or in an article, pass for the
+        # separators: each pair below gave the same lines, so a registry made for one list passed for the other. The
+        # digest hashes compact JSON instead, each character past ASCII escaped, so any strings at all encode.
+        lines = lambda aliases: "".join(f"{name}\t{article}\n" for name, article in sorted(aliases.items()))
+        for first, second in (({"a": "C", "b": "C"}, {"a\tC\nb": "C"}), ({"a": "C", "b": "C"}, {"a": "C\nb\tC"})):
+            with self.subTest(second=second):
+                self.assertEqual(lines(first), lines(second))
+                self.assertNotEqual(extract.aliases_digest(first), extract.aliases_digest(second))
+        self.assertEqual(extract.aliases_digest({"d": "C", "c": "C", "\u03b1\ud800": "E"}),
+                         hashlib.sha256(b'[["C",["c","d"]],["E",["\\u03b1\\ud800"]]]').hexdigest())
+
+    def test_a_duplicate_whose_article_is_gone_gives_no_bridge(self) -> None:
+        # The Lean deleted C, whose row lists c as a duplicate; c's type names M.space and its proof M.fubini. A uses
+        # only c: the way stops there, so A neither bridges to them nor leaves them out. The registry's inputs record
+        # the list the rows give, whatever the Lean has.
+        rows = [with_mathlib(row("c", "theorem", [], []), ["M.space"], ["M.fubini"], direct=["M.fubini"],
+                             type_direct=["M.space"]),
+                with_mathlib(row("A", "theorem", ["c"], ["c"]), [], []),
+                *(credited(name, "theorem", [], []) for name in ("M.fubini", "M.space"))]
+        with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            output, found = run_registry(rows, ["C", "A"], duplicates={"c": "C"}, declared={"c", "A"})
+        self.assertEqual(output["articles"]["A"], {"module": "MathlibExt.T", "statement": [], "proof": []})
+        self.assertEqual((found["bridges"], found["left_out"]), ({}, {}))
+        self.assertEqual(found["inputs"]["aliases_sha256"], hashlib.sha256(b'[["C",["c"]]]').hexdigest())
+        # Unlisted, c is a hidden theorem: A reaches through it what its proof names.
+        with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            _, found = run_registry(rows, ["C", "A"])
+        self.assertEqual(found["left_out"], {"A": {"statement": ["M.space"], "proof": ["M.fubini"]}})
+
     def test_direct_statement_and_proof_bridges_are_kept(self) -> None:
         # T's type names M.s itself; its proof names M.d and M.s itself and reaches M.p only through another constant.
         # M.s is then one statement bridge, M.d a proof bridge, and M.p no bridge.
@@ -791,6 +1086,183 @@ class BridgeConvention(unittest.TestCase):
         self.assertIn("2 bridge edges (1 statement, 1 proof), 1 more reached only through other constants left out "
                       "(0 statement, 1 proof)", printed.getvalue())
         self.assertNotIn("bridge_rule", found["inputs"])
+
+
+class QuotedArticleNames(unittest.TestCase):
+    def run_join(self, rows: list[dict], articles: set[str], *, lean_sources: dict[str, str],
+                 duplicates: dict[str, str] | None = None, registered: list[dict] | None = None,
+                 index_error: OSError | None = None, expect_no_join: bool = False,
+                 toolchain: str | None = "leanprover/lean4:v4.36.0"
+                 ) -> tuple[int, bytes, bytes, str]:
+        # Use the real pinned source scanner (and ordinary module paths), not a normalization mock.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            if toolchain is not None:
+                (root / "lean-toolchain").write_text(toolchain + "\n", encoding="utf-8")
+            for path, source in lean_sources.items():
+                file = root / path
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_text(source, encoding="utf-8")
+            dump, output, registry, names = (root / label for label in ("dump", "output", "registry", "names"))
+            payload = rows if registered is None else framed(rows + registered)
+            dump.write_text("".join(json.dumps(record) + "\n" for record in payload), encoding="utf-8")
+            output.write_bytes(b"original output")
+            registry.write_bytes(b"original registry")
+            argv = ["extract", str(dump), str(output)]
+            if registered is not None:
+                names.write_text("".join(record["name"] + "\n" for record in registered), encoding="utf-8")
+                argv += ["--registry", str(registry), "--names", str(names)]
+            index = extract.lean_index
+            with patch.object(extract, "article_manifest", return_value=articles), \
+                    patch.object(extract, "article_aliases", return_value=duplicates or {}), \
+                    patch.object(extract, "mathlib_revision", return_value=PIN), \
+                    patch.object(extract, "ROOT", root), \
+                    patch.object(extract, "BLUEPRINT", root / "blueprint"), \
+                    patch.object(extract, "lean_index", wraps=index, side_effect=index_error) as source_index, \
+                    patch.object(extract, "join_missing_quoted_articles",
+                                 wraps=extract.join_missing_quoted_articles) as join, \
+                    patch("sys.argv", argv), redirect_stderr(io.StringIO()) as errors, redirect_stdout(io.StringIO()):
+                status = extract.main()
+                if expect_no_join:
+                    join.assert_not_called()
+                    source_index.assert_not_called()
+            return status, output.read_bytes(), registry.read_bytes(), errors.getvalue()
+
+    def test_only_authored_quotes_can_fall_back(self) -> None:
+        sources = {"MathlibExt/T.lean": "namespace A\ndef x := 0\nend A\n"}
+        quoted = row("A.«x»", "def", [], [])
+        for payload in ([quoted], [quoted, row("A.x", "theorem", [], [])]):
+            with self.subTest(exact=len(payload) == 2):
+                status, out, _, errors = self.run_join(payload, {"A.x"}, lean_sources=sources, expect_no_join=True)
+                self.assertEqual(status, 0)
+                got = json.loads(out)
+                self.assertEqual(set(got["articles"]), {"A.x"} if len(payload) == 2 else set())
+                self.assertEqual(got["missing_articles"]["unprefixed"], [] if len(payload) == 2 else ["A.x"])
+                self.assertEqual("A.x" in errors, len(payload) == 1)
+
+    def test_stock_exact_quoted_and_private_resolution_take_precedence(self) -> None:
+        source = {"MathlibExt/T.lean": "namespace A\ndef «x» := 0\nend A\n"}
+        quoted = "A.«x»"
+        for exact in (quoted, "_private.MathlibExt.T.0." + quoted):
+            with self.subTest(exact=exact):
+                payload = [row("A.x", "def", ["Canonical"], []), row(exact, "def", ["Exact"], []),
+                           row("Canonical", "def", [], []), row("Exact", "def", [], [])]
+                payload[1]["private"] = exact != quoted
+                status, out, _, errors = self.run_join(payload, {quoted, "Exact", "Canonical"},
+                                                      lean_sources=source, expect_no_join=True)
+                self.assertEqual((status, errors), (0, ""))
+                self.assertEqual(json.loads(out)["articles"][quoted]["statement"], ["Exact"])
+
+    def test_renderer_exception_is_not_a_source_equivalence(self) -> None:
+        # For both names the pinned Lean renderer suppresses escaping at `_inaccessible`.
+        first, second = "A.«b.c»._inaccessible", "A.b.«c»._inaccessible"
+        source = {"MathlibExt/T.lean": f"def {first} := 0\ndef {second} := 1\n"}
+        status, out, _, errors = self.run_join([row("A.b.c._inaccessible", "def", ["Unrelated"], [])],
+                                              {second}, lean_sources=source)
+        self.assertEqual(status, 0)
+        self.assertEqual(json.loads(out)["articles"], {})
+        self.assertEqual(json.loads(out)["missing_articles"]["unprefixed"], [second])
+        self.assertIn(second, errors)
+        self.assertIsNone(extract.compiled_spelling(first))
+        self.assertIsNone(extract.compiled_spelling(second))
+
+    def test_preexisting_dangling_project_references_refuse_before_writes(self) -> None:
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        quoted = "A.«x»"
+        for field in ("type", "value"):
+            with self.subTest(field=field):
+                consumer = row("Consumer", "theorem", [], [])
+                consumer[field] = [quoted]
+                rows = [with_mathlib(record, [], []) for record in [row("A.x", "def", [], []), consumer]]
+                status, out, registry, errors = self.run_join(rows, {quoted, "Consumer"}, lean_sources=source,
+                                                             registered=[])
+                self.assertEqual((status, out, registry), (1, b"original output", b"original registry"))
+                self.assertIn(f"dangling {field} reference", errors)
+
+    def test_ordinary_fallback_preserves_both_dependency_directions_and_registry(self) -> None:
+        raw, quoted = "A.x", "A.«x»"
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        payload = [with_mathlib(row(raw, "def", ["Index"], []), ["M.fact"], [], type_direct=["M.fact"]),
+                   with_mathlib(row("Index", "def", [], []), [], []),
+                   with_mathlib(row("Consumer", "theorem", [raw], []), [], [])]
+        status, out, registry, errors = self.run_join(payload, {quoted, "Index", "Consumer"}, lean_sources=source,
+                                                     registered=[credited("M.fact", "theorem", [], [])])
+        self.assertEqual((status, errors), (0, ""))
+        articles = json.loads(out)["articles"]
+        self.assertEqual(articles[quoted]["statement"], ["Index"])
+        self.assertEqual(articles["Consumer"]["statement"], [quoted])
+        self.assertNotIn(raw, articles)
+        payload = json.loads(registry)
+        self.assertEqual(payload["bridges"][quoted]["statement"], ["M.fact"])
+        self.assertNotIn(raw, payload["bridges"])
+        self.assertEqual(payload["inputs"]["extraction_sha256"], hashlib.sha256(out).hexdigest())
+
+    def test_no_general_name_decoder(self) -> None:
+        self.assertEqual(extract.compiled_spelling("CategoryTheory.«prefix»"), "CategoryTheory.prefix")
+        self.assertEqual(extract.compiled_spelling("«A».«x2».y_z"), "A.x2.y_z")
+        for name in ("A.x", "A.«b.c»", "A.«with space»", "A.«1»", "A.«»", "A.«α»", "«A».1",
+                     "A.«foo'»", "A.«x!»", "A.«b«c»", "A.«x»,y", "A.«x", "A.x»", "A..«x»", "A.«x».\n",
+                     "_root_.A.«x»", "«_root_».A.«x»", "A.«x»._inaccessible", "A.«x✝»", "A.«x»._hyg"):
+            with self.subTest(name=name):
+                self.assertIsNone(extract.compiled_spelling(name))
+
+    def test_competing_article_or_source_claims_refuse_before_writes(self) -> None:
+        raw, quoted, competing = "A.x", "A.«x»", "«A».x"
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        cases = [({quoted, raw}, [raw], source, "article"),
+                 ({quoted, competing}, [raw, competing], source, "article"),
+                 ({quoted}, [raw, competing], source, "compiled"),
+                 ({quoted}, [raw], {**source, "MathlibExt/U.lean": "def A.x := 1\n"}, "source")]
+        for articles, names, lean_sources, reason in cases:
+            with self.subTest(reason=reason):
+                status, out, registry, errors = self.run_join([row(name, "def", [], []) for name in names], articles,
+                                                             lean_sources=lean_sources)
+                self.assertEqual((status, out, registry), (1, b"original output", b"original registry"))
+                self.assertIn(f"competing {reason}", errors)
+
+    def test_overlap_wrong_owner_or_private_row_refuses_before_writes(self) -> None:
+        raw, quoted = "A.x", "A.«x»"
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        normal = with_mathlib(row(raw, "def", [], []), [], [])
+        cases = [([normal], {"Twin": quoted}, [], source, "duplicate or registry"),
+                 ([normal], {}, [{"name": raw, "registered": True, "missing": True,
+                                  "module_given": False, "project": True}], source, "duplicate or registry"),
+                 ([normal], {}, [], {"MathlibExt/U.lean": "def A.«x» := 0\n"}, "unique public source owner"),
+                 ([{**normal, "private": True}], {}, [], source, "unique public source owner"),
+                 ([normal, {**normal, "name": "_private.MathlibExt.T.0.A.x", "private": True}], {}, [], source,
+                  "private row")]
+        for rows, duplicates, registered, lean_sources, reason in cases:
+            with self.subTest(reason=reason):
+                status, out, registry, errors = self.run_join(rows, {quoted}, lean_sources=lean_sources,
+                                                             duplicates=duplicates, registered=registered)
+                self.assertEqual((status, out, registry), (1, b"original output", b"original registry"))
+                self.assertIn(reason, errors)
+
+    def test_fallback_requires_the_pinned_lean_toolchain(self) -> None:
+        quoted = "A.«x»"
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        for toolchain in (None, "leanprover/lean4:v4.37.0"):
+            with self.subTest(toolchain=toolchain):
+                status, out, _, errors = self.run_join([row("A.x", "def", [], [])], {quoted},
+                                                       lean_sources=source, toolchain=toolchain)
+                self.assertEqual(status, 0)
+                self.assertEqual(json.loads(out)["missing_articles"]["unprefixed"], [quoted])
+                self.assertIn(quoted, errors)
+
+    def test_missing_target_remains_missing_and_index_error_is_safe(self) -> None:
+        from scripts import sync_wiki
+        from autoform_cli.lean import LeanSourceError
+
+        quoted = "A.«x»"
+        source = {"MathlibExt/T.lean": "def A.«x» := 0\n"}
+        status, out, _, _ = self.run_join([], {quoted}, lean_sources=source)
+        self.assertEqual(status, 0)
+        self.assertEqual(sync_wiki.uncompiled_articles(json.loads(out), SimpleNamespace(declarations={quoted})),
+                         [quoted])
+        status, out, registry, errors = self.run_join([row("A.x", "def", [], [])], {quoted}, lean_sources=source,
+                                                     index_error=LeanSourceError("MathlibExt/T.lean changed"))
+        self.assertEqual((status, out, registry), (1, b"original output", b"original registry"))
+        self.assertEqual(errors, "error: Lean sources could not be indexed: MathlibExt/T.lean changed\n")
 
 
 if __name__ == "__main__":

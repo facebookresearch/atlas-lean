@@ -18,8 +18,19 @@ body) or an inductive type (its constructors' types). A theorem's proof
 dependencies are those its value reaches the same way, minus the statement
 ones. Mutually recursive definitions and mutual inductive types depend on each
 other, which a dependency DAG can't show, so statement edges inside such a group
-are left out and the group is listed under "mutual". The build adds the result
-to the articles' Depends on lists; it is never committed.
+are left out and the group is listed under "mutual". A declaration a statement
+page's row lists as a duplicate (`sync_wiki.duplicate_names`), the article's
+result stated again, has no page. For any other article the way stops at it as
+at the article, which a use of it reaches, so an article that uses only the
+duplicate depends on the article. For its own article it is part of the
+article, as a non-article constant would be: the article depends on what the
+duplicate uses, and never on itself (own_duplicates). Nothing is written when a
+page stands for a duplicate, when two private constants of the dump take the
+name of a duplicate or of its article, or when the dump lacks one of them that
+the Lean sources still declare. When the Lean no longer declares one of them, a
+warning names both, and a use of the duplicate counts for no page: the way
+still stops at it (resolve_aliases). The build adds the result to the
+articles' Depends on lists; it is never committed.
 
 With --registry, the dump must have been made with NAMES, the Mathlib
 declarations wiki pages credit (`sync_wiki.py mathlib-names`, passed to
@@ -34,21 +45,24 @@ no page gets them. For each credited declaration found, the registry gives its
 module, its kind and the credited declarations it reaches by those rules,
 through its proof as through its statement (Mathlib edges); the names the dump
 did not find in a Mathlib module (`missing`), among them those that are v2
-constants (`project`); and what it was made from (`inputs`: the digest of NAMES
-and of the dump, and Mathlib's revision in lake-manifest.json). Every project
-row of the dump must carry its lists of credited declarations, nested as the
-dump writes them; the dump's rows for credited names never replace the
-project's rows, and every name of NAMES must have exactly one: otherwise nothing
-is written. OUTPUT.json is the same with or without it. Both files are written
-only once both are made, each whole.
+constants (`project`); and what it was made from (`inputs`: the digest of NAMES,
+of the dump and of the duplicates the rows list with their articles, and
+Mathlib's revision in lake-manifest.json), in a format of its own
+(REGISTRY_FORMAT). Every project row of the dump must carry its lists of
+credited declarations, nested as the dump writes them; the dump's rows for
+credited names never replace the project's rows, and every name of NAMES must
+have exactly one: otherwise nothing is written. OUTPUT.json is the same with or
+without it. Both files are written only once both are made, each whole.
 """
 
 from __future__ import annotations
 
+import functools
 import gzip
 import hashlib
 import json
 import os
+import re
 import secrets
 import shutil
 import sys
@@ -67,6 +81,10 @@ STATEMENT_VALUE = frozenset({"def", "inductive"})
 
 
 DUMP_FORMAT = {"dump": "atlas-v2-dependencies", "format": 5, "closure": "statement-and-all-uses"}
+# The format of the registry --registry writes, apart from the dump's: since 6, it records the duplicates lists it was
+# made for (`inputs.aliases_sha256`), as its bridges depend on them while the extraction beside it may not, and every
+# consumer checks them against its checkout's rows (sync_wiki.registry_problems).
+REGISTRY_FORMAT = 6
 # The lists of credited declarations every project row of such a dump carries; a definition's or an inductive
 # type's row carries `mathlib_state` too. Each `_direct` list holds the names its expressions name themselves, and is
 # part of the list that reaches through other constants from the same expressions; what an expression reaches through
@@ -367,6 +385,86 @@ def publish_private_targets(rows: dict[str, dict], manifest: set[str]) -> dict[s
     }
 
 
+# A conservative ASCII subset of Lean 4.36.0 (611c117b) `Name.toString`'s ordinary
+# identifier components. A leading letter excludes `_root_`, `_private`, `_hyg`,
+# `_inaccessible`, and other internal names. This is not a Lean Name decoder.
+_QUOTED_NAME_TOOLCHAIN = "leanprover/lean4:v4.36.0"
+_ORDINARY_COMPONENT = r"[A-Za-z][A-Za-z0-9_]*"
+_ORDINARY_AUTHORED = re.compile(
+    rf"(?:{_ORDINARY_COMPONENT}|«{_ORDINARY_COMPONENT}»)(?:\.(?:{_ORDINARY_COMPONENT}|«{_ORDINARY_COMPONENT}»))*"
+)
+
+
+def compiled_spelling(authored: str) -> str | None:
+    """The one canonical spelling for an ordinary name with redundant source quotes, if supported."""
+    if "«" not in authored or _ORDINARY_AUTHORED.fullmatch(authored) is None:
+        return None
+    return ".".join(part[1:-1] if part.startswith("«") else part for part in authored.split("."))
+
+
+def join_missing_quoted_articles(rows: dict[str, dict], missing: set[str], manifest: set[str],
+                                 listed: dict[str, str], registered: dict[str, dict],
+                                 source_index) -> dict[str, dict]:
+    """Try the authored-to-compiled fallback only after stock exact and private resolution."""
+    candidates = [(compiled, authored) for authored in sorted(missing)
+                  if (compiled := compiled_spelling(authored)) is not None and compiled in rows]
+    if not candidates:
+        return rows
+    try:
+        toolchain = (ROOT / "lean-toolchain").read_text(encoding="utf-8").strip()
+    except FileNotFoundError:
+        return rows
+    if toolchain != _QUOTED_NAME_TOOLCHAIN:
+        return rows
+
+    rename: dict[str, str] = {}
+    for compiled, authored in candidates:
+        if compiled in manifest or compiled in rename:
+            raise ValueError(f"competing article spellings for {compiled}")
+        rename[compiled] = authored
+
+    destinations = set(rename.values())
+    for name in manifest - destinations:
+        if compiled_spelling(name) in rename:
+            raise ValueError(f"competing article spelling for a quoted target: {name}")
+    for name in listed.keys() | set(listed.values()) | registered.keys():
+        if name in rename or name in destinations or compiled_spelling(name) in rename:
+            raise ValueError(f"quoted-name fallback overlaps a duplicate or registry endpoint: {name}")
+
+    index = source_index()
+    for names in (index.declarations, index.duplicates):
+        for name in names:
+            if name in rename or (name not in destinations and compiled_spelling(name) in rename):
+                raise ValueError(f"competing source spelling for a quoted article: {name}")
+    for compiled, authored in rename.items():
+        sources = index.occurrences(authored)
+        row = rows[compiled]
+        if (len(sources) != 1 or sources[0].private or row.get("private") is not False or
+                sources[0].path.with_suffix("").as_posix().replace("/", ".") != row["module"]):
+            raise ValueError(f"cannot bind {compiled} to the unique public source owner of {authored}")
+
+    result: dict[str, dict] = {}
+    for name, row in rows.items():
+        if compiled_spelling(name) in rename:
+            raise ValueError(f"competing compiled spelling for a quoted target: {name}")
+        if row.get("private"):
+            prefix = f"_private.{row['module']}.0."
+            if (suffix := name.removeprefix(prefix)) != name and (
+                    suffix in rename or suffix in destinations or compiled_spelling(suffix) in rename):
+                raise ValueError(f"quoted-name fallback overlaps a private row: {name}")
+        authored = rename.get(name, name)
+        changed = authored != name
+        for field in ("type", "value"):
+            for use in row[field]:
+                if use in destinations:
+                    raise ValueError(f"{name} has a dangling {field} reference to quoted target {use}")
+                changed |= use in rename
+        result[authored] = ({**row, "name": authored,
+                             **{field: [rename.get(use, use) for use in row[field]]
+                                for field in ("type", "value")}} if changed else row)
+    return result
+
+
 def article_manifest() -> set[str]:
     """The Lean names the wiki's articles state, one per statement page Autoform's own loader reads: the
     declaration the page's row credits (its Lean link to this project with role `states`, or its only one with no
@@ -413,6 +511,105 @@ def article_manifest() -> set[str]:
     return names
 
 
+def article_aliases() -> dict[str, str]:
+    """The declarations the wiki's rows list as duplicates (`sync_wiki.duplicate_names`), each with the declaration
+    its row credits: the same result stated again, with no page of its own, so that a use of one is a use of that
+    article. The rows are read as the registry's consumers read them (`sync_wiki.listed_duplicates`), and a list
+    `sync_wiki.duplicate_markers` refuses without the Lean index raises ValueError, as no use may be counted for an
+    article it does not state. The rows are read without the index: a row an earlier sync wrote with only a module
+    and a name has no `object`, so a list on it is refused, as one on a row whose declaration only the links folder's
+    defaults give, and the declaration such a row stands for, which only the index gives, is among article_manifest's
+    names, which resolve_aliases checks the aliases against; whether the Lean has each name is for the dump, and the
+    Lean sources, to say."""
+
+    if __package__:
+        from . import sync_wiki
+    else:
+        import sync_wiki
+
+    aliases, problems = sync_wiki.listed_duplicates({links: sync_wiki.read_rows(links.read_text(encoding="utf-8"))
+                                                     for links in sorted((BLUEPRINT / "links").glob("*.jsonl"))})
+    if problems:
+        raise ValueError(f"{len(problems)} duplicates lists to fix, so no article manifest: "
+                         + "; ".join(problems[:20]))
+    return aliases
+
+
+def private_collisions(rows: dict[str, dict], names: set[str]) -> dict[str, list[str]]:
+    """The names of *names* that two or more private constants of the dump (*rows*) would be published as (see
+    publish_private_targets), the dump having no public constant of that name, each with those constants: declarations
+    of different modules that one source name cannot tell apart."""
+    found: dict[str, list[str]] = {}
+    for name, row in rows.items():
+        prefix = f"_private.{row['module']}.0."
+        if row.get("private") and name.startswith(prefix) and (public := name[len(prefix):]) in names \
+                and public not in rows:
+            found.setdefault(public, []).append(name)
+    return {public: sorted(constants) for public, constants in found.items() if len(constants) > 1}
+
+
+def resolve_aliases(listed: dict[str, str], manifest: set[str], rows: dict[str, dict], declared,
+                    collisions: dict[str, list[str]] | None = None
+                    ) -> tuple[dict[str, str | None], list[str], list[str]]:
+    """The duplicates (*listed*, see article_aliases) the extraction and the Mathlib layer's bridge count, each with its
+    article, or None for one whose article the Lean no longer declares: the way stops at it, and its uses count for no
+    page; then what stops them, and what they warn about. Given the articles (*manifest*, see article_manifest), the
+    dump's project rows (*rows*, a private one by its source name), *declared*, which says whether the Lean sources
+    declare a name (None when nothing can tell), and *collisions* (see private_collisions), an error is: a page standing
+    for a duplicate, as a row an earlier sync wrote with a module and a name can; an article not among the articles; a
+    duplicate or an article that two private constants take; and one with no compiled row that the Lean declares, or
+    for which nothing can tell, as the dump is then incomplete, whatever the other one is. A warning names a duplicate,
+    or an article, or both, that the Lean no longer declares, with the other: the duplicate is then left out, as no
+    constant uses it, or stops the way with no article. A Lean change that renames or deletes a declaration so fails no
+    build, and the sync lists the stale entry for an editor (sync_wiki.stale_duplicates)."""
+    collisions = collisions or {}
+    alias: dict[str, str | None] = {}
+    problems, warnings = [], []
+    for name, article in sorted(listed.items()):
+        about = f"the wiki lists {name} as a duplicate of {article}, but"
+        if name in manifest:
+            problems.append(f"{about} a page stands for {name}")
+        elif article not in manifest:
+            problems.append(f"{about} {article} is not among the articles, so a use of {name} could count for no page")
+        elif shared := [one for one in (name, article) if one in collisions]:
+            problems += [f"{about} the compiled dependency dump has several private constants named {one}, which one "
+                         f"name cannot tell apart: {', '.join(collisions[one])}" for one in shared]
+        elif not (missing := [one for one in (name, article) if one not in rows]):
+            alias[name] = article
+        elif incomplete := {one: source for one in missing if (source := declared(one)) is not False}:
+            # Each end the dump lacks is judged on its own: one the Lean may still declare stops the build, whatever
+            # the other end is.
+            for one, source in incomplete.items():
+                why = ("the Lean sources declare it" if source else
+                       "nothing here tells whether the Lean still declares it")
+                problems.append(f"{about} the compiled dependency dump has no row for {one}, and {why}: make the dump "
+                                "again")
+        elif len(missing) == 2:
+            warnings.append(f"the Lean no longer declares {name}, which the wiki lists as a duplicate of {article}, "
+                            f"nor {article}: the entry counts for nothing; drop it from the row's `duplicates`")
+        elif missing == [name]:
+            warnings.append(f"the Lean no longer declares {name}, which the wiki lists as a duplicate of {article}: "
+                            "the entry counts for nothing; drop it from the row's `duplicates`")
+        else:
+            warnings.append(f"the Lean no longer declares {article}, whose page lists {name} as a duplicate: a use of "
+                            f"{name} counts for no page; relink the page or drop the entry")
+            alias[name] = None
+    return alias, problems, warnings
+
+
+def aliases_digest(aliases: dict[str, str]) -> str:
+    """The digest of the duplicates the rows list, each with its article (article_aliases): each article, sorted, with
+    its duplicates, sorted, as compact JSON with every character past ASCII escaped, which spells any lists one way
+    only, whatever their strings hold (a tab, a line feed, a lone surrogate). These are the lists a registry records
+    it was made for, which a consumer computes again from its checkout's rows (sync_wiki.registry_problems). A
+    `duplicates` edit can change the bridges and leave the extraction as it was, so its digest cannot show it."""
+    lists: dict[str, list[str]] = {}
+    for name, article in aliases.items():
+        lists.setdefault(article, []).append(name)
+    encoded = json.dumps(sorted((article, sorted(names)) for article, names in lists.items()), separators=(",", ":"))
+    return hashlib.sha256(encoded.encode("ascii")).hexdigest()
+
+
 def lean_index():
     """The Lean index of the project's sources, as lean-facts reads it."""
     from autoform_cli.lean import index_project
@@ -420,12 +617,26 @@ def lean_index():
     return index_project(BLUEPRINT.parent, exclude_roots=("v1", "Atlas"))
 
 
+def expression_uses(row: dict | None, statement: bool) -> list[str]:
+    """The constants *row*'s expressions use: with *statement*, what it states (its type, and its value when that is
+    part of what it states); otherwise everything, its type and its value."""
+    if not row:
+        return []
+    if statement and row.get("kind") not in STATEMENT_VALUE:
+        return row["type"]
+    return row["type"] + row["value"]
+
+
 def frontiers(rows: dict[str, dict], articles: set[str], statement: bool = False,
-              direct=None) -> dict[str, frozenset[str]]:
+              direct=None, alias: dict[str, str | None] | None = None) -> dict[str, frozenset[str]]:
     """For every non-article constant, the articles reachable through non-articles.
 
     With *direct*, a function of a constant's name, the constants reached are instead what *direct* gives for
     each non-article on the way (the Mathlib declarations it names, say), and articles only stop the way.
+
+    With *alias*, which maps a duplicate (see resolve_aliases) to its article, or to None when the article is gone, a
+    duplicate stops the way, and a set lists the duplicate itself where the way reaches it: what it gives depends on
+    whose way it is (see through_aliases). Each duplicate also gets the set its own uses reach, as a non-article.
 
     With *statement*, only what a constant states counts: its type, and its value only when that value is
     part of what it states (a definition's body, an inductive type's constructors). A hidden theorem's proof
@@ -439,20 +650,16 @@ def frontiers(rows: dict[str, dict], articles: set[str], statement: bool = False
     """
 
     def uses(name: str) -> list[str]:
-        row = rows.get(name)
-        if not row:
-            return []
-        if statement and row.get("kind") not in STATEMENT_VALUE:
-            return row["type"]
-        return row["type"] + row["value"]
+        return expression_uses(rows.get(name), statement)
 
+    alias = alias or {}
     memo: dict[str, frozenset[str]] = {}
     index: dict[str, int] = {}
     low: dict[str, int] = {}
     stack: list[str] = []
     on_stack: set[str] = set()
     for root in rows:
-        if root in articles or root in index:
+        if root in articles or root in alias or root in index:
             continue
         index[root] = low[root] = len(index)
         stack.append(root)
@@ -462,7 +669,7 @@ def frontiers(rows: dict[str, dict], articles: set[str], statement: bool = False
             node, children = work[-1]
             child = next(children, None)
             if child is not None:
-                if child in articles:
+                if child in articles or child in alias:
                     continue
                 if child not in index:
                     index[child] = low[child] = len(index)
@@ -490,14 +697,73 @@ def frontiers(rows: dict[str, dict], articles: set[str], statement: bool = False
                 if direct is not None:
                     reached |= set(direct(member))
                 for use in uses(member):
-                    if use in articles:
+                    if use in alias:
+                        reached.add(use)
+                    elif use in articles:
                         if direct is None:
                             reached.add(use)
                     elif use not in members:
                         reached |= memo[use]
             for member in component:
                 memo[member] = frozenset(reached)
+    # What each duplicate's own uses reach, for its own article, which it is part of (see through_aliases).
+    for name in alias:
+        if name in rows:
+            reached = set(direct(name)) if direct is not None else set()
+            for use in uses(name):
+                if use in alias or (use in articles and direct is None):
+                    reached.add(use)
+                elif use not in articles:
+                    reached |= memo.get(use, frozenset())
+            memo[name] = frozenset(reached)
     return memo
+
+
+def through_aliases(name: str, reached: frozenset[str], through: dict[str, frozenset[str]],
+                    alias: dict[str, str | None], articles: bool = True) -> frozenset[str] | set[str]:
+    """What *reached*, a set frontiers gives with *alias*, gives article *name*. A duplicate of another article stands
+    for that article (with *articles*; for nothing otherwise, as articles then only stop the way), and one whose
+    article is gone for nothing. One of *name*'s own is part of it, as a non-article: it stands for what it reaches
+    itself, its set in *through*, each read once, so a cycle through it ends. The caller drops *name* itself."""
+    if not alias or alias.keys().isdisjoint(reached):
+        return reached
+    found: set[str] = set()
+    seen: set[str] = set()
+    pending = [reached]
+    while pending:
+        for target in pending.pop():
+            if target not in alias:
+                found.add(target)
+            elif (article := alias[target]) is None:
+                continue
+            elif article == name:
+                if target not in seen:
+                    seen.add(target)
+                    pending.append(through.get(target, frozenset()))
+            elif articles:
+                found.add(article)
+    return found
+
+
+def own_duplicates(name: str, uses: list[str], rows: dict[str, dict], alias: dict[str, str | None],
+                   statement: bool) -> tuple[list[str], list[str]]:
+    """*uses*, an expression of article *name*, with each duplicate of *name*'s own it names (see resolve_aliases)
+    replaced by what the duplicate uses (see expression_uses, with *statement*), each once; then the duplicates so
+    replaced. A duplicate states its article's result, so what it names, the article names: for its own article it is
+    no stop but part of the article. Another of *name*'s own that such a duplicate names stays among the uses, for the
+    caller to follow as a hidden constant (see through_aliases): the article reaches what that one uses, but names
+    none of it. A duplicate of another article stays in *uses*."""
+    if not alias or name not in alias.values():
+        return uses, []
+    kept: list[str] = []
+    replaced: list[str] = []
+    for use in uses:
+        if use not in alias or alias[use] != name:
+            kept.append(use)
+        elif use not in replaced:
+            replaced.append(use)
+            kept.extend(expression_uses(rows.get(use), statement))
+    return kept, replaced
 
 
 def mutual_groups(edges: dict[str, set[str]]) -> list[list[str]]:
@@ -554,14 +820,21 @@ def mathlib_kind(row: dict) -> str:
     return MATHLIB_KINDS.get(row.get("kind", ""), row.get("kind", ""))
 
 
-def registry(rows: dict[str, dict], articles: set[str], registered: dict[str, dict]) -> dict:
+def registry(rows: dict[str, dict], articles: set[str], registered: dict[str, dict],
+             alias: dict[str, str | None] | None = None) -> dict:
     """The bridge and Mathlib edges of the credited Mathlib declarations; see the module docstring. A row's
     `mathlib_type` and `mathlib_state` (a definition's body, an inductive type's constructors) list the credited
     declarations what it states reaches, `mathlib_value` those everything it uses reaches, and
     `mathlib_type_direct` and `mathlib_value_direct` those its type and its value name themselves. An article's
     bridge's kind is decided first, a statement one when the statement reaches the declaration at all, and the bridge
     is kept only when the statement, or the proof, names the declaration itself; the others are listed apart
-    (`left_out`), by kind."""
+    (`left_out`), by kind. A duplicate (*alias*, see frontiers) stops any other article's way as its article does, so
+    that no article reaches through it what its article's own edges give, nor, its article gone, what it reaches
+    itself. For its own article it is part of the article (see own_duplicates): what it reaches, the article reaches,
+    and what it names, where the article names the duplicate itself, the article names, so that it bridges too; one
+    the article reaches otherwise, through a hidden constant or through another duplicate, gives only what is left
+    out, as a hidden constant does."""
+    alias = alias or {}
     found = {name: row for name, row in registered.items() if not row.get("missing")}
 
     def direct(name: str, statement: bool, table: dict[str, dict] = rows) -> list[str]:
@@ -572,31 +845,50 @@ def registry(rows: dict[str, dict], articles: set[str], registered: dict[str, di
         # A proof that passes through a constant reaches everything it uses: its type as much as its value.
         return row.get("mathlib_type_used", []) + row.get("mathlib_value", [])
 
-    through_statement = frontiers(rows, articles, statement=True, direct=lambda name: direct(name, True))
-    through = frontiers(rows, articles, direct=lambda name: direct(name, False))
+    through_statement = frontiers(rows, articles, statement=True, direct=lambda name: direct(name, True), alias=alias)
+    through = frontiers(rows, articles, direct=lambda name: direct(name, False), alias=alias)
 
-    def collapse(uses: list[str], own: list[str], memo: dict[str, frozenset[str]]) -> set[str]:
-        reached = set(own)
-        for use in uses:
-            if use not in articles:
-                reached |= memo.get(use, frozenset())
-        return reached & found.keys()
+    def names(name: str, statement: bool) -> list[str]:
+        # What a constant's expressions name themselves: those it states, or all it uses (see expression_uses).
+        row = rows.get(name) or {}
+        if statement and row.get("kind") not in STATEMENT_VALUE:
+            return row.get("mathlib_type_direct", [])
+        return row.get("mathlib_type_direct", []) + row.get("mathlib_value_direct", [])
+
+    def collapse(name: str, uses: list[str], own: list[str], named: list[str], memo: dict[str, frozenset[str]],
+                 statement: bool) -> tuple[set[str], set[str]]:
+        # What article *name*'s expression *uses* reaches, given what it reaches through Mathlib itself (*own*), and
+        # what it names, given the names it has (*named*), with those of the duplicates of its own it names itself.
+        kept, duplicates = own_duplicates(name, uses, rows, alias, statement)
+        reached, naming = set(own), set(named)
+        for duplicate in duplicates:
+            reached |= set(direct(duplicate, statement))
+            naming |= set(names(duplicate, statement))
+        for use in kept:
+            # Another article stops the way, and so does its duplicate; one of the article's own that a duplicate it
+            # names names is followed as a hidden constant.
+            if use not in articles and (use not in alias or alias[use] == name):
+                reached |= through_aliases(name, memo.get(use, frozenset()), memo, alias, articles=False)
+        return reached & found.keys(), naming
 
     bridges, left_out = {}, {}
     for name in sorted(articles):
         row = rows[name]
         if row["kind"] in STATEMENT_VALUE:
-            statement = collapse(row["type"] + row["value"], direct(name, True), through_statement)
-            proof: set[str] = set()
             # A definition's body and an inductive type's constructors are part of what it states.
-            stated = set(row["mathlib_type_direct"]) | set(row["mathlib_value_direct"])
+            statement, stated = collapse(name, row["type"] + row["value"], direct(name, True),
+                                         row["mathlib_type_direct"] + row["mathlib_value_direct"], through_statement,
+                                         True)
+            proof, proved = set(), set()
         else:
-            statement = collapse(row["type"], row.get("mathlib_type", []), through_statement)
-            proof = collapse(row["value"], row.get("mathlib_value", []), through) - statement
-            stated = set(row["mathlib_type_direct"])
+            statement, stated = collapse(name, row["type"], row.get("mathlib_type", []), row["mathlib_type_direct"],
+                                         through_statement, True)
+            proof, proved = collapse(name, row["value"], row.get("mathlib_value", []), row["mathlib_value_direct"],
+                                     through, False)
+            proof -= statement
         # A statement or a proof bridges only to what it names itself; what it reaches only through other constants,
         # the project's or Mathlib's, gives no edge.
-        kept = {"statement": statement & stated, "proof": proof & set(row["mathlib_value_direct"])}
+        kept = {"statement": statement & stated, "proof": proof & proved}
         dropped = {"statement": statement - kept["statement"], "proof": proof - kept["proof"]}
         if kept["statement"] or kept["proof"]:
             bridges[name] = {kind: sorted(kept[kind]) for kind in ("statement", "proof")}
@@ -650,6 +942,7 @@ def main() -> int:
         return 2
     try:
         manifest = article_manifest()
+        listed = article_aliases()
     except ValueError as error:
         print(f"error: {error}", file=sys.stderr)
         return 1
@@ -698,21 +991,58 @@ def main() -> int:
             print(f"error: {len(problems)} problems in the rows of {args[0]}, which are not all in the current "
                   "format; make it again with scripts/dump_v2_dependencies.lean and the list", file=sys.stderr)
             return 1
+    # A private duplicate or article is published by its source name only when one constant has it.
+    collisions = private_collisions(project_rows, listed.keys() | set(listed.values()))
     # The credited Mathlib declarations' rows serve only the registry: OUTPUT.json is the same without them.
-    rows = publish_private_targets(project_rows, manifest)
-    missing = sorted(manifest - rows.keys())
+    rows = publish_private_targets(project_rows, manifest | listed.keys())
+    sources = functools.cache(lean_index)
+    missing = manifest - rows.keys()
+    if any("«" in name for name in missing):
+        try:
+            rows = join_missing_quoted_articles(rows, missing, manifest, listed, registered, sources)
+        except ValueError as error:
+            print(f"error: {error}", file=sys.stderr)
+            return 1
+        except OSError as error:
+            from autoform_cli.lean import index_failure_message
+
+            print(f"error: {index_failure_message(error)}", file=sys.stderr)
+            return 1
+        missing -= rows.keys()
+    # A use of a duplicate counts as a use of its article, which only the compiled rows of both can show; the Lean
+    # sources, read only for a row the dump lacks, tell a deleted declaration from an incomplete dump.
+    alias, problems, warnings = resolve_aliases(listed, manifest, rows, lambda name: name in sources().declarations,
+                                                collisions)
+    for warning in warnings:
+        print(f"warning: {warning}", file=sys.stderr)
+    if problems:
+        for problem in problems[:20]:
+            print(f"error: {problem}", file=sys.stderr)
+        print(f"error: {len(problems)} declarations listed as duplicates whose uses could not count as uses of their "
+              "articles; make the dump again, or fix the lists", file=sys.stderr)
+        return 1
+    missing = sorted(missing)
     if missing:
         for name in missing[:20]:
             print(f"warning: roadmap Lean target is absent from the compiled dependency dump: {name}", file=sys.stderr)
         print(f"warning: {len(missing)} roadmap targets have no compiled dependency row", file=sys.stderr)
     articles = manifest & rows.keys()
     # Statements reach through what hidden constants state; proofs through everything they use.
-    reach_statement, reach = frontiers(rows, articles, statement=True), frontiers(rows, articles)
+    reach_statement = frontiers(rows, articles, statement=True, alias=alias)
+    reach = frontiers(rows, articles, alias=alias)
 
-    def collapse(name: str, uses: list[str], through: dict[str, frozenset[str]]) -> set[str]:
+    def collapse(name: str, uses: list[str], through: dict[str, frozenset[str]], statement: bool) -> set[str]:
         found: set[str] = set()
-        for use in uses:
-            found |= {use} if use in articles else through.get(use, frozenset())
+        # The article's own duplicates are part of it: what they use, it uses.
+        for use in own_duplicates(name, uses, rows, alias, statement)[0]:
+            if use in alias and alias[use] != name:
+                # A duplicate of another article stands for that article; one whose article is gone, for none.
+                found |= {alias[use]} - {None}
+            elif use in articles:
+                found.add(use)
+            else:
+                # A hidden constant, or one of the article's own duplicates that a duplicate it names names.
+                found |= through_aliases(name, through.get(use, frozenset()), through, alias)
         found.discard(name)
         return found
 
@@ -720,10 +1050,10 @@ def main() -> int:
     for name in sorted(articles):
         row = rows[name]
         if row["kind"] in STATEMENT_VALUE:
-            statement, proof = collapse(name, row["type"] + row["value"], reach_statement), set()
+            statement, proof = collapse(name, row["type"] + row["value"], reach_statement, True), set()
         else:
-            statement = collapse(name, row["type"], reach_statement)
-            proof = collapse(name, row["value"], reach) - statement
+            statement = collapse(name, row["type"], reach_statement, True)
+            proof = collapse(name, row["value"], reach, False) - statement
         result[name] = {
             "module": row["module"],
             "statement": sorted(statement),
@@ -748,10 +1078,11 @@ def main() -> int:
                                   ensure_ascii=False, sort_keys=True) + "\n"}
     found = None
     if registry_output is not None:
-        found = registry(rows, articles, registered)
+        found = registry(rows, articles, registered, alias)
         found["inputs"] = {"names_sha256": names_digest(read_names(names_file)),
-                           "dump_sha256": file_digest(Path(args[0])), "mathlib_rev": mathlib_revision(),
-                           "requested": len(registered), "format": DUMP_FORMAT["format"],
+                           "dump_sha256": file_digest(Path(args[0])), "aliases_sha256": aliases_digest(listed),
+                           "mathlib_rev": mathlib_revision(),
+                           "requested": len(registered), "format": REGISTRY_FORMAT,
                            "extraction_sha256": hashlib.sha256(outputs[output].encode("utf-8")).hexdigest()}
         outputs[registry_output] = json.dumps(found, ensure_ascii=False, sort_keys=True) + "\n"
     # Both made, then both written: a failure above leaves neither, and so does one while writing.

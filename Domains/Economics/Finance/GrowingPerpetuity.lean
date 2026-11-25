@@ -42,14 +42,17 @@ Atlas roadmap target FI01.T03.
 
 namespace MathlibExt.Economics.Finance
 
-/-- Discounted cash flow of a growing perpetuity: the payment `C₁ (1 + g) ^ t`
-made at date `t + 1` (so `C₁` at date 1, growing at rate `g` per period),
-discounted at the constant rate `r` (source clause: "cash flow `C_t = C₁ (1+g)^(t-1)`
-at dates `t ≥ 1`"). -/
+/-- Discounted cash flow of a growing perpetuity: the payment `C₁ (1 + g) ^ t` made at date `t + 1`
+(so `C₁` at date 1, growing at rate `g` per period), discounted at the constant rate `r` (source
+clause: "cash flow `C_t = C₁ (1+g)^(t-1)` at dates `t ≥ 1`"). It is defined for all real `C₁`, `r`
+and `g`, with the convention `0⁻¹ = 0` when `1 + r = 0`. -/
 noncomputable def growingPerpetuityTerm (C₁ r g : ℝ) (t : ℕ) : ℝ :=
   discountFactor r (t + 1) * (C₁ * (1 + g) ^ t)
 
-/-- Value of a growing perpetuity, the sum of all discounted cash flows. -/
+/-- Value of a growing perpetuity, the sum of all discounted cash flows. It is defined for all real
+`C₁`, `r` and `g`: a series that does not converge absolutely has value `0`, and for `r = -1` the
+convention `0⁻¹ = 0` makes every discount factor, hence the value, `0`; the intended domain is
+`1 + r > 0` with `0 ≤ (1 + g) / (1 + r) < 1`. -/
 noncomputable def growingPerpetuity (C₁ r g : ℝ) : ℝ :=
   ∑' t : ℕ, growingPerpetuityTerm C₁ r g t
 
@@ -87,8 +90,8 @@ theorem hasSum_growingPerpetuity (C₁ r g : ℝ) (hr : 0 < 1 + r)
   rw [hfun]
   exact hmul
 
-/-- Gordon growth formula: a growing perpetuity is worth `C₁ / (r - g)` under the
-same hypotheses (Atlas roadmap FI01.T03). -/
+/-- Gordon growth formula: a growing perpetuity is worth `C₁ / (r - g)` when
+`1 + r > 0` and `0 ≤ (1 + g) / (1 + r) < 1` (Atlas roadmap FI01.T03). -/
 theorem growingPerpetuity_eq (C₁ r g : ℝ) (hr : 0 < 1 + r)
     (hx₀ : 0 ≤ (1 + g) / (1 + r)) (hx₁ : (1 + g) / (1 + r) < 1) :
     growingPerpetuity C₁ r g = C₁ / (r - g) := by

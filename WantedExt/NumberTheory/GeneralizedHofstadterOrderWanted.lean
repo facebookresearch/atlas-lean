@@ -376,18 +376,6 @@ public theorem_wanted hofL_succ_comparison {k n j : ℕ} (hk : 1 ≤ k) (hn : 1 
     hofL (k + 1) n ≤ hofL k n ∧ hofCount (k + 1) (· = k + 1) n ≤ hofCount k (· = k) n ∧
       (hofL k)^[j] n < (hofL (k + 1))^[j + 1] n
 
-/-- **Iterates of $L_{k+1}$ lie below iterates of $L_k$.** Let $x_k[0]\,x_k[1] \cdots$ be the
-fixed point, beginning with $k$, of the substitution $\tau_k$ that sends $k$ to $k\,1$ and every
-other letter $i$ to $i + 1$, let $L_k(n)$ be the length of the word
-$\tau_k(x_k[0] \cdots x_k[n-1])$, and write $L_k^j$ for the $j$-fold iterate of $L_k$. For
-every $k \ge 1$, every $j \ge 0$ and every natural number $n$, $L_{k+1}^j(n) \le L_k^j(n)$.
-
-Source: Pierre Letouzey, Shuo Li, and Wolfgang Steiner, *Pointwise Order of Generalized
-Hofstadter Functions G, H, and Beyond*, Journal of Integer Sequences 29 (2026), Article 26.3.3,
-Corollary 21 (`jis-2026-26.3.3-cor-21`). -/
-public theorem_wanted hofL_iterate_succ_le {k : ℕ} (hk : 1 ≤ k) (j : ℕ) :
-    (hofL (k + 1))^[j] ≤ (hofL k)^[j]
-
 /-- **Iterates of consecutive Hofstadter functions are ordered.** For every $k \ge 1$, $j \ge 0$
 and $n \ge 0$, $F_k^j(n) \le F_{k+1}^j(n)$, where $F_k$ is the generalized Hofstadter function and
 $F_k^j$ is its $j$-fold iterate.

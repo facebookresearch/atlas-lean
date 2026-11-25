@@ -92,7 +92,8 @@ open MathlibExt.Analysis.ODE.ExponentialGrowth
 
 /-- At a time `t` where `ng' = -J` and `nw' = J`, the total inventory
 `ng + nw` has zero time derivative. Here `J t = k * A * (H * p t - c t)` with
-`p t = ng t * R * T / Vg` and `c t = nw t / Vw`. -/
+`p t = ng t * R * T / Vg` and `c t = nw t / Vw`; with the convention `x / 0 = 0`,
+`p t = 0` when `Vg = 0` and `c t = 0` when `Vw = 0`. -/
 lemma air_water_total_hasDerivAt_zero (Vg Vw R T H k A : ℝ)
     (ng nw : ℝ → ℝ) (t : ℝ)
     (hng : HasDerivAt ng (-(k * A * (H * (ng t * R * T / Vg) - nw t / Vw))) t)
@@ -103,7 +104,9 @@ lemma air_water_total_hasDerivAt_zero (Vg Vw R T H k A : ℝ)
   exact h
 
 /-- Conservation of the total inventory: if the exchange equations hold at
-every time, then `ng t + nw t = ng 0 + nw 0` for every `t`. -/
+every time, then `ng t + nw t = ng 0 + nw 0` for every `t`. With the convention
+`x / 0 = 0`, the partial pressure `p t = ng t * R * T / Vg` is `0` when `Vg = 0` and the
+concentration `c t = nw t / Vw` is `0` when `Vw = 0`. -/
 theorem air_water_total_conserved (Vg Vw R T H k A : ℝ) (ng nw : ℝ → ℝ)
     (hng : ∀ t, HasDerivAt ng (-(k * A * (H * (ng t * R * T / Vg) - nw t / Vw))) t)
     (hnw : ∀ t, HasDerivAt nw (k * A * (H * (ng t * R * T / Vg) - nw t / Vw)) t)
@@ -115,8 +118,9 @@ theorem air_water_total_conserved (Vg Vw R T H k A : ℝ) (ng nw : ℝ → ℝ)
 
 /-! ## B. Disequilibrium equation and closed form -/
 
-/-- The disequilibrium `d t = H * p t - c t` satisfies the linear equation
-`d' t = -rate * d t` with `rate = k * A * (H * R * T / Vg + 1 / Vw)`.
+/-- For positive volumes `Vg` and `Vw`, at a time `t` where `ng' = -J` and `nw' = J`, the
+disequilibrium `d t = H * p t - c t` satisfies the linear equation `d' t = -rate * d t` with
+`rate = k * A * (H * R * T / Vg + 1 / Vw)`.
 The identity holds for all real `k`, `A`, `H`, `R`, `T`; it describes
 relaxation toward equilibrium only when `rate > 0` (see
 `air_water_rate_pos`). -/
@@ -143,10 +147,10 @@ theorem air_water_difference_ode (Vg Vw R T H k A : ℝ)
   convert h using 1
   ring
 
-/-- If the exchange equations hold at every time, the disequilibrium is the
-signed exponential `d t = d 0 * exp (-rate * t)`, written as the exponential
+/-- For positive volumes `Vg` and `Vw`, if the exchange equations hold at every time, the
+disequilibrium is the signed exponential `d t = d 0 * exp (-rate * t)`, written as the exponential
 path with rate `-rate`. No sign is imposed on `k`, `A`, `H`, `R`, `T`: for
-`rate > 0` the path decays, for `rate < 0` it grows. -/
+`rate > 0` the path decays, for `rate < 0` its magnitude grows unless `d 0 = 0`. -/
 theorem air_water_difference_eq_expGrowthPath (Vg Vw R T H k A : ℝ)
     (hVg : 0 < Vg) (hVw : 0 < Vw) (ng nw : ℝ → ℝ)
     (hng : ∀ t, HasDerivAt ng (-(k * A * (H * (ng t * R * T / Vg) - nw t / Vw))) t)
@@ -168,8 +172,8 @@ lemma air_water_rate_pos (Vg Vw R T H k A : ℝ) (hVg : 0 < Vg) (hVw : 0 < Vw)
     0 < k * A * (H * R * T / Vg + 1 / Vw) := by
   positivity
 
-/-- Forward-time decay: with positive physical parameters and the exchange
-equations holding at every time, the disequilibrium `H * p t - c t` tends
+/-- Forward-time decay: with positive physical parameters `k`, `A`, `H`, `R`, `T`, `Vg` and `Vw`
+and the exchange equations holding at every time, the disequilibrium `H * p t - c t` tends
 to `0` as `t → ∞`. -/
 theorem air_water_difference_tendsto_zero (Vg Vw R T H k A : ℝ)
     (hVg : 0 < Vg) (hVw : 0 < Vw) (hR : 0 < R) (hT : 0 < T) (hH : 0 < H)

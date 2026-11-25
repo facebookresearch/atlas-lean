@@ -10,9 +10,22 @@ module
 
 import MathlibExt.NumberTheory.QuadraticIrrationalCFNonexistence
 
-/-! # Tests for shifted convergent denominators and periodic continued fractions -/
+/-! # Tests for convergent denominators and periodic continued fractions -/
 
 open MetaMathlibExt
+
+-- At the shortest split, both predecessor denominators are the empty continuant.
+example (x : ℕ) : convergentDen (fun _ => x) 2 = x * x + 1 :=
+  convergentDen_symm_split 3 (fun _ => x) (fun _ _ _ => rfl) 1 (by decide) (by decide)
+
+-- Splitting 1, 2, 0, 0, 2, 1 after the second entry gives 3 * 3 + 1 * 1.
+example :
+    let a (n : ℕ) := min n (7 - n) % 3
+    convergentDen a 6 = 3 * 3 + 1 * 1 := by
+  intro a
+  apply convergentDen_symm_split 7 a _ 2 (by decide) (by decide)
+  intro i _ hi
+  simp only [a, Nat.sub_sub_self hi.le, min_comm]
 
 -- At the shortest admissible split both shorter correction terms are empty continuants.
 example (x : ℕ) : convergentDen (fun _ => x) 2 = x * x + 1 :=

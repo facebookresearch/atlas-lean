@@ -6,14 +6,41 @@
 it. Formal-Math is an upstream source snapshot, not a Lake dependency: files arrive through
 reviewed ATLAS pull requests, and Formal-Math never depends on ATLAS.
 
-## Schema (version 1)
+## Storage layout
 
-Top level: `schema_version`, `upstream` (`repository`, always `fairinternal/formal-math`, and the
-full `commit`), `lean_toolchain` (the ATLAS
-toolchain when the sync ran; a later Lean bump does not invalidate the recorded provenance, and the
-next sync updates it), `roots`, and `rows`, sorted by path, one per line. Files that never came from Formal-Math (ATLAS-only work
-and third-party FLT content, which keeps its own header) have no row. Totals are computed by the
-sync report, not stored, so concurrent pull requests touching different rows do not conflict.
+The checker supports monolithic schema 1 and domain-sharded schema 2. Schema 2 keeps the shared
+metadata and the single upstream pin in `formal-math-sync.json`, without inline rows. Rows live
+in `formal-math-sync.d/<library>/<first-directory>.json`; a Lean file directly under a library
+uses `formal-math-sync.d/<library>.json`. For example, `MathlibExt/AlgebraicTopology/Foo.lean`
+belongs to `formal-math-sync.d/MathlibExt/AlgebraicTopology.json`. Each shard contains just a
+nonempty `rows` list, sorted by the same path key. There is no shard index to edit when a
+new domain gains its first row.
+
+Ordinary divergence and retirement commands write only the owning shards. Changes in unrelated
+domains no longer contend for one file. Within a domain, reconcile competing changes by row;
+never discard the other branch's records. Global pin updates still need coordination. The
+checker validates the whole logical ledger together, including cross-domain copies and renames.
+
+The layout conversion is made in a dedicated PR from current `main`, after outstanding
+monolithic edits have been reconciled:
+
+```bash
+python3 scripts/check_formal_math_sync.py --split-by-domain
+python3 scripts/check_formal_math_sync.py --base origin/main
+```
+
+Conversion must leave every row and all shared metadata unchanged. Keep it in its own merge
+batch; if an earlier queued change edits the monolithic ledger, regenerate the conversion on
+updated `main`. Once adopted, the checker rejects reverting to monolithic storage. An authorized
+upstream sync remains a separate operation.
+
+## Row schema
+
+Shared metadata: `schema_version`, `upstream` (the repository `fairinternal/formal-math` and
+full `commit`), `lean_toolchain` (the ATLAS toolchain at the last sync), and `roots`. A later
+Lean bump does not invalidate the recorded provenance. Logical rows are sorted by path, one per
+line in each file. Files that never came from Formal-Math (ATLAS-only work and third-party FLT
+content, which keeps its own header) have no row. Totals are computed, not stored.
 
 Each row has `path` and `disposition`. `published_sha256` is the SHA-256 of the ATLAS file's bytes;
 `upstream_sha256` is the SHA-256 of an upstream file's body: the text after Formal-Math's own leading

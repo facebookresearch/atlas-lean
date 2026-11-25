@@ -17,7 +17,7 @@ doi:10.1137/0222015.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Basic
 public import Mathlib.Order.Lattice.Nat
 public import MathlibExt.Computability.BinaryNatEncoding

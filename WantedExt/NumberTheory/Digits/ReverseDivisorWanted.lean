@@ -40,6 +40,7 @@ public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Set.Finite.Basic
 public import MathlibExt.NumberTheory.Digits.ReverseDivisibility
 public import MathlibExt.NumberTheory.Digits.ReverseDivisor
+public import MathlibExt.NumberTheory.Digits.ReverseDivisorCoprime
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorFourDigits
 public import MathlibExt.NumberTheory.Digits.ReverseDivisorQuotientFour
 
@@ -65,16 +66,6 @@ Integer Divides the Reverse of Any of Its Multiples?",
 Proposition 1. -/
 theorem_wanted hasPropertyPStar_of_dvd (n : ℕ) (hn : n ∣ 99) :
     HasPropertyPStar n
-
-/-- **Positive integers sharing a factor with $10$ lack property $P^*$.** If $n \ge 1$ is a
-natural number with $\gcd(n, 10) \ne 1$, then $n$ does not have the property $P^*$.
-
-Source: Mohamed Ayad and Rachid Bouchenna, "Which
-Integer Divides the Reverse of Any of Its Multiples?",
-Proposition 2. -/
-theorem_wanted not_hasPropertyPStar_of_not_coprime (n : ℕ)
-    (hn : 1 ≤ n) (h : ¬ Nat.Coprime n 10) :
-    ¬ HasPropertyPStar n
 
 /-- **Palindromes with property $P^*$.** Let $n \ge 1$ be a natural number that is a decimal
 palindrome, that is, whose decimal reversal equals $n$. If $n$ has the property $P^*$, then $n$

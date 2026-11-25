@@ -14,11 +14,9 @@ public import Mathlib.RingTheory.ClassGroup.Basic
 /-!
 # Coprime representatives of ideal classes
 
-A nonzero ideal in a Dedekind domain has a coprime multiplier making it principal, and every ideal
-class has an integral representative coprime to any prescribed nonzero ideal. Mathlib v4.36 also
-proves the second result, as `ClassGroup.exists_mk0_eq_and_isCoprime`; ATLAS's statement and proof,
-which take a nonzero ideal and give a nonzero representative, are kept as
-`MetaMathlibExt.ClassGroup.exists_mk0_eq_and_isCoprime`.
+A nonzero ideal in a Dedekind domain has a coprime multiplier making it principal. That every ideal
+class has an integral representative coprime to any prescribed nonzero ideal is Mathlib's
+`ClassGroup.exists_mk0_eq_and_isCoprime`.
 -/
 
 @[expose] public section
@@ -46,42 +44,3 @@ theorem Ideal.exists_isCoprime_mul_isPrincipal (I a : Ideal A) (hI : I ≠ ⊥)
     exact Ideal.isCoprime_iff_sup_eq.mpr (by rw [sup_comm]; exact h2)
   · rw [← hJ]
     exact ⟨⟨x, rfl⟩⟩
-
-namespace MetaMathlibExt
-
-/-- **Ideal classes have representatives coprime to a given ideal.** Let $A$ be a
-Dedekind domain and let $\mathfrak{a}$ be a nonzero ideal of $A$. Then every class $c$ in the
-ideal class group of $A$ is the class of some nonzero ideal $K$ of $A$ with
-$K + \mathfrak{a} = A$. -/
-theorem ClassGroup.exists_mk0_eq_and_isCoprime (c : ClassGroup A) (a : Ideal A)
-    (ha : a ≠ ⊥) :
-    ∃ (K : Ideal A) (hK : K ≠ ⊥),
-      ClassGroup.mk0 ⟨K, mem_nonZeroDivisors_iff_ne_zero.mpr hK⟩ = c ∧
-        IsCoprime K a := by
-  obtain ⟨⟨J, hJ_mem⟩, hJ_class⟩ := ClassGroup.mk0_surjective c⁻¹
-  have hJ_ne : J ≠ ⊥ := mem_nonZeroDivisors_iff_ne_zero.mp hJ_mem
-  obtain ⟨K, hK_coprime, hK_principal⟩ :=
-    Ideal.exists_isCoprime_mul_isPrincipal J a hJ_ne ha
-  by_cases hK_ne : K = ⊥
-  · have hsup := Ideal.isCoprime_iff_sup_eq.mp hK_coprime
-    have ha_top : a = ⊤ := by rw [← hsup, hK_ne, bot_sup_eq]
-    obtain ⟨⟨Kprime, hKprime_mem⟩, hKprime_class⟩ := ClassGroup.mk0_surjective c
-    have hKprime_ne : Kprime ≠ ⊥ := mem_nonZeroDivisors_iff_ne_zero.mp hKprime_mem
-    refine ⟨Kprime, hKprime_ne, hKprime_class, ?_⟩
-    exact Ideal.isCoprime_iff_sup_eq.mpr (by rw [ha_top, sup_top_eq])
-  · refine ⟨K, hK_ne, ?_, hK_coprime⟩
-    have hJK_ne : J * K ≠ ⊥ := mul_ne_zero hJ_ne hK_ne
-    have h1 :
-        ClassGroup.mk0 ⟨J * K, mem_nonZeroDivisors_iff_ne_zero.mpr hJK_ne⟩ =
-          1 := by
-      rwa [ClassGroup.mk0_eq_one_iff]
-    have h2 :
-        ClassGroup.mk0 ⟨J * K, mem_nonZeroDivisors_iff_ne_zero.mpr hJK_ne⟩ =
-          ClassGroup.mk0 ⟨J, hJ_mem⟩ *
-            ClassGroup.mk0 ⟨K, mem_nonZeroDivisors_iff_ne_zero.mpr hK_ne⟩ := by
-      rw [← MonoidHom.map_mul]
-      congr 1
-    rw [h2, hJ_class] at h1
-    exact (eq_of_inv_mul_eq_one h1).symm
-
-end MetaMathlibExt

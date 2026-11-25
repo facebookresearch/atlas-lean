@@ -25,7 +25,7 @@ jump from trivial to NP-complete", SIAM J. Comput. 22 (1993), 203-210, doi:10.11
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity

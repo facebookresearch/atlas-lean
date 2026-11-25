@@ -65,4 +65,51 @@ example (A : ℕ → ℝ) (h0 : A 0 = 1) (h1 : A 1 = 1)
   rw [div_lt_iff₀ (by positivity)]
   linarith
 
+-- At the first admissible index, the neighboring powered terms are 1, 16, and 3375.
+example :
+    let z (m : ℕ) := ((m : ℝ) * a005773Seq m) ^ m
+    z 1 = 1 ∧ z 2 = 16 ∧ z 3 = 3375 ∧ z 2 ^ 2 ≤ z 1 * z 3 := by
+  refine ⟨?_, ?_, ?_, a005773Recurrence_pow_logConvex a005773Seq rfl rfl a005773Seq_rec 2
+    (by decide)⟩ <;> norm_num [a005773Seq]
+
+-- The lower bound n = 2 is sharp for the differences of the weighted terms.
+-- Their first four values are 1, 3, 11, 37, so log-concavity fails at n = 1.
+example :
+    let v (m : ℕ) := (m + 1 : ℕ) * a005773Seq (m + 1) - m * a005773Seq m
+    v 1 ^ 2 < v 0 * v 2 ∧ v 1 * v 3 ≤ v 2 ^ 2 := by
+  refine ⟨?_, (a005773Recurrence_weighted_logConcave a005773Seq rfl rfl a005773Seq_rec 2
+    (by decide)).2.1⟩
+  norm_num [a005773Seq]
+
+-- Third differences fail log-convexity at n = 2. Check both claimed starting indices.
+example :
+    let z (m : ℕ) := a005773Seq (m + 3) - 3 * a005773Seq (m + 2) +
+      3 * a005773Seq (m + 1) - a005773Seq m
+    z 1 * z 3 < z 2 ^ 2 ∧ z 3 ^ 2 ≤ z 2 * z 4 ∧
+      z 3 / (Nat.factorial 3) * (z 5 / (Nat.factorial 5)) ≤ (z 4 / (Nat.factorial 4)) ^ 2 := by
+  have h := a005773Recurrence_thirdDiff_logConvex_logBalanced a005773Seq rfl rfl a005773Seq_rec
+  refine ⟨?_, h.1 3 (by decide), h.2 4 (by decide)⟩
+  norm_num [a005773Seq]
+
+-- First and second differences at the first admissible index: their neighboring values
+-- are 8, 22, 61 and 14, 39, 110, so both log-convexity and weighted log-concavity hold at
+-- `n = 4`.
+example :
+    let d₁ (m : ℕ) := a005773Seq (m + 1) - a005773Seq m
+    let d₂ (m : ℕ) := a005773Seq (m + 2) - 2 * a005773Seq (m + 1) + a005773Seq m
+    d₁ 4 ^ 2 ≤ d₁ 3 * d₁ 5 ∧
+      d₁ 3 / (Nat.factorial 3) * (d₁ 5 / (Nat.factorial 5)) ≤ (d₁ 4 / (Nat.factorial 4)) ^ 2 ∧
+      d₂ 4 ^ 2 ≤ d₂ 3 * d₂ 5 ∧
+      d₂ 3 / (Nat.factorial 3) * (d₂ 5 / (Nat.factorial 5)) ≤ (d₂ 4 / (Nat.factorial 4)) ^ 2 := by
+  have h := a005773Recurrence_diff_logBalanced a005773Seq rfl rfl a005773Seq_rec 4 (by decide)
+  obtain ⟨⟨h₁, hw₁⟩, h₂, hw₂⟩ := h
+  refine ⟨h₁, hw₁, h₂, hw₂⟩
+
+-- Log-convexity of the second differences fails at `n = 3`: their values there are
+-- 2, 14, 39, and `14 ^ 2 > 2 * 39`, so the bound `n ≥ 4` cannot be lowered for `Δ²A`.
+example :
+    let d₂ (m : ℕ) := a005773Seq (m + 2) - 2 * a005773Seq (m + 1) + a005773Seq m
+    ¬ d₂ 3 ^ 2 ≤ d₂ 2 * d₂ 4 := by
+  norm_num [a005773Seq]
+
 end MetaMathlibExt

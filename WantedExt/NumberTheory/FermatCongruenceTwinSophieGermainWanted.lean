@@ -15,6 +15,8 @@ public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.RingTheory.Coprime.Basic
 public import MathlibExt.NumberTheory.CarmichaelNumber
 public import MathlibExt.NumberTheory.FermatCongruenceCoprimeModuli
+public import MathlibExt.NumberTheory.SophieGermainChainFermatCongruence
+public import MathlibExt.NumberTheory.SophieGermainChainLength
 public import MathlibExt.NumberTheory.SophieGermainPrime
 
 /-!
@@ -73,36 +75,6 @@ public theorem_wanted isSophieGermainPrime_iff_forall_fermat_congruence {p : ℕ
         a ^ (2 * p) ≡ (2 * p + 1) * a ^ (p + 1) - 2 * p [ZMOD (p : ℤ) * (2 * p + 1)]) ∧
       (Nat.IsSophieGermainPrime p ↔ ∀ a : ℤ, IsCoprime a ((p : ℤ) * (2 * p + 1)) →
         (2 * p + 1) * a ^ (p - 1) ≡ p * a ^ (2 * p) + p + 1 [ZMOD (p : ℤ) * (2 * p + 1)])
-
-/-- **Fermat-type congruences along a Sophie Germain prime chain.** Let $p$ and $j$ be natural
-numbers and put $q_{i+1} = 2^i (p + 1) - 1$ for $i \ge 0$, so that $q_1 = p$ and
-$q_{i+2} = 2q_{i+1} + 1$. Suppose $q_1, \dots, q_{j+2}$ are all prime, and write $q = q_{j+1}$
-and $q' = q_{j+2} = 2q + 1$. Then for every integer $a$ coprime to $qq'$,
-$a^{q'-1} \equiv q'\,a^{q+1} - 2q \pmod{qq'}$ and
-$q'\,a^{q-1} \equiv q\,a^{q'-1} + q + 1 \pmod{qq'}$.
-
-Source: Takashi Agoh, *A Note on Fermat's Congruence*, INTEGERS 25 (2025), Article A31,
-Corollary 3.4, Congruences (3.8) (`integers-2025-A31-cor-3-4`). -/
-public theorem_wanted sophieGermainChain_fermat_congruence {p j : ℕ}
-    (hchain : ∀ i ≤ j + 1, (2 ^ i * (p + 1) - 1).Prime) (a : ℤ) :
-    let q : ℕ := 2 ^ j * (p + 1) - 1
-    let q' : ℕ := 2 ^ (j + 1) * (p + 1) - 1
-    IsCoprime a ((q : ℤ) * q') →
-      a ^ (q' - 1) ≡ q' * a ^ (q + 1) - 2 * q [ZMOD (q : ℤ) * q'] ∧
-        q' * a ^ (q - 1) ≡ q * a ^ (q' - 1) + q + 1 [ZMOD (q : ℤ) * q']
-
-/-- **Length of a Sophie Germain prime chain.** Let $p$ be an odd prime and let
-$\mathrm{ord}_p(2)$ be the multiplicative order of $2$ modulo $p$. Then there is some
-$j \le \mathrm{ord}_p(2)$ such that $2^j (p + 1) - 1$ is not prime. Thus the Sophie Germain prime
-chain $q_1 = p$, $q_{i+1} = 2q_i + 1 = 2^i (p + 1) - 1$ begins with at most $\mathrm{ord}_p(2)$
-consecutive primes.
-
-Source: Takashi Agoh, *A Note on Fermat's Congruence*, INTEGERS 25 (2025), Article A31,
-Theorem 3.5, quoting T. Agoh, Tatra Mt. Math. Publ. 20 (2000), Proposition 3.1
-(`integers-2025-A31-thm-3-5`). -/
-public theorem_wanted sophieGermainChain_length_le_orderOf_two {p : ℕ} (hp : p.Prime)
-    (hp2 : p ≠ 2) :
-    ∃ j ≤ orderOf (2 : ZMod p), ¬(2 ^ j * (p + 1) - 1).Prime
 
 end
 

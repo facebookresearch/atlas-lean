@@ -9,16 +9,18 @@ Because $L/K$ is Galois, whether $a$ is a local norm at $v$ does not depend on t
 above $v$. The cyclic hypothesis cannot be dropped: Milne's Remark VIII.3.2 recalls that $5^2$ is a
 local norm everywhere from $\mathbb{Q}(\sqrt{13}, \sqrt{17})$ but not a global norm.
 
-Milne's proof: for a cyclic extension the [Tate cohomology group](idele-class-tate-cohomology-of-cyclic-extension.md)
+Milne's proof: for a cyclic extension the [Tate cohomology group](cohomology-of-idele-classes/cyclic-extension-tate-cohomology.md)
 $\hat H^{-1}(G, C_L)$ of the idèle class group vanishes, so the long exact cohomology sequence of
 $1 \to L^\times \to \mathbb{I}_L \to C_L \to 1$ shows that
 $\hat H^0(G, L^\times) \to \hat H^0(G, \mathbb{I}_L)$ is injective. This map is
-$K^\times / N_{L/K}(L^\times) \to \bigoplus_v K_v^\times / N_{L_w/K_v}(L_w^\times)$ (Milne,
+$K^\times / N_{L/K}(L^\times) \to \bigoplus_v K_v^\times / N_{L_w/K_v}(L_w^\times)$, by the
+[cohomology of the idèle group](cohomology-of-idele-classes/cohomology-of-the-idele-group.md) (Milne,
 Proposition VII.2.5).
 
 ## Proof depends on
 
-- [Tate cohomology of the idèle class group of a cyclic extension](idele-class-tate-cohomology-of-cyclic-extension.md)
+- [Tate cohomology of the idèle class group of a cyclic extension](cohomology-of-idele-classes/cyclic-extension-tate-cohomology.md), for $\hat H^{-1}(G, C_L) = 0$
+- [Cohomology of the idèle group of a Galois extension](cohomology-of-idele-classes/cohomology-of-the-idele-group.md), for $\hat H^0(G, \mathbb{I}_L) \cong \bigoplus_v K_v^\times / N_{L_w/K_v}(L_w^\times)$
 
 ## Sources
 
