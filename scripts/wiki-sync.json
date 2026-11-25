@@ -14846,6 +14846,7 @@
 "Cslib.Algorithms.Lean.Online.Paging.lruStep_take_of_not_mem": "3db184486bdebdf6",
 "Cslib.Algorithms.Lean.Online.Paging.lruTrace": "d830bc26f14b1cd0",
 "Cslib.Algorithms.Lean.Online.Paging.lruTrace_spec": "1c085477e3bc9cfe",
+"Cslib.Algorithms.Lean.Online.Paging.lru_inclusion": "5b066aa231d2b673",
 "Cslib.Algorithms.Lean.Online.Paging.lru_tr": "9cebc5fae3219075",
 "Cslib.Algorithms.Lean.Online.Paging.mem_of_full": "e6d676b5bb731370",
 "Cslib.Algorithms.Lean.Online.Paging.misses_adversary": "ea07a08cb4ee3049",

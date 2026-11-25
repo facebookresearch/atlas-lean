@@ -1180,6 +1180,7 @@
   "CSLibExt/Algorithms/Lean/Online/BipartiteMatching": {"to": "ComputerScience/online-algorithms", "title": "Online bipartite matching"},
   "CSLibExt/Algorithms/Lean/Online/FifoPaging": {"to": "ComputerScience/online-algorithms", "title": "Competitive paging"},
   "CSLibExt/Algorithms/Lean/Online/ListUpdate": {"to": "ComputerScience/online-algorithms", "title": "List update problem"},
+  "CSLibExt/Algorithms/Lean/Online/LruPagingInclusion": {"to": "ComputerScience/computer-systems", "title": "Os resource management"},
   "CSLibExt/Algorithms/Lean/Online/MatchingLowerBound": {"to": "ComputerScience/online-algorithms", "title": "Online bipartite matching"},
   "CSLibExt/Algorithms/Lean/Online/Paging": {"to": "ComputerScience/online-algorithms", "title": "Competitive paging"},
   "CSLibExt/Algorithms/Lean/Online/PagingLowerBound": {"to": "ComputerScience/online-algorithms", "title": "Competitive paging"},
