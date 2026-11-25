@@ -46,7 +46,8 @@ namespace WantedExt.Biology.StatisticalGenetics.SpearmanKarberWanted
 open Finset
 
 /-- The Spearman–Kärber value `∑ᵢ (pᵢ₊₁ - pᵢ) (xᵢ + xᵢ₊₁) / 2` for doses `xᵢ = x₀ + i d`,
-`i = 0, …, k`, and response proportions `p`. -/
+`i = 0, …, k`, and response proportions `p`; for nondecreasing `p` with `p₀ = 0` and `p_k = 1` it
+is the mean of the distribution with mass `pᵢ₊₁ - pᵢ` at `(xᵢ + xᵢ₊₁) / 2`. -/
 noncomputable def spearmanKarber (x₀ d : ℝ) {k : ℕ} (p : Fin (k + 1) → ℝ) : ℝ :=
   ∑ i : Fin k, (p i.succ - p i.castSucc) *
     ((x₀ + (i : ℕ) * d) + (x₀ + ((i : ℕ) + 1) * d)) / 2
@@ -78,7 +79,9 @@ public theorem_wanted spearmanKarber_eq (x₀ d : ℝ) (k : ℕ) (hk : 1 ≤ k) 
         p (Fin.last k) / 2)
 
 /-- **Unbiasedness and exact variance** (Irwin and Cheeseman 1939, p. 574; derived): let `d > 0`,
-`n ≥ 1`, and let the true response probabilities satisfy `0 ≤ Pᵢ ≤ 1`, `P₀ = 0` and `P_k = 1`.
+`n ≥ 1`, and let the true response probabilities satisfy `0 ≤ Pᵢ ≤ 1`, `P₀ = 0`, `P_k = 1`, and
+be nondecreasing in dose (`Pᵢ ≤ Pᵢ₊₁` for `i < k`), so that the interpolated tolerance
+distribution, with mass `Pᵢ₊₁ - Pᵢ ≥ 0` at `(xᵢ + xᵢ₊₁) / 2`, is a probability distribution.
 For independent binomial(`n`, `Pᵢ`) counts at the doses `xᵢ = x₀ + i d`, the Spearman–Kärber
 estimator `m` has expectation equal to the mean of the interpolated tolerance distribution,
 `E[m] = ∑ᵢ (Pᵢ₊₁ - Pᵢ) (xᵢ + xᵢ₊₁) / 2`, and variance `E[(m - E[m])²] = d² ∑ᵢ Pᵢ (1 - Pᵢ) / n`.
@@ -86,7 +89,7 @@ estimator `m` has expectation equal to the mean of the interpolated tolerance di
 Source: Irwin and Cheeseman (1939), p. 574. -/
 public theorem_wanted expect_variance (x₀ d : ℝ) (hd : 0 < d) (k n : ℕ) (hn : 1 ≤ n)
     (P : Fin (k + 1) → ℝ) (hP : ∀ i, 0 ≤ P i ∧ P i ≤ 1) (h₀ : P 0 = 0)
-    (hk₁ : P (Fin.last k) = 1) :
+    (hk₁ : P (Fin.last k) = 1) (hmono : ∀ i : Fin k, P i.castSucc ≤ P i.succ) :
     expect n P (estimator x₀ d n) = spearmanKarber x₀ d P ∧
       expect n P (fun r => (estimator x₀ d n r - spearmanKarber x₀ d P) ^ 2) =
         d ^ 2 * (∑ i, P i * (1 - P i)) / n

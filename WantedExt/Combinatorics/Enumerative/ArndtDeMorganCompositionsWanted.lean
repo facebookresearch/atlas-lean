@@ -29,33 +29,13 @@ module
 import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.Enumerative.ArndtU
 public import MathlibExt.Combinatorics.Enumerative.ArndtVFixed
-public import MathlibExt.Combinatorics.Enumerative.KArndtRecurrence
+public import MathlibExt.Combinatorics.Enumerative.ArndtNegativeEven
 public import MathlibExt.NumberTheory.PadovanSequence
 public import WantedExt.Combinatorics.Enumerative.ArndtCompositionsGeneratingFunctionsWanted
 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Compositions into odd or small even parts.** For natural numbers $k$ and $n$, $c^{2k}_o(n)$
-is the number of compositions of $n$, with any number of parts, in which every part is odd or at
-most $2k$. For $k = 0$ these are De Morgan's compositions of $n$ into odd parts.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Definitions 2 and 5. -/
-def oddOrSmallEvenCompositionCount (k n : ℕ) : ℕ :=
-  ∑ m ∈ Finset.range (n + 1), ((Finset.Nat.antidiagonalTuple m n).filter fun c =>
-    ∀ i, 0 < c i ∧ (Odd (c i) ∨ c i ≤ 2 * k)).card
-
-/-- **Compositions of five into odd or small even parts.** Let $c^{2k}_o(n)$ be the number of
-compositions of $n$ in which every part is odd or at most $2k$. Then $c^0_o(5) = 5$ and
-$c^2_o(5) = 14$.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Table 3 and the discussion after Theorem 5. -/
-theorem oddOrSmallEvenCompositionCount_five :
-    oddOrSmallEvenCompositionCount 0 5 = 5 ∧ oddOrSmallEvenCompositionCount 1 5 = 14 := by
-  decide
 
 /-- **Compositions into even or small odd parts.** For natural numbers $k$ and $n$,
 $c^{2k+1}_e(n)$ is the number of compositions of $n$ (sequences of positive integers of any
@@ -111,17 +91,6 @@ public theorem_wanted arndtU_fixed_iff_and_count :
     ∀ n : ℕ, 1 ≤ n →
       (Finset.univ.filter fun c : Composition n => arndtU c.blocks = c.blocks).card =
         shiftedPadovanSequence (n - 1)
-
-/-- **Generalized Arndt compositions with negative even shift.** For every natural number
-$j \ge 1$ and every natural number $n$, the number $a(n, -2j)$ of compositions
-$(c_1, \dots, c_m)$ of $n$ with $c_{2i-1} > c_{2i} - 2j$ whenever $2i \le m$ equals the number
-$c^{2j}_o(n)$ of compositions of $n$ in which every part is odd or at most $2j$. This includes
-$n = 0$.
-
-Source: Brian Hopkins and Aram Tangboonduangjit, *Arndt and De Morgan Compositions*, INTEGERS 26
-(2026), Article A64, Theorem 5 (`integers-2026-A64-thm-5`). -/
-public theorem_wanted kArndtTotalCount_neg_even (j n : ℕ) (hj : 1 ≤ j) :
-    kArndtTotalCount (-(2 * j : ℤ)) n = oddOrSmallEvenCompositionCount j n
 
 /-- **Generalized Arndt compositions with negative odd shift.** For all natural numbers $j$ and
 $n$, the number $a(n, -2j - 1)$ of compositions $(c_1, \dots, c_m)$ of $n$ with

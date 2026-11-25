@@ -11,20 +11,22 @@ LICENSE file in the root directory of this source tree.
 
 Draw an independent sample of size `N` from a distribution `p` on finitely many species, and let
 `n_r(N)` be the number of species seen exactly `r` times. Good (1953), crediting Turing, showed
-that the total population frequency of the species seen `r` times is about `(r + 1) n_{r+1} / N`,
-and in particular that the proportion of the population represented by the sample is about
-`1 - n₁ / N` (eq. 8). The exact form behind these approximations compares a sample of size `N`
-with one of size `N + 1`: the expected missing mass satisfies `E[M₀(N)] = E[n₁(N + 1)] / (N + 1)`,
-and, more generally, the expected total probability of the species seen exactly `r` times in a
-sample of size `N` is `(r + 1) E[n_{r+1}(N + 1)] / (N + 1)`.
+that the total population frequency of the species seen `r` times is about `(r + 1) n_{r+1} / N`
+(eq. 6), and in particular that the chance that the next individual belongs to a new species is
+about `n₁ / N` (eq. 9). These approximations come from Good's exact relation (eq. 15), which
+compares a sample of size `N` with one of size `N + 1`:
+`E_N(q_r) = (r + 1) E_{N+1}(n_{r+1}) / ((N + 1) E_N(n_r))` for the population frequency `q_r` of
+a species seen `r` times. Multiplied by `E_N(n_r)` (eq. 11) it says that the expected total
+probability of the species seen exactly `r` times in a sample of size `N` is
+`(r + 1) E[n_{r+1}(N + 1)] / (N + 1)`; for `r = 0`, the expected missing mass is
+`E[M₀(N)] = E[n₁(N + 1)] / (N + 1)`.
 
-Recorded here: the two exact identities for samples drawn independently from `p`. The rendered
-equations of Good (1953) were not available locally (the text read is an OCR copy with garbled
-displays); the exact identities are derived from the model, and Good's approximate forms
-(eq. 2 and eq. 8) are the readable source statements.
+Recorded here: the two exact identities, in total-mass form, for samples drawn independently
+from `p`. The text read locally is an OCR copy whose displayed equations are partly garbled; the
+equation numbers follow Good (1953), and the total-mass form is derived from eq. 15 and eq. 11.
 
 Sources: I. J. Good, "The population frequencies of species and the estimation of population
-parameters", Biometrika 40 (1953) 237–264, doi:10.1093/biomet/40.3-4.237, eqs. 2 and 8.
+parameters", Biometrika 40 (1953) 237–264, doi:10.1093/biomet/40.3-4.237, eqs. 6, 9, 11 and 15.
 -/
 module
 
@@ -62,25 +64,26 @@ noncomputable def massSeen {α : Type*} [Fintype α] [DecidableEq α] {N : ℕ} 
 noncomputable def expect {α : Type*} [Fintype α] (N : ℕ) (p : α → ℝ) (f : (Fin N → α) → ℝ) : ℝ :=
   ∑ ω : Fin N → α, sampleProb p ω * f ω
 
-/-- **The Good–Turing identity for the missing mass** (Good 1953, exact form of eq. 8; derived):
-let `p` be a probability distribution on a finite set of species (every `p(a) ≥ 0`,
-`∑ p(a) = 1`) and `N` a sample size. Then the expected total probability of the species not seen
-in a sample of size `N` equals the expected number of species seen exactly once in a sample of
-size `N + 1`, divided by `N + 1`: `E[M₀(N)] = E[n₁(N + 1)] / (N + 1)`.
+/-- **The Good–Turing identity for the missing mass** (Good 1953, eq. 15 with `r = 0`, in
+total-mass form; its approximation is eq. 9): let `p` be a probability distribution on a finite
+set of species (every `p(a) ≥ 0`, `∑ p(a) = 1`) and `N` a sample size. Then the expected total
+probability of the species not seen in a sample of size `N` equals the expected number of species
+seen exactly once in a sample of size `N + 1`, divided by `N + 1`:
+`E[M₀(N)] = E[n₁(N + 1)] / (N + 1)`.
 
-Source: Good (1953), eq. 8. -/
+Source: Good (1953), eqs. 15 and 9. -/
 public theorem_wanted expect_missingMass {α : Type*} [Fintype α] [DecidableEq α] (p : α → ℝ)
     (hp : ∀ a, 0 ≤ p a) (hp₁ : ∑ a, p a = 1) (N : ℕ) :
     expect N p (fun ω => massSeen p ω 0) =
       expect (N + 1) p (fun ω => (freqOfFreq ω 1 : ℝ)) / (N + 1)
 
-/-- **The Good–Turing identity for species seen `r` times** (Good 1953, exact form of eq. 2;
-derived): let `p` be a probability distribution on a finite set of species (every `p(a) ≥ 0`,
-`∑ p(a) = 1`), `N` a sample size and `r` a natural number. Then the expected total probability of
-the species seen exactly `r` times in a sample of size `N` equals
-`(r + 1) E[n_{r+1}(N + 1)] / (N + 1)`.
+/-- **The Good–Turing identity for species seen `r` times** (Good 1953, eq. 15 multiplied by
+eq. 11, in total-mass form; its approximation is eq. 6): let `p` be a probability distribution
+on a finite set of species (every `p(a) ≥ 0`, `∑ p(a) = 1`), `N` a sample size and `r` a natural
+number. Then the expected total probability of the species seen exactly `r` times in a sample of
+size `N` equals `(r + 1) E[n_{r+1}(N + 1)] / (N + 1)`.
 
-Source: Good (1953), eq. 2. -/
+Source: Good (1953), eqs. 15, 11 and 6. -/
 public theorem_wanted expect_massSeen {α : Type*} [Fintype α] [DecidableEq α] (p : α → ℝ)
     (hp : ∀ a, 0 ≤ p a) (hp₁ : ∑ a, p a = 1) (N r : ℕ) :
     expect N p (fun ω => massSeen p ω r) =
