@@ -278,3 +278,6 @@ Topics added since this subject's fields were last revised.
 - [Equivalence](equivalence/README.md)
 - [Finite Locally Free](finite-locally-free/README.md)
 - [Hopf Spec](hopf-spec/README.md)
+- [Faltings Height](faltings-height/README.md)
+- [Gaudron Remond Isogeny](gaudron-remond-isogeny/README.md)
+- [Javanpeykar Belyi](javanpeykar-belyi/README.md)
