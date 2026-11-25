@@ -7,6 +7,6 @@ vector $x \in \mathbb{R}^{\kappa}$, the photon-count law at $x$ is the product m
 $$P_x = \bigotimes_{j \in \iota} \mathrm{Poisson}\bigl(\lambda_j(x)\bigr)$$
 
 on count vectors $N \in \mathbb{N}^{\iota}$, where $\lambda_j(x) = I_{0,j}\, e^{-(Ax)_j}$ is the
-[transmitted rate](transmitted-rate.md) of ray $j$. In the model it describes independent counts in
-the different rays, the count of ray $j$ being Poisson with rate $\lambda_j(x)$; the independence is
-an assumption of the model, built into the product.
+[transmitted rate](transmitted-rate.md) of ray $j$. The product form is the model's assumption that
+the counts in the different rays are independent, with the Poisson factor of rate $\lambda_j(x)$ for
+ray $j$.

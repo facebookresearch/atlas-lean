@@ -1,6 +1,6 @@
 # Effective axial stiffness EA / L of a bar
 
-For an axial rigidity $EA$, a force, and a length $L$, the effective axial stiffness of the bar is
+For an axial rigidity $EA$ (a force) and a length $L$, the effective axial stiffness of the bar is
 
 $$k = \frac{EA}{L},$$
 

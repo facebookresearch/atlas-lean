@@ -11,5 +11,4 @@ $$
 
 $p$ is a probability distribution on the scenarios, and every scenario voltage, including that of a
 scenario of weight zero, lies in $[a, b]$. The real masses of a probability mass function qualify as
-weights ([real masses form a finite distribution](to-real-weights-is-distribution.md)). For $a > b$
-the condition never holds, since weights summing to one force $\Omega$ to be nonempty.
+weights ([real masses form a finite distribution](to-real-weights-is-distribution.md)).

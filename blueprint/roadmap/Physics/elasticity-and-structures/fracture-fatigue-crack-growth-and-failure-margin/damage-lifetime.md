@@ -7,5 +7,8 @@ the component is the hitting time of $d - D$ into $[0, \infty)$ from time $0$:
 $$\tau(\omega) = \inf\{t \ge 0 : d(\omega, t) \ge D(\omega)\} \in [0, \infty],$$
 
 with $\tau(\omega) = \infty$ when the set is empty, that is, when the threshold is never reached.
-For a general path the infimum need not be attained; for a
-[continuous nondecreasing path](lt-damage-lifetime-iff.md) it is.
+The definition does not require the infimum to be attained. For a continuous nondecreasing path
+$t \mapsto d(\omega, t)$,
+[$t < \tau(\omega)$ exactly when $d(\omega, t) < D(\omega)$](lt-damage-lifetime-iff.md), and
+[$\tau(\omega) \le t$ exactly when $d(\omega, t) \ge D(\omega)$](damage-lifetime-le-iff.md), for
+every time $t \ge 0$.

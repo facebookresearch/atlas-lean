@@ -8,7 +8,7 @@ with shear factor $c$ when
 - for all real $\sigma$ and $\tau$, $\Phi$ takes the value $\sqrt{\sigma^2 + c \tau^2}$ on the
   [bending–torsion state](bending-torsion-state.md) $S(\sigma, \tau)$.
 
-The von Mises (distortion-energy) equivalent stress has this form with $c = 3$, the Tresca
-(maximum-shear) equivalent stress with $c = 4$. The factor must be positive: for $c \le 0$ a pure
-torque ($\sigma = 0$) would get the value $\sqrt{c \tau^2} = 0$, the square root of a negative
-number being taken as $0$.
+In the physical reading, $c = 3$ is the shear factor of the von Mises (distortion-energy) criterion
+and $c = 4$ that of the Tresca (maximum-shear) criterion. The factor must be positive: for $c \le 0$
+a pure torque ($\sigma = 0$) would get the value $\sqrt{c \tau^2} = 0$, the square root of a
+negative number being taken as $0$.

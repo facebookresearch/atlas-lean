@@ -34,7 +34,7 @@ $x \mapsto Ax$ is.
 
 ## A single ray through two cells
 
-- [Rank-deficient single-ray design matrix for two cells](ct-row.md)
+- [Single-ray design matrix with both entries 1 for two cells](ct-row.md)
 - [Two distinct nonnegative attenuations with the same measurement](ct-nullspace-pair.md)
 - [Attenuations $(1, 0)$ and $(0, 1)$ give the same transmitted rate](ct-equal-rates.md)
 - [Attenuations $(1, 0)$ and $(0, 1)$ give the same photon-count law](ct-photon-law-pair.md)

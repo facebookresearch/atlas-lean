@@ -10,5 +10,5 @@ The exponential factor is positive, so taking it as a nonnegative real truncates
 [as a real number](transmitted-rate-coe.md) the rate is $I_{0,j} e^{-(Ax)_j}$. The rate is $0$ when
 $I_{0,j} = 0$. When there are finitely many rays, it is the rate of the Poisson law of ray $j$ in
 the [photon-count law](photon-law.md). In the CT reading, $A_{jk} \ge 0$ is the length of ray $j$ in
-cell $k$ and $x_k \ge 0$ the attenuation coefficient of cell $k$, so that
-$\lambda_j(x) \le I_{0,j}$; the definition takes any real $A$ and $x$.
+cell $k$ and $x_k \ge 0$ the attenuation coefficient of cell $k$; the definition takes any real $A$
+and $x$.

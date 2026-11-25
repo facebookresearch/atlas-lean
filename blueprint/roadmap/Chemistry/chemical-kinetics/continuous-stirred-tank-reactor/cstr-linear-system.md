@@ -6,7 +6,8 @@ stirred-tank linear system is the one-state
 
 $$A = -\Big(\frac{Q}{V} + k\Big), \qquad b = \frac{Q}{V}, \qquad c = C, \qquad d = 0,$$
 
-so that $\dot x = A x + b u$ and $y = C x$, with no direct feedthrough. In the physical reading
-$V > 0$, $Q > 0$ and $k \ge 0$, the state $x$ is the deviation of the concentration from a steady
-state and the input $u$ the deviation of the inlet concentration. The definition takes all real
-inputs; with the convention $a/0 = 0$, $V = 0$ gives $A = -k$ and $b = 0$.
+so that its [state field](cstr-linear-system-field-eq.md) is $-(Q/V + k)\, x + (Q/V)\, u$ and its
+[output](cstr-linear-system-output-eq.md) is $C x$, with no direct feedthrough. In the physical
+reading $V > 0$, $Q > 0$ and $k \ge 0$, the state $x$ is the deviation of the concentration from a
+steady state and the input $u$ the deviation of the inlet concentration. The definition takes all
+real inputs; with the convention $a/0 = 0$, $V = 0$ gives $A = -k$ and $b = 0$.

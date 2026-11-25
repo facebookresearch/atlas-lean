@@ -5,5 +5,5 @@ For an end force $F$ and a stiffness $k$, the compliance is the work of the end 
 
 $$J(F, k) = F\, u_{\mathrm{tip}} = F \cdot \frac{F}{k}.$$
 
-It equals $F^2 / k$ for every $k$; at $k = 0$ it is $0$ by the convention $x / 0 = 0$. In the
-physical reading $k > 0$, and then $J(F, k) \ge 0$.
+It [equals $F^2 / k$](compliance-eq-sq-div.md) for every $k$; at $k = 0$ it is $0$ by the convention
+$x / 0 = 0$. In the physical reading $k > 0$.
