@@ -229,10 +229,9 @@ variable {F}
 set_option linter.dupNamespace false in
 /-- **Principal adele map.** Let $F$ be a function field over a field $K$, that is, a finite
 extension of the rational function field $K(t)$. The principal adele map is a ring homomorphism
-from $F$ to the adele ring $\mathcal{A}_F$ of $F/K$. It is meant to be the diagonal embedding
-sending $x \in F$ to the adele whose coordinate at every place $P$ of $F/K$ is $x$, which is
-well defined since $x$ has only finitely many poles; this coordinate formula is stated
-separately.
+from $F$ to the adele ring $\mathcal{A}_F$ of $F/K$. It is the diagonal embedding sending $x \in F$
+to the adele whose coordinate at every place $P$ of $F/K$ is $x$. This is well defined since $x$
+has only finitely many poles. See `Adele.principal_apply` for the coordinate formula.
 
 Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
 def Adele.principal [BundledFunctionField K F] : F →+* Adele K F where
@@ -241,6 +240,15 @@ def Adele.principal [BundledFunctionField K F] : F →+* Adele K F where
   map_mul' _ _ := rfl
   map_zero' := rfl
   map_add' _ _ := rfl
+
+set_option linter.dupNamespace false in
+/-- **Coordinates of a principal adele.** Let $F$ be a function field over a field $K$, that is,
+a finite extension of the rational function field $K(t)$. For every $x \in F$ and every place
+$P$ of $F/K$, the coordinate at $P$ of the principal adele of $x$ is $x$.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
+theorem Adele.principal_apply [BundledFunctionField K F] (x : F)
+    (v : Place K F) : (Adele.principal K x) v = x := rfl
 
 end AlgebraicGeometry.Faltings
 

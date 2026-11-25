@@ -63,19 +63,6 @@ variable (K F : Type*) [Field K] [Field F] [Algebra K F]
 open scoped RestrictedProduct
 open RestrictedProduct
 
-variable {F}
-
-/- The coordinates of a principal adele are constant. -/
-/-- **Coordinates of a principal adele.** Let $F$ be a function field over a field $K$, that is,
-a finite extension of the rational function field $K(t)$. For every $x \in F$ and every place
-$P$ of $F/K$, the coordinate at $P$ of the principal adele of $x$ is $x$.
-
-Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
-public theorem_wanted Adele.principal_apply [BundledFunctionField K F] (x : F)
-    (v : Place K F) : (Adele.principal K x) v = x
-
-variable (F)
-
 /-- The `F`-algebra structure on the adeles, specified by `instAlgebraAdele_algebraMap`
 below to be the one whose algebra map is the principal embedding.
 Source: see manifest Via leanprover/lean-eval@38361be, problem `faltings`. -/
