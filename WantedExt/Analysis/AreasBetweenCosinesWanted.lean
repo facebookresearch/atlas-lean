@@ -44,20 +44,6 @@ Journal of Integer Sequences 28 (2025), Article 25.2.3, Eq. (1). -/
 public theorem cosPowArea_one_right (n : ℕ) : cosPowArea n 1 = 0 := by
   simp [cosPowArea]
 
-/-- **Area between $\cos^n x$ and $\cos^n(kx)$ in the limit, odd $n$.** Let $n$ be an odd natural
-number. As $k \to \infty$ through the natural numbers, the area
-$\int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$ between $\cos^n x$ and $\cos^n(kx)$ on $[0, \pi]$
-converges to
-$$\frac{8}{2^{n-1}\pi} \sum_{j=0}^{(n-1)/2} \frac{\binom{n}{j}}{(n-2j)^2}.$$
-
-Source: Muhammad Adam Dombrowski and Gregory Dresden, *Areas Between Cosines*,
-Journal of Integer Sequences 28 (2025), Article 25.2.3, Theorem 1
-(`jis-2025-25.2.3-thm-1`). -/
-public theorem_wanted tendsto_cosPowArea_of_odd {n : ℕ} (hn : Odd n) :
-    Tendsto (fun k => cosPowArea n k) atTop
-      (𝓝 (8 / (2 ^ (n - 1) * π) *
-        ∑ j ∈ Finset.range ((n - 1) / 2 + 1), (n.choose j : ℝ) / ((n : ℝ) - 2 * j) ^ 2))
-
 /-- **Limiting area between even cosine powers.** For natural numbers $n$ and $k$, let
 $A_n(k) = \int_0^\pi |\cos^n x - \cos^n(kx)|\,dx$. As $k \to \infty$ through the natural numbers:
 if $n \equiv 2 \pmod 4$, then
