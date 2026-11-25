@@ -53,17 +53,19 @@ namespace MathlibExt.Economics.Macro.OverlappingGenerations
 /-- Wage per young worker in the specified OLG economy: the marginal product of
 labour of the Cobb-Douglas technology `F(K, L) = A * K ^ (1/2) * L ^ (1/2)`,
 so in per-worker terms `w = (1 - 1/2) * A * sqrt k = A / 2 * sqrt k`, where `k`
-is capital per worker. -/
+is capital per worker. It is defined for every real `k`: for `k < 0` the convention `sqrt k = 0`
+makes it `0`; the intended domain is `k ≥ 0`. -/
 noncomputable def olgWage (A k : ℝ) : ℝ := A / 2 * Real.sqrt k
 
 /-- Savings per young worker under log utility: the optimal savings rule
-`β / (1 + β) * w` proved in `logUtility_optimalSavings` below. -/
+`β / (1 + β) * w` proved in `logUtility_optimalSavings` below. It is defined for every real
+`β`: for `β = -1` the convention `x / 0 = 0` makes it `0`; the intended domain is `β > 0`. -/
 noncomputable def olgSavings (β w : ℝ) : ℝ := β / (1 + β) * w
 
-/-- Capital-market factor: with population growth `n` (`N[t+1] = (1+n) * N[t]`),
-full depreciation (two-period lives: capital lasts one generation), and capital
-market clearing `K[t+1] = N[t] * s[t]`, capital per worker obeys
-`k[t+1] = olgCapitalFactor A β n * sqrt (k[t])`. -/
+/-- Capital-market factor: with population growth `n` (`N[t+1] = (1+n) * N[t]`), full depreciation
+(two-period lives: capital lasts one generation), and capital market clearing
+`K[t+1] = N[t] * s[t]`, capital per worker obeys `k[t+1] = olgCapitalFactor A β n * sqrt (k[t])`.
+With the convention `x / 0 = 0`, `C = 0` when `(1 + β) * (1 + n) = 0`. -/
 noncomputable def olgCapitalFactor (A β n : ℝ) : ℝ :=
   β * A / (2 * (1 + β) * (1 + n))
 
@@ -155,7 +157,8 @@ theorem logUtility_optimalSavings {w β R : ℝ} (hw : 0 < w) (hβ : 0 < β) (hR
 
 /-- **OLG capital-market recurrence (MA08.T03).** In the specified two-period
 OLG economy (log utility, Cobb-Douglas exponent `1/2`, full depreciation,
-population growth `n`, capital market clearing), capital per worker satisfies
+population growth `n`, capital market clearing), with `1 + n ≠ 0` and `1 + β ≠ 0`, if
+`k[t+1] = olgSavings β (olgWage A (k[t])) / (1 + n)` for all `t`, capital per worker satisfies
 `k[t+1] = olgCapitalFactor A β n * sqrt (k[t])`. -/
 theorem olg_capitalRecurrence {A β n : ℝ} (hn : 1 + n ≠ 0) (hβ : 1 + β ≠ 0)
     {k : ℕ → ℝ}

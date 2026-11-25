@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.CondensedMatter.IsingModel.Sharpness.Switching
+import Mathlib.Algebra.BigOperators.Ring.Nat
 
 /-!
 # The four-source disconnection dichotomy
@@ -67,7 +68,7 @@ lemma even_compOddVertices (ends : ι → Sym2 V) (m : Finset ι)
     (hnd : ∀ i ∈ m, ¬ (ends i).IsDiag) (u : V) :
     Even (compOddVertices ends m u).card := by
   have hsum := sum_deg_comp_even ends m hnd u
-  rw [even_sum_iff_even_count] at hsum
+  rw [Finset.even_sum_iff_even_card_odd] at hsum
   exact hsum
 
 omit [DecidableEq ι] [Fintype ι] in

@@ -17,6 +17,9 @@ import Mathlib.MeasureTheory.Function.LocallyIntegrable
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.Analysis.SpecialFunctions.Pow.Integral
 import Mathlib.Probability.Moments.Variance
+-- `Measure.pi` is `@[no_expose]` at this Mathlib pin, and `pi_gaussian_le_volume` must unfold it
+-- to its outer measure.
+import all Mathlib.MeasureTheory.Constructions.Pi
 
 /-!
 # Stein's lemma, Stein's unbiased risk estimate and the James–Stein estimator
@@ -57,8 +60,8 @@ covered.
 * `jamesSteinGrandMean`, `integral_jamesSteinGrandMean_risk_lt`: shrinkage towards the grand mean
   dominates `X` for `N ≥ 4` and any known `σ² > 0` (Efron 2021, Theorem 1, credited there to James
   and Stein 1961).
-* `jamesSteinPlus`: the positive-part estimator (its improvement over James–Stein is recorded in
-  `WantedExt.Probability.JamesSteinWanted`).
+* `jamesSteinPlus`: the positive-part estimator. Its risk comparison with James–Stein is proved in
+  `MathlibExt.Probability.Statistics.JamesSteinPlus`.
 
 ## References
 

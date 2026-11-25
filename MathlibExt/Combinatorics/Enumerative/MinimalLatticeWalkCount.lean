@@ -144,24 +144,21 @@ private theorem lattice_walk_count_aux (n k : ℕ) (c o : Fin 3) (u w : Fin 3 �
   exact hbij.symm
 
 /--
-Minimal lattice-walk counts: the number of minimal `S`-walks from the origin
-to `(a, b)` with steps `(1,0)`, `(0,1)`, `(1,1)` (formalized as step
-sequences of length `max a b` with coordinate sums `a` and `b`) equals
-`choose (max a b) (min a b)`.
+**Minimal lattice walks with unit and diagonal steps.** For all natural numbers $a$ and $b$,
+the number of sequences of $\max(a, b)$ steps, each taken from $\{(1,0), (0,1), (1,1)\}$,
+whose sum is $(a, b)$ equals $\binom{\max(a, b)}{\min(a, b)}$.
+
+Every walk from the origin to $(a, b)$ with these steps has at least $\max(a, b)$ steps, since
+each step raises each coordinate by at most $1$, and walks of exactly that length exist; so the
+sequences counted are the minimal-length walks from the origin to $(a, b)$.
+
+Proves `Wanted` entry `minimal_lattice_walk_count`.
 
 Source: Jackson Evoniuk, Steven Klee, and Van Magnan, "Enumerating Minimal
 Length Lattice Paths," Journal of Integer Sequences 21 (2018),
 Article 18.3.6, Theorem (section Minimal walks for S = {(1,0),(0,1),(1,1)},
 label sec2), lines 273–275,
 https://cs.uwaterloo.ca/journals/JIS/VOL21/Klee/klee2.tex
-
-Minimal walks have length `max a b` since each step raises the max
-coordinate by at most 1; for `a ≥ b` every step raises `x`, so exactly `b`
-of the `a` steps are diagonal. The step-type coordinates are read off the
-`![1,0,1]` / `![0,1,1]` vectors. Verified computationally for all
-`a, b ∈ 0..4`.
-
-Proves `Wanted` entry `minimal_lattice_walk_count`.
 -/
 theorem minimal_lattice_walk_count (a b : ℕ) :
     Finset.card (Finset.univ.filter (fun f : Fin (max a b) → Fin 3 =>

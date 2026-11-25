@@ -19,7 +19,7 @@ D. Lichtenstein, "Planar formulae and their uses", SIAM Journal on Computing 11(
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Computability.CookLevin
+public import CSLibExt.Computability.Complexity.Defs
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
 public import MathlibExt.Computability.BinaryNatEncoding
@@ -39,8 +39,8 @@ QUESTION: is there a satisfying truth assignment for `C`?
 
 This is SATISFIABILITY restricted as in Garey and Johnson's comment to [LO1] (Lichtenstein
 1977; published as Lichtenstein 1982). The formula uses the repository's CNF representation
-(`Cslib.Logic.PL.CNF`): a list of clauses, each a list of literals `(variable, polarity)`, with
-variables `0, …, n - 1`; `|c| ≤ 3` is `c.length ≤ 3`, as in the repository's 3SAT
+(`Cslib.Logic.LegacyPL.CNF`): a list of clauses, each a list of literals `(variable, polarity)`,
+with variables `0, …, n - 1`; `|c| ≤ 3` is `c.length ≤ 3`, as in the repository's 3SAT
 (`Cslib.Complexity.Karp.is3`). The graph `G` has one vertex `Sum.inl u` for each variable
 `u` and one vertex `Sum.inr c` for each clause `c` of the list, and `Sum.inl u` is adjacent to
 `Sum.inr c` exactly when some literal of `c` has variable `u`. Planarity is the shared
@@ -60,7 +60,7 @@ reduction from every language in `NP`
 
 /-- An instance: the number `n` of variables (variables `0, …, n - 1`) and the CNF formula, a
 list of clauses, each a list of literals `(variable, polarity)`. -/
-abbrev PlanarThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
+abbrev PlanarThreeSatInstance := ℕ × Cslib.Logic.LegacyPL.CNF
 
 /-- The variable-clause incidence graph `G` of the instance: its vertices are the variables
 `Sum.inl u` and the clauses `Sum.inr c`, and `{u, c}` is an edge exactly when `u` or `ū`
@@ -79,7 +79,7 @@ def WellFormed (i : PlanarThreeSatInstance) : Prop :=
 /-- Some truth assignment to the `n` variables satisfies every clause. -/
 def PlanarThreeSatFeasible (i : PlanarThreeSatInstance) : Prop :=
   ∃ assign : List Bool, assign.length = i.1 ∧
-    Cslib.Logic.PL.CNF.Satisfies (fun x => assign.getD x false) i.2
+    Cslib.Logic.LegacyPL.CNF.Satisfies (fun x => assign.getD x false) i.2
 
 open Classical in
 /-- PLANAR 3SAT as a decision problem over bitstrings. -/

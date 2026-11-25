@@ -10,17 +10,15 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import MathlibExt.Probability.RandomWalkFiniteGroup
+public import MathlibExt.Probability.RandomTranspositionLower
 
 /-!
 # Random walks on finite groups: wishlist
 
-Established results of Diaconis and Shahshahani whose proofs are deferred; the tools they rest on
+The upper cutoff estimate for random transpositions is deferred. Its Fourier-analytic tools
 (the upper bound lemma `MathlibExt.Probability.RandomWalkFiniteGroup.upper_bound_lemma` and the
 transform of the random-transposition measure `fourier_randomTransposition`) are proved.
-
-* `diaconis_shahshahani_upper`, `diaconis_shahshahani_lower`: random transpositions mix after
-  `(1/2) n log n + c n` steps, and not before.
+The lower bound `diaconis_shahshahani_lower` is in the imported proved module.
 
 The Bayer–Diaconis formula for riffle shuffles is proved:
 `MathlibExt.Probability.RiffleShuffle.card_sort_eq`.
@@ -50,15 +48,5 @@ theorem_wanted diaconis_shahshahani_upper :
       0 < ((k : ℝ) - n * Real.log n / 2) / n →
       2 * tvDist (convPow (randomTransposition n) k) (uniform (Equiv.Perm (Fin n))) ≤
         b * Real.exp (-2 * (((k : ℝ) - n * Real.log n / 2) / n))
-
-/-- **Random transpositions: fewer than `(1/2) n log n` steps do not suffice
-(Diaconis–Shahshahani).** For every choice of step numbers `k = k(n)`, with
-`c = (k - (1/2) n log n) / n`, `‖T^{*k} - U‖ ≥ 2 (1/e - exp(-e^{-2c})) + o(1)` as `n → ∞`, in the
-`ℓ¹` norm `‖·‖ = 2 ‖·‖_TV` (Diaconis and Shahshahani 1981, Theorem 2, proved there with the set
-of permutations having a fixed point, an argument they credit to Charles Stein). -/
-theorem_wanted diaconis_shahshahani_lower (k : ℕ → ℕ) (ε : ℝ) (hε : 0 < ε) :
-    ∀ᶠ n : ℕ in Filter.atTop, ∀ [NeZero n],
-      2 * (Real.exp (-1) - Real.exp (-Real.exp (-2 * (((k n : ℝ) - n * Real.log n / 2) / n))))
-        - ε ≤ 2 * tvDist (convPow (randomTransposition n) (k n)) (uniform (Equiv.Perm (Fin n)))
 
 end MathlibExt.Probability.RandomWalkFiniteGroupWanted
