@@ -32,16 +32,20 @@ Kohl). UnsolvedMath record UM-00701478 (`KOU-18.49`), dataset ulamai/UnsolvedMat
 matches `n - 2` there.
 -/
 
-/-- Kourovka 18.49 (S. Kohl): for every `n` and all `a, b, c` with `1 < a, b, c ≤ n - 2`, the
-symmetric group `Sₙ` has elements `x`, `y` of orders `a` and `b` whose product `x y` has order
-`c`. -/
+/-- **Kohl's question on orders of products in symmetric groups.** For every natural number $n$
+and all natural numbers $a, b, c$ with $1 < a \le n - 2$, $1 < b \le n - 2$ and $1 < c \le n - 2$,
+the symmetric group $S_n$ contains permutations $x$ and $y$ such that $x$ has order $a$, $y$ has
+order $b$ and $xy$ has order $c$. -/
 def symmetricGroupHasProductWithOrders : Prop :=
   ∀ n a b c : ℕ, 1 < a → 1 < b → 1 < c → a ≤ n - 2 → b ≤ n - 2 → c ≤ n - 2 →
     ∃ x y : Equiv.Perm (Fin n), orderOf x = a ∧ orderOf y = b ∧ orderOf (x * y) = c
 
-/--
-Resolved true: the Kourovka Archive answers 18.49 "Yes, it is" (G. A. Miller, 1900; another solution
-by J. König, 2016). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
+/-- **Permutations of prescribed orders with product of prescribed order.** For every natural
+number $n$ and all natural numbers $a, b, c$ with $1 < a \le n - 2$, $1 < b \le n - 2$ and
+$1 < c \le n - 2$, the symmetric group $S_n$ contains permutations $x$ and $y$ of orders $a$ and
+$b$ whose product $xy$ has order $c$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
 Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
 Problem 18.49 (S. Kohl); resolution: G. A. Miller, Amer. J. Math. 22 (1900), no. 2, 185-190; J.
 König, European J. Combin. 57 (2016), 50-56, Kourovka Archive, Problem 18.49: Yes, it is (Miller);

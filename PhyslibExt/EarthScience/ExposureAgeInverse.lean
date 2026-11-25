@@ -78,12 +78,16 @@ taking the age of the inventory at time `t` returns `t`.
 namespace EarthScience
 
 /-- Exposure inventory with constant production `P`, decay `lam`,
-inherited inventory `N0`: `N0 * exp (-lam * t) + (P / lam) * (1 - exp (-lam * t))`. -/
+inherited inventory `N0`: `N0 * exp (-lam * t) + (P / lam) * (1 - exp (-lam * t))`.
+With the convention `x / 0 = 0` it is the constant `N0` at `lam = 0`; the intended domain is
+`P > 0`, `lam > 0`, `N0 ≥ 0` and `t ≥ 0`. -/
 noncomputable def exposureInventory (P lam N0 t : ℝ) : ℝ :=
   N0 * Real.exp (-lam * t) + (P / lam) * (1 - Real.exp (-lam * t))
 
 /-- Exposure age inverting the inventory at `N0 = 0`:
-`-log (1 - lam * N / P) / lam`. Admissible for `0 ≤ N < P / lam`. -/
+`-log (1 - lam * N / P) / lam`. Admissible for `P > 0`, `lam > 0` and `0 ≤ N < P / lam`.
+With the conventions `x / 0 = 0`, `log 0 = 0` and `log x = log |x|`, it is `0` when `P = 0`,
+`lam = 0` or `lam * N = P`, and `-log (lam * N / P - 1) / lam` when `lam * N / P > 1`. -/
 noncomputable def exposureAge (P lam N : ℝ) : ℝ :=
   -Real.log (1 - lam * N / P) / lam
 
@@ -94,8 +98,8 @@ private lemma exposureInventory_eq (P lam N0 t : ℝ) :
   unfold exposureInventory
   ring
 
-/-- Below saturation the inventory is monotone on nonnegative time:
-it never decreases toward saturation from below. -/
+/-- For `P > 0`, `lam > 0` and `N0 ≤ P / lam` (at or below saturation) the inventory is
+monotone on nonnegative time: it never decreases toward saturation from below. -/
 theorem exposure_inventory_monotoneOn {P lam N0 : ℝ} (_hP : 0 < P)
     (hlam : 0 < lam) (hN0 : N0 ≤ P / lam) :
     MonotoneOn (exposureInventory P lam N0) (Set.Ici 0) := by
@@ -112,7 +116,8 @@ theorem exposure_inventory_monotoneOn {P lam N0 : ℝ} (_hP : 0 < P)
   have e2 := exposureInventory_eq P lam N0 b
   nlinarith [hmul, e1, e2]
 
-/-- Strictly below saturation the inventory is strictly increasing. -/
+/-- For `P > 0`, `lam > 0` and `N0 < P / lam` (strictly below saturation) the inventory is
+strictly increasing on nonnegative time. -/
 theorem exposure_inventory_strictMonoOn {P lam N0 : ℝ} (_hP : 0 < P)
     (hlam : 0 < lam) (hN0 : N0 < P / lam) :
     StrictMonoOn (exposureInventory P lam N0) (Set.Ici 0) := by
@@ -128,7 +133,8 @@ theorem exposure_inventory_strictMonoOn {P lam N0 : ℝ} (_hP : 0 < P)
   have e2 := exposureInventory_eq P lam N0 b
   nlinarith [hmul, e1, e2]
 
-/-- The inventory is bounded above by the saturation value `P / lam`. -/
+/-- For `P > 0`, `lam > 0`, `0 ≤ N0 ≤ P / lam` and `t ≥ 0`, the inventory is bounded above by
+the saturation value `P / lam`. -/
 theorem exposure_inventory_le_saturation {P lam N0 : ℝ} (_hP : 0 < P)
     (_hlam : 0 < lam) (_hN0 : 0 ≤ N0) (hN0' : N0 ≤ P / lam) (t : ℝ) (_ht : 0 ≤ t) :
     exposureInventory P lam N0 t ≤ P / lam := by
@@ -139,8 +145,8 @@ theorem exposure_inventory_le_saturation {P lam N0 : ℝ} (_hP : 0 < P)
   have e := exposureInventory_eq P lam N0 t
   nlinarith [hmul, e]
 
-/-- The age inverse recovers the inventory: at `N0 = 0`, evaluating the
-inventory at the exposure age of an admissible `N` returns `N`. -/
+/-- The age inverse recovers the inventory: for `P > 0`, `lam > 0` and `0 ≤ N < P / lam`,
+evaluating the inventory with `N0 = 0` at the exposure age of `N` returns `N`. -/
 theorem exposure_age_inventory {P lam N : ℝ} (hP : 0 < P) (hlam : 0 < lam)
     (_hN : 0 ≤ N) (hN' : N < P / lam) :
     exposureInventory P lam 0 (exposureAge P lam N) = N := by
@@ -161,7 +167,8 @@ theorem exposure_age_inventory {P lam N : ℝ} (hP : 0 < P) (hlam : 0 < lam)
   field_simp
   ring
 
-/-- The inventory followed by the age inverse recovers the time. -/
+/-- For `P > 0`, `lam > 0` and `t ≥ 0`, the inventory with `N0 = 0` followed by the age
+inverse recovers the time. -/
 theorem exposure_inventory_age {P lam t : ℝ} (hP : 0 < P) (hlam : 0 < lam)
     (_ht : 0 ≤ t) :
     exposureAge P lam (exposureInventory P lam 0 t) = t := by

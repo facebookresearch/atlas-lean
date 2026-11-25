@@ -1,0 +1,769 @@
+/-
+  Author: @toskua, Avocado
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.CompletelyPositiveMap.ChoiRank
+public import MathlibExt.LinearAlgebra.Matrix.UnitaryBetween
+
+/-!
+# Kraus equivalence
+
+This module introduces mixing of a finite Kraus family by a coefficient matrix and
+shows that the associated completely positive map is preserved when the
+coefficient matrix is an isometry. When the vectorized original family is
+linearly independent, every other family representing the same CP map is obtained
+by such isometric mixing. In particular, same-index arbitrary Kraus families
+defining the same completely positive map are related by a unitary coefficient matrix.
+-/
+
+@[expose] public section
+
+open Matrix
+open scoped Matrix ComplexOrder InnerProductSpace
+
+
+
+namespace CompletelyPositiveMap
+
+variable {m n : Type*} [Fintype m] [Fintype n] [DecidableEq m] [DecidableEq n]
+variable {r s : Type*} [Fintype r] [Fintype s] [DecidableEq r] [DecidableEq s]
+
+/-- Mixing Kraus operators by a coefficient matrix `U : Matrix s r ℂ`.
+
+`(mixKraus U K) j = ∑ i, U j i • K i`. No conjugation on `U j i`. -/
+noncomputable def mixKraus (U : Matrix s r ℂ) (K : r → Matrix m n ℂ) :
+    s → Matrix m n ℂ :=
+  fun j => ∑ i : r, U j i • K i
+
+omit [Fintype m] [Fintype n] [Fintype s]
+    [DecidableEq m] [DecidableEq n] [DecidableEq r] [DecidableEq s] in
+@[simp]
+theorem mixKraus_apply (U : Matrix s r ℂ) (K : r → Matrix m n ℂ) (j : s) :
+    mixKraus U K j = ∑ i : r, U j i • K i :=
+  rfl
+
+omit [DecidableEq s] in
+/-- Kraus map preserved by an isometry coefficient matrix. -/
+theorem kraus_mixKraus_of_isometry (U : Matrix s r ℂ) (K : r → Matrix m n ℂ)
+    (hU : Matrix.IsIsometry U) :
+    kraus (mixKraus U K) = kraus K := by
+  classical
+  apply DFunLike.ext
+  intro X
+  simp only [kraus_apply, mixKraus_apply]
+  have hConjSum : ∀ j : s, (∑ i' : r, U j i' • K i')ᴴ = ∑ i' : r, star (U j i') • (K i')ᴴ := by
+    intro j
+    rw [Matrix.conjTranspose_sum]
+    apply Finset.sum_congr rfl
+    intro i' _
+    rw [Matrix.conjTranspose_smul]
+  have hExpand : ∀ j : s,
+      (∑ i : r, U j i • K i) * X * (∑ i' : r, U j i' • K i')ᴴ =
+        ∑ i : r, ∑ i' : r, (U j i * star (U j i')) • (K i * X * (K i')ᴴ) := by
+    intro j
+    calc
+      (∑ i : r, U j i • K i) * X * (∑ i' : r, U j i' • K i')ᴴ
+          = (∑ i : r, (U j i • K i) * X) * (∑ i' : r, U j i' • K i')ᴴ := by
+            rw [Matrix.sum_mul]
+      _ = (∑ i : r, U j i • (K i * X)) * (∑ i' : r, U j i' • K i')ᴴ := by
+            congr 1
+            apply Finset.sum_congr rfl
+            intro i _
+            rw [Matrix.smul_mul]
+      _ = (∑ i : r, U j i • (K i * X)) * (∑ i' : r, star (U j i') • (K i')ᴴ) := by
+            rw [hConjSum j]
+      _ = ∑ i : r, (U j i • (K i * X)) * (∑ i' : r, star (U j i') • (K i')ᴴ) := by
+            rw [Matrix.sum_mul]
+      _ = ∑ i : r, ∑ i' : r, (U j i • (K i * X)) * (star (U j i') • (K i')ᴴ) := by
+            apply Finset.sum_congr rfl
+            intro i _
+            rw [Matrix.mul_sum]
+      _ = ∑ i : r, ∑ i' : r, (U j i * star (U j i')) • (K i * X * (K i')ᴴ) := by
+            apply Finset.sum_congr rfl
+            intro i _
+            apply Finset.sum_congr rfl
+            intro i' _
+            calc
+              (U j i • (K i * X)) * (star (U j i') • (K i')ᴴ)
+                  = U j i • ((K i * X) * (star (U j i') • (K i')ᴴ)) := by
+                rw [Matrix.smul_mul]
+              _ = U j i • (star (U j i') • ((K i * X) * (K i')ᴴ)) := by
+                rw [Matrix.mul_smul]
+              _ = (U j i * star (U j i')) • (K i * X * (K i')ᴴ) := by
+                rw [smul_smul, mul_comm]
+  have hSumSwap : ∑ j : s, ∑ i : r, ∑ i' : r, (U j i * star (U j i')) • (K i * X * (K i')ᴴ) =
+      ∑ i : r, ∑ i' : r, ∑ j : s, (U j i * star (U j i')) • (K i * X * (K i')ᴴ) := by
+    calc
+      ∑ j : s, ∑ i : r, ∑ i' : r, (U j i * star (U j i')) • (K i * X * (K i')ᴴ)
+          = ∑ i : r, ∑ j : s, ∑ i' : r, (U j i * star (U j i')) • (K i * X * (K i')ᴴ) := by
+            rw [Finset.sum_comm]
+      _ = ∑ i : r, ∑ i' : r, ∑ j : s, (U j i * star (U j i')) • (K i * X * (K i')ᴴ) := by
+            apply Finset.sum_congr rfl
+            intro i _
+            rw [Finset.sum_comm]
+  calc
+    ∑ j : s, (∑ i : r, U j i • K i) * X * (∑ i' : r, U j i' • K i')ᴴ
+        = ∑ j : s, ∑ i : r, ∑ i' : r, (U j i * star (U j i')) • (K i * X * (K i')ᴴ) := by
+          apply Finset.sum_congr rfl
+          intro j _
+          exact hExpand j
+    _ = ∑ i : r, ∑ i' : r, ∑ j : s, (U j i * star (U j i')) • (K i * X * (K i')ᴴ) := hSumSwap
+    _ = ∑ i : r, ∑ i' : r, (∑ j : s, U j i * star (U j i')) • (K i * X * (K i')ᴴ) := by
+          apply Finset.sum_congr rfl
+          intro i _
+          apply Finset.sum_congr rfl
+          intro i' _
+          rw [← Finset.sum_smul]
+    _ = ∑ i : r, ∑ i' : r, (star ((Uᴴ * U) i i')) • (K i * X * (K i')ᴴ) := by
+          apply Finset.sum_congr rfl
+          intro i _
+          apply Finset.sum_congr rfl
+          intro i' _
+          congr 1
+          have hMU : (Uᴴ * U) i i' = ∑ j : s, star (U j i) * U j i' := by
+            simp [Matrix.mul_apply, Matrix.conjTranspose_apply]
+          have hStar :
+              star ((Uᴴ * U) i i') = ∑ j : s, U j i * star (U j i') := by
+            rw [hMU, star_sum]
+            apply Finset.sum_congr rfl
+            intro j _
+            rw [star_mul, star_star, mul_comm]
+          rw [hStar]
+    _ = ∑ i : r, K i * X * (K i)ᴴ := by
+          have hUeq : Uᴴ * U = (1 : Matrix r r ℂ) := hU
+          have hStarOne : ∀ i i' : r, star ((Uᴴ * U) i i') =
+              if i = i' then 1 else 0 := by
+            intro i i'
+            rw [hUeq]
+            simp only [Matrix.one_apply]
+            by_cases h : i = i'
+            · simp [h]
+            · simp [h]
+          calc
+            ∑ i : r, ∑ i' : r, (star ((Uᴴ * U) i i')) • (K i * X * (K i')ᴴ)
+                = ∑ i : r, ∑ i' : r, (if i = i' then (1 : ℂ) else 0) • (K i * X * (K i')ᴴ) := by
+                  apply Finset.sum_congr rfl
+                  intro i _
+                  apply Finset.sum_congr rfl
+                  intro i' _
+                  rw [hStarOne i i']
+            _ = ∑ i : r, K i * X * (K i)ᴴ := by
+                  apply Finset.sum_congr rfl
+                  intro i _
+                  calc
+                    ∑ i' : r, (if i = i' then (1 : ℂ) else 0) • (K i * X * (K i')ᴴ)
+                        = ∑ i' : r, if i' = i then K i * X * (K i)ᴴ else 0 := by
+                          apply Finset.sum_congr rfl
+                          intro i' _
+                          by_cases h : i = i'
+                          · subst h
+                            simp
+                          · have h' : ¬ (i' = i) := fun hc => h hc.symm
+                            simp [h, h']
+                    _ = K i * X * (K i)ᴴ := by
+                          rw [Finset.sum_eq_single i
+                            (fun i' _ hi' => by simp [hi'])
+                            (by simp)]
+                          simp
+
+-- Private column matrices built from vec
+
+omit [Fintype m] [Fintype n] [Fintype r] [Fintype s]
+    [DecidableEq m] [DecidableEq n] [DecidableEq r] [DecidableEq s] in
+private noncomputable def vecColMat (K : r → Matrix m n ℂ) :
+    Matrix (n × m) r ℂ :=
+  Matrix.of fun x i => Matrix.vec (K i) x
+
+omit [Fintype m] [Fintype n] [Fintype r]
+    [DecidableEq m] [DecidableEq n] [DecidableEq r] in
+private lemma vecColMat_col (K : r → Matrix m n ℂ) (i : r) :
+    (vecColMat K).col i = Matrix.vec (K i) := by
+  ext x
+  simp [vecColMat, Matrix.of_apply, Matrix.col_apply]
+
+omit [DecidableEq r] in
+private lemma choi_eq_vecColMat_mul (K : r → Matrix m n ℂ) :
+    choiMatrix (kraus K) = vecColMat K * (vecColMat K)ᴴ := by
+  ext x y
+  simp [vecColMat, Matrix.of_apply, Matrix.mul_apply, Matrix.conjTranspose_apply,
+    Pi.star_apply, choiMatrix_kraus, Matrix.vecMulVec_apply, Matrix.sum_apply]
+
+private theorem outer_eq_of_kraus_eq {r s : Type*} [Fintype r] [Fintype s]
+    {K : r → Matrix m n ℂ} {L : s → Matrix m n ℂ}
+    (hEq : kraus K = kraus L) :
+    vecColMat K * (vecColMat K)ᴴ = vecColMat L * (vecColMat L)ᴴ := by
+  calc
+    vecColMat K * (vecColMat K)ᴴ = choiMatrix (kraus K) := (choi_eq_vecColMat_mul K).symm
+    _ = choiMatrix (kraus L) := by rw [hEq]
+    _ = vecColMat L * (vecColMat L)ᴴ := choi_eq_vecColMat_mul L
+
+-- Generic outer-factor lemma: independent columns of A and A*Aᴴ = B*Bᴴ gives isometry
+
+private theorem exists_isometry_of_outer_eq {h r s : Type*} [Finite h] [Fintype r] [Fintype s]
+    [DecidableEq r]
+    (A : Matrix h r ℂ) (B : Matrix h s ℂ)
+    (hLI : LinearIndependent ℂ A.col)
+    (hOuter : A * Aᴴ = B * Bᴴ) :
+    ∃ C : Matrix s r ℂ, Matrix.IsIsometry C ∧ B = A * Cᵀ := by
+  classical
+  let : Fintype h := Fintype.ofFinite h
+  by_cases hr : Fintype.card r = 0
+  · have hEmpty : IsEmpty r := Fintype.card_eq_zero_iff.mp hr
+    have hUniv : (Finset.univ : Finset r) = ∅ := Finset.univ_eq_empty_iff.mpr hEmpty
+    have hAZero : A * Aᴴ = 0 := by
+      ext x y
+      simp only [Matrix.mul_apply, Matrix.conjTranspose_apply]
+      rw [hUniv]
+      simp
+    have hBZero : B * Bᴴ = 0 := by
+      rw [← hOuter, hAZero]
+    have hB_eq_zero : B = 0 := by
+      let bLin : EuclideanSpace ℂ s →ₗ[ℂ] EuclideanSpace ℂ h := Matrix.toEuclideanLin B
+      have hb_mul : Matrix.toEuclideanLin (B * Bᴴ) = bLin ∘ₗ bLin.adjoint := by
+        calc
+          Matrix.toEuclideanLin (B * Bᴴ)
+              = Matrix.toLpLin 2 2 (B * Bᴴ) := rfl
+          _ = Matrix.toLpLin 2 2 B ∘ₗ Matrix.toLpLin 2 2 (Bᴴ) := by
+              rw [Matrix.toLpLin_mul_same]
+          _ = bLin ∘ₗ Matrix.toEuclideanLin (Bᴴ) := rfl
+          _ = bLin ∘ₗ bLin.adjoint := by
+              rw [Matrix.toEuclideanLin_conjTranspose_eq_adjoint]
+      have hZeroComp : bLin ∘ₗ bLin.adjoint = 0 := by
+        have hMapZero : Matrix.toEuclideanLin (B * Bᴴ) =
+            (0 : EuclideanSpace ℂ h →ₗ[ℂ] EuclideanSpace ℂ h) := by
+          rw [hBZero]
+          simp
+        rw [hb_mul] at hMapZero
+        exact hMapZero
+      have hRangeZero : bLin.range = ⊥ := by
+        have hRangeEq : (bLin ∘ₗ bLin.adjoint).range = bLin.range :=
+          LinearMap.range_self_comp_adjoint bLin
+        rw [hZeroComp, LinearMap.range_zero] at hRangeEq
+        exact hRangeEq.symm
+      have hBLinZero : bLin = 0 := by
+        rw [← LinearMap.range_eq_bot]
+        exact hRangeZero
+      have hMapEq : Matrix.toEuclideanLin B =
+          (0 : EuclideanSpace ℂ s →ₗ[ℂ] EuclideanSpace ℂ h) := hBLinZero
+      have hZeroMat : Matrix.toEuclideanLin (0 : Matrix h s ℂ) =
+          (0 : EuclideanSpace ℂ s →ₗ[ℂ] EuclideanSpace ℂ h) := by
+        simp
+      have hEq : Matrix.toEuclideanLin B = Matrix.toEuclideanLin (0 : Matrix h s ℂ) := by
+        rw [hMapEq, hZeroMat]
+      exact (Matrix.toEuclideanLin (m := h) (n := s)).injective hEq
+    let C : Matrix s r ℂ := 0
+    have hC_iso : Matrix.IsIsometry C := by
+      ext i j
+      exact (hEmpty.false i).elim
+    have hB_eq : B = A * Cᵀ := by
+      rw [hB_eq_zero]
+      ext x y
+      simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.zero_apply, C]
+      rw [hUniv]
+      simp
+    exact ⟨C, hC_iso, hB_eq⟩
+  · have hCardPos : 0 < Fintype.card r := Nat.pos_of_ne_zero hr
+    have hNonempty : Nonempty r := Fintype.card_pos_iff.mp hCardPos
+    have hMulInj : Function.Injective A.mulVec := by
+      rwa [Matrix.mulVec_injective_iff]
+    let a : EuclideanSpace ℂ r →ₗ[ℂ] EuclideanSpace ℂ h := Matrix.toEuclideanLin A
+    let b : EuclideanSpace ℂ s →ₗ[ℂ] EuclideanSpace ℂ h := Matrix.toEuclideanLin B
+    have ha_inj : Function.Injective a := by
+      intro x y hxy
+      have hMul : A.mulVec (WithLp.ofLp x) = A.mulVec (WithLp.ofLp y) := by
+        have h1 : Matrix.toEuclideanLin A x = Matrix.toEuclideanLin A y := hxy
+        have h2 : Matrix.toLpLin 2 2 A x = Matrix.toLpLin 2 2 A y := h1
+        rw [Matrix.toLpLin_apply, Matrix.toLpLin_apply] at h2
+        exact WithLp.toLp_injective 2 h2
+      have hOfLpEq : WithLp.ofLp x = WithLp.ofLp y := hMulInj hMul
+      exact WithLp.ofLp_injective 2 hOfLpEq
+    have ha_ker : LinearMap.ker a = ⊥ := LinearMap.ker_eq_bot.mpr ha_inj
+    have hMulTransA : Matrix.toLpLin 2 2 (A * Aᴴ) =
+        Matrix.toLpLin 2 2 A ∘ₗ Matrix.toLpLin 2 2 (Aᴴ) := by
+      rw [Matrix.toLpLin_mul_same]
+    have hMulTransB : Matrix.toLpLin 2 2 (B * Bᴴ) =
+        Matrix.toLpLin 2 2 B ∘ₗ Matrix.toLpLin 2 2 (Bᴴ) := by
+      rw [Matrix.toLpLin_mul_same]
+    have ha_adj : Matrix.toEuclideanLin (Aᴴ) = a.adjoint := by
+      simp only [a]
+      rw [Matrix.toEuclideanLin_conjTranspose_eq_adjoint]
+    have hb_adj : Matrix.toEuclideanLin (Bᴴ) = b.adjoint := by
+      simp only [b]
+      rw [Matrix.toEuclideanLin_conjTranspose_eq_adjoint]
+    have hA_map : Matrix.toEuclideanLin (A * Aᴴ) = a ∘ₗ a.adjoint := by
+      calc
+        Matrix.toEuclideanLin (A * Aᴴ)
+            = Matrix.toLpLin 2 2 (A * Aᴴ) := rfl
+        _ = Matrix.toLpLin 2 2 A ∘ₗ Matrix.toLpLin 2 2 (Aᴴ) := hMulTransA
+        _ = a ∘ₗ Matrix.toEuclideanLin (Aᴴ) := rfl
+        _ = a ∘ₗ a.adjoint := by rw [ha_adj]
+    have hB_map : Matrix.toEuclideanLin (B * Bᴴ) = b ∘ₗ b.adjoint := by
+      calc
+        Matrix.toEuclideanLin (B * Bᴴ)
+            = Matrix.toLpLin 2 2 (B * Bᴴ) := rfl
+        _ = Matrix.toLpLin 2 2 B ∘ₗ Matrix.toLpLin 2 2 (Bᴴ) := hMulTransB
+        _ = b ∘ₗ Matrix.toEuclideanLin (Bᴴ) := rfl
+        _ = b ∘ₗ b.adjoint := by rw [hb_adj]
+    have hMapEq : a ∘ₗ a.adjoint = b ∘ₗ b.adjoint := by
+      have h1 : Matrix.toEuclideanLin (A * Aᴴ) = Matrix.toEuclideanLin (B * Bᴴ) := by
+        rw [hOuter]
+      rw [hA_map, hB_map] at h1
+      exact h1
+    have hRangeA : (a ∘ₗ a.adjoint).range = a.range :=
+      LinearMap.range_self_comp_adjoint a
+    have hRangeB : (b ∘ₗ b.adjoint).range = b.range :=
+      LinearMap.range_self_comp_adjoint b
+    have hRangeEq : a.range = b.range := by
+      rw [← hRangeA, ← hRangeB, hMapEq]
+    let bToRange : EuclideanSpace ℂ s →ₗ[ℂ] ↥(a.range) :=
+      b.codRestrict a.range (fun x => by
+        have hbmem : b x ∈ b.range := ⟨x, rfl⟩
+        have : b x ∈ a.range := hRangeEq ▸ hbmem
+        exact this)
+    let aRangeRestrict : EuclideanSpace ℂ r →ₗ[ℂ] ↥(a.range) := a.rangeRestrict
+    have ha_eq : a = a.range.subtype ∘ₗ aRangeRestrict := by
+      apply LinearMap.ext
+      intro x
+      rfl
+    have hb_eq : b = a.range.subtype ∘ₗ bToRange := by
+      apply LinearMap.ext
+      intro x
+      simp only [LinearMap.comp_apply, bToRange, LinearMap.codRestrict_apply,
+        Submodule.subtype_apply]
+    have haRR_inj : Function.Injective aRangeRestrict := by
+      intro x y hxy
+      have hxy' : a x = a y := by
+        have h1 : (aRangeRestrict x : EuclideanSpace ℂ h) = a x := rfl
+        have h2 : (aRangeRestrict y : EuclideanSpace ℂ h) = a y := rfl
+        have h3 : (aRangeRestrict x : EuclideanSpace ℂ h) =
+            (aRangeRestrict y : EuclideanSpace ℂ h) := by
+          have : (aRangeRestrict x : ↥(a.range)) = aRangeRestrict y := hxy
+          exact congrArg Subtype.val this
+        rw [h1, h2] at h3
+        exact h3
+      exact ha_inj hxy'
+    have haRR_range_top : aRangeRestrict.range = ⊤ := by
+      rw [Submodule.eq_top_iff']
+      intro ⟨y, hy⟩
+      rw [LinearMap.mem_range]
+      obtain ⟨x, hx⟩ := LinearMap.mem_range.mp hy
+      use x
+      apply Subtype.ext
+      exact hx
+    have haRR_surj : Function.Surjective aRangeRestrict := by
+      rw [← LinearMap.range_eq_top]
+      exact haRR_range_top
+    have haRR_bij : Function.Bijective aRangeRestrict :=
+      ⟨haRR_inj, haRR_surj⟩
+    let aEquiv : EuclideanSpace ℂ r ≃ₗ[ℂ] ↥(a.range) :=
+      LinearEquiv.ofBijective aRangeRestrict haRR_bij
+    have haEquiv_coe : (aEquiv : EuclideanSpace ℂ r →ₗ[ℂ] ↥(a.range)) = aRangeRestrict := rfl
+    let D : EuclideanSpace ℂ s →ₗ[ℂ] EuclideanSpace ℂ r :=
+      (aEquiv.symm : ↥(a.range) →ₗ[ℂ] EuclideanSpace ℂ r) ∘ₗ bToRange
+    have hIdComp : aRangeRestrict ∘ₗ
+        (aEquiv.symm : ↥(a.range) →ₗ[ℂ] EuclideanSpace ℂ r) = LinearMap.id := by
+      apply LinearMap.ext
+      intro y
+      calc
+        (aRangeRestrict ∘ₗ (aEquiv.symm : ↥(a.range) →ₗ[ℂ] _)) y
+            = aRangeRestrict (aEquiv.symm y) := rfl
+        _ = (aEquiv : EuclideanSpace ℂ r →ₗ[ℂ] ↥(a.range)) (aEquiv.symm y) := by
+            rw [haEquiv_coe]
+        _ = y := aEquiv.apply_symm_apply y
+    -- Show a ∘ D = b via pointwise reasoning to avoid dependent rewrite issues
+    have h_a_comp_D : a ∘ₗ D = b := by
+      apply LinearMap.ext
+      intro x
+      calc
+        (a ∘ₗ D) x = a (D x) := rfl
+        _ = a.range.subtype (aRangeRestrict (D x)) := rfl
+        _ = a.range.subtype
+              ((aRangeRestrict ∘ₗ (aEquiv.symm : ↥(a.range) →ₗ[ℂ] _)) (bToRange x)) := by
+            simp only [D, LinearMap.comp_apply]
+        _ = a.range.subtype (bToRange x) := by
+            have hIdApply : (aRangeRestrict ∘ₗ
+                (aEquiv.symm : ↥(a.range) →ₗ[ℂ] _)) (bToRange x) = bToRange x := by
+              have h := DFunLike.congr_fun hIdComp (bToRange x)
+              simpa [LinearMap.comp_apply] using h
+            rw [hIdApply]
+        _ = b x := by
+            simp only [bToRange, LinearMap.codRestrict_apply,
+              Submodule.subtype_apply]
+    have h1 : a ∘ₗ a.adjoint = a ∘ₗ D ∘ₗ D.adjoint ∘ₗ a.adjoint := by
+      calc
+        a ∘ₗ a.adjoint = b ∘ₗ b.adjoint := hMapEq
+        _ = (a ∘ₗ D) ∘ₗ (a ∘ₗ D).adjoint := by rw [h_a_comp_D]
+        _ = (a ∘ₗ D) ∘ₗ (D.adjoint ∘ₗ a.adjoint) := by rw [LinearMap.adjoint_comp]
+        _ = a ∘ₗ D ∘ₗ D.adjoint ∘ₗ a.adjoint := by simp only [LinearMap.comp_assoc]
+    have h2 : a.adjoint = D ∘ₗ D.adjoint ∘ₗ a.adjoint := by
+      apply LinearMap.ext
+      intro y
+      apply ha_inj
+      have hEq : a (a.adjoint y) = a ((D ∘ₗ D.adjoint ∘ₗ a.adjoint) y) := by
+        have hh := DFunLike.congr_fun h1 y
+        simpa [LinearMap.comp_apply] using hh
+      exact hEq
+    have hAdj_surj : Function.Surjective a.adjoint := by
+      have hBot : a.ker = ⊥ := ha_ker
+      have hOrth : a.kerᗮ = a.adjoint.range := LinearMap.orthogonal_ker a
+      have hTop : (⊥ : Submodule ℂ (EuclideanSpace ℂ r))ᗮ = ⊤ := by
+        rw [Submodule.bot_orthogonal_eq_top]
+      have hRangeTop : a.adjoint.range = ⊤ := by
+        rw [← hOrth, hBot, hTop]
+      rw [LinearMap.range_eq_top] at hRangeTop
+      exact hRangeTop
+    have hDDt_id : D ∘ₗ D.adjoint = LinearMap.id := by
+      apply LinearMap.ext
+      intro z
+      obtain ⟨y, hy⟩ := hAdj_surj z
+      calc
+        (D ∘ₗ D.adjoint) z = (D ∘ₗ D.adjoint) (a.adjoint y) := by rw [hy]
+        _ = a.adjoint y := by
+          have hh := DFunLike.congr_fun h2 y
+          have hh' : (D ∘ₗ D.adjoint) (a.adjoint y) = a.adjoint y := by
+            simpa [LinearMap.comp_apply] using hh.symm
+          exact hh'
+        _ = z := by rw [hy]
+    let Dm : Matrix r s ℂ := (Matrix.toEuclideanLin (m := r) (n := s)).symm D
+    have hDm_eq : Matrix.toEuclideanLin Dm = D := by simp [Dm]
+    have hDm_conj : Dm * Dmᴴ = 1 := by
+      have hMap : Matrix.toEuclideanLin (Dm * Dmᴴ) = D ∘ₗ D.adjoint := by
+        calc
+          Matrix.toEuclideanLin (Dm * Dmᴴ)
+              = Matrix.toLpLin 2 2 (Dm * Dmᴴ) := rfl
+          _ = Matrix.toLpLin 2 2 Dm ∘ₗ Matrix.toLpLin 2 2 (Dmᴴ) := by
+              rw [Matrix.toLpLin_mul_same]
+          _ = D ∘ₗ Matrix.toEuclideanLin (Dmᴴ) := by rw [hDm_eq]
+          _ = D ∘ₗ D.adjoint := by
+            rw [Matrix.toEuclideanLin_conjTranspose_eq_adjoint, hDm_eq]
+      have hId : Matrix.toEuclideanLin (1 : Matrix r r ℂ) = LinearMap.id := by simp
+      have hEq : Matrix.toEuclideanLin (Dm * Dmᴴ) =
+          Matrix.toEuclideanLin (1 : Matrix r r ℂ) := by rw [hMap, hDDt_id, hId]
+      exact (Matrix.toEuclideanLin (m := r) (n := r)).injective hEq
+    let C : Matrix s r ℂ := Dmᵀ
+    have hC_iso : Matrix.IsIsometry C := by
+      have : Cᴴ * C = (1 : Matrix r r ℂ) := by
+        calc
+          Cᴴ * C = (Dmᵀ)ᴴ * Dmᵀ := rfl
+          _ = (Dmᴴ)ᵀ * Dmᵀ := by rw [Matrix.conjTranspose_transpose_eq_transpose_conjTranspose]
+          _ = (Dm * Dmᴴ)ᵀ := by rw [← Matrix.transpose_mul]
+          _ = (1 : Matrix r r ℂ)ᵀ := by rw [hDm_conj]
+          _ = 1 := by rw [Matrix.transpose_one]
+      exact this
+    have hB_eq : B = A * Cᵀ := by
+      have hCTrans : Cᵀ = Dm := by simp [C]
+      have hAB : A * Dm = B := by
+        have hMapA : Matrix.toEuclideanLin (A * Dm) = a ∘ₗ D := by
+          calc
+            Matrix.toEuclideanLin (A * Dm)
+                = Matrix.toLpLin 2 2 (A * Dm) := rfl
+            _ = Matrix.toLpLin 2 2 A ∘ₗ Matrix.toLpLin 2 2 Dm := by
+              rw [Matrix.toLpLin_mul_same]
+            _ = a ∘ₗ D := by rw [hDm_eq]
+        have hMapB : Matrix.toEuclideanLin B = b := rfl
+        have hEqMap : Matrix.toEuclideanLin (A * Dm) = Matrix.toEuclideanLin B := by
+          rw [hMapA, h_a_comp_D, hMapB]
+        exact (Matrix.toEuclideanLin (m := h) (n := s)).injective hEqMap
+      calc
+        B = A * Dm := hAB.symm
+        _ = A * Cᵀ := by rw [← hCTrans]
+    exact ⟨C, hC_iso, hB_eq⟩
+
+-- Minimal-to-arbitrary Kraus equivalence
+
+omit [DecidableEq s] in
+/-- If the vectorized Kraus family `K` is linearly independent and `kraus K = kraus L`,
+then `L` is obtained by mixing `K` with a coefficient isometry. -/
+theorem exists_isometry_of_kraus_eq {K : r → Matrix m n ℂ} {L : s → Matrix m n ℂ}
+    (hK : LinearIndependent ℂ (fun i => Matrix.vec (K i)))
+    (hEq : kraus K = kraus L) :
+    ∃ U : Matrix s r ℂ, Matrix.IsIsometry U ∧ L = mixKraus U K := by
+  classical
+  let A := vecColMat K
+  let B := vecColMat L
+  have hA_col_eq : A.col = fun i => Matrix.vec (K i) := by
+    funext i
+    exact vecColMat_col K i
+  have hLI_A : LinearIndependent ℂ A.col := hA_col_eq.symm ▸ hK
+  have hOuter : A * Aᴴ = B * Bᴴ := outer_eq_of_kraus_eq hEq
+  obtain ⟨C, hC_iso, hB_eq⟩ := exists_isometry_of_outer_eq A B hLI_A hOuter
+  refine ⟨C, hC_iso, ?_⟩
+  funext j
+  have hVecEq : Matrix.vec (L j) = ∑ i : r, C j i • Matrix.vec (K i) := by
+    ext x
+    calc
+      Matrix.vec (L j) x = B x j := by
+        simp [B, vecColMat, Matrix.of_apply]
+      _ = (A * Cᵀ) x j := by rw [hB_eq]
+      _ = ∑ i : r, A x i * Cᵀ i j := by
+        simp [Matrix.mul_apply]
+      _ = ∑ i : r, A x i * C j i := by
+        simp [Matrix.transpose_apply]
+      _ = ∑ i : r, C j i * A x i := by
+        apply Finset.sum_congr rfl
+        intro i _
+        rw [mul_comm]
+      _ = ∑ i : r, C j i * Matrix.vec (K i) x := by
+        apply Finset.sum_congr rfl
+        intro i _
+        simp [A, vecColMat, Matrix.of_apply]
+      _ = (∑ i : r, C j i • Matrix.vec (K i)) x := by
+        simp [smul_eq_mul]
+  have hVecMix : Matrix.vec (mixKraus C K j) = ∑ i : r, C j i • Matrix.vec (K i) := by
+    calc
+      Matrix.vec (mixKraus C K j) = Matrix.vec (∑ i : r, C j i • K i) := rfl
+      _ = ∑ i : r, Matrix.vec (C j i • K i) := by
+        rw [Matrix.vec_sum]
+      _ = ∑ i : r, C j i • Matrix.vec (K i) := by
+        apply Finset.sum_congr rfl
+        intro i _
+        rw [Matrix.vec_smul]
+  have hVecFinal : Matrix.vec (L j) = Matrix.vec (mixKraus C K j) := by
+    rw [hVecEq, hVecMix]
+  exact (Matrix.vec_inj.mp hVecFinal)
+
+omit [DecidableEq s] in
+/-- For a linearly independent Kraus family `K`, the mixed family `mixKraus U K`
+defines the same CP map as `K` exactly when `U` is an isometry.
+
+Rows of `U : Matrix s r ℂ` index the target family `mixKraus U K` and columns
+index the source family `K`: `(mixKraus U K) j = ∑ i, U j i • K i` with no
+conjugation on `U j i`. The isometry condition is `Uᴴ * U = 1`. Empty
+`r = Fin 0` is supported: the empty-column matrix is isometric and forces the
+target to be zero. -/
+theorem kraus_mixKraus_eq_iff_isometry {K : r → Matrix m n ℂ}
+    (hK : LinearIndependent ℂ (fun i => Matrix.vec (K i)))
+    (U : Matrix s r ℂ) :
+    kraus (mixKraus U K) = kraus K ↔ Matrix.IsIsometry U := by
+  constructor
+  · intro hEq
+    obtain ⟨V, hV_iso, hV_eq⟩ := exists_isometry_of_kraus_eq hK hEq.symm
+    have hUV : U = V := by
+      ext j i
+      have hMixJ : (mixKraus U K) j = (mixKraus V K) j := by
+        have : mixKraus U K = mixKraus V K := hV_eq
+        exact congrFun this j
+      simp only [mixKraus_apply] at hMixJ
+      have hVecU : Matrix.vec (∑ k : r, U j k • K k) = ∑ k : r, U j k • Matrix.vec (K k) := by
+        calc
+          Matrix.vec (∑ k : r, U j k • K k) = ∑ k : r, Matrix.vec (U j k • K k) := by
+            rw [Matrix.vec_sum]
+          _ = ∑ k : r, U j k • Matrix.vec (K k) := by
+            apply Finset.sum_congr rfl
+            intro k _
+            rw [Matrix.vec_smul]
+      have hVecV : Matrix.vec (∑ k : r, V j k • K k) = ∑ k : r, V j k • Matrix.vec (K k) := by
+        calc
+          Matrix.vec (∑ k : r, V j k • K k) = ∑ k : r, Matrix.vec (V j k • K k) := by
+            rw [Matrix.vec_sum]
+          _ = ∑ k : r, V j k • Matrix.vec (K k) := by
+            apply Finset.sum_congr rfl
+            intro k _
+            rw [Matrix.vec_smul]
+      have hVecEq : ∑ k : r, U j k • Matrix.vec (K k) = ∑ k : r, V j k • Matrix.vec (K k) := by
+        calc
+          ∑ k : r, U j k • Matrix.vec (K k) = Matrix.vec (∑ k : r, U j k • K k) := hVecU.symm
+          _ = Matrix.vec (∑ k : r, V j k • K k) := by rw [hMixJ]
+          _ = ∑ k : r, V j k • Matrix.vec (K k) := hVecV
+      exact hK.eq_coords_of_eq hVecEq i
+    rw [hUV]
+    exact hV_iso
+  · intro hU
+    exact kraus_mixKraus_of_isometry U K hU
+
+/-- If the vectorized Kraus families `K` and `L` are each linearly independent
+and `kraus K = kraus L`, then they are related by a coefficient matrix which is
+unitary between the index types.
+
+This is the minimal-to-minimal Kraus equivalence, the finite-dimensional form of
+Watrous Corollary 2.23. The coefficient convention follows Watrous (2.99)
+`Bₐ = ∑_b U(a,b) A_b` with no star on the coefficient (cf. Theorem 2.12 via
+`A * Aᴴ = B * Bᴴ`). Here rows of `U : Matrix s r ℂ` index the target family `L`
+and columns index the source family `K`, and `L = mixKraus U K`.
+
+The cardinality equality `Fintype.card r = Fintype.card s` is derived from
+`linearIndependent_vec_iff_choiRank_kraus_eq_card` and `hEq`; the isometry `U`
+and mixing equality come from `exists_isometry_of_kraus_eq`; the upgrade to
+`IsUnitaryBetween` uses `Matrix.mul_eq_one_comm_of_card_eq` for `card r = card s`.
+Empty types and `Fin 0` zero-rank cases are supported. -/
+theorem exists_unitaryBetween_of_kraus_eq {K : r → Matrix m n ℂ} {L : s → Matrix m n ℂ}
+    (hK : LinearIndependent ℂ (fun i => Matrix.vec (K i)))
+    (hL : LinearIndependent ℂ (fun i => Matrix.vec (L i)))
+    (hEq : kraus K = kraus L) :
+    ∃ U : Matrix s r ℂ, Matrix.IsUnitaryBetween U ∧ L = mixKraus U K := by
+  classical
+  have hCardK : choiRank (kraus K) = Fintype.card r :=
+    (linearIndependent_vec_iff_choiRank_kraus_eq_card K).mp hK
+  have hCardL : choiRank (kraus L) = Fintype.card s :=
+    (linearIndependent_vec_iff_choiRank_kraus_eq_card L).mp hL
+  have hCardEq : Fintype.card r = Fintype.card s := by
+    calc Fintype.card r = choiRank (kraus K) := hCardK.symm
+      _ = choiRank (kraus L) := by rw [hEq]
+      _ = Fintype.card s := hCardL
+  obtain ⟨U, hU_iso, hU_mix⟩ := exists_isometry_of_kraus_eq hK hEq
+  have hUHU : Matrix.conjTranspose U * U = (1 : Matrix r r ℂ) := hU_iso
+  have hUUH : U * Matrix.conjTranspose U = (1 : Matrix s s ℂ) := by
+    have hComm : (Matrix.conjTranspose U * U = (1 : Matrix r r ℂ)) ↔
+        (U * Matrix.conjTranspose U = (1 : Matrix s s ℂ)) :=
+      Matrix.mul_eq_one_comm_of_card_eq (R := ℂ) (m := r) (n := s)
+        (A := Matrix.conjTranspose U) (B := U) hCardEq
+    exact hComm.mp hUHU
+  exact ⟨U, ⟨hUHU, hUUH⟩, hU_mix⟩
+
+/-! ### Same-index arbitrary Kraus equivalence -/
+
+omit [Fintype m] [Fintype n] [DecidableEq m] [DecidableEq n]
+    [Fintype s] [DecidableEq s] [Fintype r] [DecidableEq r] in
+private lemma mixKraus_comp {r₁ r₂ r₃ : Type*} [Fintype r₁] [Fintype r₂]
+    (U : Matrix r₃ r₁ ℂ) (V : Matrix r₁ r₂ ℂ) (M : r₂ → Matrix m n ℂ) :
+    mixKraus (U * V) M = mixKraus U (mixKraus V M) := by
+  classical
+  funext j
+  simp only [mixKraus_apply, Matrix.mul_apply]
+  calc
+    ∑ k : r₂, (∑ i : r₁, U j i * V i k) • M k
+        = ∑ k : r₂, ∑ i : r₁, (U j i * V i k) • M k := by
+          apply Finset.sum_congr rfl
+          intro k _
+          rw [Finset.sum_smul]
+    _ = ∑ i : r₁, ∑ k : r₂, (U j i * V i k) • M k := by
+          rw [Finset.sum_comm]
+    _ = ∑ i : r₁, ∑ k : r₂, U j i • (V i k • M k) := by
+          apply Finset.sum_congr rfl
+          intro i _
+          apply Finset.sum_congr rfl
+          intro k _
+          rw [smul_smul, mul_comm]
+    _ = ∑ i : r₁, U j i • ∑ k : r₂, V i k • M k := by
+          apply Finset.sum_congr rfl
+          intro i _
+          rw [← Finset.smul_sum]
+    _ = _ := rfl
+
+
+
+/-- Same-index arbitrary Kraus equivalence: if two families indexed by the same
+type `r` define the same CP map, they are related by a unitary coefficient
+matrix `U ∈ unitaryGroup r` with `L = mixKraus U K`.
+
+This is Watrous Corollary 2.23 (same-index form). Rows of `U` index the target
+family `L` and columns index the source family `K`, with no star on the
+coefficient. The proof factors through a minimal rank-sized linearly independent
+family `M` obtained from `exists_kraus_choiRank_linearIndependent`, uses
+`exists_isometry_of_kraus_eq` to obtain isometries `VK, VL` with
+`K = mixKraus VK M`, `L = mixKraus VL M`, extends the isometries to a unitary
+`U` with `U * VK = VL` via `exists_unitary_mul_eq_of_isometry`, and concludes
+by `mixKraus_comp`. Zero rank (`Fin 0`) and empty `r` cases are handled
+explicitly with identity. -/
+theorem exists_unitaryGroup_of_kraus_eq {K L : r → Matrix m n ℂ}
+    (hEq : kraus K = kraus L) :
+    ∃ U : Matrix r r ℂ, U ∈ Matrix.unitaryGroup r ℂ ∧ L = mixKraus U K := by
+  classical
+  let φ := kraus K
+  have hφL : φ = kraus L := hEq
+  obtain ⟨M, hM_eq, hM_li⟩ := exists_kraus_choiRank_linearIndependent φ
+  have hKM : kraus M = kraus K := by
+    calc
+      kraus M = φ := hM_eq.symm
+      _ = kraus K := rfl
+  have hLM : kraus M = kraus L := by
+    calc
+      kraus M = φ := hM_eq.symm
+      _ = kraus L := hφL
+  obtain ⟨VK, hVK_iso, hK_eq⟩ := exists_isometry_of_kraus_eq hM_li hKM
+  obtain ⟨VL, hVL_iso, hL_eq⟩ := exists_isometry_of_kraus_eq hM_li hLM
+  have hMixZero : mixKraus (1 : Matrix r r ℂ) (fun _ => (0 : Matrix m n ℂ)) = fun _ => 0 := by
+    funext j
+    simp [mixKraus_apply]
+  by_cases hq : IsEmpty (Fin (choiRank φ))
+  · have hK_zero : K = fun _ => 0 := by
+      funext j
+      have : K j = (mixKraus VK M) j := by rw [hK_eq]
+      rw [this]
+      simp only [mixKraus_apply]
+      have huniv : (Finset.univ : Finset (Fin (choiRank φ))) = ∅ :=
+        Finset.univ_eq_empty_iff.mpr hq
+      rw [huniv]
+      simp
+    have hL_zero : L = fun _ => 0 := by
+      funext j
+      have : L j = (mixKraus VL M) j := by rw [hL_eq]
+      rw [this]
+      simp only [mixKraus_apply]
+      have huniv : (Finset.univ : Finset (Fin (choiRank φ))) = ∅ :=
+        Finset.univ_eq_empty_iff.mpr hq
+      rw [huniv]
+      simp
+    refine ⟨1, ?_, ?_⟩
+    · rw [Matrix.mem_unitaryGroup_iff']
+      simp
+    · calc
+        L = fun _ => 0 := hL_zero
+        _ = mixKraus (1 : Matrix r r ℂ) (fun _ => (0 : Matrix m n ℂ)) := hMixZero.symm
+        _ = mixKraus (1 : Matrix r r ℂ) K := by rw [← hK_zero]
+  · rw [not_isEmpty_iff] at hq
+    obtain ⟨U, hU_mem, hU_mul⟩ :=
+      Matrix.exists_unitary_mul_eq_of_isometry VK VL hVK_iso hVL_iso
+    refine ⟨U, hU_mem, ?_⟩
+    calc
+      L = mixKraus VL M := hL_eq
+      _ = mixKraus (U * VK) M := by rw [hU_mul]
+      _ = mixKraus U (mixKraus VK M) := by rw [mixKraus_comp]
+      _ = mixKraus U K := by rw [← hK_eq]
+
+omit [DecidableEq r] [DecidableEq s] in
+private lemma kraus_sumElim_inl_zero (K : r → Matrix m n ℂ) :
+    kraus (Sum.elim K (fun _ : s => (0 : Matrix m n ℂ))) = kraus K := by
+  apply DFunLike.ext
+  intro X
+  simp [kraus_apply, Fintype.sum_sum_type]
+
+omit [DecidableEq r] [DecidableEq s] in
+private lemma kraus_sumElim_inr_zero (L : s → Matrix m n ℂ) :
+    kraus (Sum.elim (fun _ : r => (0 : Matrix m n ℂ)) L) = kraus L := by
+  apply DFunLike.ext
+  intro X
+  simp [kraus_apply, Fintype.sum_sum_type]
+
+/-- Arbitrary unequal-family Kraus unitary equivalence after zero-padding to `r ⊕ s`.
+
+Given `K : r → Matrix m n ℂ` and `L : s → Matrix m n ℂ` with `kraus K = kraus L`,
+zero-pad both to the common index type `r ⊕ s`:
+
+* source padded family places `K` on `Sum.inl` and zero on `Sum.inr`:
+  `Sum.elim K (fun _ : s => 0)`;
+* target padded family places zero on `Sum.inl` and `L` on `Sum.inr`:
+  `Sum.elim (fun _ : r => 0) L`.
+
+Then there exists a unitary `U : Matrix (r ⊕ s) (r ⊕ s) ℂ` in
+`Matrix.unitaryGroup (r ⊕ s) ℂ` such that
+
+`targetPad = mixKraus U sourcePad`,
+
+i.e. for `j : r ⊕ s`, `targetPad j = ∑ i, U j i • sourcePad i` with no star
+(`conj`) on the coefficient `U j i`. Conjugation appears only via `ᴴ` on
+Kraus operators inside the CP sum, as in Watrous Theorem 2.12 / Corollary 2.23
+without star.
+
+No unpadded unitary on `r` or `s` is claimed for unequal cardinalities:
+e.g. `[A]` and `[A/√2, A/√2]` have the same CP map but are not related by a
+square unitary; they become unitarily related only after zero-padding to a
+common type, here `r ⊕ s`. Empty `r`, `s`, and zero maps are supported
+without `Nonempty` using `Fin 0` and empty sums. -/
+theorem exists_unitaryGroup_of_kraus_eq_padded {r s : Type*} [Fintype r] [Fintype s]
+    [DecidableEq r] [DecidableEq s] {K : r → Matrix m n ℂ} {L : s → Matrix m n ℂ}
+    (hEq : kraus K = kraus L) :
+    ∃ U : Matrix (r ⊕ s) (r ⊕ s) ℂ, U ∈ Matrix.unitaryGroup (r ⊕ s) ℂ ∧
+      (Sum.elim (fun _ : r => (0 : Matrix m n ℂ)) L) =
+        mixKraus U (Sum.elim K (fun _ : s => (0 : Matrix m n ℂ))) := by
+  classical
+  let Kpad : r ⊕ s → Matrix m n ℂ := Sum.elim K (fun _ : s => (0 : Matrix m n ℂ))
+  let Lpad : r ⊕ s → Matrix m n ℂ := Sum.elim (fun _ : r => (0 : Matrix m n ℂ)) L
+  have hKpad : kraus Kpad = kraus K := kraus_sumElim_inl_zero K
+  have hLpad : kraus Lpad = kraus L := kraus_sumElim_inr_zero L
+  have hPadEq : kraus Kpad = kraus Lpad := by
+    rw [hKpad, hEq, ← hLpad]
+  exact exists_unitaryGroup_of_kraus_eq hPadEq
+
+end CompletelyPositiveMap

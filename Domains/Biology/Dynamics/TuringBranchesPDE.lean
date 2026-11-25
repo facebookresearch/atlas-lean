@@ -33,19 +33,20 @@ which constructs such a Turing map `F`:
   linearization `D ∂ₓₓ + J` restricted to a **finite** cosine-mode space, which the linearization
   leaves invariant;
 * it combines the reduction with the reduced Crandall–Rabinowitz branch theorem of
-  `Domains.Biology.Dynamics.TuringBranches` (T55), which enters **only** through the explicit
-  hypothesis `hCR`, its specialization to the reduced map (the file does not import T55).
+  `Domains.Biology.Dynamics.TuringBranches`, which enters **only** through the explicit
+  hypothesis `hCR`, its specialization to the reduced map (the file does not import it).
 
 ## Source receipt
 
 * **Lyapunov–Schmidt reduction**: H. Kielhöfer, *Bifurcation Theory: An Introduction with
   Applications to Partial Differential Equations*, 2nd ed., Springer (2012), §I.2 ("The Method of
   Lyapunov–Schmidt"): for `F(x, λ)` with Fredholm linearization `D_x F(0, λ₀)`, the solutions of
-  `F = 0` near `(0, λ₀)` are `x = v + ψ(v, λ)`, `v ∈ ker`, with `Φ(v, λ) = (1 - Q) F(v + ψ(v, λ), λ)
-  = 0`, the finite-dimensional bifurcation equation. Here: `lyapunovSchmidt`.
+  `F = 0` near `(0, λ₀)` are `x = v + ψ(v, λ)`, `v ∈ ker`, with
+  `Φ(v, λ) = (1 - Q) F(v + ψ(v, λ), λ) = 0`, the finite-dimensional bifurcation equation. Here:
+  `lyapunovSchmidt`.
 * **Bifurcation from a simple eigenvalue**: M. G. Crandall and P. H. Rabinowitz, *Bifurcation from
-  simple eigenvalues*, J. Funct. Anal. 8 (1971) 321–340, Theorem 1.7; the reduced form is T55's
-  `exists_patternBranch` (PR #1533), used here only through the explicit hypothesis `hCR`.
+  simple eigenvalues*, J. Funct. Anal. 8 (1971) 321–340, Theorem 1.7; the reduced form is
+  `TuringBranches.exists_patternBranch`, used here only through the explicit hypothesis `hCR`.
 * **Turing linearization on Neumann modes**: J. D. Murray, *Mathematical Biology II*, 3rd ed.,
   Springer (2003), ch. 2: `cos(kₙ x) v` with `kₙ = n π / ℓ` is mapped to `cos(kₙ x) (J - kₙ² D) v`.
 
@@ -87,9 +88,8 @@ which constructs such a Turing map `F`:
   Here the Fredholm data is proved on finitely many Neumann modes (`ι` finite).
 * Dividing the scalar map by the amplitude, `G̃(a, d) = a G(a, d)` with `G` strictly
   differentiable, uses `C²` regularity of `F`; it is the hypothesis `hfac`.
-* The final branch-existence statement for the Turing system with T55's theorem plugged in
-  (`hCR := exists_patternBranch`) and `G(0, d) =` the critical eigenvalue is deferred until
-  PR #1533 merges.
+* The branch statement for the Turing system with `hCR := exists_patternBranch` plugged in is
+  `TuringBranchApplication.turing_patternBranch_of_reduction`.
 -/
 
 @[expose] public section
@@ -211,8 +211,8 @@ theorem hasStrictFDerivAt_lsRangeMap (hF : HasStrictFDerivAt F F' ((0 : E), p₀
     (hF'.comp _ (lsEmbed (Λ := Λ) pkg).hasStrictFDerivAt)
 
 omit [CompleteSpace E] [CompleteSpace Y] [CompleteSpace Λ] in
-/-- The partial derivative of the range equation in the essential component is the package
-isomorphism `X₁ ≃ range L`. -/
+/-- If `F'(x, 0) = L x` for all `x`, the partial derivative of the range map in the essential
+component is the package isomorphism `X₁ ≃ range L`. -/
 theorem lsRangeMap_deriv_inr (hFL : F' ∘L .inl ℝ E Λ = L) :
     (pkg.decCodom.proj ∘L F' ∘L lsEmbed pkg) ∘L .inr ℝ _ _ =
       (pkg.equiv : pkg.decDom.X₁ →L[ℝ] pkg.decCodom.X₁) := by
@@ -225,20 +225,24 @@ theorem isInvertible_lsRangeMap_deriv_inr (hFL : F' ∘L .inl ℝ E Λ = L) :
     ((pkg.decCodom.proj ∘L F' ∘L lsEmbed pkg) ∘L .inr ℝ _ _).IsInvertible :=
   ⟨pkg.equiv, (lsRangeMap_deriv_inr pkg hFL).symm⟩
 
-/-- **The Lyapunov–Schmidt solution operator** `W : X₀ × Λ → X₁`: the implicit-function solution
-of the range equation `Q F(z + W(z, p), p) = 0` near `(0, p₀)`. -/
+/-- **The Lyapunov–Schmidt solution operator** `W : X₀ × Λ → X₁` (`E`, `Y`, `Λ` Banach): the
+implicit-function solution
+of the range equation through `((0, p₀), 0)`, `Q F(z + W(z, p), p) = Q F(0, p₀)` near `(0, p₀)`;
+this is the range equation `Q F(z + W(z, p), p) = 0` when `F(0, p₀) = 0`. -/
 noncomputable def lsSolution (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) : pkg.decDom.X₀ × Λ → pkg.decDom.X₁ :=
   (hasStrictFDerivAt_lsRangeMap pkg hF).implicitFunctionOfProdDomain
     (isInvertible_lsRangeMap_deriv_inr pkg hFL)
 
-/-- **The reduced (bifurcation) map** `g(z, p) = (1 - Q) F(z + W(z, p), p) ∈ Y₀`, a map between
-finite-dimensional spaces. -/
+/-- **The reduced (bifurcation) map** `g(z, p) = (1 - Q) F(z + W(z, p), p) ∈ Y₀`, with values in
+the finite-dimensional cokernel part `Y₀` (its domain `X₀ × Λ` is finite-dimensional when `Λ`
+is). -/
 noncomputable def lsReduced (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) : pkg.decDom.X₀ × Λ → pkg.decCodom.X₀ :=
   fun q => cokerProj pkg (F ((q.1 : E) + lsSolution pkg hF hFL q, q.2))
 
-/-- Near `((0, p₀), 0)`, the range equation holds exactly on the graph of `W`. -/
+/-- If `F(0, p₀) = 0`, then near `((0, p₀), 0)` the range equation `Q F(z + w, p) = 0` holds
+exactly on the graph of `W`. -/
 theorem eventually_lsRangeMap_eq_zero_iff (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) (hF0 : F ((0 : E), p₀) = 0) :
     ∀ᶠ v in 𝓝 (((0 : pkg.decDom.X₀), p₀), (0 : pkg.decDom.X₁)),
@@ -250,17 +254,18 @@ theorem eventually_lsRangeMap_eq_zero_iff (hF : HasStrictFDerivAt F F' ((0 : E),
   rw [h0] at this
   exact this
 
-/-- `W(0, p₀) = 0`. -/
+/-- If `F(0, p₀) = 0`, then `W(0, p₀) = 0`. -/
 theorem lsSolution_zero (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) (hF0 : F ((0 : E), p₀) = 0) :
     lsSolution pkg hF hFL ((0 : pkg.decDom.X₀), p₀) = 0 :=
   ((eventually_lsRangeMap_eq_zero_iff pkg hF hFL hF0).self_of_nhds).1 (by simp [lsRangeMap, hF0])
 
-/-- **Lyapunov–Schmidt reduction.** Let `F : E × Λ → Y` vanish at `(0, p₀)` and be strictly
-differentiable there with state derivative `L = ∂ₓF(0, p₀)`, and fix a Fredholm package of `L`
-(`E = X₁ ⊕ ker L`, `Y = range L ⊕ Y₀`, `X₁ ≃ range L`). Then near `(0, p₀)`, `F(x, p) = 0` iff the
-essential component of `x` is given by the solution operator, `π₁ x = W(π₀ x, p)`, and the kernel
-component solves the finite-dimensional bifurcation equation `g(π₀ x, p) = 0`. -/
+/-- **Lyapunov–Schmidt reduction.** Let `F : E × Λ → Y` (`E`, `Y`, `Λ` Banach spaces) vanish at
+`(0, p₀)` and be strictly differentiable there with state derivative `L = ∂ₓF(0, p₀)`, and fix a
+Fredholm package of `L` (`E = X₁ ⊕ ker L`, `Y = range L ⊕ Y₀`, `X₁ ≃ range L`). Then near `(0, p₀)`,
+`F(x, p) = 0` iff the essential component of `x` is given by the solution operator,
+`π₁ x = W(π₀ x, p)`, and the kernel component solves the finite-dimensional bifurcation equation
+`g(π₀ x, p) = 0`. -/
 theorem lyapunovSchmidt (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) (hF0 : F ((0 : E), p₀) = 0) :
     ∀ᶠ q in 𝓝 ((0 : E), p₀), F q = 0 ↔
@@ -287,7 +292,8 @@ theorem lyapunovSchmidt (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     simp
 
 /-- The solution operator is strictly differentiable at `(0, p₀)` and its derivative vanishes in
-the kernel direction: `∂_z W(0, p₀) = 0`, so the branch is tangent to `ker L`. -/
+the kernel direction: `∂_z W(0, p₀) = 0`, so `z ↦ z + W(z, p₀)` has derivative the inclusion of
+`X₀` at `z = 0` (the derivative in `p` need not vanish). -/
 theorem exists_hasStrictFDerivAt_lsSolution (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) :
     ∃ W' : pkg.decDom.X₀ × Λ →L[ℝ] pkg.decDom.X₁,
@@ -321,14 +327,15 @@ section ScalarReduction
 variable {φ : E} (hφ : φ ∈ pkg.decDom.X₀) (hspan : ∀ z : pkg.decDom.X₀, ∃ a : ℝ, (z : E) = a • φ)
   (ψ : Y →L[ℝ] ℝ)
 
-/-- **The scalar bifurcation function** `G̃(a, p) = ψ(F(a φ + W(a φ, p), p))` for a kernel
-`ker L = ℝ φ` spanned by one vector, with `ψ` a functional whose kernel contains `range L` and
-which is injective on the cokernel part. -/
+/-- **The scalar bifurcation function** `G̃(a, p) = ψ(F(a φ + W(a φ, p), p))`, intended for a
+kernel `ker L = ℝ φ` spanned by one vector and a functional `ψ` whose kernel contains `range L`
+and which is injective on the cokernel part; the definition does not require these. -/
 noncomputable def lsScalar (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) : ℝ × Λ → ℝ :=
   fun q => ψ (F (q.1 • φ + lsSolution pkg hF hFL (q.1 • ⟨φ, hφ⟩, q.2), q.2))
 
-/-- The scalar bifurcation function has the zeros of the reduced map. -/
+/-- If `ψ` vanishes on `range L` and is injective on the cokernel part `Y₀`, the scalar bifurcation
+function has the zeros of the reduced map: `G̃(a, p) = 0 ↔ g(a φ, p) = 0`. -/
 theorem lsScalar_eq_zero_iff (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) (hψ1 : ∀ y ∈ pkg.decCodom.X₁, ψ y = 0)
     (hψ0 : ∀ y ∈ pkg.decCodom.X₀, ψ y = 0 → y = 0) (q : ℝ × Λ) :
@@ -347,7 +354,7 @@ theorem lsScalar_eq_zero_iff (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     rw [h]
     simp
 
-/-- The coordinate of the kernel component `π₀ x = a φ`. -/
+/-- The coordinate of the kernel component `π₀ x = a φ`: a chosen `a`, unique when `φ ≠ 0`. -/
 noncomputable def kerCoord (x : E) : ℝ :=
   Classical.choose (hspan (kerProj pkg x))
 
@@ -375,11 +382,12 @@ theorem proj_smul_add (a : ℝ) (w : pkg.decDom.X₁) :
   rw [map_add, map_smul, this, proj_coe_X₁, smul_zero, zero_add]
 
 include hspan in
-/-- **Lyapunov–Schmidt reduction to a scalar equation.** For a kernel `ker L = ℝ φ` spanned by one
-vector and a functional `ψ` cutting out `range L`, near `(0, p₀)` the solutions of `F(x, p) = 0` are
-exactly `x = a φ + W(a φ, p)` with `G̃(a, p) = 0`. The kernel has dimension at most one and
-`range L` has codimension at most one; `φ = 0` and `ψ = 0` are allowed, so the index need not be
-zero. -/
+/-- **Lyapunov–Schmidt reduction to a scalar equation.** Let `F : E × Λ → Y` (Banach spaces) vanish
+at `(0, p₀)` and be strictly differentiable there with state derivative `L`. For a kernel
+`ker L = ℝ φ` spanned by one vector and a functional `ψ` cutting out `range L`, near `(0, p₀)` the
+solutions of `F(x, p) = 0` are exactly `x = a φ + W(a φ, p)` with `G̃(a, p) = 0`. The kernel has
+dimension at most one and `range L` has codimension at most one; `φ = 0` and `ψ = 0` are allowed, so
+the index need not be zero. -/
 theorem lyapunovSchmidt_scalar (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) (hF0 : F ((0 : E), p₀) = 0)
     (hψ1 : ∀ y ∈ pkg.decCodom.X₁, ψ y = 0) (hψ0 : ∀ y ∈ pkg.decCodom.X₀, ψ y = 0 → y = 0) :
@@ -409,7 +417,7 @@ theorem eventually_lsScalar_zero (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
   simp [lsScalar, hp.1, h0]
 
 omit [CompleteSpace E] [CompleteSpace Y] [CompleteSpace Λ] in
-/-- The kernel coordinate tends to `0` at `x = 0`. -/
+/-- For `φ ≠ 0`, the kernel coordinate tends to `0` at `x = 0`. -/
 theorem tendsto_kerCoord (hφ0 : φ ≠ 0) : Tendsto (kerCoord pkg hspan) (𝓝 0) (𝓝 0) := by
   have h : ∀ x, ‖kerCoord pkg hspan x‖ = ‖kerProj pkg x‖ / ‖φ‖ := by
     intro x
@@ -434,17 +442,17 @@ variable {E Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace
   {L : E →L[ℝ] Y} (pkg : FredholmPackage L)
   {F : E × ℝ → Y} {F' : E × ℝ →L[ℝ] Y} {d₀ : ℝ}
 
-/-- **Pattern branches of the full problem from the reduced branch theorem.** Let `F(x, d)` have
-the trivial branch `F(0, d) = 0` near `d₀` and a linearization at `(0, d₀)` with one-dimensional
-kernel `ker L = ℝ φ` (`φ ≠ 0`) and `range L = ker ψ` for a functional `ψ` (Fredholm package
-hypotheses as in `lyapunovSchmidt_scalar`). Assume the scalar
+/-- **Pattern branches of the full problem from the reduced branch theorem.** Let `F(x, d)`
+(`E`, `Y` Banach spaces) have the trivial branch `F(0, d) = 0` near `d₀` and a linearization at
+`(0, d₀)` with one-dimensional kernel `ker L = ℝ φ` (`φ ≠ 0`) and `range L = ker ψ` for a
+functional `ψ` (Fredholm package hypotheses as in `lyapunovSchmidt_scalar`). Assume the scalar
 bifurcation function factors as `G̃(a, d) = a G(a, d)` near `(0, d₀)` with `G` strictly
 differentiable, `G(0, d₀) = 0` and `∂_d G(0, d₀) ≠ 0`.
 
 The reduced Crandall–Rabinowitz branch theorem for `a G(a, d) = 0`, specialized to this `G`, is
 the explicit hypothesis `hCR`; the universal `exists_patternBranch` of
-`Domains.Biology.Dynamics.TuringBranches` (PR #1533, not yet merged) specializes to it at the
-call site (`hCR := exists_patternBranch`). Then the full equation has a unique local pattern
+`Domains.Biology.Dynamics.TuringBranches` specializes to it at the call site
+(`hCR := exists_patternBranch`). Then the full equation has a unique local pattern
 branch: a `d = β(a)` through `(0, d₀)` with slope `-∂_a G / ∂_d G` such that near `(0, d₀)` the
 solutions of `F(x, d) = 0` are exactly the trivial ones `x = 0` and the branch
 `x = a φ + W(a φ, d)`, `d = β(a)`; every point of the branch solves `F = 0` for small `a`. -/

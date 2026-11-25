@@ -56,7 +56,8 @@ namespace Cslib.Databases
 
 open scoped List
 
-/-- The mode of a lock. -/
+/-- **Lock mode.** A lock is held in one of two modes: shared (a read lock) or exclusive (a write
+lock). -/
 inductive LockMode
   /-- A shared (read) lock. -/
   | shared
@@ -72,7 +73,9 @@ instance (P : LockMode → Prop) [DecidablePred P] : Decidable (∀ m, P m) :=
   decidable_of_iff (P .shared ∧ P .exclusive)
     ⟨fun h m => by cases m; exacts [h.1, h.2], fun h => ⟨h _, h _⟩⟩
 
-/-- `m'.Covers m`: a lock in mode `m'` permits what a lock in mode `m` permits. -/
+/-- **Lock mode coverage.** A lock mode $m'$ covers a lock mode $m$ when a lock in mode $m'$
+permits what a lock in mode $m$ permits: an exclusive lock covers both modes, and a shared lock
+covers only the shared mode. -/
 def LockMode.Covers : LockMode → LockMode → Prop
   | .exclusive, _ => True
   | .shared, m => m = .shared
@@ -87,7 +90,11 @@ def Access.mode : Access → LockMode
 
 variable {n : ℕ} {X : Type*}
 
-/-- An action of a locked schedule. -/
+/-- **Action of a locked schedule.** For $n$ transactions, numbered $0, \dots, n-1$, and a type $X$
+of data items, an action of a locked schedule is one of three kinds: a read or write operation; a
+lock request, in which a transaction $t$ acquires a lock on an item $x \in X$ in a lock mode $m$
+(shared or exclusive); or a release, in which a transaction $t$ releases its lock on an item
+$x \in X$. -/
 inductive Action (n : ℕ) (X : Type*)
   /-- A read or a write. -/
   | op (o : Op n X)
@@ -97,14 +104,18 @@ inductive Action (n : ℕ) (X : Type*)
   | unlock (t : Fin n) (x : X)
 deriving DecidableEq
 
-/-- The reads and writes of a locked schedule, in order. -/
+/-- **Reads and writes of a locked schedule.** For a locked schedule $s$, the schedule of reads and
+writes of $s$: its reads and writes in order, with the lock requests and releases erased. -/
 def ops (s : List (Action n X)) : List (Op n X) :=
   s.filterMap fun
     | .op o => some o
     | _ => none
 
-/-- Transaction `t` holds a lock on `x` covering mode `m` just before position `p`: it acquired a
-lock on `x` at an earlier position and has not released it since. -/
+/-- **Holding a lock.** Let $s$ be a locked schedule, $t$ a transaction, $x$ a data item, $m$ a
+lock mode and $p$ a natural number. Transaction $t$ holds a lock on $x$ covering mode $m$ just
+before position $p$ of $s$ when there is a position $q < p$ at which $s$ has a lock request by $t$
+on $x$ in some mode $m'$ that covers $m$, and for no position $r$ with $q < r < p$ is the action
+of $s$ at $r$ a release of $x$ by $t$. -/
 def HoldsBefore (s : List (Action n X)) (t : Fin n) (x : X) (m : LockMode) (p : ℕ) : Prop :=
   ∃ q < p, (∃ m', s[q]? = some (.lock t x m') ∧ m'.Covers m) ∧
     ∀ r < p, q < r → s[r]? ≠ some (.unlock t x)
@@ -114,25 +125,44 @@ instance [DecidableEq X] (s : List (Action n X)) (t : Fin n) (x : X) (m : LockMo
   unfold HoldsBefore
   infer_instance
 
-/-- Every read or write is covered by a lock of its transaction in the mode the access requires. -/
+/-- **Schedules covered by locks.** A locked schedule $s$ is covered by locks when every read or
+write is protected by a lock of its transaction: whenever $s$ has at position $p$ a read or write
+$o$ by transaction $t$ on item $x$, just before position $p$ transaction $t$ holds a lock on $x$
+(acquired at an earlier position and not released since) whose mode covers the mode $o$ requires,
+namely shared for a read and exclusive for a write; an exclusive lock covers both modes. -/
 def LocksCover (s : List (Action n X)) : Prop :=
   ∀ p o, s[p]? = some (.op o) → HoldsBefore s o.txn o.item o.access.mode p
 
-/-- Every lock is released later in the schedule, so transactions end holding no locks. -/
+/-- **Schedules that release every lock.** A locked schedule $s$ releases its locks when every lock
+request is followed by a matching release: whenever $s$ has at position $q$ a lock request (in
+either mode) by transaction $t$ on item $x$, there is a position $r > q$ at which $s$ has a
+release by $t$ of $x$.
+
+In particular, transactions end holding no locks. -/
 def ReleasesLocks (s : List (Action n X)) : Prop :=
   ∀ (q : ℕ) (t : Fin n) (x : X) (m : LockMode), s[q]? = some (.lock t x m) →
     ∃ r, q < r ∧ s[r]? = some (.unlock t x)
 
-/-- A well-formed locked schedule: accesses are covered by locks, and all locks are released. -/
+/-- **Well-formed locked schedules.** A locked schedule $s$ (a list of reads, writes, lock
+requests and lock releases of transactions) is well formed when its accesses are covered by
+locks and it releases its locks: every read or write in $s$ is preceded by a lock request of its
+own transaction on its item, in a mode covering the access (shared or exclusive for a read,
+exclusive for a write), with no release of that item by that transaction in between; and every
+lock request in $s$ by a transaction on an item is followed later in $s$ by a release of that
+item by the same transaction. -/
 def WellFormed (s : List (Action n X)) : Prop := LocksCover s ∧ ReleasesLocks s
 
-/-- Lock compatibility at the point just before position `p`: two transactions do not both hold
-locks on the same item unless both are shared. -/
+/-- **Lock compatibility at a point.** A locked schedule $s$ is legal just before position $p$
+when, for every data item $x$, all distinct transactions $t \ne t'$ and all lock modes $m$, $m'$:
+if $t$ holds a lock on $x$ covering $m$ and $t'$ holds a lock on $x$ covering $m'$ just before
+position $p$ of $s$, then $m$ and $m'$ are both the shared mode. In words, two transactions do not
+both hold locks on the same item unless both locks are shared. -/
 def LegalAt (s : List (Action n X)) (p : ℕ) : Prop :=
   ∀ x t t' m m', t ≠ t' → HoldsBefore s t x m p → HoldsBefore s t' x m' p →
     m = .shared ∧ m' = .shared
 
-/-- The items locked somewhere in the schedule. -/
+/-- **Locked items.** The list of data items locked in a locked schedule $s$: for each lock request
+of $s$, in order, the item it locks, so an item appears once for each lock request on it. -/
 def lockedItems (s : List (Action n X)) : List X :=
   s.filterMap fun
     | .lock _ x _ => some x
@@ -151,27 +181,39 @@ theorem legalAt_iff (s : List (Action n X)) (p : ℕ) :
 instance [DecidableEq X] (s : List (Action n X)) (p : ℕ) : Decidable (LegalAt s p) :=
   decidable_of_iff _ (legalAt_iff s p).symm
 
-/-- Lock compatibility at every point of the schedule. (After the last action the locks no longer
-change, so the points `p ≤ s.length` are all the points.) -/
+/-- **Legal locked schedule.** A locked schedule $s$ of length $\ell$ is legal when it satisfies
+lock compatibility at every point $p \le \ell$: just before position $p$, no two distinct
+transactions both hold locks on the same item unless both locks are shared.
+
+After the last action the locks no longer change, so the points $p \le \ell$ are all the points. -/
 def Legal (s : List (Action n X)) : Prop := ∀ p ≤ s.length, LegalAt s p
 
 instance [DecidableEq X] (s : List (Action n X)) : Decidable (Legal s) := by
   unfold Legal
   infer_instance
 
-/-- Two-phase locking: every lock request of a transaction precedes every release of that
-transaction. -/
+/-- **Two-phase schedules.** A locked schedule $s$ is two-phase when every lock request of a
+transaction precedes every release of that transaction: whenever $s$ has at position $p$ a release
+by transaction $t$ and at position $q$ a lock request by $t$ (on any items, in any mode), then
+$q < p$. -/
 def TwoPhase (s : List (Action n X)) : Prop :=
   ∀ (t : Fin n) (p q : ℕ) (x y : X) (m : LockMode),
     s[p]? = some (.unlock t x) → s[q]? = some (.lock t y m) → q < p
 
-/-- Strict two-phase locking: two-phase, and exclusive locks are released only after the last read
-or write of their transaction. -/
+/-- **Strict two-phase schedules.** A locked schedule $s$ is strict two-phase when it is two-phase
+and every transaction releases its exclusive locks only after its last read or write: whenever
+$s$ has at position $p$ a release by transaction $t$ of item $x$ and just before position $p$
+transaction $t$ holds an exclusive lock on $x$, every read or write of $t$ in $s$ occurs at a
+position before $p$. -/
 def StrictTwoPhase (s : List (Action n X)) : Prop :=
   TwoPhase s ∧ ∀ t x p, s[p]? = some (.unlock t x) → HoldsBefore s t x .exclusive p →
     ∀ q o, s[q]? = some (.op o) → o.txn = t → q < p
 
-/-- `LocksCover` at one position. -/
+/-- **Lock coverage at a position.** For a locked schedule $s$ and a position $p$: if $s$ has at
+position $p$ a read or write $o$ by transaction $t$ on item $x$, then just before position $p$
+transaction $t$ holds a lock on $x$ whose mode covers the mode $o$ requires (shared for a read,
+exclusive for a write; an exclusive lock covers both modes). If position $p$ holds a lock request
+or a release, or lies beyond the end of $s$, the condition holds trivially. -/
 def LocksCoverAt (s : List (Action n X)) (p : ℕ) : Prop :=
   match s[p]? with
   | some (.op o) => HoldsBefore s o.txn o.item o.access.mode p
@@ -201,7 +243,11 @@ theorem locksCover_iff (s : List (Action n X)) :
 instance [DecidableEq X] (s : List (Action n X)) : Decidable (LocksCover s) :=
   decidable_of_iff _ (locksCover_iff s).symm
 
-/-- `ReleasesLocks` at one position. -/
+/-- **Release of the lock requested at a position.** For a locked schedule $s$ and a position $q$:
+if $s$ has at position $q$ a lock request (in either mode) by transaction $t$ on item $x$, then
+there is a position $r$ with $q < r$ and $r$ less than the length of $s$ at which $s$ has a release
+by $t$ of $x$. If position $q$ holds a read, a write or a release, or lies beyond the end of $s$,
+the condition holds trivially. -/
 def ReleasedAt (s : List (Action n X)) (q : ℕ) : Prop :=
   match s[q]? with
   | some (.lock t x _) => ∃ r < s.length, q < r ∧ s[r]? = some (.unlock t x)
@@ -237,7 +283,10 @@ instance [DecidableEq X] (s : List (Action n X)) : Decidable (WellFormed s) := b
   unfold WellFormed
   infer_instance
 
-/-- `TwoPhase` at one pair of positions. -/
+/-- **Two-phase condition at a pair of positions.** For a locked schedule $s$ and positions $p$ and
+$q$: if $s$ has at position $p$ a release by transaction $t$ and at position $q$ a lock request by
+the same transaction $t$, then $q < p$. For every other pair of positions, including positions
+beyond the end of $s$, the condition holds trivially. -/
 def TwoPhaseAt (s : List (Action n X)) (p q : ℕ) : Prop :=
   match s[p]?, s[q]? with
   | some (.unlock t _), some (.lock t' _ _) => t' = t → q < p
@@ -271,7 +320,11 @@ theorem twoPhase_iff (s : List (Action n X)) :
 instance (s : List (Action n X)) : Decidable (TwoPhase s) :=
   decidable_of_iff _ (twoPhase_iff s).symm
 
-/-- The strictness condition at one pair of positions. -/
+/-- **Strictness at a pair of positions.** For a locked schedule $s$ and positions $p$ and $q$: if
+$s$ has at position $p$ a release by transaction $t$ of item $x$, just before position $p$
+transaction $t$ holds an exclusive lock on $x$, and $s$ has at position $q$ a read or write by
+$t$, then $q < p$. For every other pair of positions, including positions beyond the end of $s$,
+the condition holds trivially. -/
 def StrictAt (s : List (Action n X)) (p q : ℕ) : Prop :=
   match s[p]?, s[q]? with
   | some (.unlock t x), some (.op o) => o.txn = t → HoldsBefore s t x .exclusive p → q < p
@@ -302,7 +355,8 @@ theorem strictTwoPhase_iff (s : List (Action n X)) :
 instance [DecidableEq X] (s : List (Action n X)) : Decidable (StrictTwoPhase s) :=
   decidable_of_iff _ (strictTwoPhase_iff s).symm
 
-/-- Whether an action is a release by transaction `t`. -/
+/-- **Release test.** For a transaction $t$, this Boolean test on the actions of a locked schedule
+returns true exactly when the action is a release by $t$ of its lock on some item. -/
 def Action.isUnlockBy (t : Fin n) : Action n X → Bool
   | .unlock t' _ => t' == t
   | _ => false
@@ -404,9 +458,9 @@ theorem TwoPhase.conflictSerializable {s : List (Action n X)}
       ⟨qa, by omega, ⟨ma, hla, hma⟩, fun r h₂ h₁ => by omega⟩
       ⟨qb, by omega, ⟨mb, hlb, hmb⟩, fun r h₂ h₁ => hfreeb r (by omega) h₁⟩
 
-/-- **Strict two-phase locking** produces conflict-serializable schedules: the reads and writes of
-a strict two-phase, legal locked schedule whose distinct accesses are covered by locks are
-conflict-serializable. -/
+/-- **Strict two-phase locking theorem.** If the reads and writes of a locked schedule are
+distinct, are covered by locks, and the schedule is legal and strict two-phase, then its reads and
+writes form a conflict-serializable schedule. -/
 theorem StrictTwoPhase.conflictSerializable {s : List (Action n X)}
     (hnd : (ops s).Nodup) (hwf : LocksCover s) (hl : Legal s) (h : StrictTwoPhase s) :
     ConflictSerializable (ops s) :=

@@ -65,9 +65,19 @@ modal mass of mode `j` is `Γ j ^ 2`; these sum to the total mass
 `r ⬝ᵥ (M *ᵥ r)` seen by the base motion. No division or inverse appears
 in the participation statements.
 
+For peak accounting over a finite horizon `[0, T]`, the reference
+response `u j` of mode `j` is the unit-mass oscillator response
+`u'' + (α + β * μ j) u' + μ j u = -ag t` from rest, for a supplied base
+acceleration history `ag`. The modal correspondence `q j = Γ j * u j` on
+`[0, T]` is an explicit input to the peak bound, not derived: deriving it
+needs a uniqueness theorem for the forced oscillator, which is out of
+scope. The oscillator equation and the rest initial data identify which
+`u j` is meant; the bound uses only continuity of `u j` and the
+correspondence, so they are not premises.
+
 Exclusions: no decoupling for nonproportional damping, no indefinite
-stiffness, no SRSS/CQC or other modal-peak combination rule, no response
-spectrum and no code coefficient.
+stiffness, and only the finite-horizon ABSSUM bound below: no SRSS/CQC,
+infinite-time spectrum, statistical combination or code coefficient.
 
 ## ii. Key results
 
@@ -84,11 +94,14 @@ spectrum and no code coefficient.
 - `mulVec_participation`: the factors reconstruct `r`, `Φ *ᵥ Γ = r`.
 - `sum_participation_sq_lt_of_not_mem`: dropping a participating mode
   strictly loses effective mass.
+- `spectralDisplacement`: peak reference displacement on `[0, T]`.
+- `abs_modal_combination_le`: finite-horizon ABSSUM peak bound.
 
 ## iii. Table of contents
 
 - A. Rayleigh damping and modal decoupling
 - B. Base participation and effective modal mass
+- C. Finite-horizon peak bound
 
 ## iv. References
 
@@ -183,8 +196,10 @@ private lemma deriv_unit_mulVec {n : Type*} [Fintype n] [DecidableEq n]
 pencil `(K, M)` with `Φᵀ * K * Φ = diagonal μ`, a trajectory `x` satisfies
 `M x'' + (α M + β K) x' + K x = f` at time `t` iff its modal coordinates
 `q = Φᵀ * M *ᵥ x` satisfy the decoupled equations
-`q_j'' + (α + β * μ j) q_j' + μ j q_j = (Φᵀ *ᵥ f t) j` at `t`, for every mode `j`.
-Proportional damping only; holds for every real `α`, `β` and any load `f`. -/
+`(q'')_j + (α + β * μ j) (q')_j + μ j q_j = (Φᵀ *ᵥ f t) j` at `t`, for every mode `j`, where
+`(q')_j` and `(q'')_j` are the `j`-th components of the derivatives of the vector `q` (each
+derivative `0` where the function is not differentiable). Proportional damping only; holds for
+every real `α`, `β` and any load `f`. -/
 theorem rayleigh_modal_decoupling {M K Φ : Matrix n n ℝ} {μ : n → ℝ}
     (hMΦ : Φᵀ * M * Φ = 1) (hKΦ : Φᵀ * K * Φ = diagonal μ) (α β : ℝ)
     (x f : ℝ → n → ℝ) (t : ℝ) :
@@ -263,7 +278,9 @@ stiffness `K` and Rayleigh coefficients `α, β ≥ 0`, the canonical modal-basi
 theorem (`PhyslibExt.Mechanics.ModalResponse.exists_modalBasis`) yields an invertible
 mass-orthonormal basis `Φ` with `Φᵀ * K * Φ = diagonal μ`, nonnegative `μ j` and
 nonnegative modal damping `α + β * μ j`, in which every trajectory and load decouple as in
-`rayleigh_modal_decoupling`. Repeated eigenvalues and rigid modes (`μ j = 0`) included. -/
+`rayleigh_modal_decoupling` (components of the derivatives of the vector `q`, each derivative `0`
+where the function is not differentiable). Repeated eigenvalues and rigid modes (`μ j = 0`)
+included. -/
 theorem exists_rayleigh_modal_decoupling
     {M K : Matrix n n ℝ} (hM : M.PosDef) (hK : K.PosSemidef) {α β : ℝ}
     (hα : 0 ≤ α) (hβ : 0 ≤ β) :
@@ -342,5 +359,38 @@ lemma sum_participation_sq_lt_of_not_mem {M Φ : Matrix n n ℝ}
   refine Finset.sum_lt_sum_of_subset (Finset.subset_univ s) (Finset.mem_univ j) hj hpos ?_
   intro k _ _
   exact sq_nonneg _
+
+/-! ## C. Finite-horizon peak bound -/
+
+/-- Spectral displacement of a response `u` on the horizon `[0, T]`: the supremum of
+`|u t|` over `t ∈ [0, T]`, a maximum for continuous `u` and `0 ≤ T`. By the real `sSup`
+convention it is `0` for `T < 0` and when `|u|` is unbounded on `[0, T]`. -/
+noncomputable def spectralDisplacement (T : ℝ) (u : ℝ → ℝ) : ℝ :=
+  sSup ((fun t => |u t|) '' Set.Icc 0 T)
+
+omit [DecidableEq n] in
+/-- Finite-horizon absolute-sum peak bound: if each modal response satisfies the
+correspondence `q j = Γ j * u j` on `[0, T]` with a continuous reference response `u j`
+and participation factors `Γ`, then for every `t ∈ [0, T]` the combined response obeys
+`|∑ j, c j * q j t| ≤ ∑ j, |c j * Γ j| * spectralDisplacement T (u j)`. -/
+theorem abs_modal_combination_le {M Φ : Matrix n n ℝ} {r : n → ℝ} {T : ℝ}
+    {u q : n → ℝ → ℝ} (c : n → ℝ)
+    (hu : ∀ j, ContinuousOn (u j) (Set.Icc 0 T))
+    (hq : ∀ j, ∀ t ∈ Set.Icc 0 T, q j t = participation M Φ r j * u j t)
+    {t : ℝ} (ht : t ∈ Set.Icc 0 T) :
+    |∑ j, c j * q j t| ≤
+      ∑ j, |c j * participation M Φ r j| * spectralDisplacement T (u j) := by
+  have hle : ∀ j, |u j t| ≤ spectralDisplacement T (u j) := by
+    intro j
+    apply le_csSup
+    · exact (isCompact_Icc.image_of_continuousOn (hu j).abs).bddAbove
+    · exact ⟨t, ht, rfl⟩
+  calc |∑ j, c j * q j t| ≤ ∑ j, |c j * q j t| :=
+          Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ j, |c j * participation M Φ r j| * spectralDisplacement T (u j) := by
+        apply Finset.sum_le_sum
+        intro j _
+        rw [hq j t ht, ← mul_assoc, abs_mul]
+        exact mul_le_mul_of_nonneg_left (hle j) (abs_nonneg _)
 
 end PhyslibExt.Mechanics.RayleighModal

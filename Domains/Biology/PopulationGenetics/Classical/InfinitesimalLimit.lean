@@ -49,16 +49,23 @@ namespace MathlibExt.Biology.PopulationGenetics.Classical.InfinitesimalLimit
 
 variable {Ω : Type*} [MeasurableSpace Ω]
 
-/-- The offspring **segregation deviation** at `M` loci, `R_M = ∑_{l < M} a_l (X_l - E X_l)`:
-`X l` is the offspring's allele count at locus `l` (a Mendelian draw given the parents) and
-`a l` is the additive effect of the locus. -/
+/-- The offspring **segregation deviation** at `M` loci, `R_M = ∑_{l < M} a_l (X_l - E X_l)`,
+for a measure `P`, reals `a l` and real functions `X l`. In the intended use `X l` is the
+offspring's allele count at locus `l` (a Mendelian draw given the parents) and `a l` is the
+additive effect of the locus; the definition assumes no range, law, probability measure or
+integrability. Here `E X_l = ∫ X_l dP`, the mean when `P` is a probability measure and `X l` is
+integrable, and `0` by convention when `X l` is not integrable; for `M = 0` the sum is empty and
+`R_0 = 0`. -/
 noncomputable def segregationDeviation (P : Measure Ω) (M : ℕ) (a : ℕ → ℝ) (X : ℕ → Ω → ℝ) :
     Ω → ℝ :=
   fun ω => ∑ l ∈ range M, a l * (X l ω - P[X l])
 
 /-- The law of the offspring's count of the focal allele at one biallelic locus when the parents
 carry `g₁` and `g₂` copies (`gᵢ ∈ {0, 1, 2}`): each parent transmits the focal allele
-independently with probability `gᵢ / 2` (Mendel's first law), so the count is `0`, `1` or `2`. -/
+independently with probability `gᵢ / 2` (Mendel's first law), so the count is `0`, `1` or `2`.
+It is a probability measure for `g₁, g₂ ≤ 2`. It is defined for all natural `g₁, g₂`: a negative
+weight, which occurs as soon as `g₁ > 2` or `g₂ > 2`, is replaced by `0`, and the total mass then
+exceeds `1`. -/
 noncomputable def mendelLaw (g₁ g₂ : ℕ) : Measure ℝ :=
   ENNReal.ofReal ((1 - (g₁ : ℝ) / 2) * (1 - (g₂ : ℝ) / 2)) • Measure.dirac 0 +
     ENNReal.ofReal ((g₁ : ℝ) / 2 * (1 - (g₂ : ℝ) / 2) + (1 - (g₁ : ℝ) / 2) * ((g₂ : ℝ) / 2)) •
@@ -108,8 +115,9 @@ private lemma iIndepFun_centered (hind : iIndepFun X P) (a : ℕ → ℝ) (c : �
 
 end Helpers
 
-/-- **Variance of the segregation deviation.** For independent (unlinked) loci with allele
-counts in `[0, 2]`, `Var(R_M) = ∑_{l < M} a_l² Var(X_l)`. -/
+/-- **Variance of the segregation deviation.** Under a probability measure, for measurable,
+independent (unlinked) allele counts `X l` almost surely in `[0, 2]`,
+`Var(R_M) = ∑_{l < M} a_l² Var(X_l)`. -/
 theorem variance_segregationDeviation {P : Measure Ω} [IsProbabilityMeasure P] {M : ℕ}
     {a : ℕ → ℝ} {X : ℕ → Ω → ℝ} (hXm : ∀ l, Measurable (X l)) (hind : iIndepFun X P)
     (hX : ∀ l, ∀ᵐ ω ∂P, X l ω ∈ Set.Icc (0 : ℝ) 2) :
@@ -126,10 +134,10 @@ theorem variance_segregationDeviation {P : Measure Ω} [IsProbabilityMeasure P] 
   rw [variance_const_mul, variance_sub_const (hXm l).aestronglyMeasurable]
 
 /-- **Segregation Berry–Esseen bound.** Conditional on the parents (the probability space),
-let the offspring allele counts `X l ∈ [0, 2]` at unlinked loci be independent, with additive
-effects `|a l| ≤ B / √M`. If `σ² = Var(R_M) > 0`, then for every `x`,
-`|P(R_M ≤ x) - Φ(x / σ)| ≤ 336 B³ / (σ³ √M)`, where `Φ` is the standard normal distribution
-function. The constant is `42 · 2³`, from Atlas's Lyapunov-form Berry–Esseen bound with
+let the offspring allele counts `X l ∈ [0, 2]` at unlinked loci be measurable and independent,
+with additive effects `|a l| ≤ B / √M` for `l < M`. If `σ > 0` and `σ² = Var(R_M)`, then for
+every `x`, `|P(R_M ≤ x) - Φ(x / σ)| ≤ 336 B³ / (σ³ √M)`, where `Φ` is the standard normal
+distribution function. The constant is `42 · 2³`, from Atlas's Lyapunov-form Berry–Esseen bound with
 constant `42`. -/
 theorem abs_segregation_cdf_sub_le {P : Measure Ω} [IsProbabilityMeasure P] {M : ℕ}
     {B σ : ℝ} {a : ℕ → ℝ} {X : ℕ → Ω → ℝ} (hXm : ∀ l, Measurable (X l))
@@ -215,7 +223,9 @@ theorem abs_segregation_cdf_sub_le {P : Measure Ω} [IsProbabilityMeasure P] {M 
   calc _ ≤ 42 * γ := hmain
     _ = 336 * B ^ 3 / (σ ^ 3 * √M) := by rw [hγ]; ring
 
-/-- A Mendelian draw lies in `{0, 1, 2} ⊆ [0, 2]`: the law gives no mass outside `[0, 2]`. -/
+/-- For all natural `g₁, g₂` the measure `mendelLaw g₁ g₂` is carried by `{0, 1, 2}`, so it gives
+no mass outside `[0, 2]`; for `g₁, g₂ ≤ 2`, where it is a probability measure, a Mendelian draw
+lies in `{0, 1, 2} ⊆ [0, 2]`. -/
 theorem mendelLaw_compl_Icc (g₁ g₂ : ℕ) : mendelLaw g₁ g₂ (Set.Icc (0 : ℝ) 2)ᶜ = 0 := by
   simp [mendelLaw, Measure.dirac_apply' _ measurableSet_Icc.compl, Set.indicator_of_notMem]
 
@@ -242,7 +252,8 @@ private lemma integrable_mendelLaw (f : ℝ → ℝ) (g₁ g₂ : ℕ) : Integra
     (Integrable.smul_measure ?_ ENNReal.ofReal_ne_top) <;>
   exact integrable_dirac enorm_lt_top
 
-/-- Integrals against the Mendelian offspring law. -/
+/-- Integrals against the Mendelian offspring law: for `g₁, g₂ ≤ 2`, `pᵢ = gᵢ / 2` and every
+`f : ℝ → ℝ`, `∫ f = (1 - p₁) (1 - p₂) f 0 + (p₁ (1 - p₂) + (1 - p₁) p₂) f 1 + p₁ p₂ f 2`. -/
 theorem integral_mendelLaw (f : ℝ → ℝ) {g₁ g₂ : ℕ} (h₁ : g₁ ≤ 2) (h₂ : g₂ ≤ 2) :
     ∫ x, f x ∂mendelLaw g₁ g₂ =
       (1 - (g₁ : ℝ) / 2) * (1 - (g₂ : ℝ) / 2) * f 0 +
@@ -281,9 +292,10 @@ theorem variance_mendelLaw {g₁ g₂ : ℕ} (h₁ : g₁ ≤ 2) (h₂ : g₂ �
   rw [e1, e2]
   ring
 
-/-- **Segregation Berry–Esseen bound for Mendelian draws.** If the offspring allele count at
-locus `l` has the Mendelian law of parents carrying `g₁ l` and `g₂ l` focal alleles, the loci are
-unlinked (independent), and `|a l| ≤ B / √M`, then whenever `σ² = Var(R_M) > 0`,
+/-- **Segregation Berry–Esseen bound for Mendelian draws.** Under a probability measure, if the
+measurable offspring allele count at locus `l` has the Mendelian law of parents carrying `g₁ l`
+and `g₂ l` focal alleles, the loci are unlinked (independent), and `|a l| ≤ B / √M` for `l < M`,
+then whenever `σ > 0` and `σ² = Var(R_M)`,
 `|P(R_M ≤ x) - Φ(x / σ)| ≤ 336 B³ / (σ³ √M)`. -/
 theorem abs_mendelian_segregation_cdf_sub_le {P : Measure Ω} [IsProbabilityMeasure P] {M : ℕ}
     {B σ : ℝ} {a : ℕ → ℝ} {X : ℕ → Ω → ℝ} {g₁ g₂ : ℕ → ℕ} (hXm : ∀ l, Measurable (X l))

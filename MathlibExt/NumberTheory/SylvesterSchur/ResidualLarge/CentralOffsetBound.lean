@@ -43,7 +43,14 @@ private lemma central_layers_le_four_pow_of_lt_three_mul {n N : ℕ}
       apply Nat.pow_le_pow_right (by norm_num : 0 < 4)
       omega
 
-/-- Large-`n` residual estimate in the central-offset range `k + n - 1 < 3 * n`. -/
+/-- **Central-offset residual bound.** Let $n$ and $k$ be natural numbers with $945 \le n < k$
+and $k + n - 1 < 3n$, and put $N = k + n - 1$ and $i = k - n - 1$. For a natural number $m$
+let $m\#$ denote the product of all primes $p \le m$, and let $P_0 = \lfloor N/3 \rfloor\#$ and
+$P_j = \lfloor N^{1/(j+1)} \rfloor\#$ for $j \ge 1$. Then
+$$
+n \cdot 2^{i} \cdot \prod_{0 \le j < \lfloor \log_2 N \rfloor} P_j < 3^{i} \cdot 4^{n}.
+$$
+-/
 lemma second_residual_large_central_offset_bound {n k : ℕ}
     (hn : 945 ≤ n) (hk : n < k) (hcentral : k + n - 1 < 3 * n) :
     n * (2 ^ (k - n - 1) *

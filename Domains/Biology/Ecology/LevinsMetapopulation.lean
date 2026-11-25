@@ -44,23 +44,23 @@ is one when `e = 0`. The formula `1 - e / c` means nothing there; Lean's divisio
   for `c ≠ 0`).
 * `levins`, `isSolution_levins`, `exists_isSolution`: the explicit solution and global
   existence with `[0, 1]` invariant.
-* `IsSolution.eq_of_initial`, `IsSolution.eq_levins`: forward uniqueness; every solution is the
-  explicit one.
-* `extinction_isGloballyStable`: if `c ≤ e` (and `e > 0`; `e > 0` is needed: for `c = e = 0`
+* `IsSolution.eq_of_initial`, `IsSolution.eq_levins`: forward uniqueness; for `c ≥ 0`, every
+  solution with `p(0) ≥ 0` is the explicit one on `[0, ∞)`.
+* `extinction_isGloballyStable`: if `0 ≤ c ≤ e` (and `e > 0`; `e > 0` is needed: for `c = e = 0`
   every state is an equilibrium, so `0` attracts nothing else), `p = 0` is Lyapunov stable and
   attracts every solution starting in `[0, 1]`; the trajectory never exceeds `p(0)`.
 * `persistence_isGloballyStable`: if `0 ≤ e < c`, `p*` is Lyapunov stable and attracts every
-  solution starting in `(0, 1]`; `|p(t) - p*|` is nonincreasing and decays like `e^{-(c - e) t}`
-  (`abs_levins_sub_le`, `abs_levins_sub_le_exp`).
+  solution starting in `(0, 1]`; `|p(t) - p*|` never exceeds `|p(0) - p*|` and decays like
+  `e^{-(c - e) t}` (`abs_levins_sub_le`, `abs_levins_sub_le_exp`).
 * `not_isLyapunovStable_zero`: if `0 ≤ e < c`, extinction is unstable.
-* `tendsto_zero_iff_le`: for `c, e > 0`, every solution from `[0, 1]` goes extinct iff `c ≤ e`.
+* `tendsto_zero_iff_le`: for `c, e > 0`, every solution from `[0, 1]` tends to `0` iff `c ≤ e`.
 
 ## Implementation
 
 With `S = 1 - p` the pair `(S, p)` solves the closed-population SIS model of
 `Domains.Biology.Epidemiology.SIS` with `β = c`, `γ = e` and `N = 1` (`IsSolution.toSIS`).
 The explicit solution, uniqueness and the two limits are taken from that file; the Lyapunov
-stability bounds are proved here from the explicit formula. For `0 ≤ e < c` the explicit
+stability bounds are proved here from the explicit formula. For `c > 0` and `e < c` the explicit
 solution is the logistic curve with rate `c - e` and carrying capacity `p*`
 (`levins_eq_logistic`). The stability notions `IsLyapunovStable`, `IsGloballyAttracting` and
 `IsGloballyStable` abbreviate the shared notions of `MathlibExt.Dynamics.EquilibriumStability` for
@@ -87,14 +87,16 @@ empty fraction `1 - p` at rate `c`, and local populations go extinct at rate `e`
 `c p (1 - p) - e p`. -/
 def balance (c e p : ℝ) : ℝ := c * p * (1 - p) - e * p
 
-/-- `p` solves the Levins equation `p' = c p (1 - p) - e p` for all `t ≥ 0`. -/
+/-- `p` solves the Levins equation `p' = c p (1 - p) - e p` for all `t ≥ 0`: at every `t ≥ 0`,
+`t = 0` included, `p` has a two-sided derivative equal to `c p(t) (1 - p(t)) - e p(t)`. -/
 structure IsSolution (c e : ℝ) (p : ℝ → ℝ) : Prop where
   /-- The occupied fraction changes by colonization minus extinction. -/
   hasDerivAt : ∀ t, 0 ≤ t → HasDerivAt p (balance c e (p t)) t
 
 /-- The **persistence equilibrium** `p* = 1 - e / c`: for `c ≠ 0`, the equilibrium besides
-`p = 0` (`balance_eq_zero_iff`). At `c = 0` it is not an equilibrium unless `e = 0`: Lean's
-division gives `persistenceEq 0 e = 1`, while `balance 0 e 1 = -e`. -/
+`p = 0` (`balance_eq_zero_iff`; the two coincide when `e = c`). At `c = 0` it is not an
+equilibrium unless `e = 0`: with the convention `x / 0 = 0`, `persistenceEq 0 e = 1`, while
+`balance 0 e 1 = -e`. -/
 noncomputable def persistenceEq (c e : ℝ) : ℝ := 1 - e / c
 
 variable {c e : ℝ}
@@ -185,7 +187,9 @@ theorem IsSolution.toSIS {p : ℝ → ℝ} (h : IsSolution c e p) :
 
 /-- The **explicit solution** of the Levins equation with `p(0) = p₀`: the SIS solution with
 `β = c`, `γ = e`, `N = 1`,
-`p(t) = p₀ e^{(c - e) t} / (1 + c p₀ φ(t))`, `φ(t) = ∫₀ᵗ e^{(c - e) s} ds`. -/
+`p(t) = p₀ e^{(c - e) t} / (1 + c p₀ φ(t))`, `φ(t) = ∫₀ᵗ e^{(c - e) s} ds`. It is defined for all
+real inputs, with the convention `x / 0 = 0` where the denominator vanishes; for `c, p₀ ≥ 0` and
+`t ≥ 0` the denominator is at least `1`. -/
 noncomputable def levins (c e p₀ t : ℝ) : ℝ :=
   SIS.sisInfected c e 1 p₀ t
 
@@ -202,7 +206,8 @@ theorem isSolution_levins {p₀ : ℝ} (hc : 0 ≤ c) (hp₀ : 0 ≤ p₀) :
   · simp only [balance, SIS.sisSusceptible, levins]
     ring
 
-/-- **Invariance of `[0, 1]` for the explicit solution** (`c, e ≥ 0`). -/
+/-- **Invariance of `[0, 1]` for the explicit solution** (`c, e ≥ 0`): if `p₀ ∈ [0, 1]`, then
+`p(t) ∈ [0, 1]` for all `t ≥ 0`. -/
 theorem levins_mem_Icc {p₀ t : ℝ} (hc : 0 ≤ c) (he : 0 ≤ e) (hp₀ : p₀ ∈ Icc 0 1)
     (ht : 0 ≤ t) : levins c e p₀ t ∈ Icc 0 1 :=
   SIS.sisInfected_mem_Icc hc he one_pos hp₀ ht
@@ -220,8 +225,10 @@ theorem levins_pos {p₀ t : ℝ} (hc : 0 ≤ c) (hp₀ : 0 < p₀) (ht : 0 ≤ 
   div_pos (mul_pos hp₀ (exp_pos _))
     (by linarith [SIS.one_le_sisDenom (γ := e) hc one_pos hp₀.le ht])
 
-/-- **Logistic form.** For `0 ≤ e < c` the explicit solution is the logistic curve with rate
-`c - e` and carrying capacity `p*`. -/
+/-- **Logistic form.** For `c > 0` and `e < c` (no sign condition on `e`) and all real `p₀`, `t`,
+the explicit solution is the logistic curve with rate `c - e` and carrying capacity `p*`:
+`p(t) = p* p₀ e^{(c - e) t} / (p* + p₀ (e^{(c - e) t} - 1))`, both sides being `0` where their
+denominators vanish (at the same times). -/
 theorem levins_eq_logistic (hc : 0 < c) (hec : e < c) (p₀ t : ℝ) :
     levins c e p₀ t = Dynamics.Logistic.logistic (c - e) (persistenceEq c e) p₀ t := by
   rw [levins, SIS.sisInfected_eq_logistic hc.ne' (sub_pos.2 hec).ne' one_ne_zero,
@@ -240,17 +247,18 @@ theorem eq_of_initial (hp : IsSolution c e p) (hq : IsSolution c e q) (h0 : p 0 
     {t : ℝ} (ht : 0 ≤ t) : p t = q t :=
   hp.toSIS.infected_eq_of_initial hq.toSIS one_ne_zero (by ring) (by ring) h0 ht
 
-/-- **Every solution is the explicit one** (`c ≥ 0`, `p(0) ≥ 0`). -/
+/-- **Every solution is the explicit one** on `[0, ∞)` (`c ≥ 0`, `p(0) ≥ 0`). -/
 theorem eq_levins (hp : IsSolution c e p) (hc : 0 ≤ c) (hp0 : 0 ≤ p 0) {t : ℝ} (ht : 0 ≤ t) :
     p t = levins c e (p 0) t :=
   hp.eq_of_initial (isSolution_levins hc hp0) (levins_zero _ _ _).symm ht
 
-/-- **Invariance of `[0, 1]`** (`c, e ≥ 0`). -/
+/-- **Invariance of `[0, 1]`** (`c, e ≥ 0`): a solution with `p(0) ∈ [0, 1]` has `p(t) ∈ [0, 1]`
+for all `t ≥ 0`. -/
 theorem mem_Icc (hp : IsSolution c e p) (hc : 0 ≤ c) (he : 0 ≤ e) (hp0 : p 0 ∈ Icc 0 1)
     {t : ℝ} (ht : 0 ≤ t) : p t ∈ Icc 0 1 :=
   hp.eq_levins hc hp0.1 ht ▸ levins_mem_Icc hc he hp0 ht
 
-/-- An occupied landscape stays occupied: `p(0) > 0 → p(t) > 0` (`c ≥ 0`). -/
+/-- An occupied landscape stays occupied: `p(0) > 0 → p(t) > 0` for all `t ≥ 0` (`c ≥ 0`). -/
 theorem pos (hp : IsSolution c e p) (hc : 0 ≤ c) (hp0 : 0 < p 0) {t : ℝ} (ht : 0 ≤ t) :
     0 < p t :=
   hp.eq_levins hc hp0.le ht ▸ levins_pos hc hp0 ht
@@ -279,8 +287,8 @@ namespace IsSolution
 
 variable {p : ℝ → ℝ}
 
-/-- For `c ≤ e`, the occupied fraction never exceeds its initial value:
-`0 ≤ p(t) ≤ p(0) e^{(c - e) t} ≤ p(0)`. -/
+/-- For `0 ≤ c ≤ e`, a solution with `p(0) ≥ 0` never exceeds its initial value: `p(t) ≤ p(0)`
+for all `t ≥ 0`, since `0 ≤ p(t) ≤ p(0) e^{(c - e) t} ≤ p(0)` for the explicit solution. -/
 theorem le_initial (hp : IsSolution c e p) (hc : 0 ≤ c) (hce : c ≤ e) (hp0 : 0 ≤ p 0) {t : ℝ}
     (ht : 0 ≤ t) : p t ≤ p 0 := by
   rw [hp.eq_levins hc hp0 ht]
@@ -310,7 +318,8 @@ theorem extinction_isGloballyStable (hc : 0 ≤ c) (he : 0 < e) (hce : c ≤ e) 
 
 /-! ### Persistence: `c > e` -/
 
-/-- Distance to `p*` along the explicit solution:
+/-- Difference from `p*` along the explicit solution: for `c > 0`, `e < c` and real `p₀`, `t`
+with `p* + p₀ (e^{(c - e) t} - 1) ≠ 0`,
 `p(t) - p* = p* (p₀ - p*) / (p* + p₀ (e^{(c - e) t} - 1))`. -/
 theorem levins_sub_persistenceEq (hc : 0 < c) (hec : e < c) {p₀ t : ℝ}
     (hden : persistenceEq c e + p₀ * (exp ((c - e) * t) - 1) ≠ 0) :
@@ -321,8 +330,8 @@ theorem levins_sub_persistenceEq (hc : 0 < c) (hec : e < c) {p₀ t : ℝ}
   field_simp
   ring
 
-/-- **The distance to `p*` never grows.** For `0 < c`, `e < c`, `p₀ > 0` and `t ≥ 0`,
-`|p(t) - p*| ≤ |p₀ - p*|`. -/
+/-- **The distance to `p*` never exceeds its initial value.** For `0 < c`, `e < c`, `p₀ > 0` and
+`t ≥ 0`, the explicit solution satisfies `|p(t) - p*| ≤ |p₀ - p*|`. -/
 theorem abs_levins_sub_le (hc : 0 < c) (hec : e < c) {p₀ t : ℝ} (hp₀ : 0 < p₀) (ht : 0 ≤ t) :
     |levins c e p₀ t - persistenceEq c e| ≤ |p₀ - persistenceEq c e| := by
   have hK := (persistenceEq_pos_iff hc).2 hec
@@ -335,8 +344,8 @@ theorem abs_levins_sub_le (hc : 0 < c) (hec : e < c) {p₀ t : ℝ} (hp₀ : 0 <
     abs_of_pos hDpos, div_le_iff₀ hDpos, mul_comm]
   exact mul_le_mul_of_nonneg_left hD (abs_nonneg _)
 
-/-- **Exponential convergence to `p*`.** For `0 < c`, `e < c`, `p₀ > 0` and `t ≥ 0`,
-`|p(t) - p*| ≤ (p* / min p₀ p*) |p₀ - p*| e^{-(c - e) t}`. -/
+/-- **Exponential convergence to `p*`.** For `0 < c`, `e < c`, `p₀ > 0` and `t ≥ 0`, the explicit
+solution satisfies `|p(t) - p*| ≤ (p* / min p₀ p*) |p₀ - p*| e^{-(c - e) t}`. -/
 theorem abs_levins_sub_le_exp (hc : 0 < c) (hec : e < c) {p₀ t : ℝ} (hp₀ : 0 < p₀)
     (ht : 0 ≤ t) :
     |levins c e p₀ t - persistenceEq c e| ≤
@@ -411,7 +420,7 @@ theorem not_isLyapunovStable_zero (he : 0 ≤ e) (hec : e < c) :
   linarith [le_abs_self (levins c e p₀ t)]
 
 /-- **Persistence threshold, global form.** For `c, e > 0`, every solution starting in `[0, 1]`
-goes extinct iff `c ≤ e`. -/
+tends to `0` iff `c ≤ e`. -/
 theorem tendsto_zero_iff_le (hc : 0 < c) (he : 0 < e) :
     (∀ p : ℝ → ℝ, IsSolution c e p → p 0 ∈ Icc 0 1 → Tendsto p atTop (𝓝 0)) ↔ c ≤ e := by
   refine ⟨fun h => le_of_not_gt fun hec => ?_,

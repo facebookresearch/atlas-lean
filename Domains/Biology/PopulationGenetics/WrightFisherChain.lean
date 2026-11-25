@@ -462,7 +462,7 @@ private lemma measureReal_exists_eq_of_tendsto {Ω : Type*} {m : MeasurableSpace
     ae_all_iff.2 (ae_stay hX ha)
   have hF : ∀ t, Set.accumulate E t =ᵐ[μ] E t := fun t => by
     filter_upwards [hstay] with ω h
-    refine propext ⟨fun hω => ?_, fun hω => Set.mem_accumulate.2 ⟨t, le_rfl, hω⟩⟩
+    refine ⟨fun hω => ?_, fun hω => Set.mem_accumulate.2 ⟨t, le_rfl, hω⟩⟩
     obtain ⟨s, hst, hs⟩ := Set.mem_accumulate.1 hω
     induction t, hst using Nat.le_induction with
     | base => exact hs
