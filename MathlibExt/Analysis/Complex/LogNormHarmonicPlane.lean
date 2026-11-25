@@ -109,8 +109,9 @@ variable {E G F : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [Finit
   [NormedAddCommGroup G] [InnerProductSpace ℝ G] [FiniteDimensional ℝ G]
   [NormedAddCommGroup F] [NormedSpace ℝ F]
 
-/-- The Laplacian commutes with precomposition by a linear isometry equivalence: if
-`L : E ≃ₗᵢ[ℝ] G`, then `Δ (f ∘ L) = Δ f ∘ L`. -/
+/-- Let $L : E \to G$ be a linear isometric equivalence between finite-dimensional real inner
+product spaces. For every function $f : G \to F$ into a real normed space, the Laplacian
+satisfies $\Delta(f \circ L) = (\Delta f) \circ L$. -/
 theorem laplacian_comp_linearIsometryEquiv (f : G → F) (L : E ≃ₗᵢ[ℝ] G) :
     Δ (f ∘ L) = Δ f ∘ L := by
   ext x
@@ -127,8 +128,9 @@ theorem laplacian_comp_linearIsometryEquiv (f : G → F) (L : E ≃ₗᵢ[ℝ] G
   ext j
   fin_cases j <;> rfl
 
-/-- Harmonicity is invariant under linear isometry equivalences: if `L : E ≃ₗᵢ[ℝ] G`, then
-`f ∘ L` is harmonic at `x` if and only if `f` is harmonic at `L x`. -/
+/-- Let $L : E \to G$ be a linear isometric equivalence between finite-dimensional real inner
+product spaces, and let $f : G \to F$ take values in a real normed space. For each $x \in E$,
+$f \circ L$ is harmonic at $x$ if and only if $f$ is harmonic at $Lx$. -/
 theorem harmonicAt_comp_linearIsometryEquiv_iff {f : G → F} (L : E ≃ₗᵢ[ℝ] G) {x : E} :
     HarmonicAt (f ∘ L) x ↔ HarmonicAt f (L x) := by
   refine and_congr ?_ ?_

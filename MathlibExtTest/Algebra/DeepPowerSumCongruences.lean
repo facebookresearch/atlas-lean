@@ -71,6 +71,51 @@ example : ¬ ∀ n : ℕ, 1 ≤ n → ∀ a ∈ Ideal.span {(Zsqrtd.sqrtd : ℤ�
   simp [pow_two] at hre
   omega
 
+-- Test section: Kummer's theorem for multinomial coefficients.
+
+/-- The binomial case: `v_p(C(n + k, k))` is the sum over `1 ≤ i ≤ n + k` of the carries
+`⌊(k mod p ^ i + n mod p ^ i) / p ^ i⌋`, from the multinomial coefficient `(n + k; k, n)` of a
+two-element index set. -/
+private theorem padicValNat_choose_eq_sum_carries {p : ℕ} [Fact p.Prime] (n k : ℕ) :
+    padicValNat p ((n + k).choose k) =
+      ∑ i ∈ Finset.Icc 1 (n + k), (k % p ^ i + n % p ^ i) / p ^ i := by
+  have h := padicValNat_multinomial_eq_sum_carries (p := p) ({0, 1} : Finset (Fin 2)) ![k, n]
+  rw [Nat.binomial_eq_choose (by decide)] at h
+  simpa [Finset.sum_pair, Nat.add_comm k n] using h
+
+-- With two numbers every carry is `0` or `1`, so the sum of the carries counts the positions `i`
+-- with `p ^ i ≤ k mod p ^ i + n mod p ^ i`: this is Kummer's theorem for binomial coefficients,
+-- in the form of Mathlib's `multiplicity_choose'`.
+open Finset in
+example {p : ℕ} [hp : Fact p.Prime] (n k : ℕ) :
+    padicValNat p ((n + k).choose k) = #{i ∈ Icc 1 (n + k) | p ^ i ≤ k % p ^ i + n % p ^ i} := by
+  rw [padicValNat_choose_eq_sum_carries, card_filter]
+  refine sum_congr rfl fun i _ => ?_
+  have hpi : 0 < p ^ i := pow_pos hp.out.pos i
+  have hk := Nat.mod_lt k hpi
+  have hn := Nat.mod_lt n hpi
+  split_ifs with h
+  · exact Nat.div_eq_of_lt_le (by omega) (by omega)
+  · exact Nat.div_eq_of_lt (by omega)
+
+-- With more numbers a carry can exceed `1`: for `p = 2` and `r = (1, 1, 1, 1)` the carries are
+-- `c_1 = 2` and `c_2 = 1`, and indeed `(4; 1, 1, 1, 1) = 24 = 2 ^ 3 * 3`.
+example : padicValNat 2 (Nat.multinomial Finset.univ ![1, 1, 1, 1]) = 3 ∧
+    (∑ j : Fin 4, ![1, 1, 1, 1] j % 2 ^ 1) / 2 ^ 1 = 2 ∧
+    Nat.multinomial Finset.univ ![1, 1, 1, 1] = 2 ^ 3 * 3 := by
+  refine ⟨?_, by decide, by decide⟩
+  rw [padicValNat_multinomial_eq_sum_carries]
+  decide
+
+-- The carries vanish beyond `m = Σ_j r_j`, so the sum over `1 ≤ i ≤ m` is the sum of all the
+-- carries: for `i > m`, every `r_j ≤ m < p ^ i`, so `Σ_j (r_j mod p ^ i) = m < p ^ i`.
+example {p : ℕ} [hp : Fact p.Prime] {ι : Type*} (s : Finset ι) (r : ι → ℕ) {i : ℕ}
+    (hi : ∑ j ∈ s, r j < i) : (∑ j ∈ s, r j % p ^ i) / p ^ i = 0 := by
+  have hlt : ∑ j ∈ s, r j < p ^ i := hi.trans (Nat.lt_pow_self hp.out.one_lt)
+  rw [Finset.sum_congr rfl fun j hj => Nat.mod_eq_of_lt
+    ((Finset.single_le_sum (fun _ _ => Nat.zero_le _) hj).trans_lt hlt)]
+  exact Nat.div_eq_of_lt hlt
+
 -- Test section: the valuation bound for multinomial coefficients.
 
 /-- The binomial case of the bound, `v_p(n) ≤ v_p(k) + v_p(C(n, k))` for `0 < k ≤ n`, from the

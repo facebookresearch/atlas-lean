@@ -10,11 +10,10 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.Defs
-public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Int.ModEq
-public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.NumberTheory.DoublyExponentialReciprocalSum
 public import MathlibExt.NumberTheory.GeneralizedSylvester
+public import MathlibExt.NumberTheory.MillinSeries
 
 /-!
 # Reciprocal sums of doubly exponential sequences
@@ -63,19 +62,6 @@ public theorem_wanted eq_sylvester_of_ratio_mem_of_hasSum_one {a : ℕ → ℕ}
     (hratio : ∀ n, 2 / 3 ≤ (a n : ℝ) ^ 2 / a (n + 1) ∧ (a n : ℝ) ^ 2 / a (n + 1) ≤ 4 / 3)
     (hsum : HasSum (fun n => 1 / (a n : ℝ)) 1) :
     ∀ n, a n = Nat.generalizedSylvester 1 n
-
-/-- **Characterization of the denominators of the Millin series.** Let $(a_n)_{n \ge 0}$ be a
-sequence of positive integers with $a_n^2 / a_{n+1} \le 2/3$ for all $n$ and
-$\sum_n 1 / a_n = (5 - \sqrt 5) / 2$. Then $a_n = F_{2^{n+1}}$ for all $n \ge 0$, where $F_k$
-is the $k$-th Fibonacci number ($F_0 = 0$, $F_1 = 1$); that is, $a$ is the sequence
-$F_2, F_4, F_8, \ldots$.
-
-Source: Junnosuke Koizumi, *Irrationality of the Reciprocal Sum of Doubly Exponential
-Sequences*, INTEGERS 26 (2026), Article A28, Corollary 2 (`integers-2026-A28-cor-2`). -/
-public theorem_wanted eq_fib_two_pow_of_ratio_le_of_hasSum_millin {a : ℕ → ℕ}
-    (hpos : ∀ n, 0 < a n) (hratio : ∀ n, (a n : ℝ) ^ 2 / a (n + 1) ≤ 2 / 3)
-    (hsum : HasSum (fun n => 1 / (a n : ℝ)) ((5 - √5) / 2)) :
-    ∀ n, a n = Nat.fib (2 ^ (n + 1))
 
 /-- **Doubly exponential floors are Type 2 irrationality sequences for all but countably many
 bases.** For all real numbers $\alpha > 1$ outside a countable set, the sequence

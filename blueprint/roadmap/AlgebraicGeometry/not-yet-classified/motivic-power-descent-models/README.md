@@ -1,0 +1,15 @@
+# Motivic Power Descent Models
+
+- [Upper Diagonal](upper-diagonal.md)
+- [Upper Base Quotient](upper-base-quotient.md)
+- [Diagonal Descent](diagonal-descent.md)
+- [Coefficient Graph](coefficient-graph.md)
+- [Upper Quotient Cycle](upper-quotient-cycle.md)
+- [Is Over Generator](is-over-generator.md)
+- [Cycle Descent](cycle-descent.md)
+- [Diagonal Cycle](diagonal-cycle.md)
+- [Pullback Power Bundle](pullback-power-bundle.md)
+- [Map](map.md)
+- [Relative Power Cycles](relative-power-cycles.md)
+- [Forget Relative Power Cycles](forget-relative-power-cycles.md)
+- [Relative Power Cycle](relative-power-cycle.md)

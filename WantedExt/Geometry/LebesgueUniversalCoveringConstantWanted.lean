@@ -6,13 +6,15 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-import Batteries.Util.ProofWanted
-import Mathlib.Analysis.Convex.Basic
-import Mathlib.Analysis.InnerProductSpace.PiL2
-import Mathlib.Analysis.Real.Sqrt
-import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
-import Mathlib.Topology.MetricSpace.Isometry
-import MathlibExt.Geometry.LebesgueUniversalCoveringConstant
+module
+
+public import Batteries.Util.ProofWanted
+public import Mathlib.Analysis.Convex.Basic
+public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import Mathlib.Analysis.Real.Sqrt
+public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
+public import Mathlib.Topology.MetricSpace.Isometry
+public import MathlibExt.Geometry.LebesgueUniversalCoveringJung
 
 /-!
 # Lebesgue universal covering constant
@@ -26,13 +28,13 @@ not assumptions or proofs. Source: optimization catalogue, constant 13b.
 
 The definitions of universal convex covers, of planar area and of the constant
 (`lebesgueUniversalCoveringConstant`), and the proved disk lower bound, are in
-`MathlibExt/Geometry/LebesgueUniversalCoveringConstant.lean`, which this module
-imports.
+`MathlibExt/Geometry/LebesgueUniversalCoveringConstant.lean`. This module imports them through
+`MathlibExt/Geometry/LebesgueUniversalCoveringJung.lean`, which proves Jung's upper bound.
 -/
 
 namespace MathlibExt.Geometry.LebesgueUniversalCoveringConstantWanted
 
-noncomputable section
+@[expose] public noncomputable section
 
 /-- **Directional width.** For a planar set $K$ and a vector $u$ in the plane, the width of $K$
 in direction $u$ is $\sup_{x \in K} \langle u, x \rangle - \inf_{x \in K} \langle u, x \rangle$,
@@ -75,14 +77,6 @@ def vrecica1981ConstantWidthOneSuffices : Prop :=
       Convex ℝ Ω →
         (∀ K : Set Plane, IsConstantWidthOne K → CoversCongruentCopy Ω K) →
           IsUniversalConvexCover Ω
-
-/-- **Jung's upper bound for Lebesgue's universal covering constant (statement).** The proposition
-that Lebesgue's universal covering constant is at most $\pi/3$.
-
-This is the bound given by Jung's theorem: a closed disk of radius $1/\sqrt{3}$, of area $\pi/3$,
-contains a translate of every planar set of diameter $1$. -/
-def trivialJungElekes1994UpperBound : Prop :=
-  lebesgueUniversalCoveringConstant ≤ ENNReal.ofReal (Real.pi / 3)
 
 /-- **Statement of Pál's hexagon bound.** The proposition that the Lebesgue universal covering
 constant is at most $\sqrt{3}/2$, the bound given by Pál's regular hexagon. -/
@@ -169,12 +163,6 @@ $\Omega$ is a universal convex cover.
 
 Source: Vrećica, A note on sets of constant width (1981). -/
 theorem_wanted vrecica1981ConstantWidthOneSuffices_holds : vrecica1981ConstantWidthOneSuffices
-
-/-- **Jung's bound for the Lebesgue covering problem.** The Lebesgue universal covering constant
-is at most $\pi/3$.
-
-Source: Jung's theorem, quoted in Elekes (1994), catalogue constant 13b. -/
-theorem_wanted trivialJungElekes1994UpperBound_holds : trivialJungElekes1994UpperBound
 
 /-- **Pál's hexagon bound.** The Lebesgue universal covering constant is at most $\sqrt{3}/2$.
 
