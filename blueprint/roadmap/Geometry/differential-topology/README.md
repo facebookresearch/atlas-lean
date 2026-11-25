@@ -13,4 +13,7 @@ Smooth manifolds and smooth maps between them: immersions, submersions, transver
 - [Collar neighborhood theorem (topological form)](topological-collar-neighborhood-of-smoot.md)
 - [Hadamard–Caccioppoli global inverse theorem](hadamard-caccioppoli-global-inverse.md)
 - [Hairy ball theorem](hairy-ball-even-sphere-ambient.md)
+- [Lie group](lie-group.md)
 - [Smooth retraction onto a closed embedded manifold in $\mathbb{R}^n$](tubular-smooth-retraction.md)
+- [Existence of smooth partitions of unity](partition-of-unity-existence.md)
+- [Differential of a smooth map at a point, acting on derivations](differential-smooth-map.md)
