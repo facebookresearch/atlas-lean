@@ -42,6 +42,8 @@ A *matching mechanism* maps every stated preference profile of a marriage market
 
 - [Strategy-proofness of the man-optimal stable mechanism for the men](man-optimal-mechanism-strategy-proof-for-men.md)
 - [Weak Pareto optimality of the man-optimal stable matching for the men](not-forall-lt-of-is-man-optimal-stable.md)
+- [Strategy-proofness of deferred acceptance with unequal sides and unacceptable partners](deferred-acceptance-with-unacceptable-partners-and-unequal-sides.md)
+- [Many-to-one stable matching reduces to one-to-one by quota slots](college-admissions-reduces-to-marriage.md)
 
 ## Related topics
 
