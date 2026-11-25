@@ -3,6 +3,7 @@
 - [No early exercise of American calls](no-early-exercise-of-american-calls/README.md)
 - [No-arbitrage condition in the binomial model](no-arbitrage-condition-in-the-binomial-model/README.md)
 - [One-period binomial pricing by replication](one-period-binomial-pricing-by-replication/README.md)
+- [Optimal execution](optimal-execution/README.md)
 - [Option payoffs and put–call parity](option-payoffs-and-put-call-parity/README.md)
 - [Portfolio beta](portfolio-beta/README.md)
 - [Replication in the multi-period binomial model](replication-in-the-multi-period-binomial-model/README.md)
