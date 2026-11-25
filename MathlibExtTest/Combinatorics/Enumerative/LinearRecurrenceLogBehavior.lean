@@ -81,4 +81,14 @@ example :
     (by decide)).2.1⟩
   norm_num [a005773Seq]
 
+-- Third differences fail log-convexity at n = 2. Check both claimed starting indices.
+example :
+    let z (m : ℕ) := a005773Seq (m + 3) - 3 * a005773Seq (m + 2) +
+      3 * a005773Seq (m + 1) - a005773Seq m
+    z 1 * z 3 < z 2 ^ 2 ∧ z 3 ^ 2 ≤ z 2 * z 4 ∧
+      z 3 / (Nat.factorial 3) * (z 5 / (Nat.factorial 5)) ≤ (z 4 / (Nat.factorial 4)) ^ 2 := by
+  have h := a005773Recurrence_thirdDiff_logConvex_logBalanced a005773Seq rfl rfl a005773Seq_rec
+  refine ⟨?_, h.1 3 (by decide), h.2 4 (by decide)⟩
+  norm_num [a005773Seq]
+
 end MetaMathlibExt

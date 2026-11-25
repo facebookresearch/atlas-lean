@@ -42,6 +42,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib
 public import MathlibExt.Probability.Distributions.Semicircle
+public import MathlibExt.Probability.WignerMatrix
 
 @[expose] public section
 
@@ -110,28 +111,6 @@ set_option linter.dupNamespace false in
 /-- The semicircle measure is a probability measure. -/
 instance isProbabilityMeasure_semicircleLaw : IsProbabilityMeasure semicircleLaw := by
   rw [semicircleLaw_eq_semicircleReal]; infer_instance
-
-/-- **Wigner matrix.** Let $X_{ij} : \Omega \to \mathbb{R}$, for $i, j \in \mathbb{N}$, be real
-functions on a set $\Omega$. For $n \in \mathbb{N}$ and $\omega \in \Omega$, the Wigner matrix
-$W_n(\omega)$ is the $n \times n$ complex matrix, with rows and columns indexed by
-$\{0, \dots, n - 1\}$, whose entry at $(i, j)$ is the real number
-$X_{\min(i, j)\, \max(i, j)}(\omega)$. Only the $X_{ij}$ with $i \le j$ are used, and the matrix
-is real symmetric. -/
-noncomputable def wignerMatrix {Ω : Type*} (X : ℕ → ℕ → Ω → ℝ) (n : ℕ)
-    (ω : Ω) : Matrix (Fin n) (Fin n) ℂ :=
-  fun i j => ((X (min (i : ℕ) j) (max (i : ℕ) j) ω : ℝ) : ℂ)
-
-/-- **Wigner matrices are Hermitian.** For every family of real functions
-$X_{ij} : \Omega \to \mathbb{R}$, $i, j \in \mathbb{N}$, on a set $\Omega$, every $n \in \mathbb{N}$
-and every $\omega \in \Omega$, the Wigner matrix $W_n(\omega)$ is Hermitian.
-
-The matrix is in fact real symmetric: its entry at $(i, j)$ is the real number
-$X_{\min(i, j)\, \max(i, j)}(\omega)$, and $\min$ and $\max$ are symmetric in their arguments. -/
-lemma wignerMatrix_isHermitian {Ω : Type*} (X : ℕ → ℕ → Ω → ℝ) (n : ℕ)
-    (ω : Ω) : (wignerMatrix X n ω).IsHermitian := by
-  ext i j
-  simp [wignerMatrix, Matrix.conjTranspose_apply, Complex.conj_ofReal,
-    min_comm (i : ℕ) j, max_comm (i : ℕ) j]
 
 /- **Wigner's semicircle law** (Wigner 1955). For an iid family of
 mean-`0`, variance-`1` real random variables, the empirical spectral

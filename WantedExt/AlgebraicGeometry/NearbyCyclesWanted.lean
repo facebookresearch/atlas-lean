@@ -52,10 +52,14 @@ open _root_.MathlibExt.AlgebraicGeometry.NearbyCycleProperMaps
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- Choose a resolver with the extra deck compatibility needed by the
-functorial cone enhancement. Generic K-injective resolution existence is
-already covered; an arbitrary resolver is not required to carry this
-strict cochain comparison. -/
+/-- A functorial K-injective resolution on the exponential cover that is compatible with the deck
+transformation. For a complex variety $X$ and a regular function $s$ on $X$, let
+$\widetilde{X} = \{(x, z) \in X(\mathbb{C}) \times \mathbb{C} : s(x) = e^{2\pi i z}\}$ be the
+exponential cover and $d(x, z) = (x, z + 1)$ its deck transformation. This constructs a functorial
+resolution $K \to R(K)$ of cochain complexes of sheaves of $\mathbb{Q}$-vector spaces on
+$\widetilde{X}$ by K-injective complexes (a natural quasi-isomorphism), together with a natural
+isomorphism $R(d_*K) \cong d_*R(K)$ that carries the inclusion $d_*K \to R(d_*K)$ to $d_*$ of the
+inclusion $K \to R(K)$. -/
 public def_wanted deckCompatibleResolver
     (X : ComplexScheme) [IsComplexVariety X] (s : Γ(X.left, ⊤)) :
     DeckCompatibleCycleResolution X s
@@ -90,11 +94,18 @@ public theorem_wanted perverseCyclesExact
       ((perverseTStructure X).ge m K →
         (perverseTStructure A.Z).ge m ⟨_, hφ⟩)
 
-/-- The proper direct-image comparison of the actual global cycle
-triangles, with the zero/cover base-change maps and both deck monodromies
-fixed by the completed core definitions. This requests the existence of a
-compatible comparison: its vanishing-cycle component is any completion to a
-triangle isomorphism intertwining monodromy, not a specified cone map. -/
+/-- Proper direct image of nearby and vanishing cycles. Let $X$, $Y$ be complex varieties with
+regular functions $s$ on $X$ and $t$ on $Y$, closed subvarieties `A`, `B` presenting their zero
+loci, and a proper morphism $g : X \to Y$ with $t \circ g = s$ that restricts to $g_0$ between
+the zero loci (`FunctionMorphism`). For the given derived direct-image data on this diagram
+(`DiagramDerivedData`), functorial K-injective resolutions `R₁`, `R₂` on the exponential covers
+and their compatibilities `E₁`, `E₂` with the deck translation, this constructs an isomorphism,
+natural in bounded constructible complexes $K$ of sheaves of $\mathbb{Q}$-vector spaces on
+$X(\mathbb{C})$, from the nearby/vanishing cycle triangle of $Rg_* K$ to $Rg_{0*}$ of the cycle
+triangle of $K$. Its first component is the base-change map for restriction to the zero loci and
+its second component is the canonical comparison `properNearbyComparison`; its third
+(vanishing-cycle) component is only required to complete these to an isomorphism of triangles,
+and the isomorphism intertwines the nearby and the vanishing monodromies. -/
 public def_wanted properCycleComparison
     (X Y : ComplexScheme) [IsComplexVariety X] [IsComplexVariety Y]
     (s : Γ(X.left, ⊤)) (t : Γ(Y.left, ⊤))

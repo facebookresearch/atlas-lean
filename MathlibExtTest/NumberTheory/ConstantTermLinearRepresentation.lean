@@ -76,3 +76,16 @@ example (e : Fin 1 → ℤ) (he : e ≠ 0) :
   apply (exists_constantTerm_pow_dvd_iff_tilde (p := 2) (a := 2) (ℓ := 1)
     (by decide) (by decide) P Pt (fun j => by simp [hsq])).2 2
   simp [hct]
+
+-- Doubling sends -1 to the boundary -2 on the first step. That entry eventually vanishes.
+example :
+    let T := Fintype.piFinset fun _ : Fin 1 => Finset.Icc (-2 : ℤ) 2
+    let A := Matrix.of fun i j : ↥T => if i.val = (2 : ℕ) • j.val then (1 : ZMod 2) else 0
+    let i : ↥T := ⟨fun _ => -2, by decide⟩
+    let j : ↥T := ⟨fun _ => -1, by decide⟩
+    A i j = 1 ∧ ∃ s : ℕ, ∀ n ≥ s, (A ^ n) i j = 0 := by
+  intro T A i j
+  refine ⟨by decide +revert, ?_⟩
+  obtain ⟨s, hs⟩ := exists_gammaZero_pow_eq_single Nat.prime_two 1 2
+  refine ⟨s, fun n hn => ?_⟩
+  exact (congrArg (fun M : Matrix T T (ZMod 2) => M i j) (hs n hn)).trans (by decide +revert)

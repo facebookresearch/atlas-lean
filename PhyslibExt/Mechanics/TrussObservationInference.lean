@@ -119,9 +119,12 @@ lemma toLp_sensor_eq_toEuclideanLin_add_offset {J M : Type*}
 /-! ## B. Gaussian posterior of the load parameters -/
 
 /-- Gaussian posterior of the load parameters given the corrected
-sensor reading: under a proper Gaussian prior `θ ~ N(m, Sθ)`,
-independent Gaussian sensor noise `v ~ N(0, R)` and an invertible
-innovation covariance, the conditional law of `θ` given the corrected
+sensor reading: at positive-definite fixed supported stiffness `K`,
+with the displacement `u ω` solving `K *ᵥ u ω = f0 + Bload *ᵥ θ ω`
+at every outcome `ω`, measurable `θ` and `v`, a Gaussian prior
+`θ ~ N(m, Sθ)` and independent Gaussian sensor noise `v ~ N(0, R)`
+(`Sθ` and `R` positive semidefinite) and an invertible innovation
+covariance, the conditional law of `θ` given the corrected
 reading `toLp (Cmat *ᵥ u) + v - toLp (Cmat *ᵥ (K⁻¹ *ᵥ f0))` is, for
 almost every reading `y`, Gaussian with mean
 `m + Sθ Hᵀ (H Sθ Hᵀ + R)⁻¹ (y - H m)` and covariance

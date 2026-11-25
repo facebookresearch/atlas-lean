@@ -10,14 +10,17 @@ module
 
 public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.Meromorphic.Divisor
+public import Mathlib.Analysis.Meromorphic.NormalForm
 import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.Analysis.Normed.Module.Connected
 import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
+import MathlibExt.Analysis.Complex.ArgumentPrinciple
 
 /-!
 # Rouché's theorem for the disc
 
-Proves `Wanted` entry `rouche_closedBall`.
+Compares zero counts for analytic functions on a disc and for meromorphic functions
+in normal form with an analytic perturbation.
 -/
 
 @[expose] public section
@@ -547,13 +550,13 @@ private theorem aux_arg {c : ℂ} {R : ℝ} (hR : 0 < R) {f : ℂ → ℂ}
   exact Finset.sum_mul Z (fun a => ((m a : ℕ) : ℂ)) (2 * ↑Real.pi * Complex.I)
 
 private theorem aux_step {c : ℂ} {R : ℝ} (hR : 0 < R) {f g : ℂ → ℂ}
-    (hf : AnalyticOnNhd ℂ f (Metric.closedBall c R))
-    (hg : AnalyticOnNhd ℂ g (Metric.closedBall c R))
+    (hf : AnalyticOnNhd ℂ f (Metric.sphere c R))
+    (hg : AnalyticOnNhd ℂ g (Metric.sphere c R))
     (hfg : ∀ z ∈ Metric.sphere c R, ‖g z‖ < ‖f z‖) :
     ∮ z in C(c, R), deriv (fun z => f z + g z) z / ((fun z => f z + g z) z)
     = ∮ z in C(c, R), deriv f z / f z := by
   obtain ⟨hf0, hF0⟩ := aux_sphere_ne_zero hfg
-  have hF : AnalyticOnNhd ℂ (fun z => f z + g z) (Metric.closedBall c R) :=
+  have hF : AnalyticOnNhd ℂ (fun z => f z + g z) (Metric.sphere c R) :=
     hf.add hg
   have hcontF : ContinuousOn
       (fun z => deriv (fun z => f z + g z) z / ((fun z => f z + g z) z))
@@ -561,18 +564,18 @@ private theorem aux_step {c : ℂ} {R : ℝ} (hR : 0 < R) {f g : ℂ → ℂ}
     apply ContinuousOn.div
     · intro z hz
       have ha : AnalyticAt ℂ (deriv (fun z => f z + g z)) z :=
-        (hF z (Metric.sphere_subset_closedBall hz)).deriv
+        (hF z hz).deriv
       exact ha.continuousAt.continuousWithinAt
-    · exact (hF.mono Metric.sphere_subset_closedBall).continuousOn
+    · exact hF.continuousOn
     · intro z hz
       exact hF0 z hz
   have hcontf : ContinuousOn (fun z => deriv f z / f z) (Metric.sphere c R) := by
     apply ContinuousOn.div
     · intro z hz
       have ha : AnalyticAt ℂ (deriv f) z :=
-        (hf z (Metric.sphere_subset_closedBall hz)).deriv
+        (hf z hz).deriv
       exact ha.continuousAt.continuousWithinAt
-    · exact (hf.mono Metric.sphere_subset_closedBall).continuousOn
+    · exact hf.continuousOn
     · intro z hz
       exact hf0 z hz
   have hintF : CircleIntegrable
@@ -588,8 +591,8 @@ private theorem aux_step {c : ℂ} {R : ℝ} (hR : 0 < R) {f g : ℂ → ℂ}
     have hfz : f z ≠ 0 := hf0 z hz
     have hFz : (fun z => f z + g z) z ≠ 0 := hF0 z hz
     have hFz' : f z + g z ≠ 0 := hF0 z hz
-    have hfA : AnalyticAt ℂ f z := hf z (Metric.sphere_subset_closedBall hz)
-    have hgA : AnalyticAt ℂ g z := hg z (Metric.sphere_subset_closedBall hz)
+    have hfA : AnalyticAt ℂ f z := hf z hz
+    have hgA : AnalyticAt ℂ g z := hg z hz
     have hug : ‖g z / f z‖ < 1 := by
       have hfp : 0 < ‖f z‖ :=
         lt_of_le_of_lt (norm_nonneg _) (hfg z hz)
@@ -666,7 +669,8 @@ theorem rouche_closedBall
     hf.add hg
   have hAf := aux_arg hR hf hf0
   have hAF := aux_arg hR hF (fun z hz => hF0 z hz)
-  have hEq := aux_step hR hf hg hfg
+  have hEq := aux_step hR (hf.mono Metric.sphere_subset_closedBall)
+    (hg.mono Metric.sphere_subset_closedBall) hfg
   have hboth : ((∑ᶠ z, MeromorphicOn.divisor (fun z => f z + g z) (Metric.ball c R) z : ℤ) : ℂ)
       * (2 * ↑Real.pi * Complex.I)
       = ((∑ᶠ z, MeromorphicOn.divisor f (Metric.ball c R) z : ℤ) : ℂ)
@@ -678,4 +682,145 @@ theorem rouche_closedBall
     mul_right_cancel₀ Complex.two_pi_I_ne_zero hboth
   exact (Int.cast_injective hcast).symm
 
+open Set Metric MeromorphicOn
+
+/-- No order on the boundary contributes to the closed-disc divisor sum. -/
+private theorem signedSum_closedBall_eq_ball {f : ℂ → ℂ} {R : ℝ}
+    (hf : MeromorphicOn f (closedBall 0 R))
+    (hbd : ∀ z ∈ sphere 0 R, divisor f (closedBall 0 R) z = 0) :
+    (∑ᶠ z, divisor f (closedBall 0 R) z) = ∑ᶠ z, divisor f (ball 0 R) z := by
+  classical
+  apply finsum_congr
+  intro z
+  rw [← hf.divisor_restrict ball_subset_closedBall, Function.locallyFinsuppWithin.restrict_apply]
+  by_cases hz : z ∈ ball (0 : ℂ) R
+  · rw [ite_eq_left hz]
+  · rw [ite_eq_right hz]
+    by_cases hz' : z ∈ closedBall (0 : ℂ) R
+    · exact hbd z (mem_sphere.mpr (le_antisymm (mem_closedBall.mp hz')
+        (not_lt.mp (fun h => hz (mem_ball.mpr h)))))
+    · exact (divisor f (closedBall 0 R)).apply_eq_zero_of_notMem hz'
+
+/-- Split a finite divisor sum into its zero and pole counts. -/
+private theorem signedSum_eq_pos_sub_neg {U : Set ℂ} (hU : IsCompact U)
+    (D : Function.locallyFinsuppWithin U ℤ) :
+    (∑ᶠ z, D z) = (∑ᶠ z, D⁺ z) - ∑ᶠ z, D⁻ z := by
+  have hp : Function.HasFiniteSupport (fun z => D⁺ z) := (D.finiteSupport hU).subset fun z hz => by
+    rw [Function.mem_support] at hz ⊢
+    intro h
+    exact hz (by simp [h])
+  have hn : Function.HasFiniteSupport (fun z => D⁻ z) := (D.finiteSupport hU).subset fun z hz => by
+    rw [Function.mem_support] at hz ⊢
+    intro h
+    exact hz (by simp [h])
+  rw [← finsum_sub_distrib hp hn]
+  exact finsum_congr fun z => by
+    simp only [Function.locallyFinsuppWithin.posPart_apply,
+      Function.locallyFinsuppWithin.negPart_apply, posPart_sub_negPart]
+
 end MathlibExt.Analysis.Complex.Rouche
+
+namespace MathlibExt.Analysis.RoucheWanted.ComplexAnalysis
+
+open Set Metric MeromorphicOn
+open MathlibExt.Analysis.Complex.Rouche
+  (aux_sphere_ne_zero aux_step signedSum_closedBall_eq_ball signedSum_eq_pos_sub_neg)
+
+/-
+LeanEval attribution for `rouche_zero_count_eq`
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Attribution and modification notice (Apache License 2.0, Section 4):
+taken from leanprover/lean-eval at commit
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.ComplexAnalysis.Rouche` —
+rouche_zero_count_eq (manifest `manifests/problems/rouche_zero_count_eq.toml`, rev 1, submitter Kim
+Morrison, status archived) —
+distributed under the Apache License, Version 2.0. lean-eval ships no
+`NOTICE` file. The ATLAS import changed the namespace and converted the LeanEval marker to
+`theorem_wanted`. This revision preserves the statement and its audited docstring, and replaces
+the wanted declaration with a proof using the existing circle comparison and argument principle.
+-/
+
+/-- **Rouché's theorem.** Let $R > 0$, let $f : \mathbb{C} \to \mathbb{C}$ be meromorphic on
+$\mathbb{C}$ and in normal form (at every point $f$ is either analytic, or has a pole and takes
+the value $0$ there), and let $g : \mathbb{C} \to \mathbb{C}$ be analytic on $\mathbb{C}$.
+If $|g(z)| < |f(z)|$ for every $z$ with $|z| = R$, then $f + g$ and $f$ have the same number
+of zeros in the closed disk $|z| \le R$, counted with multiplicity: the sum over the points of
+the disk of the positive part of the order of $f + g$ equals the same sum for $f$.
+
+Source: E. Rouché, *Mémoire sur la série de Lagrange*, J. École Polytechnique 22 (1862)
+(Rouché's theorem). Via leanprover/lean-eval@38361be, problem `rouche`. -/
+public theorem rouche_zero_count_eq
+    {f g : ℂ → ℂ} {R : ℝ}
+    (hR : 0 < R)
+    (hf : MeromorphicNFOn f Set.univ)
+    (hg : AnalyticOn ℂ g Set.univ)
+    (hbound : ∀ z : ℂ, ‖z‖ = R → ‖g z‖ < ‖f z‖) :
+    (∑ᶠ z, ((divisor (f + g) (Metric.closedBall 0 R))⁺) z) =
+      (∑ᶠ z, ((divisor f (Metric.closedBall 0 R))⁺) z) := by
+  have hfg (z : ℂ) (hz : z ∈ sphere 0 R) : ‖g z‖ < ‖f z‖ :=
+    hbound z (by simpa only [mem_sphere, dist_zero_right] using hz)
+  obtain ⟨hf0, hF0⟩ := aux_sphere_ne_zero hfg
+  have hgA : AnalyticOnNhd ℂ g univ := isOpen_univ.analyticOn_iff_analyticOnNhd.mp hg
+  have hfA : AnalyticOnNhd ℂ f (sphere 0 R) := by
+    intro z hz
+    have hnf := hf (mem_univ z)
+    exact hnf.meromorphicOrderAt_nonneg_iff_analyticAt.mp
+      (hnf.meromorphicOrderAt_eq_zero_iff.mpr (hf0 z hz)).symm.le
+  have hFs : AnalyticOnNhd ℂ (f + g) (sphere 0 R) :=
+    hfA.add (hgA.mono (subset_univ _))
+  have hmerof : MeromorphicOn f univ := hf.meromorphicOn
+  have hmeroF : MeromorphicOn (f + g) univ := hmerof.add hgA.meromorphicOn
+  have hord (q : ℂ → ℂ) (hq : AnalyticOnNhd ℂ q (sphere 0 R))
+      (hq0 : ∀ z ∈ sphere 0 R, q z ≠ 0) (z : ℂ) (hz : z ∈ sphere 0 R) :
+      meromorphicOrderAt q z = 0 := by
+    have ha := hq z hz
+    rw [ha.meromorphicOrderAt_eq, ha.analyticOrderAt_eq_zero.mpr (hq0 z hz), ENat.map_zero]
+    simp
+  obtain ⟨z₀, hz₀⟩ := (NormedSpace.sphere_nonempty (x := (0 : ℂ))).mpr hR.le
+  have ht (q : ℂ → ℂ) (hq : MeromorphicOn q univ) (hq₀ : meromorphicOrderAt q z₀ = 0)
+      (z : ℂ) : meromorphicOrderAt q z ≠ ⊤ :=
+    hq.meromorphicOrderAt_ne_top_of_isPreconnected isPreconnected_univ (mem_univ z₀) (mem_univ z)
+      (by rw [hq₀]; exact WithTop.zero_ne_top)
+  have hbd (q : ℂ → ℂ) (hq : MeromorphicOn q (closedBall 0 R))
+      (horder : ∀ z ∈ sphere 0 R, meromorphicOrderAt q z = 0) (z : ℂ) (hz : z ∈ sphere 0 R) :
+      divisor q (closedBall 0 R) z = 0 := by
+    rw [MeromorphicOn.divisor_apply hq (sphere_subset_closedBall hz), horder z hz]
+    simp
+  have hfM := hmerof.mono_set (subset_univ (closedBall 0 R))
+  have hFM := hmeroF.mono_set (subset_univ (closedBall 0 R))
+  have hbf := hbd f hfM (hord f hfA hf0)
+  have hbF := hbd (f + g) hFM (hord (f + g) hFs hF0)
+  have haf := MathlibExt.Analysis.Complex.ArgumentPrinciple.argumentPrinciple_closedBall_general
+    hR hfM (fun z _ => ht f hmerof (hord f hfA hf0 z₀ hz₀) z) hbf
+  have haF := MathlibExt.Analysis.Complex.ArgumentPrinciple.argumentPrinciple_closedBall_general
+    hR hFM (fun z _ => ht (f + g) hmeroF (hord (f + g) hFs hF0 z₀ hz₀) z) hbF
+  -- Compare signed counts using only analyticity on the boundary.
+  have hi := aux_step hR hfA (hgA.mono (subset_univ _)) hfg
+  change (∮ z in C(0, R), logDeriv (f + g) z) = (∮ z in C(0, R), logDeriv f z) at hi
+  rw [haF, haf] at hi
+  have hsignedOpen : (∑ᶠ z, divisor (f + g) (ball 0 R) z) = ∑ᶠ z, divisor f (ball 0 R) z :=
+    Int.cast_injective (mul_left_cancel₀ Complex.two_pi_I_ne_zero hi)
+  have hsigned :
+      (∑ᶠ z, divisor (f + g) (closedBall 0 R) z) = ∑ᶠ z, divisor f (closedBall 0 R) z := by
+    rw [signedSum_closedBall_eq_ball hFM hbF, signedSum_closedBall_eq_ball hfM hbf]
+    exact hsignedOpen
+  -- The pole counts cancel because the perturbation is analytic.
+  have hc := isCompact_closedBall (0 : ℂ) R
+  rw [signedSum_eq_pos_sub_neg hc (divisor (f + g) (closedBall 0 R)),
+    signedSum_eq_pos_sub_neg hc (divisor f (closedBall 0 R)),
+    negPart_divisor_add_of_analyticNhdOn_right hfM (hgA.mono (subset_univ _))] at hsigned
+  omega
+
+end MathlibExt.Analysis.RoucheWanted.ComplexAnalysis

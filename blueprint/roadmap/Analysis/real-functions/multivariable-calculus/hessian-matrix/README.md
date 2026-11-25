@@ -6,3 +6,4 @@
 - [Symmetry of the Hessian](hessian-matrix-symmetric.md)
 - [The second derivative is nonnegative at a local minimum](deriv-deriv-nonneg.md)
 - [Second-derivative test, necessary condition](is-local-min-hessian-quadratic-nonneg.md)
+- [Second-order sufficient condition for a strict local minimum](strict-local-min-of-positive-definite-hessian.md)
