@@ -14,7 +14,25 @@ public import MathlibExt.AlgebraicGeometry.NilpPointsFactor
 
 open CategoryTheory AlgebraicGeometry
 
-/-- Consumer with the original binders. -/
+/-- `Scheme.pointsOver` acts on morphisms by precomposition with their `Spec`. -/
+example {𝒪 : Type} [CommRing 𝒪] {X : Scheme.{0}} (f : X ⟶ Spec (CommRingCat.of 𝒪))
+    {B B' : CommAlgCat.{0} 𝒪} (g : B ⟶ B') (φ : (Scheme.pointsOver f).obj B) :
+    ((Scheme.pointsOver f).map g φ).1 = Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ φ.1 := by
+  simp
+
+/-- `Scheme.pointsOver` is a functor, so the standard functor lemmas apply to it. -/
+example {𝒪 : Type} [CommRing 𝒪] {X : Scheme.{0}} (f : X ⟶ Spec (CommRingCat.of 𝒪))
+    (B : CommAlgCat.{0} 𝒪) : (Scheme.pointsOver f).map (𝟙 B) = 𝟙 _ :=
+  (Scheme.pointsOver f).map_id B
+
+/-- `Scheme.pointsOver.mapHom` composes points with the morphism of schemes. -/
+example {𝒪 : Type} [CommRing 𝒪] {X Y : Scheme.{0}} (fX : X ⟶ Spec (CommRingCat.of 𝒪))
+    (fY : Y ⟶ Spec (CommRingCat.of 𝒪)) (h : X ⟶ Y) (w : h ≫ fY = fX) {B : CommAlgCat.{0} 𝒪}
+    (φ : (Scheme.pointsOver fX).obj B) :
+    ((Scheme.pointsOver.mapHom fX fY h w).app B φ).1 = φ.1 ≫ h := by
+  simp
+
+/-- Consumer with the binders of the theorem. -/
 example {𝒪 : Type} [CommRing 𝒪] [IsNoetherianRing 𝒪] (π : 𝒪)
     {M X : Scheme.{0}} (fM : M ⟶ Spec (CommRingCat.of 𝒪))
     (f : X ⟶ Spec (CommRingCat.of 𝒪))
@@ -29,53 +47,50 @@ example {𝒪 : Type} [CommRing 𝒪] [IsNoetherianRing 𝒪] (π : 𝒪)
       {s | ∀ g : G, (ρ g).asIso.hom.appLE (p ⁻¹ᵁ V) (p ⁻¹ᵁ V)
         (by rw [← Scheme.Hom.comp_preimage, hρp g]) s = s})
     (T : Scheme.{0}) (t : T ⟶ Spec (CommRingCat.of 𝒪))
-    (u : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B],
-      IsNilpotent (algebraMap 𝒪 B π) → (Scheme.nilpPoints fM).obj B →
-        (Scheme.nilpPoints t).obj B)
-    (hu_nat : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (B' : Type)
-      [CommRing B'] [Algebra 𝒪 B'] (hB : IsNilpotent (algebraMap 𝒪 B π))
-      (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B →ₐ[𝒪] B')
-      (x : (Scheme.nilpPoints fM).obj B),
-      u B' hB' ((Scheme.nilpPoints fM).map φ x) =
-        (Scheme.nilpPoints t).map φ (u B hB x))
-    (hu_inv : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B]
+    (u : ∀ B : CommAlgCat.{0} 𝒪,
+      IsNilpotent (algebraMap 𝒪 B π) → (Scheme.pointsOver fM).obj B →
+        (Scheme.pointsOver t).obj B)
+    (hu_nat : ∀ (B B' : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+      (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B ⟶ B')
+      (x : (Scheme.pointsOver fM).obj B),
+      u B' hB' ((Scheme.pointsOver fM).map φ x) =
+        (Scheme.pointsOver t).map φ (u B hB x))
+    (hu_inv : ∀ (B : CommAlgCat.{0} 𝒪)
       (hB : IsNilpotent (algebraMap 𝒪 B π)) (g : G)
-      (y : (Scheme.nilpPoints fM).obj B),
-      u B hB ((Scheme.nilpPoints.mapHom fM fM (ρ g).asIso.hom (hover g)).app B y) =
+      (y : (Scheme.pointsOver fM).obj B),
+      u B hB ((Scheme.pointsOver.mapHom fM fM (ρ g).asIso.hom (hover g)).app B y) =
         u B hB y)
     (hX : IsAffine X) (hT : IsAffine T) :
-    ∃ ubar : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B],
-        IsNilpotent (algebraMap 𝒪 B π) → (Scheme.nilpPoints f).obj B →
-          (Scheme.nilpPoints t).obj B,
-      (∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (B' : Type) [CommRing B']
-          [Algebra 𝒪 B'] (hB : IsNilpotent (algebraMap 𝒪 B π))
-          (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B →ₐ[𝒪] B')
-          (x : (Scheme.nilpPoints f).obj B),
-          ubar B' hB' ((Scheme.nilpPoints f).map φ x) =
-            (Scheme.nilpPoints t).map φ (ubar B hB x)) ∧
-        (∀ (B : Type) [CommRing B] [Algebra 𝒪 B]
+    ∃ ubar : ∀ B : CommAlgCat.{0} 𝒪,
+        IsNilpotent (algebraMap 𝒪 B π) → (Scheme.pointsOver f).obj B →
+          (Scheme.pointsOver t).obj B,
+      (∀ (B B' : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+          (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B ⟶ B')
+          (x : (Scheme.pointsOver f).obj B),
+          ubar B' hB' ((Scheme.pointsOver f).map φ x) =
+            (Scheme.pointsOver t).map φ (ubar B hB x)) ∧
+        (∀ (B : CommAlgCat.{0} 𝒪)
           (hB : IsNilpotent (algebraMap 𝒪 B π))
-          (y : (Scheme.nilpPoints fM).obj B),
-          ubar B hB ((Scheme.nilpPoints.mapHom fM f p hp).app B y) =
+          (y : (Scheme.pointsOver fM).obj B),
+          ubar B hB ((Scheme.pointsOver.mapHom fM f p hp).app B y) =
             u B hB y) ∧
-        ∀ u' : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B],
-            IsNilpotent (algebraMap 𝒪 B π) → (Scheme.nilpPoints f).obj B →
-              (Scheme.nilpPoints t).obj B,
-          (∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (B' : Type)
-              [CommRing B'] [Algebra 𝒪 B']
+        ∀ u' : ∀ B : CommAlgCat.{0} 𝒪,
+            IsNilpotent (algebraMap 𝒪 B π) → (Scheme.pointsOver f).obj B →
+              (Scheme.pointsOver t).obj B,
+          (∀ (B B' : CommAlgCat.{0} 𝒪)
               (hB : IsNilpotent (algebraMap 𝒪 B π))
-              (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B →ₐ[𝒪] B')
-              (x : (Scheme.nilpPoints f).obj B),
-              u' B' hB' ((Scheme.nilpPoints f).map φ x) =
-                (Scheme.nilpPoints t).map φ (u' B hB x)) →
-            (∀ (B : Type) [CommRing B] [Algebra 𝒪 B]
+              (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B ⟶ B')
+              (x : (Scheme.pointsOver f).obj B),
+              u' B' hB' ((Scheme.pointsOver f).map φ x) =
+                (Scheme.pointsOver t).map φ (u' B hB x)) →
+            (∀ (B : CommAlgCat.{0} 𝒪)
               (hB : IsNilpotent (algebraMap 𝒪 B π))
-              (y : (Scheme.nilpPoints fM).obj B),
-              u' B hB ((Scheme.nilpPoints.mapHom fM f p hp).app B y) =
+              (y : (Scheme.pointsOver fM).obj B),
+              u' B hB ((Scheme.pointsOver.mapHom fM f p hp).app B y) =
                 u B hB y) →
-            ∀ (B : Type) [CommRing B] [Algebra 𝒪 B]
+            ∀ (B : CommAlgCat.{0} 𝒪)
               (hB : IsNilpotent (algebraMap 𝒪 B π))
-              (z : (Scheme.nilpPoints f).obj B), u' B hB z = ubar B hB z :=
+              (z : (Scheme.pointsOver f).obj B), u' B hB z = ubar B hB z :=
   AlgebraicGeometry.Scheme.existsUnique_nilpPoints_factor_of_quotient_of_isAffine_of_isAffine_of_isNoetherianRing
     π fM f hlft hlftX ρ hover p hp hρp hint haff hsurj hsec hinv T t u hu_nat
     hu_inv hX hT

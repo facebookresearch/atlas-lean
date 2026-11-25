@@ -37,12 +37,18 @@ The statement is at universe level 0 throughout, as forced by its use of
 
 module
 
+public import Mathlib.Algebra.Category.CommAlgCat.Basic
 public import Mathlib.AlgebraicGeometry.AffineScheme
 public import Mathlib.AlgebraicGeometry.Morphisms.Integral
 public import Mathlib.AlgebraicGeometry.Morphisms.FiniteType
 public import Mathlib.RingTheory.Finiteness.Basic
 
-import Mathlib
+import Mathlib.RingTheory.Filtration
+import Mathlib.Tactic.Abel
+import Mathlib.Tactic.Choose
+import Mathlib.Tactic.Conv
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.SimpRw
 
 @[expose] public section
 
@@ -50,40 +56,6 @@ open CategoryTheory AlgebraicGeometry
 open scoped Pointwise
 
 namespace AlgebraicGeometry
-
-structure AlgFunctor (𝒪 : Type) [CommRing 𝒪] : Type 1 where
-
-  obj : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B], Type
-
-  map : ∀ {B : Type} [CommRing B] [Algebra 𝒪 B] {B' : Type} [CommRing B'] [Algebra 𝒪 B'],
-    (B →ₐ[𝒪] B') → obj B → obj B'
-
-  map_id : ∀ {B : Type} [CommRing B] [Algebra 𝒪 B] (x : obj B), map (AlgHom.id 𝒪 B) x = x
-
-  map_comp : ∀ {B₁ : Type} [CommRing B₁] [Algebra 𝒪 B₁] {B₂ : Type} [CommRing B₂] [Algebra 𝒪 B₂]
-    {B₃ : Type} [CommRing B₃] [Algebra 𝒪 B₃] (f : B₁ →ₐ[𝒪] B₂) (g : B₂ →ₐ[𝒪] B₃) (x : obj B₁),
-    map (g.comp f) x = map g (map f x)
-
-namespace AlgFunctor
-
-variable {𝒪 : Type} [CommRing 𝒪]
-
-structure NatTrans (F G : AlgFunctor 𝒪) : Type 1 where
-
-  app : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B], F.obj B → G.obj B
-
-  naturality : ∀ {B : Type} [CommRing B] [Algebra 𝒪 B] {B' : Type} [CommRing B'] [Algebra 𝒪 B']
-    (f : B →ₐ[𝒪] B') (x : F.obj B), app B' (F.map f x) = G.map f (app B x)
-
-def NatTrans.id (F : AlgFunctor 𝒪) : NatTrans F F where
-  app := fun _ _ _ x => x
-  naturality _ _ := rfl
-
-def NatTrans.comp {F G H : AlgFunctor 𝒪} (η : NatTrans F G) (θ : NatTrans G H) : NatTrans F H where
-  app := fun B _ _ x => θ.app B (η.app B x)
-  naturality f x := by rw [η.naturality, θ.naturality]
-
-end AlgFunctor
 
 variable {𝒪 : Type} [CommRing 𝒪]
 
@@ -96,33 +68,44 @@ theorem Scheme.specMap_algHom_comp_specOver {B : Type} [CommRing B] [Algebra �
   rw [Scheme.specOver, Scheme.specOver, ← Spec.map_comp, ← CommRingCat.ofHom_comp, AlgHom.toRingHom_eq_coe,
     AlgHom.comp_algebraMap]
 
-noncomputable def Scheme.nilpPoints {X : Scheme.{0}} (f : X ⟶ Spec (.of 𝒪)) : AlgFunctor 𝒪 where
-  obj B _ _ := { φ : Spec (.of B) ⟶ X // φ ≫ f = Scheme.specOver B }
-  map g φ := ⟨Spec.map (CommRingCat.ofHom g.toRingHom) ≫ φ.1, by
+noncomputable def Scheme.pointsOver {X : Scheme.{0}} (f : X ⟶ Spec (.of 𝒪)) :
+    CommAlgCat.{0} 𝒪 ⥤ Type where
+  obj B := { φ : Spec (.of B) ⟶ X // φ ≫ f = Scheme.specOver B }
+  map g := TypeCat.ofHom fun φ => ⟨Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ φ.1, by
     rw [Category.assoc, φ.2, Scheme.specMap_algHom_comp_specOver]⟩
-  map_id φ := by
-    apply Subtype.ext
+  map_id B := by
+    ext φ
     show Spec.map (CommRingCat.ofHom (RingHom.id _)) ≫ φ.1 = φ.1
     rw [CommRingCat.ofHom_id, Spec.map_id, Category.id_comp]
-  map_comp g h φ := by
-    apply Subtype.ext
-    show Spec.map (CommRingCat.ofHom ((h.comp g).toRingHom)) ≫ φ.1 =
-      Spec.map (CommRingCat.ofHom h.toRingHom) ≫ (Spec.map (CommRingCat.ofHom g.toRingHom) ≫ φ.1)
+  map_comp g h := by
+    ext φ
+    show Spec.map (CommRingCat.ofHom ((h.hom.comp g.hom).toRingHom)) ≫ φ.1 =
+      Spec.map (CommRingCat.ofHom h.hom.toRingHom) ≫
+        (Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ φ.1)
     simp only [AlgHom.toRingHom_eq_coe]
     rw [AlgHom.comp_toRingHom, CommRingCat.ofHom_comp, Spec.map_comp, Category.assoc]
 
-@[simp] theorem Scheme.nilpPoints_map_val {X : Scheme.{0}} (f : X ⟶ Spec (.of 𝒪)) {B : Type} [CommRing B]
-    [Algebra 𝒪 B] {B' : Type} [CommRing B'] [Algebra 𝒪 B'] (g : B →ₐ[𝒪] B') (φ : (Scheme.nilpPoints f).obj B) :
-    ((Scheme.nilpPoints f).map g φ).1 = Spec.map (CommRingCat.ofHom g.toRingHom) ≫ φ.1 := rfl
+@[simp] theorem Scheme.pointsOver_map_val {X : Scheme.{0}} (f : X ⟶ Spec (.of 𝒪))
+    {B B' : CommAlgCat.{0} 𝒪} (g : B ⟶ B') (φ : (Scheme.pointsOver f).obj B) :
+    ((Scheme.pointsOver f).map g φ).1 = Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ φ.1 :=
+  rfl
 
-noncomputable def Scheme.nilpPoints.mapHom {X Y : Scheme.{0}} (fX : X ⟶ Spec (.of 𝒪)) (fY : Y ⟶ Spec (.of 𝒪)) (h : X ⟶ Y)
-    (w : h ≫ fY = fX) : AlgFunctor.NatTrans (Scheme.nilpPoints fX) (Scheme.nilpPoints fY) where
-  app B _ _ φ := ⟨φ.1 ≫ h, by rw [Category.assoc, w, φ.2]⟩
-  naturality g φ := by
+noncomputable def Scheme.pointsOver.mapHom {X Y : Scheme.{0}} (fX : X ⟶ Spec (.of 𝒪))
+    (fY : Y ⟶ Spec (.of 𝒪)) (h : X ⟶ Y) (w : h ≫ fY = fX) :
+    Scheme.pointsOver fX ⟶ Scheme.pointsOver fY where
+  app B := TypeCat.ofHom fun φ => ⟨φ.1 ≫ h, by rw [Category.assoc, w, φ.2]⟩
+  naturality B B' g := by
+    ext φ
     apply Subtype.ext
-    show Spec.map (CommRingCat.ofHom g.toRingHom) ≫ (φ.1 ≫ h) = (Spec.map (CommRingCat.ofHom g.toRingHom) ≫ φ.1) ≫ h
+    show (Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ φ.1) ≫ h =
+      Spec.map (CommRingCat.ofHom g.hom.toRingHom) ≫ (φ.1 ≫ h)
     rw [Category.assoc]
 
+@[simp] theorem Scheme.pointsOver.mapHom_app_val {X Y : Scheme.{0}} (fX : X ⟶ Spec (.of 𝒪))
+    (fY : Y ⟶ Spec (.of 𝒪)) (h : X ⟶ Y) (w : h ≫ fY = fX) {B : CommAlgCat.{0} 𝒪}
+    (φ : (Scheme.pointsOver fX).obj B) :
+    ((Scheme.pointsOver.mapHom fX fY h w).app B φ).1 = φ.1 ≫ h :=
+  rfl
 
 end AlgebraicGeometry
 
@@ -616,7 +599,7 @@ variable {Y T : Scheme.{0}} [IsAffine Y] [IsAffine T] (fY : Y ⟶ Spec (CommRing
 
 private noncomputable def canPt (a : Γ(Y, ⊤)) (n : ℕ) :
     letI : Algebra 𝒪 Γ(Y, ⊤) := (baseHom fY).toAlgebra
-    (Scheme.nilpPoints fY).obj (Γ(Y, ⊤) ⧸ Ideal.span {a ^ n}) :=
+    (Scheme.pointsOver fY).obj (.of 𝒪 (Γ(Y, ⊤) ⧸ Ideal.span {a ^ n})) :=
   letI : Algebra 𝒪 Γ(Y, ⊤) := (baseHom fY).toAlgebra
   ⟨ofHom (Ideal.Quotient.mk _), ofHom_over fY _ rfl⟩
 
@@ -624,11 +607,11 @@ private theorem canPt_val (a : Γ(Y, ⊤)) (n : ℕ) :
     letI : Algebra 𝒪 Γ(Y, ⊤) := (baseHom fY).toAlgebra
     (canPt fY a n).1 = ofHom (Ideal.Quotient.mk (Ideal.span {a ^ n})) := rfl
 
-variable (v : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B], IsNilpotent (algebraMap 𝒪 B π) →
-    (Scheme.nilpPoints fY).obj B → (Scheme.nilpPoints t).obj B)
-  (hv_nat : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (B' : Type) [CommRing B'] [Algebra 𝒪 B']
-    (hB : IsNilpotent (algebraMap 𝒪 B π)) (hB' : IsNilpotent (algebraMap 𝒪 B' π))
-    (φ : B →ₐ[𝒪] B') (x : (Scheme.nilpPoints fY).obj B), v B' hB' ((Scheme.nilpPoints fY).map φ x) = (Scheme.nilpPoints t).map φ (v B hB x))
+variable (v : ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) →
+    (Scheme.pointsOver fY).obj B → (Scheme.pointsOver t).obj B)
+  (hv_nat : ∀ (B B' : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+    (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B ⟶ B') (x : (Scheme.pointsOver fY).obj B),
+    v B' hB' ((Scheme.pointsOver fY).map φ x) = (Scheme.pointsOver t).map φ (v B hB x))
 
 include hv_nat in
 
@@ -643,28 +626,32 @@ private theorem tower_compat (a : Γ(Y, ⊤)) :
     Ideal.Quotient.factorₐ 𝒪 (Ideal.span_singleton_le_span_singleton.mpr (pow_dvd_pow a (Nat.le_succ n)))
   have hφn : φn.toRingHom = Ideal.Quotient.factor (Ideal.span_singleton_le_span_singleton.mpr (pow_dvd_pow a (Nat.le_succ n))) :=
     Ideal.Quotient.ringHom_ext (RingHom.ext fun _ => rfl)
-  have hpt : (Scheme.nilpPoints fY).map φn (canPt fY a (n + 1)) = canPt fY a n := by
+  have hpt : (Scheme.pointsOver fY).map (CommAlgCat.ofHom φn) (canPt fY a (n + 1)) =
+      canPt fY a n := by
     apply Subtype.ext
     show Spec.map (CommRingCat.ofHom φn.toRingHom) ≫ ofHom (Ideal.Quotient.mk _) = ofHom (Ideal.Quotient.mk _)
     rw [specMap_comp_ofHom]
     congr 1
-  have hz := hv_nat _ _ (hBn (n + 1)) (hBn n) φn (canPt fY a (n + 1))
+  have hz := hv_nat _ _ (hBn (n + 1)) (hBn n) (CommAlgCat.ofHom φn) (canPt fY a (n + 1))
   rw [hpt] at hz
   rw [hz, ← hφn]
   exact (toHom_specMap_comp φn.toRingHom _).symm
 
-private theorem eq_map_canPt (a : Γ(Y, ⊤)) {B : Type} [CommRing B] [Algebra 𝒪 B] (y : (Scheme.nilpPoints fY).obj B) (N : ℕ)
+private theorem eq_map_canPt (a : Γ(Y, ⊤)) {B : CommAlgCat.{0} 𝒪}
+    (y : (Scheme.pointsOver fY).obj B) (N : ℕ)
     (hN : ∀ a' ∈ Ideal.span {a ^ N}, toHom y.1 a' = 0) :
     letI : Algebra 𝒪 Γ(Y, ⊤) := (baseHom fY).toAlgebra
-    ∃ ξN : (Γ(Y, ⊤) ⧸ Ideal.span {a ^ N}) →ₐ[𝒪] B,
-      ξN.toRingHom.comp (Ideal.Quotient.mk (Ideal.span {a ^ N})) = toHom y.1 ∧ y = (Scheme.nilpPoints fY).map ξN (canPt fY a N) := by
+    ∃ ξN : CommAlgCat.of 𝒪 (Γ(Y, ⊤) ⧸ Ideal.span {a ^ N}) ⟶ B,
+      ξN.hom.toRingHom.comp (Ideal.Quotient.mk (Ideal.span {a ^ N})) = toHom y.1 ∧
+        y = (Scheme.pointsOver fY).map ξN (canPt fY a N) := by
   letI : Algebra 𝒪 Γ(Y, ⊤) := (baseHom fY).toAlgebra
   have hξ : (toHom y.1).comp (baseHom fY) = algebraMap 𝒪 B := toHom_comp_baseHom fY y.1 y.2
-  let ξN : (Γ(Y, ⊤) ⧸ Ideal.span {a ^ N}) →ₐ[𝒪] B :=
-    Ideal.Quotient.liftₐ _ (AlgHom.mk (toHom y.1) (fun o => by rw [← hξ]; rfl)) hN
-  have hξN : ξN.toRingHom.comp (Ideal.Quotient.mk (Ideal.span {a ^ N})) = toHom y.1 := RingHom.ext fun _ => rfl
+  let ξN : CommAlgCat.of 𝒪 (Γ(Y, ⊤) ⧸ Ideal.span {a ^ N}) ⟶ B := CommAlgCat.ofHom
+    (Ideal.Quotient.liftₐ _ (AlgHom.mk (toHom y.1) (fun o => by rw [← hξ]; rfl)) hN)
+  have hξN : ξN.hom.toRingHom.comp (Ideal.Quotient.mk (Ideal.span {a ^ N})) = toHom y.1 :=
+    RingHom.ext fun _ => rfl
   refine ⟨ξN, hξN, Subtype.ext ?_⟩
-  show y.1 = Spec.map (CommRingCat.ofHom ξN.toRingHom) ≫ ofHom (Ideal.Quotient.mk _)
+  show y.1 = Spec.map (CommRingCat.ofHom ξN.hom.toRingHom) ≫ ofHom (Ideal.Quotient.mk _)
   rw [specMap_comp_ofHom, hξN]
   exact (ofHom_toHom y.1).symm
 
@@ -674,13 +661,14 @@ section Invariance
 
 variable {M T : Scheme.{0}} [IsAffine M] [IsAffine T] (fM : M ⟶ Spec (CommRingCat.of 𝒪)) (t : T ⟶ Spec (CommRingCat.of 𝒪))
   (π : 𝒪) {G : Type} [Group G] (ρ : G →* Aut M) (hover : ∀ g : G, (ρ g).asIso.hom ≫ fM = fM)
-  (u : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B], IsNilpotent (algebraMap 𝒪 B π) →
-    (Scheme.nilpPoints fM).obj B → (Scheme.nilpPoints t).obj B)
-  (hu_nat : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (B' : Type) [CommRing B'] [Algebra 𝒪 B']
-    (hB : IsNilpotent (algebraMap 𝒪 B π)) (hB' : IsNilpotent (algebraMap 𝒪 B' π))
-    (φ : B →ₐ[𝒪] B') (x : (Scheme.nilpPoints fM).obj B), u B' hB' ((Scheme.nilpPoints fM).map φ x) = (Scheme.nilpPoints t).map φ (u B hB x))
-  (hu_inv : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (hB : IsNilpotent (algebraMap 𝒪 B π)) (g : G) (y : (Scheme.nilpPoints fM).obj B),
-    u B hB ((Scheme.nilpPoints.mapHom fM fM (ρ g).asIso.hom (hover g)).app B y) = u B hB y)
+  (u : ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) →
+    (Scheme.pointsOver fM).obj B → (Scheme.pointsOver t).obj B)
+  (hu_nat : ∀ (B B' : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+    (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B ⟶ B') (x : (Scheme.pointsOver fM).obj B),
+    u B' hB' ((Scheme.pointsOver fM).map φ x) = (Scheme.pointsOver t).map φ (u B hB x))
+  (hu_inv : ∀ (B : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π)) (g : G)
+    (y : (Scheme.pointsOver fM).obj B),
+    u B hB ((Scheme.pointsOver.mapHom fM fM (ρ g).asIso.hom (hover g)).app B y) = u B hB y)
 
 include hu_nat hu_inv in
 
@@ -700,14 +688,15 @@ private theorem tower_invariant (a : Γ(M, ⊤)) (ha : ∀ g : G, (ρ g).asIso.h
     rw [map_pow, ha]
     exact Ideal.subset_span rfl
   let gbar : (Γ(M, ⊤) ⧸ Ideal.span {a ^ n}) →ₐ[𝒪] (Γ(M, ⊤) ⧸ Ideal.span {a ^ n}) := Ideal.quotientMapₐ _ σ hσI
-  have hpt : (Scheme.nilpPoints fM).map gbar (canPt fM a n) =
-      (Scheme.nilpPoints.mapHom fM fM (ρ g).asIso.hom (hover g)).app _ (canPt fM a n) := by
+  have hpt : (Scheme.pointsOver fM).map (CommAlgCat.ofHom gbar) (canPt fM a n) =
+      (Scheme.pointsOver.mapHom fM fM (ρ g).asIso.hom (hover g)).app _ (canPt fM a n) := by
     apply Subtype.ext
     show Spec.map (CommRingCat.ofHom gbar.toRingHom) ≫ ofHom (Ideal.Quotient.mk _) = ofHom (Ideal.Quotient.mk _) ≫ (ρ g).asIso.hom
     rw [specMap_comp_ofHom, ofHom_comp_hom]
     congr 1
-  have hz : (Scheme.nilpPoints t).map gbar (u _ (hBn n) (canPt fM a n)) = u _ (hBn n) (canPt fM a n) := by
-    rw [← hu_nat _ _ (hBn n) (hBn n) gbar (canPt fM a n), hpt]
+  have hz : (Scheme.pointsOver t).map (CommAlgCat.ofHom gbar) (u _ (hBn n) (canPt fM a n)) =
+      u _ (hBn n) (canPt fM a n) := by
+    rw [← hu_nat _ _ (hBn n) (hBn n) (CommAlgCat.ofHom gbar) (canPt fM a n), hpt]
     exact hu_inv _ (hBn n) g (canPt fM a n)
   have hcg : gbar.toRingHom.comp (toHom (u _ (hBn n) (canPt fM a n)).1) = toHom (u _ (hBn n) (canPt fM a n)).1 := by
     conv_rhs => rw [← hz]
@@ -784,23 +773,35 @@ theorem AlgebraicGeometry.Scheme.existsUnique_nilpPoints_factor_of_quotient_of_i
     (hinv : ∀ V : X.Opens, Set.range (p.app V) =
       {s | ∀ g : G, (ρ g).asIso.hom.appLE (p ⁻¹ᵁ V) (p ⁻¹ᵁ V) (by rw [← Scheme.Hom.comp_preimage, hρp g]) s = s})
     (T : Scheme.{0}) (t : T ⟶ Spec (CommRingCat.of 𝒪))
-    (u : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B], IsNilpotent (algebraMap 𝒪 B π) → (Scheme.nilpPoints fM).obj B → (Scheme.nilpPoints t).obj B)
-    (hu_nat : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (B' : Type) [CommRing B'] [Algebra 𝒪 B'] (hB : IsNilpotent (algebraMap 𝒪 B π)) (hB' : IsNilpotent (algebraMap 𝒪 B' π))
-      (φ : B →ₐ[𝒪] B') (x : (Scheme.nilpPoints fM).obj B), u B' hB' ((Scheme.nilpPoints fM).map φ x) = (Scheme.nilpPoints t).map φ (u B hB x))
-    (hu_inv : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (hB : IsNilpotent (algebraMap 𝒪 B π)) (g : G) (y : (Scheme.nilpPoints fM).obj B),
-      u B hB ((Scheme.nilpPoints.mapHom fM fM (ρ g).asIso.hom (hover g)).app B y) = u B hB y)
+    (u : ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) →
+      (Scheme.pointsOver fM).obj B → (Scheme.pointsOver t).obj B)
+    (hu_nat : ∀ (B B' : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+      (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B ⟶ B') (x : (Scheme.pointsOver fM).obj B),
+      u B' hB' ((Scheme.pointsOver fM).map φ x) = (Scheme.pointsOver t).map φ (u B hB x))
+    (hu_inv : ∀ (B : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π)) (g : G)
+      (y : (Scheme.pointsOver fM).obj B),
+      u B hB ((Scheme.pointsOver.mapHom fM fM (ρ g).asIso.hom (hover g)).app B y) = u B hB y)
     (hX : IsAffine X) (hT : IsAffine T) :
-    ∃ ubar : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B], IsNilpotent (algebraMap 𝒪 B π) → (Scheme.nilpPoints f).obj B → (Scheme.nilpPoints t).obj B,
-      (∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (B' : Type) [CommRing B'] [Algebra 𝒪 B'] (hB : IsNilpotent (algebraMap 𝒪 B π)) (hB' : IsNilpotent (algebraMap 𝒪 B' π))
-        (φ : B →ₐ[𝒪] B') (x : (Scheme.nilpPoints f).obj B), ubar B' hB' ((Scheme.nilpPoints f).map φ x) = (Scheme.nilpPoints t).map φ (ubar B hB x)) ∧
-      (∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (hB : IsNilpotent (algebraMap 𝒪 B π)) (y : (Scheme.nilpPoints fM).obj B),
-        ubar B hB ((Scheme.nilpPoints.mapHom fM f p hp).app B y) = u B hB y) ∧
-      ∀ u' : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B], IsNilpotent (algebraMap 𝒪 B π) → (Scheme.nilpPoints f).obj B → (Scheme.nilpPoints t).obj B,
-        (∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (B' : Type) [CommRing B'] [Algebra 𝒪 B'] (hB : IsNilpotent (algebraMap 𝒪 B π)) (hB' : IsNilpotent (algebraMap 𝒪 B' π))
-          (φ : B →ₐ[𝒪] B') (x : (Scheme.nilpPoints f).obj B), u' B' hB' ((Scheme.nilpPoints f).map φ x) = (Scheme.nilpPoints t).map φ (u' B hB x)) →
-        (∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (hB : IsNilpotent (algebraMap 𝒪 B π)) (y : (Scheme.nilpPoints fM).obj B),
-          u' B hB ((Scheme.nilpPoints.mapHom fM f p hp).app B y) = u B hB y) →
-        ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (hB : IsNilpotent (algebraMap 𝒪 B π)) (z : (Scheme.nilpPoints f).obj B), u' B hB z = ubar B hB z := by
+    ∃ ubar : ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) →
+        (Scheme.pointsOver f).obj B → (Scheme.pointsOver t).obj B,
+      (∀ (B B' : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+        (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B ⟶ B') (x : (Scheme.pointsOver f).obj B),
+        ubar B' hB' ((Scheme.pointsOver f).map φ x) =
+          (Scheme.pointsOver t).map φ (ubar B hB x)) ∧
+      (∀ (B : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+        (y : (Scheme.pointsOver fM).obj B),
+        ubar B hB ((Scheme.pointsOver.mapHom fM f p hp).app B y) = u B hB y) ∧
+      ∀ u' : ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) →
+          (Scheme.pointsOver f).obj B → (Scheme.pointsOver t).obj B,
+        (∀ (B B' : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+          (hB' : IsNilpotent (algebraMap 𝒪 B' π)) (φ : B ⟶ B') (x : (Scheme.pointsOver f).obj B),
+          u' B' hB' ((Scheme.pointsOver f).map φ x) =
+            (Scheme.pointsOver t).map φ (u' B hB x)) →
+        (∀ (B : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+          (y : (Scheme.pointsOver fM).obj B),
+          u' B hB ((Scheme.pointsOver.mapHom fM f p hp).app B y) = u B hB y) →
+        ∀ (B : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+          (z : (Scheme.pointsOver f).obj B), u' B hB z = ubar B hB z := by
   classical
   haveI : IsAffine X := hX
   haveI : IsAffine T := hT
@@ -875,7 +876,8 @@ theorem AlgebraicGeometry.Scheme.existsUnique_nilpPoints_factor_of_quotient_of_i
     rw [show Ideal.Quotient.mk (Ideal.span {πR ^ n}) πR ^ n = Ideal.Quotient.mk (Ideal.span {πR ^ n}) (πR ^ n) from
       (map_pow _ _ _).symm, Ideal.Quotient.eq_zero_iff_mem]
     exact Ideal.subset_span rfl⟩
-  let zT : ∀ n : ℕ, (Scheme.nilpPoints t).obj (Γ(M, ⊤) ⧸ Ideal.span {πA ^ n}) := fun n => u _ (hBn n) (canPt fM πA n)
+  let zT : ∀ n : ℕ, (Scheme.pointsOver t).obj (.of 𝒪 (Γ(M, ⊤) ⧸ Ideal.span {πA ^ n})) :=
+    fun n => u _ (hBn n) (canPt fM πA n)
   let c : ∀ n : ℕ, Γ(T, ⊤) →+* Γ(M, ⊤) ⧸ Ideal.span {πA ^ n} := fun n => toHom (zT n).1
   have hc : ∀ n : ℕ, (Ideal.Quotient.factor
       (Ideal.span_singleton_le_span_singleton.mpr (pow_dvd_pow πA (Nat.le_succ n)))).comp (c (n + 1)) = c n :=
@@ -897,44 +899,49 @@ theorem AlgebraicGeometry.Scheme.existsUnique_nilpPoints_factor_of_quotient_of_i
       rw [toHom_comp_baseHom t (zT n).1 (zT n).2]
       exact RingHom.ext fun o => by show Ideal.Quotient.mk _ (baseHom fM o) = _; rw [hbase]; rfl)
 
-  have hηover : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (x : (Scheme.nilpPoints f).obj B),
-      (toHom x.1).comp (baseHom f) = algebraMap 𝒪 B := fun B _ _ x => toHom_comp_baseHom f x.1 x.2
-  have hxkill : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (hB : IsNilpotent (algebraMap 𝒪 B π))
-      (x : (Scheme.nilpPoints f).obj B), ∀ a ∈ Ideal.span {πR ^ hB.choose}, toHom x.1 a = 0 := fun B _ _ hB x =>
-    kill_of_pow_eq_zero f π (toHom x.1) (hηover B x) hB.choose hB.choose_spec
-  let ubar : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B], IsNilpotent (algebraMap 𝒪 B π) →
-      (Scheme.nilpPoints f).obj B → (Scheme.nilpPoints t).obj B := fun B _ _ hB x =>
+  have hηover : ∀ (B : CommAlgCat.{0} 𝒪) (x : (Scheme.pointsOver f).obj B),
+      (toHom x.1).comp (baseHom f) = algebraMap 𝒪 B := fun B x => toHom_comp_baseHom f x.1 x.2
+  have hxkill : ∀ (B : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+      (x : (Scheme.pointsOver f).obj B), ∀ a ∈ Ideal.span {πR ^ hB.choose}, toHom x.1 a = 0 :=
+    fun B hB x => kill_of_pow_eq_zero f π (toHom x.1) (hηover B x) hB.choose hB.choose_spec
+  let ubar : ∀ B : CommAlgCat.{0} 𝒪, IsNilpotent (algebraMap 𝒪 B π) →
+      (Scheme.pointsOver f).obj B → (Scheme.pointsOver t).obj B := fun B hB x =>
     ⟨ofHom (evHom d (toHom x.1) hB.choose (hxkill B hB x)),
       ofHom_over t _ (evHom_comp_baseHom f t d hdO (toHom x.1) (hηover B x) _ _)⟩
-  have hubar : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (hB : IsNilpotent (algebraMap 𝒪 B π))
-      (x : (Scheme.nilpPoints f).obj B), (ubar B hB x).1 = ofHom (evHom d (toHom x.1) hB.choose (hxkill B hB x)) :=
-    fun _ _ _ _ _ => rfl
+  have hubar : ∀ (B : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+      (x : (Scheme.pointsOver f).obj B),
+      (ubar B hB x).1 = ofHom (evHom d (toHom x.1) hB.choose (hxkill B hB x)) :=
+    fun _ _ _ => rfl
 
-  have hubar_any : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (hB : IsNilpotent (algebraMap 𝒪 B π))
-      (x : (Scheme.nilpPoints f).obj B) (N : ℕ) (hN : ∀ a ∈ Ideal.span {πR ^ N}, toHom x.1 a = 0),
-      (ubar B hB x).1 = ofHom (evHom d (toHom x.1) N hN) := fun B _ _ hB x N hN => by
+  have hubar_any : ∀ (B : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+      (x : (Scheme.pointsOver f).obj B) (N : ℕ) (hN : ∀ a ∈ Ideal.span {πR ^ N}, toHom x.1 a = 0),
+      (ubar B hB x).1 = ofHom (evHom d (toHom x.1) N hN) := fun B hB x N hN => by
     rw [hubar, evHom_indep d hdc (toHom x.1) hB.choose N (hxkill B hB x) hN]
 
-  have hnat : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (B' : Type) [CommRing B'] [Algebra 𝒪 B']
+  have hnat : ∀ (B B' : CommAlgCat.{0} 𝒪)
       (hB : IsNilpotent (algebraMap 𝒪 B π)) (hB' : IsNilpotent (algebraMap 𝒪 B' π))
-      (φ : B →ₐ[𝒪] B') (x : (Scheme.nilpPoints f).obj B),
-      ubar B' hB' ((Scheme.nilpPoints f).map φ x) = (Scheme.nilpPoints t).map φ (ubar B hB x) := by
-    intro B _ _ B' _ _ hB hB' φ x
-    have hx' : toHom ((Scheme.nilpPoints f).map φ x).1 = φ.toRingHom.comp (toHom x.1) := toHom_specMap_comp φ.toRingHom x.1
-    have hkφ : ∀ a ∈ Ideal.span {πR ^ hB.choose}, φ.toRingHom.comp (toHom x.1) a = 0 := fun a ha => by
-      rw [RingHom.comp_apply, hxkill B hB x a ha, map_zero]
-    have hkφ' : ∀ a ∈ Ideal.span {πR ^ hB.choose}, toHom ((Scheme.nilpPoints f).map φ x).1 a = 0 := by rw [hx']; exact hkφ
+      (φ : B ⟶ B') (x : (Scheme.pointsOver f).obj B),
+      ubar B' hB' ((Scheme.pointsOver f).map φ x) = (Scheme.pointsOver t).map φ (ubar B hB x) := by
+    intro B B' hB hB' φ x
+    have hx' : toHom ((Scheme.pointsOver f).map φ x).1 = φ.hom.toRingHom.comp (toHom x.1) :=
+      toHom_specMap_comp φ.hom.toRingHom x.1
+    have hkφ : ∀ a ∈ Ideal.span {πR ^ hB.choose}, φ.hom.toRingHom.comp (toHom x.1) a = 0 :=
+      fun a ha => by rw [RingHom.comp_apply, hxkill B hB x a ha, map_zero]
+    have hkφ' : ∀ a ∈ Ideal.span {πR ^ hB.choose},
+        toHom ((Scheme.pointsOver f).map φ x).1 a = 0 := by
+      rw [hx']; exact hkφ
     apply Subtype.ext
     rw [hubar_any B' hB' _ hB.choose hkφ']
-    show ofHom _ = Spec.map (CommRingCat.ofHom φ.toRingHom) ≫ ofHom _
-    rw [specMap_comp_ofHom, comp_evHom d φ.toRingHom (toHom x.1) hB.choose (hxkill B hB x) hkφ]
+    show ofHom _ = Spec.map (CommRingCat.ofHom φ.hom.toRingHom) ≫ ofHom _
+    rw [specMap_comp_ofHom, comp_evHom d φ.hom.toRingHom (toHom x.1) hB.choose (hxkill B hB x) hkφ]
     congr 1
     exact evHom_congr d hx' _ _ _
 
   have hpbase : p.appTop.hom.comp (baseHom f) = baseHom fM := RingHom.ext fun o => (hbase o).symm
-  have hfac : ∀ (B : Type) [CommRing B] [Algebra 𝒪 B] (hB : IsNilpotent (algebraMap 𝒪 B π))
-      (y : (Scheme.nilpPoints fM).obj B), ubar B hB ((Scheme.nilpPoints.mapHom fM f p hp).app B y) = u B hB y := by
-    intro B _ _ hB y
+  have hfac : ∀ (B : CommAlgCat.{0} 𝒪) (hB : IsNilpotent (algebraMap 𝒪 B π))
+      (y : (Scheme.pointsOver fM).obj B),
+      ubar B hB ((Scheme.pointsOver.mapHom fM f p hp).app B y) = u B hB y := by
+    intro B hB y
     have hN : algebraMap 𝒪 B π ^ hB.choose = 0 := hB.choose_spec
     have hξ : (toHom y.1).comp (baseHom fM) = algebraMap 𝒪 B := toHom_comp_baseHom fM y.1 y.2
     have hξkill : ∀ a ∈ Ideal.span {πA ^ hB.choose}, toHom y.1 a = 0 := by
@@ -943,27 +950,30 @@ theorem AlgebraicGeometry.Scheme.existsUnique_nilpPoints_factor_of_quotient_of_i
       rw [map_mul, map_pow, ← hπA, show toHom y.1 (algebraMap 𝒪 Γ(M, ⊤) π) = algebraMap 𝒪 B π from by rw [← hξ]; rfl,
         hN, mul_zero]
     obtain ⟨ξN, hξN, hy⟩ := eq_map_canPt fM πA y hB.choose hξkill
-    have hη : toHom ((Scheme.nilpPoints.mapHom fM f p hp).app B y).1 = (toHom y.1).comp p.appTop.hom := toHom_comp y.1 p
+    have hη : toHom ((Scheme.pointsOver.mapHom fM f p hp).app B y).1 =
+        (toHom y.1).comp p.appTop.hom :=
+      toHom_comp y.1 p
     have hk1 : ∀ a ∈ Ideal.span {πR ^ hB.choose}, (toHom y.1).comp (algebraMap Γ(X, ⊤) Γ(M, ⊤)) a = 0 :=
       kill_of_pow_eq_zero f π _ (by show ((toHom y.1).comp p.appTop.hom).comp (baseHom f) = _; rw [RingHom.comp_assoc, hpbase, hξ]) _ hN
-    have hkη : ∀ a ∈ Ideal.span {πR ^ hB.choose}, toHom ((Scheme.nilpPoints.mapHom fM f p hp).app B y).1 a = 0 := by
+    have hkη : ∀ a ∈ Ideal.span {πR ^ hB.choose},
+        toHom ((Scheme.pointsOver.mapHom fM f p hp).app B y).1 a = 0 := by
       rw [hη]; exact hk1
     apply Subtype.ext
-    rw [hubar_any B hB ((Scheme.nilpPoints.mapHom fM f p hp).app B y) hB.choose hkη]
+    rw [hubar_any B hB ((Scheme.pointsOver.mapHom fM f p hp).app B y) hB.choose hkη]
     conv_rhs => rw [hy, hu_nat _ _ (hBn hB.choose) hB ξN (canPt fM πA hB.choose)]
-    show ofHom _ = Spec.map (CommRingCat.ofHom ξN.toRingHom) ≫ (zT hB.choose).1
+    show ofHom _ = Spec.map (CommRingCat.ofHom ξN.hom.toRingHom) ≫ (zT hB.choose).1
     conv_rhs => rw [← ofHom_toHom (zT hB.choose).1, specMap_comp_ofHom]
     congr 1
-    have step1 : evHom d (toHom ((Scheme.nilpPoints.mapHom fM f p hp).app B y).1) hB.choose hkη =
+    have step1 : evHom d (toHom ((Scheme.pointsOver.mapHom fM f p hp).app B y).1) hB.choose hkη =
         evHom d ((toHom y.1).comp (algebraMap Γ(X, ⊤) Γ(M, ⊤))) hB.choose hk1 := by congr 1
     rw [step1, evHom, ← lift_comp_quotientMap (X := X) (algebraMap Γ(X, ⊤) Γ(M, ⊤)) (toHom y.1) hB.choose hξkill hk1,
       RingHom.comp_assoc, hdf hB.choose]
-    show _ = ξN.toRingHom.comp (c hB.choose)
+    show _ = ξN.hom.toRingHom.comp (c hB.choose)
     congr 1
     exact Ideal.Quotient.ringHom_ext (hξN.symm ▸ rfl)
   refine ⟨ubar, hnat, hfac, ?_⟩
 
-  intro u' hu'nat hu'fac B _ _ hB x
+  intro u' hu'nat hu'fac B hB x
 
   obtain ⟨ηN, hηN, hx⟩ := eq_map_canPt f πR x hB.choose (hxkill B hB x)
   rw [hx, hu'nat _ _ (hRn hB.choose) hB ηN, hnat _ _ (hRn hB.choose) hB ηN]
@@ -980,12 +990,13 @@ theorem AlgebraicGeometry.Scheme.existsUnique_nilpPoints_factor_of_quotient_of_i
     let ιn : (Γ(X, ⊤) ⧸ Ideal.span {πR ^ n}) →ₐ[𝒪] (Γ(M, ⊤) ⧸ Ideal.span {πA ^ n}) :=
       Ideal.quotientMapₐ _ (AlgHom.mk (algebraMap Γ(X, ⊤) Γ(M, ⊤)) (fun o => (hbase o).symm))
         (by rw [Ideal.span_singleton_le_iff_mem, Ideal.mem_comap]; exact Ideal.subset_span (by rw [map_pow]; rfl))
-    have hpt : (Scheme.nilpPoints f).map ιn (canPt f πR n) = (Scheme.nilpPoints.mapHom fM f p hp).app _ (canPt fM πA n) := by
+    have hpt : (Scheme.pointsOver f).map (CommAlgCat.ofHom ιn) (canPt f πR n) =
+        (Scheme.pointsOver.mapHom fM f p hp).app _ (canPt fM πA n) := by
       apply Subtype.ext
       show Spec.map (CommRingCat.ofHom ιn.toRingHom) ≫ ofHom (Ideal.Quotient.mk _) = ofHom (Ideal.Quotient.mk _) ≫ p
       rw [specMap_comp_ofHom, ← ofHom_toHom (ofHom (Ideal.Quotient.mk (Ideal.span {πA ^ n})) ≫ p), toHom_comp, toHom_ofHom]
       congr 1
-    have h1 := hu'nat _ _ (hRn n) (hBn n) ιn (canPt f πR n)
+    have h1 := hu'nat _ _ (hRn n) (hBn n) (CommAlgCat.ofHom ιn) (canPt f πR n)
     rw [hpt, hu'fac _ (hBn n)] at h1
 
     show _ = toHom (zT n).1
