@@ -33,20 +33,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Normal form of a number with exactly $\ell$ representations.** Let $c$ and $d$ be coprime
-positive integers, and let $n$ and $\ell$ be natural numbers such that the equation
-$n = cx + dy$ has exactly $\ell$ solutions $(x, y)$ in natural numbers. Then there are natural
-numbers $x_0 < d$ and $y_0 < c$ with $n = (\ell - 1)cd + cx_0 + dy_0$ in the integers.
-
-The identity is stated over the integers, so $\ell = 0$ is included (then $\ell - 1 = -1$). The
-paper's standing assumption $1 < c < d$ is weakened to $0 < c$, $0 < d$.
-
-Source: Yuchen Ding and Takao Komatsu, *On a Conjecture of Ramírez Alfonsín and
-Skałba, III*, INTEGERS 25 (2025), Article A51, Lemma 2 (`integers-2025-A51-lem-2`). -/
-public theorem_wanted exists_eq_of_ncard_twoGeneratorReps {c d : ℕ} (hc : 0 < c) (hd : 0 < d)
-    (hcd : c.Coprime d) (n ℓ : ℕ) (hℓ : {p : ℕ × ℕ | c * p.1 + d * p.2 = n}.ncard = ℓ) :
-    ∃ x₀ < d, ∃ y₀ < c, (n : ℤ) = ((ℓ : ℤ) - 1) * c * d + c * x₀ + d * y₀
-
 /-- **Weighted count of primes in the $\ell$-numerical semigroup.** For every natural number
 $\ell$ and every $\varepsilon > 0$ there is a natural number $C$ such that the following holds
 for all coprime natural numbers $c$ and $d$ with $C \le c < d$. For a natural number $k$ put

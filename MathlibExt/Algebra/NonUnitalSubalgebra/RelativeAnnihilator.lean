@@ -1,0 +1,161 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Algebra.NonUnitalSubalgebra.TwoSided
+
+/-!
+# Algebraic relative annihilators in nonunital algebras
+
+For a two-sided nonunital subalgebra `I` and an arbitrary set `D`, this file
+bundles the elements which send `D` into `I` by left or right multiplication.
+No topology, norm, star operation, unit, or C-star structure is required.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace NonUnitalSubalgebra
+
+universe uR uA
+
+variable {R : Type uR} {A : Type uA}
+variable [CommSemiring R] [NonUnitalSemiring A] [Module R A]
+variable [IsScalarTower R A A] [SMulCommClass R A A]
+
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `(r • a) * b = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. The left relative annihilator consists of `x` such that `x*d ∈ I` for every `d ∈ D`.
+-/
+def leftAnnihilatorModulo
+    (I : NonUnitalSubalgebra R A) [I.IsTwoSided] (D : Set A) :
+    NonUnitalSubalgebra R A where
+  carrier := {x | ∀ d ∈ D, x * d ∈ I}
+  zero_mem' := by
+    intro d _hd
+    rw [zero_mul]
+    exact (NonUnitalSubalgebra.mem_toSubmodule I).1 I.toSubmodule.zero_mem
+  add_mem' := by
+    intro x y hx hy d hd
+    rw [add_mul]
+    exact I.add_mem (hx d hd) (hy d hd)
+  mul_mem' := by
+    intro x y _hx hy d hd
+    rw [mul_assoc]
+    exact IsTwoSided.mul_mem_left x (hy d hd)
+  smul_mem' := by
+    intro r x hx d hd
+    rw [smul_mul_assoc]
+    exact I.smul_mem r (hx d hd)
+
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `a * (r • b) = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. The right relative annihilator consists of `x` such that `d*x ∈ I` for every `d ∈ D`.
+-/
+def rightAnnihilatorModulo
+    (I : NonUnitalSubalgebra R A) [I.IsTwoSided] (D : Set A) :
+    NonUnitalSubalgebra R A where
+  carrier := {x | ∀ d ∈ D, d * x ∈ I}
+  zero_mem' := by
+    intro d _hd
+    rw [mul_zero]
+    exact (NonUnitalSubalgebra.mem_toSubmodule I).1 I.toSubmodule.zero_mem
+  add_mem' := by
+    intro x y hx hy d hd
+    rw [mul_add]
+    exact I.add_mem (hx d hd) (hy d hd)
+  mul_mem' := by
+    intro x y hx _hy d hd
+    rw [← mul_assoc]
+    exact IsTwoSided.mul_mem_right (hx d hd) y
+  smul_mem' := by
+    intro r x hx d hd
+    rw [mul_smul_comm]
+    exact I.smul_mem r (hx d hd)
+
+omit [SMulCommClass R A A] in
+@[simp]
+theorem mem_leftAnnihilatorModulo_iff
+    (I : NonUnitalSubalgebra R A) [I.IsTwoSided]
+    (D : Set A) (x : A) :
+    x ∈ I.leftAnnihilatorModulo D ↔ ∀ d ∈ D, x * d ∈ I :=
+  Iff.rfl
+
+omit [IsScalarTower R A A] in
+@[simp]
+theorem mem_rightAnnihilatorModulo_iff
+    (I : NonUnitalSubalgebra R A) [I.IsTwoSided]
+    (D : Set A) (x : A) :
+    x ∈ I.rightAnnihilatorModulo D ↔ ∀ d ∈ D, d * x ∈ I :=
+  Iff.rfl
+
+omit [SMulCommClass R A A] in
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `(r • a) * b = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. If `x` belongs to the left relative annihilator, then `a*x` belongs to it for every
+`a ∈ A`.
+-/
+theorem mul_mem_leftAnnihilatorModulo_left
+    (I : NonUnitalSubalgebra R A) [I.IsTwoSided]
+    (D : Set A) (a : A) {x : A} (hx : x ∈ I.leftAnnihilatorModulo D) :
+    a * x ∈ I.leftAnnihilatorModulo D := by
+  rw [mem_leftAnnihilatorModulo_iff]
+  intro d hd
+  rw [mul_assoc]
+  exact IsTwoSided.mul_mem_left a
+    ((mem_leftAnnihilatorModulo_iff I D x).1 hx d hd)
+
+omit [IsScalarTower R A A] in
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `a * (r • b) = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. If `x` belongs to the right relative annihilator, then `x*a` belongs to it for every
+`a ∈ A`.
+-/
+theorem mul_mem_rightAnnihilatorModulo_right
+    (I : NonUnitalSubalgebra R A) [I.IsTwoSided]
+    (D : Set A) {x : A} (hx : x ∈ I.rightAnnihilatorModulo D) (a : A) :
+    x * a ∈ I.rightAnnihilatorModulo D := by
+  rw [mem_rightAnnihilatorModulo_iff]
+  intro d hd
+  rw [← mul_assoc]
+  exact IsTwoSided.mul_mem_right
+    ((mem_rightAnnihilatorModulo_iff I D x).1 hx d hd) a
+
+omit [SMulCommClass R A A] in
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `(r • a) * b = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. Every element of `I` belongs to the left relative annihilator of `D` modulo `I`.
+-/
+theorem le_leftAnnihilatorModulo
+    (I : NonUnitalSubalgebra R A) [I.IsTwoSided] (D : Set A) :
+    I ≤ I.leftAnnihilatorModulo D := by
+  intro x hx
+  rw [mem_leftAnnihilatorModulo_iff]
+  intro d _hd
+  exact IsTwoSided.mul_mem_right hx d
+
+omit [IsScalarTower R A A] in
+/-- Let `R` be a commutative semiring and `A` a possibly nonunital semiring with an `R`-module structure
+satisfying `a * (r • b) = r • (a * b)`. Let `I` be a two-sided nonunital `R`-subalgebra and `D` any
+subset of `A`. Every element of `I` belongs to the right relative annihilator of `D` modulo `I`.
+-/
+theorem le_rightAnnihilatorModulo
+    (I : NonUnitalSubalgebra R A) [I.IsTwoSided] (D : Set A) :
+    I ≤ I.rightAnnihilatorModulo D := by
+  intro x hx
+  rw [mem_rightAnnihilatorModulo_iff]
+  intro d _hd
+  exact IsTwoSided.mul_mem_left d hx
+
+end NonUnitalSubalgebra
