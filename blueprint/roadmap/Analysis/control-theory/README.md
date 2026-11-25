@@ -14,6 +14,12 @@ Mathematical control theory of finite-dimensional systems: controllability of li
 - [Steady-state step response of a stable linear system](dc-gain-of-a-stable-linear-system.md)
 - [Linear-quadratic control](linear-quadratic-control/README.md)
 - [Average consensus on a connected undirected graph](average-consensus-on-a-connected-undirected-graph.md)
+- [Discrete-time systems and safety](discrete-time-systems-and-safety/README.md)
+- [Hybrid systems](hybrid-systems/README.md)
+- [Advisory and handoff criteria for human-in-the-loop controllers](advisory-handoff-contract-criteria.md)
+- [Human-in-the-loop controller model](human-in-the-loop-controller-model.md)
+- [Conditional correctness of prescient advisories (safety case)](conditional-correctness-of-prescient-advisories.md)
+- [Optimal, robust and adaptive control](optimal-robust-and-adaptive-control/README.md)
 
 ## Single-input single-output linear systems
 
