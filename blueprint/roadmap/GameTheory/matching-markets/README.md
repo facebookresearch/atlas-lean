@@ -7,6 +7,8 @@ Two-sided matching markets: stable matchings of marriage and college-admissions 
 - [Stable matching mechanisms and incentives](stable-matching-mechanisms-and-incentives/README.md)
 
 - [Housing markets](housing-markets/README.md)
+- [Incomplete-to-complete marriage encoding](incomplete-to-complete-marriage-encoding.md)
+- [School choice: justified envy and DA](school-choice-justified-envy-and-da.md)
 
 ## Related topics
 
