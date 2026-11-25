@@ -61,21 +61,6 @@ public theorem shiftedFloorResidueCount_modulus_one (n : ℕ) (α ν : ℝ)
   rw [Finset.filter_true_of_mem (fun k _ => by simp [Int.ModEq])]
   simp
 
-/-- **Odd floor quotients as a hyperbolic lattice-point difference.** For every natural number
-$n$, the floor sequence parity count $\mathcal{F}_n$ equals the number of integer pairs $(x, y)$
-with $x, y \ge 1$ and $n/2 < xy \le n$ minus the number of integer pairs $(x, y)$ with
-$x, y \ge 1$ and $xy \le n/2$.
-
-Source: Nicholas Dent and Caleb M. Shor, *On Residues of Rounded Shifted
-Fractions with a Common Numerator*, Journal of Integer Sequences 27 (2024),
-Article 24.2.5, Proposition 4 (`jis-2024-24.2.5-prop-4`). -/
-public theorem_wanted floorQuotientOddCount_eq_hyperbolic_lattice_difference
-    (n : ℕ) :
-    (floorQuotientOddCount n : ℤ) =
-      (Nat.card {p : ℤ × ℤ // 1 ≤ p.1 ∧ 1 ≤ p.2 ∧
-          (n : ℤ) < 2 * (p.1 * p.2) ∧ p.1 * p.2 ≤ n} : ℤ) -
-        Nat.card {p : ℤ × ℤ // 1 ≤ p.1 ∧ 1 ≤ p.2 ∧ 2 * (p.1 * p.2) ≤ n}
-
 /-- **Dirichlet's asymptotic for the divisor summatory function.** Let $\tau(m)$ be the number of
 positive divisors of $m$, let $D(x) = \sum_{1 \le m \le x} \tau(m)$ for real $x$, and let
 $\gamma$ be the Euler–Mascheroni constant. There is a real constant $C$ such that
