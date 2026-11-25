@@ -3,6 +3,8 @@
 - [Jacobi symbols of a discriminant $D$ agree at odd primes congruent modulo $D$](jacobi-sym-prime-add-mul-eq.md)
 - [Ballot's Lemma 2: three divisibilities as one congruence](mul-dvd-prod-sub-sign-iff.md)
 - [$D$-Carmichael number](is-dcarmichael.md)
+- [Cofactor dvd](cofactor-dvd.md)
+- [Dvd lucas of local order dvd](dvd-lucas-of-local-order-dvd.md)
 - [$D$-Carmichael numbers are not prime](not-prime.md)
 - [$9$ is not a $5$-Carmichael number](not-is-dcarmichael-five-nine.md)
 - [Extended digit sum](lucas-digit-sum.md)

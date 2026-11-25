@@ -78,7 +78,12 @@ namespace Dynamics.EinsiedlerKatokLindenstrauss
 
 open MetaMathlibExt (distToNearestInt)
 
-/-- Source: see manifest Via leanprover/lean-eval@38361be, problem `einsiedler_katok_lindenstrauss`. -/
+/-- **Einsiedler–Katok–Lindenstrauss theorem.** For a real number $x$, write $\lVert x \rVert$
+for the distance from $x$ to the nearest integer. The set of pairs $(\alpha, \beta)$ of real
+numbers with $\liminf_{n \to \infty} n \cdot \lVert n\alpha \rVert \cdot \lVert n\beta \rVert > 0$,
+the lower limit taken over natural numbers $n$, has Hausdorff dimension $0$ in $\mathbb{R}^2$.
+
+Source: see manifest Via leanprover/lean-eval@38361be, problem `einsiedler_katok_lindenstrauss`. -/
 public theorem_wanted einsiedler_katok_lindenstrauss :
     dimH {(α, β) : ℝ × ℝ | Filter.atTop.liminf
       (fun n : ℕ ↦ n * distToNearestInt (n * α) * distToNearestInt (n * β)) > 0} = 0

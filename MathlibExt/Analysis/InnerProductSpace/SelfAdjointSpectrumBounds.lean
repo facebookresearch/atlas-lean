@@ -47,9 +47,11 @@ variable {𝕜 : Type*} [RCLike 𝕜]
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace 𝕜 H] [CompleteSpace H]
 
 omit [CompleteSpace H] in
-/-- Auxiliary lemma: for `t ∈ ℝ` and a nonzero vector `x`, the Rayleigh
-quotient of `t • 1 - T` at `x` equals `t` minus the Rayleigh quotient of `T`
-at `x`. -/
+/-- **Rayleigh quotient of a shifted operator.** Let $T$ be a bounded linear operator on an inner
+product space $H$ over $\mathbb{R}$ or $\mathbb{C}$, let $I$ be the identity operator on $H$, and
+write $R_S(x) = \operatorname{Re}\langle Sx, x\rangle / \|x\|^2$ for the Rayleigh quotient of an
+operator $S$. Then for every real number $t$ and every nonzero $x \in H$,
+$R_{tI - T}(x) = t - R_T(x)$. -/
 theorem rayleighQuotient_algebraMap_sub (T : H →L[𝕜] H) (t : ℝ) (x : H) (hx : x ≠ 0) :
     ((algebraMap 𝕜 (H →L[𝕜] H)) (↑t : 𝕜) - T).rayleighQuotient x =
       t - T.rayleighQuotient x := by
@@ -63,9 +65,11 @@ theorem rayleighQuotient_algebraMap_sub (T : H →L[𝕜] H) (t : ℝ) (x : H) (
   have hxn : (‖x‖ : ℝ) ≠ 0 := norm_ne_zero_iff.mpr hx
   field_simp
 
-/-- **Spectrum bounds over nonzero vectors.** For a self-adjoint operator
-`T` and `μ ∈ Spec(T)`, the real part of `μ` lies between the infimum and
-supremum of the Rayleigh quotient over nonzero vectors. -/
+/-- **Spectrum bounds over nonzero vectors.** Let $T$ be a self-adjoint bounded linear operator on
+a nonzero Hilbert space $H$ over $\mathbb{R}$ or $\mathbb{C}$, with Rayleigh quotient
+$R_T(x) = \operatorname{Re}\langle Tx, x\rangle / \|x\|^2$. Then every $\mu$ in the spectrum of
+$T$ satisfies $\inf_{x \ne 0} R_T(x) \le \operatorname{Re}\mu \le \sup_{x \ne 0} R_T(x)$, where
+the infimum and supremum range over the nonzero vectors $x \in H$. -/
 theorem selfAdjoint_spectrum_subset_Icc_nonzero [Nontrivial H]
     (T : H →L[𝕜] H) (hT : IsSelfAdjoint T) {mu : 𝕜} (hmu : mu ∈ spectrum 𝕜 T) :
     ⨅ x : {x : H // x ≠ 0}, T.rayleighQuotient x.1 ≤ RCLike.re mu ∧
@@ -126,9 +130,14 @@ theorem selfAdjoint_spectrum_subset_Icc_nonzero [Nontrivial H]
     linarith
   exact ⟨h_lower, h_upper⟩
 
-/-- The original all-vector spectrum bounds, retained as a corollary of
-`selfAdjoint_spectrum_subset_Icc_nonzero`. The all-vector extrema also
-include the totalized quotient at zero. -/
+/-- **Spectrum bounds over all vectors.** Let $T$ be a self-adjoint bounded linear operator on a
+nonzero Hilbert space $H$ over $\mathbb{R}$ or $\mathbb{C}$, with Rayleigh quotient
+$R_T(x) = \operatorname{Re}\langle Tx, x\rangle / \|x\|^2$ for $x \ne 0$ and $R_T(0) = 0$. Then
+every $\mu$ in the spectrum of $T$ satisfies
+$\inf_{x \in H} R_T(x) \le \operatorname{Re}\mu \le \sup_{x \in H} R_T(x)$.
+
+Unlike the bounds over nonzero vectors, these extrema also take into account the value $0$ of the
+quotient at $x = 0$. -/
 theorem selfAdjoint_spectrum_subset_Icc [Nontrivial H]
     (T : H →L[𝕜] H) (hT : IsSelfAdjoint T) {mu : 𝕜} (hmu : mu ∈ spectrum 𝕜 T) :
     ⨅ x : H, T.rayleighQuotient x ≤ RCLike.re mu ∧

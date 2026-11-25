@@ -40,7 +40,9 @@ namespace Cslib.Algorithms.Lean
 universe u
 
 /--
-A Bloom filter over `α` with `m` bits: a list of hash functions into `Fin m` and the bit vector.
+**Bloom filter.** A Bloom filter over a type $\alpha$ with $m$ bits consists of a finite list of
+hash functions $\alpha \to \{0, \dots, m - 1\}$ and a bit vector of length $m$.
+
 No false-positive rate is claimed because the model supplies no probability distribution.
 -/
 public structure BloomFilter (α : Type u) (m : Nat) where
@@ -51,18 +53,29 @@ public structure BloomFilter (α : Type u) (m : Nat) where
 
 namespace BloomFilter
 
-/-- The empty Bloom filter for the given hash functions: every bit is unset. -/
+/--
+**Empty Bloom filter.** Let $\alpha$ be a type and $m$ a natural number. Given a list of hash
+functions $\alpha \to \{0, \dots, m - 1\}$, the empty Bloom filter with these hash functions has
+all of its $m$ bits unset.
+-/
 public def empty {α : Type u} {m : Nat} (hashes : List (α → Fin m)) : BloomFilter α m where
   hashes := hashes
   bits := Vector.replicate m false
 
-/-- Inserts an element by setting the bit selected by each hash function. -/
+/--
+**Bloom filter insertion.** Inserting an element $x$ into a Bloom filter keeps its hash functions
+and sets bit $h(x)$ for every hash function $h$ of the filter, leaving all other bits unchanged.
+-/
 public def insert {α : Type u} {m : Nat} (filter : BloomFilter α m) (x : α) :
     BloomFilter α m where
   hashes := filter.hashes
   bits := filter.hashes.foldl (fun bits h => bits.set (h x) true) filter.bits
 
-/-- Whether every bit selected for `x` is set, so `x` may have been inserted. -/
+/--
+**Bloom filter membership query.** A Bloom filter reports that an element $x$ may be present
+when bit $h(x)$ is set for every hash function $h$ of the filter, and reports $x$ absent
+otherwise.
+-/
 public def mayContain {α : Type u} {m : Nat} (filter : BloomFilter α m) (x : α) : Bool :=
   filter.hashes.all fun h => filter.bits[h x]
 
@@ -90,8 +103,10 @@ private theorem foldl_set_get_iff {α : Type u} {m : Nat} :
             · exact Or.inr ⟨h', hmem, rfl⟩
 
 /--
-Bit-set characterization of insertion: after inserting `x`, bit `i` is set exactly when it was
-already set or some hash function sends `x` to `i`.
+**Bits set by an insertion.** Let $F$ be a Bloom filter over $\alpha$ with $m$ bits, let
+$x \in \alpha$ and let $i \in \{0, \dots, m - 1\}$. Bit $i$ of the filter obtained by inserting
+$x$ into $F$ is set if and only if bit $i$ of $F$ is set or some hash function $h$ of $F$
+satisfies $h(x) = i$.
 -/
 public theorem bit_insert_iff {α : Type u} {m : Nat} (filter : BloomFilter α m)
     (x : α) (i : Fin m) :
@@ -99,12 +114,19 @@ public theorem bit_insert_iff {α : Type u} {m : Nat} (filter : BloomFilter α m
       filter.bits[i] = true ∨ ∃ h ∈ filter.hashes, h x = i :=
   foldl_set_get_iff filter.hashes filter.bits x i
 
-/-- `mayContain` holds exactly when every hash-selected bit is set. -/
+/--
+**Membership query in terms of bits.** For a Bloom filter $F$ and an element $x$, $F$ reports
+that $x$ may be present if and only if bit $h(x)$ of $F$ is set for every hash function $h$ of
+$F$.
+-/
 public theorem mayContain_iff {α : Type u} {m : Nat} (filter : BloomFilter α m) (x : α) :
     filter.mayContain x = true ↔ ∀ h ∈ filter.hashes, filter.bits[h x] = true := by
   simp [mayContain, List.all_eq_true]
 
-/-- No false negatives: an element is reported present immediately after its own insertion. -/
+/--
+**An inserted element is reported present.** For every Bloom filter $F$ and element $x$, the
+filter obtained by inserting $x$ into $F$ reports that $x$ may be present.
+-/
 public theorem mayContain_insert_self {α : Type u} {m : Nat} (filter : BloomFilter α m)
     (x : α) : (filter.insert x).mayContain x = true := by
   rw [mayContain_iff]
@@ -113,8 +135,11 @@ public theorem mayContain_insert_self {α : Type u} {m : Nat} (filter : BloomFil
   exact Or.inr ⟨h, hmem, rfl⟩
 
 /--
-No false negatives under further inserts: insertion never clears a bit, so an element reported
-present stays reported present after any later insertion.
+**Insertion preserves positive answers.** Let $F$ be a Bloom filter and let $x$, $y$ be elements.
+If $F$ reports that $x$ may be present, then so does the filter obtained by inserting $y$ into $F$.
+
+Insertion never clears a bit, so an element reported present stays reported present after any
+later insertion; in particular there are no false negatives under further inserts.
 -/
 public theorem mayContain_insert_mono {α : Type u} {m : Nat} (filter : BloomFilter α m)
     (x y : α) (present : filter.mayContain x = true) :
@@ -124,7 +149,9 @@ public theorem mayContain_insert_mono {α : Type u} {m : Nat} (filter : BloomFil
   rw [bit_insert_iff]
   exact Or.inl (present h hmem)
 
-/-- With at least one hash function, the empty filter reports every element absent. -/
+/-- **The empty Bloom filter reports every element absent.** Let $\alpha$ be a type, $m$ a
+natural number and $H$ a nonempty list of hash functions $\alpha \to \{0, \dots, m - 1\}$. For
+every element $x \in \alpha$, the empty Bloom filter with hash functions $H$ reports $x$ absent. -/
 public theorem mayContain_empty {α : Type u} {m : Nat} {hashes : List (α → Fin m)}
     (nonempty : hashes ≠ []) (x : α) :
     (empty hashes).mayContain x = false := by
