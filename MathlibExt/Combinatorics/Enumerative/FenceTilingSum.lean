@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Intervals
+public import Mathlib.Algebra.Field.Basic
 public import Mathlib.Algebra.Group.Nat.Even
 public import Mathlib.Data.Finset.Powerset
 import Mathlib.Algebra.BigOperators.Ring.Finset
@@ -64,6 +65,19 @@ Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun
 Section 2 (before Lemma 2.1). -/
 def fenceTilingSum {R : Type*} [CommSemiring R] (a b : R) (n : ℕ) : R :=
   ∑ F ∈ fenceTilings n, fenceTilingWeight a b n F
+
+
+/-- **Weighted count of bifence-free fence tilings.** Let $a$, $b$ be elements of a commutative
+semiring and $n \ge 0$. Two fences at positions $k$ and $k + 1$ form a bifence. The weighted number
+$C_n$ of tilings with no bifence is the sum of the weights, with half-square weights $a$ and $b$,
+of the fence tilings $F$ of the $n$-board with no bifence, that is, with $k + 1 \notin F$ for every
+$k \in F$.
+
+Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
+Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
+Lemma 3.15. -/
+def noBifenceTilingSum {R : Type*} [CommSemiring R] (a b : R) (n : ℕ) : R :=
+  ∑ F ∈ (fenceTilings n).filter (fun F => ∀ k ∈ F, k + 1 ∉ F), fenceTilingWeight a b n F
 
 end
 
@@ -413,5 +427,203 @@ public theorem fenceTilingSum_even {R : Type*} [CommSemiring R] (a b : R) {n : �
     _ = b ^ 2 * pathSum a b (2 * k + 1) ^ 2 + pathSum a b (2 * k) ^ 2 +
         2 * (b * pathSum a b (2 * k + 1) * pathSum a b (2 * k)) := by ring
     _ = _ := by rw [evenCross, sum_range_succ (n := k)]; ring
+
+-- The starts of disjoint length-three blocks in a span of m half-cells.
+private def spacedTilings (m i : ℕ) : Finset (Finset ℕ) :=
+  ((range (m - 2)).powersetCard i).filter fun F => ∀ j ∈ F, ∀ k ∈ F, j < k → j + 3 ≤ k
+
+private theorem mem_spacedTilings {m i : ℕ} {F : Finset ℕ} :
+    F ∈ spacedTilings m i ↔ (∀ k ∈ F, k + 2 < m) ∧ F.card = i ∧
+      (∀ j ∈ F, ∀ k ∈ F, j < k → j + 3 ≤ k) := by
+  simp only [spacedTilings, mem_filter, mem_powersetCard, Finset.subset_iff, mem_range, and_assoc]
+  exact and_congr_left' (forall_congr' fun _ => imp_congr_right fun _ => by omega)
+
+-- Either the last half-cell is free, or it ends a block beginning at m.
+private theorem spacedTilings_split (m i : ℕ) :
+    spacedTilings (m + 3) (i + 1) =
+      spacedTilings (m + 2) (i + 1) ∪ (spacedTilings m i).image (insert m) := by
+  ext F
+  simp only [mem_union, mem_image, mem_spacedTilings]
+  constructor
+  · rintro ⟨hbound, hcard, hsep⟩
+    by_cases hm : m ∈ F
+    · right
+      refine ⟨F.erase m, ⟨fun k hk => ?_, by rw [card_erase_of_mem hm, hcard]; omega,
+        fun j hj k hk hjk => hsep j (mem_of_mem_erase hj) k (mem_of_mem_erase hk) hjk⟩,
+        insert_erase hm⟩
+      obtain ⟨hne, hk⟩ := mem_erase.mp hk
+      have := hbound k hk
+      have := hsep k hk m hm (by omega)
+      omega
+    · refine Or.inl ⟨fun k hk => ?_, hcard, hsep⟩
+      have := hbound k hk
+      by_contra! h
+      exact hm (by rwa [show m = k by omega])
+  · rintro (⟨hbound, hcard, hsep⟩ | ⟨G, ⟨hbound, hcard, hsep⟩, rfl⟩)
+    · exact ⟨fun k hk => by have := hbound k hk; omega, hcard, hsep⟩
+    · have hm : m ∉ G := fun h => by have := hbound m h; omega
+      refine ⟨?_, by rw [card_insert_of_notMem hm, hcard], ?_⟩
+      · intro k hk
+        rcases mem_insert.mp hk with rfl | hk
+        · omega
+        · have := hbound k hk
+          omega
+      · intro j hj k hk hjk
+        rcases mem_insert.mp hj with hj | hj
+        · rcases mem_insert.mp hk with hk | hk
+          · omega
+          · have := hbound k hk
+            omega
+        · rcases mem_insert.mp hk with hk | hk
+          · have := hbound j hj
+            omega
+          · exact hsep j hj k hk hjk
+
+private theorem card_spacedTilings (m i : ℕ) :
+    (spacedTilings m i).card = (m - 2 * i).choose i := by
+  induction m using Nat.strong_induction_on generalizing i with
+  | ind m ih =>
+    cases i with
+    | zero => simp [spacedTilings, filter_singleton]
+    | succ i =>
+      obtain rfl | rfl | rfl | ⟨m, rfl⟩ : m = 0 ∨ m = 1 ∨ m = 2 ∨ ∃ k, m = k + 3 := by
+        by_cases h : m < 3
+        · omega
+        · exact Or.inr (Or.inr (Or.inr ⟨m - 3, by omega⟩))
+      · simp [spacedTilings]
+      · simp [spacedTilings, show 1 - 2 * (i + 1) = 0 by omega]
+      · simp [spacedTilings, show 2 - 2 * (i + 1) = 0 by omega]
+      have fresh (F : Finset ℕ) (hF : F ∈ spacedTilings m i) : m ∉ F := fun h => by
+        have := (mem_spacedTilings.mp hF).1 m h
+        omega
+      have hinj : Set.InjOn (fun F : Finset ℕ => insert m F) ↑(spacedTilings m i) := by
+        intro F hF G hG eq
+        simpa only [erase_insert (fresh F hF), erase_insert (fresh G hG)] using
+          congrArg (fun S : Finset ℕ => S.erase m) eq
+      have hdisj : Disjoint (spacedTilings (m + 2) (i + 1))
+          ((spacedTilings m i).image (insert m)) := by
+        rw [disjoint_left]
+        intro F hF himage
+        obtain ⟨G, _, rfl⟩ := mem_image.mp himage
+        have := (mem_spacedTilings.mp hF).1 m (mem_insert_self m G)
+        omega
+      rw [spacedTilings_split, card_union_of_disjoint hdisj, card_image_of_injOn hinj,
+        ih (m + 2) (by omega), ih m (by omega)]
+      by_cases h : 2 * i ≤ m
+      · rw [show m + 3 - 2 * (i + 1) = (m - 2 * i) + 1 by omega,
+          show m + 2 - 2 * (i + 1) = m - 2 * i by omega, Nat.choose_succ_succ, add_comm]
+      · have hz := Nat.choose_eq_zero_of_lt (show 0 < i by omega)
+        simp [show m + 3 - 2 * (i + 1) = 0 by omega,
+          show m + 2 - 2 * (i + 1) = 0 by omega, show m - 2 * i = 0 by omega, hz]
+
+private theorem mem_noBifenceFiber {n i : ℕ} {F : Finset ℕ} :
+    F ∈ ((fenceTilings n).filter (fun F => ∀ k ∈ F, k + 1 ∉ F)).filter (fun F => F.card = i) ↔
+      F ∈ spacedTilings (2 * n) i := by
+  simp only [mem_filter, mem_fenceTilings, mem_spacedTilings]
+  constructor
+  · rintro ⟨⟨⟨hb, h₂⟩, h₁⟩, hc⟩
+    refine ⟨hb, hc, fun j hj k hk hjk => ?_⟩
+    by_contra! h
+    obtain rfl | rfl : k = j + 1 ∨ k = j + 2 := by omega
+    · exact h₁ j hj hk
+    · exact h₂ j hj hk
+  · rintro ⟨hb, hc, hs⟩
+    exact ⟨⟨⟨hb, fun k hk hj => by have := hs k hk (k + 2) hj (by omega); omega⟩,
+      fun k hk hj => by have := hs k hk (k + 1) hj (by omega); omega⟩, hc⟩
+
+private theorem card_le_span {m i : ℕ} {F : Finset ℕ} (hF : F ∈ spacedTilings m i) :
+    i ≤ m / 3 := by
+  have hpos : 0 < (spacedTilings m i).card := card_pos.mpr ⟨F, hF⟩
+  rw [card_spacedTilings] at hpos
+  by_contra! h
+  rw [Nat.choose_eq_zero_of_lt (show m - 2 * i < i by omega)] at hpos
+  omega
+
+-- The product on the completely uncovered board. Adding a cell adds two equal weights.
+private theorem prod_halfCellWeight {K : Type*} [Field K] (a b : K) (hb : b ≠ 0) (n : ℕ) :
+    (∏ k ∈ range (2 * n), cellWeight a b (k / 2)) = (a / b) ^ (n % 2) * (a * b) ^ n := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [show 2 * (n + 1) = (2 * n + 1) + 1 by omega, prod_range_succ, prod_range_succ, ih,
+      show (2 * n + 1) / 2 = n by omega, show (2 * n) / 2 = n by omega]
+    have hcancel := div_mul_cancel₀ a hb
+    by_cases he : n % 2 = 0
+    · simp only [cellWeight, he, ite_true, pow_zero, one_mul,
+        show (n + 1) % 2 = 1 by omega, pow_one, pow_succ (a * b) n]
+      calc
+        _ = (a / b * b) * a * (a * b) ^ n := by rw [hcancel]; ring
+        _ = _ := by ring
+    · simp only [cellWeight, show n % 2 = 1 by omega, ite_eq_right (by decide : (1 : ℕ) ≠ 0),
+        pow_one, show (n + 1) % 2 = 0 by omega, pow_zero, one_mul, pow_succ (a * b) n]
+      calc
+        _ = (a / b * b) * b * (a * b) ^ n := by ring
+        _ = _ := by rw [hcancel]; ring
+
+-- Each fence has one post in each color; the removed factor is ab per fence.
+private theorem fenceTilingWeight_eq_pow {K : Type*} [Field K] {a b : K} (ha : a ≠ 0)
+    (hb : b ≠ 0) {n : ℕ} {F : Finset ℕ} (hF : F ∈ fenceTilings n) (hc : F.card ≤ n) :
+    fenceTilingWeight a b n F = (a / b) ^ (n % 2) * (a * b) ^ (n - F.card) := by
+  obtain ⟨hbound, hsep⟩ := mem_fenceTilings.mp hF
+  have hsub : F ∪ F.image (· + 2) ⊆ range (2 * n) := by
+    intro k hk
+    rw [mem_range]
+    rcases mem_union.mp hk with hk | hk
+    · have := hbound k hk
+      omega
+    · obtain ⟨j, hj, rfl⟩ := mem_image.mp hk
+      exact hbound j hj
+  have hdisj : Disjoint F (F.image (· + 2)) := by
+    rw [disjoint_left]
+    intro k hk himage
+    obtain ⟨j, hj, rfl⟩ := mem_image.mp himage
+    exact hsep j hj hk
+  have hposts : (∏ k ∈ F ∪ F.image (· + 2), cellWeight a b (k / 2)) = (a * b) ^ F.card := by
+    rw [prod_union hdisj, prod_image (fun i _ j _ hij => by omega), ← prod_mul_distrib]
+    calc
+      _ = ∏ _k ∈ F, a * b := by
+        refine prod_congr rfl fun k _ => ?_
+        have hstep : (k + 2) / 2 = k / 2 + 1 := by omega
+        rw [hstep, cellWeight, cellWeight]
+        by_cases h : k / 2 % 2 = 0
+        · simp [h, show (k / 2 + 1) % 2 ≠ 0 by omega]
+        · simp [h, show (k / 2 + 1) % 2 = 0 by omega, mul_comm]
+      _ = _ := prod_const _
+  apply mul_right_cancel₀ (pow_ne_zero F.card (mul_ne_zero ha hb))
+  rw [mul_assoc, ← pow_add, Nat.sub_add_cancel hc, ← prod_halfCellWeight a b hb n, ← hposts]
+  exact prod_sdiff hsub
+
+/-- **Closed formula for bifence-free fence tilings.** Let $a$, $b$ be nonzero elements of a field
+and let $\xi(n) = n \bmod 2$. For every natural number $n$, the weighted number $C_n$ of tilings of
+the $n$-board by half-squares and $(1/2, 1/2)$-fences with no bifence, with half-square weights
+$a$ and $b$, is
+$$
+C_n = \left(\frac{a}{b}\right)^{\xi(n)}
+\sum_{i=0}^{\lfloor 2n/3 \rfloor} \binom{2n-2i}{i} (ab)^{n-i}.
+$$
+
+Source: Nassima Belaggoun and Hacène Belbachir, *Combinatorial Identities for the Bi-Periodic
+Fibonacci Numbers Squared*, The Fibonacci Quarterly 62 (2024), Article belaggoun01132024,
+Lemma 3.15 (`fq-2024-belaggoun01132024-lem-3.15`). -/
+public theorem noBifenceTilingSum_eq_sum_choose {K : Type*} [Field K] {a b : K}
+    (ha : a ≠ 0) (hb : b ≠ 0) (n : ℕ) :
+    noBifenceTilingSum a b n =
+      (a / b) ^ (n % 2) *
+        ∑ i ∈ range (2 * n / 3 + 1), ((2 * n - 2 * i).choose i : K) * (a * b) ^ (n - i) := by
+  have maps (F : Finset ℕ) (hF : F ∈ (fenceTilings n).filter
+      (fun F => ∀ k ∈ F, k + 1 ∉ F)) : F.card ∈ range (2 * n / 3 + 1) := by
+    have h := card_le_span (mem_noBifenceFiber.mp (mem_filter.mpr ⟨hF, rfl⟩))
+    exact mem_range.mpr (by omega)
+  rw [noBifenceTilingSum, ← sum_fiberwise_of_maps_to (g := Finset.card) maps, mul_sum]
+  refine sum_congr rfl fun i hi => ?_
+  have hi' : i ≤ n := by have := mem_range.mp hi; omega
+  have hfiber := Finset.ext fun F => @mem_noBifenceFiber n i F
+  rw [hfiber]
+  calc
+    _ = ∑ _F ∈ spacedTilings (2 * n) i, (a / b) ^ (n % 2) * (a * b) ^ (n - i) := by
+      refine sum_congr rfl fun F hF => ?_
+      obtain ⟨hF', hc⟩ := mem_filter.mp (mem_noBifenceFiber.mpr hF)
+      rw [fenceTilingWeight_eq_pow ha hb (mem_filter.mp hF').1 (by omega), hc]
+    _ = _ := by rw [sum_const, nsmul_eq_mul, card_spacedTilings]; ring
 
 end MetaMathlibExt
