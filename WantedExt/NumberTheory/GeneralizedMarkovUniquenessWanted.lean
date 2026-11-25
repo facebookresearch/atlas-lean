@@ -141,17 +141,6 @@ public theorem_wanted IsGenMarkovTriple.pairwise_coprime {k a b c : ℕ}
     (h : IsGenMarkovTriple k a b c) :
     Nat.Coprime a b ∧ Nat.Coprime b c ∧ Nat.Coprime a c
 
-/-- **At most two solutions of $x^2 + kx + 1 \equiv 0$ modulo an odd prime power.** Let $p$
-be an odd prime, let $m \ge 2$ and let $k \in \mathbb{N}$ with $k^2 - 4 \not\equiv 0 \pmod p$.
-Then at most two integers $x$ with $0 \le x < p^m$ satisfy
-$x^2 + kx + 1 \equiv 0 \pmod{p^m}$.
-
-Source: Y. Gyoda and S. Maruyama, *Uniqueness Theorem of Generalized Markov Numbers That
-Are Prime Powers*, INTEGERS 26 (2026), Article A91, Lemma 4.11. -/
-public theorem_wanted genMarkovCongruenceCount_prime_pow_le_two {p m k : ℕ} (hp : p.Prime)
-    (hp2 : p ≠ 2) (hm : 2 ≤ m) (hk : ¬ (p : ℤ) ∣ (k : ℤ) ^ 2 - 4) :
-    genMarkovCongruenceCount k (p ^ m) ≤ 2
-
 /-- **An even generalized Markov number forces $k$ to be even.** Let $k$ be a natural number. If
 some $k$-generalized Markov number $b$ is even, then $k$ is even.
 
