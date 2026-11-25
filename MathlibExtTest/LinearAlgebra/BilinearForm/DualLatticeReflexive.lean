@@ -18,25 +18,25 @@ variable {A K V : Type*} [CommRing A] [Field K] [Algebra A K]
 
 /-- The generic flip double-dual theorem applies with no symmetry hypothesis. -/
 example [FiniteDimensional K V] [IsDomain A] (B : BilinForm K V)
-    (hB : B.Nondegenerate) (M : Submodule A V) [Submodule.IsLattice K M]
+    (hB : B.Nondegenerate) (M : Submodule A V) [Submodule.IsFullLattice K M]
     [Module.IsReflexive A M] :
     B.flip.dualSubmodule (B.dualSubmodule M) = M :=
-  B.dualSubmodule_flip_dualSubmodule_of_isLattice hB M
+  B.dualSubmodule_flip_dualSubmodule_of_isFullLattice hB M
 
 /-- The Dedekind corollary needs no `Module.IsReflexive` hypothesis. -/
 example [FiniteDimensional K V] [IsDedekindDomain A] (B : BilinForm K V)
     (hB : B.Nondegenerate) (hBsymm : B.IsSymm) (M : Submodule A V)
-    [Submodule.IsLattice K M] :
+    [Submodule.IsFullLattice K M] :
     B.dualSubmodule (B.dualSubmodule M) = M :=
-  B.dualSubmodule_dualSubmodule_of_isLattice hB hBsymm M
+  B.dualSubmodule_dualSubmodule_of_isFullLattice hB hBsymm M
 
 /-- Concrete rank-one example: the multiplication form on `ℚ` with lattice `ℤ ∙ 1`. -/
 example : LinearMap.BilinForm.dualSubmodule (LinearMap.mul ℚ ℚ)
     (LinearMap.BilinForm.dualSubmodule (LinearMap.mul ℚ ℚ)
       (Submodule.span ℤ {(1 : ℚ)})) =
     Submodule.span ℤ {(1 : ℚ)} := by
-  have : Submodule.IsLattice ℚ (Submodule.span ℤ {(1 : ℚ)}) := by
-    refine { fg := ?_, span_eq_top := ?_ }
+  have : Submodule.IsFullLattice ℚ (Submodule.span ℤ {(1 : ℚ)}) := by
+    refine { toIsLattice := .of_fg ℚ ?_, span_eq_top := ?_ }
     · exact Submodule.fg_span (Set.finite_singleton (1 : ℚ))
     · rw [eq_top_iff]
       intro x _
@@ -54,5 +54,5 @@ example : LinearMap.BilinForm.dualSubmodule (LinearMap.mul ℚ ℚ)
       simpa [LinearMap.mul_apply'] using h
     · have h := hy 1
       simpa [LinearMap.mul_apply'] using h
-  exact LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_isLattice
+  exact LinearMap.BilinForm.dualSubmodule_dualSubmodule_of_isFullLattice
     (LinearMap.mul ℚ ℚ) hB hBsymm _

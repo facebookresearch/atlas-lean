@@ -36,7 +36,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
   `{V' = 0}` is empty, and the conclusion fails: the ω-limit set of `x(t) = t` is empty.
 
 The reversible Michaelis–Menten application is tested in
-`MathlibExtTest.Biology.Dynamics.ReversibleMichaelisMenten.LaSalle`. -/
+`DomainsTest.Biology.Dynamics.ReversibleMichaelisMenten.LaSalle`. -/
 
 open Set Filter Metric
 open scoped Topology

@@ -162,7 +162,7 @@ theorem eq_of_div_eq_zero {Q P : Bool → ℝ} (hQ : ∀ b, 0 < Q b) (hQ1 : ∑ 
   funext a
   exact (gibbs_term (hP0 a) (hQ a)).2 (hz a (Finset.mem_univ a))
 
-/-- Non-vacuity of the wanted Gibbs conditioning principle
+/-- Non-vacuity of the Gibbs conditioning principle
 (`GibbsConditioningWanted.tendsto_iidProb_prefix_div_iidProb`): all its hypotheses hold for `Q`
 uniform on `Bool`, `Γ` all probability vectors, `r = 0`, the floor types with `⌊n/2⌋` letters
 `true`, and `P* = Q`. -/

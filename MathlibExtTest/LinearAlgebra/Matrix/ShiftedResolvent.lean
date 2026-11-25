@@ -39,31 +39,33 @@ example {lam : ℝ} (hlam : 0 < lam) (Y z : Fin 3 → ℝ) :
 example : (∀ i j, 0 ≤ (1 : Matrix (Fin 3) (Fin 3) ℝ) i j) ∧
     ∀ i, ∑ j, (1 : Matrix (Fin 3) (Fin 3) ℝ) i j ≤ 1 := by
   refine ⟨fun i j => ?_, fun i => ?_⟩
-  · by_cases h : i = j <;> simp [one_apply, h]
-  · simp [one_apply]
+  · by_cases h : i = j <;> simp [Matrix.one_apply, h]
+  · simp [Matrix.one_apply]
 
 -- So the spectral radius of `I` is at most `1` and its eigenvalues lie in `[0, 1]`.
 example : spectralRadius ℂ ((1 : Matrix (Fin 3) (Fin 3) ℝ).map (algebraMap ℝ ℂ)) ≤ 1 :=
   spectralRadius_le_one_of_rowSum_le_one
-    (fun i j => by by_cases h : i = j <;> simp [one_apply, h]) (fun i => by simp [one_apply])
+    (fun i j => by by_cases h : i = j <;> simp [Matrix.one_apply, h])
+    (fun i => by simp [Matrix.one_apply])
 
 example (i : Fin 3) : (PosDef.one.posSemidef : (1 : Matrix (Fin 3) (Fin 3) ℝ).PosSemidef).1.eigenvalues i
     ∈ Set.Icc (0 : ℝ) 1 :=
   eigenvalues_mem_Icc_zero_one_of_rowSum_le_one PosDef.one.posSemidef
-    (fun i j => by by_cases h : i = j <;> simp [one_apply, h]) (fun i => by simp [one_apply]) i
+    (fun i j => by by_cases h : i = j <;> simp [Matrix.one_apply, h])
+    (fun i => by simp [Matrix.one_apply]) i
 
 -- `2 I` violates the row-sum bound.
 example : ¬ ∀ i, ∑ j, ((2 : ℝ) • (1 : Matrix (Fin 2) (Fin 2) ℝ)) i j ≤ 1 := by
   intro h
   have := h 0
-  simp [one_apply] at this
+  simp [Matrix.one_apply] at this
 
 -- Scalar `a I` with `a ∈ [0, 1]`: the row-sum bound holds, and the fixed point is
 -- `z = (λ a / (1 + λ a)) Y`.
 example {a : ℝ} (ha1 : a ≤ 1) :
     ∀ i, ∑ j, (a • (1 : Matrix (Fin 3) (Fin 3) ℝ)) i j ≤ 1 := by
   intro i
-  simpa [one_apply] using ha1
+  simpa [Matrix.one_apply] using ha1
 
 example {a lam : ℝ} (ha0 : 0 ≤ a) (hlam : 0 < lam) (Y : Fin 3 → ℝ) :
     (lam * a / (1 + lam * a)) • Y =

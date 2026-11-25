@@ -9,6 +9,7 @@ Perfect, multiperfect, odd perfect, abundant, practical, Zumkeller, Giuga, amica
 - [Odd perfect numbers](odd-perfect-numbers/README.md)
 - [Pseudoperfect numbers](pseudoperfect-numbers/README.md)
 - [Spoof Lehmer factorizations](spoof-lehmer-factorizations/README.md)
+- [Weighted perfect numbers](weighted-perfect-numbers/README.md)
 - [Zumkeller numbers](zumkeller-numbers/README.md)
 - [Euler's theorem on even perfect numbers](euler-characterization-of-even-perfect-n.md)
 - [Extremely abundant number](is-extremely-abundant-number.md)

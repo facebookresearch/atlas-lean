@@ -40,7 +40,10 @@ open Finset
 
 variable {V W : Type*} (F : SimpleGraph V) (G : SimpleGraph W)
 
-/-- A non-edge `xy` of `G` is `F`-saturating if adding it creates a copy of `F`. -/
+/-- **Saturating non-edge.** Let $F$ and $G$ be simple graphs. A pair of vertices $x, y$ of $G$ is
+an $F$-saturating non-edge of $G$ if $x \ne y$, $x$ and $y$ are not adjacent in $G$, and the graph
+$G + xy$ obtained from $G$ by adding the edge $xy$ contains a copy of $F$ (a subgraph isomorphic
+to $F$, not necessarily induced). -/
 def IsSaturatingNonedge (x y : W) : Prop :=
   x ≠ y ∧ ¬G.Adj x y ∧ IsContained F (G ⊔ edge x y)
 
@@ -63,14 +66,18 @@ theorem IsSaturatingNonedge.not_adj {x y : W} (h : IsSaturatingNonedge F G x y) 
     ¬G.Adj x y :=
   h.2.1
 
-/-- Under the source's `F`-free hypothesis, a saturating non-edge creates a copy
-of `F` where none existed. -/
+/-- **A saturating non-edge of an $F$-free graph creates a copy of $F$.** Let $F$ and $G$ be simple
+graphs, and let $xy$ be an $F$-saturating non-edge of $G$. If $G$ is $F$-free, that is, $G$
+contains no copy of $F$, then the graph $G + xy$ obtained from $G$ by adding the edge $xy$
+contains a copy of $F$, and $G$ does not. -/
 theorem IsSaturatingNonedge.newCopy_of_free {x y : W} (h : IsSaturatingNonedge F G x y)
     (hfree : Free F G) :
     IsContained F (G ⊔ edge x y) ∧ ¬IsContained F G :=
   ⟨h.2.2, hfree⟩
 
-/-- The simple graph whose edges are exactly the `F`-saturating non-edges of `G`. -/
+/-- **Graph of saturating non-edges.** Let $F$ and $G$ be simple graphs. The graph of $F$-saturating
+non-edges of $G$ is the simple graph on the vertices of $G$ whose edges are exactly the
+$F$-saturating non-edges of $G$. -/
 def saturatingNonedgeGraph : SimpleGraph W :=
   fromRel (IsSaturatingNonedge F G)
 
@@ -86,7 +93,10 @@ theorem saturatingNonedgeGraph_adj {x y : W} :
 
 variable [Fintype (saturatingNonedgeGraph F G).edgeSet]
 
-/-- The number `f_F(G)` of `F`-saturating non-edges of `G`. -/
+/-- **Number of saturating non-edges.** Let $F$ and $G$ be simple graphs such that $G$ has only
+finitely many $F$-saturating non-edges. Then $f_F(G)$ is the number of $F$-saturating non-edges
+of $G$, counted as unordered pairs $\{x, y\}$, that is, the number of edges of the graph of
+$F$-saturating non-edges of $G$. -/
 def numSaturatingNonedges : ℕ :=
   #(saturatingNonedgeGraph F G).edgeFinset
 
