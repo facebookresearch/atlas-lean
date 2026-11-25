@@ -6,9 +6,9 @@ $w_1 m_1 + w_2 m_2 = m$. The second moment increases, $w_1 m_1^2 + w_2 m_2^2 - m
 $m_1 < m < m_2$. These are moments of the remapping, not conservation of particle number under aggregation; for $m$ outside the
 pivot interval one weight is negative.
 
-## Depends on
-
-## Proof depends on
+The weight-sum, mass, and excess identities hold algebraically for all real $m$. The sign
+conditions distinguish the pivot interval from extrapolation: below $m_1$ the second weight is
+negative, and above $m_2$ the first weight is negative.
 
 ## Sources
 
