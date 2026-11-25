@@ -11,7 +11,7 @@ For $\alpha = 2/3$, part 1 matches the known algorithm with amortized update tim
 **Proof idea.** The OMv conjecture implies the same truly-subcubic hardness for the online vector-matrix-vector problem *OuMv*: an OMv algorithm can be simulated with OuMv queries. In OuMv, the matrix $M$ is fixed, pairs of vectors $(u_i, v_i)$ arrive online, and the algorithm must output the single bit $u_i^\top M v_i$. An OuMv instance becomes a subgraph-connectivity instance as follows:
 - encode $M$ as a bipartite graph between two copies of the index set;
 - attach a source to the left copy and a sink to the right copy;
-- for each pair $(u_i, v_i)$, switch on the left vertices in the support of $u_i$ and the right vertices in the support of $v_i$, then ask one connectivity query.
+- for each pair $(u_i, v_i)$, switch on exactly the left vertices in the support of $u_i$ and the right vertices in the support of $v_i$, switching off every vertex that was on in the previous round but is not in the new supports, with at most $O(n)$ updates per round, then ask one connectivity query.
 
 The bit $u_i^\top M v_i$ is $1$ exactly when the source and sink are connected. Faster updates and queries would therefore give a truly subcubic algorithm for OuMv, and so for OMv.
 
