@@ -19,7 +19,7 @@
 
 ## D. Fins as passive cables
 
-- [Is Fin Steady State](is-fin-steady-state.md)
+- [Steady one-dimensional fin](is-fin-steady-state.md)
 - [Fin Parameter](fin-parameter.md)
 - [Steady fin equations as cable equations](is-fin-steady-state-iff.md)
 - [Length constant of a fin](length-constant-fin.md)

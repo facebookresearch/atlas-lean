@@ -6,7 +6,7 @@
 
 ## D. Plane Couette flow
 
-- [Couette Velocity](couette-velocity.md)
+- [Plane Couette velocity](couette-velocity.md)
 - [Plane Couette fluid](couette-fluid.md)
 - [Plane Couette flow](couette-flow.md)
 

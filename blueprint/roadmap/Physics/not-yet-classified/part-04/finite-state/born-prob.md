@@ -1,3 +1,3 @@
-# Born probability
+# Born weight
 
-For a vector $\psi$ in $\mathbb{C}^n$ and an orthonormal basis $b$, the Born probability of outcome $i$ is the squared modulus $\lvert\langle b_i, \psi\rangle\rvert^2$ of the amplitude. It is defined for every $\psi$. This is the Born rule, a physical postulate taken as a definition.
+For a vector $\psi$ in $\mathbb{C}^n$ of any norm and an orthonormal basis $b$, the Born weight of outcome $i$ is the squared modulus $\lvert\langle b_i, \psi\rangle\rvert^2$ of the amplitude, an unnormalized weight. The weights sum to $\lVert\psi\rVert^2$, so they form a probability distribution exactly when $\lVert\psi\rVert = 1$.

@@ -6,4 +6,4 @@
 
 ## B. Born probabilities
 
-- [Born probability](born-prob.md)
+- [Born weight](born-prob.md)

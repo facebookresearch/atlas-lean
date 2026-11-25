@@ -26,5 +26,5 @@
 - [Single-mode shear flow solves the Navier-Stokes equations](single-mode-flow-navier-stokes.md)
 - [Energy balance of the single-mode shear flow](single-mode-profile-energy-balance.md)
 - [Single-mode shear flow has positive kinetic energy](single-mode-profile-energy-pos.md)
-- [Single Mode Profile energy strict Mono On](single-mode-profile-energy-strict-mono-o.md)
+- [Kinetic energy of the single-mode shear flow increases](single-mode-profile-energy-strict-mono-o.md)
 - [Dropping the moving-wall term predicts false decay](single-mode-profile-no-wall-work.md)
