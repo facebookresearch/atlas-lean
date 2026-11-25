@@ -20,3 +20,6 @@ The Wright–Fisher diffusion as the continuum limit of allele-frequency dynamic
 - [Wright–Fisher diffusion with selection and mutation](wright-fisher-diffusion-with-selection-and-mutat/README.md)
 - [Wright–Fisher semigroup and moment duality](wright-fisher-semigroup-and-moment-duality/README.md)
 - [Construction of the neutral Wright–Fisher diffusion](construction-of-the-neutral-wright-fisher-diffus/README.md)
+
+- [Transition densities of Wright–Fisher diffusions](transition-densities-of-wright-fisher-diffusions/README.md)
+- [Fleming–Viot processes](fleming-viot-processes/README.md)
