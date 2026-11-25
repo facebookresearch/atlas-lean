@@ -129,6 +129,42 @@ theorem gradientDescent_sufficient_decrease
     Real.norm_eq_abs, abs_neg, abs_of_pos hη.1] at h
   nlinarith
 
+/-- **Gradient norm bound for smooth lower-bounded functions.** Let $f : E \to \mathbb{R}$ be
+differentiable on a real Hilbert space $E$, with $L$-Lipschitz gradient for $L \ge 0$.
+If $f_{\mathrm{lower}} \le f(y)$ for every $y \in E$, then for every $x \in E$,
+$\|\nabla f(x)\|^2 \le 2L (f(x) - f_{\mathrm{lower}})$.
+
+The proof only uses that $f_{\mathrm{lower}}$ is a global lower bound, so it need not be the
+infimum. Neither convexity nor an attained minimum is required.
+
+Source: A. Khaled and P. Richtárik,
+[*Better Theory for SGD in the Nonconvex World*](https://arxiv.org/abs/2002.03329v3),
+§4.5, Lemma 1, eq. (14), and §10.1 (proof), where the lower bound is the infimum. -/
+theorem gradientDescent_norm_gradient_sq_le
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
+    {f : E → ℝ} {L fLower : ℝ} (hL : 0 ≤ L) (hdiff : Differentiable ℝ f)
+    (hsmooth : LipschitzWith ⟨L, hL⟩ (gradient f)) (hLower : ∀ y, fLower ≤ f y) (x : E) :
+    ‖gradient f x‖ ^ 2 ≤ 2 * L * (f x - fLower) := by
+  rcases hL.eq_or_lt with hzero | hpos
+  · subst L
+    simp only [mul_zero, zero_mul]
+    by_contra! hnorm
+    -- With no quadratic term, this step lowers the upper model below `fLower`.
+    let t := (f x - fLower + 1) / ‖gradient f x‖ ^ 2
+    have ht : t * ‖gradient f x‖ ^ 2 = f x - fLower + 1 :=
+      div_mul_cancel₀ _ (ne_of_gt hnorm)
+    have hdec := gradientDescent_descent_lemma hL hdiff hsmooth x (-t • gradient f x)
+    simp only [inner_smul_right, real_inner_self_eq_norm_sq, zero_div, zero_mul, add_zero,
+      neg_mul, ht] at hdec
+    linarith only [hdec, hLower (x + -t • gradient f x)]
+  · have hdec := gradientDescent_sufficient_decrease hpos hdiff hsmooth
+      (η := 1 / L) ⟨one_div_pos.mpr hpos, le_rfl⟩ x
+    have hgap : (1 / L / 2) * ‖gradient f x‖ ^ 2 ≤ f x - fLower := by
+      linarith only [hdec, hLower (x - (1 / L) • gradient f x)]
+    rw [div_div, one_div_mul_eq_div, mul_comm L 2] at hgap
+    simpa only [mul_comm (f x - fLower)] using
+      (div_le_iff₀ (show 0 < 2 * L by positivity)).mp hgap
+
 private theorem gradientDescent_first_order
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
     {f : E → ℝ} (hconvex : ConvexOn ℝ Set.univ f) (hdiff : Differentiable ℝ f)
