@@ -13,6 +13,7 @@ public import Mathlib.Algebra.ContinuedFractions.Computation.Basic
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.NumberTheory.Real.GoldenRatio
 public import MathlibExt.NumberTheory.KPellLucasCloseToPowerOfTwo
+public import MathlibExt.NumberTheory.KPellLucasDominantRoot
 
 /-!
 # `k`-Pell–Lucas numbers close to a power of 2
@@ -80,22 +81,6 @@ public theorem_wanted kPellLucas_dominantRoot_golden_approx (k n : ℕ) (hk : 50
           (goldenRatio ^ 2 - 1) /
             ((k + 1) * (goldenRatio ^ 2) ^ 2 - 3 * k * goldenRatio ^ 2 + k - 1)| <
         4 * k / goldenRatio ^ k
-
-/-- **Main term of the dominant root (Lemma 3).** Let $\varphi$ be the golden ratio, let $k$ and
-$n$ be natural numbers with $k \ge 50$ and $n < \varphi^{k/2}$, and let $\alpha > 0$ be a real
-number with $\alpha^k = 2\alpha^{k-1} + \sum_{i=0}^{k-2} \alpha^i$. Write
-$g_k(z) = (z - 1) / ((k + 1) z^2 - 3kz + k - 1)$. Then there is a real number $\xi$ with
-$|\xi| < 1.25 / \varphi^{k/2}$ such that
-$(2\alpha - 2) \, g_k(\alpha) \, \alpha^n = \frac{2\varphi^{2n+1}}{\varphi + 2} (1 + \xi)$.
-
-Source: Mohamadou Bachabi, Bakary Kourouma, and Alain Togbé, *On k-Pell-Lucas Numbers Close to
-a Power of 2*, INTEGERS 25 (2025), Article A67, Lemma 3 (`integers-2025-A67-lem-3`). -/
-public theorem_wanted kPellLucas_dominantRoot_main_term (k n : ℕ) (hk : 50 ≤ k)
-    (hnk : (n : ℝ) < goldenRatio ^ ((k : ℝ) / 2)) (α : ℝ) (hα : 0 < α)
-    (hroot : α ^ k = 2 * α ^ (k - 1) + ∑ i ∈ Finset.range (k - 1), α ^ i) :
-    ∃ ξ : ℝ, (2 * α - 2) * ((α - 1) / ((k + 1) * α ^ 2 - 3 * k * α + k - 1)) * α ^ n =
-        2 * goldenRatio ^ (2 * n + 1) / (goldenRatio + 2) * (1 + ξ) ∧
-      |ξ| < 1.25 / goldenRatio ^ ((k : ℝ) / 2)
 
 /-- **Continued-fraction lower bound for rational approximations.** Let $\tau$ be an irrational real
 number with simple continued fraction expansion $[a_0; a_1, a_2, \ldots]$, so that

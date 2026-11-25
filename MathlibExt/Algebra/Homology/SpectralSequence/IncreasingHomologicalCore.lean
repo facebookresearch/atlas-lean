@@ -6,23 +6,17 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Author: @toskua
--/
 
 module
 
 public import Mathlib.Algebra.Homology.SpectralObject.FirstPage
 
 /-!
-# Spectral-sequence core for an increasing homological filtration
+# The core of an increasing homological spectral sequence
 
-This file provides the page-one spectral-sequence core whose filtration
-interval at bidegree `(p, q)` is `p - 1 ⟶ p`.  It is adapted to positive
-increasing filtrations while retaining the homological differential of
-bidegree `(-r, r - 1)`.
-
-No existence or convergence statement for a spectral sequence is made here.
+The page-one core of a positive increasing filtration uses the interval
+p - 1 ⟶ p at bidegree (p, q). Its homological differential has bidegree
+(-r, r - 1).
 -/
 
 @[expose] public section

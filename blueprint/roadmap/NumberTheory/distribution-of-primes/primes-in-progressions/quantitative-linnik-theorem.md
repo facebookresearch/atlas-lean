@@ -34,9 +34,9 @@ exceptional zero.
 ## Proof depends on
 
 - [Log-free truncated explicit formula for Dirichlet characters](../../zeta-l-functions/dirichlet-l-functions/log-free-truncated-explicit-formula.md)
-- [Classical zero-free region for Dirichlet L-functions of a fixed modulus](../../zeta-l-functions/dirichlet-l-functions/dirichlet-l-function-zero-free-region-fixed-modulus.md)
-- [Log-free zero-density estimate for Dirichlet L-functions](../../zeta-l-functions/dirichlet-l-functions/log-free-zero-density-estimate.md)
-- [Deuring–Heilbronn repulsion of zeros by an exceptional zero](../../zeta-l-functions/dirichlet-l-functions/deuring-heilbronn-repulsion.md)
+- [Classical zero-free region for Dirichlet L-functions of a fixed modulus](../../zeta-l-functions/dirichlet-l-functions/zeros-of-dirichlet-l-functions/dirichlet-l-function-zero-free-region-fixed-modulus.md)
+- [Log-free zero-density estimate for Dirichlet L-functions](../../zeta-l-functions/dirichlet-l-functions/zeros-of-dirichlet-l-functions/log-free-zero-density-estimate.md)
+- [Deuring–Heilbronn repulsion of zeros by an exceptional zero](../../zeta-l-functions/dirichlet-l-functions/zeros-of-dirichlet-l-functions/deuring-heilbronn-repulsion.md)
 
 ## Sources
 

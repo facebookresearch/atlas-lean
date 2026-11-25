@@ -1,14 +1,5 @@
 # Opposite
 
-- [Op](op.md)
-- [Op obj](op-obj.md)
-- [Op map](op-map.md)
-- [Unop](unop.md)
-- [Unop obj](unop-obj.md)
-- [Unop map](unop-map.md)
-- [Op Unop](op-unop.md)
-- [Unop Op](unop-op.md)
-- [Op map Functor](op-map-functor.md)
 - [Original Right Tensor Adjunction](original-right-tensor-adjunction.md)
 - [Original Right Tensor Adjunction hom Equiv](original-right-tensor-adjunction-hom-equ.md)
 - [Original Right Tensor Adjunction counit](original-right-tensor-adjunction-counit.md)
