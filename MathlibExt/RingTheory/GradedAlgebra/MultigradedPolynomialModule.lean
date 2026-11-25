@@ -50,18 +50,21 @@ open MvPolynomial
 
 variable (K : Type*) [Field K] (n : ℕ)
 
-/-- Embed a monomial exponent with natural entries into the `ℤⁿ` grading index. -/
+/-- **Exponent vectors as integer vectors.** For an exponent vector
+$a = (a_1, \dots, a_n) \in \mathbb{N}^n$ of a monomial, this is the vector
+$(a_1, \dots, a_n) \in \mathbb{Z}^n$ obtained by viewing each entry $a_i$ as an integer. -/
 public noncomputable def natDegreeToInt {n : ℕ} (a : Fin n →₀ ℕ) : Fin n →₀ ℤ :=
   Finsupp.mapRange (fun x : ℕ => (x : ℤ)) (by simp) a
 
-/-- A `ℤⁿ`-graded module over `MvPolynomial (Fin n) K` with the standard
-monomial degree-shift action: each homogeneous piece is a `K`-submodule, the
-pieces give a direct-sum decomposition of `M`, scalars act through
-`MvPolynomial.C`, and multiplication by `monomial a c` sends the `α`-piece
-into the `(α + natDegreeToInt a)`-piece.
-
-This records only the graded object. It does not provide resolutions,
-Betti numbers, or any polynomiality conclusion; see the module docstring. -/
+/-- **Multigraded modules over a polynomial ring.** Let $K$ be a field, $n \in \mathbb{N}$
+and $R = K[x_1, \dots, x_n]$, and let $M$ be an $R$-module that is also a $K$-vector
+space. A $\mathbb{Z}^n$-grading of $M$ compatible with monomial multiplication consists of
+$K$-subspaces $M_\alpha \subseteq M$, one for each $\alpha \in \mathbb{Z}^n$, such that $M$
+is the direct sum of the $M_\alpha$, the action of each $k \in K$ on $M$ agrees with
+multiplication by the constant polynomial $k \in R$, and for every $a \in \mathbb{N}^n$,
+every $c \in K$ and every $\alpha \in \mathbb{Z}^n$, multiplication by the monomial
+$c x^a = c x_1^{a_1} \cdots x_n^{a_n}$ maps $M_\alpha$ into $M_{\alpha + a}$, where $a$ is
+viewed as an element of $\mathbb{Z}^n$. -/
 public structure MultigradedPolynomialModule (M : Type*) [AddCommGroup M]
     [Module (MvPolynomial (Fin n) K) M] [Module K M] where
   /-- The homogeneous `K`-submodule in degree `α`. -/

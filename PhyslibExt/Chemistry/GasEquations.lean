@@ -121,7 +121,9 @@ lemma idealGas_pressure_alone_eq_partialPressure {ι : Type*} [Fintype ι] (n : 
 
 /-- The van der Waals pressure `p = R T / (V_m - b) - a / V_m ^ 2` as a function of the molar
 volume `Vm`. The model is used on `Vm > b` with fitted parameters `a, b > 0` and with
-`R, T > 0`; outside `Vm > b` no van der Waals result of this module applies. -/
+`R, T > 0`; outside `Vm > b` no van der Waals result of this module applies. It is defined for
+every real `Vm`: by the convention `x / 0 = 0`, the term `R T / (V_m - b)` is `0` at `Vm = b` and
+the term `a / V_m ^ 2` is `0` at `Vm = 0`. -/
 noncomputable def vdWPressure (a b R T Vm : ℝ) : ℝ := R * T / (Vm - b) - a / Vm ^ 2
 
 /-- Van der Waals model: the derivative of the pressure in the molar volume at any
@@ -158,7 +160,8 @@ lemma hasDerivAt_deriv_vdWPressure (a b R T Vm : ℝ) (hb : 0 < b) (hVm : b < Vm
 
 /-! ## C. The van der Waals critical point -/
 
-/-- The compressibility factor `Z = p V_m / (R T)`. -/
+/-- The compressibility factor `Z = p V_m / (R T)`. By the convention `x / 0 = 0`, `Z = 0` when
+`R T = 0`. -/
 noncomputable def compressibilityFactor (p Vm R T : ℝ) : ℝ := p * Vm / (R * T)
 
 /-- Van der Waals model, critical point. If `a, b, R, T > 0`, `Vm > b`, and both critical
@@ -200,9 +203,9 @@ theorem vdW_critical_point (a b R T Vm : ℝ) (ha : 0 < a) (hb : 0 < b) (hR : 0 
   rw [compressibilityFactor, hp, hTc]
   field_simp
 
-/-- Van der Waals model, critical point stated with the derivatives themselves: if
-`deriv p = 0` and `deriv (deriv p) = 0` at `Vm > b` for the van der Waals pressure `p`, then
-`Vm = 3 b`, `T = 8 a / (27 R b)`, `p = a / (27 b ^ 2)` and `Z = 3 / 8`. -/
+/-- Van der Waals model, critical point stated with the derivatives themselves: for
+`a, b, R, T > 0`, if `deriv p = 0` and `deriv (deriv p) = 0` at `Vm > b` for the van der Waals
+pressure `p`, then `Vm = 3 b`, `T = 8 a / (27 R b)`, `p = a / (27 b ^ 2)` and `Z = 3 / 8`. -/
 lemma vdW_critical_point_of_deriv (a b R T Vm : ℝ) (ha : 0 < a) (hb : 0 < b) (hR : 0 < R)
     (hT : 0 < T) (hVm : b < Vm) (h₁ : deriv (fun V => vdWPressure a b R T V) Vm = 0)
     (h₂ : deriv (deriv fun V => vdWPressure a b R T V) Vm = 0) :
@@ -215,21 +218,25 @@ lemma vdW_critical_point_of_deriv (a b R T Vm : ℝ) (ha : 0 < a) (hb : 0 < b) (
 /-! ## D. The reduced van der Waals equation -/
 
 /-- The van der Waals reduced pressure `P_r = p / p_c` with the critical pressure
-`p_c = a / (27 b ^ 2)`. -/
+`p_c = a / (27 b ^ 2)`. It is defined for all real `a`, `b` and `p`: for `a = 0` or `b = 0` the
+convention `x / 0 = 0` makes it `0`. The intended domain is `a, b > 0`. -/
 noncomputable def vdWReducedPressure (a b p : ℝ) : ℝ := p / (a / (27 * b ^ 2))
 
 /-- The van der Waals reduced molar volume `V_r = V_m / V_{m,c}` with the critical molar volume
-`V_{m,c} = 3 b`. -/
+`V_{m,c} = 3 b`. It is defined for every real `b`: for `b = 0` the convention `x / 0 = 0` makes it
+`0`. The intended domain is `b > 0`. -/
 noncomputable def vdWReducedVolume (b Vm : ℝ) : ℝ := Vm / (3 * b)
 
 /-- The van der Waals reduced temperature `T_r = T / T_c` with the critical temperature
-`T_c = 8 a / (27 R b)`. -/
+`T_c = 8 a / (27 R b)`. It is defined for all real `a`, `b`, `R` and `T`: for `a = 0`, `b = 0` or
+`R = 0` the convention `x / 0 = 0` makes it `0`. The intended domain is `a, b, R > 0`. -/
 noncomputable def vdWReducedTemperature (a b R T : ℝ) : ℝ := T / (8 * a / (27 * R * b))
 
-/-- Van der Waals model: the reduced equation `(P_r + 3 / V_r ^ 2) (3 V_r - 1) = 8 T_r`, in which
-`a, b, R` no longer appear. This is exact within the van der Waals model; for real gases the law
-of corresponding states is an empirical regularity. The hypotheses `_hR` and `_hT` record the
-domain of the model; the identity holds for every `R` and `T`. -/
+/-- Van der Waals model: for `0 < a`, `0 < b` and `b < Vm`, the reduced equation
+`(P_r + 3 / V_r ^ 2) (3 V_r - 1) = 8 T_r`, in which `a, b, R` no longer appear. This is exact
+within the van der Waals model; for real gases the law of corresponding states is an empirical
+regularity. The hypotheses `_hR` and `_hT` record the domain of the model; the identity holds for
+every `R` and `T`. -/
 theorem reduced_vdW_equation (a b R T Vm p Pr Vr Tr : ℝ) (ha : 0 < a) (hb : 0 < b)
     (_hR : 0 < R) (_hT : 0 < T) (hVm : b < Vm) (hp : p = vdWPressure a b R T Vm)
     (hPr : Pr = vdWReducedPressure a b p) (hVr : Vr = vdWReducedVolume b Vm)
@@ -244,14 +251,17 @@ theorem reduced_vdW_equation (a b R T Vm p Pr Vr Tr : ℝ) (ha : 0 < a) (hb : 0 
 
 /-! ## E. Virial coefficients and the Boyle temperature -/
 
-/-- The second virial coefficient `B(T) = b - a / (R T)` of the van der Waals gas. -/
+/-- The second virial coefficient `B(T) = b - a / (R T)` of the van der Waals gas. It is defined
+for all real `R` and `T`: for `R T = 0` the convention `x / 0 = 0` makes it `b`. The intended
+domain is `R, T > 0`. -/
 noncomputable def vdWSecondVirialCoeff (a b R T : ℝ) : ℝ := b - a / (R * T)
 
-/-- Van der Waals model, exact virial identity: `Z = 1 + B / V_m + b ^ 2 / (V_m (V_m - b))` with
-`B = b - a / (R T)`. So `B` is the coefficient of `1 / V_m` in the expansion of `Z`, with the
-exact remainder `b ^ 2 / (V_m (V_m - b))`, which is of order `1 / V_m ^ 2` as `V_m → ∞` (that
-asymptotic remark is not formalized here); the truncation `Z ≈ 1 + B / V_m` is not an equality.
-The hypothesis `_ha` records the domain of the model; the identity holds for every `a`. -/
+/-- Van der Waals model, exact virial identity for `0 < b`, `0 < R`, `0 < T` and `b < Vm`:
+`Z = 1 + B / V_m + b ^ 2 / (V_m (V_m - b))` with `B = b - a / (R T)`. So `B` is the coefficient
+of `1 / V_m` in the expansion of `Z`, with the exact remainder `b ^ 2 / (V_m (V_m - b))`, which is
+of order `1 / V_m ^ 2` as `V_m → ∞` (that asymptotic remark is not formalized here); the
+truncation `Z ≈ 1 + B / V_m` is not an equality. The hypothesis `_ha` records the domain of the
+model; the identity holds for every `a`. -/
 theorem vdW_virial_expansion (a b R T Vm p : ℝ) (_ha : 0 < a) (hb : 0 < b) (hR : 0 < R)
     (hT : 0 < T) (hVm : b < Vm) (hp : p = vdWPressure a b R T Vm) :
     compressibilityFactor p Vm R T =

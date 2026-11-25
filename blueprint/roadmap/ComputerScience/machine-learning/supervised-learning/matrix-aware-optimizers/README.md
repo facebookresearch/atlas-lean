@@ -7,3 +7,5 @@ spectral-norm ball (uniquely when the momentum has full rank). The pages are
 expositions of published methods; each names the linear algebra it relies on, and how, under
 Informally uses. The polar factor and the iterations that compute it are under [polar
 decomposition](../../../../LinearAlgebra/matrix-decompositions/polar-decomposition/README.md).
+
+- [Muon optimizer](muon.md)

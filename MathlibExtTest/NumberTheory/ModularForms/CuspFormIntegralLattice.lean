@@ -39,3 +39,23 @@ example (N : ℕ) (k : ℤ) (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) (n : 
     simp
   have hodd : 2 * m = 1 := by exact_mod_cast hcast
   omega
+
+/-- exactSource consumer: the original binders apply verbatim. -/
+example (N : ℕ) (k : ℤ) :
+    CuspForm.HasIntegralStructure N k ↔
+      Submodule.span ℂ
+        ((CuspForm.intLattice N k :
+          Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N) k)) :
+          Set (CuspForm (CongruenceSubgroup.Gamma0 N) k)) = ⊤ :=
+  CuspForm.hasIntegralStructure_iff N k
+
+/-- The integral lattice is contained in its complex span, so under an
+integral structure every cusp form lies in that span. -/
+example (N : ℕ) (k : ℤ) (h : CuspForm.HasIntegralStructure N k)
+    (f : CuspForm (CongruenceSubgroup.Gamma0 N) k) :
+    f ∈ Submodule.span ℂ
+      ((CuspForm.intLattice N k :
+        Submodule ℤ (CuspForm (CongruenceSubgroup.Gamma0 N) k)) :
+        Set (CuspForm (CongruenceSubgroup.Gamma0 N) k)) := by
+  rw [h]
+  exact Submodule.mem_top
