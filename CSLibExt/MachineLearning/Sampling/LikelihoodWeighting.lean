@@ -164,12 +164,6 @@ theorem sum_proposal_lwWeight_div [Fintype α] [DecidableEq α] (E : Finset (Fin
 theorem joint_nonneg (x : Fin n → α) : 0 ≤ b.joint x :=
   b.toChain.joint_nonneg n x
 
-/-- Without evidence the clamped network is the network itself. -/
-theorem joint_mutilateSet_empty (e : Fin n → α) : (b.mutilateSet ∅ e).joint = b.joint := by
-  classical
-  funext x
-  simpa using b.proposal_mul_lwWeight ∅ e x
-
 /-- Without evidence the evidence has probability `1`. -/
 theorem evidenceProb_empty [Fintype α] [DecidableEq α] (e : Fin n → α) :
     b.evidenceProb ∅ e = 1 := by

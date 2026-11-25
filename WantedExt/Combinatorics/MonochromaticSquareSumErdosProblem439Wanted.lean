@@ -33,23 +33,28 @@ the statement for colourings of `ℤ`, which restrict to the positive integers. 
 question is stated for every `k ≥ 2`. formal-conjectures has no statement of this problem.
 -/
 
-/-- Erdős Problem 439, first question: in every colouring of the positive integers with finitely
-many colours there are `x ≠ y` of the same colour with `x + y` a perfect square. -/
+/-- **Erdős Problem 439 for squares.** The statement that for every colouring of the positive
+integers with finitely many colours there are distinct positive integers $x$ and $y$ of the same
+colour such that $x + y$ is a perfect square. -/
 def monochromaticSquareSum : Prop :=
   ∀ r : ℕ, ∀ c : ℕ → Fin r, ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ≠ y ∧ c x = c y ∧ IsSquare (x + y)
 
-/-- Erdős Problem 439, second question: for every `k ≥ 2`, in every colouring of the positive
-integers with finitely many colours there are `x ≠ y` of the same colour with `x + y` a `k`-th
-power. -/
+/-- **Erdős Problem 439 for $k$-th powers.** The statement that for every integer $k \ge 2$ and
+every colouring of the positive integers with finitely many colours there are distinct positive
+integers $x$ and $y$ of the same colour such that $x + y = z^k$ for some natural number $z$. -/
 def monochromaticPowerSum : Prop :=
   ∀ k : ℕ, 2 ≤ k → ∀ r : ℕ, ∀ c : ℕ → Fin r,
     ∃ x y : ℕ, 0 < x ∧ 0 < y ∧ x ≠ y ∧ c x = c y ∧ ∃ z : ℕ, x + y = z ^ k
 
 /--
-Resolved true: Khalfalah and Szemerédi proved that every finite colouring of the integers has `x ≠
-y` of the same colour with `x + y` a square, the case `f(z) = z²` of their theorem (Erdős, Sárközy
-and Sós had done 2 and 3 colours); erdosproblems.com/439 lists the problem as proved and restates it
-for the graph on `ℕ`. Source: T. F. Bloom, Erdős Problems, Problem #439,
+**Erdős Problem 439 for squares is true.** For every colouring of the positive integers with
+finitely many colours there are distinct positive integers $x$ and $y$ of the same colour such
+that $x + y$ is a perfect square.
+
+This is the case $f(z) = z^2$ of a theorem of Khalfalah and Szemerédi on monochromatic
+solutions of $x + y = f(z)$; Erdős, Sárközy and Sós had proved the cases of $2$ and $3$ colours.
+
+Source: T. F. Bloom, Erdős Problems, Problem #439,
 https://www.erdosproblems.com/439 (status PROVED); resolution: A. Khalfalah and E. Szemerédi, On the
 number of monochromatic solutions of x + y = z², Combin. Probab. Comput. (2006), 213-227, main
 theorem (a conjecture of Erdős, Roth, Sárközy and Sós): for every nonconstant f ∈ ℤ[z] with 2 ∣ f(z)
@@ -59,9 +64,15 @@ f(z) (abstract; erdosproblems.com/439), https://doi.org/10.1017/S096354830500716
 public theorem_wanted monochromaticSquareSum_holds : monochromaticSquareSum
 
 /--
-Resolved true: the theorem of Khalfalah and Szemerédi covers `x + y = f(z)` for every nonconstant `f
-∈ ℤ[z]` such that `f(z)` is even for some integer `z`; `f(z) = z^k` with `k ≥ 2` qualifies, since
-`f(2) = 2^k` (erdosproblems.com/439). Source: T. F. Bloom, Erdős Problems, Problem #439,
+**Erdős Problem 439 for $k$-th powers is true.** For every integer $k \ge 2$ and every colouring
+of the positive integers with finitely many colours there are distinct positive integers $x$ and
+$y$ of the same colour such that $x + y = z^k$ for some natural number $z$.
+
+Khalfalah and Szemerédi proved the corresponding statement for $x + y = f(z)$ for every
+nonconstant polynomial $f$ with integer coefficients such that $f(z)$ is even for some integer
+$z$; the polynomial $f(z) = z^k$ qualifies, since $f(2) = 2^k$.
+
+Source: T. F. Bloom, Erdős Problems, Problem #439,
 https://www.erdosproblems.com/439 (status PROVED); resolution: A. Khalfalah and E. Szemerédi, On the
 number of monochromatic solutions of x + y = z², Combin. Probab. Comput. (2006), 213-227, main
 theorem (a conjecture of Erdős, Roth, Sárközy and Sós): for every nonconstant f ∈ ℤ[z] with 2 ∣ f(z)

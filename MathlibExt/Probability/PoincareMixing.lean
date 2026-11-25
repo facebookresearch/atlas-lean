@@ -228,7 +228,7 @@ theorem sq_two_mul_tvDist_pow_le {π : S → ℝ} (hπ : ∀ x, 0 < π x) (hπ1 
     intro n; funext y
     simp only [hgdef, mulVec, dotProduct, mul_sub, mul_one, Finset.sum_sub_distrib,
       sum_row_of_mem_rowStochastic hPs y]
-    rw [pow_succ, mul_apply, Finset.sum_div]
+    rw [pow_succ, Matrix.mul_apply, Finset.sum_div]
     congr 1
     refine Finset.sum_congr rfl fun z _ => ?_
     have h := hPrev z y
@@ -255,7 +255,7 @@ theorem sq_two_mul_tvDist_pow_le {π : S → ℝ} (hπ : ∀ x, 0 < π x) (hπ1 
       intro y
       have hx := hπne x
       have hy := hπne y
-      simp only [hgdef, pow_zero, one_apply]
+      simp only [hgdef, pow_zero, Matrix.one_apply]
       by_cases h : x = y
       · subst h; simp only [↓reduceIte]; field_simp; ring
       · simp only [h, ↓reduceIte]; field_simp; ring
@@ -321,7 +321,7 @@ theorem tvDist_pow_succ_le {π : S → ℝ} {P : Matrix S S ℝ} (hP : P ∈ row
     (hπ : π ᵥ* P = π) (x : S) (t : ℕ) :
     tvDist (fun y => (P ^ (t + 1)) x y) π ≤ tvDist (fun y => (P ^ t) x y) π := by
   have hrow : (fun y => (P ^ (t + 1)) x y) = (fun y => (P ^ t) x y) ᵥ* P := by
-    funext y; rw [pow_succ, mul_apply]; rfl
+    funext y; rw [pow_succ, Matrix.mul_apply]; rfl
   rw [hrow]
   conv_lhs => rw [← hπ]
   exact tvDist_vecMul_le hP _ _

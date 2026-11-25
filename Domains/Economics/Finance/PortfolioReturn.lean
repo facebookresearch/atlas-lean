@@ -43,15 +43,18 @@ FI05.T02.
 
 namespace MathlibExt.Economics.Finance.PortfolioReturn
 
-/-- One-period asset return from initial price `P₀` to terminal price `P₁`. -/
+/-- One-period asset return from initial price `P₀` to terminal price `P₁`: `(P₁ - P₀) / P₀`,
+which is `0` at `P₀ = 0` (division by zero gives `0`). -/
 noncomputable def assetReturn (P₀ P₁ : ℝ) : ℝ := (P₁ - P₀) / P₀
 
 /-- Initial-value weight of a holding `h` with initial price `P₀` in a portfolio
-with initial wealth `W₀`: the share of initial wealth held in this asset. -/
+with initial wealth `W₀`: the share `h * P₀ / W₀` of initial wealth held in this asset
+(`0` at `W₀ = 0`). -/
 noncomputable def portfolioWeight (h P₀ W₀ : ℝ) : ℝ := h * P₀ / W₀
 
-/-- One-period portfolio return of holdings `h i` with prices `P₀ i → P₁ i` over
-the asset set `s`: `(W₁ - W₀) / W₀` with `W₀ = ∑ h i * P₀ i`, `W₁ = ∑ h i * P₁ i`. -/
+/-- One-period portfolio return of holdings `h i` with prices `P₀ i → P₁ i` over the asset set `s`:
+`(W₁ - W₀) / W₀` with `W₀ = ∑ h i * P₀ i`, `W₁ = ∑ h i * P₁ i`. With the convention `x / 0 = 0` it
+is `0` when `W₀ = 0`. -/
 noncomputable def portfolioReturn {ι : Type*} (h P₀ P₁ : ι → ℝ) (s : Finset ι) : ℝ :=
   (∑ i ∈ s, h i * P₁ i - ∑ i ∈ s, h i * P₀ i) / ∑ i ∈ s, h i * P₀ i
 

@@ -37,40 +37,41 @@ out-of-domain `q` cannot be passed silently.
 
 namespace MetaMathlibExt.QPochhammer
 
-/-- Raw complex infinite q-Pochhammer product `(a;q)_∞`, total in `q`.
-
-This is Mathlib's `tprod` over `ℕ` of the zero-based factor family
-`1 - a * q ^ n`. When the factors are not multipliable (in particular for most
-`q` with `‖q‖ ≥ 1`), `tprod` takes its conventional default value `1`; see
-`qPochhammerInfRaw_two_one`. Use the canonical `qPochhammerInf`, which requires
-convergence evidence `‖q‖ < 1`, unless this fallback behaviour is intended. -/
+/-- **Raw infinite q-Pochhammer product.** For complex numbers $a$ and $q$, the raw infinite
+q-Pochhammer product is the unconditional infinite product $\prod_{n=0}^{\infty} (1 - a q^n)$,
+defined for every $q$: when this product does not converge unconditionally (in particular for
+most $q$ with $|q| \ge 1$), its value is $1$ by convention. -/
 noncomputable def qPochhammerInfRaw (a q : ℂ) : ℂ :=
   tprod (fun n : ℕ => (1 - a * q ^ n))
 
-/-- Complex infinite q-Pochhammer symbol `(a;q)_∞`, restricted to the unit disk.
+/-- **Infinite q-Pochhammer symbol.** For complex numbers $a$ and $q$ with $|q| < 1$, the infinite
+q-Pochhammer symbol is $(a;q)_\infty = \prod_{n=0}^{\infty} (1 - a q^n)$, the unconditional
+infinite product of the factors $1 - a q^n$.
 
-Source `2607.10576:D01` / `2608.13818:D02` jointly define
-`(a;q)_∞ := ∏_{j=0}^{∞} (1 - a·q^j)` for complex `a, q` with `‖q‖ < 1`.
-On this domain the value agrees with the raw product `qPochhammerInfRaw a q`,
-while the hypothesis `hq` makes it impossible to silently evaluate at an
-out-of-domain `q`. -/
+The hypothesis $|q| < 1$ is an argument of the definition, so the symbol cannot be applied to
+$q$ outside the open unit disk.
+
+Source: `2607.10576:D01` / `2608.13818:D02` jointly define
+`(a;q)_∞ := ∏_{j=0}^{∞} (1 - a·q^j)` for complex `a, q` with `‖q‖ < 1`. -/
 noncomputable def qPochhammerInf (a q : ℂ) (_hq : ‖q‖ < 1) : ℂ :=
   qPochhammerInfRaw a q
 
-/-- With zero first parameter, every q-Pochhammer factor is one. -/
+/-- **The q-Pochhammer symbol with a = 0.** For every complex number $q$ with $|q| < 1$,
+$(0;q)_\infty = 1$, since every factor $1 - 0 \cdot q^n$ equals $1$. -/
 @[simp]
 theorem qPochhammerInf_zero_left (q : ℂ) (hq : ‖q‖ < 1) :
     qPochhammerInf 0 q hq = 1 := by
   simp [qPochhammerInf, qPochhammerInfRaw]
 
-/-- Convergence of the complex q-Pochhammer infinite product on the
-open unit disk.
+/-- **Convergence of the infinite q-Pochhammer product.** For all complex numbers $a$ and $q$ with
+$|q| < 1$, the infinite product $\prod_{n=0}^{\infty} (1 - a q^n)$ converges unconditionally to
+the infinite q-Pochhammer symbol $(a;q)_\infty$: the products of the factors $1 - a q^n$ over
+finite sets of indices $n$ tend to $(a;q)_\infty$.
 
-Source `2607.10576:D01`: the infinite product `(a;q)_∞` is used under
-`‖q‖ < 1`. For complex `a, q` with `‖q‖ < 1` the factor family
-`n ↦ 1 - a * q ^ n` satisfies `HasProd` to the named value
-`qPochhammerInf a q hq`. No nonvanishing hypothesis is imposed, so
-zero-factor cases (product value `0`) are covered. -/
+No nonvanishing hypothesis is imposed, so the cases where some factor is zero (and the product
+is $0$) are included.
+
+Source: `2607.10576:D01`, where the infinite product $(a;q)_\infty$ is used under $|q| < 1$. -/
 theorem hasProd_qPochhammerInf (a q : ℂ) (hq : ‖q‖ < 1) :
     HasProd (fun n : ℕ => (1 - a * q ^ n)) (qPochhammerInf a q hq) := by
   have hs : Summable (fun n : ℕ => q ^ n) :=
@@ -80,7 +81,9 @@ theorem hasProd_qPochhammerInf (a q : ℂ) (hq : ‖q‖ < 1) :
     Complex.multipliable_one_add_of_summable hsa
   simpa [qPochhammerInf, qPochhammerInfRaw, sub_eq_add_neg] using hm.hasProd
 
-/-- The first factor vanishes at `(a, q) = (1, 0)`. -/
+/-- **The q-Pochhammer symbol vanishes at a = 1 and q = 0.** The infinite q-Pochhammer symbol
+satisfies $(1;0)_\infty = 0$, because its factor for $n = 0$ is $1 - 1 \cdot 0^0 = 0$ (with the
+convention $0^0 = 1$). -/
 @[simp]
 theorem qPochhammerInf_one_zero : qPochhammerInf 1 0 (by simp) = 0 := by
   have hp := hasProd_qPochhammerInf 1 0 (by simp)
@@ -88,13 +91,13 @@ theorem qPochhammerInf_one_zero : qPochhammerInf 1 0 (by simp) = 0 := by
     hasProd_zero_of_exists_eq_zero ⟨0, by simp⟩
   exact hp.unique hz
 
-/-- Regression for the raw product outside the unit disk: the `tprod` fallback.
+/-- **The raw q-Pochhammer product at a = 2 and q = 1 equals 1.** The raw infinite q-Pochhammer
+product at $a = 2$ and $q = 1$ equals $1$.
 
-At `(a, q) = (2, 1)` every factor equals `-1`, so the family is not
-multipliable and the total product `qPochhammerInfRaw 2 1` is `1` by the
-`tprod` convention (`tprod_eq_one_of_not_multipliable`), not a limit of
-partial products. This is exactly the silent wrong-value behaviour that the
-gated `qPochhammerInf` (which demands `‖q‖ < 1`) rules out. -/
+Every factor $1 - 2 \cdot 1^n$ equals $-1$, so the finite partial products alternate between $-1$
+and $1$ and the product does not converge; the value $1$ is the default that the unconditional
+product takes in that case, not a limit of partial products. The q-Pochhammer symbol
+$(a;q)_\infty$, which requires $|q| < 1$, excludes such arguments. -/
 theorem qPochhammerInfRaw_two_one : qPochhammerInfRaw 2 1 = 1 := by
   have hfactor : ∀ n : ℕ, (1 - (2 : ℂ) * (1 : ℂ) ^ n) = -1 := by
     intro n
