@@ -37,7 +37,7 @@ import Mathlib.Tactic.LinearCombination
 # The cup pairing is independent of the chosen primitive
 
 For any primitive `h` of `omega φ ψ`, the rational cup pairing equals
-`cuspSum Γ h / (2 * mult Γ)`.
+`orientedCuspSum Γ h / (2 * mult Γ)`.
 -/
 
 open scoped MatrixGroups
@@ -89,8 +89,8 @@ private theorem hom_T_eq_one (f : SL(2, ℤ) →* Multiplicative ℚ) : f Modula
 
 variable (Γ : Subgroup SL(2, ℤ))
 
-private theorem sum_apply_cuspGen_eq_zero [Γ.FiniteIndex] (χ : Additive Γ →+ ℚ) :
-    ∑ q : Cusp Γ, χ (Additive.ofMul (cuspGen Γ q)) = 0 := by
+private theorem sum_apply_orientedCuspGen_eq_zero [Γ.FiniteIndex] (χ : Additive Γ →+ ℚ) :
+    ∑ q : OrientedCusp Γ, χ (Additive.ofMul (orientedCuspGen Γ q)) = 0 := by
   have h := (AddMonoidHom.toMultiplicativeRight χ).transfer_eq_prod_quotient_orbitRel_zpowers_quot
     ModularGroup.T
   rw [hom_T_eq_one] at h
@@ -121,28 +121,29 @@ private theorem diffChar_apply (φ ψ : Additive Γ →+ ℚ) (h₀ h : Γ → �
     (hh : IsPrimitive φ ψ h) (g : Γ) :
     diffChar φ ψ h₀ h hh₀ hh (Additive.ofMul g) = h₀ g - h g := rfl
 
-private theorem cuspSum_eq_of_isPrimitive [Γ.FiniteIndex] (φ ψ : Additive Γ →+ ℚ) (h₀ h : Γ → ℚ)
-    (hh₀ : IsPrimitive φ ψ h₀) (hh : IsPrimitive φ ψ h) : cuspSum Γ h₀ = cuspSum Γ h := by
+private theorem orientedCuspSum_eq_of_isPrimitive [Γ.FiniteIndex] (φ ψ : Additive Γ →+ ℚ)
+    (h₀ h : Γ → ℚ) (hh₀ : IsPrimitive φ ψ h₀) (hh : IsPrimitive φ ψ h) :
+    orientedCuspSum Γ h₀ = orientedCuspSum Γ h := by
   have hsplit : h₀ = h + (fun g => diffChar φ ψ h₀ h hh₀ hh (Additive.ofMul g)) := by
     funext g
     simp only [Pi.add_apply, diffChar_apply]
     ring
-  rw [hsplit, cuspSum_add]
-  unfold cuspSum
-  rw [sum_apply_cuspGen_eq_zero Γ (diffChar φ ψ h₀ h hh₀ hh), add_zero]
+  rw [hsplit, orientedCuspSum_add]
+  unfold orientedCuspSum
+  rw [sum_apply_orientedCuspGen_eq_zero Γ (diffChar φ ψ h₀ h hh₀ hh), add_zero]
 
 private theorem main [Γ.FiniteIndex] (φ ψ : Additive Γ →+ ℚ) (h : Γ → ℚ) (hh : IsPrimitive φ ψ h) :
-    pair Γ φ ψ = cuspSum Γ h / (2 * mult Γ) := by
+    pair Γ φ ψ = orientedCuspSum Γ h / (2 * mult Γ) := by
   have hp : ∃ h' : Γ → ℚ, IsPrimitive φ ψ h' := ⟨h, hh⟩
-  rw [pair_eq_dif Γ φ ψ hp, cuspSum_eq_of_isPrimitive φ ψ _ h (Classical.choose_spec hp) hh]
+  rw [pair_eq_dif Γ φ ψ hp, orientedCuspSum_eq_of_isPrimitive φ ψ _ h (Classical.choose_spec hp) hh]
 
 end ModularCurve.CupPairing.Indep
 
-/-- For any primitive `h` of `omega φ ψ`, the cup pairing is `cuspSum Γ h / (2 * mult Γ)`:
+/-- For any primitive `h` of `omega φ ψ`, the cup pairing is `orientedCuspSum Γ h / (2 * mult Γ)`:
 the value does not depend on the chosen primitive. -/
-public theorem ModularCurve.CupPairing.pair_eq_cuspSum_div_of_isPrimitive (Γ : Subgroup SL(2, ℤ))
-    [Γ.FiniteIndex] (φ ψ : Additive Γ →+ ℚ) (h : Γ → ℚ)
+public theorem ModularCurve.CupPairing.pair_eq_orientedCuspSum_div_of_isPrimitive
+    (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] (φ ψ : Additive Γ →+ ℚ) (h : Γ → ℚ)
     (hh : ModularCurve.CupPairing.IsPrimitive φ ψ h) :
     ModularCurve.CupPairing.pair Γ φ ψ =
-      ModularCurve.PDPairing.cuspSum Γ h / (2 * ModularCurve.CupPairing.mult Γ) :=
+      ModularCurve.PDPairing.orientedCuspSum Γ h / (2 * ModularCurve.CupPairing.mult Γ) :=
   ModularCurve.CupPairing.Indep.main φ ψ h hh

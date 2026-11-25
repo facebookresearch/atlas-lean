@@ -16,7 +16,7 @@ public import MathlibExt.NumberTheory.ModularForms.ModularGroupSerreTree
 open scoped MatrixGroups
 
 /-- Source consumer with the original binders. -/
-theorem exactSource :
+private theorem exactSource :
     ∃ e : Monoid.CoprodI (fun i : Fin 2 => Multiplicative (ZMod (i.val + 2)))
         ≃* Matrix.SpecialLinearGroup (Fin 2) ℤ ⧸ Subgroup.center (Matrix.SpecialLinearGroup (Fin 2)
             ℤ),
@@ -27,7 +27,7 @@ theorem exactSource :
   ModularGroup.exists_mulEquiv_freeProduct_quotient_center
 
 /-- Source consumer with the original binders. -/
-theorem exactSource_sub {A : Type*} [AddCommGroup A]
+private theorem exactSource_sub {A : Type*} [AddCommGroup A]
     (c : SL(2, ℤ) → A) (hc : ∀ g, c (-g) = c g) :
     ∃ a b : SL(2, ℤ) → A, (∀ g, a (ModularGroup.S * g) = a g) ∧
       (∀ g, b (ModularGroup.S * ModularGroup.T * g) = b g) ∧ ∀ g, c g = b g - a g :=

@@ -15,7 +15,7 @@ public import MathlibExt.NumberTheory.ModularForms.CupPairing.Integral
 open scoped MatrixGroups
 
 /-- Source consumer with the original binders. -/
-theorem exactSource (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] :
+private theorem exactSource (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] :
     ∃ IP : ModularCurve.Period.parabolicHoms ℤ Γ ℤ →ₗ[ℤ]
         ModularCurve.Period.parabolicHoms ℤ Γ ℤ →ₗ[ℤ] ℤ,
       Function.Bijective IP ∧ Function.Bijective IP.flip ∧

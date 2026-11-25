@@ -13,7 +13,7 @@ public import MathlibExt.LinearAlgebra.Matrix.DotProductPerfectPairing
 @[expose] public section
 
 /-- Source consumer with the original binders. -/
-theorem exactSource {ι : Type*} [Fintype ι]
+private theorem exactSource {ι : Type*} [Fintype ι]
     {L : Type*} [AddCommGroup L] [Module ℤ L]
     (B E : Submodule ℤ (ι → ℤ))
     (hB : ∀ (n : ℤ) (v : ι → ℤ), n ≠ 0 → n • v ∈ B → v ∈ B)
