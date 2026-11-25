@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.Data.Nat.Prime.Basic
 import MathlibExt.NumberTheory.ArithmeticFunction.BiunitaryDivisorParity
 
@@ -42,3 +43,27 @@ example : sigmaBiunitary 12 = 20 := by decide
 
 example : ¬ Odd (sigmaBiunitary 12) :=
   not_odd_sigmaBiunitary_of_three_dvd 12 (by decide) (by decide)
+
+-- `90 = 2 * 3^2 * 5` has two distinct odd prime factors; the bound is sharp.
+example : 4 ∣ sigmaBiunitary 90 := by
+  have hcard : (90 : ℕ).primeFactors.card = 3 := by
+    rw [show (90 : ℕ) = 2 * (3 ^ 2 * 5) by decide,
+      Nat.primeFactors_mul (a := 2) (b := 3 ^ 2 * 5) (by decide) (by decide),
+      Nat.primeFactors_mul (a := 3 ^ 2) (b := 5) (by decide) (by decide),
+      Nat.primeFactors_prime_pow (k := 2) (by decide) Nat.prime_three,
+      Nat.prime_two.primeFactors, Nat.prime_five.primeFactors]
+    decide
+  simpa only [hcard, show (2 : ℕ) ^ (3 - 1) = 4 by decide] using
+    two_pow_card_primeFactors_sub_one_dvd_sigmaBiunitary_of_even 90 (by decide) (by decide)
+
+example : ¬ 8 ∣ sigmaBiunitary 90 := by decide
+
+-- For a power of two the exponent drops to zero, and the divisor sum need not be even.
+example : 1 ∣ sigmaBiunitary 16 := by
+  have hcard : (16 : ℕ).primeFactors.card = 1 := by
+    rw [show (16 : ℕ) = 2 ^ 4 by decide,
+      Nat.primeFactors_prime_pow (k := 4) (by decide) Nat.prime_two, Finset.card_singleton]
+  simpa only [hcard, Nat.sub_self, pow_zero] using
+    two_pow_card_primeFactors_sub_one_dvd_sigmaBiunitary_of_even 16 (by decide) (by decide)
+
+example : ¬ 2 ∣ sigmaBiunitary 16 := by decide
