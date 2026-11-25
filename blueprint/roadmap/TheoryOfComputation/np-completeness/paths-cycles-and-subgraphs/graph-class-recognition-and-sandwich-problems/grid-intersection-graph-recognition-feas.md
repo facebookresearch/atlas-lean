@@ -1,0 +1,3 @@
+# Feasible instances of GRID INTERSECTION GRAPH RECOGNITION
+
+An instance $(a, b, E)$ is feasible for GRID INTERSECTION GRAPH RECOGNITION when each $u < a$ can be given a horizontal segment $\{(x, y_u) : x_u \le x \le x'_u\}$ and each $w < b$ a vertical segment $\{(x_w, y) : y_w \le y \le y'_w\}$, all coordinates natural numbers, such that segments on the same side are pairwise disjoint (two horizontal segments lie on different rows or have disjoint ranges, and likewise for vertical ones), and $(u, w) \in E$ exactly when the two segments cross: $x_u \le x_w \le x'_u$ and $y_w \le y_u \le y'_w$.

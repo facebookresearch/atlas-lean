@@ -9,8 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.SimpleGraph.GraphLimits.Graphon
-public import MathlibExt.Combinatorics.FinitelyForcibleGraphons
+public import MathlibExt.Combinatorics.SimpleGraph.GraphLimits.GraphonCounting
 
 /-!
 # Graph limits: the limit theorem, compactness and uniqueness (wanted)
@@ -36,14 +35,6 @@ namespace MathlibExt.Combinatorics.SimpleGraph.GraphLimitsWanted
 open MathlibExt.Combinatorics.SimpleGraph.GraphLimits
 open MathlibExt.Combinatorics.FinitelyForcibleOptimumOWR4212Problem011Wanted (IsGraphon)
 open Filter Topology
-
-/-- **Counting lemma for graphons.** For graphons `U, W` with values in `[0, 1]` and every simple
-graph `F`, `|t(F, U) - t(F, W)| ≤ |E(F)| · ‖U - W‖_□` (Lovász–Szegedy, *Limits of dense graph
-sequences* (2006), Lemma 4.1; the finite-graph case is `abs_homDensity_sub_homDensity_le`). -/
-public theorem_wanted abs_graphonHomDensity_sub_le {k : ℕ} (F : SimpleGraph (Fin k))
-    [DecidableRel F.Adj] {U W : ℝ → ℝ → ℝ} (hU : IsGraphon U) (hW : IsGraphon W) :
-    |graphonHomDensity F U - graphonHomDensity F W| ≤
-      F.edgeFinset.card * graphonCutNorm (fun x y => U x y - W x y)
 
 /-- **Lovász–Szegedy limit theorem.** Every convergent sequence of (nonempty) simple graphs has a
 graphon limit: there is a graphon `W` with `t(F, Gₙ) → t(F, W)` for every simple graph `F`
