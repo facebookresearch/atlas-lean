@@ -22,5 +22,4 @@ Typed lambda calculi and type inference: the simply typed lambda calculus (synta
 - [Advanced type systems](advanced-type-systems/README.md)
 - [Curry–Howard correspondence for implicational logic](curry-howard-correspondence-for-implicational-logic.md)
 - [Typed terms give natural-deduction derivations](typed-terms-give-natural-deduction-derivations.md)
-- [Strong normalization of System F](strong-normalization-of-system-f.md)
 - [Uniqueness of normal forms in System F](uniqueness-of-normal-forms-in-system-f.md)
