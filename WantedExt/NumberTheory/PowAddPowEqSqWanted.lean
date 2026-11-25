@@ -42,6 +42,10 @@ solutions when `n ≡ p ≡ 1 (mod 4)`
 
 The parity restriction when `n ≡ p ≡ 3 (mod 4)` is proved in
 `MathlibExt.NumberTheory.PowAddPowEqSqOppositeParity`.
+
+Proved in `MathlibExt.NumberTheory.PowAddPowEqSqTwoPow`,
+which this module imports: Theorem 3, the solutions
+for `n = 2` and `p ≡ 3 (mod 4)` (`two_pow_solutions`).
 -/
 module
 
@@ -53,6 +57,7 @@ public import MathlibExt.NumberTheory.PowAddPowEqSqEvenExponent
 public import MathlibExt.NumberTheory.PowAddPowEqSqModFourOne
 public import MathlibExt.NumberTheory.PowAddPowEqSqModSixty
 public import MathlibExt.NumberTheory.PowAddPowEqSqOppositeParity
+public import MathlibExt.NumberTheory.PowAddPowEqSqTwoPow
 public import MathlibExt.NumberTheory.ThreePowAddThirtyfivePow
 public import MathlibExt.NumberTheory.TwoPowAddFifteenPow
 
@@ -85,19 +90,5 @@ Source: Suton Tadee, "On the Diophantine Equation
 theorem_wanted five_pow_add_four_pow_mul_add_one_ne_sq
     (p m n x y z : ℕ) (hm : 1 ≤ m) :
     (5 ^ n) ^ x + (4 ^ m * p + 1) ^ y ≠ z ^ 2
-
-/-- **Solutions of $2^x + (5p)^y = z^2$ for $p \equiv 3 \pmod 4$.** Let $p$ be a prime with
-$p \equiv 3 \pmod 4$. For natural numbers $x$, $y$, $z$, $2^x + (5p)^y = z^2$ holds if and
-only if $(x, y, z) = (3, 0, 3)$, or $p = 3$ and $(x, y, z) = (6, 2, 17)$, or $x = 0$, $y = 1$
-and $z^2 = 5p + 1$.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Theorem 3. -/
-theorem_wanted two_pow_solutions (p x y z : ℕ) (hp : p.Prime)
-    (hp4 : p % 4 = 3) :
-    2 ^ x + (5 * p) ^ y = z ^ 2 ↔
-      (x = 3 ∧ y = 0 ∧ z = 3) ∨
-        (p = 3 ∧ x = 6 ∧ y = 2 ∧ z = 17) ∨
-        (x = 0 ∧ y = 1 ∧ z ^ 2 = 5 * p + 1)
 
 end MathlibExt.NumberTheory.PowAddPowEqSqWanted
