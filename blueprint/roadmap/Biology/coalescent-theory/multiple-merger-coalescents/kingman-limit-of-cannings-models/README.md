@@ -74,3 +74,5 @@
 - [Finite-dimensional distributions of a finite Markov chain](chain-fdd.md)
 - [Finite-dimensional distributions of Kingman's coalescent](kingman-fdd.md)
 - [Möhle–Sagitov: genealogies converge to Kingman's in finite dimensions](tendsto-chain-fdd.md)
+
+- [Wright–Fisher as a Cannings model with clock N generations](wright-fisher-as-a-cannings-model-satisfying-moh.md)

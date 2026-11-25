@@ -46,6 +46,10 @@ which this module imports: the partial-sum identity for `t(3k)`
 (`trib_add_two_sub_three_mul` and `trib_add_two_sub_three_mul_add_two`).
 The tribonacci numbers `tribNat` and `trib` moved there as well, with
 unchanged names, bodies and docstrings.
+
+The binomial sum `ccoAllowed_one_eq_sum` is proved in
+`MathlibExt.Combinatorics.Enumerative.NColorCompositionBinomialSum`, which also defines
+`ColorCompAllowed` and `ccoAllowed`. All three are re-exported here under their original names.
 -/
 module
 
@@ -56,6 +60,7 @@ public import Mathlib.Data.List.Chain
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import MathlibExt.Combinatorics.Enumerative.NColorCompositionBinomialSum
 public import MathlibExt.Combinatorics.Enumerative.NColorCompositions
 
 set_option autoImplicit false
@@ -63,16 +68,6 @@ set_option autoImplicit false
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.Enumerative.NColorCompositionsWanted
-
-/-- **n-color compositions with two allowed consecutive colors.** For natural numbers $b$ and $n$,
-$\mathrm{CCo}_{b,b+1}(n)$ is the set of $n$-color compositions of $n$ that use only the colors $b$
-and $b+1$: finite sequences of pairs $(k_1, c_1), \dots, (k_m, c_m)$ of natural numbers (part
-$k_i$ with color $c_i$) such that $1 \le c_i \le k_i$ and $c_i \in \{b, b+1\}$ for every $i$, and
-$k_1 + \dots + k_m = n$. -/
-def ColorCompAllowed (b n : ℕ) : Type :=
-  { l : List (ℕ × ℕ) //
-    (∀ pc ∈ l, 1 ≤ pc.2 ∧ pc.2 ≤ pc.1 ∧ (pc.2 = b ∨ pc.2 = b + 1)) ∧
-      (l.map Prod.fst).sum = n }
 
 /-- **n-color compositions with two prohibited consecutive colors.** For natural numbers $b$ and
 $n$, $\mathrm{CCo}_{\widehat{b,b+1}}(n)$ is the set of $n$-color compositions of $n$ in which no
@@ -92,14 +87,6 @@ def ColorCompProhibit2 (n : ℕ) : Type :=
   { l : List (ℕ × ℕ) //
     (∀ pc ∈ l, 1 ≤ pc.2 ∧ pc.2 ≤ pc.1 ∧ pc.2 ≠ 2) ∧
       (l.map Prod.fst).sum = n }
-
-/-- **Count of n-color compositions with two consecutive colors.** An $n$-color composition of a
-natural number $n$ is a finite sequence of parts, each a positive integer $k$ carrying a color
-$c$ with $1 \le c \le k$, whose sizes sum to $n$. For natural numbers $b$ and $n$,
-$\operatorname{cco}_{b,b+1}(n)$ is the number of $n$-color compositions of $n$ in which every
-part has color $b$ or $b+1$. -/
-noncomputable def ccoAllowed (b n : ℕ) : ℕ :=
-  Nat.card (ColorCompAllowed b n)
 
 /-- **Number of n-color compositions with two prohibited consecutive colors.** For natural numbers
 $b$ and $n$, $\mathrm{cco}_{\widehat{b,b+1}}(n)$ is the number of elements of
@@ -229,18 +216,6 @@ Theorem 2. -/
 theorem_wanted nonempty_equiv_colorCompAllowed_ternary
     (b n : ℕ) (hb : 1 ≤ b) (hn : 1 ≤ n) :
     Nonempty (ColorCompAllowed b n ≃ TernaryAdmissible b n)
-
-/-- **Binomial sum for n-color compositions with colors 1 and 2.** For every natural number
-$n \ge 1$, the number $\operatorname{cco}_{1,2}(n)$ of $n$-color compositions of $n$ in which
-every part has color $1$ or $2$ satisfies
-$$\operatorname{cco}_{1,2}(n) = \sum_{m=0}^{\lfloor n/2 \rfloor} 2^m \binom{n}{2m}.$$
-
-Source: Brian Hopkins and Hua Wang, "Allowing or Prohibiting
-Two Consecutive Colors in `n`-Color Compositions",
-Theorem 3. -/
-theorem_wanted ccoAllowed_one_eq_sum (n : ℕ) (hn : 1 ≤ n) :
-    ccoAllowed 1 n =
-      ∑ m ∈ Finset.range (n / 2 + 1), 2 ^ m * Nat.choose n (2 * m)
 
 /-- **n-color compositions with colors 2, 3 and compositions with parts not divisible by 3.** For
 every natural number $n \ge 1$, there is a bijection between $\mathrm{CCo}_{2,3}(n+1)$, the

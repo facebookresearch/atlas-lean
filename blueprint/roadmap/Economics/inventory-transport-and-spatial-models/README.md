@@ -8,3 +8,4 @@ Quantitative models of stocks and of movement in space: inventory dynamics with 
 - [Inventory dynamics with backlogging](inventory-dynamics-with-backlogging/README.md)
 - [Singly constrained spatial interaction models](singly-constrained-spatial-interaction-models/README.md)
 - [Stock balances on transfer networks](stock-balances-on-transfer-networks/README.md)
+- [Deterministic yield](deterministic-yield/README.md)

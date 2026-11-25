@@ -1640,8 +1640,9 @@ private theorem abs_nat_div_sub_div_le_one (M b : ℕ) (hb : 0 < b) :
   rw [hdiff]
   exact le_of_lt hfrac
 
--- N11: h-free counting function `x/ζ(h) + O(√x)`.
-private theorem abs_card_hfree_sub_le (h : ℕ) (hh : 2 ≤ h) (y : ℝ) (hy : 0 ≤ y) :
+/-- The count of positive `h`-free integers up to `y` differs from `y / ζ(h)` by at most
+`4 * √y`. -/
+theorem PowerFreeParity.abs_card_hfree_sub_le (h : ℕ) (hh : 2 ≤ h) (y : ℝ) (hy : 0 ≤ y) :
     |((((Finset.Icc 1 ⌊y⌋₊).filter
         (fun n => ∀ p ∈ n.primeFactors, n.factorization p < h)).card : ℕ) : ℝ)
       - y / (riemannZeta (h : ℂ)).re| ≤ 4 * Real.sqrt y := by
@@ -1863,7 +1864,7 @@ private theorem abs_sum_prime_card_hfree_sub_main_le (h : ℕ) (hh : 2 ≤ h)
       have h0 : 0 < p := by omega
       exact_mod_cast h0
     have hy0 : (0:ℝ) ≤ x / (p:ℝ) := div_nonneg hx0 (le_of_lt hppos)
-    exact abs_card_hfree_sub_le h hh (x / (p:ℝ)) hy0
+    exact PowerFreeParity.abs_card_hfree_sub_le h hh (x / (p:ℝ)) hy0
   have hmain : (x / (riemannZeta (h : ℂ)).re)
         * ∑ p ∈ S, (1:ℝ) / (p:ℝ)
         = ∑ p ∈ S, (x / (p:ℝ)) / (riemannZeta (h : ℂ)).re := by

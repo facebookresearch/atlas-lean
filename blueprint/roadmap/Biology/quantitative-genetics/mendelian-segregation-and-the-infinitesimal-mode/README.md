@@ -12,3 +12,6 @@
 - [Berry–Esseen bound for Mendelian draws, explicit variance form](abs-mendelian-segregation-cdf-sub-le-of.md)
 
 - [The infinitesimal model as a limit of many loci](infinitesimal-model-as-a-limit-of-many-loci.md)
+
+- [The infinitesimal model of inheritance](infinitesimal-model-definition.md)
+- [The Bulmer effect: selection reduces additive variance](bulmer-effect.md)
