@@ -1,0 +1,48 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.EssentialRepresentation
+
+/-!
+# The neutral essential-space condition for nondegeneracy
+
+Use the already defined essential closed span equal to the entire Hilbert
+space. Its equivalence with density of the original operator-range span
+bridges all source formulations. The actual essential restriction satisfies
+this same condition. No second nondegeneracy predicate or supplied support
+model is introduced.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace NonUnitalStarAlgHom
+
+noncomputable section
+
+universe uA uH
+
+variable {A : Type uA} [NonUnitalNonAssocSemiring A] [DistribMulAction ℂ A] [Star A]
+variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-- The existing neutral essential-space condition is exactly density of the original range span. -/
+theorem essentialSpace_eq_top_iff_dense (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
+    ρ.essentialSpace = ⊤ ↔
+      Dense (Submodule.span ℂ (Set.range fun z : A × H => ρ z.1 z.2) : Set H) := by
+  change (Submodule.span ℂ (Set.range fun z : A × H => ρ z.1 z.2)).topologicalClosure = ⊤ ↔ _
+  exact (Submodule.dense_iff_topologicalClosure_eq_top :
+    Dense (Submodule.span ℂ (Set.range fun z : A × H => ρ z.1 z.2) : Set H) ↔
+      (Submodule.span ℂ (Set.range fun z : A × H => ρ z.1 z.2)).topologicalClosure = ⊤).symm
+
+/-- The original computed essential restriction satisfies the same neutral nondegeneracy condition. -/
+theorem essentialRepresentation_essentialSpace_eq_top (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
+    ρ.essentialRepresentation.essentialSpace = ⊤ :=
+  (essentialSpace_eq_top_iff_dense ρ.essentialRepresentation).mpr ρ.nondegenerate_essentialRepresentation
+
+end
+
+end NonUnitalStarAlgHom

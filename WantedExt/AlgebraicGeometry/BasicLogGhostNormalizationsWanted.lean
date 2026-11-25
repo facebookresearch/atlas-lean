@@ -1,0 +1,75 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+public import Batteries.Util.ProofWanted
+public import MathlibExt.AlgebraicGeometry.BasicLogGhostNormalizations
+
+/-!
+# Geometric basicization and all stalk/base-change normalization requests
+
+The source uses actual characteristic stalks, actual component/node
+enumerations, ordered native site-point generizations, the computed
+contact b−a, the genuine saturated relation quotient, and the actual
+initial basic family on the same ordinary stable map.
+
+The geometric constructor retains the primary source's characteristic-zero
+finite-type scope and Zariski-defined fs target/base log charts. The public
+types and actual specialization/base-change operations are independent
+of a choice of coefficient field. No basicness or quotient-equivalence
+conclusion is an input to the constructor.
+
+Reference: Gross–Siebert arXiv:1102.4322v2, equations1.7/1.8,
+Construction1.16, equation1.14, Definition1.20, Lemma1.23,
+Proposition1.24 and diagram1.16.
+-/
+
+@[expose] public noncomputable section
+
+namespace WantedExt.AlgebraicGeometry.BasicLogGhostNormalizations
+
+open _root_.CategoryTheory _root_.CategoryTheory.Limits _root_.AlgebraicGeometry
+open MathlibExt.AlgebraicGeometry
+open EtaleLogSchemes EtaleLogDiagrams GeometricLogGhosts
+open BasicLogMapFamilies BasicLogGeometricGhosts BasicLogGhostNormalizations
+
+/-- Generic geometric field-extension integration, fixed on every native
+small-étale lift and log-section generator. -/
+public def_wanted fieldExtensionGhostComparison [InverseImageTheory.{0}]
+    (Y : LogScheme.{0}) (K L : Type) [Field K] [IsSepClosed K] [Field L] [IsSepClosed L]
+    (f : K →+* L) (x : Spec (.of K) ⟶ Y.scheme) (y : Spec (.of L) ⟶ Y.scheme)
+    (h : Spec.map (CommRingCat.ofHom f) ≫ x = y) : FieldGhostComparison Y f x y h
+
+/-- The basic family, every geometric fibre and its actual ghost quotient
+are construction output. The field is arbitrary of characteristic zero;
+no embedding into C, target smoothness or SNC restriction is added. -/
+public def_wanted geometricBasicization [InverseImageTheory.{0}]
+    (k : Type) [Field k] [CharZero k]
+    (X S : LogScheme.{0}) (hX : X.IsFineSaturated) (hS : S.IsFineSaturated)
+    (hXZariski : HasZariskiFineSaturatedCharts X) (hSZariski : HasZariskiFineSaturatedCharts S)
+    (q : EtaleLogSchemes.Hom X S) [LocallyOfFiniteType q.map] [QuasiCompact q.map]
+    (c : S.scheme ⟶ Spec (.of k)) [LocallyOfFiniteType c] [QuasiCompact c]
+    (n g : ℕ) (W : Scheme.{0}) [IsNoetherian W]
+    (b : W ⟶ S.scheme) [LocallyOfFiniteType b] [QuasiCompact b]
+    (M : StableLogMap q n g W b) :
+    Σ' B : Basicization M,
+      ∀ (K : Type) [Field K] [IsAlgClosed K] (t : Spec (.of K) ⟶ W),
+        Σ H : FibreType M t, BasicGhostModel M B t H
+
+/-- Every actual G3/I1 Cartesian log-family base change fixes the resulting
+basic comparison maps. Strictness, projection/target/base squares and the
+two original-log comparison equations are part of construction output. -/
+public def_wanted basicizationBaseChange [InverseImageTheory.{0}]
+    (X S : LogScheme.{0}) (q : EtaleLogSchemes.Hom X S)
+    (n g : ℕ) (W W' : Scheme.{0}) (b : W ⟶ S.scheme) (h : W' ⟶ W)
+    (M : StableLogMap q n g W b) (M' : StableLogMap q n g W' (h ≫ b))
+    (C : GeneralStableMapFamilies.BaseChangeData M.family h M'.family)
+    (A : LogBaseChange M h M' C) (B : Basicization M) (B' : Basicization M') :
+    BasicizedBaseChange M B h M' C B' A
+
+end WantedExt.AlgebraicGeometry.BasicLogGhostNormalizations

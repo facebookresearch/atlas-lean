@@ -10,6 +10,8 @@ Single-source and all-pairs shortest paths: Dijkstra, Bellman-Ford, DAG relaxati
 - [Minimum cycle mean](minimum-cycle-mean/README.md)
 - [Shortest paths in directed acyclic graphs](shortest-paths-in-directed-acyclic-graphs/README.md)
 
+- [Slack and the critical path of a project network](slack-and-the-critical-path.md)
+
 ## Related topics
 
 - [Stochastic shortest path problems](../../heuristic-search-and-planning/stochastic-shortest-path-problems/README.md): deterministic shortest path problems are the special case of stochastic shortest path problems with deterministic transitions (Bertsekas, *Abstract Dynamic Programming*, 3rd ed., Example 1.2.7).

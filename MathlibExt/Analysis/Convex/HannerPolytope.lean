@@ -19,14 +19,14 @@ public import MathlibExt.Geometry.Convex.CubeCovering
 
 @[expose] public section
 
-open Set
+open Set Pointwise
 
 namespace MetaMathlibExt
 
 /-- **Centered unit segment.** The centered unit segment is the closed unit ball
 $\{x \in \mathbb{R}^1 : \|x\| \le 1\}$, that is, the segment $[-1, 1]$. It is the
 one-dimensional leaf in the recursive definition of Hanner polytopes. -/
-def hannerUnitSegment : Set (EuclideanSpace ℝ (Fin 1)) :=
+noncomputable def hannerUnitSegment : Set (EuclideanSpace ℝ (Fin 1)) :=
   Metric.closedBall 0 1
 
 /-- **$\ell_\infty$ sum of bodies.** For sets $K \subseteq \mathbb{R}^m$ and

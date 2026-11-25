@@ -92,7 +92,7 @@ theorem transpose_mul_qrQ {A : Matrix m (Fin k) ℝ} (h : LinearIndependent ℝ 
   have hli : LinearIndependent ℝ (colVec A) := linearIndependent_colVec h
   have hon : Orthonormal ℝ (gramSchmidtNormed ℝ (colVec A)) := gramSchmidtNormed_orthonormal hli
   ext l l'
-  rw [mul_apply, one_apply]
+  rw [Matrix.mul_apply, Matrix.one_apply]
   have := (orthonormal_iff_ite.1 hon) l l'
   rw [real_inner_euclidean] at this
   simpa [qrQ] using this
@@ -160,7 +160,7 @@ theorem eq_qrQ_mul_qrR {A : Matrix m (Fin k) ℝ} (h : LinearIndependent ℝ A�
   have := congrArg (fun x : EuclideanSpace ℝ m => x.ofLp i) (colVec_eq_sum h j)
   simp only [colVec, WithLp.ofLp_sum, WithLp.ofLp_smul, Finset.sum_apply, Pi.smul_apply,
     smul_eq_mul] at this
-  rw [this, mul_apply]
+  rw [this, Matrix.mul_apply]
   simp [qrQ, mul_comm]
 
 /-- **Existence of the reduced QR factorization** (Trefethen–Bau, Lecture 7, full-rank case):
@@ -176,7 +176,7 @@ theorem exists_qr (A : Matrix m (Fin k) ℝ) (h : LinearIndependent ℝ Aᵀ) :
 theorem diag_mul_of_isUpperTriangular {U V : Matrix (Fin k) (Fin k) ℝ}
     (hU : U.IsUpperTriangular) (hV : V.IsUpperTriangular) (i : Fin k) :
     (U * V) i i = U i i * V i i := by
-  rw [mul_apply, sum_eq_single i]
+  rw [Matrix.mul_apply, sum_eq_single i]
   · intro l _ hli
     rcases lt_or_gt_of_ne hli with hl | hl
     · rw [hU hl, zero_mul]
@@ -203,7 +203,7 @@ private lemma eq_one_of_transpose_mul_self {U : Matrix (Fin k) (Fin k) ℝ}
   have hdiag : ∀ j, U j j = 1 := by
     intro j
     have := congrFun (congrFun hUU j) j
-    rw [mul_apply, one_apply_eq, sum_eq_single j] at this
+    rw [Matrix.mul_apply, one_apply_eq, sum_eq_single j] at this
     · simp only [transpose_apply] at this
       nlinarith [hpos j]
     · intro l _ hl; simp [transpose_apply, hoff l j hl]

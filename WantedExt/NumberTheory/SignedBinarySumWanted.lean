@@ -19,24 +19,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **Interval and congruence characterization of signed power-of-two sums.** Let $m \ge 1$ and
-$s \le t$ be natural numbers and put $L = t - s + 1$. An integer $n$ can be written as
-$\sum_{j=s}^{t} \lambda_j 2^j$ with every $\lambda_j \in \{-1, m\}$ if and only if
-$-2^s (2^L - 1) \le n \le 2^s m (2^L - 1)$ and $n \equiv -2^s (2^L - 1) \pmod{2^s (m + 1)}$.
-
-Source: Ross, *A Perfect Number Generalization and Some Euclid-Euler Type Results*, JIS 27 (2024),
-Article 24.7.5, Lemma 7 (`jis-2024-24.7.5-lem-7`): for `0 ≤ s ≤ t` and
-`m ≥ 1`, the integers of the form `∑_{j=s}^{t} λⱼ * 2^j` with
-`λⱼ ∈ {-1, m}` are precisely the integers `n` in the interval
-`[-2^s * (2^{t-s+1} - 1), 2^s * m * (2^{t-s+1} - 1)]` satisfying
-`n ≡ -2^s * (2^{t-s+1} - 1) [ZMOD 2^s * (m + 1)]`. -/
-public theorem_wanted isSignedPowTwoSum_iff (m s t : ℕ) (hm : 1 ≤ m)
-    (hst : s ≤ t) (n : ℤ) :
-    IsSignedPowTwoSum m s t n ↔
-      -(2 : ℤ) ^ s * (2 ^ (t - s + 1) - 1) ≤ n ∧
-      n ≤ 2 ^ s * (m : ℤ) * (2 ^ (t - s + 1) - 1) ∧
-      n ≡ -(2 : ℤ) ^ s * (2 ^ (t - s + 1) - 1) [ZMOD 2 ^ s * ((m : ℤ) + 1)]
-
 /-- Integers with at least two distinct prime factors are `S`-perfect for some
 finite `S` with `#S ≤ τ(n) - 2`; prime powers are never `S`-perfect.
 

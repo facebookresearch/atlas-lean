@@ -50,12 +50,13 @@ namespace EarthScience
 /-- Pore (seepage) velocity from Darcy discharge per bulk area `q`
 and porosity `n`: `v = q / n`. The Darcy flux and pore velocity are
 different quantities; this definition records only the kinematic
-conversion, with totalized division outside `n ≠ 0`. -/
+conversion. With the convention `x / 0 = 0`, it is `0` when `n = 0`. -/
 noncomputable def poreVelocity (q n : ℝ) : ℝ := q / n
 
 /-- Courant number for pore velocity `q / n`, time step `dt`, and
 cell width `dx`: `|q / n| * dt / dx`. This is only the dimensionless
-expression; it does not assert stability of any numerical scheme. -/
+expression; it does not assert stability of any numerical scheme.
+With the convention `x / 0 = 0`, it is `0` when `n = 0` or `dx = 0`. -/
 noncomputable def courantNumber (q n dt dx : ℝ) : ℝ :=
   |q / n| * dt / dx
 
@@ -72,14 +73,15 @@ lemma poreVelocity_mul {q n : ℝ} (hn : n ≠ 0) :
   unfold poreVelocity
   exact div_mul_cancel₀ q hn
 
-/-- The Courant number is nonnegative for a nonnegative time step
-and positive cell width. -/
+/-- For every `q` and `n`, the Courant number is nonnegative for a nonnegative time step and
+positive cell width. At `n = 0` it is `0`, by the convention `x / 0 = 0`. -/
 lemma courantNumber_nonneg {q n dt dx : ℝ} (hdt : 0 ≤ dt)
     (hdx : 0 < dx) : 0 ≤ courantNumber q n dt dx := by
   unfold courantNumber
   positivity
 
-/-- A zero time step has Courant number zero. -/
+/-- A zero time step has Courant number zero (also at `dx = 0`, by the
+convention `x / 0 = 0`). -/
 lemma courantNumber_zero_dt (q n dx : ℝ) :
     courantNumber q n 0 dx = 0 := by
   unfold courantNumber

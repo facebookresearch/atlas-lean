@@ -25,7 +25,7 @@ set_option autoImplicit false
 
 namespace CSLibExtTest.Logics.Propositional.Resolution
 
-open Cslib.Logic.PL Cslib.Algorithms.SAT.DPLL
+open Cslib.Logic.LegacyPL Cslib.Algorithms.SAT.DPLL
 
 /-- Resolving `x₀ ∨ x₁` with `¬x₀ ∨ x₂` on `x₀`. -/
 example : CNFClause.resolvent 0 [(0, true), (1, true)] [(0, false), (2, true)] =

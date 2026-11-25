@@ -33,38 +33,22 @@ dropped the helper lemmas, and turned the README values (which SqueezeBench
 marks as reporting only) into Batteries `theorem_wanted` declarations. The
 trivial value `S(1) = 1` is omitted.
 
-Proved in `MathlibExt.Combinatorics.SchurNumbers`, which this module imports:
-the lower bound for the sixth Schur number (`le_schurNumber_six`). The
-definitions `schurForces` and `schurNumber` moved there with it, with the same
-names, statements and docstrings.
+This module imports `MathlibExt.Combinatorics.SchurNumbers`, which proves the
+second and third Schur numbers and the lower bound for the sixth Schur number.
+The definitions `schurForces` and `schurNumber` moved there with the lower
+bound, with the same names, statements and docstrings. It also imports
+`MathlibExt.Combinatorics.SchurNumberFour`, which proves the fourth Schur number;
+that statement moved there with the same name, statement and docstring.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SchurNumbers
+public import MathlibExt.Combinatorics.SchurNumberFour
 
 @[expose] public section
 
 namespace MathlibExt.Combinatorics.SchurNumbersWanted
-
-/-- **The second Schur number.** The Schur number $S(2)$ equals $4$.
-
-Source: exhaustive check; OEIS A045652; listed in leansolving/SqueezeBench
-`SqueezeBench/Problems/Schur/README.md`. -/
-public theorem_wanted schurNumber_two : schurNumber 2 = 4
-
-/-- **The third Schur number.** The Schur number $S(3)$ equals $13$.
-
-Source: exhaustive check; OEIS A045652; listed in SqueezeBench
-`SqueezeBench/Problems/Schur/README.md`. -/
-public theorem_wanted schurNumber_three : schurNumber 3 = 13
-
-/-- **The fourth Schur number.** The Schur number $S(4)$ equals $44$.
-
-Source: S. W. Golomb and L. D. Baumert, *Backtrack programming*, J. ACM 12
-(1965), 516–524; OEIS A045652; listed in SqueezeBench
-`SqueezeBench/Problems/Schur/README.md`. -/
-public theorem_wanted schurNumber_four : schurNumber 4 = 44
 
 /-- **The fifth Schur number.** The Schur number $S(5)$ equals $160$.
 

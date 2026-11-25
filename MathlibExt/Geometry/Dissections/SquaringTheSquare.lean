@@ -73,7 +73,7 @@ private theorem scale_strictMono : StrictMono scale := fun _ _ h =>
 private theorem scale_add (m n : ℕ) : scale (m + n) = scale m + scale n := by
   simp [scale, add_div]
 
-private def Tile.square (t : Tile) : Set (ℝ × ℝ) :=
+private noncomputable def Tile.square (t : Tile) : Set (ℝ × ℝ) :=
   Icc (scale t.x, scale t.y) (scale (t.x + t.side), scale (t.y + t.side))
 
 private theorem tiles_cover : (⋃ i, (tiles i).square) = Icc (0, 0) (1, 1) := by
