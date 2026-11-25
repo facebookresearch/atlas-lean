@@ -91,3 +91,7 @@
 - [Cofibration retracts](cofibration-retracts.md)
 - [Initial is Cofibrant](initial-is-cofibrant.md)
 - [Is Cofibrant of cofibration](is-cofibrant-of-cofibration.md)
+- [Iso Cat Map Fundamental Groupoid](iso-cat-map-fundamental-groupoid.md)
+- [Map Fundamental Groupoid Id](map-fundamental-groupoid-id.md)
+- [Map Fundamental Groupoid Comp](map-fundamental-groupoid-comp.md)
+- [Congr Map Fundamental Groupoid Of Eq](congr-map-fundamental-groupoid-of-eq.md)

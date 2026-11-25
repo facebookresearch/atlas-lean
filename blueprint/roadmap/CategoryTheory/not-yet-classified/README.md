@@ -765,3 +765,6 @@ Topics added since this subject's fields were last revised.
 - [Weighted Coend Transport](weighted-coend-transport/README.md)
 - [Weighted End](weighted-end/README.md)
 - [Weighted End Variance](weighted-end-variance/README.md)
+- [Change](change/README.md)
+- [Functoriality](functoriality/README.md)
+- [Simplicial Replacement](simplicial-replacement/README.md)
