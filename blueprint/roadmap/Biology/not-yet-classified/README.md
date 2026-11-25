@@ -23,3 +23,4 @@ Topics added since this subject's fields were last revised.
 - [Spearman Karber](spearman-karber/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
 - [War Of Attrition](war-of-attrition/README.md)
+- [String Overlap](string-overlap/README.md)

@@ -86,3 +86,5 @@ Topics added since this subject's fields were last revised.
 - [DGAlgebras](dgalgebra.md)
 - [Two Term Complex](two-term-complex.md)
 - [Power Root Closure](power-root-closure.md)
+- [Affine Recurrence Convergence](affine-recurrence-convergence/README.md)
+- [Sum Range Drop](sum-range-drop/README.md)
