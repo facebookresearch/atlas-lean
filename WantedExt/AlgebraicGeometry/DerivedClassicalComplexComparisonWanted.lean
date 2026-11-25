@@ -49,7 +49,9 @@ open scoped Simplicial
 
 universe u
 
-/-- Prove the sheaf axiom for the actual global-section presheaf on the small étale site. -/
+/-- For every scheme $X$, the presheaf of rings on the small étale site of $X$ that sends an étale
+$X$-scheme $U$ to its ring of global sections $\Gamma(U, \mathcal{O}_U)$
+(`etaleStructurePresheaf`) is a sheaf for the étale topology (`EtaleStructureSource`). -/
 theorem_wanted classical_etale_structure_source (X : Scheme.{u}) : EtaleStructureSource X
 
 /-- Assemble actual ringed inverse images and their native total left derivations. -/
