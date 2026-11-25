@@ -75,7 +75,8 @@ class PlaceLines(unittest.TestCase):
                       "MathlibExt/Algebra/Rings -> Algebra/groups | Units <b>x</b>",
                       "MathlibExt/Algebra/Rings -> Algebra/groups | Rings: a | b",
                       "MathlibExt/Algebra/Rings -> Algebra/groups | [Rings](x)",
-                      "MathlibExt/Algebra/Rings -> Algebra/groups | `Rings`"):
+                      "MathlibExt/Algebra/Rings -> Algebra/groups | `Rings`",
+                      "MathlibExt/Algebra/Rings -> Algebra/groups | Fixes https://example.invalid/issues/1"):
             with self.subTest(value=value), self.assertRaises(ValueError) as caught:
                 batch.parse_place(value)
             for part in value.split():
@@ -138,6 +139,18 @@ class ReportSections(unittest.TestCase):
                   f"{titles['appended']}: 0\nerror: something\n  not an item\n")
         self.assertEqual(batch.report_sections(output), {"added": ["a.md", "b.md"],
                                                          "replaced": ["Algebra/x: - [Old](old.md)"], "appended": []})
+
+
+class InTopic(unittest.TestCase):
+    def test_a_page_in_the_topic_or_alone_in_the_field(self) -> None:
+        for page, expected in (("Algebra/groups/sylow-theorems/sylow.md", True),
+                               ("Algebra/groups/part-02/sylow-theorems/part-01/sylow.md", True),
+                               ("Algebra/groups/sylow.md", True), ("Algebra/groups/part-03/sylow.md", True),
+                               ("Algebra/groups/group-basics/sylow.md", False),
+                               ("Algebra/groups-extra/sylow-theorems/sylow.md", False),
+                               ("Algebra/not-yet-classified/sylow/sylow.md", False)):
+            with self.subTest(page=page):
+                self.assertEqual(batch.in_topic(page, "Algebra/groups", "Sylow theorems"), expected)
 
 
 class Fields(unittest.TestCase):
@@ -330,10 +343,10 @@ class Batches(unittest.TestCase):
                          ["README.md", "fields-domain.md", "fields.md"])
         text = body.read_text()
         self.assertTrue(text.startswith("Graph: batch\n"), text)
-        self.assertIn("| `MathlibExt/Algebra/Sylow` | `Algebra/groups` | Sylow theorems | #2 |", text)
-        self.assertIn("| `MathlibExt/Algebra/SylowConj` | `Algebra/groups` | Sylow theorems | "
+        self.assertIn("| `MathlibExt/Algebra/Sylow` | `Algebra/groups` | `Sylow theorems` | #2 |", text)
+        self.assertIn("| `MathlibExt/Algebra/SylowConj` | `Algebra/groups` | `Sylow theorems` | "
                       "WantedExt/Algebra/SylowWanted |", text)
-        self.assertIn("| `MathlibExt/Algebra/Units` | `Algebra/rings` | Units of a ring | #4 |", text)
+        self.assertIn("| `MathlibExt/Algebra/Units` | `Algebra/rings` | `Units of a ring` | #4 |", text)
         self.assertIn("#4: `MathlibExt/Algebra/Fields` is left unplaced: the pull request's merge does not change it",
                       text)
         self.assertIn("- `WantedExt/Algebra/SylowWanted`", text)
@@ -341,11 +354,14 @@ class Batches(unittest.TestCase):
         self.assertIn("- `MathlibExt/Algebra/Fields`: in `Algebra/not-yet-classified/`", text)
         # make shows the sync's own report.
         self.assertIn(dict(sync.REPORT)["added"], result.stdout)
-        # verify agrees, and base names the batch.
+        # verify agrees, and base names the batch once it has merged.
         result = self.tool("verify", commit)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(self.tool("base").returncode, 1)
+        self.land(5, "batch-1")
         result = self.tool("base")
         self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(f"Last batch: {commit}, from {self.base} up to {head}.", result.stdout)
         self.assertIn(f"The next batch starts from {head}.", result.stdout)
 
     def test_the_next_batch_starts_where_the_last_one_ended(self) -> None:
@@ -594,9 +610,46 @@ class Batches(unittest.TestCase):
         text = self.description()
         self.assertNotIn("MathlibExt/Algebra/Fields", self.placements())
         self.assertTrue((self.root / "blueprint/roadmap/Algebra/not-yet-classified/fields/fields-comm.md").is_file())
-        self.assertIn("`MathlibExt/Algebra/Fields` is left unplaced: it already has pages outside `Algebra/rings`", text)
+        self.assertIn("`MathlibExt/Algebra/Fields` is left unplaced: it already has pages outside the topic `Fields` of "
+                      "`Algebra/rings`", text)
         result = self.tool("verify")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_a_placement_keeps_a_modules_pages_in_their_topic(self) -> None:
+        # A proof moves the wanted `sylow`, whose page is in the topic Sylow theorems, into a new module and asks for
+        # another topic of the same field: the module stays where its page is, unplaced, with a note.
+        self.merge(1, lambda: (self.module("MathlibExt/Algebra/SylowNew.lean", ["sylow", "sylow_count"]),
+                               self.write("WantedExt/Algebra/SylowWanted.lean", "namespace Ext\n\n/-- Sylow subgroups "
+                                          "are conjugate. -/\ntheorem sylow_conj : True := trivial\n\nend Ext\n")),
+                   "Graph: new\nPlace: MathlibExt/Algebra/SylowNew -> Algebra/groups | Sylow counting\n")
+        text = self.description("--base", self.base)
+        self.assertNotIn("MathlibExt/Algebra/SylowNew", self.placements())
+        self.assertIn("`MathlibExt/Algebra/SylowNew` is left unplaced: it already has pages outside the topic `Sylow "
+                      "counting` of `Algebra/groups`", text)
+        result = self.tool("verify")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_only_a_merged_pull_requests_head_counts_as_a_batch(self) -> None:
+        self.lean_only_merges()
+        self.assertEqual(self.tool("make", "--base", self.base).returncode, 0)
+        through = self.git("rev-parse", "HEAD^")
+        self.land(5, "batch-1")
+        self.merge(6, self.cosets)
+        # A graph pull request of two commits, the first carrying make's whole message.
+        parent = self.git("rev-parse", "HEAD")
+        self.git("switch", "-q", "-c", "topic-7")
+        page = self.root / "blueprint/roadmap/Algebra/groups/group-basics/lagrange.md"
+        page.write_text(page.read_text() + "\nA remark.\n")
+        self.git("commit", "-q", "-am", f"{batch.SUBJECT}{parent[:12]}\n\nGraph-sync-base: {through}\n"
+                                        f"Graph-sync-through: {parent}\n")
+        page.write_text(page.read_text() + "\nAnother remark.\n")
+        self.git("commit", "-q", "-am", "Another remark")
+        self.git("switch", "-q", "main")
+        self.git("merge", "-q", "--no-ff", "-m", "Merge pull request #7 from someone/topic-7", "topic-7")
+        self.bodies["7"] = "Graph: af_x\n"
+        self.assertIn(f"The next batch starts from {through}.", self.tool("base").stdout)
+        self.assertEqual(self.tool("make").returncode, 0)
+        self.assertTrue((self.root / "blueprint/roadmap/Algebra/groups/group-basics/cosets.md").is_file())
 
     def test_the_placement_rules(self) -> None:
         # To start from: a placed folder, a placed module, an unplaced one, and an entry for Mathlib.
@@ -608,6 +661,7 @@ class Batches(unittest.TestCase):
         self.module("MathlibExt/Algebra/Folder/Inner.lean", ["inner_one", "inner_two"])
         self.module("MathlibExt/Algebra/Old.lean", ["old_one"])
         self.module("MathlibExt/Algebra/Loose.lean", ["loose_one"])
+        self.module("MathlibExt/Nowhere/Older.lean", ["older_one"])
         self.base = self.commit("more to start from")
         # Two pull requests change one module and ask for different topics.
         self.merge(1, lambda: self.module("MathlibExt/Algebra/Rule1.lean", ["r1"]),
@@ -639,8 +693,9 @@ class Batches(unittest.TestCase):
                 '  "MathlibExt/Algebra/Old": {"to": "Algebra/rings", "title": "Old topic"},\n', ""))
 
         self.merge(7, move_old)
-        # A module in a folder with no subject.
-        self.merge(8, lambda: self.module("MathlibExt/Nowhere/Thing.lean", ["thing"]))
+        # A module in a folder with no subject, and an older one there that gains a declaration.
+        self.merge(8, lambda: (self.module("MathlibExt/Nowhere/Thing.lean", ["thing"]),
+                               self.module("MathlibExt/Nowhere/Older.lean", ["older_one", "older_two"])))
         text = self.description("--base", self.base)
         placements = self.placements()
         self.assertEqual({key: value for key, value in placements.items() if key not in TAXONOMY["placements"]}, {
@@ -655,11 +710,13 @@ class Batches(unittest.TestCase):
         self.assertNotIn("Fixes", text)
         self.assertIn("MathlibExt/Algebra/Rule4 is left unplaced: its declarations came from modules placed differently "
                       "or not at all (MathlibExt/Algebra/Groups, MathlibExt/Algebra/Loose)", text)
-        self.assertIn("| `MathlibExt/Algebra/Rule5/Basic` | `Algebra/rings` | Rule5 | #5 |", text)
-        self.assertIn("| `MathlibExt/Algebra/Moved` | `Algebra/rings` | Folder topic | MathlibExt/Algebra/Folder/Inner |",
-                      text)
+        self.assertIn("| `MathlibExt/Algebra/Rule5/Basic` | `Algebra/rings` | `Rule5` | #5 |", text)
+        self.assertIn("| `MathlibExt/Algebra/Moved` | `Algebra/rings` | `Folder topic` | "
+                      "MathlibExt/Algebra/Folder/Inner |", text)
         self.assertIn("- `MathlibExt/Algebra/Folder`", text)
         self.assertIn("- `MathlibExt/Nowhere/Thing`: **no pages**, as its folder has no subject", text)
+        self.assertIn("### Changed modules with no pages", text)
+        self.assertIn("- `MathlibExt/Nowhere/Older`", text)
         self.assertIn("- `MathlibExt/Algebra/Rule1`: in `Algebra/not-yet-classified/`", text)
         result = self.tool("verify")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

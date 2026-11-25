@@ -28,7 +28,7 @@ base prints the last batch on REV (`HEAD` by default) and the commit the next ba
 make and verify read the descriptions of the pull requests merged since the base with `gh`, unless --bodies gives
 them as JSON ({"<number>": "<description>"}). A description is untrusted text: only its `Place:` lines are read
 (see parse_place), and each counts only for a module that the pull request's own merge changed, that no placement
-covers and that has no page outside that field yet, under a field or subfield the taxonomy has.
+covers and that has no page outside that topic yet, under a field or subfield the taxonomy has.
 
 Run it with a Python that has Autoform installed, as sync_wiki.py.
 """
@@ -172,12 +172,21 @@ def batch_of(commit: str, head: str) -> tuple[str, str] | None:
     return base, through
 
 
+@functools.cache
+def merged_heads(head: str) -> frozenset[str]:
+    """The heads of the pull requests merged into *head*'s first-parent history, which their reviews covered: the
+    second parents of its merges, not the commits within a merged branch."""
+    lines = git("rev-list", "--first-parent", "--merges", "--parents", head).decode().splitlines()
+    return frozenset(parts[2] for parts in (line.split() for line in lines) if len(parts) > 2)
+
+
 def last_batch(head: str) -> tuple[str, str, str] | None:
-    """The newest batch *head* contains, as (its commit, its base, the commit it brought the graph up to); each batch
-    is made on a main that holds the one before, so the first in topological order is the newest."""
+    """The newest batch merged into *head*, as (its commit, its base, the commit it brought the graph up to): the head
+    of a merged pull request (merged_heads) that is a batch (batch_of). Each batch is made on a main that holds the one
+    before, so the first in topological order is the newest."""
     listing = git("log", "--topo-order", "--format=%H", "--fixed-strings", f"--grep={THROUGH_TRAILER}: ", head)
     for commit in listing.decode().split():
-        if found := batch_of(commit, head):
+        if commit in merged_heads(head) and (found := batch_of(commit, head)):
             return (commit, *found)
     return None
 
@@ -253,7 +262,8 @@ def parse_place(value: str) -> tuple[str, str, str | None]:
     """The module, field and topic title a `Place:` line gives: `<module> -> <field>`, and ` | <topic title>` after
     them when it names the topic; ValueError if it is anything else. The module is written as scripts/taxonomy.json
     keys it, a path of Lean identifiers without `.lean`, and the field as `<subject>/<field>` or
-    `<subject>/<field>/<subfield>`. A title is one line of at most TITLE_LIMIT printable characters, none of UNSAFE.
+    `<subject>/<field>/<subfield>`. A title is one line of at most TITLE_LIMIT printable characters, none of UNSAFE,
+    with no address (`://`), which GitHub would read as a reference.
     The error never repeats the line's text, which is untrusted."""
     match = PLACE_VALUE.fullmatch(value)
     if not match:
@@ -261,9 +271,10 @@ def parse_place(value: str) -> tuple[str, str, str | None]:
     module, to, title = match.group("module", "to", "title")
     if not MODULE.fullmatch(module) or module.split("/", 1)[0] not in wiki.LIBRARIES:
         raise ValueError("it names no module of the five libraries, as a path without `.lean`")
-    if title is not None and (len(title) > TITLE_LIMIT or not title.isprintable() or UNSAFE & set(title)):
+    if title is not None and (len(title) > TITLE_LIMIT or not title.isprintable() or UNSAFE & set(title)
+                              or "://" in title):
         raise ValueError(f"its topic is not one line of at most {TITLE_LIMIT} printable characters free of "
-                         f"{''.join(sorted(UNSAFE))}")
+                         f"{''.join(sorted(UNSAFE))} and of addresses")
     return module, to, title
 
 
@@ -310,6 +321,18 @@ def lean_index(commit: str):
         return index_project(root, exclude_roots=sync.EXCLUDED)
 
 
+def in_topic(page: str, to: str, title: str) -> bool:
+    """Whether a page, by path from the roadmap, sits where the placement (*to*, *title*) lays out its module's pages
+    (generate_wiki.topic_node): in the topic's folder, or right in the field for a topic of one page, either of them
+    possibly within one of the field's parts."""
+    if not page.startswith(f"{to}/"):
+        return False
+    rest = page[len(to) + 1:].split("/")
+    if len(rest) > 1 and re.fullmatch(r"part-\d+", rest[0]):
+        rest = rest[1:]
+    return len(rest) == 1 or rest[0] == wiki.slugify(title)
+
+
 def module_pages(head: str, index) -> dict[str, set[str]]:
     """The pages that already stand for a declaration of each module at *head*, by path from the roadmap: those whose
     row links the declaration, holds it back or lists it as a duplicate, read as the sync reads rows."""
@@ -327,13 +350,17 @@ def module_pages(head: str, index) -> dict[str, set[str]]:
             try:
                 names = {name for name in (sync.lean_name(row), sync.held_name(row)) if name}
                 names.update(sync.duplicate_names(row))
-                page = sync.page_name(row) if names else None
+                legacy = sync.legacy_pair(row)
+                page = sync.page_name(row) if names or legacy else None
             except (ValueError, TypeError, AttributeError, KeyError):
                 continue
-            for name in names:
-                declaration = index.declarations.get(name)
-                if declaration is not None and (module := library_module(declaration.path.as_posix())):
-                    pages.setdefault(module, set()).add(page)
+            modules = {library_module(declaration.path.as_posix()) for name in names
+                       if (declaration := index.declarations.get(name)) is not None}
+            if legacy:
+                # A row an earlier sync wrote with only a module and a name.
+                modules.add(library_module(legacy[0].replace(".", "/") + ".lean"))
+            for module in modules - {None}:
+                pages.setdefault(module, set()).add(page)
     return pages
 
 
@@ -353,6 +380,8 @@ class PlacementPlan:
     # The modules new since the base that stay unplaced, each with where its pages go: its subject's
     # `not-yet-classified/` folder, or nowhere for a folder with no subject.
     unplaced: list[tuple[str, str | None]] = field(default_factory=list)
+    # The older modules a pull request in the range changed that get no pages, in a folder that is no subject.
+    subjectless: list[str] = field(default_factory=list)
     # What an editor may want to know: `Place:` lines left out, and why; modules whose declarations came from places
     # that disagree; modules that already have pages.
     notes: list[str] = field(default_factory=list)
@@ -373,9 +402,11 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
        each of them was in at *base*, placed as the taxonomy at *head*, or else at *base*, places it, when all of them
        agree on one place and none came from an unplaced module. A proof that moves a wanted statement, with its name,
        into a new module so takes that statement's place.
-    A placement never contradicts where a module's pages already are (see module_pages): the sync moves no page, so a
-    module with a page outside the field it would get is noted and left as it is, for a graph pull request that moves
-    its pages too; a proof's module, whose moved statement's page is already in that field, is placed. A module that no
+    A placement never contradicts where a module's pages already are (see module_pages, in_topic): the sync moves no
+    page, so a module with a page outside the topic it would get is noted and left as it is, for a graph pull request
+    that moves its pages too; a proof's module, whose moved statement's page is already in that topic, is placed. A
+    changed module that gets no pages, in a folder that is no subject, is listed (PlacementPlan.subjectless). A module
+    that no
     longer exists at *head*, neither as a file nor as a folder, loses its own placement. Mathlib's entries
     (`Mathlib/...`) are not the project's modules and stay. *indexes* gives the Lean indexes of *base* and *head* (see
     lean_index), read otherwise."""
@@ -472,15 +503,18 @@ def placement_plan(base: str, head: str, bodies: dict[int, str], indexes=None) -
         elif module not in asked and module in unsure:
             plan.notes.append(unsure[module])
     for module, item in sorted(chosen.items()):
-        elsewhere = sorted(page for page in pages().get(module, ()) if not page.startswith(f"{item.to}/"))
+        elsewhere = sorted(page for page in pages().get(module, ()) if not in_topic(page, item.to, item.title))
         if elsewhere:
-            plan.notes.append(f"`{module}` is left unplaced: it already has pages outside `{item.to}`, such as "
-                              f"`{elsewhere[0]}`, which a placement would not move; placing it is a graph pull request "
-                              "that moves them")
+            plan.notes.append(f"`{module}` is left unplaced: it already has pages outside the topic `{item.title}` of "
+                              f"`{item.to}`, such as `{elsewhere[0]}`, which a placement would not move; placing it is "
+                              "a graph pull request that moves them")
         else:
             plan.added.append(item)
     placed = {item.module for item in plan.added}
     plan.unplaced = [(module, subject_of(module, taxonomy)) for module in new if module not in placed]
+    changed = {module for path in changed_between(base, head) if (module := library_module(path)) in modules}
+    plan.subjectless = sorted(module for module in changed - set(new) if placement_of(module, placements) is None
+                              and subject_of(module, taxonomy) is None)
     plan.dropped = sorted(key for key in placements if key.split("/", 1)[0] in wiki.LIBRARIES
                           and key not in modules and key not in folders)
     return plan
@@ -650,6 +684,8 @@ def make(options) -> int:
                          f"{restore}")
     if not changed:
         print("Nothing to sync: the graph is in step with the Lean merged up to here.")
+        for note in plan.notes + [f"{module} gets no pages: its folder has no subject" for module in plan.subjectless]:
+            print(f"note: {note}")
         return 0
     git("add", "-A", "--", TAXONOMY_PATH, "scripts/wiki-sync.json", "blueprint/roadmap", "blueprint/links")
     git("commit", "-q", "--no-verify", "-F", "-", data=message_for(base, head, plan, report).encode())
@@ -757,19 +793,23 @@ def describe(commit: str, base: str, head: str, plan: PlacementPlan, report: dic
              "that no longer exist dropped.", ""]
     if plan.added:
         lines += ["### Placements", "", "| Module | Field | Topic | From |", "| --- | --- | --- | --- |"]
-        lines += [f"| `{item.module}` | `{item.to}` | {item.title} | {item.source} |" for item in plan.added]
+        lines += [f"| `{item.module}` | `{item.to}` | `{item.title}` | {item.source} |" for item in plan.added]
         lines.append("")
     if plan.dropped:
         lines += ["### Placements dropped", ""] + [f"- `{key}`" for key in plan.dropped] + [""]
     if plan.unplaced:
-        lines += ["### New modules left unplaced", "", "No `Place:` line placed them, and they took no placed module's "
-                  "declarations. Placing one is a graph pull request that moves its pages; for one with no pages, in a "
-                  "folder with no subject, it also runs the whole-project sync, which writes them "
-                  "([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)):", ""]
+        lines += ["### New modules left unplaced", "", "Nothing placed them: they had no `Place:` line and took no placed "
+                  "module's declarations, or the notes below say why not. Placing one is a graph pull request that "
+                  "moves its pages; for one with no pages, in a folder with no subject, it also runs the whole-project "
+                  "sync, which writes them ([Maintaining articles](docs/BLUEPRINT.md#maintaining-articles)):", ""]
         lines += [f"- `{module}`: " + (f"in `{subject}/not-yet-classified/`" if subject else
                                        "**no pages**, as its folder has no subject")
                   for module, subject in plan.unplaced]
         lines.append("")
+    if plan.subjectless:
+        lines += ["### Changed modules with no pages", "", "Their folders have no subject, so their new documented "
+                  "declarations get no pages until a graph pull request places them and runs the whole-project sync:",
+                  ""] + [f"- `{module}`" for module in plan.subjectless] + [""]
     if plan.notes:
         lines += ["### Left for an editor", ""] + [f"- {note}" for note in plan.notes] + [""]
     for kind, title in sync.REPORT:

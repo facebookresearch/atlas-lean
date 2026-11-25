@@ -628,15 +628,17 @@ FILE` gives them as JSON instead). Write the description outside the
 checkout, as above: a file left in it stops the next `make`. It starts from
 the commit the last batch brought the graph up to, which that batch's commit
 names in a `Graph-sync-through:` trailer (`python3 scripts/graph_batch.py
-base` prints it). The first batch gives its base with `--base`; a later one
-may give an earlier commit, never a later one, which would skip Lean. Then it:
+base` prints it). The last batch is the newest merged pull request whose head
+is a batch; a commit within a merged branch never counts. The first batch
+gives its base with `--base`; a later one may give an earlier commit, never a
+later one, which would skip Lean. Then it:
 
 1. places each module that neither its own placement nor its folder's covers:
    as a merged pull request's `Place:` line asks, for a module that pull
    request's merge changed; else, for a module new since the base, where the
    module whose declarations it took, by name, is placed, as a proof takes the
    place of the wanted statement it moves. It never places a module that
-   already has a page outside the field it would get, since the sync moves no
+   already has a page outside the topic it would get, since the sync moves no
    page: placing that one is a graph pull request that moves its pages too. A
    module it cannot place goes to its subject's `not-yet-classified/` folder,
    as the sync puts any unplaced module; one in a folder that is no subject
@@ -660,17 +662,19 @@ A `Place:` line, one per module in a pull request's description, reads
 `Place: <module> -> <field>` or `Place: <module> -> <field> | <topic>`: the
 module as `scripts/taxonomy.json` keys it, a path without `.lean`, and a field
 or subfield of the taxonomy, such as `Algebra/rings-and-fields`. A topic is one
-line of at most 160 characters with none of ``<>[]{}|`@#\``. Without one, the
-module takes its docstring's `# ` heading, or else its name (its folder's, for
-a name such as `Basic`), as its topic's title, unless it takes declarations
-from a module placed in the same field, whose topic it then joins. A line
-counts only for a module that its pull request's merge changed and that
-nothing places yet. `make` reads the lines after the merge, as untrusted text,
-and leaves out those in code blocks and HTML comments.
+line of at most 160 characters with none of ``<>[]{}|`@#\`` and no address
+(`://`). Without one, the module takes its docstring's `# ` heading, or else
+its name (its folder's, for a name such as `Basic`), as its topic's title,
+unless it takes declarations from a module placed in the same field, whose
+topic it then joins. A line counts only for a module that its pull request's
+merge changed and that nothing places yet. `make` reads the lines after the
+merge, as untrusted text, and leaves out those in fenced code blocks and HTML
+comments.
 
 `--body FILE` writes the pull request's description: the placements, each with
-where it comes from; the placements dropped; the new modules left unplaced;
-what `make` left for an editor (lines it could not follow, modules it could not
+where it comes from; the placements dropped; the new modules left unplaced,
+and the changed ones that get no pages, in a folder with no subject; what
+`make` left for an editor (lines it could not follow, modules it could not
 place); the sync's own items for an editor, such as part-list lines its refresh
 replaced; and the pages whose declaration's docstring changed while no pull
 request recorded its digest. Push the commit to a branch of its own and open
