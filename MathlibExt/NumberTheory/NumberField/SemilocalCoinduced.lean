@@ -39,9 +39,66 @@ public import Mathlib.RingTheory.Valuation.RamificationGroup
 import Mathlib.NumberTheory.RamificationInertia.Galois
 import Mathlib.RingTheory.Invariant.Basic
 
+/-!
+# Semilocal coinduced modules of local units
+
+Let `K / E` be a Galois extension of number fields and `v` a place of `E`. The Galois group
+`K ≃ₐ[E] K` permutes the places of `K` above `v`, and an automorphism `σ` with `σ • w = w'`
+extends to a ring isomorphism between the completions at `w` and at `w'`. This file constructs
+these actions and transports and proves that the representation of the Galois group coinduced
+from the decomposition group of a chosen place `w₀` above `v`, acting on the units of the
+completion at `w₀`, is additively isomorphic to the product of the units of the completions at
+all places above `v`, compatibly with the Galois action. This is the module-level input of
+Shapiro's lemma for semilocal units, for finite and for infinite places.
+
+## Main definitions
+
+Finite places (nonzero primes of `𝓞 K`):
+
+* `NumberField.PlaceAbove.above E K v`: a chosen finite place of `K` above `v`.
+* `NumberField.PlaceTransport.instMulActionHeightOneSpectrum`: the action of `K ≃ₐ[E] K` on
+  finite places, `(σ • w).asIdeal = σ(w.asIdeal)`; equivalently `x ∈ σ • w ↔ σ⁻¹ • x ∈ w`.
+* `NumberField.PlaceDecomp.decomp E K w`: the decomposition group of `w`, and
+  `NumberField.PlaceDecomp.actRingEquiv`, its action on the completion `w.adicCompletion K`.
+* `NumberField.PlaceTransport.transport σ h`: for `h : σ • w = w'`, the ring isomorphism
+  `w.adicCompletion K ≃+* w'.adicCompletion K` extending `σ`, with its restrictions
+  `transportIntegers`, `transportUnits` and `transportIntegerUnits`.
+* `NumberField.FiniteSIdele.D`, `localUnits`, `localIntegerUnits`: the decomposition group of
+  the chosen place above `v` and its `ℤ`-representations on the local units and integer units.
+
+Infinite places:
+
+* `NumberField.ArchIdele.above E K v`: a chosen infinite place of `K` above `v`.
+* `NumberField.InfPlaceDecomp.decomp E K w`: the stabilizer of `w`, with its action
+  `NumberField.InfPlaceDecomp.actRingEquiv` on `w.Completion` and the representation
+  `NumberField.InfPlaceDecomp.localUnits` on the local units.
+* `NumberField.InfinitePlaceTransport.transport σ h` and `transportUnits`.
+
+## Main results
+
+* `NumberField.FiniteSIdele.exists_addEquiv_coind_localUnits`
+* `NumberField.ArchIdele.exists_addEquiv_coind_localUnits`
+
+Each gives an additive equivalence `e` from `Rep.coind` of the local units to
+`Additive (Π w, (local units at w))`, the product over the places `w` above `v`, such that the
+`w`-component of `e (g • f)` is the transport along `g` of the `w'`-component of `e f`
+whenever `g • w' = w`.
+
+## Conventions and scopes
+
+Automorphisms act on places on the left through their inverses: `σ • w` is the prime `σ(w)` for
+finite places (scope `NumberField.PlaceTransport`), and Mathlib's `σ • w = w ∘ σ⁻¹` for
+infinite places. Every transport is `σ` on the image of `K` (`transport_coe`); at finite places
+it preserves valuations (`valued_transport`) and integers (`transportIntegers`). When `σ` fixes
+`w`, the transport is the decomposition group action. The actions of decomposition groups on
+completions, their integers and unit groups are scoped instances: open
+`NumberField.PlaceDecomp` for finite places and `NumberField.InfPlaceDecomp` for infinite places.
+The coinduced representation is Mathlib's `Rep.coind`: functions `f` on the Galois group with
+`f (d * x) = d • f x` for `d` in the decomposition group, on which `g` acts by
+`(g • f) x = f (x * g)`.
+-/
+
 @[expose] public section
-
-
 
 open IsDedekindDomain NumberField
 
@@ -49,6 +106,9 @@ namespace NumberField.PlaceAbove
 
 variable (E K : Type*) [Field E] [NumberField E] [Field K] [Algebra E K]
 
+/-- **A finite place above a finite place.** For a field extension `K / E` with `E` a number
+field, every finite place `v` of `E` (a nonzero prime of `𝓞 E`) has a nonzero prime `w` of
+`𝓞 K` above it: the preimage of `w` in `𝓞 E` is `v`. -/
 theorem exists_above (v : HeightOneSpectrum (𝓞 E)) :
     ∃ w : HeightOneSpectrum (𝓞 K), w.asIdeal.comap (algebraMap (𝓞 E) (𝓞 K)) = v.asIdeal := by
   have hinj : Function.Injective (algebraMap (𝓞 E) (𝓞 K)) := fun x y hxy => by
@@ -65,9 +125,13 @@ theorem exists_above (v : HeightOneSpectrum (𝓞 E)) :
     exact v.ne_bot (by rw [← hWv, Ideal.under_bot])
   exact ⟨⟨W, hWmax.isPrime, hW0⟩, hWv⟩
 
+/-- **Chosen finite place above a finite place.** A choice, made with `Classical.choose`, of a
+nonzero prime `w` of `𝓞 K` lying over the finite place `v` of `E` (see `comap_above`). -/
 noncomputable def above (v : HeightOneSpectrum (𝓞 E)) : HeightOneSpectrum (𝓞 K) := (exists_above E K
   v).choose
 
+/-- **The chosen finite place lies over the given place.** The chosen place `above E K v` lies over
+`v`: its prime ideal contracts to `v` in `𝓞 E`. -/
 theorem comap_above (v : HeightOneSpectrum (𝓞 E)) :
     (above E K v).asIdeal.comap (algebraMap (𝓞 E) (𝓞 K)) = v.asIdeal := (exists_above E K
       v).choose_spec
@@ -82,6 +146,9 @@ namespace NumberField.PlaceDecomp
 section general
 variable {K : Type*} [Field K] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
+/-- **Valuation-preserving automorphisms are uniformly continuous.** A ring automorphism `f` of `K`
+that preserves a valuation `v`, `v (f x) = v x` for all `x`, is uniformly continuous as a map
+`WithVal v → WithVal v`. -/
 theorem uniformContinuous_congr_of_forall_eq (v : Valuation K Γ₀) (f : K ≃+* K) (h : ∀ x,
   v (f x) = v x) :
     UniformContinuous (WithVal.congr v v f) := by
@@ -99,6 +166,8 @@ theorem uniformContinuous_congr_of_forall_eq (v : Valuation K Γ₀) (f : K ≃+
   rw [Valuation.restrict_lt_iff_lt_embedding] at hx ⊢
   rwa [key]
 
+/-- In `WithZero (Multiplicative ℤ)` every `t < 1` satisfies `t ≤ exp (-1)`: the value group is
+discrete. -/
 theorem le_exp_neg_one_of_lt_one {t : WithZero (Multiplicative ℤ)} (ht : t < 1) : t ≤
   WithZero.exp (-1) := by
   rcases eq_or_ne t 0 with rfl | h0
@@ -108,6 +177,9 @@ theorem le_exp_neg_one_of_lt_one {t : WithZero (Multiplicative ℤ)} (ht : t < 1
     rw [WithZero.exp_le_exp]
     omega
 
+/-- A ring automorphism `f` of `K` such that the valuation `v` with values in
+`WithZero (Multiplicative ℤ)` is equivalent to `v ∘ f` preserves `v` exactly, `v (f x) = v x`,
+provided some element has valuation `exp (-1)`. -/
 theorem apply_eq_of_isEquiv_comap (v : Valuation K (WithZero (Multiplicative ℤ))) (f : K ≃+* K)
     (hf : v.IsEquiv (v.comap (f : K →+* K))) (hπ : ∃ π : K,
       v π = WithZero.exp (-1)) (x : K) : v (f x) = v x := by
@@ -153,11 +225,16 @@ end general
 variable (E K : Type*) [Field E] [Field K] [NumberField K] [Algebra E K] (w : HeightOneSpectrum (𝓞
   K))
 
+/-- **Decomposition group of a finite place.** The decomposition group of the finite place `w` of
+`K` in `K ≃ₐ[E] K`: the automorphisms that map the valuation subring of `w` onto itself
+(`ValuationSubring.decompositionSubgroup`). -/
 noncomputable abbrev decomp : Subgroup (K ≃ₐ[E] K) := ((w.valuation
   K).valuationSubring).decompositionSubgroup E
 
 variable {E K w}
 
+/-- For `σ` in the decomposition group of `w`, the `w`-adic valuation is equivalent to its
+composite with `σ`. -/
 theorem isEquiv_comap_of_mem (σ : K ≃ₐ[E] K) (hσ : σ ∈ decomp E K w) :
     (w.valuation K).IsEquiv ((w.valuation K).comap (σ : K →+* K)) := by
   rw [Valuation.isEquiv_iff_val_le_one]
@@ -169,15 +246,22 @@ theorem isEquiv_comap_of_mem (σ : K ≃ₐ[E] K) (hσ : σ ∈ decomp E K w) :
   rw [Valuation.comap_apply]
   exact this.symm
 
+/-- An element `σ` of the decomposition group of `w` preserves the `w`-adic valuation:
+`w.valuation K (σ x) = w.valuation K x`. -/
 theorem valuation_apply_of_mem (σ : K ≃ₐ[E] K) (hσ : σ ∈ decomp E K w) (x : K) :
     w.valuation K (σ x) = w.valuation K x :=
   apply_eq_of_isEquiv_comap (w.valuation K) (σ : K ≃+* K) (isEquiv_comap_of_mem σ
     hσ) (w.valuation_exists_uniformizer K) x
 
+/-- **Decomposition group elements are uniformly continuous at a finite place.** An element of the
+decomposition group of `w` is uniformly continuous for the `w`-adic uniformity on `K`. -/
 theorem uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) (hσ : σ ∈ decomp E K w) :
     UniformContinuous (WithVal.congr (w.valuation K) (w.valuation K) (σ : K ≃+* K)) :=
   uniformContinuous_congr_of_forall_eq (w.valuation K) (σ : K ≃+* K) (valuation_apply_of_mem σ hσ)
 
+/-- **Decomposition group action on the completion at a finite place.** An element `σ` of the
+decomposition group of `w` extends by continuity to a ring automorphism of the completion
+`w.adicCompletion K`; on the image of `K` it is `σ` (`actRingEquiv_coe`). -/
 noncomputable def actRingEquiv (σ : decomp E K w) : w.adicCompletion K ≃+* w.adicCompletion K :=
   ((HeightOneSpectrum.adicCompletion.equiv K w).trans
     (UniformSpace.Completion.mapRingEquiv (WithVal.congr (w.valuation K) (w.valuation K) ((σ : K
@@ -189,12 +273,16 @@ noncomputable def actRingEquiv (σ : decomp E K w) : w.adicCompletion K ≃+* w.
           K) (σ⁻¹).2).continuous))).trans
     (HeightOneSpectrum.adicCompletion.equiv K w).symm
 
+/-- **Decomposition action at a finite place on the underlying completion.** On the underlying
+uniform-space completion, `actRingEquiv σ` is the completion map of `σ`. -/
 theorem actRingEquiv_apply (σ : decomp E K w) (x : w.adicCompletion K) :
     (actRingEquiv σ x).toCompletion
       = UniformSpace.Completion.map (WithVal.congr (w.valuation K) (w.valuation K) ((σ : K ≃ₐ[E] K)
         : K ≃+* K)) x.toCompletion :=
   rfl
 
+/-- **Decomposition action at a finite place on elements of the field.** On the image of `K`,
+`actRingEquiv σ` is `σ`: it sends the image of `x` to the image of `σ x`. -/
 theorem actRingEquiv_coe (σ : decomp E K w) (x : WithVal (w.valuation K)) :
     actRingEquiv σ (x : w.adicCompletion K)
       = ((WithVal.congr (w.valuation K) (w.valuation K) ((σ : K ≃ₐ[E] K) : K ≃+* K) x
@@ -204,6 +292,8 @@ theorem actRingEquiv_coe (σ : decomp E K w) (x : WithVal (w.valuation K)) :
     HeightOneSpectrum.adicCompletion.toCompletion_ofCompletion,
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2)]
 
+/-- **Continuity of the decomposition action at a finite place.** The automorphism `actRingEquiv σ`
+of `w.adicCompletion K` is continuous. -/
 theorem continuous_actRingEquiv (σ : decomp E K w) : Continuous (actRingEquiv σ) := by
   have : (actRingEquiv σ : w.adicCompletion K → w.adicCompletion K)
       = HeightOneSpectrum.adicCompletion.ofCompletion ∘
@@ -216,6 +306,8 @@ theorem continuous_actRingEquiv (σ : decomp E K w) : Continuous (actRingEquiv �
     (UniformSpace.Completion.continuous_map.comp
       (HeightOneSpectrum.adicCompletion.continuous_toCompletion K w))
 
+/-- **The identity acts trivially on the completion at a finite place.** The identity of the
+decomposition group acts on `w.adicCompletion K` as the identity. -/
 theorem actRingEquiv_one : actRingEquiv (1 : decomp E K w) = RingEquiv.refl _ := by
   apply RingEquiv.ext
   intro x
@@ -228,6 +320,8 @@ theorem actRingEquiv_one : actRingEquiv (1 : decomp E K w) = RingEquiv.refl _ :=
         ((1 : decomp E K w) : K ≃ₐ[E] K) (1 : decomp E K w).2)]
   rfl
 
+/-- **The decomposition action at a finite place respects products.** The action on
+`w.adicCompletion K` respects products: `σ * τ` acts as `τ` followed by `σ`. -/
 theorem actRingEquiv_mul (σ τ : decomp E K w) : actRingEquiv (σ * τ) = (actRingEquiv
   τ).trans (actRingEquiv σ) := by
   apply RingEquiv.ext
@@ -245,19 +339,28 @@ theorem actRingEquiv_mul (σ τ : decomp E K w) : actRingEquiv (σ * τ) = (actR
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2)]
   rfl
 
+/-- **Decomposition group to automorphisms of the completion at a finite place.** The action of the
+decomposition group of `w` on `w.adicCompletion K`, as a group homomorphism into the ring
+automorphisms of the completion. -/
 noncomputable def actHom : decomp E K w →* (w.adicCompletion K ≃+* w.adicCompletion K) where
   toFun := actRingEquiv
   map_one' := actRingEquiv_one
   map_mul' σ τ := actRingEquiv_mul σ τ
 
+/-- An element of the decomposition group acts on `WithVal (w.valuation K)`, a copy of `K`, as it
+acts on `K`. -/
 theorem smul_withVal_def (σ : decomp E K w) (y : WithVal (w.valuation K)) :
     σ • y = WithVal.toVal (w.valuation K) ((σ : K ≃ₐ[E] K) y.ofVal) := rfl
 
+/-- The decomposition group of `w` acts on `WithVal (w.valuation K)` through its action on `K`
+(scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instMulActionWithVal : MulAction (decomp E K w) (WithVal (w.valuation
   K)) where
   one_smul y := by rw [smul_withVal_def]; rfl
   mul_smul σ τ y := by rw [smul_withVal_def, smul_withVal_def, smul_withVal_def]; rfl
 
+/-- The action of the decomposition group on `WithVal (w.valuation K)` is additive (scoped in
+`NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instDistribMulActionWithVal : DistribMulAction (decomp E K
   w) (WithVal (w.valuation K)) where
   smul_zero σ := by rw [smul_withVal_def]; simp
@@ -266,10 +369,15 @@ noncomputable scoped instance instDistribMulActionWithVal : DistribMulAction (de
     change WithVal.toVal _ ((σ : K ≃ₐ[E] K) (x.ofVal + y.ofVal)) = _
     rw [map_add]; rfl
 
+/-- Each element of the decomposition group acts uniformly continuously on
+`WithVal (w.valuation K)` (scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instUniformContinuousConstSMul :
     UniformContinuousConstSMul (decomp E K w) (WithVal (w.valuation K)) :=
   ⟨fun σ => uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2⟩
 
+/-- **Decomposition group acts on the completion at a finite place.** The decomposition group of
+`w` acts on `w.adicCompletion K` by ring automorphisms, through `actRingEquiv` (scoped in
+`NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instMulSemiringAction : MulSemiringAction (decomp E K
   w) (w.adicCompletion K) where
   smul σ x := actRingEquiv σ x
@@ -287,18 +395,26 @@ noncomputable scoped instance instMulSemiringAction : MulSemiringAction (decomp 
     change actRingEquiv σ (x * y) = actRingEquiv σ x * actRingEquiv σ y
     rw [map_mul]
 
+/-- **The scoped action at a finite place is the decomposition action.** The scoped action of the
+decomposition group on `w.adicCompletion K` is `actRingEquiv`. -/
 theorem smul_def (σ : decomp E K w) (x : w.adicCompletion K) : σ • x = actRingEquiv σ x := rfl
 
+/-- The decomposition group of `w` acts on the units of `w.adicCompletion K` through its action on
+the completion (scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instMulDistribMulActionUnits : MulDistribMulAction (decomp E K
   w) (w.adicCompletion K)ˣ :=
   Units.mulDistribMulActionRight
 
+/-- **The action on local units at a finite place.** The action on units of `w.adicCompletion K` is
+the action on the underlying element. -/
 theorem coe_smul_units (σ : decomp E K w) (u : (w.adicCompletion K)ˣ) : ((σ • u : (w.adicCompletion
   K)ˣ) : w.adicCompletion K) = σ • (u : w.adicCompletion K) := rfl
 
 section integers
 
 open WithZeroTopology in
+/-- The decomposition group action preserves the valuation of the completion:
+`Valued.v (actRingEquiv σ x) = Valued.v x`. -/
 theorem valued_actRingEquiv (σ : decomp E K w) (x : w.adicCompletion K) : Valued.v (actRingEquiv σ
   x) = Valued.v x := by
   have hclosed : IsClosed {y : w.adicCompletion K | Valued.v (actRingEquiv σ y) = Valued.v y} := by
@@ -322,21 +438,29 @@ theorem valued_actRingEquiv (σ : decomp E K w) (x : w.adicCompletion K) : Value
     WithVal.congr_apply]
   exact valuation_apply_of_mem (σ : K ≃ₐ[E] K) σ.2 a.ofVal
 
+/-- The scoped decomposition group action preserves the valuation of `w.adicCompletion K`. -/
 theorem valued_smul (σ : decomp E K w) (x : w.adicCompletion K) : Valued.v (σ • x) = Valued.v x :=
   valued_actRingEquiv σ x
 
+/-- The decomposition group action preserves the integers of the completion:
+`σ • x ∈ w.adicCompletionIntegers K ↔ x ∈ w.adicCompletionIntegers K`. -/
 theorem smul_mem_adicCompletionIntegers_iff (σ : decomp E K w) (x : w.adicCompletion K) :
     σ • x ∈ w.adicCompletionIntegers K ↔ x ∈ w.adicCompletionIntegers K := by
   rw [HeightOneSpectrum.mem_adicCompletionIntegers, HeightOneSpectrum.mem_adicCompletionIntegers,
     valued_smul]
 
+/-- The decomposition group of `w` acts on the integers `w.adicCompletionIntegers K` by restricting
+its action on the completion (scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instSMulIntegers : SMul (decomp E K w) (w.adicCompletionIntegers K) :=
   ⟨fun σ x => ⟨σ • (x : w.adicCompletion K), (smul_mem_adicCompletionIntegers_iff σ _).2 x.2⟩⟩
 
+/-- The action on the integers of the completion is the action on the underlying element. -/
 theorem coe_smul_integers (σ : decomp E K w) (x : w.adicCompletionIntegers K) :
     ((σ • x : w.adicCompletionIntegers K) : w.adicCompletion K) = σ • (x : w.adicCompletion K)
       := rfl
 
+/-- The decomposition group of `w` acts on the integers of `w.adicCompletion K` by ring
+automorphisms (scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instMulSemiringActionIntegers : MulSemiringAction (decomp E K
   w) (w.adicCompletionIntegers K) :=
   { instSMulIntegers (E := E) (K := K) (w := w) with
@@ -351,24 +475,36 @@ noncomputable scoped instance instMulSemiringActionIntegers : MulSemiringAction 
       rw [coe_smul_integers]
       exact MulSemiringAction.smul_mul σ (x : w.adicCompletion K) y) }
 
+/-- The decomposition group of `w` acts on the units of the integers of `w.adicCompletion K`
+(scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instMulDistribMulActionIntegerUnits : MulDistribMulAction (decomp E K
   w) (w.adicCompletionIntegers K)ˣ :=
   Units.mulDistribMulActionRight
 
+/-- The multiplicative action underlying `instMulSemiringActionIntegers`, as a direct instance
+(scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instMulActionIntegers : MulAction (decomp E K
   w) (w.adicCompletionIntegers K) :=
   (instMulSemiringActionIntegers (E := E) (K := K) (w := w)).toMulAction
 
+/-- The scalar action underlying `instMulDistribMulActionUnits`, as a direct instance (scoped in
+`NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instSMulUnits : SMul (decomp E K w) (w.adicCompletion K)ˣ :=
   (instMulDistribMulActionUnits (E := E) (K := K) (w := w)).toMulAction.toSMul
 
+/-- The scalar action underlying `instMulDistribMulActionIntegerUnits`, as a direct instance
+(scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instSMulIntegerUnits : SMul (decomp E K w) (w.adicCompletionIntegers
   K)ˣ :=
   (instMulDistribMulActionIntegerUnits (E := E) (K := K) (w := w)).toMulAction.toSMul
 
+/-- The multiplicative action underlying `instMulDistribMulActionUnits`, as a direct instance
+(scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instMulActionUnits : MulAction (decomp E K w) (w.adicCompletion K)ˣ :=
   (instMulDistribMulActionUnits (E := E) (K := K) (w := w)).toMulAction
 
+/-- The multiplicative action underlying `instMulDistribMulActionIntegerUnits`, as a direct
+instance (scoped in `NumberField.PlaceDecomp`). -/
 noncomputable scoped instance instMulActionIntegerUnits : MulAction (decomp E K
   w) (w.adicCompletionIntegers K)ˣ :=
   (instMulDistribMulActionIntegerUnits (E := E) (K := K) (w := w)).toMulAction
@@ -384,6 +520,9 @@ namespace NumberField.PlaceTransport
 section general
 variable {R S : Type*} [Field R] [Field S] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
+/-- **Valuation-matching ring isomorphisms are uniformly continuous.** A ring isomorphism
+`f : R ≃+* S` that carries a surjective valuation `v` on `R` to the valuation `v'` on `S`,
+`v' (f x) = v x`, is uniformly continuous as a map `WithVal v → WithVal v'`. -/
 theorem uniformContinuous_congr_of_forall_eq (v : Valuation R Γ₀) (v' : Valuation S Γ₀) (hv
   : Function.Surjective v)
     (f : R ≃+* S) (h : ∀ x, v' (f x) = v x) : UniformContinuous (WithVal.congr v v' f) := by
@@ -411,6 +550,9 @@ end general
 
 variable (E K : Type*) [Field E] [Field K] [Algebra E K]
 
+/-- **Galois action on finite places.** The automorphisms `K ≃ₐ[E] K` act on the left on the
+nonzero primes of `𝓞 K`: `σ • w` is the preimage of `w` under `σ⁻¹`, that is the prime `σ(w)`,
+so `x ∈ σ • w ↔ σ⁻¹ • x ∈ w` (scoped in `NumberField.PlaceTransport`). -/
 noncomputable scoped instance instMulActionHeightOneSpectrum : MulAction (K ≃ₐ[E]
   K) (HeightOneSpectrum (𝓞 K)) where
   smul σ w := HeightOneSpectrum.comap (MulSemiringAction.toRingEquiv (K ≃ₐ[E] K) (𝓞 K) σ⁻¹ : 𝓞 K →+*
@@ -429,17 +571,21 @@ noncomputable scoped instance instMulActionHeightOneSpectrum : MulAction (K ≃�
 
 variable {E K}
 
+/-- The prime ideal of `σ • w` is the preimage of the prime ideal of `w` under `σ⁻¹`. -/
 theorem smul_asIdeal (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) :
     (σ • w).asIdeal = w.asIdeal.comap (MulSemiringAction.toRingEquiv (K ≃ₐ[E] K) (𝓞 K) σ⁻¹ : 𝓞 K →+*
       𝓞 K) := rfl
 
+/-- `x` lies in the prime of `σ • w` if and only if `σ⁻¹ • x` lies in the prime of `w`. -/
 theorem mem_smul_asIdeal_iff (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) (x : 𝓞 K) :
     x ∈ (σ • w).asIdeal ↔ σ⁻¹ • x ∈ w.asIdeal := Iff.rfl
 
+/-- `σ • x` lies in the prime of `σ • w` if and only if `x` lies in the prime of `w`. -/
 theorem smul_mem_smul_asIdeal_iff (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) (x : 𝓞 K) :
     σ • x ∈ (σ • w).asIdeal ↔ x ∈ w.asIdeal := by
   rw [mem_smul_asIdeal_iff, inv_smul_smul]
 
+/-- The prime ideal of `σ • w` is the image of the prime ideal of `w` under `σ`. -/
 theorem smul_asIdeal_eq_map (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) :
     (σ • w).asIdeal = Ideal.map ((MulSemiringAction.toRingEquiv (K ≃ₐ[E] K) (𝓞 K) σ : 𝓞 K ≃+* 𝓞 K)
       : 𝓞 K →+* 𝓞 K) w.asIdeal := by
@@ -447,6 +593,8 @@ theorem smul_asIdeal_eq_map (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)
   ext x
   rw [mem_smul_asIdeal_iff, Ideal.mem_comap, MulSemiringAction.toRingEquiv_apply_symm_apply]
 
+/-- `σ • x` lies in the `n`-th power of the prime of `σ • w` if and only if `x` lies in the `n`-th
+power of the prime of `w`. -/
 theorem smul_mem_smul_asIdeal_pow_iff (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) (x : 𝓞 K) (n
   : ℕ) :
     σ • x ∈ (σ • w).asIdeal ^ n ↔ x ∈ w.asIdeal ^ n := by
@@ -454,12 +602,16 @@ theorem smul_mem_smul_asIdeal_pow_iff (σ : K ≃ₐ[E] K) (w : HeightOneSpectru
     MulSemiringAction.toRingEquiv_apply_symm_apply,
     inv_smul_smul]
 
+/-- **Inverting the Galois action on finite places.** If `σ • w = w'` for finite places of `K`, then
+`σ⁻¹ • w' = w`. -/
 theorem inv_smul_eq_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w')
   : σ⁻¹ • w' = w := by
   rw [← h, inv_smul_smul]
 
 variable [NumberField K]
 
+/-- The Galois action carries valuations along: for `r ∈ 𝓞 K`, the `σ • w`-adic valuation of
+`σ • r` equals the `w`-adic valuation of `r`. -/
 theorem intValuation_smul_apply (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) (r : 𝓞 K) :
     (σ • w).intValuation (σ • r) = w.intValuation r := by
   rcases eq_or_ne r 0 with rfl | hr
@@ -475,6 +627,7 @@ theorem intValuation_smul_apply (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (�
       rw [hn, HeightOneSpectrum.intValuation_le_pow_iff_mem, ← smul_mem_smul_asIdeal_pow_iff σ,
         ← HeightOneSpectrum.intValuation_le_pow_iff_mem, hn]
 
+/-- For `x ∈ K`, the `σ • w`-adic valuation of `σ x` equals the `w`-adic valuation of `x`. -/
 theorem valuation_smul_apply (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K)) (x : K) :
     (σ • w).valuation K (σ x) = w.valuation K x := by
   obtain ⟨a, b, -, rfl⟩ := IsFractionRing.div_surjective (A := 𝓞 K) x
@@ -485,12 +638,15 @@ theorem valuation_smul_apply (σ : K ≃ₐ[E] K) (w : HeightOneSpectrum (𝓞 K
       intValuation_smul_apply,
     intValuation_smul_apply]
 
+/-- If `σ • w = w'`, then `w'.valuation K (σ x) = w.valuation K x` for every `x ∈ K`. -/
 theorem valuation_apply_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w =
   w') (x : K) :
     w'.valuation K (σ x) = w.valuation K x := by
   subst h
   exact valuation_smul_apply σ w x
 
+/-- **Galois automorphisms are uniformly continuous between finite places.** If `σ • w = w'`, then
+`σ` is uniformly continuous from the `w`-adic to the `w'`-adic uniformity on `K`. -/
 theorem uniformContinuous_congr_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : HeightOneSpectrum (𝓞 K)} (h : σ •
   w = w') :
     UniformContinuous (WithVal.congr (w.valuation K) (w'.valuation K) ((σ : K ≃ₐ[E] K) : K ≃+* K))
@@ -498,6 +654,10 @@ theorem uniformContinuous_congr_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : HeightOn
   uniformContinuous_congr_of_forall_eq (w.valuation K) (w'.valuation K) (w.valuation_surjective K)
     _ (valuation_apply_of_smul_eq h)
 
+/-- **Transport between completions at finite places.** For `σ : K ≃ₐ[E] K` with `σ • w = w'`,
+the ring isomorphism `w.adicCompletion K ≃+* w'.adicCompletion K` extending `σ` by continuity:
+on the image of `K` it is `σ` (`transport_coe`), and it preserves valuations
+(`valued_transport`). -/
 noncomputable def transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w') :
     w.adicCompletion K ≃+* w'.adicCompletion K :=
   ((HeightOneSpectrum.adicCompletion.equiv K w).trans
@@ -508,6 +668,8 @@ noncomputable def transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞
         rfl))).trans
     (HeightOneSpectrum.adicCompletion.equiv K w').symm
 
+/-- **Transport between finite places on the underlying completions.** On the underlying
+uniform-space completions, `transport σ h` is the completion map of `σ`. -/
 theorem transport_apply (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w') (x
   : w.adicCompletion K) :
     (transport σ h x).toCompletion
@@ -515,6 +677,9 @@ theorem transport_apply (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)}
         : K ≃+* K)) x.toCompletion :=
   rfl
 
+/-- **Transport between finite places on elements of the field.** On the image of `K`,
+`transport σ h` is `σ`: it sends the image of `x` in `w.adicCompletion K` to the image of `σ x` in
+`w'.adicCompletion K`. -/
 theorem transport_coe (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w') (x
   : WithVal (w.valuation K)) :
     transport σ h (x : w.adicCompletion K)
@@ -525,6 +690,8 @@ theorem transport_coe (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (
     HeightOneSpectrum.adicCompletion.toCompletion_ofCompletion,
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_smul_eq h)]
 
+/-- **Continuity of the transport between finite places.** The transport `transport σ h` between
+completions at finite places is continuous. -/
 theorem continuous_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w')
   : Continuous (transport σ h) := by
   have : (transport σ h : w.adicCompletion K → w'.adicCompletion K)
@@ -538,6 +705,7 @@ theorem continuous_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (�
     (UniformSpace.Completion.continuous_map.comp
       (HeightOneSpectrum.adicCompletion.continuous_toCompletion K w))
 
+/-- For `c ≠ 0`, the set of `y` in `w.adicCompletion K` with `Valued.v y ≤ c` is clopen. -/
 theorem isClopen_setOf_valued_le (w : HeightOneSpectrum (𝓞 K)) {c : WithZero (Multiplicative ℤ)} (hc
   : c ≠ 0) :
     IsClopen {y : w.adicCompletion K | Valued.v y ≤ c} := by
@@ -550,6 +718,7 @@ theorem isClopen_setOf_valued_le (w : HeightOneSpectrum (𝓞 K)) {c : WithZero 
   rw [this]
   exact Valued.isClopen_closedBall (w.adicCompletion K) hr
 
+/-- The transport preserves valuations: `Valued.v (transport σ h x) = Valued.v x`. -/
 theorem valued_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w') (x
   : w.adicCompletion K) :
     Valued.v (transport σ h x) = Valued.v x := by
@@ -590,6 +759,8 @@ theorem valued_transport (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)
       _).2 ((map_ne_zero (transport σ h)).2 hx)
     exact le_antisymm ((key _ h0 x).2 le_rfl) ((key _ h0' x).1 le_rfl)
 
+/-- The transport matches the integers of the two completions:
+`transport σ h x ∈ w'.adicCompletionIntegers K ↔ x ∈ w.adicCompletionIntegers K`. -/
 theorem transport_mem_adicCompletionIntegers_iff (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h
   : σ • w = w')
     (x : w.adicCompletion K) : transport σ h x ∈ w'.adicCompletionIntegers K ↔ x ∈
@@ -597,6 +768,8 @@ theorem transport_mem_adicCompletionIntegers_iff (σ : K ≃ₐ[E] K) {w w' : He
   rw [HeightOneSpectrum.mem_adicCompletionIntegers, HeightOneSpectrum.mem_adicCompletionIntegers,
     valued_transport]
 
+/-- **Transport between integers of completions.** The restriction of `transport σ h` to a ring
+isomorphism `w.adicCompletionIntegers K ≃+* w'.adicCompletionIntegers K`. -/
 noncomputable def transportIntegers (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w =
   w') :
     w.adicCompletionIntegers K ≃+* w'.adicCompletionIntegers K where
@@ -611,16 +784,21 @@ noncomputable def transportIntegers (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectr
   map_add' x y := Subtype.ext (map_add (transport σ h) (x : w.adicCompletion K) (y
     : w.adicCompletion K))
 
+/-- `transportIntegers σ h` agrees with `transport σ h` on underlying elements. -/
 theorem coe_transportIntegers (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w = w') (x
   : w.adicCompletionIntegers K) :
     ((transportIntegers σ h x : w'.adicCompletionIntegers K) : w'.adicCompletion K) = transport σ
       h (x : w.adicCompletion K) := rfl
 
+/-- **Transport between local units at finite places.** The group isomorphism
+`(w.adicCompletion K)ˣ ≃* (w'.adicCompletion K)ˣ` induced by `transport σ h`. -/
 noncomputable abbrev transportUnits (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ • w =
   w') :
     (w.adicCompletion K)ˣ ≃* (w'.adicCompletion K)ˣ :=
   Units.mapEquiv (transport σ h).toMulEquiv
 
+/-- The group isomorphism between the units of `w.adicCompletionIntegers K` and of
+`w'.adicCompletionIntegers K` induced by `transportIntegers σ h`. -/
 noncomputable abbrev transportIntegerUnits (σ : K ≃ₐ[E] K) {w w' : HeightOneSpectrum (𝓞 K)} (h : σ •
   w = w') :
     (w.adicCompletionIntegers K)ˣ ≃* (w'.adicCompletionIntegers K)ˣ :=
@@ -788,24 +966,36 @@ namespace NumberField.FiniteSIdele
 
 variable (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
 
+/-- **Decomposition group at the chosen place above a finite place.** The decomposition group in
+`K ≃ₐ[E] K` of the chosen place `PlaceAbove.above E K v` above the finite place `v` of `E`. -/
 noncomputable abbrev D (v : HeightOneSpectrum (𝓞 E)) : Subgroup (K ≃ₐ[E] K) :=
   NumberField.PlaceDecomp.decomp E K (NumberField.PlaceAbove.above E K v)
 
 section local_modules
 
+/-- **Local units at the chosen place above a finite place.** The units of the completion
+`w.adicCompletion K` at `w = PlaceAbove.above E K v`, written additively, as a `ℤ`-linear
+representation of the decomposition group `D E K v` acting on the completion. -/
 noncomputable abbrev localUnits (v : HeightOneSpectrum (𝓞 E)) : Rep ℤ (D E K v) :=
   Rep.ofMulDistribMulAction (D E K v) ((NumberField.PlaceAbove.above E K v).adicCompletion K)ˣ
 
+/-- **Local integer units at the chosen place above a finite place.** The units of the integers
+`w.adicCompletionIntegers K` at `w = PlaceAbove.above E K v`, written additively, as a
+`ℤ`-linear representation of `D E K v`. -/
 noncomputable abbrev localIntegerUnits (v : HeightOneSpectrum (𝓞 E)) : Rep ℤ (D E K v) :=
   Rep.ofMulDistribMulAction (D E K v) ((NumberField.PlaceAbove.above E K v).adicCompletionIntegers
     K)ˣ
 
+/-- The inclusion of the integer units into the units of the completion at the chosen place above
+`v`, as a morphism of representations of `D E K v`. -/
 noncomputable def integerUnitsToUnits (v : HeightOneSpectrum (𝓞 E)) : localIntegerUnits E K v ⟶
   localUnits E K v :=
   Rep.ofHom ⟨(Units.map ((NumberField.PlaceAbove.above E K v).adicCompletionIntegers
     K).subtype.toMonoidHom).toAdditive.toIntLinearMap,
     fun _ => rfl⟩
 
+/-- `integerUnitsToUnits` sends an integer unit to the same element, viewed as a unit of the
+completion. -/
 theorem integerUnitsToUnits_hom_apply (v : HeightOneSpectrum (𝓞 E)) (u
   : ((NumberField.PlaceAbove.above E K v).adicCompletionIntegers K)ˣ) :
     Additive.toMul ((integerUnitsToUnits E K v).hom (Additive.ofMul u))
@@ -825,6 +1015,9 @@ namespace NumberField.InfPlaceDecomp
 section general
 variable {K : Type*} [Field K]
 
+/-- **Absolute-value-preserving automorphisms are uniformly continuous.** A ring automorphism `f` of
+`K` that preserves a real absolute value `v` is an isometry of `WithAbs v`, hence uniformly
+continuous. -/
 theorem uniformContinuous_congr_of_forall_eq (v : AbsoluteValue K ℝ) (f : K ≃+* K) (h : ∀ x,
   v (f x) = v x) :
     UniformContinuous (WithAbs.congr v v f) :=
@@ -836,19 +1029,29 @@ end general
 
 variable (E K : Type*) [Field E] [Field K] [Algebra E K] (w : InfinitePlace K)
 
+/-- **Decomposition group of an infinite place.** The stabilizer of the infinite place `w` of `K`
+in `K ≃ₐ[E] K`, for Mathlib's action `σ • w = w ∘ σ⁻¹`. -/
 abbrev decomp : Subgroup (K ≃ₐ[E] K) := MulAction.stabilizer (K ≃ₐ[E] K) w
 
 variable {E K w}
 
+/-- An element `σ` of the decomposition group of the infinite place `w` preserves `w`:
+`w (σ x) = w x`. -/
 theorem apply_of_mem (σ : K ≃ₐ[E] K) (hσ : σ ∈ decomp E K w) (x : K) : w (σ x) = w x := by
   rw [MulAction.mem_stabilizer_iff] at hσ
   conv_lhs => rw [← hσ]
   rw [InfinitePlace.smul_apply, AlgEquiv.symm_apply_apply]
 
+/-- **Decomposition group elements are uniformly continuous at an infinite place.** An element of
+the decomposition group of the infinite place `w` is uniformly continuous for the absolute value of
+`w`. -/
 theorem uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) (hσ : σ ∈ decomp E K w) :
     UniformContinuous (WithAbs.congr w.1 w.1 (σ : K ≃+* K)) :=
   uniformContinuous_congr_of_forall_eq w.1 (σ : K ≃+* K) (apply_of_mem σ hσ)
 
+/-- **Decomposition group action on the completion at an infinite place.** An element `σ` of the
+decomposition group of the infinite place `w` extends by continuity to a ring automorphism of
+the completion `w.Completion`; on the image of `K` it is `σ` (`actRingEquiv_coe`). -/
 noncomputable def actRingEquiv (σ : decomp E K w) : w.Completion ≃+* w.Completion :=
   ((AbsoluteValue.Completion.equiv w.1).trans
     (UniformSpace.Completion.mapRingEquiv (WithAbs.congr w.1 w.1 ((σ : K ≃ₐ[E] K) : K ≃+* K))
@@ -859,6 +1062,8 @@ noncomputable def actRingEquiv (σ : decomp E K w) : w.Completion ≃+* w.Comple
           K) (σ⁻¹).2).continuous))).trans
     (AbsoluteValue.Completion.equiv w.1).symm
 
+/-- **Decomposition action at an infinite place on the underlying completion.** On the underlying
+uniform-space completion, `actRingEquiv σ` is the completion map of `σ`. -/
 theorem actRingEquiv_apply (σ : decomp E K w) (x : w.Completion) :
     AbsoluteValue.Completion.toCompletion (actRingEquiv σ x) =
       UniformSpace.Completion.map (WithAbs.congr w.1 w.1 ((σ : K ≃ₐ[E] K) : K ≃+* K))
@@ -868,6 +1073,8 @@ theorem actRingEquiv_apply (σ : decomp E K w) (x : w.Completion) :
     AbsoluteValue.Completion.equiv_apply]
   rfl
 
+/-- **Decomposition action at an infinite place on elements of the field.** On the image of `K`,
+`actRingEquiv σ` is `σ`: it sends the image of `x` to the image of `σ x`. -/
 theorem actRingEquiv_coe (σ : decomp E K w) (x : WithAbs w.1) :
     actRingEquiv σ (x : w.Completion) = ((WithAbs.congr w.1 w.1 ((σ : K ≃ₐ[E] K) : K ≃+* K) x
       : WithAbs w.1) : w.Completion) := by
@@ -876,6 +1083,8 @@ theorem actRingEquiv_coe (σ : decomp E K w) (x : WithAbs w.1) :
     AbsoluteValue.Completion.toCompletion_coe,
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2)]
 
+/-- **Continuity of the decomposition action at an infinite place.** The automorphism
+`actRingEquiv σ` of `w.Completion` is continuous. -/
 theorem continuous_actRingEquiv (σ : decomp E K w) : Continuous (actRingEquiv σ) := by
   have : (actRingEquiv σ : w.Completion → w.Completion) =
       AbsoluteValue.Completion.ofCompletion ∘
@@ -889,6 +1098,8 @@ theorem continuous_actRingEquiv (σ : decomp E K w) : Continuous (actRingEquiv �
     (UniformSpace.Completion.continuous_map.comp
       (AbsoluteValue.Completion.continuous_toCompletion w.1))
 
+/-- **The identity acts trivially on the completion at an infinite place.** The identity of the
+decomposition group acts on `w.Completion` as the identity. -/
 theorem actRingEquiv_one : actRingEquiv (1 : decomp E K w) = RingEquiv.refl _ := by
   apply RingEquiv.ext
   intro x
@@ -901,6 +1112,8 @@ theorem actRingEquiv_one : actRingEquiv (1 : decomp E K w) = RingEquiv.refl _ :=
     (uniformContinuous_congr_of_mem ((1 : decomp E K w) : K ≃ₐ[E] K) (1 : decomp E K w).2)]
   rfl
 
+/-- **The decomposition action at an infinite place respects products.** The action on
+`w.Completion` respects products: `σ * τ` acts as `τ` followed by `σ`. -/
 theorem actRingEquiv_mul (σ τ : decomp E K w) : actRingEquiv (σ * τ) = (actRingEquiv
   τ).trans (actRingEquiv σ) := by
   apply RingEquiv.ext
@@ -919,18 +1132,27 @@ theorem actRingEquiv_mul (σ τ : decomp E K w) : actRingEquiv (σ * τ) = (actR
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2)]
   rfl
 
+/-- **Decomposition group to automorphisms of the completion at an infinite place.** The action of
+the decomposition group of the infinite place `w` on `w.Completion`, as a group homomorphism into
+the ring automorphisms of the completion. -/
 noncomputable def actHom : decomp E K w →* (w.Completion ≃+* w.Completion) where
   toFun := actRingEquiv
   map_one' := actRingEquiv_one
   map_mul' σ τ := actRingEquiv_mul σ τ
 
+/-- An element of the decomposition group acts on `WithAbs w.1`, a copy of `K`, as it acts on
+`K`. -/
 theorem smul_withAbs_def (σ : decomp E K w) (y : WithAbs w.1) : σ • y = WithAbs.toAbs w.1 ((σ : K
   ≃ₐ[E] K) y.ofAbs) := rfl
 
+/-- The decomposition group of the infinite place `w` acts on `WithAbs w.1` through its action on
+`K` (scoped in `NumberField.InfPlaceDecomp`). -/
 noncomputable scoped instance instMulActionWithAbs : MulAction (decomp E K w) (WithAbs w.1) where
   one_smul y := by rw [smul_withAbs_def]; rfl
   mul_smul σ τ y := by rw [smul_withAbs_def, smul_withAbs_def, smul_withAbs_def]; rfl
 
+/-- The action of the decomposition group on `WithAbs w.1` is additive (scoped in
+`NumberField.InfPlaceDecomp`). -/
 noncomputable scoped instance instDistribMulActionWithAbs : DistribMulAction (decomp E K w) (WithAbs
   w.1) where
   smul_zero σ := by rw [smul_withAbs_def]; simp
@@ -939,10 +1161,15 @@ noncomputable scoped instance instDistribMulActionWithAbs : DistribMulAction (de
     change WithAbs.toAbs _ ((σ : K ≃ₐ[E] K) (x.ofAbs + y.ofAbs)) = _
     rw [map_add]; rfl
 
+/-- Each element of the decomposition group acts uniformly continuously on `WithAbs w.1` (scoped
+in `NumberField.InfPlaceDecomp`). -/
 noncomputable scoped instance instUniformContinuousConstSMul : UniformContinuousConstSMul (decomp E
   K w) (WithAbs w.1) :=
   ⟨fun σ => uniformContinuous_congr_of_mem (σ : K ≃ₐ[E] K) σ.2⟩
 
+/-- **Decomposition group acts on the completion at an infinite place.** The decomposition group
+of the infinite place `w` acts on `w.Completion` by ring automorphisms, through `actRingEquiv`
+(scoped in `NumberField.InfPlaceDecomp`). -/
 noncomputable scoped instance instMulSemiringAction : MulSemiringAction (decomp E K w) w.Completion
   where
   smul σ x := actRingEquiv σ x
@@ -958,25 +1185,40 @@ noncomputable scoped instance instMulSemiringAction : MulSemiringAction (decomp 
     change actRingEquiv σ (x * y) = actRingEquiv σ x * actRingEquiv σ y
     rw [map_mul]
 
+/-- **The scoped action at an infinite place is the decomposition action.** The scoped action of the
+decomposition group on `w.Completion` is `actRingEquiv`. -/
 theorem smul_def (σ : decomp E K w) (x : w.Completion) : σ • x = actRingEquiv σ x := rfl
 
+/-- Each element of the decomposition group acts continuously on `w.Completion` (scoped in
+`NumberField.InfPlaceDecomp`). -/
 scoped instance instContinuousConstSMul : ContinuousConstSMul (decomp E K w) w.Completion :=
   ⟨fun σ => continuous_actRingEquiv σ⟩
 
+/-- The decomposition group of the infinite place `w` acts on the units of `w.Completion` through
+its action on the completion (scoped in `NumberField.InfPlaceDecomp`). -/
 noncomputable scoped instance instMulDistribMulActionUnits : MulDistribMulAction (decomp E K
   w) (w.Completion)ˣ :=
   Units.mulDistribMulActionRight
 
+/-- The multiplicative action underlying `instMulDistribMulActionUnits`, as a direct instance
+(scoped in `NumberField.InfPlaceDecomp`). -/
 noncomputable scoped instance instMulActionUnits : MulAction (decomp E K w) (w.Completion)ˣ :=
   (instMulDistribMulActionUnits (E := E) (K := K) (w := w)).toMulAction
 
+/-- The scalar action underlying `instMulActionUnits`, as a direct instance (scoped in
+`NumberField.InfPlaceDecomp`). -/
 noncomputable scoped instance instSMulUnits : SMul (decomp E K w) (w.Completion)ˣ :=
   (instMulActionUnits (E := E) (K := K) (w := w)).toSMul
 
+/-- **The action on local units at an infinite place.** The action on units of `w.Completion` is the
+action on the underlying element. -/
 theorem coe_smul_units (σ : decomp E K w) (u : (w.Completion)ˣ) : ((σ • u : (w.Completion)ˣ)
   : w.Completion) = σ • (u : w.Completion) := rfl
 
 variable (E K w) in
+/-- **Local units at an infinite place.** The units of the completion `w.Completion` at the
+infinite place `w`, written additively, as a `ℤ`-linear representation of the decomposition
+group of `w` acting on the completion. -/
 noncomputable abbrev localUnits : Rep ℤ (decomp E K w) := Rep.ofMulDistribMulAction (decomp E K
   w) (w.Completion)ˣ
 
@@ -988,11 +1230,17 @@ open scoped NumberField.InfPlaceDecomp
 
 variable (E K : Type) [Field E] [NumberField E] [Field K] [NumberField K] [Algebra E K]
 
+/-- **An infinite place above an infinite place.** Every infinite place `v` of `E` is the
+restriction of an infinite place `w` of `K`: `w.comap (algebraMap E K) = v`. -/
 theorem exists_above (v : InfinitePlace E) : ∃ w : InfinitePlace K, w.comap (algebraMap E K) = v :=
   InfinitePlace.comap_surjective v
 
+/-- **Chosen infinite place above an infinite place.** A choice, made with `Classical.choose`, of
+an infinite place of `K` restricting to the infinite place `v` of `E` (see `comap_above`). -/
 noncomputable def above (v : InfinitePlace E) : InfinitePlace K := (exists_above E K v).choose
 
+/-- **The chosen infinite place restricts to the given place.** The chosen infinite place
+`above E K v` restricts to `v` on `E`. -/
 theorem comap_above (v : InfinitePlace E) : (above E K v).comap (algebraMap E K) = v
   := (exists_above E K v).choose_spec
 
@@ -1005,6 +1253,9 @@ namespace NumberField.InfinitePlaceTransport
 section general
 variable {R S : Type*} [Field R] [Field S]
 
+/-- **Absolute-value-matching ring isomorphisms are uniformly continuous.** A ring isomorphism
+`f : R ≃+* S` with `v' (f x) = v x` for real absolute values `v` and `v'` is an isometry
+`WithAbs v → WithAbs v'`, hence uniformly continuous. -/
 theorem uniformContinuous_congr_of_forall_eq (v : AbsoluteValue R ℝ) (v' : AbsoluteValue S ℝ) (f : R
   ≃+* S)
     (h : ∀ x, v' (f x) = v x) : UniformContinuous (WithAbs.congr v v' f) :=
@@ -1016,19 +1267,27 @@ end general
 
 variable {E K : Type*} [Field E] [Field K] [Algebra E K]
 
+/-- If `σ • w = w'` for infinite places of `K`, then `w' (σ x) = w x` for every `x ∈ K`. -/
 theorem apply_apply_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : InfinitePlace K} (h : σ • w = w') (x : K)
   : w' (σ x) = w x := by
   rw [← h, InfinitePlace.smul_apply, AlgEquiv.symm_apply_apply]
 
+/-- **Inverting the Galois action on infinite places.** If `σ • w = w'` for infinite places of `K`,
+then `σ⁻¹ • w' = w`. -/
 theorem inv_smul_eq_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : InfinitePlace K} (h : σ • w = w') : σ⁻¹ • w'
   = w := by
   rw [← h, inv_smul_smul]
 
+/-- **Galois automorphisms are uniformly continuous between infinite places.** If `σ • w = w'` for
+infinite places, then `σ` is uniformly continuous from `WithAbs w.1` to `WithAbs w'.1`. -/
 theorem uniformContinuous_congr_of_smul_eq {σ : K ≃ₐ[E] K} {w w' : InfinitePlace K} (h : σ • w = w')
   :
     UniformContinuous (WithAbs.congr w.1 w'.1 ((σ : K ≃ₐ[E] K) : K ≃+* K)) :=
   uniformContinuous_congr_of_forall_eq w.1 w'.1 _ (apply_apply_of_smul_eq h)
 
+/-- **Transport between completions at infinite places.** For `σ : K ≃ₐ[E] K` with `σ • w = w'`,
+the ring isomorphism `w.Completion ≃+* w'.Completion` extending `σ` by continuity: on the image
+of `K` it is `σ` (`transport_coe`). -/
 noncomputable def transport (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') : w.Completion
   ≃+* w'.Completion :=
   (AbsoluteValue.Completion.equiv w.1).trans
@@ -1038,6 +1297,9 @@ noncomputable def transport (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : �
         rfl)).trans
     (AbsoluteValue.Completion.equiv w'.1).symm)
 
+/-- **Transport between infinite places through the underlying completions.** `transport σ h` is the
+completion map of `σ` between the underlying uniform-space completions, wrapped back into
+`w'.Completion`. -/
 theorem transport_apply (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') (x : w.Completion)
   :
     transport σ h x = AbsoluteValue.Completion.ofCompletion
@@ -1047,6 +1309,7 @@ theorem transport_apply (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ �
     AbsoluteValue.Completion.equiv_symm_apply, AbsoluteValue.Completion.equiv_apply]
   rfl
 
+/-- On the underlying uniform-space completions, `transport σ h` is the completion map of `σ`. -/
 theorem toCompletion_transport (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') (x
   : w.Completion) :
     AbsoluteValue.Completion.toCompletion (transport σ h x)
@@ -1054,6 +1317,9 @@ theorem toCompletion_transport (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h 
         (AbsoluteValue.Completion.toCompletion x) := by
   rw [transport_apply, AbsoluteValue.Completion.toCompletion_ofCompletion]
 
+/-- **Transport between infinite places on elements of the field.** On the image of `K`,
+`transport σ h` is `σ`: it sends the image of `x` in `w.Completion` to the image of `σ x` in
+`w'.Completion`. -/
 theorem transport_coe (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') (x : WithAbs w.1) :
     transport σ h (x : w.Completion) = ((WithAbs.congr w.1 w'.1 ((σ : K ≃ₐ[E] K) : K ≃+* K) x
       : WithAbs w'.1) : w'.Completion) := by
@@ -1061,6 +1327,8 @@ theorem transport_coe (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • 
     UniformSpace.Completion.map_coe (uniformContinuous_congr_of_smul_eq h),
     AbsoluteValue.Completion.ofCompletion_coe]
 
+/-- **Continuity of the transport between infinite places.** The transport `transport σ h` between
+completions at infinite places is continuous. -/
 theorem continuous_transport (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w')
   : Continuous (transport σ h) := by
   rw [show (transport σ h : w.Completion → w'.Completion) = AbsoluteValue.Completion.ofCompletion ∘
@@ -1070,10 +1338,13 @@ theorem continuous_transport (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : 
     (UniformSpace.Completion.continuous_map.comp
       (AbsoluteValue.Completion.continuous_toCompletion w.1))
 
+/-- **Transport between local units at infinite places.** The group isomorphism
+`(w.Completion)ˣ ≃* (w'.Completion)ˣ` induced by `transport σ h`. -/
 noncomputable abbrev transportUnits (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') :
     (w.Completion)ˣ ≃* (w'.Completion)ˣ :=
   Units.mapEquiv (transport σ h).toMulEquiv
 
+/-- `transportUnits σ h` agrees with `transport σ h` on underlying elements. -/
 theorem coe_transportUnits (σ : K ≃ₐ[E] K) {w w' : InfinitePlace K} (h : σ • w = w') (u
   : (w.Completion)ˣ) :
     ((transportUnits σ h u : (w'.Completion)ˣ) : w'.Completion) = transport σ h (u : w.Completion)
@@ -1352,6 +1623,14 @@ end FiniteCoindAux
 open scoped NumberField.PlaceDecomp NumberField.PlaceTransport
 
 
+/-- **Semilocal coinduced local units at a finite place.** Let `K / E` be a Galois extension of
+number fields, `v` a finite place of `E`, `w₀ = PlaceAbove.above E K v` and `D = D E K v` its
+decomposition group. The representation of `K ≃ₐ[E] K` coinduced from the `D`-representation
+`localUnits E K v` on the units of `w₀.adicCompletion K` is additively isomorphic to the product
+of the units of `w.adicCompletion K` over all finite places `w` of `K` above `v`, compatibly
+with the Galois action: for `g : K ≃ₐ[E] K` and places `w`, `w'` above `v` with `g • w' = w`,
+the `w`-component of the image of `g • f` is the transport along `g` of the `w'`-component of
+the image of `f`. -/
 theorem NumberField.FiniteSIdele.exists_addEquiv_coind_localUnits (E K : Type) [Field
   E] [NumberField E] [Field K]
     [NumberField K] [Algebra E K] [IsGalois E K] (v
@@ -1584,6 +1863,14 @@ end
 end ArchCoindAux
 
 
+/-- **Semilocal coinduced local units at an infinite place.** Let `K / E` be a Galois extension of
+number fields, `v` an infinite place of `E`, and `w₀ = ArchIdele.above E K v` with
+decomposition group `D`. The representation of `K ≃ₐ[E] K` coinduced from the
+`D`-representation on the units of `w₀.Completion` is additively isomorphic to the product of
+the units of `w.Completion` over all infinite places `w` of `K` above `v`, compatibly with the
+Galois action: for `g : K ≃ₐ[E] K` and places `w`, `w'` above `v` with `g • w' = w`, the
+`w`-component of the image of `g • f` is the transport along `g` of the `w'`-component of the
+image of `f`. -/
 theorem NumberField.ArchIdele.exists_addEquiv_coind_localUnits (E K : Type) [Field E] [NumberField
   E] [Field K] [NumberField K]
     [Algebra E K] [IsGalois E K] (v : NumberField.InfinitePlace E) :
@@ -1604,4 +1891,3 @@ theorem NumberField.ArchIdele.exists_addEquiv_coind_localUnits (E K : Type) [Fie
             =
           NumberField.InfinitePlaceTransport.transportUnits g h (Additive.toMul (e f) w') :=
   ⟨ArchCoindAux.equiv v, fun g f w w' h => ArchCoindAux.fwd_ρ v g f w w' h⟩
-
