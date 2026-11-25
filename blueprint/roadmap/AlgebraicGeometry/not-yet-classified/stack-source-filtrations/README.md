@@ -1,0 +1,16 @@
+# Stack Source Filtrations
+
+- [Parameter](parameter.md)
+- [Maps](maps.md)
+- [Evaluate](evaluate.md)
+- [Restrict](restrict.md)
+- [Restrict component](restrict-component.md)
+- [Postcompose](postcompose.md)
+- [Lifting Comparison](lifting-comparison.md)
+- [Has Unique Diagram Lifts](has-unique-diagram-lifts.md)
+- [Parameter Reindex](parameter-reindex.md)
+- [Source Section](source-section.md)
+- [Modification Source](modification-source.md)
+- [Modification First](modification-first.md)
+- [Modification Generic Iso](modification-generic-iso.md)
+- [Has Unique Groupoid Filler](has-unique-groupoid-filler.md)

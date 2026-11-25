@@ -1,0 +1,15 @@
+# Valuative Fano Geometry
+
+- [Section Space](section-space.md)
+- [Fano Data](fano-data.md)
+- [Anticanonical Volume](anticanonical-volume.md)
+- [Local Ring](local-ring.md)
+- [Local Scalar Map](local-scalar-map.md)
+- [Local Algebra](local-algebra.md)
+- [Local Scalar Map natural](local-scalar-map-natural.md)
+- [Local Top Forms](local-top-forms.md)
+- [Stalk Algebra Map](stalk-algebra-map.md)
+- [Canonical Stalk Algebra Map](canonical-stalk-algebra-map.md)
+- [Stalk Differential Map](stalk-differential-map.md)
+- [Top Stalk Map](top-stalk-map.md)
+- [Jacobian Scalar](jacobian-scalar.md)

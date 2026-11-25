@@ -13,3 +13,7 @@
 - [Completion Map](completion-map.md)
 - [Completion Rank](completion-rank.md)
 - [Completed Norm](completed-norm.md)
+- [Completed Tensor Factors](completed-tensor-factors.md)
+- [Total Local Degree](total-local-degree.md)
+- [Tensor Norm](tensor-norm.md)
+- [Completed Place Norm](completed-place-norm.md)

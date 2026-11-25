@@ -9,3 +9,6 @@
 - [Completion Maps](completion-maps.md)
 - [Comparison](comparison.md)
 - [Completed Filtered Inverse](completed-filtered-inverse.md)
+- [Finite Tensor Transition](finite-tensor-transition.md)
+- [Finite Completion Maps](finite-completion-maps.md)
+- [Completed Filtered Inverse](completed-filtered-inverse-2.md)

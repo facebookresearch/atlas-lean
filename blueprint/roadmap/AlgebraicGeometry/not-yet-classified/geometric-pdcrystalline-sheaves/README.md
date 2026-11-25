@@ -10,3 +10,4 @@
 - [Crystalline Ext](crystalline-ext.md)
 - [Crystalline Ext Cochains](crystalline-ext-cochains.md)
 - [Crystalline Ext Resolution Iso](crystalline-ext-resolution-iso.md)
+- [Descent for the structure ring of the crystalline site](crystalline-structure-descent.md)
