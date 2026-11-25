@@ -7,138 +7,111 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Transposition lower bound and 1.5-approximation
+# Sorting by transpositions: the odd-cycle bound and the 1.5 guarantee
 
-For a permutation `π` of `0..n` (as a list with each value exactly once),
-the cycle graph has black edges joining consecutive positions and gray edges
-joining consecutive values. With `c_odd(π)` odd cycles, the transposition
-distance satisfies `2 * d(π) ≥ (n + 1) - c_odd(π)` (Theorem 2.4). The
-TransSort procedure (a relation: every admissible run) sorts in at most
-`(3/4) * (n + 1 - c_odd(π))` transpositions (`4 * len ≤ 3 * ((n+1) - c_odd)`),
-a 1.5-approximation (Corollary 6.10); hence the diameter of `S_n` is at most
-`3n/4` (Corollary 6.11, `4 * d ≤ 3 * n`). Time bounds need a RAM cost model.
+A permutation `π` of `1, …, n` is framed by `π_0 = 0` and `π_{n+1} = n + 1` and written as the
+list `[π_0, π_1, …, π_{n+1}]`. For `1 ≤ i < j < k ≤ n + 1`, the transposition `ρ(i, j, k)`
+exchanges the blocks `π_i … π_{j-1}` and `π_j … π_{k-1}`; the transposition distance `d(π)` is
+the least number of transpositions that turn `π` into the identity.
 
-Overlap (definitional): `WantedExt/Complexity/NPComplete/SortingByTranspositionsWanted.lean`
-(NP-completeness) defines transpositions; the cycle-graph bounds and the
-1.5-approximation are not present there.
+The cycle graph `G(π)` has a black edge from `π_i` to `π_{i-1}` for `1 ≤ i ≤ n + 1` and a gray
+edge from `v` to `v + 1` for `0 ≤ v ≤ n`; it decomposes uniquely into alternating cycles. Leaving
+black edge `i` through the gray edge at `π_{i-1}` leads to the black edge at position
+`f(i) = pos(π_{i-1} + 1)`, so the alternating cycles are the cycles of the permutation `f` of
+`{1, …, n + 1}`, and the length of a cycle is its number of black edges. A cycle is odd if that
+number is odd; `c_odd(π)` counts the odd cycles (fixed points of `f` included).
 
-Sources: V. Bafna and P. A. Pevzner, "Sorting by transpositions", SIAM
-J. Discrete Math. 11(2):224-240, 1998, doi:10.1137/S089548019528280X,
-Theorem 2.4 and Corollaries 6.10-6.11.
+**Theorem 2.4** (Bafna–Pevzner 1998). `d(π) ≥ (n + 1 - c_odd(π))/2`.
+
+**Corollaries 6.10 and 6.11** (Bafna–Pevzner 1998). Algorithm TransSort sorts `π` with at most
+`(3/4)(n + 1 - c_odd(π))` transpositions, so it is a 1.5-approximation; and the transposition
+diameter of the permutations of `n` elements is at most `3n/4`.
+
+The corollaries are stated as the existence of sorting sequences of those lengths (the sequences
+TransSort produces); the algorithm itself and its `O(n²)` running time are not stated. Bounds
+are cleared of denominators.
+
+Sources: V. Bafna and P. A. Pevzner, "Sorting by transpositions", SIAM J. Discrete Math.
+11(2):224-240, 1998, doi:10.1137/S089548019528280X, Theorem 2.4 and Corollaries 6.10-6.11.
 -/
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Fintype.Powerset
-public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Algebra.Order.Group.Nat
+public import Mathlib.Algebra.Group.Nat.Even
 public import Mathlib.Algebra.Ring.Parity
+public import Mathlib.Logic.Function.Iterate
+public import Mathlib.Order.Interval.Finset.Nat
 
 @[expose] public section
 
 namespace WantedExt.Biology.ComputationalBiology.TranspositionWanted
 
-open Classical
+/-- `p` is a framed permutation of `1, …, n`: a permutation of `[0, 1, …, n + 1]` with first
+entry `0` and last entry `n + 1`. -/
+def IsFramedPerm (n : ℕ) (p : List ℕ) : Prop :=
+  p.Perm (List.range (n + 2)) ∧ p.getD 0 0 = 0 ∧ p.getD (n + 1) 0 = n + 1
 
-variable (n : ℕ)
+/-- The transposition `ρ(i, j, k)`: exchange the block in positions `i, …, j - 1` with the block
+in positions `j, …, k - 1`. -/
+def transposition (l : List ℕ) (i j k : ℕ) : List ℕ :=
+  l.take i ++ (l.drop j).take (k - j) ++ (l.drop i).take (j - i) ++ l.drop k
 
-/-- Valid permutations of `0..n`: each value exactly once. -/
-def IsPerm (π : List ℕ) : Prop :=
-  π.length = n + 1 ∧ ∀ v, v ≤ n ↔ v ∈ π
+/-- A valid transposition `(i, j, k)` of a framed permutation of `1, …, n`:
+`1 ≤ i < j < k ≤ n + 1`. -/
+def IsValidTransposition (n : ℕ) (o : ℕ × ℕ × ℕ) : Prop :=
+  1 ≤ o.1 ∧ o.1 < o.2.1 ∧ o.2.1 < o.2.2 ∧ o.2.2 ≤ n + 1
 
-/-- Apply transposition `(i,j,k)`: swap the blocks `[i,j)` and `[j,k)`. -/
-def applyTransposition (π : List ℕ) (t : ℕ × ℕ × ℕ) : List ℕ :=
-  π.take t.1 ++ (π.drop t.2.1).take (t.2.2 - t.2.1) ++
-    (π.drop t.1).take (t.2.1 - t.1) ++ π.drop t.2.2
+/-- At most `m` valid transpositions, applied in order, turn `p` into the identity
+`[0, 1, …, n + 1]`, so `d(p) ≤ m`. -/
+def SortsWithin (n : ℕ) (p : List ℕ) (m : ℕ) : Prop :=
+  ∃ ops : List (ℕ × ℕ × ℕ), ops.length ≤ m ∧ (∀ o ∈ ops, IsValidTransposition n o) ∧
+    ops.foldl (fun l o => transposition l o.1 o.2.1 o.2.2) p = List.range (n + 2)
 
-/-- Sorting by transpositions: chains to the identity. -/
-inductive SortsByTrans (target : List ℕ) : List ℕ →
-    List (ℕ × ℕ × ℕ) → Prop where
-  | nil (π) : SortsByTrans target π []
-  | cons (π π' : List ℕ) (t : ℕ × ℕ × ℕ)
-      (rest : List (ℕ × ℕ × ℕ)) :
-      π' = applyTransposition π t → SortsByTrans target π' rest →
-        SortsByTrans target π (t :: rest)
+/-- The successor of black edge `i` in its alternating cycle: the position of `p_{i-1} + 1`. -/
+def cycleSucc (p : List ℕ) (i : ℕ) : ℕ :=
+  p.idxOf (p.getD (i - 1) 0 + 1)
 
-/-- Transposition distance: minimum sorting length over the assumed run. -/
-noncomputable def transDist (π : List ℕ)
-    (h : ∃ seq : List (ℕ × ℕ × ℕ),
-      SortsByTrans (List.range (n + 1)) π seq) : ℕ :=
-  Nat.find (p := fun k => ∃ seq : List (ℕ × ℕ × ℕ),
-    SortsByTrans (List.range (n + 1)) π seq ∧ seq.length = k)
-    (by obtain ⟨s, hs⟩ := h; exact ⟨s.length, s, hs, rfl⟩)
+open Classical in
+/-- The black edges in the alternating cycle of black edge `i`, a subset of `{1, …, n + 1}`. -/
+noncomputable def cycleOf (n : ℕ) (p : List ℕ) (i : ℕ) : Finset ℕ :=
+  (Finset.Icc 1 (n + 1)).filter fun j => ∃ t, (cycleSucc p)^[t] i = j
 
-/-- Black edges join consecutive positions (framed); gray edges join
-consecutive values. Vertices are positions `0..n`. -/
-def blackEdge (π : List ℕ) (a b : Fin (n + 1)) : Prop :=
-  ∃ i, i + 1 ≤ n ∧
-    ((π.getD i 0 = a.val ∧ π.getD (i + 1) 0 = b.val) ∨
-      (π.getD i 0 = b.val ∧ π.getD (i + 1) 0 = a.val))
+open Classical in
+/-- `c_odd(p)`: the number of alternating cycles with an odd number of black edges, each counted
+once at its least black edge. -/
+noncomputable def oddCycles (n : ℕ) (p : List ℕ) : ℕ :=
+  ((Finset.Icc 1 (n + 1)).filter fun i =>
+    (∀ j ∈ cycleOf n p i, i ≤ j) ∧ Odd (cycleOf n p i).card).card
 
-/-- Gray edges join value-consecutive positions. -/
-def grayEdge (π : List ℕ) (a b : Fin (n + 1)) : Prop :=
-  ∃ u v : ℕ, u + 1 = v ∧
-    ((π.getD a.val 0 = u ∧ π.getD b.val 0 = v) ∨
-      (π.getD a.val 0 = v ∧ π.getD b.val 0 = u))
+/-- **Odd-cycle lower bound** (Bafna–Pevzner 1998, Theorem 2.4). For every framed permutation
+`p` of `1, …, n` and every `m` such that at most `m` transpositions sort `p`,
+`n + 1 ≤ 2m + c_odd(p)`; that is, `d(p) ≥ (n + 1 - c_odd(p))/2`.
 
-/-- Alternating cycles and oddness via the union-edge reachability below. -/
-inductive CGReach (n : ℕ) (E : Fin (n + 1) × Fin (n + 1) → Prop) :
-    Fin (n + 1) → Fin (n + 1) → Prop where
-  | refl (v) : CGReach n E v v
-  | step (u v w) : CGReach n E u v → E (v, w) → CGReach n E u w
+Source: V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240, Theorem 2.4. -/
+theorem_wanted add_one_le_two_mul_add_oddCycles (n : ℕ) {p : List ℕ} (hp : IsFramedPerm n p)
+    {m : ℕ} (hm : SortsWithin n p m) :
+    n + 1 ≤ 2 * m + oddCycles n p
 
-/-- Cycle components of the black/gray union graph. -/
-noncomputable def cycleComps (π : List ℕ) : Finset (Finset (Fin (n + 1))) :=
-  Finset.univ.filter fun K =>
-    K.Nonempty ∧ (∀ u ∈ K, ∀ v ∈ K,
-      CGReach n (fun p => blackEdge n π p.1 p.2 ∨ grayEdge n π p.1 p.2) u v) ∧
-      ∀ w ∉ K, ∀ u ∈ K,
-        ¬ CGReach n (fun p => blackEdge n π p.1 p.2 ∨ grayEdge n π p.1 p.2) u w
+/-- **The 1.5 guarantee** (Bafna–Pevzner 1998, Corollary 6.10). Every framed permutation `p` of
+`1, …, n` can be sorted by some number `m` of transpositions with
+`4m + 3 c_odd(p) ≤ 3(n + 1)`, that is `m ≤ (3/4)(n + 1 - c_odd(p))`; with Theorem 2.4 this is
+within a factor `3/2` of `d(p)`.
 
-/-- Odd-cycle count of the cycle graph. -/
-noncomputable def oddCycleCount (π : List ℕ) : ℕ :=
-  Finset.card ((cycleComps n π).filter fun K => Odd K.card)
+Source: V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240,
+Corollary 6.10. -/
+theorem_wanted exists_sortsWithin_three_quarters (n : ℕ) {p : List ℕ}
+    (hp : IsFramedPerm n p) :
+    ∃ m, SortsWithin n p m ∧ 4 * m + 3 * oddCycles n p ≤ 3 * (n + 1)
 
-/-- A TransSort run: each step is a transposition triple. -/
-def IsTransSortRun (π : List ℕ) (seq : List (ℕ × ℕ × ℕ)) : Prop :=
-  SortsByTrans (List.range (n + 1)) π seq
+/-- **Transposition diameter** (Bafna–Pevzner 1998, Corollary 6.11). Every framed permutation
+`p` of `1, …, n` can be sorted by some number `m` of transpositions with `4m ≤ 3n`.
 
-/-- **Odd-cycle lower bound** (Bafna-Pevzner 1998, Theorem 2.4): hypotheses
-are a valid permutation (`hπ`), well-formed black/gray structure
-(`hedges`: every position pair in one triple), and the distance
-characterization (`hd_le`, `hd_att`). Conclusion:
-`2 * d(π) ≥ (n + 1) - c_odd(π)` over `ℕ`.
-
-Source: Bafna-Pevzner (1998), Theorem 2.4. -/
-theorem_wanted transposition_lower_bound (π : List ℕ) (hπ : IsPerm n π)
-    (hex : ∃ seq : List (ℕ × ℕ × ℕ),
-      SortsByTrans (List.range (n + 1)) π seq)
-    (hd_le : ∀ seq : List (ℕ × ℕ × ℕ),
-      SortsByTrans (List.range (n + 1)) π seq →
-        transDist n π hex ≤ seq.length)
-    (hd_att : ∃ seq : List (ℕ × ℕ × ℕ),
-      SortsByTrans (List.range (n + 1)) π seq ∧
-        transDist n π hex = seq.length) :
-    2 * transDist n π hex ≥ (n + 1) - oddCycleCount n π
-
-/-- **TransSort 1.5-approximation and diameter** (Bafna-Pevzner 1998,
-Corollaries 6.10-6.11): same hypotheses as `transposition_lower_bound`,
-plus every TransSort run sorting within three quarters of the breakpoint
-defect (`hsort`: `4 * len ≤ 3 * ((n+1) - c_odd)`), the distance
-characterization (`hd_le`), and at least one odd cycle (`hodd`).
-Conclusions: the run bound and the diameter bound `4 * d(π) ≤ 3 * n`.
-
-Source: Bafna-Pevzner (1998), Corollaries 6.10-6.11. -/
-theorem_wanted transSort_approx (π : List ℕ) (hπ : IsPerm n π)
-    (hex : ∃ seq : List (ℕ × ℕ × ℕ),
-      SortsByTrans (List.range (n + 1)) π seq)
-    (seq : List (ℕ × ℕ × ℕ))
-    (hrun : IsTransSortRun n π seq)
-    (hsort : 4 * seq.length ≤ 3 * ((n + 1) - oddCycleCount n π)) :
-    4 * seq.length ≤ 3 * ((n + 1) - oddCycleCount n π) ∧
-      4 * transDist (n := n) π
-        ⟨seq, hrun⟩ ≤ 3 * n
+Source: V. Bafna and P. A. Pevzner, SIAM J. Discrete Math. 11 (1998) 224-240,
+Corollary 6.11. -/
+theorem_wanted exists_sortsWithin_diameter (n : ℕ) {p : List ℕ} (hp : IsFramedPerm n p) :
+    ∃ m, SortsWithin n p m ∧ 4 * m ≤ 3 * n
 
 end WantedExt.Biology.ComputationalBiology.TranspositionWanted

@@ -1,3 +1,3 @@
 # Framed
 
-Framing with `0` and `n+1`.
+The framed permutation `[0, π_1, …, π_n, n + 1]`.

@@ -9,109 +9,116 @@ LICENSE file in the root directory of this source tree.
 /-
 # Myers' bit-vector algorithm for approximate string matching
 
-For a query `P` of length `m` and text `T` of length `n`, the unit-cost
-edit-distance matrix `C` with `C[0,j] = 0` has all vertical and horizontal
-deltas in `{-1,0,1}` (Lemma 1). Encoding each column's vertical deltas as
-two bit-vectors `Pv`, `Mv` (natural numbers masked to `m` bits) lets one
-column step run in `O(1)` word operations for `m ≤ w`, giving `O(n⌈m/w⌉)`
-matching within `k` differences, independent of `k`. Word-RAM time readings
-need a cost model and are context here.
+For a pattern `P` of length `m` and a text `T` of length `n`, the approximate-matching
+dynamic-programming matrix `C` has `C[0, j] = 0` (a match may start anywhere in the text),
+`C[i, 0] = i`, and the unit-cost edit-distance recurrence
+`C[i+1, j+1] = min(C[i, j+1] + 1, C[i+1, j] + 1, C[i, j] + [P_{i+1} ≠ T_{j+1}])`.
+The pattern matches with at most `k` differences ending at text position `j` exactly when
+`C[m, j] ≤ k`.
 
-Overlap: none found (no bit-vector string-matching module; the Myers 1986
-`O(ND)` citation in WavefrontAlignment is a different result).
+**Lemma 1** (Myers 1999). Every vertical delta `C[i+1, j] - C[i, j]` and every horizontal delta
+`C[i, j+1] - C[i, j]` lies in `{-1, 0, 1}`.
 
-Sources: G. Myers, "A fast bit-vector algorithm for approximate string
-matching based on dynamic programming", J. ACM 46(3):395-415, 1999,
-doi:10.1145/316542.316550, Lemma 1 and Figure 5.
+**Algorithm** (Myers 1999). Encode the vertical deltas of column `j` by two `m`-bit vectors
+`Pv` (deltas `+1`) and `Mv` (deltas `-1`), start from `Pv = 1^m`, `Mv = 0^m` and score `m`, and
+update them for each text character with a constant number of bitwise operations and one
+addition, using the match mask `Eq` of that character (bit `i` set exactly when `P_{i+1}` equals
+it). The score `C[m, j]` changes by the top bit of the horizontal deltas, and position `j` is
+reported when the score is at most `k`. The reported positions are exactly the positions
+`1 ≤ j ≤ n` with `C[m, j] ≤ k`.
+
+The update below is Myers' column recurrence in the standard formulation (`Xv`, `Xh`, `Ph`, `Mh`
+with the carry-propagating addition). Bit vectors are natural numbers reduced modulo `2^m`, so a
+single word of width `m` is modelled. The running-time claims (`O(1)` word operations per column
+for `m ≤ w`, `O(n⌈m/w⌉)` overall, and the `O(kn/w)` expected bound) need a word-RAM cost model
+and are not stated.
+
+Sources: G. Myers, "A fast bit-vector algorithm for approximate string matching based on
+dynamic programming", J. ACM 46(3):395-415, 1999, doi:10.1145/316542.316550, Lemma 1 and the
+column-update algorithm.
 -/
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.List.Basic
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Algebra.Order.Archimedean.Real.Basic
+public import Mathlib.Data.Nat.Bitwise
+public import Mathlib.Data.Int.Basic
 public import Mathlib.Order.MinMax
 
 @[expose] public section
 
 namespace WantedExt.Biology.ComputationalBiology.MyersBitVectorWanted
 
-open Classical
-
 variable {α : Type*} [DecidableEq α]
 
-/-- All-ones mask for `m`-bit vectors. -/
-def maskOnes (m : ℕ) : ℕ :=
-  2 ^ m - 1
+/-- The approximate-matching dynamic-programming matrix: `dp P T 0 j = 0`,
+`dp P T i 0 = i`, and `dp P T (i+1) (j+1)` is the minimum of `dp P T i (j+1) + 1`,
+`dp P T (i+1) j + 1` and `dp P T i j` plus `0` if `P[i] = T[j]` and `1` otherwise. -/
+def dp (P T : List α) : ℕ → ℕ → ℕ
+  | 0, _ => 0
+  | i + 1, 0 => i + 1
+  | i + 1, j + 1 =>
+    min (min (dp P T i (j + 1) + 1) (dp P T (i + 1) j + 1))
+      (dp P T i j + if P[i]? = T[j]? then 0 else 1)
+termination_by i j => (i, j)
 
-/-- Unit substitution cost: 0 on match, 1 else. -/
-def subCost (a b : α) : ℝ :=
-  if a = b then 0 else 1
+/-- The match mask of the character `c`: bit `i` is set exactly when `P[i] = c`. -/
+def eqMask (P : List α) (c : α) : ℕ :=
+  ((List.range P.length).filter fun i => P[i]? = some c).foldr (fun i acc => 2 ^ i + acc) 0
 
-/-- DP matrix with `C[0,j] = 0` and the unit-cost recurrence: horizontal,
-vertical, and diagonal steps plus substitution cost. -/
-def IsDPMatrix (P T : List α) (C : ℕ → ℕ → ℤ) : Prop :=
-  (∀ j, C 0 j = 0) ∧
-    ∀ i j : ℕ, i < P.length → j < T.length →
-      ∃ c : ℤ, c = (if P[i]? = T[j]? then 0 else 1) ∧
-        C (i + 1) (j + 1) = min (min (C i (j + 1) + 1) (C (i + 1) j + 1))
-          (C i j + c)
+/-- One column update of the bit-vector algorithm for a pattern of length `m`, on the state
+`(Pv, Mv, score)` and the match mask `Eq` of the next text character (all bit vectors reduced
+modulo `2^m`, and `mask = 2^m - 1`):
+`Xv = Eq ∨ Mv`, `Xh = (((Eq ∧ Pv) + Pv) ∧ mask) ⊕ Pv) ∨ Eq`, `Ph = Mv ∨ ¬(Xh ∨ Pv)`,
+`Mh = Pv ∧ Xh`; the score increases by one if bit `m - 1` of `Ph` is set and otherwise
+decreases by one if bit `m - 1` of `Mh` is set; then `Ph` and `Mh` are shifted left by one
+(without carry-in, since `C[0, j] = 0`), and the new state is `Pv' = Mh ∨ ¬(Xv ∨ Ph)`,
+`Mv' = Ph ∧ Xv`. -/
+def step (m Eq : ℕ) (s : ℕ × ℕ × ℤ) : ℕ × ℕ × ℤ :=
+  let mask := 2 ^ m - 1
+  let Pv := s.1
+  let Mv := s.2.1
+  let Xv := Eq ||| Mv
+  let Xh := ((((Eq &&& Pv) + Pv) &&& mask) ^^^ Pv) ||| Eq
+  let Ph := Mv ||| (mask ^^^ (Xh ||| Pv))
+  let Mh := Pv &&& Xh
+  let score := if Ph.testBit (m - 1) then s.2.2 + 1
+    else if Mh.testBit (m - 1) then s.2.2 - 1 else s.2.2
+  let Ph' := (Ph <<< 1) &&& mask
+  let Mh' := (Mh <<< 1) &&& mask
+  (Mh' ||| (mask ^^^ (Xv ||| Ph')), Ph' &&& Xv, score)
 
-/-- Vertical delta at a cell. -/
-def vertDelta (C : ℕ → ℕ → ℤ) (i j : ℕ) : ℤ :=
-  C (i + 1) j - C i j
+/-- Scan the remaining text `T`, whose first character is at text position `j + 1`, from the
+state `s`, reporting each position whose score after its update is at most `k`. -/
+def scan (P : List α) (k : ℤ) : List α → ℕ → ℕ × ℕ × ℤ → List ℕ
+  | [], _, _ => []
+  | c :: T, j, s =>
+    let s' := step P.length (eqMask P c) s
+    (if s'.2.2 ≤ k then [j + 1] else []) ++ scan P k T (j + 1) s'
 
-/-- Horizontal delta at a cell. -/
-def horizDelta (C : ℕ → ℕ → ℤ) (i j : ℕ) : ℤ :=
-  C i (j + 1) - C i j
+/-- The positions reported by the bit-vector algorithm: start from `Pv = 2^m - 1`, `Mv = 0` and
+score `m`, and scan the text from position `1`. -/
+def myersMatches (P T : List α) (k : ℤ) : List ℕ :=
+  scan P k T 0 (2 ^ P.length - 1, 0, P.length)
 
-/-- One Figure-5 column step: bit-vectors in, bit-vectors and score out.
-Correctness (`hstep_ok` below) ties it to the deltas. -/
-def colStep (Pv Mv Eq m : ℕ) : ℕ × ℕ :=
-  ((Pv &&& Eq) &&& maskOnes m, (Mv &&& Eq) &&& maskOnes m)
+/-- **Deltas lie in `{-1, 0, 1}`** (Myers 1999, Lemma 1). For a pattern `P` and a text `T`, every
+vertical delta `dp P T (i+1) j - dp P T i j` with `i < |P|` and `j ≤ |T|`, and every horizontal
+delta `dp P T i (j+1) - dp P T i j` with `i ≤ |P|` and `j < |T|`, is `-1`, `0` or `1`.
 
-/-- Positions matching within `k` differences. -/
-def matchPositions (P T : List α) (C : ℕ → ℕ → ℤ) (k : ℤ) : Finset ℕ :=
-  (Finset.range (T.length + 1)).filter fun j => C P.length j ≤ k
+Source: G. Myers, J. ACM 46 (1999) 395-415, Lemma 1. -/
+theorem_wanted delta_mem (P T : List α) :
+    (∀ i j, i < P.length → j ≤ T.length →
+      ((dp P T (i + 1) j : ℤ) - dp P T i j) ∈ ({-1, 0, 1} : Set ℤ)) ∧
+    ∀ i j, i ≤ P.length → j < T.length →
+      ((dp P T i (j + 1) : ℤ) - dp P T i j) ∈ ({-1, 0, 1} : Set ℤ)
 
-/-- **Delta range** (Myers 1999, Lemma 1): hypotheses are query/text
-lengths (`hm`, `hn`), a DP matrix (`hC`), and unit costs. Conclusions: every
-vertical and horizontal delta lies in `{-1,0,1}`.
+/-- **Correctness of the bit-vector algorithm** (Myers 1999). For a nonempty pattern `P`, any
+text `T` and any threshold `k`, the positions reported by the bit-vector algorithm are, in
+increasing order, exactly the text positions `1 ≤ j ≤ |T|` with `dp P T |P| j ≤ k`.
 
-Source: Myers (1999), Lemma 1. -/
-theorem_wanted delta_range (P T : List α) (m n : ℕ)
-    (hm : P.length = m) (hn : T.length = n)
-    (C : ℕ → ℕ → ℤ)
-    (hC : IsDPMatrix P T C) :
-    (∀ i j, i < m → j ≤ n → vertDelta C i j = -1 ∨
-      vertDelta C i j = 0 ∨ vertDelta C i j = 1) ∧
-      ∀ i j, i ≤ m → j < n → horizDelta C i j = -1 ∨
-        horizDelta C i j = 0 ∨ horizDelta C i j = 1
-
-/-- **Bit-vector column correctness** (Myers 1999, Figure 5): same setup as
-`delta_range`, plus per-column bit-vectors (`Pv`, `Mv`), equality masks
-(`Eq`: bit `i` iff `P[i] = T[j]`), and the step correctness (`hstep_ok`:
-the step outputs encode exactly the true deltas). Conclusion: the reported
-positions are exactly the matches within `k` differences.
-
-Source: Myers (1999), Figure 5. -/
-theorem_wanted colStep_correct (P T : List α) (m n : ℕ)
-    (hm : P.length = m) (hn : T.length = n)
-    (C : ℕ → ℕ → ℤ)
-    (hC : IsDPMatrix P T C)
-    (Pv Mv Eq : ℕ → ℕ)
-    (hEq : ∀ j, j < n → ∀ i, i < m →
-      Nat.testBit (Eq j) i = decide (P[i]? = T[j]?))
-    (k : ℤ)
-    (hstep_ok : ∀ j, j < n → ∃ Pv' Mv' : ℕ,
-      colStep (Pv j) (Mv j) (Eq j) m = (Pv', Mv') ∧
-        ∀ i, i < m → (Nat.testBit Pv' i ↔ vertDelta C i j = 1) ∧
-          (Nat.testBit Mv' i ↔ vertDelta C i j = -1))
-    (reported : Finset ℕ)
-    (hrep : reported = matchPositions P T C k) :
-    ∀ j, j ∈ reported ↔ j ≤ T.length ∧ C P.length j ≤ k
+Source: G. Myers, J. ACM 46 (1999) 395-415, the bit-vector column-update algorithm. -/
+theorem_wanted myersMatches_eq (P T : List α) (hP : P ≠ []) (k : ℤ) :
+    myersMatches P T k =
+      (List.range' 1 T.length).filter fun j => decide ((dp P T P.length j : ℤ) ≤ k)
 
 end WantedExt.Biology.ComputationalBiology.MyersBitVectorWanted

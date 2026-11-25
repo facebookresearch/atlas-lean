@@ -7,180 +7,138 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Generic identifiability via Kruskal's theorem
+# Kruskal's theorem and generic identifiability of latent class models
 
-For `r × κⱼ` matrices `Mⱼ`, write `[M₁,M₂,M₃]` for the three-way tensor with
-`(u,v,w)` entry `∑ᵢ m₁ᵢ(u) m₂ᵢ(v) m₃ᵢ(w)`. The Kruskal rank of `M` is the
-largest `I` with every `I` rows linearly independent. Kruskal's theorem
-(Theorem 1): if `I₁ + I₂ + I₃ ≥ 2r + 2`, then `[M₁,M₂,M₃]` determines the
-factors up to simultaneous row permutation and rescaling. Hence the latent
-class model `M(r; k₁,…,kₚ)` with a tripartition `S₁,S₂,S₃` of the observed
-variables (`κᵢ` the product of state counts on `Sᵢ`) is generically
-identifiable up to label swapping when
-`min(r,κ₁) + min(r,κ₂) + min(r,κ₃) ≥ 2r + 2` (Theorem 4): outside the zero
-set of some nonzero parameter polynomial, equal distributions imply equal
-parameters. An HMM with `r` hidden and `κ` observable states is generically
-identifiable from `2k+1` consecutive variables when `C(k+κ-1,κ-1) ≥ r`
-(Theorem 6).
+For a real matrix `M` with `r` rows, the Kruskal rank of `M` is the largest `I` such that every
+set of `I` rows of `M` is linearly independent. Three matrices `M_1, M_2, M_3` with `r` rows (of
+lengths `κ_1, κ_2, κ_3`) determine the tensor `[M_1, M_2, M_3]` with entries
+`∑_i M_1(i, u) M_2(i, v) M_3(i, w)`.
 
-Overlap: none found (no Kruskal-rank tensor identifiability; the MST
-`Kruskal.lean` and matroid files are unrelated).
+**Theorem 1** (Kruskal 1977, as stated by Allman–Matias–Rhodes 2009). If the Kruskal ranks
+`I_1, I_2, I_3` satisfy `I_1 + I_2 + I_3 ≥ 2r + 2`, then `[M_1, M_2, M_3]` determines the `M_j`
+up to simultaneous permutation of the rows and rescaling of the rows: if
+`[N_1, N_2, N_3] = [M_1, M_2, M_3]`, there are a permutation `σ` and scalars `c_j(i)` with
+`c_1(i) c_2(i) c_3(i) = 1` and `N_j(i, ·) = c_j(i) M_j(σ i, ·)`.
 
-Sources: E. S. Allman, C. Matias and J. A. Rhodes, "Identifiability of
-parameters in latent structure models with many observed variables", Ann.
-Statist. 37(6A):3099-3132, 2009, doi:10.1214/09-AOS689, Theorems 1, 4, 6.
+The latent class model `M(r; k_1, …, k_p)` has a hidden variable with `r` classes and `p`
+observed variables, conditionally independent given the class, with `k_j` states. Its parameters
+are the class proportions `π` (a probability vector) and, for each `j`, an `r × k_j` matrix
+`M_j` with stochastic rows; the joint distribution is
+`P(x_1, …, x_p) = ∑_i π_i ∏_j M_j(i, x_j)`.
+
+**Theorem 4** (Allman–Matias–Rhodes 2009). If the observed variables have a tripartition
+`S_1 ⊔ S_2 ⊔ S_3` into nonempty parts with `κ_t = ∏_{j ∈ S_t} k_j` and
+`min(r, κ_1) + min(r, κ_2) + min(r, κ_3) ≥ 2r + 2`, then the parameters of `M(r; k_1, …, k_p)`
+are generically identifiable up to label swapping.
+
+Generically identifiable means: identifiability holds outside the zero set of some polynomial in
+the parameters that does not vanish identically on the parameter space. It is stated with the
+polynomial existentially quantified and a parameter point where it is nonzero. The paper's
+variant with fixed positive class proportions, its hidden Markov model result (Theorem 6, whose
+treatment of the initial distribution is not reproduced here), and its results for random graph
+mixtures and nonparametric mixtures (Theorems 7-9) are not stated.
+
+Sources: E. S. Allman, C. Matias and J. A. Rhodes, "Identifiability of parameters in latent
+structure models with many observed variables", Ann. Statist. 37(6A):3099-3132, 2009,
+doi:10.1214/09-AOS689, Theorems 1 and 4; J. B. Kruskal, "Three-way arrays: rank and uniqueness
+of trilinear decompositions", Linear Algebra Appl. 18 (1977) 95-138.
 -/
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.LinearAlgebra.LinearIndependent.Defs
-public import Mathlib.Algebra.Module.Pi
 public import Mathlib.Algebra.MvPolynomial.Basic
 public import Mathlib.Algebra.MvPolynomial.Eval
+public import Mathlib.Algebra.Order.Group.Nat
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.LinearAlgebra.LinearIndependent.Defs
+public import Mathlib.Data.Fintype.BigOperators
+public import Mathlib.Data.Fintype.Sigma
 
 @[expose] public section
 
 namespace WantedExt.Biology.ComputationalBiology.KruskalIdentifiabilityWanted
 
-open Classical
-
 variable {r : ℕ}
 
-/-- Tensor entry: `∑ᵢ m₁ᵢ(u) m₂ᵢ(v) m₃ᵢ(w)`. -/
+/-- The tensor `[M_1, M_2, M_3]`: entry `(u, v, w)` is `∑_i M_1(i, u) M_2(i, v) M_3(i, w)`. -/
 noncomputable def tensorEntry {κ₁ κ₂ κ₃ : ℕ} (M₁ : Fin r → Fin κ₁ → ℝ)
     (M₂ : Fin r → Fin κ₂ → ℝ) (M₃ : Fin r → Fin κ₃ → ℝ)
     (u : Fin κ₁) (v : Fin κ₂) (w : Fin κ₃) : ℝ :=
-  Finset.sum Finset.univ fun i => M₁ i u * M₂ i v * M₃ i w
+  ∑ i, M₁ i u * M₂ i v * M₃ i w
 
-/-- Kruskal rank property at level `I`: every `I` rows independent, and some
-`I+1` rows dependent (vacuous maximality is fine for the statements). -/
+/-- `M` (with `r` rows) has Kruskal rank exactly `I`: `I ≤ r`, every set of `I` rows is linearly
+independent, and, if `I < r`, some set of `I + 1` rows is linearly dependent. -/
 def IsKruskalRank {κ : ℕ} (M : Fin r → Fin κ → ℝ) (I : ℕ) : Prop :=
-  (∀ s : Finset (Fin r), s.card = I →
-    LinearIndependent ℝ fun i : s => M i) ∧
-    ∀ J : ℕ, I < J → J ≤ r →
-      ∃ s : Finset (Fin r), s.card = J ∧
-        ¬ LinearIndependent ℝ fun i : s => M i
+  I ≤ r ∧ (∀ s : Finset (Fin r), s.card = I → LinearIndependent ℝ fun i : s => M i) ∧
+    (I < r → ∃ s : Finset (Fin r), s.card = I + 1 ∧ ¬ LinearIndependent ℝ fun i : s => M i)
 
-/-- **Kruskal's theorem** (Allman-Matias-Rhodes 2009, Theorem 1): hypotheses
-are three factor matrices with Kruskal ranks `I₁,I₂,I₃` (`hrank`) summing
-to at least `2r+2` (`hsum`). Conclusion: any second factorization of the
-same tensor agrees up to a common row permutation `σ` and nonzero
-per-row rescalings multiplying to one.
+/-- **Kruskal's theorem** (Allman–Matias–Rhodes 2009, Theorem 1). Let `M_1, M_2, M_3` be real
+matrices with `r` rows and Kruskal ranks exactly `I_1, I_2, I_3`, with
+`I_1 + I_2 + I_3 ≥ 2r + 2`. If real matrices `N_1, N_2, N_3` of the same shapes give the same
+tensor, then there are a permutation `σ` of the rows and scalars `c_1, c_2, c_3` with
+`c_1(i) c_2(i) c_3(i) = 1` and `N_j(i, ·) = c_j(i) M_j(σ i, ·)` for every row `i` and every `j`.
 
-Source: Allman-Matias-Rhodes (2009), Theorem 1. -/
-theorem_wanted kruskal_theorem {κ₁ κ₂ κ₃ : ℕ}
-    (M₁ : Fin r → Fin κ₁ → ℝ) (M₂ : Fin r → Fin κ₂ → ℝ)
-    (M₃ : Fin r → Fin κ₃ → ℝ)
-    (I₁ I₂ I₃ : ℕ)
-    (hrank : IsKruskalRank M₁ I₁ ∧ IsKruskalRank M₂ I₂ ∧
-      IsKruskalRank M₃ I₃)
-    (hsum : I₁ + I₂ + I₃ ≥ 2 * r + 2)
-    (N₁ : Fin r → Fin κ₁ → ℝ) (N₂ : Fin r → Fin κ₂ → ℝ)
+Source: E. S. Allman, C. Matias and J. A. Rhodes, Ann. Statist. 37 (2009) 3099-3132, Theorem 1
+(Kruskal 1977). -/
+theorem_wanted kruskal_theorem {κ₁ κ₂ κ₃ : ℕ} (M₁ : Fin r → Fin κ₁ → ℝ)
+    (M₂ : Fin r → Fin κ₂ → ℝ) (M₃ : Fin r → Fin κ₃ → ℝ) {I₁ I₂ I₃ : ℕ}
+    (h₁ : IsKruskalRank M₁ I₁) (h₂ : IsKruskalRank M₂ I₂) (h₃ : IsKruskalRank M₃ I₃)
+    (hsum : 2 * r + 2 ≤ I₁ + I₂ + I₃) (N₁ : Fin r → Fin κ₁ → ℝ) (N₂ : Fin r → Fin κ₂ → ℝ)
     (N₃ : Fin r → Fin κ₃ → ℝ)
-    (hsame : ∀ u v w, tensorEntry M₁ M₂ M₃ u v w =
-      tensorEntry N₁ N₂ N₃ u v w) :
-    ∃ σ : Equiv.Perm (Fin r), ∃ c₁ c₂ c₃ : Fin r → ℝ,
-      (∀ i, c₁ i * c₂ i * c₃ i = 1) ∧
-        ∀ i u v w, N₁ i u = c₁ i * M₁ (σ i) u ∧
-          N₂ i v = c₂ i * M₂ (σ i) v ∧ N₃ i w = c₃ i * M₃ (σ i) w
+    (hsame : ∀ u v w, tensorEntry N₁ N₂ N₃ u v w = tensorEntry M₁ M₂ M₃ u v w) :
+    ∃ σ : Equiv.Perm (Fin r), ∃ c₁ c₂ c₃ : Fin r → ℝ, (∀ i, c₁ i * c₂ i * c₃ i = 1) ∧
+      ∀ i, (∀ u, N₁ i u = c₁ i * M₁ (σ i) u) ∧ (∀ v, N₂ i v = c₂ i * M₂ (σ i) v) ∧
+        ∀ w, N₃ i w = c₃ i * M₃ (σ i) w
 
-/-- Latent-class parameters: mixing proportions on the simplex and three
-conditional matrices with stochastic rows. -/
-structure LatentParams (r κ₁ κ₂ κ₃ : ℕ) where
-  pi : Fin r → ℝ
-  M₁ : Fin r → Fin κ₁ → ℝ
-  M₂ : Fin r → Fin κ₂ → ℝ
-  M₃ : Fin r → Fin κ₃ → ℝ
-  pi_nonneg : ∀ i, 0 ≤ pi i
-  pi_sum : Finset.sum Finset.univ pi = 1
-  stoch1 : ∀ i u, 0 ≤ M₁ i u
-  stoch1sum : ∀ i, Finset.sum Finset.univ (M₁ i) = 1
-  stoch2 : ∀ i v, 0 ≤ M₂ i v
-  stoch2sum : ∀ i, Finset.sum Finset.univ (M₂ i) = 1
-  stoch3 : ∀ i w, 0 ≤ M₃ i w
-  stoch3sum : ∀ i, Finset.sum Finset.univ (M₃ i) = 1
+/-- A point of the parameter space of the latent class model `M(r; k_1, …, k_p)`: class
+proportions `π` forming a probability vector, and for each observed variable `j` a matrix `M j`
+with `r` stochastic rows of length `k j`. -/
+structure LatentClassParams (r p : ℕ) (k : Fin p → ℕ) where
+  /-- The class proportions. -/
+  π : Fin r → ℝ
+  /-- The conditional distribution of observed variable `j` given each class. -/
+  M : (j : Fin p) → Fin r → Fin (k j) → ℝ
+  π_nonneg : ∀ i, 0 ≤ π i
+  π_sum : ∑ i, π i = 1
+  M_nonneg : ∀ j i u, 0 ≤ M j i u
+  M_sum : ∀ j i, ∑ u, M j i u = 1
 
-/-- Flat parameter index: mixing weights plus all conditional entries. -/
-abbrev PIdx (r κ₁ κ₂ κ₃ : ℕ) :=
-  Fin r ⊕ (Fin r × Fin κ₁) ⊕ (Fin r × Fin κ₂) ⊕ (Fin r × Fin κ₃)
+namespace LatentClassParams
 
-/-- Parameter valuation from structured parameters. -/
-def valOf {κ₁ κ₂ κ₃ : ℕ} (P : LatentParams r κ₁ κ₂ κ₃) :
-    PIdx r κ₁ κ₂ κ₃ → ℝ :=
-  Sum.elim P.pi (Sum.elim (fun p => P.M₁ p.1 p.2)
-    (Sum.elim (fun p => P.M₂ p.1 p.2) (fun p => P.M₃ p.1 p.2)))
+variable {p : ℕ} {k : Fin p → ℕ}
 
-/-- Joint distribution of the latent-class model (first factor reweighted
-by the mixing proportions). -/
-noncomputable def jointTensor {κ₁ κ₂ κ₃ : ℕ} (P : LatentParams r κ₁ κ₂ κ₃)
-    (u : Fin κ₁) (v : Fin κ₂) (w : Fin κ₃) : ℝ :=
-  Finset.sum Finset.univ fun i => P.pi i * P.M₁ i u * P.M₂ i v * P.M₃ i w
+/-- The joint distribution `P(x) = ∑_i π_i ∏_j M_j(i, x_j)` of the observed variables. -/
+noncomputable def joint (P : LatentClassParams r p k) (x : (j : Fin p) → Fin (k j)) : ℝ :=
+  ∑ i, P.π i * ∏ j, P.M j i (x j)
 
-/-- **Generic identifiability of latent class models** (Allman-Matias-Rhodes
-2009, Theorem 4): hypotheses are latent parameters with fixed positive
-mixing proportions (`hpos`), a tripartition rank condition
-(`htri`: `min(r,κ₁)+min(r,κ₂)+min(r,κ₃) ≥ 2r+2`), and a nonzero parameter
-polynomial avoided by the parameters (`Q`, `hQ`, `hgen`). Conclusion: equal
-joint distributions force equal parameters up to permuting hidden labels.
+/-- The coordinates of a parameter point: the class proportions and all conditional
+probabilities. -/
+def coords (P : LatentClassParams r p k) : Fin r ⊕ (Σ j : Fin p, Fin r × Fin (k j)) → ℝ :=
+  Sum.elim P.π fun e => P.M e.1 e.2.1 e.2.2
 
-Source: Allman-Matias-Rhodes (2009), Theorem 4. -/
-theorem_wanted latent_class_identifiable {κ₁ κ₂ κ₃ : ℕ}
-    (P : LatentParams r κ₁ κ₂ κ₃)
-    (hpos : ∀ i, 0 < P.pi i)
-    (htri : min r κ₁ + min r κ₂ + min r κ₃ ≥ 2 * r + 2)
-    (Q : MvPolynomial (PIdx r κ₁ κ₂ κ₃) ℝ)
-    (hQ : Q ≠ 0)
-    (hgen : MvPolynomial.eval (valOf P) Q ≠ 0)
-    (P' : LatentParams r κ₁ κ₂ κ₃)
-    (hsame : ∀ u v w, jointTensor P u v w = jointTensor P' u v w) :
-    ∃ σ : Equiv.Perm (Fin r), (∀ i, P'.pi i = P.pi (σ i)) ∧
-      (∀ i u, P'.M₁ i u = P.M₁ (σ i) u) ∧
-        (∀ i v, P'.M₂ i v = P.M₂ (σ i) v) ∧
-          ∀ i w, P'.M₃ i w = P.M₃ (σ i) w
+/-- The parameters `P` are identifiable up to label swapping: every parameter point with the
+same joint distribution is obtained from `P` by permuting the classes. -/
+def IsIdentifiableAt (P : LatentClassParams r p k) : Prop :=
+  ∀ P' : LatentClassParams r p k, P'.joint = P.joint →
+    ∃ σ : Equiv.Perm (Fin r), ∀ i, P'.π i = P.π (σ i) ∧ ∀ j u, P'.M j i u = P.M j (σ i) u
 
-/-- HMM window marginal: sum over hidden paths of initial-by-transition-by-
-emission products. -/
-noncomputable def hmmMarginal (r κ k : ℕ) (trans : Fin r → Fin r → ℝ)
-    (emit : Fin r → Fin κ → ℝ) (pi0 : Fin r → ℝ)
-    (w : Fin (2 * k + 1) → Fin κ) : ℝ :=
-  Finset.sum Finset.univ fun h : Fin (2 * k + 1) → Fin r =>
-    pi0 (h 0) *
-      (Finset.prod Finset.univ fun t : Fin (2 * k) =>
-        trans (h ⟨t.val, by omega⟩) (h ⟨t.val + 1, by omega⟩)) *
-      Finset.prod Finset.univ fun t => emit (h t) (w t)
+end LatentClassParams
 
-/-- **Generic identifiability of HMMs** (Allman-Matias-Rhodes 2009,
-Theorem 6): hypotheses are `r` hidden states, `κ` observable states, a
-window `2k+1` with `C(k+κ-1,κ-1) ≥ r` (`hwin`), positive transitions,
-emissions, and initial distribution (`hpos`), and genericity via a nonzero
-avoided polynomial (`Q`, `hQ`, `hgen`). Conclusion: equal window marginals
-force equal parameters up to label swapping.
+/-- **Generic identifiability of latent class models** (Allman–Matias–Rhodes 2009, Theorem 4).
+Let `M(r; k_1, …, k_p)` be a latent class model and `S` a tripartition of its observed variables
+into three nonempty parts (`S` surjective onto `Fin 3`), with `κ_t = ∏_{j : S j = t} k_j` and
+`min(r, κ_0) + min(r, κ_1) + min(r, κ_2) ≥ 2r + 2`. Then there is a polynomial `Q` in the
+parameter coordinates that is nonzero at some parameter point and such that the parameters are
+identifiable up to label swapping at every parameter point where `Q` does not vanish.
 
-Source: Allman-Matias-Rhodes (2009), Theorem 6. -/
-theorem_wanted hmm_identifiable (r κ k : ℕ)
-    (trans : Fin r → Fin r → ℝ) (emit : Fin r → Fin κ → ℝ)
-    (pi0 : Fin r → ℝ)
-    (hwin : (k + κ - 1).choose (κ - 1) ≥ r)
-    (hpos : (∀ i j, 0 < trans i j) ∧ (∀ i a, 0 < emit i a) ∧
-      ∀ i, 0 < pi0 i)
-    (Q : MvPolynomial (Fin r ⊕ (Fin r × Fin r) ⊕ (Fin r × Fin κ)) ℝ)
-    (hQ : Q ≠ 0)
-    (hgen : MvPolynomial.eval
-      (Sum.elim pi0 (Sum.elim (fun p => trans p.1 p.2)
-        (fun p => emit p.1 p.2))) Q ≠ 0)
-    (trans' : Fin r → Fin r → ℝ) (emit' : Fin r → Fin κ → ℝ)
-    (pi0' : Fin r → ℝ)
-    (hsame : ∀ w : Fin (2 * k + 1) → Fin κ,
-      hmmMarginal r κ k trans emit pi0 w =
-        hmmMarginal r κ k trans' emit' pi0' w) :
-    ∃ σ : Equiv.Perm (Fin r),
-      (∀ i, pi0' i = pi0 (σ i)) ∧
-        (∀ i j, trans' i j = trans (σ i) (σ j)) ∧
-          ∀ i a, emit' i a = emit (σ i) a
+Source: E. S. Allman, C. Matias and J. A. Rhodes, Ann. Statist. 37 (2009) 3099-3132,
+Theorem 4. -/
+theorem_wanted generic_identifiable {p : ℕ} (k : Fin p → ℕ) (S : Fin p → Fin 3)
+    (hS : Function.Surjective S)
+    (hrank : 2 * r + 2 ≤ ∑ t : Fin 3, min r (∏ j ∈ Finset.univ.filter (S · = t), k j)) :
+    ∃ Q : MvPolynomial (Fin r ⊕ (Σ j : Fin p, Fin r × Fin (k j))) ℝ,
+      (∃ P₀ : LatentClassParams r p k, MvPolynomial.eval P₀.coords Q ≠ 0) ∧
+        ∀ P : LatentClassParams r p k, MvPolynomial.eval P.coords Q ≠ 0 → P.IsIdentifiableAt
 
 end WantedExt.Biology.ComputationalBiology.KruskalIdentifiabilityWanted

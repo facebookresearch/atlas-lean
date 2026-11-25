@@ -1,4 +1,4 @@
 # Is Kruskal Rank
 
-Kruskal rank property at level `I`: every `I` rows independent, and some
-`I+1` rows dependent (vacuous maximality is fine for the statements).
+`M` (with `r` rows) has Kruskal rank exactly `I`: `I ≤ r`, every set of `I` rows is linearly
+independent, and, if `I < r`, some set of `I + 1` rows is linearly dependent.

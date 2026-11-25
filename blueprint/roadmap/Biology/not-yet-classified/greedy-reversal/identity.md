@@ -1,3 +1,3 @@
 # Identity
 
-The sorted identity n `1..n`.
+The identity framed permutation `[0, 1, …, n + 1]`.

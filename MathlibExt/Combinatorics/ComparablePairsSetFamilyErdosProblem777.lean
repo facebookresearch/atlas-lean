@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Algebra.Order.Chebyshev
+import Mathlib.Data.Finset.Interval
 import Mathlib.Data.Finset.Sum
 import Mathlib.Data.Fintype.Powerset
 
@@ -20,6 +22,10 @@ construction described in Section 2 of *Comparable pairs in families of sets* (a
 Lower sets have one exceptional point in the right half and upper sets miss one point in the
 left half. Counting strict containments between the two gives density at least $1/16$ while
 the ratio of the family size to $2^{n/2}$ grows without bound.
+
+We prove the third question by counting pairs of tuples in which every lower set is contained
+in every upper set. Two applications of the power-mean inequality bound the count from below.
+The union of the lower sets separates the tuples and gives an upper bound.
 -/
 
 @[expose] public section
@@ -181,5 +187,154 @@ theorem denseComparabilityFamilySmall_refuted : ¬ denseComparabilityFamilySmall
     mul_left_comm 2, mul_comm (2 : ℝ) (2 ^ (k + 1))] at hbound
   have := (mul_le_mul_iff_left₀ (by positivity)).mp hbound
   linarith
+
+private abbrev tuples {α : Type*} (k : ℕ) (s : Finset α) :=
+  Fintype.piFinset fun _ : Fin k ↦ s
+
+private def incidences {α β : Type*} (s : Finset α) (t : Finset β)
+    (r : α → β → Prop) [DecidableRel r] :=
+  (s ×ˢ t).filter fun p ↦ r p.1 p.2
+
+private theorem card_incidences {α β : Type*} (s : Finset α) (t : Finset β)
+    (r : α → β → Prop) [DecidableRel r] :
+    (incidences s t r).card = ∑ a ∈ s, (t.filter (r a)).card := by
+  simp only [incidences, card_eq_sum_ones, sum_filter, sum_product]
+
+-- Count ordered stars by their centre and then by their tuple of leaves.
+private theorem count_stars {α β : Type*} (s : Finset α) (t : Finset β)
+    (r : α → β → Prop) [DecidableRel r] (j : ℕ) :
+    (incidences s t r).card ^ (j + 1) ≤ s.card ^ j *
+      (incidences (tuples (j + 1) t) s (fun b a ↦ ∀ i, r a (b i))).card := by
+  classical
+  rw [card_incidences]
+  apply (pow_sum_le_card_mul_sum_pow (fun _ _ ↦ Nat.zero_le _) j).trans_eq
+  congr 1
+  have htuples (a : α) : tuples (j + 1) (t.filter (r a)) =
+      (tuples (j + 1) t).filter (fun b ↦ ∀ i, r a (b i)) := by
+    ext b
+    simp [tuples, Fintype.mem_piFinset, forall_and]
+  simp_rw [← Fintype.card_piFinset_const _ (j + 1), htuples]
+  rw [card_incidences]
+  simp only [card_eq_sum_ones, sum_filter]
+  exact sum_comm
+
+-- The union of the lower tuple separates all lower sets from all upper sets.
+private theorem count_boxes {n k : ℕ} (F : Finset (Finset (Fin n))) :
+    (incidences (tuples k F) (tuples k F)
+      (fun a b ↦ ∀ i j, a i ⊂ b j)).card ≤ (2 ^ n) ^ (k + 1) := by
+  classical
+  let box (u : Finset (Fin n)) := tuples k (Iic u) ×ˢ tuples k (Icc u univ)
+  have hbox (u : Finset (Fin n)) : (box u).card = (2 ^ n) ^ k := by
+    have hu : u.card ≤ n := by simpa using u.card_le_univ
+    simp only [box, card_product, Fintype.card_piFinset_const, card_Iic_finset,
+      card_Icc_finset (subset_univ _), card_univ, Fintype.card_fin]
+    rw [← mul_pow, ← pow_add, Nat.add_sub_of_le hu]
+  calc
+    _ ≤ (univ.biUnion box).card := by
+      apply card_le_card
+      rintro ⟨a, b⟩ hp
+      have hab := (mem_filter.mp hp).2
+      let u := univ.biUnion a
+      refine mem_biUnion.mpr ⟨u, mem_univ _, mem_product.mpr ⟨?_, ?_⟩⟩
+      · exact Fintype.mem_piFinset.mpr fun i ↦ mem_Iic.mpr (subset_biUnion_of_mem a (mem_univ i))
+      · refine Fintype.mem_piFinset.mpr fun j ↦ mem_Icc.mpr ⟨?_, subset_univ _⟩
+        exact biUnion_subset.mpr fun i _ ↦ (hab i j).le
+    _ ≤ ∑ u : Finset (Fin n), (box u).card := card_biUnion_le
+    _ = _ := by simp [hbox, pow_succ, mul_comm]
+
+-- Two applications of the star count give a lower bound for the number of boxes.
+private theorem comparablePairs_moment {n : ℕ} (F : Finset (Finset (Fin n))) (j : ℕ) :
+    (comparablePairs F) ^ ((j + 1) * (j + 1)) ≤
+      F.card ^ (2 * j * (j + 1)) * (2 ^ n) ^ (j + 2) := by
+  classical
+  let k := j + 1
+  let stars := incidences (tuples k F) F (fun b a ↦ ∀ i, a ⊂ b i)
+  have h₁ : comparablePairs F ^ k ≤ F.card ^ j * stars.card :=
+    count_stars F F (· ⊂ ·) j
+  have h₂ : stars.card ^ k ≤ (F.card ^ k) ^ j * (2 ^ n) ^ (k + 1) := by
+    apply (count_stars (tuples k F) F (fun b a ↦ ∀ i, a ⊂ b i) j).trans
+    rw [Fintype.card_piFinset_const]
+    exact Nat.mul_le_mul_left _ (count_boxes F)
+  calc
+    _ = (comparablePairs F ^ k) ^ k := pow_mul ..
+    _ ≤ (F.card ^ j * stars.card) ^ k := Nat.pow_le_pow_left h₁ _
+    _ ≤ (F.card ^ j) ^ k * ((F.card ^ k) ^ j * (2 ^ n) ^ (k + 1)) := by
+      rw [mul_pow]
+      exact Nat.mul_le_mul_left _ h₂
+    _ = _ := by
+      rw [← mul_assoc, ← pow_mul, ← pow_mul, ← pow_add]
+      congr 2
+      dsimp [k]
+      ring
+
+/--
+**Affirmative answer to Erdős Problem 777, third question.** For every real $\varepsilon > 0$
+there is a real $\delta > 0$ such that for every $n$, every family $F$ of subsets of
+$\{0, \dots, n - 1\}$ with more than $|F|^{2 - \delta}$ comparable pairs (ordered pairs $(A, B)$
+of members of $F$ with $A \subsetneq B$) satisfies $|F| < (2 + \varepsilon)^{n/2}$.
+
+According to erdosproblems.com/777 this follows from the case $k = 1$ of Theorem 1.4 of Alon and
+Frankl, conjectured by Daykin and Erdős: there is $\beta > 0$ such that for every $\eta > 0$, a
+family of $m = 2^{(1/2 + \eta) n}$ subsets of an $n$-element set has $O(m^{2 - \beta \eta^2})$
+comparable pairs.
+
+Source: T. F. Bloom, Erdős Problems, Problem #777, https://www.erdosproblems.com/777 (status
+SOLVED); resolution: N. Alon and P. Frankl, The maximum number of disjoint pairs in a family of
+subsets, Graphs Combin. 1 (1985), 13-21; N. Alon, S. Das, R. Glebov and B. Sudakov, Comparable
+pairs in families of sets, J. Combin. Theory Ser. B (2015), 164-185, arXiv:1411.4196, Alon-Frankl
+Theorem 1.4: for every k ≥ 1 there is β(k) > 0 such that for m = 2^{(1/(k+1) + δ)n}, c(n, m) <
+(1 - 1/k) C(m, 2) + O(m^{2 - β δ^{k+1}}), the case k = 1 conjectured by Daykin and Erdős;
+Alon-Frankl Section 6, Example 6.1: the sets meeting the second half of [n] in at most d elements
+or missing at most d elements of the first half form a family of Θ(n^d 2^{n/2}) sets with a
+constant fraction of comparable pairs, disproving a conjecture of Erdős; erdosproblems.com/777:
+Alon and Frankl answer the third question in the affirmative and the second in the negative, and
+an affirmative answer to the first follows from Theorem 1.4 and Corollary 1.5 of Alon, Das,
+Glebov and Sudakov, https://www.erdosproblems.com/777.
+-/
+theorem nearlyCompleteComparabilityFamilySmall_holds :
+    nearlyCompleteComparabilityFamilySmall := by
+  intro ε hε
+  obtain ⟨j, hj⟩ := pow_unbounded_of_one_lt (4 : ℝ) (show 1 < (2 + ε) / 2 by linarith)
+  have hbase : (2 : ℝ) ^ (j + 2) ≤ (2 + ε) ^ j := by
+    rw [div_pow, lt_div_iff₀ (by positivity)] at hj
+    rw [pow_add]
+    linarith
+  -- Raising the density hypothesis to k² gives the exponent 2k² - 2.
+  -- Cancelling the factor of |F|^(2jk) in the moment bound leaves |F|^(2j).
+  let k := j + 1
+  have hk : (0 : ℝ) < k := by
+    dsimp [k]
+    positivity
+  refine ⟨2 / (k : ℝ) ^ 2, by positivity, ?_⟩
+  intro n F hpairs
+  by_contra! hlarge
+  have hpos : 0 < 2 + ε := by linarith
+  have hm : (0 : ℝ) < F.card := (Real.rpow_pos_of_pos hpos _).trans_le hlarge
+  have hlower : (F.card : ℝ) ^ (2 * j * k) * F.card ^ (2 * j) <
+      (comparablePairs F : ℝ) ^ (k * k) := by
+    calc
+      _ = ((F.card : ℝ) ^ (2 - 2 / (k : ℝ) ^ 2)) ^ (k * k) := by
+        rw [← pow_add, ← Real.rpow_natCast, ← Real.rpow_natCast, ← Real.rpow_mul hm.le]
+        congr 1
+        push_cast
+        field_simp
+        dsimp [k]
+        push_cast
+        ring
+      _ < _ := pow_lt_pow_left₀ hpairs (Real.rpow_nonneg hm.le _) (by simp [k])
+  have hupper : (comparablePairs F : ℝ) ^ (k * k) ≤
+      (F.card : ℝ) ^ (2 * j * k) * (2 ^ n) ^ (j + 2) := by
+    exact_mod_cast comparablePairs_moment F j
+  have hsmall := (mul_lt_mul_iff_right₀ (pow_pos hm _)).mp (hlower.trans_le hupper)
+  apply hsmall.not_ge
+  calc
+    ((2 : ℝ) ^ n) ^ (j + 2) = (2 ^ (j + 2)) ^ n := by rw [← pow_mul, ← pow_mul, Nat.mul_comm]
+    _ ≤ ((2 + ε) ^ j) ^ n := pow_le_pow_left₀ (by positivity) hbase _
+    _ = ((2 + ε) ^ ((n : ℝ) / 2)) ^ (2 * j) := by
+      rw [← pow_mul, ← Real.rpow_natCast, ← Real.rpow_natCast, ← Real.rpow_mul hpos.le]
+      congr 1
+      push_cast
+      ring
+    _ ≤ _ := pow_le_pow_left₀ (Real.rpow_nonneg hpos.le _) hlarge _
 
 end MathlibExt.Combinatorics.ComparablePairsSetFamilyErdosProblem777Wanted

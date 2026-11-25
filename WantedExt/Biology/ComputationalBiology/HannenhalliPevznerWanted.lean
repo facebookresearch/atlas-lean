@@ -7,169 +7,200 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# Hannenhalli-Pevzner duality for signed reversal distance
+# The Hannenhalli–Pevzner duality theorem for signed reversal distance
 
-For a signed permutation `π` of `±1..±n` (as an integer list with each
-nonzero value of absolute value at most `n` exactly once), framed by `0`
-and `n+1`, adjacencies join consecutive values (`y - x = 1`) and
-breakpoints are the other adjacent framed pairs. The breakpoint graph has
-black edges on breakpoints and gray edges on inverse breakpoints; its
-alternating cycles decompose the black edges, with maximum count `c(π)`.
-With `b(π)` breakpoints and `h(π)` hurdles (unoriented components, counted
-with `superHurdles` for fortresses), the reversal distance is
-`d(π) = b(π) - c(π) + h(π) + 1` on fortresses and `b(π) - c(π) + h(π)`
-otherwise. The Reversal_Sort procedure sorts optimally; its `O(n^4)` time
-bound needs a RAM cost model and is context here.
+A signed permutation `π = (π_1, …, π_n)` contains each of `1, …, n` exactly once, each with a
+sign. A reversal `ρ(i, j)` reverses the block `π_i … π_j` and changes the sign of each of its
+elements; the reversal distance `d(π)` is the least number of reversals that turn `π` into the
+identity `(+1, …, +n)`. Frame `π` by `π_0 = 0` and `π_{n+1} = n + 1`; a breakpoint is a position
+`0 ≤ t ≤ n` with `π_{t+1} - π_t ≠ 1`, and `b(π)` is their number.
 
-Overlap (partial base): `CSLibExt/Bioinformatics/Rearrangement/SortingByReversals.lean`
-has breakpoints, the `b ≤ 2d` bound, and sortability; the duality formula,
-hurdles, fortresses, and optimal sorting are new.
+The unsigned image of `π` replaces `+x` by `2x - 1, 2x` and `-x` by `2x, 2x - 1`, between the
+framing values `0` and `2n + 1`; it is a sequence `u_0, …, u_{2n+1}`. The breakpoint graph has a
+black edge between the positions `2t` and `2t + 1` and a gray edge between the positions of the
+values `2t` and `2t + 1`, for `0 ≤ t ≤ n`; it decomposes uniquely into alternating cycles. A
+cycle with one black edge is an adjacency; `c(π)` counts the other cycles.
 
-Sources: S. Hannenhalli and P. A. Pevzner, "Transforming cabbage into
-turnip: polynomial algorithm for sorting signed permutations by reversals",
-J. ACM 46(1):1-27, 1999, doi:10.1145/300515.300516, Theorems 5-6.
+The gray edge `t` spans the interval between the positions of `2t` and `2t + 1`. It is trivial if
+these positions are `2s, 2s + 1` (it is part of an adjacency), and oriented if the two positions
+have the same parity (equivalently, the elements `t` and `t + 1` of `π` have opposite signs).
+Two nontrivial gray edges overlap if their intervals intersect without either containing the
+other; the components of the overlap graph are the components of `π`, and a component is
+unoriented if none of its gray edges is oriented. Place the positions `0, …, 2n + 1` on a circle.
+An unoriented component `U` separates two components if the points of `U` lie on both arcs
+between them. A hurdle is an unoriented component that separates no two other unoriented
+components; a superhurdle is a hurdle whose removal turns an unoriented component that is not a
+hurdle into a hurdle; `h(π)` is the number of hurdles, and `π` is a fortress if it has an odd
+number of hurdles, all of them superhurdles.
+
+**Theorem 5** (Hannenhalli–Pevzner 1999). `d(π) = b(π) - c(π) + h(π) + 1` if `π` is a fortress,
+and `d(π) = b(π) - c(π) + h(π)` otherwise.
+
+The theorem is stated as the existence of `d` with `d = b - c + h + [fortress]` that is attained
+by a sorting sequence and is a lower bound for every sorting sequence. Theorem 6 (the algorithm
+Reversal_Sort sorts optimally in `O(n^4)` time) is not stated.
+
+Sources: S. Hannenhalli and P. A. Pevzner, "Transforming cabbage into turnip: polynomial
+algorithm for sorting signed permutations by reversals", J. ACM 46(1):1-27, 1999,
+doi:10.1145/300515.300516, Theorem 5.
 -/
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Data.List.Perm.Basic
 public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Fintype.Powerset
-public import Mathlib.Data.Fintype.Prod
-public import Mathlib.Data.List.Basic
+public import Mathlib.Data.Fintype.Fin
+public import Mathlib.Data.Int.Basic
+public import Mathlib.Algebra.Group.Nat.Even
 public import Mathlib.Algebra.Ring.Parity
+public import Mathlib.Logic.Function.Iterate
+public import Mathlib.Logic.Relation
 
 @[expose] public section
 
 namespace WantedExt.Biology.ComputationalBiology.HannenhalliPevznerWanted
 
-open Classical
+/-- `π` is a signed permutation of `1, …, n`: the absolute values of its entries are a
+permutation of `1, …, n` (so no entry is `0` and each absolute value occurs once). -/
+def IsSignedPerm (n : ℕ) (π : List ℤ) : Prop :=
+  (π.map Int.natAbs).Perm ((List.range n).map (· + 1))
 
-variable (n : ℕ)
+/-- The identity signed permutation `(+1, …, +n)`. -/
+def identity (n : ℕ) : List ℤ :=
+  (List.range n).map fun i => (i : ℤ) + 1
 
-/-- Valid signed permutations: each nonzero value of absolute value at most
-`n` exactly once. -/
-def IsSignedPerm (π : List ℤ) : Prop :=
-  π.length = n ∧ ∀ v : ℤ, v ≠ 0 → v.natAbs ≤ n → v ∈ π
+/-- The reversal `ρ(i, j)` (0-based positions `i ≤ j`): reverse the block in positions
+`i, …, j` and change the sign of each of its entries. -/
+def reversal (π : List ℤ) (i j : ℕ) : List ℤ :=
+  π.take i ++ (((π.drop i).take (j + 1 - i)).reverse.map fun x => -x) ++ π.drop (j + 1)
 
-/-- Framing with `0` and `n+1`. -/
-def framed (π : List ℤ) : List ℤ :=
-  0 :: π ++ [((n : ℤ) + 1)]
+/-- At most `m` reversals `ρ(i, j)` with `i ≤ j < n`, applied in order, turn `π` into the
+identity, so `d(π) ≤ m`. -/
+def SortsWithin (n : ℕ) (π : List ℤ) (m : ℕ) : Prop :=
+  ∃ ops : List (ℕ × ℕ), ops.length ≤ m ∧ (∀ o ∈ ops, o.1 ≤ o.2 ∧ o.2 < n) ∧
+    ops.foldl (fun l o => reversal l o.1 o.2) π = identity n
 
-/-- Adjacent values differ by exactly one upward step. -/
-def Adjacent (x y : ℤ) : Prop :=
-  y - x = 1
+/-- The framed permutation `[0, π_1, …, π_n, n + 1]`. -/
+def framed (n : ℕ) (π : List ℤ) : List ℤ :=
+  0 :: π ++ [(n : ℤ) + 1]
 
-/-- Breakpoint count of the framed permutation. -/
-noncomputable def breakpoints (π : List ℤ) : ℕ :=
-  ((List.range (framed n π).length).filter fun i =>
-    ∃ x y : ℤ, (framed n π).getD i 0 = x ∧ (framed n π).getD (i + 1) 0 = y ∧
-      ¬ Adjacent x y).length
+/-- The number `b(π)` of breakpoints: positions `0 ≤ t ≤ n` of the framed permutation with
+`π_{t+1} - π_t ≠ 1`. -/
+def breakpoints (n : ℕ) (π : List ℤ) : ℕ :=
+  ((List.range (n + 1)).filter fun t =>
+    (framed n π).getD (t + 1) 0 - (framed n π).getD t 0 ≠ 1).length
 
-/-- Black edges join breakpoint position pairs; gray edges join
-inverse-breakpoint pairs. Vertices are positions `0..n`. -/
-def blackEdge (π : List ℤ) (a b : Fin (n + 1)) : Prop :=
-  ∃ i, i + 1 ≤ n ∧
-    ((framed n π).getD i 0 + 1 ≠ (framed n π).getD (i + 1) 0 ∧
-      a.val = i ∧ b.val = i + 1) ∨
-    ((framed n π).getD i 0 + 1 ≠ (framed n π).getD (i + 1) 0 ∧
-      a.val = i + 1 ∧ b.val = i)
+/-- The unsigned image `[0, …, 2n + 1]`: `+x` becomes `2x - 1, 2x` and `-x` becomes
+`2x, 2x - 1`. -/
+def image (n : ℕ) (π : List ℤ) : List ℕ :=
+  0 :: π.flatMap (fun x => if 0 < x then [2 * x.natAbs - 1, 2 * x.natAbs]
+    else [2 * x.natAbs, 2 * x.natAbs - 1]) ++ [2 * n + 1]
 
-/-- Gray edges: value-consecutive positions in the inverse permutation. -/
-def grayEdge (π : List ℤ) (a b : Fin (n + 1)) : Prop :=
-  ∃ u v : ℤ, v - u = 1 ∧
-    ((framed n π).getD a.val 0 = u ∧ (framed n π).getD b.val 0 = v) ∨
-    ((framed n π).getD a.val 0 = v ∧ (framed n π).getD b.val 0 = u)
+/-- The position of the value `v` in the unsigned image. -/
+def pos (n : ℕ) (π : List ℤ) (v : ℕ) : ℕ :=
+  (image n π).idxOf v
 
-/-- Reachability in the black/gray union graph. -/
-inductive CGReach (n : ℕ) (E : Fin (n + 1) × Fin (n + 1) → Prop) :
-    Fin (n + 1) → Fin (n + 1) → Prop where
-  | refl (v) : CGReach n E v v
-  | step (u v w) : CGReach n E u v → E (v, w) → CGReach n E u w
+/-- One step along the alternating cycles: from position `x`, cross the black edge to the
+position `x xor 1`, then the gray edge from its value `u` to the value `u xor 1`, and return the
+position of that value. -/
+def cycleStep (n : ℕ) (π : List ℤ) (x : ℕ) : ℕ :=
+  pos n π ((image n π).getD (x ^^^ 1) 0 ^^^ 1)
 
-/-- Union edges for a permutation. -/
-def unionEdges (π : List ℤ) (p : Fin (n + 1) × Fin (n + 1)) : Prop :=
-  blackEdge n π p.1 p.2 ∨ grayEdge n π p.1 p.2
+open Classical in
+/-- The positions in the orbit of `x` under `cycleStep`: one endpoint of each black edge of the
+alternating cycle through `x`, traversed in one direction. -/
+noncomputable def orbit (n : ℕ) (π : List ℤ) (x : ℕ) : Finset ℕ :=
+  (Finset.range (2 * n + 2)).filter fun y => ∃ k, (cycleStep n π)^[k] x = y
 
-/-- Alternating cycle components of the breakpoint graph. -/
-noncomputable def cycleComps (π : List ℤ) : Finset (Finset (Fin (n + 1))) :=
-  Finset.univ.filter fun K =>
-    K.Nonempty ∧ (∀ u ∈ K, ∀ v ∈ K, CGReach n (fun p => unionEdges n π p) u v) ∧
-      ∀ w ∉ K, ∀ u ∈ K, ¬ CGReach n (fun p => unionEdges n π p) u w
+open Classical in
+/-- The number `c(π)` of alternating cycles that are not adjacencies. Each such cycle with `L ≥ 2`
+black edges gives two orbits of `cycleStep` with `L` positions (one per direction), so `c(π)` is
+half the number of orbits with at least two positions, each orbit counted at its least
+position. -/
+noncomputable def cycles (n : ℕ) (π : List ℤ) : ℕ :=
+  ((Finset.range (2 * n + 2)).filter fun x =>
+    (∀ y ∈ orbit n π x, x ≤ y) ∧ 2 ≤ (orbit n π x).card).card / 2
 
-/-- Apply signed reversal `[i,j]`: reverse and negate the framed segment. -/
-def applySignedReversal (π : List ℤ) (r : ℕ × ℕ) : List ℤ :=
-  unframeSigned ((framed n π).take (r.1 + 1) ++
-    (((framed n π).drop (r.1 + 1)).take (r.2 - r.1)).reverse.map (-·) ++
-    (framed n π).drop (r.2 + 1))
-where
-  /-- Unframe: drop both sentinels. -/
-  unframeSigned (F : List ℤ) : List ℤ :=
-    F.drop 1 |>.dropLast
+/-- The left end of the interval of gray edge `t`. -/
+def left (n : ℕ) (π : List ℤ) (t : Fin (n + 1)) : ℕ :=
+  min (pos n π (2 * t)) (pos n π (2 * t + 1))
 
-/-- Sorting by signed reversals: chains to the identity `1..n`. -/
-inductive SortsSigned (n : ℕ) : List ℤ → List (ℕ × ℕ) → Prop where
-  | nil (π) : SortsSigned n π []
-  | cons (π π' : List ℤ) (r : ℕ × ℕ) (rest : List (ℕ × ℕ)) :
-      π' = applySignedReversal n π r → SortsSigned n π' rest →
-        SortsSigned n π (r :: rest)
+/-- The right end of the interval of gray edge `t`. -/
+def right (n : ℕ) (π : List ℤ) (t : Fin (n + 1)) : ℕ :=
+  max (pos n π (2 * t)) (pos n π (2 * t + 1))
 
-/-- Reversal distance, characterized by `hd_le`/`hd_att` below. -/
-noncomputable def revDist (π : List ℤ)
-    (h : ∃ seq : List (ℕ × ℕ), SortsSigned n π seq) : ℕ :=
-  Nat.find (p := fun k => ∃ seq : List (ℕ × ℕ),
-    SortsSigned n π seq ∧ seq.length = k)
-    (by obtain ⟨s, hs⟩ := h; exact ⟨s.length, s, hs, rfl⟩)
+/-- Gray edge `t` is nontrivial: its endpoints are not the two ends `2s, 2s + 1` of a black
+edge. -/
+def IsNontrivial (n : ℕ) (π : List ℤ) (t : Fin (n + 1)) : Prop :=
+  ¬ (right n π t = left n π t + 1 ∧ Even (left n π t))
 
-/-- **Hannenhalli-Pevzner duality** (1999, Theorem 5): hypotheses are a valid
-signed permutation (`hπ`), hurdles `h` with super-hurdle count
-(`hsuper`: at most `h`), the fortress flag characterized by odd hurdles all
-super (`hfort`: `fortress ↔ Odd h ∧ superHurdles = h`), the max-cycle
-characterization (`hcmx`, `hcmx_att` over alternating decompositions
-`IsAltDecomp`, given as all-valid-cycle-covers), and the distance
-characterization (`hd_le`, `hd_att`). Conclusion over `ℤ`: `d = b - c + h`,
-plus one on fortresses.
+/-- Gray edge `t` is oriented: its endpoints have positions of the same parity. -/
+def IsOriented (n : ℕ) (π : List ℤ) (t : Fin (n + 1)) : Prop :=
+  pos n π (2 * t) % 2 = pos n π (2 * t + 1) % 2
 
-Source: Hannenhalli-Pevzner (1999), Theorem 5. -/
-theorem_wanted duality_signed (π : List ℤ) (hπ : IsSignedPerm n π)
-    (h : ℕ) (superHurdles : ℕ) (hsuper : superHurdles ≤ h)
-    (fortress : Prop)
-    (hfort : fortress ↔ (Odd h ∧ superHurdles = h))
-    (cmax : ℕ)
-    (hcmx : ∀ C : List (Finset (Fin (n + 1))),
-      (∀ K ∈ C, K ∈ cycleComps n π) → C.length ≤ cmax)
-    (hcmx_att : ∃ C : List (Finset (Fin (n + 1))),
-      (∀ K ∈ C, K ∈ cycleComps n π) ∧ C.length = cmax)
-    (hex : ∃ seq : List (ℕ × ℕ), SortsSigned n π seq)
-    (hd_le : ∀ seq : List (ℕ × ℕ), SortsSigned n π seq →
-      revDist n π hex ≤ seq.length)
-    (hd_att : ∃ seq : List (ℕ × ℕ), SortsSigned n π seq ∧
-      revDist n π hex = seq.length) :
-    (revDist n π hex : ℤ) = breakpoints n π - cmax + h +
-      (if fortress then 1 else 0)
+/-- Two nontrivial gray edges overlap: their intervals intersect and neither contains the
+other. -/
+def Overlap (n : ℕ) (π : List ℤ) (s t : Fin (n + 1)) : Prop :=
+  IsNontrivial n π s ∧ IsNontrivial n π t ∧
+    ((left n π s < left n π t ∧ left n π t < right n π s ∧ right n π s < right n π t) ∨
+      (left n π t < left n π s ∧ left n π s < right n π t ∧ right n π t < right n π s))
 
-/-- **Reversal_Sort is optimal** (1999, Theorem 6): same hypotheses as
-`duality_signed`, plus a Reversal_Sort run (`seq`, each step an admissible
-signed reversal chosen by the procedure, `hrun`) attaining the duality
-bound (`hopt`). Conclusion: the run sorts `π` in exactly `d(π)` reversals;
-the `O(n^4)` time reading is context.
+open Classical in
+/-- The component of gray edge `t`: the gray edges reachable from `t` in the overlap graph. -/
+noncomputable def component (n : ℕ) (π : List ℤ) (t : Fin (n + 1)) : Finset (Fin (n + 1)) :=
+  Finset.univ.filter fun s => Relation.ReflTransGen (Overlap n π) t s
 
-Source: Hannenhalli-Pevzner (1999), Theorem 6. -/
-theorem_wanted reversalSort_optimal (π : List ℤ) (hπ : IsSignedPerm n π)
-    (h : ℕ) (superHurdles : ℕ) (hsuper : superHurdles ≤ h)
-    (fortress : Prop)
-    (hfort : fortress ↔ (Odd h ∧ superHurdles = h))
-    (cmax : ℕ)
-    (hcmx : ∀ C : List (Finset (Fin (n + 1))),
-      (∀ K ∈ C, K ∈ cycleComps n π) → C.length ≤ cmax)
-    (hcmx_att : ∃ C : List (Finset (Fin (n + 1))),
-      (∀ K ∈ C, K ∈ cycleComps n π) ∧ C.length = cmax)
-    (hex : ∃ seq : List (ℕ × ℕ), SortsSigned n π seq)
-    (seq : List (ℕ × ℕ))
-    (hrun : SortsSigned n π seq)
-    (hopt : (seq.length : ℤ) = breakpoints n π - cmax + h +
-      (if fortress then 1 else 0)) :
-    seq.length = revDist n π hex
+open Classical in
+/-- The unoriented components: components of nontrivial gray edges none of whose gray edges is
+oriented. -/
+noncomputable def unorientedComponents (n : ℕ) (π : List ℤ) : Finset (Finset (Fin (n + 1))) :=
+  (Finset.univ.filter fun t => IsNontrivial n π t ∧
+    ∀ s ∈ component n π t, ¬ IsOriented n π s).image (component n π)
+
+/-- The positions of the endpoints of the gray edges of a component. -/
+def points (n : ℕ) (π : List ℤ) (K : Finset (Fin (n + 1))) : Finset ℕ :=
+  K.biUnion fun s => {left n π s, right n π s}
+
+/-- On the circle of positions, `U` separates `V` from `W`: for some points `x` of `V` and `y`
+of `W`, both arcs between `x` and `y` contain a point of `U`. -/
+def Separates (n : ℕ) (π : List ℤ) (U V W : Finset (Fin (n + 1))) : Prop :=
+  ∃ x ∈ points n π V, ∃ y ∈ points n π W,
+    (∃ u ∈ points n π U, min x y < u ∧ u < max x y) ∧
+      ∃ u ∈ points n π U, u < min x y ∨ max x y < u
+
+/-- `U` is a hurdle among the unoriented components `𝒰`: `U ∈ 𝒰` and `U` separates no two other
+components of `𝒰`. -/
+def IsHurdle (n : ℕ) (π : List ℤ) (𝒰 : Finset (Finset (Fin (n + 1))))
+    (U : Finset (Fin (n + 1))) : Prop :=
+  U ∈ 𝒰 ∧ ¬ ∃ V ∈ 𝒰, ∃ W ∈ 𝒰, V ≠ U ∧ W ≠ U ∧ Separates n π U V W
+
+open Classical in
+/-- The number `h(π)` of hurdles. -/
+noncomputable def hurdles (n : ℕ) (π : List ℤ) : ℕ :=
+  ((unorientedComponents n π).filter (IsHurdle n π (unorientedComponents n π))).card
+
+/-- `U` is a superhurdle: a hurdle such that, after removing `U`, some unoriented component that
+was not a hurdle becomes a hurdle. -/
+def IsSuperhurdle (n : ℕ) (π : List ℤ) (U : Finset (Fin (n + 1))) : Prop :=
+  IsHurdle n π (unorientedComponents n π) U ∧
+    ∃ V ∈ unorientedComponents n π, ¬ IsHurdle n π (unorientedComponents n π) V ∧
+      IsHurdle n π ((unorientedComponents n π).erase U) V
+
+/-- `π` is a fortress: it has an odd number of hurdles, and every hurdle is a superhurdle. -/
+def IsFortress (n : ℕ) (π : List ℤ) : Prop :=
+  Odd (hurdles n π) ∧
+    ∀ U, IsHurdle n π (unorientedComponents n π) U → IsSuperhurdle n π U
+
+open Classical in
+/-- **Hannenhalli–Pevzner duality** (1999, Theorem 5). For every signed permutation `π` of
+`1, …, n` there is `d` with `d = b(π) - c(π) + h(π) + 1` if `π` is a fortress and
+`d = b(π) - c(π) + h(π)` otherwise, such that some sequence of at most `d` reversals sorts `π`
+and every sequence of reversals sorting `π` has at least `d` reversals; that is, `d(π) = d`.
+
+Source: S. Hannenhalli and P. A. Pevzner, J. ACM 46 (1999) 1-27, Theorem 5. -/
+theorem_wanted reversalDistance_eq (n : ℕ) {π : List ℤ} (hπ : IsSignedPerm n π) :
+    ∃ d : ℕ, (d : ℤ) = (breakpoints n π : ℤ) - cycles n π + hurdles n π +
+        (if IsFortress n π then 1 else 0) ∧
+      SortsWithin n π d ∧ ∀ m, SortsWithin n π m → d ≤ m
 
 end WantedExt.Biology.ComputationalBiology.HannenhalliPevznerWanted
