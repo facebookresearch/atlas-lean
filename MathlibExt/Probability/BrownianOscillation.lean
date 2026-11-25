@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Probability.BrownianMotion.Basic
+public import MathlibExt.Probability.Distributions.GaussianTail
 import MathlibExt.Probability.BlumenthalZeroOne
 import MathlibExt.Probability.BrownianQuadraticVariation
 
@@ -50,29 +51,6 @@ open scoped NNReal ENNReal
 
 namespace ProbabilityTheory
 
-/-- **Half-line mass of a centered Gaussian.** A centered Gaussian law with variance `v ≠ 0`
-gives mass `1/2` to `(0, ∞)`, by symmetry and because it has no atoms; this is the value
-`P(B_t > 0) = 1/2` used in Le Gall's proof of the oscillation of Brownian motion at time `0` (ENS
-notes *Intégration, Probabilités et Processus Aléatoires*, proof of Corollaire 14.4.3). -/
-lemma gaussianReal_Ioi_zero {v : ℝ≥0} (hv : v ≠ 0) :
-    gaussianReal 0 v (Set.Ioi 0) = 1 / 2 := by
-  have hsymm : gaussianReal 0 v (Set.Iio 0) = gaussianReal 0 v (Set.Ioi 0) := by
-    have h := gaussianReal_map_neg (μ := 0) (v := v)
-    rw [neg_zero] at h
-    conv_lhs => rw [← h]
-    rw [Measure.map_apply measurable_neg measurableSet_Iio]
-    congr 1
-    ext x
-    simp
-  have : NullSingletonClass (gaussianReal 0 v) := nullSingletonClass_gaussianReal hv
-  have htot : gaussianReal 0 v (Set.Iio 0) + gaussianReal 0 v (Set.Ioi 0) = 1 := by
-    rw [measure_congr (Iio_ae_eq_Iic (a := (0 : ℝ))), ← Set.compl_Ioi,
-      prob_compl_eq_one_sub measurableSet_Ioi]
-    exact tsub_add_cancel_of_le prob_le_one
-  rw [hsymm] at htot
-  have hfin : gaussianReal 0 v (Set.Ioi 0) ≠ ∞ := measure_ne_top _ _
-  rw [← two_mul] at htot
-  rw [ENNReal.eq_div_iff (by norm_num) (by norm_num), htot]
 
 /-- For a Brownian motion with measurable coordinates, the event "for every `n`, `B` is
 strictly positive at some time `1/(m+1)` with `m ≥ n`" has probability one. -/

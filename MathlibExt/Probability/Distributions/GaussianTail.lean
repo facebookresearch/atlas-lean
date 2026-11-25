@@ -9,6 +9,23 @@ module
 
 public import Mathlib.Probability.Distributions.Gaussian.Real
 
+/-!
+# Standard-normal upper-tail bound
+
+This module proves an upper-tail bound for the standard normal law: for `0 ≤ u`, the mass of
+`(u, ∞)` under `gaussianReal 0 1` is at most `Real.exp (-u ^ 2 / 2) / 2`.
+
+## Main results
+
+* `ProbabilityTheory.gaussianReal_Ioi_zero`: a centered Gaussian law with positive variance gives
+  mass `1 / 2` to `(0, ∞)`.
+* `ProbabilityTheory.gaussianReal_Ioi_le_half_exp`: the standard-normal upper-tail bound.
+
+The proof compares densities after shifting the mean by `u`: on `(u, ∞)` the standard density is
+pointwise at most `Real.exp (-u ^ 2 / 2)` times the shifted density, so the tail is bounded by the
+half-line mass at zero, which is `1 / 2` by symmetry.
+-/
+
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
@@ -65,58 +82,39 @@ private lemma translate_eq {u : ℝ} :
         (Measure.map_apply (measurable_const_add _) measurableSet_Ioi).symm
     _ = gaussianReal 0 1 (Set.Ioi 0) := by rw [hmap]
 
-private lemma half_eq : gaussianReal 0 1 (Set.Ioi 0) = ENNReal.ofReal (1 / 2 : ℝ) := by
-  have hmap := gaussianReal_map_neg (μ := (0 : ℝ)) (v := (1 : ℝ≥0))
-  rw [neg_zero] at hmap
-  have hpre : (fun x : ℝ => -x) ⁻¹' Set.Ioi 0 = Set.Iio 0 := by
+/-- **Half-line mass of a centered Gaussian.** A centered Gaussian law with variance `v ≠ 0`
+gives mass `1/2` to `(0, ∞)`, by symmetry and because it has no atoms; this is the value
+`P(B_t > 0) = 1/2` used in Le Gall's proof of the oscillation of Brownian motion at time `0` (ENS
+notes *Intégration, Probabilités et Processus Aléatoires*, proof of Corollaire 14.4.3). -/
+lemma gaussianReal_Ioi_zero {v : ℝ≥0} (hv : v ≠ 0) :
+    gaussianReal 0 v (Set.Ioi 0) = 1 / 2 := by
+  have hsymm : gaussianReal 0 v (Set.Iio 0) = gaussianReal 0 v (Set.Ioi 0) := by
+    have h := gaussianReal_map_neg (μ := 0) (v := v)
+    rw [neg_zero] at h
+    conv_lhs => rw [← h]
+    rw [Measure.map_apply measurable_neg measurableSet_Iio]
+    congr 1
     ext x
-    simp only [Set.mem_preimage, Set.mem_Ioi, Set.mem_Iio, neg_pos]
-  have hsym : gaussianReal 0 1 (Set.Ioi 0) = gaussianReal 0 1 (Set.Iio 0) := by
-    calc gaussianReal 0 1 (Set.Ioi 0)
-        = Measure.map (fun x : ℝ => -x) (gaussianReal 0 1) (Set.Ioi 0) := by rw [hmap]
-      _ = gaussianReal 0 1 ((fun x : ℝ => -x) ⁻¹' Set.Ioi 0) :=
-          Measure.map_apply measurable_neg measurableSet_Ioi
-      _ = gaussianReal 0 1 (Set.Iio 0) := by rw [hpre]
-  have hnull := nullSingletonClass_gaussianReal (μ := (0 : ℝ)) (show (1 : ℝ≥0) ≠ 0 by simp)
-  have hsing : gaussianReal 0 1 {(0 : ℝ)} = 0 := hnull.measure_singleton 0
-  have hunion : Set.Ioi (0 : ℝ) ∪ Set.Iio 0 ∪ {(0 : ℝ)} = Set.univ := by
-    ext x
-    simp only [Set.mem_union, Set.mem_Ioi, Set.mem_Iio, Set.mem_singleton_iff, Set.mem_univ,
-      iff_true]
-    obtain h | h | h := lt_trichotomy x 0
-    · exact Or.inl (Or.inr h)
-    · exact Or.inr h
-    · exact Or.inl (Or.inl h)
-  have hdisj1 : Disjoint (Set.Ioi (0 : ℝ)) (Set.Iio 0) := by
-    rw [Set.disjoint_left]
-    intro x hx1 hx2
-    simp only [Set.mem_Ioi, Set.mem_Iio] at hx1 hx2
-    linarith
-  have hdisj2 : Disjoint (Set.Ioi (0 : ℝ) ∪ Set.Iio 0) ({(0 : ℝ)} : Set ℝ) := by
-    rw [Set.disjoint_left]
-    intro x hx hmem
-    simp only [Set.mem_union, Set.mem_Ioi, Set.mem_Iio, Set.mem_singleton_iff] at hx hmem
-    rw [hmem] at hx
-    simp at hx
-  have htot : gaussianReal 0 1 (Set.Ioi 0) + gaussianReal 0 1 (Set.Iio 0) = 1 := by
-    have h := measure_union (μ := gaussianReal 0 1) hdisj2 (MeasurableSet.singleton 0)
-    rw [hunion, measure_univ, measure_union hdisj1 measurableSet_Iio, hsing, add_zero] at h
-    exact h.symm
-  have h2 : gaussianReal 0 1 (Set.Ioi 0) + gaussianReal 0 1 (Set.Ioi 0) = 1 := by
-    rw [← hsym] at htot
-    exact htot
-  have hle : gaussianReal 0 1 (Set.Ioi 0) ≤ 1 :=
-    calc gaussianReal 0 1 (Set.Ioi 0) ≤ gaussianReal 0 1 Set.univ :=
-          measure_mono (Set.subset_univ _)
-      _ = 1 := measure_univ
-  have hfin : gaussianReal 0 1 (Set.Ioi 0) ≠ ∞ :=
-    ne_top_of_le_ne_top ENNReal.one_ne_top hle
-  have hTo : (gaussianReal 0 1 (Set.Ioi 0)).toReal = 1 / 2 := by
-    have h := congrArg ENNReal.toReal h2
-    rw [ENNReal.toReal_add hfin hfin, ENNReal.toReal_one] at h
-    linarith
-  rw [← hTo, ENNReal.ofReal_toReal hfin]
+    simp
+  have : NullSingletonClass (gaussianReal 0 v) := nullSingletonClass_gaussianReal hv
+  have htot : gaussianReal 0 v (Set.Iio 0) + gaussianReal 0 v (Set.Ioi 0) = 1 := by
+    rw [measure_congr (Iio_ae_eq_Iic (a := (0 : ℝ))), ← Set.compl_Ioi,
+      prob_compl_eq_one_sub measurableSet_Ioi]
+    exact tsub_add_cancel_of_le prob_le_one
+  rw [hsymm] at htot
+  have hfin : gaussianReal 0 v (Set.Ioi 0) ≠ ∞ := measure_ne_top _ _
+  rw [← two_mul] at htot
+  rw [ENNReal.eq_div_iff (by norm_num) (by norm_num), htot]
 
+private lemma half_eq : gaussianReal 0 1 (Set.Ioi 0) = ENNReal.ofReal (1 / 2 : ℝ) := by
+  have h1 : (1 : ℝ≥0) ≠ 0 := by simp
+  have h := gaussianReal_Ioi_zero h1
+  rw [h, ENNReal.ofReal_div_of_pos (show (0 : ℝ) < 2 by norm_num)]
+  simp
+
+/-- **Standard-normal upper-tail bound.** For `0 ≤ u`, the mass of `(u, ∞)` under the
+standard normal law `gaussianReal 0 1` is at most `Real.exp (-u ^ 2 / 2) / 2`. The proof compares
+densities after shifting by `u`, then uses the half-line mass `1 / 2` at zero. -/
 theorem gaussianReal_Ioi_le_half_exp {u : ℝ} (hu : 0 ≤ u) :
     gaussianReal 0 1 (Set.Ioi u) ≤ ENNReal.ofReal (Real.exp (-u ^ 2 / 2) / 2) := by
   have hE : (0 : ℝ) ≤ Real.exp (-u ^ 2 / 2) := Real.exp_nonneg _
