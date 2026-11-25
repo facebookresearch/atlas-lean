@@ -33,6 +33,7 @@ public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Algebra.Module.ZMod
 public import Mathlib.GroupTheory.QuotientGroup.Basic
+public import Mathlib.LinearAlgebra.FreeModule.ModN
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.ClassGroup.ExtendedHom
 public import Mathlib.NumberTheory.ClassNumber.AdmissibleAbsoluteValue
@@ -45,9 +46,10 @@ import Mathlib.FieldTheory.Finite.Basic
 
 For a prime `p` and a `ZMod p`-module `A` with an action `ρ` of `(ZMod p)ˣ`, this file
 defines the endomorphism `stickelbergerEnd ρ = ∑ ρ (c⁻¹)` over the exponents
-`0 < c < p / 2`, the `ω ^ i` eigenvector condition `IsOmegaEigenvector`, and the
-quotient `ModP p M = M / pM` of an abelian group with the induced action of the class
-group of a domain.
+`0 < c < p / 2` and the `ω ^ i` eigenvector condition `IsOmegaEigenvector`. On Mathlib's
+quotient `ModN M p = M / pM` of an abelian group it adds the endomorphism `modNEnd` induced by an
+endomorphism of `M`, and the endomorphism `clEnd` of the class group modulo `p`-th powers
+induced by a ring automorphism of a domain.
 
 ## Main results
 
@@ -60,9 +62,9 @@ group of a domain.
 
 The Stickelberger element of `ℚ(ζ_p)` is `θ = ∑_{a=1}^{p-1} (a / p) σ_a⁻¹`
 (L. C. Washington, *Introduction to Cyclotomic Fields*, 2nd ed., GTM 83, §6.2).
-A direct computation gives `(2 - σ_2) θ = ∑_{p/2 < a < p} σ_a⁻¹ = σ_{-1} ∑_{0 < c < p/2} σ_c⁻¹`,
-so the sum used here is an element of the Stickelberger ideal; this identity is not
-formalized in this file.
+For odd `p`, a direct computation gives
+`(2 - σ_2) θ = ∑_{p/2 < a < p} σ_a⁻¹ = σ_{-1} ∑_{0 < c < p/2} σ_c⁻¹`,
+so the sum used here is an element of the Stickelberger ideal.
 -/
 
 @[expose] public section
@@ -107,11 +109,6 @@ noncomputable def stickelbergerEnd [Fact p.Prime] (ρ : (ZMod p)ˣ →* Module.E
     Module.End (ZMod p) A :=
   ∑ c ∈ (exponentSet p).attach, ρ (expUnit c.2)⁻¹
 
-/-- The Stickelberger endomorphism kills every element. -/
-def StickelbergerAnnihilates [Fact p.Prime] (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) :
-    Prop :=
-  ∀ a : A, stickelbergerEnd ρ a = 0
-
 /-- `a` lies in the `ω ^ i` eigenspace: each unit `d` acts on it as `d ^ i`. -/
 def IsOmegaEigenvector (ρ : (ZMod p)ˣ →* Module.End (ZMod p) A) (i : ℕ) (a : A) : Prop :=
   ∀ d : (ZMod p)ˣ, ρ d a = ((d : ZMod p) ^ i) • a
@@ -154,91 +151,68 @@ theorem isOmegaEigenvector_zero {A : Type*} [AddCommGroup A]
 
 end Stickelberger
 
+namespace ModN
+
+variable {G : Type*} [AddCommGroup G]
+
+lemma mkQ_apply (n : ℕ) (x : G) :
+    mkQ n x = Submodule.Quotient.mk (p := LinearMap.range (LinearMap.lsmul ℤ G n)) x :=
+  rfl
+
+theorem mkQ_surjective (n : ℕ) : Function.Surjective (mkQ n : G →+ ModN G n) :=
+  Submodule.mkQ_surjective _
+
+theorem mkQ_eq_zero_iff (n : ℕ) {x : G} : mkQ n x = 0 ↔ ∃ y, n • y = x := by
+  rw [mkQ_apply, Submodule.Quotient.mk_eq_zero, LinearMap.mem_range]
+  simp only [LinearMap.lsmul_apply, natCast_zsmul]
+
+theorem mkQ_eq_mkQ_iff (n : ℕ) {x y : G} : mkQ n x = mkQ n y ↔ ∃ z, n • z = x - y := by
+  rw [← sub_eq_zero, ← map_sub, mkQ_eq_zero_iff]
+
+end ModN
+
 namespace Stickelberger
 
 
-section ModP
+section ModN
 
-variable (p : ℕ) (M : Type*) [AddCommGroup M]
+variable (p : ℕ) {M : Type*} [AddCommGroup M]
 
-/-- The subgroup `p • M` of multiples of `p`. -/
-def nsmulRange : AddSubgroup M where
-  carrier := Set.range fun x : M => p • x
-  add_mem' := by
-    rintro _ _ ⟨x, rfl⟩ ⟨y, rfl⟩
-    exact ⟨x + y, smul_add p x y⟩
-  zero_mem' := ⟨0, smul_zero p⟩
-  neg_mem' := by
-    rintro _ ⟨x, rfl⟩
-    exact ⟨-x, by simp⟩
+/-- The endomorphism of `ModN M p = M / pM` induced by an endomorphism of `M`. -/
+noncomputable def modNEnd (f : M →+ M) : Module.End (ZMod p) (ModN M p) :=
+  ((LinearMap.range (LinearMap.lsmul ℤ M p)).mapQ (LinearMap.range (LinearMap.lsmul ℤ M p))
+    f.toIntLinearMap (by
+      intro x hx
+      obtain ⟨y, rfl⟩ := LinearMap.mem_range.mp hx
+      rw [Submodule.mem_comap]
+      exact LinearMap.mem_range.mpr ⟨f y, by simp⟩)).toAddMonoidHom.toZModLinearMap p
 
-@[simp] lemma mem_nsmulRange {x : M} : x ∈ nsmulRange p M ↔ ∃ y, p • y = x := Iff.rfl
+@[simp] lemma modNEnd_mkQ (f : M →+ M) (x : M) :
+    modNEnd p f (ModN.mkQ p x) = ModN.mkQ p (f x) := rfl
 
-lemma nsmul_mem_nsmulRange (x : M) : p • x ∈ nsmulRange p M := ⟨x, rfl⟩
+end ModN
 
-/-- The quotient `M / pM`. -/
-abbrev ModP : Type _ := M ⧸ nsmulRange p M
-
-instance instModuleZModModP [NeZero p] : Module (ZMod p) (ModP p M) :=
-  QuotientAddGroup.zmodModule (nsmul_mem_nsmulRange p M)
-
-/-- The projection `M → M / pM`. -/
-def ModP.proj : M →+ ModP p M := QuotientAddGroup.mk' (nsmulRange p M)
-
-@[simp] lemma ModP.proj_apply (x : M) : ModP.proj p M x = QuotientAddGroup.mk x := rfl
-
-theorem ModP.proj_surjective : Function.Surjective (ModP.proj p M) :=
-  QuotientAddGroup.mk'_surjective _
-
-theorem ModP.proj_eq_zero_iff {x : M} : ModP.proj p M x = 0 ↔ ∃ y, p • y = x :=
-  (QuotientAddGroup.eq_zero_iff x).trans (mem_nsmulRange p M)
-
-variable {M} in
-lemma nsmulRange_le_comap (f : M →+ M) : nsmulRange p M ≤ (nsmulRange p M).comap f := by
-  rintro _ ⟨x, rfl⟩
-  exact ⟨f x, (map_nsmul f p x).symm⟩
-
-variable {M} in
-/-- The endomorphism of `M / pM` induced by an endomorphism of `M`. -/
-def ModP.mapHom (f : M →+ M) : ModP p M →+ ModP p M :=
-  QuotientAddGroup.map (nsmulRange p M) (nsmulRange p M) f (nsmulRange_le_comap p f)
-
-variable {M} in
-@[simp] lemma ModP.mapHom_proj (f : M →+ M) (x : M) :
-    ModP.mapHom p f (ModP.proj p M x) = ModP.proj p M (f x) := rfl
-
-variable {M} in
-/-- `ModP.mapHom` as a `ZMod p`-linear endomorphism. -/
-noncomputable def ModP.mapEnd [NeZero p] (f : M →+ M) : Module.End (ZMod p) (ModP p M) :=
-  (ModP.mapHom p f).toZModLinearMap p
-
-variable {M} in
-@[simp] lemma ModP.mapEnd_proj [NeZero p] (f : M →+ M) (x : M) :
-    ModP.mapEnd p f (ModP.proj p M x) = ModP.proj p M (f x) := rfl
-
-end ModP
 
 section ClassGroupCarrier
 
-variable (p : ℕ) [NeZero p]
+variable (p : ℕ)
 variable (R : Type*) [CommRing R] [IsDomain R]
 
 /-- The class group of `R` modulo `p`-th powers, as a `ZMod p`-module. -/
-abbrev ClGalModule : Type _ := ModP p (Additive (ClassGroup R))
+abbrev ClGalModule : Type _ := ModN (Additive (ClassGroup R)) p
 
 /-- The projection from the class group to `ClGalModule p R`. -/
 noncomputable def clProj : Additive (ClassGroup R) →+ ClGalModule p R :=
-  ModP.proj p (Additive (ClassGroup R))
+  ModN.mkQ p
 
-omit [NeZero p] in
 theorem clProj_surjective : Function.Surjective (clProj p R) :=
-  ModP.proj_surjective p (Additive (ClassGroup R))
+  ModN.mkQ_surjective p
 
 variable {R}
 
 /-- The endomorphism of `ClGalModule p R` induced by a ring automorphism of `R`. -/
 noncomputable def clEnd (g : R ≃+* R) : Module.End (ZMod p) (ClGalModule p R) :=
-  ModP.mapEnd p (MonoidHom.toAdditive (ClassGroup.mulEquiv g).toMonoidHom)
+  modNEnd p (MonoidHom.toAdditive (ClassGroup.mulEquiv g).toMonoidHom)
 
 @[simp] lemma clEnd_clProj (g : R ≃+* R) (C : ClassGroup R) :
     clEnd p g (clProj p R (Additive.ofMul C)) =

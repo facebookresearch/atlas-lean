@@ -171,27 +171,6 @@ theorem_wanted pairwiseSumsSquares_triple_family31
       ![4 * (p * r - q * s) ^ 2, 4 * (p * s - q * r) ^ 2,
         4 * (p * q - r * s) ^ 2]
 
-/-- **Four-parameter triples with square pairwise sums, family (3.2).** For all integers
-$p, q, r, s$, put $a_1 = -(p+q+r+s)(p+q-r-s)(p-q+r-s)(p-q-r+s)$,
-$a_2 = -(p-q+r+s)(p-q-r-s)(p+q+r-s)(p+q-r+s)$, $a_3 = 0$ and
-$b_1 = (p^2 - q^2 + r^2 - s^2)^2$, $b_2 = (p^2 - q^2 - r^2 + s^2)^2$,
-$b_3 = (p^2 + q^2 - r^2 - s^2)^2$. Then $a_i + b_j$ is a perfect square for all
-$i, j \in \{1, 2, 3\}$.
-
-Source: Ajai Choudhry, "Two Sets of Integers Such That All
-Elements of the Sumset of the Two Sets Are Perfect Squares",
-Theorem 1. -/
-theorem_wanted pairwiseSumsSquares_triple_family32
-    (p q r s : ℤ) :
-    PairwiseSumsSquares
-      ![-(p + q + r + s) * (p + q - r - s) * (p - q + r - s) *
-          (p - q - r + s),
-        -(p - q + r + s) * (p - q - r - s) * (p + q + r - s) *
-          (p + q - r + s), 0]
-      ![(p ^ 2 - q ^ 2 + r ^ 2 - s ^ 2) ^ 2,
-        (p ^ 2 - q ^ 2 - r ^ 2 + s ^ 2) ^ 2,
-        (p ^ 2 + q ^ 2 - r ^ 2 - s ^ 2) ^ 2]
-
 /-- **A seven-parameter family of five and three rationals with square pairwise sums.** For
 rational numbers $f, g, m, u_1, u_2, v_1, v_2$, put
 $\alpha = m u_1 u_2 (u_1 v_1 - u_2 v_2)$, $\beta = (u_1 v_2 - u_2 v_1)(m^2 u_1 u_2 v_1 v_2 - 1)$,
