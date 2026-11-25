@@ -31,10 +31,12 @@ module
 
 public import Mathlib.MeasureTheory.Measure.Haar.DistribChar
 public import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
-public import Mathlib.RingTheory.DedekindDomain.AdicValuation
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Completion
+public import Mathlib.RingTheory.DedekindDomain.AdicValuation.Valuation
 public import Mathlib.Topology.Algebra.Valued.LocallyCompact
 public import Mathlib.Topology.Clopen
 public import Mathlib.Topology.Compactness.Compact
+public import MathlibExt.NumberTheory.NumberField.HeckeCharacter
 
 @[expose] public section
 
@@ -176,7 +178,7 @@ public theorem isClopen_support_of_mem {f : X → ℂ} (hf : f ∈ testSpace X) 
     IsClopen (Function.support f) := by
   have h : Function.support f = {x | f x = 0}ᶜ := by
     ext x
-    simp only [Function.mem_support, Set.mem_compl_iff, Set.mem_setOf_eq, ne_eq]
+    simp only [Function.mem_support, Set.mem_compl_iff, Set.mem_ofPred_eq, ne_eq]
   rw [h]
   exact (hf.1.isClopen_fiber 0).compl
 
@@ -236,57 +238,72 @@ section Zeta
 variable {K : Type*} [Field K] [TopologicalSpace K] [IsTopologicalRing K]
   [LocallyCompactSpace K] [MeasurableSpace K]
 
-/-- The multiplicative Haar measure attached to an additive Haar measure. -/
-public def mulMeasure (μ : Measure K) : Measure K :=
+/-- The multiplicative Haar measure `μ(dx) / modulus x` attached to an
+additive Haar measure `μ`, as a measure on `K` carried by `{0}ᶜ`. -/
+public def mulMeasure [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure] :
+    Measure K :=
   (μ.restrict {0}ᶜ).withDensity fun x => ((modulus x : ℝ≥0∞))⁻¹
 
-/-- The local zeta integral `Z(f, χ, s)`. -/
-public def localZeta (μ : Measure K) (f : K → ℂ) (χ : Kˣ →* ℂˣ) (s : ℂ) : ℂ :=
+/-- The local zeta integral `Z(f, χ, s)` for the additive Haar measure `μ`. -/
+public def localZeta [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure]
+    (f : K → ℂ) (χ : Kˣ →* ℂˣ) (s : ℂ) : ℂ :=
   ∫ x, f x * charExt χ x * ((modulus x : ℝ) : ℂ) ^ s ∂(mulMeasure μ)
 
-public theorem localZeta_zero_fun (μ : Measure K) (χ : Kˣ →* ℂˣ) (s : ℂ) :
+public theorem localZeta_zero_fun [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure]
+    (χ : Kˣ →* ℂˣ) (s : ℂ) :
     localZeta μ (0 : K → ℂ) χ s = 0 := by
   simp [localZeta]
 
-/-- The local gamma factor, as the ratio of the zeta integral of the Fourier
-transform to the zeta integral itself. -/
-public def localGammaAt (μ : Measure K) (ψ : AddChar K ℂ) (f₀ : K → ℂ)
-    (χ : Kˣ →* ℂˣ) (s : ℂ) : ℂ :=
-  localZeta μ (tateFourier ψ μ f₀) χ⁻¹ (1 - s) / localZeta μ f₀ χ s
+/-- `γ` is a local gamma factor of `χ` at `s`, for the additive character `ψ`
+and the additive Haar measure `μ`: Tate's local functional equation
+`Z(f̂, χ⁻¹, 1 - s) = γ * Z(f, χ, s)`, with `f̂ = tateFourier ψ μ f`, holds for
+every Schwartz--Bruhat test function `f`. The zeta integrals are Lebesgue
+integrals, so this is the gamma factor where they converge (for a unitary `χ`,
+when `0 < re s < 1`). By `IsLocalGammaFactor.eq_div` it does not depend on
+the test function. -/
+public def IsLocalGammaFactor [BorelSpace K] (μ : Measure K) [μ.IsAddHaarMeasure]
+    (ψ : AddChar K ℂ) (χ : Kˣ →* ℂˣ) (s γ : ℂ) : Prop :=
+  ∀ f ∈ testSpace K,
+    localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) = γ * localZeta μ f χ s
 
-public theorem localGammaAt_eq_zero_of_localZeta_eq_zero {μ : Measure K}
-    {ψ : AddChar K ℂ} {f₀ : K → ℂ} {χ : Kˣ →* ℂˣ} {s : ℂ}
-    (h : localZeta μ f₀ χ s = 0) : localGammaAt μ ψ f₀ χ s = 0 := by
-  simp [localGammaAt, h]
+/-- A local gamma factor is the ratio of the zeta integrals of any test
+function whose zeta integral does not vanish, so it does not depend on the
+test function. -/
+public theorem IsLocalGammaFactor.eq_div [BorelSpace K] {μ : Measure K}
+    [μ.IsAddHaarMeasure] {ψ : AddChar K ℂ} {χ : Kˣ →* ℂˣ} {s γ : ℂ} {f : K → ℂ}
+    (h : IsLocalGammaFactor μ ψ χ s γ) (hf : f ∈ testSpace K)
+    (hZ : localZeta μ f χ s ≠ 0) :
+    γ = localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) / localZeta μ f χ s := by
+  rw [h f hf, mul_div_cancel_right₀ _ hZ]
+
+/-- Two local gamma factors agree as soon as one test function has a nonzero
+zeta integral. -/
+public theorem IsLocalGammaFactor.unique [BorelSpace K] {μ : Measure K}
+    [μ.IsAddHaarMeasure] {ψ : AddChar K ℂ} {χ : Kˣ →* ℂˣ} {s γ γ' : ℂ} {f : K → ℂ}
+    (h : IsLocalGammaFactor μ ψ χ s γ) (h' : IsLocalGammaFactor μ ψ χ s γ')
+    (hf : f ∈ testSpace K) (hZ : localZeta μ f χ s ≠ 0) : γ = γ' := by
+  rw [h.eq_div hf hZ, h'.eq_div hf hZ]
+
+/-- From the symmetric form of the local functional equation,
+`Z(f̂, χ⁻¹, 1 - s) * Z(g, χ, s) = Z(ĝ, χ⁻¹, 1 - s) * Z(f, χ, s)` for all test
+functions `f` and `g`, the ratio of the zeta integrals of a test function `f`
+with `Z(f, χ, s) ≠ 0` is a local gamma factor. -/
+public theorem isLocalGammaFactor_div_of_mul_comm [BorelSpace K] {μ : Measure K}
+    [μ.IsAddHaarMeasure] {ψ : AddChar K ℂ} {χ : Kˣ →* ℂˣ} {s : ℂ} {f : K → ℂ}
+    (hsymm : ∀ f ∈ testSpace K, ∀ g ∈ testSpace K,
+      localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) * localZeta μ g χ s =
+        localZeta μ (tateFourier ψ μ g) χ⁻¹ (1 - s) * localZeta μ f χ s)
+    (hf : f ∈ testSpace K) (hZ : localZeta μ f χ s ≠ 0) :
+    IsLocalGammaFactor μ ψ χ s
+      (localZeta μ (tateFourier ψ μ f) χ⁻¹ (1 - s) / localZeta μ f χ s) := by
+  intro g hg
+  rw [div_mul_eq_mul_div, hsymm f hf g hg, mul_div_cancel_right₀ _ hZ]
 
 end Zeta
 
 section Place
 
 variable (K : Type) [Field K] [NumberField K] (v : HeightOneSpectrum (𝓞 K))
-
-/-- A chosen uniformizer of the completion at `v`, as a unit. -/
-public def uniformizerUnit : (v.adicCompletion K)ˣ :=
-  Units.mk0
-    ((Classical.choose (v.valuation_exists_uniformizer K) : K) :
-      v.adicCompletion K) (by
-    intro hzero
-    have hval : Valued.v
-        ((Classical.choose (v.valuation_exists_uniformizer K) : K) :
-          v.adicCompletion K) = WithZero.exp (-1 : ℤ) := by
-      rw [HeightOneSpectrum.valuedAdicCompletion_eq_valuation']
-      exact Classical.choose_spec (v.valuation_exists_uniformizer K)
-    rw [hzero, map_zero] at hval
-    exact WithZero.exp_ne_zero hval.symm)
-
-public theorem valued_uniformizerUnit :
-    Valued.v (uniformizerUnit K v : v.adicCompletion K) =
-      WithZero.exp (-1 : ℤ) := by
-  show Valued.v
-    ((Classical.choose (v.valuation_exists_uniformizer K) : K) :
-      v.adicCompletion K) = _
-  rw [HeightOneSpectrum.valuedAdicCompletion_eq_valuation']
-  exact Classical.choose_spec (v.valuation_exists_uniformizer K)
 
 /-- The `n`-th higher unit group of the completion at `v`: units congruent
 to `1` modulo the `n`-th power of the maximal ideal (all valuation-one units
@@ -366,21 +383,34 @@ public theorem not_hasConductorExponentAt_one_succ (c : ℕ) :
   obtain ⟨u, -, hne⟩ := hmin c (Nat.lt_succ_self c)
   exact hne rfl
 
-/-- The conductor exponent of `χ` at `v`. -/
-public def conductorExponentAt (χ : (v.adicCompletion K)ˣ →* ℂˣ) : ℕ :=
-  sInf {c | HasConductorExponentAt K v χ c}
+/-- The conductor exponent of `χ` at `v`: the `c` with
+`HasConductorExponentAt K v χ c`, or `⊤` when there is none, that is, when no
+higher unit group lies in the kernel of `χ`. -/
+public def conductorExponentAt (χ : (v.adicCompletion K)ˣ →* ℂˣ) : ℕ∞ :=
+  ⨅ (c : ℕ) (_ : HasConductorExponentAt K v χ c), (c : ℕ∞)
 
 public theorem conductorExponentAt_eq_of_hasConductorExponentAt
     {χ : (v.adicCompletion K)ˣ →* ℂˣ} {c : ℕ}
     (h : HasConductorExponentAt K v χ c) :
     conductorExponentAt K v χ = c := by
-  have hmem : c ∈ {c' | HasConductorExponentAt K v χ c'} := h
-  have hle : conductorExponentAt K v χ ≤ c := Nat.sInf_le hmem
-  have hge : c ≤ conductorExponentAt K v χ := by
-    have hne : {c' | HasConductorExponentAt K v χ c'}.Nonempty := ⟨c, h⟩
-    have hmemInf := Nat.sInf_mem hne
-    exact (hasConductorExponentAt_unique K v hmemInf h).ge
-  omega
+  refine le_antisymm (iInf₂_le c h) (le_iInf₂ fun c' h' => ?_)
+  rw [hasConductorExponentAt_unique K v h h']
+
+public theorem conductorExponentAt_eq_top_iff
+    {χ : (v.adicCompletion K)ˣ →* ℂˣ} :
+    conductorExponentAt K v χ = ⊤ ↔ ∀ c, ¬ HasConductorExponentAt K v χ c := by
+  simp [conductorExponentAt]
+
+public theorem conductorExponentAt_eq_coe_iff
+    {χ : (v.adicCompletion K)ˣ →* ℂˣ} {c : ℕ} :
+    conductorExponentAt K v χ = c ↔ HasConductorExponentAt K v χ c := by
+  refine ⟨fun h => ?_, conductorExponentAt_eq_of_hasConductorExponentAt K v⟩
+  by_cases hex : ∃ c', HasConductorExponentAt K v χ c'
+  · obtain ⟨c', hc'⟩ := hex
+    rw [conductorExponentAt_eq_of_hasConductorExponentAt K v hc', Nat.cast_inj] at h
+    exact h ▸ hc'
+  · rw [(conductorExponentAt_eq_top_iff K v).mpr (not_exists.mp hex)] at h
+    exact absurd h.symm (ENat.natCast_ne_top c)
 
 @[simp]
 public theorem conductorExponentAt_one :
@@ -393,7 +423,7 @@ character, and `1` for a ramified character. -/
 public def localLFactorAt (χ : (v.adicCompletion K)ˣ →* ℂˣ) (s : ℂ) : ℂ := by
   classical exact
     if HasConductorExponentAt K v χ 0 then
-      (1 - (χ (uniformizerUnit K v) : ℂ) *
+      (1 - (χ (NumberField.AdelicLevel.uniformizerUnit (𝓞 K) K v) : ℂ) *
         (Ideal.absNorm v.asIdeal : ℂ) ^ (-s))⁻¹
     else 1
 
@@ -401,15 +431,15 @@ public theorem localLFactorAt_of_hasConductorExponentAt_zero
     {χ : (v.adicCompletion K)ˣ →* ℂˣ}
     (hχ : HasConductorExponentAt K v χ 0) (s : ℂ) :
     localLFactorAt K v χ s
-      = (1 - (χ (uniformizerUnit K v) : ℂ) *
+      = (1 - (χ (NumberField.AdelicLevel.uniformizerUnit (𝓞 K) K v) : ℂ) *
           (Ideal.absNorm v.asIdeal : ℂ) ^ (-s))⁻¹ := by
-  rw [localLFactorAt, if_pos hχ]
+  rw [localLFactorAt, ite_eq_left hχ]
 
 public theorem localLFactorAt_of_not_hasConductorExponentAt_zero
     {χ : (v.adicCompletion K)ˣ →* ℂˣ}
     (hχ : ¬ HasConductorExponentAt K v χ 0) (s : ℂ) :
     localLFactorAt K v χ s = 1 := by
-  rw [localLFactorAt, if_neg hχ]
+  rw [localLFactorAt, ite_eq_right hχ]
 
 public theorem localLFactorAt_one (s : ℂ) :
     localLFactorAt K v (1 : (v.adicCompletion K)ˣ →* ℂˣ) s
@@ -420,45 +450,47 @@ public theorem localLFactorAt_one (s : ℂ) :
 
 section Epsilon
 
-variable [MeasurableSpace (v.adicCompletion K)]
+variable [MeasurableSpace (v.adicCompletion K)] [BorelSpace (v.adicCompletion K)]
   [LocallyCompactSpace (v.adicCompletion K)]
 
-/-- The local epsilon factor at `v`, built from the gamma factor and the
-ratio of `L`-factors. -/
-public def localEpsilonAt (μ : Measure (v.adicCompletion K))
-    (ψ : AddChar (v.adicCompletion K) ℂ) (f : v.adicCompletion K → ℂ)
-    (χ : (v.adicCompletion K)ˣ →* ℂˣ) (s : ℂ) : ℂ :=
-  localGammaAt μ ψ f χ s * localLFactorAt K v χ s /
-    localLFactorAt K v χ⁻¹ (1 - s)
+/-- `ε` is a local epsilon factor of `χ` at `v` and `s`, for the additive
+character `ψ` and the additive Haar measure `μ`, when
+`ε = γ * L(χ, s) / L(χ⁻¹, 1 - s)` for a local gamma factor `γ`. -/
+public def IsLocalEpsilonFactorAt (μ : Measure (v.adicCompletion K))
+    [μ.IsAddHaarMeasure] (ψ : AddChar (v.adicCompletion K) ℂ)
+    (χ : (v.adicCompletion K)ˣ →* ℂˣ) (s ε : ℂ) : Prop :=
+  ∃ γ, IsLocalGammaFactor μ ψ χ s γ ∧
+    ε = γ * localLFactorAt K v χ s / localLFactorAt K v χ⁻¹ (1 - s)
 
-public theorem localEpsilonAt_def (μ : Measure (v.adicCompletion K))
-    (ψ : AddChar (v.adicCompletion K) ℂ) (f : v.adicCompletion K → ℂ)
-    (χ : (v.adicCompletion K)ˣ →* ℂˣ) (s : ℂ) :
-    localEpsilonAt K v μ ψ f χ s
-      = localGammaAt μ ψ f χ s * localLFactorAt K v χ s /
-        localLFactorAt K v χ⁻¹ (1 - s) :=
-  rfl
+/-- Two local epsilon factors agree as soon as one test function has a
+nonzero zeta integral. -/
+public theorem IsLocalEpsilonFactorAt.unique {μ : Measure (v.adicCompletion K)}
+    [μ.IsAddHaarMeasure] {ψ : AddChar (v.adicCompletion K) ℂ}
+    {χ : (v.adicCompletion K)ˣ →* ℂˣ} {s ε ε' : ℂ} {f : v.adicCompletion K → ℂ}
+    (h : IsLocalEpsilonFactorAt K v μ ψ χ s ε)
+    (h' : IsLocalEpsilonFactorAt K v μ ψ χ s ε')
+    (hf : f ∈ testSpace (v.adicCompletion K)) (hZ : localZeta μ f χ s ≠ 0) :
+    ε = ε' := by
+  obtain ⟨γ, hγ, rfl⟩ := h
+  obtain ⟨γ', hγ', rfl⟩ := h'
+  rw [hγ.unique hγ' hf hZ]
 
-public theorem localEpsilonAt_of_not_hasConductorExponentAt_zero
-    (μ : Measure (v.adicCompletion K)) (ψ : AddChar (v.adicCompletion K) ℂ)
-    (f : v.adicCompletion K → ℂ) {χ : (v.adicCompletion K)ˣ →* ℂˣ}
-    (hχ : ¬ HasConductorExponentAt K v χ 0) (s : ℂ) :
-    localEpsilonAt K v μ ψ f χ s = localGammaAt μ ψ f χ s := by
+/-- For a ramified character both `L`-factors are `1`, so the local epsilon
+factors are exactly the local gamma factors. -/
+public theorem isLocalEpsilonFactorAt_iff_of_not_hasConductorExponentAt_zero
+    (μ : Measure (v.adicCompletion K)) [μ.IsAddHaarMeasure]
+    (ψ : AddChar (v.adicCompletion K) ℂ) {χ : (v.adicCompletion K)ˣ →* ℂˣ}
+    (hχ : ¬ HasConductorExponentAt K v χ 0) (s ε : ℂ) :
+    IsLocalEpsilonFactorAt K v μ ψ χ s ε ↔ IsLocalGammaFactor μ ψ χ s ε := by
   have hχ' : ¬ HasConductorExponentAt K v χ⁻¹ 0 := fun h => hχ <| by
     rw [hasConductorExponentAt_zero_iff] at h ⊢
     intro u hu
     have h1 := h u hu
     rwa [MonoidHom.inv_apply, inv_eq_one] at h1
-  rw [localEpsilonAt, localLFactorAt_of_not_hasConductorExponentAt_zero K v hχ,
-    localLFactorAt_of_not_hasConductorExponentAt_zero K v hχ', mul_one, div_one]
-
-public theorem localEpsilonAt_eq_zero_of_localZeta_eq_zero
-    {μ : Measure (v.adicCompletion K)} {ψ : AddChar (v.adicCompletion K) ℂ}
-    {f : v.adicCompletion K → ℂ} {χ : (v.adicCompletion K)ˣ →* ℂˣ} {s : ℂ}
-    (h : localZeta μ f χ s = 0) :
-    localEpsilonAt K v μ ψ f χ s = 0 := by
-  rw [localEpsilonAt, localGammaAt_eq_zero_of_localZeta_eq_zero h,
-    zero_mul, zero_div]
+  simp only [IsLocalEpsilonFactorAt,
+    localLFactorAt_of_not_hasConductorExponentAt_zero K v hχ,
+    localLFactorAt_of_not_hasConductorExponentAt_zero K v hχ', mul_one, div_one,
+    exists_eq_right']
 
 end Epsilon
 
