@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Combinatorics.KuniskyKomlosLowerBound
 public import MathlibExt.Combinatorics.VectorDiscrepancy
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -27,15 +28,6 @@ open scoped BigOperators ENNReal
 open MatrixDiscrepancy
 
 namespace KomlosDiscrepancyWanted
-
-/-- **Equivalence of the square and rectangular Komlós formulations (statement).** The statement
-that the uniform discrepancy bound for vectors in the unit ball holds if and only if the Komlós
-constant is finite.
-
-Source: optimization catalogue C24a, line 26, and AIM Problem 1.05. The padding
-bridge is requested, not assumed or claimed definitional. -/
-def constantFormulationEquivalence : Prop :=
-  UniformRectangularBound ↔ komlosConstant < ⊤
 
 /-- **Beck–Spencer–Gluskin logarithmic upper bound (statement).** The statement that there are a
 real number $c > 0$ and a natural number $N \ge 3$ such that for every natural number $n \ge N$,
@@ -105,17 +97,6 @@ def bansalJiang2025LittleSqrtLogUpperBound : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ N : ℕ, 3 ≤ N ∧ ∀ n : ℕ, N ≤ n →
     dimensionConstant n ≤ ENNReal.ofReal (ε * Real.sqrt (Real.log n))
 
-/-- **Kunisky's lower bound for the Komlós constant (statement).** The statement that the Komlós
-constant is at least $1 + \sqrt{2}$.
-
-The bound concerns the supremum over all dimensions; it does not assert that any single
-dimension attains $1 + \sqrt{2}$.
-
-Source: optimization catalogue C24a, line 45, and retained Kunisky
-arXiv2111.02974v1, Theorem 1.1. -/
-def kunisky2023LowerBound : Prop :=
-  ENNReal.ofReal (1 + Real.sqrt 2) ≤ komlosConstant
-
 /-- Kunisky's finite lower bound in every dyadic dimension `2 ^ k`.
 
 Source: Kunisky, SIAM J. Discrete Math. 37 (2023), arXiv:2111.02974,
@@ -153,18 +134,6 @@ and optimization catalogue C24a, line 55. -/
 def nikolov2013VectorDiscrepancyUpperBound : Prop :=
   ∀ (m n : ℕ), 1 ≤ n → ∀ A : Matrix (Fin m) (Fin n) ℝ, ColumnAdmissible A →
     vectorDiscrepancy A ≤ 1
-
-/-- **The square and rectangular Komlós formulations are equivalent.** The following two
-conditions are equivalent. (a) There is a real constant $C > 0$ such that for all natural numbers
-$n$ and $d$ and all vectors $v_1, \dots, v_n \in \mathbb{R}^d$ of Euclidean norm at most $1$,
-writing $v_{ij}$ for the $j$-th coordinate of $v_i$, there are signs
-$\varepsilon_1, \dots, \varepsilon_n \in \{-1, 1\}$ with
-$\left|\sum_{i=1}^{n} \varepsilon_i v_{ij}\right| \le C$ for every coordinate index $j$. (b) The
-Komlós constant, the supremum over all $n \ge 1$ of the discrepancy of real $n \times n$ matrices
-whose columns all have Euclidean norm at most $1$, is finite.
-
-Source: optimization catalogue C24a, line 26, and AIM Problem 1.05. -/
-theorem_wanted constantFormulationEquivalence_holds : constantFormulationEquivalence
 
 /-- **Beck–Spencer–Gluskin logarithmic upper bound for the Komlós constant.** There are a real
 number $c > 0$ and a natural number $N \ge 3$ such that for every natural number $n \ge N$, the
@@ -214,13 +183,6 @@ logarithm. In other words, the Komlós constant in dimension $n$ is $o(\sqrt{\lo
 Source: BJ2025, arXiv2508.03961, the improvement reported in its abstract. -/
 theorem_wanted bansalJiang2025LittleSqrtLogUpperBound_holds :
   bansalJiang2025LittleSqrtLogUpperBound
-
-/-- **Kunisky's lower bound for the Komlós constant.** The Komlós constant (the supremum over all
-$n \ge 1$ of the discrepancy of real $n \times n$ matrices whose columns all have Euclidean norm
-at most $1$, taken in $[0, \infty]$) is at least $1 + \sqrt{2}$.
-
-Source: Kunisky, arXiv2111.02974v1, Theorem 1.1; catalogue C24a, line 45. -/
-theorem_wanted kunisky2023LowerBound_holds : kunisky2023LowerBound
 
 /-- Source: Kunisky, SIAM J. Discrete Math. 37 (2023), arXiv:2111.02974,
 Theorem 1.1, at each dyadic dimension `2 ^ k`. -/

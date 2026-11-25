@@ -13,3 +13,4 @@ Ordered dictionaries: binary search trees and their balanced variants (AVL, red-
 - [Splay tree](splay-tree/README.md)
 - [Treap](treap/README.md)
 - [Weight-balanced tree](weight-balanced-tree/README.md)
+- [Randomized search trees](randomized-search-trees/README.md)

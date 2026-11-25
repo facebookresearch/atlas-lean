@@ -35,12 +35,15 @@ the useful life, so book value stays at salvage afterwards.
 
 namespace MathlibExt.Economics.Accounting
 
-/-- Straight-line depreciation charge per period: `(cost - salvage) / life`. -/
+/-- Straight-line depreciation charge per period: `(cost - salvage) / life`. It is defined for
+every `life`: for `life = 0` the convention `x / 0 = 0` makes it `0`; the intended domain is
+`life ≥ 1`. -/
 noncomputable def straightLineCharge (cost salvage : ℝ) (life : ℕ) : ℝ :=
   (cost - salvage) / life
 
 /-- Book value after `t` periods of straight-line depreciation over a useful life of `life`
-periods: charges stop once the useful life is over, so periods after `life` charge nothing. -/
+periods: charges stop once the useful life is over, so periods after `life` charge nothing.
+For `life = 0` no charge is made and the book value is `cost`. -/
 noncomputable def straightLineBookValue (cost salvage : ℝ) (life t : ℕ) : ℝ :=
   cost - ∑ _s ∈ Finset.range (min t life), straightLineCharge cost salvage life
 

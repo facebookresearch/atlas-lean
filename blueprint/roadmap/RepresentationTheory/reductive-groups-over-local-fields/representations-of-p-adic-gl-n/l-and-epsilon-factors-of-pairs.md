@@ -41,24 +41,42 @@ since it uses the local Artin isomorphism of local class field theory in that ca
   prints the last determinant as $\det(-\Phi \mid V^{I_F}/V_N^{I_F})$, without $q^{-s}$, which
   already gives a wrong $s$-dependence for $\rho = \mathrm{Sp}(2)$ in his example (3.2.3).
 
+## Expansion
+
 A good expansion has definition pages for the local Rankin–Selberg integrals and their
 convergence and rationality, for the factors of generic pairs and their functional equation, for
 the extension to all irreducible pairs, for the conductor, for Tate's local factors, for the
 Langlands–Deligne local constants, for the factors of Weil–Deligne representations, and for the
 representations $\mathrm{Sp}(m)$ with the decomposition into indecomposables $\rho_0 \otimes
 \mathrm{Sp}(m)$ and the factors of their tensor products, each citing the sources below with
-locators. The pages of the Galois side belong beside the Weil–Deligne
-representations of
-[Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md).
+locators. The pages of the Galois side belong beside
+[the Weil group of a p-adic field](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-group-of-a-p-adic-field.md) and
+[Weil–Deligne representations](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-deligne-representations.md).
 The recursion in Wedhorn's (2.5.2) (3) should be checked against Kudla's survey, which Wedhorn
 follows there, since its printed factors do not depend on the product index.
+
+A good expansion also writes out these steps of its own proof:
+
+- the convergence and rationality of the local integrals, from the asymptotic expansion of Whittaker functions on the diagonal torus (Cogdell, Lecture 6, §2, Proposition 6.2, p. 47); Cogdell proves this for unitary generic representations with $m < n$, the case $m = n$ being analogous.
+- the existence of the Langlands–Deligne local constants, multiplicative in exact sequences and inductive in degree zero, by Deligne's global argument (Deligne 1973, as cited by Wedhorn), for the Galois side.
+- the application of Brauer's theorem type by type: a virtual representation of $W_F$ is a combination of irreducible ones, on each of which a power of Frobenius acts by a scalar, its type, and each type becomes of finite image after an unramified twist chosen for it (Česnavičius, §5.5, Lemma 5.5.1, (5.5.2)–(5.5.3), and Proposition 5.6, after Deligne); one twist for the whole representation does not suffice, as $1 \oplus \lvert \cdot \rvert$ shows.
 
 ## Depends on
 
 - [Whittaker models and the Gelfand–Kazhdan theorems for GLₙ](whittaker-models-for-gl-n.md), for generic representations and Whittaker models
 - [Langlands classification for GLₙ](langlands-classification-for-gl-n.md), for the extension of the factors to all irreducible pairs
-- [Galois cohomology and p-adic Hodge theory](../../../NumberTheory/algebraic-number-theory/galois-representations/galois-cohomology-and-p-adic-hodge-theory.md), for the Galois side ($F$ of characteristic zero): the Weil group and Weil–Deligne representations
+- [Weil group of a p-adic field](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-group-of-a-p-adic-field.md), for the Galois side ($F$ of characteristic zero): the Weil group
+- [Weil–Deligne representations](../../../NumberTheory/algebraic-number-theory/galois-representations/weil-deligne-representations/weil-deligne-representations.md), for the Galois side ($F$ of characteristic zero): Weil–Deligne representations
 - [Local class field theory](../../../NumberTheory/p-adic-numbers/local-class-field-theory.md), for the Galois side ($F$ of characteristic zero): the local Artin map $\mathrm{rec}_F$, composed with pointwise inversion, $x \mapsto \mathrm{rec}_F(x)^{-1}$, and read in the Weil group, which makes characters of $F^\times$ characters of $W_F$
+
+## Proof depends on
+
+- [Asymptotics of Whittaker functions of GLₙ over a non-archimedean field](asymptotics-of-whittaker-functions.md), for the expansion of Whittaker functions on the diagonal torus, uniform over the Whittaker model, from which the convergence and rationality of the local integrals follow (Cogdell, Lecture 6, §1, Proposition 6.1 and Remark 3, p. 46)
+- [Mirabolic restriction and Bernstein–Zelevinsky derivatives](bernstein-zelevinsky-derivatives.md), for the Kirillov models and the representation theory of the mirabolic subgroup, in which the uniqueness, outside finitely many values of $q^{-s}$, of the quasi-invariant bilinear forms behind the local functional equation is proved (Cogdell, Lecture 6, §3, Proposition 6.4, p. 48; Theorem 6.2 is the resulting functional equation)
+- [Parabolic subgroups, Bruhat–Tits buildings and Moy–Prasad filtrations](../representations-of-p-adic-reductive-groups/parabolic-subgroups-buildings-and-moy-prasad-filtrations.md), for the Bruhat decomposition, which the proof of that uniqueness also uses (ibid.)
+- [Functional equation of Hecke L-functions](../../../NumberTheory/zeta-l-functions/dirichlet-l-functions/hecke-l-function-functional-equation.md), for the global functional equation of Hecke $L$-functions with the standard adelic character and self-dual measures, from which Deligne's global argument for the local constants starts; it does not state the local functional equations for arbitrary $(\chi, \psi, dx)$
+- [Tate's local functional equation](../../../NumberTheory/zeta-l-functions/tate-local-functional-equation.md), for Tate's local functional equation for every nontrivial additive character $\psi$ and Haar measure $dx$ (Poonen, Theorem 4.18 (e), pp. 19–20), for Tate's local factors
+- [Brauer's induction theorem](../../finite-group-representations/brauer-induction-theorem.md), for Brauer's induction theorem in the virtual form needed for inductivity in degree zero (Česnavičius, Proposition 5.3 (b), after Deligne)
 
 ## Sources
 
@@ -80,6 +98,20 @@ follows there, since its printed factors do not depend on the product index.
 - H. Jacquet, I. I. Piatetski-Shapiro and J. A. Shalika, "Rankin–Selberg convolutions", Amer. J.
   Math. 105 (1983), 367–483, the source of the factors of pairs, as cited by Wedhorn and by
   Henniart (2002, §1.2).
+- J. W. Cogdell, "Lectures on L-functions, converse theorems, and functoriality for GL_n", in
+  *Lectures on Automorphic L-functions*, Fields Institute Monographs 20, American Mathematical Society,
+  2004; author's version <https://people.math.osu.edu/cogdell.1/fields-www.pdf>: Lecture 6, for unitary
+  generic representations and the case $m < n$ ("The m = n theory is analogous"): §1,
+  Proposition 6.1 and Remark 3, p. 46 (the asymptotics of Whittaker functions on the diagonal torus,
+  through finite functions that come from the Jacquet module), §2, Proposition 6.2, p. 47 (convergence
+  and rationality of the local integrals), and §3, p. 48 (Proposition 6.4, the uniqueness principle behind the local
+  functional equation, whose proof "takes place in the Kirillov models and involves the representation
+  theory of the mirabolic subgroup P and Bruhat theory", and Theorem 6.2).
+- K. Česnavičius, "Local factors valued in normal domains", author's version of 15 October 2014,
+  <https://webusers.imj-prg.fr/~kestutis.cesnavicius/epsilon-schemes.pdf>: Proposition 5.3 (after Deligne 1973, 1.5:
+  the virtual representations of degree zero of a finite group are spanned by the $\mathrm{Ind}_H^G([\chi] - [1_H])$, $H$
+  elementary), §5.5 (types of Weil representations, after Deligne 1973, 4.10: Lemma 5.5.1, the decomposition (5.5.2)
+  by types and the twist (5.5.3) by an unramified character of each type) and Proposition 5.6.
 - P. Deligne, "Les constantes des équations fonctionnelles des fonctions L", in *Modular Functions
   of One Variable II*, Lecture Notes in Math. 349, Springer, 1973, 501–596, the source of the local
   constants, as cited by Wedhorn ([De2]).
