@@ -56,10 +56,10 @@ namespace IsDiscreteValuationRing
 
 variable (R : Type*) [CommRing R] [IsDomain R] [IsDiscreteValuationRing R]
 
-/-- The `i`-th maximal-ideal graded piece `𝔪 ^ i ⧸ 𝔪 ^ (i + 1)` of a discrete
-valuation ring, presented as the quotient of the ideal `𝔪 ^ i` by `𝔪 • ⊤`.
-This is new supporting infrastructure for the corrected ATLAS N261
-filtered-trace route, not a source theorem. -/
+/-- **Graded pieces of the maximal-ideal filtration.** Let $R$ be a discrete valuation ring with
+maximal ideal $\mathfrak{m}$. For $i \in \mathbb{N}$, the $i$-th graded piece is the $R$-module
+$\mathfrak{m}^i/\mathfrak{m}^{i+1}$, realized as the quotient of the ideal $\mathfrak{m}^i$,
+viewed as an $R$-module, by its submodule $\mathfrak{m} \cdot \mathfrak{m}^i$. -/
 abbrev MaximalIdealGradedPiece (i : ℕ) :=
   ((IsLocalRing.maximalIdeal R) ^ i : Ideal R) ⧸
     (IsLocalRing.maximalIdeal R • ⊤ :
@@ -74,12 +74,14 @@ instance (i : ℕ) :
   inferInstanceAs
     (Module (R ⧸ IsLocalRing.maximalIdeal R) (MaximalIdealGradedPiece R i))
 
-/-- The `i`-th maximal-ideal graded piece is `κ`-linearly a copy of the residue
-field. The underlying function and inverse come from
-`Ideal.quotEquivPowQuotPowSucc`; only the residue-scalar compatibility is proved
-here, by quotient induction: a residue scalar `mk r` acts on both sides as the
-representative `r` acts over `R` (the maximal ideal annihilates the graded
-piece, so this is well defined). -/
+/-- **Graded pieces of a DVR as copies of the residue field.** Let $R$ be a discrete valuation
+ring with maximal ideal $\mathfrak{m}$ and residue field $\kappa = R/\mathfrak{m}$, and let
+$\varpi$ be a generator of $\mathfrak{m}$ chosen once and for all. For $i \in \mathbb{N}$, the
+map $\kappa \to \mathfrak{m}^i/\mathfrak{m}^{i+1}$ sending the class of $r \in R$ to the class
+of $r \varpi^i$ is a $\kappa$-linear isomorphism.
+
+Here $\kappa$ acts on $\mathfrak{m}^i/\mathfrak{m}^{i+1}$ through $R$, which is well defined
+because $\mathfrak{m}$ annihilates the graded piece. -/
 noncomputable def residueFieldLinearEquivMaximalIdealGradedPiece (i : ℕ) :
     IsLocalRing.ResidueField R ≃ₗ[IsLocalRing.ResidueField R]
       MaximalIdealGradedPiece R i :=
@@ -91,7 +93,10 @@ noncomputable def residueFieldLinearEquivMaximalIdealGradedPiece (i : ℕ) :
       obtain ⟨r, rfl⟩ := Ideal.Quotient.mk_surjective q
       exact e.map_smul r x }
 
-/-- Every maximal-ideal graded piece of a DVR has residue-field finrank one. -/
+/-- **Graded pieces of a DVR are one-dimensional.** Let $R$ be a discrete valuation ring with
+maximal ideal $\mathfrak{m}$ and residue field $\kappa = R/\mathfrak{m}$. For every
+$i \in \mathbb{N}$, the graded piece $\mathfrak{m}^i/\mathfrak{m}^{i+1}$ is a vector space of
+dimension one over $\kappa$. -/
 theorem finrank_maximalIdealGradedPiece (i : ℕ) :
     Module.finrank (IsLocalRing.ResidueField R)
       (MaximalIdealGradedPiece R i) = 1 := by

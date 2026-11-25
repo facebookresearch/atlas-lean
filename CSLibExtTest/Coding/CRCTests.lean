@@ -66,7 +66,7 @@ burst of length 3 and CRC-3 catches it. -/
 example (m : (ZMod 2)[X]) : ¬g ∣ encode g m + (X ^ 5 + X ^ 3) := by
   have hne : (X ^ 5 + X ^ 3 : (ZMod 2)[X]) ≠ 0 := by
     intro h
-    have := congrArg (coeff · 3) h
+    have := congrArg (·.coeff 3) h
     simp [coeff_X_pow] at this
   have hb : IsBurstLE (X ^ 5 + X ^ 3 : (ZMod 2)[X]) 3 := by
     refine isBurstLE_of_support hne (i := 3) fun j hj ↦ ?_
@@ -123,7 +123,7 @@ two-terms hypothesis is independent of `X ∤ g`. -/
 example (m e : (ZMod 2)[X]) : (1 : (ZMod 2)[X]) ∣ encode 1 m + e := one_dvd _
 
 example : ¬X ∣ (1 : (ZMod 2)[X]) := by
-  rw [X_dvd_iff, coeff_one_zero]
+  rw [X_dvd_iff, AddMonoidAlgebra.coeff_one_zero]
   exact one_ne_zero
 
 /-- The bound `deg g` is sharp: `g` itself is a burst of length 4 that CRC-3 misses. -/

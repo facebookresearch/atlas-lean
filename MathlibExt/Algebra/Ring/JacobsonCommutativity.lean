@@ -55,9 +55,11 @@ element (using `littleWedderburn`).
 
 variable {R : Type*} [Ring R]
 
-/-- A two-sided ideal is prime if it is proper and `a * R * b ⊆ P` forces
-`a ∈ P` or `b ∈ P`. This is the noncommutative notion; Mathlib's
-`Ideal.IsPrime` is the (stronger) completely prime notion. -/
+/-- **Prime two-sided ideal.** A two-sided ideal $P$ of a ring $R$ is prime if $P \ne R$ and,
+for all $a, b \in R$, if $a r b \in P$ for every $r \in R$, then $a \in P$ or $b \in P$.
+
+This is the noncommutative notion of primality; being completely prime ($P \ne R$, and
+$ab \in P$ forces $a \in P$ or $b \in P$) is stronger. -/
 def IsPrimeIdeal (P : TwoSidedIdeal R) : Prop :=
   P ≠ ⊤ ∧ ∀ a b : R, (∀ r : R, a * r * b ∈ P) → a ∈ P ∨ b ∈ P
 
@@ -92,8 +94,8 @@ private lemma eq_zero_of_pow_eq_zero {x : R} {m : ℕ}
   rw [hk, pow_add, hx, zero_mul] at hxN
   exact hxN.symm
 
-/-- An `m`-system: a nonempty set avoiding `0`, closed under joining pairs
-through `R`. -/
+/-- **m-system.** A subset $M$ of a ring $R$ is an $m$-system if it is nonempty, does not
+contain $0$, and for all $a, b \in M$ there is some $r \in R$ with $a r b \in M$. -/
 def IsMSystem (M : Set R) : Prop :=
   M.Nonempty ∧ 0 ∉ M ∧ ∀ a b : R, a ∈ M → b ∈ M → ∃ r : R, a * r * b ∈ M
 

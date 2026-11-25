@@ -5,3 +5,4 @@ Sylow theory and its generalization to sets of primes: Hall π-subgroups, the cl
 - [Groups with Hall maximal subgroups](groups-with-hall-maximal-subgroups/README.md)
 - [Hall π-subgroups](hall-subgroups/README.md)
 - [Pronormality of Hall subgroups](pronormality-of-hall-subgroups/README.md)
+- [Finite groups have subgroups of every prime-power order dividing their order (Sylow existence)](sylow-existence.md)

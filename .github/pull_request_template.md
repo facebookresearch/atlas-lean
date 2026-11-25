@@ -2,6 +2,15 @@
 
 <!-- Describe the mathematical or infrastructure change and its scope. -->
 
+<!--
+One `Graph:` line, as CONTRIBUTING.md asks: the article ids (`af_…`) of the
+pages this pull request proves, fixes or extends, plus `new` when it adds
+declarations that get pages (their pages are in this pull request), or `none`
+when it changes nothing the graph shows. Name each ready task it takes on a
+`Tasks: af_…` line.
+-->
+Graph:
+
 ## Validation
 
 - [ ] I ran `scripts/check.sh` from the repository root.

@@ -53,8 +53,10 @@ namespace MathlibExt.Probability.BirkhoffErgodicL1
 variable {α : Type*} [MeasurableSpace α] {μ : Measure α}
 variable {T : α → α}
 
-/-- Birkhoff sums of an integrable observable under a measure-preserving
-transformation are integrable. -/
+/-- **Integrability of Birkhoff sums.** Let $\mu$ be a measure on a measurable space $\alpha$,
+let $T : \alpha \to \alpha$ preserve $\mu$, and let $g : \alpha \to \mathbb{R}$ be
+$\mu$-integrable. Then for every $n \in \mathbb{N}$ the Birkhoff sum
+$x \mapsto \sum_{k=0}^{n-1} g(T^k x)$ is $\mu$-integrable. -/
 theorem integrable_birkhoffSum_of_measurePreserving
     (hmp : MeasurePreserving T μ μ) {g : α → ℝ} (hg : Integrable g μ) (n : ℕ) :
     Integrable (birkhoffSum T g n) μ := by
@@ -64,16 +66,21 @@ theorem integrable_birkhoffSum_of_measurePreserving
     rw [birkhoffSum_succ']
     exact hg.add (hmp.integrable_comp_of_integrable ih)
 
-/-- Birkhoff averages of an integrable observable under a measure-preserving
-transformation are integrable. -/
+/-- **Integrability of Birkhoff averages.** Let $\mu$ be a measure on a measurable space
+$\alpha$, let $T : \alpha \to \alpha$ preserve $\mu$, and let $g : \alpha \to \mathbb{R}$ be
+$\mu$-integrable. Then for every $n \in \mathbb{N}$ the Birkhoff average
+$x \mapsto \frac{1}{n} \sum_{k=0}^{n-1} g(T^k x)$ is $\mu$-integrable (for $n = 0$ it is the
+zero function). -/
 theorem integrable_birkhoffAverage_of_measurePreserving
     (hmp : MeasurePreserving T μ μ) {g : α → ℝ} (hg : Integrable g μ) (n : ℕ) :
     Integrable (birkhoffAverage ℝ T g n) μ := by
   have h := integrable_birkhoffSum_of_measurePreserving hmp hg n
   exact Integrable.smul ((n : ℝ)⁻¹) h
 
-/-- The integral of an observable is unchanged by precomposition with an
-iterate of a measure-preserving transformation. -/
+/-- **Invariance of the integral under iterates.** Let $\mu$ be a measure on a measurable space
+$\alpha$, let $T : \alpha \to \alpha$ preserve $\mu$, and let $u : \alpha \to \mathbb{R}$ be
+$\mu$-integrable. Then for every $k \in \mathbb{N}$, writing $T^k$ for the $k$-th iterate of
+$T$, we have $\int u(T^k x) \, d\mu(x) = \int u \, d\mu$. -/
 theorem integral_comp_iterate_of_measurePreserving
     (hmp : MeasurePreserving T μ μ) {u : α → ℝ} (hu : Integrable u μ) (k : ℕ) :
     ∫ x, u (T^[k] x) ∂μ = ∫ x, u x ∂μ := by
@@ -86,8 +93,10 @@ theorem integral_comp_iterate_of_measurePreserving
   rw [hmpk.map_eq] at h1
   exact h1.symm
 
-/-- For `0 < n`, the integral of the `n`-th Birkhoff average of `u` equals
-the integral of `u` (each orbit point contributes equally, by invariance). -/
+/-- **Birkhoff averages preserve the integral.** Let $\mu$ be a measure on a measurable space
+$\alpha$, let $T : \alpha \to \alpha$ preserve $\mu$, and let $u : \alpha \to \mathbb{R}$ be
+$\mu$-integrable. Then for every $n \ge 1$,
+$\int \frac{1}{n} \sum_{k=0}^{n-1} u(T^k x) \, d\mu(x) = \int u \, d\mu$. -/
 theorem integral_birkhoffAverage_of_measurePreserving
     (hmp : MeasurePreserving T μ μ) {u : α → ℝ} (hu : Integrable u μ)
     {n : ℕ} (hn : 0 < n) :
@@ -109,8 +118,11 @@ theorem integral_birkhoffAverage_of_measurePreserving
   exact inv_mul_cancel_left₀ (by exact_mod_cast hn.ne') _
 
 omit [MeasurableSpace α] in
-/-- Pointwise: the norm of a Birkhoff average is at most the Birkhoff average
-of the pointwise norm. -/
+/-- **Triangle inequality for Birkhoff averages.** Let $T : \alpha \to \alpha$ be a map. For
+$f : \alpha \to \mathbb{R}$ and $n \ge 1$ write $A_n f(x) = \frac{1}{n} \sum_{k=0}^{n-1} f(T^k x)$
+for the $n$-th Birkhoff average of $f$, and $A_0 f = 0$. Then for every
+$u : \alpha \to \mathbb{R}$, every $n \in \mathbb{N}$ and every $x \in \alpha$, writing $|u|$ for
+the function $y \mapsto |u(y)|$, we have $|A_n u(x)| \le A_n |u|(x)$. -/
 theorem norm_birkhoffAverage_le_birkhoffAverage_norm
     {u : α → ℝ} (n : ℕ) (x : α) :
     ‖birkhoffAverage ℝ T u n x‖ ≤ birkhoffAverage ℝ T (fun y => ‖u y‖) n x := by
@@ -126,7 +138,12 @@ theorem norm_birkhoffAverage_le_birkhoffAverage_norm
       (inv_nonneg.mpr hn'.le)
 
 omit [MeasurableSpace α] in
-/-- Birkhoff averages are monotone in the observable. -/
+/-- **Monotonicity of Birkhoff averages.** Let $T : \alpha \to \alpha$ be a map. For
+$u : \alpha \to \mathbb{R}$, $n \ge 1$ and $x \in \alpha$, write
+$A_n u(x) = \frac{1}{n} \sum_{k=0}^{n-1} u(T^k x)$ for the $n$-th Birkhoff average of $u$ at
+$x$, and $A_0 u(x) = 0$. If $u, v : \alpha \to \mathbb{R}$ satisfy $u(y) \le v(y)$ for every
+$y \in \alpha$, then $A_n u(x) \le A_n v(x)$ for every $n \in \mathbb{N}$ and every
+$x \in \alpha$. -/
 theorem birkhoffAverage_le_birkhoffAverage
     {u v : α → ℝ} (h : ∀ y, u y ≤ v y) (n : ℕ) (x : α) :
     birkhoffAverage ℝ T u n x ≤ birkhoffAverage ℝ T v n x := by
@@ -141,7 +158,11 @@ theorem birkhoffAverage_le_birkhoffAverage
       (inv_nonneg.mpr hn'.le)
 
 omit [MeasurableSpace α] in
-/-- If `g` is bounded by `M ≥ 0` everywhere, so is every Birkhoff average. -/
+/-- **Birkhoff averages of a bounded function are bounded.** Let $T : \alpha \to \alpha$ be a
+map, let $M \ge 0$, and let $g : \alpha \to \mathbb{R}$ satisfy $|g(x)| \le M$ for every
+$x \in \alpha$. Then for every $n \in \mathbb{N}$ and every $x \in \alpha$, the Birkhoff average
+$\frac{1}{n} \sum_{k=0}^{n-1} g(T^k x)$ (taken to be $0$ for $n = 0$) has absolute value at
+most $M$. -/
 theorem norm_birkhoffAverage_le_of_bounded
     {g : α → ℝ} {M : ℝ} (hM : 0 ≤ M) (hgb : ∀ x, ‖g x‖ ≤ M) (n : ℕ) (x : α) :
     ‖birkhoffAverage ℝ T g n x‖ ≤ M := by
@@ -155,8 +176,12 @@ theorem norm_birkhoffAverage_le_of_bounded
     have h := birkhoffAverage_apply_of_comp_eq ℝ hcomp hn' x
     exact h.le
 
-/-- Birkhoff averages are `L¹`-contractions: the `L¹` distance between two
-averages is at most the `L¹` distance between the observables. -/
+/-- **Birkhoff averages are $L^1$-contractions.** Let $\mu$ be a measure on a measurable space
+$\alpha$, let $T : \alpha \to \alpha$ preserve $\mu$, and let $g, h : \alpha \to \mathbb{R}$ be
+$\mu$-integrable. For a function $f : \alpha \to \mathbb{R}$ and $n \ge 1$ write
+$A_n f(x) = \frac{1}{n} \sum_{k=0}^{n-1} f(T^k x)$, and $A_0 f = 0$. Then for every
+$n \in \mathbb{N}$,
+$\int |A_n g(x) - A_n h(x)| \, d\mu(x) \le \int |g(x) - h(x)| \, d\mu(x)$. -/
 theorem integral_norm_birkhoffAverage_sub_le
     (hmp : MeasurePreserving T μ μ) {g h : α → ℝ}
     (hg : Integrable g μ) (hh : Integrable h μ) (n : ℕ) :
@@ -186,10 +211,14 @@ theorem integral_norm_birkhoffAverage_sub_le
       _ = ∫ x, ‖g x - h x‖ ∂μ :=
           integral_congr_ae (Filter.Eventually.of_forall fun x => by simp [Pi.sub_apply])
 
-/-- Birkhoff's ergodic theorem in `L¹` for bounded observables: if `g` is
-bounded by `M`, the `L¹` distance between the Birkhoff averages of `g` and
-the space average `∫ g` tends to `0`. This follows from the a.s. theorem
-plus dominated convergence. -/
+/-- **Birkhoff's ergodic theorem in $L^1$ for bounded functions.** Let $\mu$ be a probability
+measure on a measurable space $\alpha$, let $T : \alpha \to \alpha$ be ergodic with respect to
+$\mu$ (in particular $T$ preserves $\mu$), let $M \ge 0$, and let $g : \alpha \to \mathbb{R}$ be
+$\mu$-integrable with $|g(x)| \le M$ for every $x \in \alpha$. For $n \ge 1$ let
+$A_n g(x) = \frac{1}{n} \sum_{k=0}^{n-1} g(T^k x)$. Then
+$\int \left| A_n g(x) - \int g \, d\mu \right| d\mu(x) \to 0$ as $n \to \infty$.
+
+This follows from the almost-everywhere ergodic theorem and dominated convergence. -/
 theorem tendsto_integral_norm_birkhoffAverage_of_bounded
     [IsProbabilityMeasure μ]
     (hT : Ergodic T μ) {g : α → ℝ} (hg : Integrable g μ)
@@ -223,11 +252,12 @@ theorem tendsto_integral_norm_birkhoffAverage_of_bounded
       simpa using hlim.norm)
   simpa using hDCT
 
-/-- **Birkhoff's ergodic theorem in `L¹` (ergodic case).** Let `T` be an
-ergodic measure-preserving transformation of a probability space and let
-`g` be integrable. Then the Birkhoff averages of `g` converge to the space
-average `∫ g` in `L¹`:
-`∫ ‖(1/n) ∑_{k<n} g ∘ T^[k] - ∫ g‖ → 0`. -/
+/-- **Birkhoff's ergodic theorem in $L^1$ (ergodic case).** Let $\mu$ be a probability measure
+on a measurable space $\alpha$, let $T : \alpha \to \alpha$ be ergodic with respect to $\mu$ (in
+particular $T$ preserves $\mu$), and let $g : \alpha \to \mathbb{R}$ be $\mu$-integrable. For
+$n \ge 1$ let $A_n g(x) = \frac{1}{n} \sum_{k=0}^{n-1} g(T^k x)$ be the Birkhoff averages of
+$g$. Then $\int \left| A_n g(x) - \int g \, d\mu \right| d\mu(x) \to 0$ as $n \to \infty$; that
+is, the Birkhoff averages of $g$ converge to the constant $\int g \, d\mu$ in $L^1(\mu)$. -/
 theorem birkhoff_ergodic_theorem_L1
     [IsProbabilityMeasure μ]
     (hT : Ergodic T μ) {g : α → ℝ} (hg : Integrable g μ) :

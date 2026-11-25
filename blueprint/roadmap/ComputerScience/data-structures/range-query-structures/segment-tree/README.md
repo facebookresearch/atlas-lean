@@ -28,3 +28,4 @@
 - [Point update of a built segment tree](to-list-update-build.md)
 - [Aggregate after a point update of a built segment tree](agg-update-build.md)
 - [Range queries after a point update of a built segment tree](query-update-build.md)
+- [Segment-tree queries visit logarithmically many nodes](segment-tree-queries-visit-logarithmically-many-nodes.md)
