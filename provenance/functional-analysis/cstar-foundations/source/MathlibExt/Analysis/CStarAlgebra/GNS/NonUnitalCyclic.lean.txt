@@ -1,0 +1,138 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.GNS.OneVector
+public import Mathlib.Topology.Algebra.Module.Basic
+import Mathlib.Tactic.Linarith
+
+/-!
+# Cyclic span for the original nonunital state
+
+The general increasing approximate-unit filter approaches the literal
+class of the forced unit in the actual GNS norm. Consequently the original
+nonunital coefficient orbit, not only the unitized orbit, has dense span.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+noncomputable section
+
+open UniformSpace Filter Topology
+open scoped ComplexOrder InnerProductSpace
+
+namespace PositiveContinuousLinearMap
+
+universe uA
+
+variable {A : Type uA} [NonUnitalCStarAlgebra A]
+  [PartialOrder A] [StarOrderedRing A]
+
+attribute [local instance] PositiveContinuousLinearMap.stateUnitizationOrder
+  PositiveContinuousLinearMap.stateUnitizationStarOrder
+
+/-- The original GNS coefficient image has its exact state-square norm. -/
+theorem stateGNSMap_norm_sq (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1)
+    (a : A) : ‖stateGNSMap f hf a‖ ^ 2 = (f (star a * a)).re := by
+  exact (inner_self_eq_norm_sq (𝕜 := ℂ) (stateGNSMap f hf a)).symm.trans
+    (congrArg Complex.re (stateGNSMap_inner f hf a a))
+
+/-- Distance to the literal unit class is computed from the original state. -/
+theorem stateGNSMap_sub_vector_norm_sq (f : A →P[ℂ] ℂ)
+    (hf : ‖f.toContinuousLinearMap‖ = 1) (e : A) (he : IsSelfAdjoint e) :
+    ‖stateGNSMap f hf e - unitizationGNSVector f hf‖ ^ 2 =
+      1 - 2 * (f e).re + (f (e * e)).re := by
+  have hInner : inner ℂ (unitizationGNSVector f hf) (stateGNSMap f hf e) = f e := by
+    rw [← stateGNSRepresentation_vector f hf e]
+    exact stateGNSRepresentation_state f hf e
+  rw [norm_sub_rev, norm_sub_sq (𝕜 := ℂ), norm_unitizationGNSVector,
+    stateGNSMap_norm_sq, he.star_eq, hInner]
+  simp only [one_pow, RCLike.re_eq_complex_re]
+
+/-- Positive contractions approach the unit class according to their actual state value. -/
+theorem stateGNSMap_sub_vector_norm_sq_le (f : A →P[ℂ] ℂ)
+    (hf : ‖f.toContinuousLinearMap‖ = 1) (e : A) (he : 0 ≤ e) (hen : ‖e‖ ≤ 1) :
+    ‖stateGNSMap f hf e - unitizationGNSVector f hf‖ ^ 2 ≤ 1 - (f e).re := by
+  rw [stateGNSMap_sub_vector_norm_sq f hf e he.isSelfAdjoint]
+  have h : (f (e * e)).re ≤ (f e).re :=
+    (f.mono (CStarAlgebra.mul_self_le_of_nonneg_of_norm_le_one he hen)).1
+  linarith
+
+/-- The general approximate unit, with no sigma-unitality assumption, converges
+to the literal unit vector in the original state GNS norm. -/
+theorem tendsto_stateGNSMap_approximateUnit (f : A →P[ℂ] ℂ)
+    (hf : ‖f.toContinuousLinearMap‖ = 1) :
+    Tendsto (stateGNSMap f hf) (CStarAlgebra.approximateUnit A)
+      (𝓝 (unitizationGNSVector f hf)) := by
+  have hl := CStarAlgebra.increasingApproximateUnit A
+  have hState : Tendsto (fun e : A => (f e).re) (CStarAlgebra.approximateUnit A) (𝓝 (1 : ℝ)) := by
+    have h := (Complex.continuous_re.tendsto (‖f.toContinuousLinearMap‖ : ℂ)).comp
+      (f.tendsto_nhds_opNorm hl)
+    change Tendsto (fun e : A => (f e).re) (CStarAlgebra.approximateUnit A)
+      (𝓝 ((‖f.toContinuousLinearMap‖ : ℂ).re)) at h
+    simpa only [Complex.ofReal_re, hf] using h
+  have hUpper : Tendsto (fun e : A => 1 - (f e).re) (CStarAlgebra.approximateUnit A) (𝓝 (0 : ℝ)) := by
+    have hOne : Tendsto (fun _ : A => (1 : ℝ)) (CStarAlgebra.approximateUnit A) (𝓝 (1 : ℝ)) :=
+      tendsto_const_nhds
+    simpa only [sub_self] using hOne.sub hState
+  have hBound : ∀ᶠ e in CStarAlgebra.approximateUnit A,
+      ‖stateGNSMap f hf e - unitizationGNSVector f hf‖ ^ 2 ≤ 1 - (f e).re := by
+    filter_upwards [hl.eventually_nonneg, hl.eventually_norm] with e he hen
+    exact stateGNSMap_sub_vector_norm_sq_le f hf e he hen
+  have hSq : Tendsto (fun e : A => ‖stateGNSMap f hf e - unitizationGNSVector f hf‖ ^ 2)
+      (CStarAlgebra.approximateUnit A) (𝓝 (0 : ℝ)) :=
+    squeeze_zero' (Eventually.of_forall fun _ => sq_nonneg _) hBound hUpper
+  have hNorm : Tendsto (fun e : A => ‖stateGNSMap f hf e - unitizationGNSVector f hf‖)
+      (CStarAlgebra.approximateUnit A) (𝓝 (0 : ℝ)) := by
+    have h := (Real.continuous_sqrt.tendsto 0).comp hSq
+    change Tendsto (fun e : A => Real.sqrt
+      (‖stateGNSMap f hf e - unitizationGNSVector f hf‖ ^ 2))
+      (CStarAlgebra.approximateUnit A) (𝓝 (Real.sqrt 0)) at h
+    have hEq (e : A) :
+        Real.sqrt (‖stateGNSMap f hf e - unitizationGNSVector f hf‖ ^ 2) =
+          ‖stateGNSMap f hf e - unitizationGNSVector f hf‖ :=
+      Real.sqrt_sq (norm_nonneg _)
+    simpa only [hEq, Real.sqrt_zero] using h
+  exact tendsto_iff_norm_sub_tendsto_zero.mpr hNorm
+
+/-- The given nonunital algebra itself has dense cyclic span at the literal unit vector. -/
+theorem dense_stateGNSRepresentation_span (f : A →P[ℂ] ℂ)
+    (hf : ‖f.toContinuousLinearMap‖ = 1) :
+    Dense (Submodule.span ℂ (Set.range fun a : A =>
+      stateGNSRepresentation f hf a (unitizationGNSVector f hf)) :
+        Set (unitizationGNS f hf)) := by
+  let S : Submodule ℂ (unitizationGNS f hf) :=
+    Submodule.span ℂ (Set.range fun a : A =>
+      stateGNSRepresentation f hf a (unitizationGNSVector f hf))
+  have hA (a : A) : stateGNSMap f hf a ∈ S.topologicalClosure := by
+    apply S.le_topologicalClosure
+    exact Submodule.subset_span ⟨a, stateGNSRepresentation_vector f hf a⟩
+  have hOne : unitizationGNSVector f hf ∈ S.topologicalClosure :=
+    S.isClosed_topologicalClosure.mem_of_tendsto
+      (tendsto_stateGNSMap_approximateUnit f hf) (Eventually.of_forall hA)
+  let F := (unitizationState f hf).toPositiveLinearMap
+  have hUnitized (u : Unitization ℂ A) : (F.toPreGNS u : F.GNS) ∈ S.topologicalClosure := by
+    have hu : u = u.fst • (1 : Unitization ℂ A) + Unitization.inr u.snd := by
+      rw [← Algebra.algebraMap_eq_smul_one, Unitization.algebraMap_eq_inl]
+      exact (Unitization.inl_fst_add_inr_snd_eq u).symm
+    have hImage : (F.toPreGNS u : F.GNS) =
+        u.fst • unitizationGNSVector f hf + stateGNSMap f hf u.snd := by
+      change (F.toPreGNS u : F.GNS) =
+        u.fst • (F.toPreGNS (1 : Unitization ℂ A) : F.GNS) +
+          (F.toPreGNS (Unitization.inr u.snd) : F.GNS)
+      have h := congrArg (fun x : Unitization ℂ A => (F.toPreGNS x : F.GNS)) hu
+      simpa only [map_add, map_smul, Completion.coe_add, Completion.coe_smul] using h
+    rw [hImage]
+    exact S.topologicalClosure.add_mem (S.topologicalClosure.smul_mem _ hOne) (hA u.snd)
+  apply Submodule.dense_iff_topologicalClosure_eq_top.mpr
+  apply Submodule.eq_top_iff'.mpr
+  intro x
+  refine Completion.induction_on x S.isClosed_topologicalClosure ?_
+  intro y
+  simpa only [F.toPreGNS_ofPreGNS] using hUnitized (F.ofPreGNS y)
+
+end PositiveContinuousLinearMap

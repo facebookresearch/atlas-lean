@@ -89,9 +89,10 @@ public section
 
 namespace MathlibExt.Analysis.Calculus.EqualPartialsFactorSumWanted
 
-/-- **Equal partial derivatives make a function constant on the lines `x + y = c`.** If
-`f : ℝ × ℝ → E` is differentiable and its partial derivatives agree, `∂₁f = ∂₂f` on `ℝ × ℝ`,
-then `f (x, y) = f (x + y, 0)` for all `x, y : ℝ`. -/
+/-- **Equal partial derivatives make a function constant on the lines `x + y = c`.**
+Let `E` be a real normed space. If `f : ℝ × ℝ → E` is
+differentiable and its partial derivatives agree, `∂₁f = ∂₂f` on `ℝ × ℝ`, then
+`f (x, y) = f (x + y, 0)` for all `x, y : ℝ`. -/
 theorem apply_eq_apply_add_zero_of_fderiv_eq {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] {f : ℝ × ℝ → E} (hf : Differentiable ℝ f)
     (hpar : ∀ p : ℝ × ℝ, (fderiv ℝ f p) (1, 0) = (fderiv ℝ f p) (0, 1)) (x y : ℝ) :

@@ -51,24 +51,32 @@ open Set
 open MeasureTheory ProbabilityTheory
 
 /-- The law `∑ ω, p ω • δ_{X ω}` of the loss `X` on a finite sample space with probability
-weights `p`. -/
+weights `p`. It is defined for all real weights: each weight is clamped to `max (p ω) 0`, so a
+negative weight puts no mass at its outcome. -/
 noncomputable def lossLaw {Ω : Type*} [Fintype Ω] (p : Ω → ℝ) (X : Ω → ℝ) : Measure ℝ :=
   ∑ ω, ENNReal.ofReal (p ω) • Measure.dirac (X ω)
 
 /-- Expected shortfall at level `α` of the loss `X` under the weights `p`, by the
-Rockafellar-Uryasev convex formula `inf_c (c + E[(X - c)⁺] / (1 - α))`. -/
+Rockafellar-Uryasev formula `inf_c (c + E[(X - c)⁺] / (1 - α))`. For probability weights `p`
+(nonnegative, summing to `1`) and `0 < α < 1` it is the expected shortfall of `X`, and the objective
+is convex in `c`; it is evaluated for all real weights, with the raw weights. The infimum is taken
+in the real numbers, so it is `0` when the values are not bounded below, as for `α = 1`, where the
+convention `x / 0 = 0` reduces the objective to `c`. -/
 noncomputable def expectedShortfall {Ω : Type*} [Fintype Ω] (p : Ω → ℝ) (α : ℝ)
     (X : Ω → ℝ) : ℝ :=
   ⨅ c : ℝ, (c + (∑ ω, p ω * max (X ω - c) 0) / (1 - α))
 
-/-- Expected shortfall at level `α` by quantile integration:
-`(1 - α)⁻¹ ∫_α^1 q_X(u) du`, with `q_X` the lower quantile of the loss law. -/
+/-- Expected shortfall at level `α` by quantile integration: `(1 - α)⁻¹ ∫_α^1 q_X(u) du`, with `q_X`
+the lower quantile of the loss law. It is the expected shortfall of a probability law for
+probability weights `p` (nonnegative, summing to `1`). It is evaluated for all real weights, through
+`lossLaw` (negative weights clamped to `0`), but for other weights the loss law need not be a
+probability measure. With the convention `x / 0 = 0` it is `0` for `α = 1`. -/
 noncomputable def quantileExpectedShortfall {Ω : Type*} [Fintype Ω] (p : Ω → ℝ) (α : ℝ)
     (X : Ω → ℝ) : ℝ :=
   (∫ u in α..1, cdfQuantile (lossLaw p X) u) / (1 - α)
 
 
-/-- The loss law is a probability measure under the standing hypotheses. -/
+/-- The loss law is a probability measure for nonnegative weights `p` summing to one. -/
 theorem isProbabilityMeasure_lossLaw {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
     (hp : ∀ ω, 0 ≤ p ω) (hp1 : ∑ ω, p ω = 1) (X : Ω → ℝ) :
     IsProbabilityMeasure (lossLaw p X) := by
@@ -80,7 +88,8 @@ theorem isProbabilityMeasure_lossLaw {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
   simp only [MeasureTheory.Measure.smul_apply, hdirac, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg (fun i _ => hp i), hp1, ENNReal.ofReal_one]
 
-/-- The cdf of the loss law counts the weights of outcomes with loss below `x`. -/
+/-- For nonnegative weights `p` summing to one, the cdf of the loss law at `x` is the total
+weight of the outcomes with loss at most `x`. -/
 theorem cdf_lossLaw_eq {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
     (hp : ∀ ω, 0 ≤ p ω) (hp1 : ∑ ω, p ω = 1) (X : Ω → ℝ) (x : ℝ) :
     cdf (lossLaw p X) x = ∑ ω ∈ Finset.univ.filter (fun ω => X ω ≤ x), p ω := by
@@ -268,8 +277,8 @@ private theorem obj_ge_quantile {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
   rw [sub_div] at h2
   linarith
 
-/-- The Rockafellar-Uryasev infimum is attained at the value-at-risk `q_X(α)`, the lower
-`α`-quantile of the loss. -/
+/-- For nonnegative weights `p` summing to one and `0 < α < 1`, the Rockafellar-Uryasev
+infimum is attained at the value-at-risk `q_X(α)`, the lower `α`-quantile of the loss. -/
 theorem expectedShortfall_eq_valueAtRisk_add {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
     (hp : ∀ ω, 0 ≤ p ω) (hp1 : ∑ ω, p ω = 1) {α : ℝ} (hα0 : 0 < α) (hα1 : α < 1)
     (X : Ω → ℝ) :
@@ -314,7 +323,7 @@ private theorem le_quantile_of_cdf_eq_zero {Ω : Type*} [Fintype Ω] {p : Ω →
     linarith [hu.1]
 
 /-- The quantile-integral and Rockafellar-Uryasev definitions of expected shortfall agree on
-finite loss distributions. -/
+finite loss distributions (nonnegative weights `p` summing to one) at levels `0 < α < 1`. -/
 theorem quantileExpectedShortfall_eq_expectedShortfall {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
     (hp : ∀ ω, 0 ≤ p ω) (hp1 : ∑ ω, p ω = 1) {α : ℝ} (hα0 : 0 < α) (hα1 : α < 1)
     (X : Ω → ℝ) :
@@ -489,7 +498,8 @@ theorem quantileExpectedShortfall_eq_expectedShortfall {Ω : Type*} [Fintype Ω]
     rw [hsplit, hconst, hsub_eq]
   rw [hES, hint, add_div, mul_div_cancel_right₀ _ hd']
 
-/-- **Subadditivity of expected shortfall** for losses on a finite probability space. -/
+/-- **Subadditivity of expected shortfall** for losses on a finite probability space, at a
+level `0 < α < 1`. -/
 theorem expectedShortfall_add_le {Ω : Type*} [Fintype Ω] {p : Ω → ℝ}
     (hp : ∀ ω, 0 ≤ p ω) (hp1 : ∑ ω, p ω = 1) {α : ℝ} (hα0 : 0 < α) (hα1 : α < 1)
     (X Y : Ω → ℝ) :

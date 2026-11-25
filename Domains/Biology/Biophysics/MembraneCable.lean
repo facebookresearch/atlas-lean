@@ -57,9 +57,9 @@ axial resistance `ri` (per unit length), membrane voltage `V` measured from rest
     `V x = V 0 cosh ((L - x)/λ) / cosh (L/λ)`, input relation `V 0 = r∞ coth (L/λ) I 0`
     (`IsSteadyState.sealedEnd_input`), end attenuation `V L = V 0 / cosh (L/λ)`.
 
-Only the steady state is treated: the time-dependent cable equation
-`λ² V_xx = τ V_t + V` is not formalized here. The Goldman–Hodgkin–Katz equation for several
-species and active (Hodgkin–Huxley) membranes are also out of scope.
+Only the steady state is treated: the time-dependent cable equation `λ² V_xx = τ V_t + V`, the
+Goldman–Hodgkin–Katz equation for several species and active (Hodgkin–Huxley) membranes are out
+of scope of this file.
 
 ## References
 
@@ -80,22 +80,27 @@ namespace MathlibExt.Biology.Biophysics.MembraneCable
 with gas constant `R`, absolute temperature `T`, Faraday constant `F`, inside concentration
 `cIn` and outside concentration `cOut`. It is the inside-minus-outside membrane voltage at which
 the species is in electrochemical equilibrium (`electrochemicalPotential_eq_iff`,
-`sub_eq_nernstPotential_of_flux_eq_zero`). -/
+`sub_eq_nernstPotential_of_flux_eq_zero`), in the model with `R, T, F, cIn, cOut > 0` and `z ≠ 0`.
+The formula is total: with `u / 0 = 0`, `log 0 = 0` and `log u = log |u|`, it is `0` when
+`z F = 0`, `cIn = 0` or `cOut = 0`. -/
 noncomputable def nernstPotential (R T z F cIn cOut : ℝ) : ℝ := R * T / (z * F) * log (cOut / cIn)
 
 /-- Molar electrochemical potential `μ̃ = μ₀ + R T log c + z F φ` of an ion species of valence `z`
-at concentration `c` and electric potential `φ`, with standard chemical potential `μ₀`. -/
+at concentration `c` and electric potential `φ`, with standard chemical potential `μ₀`. With
+`log 0 = 0` it is `μ₀ + z F φ` at `c = 0`; in the model `c > 0`. -/
 noncomputable def electrochemicalPotential (R T z F μ₀ c φ : ℝ) : ℝ :=
   μ₀ + R * T * log c + z * F * φ
 
 /-- One-dimensional Nernst–Planck flux `J = -D (c' + (z F / (R T)) c φ')` of an ion species with
 diffusion coefficient `D`, at a point where the concentration is `c`, its gradient is `dc` and the
-electric-potential gradient is `dφ`: Fickian diffusion plus electrical drift. -/
+electric-potential gradient is `dφ`: Fickian diffusion plus electrical drift. With `u / 0 = 0`
+the drift term vanishes when `R T = 0`. -/
 noncomputable def nernstPlanckFlux (D R T z F c dc dφ : ℝ) : ℝ :=
   -D * (dc + z * F / (R * T) * c * dφ)
 
-/-- Equal electrochemical potentials inside (`cIn`, `φIn`) and outside (`cOut`, `φOut`) is
-equivalent to the membrane voltage `φIn - φOut` being the Nernst potential. -/
+/-- For `z F ≠ 0` and positive concentrations `cIn`, `cOut`, equal electrochemical potentials
+inside (`cIn`, `φIn`) and outside (`cOut`, `φOut`), with the same `μ₀`, is equivalent to the
+membrane voltage `φIn - φOut` being the Nernst potential. -/
 theorem electrochemicalPotential_eq_iff {R T z F μ₀ cIn cOut φIn φOut : ℝ} (hzF : z * F ≠ 0)
     (hIn : 0 < cIn) (hOut : 0 < cOut) :
     electrochemicalPotential R T z F μ₀ cIn φIn = electrochemicalPotential R T z F μ₀ cOut φOut ↔
@@ -104,7 +109,8 @@ theorem electrochemicalPotential_eq_iff {R T z F μ₀ cIn cOut φIn φOut : ℝ
   rw [log_div hOut.ne' hIn.ne', div_mul_eq_mul_div, eq_div_iff hzF]
   constructor <;> intro h <;> linear_combination h
 
-/-- **Nernst equilibrium from zero Nernst–Planck flux.** Across a membrane `[0, L]` with the
+/-- **Nernst equilibrium from zero Nernst–Planck flux.** Let `D ≠ 0`, `R T ≠ 0`, `z F ≠ 0` and
+`L ≥ 0`. Across a membrane `[0, L]` with the
 inside at `x = 0` and the outside at `x = L`, if the concentration `c > 0` and the potential `φ`
 have derivatives `c'`, `φ'` within `[0, L]` and the Nernst–Planck flux vanishes throughout, then
 the membrane voltage `φ 0 - φ L` is the Nernst potential of the boundary concentrations. -/
@@ -137,24 +143,28 @@ theorem sub_eq_nernstPotential_of_flux_eq_zero {D R T z F L : ℝ} {c c' φ φ' 
   field_simp
   linear_combination -hconst
 
-/-- Equal concentrations give zero Nernst potential. -/
+/-- Equal concentrations give zero Nernst potential, for every real `c` (at `c = 0` because
+`0 / 0 = 0` and `log 0 = 0`). -/
 @[simp] theorem nernstPotential_self (R T z F c : ℝ) : nernstPotential R T z F c c = 0 := by
   by_cases hc : c = 0 <;> simp [nernstPotential, hc]
 
-/-- Exchanging the inside and outside concentrations reverses the sign of the Nernst potential. -/
+/-- Exchanging the inside and outside concentrations reverses the sign of the Nernst potential,
+for all real arguments (`log (1 / u) = -log u` also at `u = 0` under the conventions). -/
 theorem nernstPotential_swap (R T z F cIn cOut : ℝ) :
     nernstPotential R T z F cOut cIn = -nernstPotential R T z F cIn cOut := by
   unfold nernstPotential
   rw [show cIn / cOut = (cOut / cIn)⁻¹ from (inv_div _ _).symm, log_inv]; ring
 
-/-- Reversing the valence reverses the sign of the Nernst potential. -/
+/-- Reversing the valence reverses the sign of the Nernst potential, for all real arguments (at
+`z F = 0` both sides are `0`). -/
 theorem nernstPotential_neg_valence (R T z F cIn cOut : ℝ) :
     nernstPotential R T (-z) F cIn cOut = -nernstPotential R T z F cIn cOut := by
   unfold nernstPotential
   rw [neg_mul, div_neg, neg_mul]
 
-/-- With `R T > 0` and `z F > 0` (a cation, positive Faraday constant), the Nernst potential is
-positive exactly when the outside concentration exceeds the inside one. -/
+/-- With `R T > 0` and `z F > 0` (a cation, positive Faraday constant) and positive
+concentrations, the Nernst potential is positive exactly when the outside concentration exceeds
+the inside one. -/
 theorem nernstPotential_pos_iff {R T z F cIn cOut : ℝ} (hRT : 0 < R * T) (hzF : 0 < z * F)
     (hIn : 0 < cIn) (hOut : 0 < cOut) :
     0 < nernstPotential R T z F cIn cOut ↔ cIn < cOut := by
@@ -162,8 +172,8 @@ theorem nernstPotential_pos_iff {R T z F cIn cOut : ℝ} (hRT : 0 < R * T) (hzF 
   rw [mul_pos_iff_of_pos_left (div_pos hRT hzF), log_pos_iff (div_pos hOut hIn).le,
     one_lt_div hIn]
 
-/-- **Boltzmann form.** At the Nernst potential `E`, the concentration ratio is
-`c_out / c_in = exp (z F E / (R T))`. -/
+/-- **Boltzmann form.** For `R T ≠ 0`, `z F ≠ 0` and positive concentrations, at the Nernst
+potential `E` the concentration ratio is `c_out / c_in = exp (z F E / (R T))`. -/
 theorem div_eq_exp_nernstPotential {R T z F cIn cOut : ℝ} (hRT : R * T ≠ 0) (hzF : z * F ≠ 0)
     (hIn : 0 < cIn) (hOut : 0 < cOut) :
     cOut / cIn = exp (z * F / (R * T) * nernstPotential R T z F cIn cOut) := by
@@ -199,7 +209,7 @@ theorem timeConstant_pos {cm : ℝ} (hm : 0 < rm) (hcm : 0 < cm) :
     0 < timeConstant rm cm :=
   mul_pos hm hcm
 
-/-- **Sealed end.** At a point of the cable with unique spatial
+/-- **Sealed end.** For `ri ≠ 0`, at a point of the cable with unique spatial
 derivative within the cable set, the axial current vanishes
 exactly when the within-set voltage spatial derivative vanishes:
 a sealed end is the zero-derivative boundary condition. -/
@@ -217,14 +227,15 @@ theorem sealed_end_iff {s : Set ℝ} {V I : ℝ → ℝ} (h : IsSteadyState rm r
     have h2 : ri * I x = 0 := by linarith [h0]
     exact (mul_eq_zero.mp h2).resolve_left hri
 
-/-- `r∞ = rm / λ`. -/
+/-- `r∞ = rm / λ` for `rm, ri > 0` (the same value as `r∞ = ri λ`, as `λ² = rm / ri`). -/
 theorem charResistance_eq_div (hm : 0 < rm) (hi : 0 < ri) :
     charResistance rm ri = rm / lengthConstant rm ri := by
   have hl := (lengthConstant_pos hm hi).ne'
   rw [charResistance_eq hm hi, eq_div_iff hl]
   linear_combination mul_lengthConstant_sq hm hi
 
-/-- **The steady-state cable equation.** Eliminating the axial current: the voltage gradient
+/-- **The steady-state cable equation.** For `rm, ri > 0`, eliminating the axial current: the
+voltage gradient
 `V' = -ri I` has derivative `V / λ²`, i.e. `λ² V'' = V`. -/
 theorem IsSteadyState.hasDerivWithinAt_voltage_deriv {s : Set ℝ} {V I : ℝ → ℝ}
     (h : IsSteadyState rm ri s V I) (hm : 0 < rm) (hi : 0 < ri) {x : ℝ} (hx : x ∈ s) :
@@ -245,15 +256,16 @@ theorem cableVoltage_charResistance_mul (I₀ x : ℝ) :
       charResistance rm ri * I₀ * exp (-(x / lengthConstant rm ri)) := by
   rw [cableVoltage, ← cosh_sub_sinh]; ring
 
-/-- With `V₀ = r∞ I₀` the transfer-form current is the pure decaying exponential `I₀ e^{-x/λ}`. -/
+/-- For `rm, ri > 0`, with `V₀ = r∞ I₀` the transfer-form current is the pure decaying
+exponential `I₀ e^{-x/λ}`. -/
 theorem cableCurrent_charResistance_mul (hm : 0 < rm) (hi : 0 < ri) (I₀ x : ℝ) :
     cableCurrent rm ri (charResistance rm ri * I₀) I₀ x =
       I₀ * exp (-(x / lengthConstant rm ri)) := by
   rw [cableCurrent, ← cosh_sub_sinh, mul_div_cancel_left₀ _ (charResistance_pos hm hi).ne']; ring
 
-/-- **Semi-infinite cable (bounded at infinity).** A steady state on `[0, ∞)` whose voltage is
-bounded satisfies the input relation `V 0 = r∞ I 0` and decays exponentially with length
-constant `λ`: `V x = V 0 e^{-x/λ}` and `I x = I 0 e^{-x/λ}`. -/
+/-- **Semi-infinite cable (bounded at infinity).** For `rm, ri > 0`, a steady state on `[0, ∞)`
+whose voltage is bounded satisfies the input relation `V 0 = r∞ I 0` and decays exponentially
+with length constant `λ`: `V x = V 0 e^{-x/λ}` and `I x = I 0 e^{-x/λ}` for `x ≥ 0`. -/
 theorem IsSteadyState.eq_exp_of_bounded {V I : ℝ → ℝ} (h : IsSteadyState rm ri (Ici 0) V I)
     (hm : 0 < rm) (hi : 0 < ri) (hB : ∃ M, ∀ x, 0 ≤ x → |V x| ≤ M) :
     V 0 = charResistance rm ri * I 0 ∧ ∀ x, 0 ≤ x →
@@ -302,7 +314,8 @@ theorem IsSteadyState.eq_exp_of_bounded {V I : ℝ → ℝ} (h : IsSteadyState r
   · rw [(hsol x hx).2, hV0, cableCurrent_charResistance_mul hm hi]
 
 /-- **Current injection into a semi-infinite cable.** If a current `I₀` is injected at `x = 0`
-(`I 0 = I₀`) and the voltage stays bounded, then `V x = r∞ I₀ e^{-x/λ}`. -/
+(`I 0 = I₀`) and the voltage stays bounded, then `V x = r∞ I₀ e^{-x/λ}` for `x ≥ 0`
+(`rm, ri > 0`). -/
 theorem IsSteadyState.voltage_eq_of_current_injection {V I : ℝ → ℝ} {I₀ : ℝ}
     (h : IsSteadyState rm ri (Ici 0) V I) (hm : 0 < rm) (hi : 0 < ri)
     (hB : ∃ M, ∀ x, 0 ≤ x → |V x| ≤ M) (hI₀ : I 0 = I₀) {x : ℝ} (hx : 0 ≤ x) :
@@ -310,8 +323,8 @@ theorem IsSteadyState.voltage_eq_of_current_injection {V I : ℝ → ℝ} {I₀ 
   obtain ⟨hV0, hsol⟩ := h.eq_exp_of_bounded hm hi hB
   rw [(hsol x hx).1, hV0, hI₀]
 
-/-- On a bounded semi-infinite steady state the voltage falls by the factor `e` over each
-length constant: `V (x + λ) = e⁻¹ V x`. -/
+/-- For `rm, ri > 0`, on a bounded semi-infinite steady state the voltage falls by the factor `e`
+over each length constant: `V (x + λ) = e⁻¹ V x` for `x ≥ 0`. -/
 theorem IsSteadyState.voltage_add_lengthConstant {V I : ℝ → ℝ}
     (h : IsSteadyState rm ri (Ici 0) V I) (hm : 0 < rm) (hi : 0 < ri)
     (hB : ∃ M, ∀ x, 0 ≤ x → |V x| ≤ M) {x : ℝ} (hx : 0 ≤ x) :
@@ -322,7 +335,8 @@ theorem IsSteadyState.voltage_add_lengthConstant {V I : ℝ → ℝ}
     exp_add]
   ring
 
-/-- **Sealed-end input resistance.** `V 0 = r∞ coth (L / λ) I 0`. -/
+/-- **Sealed-end input resistance.** For `rm, ri, L > 0` and a steady state on `[0, L]` with
+`I L = 0`, `V 0 = r∞ coth (L / λ) I 0`. -/
 theorem IsSteadyState.sealedEnd_input {L : ℝ} {V I : ℝ → ℝ}
     (h : IsSteadyState rm ri (Icc 0 L) V I) (hm : 0 < rm) (hi : 0 < ri) (hL : 0 < L)
     (hsealed : I L = 0) :
@@ -333,13 +347,15 @@ theorem IsSteadyState.sealedEnd_input {L : ℝ} {V I : ℝ → ℝ}
   rw [eq_div_iff hs.ne']
   exact (h.sealedEnd hm hi hL hsealed).1
 
-/-- **Sealed-end attenuation.** The voltage at the sealed end is `V L = V 0 / cosh (L / λ)`. -/
+/-- **Sealed-end attenuation.** For `rm, ri, L > 0` and a steady state on `[0, L]` with `I L = 0`,
+the voltage at the sealed end is `V L = V 0 / cosh (L / λ)`. -/
 theorem IsSteadyState.sealedEnd_voltage_end {L : ℝ} {V I : ℝ → ℝ}
     (h : IsSteadyState rm ri (Icc 0 L) V I) (hm : 0 < rm) (hi : 0 < ri) (hL : 0 < L)
     (hsealed : I L = 0) : V L = V 0 / cosh (L / lengthConstant rm ri) := by
   rw [(h.sealedEnd hm hi hL hsealed).2 L ⟨hL.le, le_rfl⟩, sub_self, zero_div, cosh_zero, mul_one]
 
-/-- **Derivation of the length constant.** A nonzero exponential profile `V x = c e^{-a x}`,
+/-- **Derivation of the length constant.** For `rm, ri > 0`, a nonzero exponential profile
+`V x = c e^{-a x}`,
 `a > 0`, is the voltage of a steady state of the core-conductor equations on the whole line
 exactly when its decay rate is `a = 1 / λ`, `λ = sqrt (rm / ri)`. -/
 theorem exists_isSteadyState_exp_iff (hm : 0 < rm) (hi : 0 < ri) {a c : ℝ} (ha : 0 < a)

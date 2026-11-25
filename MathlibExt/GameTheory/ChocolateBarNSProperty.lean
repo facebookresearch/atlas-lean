@@ -13,6 +13,8 @@ public import Mathlib.Algebra.Group.Indicator
 public import Mathlib.Algebra.Group.Nat.Defs
 public import Mathlib.Order.Interval.Set.Defs
 import Mathlib.Data.Nat.Find
+import Mathlib.Order.MinMax
+import MathlibExt.Data.Nat.DyadicBlock
 
 /-! # The NS property and indicator functions of upper intervals -/
 
@@ -40,6 +42,29 @@ INTEGERS 25 (2025), Article G3, Definition 11. -/
 public theorem hasNSProperty_const (c : ℕ) : HasNSProperty fun _ ↦ c :=
   ⟨monotone_const, fun _ _ _ _ _ ↦ rfl⟩
 
+/-- **Constant extension preserves the NS property.** Let $z \in \mathbb{N}$ and let
+$h : \mathbb{N} \to \mathbb{N}$ satisfy $h(a) \le h(b)$ whenever $a \le b \le z$, and
+$\lfloor h(a) / 2^{i-1} \rfloor = \lfloor h(b) / 2^{i-1} \rfloor$ whenever $a, b \le z$,
+$i \ge 1$ and $\lfloor a / 2^i \rfloor = \lfloor b / 2^i \rfloor$. Then the function sending
+$x$ to $h(x)$ for $x \le z$ and to $h(z)$ for $x > z$ has the NS property.
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Lemma 1 (`integers-2025-G3-lem-1`). -/
+public theorem hasNSProperty_extend_const (z : ℕ) (h : ℕ → ℕ)
+    (hmono : ∀ a b, a ≤ b → b ≤ z → h a ≤ h b)
+    (hns : ∀ a b i : ℕ, a ≤ z → b ≤ z → 0 < i → a / 2 ^ i = b / 2 ^ i →
+      h a / 2 ^ (i - 1) = h b / 2 ^ (i - 1)) :
+    HasNSProperty fun x ↦ if x ≤ z then h x else h z := by
+  suffices HasNSProperty (fun x ↦ h (min x z)) by
+    simpa only [min_def, apply_ite] using this
+  constructor
+  · intro a b hab
+    exact hmono _ _ (min_le_min_right z hab) (min_le_right b z)
+  · intro a b i hi hab
+    exact hns _ _ i (min_le_right a z) (min_le_right b z) hi
+      (min_div_two_pow_eq_of_div_two_pow_eq hab z)
+
 /-- **The identity function lacks the NS property.** The identity function on the natural
 numbers does not have the NS property: $\lfloor 0/2 \rfloor = \lfloor 1/2 \rfloor$, but
 $0 \ne 1$.
@@ -49,6 +74,19 @@ INTEGERS 25 (2025), Article G3, Definition 11. -/
 public theorem not_hasNSProperty_id : ¬ HasNSProperty id := fun h ↦ by
   have := h.2 0 1 1 Nat.one_pos rfl
   simp at this
+
+/-- **Halving functions have the NS property.** For every natural number $m \ge 1$, the function
+$x \mapsto \lfloor x / 2^m \rfloor$ on $\mathbb{N}$ has the NS property.
+
+Source: Ryohei Miyadera, Hikaru Manabe and Aditi Singh, *Generalizations of
+Two-Dimensional and Three-Dimensional Chocolate Bar Games*, INTEGERS 25 (2025),
+Article G3, Lemma 7 (`integers-2025-G3-lem-7`). -/
+public theorem hasNSProperty_div_two_pow {m : ℕ} (hm : 0 < m) :
+    HasNSProperty fun x ↦ x / 2 ^ m := by
+  refine ⟨fun _ _ hab ↦ Nat.div_le_div_right hab, fun z z' i hi h ↦ ?_⟩
+  have he : m + (i - 1) = i + (m - 1) := by omega
+  simpa only [Nat.div_div_eq_div_mul, ← Nat.pow_add, he] using
+    congrArg (fun q : ℕ ↦ q / 2 ^ (m - 1)) h
 
 /-- **Indicator functions with the NS property.** Let $f : \mathbb{N} \to \mathbb{N}$ be monotone,
 with $f(x) \le 1$ for all $x$ and $f(x) = 1$ for some $x$. Then $f$ has the NS property if and
