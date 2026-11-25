@@ -1,0 +1,7 @@
+# Concurrent histories
+
+A *history* is a finite sequence of invocation and response events, each tagged with a process and an object. A response *matches* an earlier invocation by the same process on the same object; an invocation without a matching response is *pending*. A history is *sequential* if it is empty or it starts with an invocation, each invocation except possibly the last is immediately followed by a matching response, and each response other than the last event is immediately followed by an invocation. A history is *well formed* if each process subhistory, the subsequence of events of one process, is sequential; object subhistories of a well-formed history need not be sequential. An *operation* of a history is an invocation together with the next matching response. Two histories are *equivalent* if they have the same process subhistories. $\mathrm{complete}(H)$ is the subsequence of $H$ obtained by deleting pending invocations. The *real-time order* $<_H$ on operations is given by $o_1 <_H o_2$ when the response of $o_1$ precedes the invocation of $o_2$. These event-level histories, which may contain pending invocations, refine the [histories of completed operations](../linearizability/well-formed.md) used for linearizable histories.
+
+## Sources
+
+- M. P. Herlihy and J. M. Wing, "Linearizability: a correctness condition for concurrent objects", *ACM Transactions on Programming Languages and Systems* 12(3):463–492, 1990, Section 2
