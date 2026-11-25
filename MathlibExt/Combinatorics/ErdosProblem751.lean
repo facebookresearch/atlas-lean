@@ -20,12 +20,11 @@ import Mathlib.Combinatorics.SimpleGraph.Connectivity.Subgraph
 
 Erdős asked whether for every `k` there is a graph of chromatic number `4` any two of whose
 cycle lengths differ by at least `k`, and whether such graphs exist with arbitrarily large girth
-(Erdős Problem 751, `conjecture`). Bondy and Vince answered both questions negatively: every graph
-of minimum degree at least three has two cycles whose lengths differ by one or two. This file
-proves that theorem for finite graphs of minimum degree three
-(`exists_cycleLengths_lt_le_add_two_of_three_le_minDegree`) and for all graphs that are not
-`3`-colourable (`exists_cycleLengths_lt_le_add_two_of_not_colorable`), and deduces
-`conjecture_refuted`.
+(Erdős Problem 751, `conjecture`). Bondy and Vince showed that every finite graph of minimum degree
+at least three has two cycles whose lengths differ by one or two
+(`exists_cycleLengths_lt_le_add_two_of_three_le_minDegree`). The same conclusion holds for every
+graph that is not `3`-colourable (`exists_cycleLengths_lt_le_add_two_of_not_colorable`), giving a
+negative answer to both questions (`conjecture_refuted`).
 
 ## Proof
 
@@ -867,7 +866,8 @@ theorem exists_cycleLengths_lt_le_add_two_of_three_le_minDegree [Fintype V] [Dec
   rw [← neighborFinset_eq_filter, card_neighborFinset_eq_degree]
   exact h.trans (G.minDegree_le_degree v)
 
-/-- Every simple graph, on any vertex type, that is not `3`-colourable has two cycle lengths
+/-- **Bondy–Vince theorem, graphs that are not 3-colourable.**
+Every simple graph, on any vertex type, that is not `3`-colourable has two cycle lengths
 `m < m'` with `m' ≤ m + 2`, that is, two cycles whose lengths differ by one or two. In particular
 this holds for every graph of chromatic number `4`. -/
 theorem exists_cycleLengths_lt_le_add_two_of_not_colorable (h : ¬ G.Colorable 3) :
