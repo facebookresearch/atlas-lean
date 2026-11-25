@@ -37,7 +37,7 @@ against `(p', q')` is
 * `IsStrictNash A B p q`: `(p, q)` is a strict Nash equilibrium of the bimatrix game `(A, B)`:
   every unilateral deviation in either role strictly lowers the deviator's payoff.
 * `symmetrize ρ A B`: the symmetric matrix game on pure behavior strategies `ι × κ`, so that
-  `Replicator.IsESS (symmetrize ρ A B)` is the symmetric-game ESS of T25 applied to the role game.
+  `Replicator.IsESS (symmetrize ρ A B)` is the symmetric-game ESS applied to the role game.
 
 ## Main results
 
@@ -97,7 +97,8 @@ def IsMixed (p : ι → ℝ) : Prop :=
 
 /-- The payoff of the behavior strategy `s = (p, q)` against `t = (p', q')` in the role game
 where a contestant is in role I with probability `ρ` and in role II with probability `1 - ρ`:
-`ρ * (p · A q') + (1 - ρ) * (q · B p')`. -/
+`ρ * (p · A q') + (1 - ρ) * (q · B p')`. The expected-payoff reading needs `0 ≤ ρ ≤ 1` and mixed
+strategies; the formula is defined for all vectors and all real `ρ`. -/
 def rolePayoff (ρ : ℝ) (A : Matrix ι κ ℝ) (B : Matrix κ ι ℝ)
     (s t : (ι → ℝ) × (κ → ℝ)) : ℝ :=
   ρ * (s.1 ⬝ᵥ A *ᵥ t.2) + (1 - ρ) * (s.2 ⬝ᵥ B *ᵥ t.1)
@@ -131,7 +132,8 @@ marginals. -/
 def marginals (x : ι × κ → ℝ) : (ι → ℝ) × (κ → ℝ) :=
   (fun i => ∑ k, x (i, k), fun k => ∑ i, x (i, k))
 
-/-- The product mixed strategy on `ι × κ` with marginals `p` and `q`. -/
+/-- The product `(i, k) ↦ p i * q k` on `ι × κ`; for mixed `p` and `q` it is a mixed strategy with
+marginals `p` and `q`. -/
 def prodStrategy (p : ι → ℝ) (q : κ → ℝ) : ι × κ → ℝ :=
   fun a => p a.1 * q a.2
 
@@ -283,7 +285,7 @@ theorem isRoleESS_iff_isStrictNash (hρ0 : 0 < ρ) (hρ1 : ρ < 1) :
     · have hlt := h.2.1 t.1 ht1 h1
       nlinarith
 
-/-- **Every ESS of a role game is pure** in both roles. -/
+/-- **Every ESS of a role game is pure** in both roles, for `0 < ρ < 1`. -/
 theorem IsRoleESS.exists_eq_single [DecidableEq ι] [DecidableEq κ] (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
     (h : IsRoleESS ρ A B (p, q)) : ∃ i k, p = Pi.single i 1 ∧ q = Pi.single k 1 := by
   have hs := (isRoleESS_iff_isStrictNash hρ0 hρ1).1 h
@@ -291,8 +293,9 @@ theorem IsRoleESS.exists_eq_single [DecidableEq ι] [DecidableEq κ] (hρ0 : 0 <
   obtain ⟨k, hk⟩ := hs.exists_eq_single_right
   exact ⟨i, k, hi, hk⟩
 
-/-- **No completely mixed ESS in role I.** With at least two role-I strategies, an ESS of a role
-game never uses every role-I strategy, unlike the interior ESS of a symmetric game. -/
+/-- **No completely mixed ESS in role I.** For `0 < ρ < 1` and at least two role-I strategies,
+an ESS of a role game never uses every role-I strategy, unlike the interior ESS of a symmetric
+game. -/
 theorem IsRoleESS.not_pos_left [Nontrivial ι] (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
     (h : IsRoleESS ρ A B (p, q)) : ¬ ∀ i, 0 < p i := by
   classical
@@ -303,7 +306,8 @@ theorem IsRoleESS.not_pos_left [Nontrivial ι] (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
   rw [hi, Pi.single_eq_of_ne hj] at this
   exact lt_irrefl 0 this
 
-/-- **No completely mixed ESS in role II.** -/
+/-- **No completely mixed ESS in role II.** For `0 < ρ < 1` and at least two role-II strategies,
+an ESS of a role game never uses every role-II strategy. -/
 theorem IsRoleESS.not_pos_right [Nontrivial κ] (hρ0 : 0 < ρ) (hρ1 : ρ < 1)
     (h : IsRoleESS ρ A B (p, q)) : ¬ ∀ k, 0 < q k := by
   classical

@@ -14,6 +14,7 @@ public import Mathlib.Combinatorics.Enumerative.Composition
 public import Mathlib.RingTheory.PowerSeries.Basic
 public import MathlibExt.Combinatorics.AssociatedStirlingEulerian
 public import MathlibExt.Combinatorics.Enumerative.FenceTiling
+public import MathlibExt.Combinatorics.Enumerative.SubwordShiftSet
 public import MathlibExt.NumberTheory.Recurrences.HonsbergerFibonacciP
 
 /-!
@@ -311,81 +312,6 @@ public theorem_wanted restrictedCombinationTotal_Icc_erase_eq_card_compositions
     restrictedCombinationTotal ((Finset.Icc 1 q).erase p) n =
       Nat.card {c : Composition (n + q) //
         ∀ b ∈ c.blocks, b = 1 ∨ (q + 1 ≤ b ∧ p ∣ b - (q + 1))}
-
-/-- **Well-based sets.** A finite set $Q$ of natural numbers is well based (Kitaev;
-Valyuzhenich) if for every $x \in Q$ and every natural number $a$ with $0 < a < x$, at least one
-of $a$ and $x - a$ lies in $Q$.
-
-The empty set is well based, as in the paper's equivalent formulation. For a nonempty set $Q$
-of positive integers the condition forces $1 \in Q$.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 5.1. -/
-public def IsWellBased (Q : Finset ℕ) : Prop :=
-  ∀ x ∈ Q, ∀ a, 0 < a → a < x → a ∈ Q ∨ x - a ∈ Q
-
-/-- **The set $\{1, \dots, q\}$ is well based.** For every natural number $q$, the set
-$\{1, 2, \dots, q\}$ is well based.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 5.1. -/
-public theorem isWellBased_Icc (q : ℕ) : IsWellBased (Finset.Icc 1 q) := by
-  intro x hx a ha hax
-  left
-  simp only [Finset.mem_Icc] at hx ⊢
-  omega
-
-/-- **The set $\{1, 3, 4\}$ is not well based.** The set $\{1, 3, 4\}$ is not well based: in
-$4 = 2 + 2$ neither part lies in the set.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 5.1. -/
-public theorem not_isWellBased_one_three_four : ¬ IsWellBased {1, 3, 4} := by
-  intro h
-  have := h 4 (by simp) 2 (by norm_num) (by norm_num)
-  simp at this
-
-/-- **Shift set of a binary subword.** For natural numbers $\omega$ and $l$, the shift set of
-$\omega$ with length $l$ is the set of $j \in \{1, \dots, l - 1\}$ with
-$\lfloor \omega / 2^j \rfloor \ne \omega \bmod 2^{l-j}$. When $\omega < 2^l$ is read as a binary
-word of length $l$, this says that the leftmost $l - j$ bits of $\omega$ differ from its rightmost
-$l - j$ bits.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Theorem 21. -/
-public def subwordShiftSet (ω l : ℕ) : Finset ℕ :=
-  (Finset.Icc 1 (l - 1)).filter fun j => ω / 2 ^ j ≠ ω % 2 ^ (l - j)
-
-/-- **Shift set of the subword 1010.** The shift set of the binary subword $1010$ of length $4$
-(the number $10$) is $\{1, 3\}$.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Section 5.1 (OEIS list after Theorem 21). -/
-public theorem subwordShiftSet_1010 : subwordShiftSet 0b1010 4 = {1, 3} := by
-  decide
-
-/-- **Subword shift sets are well based.** Let $l$ be a natural number and $\omega$ a binary word
-of length $l$, read as a natural number $\omega < 2^l$. Then the set $Q$ of those
-$j \in \{1, \dots, l-1\}$ for which the leftmost $l - j$ bits of $\omega$ differ from its
-rightmost $l - j$ bits, that is $\lfloor \omega / 2^j \rfloor \ne \omega \bmod 2^{l-j}$, is well
-based.
-
-This is the well-based part of Theorem 22 of the paper. Its further claim, that no integer
-linear combination of the elements $p_i$ of $\{1, \dots, q\} \setminus Q$ lies in $Q$ (with $q$
-the largest element of $Q$), is omitted: for $\omega = 010100101$ and $l = 9$ one gets
-$Q = \{1, 2, 3, 4, 6, 8\}$, $q = 8$, $p_1 = 5$, $p_2 = 7$, and $p_2 - p_1 = 2 \in Q$. The side
-condition $q = l - 1$ of Theorem 21 is not needed.
-
-Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and
-Strongly Restricted Permutations, Compositions, and Bit Strings*, Journal of Integer
-Sequences 28 (2025), Article 25.3.7, Theorem 22. -/
-public theorem_wanted isWellBased_subwordShiftSet (ω l : ℕ) (hω : ω < 2 ^ l) :
-    IsWellBased (subwordShiftSet ω l)
 
 /-- **Bivariate generating function for well-based forbidden differences.** Let $Q$ be a finite
 set of positive integers that is well based, and write $S^Q_{n,k}$ for the number of $k$-subsets
