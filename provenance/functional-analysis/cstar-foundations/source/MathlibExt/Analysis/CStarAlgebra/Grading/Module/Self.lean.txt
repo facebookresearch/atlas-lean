@@ -1,0 +1,14 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.CStarAlgebra.Grading.Module
+
+/-!
+# Compatibility import for the coefficient self-module grading
+
+The original `Grading.Module` owner provides `selfGenerator`, `self`, and
+both application lemmas. This module publicly re-exports that owner for
+clients using the focused `Grading.Module.Self` import.
+-/
