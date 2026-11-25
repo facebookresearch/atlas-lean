@@ -8,5 +8,6 @@ Hilbert–Waring, g(3)=9, Fermat polygonal theorem, polygonal, triangular and po
 - [Fermat polygonal number theorem](fermat-polygonal-number-theorem/README.md)
 - [Waring's problem for cubes](waring-s-problem-for-cubes/README.md)
 - [Hilbert–Waring theorem](hilbert-waring.md)
+- [Hua's theorem on the Waring–Goldbach problem](waring-goldbach.md)
 - [Legendre's four-triangular-numbers theorem](four-triangular-numbers-eq-divisor-sum.md)
 - [Waring's problem for Hurwitz quaternion integers](hurwitz-quaternion-waring-bound.md)

@@ -1,0 +1,8 @@
+# Erdős primitive set conjecture
+
+For every set $A$ of integers at least $2$ in which no element divides another, the sum $\sum_{a \in A} 1/(a \log a)$ converges and is at most $\sum_{p} 1/(p \log p)$, the sum over all primes.
+
+## Sources
+
+- T. F. Bloom, Erdős Problems, Problem #164, https://www.erdosproblems.com/164.
+- J. D. Lichtman, A proof of the Erdős primitive set conjecture, arXiv:2202.02384 (2022), https://arxiv.org/abs/2202.02384.

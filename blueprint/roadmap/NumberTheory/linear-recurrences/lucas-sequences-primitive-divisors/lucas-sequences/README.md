@@ -19,4 +19,8 @@
 - [Lucas sequence of the first kind: value at one](initial-one.md)
 - [Lucas sequence of the first kind: the recurrence](recurrence-step.md)
 - [Nondegenerate Lucas pair](is-nondegenerate-lucas-pair.md)
+- [Symmetric weighted sums of Lucas sequence products](sum-symm-mul-lucas-u-eq-sum-mul-lucas-v.md)
+- [Generating function of harmonic numbers times a Lucas sequence](has-sum-harmonic-mul-lucas-u.md)
+- [Generating function of Catalan numbers times a companion Lucas sequence](catalan-mul-lucas-v-succ-power-series.md)
+- [Generating function of Catalan numbers times a Lucas sequence](catalan-mul-lucas-u-power-series.md)
 - [Addition formula $2U_{m+n} = U_m V_n + V_m U_n$ for Lucas sequences](two-mul-lucas-u-add.md)

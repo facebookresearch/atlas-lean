@@ -16,4 +16,6 @@
 - [Primes with odd order of 2 of small size](order-of-two-odd-small-count-lt.md)
 - [Primes with odd order of 2 of medium size](order-of-two-odd-medium-count-lt.md)
 - [Beeger's theorem](even-pseudoprimes-infinite.md)
+- [Guy's question on even Fibonacci pseudoprimes](exists-even-fibonacci-pseudoprime.md)
+- [There are no even Fibonacci pseudoprimes of the first kind](exists-even-fibonacci-pseudoprime-refute.md)
 - [Cheng–Kinlaw–Nguyen reciprocal-sum bounds](even-pseudoprime-reciprocal-sum-bounds.md)

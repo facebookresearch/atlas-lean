@@ -2,6 +2,8 @@
 
 - [Powers of three plus one that are perfect squares](eq-zero-of-three-pow-succ-add-one-eq-sq.md)
 - [Solutions of $p^x + (p + a)^y = z^2$ for odd primes $p$ and $p + a$](pow-add-pow-eq-sq.md)
+- [No solutions of p^x + (p + a)^y = z² under a Legendre symbol condition](pow-add-pow-ne-sq-of-legendre-sym.md)
+- [Solutions of (p + a)^x − p^y = z² under a Legendre symbol condition](pow-sub-pow-eq-sq-iff-of-legendre-sym.md)
 - [$19^x + 151^y$ is never a perfect square](pow19-add-pow151-ne-sq.md)
 - [Solutions of $2^x + 1 = z^2$](two-pow-add-one-eq-sq.md)
 - [Solutions of $n^x + 1 = z^2$ for $n \ne 2$](pow-add-one-eq-sq.md)

@@ -10,6 +10,7 @@ Collatz problem, EKG, Stern diatomic, Hofstadter, Golomb, Ulam, Ducci, Josephus 
 - [Integer polynomial maps modulo primes](integer-polynomial-maps-modulo-primes/README.md)
 - [Josephus problem](josephus-problem/README.md)
 - [Klarner's theorem on iterated affine maps](klarner-s-theorem-on-iterated-affine-maps/README.md)
+- [Klarner–Rado sequences](klarner-rado-sequences/README.md)
 - [Locally nilpotent polynomials](locally-nilpotent-polynomials/README.md)
 - [Stern's diatomic sequence](stern-s-diatomic-sequence/README.md)
 - [Three-term Hofstadter-like sequences](three-term-hofstadter-like-sequences/README.md)

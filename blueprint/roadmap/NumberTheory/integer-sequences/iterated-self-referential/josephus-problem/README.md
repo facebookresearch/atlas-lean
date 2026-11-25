@@ -39,3 +39,5 @@
 - [Linear-step bound at a low extremal point](shift-le-iff-le-div.md)
 - [Linear growth of the Josephus function after a high extremal point](josephus-add-eq-of-high.md)
 - [The Josephus function has infinitely many fixed points](infinite-fixed-points.md)
+- [The next high extremal point of the Josephus function](josephus-next-high-extremal.md)
+- [The next low extremal point of the Josephus function](josephus-next-low-extremal.md)

@@ -5,6 +5,7 @@ Jacobi and Ramanujan theta functions, q-Pochhammer symbols and Euler products, R
 - [Glaisher's divisor functions and infinite products](glaisher-s-divisor-functions-and-infinite-produc/README.md)
 - [Hyperbolicity of Jensen polynomials](hyperbolicity-of-jensen-polynomials/README.md)
 - [Lambert series](lambert-series/README.md)
+- [Nonnegative eta products](nonnegative-eta-products/README.md)
 - [q-Pochhammer symbol](q-pochhammer-symbol/README.md)
 - [Coefficients of mock theta functions](coefficients-of-mock-theta-functions/README.md)
 - [Jacobi triple product](jacobi-triple-product/README.md)

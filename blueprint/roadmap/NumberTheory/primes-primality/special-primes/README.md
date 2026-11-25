@@ -4,6 +4,7 @@ Fermat, Mersenne, Sophie Germain, Wieferich, Cullen and other named prime famili
 
 - [Cullen numbers](cullen-numbers/README.md)
 - [Fermat numbers](fermat-numbers/README.md)
+- [Shanks chains](shanks-chains/README.md)
 - [Sierpiński and Riesel numbers](sierpi-ski-and-riesel-numbers/README.md)
 - [Socialist primes](socialist-primes/README.md)
 - [Sophie Germain primes](sophie-germain-primes/README.md)

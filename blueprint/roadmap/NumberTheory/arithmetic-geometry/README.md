@@ -4,6 +4,10 @@ Rational points of varieties over number fields: torsion and rank of elliptic cu
 
 - [Hasse principle for random Fano hypersurfaces](hasse-principle-for-random-fano-hypersurfaces/README.md)
 - [Heights of rational points on elliptic curves](heights-of-rational-points-on-elliptic-curves/README.md)
+- [Integral points on elliptic curves](integral-points-on-elliptic-curves/README.md)
 - [Local-global conjecture for Apollonian circle packings](local-global-conjecture-for-apollonian-circle-pa/README.md)
+- [Manin's conjecture for cubic surfaces](manin-s-conjecture-for-cubic-surfaces/README.md)
 - [Mazur's torsion theorem](mazur-s-torsion-theorem/README.md)
 - [Ranks of the elliptic curves $y^2 = x^3 - 2pqx$](ranks-of-the-elliptic-curves-y-x-2pqx/README.md)
+- [Rational points of bounded height on plane curves](rational-points-of-bounded-height-on-plane-curve/README.md)
+- [Zero-cycles on bielliptic surfaces](zero-cycles-on-bielliptic-surfaces/README.md)

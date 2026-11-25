@@ -2,6 +2,7 @@
 
 Squarefree, k-free, k-full and powerful, smooth and rough numbers, highly composite numbers, integers with prescribed prime factors.
 
+- [Behrend sequences](behrend-sequences/README.md)
 - [Benelux pairs](benelux-pairs/README.md)
 - [Consecutive smooth numbers](consecutive-smooth-numbers/README.md)
 - [Density of integers by their k-th smallest prime factor](density-of-integers-by-their-k-th-smallest-prime/README.md)
@@ -14,6 +15,7 @@ Squarefree, k-free, k-full and powerful, smooth and rough numbers, highly compos
 - [Odd and even k-full and l-free numbers](odd-and-even-k-full-and-l-free-numbers/README.md)
 - [Powerful numbers in arithmetic progressions](powerful-numbers-in-arithmetic-progressions/README.md)
 - [Rough numbers](rough-numbers/README.md)
+- [Smooth numbers](smooth-numbers/README.md)
 - [Squarefree numbers](squarefree-numbers/README.md)
 - [Weakly prime-additive numbers](weakly-prime-additive-numbers/README.md)
 - [Abs card hfree sub le](abs-card-hfree-sub-le.md)

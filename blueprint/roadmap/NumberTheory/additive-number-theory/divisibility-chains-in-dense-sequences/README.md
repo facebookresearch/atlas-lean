@@ -1,0 +1,4 @@
+# Divisibility chains in dense sequences
+
+- [Erdős Problem 1217 (dense divisibility chains)](divisibility-chain-log-log-count.md)
+- [Dense sequences contain long divisibility chains](divisibility-chain-log-log-count-holds.md)
