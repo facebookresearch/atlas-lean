@@ -32,7 +32,7 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import MathlibExt.RingTheory.MvFormalGroup.Basic
+public import MathlibExt.AlgebraicGeometry.CerednikDrinfeld.SpecialFormalFunctor
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.RingTheory.AdicCompletion.Basic
 public import Mathlib.RingTheory.Ideal.Span
@@ -66,7 +66,8 @@ constant terms, identity linear part, coefficients tending to zero `p`-adically,
 `Fp` into the additive formal group law. `MvFormalGroup.exists_log_rescale_of_isAdicComplete`
 states the same logarithm for the formal group law `F.rescale hp`.
 
-The formal group law API itself is in `MathlibExt.RingTheory.MvFormalGroup.Basic`.
+The formal group law API it builds on (`MvFormalGroup`, `MvFormalGroup.IsComm`, base change,
+substitution lemmas) is in `MathlibExt.AlgebraicGeometry.CerednikDrinfeld.SpecialFormalFunctor`.
 -/
 
 noncomputable section
