@@ -18,9 +18,7 @@ x_k` with `x_j ≥ (x_{j+1} + x_{j-1}) / 2` for `1 < j < k`. Estimate `f(k)`. In
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Order.Archimedean.Real.Basic
-public import Mathlib.Order.Filter.AtTopBot.Defs
-public import Mathlib.Order.Fin.Basic
+public import MathlibExt.Combinatorics.DescendingWaveColoringErdosProblem781
 
 @[expose] public section
 
@@ -36,49 +34,18 @@ without `sInf`. Waves are strictly increasing; formal-conjectures' `IsDescending
 < x_k`, which lets constant sequences count as waves. Alon and Spencer work with ascending waves
 (`x_{i+1} - x_i ≤ x_{i+2} - x_{i+1}`); the reflection `x ↦ n + 1 - x` exchanges ascending and
 descending waves in `{1, …, n}`, so both define the same `f`, and Alon and Spencer quote Brown,
-Erdős and Freedman's bounds for it. The refutation rests on the asymptotic lower bound, not on a
-finite check.
+Erdős and Freedman's bounds for it. Their asymptotic lower bound refutes the quadratic formula.
 -/
 
-/-- A `k`-term descending wave: `x₀ < x₁ < ⋯ < x_{k-1}` with `x_{j-1} + x_{j+1} ≤ 2 x_j` for
-`0 < j < k - 1`. -/
-def IsDescendingWave {k : ℕ} (x : Fin k → ℕ) : Prop :=
-  StrictMono x ∧ ∀ i j l : Fin k, (i : ℕ) + 1 = (j : ℕ) → (j : ℕ) + 1 = (l : ℕ) →
-    x i + x l ≤ 2 * x j
-
-/-- Every `2`-coloring of `{1, …, n}` has a monochromatic `k`-term descending wave, i.e.
-`f(k) ≤ n`. -/
-def ForcesMonochromaticWave (k n : ℕ) : Prop :=
-  ∀ c : ℕ → Fin 2, ∃ x : Fin k → ℕ, IsDescendingWave x ∧ (∀ i, 1 ≤ x i ∧ x i ≤ n) ∧
-    ∃ γ : Fin 2, ∀ i, c (x i) = γ
-
-/-- Erdős Problem 781, the yes/no question: `f(k) = k² - k + 1` for every `k ≥ 1`. -/
-def waveNumberQuadratic : Prop :=
-  ∀ k : ℕ, 1 ≤ k → ForcesMonochromaticWave k (k ^ 2 - k + 1) ∧
-    ¬ ForcesMonochromaticWave k (k ^ 2 - k)
-
-/-- Erdős Problem 781, estimate of `f(k)`: `f(k) ≍ k³`. -/
-def waveNumberCubicOrder : Prop :=
-  ∃ c C : ℝ, 0 < c ∧ ∀ᶠ k : ℕ in Filter.atTop,
-    (∀ n : ℕ, ForcesMonochromaticWave k n → c * (k : ℝ) ^ 3 ≤ n) ∧
-      ForcesMonochromaticWave k ⌊C * (k : ℝ) ^ 3⌋₊
-
 /--
-Resolved false: Alon and Spencer proved `f(k) ≥ c_1 k³` (Theorem 1.1), so `f(k) > k² - k + 1` for
-all large `k`; erdosproblems.com/781 lists the problem as disproved. Source: T. F. Bloom, Erdős
-Problems, Problem #781, https://www.erdosproblems.com/781 (status DISPROVED); resolution: N. Alon
-and J. Spencer, Ascending waves, J. Combin. Theory Ser. A 52 (1989), 275-287; T. C. Brown, P. Erdős
-and A. R. Freedman, Quasi-progressions and descending waves, J. Combin. Theory Ser. A 53 (1990),
-81-95, Alon-Spencer Theorem 1.1: c_1 k³ ≤ f(k) ≤ c_2 k³ for all k ≥ 1, the upper bound being Brown,
-Erdős and Freedman's f(k) ≤ k³/3 - 4k/3 + 3; Brown, Erdős and Freedman also proved k² - k + 1 ≤ f(k)
-and asked whether it is the exact value, and Alon and Spencer: 'Here we show that this is false',
-https://web.math.princeton.edu/~nalon/PDFS/Publications1/Ascending%20waves.pdf.
--/
-public theorem_wanted waveNumberQuadratic_refuted : ¬ waveNumberQuadratic
+**Alon–Spencer: the descending-wave number has cubic order.** For natural numbers $k$ and $n$, say
+that $n$ forces a $k$-term wave if every colouring of $\{1, \dots, n\}$ with two colours has a
+monochromatic $k$-term descending wave. There are real numbers $c > 0$ and $C$ such that for all
+sufficiently large $k$, every natural number $n$ that forces a $k$-term wave satisfies
+$n \ge c k^3$, and the natural number $\lfloor \max(C k^3, 0) \rfloor$ forces a $k$-term wave.
+Writing $f(k)$ for the least $n$ that forces a $k$-term wave, this says $f(k) \asymp k^3$.
 
-/--
-Resolved true: Alon and Spencer's Theorem 1.1 gives `c_1 k³ ≤ f(k) ≤ c_2 k³`, the upper bound being
-Brown, Erdős and Freedman's `f(k) ≤ (k³ - 4k + 9) / 3` (erdosproblems.com/781). Source: T. F. Bloom,
+Source: T. F. Bloom,
 Erdős Problems, Problem #781, https://www.erdosproblems.com/781 (status DISPROVED); resolution: N.
 Alon and J. Spencer, Ascending waves, J. Combin. Theory Ser. A 52 (1989), 275-287; T. C. Brown, P.
 Erdős and A. R. Freedman, Quasi-progressions and descending waves, J. Combin. Theory Ser. A 53

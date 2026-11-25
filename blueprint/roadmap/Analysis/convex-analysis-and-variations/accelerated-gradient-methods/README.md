@@ -20,6 +20,7 @@ Nesterov's own analysis uses estimate sequences: quadratic functions $\varphi_k(
 - [Decay of the scaling sequence of Nesterov's scheme](estimate-sequence-lambda-le.md)
 - [Optimal rate of Nesterov's scheme started at $\gamma_0 = L$](estimate-sequence-optimal-rate.md)
 - [Linear rate of the accelerated gradient method for strongly convex functions](accelerated-strongly-convex-rate.md)
+- [Nesterov's accelerated gradient method for smooth convex functions](nesterov-accelerated-gradient-method.md)
 
 ## Related topics
 

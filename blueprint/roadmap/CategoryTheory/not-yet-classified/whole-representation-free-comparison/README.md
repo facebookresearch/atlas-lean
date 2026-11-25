@@ -1,0 +1,16 @@
+# Whole Representation Free Comparison
+
+- [Genuine Free Iso](genuine-free-iso.md)
+- [Genuine Evaluation Iso](genuine-evaluation-iso.md)
+- [Genuine Free Iso hom component](genuine-free-iso-hom-component.md)
+- [Genuine Free Iso inv component](genuine-free-iso-inv-component.md)
+- [Genuine Evaluation Iso hom app](genuine-evaluation-iso-hom-app.md)
+- [Genuine Evaluation Iso inv app](genuine-evaluation-iso-inv-app.md)
+- [Adjunction unit](adjunction-unit.md)
+- [Adjunction counit app](adjunction-counit-app.md)
+- [Genuine unit](genuine-unit.md)
+- [Genuine counit](genuine-counit.md)
+- [Free triangle](free-triangle.md)
+- [Evaluation triangle](evaluation-triangle.md)
+- [Adjunction hom genuine](adjunction-hom-genuine.md)
+- [Adjunction hom inverse genuine](adjunction-hom-inverse-genuine.md)

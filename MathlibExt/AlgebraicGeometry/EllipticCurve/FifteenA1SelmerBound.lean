@@ -754,11 +754,12 @@ private theorem nat_sq_of_even_padicValNat :
     · exact ⟨1, by norm_num⟩
     obtain ⟨p, hp, hpn⟩ := Nat.exists_prime_and_dvd hn1
     haveI : Fact p.Prime := ⟨hp⟩
-    have hval1 : 1 ≤ padicValNat p n := one_le_padicValNat_of_dvd hn hpn
+    have hval1 : 1 ≤ padicValNat p n := by
+      rw [Nat.padicValNat_def]; exact one_le_multiplicity_of_dvd hn hpn
     have hval2 : 2 ≤ padicValNat p n := by
       obtain ⟨r, hr⟩ := h p hp
       omega
-    obtain ⟨k, hk⟩ := (padicValNat_dvd_iff_le hn).mpr hval2
+    obtain ⟨k, hk⟩ := (multiplicity_dvd_iff_le (n := 2) hn).mpr (Nat.padicValNat_def ▸ hval2)
     have hk0 : k ≠ 0 := by rintro rfl; exact hn (by rw [hk, mul_zero])
     have hp0 : p ^ 2 ≠ 0 := pow_ne_zero 2 hp.ne_zero
     have hklt : k < n := by
@@ -769,12 +770,13 @@ private theorem nat_sq_of_even_padicValNat :
       intro r hr
       haveI : Fact r.Prime := ⟨hr⟩
       have hsum : padicValNat r n = padicValNat r (p ^ 2) + padicValNat r k := by
-        rw [hk]; exact padicValNat.mul hp0 hk0
+        simp only [Nat.padicValNat_def]; rw [hk]; exact Nat.multiplicity_mul hp0 hk0
       rcases eq_or_ne r p with rfl | hrp
-      · rw [padicValNat.prime_pow] at hsum
+      · rw [Nat.padicValNat_def (n := r ^ 2), Nat.multiplicity_prime_pow] at hsum
         obtain ⟨s, hs⟩ := h r hr
         exact ⟨s - 1, by omega⟩
-      · rw [padicValNat.pow _ 2, padicValNat_primes hrp, mul_zero, zero_add] at hsum
+      · rw [Nat.padicValNat_def (n := p ^ 2), Nat.multiplicity_pow, multiplicity_primes hrp,
+          mul_zero, zero_add] at hsum
         rw [← hsum]; exact h r hr
     obtain ⟨m, hm⟩ := ih k hklt hk0 hkval
     exact ⟨p * m, by rw [hk, hm]; ring⟩
@@ -789,7 +791,8 @@ private theorem exists_sq_of_even_padicValRat_of_pos {a : ℚ} (ha : 0 < a)
     intro p hp
     haveI : Fact p.Prime := ⟨hp⟩
     have hval : padicValRat p a =
-        (padicValNat p a.num.natAbs : ℤ) - (padicValNat p a.den : ℤ) := rfl
+        (padicValNat p a.num.natAbs : ℤ) - (padicValNat p a.den : ℤ) := by
+      rw [padicValRat_def, padicValInt, Nat.padicValNat_def, Nat.padicValNat_def]
     have heven := h p hp
     rw [hval] at heven
     have hcop : ¬ (p ∣ a.num.natAbs ∧ p ∣ a.den) := by
@@ -798,11 +801,13 @@ private theorem exists_sq_of_even_padicValRat_of_pos {a : ℚ} (ha : 0 < a)
       exact hp.ne_one (Nat.dvd_one.mp (hgcd ▸ Nat.dvd_gcd h1 h2))
     rw [Int.even_sub] at heven
     rcases not_and_or.mp hcop with h1 | h1
-    · have hz : padicValNat p a.num.natAbs = 0 := padicValNat.eq_zero_of_not_dvd h1
+    · have hz : padicValNat p a.num.natAbs = 0 :=
+        Nat.padicValNat_def.trans (multiplicity_eq_zero_of_not_dvd h1)
       refine ⟨by rw [hz]; exact Even.zero, ?_⟩
       have : Even ((padicValNat p a.den : ℤ)) := heven.mp (by rw [hz]; exact Even.zero)
       exact_mod_cast this
-    · have hz : padicValNat p a.den = 0 := padicValNat.eq_zero_of_not_dvd h1
+    · have hz : padicValNat p a.den = 0 :=
+        Nat.padicValNat_def.trans (multiplicity_eq_zero_of_not_dvd h1)
       refine ⟨?_, by rw [hz]; exact Even.zero⟩
       have : Even ((padicValNat p a.num.natAbs : ℤ)) := heven.mpr (by rw [hz]; exact Even.zero)
       exact_mod_cast this
@@ -825,9 +830,10 @@ private theorem exists_sq_of_even_padicValRat_of_pos {a : ℚ} (ha : 0 < a)
 
 private def sgn (a : ℚ) : ℤ := if 0 < a then 1 else -1
 
-private def vparity (q : ℕ) (a : ℚ) : ℕ := (padicValRat q a % 2).toNat
+private noncomputable def vparity (q : ℕ) (a : ℚ) : ℕ := (padicValRat q a % 2).toNat
 
-private def canonRep (p : ℕ) (a : ℚ) : ℤ := sgn a * 2 ^ vparity 2 a * (p : ℤ) ^ vparity p a
+private noncomputable def canonRep (p : ℕ) (a : ℚ) : ℤ :=
+  sgn a * 2 ^ vparity 2 a * (p : ℤ) ^ vparity p a
 
 private theorem sgn_eq_one_or_neg_one (a : ℚ) : sgn a = 1 ∨ sgn a = -1 := by
   unfold sgn; split <;> simp

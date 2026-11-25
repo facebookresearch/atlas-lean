@@ -9,8 +9,11 @@ tools behind generalization bounds in learning theory (Wainwright, *High-Dimensi
 2019, Chapter 4).
 
 - [Uniform deviation of empirical means](uniform-deviation.md)
+- [Measurability of the uniform deviation](measurable-uniform-deviation.md)
+- [Bounded differences of the uniform deviation](abs-uniform-deviation-update-sub-le.md)
 - [Rademacher complexity](rademacher-complexity.md)
 - [Symmetrization bound](integral-uniform-deviation-le-two-mul-ra.md)
+- [Concentration of the uniform deviation](uniform-deviation-le-integral-uniform-de.md)
 - [Uniform law via Rademacher complexity](uniform-deviation-le-two-mul-rademacher.md)
 
 ## Related topics
