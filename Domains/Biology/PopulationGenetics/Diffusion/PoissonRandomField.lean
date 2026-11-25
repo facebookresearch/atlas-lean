@@ -161,8 +161,9 @@ theorem current_prfDensity (θ σ : ℝ) {x : ℝ} (hx : x ∈ Ioo (0 : ℝ) 1) 
     field_simp
     ring
 
-/-- **Probability current, explicit form.** For `σ ≠ 0` the constant current `σ F - F' / 2`
-of `current_prfDensity` is `θ σ / (1 - e^{-2σ})` on `(0, 1)`. -/
+/-- **Probability current, explicit form.** For `σ ≠ 0` and every real `θ` the constant current
+`σ F - F' / 2` of `current_prfDensity` is `θ σ / (1 - e^{-2σ})` on `(0, 1)`; the intensity and
+current reading needs `θ ≥ 0`. -/
 theorem current_prfDensity_of_ne_zero (θ : ℝ) {σ : ℝ} (hσ : σ ≠ 0) {x : ℝ}
     (hx : x ∈ Ioo (0 : ℝ) 1) :
     σ * (x * (1 - x) * prfDensity θ σ x) -
@@ -226,7 +227,7 @@ private theorem eq_prfDensity_of_forward_of_ne_zero {θ σ : ℝ} (hθ : θ ≠ 
       (by ring)
   have hkim := eq_kimuraFixation_of_generator_eq_zero (σ := σ) (u := u)
     (fun y hy => ((hcont (1 - y) ⟨sub_nonneg.2 hy.2, by linarith [hy.1]⟩).comp
-      ((continuous_const.sub continuous_id).continuousWithinAt) (fun z hz =>
+      ((continuous_const.sub continuous_id).continuousWithinAt) (fun z (hz : z ∈ Icc (0 : ℝ) 1) =>
         ⟨sub_nonneg.2 hz.2, by linarith [hz.1]⟩)).div_const θ)
     (fun y hy => (hd1 y hy).differentiableAt.differentiableWithinAt)
     (fun y hy => ((hd2 y hy).differentiableAt.congr_of_eventuallyEq

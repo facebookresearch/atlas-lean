@@ -47,8 +47,9 @@ not imported to keep `Demography` independent.
 - `deathProbability`: death probability on `[x, x + 1)` over `l x`.
 - `centralDeathRate`: deaths over positive exposure.
 - `populationShare`: share of category `i` in the total.
-- `crudeRate`: crude rate, the size-weighted mean `Finset.univ.centerMass`
-  of the category rates.
+- `crudeRate`: crude rate `Finset.univ.centerMass` of the category rates with
+  the sizes as weights (`0` for zero total size); a size-weighted mean for a
+  valid population.
 - `directlyStandardizedRate`: crude rate under the standard's composition.
 - `IsValidPopulation`: nonnegative category sizes with a positive total.
 
@@ -116,7 +117,9 @@ not imported to keep `Demography` independent.
 
 namespace MathlibExt.Biology.Demography.LifeTable
 
-/-- Death probability on `[x, x + 1)` over the positive risk set `l x`, HMD (80), (84). -/
+/-- Death probability `d x / l x` on `[x, x + 1)` over the positive risk set `l x`,
+  HMD (80), (84). It lies in `[0, 1]`, and reads as the probability of dying in
+  `[x, x + 1)`, when `0 ≤ d x ≤ l x`; for arbitrary real `d x` it is only a ratio. -/
 noncomputable def deathProbability (l d : ℕ → ℝ) (x : ℕ) (_hx : 0 < l x) : ℝ :=
   d x / l x
 
@@ -124,7 +127,8 @@ noncomputable def deathProbability (l d : ℕ → ℝ) (x : ℕ) (_hx : 0 < l x)
 noncomputable def centralDeathRate (D E : ℝ) (_hE : 0 < E) : ℝ :=
   D / E
 
-/-- Cohort balance over `T` years with deaths and net migration, HMD (10)-(11). -/
+/-- Cohort balance over `T` years with deaths and net migration, HMD (10)-(11). For `T = 0`
+  both sums are empty. -/
 theorem cohort_balance (P D M : ℕ → ℝ) (hstep : ∀ t, P (t + 1) = P t - D t + M t) (T : ℕ) :
     P T = P 0 - ∑ t ∈ Finset.range T, D t + ∑ t ∈ Finset.range T, M t := by
   induction T with
@@ -133,7 +137,7 @@ theorem cohort_balance (P D M : ℕ → ℝ) (hstep : ∀ t, P (t + 1) = P t - D
     rw [hstep n, ih, Finset.sum_range_succ, Finset.sum_range_succ]
     ring
 
-/-- Closed cohort balance with no migration or error. -/
+/-- Closed cohort balance with no migration or error. For `T = 0` the sum is empty. -/
 theorem closed_cohort_balance (P D : ℕ → ℝ) (hstep : ∀ t, P (t + 1) = P t - D t) (T : ℕ) :
     P T = P 0 - ∑ t ∈ Finset.range T, D t := by
   induction T with
@@ -142,7 +146,8 @@ theorem closed_cohort_balance (P D : ℕ → ℝ) (hstep : ∀ t, P (t + 1) = P 
     rw [hstep n, ih, Finset.sum_range_succ]
     ring
 
-/-- Extinct cohort initial size equals total deaths, HMD (9). -/
+/-- Extinct cohort initial size equals total deaths, HMD (9). For `T = 0` the sum is empty and
+  the statement reads `P 0 = 0`. -/
 theorem extinct_cohort (P D : ℕ → ℝ) (hstep : ∀ t, P (t + 1) = P t - D t) {T : ℕ}
     (hT : P T = 0) :
     P 0 = ∑ t ∈ Finset.range T, D t := by
@@ -165,14 +170,17 @@ theorem deathProbability_mem_Icc (l d : ℕ → ℝ) (x : ℕ) (hx : 0 < l x)
   rw [Set.mem_Icc]
   exact ⟨div_nonneg hd0 (le_of_lt hx), (div_le_one hx).mpr hdle⟩
 
-/-- One-step survival as multiplication by `1 - q`, HMD (78). -/
+/-- One-step survival as multiplication by `1 - q`, HMD (78); `1 - q` lies in `[0, 1]`, as the
+  probability of surviving from `x` to `x + 1`, when `0 ≤ d x ≤ l x`. -/
 theorem survivors_succ_eq_mul (l d : ℕ → ℝ) (hstep : ∀ x, l (x + 1) = l x - d x) (x : ℕ)
     (hx : 0 < l x) :
     l (x + 1) = l x * (1 - deathProbability l d x hx) := by
   have h := mul_deathProbability l d x hx
   rw [hstep x, mul_sub, mul_one, h]
 
-/-- Survivors as initial size times survival product, HMD (79). -/
+/-- Survivors as initial size times survival product, HMD (79). For `x = 0` the product is
+  empty and equals `1`. Each factor `1 - q` lies in `[0, 1]`, as a one-step survival
+  probability, when `0 ≤ d k ≤ l k`. -/
 theorem survivors_eq_mul_prod (l d : ℕ → ℝ) (hstep : ∀ x, l (x + 1) = l x - d x) (x : ℕ)
     (hpos : ∀ k : Fin x, 0 < l k) :
     l x = l 0 * ∏ k : Fin x, (1 - deathProbability l d k (hpos k)) := by
@@ -228,10 +236,12 @@ theorem survivors_eq_zero_of_le (l d : ℕ → ℝ) (hstep : ∀ x, l (x + 1) = 
 noncomputable def populationShare {ι : Type*} [Fintype ι] (N : ι → ℝ) (i : ι) : ℝ :=
   N i / ∑ j, N j
 
-/-- Crude rate from sizes `N` and rates `T`: the size-weighted mean
+/-- Crude rate from sizes `N` and rates `T`: the size-weighted centre of mass
   `Finset.univ.centerMass N T`, which is Das Gupta (5.1)
   (`crudeRate_eq_sum_mul_div`); junk value `0` when the total is `0`.
-  Demographic corollaries assume `IsValidPopulation`. -/
+  It is a weighted mean of the rates for nonnegative sizes with a positive total
+  (`IsValidPopulation`), which the demographic corollaries assume; for signed sizes it can lie
+  outside the range of the rates. -/
 noncomputable def crudeRate {ι : Type*} [Fintype ι] (N T : ι → ℝ) : ℝ :=
   Finset.univ.centerMass N T
 
@@ -242,8 +252,8 @@ noncomputable def directlyStandardizedRate {ι : Type*} [Fintype ι] (S T : ι �
   crudeRate S T
 
 /-- A valid population: nonnegative category sizes with a positive total. The
-  demographic corollaries assume it; the algebraic identities need no
-  hypothesis on the sizes. -/
+  demographic corollaries (shares in `[0, 1]`, crude and standardized rates within the
+  range of the category rates) assume it. -/
 structure IsValidPopulation {ι : Type*} [Fintype ι] (N : ι → ℝ) : Prop where
   /-- Every category size is nonnegative. -/
   nonneg : ∀ i, 0 ≤ N i
@@ -251,7 +261,7 @@ structure IsValidPopulation {ι : Type*} [Fintype ι] (N : ι → ℝ) : Prop wh
   sum_pos : 0 < ∑ i, N i
 
 /-- Crude rate as total events over total size, Das Gupta (5.1); holds for all
-  real sizes, including zero total. -/
+  real sizes, including zero total, where both sides are `0`. -/
 theorem crudeRate_eq_sum_mul_div {ι : Type*} [Fintype ι] (N T : ι → ℝ) :
     crudeRate N T = (∑ i, T i * N i) / ∑ i, N i := by
   unfold crudeRate Finset.centerMass
@@ -262,7 +272,7 @@ theorem crudeRate_eq_sum_mul_div {ι : Type*} [Fintype ι] (N T : ι → ℝ) :
   rw [smul_eq_mul, mul_comm]
 
 /-- Crude rate as a share-weighted sum, Das Gupta (5.1)-(5.2); holds for all
-  real sizes, including zero total. -/
+  real sizes, including zero total, where every share and both sides are `0`. -/
 theorem crudeRate_eq_sum_populationShare_mul {ι : Type*} [Fintype ι] (N T : ι → ℝ) :
     crudeRate N T = ∑ i, populationShare N i * T i := by
   rw [crudeRate_eq_sum_mul_div]
@@ -271,19 +281,21 @@ theorem crudeRate_eq_sum_populationShare_mul {ι : Type*} [Fintype ι] (N T : ι
     ring
   simp only [h, Finset.sum_div]
 
-/-- Crude rate is `Finset.univ.centerMass`, by definition. -/
+/-- Crude rate is `Finset.univ.centerMass`, by definition; with `0⁻¹ = 0` it is `0` when the
+  total size is `0`. -/
 theorem crudeRate_eq_centerMass {ι : Type*} [Fintype ι] (N T : ι → ℝ) :
     crudeRate N T = Finset.univ.centerMass N T :=
   rfl
 
 /-- Standardized rate is the crude rate with the standard's composition, by
-  definition. -/
+  definition; both are `0` when the standard's total is `0`. -/
 theorem directlyStandardizedRate_eq_crudeRate {ι : Type*} [Fintype ι] (S T : ι → ℝ) :
     directlyStandardizedRate S T = crudeRate S T :=
   rfl
 
-/-- Crude rate of central death rates is total deaths over total exposure; the
-  positive exposures are needed only to define the central rates. -/
+/-- Crude rate of central death rates is total deaths over total exposure; the positive
+  exposures, which the central rates require, are the only hypothesis, and the deaths may have
+  any sign. If `ι` is empty, both sides are `0`. -/
 theorem crudeRate_centralDeathRate {ι : Type*} [Fintype ι] (D N : ι → ℝ)
     (hN : ∀ i, 0 < N i) :
     crudeRate N (fun i => centralDeathRate (D i) (N i) (hN i)) = (∑ i, D i) / ∑ i, N i := by
@@ -297,7 +309,8 @@ theorem crudeRate_centralDeathRate {ι : Type*} [Fintype ι] (D N : ι → ℝ)
 /-- Rate/composition decomposition of crude-rate differences, Das Gupta
   (5.3)-(5.4) with the Kitagawa (1955) averaged standard. The first bracket
   is the rate effect (5.3) and the second is the composition effect (5.4).
-  Holds for all real sizes, including zero totals. -/
+  Holds for all real sizes, including zero totals: a population with total `0` has every share
+  and its crude rate equal to `0`. -/
 theorem crudeRate_sub_crudeRate {ι : Type*} [Fintype ι] (N n T t : ι → ℝ) :
     crudeRate n t - crudeRate N T =
       (∑ i, (populationShare n i + populationShare N i) / 2 * t i -
@@ -311,7 +324,8 @@ theorem crudeRate_sub_crudeRate {ι : Type*} [Fintype ι] (N n T t : ι → ℝ)
   ring
 
 /-- Equal rates leave only the composition effect, as a `directlyStandardizedRate`
-  difference; holds for all real sizes, including zero totals. -/
+  difference; holds for all real sizes, including zero totals, where every share and the crude
+  and standardized rates are `0`. -/
 theorem crudeRate_sub_crudeRate_of_same_rates {ι : Type*} [Fintype ι] (N n T : ι → ℝ) :
     crudeRate n T - crudeRate N T = ∑ i, T i * (populationShare n i - populationShare N i) ∧
       ∑ i, T i * (populationShare n i - populationShare N i) =
@@ -325,7 +339,8 @@ theorem crudeRate_sub_crudeRate_of_same_rates {ι : Type*} [Fintype ι] (N n T :
     ring
   exact ⟨hsum, hsum.symm⟩
 
-/-- Shares sum to `1` when the total is nonzero. -/
+/-- Shares sum to `1` when the total is nonzero. When the total is `0`, every share is `0` and
+  the shares sum to `0`. -/
 theorem sum_populationShare {ι : Type*} [Fintype ι] {N : ι → ℝ} (hN : ∑ i, N i ≠ 0) :
     ∑ i, populationShare N i = 1 := by
   unfold populationShare

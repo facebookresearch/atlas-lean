@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.DiscreteValuationRing.EtaleResidueExtension
 universe u
 
 -- exactSource consumer: the original binders apply verbatim.
-theorem exactSource
+private theorem exactSource
     (W : Type u) [CommRing W] [IsDomain W] [IsDiscreteValuationRing W]
     [IsAdicComplete (IsLocalRing.maximalIdeal W) W]
     (k : Type u) [Field k] [Algebra (IsLocalRing.ResidueField W) k]

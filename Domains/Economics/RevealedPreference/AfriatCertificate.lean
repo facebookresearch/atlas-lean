@@ -62,9 +62,9 @@ noncomputable def afriatUtility {ι G : Type*} [Fintype ι] [Nonempty ι] [Finty
 
 end DemandData
 
-/-- Afriat's theorem, (3) ⇒ (4): with strictly positive prices, Afriat's utility built from a
-certificate is locally nonsatiated, continuous, concave and monotone, takes the value `Uⁱ` at
-`xⁱ`, and rationalizes the data. -/
+/-- Afriat's theorem, (3) ⇒ (4): with at least one observation and at least one good, and strictly
+positive prices, Afriat's utility built from a certificate is locally nonsatiated, continuous,
+concave and monotone, takes the value `Uⁱ` at `xⁱ`, and rationalizes the data. -/
 theorem DemandData.IsAfriatCertificate.afriatUtility_spec {ι G : Type*} [Fintype ι]
     [Nonempty ι] [Fintype G] [Nonempty G] {D : DemandData ι G} {U lam : ι → ℝ}
     (hp : ∀ i g, 0 < D.price i g) (h : D.IsAfriatCertificate U lam) :

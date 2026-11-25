@@ -1,0 +1,188 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+Author: @toskua
+-/
+module
+
+public import Mathlib.Algebra.Group.Conj
+public import Mathlib.Algebra.Star.StarProjection
+public import Mathlib.Analysis.CStarAlgebra.Classes
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Basic
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Instances
+import Mathlib.Analysis.CStarAlgebra.ContinuousFunctionalCalculus.Projection
+import Mathlib.Tactic.NoncommRing
+import Mathlib.Tactic.NormNum
+
+/-!
+# Idempotents and projections in complex C-star algebras
+
+Every algebraic idempotent in a unital complex C-star algebra is conjugate by
+a unit to a star projection.  The construction uses the explicit orthogonal
+range projection formula and records its two range relations for downstream
+algebraic-equivalence arguments.
+-/
+
+@[expose] public section
+
+namespace CStarAlgebra
+
+noncomputable section
+
+/-- In a unital complex C-star algebra, `1 + star x * x` is invertible. -/
+theorem isUnit_one_add_star_mul_self
+    {A : Type*} [CStarAlgebra A] (x : A) :
+    IsUnit (1 + star x * x) := by
+  rcases subsingleton_or_nontrivial A with hA | hA
+  · let _ := hA
+    exact isUnit_of_subsingleton _
+  · let _ := hA
+    apply spectrum.isUnit_of_zero_notMem (R := ℝ)
+    intro hzero
+    have hneg : (-1 : ℝ) ∈ spectrum ℝ (star x * x) := by
+      rw [← spectrum.add_mem_add_iff
+        (R := ℝ) (a := star x * x) (r := -1) (s := 1)]
+      simpa using hzero
+    have hnonneg : (0 : ℝ) ≤ -1 :=
+      spectrum_star_mul_self_nonneg (-1) hneg
+    norm_num at hnonneg
+
+end
+
+end CStarAlgebra
+
+/-- **Idempotents are conjugate to projections.** For a unital complex C*-algebra `A` and an idempotent
+`e ∈ A`, there is a self-adjoint idempotent `p ∈ A` with `e p = p` and `p e = e`, such that `e` and
+`p` are conjugate by an invertible element of `A`. -/
+theorem IsIdempotentElem.exists_isStarProjection_isConj
+    {A : Type*} [CStarAlgebra A] {e : A} (he : IsIdempotentElem e) :
+    ∃ p : A,
+      IsStarProjection p ∧
+        e * p = p ∧
+        p * e = e ∧
+        IsConj e p := by
+  let d : A := e - Star.star e
+  let b : A := 1 + Star.star d * d
+  have heq : e * e = e := he.eq
+  have heStar : Star.star e * Star.star e = Star.star e := by
+    have h := congrArg Star.star heq
+    simpa only [star_mul, star_star] using h
+  have he_assoc_star : e * (e * Star.star e) = e * Star.star e := by
+    rw [← mul_assoc, heq]
+  have heStar_assoc_e :
+      Star.star e * (Star.star e * e) = Star.star e * e := by
+    rw [← mul_assoc, heStar]
+  have hbSelf : IsSelfAdjoint b := by
+    exact (IsSelfAdjoint.one A).add (IsSelfAdjoint.star_mul_self d)
+  have hbUnit : IsUnit b :=
+    CStarAlgebra.isUnit_one_add_star_mul_self d
+  have hb_e : b * e = e * b := by
+    dsimp [b, d]
+    simp only [star_sub, star_star]
+    noncomm_ring [heq, heStar, he_assoc_star, heStar_assoc_e]
+  have hb_star : b * Star.star e = Star.star e * b := by
+    dsimp [b, d]
+    simp only [star_sub, star_star]
+    noncomm_ring [heq, heStar, he_assoc_star, heStar_assoc_e]
+  have hb_e_formula : b * e = e * Star.star e * e := by
+    dsimp [b, d]
+    simp only [star_sub, star_star]
+    noncomm_ring [heq, heStar, he_assoc_star, heStar_assoc_e]
+  let u : Aˣ := hbUnit.unit
+  have huval : (u : A) = b := hbUnit.unit_spec
+  let bi : A := ↑u⁻¹
+  have hbbi : b * bi = 1 := by
+    calc
+      b * bi = (u : A) * bi := congrArg (fun z ↦ z * bi) huval.symm
+      _ = (u : A) * (↑(u⁻¹) : A) := rfl
+      _ = 1 := Units.mul_inv u
+  have hbih : bi * b = 1 := by
+    calc
+      bi * b = bi * (u : A) := congrArg (fun z ↦ bi * z) huval.symm
+      _ = (↑(u⁻¹) : A) * (u : A) := rfl
+      _ = 1 := Units.inv_mul u
+  have hbi_e : bi * e = e * bi := by
+    calc
+      bi * e = (bi * e) * (b * bi) := by rw [hbbi, mul_one]
+      _ = bi * (e * b) * bi := by ac_rfl
+      _ = bi * (b * e) * bi := by rw [← hb_e]
+      _ = (bi * b) * e * bi := by ac_rfl
+      _ = e * bi := by rw [hbih, one_mul]
+  have hbi_star : bi * Star.star e = Star.star e * bi := by
+    calc
+      bi * Star.star e =
+          (bi * Star.star e) * (b * bi) := by rw [hbbi, mul_one]
+      _ = bi * (Star.star e * b) * bi := by ac_rfl
+      _ = bi * (b * Star.star e) * bi := by rw [← hb_star]
+      _ = (bi * b) * Star.star e * bi := by ac_rfl
+      _ = Star.star e * bi := by rw [hbih, one_mul]
+  have hstarbi_b : Star.star bi * b = 1 := by
+    calc
+      Star.star bi * b = Star.star bi * Star.star b := by rw [hbSelf.star_eq]
+      _ = Star.star (b * bi) := by rw [star_mul]
+      _ = 1 := by rw [hbbi, star_one]
+  have hbiSelf : IsSelfAdjoint bi := by
+    rw [isSelfAdjoint_iff]
+    calc
+      Star.star bi = Star.star bi * (b * bi) := by rw [hbbi, mul_one]
+      _ = (Star.star bi * b) * bi := by rw [mul_assoc]
+      _ = bi := by rw [hstarbi_b, one_mul]
+  let p : A := e * Star.star e * bi
+  have heeSelf : IsSelfAdjoint (e * Star.star e) :=
+    IsSelfAdjoint.mul_star_self e
+  have hee_bi : Commute (e * Star.star e) bi := by
+    change (e * Star.star e) * bi = bi * (e * Star.star e)
+    calc
+      (e * Star.star e) * bi = e * (Star.star e * bi) := by rw [mul_assoc]
+      _ = e * (bi * Star.star e) := by rw [hbi_star]
+      _ = (e * bi) * Star.star e := by rw [mul_assoc]
+      _ = (bi * e) * Star.star e := by rw [hbi_e]
+      _ = bi * (e * Star.star e) := by rw [mul_assoc]
+  have hpSelf : IsSelfAdjoint p := by
+    exact (heeSelf.commute_iff hbiSelf).mp hee_bi
+  have hep : e * p = p := by
+    dsimp [p]
+    calc
+      e * (e * Star.star e * bi) = (e * e) * Star.star e * bi := by
+        ac_rfl
+      _ = e * Star.star e * bi := by rw [heq]
+  have hpe : p * e = e := by
+    dsimp [p]
+    calc
+      (e * Star.star e * bi) * e =
+          e * Star.star e * (bi * e) := by ac_rfl
+      _ = e * Star.star e * (e * bi) := by rw [hbi_e]
+      _ = (e * Star.star e * e) * bi := by ac_rfl
+      _ = (b * e) * bi := by rw [hb_e_formula]
+      _ = (e * b) * bi := by rw [hb_e]
+      _ = e * (b * bi) := by rw [mul_assoc]
+      _ = e := by rw [hbbi, mul_one]
+  have hpEq : p * p = p := by
+    calc
+      p * p = p * (e * p) := by rw [hep]
+      _ = (p * e) * p := (mul_assoc _ _ _).symm
+      _ = e * p := by rw [hpe]
+      _ = p := hep
+  have hpIdem : IsIdempotentElem p := hpEq
+  have hpProj : IsStarProjection p := ⟨hpIdem, hpSelf⟩
+  let v : A := e + 1 - p
+  let w : A := p + 1 - e
+  have hvw : v * w = 1 := by
+    dsimp [v, w]
+    noncomm_ring [heq, hpEq, hep, hpe]
+  have hwv : w * v = 1 := by
+    dsimp [v, w]
+    noncomm_ring [heq, hpEq, hep, hpe]
+  have hvUnit : IsUnit v :=
+    isUnit_iff_exists.mpr ⟨w, hvw, hwv⟩
+  refine ⟨p, hpProj, hep, hpe, ⟨hvUnit.unit, ?_⟩⟩
+  change (hvUnit.unit : A) * e = p * (hvUnit.unit : A)
+  rw [hvUnit.unit_spec]
+  dsimp [v]
+  noncomm_ring [heq, hpEq, hep, hpe]
