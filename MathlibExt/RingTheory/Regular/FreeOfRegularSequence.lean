@@ -36,26 +36,13 @@ public import Mathlib.RingTheory.Ideal.Quotient.Operations
 
 import Mathlib.LinearAlgebra.Basis.VectorSpace
 import Mathlib.RingTheory.Ideal.Quotient.Noetherian
+import Mathlib.RingTheory.LocalRing.RingHom.Basic
 
 @[expose] public section
 
 open RingTheory.Sequence
 
 namespace Module
-
-private theorem map_mk_maximalIdeal {A : Type*} [CommRing A] [IsLocalRing A] (I : Ideal A)
-    (hI : I ≠ ⊤) [IsLocalRing (A ⧸ I)] :
-    (IsLocalRing.maximalIdeal A).map (Ideal.Quotient.mk I) =
-      IsLocalRing.maximalIdeal (A ⧸ I) := by
-  have hsurj : Function.Surjective (Ideal.Quotient.mk I) := Ideal.Quotient.mk_surjective
-  rcases Ideal.map_eq_top_or_isMaximal_of_surjective _ hsurj
-      (IsLocalRing.maximalIdeal.isMaximal A) with h | h
-  · exfalso
-    have h2 := congrArg (Ideal.comap (Ideal.Quotient.mk I)) h
-    rw [Ideal.comap_map_of_surjective _ hsurj, Ideal.comap_top, ← RingHom.ker_eq_comap_bot,
-      Ideal.mk_ker, sup_eq_left.mpr (IsLocalRing.le_maximalIdeal hI)] at h2
-    exact (IsLocalRing.maximalIdeal.isMaximal A).ne_top h2
-  · exact IsLocalRing.eq_maximalIdeal h
 
 private theorem free_of_isWeaklyRegular_aux (n : ℕ) :
     ∀ (A : Type*) [CommRing A] [IsLocalRing A] [IsNoetherianRing A] (rs : List A),
@@ -79,14 +66,15 @@ private theorem free_of_isWeaklyRegular_aux (n : ℕ) :
       obtain ⟨hr, hM'⟩ := hM
       have hr𝔪 : r ∈ IsLocalRing.maximalIdeal A := hspan ▸ Ideal.subset_span (by simp)
       have hne : Ideal.span {r} ≠ ⊤ :=
-        fun h => (IsLocalRing.mem_maximalIdeal r).mp hr𝔪 (Ideal.span_singleton_eq_top.mp h)
+        Ideal.span_singleton_ne_top ((IsLocalRing.mem_maximalIdeal r).mp hr𝔪)
       have : Nontrivial (A ⧸ Ideal.span {r}) := Ideal.Quotient.nontrivial_iff.mpr hne
       have : IsLocalRing (A ⧸ Ideal.span {r}) :=
         IsLocalRing.of_surjective' (Ideal.Quotient.mk _) Ideal.Quotient.mk_surjective
       have hspan' : Ideal.ofList (rs'.map (Ideal.Quotient.mk (Ideal.span {r}))) =
           IsLocalRing.maximalIdeal (A ⧸ Ideal.span {r}) := by
-        rw [← Ideal.map_ofList, ← map_mk_maximalIdeal _ hne, ← hspan, Ideal.ofList_cons,
-          Ideal.map_sup, Ideal.map_quotient_self, bot_sup_eq]
+        rw [← Ideal.map_ofList, ← IsLocalRing.map_maximalIdeal_of_surjective
+          (Ideal.Quotient.mk (Ideal.span {r})) Ideal.Quotient.mk_surjective, ← hspan,
+          Ideal.ofList_cons, Ideal.map_sup, Ideal.map_quotient_self, bot_sup_eq]
       have : Module.Finite (A ⧸ Ideal.span {r}) (QuotSMulTop r M) :=
         Module.Finite.of_restrictScalars_finite A _ _
       have : Module.FinitePresentation A M := Module.finitePresentation_of_finite A M
