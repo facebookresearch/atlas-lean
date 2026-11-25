@@ -29,18 +29,17 @@ removed and the names restated in Mathlib style.
 
 module
 
-public import Mathlib.RingTheory.HopfAlgebra.Basic
-public import Mathlib.RingTheory.HopfAlgebra.Convolution
-public import Mathlib.RingTheory.Coalgebra.Convolution
+public import Mathlib.LinearAlgebra.Dimension.Finrank
+public import Mathlib.LinearAlgebra.FreeModule.Basic
 public import Mathlib.RingTheory.Bialgebra.Convolution
-public import Mathlib.LinearAlgebra.TensorProduct.Basis
-public import Mathlib.RingTheory.TensorProduct.Basic
-import Mathlib.FieldTheory.Finite.GaloisField
-import Mathlib.Algebra.Algebra.Operations
-import Mathlib.LinearAlgebra.FreeModule.Finite.Matrix
-public import Mathlib.RingTheory.Norm.Defs
-
-@[expose] public section
+public import Mathlib.RingTheory.HopfAlgebra.Basic
+import Mathlib.LinearAlgebra.Dimension.Free
+import Mathlib.LinearAlgebra.TensorProduct.Basis
+import Mathlib.RingTheory.Coalgebra.Convolution
+import Mathlib.RingTheory.HopfAlgebra.Convolution
+import Mathlib.RingTheory.Norm.Basic
+import Mathlib.RingTheory.Norm.Defs
+import Mathlib.RingTheory.TensorProduct.Basic
 
 open TensorProduct WithConv Coalgebra
 
@@ -72,7 +71,7 @@ def postComp (g : A →ₐ[R] A') : WithConv (C →ₗ[R] A) →+* WithConv (C �
     apply WithConv.ext
     simp [LinearMap.comp_add]
 
-@[scoped simp] lemma postComp_apply (g : A →ₐ[R] A') (F : WithConv (C →ₗ[R] A)) :
+@[local simp] lemma postComp_apply (g : A →ₐ[R] A') (F : WithConv (C →ₗ[R] A)) :
     postComp g F = toConv (g.toLinearMap ∘ₗ F.ofConv) := rfl
 
 private lemma postComp_comp (g : A →ₐ[R] A') (g' : A' →ₐ[R] A'') (F : WithConv (C →ₗ[R] A)) :
@@ -133,7 +132,7 @@ variable {R : Type*} [CommSemiring R] {H : Type*} [CommSemiring H] [HopfAlgebra 
 
 private def antipodeAlgHom : H →ₐ[R] H :=
   AlgHom.ofLinearMap (HopfAlgebra.antipode R) HopfAlgebra.antipode_one fun a b => by
-    rw [HopfAlgebra.antipode_mul, mul_comm]
+    rw [HopfAlgebra.antipode_mul_antidistrib, mul_comm]
 
 variable {A : Type*} [CommSemiring A] [Algebra R A]
 
@@ -358,14 +357,11 @@ private theorem toD_pow_card_eq_one (u : P R H T) :
     toD u ^ Fintype.card (Module.Free.ChooseBasisIndex R H) = 1 := by
   classical
   set b := Module.Free.chooseBasis R H
-
   have hN : Algebra.norm (D R H T) (ΦEquiv u (xE : E R H T)) =
       Algebra.norm (D R H T) (xE : E R H T) :=
     Algebra.norm_eq_of_algEquiv (ΦEquiv u) xE
-
   rw [ΦEquiv_apply, Φ_xE, map_mul, ← algebraMap_eq,
     Algebra.norm_algebraMap_of_basis (basisDE (T := T) b)] at hN
-
   have hu : IsUnit (Algebra.norm (D R H T) (xE : E R H T)) := (isUnit_xE).map _
   exact hu.mul_right_injective (hN.trans (mul_one _).symm)
 
@@ -373,8 +369,8 @@ private theorem convPow_finrank_eq_one (u : P R H T) : u ^ Module.finrank R H = 
   cases subsingleton_or_nontrivial R with
   | inl h =>
     have : Subsingleton T := (algebraMap R T).codomain_trivial
-    haveI : Subsingleton (H →ₐ[R] T) := ⟨fun f g => AlgHom.ext fun _ => Subsingleton.elim _ _⟩
-    haveI : Subsingleton (P R H T) := ⟨fun f g => WithConv.ext (Subsingleton.elim _ _)⟩
+    have : Subsingleton (H →ₐ[R] T) := ⟨fun f g => AlgHom.ext fun _ => Subsingleton.elim _ _⟩
+    have : Subsingleton (P R H T) := ⟨fun f g => WithConv.ext (Subsingleton.elim _ _)⟩
     exact Subsingleton.elim _ _
   | inr h =>
     apply toD_injective

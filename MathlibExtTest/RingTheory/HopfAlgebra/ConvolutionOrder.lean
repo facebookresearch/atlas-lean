@@ -15,7 +15,7 @@ public import MathlibExt.RingTheory.HopfAlgebra.ConvolutionOrder
 universe u v w
 
 /-- The restated theorem applied with the original binders. -/
-theorem exactSource
+private theorem exactSource
     (R : Type u) [CommRing R]
     (H : Type v) [CommRing H] [HopfAlgebra R H] [Coalgebra.IsCocomm R H]
     [Module.Finite R H] [Module.Free R H]
