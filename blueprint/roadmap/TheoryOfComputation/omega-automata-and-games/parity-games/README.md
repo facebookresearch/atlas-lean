@@ -59,3 +59,7 @@
 - [Priority compression preserves parity](priority-compressed-mod-two.md)
 - [Maximal priority on a set of positions](max-priority-in.md)
 - [Positions of maximal priority](max-positions-in.md)
+
+- [Progress measures give winning strategies in parity games](progress-measures-give-winning-strategies-in.md)
+- [Finite parity games are positionally determined](finite-parity-games-are-positionally-determined.md)
+- [Small progress measures](small-progress-measures.md)
