@@ -95975,6 +95975,7 @@
 "MetaMathlibExt.tendsto_tsum_qBracket_bernoulli": "2cdc484f5f5bfcad",
 "MetaMathlibExt.tendsto_valuationSquareCount_poisson": "45b45f3f0dfc322b",
 "MetaMathlibExt.tendsto_volume_log_smallestDenominator_gt": "37704fa6665cd1b2",
+"MetaMathlibExt.tendsto_zero_of_uniformContinuousOn_Ici_of_integral_tendsto": "697a0f4156ef5abe",
 "MetaMathlibExt.terai_pythagorean_of_prime_of_mod_eight": "8d46d3df6bfd4196",
 "MetaMathlibExt.terai_ten_fifteen_five_eq_one_one_two": "7980d55bde7c0f76",
 "MetaMathlibExt.testBit_add_two_pow_eq_update": "46343e262721ffc5",
