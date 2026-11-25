@@ -333,13 +333,11 @@ private theorem homologyComplexTo_quasiIso
   let _ : Projective (K.homology i) := hK i
   let hICycles : IsIso ((homologyComplex K).iCycles i) :=
     ShortComplex.isIso_iCycles ((homologyComplex K).sc i) (by
-      simp only [shortComplexFunctor_obj_g, homologyComplex_d]
-      exact rfl)
+      simp only [shortComplexFunctor_obj_g, homologyComplex_d])
   letI : IsIso ((homologyComplex K).iCycles i) := hICycles
   let hHomologyπ : IsIso ((homologyComplex K).homologyπ i) :=
     ShortComplex.isIso_homologyπ ((homologyComplex K).sc i) (by
-      simp only [shortComplexFunctor_obj_f, homologyComplex_d]
-      exact rfl)
+      simp only [shortComplexFunctor_obj_f, homologyComplex_d])
   letI : IsIso ((homologyComplex K).homologyπ i) := hHomologyπ
   have hcycles :
       cyclesMap (homologyComplexTo K) i =
@@ -383,11 +381,9 @@ private noncomputable def homologyComplexHomologyIsoX
     (homologyComplex K).homology n ≅ (homologyComplex K).X n :=
   (ShortComplex.HomologyData.ofZeros ((homologyComplex K).sc n)
     (by
-      simp only [shortComplexFunctor_obj_f, homologyComplex_d]
-      exact rfl)
+      simp only [shortComplexFunctor_obj_f, homologyComplex_d])
     (by
-      simp only [shortComplexFunctor_obj_g, homologyComplex_d]
-      exact rfl)).left.homologyIso
+      simp only [shortComplexFunctor_obj_g, homologyComplex_d])).left.homologyIso
 
 private lemma linearHomHomologyComplex_d
     (K : ChainComplex C ℕ) (M : C) (i j : ℕ) :
@@ -408,11 +404,9 @@ private noncomputable def linearHomHomologyComplexHomologyIsoX
     (((linearHomCochainComplexFunctor R C M).obj
       (op (homologyComplex K))).sc n)
     (by
-      simp only [shortComplexFunctor_obj_f, linearHomHomologyComplex_d]
-      exact rfl)
+      simp only [shortComplexFunctor_obj_f, linearHomHomologyComplex_d])
     (by
-      simp only [shortComplexFunctor_obj_g, linearHomHomologyComplex_d]
-      exact rfl)).left.homologyIso
+      simp only [shortComplexFunctor_obj_g, linearHomHomologyComplex_d])).left.homologyIso
 
 private noncomputable def homologyComplexComparisonIso
     (K : ChainComplex C ℕ) (M : C) (n : ℕ) :
