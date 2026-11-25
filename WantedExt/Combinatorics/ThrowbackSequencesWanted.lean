@@ -13,6 +13,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Topology.Instances.Real.Lemmas
 public import MathlibExt.Combinatorics.Sequences.ThrowbackFrequency
+public import MathlibExt.Combinatorics.Sequences.ThrowbackRecurrence
 public import MathlibExt.Combinatorics.Sequences.ThrowbackUniformRecurrence
 
 /-!
@@ -30,17 +31,6 @@ The throwback operation moves the leader `x₀` of a sequence `X = (x₀, x₁, 
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Every term recurs in the throwback sequence.** Let $X = (x_0, x_1, \dots)$ be a sequence of
-pairwise distinct positive integers, and let $T(X) = (t_0, t_1, \dots)$ be its throwback
-sequence. Then every term $x_j$ of $X$ appears infinitely often in $T(X)$: there are infinitely
-many $k$ with $t_k = x_j$.
-
-Source: Jesiah Darnell and Benjamin F. Dribus, *Throwback Sequences of Positive Integers*,
-Journal of Integer Sequences 28 (2025), Article 25.5.1, Theorem 2 (`jis-2025-25.5.1-thm-2`). -/
-public theorem_wanted throwbackSequence_infinite_eq (X : ℕ → ℕ) (hX : ∀ n, 0 < X n)
-    (hinj : Function.Injective X) (j : ℕ) :
-    {k | throwbackSequence X k = X j}.Infinite
 
 /-- **Recursive bound on the time to become leader.** Let $X = (x_0, x_1, \dots)$ be a sequence
 of pairwise distinct positive integers, with positions numbered from $0$, the leader being at
