@@ -18,6 +18,7 @@ public import Mathlib.Topology.ContinuousOn
 namespace MathlibExtTest.Biology.PopulationGenetics.Diffusion.BoundaryClassification
 
 open MathlibExt.Biology.PopulationGenetics.Diffusion
+open MathlibExt.Probability.Diffusion
 
 example : IsExitBoundaryAtZero
     (fun x : ℝ => (0 * (1 - x) - 1 / 2 * x) / 2 + 0 * (x * (1 - x)))
@@ -75,42 +76,25 @@ example : IsEntranceBoundaryAtOne
   · norm_num [Set.mem_Ioo]
   · norm_num
 
-example : IsRegularBoundaryAtZero (fun _ : ℝ => 0) (fun _ : ℝ => 1) (1 / 3 : ℝ) ↔
-    IsRegularBoundaryAtZero (fun _ : ℝ => 0) (fun _ : ℝ => 1) (1 / 2 : ℝ) := by
-  apply isRegularBoundaryAtZero_basepoint_iff
-  · intro x _
-    exact zero_lt_one
-  · exact continuousOn_const
-  · exact continuousOn_const
-  · norm_num [Set.mem_Ioo]
-  · norm_num [Set.mem_Ioo]
+-- The selection-mutation coefficients satisfy the standing hypotheses at an interior basepoint.
+example : IsFellerAdmissible
+    (fun x : ℝ => (1 / 2 * (1 - x) - 1 / 2 * x) / 2 + 0 * (x * (1 - x)))
+    (fun x : ℝ => x * (1 - x)) (1 / 2 : ℝ) :=
+  isFellerAdmissible_selectionMutation 0 (1 / 2) (1 / 2) (1 / 2) (by norm_num [Set.mem_Ioo])
 
-example : IsNaturalBoundaryAtOne (fun _ : ℝ => 0) (fun _ : ℝ => 1) (1 / 3 : ℝ) ↔
-    IsNaturalBoundaryAtOne (fun _ : ℝ => 0) (fun _ : ℝ => 1) (1 / 2 : ℝ) := by
-  apply isNaturalBoundaryAtOne_basepoint_iff
-  · intro x _
-    exact zero_lt_one
-  · exact continuousOn_const
-  · exact continuousOn_const
-  · norm_num [Set.mem_Ioo]
-  · norm_num [Set.mem_Ioo]
+-- An endpoint basepoint is rejected, although `Ioo 0 0` and `Ioo 1 1` are empty.
+example : ¬ IsRegularBoundaryAtZero
+    (fun x : ℝ => (1 / 2 * (1 - x) - 1 / 2 * x) / 2 + 0 * (x * (1 - x)))
+    (fun x : ℝ => x * (1 - x)) 0 :=
+  fun h => lt_irrefl 0 h.1.mem_Ioo.1
+
+example : ¬ IsRegularBoundaryAtOne
+    (fun x : ℝ => (1 / 2 * (1 - x) - 1 / 2 * x) / 2 + 0 * (x * (1 - x)))
+    (fun x : ℝ => x * (1 - x)) 1 :=
+  fun h => lt_irrefl 1 h.1.mem_Ioo.2
 
 #print axioms
-  MathlibExt.Biology.PopulationGenetics.Diffusion.isRegularBoundaryAtZero_basepoint_iff
-#print axioms
-  MathlibExt.Biology.PopulationGenetics.Diffusion.isExitBoundaryAtZero_basepoint_iff
-#print axioms
-  MathlibExt.Biology.PopulationGenetics.Diffusion.isEntranceBoundaryAtZero_basepoint_iff
-#print axioms
-  MathlibExt.Biology.PopulationGenetics.Diffusion.isNaturalBoundaryAtZero_basepoint_iff
-#print axioms
-  MathlibExt.Biology.PopulationGenetics.Diffusion.isRegularBoundaryAtOne_basepoint_iff
-#print axioms
-  MathlibExt.Biology.PopulationGenetics.Diffusion.isExitBoundaryAtOne_basepoint_iff
-#print axioms
-  MathlibExt.Biology.PopulationGenetics.Diffusion.isEntranceBoundaryAtOne_basepoint_iff
-#print axioms
-  MathlibExt.Biology.PopulationGenetics.Diffusion.isNaturalBoundaryAtOne_basepoint_iff
+  MathlibExt.Biology.PopulationGenetics.Diffusion.isFellerAdmissible_selectionMutation
 #print axioms
   MathlibExt.Biology.PopulationGenetics.Diffusion.boundaryAtZero_selectionMutation_exit
 #print axioms
