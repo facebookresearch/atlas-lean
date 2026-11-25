@@ -12,8 +12,9 @@ LICENSE file in the root directory of this source tree.
 For a real `n × n` matrix `A`, the interaction graph `G(A)` has vertices `1, …, n` and an edge
 `j → i` exactly when `A_{ij} ≠ 0`, with the sign of `A_{ij}`. A circuit is positive if the
 product of the signs of its edges is `+1`. For `I ⊆ {1, …, n}`, `τ_I A` changes the sign of the
-entries `A_{ij}` with `i ∈ I`, and for a permutation `σ`, `σ A` is the product of `A` with the
-permutation matrix of `σ`, so that `G(σ A)` replaces each edge `j → i` by `j → σ(i)`.
+entries `A_{ij}` with `i ∈ I`, and for a permutation `σ`, `σ A` is the left product
+`(σ⁻¹).permMatrix ℝ * A` (entries `(σ A)_{ij} = A_{σ⁻¹(i), j}`), so that `G(σ A)` replaces each
+edge `j → i` by `j → σ(i)`.
 
 Let `Ω = ∏_i Ω_i ⊆ ℝ^n` be a product of open intervals, and let `F : Ω → ℝ^n` be differentiable,
 with Jacobian matrix `J(a) = (∂F_i/∂x_j (a))`. A zero `a` of `F` is nondegenerate if
@@ -56,9 +57,9 @@ variable {n : ℕ}
 def tauSign (I : Finset (Fin n)) (A : Matrix (Fin n) (Fin n) ℝ) : Matrix (Fin n) (Fin n) ℝ :=
   fun i j => if i ∈ I then -A i j else A i j
 
-/-- `σ A`: the product of `A` with the permutation matrix of `σ`, with entries
-`(σ A)_{σ(i) j} = A_{ij}`, so that its interaction graph replaces each edge `j → i` of `G(A)` by
-`j → σ(i)`. -/
+/-- `σ A`: the left product `(σ⁻¹).permMatrix ℝ * A` under Mathlib's permutation-matrix convention,
+with entries `(permRows σ A) i j = A (σ⁻¹ i) j` (equivalently `(σ A)_{σ(i) j} = A_{ij}`), so that
+its interaction graph replaces each edge `j → i` of `G(A)` by `j → σ(i)`. -/
 def permRows (σ : Equiv.Perm (Fin n)) (A : Matrix (Fin n) (Fin n) ℝ) :
     Matrix (Fin n) (Fin n) ℝ :=
   fun i j => A (σ.symm i) j
