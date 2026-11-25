@@ -36,13 +36,14 @@ public import Mathlib.AlgebraicGeometry.Pullbacks
 import Mathlib.Tactic.FinCases
 
 /-!
-# Degree-zero compatibility of the iterated Čech augmentations with the cup product
+# Degree-zero compatibility of the iterated Čech restriction maps with the cup product
 
 Let `X` and `Y` be schemes over `Spec k` with ordered affine covers `𝔘` and `𝔙`, and cover
 `X ×_k Y` by the products `pr₁⁻¹ 𝔘ᵢ ⊓ pr₂⁻¹ 𝔙ⱼ`, assumed affine. For degree-zero Čech cocycles
 `α` of `𝒪_X` and `β` of `𝒪_Y`, the external product `pr₁^* α · pr₂^* β`, viewed as a total
-cochain of the Čech double complex and augmented into the iterated Čech complex, agrees with
-the augmentation of the cup product of the pullbacks of `α` and `β` to the product cover.
+cochain of the Čech double complex and restricted into the iterated Čech complex by `augTot`,
+agrees with the image under `augCech` of the cup product of the pullbacks of `α` and `β` to the
+product cover.
 -/
 
 @[expose] public section
@@ -153,11 +154,11 @@ private theorem unitPullback_zero {R' : Type u} [CommRing R'] {πP : P ⟶ Spec 
 
 end Aux
 
-/-- Degree-zero compatibility of the iterated Čech augmentations with the cup product on the
-product cover of `X ×_k Y`: for Čech `0`-cocycles `α` of `𝒪_X` on `𝔘` and `β` of `𝒪_Y` on `𝔙`,
-augmenting the external product `pr₁^* α · pr₂^* β` (a total `0`-cochain of the Čech double
-complex) into the iterated Čech complex gives the same element as augmenting the cup product of
-the pullbacks of `α` and `β` to the product cover. -/
+/-- Degree-zero compatibility of the restriction maps `augTot` and `augCech` with the cup product
+on the product cover of `X ×_k Y`: for Čech `0`-cocycles `α` of `𝒪_X` on `𝔘` and `β` of `𝒪_Y`
+on `𝔙`, `augTot` sends the external product `pr₁^* α · pr₂^* β` (a total `0`-cochain of the Čech
+double complex) to the same element of the iterated Čech term `IterCech.C … 0 0` as `augCech`
+sends the cup product of the pullbacks of `α` and `β` to the product cover. -/
 theorem augTot_single_eq_augCech_cup_zero
     {k : Type u} [CommRing k] {X Y : Scheme.{u}}
     (πX : X ⟶ Spec (CommRingCat.of k)) (πY : Y ⟶ Spec (CommRingCat.of k))

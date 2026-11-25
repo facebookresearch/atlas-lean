@@ -53,11 +53,13 @@ namespace Scheme.OrderedAffineCover
 
 variable {V : Scheme.{u}} (K : V.OrderedAffineCover)
 
-/-- The front `a`-face `(s₀, …, s_a)` of a strictly increasing `n`-tuple, `a + b = n`. -/
+/-- The front `a`-face `(s₀, …, s_a)` of a strictly increasing `(n + 1)`-tuple `(s₀, …, sₙ)`,
+`a + b = n`. -/
 def frontFace (a b n : ℕ) (h : a + b = n) (s : K.Idx n) : K.Idx a :=
   ⟨fun j => s.1 ⟨j.1, by omega⟩, fun _ _ hj => s.2 (Fin.mk_lt_mk.2 (Fin.lt_def.1 hj))⟩
 
-/-- The back `b`-face `(s_a, …, sₙ)` of a strictly increasing `n`-tuple, `a + b = n`. -/
+/-- The back `b`-face `(s_a, …, sₙ)` of a strictly increasing `(n + 1)`-tuple `(s₀, …, sₙ)`,
+`a + b = n`. -/
 def backFace (a b n : ℕ) (h : a + b = n) (s : K.Idx n) : K.Idx b :=
   ⟨fun j => s.1 ⟨a + j.1, by omega⟩,
     fun _ _ hj => s.2 (Fin.mk_lt_mk.2 (by have := Fin.lt_def.1 hj; omega))⟩

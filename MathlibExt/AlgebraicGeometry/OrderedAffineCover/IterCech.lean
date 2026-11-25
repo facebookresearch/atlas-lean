@@ -30,17 +30,20 @@ module
 public import MathlibExt.AlgebraicGeometry.OrderedAffineCover.BiCech
 
 /-!
-# Augmentations into the iterated Čech complex
+# Restriction maps into the iterated Čech complex
 
 Given ordered open families `𝔄`, `𝔅`, `ℭ` of a scheme and a presheaf of modules `F`, the
 iterated Čech complex has `(r, m)` term
 `IterCech.C F 𝔄 𝔅 ℭ r m = ∏_{K ∈ ℭ.Idx r} Tot(biCech F 𝔄 (𝔅 ∩ ℭ.inter K)) m`.
-This file defines its two augmentations:
+This file defines these terms and two restriction maps into them:
 
 * `IterCech.augTot`: from the total complex of `biCech F 𝔄 𝔅` into the column `r = 0`, by
   restricting to each `𝔅 ∩ ℭ.U k`;
 * `IterCech.augCech`: from the Čech cochains of `F` on an ordered affine cover `ℭ'` into the
   row `m = 0`, by restricting each section to the relevant intersections.
+
+The names follow the source, where these maps are the augmentations of the iterated Čech
+complex; its differentials are not defined here.
 -/
 
 @[expose] public section
@@ -116,16 +119,18 @@ theorem resTot₀_apply (W : Z.Opens) (m : ℕ) (c : DoubleComplex.Tot (F.biCech
       F.res (inf_le_inf_left _ (le_trans (𝔅.restr_inter_le W st.2) inf_le_left)) (c pq st) :=
   rfl
 
-/-- The augmentation of the iterated Čech complex by the total complex of the Čech double
-complex of `𝔄` and `𝔅`, into the column `r = 0`. -/
+/-- The restriction map from the degree-`m` total cochains of the Čech double complex of `𝔄` and
+`𝔅` to the `(0, m)` term of the iterated Čech complex: over each `0`-simplex `K` of `ℭ`, it
+restricts every component from `𝔅` to `𝔅 ∩ ℭ.inter K`. -/
 def augTot (m : ℕ) : DoubleComplex.Tot (F.biCech 𝔄 𝔅) m →ₗ[R] C F 𝔄 𝔅 ℭ 0 m :=
   LinearMap.pi fun K => resTot₀ F 𝔄 𝔅 (ℭ.inter K) m
 
 theorem augTot_apply (m : ℕ) (c : DoubleComplex.Tot (F.biCech 𝔄 𝔅) m) (K : ℭ.Idx 0) :
     augTot F 𝔄 𝔅 ℭ m c K = resTot₀ F 𝔄 𝔅 (ℭ.inter K) m c := rfl
 
-/-- The augmentation of the iterated Čech complex by the Čech complex of `F` on an ordered
-affine cover `ℭ'`, into the row `m = 0`. -/
+/-- The restriction map from the degree-`r` Čech cochains of `F` on an ordered affine cover `ℭ'`
+to the `(r, 0)` term of the iterated Čech complex: over each `r`-simplex `K` of `ℭ'`, it restricts
+the value of a cochain at `K` to each open `𝔄.inter s ⊓ (𝔅 ∩ ℭ'.inter K).inter t`. -/
 def augCech (ℭ' : Z.OrderedAffineCover) (r : ℕ) :
     F.cochain ℭ' r →ₗ[R] C F 𝔄 𝔅 ℭ'.toOpenFamily r 0 where
   toFun x := fun K _ st =>

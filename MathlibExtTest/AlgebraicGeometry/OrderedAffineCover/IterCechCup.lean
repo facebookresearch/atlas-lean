@@ -76,3 +76,46 @@ example {Z : Scheme.{u}} (𝔄 𝔅 : Z.OrderedOpenFamily)
     (hcov : ⨆ ij : 𝔄.ι × 𝔅.ι, 𝔄.U ij.1 ⊓ 𝔅.U ij.2 = ⊤) :
     (𝔄.prodCover 𝔅 haff hcov).ι = (𝔄.ι ×ₗ 𝔅.ι) :=
   rfl
+
+/-! ### A concrete instance: `Spec ℤ ×_ℤ Spec ℤ` with one-open covers -/
+
+/-- The cover of `Spec ℤ` by the single open `⊤`. -/
+private noncomputable def topCover : (Spec (CommRingCat.of ℤ)).OrderedAffineCover where
+  ι := Fin 1
+  U _ := ⊤
+  isAffineOpen _ := isAffineOpen_top _
+  iSup_eq_top := iSup_const
+
+/-- `𝟙 (Spec ℤ)`, the structure morphism of `Spec ℤ` over itself. -/
+private noncomputable abbrev πℤ : Spec (CommRingCat.of ℤ) ⟶ Spec (CommRingCat.of ℤ) := 𝟙 _
+
+private theorem haff_topCover : ∀ i j,
+    IsAffineOpen ((topCover.preimageFamily (pullback.fst πℤ πℤ)).U i ⊓
+      (topCover.preimageFamily (pullback.snd πℤ πℤ)).U j) := fun _ _ => by
+  change IsAffineOpen (pullback.fst πℤ πℤ ⁻¹ᵁ ⊤ ⊓ pullback.snd πℤ πℤ ⁻¹ᵁ ⊤)
+  rw [Scheme.Hom.preimage_top, Scheme.Hom.preimage_top, inf_top_eq]
+  exact isAffineOpen_top _
+
+private theorem hcov_topCover : ⨆ ij : topCover.ι × topCover.ι,
+    (topCover.preimageFamily (pullback.fst πℤ πℤ)).U ij.1 ⊓
+      (topCover.preimageFamily (pullback.snd πℤ πℤ)).U ij.2 = ⊤ := by
+  change ⨆ _ij : Fin 1 × Fin 1, pullback.fst πℤ πℤ ⁻¹ᵁ ⊤ ⊓ pullback.snd πℤ πℤ ⁻¹ᵁ ⊤ = ⊤
+  rw [Scheme.Hom.preimage_top, Scheme.Hom.preimage_top, inf_top_eq, iSup_const]
+
+/-- A one-open cover has no strictly increasing pairs of indices. -/
+private theorem isEmpty_topCover_idx_one : IsEmpty (topCover.Idx 1) := by
+  refine ⟨fun s => ?_⟩
+  have hlt := s.2 (show (0 : Fin 2) < 1 by decide)
+  rw [Subsingleton.elim (α := Fin 1) (s.1 1) (s.1 0)] at hlt
+  exact lt_irrefl _ hlt
+
+/-- On a one-open cover every degree-zero cochain is a cocycle. -/
+private theorem d_topCover_eq_zero (α : (OModulePresheaf.unit πℤ).cochain topCover 0) :
+    (OModulePresheaf.unit πℤ).d topCover 0 α = 0 :=
+  funext fun s => (isEmpty_topCover_idx_one.false s).elim
+
+/-- The hypotheses `haff` and `hcov` hold for the one-open covers of `Spec ℤ`, so the theorem
+applies to any pair of degree-zero cochains there. -/
+example (α β : (OModulePresheaf.unit πℤ).cochain topCover 0) :=
+  OModulePresheaf.IterCech.augTot_single_eq_augCech_cup_zero πℤ πℤ topCover topCover
+    haff_topCover hcov_topCover ⟨(0, 0), rfl⟩ ⟨α, d_topCover_eq_zero α⟩ ⟨β, d_topCover_eq_zero β⟩

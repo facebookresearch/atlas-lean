@@ -50,6 +50,10 @@ alternating Čech differential.
   `U` are also `Γ(V, U)`-modules, compatibly with restriction.
 * `AlgebraicGeometry.OModulePresheaf.d`: the alternating Čech differential.
 * `AlgebraicGeometry.OModulePresheaf.unit`: the structure presheaf `U ↦ Γ(V, U)`.
+
+Mathlib's `CategoryTheory.cechComplexFunctor` is the Čech complex indexed by all tuples
+`Fin (n + 1) → ι`; the cochains here are the alternating ones, indexed by strictly increasing
+tuples, as in the source.
 -/
 
 @[expose] public section
