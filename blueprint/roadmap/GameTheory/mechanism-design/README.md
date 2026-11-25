@@ -9,6 +9,7 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Optimal auctions and virtual valuations](optimal-auctions-and-virtual-valuations/README.md)
 - [Vickrey–Clarke–Groves mechanisms](vickrey-clarke-groves-mechanisms/README.md)
 - [Myerson–Satterthwaite theorem](myerson-satterthwaite.md)
+- [Bilateral trade](bilateral-trade/README.md)
 - [Screening with two types](screening-with-two-types/README.md)
 
 ## Related topics
@@ -19,4 +20,7 @@ The [revelation principle](revelation-principle/README.md) reduces the design pr
 - [Social choice theory](../social-choice/README.md): aggregation of preferences without money, where the Gibbard–Satterthwaite theorem rules out nontrivial strategy-proof rules.
 - [Matching markets](../matching-markets/README.md): mechanisms without money for two-sided matching with ordinal preferences and private outcomes, where Roth's impossibility theorem rules out stable mechanisms that are strategy-proof for both sides.
 
-- [Bilateral trade](bilateral-trade/README.md)
+## Research directions
+
+- [Menu-size complexity of revenue approximation](menu-size-complexity-of-revenue-approximation.md)
+- [Optimal prophet-secretary ratio](optimal-prophet-secretary-ratio.md)

@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.NumberTheory.PythagoreanTripleGroups
+public import MathlibExt.NumberTheory.IntPythagoreanTriples
 
 namespace MetaMathlibExt
 
@@ -67,33 +67,6 @@ public theorem_wanted ratPythagoreanTriples_commGroup :
       (∀ u ∈ ratPythagoreanTriples, ∃ v ∈ ratPythagoreanTriples,
         pythagoreanTripleMul u v = (1, 0, 1)) ∧
       ratPythagoreanTriples.Infinite
-
-/-- **Integral Pythagorean triples form a commutative monoid.** Let $M$ be the set of integer
-triples $(a, b, c)$ with $a^2 + b^2 = c^2$, let $N$ be the set of triples in $M$ whose three
-entries are nonnegative, and let $\star$ be Amato's product of triples. Then the product of two
-triples in $M$ lies in $M$, $\star$ is associative and commutative on $M$, and
-$u \star (1, 0, 1) = u$ for every $u \in M$. Moreover $(1, 0, 1) \in N$, the product of two
-triples in $N$ lies in $N$, and $N$ is infinite. So $M$ is an infinite commutative monoid with
-identity $(1, 0, 1)$, and $N$ is an infinite submonoid.
-
-The source prints its operation (12) as $(a, b, c) \star (e, f, g) = (ae, bf + ce, \dots)$ with
-$d_2 = f - e$; it is read as
-$(a, b, c) \star (d, e, f) = (ad,\ bf + ce,\ bf + ce + (c - b)(f - e))$, the integral case of (4),
-as the source states.
-
-Source: Roberto Amato, *Groups and Monoid in the Set of Pythagorean Triples*, INTEGERS 24 (2024),
-Article A5, Corollary 1 (`integers-2024-A5-cor-1`). -/
-public theorem_wanted intPythagoreanTriples_commMonoid :
-    let M : Set (ℤ × ℤ × ℤ) := {v | v.1 ^ 2 + v.2.1 ^ 2 = v.2.2 ^ 2}
-    let N : Set (ℤ × ℤ × ℤ) := {v | v ∈ M ∧ 0 ≤ v.1 ∧ 0 ≤ v.2.1 ∧ 0 ≤ v.2.2}
-    (1, 0, 1) ∈ N ∧
-      (∀ u ∈ M, ∀ v ∈ M, pythagoreanTripleMul u v ∈ M) ∧
-      (∀ u ∈ N, ∀ v ∈ N, pythagoreanTripleMul u v ∈ N) ∧
-      (∀ u ∈ M, ∀ v ∈ M, ∀ w ∈ M, pythagoreanTripleMul (pythagoreanTripleMul u v) w =
-        pythagoreanTripleMul u (pythagoreanTripleMul v w)) ∧
-      (∀ u ∈ M, ∀ v ∈ M, pythagoreanTripleMul u v = pythagoreanTripleMul v u) ∧
-      (∀ u ∈ M, pythagoreanTripleMul u (1, 0, 1) = u) ∧
-      N.Infinite
 
 /-- **Amato's group law on rational points of the unit circle.** Let
 $P = \{(x, y) \in \mathbb{Q}^2 : x \neq 0,\ x^2 + y^2 = 1\}$ and let $\odot$ be Amato's product
