@@ -9,19 +9,17 @@ Integrability is automatic since $E$ is compact. Proof sketch: for $F \in \mathc
 ## Depends on
 
 - [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
+- [Conditional expectation given a σ-field](../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
 
 ## Proof depends on
 
 - [Global existence and uniqueness for globally Lipschitz ODEs](../../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
+- [Duhamel's formula (variation of constants)](../../../../Analysis/ordinary-differential-equations/duhamel-variation-of-constants.md)
+- [Uniqueness of the conditional expectation](../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/ae-eq-cond-exp-of-forall-set-integral-eq.md)
 
 ## Expansion
 
 A full proof page must still establish the linear equation for $m$ from the martingale property, its unique solvability, and the case of a random initial state.
-
-It also uses:
-
-- The matrix exponential of a finite matrix.
-- conditional expectation
 
 ## Sources
 

@@ -8,6 +8,12 @@ Let $K \ge 2$ and let $(T_t)_{t \ge 0}$ be the [neutral $K$-allele Feller semigr
 ## Depends on
 
 - [Neutral K-allele semigroup on the simplex via multinomial duality](../wright-fisher-semigroup-and-moment-duality/neutral-k-allele-semigroup-on-the-simplex-via-mu.md)
+- [Path-space measure of a Markov semigroup](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/path-measure.md)
+
+## Proof depends on
+
+- [Positive operators on $C(E)$ are given by Markov kernels](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/exists-markov-kernel-of-positive-operato.md)
+- [Kolmogorov extension theorem](../../../../Probability/foundations/kolmogorov-extension-theorem/kolmogorov-extension.md)
 
 ## Expansion
 
@@ -16,11 +22,6 @@ A full proof page must still establish:
 - the representation, measurability and Chapman–Kolmogorov statements from the Feller property;
 - the consistency of the finite-dimensional laws and the extension;
 - projection consistency: for each $i$, the coordinate $X^i$ under $P_x$ is the two-allele Wright–Fisher process started at $x_i$: neutral when there is no mutation, and with the induced two-type mutation rates under parent-independent mutation.
-
-It also uses:
-
-- Continuous-time Markov processes defined by a family of transition kernels.
-- measure-theoretic prerequisites: the Riesz representation theorem and Kolmogorov's extension theorem
 
 ## Sources
 

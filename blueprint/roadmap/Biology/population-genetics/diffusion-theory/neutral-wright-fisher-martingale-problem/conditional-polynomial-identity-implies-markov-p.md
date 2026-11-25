@@ -6,10 +6,15 @@ $$\mathbb E[p(X_t) \mid \mathcal F_s] = (T_{t-s} p)(X_s) \quad \text{almost sure
 
 Then the same identity holds for every $f \in C(E)$, by density and the contraction property; $X$ is a Markov process with respect to $(\mathcal F_t)$ with transition operators $(T_t)$; and the finite-dimensional laws of $X$ are determined by the law of $X_0$ and $(T_t)$, by iterated conditioning. Hence two processes satisfying the identity with the same initial law have the same law on path space. The argument uses neither the general uniqueness theorem for martingale problems by duality nor a disintegration. It applies with the semigroup obtained from $T_t = e^{tA}$ on polynomials, given by the [conditional polynomial-semigroup identity](conditional-polynomial-semigroup-identity-for-ma.md), and with random initial laws.
 
+## Depends on
+
+- [Conditional expectation given a σ-field](../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
+
 ## Proof depends on
 
 - [Conditional polynomial-semigroup identity for martingale-problem solutions with triangular generators](conditional-polynomial-semigroup-identity-for-ma.md)
 - [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
+- [Tower property of conditional expectation](../../../../Probability/foundations/conditional-expectation/tower-property/tower-property.md)
 
 ## Expansion
 
@@ -18,10 +23,6 @@ A full proof page must still establish:
 - the extension from polynomials to $C(E)$;
 - the finite-dimensional identity, first for two times and then by induction;
 - the uniqueness statement, including random initial laws.
-
-It also uses:
-
-- conditional expectation, and density of polynomials in $C(E)$
 
 ## Sources
 

@@ -29,6 +29,7 @@ needed: the variance limit uses only the strong law for irreducible chains.
 
 - [Strong law for finite irreducible Markov chains](../markov-chains/convergence-theorem-for-finite-markov-chains/strong-law-for-additive-functionals-of-finite-ir.md)
 - [Stationary distribution is unique](../markov-chains/convergence-theorem-for-finite-markov-chains/stationary-unique.md)
+- [Martingale central limit theorem for bounded increments](martingale-central-limit-theorem.md)
 
 ## Expansion
 
@@ -44,11 +45,6 @@ A proof page must establish:
 - The martingale central limit theorem for bounded increments, and the
   negligibility of the bounded endpoint term $g(X_0)-g(X_n)$.
 - The degenerate case $\sigma^2=0$ separately.
-
-It also uses:
-
-- The martingale central limit theorem for martingales with bounded
-  increments and convergent conditional variances.
 
 ## Sources
 

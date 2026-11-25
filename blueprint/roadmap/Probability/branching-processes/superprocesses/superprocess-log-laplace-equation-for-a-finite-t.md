@@ -21,6 +21,7 @@ on the bounded test functions $F(x)=e^{-\langle f,x\rangle}$, $f\in(0,\infty)^E$
 
 - [Martingale-problem limits on a locally compact state space](../../markov-chains/martingale-problems/martingale-problem-limits-on-a-locally-compact-s.md)
 - [Feller branching diffusion as the scaling limit of critical binary branching](../linear-birth-death-process/feller-branching-diffusion-as-the-scaling-limit.md)
+- [Non-explosion criteria and Kolmogorov equations on a countable state space](../../markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/non-explosion-criteria-and-kolmogorov-equations.md)
 
 ## Expansion
 
@@ -30,10 +31,6 @@ A full proof page must establish:
 - Global existence, uniqueness and nonnegativity of $u$ (a priori bounds $0\le u_t$ and $\max_iu_t(i)\le\max_if(i)$ reduce the quadratic equation to a globally Lipschitz one).
 - The duality computation $\frac{d}{ds}\mathbb E\bigl[e^{-\langle u_{t-s},X_s\rangle}\bigr]=0$ from the martingale problem, giving the Laplace-functional identity.
 - Consistency with the total mass: for $A$ with zero row sums and $f\equiv\lambda$, $u_t\equiv\lambda/(1+\gamma\lambda t/2)$, the log-Laplace function of [Feller's branching diffusion](../linear-birth-death-process/feller-branching-diffusion-as-the-scaling-limit.md).
-
-It also uses:
-
-- Galton–Watson process realization of the particle system
 
 ## Sources
 

@@ -21,10 +21,6 @@ For two loci and a sample of two this is [the two-locus coalescent](two-locus-ra
 3. For $\rho = 0$ the generator lumps to [the rate matrix of Kingman's partition-valued coalescent](../partition-valued-kingman-coalescent/partition-rate.md).
 4. For $n = 2$ and $\rho = 0$, under the reduced convention the number of lineages jumps from $2$ to $0$ at the coalescence: there is no state with one lineage.
 
-It also uses:
-
-- Finite graphs and finite directed acyclic graphs.
-
 ## Sources
 
 - R. R. Hudson, Properties of a neutral allele model with intragenic recombination, *Theor. Popul. Biol.* 23 (1983), 183–201, <https://pubmed.ncbi.nlm.nih.gov/6612631/> (intragenic recombination model).

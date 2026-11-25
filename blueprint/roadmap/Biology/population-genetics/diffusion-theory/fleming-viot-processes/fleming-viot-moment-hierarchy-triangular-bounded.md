@@ -17,6 +17,7 @@ No commutation of the semigroup $e^{tB^{(n)}}$ with the diagonal maps $\Phi_{ij}
 ## Proof depends on
 
 - [Gronwall inequality (integral form)](../../../../Analysis/ordinary-differential-equations/gronwall-inequality/gronwall-inequality-integral-form.md)
+- [Duhamel's formula (variation of constants)](../../../../Analysis/ordinary-differential-equations/duhamel-variation-of-constants.md)
 
 ## Expansion
 
@@ -26,10 +27,6 @@ A full proof page must still establish:
 - the case $n = 1$ and the non-commutation example.
 
 Unbounded Feller mutation is a separate target, since it needs an approximation of the diagonal maps on the graph of the generator.
-
-It also uses:
-
-- exponentials of bounded operators on a Banach space
 
 ## Sources
 

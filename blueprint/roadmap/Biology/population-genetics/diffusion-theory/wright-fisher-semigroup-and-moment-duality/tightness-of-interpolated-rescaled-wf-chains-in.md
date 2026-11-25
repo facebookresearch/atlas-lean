@@ -10,16 +10,13 @@ for grid times $s, t \in M^{-1}\mathbb{Z} \cap [0, T]$, and $\mathbb{E}\lvert Y^
 
 - [One generation of the neutral Wright–Fisher chain](wf-step.md)
 - [Neutral Wright–Fisher transition matrix](../../wright-fisher-markov-chain/wright-fisher.md)
+- [Kolmogorov–Chentsov tightness criterion in $C([0,T])$](../../../../Probability/convergence-of-measures/kolmogorov-chentsov-tightness-criterion.md)
 
 ## Expansion
 
 1. The grid bound, from the fourth central moments of the binomial sampling in [one generation](wf-step.md). The $1/M$ term comes from the fourth central binomial moment $\mathbb{E}\bigl[(k/M - p)^4\bigr] = p(1 - p)\bigl(1 + 3(M - 2)p(1 - p)\bigr)/M^3 \le C/M^2$, summed over the generations.
 2. The bound for all $s, t$: for $\lvert t - s \rvert \ge 1/M$, $\lvert t - s \rvert / M \le \lvert t - s \rvert^2$; within one generation the interpolation is linear and the one-step fourth moment is of order $M^{-2}$.
 3. Tightness from the modulus criterion.
-
-It also uses:
-
-- Prokhorov's theorem on a Polish space, and the Kolmogorov–Chentsov criterion in $C([0, T])$.
 
 ## Sources
 

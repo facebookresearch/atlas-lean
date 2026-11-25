@@ -16,6 +16,7 @@ Then every subsequential limit in law $X$ of $(X^N)$ has continuous paths and so
 
 - [A countable bounded-pointwise core of the graph suffices for a martingale problem](countable-bounded-pointwise-graph-core-for-marti.md)
 - [Martingale problems](martingale-problems-generic-definition.md)
+- [C-tightness: tight laws with vanishing maximal jumps have continuous limit points](../../convergence-of-measures/skorokhod-space/c-tightness-criterion.md)
 
 ## Proof depends on
 
@@ -33,10 +34,6 @@ the error from the grid being at most $2\sup|A_Nf|/M_N$.
 - Replacing $A_Nf$ by $Af$ by hypothesis 1, and passing to the limit along the subsequence: continuity of the limit paths makes the evaluation and time-integral functionals continuous at the limit.
 - A monotone-class argument from the cylinder functions $H$ to the natural filtration, and the extension from $\mathcal G$ to all of $A$ by the countable core lemma.
 - Application to Wright–Fisher chains with selection, which constructs a solution of the selection Wright–Fisher martingale problem (compare the [existence of the selection-mutation Wright–Fisher diffusion](../../../Biology/population-genetics/diffusion-theory/wright-fisher-diffusion-with-mutation/existence-of-the-selection-mutation-wf-diffusion.md)).
-
-It also uses:
-
-- Tightness criteria in $D$ and C-tightness
 
 ## Sources
 

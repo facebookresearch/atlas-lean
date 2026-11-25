@@ -14,16 +14,17 @@ For $n = 1$ the duality reads $\mathbb E \langle f, X_t \rangle = \langle e^{tB}
 - [Fleming-Viot martingale-problem solutions satisfy the moment hierarchy (bounded mutation)](fleming-viot-martingale-problem-solutions-satisf.md)
 - [From one-time marginal uniqueness to fdd uniqueness for martingale problems](../../../../Probability/markov-chains/martingale-problems/from-one-time-marginal-uniqueness-to-fdd-uniquen.md)
 
+## Proof depends on
+
+- [Stone–Weierstrass theorem for star subalgebras](../../../../Topology/function-spaces/stone-weierstrass-star-subalgebra.md)
+- [Prokhorov's theorem on a Polish space](../../../../Probability/convergence-of-measures/prokhorov-theorem-on-a-polish-space.md)
+
 ## Expansion
 
 A full proof page must still establish:
 
 - that the polynomials separate the points of $\mathcal M_1(E)$ and the density argument on the compact space $\mathcal M_1(E)$ with the weak topology;
 - the cases $n = 1$ and finite $E$.
-
-It also uses:
-
-- the Stone–Weierstrass theorem and compactness of $\mathcal M_1(E)$ in the weak topology
 
 ## Sources
 

@@ -10,6 +10,7 @@ Let $E$ be a compact metric space, such as $[0, 1]$ or a simplex, and let $Q_x$,
 ## Proof depends on
 
 - [Law of a continuous modification on the space of continuous paths, measurable in the initial point](law-of-a-continuous-modification-on-c-0-infinity.md)
+- [Extension of consistent measures on the canonical filtration of continuous paths](../../../../Probability/foundations/consistent-measures-on-continuous-path-space.md)
 
 ## Expansion
 
@@ -18,10 +19,6 @@ A full proof page must still establish:
 - consistency of the family $Z_t \cdot Q_x$ from the martingale property of $Z$;
 - the extension to the canonical $\sigma$-field of $C([0, \infty), E)$ and its uniqueness;
 - measurability in $x$, and the constant case.
-
-It also uses:
-
-- measure-theoretic prerequisites: extension of consistent families of measures on a filtration
 
 ## Sources
 

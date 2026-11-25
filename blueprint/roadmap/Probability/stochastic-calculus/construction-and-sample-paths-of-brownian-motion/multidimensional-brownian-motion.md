@@ -13,6 +13,8 @@ and conversely a continuous centred Gaussian process $X$ with $X_0=0$ and $\oper
 ## Depends on
 
 - [Existence of Brownian motion](exists-is-brownian-real.md)
+- [Positive elements are the squares of positive elements](../../../Analysis/operator-algebras/powers-and-square-roots-of-positive-operators/nonneg-iff-exists-nonneg-and-eq-mul-self.md)
+- [Positive square roots are unique](../../../Analysis/operator-algebras/powers-and-square-roots-of-positive-operators/mul-self-eq-mul-self-iff.md)
 
 ## Expansion
 
@@ -22,10 +24,6 @@ A full proof page must establish the following.
 - Item 1 from coordinatewise independence and the one-dimensional increments.
 - Item 2: linear images of Gaussian vectors are Gaussian, $\operatorname{Cov}(AB_s,AB_t)=\min(s,t)AA^{\mathsf T}$, and a centred Gaussian law is determined by its covariance; continuity of paths transfers through the linear map.
 - Item 3, including the case of singular $C$, where $B^C$ lives in the range of $C$.
-
-It also uses:
-
-- Linear algebra of positive semidefinite matrices and quadratic forms (square roots and factorizations $AA^{\mathsf T}=C$)
 
 ## Sources
 

@@ -8,13 +8,17 @@ Let $X$ be a real Banach space and $(S(t))_{t\ge0}$ a strongly continuous semigr
 
 The resolvent bound is equivalent to dissipativity of $A$: $\|(\lambda-A)x\|\ge\lambda\|x\|$ for $x\in D(A)$ and $\lambda>0$. In finite dimensions, with $S(t)=e^{tA}$ and $\|e^{tA}\|\le1$, the resolvent formula is the Laplace transform of $t\mapsto e^{tA}$.
 
+## Depends on
+
+- [Strongly continuous contraction semigroups, generators and cores](../../../Analysis/operator-theory/strongly-continuous-contraction-semigroups.md)
+
+## Proof depends on
+
+- [Integral identities for a strongly continuous semigroup and its generator](../../../Analysis/operator-theory/integral-identities-for-semigroup-generators.md)
+
 ## Expansion
 
 A proof page must establish: density of $D(A)$ through the averages $t^{-1}\int_0^tS(s)x\,ds\in D(A)$; closedness from $S(t)x-x=\int_0^tS(s)Ax\,ds$ for $x\in D(A)$; that the Laplace integral $R_\lambda x$ lies in $D(A)$ with $(\lambda-A)R_\lambda x=x$, and $R_\lambda(\lambda-A)x=x$ for $x\in D(A)$; the bound $\|R_\lambda\|\le\int_0^\infty e^{-\lambda t}\,dt=1/\lambda$; and the finite-dimensional case.
-
-It also uses:
-
-- Deterministic operator semigroups (strong continuity, generators, vector-valued Riemann integrals)
 
 ## Sources
 

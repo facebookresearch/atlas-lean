@@ -10,6 +10,12 @@ and $\int y\, K^\theta_t(x, dy) = x$ when $\theta = 0$.
 ## Depends on
 
 - [Mutation WF Feller semigroup via polynomial duality and chain limits](../wright-fisher-semigroup-and-moment-duality/mutation-wf-feller-semigroup-via-polynomial-dual.md)
+- [Path-space measure of a Markov semigroup](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/path-measure.md)
+
+## Proof depends on
+
+- [Positive operators on $C(E)$ are given by Markov kernels](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/exists-markov-kernel-of-positive-operato.md)
+- [Kolmogorov extension theorem](../../../../Probability/foundations/kolmogorov-extension-theorem/kolmogorov-extension.md)
 
 ## Expansion
 
@@ -18,11 +24,6 @@ A full proof page must still establish:
 - the representation, measurability and Chapman–Kolmogorov statements from the Feller property;
 - the mean formula, from the generator $\tfrac12 y(1-y) f'' + \tfrac12(\theta_1(1-y) - \theta_2 y) f'$ applied to $f(y) = y$;
 - the consistency of the finite-dimensional laws and the extension.
-
-It also uses:
-
-- Continuous-time Markov processes defined by a family of transition kernels.
-- measure-theoretic prerequisites: the Riesz representation theorem and Kolmogorov's extension theorem
 
 ## Sources
 

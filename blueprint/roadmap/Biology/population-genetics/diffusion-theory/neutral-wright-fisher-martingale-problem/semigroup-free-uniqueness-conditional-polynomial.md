@@ -10,18 +10,16 @@ and $q$ is again a polynomial, of degree at most $\deg p_{k-1} + \deg p_k$. By b
 
 - [Conditional polynomial-semigroup identity for martingale-problem solutions with triangular generators](conditional-polynomial-semigroup-identity-for-ma.md)
 - [Moment determinacy on compact subsets of Euclidean space](moment-determinacy-on-compact-subsets-of-r-d-sim.md)
+- [Conditional expectation given a σ-field](../../../../Probability/foundations/conditional-expectation/conditional-expectation-given-a-sigma-field/conditional-expectation.md)
 
 ## Proof depends on
 
 - [Martingale problems (generic definition)](../../../../Probability/markov-chains/martingale-problems/martingale-problems-generic-definition.md)
+- [Tower property of conditional expectation](../../../../Probability/foundations/conditional-expectation/tower-property/tower-property.md)
 
 ## Expansion
 
 A full proof page must still establish the recursion with its degree bookkeeping and the passage from joint polynomial moments to finite-dimensional laws.
-
-It also uses:
-
-- conditional expectation
 
 ## Sources
 

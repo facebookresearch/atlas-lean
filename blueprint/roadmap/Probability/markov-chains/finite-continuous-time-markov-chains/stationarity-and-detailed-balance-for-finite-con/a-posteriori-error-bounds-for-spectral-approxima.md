@@ -21,6 +21,10 @@ Exact orthonormal eigenpairs give $R=0$ and $E=0$, and both bounds vanish.
 
 - [Detailed balance](is-detailed-balance.md)
 
+## Proof depends on
+
+- [Spectral formula for a reversible rate matrix](symmetrized-spectral-formula-for-p-t-exp-tq-of-a.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -31,11 +35,6 @@ A full proof page must establish:
 - (C) from the singular values of $V$; (D) from $x^{\top}V\Lambda V^{\top}x\le\lambda_+\lVert V^{\top}x\rVert^2$; (E) from $|M_{ij}|\le\lVert M\rVert_2$.
 - The $1\times1$ probe $S=0$, $V=2$, $\Lambda=1$, $t=1$: $R=-2$, $E=3$, $\kappa=1$, $\lVert V^{-1}\rVert_2=\tfrac12$; (A) true error $e-1\approx1.718$ against the bound $e\approx2.718$; (B) true error $4e-1\approx9.873$ against $4e\approx10.873$; (B) at $t=0$ true error $3$ equals the bound $3$.
 - A numerical check on a perturbed four-state Jukes–Cantor rate matrix, comparing both bounds with computed spectral-norm errors at several times.
-
-It also uses:
-
-- Symmetrized spectral formula for $P(t)=e^{tQ}$ of a reversible rate matrix
-- Floating-point error bounds for log-likelihood accumulation
 
 ## Sources
 

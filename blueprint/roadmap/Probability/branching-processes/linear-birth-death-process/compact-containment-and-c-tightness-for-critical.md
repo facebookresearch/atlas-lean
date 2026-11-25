@@ -27,15 +27,12 @@ Consequently the laws of $(M^N)_{N\ge1}$ satisfy compact containment in $[0,\inf
 ## Proof depends on
 
 - [Non-explosion criteria and Kolmogorov equations (countable state)](../../markov-chains/finite-continuous-time-markov-chains/finite-continuous-time-markov-chains-as-path-pro/non-explosion-criteria-and-kolmogorov-equations.md)
+- [Optional stopping for right-continuous martingales](../../martingales/stopping-times-and-martingale-problems/optional-stopping-right-continuous.md)
+- [Doob's $L^2$ maximal inequality for right-continuous martingales](../../martingales/stopping-times-and-martingale-problems/doob-l2-maximal-inequality-right-continuous.md)
 
 ## Expansion
 
 A full proof computes the generator of $M^N$: jumps $\pm1/N$, each at total rate $\gamma N^2M/2$, so the drift vanishes and the jump variance rate is $\gamma M$. It should establish the exact second moment from $\mathbb E(M^N_t)^2=\mathbb E(M^N_0)^2+\gamma\int_0^t\mathbb E M^N_s\,ds$, the maximal bound from Doob's $L^2$ inequality, and the increment bound from optional stopping for the martingale $(M^N)^2-\langle M^N\rangle$. Optional stopping and Doob's $L^2$ maximal inequality are needed for right-continuous martingales, not only continuous ones. The containment bound alone is not C-tightness: the increment estimate and the vanishing jump size are separate steps.
-
-It also uses:
-
-- Optional stopping for right-continuous martingales
-- Doob's $L^2$ maximal inequality for right-continuous martingales
 
 ## Sources
 

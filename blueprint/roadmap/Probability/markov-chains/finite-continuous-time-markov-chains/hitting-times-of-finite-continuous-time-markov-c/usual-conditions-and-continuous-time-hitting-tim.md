@@ -24,10 +24,6 @@ A full proof page must establish:
 - The counterexample with $X_t=t\xi$.
 - The absorption-time corollary from the closed-set case.
 
-It also uses:
-
-- Topology of metric spaces
-
 ## Sources
 
 - I. Karatzas and S. E. Shreve, *Brownian Motion and Stochastic Calculus*, 2nd ed., Graduate Texts in Mathematics 113, Springer (1991), <https://link.springer.com/book/10.1007/978-1-4612-0949-2>, Sec. 1.2 (stopping times and optional times).

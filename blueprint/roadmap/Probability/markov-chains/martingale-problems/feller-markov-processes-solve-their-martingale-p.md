@@ -13,6 +13,11 @@ is an $(\mathcal F_t)$-martingale, so $X$ solves the $(A,\mu)$ [martingale probl
 ## Depends on
 
 - [Martingale problems](martingale-problems-generic-definition.md)
+- [Strongly continuous contraction semigroups, generators and cores](../../../Analysis/operator-theory/strongly-continuous-contraction-semigroups.md)
+
+## Proof depends on
+
+- [Integral identities for a strongly continuous semigroup and its generator](../../../Analysis/operator-theory/integral-identities-for-semigroup-generators.md)
 
 ## Expansion
 
@@ -20,10 +25,6 @@ A full proof page must establish:
 
 - The semigroup identity $T_sf-f=\int_0^sT_uAf\,du$ in $C(E)$ for $f\in\mathcal D(A)$.
 - For $t,s\ge0$: $\mathbb E[f(X_{t+s})-f(X_t)\mid\mathcal F_t]=T_sf(X_t)-f(X_t)=\int_0^sT_uAf(X_t)\,du=\mathbb E\bigl[\int_t^{t+s}Af(X_u)\,du\bigm|\mathcal F_t\bigr]$, the last step by Fubini and the Markov property, using joint measurability of $(u,\omega)\mapsto Af(X_u(\omega))$ from càdlàg paths.
-
-It also uses:
-
-- Strongly continuous operator semigroups and their generators
 
 ## Sources
 

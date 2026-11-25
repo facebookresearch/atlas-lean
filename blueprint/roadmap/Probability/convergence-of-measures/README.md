@@ -18,3 +18,5 @@ Weak convergence and convergence in probability, tightness and Prokhorov's theor
 - [Convergence in distribution and bounded continuous functions](convergence-in-distribution-and-bounded-continuous-functions/README.md)
 
 - [Skorokhod space](skorokhod-space/README.md)
+- [Prokhorov's theorem on a Polish space](prokhorov-theorem-on-a-polish-space.md)
+- [Kolmogorov–Chentsov tightness criterion in $C([0,T])$](kolmogorov-chentsov-tightness-criterion.md)

@@ -9,16 +9,14 @@ The induced law of the gene tree is a probability kernel in the network data: th
 ## Depends on
 
 - [The multispecies coalescent](gene-tree-prob.md)
+- [Phylogenetic network (routing skeleton)](../../population-structure/admixture-graphs/phylo-network.md)
+- [Routing kernel of a phylogenetic network](../../population-structure/admixture-graphs/route-prob-2.md)
 
 ## Expansion
 
 1. Normalization of the kernel, by induction over the network from the leaves.
 2. The reduction for $\gamma \in \{0, 1\}$.
 3. A check: one reticulation and two lineages, where the explicit mixture over the four routings sums to $1$.
-
-It also uses:
-
-- A data type for valid time-consistent phylogenetic networks, with the routing kernel at reticulations. No page states it yet.
 
 ## Sources
 

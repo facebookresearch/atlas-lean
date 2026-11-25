@@ -11,6 +11,7 @@ Let $\mathcal S$ be a set of nontrivial splits of $X$ that are pairwise compatib
 ## Proof depends on
 
 - [Splits-equivalence theorem](../splits-compatibility-ultrametrics-and-upgma/splits-equivalence.md)
+- [Splits of two tree edges are compatible](side-compat.md)
 
 ## Expansion
 
@@ -22,10 +23,6 @@ A proof page must establish:
 - a five-leaf check of the induction step, and the rejection of an incompatible pair such as $\{1,2\}\mid\{3,4,5\}$ and $\{1,3\}\mid\{2,4,5\}$.
 
 The [splits-equivalence theorem](../splits-compatibility-ultrametrics-and-upgma/splits-equivalence.md) states the existence of an unrooted binary tree whose splits contain $\mathcal S$; the result here is the exact, unique realization by a not necessarily binary $X$-tree.
-
-It also uses:
-
-- Finite trees and graph isomorphism
 
 ## Sources
 

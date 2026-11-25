@@ -33,10 +33,6 @@ A proof page must establish:
 - the special case $k=0$, where the constraint set is $\{0\}$ and $D_L$ is the Wald statistic $L\operatorname{vec}(\widehat F_L)^{\mathsf T}\widehat V_L^{-1}\operatorname{vec}(\widehat F_L)$ with $nr$ degrees of freedom (here $F=0$);
 - consistency: if $\operatorname{rank}F>k$ under the same hypotheses, then $D_L\to\infty$ in probability, since the minimum distance converges to a positive constant.
 
-It also uses:
-
-- Statistical estimation and likelihood primitives
-
 ## Sources
 
 - E. Harney, N. Patterson, D. Reich and J. Wakeley, *Assessing the performance of qpAdm: a statistical tool for studying population admixture*, Genetics 217(4) (2021), iyaa045, <https://pmc.ncbi.nlm.nih.gov/articles/PMC8049561/> (qpAdm rank testing and P-value calibration; background).

@@ -33,10 +33,6 @@ A full proof page must establish:
 - For $z=1$, the only allowed transitions from $\{1,2\}$ lead to a state where one copy carries nothing.
 - Absorption probabilities through the embedded jump chain and its [absorption equations](../../../Probability/markov-chains/finite-markov-chains/absorption-probabilities-and-mean-absorption-tim.md), or through the continuous-time hitting-time equations.
 
-It also uses:
-
-- Neutral substitution: expected origination flux of eventual fixers equals the mutation rate
-
 ## Sources
 
 - M. Lynch and A. Force, *The probability of duplicate gene preservation by subfunctionalization*, Genetics (2000), <https://pubmed.ncbi.nlm.nih.gov/10629003/> (the subfunctionalization model; background).

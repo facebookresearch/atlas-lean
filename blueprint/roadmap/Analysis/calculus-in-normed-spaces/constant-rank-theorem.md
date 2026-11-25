@@ -15,6 +15,10 @@ submanifold of dimension $d-r$. Rank $r$ at the single point $x$ is not
 enough: the rank must be constant on a neighbourhood. The cases $r=0$ ($f$
 locally constant) and $r=d$ (an immersion) are included.
 
+## Proof depends on
+
+- [Inverse function theorem](inverse-function-theorem.md)
+
 ## Expansion
 
 A proof page must establish:
@@ -28,11 +32,6 @@ A proof page must establish:
   rank on the neighbourhood.
 - The construction of $\psi$, the fibre-dimension corollary, and the boundary
   cases $r=0$ and $r=\min(d,m)$.
-
-It also uses:
-
-- The inverse function theorem for $C^k$ maps between open subsets of
-  $\mathbb R^d$.
 
 ## Sources
 

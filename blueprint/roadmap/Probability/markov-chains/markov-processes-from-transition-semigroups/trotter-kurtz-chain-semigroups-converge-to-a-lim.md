@@ -10,13 +10,13 @@ $$\sup_{0\le t\le t_0}\bigl\|T_N^{\lfloor a_Nt\rfloor}f-T(t)f\bigr\|_\infty\long
 
 The neutral Wright–Fisher chain is an instance: [$\lfloor tM\rfloor$ generations of the chain with $M$ gene copies converge to the diffusion semigroup](../../../Biology/population-genetics/diffusion-theory/wright-fisher-semigroup-and-moment-duality/tendsto-wf-step-pow-floor.md).
 
+## Proof depends on
+
+- [Trotter–Kato approximation theorem](../../../Analysis/operator-theory/trotter-kato-approximation-theorem.md)
+
 ## Expansion
 
 A proof page must establish: the comparison of $T_N^{\lfloor a_Nt\rfloor}$ with the semigroup $e^{ta_N(T_N-I)}$, whose difference applied to $f\in D$ is bounded by a multiple of $a_N^{-1/2}\|a_N(T_N-I)f\|_\infty$ (a Poisson-versus-deterministic count of steps); convergence $e^{ta_N(T_N-I)}f\to T(t)f$, locally uniformly in $t$, from generator convergence on a core (Trotter–Kato); extension from $D$ to $C(E)$ by density of $D$ and the uniform contraction bounds; and a test with random-walk chains on $\frac1N\mathbb Z$ folded onto a compact interval by reflection, converging to the reflected heat semigroup.
-
-It also uses:
-
-- Deterministic operator semigroups (cores, Trotter–Kato approximation)
 
 ## Sources
 

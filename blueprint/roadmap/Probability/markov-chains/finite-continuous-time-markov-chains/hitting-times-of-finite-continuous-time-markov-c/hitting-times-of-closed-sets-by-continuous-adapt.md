@@ -14,6 +14,10 @@ a countable infimum of $\mathcal F_t$-measurable random variables, where $x\maps
 
 - [Filtrations and stopping times](../../../martingales/stopping-times-and-martingale-problems/filtrations-and-stopping-times.md)
 
+## Proof depends on
+
+- [The distance to a set is 1-Lipschitz and vanishes exactly on its closure](../../../../Topology/metric-spaces/distance-to-a-set.md)
+
 ## Expansion
 
 A full proof page must establish:
@@ -21,10 +25,6 @@ A full proof page must establish:
 - The displayed identity: if $\tau_C\le t$ the infimum of $s\mapsto d(X_s,C)$ over $[0,t]$ is attained and equals $0$, and by continuity it equals the infimum over the countable dense set; conversely a vanishing infimum over $[0,t]$ is attained at some $s\le t$ with $X_s\in C$.
 - The special cases listed above.
 - The boundary of the claim: hitting times of open sets are not stopping times for every filtration; they are under right-continuity, as in [usual conditions and continuous-time hitting times](usual-conditions-and-continuous-time-hitting-tim.md).
-
-It also uses:
-
-- Topology of metric spaces (continuity of the distance to a set)
 
 ## Sources
 

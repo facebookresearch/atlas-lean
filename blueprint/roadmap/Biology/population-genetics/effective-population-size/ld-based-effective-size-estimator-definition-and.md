@@ -47,10 +47,6 @@ A full proof page must establish:
 - The two-point design $c=(0.01,0.5)$: $m_K(100)=\tfrac12(1/5+1/201)\approx0.10249$, while $(1/0.10249-1)/0.04\approx218.9\ne100$, so no single-$c$ inversion formula applies.
 - With population $r^2=0$ and positive finite-sample $\mathbb E\,\hat r^2$, the idealized map returns a finite $\hat N$ (downward bias), so a sampling term in the calibration is necessary.
 
-It also uses:
-
-- Multinomial law of genotype and allele counts and the multi-allele maximum-likelihood estimator
-
 ## Sources
 
 - W. G. Hill, *Estimation of effective population size from data on linkage disequilibrium*, Genetical Research (1981), <https://core-varnish-new.prod.aop.cambridge.org/core/services/aop-cambridge-core/content/view/AA65A3B2E03EB5590444B886935D325E/S0016672300020553a.pdf/estimation_of_effective_population_size_from_data_on_linkage_disequilibrium1.pdf>, Summary and Sec. 2(i)–(ii): the variance of $r$ approximated as a ratio of moments with a population part in $(N,c)$ and a sampling part in $n$; $N$ estimated by replacing $\mathbb E(r^2)$ with its observed value and inverting.

@@ -9,16 +9,13 @@ the time-ordered exponential of $Y$ on $[0, t]$: the value at time $t$ of the so
 ## Proof depends on
 
 - [Global existence and uniqueness for globally Lipschitz ODEs](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md)
+- [The operator norm is submultiplicative](../../../Analysis/operator-theory/bounded-operators/operator-norm-submultiplicative.md)
 
 ## Expansion
 
 1. Existence and uniqueness of $\Phi$, from [global existence for globally Lipschitz equations](../../../Analysis/ordinary-differential-equations/maximal-solutions-and-global-existence/ode-global-exists-of-global-lipschitz.md).
 2. The convergence, by comparing one step of the product with $\Phi(s + 1/M)\Phi(s)^{-1}$ and summing the errors.
 3. Checks: constant $Y$ gives $e^{tY}$, and $Y$ with two constant pieces gives the product of two exponentials.
-
-It also uses:
-
-- Linear algebra of finite matrices and the operator norm.
 
 ## Sources
 

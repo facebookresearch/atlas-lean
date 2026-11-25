@@ -24,11 +24,6 @@ The interior hypothesis cannot be dropped: if $p_0\in\{0,1\}$, then $K_M=Mp_0$ a
 
 A full proof compares the Beta density with the normal density after centring at $K_M/M$ and scaling by $\sqrt M$: Stirling's formula for the normalizing constant, a second-order expansion of $(a+K-1)\log p+(b+M-K-1)\log(1-p)$ around $K/M$, and tail bounds, together with $K_M/M\to p_0$ in probability, which turns the variance $\frac{K_M}{M}(1-\frac{K_M}{M})/M$ into $p_0(1-p_0)/M$ at a cost that vanishes in total variation. The variance $p_0(1-p_0)/M$ is the inverse Fisher information of $M$ Bernoulli draws.
 
-It also uses:
-
-- Posterior consistency in finite models
-- Fisher information adds over iid draws; allele-frequency information and efficiency
-
 ## Sources
 
 - G. Casella and R. L. Berger, *Statistical Inference*, 2nd ed., 2002, Bayesian asymptotics (topic citation).

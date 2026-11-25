@@ -19,3 +19,4 @@ Probability measures and laws of random variables, expected value and the change
 
 - [Exchangeable sequences](exchangeable-sequences/README.md)
 - [Exchangeable random partitions](exchangeable-random-partitions/README.md)
+- [Extension of consistent measures on the canonical filtration of continuous paths](consistent-measures-on-continuous-path-space.md)

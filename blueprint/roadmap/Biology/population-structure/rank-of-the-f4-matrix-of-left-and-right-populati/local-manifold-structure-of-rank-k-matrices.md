@@ -7,6 +7,11 @@ Let $n,r\ge1$ and $0\le k\le\min(n,r)$, and let $F$ be a real $n\times r$ matrix
 
 For example, for $n=r=2$ and $k=1$, $M_1$ near a rank-one matrix is the hypersurface $\{\det G=0\}$, of dimension $3$ and codimension $1$.
 
+## Proof depends on
+
+- [Rank additivity for the Schur complement](../../../LinearAlgebra/matrix-algebra/rank-of-block-matrices-and-the-fixed-rank-locus/rank-from-blocks-of-is-unit-det.md)
+- [Local manifold structure of the rank-k matrix locus](../../../LinearAlgebra/matrix-algebra/rank-of-block-matrices-and-the-fixed-rank-locus/exists-local-graph.md)
+
 ## Expansion
 
 A proof page must establish:
@@ -15,11 +20,6 @@ A proof page must establish:
 - openness of the set where a chosen $k\times k$ minor is invertible, which gives the neighbourhood $U$ on which rank at most $k$ forces rank exactly $k$;
 - smoothness of the graph map $(A,B,C)\mapsto CA^{-1}B$, and the dimension count $k^2+k(r-k)+k(n-k)=k(n+r-k)$, so the codimension is $nr-k(n+r-k)=(n-k)(r-k)$;
 - the case $n=r=2$, $k=1$.
-
-It also uses:
-
-- Linear algebra: block matrices, Schur complements and rank
-- Smooth embedded submanifolds of Euclidean space given as graphs
 
 ## Sources
 

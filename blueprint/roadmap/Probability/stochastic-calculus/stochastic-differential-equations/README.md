@@ -10,3 +10,4 @@
 - [Yamada–Watanabe approximating functions](yamada-watanabe-approximating-functions-determin.md)
 - [Yamada–Watanabe pathwise uniqueness for Hölder-type diffusion coefficients](yamada-watanabe-pathwise-uniqueness-holder-1-2-d.md)
 - [Yamada–Watanabe theorem: weak existence and pathwise uniqueness](yamada-watanabe-theorem-weak-existence-pathwise.md)
+- [Comparison theorem for one-dimensional stochastic differential equations](comparison-theorem-for-one-dimensional-sdes.md)

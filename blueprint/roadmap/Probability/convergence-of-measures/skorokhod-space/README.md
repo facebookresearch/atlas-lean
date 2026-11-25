@@ -8,3 +8,5 @@
 - [Skorokhod space D([0,T],E) for a metric space E: J1 topology and embeddings](skorokhod-space-d-0-t-e-for-a-metric-space-e-j1.md)
 - [Skorokhod space D[0,T] with J1 metric](skorokhod-space-d-0-t-with-j1-metric.md)
 - [Sufficient criterion for relative compactness and tightness in D([0,infinity),E), finite E](sufficient-criterion-for-relative-compactness-an.md)
+- [Tightness in $D([0,T],E)$ from compact containment and the modulus $w'$](tightness-in-d-via-the-modulus-w-prime.md)
+- [C-tightness: tight laws with vanishing maximal jumps have continuous limit points](c-tightness-criterion.md)

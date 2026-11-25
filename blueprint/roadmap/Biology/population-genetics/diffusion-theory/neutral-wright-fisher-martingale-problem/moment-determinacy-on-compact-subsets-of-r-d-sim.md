@@ -6,14 +6,14 @@ $$\int_E x^\beta\, \mu(dx) = \int_E x^\beta\, \nu(dx) \qquad \text{for every mul
 
 then $\mu = \nu$. By the Stone–Weierstrass theorem the polynomials are dense in $C(E)$, so $\int f\, d\mu = \int f\, d\nu$ for every $f \in C(E)$, and finite Borel measures on a compact metric space are determined by their integrals of continuous functions.
 
+## Proof depends on
+
+- [Stone–Weierstrass theorem for star subalgebras](../../../../Topology/function-spaces/stone-weierstrass-star-subalgebra.md)
+- [Finite Borel measures on a metric space are determined by integrals of bounded continuous functions](../../../../MeasureTheory/measures/regular-measures/measures-determined-by-continuous-integrals.md)
+
 ## Expansion
 
 A full proof page must still establish the density of polynomials in $C(E)$ and the identification of finite Borel measures on $E$ from their integrals of continuous functions, and record the case $E = \Delta_{K-1}^k \subseteq \mathbb R^{kK}$.
-
-It also uses:
-
-- the Stone–Weierstrass theorem on a compact subset of $\mathbb R^d$
-- uniqueness of finite Borel measures on a compact metric space from their integrals of continuous functions
 
 ## Sources
 

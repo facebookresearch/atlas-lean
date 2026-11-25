@@ -22,10 +22,6 @@ A full page must establish:
 - the one-column example;
 - a precise form of the non-p-value caveat, with an explicit example in which $s(\sigma)$ is not a valid p-value for the hypothesis that $\sigma$ is a split of the true tree; this, and a block-bootstrap variant for linked sites, remain open obligations.
 
-It also uses:
-
-- Nonparametric bootstrap for smooth statistics, and the block bootstrap for linked sites
-
 ## Sources
 
 - J. Felsenstein, *Confidence limits on phylogenies: an approach using the bootstrap*, Evolution 39 (1985), 783–791 (phylogenetic bootstrap).

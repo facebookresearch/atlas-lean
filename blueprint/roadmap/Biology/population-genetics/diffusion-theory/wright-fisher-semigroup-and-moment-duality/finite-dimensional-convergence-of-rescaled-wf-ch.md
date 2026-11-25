@@ -10,20 +10,17 @@ converge weakly to the finite-dimensional distribution of the neutral Wright–F
 
 - [Neutral Wright–Fisher diffusion semigroup](wf-semigroup.md)
 - [Diffusion approximation of the Wright–Fisher transition operators](tendsto-wf-step-pow-floor.md)
+- [Path-space measure of a Markov semigroup](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/path-measure.md)
 
 ## Proof depends on
 
 - [Neutral Wright–Fisher transition matrix](../../wright-fisher-markov-chain/wright-fisher.md)
+- [Stone–Weierstrass theorem for star subalgebras](../../../../Topology/function-spaces/stone-weierstrass-star-subalgebra.md)
 
 ## Expansion
 
 1. Induction on $k$ with the Markov property, using the uniform convergence of the operators and the Feller continuity of $P_t$ in $x$.
 2. The case $k = 1$ is [the diffusion approximation of the transition operators](tendsto-wf-step-pow-floor.md) together with the Feller continuity in $x$.
-
-It also uses:
-
-- The canonical path measure built from Chapman–Kolmogorov kernels.
-- Weak convergence of probability measures on the compact cube $[0, 1]^k$.
 
 ## Sources
 

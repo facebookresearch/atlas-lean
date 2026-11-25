@@ -5,6 +5,14 @@ Let $E$ be a compact metric space and $(K_t)_{t \ge 0}$ a family of Markov kerne
 1. the law $Q_x$ of $Y^x$ on $C([0, \infty), E)$ is a probability measure determined by the finite-dimensional laws of $P_x$, and so does not depend on the choice of the continuous modification;
 2. $x \mapsto Q_x(A)$ is measurable for every Borel set $A \subseteq C([0, \infty), E)$, so $(Q_x)_{x \in E}$ is a Markov kernel from $E$ to $C([0, \infty), E)$.
 
+## Depends on
+
+- [Path-space measure of a Markov semigroup](../../../../Probability/markov-chains/markov-processes-from-transition-semigroups/path-measure.md)
+
+## Proof depends on
+
+- [Dynkin's π–λ theorem](../../../../MeasureTheory/measurable-spaces/pi-systems-and-the-theorem/dynkin-s-pi-lambda-theorem/induction-on-inter.md)
+
 ## Expansion
 
 A full proof page must still establish:
@@ -12,11 +20,6 @@ A full proof page must still establish:
 - the equality of the Borel and cylinder $\sigma$-fields on $C([0, \infty), E)$ for separable metric $E$;
 - uniqueness of $Q_x$ from its finite-dimensional laws, and measurability in $x$ on cylinder sets, extended by a $\pi$–$\lambda$ argument;
 - the neutral case: $Q_x$ is the law of the [continuous modified Wright–Fisher process](modified-process.md) started at $x$.
-
-It also uses:
-
-- Continuous-time Markov processes defined by a family of transition kernels.
-- measure-theoretic prerequisites (product $\sigma$-fields, the $\pi$–$\lambda$ theorem) and the topology of locally uniform convergence
 
 ## Sources
 

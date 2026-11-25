@@ -18,14 +18,11 @@ The jump bound alone does not give tightness; it gives continuity of limits only
 - [Aldous tightness criterion in D([0,T],E) with initial and compact-containment conditions](../../../../Probability/convergence-of-measures/skorokhod-space/aldous-tightness-criterion-in-d-0-t-e-with-initi.md)
 - [D([0,T],E) is Polish for Polish E](../../../../Probability/convergence-of-measures/skorokhod-space/d-0-t-e-is-polish-for-polish-e.md)
 - [Borel sigma-algebra of D equals the coordinate sigma-algebra; fdd determine laws](../../../../Probability/convergence-of-measures/skorokhod-space/borel-sigma-algebra-of-d-equals-the-coordinate-s.md)
+- [Prokhorov's theorem on a Polish space](../../../../Probability/convergence-of-measures/prokhorov-theorem-on-a-polish-space.md)
 
 ## Expansion
 
 A full proof page must still establish the extension from the countable family of projections to the measure-valued processes and the continuity of the limit points.
-
-It also uses:
-
-- Prokhorov's theorem on a Polish space.
 
 ## Sources
 

@@ -5,3 +5,4 @@ Metric, pseudometric and extended metric spaces: balls, boundedness and diameter
 - [Heine–Borel theorem: in a proper metric space, compact means closed and bounded](heine-borel.md)
 - [Open ball in a pseudometric space](metric-open-ball.md)
 - [Ultrametric distance](is-ultrametric-dist.md)
+- [The distance to a set is 1-Lipschitz and vanishes exactly on its closure](distance-to-a-set.md)

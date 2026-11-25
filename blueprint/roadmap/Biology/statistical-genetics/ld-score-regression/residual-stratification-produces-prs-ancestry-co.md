@@ -27,10 +27,6 @@ A full proof page must establish the following.
 - That the non-vanishing condition $\sum_jc_j\Delta_j\ne0$ is needed: with $b\ne0$ and loadings orthogonal to the differentiation vector the expectation is $0$.
 - The relation with the single-locus [covariance induced by population stratification](population-stratification-creates-spurious-assoc.md), which explains how residual stratification enters $\hat\beta_j$ as a shift proportional to $c_j$.
 
-It also uses:
-
-- Polygenic score accuracy, calibration and portability caveat
-
 ## Sources
 
 - J. J. Berg et al., *Reduced signal for polygenic adaptation of height in UK Biobank*, eLife 8 (2019), e39725, doi:10.7554/eLife.39725; M. Sohail et al., *Polygenic adaptation on height is overestimated due to uncorrected stratification in genome-wide association studies*, eLife 8 (2019), e39702, doi:10.7554/eLife.39702 (background: stratification inflating polygenic adaptation signals).

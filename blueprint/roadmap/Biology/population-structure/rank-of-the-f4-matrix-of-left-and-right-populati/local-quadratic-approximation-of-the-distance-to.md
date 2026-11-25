@@ -8,6 +8,11 @@ that is, for every $\eta>0$ there is $\delta>0$ with $\bigl|d_W(F+h,S)^2-d_W(h,T
 
 For example, for the unit circle $S\subset\mathbb R^2$, $F=(1,0)$ and $W=I$, $d(F+h,S)=\bigl|\,\|F+h\|-1\bigr|$ and $d(h,T_FS)=|h_1|$, and for $\|h\|<1/2$ one has $0\le\|F+h\|-1-h_1\le h_2^2$, so the distances differ by at most $\|h\|^2$ and their squares by $O(\|h\|^3)$.
 
+## Proof depends on
+
+- [Implicit function theorem](../../../Analysis/real-functions/multivariable-calculus/implicit-function-theorem.md)
+- [Taylor's theorem with little-o remainder in several variables](../../../Analysis/real-functions/multivariable-calculus/taylor-is-little-o-multivariable.md)
+
 ## Expansion
 
 A proof page must establish:
@@ -16,10 +21,6 @@ A proof page must establish:
 - a local graph representation of $S$ over $T_FS$ with a $C^2$ map whose differential vanishes at $F$, giving $|d_W(F+h,S)-d_W(h,T_FS)|=O(\|h\|^2)$ and hence the squared estimate;
 - uniformity of the constants for $W$ in a compact set of positive definite matrices, which the minimum-distance chi-square limit needs;
 - the affine case and the circle example with its explicit bound.
-
-It also uses:
-
-- Taylor expansion of $C^2$ maps and the implicit function theorem
 
 ## Sources
 

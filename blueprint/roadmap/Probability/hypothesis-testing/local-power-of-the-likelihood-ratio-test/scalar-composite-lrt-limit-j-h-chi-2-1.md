@@ -22,11 +22,6 @@ the law of $(J/H)\,Z^2$ with $Z$ standard normal. Hence, for consistent estimato
 
 A proof page must establish the expansion $W_n=n^{-1}\bigl(\sum_iu(\theta_0;Y_i)\bigr)^2/H+o_P(1)$ from a second-order Taylor expansion around $\widehat\theta_n$, the central limit theorem $n^{-1/2}\sum_iu(\theta_0;Y_i)\to\mathcal N(0,J)$, the identification of the limit of $\bigl(n^{-1/2}\sum_iu\bigr)^2/H$ as $(J/H)\chi^2_1$, Slutsky's lemma for the adjusted statistic, and the case $J=H$.
 
-It also uses:
-
-- Composite likelihood: Godambe information, consistency and sandwich asymptotics
-- Nonparametric bootstrap for smooth statistics; block bootstrap for linked sites
-
 ## Sources
 
 - C. Varin, N. Reid and D. Firth, *An overview of composite likelihood methods*, Statistica Sinica 21 (2011), 5–42, <https://www3.stat.sinica.edu.tw/sstest/oldpdf/A21n11.pdf>, Section 2.3, equation (2.5) and the limit $\sum_j\lambda_jZ_j^2$ with $\lambda_j$ the eigenvalues of $(H^{\psi\psi})^{-1}G_{\psi\psi}$, whose scalar case is $\lambda=J/H$ (statement).

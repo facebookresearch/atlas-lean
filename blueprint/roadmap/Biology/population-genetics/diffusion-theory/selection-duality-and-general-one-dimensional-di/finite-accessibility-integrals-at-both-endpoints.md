@@ -23,10 +23,6 @@ Hence $\lim_n \tau_n$ is finite almost surely and, by continuity of the paths, e
 1. The three steps above.
 2. A check: in the Wright–Fisher case with genic selection the weighted integral is finite, since $s(y) \sim y$ and $m(dy) \sim 2\, dy / y$ near $0$.
 
-It also uses:
-
-- The Feller boundary classification for allele-frequency diffusions.
-
 ## Sources
 
 - S. Karlin and H. M. Taylor, *A Second Course in Stochastic Processes*, Academic Press (1981), Chapter 15 (accessibility and mean exit times).

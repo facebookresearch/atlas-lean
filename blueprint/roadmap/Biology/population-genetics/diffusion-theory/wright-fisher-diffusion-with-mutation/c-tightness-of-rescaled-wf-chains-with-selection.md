@@ -21,16 +21,13 @@ Hence the step processes $t \mapsto X^M_{\lfloor tM \rfloor}$ are C-tight in $D(
 
 - [Tightness of interpolated rescaled WF chains in C([0,T])](../wright-fisher-semigroup-and-moment-duality/tightness-of-interpolated-rescaled-wf-chains-in.md)
 - [Neutral Wright–Fisher transition matrix](../../wright-fisher-markov-chain/wright-fisher.md)
+- [Prokhorov's theorem on a Polish space](../../../../Probability/convergence-of-measures/prokhorov-theorem-on-a-polish-space.md)
 
 ## Expansion
 
 1. The fourth-moment bound, from the binomial sampling and the drift of the chain.
 2. The jump bound, by a union bound over the $\lfloor MT \rfloor$ generations with a one-generation fourth-moment bound $C/M^2$.
 3. C-tightness from the two bounds, and the reduction for $\alpha = \theta = 0$ to [the tightness of the neutral interpolated chains](../wright-fisher-semigroup-and-moment-duality/tightness-of-interpolated-rescaled-wf-chains-in.md).
-
-It also uses:
-
-- Prokhorov's theorem on a Polish space.
 
 ## Sources
 

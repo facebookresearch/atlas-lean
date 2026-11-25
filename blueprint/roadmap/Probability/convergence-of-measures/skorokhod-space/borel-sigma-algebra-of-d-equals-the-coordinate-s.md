@@ -9,6 +9,10 @@ The terminal time must belong to $T_0$: for irrational $T$, the càdlàg path $f
 - [Skorokhod space D([0,T],E) for a metric space E: J1 topology and embeddings](skorokhod-space-d-0-t-e-for-a-metric-space-e-j1.md)
 - [D([0,T],E) is Polish for Polish E](d-0-t-e-is-polish-for-polish-e.md)
 
+## Proof depends on
+
+- [Dynkin's π–λ theorem](../../../MeasureTheory/measurable-spaces/pi-systems-and-the-theorem/dynkin-s-pi-lambda-theorem/induction-on-inter.md)
+
 ## Expansion
 
 A full page must establish:
@@ -17,10 +21,6 @@ A full page must establish:
 - the reverse inclusion, using separability: every open ball of $D([0,T],E)$ is measurable for the evaluations at times in $T_0$, by approximating $d(x,\cdot)$ through right-continuity at times of $T_0$ and the value at $T$;
 - the uniqueness of laws from the $\pi$-$\lambda$ theorem applied to finite-dimensional cylinder sets;
 - the rational-times corollary and the counterexample at an irrational terminal time.
-
-It also uses:
-
-- Measure, probability, integration and product measures
 
 ## Sources
 
