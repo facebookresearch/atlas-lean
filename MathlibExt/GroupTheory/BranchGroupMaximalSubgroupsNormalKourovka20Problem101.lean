@@ -33,7 +33,8 @@ vertex has at least two children, with every rigid level stabilizer (the subgrou
 rigid stabilizers of the vertices of a level) of finite index: the definition of
 Garciarena-Petschick (Section 2) for subgroups of `Aut(X*)`. The definitions are in the shared
 module `MathlibExt.GroupTheory.BranchGroupShared`, which repeats those of the OpenConjectures entry
-`BranchGroupsBoundedlyAcyclic` (Kourovka 21.116); WantedExt cannot import OpenConjectures.
+`BranchGroupsBoundedlyAcyclic` (Kourovka 21.116). The ATLAS project libraries cannot import
+OpenConjectures.
 -/
 
 namespace MathlibExt.GroupTheory.BranchGroupMaximalSubgroupsNormalKourovka20Problem101Wanted
