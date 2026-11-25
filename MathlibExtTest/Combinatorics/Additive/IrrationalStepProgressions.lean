@@ -29,3 +29,14 @@ example : (1 / 2 : ℝ) ∉ Set.range ((↑) : ℕ → ℝ) ∧
 -- At index zero the doubled start is a nonnegative integer.
 example : 2 * (1 / 2 : ℝ) + 0 * Real.sqrt 2 ∈ Set.range ((↑) : ℕ → ℝ) :=
   ⟨1, by norm_num⟩
+
+-- The smallest allowed interval, progression length, and gap. Here `2 + 2 = 0 + 4`
+-- belongs to two different types of sums, so simply adding their cardinalities is not exact.
+example : ¬ IsMSTDSet (realIntervalSet 3 ∪ realAPSet 4 2 (Real.sqrt 2)) :=
+  not_isMSTDSet_intervalAP_irrational_diff 3 2 4 (Real.sqrt 2) (by decide) (by decide)
+    irrational_sqrt_two (Real.sqrt_pos.2 (by norm_num)) (by decide)
+
+-- With a larger gap the two constant terms in the count are separated.
+example : ¬ IsMSTDSet (realIntervalSet 4 ∪ realAPSet 8 3 (Real.sqrt 2)) :=
+  not_isMSTDSet_intervalAP_irrational_diff 4 3 8 (Real.sqrt 2) (by decide) (by decide)
+    irrational_sqrt_two (Real.sqrt_pos.2 (by norm_num)) (by decide)

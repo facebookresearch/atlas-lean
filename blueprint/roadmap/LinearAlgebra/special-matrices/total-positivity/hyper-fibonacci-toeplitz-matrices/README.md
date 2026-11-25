@@ -16,3 +16,5 @@ A Toeplitz matrix built from a sequence is totally positive when all its minors 
 - [Eventual log-concavity of hyper $p$-Fibonacci and hyper $p$-Lucas numbers](hyper-pfibonacci-hyper-plucas-eventually.md): the same for the hyper $p$-Fibonacci and hyper $p$-Lucas numbers
 - [Total positivity of hyper $p$-Fibonacci Toeplitz matrices](hyper-pfibonacci-toeplitz-has-positive-m.md): special case: hyper $p$-Fibonacci numbers
 - [Total positivity of hyper $p$-Lucas Toeplitz matrices](hyper-plucas-toeplitz-has-positive-minor.md): special case: hyper $p$-Lucas numbers
+- [A binomial-sum formula for generalized hyper-Fibonacci numbers](generalized-hyper-fibonacci-sub-eq-sub.md): used in the proof of the eventual positivity of the Toeplitz determinants
+- [Hankel determinants of generalized hyper-Fibonacci numbers](generalized-hyper-fibonacci-hankel-det.md): used in the proof of the main statement: reversing the columns of $T_s$ gives the Hankel matrix $H_{r,s-r-1}$

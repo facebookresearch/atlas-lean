@@ -23,41 +23,19 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.Data.Set.Finite.Basic
-public import Mathlib.Data.ZMod.Basic
-public import Mathlib.Dynamics.PeriodicPts.Defs
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Topology.Basic
 public import Mathlib.Topology.Instances.Real.Lemmas
+public import MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibility
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.Recurrences.FibonacciSumDivisibilityWanted
-
-/-- **Pisano period.** For a natural number $n$, the Pisano period $\pi(n)$ is the minimal period
-of the pair $(0, 1)$ under the Fibonacci step $(a, b) \mapsto (b, a + b)$ on
-$\mathbb{Z}/n\mathbb{Z} \times \mathbb{Z}/n\mathbb{Z}$: the least $k \ge 1$ such that $k$
-applications of the step map $(0, 1)$ back to $(0, 1)$, or $0$ if there is no such $k$ (as for
-$n = 0$, where $\mathbb{Z}/0\mathbb{Z} = \mathbb{Z}$). -/
-noncomputable def pisanoPeriod (n : ℕ) : ℕ :=
-  Function.minimalPeriod
-    (fun p : ZMod n × ZMod n => (p.2, p.1 + p.2)) (0, 1)
-
-/-- **The Pisano period of $F_n$ divides $2n$ for even $n$.** Let $F_n$ denote the $n$-th Fibonacci
-number and $\pi(m)$ the Pisano period of $m$. For every even natural number $n > 1$, $\pi(F_n)$
-divides $2n$.
-
-Source: Oisín Flynn-Connolly, "On the Divisibility of Sums of Fibonacci
-Numbers",
-Proposition 2. -/
-theorem_wanted pisanoPeriod_fib_dvd_two_mul
-    (n : ℕ) (hn : 1 < n) (hn2 : 2 ∣ n) :
-    pisanoPeriod (Nat.fib n) ∣ 2 * n
 
 /-- **The minimum of $\pi(n)/n$ over $1 \le n < N$ tends to zero.** Let $\pi(n)$ denote the Pisano
 period of $n$. As $N \to \infty$, the minimum of the real numbers $\pi(n)/n$ over the integers

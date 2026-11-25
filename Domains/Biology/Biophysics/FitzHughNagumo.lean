@@ -52,8 +52,9 @@ the equilibrium needs `0 < b ≤ 1`.
 ## Main results
 
 * **Invariant region (trapping).** With `energy ε v w = v² + w² / ε`, the derivative of the
-  energy along the field is `energyFlux a b ε I v w = ⟪∇energy, field⟫ =
-  2 (v² - v⁴/3 + I v + a w - b w²)` (`hasDerivAt_energy`). `energyFlux_neg_of_energy_eq`: for
+  energy along the field is
+  `energyFlux a b ε I v w = ⟪∇energy, field⟫ = 2 (v² - v⁴/3 + I v + a w - b w²)`
+  (`hasDerivAt_energy`). `energyFlux_neg_of_energy_eq`: for
   `b, ε > 0` and every level `R > trapRadius a b ε I`, the field points strictly inward on the
   ellipse `energy = R`. `IsSolution.energy_le`: the sublevel set `energy ≤ R` is therefore
   forward invariant, and `IsSolution.energy_le_max` bounds every solution.
@@ -62,7 +63,7 @@ the equilibrium needs `0 < b ≤ 1`.
   `C/κ = trapRadius`.
 * **Global existence and uniqueness.** `exists_isSolution`: for `b, ε > 0` every initial state
   has a solution on `[0, ∞)`; `IsSolution.eq_of_initial`: it is unique forward in time.
-* **Equilibria.** `isEquilibrium_iff`: equilibria are `w = (v + a) / b` with
+* **Equilibria.** `isEquilibrium_iff`: for `b, ε ≠ 0` equilibria are `w = (v + a) / b` with
   `eqCubic a b I v = 0`. `existsUnique_equilibrium`: for `0 < b ≤ 1` there is exactly one.
 * **Linearization and classification.** `jacobian b ε v = !![1 - v², -1; ε, -ε b]` is the matrix
   of partial derivatives of the field (`jacobian_eq_partials`); its trace is
@@ -79,7 +80,7 @@ the equilibrium needs `0 < b ≤ 1`.
   (`equilibriumType_eq_center_iff_of_lt_one`,
   `re_eq_zero_and_im_ne_zero_of_mem_spectrum_jacobian`). `isLinearlyStable_iff_of_lt_one` and
   `isLinearlyUnstable_iff_of_lt_one` state the first two in trace–determinant form.
-  `equilibriumType_eq_saddle_iff`: saddles occur iff `b (1 - v²) > 1`.
+  `equilibriumType_eq_saddle_iff`: for `ε > 0`, saddles occur iff `b (1 - v²) > 1`.
 * **Post-pulse drift (single pulse).** A pulse of amplitude `δ` moves the rest state `(v*, w*)`
   to `(v* + δ, w*)`. The voltage is rising after the pulse (`IsRisingAfterPulse`) when the
   voltage field is positive there and falling (`IsFallingAfterPulse`) when it is negative; this
@@ -107,7 +108,8 @@ the equilibrium needs `0 < b ≤ 1`.
   `restFlux = 2 ((v - v*)² · restFactor v* (v - v*) - b (w - w*)²)` along the field
   (`hasDerivAt_restEnergy`, `restFlux_eq`), where `restFactor v* x = 1 - v*² - v* x - x² / 3`
   is the post-pulse factor of `vField_pulse`. `IsSolution.restEnergy_le_exp`: while
-  `restFactor ≤ -c` along a solution, `restEnergy` decays like `e^{-2 min c (b ε) t}`. Since
+  `restFactor ≤ -c` along a solution, `restEnergy` is at most `e^{-2 min c (b ε) t}` times its
+  initial value. Since
   `restFactor v* x ≤ 1 - v*² / 4` (`restFactor_le`), for `v*² > 4`, `b, ε > 0` every solution
   returns to rest exponentially (`IsSolution.restEnergy_le_exp_global`,
   `IsSolution.tendsto_rest_of_four_lt_sq`). For `ρ > 0` with `|v*| ρ < v*² - 1` (so `v*² > 1`;
@@ -161,14 +163,16 @@ open MathlibExt.Biology.Dynamics.PlanarStability
 /-- Voltage (fast) component of the FitzHugh–Nagumo field: `v - v³/3 - w + I`. -/
 def vField (I v w : ℝ) : ℝ := v - v ^ 3 / 3 - w + I
 
-/-- Recovery (slow) component of the FitzHugh–Nagumo field: `ε (v + a - b w)`. -/
+/-- Recovery (slow) component of the FitzHugh–Nagumo field: `ε (v + a - b w)`. In the model `b > 0`
+and `ε > 0`; the definition takes any real values. -/
 def wField (a b ε v w : ℝ) : ℝ := ε * (v + a - b * w)
 
 /-- The FitzHugh–Nagumo field on the state space `ℝ × ℝ` of pairs `(v, w)`. -/
 def field (a b ε I : ℝ) (x : ℝ × ℝ) : ℝ × ℝ := (vField I x.1 x.2, wField a b ε x.1 x.2)
 
 /-- `(v, w)` solves the FitzHugh–Nagumo system on `[0, ∞)` (two-sided derivatives at every
-`t ≥ 0`). -/
+`t ≥ 0`). No initial condition is imposed; in the model `b, ε > 0`, but any real parameters are
+allowed. -/
 def IsSolution (a b ε I : ℝ) (v w : ℝ → ℝ) : Prop :=
   ∀ t, 0 ≤ t → HasDerivAt v (vField I (v t) (w t)) t ∧ HasDerivAt w (wField a b ε (v t) (w t)) t
 
@@ -180,28 +184,35 @@ theorem contDiff_field {n : WithTop ℕ∞} : ContDiff ℝ n (field a b ε I) :=
 
 /-! ### Energy, the trapping ellipse, and forward invariance -/
 
-/-- The energy `v² + w² / ε`, whose sublevel sets are the trapping ellipses. -/
+/-- The energy `v² + w² / ε`, whose sublevel sets are the trapping ellipses. The intended domain is
+`ε > 0`; with the convention `x / 0 = 0` it equals `v²` at `ε = 0`. -/
 def energy (ε v w : ℝ) : ℝ := v ^ 2 + w ^ 2 / ε
 
 /-- The flux `⟪∇energy, field⟫ = 2 v · vField + (2 w / ε) · wField` of the field through the
 level sets of `energy`: the derivative of `energy` along trajectories (`hasDerivAt_energy`).
-It is negative exactly where the field points into the sublevel set. -/
+Where it is negative at a point of a level set `energy = R`, the field points strictly into the
+sublevel set `energy ≤ R`. With the convention `x / 0 = 0` the second term is `0` at `ε = 0`. -/
 def energyFlux (a b ε I v w : ℝ) : ℝ := 2 * v * vField I v w + 2 * w / ε * wField a b ε v w
 
-/-- The flux in closed form (the coupling terms `∓ v w` cancel). -/
+/-- For `ε ≠ 0`, the flux in closed form `2 (v² - v⁴/3 + I v + a w - b w²)` (the coupling terms
+`∓ v w` cancel). -/
 theorem energyFlux_eq (hε : ε ≠ 0) (v w : ℝ) :
     energyFlux a b ε I v w = 2 * (v ^ 2 - v ^ 4 / 3 + I * v + a * w - b * w ^ 2) := by
   unfold energyFlux vField wField
   field_simp
   ring
 
-/-- The constant `C = 5 + I²/2 + a²/(2b)` in the dissipation inequality. -/
+/-- The constant `C = 5 + I²/2 + a²/(2b)` in the dissipation inequality. The intended domain is
+`b > 0`, where `C > 0`; with the convention `x / 0 = 0` it is `5 + I²/2` at `b = 0`. -/
 def absorbConst (a b I : ℝ) : ℝ := 5 + I ^ 2 / 2 + a ^ 2 / (2 * b)
 
-/-- The decay rate `κ = min 1 (b ε / 2)` in the dissipation inequality. -/
+/-- The decay rate `κ = min 1 (b ε / 2)` in the dissipation inequality: positive for `b, ε > 0`, and
+`κ = b ε / 2 ≤ 0` when `b ε ≤ 0`. -/
 def decayRate (b ε : ℝ) : ℝ := min 1 (b * ε / 2)
 
-/-- Every ellipse `energy = R` with `R > trapRadius a b ε I = C / κ` is trapping. -/
+/-- The trapping radius `C / κ`. For `b, ε > 0` every ellipse `energy = R` with
+`R > trapRadius a b ε I = C / κ` is trapping (`energyFlux_neg_of_energy_eq`). With the convention
+`x / 0 = 0` it is `0` when `b ε = 0`. -/
 def trapRadius (a b ε I : ℝ) : ℝ := absorbConst a b I / decayRate b ε
 
 theorem decayRate_pos (hb : 0 < b) (hε : 0 < ε) : 0 < decayRate b ε :=
@@ -213,7 +224,7 @@ theorem absorbConst_pos (hb : 0 < b) : 0 < absorbConst a b I := by
 theorem trapRadius_pos (hb : 0 < b) (hε : 0 < ε) : 0 < trapRadius a b ε I :=
   div_pos (absorbConst_pos hb) (decayRate_pos hb hε)
 
-/-- **Dissipation inequality.** `energyFlux ≤ 2 (C - κ · energy)`. -/
+/-- **Dissipation inequality.** For `b, ε > 0`, `energyFlux ≤ 2 (C - κ · energy)`. -/
 theorem energyFlux_le (hb : 0 < b) (hε : 0 < ε) (v w : ℝ) :
     energyFlux a b ε I v w ≤ 2 * (absorbConst a b I - decayRate b ε * energy ε v w) := by
   rw [energyFlux_eq hε.ne']
@@ -425,11 +436,13 @@ theorem IsSolution.eq_of_initial {v' w' : ℝ → ℝ} (h : IsSolution a b ε I 
 /-- `(v, w)` is an equilibrium (rest state) of the FitzHugh–Nagumo field. -/
 def IsEquilibrium (a b ε I v w : ℝ) : Prop := vField I v w = 0 ∧ wField a b ε v w = 0
 
-/-- The equilibrium cubic `v - v³/3 - (v + a)/b + I`: the voltage field on the recovery
-nullcline `w = (v + a)/b`. -/
+/-- The equilibrium cubic `v - v³/3 - (v + a)/b + I`: for `b ≠ 0`, the voltage field on the
+recovery nullcline `w = (v + a)/b`. With the convention `x / 0 = 0` it is `v - v³/3 + I` at
+`b = 0`. -/
 def eqCubic (a b I v : ℝ) : ℝ := v - v ^ 3 / 3 - (v + a) / b + I
 
-/-- Equilibria lie on the recovery nullcline `w = (v + a)/b` at roots of the equilibrium cubic. -/
+/-- For `b ≠ 0` and `ε ≠ 0`, `(v, w)` is an equilibrium iff it lies on the recovery nullcline
+`w = (v + a)/b` at a root of the equilibrium cubic. -/
 theorem isEquilibrium_iff (hb : b ≠ 0) (hε : ε ≠ 0) {v w : ℝ} :
     IsEquilibrium a b ε I v w ↔ w = (v + a) / b ∧ eqCubic a b I v = 0 := by
   unfold IsEquilibrium vField wField eqCubic
@@ -564,11 +577,14 @@ theorem isCharRoot_iff_det (b ε v : ℝ) (z : ℂ) :
 
 /-! ### Classification of the FitzHugh–Nagumo equilibria -/
 
-/-- The linearization type of the FitzHugh–Nagumo equilibrium with voltage `v`, a function of the
-parameters `b`, `ε` and of `v` (which itself depends on `a`, `b`, `I` through `eqCubic`). -/
+/-- The linearization type of the FitzHugh–Nagumo equilibrium with voltage `v`: the
+trace–determinant type of the Jacobian at `v`, a function of the parameters `b`, `ε` and of `v`,
+defined for every real `v`. For `b ≠ 0` and `ε ≠ 0` an equilibrium's voltage is a root of `eqCubic`
+(`isEquilibrium_iff`), so the type at an equilibrium also depends on `a`, `b` and `I`; at `ε = 0`
+every point of the voltage nullcline is an equilibrium. -/
 def equilibriumType (b ε v : ℝ) : LinearType := linearType (jacTrace b ε v) (jacDet b ε v)
 
-/-- Saddles occur exactly when `b (1 - v²) > 1` (impossible for `0 < b ≤ 1`). -/
+/-- For `ε > 0`, saddles occur exactly when `b (1 - v²) > 1` (impossible for `0 < b ≤ 1`). -/
 theorem equilibriumType_eq_saddle_iff (hε : 0 < ε) {v : ℝ} :
     equilibriumType b ε v = .saddle ↔ 1 < b * (1 - v ^ 2) := by
   rw [equilibriumType, linearType_eq_saddle_iff, jacDet]
@@ -668,13 +684,15 @@ theorem vField_pulse {v w : ℝ} (h : vField I v w = 0) (δ : ℝ) :
 
 /-- The lower root `(-3v - √(12 - 3v²))/2` of the post-pulse factor `1 - v² - v δ - δ²/3` in `δ`
 (`pulse_factor`, for `v² ≤ 4`): from a rest state with voltage `v`, a pulse of this amplitude
-lands on the voltage nullcline. On the left branch `-2 < v < -1` it is positive, and the positive
-pulses after which the voltage rises are exactly those with
+lands on the voltage nullcline. For `v² > 4` the square root is `0` (`√x = 0` for `x < 0`) and
+the value `-3v/2` is not a root. At a rest state on the left branch `-2 < v < -1` it is positive,
+and the positive pulses after which the voltage rises are exactly those with
 `pulseRootLow v < δ < pulseRootHigh v` (`isRisingAfterPulse_iff`), a nonempty open interval
 (`pulseRootLow_lt_pulseRootHigh`). -/
 def pulseRootLow (v : ℝ) : ℝ := (-3 * v - √(12 - 3 * v ^ 2)) / 2
 
-/-- The upper root `(-3v + √(12 - 3v²))/2` of the post-pulse factor (`pulse_factor`). On the left
+/-- The upper root `(-3v + √(12 - 3v²))/2` of the post-pulse factor (`pulse_factor`, for
+`v² ≤ 4`; for `v² > 4` the square root is `0` and the value `-3v/2` is not a root). On the left
 branch `-2 < v < -1` it is the upper end of the open interval of positive pulses after which the
 voltage rises, from a rest state with voltage `v`. -/
 def pulseRootHigh (v : ℝ) : ℝ := (-3 * v + √(12 - 3 * v ^ 2)) / 2
@@ -697,7 +715,8 @@ theorem pulseRootLow_lt_pulseRootHigh {v : ℝ} (hv : v ^ 2 < 4) :
   have := Real.sqrt_pos.2 (by linarith : (0 : ℝ) < 12 - 3 * v ^ 2)
   linarith
 
-/-- **Rising window.** At rest with `v² ≤ 4`, the voltage rises after a positive pulse `δ` iff
+/-- **Rising window.** On the voltage nullcline (`vField I v w = 0`, for instance at rest) with
+`v² ≤ 4`, the voltage rises after a positive pulse `δ` iff
 `pulseRootLow v < δ < pulseRootHigh v`. -/
 theorem isRisingAfterPulse_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2 ≤ 4) (hδ : 0 < δ) :
     IsRisingAfterPulse I v w δ ↔ pulseRootLow v < δ ∧ δ < pulseRootHigh v := by
@@ -716,8 +735,8 @@ theorem isRisingAfterPulse_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2
       mul_neg_of_pos_of_neg (by linarith) (by linarith)
     nlinarith
 
-/-- At rest with `v² ≤ 4`, the voltage falls after a positive pulse `δ` iff `δ < pulseRootLow v`
-or `δ > pulseRootHigh v`. -/
+/-- On the voltage nullcline (`vField I v w = 0`, for instance at rest) with `v² ≤ 4`, the voltage
+falls after a positive pulse `δ` iff `δ < pulseRootLow v` or `δ > pulseRootHigh v`. -/
 theorem isFallingAfterPulse_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2 ≤ 4) (hδ : 0 < δ) :
     IsFallingAfterPulse I v w δ ↔ δ < pulseRootLow v ∨ pulseRootHigh v < δ := by
   rw [IsFallingAfterPulse, vField_pulse h, pulse_factor hv]
@@ -738,8 +757,9 @@ theorem isFallingAfterPulse_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 
         mul_pos (by linarith) (by linarith)
       nlinarith
 
-/-- For a rest voltage `v < -1` (left branch of the cubic nullcline) the lower root
-`pulseRootLow v` is positive. -/
+/-- For `v < -1` (at a rest state, the left branch of the cubic nullcline) the lower root
+`pulseRootLow v` is positive. For `v < -2` the square root is `0` by the convention `√x = 0` for
+`x < 0`, and the value `-3v/2` is not a root. -/
 theorem pulseRootLow_pos {v : ℝ} (hv1 : v < -1) : 0 < pulseRootLow v := by
   unfold pulseRootLow
   have hs : √(12 - 3 * v ^ 2) < -3 * v := by
@@ -747,7 +767,9 @@ theorem pulseRootLow_pos {v : ℝ} (hv1 : v < -1) : 0 < pulseRootLow v := by
     nlinarith
   linarith
 
-/-- **The voltage falls after small pulses** on the left branch `-2 ≤ v < -1`. -/
+/-- **The voltage falls after small pulses** at a state on the voltage nullcline
+(`vField I v w = 0`) on the left branch `-2 ≤ v < -1`: after every pulse
+`0 < δ < pulseRootLow v`. -/
 theorem isFallingAfterPulse_of_lt_pulseRootLow {v w δ : ℝ} (h : vField I v w = 0) (hv1 : v < -1)
     (hv2 : -2 ≤ v) (hδ : 0 < δ) (hδθ : δ < pulseRootLow v) : IsFallingAfterPulse I v w δ :=
   (isFallingAfterPulse_iff h (by nlinarith) hδ).2 (Or.inl hδθ)
@@ -916,7 +938,8 @@ theorem single_pulse_response {vr wr δ : ℝ} (hrest : IsEquilibrium a b ε I v
 
 /-! ### Return to rest -/
 
-/-- The energy `(v - vr)² + (w - wr)² / ε` centred at the state `(vr, wr)`. -/
+/-- The energy `(v - vr)² + (w - wr)² / ε` centred at the state `(vr, wr)`. The intended domain is
+`ε > 0`; with the convention `x / 0 = 0` it equals `(v - vr)²` at `ε = 0`. -/
 def restEnergy (ε vr wr v w : ℝ) : ℝ := energy ε (v - vr) (w - wr)
 
 /-- `restFactor vr x = 1 - vr² - vr x - x² / 3`. At an equilibrium with voltage `vr` the voltage
@@ -925,7 +948,8 @@ field at the voltage displacement `x = v - vr` is `x · restFactor vr x - (w - w
 def restFactor (vr x : ℝ) : ℝ := 1 - vr ^ 2 - vr * x - x ^ 2 / 3
 
 /-- The flux `⟪∇restEnergy, field⟫` of the field through the level sets of `restEnergy`: the
-derivative of `restEnergy` along trajectories (`hasDerivAt_restEnergy`). -/
+derivative of `restEnergy` along trajectories (`hasDerivAt_restEnergy`). With the convention
+`x / 0 = 0` the second term is `0` at `ε = 0`. -/
 def restFlux (a b ε I vr wr v w : ℝ) : ℝ :=
   2 * (v - vr) * vField I v w + 2 * (w - wr) / ε * wField a b ε v w
 
@@ -958,7 +982,8 @@ theorem pulseRootLow_nonneg {v : ℝ} (hv1 : v ≤ -1) : 0 ≤ pulseRootLow v :=
   have hs : √(12 - 3 * v ^ 2) ≤ -3 * v := Real.sqrt_le_iff.2 ⟨by linarith, by nlinarith⟩
   linarith
 
-/-- For `v > -1` the lower root `pulseRootLow v` is negative. -/
+/-- For `v > -1` the lower root `pulseRootLow v` is negative. For `v > 2` the square root is `0` by
+the convention `√x = 0` for `x < 0`, and the value `-3v/2` is not a root. -/
 theorem pulseRootLow_neg {v : ℝ} (hv1 : -1 < v) : pulseRootLow v < 0 := by
   unfold pulseRootLow
   have hs : -3 * v < √(12 - 3 * v ^ 2) := by
@@ -1057,7 +1082,7 @@ theorem restFlux_le {vr wr : ℝ} (hrest : IsEquilibrium a b ε I vr wr) (hε : 
   unfold restEnergy energy
   nlinarith [h1, h2]
 
-/-- **Exponential decay to rest.** For `ε > 0` and an equilibrium `(vr, wr)`: if
+/-- **Exponential bound on the centred energy.** For `ε > 0` and an equilibrium `(vr, wr)`: if
 `restFactor vr (v s - vr) ≤ -c` along a solution for `s ∈ [0, t]`, then
 `restEnergy(t) ≤ e^{-2 min c (b ε) t} restEnergy(0)`.
 
@@ -1177,9 +1202,9 @@ theorem IsSolution.tendsto_rest_of_basin (h : IsSolution a b ε I v w) {vr wr : 
 
 /-! ### Periodic orbits -/
 
-/-- **Periodic orbits must enter the band `restFactor > 0`.** For `b, ε > 0` and an equilibrium
-`(vr, wr)`, a `T`-periodic solution (`T > 0`) along which `restFactor vr (v - vr) ≤ 0` at all
-times is the constant rest state.
+/-- **Nonconstant periodic orbits must enter the band `restFactor > 0`.** For `b, ε > 0` and an
+equilibrium `(vr, wr)`, a `T`-periodic solution (`T > 0`) along which `restFactor vr (v - vr) ≤ 0`
+at all times is the constant rest state.
 
 Proof: `restEnergy` is antitone (its derivative is `restFlux ≤ -2 b (w - wr)² ≤ 0`) and
 `T`-periodic, hence constant on `[0, ∞)`; so `restFlux = 0` on `(0, ∞)`, forcing `w = wr` there,

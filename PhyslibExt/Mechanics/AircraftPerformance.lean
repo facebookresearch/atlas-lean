@@ -222,12 +222,13 @@ At `g = 0` Lean's convention `x / 0 = 0` gives the meaningless value `0`. -/
 noncomputable def scaleHeight (Rs T g : ℝ) : ℝ := Rs * T / |g|
 
 /-- Density at height `z` of the isothermal layer with reference density `ρ0`: the ideal-gas
-relation `ρ = p / (Rs * T)` applied to `isothermalPressure` with reference pressure
-`ρ0 * Rs * T`. The physical regime is `ρ0, g, Rs, T > 0`, `z` upward, `z` in a declared band. -/
+relation `ρ = p / (Rs * T)` applied to `isothermalPressure` with reference pressure `ρ0 * Rs * T`,
+that is `ρ0 * exp (-g * z / (Rs * T))` for `Rs * T ≠ 0`; with the convention `x / 0 = 0` it is `0`
+when `Rs * T = 0`. The physical regime is `ρ0, g, Rs, T > 0`, `z` upward, `z` in a declared band. -/
 noncomputable def isothermalDensity (ρ0 g Rs T z : ℝ) : ℝ :=
   isothermalPressure (ρ0 * Rs * T) g Rs T z / (Rs * T)
 
-/-- The density obtained from the pressure profile and the ideal-gas relation is
+/-- For `g, Rs, T > 0`, the density obtained from the pressure profile and the ideal-gas relation is
 `ρ(z) = ρ0 * exp (-z / H)` with `H = Rs * T / |g|`. -/
 lemma isothermalDensity_eq_exp {g Rs T : ℝ} (hg : 0 < g) (hRs : 0 < Rs) (hT : 0 < T)
     (ρ0 z : ℝ) :
@@ -243,8 +244,9 @@ lemma isothermalDensity_eq_exp {g Rs T : ℝ} (hg : 0 < g) (hRs : 0 < Rs) (hT : 
   rw [harg]
   field_simp
 
-/-- Hydrostatic balance in density form: the pressure profile with reference pressure
-`ρ0 * Rs * T` satisfies `p'(z) = -ρ(z) * g` for `ρ = isothermalDensity ρ0 g Rs T`. -/
+/-- Hydrostatic balance in density form: for all real inputs, the pressure profile with reference
+pressure `ρ0 * Rs * T` satisfies `p'(z) = -ρ(z) * g` for `ρ = isothermalDensity ρ0 g Rs T` (both
+sides are `0` when `Rs * T = 0`, by the convention `x / 0 = 0`). -/
 lemma hasDerivAt_isothermalPressure_density (ρ0 g Rs T z : ℝ) :
     HasDerivAt (isothermalPressure (ρ0 * Rs * T) g Rs T)
       (-(isothermalDensity ρ0 g Rs T z) * g) z := by
@@ -266,7 +268,8 @@ lemma scaleHeight_pos {Rs T g : ℝ} (hRs : 0 < Rs) (hT : 0 < T) (hg : g ≠ 0) 
 
 /-! ## B. Bounds on a declared band -/
 
-/-- On a declared band `[z₁, z₂]` the density strictly decreases with height. -/
+/-- For `ρ0, g, Rs, T > 0`, on a declared band `[z₁, z₂]` the density strictly decreases with
+height. -/
 lemma isothermalDensity_strictAntiOn {ρ0 g Rs T : ℝ} (hρ0 : 0 < ρ0) (hg : 0 < g)
     (hRs : 0 < Rs) (hT : 0 < T) (z₁ z₂ : ℝ) :
     StrictAntiOn (isothermalDensity ρ0 g Rs T) (Set.Icc z₁ z₂) := by
@@ -276,7 +279,7 @@ lemma isothermalDensity_strictAntiOn {ρ0 g Rs T : ℝ} (hρ0 : 0 < ρ0) (hg : 0
   unfold isothermalDensity
   exact (div_lt_div_iff_of_pos_right hRT).mpr (hpress hab)
 
-/-- Engineering density bounds on a declared band: for `z ∈ [z₁, z₂]`,
+/-- Engineering density bounds on a declared band: for `ρ0, g, Rs, T > 0` and `z ∈ [z₁, z₂]`,
 `0 < ρ0 * exp (-z₂ / H) ≤ ρ(z) ≤ ρ0 * exp (-z₁ / H)`. -/
 lemma isothermalDensity_band_bounds {ρ0 g Rs T z₁ z₂ z : ℝ} (hρ0 : 0 < ρ0) (hg : 0 < g)
     (hRs : 0 < Rs) (hT : 0 < T) (hz : z ∈ Set.Icc z₁ z₂) :
@@ -293,10 +296,9 @@ lemma isothermalDensity_band_bounds {ρ0 g Rs T z₁ z₂ z : ℝ} (hρ0 : 0 < �
   · exact mul_le_mul_of_nonneg_left
       (Real.exp_le_exp.mpr ((div_le_div_iff_of_pos_right hH).mpr (neg_le_neg h1))) hρ0'
 
-/-- The band bounds do not extend beyond the band: below `z₁` the density exceeds the upper
-bound `ρ0 * exp (-z₁ / H)`, and above `z₂` it falls below the lower bound
-`ρ0 * exp (-z₂ / H)`. The band hypothesis of `isothermalDensity_band_bounds` cannot be
-dropped. -/
+/-- For `ρ0, g, Rs, T > 0` the band bounds do not extend beyond the band: below `z₁` the density
+exceeds the upper bound `ρ0 * exp (-z₁ / H)`, and above `z₂` it falls below the lower bound
+`ρ0 * exp (-z₂ / H)`. The band hypothesis of `isothermalDensity_band_bounds` cannot be dropped. -/
 lemma isothermalDensity_band_bounds_fail_outside {ρ0 g Rs T z₁ z₂ z : ℝ} (hρ0 : 0 < ρ0)
     (hg : 0 < g) (hRs : 0 < Rs) (hT : 0 < T) :
     (z < z₁ → ρ0 * Real.exp (-z₁ / scaleHeight Rs T g) < isothermalDensity ρ0 g Rs T z) ∧
@@ -316,8 +318,9 @@ lemma isothermalDensity_band_bounds_fail_outside {ρ0 g Rs T z₁ z₂ z : ℝ} 
 Density has dimension `M L⁻³`, gravity `L T⁻²`, the mass-specific gas constant
 `L² T⁻² Θ⁻¹`, temperature `Θ` and height `L`. -/
 
-/-- The density formula commutes with a change of units with length, time and temperature
-factors `l, s, k > 0`, for every mass factor `m`: rescaled inputs give the rescaled density. -/
+/-- For `Rs, T > 0`, the density formula commutes with a change of units with length, time and
+temperature factors `l, s, k > 0`, for every real `m` (the mass factor of a change of units when
+`m > 0`): rescaled inputs give the rescaled density. -/
 lemma isothermalDensity_unitChange (m : ℝ) {l s k Rs T : ℝ} (hl : 0 < l) (hs : 0 < s)
     (hk : 0 < k) (hRs : 0 < Rs) (hT : 0 < T) (ρ0 g z : ℝ) :
     isothermalDensity (m / l ^ 3 * ρ0) (l / s ^ 2 * g) (l ^ 2 / (s ^ 2 * k) * Rs) (k * T)
@@ -342,7 +345,8 @@ lemma isothermalDensity_unitChange (m : ℝ) {l s k Rs T : ℝ} (hl : 0 < l) (hs
   rw [hE]
   field_simp
 
-/-- The scale height transforms as a length under a change of units. -/
+/-- The scale height transforms as a length under a change of units with length, time and
+temperature factors `l, s, k > 0`. -/
 lemma scaleHeight_unitChange {l s k : ℝ} (hl : 0 < l) (hs : 0 < s) (hk : 0 < k)
     (Rs T g : ℝ) :
     scaleHeight (l ^ 2 / (s ^ 2 * k) * Rs) (k * T) (l / s ^ 2 * g) = l * scaleHeight Rs T g := by
@@ -370,8 +374,8 @@ coefficient `CL`, for air density `ρ` and wing area `S`:
 noncomputable def polarDrag (ρ S CD0 k CL V : ℝ) : ℝ :=
   ρ * V ^ 2 / 2 * S * (CD0 + k * CL ^ 2)
 
-/-- Lift coefficient required for level flight `L = W` at speed `V`:
-`CL = 2 * W / (ρ * V ^ 2 * S)`. -/
+/-- Lift coefficient required for level flight `L = W` at speed `V`: `CL = 2 * W / (ρ * V ^ 2 * S)`;
+with the convention `x / 0 = 0` it is `0` when `ρ * V ^ 2 * S = 0`. -/
 noncomputable def levelLiftCoeff (W ρ S V : ℝ) : ℝ :=
   2 * W / (ρ * V ^ 2 * S)
 
@@ -379,16 +383,18 @@ noncomputable def levelLiftCoeff (W ρ S V : ℝ) : ℝ :=
 noncomputable def parasiteDragFactor (ρ S CD0 : ℝ) : ℝ :=
   ρ * S * CD0 / 2
 
-/-- Induced-drag factor `b = 2 * k * W ^ 2 / (ρ * S)`: the drag due to lift in level flight at
-speed `V` is `b / V ^ 2`. -/
+/-- Induced-drag factor `b = 2 * k * W ^ 2 / (ρ * S)`: the drag due to lift in level flight at speed
+`V` is `b / V ^ 2`. With the convention `x / 0 = 0`, `b = 0` when `ρ * S = 0`. -/
 noncomputable def inducedDragFactor (W ρ S k : ℝ) : ℝ :=
   2 * k * W ^ 2 / (ρ * S)
 
-/-- Level-flight drag `D(V) = a * V ^ 2 + b / V ^ 2` of the declared polar. -/
+/-- Level-flight drag `D(V) = a * V ^ 2 + b / V ^ 2` of the declared polar; with the convention
+`x / 0 = 0` it is the meaningless value `0` at `V = 0`. -/
 noncomputable def levelDrag (W ρ S CD0 k V : ℝ) : ℝ :=
   parasiteDragFactor ρ S CD0 * V ^ 2 + inducedDragFactor W ρ S k / V ^ 2
 
-/-- At the level-flight lift coefficient the lift `ρ * V ^ 2 / 2 * S * CL` equals the weight. -/
+/-- For `ρ, S, V ≠ 0`, at the level-flight lift coefficient the lift `ρ * V ^ 2 / 2 * S * CL` equals
+the weight. -/
 lemma lift_levelLiftCoeff {ρ S V : ℝ} (hρ : ρ ≠ 0) (hS : S ≠ 0) (hV : V ≠ 0) (W : ℝ) :
     ρ * V ^ 2 / 2 * S * levelLiftCoeff W ρ S V = W := by
   have hV2 : V ^ 2 ≠ 0 := pow_ne_zero 2 hV
@@ -396,9 +402,8 @@ lemma lift_levelLiftCoeff {ρ S V : ℝ} (hρ : ρ ≠ 0) (hS : S ≠ 0) (hV : V
   unfold levelLiftCoeff
   field_simp
 
-/-- Imposing level flight with thrust along the velocity: if the lift
-`ρ * V ^ 2 / 2 * S * CL` equals the weight `W`, the polar drag is
-`D(V) = a * V ^ 2 + b / V ^ 2`. -/
+/-- Imposing level flight with thrust along the velocity: for `ρ, S, V ≠ 0`, if the lift
+`ρ * V ^ 2 / 2 * S * CL` equals the weight `W`, the polar drag is `D(V) = a * V ^ 2 + b / V ^ 2`. -/
 lemma polarDrag_eq_levelDrag {W ρ S CD0 k CL V : ℝ} (hρ : ρ ≠ 0) (hS : S ≠ 0) (hV : V ≠ 0)
     (hL : ρ * V ^ 2 / 2 * S * CL = W) :
     polarDrag ρ S CD0 k CL V = levelDrag W ρ S CD0 k V := by
@@ -461,17 +466,18 @@ private lemma two_sqrt_mul_eq_add_iff {x y : ℝ} (hx : 0 ≤ x) (hy : 0 ≤ y) 
 /-! ## E. Minimum drag -/
 
 /-- Minimum-drag speed `V_md = √(√(b / a))`. For positive weight and `ρ, S, CD0, k > 0` it is the
-unique positive speed of least level-flight drag
-(`levelDrag_eq_two_sqrt_iff_eq_minDragSpeed`). As a formula it is the positive root of
-`V ^ 4 = b / a` whenever `W ≠ 0` and `ρ, S, CD0, k > 0` (`minDragSpeed_pos`,
-`minDragSpeed_pow_four`). If `CD0 = 0`, `k = 0` or `W = 0`, Lean's conventions `x / 0 = 0` and
-`√0 = 0` give the value `0`, which is not a positive speed: with `ρ, S > 0` and `CD0, k ≥ 0` the
-drag then has no minimum over positive speeds when exactly one of its two terms vanishes, and
-every positive speed is a minimizer when both vanish. -/
+unique positive speed of least level-flight drag (`levelDrag_eq_two_sqrt_iff_eq_minDragSpeed`). As a
+formula it is the positive root of `V ^ 4 = b / a` whenever `W ≠ 0` and `ρ, S, CD0, k > 0`
+(`minDragSpeed_pos`, `minDragSpeed_pow_four`). If `ρ`, `S`, `CD0`, `k` or `W` is `0` (or
+`b / a < 0`), the conventions `x / 0 = 0` and `√x = 0` for `x ≤ 0` give the value `0`, which is not
+a positive speed: with `ρ, S > 0` and `CD0, k ≥ 0` the drag then has no minimum over positive speeds
+when exactly one of its two terms vanishes, and every positive speed is a minimizer when both
+vanish. -/
 noncomputable def minDragSpeed (W ρ S CD0 k : ℝ) : ℝ :=
   Real.sqrt (Real.sqrt (inducedDragFactor W ρ S k / parasiteDragFactor ρ S CD0))
 
-/-- Arithmetic-geometric mean bound: at every nonzero speed `2 * √(a * b) ≤ D(V)`. -/
+/-- Arithmetic-geometric mean bound: for `ρ, S > 0` and `CD0, k ≥ 0`, at every nonzero speed
+`2 * √(a * b) ≤ D(V)`. -/
 lemma two_sqrt_le_levelDrag {W ρ S CD0 k V : ℝ} (hρ : 0 < ρ) (hS : 0 < S) (hCD0 : 0 ≤ CD0)
     (hk : 0 ≤ k) (hV : V ≠ 0) :
     2 * Real.sqrt (parasiteDragFactor ρ S CD0 * inducedDragFactor W ρ S k) ≤
@@ -488,7 +494,8 @@ lemma two_sqrt_le_levelDrag {W ρ S CD0 k V : ℝ} (hρ : 0 < ρ) (hS : 0 < S) (
   unfold levelDrag
   exact h
 
-/-- Equality in the bound holds exactly when `V ^ 4 = b / a`. -/
+/-- For `ρ, S, CD0 > 0`, `k ≥ 0` and `V ≠ 0`, equality in the bound holds exactly when
+`V ^ 4 = b / a`. -/
 lemma levelDrag_eq_two_sqrt_iff {W ρ S CD0 k V : ℝ} (hρ : 0 < ρ) (hS : 0 < S) (hCD0 : 0 < CD0)
     (hk : 0 ≤ k) (hV : V ≠ 0) :
     levelDrag W ρ S CD0 k V =
@@ -608,11 +615,11 @@ lemma isLeast_levelDrag {W ρ S CD0 k : ℝ} (hW : 0 < W) (hρ : 0 < ρ) (hS : 0
     have hV : 0 < V := hVmem
     exact two_sqrt_le_levelDrag hρ hS hCD0.le hk.le hV.ne'
 
-/-- Engineering form of the bound, an identity for all parameters:
-`2 * √(a * b) = 2 * |W| * √(CD0 * k)`. For positive weight and `ρ, S, CD0, k > 0` it is the
-minimum drag (`isLeast_levelDrag`); in level flight the lift equals the weight `W`, so the
-greatest lift-to-drag ratio is `W / (2 * W * √(CD0 * k)) = 1 / (2 * √(CD0 * k))`. That
-consequence needs `W > 0`: for `W < 0` the lift is negative and the ratio at minimum drag is
+/-- Engineering form of the bound, an identity for `ρ, S ≠ 0` and all other parameters:
+`2 * √(a * b) = 2 * |W| * √(CD0 * k)`. For positive weight and `ρ, S, CD0, k > 0` it is the minimum
+drag (`isLeast_levelDrag`); in level flight the lift equals the weight `W`, so the greatest
+lift-to-drag ratio is `W / (2 * W * √(CD0 * k)) = 1 / (2 * √(CD0 * k))`. That consequence needs
+`W > 0`: for `W < 0` the lift is negative and the ratio at minimum drag is
 `-1 / (2 * √(CD0 * k))`. -/
 lemma two_sqrt_mul_dragFactor_eq {W ρ S CD0 k : ℝ} (hρ : ρ ≠ 0) (hS : S ≠ 0) :
     2 * Real.sqrt (parasiteDragFactor ρ S CD0 * inducedDragFactor W ρ S k) =
@@ -635,12 +642,13 @@ lemma two_sqrt_mul_dragFactor_eq {W ρ S CD0 k : ℝ} (hρ : ρ ≠ 0) (hS : S �
 /-! ## F. The stall-validity interval -/
 
 /-- Stall speed `V_s = √(2 * W / (ρ * S * CLmax))` for the polar's maximum lift coefficient
-`CLmax`. The physical regime is `W, ρ, S, CLmax > 0`; for `W ≤ 0` the radicand is not positive
-and `Real.sqrt` returns the meaningless value `0`, so the stall results assume `0 < W`. -/
+`CLmax`. The physical regime is `W, ρ, S, CLmax > 0`; for `W ≤ 0` (with `ρ, S, CLmax > 0`) the
+radicand is not positive and `Real.sqrt` returns the meaningless value `0`, so the stall results
+assume `0 < W`. -/
 noncomputable def stallSpeed (W ρ S CLmax : ℝ) : ℝ :=
   Real.sqrt (2 * W / (ρ * S * CLmax))
 
-/-- The stall-validity interval: for positive weight, at a positive speed the level-flight lift
+/-- The stall-validity interval: for `W, ρ, S, CLmax > 0`, at a positive speed the level-flight lift
 coefficient is at most `CLmax` exactly when the speed is at least the stall speed. -/
 lemma levelLiftCoeff_le_iff_stallSpeed_le {W ρ S CLmax V : ℝ} (hW : 0 < W) (hρ : 0 < ρ)
     (hS : 0 < S) (hCL : 0 < CLmax) (hV : 0 < V) :
@@ -656,9 +664,9 @@ lemma levelLiftCoeff_le_iff_stallSpeed_le {W ρ S CLmax V : ℝ} (hW : 0 < W) (h
   have heq : CLmax * (ρ * V ^ 2 * S) = V ^ 2 * (ρ * S * CLmax) := by ring
   rw [heq]
 
-/-- Subject to the stall-validity interval: for positive weight, some positive speed with lift
-coefficient at most `CLmax` attains the bound `2 * √(a * b)` exactly when the stall speed is at
-most the minimum-drag speed. -/
+/-- Subject to the stall-validity interval: for `W > 0` and `ρ, S, CD0, k, CLmax > 0`, some positive
+speed with lift coefficient at most `CLmax` attains the bound `2 * √(a * b)` exactly when the stall
+speed is at most the minimum-drag speed. -/
 lemma exists_levelDrag_eq_two_sqrt_iff {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (hρ : 0 < ρ)
     (hS : 0 < S) (hCD0 : 0 < CD0) (hk : 0 < k) (hCL : 0 < CLmax) :
     (∃ V, 0 < V ∧ levelLiftCoeff W ρ S V ≤ CLmax ∧
@@ -679,9 +687,9 @@ lemma exists_levelDrag_eq_two_sqrt_iff {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (
     · exact (levelLiftCoeff_le_iff_stallSpeed_le hW hρ hS hCL hmd).mpr hle
     · exact (levelDrag_eq_two_sqrt_iff_eq_minDragSpeed hW hρ hS hCD0 hk hmd).mpr rfl
 
-/-- An unconstrained minimizer below the stall speed is not an operating point: for positive
-weight and `CD0, k > 0`, every positive speed with lift coefficient at most `CLmax` has drag
-strictly above `2 * √(a * b)`. -/
+/-- An unconstrained minimizer below the stall speed is not an operating point: for `W > 0` and
+`ρ, S, CD0, k, CLmax > 0`, if the minimum-drag speed is below the stall speed, every positive speed
+with lift coefficient at most `CLmax` has drag strictly above `2 * √(a * b)`. -/
 lemma two_sqrt_lt_levelDrag_of_minDragSpeed_lt_stallSpeed {W ρ S CD0 k CLmax V : ℝ}
     (hW : 0 < W) (hρ : 0 < ρ) (hS : 0 < S) (hCD0 : 0 < CD0) (hk : 0 < k) (hCL : 0 < CLmax)
     (hmd : minDragSpeed W ρ S CD0 k < stallSpeed W ρ S CLmax) (hV : 0 < V)
@@ -704,8 +712,8 @@ lemma two_sqrt_lt_levelDrag_of_minDragSpeed_lt_stallSpeed {W ρ S CD0 k CLmax V 
     exact hne (hiff.mp hcon)
   exact lt_of_le_of_ne hle (Ne.symm hDne)
 
-/-- The stall speed exceeds the minimum-drag speed exactly when the lift coefficient at minimum
-drag, `√(CD0 / k)`, exceeds `CLmax`. -/
+/-- For `W > 0` and `ρ, S, CD0, k, CLmax > 0`, the stall speed exceeds the minimum-drag speed
+exactly when the lift coefficient at minimum drag, `√(CD0 / k)`, exceeds `CLmax`. -/
 lemma minDragSpeed_lt_stallSpeed_iff {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (hρ : 0 < ρ)
     (hS : 0 < S) (hCD0 : 0 < CD0) (hk : 0 < k) (hCL : 0 < CLmax) :
     minDragSpeed W ρ S CD0 k < stallSpeed W ρ S CLmax ↔ CLmax < Real.sqrt (CD0 / k) := by
@@ -753,8 +761,9 @@ lemma minDragSpeed_lt_stallSpeed_iff {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (h�
 
 /-! ## G. Isothermal-layer density as the density input -/
 
-/-- The density of the isothermal layer at any height `z` is an admissible density input: the
-level-flight drag at every nonzero speed is at least `2 * √(a * b)` evaluated at that density. -/
+/-- The density of the isothermal layer at any height `z` is an admissible density input: for
+`ρ0, Rs, T, S > 0` and `CD0, k ≥ 0`, the level-flight drag at every nonzero speed is at least
+`2 * √(a * b)` evaluated at that density. -/
 lemma two_sqrt_le_levelDrag_isothermalDensity {ρ0 Rs T S CD0 k V : ℝ} (hρ0 : 0 < ρ0)
     (hRs : 0 < Rs) (hT : 0 < T) (hS : 0 < S) (hCD0 : 0 ≤ CD0) (hk : 0 ≤ k) (hV : V ≠ 0)
     (W g z : ℝ) :
@@ -783,7 +792,7 @@ lemma levelPower_eq (W ρ S CD0 k V : ℝ) :
   · have hV2 : V ^ 2 ≠ 0 := pow_ne_zero 2 hV
     field_simp
 
-/-- Imposing level flight with thrust along the velocity: if the lift
+/-- Imposing level flight with thrust along the velocity: for `ρ, S, V ≠ 0`, if the lift
 `ρ * V ^ 2 / 2 * S * CL` equals the weight `W`, the thrust power `D * V` of the declared polar is
 the power required `P(V)`. -/
 lemma polarDrag_mul_eq_levelPower {W ρ S CD0 k CL V : ℝ} (hρ : ρ ≠ 0) (hS : S ≠ 0) (hV : V ≠ 0)
@@ -880,11 +889,12 @@ lemma isMinOn_levelPower_iff {W ρ S CD0 k V : ℝ} (hρ : 0 < ρ) (hS : 0 < S) 
         exact hpos.le
     linarith [hdiff, hnonneg]
 
-/-- Minimum-power speed `V_mp = √(√(b / (3 * a)))`. For positive weight and `ρ, S, CD0, k > 0` it
-is the unique positive speed of least power required (`levelPower_minPowerSpeed_lt`). As a
-formula it is the positive root of `V ^ 4 = b / (3 * a)` whenever `W ≠ 0` and `ρ, S, CD0, k > 0`
-(`minPowerSpeed_pos`, `minPowerSpeed_pow_four`). If `CD0 = 0`, `k = 0` or `W = 0`, Lean's
-conventions `x / 0 = 0` and `√0 = 0` give the value `0`, which is not a positive speed. -/
+/-- Minimum-power speed `V_mp = √(√(b / (3 * a)))`. For positive weight and `ρ, S, CD0, k > 0` it is
+the unique positive speed of least power required (`levelPower_minPowerSpeed_lt`). As a formula it
+is the positive root of `V ^ 4 = b / (3 * a)` whenever `W ≠ 0` and `ρ, S, CD0, k > 0`
+(`minPowerSpeed_pos`, `minPowerSpeed_pow_four`). If `ρ`, `S`, `CD0`, `k` or `W` is `0` (or
+`b / (3 * a) < 0`), the conventions `x / 0 = 0` and `√x = 0` for `x ≤ 0` give the value `0`, which
+is not a positive speed. -/
 noncomputable def minPowerSpeed (W ρ S CD0 k : ℝ) : ℝ :=
   Real.sqrt (Real.sqrt (inducedDragFactor W ρ S k / (3 * parasiteDragFactor ρ S CD0)))
 
@@ -1191,8 +1201,9 @@ lemma levelLiftCoeff_minPowerSpeed {W ρ S CD0 k : ℝ} (hW : 0 < W) (hρ : 0 < 
 
 /-! ## K. Power on the stall-validity interval -/
 
-/-- For positive weight, the minimum-power speed lies below the stall speed exactly when its lift
-coefficient `√(3 * CD0 / k)` exceeds `CLmax`; it is then not an operating point. -/
+/-- For `W > 0` and `ρ, S, CD0, k, CLmax > 0`, the minimum-power speed lies below the stall speed
+exactly when its lift coefficient `√(3 * CD0 / k)` exceeds `CLmax`; it is then not an operating
+point. -/
 lemma minPowerSpeed_lt_stallSpeed_iff {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (hρ : 0 < ρ)
     (hS : 0 < S) (hCD0 : 0 < CD0) (hk : 0 < k) (hCL : 0 < CLmax) :
     minPowerSpeed W ρ S CD0 k < stallSpeed W ρ S CLmax ↔ CLmax < Real.sqrt (3 * CD0 / k) := by
@@ -1204,9 +1215,10 @@ lemma minPowerSpeed_lt_stallSpeed_iff {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (h
   exact ⟨fun hlt => lt_of_not_ge (fun hge => not_le_of_gt hlt (hiff.mp hge)),
     fun hlt => lt_of_not_ge (fun hge => not_le_of_gt hlt (hiff.mpr hge))⟩
 
-/-- Selection on the stall-validity interval: for positive weight, every positive speed with lift
-coefficient at most `CLmax` other than `max V_s V_mp` needs strictly more power than that speed.
-When `V_mp < V_s` the selected speed is the stall endpoint, not the unconstrained minimizer. -/
+/-- Selection on the stall-validity interval: for `W > 0` and `ρ, S, CD0, k, CLmax > 0`, every
+positive speed with lift coefficient at most `CLmax` other than `max V_s V_mp` needs strictly more
+power than that speed. When `V_mp < V_s` the selected speed is the stall endpoint, not the
+unconstrained minimizer. -/
 lemma levelPower_max_lt {W ρ S CD0 k CLmax V : ℝ} (hW : 0 < W) (hρ : 0 < ρ) (hS : 0 < S)
     (hCD0 : 0 < CD0) (hk : 0 < k) (hCL : 0 < CLmax) (hV : 0 < V)
     (hadm : levelLiftCoeff W ρ S V ≤ CLmax)
@@ -1224,9 +1236,9 @@ lemma levelPower_max_lt {W ρ S CD0 k CLmax V : ℝ} (hW : 0 < W) (hρ : 0 < ρ)
     exact hmono (show minPowerSpeed W ρ S CD0 k ≤ stallSpeed W ρ S CLmax from hle)
       (show minPowerSpeed W ρ S CD0 k ≤ V from le_trans hle hsV) hlt
 
-/-- For positive weight, the least power required among positive speeds with lift coefficient at
-most `CLmax` is attained at `max V_s V_mp`: at the minimum-power speed when it is admissible and
-at the stall endpoint otherwise. -/
+/-- For `W > 0` and `ρ, S, CD0, k, CLmax > 0`, the least power required among positive speeds with
+lift coefficient at most `CLmax` is attained at `max V_s V_mp`: at the minimum-power speed when it
+is admissible and at the stall endpoint otherwise. -/
 lemma isLeast_levelPower_stall {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (hρ : 0 < ρ) (hS : 0 < S)
     (hCD0 : 0 < CD0) (hk : 0 < k) (hCL : 0 < CLmax) :
     IsLeast (levelPower W ρ S CD0 k '' {V | 0 < V ∧ levelLiftCoeff W ρ S V ≤ CLmax})
@@ -1254,7 +1266,8 @@ lemma isLeast_levelPower_stall {W ρ S CD0 k CLmax : ℝ} (hW : 0 < W) (hρ : 0 
 /-! ## L. Shaft power -/
 
 /-- Shaft power `P(V) / η` that a propulsor of efficiency `η` must absorb to deliver the power
-required `P(V)`; the physical regime is `0 < η ≤ 1`, with `η` a declared constant. -/
+required `P(V)`; with the convention `x / 0 = 0` it is `0` at `η = 0`. The physical regime is
+`0 < η ≤ 1`, with `η` a declared constant. -/
 noncomputable def shaftPowerRequired (η W ρ S CD0 k V : ℝ) : ℝ :=
   levelPower W ρ S CD0 k V / η
 
@@ -1301,13 +1314,15 @@ lemma isMinOn_shaftPowerRequired_iff {η W ρ S CD0 k V : ℝ} (hη : 0 < η) (h
 /-! ## M. Thrust-specific fuel law in quasi-level cruise -/
 
 /-- Lift-to-drag ratio `Λ = CL / (CD0 + k * CL ^ 2)` of the declared polar at the lift coefficient
-`CL`; it does not depend on density, speed or weight. -/
+`CL`; it does not depend on density, speed or weight. With the convention `x / 0 = 0`, `Λ = 0` when
+`CD0 + k * CL ^ 2 = 0`. -/
 noncomputable def polarLiftToDrag (CD0 k CL : ℝ) : ℝ :=
   CL / (CD0 + k * CL ^ 2)
 
 /-- Quasi-level cruise at a fixed lift coefficient: if the lift `ρ * V ^ 2 / 2 * S * CL` equals the
-weight `W` and `CL ≠ 0`, the polar drag is `W / Λ`. With thrust along the velocity balancing that
-drag, the weight-based fuel law `W' = -cW * T` becomes `W' = -cW * W / Λ`. -/
+weight `W` and `CL ≠ 0`, the polar drag is `W / Λ` (both sides are `0` when `CD0 + k * CL ^ 2 = 0`).
+With thrust along the velocity balancing that drag, the weight-based fuel law `W' = -cW * T` becomes
+`W' = -cW * W / Λ`. -/
 lemma polarDrag_eq_div_polarLiftToDrag {W ρ S CD0 k CL V : ℝ} (hCL : CL ≠ 0)
     (hL : ρ * V ^ 2 / 2 * S * CL = W) :
     polarDrag ρ S CD0 k CL V = W / polarLiftToDrag CD0 k CL := by
@@ -1322,7 +1337,9 @@ lemma polarDrag_eq_div_polarLiftToDrag {W ρ S CD0 k CL V : ℝ} (hCL : CL ≠ 0
 /-! ## N. The weight history -/
 
 /-- Weight `W(t) = Wi * exp (-(cW / Λ) * t)` at time `t` of the cruise that starts at the weight
-`Wi`, with weight-based fuel coefficient `cW` (an inverse time) and lift-to-drag ratio `Λ`. -/
+`Wi`, with weight-based fuel coefficient `cW` (an inverse time) and lift-to-drag ratio `Λ`; with the
+convention `x / 0 = 0` it is the constant `Wi` when `Λ = 0`. In the physical reading
+`Wi, cW, Λ > 0`. -/
 noncomputable def cruiseWeight (Wi cW Λ t : ℝ) : ℝ :=
   Wi * Real.exp (-(cW / Λ) * t)
 
@@ -1385,8 +1402,9 @@ lemma eq_cruiseWeight_of_hasDerivAt {W : ℝ → ℝ} {cW Λ t₁ : ℝ}
 
 /-! ## O. Duration and range -/
 
-/-- Breguet endurance `Λ / cW * log (Wi / Wf)`: the cruise time from the weight `Wi` down to
-`Wf`. -/
+/-- Breguet endurance `Λ / cW * log (Wi / Wf)`: the cruise time from the weight `Wi` down to `Wf`.
+With the conventions `x / 0 = 0`, `log 0 = 0` and `log x = log |x|` it is `0` when `cW = 0`,
+`Wi = 0` or `Wf = 0`, and `Λ / cW * log |Wi / Wf|` when `Wi / Wf < 0`. -/
 noncomputable def breguetDuration (Λ cW Wi Wf : ℝ) : ℝ :=
   Λ / cW * Real.log (Wi / Wf)
 
@@ -1423,9 +1441,9 @@ lemma cruiseWeight_eq_iff {Wi Wf cW Λ t : ℝ} (hWi : 0 < Wi) (hWf : 0 < Wf) (h
     rw [h]
     field_simp
 
-/-- Duration: a cruise that obeys `W' = -cW * W / Λ` on `[0, t₁]`, with `cW, Λ > 0` and positive
-initial weight, lasts `t₁ = Λ / cW * log (W 0 / W t₁)`, the time to burn from `Wi = W 0` down to
-`Wf = W t₁`. -/
+/-- Duration: for `cW, Λ > 0` and `t₁ ≥ 0`, a cruise that obeys `W' = -cW * W / Λ` on `[0, t₁]`
+with positive initial weight lasts `t₁ = Λ / cW * log (W 0 / W t₁)`, the time to burn from
+`Wi = W 0` down to `Wf = W t₁`. -/
 lemma cruise_duration_eq {W : ℝ → ℝ} {cW Λ t₁ : ℝ} (hcW : 0 < cW) (hΛ : 0 < Λ) (ht₁ : 0 ≤ t₁)
     (hW : ∀ t ∈ Set.Icc 0 t₁, HasDerivAt W (-cW * W t / Λ) t) (hW0 : 0 < W 0) :
     t₁ = breguetDuration Λ cW (W 0) (W t₁) := by
@@ -1437,9 +1455,9 @@ lemma cruise_duration_eq {W : ℝ → ℝ} {cW Λ t₁ : ℝ} (hcW : 0 < cW) (h�
     exact mul_pos hW0 (Real.exp_pos _)
   exact (cruiseWeight_eq_iff hW0 hW1_pos hcW hΛ).mp hW_eq.symm
 
-/-- Range: flying that cruise at the constant air speed `V` (`s' = V` on `[0, t₁]`) covers the
-air-path distance `s t₁ - s 0 = V * (Λ / cW * log (W 0 / W t₁))`, the speed times the
-duration. -/
+/-- Range: for `cW, Λ > 0`, `t₁ ≥ 0` and a cruise that obeys `W' = -cW * W / Λ` on `[0, t₁]` with
+positive initial weight, flying at the constant air speed `V` (`s' = V` on `[0, t₁]`) covers the
+air-path distance `s t₁ - s 0 = V * (Λ / cW * log (W 0 / W t₁))`, the speed times the duration. -/
 lemma cruise_range_eq {W s : ℝ → ℝ} {V cW Λ t₁ : ℝ} (hcW : 0 < cW) (hΛ : 0 < Λ) (ht₁ : 0 ≤ t₁)
     (hW : ∀ t ∈ Set.Icc 0 t₁, HasDerivAt W (-cW * W t / Λ) t) (hW0 : 0 < W 0)
     (hs : ∀ t ∈ Set.Icc 0 t₁, HasDerivAt s V t) :
@@ -1482,7 +1500,7 @@ lemma hasDerivAt_weight_of_mass {m : ℝ → ℝ} {cm g T t : ℝ} (hm : HasDeri
   exact (hm.const_mul g).congr_deriv (by ring)
 
 /-- Mass form of the duration: if the mass obeys `m' = -cm * (g * m / Λ)` on `[0, t₁]` (thrust
-`W / Λ` for the weight `W = g * m`) with `cm, g, Λ > 0` and `m 0 > 0`, the cruise lasts
+`W / Λ` for the weight `W = g * m`) with `cm, g, Λ > 0`, `t₁ ≥ 0` and `m 0 > 0`, the cruise lasts
 `t₁ = Λ / (g * cm) * log (m 0 / m t₁)`. -/
 lemma cruise_duration_mass_eq {m : ℝ → ℝ} {cm g Λ t₁ : ℝ} (hcm : 0 < cm) (hg : 0 < g)
     (hΛ : 0 < Λ) (ht₁ : 0 ≤ t₁)
@@ -1493,7 +1511,7 @@ lemma cruise_duration_mass_eq {m : ℝ → ℝ} {cm g Λ t₁ : ℝ} (hcm : 0 < 
     fun t ht => (hm t ht).congr_deriv (by ring)
   exact cruise_duration_eq hcW hΛ ht₁ hm' hm0
 
-/-- Confusing the coefficients loses a factor `g`: using the mass-based `cm` where the
+/-- Confusing the coefficients loses a factor `g`: for `g ≠ 0`, using the mass-based `cm` where the
 weight-based `g * cm` belongs multiplies the duration, and so the range, by `g`. -/
 lemma breguetDuration_mass_confusion {Λ cm g Wi Wf : ℝ} (hg : g ≠ 0) :
     breguetDuration Λ cm Wi Wf = g * breguetDuration Λ (g * cm) Wi Wf := by
@@ -1552,8 +1570,9 @@ lemma lift_cruiseClimb {ρ0 g Rs T V S CL Wi cW Λ z₀ : ℝ} (hg : 0 < g) (hRs
         * Real.exp (-(cW / Λ) * t) := by ring
   rw [hring, h0]
 
-/-- The cruise-climb is forced: with `ρ0 > 0` and nonzero `V, S, CL`, a height at which the lift
-balances the cruise weight at time `t` is `z₀ + H * (cW / Λ) * t`. -/
+/-- The cruise-climb is forced: with `ρ0, g, Rs, T > 0` and nonzero `V, S, CL`, if the lift at the
+height `z₀` balances the initial weight `Wi`, a height at which the lift balances the cruise weight
+at time `t` is `z₀ + H * (cW / Λ) * t`. -/
 lemma eq_cruiseClimb_of_lift_eq {ρ0 g Rs T V S CL Wi cW Λ z₀ z t : ℝ} (hρ0 : 0 < ρ0)
     (hg : 0 < g) (hRs : 0 < Rs) (hT : 0 < T) (hV : V ≠ 0) (hS : S ≠ 0) (hCL : CL ≠ 0)
     (h0 : isothermalDensity ρ0 g Rs T z₀ * V ^ 2 / 2 * S * CL = Wi)

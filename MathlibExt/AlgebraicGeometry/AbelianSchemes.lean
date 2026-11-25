@@ -125,10 +125,7 @@ def IsNormalizedAtZero {S : Scheme.{u}} (A : AbelianScheme S) (T : Over S)
   Nonempty ((Scheme.Modules.pullback (zeroSectionAt A T).left).obj L ≅
     structureModule T.left)
 
-/-- The actual pullback of the Poincaré family along a parameter morphism. -/
-def familyPullback {S : Scheme.{u}} (A D T : Over S)
-    (P : (prod A D).left.Modules) (f : T ⟶ D) : (prod A T).left.Modules :=
-  (Scheme.Modules.pullback (prod.map (𝟙 A) f).left).obj P
+export AlgebraicLineBundleFamilies (familyPullback)
 
 /-- A relative dual abelian scheme with both normalized origins and a
 universal actual geometric Picard-zero line family. -/

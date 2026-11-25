@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import MathlibExt.Combinatorics.Enumerative.PermutationWordle
+public import MathlibExt.Combinatorics.Enumerative.PermutationWordleCounts
+public import MathlibExt.Combinatorics.Enumerative.PermutationWordleDerangements
 public import MathlibExt.NumberTheory.LucasSequence
 
 /-!
@@ -30,17 +31,6 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- **One- and two-guess counts for deranged strategies.** Let $n \in \mathbb{N}$ and let $S$ be
-a strategy whose component $S[m]$ has no fixed point for every $2 \le m \le n$, and write
-$[x^r] f_S$ for the number of permutations of $\{0, \dots, n-1\}$ that $S$ guesses in exactly $r$
-guesses. Then $[x^1] f_S = 1$ and $[x^2] f_S = 2^n - n - 1$, the Eulerian number $A(n, 1)$.
-
-Source: Aurora Hiveley, *Experimenting with Permutation Wordle*, Journal of Integer Sequences 29
-(2026), Article 26.1.7, Theorem 5 (`jis-2026-26.1.7-thm-5`). -/
-public theorem_wanted permWordleCoeff_one_and_two (n : ℕ) (S : (m : ℕ) → Equiv.Perm (Fin m))
-    (hS : ∀ m, 2 ≤ m → m ≤ n → ∀ k : Fin m, S m k ≠ k) :
-    permWordleCoeff S n 1 = 1 ∧ permWordleCoeff S n 2 = 2 ^ n - n - 1
-
 /-- **Cyclic shift maximizes three-guess solves among inductive strategies.** Let $n \ge 4$ and let
 $S$ be an inductive strategy of length $n$ whose component $S[n]$ is not the rotation
 $i \mapsto i + 1 \pmod n$. Then strictly fewer permutations of $\{0, \dots, n-1\}$ are guessed in
@@ -52,16 +42,6 @@ public theorem_wanted permWordleCoeff_three_lt_cyclicShift (n : ℕ) (hn : 4 ≤
     (S : (m : ℕ) → Equiv.Perm (Fin m)) (hS : IsInductivePermWordleStrategy n S)
     (hne : S n ≠ finRotate n) :
     permWordleCoeff S n 3 < permWordleCoeff cyclicShiftStrategy n 3
-
-/-- **Derangements solved in three guesses by cyclic shift.** For $n \ge 3$, exactly
-$2^n - (2n + 1)$ derangements $\pi$ of $\{0, \dots, n-1\}$ are guessed by the cyclic shift
-strategy in exactly three guesses.
-
-Source: Aurora Hiveley, *Experimenting with Permutation Wordle*, Journal of Integer Sequences 29
-(2026), Article 26.1.7, Lemma 9 (`jis-2026-26.1.7-lem-9`). -/
-public theorem_wanted card_derangements_solvedIn_three_cyclicShift (n : ℕ) (hn : 3 ≤ n) :
-    Nat.card {π : Equiv.Perm (Fin n) //
-      (∀ k, π k ≠ k) ∧ PermWordleSolvedIn cyclicShiftStrategy π 3} = 2 ^ n - (2 * n + 1)
 
 /-- **Three-guess solves of permutations with a fixed point.** Let $n \ge 4$ and let $S$ be a
 permutation Wordle strategy (a permutation $S[m]$ of $\{0, \dots, m-1\}$ for each $m$) with
