@@ -1,0 +1,3 @@
+# Well-formed instances of 3-COLORABILITY OF C4-FREE GRAPHS
+
+An instance $(n, E, K)$ is well-formed for 3-COLORABILITY OF $C_4$-FREE GRAPHS when it is a well-formed GRAPH COLORING instance (the list $E$ has no repeated entries, and every pair $(u, v)$ in $E$ satisfies $u < n$, $v < n$, $u \ne v$ and $(v, u) \notin E$), $K = 3$, and the cycle $C_4$ on 4 vertices is not an induced subgraph of the graph of the instance (on the vertices $0, \dots, n-1$, with $u$ and $v$ adjacent when $u \ne v$ and $(u, v)$ or $(v, u)$ is in $E$). Here a graph $H$ is an induced subgraph of $G$ when some injective map from the vertices of $H$ to those of $G$ preserves both adjacency and non-adjacency.
