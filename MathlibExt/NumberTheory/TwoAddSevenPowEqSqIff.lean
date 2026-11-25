@@ -9,7 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Nat.Prime.Defs
-import Mathlib.Tactic
+import Mathlib.Algebra.Ring.Parity
+import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum.GCD
+import Mathlib.Tactic.Ring
 
 /-!
 # Solutions of $2 + 7^y = z^2$

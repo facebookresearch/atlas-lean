@@ -9,9 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Ring.Int.Defs
+import Mathlib.Data.ZMod.Basic
 import Mathlib.RingTheory.Int.Basic
+import Mathlib.Tactic.LinearCombination
+import MathlibExt.NumberTheory.NagellLjunggrenCubeNoSolution
 import MathlibExt.NumberTheory.SqAddAddOneEqThreeMulCube
-import all MathlibExt.NumberTheory.NagellLjunggrenCubeNoSolution
 
 /-!
 # Integer solutions of $u^3 - 2v^3 = 1$

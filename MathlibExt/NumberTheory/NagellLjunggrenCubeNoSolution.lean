@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.Ring.Int.Defs
+public import Mathlib.Data.ZMod.Defs
 import Mathlib.Algebra.Field.ZMod
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Data.Nat.Factorization.Basic
@@ -266,11 +266,14 @@ private theorem dependent {A B : ℝ} (hA : A ^ 3 = a) (hB : B ^ 3 = b)
   rw [zpow_sub, ← div_eq_mul_inv]
   exact eq_div_iff_mul_eq'.2 heq.symm
 
-/-- For consecutive positive coefficients, the solution in the `(1, 1)` class modulo three
-is unique. Write `A³ = a`, `B³ = b`, and consider the norm-one units
-`R = (AU - BV) / (A - B)` and `S = (A - B)³`. The coefficients of `A²B` and `AB²`
-in `R` are both `U - V`. In `S` they are `-3` and `3`. -/
-private theorem thue {a b U V : ℤ} (hb : 1 ≤ b) (hab : a = b + 1)
+/-- **A cubic Thue equation with consecutive coefficients.** Let $a,b,U,V$ be integers with
+$a = b + 1$ and $b \ge 1$. If $aU^3 - bV^3 = 1$ and $U \equiv V \equiv 1 \pmod 3$, then $U = V$.
+
+Write $A = \sqrt[3]{a}$ and $B = \sqrt[3]{b}$. The coefficients of $A^2B$ and $AB^2$ in the
+norm-one unit $(AU - BV)/(A - B)$ are both $U - V$. In $(A - B)^3$ they are $-3$ and $3$.
+
+Source: The cubic-unit argument in `MathlibExt.NumberTheory.NagellLjunggrenCubeNoSolution`. -/
+public theorem thue {a b U V : ℤ} (hb : 1 ≤ b) (hab : a = b + 1)
     (h : a * U ^ 3 - b * V ^ 3 = 1) (hU : (U : ZMod 3) = 1) (hV : (V : ZMod 3) = 1) :
     U = V := by
   let x : Cubic a b := ⟨a * U - b * V, U - V, U - V⟩
