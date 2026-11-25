@@ -9864,6 +9864,7 @@
   "MathlibExt/Analysis/OperatorTheory/MulByIdentityBoundedOnL2UnitInterval": {"to": "Analysis/operator-theory/integral-and-multiplication", "title": "Multiplication operators on L²"},
   "MathlibExt/Analysis/Optimization/BarzilaiBorwein": {"to": "Analysis/numerical-analysis", "title": "Barzilai–Borwein step size"},
   "MathlibExt/Analysis/Optimization/DaiYuan": {"to": "Analysis/numerical-analysis", "title": "Nonlinear conjugate gradient methods"},
+  "MathlibExt/Analysis/Optimization/FletcherReeves": {"to": "Analysis/numerical-analysis", "title": "Nonlinear conjugate gradient methods"},
   "MathlibExt/Analysis/Optimization/LineSearch": {"to": "Analysis/numerical-analysis", "title": "Line search methods"},
   "MathlibExt/Analysis/Optimization/QuasiNewton": {"to": "Analysis/numerical-analysis", "title": "Quasi-Newton methods"},
   "MathlibExt/Analysis/Optimization/Raydan": {"to": "Analysis/numerical-analysis", "title": "Barzilai–Borwein step size"},

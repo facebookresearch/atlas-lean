@@ -1,9 +1,9 @@
 # Global convergence of the Fletcher–Reeves method under strong Wolfe steps
 
 Let $f$ be a function on a finite-dimensional real inner product space whose level set
-$\{y : f(y) \le f(x_0)\}$ is bounded and which, on an open neighbourhood $U$ of it, is
-differentiable with $L$-Lipschitz gradient. Run $x_{k+1} = x_k + \alpha_k d_k$ with
-$d_0 = -\nabla f(x_0)$ and
+$\{y : f(y) \le f(x_0)\}$ is bounded. Assume $f$ is bounded below on this level set and is
+differentiable with $L$-Lipschitz gradient on an open neighbourhood $U$ of it.
+Run $x_{k+1} = x_k + \alpha_k d_k$ with $d_0 = -\nabla f(x_0)$ and
 
 $$d_{k+1} = -\nabla f(x_{k+1}) + \frac{\|\nabla f(x_{k+1})\|^2}{\|\nabla f(x_k)\|^2}\, d_k ,$$
 
@@ -17,6 +17,11 @@ convergence for $\sigma < 1/2$; the endpoint $\sigma = 1/2$ is due to Liu, Han a
 Dai and Yuan (1996). Compare the
 [Dai–Yuan method](dai-yuan-liminf-norm-gradient.md), which needs only standard Wolfe steps.
 
+The explicit lower bound supplies the hypothesis of the Zoutendijk condition. A bounded sublevel
+set alone does not imply a lower bound when differentiability is assumed only on its open
+neighbourhood. The earlier Dai–Yuan (1999) line-search result assumes a global lower bound;
+a bound on the starting sublevel set suffices because the steps stay in that set.
+
 ## Background
 
 - [Zoutendijk condition](../line-search-methods/zoutendijk.md): the summability (Lemma 2.2 of the
@@ -24,7 +29,7 @@ Dai and Yuan (1996). Compare the
 
 ## Sources
 
-- Y. H. Dai and Y. Yuan, *A note on the nonlinear conjugate gradient method*, J. Comput. Math. 20 (2002); https://lsec.cc.ac.cn/pub/yyx/papers/jcm1290.pdf, Theorem 4.2 under Assumption 2.1.
+- Y. H. Dai and Y. Yuan, *A note on the nonlinear conjugate gradient method*, J. Comput. Math. 20 (2002); https://lsec.cc.ac.cn/pub/yyx/papers/jcm1290.pdf, Theorem 4.2 under Assumption 2.1, with the lower-bound hypothesis made explicit here.
 - M. Al-Baali, *Descent property and global convergence of the Fletcher–Reeves method with inexact
   line search*, IMA J. Numer. Anal. 5 (1985), 121–124 (the case $\sigma < 1/2$).
 - G. H. Liu, J. Y. Han and H. X. Yin, *Global convergence of the Fletcher–Reeves algorithm with an
