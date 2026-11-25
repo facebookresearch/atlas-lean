@@ -11,8 +11,7 @@ $$\frac{\Gamma, x{<:}\varphi \vdash \sigma <: \tau}{\Gamma \vdash \forall x{<:}\
 $\Gamma \vdash_N \Gamma[x] <: \tau$; the arrow rule; and the kernel quantifier rule. Then:
 
 - reflexivity and transitivity are admissible for $\vdash_N$, so $\Gamma \vdash_N \sigma <: \tau$ holds exactly when $\Gamma \vdash \sigma <: \tau$;
-- the rules of $\vdash_N$ are syntax directed, and in kernel $F_{<:}$ the search they define terminates on every well-formed input, that is, an ordered context in which each bound mentions only $\top$ and variables declared earlier, and types whose free variables are declared in the context, since the bounds in the
-  context never change under a quantifier; hence kernel $F_{<:}$ subtyping is decidable.
+- the rules of $\vdash_N$ are syntax directed, and in kernel $F_{<:}$ the search they define terminates on every well-formed input, that is, an ordered context $\Gamma$ in which each bound is a type, arrows and bounded quantifiers included, whose free variables are declared earlier, and types whose free variables are declared in $\Gamma$. Termination is shown with the weight of a type relative to $\Gamma$, in which a variable weighs one more than its bound and which is well defined because bounds mention only earlier variables: every rule of $\vdash_N$ reduces the sum of the weights of the two sides, because the kernel quantifier rule keeps the bound unchanged when it extends the context. Hence kernel $F_{<:}$ subtyping is decidable.
 
 In full $F_{<:}$, where the quantifier rule compares bounds contravariantly and rebinds the body with the smaller bound, the same algorithmic
 system is still equivalent to the declarative one, but the search need not terminate, and subtyping is undecidable.
