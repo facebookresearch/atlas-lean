@@ -11984,6 +11984,7 @@
   "MathlibExt/GroupTheory/DicksonPGL2Tame": {"to": "GroupTheory/linear-groups", "title": "Dickson's classification of finite subgroups of PGL₂"},
   "MathlibExt/GroupTheory/DicksonPGL2Wild": {"to": "GroupTheory/linear-groups", "title": "Dickson's classification of finite subgroups of PGL₂"},
   "MathlibExt/GroupTheory/ElementaryDivisorsUniqueness": {"to": "GroupTheory/abelian-groups", "title": "Structure of finitely generated abelian groups"},
+  "MathlibExt/GroupTheory/ExactlyOneNoncommutator": {"to": "GroupTheory/commutators-and-engel-conditions", "title": "Non-commutators in finite groups"},
   "MathlibExt/GroupTheory/FiniteAbelian/SubgroupCount": {"to": "Combinatorics/additive-combinatorics/sum-free-sets", "title": "Sum-free sets in abelian groups"},
   "MathlibExt/GroupTheory/FiniteAbelian/Torsion": {"to": "GroupTheory/abelian-groups", "title": "Structure of finitely generated abelian groups"},
   "MathlibExt/GroupTheory/FiniteAbelianDual": {"to": "GroupTheory/abelian-groups", "title": "Dual groups of finite abelian groups"},
