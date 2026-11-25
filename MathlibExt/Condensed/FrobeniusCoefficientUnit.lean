@@ -71,6 +71,12 @@ abbrev unitRepresentable (U : UnitInductionModel p P π M) :
     RightModule (TorsionRing p P π) M.compact.objects :=
   ⟨dgRepresentable (TorsionRing p P π) U.val.unit⟩
 
+/-- The coefficient representable is cofibrant, as every representable right DG module is
+(`DGQuasiFunctorModels.isCofibrantModule_dgRepresentable`). -/
+theorem unitRepresentable_cofibrant (U : UnitInductionModel p P π M) :
+    IsCofibrantModule (unitRepresentable p P π M U) :=
+  isCofibrantModule_dgRepresentable U.val.unit
+
 set_option maxHeartbeats 1200000 in
 /-- Compact Frobenius unit data is locked to the native geometric coefficient map: its arrow is
 normalized against the bundled geometric normalization, using that normalization's derived
@@ -93,29 +99,27 @@ structure CompactUnit (U : UnitInductionModel p P π M) where
     (normalization.extension.functor _ _ ⋙ M.analytic.functor).map unitIso.hom ≫
       M.analytic.functor.map (geometricUnitMap p P π h normalization.extension) ≫
         inv (M.analytic.unit.app (unitObject (TorsionRing p P π)))
-  cofibrant : IsCofibrantModule (unitRepresentable p P π M U)
 
 /-- The model of a compact unit is geometrically normalized. -/
 theorem CompactUnit.source_normalization {U : UnitInductionModel p P π M}
     (A : CompactUnit p P π h M F U) : IsGeometricallyNormalized p P π F :=
   ⟨A.normalization⟩
 
-/-- Its cofibrant source is exactly the coefficient representable. -/
-abbrev CompactUnit.source {U : UnitInductionModel p P π M}
-    (A : CompactUnit p P π h M F U) :
+/-- The cofibrant source of a compact unit is exactly the coefficient representable. -/
+abbrev unitSource (U : UnitInductionModel p P π M) :
     DGDerivedModules (TorsionRing p P π) M.compact.objects :=
-  ⟨unitRepresentable p P π M U, A.cofibrant⟩
+  ⟨unitRepresentable p P π M U, unitRepresentable_cofibrant p P π M U⟩
 
 /-- The Yoneda/adjunction-forced linearization of the coefficient representable. -/
 def CompactUnit.linearization {U : UnitInductionModel p P π M}
     (A : CompactUnit p P π h M F U) :
     DGHom (TorsionRing p P π) 0
-      (F.extension.functor.obj (A.source p P π h M F)).obj (unitRepresentable p P π M U) :=
+      (F.extension.functor.obj (unitSource p P π M U)).obj (unitRepresentable p P π M U) :=
   let b := ((F.restriction.value (unitRepresentable p P π M U) (op U.val.unit)).inv.f 0)
     A.arrow
   let c := ((dgRepresentableHomIso (TorsionRing p P π) U.val.unit
     (F.restriction.functor.obj (unitRepresentable p P π M U)).toEnrichedFunctor).inv.f 0) b
-  ((F.extension.homIso (A.source p P π h M F) (unitRepresentable p P π M U)).inv.f 0) c
+  ((F.extension.homIso (unitSource p P π M U) (unitRepresentable p P π M U)).inv.f 0) c
 
 set_option maxHeartbeats 1200000 in
 /-- The almost-local coefficient phi unit and the normalized localization square. The square is
@@ -129,10 +133,10 @@ structure AlmostUnit (U : UnitInductionModel p P π M)
   almost_equivalence : IsAlmostEquivalence p P π M localization
   linearization_square :
     dgComp (C := RightModule (TorsionRing p P π) M.compact.objects)
-      (X := (F.extension.functor.obj (A.source p P π h M F)).obj)
+      (X := (F.extension.functor.obj (unitSource p P π M U)).obj)
       (Y := (F.extension.functor.obj ⟨object.module.obj, object.module.property.1⟩).obj)
       (Z := object.module.obj) (TorsionRing p P π)
-      (((F.extension.functor.map (A.source p P π h M F)
+      (((F.extension.functor.map (unitSource p P π M U)
         ⟨object.module.obj, object.module.property.1⟩).f 0) (closedModuleHom localization))
       (closedModuleHom (C := M.compact.objects)
         (M.localization.unit (F.extension.functor.obj
@@ -141,6 +145,6 @@ structure AlmostUnit (U : UnitInductionModel p P π M)
       (TorsionRing p P π) (A.linearization p P π h M F)
       (closedModuleHom localization) (by omega) ∈
         dgBoundaries (TorsionRing p P π)
-          (F.extension.functor.obj (A.source p P π h M F)).obj object.module.obj
+          (F.extension.functor.obj (unitSource p P π M U)).obj object.module.obj
 
 end MathlibExt.Condensed.FrobeniusCoefficientUnit

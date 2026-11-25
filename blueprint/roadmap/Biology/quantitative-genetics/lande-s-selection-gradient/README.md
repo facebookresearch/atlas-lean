@@ -20,3 +20,5 @@
 - [Multivariate directional selection differential](selection-differential-mv.md)
 - [Lande's gradient of mean fitness for multivariate traits](has-gradient-at-mean-fitness-mv.md)
 - [Lande's equation for multivariate traits](selection-differential-mv-eq.md)
+
+- [Polygenic adaptation](polygenic-adaptation.md)

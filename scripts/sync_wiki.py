@@ -136,6 +136,7 @@ from __future__ import annotations
 
 import argparse
 import dataclasses
+import errno
 import functools
 import hashlib
 import importlib
@@ -151,6 +152,7 @@ import tempfile
 import unicodedata
 from urllib.parse import urlsplit
 from collections import Counter, defaultdict
+from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
@@ -3184,6 +3186,20 @@ INDEX_DIFFERS = ("the index holds it otherwise than the working tree, and a comm
                  "tree's, or restore the index's, and check again")
 
 
+def git_path_records(args: tuple[str, ...], pathspecs: list[str]) -> Iterator[bytes]:
+    """Read NUL-terminated Git records, splitting pathspecs that exceed the OS argument limit."""
+    try:
+        output = git(*args, "--", *pathspecs)
+    except OSError as error:
+        if error.errno != errno.E2BIG or len(pathspecs) < 2:
+            raise
+        middle = len(pathspecs) // 2
+        yield from git_path_records(args, pathspecs[:middle])
+        yield from git_path_records(args, pathspecs[middle:])
+    else:
+        yield from filter(None, output.split(b"\0"))
+
+
 def disagreeing(paths: set[str]) -> dict[str, str]:
     """Of *paths*, those the index holds otherwise than the working tree, as Git compares them (with the line ends it
     normalises), each with what is wrong: anything but a file in the index, a submodule among them, is not the sync's;
@@ -3194,13 +3210,11 @@ def disagreeing(paths: set[str]) -> dict[str, str]:
     ordered = sorted(paths)
     literal = [f":(literal){path}" for path in ordered]
     modes = {}
-    for record in git("ls-files", "-s", "-z", "--", *literal).split(b"\0"):
-        if record:
-            meta, raw = record.split(b"\t", 1)
-            modes[os.fsdecode(raw)] = meta.decode("ascii").split(" ")[0]
-    unstaged = {os.fsdecode(path) for path in git("diff", "--name-only", "--no-renames", "--ignore-submodules=none",
-                                                  "-z", "--", *literal).split(
-        b"\0") if path}
+    for record in git_path_records(("ls-files", "-s", "-z"), literal):
+        meta, raw = record.split(b"\t", 1)
+        modes[os.fsdecode(raw)] = meta.decode("ascii").split(" ")[0]
+    diff = ("diff", "--name-only", "--no-renames", "--ignore-submodules=none", "-z")
+    unstaged = {os.fsdecode(path) for path in git_path_records(diff, literal)}
     found = {}
     for path in ordered:
         mode = modes.get(path)

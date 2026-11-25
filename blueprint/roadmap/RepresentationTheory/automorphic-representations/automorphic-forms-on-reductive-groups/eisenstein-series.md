@@ -34,6 +34,8 @@ $\mathfrak{a}_P$ and $\mathfrak{a}_{P,\mathbb{C}}^*$ as usual.
 - **Vanishing lemma** (Langlands). An automorphic form whose constant terms along all parabolic
   subgroups (including $G$) are orthogonal to cusp forms is zero.
 
+## Expansion
+
 A good expansion has pages for the definition and absolute convergence of Eisenstein series and
 intertwining operators, for the constant term formula, for the meromorphic continuation and functional
 equations, for the automorphy of Eisenstein series, for the spectral decomposition, and for the vanishing
@@ -52,7 +54,18 @@ Math. 544, Springer, 1976) and Mœglin–Waldspurger's *Spectral decomposition a
 ## Depends on
 
 - [Automorphic forms, cusp forms and automorphic representations](automorphic-forms-and-automorphic-representations.md), for automorphic forms, cusp forms and constant terms
-- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for $H_P$, $\mathfrak{a}_P$ and the Siegel sets on which the convergence is proved
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for $H_P$, $\mathfrak{a}_P$ and the definition of Siegel sets
+
+## Proof depends on
+
+- [Constant terms and Harish-Chandra's convolution identity for automorphic forms](constant-terms-and-convolution-identity.md), for the automorphy of constant terms of automorphic forms on Levi factors, applied once an Eisenstein series is known to be automorphic, in the analysis along smaller parabolic subgroups; the constant term formula itself comes from the Bruhat decomposition and unfolding
+- [Parabolic subgroups and the rational Bruhat decomposition of reductive groups](../../../GroupTheory/linear-groups/parabolic-subgroups-and-rational-bruhat-decomposition.md), for the decomposition of $G(k)$ into the double cosets $P(k) w Q(k)$, which unfolds the constant terms
+- [Siegel sets and reduction theory for adelic groups](../../../NumberTheory/algebraic-number-theory/adeles-class-field-theory/reduction-theory-for-adelic-groups.md), for the Siegel-set estimates in the proof of absolute convergence
+- [Discreteness of the cuspidal spectrum](discreteness-of-the-cuspidal-spectrum.md), for the cuspidal spectrum of the Levi factors, whose cuspidal data index the wave packets of the spectral decomposition
+- [Paley–Wiener theorem on a real vector space](../../../Analysis/harmonic-analysis/fourier-transform/paley-wiener-theorem-on-a-real-vector-space.md), for the wave packets: entire functions on $\mathfrak{a}_{P,\mathbb{C}}^*$ of Paley–Wiener type, with values in a finite-dimensional space, are the Fourier–Laplace transforms of smooth compactly supported functions on $\mathfrak{a}_P$ (Arthur, §12)
+- [Square-integrable K-finite and Z-finite functions are automorphic forms](square-integrable-automorphic-forms.md), for the smooth representatives of moderate growth of the $K$-finite vectors in the discrete spectrum of the Levi factors, to which the formulas apply pointwise, and for their growth on Siegel sets in the proof of absolute convergence (Arthur, §7, Lemma 7.1, pp. 32–35)
+- [Rapid decay of cusp forms](rapid-decay-of-cusp-forms.md), for the rapid decay of cuspidal data on Siegel sets of the Levi factors, behind the square integrability of the pseudo-Eisenstein series and the inner products of wave packets (Arthur, §12, pp. 64–66)
+- [Harish-Chandra's finiteness theorem for automorphic forms](harish-chandra-finiteness-theorem.md), for the finite multiplicities in the whole discrete spectrum of the Levi factors, residual part included (Borel, §10, p. 28)
 
 ## Sources
 

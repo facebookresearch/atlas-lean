@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.RingTheory.PowerSeries.Inverse
-public import MathlibExt.Combinatorics.Enumerative.FixedColumnHooks
+public import MathlibExt.Combinatorics.Enumerative.FixedFirstColumnHook
 
 namespace MetaMathlibExt
 
@@ -133,30 +133,6 @@ public theorem_wanted columnHook_size_genFun (n m k : ℕ) (hm : 1 ≤ m) (hk : 
         m ≤ partitionRowLen p s ∧ partitionHookLength p s m = k)).card : ℕ) : ℚ) =
       coeff n (X ^ (m + k - 1) * P * ∑ l ∈ Finset.Icc 1 k, X ^ ((m - 1) * (k - l)) *
         mPoch (l - 1) * (qPochFin X (l - 1) * qPochFin X (k - l))⁻¹)
-
-/-- **Partitions with a fixed first-column hook arising from a part of given size.** Let $n$ and $k$
-be natural numbers with $k \ge 1$ and let $h < k$ be an integer. The number of partitions
-$\lambda$ of $n$ that have an $h$-fixed hook in column $1$ at some row $s$ with $\lambda_s = k$ is
-the coefficient of $q^n$ in
-$$\sum_{s=0}^{n} \frac{q^{s(k+1)+k(k-h)}}{(q;q)_{s+k-h-1}} \binom{s+k-1}{k-1}_q,$$
-where $(q;q)_j = \prod_{i<j} (1 - q^{i+1})$ is the finite $q$-Pochhammer symbol and
-$\binom{a}{b}_q$ is the Gaussian binomial coefficient.
-
-The $s$-th term has no monomial below $q^s$, so the count is also the coefficient of $q^n$ in the
-full series over all $s \ge 0$. Under $s \mapsto s + k - h$ that series is the paper's
-$\sum_{s \ge k-h} q^{(k+1)(s-1)+h+1} \binom{s+h-1}{k-1}_q / (q;q)_{s-1}$, whose lower limit
-$k - h$ is a positive row index.
-
-Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
-(2025), Article A28, Theorem 6 (`integers-2025-A28-thm-6`). -/
-public theorem_wanted fixedFirstColumnHook_part_genFun (n k : ℕ) (h : ℤ) (hk : 1 ≤ k)
-    (hh : h < k) :
-    (((Finset.univ : Finset n.Partition).filter (fun p =>
-        ((Finset.Icc 1 n).filter (fun s =>
-          IsFixedColumnHook p 1 s h ∧ partitionRowLen p s = k)).Nonempty)).card : ℚ) =
-      coeff n (∑ s ∈ Finset.range (n + 1),
-        X ^ ((s : ℤ) * (k + 1) + k * (k - h)).toNat *
-          (qPochFin (X : ℚ⟦X⟧) ((s : ℤ) + k - h - 1).toNat)⁻¹ * gaussBinom X (s + k - 1) (k - 1))
 
 /-- **Generating function for fixed column hooks from a part of size $k$.** Let $n$, $m \ge 1$
 and $k \ge m$ be natural numbers and let $h$ be an integer with $h + m \le k$.

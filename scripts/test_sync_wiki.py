@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import errno
 import hashlib
 import io
 import json
@@ -5228,6 +5229,25 @@ class ScopedRun(unittest.TestCase):
                 "MathlibExt/Algebra/Groups.lean: " + INDEX_DIFFERS]), flags)
         self.git("add", "--", "MathlibExt/Algebra/Groups.lean")
         self.assertEqual(self.run_sync("--check")[3]["missing"], ["Ext.workOnly"])
+
+    def test_index_checks_every_path_when_git_arguments_are_too_long(self) -> None:
+        paths = ["blueprint/a[1].md", "blueprint/b.md", "blueprint/c.md", "blueprint/d.md"]
+        for path in paths:
+            self.write(path, "Staged.\n")
+        self.git("add", "--", "blueprint")
+        for path in (paths[0], paths[-1]):
+            self.write(path, "Changed since staging.\n")
+
+        git = sync.git
+
+        def limited_git(*args: str) -> bytes:
+            if len(args[args.index("--") + 1:]) > 1:
+                raise OSError(errno.E2BIG, "Argument list too long")
+            return git(*args)
+
+        with patch.object(sync, "git", limited_git):
+            self.assertEqual(sync.disagreeing(set(paths)),
+                             {paths[0]: INDEX_DIFFERS, paths[-1]: INDEX_DIFFERS})
 
     def test_a_working_tree_like_the_base_has_no_wiki_changes(self) -> None:
         # A prose edit committed on the branch, then undone in the working tree without staging: the changes, the

@@ -11,6 +11,7 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.LegendreSymbol.ZModChar
+public import MathlibExt.NumberTheory.PrimeCounting.WallisPrimeFactor
 
 /-! # Thinned Wallis-type prime products modulo `2^m`
 
@@ -29,17 +30,6 @@ open Filter Topology
 namespace MetaMathlibExt
 
 @[expose] public section
-
-/-- **Factor identity for Wallis-type prime products.** For every odd prime $p$,
-$$\frac{p - \chi_4(p)}{p + \chi_4(p)} = \frac{(1 - \chi_4(p)/p)^2}{1 - 1/p^2},$$
-where $\chi_4$ is the nontrivial Dirichlet character modulo $4$.
-
-Source: Mike Winkler, *Thinned Wallis-Type Prime Products in Residue Classes Modulo 2^m*,
-INTEGERS 26 (2026), Article A90, Lemma 1 (`integers-2026-A90-lem-1`). -/
-public theorem_wanted wallis_prime_factor_eq
-    (p : ℕ) (hp : p.Prime) (hodd : Odd p) :
-    ((p : ℝ) - ZMod.χ₄ (p : ZMod 4)) / ((p : ℝ) + ZMod.χ₄ (p : ZMod 4)) =
-      (1 - (ZMod.χ₄ (p : ZMod 4) : ℝ) / p) ^ 2 / (1 - 1 / (p : ℝ) ^ 2)
 
 /-- **Asymptotic for thinned Wallis-type prime products.** Let $m \ge 2$, let $q = 2^m$, and let
 $S$ be a set of units of $\mathbb{Z}/q\mathbb{Z}$. Let $\varphi$ be Euler's totient function and
