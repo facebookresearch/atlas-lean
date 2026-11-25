@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Batteries.Util.ProofWanted
+public import Mathlib.GroupTheory.PGroup
+public import Mathlib.GroupTheory.Sylow
+public import Mathlib.GroupTheory.Nilpotent
 public import MathlibExt.GroupTheory.BaerSuzukiBinaryFinite
 
 /-!
