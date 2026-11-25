@@ -1,0 +1,30 @@
+{
+  "schema": "atlas.mathlibext-source-snapshot.v1",
+  "library": "MathlibExt",
+  "encoding": "UTF-8 JSON Lines with literal source_text strings; standard JSON escaping only",
+  "source_version": "Promoted MathlibExt source commit 941e17f5fb6eb408e4255a91f504eb9de27d2af8",
+  "source_commit": "941e17f5fb6eb408e4255a91f504eb9de27d2af8",
+  "source_docs_commit": "e33bf88bbd9cd6fd87cec1e834ad9f80a07727bd",
+  "file_count": 1,
+  "original_source_lines": 270,
+  "original_bytes": 13151,
+  "chunks": [
+    {
+      "file": "part-0001.jsonl",
+      "sha256": "539370f015c040a12dea8b2341671b20223762e2841508e48fb35b28a519e263",
+      "bytes": 13637,
+      "rows": 1
+    }
+  ],
+  "files": [
+    {
+      "original_path": "MathlibExt/Analysis/InnerProductSpace/SingularValuesScalar.lean",
+      "original_sha256": "7f5a1e3e61460411f29994cb295f0a01ddbc5629cfc8151a7df43da6c5251cb4",
+      "original_bytes": 13151,
+      "original_lines": 270,
+      "snapshot_file": "part-0001.jsonl",
+      "snapshot_line": 1,
+      "snapshot_adaptations": []
+    }
+  ]
+}

@@ -614,3 +614,4 @@ Topics added since this subject's fields were last revised.
 - [Compact Map](compact-map/README.md)
 - [Operator Algebra](operator-algebra/README.md)
 - [Rank One](rank-one/README.md)
+- [Singular Values Scalar](singular-values-scalar/README.md)
