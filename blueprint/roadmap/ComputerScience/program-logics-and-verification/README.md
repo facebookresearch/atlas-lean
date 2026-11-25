@@ -19,6 +19,8 @@ Logics for proving programs correct: Hoare logic for partial and total correctne
 
 - [Concurrency logics](concurrency-logics/README.md)
 - [Incorrectness logic](incorrectness-logic/README.md)
+- [Program synthesis](program-synthesis/README.md)
+- [Crash safety](crash-safety/README.md)
 - [Refinement](refinement/README.md)
 - [Compiling IMP programs and Hoare derivations into traced diagrams](compiling-imp-programs-and-hoare-derivations-int/README.md)
 - [Compiling IMP verification conditions into diagram annotations](compiling-imp-verification-conditions-into-diagr/README.md)

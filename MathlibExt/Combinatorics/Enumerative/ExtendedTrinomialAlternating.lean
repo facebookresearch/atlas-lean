@@ -11,7 +11,7 @@ module
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.RingTheory.PowerSeries.Binomial
 public import Mathlib.RingTheory.PowerSeries.Substitution
-import Mathlib.Algebra.Polynomial.Roots
+import MathlibExt.RingTheory.PowerSeries.BinomialSubstitution
 import Mathlib.Tactic.Ring
 
 /-!
@@ -21,65 +21,6 @@ import Mathlib.Tactic.Ring
 open PowerSeries
 
 namespace MetaMathlibExt
-
-private noncomputable def substCoeffPolynomial (A : PowerSeries ℂ) (n : ℕ) :
-    Polynomial ℂ :=
-  ∑ k ∈ Finset.range (n + 1),
-    Polynomial.C ((k.factorial : ℂ)⁻¹ * coeff n (A ^ k)) * descPochhammer ℂ k
-
-private theorem eval_substCoeffPolynomial (A : PowerSeries ℂ) (hA : constantCoeff A = 0)
-    (n : ℕ) (x : ℂ) :
-    (substCoeffPolynomial A n).eval x = coeff n ((binomialSeries ℂ x).subst A) := by
-  rw [coeff_subst' (HasSubst.of_constantCoeff_zero' hA),
-    finsum_eq_sum_of_support_subset _ (s := Finset.range (n + 1))]
-  · simp only [substCoeffPolynomial, Polynomial.eval_finsetSum, Polynomial.eval_mul,
-      Polynomial.eval_C, binomialSeries_coeff, smul_eq_mul, mul_one]
-    refine Finset.sum_congr rfl fun k _ ↦ ?_
-    have hp : (descPochhammer ℂ k).eval x = (descPochhammer ℤ k).smeval x := by
-      rw [← descPochhammer_map (Int.castRingHom ℂ), Polynomial.eval_map,
-        ← Polynomial.eval₂_smulOneHom_eq_smeval ℤ,
-        show Int.castRingHom ℂ = RingHom.smulOneHom from Subsingleton.elim _ _]
-    rw [hp, Ring.choose_eq_smul, smul_eq_mul]
-    ring
-  · intro k hk
-    by_contra hkr
-    have hnk : n < k := by simpa [Finset.mem_range] using hkr
-    apply hk
-    change coeff k (binomialSeries ℂ x) • coeff n (A ^ k) = 0
-    rw [coeff_of_lt_order n ((by exact_mod_cast hnk : (n : ℕ∞) < k).trans_le
-        (le_order_pow_of_constantCoeff_eq_zero k hA)), smul_zero]
-
-private theorem binomialSeries_subst_mul (A B : PowerSeries ℂ)
-    (hA : constantCoeff A = 0) (hB : constantCoeff B = 0) (x : ℂ) :
-    (binomialSeries ℂ x).subst A * (binomialSeries ℂ x).subst B =
-      (binomialSeries ℂ x).subst (A + B + A * B) := by
-  have hAB : constantCoeff (A + B + A * B) = 0 := by simp [hA, hB]
-  have natSubst (D : PowerSeries ℂ) (hD : constantCoeff D = 0) (m : ℕ) :
-      (binomialSeries ℂ (m : ℂ)).subst D = (1 + D) ^ m := by
-    have h := HasSubst.of_constantCoeff_zero' hD
-    rw [binomialSeries_nat, subst_pow h, ← coe_substAlgHom h, map_add, map_one,
-      substAlgHom_X h]
-  -- At each degree the two coefficients are polynomials in the exponent.
-  ext n
-  let P : Polynomial ℂ := ∑ ij ∈ Finset.antidiagonal n,
-    substCoeffPolynomial A ij.1 * substCoeffPolynomial B ij.2
-  let Q := substCoeffPolynomial (A + B + A * B) n
-  have evalP (z : ℂ) : P.eval z =
-      coeff n ((binomialSeries ℂ z).subst A * (binomialSeries ℂ z).subst B) := by
-    simp only [P, Polynomial.eval_finsetSum, Polynomial.eval_mul, coeff_mul,
-      eval_substCoeffPolynomial A hA, eval_substCoeffPolynomial B hB]
-  have evalQ (z : ℂ) : Q.eval z =
-      coeff n ((binomialSeries ℂ z).subst (A + B + A * B)) :=
-    eval_substCoeffPolynomial _ hAB n z
-  have hpq : P = Q := by
-    apply Polynomial.eq_of_infinite_eval_eq
-    refine (Set.infinite_range_of_injective (Nat.cast_injective (R := ℂ))).mono ?_
-    rintro _ ⟨m, rfl⟩
-    change P.eval (m : ℂ) = Q.eval (m : ℂ)
-    rw [evalP, evalQ, natSubst A hA, natSubst B hB, natSubst _ hAB, ← mul_pow]
-    congr 2
-    ring
-  rw [← evalP, ← evalQ, hpq]
 
 private theorem coeff_mul_eq_sum_range_right (f g : PowerSeries ℂ) (n : ℕ) :
     coeff n (f * g) = ∑ k ∈ Finset.range (n + 1), coeff (n - k) f * coeff k g := by

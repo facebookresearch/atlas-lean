@@ -24,3 +24,5 @@ Comparison and distribution sorting algorithms (including their expected-cost an
 - [Precision at a cutoff](precision-at-a-cutoff/README.md)
 - [Probability ranking principle for expected precision](probability-ranking-principle-for-expected-preci/README.md)
 - [Quicksort](quicksort/README.md)
+- [Algorithm analysis models](algorithm-analysis-models/README.md)
+- [Selection bounds](selection-bounds/README.md)
