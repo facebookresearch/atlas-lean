@@ -1,0 +1,17 @@
+# The canonical primitive/homology comparison
+
+- [Primitive Equation](primitive-equation.md)
+- [Primitive Complex](primitive-complex.md)
+- [Primitive Inclusion](primitive-inclusion.md)
+- [Homology Map eq zero of component](homology-map-eq-zero-of-component.md)
+- [Homology Primitive Equation](homology-primitive-equation.md)
+- [Homology Primitives](homology-primitives.md)
+- [Primitive Equation transport](primitive-equation-transport.md)
+- [Homology Inclusion primitive](homology-inclusion-primitive.md)
+- [Primitive Comparison](primitive-comparison.md)
+- [Primitive Comparison on cycles](primitive-comparison-on-cycles.md)
+- [Primitive Equation naturality](primitive-equation-naturality.md)
+- [Primitive Complex Map](primitive-complex-map.md)
+- [Homology Primitive Equation naturality](homology-primitive-equation-naturality.md)
+- [Homology Primitives Map](homology-primitives-map.md)
+- [Primitive Comparison naturality](primitive-comparison-naturality.md)

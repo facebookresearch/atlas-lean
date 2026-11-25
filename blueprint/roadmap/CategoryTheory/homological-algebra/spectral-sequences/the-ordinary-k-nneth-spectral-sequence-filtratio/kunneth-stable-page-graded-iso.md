@@ -1,0 +1,4 @@
+# Kunneth Stable Page Graded Iso
+
+The explicit stable page is the adjacent graded piece of the ordinary
+tensor-homology filtration.

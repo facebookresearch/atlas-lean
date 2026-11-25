@@ -1,0 +1,73 @@
+# Functor-valued bar of an adjunction
+
+## Adj Modules
+
+- [Adj Right Module](adj-right-module.md)
+- [Adj Right Module functor](adj-right-module-functor.md)
+- [Adj Right Module action app](adj-right-module-action-app.md)
+- [Adj Left Module](adj-left-module.md)
+- [Adj Left Module functor](adj-left-module-functor.md)
+- [Adj Left Module action app](adj-left-module-action-app.md)
+
+## Adj Bar
+
+- [Adj Bar](adj-bar.md)
+- [Adj Bar obj](adj-bar-obj.md)
+- [Adj Bar obj obj](adj-bar-obj-obj.md)
+- [Adj Bar obj map](adj-bar-obj-map.md)
+- [Adj Bar obj zero](adj-bar-obj-zero.md)
+- [Adj Bar map δ op](adj-bar-map-op.md)
+- [Adj Bar map σ op](adj-bar-map-op-2.md)
+- [Adj Bar map δ op app](adj-bar-map-op-app.md)
+- [Adj Bar map σ op app](adj-bar-map-op-app-2.md)
+
+## Adj Augmentation
+
+- [Adj Pairing](adj-pairing.md)
+- [Adj Pairing app](adj-pairing-app.md)
+- [Adj Balanced Pairing](adj-balanced-pairing.md)
+- [Adj Balanced Pairing target](adj-balanced-pairing-target.md)
+- [Adj Balanced Pairing pairing](adj-balanced-pairing-pairing.md)
+- [Adj Augmented](adj-augmented.md)
+- [Adj Augmented left](adj-augmented-left.md)
+- [Adj Augmented right](adj-augmented-right.md)
+- [Adj Augmented point obj](adj-augmented-point-obj.md)
+- [Adj Augmented hom app mk](adj-augmented-hom-app-mk.md)
+- [Adj Augmented hom zero](adj-augmented-hom-zero.md)
+
+## Adj EMComparison
+
+- [Adj Evaluated Augmented](adj-evaluated-augmented.md)
+- [Adj Evaluated Augmented point](adj-evaluated-augmented-point.md)
+- [Adj Evaluated Augmented obj zero](adj-evaluated-augmented-obj-zero.md)
+- [Adj Eval Algebra](adj-eval-algebra.md)
+- [Adj Literal Augmented](adj-literal-augmented.md)
+- [Adj Literal Augmented left](adj-literal-augmented-left.md)
+- [Adj Literal Augmented point](adj-literal-augmented-point.md)
+- [Adj Literal Augmented obj zero](adj-literal-augmented-obj-zero.md)
+- [Adj Eval Forget Nat Trans](adj-eval-forget-nat-trans.md)
+- [Adj Literal Hom](adj-literal-hom.md)
+- [Adj Literal Hom right](adj-literal-hom-right.md)
+- [Adj Literal Hom left app](adj-literal-hom-left-app.md)
+- [Adj Literal Hom id](adj-literal-hom-id.md)
+- [Adj Literal Hom comp](adj-literal-hom-comp.md)
+- [Adj Literal Bar obj eq](adj-literal-bar-obj-eq.md)
+- [Adj Literal Bar Iso](adj-literal-bar-iso.md)
+- [Adj Literal Bar Iso hom app](adj-literal-bar-iso-hom-app.md)
+- [Adj Evaluated Augmented hom zero](adj-evaluated-augmented-hom-zero.md)
+- [Adj Literal Iso](adj-literal-iso.md)
+- [Adj Literal Augmented hom zero](adj-literal-augmented-hom-zero.md)
+- [Adj To EMComparison](adj-to-emcomparison.md)
+- [Adj To EMComparison right eq To Hom](adj-to-emcomparison-right-eq-to-hom.md)
+- [Adj To EMComparison obj zero](adj-to-emcomparison-obj-zero.md)
+- [Adj To EMComparison left zero](adj-to-emcomparison-left-zero.md)
+- [Adj Evaluated Hom](adj-evaluated-hom.md)
+- [Adj To EMComparison naturality](adj-to-emcomparison-naturality.md)
+- [Adj Evaluated Hom right eq To Hom](adj-evaluated-hom-right-eq-to-hom.md)
+- [Adj Evaluated Hom id](adj-evaluated-hom-id.md)
+- [Adj Evaluated Hom comp](adj-evaluated-hom-comp.md)
+- [Adj Literal Iso hom left](adj-literal-iso-hom-left.md)
+- [Adj Literal Iso hom right eq To Hom](adj-literal-iso-hom-right-eq-to-hom.md)
+- [Adj Literal To EMComparison](adj-literal-to-emcomparison.md)
+- [Adj Literal Iso naturality](adj-literal-iso-naturality.md)
+- [Adj Literal To EMComparison naturality](adj-literal-to-emcomparison-naturality.md)

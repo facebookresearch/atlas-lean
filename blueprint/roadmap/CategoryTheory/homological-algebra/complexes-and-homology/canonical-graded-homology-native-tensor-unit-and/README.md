@@ -1,0 +1,18 @@
+# Canonical graded homology: native tensor, unit and coherence
+
+- [Homology Functor](homology-functor.md)
+- [Pair](pair.md)
+- [Tensorator](tensorator.md)
+- [Pair naturality](pair-naturality.md)
+- [Tensorator naturality](tensorator-naturality.md)
+- [Unit Iso](unit-iso.md)
+- [Unit Map](unit-map.md)
+- [Cycles Pair](cycles-pair.md)
+- [Cycle Pair](cycle-pair.md)
+- [Pair assoc](pair-assoc.md)
+- [Tensorator associativity](tensorator-associativity.md)
+- [Unit left pair](unit-left-pair.md)
+- [Unit right pair](unit-right-pair.md)
+- [Tensorator left unitality](tensorator-left-unitality.md)
+- [Tensorator right unitality](tensorator-right-unitality.md)
+- [Lax Monoidal](lax-monoidal.md)

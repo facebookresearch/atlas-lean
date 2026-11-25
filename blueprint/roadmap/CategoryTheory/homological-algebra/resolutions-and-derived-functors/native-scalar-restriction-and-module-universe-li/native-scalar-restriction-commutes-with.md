@@ -1,0 +1,3 @@
+# Native scalar restriction commutes with native carrier...
+
+Native scalar restriction commutes with native carrier lifting on the actual module actions.

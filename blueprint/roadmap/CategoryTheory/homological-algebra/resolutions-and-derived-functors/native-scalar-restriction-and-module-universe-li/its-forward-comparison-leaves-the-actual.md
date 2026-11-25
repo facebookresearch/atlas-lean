@@ -1,0 +1,3 @@
+# Its forward comparison leaves the actual lifted value...
+
+Its forward comparison leaves the actual lifted value unchanged.

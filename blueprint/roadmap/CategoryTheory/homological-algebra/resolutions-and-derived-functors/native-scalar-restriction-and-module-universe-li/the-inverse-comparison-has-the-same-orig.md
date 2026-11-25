@@ -1,0 +1,3 @@
+# The inverse comparison has the same original carrier...
+
+The inverse comparison has the same original carrier identity.

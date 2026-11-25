@@ -1,0 +1,18 @@
+# Actual finite-matrix CE-to-cyclic chain maps and homology lifts
+
+- [Matrix Cyclic Chain Map](matrix-cyclic-chain-map.md)
+- [Matrix Cyclic Weibel Chain Map](matrix-cyclic-weibel-chain-map.md)
+- [Matrix Cyclic Chain Map f](matrix-cyclic-chain-map-f.md)
+- [Matrix Cyclic Weibel Chain Map f](matrix-cyclic-weibel-chain-map-f.md)
+- [Matrix Cyclic Printed Zero Corner](matrix-cyclic-printed-zero-corner.md)
+- [Matrix Cyclic Chain Map zero Corner](matrix-cyclic-chain-map-zero-corner.md)
+- [Matrix Cyclic Weibel Chain Map zero Corner](matrix-cyclic-weibel-chain-map-zero-corn.md)
+- [Matrix Cyclic Printed Coefficient Map](matrix-cyclic-printed-coefficient-map.md)
+- [Matrix Cyclic Chain Map naturality](matrix-cyclic-chain-map-naturality.md)
+- [Matrix Cyclic Weibel Chain Map naturality](matrix-cyclic-weibel-chain-map-naturalit.md)
+- [Matrix Cyclic Connes Homology Map](matrix-cyclic-connes-homology-map.md)
+- [Matrix Cyclic Homology Map](matrix-cyclic-homology-map.md)
+- [Matrix Cyclic Homology Map comp connes](matrix-cyclic-homology-map-comp-connes.md)
+- [Matrix Cyclic Homology Map zero Corner](matrix-cyclic-homology-map-zero-corner.md)
+- [Matrix Cyclic Connes Homology Map naturality](matrix-cyclic-connes-homology-map-natura.md)
+- [Matrix Cyclic Homology Map naturality](matrix-cyclic-homology-map-naturality.md)
