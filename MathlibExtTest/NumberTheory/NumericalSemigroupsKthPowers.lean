@@ -11,12 +11,14 @@ module
 import MathlibExt.NumberTheory.NumericalSemigroupsKthPowers
 
 /-!
-# Tail semigroups of the powers of two
+# Tests for tail semigroups
 
-In an earlier tail, each power is the sum of two copies of its predecessor.
+In a tail of the powers of two, each power after the first is twice its predecessor.
 At the start of its own tail it is minimal. So its first appearance is its own index: the growth
 hypothesis holds with slope one, each power is a minimal generator of its own tail only, and every
 tail has exactly one minimal generator.
+
+For squares, the recursion gives explicit conductor bounds starting from the tail containing one.
 -/
 
 namespace MetaMathlibExt.embeddingDimension_le_of_firstAppearance_ge
@@ -86,3 +88,25 @@ example (n : ℕ) (hn : 1 ≤ n) : (generators n).ncard = 1 := by
   rw [h, hset, Set.ncard_singleton]
 
 end MetaMathlibExt.embeddingDimension_le_of_firstAppearance_ge
+
+namespace MetaMathlibExt.conductor_powers_le
+
+private noncomputable abbrev squareConductor (n : ℕ) :=
+  sInf {c : ℕ | ∀ j ≥ c, j ∈ AddSubmonoid.closure ((fun i : ℕ => i ^ 2) '' Set.Ici n)}
+
+/-- Starting from conductor zero at index one, recurse through an even and an odd index. -/
+example : squareConductor 3 ≤ 300 := by
+  have h₁ : squareConductor 1 = 0 := by
+    apply Nat.le_zero.mp
+    apply Nat.sInf_le
+    intro j _
+    have h : 1 ∈ AddSubmonoid.closure ((fun i : ℕ => i ^ 2) '' Set.Ici 1) :=
+      AddSubmonoid.subset_closure ⟨1, by decide, rfl⟩
+    simpa using (AddSubmonoid.nsmul_mem _ h j)
+  have h₂ : squareConductor 2 ≤ 4 * squareConductor 1 + 48 :=
+    conductor_powers_le 2 2 (by decide) (by decide)
+  have h₃ : squareConductor 3 ≤ 4 * squareConductor 2 + 108 :=
+    conductor_powers_le 3 2 (by decide) (by decide)
+  omega
+
+end MetaMathlibExt.conductor_powers_le
