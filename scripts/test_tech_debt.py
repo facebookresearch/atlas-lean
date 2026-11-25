@@ -43,7 +43,7 @@ class SourceCounts(unittest.TestCase):
             (root / "MathlibExt").mkdir()
             (root / "MathlibExtTest").mkdir()
             (root / "MathlibExt" / "A.lean").write_text(
-                "open Classical\nset_option maxHeartbeats 400000 in\ntheorem t : True := by\n  erw [x]\n",
+                "open Classical\nopen Classical in\nopen ClassicalFoo\nset_option maxHeartbeats 400000 in\ntheorem t : True := by\n  erw [x]\n",
                 encoding="utf-8")
             (root / "MathlibExt" / "Untracked.lean").write_text("erw [y]\n", encoding="utf-8")
             (root / "MathlibExtTest" / "T.lean").write_text("erw [z]\nexample : True := by native_decide\n",

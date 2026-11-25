@@ -27,15 +27,15 @@ LIBRARIES = ("MathlibExt", "CSLibExt", "PhyslibExt", "Domains", "WantedExt")
 TESTS = ("MathlibExtTest", "CSLibExtTest", "PhyslibExtTest", "DomainsTest")
 LONG_FILE_LINES = 1500
 
-# (name, extended regex, roots); each counts matching lines in tracked `.lean` files.
+# (name, extended regex, roots[, excluded regex]); each counts the matching lines of tracked
+# `.lean` files, leaving out lines that also match the excluded regex.
 SOURCE_COUNTERS = (
     ("`erw` rewrites", r"erw \[", LIBRARIES),
     ("`maxHeartbeats` raises", r"^ *set_option (synthInstance\.)?maxHeartbeats [0-9]+", LIBRARIES),
     ("linters disabled with `set_option ... false`", r"set_option linter\.[A-Za-z.]+ false", LIBRARIES),
     ("`nolint` attributes", r"nolint ", LIBRARIES),
     ("`set_option backward.*`", r"set_option backward\.", LIBRARIES),
-    ("top-level `open Classical`", r"^open (scoped )?Classical", LIBRARIES),
-    ("`axiom` declarations", r"^(private |protected )?axiom ", LIBRARIES),
+    ("top-level `open Classical`", r"^open (scoped )?Classical( |$)", LIBRARIES, r" in *$"),
     ("`theorem_wanted` and `def_wanted`", r"^(theorem|def)_wanted ", ("WantedExt",)),
     ("`@[deprecated]` declarations", r"@\[deprecated", LIBRARIES),
     ("`TODO` and `FIXME` comments", r"(TODO|FIXME)", LIBRARIES),
@@ -54,9 +54,10 @@ def git(root: Path, *args: str) -> str:
                           encoding="utf-8", check=True).stdout
 
 
-def grep_count(root: Path, regex: str, roots: tuple[str, ...]) -> int:
+def grep_count(root: Path, regex: str, roots: tuple[str, ...], excluded: str | None = None) -> int:
     pathspecs = [f"{r}/*.lean" for r in roots]
-    out = subprocess.run(["git", "-C", str(root), "grep", "-c", "-E", "-e", regex, "--", *pathspecs],
+    patterns = ["-e", regex] + (["--and", "--not", "-e", excluded] if excluded else [])
+    out = subprocess.run(["git", "-C", str(root), "grep", "-c", "-E", *patterns, "--", *pathspecs],
                          capture_output=True, encoding="utf-8", check=False)
     if out.returncode not in (0, 1):
         raise RuntimeError(out.stderr.strip())
@@ -83,7 +84,7 @@ def manifest_pending(root: Path) -> int:
 
 
 def source_counts(root: Path) -> dict[str, int]:
-    counts = {name: grep_count(root, regex, roots) for name, regex, roots in SOURCE_COUNTERS}
+    counts = {counter[0]: grep_count(root, *counter[1:]) for counter in SOURCE_COUNTERS}
     counts[f"library files over {LONG_FILE_LINES} lines"] = long_files(root)
     counts["Formal-Math divergences with a pending backport"] = manifest_pending(root)
     return counts
