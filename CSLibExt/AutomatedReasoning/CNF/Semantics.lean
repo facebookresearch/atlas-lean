@@ -22,24 +22,24 @@ public import CSLibExt.Logics.Propositional.CNF.Semantics
 
 namespace Cslib.CookLevin
 
-export Cslib.Logic.PL (CNFClause CNF CNFSat cnfSat_iff_exists_satisfies)
+export Cslib.Logic.LegacyPL (CNFClause CNF CNFSat cnfSat_iff_exists_satisfies)
 
 namespace CNFLiteral
 
-export Cslib.Logic.PL.CNFLiteral (Satisfies satisfies_def)
+export Cslib.Logic.LegacyPL.CNFLiteral (Satisfies satisfies_def)
 
 end CNFLiteral
 
 namespace CNFClause
 
-export Cslib.Logic.PL.CNFClause (Satisfies satisfies_def satisfies_nil
+export Cslib.Logic.LegacyPL.CNFClause (Satisfies satisfies_def satisfies_nil
   satisfies_cons)
 
 end CNFClause
 
 namespace CNF
 
-export Cslib.Logic.PL.CNF (Satisfies satisfies_def satisfies_nil
+export Cslib.Logic.LegacyPL.CNF (Satisfies satisfies_def satisfies_nil
   satisfies_cons)
 
 end CNF

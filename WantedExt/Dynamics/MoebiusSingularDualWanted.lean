@@ -25,7 +25,7 @@ matrices `V_{αγ}, V_{αδ}, V_{βγ}, V_{βδ}` printed in the source, for par
 below are written out from the printed product matrices (which use `V_δ = (2 δ-1; 1 δ)`, while
 `V_δ` itself is printed as `(2 δ-1; 1 -δ)`).
 
-The central equations and the singularity theorem are proved in
+The endpoint inequality, central equations and singularity theorem are proved in
 `MathlibExt.Dynamics.MoebiusSingularDual`.
 -/
 
@@ -46,23 +46,6 @@ public theorem_wanted moebius_fixedPoint_eq_iff (β γ η : ℝ) (hβ : β ≠ 2
     (hden : 3 - 2 * β + (2 - β) * η ≠ 0) :
     (-2 + 2 * β + γ + (-1 + β + γ) * η) / (3 - 2 * β + (2 - β) * η) = η ↔
       η = -1 ∨ η = (-2 + 2 * β + γ) / (2 - β)
-
-/-- **Moebius dual branches disagree at −1.** Let $\alpha, \beta, \delta$ be real numbers with
-$\alpha > 0$, $\beta < 1$ and $\delta \ge 0$, and define the dual branches
-$V^\#_{\alpha\delta}(y) = (2\alpha\delta - 1 + \alpha\delta y)/(2\alpha + 1 + \alpha y)$ and
-$V^\#_{\beta\delta}(y) = (2\delta - 2\beta\delta - 1 + (\delta - \beta\delta - 1) y)/
-(3 - 2\beta + (2 - \beta) y)$. Then $V^\#_{\beta\delta}(-1) \ne V^\#_{\alpha\delta}(-1)$.
-
-Equality would force $\delta = -1$.
-
-Source: Fritz Schweiger, *A Remark on Singular Duals of Moebius Maps*, INTEGERS 24 (2024),
-Article A17, Lemma 2 (`integers-2024-A17-lem-2`). -/
-public theorem_wanted moebius_dual_endpoint_ne_neg_one (α β δ : ℝ) (hα : 0 < α) (hβ : β < 1)
-    (hδ : 0 ≤ δ) :
-    let dualαδ : ℝ → ℝ := fun y => (2 * α * δ - 1 + α * δ * y) / (2 * α + 1 + α * y)
-    let dualβδ : ℝ → ℝ := fun y =>
-      (2 * δ - 2 * β * δ - 1 + (δ - β * δ - 1) * y) / (3 - 2 * β + (2 - β) * y)
-    dualβδ (-1) ≠ dualαδ (-1)
 
 end
 

@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Computability.Machines.Turing.MultiTape.TimeFromSpace
 public import CSLibExt.Computability.Machines.Turing.MultiTape.TimeSpace
 
 /-!
@@ -25,7 +26,8 @@ within the same time and space bounds (`IsRelabelling.computes_iff`, `runsInTime
 `runsInSpace_iff`, `computesFunInTimeAndSpace_iff`, `decides_iff`).
 
 Space is CSLib's path-based `MultiTapeNTM.RunsInSpace`; for a deterministic machine it is a bound
-on `MultiTapeTM.spaceUsed` along the run (`runsInSpace_iff_forall_spaceUsed_le`).
+on `MultiTapeTM.spaceUsed` along the run (`runsInSpace_iff_forall_spaceUsed_le`). CSLib v4.36
+dropped `MultiTapeTM.spaceUsed`; Atlas restores it in `MultiTape/TimeFromSpace.lean`.
 
 ## Main definitions
 

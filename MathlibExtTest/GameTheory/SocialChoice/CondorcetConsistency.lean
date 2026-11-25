@@ -247,5 +247,12 @@ theorem t7_borda_dodgson_consistent :
   ⟨(dodgsonScore_eq_zero_iff bordaP 0).mpr t1_borda_condorcet_winner,
     fun h => not_isCondorcetWinner_one
       ((dodgsonScore_eq_zero_iff bordaP 1).mp h)⟩
+theorem t8_borda_prod_not_consistent :
+    IsCondorcetWinner bordaP 0 ∧
+      (0 : Fin 3) ∉ winners (fun a => (bordaScore bordaP a : ℤ)) ∧
+      ∃ (P : Profile (Fin 3) (Fin 5)) (a : Fin 3),
+        IsCondorcetWinner P a ∧ a ∉ winners (fun x => (bordaScore P x : ℤ)) :=
+  ⟨t1_borda_condorcet_winner, t2_borda_not_consistent.2.2,
+    exists_isCondorcetWinner_notMem_winners_bordaScore⟩
 end
 end MathlibExtTest.GameTheory.SocialChoice.CondorcetConsistency

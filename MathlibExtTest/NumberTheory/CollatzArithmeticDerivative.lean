@@ -9,11 +9,38 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.NumberTheory.CollatzArithmeticDerivative
+import Mathlib.Tactic.NormNum.Prime
 
 open MetaMathlibExt
 
 example : collatzAccelerated 0 = 0 ∧ collatzAccelerated 3 = 5 ∧ collatzAccelerated 6 = 3 :=
   ⟨rfl, rfl, rfl⟩
+
+-- The compatible semiprimes `71 · 1609` and `349 · 491` give a positive solution of
+-- `D(C(n)) = C(D(n))`: both sides are `840`, and the solution is odd.
+example : arithmeticDerivative (collatzAccelerated (71 * 1609)) =
+      collatzAccelerated (arithmeticDerivative (71 * 1609)) ∧ Odd (71 * 1609) := by
+  have h : arithmeticDerivative (collatzAccelerated (71 * 1609)) =
+      collatzAccelerated (arithmeticDerivative (71 * 1609)) := by
+    rw [show collatzAccelerated (71 * 1609) = 349 * 491 from rfl, arithmeticDerivative_mul,
+      arithmeticDerivative_mul, arithmeticDerivative_prime (by norm_num : Nat.Prime 349),
+      arithmeticDerivative_prime (by norm_num : Nat.Prime 491),
+      arithmeticDerivative_prime (by norm_num : Nat.Prime 71),
+      arithmeticDerivative_prime (by norm_num : Nat.Prime 1609)]
+    rfl
+  exact ⟨h, odd_of_arithmeticDerivative_collatz_comm _ (by norm_num) h⟩
+
+-- The positivity hypothesis is needed: `n = 0` solves the equation but is even.
+example : arithmeticDerivative (collatzAccelerated 0) =
+      collatzAccelerated (arithmeticDerivative 0) ∧ ¬ Odd 0 :=
+  ⟨by simp [collatzAccelerated, arithmeticDerivative_zero], by decide⟩
+
+-- No positive even number solves the equation.
+example (m : ℕ) (hm : 0 < m) :
+    arithmeticDerivative (collatzAccelerated (2 * m)) ≠
+      collatzAccelerated (arithmeticDerivative (2 * m)) := fun h =>
+  Nat.not_odd_iff_even.mpr (even_two_mul m)
+    (odd_of_arithmeticDerivative_collatz_comm _ (by omega) h)
 
 -- The two semiprimes in the example realize opposite residue orders.
 example : (71 * 1609 % 3 = 2 ∧ 349 * 491 % 3 = 2) ∧

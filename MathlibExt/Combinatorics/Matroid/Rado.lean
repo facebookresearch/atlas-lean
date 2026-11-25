@@ -332,10 +332,10 @@ private theorem rado_aux
             constructor
             · rintro ⟨z, rfl⟩
               by_cases hz : z ∈ s
-              · change (if h : z ∈ s then f0 ⟨z, h⟩ else f1 ⟨z, h⟩) ∈ _ ∪ _
+              · change (if h : z ∈ s then f0 ⟨z, h⟩ else f1 ⟨z, h⟩) ∈ (_ ∪ _ : Set _)
                 rw [dite_eq_left hz]
                 simp
-              · change (if h : z ∈ s then f0 ⟨z, h⟩ else f1 ⟨z, h⟩) ∈ _ ∪ _
+              · change (if h : z ∈ s then f0 ⟨z, h⟩ else f1 ⟨z, h⟩) ∈ (_ ∪ _ : Set _)
                 rw [dite_eq_right hz]
                 simp
             · intro hy
