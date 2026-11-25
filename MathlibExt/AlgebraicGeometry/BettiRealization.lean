@@ -49,7 +49,7 @@ abbrev rationalUnit (Z : TopCat.{0}) : RationalDerived Z :=
 of rational sheaves: the cohomology of the constant sheaf. For locally
 contractible spaces, such as the complex points of a variety with their
 analytic topology, it is singular (Betti) cohomology; on general spaces sheaf
-and singular cohomology can differ (already in degree zero on the Cantor
+and singular cohomology can differ (even in degree zero, on the Cantor
 set). -/
 abbrev Cohomology (Z : TopCat.{0}) (n : ℤ) : Type 1 :=
   rationalUnit Z ⟶ (rationalUnit Z)⟦n⟧
@@ -68,8 +68,10 @@ theorem cohomologyCast_rfl {Z : TopCat.{0}} {m : ℤ} (x : Cohomology Z m) :
     cohomologyCast rfl x = x :=
   rfl
 
-/-- Cup product: the Yoneda product of shifted morphisms, Mathlib's
-`ShiftedHom.comp`, in the order `x` then `y`. -/
+/-- Cup product $H^i(Z; \mathbb{Q}) \times H^j(Z; \mathbb{Q}) \to H^{i+j}(Z; \mathbb{Q})$: the
+Yoneda product `ShiftedHom.comp` of shifted morphisms, in the order `x` then `y`, that is, the
+composite $\mathbb{Q}_Z \to \mathbb{Q}_Z[i] \to \mathbb{Q}_Z[j][i] \cong \mathbb{Q}_Z[i+j]$ of $x$
+followed by the shift $y[i]$ of $y$. -/
 def cup (Z : TopCat.{0}) {i j : ℤ}
     (x : Cohomology Z i) (y : Cohomology Z j) : Cohomology Z (i + j) :=
   ShiftedHom.comp x y (add_comm j i)
