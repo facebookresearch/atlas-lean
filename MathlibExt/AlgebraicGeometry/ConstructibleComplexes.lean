@@ -59,7 +59,7 @@ instance extendScalars_preservesFiniteLimits (k l : Type) [Field k] [Field l]
     [Algebra k l] :
     PreservesFiniteLimits (ModuleCat.extendScalars.{0, 0, 0} (algebraMap k l)) := by
   let F := ModuleCat.extendScalars.{0, 0, 0} (algebraMap k l)
-  have : F.Additive := rightExactFunctor_le_additiveFunctor _ _ F
+  have : F.Additive := preservesFiniteColimits_le_additiveFunctor _ _ F
     (show PreservesFiniteColimits F from
       inferInstanceAs (PreservesFiniteColimits (ModuleCat.extendScalars (algebraMap k l))))
   have h (S : ShortComplex (ModuleCat.{0} k)) (hS : S.Exact) : (S.map F).Exact := by

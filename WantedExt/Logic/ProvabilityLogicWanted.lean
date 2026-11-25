@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import CSLibExt.Logics.Modal.ProvabilityLogic.FixedPoint
+public import CSLibExt.Logics.Modal.ProvabilityLogic.FixedPointExistence
 public import CSLibExt.Logics.Modal.ProvabilityLogic.FrameCorrespondence
 
 /-!
@@ -19,7 +19,6 @@ Established results about GL over the Hilbert system `Derivable Axioms.GL` of
 `CSLibExt.Logics.Modal.ProvabilityLogic.Basic`, recorded without proof.
 
 * `derivable_GL_iff_finite`: Segerberg's completeness theorem for finite strict partial orders.
-* `fixedPoint_GL`: the de Jongh–Sambin fixed point theorem (existence), in general.
 -/
 
 @[expose] public section
@@ -41,17 +40,6 @@ theorem_wanted derivable_GL_iff_finite (phi : Formula Atom) :
     Derivable Axioms.GL phi ↔
       ∀ (W : Type u) [Finite W] (M : KripkeModel W Atom),
         (∀ {a b c}, M.rel a b → M.rel b c → M.rel a c) → (∀ w, ¬M.rel w w) → M.Valid phi
-
-/-- **The de Jongh–Sambin fixed point theorem.** If every occurrence of the atom `p` in `A` lies
-under a box, there is a formula `H` in which `p` does not occur, all of whose atoms occur in `A`,
-such that `GL ⊢ H ↔ A(H)` (de Jongh and Sambin, 1975; Verbrugge, "Provability logic", *Stanford
-Encyclopedia of Philosophy*, current edition, §2.2). The fixed point is unique up to GL-provable
-equivalence by the proved `Derivable.fixedPoint_unique_GL`; the case of one boxed occurrence is
-the proved `Derivable.fixedPoint_GL_of_box`. -/
-theorem_wanted fixedPoint_GL [DecidableEq Atom] {A : Formula Atom} {p : Atom}
-    (hA : A.Modalised p) :
-    ∃ H : Formula Atom, p ∉ H.atoms ∧ H.atoms ⊆ A.atoms ∧
-      Derivable Axioms.GL (H.iff (A.subst p H))
 
 end Modal
 end Cslib
