@@ -89,13 +89,20 @@ theorem nsmul_torsionBy_eq_zero {V : Type w} [AddCommGroup V] {iV : Module k V} 
   rw [← Nat.cast_smul_eq_nsmul k]
   exact Subtype.ext ((Submodule.mem_torsionBy_iff (p : k) (x : V)).1 x.2)
 
-instance instModuleZModQuot {V : Type w} [AddCommGroup V] {iV : Module k V} (p : ℕ) :
+-- The two `ZMod p`-module structures below are reducible defs, not instances (see note
+-- [reducible non-instances]): for `k = ZMod p` the quotient and the submodule already carry
+-- Mathlib's module structures, and global instances would compete with them. `modP`, `torsionP`
+-- and the `Rep` objects carry them; this file, and any importer that needs them as instances,
+-- opts in with `attribute [local instance] Rep.zmodModuleQuot Rep.zmodModuleTorsion`.
+abbrev zmodModuleQuot {V : Type w} [AddCommGroup V] {iV : Module k V} (p : ℕ) :
     Module (ZMod p) (V ⧸ ((p : k) • (⊤ : Submodule k V))) :=
   AddCommGroup.zmodModule (nsmul_quot_eq_zero p)
 
-instance instModuleZModTorsion {V : Type w} [AddCommGroup V] {iV : Module k V} (p : ℕ) :
+abbrev zmodModuleTorsion {V : Type w} [AddCommGroup V] {iV : Module k V} (p : ℕ) :
     Module (ZMod p) ↥(Submodule.torsionBy k V (p : k)) :=
   AddCommGroup.zmodModule (nsmul_torsionBy_eq_zero p)
+
+attribute [local instance] zmodModuleQuot zmodModuleTorsion
 
 def toZMod (p : ℕ) {M : Type w} [AddCommGroup M] [Module (ZMod p) M] {inst : Module k M} (σ :
   Representation k G M) :
@@ -154,6 +161,42 @@ def repTorsionPMap (p : ℕ) {A B : Rep.{w} k G} (f : A ⟶ B) : repTorsionP p A
 @[simp] theorem repTorsionPMap_hom_apply_coe (p : ℕ) {A B : Rep.{w} k G} (f : A ⟶ B) (a :
   ↥(Submodule.torsionBy k A (p : k))) :
     (((repTorsionPMap p f).hom a : ↥(Submodule.torsionBy k B (p : k))) : B) = f.hom a := rfl
+
+@[simp] theorem repModPMap_id (p : ℕ) (A : Rep.{w} k G) :
+    repModPMap p (𝟙 A) = 𝟙 (repModP p A) := by
+  refine Rep.hom_ext <| Representation.IntertwiningMap.ext <| LinearMap.ext fun x => ?_
+  obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ x
+  rfl
+
+@[simp] theorem repModPMap_comp (p : ℕ) {A B C : Rep.{w} k G} (f : A ⟶ B) (g : B ⟶ C) :
+    repModPMap p (f ≫ g) = repModPMap p f ≫ repModPMap p g := by
+  refine Rep.hom_ext <| Representation.IntertwiningMap.ext <| LinearMap.ext fun x => ?_
+  obtain ⟨a, rfl⟩ := Submodule.Quotient.mk_surjective _ x
+  rfl
+
+@[simp] theorem repTorsionPMap_id (p : ℕ) (A : Rep.{w} k G) :
+    repTorsionPMap p (𝟙 A) = 𝟙 (repTorsionP p A) :=
+  Rep.hom_ext <| Representation.IntertwiningMap.ext <| LinearMap.ext fun _ => rfl
+
+@[simp] theorem repTorsionPMap_comp (p : ℕ) {A B C : Rep.{w} k G} (f : A ⟶ B) (g : B ⟶ C) :
+    repTorsionPMap p (f ≫ g) = repTorsionPMap p f ≫ repTorsionPMap p g :=
+  Rep.hom_ext <| Representation.IntertwiningMap.ext <| LinearMap.ext fun _ => rfl
+
+-- Reduction modulo `p` as a functor; its object and morphism maps are `repModP` and
+-- `repModPMap`.
+abbrev modPFunctor (p : ℕ) : Rep.{w} k G ⥤ Rep.{w} (ZMod p) G where
+  obj := repModP p
+  map := repModPMap p
+  map_id := repModPMap_id p
+  map_comp := repModPMap_comp p
+
+-- The `p`-torsion as a functor; its object and morphism maps are `repTorsionP` and
+-- `repTorsionPMap`.
+abbrev torsionPFunctor (p : ℕ) : Rep.{w} k G ⥤ Rep.{w} (ZMod p) G where
+  obj := repTorsionP p
+  map := repTorsionPMap p
+  map_id := repTorsionPMap_id p
+  map_comp := repTorsionPMap_comp p
 
 end Rep
 
@@ -553,6 +596,8 @@ end Representation
 namespace Rep
 
 open CategoryTheory
+
+attribute [local instance] zmodModuleQuot zmodModuleTorsion
 
 set_option maxHeartbeats 800000 in
 /-- For a finite integral representation of a finite group whose order is
