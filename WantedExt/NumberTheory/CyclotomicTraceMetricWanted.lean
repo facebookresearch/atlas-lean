@@ -109,29 +109,6 @@ INTEGERS 25 (2025), Article A10, Lemma 4 (`integers-2025-A10-lem-4`). -/
 public theorem_wanted cyclotomicDistMoment_two (hp : p.Prime) (N : ℕ) :
     cyclotomicDistMoment p K N 2 = 2 / 3 * ((p : ℝ) ^ 3 - 2 * p ^ 2 + 1) * N * (N + 1)
 
-/-- **Fourth-power sum of coordinate differences over a box.** Let $p$ be a prime and $N$ a
-natural number, and let $B(p, N)$ be the set of integer vectors $a = (a_1, \dots, a_{p-1})$
-with $|a_i| \le N$ for all $i$. Then
-$$\sum_{i=1}^{p-1} \sum_{j=1}^{p-1} \sum_{a, b \in B(p, N)} (a_i - b_i)^2 (a_j - b_j)^2 =
-(2N+1)^{2(p-1)} \cdot \tfrac{2}{45} N (N+1) (p-1) (10N^2 p + 4N^2 + 10Np + 4N - 3).$$
-
-This corrects the paper's printed right side, which omits the factor $(2N+1)^{2(p-1)}$: for
-$p = 3$ and $N = 1$ the sum is $936$, while the printed right side is $104/9$. The paper's own
-proof carries the factors $(2N+1)^{2p-4}$ and $(2N+1)^{2p-6}$ in its pieces (10) and (11), and
-combining them gives the value above; the printed formula is the sum divided by
-$|B(p, N)|^2 = (2N+1)^{2(p-1)}$. The paper takes $p$ an odd prime; here only $p$ prime is
-assumed.
-
-Source: Saettone, Zaharescu and Zhang, *On a Special Metric in Cyclotomic Fields*,
-INTEGERS 25 (2025), Article A10, Lemma 5 (`integers-2025-A10-lem-5`). -/
-public theorem_wanted sum_sq_sub_mul_sq_sub_box (p : ℕ) (hp : p.Prime) (N : ℕ) :
-    ∑ i : Fin (p - 1), ∑ j : Fin (p - 1),
-      ∑ a ∈ Fintype.piFinset (fun _ : Fin (p - 1) => Finset.Icc (-(N : ℤ)) N),
-        ∑ b ∈ Fintype.piFinset (fun _ : Fin (p - 1) => Finset.Icc (-(N : ℤ)) N),
-          (((a i - b i) ^ 2 * (a j - b j) ^ 2 : ℤ) : ℚ) =
-      (2 * N + 1) ^ (2 * (p - 1)) * (2 / 45 * N * (N + 1) * ((p : ℚ) - 1) *
-        (10 * N ^ 2 * p + 4 * N ^ 2 + 10 * N * p + 4 * N - 3))
-
 /-- **Fourth moment of the trace distance on the cyclotomic box.** Let $p$ be a prime, let $N$ be
 a natural number, and let $K$ be a field generated over $\mathbb{Q}$ by a primitive $p$-th root of
 unity, with fixed primitive $p$-th root of unity $\omega \in K$. Let $M_4(p, N)$ be the fourth
