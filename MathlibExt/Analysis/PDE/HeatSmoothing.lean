@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import MathlibExt.Analysis.PDE.HeatKernel
 public import Mathlib.Algebra.MvPolynomial.PDeriv
 public import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.Algebra.Ring.IsFormallyReal
@@ -27,43 +28,42 @@ public import Mathlib.Topology.Algebra.MvPolynomial
 /-!
 # Whole-space heat smoothing
 
-For bounded measurable `g`, the Gaussian heat convolution
-`u(t, x) = ∫ y, g y * (4πt)^(-n/2) * exp(-‖x - y‖² / (4t))`
-is smooth (`ContDiffOn ℝ ∞`, i.e. `C^∞`, not analytic) at positive time,
-satisfies the heat equation `u_t = Δu` at positive time, preserves the
-constant function `1`, and its `L^p` heat-semigroup generator equals the
-Laplacian on compactly supported `C²` functions.
+For bounded measurable `g` on `EuclideanSpace ℝ (Fin n)`, the heat convolution
+`u(t, x) = ∫ y, g y * heatKernel (EuclideanSpace ℝ (Fin n)) t (x - y)`, where
+`heatKernel E t z = (4πt)^(-n/2) * exp(-‖z‖² / (4t))` is the heat kernel of
+`MathlibExt.Analysis.PDE.HeatKernel`, is smooth (`ContDiffOn ℝ ∞`, i.e. `C^∞`, not analytic) at
+positive time, satisfies the heat equation `u_t = Δu` at positive time, preserves the constant
+function `1`, and its `L^p` heat-semigroup generator equals the Laplacian on compactly supported
+`C²` functions.
 
-## i. Overview
+## Main definitions
 
-The kernel `K_t(z) = (4πt)^(-n/2) * exp(-‖z‖² / (4t))` is a
-Gaussian-times-polynomial kernel (the class `gaussPolyKernel` with
-`Q = 1`, `k = 0`), and every such class member is `ContDiffOn ∞` at
-positive time: the class is closed under time and space differentiation
-(kernel closure identities), the convolution is jointly differentiable
-(joint `HasFDerivAt` from its time and space partials), and the `fderiv`
-of a class member is again a `coprod` of class members, so induction on
-the order gives `ContDiffOn ∞`. Specializing to `(Q, k) = (1, 0)` gives
-smoothing. The heat equation follows from the time partial, the second
-space partials, and the kernel PDE `∂t K = ΔK`. The generator follows
-from the Taylor remainder identity and the `L^p` estimate.
+- `heatConvolution n g t x`: the heat convolution `∫ y, g y * heatKernel _ t (x - y)`.
 
-## ii. Key results
+## Main results
 
-- `EarthScience.heat_convolution_smooth`: the heat convolution is
-  `ContDiffOn ℝ ∞` at positive time. The target is `∞` (`C^∞`), not
-  `⊤`: under current Mathlib `ContDiffOn ⊤` means analytic (`ω`), while
-  `∞` means `C^∞` (all finite orders). Analyticity is a separate
-  follow-up, not proved here.
-- `EarthScience.heat_convolution_satisfies_heat_equation`: at positive
-  time, `u_t = Δu`.
-- `EarthScience.heat_convolution_const_one`: the convolution of `1`
-  is `1` at positive time.
-- `EarthScience.heat_semigroup_generator_eq_laplacian`: the `L^p`
-  heat-semigroup generator equals the Laplacian on compactly supported
-  `C²` functions.
+- `heat_convolution_smooth`: the heat convolution is `ContDiffOn ℝ ∞` at positive time. The
+  target is `∞` (`C^∞`), not `⊤`: under current Mathlib `ContDiffOn ⊤` means analytic (`ω`),
+  while `∞` means `C^∞` (all finite orders). Analyticity is a separate follow-up, not proved
+  here.
+- `heat_convolution_satisfies_heat_equation`: at positive time, `u_t = Δu`.
+- `heat_convolution_const_one`: the convolution of `1` is `1` at positive time.
+- `heat_semigroup_generator_eq_laplacian`: the `L^p` heat-semigroup generator equals the
+  Laplacian on compactly supported `C²` functions.
 
-## iii. Table of contents
+## Implementation notes
+
+The kernel `K_t(z) = heatKernel (EuclideanSpace ℝ (Fin n)) t z` is a Gaussian-times-polynomial
+kernel (the class `gaussPolyKernel` with `Q = 1`, `k = 0`), and every such class member is
+`ContDiffOn ∞` at positive time: the class is closed under time and space differentiation
+(kernel closure identities), the convolution is jointly differentiable (joint `HasFDerivAt` from
+its time and space partials), and the `fderiv` of a class member is again a `coprod` of class
+members, so induction on the order gives `ContDiffOn ∞`. Specializing to `(Q, k) = (1, 0)` gives
+smoothing. The heat equation follows from the time partial, the second space partials, and the
+kernel PDE `∂t K = ΔK`. The generator follows from the Taylor remainder identity and the `L^p`
+estimate.
+
+The file is organized in sections:
 
 - A. Shared definitions
 - B. Gaussian moments
@@ -78,7 +78,7 @@ from the Taylor remainder identity and the `L^p` estimate.
 - K. Constant-one
 - L. Remainder, modulus, and the `L^p` estimate
 
-## iv. References
+## References
 
 - L. C. Evans, *Partial Differential Equations*, 2nd ed., Graduate Studies
   in Mathematics 19, American Mathematical Society, 2010, Chapter 2:
@@ -87,13 +87,11 @@ from the Taylor remainder identity and the `L^p` estimate.
 - E. M. Stein and R. Shakarchi, *Fourier Analysis: An Introduction*,
   Princeton Lectures in Analysis I, Princeton University Press, 2003,
   Chapter 5: the heat equation on the line and the Gaussian.
-- Lean 4.35.0 / Mathlib 56a00585.
-
 -/
 
 @[expose] public section
 
-namespace EarthScience
+namespace MathlibExt.Analysis.PDE.HeatKernel
 
 open MeasureTheory
 open scoped Topology
@@ -101,15 +99,21 @@ open Filter
 
 /-! ## A. Shared definitions -/
 
-/-- Gaussian heat kernel on `EuclideanSpace ℝ (Fin n)` at diffusivity 1:
-`(4πt)^(-n/2) exp(-‖x‖² / (4t))`. -/
-noncomputable def heatKernel (n : ℕ) (t : ℝ) (x : EuclideanSpace ℝ (Fin n)) : ℝ :=
-  (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖x‖ ^ 2 / (4 * t))
+/-- `Φ n` is the heat kernel `heatKernel` on `EuclideanSpace ℝ (Fin n)`:
+`Φ n t x = (4πt)^(-n/2) exp(-‖x‖² / (4t))`. -/
+local notation:max "Φ" n:max => heatKernel (EuclideanSpace ℝ (Fin n))
 
-/-- Gaussian heat convolution of bounded measurable data `g` at time `t`. -/
+/-- Gaussian heat convolution of bounded measurable data `g` at time `t`: the convolution of `g`
+with the heat kernel `heatKernel (EuclideanSpace ℝ (Fin n)) t`. -/
 noncomputable def heatConvolution (n : ℕ) (g : EuclideanSpace ℝ (Fin n) → ℝ)
     (t : ℝ) (x : EuclideanSpace ℝ (Fin n)) : ℝ :=
-  ∫ (y : EuclideanSpace ℝ (Fin n)), g y * heatKernel n t (x - y)
+  ∫ (y : EuclideanSpace ℝ (Fin n)), g y * heatKernel (EuclideanSpace ℝ (Fin n)) t (x - y)
+
+/-- The heat kernel on `EuclideanSpace ℝ (Fin n)`, with the dimension `n` in the exponent. -/
+private theorem heatKernel_euclideanSpace (n : ℕ) (t : ℝ) (x : EuclideanSpace ℝ (Fin n)) :
+    Φ n t x = (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖x‖ ^ 2 / (4 * t)) := by
+  unfold heatKernel
+  rw [finrank_euclideanSpace_fin]
 
 /-- Gaussian-times-polynomial kernels. -/
 private noncomputable def gaussPolyKernel (n : ℕ) (Q : MvPolynomial (Fin n) ℝ) (k : ℕ)
@@ -264,14 +268,9 @@ private theorem heatKernel_second_point (n : ℕ) (t : ℝ) (ht : 0 < t) (i j : 
 private theorem heatKernel_mass (n : ℕ) {t : ℝ} (ht : 0 < t) :
     ∫ y : EuclideanSpace ℝ (Fin n), (4 * Real.pi * t) ^ (-(n : ℝ) / 2)
         * Real.exp (-‖y‖ ^ 2 / (4 * t)) = 1 := by
-  have ht' : (0:ℝ) < 2 * t := by linarith
-  have hv_eq : ((⟨2 * t, ht'.le⟩ : NNReal) : ℝ) = 2 * t := rfl
-  rw [heatKernel_transfer n]
-  simp_rw [heatKernel_mass_point n t ht]
-  rw [integral_fintype_prod_volume_eq_prod
-    (fun (_ : Fin n) (s : ℝ) => (4 * Real.pi * t) ^ (-(1 : ℝ) / 2) * Real.exp (-s ^ 2 / (4 * t)))]
-  simp_rw [heatKernel_1d_mass t ht _ hv_eq]
-  exact Finset.prod_const_one
+  have h := integral_heatKernel (E := EuclideanSpace ℝ (Fin n)) ht
+  simp only [heatKernel, finrank_euclideanSpace_fin] at h
+  exact h
 
 /-- First moment of the heat kernel vanishes. -/
 private theorem heatKernel_firstMoment (n : ℕ) {t : ℝ} (ht : 0 < t) (i : Fin n) :
@@ -4128,7 +4127,7 @@ private theorem heat_convolution_smooth_final (n : ℕ) {g : EuclideanSpace ℝ 
       (fun p : ℝ × EuclideanSpace ℝ (Fin n) => heatConvolution n g p.1 p.2)
       (Set.Ioi 0 ×ˢ Set.univ) := by
   have hbridge : ∀ (t : ℝ) (z : EuclideanSpace ℝ (Fin n)),
-      heatKernel n t z = gaussPolyKernel n 1 0 t z := by
+      Φ n t z = gaussPolyKernel n 1 0 t z := by
     intro t z
     simp [heatKernel, gaussPolyKernel]
   have hFG : (fun p : ℝ × EuclideanSpace ℝ (Fin n) => heatConvolution n g p.1 p.2)
@@ -5882,14 +5881,14 @@ private theorem heatConvolution_satisfies_heat_equation_final_asm (n : ℕ)
       = Laplacian.laplacian (fun y => heatConvolution n g t y) x := by
   -- The class kernel at `(Q, k) = (1, 0)` is the heat kernel.
   have hKeq : ∀ (s : ℝ) (z : EuclideanSpace ℝ (Fin n)),
-      gaussPolyKernel n 1 0 s z = heatKernel n s z := by
+      gaussPolyKernel n 1 0 s z = Φ n s z := by
     intro s z
     simp [heatKernel, gaussPolyKernel]
   -- The convolution in class-kernel form.
   have hCeq : ∀ (s : ℝ) (z : EuclideanSpace ℝ (Fin n)),
       heatConvolution n g s z = ∫ y, g y * gaussPolyKernel n 1 0 s (z - y) := by
     intro s z
-    change ∫ (y : EuclideanSpace ℝ (Fin n)), g y * heatKernel n s (z - y)
+    change ∫ (y : EuclideanSpace ℝ (Fin n)), g y * Φ n s (z - y)
       = ∫ y, g y * gaussPolyKernel n 1 0 s (z - y)
     apply integral_congr_ae
     filter_upwards with y
@@ -6052,10 +6051,10 @@ private theorem heatConvolution_satisfies_heat_equation_final_asm (n : ℕ)
   filter_upwards with y
   congr 1
   have hGK : (fun s => gaussPolyKernel n 1 0 s (x - y))
-      = (fun s => heatKernel n s (x - y)) :=
+      = (fun s => Φ n s (x - y)) :=
     funext fun s => hKeq s (x - y)
   rw [hGK]
-  exact hKernelPDEThm n ht (x - y)
+  simpa only [heatKernel_euclideanSpace] using hKernelPDEThm n ht (x - y)
 
 end H4cFinal
 
@@ -6092,52 +6091,17 @@ open scoped Topology
 open Filter
 
 
-/-- Mass preservation on constant data: convolution of `1` is `1`. Hint:
-unfold the definitions; the kernel integrates to 1 as a product of 1-D
-Gaussian integrals (`integral_gaussian` in
-`Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral`), after a
-translation `x - y` change of variables. -/
+/-- Mass preservation on constant data: convolution of `1` is `1`. After the translation
+`y ↦ x - y`, this is the total mass `integral_heatKernel` of the heat kernel. -/
 theorem heat_convolution_const_one (n : ℕ) {t : ℝ} (ht : 0 < t)
     (x : EuclideanSpace ℝ (Fin n)) :
     heatConvolution n (fun _ => 1) t x = 1 := by
-  have ht' : t ≠ 0 := ne_of_gt ht
   simp only [heatConvolution, one_mul]
-  have hneg := integral_neg_eq_self (fun z => heatKernel n t (x + z))
+  have hneg := integral_neg_eq_self (fun z => Φ n t (x + z))
     (volume : Measure (EuclideanSpace ℝ (Fin n)))
   simp only [← sub_eq_add_neg] at hneg
   rw [hneg, integral_add_left_eq_self]
-  have hmp : MeasurePreserving (WithLp.toLp 2 : (Fin n → ℝ) → EuclideanSpace ℝ (Fin n))
-      volume volume :=
-    PiLp.volume_preserving_toLp (Fin n)
-  have hemb : MeasurableEmbedding (WithLp.toLp 2 : (Fin n → ℝ) → EuclideanSpace ℝ (Fin n)) :=
-    (MeasurableEquiv.toLp 2 (Fin n → ℝ)).measurableEmbedding
-  have htrans : ∫ v : Fin n → ℝ, heatKernel n t (WithLp.toLp 2 v)
-      = ∫ z : EuclideanSpace ℝ (Fin n), heatKernel n t z :=
-    hmp.integral_comp hemb (fun z : EuclideanSpace ℝ (Fin n) => heatKernel n t z)
-  rw [← htrans]
-  have hfn : ∀ v : Fin n → ℝ, heatKernel n t (WithLp.toLp 2 v)
-      = (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * ∏ i, Real.exp (-(1 / (4 * t)) * (v i) ^ 2) := by
-    intro v
-    have hnorm : ‖WithLp.toLp 2 v‖ ^ 2 = ∑ i, (v i) ^ 2 := by
-      simp only [EuclideanSpace.real_norm_sq_eq]
-    simp only [heatKernel, hnorm]
-    congr 1
-    rw [← Real.exp_sum]
-    congr 1
-    rw [← Finset.mul_sum]
-    field_simp
-  simp only [hfn]
-  rw [integral_const_mul,
-    integral_fintype_prod_volume_eq_pow
-      (fun y : ℝ => Real.exp (-(1 / (4 * t)) * y ^ 2)),
-    Fintype.card_fin, integral_gaussian (1 / (4 * t))]
-  have hpi : Real.pi / (1 / (4 * t)) = 4 * Real.pi * t := by
-    field_simp
-  have hpos : 0 < 4 * Real.pi * t := by positivity
-  have hsqrt : (√(4 * Real.pi * t)) ^ n = (4 * Real.pi * t) ^ ((1 / 2 : ℝ) * (n : ℝ)) := by
-    rw [Real.sqrt_eq_rpow, ← Real.rpow_natCast, ← Real.rpow_mul hpos.le]
-  have hexp : (-(n : ℝ) / 2) + (1 / 2 : ℝ) * (n : ℝ) = 0 := by ring
-  rw [hpi, hsqrt, ← Real.rpow_add hpos, hexp, Real.rpow_zero]
+  exact integral_heatKernel ht
 
 end H1new
 
@@ -6623,6 +6587,7 @@ private theorem heatConvolution_sub_eq_remainder_asm (n : ℕ)
       = ∫ (y : EuclideanSpace ℝ (Fin n)),
         φ (x - y) * ((4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖y‖ ^ 2 / (4 * t))) := by
     unfold heatConvolution heatKernel
+    rw [finrank_euclideanSpace_fin]
     have hsub : (∫ (y : EuclideanSpace ℝ (Fin n)),
         φ y * ((4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖x - y‖ ^ 2 / (4 * t))))
         = ∫ (y : EuclideanSpace ℝ (Fin n)),
@@ -7715,22 +7680,8 @@ open MeasureTheory
 
 
 private theorem heatKernel_nonneg (n : ℕ) (t : ℝ) (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
-    0 ≤ heatKernel n t x := by
-  unfold heatKernel
-  apply mul_nonneg
-  · apply Real.rpow_nonneg
-    have hpi : 0 ≤ Real.pi := Real.pi_pos.le
-    positivity
-  · exact Real.exp_nonneg _
-
-private theorem heatKernel_pos (n : ℕ) (t : ℝ) (ht : 0 < t) (x : EuclideanSpace ℝ (Fin n)) :
-    0 < heatKernel n t x := by
-  unfold heatKernel
-  apply mul_pos
-  · apply Real.rpow_pos_of_pos
-    have hpi : 0 < Real.pi := Real.pi_pos
-    positivity
-  · exact Real.exp_pos _
+    0 ≤ Φ n t x :=
+  (heatKernel_pos ht x).le
 
 
 private theorem coord_mul_le_norm_sq (n : ℕ) (y : EuclideanSpace ℝ (Fin n)) (i j : Fin n) :
@@ -8246,19 +8197,19 @@ private theorem Dfn_integral_density (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) 
       ∃ M : ℝ, 0 ≤ M ∧ ∀ x, |secondPartialFn n φ i j x| ≤ M) :
     ∀ (t : ℝ), 0 < t → ∀ x : EuclideanSpace ℝ (Fin n),
       (∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal
-        (heatKernel n t y)))
-      = ∫ y, heatKernel n t y * Dfn n φ x y := by
+        (Φ n t y)))
+      = ∫ y, Φ n t y * Dfn n φ x y := by
   -- `integral_withDensity_eq_integral_smul` needs no integrability, so the
   -- regularity hypotheses are unneeded; reference them to silence the linter.
   have _ := hDijThm
   have _ := hBndThm
   intro t ht x
-  have hKcont : Continuous (fun y : EuclideanSpace ℝ (Fin n) => heatKernel n t y) := by
+  have hKcont : Continuous (fun y : EuclideanSpace ℝ (Fin n) => Φ n t y) := by
     unfold heatKernel
     fun_prop
-  have hKmeas : Measurable (fun y : EuclideanSpace ℝ (Fin n) => Real.toNNReal (heatKernel n t y)) :=
+  have hKmeas : Measurable (fun y : EuclideanSpace ℝ (Fin n) => Real.toNNReal (Φ n t y)) :=
     hKcont.measurable.real_toNNReal
-  have hKnonneg : ∀ y : EuclideanSpace ℝ (Fin n), 0 ≤ heatKernel n t y := by
+  have hKnonneg : ∀ y : EuclideanSpace ℝ (Fin n), 0 ≤ Φ n t y := by
     intro y
     unfold heatKernel
     apply mul_nonneg
@@ -8296,7 +8247,7 @@ private theorem Dfn_integral_measurable (n : ℕ) {φ : EuclideanSpace ℝ (Fin 
         = if i = j then 2 * t else 0)) :
     ∀ (t : ℝ), 0 < t → AEStronglyMeasurable
       (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-        ENNReal.ofReal (heatKernel n t y))) volume := by
+        ENNReal.ofReal (Φ n t y))) volume := by
   intro t ht
   have hCont : ∀ i j, Continuous (secondPartialFn n φ i j) :=
     fun i j => (hDijThm i j).1
@@ -8380,10 +8331,10 @@ private theorem Dfn_integral_measurable (n : ℕ) {φ : EuclideanSpace ℝ (Fin 
     have h2 := hDfnCont.comp hInner
     simpa [Function.comp_def] using h2
   have hFmeas : ∀ x, AEStronglyMeasurable (fun y => Dfn n φ x y)
-      (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)) :=
+      (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)) :=
     fun x => (hContY x).aestronglyMeasurable
   have hContAE : ∀ᵐ y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal
-    (heatKernel n t y)),
+    (Φ n t y)),
       Continuous fun x => Dfn n φ x y :=
     Filter.Eventually.of_forall fun y => hContX y
   have hyi_le : ∀ (y : EuclideanSpace ℝ (Fin n)) (i : Fin n), |y i| ≤ ‖y‖ := by
@@ -8461,19 +8412,19 @@ private theorem Dfn_integral_measurable (n : ℕ) {φ : EuclideanSpace ℝ (Fin 
         ≤ (C * ‖y‖ ^ 2) * |1 - 0| := hInt
       _ = C * ‖y‖ ^ 2 := by simp
   have hBoundEv : ∀ x, ∀ᵐ y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal
-    (heatKernel n t y)),
+    (Φ n t y)),
       ‖Dfn n φ x y‖ ≤ C * ‖y‖ ^ 2 :=
     fun x => Filter.Eventually.of_forall fun y => hBoundPt x y
   have hBasePos : (0 : ℝ) < 4 * Real.pi * t := by
     have hpi : (0 : ℝ) < Real.pi := Real.pi_pos
     positivity
-  have hHeatNonneg : ∀ y, 0 ≤ heatKernel n t y := by
+  have hHeatNonneg : ∀ y, 0 ≤ Φ n t y := by
     intro y
     unfold heatKernel
     apply mul_nonneg
     · exact Real.rpow_nonneg (le_of_lt hBasePos) _
     · exact le_of_lt (Real.exp_pos _)
-  have hHeatCont : Continuous (fun y : EuclideanSpace ℝ (Fin n) => heatKernel n t y) := by
+  have hHeatCont : Continuous (fun y : EuclideanSpace ℝ (Fin n) => Φ n t y) := by
     unfold heatKernel
     apply Continuous.mul continuous_const
     apply Real.continuous_exp.comp
@@ -8484,7 +8435,7 @@ private theorem Dfn_integral_measurable (n : ℕ) {φ : EuclideanSpace ℝ (Fin 
       have h4t : (0 : ℝ) < 4 * t := by positivity
       exact ne_of_gt h4t
   have hDiagInt : ∀ i, Integrable
-      (fun y : EuclideanSpace ℝ (Fin n) => heatKernel n t y * (y i * y i)) volume := by
+      (fun y : EuclideanSpace ℝ (Fin n) => Φ n t y * (y i * y i)) volume := by
     intro i
     have h3 : (∫ y : EuclideanSpace ℝ (Fin n),
         ((4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖y‖ ^ 2 / (4 * t))) * (y i * y i))
@@ -8500,58 +8451,58 @@ private theorem Dfn_integral_measurable (n : ℕ) {φ : EuclideanSpace ℝ (Fin 
       have h0 := integral_undef hni
       rw [h3] at h0
       exact ht2 h0
-    have hEq : (fun y : EuclideanSpace ℝ (Fin n) => heatKernel n t y * (y i * y i))
+    have hEq : (fun y : EuclideanSpace ℝ (Fin n) => Φ n t y * (y i * y i))
         = (fun y => ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)
           * Real.exp (-‖y‖ ^ 2 / (4 * t))) * (y i * y i)) := by
       funext y
       simp [heatKernel]
     rwa [hEq]
   have hNormSqHeatInt : Integrable
-      (fun y : EuclideanSpace ℝ (Fin n) => ‖y‖ ^ 2 * heatKernel n t y) volume := by
-    have hEq : (fun y : EuclideanSpace ℝ (Fin n) => ‖y‖ ^ 2 * heatKernel n t y)
-        = (fun y => ∑ i, ((y i) ^ 2 * heatKernel n t y)) := by
+      (fun y : EuclideanSpace ℝ (Fin n) => ‖y‖ ^ 2 * Φ n t y) volume := by
+    have hEq : (fun y : EuclideanSpace ℝ (Fin n) => ‖y‖ ^ 2 * Φ n t y)
+        = (fun y => ∑ i, ((y i) ^ 2 * Φ n t y)) := by
       funext y
       rw [EuclideanSpace.real_norm_sq_eq, Finset.sum_mul]
     rw [hEq]
     exact integrable_finsetSum _ fun i _ => by
-      have hEq2 : (fun y : EuclideanSpace ℝ (Fin n) => (y i) ^ 2 * heatKernel n t y)
-          = (fun y => heatKernel n t y * (y i * y i)) := by
+      have hEq2 : (fun y : EuclideanSpace ℝ (Fin n) => (y i) ^ 2 * Φ n t y)
+          = (fun y => Φ n t y * (y i * y i)) := by
         funext y
         ring
       rw [hEq2]
       exact hDiagInt i
   have hDensMeas : Measurable
-      (fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)) :=
+      (fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)) :=
     hHeatCont.measurable.ennreal_ofReal
   have hDensLt : ∀ᵐ (y : EuclideanSpace ℝ (Fin n)) ∂volume,
-      (ENNReal.ofReal (heatKernel n t y)) < (⊤ : ENNReal) :=
+      (ENNReal.ofReal (Φ n t y)) < (⊤ : ENNReal) :=
     Filter.Eventually.of_forall fun y => ENNReal.ofReal_lt_top
   have hBoundIntVolume : Integrable
-      (fun y : EuclideanSpace ℝ (Fin n) => (C * ‖y‖ ^ 2) * heatKernel n t y) volume := by
-    have hEq : (fun y : EuclideanSpace ℝ (Fin n) => (C * ‖y‖ ^ 2) * heatKernel n t y)
-        = (fun y => C * (‖y‖ ^ 2 * heatKernel n t y)) := by
+      (fun y : EuclideanSpace ℝ (Fin n) => (C * ‖y‖ ^ 2) * Φ n t y) volume := by
+    have hEq : (fun y : EuclideanSpace ℝ (Fin n) => (C * ‖y‖ ^ 2) * Φ n t y)
+        = (fun y => C * (‖y‖ ^ 2 * Φ n t y)) := by
       funext y
       ring
     rw [hEq]
     exact hNormSqHeatInt.const_mul C
   have hBoundInt : Integrable (fun y : EuclideanSpace ℝ (Fin n) => C * ‖y‖ ^ 2)
-      (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)) :=
+      (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)) :=
         by
     rw [integrable_withDensity_iff hDensMeas hDensLt]
     have hEq : (fun y : EuclideanSpace ℝ (Fin n) =>
-          (C * ‖y‖ ^ 2) * (ENNReal.ofReal (heatKernel n t y)).toReal)
-        = (fun y => (C * ‖y‖ ^ 2) * heatKernel n t y) := by
+          (C * ‖y‖ ^ 2) * (ENNReal.ofReal (Φ n t y)).toReal)
+        = (fun y => (C * ‖y‖ ^ 2) * Φ n t y) := by
       funext y
       rw [ENNReal.toReal_ofReal (hHeatNonneg y)]
     rw [hEq]
     exact hBoundIntVolume
   have hContIntegral : Continuous (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity
-      fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y))) :=
+      fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y))) :=
     continuous_of_dominated hFmeas hBoundEv hBoundInt hContAE
   exact hContIntegral.aestronglyMeasurable
 
 private theorem heatKernel_continuous (n : ℕ) (t : ℝ) (ht : 0 < t) :
-    Continuous fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x := by
+    Continuous fun x : EuclideanSpace ℝ (Fin n) => Φ n t x := by
   unfold heatKernel
   apply Continuous.mul continuous_const
   apply Real.continuous_exp.comp
@@ -8726,7 +8677,7 @@ private theorem Dfn_continuous (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → �
 private theorem integrable_heatKernel_mul_norm_pow (n : ℕ) (t : ℝ) (ht : 0 < t)
     (m : ℕ) :
     Integrable (fun a : EuclideanSpace ℝ (Fin n) =>
-      heatKernel n t a * ‖a‖ ^ m) volume := by
+      Φ n t a * ‖a‖ ^ m) volume := by
   have hsup : ∀ u : ℝ, ∀ k : ℕ, 1 ≤ k → 0 ≤ u →
       u ^ k * Real.exp (-u) ≤ (k : ℝ) ^ k := by
     intro u k hk hu
@@ -8885,11 +8836,11 @@ private theorem integrable_heatKernel_mul_norm_pow (n : ℕ) (t : ℝ) (ht : 0 <
           * ‖a‖ ^ m := by ring
       _ = Real.exp (-‖a‖ ^ 2 / (4 * t)) * ‖a‖ ^ m := by rw [hexp]
   have heq : (fun a : EuclideanSpace ℝ (Fin n) =>
-      heatKernel n t a * ‖a‖ ^ m)
+      Φ n t a * ‖a‖ ^ m)
       = fun a => (4 * Real.pi * t) ^ (-(n : ℝ) / 2)
         * (Real.exp (-‖a‖ ^ 2 / (4 * t)) * ‖a‖ ^ m) := by
     funext a
-    unfold heatKernel
+    rw [heatKernel_euclideanSpace]
     ring
   rw [heq]
   exact hfin.const_mul _
@@ -9375,7 +9326,7 @@ private theorem Dfn_uncurry_integrable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n
       Dfn n φ x y))
     (hIntMom : ∀ (n : ℕ) (t : ℝ) (_ht : 0 < t) (m : ℕ),
     Integrable (fun a : EuclideanSpace ℝ (Fin n) =>
-      heatKernel n t a * ‖a‖ ^ m) volume)
+      Φ n t a * ‖a‖ ^ m) volume)
     (hXBound : ∀ (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
       (_hDijThm : ∀ (i j : Fin n),
         Continuous (secondPartialFn n φ i j)
@@ -9404,7 +9355,7 @@ private theorem Dfn_uncurry_integrable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n
     ∀ (t : ℝ), 0 < t →
       Integrable (Function.uncurry fun x y : EuclideanSpace ℝ (Fin n) => Dfn n φ x y)
         (volume.prod (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal
-          (heatKernel n t y))) := by
+          (Φ n t y))) := by
   intro t ht
   have hDij : ∀ i j, Continuous (secondPartialFn n φ i j) :=
     fun i j => (hDijThm i j).1
@@ -9420,34 +9371,34 @@ private theorem Dfn_uncurry_integrable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n
   have hProd : (∫⁻ a, ENNReal.ofReal
         ‖Function.uncurry (fun x y : EuclideanSpace ℝ (Fin n) => Dfn n φ x y) a‖
         ∂(volume.prod (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-          ENNReal.ofReal (heatKernel n t y))))
+          ENNReal.ofReal (Φ n t y))))
       = ∫⁻ x, ∫⁻ y, ENNReal.ofReal ‖Dfn n φ x y‖
         ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-          ENNReal.ofReal (heatKernel n t y)) ∂volume :=
+          ENNReal.ofReal (Φ n t y)) ∂volume :=
     lintegral_prod _ hF.aemeasurable
   have hUnc : AEMeasurable (Function.uncurry fun x y : EuclideanSpace ℝ (Fin n) =>
       ENNReal.ofReal ‖Dfn n φ x y‖)
       (volume.prod (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-        ENNReal.ofReal (heatKernel n t y))) :=
+        ENNReal.ofReal (Φ n t y))) :=
     hF.aemeasurable
   have hSwap : (∫⁻ x, ∫⁻ y, ENNReal.ofReal ‖Dfn n φ x y‖
         ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-          ENNReal.ofReal (heatKernel n t y)) ∂volume)
+          ENNReal.ofReal (Φ n t y)) ∂volume)
       = ∫⁻ y, ∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ∂volume
         ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-          ENNReal.ofReal (heatKernel n t y)) :=
+          ENNReal.ofReal (Φ n t y)) :=
     lintegral_lintegral_swap hUnc
   rw [hProd, hSwap]
   have hMono : (∫⁻ y, ∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ∂volume
         ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-          ENNReal.ofReal (heatKernel n t y)))
+          ENNReal.ofReal (Φ n t y)))
       ≤ ∫⁻ y, ENNReal.ofReal (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)
         ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-          ENNReal.ofReal (heatKernel n t y)) :=
+          ENNReal.ofReal (Φ n t y)) :=
     lintegral_mono hXB
   refine lt_of_le_of_lt hMono ?_
   have hHKMeas : Measurable (fun y : EuclideanSpace ℝ (Fin n) =>
-      ENNReal.ofReal (heatKernel n t y)) :=
+      ENNReal.ofReal (Φ n t y)) :=
     (ENNReal.continuous_ofReal.comp (heatKernel_continuous n t ht)).measurable
   have hpolycont : Continuous (fun y : EuclideanSpace ℝ (Fin n) =>
       C * (R + ‖y‖) ^ n * ‖y‖ ^ 2) :=
@@ -9458,14 +9409,14 @@ private theorem Dfn_uncurry_integrable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n
     (ENNReal.continuous_ofReal.comp hpolycont).measurable
   have hDens : (∫⁻ y, ENNReal.ofReal (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)
         ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-          ENNReal.ofReal (heatKernel n t y)))
-      = ∫⁻ y, ENNReal.ofReal (heatKernel n t y)
+          ENNReal.ofReal (Φ n t y)))
+      = ∫⁻ y, ENNReal.ofReal (Φ n t y)
         * ENNReal.ofReal (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2) ∂volume :=
     lintegral_withDensity_eq_lintegral_mul volume hHKMeas hDensMeas
   rw [hDens]
   have hmul : ∀ y : EuclideanSpace ℝ (Fin n),
-      ENNReal.ofReal (heatKernel n t y) * ENNReal.ofReal (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)
-        = ENNReal.ofReal (heatKernel n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)) :=
+      ENNReal.ofReal (Φ n t y) * ENNReal.ofReal (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)
+        = ENNReal.ofReal (Φ n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)) :=
     fun y => (ENNReal.ofReal_mul (heatKernel_nonneg n t ht y)).symm
   simp only [hmul]
   have hpowbound : ∀ r : ℝ, 0 ≤ r → (R + r) ^ n ≤ 2 ^ n * (R ^ n + r ^ n) := by
@@ -9500,38 +9451,38 @@ private theorem Dfn_uncurry_integrable (n : ℕ) {φ : EuclideanSpace ℝ (Fin n
       _ ≤ C * ((2 ^ n * (R ^ n + ‖y‖ ^ n)) * ‖y‖ ^ 2) := h3
       _ = 2 ^ n * C * (R ^ n * ‖y‖ ^ 2 + ‖y‖ ^ (n + 2)) := by rw [← hpow]; ring
   have hfmeas : AEStronglyMeasurable (fun y : EuclideanSpace ℝ (Fin n) =>
-      heatKernel n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)) volume :=
+      Φ n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)) volume :=
     ((heatKernel_continuous n t ht).mul hpolycont).aestronglyMeasurable
   have h2 : Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-      ((2 : ℝ) ^ n * C * R ^ n) * (heatKernel n t y * ‖y‖ ^ 2)) volume :=
+      ((2 : ℝ) ^ n * C * R ^ n) * (Φ n t y * ‖y‖ ^ 2)) volume :=
     (hIntMom n t ht 2).const_mul ((2 : ℝ) ^ n * C * R ^ n)
   have hn2 : Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-      ((2 : ℝ) ^ n * C) * (heatKernel n t y * ‖y‖ ^ (n + 2))) volume :=
+      ((2 : ℝ) ^ n * C) * (Φ n t y * ‖y‖ ^ (n + 2))) volume :=
     (hIntMom n t ht (n + 2)).const_mul ((2 : ℝ) ^ n * C)
   have hR := h2.add hn2
   have hbound : ∀ᵐ y : EuclideanSpace ℝ (Fin n) ∂volume,
-      ‖heatKernel n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)‖
+      ‖Φ n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)‖
         ≤ ((fun y : EuclideanSpace ℝ (Fin n) =>
-          ((2 : ℝ) ^ n * C * R ^ n) * (heatKernel n t y * ‖y‖ ^ 2))
+          ((2 : ℝ) ^ n * C * R ^ n) * (Φ n t y * ‖y‖ ^ 2))
           + (fun y : EuclideanSpace ℝ (Fin n) =>
-          ((2 : ℝ) ^ n * C) * (heatKernel n t y * ‖y‖ ^ (n + 2)))) y := by
+          ((2 : ℝ) ^ n * C) * (Φ n t y * ‖y‖ ^ (n + 2)))) y := by
     refine ae_of_all _ (fun y => ?_)
-    change ‖heatKernel n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)‖
-      ≤ ((2 : ℝ) ^ n * C * R ^ n) * (heatKernel n t y * ‖y‖ ^ 2)
-        + ((2 : ℝ) ^ n * C) * (heatKernel n t y * ‖y‖ ^ (n + 2))
+    change ‖Φ n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)‖
+      ≤ ((2 : ℝ) ^ n * C * R ^ n) * (Φ n t y * ‖y‖ ^ 2)
+        + ((2 : ℝ) ^ n * C) * (Φ n t y * ‖y‖ ^ (n + 2))
     rw [Real.norm_eq_abs, abs_of_nonneg (mul_nonneg (heatKernel_nonneg n t ht y) (hpoly y))]
-    calc heatKernel n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)
-        ≤ heatKernel n t y * (2 ^ n * C * (R ^ n * ‖y‖ ^ 2 + ‖y‖ ^ (n + 2))) :=
+    calc Φ n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)
+        ≤ Φ n t y * (2 ^ n * C * (R ^ n * ‖y‖ ^ 2 + ‖y‖ ^ (n + 2))) :=
           mul_le_mul_of_nonneg_left (hpolyQ y) (heatKernel_nonneg n t ht y)
-      _ = ((2 : ℝ) ^ n * C * R ^ n) * (heatKernel n t y * ‖y‖ ^ 2)
-          + ((2 : ℝ) ^ n * C) * (heatKernel n t y * ‖y‖ ^ (n + 2)) := by ring
+      _ = ((2 : ℝ) ^ n * C * R ^ n) * (Φ n t y * ‖y‖ ^ 2)
+          + ((2 : ℝ) ^ n * C) * (Φ n t y * ‖y‖ ^ (n + 2)) := by ring
   have hInt : Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-      heatKernel n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)) volume :=
+      Φ n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)) volume :=
     hR.mono' hfmeas hbound
   have hfin := (hasFiniteIntegral_iff_norm _).mp hInt.hasFiniteIntegral
   have hnorm : ∀ y : EuclideanSpace ℝ (Fin n),
-      ‖heatKernel n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)‖
-        = heatKernel n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2) := by
+      ‖Φ n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2)‖
+        = Φ n t y * (C * (R + ‖y‖) ^ n * ‖y‖ ^ 2) := by
     intro y
     rw [Real.norm_eq_abs, abs_of_nonneg (mul_nonneg (heatKernel_nonneg n t ht y) (hpoly y))]
   simp only [hnorm] at hfin
@@ -9562,65 +9513,65 @@ private theorem Dfn_Jensen_chain (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p
           * Real.exp (-‖y‖ ^ 2 / (4 * t))) * (y i * y j)
         = if i = j then 2 * t else 0))
     (hProbThm : ∀ (n : ℕ) {t : ℝ} (_ht : 0 < t),
-      (∫ (y : EuclideanSpace ℝ (Fin n)), heatKernel n t y = 1) →
+      (∫ (y : EuclideanSpace ℝ (Fin n)), Φ n t y = 1) →
       IsProbabilityMeasure
-        (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)))
+        (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)))
     (hMeas : ∀ (t : ℝ), 0 < t →
       AEStronglyMeasurable (Function.uncurry fun x y : EuclideanSpace ℝ (Fin n) => Dfn n φ x y)
-        ((volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t
+        ((volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t
           y)).prod volume))
     (hInt : ∀ (t : ℝ), 0 < t →
       Integrable (Function.uncurry fun y x : EuclideanSpace ℝ (Fin n) => Dfn n φ x y)
-        ((volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t
+        ((volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t
           y)).prod volume)) :
     ∀ (t : ℝ), 0 < t →
       (∫⁻ x, ENNReal.ofReal ‖(∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin
-        n) => ENNReal.ofReal (heatKernel n t y)))‖ ^ p.toReal ∂volume)
-      ≤ ∫⁻ y, ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+        n) => ENNReal.ofReal (Φ n t y)))‖ ^ p.toReal ∂volume)
+      ≤ ∫⁻ y, ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
         ∂volume) ∂volume := by
   intro t ht
   have hq1 : 1 ≤ p.toReal := by
     have h := ENNReal.toReal_mono (ne_of_lt hp) hp1
     rwa [ENNReal.toReal_one] at h
-  have hmass : (∫ (y : EuclideanSpace ℝ (Fin n)), heatKernel n t y) = 1 :=
-    (hMomThm n ht).1
+  have hmass : (∫ (y : EuclideanSpace ℝ (Fin n)), Φ n t y) = 1 := by
+    simpa only [heatKernel_euclideanSpace] using (hMomThm n ht).1
   have := hProbThm n ht hmass
-  have hpos : ∀ y : EuclideanSpace ℝ (Fin n), 0 < heatKernel n t y := by
+  have hpos : ∀ y : EuclideanSpace ℝ (Fin n), 0 < Φ n t y := by
     intro y
     unfold heatKernel
     apply mul_pos
     · exact Real.rpow_pos_of_pos (by positivity) _
     · exact Real.exp_pos _
-  have hhk : Measurable (fun y : EuclideanSpace ℝ (Fin n) => heatKernel n t y) := by
+  have hhk : Measurable (fun y : EuclideanSpace ℝ (Fin n) => Φ n t y) := by
     unfold heatKernel
     measurability
   have hf_meas : AEMeasurable
-      (fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)) volume :=
+      (fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)) volume :=
     (ENNReal.measurable_ofReal.comp hhk).aemeasurable
   have hf_ne : ∀ᵐ y ∂(volume : Measure (EuclideanSpace ℝ (Fin n))),
-      ENNReal.ofReal (heatKernel n t y) ≠ 0 :=
+      ENNReal.ofReal (Φ n t y) ≠ 0 :=
     Filter.Eventually.of_forall fun y => ne_of_gt (ENNReal.ofReal_pos.mpr (hpos y))
   have hvol_ac : volume ≪ (volume.withDensity
-      fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)) :=
+      fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)) :=
     withDensity_absolutelyContinuous' hf_meas hf_ne
   have hμt_ac : (volume.withDensity
-      fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)) ≪ volume :=
+      fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)) ≪ volume :=
     withDensity_absolutelyContinuous volume _
   have hprod_ac : (volume.prod (volume.withDensity
-      fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)))
+      fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)))
       ≪ ((volume.withDensity
-        fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)).prod volume) :=
+        fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)).prod volume) :=
     Measure.AbsolutelyContinuous.prod hvol_ac hμt_ac
   have hM : AEStronglyMeasurable
       (Function.uncurry fun y x : EuclideanSpace ℝ (Fin n) => Dfn n φ x y)
-      ((volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t
+      ((volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t
         y)).prod volume) :=
     AEStronglyMeasurable.prod_swap
       (f := Function.uncurry fun x y : EuclideanSpace ℝ (Fin n) => Dfn n φ x y)
       (AEStronglyMeasurable.mono_ac hprod_ac (hMeas t ht))
   have hI : Integrable
       (Function.uncurry fun y x : EuclideanSpace ℝ (Fin n) => Dfn n φ x y)
-      ((volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t
+      ((volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t
         y)).prod volume) := by
     exact hInt t ht
   have hJ := hJensenThm hq1 hM hI
@@ -9629,25 +9580,25 @@ private theorem Dfn_Jensen_chain (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp : p
   have hunc : AEMeasurable
       (Function.uncurry fun x y : EuclideanSpace ℝ (Fin n) =>
         ENNReal.ofReal (‖Dfn n φ y x‖ ^ p.toReal))
-      ((volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t
+      ((volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t
         y)).prod volume) :=
     hψ.comp_aemeasurable hM.aemeasurable
   have hg_meas : AEMeasurable
       (fun x : EuclideanSpace ℝ (Fin n) =>
         ∫⁻ y, ENNReal.ofReal (‖Dfn n φ y x‖ ^ p.toReal) ∂volume)
-      (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)) :=
+      (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)) :=
     AEMeasurable.lintegral_prod_right hunc
   calc (∫⁻ x, ENNReal.ofReal ‖(∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin
-    n) => ENNReal.ofReal (heatKernel n t y)))‖ ^ p.toReal ∂volume)
+    n) => ENNReal.ofReal (Φ n t y)))‖ ^ p.toReal ∂volume)
       = ∫⁻ y, ENNReal.ofReal (‖∫ x, Dfn n φ y x ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin
-        n) => ENNReal.ofReal (heatKernel n t y))‖ ^ p.toReal) ∂volume := by
+        n) => ENNReal.ofReal (Φ n t y))‖ ^ p.toReal) ∂volume := by
         apply lintegral_congr
         intro a
         exact ENNReal.ofReal_rpow_of_nonneg (norm_nonneg _) (zero_le_one.trans hq1)
     _ ≤ ∫⁻ x, ∫⁻ y, ENNReal.ofReal (‖Dfn n φ y x‖ ^ p.toReal) ∂volume ∂(volume.withDensity fun y :
-      EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)) :=
+      EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)) :=
       hJ
-    _ = ∫⁻ y, ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+    _ = ∫⁻ y, ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
       ∂volume) ∂volume := by
         rw [lintegral_withDensity_eq_lintegral_mul₀' hf_meas hg_meas]
         apply lintegral_congr
@@ -9676,9 +9627,9 @@ private theorem Dfn_Jensen_lintegral (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp
           * Real.exp (-‖y‖ ^ 2 / (4 * t))) * (y i * y j)
         = if i = j then 2 * t else 0))
     (hProbThm : ∀ (n : ℕ) {t : ℝ} (_ht : 0 < t),
-      (∫ (y : EuclideanSpace ℝ (Fin n)), heatKernel n t y = 1) →
+      (∫ (y : EuclideanSpace ℝ (Fin n)), Φ n t y = 1) →
       IsProbabilityMeasure
-        (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)))
+        (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)))
     (hDijThm : ∀ (i j : Fin n),
       Continuous (secondPartialFn n φ i j)
         ∧ HasCompactSupport (secondPartialFn n φ i j)
@@ -9695,8 +9646,8 @@ private theorem Dfn_Jensen_lintegral (n : ℕ) {p : ENNReal} (hp1 : 1 ≤ p) (hp
       ∃ M : ℝ, 0 ≤ M ∧ ∀ x, |secondPartialFn n φ i j x| ≤ M) :
     ∀ (t : ℝ), 0 < t →
       (∫⁻ x, ENNReal.ofReal ‖(∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin
-        n) => ENNReal.ofReal (heatKernel n t y)))‖ ^ p.toReal ∂volume)
-      ≤ ∫⁻ y, ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+        n) => ENNReal.ofReal (Φ n t y)))‖ ^ p.toReal ∂volume)
+      ≤ ∫⁻ y, ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
         ∂volume) ∂volume := by
   intro t ht
   have hDij : ∀ i j, Continuous (secondPartialFn n φ i j) :=
@@ -9729,9 +9680,9 @@ private theorem jensen_density_bundle (n : ℕ) (_hn : 0 < n) {p : ENNReal} (hp1
           * Real.exp (-‖y‖ ^ 2 / (4 * t))) * (y i * y j)
         = if i = j then 2 * t else 0))
     (hProbThm : ∀ (n : ℕ) {t : ℝ} (_ht : 0 < t),
-      (∫ (y : EuclideanSpace ℝ (Fin n)), heatKernel n t y = 1) →
+      (∫ (y : EuclideanSpace ℝ (Fin n)), Φ n t y = 1) →
       IsProbabilityMeasure
-        (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)))
+        (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)))
     (hDijThm : ∀ (i j : Fin n),
       Continuous (secondPartialFn n φ i j)
         ∧ HasCompactSupport (secondPartialFn n φ i j)
@@ -9758,15 +9709,15 @@ private theorem jensen_density_bundle (n : ℕ) (_hn : 0 < n) {p : ENNReal} (hp1
     ∀ (t : ℝ), 0 < t →
       (∀ x : EuclideanSpace ℝ (Fin n),
         (∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal
-          (heatKernel n t y)))
-        = ∫ y, heatKernel n t y * Dfn n φ x y)
+          (Φ n t y)))
+        = ∫ y, Φ n t y * Dfn n φ x y)
       ∧ AEStronglyMeasurable
         (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-          ENNReal.ofReal (heatKernel n t y)))
+          ENNReal.ofReal (Φ n t y)))
         volume
       ∧ (∫⁻ x, ENNReal.ofReal ‖(∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin
-        n) => ENNReal.ofReal (heatKernel n t y)))‖ ^ p.toReal ∂volume)
-        ≤ ∫⁻ y, ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+        n) => ENNReal.ofReal (Φ n t y)))‖ ^ p.toReal ∂volume)
+        ≤ ∫⁻ y, ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
           ∂volume) ∂volume := by
   intro t ht
   exact ⟨Dfn_integral_density n hDijThm hBndThm t ht,
@@ -10817,7 +10768,7 @@ Proved via a pointwise polynomial-Gaussian bound plus the Gaussian integral. -/
 private theorem smallBall_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
     ∃ Cmom : ℝ, 0 ≤ Cmom ∧ ∀ (δ t : ℝ), 0 < δ → 0 < t → ∀ (C0 : ℝ), 0 ≤ C0 →
       ∫⁻ y in Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) δ,
-        ENNReal.ofReal (heatKernel n t y) * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q)) ∂volume
+        ENNReal.ofReal (Φ n t y) * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q)) ∂volume
         ≤ ENNReal.ofReal (C0 * (Cmom * t ^ q)) := by
   refine ⟨(8:ℝ)^q * q^q * 2^((n:ℝ)/2), ?_, fun δ t hδ ht C0 hC0 => ?_⟩
   · have hq0 : 0 ≤ q := by linarith
@@ -10832,7 +10783,7 @@ private theorem smallBall_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
       mul_nonneg (mul_nonneg hC0 (Real.rpow_nonneg h4pt0 _))
         (mul_nonneg (Real.rpow_nonneg h8t0 _) (Real.rpow_nonneg hq0 _))
     have hpt : ∀ y : EuclideanSpace ℝ (Fin n),
-        ENNReal.ofReal (heatKernel n t y) * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q))
+        ENNReal.ofReal (Φ n t y) * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q))
           ≤ ENNReal.ofReal ((C0 * (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * ((8 * t) ^ q * q ^ q))
             * Real.exp (-‖y‖ ^ 2 / (8 * t))) := by
       intro y
@@ -10845,7 +10796,7 @@ private theorem smallBall_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
             * ((8 * t) ^ q * q ^ q * Real.exp (-‖y‖ ^ 2 / (8 * t))) :=
         mul_le_mul_of_nonneg_left hcore
           (mul_nonneg hC0 (Real.rpow_nonneg h4pt0 _))
-      unfold heatKernel
+      rw [heatKernel_euclideanSpace]
       have eL : (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖y‖ ^ 2 / (4 * t)) * (C0 * ‖y‖ ^ (2
         * q))
           = C0 * (4 * Real.pi * t) ^ (-(n : ℝ) / 2)
@@ -10857,11 +10808,11 @@ private theorem smallBall_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
       rw [eL, eR]
       exact hmul2
     have hstep1 : (∫⁻ y in Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) δ,
-          ENNReal.ofReal (heatKernel n t y) * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q)) ∂volume)
-        ≤ ∫⁻ y, ENNReal.ofReal (heatKernel n t y)
+          ENNReal.ofReal (Φ n t y) * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q)) ∂volume)
+        ≤ ∫⁻ y, ENNReal.ofReal (Φ n t y)
           * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q)) ∂volume :=
       lintegral_mono' Measure.restrict_le_self le_rfl
-    have hstep2 : (∫⁻ y, ENNReal.ofReal (heatKernel n t y)
+    have hstep2 : (∫⁻ y, ENNReal.ofReal (Φ n t y)
           * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q)) ∂volume)
         ≤ ∫⁻ y, ENNReal.ofReal ((C0 * (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * ((8 * t) ^ q * q ^ q))
             * Real.exp (-‖y‖ ^ 2 / (8 * t))) ∂volume :=
@@ -10918,7 +10869,7 @@ private theorem largeCompl_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
     ∃ C1 C2 : ℝ, 0 ≤ C1 ∧ 0 ≤ C2 ∧ ∀ (R δ t : ℝ), 0 ≤ R → 0 < δ → 0 < t →
       ∀ (C0 : ℝ), 0 ≤ C0 →
       ∫⁻ y in (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) δ)ᶜ,
-        ENNReal.ofReal (heatKernel n t y)
+        ENNReal.ofReal (Φ n t y)
           * ENNReal.ofReal (C0 * (R ^ n * ‖y‖ ^ (2 * q) + ‖y‖ ^ n * ‖y‖ ^ (2 * q))) ∂volume
         ≤ ENNReal.ofReal (C0 * ((R ^ n * C1 * t ^ q + C2 * t ^ (q + (n : ℝ) / 2))
           * Real.exp (-δ ^ 2 / (16 * t)))) := by
@@ -10952,7 +10903,7 @@ private theorem largeCompl_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
           (mul_nonneg (Real.rpow_nonneg h16t0 _) (Real.rpow_nonneg hq0 _)))
           (mul_nonneg (Real.rpow_nonneg h16t0 _) (Real.rpow_nonneg hqnpos.le _)))
     have hpt : ∀ y : EuclideanSpace ℝ (Fin n), δ ≤ ‖y‖ →
-        ENNReal.ofReal (heatKernel n t y)
+        ENNReal.ofReal (Φ n t y)
           * ENNReal.ofReal (C0 * (R ^ n * ‖y‖ ^ (2 * q) + ‖y‖ ^ n * ‖y‖ ^ (2 * q)))
           ≤ ENNReal.ofReal ((C0 * (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-δ ^ 2 / (16 * t))
             * (R ^ n * ((16 * t) ^ q * q ^ q) + (16 * t) ^ (q + (n:ℝ)/2) * (q + (n:ℝ)/2) ^ (q +
@@ -11044,7 +10995,7 @@ private theorem largeCompl_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
         mul_le_mul_of_nonneg_left hadd (mul_nonneg hC0 (Real.rpow_nonneg h4pt0 _))
       rw [← ENNReal.ofReal_mul (heatKernel_nonneg n t ht y)]
       apply ENNReal.ofReal_le_ofReal
-      unfold heatKernel
+      rw [heatKernel_euclideanSpace]
       have eL : (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖y‖ ^ 2 / (4 * t))
             * (C0 * (R ^ n * ‖y‖ ^ (2 * q) + ‖y‖ ^ n * ‖y‖ ^ (2 * q)))
           = C0 * (4 * Real.pi * t) ^ (-(n : ℝ) / 2)
@@ -11065,7 +11016,7 @@ private theorem largeCompl_integral_bound (n : ℕ) (q : ℝ) (hq : 1 ≤ q) :
     have hBmeas : MeasurableSet (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) δ) :=
       measurableSet_closedBall
     have hstep2 : (∫⁻ y in (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) δ)ᶜ,
-          ENNReal.ofReal (heatKernel n t y)
+          ENNReal.ofReal (Φ n t y)
             * ENNReal.ofReal (C0 * (R ^ n * ‖y‖ ^ (2 * q) + ‖y‖ ^ n * ‖y‖ ^ (2 * q))) ∂volume)
         ≤ ∫⁻ y in (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) δ)ᶜ,
           ENNReal.ofReal ((C0 * (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-δ ^ 2 / (16 * t))
@@ -11194,7 +11145,7 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
           * ((∑ i, ∑ j, secondPartialModulus n φ i j ‖y‖) * (R + ‖y‖) ^ n * ‖y‖ ^ (2 * p.toReal))))
             →
       ∃ K1 K2 : ℝ, 0 ≤ K1 ∧ 0 ≤ K2 ∧ ∀ δ t : ℝ, 0 < δ → 0 < t → t ≤ 1 →
-        (∫⁻ y, ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+        (∫⁻ y, ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
           ∂volume) ∂volume).toReal
         ≤ t ^ p.toReal * ((∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n * K1 + K2 *
           Real.exp (-δ ^ 2 / (16 * t))) := by
@@ -11216,13 +11167,10 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
   intro C R hC hR hAnt
   have hPREF0 : 0 ≤ ((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2)
       * (((n : ℝ) ^ 2) ^ q) * C := by
-    apply mul_nonneg
-    apply mul_nonneg
-    apply mul_nonneg
+    refine mul_nonneg (mul_nonneg (mul_nonneg ?_ ?_) ?_) hC
     · exact Real.rpow_nonneg (by norm_num) _
     · norm_num
     · exact Real.rpow_nonneg (by positivity) _
-    · exact hC
   have hMtot0 : 0 ≤ ∑ i, ∑ j, 2 * M i j := by
     apply Finset.sum_nonneg
     intro i _
@@ -11254,9 +11202,9 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
       mul_nonneg (mul_nonneg hPREF0 hMtot0) (by positivity)
     -- SMALL part: pointwise bound on `‖y‖ ≤ δ` via modulus monotonicity.
     have hGy_small : ∀ y : EuclideanSpace ℝ (Fin n), ‖y‖ ≤ δ →
-        ENNReal.ofReal (heatKernel n t y)
+        ENNReal.ofReal (Φ n t y)
           * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume)
-          ≤ ENNReal.ofReal (heatKernel n t y) * ENNReal.ofReal
+          ≤ ENNReal.ofReal (Φ n t y) * ENNReal.ofReal
             (((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^ q) * C)
               * (∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n)
               * ‖y‖ ^ (2 * q)) := by
@@ -11299,16 +11247,16 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
         exact hstep
       exact le_trans (hAnt y) (ENNReal.ofReal_le_ofReal hfull)
     have hS_le : ∫⁻ y in B,
-          ENNReal.ofReal (heatKernel n t y)
+          ENNReal.ofReal (Φ n t y)
             * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume
         ≤ ENNReal.ofReal (((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2)
           * (((n : ℝ) ^ 2) ^ q) * C)
           * (∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n)
           * (Cmom * t ^ q)) := by
       have hmono : ∫⁻ y in B,
-            ENNReal.ofReal (heatKernel n t y)
+            ENNReal.ofReal (Φ n t y)
               * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume
-          ≤ ∫⁻ y in B, ENNReal.ofReal (heatKernel n t y) * ENNReal.ofReal
+          ≤ ∫⁻ y in B, ENNReal.ofReal (Φ n t y) * ENNReal.ofReal
             (((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^ q) * C)
               * (∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n)
               * ‖y‖ ^ (2 * q)) ∂volume := by
@@ -11321,9 +11269,9 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
       exact le_trans hmono hH
     -- LARGE part: pointwise bound on `‖y‖ > δ` via the global modulus bound.
     have hGy_large : ∀ y : EuclideanSpace ℝ (Fin n),
-        ENNReal.ofReal (heatKernel n t y)
+        ENNReal.ofReal (Φ n t y)
           * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume)
-          ≤ ENNReal.ofReal (heatKernel n t y) * ENNReal.ofReal
+          ≤ ENNReal.ofReal (Φ n t y) * ENNReal.ofReal
             (((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^ q) * C)
               * (∑ i, ∑ j, 2 * M i j) * (2 : ℝ) ^ n)
               * (R ^ n * ‖y‖ ^ (2 * q) + ‖y‖ ^ n * ‖y‖ ^ (2 * q))) := by
@@ -11367,7 +11315,7 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
         exact hstep
       exact le_trans (hAnt y) (ENNReal.ofReal_le_ofReal hfull)
     have hL_le : ∫⁻ y in Bᶜ,
-          ENNReal.ofReal (heatKernel n t y)
+          ENNReal.ofReal (Φ n t y)
             * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume
         ≤ ENNReal.ofReal (((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2)
           * (((n : ℝ) ^ 2) ^ q) * C)
@@ -11375,9 +11323,9 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
           * ((R ^ n * C1 * t ^ q + C2 * t ^ (q + (n : ℝ) / 2))
             * Real.exp (-δ ^ 2 / (16 * t)))) := by
       have hmono : ∫⁻ y in Bᶜ,
-            ENNReal.ofReal (heatKernel n t y)
+            ENNReal.ofReal (Φ n t y)
               * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume
-          ≤ ∫⁻ y in Bᶜ, ENNReal.ofReal (heatKernel n t y) * ENNReal.ofReal
+          ≤ ∫⁻ y in Bᶜ, ENNReal.ofReal (Φ n t y) * ENNReal.ofReal
             (((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^ q) * C)
               * (∑ i, ∑ j, 2 * M i j) * (2 : ℝ) ^ n)
               * (R ^ n * ‖y‖ ^ (2 * q) + ‖y‖ ^ n * ‖y‖ ^ (2 * q))) ∂volume := by
@@ -11389,11 +11337,11 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
           * (∑ i, ∑ j, 2 * M i j) * (2 : ℝ) ^ n) hC0l0
       exact le_trans hmono hH
     -- Combine the two parts through `ENNReal.toReal` monotonicity.
-    have hsplit : (∫⁻ y, ENNReal.ofReal (heatKernel n t y)
+    have hsplit : (∫⁻ y, ENNReal.ofReal (Φ n t y)
           * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume)
-        = (∫⁻ y in B, ENNReal.ofReal (heatKernel n t y)
+        = (∫⁻ y in B, ENNReal.ofReal (Φ n t y)
           * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume)
-        + (∫⁻ y in Bᶜ, ENNReal.ofReal (heatKernel n t y)
+        + (∫⁻ y in Bᶜ, ENNReal.ofReal (Φ n t y)
           * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume) :=
       (lintegral_add_compl _ hBmeas).symm
     have hoRsmall : ENNReal.ofReal (((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2)
@@ -11407,17 +11355,17 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
         * ((R ^ n * C1 * t ^ q + C2 * t ^ (q + (n : ℝ) / 2))
           * Real.exp (-δ ^ 2 / (16 * t)))) ≠ ⊤ := by
       simp
-    have hsmall_ne : (∫⁻ y in B, ENNReal.ofReal (heatKernel n t y)
+    have hsmall_ne : (∫⁻ y in B, ENNReal.ofReal (Φ n t y)
         * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume) ≠ ⊤ :=
       ne_top_of_le_ne_top hoRsmall hS_le
-    have hlarge_ne : (∫⁻ y in Bᶜ, ENNReal.ofReal (heatKernel n t y)
+    have hlarge_ne : (∫⁻ y in Bᶜ, ENNReal.ofReal (Φ n t y)
         * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume) ≠ ⊤ :=
       ne_top_of_le_ne_top hoRlarge hL_le
-    have hsplit_toReal : (∫⁻ y, ENNReal.ofReal (heatKernel n t y)
+    have hsplit_toReal : (∫⁻ y, ENNReal.ofReal (Φ n t y)
           * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume).toReal
-        = (∫⁻ y in B, ENNReal.ofReal (heatKernel n t y)
+        = (∫⁻ y in B, ENNReal.ofReal (Φ n t y)
           * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume).toReal
-        + (∫⁻ y in Bᶜ, ENNReal.ofReal (heatKernel n t y)
+        + (∫⁻ y in Bᶜ, ENNReal.ofReal (Φ n t y)
           * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume).toReal := by
       rw [hsplit, ENNReal.toReal_add hsmall_ne hlarge_ne]
     have hsmallR0 : 0 ≤ ((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2)
@@ -11435,7 +11383,7 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
           (Real.rpow_nonneg (le_of_lt ht) _))
           (mul_nonneg hC20 (Real.rpow_nonneg (le_of_lt ht) _)))
         (Real.exp_pos _).le)
-    have hStoReal : (∫⁻ y in B, ENNReal.ofReal (heatKernel n t y)
+    have hStoReal : (∫⁻ y in B, ENNReal.ofReal (Φ n t y)
         * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume).toReal
         ≤ ((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^ q) * C)
         * (∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n)
@@ -11443,7 +11391,7 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
       have h := ENNReal.toReal_mono hoRsmall hS_le
       rw [ENNReal.toReal_ofReal hsmallR0] at h
       exact h
-    have hLtoReal : (∫⁻ y in Bᶜ, ENNReal.ofReal (heatKernel n t y)
+    have hLtoReal : (∫⁻ y in Bᶜ, ENNReal.ofReal (Φ n t y)
         * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume).toReal
         ≤ ((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^ q) * C)
         * (∑ i, ∑ j, 2 * M i j) * (2 : ℝ) ^ n)
@@ -11502,9 +11450,9 @@ private theorem y_integral_estimate (n : ℕ) (hn : 0 < n) {p : ENNReal} (hp1 : 
         ring
       rw [heq] at hfull
       exact hfull
-    have h1 : (∫⁻ y in B, ENNReal.ofReal (heatKernel n t y)
+    have h1 : (∫⁻ y in B, ENNReal.ofReal (Φ n t y)
         * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume).toReal
-        + (∫⁻ y in Bᶜ, ENNReal.ofReal (heatKernel n t y)
+        + (∫⁻ y in Bᶜ, ENNReal.ofReal (Φ n t y)
         * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ q ∂volume) ∂volume).toReal
         ≤ ((((1 : ℝ) / 2) ^ (q - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^ q) * C)
         * (∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n)
@@ -11613,9 +11561,9 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
       (eLpNorm f p volume).toReal ^ p.toReal
         = (∫⁻ x, ENNReal.ofReal ‖f x‖ ^ p.toReal ∂volume).toReal)
     (hProbThm : ∀ (n : ℕ) {t : ℝ} (_ht : 0 < t),
-      (∫ (y : EuclideanSpace ℝ (Fin n)), heatKernel n t y = 1) →
+      (∫ (y : EuclideanSpace ℝ (Fin n)), Φ n t y = 1) →
       IsProbabilityMeasure
-        (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)))
+        (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)))
     (hBndThm : ∀ (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ} (i j : Fin n),
       Continuous (secondPartialFn n φ i j) →
       HasCompactSupport (secondPartialFn n φ i j) →
@@ -11671,9 +11619,9 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
             * Real.exp (-‖y‖ ^ 2 / (4 * t))) * (y i * y j)
           = if i = j then 2 * t else 0))
       (_hProbThm : ∀ (n : ℕ) {t : ℝ} (_ht : 0 < t),
-        (∫ (y : EuclideanSpace ℝ (Fin n)), heatKernel n t y = 1) →
+        (∫ (y : EuclideanSpace ℝ (Fin n)), Φ n t y = 1) →
         IsProbabilityMeasure
-          (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t
+          (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t
             y)))
       (_hDijThm : ∀ (i j : Fin n),
         Continuous (secondPartialFn n φ i j)
@@ -11701,15 +11649,15 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
       ∀ (t : ℝ), 0 < t →
         (∀ x : EuclideanSpace ℝ (Fin n),
           (∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal
-            (heatKernel n t y)))
-          = ∫ y, heatKernel n t y * Dfn n φ x y)
+            (Φ n t y)))
+          = ∫ y, Φ n t y * Dfn n φ x y)
         ∧ AEStronglyMeasurable
           (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-            ENNReal.ofReal (heatKernel n t y)))
+            ENNReal.ofReal (Φ n t y)))
           volume
         ∧ (∫⁻ x, ENNReal.ofReal ‖(∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ
-          (Fin n) => ENNReal.ofReal (heatKernel n t y)))‖ ^ p.toReal ∂volume)
-          ≤ ∫⁻ y, ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^
+          (Fin n) => ENNReal.ofReal (Φ n t y)))‖ ^ p.toReal ∂volume)
+          ≤ ∫⁻ y, ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^
             p.toReal ∂volume) ∂volume)
     (hC2bypass : ∀ (n : ℕ) (_hn : 0 < n) {p : ENNReal} (_hp1 : 1 ≤ p)
     (_hp : p < ⊤) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
@@ -11796,20 +11744,20 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
             * ((∑ i, ∑ j, secondPartialModulus n φ i j ‖y‖) * (R + ‖y‖) ^ n * ‖y‖ ^ (2 *
               p.toReal)))) →
         ∃ K1 K2 : ℝ, 0 ≤ K1 ∧ 0 ≤ K2 ∧ ∀ δ t : ℝ, 0 < δ → 0 < t → t ≤ 1 →
-          (∫⁻ y, ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+          (∫⁻ y, ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
             ∂volume) ∂volume).toReal
           ≤ t ^ p.toReal * ((∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n * K1 + K2 *
             Real.exp (-δ ^ 2 / (16 * t))))
     (hSmallBall : ∀ (n : ℕ) (q : ℝ), 1 ≤ q →
       ∃ Cmom : ℝ, 0 ≤ Cmom ∧ ∀ (δ t : ℝ), 0 < δ → 0 < t → ∀ (C0 : ℝ), 0 ≤ C0 →
         ∫⁻ y in Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) δ,
-          ENNReal.ofReal (heatKernel n t y) * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q)) ∂volume
+          ENNReal.ofReal (Φ n t y) * ENNReal.ofReal (C0 * ‖y‖ ^ (2 * q)) ∂volume
           ≤ ENNReal.ofReal (C0 * (Cmom * t ^ q)))
     (hLargeCompl : ∀ (n : ℕ) (q : ℝ), 1 ≤ q →
       ∃ C1 C2 : ℝ, 0 ≤ C1 ∧ 0 ≤ C2 ∧ ∀ (R δ t : ℝ), 0 ≤ R → 0 < δ → 0 < t →
         ∀ (C0 : ℝ), 0 ≤ C0 →
         ∫⁻ y in (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) δ)ᶜ,
-          ENNReal.ofReal (heatKernel n t y)
+          ENNReal.ofReal (Φ n t y)
             * ENNReal.ofReal (C0 * (R ^ n * ‖y‖ ^ (2 * q) + ‖y‖ ^ n * ‖y‖ ^ (2 * q))) ∂volume
           ≤ ENNReal.ofReal (C0 * ((R ^ n * C1 * t ^ q + C2 * t ^ (q + (n : ℝ) / 2))
             * Real.exp (-δ ^ 2 / (16 * t)))))
@@ -11837,7 +11785,7 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
       (eLpNorm (fun x => heatConvolution n φ t x - φ x - t * Laplacian.laplacian φ x) p
         volume).toReal / t
       = (eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n)
-        => ENNReal.ofReal (heatKernel n t y))) p volume).toReal / t := by
+        => ENNReal.ofReal (Φ n t y))) p volume).toReal / t := by
     filter_upwards [self_mem_nhdsWithin] with t ht
     rw [Set.mem_Ioi] at ht
     congr 1
@@ -11846,11 +11794,12 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
     apply Filter.Eventually.of_forall
     intro x
     have h1 : heatConvolution n φ t x - φ x - t * Laplacian.laplacian φ x
-        = ∫ y, heatKernel n t y * Dfn n φ x y :=
-      hRemThm n hφ hφ_supp ht x
+        = ∫ y, Φ n t y * Dfn n φ x y := by
+      simp only [heatKernel_euclideanSpace]
+      exact hRemThm n hφ hφ_supp ht x
     have h2 : (∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-      ENNReal.ofReal (heatKernel n t y)))
-        = ∫ y, heatKernel n t y * Dfn n φ x y :=
+      ENNReal.ofReal (Φ n t y)))
+        = ∫ y, Φ n t y * Dfn n φ x y :=
       (hC1thm n hn hp1 hp hφ hφ_supp hJensenThm hMomThm hProbThm hDijThm hSubThm hBndThm t ht).1 x
     simp only []
     rw [h1, ← h2]
@@ -11859,21 +11808,21 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
   -- Step 2: `eLpNorm` to `∫⁻` via `hEqThm`.
   have hE : ∀ t : ℝ, 0 < t →
       (eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-        ENNReal.ofReal (heatKernel n t y))) p volume).toReal ^ p.toReal
+        ENNReal.ofReal (Φ n t y))) p volume).toReal ^ p.toReal
       = (∫⁻ x, ENNReal.ofReal ‖(∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin
-        n) => ENNReal.ofReal (heatKernel n t y)))‖ ^ p.toReal ∂volume).toReal := by
+        n) => ENNReal.ofReal (Φ n t y)))‖ ^ p.toReal ∂volume).toReal := by
     intro t ht
     have hmeas : AEStronglyMeasurable
         (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-          ENNReal.ofReal (heatKernel n t y)))
+          ENNReal.ofReal (Φ n t y)))
         volume :=
       (hC1thm n hn hp1 hp hφ hφ_supp hJensenThm hMomThm hProbThm hDijThm hSubThm hBndThm t ht).2.1
     exact hEqThm n hp0 hpTop' hmeas hqpos
   -- Step 3: Jensen (`hC1thm`) + density conversion.
   have hJ : ∀ t : ℝ, 0 < t →
       (∫⁻ x, ENNReal.ofReal ‖(∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin
-        n) => ENNReal.ofReal (heatKernel n t y)))‖ ^ p.toReal ∂volume)
-      ≤ ∫⁻ y, ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+        n) => ENNReal.ofReal (Φ n t y)))‖ ^ p.toReal ∂volume)
+      ≤ ∫⁻ y, ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
         ∂volume) ∂volume :=
     fun t ht => (hC1thm n hn hp1 hp hφ hφ_supp hJensenThm hMomThm hProbThm hDijThm hSubThm hBndThm
       t ht).2.2
@@ -11883,13 +11832,13 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
   obtain ⟨K1, K2, hK1, hK2, hMain⟩ : ∃ K1 K2 : ℝ, 0 ≤ K1 ∧ 0 ≤ K2 ∧ ∀ δ t : ℝ, 0 < δ → 0 < t → t ≤
     1 →
       (eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n) =>
-        ENNReal.ofReal (heatKernel n t y))) p volume).toReal ^ p.toReal
+        ENNReal.ofReal (Φ n t y))) p volume).toReal ^ p.toReal
       ≤ t ^ p.toReal * ((∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n * K1 + K2 *
         Real.exp (-δ ^ 2 / (16 * t))) := by
     refine ⟨J1, J2, hJ1, hJ2, fun δ t hδ ht ht1 => ?_⟩
     -- Finiteness of the `y`-integral, needed for `ENNReal.toReal_mono`,
     -- via the small-ball / large-complement moment bounds.
-    have hbfin : (∫⁻ y, ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^
+    have hbfin : (∫⁻ y, ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^
       p.toReal ∂volume) ∂volume) ≠ ⊤ := by
       have hPREFnn : 0 ≤ ((1 : ℝ) / 2) ^ (p.toReal - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^
         p.toReal) * C := by
@@ -12055,7 +12004,7 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
           · exact hMtotnn
         · exact pow_nonneg zero_le_two n
       have hball : (∫⁻ y in Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) (1 : ℝ),
-          ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+          ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
             ∂volume) ∂volume)
           ≤ ENNReal.ofReal (((((1 : ℝ) / 2) ^ (p.toReal - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^
             p.toReal) * C)
@@ -12073,7 +12022,7 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
         have h12 := le_trans (hH y) (ENNReal.ofReal_le_ofReal h2)
         exact mul_le_mul_of_nonneg_left h12 zero_le
       have hcompl : (∫⁻ y in (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) (1 : ℝ))ᶜ,
-          ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+          ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
             ∂volume) ∂volume)
           ≤ ENNReal.ofReal (((((1 : ℝ) / 2) ^ (p.toReal - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^
             p.toReal) * C)
@@ -12091,12 +12040,12 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
         have h12 := le_trans (hH y) (ENNReal.ofReal_le_ofReal h2)
         exact mul_le_mul_of_nonneg_left h12 zero_le
       have hsplit : (∫⁻ y in Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) (1 : ℝ),
-            ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+            ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
               ∂volume) ∂volume)
           + (∫⁻ y in (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) (1 : ℝ))ᶜ,
-            ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+            ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
               ∂volume) ∂volume)
-          = (∫⁻ y, ENNReal.ofReal (heatKernel n t y)
+          = (∫⁻ y, ENNReal.ofReal (Φ n t y)
             * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal ∂volume) ∂volume) :=
         lintegral_add_compl _ measurableSet_closedBall
       have hAnn : 0 ≤ (((((1 : ℝ) / 2) ^ (p.toReal - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^
@@ -12120,7 +12069,7 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
             · exact hC2nn
             · exact Real.rpow_nonneg (le_of_lt ht) _
         · exact Real.exp_nonneg _
-      have hfin : (∫⁻ y, ENNReal.ofReal (heatKernel n t y)
+      have hfin : (∫⁻ y, ENNReal.ofReal (Φ n t y)
           * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal ∂volume) ∂volume)
           ≤ ENNReal.ofReal ((((((1 : ℝ) / 2) ^ (p.toReal - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^
             p.toReal) * C)
@@ -12129,13 +12078,13 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
             * (∑ i, ∑ j, 2 * M i j) * 2 ^ n)
             * ((R ^ n * C1 * t ^ p.toReal + C2 * t ^ (p.toReal + (n : ℝ) / 2))
               * Real.exp (-(1 : ℝ) ^ 2 / (16 * t))))) := by
-        calc (∫⁻ y, ENNReal.ofReal (heatKernel n t y)
+        calc (∫⁻ y, ENNReal.ofReal (Φ n t y)
               * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal ∂volume) ∂volume)
             = (∫⁻ y in Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) (1 : ℝ),
-                ENNReal.ofReal (heatKernel n t y)
+                ENNReal.ofReal (Φ n t y)
                 * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal ∂volume) ∂volume)
               + (∫⁻ y in (Metric.closedBall (0 : EuclideanSpace ℝ (Fin n)) (1 : ℝ))ᶜ,
-                ENNReal.ofReal (heatKernel n t y)
+                ENNReal.ofReal (Φ n t y)
                 * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal ∂volume) ∂volume) := hsplit.symm
           _ ≤ ENNReal.ofReal (((((1 : ℝ) / 2) ^ (p.toReal - 1) * ((1 : ℝ) / 2) * (((n : ℝ) ^ 2) ^
             p.toReal) * C)
@@ -12154,10 +12103,10 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
                 * Real.exp (-(1 : ℝ) ^ 2 / (16 * t))))) := (ENNReal.ofReal_add hAnn hBnn').symm
       exact ne_top_of_le_ne_top ENNReal.ofReal_ne_top hfin
     calc (eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n)
-      => ENNReal.ofReal (heatKernel n t y))) p volume).toReal ^ p.toReal
+      => ENNReal.ofReal (Φ n t y))) p volume).toReal ^ p.toReal
         = (∫⁻ x, ENNReal.ofReal ‖(∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ
-          (Fin n) => ENNReal.ofReal (heatKernel n t y)))‖ ^ p.toReal ∂volume).toReal := hE t ht
-      _ ≤ (∫⁻ y, ENNReal.ofReal (heatKernel n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
+          (Fin n) => ENNReal.ofReal (Φ n t y)))‖ ^ p.toReal ∂volume).toReal := hE t ht
+      _ ≤ (∫⁻ y, ENNReal.ofReal (Φ n t y) * (∫⁻ x, ENNReal.ofReal ‖Dfn n φ x y‖ ^ p.toReal
         ∂volume) ∂volume).toReal := ENNReal.toReal_mono hbfin (hJ t ht)
       _ ≤ t ^ p.toReal * ((∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n * J1 + J2 *
         Real.exp (-δ ^ 2 / (16 * t))) := hY δ t hδ ht ht1
@@ -12252,17 +12201,17 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
     zero_lt_one)] with t htail htmem ht1
   rw [Set.mem_Ioi] at htmem
   have hTnn : 0 ≤ (eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ
-    (Fin n) => ENNReal.ofReal (heatKernel n t y))) p volume).toReal / t :=
+    (Fin n) => ENNReal.ofReal (Φ n t y))) p volume).toReal / t :=
     div_nonneg ENNReal.toReal_nonneg (le_of_lt htmem)
   have hBlt : (∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n * K1 + K2 * Real.exp (-δ ^ 2
     / (16 * t)) < ε ^ p.toReal := by
     linarith [hδsmall, htail]
   have hpow_le : ((eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ
-    (Fin n) => ENNReal.ofReal (heatKernel n t y))) p volume).toReal / t) ^ p.toReal
+    (Fin n) => ENNReal.ofReal (Φ n t y))) p volume).toReal / t) ^ p.toReal
       ≤ (∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n * K1 + K2 * Real.exp (-δ ^ 2 / (16
         * t)) := by
     have hLnn : 0 ≤ (eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace
-      ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y))) p volume).toReal :=
+      ℝ (Fin n) => ENNReal.ofReal (Φ n t y))) p volume).toReal :=
       ENNReal.toReal_nonneg
     have htnn : 0 ≤ t := le_of_lt htmem
     have htq : 0 < t ^ p.toReal := by positivity
@@ -12271,20 +12220,20 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
     rw [mul_comm (t ^ p.toReal) _] at h
     exact h
   have hle : (eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin
-    n) => ENNReal.ofReal (heatKernel n t y))) p volume).toReal / t
+    n) => ENNReal.ofReal (Φ n t y))) p volume).toReal / t
       ≤ ((∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n * K1 + K2 * Real.exp (-δ ^ 2 /
         (16 * t))) ^ (1 / p.toReal) := by
     have h1 : ((((eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ
-      (Fin n) => ENNReal.ofReal (heatKernel n t y))) p volume).toReal / t) ^ p.toReal) ^ (1 /
+      (Fin n) => ENNReal.ofReal (Φ n t y))) p volume).toReal / t) ^ p.toReal) ^ (1 /
         p.toReal))
         ≤ ((∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n * K1 + K2 * Real.exp (-δ ^ 2 /
           (16 * t))) ^ (1 / p.toReal) :=
       Real.rpow_le_rpow (by positivity) hpow_le (by positivity)
     have h2 : ((((eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ
-      (Fin n) => ENNReal.ofReal (heatKernel n t y))) p volume).toReal / t) ^ p.toReal) ^ (1 /
+      (Fin n) => ENNReal.ofReal (Φ n t y))) p volume).toReal / t) ^ p.toReal) ^ (1 /
         p.toReal))
         = (eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n)
-          => ENNReal.ofReal (heatKernel n t y))) p volume).toReal / t := by
+          => ENNReal.ofReal (Φ n t y))) p volume).toReal / t := by
       rw [← Real.rpow_mul hTnn, hqq, Real.rpow_one]
     rwa [h2] at h1
   have hlt : ((∑ i, ∑ j, secondPartialModulus n φ i j δ) * (R + δ) ^ n * K1 + K2 * Real.exp (-δ ^ 2
@@ -12300,12 +12249,12 @@ private theorem tendsto_generator_of_diff_le (n : ℕ) (hn : 0 < n)
       rw [← Real.rpow_mul (le_of_lt hε), hqq, Real.rpow_one]
     rwa [h2] at h1
   have hdist : dist ((eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y :
-    EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y))) p volume).toReal / t) 0
+    EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y))) p volume).toReal / t) 0
       = (eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y : EuclideanSpace ℝ (Fin n)
-        => ENNReal.ofReal (heatKernel n t y))) p volume).toReal / t := by
+        => ENNReal.ofReal (Φ n t y))) p volume).toReal / t := by
     rw [dist_zero_right, Real.norm_eq_abs, abs_of_nonneg hTnn]
   have hgoal : dist ((eLpNorm (fun x => ∫ y, Dfn n φ x y ∂(volume.withDensity fun y :
-    EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y))) p volume).toReal / t) 0 < ε :=
+    EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y))) p volume).toReal / t) 0 < ε :=
       by
     rw [hdist]
     exact lt_of_le_of_lt hle hlt
@@ -12333,12 +12282,12 @@ private theorem eLpNorm_toReal_rpow_eq_lintegral_ofReal (n : ℕ) {p : ENNReal} 
     (hae : AEStronglyMeasurable f volume) (hq_pos : 0 < p.toReal) :
     (eLpNorm f p volume).toReal ^ p.toReal
       = (∫⁻ x, ENNReal.ofReal ‖f x‖ ^ p.toReal ∂volume).toReal := by
-  have hEq := eLpNorm_eq_lintegral_rpow_enorm_toReal (μ := volume) (f := f) hp0 hpTop hae
+  have hEq := eLpNorm_eq_lintegral_rpow_eNorm_toReal (μ := volume) (f := f) hp0 hpTop hae
   have hInt : (∫⁻ x, ‖f x‖ₑ ^ p.toReal ∂volume)
       = ∫⁻ x, ENNReal.ofReal ‖f x‖ ^ p.toReal ∂volume := by
     apply lintegral_congr
     intro x
-    rw [Real.enorm_eq_ofReal_abs, Real.norm_eq_abs]
+    rw [Real.eNorm_eq_ofReal_abs, Real.norm_eq_abs]
   rw [hInt] at hEq
   have hq_ne : p.toReal ≠ 0 := ne_of_gt hq_pos
   calc (eLpNorm f p volume).toReal ^ p.toReal
@@ -12359,22 +12308,22 @@ open scoped Topology
 
 
 private theorem isProbability_heatDensity (n : ℕ) {t : ℝ} (ht : 0 < t)
-    (hInt : ∫ (y : EuclideanSpace ℝ (Fin n)), heatKernel n t y = 1) :
+    (hInt : ∫ (y : EuclideanSpace ℝ (Fin n)), Φ n t y = 1) :
     IsProbabilityMeasure
-      (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (heatKernel n t y)) :=
+      (volume.withDensity fun y : EuclideanSpace ℝ (Fin n) => ENNReal.ofReal (Φ n t y)) :=
         by
-  have hcont : Continuous (heatKernel n t) := by
+  have hcont : Continuous (Φ n t) := by
     unfold heatKernel
     continuity
-  have hmeas : AEStronglyMeasurable (heatKernel n t) volume :=
+  have hmeas : AEStronglyMeasurable (Φ n t) volume :=
     hcont.aestronglyMeasurable
-  have hnn : ∀ y, 0 ≤ heatKernel n t y := by
+  have hnn : ∀ y, 0 ≤ Φ n t y := by
     intro y
     unfold heatKernel
     refine mul_nonneg (Real.rpow_nonneg ?_ _) (Real.exp_nonneg _)
     positivity
-  have hnn_ae : 0 ≤ᵐ[volume] (heatKernel n t) := Filter.Eventually.of_forall hnn
-  have hfi : Integrable (heatKernel n t) volume := by
+  have hnn_ae : 0 ≤ᵐ[volume] (Φ n t) := Filter.Eventually.of_forall hnn
+  have hfi : Integrable (Φ n t) volume := by
     by_contra hcon
     rw [integral_undef hcon] at hInt
     norm_num at hInt
@@ -12404,11 +12353,11 @@ private theorem abs_mul_le_half_sum_sq (a b : ℝ) : |a * b| ≤ (a * a + b * b)
 
 private theorem integrable_kernel_coord_mul (n : ℕ) (t : ℝ) (ht : 0 < t)
     (hm2 : ∀ i j : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)),
-      heatKernel n t y * (y i * y j) = if i = j then 2 * t else 0)
+      Φ n t y * (y i * y j) = if i = j then 2 * t else 0)
     (i j : Fin n) :
-    Integrable (fun y : EuclideanSpace ℝ (Fin n) => heatKernel n t y * (y i * y j)) := by
+    Integrable (fun y : EuclideanSpace ℝ (Fin n) => Φ n t y * (y i * y j)) := by
   have hdiag : ∀ k : Fin n, Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-      heatKernel n t y * (y k * y k)) := by
+      Φ n t y * (y k * y k)) := by
     intro k
     by_contra hnot
     have hval := hm2 k k
@@ -12419,24 +12368,24 @@ private theorem integrable_kernel_coord_mul (n : ℕ) (t : ℝ) (ht : 0 < t)
   · subst hij
     exact hdiag i
   · have hg : Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-        (heatKernel n t y * (y i * y i) + heatKernel n t y * (y j * y j)) / 2) :=
+        (Φ n t y * (y i * y i) + Φ n t y * (y j * y j)) / 2) :=
       ((hdiag i).add (hdiag j)).div_const 2
     have hf : AEStronglyMeasurable
-        (fun y : EuclideanSpace ℝ (Fin n) => heatKernel n t y * (y i * y j)) volume :=
+        (fun y : EuclideanSpace ℝ (Fin n) => Φ n t y * (y i * y j)) volume :=
       ((heatKernel_continuous n t ht).mul
         ((coord_continuous n i).mul (coord_continuous n j))).aestronglyMeasurable
     have hbound : ∀ y : EuclideanSpace ℝ (Fin n),
-        ‖heatKernel n t y * (y i * y j)‖ ≤
-          (heatKernel n t y * (y i * y i) + heatKernel n t y * (y j * y j)) / 2 := by
+        ‖Φ n t y * (y i * y j)‖ ≤
+          (Φ n t y * (y i * y i) + Φ n t y * (y j * y j)) / 2 := by
       intro y
-      have hk : 0 ≤ heatKernel n t y := heatKernel_nonneg n t ht y
+      have hk : 0 ≤ Φ n t y := heatKernel_nonneg n t ht y
       have hmain := abs_mul_le_half_sum_sq (y i) (y j)
       rw [Real.norm_eq_abs]
-      calc |heatKernel n t y * (y i * y j)|
-          = heatKernel n t y * |y i * y j| := by rw [abs_mul, abs_of_nonneg hk]
-        _ ≤ heatKernel n t y * ((y i * y i + y j * y j) / 2) :=
+      calc |Φ n t y * (y i * y j)|
+          = Φ n t y * |y i * y j| := by rw [abs_mul, abs_of_nonneg hk]
+        _ ≤ Φ n t y * ((y i * y i + y j * y j) / 2) :=
             mul_le_mul_of_nonneg_left hmain hk
-        _ = (heatKernel n t y * (y i * y i) + heatKernel n t y * (y j * y j)) / 2 := by ring
+        _ = (Φ n t y * (y i * y i) + Φ n t y * (y j * y j)) / 2 := by ring
     exact Integrable.mono' hg hf (ae_of_all _ hbound)
 
 /-- Half-part identification, assembled from Gaussian second moments
@@ -12469,18 +12418,18 @@ private theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace �
       = t * Laplacian.laplacian φ x := by
   have _ := hφ_supp
   have hm2K : ∀ i j : Fin n, ∫ (y : EuclideanSpace ℝ (Fin n)),
-      heatKernel n t y * (y i * y j) = if i = j then 2 * t else 0 :=
-    fun i j => (hMomentsThm n ht).2.2 i j
+      Φ n t y * (y i * y j) = if i = j then 2 * t else 0 :=
+    fun i j => by simpa only [heatKernel_euclideanSpace] using (hMomentsThm n ht).2.2 i j
   have hInt : ∀ i j : Fin n, Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-      heatKernel n t y * (y i * y j)) :=
+      Φ n t y * (y i * y j)) :=
     fun i j => integrable_kernel_coord_mul n t ht hm2K i j
   have hpt : ∀ y : EuclideanSpace ℝ (Fin n),
-      heatKernel n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
+      Φ n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
           (x i))
-        = ∑ i, ∑ j, heatKernel n t y * ((1 / 2) * (y i * y j) *
+        = ∑ i, ∑ j, Φ n t y * ((1 / 2) * (y i * y j) *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
@@ -12494,7 +12443,7 @@ private theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace �
     intro j _
     ring
   have hSumm : ∀ i j : Fin n, Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-      heatKernel n t y * ((1 / 2) * (y i * y j) *
+      Φ n t y * ((1 / 2) * (y i * y j) *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
@@ -12510,8 +12459,8 @@ private theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace �
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i)) * (heatKernel n t y * (y i * y j))
-          = heatKernel n t y * ((1 / 2) * (y i * y j) *
+          (x i)) * (Φ n t y * (y i * y j))
+          = Φ n t y * ((1 / 2) * (y i * y j) *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
@@ -12520,7 +12469,7 @@ private theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace �
     exact h.congr (ae_of_all _ heq)
   have hIn : ∀ i : Fin n, ∀ j ∈ (Finset.univ : Finset (Fin n)),
       Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-        heatKernel n t y * ((1 / 2) * (y i * y j) *
+        Φ n t y * ((1 / 2) * (y i * y j) *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
@@ -12528,14 +12477,14 @@ private theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace �
     fun i j _ => hSumm i j
   have hOut : ∀ i ∈ (Finset.univ : Finset (Fin n)),
       Integrable (fun y : EuclideanSpace ℝ (Fin n) =>
-        ∑ j, heatKernel n t y * ((1 / 2) * (y i * y j) *
+        ∑ j, Φ n t y * ((1 / 2) * (y i * y j) *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
           (x i))) :=
     fun i _ => integrable_finsetSum _ (fun j _ => hSumm i j)
   have hval : ∀ i j : Fin n, (∫ y : EuclideanSpace ℝ (Fin n),
-      heatKernel n t y * ((1 / 2) * (y i * y j) *
+      Φ n t y * ((1 / 2) * (y i * y j) *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
@@ -12547,7 +12496,7 @@ private theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace �
           (x i) * (if i = j then 2 * t else 0) := by
     intro i j
     have heq : ∀ y : EuclideanSpace ℝ (Fin n),
-        heatKernel n t y * ((1 / 2) * (y i * y j) *
+        Φ n t y * ((1 / 2) * (y i * y j) *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
@@ -12556,7 +12505,7 @@ private theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace �
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
-          (x i)) * (heatKernel n t y * (y i * y j)) :=
+          (x i)) * (Φ n t y * (y i * y j)) :=
       fun y => by ring
     simp only [heq, integral_const_mul, hm2K i j]
   have hcoll : ∀ i : Fin n, (∑ j, (1 / 2 : ℝ) *
@@ -12589,21 +12538,22 @@ private theorem gaussian_half_second_order_asm (n : ℕ) {φ : EuclideanSpace �
     rw [Finset.sum_ite_eq']
     simp only [Finset.mem_univ, ite_true]
     ring
+  simp only [← heatKernel_euclideanSpace]
   change ∫ (y : EuclideanSpace ℝ (Fin n)),
-      heatKernel n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
+      Φ n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
           (x i))
       = t * Laplacian.laplacian φ x
   calc ∫ (y : EuclideanSpace ℝ (Fin n)),
-          heatKernel n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
+          Φ n t y * ((1 / 2 : ℝ) * ∑ i, ∑ j, y i * y j *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
           (x i))
         = ∑ i, ∑ j, ∫ (y : EuclideanSpace ℝ (Fin n)),
-            heatKernel n t y * ((1 / 2) * (y i * y j) *
+            Φ n t y * ((1 / 2) * (y i * y j) *
         deriv (fun v => deriv (fun r => φ (WithLp.toLp 2 (Function.update
           (WithLp.toLp 2 (Function.update x i v)) j r)))
           ((WithLp.toLp 2 (Function.update x i v)) j))
@@ -12631,51 +12581,15 @@ section P1Ennreal
 
 open scoped Convolution
 
-private theorem integrable_gaussian_euclidean (n : ℕ) (c : ℝ) (hc : 0 < c) :
-    Integrable (fun x : EuclideanSpace ℝ (Fin n) => Real.exp (-c * ‖x‖ ^ 2)) volume := by
-  have hb : 0 < ((c : ℝ) : ℂ).re := by simpa using hc
-  have h := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add
-    (V := EuclideanSpace ℝ (Fin n)) (b := (c : ℂ)) (c := 0)
-    (w := (0 : EuclideanSpace ℝ (Fin n))) hb
-  have hEq : (fun v : EuclideanSpace ℝ (Fin n) => ((Real.exp (-c * ‖v‖ ^ 2) : ℝ) : ℂ))
-      = fun v => Complex.exp
-        (-(c : ℂ) * ‖v‖ ^ 2 + 0 * ((inner ℝ (0 : EuclideanSpace ℝ (Fin n)) v : ℝ) : ℂ)) := by
-    funext v
-    simp only [inner_zero_left, Complex.ofReal_zero, mul_zero, add_zero]
-    rw [Complex.ofReal_exp]
-    congr 1
-    push_cast
-    ring
-  have hC : Integrable
-      (fun v : EuclideanSpace ℝ (Fin n) => ((Real.exp (-c * ‖v‖ ^ 2) : ℝ) : ℂ)) volume := by
-    rw [hEq]
-    exact h
-  exact Integrable.iff_ofReal.mpr hC
-
 private theorem continuous_heatKernel (n : ℕ) (t : ℝ) :
-    Continuous fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x := by
+    Continuous fun x : EuclideanSpace ℝ (Fin n) => Φ n t x := by
   unfold heatKernel
   fun_prop
 
-private theorem integrable_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
-    Integrable (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) volume := by
-  have hc : (0 : ℝ) < 1 / (4 * t) := by positivity
-  have hG := integrable_gaussian_euclidean n (1 / (4 * t)) hc
-  have hEq : ∀ x : EuclideanSpace ℝ (Fin n),
-      heatKernel n t x
-        = (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-(1 / (4 * t)) * ‖x‖ ^ 2) := by
-    intro x
-    unfold heatKernel
-    congr 1
-    congr 1
-    have ht4 : (4 : ℝ) * t ≠ 0 := by positivity
-    field_simp
-  simp_rw [hEq]
-  simpa [smul_eq_mul] using hG.const_mul ((4 * Real.pi * t) ^ (-(n : ℝ) / 2))
-
 private theorem memLp_top_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
-    MemLp (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) ⊤ volume := by
-  apply memLp_top_of_bound (continuous_heatKernel n t).aestronglyMeasurable _
+    MemLp (fun x : EuclideanSpace ℝ (Fin n) => Φ n t x) ⊤ volume := by
+  refine memLp_top_of_bound (continuous_heatKernel n t).aestronglyMeasurable
+    ((4 * Real.pi * t) ^ (-(n : ℝ) / 2)) ?_
   filter_upwards with x
   have hC : (0 : ℝ) ≤ (4 * Real.pi * t) ^ (-(n : ℝ) / 2) := by
     apply Real.rpow_nonneg
@@ -12684,11 +12598,10 @@ private theorem memLp_top_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
   have he : -‖x‖ ^ 2 / (4 * t) ≤ (0 : ℝ) :=
     div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr hx2) (by positivity)
   have hexp : Real.exp (-‖x‖ ^ 2 / (4 * t)) ≤ 1 := Real.exp_le_one_iff.mpr he
-  have hK : (0 : ℝ) ≤ heatKernel n t x := by
-    unfold heatKernel
+  have hK : (0 : ℝ) ≤ Φ n t x := by
+    rw [heatKernel_euclideanSpace]
     exact mul_nonneg hC (Real.exp_pos _).le
-  rw [Real.norm_of_nonneg hK]
-  unfold heatKernel
+  rw [Real.norm_of_nonneg hK, heatKernel_euclideanSpace]
   calc (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * Real.exp (-‖x‖ ^ 2 / (4 * t))
       ≤ (4 * Real.pi * t) ^ (-(n : ℝ) / 2) * 1 :=
         mul_le_mul_of_nonneg_left hexp hC
@@ -12697,19 +12610,19 @@ private theorem memLp_top_heatKernel (n : ℕ) (t : ℝ) (ht : 0 < t) :
 private theorem heatConvolution_eq_conv (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (t : ℝ)
     (x : EuclideanSpace ℝ (Fin n)) :
     heatConvolution n φ t x
-      = (φ ⋆[ContinuousLinearMap.mul ℝ ℝ, volume] heatKernel n t) x := by
+      = (φ ⋆[ContinuousLinearMap.mul ℝ ℝ, volume] Φ n t) x := by
   unfold heatConvolution
   rw [MeasureTheory.convolution_mul]
 
 private theorem heatConvolution_fun_eq (n : ℕ) (φ : EuclideanSpace ℝ (Fin n) → ℝ) (t : ℝ) :
     heatConvolution n φ t
-      = φ ⋆[ContinuousLinearMap.mul ℝ ℝ, volume] heatKernel n t :=
+      = φ ⋆[ContinuousLinearMap.mul ℝ ℝ, volume] Φ n t :=
   funext (heatConvolution_eq_conv n φ t)
 
 private theorem continuous_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) (t : ℝ) :
     Continuous (heatConvolution n φ t) := by
-  have hK : LocallyIntegrable (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) volume :=
+  have hK : LocallyIntegrable (fun x : EuclideanSpace ℝ (Fin n) => Φ n t x) volume :=
     (continuous_heatKernel n t).locallyIntegrable
   have hcont := HasCompactSupport.continuous_convolution_left
     (L := ContinuousLinearMap.mul ℝ ℝ) hφ_supp hφ.continuous hK
@@ -12722,8 +12635,8 @@ private theorem integrable_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (F
   rw [heatConvolution_fun_eq n φ t]
   have hφint : Integrable φ volume :=
     hφ.continuous.integrable_of_hasCompactSupport hφ_supp
-  have hKint : Integrable (fun x : EuclideanSpace ℝ (Fin n) => heatKernel n t x) volume :=
-    integrable_heatKernel n t ht
+  have hKint : Integrable (fun x : EuclideanSpace ℝ (Fin n) => Φ n t x) volume :=
+    integrable_heatKernel ht
   exact Integrable.integrable_convolution (L := ContinuousLinearMap.mul ℝ ℝ) hφint hKint
 
 private theorem memLp_phi_of_contDiff (n : ℕ) {p : ENNReal}
@@ -12766,25 +12679,25 @@ private theorem enorm_heatConvolution_le (n : ℕ) {φ : EuclideanSpace ℝ (Fin
     (hφ : ContDiff ℝ 2 φ) (_hφ_supp : HasCompactSupport φ) (t : ℝ) (_ht : 0 < t)
     (x : EuclideanSpace ℝ (Fin n)) :
     ‖(heatConvolution n φ t) x‖ₑ ≤ ‖ContinuousLinearMap.mul ℝ ℝ‖ₑ * eLpNorm φ 1 volume
-      * eLpNorm (heatKernel n t) ⊤ volume := by
+      * eLpNorm (Φ n t) ⊤ volume := by
   rw [heatConvolution_fun_eq n φ t]
-  exact enorm_convolution_le (L := ContinuousLinearMap.mul ℝ ℝ) (p := 1) (q := ⊤)
+  exact eNorm_convolution_le (L := ContinuousLinearMap.mul ℝ ℝ) (p := 1) (q := ⊤)
     hφ.continuous.aestronglyMeasurable (continuous_heatKernel n t).aestronglyMeasurable x
 
 private theorem eLpNorm_bound_heatConvolution (n : ℕ) {φ : EuclideanSpace ℝ (Fin n) → ℝ}
     (hφ : ContDiff ℝ 2 φ) (hφ_supp : HasCompactSupport φ) (t : ℝ) (ht : 0 < t) :
     ‖ContinuousLinearMap.mul ℝ ℝ‖ₑ * eLpNorm φ 1 volume
-      * eLpNorm (heatKernel n t) ⊤ volume < ⊤ := by
+      * eLpNorm (Φ n t) ⊤ volume < ⊤ := by
   have hφ1 : eLpNorm φ 1 volume < ⊤ := memLp_phi_of_contDiff n hφ hφ_supp (p := 1)
-  have hKt : eLpNorm (heatKernel n t) ⊤ volume < ⊤ := memLp_top_heatKernel n t ht
-  exact ENNReal.mul_lt_top (ENNReal.mul_lt_top enorm_lt_top hφ1) hKt
+  have hKt : eLpNorm (Φ n t) ⊤ volume < ⊤ := memLp_top_heatKernel n t ht
+  exact ENNReal.mul_lt_top (ENNReal.mul_lt_top eNorm_lt_top hφ1) hKt
 
 private theorem eLpNorm_lt_top_of_uniform_enorm_bound (n : ℕ) {p : ENNReal}
     {f : EuclideanSpace ℝ (Fin n) → ℝ} (hp1 : 1 ≤ p) (hp : p ≠ ⊤)
     (hf : AEStronglyMeasurable f volume) (hint : Integrable f volume) (B : ENNReal)
     (hB : B < ⊤) (hle : ∀ x, ‖f x‖ₑ ≤ B) : eLpNorm f p volume < ⊤ := by
   have hp0 : p ≠ 0 := (zero_lt_one.trans_le hp1).ne'
-  rw [eLpNorm_lt_top_iff_lintegral_rpow_enorm_lt_top hp0 hp hf]
+  rw [eLpNorm_lt_top_iff_lintegral_rpow_eNorm_lt_top hp0 hp hf]
   have hq1 : (1 : ℝ) ≤ p.toReal := by
     have h := (ENNReal.toReal_le_toReal ENNReal.one_ne_top hp).mpr hp1
     simpa using h
@@ -12799,9 +12712,9 @@ private theorem eLpNorm_lt_top_of_uniform_enorm_bound (n : ℕ) {p : ENNReal}
     rw [hsplit, ENNReal.rpow_one]
     exact mul_le_mul_left (ENNReal.rpow_le_rpow (hle x) hexp) _
   have hmeas : AEMeasurable (fun x : EuclideanSpace ℝ (Fin n) => ‖f x‖ₑ) volume :=
-    hf.aemeasurable.enorm
+    hf.aemeasurable.eNorm
   have hint' : ∫⁻ x, ‖f x‖ₑ ∂volume < ⊤ :=
-    hasFiniteIntegral_iff_enorm.mp hint.hasFiniteIntegral
+    hasFiniteIntegral_iff_eNorm.mp hint.hasFiniteIntegral
   calc ∫⁻ x, ‖f x‖ₑ ^ p.toReal ∂volume
       ≤ ∫⁻ x, B ^ (p.toReal - 1) * ‖f x‖ₑ ∂volume :=
         lintegral_mono_ae (Filter.Eventually.of_forall hpt)
@@ -13086,4 +12999,4 @@ theorem heat_semigroup_generator_eq_laplacian (n : ℕ) {p : ENNReal}
 
 end FinalGlueH5
 
-end EarthScience
+end MathlibExt.Analysis.PDE.HeatKernel

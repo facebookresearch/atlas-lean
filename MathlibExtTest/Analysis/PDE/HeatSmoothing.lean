@@ -9,44 +9,33 @@ module
 
 import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-import PhyslibExt.EarthScience.HeatSmoothing
+import MathlibExt.Analysis.PDE.HeatSmoothing
 
 /-!
 # Heat smoothing checks
 
-Concrete consumers of `PhyslibExt.EarthScience.HeatSmoothing`: the constant
-function `1`, whose heat convolution is `1` (in dimensions `1` and `0`, the
-latter a boundary case); and the Gaussian `exp(-‖y‖²)`, whose heat
-convolution is `C^∞` at positive time and satisfies the heat equation.
+Concrete consumers of `MathlibExt.Analysis.PDE.HeatSmoothing`: the constant function `1`, whose
+heat convolution is `1` (in dimensions `1` and `0`, the latter a boundary case); the Gaussian
+`exp(-‖y‖²)`, whose heat convolution is `C^∞` at positive time and satisfies the heat equation;
+and the `(1 - x^2)^3` cutoff bump in dimension `1` and the constant `1` in dimension `0`, for which
+the `L^p` heat-semigroup generator equals the Laplacian.
 
-## i. Overview
-
-These are elaboration and non-vacuity checks, not new results. The Gaussian
-is bounded and measurable, so the module's theorems apply to it
-non-trivially: smoothing gives `ContDiffOn ℝ ∞` of its heat convolution,
-and the heat equation gives the pointwise identity `u_t = Δu`.
-
-## ii. Key results
-
-No new results are introduced here; the private definitions `gaussian`,
-`gaussian_meas`, and `gaussian_bdd` are the test function
-`exp(-‖y‖²)` and its side conditions.
-
-## iii. Table of contents
-
-- A. The Gaussian test function and its side conditions
-- B. Constant-one, in dimensions `1` and `0`
-- C. Smoothing and the heat equation for the Gaussian
-- D. The `(1 - x^2)^3` cutoff bump in dimension `1`
-- E. Generator equals the Laplacian: bump in dimension `1`, constant `1` in dimension `0`
-
-## iv. References
-
-- `PhyslibExt.EarthScience.HeatSmoothing`
+These are elaboration and non-vacuity checks, not new results: the Gaussian is bounded and
+measurable and the bump is a nonzero compactly supported `C²` function, so the module's theorems
+apply to them non-trivially. The private definitions `gaussian`, `gaussian_meas`, and
+`gaussian_bdd` are the test function `exp(-‖y‖²)` and its side conditions. The first check pins
+`heatConvolution` to the shared heat kernel `MathlibExt.Analysis.PDE.HeatKernel.heatKernel`.
 -/
 
 open MeasureTheory
 open scoped ContDiff Topology
+open MathlibExt.Analysis.PDE.HeatKernel
+
+/-- The heat convolution is the convolution with the shared heat kernel on
+`EuclideanSpace ℝ (Fin n)`. -/
+example (n : ℕ) (g : EuclideanSpace ℝ (Fin n) → ℝ) (t : ℝ) (x : EuclideanSpace ℝ (Fin n)) :
+    heatConvolution n g t x = ∫ y, g y * heatKernel (EuclideanSpace ℝ (Fin n)) t (x - y) :=
+  rfl
 
 /-! ## A. The Gaussian test function and its side conditions -/
 
@@ -72,15 +61,15 @@ private theorem gaussian_bdd (n : ℕ) :
 /-! ## B. Constant-one, in dimensions `1` and `0` -/
 
 /-- The heat convolution of `1` in dimension `1` is `1`. -/
-example : EarthScience.heatConvolution 1 (fun _ => (1 : ℝ)) 1
+example : heatConvolution 1 (fun _ => (1 : ℝ)) 1
     (0 : EuclideanSpace ℝ (Fin 1)) = 1 :=
-  EarthScience.heat_convolution_const_one 1 one_pos 0
+  heat_convolution_const_one 1 one_pos 0
 
 /-- The heat convolution of `1` in dimension `0` (boundary case: the space
 is a point) is `1`. -/
-example : EarthScience.heatConvolution 0 (fun _ => (1 : ℝ)) 1
+example : heatConvolution 0 (fun _ => (1 : ℝ)) 1
     (0 : EuclideanSpace ℝ (Fin 0)) = 1 :=
-  EarthScience.heat_convolution_const_one 0 one_pos 0
+  heat_convolution_const_one 0 one_pos 0
 
 /-! ## C. Smoothing and the heat equation for the Gaussian -/
 
@@ -88,17 +77,17 @@ example : EarthScience.heatConvolution 0 (fun _ => (1 : ℝ)) 1
 `ContDiffOn ℝ ∞` (`C^∞`) at positive time. -/
 example : ContDiffOn ℝ ∞
     (fun p : ℝ × EuclideanSpace ℝ (Fin 1) =>
-      EarthScience.heatConvolution 1 (gaussian 1) p.1 p.2)
+      heatConvolution 1 (gaussian 1) p.1 p.2)
     (Set.Ioi 0 ×ˢ Set.univ) :=
-  EarthScience.heat_convolution_smooth 1 (gaussian_meas 1) (gaussian_bdd 1)
+  heat_convolution_smooth 1 (gaussian_meas 1) (gaussian_bdd 1)
 
 /-- Heat equation: the heat convolution of the Gaussian in dimension `1`
 satisfies `u_t = Δu` at `t = 1`, `x = 0`. -/
-example : deriv (fun s => EarthScience.heatConvolution 1 (gaussian 1) s
+example : deriv (fun s => heatConvolution 1 (gaussian 1) s
       (0 : EuclideanSpace ℝ (Fin 1))) 1
-    = Laplacian.laplacian (fun y => EarthScience.heatConvolution 1 (gaussian 1) 1 y)
+    = Laplacian.laplacian (fun y => heatConvolution 1 (gaussian 1) 1 y)
       (0 : EuclideanSpace ℝ (Fin 1)) :=
-  EarthScience.heat_convolution_satisfies_heat_equation 1 (gaussian_meas 1)
+  heat_convolution_satisfies_heat_equation 1 (gaussian_meas 1)
     (gaussian_bdd 1) one_pos 0
 
 /-! ## D. The `(1 - x^2)^3` cutoff bump in dimension `1` -/
@@ -342,48 +331,48 @@ constant function `1` in dimension `0` (boundary case: the space is a point,
 so every function is compactly supported). -/
 example : Filter.Tendsto
     (fun t : ℝ =>
-      (eLpNorm (fun x : EuclideanSpace ℝ (Fin 0) => EarthScience.heatConvolution 0 (fun _ => (1 : ℝ)) t x
+      (eLpNorm (fun x : EuclideanSpace ℝ (Fin 0) => heatConvolution 0 (fun _ => (1 : ℝ)) t x
         - (fun _ => (1 : ℝ)) x
         - t * Laplacian.laplacian (fun _ : EuclideanSpace ℝ (Fin 0) => (1 : ℝ)) x) 2 volume).toReal / t)
     (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
-  EarthScience.heat_semigroup_generator_eq_laplacian 0 (by norm_num) (by norm_num)
+  heat_semigroup_generator_eq_laplacian 0 (by norm_num) (by norm_num)
     contDiff_const (IsClosed.isCompact (isClosed_tsupport _))
 
 /-- Generator: the `L^p` heat-semigroup generator equals the Laplacian for the
 `(1 - x^2)^3` cutoff bump in dimension `1` (non-vacuous: the bump is nonzero). -/
 example : Filter.Tendsto
     (fun t : ℝ =>
-      (eLpNorm (fun x : EuclideanSpace ℝ (Fin 1) => EarthScience.heatConvolution 1 (fun x : EuclideanSpace ℝ (Fin 1) =>
+      (eLpNorm (fun x : EuclideanSpace ℝ (Fin 1) => heatConvolution 1 (fun x : EuclideanSpace ℝ (Fin 1) =>
           if |x 0| < 1 then (1 - (x 0)^2)^3 else 0) t x
         - (fun x : EuclideanSpace ℝ (Fin 1) =>
           if |x 0| < 1 then (1 - (x 0)^2)^3 else 0) x
         - t * Laplacian.laplacian (fun x : EuclideanSpace ℝ (Fin 1) =>
           (if |x 0| < 1 then (1 - (x 0)^2)^3 else 0 : ℝ)) x) 2 volume).toReal / t)
     (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
-  EarthScience.heat_semigroup_generator_eq_laplacian 1 (by norm_num) (by norm_num)
+  heat_semigroup_generator_eq_laplacian 1 (by norm_num) (by norm_num)
     bump_contDiff_compactSupport.1 bump_contDiff_compactSupport.2
 
 /-- Generator in `ENNReal`: the `L^p` heat-semigroup generator equals the
 Laplacian for the `(1 - x^2)^3` cutoff bump in dimension `1` (non-vacuous). -/
 example : Filter.Tendsto
     (fun t : ℝ =>
-      (eLpNorm (fun x : EuclideanSpace ℝ (Fin 1) => EarthScience.heatConvolution 1 (fun x : EuclideanSpace ℝ (Fin 1) =>
+      (eLpNorm (fun x : EuclideanSpace ℝ (Fin 1) => heatConvolution 1 (fun x : EuclideanSpace ℝ (Fin 1) =>
           if |x 0| < 1 then (1 - (x 0)^2)^3 else 0) t x
         - (fun x : EuclideanSpace ℝ (Fin 1) =>
           if |x 0| < 1 then (1 - (x 0)^2)^3 else 0) x
         - t * Laplacian.laplacian (fun x : EuclideanSpace ℝ (Fin 1) =>
           (if |x 0| < 1 then (1 - (x 0)^2)^3 else 0 : ℝ)) x) 2 volume) / ENNReal.ofReal t)
     (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
-  EarthScience.heat_semigroup_generator_eq_laplacian_ennreal 1 (by norm_num) (by norm_num)
+  heat_semigroup_generator_eq_laplacian_ennreal 1 (by norm_num) (by norm_num)
     bump_contDiff_compactSupport.1 bump_contDiff_compactSupport.2
 
 /-- Generator in `ENNReal`: the `L^p` heat-semigroup generator equals the
 Laplacian for the constant function `1` in dimension `0` (boundary case). -/
 example : Filter.Tendsto
     (fun t : ℝ =>
-      (eLpNorm (fun x : EuclideanSpace ℝ (Fin 0) => EarthScience.heatConvolution 0 (fun _ => (1 : ℝ)) t x
+      (eLpNorm (fun x : EuclideanSpace ℝ (Fin 0) => heatConvolution 0 (fun _ => (1 : ℝ)) t x
         - (fun _ => (1 : ℝ)) x
         - t * Laplacian.laplacian (fun _ : EuclideanSpace ℝ (Fin 0) => (1 : ℝ)) x) 2 volume) / ENNReal.ofReal t)
     (nhdsWithin 0 (Set.Ioi 0)) (nhds 0) :=
-  EarthScience.heat_semigroup_generator_eq_laplacian_ennreal 0 (by norm_num) (by norm_num)
+  heat_semigroup_generator_eq_laplacian_ennreal 0 (by norm_num) (by norm_num)
     contDiff_const (IsClosed.isCompact (isClosed_tsupport _))
