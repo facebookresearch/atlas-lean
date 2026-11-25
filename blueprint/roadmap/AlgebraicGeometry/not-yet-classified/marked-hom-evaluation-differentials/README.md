@@ -11,3 +11,5 @@
 - [Pushforward H0](pushforward-h0.md)
 - [Fixed Source Iso](fixed-source-iso.md)
 - [Derived Evaluation](derived-evaluation.md)
+- [Marked Evaluation Tangent Chain Rule](marked-evaluation-tangent-chain-rule.md)
+- [Marked Evaluation Kodaira Spencer](marked-evaluation-kodaira-spencer.md)
