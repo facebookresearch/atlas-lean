@@ -47,9 +47,14 @@ variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable [AddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E] [Norm E]
 variable [CStarModule Bᵐᵒᵖ E]
 
-/-- The actual norm of a right coefficient obtained by real nonunital CFC
-is the weighted scalar square on the coefficient-inner spectrum.
-No completeness or commuting-coefficient hypothesis is needed. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a
+complex vector space with a norm and right coefficient action satisfying the inner-product
+C*-module laws.
+
+For x ∈ E, let a = ⟨x, x⟩. If f : ℝ → ℝ is continuous on the real quasispectrum of a and f(0) =
+0, then ‖x f(a)‖² = ‖(s ↦ s f(s)²)(a)‖ for nonunital continuous functional calculus.
+-/
 theorem norm_right_smul_cfc_sq (x : E) (f : ℝ → ℝ)
     (hf : ContinuousOn f (quasispectrum ℝ (CStarModule.rightInner (B := B) x x)))
     (hf0 : f 0 = 0) :
@@ -173,8 +178,14 @@ section NonnegInnerFactorization
 open Filter
 open scoped Topology
 
-/-- Canonical positivity of a vector's actual coefficient inner square is
-sufficient for factorization, independently of the opposite-order presentation. -/
+/--
+Let B be a possibly nonunital complex C*-algebra with a partial order on Bᵐᵒᵖ. Let E be a
+complete normed right inner-product module over B, with compatible complex normed-space
+structures.
+
+If x ∈ E satisfies ⟨x, x⟩ ≥ 0 in the canonical spectral order of B, there exist y ∈ E and b ∈ B
+with x = yb.
+-/
 theorem exists_right_factor_of_nonneg_inner {B : Type uB} {E : Type uE}
     [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
     [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
@@ -350,8 +361,13 @@ end NonnegInnerFactorization
 
 section StarOrderedFactorization
 
-/-- A valid caller opposite star order gives factorization without a
-separate canonical-Gram positivity premise or a replacement module dictionary. -/
+/--
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra Bᵐᵒᵖ has a
+star-compatible partial order. Let E be a complete normed right inner-product module over B,
+with compatible complex normed-space structures.
+
+Every x ∈ E admits a right factorization x = yb with y ∈ E and b ∈ B.
+-/
 theorem exists_right_factor_of_starOrderedRing {B : Type uB} {E : Type uE}
     [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
     [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
@@ -389,13 +405,13 @@ attribute [local instance] CStarAlgebra.spectralOrder CStarAlgebra.spectralOrder
 open Filter
 open scoped Topology
 
-/-- Every vector in an actual complete right Hilbert C-star module factors
-through a coefficient of its original nonunital algebra.
+/--
+Let B be a possibly nonunital complex C*-algebra, with its canonical spectral order and induced
+opposite order. Let E be a complete normed right inner-product B-module with a compatible
+complex normed-space structure.
 
-This wrapper uses the canonical order on `B` and the induced opposite order.
-For a module with a separately installed canonical order on `Bᵐᵒᵖ`, use
-`exists_right_factor_of_nonneg_inner` with the spectral-order unop bridge.
-The two order dictionaries are not silently identified. -/
+Every x ∈ E admits a right factorization x = yb with y ∈ E and b ∈ B.
+-/
 theorem exists_right_factor {B : Type uB} {E : Type uE}
     [NonUnitalCStarAlgebra B]
     [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]

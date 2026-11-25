@@ -38,8 +38,9 @@ namespace ZeroAtInftyContinuousMap
 
 /-! ## Functoriality in the coefficient algebra -/
 
-/-- Pointwise postcomposition of a `C₀` function by a nonunital C-star
-homomorphism. -/
+/-- Let `Omega` be a topological space. Let `A`, `B` be possibly nonunital complex C*-algebras.
+
+Pointwise postcomposition of a `C₀` function by a nonunital C-star homomorphism. -/
 def nonUnitalStarAlgHom_postcomp
     {Omega : Type u} [TopologicalSpace Omega]
     {A : Type v} {B : Type w}
@@ -76,7 +77,9 @@ theorem nonUnitalStarAlgHom_postcomp_id
   ext f omega
   rfl
 
-/-- Postcomposition respects composition of coefficient homomorphisms. -/
+/-- Let `Omega` be a topological space. Let `A`, `B`, `C` be possibly nonunital complex C*-algebras.
+
+Postcomposition respects composition of coefficient homomorphisms. -/
 theorem nonUnitalStarAlgHom_postcomp_comp
     {Omega : Type u} [TopologicalSpace Omega]
     {A : Type v} {B : Type w} {C : Type*}
@@ -91,8 +94,10 @@ theorem nonUnitalStarAlgHom_postcomp_comp
 
 /-! ## Functoriality in the domain -/
 
-/-- Precomposition by a cocompact map as a nonunital star-algebra
-homomorphism. -/
+/-- Let `X`, `Y` be topological spaces. Let `A` be a possibly nonunital complex C*-algebra. The
+domain map is continuous and sends the cocompact filter to the cocompact filter.
+
+Precomposition by a cocompact map as a nonunital star-algebra homomorphism. -/
 def compNonUnitalStarAlgHom
     {X : Type u} {Y : Type v} {A : Type w}
     [TopologicalSpace X] [TopologicalSpace Y]
@@ -122,7 +127,10 @@ theorem compNonUnitalStarAlgHom_id
   ext f x
   rfl
 
-/-- Precomposition reverses composition of cocompact domain maps. -/
+/-- Let `W`, `X`, `Y` be topological spaces. Let `A` be a possibly nonunital complex C*-algebra. The
+domain map is continuous and sends the cocompact filter to the cocompact filter.
+
+Precomposition reverses composition of cocompact domain maps. -/
 theorem compNonUnitalStarAlgHom_comp
     {W : Type*} {X : Type u} {Y : Type v} {A : Type w}
     [TopologicalSpace W] [TopologicalSpace X] [TopologicalSpace Y]
@@ -133,7 +141,11 @@ theorem compNonUnitalStarAlgHom_comp
   ext f x
   rfl
 
-/-- Coefficient postcomposition commutes with domain precomposition. -/
+/-- Let `X` and `Y` be topological spaces and let `A` and `B` be possibly nonunital complex
+C*-algebras. Specify a continuous cocompact map `g : X → Y` and a nonunital complex star-algebra
+homomorphism `φ : A → B`.
+
+Coefficient postcomposition commutes with domain precomposition. -/
 theorem nonUnitalStarAlgHom_postcomp_comp_compNonUnitalStarAlgHom
     {X : Type u} {Y : Type v} {A : Type w} {B : Type*}
     [TopologicalSpace X] [TopologicalSpace Y]
@@ -146,11 +158,11 @@ theorem nonUnitalStarAlgHom_postcomp_comp_compNonUnitalStarAlgHom
   ext f x
   rfl
 
-/-- Precomposition by a homeomorphism, contravariantly on `C₀`.
+/-- Let `X`, `Y` be topological spaces. Let `A` be a possibly nonunital complex C*-algebra.
 
-Unlike `ContinuousMapZero.starAlgEquivPrecomp`, this acts on functions
-vanishing at infinity and does not require a distinguished point in the
-domain. -/
+Precomposition by a homeomorphism, contravariantly on `C₀`. Unlike
+`ContinuousMapZero.starAlgEquivPrecomp`, this acts on functions vanishing at infinity and does
+not require a distinguished point in the domain. -/
 def starAlgEquivPrecomp
     {X : Type u} {Y : Type v} {A : Type w}
     [TopologicalSpace X] [TopologicalSpace Y]
@@ -206,7 +218,9 @@ theorem starAlgEquivPrecomp_symm
   ext f y
   rfl
 
-/-- Precomposition reverses composition of homeomorphisms. -/
+/-- Let `X`, `Y`, `Z` be topological spaces. Let `A` be a possibly nonunital complex C*-algebra.
+
+Precomposition reverses composition of homeomorphisms. -/
 theorem starAlgEquivPrecomp_trans
     {X : Type u} {Y : Type v} {Z : Type*} {A : Type w}
     [TopologicalSpace X] [TopologicalSpace Y] [TopologicalSpace Z]
@@ -219,7 +233,11 @@ theorem starAlgEquivPrecomp_trans
 
 /-! ## The `C₀` exponential law -/
 
-/-- The `C₀` exponential law, with uncurrying as the forward action. -/
+/-- Let `X` be a T₁ topological space, let `Y` be a topological space, and let `A` be a possibly
+nonunital complex C*-algebra. Both function algebras consist of continuous functions vanishing
+at infinity.
+
+The `C₀` exponential law, with uncurrying as the forward action. -/
 def uncurryStarAlgEquiv
     {X : Type u} {Y : Type v} {A : Type w}
     [TopologicalSpace X] [T1Space X] [TopologicalSpace Y]
@@ -435,8 +453,12 @@ local instance spectralOrderInstance : PartialOrder A :=
 local instance spectralOrderedRingInstance : StarOrderedRing A :=
   CStarAlgebra.spectralOrderedRing A
 
-/-- The entrywise star-algebra equivalence between matrices of `C₀` functions
-and `C₀` functions with matrix values. -/
+/-- Let `Ω` be a topological space, let `A` be a possibly nonunital complex C*-algebra, and let `I`
+be a finite index type. Matrices and functions vanishing at infinity have their canonical
+C*-norms.
+
+The entrywise star-algebra equivalence between matrices of `C₀` functions and `C₀` functions
+with matrix values. -/
 def zeroAtInftyStarAlgEquiv :
     CStarMatrix I I C₀(Omega, A) ≃⋆ₐ[ℂ] C₀(Omega, CStarMatrix I I A) := by
   let matrixToFunctions :

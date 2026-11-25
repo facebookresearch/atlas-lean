@@ -1,4 +1,5 @@
-# Class Map star
+# Adjoint of an operator class
 
-Taking the star of an operator class is represented by taking the
-operator adjoint before quotienting.
+Let `H` be a complete complex Hilbert space. Its Calkin algebra is
+the quotient `B(H)/K(H)` of bounded operators by compact operators, with the quotient C*-norm. For
+every bounded operator `T`, the class of `T*` equals the involution of the class of `T`.

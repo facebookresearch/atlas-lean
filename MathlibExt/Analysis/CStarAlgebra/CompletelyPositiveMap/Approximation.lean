@@ -37,10 +37,10 @@ universe uA uB
 variable {A : Type uA} {B : Type uB}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- A function is approximable on every finite set by genuine finite-rank
-completely positive contractions. The four canonical order dictionaries are
-local values, including the scope in which the linear range is projected.
-No approximation witness is selected by this predicate. -/
+/-- **Finite-rank completely positive approximation.** For nonunital complex C*-algebras `A` and `B`, a
+function `f : A → B` has this property when, for every finite `F ⊆ A` and every `ε > 0`, there is a
+completely positive contraction `φ : A → B` with finite-dimensional complex-linear range such that
+`‖φ(a) - f(a)‖ < ε` for every `a ∈ F`. Positivity uses the spectral orders of `A` and `B`. -/
 def HasFiniteRankCPCApproximation (f : A → B) : Prop :=
   letI : PartialOrder A := CStarAlgebra.spectralOrder A
   letI : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
@@ -52,8 +52,11 @@ def HasFiniteRankCPCApproximation (f : A → B) : Prop :=
       FiniteDimensional ℂ (LinearMap.range phi.toLinearMap) ∧
       ∀ a ∈ F, ‖phi a - f a‖ < ε
 
-/-- The public finite-test characterization, with the same canonical
-source/target dictionaries and the actual linear range. -/
+/-- **Finite-test characterization of finite-rank CP approximation.** For nonunital complex C*-algebras
+`A` and `B` and a function `f : A → B`, finite-rank completely positive approximation is equivalent
+to the following condition: for every finite `F ⊆ A` and `ε > 0`, a completely positive contraction
+with finite-dimensional complex-linear range approximates `f` within `ε` at every point of `F`. Both
+algebras carry their spectral orders. -/
 theorem hasFiniteRankCPCApproximation_iff (f : A → B) :
     HasFiniteRankCPCApproximation f ↔
       (letI : PartialOrder A := CStarAlgebra.spectralOrder A

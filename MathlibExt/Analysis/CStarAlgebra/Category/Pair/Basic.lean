@@ -31,7 +31,9 @@ universe u
 
 open CategoryTheory
 
-/-- A genuine closed-ideal pair. -/
+/-- **Category of C*-ideal pairs.** A C*-ideal pair `(A,J)` consists of a nonunital complex C*-algebra
+`A` and a distinguished closed two-sided star ideal `J ⊆ A`. These pairs are the objects; a morphism
+is a nonunital star homomorphism carrying the distinguished ideal into the distinguished ideal. -/
 structure CStarPairCat : Type (u + 1) where
   /-- The actual ambient algebra, with its existing C-star dictionary. -/
   algebra : NonUnitalCStarAlgCat.{u}
@@ -40,7 +42,9 @@ structure CStarPairCat : Type (u + 1) where
 
 namespace CStarPairCat
 
-/-- An actual homomorphism preserving the distinguished ideal. -/
+/-- **Morphism of C*-ideal pairs.** A C*-ideal pair `(A,J)` consists of a nonunital complex C*-algebra
+`A` and a distinguished closed two-sided star ideal `J ⊆ A`. A morphism `(A,J) → (B,K)` is a
+nonunital complex star homomorphism `f : A → B` satisfying `f(J) ⊆ K`. -/
 @[ext]
 structure Hom (P Q : CStarPairCat.{u}) where
   /-- The underlying nonunital star homomorphism of the actual algebras. -/
@@ -76,14 +80,19 @@ theorem hom_ext {P Q : CStarPairCat.{u}} {f g : P ⟶ Q}
     (h : f.hom = g.hom) : f = g :=
   Hom.ext h
 
-/-- The actual ambient algebra of a pair. -/
+/-- **Ambient algebra functor for C*-ideal pairs.** A C*-ideal pair `(A,J)` consists of a nonunital
+complex C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. The assignment
+`(A,J) ↦ A`, retaining each ideal-preserving star homomorphism, is a functor to nonunital complex
+C*-algebras. -/
 def forget : CStarPairCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
   obj P := P.algebra
   map f := f.hom
   map_id _P := rfl
   map_comp _f _g := rfl
 
-/-- The pair (A,A), with its actual whole ideal. -/
+/-- **Whole-ideal pair functor.** A C*-ideal pair `(A,J)` consists of a nonunital complex C*-algebra `A`
+and a distinguished closed two-sided star ideal `J ⊆ A`. Sending a nonunital complex C*-algebra `A`
+to `(A,A)` and retaining its star homomorphisms defines the diagonal functor. -/
 def diagonal : NonUnitalCStarAlgCat.{u} ⥤ CStarPairCat.{u} where
   obj A := ⟨A, ClosedStarIdeal.top A⟩
   map f :=
@@ -96,14 +105,18 @@ def diagonal : NonUnitalCStarAlgCat.{u} ⥤ CStarPairCat.{u} where
     apply Hom.ext
     rfl
 
-/-- The literal distinguished ideal, with its inherited C-star structure. -/
+/-- **Distinguished ideal as a C*-algebra.** A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. The ideal `J`, with its
+inherited norm and operations, is a nonunital complex C*-algebra. -/
 def idealObject (P : CStarPairCat.{u}) : NonUnitalCStarAlgCat.{u} := by
   letI : NonUnitalCStarAlgebra P.ideal.carrier :=
     NonUnitalStarSubalgebra.nonUnitalCStarAlgebra P.ideal.carrier
       (h_closed := P.ideal.isClosed)
   exact NonUnitalCStarAlgCat.of P.ideal.carrier
 
-/-- Restrict an actual ideal-preserving map to the actual ideal. -/
+/-- **Restriction of an ideal-preserving homomorphism.** A C*-ideal pair `(A,J)` consists of a nonunital
+complex C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. A morphism `(A,J) →
+(B,K)` restricts to a nonunital star homomorphism `J → K`. -/
 def idealMap {P Q : CStarPairCat.{u}} (f : P ⟶ Q) :
     idealObject P ⟶ idealObject Q :=
   NonUnitalStarAlgHom.codRestrict
@@ -117,7 +130,9 @@ theorem idealMap_apply {P Q : CStarPairCat.{u}} (f : P ⟶ Q)
       f.hom (x : P.algebra) := by
   rfl
 
-/-- Send a pair to its actual ideal and a morphism to its restriction. -/
+/-- **Distinguished-ideal functor.** A C*-ideal pair `(A,J)` consists of a nonunital complex C*-algebra
+`A` and a distinguished closed two-sided star ideal `J ⊆ A`. Sending `(A,J)` to `J` and every
+ideal-preserving homomorphism to its restriction defines a functor to nonunital complex C*-algebras. -/
 def idealFunctor : CStarPairCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
   obj := idealObject
   map := idealMap
@@ -132,7 +147,9 @@ def idealFunctor : CStarPairCat.{u} ⥤ NonUnitalCStarAlgCat.{u} where
     apply Subtype.ext
     rfl
 
-/-- The real ideal inclusions, natural in ideal-preserving homomorphisms. -/
+/-- **Natural ideal inclusion for pairs.** A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. The inclusions `J ↪ A` form
+a natural transformation from the distinguished-ideal functor to the ambient-algebra functor. -/
 def idealInclusion : NatTrans idealFunctor.{u} forget.{u} where
   app P := NonUnitalStarSubalgebraClass.subtype P.ideal.carrier
   naturality {P Q} f := by
@@ -140,7 +157,9 @@ def idealInclusion : NatTrans idealFunctor.{u} forget.{u} where
     intro x
     rfl
 
-/-- The natural pair map (A,J)→(A,A) is the ambient identity. -/
+/-- **Natural map to the whole-ideal pair.** A C*-ideal pair `(A,J)` consists of a nonunital complex
+C*-algebra `A` and a distinguished closed two-sided star ideal `J ⊆ A`. The identity of `A` gives a
+pair morphism `(A,J) → (A,A)`, natural in ideal-preserving homomorphisms. -/
 def fullInclusion : NatTrans (𝟭 CStarPairCat.{u}) (forget ⋙ diagonal) where
   app P :=
     { hom := NonUnitalStarAlgHom.id ℂ P.algebra

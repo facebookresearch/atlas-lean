@@ -1,4 +1,4 @@
-# Quasispectrum op
+# Quasispectrum in an opposite ring
 
-The quasispectrum of an element agrees with that of its image in the
-opposite ring.
+For a commutative semiring `R`, a nonunital ring `B` carrying
+an `R`-module structure, and `a ∈ B`, the quasispectrum over `R` of `op(a)` equals that of `a`.

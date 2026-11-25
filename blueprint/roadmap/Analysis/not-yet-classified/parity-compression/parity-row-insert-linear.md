@@ -1,3 +1,4 @@
 # Parity Row Insert Linear
 
-Insert the rows into their actual even or odd positions and zero-pad columns.
+Let `A` be a complex module. For natural numbers `N` and `ε : Fin 2`. Insert the rows into their
+even or odd positions and zero-pad columns.

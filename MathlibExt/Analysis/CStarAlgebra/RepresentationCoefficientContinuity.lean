@@ -37,7 +37,10 @@ universe u v
 variable {A : Type u} [CStarAlgebra A]
 variable {H : Type v} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The original coefficient is continuous in its linear first vector. -/
+/-- **Continuity in the first coefficient vector.** Let `A` be a unital complex C*-algebra, `H` a
+complete complex Hilbert space, and `ρ : A → B(H)` a unital complex star representation. For a fixed
+`h ∈ H`, the map taking `g` to the continuous functional `a ↦ ⟨h,ρ(a)g⟩` is norm-continuous from `H`
+to the continuous dual of `A`. -/
 theorem representationCoefficient_continuous_left
     (ρ : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (h : H) :
     Continuous (fun g : H => representationCoefficient ρ g h) := by
@@ -49,7 +52,10 @@ theorem representationCoefficient_continuous_left
     exact (norm_representationCoefficient_le ρ g h).trans_eq (mul_comm ‖g‖ ‖h‖)
   exact (L.mkContinuous ‖h‖ hbound).continuous
 
-/-- The original coefficient is continuous in its conjugate-linear second vector. -/
+/-- **Continuity in the second coefficient vector.** Let `A` be a unital complex C*-algebra, `H` a
+complete complex Hilbert space, and `ρ : A → B(H)` a unital complex star representation. For a fixed
+`g ∈ H`, the map taking `h` to the continuous functional `a ↦ ⟨h,ρ(a)g⟩` is norm-continuous from `H`
+to the continuous dual of `A`. -/
 theorem representationCoefficient_continuous_right
     (ρ : A →⋆ₐ[ℂ] (H →L[ℂ] H)) (g : H) :
     Continuous (fun h : H => representationCoefficient ρ g h) := by

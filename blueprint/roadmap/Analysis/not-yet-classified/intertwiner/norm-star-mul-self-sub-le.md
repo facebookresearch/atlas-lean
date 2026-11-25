@@ -1,3 +1,4 @@
-# Norm star mul self sub le
+# Difference bound for adjoint products
 
-A quantitative bound for the original two adjoint products.
+Let `A` be a nonunital complex C*-algebra. For `x,y ∈ A`,
+`‖x* x - y* y‖ ≤ ‖x-y‖ (‖x‖ + ‖y‖)`.

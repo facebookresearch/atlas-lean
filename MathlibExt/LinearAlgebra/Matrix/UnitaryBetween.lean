@@ -63,34 +63,26 @@ namespace Matrix
 
 variable {out inp : Type*} {R : Type*} [CommRing R] [StarRing R]
 
-/-- A rectangular matrix `U : Matrix out inp R` is an isometry when
-`Uᴴ * U = 1` on the input/column index `inp`, where `Uᴴ = Matrix.conjTranspose U`.
-
-Orientation: `out` is the row/output index, `inp` is the column/input index,
-so `U : Matrix out inp R` represents a linear map `inp → out`. The condition
-`Uᴴ * U = 1` requires `[Fintype out]` for the middle sum and `[DecidableEq inp]`
-for the identity on `inp`. Empty types are supported. -/
+/-- Let `R` be a commutative star ring and let `out`, `inp` be index types. Assume `out` is finite and
+equality is decidable on `inp`. An `out × inp` matrix `U` is an isometry when `Uᴴ*U = 1` on the
+input index. Empty index types are included.
+-/
 def IsIsometry [DecidableEq inp] [Fintype out]
     (U : Matrix out inp R) : Prop :=
   Matrix.conjTranspose U * U = 1
 
-/-- A rectangular matrix `U : Matrix out inp R` is a coisometry when
-`U * Uᴴ = 1` on the output/row index `out`, where `Uᴴ = Matrix.conjTranspose U`.
-
-Orientation: `out` is the row/output index, `inp` is the column/input index.
-The condition `U * Uᴴ = 1` requires `[Fintype inp]` and `[DecidableEq out]`.
-Empty types are supported. -/
+/-- Let `R` be a commutative star ring and let `out`, `inp` be index types. Assume `inp` is finite and
+equality is decidable on `out`. An `out × inp` matrix `U` is a coisometry when `U*Uᴴ = 1` on the
+output index. Empty index types are included.
+-/
 def IsCoisometry [DecidableEq out] [Fintype inp]
     (U : Matrix out inp R) : Prop :=
   U * Matrix.conjTranspose U = 1
 
-/-- A rectangular matrix `U : Matrix out inp R` is unitary between `inp` and `out`
-when `Uᴴ * U = 1` on `inp` and `U * Uᴴ = 1` on `out`, where `Uᴴ = Matrix.conjTranspose U`.
-
-Orientation: `out` is the row/output index, `inp` is the column/input index,
-so `U : Matrix out inp R` is a linear map `inp → out`. Both equalities are
-required; this represents a unitary isomorphism between possibly differently
-named finite bases, not an isometry-only condition. -/
+/-- Let `R` be a commutative star ring and let `out`, `inp` be index types. If both index types are
+finite with decidable equality, an `out × inp` matrix `U` is unitary between them when both `Uᴴ*U =
+1` and `U*Uᴴ = 1` hold.
+-/
 def IsUnitaryBetween [DecidableEq out] [DecidableEq inp] [Fintype out] [Fintype inp]
     (U : Matrix out inp R) : Prop :=
   Matrix.conjTranspose U * U = 1 ∧ U * Matrix.conjTranspose U = 1
@@ -99,27 +91,38 @@ section Projections
 
 variable [DecidableEq out] [DecidableEq inp] [Fintype out] [Fintype inp]
 
-/-- Left projection of `IsUnitaryBetween`: `conjTranspose U * U = 1` on the input index. -/
+/-- Let `R` be a commutative star ring and let `out`, `inp` be index types. For finite decidable index
+types and a unitary-between matrix `U`, the input-side identity is `Uᴴ*U = 1`.
+-/
 theorem IsUnitaryBetween.star_mul {U : Matrix out inp R}
     (h : IsUnitaryBetween U) : Matrix.conjTranspose U * U = 1 :=
   h.1
 
-/-- Right projection of `IsUnitaryBetween`: `U * conjTranspose U = 1` on the output index. -/
+/-- Let `R` be a commutative star ring and let `out`, `inp` be index types. For finite decidable index
+types and a unitary-between matrix `U`, the output-side identity is `U*Uᴴ = 1`.
+-/
 theorem IsUnitaryBetween.mul_star {U : Matrix out inp R}
     (h : IsUnitaryBetween U) : U * Matrix.conjTranspose U = 1 :=
   h.2
 
-/-- Projection of `IsUnitaryBetween` to `IsIsometry`: `Uᴴ * U = 1`. -/
+/-- Let `R` be a commutative star ring and let `out`, `inp` be index types. For finite decidable index
+types, every unitary-between matrix is an isometry.
+-/
 theorem IsUnitaryBetween.isIsometry {U : Matrix out inp R}
     (h : IsUnitaryBetween U) : IsIsometry U :=
   h.1
 
-/-- Projection of `IsUnitaryBetween` to `IsCoisometry`: `U * Uᴴ = 1`. -/
+/-- Let `R` be a commutative star ring and let `out`, `inp` be index types. For finite decidable index
+types, every unitary-between matrix is a coisometry.
+-/
 theorem IsUnitaryBetween.isCoisometry {U : Matrix out inp R}
     (h : IsUnitaryBetween U) : IsCoisometry U :=
   h.2
 
-/-- `IsUnitaryBetween` is exactly `IsIsometry ∧ IsCoisometry`. -/
+/-- Let `R` be a commutative star ring and let `out`, `inp` be index types. For finite decidable index
+types, a rectangular matrix is unitary between them exactly when it is both an isometry and a
+coisometry.
+-/
 theorem isUnitaryBetween_iff_isIsometry_and_isCoisometry {U : Matrix out inp R} :
     IsUnitaryBetween U ↔ IsIsometry U ∧ IsCoisometry U :=
   Iff.rfl
@@ -128,8 +131,9 @@ end Projections
 
 variable {n : Type*} [DecidableEq n] [Fintype n]
 
-/-- Square specialization: for `U : Matrix n n R`, `IsUnitaryBetween U` is
-equivalent to membership in the ordinary unitary group `Matrix.unitaryGroup n R`. -/
+/-- Let `R` be a commutative star ring and `n` a finite index type with decidable equality. A square
+matrix is unitary between `n` and itself exactly when it belongs to `Matrix.unitaryGroup n R`.
+-/
 theorem isUnitaryBetween_iff_mem_unitaryGroup {U : Matrix n n R} :
     IsUnitaryBetween U ↔ U ∈ unitaryGroup n R := by
   constructor
@@ -144,13 +148,10 @@ theorem isUnitaryBetween_iff_mem_unitaryGroup {U : Matrix n n R} :
     · have h2 : U * star U = 1 := mem_unitaryGroup_iff.mp h
       rwa [Matrix.star_eq_conjTranspose] at h2
 
-/-- Any two `out × inp` isometries with the same finite domain differ by a
-left-multiplied square unitary on `out`. The input is allowed to be `Finite`
-and possibly empty; the empty case is handled explicitly, and a nonempty input
-rules out empty output from `Vᴴ * V = 1`. The proof converts to Euclidean
-lin maps, builds range linear isometry equivalences, extends with
-`LinearIsometry.extend`, uses finite-dimensional injectivity iff surjectivity,
-and converts back to a unitary matrix. -/
+/-- Let `out`, `inp` be finite index types with decidable equality, and let `V`, `W` be complex `out ×
+inp` matrices satisfying `Vᴴ*V = Wᴴ*W = 1`. There exists a square unitary matrix `U` on `out` with
+`U*V = W`. Either index type may be empty.
+-/
 public theorem exists_unitary_mul_eq_of_isometry
     {out inp : Type*}
     [Fintype out] [DecidableEq out] [Finite inp] [DecidableEq inp]

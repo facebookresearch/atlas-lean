@@ -39,7 +39,11 @@ namespace ContinuousMap
 
 variable {X : Type u} [TopologicalSpace X]
 
-/-- Restrict a continuous function on StoneCech through the actual unit map. -/
+/-- Let `X` be an arbitrary topological space. The scalar function spaces are the bounded continuous
+complex functions on `X` and the continuous complex functions on its Stone–Čech
+compactification.
+
+Restrict a continuous function on StoneCech through the unit map. -/
 noncomputable def stoneCechRestrictHom :
     C(StoneCech X, ℂ) →⋆ₐ[ℂ] (X →ᵇ ℂ) where
   toFun f := (BoundedContinuousFunction.mkOfCompact f).compContinuous
@@ -71,7 +75,11 @@ noncomputable def stoneCechRestrictHom :
     intro x
     rfl
 
-/-- Restriction has its literal compactification-unit value. -/
+/-- Let `X` be an arbitrary topological space. The scalar function spaces are the bounded continuous
+complex functions on `X` and the continuous complex functions on its Stone–Čech
+compactification.
+
+Restriction has its compactification-unit value. -/
 @[simp]
 theorem stoneCechRestrictHom_apply (f : C(StoneCech X, ℂ)) (x : X) :
     stoneCechRestrictHom f x = f (stoneCechUnit x) := rfl
@@ -82,7 +90,11 @@ namespace BoundedContinuousFunction
 
 variable {X : Type u} [TopologicalSpace X]
 
-/-- Extend a bounded scalar function via its actual compact norm-bounded ball. -/
+/-- Let `X` be an arbitrary topological space. The scalar function spaces are the bounded continuous
+complex functions on `X` and the continuous complex functions on its Stone–Čech
+compactification.
+
+Extend a bounded scalar function via its compact norm-bounded ball. -/
 noncomputable def stoneCechExtension (g : X →ᵇ ℂ) : C(StoneCech X, ℂ) :=
   let gK : C(X, Metric.closedBall (0 : ℂ) ‖g‖) :=
     { toFun x := ⟨g x, mem_closedBall_zero_iff.2 (g.norm_coe_le_norm x)⟩
@@ -95,7 +107,11 @@ noncomputable def stoneCechExtension (g : X →ᵇ ℂ) : C(StoneCech X, ℂ) :=
       (continuous_stoneCechExtend
         (g := (gK : X → Metric.closedBall (0 : ℂ) ‖g‖)) gK.continuous) }
 
-/-- The compact-ball extension has exactly the given value on the unit image. -/
+/-- Let `X` be an arbitrary topological space. The scalar function spaces are the bounded continuous
+complex functions on `X` and the continuous complex functions on its Stone–Čech
+compactification.
+
+The compact-ball extension has exactly the given value on the unit image. -/
 @[simp]
 theorem stoneCechExtension_stoneCechUnit (g : X →ᵇ ℂ) (x : X) :
     stoneCechExtension g (stoneCechUnit x) = g x := by
@@ -109,7 +125,11 @@ theorem stoneCechExtension_stoneCechUnit (g : X →ᵇ ℂ) (x : X) :
   rw [stoneCechExtend_stoneCechUnit]
   rfl
 
-/-- Restriction recovers every bounded scalar function from its actual extension. -/
+/-- Let `X` be an arbitrary topological space. The scalar function spaces are the bounded continuous
+complex functions on `X` and the continuous complex functions on its Stone–Čech
+compactification.
+
+Restriction recovers every bounded scalar function from its extension. -/
 @[simp]
 theorem stoneCechRestrict_extension (g : X →ᵇ ℂ) :
     ContinuousMap.stoneCechRestrictHom (stoneCechExtension g) = g := by
@@ -117,7 +137,11 @@ theorem stoneCechRestrict_extension (g : X →ᵇ ℂ) :
   intro x
   simp only [ContinuousMap.stoneCechRestrictHom_apply, stoneCechExtension_stoneCechUnit]
 
-/-- Density makes the extension of a restricted continuous scalar function unique. -/
+/-- Let `X` be an arbitrary topological space. The scalar function spaces are the bounded continuous
+complex functions on `X` and the continuous complex functions on its Stone–Čech
+compactification.
+
+Density makes the extension of a restricted continuous scalar function unique. -/
 @[simp]
 theorem stoneCechExtension_restrict (f : C(StoneCech X, ℂ)) :
     stoneCechExtension (ContinuousMap.stoneCechRestrictHom f) = f := by
@@ -137,7 +161,11 @@ namespace ContinuousMap
 
 variable {X : Type u} [TopologicalSpace X]
 
-/-- Actual restriction and compact-ball extension form a scalar star algebra equivalence. -/
+/-- Let `X` be an arbitrary topological space. The scalar function spaces are the bounded continuous
+complex functions on `X` and the continuous complex functions on its Stone–Čech
+compactification.
+
+restriction and compact-ball extension form a scalar star algebra equivalence. -/
 noncomputable def stoneCechRestrictEquiv :
     C(StoneCech X, ℂ) ≃⋆ₐ[ℂ] (X →ᵇ ℂ) where
   toFun := stoneCechRestrictHom
@@ -149,12 +177,20 @@ noncomputable def stoneCechRestrictEquiv :
   map_star' := map_star stoneCechRestrictHom
   map_smul' := map_smul stoneCechRestrictHom
 
-/-- The equivalence keeps the actual restriction map as its forward value. -/
+/-- Let `X` be an arbitrary topological space. The scalar function spaces are the bounded continuous
+complex functions on `X` and the continuous complex functions on its Stone–Čech
+compactification.
+
+The equivalence keeps the restriction map as its forward value. -/
 @[simp]
 theorem stoneCechRestrictEquiv_apply (f : C(StoneCech X, ℂ)) :
     stoneCechRestrictEquiv f = stoneCechRestrictHom f := rfl
 
-/-- The inverse equivalence keeps the actual compact-ball extension as its value. -/
+/-- Let `X` be an arbitrary topological space. The scalar function spaces are the bounded continuous
+complex functions on `X` and the continuous complex functions on its Stone–Čech
+compactification.
+
+The inverse equivalence keeps the compact-ball extension as its value. -/
 @[simp]
 theorem stoneCechRestrictEquiv_symm_apply (g : X →ᵇ ℂ) :
     stoneCechRestrictEquiv.symm g = BoundedContinuousFunction.stoneCechExtension g := rfl

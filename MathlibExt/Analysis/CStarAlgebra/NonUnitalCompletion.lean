@@ -163,9 +163,10 @@ private theorem completionNonUnitalMapStar_norm_mul_self_le
   simpa only [UniformSpace.Completion.norm_coe] using
     CStarRing.norm_mul_self_le a
 
-/-- The canonical nonunital C-star structure on the ordinary uniform completion
-of an incomplete complex C-star ring. Activate it locally with `let _ := ...`.
-No global instance is registered. -/
+/-- **Nonunital C*-completion.** Let `A` be a nonunital normed complex algebra with a ring involution
+compatible with complex scalars and satisfying `‖a* a‖ = ‖a‖²`; `A` need not be complete. Its
+uniform completion carries a nonunital complex C*-algebra structure with the extended norm,
+multiplication, complex scalar action, and involution. -/
 @[instance_reducible]
 noncomputable def completionNonUnitalCStarAlgebra
     (A : Type uA)
@@ -201,8 +202,10 @@ noncomputable def completionNonUnitalCStarAlgebra
       star_smul := by exact completionNonUnitalMapStar_smul A
       norm_mul_self_le := by exact completionNonUnitalMapStar_norm_mul_self_le A }
 
-/-- The completed involution agrees with source involution on the dense
-canonical coefficient image. -/
+/-- **Involution on a nonunital C*-completion.** Let `A` be a nonunital normed complex algebra with a
+ring involution compatible with complex scalars and satisfying `‖a* a‖ = ‖a‖²`; `A` need not be
+complete. For the canonical dense map `ι` into its uniform completion and every `a ∈ A`, `(ι(a))* =
+ι(a*)`. -/
 theorem completionNonUnitalCStarAlgebra_star_coe
     (A : Type uA)
     [NonUnitalNormedRing A] [StarRing A] [CStarRing A]

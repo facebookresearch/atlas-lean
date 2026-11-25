@@ -1,3 +1,6 @@
 # Norm gns One Vector
 
-The vector's norm is computed from the original positive functional.
+Let `B` be a unital complex C*-algebra with a compatible star order, and let `f : B → ℂ` be a
+positive complex-linear functional.
+
+The vector's norm is computed from the positive functional.

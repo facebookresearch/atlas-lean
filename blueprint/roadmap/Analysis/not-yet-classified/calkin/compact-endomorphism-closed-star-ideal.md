@@ -1,4 +1,5 @@
-# Compact Endomorphism Closed Star Ideal
+# Compact operators as a closed star ideal
 
-The compact endomorphisms, bundled as the canonical closed two-sided star
-ideal of the bounded operators on a complex Hilbert space.
+Let `H` be a complete complex Hilbert space. Its
+Calkin algebra is the quotient `B(H)/K(H)` of bounded operators by compact operators, with the
+quotient C*-norm. The compact operators form a closed two-sided star ideal of `B(H)`.

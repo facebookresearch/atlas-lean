@@ -1,3 +1,6 @@
-# Dense finite Support Set
+# Density of finite-support sections
 
-Actual finite-support families are dense in the inherited norm topology.
+For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its c₀ direct sum consists of norm-vanishing sections with coordinatewise operations
+and the supremum norm. The sections with finite support are dense in the c₀ sum for its supremum
+norm.

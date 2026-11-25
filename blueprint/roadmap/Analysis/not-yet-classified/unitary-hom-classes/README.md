@@ -2,19 +2,19 @@
 
 ## CStar Extension
 
-- [Weakly unitary equivalent refl](weakly-unitary-equivalent-refl.md)
-- [Weakly unitary equivalent symm](weakly-unitary-equivalent-symm.md)
-- [Weakly unitary equivalent trans](weakly-unitary-equivalent-trans.md)
-- [Weak Unitary Hom Setoid](weak-unitary-hom-setoid.md)
-- [Unitary Hom Classes](unitary-hom-classes.md)
+- [Reflexivity of weak Busby equivalence](weakly-unitary-equivalent-refl.md)
+- [Symmetry of weak Busby equivalence](weakly-unitary-equivalent-symm.md)
+- [Transitivity of weak Busby equivalence](weakly-unitary-equivalent-trans.md)
+- [Equivalence relation of weak Busby conjugacy](weak-unitary-hom-setoid.md)
+- [Weak unitary classes of Busby homomorphisms](unitary-hom-classes.md)
 
 ## Unitary Hom Classes
 
-- [Mk](mk.md)
-- [Mk eq mk iff](mk-eq-mk-iff.md)
-- [Has Liftable Representative](has-liftable-representative.md)
-- [Zero has Liftable Representative](zero-has-liftable-representative.md)
+- [Class of a Busby homomorphism](mk.md)
+- [Equality of weak unitary Busby classes](mk-eq-mk-iff.md)
+- [Liftable representative of a Busby class](has-liftable-representative.md)
+- [Liftability of the zero Busby class](zero-has-liftable-representative.md)
 
 ## CStar Extension
 
-- [Is Trivial of strongly unitary equivalent](is-trivial-of-strongly-unitary-equivalen.md)
+- [Strong Busby conjugacy preserves liftability](is-trivial-of-strongly-unitary-equivalen.md)

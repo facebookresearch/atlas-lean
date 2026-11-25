@@ -1,6 +1,6 @@
 # Separated Completion
 
-- [Separated Completion CStar Algebra](separated-completion-cstar-algebra.md)
-- [Separated Completion Star Alg Hom](separated-completion-star-alg-hom.md)
-- [Separated Completion Star Alg Hom apply](separated-completion-star-alg-hom-apply.md)
-- [Separated Completion Star Alg Hom norm](separated-completion-star-alg-hom-norm.md)
+- [C*-algebra of a separated completion](separated-completion-cstar-algebra.md)
+- [Canonical homomorphism to a separated C*-completion](separated-completion-star-alg-hom.md)
+- [Formula for the separated-completion homomorphism](separated-completion-star-alg-hom-apply.md)
+- [Norm preserved by a separated C*-completion](separated-completion-star-alg-hom-norm.md)

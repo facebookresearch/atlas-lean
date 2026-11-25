@@ -37,7 +37,11 @@ universe uA uH
 variable {A : Type uA} [NonUnitalNonAssocSemiring A] [DistribMulAction ℂ A] [Star A]
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The existing neutral essential-space condition is exactly density of the original range span. -/
+/-- **Characterization of the essential space.** Let `H` be a complete complex Hilbert space and let `A`
+be a nonunital, possibly nonassociative semiring with a distributive complex scalar action and a
+star operation. Let `ρ : A → B(H)` preserve addition, multiplication, complex scalars, and star. The
+essential space of `ρ` is all of `H` exactly when the complex-linear span of `{ρ(a)ξ : a ∈ A, ξ ∈
+H}` is norm-dense in `H`. -/
 theorem essentialSpace_eq_top_iff_dense (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
     ρ.essentialSpace = ⊤ ↔
       Dense (Submodule.span ℂ (Set.range fun z : A × H => ρ z.1 z.2) : Set H) := by
@@ -46,7 +50,11 @@ theorem essentialSpace_eq_top_iff_dense (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H
     Dense (Submodule.span ℂ (Set.range fun z : A × H => ρ z.1 z.2) : Set H) ↔
       (Submodule.span ℂ (Set.range fun z : A × H => ρ z.1 z.2)).topologicalClosure = ⊤).symm
 
-/-- The original computed essential restriction satisfies the same neutral nondegeneracy condition. -/
+/-- **Essential restriction has full essential space.** Let `H` be a complete complex Hilbert space and
+let `A` be a nonunital, possibly nonassociative semiring with a distributive complex scalar action
+and a star operation. Let `ρ : A → B(H)` preserve addition, multiplication, complex scalars, and
+star. The representation restricted to its closed essential subspace has that whole subspace as its
+essential space. -/
 theorem essentialRepresentation_essentialSpace_eq_top (ρ : A →⋆ₙₐ[ℂ] (H →L[ℂ] H)) :
     ρ.essentialRepresentation.essentialSpace = ⊤ :=
   (essentialSpace_eq_top_iff_dense ρ.essentialRepresentation).mpr ρ.nondegenerate_essentialRepresentation

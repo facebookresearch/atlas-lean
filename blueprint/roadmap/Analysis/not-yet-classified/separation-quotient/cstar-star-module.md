@@ -1,4 +1,5 @@
-# Cstar Star Module
+# Complex scalars and the separated involution
 
-Scalar conjugation descends with the same canonical quotient scalar
-operations.
+For a unital seminormed complex algebra `A` with
+scalar-compatible isometric ring involution, the separation quotient satisfies `(c x)* =
+conjugate(c) x*`.

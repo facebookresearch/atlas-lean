@@ -1,5 +1,5 @@
-# Exists kraus choi Rank
+# Kraus representation of minimal size
 
-Every completely positive map `φ : Matrix n n ℂ →CP Matrix m m ℂ` admits a
-Kraus representation indexed by `Fin (choiRank φ)`. This covers the case
-`choiRank φ = 0`, empty input and output types, and the zero map.
+Every completely positive map `φ : Matrix n n ℂ →CP Matrix
+m m ℂ`, for finite decidable `n,m`, has a Kraus family `K : Fin (choiRank φ) → Matrix m n ℂ` with `φ
+= kraus K`. Choi rank zero gives an empty family; empty input or output types are allowed.

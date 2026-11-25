@@ -49,8 +49,9 @@ variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable [AddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E] [Norm E]
 variable [CStarModule Bᵐᵒᵖ E]
 
-/-- The `B`-valued inner product of a right C-star module represented as a
-`CStarModule Bᵐᵒᵖ E`. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its complex module structure, norm and B-valued inner product. The B-valued inner product is
+conjugate-linear in the first vector and right B-linear in the second vector. -/
 def rightInner (x y : E) : B :=
   MulOpposite.unop (inner Bᵐᵒᵖ x y)
 
@@ -112,19 +113,25 @@ theorem star_rightInner (x y : E) :
   rw [rightInner, rightInner, ← MulOpposite.unop_star,
     CStarModule.star_inner]
 
-/-- The inner product is right-linear in its second vector. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its complex module structure, norm and B-valued inner product. The inner product of x with yb
+is the inner product of x with y multiplied on the right by b. -/
 @[simp]
 theorem rightInner_right_smul (x y : E) (b : B) :
     rightInner (B := B) x (y <• b) = rightInner (B := B) x y * b := by
   simp [rightInner]
 
-/-- Moving a right coefficient out of the first vector conjugates it. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its complex module structure, norm and B-valued inner product. The inner product of xb with y
+is star(b) multiplied by the inner product of x with y. -/
 @[simp]
 theorem rightInner_left_smul (x y : E) (b : B) :
     rightInner (B := B) (x <• b) y = star b * rightInner (B := B) x y := by
   simp [rightInner]
 
-/-- Vectors are determined by all right-module inner products against them. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its complex module structure, norm and B-valued inner product. Two vectors are equal if their
+B-valued inner products against every vector are equal. -/
 theorem ext_rightInner {x y : E}
     (h : ∀ z : E, rightInner (B := B) z x = rightInner (B := B) z y) : x = y := by
   rw [← sub_eq_zero]
@@ -200,8 +207,8 @@ theorem norm_rightInner_self (x : E) :
   rw [rightInner, MulOpposite.norm_unop]
   exact (CStarModule.norm_sq_eq (A := Bᵐᵒᵖ) (x := x)).symm
 
-/-- Right multiplication is bounded by the product of the vector and
-coefficient norms. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a normed right C-star module over
+B. The norm of xb is at most the norm of x times the norm of b. -/
 theorem norm_right_smul_le (x : E) (b : B) :
     ‖x <• b‖ ≤ ‖x‖ * ‖b‖ := by
   refine (sq_le_sq₀ (CStarModule.norm_nonneg Bᵐᵒᵖ (E := E) (x := x <• b))
@@ -220,8 +227,8 @@ theorem norm_right_smul_le (x : E) (b : B) :
       rw [norm_star, norm_rightInner_self (B := B)]
       ring
 
-/-- Right multiplication as a complex-bilinear map, without installing an
-ambient `SMul B E`.  This construction is available at the pre-Hilbert level. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a normed right C-star module over
+B. Right multiplication defines a complex-bilinear map from E × B into E. -/
 def rightSMulLinear : E →ₗ[ℂ] B →ₗ[ℂ] E where
   toFun x :=
     { toFun := fun b ↦ x <• b
@@ -247,9 +254,11 @@ variable [NonUnitalCStarAlgebra C] [PartialOrder Cᵐᵒᵖ]
 variable [AddCommGroup F] [Module ℂ F] [Norm F]
   [SMul Cᵐᵒᵖ F] [CStarModule Cᵐᵒᵖ F]
 
-/-- Right-inner covariance forces coefficient semilinearity. The vector map
-need not be linear, continuous or bijective; the coefficient map needs only
-multiplication and star preservation. -/
+/-- Let B and C be possibly nonunital complex C-star algebras and E and F right pre-Hilbert
+modules over them. Suppose maps σ from B to C and U from E to F satisfy inner(Ux,Uy) =
+σ(inner(x,y)) for every pair of vectors. Assume σ preserves multiplication and involution.
+Right-inner covariance forces coefficient semilinearity. The vector map need not be linear,
+continuous or bijective; the coefficient map needs only multiplication and star preservation. -/
 theorem map_right_smul_of_map_rightInner
     {S : Type*} [FunLike S B C] [MulHomClass S B C] [StarHomClass S B C]
     (σ : S) (U : E → F)
@@ -300,8 +309,11 @@ theorem map_right_smul_of_map_rightInner
     simpa [CStarModule.rightInner] using hdd
   exact sub_eq_zero.mp hd
 
-/-- Right-inner covariance and preservation of coefficient norms imply
-preservation of vector norms, without linearity or completeness. -/
+/-- Let B and C be possibly nonunital complex C-star algebras and E and F right pre-Hilbert
+modules over them. Suppose maps σ from B to C and U from E to F satisfy inner(Ux,Uy) =
+σ(inner(x,y)) for every pair of vectors. Assume σ preserves coefficient norms. Right-inner
+covariance and preservation of coefficient norms imply preservation of vector norms, without
+linearity or completeness. -/
 theorem norm_map_of_map_rightInner
     (σ : B → C) (U : E → F)
     (hσnorm : ∀ b : B, ‖σ b‖ = ‖b‖)
@@ -322,8 +334,10 @@ theorem norm_map_of_map_rightInner
       hσnorm (CStarModule.rightInner (B := B) x x)
     _ = ‖x‖ ^ 2 := CStarModule.norm_rightInner_self (B := B) x
 
-/-- Right-inner covariance and coefficient injectivity imply vector-map
-injectivity; no additivity or continuity is required. -/
+/-- Let B and C be possibly nonunital complex C-star algebras and E and F right pre-Hilbert
+modules over them. Suppose maps σ from B to C and U from E to F satisfy inner(Ux,Uy) =
+σ(inner(x,y)) for every pair of vectors. Assume σ is injective. Right-inner covariance and
+coefficient injectivity imply vector-map injectivity; no additivity or continuity is required. -/
 theorem injective_of_map_rightInner
     (σ : B → C) (U : E → F)
     (hσinjective : Function.Injective σ)
@@ -353,8 +367,9 @@ variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
 variable [CStarModule Bᵐᵒᵖ E]
 
-/-- The complex polarization identity for a right C-star-module inner
-product. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a normed right C-star module over
+B. The B-valued inner product is recovered from the four self-inner values at x plus or minus
+y and x plus or minus i times y by the complex polarization formula. -/
 theorem rightInner_polarization (x y : E) :
     (4 : ℂ) • rightInner (B := B) x y =
       (rightInner (B := B) (x + y) (x + y) -
@@ -429,8 +444,8 @@ private theorem norm_rightInner_le_four_of_norm_eq_one (x y : E)
       _ ≤ 16 := hsum
   linarith
 
-/-- A polarization-based norm bound for the right inner product that does
-not require a `StarOrderedRing` instance on the chosen coefficient order. -/
+/-- Let B be a unital complex C-star algebra and E a normed right C-star module over B. The norm
+of the B-valued inner product of x and y is at most four times the product of their norms. -/
 theorem norm_rightInner_le_four_mul (x y : E) :
     ‖rightInner (B := B) x y‖ ≤ 4 * ‖x‖ * ‖y‖ := by
   by_cases hx : ‖x‖ = 0
@@ -483,7 +498,8 @@ variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable [NormedAddCommGroup E] [NormedSpace ℂ E] [SMul Bᵐᵒᵖ E]
 variable [CStarModule Bᵐᵒᵖ E]
 
-/-- The jointly continuous complex-bilinear right action. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a normed right C-star module over
+B. Right multiplication is a bounded complex-bilinear map from E × B into E. -/
 noncomputable def rightSMulCLM : E →L[ℂ] B →L[ℂ] E :=
   (rightSMulLinear (B := B)).mkContinuous₂ 1 fun x b ↦ by
     simpa using norm_right_smul_le x b
@@ -507,18 +523,24 @@ theorem continuous_const_right_smul (x : E) :
     Continuous fun b : B ↦ x <• b := by
   exact (rightSMulCLM (B := B) x).continuous
 
-/-- The right-module inner product is jointly continuous. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a normed right C-star module over
+B. With the compatible C-star-positive coefficient order, the B-valued inner product is
+jointly continuous in the two normed-module variables. -/
 @[continuity, fun_prop]
 theorem continuous_rightInner [StarOrderedRing Bᵐᵒᵖ] :
     Continuous fun p : E × E ↦ rightInner (B := B) p.1 p.2 :=
   MulOpposite.continuous_unop.comp CStarModule.continuous_inner
 
-/-- The right-module inner product is continuous in its first vector. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a normed right C-star module over
+B. With the compatible C-star-positive coefficient order, the inner product is continuous in
+its first normed-module variable. -/
 theorem continuous_rightInner_left [StarOrderedRing Bᵐᵒᵖ] (y : E) :
     Continuous fun x : E ↦ rightInner (B := B) x y :=
   continuous_rightInner.comp (continuous_id.prodMk continuous_const)
 
-/-- The right-module inner product is continuous in its second vector. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a normed right C-star module over
+B. With the compatible C-star-positive coefficient order, the inner product is continuous in
+its second normed-module variable. -/
 theorem continuous_rightInner_right [StarOrderedRing Bᵐᵒᵖ] (x : E) :
     Continuous fun y : E ↦ rightInner (B := B) x y :=
   continuous_rightInner.comp (continuous_const.prodMk continuous_id)
@@ -534,7 +556,9 @@ universe u
 variable {B : Type u} [NonUnitalCStarAlgebra B]
 variable [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
 
-/-- The canonical right self-module, with inner product `op (star x * y)`. -/
+/-- Let B be a possibly nonunital complex C-star algebra with its C-star-positive order. The
+coefficient algebra B is a right C-star module over itself with right multiplication and inner
+product star(x)y. -/
 @[instance_reducible]
 def selfModule : CStarModule Bᵐᵒᵖ B where
   inner x y := MulOpposite.op (star x * y)
@@ -564,7 +588,8 @@ def selfModule : CStarModule Bᵐᵒᵖ B where
     rw [← sq_eq_sq₀ (norm_nonneg _) (by positivity)]
     simpa [sq] using Eq.symm (CStarRing.norm_star_mul_self (x := x))
 
-/-- Scoped activation of the canonical right self-module. -/
+/-- Let B be a possibly nonunital complex C-star algebra with its C-star-positive order. Right
+multiplication and the inner product star(x)y make B a right C-star module over itself. -/
 scoped instance instSelfModule : CStarModule Bᵐᵒᵖ B := selfModule
 
 local instance : CStarModule Bᵐᵒᵖ B := selfModule

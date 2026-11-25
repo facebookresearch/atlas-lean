@@ -167,8 +167,16 @@ private theorem rawLeftMap_squareSplit
     simp only [map_add, LinearMap.add_apply, smul_add]
     rw [add_add_add_comm, hz, hz']
 
-/-- The literal radical left map is bounded by the actual input operator norm.
-Both quotient norms are the constructed self-inner norms, not assumptions. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and F₁ be complete normed right inner-product B₁-modules and E₂
+a complete normed right inner-product B₂-module, all with compatible complex normed-space
+structures. Let φ represent B₁ by adjointable endomorphisms of E₂, and use the Gram-form norms
+on the balanced tensor radical quotients.
+
+For an adjointable L : E₁ → F₁ and a radical quotient vector q, the induced map satisfies
+‖L_φ(q)‖ ≤ ‖L‖ ‖q‖.
+-/
 theorem radicalLeftMap_norm_le
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) (q : RadicalTensor (E₁ := E₁) φ) :
@@ -227,7 +235,16 @@ theorem radicalLeftMap_norm_le
   exact (sq_le_sq₀ (_root_.norm_nonneg (radicalLeftMap φ L q))
     (mul_nonneg (_root_.norm_nonneg L) (_root_.norm_nonneg q))).mp hsq
 
-/-- The actual radical left map with continuity derived from its proved bound. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and F₁ be complete normed right inner-product B₁-modules and E₂
+a complete normed right inner-product B₂-module, all with compatible complex normed-space
+structures. Let φ represent B₁ by adjointable endomorphisms of E₂, and use the Gram-form norms
+on the balanced tensor radical quotients.
+
+An adjointable L : E₁ → F₁ induces a bounded complex-linear map between the two balanced tensor
+radical quotients.
+-/
 def radicalLeftCLM
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) :
@@ -250,7 +267,16 @@ def radicalLeftCLM
     radicalTensorNormedSpace φ
   exact (radicalLeftMap φ L).mkContinuous ‖L‖ (fun q => radicalLeftMap_norm_le φ L q)
 
-/-- The bounded map retains the exact existing algebraic quotient value. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and F₁ be complete normed right inner-product B₁-modules and E₂
+a complete normed right inner-product B₂-module, all with compatible complex normed-space
+structures. Let φ represent B₁ by adjointable endomorphisms of E₂, and use the Gram-form norms
+on the balanced tensor radical quotients.
+
+For an adjointable L : E₁ → F₁ and a radical quotient vector q, the bounded induced map
+evaluates to the algebraically induced radical quotient image of q.
+-/
 @[simp]
 theorem radicalLeftCLM_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -274,7 +300,16 @@ theorem radicalLeftCLM_apply
     radicalTensorNormedSpace φ
   rfl
 
-/-- The computed radical CLM has the actual source operator-norm bound. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and F₁ be complete normed right inner-product B₁-modules and E₂
+a complete normed right inner-product B₂-module, all with compatible complex normed-space
+structures. Let φ represent B₁ by adjointable endomorphisms of E₂, and use the Gram-form norms
+on the balanced tensor radical quotients.
+
+For an adjointable L : E₁ → F₁, the operator norm of the induced bounded map between the tensor
+radical quotients is at most ‖L‖.
+-/
 theorem radicalLeftCLM_norm_le
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) :

@@ -1,3 +1,4 @@
-# Choi Rank single Kraus eq one of ne zero
+# Rank of a nonzero single Kraus operator
 
-A nonzero single-Kraus map has Choi rank exactly one. Requires `K ≠ 0`.
+For finite decidable `n,m`, a nonzero complex matrix `K
+: Matrix m n ℂ` gives a completely positive map `X ↦ K X Kᴴ` of Choi rank exactly one.

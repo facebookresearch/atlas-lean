@@ -2,14 +2,14 @@
 
 ## Completely Positive Map
 
-- [Cod Restrict](cod-restrict.md)
-- [Cod Restrict apply](cod-restrict-apply.md)
-- [Norm cod Restrict apply](norm-cod-restrict-apply.md)
-- [Norm cod Restrict apply le](norm-cod-restrict-apply-le.md)
+- [Closed codomain restriction of a CP map](cod-restrict.md)
+- [Evaluation of closed codomain restriction](cod-restrict-apply.md)
+- [Norm under closed codomain restriction](norm-cod-restrict-apply.md)
+- [Contraction under closed codomain restriction](norm-cod-restrict-apply-le.md)
 
 ## Canonical
 
-- [Cod Restrict Closed](cod-restrict-closed.md)
-- [Cod Restrict Closed apply](cod-restrict-closed-apply.md)
-- [Norm cod Restrict Closed apply](norm-cod-restrict-closed-apply.md)
-- [Norm cod Restrict Closed apply le](norm-cod-restrict-closed-apply-le.md)
+- [Canonical-order closed codomain restriction](cod-restrict-closed.md)
+- [Evaluation of canonical closed codomain restriction](cod-restrict-closed-apply.md)
+- [Norm of canonical closed codomain restriction](norm-cod-restrict-closed-apply.md)
+- [Canonical closed restriction preserves contraction](norm-cod-restrict-closed-apply-le.md)

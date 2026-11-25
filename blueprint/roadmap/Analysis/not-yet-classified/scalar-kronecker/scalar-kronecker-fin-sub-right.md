@@ -1,3 +1,4 @@
 # Scalar Kronecker Fin sub right
 
-Subtraction in the coefficient-matrix slot.
+Let `R` be a complex module. For natural numbers `m` and `n`, `S : CStarMatrix (Fin m) (Fin m) ℂ`
+and `M` and `N : CStarMatrix (Fin n) (Fin n) R`. Subtraction in the coefficient-matrix slot.

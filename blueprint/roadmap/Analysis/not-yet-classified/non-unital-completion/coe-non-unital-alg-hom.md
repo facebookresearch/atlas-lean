@@ -1,5 +1,6 @@
-# Coe Non Unital Alg Hom
+# Equivariant homomorphism into a completion
 
-The canonical equivariant map from a nonunital seminormed ring carrying a
-distributive monoid action with uniformly continuous fixed-scalar maps into
-its ordinary uniform completion.
+Let `A` be a nonunital seminormed ring and let a
+monoid `𝕜` act distributively on its additive group, with each fixed-scalar map uniformly
+continuous. The canonical map from `A` to its uniform completion preserves addition, multiplication,
+and the `𝕜`-action.

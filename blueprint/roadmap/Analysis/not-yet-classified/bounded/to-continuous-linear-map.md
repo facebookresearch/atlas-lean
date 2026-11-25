@@ -1,4 +1,5 @@
-# To Continuous Linear Map
+# Bounded linear map associated with a CP map
 
-The actual continuous linear map of a CP map, using Mathlib's positive
-map continuity and positive continuous-map class adapter.
+A completely positive map `φ : A → B` between
+nonunital complex C*-algebras with star-compatible partial orders is continuous. This is its
+continuous complex-linear map, with the same values.

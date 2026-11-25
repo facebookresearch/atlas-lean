@@ -39,8 +39,13 @@ variable [Monoid S] [Semiring R] [StarRing R]
 variable [DistribMulAction S R] [IsScalarTower S R R] [SMulCommClass S R R]
 variable [Fintype ι] [DecidableEq ι]
 
-/-- The literal finite matrix fold from a genuine Cuntz family. Its forward
-map is `Σi,j vi*Xij*star(vj)` and its inverse has entries `star(vi)*z*vj`. -/
+/-- Let `S` be a monoid acting additively on a star semiring `R`, compatibly with multiplication on both
+sides. Let `ι` be finite with decidable equality. For a family `v : ι → R` satisfying `star (v i) *
+v j = δij` and `∑ i, v i * star (v i) = 1`, the matrix fold is a star-algebra equivalence
+`CStarMatrix ι ι R ≃⋆ₐ[S] R`. It sends `X` to `∑ i,j, v i * X i j * star (v j)`; its inverse sends
+`z` to the matrix with entry `star (v i) * z * v j`. Here `δij` is one when `i = j` and zero
+otherwise.
+-/
 def fold (v : ι → R)
     (hOrth : ∀ i j : ι, star (v i) * v j = if i = j then 1 else 0)
     (hPartition : (∑ i : ι, v i * star (v i)) = 1) :
@@ -128,7 +133,12 @@ def fold (v : ι → R)
   · intro c X
     simp only [Phi, CStarMatrix.smul_apply, mul_smul_comm, smul_mul_assoc, Finset.smul_sum]
 
-/-- The fold evaluates to its literal ordered double sum. -/
+/-- Let `S` be a monoid. Let `R` be a semiring. Let `ι` be a finite index type with decidable equality.
+The star on `R` is an additive involution reversing products. `S` acts on `R` preserving addition
+and zero. The `S`-scalar action on `R` is compatible with multiplication on both sides. For `v : ι →
+R` and `X : CStarMatrix ι ι R`. Assume `∀ i j : ι, star (v i) * v j = if i = j then 1 else 0` and
+`(∑ i : ι, v i * star (v i)) = 1`. The fold evaluates to its ordered double sum.
+-/
 theorem fold_apply (v : ι → R)
     (hOrth : ∀ i j : ι, star (v i) * v j = if i = j then 1 else 0)
     (hPartition : (∑ i : ι, v i * star (v i)) = 1) (X : CStarMatrix ι ι R) :
@@ -136,7 +146,12 @@ theorem fold_apply (v : ι → R)
       ∑ i : ι, ∑ j : ι, v i * X i j * star (v j) := by
   rfl
 
-/-- The inverse fold has the actual ordered multiplier sandwich entries. -/
+/-- Let `S` be a monoid. Let `R` be a semiring. Let `ι` be a finite index type with decidable equality.
+The star on `R` is an additive involution reversing products. `S` acts on `R` preserving addition
+and zero. The `S`-scalar action on `R` is compatible with multiplication on both sides. For `v : ι →
+R`, `z : R` and `i` and `j : ι`. Assume `∀ i j : ι, star (v i) * v j = if i = j then 1 else 0` and
+`(∑ i : ι, v i * star (v i)) = 1`. The inverse fold has the ordered multiplier sandwich entries.
+-/
 theorem fold_symm_apply_entry (v : ι → R)
     (hOrth : ∀ i j : ι, star (v i) * v j = if i = j then 1 else 0)
     (hPartition : (∑ i : ι, v i * star (v i)) = 1) (z : R) (i j : ι) :

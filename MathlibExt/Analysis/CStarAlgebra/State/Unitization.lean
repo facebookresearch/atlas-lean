@@ -49,18 +49,26 @@ local instance stateUnitizationStarOrder :
     @StarOrderedRing (Unitization ℂ A) _ stateUnitizationOrder _ :=
   CStarAlgebra.spectralOrderedRing _
 
-/-- The literal linear extension with scalar value one, before positivity is proved. -/
+/-- **Linear extension to the unitization.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. On the complex unitization, the formula `(λ,a) ↦ λ + f(a)` defines a complex-linear
+extension of `f` with value one at the adjoined unit. -/
 def unitizationLinearExtension (f : A →P[ℂ] ℂ) : Unitization ℂ A →ₗ[ℂ] ℂ :=
   (Unitization.fstHom ℂ A).toLinearMap +
     f.toLinearMap.comp (Unitization.sndHom ℂ ℂ A)
 
 omit [StarOrderedRing A] in
-/-- The forced unitization extension has its actual coordinate formula. -/
+/-- **Formula for the linear unitization extension.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. For every `(λ,a)` in the complex unitization, the linear extension has value `λ + f(a)`. -/
 @[simp]
 theorem unitizationLinearExtension_apply (f : A →P[ℂ] ℂ) (x : Unitization ℂ A) :
     unitizationLinearExtension f x = x.fst + f x.snd := rfl
 
-/-- The genuine norm-one nonunital Schwarz bound makes the scalar variance nonnegative. -/
+/-- **Nonnegative variance of a nonunital state.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. Assume that the operator norm of `f` is one. For every `a ∈ A`, `f(a* a) - |f(a)|² ≥ 0`
+in the spectral order of `ℂ`. -/
 theorem state_variance_nonneg (f : A →P[ℂ] ℂ)
     (hf : ‖f.toContinuousLinearMap‖ = 1) (a : A) :
     0 ≤ f (star a * a) - star (f a) * f a := by
@@ -73,8 +81,10 @@ theorem state_variance_nonneg (f : A →P[ℂ] ℂ)
   rw [Complex.eq_coe_norm_of_nonneg hff, Complex.eq_coe_norm_of_nonneg hAA]
   exact (RCLike.ofReal_le_ofReal (K := ℂ)).2 hNorm
 
-/-- The extension's value on a star square is the ordinary scalar square
-plus the actual variance of the original state. -/
+/-- **Star-square formula for the unitization extension.** Let `A` be a nonunital complex C*-algebra
+with a star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. For `x = (λ,a)` in the complex unitization, the extension takes `x* x` to `|λ + f(a)|² +
+f(a* a) - |f(a)|²`. -/
 theorem unitizationLinearExtension_star_square (f : A →P[ℂ] ℂ)
     (x : Unitization ℂ A) :
     unitizationLinearExtension f (star x * x) =
@@ -85,15 +95,20 @@ theorem unitizationLinearExtension_star_square (f : A →P[ℂ] ℂ)
     smul_eq_mul, star_add]
   ring
 
-/-- Every actual unitization star square has a nonnegative extension value. -/
+/-- **Positivity on unitization star squares.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. Assume that the operator norm of `f` is one. For every element `x` of the complex
+unitization, the extension `(λ,a) ↦ λ + f(a)` has nonnegative value at `x* x`. -/
 theorem unitizationLinearExtension_square_nonneg (f : A →P[ℂ] ℂ)
     (hf : ‖f.toContinuousLinearMap‖ = 1) (x : Unitization ℂ A) :
     0 ≤ unitizationLinearExtension f (star x * x) := by
   rw [unitizationLinearExtension_star_square]
   exact add_nonneg (star_mul_self_nonneg _) (state_variance_nonneg f hf x.snd)
 
-/-- Additive closure of the actual positive star squares proves positivity
-on the full stock unitization cone. -/
+/-- **Positivity of the unitization extension.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. Assume that the operator norm of `f` is one. For every positive element `x` of the
+complex C*-unitization, the linear extension has nonnegative value. -/
 theorem unitizationLinearExtension_nonneg (f : A →P[ℂ] ℂ)
     (hf : ‖f.toContinuousLinearMap‖ = 1) (x : Unitization ℂ A) (hx : 0 ≤ x) :
     0 ≤ unitizationLinearExtension f x := by
@@ -106,35 +121,50 @@ theorem unitizationLinearExtension_nonneg (f : A →P[ℂ] ℂ)
   · intro a b _ _ ha hb
     simpa only [map_add] using add_nonneg ha hb
 
-/-- The actual positive linear state on forced unitization. Its positivity
-is proved from the given original state, not supplied as a premise. -/
+/-- **Positive state on the unitization.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. Assume that the operator norm of `f` is one. The extension `(λ,a) ↦ λ + f(a)` is a
+positive complex-linear functional on the complex unitization. -/
 def unitizationPositiveState (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1) :
     Unitization ℂ A →ₚ[ℂ] ℂ :=
   PositiveLinearMap.mk₀ (unitizationLinearExtension f) (unitizationLinearExtension_nonneg f hf)
 
-/-- The actual positive extension is continuous because its domain is the
-already constructed stock C-star unitization. -/
+/-- **Continuous state on the unitization.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. Assume that the operator norm of `f` is one. The extension `(λ,a) ↦ λ + f(a)` is a
+positive continuous complex-linear functional on the complex C*-unitization. -/
 def unitizationState (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1) :
     Unitization ℂ A →P[ℂ] ℂ :=
   PositiveContinuousLinearMap.ofClass (unitizationPositiveState f hf)
 
-/-- The continuous state retains the literal scalar-plus-original-state formula. -/
+/-- **Value of the unitization state.** Let `A` be a nonunital complex C*-algebra with a star-compatible
+partial order and let `f : A → ℂ` be a positive continuous complex-linear functional. Assume that
+the operator norm of `f` is one. For every element `(λ,a)` of the unitization, the extended state
+has value `λ + f(a)`. -/
 @[simp]
 theorem unitizationState_apply (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1)
     (x : Unitization ℂ A) : unitizationState f hf x = x.fst + f x.snd := rfl
 
-/-- Restriction through the actual isometric ideal embedding recovers the given state. -/
+/-- **Restriction of the unitization state.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. Assume that the operator norm of `f` is one. The extended state evaluates at the ideal
+inclusion `(0,a)` to `f(a)` for every `a ∈ A`. -/
 theorem unitizationState_inr (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1) (a : A) :
     unitizationState f hf (Unitization.inr a) = f a := by
   simp only [unitizationState_apply, Unitization.fst_inr, Unitization.snd_inr, zero_add]
 
-/-- The literal forced unit has state value one. -/
+/-- **Value of the state at the adjoined unit.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. Assume that the operator norm of `f` is one. The extended state takes value one at the
+unit of the complex unitization. -/
 theorem unitizationState_one (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1) :
     unitizationState f hf (1 : Unitization ℂ A) = 1 := by
   simp only [unitizationState_apply, Unitization.fst_one, Unitization.snd_one, map_zero, add_zero]
 
-/-- Positivity and the value at the actual unit give norm one in the original
-stock unitization norm. -/
+/-- **Norm of the extended unitization state.** Let `A` be a nonunital complex C*-algebra with a
+star-compatible partial order and let `f : A → ℂ` be a positive continuous complex-linear
+functional. Assume that the operator norm of `f` is one. The positive continuous extension of `f` to
+the complex C*-unitization has operator norm one. -/
 theorem norm_unitizationState (f : A →P[ℂ] ℂ) (hf : ‖f.toContinuousLinearMap‖ = 1) :
     ‖(unitizationState f hf).toContinuousLinearMap‖ = 1 := by
   have h := (unitizationState f hf).ofReal_opNorm_eq_map_one

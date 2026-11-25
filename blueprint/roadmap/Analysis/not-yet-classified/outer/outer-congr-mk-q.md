@@ -1,4 +1,5 @@
-# Outer Congr mk Q
+# Classes under outer multiplier transport
 
-Outer transport evaluates on the actual submodule quotient projection.
-The named `outerCongr_outerQuotientMap` equation remains available for rewrites.
+Let `A,B` be nonunital complex C*-algebras and `e : A
+≃ B` a complex star-algebra equivalence. The induced outer equivalence sends the class of `T ∈ M(A)`
+to the class of its transported multiplier in `M(B)`.

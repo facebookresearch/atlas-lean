@@ -1,4 +1,5 @@
-# Eval Zero homotopic eval One
+# Endpoint evaluations are point-norm homotopic
 
-Evaluation at the two endpoints of the unit interval gives point-norm
-homotopic nonunital star homomorphisms.
+For a nonunital complex C*-algebra `A`,
+evaluation at `0` and evaluation at `1` are point-norm homotopic nonunital complex star
+homomorphisms from `C([0,1],A)` to `A`.

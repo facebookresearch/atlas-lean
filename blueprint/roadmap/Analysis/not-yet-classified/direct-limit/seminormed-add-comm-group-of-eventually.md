@@ -1,4 +1,9 @@
 # Seminormed Add Comm Group Of Eventually Bounded
 
-The explicit seminormed additive-group dictionary on the same algebraic
-carrier, with the original direct-limit addition and subtraction.
+Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The seminormed additive-group structure on the same algebraic carrier, with the direct-limit
+addition and subtraction.

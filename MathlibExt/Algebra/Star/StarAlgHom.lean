@@ -39,7 +39,10 @@ variable {R : Type uR} [CommSemiring R]
     {A : Type uA} [NonUnitalNonAssocSemiring A] [Module R A] [Star A]
     {B : Type uB} [NonUnitalNonAssocSemiring B] [Module R B] [Star B]
 
-/-- Promote the same linear map by its actual multiplication and star laws. -/
+/-- Let `R` be a commutative semiring and let `A`, `B` be possibly nonunital, nonassociative semirings
+with `R`-module structures and star operations. Let `f : A →ₗ[R] B` preserve multiplication and
+star. These two preservation laws give a nonunital star homomorphism with the same values as `f`.
+-/
 def ofLinearMap (f : A →ₗ[R] B)
     (hmul : ∀ a b, f (a * b) = f a * f b)
     (hstar : ∀ a, f (star a) = star (f a)) : A →⋆ₙₐ[R] B where
@@ -51,7 +54,10 @@ def ofLinearMap (f : A →ₗ[R] B)
         simpa only [MonoidHom.id_apply] using f.map_smul r a }
   map_star' := hstar
 
-/-- Promotion retains every original value of the actual linear map. -/
+/-- Let `R` be a commutative semiring and let `A`, `B` be possibly nonunital, nonassociative semirings
+with `R`-module structures and star operations. Let `f : A →ₗ[R] B` preserve multiplication and
+star. For every `a ∈ A`, the resulting nonunital star homomorphism has value `f a`.
+-/
 @[simp]
 theorem ofLinearMap_apply (f : A →ₗ[R] B)
     (hmul : ∀ a b, f (a * b) = f a * f b)

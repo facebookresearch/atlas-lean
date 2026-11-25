@@ -43,7 +43,9 @@ private theorem nonUnitalStarAlgHom_lipschitz
   simpa only [one_mul] using
     NonUnitalStarAlgHom.nnNorm_apply_le φ a
 
-/-- Pointwise coefficient postcomposition on bounded continuous functions. -/
+/-- Let `X` be a topological space. Let `A`, `B` be possibly nonunital complex C*-algebras.
+
+Pointwise coefficient postcomposition on bounded continuous functions. -/
 @[no_expose]
 def compNonUnitalStarAlgHom
     {X : Type uX} [TopologicalSpace X]
@@ -86,7 +88,9 @@ theorem compNonUnitalStarAlgHom_zero
   ext f x
   rfl
 
-/-- Bounded coefficient postcomposition respects composition. -/
+/-- Let `X` be a topological space. Let `A`, `B`, `C` be possibly nonunital complex C*-algebras.
+
+Bounded coefficient postcomposition respects composition. -/
 theorem compNonUnitalStarAlgHom_comp
     {X : Type uX} [TopologicalSpace X]
     {A : Type uA} {B : Type uB} {C : Type uC}

@@ -1,3 +1,4 @@
-# Of
+# Commutative nonunital C*-algebra as an object
 
-Bundle the existing nonunital algebra without replacing its norm or scalar structure.
+**Commutative nonunital C*-algebra as an object.** A commutative nonunital complex C*-algebra `A`
+gives an object with its given carrier, norm, involution, and complex algebra structure.

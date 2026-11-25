@@ -44,7 +44,10 @@ variable {F' : Type uF'} [NormedAddCommGroup F'] [NormedSpace ℂ F']
 variable {G : Type uG} [NormedAddCommGroup G] [NormedSpace ℂ G]
   [SMul Bᵐᵒᵖ G] [CStarModule Bᵐᵒᵖ G]
 
-/-- Coordinatewise product of two unitary module equivalences. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. Two unitary module
+equivalences induce a unitary equivalence of the Hilbert-module products by applying them
+coordinatewise. -/
 def prodCongr (U : UnitaryEquiv B E E') (V : UnitaryEquiv B F F') :
     UnitaryEquiv B (CStarModule.Product B E F)
       (CStarModule.Product B E' F') where
@@ -69,7 +72,10 @@ theorem prodCongr_apply (U : UnitaryEquiv B E E')
       ((U x.1, V x.2) : CStarModule.Product B E' F') :=
   CStarModule.AdjointableOperator.prodMap_apply _ _ _
 
-/-- The adjointable coordinate-swap operator underlying `prodComm`. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. The coordinate
+interchange map on the two-factor Hilbert-module product is adjointable and is its own
+adjoint. -/
 @[no_expose]
 def prodCommOperator :
     CStarModule.AdjointableOperator B (CStarModule.Product B E F)
@@ -79,7 +85,9 @@ def prodCommOperator :
     (CStarModule.Product.inr (B := B) (E := F) (F := E)).comp
       (CStarModule.Product.fst (B := B) (E := E) (F := F))
 
-/-- Swap the two factors of a binary C-star-module product. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. Interchanging the two
+factors is a unitary equivalence of the Hilbert-module products. -/
 def prodComm :
     UnitaryEquiv B (CStarModule.Product B E F)
       (CStarModule.Product B F E) where
@@ -114,7 +122,9 @@ theorem prodComm_apply (x : CStarModule.Product B E F) :
   change (x.2, 0) + (0, x.1) = (x.2, x.1)
   ext <;> simp
 
-/-- The adjointable reassociation operator underlying `prodAssoc`. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. Reassociation of a three-
+factor Hilbert-module product is adjointable, with the reverse reassociation as adjoint. -/
 @[no_expose]
 def prodAssocOperator :
     CStarModule.AdjointableOperator B
@@ -134,7 +144,9 @@ def prodAssocOperator :
     (CStarModule.Product.inr
       (B := B) (E := E) (F := CStarModule.Product B F G)).comp fg
 
-/-- Reassociate three binary C-star-module products. -/
+/-- Let B be a possibly nonunital complex C-star algebra and let the factors be normed right
+C-star modules over B, with their coefficient-valued inner products. Reassociation gives a
+unitary equivalence between the two bracketings of a three-factor Hilbert-module product. -/
 def prodAssoc :
     UnitaryEquiv B
       (CStarModule.Product B (CStarModule.Product B E F) G)

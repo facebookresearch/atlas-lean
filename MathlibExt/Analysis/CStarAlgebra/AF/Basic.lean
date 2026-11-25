@@ -37,7 +37,9 @@ namespace CStarAlgebra
 
 universe u v
 
-/-- A closed finite-dimensional star subalgebra with its inherited norm. -/
+/-- **Closed finite-dimensional C*-subalgebra.** For a nonunital complex C*-algebra `A` and a nonunital
+star subalgebra `B ⊆ A`, this means that `B` is closed in the norm topology of `A` and
+finite-dimensional as a complex vector space, with its inherited norm. -/
 def IsFiniteDimensionalSubalgebra
     {A : Type u} [NonUnitalCStarAlgebra A]
     (B : NonUnitalStarSubalgebra ℂ A) : Prop :=
@@ -55,8 +57,10 @@ def IsAF (A : Type u) [NonUnitalCStarAlgebra A] : Prop :=
       (∀ n, IsFiniteDimensionalSubalgebra (stage n)) ∧
       closure (⋃ n, (stage n : Set A)) = Set.univ
 
-/-- A finite-dimensional stage has a closed finite-dimensional image under
-any nonunital star homomorphism, including the zero homomorphism. -/
+/-- **Finite-dimensional range of a star homomorphism.** If `D` and `A` are nonunital complex
+C*-algebras, `D` is finite-dimensional over `ℂ`, and `f : D → A` is a nonunital star-algebra
+homomorphism, its range is a closed finite-dimensional nonunital star subalgebra of `A`. The zero
+homomorphism is included. -/
 theorem isFiniteDimensionalSubalgebra_range
     {D : Type v} [NonUnitalCStarAlgebra D] [FiniteDimensional ℂ D]
     {A : Type u} [NonUnitalCStarAlgebra A] (f : D →⋆ₙₐ[ℂ] A) :
@@ -74,8 +78,10 @@ theorem isFiniteDimensionalSubalgebra_range
   change IsClosed (f.range.toSubmodule : Set A)
   exact Submodule.closed_of_finiteDimensional _
 
-/-- Increasing dense images of actual finite-dimensional stages are AF.
-The hypotheses are the raw stage-map properties of a sequential limit. -/
+/-- **AF algebras from increasing finite-dimensional ranges.** Let `A` be a nonunital complex
+C*-algebra, let `Dₙ` be finite-dimensional nonunital complex C*-algebras, and let `fₙ : Dₙ → A` be
+nonunital star-algebra homomorphisms. If their ranges increase with `n ∈ ℕ` and their union is
+norm-dense in `A`, then `A` is approximately finite-dimensional. -/
 theorem isAF_of_monotone_dense_range
     {A : Type u} [NonUnitalCStarAlgebra A]
     {D : ℕ → Type v} [∀ n, NonUnitalCStarAlgebra (D n)]
@@ -87,8 +93,9 @@ theorem isAF_of_monotone_dense_range
     fun n => isFiniteDimensionalSubalgebra_range (f n), ?_⟩
   simpa only [NonUnitalStarAlgHom.coe_range] using hdense.closure_eq
 
-/-- Finite-dimensional algebras are AF, with the constant identity system.
-No nontriviality condition excludes the zero algebra. -/
+/-- **Finite-dimensional C*-algebras are AF.** Every finite-dimensional nonunital complex C*-algebra is
+approximately finite-dimensional, using the constant sequence of the whole algebra. This includes
+the zero algebra. -/
 theorem isAF_of_finiteDimensional
     (A : Type u) [NonUnitalCStarAlgebra A] [FiniteDimensional ℂ A] : IsAF A := by
   apply isAF_of_monotone_dense_range (D := fun _ => A)

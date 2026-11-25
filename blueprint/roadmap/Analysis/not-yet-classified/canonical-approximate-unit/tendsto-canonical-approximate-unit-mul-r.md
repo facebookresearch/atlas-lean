@@ -1,3 +1,5 @@
-# Tendsto canonical Approximate Unit mul right
+# Approximate unit acts on the left
 
-The original canonical coefficients multiply each actual element toward that same element.
+Let `A` be a nonunital complex C*-algebra. For every fixed `x
+∈ A`, `a x` tends to `x` in norm as `a` follows the canonical positive contractive approximate-unit
+filter.

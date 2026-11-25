@@ -1,4 +1,5 @@
-# Cstar Ring
+# C*-identity on a unital separation quotient
 
-A proved C-star norm inequality on the original seminorm descends to
-the normed separation quotient. The source itself need not be normed.
+**C*-identity on a unital separation quotient.** For a unital seminormed ring `A` with isometric
+ring involution and `‖a‖² ≤ ‖a* a‖` for all `a`, the separation quotient satisfies the C*-identity
+in its norm.

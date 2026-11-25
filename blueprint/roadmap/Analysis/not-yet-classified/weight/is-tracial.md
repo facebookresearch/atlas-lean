@@ -1,3 +1,4 @@
-# Is Tracial
+# Tracial square law for a weight
 
-The actual nonunital trace-square law on an extended positive weight.
+Let `A` be a nonunital complex C*-algebra with its canonical
+spectral order. A weight `φ` is tracial when `φ(x* x) = φ(x x*)` for every `x ∈ A`.

@@ -42,14 +42,18 @@ universe u
 variable {B : Type u} [NonUnitalRing B] [Module ℂ B]
   [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] [StarRing B] [StarModule ℂ B]
 
-/-- The original nonunital ring with only its norm and pseudometric computed from this seminorm. -/
+/-- **Seminormed ring induced by a C*-seminorm.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. The seminorm `p` defines a
+nonunital seminormed ring structure on the given ring, with distance `p(x-y)`. -/
 @[instance_reducible]
 def sourceNonUnitalSeminormedRing (p : CStarSeminorm B) : NonUnitalSeminormedRing B where
   __ := ‹NonUnitalRing B›
   __ := p.toRingSeminorm.toAddGroupSeminorm.toSeminormedAddCommGroup
   norm_mul_le := p.mul_le'
 
-/-- The original complex module with its norm computed from the same actual seminorm. -/
+/-- **Complex seminormed space induced by a C*-seminorm.** Let `B` be a nonunital complex star algebra
+with scalar-compatible involution and let `p` be a C*-seminorm on `B`. The seminorm `p` defines a
+compatible complex seminormed vector-space structure on the given module. -/
 @[instance_reducible]
 def sourceNonUnitalNormedSpace (p : CStarSeminorm B) :
     let _ : NonUnitalSeminormedRing B := p.sourceNonUnitalSeminormedRing
@@ -61,12 +65,16 @@ def sourceNonUnitalNormedSpace (p : CStarSeminorm B) :
         change p (c • x) ≤ ‖c‖ * p x
         exact (map_smul_eq_mul p c x).le }
 
-/-- The same-p separation quotient followed by its ordinary uniform completion. -/
+/-- **Separated nonunital C*-completion.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. This is the uniform completion of
+the separation quotient for `p`, first identifying elements at seminorm distance zero. -/
 abbrev NonUnitalCompletion (p : CStarSeminorm B) : Type u :=
   let _ : NonUnitalSeminormedRing B := p.sourceNonUnitalSeminormedRing
   UniformSpace.Completion (SeparationQuotient B)
 
-/-- The computed nonunital C-star dictionary on the actual separated completion of this seminorm. -/
+/-- **C*-structure of a nonunital seminorm completion.** Let `B` be a nonunital complex star algebra
+with scalar-compatible involution and let `p` be a C*-seminorm on `B`. The separated completion is a
+nonunital complex C*-algebra with the norm and operations induced by `p`. -/
 @[instance_reducible]
 def nonUnitalCompletionCStarAlgebra (p : CStarSeminorm B) :
     NonUnitalCStarAlgebra p.NonUnitalCompletion := by
@@ -103,7 +111,10 @@ def nonUnitalCompletionCStarAlgebra (p : CStarSeminorm B) :
   change NonUnitalCStarAlgebra (UniformSpace.Completion (SeparationQuotient B))
   exact CStarAlgebra.completionNonUnitalCStarAlgebra (SeparationQuotient B)
 
-/-- The actual nonunital star-algebra map, given by source quotient mk followed by completion coe. -/
+/-- **Canonical map into a nonunital C*-completion.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. The separation projection followed
+by the completion inclusion defines a nonunital complex star homomorphism from `B` to its separated
+completion. -/
 def toNonUnitalCompletion (p : CStarSeminorm B) :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     B →⋆ₙₐ[ℂ] p.NonUnitalCompletion := by
@@ -149,7 +160,9 @@ def toNonUnitalCompletion (p : CStarSeminorm B) :
             (SeparationQuotient.uniformContinuous_map (star : B → B)),
           SeparationQuotient.map_mk star_isometry.uniformContinuous] }
 
-/-- The canonical map retains the literal separation quotient and completion values. -/
+/-- **Formula for the nonunital completion map.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. For every `x ∈ B`, its canonical
+image is the separation class of `x` followed by inclusion into the uniform completion. -/
 @[simp]
 theorem toNonUnitalCompletion_apply (p : CStarSeminorm B) (x : B) :
     let _ : NonUnitalSeminormedRing B := p.sourceNonUnitalSeminormedRing
@@ -158,7 +171,9 @@ theorem toNonUnitalCompletion_apply (p : CStarSeminorm B) (x : B) :
       ((SeparationQuotient.mk x : SeparationQuotient B) : p.NonUnitalCompletion) :=
   rfl
 
-/-- The actual completed norm is the original seminorm on every source element. -/
+/-- **Norm in a nonunital C*-completion.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. The canonical completion image of
+`x ∈ B` has norm `p(x)`. -/
 theorem norm_toNonUnitalCompletion (p : CStarSeminorm B) (x : B) :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     ‖p.toNonUnitalCompletion x‖ = p x := by
@@ -169,14 +184,18 @@ theorem norm_toNonUnitalCompletion (p : CStarSeminorm B) (x : B) :
       rw [toNonUnitalCompletion_apply, UniformSpace.Completion.norm_coe, SeparationQuotient.norm_mk]
     _ = p x := rfl
 
-/-- The canonical completed map has exactly the null kernel of the same source seminorm. -/
+/-- **Null kernel of the nonunital completion map.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. The completion image of `x ∈ B` is
+zero exactly when `p(x) = 0`. -/
 theorem toNonUnitalCompletion_eq_zero_iff (p : CStarSeminorm B) (x : B) :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     p.toNonUnitalCompletion x = 0 ↔ p x = 0 := by
   let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
   rw [← norm_eq_zero, norm_toNonUnitalCompletion]
 
-/-- Surjective separation followed by the stock dense completion gives the actual dense core map. -/
+/-- **Dense range of the canonical completion map.** Let `B` be a nonunital complex star algebra with
+scalar-compatible involution and let `p` be a C*-seminorm on `B`. The nonunital star homomorphism
+from `B` into its separated completion has norm-dense range. -/
 theorem denseRange_toNonUnitalCompletion (p : CStarSeminorm B) :
     let _ : NonUnitalCStarAlgebra p.NonUnitalCompletion := p.nonUnitalCompletionCStarAlgebra
     DenseRange p.toNonUnitalCompletion := by

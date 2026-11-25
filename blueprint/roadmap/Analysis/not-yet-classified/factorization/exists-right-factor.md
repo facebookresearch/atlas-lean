@@ -1,9 +1,7 @@
 # Exists right factor
 
-Every vector in an actual complete right Hilbert C-star module factors
-through a coefficient of its original nonunital algebra.
+Let B be a possibly nonunital complex C*-algebra, with its canonical spectral order and induced
+opposite order. Let E be a complete normed right inner-product B-module with a compatible
+complex normed-space structure.
 
-This wrapper uses the canonical order on `B` and the induced opposite order.
-For a module with a separately installed canonical order on `Bᵐᵒᵖ`, use
-`exists_right_factor_of_nonneg_inner` with the spectral-order unop bridge.
-The two order dictionaries are not silently identified.
+Every x ∈ E admits a right factorization x = yb with y ∈ E and b ∈ B.

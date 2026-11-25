@@ -1,4 +1,5 @@
-# Standard Even Matrix
+# Standard even grading on two-by-two matrices
 
-The standard-even grading on two-by-two matrices: diagonal entries are
-even and off-diagonal entries are odd.
+Let `A` be a nonunital complex C*-algebra. The
+generator fixes diagonal entries and negates off-diagonal entries, making diagonal matrices even and
+off-diagonal matrices odd.

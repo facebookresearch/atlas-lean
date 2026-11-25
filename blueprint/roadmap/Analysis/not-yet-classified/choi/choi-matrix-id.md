@@ -1,4 +1,5 @@
-# Choi Matrix id
+# Choi matrix of the identity
 
-Identity map convention regression: its Choi matrix is the
-matrix-unit delta `δ(a,i) δ(b,j)`, i.e. `1` iff `i = a ∧ j = b`.
+For an index type `n` with decidable equality, the identity
+complex-linear map on `Matrix n n ℂ` has Choi entry `J(id) ((i,a),(j,b)) = 1` when `i = a` and `j =
+b`, and zero otherwise. No finiteness assumption on `n` is needed.

@@ -1,4 +1,5 @@
-# Finite gram nonneg
+# Finite Gram inequality for CP maps
 
-An ordinary completely positive map satisfies the literal algebra-valued
-finite Gram inequality, in the caller's lawful coefficient orders.
+For nonunital complex C*-algebras `A,B` with star-compatible
+partial orders, a completely positive map `φ : A → B`, a finite index type `I`, and families `a : I
+→ A`, `b : I → B`, `∑ i j, bᵢ* φ(aᵢ* aⱼ) bⱼ ≥ 0` in `B`. This includes the empty family.

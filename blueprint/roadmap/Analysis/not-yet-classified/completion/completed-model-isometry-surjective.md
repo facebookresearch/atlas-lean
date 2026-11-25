@@ -1,4 +1,8 @@
 # Completed Model Isometry surjective
 
-Complete-source isometry has closed range, and the real dense model span
-forces that actual range to be the whole supplied module.
+Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. Density of the span of the values of T
+implies that the completed isometry is onto F.

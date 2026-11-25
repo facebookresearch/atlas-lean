@@ -1,4 +1,5 @@
-# Non Unital CStar Algebra
+# C*-algebra structure on a closed star quotient
 
-The explicit nonunital C⋆-algebra structure on a quotient by a closed
-two-sided star ideal. It is deliberately not installed as a global instance.
+**C*-algebra structure on a closed star quotient.** Let `B` be a nonunital complex C*-algebra and `T
+⊆ B` a closed two-sided nonunital star subalgebra. The quotient `B/T`, with its quotient norm and
+induced complex algebra operations and involution, is a nonunital complex C*-algebra.

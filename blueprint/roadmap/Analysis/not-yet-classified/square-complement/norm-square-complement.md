@@ -1,3 +1,6 @@
-# Norm Square Complement
+# Square complement of an adjoint product
 
-The positive CFC square root of the original norm-square scalar minus the adjoint square.
+Let `D` be a unital complex C*-algebra with a
+star-compatible partial order and `a ∈ D`. Its norm-square complement is the positive
+continuous-functional-calculus square root `b = √(‖a‖² 1 - a* a)`. This defines the complement
+element `b ∈ D`.

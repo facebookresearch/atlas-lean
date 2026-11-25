@@ -51,8 +51,10 @@ namespace NonUnitalStarSubalgebra
 variable {A : Type*} [NonUnitalNormedRing A] [StarRing A] [NormedSpace ℂ A]
   [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
 
-/-- A nonunital star subalgebra is two-sided when it absorbs multiplication
-by arbitrary ambient elements on both sides. -/
+/-- **Two-sided star ideal condition.** Let `A` be a nonunital normed ring with a ring involution and a
+complex normed vector-space structure compatible with multiplication and star, and let `S ⊆ A` be a
+nonunital complex star subalgebra. The subalgebra is two-sided when `a s` and `s a` belong to `S`
+for every `a ∈ A` and `s ∈ S`. -/
 class IsTwoSided (S : NonUnitalStarSubalgebra ℂ A) : Prop where
   mul_mem_left (a : A) {x : A} : x ∈ S → a * x ∈ S
   mul_mem_right {x : A} : x ∈ S → (a : A) → x * a ∈ S
@@ -65,11 +67,17 @@ instance instIsTwoSidedToNonUnitalSubalgebra
   mul_mem_left a {_x} hx := IsTwoSided.mul_mem_left a hx
   mul_mem_right {_x} hx a := IsTwoSided.mul_mem_right hx a
 
-/-- The canonical complex submodule underlying a nonunital star subalgebra. -/
+/-- **Complex submodule underlying a star subalgebra.** Let `A` be a nonunital normed ring with a ring
+involution and a complex normed vector-space structure compatible with multiplication and star, and
+let `S ⊆ A` be a nonunital complex star subalgebra. Its underlying complex vector subspace is the
+submodule with the same elements as `S`. -/
 abbrev quotientSubmodule (S : NonUnitalStarSubalgebra ℂ A) : Submodule ℂ A :=
   NonUnitalSubalgebra.quotientSubmodule S.toNonUnitalSubalgebra
 
-/-- Quotient carrier, retaining existing `Submodule.Quotient` structures. -/
+/-- **Quotient by a star subalgebra.** Let `A` be a nonunital normed ring with a ring involution and a
+complex normed vector-space structure compatible with multiplication and star, and let `S ⊆ A` be a
+nonunital complex star subalgebra. The carrier `A/S` is the quotient of the complex vector space `A`
+by the underlying submodule of `S`. -/
 abbrev Quotient (S : NonUnitalStarSubalgebra ℂ A) :=
   NonUnitalSubalgebra.Quotient S.toNonUnitalSubalgebra
 
@@ -77,7 +85,10 @@ namespace Quotient
 
 variable (S : NonUnitalStarSubalgebra ℂ A)
 
-/-- The canonical quotient projection as a complex linear map. -/
+/-- **Complex-linear quotient projection.** Let `A` be a nonunital normed ring with a ring involution
+and a complex normed vector-space structure compatible with multiplication and star, and let `S ⊆ A`
+be a nonunital complex star subalgebra. The projection `a ↦ [a]` is a complex-linear map from `A` to
+the vector quotient `A/S`. -/
 def mkL : A →ₗ[ℂ] S.Quotient :=
   (quotientSubmodule S).mkQ
 
@@ -89,12 +100,17 @@ omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
 theorem mkL_surjective : Function.Surjective (mkL S) :=
   (quotientSubmodule S).mkQ_surjective
 
-/-- Quotient multiplication before it is activated as a scoped instance. -/
+/-- **Multiplication on a two-sided quotient.** Let `A` be a nonunital normed ring with a ring
+involution and a complex normed vector-space structure compatible with multiplication and star, and
+let `S ⊆ A` be a nonunital complex star subalgebra. If `S` is two-sided, multiplication on `A/S` is
+given by `[a][b] = [a b]`. -/
 @[instance_reducible]
 def quotientMul [S.IsTwoSided] : Mul S.Quotient :=
   NonUnitalSubalgebra.Quotient.quotientMul S.toNonUnitalSubalgebra
 
-/-- Quotient involution before it is activated as a scoped instance. -/
+/-- **Involution on a star quotient.** Let `A` be a nonunital normed ring with a ring involution and a
+complex normed vector-space structure compatible with multiplication and star, and let `S ⊆ A` be a
+nonunital complex star subalgebra. The involution on `A/S` is given by `[a]* = [a*]`. -/
 @[instance_reducible]
 def quotientStar : Star S.Quotient where
   star := _root_.Quotient.map' (fun x : A ↦ star x) fun x y hxy ↦ by
@@ -168,7 +184,10 @@ scoped instance instSMulCommClass [S.IsTwoSided] :
     SMulCommClass ℂ S.Quotient S.Quotient :=
   NonUnitalSubalgebra.Quotient.instSMulCommClass S.toNonUnitalSubalgebra
 
-/-- The quotient projection as a nonunital star algebra homomorphism. -/
+/-- **Star-algebra quotient projection.** Let `A` be a nonunital normed ring with a ring involution and
+a complex normed vector-space structure compatible with multiplication and star, and let `S ⊆ A` be
+a nonunital complex star subalgebra. If `S` is two-sided, the projection `a ↦ [a]` is a nonunital
+complex star-algebra homomorphism from `A` to `A/S`. -/
 def mk [S.IsTwoSided] : A →⋆ₙₐ[ℂ] S.Quotient where
   toFun := Submodule.Quotient.mk
   map_zero' := rfl
@@ -187,7 +206,10 @@ theorem mk_eq_zero [S.IsTwoSided] (x : A) : mk S x = 0 ↔ x ∈ S :=
 
 section Normed
 
-/-- The quotient projection as a continuous complex linear map. -/
+/-- **Continuous linear quotient projection.** Let `A` be a nonunital normed ring with a ring involution
+and a complex normed vector-space structure compatible with multiplication and star, and let `S ⊆ A`
+be a nonunital complex star subalgebra. With the quotient seminorm on `A/S`, the projection `a ↦
+[a]` is a continuous complex-linear map. -/
 def mkCL : A →L[ℂ] S.Quotient :=
   (quotientSubmodule S).mkQL
 
@@ -196,7 +218,10 @@ omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
 theorem mkCL_apply (x : A) : mkCL S x = Submodule.Quotient.mk x := rfl
 
 omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A] in
-/-- The canonical quotient norm makes the projection norm-nonincreasing. -/
+/-- **Contractivity of the quotient projection.** Let `A` be a nonunital normed ring with a ring
+involution and a complex normed vector-space structure compatible with multiplication and star, and
+let `S ⊆ A` be a nonunital complex star subalgebra. For every `a ∈ A`, the quotient seminorm
+satisfies `‖[a]‖ ≤ ‖a‖`. -/
 theorem norm_mk_le (x : A) :
     ‖(Submodule.Quotient.mk x : S.Quotient)‖ ≤ ‖x‖ :=
   NonUnitalSubalgebra.Quotient.norm_mk_le S.toNonUnitalSubalgebra x
@@ -206,8 +231,11 @@ end Normed
 variable {B : Type*} [NonUnitalRing B] [StarRing B] [Module ℂ B]
   [IsScalarTower ℂ B B] [SMulCommClass ℂ B B]
 
-/-- Descend a nonunital star algebra homomorphism which vanishes on the
-two-sided ideal. -/
+/-- **Descended star homomorphism on a quotient.** Let `A` be a nonunital normed ring with a ring
+involution and a complex normed vector-space structure compatible with multiplication and star, and
+let `S ⊆ A` be a nonunital complex star subalgebra. Assume that `S` is two-sided. For a nonunital
+complex star algebra `B` and a nonunital complex star homomorphism `f : A → B` that vanishes on `S`,
+there is a descended star homomorphism `A/S → B` sending `[a]` to `f(a)`. -/
 def lift [S.IsTwoSided] (f : A →⋆ₙₐ[ℂ] B) (hS : ∀ x ∈ S, f x = 0) :
     S.Quotient →⋆ₙₐ[ℂ] B := by
   let fL : S.Quotient →ₗ[ℂ] B :=
@@ -235,8 +263,11 @@ theorem lift_mk [S.IsTwoSided] (f : A →⋆ₙₐ[ℂ] B)
 
 omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
   [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] in
-/-- Quotient-lift evaluation in the normal form of the submodule inclusion.
-The named `lift_mk` equation remains available for explicit rewrites. -/
+/-- **Evaluation of a descended star homomorphism.** Let `A` be a nonunital normed ring with a ring
+involution and a complex normed vector-space structure compatible with multiplication and star, and
+let `S ⊆ A` be a nonunital complex star subalgebra. Assume that `S` is two-sided. For a nonunital
+complex star algebra `B`, a nonunital complex star homomorphism `f : A → B` vanishing on `S`, and `a
+∈ A`, its quotient lift evaluates at `[a]` to `f(a)`. -/
 @[simp]
 theorem lift_mkQ [S.IsTwoSided] (f : A →⋆ₙₐ[ℂ] B)
     (hS : ∀ x ∈ S, f x = 0) (x : A) :
@@ -245,7 +276,11 @@ theorem lift_mkQ [S.IsTwoSided] (f : A →⋆ₙₐ[ℂ] B)
 
 omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
   [IsScalarTower ℂ B B] [SMulCommClass ℂ B B] in
-/-- Extensionality for quotient nonunital star algebra homomorphisms. -/
+/-- **Extensionality of quotient star homomorphisms.** Let `A` be a nonunital normed ring with a ring
+involution and a complex normed vector-space structure compatible with multiplication and star, and
+let `S ⊆ A` be a nonunital complex star subalgebra. Assume that `S` is two-sided. For a nonunital
+complex star algebra `B`, two nonunital star homomorphisms `A/S → B` are equal if their composites
+with the projection `A → A/S` agree. -/
 theorem hom_ext [S.IsTwoSided]
     (f g : S.Quotient →⋆ₙₐ[ℂ] B)
     (h : f.comp (mk S) = g.comp (mk S)) : f = g := by
@@ -259,8 +294,10 @@ variable {C : Type*} [NonUnitalNormedRing C] [StarRing C] [NormedSpace ℂ C]
   [IsScalarTower ℂ C C] [SMulCommClass ℂ C C] [StarModule ℂ C]
 variable (T : NonUnitalStarSubalgebra ℂ C)
 
-/-- The map on quotients induced by a nonunital star algebra homomorphism
-which sends the source ideal into the target ideal. -/
+/-- **Star homomorphism induced on quotients.** Let `A,C` be nonunital normed complex star algebras, let
+`S ⊆ A` and `T ⊆ C` be two-sided nonunital star subalgebras, and let `f : A → C` be a nonunital
+complex star homomorphism satisfying `f(S) ⊆ T`. It induces the nonunital complex star homomorphism
+`A/S → C/T` given by `[a] ↦ [f(a)]`. -/
 def map [S.IsTwoSided] [T.IsTwoSided]
     (f : A →⋆ₙₐ[ℂ] C) (hf : Set.MapsTo f S T) :
     S.Quotient →⋆ₙₐ[ℂ] T.Quotient :=
@@ -275,8 +312,10 @@ theorem map_mk [S.IsTwoSided] [T.IsTwoSided]
 
 omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
   [IsScalarTower ℂ C C] [SMulCommClass ℂ C C] [StarModule ℂ C] in
-/-- Induced quotient-map evaluation in the canonical submodule projection normal form.
-The named `map_mk` equation remains available for explicit rewrites. -/
+/-- **Evaluation of an induced quotient map.** Let `A,C` be nonunital normed complex star algebras, let
+`S ⊆ A` and `T ⊆ C` be two-sided nonunital star subalgebras, and let `f : A → C` be a nonunital
+complex star homomorphism satisfying `f(S) ⊆ T`. For each `a ∈ A`, the induced quotient homomorphism
+sends its class modulo `S` to the class of `f(a)` modulo `T`. -/
 @[simp]
 theorem map_mkQ [S.IsTwoSided] [T.IsTwoSided]
     (f : A →⋆ₙₐ[ℂ] C) (hf : Set.MapsTo f S T) (x : A) :
@@ -286,7 +325,10 @@ theorem map_mkQ [S.IsTwoSided] [T.IsTwoSided]
 
 omit [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [StarModule ℂ A]
   [IsScalarTower ℂ C C] [SMulCommClass ℂ C C] [StarModule ℂ C] in
-/-- The induced quotient map intertwines the two quotient projections. -/
+/-- **Quotient projections intertwine an induced map.** Let `A,C` be nonunital normed complex star
+algebras, let `S ⊆ A` and `T ⊆ C` be two-sided nonunital star subalgebras, and let `f : A → C` be a
+nonunital complex star homomorphism satisfying `f(S) ⊆ T`. The projection `A → A/S` followed by the
+induced map equals `f` followed by the projection `C → C/T`. -/
 theorem map_comp_mk [S.IsTwoSided] [T.IsTwoSided]
     (f : A →⋆ₙₐ[ℂ] C) (hf : Set.MapsTo f S T) :
     (NonUnitalStarSubalgebra.Quotient.map S T f hf).comp (mk S) = (mk T).comp f := by
@@ -303,7 +345,9 @@ open scoped CStarAlgebra Topology
 variable {B : Type*} [NonUnitalCStarAlgebra B]
 variable (T : NonUnitalStarSubalgebra ℂ B)
 
-/-- Multiplication is submultiplicative for the quotient seminorm. -/
+/-- **Submultiplicative quotient seminorm.** Let `B` be a nonunital complex C*-algebra and `T ⊆ B` a
+two-sided nonunital star subalgebra. The quotient seminorm on `B/T` satisfies `‖x y‖ ≤ ‖x‖ ‖y‖` for
+every pair of quotient elements. -/
 theorem norm_mul_le [T.IsTwoSided] (x y : T.Quotient) :
     ‖x * y‖ ≤ ‖x‖ * ‖y‖ :=
   NonUnitalSubalgebra.Quotient.norm_mul_le T.toNonUnitalSubalgebra x y
@@ -314,7 +358,8 @@ noncomputable scoped instance instNonUnitalNormedRing
     NonUnitalNormedRing T.Quotient :=
   NonUnitalSubalgebra.Quotient.instNonUnitalNormedRing T.toNonUnitalSubalgebra
 
-/-- The quotient involution preserves the quotient seminorm. -/
+/-- **Involution preserves the quotient seminorm.** Let `B` be a nonunital complex C*-algebra and `T ⊆
+B` a two-sided nonunital star subalgebra. For every `x ∈ B/T`, `‖x*‖ = ‖x‖`. -/
 theorem norm_star_eq [T.IsTwoSided] (x : T.Quotient) : ‖star x‖ = ‖x‖ := by
   have hle (y : T.Quotient) : ‖star y‖ ≤ ‖y‖ := by
     refine le_of_forall_pos_le_add fun ε hε ↦ ?_
@@ -375,7 +420,9 @@ private theorem exists_complementary_contraction_norm_sub_mul_lt
       (sub_le_self 1 heIcc.1)
   exact ⟨e, he0B.isSelfAdjoint.star_eq, he1, hOneSub, heclose⟩
 
-/-- The reverse C⋆ inequality for the quotient norm. -/
+/-- **C*-lower bound in a closed quotient.** Let `B` be a nonunital complex C*-algebra and `T ⊆ B` a
+closed two-sided nonunital star subalgebra. For every `x ∈ B/T`, `‖x‖² ≤ ‖x* x‖` in the quotient
+norm. -/
 theorem norm_sq_le_norm_star_mul_self [T.IsTwoSided] [IsClosed (T : Set B)]
     (x : T.Quotient) : ‖x‖ * ‖x‖ ≤ ‖star x * x‖ := by
   obtain ⟨a, rfl⟩ := mkL_surjective T x
@@ -441,8 +488,9 @@ theorem norm_sq_le_norm_star_mul_self [T.IsTwoSided] [IsClosed (T : Set B)]
     _ = ‖star (Submodule.Quotient.mk a : T.Quotient) *
           Submodule.Quotient.mk a‖ + ε := by ring
 
-/-- The explicit nonunital C⋆-algebra structure on a quotient by a closed
-two-sided star ideal. It is deliberately not installed as a global instance. -/
+/-- **C*-algebra structure on a closed star quotient.** Let `B` be a nonunital complex C*-algebra and `T
+⊆ B` a closed two-sided nonunital star subalgebra. The quotient `B/T`, with its quotient norm and
+induced complex algebra operations and involution, is a nonunital complex C*-algebra. -/
 @[instance_reducible]
 noncomputable def nonUnitalCStarAlgebra [T.IsTwoSided] [IsClosed (T : Set B)] :
     NonUnitalCStarAlgebra T.Quotient where
@@ -539,8 +587,8 @@ private theorem range_closedRangeKernelLift (rho : A →⋆ₙₐ[ℂ] B)
     exact ⟨NonUnitalStarSubalgebra.Quotient.mk (closedRangeKernel rho) a,
       closedRangeKernelLift_mk rho a⟩
 
-/-- The range of a nonunital star algebra homomorphism between complex
-C⋆-algebras is closed. -/
+/-- **Closed range of a C*-homomorphism.** For nonunital complex C*-algebras `A,B`, the range of every
+nonunital complex star-algebra homomorphism `ρ : A → B` is closed in the norm topology of `B`. -/
 theorem isClosed_range (rho : A →⋆ₙₐ[ℂ] B) : IsClosed (Set.range rho) := by
   let _ : (closedRangeKernel rho).IsTwoSided := closedRangeKernelIsTwoSided rho
   let _ : IsClosed (closedRangeKernel rho : Set A) := isClosed_closedRangeKernel rho
@@ -554,11 +602,9 @@ end NonUnitalStarAlgHom
 
 /-! ## Bundled closed two-sided star ideals -/
 
-/-- A closed two-sided star ideal in a complex nonunital C-star algebra.
-
-The ideal stores its closedness and two-sidedness proofs without installing
-either proof globally.  Quotient constructions below activate them only in a
-local `letI` scope and delegate to `NonUnitalStarSubalgebra.Quotient`. -/
+/-- **Closed two-sided star ideal.** For a nonunital complex C*-algebra `A`, this is a nonunital complex
+star subalgebra `I ⊆ A` that is norm-closed and absorbs multiplication by every element of `A` on
+both sides. -/
 structure ClosedStarIdeal (A : Type*) [NonUnitalCStarAlgebra A] where
   /-- The actual scalar-stable star subalgebra underlying the two-sided ideal. -/
   carrier : NonUnitalStarSubalgebra ℂ A
@@ -599,7 +645,8 @@ theorem ext {I J : ClosedStarIdeal A}
 instance instPartialOrder : PartialOrder (ClosedStarIdeal A) :=
   PartialOrder.lift ((↑) : ClosedStarIdeal A → Set A) SetLike.coe_injective
 
-/-- The zero closed star ideal. -/
+/-- **Zero closed star ideal.** The zero subalgebra is a closed two-sided star ideal of every nonunital
+complex C*-algebra `A`. -/
 def bot (A : Type*) [NonUnitalCStarAlgebra A] : ClosedStarIdeal A where
   carrier := ⊥
   isTwoSided := by
@@ -628,7 +675,8 @@ instance instOrderBot : OrderBot (ClosedStarIdeal A) where
     subst x
     exact I.carrier.zero_mem
 
-/-- The whole closed star ideal. -/
+/-- **Whole closed star ideal.** The whole algebra is a closed two-sided star ideal of every nonunital
+complex C*-algebra `A`. -/
 def top (A : Type*) [NonUnitalCStarAlgebra A] : ClosedStarIdeal A where
   carrier := ⊤
   isTwoSided := by
@@ -649,12 +697,15 @@ instance instOrderTop : OrderTop (ClosedStarIdeal A) where
 
 /-! ### Essential closed star ideals -/
 
-/-- A closed star ideal is essential when its left annihilator is zero. -/
+/-- **Essential closed star ideal.** Let `A` be a nonunital complex C*-algebra and let `I ⊆ A` be a
+closed two-sided star ideal. The ideal is essential when `a x = 0` for every `x ∈ I` implies `a = 0`
+for every `a ∈ A`, so its left annihilator is zero. -/
 def IsEssential (I : ClosedStarIdeal A) : Prop :=
   ∀ a : A, (∀ x : I, a * (x : A) = 0) → a = 0
 
-/-- For a closed star ideal, having zero left annihilator is equivalent to
-having zero right annihilator. -/
+/-- **Left and right annihilator characterizations of essentiality.** Let `A` be a nonunital complex
+C*-algebra and let `I ⊆ A` be a closed two-sided star ideal. The ideal is essential exactly when `x
+a = 0` for every `x ∈ I` implies `a = 0`, so its right annihilator is also zero. -/
 theorem isEssential_iff_right_annihilator_zero (I : ClosedStarIdeal A) :
     I.IsEssential ↔
       ∀ a : A, (∀ x : I, (x : A) * a = 0) → a = 0 := by
@@ -676,8 +727,9 @@ theorem isEssential_iff_right_annihilator_zero (I : ClosedStarIdeal A) :
       simpa only [star_mul, star_zero, star_star] using this
     simpa only [star_eq_zero] using hstar
 
-/-- Preimage of a closed two-sided star ideal under a nonunital star algebra
-homomorphism. -/
+/-- **Preimage of a closed star ideal.** For nonunital complex C*-algebras `A,B`, a nonunital complex
+star homomorphism `f : A → B`, and a closed two-sided star ideal `J ⊆ B`, the preimage `f⁻¹(J)` is a
+closed two-sided star ideal of `A`. -/
 def comap
     {B : Type*} [NonUnitalCStarAlgebra B]
     (f : A →⋆ₙₐ[ℂ] B) (J : ClosedStarIdeal B) : ClosedStarIdeal A where
@@ -703,7 +755,8 @@ theorem mem_comap
     x ∈ comap f J ↔ f x ∈ J :=
   Iff.rfl
 
-/-- Kernel as a bundled closed two-sided star ideal. -/
+/-- **Kernel as a closed star ideal.** For nonunital complex C*-algebras `A,B` and a nonunital complex
+star homomorphism `f : A → B`, the kernel `{a : f(a) = 0}` is a closed two-sided star ideal of `A`. -/
 def ker
     {B : Type*} [NonUnitalCStarAlgebra B]
     (f : A →⋆ₙₐ[ℂ] B) : ClosedStarIdeal A :=
@@ -718,21 +771,24 @@ theorem mem_ker
 
 /-! ### Canonical carrier and quotient structures -/
 
-/-- Explicit C-star structure on the carrier of a bundled closed star ideal.
-It is deliberately not installed as a global instance. -/
+/-- **C*-algebra structure of a closed star ideal.** Let `A` be a nonunital complex C*-algebra and let
+`I ⊆ A` be a closed two-sided star ideal. The ideal `I`, with its inherited norm, involution, and
+complex algebra operations, is a nonunital complex C*-algebra. -/
 @[instance_reducible]
 noncomputable def carrierCStarAlgebra (I : ClosedStarIdeal A) :
     NonUnitalCStarAlgebra I.carrier := by
   let _ : IsClosed (I.carrier : Set A) := I.isClosed
   exact NonUnitalStarSubalgebra.nonUnitalCStarAlgebra I.carrier
 
-/-- Canonical quotient carrier of a bundled closed star ideal. -/
+/-- **Quotient carrier of a closed star ideal.** Let `A` be a nonunital complex C*-algebra and let `I ⊆
+A` be a closed two-sided star ideal. Its quotient carrier is the complex vector quotient `A/I`. -/
 abbrev Quotient (I : ClosedStarIdeal A) := I.carrier.Quotient
 
 open scoped NonUnitalStarSubalgebra.Quotient
 
-/-- Explicit quotient C-star structure, delegated to the canonical quotient
-API and deliberately not installed as an instance. -/
+/-- **C*-algebra quotient by a closed ideal.** Let `A` be a nonunital complex C*-algebra and let `I ⊆ A`
+be a closed two-sided star ideal. The quotient `A/I` is a nonunital complex C*-algebra with the
+quotient norm and induced involution and complex algebra operations. -/
 @[instance_reducible]
 noncomputable def quotientCStarAlgebra (I : ClosedStarIdeal A) :
     let _ : I.carrier.IsTwoSided := I.isTwoSided
@@ -741,7 +797,9 @@ noncomputable def quotientCStarAlgebra (I : ClosedStarIdeal A) :
   let _ : IsClosed (I.carrier : Set A) := I.isClosed
   exact NonUnitalStarSubalgebra.Quotient.nonUnitalCStarAlgebra I.carrier
 
-/-- Canonical quotient projection, delegated to the existing quotient map. -/
+/-- **Projection onto a closed C*-quotient.** Let `A` be a nonunital complex C*-algebra and let `I ⊆ A`
+be a closed two-sided star ideal. The projection `a ↦ [a]` is a nonunital complex star-algebra
+homomorphism from `A` onto `A/I`. -/
 noncomputable def quotientMap (I : ClosedStarIdeal A) :
     let _ : I.carrier.IsTwoSided := I.isTwoSided
     A →⋆ₙₐ[ℂ] I.Quotient := by
@@ -769,10 +827,9 @@ section UnitalQuotient
 
 variable {U : Type*} [CStarAlgebra U]
 
-/-- The quotient by a closed star ideal in a unital C-star algebra, with its
-unital C-star structure kept as an explicit value.  The underlying additive,
-multiplicative, star, norm, and scalar structures are the existing nonunital
-quotient structures. -/
+/-- **Unital C*-structure on a closed ideal quotient.** Let `U` be a unital complex C*-algebra and `I ⊆
+U` a closed two-sided star ideal. The quotient `U/I` is a unital complex C*-algebra with the
+quotient norm and unit `[1]`. This also allows `I = U`, giving the zero quotient. -/
 @[instance_reducible]
 noncomputable def unitalQuotientCStarAlgebra
     (I : ClosedStarIdeal U) : CStarAlgebra I.Quotient := by
@@ -823,8 +880,9 @@ noncomputable def unitalQuotientCStarAlgebra
       toNormedAlgebra := normedAlgebra
       toStarModule := (I.quotientCStarAlgebra).toStarModule }
 
-/-- The unital quotient projection.  Its underlying function is definitionally
-the existing nonunital quotient projection. -/
+/-- **Unital star quotient projection.** Let `U` be a unital complex C*-algebra and `I ⊆ U` a closed
+two-sided star ideal. The projection `u ↦ [u]` is a unital complex star-algebra homomorphism `U →
+U/I`. -/
 noncomputable def unitalQuotientMap
     (I : ClosedStarIdeal U) :
     let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
@@ -849,8 +907,9 @@ theorem unitalQuotientMap_apply
     I.unitalQuotientMap a = I.quotientMap a := by
   rfl
 
-/-- Forgetting the unit from the explicit unital quotient map recovers the
-canonical nonunital quotient map. -/
+/-- **Underlying nonunital quotient homomorphism.** Let `U` be a unital complex C*-algebra and `I ⊆ U` a
+closed two-sided star ideal. Forgetting unit preservation from the unital quotient homomorphism
+gives the nonunital quotient homomorphism with the same values. -/
 theorem unitalQuotientMap_toNonUnitalStarAlgHom
     (I : ClosedStarIdeal U) :
     let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
@@ -881,8 +940,8 @@ theorem unitalQuotientMap_one
   let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
   exact map_one I.unitalQuotientMap
 
-/-- The ambient unit's class is the unit of the canonical unital quotient.
-This uses the actual submodule projection normal form. -/
+/-- **Unit class in a C*-quotient.** Let `U` be a unital complex C*-algebra and `I ⊆ U` a closed
+two-sided star ideal. The class of the unit of `U` is the unit of `U/I`. -/
 @[simp]
 theorem quotient_mk_one (I : ClosedStarIdeal U) :
     let _ : CStarAlgebra I.Quotient := I.unitalQuotientCStarAlgebra
@@ -893,9 +952,9 @@ theorem quotient_mk_one (I : ClosedStarIdeal U) :
 
 end UnitalQuotient
 
-/-- The canonical map `A / I → A / J` induced by an inclusion `I ≤ J` of
-bundled closed star ideals.  The stored two-sidedness proofs are activated only
-inside this construction. -/
+/-- **Quotient map from an ideal inclusion.** Let `A` be a nonunital complex C*-algebra and `I ⊆ J`
+closed two-sided star ideals of `A`. The inclusion defines a nonunital complex star homomorphism
+`A/I → A/J` sending `[a]ᵢ` to `[a]ⱼ`. -/
 noncomputable def quotientMapOfLE (I J : ClosedStarIdeal A) (h : I ≤ J) :
     let _ : I.carrier.IsTwoSided := I.isTwoSided
     let _ : J.carrier.IsTwoSided := J.isTwoSided
@@ -905,8 +964,9 @@ noncomputable def quotientMapOfLE (I J : ClosedStarIdeal A) (h : I ≤ J) :
   exact NonUnitalStarSubalgebra.Quotient.map I.carrier J.carrier
     (NonUnitalStarAlgHom.id ℂ A) fun x hx ↦ h hx
 
-/-- The quotient map induced by `I ≤ J` sends the class of an ambient
-element to its class modulo `J`. -/
+/-- **Evaluation of an inclusion-induced quotient map.** Let `A` be a nonunital complex C*-algebra and
+`I ⊆ J` closed two-sided star ideals of `A`. For every `a ∈ A`, the induced map sends the class of
+`a` modulo `I` to its class modulo `J`. -/
 theorem quotientMapOfLE_quotientMap
     (I J : ClosedStarIdeal A) (h : I ≤ J) (x : A) :
     quotientMapOfLE I J h (I.quotientMap x) = J.quotientMap x := by
@@ -914,8 +974,9 @@ theorem quotientMapOfLE_quotientMap
   let _ : J.carrier.IsTwoSided := J.isTwoSided
   rfl
 
-/-- Inclusion-induced quotient-map evaluation in submodule projection normal form.
-The original `quotientMapOfLE_quotientMap` equation retains its rewrite interface. -/
+/-- **Classes under an inclusion-induced quotient map.** Let `A` be a nonunital complex C*-algebra and
+`I ⊆ J` closed two-sided star ideals of `A`. For every `a ∈ A`, the induced quotient map evaluates
+at `[a]ᵢ` to `[a]ⱼ`, using the underlying complex-vector quotient projections. -/
 @[simp]
 theorem quotientMapOfLE_mkQ
     (I J : ClosedStarIdeal A) (h : I ≤ J) (x : A) :
@@ -925,7 +986,8 @@ theorem quotientMapOfLE_mkQ
   let _ : J.carrier.IsTwoSided := J.isTwoSided
   simpa only [quotientMap_apply] using quotientMapOfLE_quotientMap I J h x
 
-/-- The quotient map induced by reflexivity is the identity. -/
+/-- **Quotient map of a reflexive ideal inclusion.** For a nonunital complex C*-algebra `A` and a closed
+two-sided star ideal `I ⊆ A`, the quotient homomorphism induced by `I ⊆ I` is the identity of `A/I`. -/
 @[simp]
 theorem quotientMapOfLE_refl (I : ClosedStarIdeal A) :
     let _ : I.carrier.IsTwoSided := I.isTwoSided
@@ -937,8 +999,9 @@ theorem quotientMapOfLE_refl (I : ClosedStarIdeal A) :
   rw [quotientMapOfLE_quotientMap]
   rfl
 
-/-- Quotient maps induced by inclusions compose according to transitivity of
-ideal inclusion. -/
+/-- **Composition of inclusion-induced quotient maps.** For a nonunital complex C*-algebra `A` and
+closed two-sided star ideals `I ⊆ J ⊆ K`, the composite `A/I → A/J → A/K` equals the quotient
+homomorphism induced by `I ⊆ K`. -/
 theorem quotientMapOfLE_trans
     (I J K : ClosedStarIdeal A) (hIJ : I ≤ J) (hJK : J ≤ K) :
     let _ : I.carrier.IsTwoSided := I.isTwoSided
@@ -965,8 +1028,9 @@ universe u v
 variable {A : Type u} {B : Type v}
 variable [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
 
-/-- The canonical map from the quotient by the bundled closed kernel to the
-bundled range. -/
+/-- **Homomorphism from the kernel quotient to the range.** Let `A,B` be nonunital complex C*-algebras
+and `ρ : A → B` a nonunital complex star-algebra homomorphism. It induces the nonunital star
+homomorphism `A/ker(ρ) → range(ρ)` given by `[a] ↦ ρ(a)`. -/
 noncomputable def quotientKerRangeHom (rho : A →⋆ₙₐ[ℂ] B) :
     let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
       (ClosedStarIdeal.ker rho).isTwoSided
@@ -979,8 +1043,9 @@ noncomputable def quotientKerRangeHom (rho : A →⋆ₙₐ[ℂ] B) :
       apply Subtype.ext
       exact (ClosedStarIdeal.mem_ker rho x).1 hx
 
-/-- The canonical quotient-to-range map sends the class of `a` to `rho a` in
-the bundled range. -/
+/-- **Evaluation of the kernel-quotient range map.** Let `A,B` be nonunital complex C*-algebras and `ρ :
+A → B` a nonunital complex star-algebra homomorphism. For every `a ∈ A`, the induced map from
+`A/ker(ρ)` to the range sends `[a]` to `ρ(a)`, regarded as an element of the range. -/
 theorem quotientKerRangeHom_quotientMap (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
     quotientKerRangeHom rho ((ClosedStarIdeal.ker rho).quotientMap a) =
       NonUnitalStarAlgHom.rangeRestrict rho a := by
@@ -988,7 +1053,9 @@ theorem quotientKerRangeHom_quotientMap (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
     (ClosedStarIdeal.ker rho).isTwoSided
   rfl
 
-/-- Quotient-to-range evaluation in the canonical submodule projection normal form. -/
+/-- **Kernel quotient classes under the range map.** Let `A,B` be nonunital complex C*-algebras and `ρ :
+A → B` a nonunital complex star-algebra homomorphism. For every `a ∈ A`, the vector-space quotient
+class `[a]` maps to `ρ(a)` in the range. -/
 @[simp]
 theorem quotientKerRangeHom_mkQ (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
     quotientKerRangeHom rho (Submodule.Quotient.mk a) =
@@ -998,9 +1065,10 @@ theorem quotientKerRangeHom_mkQ (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
   simpa only [ClosedStarIdeal.quotientMap_apply] using
     quotientKerRangeHom_quotientMap rho a
 
-/-- Canonical first isomorphism theorem for nonunital complex C-star algebra
-homomorphisms: the quotient by the bundled closed kernel is star-algebra
-equivalent to the bundled range. -/
+/-- **First isomorphism theorem for nonunital C*-algebras.** Let `A,B` be nonunital complex C*-algebras
+and `ρ : A → B` a nonunital complex star-algebra homomorphism. There is a complex star-algebra
+equivalence `A/ker(ρ) ≃ range(ρ)`, with the quotient norm on the left and inherited norm on the
+right. -/
 noncomputable def quotientKerEquivRange (rho : A →⋆ₙₐ[ℂ] B) :
     let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
       (ClosedStarIdeal.ker rho).isTwoSided
@@ -1026,8 +1094,9 @@ noncomputable def quotientKerEquivRange (rho : A →⋆ₙₐ[ℂ] B) :
     simpa only [quotientKerRangeHom_quotientMap,
       NonUnitalStarAlgHom.coe_codRestrict] using ha
 
-/-- The first-isomorphism equivalence sends the canonical class of `a` to
-`rho a` in the bundled range. -/
+/-- **Evaluation of the first-isomorphism equivalence.** Let `A,B` be nonunital complex C*-algebras and
+`ρ : A → B` a nonunital complex star-algebra homomorphism. The canonical equivalence `A/ker(ρ) ≃
+range(ρ)` sends `[a]` to `ρ(a)` for every `a ∈ A`. -/
 theorem quotientKerEquivRange_quotientMap (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
     quotientKerEquivRange rho
         ((ClosedStarIdeal.ker rho).quotientMap a) =
@@ -1039,7 +1108,9 @@ theorem quotientKerEquivRange_quotientMap (rho : A →⋆ₙₐ[ℂ] B) (a : A) 
     NonUnitalStarAlgHom.rangeRestrict rho a
   exact quotientKerRangeHom_quotientMap rho a
 
-/-- First-isomorphism range evaluation in the canonical submodule projection normal form. -/
+/-- **Classes in the first-isomorphism equivalence.** Let `A,B` be nonunital complex C*-algebras and `ρ
+: A → B` a nonunital complex star-algebra homomorphism. The canonical equivalence from the
+vector-space quotient `A/ker(ρ)` to the range evaluates at `[a]` to `ρ(a)`. -/
 @[simp]
 theorem quotientKerEquivRange_mkQ (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
     quotientKerEquivRange rho (Submodule.Quotient.mk a) =
@@ -1049,7 +1120,9 @@ theorem quotientKerEquivRange_mkQ (rho : A →⋆ₙₐ[ℂ] B) (a : A) :
   simpa only [ClosedStarIdeal.quotientMap_apply] using
     quotientKerEquivRange_quotientMap rho a
 
-/-- Surjective form of the canonical first isomorphism theorem. -/
+/-- **First isomorphism theorem for a surjective C*-homomorphism.** Let `A,B` be nonunital complex
+C*-algebras and `ρ : A → B` a nonunital complex star-algebra homomorphism. If `ρ` is surjective, the
+kernel quotient is complex star-algebra equivalent to `B`. -/
 noncomputable def quotientKerEquivOfSurjective
     (rho : A →⋆ₙₐ[ℂ] B) (hrho : Function.Surjective rho) :
     let _ : (ClosedStarIdeal.ker rho).carrier.IsTwoSided :=
@@ -1065,8 +1138,9 @@ noncomputable def quotientKerEquivOfSurjective
           obtain ⟨a, rfl⟩ := hrho b
           exact ⟨⟨rho a, NonUnitalStarAlgHom.mem_range_self rho a⟩, rfl⟩⟩
 
-/-- The surjective first-isomorphism equivalence sends the canonical class of
-`a` to `rho a`. -/
+/-- **Evaluation of the surjective first isomorphism.** Let `A,B` be nonunital complex C*-algebras and
+`ρ : A → B` a nonunital complex star-algebra homomorphism. If `ρ` is surjective, its canonical
+equivalence `A/ker(ρ) ≃ B` sends `[a]` to `ρ(a)` for every `a ∈ A`. -/
 theorem quotientKerEquivOfSurjective_quotientMap
     (rho : A →⋆ₙₐ[ℂ] B) (hrho : Function.Surjective rho) (a : A) :
     quotientKerEquivOfSurjective rho hrho
@@ -1080,7 +1154,9 @@ theorem quotientKerEquivOfSurjective_quotientMap
   simpa only [NonUnitalStarAlgHom.coe_codRestrict] using
     congrArg Subtype.val (quotientKerEquivRange_quotientMap rho a)
 
-/-- Surjective first-isomorphism evaluation in the canonical submodule projection normal form. -/
+/-- **Quotient classes under the surjective first isomorphism.** Let `A,B` be nonunital complex
+C*-algebras and `ρ : A → B` a nonunital complex star-algebra homomorphism. If `ρ` is surjective, the
+canonical equivalence from the vector-space quotient `A/ker(ρ)` to `B` evaluates at `[a]` to `ρ(a)`. -/
 @[simp]
 theorem quotientKerEquivOfSurjective_mkQ
     (rho : A →⋆ₙₐ[ℂ] B) (hrho : Function.Surjective rho) (a : A) :

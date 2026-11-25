@@ -48,7 +48,12 @@ variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace ℂ F]
   [SMul B₂ᵐᵒᵖ F] [CStarModule B₂ᵐᵒᵖ F] [CompleteSpace F]
 
-/-- The first four real model clauses construct the ordinary complex tensor map. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The complex-bilinear map T induces a
+complex-linear map from the algebraic complex tensor product into F. -/
 def rawModelMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) :
@@ -69,7 +74,12 @@ def rawModelMap
         intro y
         exact hT.2.2.1 c x y }
 
-/-- The raw comparison retains exactly the supplied pure value. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. This algebraic comparison sends the
+elementary tensor of x and y to T(x,y). -/
 @[simp]
 theorem rawModelMap_tmul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -78,7 +88,12 @@ theorem rawModelMap_tmul
   rw [rawModelMap, TensorProduct.lift.tmul]
   simp only [LinearMap.coe_mk, AddHom.coe_mk]
 
-/-- The actual model balance clause annihilates the defining span. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. Every balancing relation lies in the
+kernel of the algebraic comparison. -/
 theorem balancingSpan_le_ker_rawModelMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) :
@@ -89,21 +104,36 @@ theorem balancingSpan_le_ker_rawModelMap
   rw [balanceRelation, map_sub, rawModelMap_tmul, rawModelMap_tmul,
     hT.2.2.2.2.1, sub_self]
 
-/-- The actual comparison descends through the independently defined balancing quotient. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The algebraic comparison therefore
+defines a complex-linear map from the B₁-balanced tensor quotient into F. -/
 def balancedModelMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) :
     BalancedTensor (E₁ := E₁) φ →ₗ[ℂ] F :=
   (balancingSpan φ).liftQ (rawModelMap φ T hT) (balancingSpan_le_ker_rawModelMap φ T hT)
 
-/-- Every ordinary tensor representative has its computed balanced image. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The balanced comparison on the class of
+an algebraic tensor equals its algebraic comparison value. -/
 theorem balancedModelMap_mkQ
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) (z : AlgebraicTensor E₁ E₂) :
     balancedModelMap φ T hT ((balancingSpan φ).mkQ z) = rawModelMap φ T hT z := by
   simp only [balancedModelMap, Submodule.mkQ_apply, Submodule.liftQ_apply]
 
-/-- Balanced pure values are the actual supplied model values. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The balanced comparison sends an
+elementary balanced tensor to T(x,y). -/
 @[simp]
 theorem balancedModelMap_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -111,7 +141,12 @@ theorem balancedModelMap_pure
     balancedModelMap φ T hT (balancedPure φ x y) = T x y := by
   simp only [balancedPure, balancedModelMap_mkQ, rawModelMap_tmul]
 
-/-- The real model clause proves the full mixed raw inner identity. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The algebraic comparison preserves the
+B₂-valued tensor inner product for every pair of algebraic tensors. -/
 theorem rawModelMap_inner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T)
@@ -129,7 +164,12 @@ theorem rawModelMap_inner
   | add z z' hz hz' =>
     simp only [map_add, rightInner_add_left, LinearMap.add_apply, hz, hz']
 
-/-- Both real balancing descents retain the original mixed inner form. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The balanced comparison preserves the
+B₂-valued inner product for every pair of balanced tensors. -/
 theorem balancedModelMap_inner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T)
@@ -141,8 +181,12 @@ theorem balancedModelMap_inner
   simpa only [balancedModelMap_mkQ, balancedInner_mkQ_mkQ] using
     rawModelMap_inner φ T hT z w
 
-/-- A true radical vector has zero image by the supplied module's actual
-definiteness, not by an assumed isometry or model-based backend. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. Every vector in the radical of the
+balanced inner form maps to zero in F. -/
 theorem radicalSpace_le_ker_balancedModelMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) :
@@ -156,28 +200,48 @@ theorem radicalSpace_le_ker_balancedModelMap
     (balancedModelMap_inner φ T hT z z).trans ((mem_radicalSpace_iff φ z).mp hz z)
   simpa only [CStarModule.rightInner, MulOpposite.unop_zero] using hzero
 
-/-- The actual comparison descends to the genuine radical/null quotient. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The balanced comparison defines a
+complex-linear map from the radical quotient into F. -/
 def radicalModelMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) :
     RadicalTensor (E₁ := E₁) φ →ₗ[ℂ] F :=
   (radicalSpace φ).liftQ (balancedModelMap φ T hT) (radicalSpace_le_ker_balancedModelMap φ T hT)
 
-/-- Every balancing representative has its computed radical image. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The radical comparison evaluated on a
+quotient class equals the balanced comparison of its representative. -/
 theorem radicalModelMap_mkQ
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) (z : BalancedTensor (E₁ := E₁) φ) :
     radicalModelMap φ T hT ((radicalSpace φ).mkQ z) = balancedModelMap φ T hT z := by
   simp only [radicalModelMap, Submodule.mkQ_apply, Submodule.liftQ_apply]
 
-/-- The actual radical comparison still sends canonical pure vectors to T. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The radical comparison sends the class
+of an elementary balanced tensor to T(x,y). -/
 theorem radicalModelMap_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) (x : E₁) (y : E₂) :
     radicalModelMap φ T hT ((radicalSpace φ).mkQ (balancedPure φ x y)) = T x y := by
   simp only [radicalModelMap_mkQ, balancedModelMap_pure]
 
-/-- The full mixed inner formula, not just a norm promise, descends through the radical. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The radical comparison preserves the B₂-
+valued inner product for every pair of radical-quotient vectors. -/
 theorem radicalModelMap_inner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T)
@@ -191,7 +255,12 @@ theorem radicalModelMap_inner
 
 variable [StarOrderedRing B₁ᵐᵒᵖ] [StarOrderedRing B₂ᵐᵒᵖ]
 
-/-- The comparison preserves the actual quotient norm and the supplied F norm. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The radical comparison preserves the
+norm defined by the coefficient-valued inner product. -/
 theorem radicalModelMap_norm
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) (q : RadicalTensor (E₁ := E₁) φ) :
@@ -207,7 +276,12 @@ theorem radicalModelMap_norm
     _ = Real.sqrt ‖radicalInner φ q q‖ := by rw [radicalModelMap_inner]
     _ = ‖q‖ := (radicalTensorNormedAddCommGroup_norm φ q).symm
 
-/-- The real norm-preserving radical map is a constructed linear isometry. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The radical comparison is a complex-
+linear isometry into F. -/
 def radicalModelIsometry
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) :
@@ -223,7 +297,12 @@ def radicalModelIsometry
   exact { toLinearMap := radicalModelMap φ T hT
           norm_map' := radicalModelMap_norm φ T hT }
 
-/-- The constructed isometry has exactly the existing comparison value. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. This linear isometry has the same value
+as the radical comparison. -/
 @[simp]
 theorem radicalModelIsometry_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)

@@ -1,4 +1,6 @@
-# Is Finite Dimensional Subalgebra range
+# Finite-dimensional range of a star homomorphism
 
-A finite-dimensional stage has a closed finite-dimensional image under
-any nonunital star homomorphism, including the zero homomorphism.
+If `D` and `A` are nonunital complex
+C*-algebras, `D` is finite-dimensional over `ℂ`, and `f : D → A` is a nonunital star-algebra
+homomorphism, its range is a closed finite-dimensional nonunital star subalgebra of `A`. The zero
+homomorphism is included.

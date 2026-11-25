@@ -45,32 +45,51 @@ attribute [local instance] PositiveContinuousLinearMap.stateUnitizationOrder
 variable (tau : A →ₚ[ℂ] ℂ)
   (htau : ‖(PositiveContinuousLinearMap.ofClass tau : A →P[ℂ] ℂ).toContinuousLinearMap‖ = 1)
 
-/-- The actual cyclic unit vector in the original state-indexed GNS completion. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional. Assume its associated continuous linear functional has
+operator norm one.
+
+The cyclic unit vector in the state-indexed GNS completion. -/
 def nonunitalGNSVector : tau.GNS :=
   (gnsUnitizationEquiv tau htau).symm
     (unitizationGNSVector (PositiveContinuousLinearMap.ofClass tau) htau)
 
-/-- The strict coefficient comparison sends the actual original vector
-to the genuine unitized class-of-one vector. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional. Assume its associated continuous linear functional has
+operator norm one.
+
+The GNS comparison sends the normalized cyclic vector to the unit class in the unitized-state
+GNS space. -/
 theorem nonunitalGNSVector_toUnitization :
     gnsUnitizationEquiv tau htau (nonunitalGNSVector tau htau) =
       unitizationGNSVector (PositiveContinuousLinearMap.ofClass tau) htau := by
   rw [nonunitalGNSVector, LinearIsometryEquiv.apply_symm_apply]
 
-/-- The original state vector has norm one in its original GNS norm. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional. Assume its associated continuous linear functional has
+operator norm one.
+
+The state vector has norm one in its GNS norm. -/
 theorem norm_nonunitalGNSVector : ‖nonunitalGNSVector tau htau‖ = 1 := by
   rw [nonunitalGNSVector, (gnsUnitizationEquiv tau htau).symm.norm_map,
     norm_unitizationGNSVector]
 
-/-- Every original algebra element acts by its literal original GNS class. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional. Assume its associated continuous linear functional has
+operator norm one.
+
+Every algebra element acts by its GNS class. -/
 theorem nonunitalGNSVector_action (a : A) :
     tau.gnsNonUnitalStarAlgHom a (nonunitalGNSVector tau htau) = tau.toGNS a := by
   apply (gnsUnitizationEquiv tau htau).injective
   rw [gnsUnitizationEquiv_intertwines, nonunitalGNSVector_toUnitization,
     stateGNSRepresentation_vector, gnsUnitizationEquiv_toGNS]
 
-/-- The actual original vector has the anchored Riesz coefficient formula
-against every literal original coefficient class. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional. Assume its associated continuous linear functional has
+operator norm one.
+
+The vector has the anchored Riesz coefficient formula against every coefficient class. -/
 theorem nonunitalGNSVector_inner (a : A) :
     inner ℂ (nonunitalGNSVector tau htau) (tau.toGNS a) = tau a := by
   have h := (gnsUnitizationEquiv tau htau).inner_map_map
@@ -100,7 +119,11 @@ theorem nonunitalGNSVector_unique (y : tau.GNS)
   rintro _ ⟨a, rfl⟩
   exact (hy a).symm.trans (nonunitalGNSVector_inner tau htau a).symm
 
-/-- The genuine original-algebra orbit of the actual vector has dense span. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra with a compatible star order. Let `τ : A → ℂ`
+be a positive complex-linear functional. Assume its associated continuous linear functional has
+operator norm one.
+
+The original-algebra orbit of the vector has dense span. -/
 theorem dense_nonunitalGNSVector_span :
     Dense (Submodule.span ℂ (Set.range fun a : A =>
       tau.gnsNonUnitalStarAlgHom a (nonunitalGNSVector tau htau)) : Set tau.GNS) := by

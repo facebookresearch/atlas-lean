@@ -47,9 +47,9 @@ private theorem continuousMapEvalStarAlgHom_apply
     continuousMapEvalStarAlgHom t f = f t :=
   rfl
 
-/-- Unitizing point-norm homotopic nonunital star homomorphisms gives
-point-norm homotopic homomorphisms between the unitizations.  The constructed
-homotopy fixes the scalar coordinate. -/
+/-- **Unitization preserves point-norm homotopy.** For nonunital complex C*-algebras `A,B` and
+point-norm homotopic nonunital star homomorphisms `φ,ψ : A → B`, their unitized maps are point-norm
+homotopic between the complex unitizations. The induced homotopy keeps the scalar coordinate fixed. -/
 theorem unitization
     {A : Type u} {B : Type v}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]

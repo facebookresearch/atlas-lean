@@ -1,3 +1,5 @@
-# Map Of Surjective
+# Image ideal under a surjective star homomorphism
 
-The actual closed two-sided image of an ideal under a surjective star map.
+Let `A,B` be nonunital complex C*-algebras and
+`f : A → B` a surjective nonunital complex star homomorphism. For a closed two-sided star ideal `I ⊆
+A`, its image `f(I)` is a closed two-sided star ideal of `B`.

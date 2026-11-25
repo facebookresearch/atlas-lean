@@ -36,8 +36,11 @@ universe uG uH uA uB uC uD uX
 
 noncomputable section
 
-/-- A point-norm continuous multiplicative monoid action by complex
-star-algebra automorphisms. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+A point-norm continuous multiplicative monoid action by complex star-algebra automorphisms. -/
 structure PointNormCStarAction
     (G : Type uG) (A : Type uA)
     [Monoid G] [TopologicalSpace G] [NonUnitalCStarAlgebra A] where
@@ -57,8 +60,11 @@ section Monoid
 
 variable [Monoid G]
 
-/-- Two point-norm actions are equal when their monoid homomorphisms are
-equal. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+Two point-norm actions are equal when their monoid homomorphisms are equal. -/
 theorem ext {α β : PointNormCStarAction G A}
     (h : α.toMonoidHom = β.toMonoidHom) : α = β := by
   cases α
@@ -66,15 +72,22 @@ theorem ext {α β : PointNormCStarAction G A}
   cases h
   rfl
 
-/-- The automorphism at one monoid element. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The automorphism at one monoid element. -/
 def aut (α : PointNormCStarAction G A) (g : G) : A ≃⋆ₐ[ℂ] A :=
   α.toMonoidHom g
 
 instance : CoeFun (PointNormCStarAction G A) fun _ ↦ G → A → A where
   coe α g := α.aut g
 
-/-- Two point-norm actions are equal when they agree on every monoid element
-and coefficient. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+Two point-norm actions are equal when they agree on every monoid element and coefficient. -/
 @[ext]
 theorem ext_apply {α β : PointNormCStarAction G A}
     (h : ∀ g a, α g a = β g a) : α = β := by
@@ -111,7 +124,11 @@ theorem apply_mul (α : PointNormCStarAction G A) (g h : G) (a : A) :
   rw [aut_mul]
   rfl
 
-/-- The orbit of a coefficient as a continuous map. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The orbit of a coefficient as a continuous map. -/
 def orbit (α : PointNormCStarAction G A) (a : A) : C(G, A) :=
   ⟨fun g ↦ α g a, α.continuous_orbit a⟩
 
@@ -152,8 +169,13 @@ theorem dist_apply (α : PointNormCStarAction G A) (g : G) (a b : A) :
     dist (α g a) (α g b) = dist a b :=
   (StarAlgEquiv.isometry (α.aut g)).dist_eq a b
 
-/-- Point-norm continuity and isometry imply continuity when both the monoid
-element and coefficient vary. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology. Let `X` be a topological parameter space. The group or monoid parameter and
+the coefficient or vector parameter are continuous functions on `X`.
+
+Point-norm continuity and isometry imply continuity when both the monoid element and coefficient
+vary. -/
 theorem continuous_apply
     {X : Type uX} [TopologicalSpace X]
     (α : PointNormCStarAction G A)
@@ -180,12 +202,20 @@ theorem continuous_apply
     _ < ε / 2 + ε / 2 := add_lt_add hya hyg
     _ = ε := add_halves ε
 
-/-- Joint continuity of the action map. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+Joint continuity of the action map. -/
 theorem continuous_action (α : PointNormCStarAction G A) :
     Continuous fun p : G × A ↦ α p.1 p.2 :=
   α.continuous_apply continuous_fst continuous_snd
 
-/-- The trivial point-norm action. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The trivial point-norm action. -/
 def trivial (G : Type uG) (A : Type uA)
     [Monoid G] [TopologicalSpace G] [NonUnitalCStarAlgebra A] :
     PointNormCStarAction G A where
@@ -200,7 +230,12 @@ section Restrict
 
 variable [Monoid H]
 
-/-- Restrict an action along a continuous monoid homomorphism. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology. The restricting map from a second monoid `H` to `G` is a continuous monoid
+homomorphism.
+
+Restrict an action along a continuous monoid homomorphism. -/
 def restrict (α : PointNormCStarAction G A) (f : ContinuousMonoidHom H G) :
     PointNormCStarAction H A where
   toMonoidHom := α.toMonoidHom.comp f.toMonoidHom
@@ -216,8 +251,11 @@ end Restrict
 
 /-! ## Equivariant homomorphisms -/
 
-/-- A nonunital star-algebra homomorphism intertwining two point-norm
-actions. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` and `B` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+A nonunital star-algebra homomorphism intertwining two point-norm actions. -/
 structure Hom (α : PointNormCStarAction G A) (β : PointNormCStarAction G B)
     extends A →⋆ₙₐ[ℂ] B where
   equivariant' : ∀ g a, toFun (α g a) = β g (toFun a)
@@ -256,7 +294,11 @@ theorem equivariant (φ : Hom α β) (g : G) (a : A) :
 theorem ext {φ ψ : Hom α β} (h : ∀ a, φ a = ψ a) : φ = ψ := by
   exact DFunLike.ext φ ψ h
 
-/-- The identity equivariant homomorphism. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A` be possibly nonunital complex
+C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient orbits in
+the norm topology.
+
+The identity equivariant homomorphism. -/
 def id (α : PointNormCStarAction G A) : Hom α α where
   toNonUnitalStarAlgHom := NonUnitalStarAlgHom.id ℂ A
   equivariant' := fun _ _ ↦ rfl
@@ -265,7 +307,11 @@ def id (α : PointNormCStarAction G A) : Hom α α where
 theorem id_apply (α : PointNormCStarAction G A) (a : A) : id α a = a :=
   rfl
 
-/-- Composition of equivariant homomorphisms. -/
+/-- Let `G` be a monoid equipped with a topology, and let `A`, `B` and `C` be possibly nonunital
+complex C*-algebras. Specify actions by star-algebra automorphisms with continuous coefficient
+orbits in the norm topology.
+
+Composition of equivariant homomorphisms. -/
 def comp {C : Type uC} [NonUnitalCStarAlgebra C]
     {γ : PointNormCStarAction G C}
     (ψ : Hom β γ) (φ : Hom α β) : Hom α γ where

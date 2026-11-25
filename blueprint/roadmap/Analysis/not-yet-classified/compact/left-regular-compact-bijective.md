@@ -1,4 +1,7 @@
 # Left Regular Compact bijective
 
-The canonical left regular representation identifies the coefficient
-algebra bijectively with its compact self-module endomorphisms.
+Let B be a possibly nonunital complex C*-algebra whose opposite algebra has a star-compatible
+partial order.
+
+Left multiplication gives a bijection from B onto the compact endomorphisms of its right
+coefficient self-module.

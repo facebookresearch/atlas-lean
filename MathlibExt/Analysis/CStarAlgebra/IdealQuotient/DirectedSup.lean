@@ -38,8 +38,9 @@ universe uA uI
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 variable {ι : Type uI} [Nonempty ι]
 
-/-- The least closed star ideal containing a nonempty directed family.
-Its carrier is literally the closure of the union, not an assumed limit. -/
+/-- **Directed supremum of closed star ideals.** Let `A` be a nonunital complex C*-algebra and `(Iᵢ)ᵢ∈ι`
+a nonempty directed family of closed two-sided star ideals of `A`, ordered by inclusion. The norm
+closure of `⋃ i, Iᵢ` is the least closed two-sided star ideal containing the whole family. -/
 def directedSup (I : ι → ClosedStarIdeal A) (hI : Directed (· ≤ ·) I) :
     ClosedStarIdeal A := by
   let S : NonUnitalStarSubalgebra ℂ A := ⨆ i, (I i).carrier
@@ -103,7 +104,9 @@ def directedSup (I : ι → ClosedStarIdeal A) (hI : Directed (· ≤ ·) I) :
     rw [hD]
     exact isClosed_closure
 
-/-- Exact topological carrier of the directed closed union. -/
+/-- **Carrier of a directed closed-ideal supremum.** Let `A` be a nonunital complex C*-algebra and
+`(Iᵢ)ᵢ∈ι` a nonempty directed family of closed two-sided star ideals of `A`, ordered by inclusion.
+The carrier of the directed supremum is exactly the norm closure of `⋃ i, Iᵢ`. -/
 theorem directedSup_carrier (I : ι → ClosedStarIdeal A)
     (hI : Directed (· ≤ ·) I) :
     ((directedSup I hI).carrier : Set A) =
@@ -119,7 +122,9 @@ theorem directedSup_carrier (I : ι → ClosedStarIdeal A)
     obtain ⟨k, hik, hjk⟩ := hI i j
     exact ⟨k, hik, hjk⟩)]
 
-/-- Every stage embeds in the constructed closed union. -/
+/-- **Each ideal lies in the directed supremum.** Let `A` be a nonunital complex C*-algebra and
+`(Iᵢ)ᵢ∈ι` a nonempty directed family of closed two-sided star ideals of `A`, ordered by inclusion.
+Every `Iᵢ` is contained in the closed ideal defined by the norm closure of the union. -/
 theorem le_directedSup (I : ι → ClosedStarIdeal A)
     (hI : Directed (· ≤ ·) I) (i : ι) : I i ≤ directedSup I hI := by
   intro x hx
@@ -127,7 +132,9 @@ theorem le_directedSup (I : ι → ClosedStarIdeal A)
   rw [directedSup_carrier]
   exact subset_closure (Set.mem_iUnion.mpr ⟨i, hx⟩)
 
-/-- Closing the union adds no elements outside a closed upper bound. -/
+/-- **Least-upper-bound property of a directed supremum.** Let `A` be a nonunital complex C*-algebra and
+`(Iᵢ)ᵢ∈ι` a nonempty directed family of closed two-sided star ideals of `A`, ordered by inclusion.
+If a closed two-sided star ideal `K` contains every `Iᵢ`, it contains their directed supremum. -/
 theorem directedSup_le (I : ι → ClosedStarIdeal A)
     (hI : Directed (· ≤ ·) I) (K : ClosedStarIdeal A)
     (hK : ∀ i, I i ≤ K) : directedSup I hI ≤ K := by

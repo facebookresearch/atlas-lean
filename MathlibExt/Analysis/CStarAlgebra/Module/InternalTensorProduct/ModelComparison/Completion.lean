@@ -50,7 +50,12 @@ variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace ℂ F]
   [SMul B₂ᵐᵒᵖ F] [CStarModule B₂ᵐᵒᵖ F] [CompleteSpace F]
 
-/-- Extend the genuine radical isometry into the actual complete supplied module. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The radical comparison extends to a
+complex-linear isometry from the completed internal tensor product into F. -/
 def completedModelIsometry
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) :
@@ -65,7 +70,12 @@ def completedModelIsometry
     radicalTensorNormedSpace φ
   exact (radicalModelIsometry φ T hT).fromCompletion
 
-/-- Canonical quotient images retain their constructed comparison value. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. On the image of a radical-quotient
+vector, the extended isometry has its radical comparison value. -/
 @[simp]
 theorem completedModelIsometry_coe
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -83,7 +93,12 @@ theorem completedModelIsometry_coe
   simp only [completedModelIsometry, LinearIsometry.fromCompletion_apply_coe,
     radicalModelIsometry_apply]
 
-/-- The actual map on every balanced representative is the quotient comparison. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. On the completed image of a balanced
+tensor, the isometry has its balanced comparison value. -/
 @[simp]
 theorem completedModelIsometry_fromBalanced
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -100,7 +115,12 @@ theorem completedModelIsometry_fromBalanced
     radicalTensorNormedSpace φ
   rw [completedFromBalanced_apply, completedModelIsometry_coe, radicalModelMap_mkQ]
 
-/-- The independently defined canonical pure map has its actual supplied pure image. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The completed isometry sends the
+elementary completed tensor of x and y to T(x,y). -/
 @[simp]
 theorem completedModelIsometry_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -116,7 +136,12 @@ theorem completedModelIsometry_pure
     radicalTensorNormedSpace φ
   rw [completedPure_apply, completedModelIsometry_coe, radicalModelMap_pure]
 
-/-- Mixed coefficient-inner preservation is proved separately from norm isometry. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The completed isometry preserves the B₂-
+valued inner product. -/
 theorem completedModelIsometry_inner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) (z w : CompletedTensor (E₁ := E₁) φ) :
@@ -158,8 +183,12 @@ theorem completedModelIsometry_inner
     completedFromBalanced_inner]
   exact balancedModelMap_inner φ T hT q v
 
-/-- Complete-source isometry has closed range, and the real dense model span
-forces that actual range to be the whole supplied module. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. Density of the span of the values of T
+implies that the completed isometry is onto F. -/
 theorem completedModelIsometry_surjective
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) :
@@ -192,8 +221,12 @@ theorem completedModelIsometry_surjective
       _ = R := hClosed.submodule_topologicalClosure_eq
   exact (LinearMap.range_eq_top).mp hTop
 
-/-- The genuine completed comparison and its proved surjectivity construct
-a unitary equivalence; neither the output equivalence nor its inverse is input. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The completed internal tensor product is
+unitarily equivalent, as a right B₂-module, to F by the extension of T. -/
 def completedTensorModelUnitary
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) :
@@ -218,7 +251,12 @@ def completedTensorModelUnitary
     simpa only [e, LinearIsometryEquiv.coe_ofSurjective] using
       completedModelIsometry_inner φ T hT z w)
 
-/-- The unitary's forward map is exactly the constructed isometric extension. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The forward value of this unitary
+equivalence is the completed comparison isometry. -/
 theorem completedTensorModelUnitary_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) (z : CompletedTensor (E₁ := E₁) φ) :
@@ -238,7 +276,12 @@ theorem completedTensorModelUnitary_apply
   simp only [completedTensorModelUnitary, UnitaryEquiv.ofLinearIsometryEquiv_apply,
     LinearIsometryEquiv.coe_ofSurjective]
 
-/-- The constructed unitary is pinned on every canonical pure vector. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The unitary equivalence sends the
+elementary completed tensor of x and y to T(x,y). -/
 @[simp]
 theorem completedTensorModelUnitary_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -258,7 +301,12 @@ theorem completedTensorModelUnitary_pure
   let : CStarModule B₂ᵐᵒᵖ (CompletedTensor (E₁ := E₁) φ) := completedCStarModule φ
   rw [completedTensorModelUnitary_apply, completedModelIsometry_pure]
 
-/-- Its genuine adjoint inverse sends supplied pure values back to canonical pure vectors. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The inverse unitary sends T(x,y) to the
+elementary completed tensor of x and y. -/
 @[simp]
 theorem completedTensorModelUnitary_symm_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -278,7 +326,12 @@ theorem completedTensorModelUnitary_symm_pure
   let : CStarModule B₂ᵐᵒᵖ (CompletedTensor (E₁ := E₁) φ) := completedCStarModule φ
   rw [← completedTensorModelUnitary_pure φ T hT x y, UnitaryEquiv.symm_apply_apply]
 
-/-- The actual unitary comparison preserves the same right B2 action. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ and E₂ complete right Hilbert
+modules over them, and φ a nonunital star representation of B₁ by B₂-adjointable operators on
+E₂. Let F be a complete right Hilbert B₂-module. Suppose T from E₁ × E₂ to F is complex-
+bilinear, balanced over B₁, right B₂-linear, preserves the coefficient-valued tensor inner
+product, and has pure values with dense complex span. The unitary comparison commutes with the
+right B₂ action. -/
 theorem completedTensorModelUnitary_right_smul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (T : E₁ → E₂ → F) (hT : IsModel φ T) (z : CompletedTensor (E₁ := E₁) φ) (b : B₂) :

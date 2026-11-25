@@ -1,4 +1,5 @@
-# Linear Independent vec iff choi Rank kraus eq card
+# Independence of Kraus operators and Choi rank
 
-The vectorized Kraus operators are linearly independent if and only if
-the Choi rank equals the cardinality of the Kraus family.
+For finite decidable matrix index types `n,m` and
+a finite family `K : r → Matrix m n ℂ`, the vectorized operators `vec(Kᵢ)` are complex-linearly
+independent exactly when the Choi rank of `kraus K` equals `|r|`.

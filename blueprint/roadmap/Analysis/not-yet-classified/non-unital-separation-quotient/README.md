@@ -1,6 +1,6 @@
 # Non Unital Separation Quotient
 
-- [Non Unital Cstar Star Ring](non-unital-cstar-star-ring.md)
-- [Mk non Unital Cstar Star](mk-non-unital-cstar-star.md)
-- [Non Unital Cstar Star Module](non-unital-cstar-star-module.md)
-- [Non Unital Cstar Ring](non-unital-cstar-ring.md)
+- [Involution on a separation quotient](non-unital-cstar-star-ring.md)
+- [Representatives of the quotient involution](mk-non-unital-cstar-star.md)
+- [Complex scalar compatibility of the separated involution](non-unital-cstar-star-module.md)
+- [C*-identity on a separation quotient](non-unital-cstar-ring.md)

@@ -42,8 +42,10 @@ variable [NormedAddCommGroup F] [NormedSpace ℂ F] [SMul Bᵐᵒᵖ F]
   [CStarModule Bᵐᵒᵖ F] [CompleteSpace F]
 variable {γ : CStarGrading B}
 
-/-- Transport a module grading by conjugating its generator with a unitary
-module equivalence. -/
+/-- **Transport of a module grading.** Let `B` be a graded nonunital complex C*-algebra with an order on
+its opposite algebra, let `E,F` be complete right Hilbert `B`-modules, let `G` be a compatible
+grading generator on `E`, and let `U : E → F` be a unitary module equivalence. The conjugate
+generator `U G U⁻¹` defines a compatible grading on `F` over the same coefficient grading. -/
 def transport
     (δ : CStarModuleGrading γ E)
     (U : CStarModule.UnitaryEquiv B E F) :
@@ -94,8 +96,10 @@ theorem transport_generator_apply
     (transport δ U).generator y = U (δ.generator (U.symm y)) :=
   rfl
 
-/-- The transporting unitary is graded from the original grading to the
-transported grading. -/
+/-- **Transporting unitary is graded.** Let `B` be a graded nonunital complex C*-algebra with an order
+on its opposite algebra, let `E,F` be complete right Hilbert `B`-modules, let `G` be a compatible
+grading generator on `E`, and let `U : E → F` be a unitary module equivalence. The equivalence `U`
+is graded from the original module grading on `E` to its conjugate grading on `F`. -/
 theorem isGradedUnitaryEquiv_transport
     (δ : CStarModuleGrading γ E)
     (U : CStarModule.UnitaryEquiv B E F) :
@@ -104,7 +108,10 @@ theorem isGradedUnitaryEquiv_transport
   change U (δ.generator x) = U (δ.generator (U.symm (U x)))
   rw [U.symm_apply_apply]
 
-/-- The inverse unitary is graded in the reverse direction. -/
+/-- **Inverse transporting unitary is graded.** Let `B` be a graded nonunital complex C*-algebra with an
+order on its opposite algebra, let `E,F` be complete right Hilbert `B`-modules, let `G` be a
+compatible grading generator on `E`, and let `U : E → F` be a unitary module equivalence. The
+inverse `U⁻¹` is graded from the conjugate grading on `F` back to the original grading on `E`. -/
 theorem isGradedUnitaryEquiv_transport_symm
     (δ : CStarModuleGrading γ E)
     (U : CStarModule.UnitaryEquiv B E F) :

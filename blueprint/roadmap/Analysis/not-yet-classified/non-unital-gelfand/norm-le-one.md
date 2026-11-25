@@ -1,3 +1,5 @@
-# Norm le one
+# Norm of a nonunital character
 
-The original continuous linear functional of a character has norm at most one.
+Let `A` be a nonunital complex Banach algebra, and let `Δ(A)` be
+the space of its nonzero continuous complex characters with pointwise topology. Every `χ ∈ Δ(A)`, as
+a continuous complex-linear functional on `A`, has operator norm at most one.

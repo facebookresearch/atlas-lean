@@ -34,7 +34,10 @@ namespace BoundedContinuousFunction
 
 universe u
 
-/-- Send a bounded scalar function to its two actual pointwise multiplier actions. -/
+/-- Let `X` be an arbitrary topological space. Bounded continuous complex functions and complex
+continuous functions vanishing at infinity carry their supremum norms.
+
+Send a bounded scalar function to its two pointwise multiplier actions. -/
 noncomputable def toZeroAtInftyMultiplierHom
     {X : Type u} [TopologicalSpace X] :
     (X →ᵇ ℂ) →⋆ₐ[ℂ] 𝓜(ℂ, C₀(X, ℂ)) where
@@ -149,19 +152,28 @@ noncomputable def toZeroAtInftyMultiplierHom
         star_mul, star_star]
       exact mul_comm _ _
 
-/-- The homomorphism retains the checked double centralizer, without a new action. -/
+/-- Let `X` be an arbitrary topological space. Bounded continuous complex functions and complex
+continuous functions vanishing at infinity carry their supremum norms.
+
+The homomorphism retains the double centralizer, without a new action. -/
 @[simp]
 theorem toZeroAtInftyMultiplierHom_apply
     {X : Type u} [TopologicalSpace X] (g : X →ᵇ ℂ) :
     toZeroAtInftyMultiplierHom g = toZeroAtInftyMultiplier g := rfl
 
-/-- Its left action has the literal scalar-function value. -/
+/-- Let `X` be an arbitrary topological space. Bounded continuous complex functions and complex
+continuous functions vanishing at infinity carry their supremum norms.
+
+Its left action has the scalar-function value. -/
 theorem toZeroAtInftyMultiplierHom_fst_apply
     {X : Type u} [TopologicalSpace X]
     (g : X →ᵇ ℂ) (f : C₀(X, ℂ)) (x : X) :
     (toZeroAtInftyMultiplierHom g).fst f x = g x * f x := rfl
 
-/-- Its right action has the same literal scalar-function value. -/
+/-- Let `X` be an arbitrary topological space. Bounded continuous complex functions and complex
+continuous functions vanishing at infinity carry their supremum norms.
+
+Its right action has the same scalar-function value. -/
 theorem toZeroAtInftyMultiplierHom_snd_apply
     {X : Type u} [TopologicalSpace X]
     (g : X →ᵇ ℂ) (f : C₀(X, ℂ)) (x : X) :

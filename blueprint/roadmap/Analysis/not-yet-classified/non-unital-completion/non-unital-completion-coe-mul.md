@@ -1,4 +1,5 @@
-# Non Unital Completion coe mul
+# Multiplication on dense completion images
 
-The completed multiplication agrees exactly with source multiplication on
-the dense canonical image.
+For a nonunital seminormed ring `A` and its canonical
+map `ι` into the uniform completion, `ι(a b) = ι(a) ι(b)` for every `a,b ∈ A`, using the induced
+completed multiplication.

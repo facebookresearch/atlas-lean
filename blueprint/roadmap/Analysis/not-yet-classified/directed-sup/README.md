@@ -1,6 +1,6 @@
 # Directed Sup
 
-- [Directed Sup](directed-sup.md)
-- [Directed Sup carrier](directed-sup-carrier.md)
-- [Le directed Sup](le-directed-sup.md)
-- [Directed Sup le](directed-sup-le.md)
+- [Directed supremum of closed star ideals](directed-sup.md)
+- [Carrier of a directed closed-ideal supremum](directed-sup-carrier.md)
+- [Each ideal lies in the directed supremum](le-directed-sup.md)
+- [Least-upper-bound property of a directed supremum](directed-sup-le.md)

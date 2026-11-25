@@ -51,19 +51,25 @@ open Filter Metric
 variable {𝕜 A : Type*} [NormedField 𝕜] [NonUnitalNormedRing A] [NormedSpace 𝕜 A]
 variable (S : NonUnitalSubalgebra 𝕜 A)
 
-/-- The canonical quotient projection as a continuous linear map. -/
+/-- **Continuous linear projection to a nonunital quotient.** Let `𝕜` be a normed field, `A` a nonunital
+normed ring with a compatible normed `𝕜`-vector-space structure, and `S ⊆ A` a nonunital
+`𝕜`-subalgebra. The projection `a ↦ [a]` is a continuous `𝕜`-linear map from `A` to `A/S`. -/
 def mkCL : A →L[𝕜] S.Quotient :=
   (quotientSubmodule S).mkQL
 
 @[simp]
 theorem mkCL_apply (x : A) : mkCL S x = Submodule.Quotient.mk x := rfl
 
-/-- The canonical quotient norm makes the projection norm-nonincreasing. -/
+/-- **Norm bound for a nonunital quotient class.** Let `𝕜` be a normed field, `A` a nonunital normed
+ring with a compatible normed `𝕜`-vector-space structure, and `S ⊆ A` a nonunital `𝕜`-subalgebra.
+For every `a ∈ A`, the quotient seminorm satisfies `‖[a]‖ ≤ ‖a‖`. -/
 theorem norm_mk_le (x : A) :
     ‖(Submodule.Quotient.mk x : S.Quotient)‖ ≤ ‖x‖ :=
   Submodule.Quotient.norm_mk_le (quotientSubmodule S) x
 
-/-- Multiplication is submultiplicative for the quotient seminorm. -/
+/-- **Submultiplicative nonunital quotient seminorm.** Let `𝕜` be a normed field, `A` a nonunital normed
+ring with a compatible normed `𝕜`-vector-space structure, and `S ⊆ A` a nonunital `𝕜`-subalgebra. If
+`S` is two-sided, the quotient multiplication satisfies `‖x y‖ ≤ ‖x‖ ‖y‖` for all `x,y ∈ A/S`. -/
 theorem norm_mul_le [S.IsTwoSided] (x y : S.Quotient) :
     ‖x * y‖ ≤ ‖x‖ * ‖y‖ := by
   refine le_of_forall_pos_le_add fun ε hε ↦ ?_

@@ -33,9 +33,11 @@ namespace CStarMatrix
 
 universe uX uι uA
 
-/-- Finite matrices of continuous functions are canonically star-algebra
-equivalent to continuous functions valued in the same finite C-star matrix
-algebra. This also covers nonunital coefficients and empty indices/domains. -/
+/-- Let `X` be a topological space, `ι` a finite index type and `A` a possibly nonunital complex
+C*-algebra. Using the spectral order on `A`, entrywise evaluation gives a complex star-algebra
+equivalence between `ι × ι` matrices of continuous functions `X → A` and continuous functions `X →
+CStarMatrix ι ι A`. The index type and the space may be empty.
+-/
 noncomputable def continuousMapStarAlgEquiv
     (X : Type uX) [TopologicalSpace X]
     (ι : Type uι) [Fintype ι]
@@ -97,8 +99,11 @@ noncomputable def continuousMapStarAlgEquiv
       intro i j
       rfl }
 
-/-- The forward equivalence evaluates each continuous matrix entry at the
-same point, without changing its row or column. -/
+/-- Let `X` be a topological space. Let `ι` be a finite index type. Let `A` be a possibly nonunital
+complex C*-algebra. For `M : CStarMatrix ι ι C(X, A)`, `x : X` and `i` and `j : ι`. Use the spectral
+order on `A`. The forward equivalence evaluates each continuous matrix entry at the same point,
+without changing its row or column.
+-/
 @[simp]
 theorem continuousMapStarAlgEquiv_apply
     (X : Type uX) [TopologicalSpace X]
@@ -112,8 +117,10 @@ theorem continuousMapStarAlgEquiv_apply
   let : StarOrderedRing A := CStarAlgebra.spectralOrderedRing A
   rfl
 
-/-- The inverse equivalence takes the literal continuous row-column
-coefficient of the matrix-valued function. -/
+/-- Let `X` be a topological space. Let `ι` be a finite index type. Let `A` be a possibly nonunital
+complex C*-algebra. Use the spectral order on `A`. The inverse equivalence takes the continuous
+row-column coefficient of the matrix-valued function.
+-/
 @[simp]
 theorem continuousMapStarAlgEquiv_symm_apply
     (X : Type uX) [TopologicalSpace X]

@@ -1,4 +1,5 @@
 # Right Inner single
 
-The right inner product of two completed coefficient singles at the same
-index.
+Let B be a possibly nonunital complex C-star algebra and I any index type. The standard right
+Hilbert B-module is the completion of the finite-support coefficient families. The right inner
+product of two completed coefficient singles at the same index.

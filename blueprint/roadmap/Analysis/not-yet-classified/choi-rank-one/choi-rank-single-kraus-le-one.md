@@ -1,3 +1,4 @@
-# Choi Rank single Kraus le one
+# Rank bound for a single Kraus operator
 
-The Choi rank of a single-Kraus map `X ↦ K * X * Kᴴ` is at most one.
+For finite decidable `n,m` and a complex rectangular
+matrix `K : Matrix m n ℂ`, the map `X ↦ K X Kᴴ` has Choi rank at most one.

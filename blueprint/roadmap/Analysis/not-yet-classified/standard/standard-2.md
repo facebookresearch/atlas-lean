@@ -1,3 +1,5 @@
-# Standard
+# Grading of the standard Hilbert module
 
-The canonical coordinatewise grading of the completed standard module.
+Let `B` be a graded nonunital complex C*-algebra with
+generator `σ` and let `ι` be any index type. The completed standard right Hilbert `B`-module indexed
+by `ι` has the grading extending coordinatewise application of `σ`.

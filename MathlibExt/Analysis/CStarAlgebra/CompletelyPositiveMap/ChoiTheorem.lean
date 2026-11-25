@@ -166,7 +166,10 @@ private lemma flatOutput_mapOmega_eq_choi
   rw [h_symm_entry]
   rfl
 
-/-- The Choi matrix of a completely positive map is positive semidefinite. -/
+/-- **Positivity of a complex matrix Choi matrix.** For finite index types `n`
+and `m` with decidable equality and a completely positive map
+`phi : Matrix n n ℂ →CP Matrix m m ℂ`, its Choi matrix, indexed by
+`n × m`, is positive semidefinite. -/
 theorem choiMatrix_posSemidef (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
     (choiMatrix φ).PosSemidef := by
   have h_Omega : 0 ≤ (CStarMatrix.ofMatrix OmegaMatrix : CStarMatrix n n (Matrix n n ℂ)) :=
@@ -179,8 +182,12 @@ theorem choiMatrix_posSemidef (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
   rw [flatOutput_mapOmega_eq_choi φ] at h_flat
   exact (Matrix.nonneg_iff_posSemidef.mp h_flat)
 
-/-- CP map reconstructed from a PSD Choi matrix, via exact unvectorization
-`K r a i = v r (i,a)` and the finite Kraus API. -/
+/-- **A completely positive map from a positive Choi matrix.** Let `n` and `m`
+be finite index types with decidable equality. A positive semidefinite complex
+matrix `J : Matrix (n × m) (n × m) ℂ` defines a completely positive map
+from `Matrix n n ℂ` to `Matrix m m ℂ`. In a finite Gram decomposition
+`J = ∑ r, vecMulVec (v r) (star (v r))`, its Kraus matrices are
+`K r a i = v r (i, a)`, with the product index in input-output order. -/
 noncomputable def ofChoiMatrix (J : Matrix (n × m) (n × m) ℂ)
     (hJ : J.PosSemidef) : Matrix n n ℂ →CP Matrix m m ℂ :=
   let k := Classical.choose ((Matrix.posSemidef_iff_eq_sum_vecMulVec (M := J)).mp hJ)
@@ -190,7 +197,10 @@ noncomputable def ofChoiMatrix (J : Matrix (n × m) (n × m) ℂ)
   let v := Classical.choose h_spec
   kraus (fun r : Fin k => (fun a i => v r (i, a) : Matrix m n ℂ))
 
-/-- Choi matrix of `ofChoiMatrix J hJ` recovers `J`. -/
+/-- **Recovery of a positive complex Choi matrix.** For finite decidable index
+types `n` and `m`, a complex matrix `J` indexed by `n × m`, and a proof `hJ`
+that `J` is positive semidefinite, the Choi matrix of the reconstructed map
+`ofChoiMatrix J hJ : Matrix n n ℂ →CP Matrix m m ℂ` equals `J`. -/
 theorem choiMatrix_ofChoiMatrix (J : Matrix (n × m) (n × m) ℂ)
     (hJ : J.PosSemidef) : choiMatrix (ofChoiMatrix J hJ) = J := by
   have h_mp := (Matrix.posSemidef_iff_eq_sum_vecMulVec (M := J)).mp hJ
@@ -230,7 +240,10 @@ theorem choiMatrix_ofChoiMatrix (J : Matrix (n × m) (n × m) ℂ)
           rw [h_vec]
     _ = J := h_vspec.symm
 
-/-- Reconstructing a CP map from its Choi matrix recovers the map. -/
+/-- **Recovery of a completely positive complex matrix map.** For finite
+decidable index types `n` and `m` and a completely positive map
+`phi : Matrix n n ℂ →CP Matrix m m ℂ`, reconstruction from its positive
+semidefinite Choi matrix gives the same map `phi`. -/
 theorem ofChoiMatrix_choiMatrix (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
     ofChoiMatrix (choiMatrix φ) (choiMatrix_posSemidef φ) = φ := by
   have h_choi : choiMatrix
@@ -257,7 +270,12 @@ theorem ofChoiMatrix_choiMatrix (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
     _ = φ.toLinearMap X := by rw [h_toLinearMap]
     _ = φ X := rfl
 
-/-- Every CP map admits a finite Kraus representation `φ = kraus K` with `Fin k` operators. -/
+/-- **Finite Kraus representation for complex matrix maps.** Let `n` and `m`
+be finite index types with decidable equality. Every completely positive map
+`phi : Matrix n n ℂ →CP Matrix m m ℂ` has a natural number `k` and a family
+`K : Fin k → Matrix m n ℂ` such that `phi = kraus K`; thus
+`phi X = ∑ r, K r * X * (K r)ᴴ` for every `X : Matrix n n ℂ`.
+Empty input/output index types and `k = 0` remain permitted. -/
 theorem exists_kraus (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
     ∃ (k : ℕ) (K : Fin k → Matrix m n ℂ), φ = kraus K := by
   refine ⟨Classical.choose
@@ -270,7 +288,11 @@ theorem exists_kraus (φ : Matrix n n ℂ →CP Matrix m m ℂ) :
               (M := choiMatrix φ)).mp (choiMatrix_posSemidef φ)))) r (i, a), ?_⟩
   exact (ofChoiMatrix_choiMatrix φ).symm
 
-/-- Equivalence between CP maps and PSD Choi matrices; inverse is `ofChoiMatrix`. -/
+/-- **Choi equivalence for finite complex matrix algebras.** For finite
+index types `n` and `m` with decidable equality, Choi matrices give an equivalence
+between completely positive maps `Matrix n n ℂ →CP Matrix m m ℂ` and positive
+semidefinite complex matrices indexed by `n × m`. Its inverse reconstructs the
+map with `ofChoiMatrix`. -/
 noncomputable def choiEquivPosSemidef :
     (Matrix n n ℂ →CP Matrix m m ℂ) ≃
       {J : Matrix (n × m) (n × m) ℂ // J.PosSemidef} where

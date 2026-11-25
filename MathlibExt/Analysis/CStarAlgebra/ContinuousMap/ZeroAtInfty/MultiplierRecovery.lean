@@ -38,11 +38,17 @@ universe u
 
 variable {X : Type u} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpace X]
 
-/-- The scalar value extracted using the actual unit-norm-bounded point cutoff. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The scalar value extracted using the unit-norm-bounded point cutoff. -/
 noncomputable def scalarFunction (T : 𝓜(ℂ, C₀(X, ℂ))) (x : X) : ℂ :=
   T.fst (ZeroAtInftyContinuousMap.pointCutoff x) x
 
-/-- Centrality determines the right action from the extracted scalar value. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+Centrality determines the right action from the extracted scalar value. -/
 theorem snd_apply_scalarFunction
     (T : 𝓜(ℂ, C₀(X, ℂ))) (f : C₀(X, ℂ)) (x : X) :
     T.snd f x = f x * scalarFunction T x := by
@@ -51,7 +57,10 @@ theorem snd_apply_scalarFunction
   simpa only [ZeroAtInftyContinuousMap.mul_apply,
     ZeroAtInftyContinuousMap.pointCutoff_apply, mul_one, scalarFunction] using h
 
-/-- Centrality determines the left action on every actual C0 function. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+Centrality determines the left action on every C0 function. -/
 theorem fst_apply_scalarFunction
     (T : 𝓜(ℂ, C₀(X, ℂ))) (f : C₀(X, ℂ)) (x : X) :
     T.fst f x = scalarFunction T x * f x := by
@@ -63,7 +72,10 @@ theorem fst_apply_scalarFunction
     ZeroAtInftyContinuousMap.pointCutoff_apply, one_mul] at h
   exact h.symm
 
-/-- Every extracted value is bounded by the existing double-centralizer norm. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+Every extracted value is bounded by the existing double-centralizer norm. -/
 theorem norm_scalarFunction_le (T : 𝓜(ℂ, C₀(X, ℂ))) (x : X) :
     ‖scalarFunction T x‖ ≤ ‖T‖ := by
   change ‖T.fst (ZeroAtInftyContinuousMap.pointCutoff x) x‖ ≤ ‖T‖
@@ -78,7 +90,10 @@ theorem norm_scalarFunction_le (T : 𝓜(ℂ, C₀(X, ℂ))) (x : X) :
         (ZeroAtInftyContinuousMap.norm_pointCutoff_le x)
     _ = ‖T‖ := DoubleCentralizer.norm_fst T
 
-/-- A fixed nonvanishing local cutoff proves continuity of the extracted function. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+A fixed nonvanishing local cutoff proves continuity of the extracted function. -/
 theorem continuous_scalarFunction (T : 𝓜(ℂ, C₀(X, ℂ))) :
     Continuous (scalarFunction T) := by
   refine continuous_iff_continuousAt.mpr fun x => ?_
@@ -95,30 +110,45 @@ theorem continuous_scalarFunction (T : 𝓜(ℂ, C₀(X, ℂ))) :
       (eq_div_iff hy).2 (fst_apply_scalarFunction T φ y).symm
   exact hquot.congr_of_eventuallyEq heq
 
-/-- Bundle the actual recovered function using its proved uniform norm bound. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+Bundle the recovered function using its proved uniform norm bound. -/
 noncomputable def toBoundedContinuousFunction (T : 𝓜(ℂ, C₀(X, ℂ))) : X →ᵇ ℂ :=
   BoundedContinuousFunction.ofNormedAddCommGroup
     (scalarFunction T) (continuous_scalarFunction T) ‖T‖ (norm_scalarFunction_le T)
 
-/-- The bundled value is literally the cutoff evaluation, without a new model. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The bundled value is literally the cutoff evaluation, without a new model. -/
 @[simp]
 theorem toBoundedContinuousFunction_apply (T : 𝓜(ℂ, C₀(X, ℂ))) (x : X) :
     toBoundedContinuousFunction T x =
       T.fst (ZeroAtInftyContinuousMap.pointCutoff x) x := rfl
 
-/-- The existing BCF norm of the recovered function is bounded by the multiplier norm. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The existing BCF norm of the recovered function is bounded by the multiplier norm. -/
 theorem norm_toBoundedContinuousFunction_le (T : 𝓜(ℂ, C₀(X, ℂ))) :
     ‖toBoundedContinuousFunction T‖ ≤ ‖T‖ :=
   BoundedContinuousFunction.norm_ofNormedAddCommGroup_le
     (continuous_scalarFunction T) (norm_nonneg T) (norm_scalarFunction_le T)
 
-/-- The recovered bounded function gives the original left multiplier action. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The recovered bounded function gives the left multiplier action. -/
 theorem fst_apply_toBoundedContinuousFunction
     (T : 𝓜(ℂ, C₀(X, ℂ))) (f : C₀(X, ℂ)) (x : X) :
     T.fst f x = toBoundedContinuousFunction T x * f x :=
   fst_apply_scalarFunction T f x
 
-/-- The recovered bounded function gives the original right multiplier action. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The recovered bounded function gives the right multiplier action. -/
 theorem snd_apply_toBoundedContinuousFunction
     (T : 𝓜(ℂ, C₀(X, ℂ))) (f : C₀(X, ℂ)) (x : X) :
     T.snd f x = f x * toBoundedContinuousFunction T x :=

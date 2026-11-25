@@ -49,12 +49,15 @@ variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable [AddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E] [Norm E]
 variable [CStarModule Bᵐᵒᵖ E]
 
-/-- The set of all coefficient-valued inner products of a right C-star
-module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The inner-product set consists of all B-valued inner products of
+pairs of module vectors. -/
 def innerProductSet : Set B :=
   Set.range fun p : E × E ↦ rightInner (B := B) p.1 p.2
 
-/-- The smallest closed two-sided star ideal containing all inner products. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The support is the smallest closed two-sided star ideal of B
+containing all module inner products. -/
 noncomputable def supportIdeal :
     ClosedStarIdeal B := by
   let Candidate :=
@@ -81,12 +84,15 @@ noncomputable def supportIdeal :
           simp]
         exact isClosed_iInter fun I ↦ I.1.isClosed }
 
-/-- A right-module inner product belongs to the support ideal. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. Every module inner product belongs to its support ideal. -/
 theorem rightInner_mem_supportIdeal (x y : E) :
     rightInner (B := B) x y ∈ supportIdeal B E :=
   fun I ↦ I.2 x y
 
-/-- Minimality of the support ideal. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The support is contained in a closed star ideal I exactly when I
+contains every module inner product. -/
 theorem supportIdeal_le_iff {I : ClosedStarIdeal B} :
     supportIdeal B E ≤ I ↔
       ∀ x y : E, rightInner (B := B) x y ∈ I := by
@@ -96,8 +102,9 @@ theorem supportIdeal_le_iff {I : ClosedStarIdeal B} :
   · intro h b hb
     exact hb ⟨I, h⟩
 
-/-- Membership in the support ideal means membership in every closed star
-ideal containing all inner products. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. A coefficient belongs to the support exactly when it belongs to
+every closed star ideal containing all module inner products. -/
 theorem mem_supportIdeal_iff (b : B) :
     b ∈ supportIdeal B E ↔
       ∀ I : ClosedStarIdeal B,
@@ -108,7 +115,8 @@ theorem mem_supportIdeal_iff (b : B) :
   · intro hb I
     exact hb I.1 I.2
 
-/-- A right C-star module is full when its support is the whole coefficient
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The module is full when its support ideal is the whole coefficient
 algebra. -/
 def IsFull : Prop :=
   supportIdeal B E = ClosedStarIdeal.top B
@@ -193,8 +201,9 @@ private noncomputable def innerSpanClosedStarIdeal : ClosedStarIdeal B where
     NonUnitalStarSubalgebra.isClosed_topologicalClosure
       (innerSpanStarSubalgebra (B := B) (E := E))
 
-/-- The support is the topological closure of the complex linear span of the
-inner products. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The support is the norm closure in B of the complex span of the
+module inner products. -/
 theorem supportIdeal_carrier_eq_topologicalClosure_span :
     (supportIdeal B E).carrier.toNonUnitalSubalgebra.toSubmodule =
       (Submodule.span ℂ (innerProductSet B E)).topologicalClosure := by
@@ -210,7 +219,9 @@ theorem supportIdeal_carrier_eq_topologicalClosure_span :
       exact rightInner_mem_supportIdeal (B := B) (E := E) x y
     · exact (supportIdeal B E).isClosed
 
-/-- Fullness is density of the algebraic inner-product span. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The module is full exactly when the complex span of its inner
+products is norm dense in B. -/
 theorem isFull_iff_dense_span :
     IsFull B E ↔ Dense (Submodule.span ℂ (innerProductSet B E) : Set B) := by
   rw [Submodule.dense_iff_topologicalClosure_eq_top,
@@ -230,8 +241,9 @@ theorem isFull_iff_dense_span :
       rw [h]
       exact Submodule.mem_top
 
-/-- Fullness means that every closed star ideal containing all inner products
-is the whole coefficient algebra. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The module is full exactly when every closed star ideal containing
+all its inner products equals B. -/
 theorem isFull_iff_forall_closedIdeal :
     IsFull B E ↔
       ∀ I : ClosedStarIdeal B,
@@ -247,7 +259,9 @@ theorem isFull_iff_forall_closedIdeal :
     exact h (supportIdeal B E)
       (rightInner_mem_supportIdeal (B := B) (E := E))
 
-/-- Sequential norm-density formulation of fullness. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The module is full exactly when every coefficient is the norm
+limit of a sequence from the complex span of its inner products. -/
 theorem isFull_iff_exists_innerSpan_sequence :
     IsFull B E ↔
       ∀ b : B, ∃ z : ℕ → B,
@@ -278,7 +292,9 @@ variable [AddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E] [Norm E]
 variable [AddCommGroup F] [Module ℂ F] [SMul Bᵐᵒᵖ F] [Norm F]
   [CStarModule Bᵐᵒᵖ F]
 
-/-- An inner-preserving map makes support monotone. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E and F right pre-Hilbert B-modules.
+Suppose U from E to F preserves their B-valued inner products. An inner-preserving map makes
+support monotone. -/
 theorem supportIdeal_mono_of_innerPreserving (f : E → F)
     (hf : ∀ x y, rightInner (B := B) (f x) (f y) =
       rightInner (B := B) x y) :
@@ -288,7 +304,9 @@ theorem supportIdeal_mono_of_innerPreserving (f : E → F)
   rw [← hf x y]
   exact rightInner_mem_supportIdeal (B := B) (E := F) (f x) (f y)
 
-/-- A surjective inner-preserving map identifies the two support ideals. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E and F right pre-Hilbert B-modules.
+Suppose U from E to F preserves their B-valued inner products. A surjective inner-preserving
+map identifies the two support ideals. -/
 theorem supportIdeal_eq_of_innerPreserving_surjective (f : E → F)
     (hsurj : Function.Surjective f)
     (hf : ∀ x y, rightInner (B := B) (f x) (f y) =
@@ -302,7 +320,9 @@ theorem supportIdeal_eq_of_innerPreserving_surjective (f : E → F)
   rw [hf]
   exact rightInner_mem_supportIdeal (B := B) (E := E) x y
 
-/-- An inner-preserving map sends fullness forward. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E and F right pre-Hilbert B-modules.
+Suppose U from E to F preserves their B-valued inner products. An inner-preserving map sends
+fullness forward. -/
 theorem isFull_of_innerPreserving (f : E → F)
     (hf : ∀ x y, rightInner (B := B) (f x) (f y) =
       rightInner (B := B) x y) (hE : IsFull B E) :
@@ -312,7 +332,9 @@ theorem isFull_of_innerPreserving (f : E → F)
   rw [hE] at hmono
   exact hmono
 
-/-- A surjective inner-preserving map preserves and reflects fullness. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E and F right pre-Hilbert B-modules.
+Suppose U from E to F preserves their B-valued inner products. A surjective inner-preserving
+map preserves and reflects fullness. -/
 theorem isFull_iff_of_innerPreserving_surjective (f : E → F)
     (hsurj : Function.Surjective f)
     (hf : ∀ x y, rightInner (B := B) (f x) (f y) =
@@ -332,8 +354,10 @@ variable [AddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E] [Norm E]
 variable [AddCommGroup F] [Module ℂ F] [SMul Cᵐᵒᵖ F] [Norm F]
   [CStarModule Cᵐᵒᵖ F]
 
-/-- Inner-product compatibility through a coefficient star equivalence gives
-the forward support inclusion. -/
+/-- Let B and C be possibly nonunital complex C-star algebras, E and F right pre-Hilbert modules
+over them, σ a star algebra equivalence from B to C, and U from E to F a map preserving the
+coefficient-valued inner product through σ. Inner-product compatibility through a coefficient
+star equivalence gives the forward support inclusion. -/
 theorem supportIdeal_le_comap_of_equiv_innerPreserving
     (e : B ≃⋆ₐ[ℂ] C) (f : E → F)
     (h : ∀ x y, rightInner (B := C) (f x) (f y) =
@@ -347,8 +371,10 @@ theorem supportIdeal_le_comap_of_equiv_innerPreserving
   rw [← h x y]
   exact rightInner_mem_supportIdeal (B := C) (E := F) (f x) (f y)
 
-/-- A surjective inner-preserving map through a coefficient star equivalence
-identifies support with the corresponding comap. -/
+/-- Let B and C be possibly nonunital complex C-star algebras, E and F right pre-Hilbert modules
+over them, σ a star algebra equivalence from B to C, and U from E to F a map preserving the
+coefficient-valued inner product through σ. A surjective inner-preserving map through a
+coefficient star equivalence identifies support with the corresponding comap. -/
 theorem supportIdeal_eq_comap_of_equiv_innerPreserving_surjective
     (e : B ≃⋆ₐ[ℂ] C) (f : E → F) (hsurj : Function.Surjective f)
     (h : ∀ x y, rightInner (B := C) (f x) (f y) =
@@ -374,8 +400,10 @@ theorem supportIdeal_eq_comap_of_equiv_innerPreserving_surjective
   change e.symm (e b) ∈ supportIdeal B E at heb
   simpa using heb
 
-/-- Surjective inner compatibility through a coefficient star equivalence
-preserves and reflects fullness. -/
+/-- Let B and C be possibly nonunital complex C-star algebras, E and F right pre-Hilbert modules
+over them, σ a star algebra equivalence from B to C, and U from E to F a map preserving the
+coefficient-valued inner product through σ. Surjective inner compatibility through a
+coefficient star equivalence preserves and reflects fullness. -/
 theorem isFull_iff_of_equiv_innerPreserving_surjective
     (e : B ≃⋆ₐ[ℂ] C) (f : E → F) (hsurj : Function.Surjective f)
     (h : ∀ x y, rightInner (B := C) (f x) (f y) =
@@ -417,7 +445,9 @@ variable [NonUnitalCStarAlgebra B] [PartialOrder Bᵐᵒᵖ]
 variable [AddCommGroup E] [Module ℂ E] [SMul Bᵐᵒᵖ E] [Norm E]
 variable [CStarModule Bᵐᵒᵖ E]
 
-/-- Support is zero exactly for a subsingleton module. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The support ideal is zero exactly when the module has only its
+zero vector. -/
 theorem supportIdeal_eq_bot_iff_subsingleton :
     supportIdeal B E = ClosedStarIdeal.bot B ↔ Subsingleton E := by
   constructor
@@ -445,8 +475,9 @@ theorem supportIdeal_eq_bot_iff_subsingleton :
         rightInner_zero_left, ClosedStarIdeal.mem_bot]
     · exact bot_le
 
-/-- A subsingleton right module is full exactly when the coefficient algebra
-is subsingleton. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. For a module with only its zero vector, fullness is equivalent to
+the coefficient algebra having only zero. -/
 theorem isFull_subsingleton_iff [Subsingleton E] :
     IsFull B E ↔ Subsingleton B := by
   rw [IsFull, supportIdeal_eq_bot_iff_subsingleton.mpr inferInstance]
@@ -485,7 +516,8 @@ local instance spectralOrderBop : PartialOrder Bᵐᵒᵖ := CStarAlgebra.spectr
 local instance : @StarOrderedRing Bᵐᵒᵖ _ spectralOrderBop _ :=
   CStarAlgebra.spectralOrderedRing _
 
-/-- The coefficient algebra is full as a right C-star module over itself. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The right self-module B has support equal to B. -/
 theorem supportIdeal_self : supportIdeal B B = ClosedStarIdeal.top B := by
   apply top_unique
   intro b _hb
@@ -498,7 +530,8 @@ theorem supportIdeal_self : supportIdeal B B = ClosedStarIdeal.top B := by
   change e * b ∈ I
   simpa only [CStarModule.Right.rightInner_self, he] using hm
 
-/-- The coefficient algebra is a full right module over itself. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E a right pre-Hilbert B-module with
+its B-valued inner product. The right self-module B is full. -/
 theorem isFull_self : IsFull B B :=
   supportIdeal_self (B := B)
 

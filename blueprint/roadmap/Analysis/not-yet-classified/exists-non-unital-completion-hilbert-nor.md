@@ -1,4 +1,7 @@
-# Seminorm Hilbert Model
+# Faithful nondegenerate representation of a C*-seminorm completion
 
-Every actual nonunital seminorm completion has a same-universe faithful
-nondegenerate Hilbert model, with the original seminorm on every source image.
+**Faithful nondegenerate representation of a C*-seminorm completion.** Let `B` be a nonunital
+complex star algebra with scalar-compatible involution and `p` a C*-seminorm. Its separated
+C*-completion has an injective isometric star representation `ρ` on a complete complex Hilbert space
+in the universe of `B`. For every source element `x`, `‖ρ(ι(x))‖ = p(x)`, and the complex-linear
+span of all representation ranges is dense in the Hilbert space.

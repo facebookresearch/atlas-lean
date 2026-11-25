@@ -41,7 +41,12 @@ namespace CStarModule.InternalTensorProduct
 
 universe uB₁ uB₂ uE₁ uE₂ uI uJ
 
-/-- The ordinary complex tensor before nonunital coefficient balancing. -/
+/--
+Let E₁ and E₂ be complex vector spaces.
+
+The algebraic tensor product E₁ ⊗[ℂ] E₂ is the ordinary complex tensor product of these vector
+spaces.
+-/
 abbrev AlgebraicTensor
     (E₁ : Type uE₁) (E₂ : Type uE₂)
     [AddCommGroup E₁] [Module ℂ E₁]
@@ -57,32 +62,67 @@ variable [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂]
 
 local notation "T" => AlgebraicTensor E₁ E₂
 
-/-- A literal relation identifying the right first-factor coefficient with
-its actual representation on the second factor. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+For x ∈ E₁, b ∈ B₁ and y ∈ E₂, the balancing relation is (xb) ⊗ y − x ⊗ φ(b)y.
+-/
 def balanceRelation
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (x : E₁) (b : B₁) (y : E₂) : T :=
   (x <• b) ⊗ₜ[ℂ] y - x ⊗ₜ[ℂ] (φ b y)
 
-/-- The complex span of all nonunital balancing relations. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+The balancing submodule is the complex-linear span of all relations (xb) ⊗ y − x ⊗ φ(b)y.
+-/
 def balancingSpan
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) : Submodule ℂ T :=
   Submodule.span ℂ
     (Set.range fun p : E₁ × B₁ × E₂ => balanceRelation φ p.1 p.2.1 p.2.2)
 
-/-- The actual algebraic balanced quotient, not a chosen model. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+The balanced algebraic tensor product is the quotient of E₁ ⊗[ℂ] E₂ by the complex span of the
+coefficient-balancing relations.
+-/
 abbrev BalancedTensor
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :=
   T ⧸ balancingSpan (E₁ := E₁) φ
 
-/-- The canonical pure map into the balanced quotient. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+The balanced pure tensor associated to x ∈ E₁ and y ∈ E₂ is the quotient class of x ⊗ y.
+-/
 def balancedPure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (x : E₁) (y : E₂) : BalancedTensor (E₁ := E₁) φ :=
   (balancingSpan (E₁ := E₁) φ).mkQ (x ⊗ₜ[ℂ] y)
 
 omit [PartialOrder B₁ᵐᵒᵖ] [Norm E₁] [CStarModule B₁ᵐᵒᵖ E₁] in
-/-- Each displayed relation belongs to the defining span. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+Every relation (xb) ⊗ y − x ⊗ φ(b)y belongs to the balancing submodule.
+-/
 theorem balanceRelation_mem
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (x : E₁) (b : B₁) (y : E₂) :
@@ -136,7 +176,14 @@ theorem balancedPure_zero_right
   simp only [balancedPure, TensorProduct.tmul_zero, map_zero]
 
 omit [PartialOrder B₁ᵐᵒᵖ] [Norm E₁] [CStarModule B₁ᵐᵒᵖ E₁] in
-/-- The canonical pure map satisfies the imposed balancing identity. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+The balanced pure tensors satisfy (xb) ⊗φ y = x ⊗φ φ(b)y for x ∈ E₁, b ∈ B₁ and y ∈ E₂.
+-/
 @[simp]
 theorem balancedPure_balance
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -147,8 +194,14 @@ theorem balancedPure_balance
   apply (Submodule.Quotient.eq (balancingSpan (E₁ := E₁) φ)).2
   exact balanceRelation_mem φ x b y
 
-/-- Right coefficients act on the second factor by the existing algebraic
-right-action map. No raw tensor norm is used. -/
+/--
+Let E₁ be a complex vector space. Let B₂ be a possibly nonunital complex C*-algebra with a
+partial order on B₂ᵐᵒᵖ, and let E₂ be a normed right inner-product B₂-module with a compatible
+complex normed-space structure.
+
+For b ∈ B₂, the right coefficient action on the algebraic tensor is the complex-linear map x ⊗ y
+↦ x ⊗ (yb).
+-/
 def rawRightSMul (b : B₂) : T →ₗ[ℂ] T :=
   TensorProduct.map LinearMap.id
     ((CStarModule.rightSMulLinear (B := B₂) (E := E₂)).flip b)
@@ -178,7 +231,13 @@ theorem rawRightSMul_add (b c : B₂) :
     TensorProduct.tmul_add, LinearMap.add_apply]
 
 omit [Norm E₁] in
-/-- Composition has the order of a genuine right action. -/
+/--
+Let E₁ be a complex vector space. Let B₂ be a possibly nonunital complex C*-algebra with a
+partial order on B₂ᵐᵒᵖ, and let E₂ be a normed right inner-product B₂-module with a compatible
+complex normed-space structure.
+
+On E₁ ⊗[ℂ] E₂, acting by bc ∈ B₂ equals acting first by b and then by c.
+-/
 theorem rawRightSMul_mul (b c : B₂) :
     rawRightSMul (E₁ := E₁) (E₂ := E₂) (b * c) =
       (rawRightSMul c).comp (rawRightSMul b) := by
@@ -195,7 +254,15 @@ theorem rawRightSMul_smul (c : ℂ) (b : B₂) :
     TensorProduct.tmul_smul, LinearMap.smul_apply]
 
 omit [PartialOrder B₁ᵐᵒᵖ] [Norm E₁] [CStarModule B₁ᵐᵒᵖ E₁] in
-/-- The actual right coefficient operator preserves the balancing span. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+The right action of every b ∈ B₂ on the algebraic tensor preserves the coefficient-balancing
+submodule.
+-/
 theorem balancingSpan_rawRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (b : B₂) :
     balancingSpan (E₁ := E₁) φ ≤
@@ -207,7 +274,15 @@ theorem balancingSpan_rawRightSMul
   simpa only [balanceRelation, AdjointableOperator.map_right_smul] using
     balanceRelation_mem φ x a (y <• b)
 
-/-- The descended right coefficient operator is a real quotient map. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+The right action of b ∈ B₂ descends to a complex-linear map on the balanced algebraic tensor
+product.
+-/
 def balancedRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (b : B₂) :
     BalancedTensor (E₁ := E₁) φ →ₗ[ℂ] BalancedTensor (E₁ := E₁) φ :=
@@ -270,7 +345,15 @@ theorem balancedRightSMul_smul
   obtain ⟨z, rfl⟩ := (balancingSpan (E₁ := E₁) φ).mkQ_surjective q
   simp only [balancedRightSMul_mkQ, rawRightSMul_smul, LinearMap.smul_apply, map_smul]
 
-/-- The same descended right action as plain, locally activatable data. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+The balanced algebraic tensor product carries a right B₂-action induced by right multiplication
+on its second tensor factor.
+-/
 @[instance_reducible]
 def balancedRightAction
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
@@ -278,7 +361,14 @@ def balancedRightAction
   smul b q := balancedRightSMul φ b.unop q
 
 omit [PartialOrder B₁ᵐᵒᵖ] [Norm E₁] [CStarModule B₁ᵐᵒᵖ E₁] in
-/-- The conventional right-action notation uses that exact quotient action. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+For x ∈ E₁, y ∈ E₂ and b ∈ B₂, balanced pure tensors satisfy x ⊗φ (yb) = (x ⊗φ y)b.
+-/
 theorem balancedPure_right_smul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (x : E₁) (y : E₂) (b : B₂) :
@@ -356,14 +446,32 @@ private def pureGramLeft
       rightInner_smul_left, map_smul, AdjointableOperator.smul_apply,
       rightInner_smul_right, LinearMap.smul_apply, starRingEnd_apply]
 
-/-- The actual conjugate-linear/linear Gram form on ordinary complex tensors. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+The B₂-valued Gram form on E₁ ⊗[ℂ] E₂ is sesquilinear and is determined on pure tensors by ⟨x ⊗
+u, y ⊗ v⟩ = ⟨u, φ(⟨x,y⟩)v⟩.
+-/
 @[no_expose]
 def rawInner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
     T →ₗ⋆[ℂ] T →ₗ[ℂ] B₂ :=
   TensorProduct.lift (pureGramLeft φ)
 
-/-- The raw Gram form has exactly the printed pure-tensor orientation. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+For x, y ∈ E₁ and u, v ∈ E₂, the Gram form of the pure tensors is ⟨x ⊗ u, y ⊗ v⟩ = ⟨u,
+φ(⟨x,y⟩)v⟩.
+-/
 @[simp]
 theorem rawInner_tmul_tmul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -373,7 +481,16 @@ theorem rawInner_tmul_tmul
   simpa only [rawInner, TensorProduct.lift.tmul, pureGramLeft,
     LinearMap.coe_mk, AddHom.coe_mk] using pureRightGram_tmul φ x y u v
 
-/-- Finite raw Gram expansion, with independent finite index types. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+For arbitrary finite index sets I and J, the Gram form of ∑ᵢ xᵢ ⊗ uᵢ and ∑ⱼ yⱼ ⊗ vⱼ equals ∑ᵢ ∑ⱼ
+⟨uᵢ, φ(⟨xᵢ,yⱼ⟩)vⱼ⟩.
+-/
 theorem rawInner_sum_tmul_sum_tmul
     {I : Type uI} {J : Type uJ} [Fintype I] [Fintype J]
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -385,7 +502,15 @@ theorem rawInner_sum_tmul_sum_tmul
   simp only [map_sum, LinearMap.sum_apply, rawInner_tmul_tmul]
   exact Finset.sum_comm
 
-/-- Conjugate symmetry holds on all raw tensors, not only on pure ones. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+For algebraic tensors z and w, the B₂-valued Gram form satisfies star(⟨z,w⟩) = ⟨w,z⟩.
+-/
 theorem star_rawInner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (z w : T) :
     star (rawInner φ z w) = rawInner φ w z := by
@@ -401,7 +526,15 @@ theorem star_rawInner
   | add z z' hz hz' =>
     simp only [map_add, LinearMap.add_apply, star_add, hz, hz']
 
-/-- The Gram form is right coefficient-linear in its second tensor. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+For algebraic tensors z and w and b ∈ B₂, the Gram form satisfies ⟨z, wb⟩ = ⟨z,w⟩b.
+-/
 theorem rawInner_rawRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z w : T) (b : B₂) :
@@ -417,7 +550,15 @@ theorem rawInner_rawRightSMul
   | add z z' hz hz' =>
     simp only [map_add, LinearMap.add_apply, hz, hz', add_mul]
 
-/-- Every balancing generator is annihilated in the right Gram slot. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+The Gram form vanishes when a coefficient-balancing relation is placed in its second argument.
+-/
 theorem rawInner_balanceRelation_right
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z : T) (x : E₁) (b : B₁) (y : E₂) :
@@ -429,7 +570,15 @@ theorem rawInner_balanceRelation_right
   | add z z' hz hz' =>
     simp only [map_add, LinearMap.add_apply, hz, hz', add_zero]
 
-/-- The left Gram slot is annihilated as well, using actual conjugate symmetry. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+The Gram form vanishes when a coefficient-balancing relation is placed in its first argument.
+-/
 theorem rawInner_balanceRelation_left
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (x : E₁) (b : B₁) (y : E₂) (z : T) :
@@ -491,8 +640,16 @@ private theorem balancingSpan_le_ker_rightQuotientInner
   simpa only [LinearMap.zero_apply] using
     congrArg (fun L : T →ₗ[ℂ] B₂ => L w) h
 
-/-- The actual descended sesquilinear form on the balanced algebraic quotient.
-No positivity or definiteness is asserted. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+The B₂-valued Gram form descends to a sesquilinear form on the balanced algebraic tensor
+product, conjugate-linear in its first argument and linear in its second.
+-/
 @[no_expose]
 def balancedInner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
@@ -508,7 +665,15 @@ theorem balancedInner_mkQ_mkQ
   simp only [balancedInner, Submodule.mkQ_apply, Submodule.liftQ_apply,
     rightQuotientInner, LinearMap.coe_mk, AddHom.coe_mk]
 
-/-- Pure tensors retain the exact source coefficient-valued Gram formula. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+For balanced pure tensors, the Gram form is ⟨x ⊗φ u, y ⊗φ v⟩ = ⟨u, φ(⟨x,y⟩)v⟩.
+-/
 @[simp]
 theorem balancedInner_pure_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -551,7 +716,15 @@ theorem balancedInner_smul_right
     balancedInner φ z (c • w) = c • balancedInner φ z w :=
   (balancedInner φ z).map_smul c w
 
-/-- Right coefficient-linearity survives both genuine quotient descents. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+For balanced tensors z and w and b ∈ B₂, the descended Gram form satisfies ⟨z, wb⟩ = ⟨z,w⟩b.
+-/
 theorem balancedInner_balancedRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z w : BalancedTensor (E₁ := E₁) φ) (b : B₂) :
@@ -561,7 +734,16 @@ theorem balancedInner_balancedRightSMul
   simpa only [balancedRightSMul_mkQ, balancedInner_mkQ_mkQ] using
     rawInner_rawRightSMul φ z w b
 
-/-- Finite Gram expansion, including empty finite index types. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, each with a partial order on its
+opposite algebra. Let E₁ be a complex vector space with a norm and a right B₁-action satisfying
+the inner-product C*-module laws. Let E₂ be a normed right inner-product B₂-module with a
+compatible complex normed-space structure. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂.
+
+For arbitrary finite index sets I and J, the Gram form of ∑ᵢ xᵢ ⊗φ uᵢ and ∑ⱼ yⱼ ⊗φ vⱼ equals ∑ᵢ
+∑ⱼ ⟨uᵢ, φ(⟨xᵢ,yⱼ⟩)vⱼ⟩, including when either index set is empty.
+-/
 theorem balancedInner_sum_pure_sum_pure
     {I : Type uI} {J : Type uJ} [Fintype I] [Fintype J]
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -574,7 +756,15 @@ theorem balancedInner_sum_pure_sum_pure
   exact Finset.sum_comm
 
 omit [PartialOrder B₁ᵐᵒᵖ] [Norm E₁] [CStarModule B₁ᵐᵒᵖ E₁] in
-/-- Pure tensors span the algebraic quotient; no topological density is claimed. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras. Let E₁ be a complex vector space with a
+right B₁-action, and let E₂ be a normed right inner-product B₂-module with a compatible complex
+normed-space structure and a partial order on B₂ᵐᵒᵖ. Let φ be a nonunital complex star
+representation of B₁ by adjointable endomorphisms of E₂.
+
+The balanced pure tensors have complex-linear span equal to the entire balanced algebraic tensor
+product.
+-/
 theorem balancedPure_span_eq_top
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
     Submodule.span ℂ (Set.range fun p : E₁ × E₂ => balancedPure φ p.1 p.2) = ⊤ := by

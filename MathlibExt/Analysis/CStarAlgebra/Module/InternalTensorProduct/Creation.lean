@@ -214,8 +214,17 @@ private theorem modelCreationPairing
         rawCreationPairing φ pure hX x y q
   exact congrFun hEq z
 
-/-- The genuine creation operator on any supplied full internal-tensor model.
-Its adjoint is the dense extension of the algebraic source formula. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, with a partial order on B₁ᵐᵒᵖ and a
+star-compatible partial order on B₂ᵐᵒᵖ. Let E₁ be a complete normed right inner-product
+B₁-module, and let E₂ and X be complete normed right inner-product B₂-modules, all with
+compatible complex normed-space structures. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂. Let pure : E₁ × E₂ → X. Assume pure is complex-linear in
+each variable, balances the B₁-actions, respects the B₂-action and satisfies the internal-tensor
+inner-product law and has dense complex-linear span in X.
+
+For x ∈ E₁, the creation operator y ↦ pure(x,y) is an adjointable map E₂ → X.
+-/
 @[no_expose]
 noncomputable def creationOnModel
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -227,7 +236,17 @@ noncomputable def creationOnModel
       (AdjointableOperator.isAdjointPair_iff_adjoint_inner _ _).2
         (modelCreationPairing φ pure hX x) }
 
-/-- A supplied-model creation operator has the prescribed pure value. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, with a partial order on B₁ᵐᵒᵖ and a
+star-compatible partial order on B₂ᵐᵒᵖ. Let E₁ be a complete normed right inner-product
+B₁-module, and let E₂ and X be complete normed right inner-product B₂-modules, all with
+compatible complex normed-space structures. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂. Let pure : E₁ × E₂ → X. Assume pure is complex-linear in
+each variable, balances the B₁-actions, respects the B₂-action and satisfies the internal-tensor
+inner-product law and has dense complex-linear span in X.
+
+For x ∈ E₁ and y ∈ E₂, the creation operator associated to x sends y to pure(x,y).
+-/
 @[simp]
 theorem creationOnModel_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -237,8 +256,18 @@ theorem creationOnModel_apply
   change modelPureRightCLM φ pure hX x y = pure x y
   exact modelPureRightCLM_apply φ pure hX x y
 
-/-- The actual bundled adjoint has Blackadar's formula on supplied pure
-vectors, with the fixed vector in the first inner-product slot. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras, with a partial order on B₁ᵐᵒᵖ and a
+star-compatible partial order on B₂ᵐᵒᵖ. Let E₁ be a complete normed right inner-product
+B₁-module, and let E₂ and X be complete normed right inner-product B₂-modules, all with
+compatible complex normed-space structures. Let φ be a nonunital complex star representation of
+B₁ by adjointable endomorphisms of E₂. Let pure : E₁ × E₂ → X. Assume pure is complex-linear in
+each variable, balances the B₁-actions, respects the B₂-action and satisfies the internal-tensor
+inner-product law and has dense complex-linear span in X.
+
+For x, z ∈ E₁ and y ∈ E₂, the adjoint of the creation operator associated to x sends pure(z,y)
+to φ(⟨x,z⟩)y.
+-/
 @[simp]
 theorem creationOnModel_adjoint_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -254,9 +283,15 @@ section Completed
 
 variable [StarOrderedRing B₁ᵐᵒᵖ]
 
-/-- The canonical creation operator on the literal completed balanced tensor.
-It is the supplied-model construction applied to the already proved canonical
-model laws. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For x ∈ E₁, the creation operator on the completed internal tensor is the adjointable map y ↦
+completedPure(x,y) from E₂.
+-/
 @[no_expose]
 noncomputable def completedCreation
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (x : E₁) :
@@ -278,8 +313,14 @@ noncomputable def completedCreation
   exact creationOnModel φ (completedPure (E₁ := E₁) φ)
     (completed_isModel φ) x
 
-/-- The canonical creation operator sends a vector to the literal completed
-pure tensor. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For x ∈ E₁ and y ∈ E₂, the canonical creation operator sends y to completedPure(x,y).
+-/
 @[simp]
 theorem completedCreation_apply
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -302,8 +343,15 @@ theorem completedCreation_apply
   exact creationOnModel_apply φ (completedPure (E₁ := E₁) φ)
     (completed_isModel φ) x y
 
-/-- The canonical creation operator's bundled adjoint has the source formula
-on literal completed pure tensors. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with star-compatible partial orders on
+their opposite algebras. Let E₁ and E₂ be complete normed right inner-product modules over B₁
+and B₂, respectively, with compatible complex normed-space structures. Let φ be a nonunital
+complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For x, z ∈ E₁ and y ∈ E₂, the adjoint of the canonical creation operator associated to x sends
+completedPure(z,y) to φ(⟨x,z⟩)y.
+-/
 @[simp]
 theorem completedCreation_adjoint_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)

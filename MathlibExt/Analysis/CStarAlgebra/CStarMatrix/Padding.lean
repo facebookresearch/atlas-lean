@@ -32,8 +32,10 @@ namespace CStarMatrix
 
 universe u
 
-/-- Top-left finite padding, with the existing matrix zero-extension value,
-bundled as a nonunital complex star-algebra homomorphism. -/
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. For natural numbers `n` and `m`. Assume `n ≤ m`. Top-left finite padding, with the
+existing matrix zero-extension value, bundled as a nonunital complex star-algebra homomorphism.
+-/
 def zeroExtendStarAlgHom
     {A : Type u} [NonUnitalRing A] [Module ℂ A] [StarAddMonoid A]
     {n m : ℕ} (h : n ≤ m) :
@@ -69,7 +71,10 @@ def zeroExtendStarAlgHom
       simp only [Matrix.zeroExtend_apply, hi, hj, ↓reduceDIte,
         ofMatrix_symm_apply, CStarMatrix.star_apply, star_zero]
 
-/-- The bundled padding map has exactly the existing matrix zero-extension value. -/
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. For natural numbers `n` and `m` and `X : CStarMatrix (Fin n) (Fin n) A`. Assume `n ≤ m`.
+The bundled padding map has exactly the existing matrix zero-extension value.
+-/
 @[simp]
 theorem zeroExtendStarAlgHom_apply
     {A : Type u} [NonUnitalRing A] [Module ℂ A] [StarAddMonoid A]
@@ -77,7 +82,10 @@ theorem zeroExtendStarAlgHom_apply
     zeroExtendStarAlgHom h X = ofMatrix (Matrix.zeroExtend h (ofMatrix.symm X)) :=
   rfl
 
-/-- Padding retains every original entry and makes the added rows and columns zero. -/
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. For natural numbers `n` and `m`, `X : CStarMatrix (Fin n) (Fin n) A` and `i` and `j :
+Fin m`. Assume `n ≤ m`. Padding retains every entry and makes the added rows and columns zero.
+-/
 theorem zeroExtendStarAlgHom_apply_entry
     {A : Type u} [NonUnitalRing A] [Module ℂ A] [StarAddMonoid A]
     {n m : ℕ} (h : n ≤ m) (X : CStarMatrix (Fin n) (Fin n) A) (i j : Fin m) :
@@ -87,8 +95,10 @@ theorem zeroExtendStarAlgHom_apply_entry
       else 0 :=
   rfl
 
-/-- Finite zero padding is injective through the retained entries, with no
-norm or nonzero-coefficient hypothesis. -/
+/-- Let `A` be a possibly nonunital ring. `A` has a complex module structure. `A` has an additive star
+involution. For natural numbers `n` and `m`. Assume `n ≤ m`. Finite zero padding is injective
+through the retained entries, with no norm or nonzero-coefficient hypothesis.
+-/
 theorem zeroExtendStarAlgHom_injective
     {A : Type u} [NonUnitalRing A] [Module ℂ A] [StarAddMonoid A]
     {n m : ℕ} (h : n ≤ m) :
@@ -102,8 +112,10 @@ theorem zeroExtendStarAlgHom_injective
     Matrix.zeroExtend h (ofMatrix.symm Y) at hCopy
   exact hCopy
 
-/-- Finite square padding preserves the operator metric for actual complete
-nonunital C-star coefficients, under their computed spectral order. -/
+/-- Let `A` be a possibly nonunital complex C*-algebra. For natural numbers `n` and `m`. Assume `n ≤ m`.
+Use the spectral order on `A`. Finite square padding preserves the operator metric for complete
+nonunital C-star coefficients, under their computed spectral order.
+-/
 theorem zeroExtendStarAlgHom_isometry
     {A : Type u} [NonUnitalCStarAlgebra A]
     {n m : ℕ} (h : n ≤ m) :

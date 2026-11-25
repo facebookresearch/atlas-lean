@@ -37,7 +37,10 @@ universe u
 
 variable {X : Type u} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpace X]
 
-/-- Point-cutoff evaluation recovers every actual bounded scalar function. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+Point-cutoff evaluation recovers every bounded scalar function. -/
 theorem toBoundedContinuousFunction_toZeroAtInftyMultiplierHom (g : X →ᵇ ℂ) :
     DoubleCentralizer.toBoundedContinuousFunction (toZeroAtInftyMultiplierHom g) = g := by
   apply BoundedContinuousFunction.ext
@@ -46,7 +49,10 @@ theorem toBoundedContinuousFunction_toZeroAtInftyMultiplierHom (g : X →ᵇ ℂ
     toZeroAtInftyMultiplierHom_fst_apply, ZeroAtInftyContinuousMap.pointCutoff_apply,
     mul_one]
 
-/-- The two recovered scalar actions reconstruct the actual original double centralizer. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The two recovered scalar actions reconstruct the double centralizer. -/
 theorem toZeroAtInftyMultiplierHom_toBoundedContinuousFunction
     (T : 𝓜(ℂ, C₀(X, ℂ))) :
     toZeroAtInftyMultiplierHom (DoubleCentralizer.toBoundedContinuousFunction T) = T := by
@@ -69,20 +75,31 @@ theorem toZeroAtInftyMultiplierHom_toBoundedContinuousFunction
       _ = T.snd f x :=
         (DoubleCentralizer.snd_apply_toBoundedContinuousFunction T f x).symm
 
-/-- Recovery cancels the actual pointwise multiplier constructor in simp normal form. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+Recovering the bounded scalar function from its pointwise multiplier returns the same bounded
+function. -/
 @[simp]
 theorem toBoundedContinuousFunction_toZeroAtInftyMultiplier (g : X →ᵇ ℂ) :
     DoubleCentralizer.toBoundedContinuousFunction (toZeroAtInftyMultiplier g) = g :=
   toBoundedContinuousFunction_toZeroAtInftyMultiplierHom g
 
-/-- The normalized pointwise constructor cancels recovery of an actual multiplier. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+Constructing the pointwise multiplier of the recovered scalar function returns the same
+multiplier. -/
 @[simp]
 theorem toZeroAtInftyMultiplier_toBoundedContinuousFunction
     (T : 𝓜(ℂ, C₀(X, ℂ))) :
     toZeroAtInftyMultiplier (DoubleCentralizer.toBoundedContinuousFunction T) = T :=
   toZeroAtInftyMultiplierHom_toBoundedContinuousFunction T
 
-/-- The pointwise multiplier homomorphism is genuinely bijective. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The pointwise multiplier homomorphism is genuinely bijective. -/
 theorem toZeroAtInftyMultiplierHom_bijective :
     Function.Bijective (toZeroAtInftyMultiplierHom (X := X)) := by
   constructor
@@ -97,7 +114,10 @@ theorem toZeroAtInftyMultiplierHom_bijective :
     exact ⟨DoubleCentralizer.toBoundedContinuousFunction T,
       toZeroAtInftyMultiplierHom_toBoundedContinuousFunction T⟩
 
-/-- The exact pointwise and recovery maps form a scalar star algebra equivalence. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The exact pointwise and recovery maps form a scalar star algebra equivalence. -/
 noncomputable def toZeroAtInftyMultiplierEquiv :
     (X →ᵇ ℂ) ≃⋆ₐ[ℂ] 𝓜(ℂ, C₀(X, ℂ)) where
   toFun := toZeroAtInftyMultiplierHom
@@ -109,32 +129,50 @@ noncomputable def toZeroAtInftyMultiplierEquiv :
   map_star' := map_star toZeroAtInftyMultiplierHom
   map_smul' := map_smul toZeroAtInftyMultiplierHom
 
-/-- The forward value remains the checked pointwise multiplier homomorphism. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The forward value remains the pointwise multiplier homomorphism. -/
 @[simp]
 theorem toZeroAtInftyMultiplierEquiv_apply (g : X →ᵇ ℂ) :
     toZeroAtInftyMultiplierEquiv g = toZeroAtInftyMultiplierHom g := rfl
 
-/-- The inverse value remains the checked recovered bounded scalar function. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The inverse value remains the recovered bounded scalar function. -/
 @[simp]
 theorem toZeroAtInftyMultiplierEquiv_symm_apply (T : 𝓜(ℂ, C₀(X, ℂ))) :
     toZeroAtInftyMultiplierEquiv.symm T = DoubleCentralizer.toBoundedContinuousFunction T := rfl
 
-/-- The equivalence's actual left action is literal pointwise scalar multiplication. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The equivalence's left action is pointwise scalar multiplication. -/
 theorem toZeroAtInftyMultiplierEquiv_fst_apply
     (g : X →ᵇ ℂ) (f : C₀(X, ℂ)) (x : X) :
     (toZeroAtInftyMultiplierEquiv g).fst f x = g x * f x := rfl
 
-/-- The equivalence's actual right action is the same pointwise scalar operation. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The equivalence's right action is the same pointwise scalar operation. -/
 theorem toZeroAtInftyMultiplierEquiv_snd_apply
     (g : X →ᵇ ℂ) (f : C₀(X, ℂ)) (x : X) :
     (toZeroAtInftyMultiplierEquiv g).snd f x = g x * f x := rfl
 
-/-- Existing complex C-star equivalence theory preserves these exact existing norms. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+Existing complex C-star equivalence theory preserves these exact existing norms. -/
 theorem norm_toZeroAtInftyMultiplierEquiv (g : X →ᵇ ℂ) :
     ‖toZeroAtInftyMultiplierEquiv g‖ = ‖g‖ :=
   StarAlgEquiv.norm_map (toZeroAtInftyMultiplierEquiv (X := X)) g
 
-/-- The actual scalar-function/multiplier equivalence is an isometry for the existing metrics. -/
+/-- Let `X` be a regular locally compact topological space. The coefficient algebra is `C₀(X,ℂ)`
+with its supremum norm, and its multipliers are bounded complex-linear double centralizers.
+
+The scalar-function/multiplier equivalence is an isometry for the existing metrics. -/
 theorem isometry_toZeroAtInftyMultiplierEquiv :
     Isometry (toZeroAtInftyMultiplierEquiv (X := X) :
       (X →ᵇ ℂ) → 𝓜(ℂ, C₀(X, ℂ))) :=

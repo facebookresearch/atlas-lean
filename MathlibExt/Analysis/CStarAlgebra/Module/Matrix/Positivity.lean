@@ -44,8 +44,9 @@ universe uB uI uE uF
 variable {B : Type uB} [NonUnitalCStarAlgebra B]
 variable [PartialOrder Bᵐᵒᵖ] [StarOrderedRing Bᵐᵒᵖ]
 
-/-- The existing right matrix representation is faithful, including for
-nonunital coefficients and an empty finite index. -/
+/-- Let B be a possibly nonunital complex C-star algebra and I a finite index type, possibly
+empty. For possibly nonunital B, the finite square-matrix column action is injective,
+including for an empty index type. -/
 theorem rightMatrixHom_injective {I : Type uI} [Fintype I] :
     Function.Injective (rightMatrixHom (B := B) (ι := I)) := by
   intro M N hMN
@@ -69,9 +70,9 @@ variable [SMul Bᵐᵒᵖ E] [CStarModule Bᵐᵒᵖ E] [CompleteSpace E]
 variable {F : Type uF} [NormedAddCommGroup F] [NormedSpace ℂ F]
 variable [SMul Bᵐᵒᵖ F] [CStarModule Bᵐᵒᵖ F] [CompleteSpace F]
 
-/-- The adjoint composite of an actual complete rectangular operator is
-positive in the canonical endomorphism order. The rectangular operator is
-never treated as an element of an endomorphism star ring. -/
+/-- Let B be a possibly nonunital complex C-star algebra and E and F complete right Hilbert
+B-modules. For complete right Hilbert B-modules E and F, the adjoint of an adjointable map
+from E to F composed with that map is nonnegative in the endomorphism C-star order. -/
 theorem adjoint_comp_self_nonneg (T : AdjointableOperator B E F) :
     @LE.le (End B E) (CStarAlgebra.spectralOrder (End B E)).toLE
       0 (T.adjointOperator.comp T) := by

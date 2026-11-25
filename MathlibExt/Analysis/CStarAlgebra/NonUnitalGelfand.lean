@@ -41,7 +41,8 @@ namespace WeakDual
 universe uA
 variable {A : Type uA} [NonUnitalCStarAlgebra A]
 
-/-- Every raw complex algebra homomorphism on a nonunital C-star algebra preserves star. -/
+/-- **Characters preserve the involution.** Let `A` be a nonunital complex C*-algebra. Every nonunital
+complex algebra homomorphism `φ : A → ℂ` satisfies `φ(a*) = conjugate(φ(a))` for every `a ∈ A`. -/
 theorem character_apply_star_of_nonunital (phi : A →ₙₐ[ℂ] ℂ) (a : A) :
     phi (star a) = star (phi a) := by
   let psi : characterSpace ℂ (Unitization ℂ A) :=
@@ -56,7 +57,9 @@ theorem character_apply_star_of_nonunital (phi : A →ₙₐ[ℂ] ℂ) (a : A) :
     _ = star (psi (a : Unitization ℂ A)) := map_star psi (a : Unitization ℂ A)
     _ = star (phi a) := congrArg star (hpsi a)
 
-/-- The canonical nonunital star-algebra map uses the original weak-character C0 evaluation. -/
+/-- **Nonunital Gelfand star transform.** Let `A` be a nonunital complex C*-algebra. Character
+evaluation gives the nonunital complex star homomorphism `A → C₀(Δ(A),ℂ)`, where `Δ(A)` is the
+pointwise-topologized space of nonzero complex characters. -/
 def nonUnitalGelfandStarTransform : A →⋆ₙₐ[ℂ] C₀(characterSpace ℂ A, ℂ) :=
   { nonUnitalGelfandTransform (A := A) with
     map_star' a := by
@@ -65,13 +68,16 @@ def nonUnitalGelfandStarTransform : A →⋆ₙₐ[ℂ] C₀(characterSpace ℂ 
       change phi (star a) = star (phi a)
       exact character_apply_star_of_nonunital (CharacterSpace.toNonUnitalAlgHom phi) a }
 
-/-- The star packaging forgets to the exact existing nonunital Gelfand algebra map. -/
+/-- **Algebra map of the nonunital Gelfand star transform.** Let `A` be a nonunital complex C*-algebra.
+Forgetting preservation of star from the Gelfand star transform recovers the character-evaluation
+nonunital complex algebra homomorphism. -/
 @[simp]
 theorem nonUnitalGelfandStarTransform_toNonUnitalAlgHom :
     (nonUnitalGelfandStarTransform (A := A)).toNonUnitalAlgHom =
       (nonUnitalGelfandTransform : A →ₙₐ[ℂ] C₀(characterSpace ℂ A, ℂ)) := rfl
 
-/-- The canonical star map has the same literal original character evaluation. -/
+/-- **Evaluation of the nonunital Gelfand transform.** Let `A` be a nonunital complex C*-algebra. For `a
+∈ A` and a nonzero complex character `φ`, the Gelfand transform of `a` has value `φ(a)` at `φ`. -/
 @[simp]
 theorem nonUnitalGelfandStarTransform_apply (a : A) (phi : characterSpace ℂ A) :
     nonUnitalGelfandStarTransform a phi = phi a := rfl

@@ -48,7 +48,9 @@ variable {A : Type u} [NonUnitalCStarAlgebra A]
 variable (gamma : CStarGrading A) (I : ClosedStarIdeal A)
 variable (hI : ∀ a : A, a ∈ I → gamma.generatorAut a ∈ I)
 
-/-- The grading generator descended to the actual canonical closed-ideal quotient. -/
+/-- **Generator on a graded ideal quotient.** Let `A` be a nonunital complex C*-algebra with grading `γ`
+and generator `σ`, and let `I ⊆ A` be a closed two-sided star ideal satisfying `σ(I) ⊆ I`. The
+generator descends to the complex star-algebra automorphism `[a] ↦ [σ(a)]` of `A/I`. -/
 def quotientGenerator :
     letI : I.carrier.IsTwoSided := I.isTwoSided
     letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra
@@ -74,7 +76,9 @@ def quotientGenerator :
     exact congrArg (NonUnitalStarSubalgebra.Quotient.mk I.carrier) (gamma.generator_involutive a)
   exact StarAlgEquiv.ofNonUnitalStarAlgHom descended descended hSquare hSquare
 
-/-- The descended generator sends the class of `a` to the class of its actual graded image. -/
+/-- **Formula for a quotient grading generator.** Let `A` be a nonunital complex C*-algebra with grading
+`γ` and generator `σ`, and let `I ⊆ A` be a closed two-sided star ideal satisfying `σ(I) ⊆ I`. For
+every `a ∈ A`, the descended generator sends its quotient class to `[σ(a)]`. -/
 theorem quotientGenerator_quotientMap (a : A) :
     letI : I.carrier.IsTwoSided := I.isTwoSided
     letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra
@@ -84,7 +88,9 @@ theorem quotientGenerator_quotientMap (a : A) :
   exact NonUnitalStarSubalgebra.Quotient.map_mk I.carrier I.carrier
     gamma.generatorAut.toNonUnitalStarAlgHom (fun a ha => hI a ha) a
 
-/-- The computed grading on the same canonical quotient and the same C-star dictionary. -/
+/-- **Grading on a closed star-ideal quotient.** Let `A` be a nonunital complex C*-algebra with grading
+`γ` and generator `σ`, and let `I ⊆ A` be a closed two-sided star ideal satisfying `σ(I) ⊆ I`. The
+descended generator defines a `ℤ/2ℤ` grading of `A/I` with its quotient C*-norm. -/
 def quotient :
     letI : I.carrier.IsTwoSided := I.isTwoSided
     letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra
@@ -93,7 +99,9 @@ def quotient :
   letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra
   exact ofInvolution (quotientGenerator gamma I hI) (quotientGenerator gamma I hI).left_inv
 
-/-- The computed quotient grading has exactly the descended generating automorphism. -/
+/-- **Generator of the quotient grading.** Let `A` be a nonunital complex C*-algebra with grading `γ`
+and generator `σ`, and let `I ⊆ A` be a closed two-sided star ideal satisfying `σ(I) ⊆ I`. The
+degree-one automorphism of the quotient grading is the descended automorphism `[a] ↦ [σ(a)]`. -/
 @[simp]
 theorem quotient_generatorAut :
     letI : I.carrier.IsTwoSided := I.isTwoSided
@@ -103,7 +111,9 @@ theorem quotient_generatorAut :
   let _ : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra
   exact ofInvolution_generatorAut _ _
 
-/-- The actual canonical quotient projection is graded for the computed quotient grading. -/
+/-- **Graded quotient projection.** Let `A` be a nonunital complex C*-algebra with grading `γ` and
+generator `σ`, and let `I ⊆ A` be a closed two-sided star ideal satisfying `σ(I) ⊆ I`. The quotient
+projection `A → A/I` is equivariant for the original and descended gradings. -/
 def quotientProjection :
     letI : I.carrier.IsTwoSided := I.isTwoSided
     letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra
@@ -123,14 +133,19 @@ def quotientProjection :
           rw [quotient_generatorAut]
           exact (quotientGenerator_quotientMap gamma I hI a).symm }
 
-/-- Forgetting the computed grading retains the existing canonical nonunital star quotient map. -/
+/-- **Underlying star map of a graded quotient projection.** Let `A` be a nonunital complex C*-algebra
+with grading `γ` and generator `σ`, and let `I ⊆ A` be a closed two-sided star ideal satisfying
+`σ(I) ⊆ I`. Forgetting grading equivariance leaves the canonical nonunital complex star quotient
+homomorphism `a ↦ [a]`. -/
 @[simp]
 theorem quotientProjection_toNonUnitalStarAlgHom :
     letI : I.carrier.IsTwoSided := I.isTwoSided
     letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra
     (quotientProjection gamma I hI).toNonUnitalStarAlgHom = I.quotientMap := rfl
 
-/-- Every quotient degree acts on a class by the corresponding degree of the original algebra. -/
+/-- **Every degree acts on quotient classes.** Let `A` be a nonunital complex C*-algebra with grading
+`γ` and generator `σ`, and let `I ⊆ A` be a closed two-sided star ideal satisfying `σ(I) ⊆ I`. For
+every `n ∈ ℤ/2ℤ` and `a ∈ A`, the quotient grading sends `[a]` to `[γ(n)a]`. -/
 theorem quotientMap_equivariant (n : ZMod 2) (a : A) :
     letI : I.carrier.IsTwoSided := I.isTwoSided
     letI : NonUnitalCStarAlgebra I.Quotient := I.quotientCStarAlgebra

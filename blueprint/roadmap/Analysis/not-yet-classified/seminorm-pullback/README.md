@@ -1,6 +1,6 @@
 # Seminorm Pullback
 
-- [Comp](comp.md)
-- [Comp apply](comp-apply.md)
-- [Of Non Unital Star Alg Hom](of-non-unital-star-alg-hom.md)
-- [Of Non Unital Star Alg Hom apply](of-non-unital-star-alg-hom-apply.md)
+- [Pullback of a C*-seminorm](comp.md)
+- [Evaluation of a pulled-back C*-seminorm](comp-apply.md)
+- [Pullback of a C*-norm](of-non-unital-star-alg-hom.md)
+- [Value of a pulled-back C*-norm](of-non-unital-star-alg-hom-apply.md)

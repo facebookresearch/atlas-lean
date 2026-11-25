@@ -34,8 +34,9 @@ namespace CompletelyPositiveMap
 
 universe uA uB
 
-/-- Completely positive maps under the canonical spectral orders of their
-C-star source and target. The dictionaries remain local values. -/
+/-- **Completely positive maps in spectral order.** For nonunital complex C*-algebras `A` and `B`, these
+are complex-linear maps `A → B` whose every finite matrix amplification is positive when both
+algebras carry their canonical spectral orders. -/
 abbrev Canonical (A : Type uA) (B : Type uB)
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B] :=
   let _ : PartialOrder A := CStarAlgebra.spectralOrder A

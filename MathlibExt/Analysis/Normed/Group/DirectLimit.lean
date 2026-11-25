@@ -48,8 +48,12 @@ variable {I : Type uI} [Preorder I] [IsDirectedOrder I] [Nonempty I]
   [DirectedSystem G (f · · ·)]
   (hNorm : ∀ i j (h : i ≤ j) (x : G i), ‖f i j h x‖ = ‖x‖)
 
-/-- The genuine additive-group norm induced by the actual norm-preserving
-transition maps on the existing directed-system quotient. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. Every transition preserves norms exactly.
+
+The additive-group norm induced by the norm-preserving transition maps on the existing
+directed-system quotient. -/
 noncomputable def addGroupNormOfNormPreserving : AddGroupNorm (_root_.DirectLimit G f) where
   toFun := _root_.DirectLimit.lift f (fun i x => ‖x‖)
     (fun i j h x => (hNorm i j h x).symm)
@@ -74,15 +78,22 @@ noncomputable def addGroupNormOfNormPreserving : AddGroupNorm (_root_.DirectLimi
     subst x
     exact (_root_.DirectLimit.zero_def (f := f) i).symm
 
-/-- The explicit normed additive-commutative-group structure on the same raw
-direct limit, using the standard group-norm metric construction. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. Every transition preserves norms exactly.
+
+The normed additive-commutative-group structure on the same raw direct limit, using the standard
+group-norm metric construction. -/
 @[instance_reducible]
 noncomputable def normedAddCommGroupOfNormPreserving :
     NormedAddCommGroup (_root_.DirectLimit G f) :=
   (addGroupNormOfNormPreserving f hNorm).toNormedAddCommGroup
 
-/-- Under the constructed dictionary, every genuine stage representative has
-exactly its original norm. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. Every transition preserves norms exactly.
+
+Under the constructed structure, every stage representative has exactly its norm. -/
 theorem normedAddCommGroupOfNormPreserving_norm_mk (i : I) (x : G i) :
     letI : NormedAddCommGroup (_root_.DirectLimit G f) :=
       normedAddCommGroupOfNormPreserving f hNorm;
@@ -105,19 +116,28 @@ variable {I : Type uI} [Preorder I]
   [∀ i j (h : i ≤ j), FunLike (T h) (G i) (G j)]
   (f : ∀ i j (h : i ≤ j), T h)
 
-/-- A common element-norm bound on a tail for each fixed source stage.
-The tail and bound may depend on that stage. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Specify a transition map for every ordered pair of indices. For each starting stage
+there is a nonnegative common operator-norm bound on a tail of its transition maps.
+
+A common element-norm bound on a tail for each fixed source stage. The tail and bound may depend
+on that stage. -/
 def IsEventuallyNormBounded : Prop :=
   ∀ i, ∃ C : ℝ, 0 ≤ C ∧ ∀ᶠ j in atTop,
     ∀ (h : i ≤ j) (x : G i), ‖f i j h x‖ ≤ C * ‖x‖
 
-/-- The actual norm net of a stage representative, extended by zero outside
-its cofinal upper cone. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Specify a transition map for every ordered pair of indices.
+
+The norm net of a stage representative, extended by zero outside its cofinal upper cone. -/
 noncomputable def stageTailNorm (i : I) (x : G i) (j : I) : ℝ := by
   classical
   exact if h : i ≤ j then ‖f i j h x‖ else 0
 
-/-- Every value of the stage-norm net is nonnegative. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Specify a transition map for every ordered pair of indices.
+
+Every value of the stage-norm net is nonnegative. -/
 theorem stageTailNorm_nonneg (i : I) (x : G i) (j : I) :
     0 ≤ stageTailNorm f i x j := by
   classical
@@ -126,8 +146,11 @@ theorem stageTailNorm_nonneg (i : I) (x : G i) (j : I) :
   · exact norm_nonneg _
   · exact le_rfl
 
-/-- An eventual common map bound supplies the upper bound for each
-representative's real limsup. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Specify a transition map for every ordered pair of indices. For each starting stage
+there is a nonnegative common operator-norm bound on a tail of its transition maps.
+
+An eventual common map bound supplies the upper bound for each representative's real limsup. -/
 theorem stageTailNorm_boundedAbove
     (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
     IsBoundedUnder (· ≤ ·) atTop (stageTailNorm f i x) := by
@@ -138,8 +161,10 @@ theorem stageTailNorm_boundedAbove
   rw [stageTailNorm, dite_eq_left hij]
   exact hj hij x
 
-/-- Nonnegativity supplies the lower bound independently of the eventual
-common-map bound. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Specify a transition map for every ordered pair of indices.
+
+Nonnegativity supplies the lower bound independently of the eventual common-map bound. -/
 theorem stageTailNorm_boundedBelow (i : I) (x : G i) :
     IsBoundedUnder (· ≥ ·) atTop (stageTailNorm f i x) :=
   isBoundedUnder_of_eventually_ge
@@ -149,7 +174,10 @@ section Additive
 
 variable [∀ i j (h : i ≤ j), AddMonoidHomClass (T h) (G i) (G j)]
 
-/-- The zero representative has the constant zero stage-norm net. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Specify a transition map for every ordered pair of indices.
+
+The zero representative has the constant zero stage-norm net. -/
 theorem stageTailNorm_zero (i : I) :
     stageTailNorm f i (0 : G i) = fun _ => (0 : ℝ) := by
   classical
@@ -158,7 +186,10 @@ theorem stageTailNorm_zero (i : I) :
   · rw [stageTailNorm, dite_eq_left h, map_zero, norm_zero]
   · rw [stageTailNorm, dite_eq_right h]
 
-/-- Negation preserves the original stage-norm net pointwise. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Specify a transition map for every ordered pair of indices.
+
+Negation preserves the stage-norm net pointwise. -/
 theorem stageTailNorm_neg (i : I) (x : G i) :
     stageTailNorm f i (-x) = stageTailNorm f i x := by
   classical
@@ -167,8 +198,10 @@ theorem stageTailNorm_neg (i : I) (x : G i) :
   · rw [stageTailNorm, dite_eq_left h, stageTailNorm, dite_eq_left h, map_neg, norm_neg]
   · rw [stageTailNorm, dite_eq_right h, stageTailNorm, dite_eq_right h]
 
-/-- The original transition maps give the pointwise triangle inequality
-for representative norm nets. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Specify a transition map for every ordered pair of indices.
+
+The transition maps give the pointwise triangle inequality for representative norm nets. -/
 theorem stageTailNorm_add_le (i : I) (x y : G i) (j : I) :
     stageTailNorm f i (x + y) j ≤
       stageTailNorm f i x j + stageTailNorm f i y j := by
@@ -182,8 +215,12 @@ theorem stageTailNorm_add_le (i : I) (x y : G i) (j : I) :
 
 variable [IsDirectedOrder I] [Nonempty I]
 
-/-- The finite real limsups satisfy the triangle inequality under the
-eventual common-map bound. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. Specify a transition map for every ordered pair of
+indices. For each starting stage there is a nonnegative common operator-norm bound on a tail of
+its transition maps.
+
+The finite real limsups satisfy the triangle inequality under the eventual common-map bound. -/
 theorem stageTailNorm_limsup_add_le
     (hBound : IsEventuallyNormBounded f) (i : I) (x y : G i) :
     limsup (stageTailNorm f i (x + y)) atTop ≤
@@ -203,7 +240,10 @@ section Coherent
 
 variable [DirectedSystem G (f · · ·)]
 
-/-- Coherence makes the two stage-norm nets agree above the later stage. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. The transition homomorphisms form a compatible directed system.
+
+Coherence makes the two stage-norm nets agree above the later stage. -/
 theorem stageTailNorm_map_eventuallyEq
     {i j : I} (h : i ≤ j) (x : G i) :
     stageTailNorm f i x =ᶠ[atTop] stageTailNorm f j (f i j h x) := by
@@ -214,8 +254,10 @@ theorem stageTailNorm_map_eventuallyEq
     DirectedSystem.map_map (f := (f · · ·)) h hjk x
   exact congrArg (fun y : G k => ‖y‖) hmap.symm
 
-/-- The real limsup is independent of moving a representative along an
-actual transition. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. The transition homomorphisms form a compatible directed system.
+
+The real limsup is independent of moving a representative along an transition. -/
 theorem stageTailNorm_limsup_map
     {i j : I} (h : i ≤ j) (x : G i) :
     limsup (stageTailNorm f i x) atTop =
@@ -228,8 +270,13 @@ variable [IsDirectedOrder I] [Nonempty I]
   [∀ i j (h : i ≤ j), AddMonoidHomClass (T h) (G i) (G j)]
   [DirectedSystem G (f · · ·)]
 
-/-- The genuine additive-group seminorm on the stock algebraic direct
-limit, obtained by descending the finite real limsup of the stage norms. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The additive-group seminorm on the algebraic direct limit, obtained by descending the finite
+real limsup of the stage norms. -/
 noncomputable def addGroupSeminormOfEventuallyBounded
     (hBound : IsEventuallyNormBounded f) : AddGroupSeminorm (_root_.DirectLimit G f) where
   toFun := _root_.DirectLimit.lift f
@@ -247,14 +294,24 @@ noncomputable def addGroupSeminormOfEventuallyBounded
     refine _root_.DirectLimit.induction (f := f) (fun i x => ?_) z
     simp only [_root_.DirectLimit.neg_def, _root_.DirectLimit.lift_def, stageTailNorm_neg]
 
-/-- The explicit seminormed additive-group dictionary on the same algebraic
-carrier, with the original direct-limit addition and subtraction. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The seminormed additive-group structure on the same algebraic carrier, with the direct-limit
+addition and subtraction. -/
 @[instance_reducible]
 noncomputable def seminormedAddCommGroupOfEventuallyBounded
     (hBound : IsEventuallyNormBounded f) : SeminormedAddCommGroup (_root_.DirectLimit G f) :=
   (addGroupSeminormOfEventuallyBounded f hBound).toSeminormedAddCommGroup
 
-/-- The constructed raw seminorm has exactly the real stage-limsup formula. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The constructed raw seminorm has exactly the real stage-limsup formula. -/
 theorem seminormedAddCommGroupOfEventuallyBounded_norm_mk
     (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
     letI : SeminormedAddCommGroup (_root_.DirectLimit G f) :=
@@ -264,21 +321,36 @@ theorem seminormedAddCommGroupOfEventuallyBounded_norm_mk
     seminormedAddCommGroupOfEventuallyBounded f hBound
   rfl
 
-/-- The separated quotient of the actual algebraic direct limit by the
-zero-seminorm relation. No completion is taken in this carrier. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The separated quotient of the algebraic direct limit by the zero-seminorm relation. No
+completion is taken in this carrier. -/
 noncomputable def NormedLimit (hBound : IsEventuallyNormBounded f) : Type (max uI uG) :=
   @SeparationQuotient (_root_.DirectLimit G f)
     (seminormedAddCommGroupOfEventuallyBounded f hBound).toPseudoMetricSpace.toUniformSpace.toTopologicalSpace
 
-/-- The explicit normed-group dictionary on the zero-seminorm quotient,
-with its stock separated addition, metric and descended norm. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The normed-group structure on the zero-seminorm quotient, with its separated addition, metric
+and descended norm. -/
 @[instance_reducible]
 noncomputable def normedAddCommGroupNormedLimit
     (hBound : IsEventuallyNormBounded f) : NormedAddCommGroup (NormedLimit f hBound) :=
   @SeparationQuotient.instNormedAddCommGroup (_root_.DirectLimit G f)
     (seminormedAddCommGroupOfEventuallyBounded f hBound)
 
-/-- The actual additive quotient map from the algebraic limit. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The additive quotient map from the algebraic limit. -/
 noncomputable def normedLimitMk (hBound : IsEventuallyNormBounded f) :
     letI : NormedAddCommGroup (NormedLimit f hBound) := normedAddCommGroupNormedLimit f hBound;
     _root_.DirectLimit G f →+ NormedLimit f hBound := by
@@ -293,7 +365,12 @@ noncomputable def normedLimitMk (hBound : IsEventuallyNormBounded f) :
       map_zero' := SeparationQuotient.mk_zero
       map_add' := fun x y => SeparationQuotient.mk_add x y }
 
-/-- Quotienting preserves precisely the constructed raw seminorm value. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+Quotienting preserves precisely the constructed raw seminorm value. -/
 theorem normedLimitMk_norm (hBound : IsEventuallyNormBounded f)
     (z : _root_.DirectLimit G f) :
     letI : NormedAddCommGroup (NormedLimit f hBound) := normedAddCommGroupNormedLimit f hBound;
@@ -306,7 +383,12 @@ theorem normedLimitMk_norm (hBound : IsEventuallyNormBounded f)
   let : NormedAddCommGroup (NormedLimit f hBound) := normedAddCommGroupNormedLimit f hBound
   exact @SeparationQuotient.norm_mk (_root_.DirectLimit G f) s z
 
-/-- The genuine quotient's norm is the original real stage-norm limsup. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The quotient's norm is the real stage-norm limsup. -/
 theorem normedLimitMk_norm_mk (hBound : IsEventuallyNormBounded f) (i : I) (x : G i) :
     letI : NormedAddCommGroup (NormedLimit f hBound) := normedAddCommGroupNormedLimit f hBound;
     ‖normedLimitMk f hBound (⟦⟨i, x⟩⟧ : _root_.DirectLimit G f)‖ =
@@ -315,8 +397,12 @@ theorem normedLimitMk_norm_mk (hBound : IsEventuallyNormBounded f) (i : I) (x : 
   rw [normedLimitMk_norm]
   rfl
 
-/-- The elements killed by the actual quotient map are exactly those with
-zero seminorm. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+The elements killed by the quotient map are exactly those with zero seminorm. -/
 theorem normedLimitMk_eq_zero_iff (hBound : IsEventuallyNormBounded f)
     (z : _root_.DirectLimit G f) :
     letI : NormedAddCommGroup (NormedLimit f hBound) := normedAddCommGroupNormedLimit f hBound;
@@ -324,8 +410,12 @@ theorem normedLimitMk_eq_zero_iff (hBound : IsEventuallyNormBounded f)
   let : NormedAddCommGroup (NormedLimit f hBound) := normedAddCommGroupNormedLimit f hBound
   rw [← norm_eq_zero, normedLimitMk_norm]
 
-/-- Every element of the zero-seminorm quotient still has an original
-finite-stage representative. -/
+/-- Let `I` be a preordered index type and let `(Gᵢ)` be a family of normed additive commutative
+groups. Assume `I` is nonempty and directed. The transition homomorphisms form a compatible
+directed system. For each starting stage there is a nonnegative common operator-norm bound on a
+tail of its transition maps.
+
+Every element of the zero-seminorm quotient still has an finite-stage representative. -/
 theorem normedLimit_exists_stage (hBound : IsEventuallyNormBounded f)
     (z : NormedLimit f hBound) :
     ∃ i, ∃ x : G i,

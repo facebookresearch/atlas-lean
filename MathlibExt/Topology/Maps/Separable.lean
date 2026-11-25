@@ -29,8 +29,11 @@ open Set TopologicalSpace Topology
 
 universe uX uY uG uH
 
-/-- An open map with separable target and separable fibers has separable source.
-The map need not be continuous or surjective. -/
+/-- Let `X` and `Y` be topological spaces, with `Y` separable. Assume the map `f : X → Y` is open
+and each subspace fibre of `f` is separable.
+
+An open map with separable target and separable fibers has separable source. The map need not be
+continuous or surjective. -/
 theorem IsOpenMap.separableSpace_of_separable_fibers
     {X : Type uX} {Y : Type uY} [TopologicalSpace X] [TopologicalSpace Y]
     [SeparableSpace Y] {f : X → Y} (hf : IsOpenMap f)
@@ -54,9 +57,12 @@ theorem IsOpenMap.separableSpace_of_separable_fibers
   refine ⟨z.val, hzU, ?_⟩
   exact mem_iUnion.2 ⟨y, mem_iUnion.2 ⟨hyD, mem_image_of_mem Subtype.val hzd⟩⟩
 
-/-- An open additive homomorphism into a separable space has separable
-domain when its actual kernel is separable. No target group topology or
-continuity of the homomorphism is required. -/
+/-- Let `G` be a topological additive group and let `H` be a separable topological space with an
+additive-group structure. Assume the additive homomorphism `f : G → H` is open and its kernel is
+separable.
+
+An open additive homomorphism into a separable space has separable domain when its kernel is
+separable. No target group topology or continuity of the homomorphism is required. -/
 theorem IsOpenMap.separableSpace_of_separable_ker
     {G : Type uG} {H : Type uH} [AddGroup G] [TopologicalSpace G]
     [IsTopologicalAddGroup G] [AddGroup H] [TopologicalSpace H]

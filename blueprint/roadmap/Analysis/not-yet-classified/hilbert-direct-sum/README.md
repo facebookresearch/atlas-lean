@@ -2,12 +2,12 @@
 
 ## Non Unital Star Alg Hom
 
-- [Hilbert Sum Operator](hilbert-sum-operator.md)
-- [Hilbert Sum Operator apply](hilbert-sum-operator-apply.md)
-- [Hilbert Direct Sum](hilbert-direct-sum.md)
-- [Hilbert Direct Sum apply](hilbert-direct-sum-apply.md)
+- [Operator on the Hilbert direct sum](hilbert-sum-operator.md)
+- [Coordinates of the Hilbert-sum operator](hilbert-sum-operator-apply.md)
+- [Hilbert direct sum of representations](hilbert-direct-sum.md)
+- [Coordinates of the Hilbert-sum representation](hilbert-direct-sum-apply.md)
 
 ## Star Alg Hom
 
-- [Hilbert Direct Sum](hilbert-direct-sum-2.md)
-- [Hilbert Direct Sum apply](hilbert-direct-sum-apply-2.md)
+- [Hilbert direct sum of representations](hilbert-direct-sum-2.md)
+- [Coordinates of the Hilbert-sum representation](hilbert-direct-sum-apply-2.md)

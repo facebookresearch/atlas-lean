@@ -1,6 +1,6 @@
 # Near
 
-- [Projection Cut](projection-cut.md)
-- [Norm projection Cut sub le](norm-projection-cut-sub-le.md)
-- [Corrected Projection Value](corrected-projection-value.md)
-- [Corrected Projection](corrected-projection.md)
+- [Spectral cutoff at one half](projection-cut.md)
+- [Scalar spectral-cutoff error](norm-projection-cut-sub-le.md)
+- [Nonunital spectral-cutoff value](corrected-projection-value.md)
+- [Correcting a nearly idempotent self-adjoint element](corrected-projection.md)

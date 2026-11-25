@@ -52,17 +52,23 @@ variable [IsScalarTower ℂ A A] [SMulCommClass ℂ A A] [CompleteSpace A]
 
 namespace CharacterSpace
 
-/-- Every nonunital character is bounded by the original algebra norm. -/
+/-- **Norm bound on character evaluation.** Let `A` be a nonunital complex Banach algebra, and let
+`Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology. For every
+`χ ∈ Δ(A)` and `a ∈ A`, `|χ(a)| ≤ ‖a‖`. -/
 theorem norm_apply_le (φ : characterSpace ℂ A) (a : A) : ‖φ a‖ ≤ ‖a‖ :=
   quasispectrum.norm_le_norm_of_mem (NonUnitalAlgHom.apply_mem_quasispectrum φ a)
 
-/-- The original continuous linear functional of a character has norm at most one. -/
+/-- **Norm of a nonunital character.** Let `A` be a nonunital complex Banach algebra, and let `Δ(A)` be
+the space of its nonzero continuous complex characters with pointwise topology. Every `χ ∈ Δ(A)`, as
+a continuous complex-linear functional on `A`, has operator norm at most one. -/
 theorem norm_le_one (φ : characterSpace ℂ A) :
     ‖toStrongDual (φ : WeakDual ℂ A)‖ ≤ 1 :=
   ContinuousLinearMap.opNorm_le_bound _ zero_le_one fun a => by
     simpa only [one_mul, toStrongDual_apply, CharacterSpace.coe_coe] using norm_apply_le φ a
 
-/-- Nonunital characters together with the actual zero functional form a compact set. -/
+/-- **Compactness of characters together with zero.** Let `A` be a nonunital complex Banach algebra, and
+let `Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology. The
+set `Δ(A) ∪ {0}` is compact in the pointwise-topologized continuous dual of `A`. -/
 theorem union_zero_isCompact : IsCompact (characterSpace ℂ A ∪ {0}) := by
   refine (WeakDual.isCompact_closedBall (𝕜 := ℂ) (E := A) 0 1).of_isClosed_subset
     (union_zero_isClosed ℂ A) ?_
@@ -73,7 +79,9 @@ theorem union_zero_isCompact : IsCompact (characterSpace ℂ A ∪ {0}) := by
   · obtain rfl := Set.mem_singleton_iff.mp hφ
     simp
 
-/-- The existing weak character space is locally compact, including the nonunital case. -/
+/-- **Local compactness of the character space.** Let `A` be a nonunital complex Banach algebra, and let
+`Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology. The
+character space `Δ(A)` is locally compact. -/
 theorem locallyCompactSpaceNonUnital : LocallyCompactSpace (characterSpace ℂ A) := by
   let K : Set (WeakDual ℂ A) := characterSpace ℂ A ∪ {0}
   let : CompactSpace K := isCompact_iff_compactSpace.mp (union_zero_isCompact (A := A))
@@ -100,7 +108,9 @@ theorem locallyCompactSpaceNonUnital : LocallyCompactSpace (characterSpace ℂ A
       (continuous_subtype_val : Continuous (Subtype.val : K → WeakDual ℂ A))
   exact (show IsOpenEmbedding i from ⟨hi, hopen⟩).locallyCompactSpace
 
-/-- A positive norm superlevel of evaluation is compact in the original character space. -/
+/-- **Compact superlevels of character evaluation.** Let `A` be a nonunital complex Banach algebra, and
+let `Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology. For
+every `a ∈ A` and `ε > 0`, the set `{χ ∈ Δ(A) : ε ≤ |χ(a)|}` is compact. -/
 theorem isCompact_norm_superlevel (a : A) {ε : ℝ} (hε : 0 < ε) :
     IsCompact {φ : characterSpace ℂ A | ε ≤ ‖φ a‖} := by
   rw [Subtype.isCompact_iff]
@@ -123,7 +133,9 @@ theorem isCompact_norm_superlevel (a : A) {ε : ℝ} (hε : 0 < ε) :
   exact (union_zero_isCompact (A := A)).inter_right
     (isClosed_le continuous_const (WeakDual.eval_continuous a).norm)
 
-/-- Evaluation at an original element tends to zero along the character-space cocompact filter. -/
+/-- **Character evaluation vanishes at infinity.** Let `A` be a nonunital complex Banach algebra, and
+let `Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology. For
+each `a ∈ A`, the function `χ ↦ χ(a)` tends to zero along the cocompact filter of `Δ(A)`. -/
 theorem eval_zero_at_infty (a : A) :
     Tendsto (fun φ : characterSpace ℂ A => φ a)
       (cocompact (characterSpace ℂ A)) (𝓝 0) := by
@@ -134,7 +146,10 @@ theorem eval_zero_at_infty (a : A) :
 
 end CharacterSpace
 
-/-- The actual nonunital Gelfand transform into functions vanishing at infinity. -/
+/-- **Nonunital Banach-algebra Gelfand transform.** Let `A` be a nonunital complex Banach algebra, and
+let `Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology. The
+evaluation formula `a ↦ (χ ↦ χ(a))` defines a nonunital complex algebra homomorphism `A →
+C₀(Δ(A),ℂ)`. -/
 def nonUnitalGelfandTransform : A →ₙₐ[ℂ] C₀(characterSpace ℂ A, ℂ) where
   toFun a :=
     { toFun := fun φ => φ a
@@ -145,12 +160,16 @@ def nonUnitalGelfandTransform : A →ₙₐ[ℂ] C₀(characterSpace ℂ A, ℂ)
   map_mul' a b := by ext φ; exact map_mul φ a b
   map_smul' z a := by ext φ; exact map_smul φ z a
 
-/-- The defining map uses literal evaluation on the original algebra and weak character. -/
+/-- **Evaluation of the nonunital Gelfand transform.** Let `A` be a nonunital complex Banach algebra,
+and let `Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology.
+The Gelfand transform of `a ∈ A` has value `χ(a)` at every `χ ∈ Δ(A)`. -/
 @[simp]
 theorem nonUnitalGelfandTransform_apply (a : A) (φ : characterSpace ℂ A) :
     nonUnitalGelfandTransform a φ = φ a := rfl
 
-/-- The actual C0-valued nonunital Gelfand transform is bounded by the original algebra norm. -/
+/-- **Contractivity of the nonunital Gelfand transform.** Let `A` be a nonunital complex Banach algebra,
+and let `Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology.
+The supremum norm of the Gelfand transform of `a ∈ A` is at most `‖a‖`. -/
 theorem norm_nonUnitalGelfandTransform_le (a : A) :
     ‖nonUnitalGelfandTransform a‖ ≤ ‖a‖ := by
   change ‖(nonUnitalGelfandTransform a).toBCF‖ ≤ ‖a‖
@@ -158,7 +177,10 @@ theorem norm_nonUnitalGelfandTransform_le (a : A) :
   intro φ
   exact CharacterSpace.norm_apply_le φ a
 
-/-- The canonical continuous complex linear map has the same actual C0 evaluation values. -/
+/-- **Continuous linear Gelfand transform.** Let `A` be a nonunital complex Banach algebra, and let
+`Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology. The
+evaluation Gelfand transform is a continuous complex-linear map `A → C₀(Δ(A),ℂ)`, with the supremum
+norm on the function space. -/
 def nonUnitalGelfandTransformCLM : A →L[ℂ] C₀(characterSpace ℂ A, ℂ) :=
   (LinearMap.ofClass
     (nonUnitalGelfandTransform (A := A) : A →ₙₐ[ℂ] C₀(characterSpace ℂ A, ℂ))).mkContinuous 1 (by
@@ -166,12 +188,18 @@ def nonUnitalGelfandTransformCLM : A →L[ℂ] C₀(characterSpace ℂ A, ℂ) :
       change ‖nonUnitalGelfandTransform a‖ ≤ 1 * ‖a‖
       simpa only [one_mul] using norm_nonUnitalGelfandTransform_le a)
 
-/-- The continuous linear packaging preserves the exact C0-valued Gelfand transform. -/
+/-- **Values of the continuous linear Gelfand transform.** Let `A` be a nonunital complex Banach
+algebra, and let `Δ(A)` be the space of its nonzero continuous complex characters with pointwise
+topology. The continuous linear Gelfand transform of `a` is the same `C₀` function as the algebraic
+Gelfand transform. -/
 @[simp]
 theorem nonUnitalGelfandTransformCLM_apply (a : A) :
     nonUnitalGelfandTransformCLM a = nonUnitalGelfandTransform a := rfl
 
-/-- The actual nonunital Gelfand transform is continuous in the original norm and C0 norm. -/
+/-- **Continuity of the nonunital Gelfand transform.** Let `A` be a nonunital complex Banach algebra,
+and let `Δ(A)` be the space of its nonzero continuous complex characters with pointwise topology.
+The Gelfand transform from `A` to `C₀(Δ(A),ℂ)` is continuous in the algebra norm and the function
+supremum norm. -/
 theorem continuous_nonUnitalGelfandTransform :
     Continuous (nonUnitalGelfandTransform (A := A) : A → C₀(characterSpace ℂ A, ℂ)) :=
   (nonUnitalGelfandTransformCLM (A := A)).continuous

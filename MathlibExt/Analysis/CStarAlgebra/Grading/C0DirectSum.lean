@@ -41,18 +41,27 @@ universe uI uA uB
 variable {I : Type uI} (A : I → Type uA)
 variable [∀ i, NonUnitalCStarAlgebra (A i)]
 
-/-- The component generator homomorphisms acting on the same completed sum. -/
+/-- **Generator homomorphism on a graded c₀ sum.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital
+complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of
+norm-vanishing sections with the supremum norm. The coordinate map `(aᵢ) ↦ (σᵢ(aᵢ))` is a nonunital
+complex star endomorphism of the c₀ sum. -/
 def generatorHom (γ : ∀ i, CStarGrading (A i)) :
     CStarC0Sum A →⋆ₙₐ[ℂ] CStarC0Sum A :=
   map A A (fun i => NonUnitalStarAlgHom.ofClass (γ i).generatorAut)
 
-/-- The generating homomorphism is literally pointwise. -/
+/-- **Coordinates of the c₀ generator homomorphism.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital
+complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of
+norm-vanishing sections with the supremum norm. For a c₀ section `f` and `i ∈ I`, the generator
+homomorphism has coordinate `σᵢ(fᵢ)`. -/
 @[simp]
 theorem generatorHom_apply (γ : ∀ i, CStarGrading (A i))
     (f : CStarC0Sum A) (i : I) :
     generatorHom A γ f i = (γ i).generatorAut (f i) := rfl
 
-/-- Component involutions give an actual involution of the completed sum. -/
+/-- **Involution of the c₀ generator homomorphism.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital
+complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of
+norm-vanishing sections with the supremum norm. Applying the coordinatewise generator homomorphism
+twice returns every c₀ section. -/
 theorem generatorHom_involutive (γ : ∀ i, CStarGrading (A i)) :
     Function.Involutive (generatorHom A γ) := by
   intro f
@@ -61,7 +70,10 @@ theorem generatorHom_involutive (γ : ∀ i, CStarGrading (A i)) :
   change (γ i).generatorAut ((γ i).generatorAut (f i)) = f i
   exact (γ i).generator_involutive (f i)
 
-/-- The actual pointwise star-algebra equivalence, with inverse itself. -/
+/-- **Star automorphism of a graded c₀ sum.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital complex
+C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of norm-vanishing
+sections with the supremum norm. The coordinatewise map `(aᵢ) ↦ (σᵢ(aᵢ))` is a complex star-algebra
+equivalence of the sum, inverse to itself. -/
 def generatorEquiv (γ : ∀ i, CStarGrading (A i)) :
     CStarC0Sum A ≃⋆ₐ[ℂ] CStarC0Sum A where
   toFun := generatorHom A γ
@@ -73,33 +85,51 @@ def generatorEquiv (γ : ∀ i, CStarGrading (A i)) :
   map_star' := map_star (generatorHom A γ)
   map_smul' := map_smul (generatorHom A γ)
 
-/-- The equivalence keeps the same literal pointwise generator. -/
+/-- **Coordinates of the c₀ generator equivalence.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital
+complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of
+norm-vanishing sections with the supremum norm. The generator equivalence has `i` coordinate
+`σᵢ(fᵢ)` on every section `f`. -/
 @[simp]
 theorem generatorEquiv_apply (γ : ∀ i, CStarGrading (A i))
     (f : CStarC0Sum A) (i : I) :
     generatorEquiv A γ f i = (γ i).generatorAut (f i) := rfl
 
-/-- Its self-inverse law is inherited from the component generators. -/
+/-- **The c₀ generator equivalence has order two.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital
+complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of
+norm-vanishing sections with the supremum norm. Applying the coordinate generator equivalence twice
+gives the identity on the c₀ sum. -/
 theorem generatorEquiv_involutive (γ : ∀ i, CStarGrading (A i)) :
     Function.Involutive (generatorEquiv A γ) :=
   generatorHom_involutive A γ
 
-/-- The pointwise generator preserves the actual inherited norm. -/
+/-- **Norm of a c₀ grading generator.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital complex
+C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of norm-vanishing
+sections with the supremum norm. The coordinate generator equivalence preserves the supremum norm of
+each section. -/
 theorem norm_generatorEquiv (γ : ∀ i, CStarGrading (A i))
     (f : CStarC0Sum A) : ‖generatorEquiv A γ f‖ = ‖f‖ :=
   StarAlgEquiv.norm_map (generatorEquiv A γ) f
 
-/-- The computed pointwise grading, from the actual involutive equivalence. -/
+/-- **Coordinatewise grading of a c₀ sum.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital complex
+C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of norm-vanishing
+sections with the supremum norm. The coordinatewise generators define a `ℤ/2ℤ` grading of the
+completed c₀ C*-algebra, including an empty index family. -/
 def grading (γ : ∀ i, CStarGrading (A i)) : CStarGrading (CStarC0Sum A) :=
   CStarGrading.ofInvolution (generatorEquiv A γ) (generatorEquiv_involutive A γ)
 
-/-- The grading constructor does not change the computed generator. -/
+/-- **Generator of the coordinatewise c₀ grading.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital
+complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of
+norm-vanishing sections with the supremum norm. The degree-one automorphism of the c₀ grading is the
+coordinate star equivalence `(aᵢ) ↦ (σᵢ(aᵢ))`. -/
 @[simp]
 theorem grading_generatorAut (γ : ∀ i, CStarGrading (A i)) :
     (grading A γ).generatorAut = generatorEquiv A γ :=
   CStarGrading.ofInvolution_generatorAut _ _
 
-/-- The grading generator has the component generator at every coordinate. -/
+/-- **Coordinates of the c₀ grading action generator.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of
+nonunital complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists
+of norm-vanishing sections with the supremum norm. For every section `f`, its image under the
+grading generator has coordinate `σᵢ(fᵢ)` at `i`. -/
 @[simp]
 theorem grading_generator_apply (γ : ∀ i, CStarGrading (A i))
     (f : CStarC0Sum A) (i : I) :
@@ -107,7 +137,10 @@ theorem grading_generator_apply (γ : ∀ i, CStarGrading (A i))
   rw [grading_generatorAut]
   rfl
 
-/-- The full action, not just the generator, is pointwise. -/
+/-- **Every degree of the c₀ grading acts coordinatewise.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of
+nonunital complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists
+of norm-vanishing sections with the supremum norm. For `n ∈ ℤ/2ℤ`, the grading action sends the `i`
+coordinate of a section `f` to `γᵢ(n)(fᵢ)`. -/
 theorem grading_aut_apply (γ : ∀ i, CStarGrading (A i))
     (n : ZMod 2) (f : CStarC0Sum A) (i : I) :
     PointNormCStarAddAction.aut (grading A γ) n f i =
@@ -117,7 +150,10 @@ theorem grading_aut_apply (γ : ∀ i, CStarGrading (A i))
     simp [grading]
   · rfl
 
-/-- Homogeneous degree is exactly homogeneous degree at each component. -/
+/-- **Homogeneity in a c₀ sum.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital complex C*-algebras
+with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of norm-vanishing sections with
+the supremum norm. A c₀ section has degree `n ∈ ℤ/2ℤ` exactly when each of its coordinates has
+degree `n` in its coefficient algebra. -/
 theorem mem_grading_part_iff (γ : ∀ i, CStarGrading (A i))
     (n : ZMod 2) (f : CStarC0Sum A) :
     f ∈ (grading A γ).part n ↔ ∀ i, f i ∈ (γ i).part n := by
@@ -133,7 +169,10 @@ theorem mem_grading_part_iff (γ : ∀ i, CStarGrading (A i))
     have hi := ((γ i).mem_part_iff_generator n (f i)).1 (h i)
     simpa only [grading_generator_apply, smul_apply] using hi
 
-/-- Coordinate evaluation is a genuine graded nonunital star homomorphism. -/
+/-- **Graded evaluation from a c₀ sum.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital complex
+C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of norm-vanishing
+sections with the supremum norm. For each `i ∈ I`, coordinate evaluation is an equivariant nonunital
+complex star homomorphism from the sum to `Aᵢ`. -/
 def gradedEval (γ : ∀ i, CStarGrading (A i)) (i : I) :
     CStarGrading.Hom (grading A γ) (γ i) where
   toNonUnitalStarAlgHom := eval A i
@@ -143,12 +182,18 @@ def gradedEval (γ : ∀ i, CStarGrading (A i)) (i : I) :
       PointNormCStarAddAction.aut (γ i) n.toAdd (f i)
     exact grading_aut_apply A γ n.toAdd f i
 
-/-- Graded evaluation has the original coordinate value. -/
+/-- **Value of graded c₀ evaluation.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital complex
+C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of norm-vanishing
+sections with the supremum norm. The graded evaluation at coordinate `i` sends a section `f` to
+`fᵢ`. -/
 @[simp]
 theorem gradedEval_apply (γ : ∀ i, CStarGrading (A i))
     (i : I) (f : CStarC0Sum A) : gradedEval A γ i f = f i := rfl
 
-/-- The underlying homomorphism is exactly the ungraded coordinate map. -/
+/-- **Underlying homomorphism of graded c₀ evaluation.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of
+nonunital complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists
+of norm-vanishing sections with the supremum norm. Forgetting equivariance leaves the
+coordinate-evaluation nonunital star homomorphism of the c₀ sum. -/
 @[simp]
 theorem gradedEval_toNonUnitalStarAlgHom (γ : ∀ i, CStarGrading (A i)) (i : I) :
     (gradedEval A γ i).toNonUnitalStarAlgHom = eval A i := rfl
@@ -157,7 +202,11 @@ section Single
 
 variable [DecidableEq I]
 
-/-- Single-coordinate inclusion is graded for the computed output grading. -/
+/-- **Graded single-coordinate inclusion.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital complex
+C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of norm-vanishing
+sections with the supremum norm. Assume that equality in `I` is decidable. For `i ∈ I`, placing an
+element of `Aᵢ` at coordinate `i` and zero elsewhere is an equivariant nonunital star homomorphism
+into the c₀ sum. -/
 def gradedSingle (γ : ∀ i, CStarGrading (A i)) (i : I) :
     CStarGrading.Hom (γ i) (grading A γ) where
   toNonUnitalStarAlgHom := single A i
@@ -173,19 +222,29 @@ def gradedSingle (γ : ∀ i, CStarGrading (A i)) (i : I) :
       simp
     · simp [single_apply_ne A i _ hji]
 
-/-- The underlying graded inclusion is the actual ungraded single map. -/
+/-- **Underlying map of a graded coordinate inclusion.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of
+nonunital complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists
+of norm-vanishing sections with the supremum norm. Assume that equality in `I` is decidable.
+Forgetting equivariance gives the single-coordinate nonunital star homomorphism from `Aᵢ` to the c₀
+sum. -/
 @[simp]
 theorem gradedSingle_toNonUnitalStarAlgHom
     (γ : ∀ i, CStarGrading (A i)) (i : I) :
     (gradedSingle A γ i).toNonUnitalStarAlgHom = single A i := rfl
 
-/-- Matching graded evaluation and inclusion act as the identity. -/
+/-- **Graded evaluation retracts a matching inclusion.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of
+nonunital complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists
+of norm-vanishing sections with the supremum norm. Assume that equality in `I` is decidable. For `a
+∈ Aᵢ`, inclusion at `i` followed by graded evaluation at `i` returns `a`. -/
 @[simp]
 theorem gradedEval_gradedSingle (γ : ∀ i, CStarGrading (A i))
     (i : I) (a : A i) : gradedEval A γ i (gradedSingle A γ i a) = a :=
   single_apply_self A i a
 
-/-- Different graded coordinates retain the actual zero-composition law. -/
+/-- **Different graded coordinates give zero.** Let `(Aᵢ)ᵢ∈I` be an arbitrary family of nonunital
+complex C*-algebras with gradings `γᵢ` and generators `σᵢ`. Their c₀ direct sum consists of
+norm-vanishing sections with the supremum norm. Assume that equality in `I` is decidable. For `j ≠
+i`, graded evaluation at `j` of the coordinate inclusion of `a ∈ Aᵢ` is zero. -/
 theorem gradedEval_gradedSingle_of_ne
     (γ : ∀ i, CStarGrading (A i)) {i j : I} (hji : j ≠ i) (a : A i) :
     gradedEval A γ j (gradedSingle A γ i a) = 0 :=
@@ -197,7 +256,10 @@ section FamilyMaps
 
 variable (B : I → Type uB) [∀ i, NonUnitalCStarAlgebra (B i)]
 
-/-- Component graded homomorphisms map the computed coefficient gradings. -/
+/-- **Family map between graded c₀ sums.** Let `(Aᵢ),(Bᵢ)` be arbitrary families of graded nonunital
+complex C*-algebras indexed by the same set `I`, and let `φᵢ : Aᵢ → Bᵢ` be equivariant nonunital
+star homomorphisms. Both c₀ sums carry their supremum C*-norms. The coordinatewise map `(aᵢ) ↦
+(φᵢ(aᵢ))` is an equivariant nonunital star homomorphism between the two coordinate-graded c₀ sums. -/
 def gradedMap (γA : ∀ i, CStarGrading (A i)) (γB : ∀ i, CStarGrading (B i))
     (φ : ∀ i, CStarGrading.Hom (γA i) (γB i)) :
     CStarGrading.Hom (grading A γA) (grading B γB) where
@@ -212,7 +274,10 @@ def gradedMap (γA : ∀ i, CStarGrading (A i)) (γB : ∀ i, CStarGrading (B i)
     rw [grading_aut_apply, grading_aut_apply]
     exact CStarGrading.Hom.equivariant (φ i) n.toAdd (f i)
 
-/-- The graded family map uses exactly the component homomorphisms. -/
+/-- **Coordinates of a graded c₀ family map.** Let `(Aᵢ),(Bᵢ)` be arbitrary families of graded nonunital
+complex C*-algebras indexed by the same set `I`, and let `φᵢ : Aᵢ → Bᵢ` be equivariant nonunital
+star homomorphisms. Both c₀ sums carry their supremum C*-norms. The `i` coordinate of the image of a
+section `f` is `φᵢ(fᵢ)`. -/
 @[simp]
 theorem gradedMap_apply
     (γA : ∀ i, CStarGrading (A i)) (γB : ∀ i, CStarGrading (B i))

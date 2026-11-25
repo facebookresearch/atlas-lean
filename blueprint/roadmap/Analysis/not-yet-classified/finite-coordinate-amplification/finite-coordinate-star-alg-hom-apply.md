@@ -1,3 +1,5 @@
-# Finite Coordinate Star Alg Hom apply
+# Coordinates of diagonal amplification
 
-Every amplified value is the original operator on that original coordinate.
+Let `H` be a complete complex Hilbert space and `n ∈ ℕ`.
+For a bounded operator `T`, a tuple `x` in the Hilbert sum of `n` copies of `H`, and `i ∈ Fin n`,
+the amplified operator has coordinate `T(xᵢ)`.

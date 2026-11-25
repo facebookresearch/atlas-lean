@@ -1,3 +1,5 @@
-# Is Closed subalgebra
+# Closedness of the c₀ star subalgebra
 
-Closedness needed by Mathlib's complete C-star subtype instance.
+For an arbitrary family `(Aᵢ)ᵢ∈I` of nonunital complex
+C*-algebras, its c₀ direct sum consists of norm-vanishing sections with coordinatewise operations
+and the supremum norm. The c₀ subalgebra is closed in the supremum-norm topology of `ℓ∞(Aᵢ)`.

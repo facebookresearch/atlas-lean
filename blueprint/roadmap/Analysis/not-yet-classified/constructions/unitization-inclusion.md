@@ -1,3 +1,5 @@
-# Unitization Inclusion
+# Graded inclusion into the unitization
 
-The canonical coefficient inclusion, as an equivariant homomorphism.
+Let `A` be a nonunital complex C*-algebra with a `ℤ/2ℤ`
+grading `γ`. The coefficient inclusion `a ↦ (0,a)` is an equivariant nonunital complex star
+homomorphism into the induced grading on the complex unitization.

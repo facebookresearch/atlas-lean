@@ -45,13 +45,19 @@ variable [SMul B₁ᵐᵒᵖ E₁] [CStarModule B₁ᵐᵒᵖ E₁]
 variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
 variable [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂]
 
-/-- The left radical is the actual complex semilinear kernel of the inner form. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. The radical is the complex-linear subspace of balanced tensors
+whose inner product against every balanced tensor vanishes. -/
 def radicalSpace
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
     Submodule ℂ (BalancedTensor (E₁ := E₁) φ) :=
   LinearMap.ker (balancedInner (E₁ := E₁) φ)
 
-/-- Radical membership means annihilation of every vector, not only itself. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. A balanced tensor is in the radical exactly when its inner
+product against every balanced tensor vanishes. -/
 @[simp]
 theorem mem_radicalSpace_iff
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -75,7 +81,9 @@ private theorem radicalSpace_le_ker_balancedInner_right
   simpa only [star_balancedInner, star_zero] using
     (mem_radicalSpace_iff φ w).mp hw z
 
-/-- Right coefficients preserve the radical by the actual inner action law. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. Right multiplication by any B₂ coefficient preserves the radical. -/
 theorem radicalSpace_balancedRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (b : B₂) :
     radicalSpace (E₁ := E₁) φ ≤ (radicalSpace φ).comap (balancedRightSMul φ b) := by
@@ -88,19 +96,28 @@ theorem radicalSpace_balancedRightSMul
   apply star_injective
   rw [star_balancedInner, star_zero, balancedInner_balancedRightSMul, h, zero_mul]
 
-/-- The genuine algebraic radical quotient, without a norm or definiteness claim. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. The radical tensor space is the balanced algebraic tensor
+quotient modulo the radical of its coefficient-valued inner form. -/
 abbrev RadicalTensor
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :=
   BalancedTensor (E₁ := E₁) φ ⧸ radicalSpace (E₁ := E₁) φ
 
-/-- The right coefficient map induced on the actual radical quotient. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. Right coefficient multiplication descends to a complex-linear map
+on the radical quotient. -/
 def radicalRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (b : B₂) :
     RadicalTensor (E₁ := E₁) φ →ₗ[ℂ] RadicalTensor (E₁ := E₁) φ :=
   (radicalSpace φ).mapQ (radicalSpace φ) (balancedRightSMul φ b)
     (radicalSpace_balancedRightSMul φ b)
 
-/-- Quotient representatives retain their computed right coefficient action. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. Right multiplication of a radical-quotient class is the class of
+the right-multiplied representative. -/
 theorem radicalRightSMul_mkQ
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (b : B₂)
     (z : BalancedTensor (E₁ := E₁) φ) :
@@ -126,7 +143,10 @@ theorem radicalRightSMul_add
   obtain ⟨z, rfl⟩ := (radicalSpace (E₁ := E₁) φ).mkQ_surjective q
   simp only [radicalRightSMul_mkQ, balancedRightSMul_add, LinearMap.add_apply, map_add]
 
-/-- The induced maps compose in the order of a right coefficient action. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. Right multiplication by a product of coefficients agrees with the
+successive right multiplications in the right-action order. -/
 theorem radicalRightSMul_mul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) (b c : B₂) :
     radicalRightSMul (E₁ := E₁) φ (b * c) =
@@ -144,7 +164,10 @@ theorem radicalRightSMul_smul
   obtain ⟨z, rfl⟩ := (radicalSpace (E₁ := E₁) φ).mkQ_surjective q
   simp only [radicalRightSMul_mkQ, balancedRightSMul_smul, LinearMap.smul_apply, map_smul]
 
-/-- Locally activatable opposite-scalar data, with no registered global instance. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. The radical tensor quotient carries the right B₂ action induced
+by the balanced tensor action. -/
 @[instance_reducible]
 def radicalRightAction
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
@@ -184,7 +207,10 @@ private theorem radicalSpace_le_ker_rightRadicalInner
     Submodule.mkQ_apply, Submodule.liftQ_apply, LinearMap.zero_apply] using
     (mem_radicalSpace_iff φ z).mp hz w
 
-/-- The actual two-slot descended sesquilinear form on the radical quotient. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. The balanced coefficient-valued inner form descends to a
+conjugate-symmetric sesquilinear form on the radical quotient. -/
 @[no_expose]
 def radicalInner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
@@ -193,7 +219,10 @@ def radicalInner
   (radicalSpace φ).liftQ (rightRadicalInner φ)
     (radicalSpace_le_ker_rightRadicalInner φ)
 
-/-- The descended form has exactly the original value on both representatives. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. The descended inner product of two quotient classes equals the
+balanced inner product of their representatives. -/
 theorem radicalInner_mkQ_mkQ
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z w : BalancedTensor (E₁ := E₁) φ) :
@@ -202,7 +231,10 @@ theorem radicalInner_mkQ_mkQ
   simp only [radicalInner, rightRadicalInner, LinearMap.coe_mk, AddHom.coe_mk,
     Submodule.mkQ_apply, Submodule.liftQ_apply]
 
-/-- Conjugate symmetry passes to the actual algebraic radical quotient. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. Interchanging the two arguments of the radical inner form takes
+its coefficient involution. -/
 theorem star_radicalInner
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z w : RadicalTensor (E₁ := E₁) φ) :
@@ -211,7 +243,10 @@ theorem star_radicalInner
   obtain ⟨w, rfl⟩ := (radicalSpace (E₁ := E₁) φ).mkQ_surjective w
   simpa only [radicalInner_mkQ_mkQ] using star_balancedInner φ z w
 
-/-- Right coefficient-linearity survives both radical quotient descents. -/
+/-- Let B₁ and B₂ be possibly nonunital complex C-star algebras, E₁ a right pre-Hilbert B₁-module,
+E₂ a normed right pre-Hilbert B₂-module, and φ a nonunital star representation of B₁ by
+adjointable operators on E₂. The radical inner form is linear for right B₂ multiplication in
+its second argument. -/
 theorem radicalInner_radicalRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (z w : RadicalTensor (E₁ := E₁) φ) (b : B₂) :

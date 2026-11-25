@@ -28,8 +28,8 @@ namespace Unitization
 
 universe u v
 
-/-- The canonical scalar-coordinate projection from a complex C-star
-unitization. -/
+/-- **Scalar projection from a C*-unitization.** For a nonunital complex C*-algebra `A`, the map `(λ,a)
+↦ λ` from its complex unitization to `ℂ` is a unital complex star-algebra homomorphism. -/
 def fstStarAlgHom (A : Type u) [NonUnitalCStarAlgebra A] :
     Unitization ℂ A →⋆ₐ[ℂ] ℂ where
   toAlgHom := Unitization.fstHom ℂ A
@@ -53,8 +53,9 @@ theorem fstStarAlgHom_inr
     fstStarAlgHom A (Unitization.inr a) = 0 := by
   simp
 
-/-- Scalar projection is natural for the canonical unitization of a
-nonunital complex star algebra homomorphism. -/
+/-- **Naturality of the unitization scalar projection.** Let `A,B` be nonunital complex C*-algebras and
+`φ : A → B` a nonunital complex star homomorphism. Scalar projection after unitizing `φ` is the
+scalar projection of the source unitization. -/
 @[simp]
 theorem fstStarAlgHom_comp_starMap
     {A : Type u} {B : Type v}
@@ -67,8 +68,9 @@ theorem fstStarAlgHom_comp_starMap
   | inl_add_inr z a =>
       simp [Unitization.algebraMap_eq_inl]
 
-/-- Unitization of a nonunital star homomorphism preserves the scalar
-coordinate. -/
+/-- **Scalar coordinate under unitization.** Let `A,B` be nonunital complex C*-algebras and `φ : A → B`
+a nonunital complex star homomorphism. For an element `(λ,a)` of the source unitization, its image
+under the unitized map has scalar coordinate `λ`. -/
 theorem starMap_fst
     {A : Type u} {B : Type v}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]
@@ -77,8 +79,9 @@ theorem starMap_fst
   change fstStarAlgHom B (Unitization.starMap phi x) = fstStarAlgHom A x
   exact DFunLike.congr_fun (fstStarAlgHom_comp_starMap phi) x
 
-/-- Unitization of a nonunital star homomorphism applies the original map to
-the non-scalar coordinate. -/
+/-- **Algebra coordinate under unitization.** Let `A,B` be nonunital complex C*-algebras and `φ : A → B`
+a nonunital complex star homomorphism. For an element `(λ,a)` of the source unitization, its image
+under the unitized map has algebra coordinate `φ(a)`. -/
 theorem starMap_snd
     {A : Type u} {B : Type v}
     [NonUnitalCStarAlgebra A] [NonUnitalCStarAlgebra B]

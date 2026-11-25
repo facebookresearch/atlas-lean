@@ -1,5 +1,5 @@
-# Non Unital Completion Normed Ring
+# Normed ring structure on a nonunital completion
 
-The canonical nonunital normed-ring structure on the ordinary uniform
-completion. Activate it locally with `let _ := ...`; it is deliberately not a
-global instance.
+For a nonunital seminormed ring `A`, its
+uniform completion carries a nonunital normed ring structure extending its multiplication and
+additive operations. The source may be incomplete or nonseparated.

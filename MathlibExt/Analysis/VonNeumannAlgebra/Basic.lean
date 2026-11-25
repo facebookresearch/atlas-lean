@@ -42,17 +42,22 @@ noncomputable instance instCarrierIsClosed
   rw [← A.centralizer_centralizer]
   exact Set.isClosed_centralizer _
 
-/-- The generic closed-star-subalgebra construction supplies the canonical
-C-star structure. This instance is stated explicitly because instance search
-cannot infer the ambient operator algebra from the concrete carrier type
-alone. Its inherited algebra, scalar, norm, and star operations are
-definitionally the subtype operations. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+For every concrete von Neumann algebra `M` on `H`, its carrier is a complex C*-algebra with the
+inherited addition, multiplication, scalar action, involution and operator norm. -/
 noncomputable instance instCarrierCStarAlgebra
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     [CompleteSpace E] (A : VonNeumannAlgebra E) : CStarAlgebra A :=
   StarSubalgebra.cstarAlgebra A
 
-/-- The full operator algebra is the greatest concrete von Neumann algebra. -/
+/-- Let `H` be a complete complex inner-product space. Concrete von Neumann algebras are star
+subalgebras of `H →L[ℂ] H` equal to their double commutants; all operator norms and weak
+operator topologies are the canonical ones.
+
+The full operator algebra is the greatest concrete von Neumann algebra. -/
 noncomputable instance instOrderTop
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℂ E]
     [CompleteSpace E] : OrderTop (VonNeumannAlgebra E) where

@@ -38,18 +38,28 @@ universe u v
 
 variable {H : Type u} [NormedAddCommGroup H] [NormedSpace ℂ H]
 
-/-- The norm-closed complex linear orbit of a vector under an arbitrary operator set. -/
+/-- Let `H` be a normed complex vector space and let `ξ ∈ H`. The operator set consists of
+continuous complex-linear endomorphisms of `H`, and closure is for the norm topology.
+
+The norm-closed complex linear orbit of a vector under an arbitrary operator set. -/
 def orbitSubspace (S : Set (H →L[ℂ] H)) (ξ : H) : Submodule ℂ H :=
   (Submodule.span ℂ (Set.range fun T : S => (T : H →L[ℂ] H) ξ)).topologicalClosure
 
-/-- The subtype-range carrier is exactly the closure of the span of the original set image. -/
+/-- Let `H` be a normed complex vector space and let `ξ ∈ H`. The operator set consists of
+continuous complex-linear endomorphisms of `H`, and closure is for the norm topology.
+
+The subtype-range carrier is exactly the closure of the span of the set image. -/
 theorem orbitSubspace_eq_span_image (S : Set (H →L[ℂ] H)) (ξ : H) :
     orbitSubspace S ξ =
       (Submodule.span ℂ ((fun T : H →L[ℂ] H => T ξ) '' S)).topologicalClosure := by
   rw [orbitSubspace, Set.image_eq_range]
 
-/-- An operator family and its range generate the same closed orbit, with an
-independent universe for the index type. -/
+/-- Let `H` be a normed complex vector space and let `ξ ∈ H`. The operator set consists of
+continuous complex-linear endomorphisms of `H`, and closure is for the norm topology. The
+operator family is indexed by an arbitrary type `ι`.
+
+An operator family and its range generate the same closed orbit, with an independent universe
+for the index type. -/
 theorem orbitSubspace_range {ι : Type v} (T : ι → H →L[ℂ] H) (ξ : H) :
     orbitSubspace (Set.range T) ξ =
       (Submodule.span ℂ (Set.range fun i : ι => T i ξ)).topologicalClosure := by

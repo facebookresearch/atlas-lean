@@ -25,7 +25,8 @@ and its opposite algebra.
 
 namespace MulOpposite
 
-/-- Quasiregularity is unchanged on passing to the opposite ring. -/
+/-- **Quasiregularity in an opposite ring.** For a nonunital ring `B` and `a ∈ B`, the element `op(a)`
+is quasiregular in `Bᵐᵒᵖ` exactly when `a` is quasiregular in `B`. -/
 theorem isQuasiregular_op_iff {B : Type*} [NonUnitalRing B] (a : B) :
     IsQuasiregular (op a) ↔ IsQuasiregular a := by
   simp only [isQuasiregular_iff]
@@ -43,8 +44,8 @@ theorem isQuasiregular_op_iff {B : Type*} [NonUnitalRing B] (a : B) :
     · apply unop_injective
       simpa [add_comm] using h1
 
-/-- The quasispectrum of an element agrees with that of its image in the
-opposite ring. -/
+/-- **Quasispectrum in an opposite ring.** For a commutative semiring `R`, a nonunital ring `B` carrying
+an `R`-module structure, and `a ∈ B`, the quasispectrum over `R` of `op(a)` equals that of `a`. -/
 theorem quasispectrum_op {R B : Type*} [CommSemiring R]
     [NonUnitalRing B] [Module R B] (a : B) :
     quasispectrum R (op a) = quasispectrum R a := by
@@ -60,8 +61,10 @@ theorem quasispectrum_op {R B : Type*} [CommSemiring R]
     rw [show -(hr.unit⁻¹ • op a) = op (-(hr.unit⁻¹ • a)) by rfl] at hq
     exact (isQuasiregular_op_iff (-(hr.unit⁻¹ • a))).1 hq
 
-/-- Restricting the quasispectrum along a scalar map is unchanged on passing
-to the opposite ring. -/
+/-- **Quasispectrum restriction in an opposite ring.** For commutative semirings `R,S` with an
+`R`-algebra structure on `S`, a nonunital ring `B` carrying module structures over both scalars, an
+element `a ∈ B`, and `f : S → R`, quasispectrum restriction along `f` holds for `op(a)` exactly when
+it holds for `a`. -/
 theorem quasispectrumRestricts_op_iff
     {R S B : Type*} [CommSemiring R] [CommSemiring S]
     [NonUnitalRing B] [Module R B] [Module S B] [Algebra R S]
@@ -81,7 +84,8 @@ theorem quasispectrumRestricts_op_iff
       rwa [quasispectrum_op] at hs
     · exact h.left_inv
 
-/-- Self-adjointness is unchanged on passing to the opposite star ring. -/
+/-- **Self-adjointness in an opposite type.** For a type `B` with a star operation and `a ∈ B`, `op(a)`
+is self-adjoint exactly when `a` is self-adjoint. -/
 theorem isSelfAdjoint_op_iff {B : Type*} [Star B] (a : B) :
     IsSelfAdjoint (op a) ↔ IsSelfAdjoint a := by
   constructor
@@ -92,9 +96,9 @@ theorem isSelfAdjoint_op_iff {B : Type*} [Star B] (a : B) :
     have ho := congrArg op h
     simpa [IsSelfAdjoint] using ho
 
-/-- Unop sends positivity for the canonical spectral order on the opposite
-C-star algebra to positivity for the canonical spectral order on the original
-algebra. -/
+/-- **Positivity from the opposite C*-algebra.** For a nonunital complex C*-algebra `B`, a positive
+element of its opposite algebra in canonical spectral order has positive underlying element in the
+spectral order of `B`. -/
 theorem spectralOrder_unop_nonneg {B : Type*} [NonUnitalCStarAlgebra B]
     {a : Bᵐᵒᵖ}
     (h : @LE.le Bᵐᵒᵖ (CStarAlgebra.spectralOrder Bᵐᵒᵖ).toLE 0 a) :

@@ -45,8 +45,10 @@ open NonUnitalSubalgebra
 variable {𝕜 E : Type*} [NontriviallyNormedField 𝕜]
   [NormedAddCommGroup E] [NormedSpace 𝕜 E]
 
-/-- The two-sided nonunital subalgebra of compact continuous linear
-endomorphisms. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm.
+
+The two-sided nonunital subalgebra of compact continuous linear endomorphisms. -/
 def compactEndomorphismIdeal : NonUnitalSubalgebra 𝕜 (E →L[𝕜] E) :=
   (compactOperator (RingHom.id 𝕜) E E).toNonUnitalSubalgebra fun T U hT _hU => by
     have hTU := hT.comp_clm U
@@ -70,10 +72,12 @@ theorem compactEndomorphismIdeal_toSubmodule :
       compactOperator (RingHom.id 𝕜) E E :=
   rfl
 
-/-- Compact endomorphisms absorb arbitrary continuous linear endomorphisms on
-both sides.  For left multiplication compactness is preserved by
-postcomposition; for right multiplication it is preserved by
-precomposition. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm.
+
+Compact endomorphisms absorb arbitrary continuous linear endomorphisms on both sides. For left
+multiplication compactness is preserved by postcomposition; for right multiplication it is
+preserved by precomposition. -/
 instance compactEndomorphismIdeal_isTwoSided :
     IsTwoSided (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)) where
   mul_mem_left T {K} hK := by
@@ -85,35 +89,49 @@ instance compactEndomorphismIdeal_isTwoSided :
     rw [← ContinuousLinearMap.coe_comp] at hKT
     exact hKT
 
-/-- The compact endomorphisms of a Banach space form a closed set in the
-operator norm. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+The compact endomorphisms of a Banach space form a closed set in the operator norm. -/
 instance compactEndomorphismIdeal_isClosed [CompleteSpace E] :
     IsClosed (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E) : Set (E →L[𝕜] E)) :=
   isClosed_setOfPred_isCompactOperator
 
-/-- Closedness of the compact endomorphisms, in the exact submodule form used
-by the neutral quotient norm. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+Closedness of the compact endomorphisms, in the exact submodule form used by the neutral
+quotient norm. -/
 instance compactOperator_isClosed [CompleteSpace E] :
     IsClosed (compactOperator (RingHom.id 𝕜) E E : Set (E →L[𝕜] E)) :=
   isClosed_setOfPred_isCompactOperator
 
-/-- Closedness in the exact `.toSubmodule` spelling. This instance is kept
-separate because typeclass search does not unfold the compact-ideal wrapper. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+Closedness in the exact `.toSubmodule` spelling. This instance is kept separate because
+typeclass search does not unfold the compact-ideal wrapper. -/
 instance compactEndomorphismIdeal_toSubmodule_isClosed [CompleteSpace E] :
     IsClosed
       ((compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)).toSubmodule : Set (E →L[𝕜] E)) :=
   compactOperator_isClosed
 
 variable (𝕜 E) in
-/-- The Banach-space Calkin algebra: continuous linear endomorphisms modulo
-compact endomorphisms, on the canonical neutral quotient carrier. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm.
+
+The Banach-space Calkin algebra: continuous linear endomorphisms modulo compact endomorphisms,
+on the canonical neutral quotient carrier. -/
 abbrev CalkinAlgebra :=
   (E →L[𝕜] E) ⧸ compactOperator (RingHom.id 𝕜) E E
 
 namespace CalkinAlgebra
 
-/-- The direct carrier spelling is definitionally the neutral quotient of the
-compact endomorphism ideal. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm.
+
+The direct carrier spelling is definitionally the neutral quotient of the compact endomorphism
+ideal. -/
 theorem eq_compactEndomorphismIdeal_quotient :
     CalkinAlgebra 𝕜 E =
       NonUnitalSubalgebra.Quotient
@@ -124,8 +142,11 @@ section Complete
 
 variable [CompleteSpace E]
 
-/-- The genuinely unital ring structure on the Calkin algebra.  This does not
-assert nontriviality: in finite dimension the unit equals zero. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+The genuinely unital ring structure on the Calkin algebra. This does not assert nontriviality:
+in finite dimension the unit equals zero. -/
 instance instRing : Ring (CalkinAlgebra 𝕜 E) := by
   let hNormed : NormedAddCommGroup (CalkinAlgebra 𝕜 E) :=
     Submodule.Quotient.normedAddCommGroup
@@ -168,8 +189,11 @@ instance instRing : Ring (CalkinAlgebra 𝕜 E) := by
       (fun _ ↦ rfl) (fun _ ↦ rfl)
   exact ring
 
-/-- The scalar action inherited from the submodule quotient is compatible
-with Calkin multiplication. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+The scalar action inherited from the submodule quotient is compatible with Calkin
+multiplication. -/
 instance instAlgebra : Algebra 𝕜 (CalkinAlgebra 𝕜 E) :=
   Algebra.ofModule
     (by
@@ -183,9 +207,11 @@ instance instAlgebra : Algebra 𝕜 (CalkinAlgebra 𝕜 E) :=
         Submodule.Quotient.mk (c • (T * U))
       rw [mul_smul_comm])
 
-/-- The quotient norm and neutral quotient multiplication make the Calkin
-algebra a normed ring when the underlying space is complete.  No
-`NormOneClass` is asserted. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+The quotient norm and neutral quotient multiplication make the Calkin algebra a normed ring when
+the underlying space is complete. No `NormOneClass` is asserted. -/
 instance instNormedRing : NormedRing (CalkinAlgebra 𝕜 E) where
   __ : Ring (CalkinAlgebra 𝕜 E) := instRing
   __ : NormedAddCommGroup (CalkinAlgebra 𝕜 E) :=
@@ -195,8 +221,10 @@ instance instNormedRing : NormedRing (CalkinAlgebra 𝕜 E) where
   norm_mul_le := NonUnitalSubalgebra.Quotient.norm_mul_le
     (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E))
 
-/-- The normed algebra structure uses the canonical quotient norm and scalar
-action. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+The normed algebra structure uses the canonical quotient norm and scalar action. -/
 instance instNormedAlgebra : NormedAlgebra 𝕜 (CalkinAlgebra 𝕜 E) where
   __ : NormedSpace 𝕜 (CalkinAlgebra 𝕜 E) :=
     Submodule.Quotient.normedSpace
@@ -210,7 +238,10 @@ theorem one_eq_class_id :
       Submodule.Quotient.mk (ContinuousLinearMap.id 𝕜 E) :=
   rfl
 
-/-- The continuous unital algebra projection onto the Calkin algebra. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+The continuous unital algebra projection onto the Calkin algebra. -/
 def classMap : (E →L[𝕜] E) →A[𝕜] CalkinAlgebra 𝕜 E where
   toFun := fun T ↦ (Submodule.Quotient.mk T : CalkinAlgebra 𝕜 E)
   map_zero' := rfl
@@ -224,21 +255,30 @@ def classMap : (E →L[𝕜] E) →A[𝕜] CalkinAlgebra 𝕜 E where
     rfl
   cont := ((compactOperator (RingHom.id 𝕜) E E).mkQL).continuous
 
-/-- Explicit representative conversion. It is not a simp rule: class-map
-heads are retained so algebraic and zero/compactness rules have stable normal forms. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+representative conversion. It is not a simp rule: class-map heads are retained so algebraic and
+zero/compactness rules have stable normal forms. -/
 theorem classMap_apply (T : E →L[𝕜] E) :
     classMap (𝕜 := 𝕜) (E := E) T = Submodule.Quotient.mk T :=
   rfl
 
-/-- The unital class map agrees definitionally, pointwise, with the neutral
-nonunital quotient projection. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+The unital class map agrees definitionally, pointwise, with the neutral nonunital quotient
+projection. -/
 theorem classMap_eq_quotient_mk (T : E →L[𝕜] E) :
     classMap (𝕜 := 𝕜) (E := E) T =
       NonUnitalSubalgebra.Quotient.mk
         (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)) T :=
   rfl
 
-/-- The class map is onto. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+The class map is onto. -/
 theorem classMap_surjective :
     Function.Surjective (classMap (𝕜 := 𝕜) (E := E)) :=
   Submodule.Quotient.mk_surjective
@@ -268,7 +308,10 @@ theorem classMap_eq_zero_iff (T : E →L[𝕜] E) :
   Submodule.Quotient.mk_eq_zero
     (compactOperator (RingHom.id 𝕜) E E)
 
-/-- The canonical quotient norm makes the class map norm-nonincreasing. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume `E` is complete.
+
+The canonical quotient norm makes the class map norm-nonincreasing. -/
 theorem norm_classMap_le (T : E →L[𝕜] E) :
     ‖classMap (𝕜 := 𝕜) (E := E) T‖ ≤ ‖T‖ :=
   Submodule.Quotient.norm_mk_le
@@ -290,8 +333,12 @@ theorem one_mem_compactEndomorphismIdeal_iff :
   simpa only [ContinuousLinearMap.coe_id'] using
     (isCompactOperator_id_iff_finiteDimensional (𝕜 := 𝕜) (E := E))
 
-/-- Every endomorphism is compact exactly in finite dimension, stated on the
-underlying compact-operator submodule. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume the scalar field `𝕜` is
+complete and locally compact.
+
+Every endomorphism is compact exactly in finite dimension, stated on the underlying
+compact-operator submodule. -/
 theorem compactEndomorphismIdeal_toSubmodule_eq_top_iff :
     (compactEndomorphismIdeal (𝕜 := 𝕜) (E := E)).toSubmodule = ⊤ ↔
       FiniteDimensional 𝕜 E := by
@@ -312,14 +359,22 @@ theorem compactEndomorphismIdeal_toSubmodule_eq_top_iff :
     rw [mul_one] at hT
     exact hT
 
-/-- The raw compact-operator submodule is top exactly in finite dimension. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume the scalar field `𝕜` is
+complete and locally compact.
+
+The raw compact-operator submodule is top exactly in finite dimension. -/
 @[simp]
 theorem compactOperator_eq_top_iff_finiteDimensional :
     compactOperator (RingHom.id 𝕜) E E = ⊤ ↔ FiniteDimensional 𝕜 E := by
   simpa only [compactEndomorphismIdeal_toSubmodule] using
     (compactEndomorphismIdeal_toSubmodule_eq_top_iff (𝕜 := 𝕜) (E := E))
 
-/-- Every endomorphism is compact exactly in finite dimension. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume the scalar field `𝕜` is
+complete and locally compact.
+
+Every endomorphism is compact exactly in finite dimension. -/
 @[simp]
 theorem compactEndomorphismIdeal_eq_top_iff :
     compactEndomorphismIdeal (𝕜 := 𝕜) (E := E) = ⊤ ↔
@@ -329,8 +384,11 @@ theorem compactEndomorphismIdeal_eq_top_iff :
 
 namespace CalkinAlgebra
 
-/-- The Calkin algebra is a singleton exactly when the underlying space is
-finite-dimensional. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume the scalar field `𝕜` is
+complete and locally compact.
+
+The Calkin algebra is a singleton exactly when the underlying space is finite-dimensional. -/
 theorem subsingleton_iff_finiteDimensional :
     Subsingleton (CalkinAlgebra 𝕜 E) ↔ FiniteDimensional 𝕜 E :=
   calc
@@ -340,13 +398,20 @@ theorem subsingleton_iff_finiteDimensional :
     _ ↔ FiniteDimensional 𝕜 E :=
       compactEndomorphismIdeal_toSubmodule_eq_top_iff
 
-/-- In finite dimension the Calkin algebra is the zero quotient. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume the scalar field `𝕜` is
+complete and locally compact.
+
+In finite dimension the Calkin algebra is the zero quotient. -/
 theorem subsingleton_of_finiteDimensional [FiniteDimensional 𝕜 E] :
     Subsingleton (CalkinAlgebra 𝕜 E) :=
   subsingleton_iff_finiteDimensional.mpr inferInstance
 
-/-- The Calkin algebra is nontrivial exactly when the underlying space is not
-finite-dimensional. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume the scalar field `𝕜` is
+complete and locally compact.
+
+The Calkin algebra is nontrivial exactly when the underlying space is not finite-dimensional. -/
 theorem nontrivial_iff_not_finiteDimensional :
     Nontrivial (CalkinAlgebra 𝕜 E) ↔ ¬ FiniteDimensional 𝕜 E :=
   calc
@@ -356,7 +421,11 @@ theorem nontrivial_iff_not_finiteDimensional :
     _ ↔ ¬ FiniteDimensional 𝕜 E :=
       not_congr compactEndomorphismIdeal_toSubmodule_eq_top_iff
 
-/-- An infinite-dimensional normed space has a nontrivial Calkin algebra. -/
+/-- Let `𝕜` be a nontrivially normed field and let `E` be a normed `𝕜`-vector space. Compact
+endomorphisms and the Calkin quotient use the operator norm. Assume the scalar field `𝕜` is
+complete and locally compact. Assume `E` is not finite dimensional over `𝕜`.
+
+An infinite-dimensional normed space has a nontrivial Calkin algebra. -/
 theorem nontrivial_of_not_finiteDimensional
     (hE : ¬ FiniteDimensional 𝕜 E) : Nontrivial (CalkinAlgebra 𝕜 E) :=
   nontrivial_iff_not_finiteDimensional.mpr hE

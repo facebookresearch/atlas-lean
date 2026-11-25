@@ -1,3 +1,6 @@
 # Point Cutoff apply
 
-The chosen cutoff has its literal value one at the specified point.
+Let `X` be a regular locally compact topological space and let `x ∈ X`. The cutoff is
+complex-valued and continuous, with compact support.
+
+The chosen cutoff has its value one at the specified point.

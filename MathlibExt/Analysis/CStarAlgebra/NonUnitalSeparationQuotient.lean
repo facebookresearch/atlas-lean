@@ -40,8 +40,10 @@ namespace SeparationQuotient
 
 universe uA
 
-/-- The isometric source involution on the actual separation quotient.
-The quotient's ring and additive operations remain the stock operations. -/
+/-- **Involution on a separation quotient.** Let `A` be a nonunital seminormed ring with a ring
+involution preserving the seminorm. Its separation quotient identifies elements at seminorm distance
+zero and carries the induced normed ring structure. The involution of `A` descends to a ring
+involution on its separation quotient. -/
 @[instance_reducible]
 def nonUnitalCstarStarRing
     (A : Type uA) [NonUnitalSeminormedRing A] [StarRing A] [NormedStarGroup A] :
@@ -70,8 +72,10 @@ def nonUnitalCstarStarRing
         SeparationQuotient.map (star : A → A) (mk a)
     rw [← mk_mul, map_mk hs, map_mk hs, map_mk hs, star_mul, mk_mul]
 
-/-- The quotient involution preserves the original involution on every
-canonical source representative. -/
+/-- **Representatives of the quotient involution.** Let `A` be a nonunital seminormed ring with a ring
+involution preserving the seminorm. Its separation quotient identifies elements at seminorm distance
+zero and carries the induced normed ring structure. For every `a ∈ A`, the class of `a*` is the
+involution of the class of `a`. -/
 theorem mk_nonUnitalCstarStar
     (A : Type uA) [NonUnitalSeminormedRing A] [StarRing A] [NormedStarGroup A] (a : A) :
     let _ : StarRing (SeparationQuotient A) := nonUnitalCstarStarRing A
@@ -80,8 +84,10 @@ theorem mk_nonUnitalCstarStar
   change SeparationQuotient.map (star : A → A) (mk a) = mk (star a)
   exact map_mk star_isometry.uniformContinuous a
 
-/-- Scalar conjugation descends with the same canonical quotient scalar
-operations. -/
+/-- **Complex scalar compatibility of the separated involution.** Let `A` be a nonunital seminormed ring
+and complex seminormed vector space with a seminorm-preserving ring involution satisfying `(c a)* =
+conjugate(c) a*`. The induced involution on the separation quotient satisfies the same complex
+scalar compatibility. -/
 theorem nonUnitalCstarStarModule
     (A : Type uA) [NonUnitalSeminormedRing A] [NormedSpace ℂ A]
     [StarRing A] [NormedStarGroup A] [StarModule ℂ A] :
@@ -93,8 +99,10 @@ theorem nonUnitalCstarStarModule
   obtain ⟨a, rfl⟩ := SeparationQuotient.surjective_mk x
   rw [← mk_smul, mk_nonUnitalCstarStar, star_smul, mk_smul, mk_nonUnitalCstarStar]
 
-/-- A proved C-star norm inequality on the original seminorm descends to
-the normed separation quotient. The source itself need not be normed. -/
+/-- **C*-identity on a separation quotient.** Let `A` be a nonunital seminormed ring with a ring
+involution preserving the seminorm. Its separation quotient identifies elements at seminorm distance
+zero and carries the induced normed ring structure. If additionally `‖a‖² ≤ ‖a* a‖` for every `a ∈
+A`, the separation quotient satisfies the C*-identity. -/
 theorem nonUnitalCstarRing
     (A : Type uA) [NonUnitalSeminormedRing A] [StarRing A] [NormedStarGroup A]
     (hCStar : ∀ a : A, ‖a‖ * ‖a‖ ≤ ‖star a * a‖) :

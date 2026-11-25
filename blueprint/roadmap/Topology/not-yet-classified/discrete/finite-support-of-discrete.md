@@ -1,3 +1,5 @@
 # Finite support of discrete
 
-The support of every original compact-support function on a discrete group is finite.
+Let `G` be a discrete topological space and let `A` be a topological type with zero.
+
+The support of every compact-support function on a discrete group is finite.

@@ -1,7 +1,6 @@
-# From Choi Matrix
+# Reconstruction of a linear map from its Choi matrix
 
-Reconstruction from a Choi matrix by matrix-unit expansion.
-
-For `J : Matrix (n × m) (n × m) ℂ`, the associated linear map sends
-`X` to `∑ i j, X i j • (of fun a b => J (i,a) (j,b))`. This is the inverse of
-`LinearMap.choiMatrix` under the repository product ordering.
+For a finite index type `n` with decidable
+equality, any index type `m`, and a complex matrix `J` indexed by `n × m`, reconstruction sends a
+complex square matrix `X` indexed by `n` to the matrix with entry `∑ i j, X(i,j) J((i,a),(j,b))`.
+This is inverse to the Choi construction.

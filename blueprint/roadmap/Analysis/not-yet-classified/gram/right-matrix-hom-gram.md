@@ -1,4 +1,5 @@
 # Right Matrix Hom gram
 
-The existing matrix representation sends the actual Gram matrix to
-the column's actual adjoint composite.
+Let B be a possibly nonunital complex C-star algebra, E a normed right C-star module over B,
+and I a finite index type, possibly empty. The matrix representation of the Gram matrix of x
+is the adjoint column map composed with the column map.

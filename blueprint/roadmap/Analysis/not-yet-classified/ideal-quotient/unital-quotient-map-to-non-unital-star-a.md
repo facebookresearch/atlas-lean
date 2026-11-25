@@ -1,4 +1,5 @@
-# Unital Quotient Map to Non Unital Star Alg Hom
+# Underlying nonunital quotient homomorphism
 
-Forgetting the unit from the explicit unital quotient map recovers the
-canonical nonunital quotient map.
+Let `U` be a unital complex C*-algebra and `I ⊆ U` a
+closed two-sided star ideal. Forgetting unit preservation from the unital quotient homomorphism
+gives the nonunital quotient homomorphism with the same values.

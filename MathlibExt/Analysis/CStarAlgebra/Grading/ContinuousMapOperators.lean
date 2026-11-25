@@ -48,7 +48,11 @@ variable {γ : CStarGrading B}
 attribute [local instance] CStarModule.ContinuousMap.rightAction
   CStarModule.ContinuousMap.cstarModule
 
-/-- Every homogeneous original operator remains homogeneous under constant extension. -/
+/-- **Homogeneous operators under constant extension.** Let `X` be a compact topological space, `B` a
+graded nonunital complex C*-algebra, and `E` a complete right Hilbert `B`-module with compatible
+generator `G`. Assume star-compatible orders on the opposite algebras of `B` and `C(X,B)`. If an
+adjointable endomorphism `T` of `E` has degree `n ∈ ℤ/2ℤ`, its pointwise constant extension `(Tf)(t)
+= T(f(t))` has the same degree for the grading of `C(X,E)`. -/
 theorem constantEndomorphismMap_isHomogeneous (δ : CStarModuleGrading γ E)
     (n : ZMod 2) (T : CStarModule.AdjointableOperator.End B E)
     (hT : IsHomogeneousOperator δ δ n T) :
@@ -61,7 +65,11 @@ theorem constantEndomorphismMap_isHomogeneous (δ : CStarModuleGrading γ E)
     CStarModule.ContinuousMap.constantEndomorphismMap_apply, _root_.ContinuousMap.smul_apply]
     using hT (f t)
 
-/-- The actual constant unital End hom is graded for the actual pointwise module grading. -/
+/-- **Graded constant extension of endomorphisms.** Let `X` be a compact topological space, `B` a graded
+nonunital complex C*-algebra, and `E` a complete right Hilbert `B`-module with compatible generator
+`G`. Assume star-compatible orders on the opposite algebras of `B` and `C(X,B)`. Constant pointwise
+extension gives an equivariant star homomorphism from the graded adjointable endomorphism algebra of
+`E` to that of `C(X,E)`. -/
 def constantGradedEndomorphismMap (δ : CStarModuleGrading γ E) :
     CStarGrading.Hom δ.operatorGrading (continuousMap X δ).operatorGrading := by
   letI : CStarModule (C(X, B))ᵐᵒᵖ C(X, B) := CStarModule.Right.selfModule

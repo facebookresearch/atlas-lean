@@ -50,12 +50,26 @@ section Raw
 
 variable {E₂ : Type uE₂} [AddCommGroup E₂] [Module ℂ E₂]
 
-/-- The ordinary complex tensor map induced by the given first-factor operator. -/
+/--
+Let B₁ be a possibly nonunital complex C*-algebra with a partial order on B₁ᵐᵒᵖ. Let E₁ and F₁
+be normed right inner-product B₁-modules with compatible complex normed-space structures, and
+let E₂ be a complex vector space.
+
+For an adjointable L : E₁ → F₁, tensoring its forward map with the identity defines a
+complex-linear map E₁ ⊗[ℂ] E₂ → F₁ ⊗[ℂ] E₂.
+-/
 def rawLeftMap (L : AdjointableOperator B₁ E₁ F₁) :
     AlgebraicTensor E₁ E₂ →ₗ[ℂ] AlgebraicTensor F₁ E₂ :=
   TensorProduct.map L.toContinuousLinearMap.toLinearMap LinearMap.id
 
-/-- The raw map has the literal first-factor pure value. -/
+/--
+Let B₁ be a possibly nonunital complex C*-algebra with a partial order on B₁ᵐᵒᵖ. Let E₁ and F₁
+be normed right inner-product B₁-modules with compatible complex normed-space structures, and
+let E₂ be a complex vector space.
+
+For an adjointable L : E₁ → F₁ and x ∈ E₁, y ∈ E₂, the induced algebraic map sends x ⊗ y to Lx ⊗
+y.
+-/
 @[simp]
 theorem rawLeftMap_tmul (L : AdjointableOperator B₁ E₁ F₁)
     (x : E₁) (y : E₂) :
@@ -69,8 +83,15 @@ variable {B₂ : Type uB₂} [NonUnitalCStarAlgebra B₂] [PartialOrder B₂ᵐ�
 variable {E₂ : Type uE₂} [NormedAddCommGroup E₂] [NormedSpace ℂ E₂]
 variable [SMul B₂ᵐᵒᵖ E₂] [CStarModule B₂ᵐᵒᵖ E₂]
 
-/-- The given adjointable map sends every defining balance relation into
-the target balancing span. Its right linearity is derived, not assumed. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The algebraic map induced by an adjointable L : E₁ → F₁ sends the coefficient-balancing
+submodule for E₁ into the corresponding submodule for F₁.
+-/
 theorem balancingSpan_rawLeftMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) :
@@ -82,7 +103,15 @@ theorem balancingSpan_rawLeftMap
   simpa only [balanceRelation, map_sub, rawLeftMap_tmul,
     AdjointableOperator.map_right_smul] using balanceRelation_mem φ (L x) b y
 
-/-- The actual first-factor adjoint gives the raw tensor adjoint identity. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For an adjointable L : E₁ → F₁ and algebraic tensors z ∈ E₁ ⊗[ℂ] E₂, w ∈ F₁ ⊗[ℂ] E₂, the Gram
+forms satisfy ⟨(L ⊗ id)z,w⟩ = ⟨z,(L* ⊗ id)w⟩.
+-/
 theorem rawLeftMap_inner_adjoint
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁)
@@ -100,7 +129,14 @@ theorem rawLeftMap_inner_adjoint
   | add z z' hz hz' =>
     simp only [map_add, LinearMap.add_apply, hz, hz']
 
-/-- First-factor maps commute with the genuine second-factor right action. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures.
+
+For an adjointable L : E₁ → F₁, tensoring L with the identity commutes with the right B₂-action
+on the second tensor factor.
+-/
 theorem rawLeftMap_rawRightSMul
     (L : AdjointableOperator B₁ E₁ F₁) (b : B₂)
     (z : AlgebraicTensor E₁ E₂) :
@@ -110,7 +146,15 @@ theorem rawLeftMap_rawRightSMul
   | tmul x y => simp only [rawRightSMul_tmul, rawLeftMap_tmul]
   | add z w hz hw => simp only [map_add, hz, hw]
 
-/-- The actual map between the two balanced algebraic quotient carriers. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+An adjointable L : E₁ → F₁ induces a complex-linear map between the balanced algebraic tensor
+products of E₁ and F₁ with E₂ along φ.
+-/
 def balancedLeftMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) :
@@ -118,7 +162,15 @@ def balancedLeftMap
   (balancingSpan (E₁ := E₁) φ).mapQ (balancingSpan (E₁ := F₁) φ)
     (rawLeftMap L) (balancingSpan_rawLeftMap φ L)
 
-/-- Every raw representative has the computed balanced image. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For an adjointable L : E₁ → F₁ and an algebraic tensor z, the image of its balanced quotient
+class is the balanced quotient class of (L ⊗ id)z.
+-/
 theorem balancedLeftMap_mkQ
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) (z : AlgebraicTensor E₁ E₂) :
@@ -126,7 +178,15 @@ theorem balancedLeftMap_mkQ
       (balancingSpan (E₁ := F₁) φ).mkQ (rawLeftMap L z) := by
   simp only [balancedLeftMap, Submodule.mkQ_apply, Submodule.mapQ_apply]
 
-/-- Balanced pure tensors have the printed first-factor value. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For an adjointable L : E₁ → F₁ and x ∈ E₁, y ∈ E₂, the induced balanced map sends x ⊗φ y to Lx
+⊗φ y.
+-/
 @[simp]
 theorem balancedLeftMap_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
@@ -134,7 +194,15 @@ theorem balancedLeftMap_pure
     balancedLeftMap φ L (balancedPure φ x y) = balancedPure φ (L x) y := by
   simp only [balancedPure, balancedLeftMap_mkQ, rawLeftMap_tmul]
 
-/-- Both balanced quotient descents preserve the actual adjoint identity. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The balanced tensor maps induced by an adjointable L : E₁ → F₁ and its adjoint satisfy the
+adjoint identity for the descended Gram forms.
+-/
 theorem balancedLeftMap_inner_adjoint
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁)
@@ -146,7 +214,14 @@ theorem balancedLeftMap_inner_adjoint
   simpa only [balancedLeftMap_mkQ, balancedInner_mkQ_mkQ] using
     rawLeftMap_inner_adjoint φ L z w
 
-/-- The balanced map is right-coefficient linear for the computed actions. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The balanced tensor map induced by an adjointable L : E₁ → F₁ respects the right B₂-action.
+-/
 theorem balancedLeftMap_balancedRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) (b : B₂)
@@ -158,8 +233,15 @@ theorem balancedLeftMap_balancedRightSMul
     congrArg (balancingSpan (E₁ := F₁) φ).mkQ
       (rawLeftMap_rawRightSMul L b z)
 
-/-- The actual adjoint identity sends the source radical into the target
-radical. No positivity, self-null criterion or norm estimate is required. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The balanced tensor map induced by an adjointable L : E₁ → F₁ sends the Gram radical for E₁ into
+the Gram radical for F₁.
+-/
 theorem radicalSpace_balancedLeftMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) :
@@ -172,7 +254,15 @@ theorem radicalSpace_balancedLeftMap
   rw [balancedLeftMap_inner_adjoint]
   exact (mem_radicalSpace_iff φ z).mp hz _
 
-/-- The genuine complex-linear map between the two actual radical quotients. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+An adjointable L : E₁ → F₁ induces a complex-linear map between the Gram-radical quotients of
+the balanced tensor products with E₂.
+-/
 def radicalLeftMap
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) :
@@ -180,7 +270,15 @@ def radicalLeftMap
   (radicalSpace (E₁ := E₁) φ).mapQ (radicalSpace (E₁ := F₁) φ)
     (balancedLeftMap φ L) (radicalSpace_balancedLeftMap φ L)
 
-/-- Every balanced representative has its computed radical image. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For an adjointable L : E₁ → F₁ and a balanced tensor z, the image of its radical quotient class
+is the radical quotient class of its balanced image under L.
+-/
 theorem radicalLeftMap_mkQ
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) (z : BalancedTensor (E₁ := E₁) φ) :
@@ -188,7 +286,15 @@ theorem radicalLeftMap_mkQ
       (radicalSpace (E₁ := F₁) φ).mkQ (balancedLeftMap φ L z) := by
   simp only [radicalLeftMap, Submodule.mkQ_apply, Submodule.mapQ_apply]
 
-/-- The radical image of a pure tensor is the source first-factor formula. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For an adjointable L : E₁ → F₁, the induced radical quotient map sends the class of x ⊗φ y to
+the class of Lx ⊗φ y.
+-/
 theorem radicalLeftMap_pure
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) (x : E₁) (y : E₂) :
@@ -197,8 +303,15 @@ theorem radicalLeftMap_pure
       (radicalSpace (E₁ := F₁) φ).mkQ (balancedPure φ (L x) y) := by
   simp only [radicalLeftMap_mkQ, balancedLeftMap_pure]
 
-/-- The two actual quotient maps induced by L and its adjoint are paired
-by the descended radical form; no completed output operator is assumed. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The radical quotient maps induced by an adjointable L : E₁ → F₁ and its adjoint satisfy the
+adjoint identity for the descended coefficient-valued forms.
+-/
 theorem radicalLeftMap_inner_adjoint
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁)
@@ -210,7 +323,14 @@ theorem radicalLeftMap_inner_adjoint
   simpa only [radicalLeftMap_mkQ, radicalInner_mkQ_mkQ] using
     balancedLeftMap_inner_adjoint φ L z w
 
-/-- The radical map preserves the genuine right coefficient action. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The radical quotient map induced by an adjointable L : E₁ → F₁ respects the right B₂-action.
+-/
 theorem radicalLeftMap_radicalRightSMul
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂)
     (L : AdjointableOperator B₁ E₁ F₁) (b : B₂)
@@ -222,7 +342,14 @@ theorem radicalLeftMap_radicalRightSMul
     congrArg (radicalSpace (E₁ := F₁) φ).mkQ
       (balancedLeftMap_balancedRightSMul φ L b z)
 
-/-- The actual identity induces the identity on the radical carrier. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ be a normed right inner-product B₁-module and E₂ a normed right inner-product
+B₂-module, all with compatible complex normed-space structures. Let φ be a nonunital complex
+star representation of B₁ by adjointable endomorphisms of E₂.
+
+The identity on E₁ induces the identity on its balanced tensor Gram-radical quotient.
+-/
 @[simp]
 theorem radicalLeftMap_id
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :
@@ -238,7 +365,15 @@ theorem radicalLeftMap_id
   | add z w hz hw =>
     simp only [map_add, LinearMap.id_apply, hz, hw]
 
-/-- Composition is induced in its actual order on the radical quotient. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁, F₁ and G₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+For adjointable L : E₁ → F₁ and S : F₁ → G₁, the radical quotient map of S ∘ L is the composite
+of the two induced radical quotient maps.
+-/
 theorem radicalLeftMap_comp
     {G₁ : Type uG₁} [NormedAddCommGroup G₁] [NormedSpace ℂ G₁]
     [SMul B₁ᵐᵒᵖ G₁] [CStarModule B₁ᵐᵒᵖ G₁]
@@ -257,7 +392,15 @@ theorem radicalLeftMap_comp
   | add z w hz hw =>
     simp only [map_add, LinearMap.comp_apply, hz, hw]
 
-/-- The actual zero input operator induces the zero radical map. -/
+/--
+Let B₁ and B₂ be possibly nonunital complex C*-algebras with partial orders on their opposite
+algebras. Let E₁ and F₁ be normed right inner-product B₁-modules and E₂ a normed right
+inner-product B₂-module, all with compatible complex normed-space structures. Let φ be a
+nonunital complex star representation of B₁ by adjointable endomorphisms of E₂.
+
+The zero adjointable map E₁ → F₁ induces the zero map on the corresponding Gram-radical
+quotients.
+-/
 @[simp]
 theorem radicalLeftMap_zero
     (φ : B₁ →⋆ₙₐ[ℂ] AdjointableOperator.End B₂ E₂) :

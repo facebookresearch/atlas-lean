@@ -51,7 +51,12 @@ variable {X : Type uX} [TopologicalSpace X] [RegularSpace X] [LocallyCompactSpac
 variable {H : Type uH} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 variable (μ : Measure X) [IsFiniteMeasureOnCompacts μ] [μ.IsOpenPosMeasure]
 
-/-- The actual compact scalar integrals recover every original continuous Hilbert vector. -/
+/-- Let `X` be a regular locally compact space with its Borel σ-algebra, let `μ` be finite on
+compact sets and positive on nonempty open sets, and let `H` be a complete complex inner-product
+space. Assume `F : X → H` is continuous and every integral of `ψ(x) • F(x)` vanishes for a
+compactly supported continuous complex test function `ψ`.
+
+The compact scalar integrals recover every continuous Hilbert vector. -/
 theorem Continuous.eq_zero_of_compactScalar_integrals_eq_zero
     {F : X → H} (hF : Continuous F) (x₀ : X)
     (hTest : ∀ ψ : C_c(X, ℂ), (∫ x : X, ψ x • F x ∂μ) = 0) : F x₀ = 0 := by

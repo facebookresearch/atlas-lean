@@ -1,3 +1,5 @@
-# Zero At Infty Neg odd Projection apply
+# Odd projection by reflection averaging
 
-The odd projection averages the difference from the reflected function.
+Let `X` be a topological space with a continuous
+involutive negation `x ↦ -x`, and let `A` be a nonunital complex C*-algebra. The algebra `C₀(X,A)`
+carries the supremum norm. For `f ∈ C₀(X,A)`, its odd projection at `x` is `(f(x) - f(-x))/2`.
