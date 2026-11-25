@@ -25,6 +25,7 @@ Hamiltonian paths and cycles, longest paths and cycles, disjoint paths and path 
 - [Undirected Hamiltonian cycle](undirected-hamiltonian-cycle/README.md)
 - [Undirected Hamiltonian path](undirected-hamiltonian-path/README.md)
 - [Vertex-disjoint paths in digraphs](vertex-disjoint-paths-in-digraphs/README.md)
+- [Fixed-point-free graph involutions](fixed-point-free-graph-involutions/README.md)
 - [Geometric Steiner tree](geometric-steiner-tree/README.md)
 - [Hamiltonian paths and cycles in line graphs](hamiltonian-paths-and-cycles-in-line-graphs/README.md)
 - [Isomorphic spanning tree](isomorphic-spanning-tree/README.md)

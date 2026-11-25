@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.Analysis.Approximation.ChebyshevLebesgue
 public import MathlibExt.Analysis.Approximation.ChebyshevSeries
 public import MathlibExt.Analysis.Approximation.Equioscillation
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Extremal
@@ -40,6 +41,9 @@ The open Bernstein ellipse `E_ρ`, `ρ > 1`, is the open region bounded by the e
 The definitions above and the convergence theorem for Lipschitz functions are provided by
 `MathlibExt.Analysis.Approximation.ChebyshevSeries`.
 
+The Lebesgue constant bound `sum_abs_lagrange_basis_chebyshev_le` (ATAP Theorem 15.2) is
+provided by `MathlibExt.Analysis.Approximation.ChebyshevLebesgue`.
+
 Wanted statements:
 
 * `norm_chebCoeff_le_of_analytic` (ATAP Theorem 8.1): if `f` is analytic in `E_ρ` with
@@ -52,8 +56,6 @@ Wanted statements:
   approximation of degree `≤ n` that equioscillates at `n + 2` points. The sufficiency and
   uniqueness halves are proved in `MathlibExt.Analysis.Approximation.Equioscillation`
   (`not_lt_of_equioscillates`, `eq_of_equioscillates`).
-* `sum_abs_lagrange_basis_chebyshev_le` (ATAP Theorem 15.2): the Lebesgue constant of the
-  Chebyshev points satisfies `Λ_n ≤ (2/π) log(n + 1) + 1`.
 * `abs_sub_chebInterp_le_of_near_best` (ATAP Theorem 16.1): Chebyshev interpolants are near-best,
   `‖f - p_n‖ ≤ (2 + (2/π) log(n + 1)) ‖f - q‖` for every polynomial `q` of degree `≤ n`.
 
@@ -114,15 +116,6 @@ theorem_wanted exists_equioscillates_of_continuousOn {f : ℝ → ℝ} {a b : �
     (hf : ContinuousOn f (Set.Icc a b)) (n : ℕ) :
     ∃ (p : ℝ[X]) (E σ : ℝ) (x : ℕ → ℝ),
       MathlibExt.Analysis.Approximation.Equioscillation.Equioscillates f a b n p E σ x
-
-/-- **Lebesgue constants of Chebyshev points** (ATAP Theorem 15.2): for `n ≥ 1` the Lagrange
-basis polynomials `ℓ_j` of the `n + 1` Chebyshev points satisfy
-`∑_j |ℓ_j(x)| ≤ (2/π) log(n + 1) + 1` for every `x ∈ [-1, 1]`. -/
-theorem_wanted sum_abs_lagrange_basis_chebyshev_le {n : ℕ} (hn : 1 ≤ n) {x : ℝ}
-    (hx : x ∈ Set.Icc (-1) 1) :
-    ∑ j : Fin (n + 1),
-        |(Lagrange.basis (Finset.univ : Finset (Fin (n + 1))) (fun i => Chebyshev.node n i)
-          j).eval x| ≤ 2 / π * Real.log (n + 1) + 1
 
 /-- **Chebyshev interpolants are near-best** (ATAP Theorem 16.1): for `n ≥ 1`, if a polynomial
 `q` of degree `≤ n` satisfies `|f - q| ≤ E` on `[-1, 1]`, then the Chebyshev interpolant
