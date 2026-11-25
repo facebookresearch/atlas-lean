@@ -250,26 +250,6 @@ public theorem_wanted fixedColumnHook_part_distinct_genFun (n m k : ℕ) (h : �
           (∏ i ∈ Finset.range (m - 1), (1 + (X : ℚ⟦X⟧) ^ (i + 1))) *
           (qPochFin (X : ℚ⟦X⟧) ((s : ℤ) + k - h - m).toNat)⁻¹ * gaussBinom X (k - m) s)
 
-/-- **Partitions with a fixed first-column hook of given size.** Let $n$ and $k$ be natural numbers
-with $k \ge 1$ and let $h < k$ be an integer. The number of partitions $\lambda$ of $n$ that have an
-$h$-fixed hook in column $1$ at some row $s$ whose hook length is $h_{s,1}(\lambda) = k$ is the
-coefficient of $q^n$ in
-$$\sum_{l=1}^{k} \frac{q^{k+l(k-h-1)}}{(q;q)_{k-h-1}} \binom{k-1}{l-1}_q,$$
-where $(q;q)_j = \prod_{i<j} (1 - q^{i+1})$ is the finite $q$-Pochhammer symbol and
-$\binom{a}{b}_q$ is the Gaussian binomial coefficient.
-
-Such a hook sits in row $s = k - h \ge 1$.
-
-Source: Philip Cuthbertson, *Fixed Hooks in Arbitrary Columns of Partitions*, INTEGERS 25
-(2025), Article A28, Theorem 10 (`integers-2025-A28-thm-10`). -/
-public theorem_wanted fixedFirstColumnHook_hook_genFun (n k : ℕ) (h : ℤ) (hk : 1 ≤ k)
-    (hh : h < k) :
-    (((Finset.univ : Finset n.Partition).filter (fun p =>
-        ((Finset.Icc 1 n).filter (fun s =>
-          IsFixedColumnHook p 1 s h ∧ partitionHookLength p s 1 = k)).Nonempty)).card : ℚ) =
-      coeff n (∑ l ∈ Finset.Icc 1 k, X ^ ((k : ℤ) + l * (k - h - 1)).toNat *
-        (qPochFin (X : ℚ⟦X⟧) ((k : ℤ) - h - 1).toNat)⁻¹ * gaussBinom X (k - 1) (l - 1))
-
 /-- **Generating function for fixed column hooks of size $k$.** Let $n$, $m \ge 1$ and $k \ge 1$
 be natural numbers and let $h < k$ be an integer.
 For a partition $\lambda$, write $\lambda_r$ for its $r$-th largest part ($0$ if it has fewer
