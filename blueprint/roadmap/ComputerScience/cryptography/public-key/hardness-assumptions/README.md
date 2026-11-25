@@ -32,3 +32,14 @@
 - [The inverse exponent inverts RSA encryption](pow-inv-val-pow.md)
 - [Correctness of the reduction from RSA to factoring](rsa-of-factor-pow-e.md)
 - [RSA hardness implies factoring hardness](factor-advantage-le-rsa-advantage.md)
+
+- [RSA inversion versus factoring](rsa-inversion-versus-factoring.md)
+
+## Trapdoor functions
+
+- [Trapdoor permutations](trapdoor-permutations.md)
+- [Learning with errors](learning-with-errors.md)
+- [Black-box constructions and oracle separations](black-box-constructions-and-oracle-separations.md)
+- [Regev's public-key encryption from learning with errors](regev-s-public-key-encryption-from-learning.md)
+- [No relativizing construction of key agreement from one-way permutations](no-relativizing-construction-of-key-agreement.md)
+- [Shoup's generic lower bound for discrete logarithms](shoup-s-generic-lower-bound-for-discrete.md)

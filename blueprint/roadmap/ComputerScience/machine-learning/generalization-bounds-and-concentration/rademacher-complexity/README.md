@@ -22,6 +22,7 @@ risk bound that turns it into a generalization guarantee.
 - [Partial binomial sums are at most $(eD/r)^r$](../../../../Combinatorics/binomial-coefficients/binomial-sums/bounds-on-partial-sums-of-binomial-coefficients/sum-choose-le-exp-mul-div-pow.md) (in Combinatorics)
 - [Rademacher complexity of a VC class, explicit rate](rademacher-complexity-sign-patterns-le-v.md)
 - [The Rademacher risk bound](risk-le-empirical-add-rademacher.md)
+- [Covering numbers and Dudley entropy integral](covering-numbers-and-dudley-entropy-integral.md)
 
 ## Supporting definitions and lemmas
 

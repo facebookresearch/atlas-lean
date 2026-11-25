@@ -21,7 +21,7 @@ set_option autoImplicit false
 
 namespace CSLibExtTest.Logics.Propositional.CNF.ResolutionWidth
 
-open Cslib.Logic.PL Cslib.Logic.PL.CNF
+open Cslib.Logic.LegacyPL Cslib.Logic.LegacyPL.CNF
 
 /-- The formula `x₀ ∧ ¬x₀`. -/
 abbrev contradiction : CNF := [[(0, true)], [(0, false)]]

@@ -35,7 +35,7 @@ The algorithm chooses `gₙ` among the atoms so that `|⟨gₙ, Rⁿ f⟩|` is (
   `‖f‖² = ∑_{n<m} |⟨gₙ, Rⁿ f⟩|² + ‖R^m f‖²` (equation (17)).
 
 The convergence of `R^m f` to the projection of `f` on the orthogonal complement of the
-dictionary (Mallat–Zhang, Theorem 1) is recorded in `WantedExt`.
+dictionary (Mallat–Zhang, Theorem 1) is proved in `MatchingPursuitConvergence`.
 -/
 
 @[expose] public section

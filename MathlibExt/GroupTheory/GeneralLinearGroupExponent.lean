@@ -471,7 +471,7 @@ private theorem pow_clog_dvd_exponent (p m : ℕ) (hp : p.Prime) (hm : 0 < m) :
       omega
     have hcm : m ≤ p ^ Nat.clog p m := Nat.le_pow_clog hp.one_lt m
     have hpred : p ^ (Nat.clog p m).pred < m :=
-      Nat.pow_pred_clog_lt_self hp.one_lt (by omega)
+      Nat.pow_pred_clog_lt_self p (by omega)
     have hu1 : u ^ (p ^ Nat.clog p m) = 1 := by
       apply Units.ext
       rw [Units.val_pow_eq_pow_val, IsUnit.unit_spec, hpow,

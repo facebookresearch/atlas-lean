@@ -308,7 +308,7 @@ noncomputable def position {F : Type*} [Finite F] [Nonempty F] (X : BravaisCryst
   X.latticeVector n + X.offset f
 
 /-- The atomic positions `{B *ᵥ n + u f | n : Fin 3 → ℤ, f : F}`. -/
-def positions {F : Type*} [Finite F] [Nonempty F] (X : BravaisCrystal F) :
+noncomputable def positions {F : Type*} [Finite F] [Nonempty F] (X : BravaisCrystal F) :
     Set (EuclideanSpace ℝ (Fin 3)) :=
   Set.range fun p : (Fin 3 → ℤ) × F => X.position p.1 p.2
 
