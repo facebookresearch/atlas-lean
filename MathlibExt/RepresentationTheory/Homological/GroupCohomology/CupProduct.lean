@@ -438,6 +438,14 @@ theorem barCochainCupPairing_pair_tmul
   exact HomologicalComplex.linearYonedaCochainPair_tmul
     k (Rep k G) (barComplexDiagonal G k) (𝟙 (A ⊗ B)) p q phi psi
 
+private lemma inhomogeneousCochainsIso_inv_apply_basis
+    (A : Rep k G) (n : ℕ) (phi : (Rep.barComplex k G).X n ⟶ A)
+    (g : Fin n → G) :
+    (((inhomogeneousCochainsIso A).inv.f n).hom phi) g =
+      phi.hom (Finsupp.single g (MonoidAlgebra.single 1 1)) := by
+  change (Rep.freeLiftLEquiv k G (Fin n → G) A phi) g = _
+  rfl
+
 set_option backward.isDefEq.respectTransparency false in
 /-- Evaluation of the arbitrary-degree bar cup on an unnormalized bar basis
 element, expressed through the diagonal and pairing descriptor. -/
@@ -454,7 +462,10 @@ theorem barCochainCupPairing_apply_basis
           (𝟙 (A ⊗ B)) p q phi psi).hom
         (Finsupp.single g (MonoidAlgebra.single 1 1)) := by
   rw [barCochainCupPairing_pair_tmul]
-  rfl
+  exact inhomogeneousCochainsIso_inv_apply_basis G k (A ⊗ B) (p + q)
+    ((barComplexDiagonal G k).f (p + q) ≫
+      HomologicalComplex.linearYonedaPairingDesc (Rep k G)
+        (𝟙 (A ⊗ B)) p q phi psi) g
 
 /-- The arbitrary-degree cup pairing transported to inhomogeneous group
 cochains. -/

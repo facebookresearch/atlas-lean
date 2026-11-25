@@ -314,12 +314,19 @@ theorem linearYonedaCochainPair_associativity_of_diagrams
       _ = _ := by
         rw [linearYonedaPairingDescOfEq_naturality]
         simp only [HomologicalComplex.id_f, Category.id_comp, linearYonedaPairingDesc]
-  simpa only [linearHomCochainComplexFunctor_obj_X, ModuleCat.hom_comp,
-    LinearMap.comp_apply,
-    ModuleCat.MonoidalCategory.tensorHom_tmul,
-    ModuleCat.hom_id, LinearMap.id_apply, ModuleCat.MonoidalCategory.associator_hom_apply,
-    linearYonedaCochainGradedPairing_pair, linearYonedaCochainPair_tmul,
-    linearYonedaCochainComparison_f_apply,
-    linearYonedaCochainComplex_XIsoOfEq_hom_apply, Category.assoc] using hpair
+  change
+    ((((linearHomCochainComplexFunctor R C Mᵣ).obj (op Kᵣ)).XIsoOfEq
+        (Nat.add_assoc p q r)).hom).hom
+      (((linearYonedaCochainComparison R C c a).f ((p + q) + r)).hom
+        (Deltaₗ.f ((p + q) + r) ≫
+          linearYonedaPairingDesc C muₗ (p + q) r
+            (Delta₁₂.f (p + q) ≫ linearYonedaPairingDesc C mu₁₂ p q phi psi) chi)) =
+    Deltaᵣ.f (p + (q + r)) ≫
+      linearYonedaPairingDesc C muᵣ p (q + r) phi
+        (Delta₂₃.f (q + r) ≫ linearYonedaPairingDesc C mu₂₃ q r psi chi)
+  erw [linearYonedaCochainComparison_f_apply R C c a ((p + q) + r)]
+  erw [linearYonedaCochainComplex_XIsoOfEq_hom_apply R C Kᵣ Mᵣ
+    (Nat.add_assoc p q r)]
+  simpa only [Category.assoc] using hpair
 
 end HomologicalComplex

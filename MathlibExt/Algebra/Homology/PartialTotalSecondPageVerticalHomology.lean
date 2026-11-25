@@ -151,6 +151,71 @@ private theorem partialTotalFourSandwichEq
     (f₀ ≫ (f₁ ≫ f₂ ≫ f₃ ≫ f₄)) ≫ f₅ = k := by
   simpa only [Category.assoc] using h
 
+private theorem partialTotalThreePostEq
+    {D : Type*} [Category D] {X₀ X₁ X₂ X₃ X₄ : D}
+    {f₀ : X₀ ⟶ X₁} {f₁ : X₁ ⟶ X₂} {f₂ : X₂ ⟶ X₃}
+    {f₃ : X₃ ⟶ X₄} {k : X₀ ⟶ X₄}
+    (h : f₀ ≫ f₁ ≫ f₂ ≫ f₃ = k) :
+    (f₀ ≫ (f₁ ≫ f₂)) ≫ f₃ = k := by
+  simpa only [Category.assoc] using h
+
+private theorem partialTotalFourMiddleEq
+    {D : Type*} [Category D] {X₀ X₁ X₂ X₃ X₄ X₅ X₆ : D}
+    {f₀ : X₀ ⟶ X₁} {f₁ : X₁ ⟶ X₂} {f₂ : X₂ ⟶ X₃}
+    {f₃ : X₃ ⟶ X₄} {f₄ : X₄ ⟶ X₅} {f₅ : X₅ ⟶ X₆} {k : X₀ ⟶ X₆}
+    (h : f₀ ≫ f₁ ≫ f₂ ≫ f₃ ≫ f₄ ≫ f₅ = k) :
+    f₀ ≫ (f₁ ≫ f₂ ≫ f₃ ≫ f₄) ≫ f₅ = k := by
+  simpa only [Category.assoc] using h
+
+private theorem partialTotalLeftIdentityEq
+    {D : Type*} [Category D] {X Y : D}
+    (a : X ⟶ X) (f : X ⟶ Y) (ha : a = 𝟙 X) : f = a ≫ f := by
+  rw [ha, Category.id_comp]
+
+private theorem partialTotalSourceCoordinateEq
+    {D : Type*} [Category D] {X A B C₀ U V W : D}
+    {s : X ⟶ A} {p : A ⟶ B} {g g₀ : B ⟶ C₀}
+    {hm : X ⟶ U} {fac : U ⟶ A} {inv : X ⟶ V} {step : V ⟶ A}
+    {a : A ⟶ W} {b : W ⟶ B} {u : V ⟶ C₀} {k : X ⟶ C₀}
+    (hs : s = hm ≫ fac) (hp : p = a ≫ b) (hg : g = g₀)
+    (hnat : hm ≫ fac = inv ≫ step)
+    (hu : step ≫ a ≫ b ≫ g₀ = u) (hk : inv ≫ u = k) :
+    s ≫ p ≫ g = k := by
+  rw [hs, hp, hg]
+  simp only [Category.assoc]
+  rw [reassoc_of% hnat, hu]
+  exact hk
+
+private theorem partialTotalTargetCoordinateEq
+    {D : Type*} [Category D] {X A B C₀ Y : D}
+    {map : X ⟶ A} {t : A ⟶ Y} {fac : A ⟶ B} {post : B ⟶ Y}
+    {fac₀ : X ⟶ C₀} {bridge : C₀ ⟶ B} {target : C₀ ⟶ Y}
+    (ht : t = fac ≫ post) (hnat : map ≫ fac = fac₀ ≫ bridge)
+    (hc : bridge ≫ post = target) : map ≫ t = fac₀ ≫ target := by
+  rw [ht, ← Category.assoc, hnat, Category.assoc, hc]
+
+private theorem partialTotalConjugateCoordinatesEq
+    {D : Type*} [Category D] {X A B C₀ Y U V S T : D}
+    {a : X ⟶ A} {b : A ⟶ B} {c : B ⟶ C₀} {d : C₀ ⟶ Y}
+    {u : B ⟶ U} {delta delta₀ : U ⟶ V} {v : V ⟶ C₀}
+    {s₀ : X ⟶ S} {s₁ : S ⟶ U} {t₀ : V ⟶ T} {t₁ : T ⟶ Y}
+    {k : X ⟶ Y}
+    (hc : c = u ≫ delta ≫ v) (hs : a ≫ b ≫ u = s₀ ≫ s₁)
+    (ht : v ≫ d = t₀ ≫ t₁) (hdelta : delta = delta₀)
+    (hk : s₀ ≫ s₁ ≫ delta₀ ≫ t₀ ≫ t₁ = k) :
+    a ≫ b ≫ c ≫ d = k := by
+  rw [hc, hdelta]
+  simp only [Category.assoc]
+  rw [reassoc_of% hs, ht]
+  exact hk
+
+private theorem partialTotalSevenReassoc
+    {D : Type*} [Category D] {X₀ X₁ X₂ X₃ X₄ X₅ X₆ X₇ : D}
+    (a : X₀ ⟶ X₁) (b : X₁ ⟶ X₂) (c : X₂ ⟶ X₃) (d : X₃ ⟶ X₄)
+    (e : X₄ ⟶ X₅) (f : X₅ ⟶ X₆) (g : X₆ ⟶ X₇) :
+    (a ≫ b) ≫ (c ≫ d) ≫ e ≫ (f ≫ g) = a ≫ b ≫ c ≫ d ≫ e ≫ f ≫ g := by
+  simp only [Category.assoc]
+
 private theorem partialTotalSignedCoordinateSquare
     {D : Type*} [Category D] [Preadditive D] [Linear ℤ D]
     {A₀ A₁ B₀ B₁ C₀ C₁ : D}
@@ -161,13 +226,17 @@ private theorem partialTotalSignedCoordinateSquare
   calc
     h ≫ (e₁.hom ≫ r₁) = (u • (e₀.hom ≫ f)) ≫ r₁ := by
       rw [← Category.assoc, hh]
-    _ = u • ((e₀.hom ≫ f) ≫ r₁) :=
-      Linear.units_smul_comp u (e₀.hom ≫ f) r₁
+    _ = u • ((e₀.hom ≫ f) ≫ r₁) := by
+      change ((u : ℤ) • (e₀.hom ≫ f)) ≫ r₁ =
+        (u : ℤ) • ((e₀.hom ≫ f) ≫ r₁)
+      exact Preadditive.zsmul_comp (f := e₀.hom ≫ f) (g := r₁) (u : ℤ)
     _ = u • ((e₀.hom ≫ r₀) ≫ g) := by
       congr 1
       rw [Category.assoc, hf, ← Category.assoc]
-    _ = (e₀.hom ≫ r₀) ≫ (u • g) :=
-      (Linear.comp_units_smul (e₀.hom ≫ r₀) u g).symm
+    _ = (e₀.hom ≫ r₀) ≫ (u • g) := by
+      change (u : ℤ) • ((e₀.hom ≫ r₀) ≫ g) =
+        (e₀.hom ≫ r₀) ≫ ((u : ℤ) • g)
+      exact (Preadditive.comp_zsmul (f := e₀.hom ≫ r₀) (g := g) (u : ℤ)).symm
 
 private theorem partialTotalIsoCoordinateComm
     {D : Type*} [Category D] {A₀ A₁ B₀ B₁ C₀ C₁ : D}
@@ -188,6 +257,7 @@ private theorem partialTotalConeCoordinateCollapse
     a ≫ b ≫ z ≫ t = r₁ ≫ δR ≫ g ≫ r₀ := by
   rw [ht]
   rw [reassoc_of% hz, hs]
+  simp only [Category.assoc]
   rw [reassoc_of% hb, reassoc_of% ha]
 
 private theorem partialTotalUnfoldMiddleThreeEq
@@ -517,6 +587,110 @@ private theorem mappingCone_homologySequenceδ_normalized
   simpa only [Category.assoc, Iso.inv_hom_id_assoc] using
     congrArg (fun k => eG.inv ≫ k) h₀
 
+private theorem partialTotalConeSpectralConjugation
+    {S₀ S₁ K₀ K₁ K₂ L₀ L₁ L₂ : CochainComplex C ℤ}
+    (s : S₀ ⟶ S₁) (f₀ : K₀ ⟶ K₁) (g₀ : K₁ ⟶ K₂)
+    (f₁ : L₀ ⟶ L₁) (g₁ : L₁ ⟶ L₂)
+    (u : ComposableArrows.mk₁ s ⟶ ComposableArrows.mk₁ g₀)
+    (v : ComposableArrows.mk₁ f₀ ⟶ ComposableArrows.mk₁ f₁)
+    (w : ComposableArrows.mk₁ s ⟶ ComposableArrows.mk₁ g₁)
+    (n n' : ℤ) (hnn' : n + 1 = n')
+    (h : let Y :=
+          (HomotopyCategory.spectralObjectMappingCone C).mapHomologicalFunctor
+            (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0);
+        (Y.H n).map u ≫ Y.δ f₀ g₀ n n' hnn' ≫ (Y.H n').map v =
+          (Y.H n).map w ≫ Y.δ f₁ g₁ n n' hnn') :
+    HomologicalComplex.homologyMap
+        ((HomotopyCategory.composableArrowsFunctor C).map u) n ≫
+      (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n).inv.app
+        (CochainComplex.mappingCone g₀) ≫
+      (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0).homologySequenceδ
+        (CochainComplex.mappingConeCompTriangleh f₀ g₀) n n' hnn' ≫
+      (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n').hom.app
+        (CochainComplex.mappingCone f₀) ≫
+      HomologicalComplex.homologyMap
+        ((HomotopyCategory.composableArrowsFunctor C).map v) n' =
+    HomologicalComplex.homologyMap
+        ((HomotopyCategory.composableArrowsFunctor C).map w) n ≫
+      (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n).inv.app
+        (CochainComplex.mappingCone g₁) ≫
+      (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0).homologySequenceδ
+        (CochainComplex.mappingConeCompTriangleh f₁ g₁) n n' hnn' ≫
+      (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n').hom.app
+        (CochainComplex.mappingCone f₁) := by
+  let Y :=
+    (HomotopyCategory.spectralObjectMappingCone C).mapHomologicalFunctor
+      (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0)
+  let G := HomotopyCategory.composableArrowsFunctor C
+  let invS := (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n).inv.app
+    (CochainComplex.mappingCone s)
+  let facT := (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n').hom.app
+    (CochainComplex.mappingCone f₁)
+  have hSource : invS ≫ (Y.H n).map u =
+      HomologicalComplex.homologyMap (G.map u) n ≫
+        (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n).inv.app
+          (CochainComplex.mappingCone g₀) := by
+    rw [partialTotalConeSpectralHMap]
+    exact partialTotalHomologyFactors_inv_naturality (G.map u) n
+  have hTarget : (Y.H n').map v ≫ facT =
+      (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n').hom.app
+          (CochainComplex.mappingCone f₀) ≫
+        HomologicalComplex.homologyMap (G.map v) n' := by
+    rw [partialTotalConeSpectralHMap]
+    exact partialTotalHomologyFactors_hom_naturality (G.map v) n'
+  have hCone : invS ≫ (Y.H n).map w =
+      HomologicalComplex.homologyMap (G.map w) n ≫
+        (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n).inv.app
+          (CochainComplex.mappingCone g₁) := by
+    rw [partialTotalConeSpectralHMap]
+    exact partialTotalHomologyFactors_inv_naturality (G.map w) n
+  have h' := partialTotalPrePostNaturality invS facT hSource hTarget hCone h
+  dsimp only [Y] at h'
+  change
+    HomologicalComplex.homologyMap (G.map u) n ≫
+      (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n).inv.app
+        (CochainComplex.mappingCone g₀) ≫
+      (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0).homologySequenceδ
+        (CochainComplex.mappingConeCompTriangleh f₀ g₀) n n' hnn' ≫
+      (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n').hom.app
+        (CochainComplex.mappingCone f₀) ≫
+      HomologicalComplex.homologyMap (G.map v) n' =
+    HomologicalComplex.homologyMap (G.map w) n ≫
+      (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n).inv.app
+        (CochainComplex.mappingCone g₁) ≫
+      (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0).homologySequenceδ
+        (CochainComplex.mappingConeCompTriangleh f₁ g₁) n n' hnn' ≫
+      (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n').hom.app
+        (CochainComplex.mappingCone f₁) at h'
+  exact h'
+
+private theorem partialTotalConePrecompHMap
+    {I : Type*} [Category I] (F : I ⥤ CochainComplex C ℤ)
+    {i j : I} (f : i ⟶ j) {D : ComposableArrows I 1}
+    (φ : ComposableArrows.mk₁ f ⟶ D) (n : ℤ) :
+    let Y := (HomotopyCategory.spectralObjectMappingCone C).mapHomologicalFunctor
+      (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0)
+    ((((HomotopyCategory.spectralObjectMappingCone C).precomp F).mapHomologicalFunctor
+        (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0)).H n).map φ =
+      (Y.H n).map (F.mapComposableArrowsObjMk₁Iso f).inv ≫
+        (Y.H n).map ((F.mapComposableArrows 1).map φ) := by
+  let Y := (HomotopyCategory.spectralObjectMappingCone C).mapHomologicalFunctor
+    (HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0)
+  have hInv : (Y.H n).map (F.mapComposableArrowsObjMk₁Iso f).inv = 𝟙 _ := by
+    have hCone :
+        (HomotopyCategory.composableArrowsFunctor C).map
+            (F.mapComposableArrowsObjMk₁Iso f).inv =
+          𝟙 (CochainComplex.mappingCone (F.map f)) := by
+      dsimp only [CategoryTheory.Functor.mapComposableArrowsObjMk₁Iso,
+        HomotopyCategory.composableArrowsFunctor]
+      convert CochainComplex.mappingCone.map_id (F.map f) using 1 <;> rfl
+    rw [partialTotalConeSpectralHMap, hCone]
+    exact (HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
+      HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) n).map_id _
+  calc
+    _ = (Y.H n).map ((F.mapComposableArrows 1).map φ) := rfl
+    _ = _ := partialTotalLeftIdentityEq _ _ hInv
+
 private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
     let T := B.partialTotalStepCochainShortComplex m
     let S := B.partialTotalStepCochainShortComplex (m + 1)
@@ -688,9 +862,6 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
   let targetMap : CochainComplex.mappingCone d₀₀₁ ⟶
       CochainComplex.mappingCone T.f :=
     (HomotopyCategory.composableArrowsFunctor C).map α
-  have hδ := Y.δ_naturality
-    d₀₀₁ d₀₁₂ d₁₀₁ d₁₁₂
-    α β n n' (by rfl) hnn'
   have hHomotopy :
       (Y.H n).map eSource.inv ≫
           Y.δ d₀₀₁ d₀₁₂ n n' hnn' ≫
@@ -705,40 +876,6 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
       α β eSource.inv eArrow.hom hSource n n' (by rfl) hnn'
   let F₀ : HomotopyCategory C (ComplexShape.up ℤ) ⥤ C :=
     HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) 0
-  let facS : (HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
-      HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) n).obj
-        (CochainComplex.mappingCone S.f) ⟶ (CochainComplex.mappingCone S.f).homology n :=
-    (HomotopyCategory.homologyFunctorFactors
-    C (ComplexShape.up ℤ) n).hom.app (CochainComplex.mappingCone S.f)
-  let facG : (HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
-      HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) n).obj
-        (CochainComplex.mappingCone g) ⟶ (CochainComplex.mappingCone g).homology n :=
-    (HomotopyCategory.homologyFunctorFactors
-    C (ComplexShape.up ℤ) n).hom.app (CochainComplex.mappingCone g)
-  let facT : (HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
-      HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) n').obj
-        (CochainComplex.mappingCone T.f) ⟶ (CochainComplex.mappingCone T.f).homology n' :=
-    (HomotopyCategory.homologyFunctorFactors
-    C (ComplexShape.up ℤ) n').hom.app (CochainComplex.mappingCone T.f)
-  have hConeMap :
-      (HomotopyCategory.homologyFunctorFactors
-          C (ComplexShape.up ℤ) n).inv.app
-            (CochainComplex.mappingCone S.f) ≫
-        (Y.H n).map eArrow.hom =
-      HomologicalComplex.homologyMap coneMap n ≫
-        (HomotopyCategory.homologyFunctorFactors
-          C (ComplexShape.up ℤ) n).inv.app
-            (CochainComplex.mappingCone g) := by
-    rw [partialTotalConeSpectralHMap]
-    exact partialTotalHomologyFactors_inv_naturality coneMap n
-  have hTargetMap :
-      (Y.H n').map α ≫ facT =
-        (HomotopyCategory.homologyFunctorFactors
-          C (ComplexShape.up ℤ) n').hom.app
-            (CochainComplex.mappingCone d₀₀₁) ≫
-          HomologicalComplex.homologyMap targetMap n' := by
-    rw [partialTotalConeSpectralHMap]
-    exact partialTotalHomologyFactors_hom_naturality targetMap n'
   have hSourceMap :
       (HomotopyCategory.homologyFunctorFactors
           C (ComplexShape.up ℤ) n).inv.app
@@ -750,36 +887,8 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
             (CochainComplex.mappingCone d₀₁₂) := by
     rw [partialTotalConeSpectralHMap]
     exact partialTotalHomologyFactors_inv_naturality sourceMap n
-  let invS : (CochainComplex.mappingCone S.f).homology n ⟶
-      (Y.H n).obj (ComposableArrows.mk₁ S.f) :=
-    (HomotopyCategory.homologyFunctorFactors C (ComplexShape.up ℤ) n).inv.app
-      (CochainComplex.mappingCone S.f)
-  have hHomotopy' := partialTotalPrePostNaturality invS facT
-    hSourceMap hTargetMap hConeMap hHomotopy
-  dsimp only [Y] at hHomotopy'
-  change
-    HomologicalComplex.homologyMap sourceMap n ≫
-        (HomotopyCategory.homologyFunctorFactors
-          C (ComplexShape.up ℤ) n).inv.app
-            (CochainComplex.mappingCone d₀₁₂) ≫
-        F₀.homologySequenceδ
-          (CochainComplex.mappingConeCompTriangleh
-            d₀₀₁ d₀₁₂) n n' hnn' ≫
-        (HomotopyCategory.homologyFunctorFactors
-          C (ComplexShape.up ℤ) n').hom.app
-            (CochainComplex.mappingCone d₀₀₁) ≫
-        HomologicalComplex.homologyMap targetMap n' =
-      HomologicalComplex.homologyMap coneMap n ≫
-        (HomotopyCategory.homologyFunctorFactors
-          C (ComplexShape.up ℤ) n).inv.app
-            (CochainComplex.mappingCone g) ≫
-        F₀.homologySequenceδ
-          (CochainComplex.mappingConeCompTriangleh
-            T.f g) n n' hnn' ≫
-        (HomotopyCategory.homologyFunctorFactors
-          C (ComplexShape.up ℤ) n').hom.app
-            (CochainComplex.mappingCone T.f)
-      at hHomotopy'
+  have hHomotopy' := partialTotalConeSpectralConjugation
+    S.f d₀₀₁ d₀₁₂ T.f g eSource.inv α eArrow.hom n n' hnn' hHomotopy
   let F : EInt ⥤ CochainComplex C ℤ := B.partialTotalCochainFiltration
   let fIdx : (core).i₁ (m, q) ⟶ (core).i₂ (m, q) :=
     homOfLE ((core).le₁₂ (m, q))
@@ -857,26 +966,8 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
   have hPrecompGamma :
       (B.partialTotalSpectralObject.H n).map γIdx.inv =
         (Y.H n).map eC.inv ≫
-          (Y.H n).map ((F.mapComposableArrows 1).map γIdx.inv) := by
-    have hYCInv : (Y.H n).map eC.inv = 𝟙 _ := by
-      have hConeC :
-          (HomotopyCategory.composableArrowsFunctor C).map eC.inv =
-            𝟙 (CochainComplex.mappingCone canonicalMap) := by
-        dsimp only [eC, canonicalMap,
-          CategoryTheory.Functor.mapComposableArrowsObjMk₁Iso,
-          HomotopyCategory.composableArrowsFunctor]
-        convert CochainComplex.mappingCone.map_id canonicalMap using 1 <;> rfl
-      rw [partialTotalConeSpectralHMap, hConeC]
-      exact (HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
-        HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) n).map_id _
-    calc
-      _ = (Y.H n).map ((F.mapComposableArrows 1).map γIdx.inv) := rfl
-      _ = _ :=
-        ((congrArg
-          (fun z : (Y.H n).obj (ComposableArrows.mk₁ canonicalMap) ⟶
-              (Y.H n).obj (ComposableArrows.mk₁ canonicalMap) =>
-            z ≫ (Y.H n).map ((F.mapComposableArrows 1).map γIdx.inv)) hYCInv).trans
-          (Category.id_comp _)).symm
+          (Y.H n).map ((F.mapComposableArrows 1).map γIdx.inv) :=
+    partialTotalConePrecompHMap F (homOfLE ((core).le₁₂ (m + 1, q))) γIdx.inv n
   have hSourceFunctor := congrArg (Y.H n).map hSourceArrowF
   simp only [Functor.map_comp] at hSourceFunctor
   have hTargetArrowF : eF.inv ≫ eF.hom ≫ e₀.hom = α := by
@@ -914,16 +1005,14 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
             (HomotopyCategory.homologyFunctorFactors C
               (ComplexShape.up ℤ) n).inv.app
                 (CochainComplex.mappingCone canonicalMap) := rfl
-    dsimp only [eGCore, Iso.trans_hom]
-    rw [hiGHom]
-    have hGId : (Y.H n).map (eG.hom ≫ 𝟙 _) = (Y.H n).map eG.hom :=
-      (Y.H n).congr_map (Category.comp_id eG.hom)
-    rw [hGId, hStepInvCoordinate, Category.assoc]
-    erw [reassoc_of% hStepNatural]
-    rw [hPrecompGamma]
-    simp only [Category.assoc]
-    rw [hSourceFunctor]
-    exact hSourceMap
+    have hCoreG : (Y.H n).map eGCore.hom = (Y.H n).map eG.hom := by
+      have hArrow : eGCore.hom = eG.hom := by
+        dsimp only [eGCore, Iso.trans_hom]
+        erw [hiGHom]
+        exact Category.comp_id _
+      exact (Y.H n).congr_map hArrow
+    exact partialTotalSourceCoordinateEq hStepInvCoordinate hPrecompGamma hCoreG
+      hStepNatural hSourceFunctor hSourceMap
   have hConeFHom :
       (HomotopyCategory.composableArrowsFunctor C).map eF.hom =
         𝟙 (CochainComplex.mappingCone (F.map fIdx)) := by
@@ -947,8 +1036,14 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
         (HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
           HomotopyCategory.homologyFunctor C
             (ComplexShape.up ℤ) n').map targetBridgeMap := by
-    simpa only [hTargetBridgeMap_eq] using
-      partialTotalConeSpectralHMap eFCore.inv n'
+    change (HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
+        HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) n').map
+          ((HomotopyCategory.composableArrowsFunctor C).map eFCore.inv) =
+      (HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
+        HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) n').map targetBridgeMap
+    exact (HomotopyCategory.quotient C (ComplexShape.up ℤ) ⋙
+      HomotopyCategory.homologyFunctor C (ComplexShape.up ℤ) n').congr_map
+        hTargetBridgeMap_eq.symm
   have hTargetNatural :
       (Y.H n').map eFCore.inv ≫
           (HomotopyCategory.homologyFunctorFactors C
@@ -960,11 +1055,12 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
           HomologicalComplex.homologyMap targetBridgeMap n' := by
     rw [hTargetBridgeMap]
     exact partialTotalHomologyFactors_hom_naturality targetBridgeMap n'
+  let stepHomMap : CochainComplex.mappingCone (F.map fIdx) ⟶
+      CochainComplex.mappingCone T.f :=
+    (HomotopyCategory.composableArrowsFunctor C).map e₀.hom
   have hTargetBridgeComposite :
-      targetBridgeMap ≫
-          ((HomotopyCategory.composableArrowsFunctor C).mapIso e₀).hom =
-        targetMap := by
-    dsimp only [targetBridgeMap, targetMap, Functor.mapIso_hom]
+      targetBridgeMap ≫ stepHomMap = targetMap := by
+    dsimp only [targetBridgeMap, targetMap, stepHomMap]
     calc
       _ = (HomotopyCategory.composableArrowsFunctor C).map
           ((eFCore.inv ≫ eF.hom) ≫ e₀.hom) :=
@@ -984,12 +1080,13 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
           (HomotopyCategory.homologyFunctorFactors C
             (ComplexShape.up ℤ) n').hom.app
               (CochainComplex.mappingCone (F.map fIdx)) ≫
-            HomologicalComplex.homologyMap
-              ((HomotopyCategory.composableArrowsFunctor C).mapIso e₀).hom n' := rfl
-    rw [hStepHomCoordinate]
-    erw [reassoc_of% hTargetNatural]
-    rw [← HomologicalComplex.homologyMap_comp]
-    rw [hTargetBridgeComposite]
+            HomologicalComplex.homologyMap stepHomMap n' := rfl
+    have hComp := HomologicalComplex.homologyMap_comp targetBridgeMap stepHomMap n'
+    have hTarget := congrArg
+      (fun t : CochainComplex.mappingCone d₀₀₁ ⟶ CochainComplex.mappingCone T.f =>
+        HomologicalComplex.homologyMap t n') hTargetBridgeComposite
+    exact partialTotalTargetCoordinateEq hStepHomCoordinate hTargetNatural
+      (hComp.symm.trans hTarget)
   have hDeltaF :
       B.partialTotalSpectralObject.δ fIdx gIdx n n' hnn' =
         (Y.H n).map eG.hom ≫
@@ -1035,10 +1132,8 @@ private theorem partialTotalE₁_delta_conjugation (m q : ℕ) :
             d₀₀₁ d₀₁₂)
             n n' hnn' := by
     rfl
-  rw [hDelta]
-  erw [reassoc_of% hSourceCoordinate, hTargetCoordinate]
-  rw [hRawDelta]
-  exact hHomotopy'
+  exact partialTotalConjugateCoordinatesEq hDelta hSourceCoordinate hTargetCoordinate
+    hRawDelta hHomotopy'
 
 private theorem partialTotalE₁_mappingConeDifferential_eq_connecting
     (m q : ℕ)
@@ -1186,8 +1281,9 @@ private theorem partialTotalE₁_mappingConeDifferential_eq_connecting
         (CochainComplex.mappingCone T.f)
   have heZero : eZero.hom = dT ≫ rZero.hom := rfl
   have hz : z ≫ dT = shiftδ ≫ hg := by
-    simpa only [z, dT, descT, shiftδ, hg, Category.assoc] using
-      mappingCone_homologySequenceδ_normalized T g n n' hnn'
+    dsimp only [z, dT, descT, shiftδ, hg]
+    exact partialTotalThreePostEq
+      (mappingCone_homologySequenceδ_normalized T g n n' hnn')
   have hshift : shiftδ = dR ≫ δR :=
     mappingCone_shiftMap_eq_shortExact R hR n n' hnn'
   have hdesc : hm ≫ dR = dS := hDesc
@@ -1205,6 +1301,9 @@ private theorem partialTotalE₁_mappingConeDifferential_eq_connecting
     have hδR : δR = hS.δ n n' hnn' ≫ HomologicalComplex.homologyMap eA.hom n' :=
       hδShort.symm
     rw [hδR]
+    have hδS : hS.δ n n' hnn' =
+        (B.partialTotalStepCochainShortExact (m + 1)).δ n n' hnn' := rfl
+    rw [hδS]
     have hn : ComplexShape.embeddingDownNat.f (m + 1 + q) = n := by
       dsimp only [n,
         CategoryTheory.Abelian.SpectralObject.coreE₁IncreasingHomologicalNat]
@@ -1242,7 +1341,7 @@ private theorem partialTotalE₁_mappingConeDifferential_eq_connecting
           ComplexShape.embeddingDownNat d.2.1).inv ≫
         (HomologicalComplex.homologyMapIso
           (B.partialTotalStepCochainX₃Iso (m + 1)) d.1.1).inv ≫
-        hS.δ d.1.1 d.1.2 (hRel d) ≫
+        (B.partialTotalStepCochainShortExact (m + 1)).δ d.1.1 d.1.2 (hRel d) ≫
         (HomologicalComplex.homologyMapIso eA d.1.2).hom ≫
         HomologicalComplex.homologyMap T.g d.1.2 ≫
         (HomologicalComplex.homologyMapIso
@@ -1254,11 +1353,16 @@ private theorem partialTotalE₁_mappingConeDifferential_eq_connecting
       apply Prod.ext
       · exact hn₀
       · exact hn₀'
-    dsimp only [partialTotalE₁ConnectingDifferential]
-    have hwhole := congrArg wholeAt hd
-    dsimp only [wholeAt, dCore, dNat, D] at hwhole
-    simpa only [rPlus, rZero, hg, hS, S, T, eA, Iso.trans_inv, Iso.trans_hom,
-      HomologicalComplex.homologyMapIso_hom, Category.assoc] using hwhole
+    have hleft :
+        rPlus.inv ≫
+            ((B.partialTotalStepCochainShortExact (m + 1)).δ n n' hnn' ≫
+              HomologicalComplex.homologyMap eA.hom n') ≫
+            hg ≫ rZero.hom = wholeAt dCore := by
+      dsimp only [rPlus, rZero, hg, wholeAt, dCore, D, Iso.trans_inv, Iso.trans_hom,
+        HomologicalComplex.homologyMapIso_hom]
+      exact partialTotalSevenReassoc _ _ _ _ _ _ _
+    have hright : wholeAt dNat = B.partialTotalE₁ConnectingDifferential m q := rfl
+    exact hleft.trans ((congrArg wholeAt hd).trans hright)
   exact partialTotalUnfoldMiddleThreeEq (hCollapse.trans hFinal)
 
 private theorem partialTotalE₁_mappingConeDifferential_eq_connectingAt
@@ -1463,7 +1567,7 @@ theorem partialTotalE₁RowDifferential_eq_connecting (m q : ℕ) :
   slice_lhs 5 6 => rw [Iso.inv_hom_id]
   simp only [Category.id_comp]
   slice_lhs 2 5 => erw [B.partialTotalE₁_delta_conjugation m q]
-  simpa only [Category.assoc] using
+  exact partialTotalFourMiddleEq
     (B.partialTotalE₁_mappingConeDifferential_eq_connecting m q hnn')
 
 /-- The actual first-page row differential is the signed horizontal homology
@@ -1688,9 +1792,11 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
   let cNatPlus := (B.totalRow (p + 1)).extendCyclesIso
     eNat hNatPlus
   let cNatZero := (B.totalRow p).extendCyclesIso eNat hNatZero
-  let cRowPlusSource := (B.signedRow (p + 1)).extendCyclesIso
-    ePlus hRowPlus
-  let cRowZero := (B.signedRow p).extendCyclesIso eZero hRowZero
+  let cRowPlusSource : (B.totalRow (p + 1)).cycles NPlus ≅
+      (B.signedRow (p + 1)).cycles q :=
+    (B.signedRow (p + 1)).extendCyclesIso ePlus hRowPlus
+  let cRowZero : (B.totalRow p).cycles NZero ≅ (B.signedRow p).cycles q :=
+    (B.signedRow p).extendCyclesIso eZero hRowZero
   let δ : Kext.homology nPlus ⟶ Lext.homology nZero :=
     (HomologicalComplex.homologyFunctor C (ComplexShape.up ℤ) 0).shiftMap
       z nPlus nZero (by dsimp [nPlus, nZero, NPlus, NZero]; omega)
@@ -1699,6 +1805,15 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
       (HomologicalComplex.homologyMap
           (HomologicalComplex.extendMap F ePlus) NPlus ≫
         eRowPlusTarget.hom)
+  have hFextNat :
+      HomologicalComplex.homologyMap
+          (HomologicalComplex.extendMap F ePlus) NPlus ≫
+          eRowPlusTarget.hom =
+        eRowPlusSource.hom ≫
+          HomologicalComplex.homologyMap F q := by
+    exact HomologicalComplex.extendHomologyIso_hom_naturality
+      (φ := F) (e := ePlus) (hj' := hRowPlus)
+  erw [hFextNat]
   have hHorizontal : B.partialTotalHorizontalRowHomology p q =
       eNatPlus.inv ≫ δ ≫ eNatZero.hom :=
     B.partialTotalHorizontalRowHomology_eq p q
@@ -1706,9 +1821,7 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
   simp only [Category.assoc]
   change eNatPlus.inv ≫ δ ≫ eNatZero.hom ≫ eRowZero.hom =
     (ComplexShape.down ℕ).ε q •
-      (HomologicalComplex.homologyMap
-          (HomologicalComplex.extendMap F ePlus) NPlus ≫
-        eRowPlusTarget.hom)
+      (eRowPlusSource.hom ≫ HomologicalComplex.homologyMap F q)
   rw [← cancel_epi eNatPlus.hom]
   simp only [Iso.hom_inv_id_assoc]
   rw [← cancel_epi
@@ -1839,16 +1952,20 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
       cRowZero.hom ≫ (B.signedRow p).iCycles q =
         (B.totalRow p).iCycles NZero ≫
           xRowZero.hom := by
-    simpa only [xRowZero, totalRowXIso, totalRow] using
-      (HomologicalComplex.extendCyclesIso_hom_iCycles
-        (K := B.signedRow p) (e := eZero) (hj' := hRowZero))
+    have h := HomologicalComplex.extendCyclesIso_hom_iCycles
+      (K := B.signedRow p) (e := eZero) (hj' := hRowZero)
+    change cRowZero.hom ≫ (B.signedRow p).iCycles q =
+      (B.totalRow p).iCycles NZero ≫ xRowZero.hom at h
+    exact h
   have hRowPlusICycles :
       cRowPlusSource.hom ≫ (B.signedRow (p + 1)).iCycles q =
         (B.totalRow (p + 1)).iCycles NPlus ≫
           xRowPlus.hom := by
-    simpa only [xRowPlus, totalRowXIso, totalRow] using
-      (HomologicalComplex.extendCyclesIso_hom_iCycles
-        (K := B.signedRow (p + 1)) (e := ePlus) (hj' := hRowPlus))
+    have h := HomologicalComplex.extendCyclesIso_hom_iCycles
+      (K := B.signedRow (p + 1)) (e := ePlus) (hj' := hRowPlus)
+    change cRowPlusSource.hom ≫ (B.signedRow (p + 1)).iCycles q =
+      (B.totalRow (p + 1)).iCycles NPlus ≫ xRowPlus.hom at h
+    exact h
   have hRowZeroHomologyπ :
       (B.totalRow p).homologyπ NZero ≫ eRowZero.hom =
         cRowZero.hom ≫ (B.signedRow p).homologyπ q := by
@@ -1919,23 +2036,6 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
     rw [hLeftCycles, hRightCycles]
     dsimp only [x]
     simpa only [Category.assoc] using hComponent
-  have hFextNat :
-      HomologicalComplex.homologyMap
-          (HomologicalComplex.extendMap F ePlus) NPlus ≫
-          eRowPlusTarget.hom =
-        eRowPlusSource.hom ≫
-          HomologicalComplex.homologyMap F q := by
-    exact HomologicalComplex.extendHomologyIso_hom_naturality
-      (φ := F) (e := ePlus) (hj' := hRowPlus)
-  have hScaledFextNat :
-      ((-1 : ℤˣ) ^ q) •
-          (HomologicalComplex.homologyMap
-            (HomologicalComplex.extendMap F ePlus) NPlus ≫
-            eRowPlusTarget.hom) =
-        ((-1 : ℤˣ) ^ q) •
-          (eRowPlusSource.hom ≫
-            HomologicalComplex.homologyMap F q) := by
-    exact congrArg (fun f => ((-1 : ℤˣ) ^ q) • f) hFextNat
   have hRightHomology :
       Kext.homologyπ nPlus ≫ eNatPlus.hom ≫
           eRowPlusSource.hom ≫
@@ -1945,7 +2045,9 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
           (B.signedRow p).homologyπ q := by
     slice_lhs 1 2 =>
       rw [HomologicalComplex.homologyπ_extendHomologyIso_hom]
+    simp only [Category.assoc]
     slice_lhs 2 3 => rw [hRowPlusHomologyπ]
+    simp only [Category.assoc]
     slice_lhs 3 4 =>
       rw [HomologicalComplex.homologyπ_naturality]
   rw [hcycles]
@@ -1953,12 +2055,11 @@ private theorem partialTotalHorizontalRowShift_homology_coordinate
     Lext x (nPlus + 1) hnextPlus hx nZero hShift
       (nZero + 1) hnextZero]
   simp only [Category.assoc]
-  slice_lhs 3 5 => rw [Iso.inv_hom_id_app_assoc]
+  erw [Iso.inv_hom_id_app_assoc]
   slice_lhs 2 3 =>
     rw [HomologicalComplex.homologyπ_extendHomologyIso_hom]
   simp only [Category.assoc]
   rw [hRowZeroHomologyπ]
-  slice_rhs 3 4 => rw [hScaledFextNat]
   simp only [Linear.comp_units_smul]
   rw [hRightHomology]
   slice_lhs 1 3 => rw [hCycle]
@@ -2164,62 +2265,28 @@ noncomputable def partialTotalFirstPageRowRestrictionHomologyIso (p q : ℕ) :
           simp only [ChainComplex.next_nat_succ]
           rfl))
 
-private noncomputable def partialTotalFirstPageSignedVerticalHomologyComponentIso
-    (p q : ℕ) :
-    ((((B.partialTotalSpectralObject.spectralSequence core).page 1).restriction
-        (partialTotalFirstPageRowEmbedding q)).X p) ≅
-      (B.signedVerticalHomologyComplex q).X p := by
-  change ((B.partialTotalSpectralObject.spectralSequence core).page 1).X (p, q) ≅
-    (B.X p).homology q
-  exact B.partialTotalSpectralSequenceFirstPageRowIso p q ≪≫ B.totalRowHomologyIso p q
+private theorem partialTotalIsoCoordinatesComm
+    {D : Type*} [Category D] {A₀ A₁ B₀ B₁ C₀ C₁ : D}
+    (e₀ : A₀ ≅ B₀) (e₁ : A₁ ≅ B₁) (r₀ : B₀ ≅ C₀) (r₁ : B₁ ≅ C₁)
+    (f : B₀ ⟶ B₁) (g : C₀ ⟶ C₁) (d : A₀ ⟶ A₁)
+    (hrow : f ≫ r₁.hom = r₀.hom ≫ g)
+    (hpage : d = e₀.hom ≫ f ≫ e₁.inv) :
+    (e₀.hom ≫ r₀.hom) ≫ g = d ≫ (e₁.hom ≫ r₁.hom) :=
+  (partialTotalIsoCoordinateComm e₀ e₁ r₀ r₁ f g hrow).trans
+    (congrArg (fun t : A₀ ⟶ A₁ => t ≫ (e₁.hom ≫ r₁.hom)) hpage.symm)
 
-private theorem partialTotalFirstPageSignedVerticalHomologyComponentComm
-    (q i j : ℕ) (hij : (ComplexShape.down ℕ).Rel i j) :
-    (B.partialTotalFirstPageSignedVerticalHomologyComponentIso i q).hom ≫
-        (B.signedVerticalHomologyComplex q).d i j =
-      (((B.partialTotalSpectralObject.spectralSequence core).page 1).restriction
-        (partialTotalFirstPageRowEmbedding q)).d i j ≫
-        (B.partialTotalFirstPageSignedVerticalHomologyComponentIso j q).hom := by
-  let P₁ : HomologicalComplex C
-      (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩) :=
-    (B.partialTotalSpectralObject.spectralSequence core).page 1
-  let e : (ComplexShape.down ℕ).Embedding
-      (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩) :=
-    partialTotalFirstPageRowEmbedding q
-  let L : ChainComplex C ℕ := B.signedVerticalHomologyComplex q
-  change j + 1 = i at hij
-  subst i
-  have hres : (P₁.restriction e).d (j + 1) j = P₁.d (j + 1, q) (j, q) := by
-    rw [P₁.restriction_d_eq e
-      (show e.f (j + 1) = (j + 1, q) by rfl)
-      (show e.f j = (j, q) by rfl)]
-    change (𝟙 (P₁.X (j + 1, q))) ≫ P₁.d (j + 1, q) (j, q) ≫
-      𝟙 (P₁.X (j, q)) = P₁.d (j + 1, q) (j, q)
-    simp only [Category.id_comp, Category.comp_id]
-  let e₀ : P₁.X (j + 1, q) ≅ (B.totalRow (j + 1)).homology (j + 1 + q) :=
-    B.partialTotalSpectralSequenceFirstPageRowIso (j + 1) q
-  let e₁ : P₁.X (j, q) ≅ (B.totalRow j).homology (j + q) :=
-    B.partialTotalSpectralSequenceFirstPageRowIso j q
-  let r₀ : (B.totalRow (j + 1)).homology (j + 1 + q) ≅ (B.X (j + 1)).homology q :=
-    B.totalRowHomologyIso (j + 1) q
-  let r₁ : (B.totalRow j).homology (j + q) ≅ (B.X j).homology q :=
-    B.totalRowHomologyIso j q
-  let f : (B.totalRow (j + 1)).homology (j + 1 + q) ⟶ (B.totalRow j).homology (j + q) :=
-    B.partialTotalHorizontalRowHomology j q
-  let g : (B.X (j + 1)).homology q ⟶ (B.X j).homology q := L.d (j + 1) j
-  let dPage : P₁.X (j + 1, q) ⟶ P₁.X (j, q) := (P₁.restriction e).d (j + 1) j
-  have hrow : f ≫ r₁.hom = r₀.hom ≫ g :=
-    B.partialTotalHorizontalRowHomology_totalRowHomologyIso j q
-  have hpage : dPage = e₀.hom ≫ f ≫ e₁.inv :=
-    hres.trans (B.partialTotalSpectralSequenceFirstPage_d_eq j q)
-  change (e₀.hom ≫ r₀.hom) ≫ g = dPage ≫ (e₁.hom ≫ r₁.hom)
-  calc
-    (e₀.hom ≫ r₀.hom) ≫ g =
-        (e₀.hom ≫ f ≫ e₁.inv) ≫ (e₁.hom ≫ r₁.hom) :=
-      partialTotalIsoCoordinateComm e₀ e₁ r₀ r₁ f g hrow
-    _ = dPage ≫ (e₁.hom ≫ r₁.hom) :=
-      congrArg (fun k : P₁.X (j + 1, q) ⟶ P₁.X (j, q) =>
-        k ≫ (e₁.hom ≫ r₁.hom)) hpage.symm
+private theorem partialTotalFirstPageRestrictionD
+    (P : HomologicalComplex C (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩))
+    (q p : ℕ) :
+    (P.restriction (partialTotalFirstPageRowEmbedding q)).d (p + 1) p =
+      P.d (p + 1, q) (p, q) := by
+  let e := partialTotalFirstPageRowEmbedding q
+  rw [P.restriction_d_eq e
+    (show e.f (p + 1) = (p + 1, q) by rfl)
+    (show e.f p = (p, q) by rfl)]
+  change (𝟙 (P.X (p + 1, q))) ≫ P.d (p + 1, q) (p, q) ≫
+    𝟙 (P.X (p, q)) = P.d (p + 1, q) (p, q)
+  simp only [Category.id_comp, Category.comp_id]
 
 /-- A fixed row of the first page is the signed horizontal complex of
 vertical homology objects. -/
@@ -2227,12 +2294,25 @@ noncomputable def partialTotalFirstPageSignedVerticalHomologyIso (q : ℕ) :
     ((B.partialTotalSpectralObject.spectralSequence core).page 1).restriction
         (partialTotalFirstPageRowEmbedding q) ≅
       B.signedVerticalHomologyComplex q := by
-  exact HomologicalComplex.Hom.isoOfComponents
-    (C₁ := ((B.partialTotalSpectralObject.spectralSequence core).page 1).restriction
-      (partialTotalFirstPageRowEmbedding q))
-    (C₂ := B.signedVerticalHomologyComplex q)
-    (fun p => B.partialTotalFirstPageSignedVerticalHomologyComponentIso p q)
-    (fun i j hij => B.partialTotalFirstPageSignedVerticalHomologyComponentComm q i j hij)
+  let P₁ : HomologicalComplex C
+      (ComplexShape.spectralSequenceNat ⟨(-1 : ℤ), 0⟩) :=
+    (B.partialTotalSpectralObject.spectralSequence core).page 1
+  let L : ChainComplex C ℕ := B.signedVerticalHomologyComplex q
+  refine HomologicalComplex.Hom.isoOfComponents
+    (C₁ := P₁.restriction (partialTotalFirstPageRowEmbedding q)) (C₂ := L)
+    (fun p => B.partialTotalSpectralSequenceFirstPageRowIso p q ≪≫ B.totalRowHomologyIso p q) ?_
+  intro i j hij
+  change j + 1 = i at hij
+  subst i
+  have hpage := (partialTotalFirstPageRestrictionD P₁ q j).trans
+    (B.partialTotalSpectralSequenceFirstPage_d_eq j q)
+  exact partialTotalIsoCoordinatesComm
+    (B.partialTotalSpectralSequenceFirstPageRowIso (j + 1) q)
+    (B.partialTotalSpectralSequenceFirstPageRowIso j q)
+    (B.totalRowHomologyIso (j + 1) q) (B.totalRowHomologyIso j q)
+    (B.partialTotalHorizontalRowHomology j q) (L.d (j + 1) j)
+    ((P₁.restriction (partialTotalFirstPageRowEmbedding q)).d (j + 1) j)
+    (B.partialTotalHorizontalRowHomology_totalRowHomologyIso j q) hpage
 
 /-- Forward components of the signed first-page row isomorphism. -/
 @[simp]

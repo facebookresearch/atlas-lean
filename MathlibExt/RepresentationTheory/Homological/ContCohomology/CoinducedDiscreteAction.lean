@@ -116,8 +116,8 @@ theorem coinduced_action_isContinuous
           change x⁻¹ * h⁻¹ * x ∈ U.toSubgroup
           have hU : h ∈ U := (inf_le_left : W ≤ U) hh
           simpa only [inv_inv] using
-            (Subgroup.Normal.conj_mem (H := U.toSubgroup)
-              inferInstance h⁻¹ (U.inv_mem hU) x⁻¹)
+            ((inferInstance : U.toSubgroup.Normal).conj_mem
+              h⁻¹ (U.inv_mem hU) x⁻¹)
         have hF : F (h⁻¹ * x) = F x := by
           rw [show h⁻¹ * x = x * (x⁻¹ * h⁻¹ * x) by group]
           exact hright x (x⁻¹ * h⁻¹ * x) hconj

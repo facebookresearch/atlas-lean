@@ -95,7 +95,11 @@ private theorem modTwo_tensor_value :
         (P := ℤ → ℤ) (N := ZMod 2) (U := ZMod 2) modTwoScalars_surjective
         (modTwoEval ⊗ₜ[ℤ] (1 : ZMod 2)) (fun _ => (1 : ℤ))) = 1 := by
   rw [TensorProduct.homTensorFiniteFactorEquivOfSurjectiveScalars_tmul]
-  simp [modTwoMultiply, modTwoEval]
+  change TensorProduct.rid (ZMod 2) (ZMod 2)
+    (TensorProduct.mapOfCompatibleSMul (ZMod 2) ℤ ℤ (ZMod 2) (ZMod 2)
+      ((modTwoEval (fun _ => (1 : ℤ))) ⊗ₜ[ℤ] (1 : ZMod 2))) = 1
+  rw [TensorProduct.mapOfCompatibleSMul_tmul]
+  simp [modTwoEval]
 
 example : (modTwoEval ⊗ₜ[ℤ] (1 : ZMod 2) :
     ((ℤ → ℤ) →ₗ[ℤ] ZMod 2) ⊗[ℤ] ZMod 2) ≠ 0 := by

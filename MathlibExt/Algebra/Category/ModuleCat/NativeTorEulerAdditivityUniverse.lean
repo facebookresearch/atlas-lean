@@ -86,6 +86,76 @@ private theorem exactShortComplex_length_toNat
     (ShortComplex.ShortExact.moduleCat_exact_iff_function_exact S).mp hS
   exact Module.exactPair_length_toNat R S.f.hom S.g.hom h h₂
 
+/-- Three consecutive range-length identities eliminate the two internal ranges. -/
+private theorem threeRangeLengths_euler
+    {l₁ l₂ l₃ r₀ r₁ r₂ r₃ : ℕ}
+    (h₁ : l₁ = r₀ + r₁) (h₂ : l₂ = r₁ + r₂) (h₃ : l₃ = r₂ + r₃) :
+    (l₁ : ℤ) - l₂ + l₃ = (r₀ : ℤ) + r₃ := by
+  omega
+
+private theorem exactFiveArrowWindow
+    {X₀ X₁ X₂ X₃ X₄ X₅ : ModuleCat.{max u v} R}
+    (a : X₀ ⟶ X₁) (b : X₁ ⟶ X₂) (c : X₂ ⟶ X₃)
+    (d : X₃ ⟶ X₄) (e : X₄ ⟶ X₅)
+    (w₀ : a ≫ b = 0) (w₁ : b ≫ c = 0) (w₂ : c ≫ d = 0) (w₃ : d ≫ e = 0)
+    (h₀ : (ShortComplex.mk a b w₀).Exact)
+    (h₁ : (ShortComplex.mk b c w₁).Exact)
+    (h₂ : (ShortComplex.mk c d w₂).Exact)
+    (h₃ : (ShortComplex.mk d e w₃).Exact) :
+    (ComposableArrows.mk₅ a b c d e).Exact where
+  zero i hi := by
+    rcases i with _ | _ | _ | _ | i
+    · exact w₀
+    · exact w₁
+    · exact w₂
+    · exact w₃
+    · omega
+  exact i hi := by
+    rcases i with _ | _ | _ | _ | i
+    · exact h₀
+    · exact h₁
+    · exact h₂
+    · exact h₃
+    · omega
+
+private theorem exactWindow_middleThreeLengths
+    (T : ComposableArrows (ModuleCat.{max u v} R) 5) (hT : T.Exact)
+    (h₁ : Module.length R (T.obj' 1) ≠ ⊤)
+    (h₂ : Module.length R (T.obj' 2) ≠ ⊤)
+    (h₃ : Module.length R (T.obj' 3) ≠ ⊤) :
+    ((Module.length R (T.obj' 1)).toNat : ℤ) -
+      (Module.length R (T.obj' 2)).toNat + (Module.length R (T.obj' 3)).toNat =
+      (Module.length R (T.map' 0 1).hom.range).toNat +
+        (Module.length R (T.map' 3 4).hom.range).toNat := by
+  have hL := exactShortComplex_length_toNat R (T.sc hT.toIsComplex 0) (hT.exact 0) h₁
+  have hM := exactShortComplex_length_toNat R (T.sc hT.toIsComplex 1) (hT.exact 1) h₂
+  have hR := exactShortComplex_length_toNat R (T.sc hT.toIsComplex 2) (hT.exact 2) h₃
+  exact threeRangeLengths_euler hL hM hR
+
+private theorem leftDerived_middleThreeLengths
+    (F : ModuleCat.{max u v} R ⥤ ModuleCat.{max u v} R) [F.Additive]
+    (S : ShortComplex (ModuleCat.{max u v} R)) (hS : S.ShortExact) (j : ℕ)
+    (h₁ : Module.length R ((F.leftDerived (j + 1)).obj S.X₁) ≠ ⊤)
+    (h₂ : Module.length R ((F.leftDerived (j + 1)).obj S.X₂) ≠ ⊤)
+    (h₃ : Module.length R ((F.leftDerived (j + 1)).obj S.X₃) ≠ ⊤) :
+    ((Module.length R ((F.leftDerived (j + 1)).obj S.X₁)).toNat : ℤ) -
+      (Module.length R ((F.leftDerived (j + 1)).obj S.X₂)).toNat +
+      (Module.length R ((F.leftDerived (j + 1)).obj S.X₃)).toNat =
+      (Module.length R (LeftDerivedDelta.LDdelta F (j + 1) S hS).hom.range).toNat +
+        (Module.length R (LeftDerivedDelta.LDdelta F j S hS).hom.range).toNat := by
+  let a := LeftDerivedDelta.LDdelta F (j + 1) S hS
+  let b := (F.leftDerived (j + 1)).map S.f
+  let c := (F.leftDerived (j + 1)).map S.g
+  let d := LeftDerivedDelta.LDdelta F j S hS
+  let e := (F.leftDerived j).map S.f
+  let T := ComposableArrows.mk₅ a b c d e
+  obtain ⟨w₀, h₀⟩ := LeftDerivedDelta.LDexact_A F (j + 1) S hS
+  obtain ⟨w₁, h₁'⟩ := LeftDerivedDelta.LDexact_B F (j + 1) S hS
+  obtain ⟨w₂, h₂'⟩ := LeftDerivedDelta.LDexact_C F j S hS
+  obtain ⟨w₃, h₃'⟩ := LeftDerivedDelta.LDexact_A F j S hS
+  have hT : T.Exact := exactFiveArrowWindow R a b c d e w₀ w₁ w₂ w₃ h₀ h₁' h₂' h₃'
+  exact exactWindow_middleThreeLengths R T hT h₁ h₂ h₃
+
 /-- Positive native degrees satisfy the actual adjacent-boundary range relation. -/
 theorem nativeTor_length_relation_succ (M : ModuleCat.{max u v} R)
     (S : ShortComplex (ModuleCat.{max u v} R)) (hS : S.ShortExact) (j : ℕ)
@@ -96,31 +166,9 @@ theorem nativeTor_length_relation_succ (M : ModuleCat.{max u v} R)
       (Module.length R (((Tor (ModuleCat.{max u v} R) (j + 1)).obj M).obj S.X₂)).toNat +
       (Module.length R (((Tor (ModuleCat.{max u v} R) (j + 1)).obj M).obj S.X₃)).toNat =
       (Module.length R (nativeTorConnecting R M S hS (j + 1)).hom.range).toNat +
-        (Module.length R (nativeTorConnecting R M S hS j).hom.range).toNat := by
-  let C := ModuleCat.{max u v} R
-  let W₀ : ComposableArrows C 5 := nativeTorLongExactWindow R M S hS j
-  let W₁ : ComposableArrows C 5 := nativeTorLongExactWindow R M S hS (j + 1)
-  let e₀ : W₀.Exact := nativeTorLongExactWindow_exact R M S hS j
-  let e₁ : W₁.Exact := nativeTorLongExactWindow_exact R M S hS (j + 1)
-  let A : ShortComplex C := e₁.sc 2
-  let B : ShortComplex C := e₀.sc 0
-  let D : ShortComplex C := e₀.sc 1
-  have hL :
-      (Module.length R (((Tor C (j + 1)).obj M).obj S.X₁)).toNat =
-        (Module.length R (nativeTorConnecting R M S hS (j + 1)).hom.range).toNat +
-          (Module.length R (((Tor C (j + 1)).obj M).map S.f).hom.range).toNat :=
-    exactShortComplex_length_toNat R A (e₁.exact 2) h₁
-  have hM :
-      (Module.length R (((Tor C (j + 1)).obj M).obj S.X₂)).toNat =
-        (Module.length R (((Tor C (j + 1)).obj M).map S.f).hom.range).toNat +
-          (Module.length R (((Tor C (j + 1)).obj M).map S.g).hom.range).toNat :=
-    exactShortComplex_length_toNat R B (e₀.exact 0) h₂
-  have hR :
-      (Module.length R (((Tor C (j + 1)).obj M).obj S.X₃)).toNat =
-        (Module.length R (((Tor C (j + 1)).obj M).map S.g).hom.range).toNat +
-          (Module.length R (nativeTorConnecting R M S hS j).hom.range).toNat :=
-    exactShortComplex_length_toNat R D (e₀.exact 1) h₃
-  omega
+        (Module.length R (nativeTorConnecting R M S hS j).hom.range).toNat :=
+  leftDerived_middleThreeLengths R ((tensoringLeft (ModuleCat.{max u v} R)).obj M)
+    S hS j h₁ h₂ h₃
 
 /-- The actual degree-zero quotient endpoint leaves only the first boundary range. -/
 theorem nativeTor_length_relation_zero (M : ModuleCat.{max u v} R)

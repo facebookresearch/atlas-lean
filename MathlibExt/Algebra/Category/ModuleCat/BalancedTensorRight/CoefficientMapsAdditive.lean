@@ -17,13 +17,12 @@ public import MathlibExt.CategoryTheory.Abelian.LeftDerived.Additive
 public import Mathlib.Algebra.Module.Bimodule
 
 /-!
-# Additive actual enriched coefficient transformations
+# Additive coefficient transformations for bimodule tensor functors
 
-These common-world foundation laws use the original quotient representatives.
-They apply to independent-carrier facade coefficients after genuine lifting.
-Neither R nor S is commutative. Arbitrary S-smul on S-linear maps is not claimed.
-The revision-specific scoped Native checks are recorded in the integration plan;
-current hosted PR build and review remain separate requirements.
+Linear maps preserving the commuting coefficient actions form an additive
+group. Their induced tensor transformations and derived Tor transformations
+are additive. Modules over the tensor product of the two scalar rings
+package the coefficient actions and their compatible maps.
 -/
 
 @[expose] public section
@@ -76,7 +75,7 @@ theorem tensorCoefficientTransformation_add (f g : B →ₗ[R] B')
 
 /-- Original R-linear maps commuting with the actual outer action form an additive group. -/
 def coefficientMapGroup : AddSubgroup (B →ₗ[R] B') where
-  carrier := fun (f : B →ₗ[R] B') => ∀ (t : Sᵐᵒᵖ) (x : B), f (t • x) = t • f x
+  carrier := {f : B →ₗ[R] B' | ∀ (t : Sᵐᵒᵖ) (x : B), f (t • x) = t • f x}
   zero_mem' := by
     intro t x
     simp only [LinearMap.zero_apply, smul_zero]
@@ -330,7 +329,7 @@ section OriginalActions
 
 open scoped TensorProduct
 
-/-- The original commuting actions package a native tensor-ring module, not a new bimodule engine. -/
+/-- Commuting actions define a module over the tensor product of the scalar rings. -/
 def coefficientObjectOfActions : coefficientCategory R S := by
   letI : Module (R ⊗[ℤ] Sᵐᵒᵖ) B := TensorProduct.Algebra.module
   exact ModuleCat.of (R ⊗[ℤ] Sᵐᵒᵖ) B
