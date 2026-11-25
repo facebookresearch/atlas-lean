@@ -23,6 +23,9 @@ public import MathlibExt.Probability.FiniteProbability
 * A partition-function (Gibbs) expectation and a normal-location coverage statement.
 * A posterior credible interval, a realized pivot interval that misses the parameter, Bessel's
   correction, a covariance-matrix identity and the comparison with `PMF`.
+* Conditioning on an event: uniform weights on `Fin 3` normalized on `{0, 1}`, positive mass
+  exactly for nonempty events, and the signed weights `(2, -1)`, whose ratio identity gives the
+  normalized weight `2`.
 -/
 
 @[expose] public section
@@ -377,5 +380,40 @@ example : olsSlope (![0, 1, 2] : Fin 3 → ℝ) (fun i => 2 + 3 * (![0, 1, 2] : 
   have hx : sxy (![0, 1, 2] : Fin 3 → ℝ) ![0, 1, 2] ≠ 0 := by
     norm_num [sxy, sampleMean_eq_sum_div, Fin.sum_univ_three]
   exact ⟨olsSlope_affine hx 2 3, olsIntercept_affine hx 2 3⟩
+
+/-! ### Conditioning on an event -/
+
+/-- Uniform weights on `Fin 3` normalized on `{0, 1}`: the state `0` gets `1 / 2`, the weights
+form a finite distribution, and the event `{1, 2}` gets the probability `1 / 2`. -/
+example (hA : 0 < prob (fun _ : Fin 3 => (1 : ℝ) / 3) {0, 1}) :
+    condWeights (fun _ : Fin 3 => (1 : ℝ) / 3) {0, 1} hA 0 = 1 / 2 ∧
+      (∀ ω, 0 ≤ condWeights (fun _ : Fin 3 => (1 : ℝ) / 3) {0, 1} hA ω) ∧
+      ∑ ω, condWeights (fun _ : Fin 3 => (1 : ℝ) / 3) {0, 1} hA ω = 1 ∧
+      prob (condWeights (fun _ : Fin 3 => (1 : ℝ) / 3) {0, 1} hA) {1, 2} = 1 / 2 := by
+  obtain ⟨h0, h1, -⟩ := condWeights_isDistribution (fun _ => by norm_num) hA
+  refine ⟨?_, h0, h1, ?_⟩
+  · simp [condWeights, prob]
+    norm_num
+  · rw [prob_condWeights]
+    simp [prob]
+    norm_num
+
+/-- With positive weights an event has positive probability exactly when it is nonempty: the
+empty event is null and `{0}` is not. -/
+example : ¬0 < prob (fun _ : Fin 3 => (1 : ℝ) / 3) ∅ ∧
+    0 < prob (fun _ : Fin 3 => (1 : ℝ) / 3) {0} := by
+  have hp : ∀ ω : Fin 3, 0 < (fun _ : Fin 3 => (1 : ℝ) / 3) ω := fun _ => by norm_num
+  exact ⟨by rw [prob_pos_iff_nonempty hp]; simp, by rw [prob_pos_iff_nonempty hp]; simp⟩
+
+/-- Signed weights are not a probability law: the weights `(2, -1)` on `Fin 2` have total mass
+`1 > 0`, and the ratio identity gives the first state the normalized weight `2`, which no
+probability takes. -/
+example : ∃ hA : 0 < prob ![(2 : ℝ), -1] Finset.univ,
+    prob (condWeights ![(2 : ℝ), -1] Finset.univ hA) {0} = 2 := by
+  have hA : 0 < prob ![(2 : ℝ), -1] Finset.univ := by
+    simp [prob, Fin.sum_univ_two]
+  refine ⟨hA, ?_⟩
+  rw [prob_condWeights]
+  norm_num [prob, Fin.sum_univ_two]
 
 end MathlibExtTest.Probability.FiniteProbability

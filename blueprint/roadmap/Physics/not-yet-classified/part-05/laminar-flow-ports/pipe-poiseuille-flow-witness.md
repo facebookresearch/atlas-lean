@@ -1,0 +1,3 @@
+# Cylindrical Poiseuille flow solves Navier-Stokes
+
+Let $\rho, \mu, G, R > 0$ and let $\lambda$ and $p_0$ be real. Consider the flow on $\mathbb{R}^3$ with constant density $\rho$, velocity $\big(0, 0, G(R^2 - x^2 - y^2)/(4\mu)\big)$, pressure $p_0 - G z$, Newtonian stress with shear viscosity $\mu$ and second viscosity $\lambda$, and no body force. Then the density is positive; the flow satisfies the continuity equation and is incompressible, with differentiable velocity; it satisfies the conservative Navier-Stokes equations everywhere; the velocity vanishes on the wall $x^2 + y^2 = R^2$; and on the axis the velocity is $(0, 0, G R^2/(4\mu))$ with $G R^2/(4\mu) > 0$.

@@ -1,9 +1,14 @@
 # Linear programming
 
 - [Strong linear programming duality](strong-linear-programming-duality.md)
+- [Exists nonneg mul Vec le iff](exists-nonneg-mul-vec-le-iff.md)
+- [Exists nonneg mul Vec eq iff](exists-nonneg-mul-vec-eq-iff.md)
 - [Linear program](linear-program.md)
 - [Feasible region of a linear program](feasible.md)
 - [Objective function of a linear program](objective.md)
+- [Is Closed feasible](is-closed-feasible.md)
+- [Convex feasible](convex-feasible.md)
+- [Is Compact feasible](is-compact-feasible.md)
 - [Maximum principle for linear programming](lp-maximum-principle.md)
 - [Optimal vertices of linear programs](simplex-algorithm.md)
 

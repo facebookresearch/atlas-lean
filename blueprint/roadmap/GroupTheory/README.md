@@ -51,3 +51,6 @@ Frobenius groups to highly homogeneous and cofinitary groups on infinite sets, a
 - [Group rings](group-rings/README.md)
 - [Combinatorics in groups](combinatorics-in-groups/README.md)
 - [Group extensions and cohomology](extensions-and-cohomology/README.md)
+- [Not yet classified](not-yet-classified/README.md)
+- [Groups, subgroups and quotients](group-basics/README.md)
+- [Semigroups and monoids](semigroups-and-monoids/README.md)

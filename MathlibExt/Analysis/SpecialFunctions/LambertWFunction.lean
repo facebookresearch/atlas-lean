@@ -43,12 +43,17 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The map `h y = y * exp y` whose restricted inverse is Lambert W.
-Ouellet JIS VOL20 `ou2.tex` lines 426-432. -/
+/-- **Lambert map.** The Lambert map is the function $h(y) = y e^y$ of a real variable $y$.
+
+The inverse of $h$ restricted to $y > -1$ is the principal real branch of the Lambert W function.
+
+Source: Ouellet JIS VOL20 `ou2.tex` lines 426-432. -/
 public noncomputable def lambertMap (y : ℝ) : ℝ :=
   y * Real.exp y
 
-/-- Every `x > -exp (-1)` has exactly one preimage `y > -1` under `h`. -/
+/-- **Principal-branch preimages of the Lambert map.** Let $h(y) = y e^y$ be the Lambert map on
+the real numbers. Every real $x > -e^{-1}$ has exactly one preimage $y > -1$ under $h$, that is,
+there is exactly one real number $y > -1$ with $y e^y = x$. -/
 public theorem existsUnique_lambertMap_preimage (x : ℝ)
     (hx : -Real.exp (-1) < x) :
     ∃! y : { y : ℝ // -1 < y }, lambertMap y.val = x := by
@@ -153,10 +158,13 @@ public theorem existsUnique_lambertMap_preimage (x : ℝ)
     refine ⟨⟨max x 0, hb_pos⟩, hb_symm, fun y hy => ?_⟩
     exact huniq_gen y ⟨max x 0, hb_pos⟩ hy hb_symm
 
-/-- Lower real branch `W₋₁`: every `x` with `-exp (-1) ≤ x < 0` has exactly one preimage
-`y ≤ -1` under `h y = y * exp y`. Existence uses `h (-1) = -exp (-1)`, `h y → 0` as
-`y → -∞` and the intermediate value theorem; uniqueness uses `h' y = exp y * (1 + y) < 0`
-on `y < -1`.
+/-- **Lower-branch preimages of the Lambert map.** Let $h(y) = y e^y$ be the Lambert map on the
+real numbers. Every real $x$ with $-e^{-1} \le x < 0$ has exactly one preimage $y \le -1$ under
+$h$, that is, there is exactly one real number $y \le -1$ with $y e^y = x$.
+
+This preimage is the value at $x$ of the lower real branch $W_{-1}$ of the Lambert W function.
+Existence uses $h(-1) = -e^{-1}$, $h(y) \to 0$ as $y \to -\infty$ and the intermediate value
+theorem; uniqueness uses $h'(y) = e^y (1 + y) < 0$ for $y < -1$.
 
 Source: Petojević, Gorjanac Ranitović, Rastovac and Mandić, *The Golden Ratio,
 Factorials, and the Lambert W Function*, Journal of Integer Sequences 27 (2024),

@@ -335,7 +335,7 @@ lemma kronOnePort_interiorSource_example (jS : ℝ) :
   have hDinv : ((!![2] : Matrix (Fin 1) (Fin 1) ℝ)⁻¹) 0 0 = 1 / 2 := by linarith
   constructor
   · unfold kronPortConductance schurComplement
-    simp only [Matrix.sub_apply, mul_apply, Fin.sum_univ_one, Matrix.of_apply,
+    simp only [Matrix.sub_apply, Matrix.mul_apply, Fin.sum_univ_one, Matrix.of_apply,
       transpose_apply]
     rw [hDinv]
     norm_num

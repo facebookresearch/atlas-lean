@@ -37,13 +37,22 @@ open Real Filter
 
 namespace MetaMathlibExt.NormalNumber
 
-/-- The `n`-th digit (0-indexed) after the radix point in the base-`b`
-expansion of `x`. This formula is intended for bases `b ≥ 2`. -/
+/-- **Base-$b$ digits of a real number.** For natural numbers $b$ and $n$ and a real number $x$, the
+$n$-th digit of $x$ in base $b$, counting from $n = 0$ just after the radix point, is
+$\lfloor b^{n+1} \{x\} \rfloor \bmod b$, where $\{x\} = x - \lfloor x \rfloor$ is the fractional
+part of $x$.
+
+For $b \ge 2$ these are the digits of the base-$b$ expansion of $\{x\}$ that does not end in an
+infinite run of the digit $b - 1$. The formula is intended only for bases $b \ge 2$. -/
 noncomputable def digitSeq (b : ℕ) (x : ℝ) (n : ℕ) : ℕ :=
   ⌊(b : ℝ) ^ (n + 1) * Int.fract x⌋₊ % b
 
-/-- A real number is simply normal in base `b`. This predicate is intended for
-bases `b ≥ 2`. -/
+/-- **Simply normal numbers.** For a natural number $b$ and a real number $x$, write $a_k$ for the
+$k$-th base-$b$ digit of $x$ after the radix point, counting from $k = 0$. Then $x$ is simply
+normal in base $b$ if for every natural number $d < b$ the proportion
+$\#\{k < n : a_k = d\} / n$ tends to $1/b$ as $n \to \infty$.
+
+This predicate is intended for bases $b \ge 2$. -/
 noncomputable def IsSimplyNormalInBase (b : ℕ) (x : ℝ) : Prop :=
   ∀ d : ℕ, d < b →
     Tendsto
@@ -52,8 +61,12 @@ noncomputable def IsSimplyNormalInBase (b : ℕ) (x : ℝ) : Prop :=
       atTop
       (nhds (1 / (b : ℝ)))
 
-/-- A real number is normal in base `b`. This predicate is intended for bases
-`b ≥ 2`. -/
+/-- **Normal numbers.** For a natural number $b$ and a real number $x$, write $a_i$ for the $i$-th
+base-$b$ digit of $x$ after the radix point, counting from $i = 0$. Then $x$ is normal in base $b$
+if for every natural number $k$ and all natural numbers $w_0, \dots, w_{k-1} < b$ the proportion
+$\#\{i < n : a_{i+j} = w_j \text{ for all } j < k\} / n$ tends to $1/b^k$ as $n \to \infty$.
+
+This predicate is intended for bases $b \ge 2$. -/
 noncomputable def IsNormalInBase (b : ℕ) (x : ℝ) : Prop :=
   ∀ (k : ℕ) (w : Fin k → ℕ), (∀ j, w j < b) →
     Tendsto
@@ -63,7 +76,8 @@ noncomputable def IsNormalInBase (b : ℕ) (x : ℝ) : Prop :=
       atTop
       (nhds (1 / (b : ℝ) ^ k))
 
-/-- Normality in a base implies simple normality in that base. -/
+/-- **Normal numbers are simply normal.** If a real number $x$ is normal in base $b$, then $x$ is
+simply normal in base $b$. -/
 theorem IsNormalInBase.isSimplyNormalInBase {b : ℕ} {x : ℝ} (h : IsNormalInBase b x) :
     IsSimplyNormalInBase b x := by
   intro d hd

@@ -1,0 +1,3 @@
+# TWO-PROCESSOR CHAINS SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME as a decision problem
+
+The decision problem TWO-PROCESSOR CHAINS SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME accepts a bitstring $x$ exactly when $x$ decodes, under the canonical bitstring encoding of quadruples $(m, T, K, P)$ (a natural number, a list of pairs, a natural number and a list of pairs), to an instance that is well-formed for TWO-PROCESSOR CHAINS SCHEDULING TO MINIMIZE TOTAL COMPLETION TIME and feasible for weighted completion time with precedence (some start times have at most $m$ tasks running at every time, respect the precedence ($\sigma(t) + l(t) \le \sigma(t')$), and have weighted completion time at most $K$). It rejects every bitstring that does not decode to such an instance.

@@ -406,7 +406,7 @@ lemma cdc_decayFun_add (μ : ℕ → ProbabilityMeasure (ConfigSpace (Sym2 (Site
 lemma cdc_decayFun_smul (μ : ℕ → ProbabilityMeasure (ConfigSpace (Sym2 (Site d))))
     (g : Multiplicative (Site d)) (c : ℝ) (f : ConfigSpace (Sym2 (Site d)) →ᵇ ℝ) (n : ℕ) :
     isd_decayFun μ g (c • f) n = c * isd_decayFun μ g f n := by
-  simp only [isd_decayFun, BoundedContinuousFunction.coe_smul, smul_eq_mul]
+  simp only [isd_decayFun, FunLike.coe_smul, Pi.smul_apply, smul_eq_mul]
   rw [integral_const_mul, integral_const_mul]
   ring
 

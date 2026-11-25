@@ -20,3 +20,6 @@ Cryptographic schemes and their correctness and security reductions: the game-ba
   families in P/poly rule out natural proofs of lower bounds against P/poly.
 - [Graph isomorphism and Arthur–Merlin proofs](../../TheoryOfComputation/randomized-and-quantum-complexity/graph-isomorphism-and-arthur-merlin-proofs/README.md):
   the complexity of the problem behind the graph-isomorphism zero-knowledge proof.
+
+- [Entropy and randomness extraction](randomness-extraction/README.md)
+- [Program obfuscation](program-obfuscation/README.md)
