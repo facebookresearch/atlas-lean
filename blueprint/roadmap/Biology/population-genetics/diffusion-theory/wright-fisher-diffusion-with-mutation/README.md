@@ -20,7 +20,7 @@
 - [Moment duality for the Wright-Fisher diffusion with two-way mutation](moment-duality-with-mutation-killed-absorbed-blo.md)
 
 - [Polynomial spectrum of the neutral Wright–Fisher generator with mutation](spectral-structure-of-l-0-theta-on-polynomials.md)
-- [Dirichlet stationary law under parent-independent mutation](dirichlet-stationary-law-under-parent-independent-mutation.md)
+- [Uniqueness and reversibility of the Dirichlet stationary law under parent-independent mutation](dirichlet-stationary-law-under-parent-independent-mutation.md)
 - [Sampling consistency and exchangeability for diffusion samples](sampling-consistency-and-exchangeability.md)
 - [Boundary classification of the Wright–Fisher diffusion with mutation](wright-fisher-boundary-classification.md)
 - [Infinite-alleles limits of finite-allele diffusions](infinite-alleles-and-finite-allele-limits.md)

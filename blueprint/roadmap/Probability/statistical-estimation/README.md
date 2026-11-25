@@ -24,6 +24,4 @@ Point estimation theory and confidence sets: bias, risk and mean squared error, 
 - [Data assimilation](data-assimilation/README.md)
 - [Hidden Markov and latent structure models](hidden-markov-and-latent-structure-models/README.md)
 - [Capture–recapture and species richness](capture-recapture-and-species-richness/README.md)
-- [Fieller's confidence sets for a ratio of means](fiellers-theorem-for-ratio-confidence-sets.md)
-- [Spearman–Kärber estimator of the mean tolerance](spearman-karber-estimator-of-the-mean-tolerance.md)
-- [Cohen's kappa and its maximum for fixed margins](cohens-kappa-and-its-marginal-constrained-maximum.md)
+- [Ratios, tolerance distributions and agreement](ratio-tolerance-and-agreement-estimators/README.md)

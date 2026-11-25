@@ -4,7 +4,7 @@ In Kingman's coalescent with $n \ge 2$ lineages the holding times $T_k \sim \mat
 
 $$E\bigl[e^{-sT_{\mathrm{MRCA},n}}\bigr] = \prod_{k=2}^n \frac{\binom k2}{\binom k2 + s}, \qquad s > -1,$$
 
-and $E[e^{-sT_{\mathrm{MRCA},n}}] = \infty$ for $s \le -1$, since the smallest rate is $\binom22 = 1$. For every $s > -1$, as $n \to \infty$ these transforms converge to the finite product $\prod_{k \ge 2}\binom k2/(\binom k2 + s)$, which is the Laplace transform of $T_\infty = \sum_{k \ge 2}T_k$ (by monotone convergence, since $T_{\mathrm{MRCA},n} \uparrow T_\infty$).
+and $E[e^{-sT_{\mathrm{MRCA},n}}] = \infty$ for $s \le -1$, since the smallest rate is $\binom22 = 1$. For every $s > -1$, as $n \to \infty$ these transforms converge to the convergent infinite product $\prod_{k \ge 2}\binom k2/(\binom k2 + s)$ (convergent because $\sum_k s/\binom k2$ converges), which is the Laplace transform of $T_\infty = \sum_{k \ge 2}T_k$: since $T_{\mathrm{MRCA},n} \uparrow T_\infty$, for $s \ge 0$ the variables $e^{-sT_{\mathrm{MRCA},n}}$ are bounded by $1$ and converge to $e^{-sT_\infty}$ (bounded convergence), and for $-1 < s < 0$ they increase to $e^{-sT_\infty}$ (monotone convergence).
 
 ## Depends on
 
