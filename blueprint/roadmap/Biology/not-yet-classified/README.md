@@ -20,3 +20,4 @@ Topics added since this subject's fields were last revised.
 - [Siphon Prime Decomposition](siphon-prime-decomposition/README.md)
 - [Spearman Karber](spearman-karber/README.md)
 - [TBRAgreement Forest](tbragreement-forest/README.md)
+- [String Overlap](string-overlap/README.md)

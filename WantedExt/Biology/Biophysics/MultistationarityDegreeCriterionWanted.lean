@@ -76,10 +76,11 @@ noncomputable def ReactionSystem.f (G : ReactionSystem n ℓ) (x : Fin n → ℝ
   G.N.mulVec (G.v x)
 
 /-- The rate functions are `C¹`, nonnegative on the nonnegative orthant, and satisfy assumption
-(`eq:assumption`): `v_j(x) = 0` whenever `x_i = 0` for some `i` with `α_{ij} > 0`. -/
+(`eq:assumption`) on the nonnegative orthant: for every `x` with `x_k ≥ 0` for all `k`,
+`v_j(x) = 0` whenever `x_i = 0` for some `i` with `α_{ij} > 0`. -/
 def ReactionSystem.Admissible (G : ReactionSystem n ℓ) : Prop :=
   ContDiff ℝ 1 G.v ∧ (∀ x, (∀ i, 0 ≤ x i) → ∀ j, 0 ≤ G.v x j) ∧
-    ∀ x j i, x i = 0 → 0 < G.α i j → G.v x j = 0
+    ∀ x, (∀ k, 0 ≤ x k) → ∀ j i, x i = 0 → 0 < G.α i j → G.v x j = 0
 
 /-- `W` is a **row-reduced conservation matrix** with pivots `piv`: its rows form a basis of
 `im(N)^⊥` (they are linearly independent, annihilate every column of `N`, and every vector
