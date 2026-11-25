@@ -1,0 +1,604 @@
+/-
+Author: @toskua, Avocado
+-/
+module
+
+public import Mathlib.Analysis.CStarAlgebra.lpSpace
+public import Mathlib.Analysis.CStarAlgebra.Spectrum
+public import Mathlib.Topology.Algebra.NonUnitalStarAlgebra
+public import Mathlib.Topology.Algebra.Module.Basic
+
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity
+
+/-!
+# Dependent coefficient C-star direct sums
+
+The carrier is the literal vanishing-norm subalgebra of the dependent
+bounded product lp A ∞. Its norm, complex action, star and completeness
+come from Mathlib's ambient C-star algebra and closed-subalgebra API.
+There is no countability or separability assumption on the constructor.
+
+Finite coordinate cutoffs give approximation in the supremum norm.
+Countability and separability enter only the derived separability
+instance. Coordinate maps are nonunital complex star homomorphisms.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open Set
+open TopologicalSpace
+open scoped ENNReal BigOperators Topology CStarAlgebra
+
+namespace CStarC0Sum
+
+universe uI uA uB uC
+
+section Vanishing
+
+variable {I : Type uI} {E : I → Type uA}
+variable [∀ i, NormedAddCommGroup (E i)]
+
+/-- Every positive norm level has only finitely many exceptional coordinates. -/
+def VanishesAtCofinite (f : ∀ i, E i) : Prop :=
+  ∀ ε : ℝ, 0 < ε → Set.Finite {i : I | ε ≤ ‖f i‖}
+
+/-- Zero vanishes along the cofinite filter, including on an empty index set. -/
+theorem vanishes_zero : VanishesAtCofinite (fun i : I => (0 : E i)) := by
+  intro ε hε
+  have hempty : {i : I | ε ≤ ‖(0 : E i)‖} = ∅ := by
+    ext i
+    simp [not_le_of_gt hε]
+  rw [hempty]
+  exact Set.finite_empty
+
+/-- A finitely supported dependent function satisfies the vanishing criterion. -/
+theorem vanishes_of_finite_support {f : ∀ i, E i}
+    (hf : Set.Finite {i : I | f i ≠ 0}) : VanishesAtCofinite f := by
+  intro ε hε
+  refine hf.subset fun i hi => ?_
+  intro hzero
+  exact (not_le_of_gt hε) (by simpa [hzero] using hi)
+
+/-- Vanishing norm levels imply boundedness; no bound is an input datum. -/
+theorem VanishesAtCofinite.bddAbove_range_norm {f : ∀ i, E i}
+    (hf : VanishesAtCofinite f) : BddAbove (Set.range fun i => ‖f i‖) := by
+  obtain ⟨C, hC⟩ := ((hf 1 zero_lt_one).image fun i => ‖f i‖).bddAbove
+  refine ⟨max 1 C, ?_⟩
+  rintro _ ⟨i, rfl⟩
+  by_cases hi : 1 ≤ ‖f i‖
+  · exact (hC ⟨i, hi, rfl⟩).trans (le_max_right _ _)
+  · exact (le_of_lt (lt_of_not_ge hi)).trans (le_max_left _ _)
+
+/-- The raw vanishing function belongs to the actual bounded lp product. -/
+theorem VanishesAtCofinite.mem_lp_infty {f : ∀ i, E i}
+    (hf : VanishesAtCofinite f) : Memℓp f ∞ :=
+  memℓp_infty hf.bddAbove_range_norm
+
+/-- The union of the two half-level exceptional sets controls addition. -/
+theorem VanishesAtCofinite.add {f g : ∀ i, E i}
+    (hf : VanishesAtCofinite f) (hg : VanishesAtCofinite g) :
+    VanishesAtCofinite (fun i => f i + g i) := by
+  intro ε hε
+  refine ((hf (ε / 2) (half_pos hε)).union
+    (hg (ε / 2) (half_pos hε))).subset fun i hi => ?_
+  change ε ≤ ‖f i + g i‖ at hi
+  by_cases hfi : ε / 2 ≤ ‖f i‖
+  · exact Or.inl hfi
+  · right
+    by_contra hgi
+    change ¬ ε / 2 ≤ ‖g i‖ at hgi
+    have hadd := norm_add_le (f i) (g i)
+    have hfl := lt_of_not_ge hfi
+    have hgl := lt_of_not_ge hgi
+    linarith
+
+/-- Negation preserves all positive norm level sets. -/
+theorem VanishesAtCofinite.neg {f : ∀ i, E i}
+    (hf : VanishesAtCofinite f) :
+    VanishesAtCofinite (fun i => -f i) := by
+  intro ε hε
+  simpa only [norm_neg] using hf ε hε
+
+/-- Subtraction is closed without a completeness assumption. -/
+theorem VanishesAtCofinite.sub {f g : ∀ i, E i}
+    (hf : VanishesAtCofinite f) (hg : VanishesAtCofinite g) :
+    VanishesAtCofinite (fun i => f i - g i) := by
+  simpa only [sub_eq_add_neg] using hf.add hg.neg
+
+variable {F : I → Type uB} [∀ i, NormedAddCommGroup (F i)]
+
+/-- A positive uniform norm multiple preserves vanishing, for different fibers too. -/
+theorem VanishesAtCofinite.of_norm_le_const_mul {f : ∀ i, E i}
+    (hf : VanishesAtCofinite f) {g : ∀ i, F i}
+    {K : ℝ} (hK : 0 < K) (hfg : ∀ i, ‖g i‖ ≤ K * ‖f i‖) :
+    VanishesAtCofinite g := by
+  intro ε hε
+  refine (hf (ε / K) (div_pos hε hK)).subset fun i hi => ?_
+  apply (div_le_iff₀ hK).2
+  simpa only [mul_comm] using hi.trans (hfg i)
+
+/-- Norm-preserving fiberwise maps preserve the literal criterion. -/
+theorem VanishesAtCofinite.of_norm_eq {f : ∀ i, E i}
+    (hf : VanishesAtCofinite f) {g : ∀ i, F i}
+    (hfg : ∀ i, ‖g i‖ = ‖f i‖) : VanishesAtCofinite g := by
+  intro ε hε
+  simpa only [hfg] using hf ε hε
+
+end Vanishing
+
+section Closedness
+
+variable {I : Type uI} (E : I → Type uA)
+variable [∀ i, NormedAddCommGroup (E i)]
+
+/-- Uniform lp-infinity limits preserve the cofinite norm criterion. -/
+theorem isClosed_vanishing :
+    IsClosed {f : lp E ∞ | VanishesAtCofinite (fun i => f i)} := by
+  apply isClosed_of_closure_subset
+  intro f hf ε hε
+  obtain ⟨g, hg, hfg⟩ :=
+    Metric.mem_closure_iff.mp hf (ε / 2) (half_pos hε)
+  refine (hg (ε / 2) (half_pos hε)).subset fun i hi => ?_
+  change ε ≤ ‖f i‖ at hi
+  change ε / 2 ≤ ‖g i‖
+  have hdist : ‖f - g‖ < ε / 2 := by
+    simpa only [dist_eq_norm] using hfg
+  have hcoord : ‖f i - g i‖ ≤ ‖f - g‖ :=
+    lp.norm_apply_le_norm (by simp) (f - g) i
+  have htriangle : ‖f i‖ ≤ ‖f i - g i‖ + ‖g i‖ := by
+    calc
+      ‖f i‖ = ‖(f i - g i) + g i‖ := by rw [sub_add_cancel]
+      _ ≤ ‖f i - g i‖ + ‖g i‖ := norm_add_le _ _
+  linarith
+
+end Closedness
+
+section Subalgebra
+
+variable {I : Type uI} (A : I → Type uA)
+variable [∀ i, NonUnitalCStarAlgebra (A i)]
+
+/-- The literal nonunital star subalgebra of norm-vanishing bounded families. -/
+def subalgebra : NonUnitalStarSubalgebra ℂ (lp A ∞) where
+  carrier := {f | VanishesAtCofinite (fun i => f i)}
+  zero_mem' := vanishes_zero
+  add_mem' := by
+    intro f g hf hg
+    exact hf.add hg
+  mul_mem' := by
+    intro f g hf hg
+    apply hg.of_norm_le_const_mul (K := ‖f‖ + 1) (by positivity)
+    intro i
+    calc
+      ‖f i * g i‖ ≤ ‖f i‖ * ‖g i‖ := norm_mul_le _ _
+      _ ≤ (‖f‖ + 1) * ‖g i‖ := mul_le_mul_of_nonneg_right
+        ((lp.norm_apply_le_norm (by simp) f i).trans (by linarith)) (norm_nonneg _)
+  smul_mem' := by
+    intro c f hf
+    apply hf.of_norm_le_const_mul (K := ‖c‖ + 1) (by positivity)
+    intro i
+    calc
+      ‖c • f i‖ ≤ ‖c‖ * ‖f i‖ := norm_smul_le _ _
+      _ ≤ (‖c‖ + 1) * ‖f i‖ :=
+        mul_le_mul_of_nonneg_right (by linarith) (norm_nonneg _)
+  star_mem' := by
+    intro f hf
+    exact hf.of_norm_eq (fun i => norm_star (f i))
+
+/-- Membership is exactly the source norm-vanishing condition. -/
+@[simp]
+theorem mem_subalgebra (f : lp A ∞) :
+    f ∈ subalgebra A ↔ VanishesAtCofinite (fun i => f i) :=
+  Iff.rfl
+
+/-- Closedness needed by Mathlib's complete C-star subtype instance. -/
+theorem isClosed_subalgebra : IsClosed (subalgebra A : Set (lp A ∞)) :=
+  isClosed_vanishing A
+
+end Subalgebra
+
+end CStarC0Sum
+
+universe uC0Index uC0Fiber
+
+/-- The completed C-star coefficient direct sum of an arbitrary dependent family. -/
+@[reducible]
+noncomputable def CStarC0Sum {I : Type uC0Index} (A : I → Type uC0Fiber)
+    [∀ i, NonUnitalCStarAlgebra (A i)] : Type (max uC0Index uC0Fiber) :=
+  ↥(CStarC0Sum.subalgebra A)
+
+namespace CStarC0Sum
+
+universe uI uA uB uC
+
+variable {I : Type uI} (A : I → Type uA)
+variable [∀ i, NonUnitalCStarAlgebra (A i)]
+
+/-- All eight dictionaries are the stock closed-subalgebra dictionaries. -/
+noncomputable instance instNonUnitalCStarAlgebra :
+    NonUnitalCStarAlgebra (CStarC0Sum A) := by
+  letI : IsClosed (subalgebra A : Set (lp A ∞)) := isClosed_subalgebra A
+  exact inferInstanceAs (NonUnitalCStarAlgebra ↥(subalgebra A))
+
+/-- Evaluation notation for a dependent coefficient family. -/
+instance instCoeFun : CoeFun (CStarC0Sum A) (fun _ => ∀ i, A i) :=
+  ⟨fun f i => f.1 i⟩
+
+/-- Inclusion into the actual bounded lp-infinity product. -/
+def toLp (f : CStarC0Sum A) : lp A ∞ := f.1
+
+/-- The bounded-product inclusion has the literal coordinate values. -/
+@[simp]
+theorem toLp_apply (f : CStarC0Sum A) (i : I) : toLp A f i = f i := rfl
+
+/-- The literal defining vanishing law, not an independently stored model. -/
+theorem vanishes (f : CStarC0Sum A) :
+    VanishesAtCofinite (fun i => f i) := f.2
+
+/-- Raw vanishing families obtain their bound from the same vanishing proof. -/
+def ofFunction (f : ∀ i, A i) (hf : VanishesAtCofinite f) : CStarC0Sum A :=
+  ⟨⟨f, hf.mem_lp_infty⟩, hf⟩
+
+/-- The raw-function constructor changes no coordinate. -/
+@[simp]
+theorem ofFunction_apply (f : ∀ i, A i) (hf : VanishesAtCofinite f) (i : I) :
+    ofFunction A f hf i = f i := rfl
+
+/-- Families are extensional in their actual coordinates. -/
+@[ext]
+theorem ext {f g : CStarC0Sum A} (h : ∀ i, f i = g i) : f = g := by
+  apply Subtype.ext
+  apply lp.ext
+  exact funext h
+
+/-- Zero is coordinatewise zero. -/
+@[simp]
+theorem zero_apply (i : I) : (0 : CStarC0Sum A) i = 0 := rfl
+
+/-- Addition is the inherited pointwise addition. -/
+@[simp]
+theorem add_apply (f g : CStarC0Sum A) (i : I) : (f + g) i = f i + g i := rfl
+
+/-- Multiplication is the inherited pointwise multiplication. -/
+@[simp]
+theorem mul_apply (f g : CStarC0Sum A) (i : I) : (f * g) i = f i * g i := rfl
+
+/-- Star is the inherited pointwise star. -/
+@[simp]
+theorem star_apply (f : CStarC0Sum A) (i : I) : star f i = star (f i) := rfl
+
+/-- Complex scalar multiplication remains the ambient scalar action. -/
+@[simp]
+theorem smul_apply (c : ℂ) (f : CStarC0Sum A) (i : I) : (c • f) i = c • f i := rfl
+
+/-- Subtraction is coordinatewise subtraction. -/
+@[simp]
+theorem sub_apply (f g : CStarC0Sum A) (i : I) : (f - g) i = f i - g i := rfl
+
+/-- The ambient inclusion changes no norm. -/
+@[simp]
+theorem norm_toLp (f : CStarC0Sum A) : ‖toLp A f‖ = ‖f‖ := rfl
+
+/-- The actual supremum norm, also valid for the empty family. -/
+theorem norm_eq_ciSup (f : CStarC0Sum A) : ‖f‖ = ⨆ i, ‖f i‖ :=
+  lp.norm_eq_ciSup (toLp A f)
+
+/-- The norm dominates each coordinate norm. -/
+theorem norm_apply_le (f : CStarC0Sum A) (i : I) : ‖f i‖ ≤ ‖f‖ :=
+  lp.norm_apply_le_norm (by simp) (toLp A f) i
+
+/-- A nonnegative uniform coordinate bound controls the sup norm without Nonempty I. -/
+theorem norm_le {f : CStarC0Sum A} {C : ℝ} (hC : 0 ≤ C)
+    (hf : ∀ i, ‖f i‖ ≤ C) : ‖f‖ ≤ C :=
+  lp.norm_le_of_forall_le hC hf
+
+/-- Coordinate evaluation as an actual nonunital complex star homomorphism. -/
+def eval (i : I) : CStarC0Sum A →⋆ₙₐ[ℂ] A i where
+  toFun f := f i
+  map_zero' := rfl
+  map_add' _ _ := rfl
+  map_mul' _ _ := rfl
+  map_star' _ := rfl
+  map_smul' _ _ := rfl
+
+/-- The evaluation homomorphism has its literal action. -/
+@[simp]
+theorem eval_apply (i : I) (f : CStarC0Sum A) : eval A i f = f i := rfl
+
+/-- Evaluation is norm decreasing by the stock lp coordinate bound. -/
+theorem norm_eval_le (i : I) (f : CStarC0Sum A) : ‖eval A i f‖ ≤ ‖f‖ :=
+  norm_apply_le A f i
+
+section Single
+
+variable [DecidableEq I]
+
+/-- Mathlib's actual lp single has finite support and hence vanishing norm levels. -/
+theorem vanishes_lp_single (i : I) (a : A i) :
+    VanishesAtCofinite (fun j => lp.single ∞ i a j) := by
+  apply vanishes_of_finite_support
+  refine (Set.finite_singleton i).subset fun j hj => ?_
+  by_contra hji
+  exact hj (by simpa using lp.single_apply_ne ∞ i a hji)
+
+/-- The actual single-coordinate inclusion, with no unitality assertion. -/
+def single (i : I) : A i →⋆ₙₐ[ℂ] CStarC0Sum A where
+  toFun a := ⟨lp.single ∞ i a, vanishes_lp_single A i a⟩
+  map_zero' := by
+    apply Subtype.ext
+    exact lp.single_zero ∞ i
+  map_add' a b := by
+    apply Subtype.ext
+    exact lp.single_add ∞ i a b
+  map_mul' a b := by
+    apply ext
+    intro j
+    change Pi.single i (a * b) j = Pi.single i a j * Pi.single i b j
+    exact congrFun (Pi.single_mul i a b) j
+  map_star' a := by
+    apply ext
+    intro j
+    change Pi.single i (star a) j = star (Pi.single i a j)
+    exact congrFun (Pi.single_star i a) j
+  map_smul' c a := by
+    apply Subtype.ext
+    exact lp.single_smul ∞ i c a
+
+/-- The single inclusion reuses Mathlib's lp single without changing its carrier data. -/
+theorem toLp_single (i : I) (a : A i) :
+    toLp A (single A i a) = lp.single ∞ i a := rfl
+
+/-- The coordinate formula retains dependent fibers through Pi.single. -/
+@[simp]
+theorem single_apply (i : I) (a : A i) (j : I) :
+    single A i a j = Pi.single i a j := rfl
+
+/-- The inclusion is the identity at its own coordinate. -/
+@[simp]
+theorem single_apply_self (i : I) (a : A i) : single A i a i = a :=
+  lp.single_apply_self ∞ i a
+
+/-- Other coordinates are zero; no heterogeneous equality transport is hidden. -/
+@[simp]
+theorem single_apply_ne (i : I) (a : A i) {j : I} (hji : j ≠ i) :
+    single A i a j = 0 :=
+  lp.single_apply_ne ∞ i a hji
+
+/-- The actual single inclusion is norm preserving. -/
+@[simp]
+theorem norm_single (i : I) (a : A i) : ‖single A i a‖ = ‖a‖ :=
+  lp.norm_single (by simp) i a
+
+/-- The actual single inclusion is isometric. -/
+theorem isometry_single (i : I) : Isometry (single A i) :=
+  AddMonoidHomClass.isometry_of_norm (single A i) (norm_single A i)
+
+/-- Evaluation composed with the matching inclusion is the identity homomorphism. -/
+@[simp]
+theorem eval_comp_single (i : I) :
+    (eval A i).comp (single A i) = NonUnitalStarAlgHom.id ℂ (A i) := by
+  ext a
+  exact single_apply_self A i a
+
+/-- A different evaluation kills the inclusion as an actual star homomorphism. -/
+theorem eval_comp_single_of_ne {i j : I} (hji : j ≠ i) :
+    (eval A j).comp (single A i) = 0 := by
+  ext a
+  exact single_apply_ne A i a hji
+
+end Single
+
+section Truncation
+
+variable [DecidableEq I]
+
+/-- The literal finite coordinate mask has finite support and vanishing norm levels. -/
+theorem vanishes_cutoff (s : Finset I) (f : CStarC0Sum A) :
+    VanishesAtCofinite (fun i => if i ∈ s then f i else 0) := by
+  apply vanishes_of_finite_support
+  refine s.finite_toSet.subset fun i hi => ?_
+  by_contra hnot
+  change i ∉ s at hnot
+  change (if i ∈ s then f i else 0) ≠ 0 at hi
+  rw [ite_eq_right hnot] at hi
+  exact hi rfl
+
+/-- Finite coordinate cutoff, as a genuine nonunital star endomorphism. -/
+def truncate (s : Finset I) : CStarC0Sum A →⋆ₙₐ[ℂ] CStarC0Sum A where
+  toFun f := ofFunction A (fun i => if i ∈ s then f i else 0)
+    (vanishes_cutoff A s f)
+  map_zero' := by ext i; simp
+  map_add' f g := by ext i; by_cases hi : i ∈ s <;> simp [hi]
+  map_mul' f g := by ext i; by_cases hi : i ∈ s <;> simp [hi]
+  map_star' f := by ext i; by_cases hi : i ∈ s <;> simp [hi]
+  map_smul' c f := by ext i; by_cases hi : i ∈ s <;> simp [hi]
+
+/-- Literal finite-cutoff coordinates. -/
+@[simp]
+theorem truncate_apply (s : Finset I) (f : CStarC0Sum A) (i : I) :
+    truncate A s f i = if i ∈ s then f i else 0 := rfl
+
+/-- Cutoff is the identity on each retained coordinate. -/
+theorem truncate_apply_of_mem (s : Finset I) (f : CStarC0Sum A) {i : I}
+    (hi : i ∈ s) : truncate A s f i = f i := by simp [hi]
+
+/-- Cutoff is zero at each omitted coordinate. -/
+theorem truncate_apply_of_not_mem (s : Finset I) (f : CStarC0Sum A) {i : I}
+    (hi : i ∉ s) : truncate A s f i = 0 := by simp [hi]
+
+/-- Every cutoff is finitely supported. -/
+theorem finite_support_truncate (s : Finset I) (f : CStarC0Sum A) :
+    Set.Finite {i : I | truncate A s f i ≠ 0} := by
+  refine s.finite_toSet.subset fun i hi => ?_
+  by_contra hnot
+  change i ∉ s at hnot
+  change truncate A s f i ≠ 0 at hi
+  rw [truncate_apply, ite_eq_right hnot] at hi
+  exact hi rfl
+
+/-- Repeated cutoffs retain exactly the intersection. -/
+theorem truncate_comp (s t : Finset I) :
+    (truncate A s).comp (truncate A t) = truncate A (s ∩ t) := by
+  ext f i
+  by_cases hs : i ∈ s <;> by_cases ht : i ∈ t <;> simp [hs, ht]
+
+/-- Coordinate cutoff is norm contractive. -/
+theorem norm_truncate_le (s : Finset I) (f : CStarC0Sum A) :
+    ‖truncate A s f‖ ≤ ‖f‖ := by
+  apply norm_le A (norm_nonneg _)
+  intro i
+  by_cases hi : i ∈ s
+  · simpa [hi] using norm_apply_le A f i
+  · simp [hi, norm_nonneg]
+
+omit [DecidableEq I] in
+/-- Evaluation commutes with finite sums on the actual carrier. -/
+@[simp]
+theorem sum_apply {K : Type*} (s : Finset K) (f : K → CStarC0Sum A) (i : I) :
+    (∑ k ∈ s, f k) i = ∑ k ∈ s, f k i :=
+  map_sum (eval A i) f s
+
+/-- Finite cutoff is the finite sum of the actual single inclusions. -/
+theorem truncate_eq_sum_single (s : Finset I) (f : CStarC0Sum A) :
+    truncate A s f = ∑ i ∈ s, single A i (f i) := by
+  apply ext
+  intro j
+  simp only [truncate_apply, sum_apply, single_apply, Finset.sum_pi_single]
+
+/-- A finite half-level set gives a strict approximation in the supremum norm. -/
+theorem exists_truncate_norm_sub_lt (f : CStarC0Sum A) {ε : ℝ} (hε : 0 < ε) :
+    ∃ s : Finset I, ‖f - truncate A s f‖ < ε := by
+  let s := (vanishes A f (ε / 2) (half_pos hε)).toFinset
+  refine ⟨s, lt_of_le_of_lt ?_ (half_lt_self hε)⟩
+  apply norm_le A (le_of_lt (half_pos hε))
+  intro i
+  by_cases hi : i ∈ s
+  · simpa only [sub_apply, truncate_apply, ite_eq_left hi, sub_self, norm_zero]
+      using (half_pos hε).le
+  · have hsmall : ‖f i‖ < ε / 2 := by
+      apply lt_of_not_ge
+      intro hbad
+      apply hi
+      simpa only [s, Set.Finite.mem_toFinset, Set.mem_ofPred_eq] using hbad
+    simpa [hi] using hsmall.le
+
+end Truncation
+
+/-- The finite-support subset of the actual completed C-star sum. -/
+def finiteSupportSet : Set (CStarC0Sum A) :=
+  {f | Set.Finite {i : I | f i ≠ 0}}
+
+/-- Actual finite-support families are dense in the inherited norm topology. -/
+theorem dense_finiteSupportSet : Dense (finiteSupportSet A) := by
+  classical
+  rw [Metric.dense_iff]
+  intro f ε hε
+  obtain ⟨s, hs⟩ := exists_truncate_norm_sub_lt A f hε
+  refine ⟨truncate A s f, ?_, finite_support_truncate A s f⟩
+  rw [Metric.mem_ball, dist_comm]
+  simpa only [dist_eq_norm] using hs
+
+/-- The union of coordinate ranges, whose complex span is dense. -/
+def singleRanges [DecidableEq I] : Set (CStarC0Sum A) :=
+  ⋃ i : I, Set.range (single A i)
+
+/-- Every finite cutoff lies in the complex span of the coordinate ranges. -/
+theorem truncate_mem_span_singleRanges [DecidableEq I]
+    (s : Finset I) (f : CStarC0Sum A) :
+    truncate A s f ∈ Submodule.span ℂ (singleRanges A) := by
+  classical
+  rw [truncate_eq_sum_single]
+  apply Submodule.sum_mem
+  intro i hi
+  apply Submodule.subset_span
+  exact Set.mem_iUnion.mpr ⟨i, Set.mem_range_self (f i)⟩
+
+/-- The complex span, not merely the union of singles, is norm dense. -/
+theorem dense_span_singleRanges [DecidableEq I] :
+    Dense (Submodule.span ℂ (singleRanges A) : Set (CStarC0Sum A)) := by
+  classical
+  rw [Metric.dense_iff]
+  intro f ε hε
+  obtain ⟨s, hs⟩ := exists_truncate_norm_sub_lt A f hε
+  refine ⟨truncate A s f, ?_, truncate_mem_span_singleRanges A s f⟩
+  rw [Metric.mem_ball, dist_comm]
+  simpa only [dist_eq_norm] using hs
+
+section Separability
+
+variable [Countable I] [∀ i, SeparableSpace (A i)]
+
+/-- Countably many separable coordinate ranges form a separable set. -/
+theorem isSeparable_singleRanges [DecidableEq I] :
+    TopologicalSpace.IsSeparable (singleRanges A) := by
+  classical
+  apply TopologicalSpace.IsSeparable.iUnion
+  intro i
+  exact TopologicalSpace.isSeparable_range (map_continuous (single A i))
+
+/-- Output separability is derived from the actual dense complex span. -/
+noncomputable instance instSeparableSpace : SeparableSpace (CStarC0Sum A) := by
+  classical
+  exact (dense_span_singleRanges A).isSeparable_iff.mp
+    ((isSeparable_singleRanges A).span (R := ℂ))
+
+end Separability
+
+section FamilyMaps
+
+variable (B : I → Type uB) [∀ i, NonUnitalCStarAlgebra (B i)]
+
+/-- Component star homomorphisms give an actual map of completed coefficient sums. -/
+def map (φ : ∀ i, A i →⋆ₙₐ[ℂ] B i) :
+    CStarC0Sum A →⋆ₙₐ[ℂ] CStarC0Sum B where
+  toFun f := ofFunction B (fun i => φ i (f i))
+    ((vanishes A f).of_norm_le_const_mul (K := 1) zero_lt_one
+      (fun i => by simpa using NonUnitalStarAlgHom.norm_apply_le (φ i) (f i)))
+  map_zero' := by ext i; simp
+  map_add' f g := by ext i; simp
+  map_mul' f g := by ext i; simp
+  map_star' f := by
+    apply ext
+    intro i
+    change φ i (star (f i)) = star (φ i (f i))
+    exact map_star (φ i) (f i)
+  map_smul' c f := by ext i; simp
+
+/-- The family map has the literal pointwise action. -/
+@[simp]
+theorem map_apply (φ : ∀ i, A i →⋆ₙₐ[ℂ] B i) (f : CStarC0Sum A) (i : I) :
+    map A B φ f i = φ i (f i) := rfl
+
+/-- No extra uniform norm assumption is needed for component C-star maps. -/
+theorem norm_map_le (φ : ∀ i, A i →⋆ₙₐ[ℂ] B i) (f : CStarC0Sum A) :
+    ‖map A B φ f‖ ≤ ‖f‖ :=
+  NonUnitalStarAlgHom.norm_apply_le (map A B φ) f
+
+/-- Evaluation after a family map is the actual component homomorphism. -/
+theorem eval_comp_map (φ : ∀ i, A i →⋆ₙₐ[ℂ] B i) (i : I) :
+    (eval B i).comp (map A B φ) = (φ i).comp (eval A i) := by
+  ext f
+  rfl
+
+/-- The identity component family gives the identity on the same carrier. -/
+theorem map_id :
+    map A A (fun i => NonUnitalStarAlgHom.id ℂ (A i)) =
+      NonUnitalStarAlgHom.id ℂ (CStarC0Sum A) := by
+  ext f i
+  rfl
+
+variable (C : I → Type uC) [∀ i, NonUnitalCStarAlgebra (C i)]
+
+/-- Pointwise composition is composition of the actual family maps. -/
+theorem map_comp (φ : ∀ i, A i →⋆ₙₐ[ℂ] B i) (ψ : ∀ i, B i →⋆ₙₐ[ℂ] C i) :
+    map A C (fun i => (ψ i).comp (φ i)) =
+      (map B C ψ).comp (map A B φ) := by
+  ext f i
+  rfl
+
+end FamilyMaps
+
+end CStarC0Sum

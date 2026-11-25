@@ -130,3 +130,5 @@
 - [A template with unequal LD scores has individuals and markers](pos-of-sxy-ld-score.md)
 - [Vanishing estimator variance along the replicated designs](tendsto-variance-ols-h2-hat-replicate.md)
 - [Consistency of LD-score regression along the replicated designs](tendsto-in-measure-ols-h2-hat-replicate.md)
+
+- [Residual stratification produces covariance between a polygenic score and ancestry](residual-stratification-produces-prs-ancestry-co.md)
