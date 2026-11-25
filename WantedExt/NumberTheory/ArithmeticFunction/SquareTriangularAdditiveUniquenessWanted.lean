@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Complex.Basic
 public import Mathlib.NumberTheory.ArithmeticFunction.Defs
 public import MathlibExt.NumberTheory.ArithmeticFunction.SquareTriangularAdditiveUniqueness
+public import MathlibExt.NumberTheory.ArithmeticFunction.SquareTriangularOddPowers
 public import MathlibExt.NumberTheory.ArithmeticFunction.SquareTriangularSmallSquares
 
 /-!
@@ -29,23 +30,6 @@ namespace MetaMathlibExt
 @[expose] public section
 
 open ArithmeticFunction
-
-/-- **Square–triangular additivity fixes odd powers of two.** Let $t_v = v(v + 1)/2$ denote the
-$v$-th triangular number, and let $f$ be a complex-valued multiplicative arithmetic function
-with $f(u^2 + t_v) = f(u^2) + f(t_v)$ for all positive integers $u$ and $v$. Let $N \ge 4$ be an
-integer such that $f(n) = n$ for every integer $n$ with $1 \le n \le N - 1$. Then
-$f(2^{2k-1}) = 2^{2k-1}$ for every positive integer $k$ with $2k \le N - 2$.
-
-Source: Mingyu Kim and Poo-Sung Park, *An Additive Uniqueness Pair of Sets for
-Multiplicative Functions: Squares and Triangular Numbers*, INTEGERS 26 (2026), Article A103,
-Lemma 3 (`integers-2026-A103-lem-3`). -/
-public theorem_wanted multiplicative_sq_triangular_additive_two_pow_odd
-    (f : ArithmeticFunction ℂ) (hf : f.IsMultiplicative)
-    (hadd : ∀ u v : ℕ, 0 < u → 0 < v →
-      f (u ^ 2 + v * (v + 1) / 2) = f (u ^ 2) + f (v * (v + 1) / 2))
-    (N : ℕ) (hN : 4 ≤ N) (hlt : ∀ n : ℕ, 1 ≤ n → n ≤ N - 1 → f n = n)
-    (k : ℕ) (hk : 0 < k) (hkN : 2 * k ≤ N - 2) :
-    f (2 ^ (2 * k - 1)) = 2 ^ (2 * k - 1)
 
 /-- **Squares and triangular numbers are an additive uniqueness pair.** Let $t_v = v(v + 1)/2$
 denote the $v$-th triangular number. If $f$ is a complex-valued multiplicative arithmetic
