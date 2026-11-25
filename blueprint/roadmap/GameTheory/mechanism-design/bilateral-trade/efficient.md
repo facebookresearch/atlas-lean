@@ -1,4 +1,6 @@
 # Efficient
 
-Ex-post efficiency for reports in `[0, 1]`: trade occurs if and only if the
-reported buyer value exceeds the reported seller cost.
+Ex-post efficiency for reports in `[0, 1]`: trade is required when the
+reported buyer value strictly exceeds the reported seller cost, and forbidden
+when it is strictly below it. At equality both outcomes maximize welfare, so the
+allocation is unconstrained there.
