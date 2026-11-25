@@ -13,6 +13,12 @@ The expansion law is a schema with infinitely many instances, and this is unavoi
 
 - [Choice preserves strong bisimilarity in CCS with communication](../calculus-of-communicating-systems/communication-choice-congr.md)
 
+## Expansion
+
+This page becomes ready once:
+
+- The exact axiom schemas for restriction and relabelling over $\mathbf{0}$, prefixes and choice, and the expansion law for parallel composition, stated as in Milner's table of equational laws (statement prerequisite; not yet stated)
+
 ## Sources
 
 - L. Aceto, A. Ingólfsdóttir, B. Luttik and P. van Tilburg, "Finite equational bases for fragments of CCS with restriction and relabelling", *Fifth IFIP International Conference on Theoretical Computer Science (TCS 2008)*, Springer, 2008, <https://luttik.win.tue.nl/Papers/CCSresrel.pdf>, Section 1 (Hennessy and Milner's ground-complete axiomatization of CCS modulo bisimilarity, its necessary infiniteness by Moller's result, and finite axiomatizations with auxiliary operators) and Table 2.2 (the axioms for choice, restriction and relabelling).

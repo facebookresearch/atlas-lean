@@ -9503,7 +9503,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/process-calculi/session-types/classical-processes/classical-processes-and-preservation.md"}], "id": "af_c9507e322b0205b724326275", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/process-calculi/session-types/classical-processes/deadlock-freedom-of-classical-processes.md"}], "id": "af_958099b7b6bd560c50f92538", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/normalization-and-logical-relations/README.md"}], "id": "af_fd86dd3643b58ea3892999bb"}
-{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/normalization-and-logical-relations/system-f-in-church-style.md"}], "id": "af_9b533ef2bd4bb77fe38a2735"}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/normalization-and-logical-relations/system-f-in-church-style.md"}], "id": "af_9b533ef2bd4bb77fe38a2735", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/normalization-and-logical-relations/girard-s-reducibility-candidates.md"}], "id": "af_c67eecc2cc08b0a3387fa7d0", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/normalization-and-logical-relations/strong-normalization-of-system-f.md"}], "id": "af_dda3feab02b4ac0d1c2a6e70", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/type-soundness/structural-lemmas-for-typing-judgments.md"}], "id": "af_f4019d4c3006775abb5502af", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
@@ -9597,7 +9597,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/advanced-type-systems/pure-type-systems-and-the-calculus-of.md"}], "id": "af_906a34ee22cbbbe90f96487c", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/calculus-of-constructions/consistency-of-the-calculus-of-constructions.md"}], "id": "af_8a15f8002314dff8db2cbc26", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/type-systems-and-lambda-calculi/type-soundness/the-curryhoward-correspondence-for.md"}], "id": "af_501a3ba7d384c4bb3cfd852a", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
-{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/process-calculi/process-algebra-laws/complete-axiomatization-of-strong-bisimilarity.md"}], "id": "af_58741843a6a611271cd67fc5", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/process-calculi/process-algebra-laws/complete-axiomatization-of-strong-bisimilarity.md"}], "id": "af_58741843a6a611271cd67fc5", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/process-calculi/process-algebra-laws/harmony-lemma-for-the-pi-calculus.md"}], "id": "af_acd31c51bcf5020506c3c278", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/programming-language-semantics/effects-modules-and-logic-programming/least-herbrand-model-of-a-definite-logic-program.md"}], "id": "af_fa306f3b2db386a0e30f738f", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/programming-language-semantics/effects-modules-and-logic-programming/sld-resolution.md"}], "id": "af_6748f773944049d225b398cc", "extensions": {"org.atlas-wiki": {"kind": "def"}}}
@@ -10037,3 +10037,11 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/approximation-algorithms/list-scheduling-on-identical-machines/list-scheduling-with-rounded-processing-times.md"}], "id": "af_60e6c832a6e4ef710a5d4047", "extensions": {"org.atlas-wiki": {"kind": "theorem"}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/approximation-algorithms/resource-constrained-scheduling/event-time-checks-for-resource-feasibility.md"}], "id": "af_7f429eca61e068700b9784a3", "extensions": {"org.atlas-wiki": {"kind": "theorem"}, "org.autoform": {"not_ready": true}}}
 {"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/approximation-algorithms/resource-constrained-scheduling/README.md"}], "id": "af_376145f147733f33b781681d"}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/computer-systems/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/computer-systems/memory-models-and-coherence/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/computer-systems/os-resource-management/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/concurrent-systems-and-protocols/routing-protocols/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/process-calculi/process-algebra-laws/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/programming-language-semantics/domain-theoretic-models/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/programming-language-semantics/garbage-collection/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/ComputerScience/programming-language-semantics/intermediate-representations/README.md"}]}
