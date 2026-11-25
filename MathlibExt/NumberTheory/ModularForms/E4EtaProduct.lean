@@ -33,11 +33,11 @@ public import Mathlib.NumberTheory.ModularForms.Discriminant
 public import Mathlib.NumberTheory.ModularForms.EisensteinSeries.QExpansion
 public import Mathlib.RingTheory.PowerSeries.PiTopology
 public import Mathlib.RingTheory.PowerSeries.Expand
-public import MathlibExt.GroupTheory.CyclicSubgroupsZModSquare
 public import MathlibExt.NumberTheory.ModularForms.JCoefficientBound
 public import MathlibExt.NumberTheory.ModularForms.QParamProduct
 public import MathlibExt.NumberTheory.ModularForms.SturmBoundGamma0
 
+import MathlibExt.NumberTheory.ModularForms.Gamma0Index
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
 import Mathlib.NumberTheory.ModularForms.NormTrace
 
@@ -240,25 +240,6 @@ end DegeneracyPort
 end ModularForm
 
 namespace ModularCurve
-private def borel (R : Type*) [CommRing R] : Subgroup SL(2, R) where
-  carrier := { M | M.1 1 0 = 0 }
-  one_mem' := by simp
-  mul_mem' := by
-    intro A B hA hB
-    show (A * B).1 1 0 = 0
-    rw [Matrix.SpecialLinearGroup.coe_mul, (Matrix.two_mul_expl A.1 B.1).2.2.1, hA, hB]
-    ring
-  inv_mem' := by
-    intro A hA
-    show (A⁻¹).1 1 0 = 0
-    have h : (A⁻¹).1 = !![A.1 1 1, -A.1 0 1; -A.1 1 0, A.1 0 0] :=
-      congrArg Subtype.val (Matrix.SpecialLinearGroup.SL2_inv_expl A)
-    rw [h]
-    exact neg_eq_zero.mpr hA
-
-private theorem mem_borel_iff {R : Type*} [CommRing R] {A : SL(2, R)} :
-    A ∈ borel R ↔ A.1 1 0 = 0 :=
-  Iff.rfl
 
 section ArithmeticLemmas
 
@@ -391,94 +372,6 @@ private theorem sl2_surj (N : ℕ) [NeZero N] :
     simpa [Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply]
       using ‹_›
 
-section QuotientBorel
-variable {R : Type*} [CommRing R]
-
-private theorem isUnimodularRow_firstCol (A : SL(2, R)) :
-    IsUnimodularRow (A.1 0 0) (A.1 1 0) := by
-  refine ⟨A.1 1 1, -A.1 0 1, ?_⟩
-  have hdet : A.1 0 0 * A.1 1 1 - A.1 0 1 * A.1 1 0 = 1 := by
-    have h := A.2; rwa [Matrix.det_fin_two] at h
-  linear_combination hdet
-
-private def firstColumnClass (A : SL(2, R)) : ProjectiveLine R :=
-  ⟦⟨(A.1 0 0, A.1 1 0), isUnimodularRow_firstCol A⟩⟧
-
-private theorem firstColumnClass_eq_iff (A B : SL(2, R)) :
-    firstColumnClass A = firstColumnClass B ↔ A⁻¹ * B ∈ borel R := by
-  constructor
-  · intro hAB
-    obtain ⟨u, h1, h2⟩ := Quotient.exact hAB
-    have h1' : (u : R) * A.1 0 0 = B.1 0 0 := h1
-    have h2' : (u : R) * A.1 1 0 = B.1 1 0 := h2
-    show (A⁻¹ * B).1 1 0 = 0
-    have hinv : (A⁻¹).1 = !![A.1 1 1, -A.1 0 1; -A.1 1 0, A.1 0 0] :=
-      congrArg Subtype.val (Matrix.SpecialLinearGroup.SL2_inv_expl A)
-    have e10 : (A⁻¹).1 1 0 = -A.1 1 0 := by simp [hinv]
-    have e11 : (A⁻¹).1 1 1 = A.1 0 0 := by simp [hinv]
-    have hentry : (A⁻¹ * B).1 1 0 = -A.1 1 0 * B.1 0 0 + A.1 0 0 * B.1 1 0 := by
-      rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two, e10, e11]
-    rw [hentry, ← h1', ← h2']; ring
-  · intro hAB
-    have hB : B = A * (A⁻¹ * B) := (mul_inv_cancel_left A B).symm
-    have hC10 : (A⁻¹ * B).1 1 0 = 0 := hAB
-    have hCdet : (A⁻¹ * B).1 0 0 * (A⁻¹ * B).1 1 1 = 1 := by
-      have h := (A⁻¹ * B).2; rw [Matrix.det_fin_two, hC10] at h; linear_combination h
-    have hB00 : B.1 0 0 = A.1 0 0 * (A⁻¹ * B).1 0 0 + A.1 0 1 * (A⁻¹ * B).1 1 0 := by
-      conv_lhs => rw [hB, Matrix.SpecialLinearGroup.coe_mul]
-      exact (Matrix.two_mul_expl A.1 (A⁻¹ * B).1).1
-    have hB10 : B.1 1 0 = A.1 1 0 * (A⁻¹ * B).1 0 0 + A.1 1 1 * (A⁻¹ * B).1 1 0 := by
-      conv_lhs => rw [hB, Matrix.SpecialLinearGroup.coe_mul]
-      exact (Matrix.two_mul_expl A.1 (A⁻¹ * B).1).2.2.1
-    refine Quotient.sound ⟨⟨(A⁻¹ * B).1 0 0, (A⁻¹ * B).1 1 1, hCdet,
-      (mul_comm _ _).trans hCdet⟩, ?_, ?_⟩
-    · show (A⁻¹ * B).1 0 0 * A.1 0 0 = B.1 0 0; rw [hB00, hC10]; ring
-    · show (A⁻¹ * B).1 0 0 * A.1 1 0 = B.1 1 0; rw [hB10, hC10]; ring
-
-private theorem card_quotient_borel (R : Type*) [CommRing R] :
-    Nat.card (SL(2, R) ⧸ borel R) = Nat.card (ProjectiveLine R) := by
-  have hwd : ∀ A B : SL(2, R), QuotientGroup.leftRel (borel R) A B →
-      firstColumnClass A = firstColumnClass B := by
-    intro A B hAB
-    rw [QuotientGroup.leftRel_apply] at hAB
-    exact (firstColumnClass_eq_iff A B).mpr hAB
-  refine Nat.card_eq_of_bijective (fun q => Quotient.liftOn' q firstColumnClass hwd) ⟨?_, ?_⟩
-  · intro q q'
-    refine Quotient.inductionOn₂' q q' ?_
-    intro A B hAB
-    have hAB' : firstColumnClass A = firstColumnClass B := hAB
-    exact (QuotientGroup.eq).mpr ((firstColumnClass_eq_iff A B).mp hAB')
-  · intro q
-    obtain ⟨v, rfl⟩ := Quotient.exists_rep q
-    obtain ⟨x, y, hxy⟩ := v.2
-    refine ⟨QuotientGroup.mk ⟨!![v.1.1, -y; v.1.2, x], by
-      rw [Matrix.det_fin_two_of]; linear_combination hxy⟩, ?_⟩
-    show firstColumnClass _ = ⟦v⟧
-    refine Quotient.sound ⟨1, ?_, ?_⟩
-    · show (1 : R) * !![v.1.1, -y; v.1.2, x] 0 0 = v.1.1; simp
-    · show (1 : R) * !![v.1.1, -y; v.1.2, x] 1 0 = v.1.2; simp
-
-end QuotientBorel
-
-private theorem Gamma0_eq_comap_borel (N : ℕ) :
-    CongruenceSubgroup.Gamma0 N = (borel (ZMod N)).comap
-      (Matrix.SpecialLinearGroup.map (n := Fin 2) (Int.castRingHom (ZMod N))) := by
-  ext A
-  rw [CongruenceSubgroup.Gamma0_mem, Subgroup.mem_comap, mem_borel_iff]
-  constructor
-  · intro hA
-    show (Int.castRingHom (ZMod N)).mapMatrix A.1 1 0 = 0; simpa using hA
-  · intro hA
-    have hA' : (Int.castRingHom (ZMod N)).mapMatrix A.1 1 0 = 0 := hA; simpa using hA'
-
-set_option maxHeartbeats 800000 in
-private theorem gamma0_index (N : ℕ) [NeZero N] :
-    (CongruenceSubgroup.Gamma0 N).index = ArithmeticFunction.dedekindPsi N := by
-  have h1 : (CongruenceSubgroup.Gamma0 N).index = (borel (ZMod N)).index := by
-    rw [Gamma0_eq_comap_borel]
-    exact Subgroup.index_comap_of_surjective _ (sl2_surj N)
-  rw [h1, Subgroup.index_eq_card, card_quotient_borel,
-    card_projectiveLine_zmod N (NeZero.ne N)]
 namespace EtaQSeries
 
 open Filter Topology Polynomial
@@ -1440,7 +1333,7 @@ private theorem one_mem_strictPeriods_Gamma0 (N : ℕ) :
   exact AddSubgroup.mem_zmultiples 1
 
 private theorem index_Gamma0_four : (CongruenceSubgroup.Gamma0 4).index = 6 := by
-  rw [gamma0_index, show (4 : ℕ) = 2 ^ 2 by norm_num,
+  rw [ModularCurve.Gamma0_index, show (4 : ℕ) = 2 ^ 2 by norm_num,
     ArithmeticFunction.dedekindPsi_prime_pow (p := 2) (k := 2) Nat.prime_two (by norm_num)]
   norm_num
 
