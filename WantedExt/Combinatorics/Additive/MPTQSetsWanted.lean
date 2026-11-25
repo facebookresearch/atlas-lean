@@ -12,6 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Defs
 public import Mathlib.RingTheory.Coprime.Basic
 public import MathlibExt.Combinatorics.Additive.MPTQSets
+public import MathlibExt.Combinatorics.Additive.MPTQSetsSmall
 public import WantedExt.Combinatorics.Additive.UnionTwoAPNotMSTDWanted
 
 /-!
@@ -56,14 +57,6 @@ Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ S
 INTEGERS 24 (2024), Article A96, Theorem 2 (`integers-2024-A96-thm-2`). -/
 public theorem_wanted eight_le_card_of_isMPTQSet_of_pos {A : Finset ℝ} (hA : IsMPTQSet A)
     (hpos : ∀ a ∈ A, 0 < a) : 8 ≤ A.card
-
-/-- **Chu's bound for MPTQ sets with a negative element.** Every MPTQ set of real numbers that
-contains a negative number has at least $5$ elements.
-
-Source: Anupriya Shetty and B. R. Shankar, *On The Minimum Cardinality of MPTQ Sets*,
-INTEGERS 24 (2024), Article A96, Theorem 2 (`integers-2024-A96-thm-2`). -/
-public theorem_wanted five_le_card_of_isMPTQSet_of_neg {A : Finset ℝ} (hA : IsMPTQSet A)
-    (hneg : ∃ a ∈ A, a < 0) : 5 ≤ A.card
 
 /-- **Five-element sets with one negative element are not MPTQ sets.** If $A$ is a set of five
 real numbers exactly one of which is negative, then $A$ is not an MPTQ set.
