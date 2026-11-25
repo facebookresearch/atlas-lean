@@ -29,6 +29,20 @@ import Mathlib.Tactic.Ring
 
 The affine group of the plane over `ZMod 3` has a `2`-block of defect zero, while every element in
 its largest normal subgroup of odd order has even centralizer order.
+
+## Record carried over from the retired `WantedExt/GroupTheory/DefectZeroBlockCentralizerKourovka12Problem26Wanted.lean`
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.26 (Shi
+Shengming; Jiping Zhang). UnsolvedMath record UM-00700845 (`KOU-12.26`), dataset ulamai/UnsolvedMath
+v1.8.0.
+
+A `p`-block of defect zero is encoded by its unique irreducible complex character `χ`, which is
+characterized by `|G|ₚ ∣ χ(1)` (Brauer): `G` has one exactly when some irreducible complex
+representation has degree divisible by `p^{vₚ(|G|)}`. `O_{p'}(G)` is the largest normal subgroup of
+order prime to `p`, so `x ∈ O_{p'}(G)` is stated as `x ∈ N` for some normal subgroup `N` of order
+prime to `p`. `p`-soluble means a subnormal series whose factors are `p`-groups or have order prime
+to `p`.
 -/
 
 namespace MathlibExt.GroupTheory.DefectZeroBlockCentralizerKourovka12Problem26Wanted

@@ -21,6 +21,17 @@ As in Staiger's formulation, the words representing the almost palindromes may b
 We count signed transitions between adjacent letters after free reduction. Reversal negates
 the count, and multiplication has defect at most three. Thus each letter change in a palindrome
 has bounded effect, while the count grows linearly on powers of the commutator.
+
+## Record carried over from the retired `WantedExt/GroupTheory/AlmostPalindromicWidthKourovka19Problem8Wanted.lean`
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 19.8 (V. G. Bardakov). UnsolvedMath record
+UM-00701556 (`KOU-19.8`), dataset ulamai/UnsolvedMath v1.8.0.
+
+Words are lists of letters `(i, b)` (`i : Fin 2`, `b = false` for an inverse letter), not
+necessarily reduced, as in Staiger's paper, and represent elements via `FreeGroup.mk`. Allowing
+unreduced words gives more almost palindromes than reduced words do, so the refutation also covers
+the reduced reading.
 -/
 
 @[expose] public section

@@ -29,6 +29,17 @@ by Ya. G. Berkovich.
 Following Brescia, Ingrosso and Trombetti, we factor the characters through the conjugacy
 classes of cyclic subgroups. In a noncyclic group these omit the class of the whole group.
 The dimension bound works directly over the rationals since the characters count fixed cosets.
+
+## Record carried over from the retired `WantedExt/GroupTheory/PermutationCharactersIndependentKourovka11Problem9Wanted.lean`
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 11.9 (Ya. G. Berkovich). UnsolvedMath
+record UM-00700702 (`KOU-11.9`), dataset ulamai/UnsolvedMath v1.8.0.
+
+The induced character `1_H^G` is the permutation character of `G` on the left cosets of `H`, `g ↦
+#{xH : g x H = x H}`, as a `ℚ`-valued function (linear independence of integer-valued functions over
+`ℚ` and over `ℂ` agree). The family is indexed by the conjugacy classes of subgroups (orbits of
+`ConjAct G` on `Subgroup G`), choosing a representative of each.
 -/
 
 @[expose] public section

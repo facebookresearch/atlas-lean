@@ -26,6 +26,16 @@ import Mathlib.Order.Interval.Finset.Nat
 Every subgroup of the permutations of the naturals isomorphic to the additive rationals contains
 an element with infinitely many distinct integer displacements (Kourovka Notebook, Problem 20.98).
 The proof counts orbit points of the permutation corresponding to `1 / r` for large `r`.
+
+## Record carried over from the retired `WantedExt/GroupTheory/RationalPermutationGroupDisplacementKourovka20Problem98Wanted.lean`
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 20.98 (N. M. Suchkov). UnsolvedMath record
+UM-00701756 (`KOU-20.98`), dataset ulamai/UnsolvedMath v1.8.0.
+
+Permutations act on Lean's `ℕ` (from `0`); shifting by one does not change the differences. The
+Notebook's `ag` is the image of `a` under `g`, written `g a`; the differences are taken in `ℤ`. The
+additive group of `ℚ` is `Multiplicative ℚ`.
 -/
 
 @[expose] public section
