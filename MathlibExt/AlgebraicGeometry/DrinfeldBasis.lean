@@ -37,7 +37,7 @@ public import Mathlib.AlgebraicGeometry.Morphisms.ClosedImmersion
 public import Mathlib.AlgebraicGeometry.Morphisms.RingHomProperties
 public import Mathlib.AlgebraicGeometry.Morphisms.Separated
 public import Mathlib.AlgebraicGeometry.Pullbacks
-public import MathlibExt.AlgebraicGeometry.RelativeGroupLaw
+public import MathlibExt.AlgebraicGeometry.RelativeGroupLawEndDegree
 
 @[expose] public section
 
@@ -113,59 +113,6 @@ namespace RelativeGroupLaw
 
 variable {R : Type u} [CommRing R] {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
 
-/-- Repeated multiplication of a point of a relative group law. -/
-def nsmul (G : RelativeGroupLaw R f) {T : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) (n : ℕ) (x : Over.mk t ⟶ Over.mk f) :
-    Over.mk t ⟶ Over.mk f :=
-  Nat.rec (G.one t) (fun _ ih => G.mul t ih x) n
-
-@[simp]
-theorem nsmul_zero (G : RelativeGroupLaw R f) {T : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) (x : Over.mk t ⟶ Over.mk f) :
-    G.nsmul t 0 x = G.one t :=
-  rfl
-
-@[simp]
-theorem nsmul_succ (G : RelativeGroupLaw R f) {T : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) (n : ℕ) (x : Over.mk t ⟶ Over.mk f) :
-    G.nsmul t (n + 1) x = G.mul t (G.nsmul t n x) x :=
-  rfl
-
-theorem nsmul_one_apply (G : RelativeGroupLaw R f) {T : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) (x : Over.mk t ⟶ Over.mk f) :
-    G.nsmul t 1 x = x := by
-  change G.mul t (G.one t) x = x
-  exact G.one_mul t x
-
-theorem nsmul_unit (G : RelativeGroupLaw R f) {T : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) (n : ℕ) :
-    G.nsmul t n (G.one t) = G.one t := by
-  induction n with
-  | zero => rfl
-  | succ n ih => rw [nsmul_succ, ih, G.mul_one]
-
-theorem nsmul_natural (G : RelativeGroupLaw R f) {T T' : Scheme.{u}}
-    (t : T ⟶ Spec (CommRingCat.of R)) (t' : T' ⟶ Spec (CommRingCat.of R))
-    (ψ : T' ⟶ T) (hψ : ψ ≫ t = t') (n : ℕ) (x : Over.mk t ⟶ Over.mk f) :
-    Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ G.nsmul t n x =
-      G.nsmul t' n
-        (Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ x) := by
-  induction n with
-  | zero => exact G.one_natural t t' ψ hψ
-  | succ n ih =>
-      calc Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫
-            G.nsmul t (n + 1) x
-          = Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫
-              G.mul t (G.nsmul t n x) x := rfl
-        _ = G.mul t'
-              (Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫
-                G.nsmul t n x)
-              (Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ x) :=
-            G.mul_natural t t' ψ hψ _ _
-        _ = G.nsmul t' (n + 1)
-              (Over.homMk (U := Over.mk t') (V := Over.mk t) ψ hψ ≫ x) := by
-            rw [ih]; rfl
-
 /-- A point is torsion of order dividing `n` for a relative group law. -/
 def IsTorsionPoint (G : RelativeGroupLaw R f) {T : Scheme.{u}}
     (t : T ⟶ Spec (CommRingCat.of R)) (n : ℕ) (x : Over.mk t ⟶ Over.mk f) :
@@ -176,24 +123,6 @@ theorem isTorsionPoint_def (G : RelativeGroupLaw R f) {T : Scheme.{u}}
     (t : T ⟶ Spec (CommRingCat.of R)) (n : ℕ) (x : Over.mk t ⟶ Over.mk f) :
     G.IsTorsionPoint t n x ↔ G.nsmul t n x = G.one t :=
   Iff.rfl
-
-/-- The scheme-level multiplication-by-`n` morphism of a relative group
-law. -/
-noncomputable def schemeNsmul (G : RelativeGroupLaw R f) (n : ℕ) : A ⟶ A :=
-  (G.nsmul f n (𝟙 (Over.mk f))).left
-
-theorem schemeNsmul_over (G : RelativeGroupLaw R f) (n : ℕ) :
-    G.schemeNsmul n ≫ f = f :=
-  Over.w (G.nsmul f n (𝟙 (Over.mk f)))
-
-/-- The scheme-theoretic kernel of multiplication by `n`. -/
-noncomputable abbrev schemeKer (G : RelativeGroupLaw R f) (n : ℕ) : Scheme.{u} :=
-  pullback (G.schemeNsmul n) (G.one (𝟙 (Spec (CommRingCat.of R)))).left
-
-/-- The structure morphism of the kernel of multiplication by `n`. -/
-noncomputable abbrev schemeKerStr (G : RelativeGroupLaw R f) (n : ℕ) :
-    G.schemeKer n ⟶ Spec (CommRingCat.of R) :=
-  pullback.snd (G.schemeNsmul n) (G.one (𝟙 (Spec (CommRingCat.of R)))).left
 
 end RelativeGroupLaw
 
@@ -236,20 +165,32 @@ noncomputable def torsionIdeal (q : ℕ) :
   (pullback.fst (G.schemeNsmul q)
     (G.one (𝟙 (Spec (CommRingCat.of R)))).left ≫ toPullbackId (f := f)).ker
 
-/-- Two sections form a Drinfeld basis at level `q` when their basis
-divisor is the torsion ideal. -/
-def IsDrinfeldBasis (q : ℕ) (P Q : Section f) : Prop :=
-  DrinfeldGlobal.basisDivisor G q P Q = DrinfeldGlobal.torsionIdeal G q
+/-- Two sections form a Drinfeld basis at level `q` when the level is
+positive, both sections are `q`-torsion, and their basis divisor is the
+torsion ideal. -/
+structure IsDrinfeldBasis (q : ℕ) (P Q : Section f) : Prop where
+  /-- The level is positive. -/
+  level_pos : 0 < q
+  /-- The first section is `q`-torsion. -/
+  isTorsionPoint_fst : G.IsTorsionPoint (𝟙 (Spec (CommRingCat.of R))) q P
+  /-- The second section is `q`-torsion. -/
+  isTorsionPoint_snd : G.IsTorsionPoint (𝟙 (Spec (CommRingCat.of R))) q Q
+  /-- The basis divisor is the torsion ideal. -/
+  basisDivisor_eq : DrinfeldGlobal.basisDivisor G q P Q = DrinfeldGlobal.torsionIdeal G q
 
 theorem isDrinfeldBasis_iff (q : ℕ) (P Q : Section f) :
     DrinfeldGlobal.IsDrinfeldBasis G q P Q ↔
-      DrinfeldGlobal.basisDivisor G q P Q = DrinfeldGlobal.torsionIdeal G q :=
-  Iff.rfl
+      0 < q ∧ G.IsTorsionPoint (𝟙 (Spec (CommRingCat.of R))) q P ∧
+        G.IsTorsionPoint (𝟙 (Spec (CommRingCat.of R))) q Q ∧
+        DrinfeldGlobal.basisDivisor G q P Q = DrinfeldGlobal.torsionIdeal G q :=
+  ⟨fun h => ⟨h.level_pos, h.isTorsionPoint_fst, h.isTorsionPoint_snd, h.basisDivisor_eq⟩,
+    fun ⟨hq, hP, hQ, h⟩ => ⟨hq, hP, hQ, h⟩⟩
 
 /-- The torsion subscheme is flat over the base whenever the scheme
 kernel of multiplication by `n` is flat over the base. -/
 theorem flat_torsionIdeal_subschemeIota_comp_snd_of_flat_schemeKerStr
-    [IsSeparated f] (n : ℕ) (h : Flat (G.schemeKerStr n)) :
+    [IsSeparated f] (n : ℕ)
+    (h : Flat (pullback.snd (G.schemeNsmul n) (G.one (𝟙 (Spec (CommRingCat.of R)))).left)) :
     Flat ((DrinfeldGlobal.torsionIdeal G n).subschemeι ≫
       pullback.snd f (𝟙 (Spec (CommRingCat.of R)))) := by
   have hone : (G.one (𝟙 (Spec (CommRingCat.of R)))).left ≫ f =
@@ -279,7 +220,7 @@ theorem flat_torsionIdeal_subschemeIota_comp_snd_of_flat_schemeKerStr
   have hstr : (pullback.fst (G.schemeNsmul n)
         (G.one (𝟙 (Spec (CommRingCat.of R)))).left ≫ toPullbackId (f := f)) ≫
         pullback.snd f (𝟙 (Spec (CommRingCat.of R))) =
-      G.schemeKerStr n := by
+      pullback.snd (G.schemeNsmul n) (G.one (𝟙 (Spec (CommRingCat.of R)))).left := by
     rw [Category.assoc,
       show toPullbackId (f := f) ≫ pullback.snd f (𝟙 (Spec (CommRingCat.of R))) = f from
         pullback.lift_snd _ _ _]
@@ -287,7 +228,7 @@ theorem flat_torsionIdeal_subschemeIota_comp_snd_of_flat_schemeKerStr
           (G.one (𝟙 (Spec (CommRingCat.of R)))).left ≫ f
         = pullback.fst (G.schemeNsmul n)
             (G.one (𝟙 (Spec (CommRingCat.of R)))).left ≫
-            (G.schemeNsmul n ≫ f) := by rw [G.schemeNsmul_over n]
+            (G.schemeNsmul n ≫ f) := by rw [G.schemeNsmul_comp n]
       _ = pullback.snd (G.schemeNsmul n)
             (G.one (𝟙 (Spec (CommRingCat.of R)))).left ≫
             (G.one (𝟙 (Spec (CommRingCat.of R)))).left ≫ f := by
