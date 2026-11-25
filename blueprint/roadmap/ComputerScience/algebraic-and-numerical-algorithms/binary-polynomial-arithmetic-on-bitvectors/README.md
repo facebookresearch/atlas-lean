@@ -5,6 +5,7 @@
 - [Bitvector of the low coefficients of a binary polynomial](to-bit-vec.md)
 - [Binary polynomial of a bitvector](to-polynomial.md)
 - [Coefficients of the binary polynomial of a bitvector](coeff-to-polynomial.md)
+- [Degree bound on the binary polynomial of a bitvector](degree-to-polynomial-lt.md)
 - [Binary polynomial of the zero bitvector](to-polynomial-zero.md)
 - [Binary polynomial of the unit bitvector](to-polynomial-one.md)
 - [Bitvector encoding recovers the original word](to-bit-vec-to-polynomial.md)
@@ -30,4 +31,3 @@
 - [Modular multiplication by $X$ matches the quotient root](adjoin-root-equiv-mul-xmod.md)
 - [Modular multiplication matches the polynomial quotient](adjoin-root-equiv-mul-mod.md)
 - [Modular powering matches the polynomial quotient](adjoin-root-equiv-pow-mod.md)
-- [Degree bound on the binary polynomial of a bitvector](degree-to-polynomial-lt.md)

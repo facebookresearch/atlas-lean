@@ -22,7 +22,6 @@
 - [Message polynomial of concatenated bit sequences](message-poly-append.md)
 - [Message polynomial of an all-zero bit sequence](message-poly-replicate-false.md)
 - [Polynomial long-division step for the unreflected serial register](to-polynomial-step-register.md)
-- [Run invariant of the unreflected serial CRC register](to-polynomial-run-register.md)
 - [Appending zero bits shifts the message polynomial](message-poly-append-zeros.md)
 - [Leading zero bits leave the message polynomial unchanged](message-poly-cons-false.md)
 - [Leading zero bits leave the final CRC register polynomial unchanged](final-register-cons-false.md)
