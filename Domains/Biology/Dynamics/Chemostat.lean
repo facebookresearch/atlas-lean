@@ -29,8 +29,9 @@ A state is a point `x : Fin 2 → ℝ` with biomass `x 0 = X` and substrate `x 1
 solutions on a set `I` of times are the integral curves `IsIntegralCurveOn x (fun _ ↦ v) I` of
 the autonomous field `v = vectorField μ D Sf y`, and the norm of `Fin 2 → ℝ` is the maximum norm
 on states. Monod's growth rate `μ(S) = μ_m S / (K_s + S)` has the form of the Michaelis–Menten
-rate law and is `mmRate μm Ks`; the substrate level `S*` at which it balances the dilution rate,
-`μ(S*) = D`, is the steady concentration `steadyConc μm Ks D` of saturable elimination.
+rate law and is `mmRate μm Ks`. For `μ_m, K_s > 0` and `D < μ_m`, the steady concentration
+`S* = steadyConc μm Ks D` of saturable elimination satisfies `μ(S*) = D`, and any `S ≥ 0` with
+`μ(S) = D` equals `S*`.
 
 ## Main results
 
@@ -160,9 +161,9 @@ theorem substrateEquivalent_relaxation {μ : ℝ → ℝ} {D Sf y : ℝ} {I : Se
 `μ(S) = μm S / (Ks + S)`, dilution rate `D`, feed substrate concentration `Sf` and yield `y`, the
 state `(X*, S*)` with substrate `S* = D Ks / (μm - D)` and biomass `X* = y (Sf - S*)` (a quotient
 by `0` is `0`). The substrate level `S*` is the steady concentration `steadyConc μm Ks D` of
-saturable elimination at infusion rate `D`: for `μm, Ks > 0` and `D < μm` it is where growth
-balances dilution, `μ(S*) = D`, and the only such level `S ≥ 0`. For `μm, Ks, Sf, y > 0` and
-`0 < D < μ(Sf)` the state is a steady state in the closed quadrant `X, S ≥ 0`, with
+saturable elimination at infusion rate `D`: for `μm, Ks > 0` and `D < μm`, growth balances
+dilution there, `μ(S*) = D`, and any `S ≥ 0` with `μ(S) = D` equals `S*`. For `μm, Ks, Sf, y > 0`
+and `0 < D < μ(Sf)` the state is a steady state in the closed quadrant `X, S ≥ 0`, with
 `0 < S* < Sf` and `X* > 0`. -/
 noncomputable def interiorState (μm Ks D Sf y : ℝ) : Fin 2 → ℝ :=
   ![y * (Sf - steadyConc μm Ks D), steadyConc μm Ks D]
