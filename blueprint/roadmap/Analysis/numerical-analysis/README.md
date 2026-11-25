@@ -8,6 +8,7 @@ Algorithms with error analysis: bisection and Newton's method, Euler and Rungeâ€
 - [Bisection method](bisection-method/README.md)
 - [Conservative finite-volume schemes](conservative-finite-volume-schemes/README.md)
 - [CÃ©a's lemma](c-a-s-lemma/README.md)
+- [Error bounds for finite sums](error-bounds-for-finite-sums/README.md)
 - [Euler method](euler-method/README.md)
 - [Finite element method in one dimension](finite-element-method-in-one-dimension/README.md)
 - [Line search methods](line-search-methods/README.md)

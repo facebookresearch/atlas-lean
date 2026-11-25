@@ -12,4 +12,6 @@
 - [Signature of a path](../../rough-paths-and-path-signatures/signature-of-a-path/README.md):
   the iterated integrals of the driving path, whose first level (the increment) is what one Euler
   step of a controlled equation uses.
+- [Stability threshold of explicit Euler for the complex test equation](scalar-euler-complex-tendsto-zero-iff.md)
+- [Stability threshold of explicit Euler for real decay](scalar-euler-real-tendsto-zero-iff.md)
 - [Explicit Euler for an index-one linear descriptor system](explicit-euler-for-an-index-one-linear-descriptor-system.md)

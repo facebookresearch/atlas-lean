@@ -31,3 +31,48 @@ subsolutions, uniqueness on bounded domains, and the one-dimensional Cauchy prob
   of the Boltzmann entropy (Jordan, Kinderlehrer and Otto).
 - [Fokker–Planck equation](../../../Probability/stochastic-calculus/fokker-planck-equation/README.md):
   the drift–diffusion equation that reduces to the heat equation without drift.
+
+
+
+
+
+- [Uniqueness of the Gaussian heat solution in the exponential-growth class](eq-heat-solution-of-exp-growth.md)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- [The Gaussian heat solution has exponential growth on every strip](heat-solution-has-exp-growth-on-strip.md)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
