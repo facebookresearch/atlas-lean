@@ -78,11 +78,12 @@ vacuum wavenumber, `lam` the vacuum wavelength and `h` the thickness,
 with `δ` in radians. It is the physical retardation only for `h ≥ 0` and
 `lam > 0`, where `δ` is positive exactly when `h > 0` and mode 1 is the
 slow mode (`n₁ > n₂`). For other real arguments it is only an algebraic
-extension of the formula. -/
+extension of the formula; with the convention `x / 0 = 0` it is `0` when `lam = 0`. -/
 noncomputable def phaseRetardation (n₁ n₂ h lam : ℝ) : ℝ :=
   PhyslibExt.ClassicalMechanics.WaveEquation.WaveConventions.wavenumber lam * (n₁ - n₂) * h
 
-/-- The phase retardation is `δ = 2 * π * (n₁ - n₂) * h / lam`. -/
+/-- The phase retardation is `δ = 2 * π * (n₁ - n₂) * h / lam`, for all real arguments; with
+the convention `x / 0 = 0` both sides are `0` when `lam = 0`. -/
 lemma phaseRetardation_eq (n₁ n₂ h lam : ℝ) :
     phaseRetardation n₁ n₂ h lam = 2 * Real.pi * (n₁ - n₂) * h / lam := by
   unfold phaseRetardation PhyslibExt.ClassicalMechanics.WaveEquation.WaveConventions.wavenumber
@@ -90,12 +91,14 @@ lemma phaseRetardation_eq (n₁ n₂ h lam : ℝ) :
 
 /-! ## B. Vanishing retardation and a non-vacuous example -/
 
-/-- `δ = 0` when the thickness `h` is `0`. -/
+/-- `δ = 0` when the thickness `h` is `0`, for every real `lam` (at `lam = 0` the factor
+`2 * π / lam` is `0` by the convention `x / 0 = 0`). -/
 theorem phaseRetardation_zero_thickness (n₁ n₂ lam : ℝ) :
     phaseRetardation n₁ n₂ 0 lam = 0 := by
   simp [phaseRetardation]
 
-/-- `δ = 0` when the two principal indices coincide (`n₁ = n₂`). -/
+/-- `δ = 0` when the two principal indices coincide (`n₁ = n₂`), for every real `h` and `lam`
+(at `lam = 0` the factor `2 * π / lam` is `0` by the convention `x / 0 = 0`). -/
 theorem phaseRetardation_equal_indices (n h lam : ℝ) :
     phaseRetardation n n h lam = 0 := by
   simp [phaseRetardation]

@@ -1,0 +1,3 @@
+# Fast mixing of Glauber dynamics for the antiferromagnetic Ising model
+
+For a graph $G$ on $n$ vertices and $\beta > 0$, the zero-field antiferromagnetic Ising model gives a spin configuration $\sigma \in \{\pm1\}^n$ weight proportional to $\exp(-\beta\sum_{uv \in E}\sigma_u\sigma_v)$, and its Glauber (heat-bath) dynamics resamples the spin of a uniformly random vertex from its conditional law given the others. The claim (AimPL Markov chain mixing times, Problem 1.3) is that for $d \ge 3$ and $\beta > 0$ with $(d - 1)\tanh\beta < 1$ there is $C$ such that on every $d$-regular graph with $n$ vertices the Glauber dynamics is within total variation distance $1/4$ of the Gibbs measure from every start after $\lceil Cn\log n\rceil$ steps.

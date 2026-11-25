@@ -11,9 +11,10 @@ module
 import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Fib.Basic
 public import MathlibExt.Combinatorics.Enumerative.NarayanaSequence
-public import MathlibExt.NumberTheory.BinomialModTwoRunLength
+public import MathlibExt.NumberTheory.BinomialParitySum
 public import MathlibExt.NumberTheory.LucasSequence
 public import MathlibExt.NumberTheory.PadovanSequence
+public import MathlibExt.NumberTheory.RunLengthTransformLinearRecurrence
 
 /-!
 # Sums of products of binomial coefficients mod 2 as run length transforms
@@ -30,31 +31,6 @@ the product of `S(ℓ)` over the lengths `ℓ` of the maximal runs of `1`s in th
 namespace MetaMathlibExt
 
 @[expose] public section
-
-open Matrix
-
-/-- **Run length transform of a linear recurrence (Rampersad–Wiebe Theorem 1).** Let $r \ge 0$, let
-$d_0, \dots, d_r$ be integers, and let $S : \mathbb{N} \to \mathbb{Z}$ satisfy $S(0) = 1$ and
-$S(m + 1) = d_0 S(m) + d_1 S(m - 1) + \dots + d_r S(m - r)$ for all $m \ge r$. Let $T$ be the run
-length transform of $S$, let $v = (1, 0, \dots, 0)$ and $w = (S(0), \dots, S(r))^\top$, let
-$\gamma(0)$ be the $(r + 1) \times (r + 1)$ matrix with first column $w$ and zeros elsewhere, and
-let $\gamma(1)$ be the $(r + 1) \times (r + 1)$ companion matrix with ones on the superdiagonal,
-last row $(d_r, \dots, d_0)$ and zeros elsewhere. Then for every natural number $n$ with binary
-digits $b_1 b_2 \cdots b_t$, most significant first,
-$T(n) = v \, \gamma(b_1) \gamma(b_2) \cdots \gamma(b_t) \, w$, where for $n = 0$ the product of
-matrices is empty and equals the identity.
-
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
-2-Regular Sequences*, INTEGERS 24 (2024), Article A73, Theorem 1. -/
-public theorem_wanted runLengthTransform_linearRecurrence_eq_linearRep (r : ℕ)
-    (d : Fin (r + 1) → ℤ) (S : ℕ → ℤ) (hS0 : S 0 = 1)
-    (hrec : ∀ m, r ≤ m → S (m + 1) = ∑ i : Fin (r + 1), d i * S (m - i)) (n : ℕ) :
-    runLengthTransform S n = Pi.single 0 1 ⬝ᵥ
-      ((((Nat.digits 2 n).reverse.map fun b =>
-          if b = 0 then Matrix.of fun i j : Fin (r + 1) => if j = 0 then S i else 0
-          else Matrix.of fun i j : Fin (r + 1) =>
-            if (i : ℕ) < r then (if (j : ℕ) = i + 1 then 1 else 0) else d (Fin.rev j)).prod) *ᵥ
-        fun i => S i)
 
 /-- **Rampersad–Wiebe Theorem 2.** Let $(F_j)_{j \ge 0}$ be the Fibonacci numbers, $F_0 = 0$,
 $F_1 = 1$, and let $T$ be the run length transform of $S(i) = F_{i+1}$, i.e. of
@@ -79,17 +55,6 @@ Sequences*, INTEGERS 24 (2024), Article A73, Theorem 3. -/
 public theorem_wanted runLengthTransform_choose_three_mul_fib (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((3 * k).choose k * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform (fun i => (Nat.fib (i + 2) : ℤ)) n
-
-/-- **Rampersad–Wiebe Theorem 4.** Let $T$ be the run length transform of the sequence $S$ with
-$S(0) = 1$ and $S(i) = 2^{i-1}$ for $i \ge 1$, i.e. of $1, 1, 2, 4, 8, \dots$. Then for every
-natural number $n$, $\sum_{k=0}^{n} \left(\binom{n}{2k} \binom{n}{k} \bmod 2\right) = T(n)$.
-
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
-2-Regular
-Sequences*, INTEGERS 24 (2024), Article A73, Theorem 4. -/
-public theorem_wanted runLengthTransform_choose_two_mul_pow_two (n : ℕ) :
-    ((∑ k ∈ Finset.range (n + 1), (n.choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
-      runLengthTransform (fun i => if i = 0 then 1 else 2 ^ (i - 1)) n
 
 /-- **Sum of $\binom{n+2k}{2k}\binom{n}{k} \bmod 2$ as a run length transform.** For every
 natural number $n$, the sum $\sum_{k=0}^{n} \bigl(\binom{n+2k}{2k}\binom{n}{k} \bmod 2\bigr)$
@@ -241,21 +206,6 @@ public theorem_wanted runLengthTransform_choose_add_five_mul_two_mul (S : ℕ �
         (n : ℕ) :
     ((∑ k ∈ Finset.range (n + 1), ((n + 5 * k).choose (2 * k) * n.choose k) % 2 : ℕ) : ℤ) =
       runLengthTransform S n
-
-/-- **Binomial parity sums at one less than a power of two.** For all natural numbers $m$ and
-$\ell$, with $n = 2^\ell - 1$, the sum
-$$\sum_{k=0}^{n} \left( \binom{2^m k}{n + k} \binom{n}{k} \bmod 2 \right)$$
-equals $1$ if $m$ divides $\ell$, and $0$ otherwise.
-
-The paper takes $m \ge 2$; the statement holds for every $m$, where $0$ divides $\ell$ only
-when $\ell = 0$.
-
-Source: Narad Rampersad and Max Wiebe, *Sums of Products of Binomial Coefficients Mod 2 and
-2-Regular Sequences*, INTEGERS 24 (2024), Article A73, Lemma 2. -/
-public theorem_wanted sum_choose_two_pow_mul_mod_two_two_pow_sub_one (m ℓ : ℕ) :
-    ∑ k ∈ Finset.range (2 ^ ℓ - 1 + 1), ((2 ^ m * k).choose (2 ^ ℓ - 1 + k) * (2 ^ ℓ -
-        1).choose k) % 2 =
-      if m ∣ ℓ then 1 else 0
 
 /-- **Binomial parity sums detect run length divisibility.** For all natural numbers $m$ and $n$,
 the sum

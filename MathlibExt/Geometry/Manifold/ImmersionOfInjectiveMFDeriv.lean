@@ -197,7 +197,7 @@ private theorem immersionInj_codChart
       ext z
       simp [r]
     rw [htarget]
-    change ContDiffOn 𝕜 n (q ∘ e.symm) (fun z => e.symm z ∈ q.source)
+    change ContDiffOn 𝕜 n (q ∘ e.symm) {z | e.symm z ∈ q.source}
     exact hq.comp e.symm.contDiff.contDiffOn (fun _ hz => hz)
   have hcE : ContMDiffOn J 𝓘(𝕜, E') n cE cE.source := by
     have hsource : cE.source ⊆ c0.source := by
