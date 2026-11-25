@@ -281,4 +281,31 @@ public theorem weightedDavenport_pi_zmod_prime_pow_of_not_dvd (p r c : ℕ)
   dsimp only [t]
   omega
 
+/-- **Olson's theorem for abelian $p$-groups.** Let $p$ be a prime, $r \ge 0$ and let
+$e_1, \dots, e_r \ge 1$ be natural numbers. The Davenport constant $D(G) = D_{\{1\}}(G)$ of
+$G = \mathbb{Z}/p^{e_1}\mathbb{Z} \oplus \dots \oplus \mathbb{Z}/p^{e_r}\mathbb{Z}$ is
+$D(G) = 1 + \sum_{i=1}^{r} (p^{e_i} - 1)$. For $r = 0$ the group $G$ is trivial and this reads
+$D(G) = 1$.
+
+Source: Md Ibrahim Molla, *New Families of Weight Sets Yielding Prescribed Weighted Zero-Sum
+Constants*, INTEGERS 26 (2026), Article A89, Theorem 4 (`integers-2026-A89-thm-4`). -/
+public theorem weightedDavenport_one_pi_zmod_prime_pow (p r : ℕ) (hp : p.Prime)
+    (e : Fin r → ℕ) (he : ∀ i, 1 ≤ e i) :
+    weightedDavenport {1} ((i : Fin r) → ZMod (p ^ e i)) =
+      ((1 + ∑ i, (p ^ e i - 1) : ℕ) : ℕ∞) := by
+  apply le_antisymm
+  · apply weightedDavenport_le
+    intro s hs hfree
+    have : Fact p.Prime := ⟨hp⟩
+    obtain ⟨I, hI, hzero⟩ := weightedDavenport_pi_zmod_prime_pow_of_dvd.exists_scaled_zero_sum
+      e 0 (fun i => (Nat.zero_le 1).trans (he i)) s.get (by simp [hs])
+    exact hfree I hI (fun _ => 1) (fun _ _ => Finset.mem_singleton_self _) (by simpa using hzero)
+  · obtain ⟨s, hs, hfree⟩ :=
+      exists_weightedZeroSumFree_pi_zmod_prime_pow.exists_weightedZeroSumFree_pi_zmod
+        (fun i => p ^ e i) 1
+    have hs' : s.length = ∑ i, (p ^ e i - 1) := by simpa using hs
+    have hfree' : IsWeightedZeroSumFree {1} s := by simpa using hfree
+    rw [Nat.add_comm, ← hs', Nat.cast_add_one]
+    exact ENat.natCast_add_one_le_iff.mpr (lt_weightedDavenport hfree')
+
 end MetaMathlibExt
