@@ -16,6 +16,7 @@ For the chemostat with dilution rate $D > 0$, feed concentration $S_f > 0$, yiel
 2. The relaxation of the total substrate equivalent to the feed (Lemma 1(1) of the source).
 3. Washout when $\lambda \ge S_f$ (Lemma 1(2)). For $D > \mu(S_f)$ this is strengthened by the [exponential attraction to chemostat washout above the critical dilution rate](../../../Biology/population-dynamics/chemostat/exponential-attraction-to-chemostat-washout.md); the boundary case $\lambda = S_f$, that is $D = \mu(S_f)$, gives convergence to washout without an exponential rate.
 4. Global convergence to the positive equilibrium when $\lambda < S_f$ (Proposition 1 with one species).
+5. For the Monod rate, part (ii) is [global convergence of the chemostat](global-convergence-of-the-chemostat.md) and part (i) with $\lambda > S_f$ is the global counterpart of the local [unconditional exponential stability of washout](unconditional-exponential-stability-of-chemostat-washout.md), without a rate.
 
 ## Sources
 
