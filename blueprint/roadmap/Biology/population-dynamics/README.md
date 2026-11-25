@@ -27,4 +27,5 @@ Differential-equation and matrix models of population growth, structure, species
 
 - [Matrix population models](matrix-population-models/README.md)
 - [Stability of evolutionarily stable states](stability-of-evolutionarily-stable-states/README.md)
+- [Life tables](life-tables/README.md)
 - [Sharpe–Lotka–Feller renewal theorem](tendsto-exp-neg-mul-births.md)
