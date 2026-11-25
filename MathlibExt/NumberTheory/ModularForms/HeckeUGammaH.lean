@@ -63,17 +63,16 @@ def Gamma0Upper (ℓ : ℕ) : Subgroup SL(2, ℤ) where
   one_mem' := by simp
   mul_mem' := by
     intro a b ha hb
-    simp only [Set.mem_setOf_eq] at *
+    simp only [Set.mem_ofPred_eq] at *
     have h := (Matrix.two_mul_expl a.1 b.1).2.1
     simp only [coe_mul] at *
     rw [h]
     simp [ha, hb]
   inv_mem' := by
     intro a ha
-    simp only [Set.mem_setOf_eq] at *
+    simp only [Set.mem_ofPred_eq] at *
     rw [SL2_inv_expl a]
-    simp only [cons_val_zero, cons_val_one, Int.cast_neg, neg_eq_zero] at *
-    exact ha
+    simpa using ha
 
 @[simp]
 theorem mem_Gamma0Upper {ℓ : ℕ} {A : SL(2, ℤ)} : A ∈ Gamma0Upper ℓ ↔ (A 0 1 : ZMod ℓ) = 0 :=
@@ -107,7 +106,7 @@ theorem conjUpperMat_mul (A B : SL(2, ℤ)) (hA : (ℓ : ℤ) ∣ A 0 1) (hB : (
   fin_cases i <;> fin_cases j <;>
     rw [Matrix.SpecialLinearGroup.coe_mul] <;>
     simp [conjUpperMat, Matrix.mul_apply, Fin.sum_univ_two, hmul, h2, h1, h3]
-  all_goals ring
+  ring
 
 @[simp] theorem conjUpperMat_apply_11 (A : SL(2, ℤ)) (h : (ℓ : ℤ) ∣ A 0 1) :
     (conjUpperMat ℓ A h) 1 1 = A 1 1 := by
@@ -130,8 +129,7 @@ theorem conjUpperMat_mem (γ : ↥(GammaHUpper M H ℓ)) :
   rw [mem_GammaH_iff M]
   refine ⟨?_, ?_⟩
   · rw [Gamma0_mem, conjUpperMat_apply_10, Int.cast_mul, Gamma0_mem.mp hγ0, zero_mul]
-  ·
-    convert hγH using 1
+  · convert hγH using 1
     ext
     simp only [val_gamma0Units, Gamma0Map, MonoidHom.coe_mk, OneHom.coe_mk, conjUpperMat_apply_11]
 
@@ -151,7 +149,7 @@ def conjL : ↥(GammaHUpper M H ℓ) →* ↥(GammaH M H) where
 
 public instance gammaHUpper_finiteIndex [NeZero M] [NeZero ℓ] :
     (GammaHUpper M H ℓ).FiniteIndex := by
-  haveI : ((Gamma (M * ℓ)).subgroupOf (GammaH M H)).FiniteIndex := inferInstance
+  have : ((Gamma (M * ℓ)).subgroupOf (GammaH M H)).FiniteIndex := inferInstance
   refine Subgroup.finiteIndex_of_le (H := (Gamma (M * ℓ)).subgroupOf (GammaH M H)) ?_
   intro γ hγ
   have hγ2 := Subgroup.mem_subgroupOf.mp hγ
@@ -164,7 +162,6 @@ public instance gammaHUpper_finiteIndex [NeZero M] [NeZero ℓ] :
 
 variable (M : ℕ) in
 theorem gamma0Units_surjective [NeZero M] : Function.Surjective (gamma0Units M) := by
-
   intro u
   have hAD : (((((u⁻¹ : (ZMod M)ˣ) : ZMod M).val : ℤ) * ((u : ZMod M).val : ℤ) - 1 : ℤ) : ZMod M) =
     0 := by
@@ -229,7 +226,7 @@ theorem coe_heckeMatrix_smul {p : ℕ} (hp : p ≠ 0) (j : ℕ) (τ : UpperHalfP
 
 
 theorem σ_heckeMatrix (p j : ℕ) : UpperHalfPlane.σ (heckeMatrix p j) = .refl ℝ ℂ := by
-  rw [UpperHalfPlane.σ, if_pos (det_heckeMatrix_pos p j)]
+  rw [UpperHalfPlane.σ, ite_eq_left (det_heckeMatrix_pos p j)]
 
 
 theorem slash_heckeMatrix_apply (k : ℤ) {p : ℕ} (hp : p ≠ 0) (j : ℕ) (f : UpperHalfPlane → ℂ)
@@ -244,47 +241,52 @@ theorem slash_heckeMatrix_apply (k : ℤ) {p : ℕ} (hp : p ≠ 0) (j : ℕ) (f 
 noncomputable def heckeU (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) : UpperHalfPlane → ℂ :=
   ∑ j ∈ Finset.range p, f ∣[k] heckeMatrix p j
 
-noncomputable def heckeT (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) : UpperHalfPlane → ℂ :=
+/-- The prime-index Hecke formula `T_p f = U_p f + f ∣[k] diag(p, 1)`, that is,
+`(p : ℂ)⁻¹ * ∑ j < p, f ((τ + j) / p) + p ^ (k - 1) * f (p * τ)` (see `heckeTPrime_apply`).
+It is stated only for a prime `p`: at a composite index the Hecke operator has further divisor
+terms, so this two-term formula is not `T_n` in general. -/
+noncomputable def heckeTPrime (k : ℤ) (p : ℕ) [Fact p.Prime] (f : UpperHalfPlane → ℂ) :
+    UpperHalfPlane → ℂ :=
   heckeU k p f + f ∣[k] heckeDiagMatrix p
-
 
 theorem heckeU_def (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) :
     heckeU k p f = ∑ j ∈ Finset.range p, f ∣[k] heckeMatrix p j := rfl
 
-theorem heckeT_eq_heckeU_add (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) :
-    heckeT k p f = heckeU k p f + f ∣[k] heckeDiagMatrix p := rfl
+theorem heckeTPrime_eq_heckeU_add (k : ℤ) (p : ℕ) [Fact p.Prime] (f : UpperHalfPlane → ℂ) :
+    heckeTPrime k p f = heckeU k p f + f ∣[k] heckeDiagMatrix p := rfl
 
-theorem heckeT_def (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) :
-    heckeT k p f = (∑ j ∈ Finset.range p, f ∣[k] heckeMatrix p j) + f ∣[k] heckeDiagMatrix p := rfl
+theorem heckeTPrime_def (k : ℤ) (p : ℕ) [Fact p.Prime] (f : UpperHalfPlane → ℂ) :
+    heckeTPrime k p f =
+      (∑ j ∈ Finset.range p, f ∣[k] heckeMatrix p j) + f ∣[k] heckeDiagMatrix p := rfl
 
 @[simp] theorem heckeU_zero_left (k : ℤ) (f : UpperHalfPlane → ℂ) : heckeU k 0 f = 0 := by
   simp [heckeU]
-
-@[simp] theorem heckeT_zero_left (k : ℤ) (f : UpperHalfPlane → ℂ) : heckeT k 0 f = f := by
-  simp [heckeT]
 
 theorem heckeU_apply (k : ℤ) {p : ℕ} (hp : p ≠ 0) (f : UpperHalfPlane → ℂ) (τ : UpperHalfPlane) :
     heckeU k p f τ = (p : ℂ)⁻¹ * ∑ j ∈ Finset.range p, f (heckeMatrix p j • τ) := by
   simp only [heckeU, Finset.sum_apply, slash_heckeMatrix_apply k hp, Finset.mul_sum]
 
-theorem heckeT_apply (k : ℤ) {p : ℕ} (hp : p ≠ 0) (f : UpperHalfPlane → ℂ) (τ : UpperHalfPlane) :
-    heckeT k p f τ = (p : ℂ)⁻¹ * ∑ j ∈ Finset.range p, f (heckeMatrix p j • τ)
+theorem heckeTPrime_apply (k : ℤ) (p : ℕ) [hp : Fact p.Prime] (f : UpperHalfPlane → ℂ)
+    (τ : UpperHalfPlane) :
+    heckeTPrime k p f τ = (p : ℂ)⁻¹ * ∑ j ∈ Finset.range p, f (heckeMatrix p j • τ)
       + (p : ℂ) ^ (k - 1) * f (heckeDiagMatrix p • τ) := by
-  rw [heckeT, Pi.add_apply, heckeU_apply k hp, slash_heckeDiagMatrix_apply k hp]
+  rw [heckeTPrime, Pi.add_apply, heckeU_apply k hp.out.ne_zero,
+    slash_heckeDiagMatrix_apply k hp.out.ne_zero]
 
 @[simp] theorem heckeU_zero (k : ℤ) (p : ℕ) : heckeU k p (0 : UpperHalfPlane → ℂ) = 0 := by
   simp [heckeU]
 
-@[simp] theorem heckeT_zero (k : ℤ) (p : ℕ) : heckeT k p (0 : UpperHalfPlane → ℂ) = 0 := by
-  simp [heckeT]
+@[simp] theorem heckeTPrime_zero (k : ℤ) (p : ℕ) [Fact p.Prime] :
+    heckeTPrime k p (0 : UpperHalfPlane → ℂ) = 0 := by
+  simp [heckeTPrime]
 
 theorem heckeU_add (k : ℤ) (p : ℕ) (f g : UpperHalfPlane → ℂ) :
     heckeU k p (f + g) = heckeU k p f + heckeU k p g := by
   simp [heckeU, Finset.sum_add_distrib]
 
-theorem heckeT_add (k : ℤ) (p : ℕ) (f g : UpperHalfPlane → ℂ) :
-    heckeT k p (f + g) = heckeT k p f + heckeT k p g := by
-  simp only [heckeT, heckeU_add, SlashAction.add_slash]
+theorem heckeTPrime_add (k : ℤ) (p : ℕ) [Fact p.Prime] (f g : UpperHalfPlane → ℂ) :
+    heckeTPrime k p (f + g) = heckeTPrime k p f + heckeTPrime k p g := by
+  simp only [heckeTPrime, heckeU_add, SlashAction.add_slash]
   abel
 
 theorem heckeU_smul (k : ℤ) (p : ℕ) (c : ℂ) (f : UpperHalfPlane → ℂ) :
@@ -292,58 +294,63 @@ theorem heckeU_smul (k : ℤ) (p : ℕ) (c : ℂ) (f : UpperHalfPlane → ℂ) :
   simp only [heckeU, ModularForm.smul_slash, σ_heckeMatrix, ContinuousAlgEquiv.refl_apply,
     Finset.smul_sum]
 
-theorem heckeT_smul (k : ℤ) (p : ℕ) (c : ℂ) (f : UpperHalfPlane → ℂ) :
-    heckeT k p (c • f) = c • heckeT k p f := by
-  rw [heckeT, heckeT, heckeU_smul, ModularForm.smul_slash, σ_heckeDiagMatrix,
+theorem heckeTPrime_smul (k : ℤ) (p : ℕ) [Fact p.Prime] (c : ℂ) (f : UpperHalfPlane → ℂ) :
+    heckeTPrime k p (c • f) = c • heckeTPrime k p f := by
+  rw [heckeTPrime, heckeTPrime, heckeU_smul, ModularForm.smul_slash, σ_heckeDiagMatrix,
     ContinuousAlgEquiv.refl_apply, smul_add]
 
 theorem heckeU_neg (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) : heckeU k p (-f) = -heckeU k p f := by
   simp [heckeU, Finset.sum_neg_distrib]
 
-theorem heckeT_neg (k : ℤ) (p : ℕ) (f : UpperHalfPlane → ℂ) : heckeT k p (-f) = -heckeT k p f := by
-  simp only [heckeT, heckeU_neg, SlashAction.neg_slash, neg_add]
+theorem heckeTPrime_neg (k : ℤ) (p : ℕ) [Fact p.Prime] (f : UpperHalfPlane → ℂ) :
+    heckeTPrime k p (-f) = -heckeTPrime k p f := by
+  simp only [heckeTPrime, heckeU_neg, SlashAction.neg_slash, neg_add]
 
 theorem heckeU_sub (k : ℤ) (p : ℕ) (f g : UpperHalfPlane → ℂ) :
     heckeU k p (f - g) = heckeU k p f - heckeU k p g := by
   rw [sub_eq_add_neg, heckeU_add, heckeU_neg, ← sub_eq_add_neg]
 
-theorem heckeT_sub (k : ℤ) (p : ℕ) (f g : UpperHalfPlane → ℂ) :
-    heckeT k p (f - g) = heckeT k p f - heckeT k p g := by
-  rw [sub_eq_add_neg, heckeT_add, heckeT_neg, ← sub_eq_add_neg]
+theorem heckeTPrime_sub (k : ℤ) (p : ℕ) [Fact p.Prime] (f g : UpperHalfPlane → ℂ) :
+    heckeTPrime k p (f - g) = heckeTPrime k p f - heckeTPrime k p g := by
+  rw [sub_eq_add_neg, heckeTPrime_add, heckeTPrime_neg, ← sub_eq_add_neg]
 
-noncomputable def coeffHeckeT (k : ℤ) (p : ℕ) (a : ℕ → ℂ) (n : ℕ) : ℂ :=
+/-- The action of `heckeTPrime k p` on `q`-expansion coefficients, for a prime `p`:
+`n ↦ a (n * p) + p ^ (k - 1) * a (n / p)`, where the second term appears only when `p ∣ n`. -/
+noncomputable def coeffHeckeTPrime (k : ℤ) (p : ℕ) [Fact p.Prime] (a : ℕ → ℂ) (n : ℕ) : ℂ :=
   a (n * p) + if p ∣ n then (p : ℂ) ^ (k - 1) * a (n / p) else 0
 
 noncomputable def coeffHeckeU (p : ℕ) (a : ℕ → ℂ) (n : ℕ) : ℂ :=
   a (n * p)
 
-theorem coeffHeckeT_apply (k : ℤ) (p : ℕ) (a : ℕ → ℂ) (n : ℕ) :
-    coeffHeckeT k p a n = a (n * p) + if p ∣ n then (p : ℂ) ^ (k - 1) * a (n / p) else 0 := rfl
+theorem coeffHeckeTPrime_apply (k : ℤ) (p : ℕ) [Fact p.Prime] (a : ℕ → ℂ) (n : ℕ) :
+    coeffHeckeTPrime k p a n = a (n * p) + if p ∣ n then (p : ℂ) ^ (k - 1) * a (n / p) else 0 :=
+  rfl
 
 theorem coeffHeckeU_apply (p : ℕ) (a : ℕ → ℂ) (n : ℕ) : coeffHeckeU p a n = a (n * p) := rfl
 
-theorem coeffHeckeT_of_dvd (k : ℤ) {p n : ℕ} (h : p ∣ n) (a : ℕ → ℂ) :
-    coeffHeckeT k p a n = a (n * p) + (p : ℂ) ^ (k - 1) * a (n / p) := by
-  rw [coeffHeckeT, if_pos h]
+theorem coeffHeckeTPrime_of_dvd (k : ℤ) {p n : ℕ} [Fact p.Prime] (h : p ∣ n) (a : ℕ → ℂ) :
+    coeffHeckeTPrime k p a n = a (n * p) + (p : ℂ) ^ (k - 1) * a (n / p) := by
+  rw [coeffHeckeTPrime, ite_eq_left h]
 
-theorem coeffHeckeT_of_not_dvd (k : ℤ) {p n : ℕ} (h : ¬ p ∣ n) (a : ℕ → ℂ) :
-    coeffHeckeT k p a n = a (n * p) := by
-  rw [coeffHeckeT, if_neg h, add_zero]
+theorem coeffHeckeTPrime_of_not_dvd (k : ℤ) {p n : ℕ} [Fact p.Prime] (h : ¬ p ∣ n)
+    (a : ℕ → ℂ) : coeffHeckeTPrime k p a n = a (n * p) := by
+  rw [coeffHeckeTPrime, ite_eq_right h, add_zero]
 
-theorem coeffHeckeT_eq_coeffHeckeU_add (k : ℤ) (p : ℕ) (a : ℕ → ℂ) (n : ℕ) :
-    coeffHeckeT k p a n = coeffHeckeU p a n + if p ∣ n then (p : ℂ) ^ (k - 1) * a (n / p) else 0 :=
-      rfl
+theorem coeffHeckeTPrime_eq_coeffHeckeU_add (k : ℤ) (p : ℕ) [Fact p.Prime] (a : ℕ → ℂ) (n : ℕ) :
+    coeffHeckeTPrime k p a n =
+      coeffHeckeU p a n + if p ∣ n then (p : ℂ) ^ (k - 1) * a (n / p) else 0 :=
+  rfl
 
-theorem coeffHeckeT_add (k : ℤ) (p : ℕ) (a b : ℕ → ℂ) :
-    coeffHeckeT k p (a + b) = coeffHeckeT k p a + coeffHeckeT k p b := by
+theorem coeffHeckeTPrime_add (k : ℤ) (p : ℕ) [Fact p.Prime] (a b : ℕ → ℂ) :
+    coeffHeckeTPrime k p (a + b) = coeffHeckeTPrime k p a + coeffHeckeTPrime k p b := by
   funext n
-  simp only [coeffHeckeT, Pi.add_apply]
+  simp only [coeffHeckeTPrime, Pi.add_apply]
   split_ifs <;> ring
 
-theorem coeffHeckeT_smul (k : ℤ) (p : ℕ) (c : ℂ) (a : ℕ → ℂ) :
-    coeffHeckeT k p (c • a) = c • coeffHeckeT k p a := by
+theorem coeffHeckeTPrime_smul (k : ℤ) (p : ℕ) [Fact p.Prime] (c : ℂ) (a : ℕ → ℂ) :
+    coeffHeckeTPrime k p (c • a) = c • coeffHeckeTPrime k p a := by
   funext n
-  simp only [coeffHeckeT, Pi.smul_apply, smul_eq_mul]
+  simp only [coeffHeckeTPrime, Pi.smul_apply, smul_eq_mul]
   split_ifs <;> ring
 
 theorem coeffHeckeU_add (p : ℕ) (a b : ℕ → ℂ) :
@@ -388,7 +395,7 @@ theorem mdifferentiable_heckeU (hf : MDiff f) : MDiff (heckeU k p f) :=
   Finset.sum_induction _ (fun g : ℍ → ℂ => MDiff g) (fun _ _ ha hb => ha.add hb)
     mdifferentiable_const (fun _ _ => hf.slash k _)
 
-theorem mdifferentiable_heckeT (hf : MDiff f) : MDiff (heckeT k p f) :=
+theorem mdifferentiable_heckeTPrime [Fact p.Prime] (hf : MDiff f) : MDiff (heckeTPrime k p f) :=
   (mdifferentiable_heckeU k p hf).add (hf.slash k _)
 
 theorem isBoundedAtImInfty_heckeU (hf : IsBoundedAtImInfty f) :
@@ -397,8 +404,8 @@ theorem isBoundedAtImInfty_heckeU (hf : IsBoundedAtImInfty f) :
     (fun _ _ ha hb => ha.add hb) UpperHalfPlane.zero_form_isBoundedAtImInfty
     (fun j _ => hf.slash k (heckeMatrix_one_zero p j))
 
-theorem isBoundedAtImInfty_heckeT (hf : IsBoundedAtImInfty f) :
-    IsBoundedAtImInfty (heckeT k p f) :=
+theorem isBoundedAtImInfty_heckeTPrime [Fact p.Prime] (hf : IsBoundedAtImInfty f) :
+    IsBoundedAtImInfty (heckeTPrime k p f) :=
   (isBoundedAtImInfty_heckeU k p hf).add (hf.slash k (heckeDiagMatrix_one_zero p))
 
 theorem isZeroAtImInfty_heckeU (hf : IsZeroAtImInfty f) :
@@ -407,8 +414,8 @@ theorem isZeroAtImInfty_heckeU (hf : IsZeroAtImInfty f) :
     (fun _ _ ha hb => ha.add hb) (zero_zeroAtFilter atImInfty)
     (fun j _ => hf.slash k (heckeMatrix_one_zero p j))
 
-theorem isZeroAtImInfty_heckeT (hf : IsZeroAtImInfty f) :
-    IsZeroAtImInfty (heckeT k p f) :=
+theorem isZeroAtImInfty_heckeTPrime [Fact p.Prime] (hf : IsZeroAtImInfty f) :
+    IsZeroAtImInfty (heckeTPrime k p f) :=
   (isZeroAtImInfty_heckeU k p hf).add (hf.slash k (heckeDiagMatrix_one_zero p))
 
 theorem apply_eq_of_coe_eq_add_nat (hf : Periodic (f ∘ ofComplex) 1) {τ₁ τ₂ : ℍ} (m : ℕ)
@@ -422,7 +429,6 @@ theorem apply_eq_of_coe_eq_add_nat (hf : Periodic (f ∘ ofComplex) 1) {τ₁ τ
   exact h1
 
 variable {p} in
-
 theorem heckeMatrix_smul_vadd (hp : p ≠ 0) (j : ℕ) (τ : ℍ) :
     heckeMatrix p j • ((1 : ℝ) +ᵥ τ) = heckeMatrix p (j + 1) • τ := by
   apply UpperHalfPlane.ext
@@ -431,7 +437,6 @@ theorem heckeMatrix_smul_vadd (hp : p ≠ 0) (j : ℕ) (τ : ℍ) :
   ring
 
 variable {p} in
-
 theorem coe_heckeMatrix_smul_self (hp : p ≠ 0) (τ : ℍ) :
     ((heckeMatrix p p • τ : ℍ) : ℂ) = (heckeMatrix p 0 • τ : ℍ) + (1 : ℕ) := by
   have hp' : (p : ℂ) ≠ 0 := by exact_mod_cast hp
@@ -441,7 +446,6 @@ theorem coe_heckeMatrix_smul_self (hp : p ≠ 0) (τ : ℍ) :
   ring
 
 variable {p} in
-
 theorem coe_heckeDiagMatrix_smul_vadd (hp : p ≠ 0) (τ : ℍ) :
     ((heckeDiagMatrix p • ((1 : ℝ) +ᵥ τ) : ℍ) : ℂ) = (heckeDiagMatrix p • τ : ℍ) + (p : ℕ) := by
   rw [coe_heckeDiagMatrix_smul hp, coe_heckeDiagMatrix_smul hp, coe_vadd]
@@ -464,13 +468,10 @@ theorem heckeU_vadd (hf : Periodic (f ∘ ofComplex) 1) (τ : ℍ) :
   · simp only [hp, heckeU_zero_left, Pi.zero_apply]
   · rw [heckeU_apply k hp, heckeU_apply k hp, sum_heckeMatrix_smul_vadd hp hf]
 
-theorem heckeT_vadd (hf : Periodic (f ∘ ofComplex) 1) (τ : ℍ) :
-    heckeT k p f ((1 : ℝ) +ᵥ τ) = heckeT k p f τ := by
-  by_cases hp : p = 0
-  · simp only [hp, heckeT_zero_left]
-    exact apply_eq_of_coe_eq_add_nat hf 1 (by rw [coe_vadd]; push_cast; ring)
-  · rw [heckeT_apply k hp, heckeT_apply k hp, sum_heckeMatrix_smul_vadd hp hf,
-      apply_eq_of_coe_eq_add_nat hf p (coe_heckeDiagMatrix_smul_vadd hp τ)]
+theorem heckeTPrime_vadd [hp : Fact p.Prime] (hf : Periodic (f ∘ ofComplex) 1) (τ : ℍ) :
+    heckeTPrime k p f ((1 : ℝ) +ᵥ τ) = heckeTPrime k p f τ := by
+  rw [heckeTPrime_apply k p, heckeTPrime_apply k p, sum_heckeMatrix_smul_vadd hp.out.ne_zero hf,
+    apply_eq_of_coe_eq_add_nat hf p (coe_heckeDiagMatrix_smul_vadd hp.out.ne_zero τ)]
 
 theorem periodic_comp_ofComplex_of_vadd {g : ℍ → ℂ} (hg : ∀ τ : ℍ, g ((1 : ℝ) +ᵥ τ) = g τ) :
     Periodic (g ∘ ofComplex) 1 := by
@@ -489,9 +490,9 @@ theorem periodic_heckeU_comp_ofComplex (hf : Periodic (f ∘ ofComplex) 1) :
     Periodic (heckeU k p f ∘ ofComplex) 1 :=
   periodic_comp_ofComplex_of_vadd (heckeU_vadd k p hf)
 
-theorem periodic_heckeT_comp_ofComplex (hf : Periodic (f ∘ ofComplex) 1) :
-    Periodic (heckeT k p f ∘ ofComplex) 1 :=
-  periodic_comp_ofComplex_of_vadd (heckeT_vadd k p hf)
+theorem periodic_heckeTPrime_comp_ofComplex [Fact p.Prime] (hf : Periodic (f ∘ ofComplex) 1) :
+    Periodic (heckeTPrime k p f ∘ ofComplex) 1 :=
+  periodic_comp_ofComplex_of_vadd (heckeTPrime_vadd k p hf)
 
 end Regularity
 
@@ -507,7 +508,7 @@ variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup (GL (Fin 2) ℝ)} {k : �
 
 theorem hasSum_qCoeff [ModularFormClass F Γ k] (f : F) (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) (τ : ℍ) :
     HasSum (fun m ↦ qCoeff f m • Periodic.qParam 1 τ ^ m) (f τ) := by
-  haveI : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
+  have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
   exact hasSum_qExpansion one_pos (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ)
     (holo f) (bdd_at_infty f) τ
 
@@ -532,7 +533,6 @@ include hp in
 theorem natCast_ne_zero' : (p : ℂ) ≠ 0 := by exact_mod_cast hp
 
 include hp in
-
 theorem qParam_heckeMatrix_smul (j : ℕ) (τ : ℍ) :
     Periodic.qParam 1 ((heckeMatrix p j • τ : ℍ) : ℂ)
       = exp (2 * π * I * τ / p) * exp (2 * π * I / p) ^ j := by
@@ -542,7 +542,6 @@ theorem qParam_heckeMatrix_smul (j : ℕ) (τ : ℍ) :
   field_simp
 
 include hp in
-
 theorem qParam_heckeDiagMatrix_smul (τ : ℍ) :
     Periodic.qParam 1 ((heckeDiagMatrix p • τ : ℍ) : ℂ) = Periodic.qParam 1 τ ^ p := by
   rw [qParam_one, qParam_one, coe_heckeDiagMatrix_smul hp, ← Complex.exp_nat_mul]
@@ -550,7 +549,6 @@ theorem qParam_heckeDiagMatrix_smul (τ : ℍ) :
   ring
 
 include hp in
-
 theorem exp_div_pow (τ : ℍ) : exp (2 * π * I * τ / p) ^ p = Periodic.qParam 1 τ := by
   rw [qParam_one, ← Complex.exp_nat_mul]
   congr 1
@@ -558,7 +556,6 @@ theorem exp_div_pow (τ : ℍ) : exp (2 * π * I * τ / p) ^ p = Periodic.qParam
   field_simp
 
 include hp in
-
 theorem sum_rootOfUnity_pow (m : ℕ) :
     ∑ j ∈ Finset.range p, (exp (2 * π * I / p) ^ j) ^ m = if p ∣ m then (p : ℂ) else 0 := by
   have hζ := Complex.isPrimitiveRoot_exp p hp
@@ -580,20 +577,17 @@ variable {f : ℍ → ℂ} (hper : Periodic (f ∘ ofComplex) 1) (hhol : MDiff f
   (hbdd : IsBoundedAtImInfty f)
 
 include hp hper hhol hbdd in
-
 theorem hasSum_average (τ : ℍ) :
     HasSum (fun l : ℕ ↦ qCoeff f (l * p) * Periodic.qParam 1 τ ^ l)
       ((p : ℂ)⁻¹ * ∑ j ∈ Finset.range p, f (heckeMatrix p j • τ)) := by
   have hF : ∀ τ' : ℍ, HasSum (fun m ↦ qCoeff f m • Periodic.qParam 1 τ' ^ m) (f τ') :=
     hasSum_qExpansion one_pos hper hhol hbdd
-
   have h1 : HasSum (fun m ↦ ∑ j ∈ Finset.range p,
       qCoeff f m • (exp (2 * π * I * τ / p) * exp (2 * π * I / p) ^ j) ^ m)
       (∑ j ∈ Finset.range p, f (heckeMatrix p j • τ)) := by
     refine hasSum_sum fun j _ => ?_
     have := hF (heckeMatrix p j • τ)
     rwa [qParam_heckeMatrix_smul hp j τ] at this
-
   have h2 : (fun m ↦ ∑ j ∈ Finset.range p,
       qCoeff f m • (exp (2 * π * I * τ / p) * exp (2 * π * I / p) ^ j) ^ m)
       = fun m ↦ if p ∣ m then (p : ℂ) * qCoeff f m * exp (2 * π * I * τ / p) ^ m else 0 := by
@@ -601,7 +595,6 @@ theorem hasSum_average (τ : ℍ) :
     simp only [mul_pow, smul_eq_mul, ← Finset.mul_sum, sum_rootOfUnity_pow hp m]
     split_ifs <;> ring
   rw [h2] at h1
-
   have hinj : Function.Injective (fun l : ℕ ↦ l * p) := mul_left_injective₀ hp
   have h3 := (hinj.hasSum_iff (f := fun m ↦
       if p ∣ m then (p : ℂ) * qCoeff f m * exp (2 * π * I * τ / p) ^ m else 0)
@@ -609,7 +602,7 @@ theorem hasSum_average (τ : ℍ) :
   have h4 : ((fun m ↦ if p ∣ m then (p : ℂ) * qCoeff f m * exp (2 * π * I * τ / p) ^ m else 0) ∘
       fun l : ℕ ↦ l * p) = fun l ↦ (p : ℂ) * (qCoeff f (l * p) * Periodic.qParam 1 τ ^ l) := by
     funext l
-    simp only [comp_apply, if_pos (dvd_mul_left p l)]
+    simp only [comp_apply, ite_eq_left (dvd_mul_left p l)]
     rw [mul_comm l p, pow_mul, exp_div_pow hp τ]
     ring
   rw [h4] at h3
@@ -618,7 +611,6 @@ theorem hasSum_average (τ : ℍ) :
   exact h5
 
 include hp hper hhol hbdd in
-
 theorem hasSum_diag (k : ℤ) (τ : ℍ) :
     HasSum (fun n : ℕ ↦ if p ∣ n then (p : ℂ) ^ (k - 1) * qCoeff f (n / p) * Periodic.qParam 1 τ ^ n
         else 0)
@@ -630,26 +622,25 @@ theorem hasSum_diag (k : ℤ) (τ : ℍ) :
   refine (hinj.hasSum_iff (fun m hm => by simp [not_dvd_of_not_mem_range hm])).mp ?_
   convert hD using 1
   · funext l
-    simp only [comp_apply, if_pos (dvd_mul_left p l),
+    simp only [comp_apply, ite_eq_left (dvd_mul_left p l),
       Nat.mul_div_cancel _ (Nat.pos_of_ne_zero hp), smul_eq_mul, ModularFormClass.qCoeff]
     rw [← pow_mul, mul_comm l p, mul_assoc]
 
 include hp hper hhol hbdd in
-
 theorem hasSum_heckeU (k : ℤ) (τ : ℍ) :
     HasSum (fun n : ℕ ↦ coeffHeckeU p (qCoeff f) n • Periodic.qParam 1 τ ^ n) (heckeU k p f τ) := by
   rw [heckeU_apply k hp]
   simpa only [coeffHeckeU_apply, smul_eq_mul] using hasSum_average hp hper hhol hbdd τ
 
-include hp hper hhol hbdd in
-
-theorem hasSum_heckeT (k : ℤ) (τ : ℍ) :
-    HasSum (fun n : ℕ ↦ coeffHeckeT k p (qCoeff f) n • Periodic.qParam 1 τ ^ n) (heckeT k p f τ) :=
-      by
-  rw [heckeT_apply k hp]
+include hper hhol hbdd in
+theorem hasSum_heckeTPrime [Fact p.Prime] (k : ℤ) (τ : ℍ) :
+    HasSum (fun n : ℕ ↦ coeffHeckeTPrime k p (qCoeff f) n • Periodic.qParam 1 τ ^ n)
+      (heckeTPrime k p f τ) := by
+  have hp : p ≠ 0 := (Fact.out : p.Prime).ne_zero
+  rw [heckeTPrime_apply k p]
   convert (hasSum_average hp hper hhol hbdd τ).add (hasSum_diag hp hper hhol hbdd k τ) using 1
   funext n
-  rw [coeffHeckeT_apply, smul_eq_mul]
+  rw [coeffHeckeTPrime_apply, smul_eq_mul]
   split_ifs <;> ring
 
 include hp hper hhol hbdd in
@@ -660,13 +651,13 @@ theorem qCoeff_heckeU_bare (k : ℤ) (n : ℕ) :
       (mdifferentiable_heckeU k p hhol) (isBoundedAtImInfty_heckeU k p hbdd))
     (hasSum_heckeU hp hper hhol hbdd k) n).symm
 
-include hp hper hhol hbdd in
-theorem qCoeff_heckeT_bare (k : ℤ) (n : ℕ) :
-    qCoeff (heckeT k p f) n = coeffHeckeT k p (qCoeff f) n :=
-  (qExpansion_coeff_unique' (mdifferentiable_heckeT k p hhol).continuous
-    (analyticAt_cuspFunction_zero one_pos (periodic_heckeT_comp_ofComplex k p hper)
-      (mdifferentiable_heckeT k p hhol) (isBoundedAtImInfty_heckeT k p hbdd))
-    (hasSum_heckeT hp hper hhol hbdd k) n).symm
+include hper hhol hbdd in
+theorem qCoeff_heckeTPrime_bare [Fact p.Prime] (k : ℤ) (n : ℕ) :
+    qCoeff (heckeTPrime k p f) n = coeffHeckeTPrime k p (qCoeff f) n :=
+  (qExpansion_coeff_unique' (mdifferentiable_heckeTPrime k p hhol).continuous
+    (analyticAt_cuspFunction_zero one_pos (periodic_heckeTPrime_comp_ofComplex k p hper)
+      (mdifferentiable_heckeTPrime k p hhol) (isBoundedAtImInfty_heckeTPrime k p hbdd))
+    (hasSum_heckeTPrime hper hhol hbdd k) n).symm
 
 variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
 
@@ -677,11 +668,11 @@ theorem qCoeff_heckeU_class [ModularFormClass F Γ k] (f : F) (hΓ : (1 : ℝ) �
   qCoeff_heckeU_bare hp (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ) (holo f)
     (bdd_at_infty f) k n
 
-include hp in
-theorem qCoeff_heckeT_class [ModularFormClass F Γ k] (f : F) (hΓ : (1 : ℝ) ∈ Γ.strictPeriods)
-    (n : ℕ) : qCoeff (heckeT k p f) n = coeffHeckeT k p (qCoeff f) n :=
+theorem qCoeff_heckeTPrime_class [Fact p.Prime] [ModularFormClass F Γ k] (f : F)
+    (hΓ : (1 : ℝ) ∈ Γ.strictPeriods) (n : ℕ) :
+    qCoeff (heckeTPrime k p f) n = coeffHeckeTPrime k p (qCoeff f) n :=
   haveI : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods one_pos hΓ⟩
-  qCoeff_heckeT_bare hp (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ) (holo f)
+  qCoeff_heckeTPrime_bare (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ) (holo f)
     (bdd_at_infty f) k n
 
 end QExpAction
@@ -772,8 +763,7 @@ theorem exists_heckeDiagMatrix_eq_map (p : ℕ) :
   · refine ⟨ratUpperTriangularGL p 0 1 (by rw [mul_one]; exact_mod_cast hp), ?_⟩
     ext i j
     fin_cases i <;> fin_cases j <;>
-      simp [heckeDiagMatrix, hp, ratUpperTriangularGL, upperTriangularGL,
-        Matrix.GeneralLinearGroup.mkOfDetNeZero]
+      simp [heckeDiagMatrix, hp, ratUpperTriangularGL, Matrix.GeneralLinearGroup.mkOfDetNeZero]
 
 end HeckeMatrices
 
@@ -816,10 +806,10 @@ theorem isBoundedAt_heckeU [ModularFormClass F Γ k] (f : F) (p : ℕ) {c : OneP
   rw [hg]
   exact isBoundedAt_slash_ratCast f g hc
 
-theorem isBoundedAt_heckeT [ModularFormClass F Γ k] (f : F) (p : ℕ) {c : OnePoint ℝ} (hc : IsCusp c
-  Γ) :
-    c.IsBoundedAt (heckeT k p ⇑f) k := by
-  rw [heckeT_eq_heckeU_add]
+theorem isBoundedAt_heckeTPrime [ModularFormClass F Γ k] (f : F) (p : ℕ) [Fact p.Prime]
+    {c : OnePoint ℝ} (hc : IsCusp c Γ) :
+    c.IsBoundedAt (heckeTPrime k p ⇑f) k := by
+  rw [heckeTPrime_eq_heckeU_add]
   refine (isBoundedAt_heckeU f p hc).add ?_
   obtain ⟨g, hg⟩ := exists_heckeDiagMatrix_eq_map p
   rw [hg]
@@ -833,9 +823,10 @@ theorem isZeroAt_heckeU [CuspFormClass F Γ k] (f : F) (p : ℕ) {c : OnePoint �
   rw [hg]
   exact isZeroAt_slash_ratCast f g hc
 
-theorem isZeroAt_heckeT [CuspFormClass F Γ k] (f : F) (p : ℕ) {c : OnePoint ℝ} (hc : IsCusp c Γ) :
-    c.IsZeroAt (heckeT k p ⇑f) k := by
-  rw [heckeT_eq_heckeU_add]
+theorem isZeroAt_heckeTPrime [CuspFormClass F Γ k] (f : F) (p : ℕ) [Fact p.Prime]
+    {c : OnePoint ℝ} (hc : IsCusp c Γ) :
+    c.IsZeroAt (heckeTPrime k p ⇑f) k := by
+  rw [heckeTPrime_eq_heckeU_add]
   refine (isZeroAt_heckeU f p hc).add ?_
   obtain ⟨g, hg⟩ := exists_heckeDiagMatrix_eq_map p
   rw [hg]
@@ -874,6 +865,7 @@ noncomputable def beta (c : ↥(CongruenceSubgroup.GammaH M H) ⧸ CongruenceSub
     (Matrix.SpecialLinearGroup.mapGL ℝ (((c.out : ↥(CongruenceSubgroup.GammaH M H)) : SL(2, ℤ))⁻¹) :
       GL (Fin 2) ℝ)
 
+omit [NeZero M] in
 theorem mapGL_conjL_mul_heckeMatrix (t : ↥(CongruenceSubgroup.GammaHUpper M H q)) :
     (Matrix.SpecialLinearGroup.mapGL ℝ ((CongruenceSubgroup.conjL M H q t :
       ↥(CongruenceSubgroup.GammaH M H)) : SL(2, ℤ)) : GL (Fin 2) ℝ) *
@@ -918,10 +910,9 @@ theorem sum_slash_beta_slash_eq (k : ℤ) {f : ℍ → ℂ}
       q c) ∣[k] γ =
       ∑ c : ↥(CongruenceSubgroup.GammaH M H) ⧸ CongruenceSubgroup.GammaHUpper M H q, f ∣[k] beta M H
         q c := by
-  letI := (CongruenceSubgroup.GammaHUpper M H q).fintypeQuotientOfFiniteIndex
+  let := (CongruenceSubgroup.GammaHUpper M H q).fintypeQuotientOfFiniteIndex
   obtain ⟨g, hg, rfl⟩ := Subgroup.mem_map.mp hγ
   set g' : ↥(CongruenceSubgroup.GammaH M H) := ⟨g, hg⟩ with hg'
-
   have hterm : ∀ c : ↥(CongruenceSubgroup.GammaH M H) ⧸ CongruenceSubgroup.GammaHUpper M H q,
       (f ∣[k] beta M H q c) ∣[k] (Matrix.SpecialLinearGroup.mapGL ℝ g : GL (Fin 2) ℝ) =
         f ∣[k] beta M H q (g'⁻¹ • c) := by
@@ -936,7 +927,6 @@ theorem sum_slash_beta_slash_eq (k : ℤ) {f : ℍ → ℂ}
     obtain ⟨t, ht⟩ := QuotientGroup.mk_out_eq_mul (CongruenceSubgroup.GammaHUpper M H q) (g'⁻¹ *
       c.out)
     rw [hmk] at ht
-
     have hrel : (((c.out : ↥(CongruenceSubgroup.GammaH M H)) : SL(2, ℤ)))⁻¹ * g =
         (((t : ↥(CongruenceSubgroup.GammaHUpper M H q)) : ↥(CongruenceSubgroup.GammaH M H)) : SL(2,
           ℤ)) * (((d.out : ↥(CongruenceSubgroup.GammaH M H)) : SL(2, ℤ)))⁻¹ := by
@@ -987,10 +977,11 @@ def transl (n : ℤ) : ↥(CongruenceSubgroup.GammaH M H) :=
     refine ⟨h0, ?_⟩
     have : gamma0Units M ⟨ModularGroup.T ^ n, h0⟩ = 1 := by
       ext; rw [val_gamma0Units]
-      show (((ModularGroup.T ^ n) 1 1 : ℤ) : ZMod M) = ((1 : (ZMod M)ˣ) : ZMod M)
+      change (((ModularGroup.T ^ n) 1 1 : ℤ) : ZMod M) = ((1 : (ZMod M)ˣ) : ZMod M)
       rw [ModularGroup.coe_T_zpow]; simp
     rw [this]; exact one_mem H⟩
 
+omit [NeZero M] in
 @[scoped simp] theorem coe_transl (n : ℤ) : ((transl M H n : ↥(CongruenceSubgroup.GammaH M H)) :
   SL(2, ℤ)) = ModularGroup.T ^ n := rfl
 
@@ -1021,8 +1012,10 @@ theorem heckeMatrix_zero_mul_mapGL_T_zpow_neg (j : Fin q) (e : ℕ) (he : (j : �
   rw [e1, e1]
   have he' : ((j : ℕ) : ℝ) + (((-j : Fin q) : ℕ) : ℝ) = (e : ℝ) * (q : ℝ) := by exact_mod_cast he
   ext i k
-  fin_cases i <;> fin_cases k <;> simp [Matrix.mul_apply, Fin.sum_univ_two] <;> linarith [he']
+  fin_cases i <;> fin_cases k <;> simp [Matrix.mul_apply, Fin.sum_univ_two]
+  linarith [he']
 
+omit [NeZero M] in
 theorem bijective_transl (hqM : q ∣ M) :
     Function.Bijective (fun j : Fin q => (QuotientGroup.mk (transl M H ((j : ℕ) : ℤ)) :
       ↥(CongruenceSubgroup.GammaH M H) ⧸ CongruenceSubgroup.GammaHUpper M H q)) := by
@@ -1035,7 +1028,6 @@ theorem bijective_transl (hqM : q ∣ M) :
       mem_Gamma0Upper, ModularGroup.coe_T_zpow] at hij
     simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_fin_one,
       Matrix.cons_val_zero] at hij
-
     apply Fin.ext
     have h1 : ((j : ℕ) : ZMod q) = ((i : ℕ) : ZMod q) := by
       have : ((-(i : ℕ) + (j : ℕ) : ℤ) : ZMod q) = 0 := by exact_mod_cast hij
@@ -1048,7 +1040,6 @@ theorem bijective_transl (hqM : q ∣ M) :
     induction c using QuotientGroup.induction_on with
     | H γ =>
     obtain ⟨h0, -⟩ := (mem_GammaH_iff M).mp γ.2
-
     have hc : ((((γ : SL(2, ℤ)) 1 0 : ℤ)) : ZMod q) = 0 := by
       rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
       exact (Int.natCast_dvd_natCast.mpr hqM).trans ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp
@@ -1060,14 +1051,12 @@ theorem bijective_transl (hqM : q ∣ M) :
       have := congrArg (fun z : ℤ => (z : ZMod q)) hdet
       simp only [Int.cast_sub, Int.cast_mul, Int.cast_one, hc, mul_zero, sub_zero] at this
       exact this
-
     set jz : ZMod q := ((((γ : SL(2, ℤ)) 0 1 : ℤ)) : ZMod q) * ((((γ : SL(2, ℤ)) 0 0 : ℤ)) : ZMod q)
       with hjz
     refine ⟨⟨jz.val, ZMod.val_lt jz⟩, ?_⟩
     symm
     rw [QuotientGroup.eq, Subgroup.mem_subgroupOf, Subgroup.coe_mul, Subgroup.coe_inv, coe_transl,
       mem_Gamma0Upper]
-
     have hentry : ((γ : SL(2, ℤ))⁻¹ * ModularGroup.T ^ (((jz.val : ℕ) : ℤ)) : SL(2, ℤ)) 0 1 =
         ((γ : SL(2, ℤ)) 1 1 : ℤ) * ((jz.val : ℕ) : ℤ) - ((γ : SL(2, ℤ)) 0 1 : ℤ) := by
       rw [Matrix.SpecialLinearGroup.coe_mul, Matrix.SpecialLinearGroup.coe_inv,
@@ -1086,11 +1075,9 @@ theorem sum_slash_beta_eq_heckeU (hqM : q ∣ M) (k : ℤ) {f : ℍ → ℂ}
     letI := (CongruenceSubgroup.GammaHUpper M H q).fintypeQuotientOfFiniteIndex
     (∑ c : ↥(CongruenceSubgroup.GammaH M H) ⧸ CongruenceSubgroup.GammaHUpper M H q, f ∣[k] beta M H
       q c) = ModularForm.heckeU k q f := by
-  letI := (CongruenceSubgroup.GammaHUpper M H q).fintypeQuotientOfFiniteIndex
-
+  let := (CongruenceSubgroup.GammaHUpper M H q).fintypeQuotientOfFiniteIndex
   rw [← Fintype.sum_bijective _ (bijective_transl M H q hqM) (fun j => f ∣[k] beta M H q
       (QuotientGroup.mk (transl M H ((j : ℕ) : ℤ)))) _ (fun _ => rfl)]
-
   have hterm : ∀ j : Fin q, f ∣[k] beta M H q (QuotientGroup.mk (transl M H ((j : ℕ) : ℤ))) =
       f ∣[k] ModularForm.heckeMatrix q ((-j : Fin q) : ℕ) := by
     intro j
@@ -1142,8 +1129,8 @@ public theorem heckeU_slash_eq_self_of_mem_GammaH
     (hf : ∀ γ ∈ (CongruenceSubgroup.GammaH M H : Subgroup (GL (Fin 2) ℝ)), f ∣[k] γ = f)
     (γ : GL (Fin 2) ℝ) (hγ : γ ∈ (CongruenceSubgroup.GammaH M H : Subgroup (GL (Fin 2) ℝ))) :
     (heckeU k q f) ∣[k] γ = heckeU k q f := by
-  haveI : NeZero q := ⟨hq.ne_zero⟩
-  letI := (CongruenceSubgroup.GammaHUpper M H q).fintypeQuotientOfFiniteIndex
+  have : NeZero q := ⟨hq.ne_zero⟩
+  let := (CongruenceSubgroup.GammaHUpper M H q).fintypeQuotientOfFiniteIndex
   rw [← ModularFormHeckeGammaH.HeckeGammaH.sum_slash_beta_eq_heckeU M H q hqM k hf]
   exact ModularFormHeckeGammaH.HeckeGammaH.sum_slash_beta_slash_eq M H q k hf γ hγ
 
@@ -1174,27 +1161,10 @@ noncomputable def heckeULinHOf (k : ℤ) {q : ℕ} (hU : StableU M H k q) :
       zero_at_cusps' := fun hc => (hU f).2.2 _ hc }
   map_add' f g := DFunLike.coe_injective <|
     show ModularForm.heckeU k q ⇑(f + g) = ModularForm.heckeU k q ⇑f + ModularForm.heckeU k q ⇑g by
-      rw [CuspForm.coe_add, ModularForm.heckeU_add]
+      rw [FunLike.coe_add, ModularForm.heckeU_add]
   map_smul' c f := DFunLike.coe_injective <|
     show ModularForm.heckeU k q ⇑(c • f) = c • ModularForm.heckeU k q ⇑f by
-      rw [CuspForm.IsGLPos.coe_smul, ModularForm.heckeU_smul]
-
-open Classical in
-
-noncomputable def heckeULinH (k : ℤ) (q : ℕ) :
-    CuspForm (CongruenceSubgroup.GammaH M H) k →ₗ[ℂ] CuspForm (CongruenceSubgroup.GammaH M H) k :=
-  if hU : StableU M H k q then heckeULinHOf k hU else 0
-
-theorem heckeULinH_eq (k : ℤ) {q : ℕ} (hU : StableU M H k q) :
-    (heckeULinH k q : CuspForm (CongruenceSubgroup.GammaH M H) k →ₗ[ℂ] _) = heckeULinHOf k hU := by
-  rw [heckeULinH, dif_pos hU]
-
-theorem coe_heckeULinH_apply (k : ℤ) {q : ℕ} (hU : StableU M H k q)
-    (f : CuspForm (CongruenceSubgroup.GammaH M H) k) : ⇑(heckeULinH k q f) = ModularForm.heckeU k q
-      ⇑f := by
-  rw [heckeULinH_eq k hU]; rfl
-
-
+      rw [FunLike.coe_smul, ModularForm.heckeU_smul]
 
 end CuspForm
 
@@ -1208,6 +1178,25 @@ public theorem stableU (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) (k : ℤ) 
       (fun γ hγ => SlashInvariantFormClass.slash_action_eq f γ hγ) γ hγ,
     ModularForm.mdifferentiable_heckeU (CuspFormClass.holo f) k q,
     fun c hc => CuspFormClass.isZeroAt_heckeU f q hc⟩
+
+variable {M : ℕ} [NeZero M] {H : Subgroup (ZMod M)ˣ}
+
+/-- The Hecke operator `U_q` on cusp forms for `GammaH M H`, for a prime `q` dividing the level
+`M`: the linear map `f ↦ heckeU k q f`, built by `heckeULinHOf` from `stableU`. It takes the
+primality and divisibility hypotheses, so it is not defined at other indices. -/
+noncomputable def heckeULinH (k : ℤ) {q : ℕ} (hq : q.Prime) (hqM : q ∣ M) :
+    CuspForm (CongruenceSubgroup.GammaH M H) k →ₗ[ℂ] CuspForm (CongruenceSubgroup.GammaH M H) k :=
+  heckeULinHOf k (stableU M H k hq hqM)
+
+theorem heckeULinH_eq (k : ℤ) {q : ℕ} (hq : q.Prime) (hqM : q ∣ M) (hU : StableU M H k q) :
+    (heckeULinH k hq hqM : CuspForm (CongruenceSubgroup.GammaH M H) k →ₗ[ℂ] _) =
+      heckeULinHOf k hU :=
+  rfl
+
+theorem coe_heckeULinH_apply (k : ℤ) {q : ℕ} (hq : q.Prime) (hqM : q ∣ M)
+    (f : CuspForm (CongruenceSubgroup.GammaH M H) k) :
+    ⇑(heckeULinH k hq hqM f) = ModularForm.heckeU k q ⇑f :=
+  rfl
 
 end CuspForm
 
@@ -1227,11 +1216,11 @@ private theorem eq_of_forall_qCoeff_eq (M : ℕ) [NeZero M] (H : Subgroup (ZMod 
     (h : ∀ n : ℕ, ModularFormClass.qCoeff F n = ModularFormClass.qCoeff G n) :
     F = G := by
   have hΓ := one_mem_strictPeriods_GammaH M H
-  haveI : Fact (IsCusp OnePoint.infty
+  have : Fact (IsCusp OnePoint.infty
       ((CongruenceSubgroup.GammaH M H : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ))) :=
     ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos hΓ⟩
   have h1 : UpperHalfPlane.qExpansion 1 (⇑(F - G)) = 0 := by
-    rw [CuspForm.coe_sub, ModularForm.qExpansion_sub one_pos hΓ F G]
+    rw [FunLike.coe_sub, ModularForm.qExpansion_sub one_pos hΓ F G]
     ext n
     have hh := h n
     simp only [ModularFormClass.qCoeff] at hh
@@ -1246,10 +1235,10 @@ private theorem eq_of_forall_qCoeff_eq (M : ℕ) [NeZero M] (H : Subgroup (ZMod 
 public theorem qCoeff_heckeULinH (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) (k : ℤ)
     {q : ℕ} (hq : q.Prime) (hqM : q ∣ M)
     (f : CuspForm (CongruenceSubgroup.GammaH M H) k) (n : ℕ) :
-    ModularFormClass.qCoeff (heckeULinH k q f) n = ModularFormClass.qCoeff f (n * q) := by
-  have hcoe : ModularFormClass.qCoeff (⇑(heckeULinH k q f)) n =
+    ModularFormClass.qCoeff (heckeULinH k hq hqM f) n = ModularFormClass.qCoeff f (n * q) := by
+  have hcoe : ModularFormClass.qCoeff (⇑(heckeULinH k hq hqM f)) n =
       ModularFormClass.qCoeff (ModularForm.heckeU k q ⇑f) n := by
-    rw [coe_heckeULinH_apply k (stableU M H k hq hqM) f]
+    rw [coe_heckeULinH_apply k hq hqM f]
   rw [hcoe, ModularFormClass.qCoeff_heckeU f (one_mem_strictPeriods_GammaH M H) hq.ne_zero n,
     ModularForm.coeffHeckeU_apply]
 
@@ -1259,7 +1248,8 @@ public theorem heckeULinH_comm
     (M : ℕ) [NeZero M] (H : Subgroup (ZMod M)ˣ) (k : ℤ)
     {q q' : ℕ} (hq : q.Prime) (hqM : q ∣ M) (hq' : q'.Prime) (hq'M : q' ∣ M)
     (f : CuspForm (CongruenceSubgroup.GammaH M H) k) :
-    heckeULinH k q (heckeULinH k q' f) = heckeULinH k q' (heckeULinH k q f) := by
+    heckeULinH k hq hqM (heckeULinH k hq' hq'M f) =
+      heckeULinH k hq' hq'M (heckeULinH k hq hqM f) := by
   apply eq_of_forall_qCoeff_eq M H
   intro n
   rw [qCoeff_heckeULinH M H k hq hqM, qCoeff_heckeULinH M H k hq' hq'M,
