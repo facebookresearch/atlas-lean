@@ -4,6 +4,7 @@ Cooperative game theory studies games in which coalitions of players can make bi
 
 - [Shapley value](shapley-value/README.md)
 - [Bondareva–Shapley theorem](bondareva-shapley-theorem/README.md)
+- [Solution concepts of graph games (Deng-Papadimitriou)](solution-concepts-of-graph-games.md)
 
 ## Related topics
 

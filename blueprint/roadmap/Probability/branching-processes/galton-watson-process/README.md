@@ -36,3 +36,6 @@
 ## Several types
 
 - [Mean identity for multitype Galton–Watson processes](multitype-galton-watson-processes.md)
+
+- [Exploration walk of a Galton–Watson forest](exploration-walk-of-a-realized-galton-watson-for.md)
+- [Normalized growth of supercritical multitype Galton–Watson processes](normalized-growth-of-multitype-galton-watson-pro.md)

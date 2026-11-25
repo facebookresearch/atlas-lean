@@ -18,7 +18,7 @@ non-trivial `kᵢ`-strong tournament for every `i`?
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.Combinatorics.TransitiveSubtournamentLogErdosProblem1216Wanted
+public import MathlibExt.Combinatorics.Digraph.TransitiveSubtournament
 public import WantedExt.GraphTheory.TournamentStrongConnectivityShared
 
 @[expose] public section
