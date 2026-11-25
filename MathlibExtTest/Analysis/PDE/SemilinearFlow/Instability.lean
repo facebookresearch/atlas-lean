@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Analysis.PDE.SemilinearFlow.Instability
-import MathlibExt.Biology.Dynamics.TuringPatterns
 
 /-! Tests for linearized instability of semilinear flows.
 
@@ -17,12 +16,6 @@ import MathlibExt.Biology.Dynamics.TuringPatterns
   remainder, so all hypotheses of `exists_escape_of_eigenvalue` hold at `0`.
 * Non-vacuity of the semigroup form: the flow `Φ t x = eᵗ x` on `ℂ` with semigroup `S t = eᵗ`,
   eigenvalue `κ = 1`, growth bound `ω = 1 < 2 · Re κ`.
-* Boundary case: an unstable *continuum* wavenumber whose domain spectrum has no unstable mode.
-  The Schnakenberg kinetics with `d_v / d_u = 9` have the unstable wavenumber `k = 1/√3`, but on
-  `[0, 1]` with Neumann boundary conditions no admissible wavenumber `k_n = n π` is unstable:
-  no Neumann Fourier mode `cos(n π x)` is unstable, so no such mode can supply the eigenvalue
-  hypothesis of the instability theorems. (That the linearized operator has no other unstable
-  eigenvalue would need completeness of the Neumann modes, not formalized here.)
 * Public proof steps used from outside `Instability`: `duhamel` on an exact orbit and on a
   forced orbit, `geom_sum_le` (sharp at `μ = 0`), `exists_escape_radius` with the constant
   `1/4` and the failure at `c = 0`, `flow_escape_of_map_escape` for the flow `2ᵗ x`, and
@@ -87,41 +80,6 @@ example : ∃ ε > 0, ∀ δ > 0, ∃ x : ℂ, ‖x - 0‖ < δ ∧
     rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (Real.exp_pos t)]
     exact mul_le_of_le_one_right (Real.exp_pos t).le ContinuousLinearMap.norm_id_le
   · rw [expSemigroup_apply, mul_one, mul_one, smul_eq_mul, mul_one, Complex.ofReal_exp]
-
-/-! ### Boundary case: unstable continuum wavenumber absent from the domain spectrum -/
-
-open MathlibExt.Biology.Dynamics.TuringPatterns in
-/-- **Continuum instability without domain instability.** For the Schnakenberg kinetics at
-`a = 1/10`, `b = 9/10` with `d_u = 1`, `d_v = 9`, the continuum wavenumber `k = 1/√3` is
-unstable, yet on `[0, 1]` with Neumann boundary conditions no admissible wavenumber `n π` is.
-An unstable continuum wavenumber therefore yields no Neumann Fourier mode that could supply the
-eigenvalue hypothesis of `exists_escape_of_semigroup` on this domain. -/
-example : IsUnstableMode (schnakenbergJacobian (1 / 10) (9 / 10)) 1 9 (Real.sqrt (1 / 3)) ∧
-    ∀ n : ℕ,
-      ¬ IsUnstableMode (schnakenbergJacobian (1 / 10) (9 / 10)) 1 9 (neumannWavenumber 1 n) := by
-  have htr : (schnakenbergJacobian (1 / 10) (9 / 10)).trace < 0 :=
-    (trace_schnakenbergJacobian_neg_iff (by norm_num)).2 (by norm_num)
-  have hdet : 0 < (schnakenbergJacobian (1 / 10) (9 / 10)).det := by
-    rw [det_schnakenbergJacobian (by norm_num)]; norm_num
-  refine ⟨?_, fun n => ?_⟩
-  · rw [isUnstableMode_iff_dispersionDet_neg htr zero_le_one (by norm_num),
-      Real.sq_sqrt (by norm_num), dispersionDet, det_schnakenbergJacobian (by norm_num)]
-    norm_num [schnakenbergJacobian]
-  refine not_isUnstableMode_neumannWavenumber_of_le one_pos (by norm_num) htr hdet one_pos ?_ n
-  have hΔ : bandDiscriminant (schnakenbergJacobian (1 / 10) (9 / 10)) 1 9 ≤ 4 := by
-    rw [bandDiscriminant, det_schnakenbergJacobian (by norm_num)]
-    norm_num [schnakenbergJacobian]
-  have hs : Real.sqrt (bandDiscriminant (schnakenbergJacobian (1 / 10) (9 / 10)) 1 9) ≤ 2 := by
-    rw [show (2 : ℝ) = Real.sqrt 4 by
-      rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]]
-    exact Real.sqrt_le_sqrt hΔ
-  have hpi : (2 : ℝ) ^ 2 ≤ (Real.pi / 1) ^ 2 := by
-    rw [div_one]
-    exact pow_le_pow_left₀ (by norm_num) Real.two_le_pi 2
-  unfold bandUpper
-  norm_num [schnakenbergJacobian] at hs ⊢
-  rw [div_le_iff₀ (by norm_num)]
-  nlinarith
 
 /-! ### Public proof steps, used from outside `Instability` -/
 

@@ -1,0 +1,53 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Analysis.Normed.Ring.DirectLimit
+public import Mathlib.Analysis.CStarAlgebra.Basic
+
+/-!
+# C-star laws on norm-preserving direct limits
+
+The stock involution satisfies the C-star inequality under the same explicit
+normed-ring dictionary whenever the actual stages do. This is the raw limit,
+not a completeness assertion or a new completion construction.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace DirectLimit
+
+universe uI uG uT
+
+variable {I : Type uI} [Preorder I] [IsDirectedOrder I] [Nonempty I]
+  {G : I → Type uG} [∀ i, NonUnitalNormedRing (G i)]
+  {T : ∀ ⦃i j : I⦄, i ≤ j → Type uT}
+  [∀ i j (h : i ≤ j), FunLike (T h) (G i) (G j)]
+  [∀ i j (h : i ≤ j), NonUnitalRingHomClass (T h) (G i) (G j)]
+  (f : ∀ i j (h : i ≤ j), T h)
+  [DirectedSystem G (f · · ·)]
+  (hNorm : ∀ i j (h : i ≤ j) (x : G i), ‖f i j h x‖ = ‖x‖)
+
+/-- The existing stock involution satisfies the C-star law under the same
+constructed normed-ring dictionary whenever the genuine stage rings do. -/
+theorem cstar_ring_of_norm_preserving
+    [∀ i, StarRing (G i)]
+    [∀ i j (h : i ≤ j), StarHomClass (T h) (G i) (G j)]
+    [∀ i, CStarRing (G i)] :
+    letI : NonUnitalNormedRing (_root_.DirectLimit G f) :=
+      nonUnitalNormedRingOfNormPreserving f hNorm;
+    CStarRing (_root_.DirectLimit G f) := by
+  let _ : NonUnitalNormedRing (_root_.DirectLimit G f) :=
+    nonUnitalNormedRingOfNormPreserving f hNorm
+  refine { norm_mul_self_le := ?_ }
+  intro z
+  refine _root_.DirectLimit.induction (f := f) (fun i x => ?_) z
+  rw [_root_.DirectLimit.star_def, _root_.DirectLimit.mul_def]
+  change ‖x‖ * ‖x‖ ≤ ‖star x * x‖
+  exact CStarRing.norm_mul_self_le x
+
+end DirectLimit

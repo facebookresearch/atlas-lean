@@ -45,6 +45,19 @@ An ideal Diesel loop of the same gas at `r = 8` with cutoff ratio `rc = 125/64`:
 * at `rc = 1` no heat is added and Lean's value of the formula is not the Otto efficiency, which
   is the limit as `rc` decreases to `1`; a cutoff ratio `16` above `r` turns the last adiabatic
   leg into a compression.
+
+An air-standard Brayton loop (`R = 287 J/(kg K)`, `cp = 2009/2 J/(kg K)`, `γ = 7/5`) at pressure
+ratio `(3/2) ^ 7`, so `a = 9/4`, from `300 K` with the turbine inlet at `1350 K`:
+
+* its states are `675 K` and `600 K`; per unit mass it absorbs `678037.5 J/kg`, rejects
+  `301350 J/kg` and does `376687.5 J/kg` of net work, with efficiency `5/9 < 7/9 = 1 - T₁ / T₃`;
+* the general results apply to it: the loop is nondegenerate, the four leg balances fix the signs
+  of the shaft works and heats, and every ideal-gas state at the compressor exit pressure on the
+  inlet adiabat has the temperature `675 K`;
+* without compression it does no work, and a turbine inlet below `675 K` gives no positive work;
+* its compressor inlet is the coldest and its turbine inlet the hottest state, so `1 - T₁ / T₃` is
+  the Carnot efficiency between them; at a pressure ratio below one the same inequality holds
+  with a negative `1 - T₁ / T₃`, which is why the comparison requires `rp > 1`.
 -/
 
 @[expose] public section
@@ -315,5 +328,154 @@ example :
       3 * (dieselCutoffTemp 300 8 (5 / 3) 16 - dieselExpandedTemp 300 8 (5 / 3) 16) < 0 :=
   diesel_cutoff_above_ratio (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num)
+
+-- Fixture: air-standard cycle with `R = 287` J/(kg K) and `cp = 2009/2` J/(kg K)
+-- (`R / cp = 2/7`, `γ = 7/5`) at pressure ratio `rp = (3/2) ^ 7 = 2187/128`, so `a = 9/4`. From
+-- `T₁ = 300` K the compressor reaches `T₂ = 675` K; with the turbine inlet at `T₃ = 1350` K the
+-- turbine exit is `T₄ = 600` K. Per unit mass `Qin = 1356075/2` J/kg, `Qout = 301350` J/kg,
+-- `Wnet = 753375/2` J/kg and `η = 5/9 < 7/9 = 1 - T₁ / T₃`.
+example :
+    braytonTempRatio (2187 / 128) 287 (2009 / 2) = 9 / 4 ∧
+      braytonCompressedTemp 300 (2187 / 128) 287 (2009 / 2) = 675 ∧
+      braytonExpandedTemp 1350 (2187 / 128) 287 (2009 / 2) = 600 ∧
+      braytonHeatIn 300 1350 (2187 / 128) 287 (2009 / 2) = 1356075 / 2 ∧
+      braytonHeatOut 300 1350 (2187 / 128) 287 (2009 / 2) = 301350 ∧
+      braytonNetWork 300 1350 (2187 / 128) 287 (2009 / 2) = 753375 / 2 ∧
+      braytonEfficiency (2187 / 128) 287 (2009 / 2) = 5 / 9 ∧
+      (5 / 9 : ℝ) < 1 - 300 / 1350 := by
+  have hexp : (287 : ℝ) / (2009 / 2) = 2 / 7 := by norm_num
+  have hrp : (2187 / 128 : ℝ) = (3 / 2) ^ 7 := by norm_num
+  have h72 : ((7 : ℕ) : ℝ) * (2 / 7) = 2 := by norm_num
+  have ha : braytonTempRatio (2187 / 128) 287 (2009 / 2) = 9 / 4 := by
+    simp only [braytonTempRatio]
+    rw [hexp, hrp, ← Real.rpow_natCast,
+      ← Real.rpow_mul (show (0 : ℝ) ≤ 3 / 2 by norm_num), h72, Real.rpow_two]
+    norm_num
+  have hT₂ : braytonCompressedTemp 300 (2187 / 128) 287 (2009 / 2) = 675 := by
+    simp only [braytonCompressedTemp, ha]
+    norm_num
+  have hT₄ : braytonExpandedTemp 1350 (2187 / 128) 287 (2009 / 2) = 600 := by
+    simp only [braytonExpandedTemp, ha]
+    norm_num
+  have hQin : braytonHeatIn 300 1350 (2187 / 128) 287 (2009 / 2) = 1356075 / 2 := by
+    simp only [braytonHeatIn, hT₂]
+    norm_num
+  have hQout : braytonHeatOut 300 1350 (2187 / 128) 287 (2009 / 2) = 301350 := by
+    simp only [braytonHeatOut, hT₄]
+    norm_num
+  have hW : braytonNetWork 300 1350 (2187 / 128) 287 (2009 / 2) = 753375 / 2 := by
+    simp only [braytonNetWork, hT₂, hT₄]
+    norm_num
+  have heff : braytonEfficiency (2187 / 128) 287 (2009 / 2) = 5 / 9 := by
+    simp only [braytonEfficiency, ha]
+    norm_num
+  have hlt : (5 / 9 : ℝ) < 1 - 300 / 1350 := by norm_num
+  exact ⟨ha, hT₂, hT₄, hQin, hQout, hW, heff, hlt⟩
+
+-- `a = (2187 / 128) ^ (287 / (2009 / 2)) = ((3 / 2) ^ 7) ^ (2 / 7) = 9 / 4`.
+private lemma braytonTempRatio_air : braytonTempRatio (2187 / 128) 287 (2009 / 2) = 9 / 4 := by
+  rw [braytonTempRatio, show (2187 / 128 : ℝ) = (3 / 2) ^ (7 : ℕ) by norm_num,
+    show (287 : ℝ) / (2009 / 2) = 2 / 7 by norm_num, ← Real.rpow_natCast,
+    ← Real.rpow_mul (by norm_num)]
+  norm_num
+
+-- The air-standard loop through the general results: `brayton_cycle` gives positive heat input
+-- and net work, the work-to-heat ratio `1 - 1 / a = 5/9` and its comparison with
+-- `1 - T₁ / T₃ = 7/9`.
+example :
+    0 < braytonHeatIn 300 1350 (2187 / 128) 287 (2009 / 2) ∧
+      0 < braytonNetWork 300 1350 (2187 / 128) 287 (2009 / 2) ∧
+      braytonNetWork 300 1350 (2187 / 128) 287 (2009 / 2) /
+          braytonHeatIn 300 1350 (2187 / 128) 287 (2009 / 2) = 5 / 9 ∧
+      (5 / 9 : ℝ) < 1 - 300 / 1350 := by
+  have hT₂ : braytonCompressedTemp 300 (2187 / 128) 287 (2009 / 2) = 675 := by
+    rw [braytonCompressedTemp, braytonTempRatio_air]
+    norm_num
+  obtain ⟨hQ, -, hW, he, hc⟩ := brayton_cycle (cp := 2009 / 2) (R := 287) (rp := 2187 / 128)
+    (T₁ := 300) (T₃ := 1350) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by rw [hT₂]; norm_num)
+  rw [braytonTempRatio_air] at he hc
+  refine ⟨hQ, hW, ?_, ?_⟩
+  · rw [he]
+    norm_num
+  · norm_num
+
+-- Signs on the same loop: the compressor's engineering work output is
+-- `workOut (753375 / 2) = -753375 / 2` J/kg (a work input), the turbine's is
+-- `workOut (-753375) = 753375` J/kg, the heater absorbs `1356075 / 2` J/kg and the cooler
+-- `-301350` J/kg. The four leg balances give the net shaft output `753375 / 2` J/kg, which is the
+-- net heat.
+example :
+    ProcessPorts.workOut (753375 / 2) + ProcessPorts.workOut (-753375) =
+        braytonNetWork 300 1350 (2187 / 128) 287 (2009 / 2) ∧
+      ProcessPorts.workOut (753375 / 2) + ProcessPorts.workOut (-753375) =
+        1356075 / 2 + -301350 := by
+  have hT₂ : braytonCompressedTemp 300 (2187 / 128) 287 (2009 / 2) = 675 := by
+    rw [braytonCompressedTemp, braytonTempRatio_air]
+    norm_num
+  have hT₄ : braytonExpandedTemp 1350 (2187 / 128) 287 (2009 / 2) = 600 := by
+    rw [braytonExpandedTemp, braytonTempRatio_air]
+    norm_num
+  have h := brayton_leg_energy (cp := 2009 / 2) (R := 287) (rp := 2187 / 128) (T₁ := 300)
+    (T₃ := 1350) (q₁₂ := 0) (q₂₃ := 1356075 / 2) (q₃₄ := 0) (q₄₁ := -301350)
+    (w₁₂ := 753375 / 2) (w₂₃ := 0) (w₃₄ := -753375) (w₄₁ := 0)
+    (by rw [hT₂]; norm_num [ProcessPorts.workOut]) (by rw [hT₂]; norm_num [ProcessPorts.workOut])
+    (by rw [hT₄]; norm_num [ProcessPorts.workOut]) (by rw [hT₄]; norm_num [ProcessPorts.workOut])
+    rfl rfl rfl rfl
+  exact ⟨h.2.2.1, h.2.2.2⟩
+
+-- Every ideal-gas state at the compressor exit pressure `rp p₁` (with `p₁ = 1`) on the adiabat
+-- through the inlet state (`p₁ = 1`, `T₁ = 300` K, `v₁ = 287 · 300`) has the temperature `675` K.
+example {T v : ℝ} (hv : 0 < v) (hgas : 2187 / 128 * 1 * v = 287 * T)
+    (had : 1 * (300 * 287 : ℝ) ^ ((2009 / 2 : ℝ) / (2009 / 2 - 287)) =
+      2187 / 128 * 1 * v ^ ((2009 / 2 : ℝ) / (2009 / 2 - 287))) :
+    T = 675 := by
+  have h := braytonCompressedTemp_eq_of_adiabat (cp := 2009 / 2) (R := 287) (rp := 2187 / 128)
+    (T₁ := 300) (p₁ := 1) (v₁ := 300 * 287) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) hv (by norm_num) hgas had
+  rw [h, braytonCompressedTemp, braytonTempRatio_air]
+  norm_num
+
+-- Degenerate boundary: without compression (`rp = 1`) the loop does no work for any turbine inlet
+-- temperature, and on the air loop the work is positive exactly when `T₃ > 675` K, so a turbine
+-- inlet at `600` K gives no positive work.
+example :
+    braytonNetWork 300 1350 1 287 (2009 / 2) = 0 ∧
+      ¬ 0 < braytonNetWork 300 600 (2187 / 128) 287 (2009 / 2) := by
+  refine ⟨(brayton_zero_work (cp := 2009 / 2) (R := 287) (rp := 2187 / 128) (T₁ := 300)
+    (T₃ := 1350) (by norm_num)).2, ?_⟩
+  rw [braytonNetWork_pos_iff (by norm_num) (by norm_num) (by norm_num), braytonCompressedTemp,
+    braytonTempRatio_air]
+  norm_num
+
+-- The extreme temperatures of the air loop: `braytonEfficiency_lt_carnot` orders the states,
+-- `T₁ = 300 K < T₂ = 675 K < T₃ = 1350 K` and `T₁ < T₄ = 600 K < T₃`, and `η = 5/9` is below
+-- the Carnot efficiency `1 - T₁ / T₃ = 7/9` between the coldest and the hottest state.
+example :
+    (300 : ℝ) < braytonCompressedTemp 300 (2187 / 128) 287 (2009 / 2) ∧
+      (300 : ℝ) < braytonExpandedTemp 1350 (2187 / 128) 287 (2009 / 2) ∧
+      braytonExpandedTemp 1350 (2187 / 128) 287 (2009 / 2) < 1350 ∧
+      braytonEfficiency (2187 / 128) 287 (2009 / 2) < 1 - 300 / 1350 :=
+  braytonEfficiency_lt_carnot (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by rw [braytonCompressedTemp, braytonTempRatio_air]; norm_num)
+
+-- `a = (128 / 2187) ^ (287 / (2009 / 2)) = ((2 / 3) ^ 7) ^ (2 / 7) = 4 / 9`.
+private lemma braytonTempRatio_expansion :
+    braytonTempRatio (128 / 2187) 287 (2009 / 2) = 4 / 9 := by
+  rw [braytonTempRatio, show (128 / 2187 : ℝ) = (2 / 3) ^ (7 : ℕ) by norm_num,
+    show (287 : ℝ) / (2009 / 2) = 2 / 7 by norm_num, ← Real.rpow_natCast,
+    ← Real.rpow_mul (by norm_num)]
+  norm_num
+
+-- Why the comparison requires `rp > 1`: at `rp = (2/3) ^ 7 = 128/2187 < 1` the same gas has
+-- `a = 4/9 < 1`, and `T₃ = 200 K` above `T₂ = 400/3 K` is colder than `T₁ = 300 K`. The inequality
+-- `1 - 1 / a < 1 - T₁ / T₃` still holds (`-5/4 < -1/2`), but `1 - T₁ / T₃` is negative, not a
+-- Carnot efficiency between a hot and a cold reservoir.
+example :
+    braytonCompressedTemp 300 (128 / 2187) 287 (2009 / 2) < 200 ∧ (200 : ℝ) < 300 ∧
+      1 - (300 : ℝ) / 200 < 0 ∧
+      braytonEfficiency (128 / 2187) 287 (2009 / 2) < 1 - 300 / 200 := by
+  rw [braytonCompressedTemp, braytonEfficiency, braytonTempRatio_expansion]
+  norm_num
 
 end PhyslibExtTest.Thermodynamics.GasCycles

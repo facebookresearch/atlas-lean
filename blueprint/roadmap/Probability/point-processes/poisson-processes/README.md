@@ -23,3 +23,9 @@
 
 - [Independent Poisson increments of the counting process](has-law-count-increments.md)
 - [Exponential interarrivals give a Poisson process](is-poisson-process-count.md)
+
+## Martingales, time changes and limit laws
+
+- [Compensated and exponential martingales of a Poisson process](poisson-process-martingales.md)
+- [Inhomogeneous Poisson processes by a deterministic time change](inhomogeneous-poisson-processes-by-deterministic.md)
+- [Functional law of large numbers for the unit Poisson process](functional-lln-and-clt-for-the-unit-poisson-proc.md)

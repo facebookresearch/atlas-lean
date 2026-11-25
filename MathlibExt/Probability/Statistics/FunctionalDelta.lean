@@ -245,7 +245,7 @@ theorem TendstoInDistribution.extended_comp {X Y : Type*} [TopologicalSpace X] [
     filter_upwards [eventually_ge_atTop k] with n hn
     refine measure_mono_ae ?_
     filter_upwards [hUD n] with ω hω hgω
-    exact subset_closure (Set.mem_biUnion hn ⟨hω, hgω⟩)
+    exact subset_closure (Set.mem_iUnion₂_of_mem hn ⟨hω, hgω⟩)
   -- Step 2: points of `X₀` in every `S k` are mapped by `g₀` into `K`.
   have h2 : ∀ x ∈ X₀, x ∈ ⋂ k, S k → g₀ x ∈ K := by
     intro x hx hxS
@@ -512,7 +512,8 @@ theorem gridIncrements_cumsum (x : Fin k → ℝ) :
       omega
     simp [hIic]
 
-private theorem abs_prod_one_add_le (x : Fin k → ℝ) (t : Finset (Fin k)) :
+/-- For `x : Fin k → ℝ` and `t : Finset (Fin k)`, `|∏ l ∈ t, (1 + x l)| ≤ exp (∑ l, |x l|)`. -/
+theorem abs_prod_one_add_le (x : Fin k → ℝ) (t : Finset (Fin k)) :
     |∏ l ∈ t, (1 + x l)| ≤ Real.exp (∑ l, |x l|) := by
   rw [abs_prod]
   calc ∏ l ∈ t, |1 + x l| ≤ ∏ l ∈ t, Real.exp |x l| :=

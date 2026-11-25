@@ -84,6 +84,23 @@ distinct one only above that threshold, and the two coincide at `m = 1`. The cla
 about positive states, not every real root: the entropy condition `m ≥ 1`, which selects the
 compression shocks, is not part of it.
 
+Sections L-M apply that condition. The entropy change per unit mass of a calorically perfect gas
+is `specificEntropyChange cv R T1 v1 T2 v2 = cv log (T2 / T1) + R log (v2 / v1)`, with the specific
+heat at constant volume `cv`, the specific gas constant `R` and the specific volumes `v = 1 / ρ`.
+For `cv = R / (γ - 1)` and `p = ρ R T` it takes the `(T, p)` form
+`cp log (T2 / T1) - R log (p2 / p1)`; on the distinct branch, where `T2 / T1 = P / r` for its
+pressure and density ratios `P` and `r`, it is `R` times
+`Δs / R = log P / (γ - 1) - γ log r / (γ - 1)` (`shockEntropyJump`).
+Above the threshold this jump has the derivative
+`2 γ (m - 1) ^ 2 / (m ((γ - 1) m + 2) (2 γ m - γ + 1))` in `m` and vanishes at `m = 1`, so across
+a nontrivial jump with `M1 > 0` the entropy rises exactly for `M1 > 1` and falls on the expansion
+branch `(γ - 1) / (2 γ) < M1 ^ 2 < 1`. Below the threshold the jump is a junk value of
+`Real.log` at a nonpositive ratio and no lemma reads it. The total enthalpy is conserved, so the
+stagnation temperatures agree, and with each stagnation state joined to its static state by the
+declared isentropic connection, `p02 / p01 = exp (-Δs / R)`: the total pressure falls across the
+compression shock and rises across the expansion root, which solves the jump conditions but is
+entropy-inadmissible.
+
 ## ii. Key results
 
 - `FluidDynamics.PerfectGasPorts.specificEnthalpy_perfectGas`: the port enthalpy is `cp T`.
@@ -127,6 +144,21 @@ compression shocks, is not part of it.
   positive state exactly above `(γ - 1) / (2 γ)`.
 - `FluidDynamics.PerfectGasPorts.shockRatio_eq_one_iff`: the two roots coincide exactly at
   `m = 1`.
+- `FluidDynamics.PerfectGasPorts.specificEntropyChange`,
+  `FluidDynamics.PerfectGasPorts.specificEntropyChange_perfectGas`: the entropy change per unit
+  mass and its `(T, p)` form.
+- `FluidDynamics.PerfectGasPorts.shockEntropyJump`,
+  `FluidDynamics.PerfectGasPorts.shockEntropyJump_one`,
+  `FluidDynamics.PerfectGasPorts.hasDerivAt_shockEntropyJump`,
+  `FluidDynamics.PerfectGasPorts.shockEntropyJump_pos_iff`: the entropy jump of the distinct
+  branch, zero at `m = 1`, its derivative and its sign.
+- `FluidDynamics.PerfectGasPorts.normalShock_entropyChange`,
+  `FluidDynamics.PerfectGasPorts.normalShock_entropy_pos_iff`: the entropy change of a nontrivial
+  positive-state jump, positive exactly for `M1 > 1`.
+- `FluidDynamics.PerfectGasPorts.normalShock_stagnationPressure_ratio`,
+  `FluidDynamics.PerfectGasPorts.normalShock_totalPressure_selection`: `T02 = T01` and
+  `p02 / p01 = exp (-Δs / R)`; the total pressure falls for `M1 > 1` and rises on the
+  entropy-inadmissible expansion branch.
 
 ## iii. Table of contents
 
@@ -141,22 +173,27 @@ compression shocks, is not part of it.
 - I. The area-velocity relation and stationary area at a sonic station
 - J. Normal-shock jump conditions and branch ratios
 - K. The two normal-shock branches
+- L. Specific entropy change in `(T, p)` form and on the distinct branch
+- M. Selection of the compression branch
 
 ## iv. References
 
 - J. D. Anderson, *Modern Compressible Flow*, 3rd ed., McGraw-Hill, 2003, ch. 3: the total
   temperature `T0 / T = 1 + (γ - 1) M ^ 2 / 2` from the adiabatic energy equation, the total
-  pressure and density ratios of an isentropic deceleration, and the normal-shock ratios
-  `ρ2 / ρ1`, `p2 / p1`, `T2 / T1` as functions of `M1`; ch. 5: the area-velocity and
+  pressure and density ratios of an isentropic deceleration, the normal-shock ratios
+  `ρ2 / ρ1`, `p2 / p1`, `T2 / T1` as functions of `M1`, the entropy change
+  `s2 - s1 = cp ln (T2 / T1) - R ln (p2 / p1)` across the shock, which selects `M1 > 1`, and
+  `p02 / p01 = exp (-(s2 - s1) / R)` at unchanged total temperature; ch. 5: the area-velocity and
   area-Mach-number relations, sonic flow at a minimum-area section and choked mass flow in
   quasi-one-dimensional isentropic flow.
 - H. W. Liepmann and A. Roshko, *Elements of Gasdynamics*, Wiley, 1957, ch. 2: flow in a stream
   tube of varying area, the mass flux per unit area and its maximum at `M = 1`.
 - A. H. Shapiro, *The Dynamics and Thermodynamics of Compressible Fluid Flow*, vol. 1, Ronald
-  Press, 1953, ch. 5: the trivial and the shock solution of the normal-shock jump conditions.
+  Press, 1953, ch. 5: the trivial and the shock solution of the normal-shock jump conditions, and
+  the rarefaction shock, an algebraic solution that the second law excludes.
 - NACA Report 1135, *Equations, Tables, and Charts for Compressible Flow*, 1953: the
   normal-shock table (`M1 = 2`, `γ = 1.4`: `p2 / p1 = 4.5`, `ρ2 / ρ1 = 2.667`,
-  `T2 / T1 = 1.688`).
+  `T2 / T1 = 1.688`, `p02 / p01 = 0.7209`).
 - Y. A. Çengel and M. A. Boles, *Thermodynamics: An Engineering Approach*, McGraw-Hill, the
   compressible-flow chapter: stagnation enthalpy `h0 = h + V ^ 2 / 2` and stagnation properties.
 - ISO 80000-11, *Quantities and units, Part 11: Characteristic numbers*: the Mach number.
@@ -1319,5 +1356,331 @@ lemma shockRatio_eq_one_iff {γ m : ℝ} (hγ : 1 < γ) (hm : 0 ≤ m) :
   have hp : shockPressureRatio γ m = 1 := hPress.mpr hm1
   unfold shockTemperatureRatio
   rw [hr, hp, div_self (one_ne_zero)]
+
+/-! ## L. Specific entropy change in `(T, p)` form and on the distinct branch -/
+
+/-- The entropy change per unit mass of a calorically perfect gas from the state `(T1, v1)` to the
+state `(T2, v2)`: `cv log (T2 / T1) + R log (v2 / v1)`, with the specific heat at constant volume
+`cv`, the specific gas constant `R` and the specific volumes `v1`, `v2` (`v = 1 / ρ`). Domain:
+positive temperatures and specific volumes; elsewhere `Real.log` returns a junk value. -/
+noncomputable def specificEntropyChange (cv R T1 v1 T2 v2 : ℝ) : ℝ :=
+  cv * Real.log (T2 / T1) + R * Real.log (v2 / v1)
+
+/-- **The `(T, p)` form of the specific entropy change.** For `γ > 1`, `R > 0`, the specific heat
+`cv = R / (γ - 1)` and two states with positive densities and temperatures obeying `p = ρ R T`,
+the specific entropy change between the specific volumes `1 / ρ1` and `1 / ρ2` is
+`cp log (T2 / T1) - R log (p2 / p1)` with `cp = γ R / (γ - 1)`. -/
+lemma specificEntropyChange_perfectGas {γ R ρ1 p1 T1 ρ2 p2 T2 : ℝ} (hγ : 1 < γ) (hR : 0 < R)
+    (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hρ2 : 0 < ρ2) (hT2 : 0 < T2) (hp1 : p1 = ρ1 * R * T1)
+    (hp2 : p2 = ρ2 * R * T2) :
+    specificEntropyChange (R / (γ - 1)) R T1 (1 / ρ1) T2 (1 / ρ2) =
+      γ * R / (γ - 1) * Real.log (T2 / T1) - R * Real.log (p2 / p1) := by
+  have hγ1 : γ - 1 ≠ 0 := (sub_pos.mpr hγ).ne'
+  have hpp : p2 / p1 = ρ2 / ρ1 * (T2 / T1) := by
+    rw [hp1, hp2]
+    field_simp
+  have hV : 1 / ρ2 / (1 / ρ1) = (ρ2 / ρ1)⁻¹ := by
+    field_simp
+  unfold specificEntropyChange
+  rw [hpp, hV, Real.log_inv, Real.log_mul (div_pos hρ2 hρ1).ne' (div_pos hT2 hT1).ne']
+  field_simp
+  ring
+
+/-- The dimensionless entropy jump `Δs / R = log P / (γ - 1) - γ log r / (γ - 1)` of the distinct
+normal-shock branch at `m = M1 ^ 2`, with its pressure ratio `P` and density ratio `r`. Domain:
+`γ > 1` and `m > (γ - 1) / (2 γ)`, where `P, r > 0`; below the threshold `P ≤ 0` and
+`Real.log` returns a junk value. -/
+noncomputable def shockEntropyJump (γ m : ℝ) : ℝ :=
+  Real.log (shockPressureRatio γ m) / (γ - 1) - γ * Real.log (shockDensityRatio γ m) / (γ - 1)
+
+/-- **No jump at `m = 1`.** For `γ > 1` both ratios are `1` at `m = 1`, so `Δs / R = 0`. -/
+lemma shockEntropyJump_one {γ : ℝ} (hγ : 1 < γ) : shockEntropyJump γ 1 = 0 := by
+  have h := shockRatio_eq_one_iff hγ zero_le_one
+  unfold shockEntropyJump
+  rw [h.1.mpr rfl, h.2.1.mpr rfl, Real.log_one]
+  ring
+
+private lemma shockRatios_pos {γ m : ℝ} (hγ : 1 < γ) (hm : (γ - 1) / (2 * γ) < m) :
+    0 < m ∧ 0 < (γ - 1) * m + 2 ∧ 0 < 2 * γ * m - γ + 1 ∧
+      0 < shockPressureRatio γ m ∧ 0 < shockDensityRatio γ m := by
+  have hγ0 : 0 < γ := by linarith
+  have hθ : 0 < (γ - 1) / (2 * γ) := div_pos (by linarith) (by linarith)
+  have hm0 : 0 < m := lt_trans hθ hm
+  have hD : 0 < (γ - 1) * m + 2 := by nlinarith
+  have hQ : 0 < 2 * γ * m - γ + 1 := by
+    rw [div_lt_iff₀ (by linarith)] at hm
+    linarith
+  refine ⟨hm0, hD, hQ, ?_, ?_⟩
+  · unfold shockPressureRatio
+    exact div_pos (by linarith) (by linarith)
+  · unfold shockDensityRatio
+    exact div_pos (mul_pos (by linarith) hm0) hD
+
+/-- **Derivative of the entropy jump.** For `γ > 1` and `m > (γ - 1) / (2 γ)`, `Δs / R` has the
+derivative `2 γ (m - 1) ^ 2 / (m ((γ - 1) m + 2) (2 γ m - γ + 1))` in `m`. -/
+lemma hasDerivAt_shockEntropyJump {γ m : ℝ} (hγ : 1 < γ) (hm : (γ - 1) / (2 * γ) < m) :
+    HasDerivAt (shockEntropyJump γ)
+      (2 * γ * (m - 1) ^ 2 / (m * ((γ - 1) * m + 2) * (2 * γ * m - γ + 1))) m := by
+  obtain ⟨hm0, hD, hQ, hP, hr⟩ := shockRatios_pos hγ hm
+  have hγ1 : γ - 1 ≠ 0 := (sub_pos.mpr hγ).ne'
+  have hγp1 : γ + 1 ≠ 0 := by linarith
+  have hPd : HasDerivAt (fun x => shockPressureRatio γ x) (2 * γ / (γ + 1)) m := by
+    have h := (((hasDerivAt_id' m).const_mul (2 * γ)).sub_const (γ - 1)).div_const (γ + 1)
+    simpa [shockPressureRatio] using h
+  have hrd : HasDerivAt (fun x => shockDensityRatio γ x)
+      (2 * (γ + 1) / ((γ - 1) * m + 2) ^ 2) m := by
+    have hnum := (hasDerivAt_id' m).const_mul (γ + 1)
+    have hden := ((hasDerivAt_id' m).const_mul (γ - 1)).add_const 2
+    have h := hnum.div hden hD.ne'
+    unfold shockDensityRatio
+    convert h using 1
+    field_simp
+    ring
+  have hlogP := hPd.log hP.ne'
+  have hlogr := hrd.log hr.ne'
+  have h := (hlogP.div_const (γ - 1)).sub ((hlogr.const_mul γ).div_const (γ - 1))
+  have hQ1 : 2 * γ * m - (γ - 1) ≠ 0 := by
+    have : 2 * γ * m - (γ - 1) = 2 * γ * m - γ + 1 := by ring
+    rw [this]
+    exact hQ.ne'
+  have hm1 : m ≠ 0 := hm0.ne'
+  have hD1 : (γ - 1) * m + 2 ≠ 0 := hD.ne'
+  unfold shockEntropyJump
+  convert h using 1
+  unfold shockPressureRatio shockDensityRatio
+  rw [show 2 * γ * m - γ + 1 = 2 * γ * m - (γ - 1) by ring]
+  rw [div_eq_iff (mul_ne_zero (mul_ne_zero hm1 hD1) hQ1)]
+  field_simp
+  ring
+
+private lemma shockEntropyJump_strictMonoOn {γ : ℝ} (hγ : 1 < γ) :
+    StrictMonoOn (shockEntropyJump γ) (Set.Ioi ((γ - 1) / (2 * γ))) := by
+  have hθ1 : (γ - 1) / (2 * γ) < 1 := by
+    rw [div_lt_one (by linarith)]
+    linarith
+  have hpos : ∀ m, (γ - 1) / (2 * γ) < m → m ≠ 1 →
+      0 < 2 * γ * (m - 1) ^ 2 / (m * ((γ - 1) * m + 2) * (2 * γ * m - γ + 1)) := by
+    intro m hm hm1
+    obtain ⟨hm0, hD, hQ, -, -⟩ := shockRatios_pos hγ hm
+    have hsq : 0 < (m - 1) ^ 2 := by
+      have : m - 1 ≠ 0 := sub_ne_zero.mpr hm1
+      positivity
+    exact div_pos (mul_pos (by linarith) hsq) (mul_pos (mul_pos hm0 hD) hQ)
+  have h1 : StrictMonoOn (shockEntropyJump γ) (Set.Ioc ((γ - 1) / (2 * γ)) 1) := by
+    refine strictMonoOn_of_deriv_pos (convex_Ioc _ _) ?_ ?_
+    · exact fun m hm => (hasDerivAt_shockEntropyJump hγ hm.1).continuousAt.continuousWithinAt
+    · intro m hm
+      rw [interior_Ioc] at hm
+      rw [(hasDerivAt_shockEntropyJump hγ hm.1).deriv]
+      exact hpos m hm.1 (ne_of_lt hm.2)
+  have h2 : StrictMonoOn (shockEntropyJump γ) (Set.Ici 1) := by
+    refine strictMonoOn_of_deriv_pos (convex_Ici _) ?_ ?_
+    · exact fun m hm =>
+        (hasDerivAt_shockEntropyJump hγ (lt_of_lt_of_le hθ1 hm)).continuousAt.continuousWithinAt
+    · intro m hm
+      rw [interior_Ici] at hm
+      rw [(hasDerivAt_shockEntropyJump hγ (lt_trans hθ1 hm)).deriv]
+      exact hpos m (lt_trans hθ1 hm) (ne_of_gt hm)
+  intro a ha b hb hab
+  rcases le_or_gt b 1 with hb1 | hb1
+  · exact h1 ⟨ha, le_trans hab.le hb1⟩ ⟨hb, hb1⟩ hab
+  · rcases le_or_gt 1 a with ha1 | ha1
+    · exact h2 ha1 hb1.le hab
+    · calc shockEntropyJump γ a < shockEntropyJump γ 1 := h1 ⟨ha, ha1.le⟩ ⟨hθ1, le_rfl⟩ ha1
+        _ < shockEntropyJump γ b := h2 le_rfl hb1.le hb1
+
+/-- **Sign of the entropy jump.** For `γ > 1` and `m > (γ - 1) / (2 γ)`, `Δs / R > 0` exactly for
+`m > 1` and `Δs / R < 0` exactly for `m < 1`. -/
+lemma shockEntropyJump_pos_iff {γ m : ℝ} (hγ : 1 < γ) (hm : (γ - 1) / (2 * γ) < m) :
+    (0 < shockEntropyJump γ m ↔ 1 < m) ∧ (shockEntropyJump γ m < 0 ↔ m < 1) := by
+  have hmono := shockEntropyJump_strictMonoOn hγ
+  have h1 := shockEntropyJump_one hγ
+  have hθ1 : (γ - 1) / (2 * γ) < 1 := by
+    rw [div_lt_one (by linarith)]
+    linarith
+  have hgt : 1 < m → 0 < shockEntropyJump γ m := fun h => by
+    have := hmono (show (1 : ℝ) ∈ Set.Ioi ((γ - 1) / (2 * γ)) from hθ1) hm h
+    rwa [h1] at this
+  have hlt : m < 1 → shockEntropyJump γ m < 0 := fun h => by
+    have := hmono hm (show (1 : ℝ) ∈ Set.Ioi ((γ - 1) / (2 * γ)) from hθ1) h
+    rwa [h1] at this
+  refine ⟨⟨fun hpos => ?_, hgt⟩, ⟨fun hneg => ?_, hlt⟩⟩
+  · rcases lt_trichotomy m 1 with h | h | h
+    · exact absurd (hlt h) (not_lt.mpr hpos.le)
+    · rw [h, h1] at hpos
+      exact absurd hpos (lt_irrefl 0)
+    · exact h
+  · rcases lt_trichotomy m 1 with h | h | h
+    · exact h
+    · rw [h, h1] at hneg
+      exact absurd hneg (lt_irrefl 0)
+    · exact absurd (hgt h) (not_lt.mpr hneg.le)
+
+/-- **Entropy change across the nontrivial branch.** Under the hypotheses of
+`normalShock_classification`, a solution other than the trivial branch is the distinct branch
+above the threshold with `M1 ^ 2 ≠ 1`, and its specific entropy change is `R` times
+`shockEntropyJump γ (M1 ^ 2)`. -/
+lemma normalShock_entropyChange {γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2 a1 M1 : ℝ} (hγ : 1 < γ)
+    (hR : 0 < R) (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hρ2 : 0 < ρ2) (hT2 : 0 < T2)
+    (ha1 : a1 ^ 2 = γ * R * T1) (hM1 : M1 = |u1| / a1)
+    (hjump : IsNormalShockJump γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2)
+    (hnt : ¬(ρ2 = ρ1 ∧ u2 = u1 ∧ p2 = p1 ∧ T2 = T1)) :
+    (γ - 1) / (2 * γ) < M1 ^ 2 ∧ M1 ^ 2 ≠ 1 ∧
+      specificEntropyChange (R / (γ - 1)) R T1 (1 / ρ1) T2 (1 / ρ2) =
+        R * shockEntropyJump γ (M1 ^ 2) := by
+  have hγ1 : γ - 1 ≠ 0 := (sub_pos.mpr hγ).ne'
+  obtain ⟨hp1, hp2, hmass, -, -⟩ := id hjump
+  have hp1pos : 0 < p1 := by rw [hp1]; positivity
+  have hp2pos : 0 < p2 := by rw [hp2]; positivity
+  rcases normalShock_classification hγ hR hρ1 hT1 hρ2 hT2 ha1 hM1 hjump with htriv |
+    ⟨hr, hP, hT, hthr⟩
+  · exact absurd htriv hnt
+  have hm1 : M1 ^ 2 ≠ 1 := by
+    intro hm
+    have h := shockRatio_eq_one_iff hγ (sq_nonneg M1)
+    have hρ : ρ2 = ρ1 := by
+      rw [h.1.mpr hm, div_eq_one_iff_eq hρ1.ne'] at hr
+      exact hr
+    have hp : p2 = p1 := by
+      rw [h.2.1.mpr hm, div_eq_one_iff_eq hp1pos.ne'] at hP
+      exact hP
+    have hTT : T2 = T1 := by
+      rw [h.2.2 hm, div_eq_one_iff_eq hT1.ne'] at hT
+      exact hT
+    have hu : u2 = u1 := by
+      rw [hρ] at hmass
+      exact (mul_left_cancel₀ hρ1.ne' hmass).symm
+    exact hnt ⟨hρ, hu, hp, hTT⟩
+  refine ⟨hthr, hm1, ?_⟩
+  obtain ⟨-, -, -, hPpos, hrpos⟩ := shockRatios_pos hγ hthr
+  rw [specificEntropyChange_perfectGas hγ hR hρ1 hT1 hρ2 hT2 hp1 hp2, hT, hP]
+  unfold shockTemperatureRatio shockEntropyJump
+  rw [Real.log_div hPpos.ne' hrpos.ne']
+  field_simp
+  ring
+
+/-! ## M. Selection of the compression branch -/
+
+/-- **Entropy selects the compression branch.** Under the hypotheses of
+`normalShock_entropyChange` and the flow orientation `M1 > 0`, the entropy rises across the jump
+exactly for `M1 > 1` and falls exactly for `M1 < 1`. -/
+lemma normalShock_entropy_pos_iff {γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2 a1 M1 : ℝ} (hγ : 1 < γ)
+    (hR : 0 < R) (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hρ2 : 0 < ρ2) (hT2 : 0 < T2)
+    (ha1 : a1 ^ 2 = γ * R * T1) (hM1 : M1 = |u1| / a1) (hM1pos : 0 < M1)
+    (hjump : IsNormalShockJump γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2)
+    (hnt : ¬(ρ2 = ρ1 ∧ u2 = u1 ∧ p2 = p1 ∧ T2 = T1)) :
+    (0 < specificEntropyChange (R / (γ - 1)) R T1 (1 / ρ1) T2 (1 / ρ2) ↔ 1 < M1) ∧
+      (specificEntropyChange (R / (γ - 1)) R T1 (1 / ρ1) T2 (1 / ρ2) < 0 ↔ M1 < 1) := by
+  obtain ⟨hthr, -, hS⟩ := normalShock_entropyChange hγ hR hρ1 hT1 hρ2 hT2 ha1 hM1 hjump hnt
+  obtain ⟨hpos, hneg⟩ := shockEntropyJump_pos_iff hγ hthr
+  have hsq1 : 1 < M1 ^ 2 ↔ 1 < M1 := ⟨fun h => by nlinarith, fun h => by nlinarith⟩
+  have hsq2 : M1 ^ 2 < 1 ↔ M1 < 1 := ⟨fun h => by nlinarith, fun h => by nlinarith⟩
+  rw [hS]
+  constructor
+  · rw [← hsq1, ← hpos]
+    exact ⟨fun h => pos_of_mul_pos_right h hR.le, fun h => mul_pos hR h⟩
+  · rw [← hsq2, ← hneg]
+    exact ⟨fun h => neg_of_mul_neg_right h hR.le, fun h => mul_neg_of_pos_of_neg hR h⟩
+
+/-- **Unchanged total enthalpy and `p02 / p01 = exp (-Δs / R)`.** For a positive-state solution
+of the jump conditions, with each stagnation state fixed by the stagnation energy balance
+`cp T + u ^ 2 / 2 = cp T0`, the ideal-gas law and the declared isentropic connection
+`p / ρ ^ γ = p0 / ρ0 ^ γ` with a positive stagnation density, the stagnation temperatures agree
+and the stagnation pressure ratio is `exp (-Δs / R)`, on either branch. -/
+lemma normalShock_stagnationPressure_ratio
+    {γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2 ρ01 p01 T01 ρ02 p02 T02 : ℝ} (hγ : 1 < γ) (hR : 0 < R)
+    (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hρ2 : 0 < ρ2) (hT2 : 0 < T2)
+    (hjump : IsNormalShockJump γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2)
+    (hen1 : γ * R / (γ - 1) * T1 + u1 ^ 2 / 2 = γ * R / (γ - 1) * T01)
+    (hen2 : γ * R / (γ - 1) * T2 + u2 ^ 2 / 2 = γ * R / (γ - 1) * T02)
+    (hρ01 : 0 < ρ01) (hρ02 : 0 < ρ02) (hp01 : p01 = ρ01 * R * T01) (hp02 : p02 = ρ02 * R * T02)
+    (hs1 : p1 / ρ1 ^ γ = p01 / ρ01 ^ γ) (hs2 : p2 / ρ2 ^ γ = p02 / ρ02 ^ γ) :
+    T02 = T01 ∧ p02 / p01 =
+      Real.exp (-(specificEntropyChange (R / (γ - 1)) R T1 (1 / ρ1) T2 (1 / ρ2) / R)) := by
+  have hγ1 : 0 < γ - 1 := sub_pos.mpr hγ
+  have hγ0 : 0 < γ := by linarith
+  have hcp : 0 < γ * R / (γ - 1) := div_pos (mul_pos hγ0 hR) hγ1
+  obtain ⟨hp1, hp2, -, -, henth⟩ := id hjump
+  have hT0 : T02 = T01 := by
+    have h : γ * R / (γ - 1) * T02 = γ * R / (γ - 1) * T01 := by linarith
+    exact mul_left_cancel₀ hcp.ne' h
+  refine ⟨hT0, ?_⟩
+  have hstag : ∀ {ρ u p T ρ0 p0 T0 : ℝ}, 0 < ρ → 0 < T → p = ρ * R * T → 0 < ρ0 →
+      p0 = ρ0 * R * T0 → γ * R / (γ - 1) * T + u ^ 2 / 2 = γ * R / (γ - 1) * T0 →
+      p / ρ ^ γ = p0 / ρ0 ^ γ → p0 / p = (T0 / T) ^ (γ / (γ - 1)) := by
+    intro ρ u p T ρ0 p0 T0 hρ hT hp hρ0 hp0 hen hs
+    have ha : Real.sqrt (γ * R * T) ^ 2 = γ * R * T := Real.sq_sqrt (by positivity)
+    exact (stagnation_pressure_ratio hγ hR hT rfl ha rfl hen hρ hρ0 hp hp0 hs).1
+  have h1 := hstag hρ1 hT1 hp1 hρ01 hp01 hen1 hs1
+  have h2 := hstag hρ2 hT2 hp2 hρ02 hp02 hen2 hs2
+  have hT01 : 0 < T01 := by
+    have h : 0 < γ * R / (γ - 1) * T01 := by rw [← hen1]; positivity
+    exact pos_of_mul_pos_right h hcp.le
+  have hp1pos : 0 < p1 := by rw [hp1]; positivity
+  have hp2pos : 0 < p2 := by rw [hp2]; positivity
+  rw [specificEntropyChange_perfectGas hγ hR hρ1 hT1 hρ2 hT2 hp1 hp2]
+  have hexp : -((γ * R / (γ - 1) * Real.log (T2 / T1) - R * Real.log (p2 / p1)) / R) =
+      Real.log (p2 / p1) + Real.log (T1 / T2) * (γ / (γ - 1)) := by
+    rw [show T1 / T2 = (T2 / T1)⁻¹ by rw [inv_div], Real.log_inv]
+    field_simp
+    ring
+  rw [hexp, Real.exp_add, Real.exp_log (div_pos hp2pos hp1pos),
+    ← Real.rpow_def_of_pos (div_pos hT1 hT2)]
+  have e1 : p01 = p1 * (T01 / T1) ^ (γ / (γ - 1)) := by
+    rw [← h1]
+    field_simp
+  have e2 : p02 = p2 * (T01 / T2) ^ (γ / (γ - 1)) := by
+    rw [← hT0, ← h2]
+    field_simp
+  have hsplit : (T01 / T2) ^ (γ / (γ - 1)) =
+      (T1 / T2) ^ (γ / (γ - 1)) * (T01 / T1) ^ (γ / (γ - 1)) := by
+    rw [← Real.mul_rpow (div_pos hT1 hT2).le (div_pos hT01 hT1).le]
+    congr 1
+    field_simp
+  have hpow : 0 < (T01 / T1) ^ (γ / (γ - 1)) := Real.rpow_pos_of_pos (div_pos hT01 hT1) _
+  rw [e1, e2, hsplit]
+  field_simp
+
+/-- **Total pressure across the two branches.** Under the hypotheses of
+`normalShock_entropy_pos_iff` and the stagnation hypotheses of
+`normalShock_stagnationPressure_ratio`: for `M1 > 1` the total pressure falls, `p02 < p01`; for
+`M1 < 1` the solution is on the positive-state expansion branch
+`(γ - 1) / (2 γ) < M1 ^ 2 < 1`, where the total pressure rises, `p01 < p02`, and the entropy
+falls: the expansion root is entropy-inadmissible. -/
+lemma normalShock_totalPressure_selection
+    {γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2 a1 M1 ρ01 p01 T01 ρ02 p02 T02 : ℝ} (hγ : 1 < γ) (hR : 0 < R)
+    (hρ1 : 0 < ρ1) (hT1 : 0 < T1) (hρ2 : 0 < ρ2) (hT2 : 0 < T2)
+    (ha1 : a1 ^ 2 = γ * R * T1) (hM1 : M1 = |u1| / a1) (hM1pos : 0 < M1)
+    (hjump : IsNormalShockJump γ R ρ1 u1 p1 T1 ρ2 u2 p2 T2)
+    (hnt : ¬(ρ2 = ρ1 ∧ u2 = u1 ∧ p2 = p1 ∧ T2 = T1))
+    (hen1 : γ * R / (γ - 1) * T1 + u1 ^ 2 / 2 = γ * R / (γ - 1) * T01)
+    (hen2 : γ * R / (γ - 1) * T2 + u2 ^ 2 / 2 = γ * R / (γ - 1) * T02)
+    (hρ01 : 0 < ρ01) (hρ02 : 0 < ρ02) (hp01 : p01 = ρ01 * R * T01) (hp02 : p02 = ρ02 * R * T02)
+    (hs1 : p1 / ρ1 ^ γ = p01 / ρ01 ^ γ) (hs2 : p2 / ρ2 ^ γ = p02 / ρ02 ^ γ) :
+    (1 < M1 → p02 < p01) ∧
+      (M1 < 1 → (γ - 1) / (2 * γ) < M1 ^ 2 ∧ M1 ^ 2 < 1 ∧ p01 < p02 ∧
+        specificEntropyChange (R / (γ - 1)) R T1 (1 / ρ1) T2 (1 / ρ2) < 0) := by
+  have hγ1 : 0 < γ - 1 := sub_pos.mpr hγ
+  have hcp : 0 < γ * R / (γ - 1) := div_pos (mul_pos (by linarith) hR) hγ1
+  obtain ⟨hthr, -, -⟩ := normalShock_entropyChange hγ hR hρ1 hT1 hρ2 hT2 ha1 hM1 hjump hnt
+  obtain ⟨hpos, hneg⟩ :=
+    normalShock_entropy_pos_iff hγ hR hρ1 hT1 hρ2 hT2 ha1 hM1 hM1pos hjump hnt
+  obtain ⟨-, hratio⟩ := normalShock_stagnationPressure_ratio hγ hR hρ1 hT1 hρ2 hT2 hjump hen1
+    hen2 hρ01 hρ02 hp01 hp02 hs1 hs2
+  have hT01 : 0 < T01 := by
+    have h : 0 < γ * R / (γ - 1) * T01 := by rw [← hen1]; positivity
+    exact pos_of_mul_pos_right h hcp.le
+  have hp01pos : 0 < p01 := by rw [hp01]; positivity
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · have hΔ := hpos.mpr h
+    have hlt : p02 / p01 < 1 := by
+      rw [hratio, Real.exp_lt_one_iff, neg_lt_zero]
+      exact div_pos hΔ hR
+    exact (div_lt_one hp01pos).mp hlt
+  · have hΔ := hneg.mpr h
+    have hgt : 1 < p02 / p01 := by
+      rw [hratio, Real.one_lt_exp_iff, neg_pos]
+      exact div_neg_of_neg_of_pos hΔ hR
+    exact ⟨hthr, by nlinarith, (one_lt_div hp01pos).mp hgt, hΔ⟩
 
 end FluidDynamics.PerfectGasPorts

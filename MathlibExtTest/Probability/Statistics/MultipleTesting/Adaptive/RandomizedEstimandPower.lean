@@ -200,7 +200,7 @@ example : (0 : Fin 2) ∈ bhRejections (1 / 20) ![0, 1] :=
 /-! ### A randomized trial on `[0, 1]` -/
 
 /-- Treated units: `ω ≤ 1/2`. -/
-def treatedR : Set ℝ := Set.Iic (1 / 2)
+noncomputable def treatedR : Set ℝ := Set.Iic (1 / 2)
 
 /-- Control potential outcomes: `0` for both endpoints. -/
 def y0R : Fin 2 → ℝ → ℝ := fun _ _ => 0

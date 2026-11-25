@@ -17,31 +17,41 @@ public import Mathlib.Basic.Real.Basic
 
 namespace MathlibExt.GroupTheory.ScottishBook160Part2Wanted
 
-/-- G is not the union of two disjoint nonempty closed sets. -/
+/-- **Connectedness in the sense of Hausdorff.** A topological space $G$ is connected in the
+sense of Hausdorff when it is not the union of two disjoint nonempty closed subsets.
+
+The empty space satisfies this condition. -/
 def IsHausdorffConnected (G : Type*) [TopologicalSpace G] : Prop :=
   ¬ ∃ (A B : Set G), IsClosed A ∧ IsClosed B ∧ A.Nonempty ∧ B.Nonempty ∧
     Disjoint A B ∧ A ∪ B = Set.univ
 
-/-- Any two points are joined by a continuous path. -/
+/-- **Arcwise connected space.** A topological space $G$ is arcwise connected when for any two
+points $x, y \in G$ there is a continuous map $\gamma \colon \mathbb{R} \to G$ with
+$\gamma(0) = x$ and $\gamma(1) = y$.
+
+Restricting $\gamma$ to $[0, 1]$ gives a path from $x$ to $y$, and every such path extends
+to $\mathbb{R}$, so this says that any two points are joined by a path; the path need not be
+injective. -/
 def IsArcwiseConnected (G : Type*) [TopologicalSpace G] : Prop :=
   ∀ x y : G, ∃ γ : ℝ → G, Continuous γ ∧ γ 0 = x ∧ γ 1 = y
 
-/-- Part (2) of Scottish Book 160: every connected (in the sense of
-Hausdorff) metric group is arcwise connected. -/
+/-- **Claim of Scottish Book Problem 160, part (2).** The claim that every metric group $G$
+(a group with a metric for which multiplication and inversion are continuous) that is
+connected in the sense of Hausdorff is arcwise connected. -/
 def ScottishBookProblem160Part2Claim : Prop :=
   ∀ (G : Type*) [MetricSpace G] [Group G] [IsTopologicalGroup G],
     IsHausdorffConnected G → IsArcwiseConnected G
 
 /--
-Part (2) of Scottish Book 160 is false. Counterexample: the p-adic
-solenoid, the inverse limit of circles under `z ↦ z ^ p` (the case of
-the solenoid construction with every `nᵢ = p`). It is a compact
-connected metrizable topological group, but it is not path connected:
-for some `x y` no continuous `γ : ℝ → G` joins them (such a `γ` would
-restrict to a continuous path on `[0, 1]`). Hence connectedness in the
-sense of Hausdorff does not imply arcwise connectedness for metric
-groups. Part (1) is not refuted here; it remains an open conjecture
-(`OpenConjectures.GroupTheory.ScottishBook160.conjecture`).
+**Connected metric groups need not be arcwise connected.** The claim of part (2) of Scottish
+Book Problem 160 is false: there is a metric group $G$ (a group with a metric for which
+multiplication and inversion are continuous) that is connected in the sense of Hausdorff but
+not arcwise connected, that is, there are points $x, y \in G$ such that no continuous map
+$\gamma \colon \mathbb{R} \to G$ has $\gamma(0) = x$ and $\gamma(1) = y$.
+
+The $p$-adic solenoid, the inverse limit of circles under $z \mapsto z^p$, is such a group:
+it is a compact connected metrizable topological group that is not path connected.
+
 Source: Encyclopedia of Mathematics, "Solenoid" (inverse-limit
 construction with `fᵢ (z) = z ^ nᵢ`, a topological group, a
 one-dimensional continuum); E. Hewitt and K. A. Ross, Abstract Harmonic

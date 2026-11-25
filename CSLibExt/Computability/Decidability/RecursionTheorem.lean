@@ -50,13 +50,16 @@ namespace Cslib.Decidability
 open Encodable
 open Nat.Partrec (Code)
 
-/-- **A quine**: a code that outputs its own number on every input. -/
+/-- **A quine.** There is a code $c$ of a partial recursive function on $\mathbb{N}$ that, on
+every input $n \in \mathbb{N}$, halts and outputs the number encoding $c$. -/
 theorem exists_quine : ∃ c : Code, ∀ n, c.eval n = Part.some (encode c) := by
   obtain ⟨c, hc⟩ := Code.fixed_point₂ (f := fun c _ ↦ Part.some (encode c))
     (Computable.encode.comp Computable.fst).partrec.to₂
   exact ⟨c, fun n ↦ by rw [hc]⟩
 
-/-- **A code that halts exactly on its own number.** -/
+/-- **A code that halts exactly on its own number.** There is a code $c$ of a partial recursive
+function on $\mathbb{N}$ such that, for every $n \in \mathbb{N}$, $c$ halts on input $n$ if and
+only if $n$ is the number encoding $c$. -/
 theorem exists_dom_eq_singleton_encode : ∃ c : Code, c.eval.Dom = {encode c} := by
   obtain ⟨c, hc⟩ := Code.fixed_point₂
     (f := fun c n ↦ cond (decide (n = encode c)) (Part.some 0) Part.none)

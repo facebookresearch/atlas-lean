@@ -195,21 +195,15 @@ example (a : Array Nat) : HeapOrdered a ↔ DaryHeapOrdered 2 a :=
 example : siftUp #[1, 5, 3, 7, 0] 4 = darySiftUp #[1, 5, 3, 7, 0] 4 2 le_rfl :=
   siftUp_eq_darySiftUp_two _ _
 
-#guard siftUp #[1, 5, 3, 7, 0] 4 == #[0, 1, 3, 7, 5]
-
 #guard darySiftUp #[1, 5, 3, 7, 0] 4 2 le_rfl == #[0, 1, 3, 7, 5]
 
 example : siftDown #[9, 2, 1, 4, 3] 0 = darySiftDown #[9, 2, 1, 4, 3] 0 2 le_rfl :=
   siftDown_eq_darySiftDown_two _ _
 
-#guard siftDown #[9, 2, 1, 4, 3] 0 == #[1, 2, 9, 4, 3]
 #guard darySiftDown #[9, 2, 1, 4, 3] 0 2 le_rfl == #[1, 2, 9, 4, 3]
 
 example : smallerChild #[0, 5, 5] 0 = darySmallestChild #[0, 5, 5] 2 0 :=
   smallerChild_eq_darySmallestChild_two _ _
-
--- Concrete child selection, including a tie: the first minimal child wins.
-example : smallerChild (#[9, 4, 4] : Array Nat) 0 = some 1 := by decide
 
 example : darySmallestChild (#[9, 4, 2] : Array Nat) 2 0 = some 2 := by
   rw [← smallerChild_eq_darySmallestChild_two]

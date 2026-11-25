@@ -54,14 +54,20 @@ theorem continuous_toEuclideanLin (W : Matrix (Fin d) (Fin q) ℝ) :
     Continuous (toEuclideanLin W) :=
   LinearMap.continuous_of_finiteDimensional _
 
-/-- `⟪W z, t⟫ = ⟪z, Wᵀ t⟫`, from Mathlib's `Matrix.toEuclideanLin_conjTranspose_eq_adjoint`. -/
+/-- **The transpose of a real matrix is its adjoint.** For every real $d \times q$ matrix $W$ and
+all $z \in \mathbb{R}^q$ and $t \in \mathbb{R}^d$, the Euclidean inner products satisfy
+$\langle Wz, t\rangle = \langle z, W^\top t\rangle$. -/
 theorem inner_toEuclideanLin (W : Matrix (Fin d) (Fin q) ℝ) (t : EuclideanSpace ℝ (Fin d))
     (z : EuclideanSpace ℝ (Fin q)) :
     ⟪toEuclideanLin W z, t⟫ = ⟪z, toEuclideanLin Wᵀ t⟫ := by
   rw [← conjTranspose_eq_transpose_of_trivial, toEuclideanLin_conjTranspose_eq_adjoint,
     LinearMap.adjoint_inner_right]
 
-/-- The characteristic function of the image of a measure under `z ↦ W z`. -/
+/-- **Characteristic function of a linear image.** Let $\mu$ be a measure on $\mathbb{R}^q$
+and $W$ a real $d \times q$ matrix, and write
+$\varphi_\nu(t) = \int e^{i\langle x, t\rangle}\,d\nu(x)$ for the characteristic function of a
+measure $\nu$. Then the pushforward $W_*\mu$ of $\mu$ under $z \mapsto Wz$ satisfies
+$\varphi_{W_*\mu}(t) = \varphi_\mu(W^\top t)$ for every $t \in \mathbb{R}^d$. -/
 theorem charFun_map_toEuclideanLin (μ : Measure (EuclideanSpace ℝ (Fin q)))
     (W : Matrix (Fin d) (Fin q) ℝ) (t : EuclideanSpace ℝ (Fin d)) :
     charFun (μ.map (toEuclideanLin W)) t = charFun μ (toEuclideanLin Wᵀ t) := by
@@ -77,10 +83,15 @@ theorem norm_sq_toEuclideanLin_transpose (W : Matrix (Fin d) (Fin q) ℝ)
     ← mulVec_transpose, transpose_transpose,
     dotProduct_comm]
 
-/-- **The marginal of probabilistic PCA and factor analysis is Gaussian** (Tipping and Bishop):
-if `z ~ N(0, I)` and `ε ~ N(0, Ψ)` are independent, then `x = W z + μ + ε` has law
-`N(μ, W Wᵀ + Ψ)`. Probabilistic PCA is the case `Ψ = σ² I`, factor analysis the case of a
-diagonal `Ψ`. -/
+/-- **The marginal of probabilistic PCA and factor analysis is Gaussian.** Let $Z$ and $E$ be
+independent random vectors on a probability space, with values in $\mathbb{R}^q$ and
+$\mathbb{R}^d$, such that $Z$ has the standard Gaussian law $N(0, I_q)$ and $E$ has law
+$N(0, \Psi)$ for a positive semidefinite real $d \times d$ matrix $\Psi$. Then for every real
+$d \times q$ matrix $W$ and every $\mu \in \mathbb{R}^d$, the random vector $WZ + \mu + E$ has
+law $N(\mu, WW^\top + \Psi)$.
+
+This is the marginal of Tipping and Bishop's model: probabilistic PCA is the case
+$\Psi = \sigma^2 I$, factor analysis the case of a diagonal $\Psi$. -/
 theorem map_eq_multivariateGaussian {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {Z : Ω → EuclideanSpace ℝ (Fin q)} {E : Ω → EuclideanSpace ℝ (Fin d)}
     {Ψ : Matrix (Fin d) (Fin d) ℝ} (hZ : HasLaw Z (stdGaussian _) P)
@@ -110,8 +121,11 @@ theorem map_eq_multivariateGaussian {Ω : Type*} [MeasurableSpace Ω] {P : Measu
   push_cast
   ring
 
-/-- **The probabilistic PCA marginal**: with isotropic noise `ε ~ N(0, σ² I)`, the observation
-`x = W z + μ + ε` has law `N(μ, W Wᵀ + σ² I)`. -/
+/-- **The probabilistic PCA marginal.** Let $Z$ and $E$ be independent random vectors on a
+probability space, with values in $\mathbb{R}^q$ and $\mathbb{R}^d$, such that $Z$ has the
+standard Gaussian law $N(0, I_q)$ and $E$ has the isotropic law $N(0, \sigma^2 I_d)$ for a real
+$\sigma^2 \ge 0$. Then for every real $d \times q$ matrix $W$ and every $\mu \in \mathbb{R}^d$, the
+random vector $WZ + \mu + E$ has law $N(\mu, WW^\top + \sigma^2 I_d)$. -/
 theorem ppca_map_eq {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     {Z : Ω → EuclideanSpace ℝ (Fin q)} {E : Ω → EuclideanSpace ℝ (Fin d)} {σ2 : ℝ} (hσ : 0 ≤ σ2)
     (hZ : HasLaw Z (stdGaussian _) P) (hE : HasLaw E (multivariateGaussian 0 (σ2 • 1)) P)
@@ -120,8 +134,12 @@ theorem ppca_map_eq {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbab
   map_eq_multivariateGaussian hZ hE
     (by rw [smul_one_eq_diagonal]; exact posSemidef_diagonal_iff.2 fun _ => hσ) hind W μ
 
-/-- **The factor-analysis marginal**: with independent noise `ε ~ N(0, diag ψ)`, the observation
-`x = W z + μ + ε` has law `N(μ, W Wᵀ + diag ψ)`. -/
+/-- **The factor-analysis marginal.** Let $Z$ and $E$ be independent random vectors on a
+probability space, with values in $\mathbb{R}^q$ and $\mathbb{R}^d$, such that $Z$ has the
+standard Gaussian law $N(0, I_q)$ and $E$ has law $N(0, \operatorname{diag}\psi)$ for a vector
+$\psi \in \mathbb{R}^d$ with $\psi_i \ge 0$ for all $i$. Then for every real $d \times q$ matrix
+$W$ and every $\mu \in \mathbb{R}^d$, the random vector $WZ + \mu + E$ has law
+$N(\mu, WW^\top + \operatorname{diag}\psi)$. -/
 theorem factorAnalysis_map_eq {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {Z : Ω → EuclideanSpace ℝ (Fin q)} {E : Ω → EuclideanSpace ℝ (Fin d)}
     {ψ : Fin d → ℝ} (hψ : ∀ i, 0 ≤ ψ i) (hZ : HasLaw Z (stdGaussian _) P)

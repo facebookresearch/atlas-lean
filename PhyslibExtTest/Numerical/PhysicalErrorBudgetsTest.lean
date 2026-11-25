@@ -24,7 +24,16 @@ import Mathlib.Tactic.NormNum
 * the same body: its trajectory solves `C T' = Q(T)` and the one-node storage law, while a node
   without a source keeps its temperature;
 * the same body in minutes and in seconds, the step `τ / 10` entered in seconds against `τ` in
-  minutes, and the unstable step `3 τ`.
+  minutes, and the unstable step `3 τ`;
+* the same body under the classical Runge–Kutta method: the one-stage method is the Euler step,
+  the RK4 step from `350` does not depend on the start time and multiplies the excess `50` by
+  `72387 / 80000`, ten steps of size `10` give `T_10 = 300 + 50 (72387 / 80000) ^ 10` with
+  `0 < |T_10 - T(100)| < 50 / 10 ^ 6`, and the step `3 τ` multiplies the excess by `11 / 8`;
+* defects through the actual recurrence: a constant offset of `1 / 2` in the computed temperatures
+  has the residual `1 / 20` at every step and the budget `1 / 2 + 5`, the budget in degrees
+  Fahrenheit, with the heat capacity and the conductance converted per degree Fahrenheit, is
+  `9 / 5` times the budget in degrees Celsius, and dropping an observed residual undercuts the
+  actual error.
 -/
 
 @[expose] public section
@@ -183,6 +192,158 @@ example {X : ℕ → ℝ} (h0 : X 0 = 350)
     norm_num
   · rw [(hX 10).2]
     norm_num
+
+
+/-! ## F. Ten classical Runge–Kutta steps on the same body -/
+
+open MathlibExt.Analysis.ODE.RungeKutta
+
+/-- **Nonzero temperature excess and exact rational amplification.** A body of heat capacity
+`500` coupled through `G = 5` to a bath at `300` has `τ = 100`. Started at `350` (`Δ = 50`), ten
+RK4 steps of `10` (that is `τ / 10`, in the same time unit as `τ`) at the times `10 j` give
+`T_10 = 300 + 50 (72387 / 80000) ^ 10`, and `0 < |T_10 - T(100)| < 50 / 10 ^ 6`. -/
+lemma bathRK4_fixture {X : ℕ → ℝ} (h0 : X 0 = 350)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300) (j * 10) (X j) 10) :
+    X 10 = 300 + 50 * (72387 / 80000) ^ 10 ∧
+      0 < |X 10 - bathTrajectory 500 5 300 50 100| ∧
+      |X 10 - bathTrajectory 500 5 300 50 100| < 50 / 10 ^ 6 := by
+  have hτ : thermalTimeConstant 500 5 = 100 := by norm_num [thermalTimeConstant]
+  have h0' : X 0 = 300 + 50 := by rw [h0]; norm_num
+  have hstep' : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300)
+      (j * (thermalTimeConstant 500 5 / 10)) (X j) (thermalTimeConstant 500 5 / 10) := by
+    intro j
+    rw [hτ, show (100 : ℝ) / 10 = 10 by norm_num]
+    exact hstep j
+  have herr := bathRK4_tenStep_error (by norm_num) (by norm_num) (by norm_num) h0' hstep'
+  have hpos := bathRK4_tenStep_error_pos (by norm_num) (by norm_num) (by norm_num) h0' hstep'
+  rw [hτ] at herr hpos
+  refine ⟨bathRK4_closed_form (by norm_num) (by norm_num) h0' hstep' 10, hpos, ?_⟩
+  simpa using herr
+
+-- The one-stage method on the bath field is the Euler step of section C: from `350` the step `10`
+-- gives `345`.
+example : rkStep eulerRK (bathField 500 5 300) 0 350 10 = 345 := by
+  rw [bathField_eulerStep]
+  norm_num [bathEulerStep, bathPower]
+
+-- The RK4 step from `350` does not depend on the start time; it is `300` plus the step of the
+-- linear decay `θ' = -θ / 100` from the excess `50`, which multiplies the excess by
+-- `R(-1 / 10) = 72387 / 80000`.
+example :
+    rkStep rk4 (bathField 500 5 300) 70 350 10 = rkStep rk4 (bathField 500 5 300) 0 350 10 ∧
+      rkStep rk4 (bathField 500 5 300) 70 350 10 =
+        300 + rkStep rk4 (fun _ y => -1 / thermalTimeConstant 500 5 * y) 0 50 10 ∧
+      rkStep rk4 (bathField 500 5 300) 70 350 10 = 300 + 50 * (72387 / 80000) := by
+  refine ⟨bathField_rk4_time_indep 500 5 300 70 350 10, ?_, ?_⟩
+  · rw [bathField_rk4_shift]
+    norm_num
+  · rw [bathField_rk4_step]
+    norm_num [thermalTimeConstant]
+
+-- After ten steps of size `10` the excess over the bath is `50 (72387 / 80000) ^ 10`.
+example {X : ℕ → ℝ} (h0 : X 0 = 350)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300) (j * 10) (X j) 10) :
+    X 10 - 300 = 50 * (72387 / 80000) ^ 10 := by
+  have hτ : thermalTimeConstant 500 5 = 100 := by norm_num [thermalTimeConstant]
+  have h0' : X 0 = 300 + 50 := by rw [h0]; norm_num
+  have hstep' : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300)
+      (j * (thermalTimeConstant 500 5 / 10)) (X j) (thermalTimeConstant 500 5 / 10) := by
+    intro j
+    rw [hτ, show (100 : ℝ) / 10 = 10 by norm_num]
+    exact hstep j
+  exact bathRK4_tenStep_excess (by norm_num) (by norm_num) h0' hstep'
+
+-- The unstable RK4 step of the stable bath: with `τ = 100`, the step `3 τ = 300` multiplies the
+-- excess by `R(-3) = 11 / 8`, giving `350`, `2950 / 8`, ..., so after ten steps the excess is
+-- `(11 / 8) ^ 10 · 50`, while the exact excess never exceeds `50`.
+example {X : ℕ → ℝ} (h0 : X 0 = 350)
+    (hstep : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300) (j * 300) (X j) 300) :
+    X 1 = 2950 / 8 ∧ |X 10 - 300| = (11 / 8) ^ 10 * 50 ∧
+      |bathTrajectory 500 5 300 50 1000 - 300| ≤ 50 := by
+  have hτ : thermalTimeConstant 500 5 = 100 := by norm_num [thermalTimeConstant]
+  have h0' : X 0 = 300 + 50 := by rw [h0]; norm_num
+  have hstep' : ∀ j : ℕ, X (j + 1) = rkStep rk4 (bathField 500 5 300)
+      (j * (3 * thermalTimeConstant 500 5)) (X j) (3 * thermalTimeConstant 500 5) := by
+    intro j
+    rw [hτ, show (3 : ℝ) * 100 = 300 by norm_num]
+    exact hstep j
+  obtain ⟨hexact, hX⟩ := bathRK4_threeTau (by norm_num) (by norm_num) h0' hstep'
+  refine ⟨?_, ?_, (hexact 1000 (by norm_num)).trans_eq (by norm_num)⟩
+  · rw [(hX 1).1]
+    norm_num
+  · rw [(hX 10).2]
+    norm_num
+
+/-! ## G. Defects through the actual Euler recurrence -/
+
+open Finset
+
+/-- **Observed residuals cannot be replaced by zero.** For `C = G = 1`, `T_amb = 0`, `Δ = 1`, a
+computed sequence equal to the exact Euler iterates except for a last step off by `1` has the
+residual `1` at step `9` and `0` before; dropping that residual from the budget leaves
+`(9 / 10) ^ 10 |Y 0 - 1| + 1 / 10`, which is below the actual error. -/
+lemma bathEuler_residual_not_zero {Y : ℕ → ℝ} (hY : ∀ j ≤ 9, Y j = (9 / 10) ^ j)
+    (hY10 : Y 10 = (9 / 10) ^ 10 + 1) :
+    (∀ j < 9, bathEulerResidual 1 1 0 Y j = 0) ∧ bathEulerResidual 1 1 0 Y 9 = 1 ∧
+      (9 / 10) ^ 10 * |Y 0 - (0 + 1)| + |(1 : ℝ)| / 10 <
+        |Y 10 - bathTrajectory 1 1 0 1 (thermalTimeConstant 1 1)| := by
+  have hτ : thermalTimeConstant 1 1 = 1 := by norm_num [thermalTimeConstant]
+  refine ⟨fun j hj => ?_, ?_, ?_⟩
+  · unfold bathEulerResidual bathEulerStep bathPower
+    rw [hτ, hY (j + 1) (by omega), hY j (by omega), pow_succ]
+    ring
+  · unfold bathEulerResidual bathEulerStep bathPower
+    rw [hτ, hY10, hY 9 (by norm_num)]
+    ring
+  · rw [hY 0 (by norm_num), hY10]
+    unfold bathTrajectory
+    rw [hτ]
+    have he : Real.exp (-1 / 1) < 1 := by
+      rw [Real.exp_lt_one_iff]
+      norm_num
+    have hp : (0 : ℝ) < (9 / 10) ^ 10 := by positivity
+    have hpos : 0 < (9 / 10 : ℝ) ^ 10 + 1 - (0 + 1 * Real.exp (-1 / 1)) := by linarith
+    rw [abs_of_pos hpos]
+    norm_num
+    linarith
+
+-- One step of size `10` of the body in the bath maps the temperatures `350` and `340` to points
+-- `9` apart.
+example :
+    bathEulerStep 500 5 300 (thermalTimeConstant 500 5 / 10) 350 -
+      bathEulerStep 500 5 300 (thermalTimeConstant 500 5 / 10) 340 = 9 := by
+  rw [bathEulerStep_sub_tenth (by norm_num) (by norm_num)]
+  norm_num
+
+-- A constant offset of `1 / 2` in the computed temperatures of the body in the bath: the residual
+-- is `1 / 20` at every step, the budget is `1 / 2 + 5`, and the computed temperature after ten
+-- steps is within it.
+example {X : ℕ → ℝ} (h0 : X 0 = 300 + 50)
+    (hstep : ∀ j, X (j + 1) = bathEulerStep 500 5 300 (thermalTimeConstant 500 5 / 10) (X j)) :
+    (∀ j, bathEulerResidual 500 5 300 (fun i => X i + 1 / 2) j = 1 / 20) ∧
+      tenStepErrorBudget 500 5 300 50 (fun i => X i + 1 / 2) = 11 / 2 ∧
+      |X 10 + 1 / 2 - bathTrajectory 500 5 300 50 (thermalTimeConstant 500 5)| ≤ 11 / 2 := by
+  have hres : ∀ j, bathEulerResidual 500 5 300 (fun i => X i + 1 / 2) j = 1 / 20 := by
+    intro j
+    have h := defect_recurrence (by norm_num) (by norm_num) hstep (fun i => X i + 1 / 2) j
+    linarith
+  have hb : tenStepErrorBudget 500 5 300 50 (fun i => X i + 1 / 2) = 11 / 2 := by
+    simp only [tenStepErrorBudget, hres, h0]
+    norm_num [sum_range_succ]
+  refine ⟨hres, hb, ?_⟩
+  have h := bathEuler_total_error (by norm_num) (by norm_num) h0 hstep (fun i => X i + 1 / 2)
+  rwa [hb] at h
+
+-- The budget in degrees Fahrenheit (`k = 9 / 5`, `c = 32`), with the heat capacity `500` and the
+-- conductance `5` per degree Celsius converted to `500 / (9 / 5) = 2500 / 9` and
+-- `5 / (9 / 5) = 25 / 9` per degree Fahrenheit, is `9 / 5` times the budget in degrees Celsius.
+example (Y : ℕ → ℝ) :
+    tenStepErrorBudget (2500 / 9) (25 / 9) (9 / 5 * 27 + 32) (9 / 5 * 50)
+        (fun i => 9 / 5 * Y i + 32) =
+      9 / 5 * tenStepErrorBudget 500 5 27 50 Y := by
+  have h := (tenStepErrorBudget_tempUnit (k := 9 / 5) (by norm_num) 32 500 5 27 50 Y).2
+  rwa [show (500 : ℝ) / (9 / 5) = 2500 / 9 by norm_num,
+    show (5 : ℝ) / (9 / 5) = 25 / 9 by norm_num] at h
 
 end PhyslibExtTest.Numerical.PhysicalErrorBudgets
 

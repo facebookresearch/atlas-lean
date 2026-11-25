@@ -1,0 +1,17 @@
+# Derived Orientation Models
+
+- [Module Cocycle](module-cocycle.md)
+- [Module To Shift](module-to-shift.md)
+- [Trace System](trace-system.md)
+- [Is Scalar Base Change](is-scalar-base-change.md)
+- [Absolute Trace](absolute-trace.md)
+- [Coefficient Trace](coefficient-trace.md)
+- [Orientation Context](orientation-context.md)
+- [Gamma Pairing](gamma-pairing.md)
+- [Replacement Pairing](replacement-pairing.md)
+- [Is Balanced Coefficient Pairing](is-balanced-coefficient-pairing.md)
+- [Tensor Representative](tensor-representative.md)
+- [Coefficient Pairing Model](coefficient-pairing-model.md)
+- [Orientation Adjoint Model](orientation-adjoint-model.md)
+- [Adjoint To Shift](adjoint-to-shift.md)
+- [Is OOrientation](is-oorientation.md)
