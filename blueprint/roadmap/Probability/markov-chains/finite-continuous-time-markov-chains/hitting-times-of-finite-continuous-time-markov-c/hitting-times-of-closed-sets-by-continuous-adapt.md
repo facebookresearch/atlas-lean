@@ -4,11 +4,11 @@ Let $(\Omega,\mathcal F,(\mathcal F_t)_{t\ge0})$ be a filtered measurable space,
 
 $$\tau_C=\inf\{t\ge0:X_t\in C\}\qquad(\inf\varnothing=+\infty).$$
 
-Then $\tau_C$ is an $(\mathcal F_t)$-stopping time: no completeness or right-continuity of the filtration is needed. Indeed, by continuity of paths and closedness of $C$, for every $t\ge0$
+Then $\tau_C$ is an $(\mathcal F_t)$-stopping time: no completeness or right-continuity of the filtration is needed. If $C=\varnothing$, then $\tau_C=+\infty$ and $\{\tau_C\le t\}=\varnothing\in\mathcal F_t$. If $C\ne\varnothing$, then by continuity of paths and closedness of $C$, for every $t\ge0$
 
 $$\{\tau_C\le t\}=\Bigl\{\inf_{s\in(\mathbb Q\cap[0,t])\cup\{t\}}d(X_s,C)=0\Bigr\},$$
 
-a countable infimum of $\mathcal F_t$-measurable random variables, where $x\mapsto d(x,C)$ is continuous and vanishes exactly on $C$. In particular, for a continuous adapted process with values in $[0,1]$: the absorption time $\inf\{t:X_t\in\{0,1\}\}$; the exit time from the open interval $(a,1-a)$, $0<a<\tfrac12$, which is the hitting time of the closed set $[0,a]\cup[1-a,1]$; and, for processes in a simplex, the hitting times of closed faces and of closed neighbourhoods of them, are stopping times.
+a countable infimum of $\mathcal F_t$-measurable random variables, where $d(x,C)=\inf_{c\in C}d(x,c)$, and $x\mapsto d(x,C)$ is continuous and, for nonempty closed $C$, vanishes exactly on $C$. In particular, for a continuous adapted process with values in $[0,1]$: the absorption time $\inf\{t:X_t\in\{0,1\}\}$; the exit time from the open interval $(a,1-a)$, $0<a<\tfrac12$, which is the hitting time of the closed set $[0,a]\cup[1-a,1]$; and, for processes in a simplex, the hitting times of closed faces and of closed neighbourhoods of them, are stopping times.
 
 ## Depends on
 
@@ -23,7 +23,7 @@ a countable infimum of $\mathcal F_t$-measurable random variables, where $x\maps
 
 A full proof page must establish:
 
-- The displayed identity: if $\tau_C\le t$ the infimum of $s\mapsto d(X_s,C)$ over $[0,t]$ is attained and equals $0$, and by continuity it equals the infimum over the countable dense set; conversely a vanishing infimum over $[0,t]$ is attained at some $s\le t$ with $X_s\in C$.
+- The displayed identity for nonempty $C$: if $\tau_C\le t$, then $X_{\tau_C}\in C$ by continuity of the path and closedness of $C$, so the continuous function $s\mapsto d(X_s,C)$ vanishes at $\tau_C\le t$ and its infimum over $[0,t]$ is $0$, which by continuity equals the infimum over the countable dense set; conversely, if that infimum is $0$, the continuous function attains its minimum $0$ on the compact interval $[0,t]$ at some $s\le t$, so $X_s\in C$ and $\tau_C\le t$. The case $C=\varnothing$ is separate, as above.
 - The special cases listed above.
 - The boundary of the claim: hitting times of open sets are not stopping times for every filtration; they are under right-continuity, as in [usual conditions and continuous-time hitting times](usual-conditions-and-continuous-time-hitting-tim.md).
 
