@@ -20,34 +20,42 @@ open MathlibExt.Topology.Knot.Euclidean
 
 namespace MathlibExt.Topology.Knot.TightAlternatingKnot
 
-/-- A real constant `c` is admissible for the tight alternating-knot
-inequality when every oriented labeled link type that admits an
-alternating diagram and whose crossing number is a finite natural
-`k` has type ropelength at least `c * k`, with the inequality read in
-`ℝ≥0∞`. On this domain the finite-crossing restriction costs
-nothing: the alternating representative itself has a regular
-projection, so every such type has finite crossing number
-(`crossingNumber_lt_top_of_admitsAlternatingDiagram` below). -/
+/-- **Admissible constants for the tight alternating knot inequality.**
+A real number $c$ is admissible when $c \ge 0$ and, for every $n$ and
+every oriented labeled link type with $n$ components that admits an
+alternating diagram and whose crossing number is a natural number $k$,
+the ropelength of the type is at least $c k$.
+
+The restriction to finite crossing number excludes no such type: the
+alternating representative is itself a regular projection, so every
+link type admitting an alternating diagram has finite crossing
+number. -/
 def IsAdmissibleAlternating (c : ℝ) : Prop :=
   0 ≤ c ∧ ∀ (n : ℕ) (L : ParametrizedLink n),
     L.AdmitsAlternatingDiagram → ∀ k : ℕ,
       L.crossingNumber = (k : ℕ∞) →
         ENNReal.ofReal c * (k : ENNReal) ≤ L.ropelength
 
-/-- The tight alternating knot constant `C₂₂ᵦ = b₀`: the supremal
-admissible constant for the linear inequality `L ≥ c * C` over link
-types admitting an alternating diagram, without assuming that the
-supremum is attained. -/
+/-- **Tight alternating knot constant.** The tight alternating knot
+constant $C_{22b} = b_0$ is the supremum, taken in the extended reals,
+of the set of real numbers $c$ admissible for the tight alternating
+knot inequality: those $c \ge 0$ such that every link type $K$ that
+admits an alternating diagram and has finite crossing number
+$\mathrm{Cr}(K)$ has ropelength $\mathrm{L}(K) \ge c\,\mathrm{Cr}(K)$.
+The supremum is not assumed to be attained. -/
 noncomputable def tightAlternatingKnotConstant : EReal :=
   sSup ((fun c : ℝ => (c : EReal)) '' {c : ℝ | IsAdmissibleAlternating c})
 
-/-- Zero is admissible. -/
+/-- **Zero is an admissible alternating constant.** The constant
+$c = 0$ is admissible for the tight alternating knot inequality. -/
 theorem isAdmissibleAlternating_zero : IsAdmissibleAlternating 0 := by
   refine ⟨le_rfl, fun _ _ _ _ _ => ?_⟩
   simp
 
-/-- Admissible alternating constants are downward closed above
-zero. -/
+/-- **Admissible alternating constants are downward closed among
+nonnegative reals.** If a real number $c$ is admissible for the tight
+alternating knot inequality and $c'$ is a real number with
+$0 \le c' \le c$, then $c'$ is admissible as well. -/
 theorem IsAdmissibleAlternating.of_le {c c' : ℝ}
     (hc : IsAdmissibleAlternating c) (h0 : 0 ≤ c') (h : c' ≤ c) :
     IsAdmissibleAlternating c' := by
@@ -58,23 +66,25 @@ theorem IsAdmissibleAlternating.of_le {c c' : ℝ}
       mul_le_mul' (ENNReal.ofReal_le_ofReal h) le_rfl
     _ ≤ L.ropelength := hc.2 n L hL k hk
 
-/-- Every admissible alternating constant is at most the tight
-alternating knot constant. -/
+/-- **Admissible constants are at most the tight alternating knot
+constant.** Every real number $c$ that is admissible for the tight
+alternating knot inequality is at most the tight alternating knot
+constant. -/
 theorem le_tightAlternatingKnotConstant {c : ℝ}
     (hc : IsAdmissibleAlternating c) :
     (c : EReal) ≤ tightAlternatingKnotConstant :=
   le_sSup ⟨c, hc, rfl⟩
 
-/-- The tight alternating knot constant is nonnegative. -/
+/-- **The tight alternating knot constant is nonnegative.** The tight
+alternating knot constant, an extended real number, is at least $0$. -/
 theorem zero_le_tightAlternatingKnotConstant :
     (0 : EReal) ≤ tightAlternatingKnotConstant := by
   simpa using le_tightAlternatingKnotConstant isAdmissibleAlternating_zero
 
-/-- An extended-real upper bound for the tight alternating knot
-constant is exactly a bound for every admissible alternating real
-constant. This is the characteristic elimination rule for proving
-upper bounds on `tightAlternatingKnotConstant` without unfolding its
-supremum definition. -/
+/-- **Upper bounds for the tight alternating knot constant.** For every
+extended real number $b$, the tight alternating knot constant is at
+most $b$ if and only if every real number $c$ that is admissible for
+the tight alternating knot inequality satisfies $c \le b$. -/
 theorem tightAlternatingKnotConstant_le_iff {b : EReal} :
     tightAlternatingKnotConstant ≤ b ↔
       ∀ c : ℝ, IsAdmissibleAlternating c → (c : EReal) ≤ b := by
@@ -86,17 +96,20 @@ theorem tightAlternatingKnotConstant_le_iff {b : EReal} :
     rintro x ⟨c, hc, rfl⟩
     exact hb c hc
 
-/-- A link type admitting an alternating diagram has finite crossing
-number: its alternating representative is itself a regular
-projection. -/
+/-- **Alternating link types have finite crossing number.** If an
+oriented labeled link type with $n$ components admits an alternating
+diagram, then its crossing number is finite: the alternating
+representative is itself a regular projection. -/
 theorem crossingNumber_lt_top_of_admitsAlternatingDiagram {n : ℕ}
     {L : ParametrizedLink n} (hL : L.AdmitsAlternatingDiagram) :
     L.crossingNumber < ⊤ := by
   obtain ⟨L', h', hreg, -⟩ := hL
   exact L.crossingNumber_lt_top_of_isotopic_of_isRegularProjection h' hreg
 
-/-- A link type admitting an alternating diagram has a natural-number
-crossing number. -/
+/-- **Alternating link types have a natural-number crossing number.**
+If an oriented labeled link type with $n$ components admits an
+alternating diagram, then its crossing number equals some natural
+number $k$. -/
 theorem exists_crossingNumber_eq_natCast_of_admitsAlternatingDiagram
     {n : ℕ} {L : ParametrizedLink n}
     (hL : L.AdmitsAlternatingDiagram) :

@@ -1,0 +1,15 @@
+# DGModule Bar Diagram Models
+
+- [Bar Chain](bar-chain.md)
+- [Postcompose](postcompose.md)
+- [Face Index](face-index.md)
+- [Face](face.md)
+- [First Map](first-map.md)
+- [Bar Values](bar-values.md)
+- [Include Bar](include-bar.md)
+- [Face Cell](face-cell.md)
+- [Bar Projective Diagram Replacement](bar-projective-diagram-replacement.md)
+- [Bar Section](bar-section.md)
+- [Joint Component](joint-component.md)
+- [Joint Edge Homotopy](joint-edge-homotopy.md)
+- [Joint Chain Cell](joint-chain-cell.md)

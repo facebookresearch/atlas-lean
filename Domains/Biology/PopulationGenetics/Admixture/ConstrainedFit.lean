@@ -54,7 +54,9 @@ namespace MathlibExt.Biology.PopulationGenetics.QpGraph
 variable {ι E : Type*} [Fintype ι] [DecidableEq ι] [Fintype E]
 
 /-- `l` maximizes `scoreS1 Q f (B *ᵥ ·)` over the nonnegative orthant:
-feasibility plus Mathlib's `IsMaxOn` predicate on `Set.Ici 0`. -/
+feasibility plus Mathlib's `IsMaxOn` predicate on `Set.Ici 0`. For singular `Q`,
+the convention `Q⁻¹ = 0` makes the score `0`, so every `l ≥ 0` qualifies; the
+intended `Q` is positive definite. -/
 def IsConstrainedMaximizer (Q : Matrix ι ι ℝ) (B : Matrix ι E ℝ) (f : ι → ℝ)
     (l : E → ℝ) : Prop :=
   l ∈ Set.Ici 0 ∧ IsMaxOn (fun l => scoreS1 Q f (B *ᵥ l)) (Set.Ici 0) l
@@ -305,8 +307,9 @@ theorem exists_isConstrainedMaximizer {Q : Matrix ι ι ℝ} (hQ : Q.PosDef)
   exact ⟨x, (isConstrainedMaximizer_iff_forall B f).mpr
     ⟨hx0, fun l hl => hxmax l hl fun e he => absurd (Finset.mem_univ e) he⟩⟩
 
-/-- KKT characterization with gradient `g = Bᵀ Q⁻¹ (f - B l)`: a feasible `l`
-is a maximizer iff `g ≤ 0` coordinatewise and `l e * g e = 0` for every `e`. -/
+/-- KKT characterization with gradient `g = Bᵀ Q⁻¹ (f - B l)`, for positive
+definite `Q`: a feasible `l` is a maximizer iff `g ≤ 0` coordinatewise and
+`l e * g e = 0` for every `e`. -/
 theorem isConstrainedMaximizer_iff {Q : Matrix ι ι ℝ} (hQ : Q.PosDef)
     (B : Matrix ι E ℝ) (f : ι → ℝ) {l : E → ℝ} :
     IsConstrainedMaximizer Q B f l ↔
@@ -445,7 +448,8 @@ theorem isConstrainedMaximizer_iff {Q : Matrix ι ι ℝ} (hQ : Q.PosDef)
       exact Finset.sum_eq_zero (fun e _ => hcs e)
     linarith [hexp, hC, hsub, hnonpos, hzero]
 
-/-- The fitted value `B l` is the same for every constrained maximizer. -/
+/-- For positive definite `Q`, the fitted value `B l` is the same for every
+constrained maximizer. -/
 theorem mulVec_eq_of_isConstrainedMaximizer {Q : Matrix ι ι ℝ} (hQ : Q.PosDef)
     {B : Matrix ι E ℝ} {f : ι → ℝ} {l₁ l₂ : E → ℝ}
     (h₁ : IsConstrainedMaximizer Q B f l₁) (h₂ : IsConstrainedMaximizer Q B f l₂) :
@@ -481,8 +485,8 @@ theorem mulVec_eq_of_isConstrainedMaximizer {Q : Matrix ι ι ℝ} (hQ : Q.PosDe
   rw [hsub2] at hB0
   exact (sub_eq_zero.mp hB0).symm
 
-/-- When the Gram matrix `Bᵀ Q⁻¹ B` is positive definite, the constrained
-maximizer `l` itself is unique. -/
+/-- For positive definite `Q`, when the Gram matrix `Bᵀ Q⁻¹ B` is positive
+definite, the constrained maximizer `l` itself is unique: any two are equal. -/
 theorem eq_of_isConstrainedMaximizer_of_posDef_gram {Q : Matrix ι ι ℝ}
     (hQ : Q.PosDef) {B : Matrix ι E ℝ} (hgram : (Bᵀ * Q⁻¹ * B).PosDef)
     {f : ι → ℝ} {l₁ l₂ : E → ℝ}

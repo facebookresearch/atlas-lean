@@ -46,27 +46,43 @@ namespace Modulus
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- Target of the combined residue-sign map: signs at infinity times
-finite-quotient units. -/
+/-- **Residue-sign target.** Let $m$ be a modulus of a number field $K$, with finite part the
+nonzero ideal $\mathfrak{m}_0$ of the ring of integers $\mathcal{O}_K$ and infinite part the
+finite set $S$ of real places of $K$. Let $G$ denote $\mathbb{Z}/2\mathbb{Z}$ written
+multiplicatively, let $G^S$ denote the group of functions from $S$ to $G$ (one sign for each place
+in $S$), and let $(\mathcal{O}_K/\mathfrak{m}_0)^\times$ denote the unit group of the quotient ring
+$\mathcal{O}_K/\mathfrak{m}_0$. The residue-sign target of $m$ is the product group
+$G^S \times (\mathcal{O}_K/\mathfrak{m}_0)^\times$. -/
 abbrev ResidueSignTarget (m : Modulus K) :=
   (m.infinitePart → Multiplicative (ZMod 2)) ×
     (𝓞 K ⧸ (m.finitePart : Ideal (𝓞 K)))ˣ
 
-/-- Combined residue-sign homomorphism on ray elements. -/
+/-- **Residue-sign map.** Let $m$ be a modulus of a number field $K$. The residue-sign map of $m$
+is the group homomorphism from the ray elements of $m$ to the residue-sign target of $m$ that
+sends a ray element $x$ to the pair formed by the image of $x$ under the infinite sign map of $m$
+and the image of $x$ under the finite residue map of $m$. -/
 noncomputable def residueSignMap (m : Modulus K) :
     rayElements m →* ResidueSignTarget m :=
   (infiniteSignMap m).prod (finiteResidueMap m)
 
-/-- Pointwise evaluation of the combined residue-sign map. -/
+/-- **Components of the residue-sign map.** Let $m$ be a modulus of a number field $K$. For every
+ray element $x$ of $m$, the image of $x$ under the residue-sign map of $m$ is the pair whose first
+component is the image of $x$ under the infinite sign map of $m$ and whose second component is the
+image of $x$ under the finite residue map of $m$. -/
 @[simp] theorem residueSignMap_apply (m : Modulus K) (x : rayElements m) :
     residueSignMap m x = (infiniteSignMap m x, finiteResidueMap m x) :=
   rfl
 
-/-- Ray-one subgroup: ray elements trivial at both coordinates. -/
+/-- **Ray-one subgroup.** Let $m$ be a modulus of a number field $K$. The ray-one subgroup of $m$ is
+the subgroup of the ray elements of $m$ consisting of the ray elements $x$ that lie in the finite
+ray-one subgroup of $m$ (those congruent to $1$ at the finite part of $m$) and in the subgroup of
+ray elements positive at every real place in the infinite part of $m$. -/
 def rayOneElements (m : Modulus K) : Subgroup (rayElements m) :=
   finiteRayOneElements m ⊓ positiveRayElements m
 
-/-- Membership in `rayOneElements` is finite congruence plus infinite positivity. -/
+/-- **Membership in the ray-one subgroup.** Let $m$ be a modulus of a number field $K$. A ray
+element $x$ of $m$ lies in the ray-one subgroup of $m$ if and only if $x$ is congruent to $1$ at
+the finite part of $m$ and $x$ is positive at every real place in the infinite part of $m$. -/
 @[simp] theorem mem_rayOneElements_iff (m : Modulus K) (x : rayElements m) :
     x ∈ rayOneElements m ↔
       CongruentOneAtFinitePart m (x : Kˣ) ∧
@@ -101,7 +117,9 @@ private theorem eq_one_or_ofAdd_one (a : Multiplicative (ZMod 2)) :
   rcases Multiplicative.ofAdd.surjective a with ⟨b, rfl⟩
   fin_cases b <;> first | left; rfl | right; rfl
 
-/-- Surjectivity of the combined residue-sign map. -/
+/-- **Surjectivity of the residue-sign map.** Let $m$ be a modulus of a number field $K$. Every
+element of the residue-sign target of $m$ is the image of some ray element of $m$ under the
+residue-sign map of $m$. -/
 theorem residueSignMap_surjective (m : Modulus K) :
     Function.Surjective (residueSignMap m) := by
   classical
@@ -220,13 +238,17 @@ theorem residueSignMap_surjective (m : Modulus K) :
     rw [residueSignMap_apply]
     exact hfin_X
 
-/-- The kernel of the combined map is the ray-one subgroup. -/
+/-- **Kernel of the residue-sign map.** Let $m$ be a modulus of a number field $K$. The kernel of
+the residue-sign map of $m$ is the ray-one subgroup of $m$. -/
 @[simp] theorem residueSignMap_ker (m : Modulus K) :
     (residueSignMap m).ker = rayOneElements m := by
   unfold rayOneElements positiveRayElements
   rw [residueSignMap, MonoidHom.ker_prod, finiteResidueMap_ker, inf_comm]
 
-/-- The combined map is trivial exactly on ray-one elements. -/
+/-- **Kernel criterion for the residue-sign map.** Let $m$ be a modulus of a number field $K$. A
+ray element $x$ of $m$ is sent to $1$ by the residue-sign map of $m$ if and only if $x$ is a ray
+element congruent to $1$ modulo $m$: $x$ is a ray element of $m$, $x$ is congruent to $1$ at the
+finite part of $m$, and $x$ is positive at every real place in the infinite part of $m$. -/
 theorem residueSignMap_eq_one_iff (m : Modulus K) (x : rayElements m) :
     residueSignMap m x = 1 ↔ IsRayElementOne m (x : Kˣ) := by
   rw [← MonoidHom.mem_ker, residueSignMap_ker]
@@ -237,7 +259,11 @@ theorem residueSignMap_eq_one_iff (m : Modulus K) (x : rayElements m) :
   · intro h
     exact (mem_rayOneElements_iff m x).mpr ⟨h.congruent, h.positive⟩
 
-/-- Canonical quotient equivalence onto the residue-sign target. -/
+/-- **The residue-sign isomorphism.** Let $m$ be a modulus of a number field $K$. The residue-sign
+isomorphism of $m$ is the group isomorphism from the quotient of the ray elements of $m$ by the
+ray-one subgroup of $m$ onto the residue-sign target of $m$ induced by the residue-sign map, which
+is surjective with kernel the ray-one subgroup; it sends the class of a ray element $x$ to the
+image of $x$ under the residue-sign map. -/
 noncomputable def rayElementsQuotientEquivResidueSign (m : Modulus K) :
     (rayElements m ⧸ rayOneElements m) ≃* ResidueSignTarget m := by
   haveI : (rayOneElements m).Normal :=
@@ -245,7 +271,10 @@ noncomputable def rayElementsQuotientEquivResidueSign (m : Modulus K) :
   exact (QuotientGroup.quotientMulEquivOfEq (residueSignMap_ker m).symm).trans
     (QuotientGroup.quotientKerEquivOfSurjective _ (residueSignMap_surjective m))
 
-/-- The quotient equivalence evaluated on a class representative. -/
+/-- **The residue-sign isomorphism on classes.** Let $m$ be a modulus of a number field $K$. For
+every ray element $x$ of $m$, the residue-sign isomorphism of $m$ sends the class of $x$ in the
+quotient of the ray elements of $m$ by the ray-one subgroup to the image of $x$ under the
+residue-sign map of $m$. -/
 @[simp] theorem rayElementsQuotientEquivResidueSign_mk (m : Modulus K)
     (x : rayElements m) :
     rayElementsQuotientEquivResidueSign m (QuotientGroup.mk x) =

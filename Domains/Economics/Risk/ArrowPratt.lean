@@ -44,11 +44,14 @@ namespace MathlibExt.Economics.Risk
 
 open Real
 
-/-- Arrow–Pratt coefficient of absolute risk aversion `A(x) = -u''(x) / u'(x)`. -/
+/-- Arrow–Pratt coefficient of absolute risk aversion `A(x) = -u''(x) / u'(x)`. A derivative that
+does not exist is taken to be `0`, and the quotient is `0` when `u'(x) = 0`. -/
 noncomputable def absoluteRiskAversion (u : ℝ → ℝ) (x : ℝ) : ℝ :=
   -deriv (deriv u) x / deriv u x
 
-/-- Arrow–Pratt coefficient of relative risk aversion `R(x) = -x u''(x) / u'(x) = x A(x)`. -/
+/-- Arrow–Pratt coefficient of relative risk aversion `R(x) = -x u''(x) / u'(x) = x A(x)`. It uses
+the conventions of `absoluteRiskAversion`: a missing derivative is `0`, and the quotient is `0` when
+`u'(x) = 0`. -/
 noncomputable def relativeRiskAversion (u : ℝ → ℝ) (x : ℝ) : ℝ :=
   x * absoluteRiskAversion u x
 
@@ -56,8 +59,10 @@ noncomputable def relativeRiskAversion (u : ℝ → ℝ) (x : ℝ) : ℝ :=
 noncomputable def caraUtility (a : ℝ) (x : ℝ) : ℝ :=
   -exp (-(a * x))
 
-/-- Constant relative risk aversion (CRRA, isoelastic) utility on wealth `x > 0`:
-`u(x) = x^(1-γ) / (1-γ)` for `γ ≠ 1` and `u(x) = log x` for `γ = 1`. -/
+/-- Constant relative risk aversion (CRRA, isoelastic) utility of wealth `x`:
+`u(x) = x^(1-γ) / (1-γ)` for `γ ≠ 1` and `u(x) = log x` for `γ = 1`. It is defined for every real
+`x`: at `x = 0` the conventions `log 0 = 0` and `0^y = 0` for `y ≠ 0` make it `0`, and for `x < 0`
+it uses `log x = log |x|` and `x^y = |x|^y cos(π y)`; the intended domain is `x > 0`. -/
 noncomputable def crraUtility (γ : ℝ) (x : ℝ) : ℝ :=
   if γ = 1 then log x else x ^ (1 - γ) / (1 - γ)
 

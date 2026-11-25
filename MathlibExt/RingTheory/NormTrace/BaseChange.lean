@@ -49,9 +49,12 @@ namespace Algebra
 variable {A A' B : Type*} [CommRing A] [CommRing A'] [CommRing B]
   [Algebra A A'] [Algebra A B] [Module.Free A B] [Module.Finite A B]
 
-/-- Norm commutes with base change: the image of `N_{B/A} b` under
-`A → A'` is the norm of `1 ⊗ b` in `A' ⊗[A] B`. This is the norm clause of
-ATLAS `NumberTheoryI`, Lemma 4.49. -/
+/-- **The norm commutes with base change.** Let $A$, $A'$ and $B$ be commutative rings, where
+$A'$ and $B$ are $A$-algebras and $B$ is a free $A$-module of finite rank. Then for every
+$b \in B$, the image of the norm $N_{B/A}(b)$ under the structure map $A \to A'$ equals the norm
+$N_{(A' \otimes_A B)/A'}(1 \otimes b)$ of $1 \otimes b$ in the $A'$-algebra $A' \otimes_A B$.
+
+Source: ATLAS `NumberTheoryI`, Lemma 4.49 (norm clause). -/
 theorem norm_baseChange (b : B) :
     algebraMap A A' (norm A b) =
       norm A' ((TensorProduct.includeRight b : A' ⊗[A] B)) := by
@@ -59,9 +62,12 @@ theorem norm_baseChange (b : B) :
     baseChange_lmul b, ← TensorProduct.includeRight_apply (b := b),
     norm_apply A' ((TensorProduct.includeRight b : A' ⊗[A] B))]
 
-/-- Trace commutes with base change: the image of `T_{B/A} b` under
-`A → A'` is the trace of `1 ⊗ b` in `A' ⊗[A] B`. This is the trace clause
-of ATLAS `NumberTheoryI`, Lemma 4.49. -/
+/-- **The trace commutes with base change.** Let $A$, $A'$ and $B$ be commutative rings, where
+$A'$ and $B$ are $A$-algebras and $B$ is a free $A$-module of finite rank. Then for every
+$b \in B$, the image of the trace $T_{B/A}(b)$ under the structure map $A \to A'$ equals the trace
+$T_{(A' \otimes_A B)/A'}(1 \otimes b)$ of $1 \otimes b$ in the $A'$-algebra $A' \otimes_A B$.
+
+Source: ATLAS `NumberTheoryI`, Lemma 4.49 (trace clause). -/
 theorem trace_baseChange (b : B) :
     algebraMap A A' (trace A B b) =
       trace A' (A' ⊗[A] B) (TensorProduct.includeRight b) := by

@@ -41,7 +41,7 @@ and the step handles the last literal (clause), as `to3Aux` and `walkF` do.
 
 namespace Cslib.Complexity.Karp.Emit3
 
-open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.PL
+open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program Cslib.CookLevin Cslib.Logic.LegacyPL
   Computability Cslib.Complexity.SatVerifier
 
 /-! ### Codes of renamed and fresh names -/
