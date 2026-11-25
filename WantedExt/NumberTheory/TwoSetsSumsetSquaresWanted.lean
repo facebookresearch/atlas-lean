@@ -34,6 +34,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Rat.Defs
 public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresQuintuple
+public import MathlibExt.NumberTheory.TwoSetsSumsetSquaresTriple
 
 set_option autoImplicit false
 
@@ -55,27 +56,6 @@ theorem_wanted pairwiseSumsSquares_triple_of_isSemiMagicRoots
     PairwiseSumsSquares
       ![e 0 2 ^ 2, e 2 0 ^ 2, e 1 1 ^ 2]
       ![0, e 1 0 ^ 2 - e 0 2 ^ 2, e 0 0 ^ 2 - e 1 1 ^ 2]
-
-/-- **Triples with square pairwise sums come from semi-magic squares.** Let $a_1, a_2, a_3$ and
-$b_1, b_2, b_3$ be integers such that every sum $a_i + b_j$ is the square of an integer. Then
-there is a $3 \times 3$ integer matrix $E = (e_{ij})$ whose squared entries $e_{ij}^2$ have all
-three row sums and all three column sums equal to one common integer, and such that
-$e_{11}^2 = a_3 + b_3$, $e_{12}^2 = a_2 + b_2$, $e_{13}^2 = a_1 + b_1$, $e_{21}^2 = a_1 + b_2$,
-$e_{22}^2 = a_3 + b_1$, $e_{23}^2 = a_2 + b_3$, $e_{31}^2 = a_2 + b_1$, $e_{32}^2 = a_1 + b_3$ and
-$e_{33}^2 = a_3 + b_2$.
-
-Source: Ajai Choudhry, "Two Sets of Integers Such That All
-Elements of the Sumset of the Two Sets Are Perfect Squares",
-Lemma 2. -/
-theorem_wanted exists_isSemiMagicRoots_of_pairwiseSumsSquares_triple
-    (a b : Fin 3 → ℤ) (hab : PairwiseSumsSquares a b) :
-    ∃ e : Fin 3 → Fin 3 → ℤ,
-      IsSemiMagicRoots e ∧
-        e 0 0 ^ 2 = a 2 + b 2 ∧ e 0 1 ^ 2 = a 1 + b 1 ∧
-          e 0 2 ^ 2 = a 0 + b 0 ∧ e 1 0 ^ 2 = a 0 + b 1 ∧
-          e 1 1 ^ 2 = a 2 + b 0 ∧ e 1 2 ^ 2 = a 1 + b 2 ∧
-          e 2 0 ^ 2 = a 1 + b 0 ∧ e 2 1 ^ 2 = a 0 + b 2 ∧
-          e 2 2 ^ 2 = a 2 + b 1
 
 /-- **Quintuple extensions come from a second semi-magic square.** Let $E = (e_{ij})$ be a
 $3 \times 3$ integer matrix whose squared entries $e_{ij}^2$ have all three row sums and all three

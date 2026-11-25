@@ -18,20 +18,28 @@ import Mathlib.MeasureTheory.Integral.Bochner.Set
 /-!
 # Standardized threshold selection
 
-A real score `f` on a measure space `(Ω, μ)` is standardized by its population mean `μ[f]` and
-population standard deviation `√Var[f; μ]`. Selecting the individuals whose score is at least
-`z` standard deviations above the mean gives the standardized upper event; the change in the mean
-of another quantity `H` under the conditional measure of an event is its conditional mean shift.
-These are the objects of truncation selection in quantitative genetics.
+For a real score `f` on a measure space `(Ω, μ)`, this file defines totalized standardization and
+truncation-selection formulas built from Mathlib's integral `μ[f]`, variance `Var[f; μ]`,
+covariance `cov[f, g; μ]`, and conditional measure `μ[|s]`. When `μ` is a probability measure and
+the scores are square-integrable (with positive variances where divided by standard deviations, and
+positive mass `μ s > 0` for a measurable event `s`), these recover the standard statistical
+objects of truncation selection in quantitative genetics: population standard deviation, Pearson
+correlation, standardized score, standardized upper-tail event, and difference of population means.
 
 ## Main definitions
 
-* `populationSD μ f`: the population standard deviation `√Var[f; μ]`.
-* `pearsonRatio μ f g`: the quotient `cov[f, g; μ] / (populationSD μ f * populationSD μ g)`, the
-  correlation of `f` and `g` when both variances are positive.
-* `standardizedValue μ f`: the standardized score `(f - μ[f]) / populationSD μ f`.
-* `standardizedUpperEvent μ f z`: the event `{ω | μ[f] + z * populationSD μ f ≤ f ω}`.
-* `conditionalMeanShift μ H s`: the mean of `H` under `μ[|s]` minus its mean under `μ`.
+* `populationSD μ f`: `√Var[f; μ]` (population standard deviation when `μ` is a probability measure
+  and `f` is square-integrable).
+* `pearsonRatio μ f g`: `cov[f, g; μ] / (populationSD μ f * populationSD μ g)` (Pearson correlation
+  when `μ` is a probability measure, `f` and `g` are square-integrable, and both variances are
+  positive; `0` when either variance is zero).
+* `standardizedValue μ f`: `(f - μ[f]) / populationSD μ f` (standardized score when `μ` is a
+  probability measure, `f` is square-integrable, and `Var[f; μ] > 0`).
+* `standardizedUpperEvent μ f z`: `{ω | μ[f] + z * populationSD μ f ≤ f ω}` (upper-tail event at
+  `z` standard deviations when `μ` is a probability measure and `f` is square-integrable).
+* `conditionalMeanShift μ H s`: the totalized integral shift `(∫ ω, H ω ∂μ[|s]) - ∫ ω, H ω ∂μ`
+  (the difference of population means when `μ` is a probability measure, `H` is integrable, and `s`
+  is a measurable event of positive mass).
 
 ## Main results
 
