@@ -12,6 +12,7 @@ public import MathlibExt.NumberTheory.Digits.DigitSumDirichletConvolution
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Analysis.SumIntegralComparisons
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.NumberTheory.Harmonic.Bounds
 
 /-!
 # Partial sums of the second digit-sum convolution
@@ -921,61 +922,18 @@ private theorem logSqDiv_sum_bound (N : ℕ) (hN : 1 ≤ N) :
     constructor <;> nlinarith [hsum_nonneg, hsum_le, hmain_le, hlognonneg, hmain_nonneg,
       abs_nonneg ((Real.log 8) ^ 3 / 3 : ℝ)]
 
-/-- The harmonic sums satisfy $\sum_{d=1}^N 1/d = \log N + O(\log N)$. -/
+/-- The harmonic sums satisfy $\sum_{d=1}^N 1/d = \log N + O(\log N)$, by Mathlib's bound
+$H_N \le 1 + \log N$ for the harmonic numbers. -/
 private theorem harmonic_sum_bound (N : ℕ) (hN : 1 ≤ N) :
     |∑ d ∈ Finset.Icc 1 N, (1 : ℝ) / (d : ℝ) - Real.log N| ≤ 20 + Real.log N := by
-  by_cases hN8 : 8 ≤ N
-  · have hanti : AntitoneOn (fun t : ℝ => (1 : ℝ) / t) (Set.Ici 8) := by
-      intro x hx y hy hxy
-      have hx8 : (8 : ℝ) ≤ x := hx
-      exact one_div_le_one_div_of_le (by linarith) hxy
-    have hFcont : ContinuousOn Real.log (Set.Ioi 0) := by
-      apply continuousOn_of_forall_continuousAt
-      intro x hx
-      exact (Real.hasDerivAt_log (ne_of_gt hx)).differentiableAt.continuousAt
-    have h := sum_bound_aux hanti
-      (fun t ht => by simpa [one_div] using Real.hasDerivAt_log (ne_of_gt ht))
-      hFcont
-      (fun t ht => by positivity)
-      (by norm_num)
-      (fun d hd => ⟨by positivity, by
-        have hd1 : 1 ≤ d := (Finset.mem_Icc.mp hd).1
-        have h1 : (1 : ℝ) / (d : ℝ) ≤ 1 := by
-          rw [div_le_one (by exact_mod_cast (Nat.pos_of_ne_zero (by omega : d ≠ 0)))]
-          exact_mod_cast (Finset.mem_Icc.mp hd).1
-        linarith⟩)
-      (fun M hM => by
-        have h1 : (1 : ℝ) / (M : ℝ) ≤ 1 := by
-          rw [div_le_one (by exact_mod_cast (Nat.pos_of_ne_zero (by omega : M ≠ 0)))]
-          exact_mod_cast (by omega : 1 ≤ M)
-        have hlog : (1 : ℝ) ≤ Real.log (M : ℝ) := by
-          have h := Real.log_le_log (by norm_num : (0 : ℝ) < 8)
-            (by exact_mod_cast hM : (8 : ℝ) ≤ (M : ℝ))
-          linarith [digitSumArith_sq_partialSum_isBigO.log_eight_gt]
-        linarith)
-      N hN8
-    have hlog8 : |Real.log 8| ≤ 2.1 := by
-      rw [abs_of_nonneg (Real.log_nonneg (by norm_num))]
-      exact le_of_lt log_eight_lt
-    refine h.trans ?_
-    linarith [hlog8]
-  · have hN7 : N ≤ 7 := by omega
-    have hsum_nonneg : 0 ≤ ∑ d ∈ Finset.Icc 1 N, (1 : ℝ) / (d : ℝ) :=
-      Finset.sum_nonneg (fun d hd => by positivity)
-    have hsum_le : ∑ d ∈ Finset.Icc 1 N, (1 : ℝ) / (d : ℝ) ≤ 7 := by
-      calc ∑ d ∈ Finset.Icc 1 N, (1 : ℝ) / (d : ℝ)
-          ≤ ∑ _d ∈ Finset.Icc 1 N, (1 : ℝ) := Finset.sum_le_sum (fun d hd => by
-            have hd1 : 1 ≤ d := (Finset.mem_Icc.mp hd).1
-            rw [div_le_one (by exact_mod_cast (Nat.pos_of_ne_zero
-              (by omega : d ≠ 0)))]
-            exact_mod_cast hd1)
-        _ = N := by simp [Finset.sum_const, Nat.card_Icc, nsmul_eq_mul]
-        _ ≤ 7 := by exact_mod_cast hN7
-    have hmain_le : Real.log (N : ℝ) ≤ 2.1 := log_le_of_le_seven hN7
-    have hlognonneg : 0 ≤ Real.log (N : ℝ) :=
-      Real.log_nonneg (by exact_mod_cast hN)
-    rw [abs_le]
-    constructor <;> linarith [hsum_nonneg, hsum_le, hmain_le, hlognonneg]
+  have hsum : ∑ d ∈ Finset.Icc 1 N, (1 : ℝ) / (d : ℝ) = (harmonic N : ℝ) := by
+    simp [harmonic_eq_sum_Icc, one_div]
+  have hup := harmonic_le_one_add_log N
+  have hnonneg : 0 ≤ ∑ d ∈ Finset.Icc 1 N, (1 : ℝ) / (d : ℝ) :=
+    Finset.sum_nonneg fun d _ => by positivity
+  have hlog : 0 ≤ Real.log N := Real.log_nonneg (by exact_mod_cast hN)
+  rw [abs_le]
+  constructor <;> linarith
 
 /-- The base-$q$ digit sum of $d$, as a real number. -/
 private noncomputable def digitSumVal (q d : ℕ) : ℝ := ((Nat.digits q d).sum : ℝ)

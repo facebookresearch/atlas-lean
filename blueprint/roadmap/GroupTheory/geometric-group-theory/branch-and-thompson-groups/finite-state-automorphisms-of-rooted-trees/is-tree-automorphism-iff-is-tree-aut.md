@@ -1,8 +1,6 @@
 # Equivalent tree automorphism criteria
 
-Preserving extensions by suffixes of the same
-length is equivalent to preserving word lengths and prefixes.
-
-## Sources
-
-- the tree automorphism criteria in Kourovka Problems 16.34, 16.85 and 16.86.
+For a permutation $g$ of the finite words over
+$\{0, \dots, d-1\}$, the following are equivalent: for all words $v$ and $w$ there is a word $u$
+of the same length as $w$ with $g(vw) = g(v)u$; and for all words $u$ and $v$, the word $g(u)$
+has the length $|u|$ of $u$ and consists of the first $|u|$ letters of $g(uv)$.

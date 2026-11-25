@@ -90,28 +90,26 @@ def finiteStateAutomorphisms (d : ℕ) : Subgroup (Equiv.Perm (List (Fin d))) :=
 
 variable {d : ℕ}
 
-/-- **Section decomposition.** The image of an extension is the image of its prefix
-followed by the section applied to the suffix.
+/-- **Section decomposition.** For a tree automorphism $g$ and words $v$ and $w$, the image of the
+concatenation $vw$ is $g(v)$ followed by the image of $w$ under the section of $g$ at $v$.
 
-Source: the section argument in `MathlibExt.GroupTheory.FiniteStateIrreducibleGenerators`. -/
+Source: Ya. Lavrenyuk, *Minimal generating sets in wreath products*, arXiv:1210.0150v1 (2012),
+Section 3, p. 7 (for an automorphism $g$ of the regular rooted tree and a vertex $v$, the state of
+$g$ at $v$ is the automorphism $h$ of the tree with $g(vu) = g(v)h(u)$ for every word $u$). -/
 theorem IsTreeAutomorphism.map_append_section {g : Equiv.Perm (List (Fin d))}
     (hg : IsTreeAutomorphism g) (v w) :
     g (v ++ w) = g v ++ treeSection g v w := by
   obtain ⟨u, _, hu⟩ := hg v w
   simp [treeSection, hu]
 
-/-- **Fixed root.** A tree automorphism fixes the empty word.
-
-Source: the section argument in `MathlibExt.GroupTheory.FiniteStateIrreducibleGenerators`. -/
+/-- **Fixed root.** A tree automorphism fixes the empty word. -/
 theorem IsTreeAutomorphism.map_nil {g : Equiv.Perm (List (Fin d))} (hg : IsTreeAutomorphism g) :
     g [] = [] := by
   obtain ⟨x, hx⟩ := g.surjective []
   obtain ⟨u, _, hu⟩ := hg [] x
   simpa [hx] using (List.append_eq_nil_iff.mp (by simpa [hx] using hu.symm)).1
 
-/-- **Preservation of levels.** A tree automorphism preserves word length.
-
-Source: the section argument in `MathlibExt.GroupTheory.FiniteStateIrreducibleGenerators`. -/
+/-- **Preservation of levels.** A tree automorphism preserves word length. -/
 theorem IsTreeAutomorphism.length_apply {g : Equiv.Perm (List (Fin d))}
     (hg : IsTreeAutomorphism g) (x : List (Fin d)) :
     (g x).length = x.length := by
@@ -148,10 +146,12 @@ private theorem sec_inv_apply {g : Equiv.Perm (List (Fin d))} (hg : IsTreeAutomo
   have h := hg.map_append_section (g.symm v) (treeSection g.symm v w)
   simpa [← (tree_inv hg).map_append_section] using h.symm
 
-/-- **Bijectivity of sections.** Each section of a tree automorphism permutes the words
-in the subtree rooted at its vertex.
+/-- **Bijectivity of sections.** For a tree automorphism $g$ and a vertex $v$, the section of $g$
+at $v$ is a bijection of the set of all words.
 
-Source: the section argument in `MathlibExt.GroupTheory.FiniteStateIrreducibleGenerators`. -/
+Source: Ya. Lavrenyuk, *Minimal generating sets in wreath products*, arXiv:1210.0150v1 (2012),
+Section 3, p. 7 (the state of an automorphism of the regular rooted tree at a vertex is again an
+automorphism of the tree). -/
 theorem IsTreeAutomorphism.bijective_treeSection {g : Equiv.Perm (List (Fin d))}
     (hg : IsTreeAutomorphism g) (v : List (Fin d)) : Function.Bijective (treeSection g v) :=
   ⟨sec_inj hg v, fun w =>
@@ -191,10 +191,12 @@ private theorem finiteState_inv {g : Equiv.Perm (List (Fin d))} (hg : isFiniteSt
     _ = Function.invFun f (f x) := congrArg (Function.invFun f) (sec_inv_apply hg.1 v w).symm
     _ = x := Function.leftInverse_invFun (sec_inj hg.1 _) _
 
-/-- **Finite sections characterize subgroup membership.** A word permutation belongs to the
-finite-state subgroup exactly when it preserves extensions and has finitely many sections.
+/-- **Finite sections characterize subgroup membership.** A permutation of the finite words over
+$\{0, \dots, d-1\}$ belongs to the group of finite-state automorphisms of the $d$-regular rooted
+tree if and only if it is a tree automorphism with finitely many distinct sections.
 
-Source: the section argument in `MathlibExt.GroupTheory.FiniteStateIrreducibleGenerators`. -/
+Source: Ya. Lavrenyuk, *Minimal generating sets in wreath products*, arXiv:1210.0150v1 (2012),
+Section 3, p. 7 (the finite-state automorphisms of a regular rooted tree form a group). -/
 theorem mem_finiteStateAutomorphisms_iff_finite_sections (g : Equiv.Perm (List (Fin d))) :
     g ∈ finiteStateAutomorphisms d ↔ IsTreeAutomorphism g ∧ (Set.range (treeSection g)).Finite := by
   refine ⟨fun h => Subgroup.closure_induction (fun x hx => hx) ?_ (fun _ _ _ _ => finiteState_mul)
@@ -209,10 +211,10 @@ theorem mem_finiteStateAutomorphisms_iff_finite_sections (g : Equiv.Perm (List (
 
 open FiniteStateFreeProductKourovka16Problem85Wanted (IsTreeAut IsFiniteStateAut)
 
-/-- **Equivalent tree automorphism criteria.** Preserving extensions by suffixes of the same
-length is equivalent to preserving word lengths and prefixes.
-
-Source: the tree automorphism criteria in Kourovka Problems 16.34, 16.85 and 16.86. -/
+/-- **Equivalent tree automorphism criteria.** For a permutation $g$ of the finite words over
+$\{0, \dots, d-1\}$, the following are equivalent: for all words $v$ and $w$ there is a word $u$
+of the same length as $w$ with $g(vw) = g(v)u$; and for all words $u$ and $v$, the word $g(u)$
+has the length $|u|$ of $u$ and consists of the first $|u|$ letters of $g(uv)$. -/
 theorem isTreeAutomorphism_iff_isTreeAut {g : Equiv.Perm (List (Fin d))} :
     IsTreeAutomorphism g ↔ IsTreeAut g := by
   constructor
@@ -226,18 +228,18 @@ theorem isTreeAutomorphism_iff_isTreeAut {g : Equiv.Perm (List (Fin d))} :
       exact (List.take_append_drop ..).symm
 
 /-- **Agreement of sections.** For a tree automorphism the input prefix and its image have
-the same length, so dropping either length defines the same section.
-
-Source: the section definitions in Kourovka Problems 16.34, 16.85 and 16.86. -/
+the same length, so dropping either length defines the same section. -/
 theorem treeSection_eq_of_isTreeAut {g : Equiv.Perm (List (Fin d))} (hg : IsTreeAut g) :
     treeSection g = FiniteStateFreeProductKourovka16Problem85Wanted.treeSection g := by
   funext u w
   simp [treeSection, FiniteStateFreeProductKourovka16Problem85Wanted.treeSection, (hg u []).1]
 
-/-- **Membership in the finite-state automorphism group.** A word permutation belongs to the
-subgroup if and only if it preserves lengths and prefixes and has finitely many sections.
+/-- **Membership in the finite-state automorphism group.** A permutation of the finite words over
+$\{0, \dots, d-1\}$ belongs to the group of finite-state automorphisms of the $d$-regular rooted
+tree if and only if it preserves word lengths and prefixes and has finitely many distinct sections.
 
-Source: the section argument in `MathlibExt.GroupTheory.FiniteStateIrreducibleGenerators`. -/
+Source: Ya. Lavrenyuk, *Minimal generating sets in wreath products*, arXiv:1210.0150v1 (2012),
+Section 3, p. 7 (the finite-state automorphisms of a regular rooted tree form a group). -/
 theorem mem_finiteStateAutomorphisms_iff (g : Equiv.Perm (List (Fin d))) :
     g ∈ finiteStateAutomorphisms d ↔ IsFiniteStateAut g := by
   rw [mem_finiteStateAutomorphisms_iff_finite_sections, isTreeAutomorphism_iff_isTreeAut,
