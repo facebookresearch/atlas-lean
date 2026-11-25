@@ -26,3 +26,5 @@
 - [Covariance of the mean pairwise difference and the number of segregating sites](covariance-mean-pair-diff-seg-sites.md)
 - [Tajima's variance identity](variance-tajima-numerator.md)
 - [Pair coalescence time against the total branch length](integral-pair-time-mul-total-length.md)
+
+- [Fu's $F_s$ statistic](fu-s-fs-statistic.md)

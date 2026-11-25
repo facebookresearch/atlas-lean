@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.Probability.DirichletForm.QuasiRegular
 public import MathlibExt.Probability.DirichletForm.Brownian
+public import MathlibExt.Probability.DirichletForm.RegularToQuasiRegular
 
 /-!
 # Dirichlet forms: wanted theorems
@@ -21,8 +21,6 @@ Central theorems of the theory of Dirichlet forms whose proofs are deferred.
   closed forms
   and Markovian resolvents (Fukushima, Oshima and Takeda, *Dirichlet Forms and Symmetric Markov
   Processes*, 2nd revised and extended ed., de Gruyter, 2011, Theorem 1.4.1, (b) ⇔ (d)).
-* `isQuasiRegular_of_isRegular`: regular forms are quasi-regular (M. Röckner and B. Schmuland,
-  *Canad. J. Math.* 47 (1995), Proposition 0.9).
 
 Fukushima's theorem (a regular Dirichlet form is the Dirichlet form of an `m`-symmetric Hunt
 process, FOT Theorem 7.2.1) and the Albeverio–Ma–Röckner characterisation of quasi-regular forms
@@ -54,17 +52,5 @@ theorem_wanted unitContractionOperates_iff_resolvent {X : Type*} [MeasurableSpac
     E.UnitContractionOperates ↔ ∀ α : ℝ, 0 < α → ∀ f u : Lp ℝ 2 m, u ∈ E.domain →
       (∀ v ∈ E.domain, E.form u v + α * ⟪u, v⟫ = ⟪f, v⟫) →
       (∀ᵐ x ∂m, 0 ≤ f x ∧ f x ≤ 1) → ∀ᵐ x ∂m, 0 ≤ α * u x ∧ α * u x ≤ 1
-
-/-- **Regular forms are quasi-regular.** Let `X` be a locally compact separable metric space and `m`
-a positive Radon measure on `X`. A regular Dirichlet form on `L²(X; m)` is quasi-regular (M.
-Röckner and B. Schmuland, *Quasi-regular Dirichlet forms: examples and counterexamples*, Canad.
-J. Math. 47 (1995), Proposition 0.9, stated there for regular semi-Dirichlet forms; cf.
-Ma–Röckner 1992, Chapter IV, Example 4a, as cited there). Metrizability cannot be dropped:
-Röckner–Schmuland, Remark 0.10 and §5(a), give a regular Dirichlet form on a separable compact
-non-metrizable Hausdorff space that is not quasi-regular. -/
-theorem_wanted isQuasiRegular_of_isRegular {X : Type*} [TopologicalSpace X]
-    [TopologicalSpace.MetrizableSpace X] [LocallyCompactSpace X] [SecondCountableTopology X]
-    [MeasurableSpace X] [BorelSpace X] {m : Measure X} [IsFiniteMeasureOnCompacts m]
-    (E : SymmetricForm m) (hD : E.IsDirichletForm) (hreg : E.IsRegular) : E.IsQuasiRegular
 
 end MathlibExt.Probability.DirichletFormWanted

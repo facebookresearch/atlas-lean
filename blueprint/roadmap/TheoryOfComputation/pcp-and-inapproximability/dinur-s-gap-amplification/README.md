@@ -8,3 +8,4 @@
 - [Gap amplification with given constants](gap-amplification.md)
 - [Alphabet reduction with given constants](alphabet-reduction.md)
 - [Dinur's gap amplification and alphabet reduction](dinur-gap-amplification.md)
+- [Dinur's amplification lemma for graph powering](dinur-s-amplification-lemma-for-graph-powering.md)

@@ -196,8 +196,10 @@ private lemma deriv_unit_mulVec {n : Type*} [Fintype n] [DecidableEq n]
 pencil `(K, M)` with `Φᵀ * K * Φ = diagonal μ`, a trajectory `x` satisfies
 `M x'' + (α M + β K) x' + K x = f` at time `t` iff its modal coordinates
 `q = Φᵀ * M *ᵥ x` satisfy the decoupled equations
-`q_j'' + (α + β * μ j) q_j' + μ j q_j = (Φᵀ *ᵥ f t) j` at `t`, for every mode `j`.
-Proportional damping only; holds for every real `α`, `β` and any load `f`. -/
+`(q'')_j + (α + β * μ j) (q')_j + μ j q_j = (Φᵀ *ᵥ f t) j` at `t`, for every mode `j`, where
+`(q')_j` and `(q'')_j` are the `j`-th components of the derivatives of the vector `q` (each
+derivative `0` where the function is not differentiable). Proportional damping only; holds for
+every real `α`, `β` and any load `f`. -/
 theorem rayleigh_modal_decoupling {M K Φ : Matrix n n ℝ} {μ : n → ℝ}
     (hMΦ : Φᵀ * M * Φ = 1) (hKΦ : Φᵀ * K * Φ = diagonal μ) (α β : ℝ)
     (x f : ℝ → n → ℝ) (t : ℝ) :
@@ -276,7 +278,9 @@ stiffness `K` and Rayleigh coefficients `α, β ≥ 0`, the canonical modal-basi
 theorem (`PhyslibExt.Mechanics.ModalResponse.exists_modalBasis`) yields an invertible
 mass-orthonormal basis `Φ` with `Φᵀ * K * Φ = diagonal μ`, nonnegative `μ j` and
 nonnegative modal damping `α + β * μ j`, in which every trajectory and load decouple as in
-`rayleigh_modal_decoupling`. Repeated eigenvalues and rigid modes (`μ j = 0`) included. -/
+`rayleigh_modal_decoupling` (components of the derivatives of the vector `q`, each derivative `0`
+where the function is not differentiable). Repeated eigenvalues and rigid modes (`μ j = 0`)
+included. -/
 theorem exists_rayleigh_modal_decoupling
     {M K : Matrix n n ℝ} (hM : M.PosDef) (hK : K.PosSemidef) {α β : ℝ}
     (hα : 0 ≤ α) (hβ : 0 ≤ β) :
@@ -359,7 +363,8 @@ lemma sum_participation_sq_lt_of_not_mem {M Φ : Matrix n n ℝ}
 /-! ## C. Finite-horizon peak bound -/
 
 /-- Spectral displacement of a response `u` on the horizon `[0, T]`: the supremum of
-`|u t|` over `t ∈ [0, T]`, a maximum for continuous `u` and `0 ≤ T`. -/
+`|u t|` over `t ∈ [0, T]`, a maximum for continuous `u` and `0 ≤ T`. By the real `sSup`
+convention it is `0` for `T < 0` and when `|u|` is unbounded on `[0, T]`. -/
 noncomputable def spectralDisplacement (T : ℝ) (u : ℝ → ℝ) : ℝ :=
   sSup ((fun t => |u t|) '' Set.Icc 0 T)
 

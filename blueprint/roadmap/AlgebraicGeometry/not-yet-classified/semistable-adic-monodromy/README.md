@@ -1,0 +1,15 @@
+# Semistable Adic Monodromy
+
+- [Galois](galois.md)
+- [Unramified Field](unramified-field.md)
+- [Inertia](inertia.md)
+- [Mem inertia iff](mem-inertia-iff.md)
+- [Is Strictly Semistable](is-strictly-semistable.md)
+- [Geometric Generic Fibre](geometric-generic-fibre.md)
+- [Cohomology](cohomology.md)
+- [Galois Operator](galois-operator.md)
+- [Galois Operator apply](galois-operator-apply.md)
+- [Inertia unipotent](inertia-unipotent.md)
+- [General Inertia Unipotent](general-inertia-unipotent.md)
+- [Nearby Inertia Nilpotent](nearby-inertia-nilpotent.md)
+- [Semistable Weil Deligne](semistable-weil-deligne.md)

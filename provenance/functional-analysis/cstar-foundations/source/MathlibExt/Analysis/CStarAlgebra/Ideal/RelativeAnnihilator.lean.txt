@@ -1,0 +1,152 @@
+/-
+Author: @toskua
+-/
+module
+
+public import MathlibExt.Algebra.Star.NonUnitalSubalgebra.RelativeAnnihilator
+public import MathlibExt.Analysis.CStarAlgebra.IdealQuotient
+
+/-!
+# Closed C-star-ideal adapters for relative annihilators
+
+The algebraic construction lives in the nonunital-subalgebra layers. These
+thin adapters retain the `ClosedStarIdeal` source-facing signatures used by
+the Blackadar compact-annihilator statements.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+
+namespace ClosedStarIdeal
+
+universe uA
+
+variable {A : Type uA} [NonUnitalCStarAlgebra A]
+
+/-- Thin closed-star-ideal adapter for the algebraic left annihilator. -/
+def leftAnnihilatorModulo
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) :
+    NonUnitalSubalgebra ℂ A := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  exact I.carrier.toNonUnitalSubalgebra.leftAnnihilatorModulo (D : Set A)
+
+/-- Thin closed-star-ideal adapter for the algebraic right annihilator. -/
+def rightAnnihilatorModulo
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) :
+    NonUnitalSubalgebra ℂ A := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  exact I.carrier.toNonUnitalSubalgebra.rightAnnihilatorModulo (D : Set A)
+
+/-- Thin closed-star-ideal adapter for the algebraic star intersection. -/
+def annihilatorModulo
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) :
+    NonUnitalStarSubalgebra ℂ A := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  exact NonUnitalStarSubalgebra.annihilatorModulo I.carrier D
+
+@[simp]
+theorem mem_leftAnnihilatorModulo_iff
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) (x : A) :
+    x ∈ I.leftAnnihilatorModulo D ↔ ∀ d ∈ D, x * d ∈ I := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  change x ∈ I.carrier.toNonUnitalSubalgebra.leftAnnihilatorModulo
+    (D : Set A) ↔ ∀ d ∈ D, x * d ∈ I.carrier
+  exact NonUnitalSubalgebra.mem_leftAnnihilatorModulo_iff
+    I.carrier.toNonUnitalSubalgebra (D : Set A) x
+
+@[simp]
+theorem mem_rightAnnihilatorModulo_iff
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) (x : A) :
+    x ∈ I.rightAnnihilatorModulo D ↔ ∀ d ∈ D, d * x ∈ I := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  change x ∈ I.carrier.toNonUnitalSubalgebra.rightAnnihilatorModulo
+    (D : Set A) ↔ ∀ d ∈ D, d * x ∈ I.carrier
+  exact NonUnitalSubalgebra.mem_rightAnnihilatorModulo_iff
+    I.carrier.toNonUnitalSubalgebra (D : Set A) x
+
+/-- Literal intersection characteristic, deliberately not a simp rule. -/
+theorem mem_annihilatorModulo_iff_sides
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) (x : A) :
+    x ∈ I.annihilatorModulo D ↔
+      x ∈ I.leftAnnihilatorModulo D ∧
+        x ∈ I.rightAnnihilatorModulo D := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  change x ∈ NonUnitalStarSubalgebra.annihilatorModulo I.carrier D ↔
+    x ∈ I.carrier.toNonUnitalSubalgebra.leftAnnihilatorModulo (D : Set A) ∧
+      x ∈ I.carrier.toNonUnitalSubalgebra.rightAnnihilatorModulo (D : Set A)
+  exact NonUnitalStarSubalgebra.mem_annihilatorModulo_iff_sides I.carrier D x
+
+/-- Fully expanded membership, chosen as the simp normal form. -/
+@[simp]
+theorem mem_annihilatorModulo_iff
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) (x : A) :
+    x ∈ I.annihilatorModulo D ↔
+      (∀ d ∈ D, x * d ∈ I) ∧ ∀ d ∈ D, d * x ∈ I := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  change x ∈ NonUnitalStarSubalgebra.annihilatorModulo I.carrier D ↔
+    (∀ d ∈ D, x * d ∈ I.carrier) ∧ ∀ d ∈ D, d * x ∈ I.carrier
+  exact NonUnitalStarSubalgebra.mem_annihilatorModulo_iff I.carrier D x
+
+/-- The left relative annihilator is an ambient left ideal. -/
+theorem mul_mem_leftAnnihilatorModulo_left
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A)
+    (a : A) {x : A} (hx : x ∈ I.leftAnnihilatorModulo D) :
+    a * x ∈ I.leftAnnihilatorModulo D := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  change x ∈ I.carrier.toNonUnitalSubalgebra.leftAnnihilatorModulo
+    (D : Set A) at hx
+  change a * x ∈ I.carrier.toNonUnitalSubalgebra.leftAnnihilatorModulo
+    (D : Set A)
+  exact NonUnitalSubalgebra.mul_mem_leftAnnihilatorModulo_left
+    I.carrier.toNonUnitalSubalgebra (D : Set A) a hx
+
+/-- The right relative annihilator is an ambient right ideal. -/
+theorem mul_mem_rightAnnihilatorModulo_right
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A)
+    {x : A} (hx : x ∈ I.rightAnnihilatorModulo D) (a : A) :
+    x * a ∈ I.rightAnnihilatorModulo D := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  change x ∈ I.carrier.toNonUnitalSubalgebra.rightAnnihilatorModulo
+    (D : Set A) at hx
+  change x * a ∈ I.carrier.toNonUnitalSubalgebra.rightAnnihilatorModulo
+    (D : Set A)
+  exact NonUnitalSubalgebra.mul_mem_rightAnnihilatorModulo_right
+    I.carrier.toNonUnitalSubalgebra (D : Set A) hx a
+
+/-- Star exchanges left relative annihilation with right relative
+annihilation. -/
+theorem star_mem_rightAnnihilatorModulo_iff
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) (x : A) :
+    star x ∈ I.rightAnnihilatorModulo D ↔
+      x ∈ I.leftAnnihilatorModulo D := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  change star x ∈ I.carrier.toNonUnitalSubalgebra.rightAnnihilatorModulo
+      (D : Set A) ↔
+    x ∈ I.carrier.toNonUnitalSubalgebra.leftAnnihilatorModulo (D : Set A)
+  exact NonUnitalStarSubalgebra.star_mem_rightAnnihilatorModulo_iff
+    I.carrier D x
+
+/-- Star exchanges right relative annihilation with left relative
+annihilation. -/
+theorem star_mem_leftAnnihilatorModulo_iff
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) (x : A) :
+    star x ∈ I.leftAnnihilatorModulo D ↔
+      x ∈ I.rightAnnihilatorModulo D := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  change star x ∈ I.carrier.toNonUnitalSubalgebra.leftAnnihilatorModulo
+      (D : Set A) ↔
+    x ∈ I.carrier.toNonUnitalSubalgebra.rightAnnihilatorModulo (D : Set A)
+  exact NonUnitalStarSubalgebra.star_mem_leftAnnihilatorModulo_iff
+    I.carrier D x
+
+/-- Every element of the modulus ideal lies in its relative annihilator. -/
+theorem carrier_le_annihilatorModulo
+    (I : ClosedStarIdeal A) (D : NonUnitalStarSubalgebra ℂ A) :
+    I.carrier ≤ I.annihilatorModulo D := by
+  let _ : I.carrier.IsTwoSided := I.isTwoSided
+  change I.carrier ≤ NonUnitalStarSubalgebra.annihilatorModulo I.carrier D
+  exact NonUnitalStarSubalgebra.le_annihilatorModulo I.carrier D
+
+end ClosedStarIdeal
