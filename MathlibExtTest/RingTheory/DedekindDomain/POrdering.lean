@@ -19,14 +19,14 @@ public import MathlibExt.RingTheory.DedekindDomain.POrdering
 open IsDedekindDomain.HeightOneSpectrum
 
 /-- Stage zero: every candidate has valuation zero. -/
-theorem test_val_zero
+private theorem test_val_zero
     {R : Type*} [CommRing R]
     (p : IsDedekindDomain.HeightOneSpectrum R) (a : ℕ → R)
     (x : R) : pOrderingValuation p a 0 x = 0 :=
   pOrderingValuation_zero p a x
 
 /-- Stage zero: the chosen term ties every other candidate. -/
-theorem test_val_zero_tie
+private theorem test_val_zero_tie
     {R : Type*} [CommRing R]
     (p : IsDedekindDomain.HeightOneSpectrum R) (a : ℕ → R)
     (x : R) :
@@ -34,7 +34,7 @@ theorem test_val_zero_tie
   rw [pOrderingValuation_zero, pOrderingValuation_zero]
 
 /-- The valuation unfolds to the stated prefix product. -/
-theorem test_val_unfold
+private theorem test_val_unfold
     {R : Type*} [CommRing R]
     (p : IsDedekindDomain.HeightOneSpectrum R) (a : ℕ → R)
     (n : ℕ) (x : R) :
@@ -44,7 +44,7 @@ theorem test_val_unfold
   rfl
 
 /-- Exact prefix indexing: the stage `n + 1` product splits. -/
-theorem test_prefix_succ
+private theorem test_prefix_succ
     {R : Type*} [CommRing R]
     (a : ℕ → R) (n : ℕ) (x : R) :
     (Finset.range (n + 1)).prod (fun k => x - a k) =
@@ -52,21 +52,21 @@ theorem test_prefix_succ
   Finset.prod_range_succ _ _
 
 /-- Projection: infinitude. -/
-theorem test_proj_infinite
+private theorem test_proj_infinite
     {R : Type*} [CommRing R] [IsDedekindDomain R]
     {p : IsDedekindDomain.HeightOneSpectrum R} {S : Set R}
     {a : ℕ → R} (h : IsPOrdering p S a) : S.Infinite :=
   h.infinite
 
 /-- Projection: sequence membership. -/
-theorem test_proj_mem
+private theorem test_proj_mem
     {R : Type*} [CommRing R] [IsDedekindDomain R]
     {p : IsDedekindDomain.HeightOneSpectrum R} {S : Set R}
     {a : ℕ → R} (h : IsPOrdering p S a) (n : ℕ) : a n ∈ S :=
   h.mem n
 
 /-- Projection: minimum property. -/
-theorem test_proj_min
+private theorem test_proj_min
     {R : Type*} [CommRing R] [IsDedekindDomain R]
     {p : IsDedekindDomain.HeightOneSpectrum R} {S : Set R}
     {a : ℕ → R} (h : IsPOrdering p S a) (n : ℕ) (x : R)
@@ -75,7 +75,7 @@ theorem test_proj_min
   h.min_le n x hx
 
 /-- Projection: minimum property as `IsLeast`. -/
-theorem test_proj_isLeast
+private theorem test_proj_isLeast
     {R : Type*} [CommRing R] [IsDedekindDomain R]
     {p : IsDedekindDomain.HeightOneSpectrum R} {S : Set R}
     {a : ℕ → R} {n : ℕ} (h : IsPOrdering p S a) :
@@ -84,7 +84,7 @@ theorem test_proj_isLeast
   h.isLeast
 
 /-- The constructor rebuilds the predicate. -/
-theorem test_constructor
+private theorem test_constructor
     {R : Type*} [CommRing R] [IsDedekindDomain R]
     {p : IsDedekindDomain.HeightOneSpectrum R} {S : Set R}
     {a : ℕ → R} (h : IsPOrdering p S a) :
@@ -92,7 +92,7 @@ theorem test_constructor
   IsPOrdering.intro h.infinite h.mem (fun n x hx => h.min_le n x hx)
 
 /-- The unfolding characterization fires on a hypothesis. -/
-theorem test_unfold_roundtrip
+private theorem test_unfold_roundtrip
     {R : Type*} [CommRing R] [IsDedekindDomain R]
     {p : IsDedekindDomain.HeightOneSpectrum R} {S : Set R}
     {a : ℕ → R} (h : IsPOrdering p S a) :
@@ -103,7 +103,7 @@ theorem test_unfold_roundtrip
   isPOrdering_unfold.mp h
 
 /-- Positive-stage characterization, forward direction. -/
-theorem test_pos_forward
+private theorem test_pos_forward
     {R : Type*} [CommRing R] [IsDedekindDomain R]
     {p : IsDedekindDomain.HeightOneSpectrum R} {S : Set R}
     {a : ℕ → R} (h : IsPOrdering p S a) :
@@ -114,7 +114,7 @@ theorem test_pos_forward
   isPOrdering_iff_pos.mp h
 
 /-- Positive-stage characterization, backward direction. -/
-theorem test_pos_backward
+private theorem test_pos_backward
     {R : Type*} [CommRing R] [IsDedekindDomain R]
     {p : IsDedekindDomain.HeightOneSpectrum R} {S : Set R}
     {a : ℕ → R}

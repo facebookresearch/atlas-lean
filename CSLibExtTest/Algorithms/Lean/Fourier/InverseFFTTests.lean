@@ -21,8 +21,8 @@ public meta import Mathlib.Algebra.Star.Basic
 open Cslib.Algorithms.Lean.TimeM
 
 -- The canonical trivial involution fixes the valid two-point sample root -1.
-local instance inverseFFTTestStarRing : StarRing (ZMod 17) := starRingOfComm
-local instance inverseFFTTestPrime : Fact (Nat.Prime 17) := ⟨by decide⟩
+private local instance inverseFFTTestStarRing : StarRing (ZMod 17) := starRingOfComm
+private local instance inverseFFTTestPrime : Fact (Nat.Prime 17) := ⟨by decide⟩
 
 #eval do
   let input : Vector (ZMod 17) 2 := ⟨#[3, 16], rfl⟩

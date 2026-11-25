@@ -63,11 +63,11 @@ example {f : ℕ → ℝ → ℝ} {S : Set ℝ} {x : ℝ} (h : ConvergesLocallyN
   h.exists_nhds_inter hx
 
 /-- A concrete one-term series on `ℝ`: only the `n = 0` term is nonzero. -/
-def oneTermSeries : ℕ → ℝ → ℝ := fun n _ => if n = 0 then 1 else 0
+private def oneTermSeries : ℕ → ℝ → ℝ := fun n _ => if n = 0 then 1 else 0
 
 /-- The sup norm of the one-term series on the singleton `{0}` picks out the
 active term. -/
-theorem supNormOn_oneTermSeries (n : ℕ) :
+private theorem supNormOn_oneTermSeries (n : ℕ) :
     supNormOn (oneTermSeries n) ({0} : Set ℝ) = if n = 0 then (1 : ℝ≥0∞) else 0 := by
   have : Nonempty ↥(({0} : Set ℝ)) := ⟨⟨0, rfl⟩⟩
   unfold supNormOn
@@ -96,7 +96,7 @@ example : supNormOn (oneTermSeries 0) ({0} : Set ℝ) = 1 := by
 
 /-- The one-term series converges normally on the singleton `{0}`: its
 sup-norm series is a single nonzero term. -/
-theorem oneTermSeries_normal :
+private theorem oneTermSeries_normal :
     ConvergesNormallyOn oneTermSeries ({0} : Set ℝ) := by
   unfold ConvergesNormallyOn
   rw [tsum_congr supNormOn_oneTermSeries,

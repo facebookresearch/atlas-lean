@@ -19,7 +19,7 @@ universe u
 section GenericTop
 variable (G : Type u) [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
 
-def topIndex : Index G :=
+private def topIndex : Index G :=
   ⟨FiniteIndexNormalSubgroup.ofSubgroup (⊤ : Subgroup G), isOpen_univ⟩
 
 example : FiniteGrp.{u} := (finiteGrpDiagram G).obj (topIndex G)

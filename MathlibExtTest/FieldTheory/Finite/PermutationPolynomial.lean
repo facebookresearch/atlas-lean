@@ -14,7 +14,7 @@ public import Mathlib.FieldTheory.Finite.Basic
 @[expose] public section
 
 /-- `5` is prime, so `ZMod 5` is a field. -/
-instance : Fact (Nat.Prime 5) := ⟨by decide⟩
+private instance : Fact (Nat.Prime 5) := ⟨by decide⟩
 
 /-- The translates of `X` evaluate to `x + c * x`; when `1 + c ≠ 0` this map
 is bijective on `ZMod 5`. -/

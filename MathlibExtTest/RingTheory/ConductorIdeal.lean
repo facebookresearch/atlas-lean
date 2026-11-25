@@ -27,7 +27,7 @@ example (A : Subalgebra ℤ ℤ) (I : Ideal ℤ) (h : (I : Set ℤ) ⊆ (A : Set
   Subalgebra.le_conductorIdeal_iff.mpr h
 
 /-- The diagonal subalgebra of `ℤ × ℤ`. -/
-def diagSubalgebra : Subalgebra ℤ (ℤ × ℤ) where
+private def diagSubalgebra : Subalgebra ℤ (ℤ × ℤ) where
   carrier := {p | p.1 = p.2}
   mul_mem' ha hb := by
     simp only [Set.mem_ofPred_eq, Prod.fst_mul, Prod.snd_mul] at ha hb ⊢
@@ -39,7 +39,7 @@ def diagSubalgebra : Subalgebra ℤ (ℤ × ℤ) where
     simp only [Set.mem_ofPred_eq, Prod.algebraMap_apply]
 
 /-- Membership in the diagonal subalgebra. -/
-theorem mem_diagSubalgebra {p : ℤ × ℤ} : p ∈ diagSubalgebra ↔ p.1 = p.2 :=
+private theorem mem_diagSubalgebra {p : ℤ × ℤ} : p ∈ diagSubalgebra ↔ p.1 = p.2 :=
   Iff.rfl
 
 -- The diagonal subalgebra of `ℤ × ℤ` has bottom conductor.

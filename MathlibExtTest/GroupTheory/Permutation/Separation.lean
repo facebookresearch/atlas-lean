@@ -52,7 +52,7 @@ example (α : Type*) [CircularOrder α] (a c d : α) :
   · exact sbtw_irrefl_left_right h
   · exact sbtw_irrefl_left_right h
 
-local instance : CircularOrder ℤ := LinearOrder.toCircularOrder ℤ
+private local instance : CircularOrder ℤ := LinearOrder.toCircularOrder ℤ
 
 example : MetaMathlibExt.circularSeparates (0 : ℤ) 2 1 3 := by
   change
