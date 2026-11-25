@@ -1,5 +1,6 @@
 # Inverting shift and difference operators
 
+- [The coefficient Bernoulli number over factorial](chapter5-entry1-minus-coeff.md)
 - [Ramanujan's operator identity for the Bernoulli numbers](ramanujan-part1-ch5-entry1.md)
 - [Polynomial shift](chapter5-polynomial-shift.md)
 - [Ramanujan's operator identity for $(1 - 2^n) B_n / n!$](ramanujan-part1-ch5-entry1-euleriangf.md)

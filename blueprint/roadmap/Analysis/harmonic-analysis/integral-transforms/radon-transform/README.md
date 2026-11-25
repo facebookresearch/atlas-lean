@@ -1,5 +1,6 @@
 # Radon transform
 
+- [Lines of the Radon transform](lines-of-the-radon-transform/README.md)
 - [Radon transform on the plane](radon.md)
 - [One-dimensional Fourier transform](fourier1.md)
 - [Two-dimensional Fourier transform](fourier2.md)

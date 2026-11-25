@@ -47,6 +47,15 @@
 - [Eckart–Young (Frobenius norm)](sum-sq-singular-values-le-frobenius-sub.md)
 - [Eckart–Young, best-approximation form](is-least-frobenius-sub-sq.md)
 - [Best low-rank approximation in a Kronecker covariance norm](kronecker-weighted-low-rank-approximation.md)
+- [Frob Sq](frob-sq.md)
+- [Squared Frobenius norm](frob-sq-eq-norm-sq.md)
+- [Singular Seq](singular-seq.md)
+- [Singular Tail Sq](singular-tail-sq.md)
+- [Eckart–Young, Frobenius lower bound](singular-tail-sq-le-frob-sq-sub.md)
+- [Eckart–Young, attainment](exists-rank-le-frob-sq-sub-eq.md)
+- [Eckart–Young, the tail is the minimum squared Frobenius error](is-least-frob-sq-sub.md)
+- [Frob Sq eq sum sq singular Seq](frob-sq-eq-sum-sq-singular-seq.md)
+- [Whitening form](is-least-frob-sq-whitened.md)
 
 ## Related topics
 

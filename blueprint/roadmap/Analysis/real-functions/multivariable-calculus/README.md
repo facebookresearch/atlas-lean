@@ -2,14 +2,20 @@
 
 Functions on R^n: partial derivatives, gradients, Jacobians, Hessians, implicit functions, regular level sets and tangent spaces, curve length, Green's theorem, multivariable Taylor expansions and counterexamples about mixed partials or continuity at the origin.
 
+- [Conservative curve integrals](conservative-curve-integrals/README.md)
 - [Continuity and differentiability at the origin in the plane](continuity-and-differentiability-at-the-origin-i/README.md)
+- [Euler's identity for positively homogeneous functions](euler-s-identity-for-positively-homogeneous-func/README.md)
+- [Euler's identity on the positive orthant](euler-s-identity-on-the-positive-orthant/README.md)
 - [Existence of mixed partial derivatives](existence-of-mixed-partial-derivatives/README.md)
+- [Functions with zero fourth derivative on an interval](functions-with-zero-fourth-derivative-on-an-inte/README.md)
 - [Gradient](gradient/README.md)
 - [Hessian matrix](hessian-matrix/README.md)
 - [Jacobian matrix](jacobian-matrix/README.md)
 - [Length of a curve](length-of-a-curve/README.md)
+- [Local injectivity from a nonsingular derivative](local-injectivity-from-a-nonsingular-derivative/README.md)
 - [Partial derivatives and symmetry of mixed partials](partial-derivatives-and-symmetry-of-mixed-partia/README.md)
 - [Tangent spaces of level sets](tangent-spaces-of-level-sets/README.md)
+- [The smooth envelope theorem](the-smooth-envelope-theorem/README.md)
 - [A unit-norm curve in $\mathbb{R}^3$ is orthogonal to its derivative](inner-deriv-self-eq-zero-of-norm-eq-one.md)
 - [An implicit function for $x^2y_1+e^x+y_2=0$ near $(1,-1)$](exists-implicit-function-sq-mul-add-exp.md)
 - [Change of variables to spherical coordinates](integral-comp-spherical-symm.md)

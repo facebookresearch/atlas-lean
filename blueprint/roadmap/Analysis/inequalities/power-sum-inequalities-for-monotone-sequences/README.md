@@ -1,5 +1,6 @@
 # Power sum inequalities for monotone sequences
 
+- [Sum Icc fib rpow two](sum-icc-fib-rpow-two.md)
 - [Normalised power sums decrease in the exponent](power-sum-rpow-one-div-le.md)
 - [Lower bound for a power sum at the mean exponent](power-sum-mul-div-max-le.md)
 - [Power sums under a larger exponent](power-sum-le-rpow-of-le.md)

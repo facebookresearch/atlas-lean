@@ -5,6 +5,7 @@
 - [Weighted forward shift at index zero](weighted-shift-fun-zero.md)
 - [Weighted forward shift at a successor index](weighted-shift-fun-succ.md)
 - [Coordinates of the weighted backward-shift function](weighted-backward-fun-apply.md)
+- [Bounded weights have a uniform bound](exists-uniform-bound.md)
 - [Weighted forward shift operator](weighted-shift-clm.md)
 - [Weighted backward shift](weighted-backward-clm.md)
 - [Weighted forward shift as a linear map](weighted-shift-lin-map.md)

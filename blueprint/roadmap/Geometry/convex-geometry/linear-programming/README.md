@@ -11,6 +11,7 @@
 - [Is Compact feasible](is-compact-feasible.md)
 - [Maximum principle for linear programming](lp-maximum-principle.md)
 - [Optimal vertices of linear programs](simplex-algorithm.md)
+- [Is Closed hull finset](is-closed-hull-finset.md)
 
 ## Related topics
 
