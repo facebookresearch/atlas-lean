@@ -1,4 +1,4 @@
 # Partial Operator
 
-A densely-defined complex-linear operator before regularity hypotheses
+A complex-linear partial map before density or regularity hypotheses
 are imposed.
