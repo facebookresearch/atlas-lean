@@ -33,7 +33,6 @@ public import Mathlib.RingTheory.DiscreteValuationRing.Basic
 public import Mathlib.RingTheory.AdicCompletion.Basic
 public import Mathlib.RingTheory.LocalRing.MaximalIdeal.Basic
 import Mathlib.NumberTheory.Cyclotomic.Basic
-import Mathlib.RingTheory.AdicCompletion.AsTensorProduct
 import Mathlib.RingTheory.AdicCompletion.LocalRing
 import Mathlib.RingTheory.AdicCompletion.Noetherian
 import Mathlib.RingTheory.DiscreteValuationRing.TFAE
@@ -45,6 +44,7 @@ import Mathlib.RingTheory.Polynomial.Cyclotomic.Roots
 import Mathlib.Algebra.Polynomial.AlgebraMap
 import Mathlib.RingTheory.AdjoinRoot
 import Mathlib.FieldTheory.Finite.Basic
+import MathlibExt.RingTheory.AdicCompletion.ModuleFinite
 
 /-!
 # Cyclotomic discrete valuation rings over a prime maximal ideal
@@ -101,35 +101,6 @@ private theorem isAdicComplete_of_pow_le_of_le {I J : Ideal R} {c : ℕ}
     toIsPrecomplete := isPrecomplete_of_pow_le_of_le hJI hIJ }
 
 end AdicTransfer
-
-section FiniteModule
-
-open TensorProduct
-
-universe u in
-private theorem isAdicComplete_of_finite {R : Type u} [CommRing R]
-    [IsNoetherianRing R] (I : Ideal R)
-    [IsAdicComplete I R] (M : Type u) [AddCommGroup M] [Module R M] [Module.Finite R M] :
-    IsAdicComplete I M := by
-  rw [← AdicCompletion.of_bijective_iff]
-  let e₁ : R ⊗[R] M ≃ₗ[R] AdicCompletion I R ⊗[R] M :=
-    LinearEquiv.rTensor M (LinearEquiv.ofBijective (AdicCompletion.of I R)
-      (AdicCompletion.of_bijective I R))
-  let e₀ : M ≃ₗ[R] R ⊗[R] M := (TensorProduct.lid R M).symm
-  have hcomp : (AdicCompletion.of I M : M → AdicCompletion I M) =
-      (AdicCompletion.ofTensorProduct I M) ∘ e₁ ∘ e₀ := by
-    funext x
-    simp only [Function.comp_apply, e₀, e₁, TensorProduct.lid_symm_apply, LinearEquiv.rTensor_tmul,
-      LinearEquiv.ofBijective_apply, AdicCompletion.ofTensorProduct_tmul]
-    have : (AdicCompletion.of I R) 1 = (1 : AdicCompletion I R) := by
-      change algebraMap R (AdicCompletion I R) 1 = 1
-      exact map_one _
-    rw [this, one_smul]
-  rw [hcomp]
-  exact (AdicCompletion.ofTensorProduct_bijective_of_finite_of_isNoetherian I M).comp
-    (e₁.bijective.comp e₀.bijective)
-
-end FiniteModule
 
 section Eisenstein
 
@@ -329,7 +300,7 @@ private scoped instance : Module.Finite W₀ (O q W₀) := (cyclotomic.monic q W
 
 private theorem zeta_sub_one_pow_mem (hW₀ : maximalIdeal W₀ = Ideal.span {(q : W₀)}) :
     (zeta q W₀ - 1) ^ (q - 1) ∈ Ideal.span {(q : O q W₀)} := by
-  haveI := isDomain q W₀ hW₀
+  have := isDomain q W₀ hW₀
   have hEis := isEisensteinAt_cyclotomic_comp_X_add_one q W₀ hW₀
   have hmo := monic_cyclotomic_comp_X_add_one q W₀
   have hroot : aeval (zeta q W₀ - 1) ((cyclotomic q W₀).comp (X + 1)) = 0 := by
@@ -360,7 +331,7 @@ private theorem isAdicComplete_span_natCast [IsAdicComplete (maximalIdeal W₀) 
     (hW₀ : maximalIdeal W₀ = Ideal.span {(q : W₀)}) :
     IsAdicComplete (Ideal.span {(q : O q W₀)}) (O q W₀) := by
   have hmod : IsAdicComplete (maximalIdeal W₀) (O q W₀) :=
-    isAdicComplete_of_finite (maximalIdeal W₀) (O q W₀)
+    IsAdicComplete.of_module_finite (maximalIdeal W₀)
   rw [← map_maximalIdeal q W₀ hW₀]
   exact
     { toIsHausdorff := (IsHausdorff.map_algebraMap_iff (S := O q W₀)).mpr hmod.toIsHausdorff
@@ -394,8 +365,8 @@ private theorem isDiscreteValuationRing [IsAdicComplete (maximalIdeal W₀) W₀
     (k : Type*) [Field k] [CharP k q] (res₀ : W₀ →+* k) (hres₀ : Function.Surjective res₀)
     (hker₀ : RingHom.ker res₀ = maximalIdeal W₀) :
     @IsDiscreteValuationRing (O q W₀) _ (isDomain q W₀ hW₀) := by
-  letI := isDomain q W₀ hW₀
-  letI := isLocalRing q W₀ hW₀ k res₀ hres₀ hker₀
+  let := isDomain q W₀ hW₀
+  let := isLocalRing q W₀ hW₀ k res₀ hres₀ hker₀
   have hmax := maximalIdeal_eq q W₀ hW₀ k res₀ hres₀ hker₀
   have hnf : ¬IsField (O q W₀) := by
     rw [IsLocalRing.isField_iff_maximalIdeal_eq, hmax]
@@ -459,8 +430,8 @@ public theorem IsDiscreteValuationRing.exists_cyclotomic_dvr_of_maximalIdeal_eq_
       (∀ (S : Type w) [CommRing S] [Algebra W₀ S] (z : S),
         (∑ i ∈ Finset.range q, z ^ i) = 0 →
         ∃! f : 𝒪 →ₐ[W₀] S, f ζ = z) := by
-  letI hdom := CycloDVR.isDomain q W₀ hW₀
-  letI hdvr := CycloDVR.isDiscreteValuationRing q W₀ hW₀ k res₀ hres₀ hker₀
+  let hdom := CycloDVR.isDomain q W₀ hW₀
+  let hdvr := CycloDVR.isDiscreteValuationRing q W₀ hW₀ k res₀ hres₀ hker₀
   have hmax : IsLocalRing.maximalIdeal (CycloDVR.O q W₀) =
       Ideal.span {CycloDVR.zeta q W₀ - 1} :=
     (IsLocalRing.eq_maximalIdeal
