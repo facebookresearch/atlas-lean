@@ -74,9 +74,10 @@ def IsFibrewiseAlgebraicallyTrivial {X S : Scheme.{u}}
     IsAlgebraicallyTrivial (Over.mk (pullback.snd π p))
       ((Scheme.Modules.pullback (pullback.fst π p)).obj L)
 
-/-- Pull a family on `A × D` back along an actual parameter morphism `T ⟶ D`. -/
-def familyPullback {k : Type u} [Field k]
-    (A D T : Over (Spec (.of k))) (P : (prod A D).left.Modules) (f : T ⟶ D) :
+/-- Pull a family on `A ×_S D` back along an actual parameter morphism `T ⟶ D`, over an
+arbitrary base scheme `S`. -/
+def familyPullback {S : Scheme.{u}}
+    (A D T : Over S) (P : (prod A D).left.Modules) (f : T ⟶ D) :
     (prod A T).left.Modules :=
   (Scheme.Modules.pullback (prod.map (𝟙 A) f).left).obj P
 

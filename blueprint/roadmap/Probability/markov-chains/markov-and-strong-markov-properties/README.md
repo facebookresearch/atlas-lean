@@ -8,3 +8,5 @@
 - [A.e. equality from a.e. equality on the finite fibers](ae-eq-of-ae-eq-restrict-finite-fibers.md)
 - [Strong Markov property for a.s.-finite stopping times](strong-markov-chain-ae-finite.md)
 - [Strong Markov property for everywhere-finite stopping times](strong-markov-chain.md)
+
+- [Dynkin martingale of a discrete-time Markov chain](dynkin-martingale-of-a-discrete-time-markov-chai.md)

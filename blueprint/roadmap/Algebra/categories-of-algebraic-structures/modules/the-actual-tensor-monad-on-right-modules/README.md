@@ -1,0 +1,17 @@
+# The actual tensor monad on right modules
+
+- [Underlying](underlying.md)
+- [Right Underlying Map](right-underlying-map.md)
+- [Underlying Right Module](underlying-right-module.md)
+- [Tensor Right SMul](tensor-right-smul.md)
+- [Tensor Right Module](tensor-right-module.md)
+- [Tensor Obj](tensor-obj.md)
+- [Tensor Map](tensor-map.md)
+- [Tensor Functor](tensor-functor.md)
+- [Tensor Unit](tensor-unit.md)
+- [Tensor Underlying Iso](tensor-underlying-iso.md)
+- [Tensor Mul](tensor-mul.md)
+- [Tensor Monad](tensor-monad.md)
+- [Forget Right](forget-right.md)
+- [Forget Action](forget-action.md)
+- [Forget Right Module](forget-right-module.md)

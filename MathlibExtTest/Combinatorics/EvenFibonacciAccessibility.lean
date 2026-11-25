@@ -29,3 +29,17 @@ example : ∃ (c : ℕ+ → Fin 2) (k : ℕ), 1 ≤ k ∧ ¬ ∃ x : Fin k → �
   obtain ⟨hone, hmany⟩ := evenFibonacciSet_degreeOfAccessibility_eq_one
   by_contra! hall
   exact hmany 2 le_rfl ⟨hone.1, by decide, hall⟩
+
+-- Two colors already block arbitrarily long monochromatic even Fibonacci diffsequences.
+example : ¬ IsAccessible evenFibonacciSet :=
+  fun h => even_fibonacci_not_two_accessible (h 2 (by decide))
+
+-- Every set of gaps inside the even Fibonacci set, such as the single gap two, inherits the
+-- obstruction.
+example (D : Set ℕ) (hD : D ⊆ evenFibonacciSet) : ¬ IsRAccessible 2 D := by
+  rintro ⟨-, -, h⟩
+  refine even_fibonacci_not_two_accessible ⟨?_, by decide, fun c k hk => ?_⟩
+  · rintro _ ⟨n, rfl⟩
+    exact Nat.fib_pos.mpr (by omega)
+  · obtain ⟨x, hx, hdiff⟩ := h c k hk
+    exact ⟨x, hx, fun i hi => (hdiff i hi).imp fun d hd => ⟨hD hd.1, hd.2⟩⟩
