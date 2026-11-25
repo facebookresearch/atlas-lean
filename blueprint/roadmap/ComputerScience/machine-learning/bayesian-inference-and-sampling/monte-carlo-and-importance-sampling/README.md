@@ -11,3 +11,8 @@
 
 - [Exact posterior marginal of a pseudo-marginal Metropolis–Hastings chain](pseudo-marginal-mh-exactness-with-unbiased-nonne.md)
 - [ABC-MCMC is reversible for the tolerance posterior](abc-mcmc-invariance-marjoram-et-al.md)
+
+- [ABC population Monte Carlo importance weights](abc-smc-population-monte-carlo-importance-weight.md)
+- [Importance sampling of coalescent histories is unbiased for the likelihood](importance-sampling-of-coalescent-histories-for.md)
+- [Particle approximations of sequential Monte Carlo samplers converge](smc-sampler-particle-approximations-converge-as.md)
+- [Sequential Monte Carlo samplers give unbiased normalizing-constant estimates](smc-sampler-unbiasedness-of-the-normalizing-cons.md)
