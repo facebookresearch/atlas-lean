@@ -9,13 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
-public import MathlibExt.MeasureTheory.OptimalTransport.Wasserstein
+public import MathlibExt.MeasureTheory.OptimalTransport.KantorovichRubinstein
 
 /-!
-# Wasserstein distances: wanted results
+# Wasserstein distances and weak convergence
 
-The Kantorovich–Rubinstein formula (Remark 6.5) and the metrization of weak convergence in `P_p`
-(Theorem 6.9) of C. Villani, *Optimal Transport: Old and New*, Grundlehren 338, Springer 2009,
+The metrization of weak convergence in `P_p` (Theorem 6.9) of C. Villani,
+*Optimal Transport: Old and New*, Grundlehren 338, Springer 2009,
 for the Wasserstein distance of `MathlibExt.MeasureTheory.OptimalTransport.Wasserstein`.
 A complete separable metric space with its Borel σ-algebra stands for Villani's Polish space.
 -/
@@ -29,18 +29,6 @@ open MathlibExt.MeasureTheory.OptimalTransport.KantorovichWanted (IsCoupling)
 open MathlibExt.MeasureTheory.OptimalTransport.Wasserstein (wasserstein transportCost)
 
 namespace MathlibExt.MeasureTheory.WassersteinWanted
-
-/-- **Kantorovich–Rubinstein formula.** On a Polish metric space `X`, for probability measures
-`μ, ν` with finite first moments, `W_1(μ, ν) = sup (∫ ψ dμ - ∫ ψ dν)` over all `1`-Lipschitz
-functions `ψ : X → ℝ` (C. Villani, *Optimal Transport: Old and New*, Springer 2009,
-Remark 6.5, formula (6.3), a consequence of Theorem 5.10(i) and Particular Case 5.4). The
-supremum is nonnegative (take `ψ = 0`), so it is stated through `ENNReal.ofReal`. -/
-theorem_wanted wasserstein_one_eq_iSup_lipschitz {X : Type*}
-    [MetricSpace X] [CompleteSpace X] [SecondCountableTopology X] [MeasurableSpace X]
-    [BorelSpace X] (μ ν : ProbabilityMeasure X) (x₀ : X)
-    (hμ : ∫⁻ x, edist x₀ x ∂(μ : Measure X) < ∞) (hν : ∫⁻ x, edist x₀ x ∂(ν : Measure X) < ∞) :
-    wasserstein 1 μ ν = ⨆ (ψ : X → ℝ) (_ : LipschitzWith 1 ψ),
-      ENNReal.ofReal (∫ x, ψ x ∂(μ : Measure X) - ∫ x, ψ x ∂(ν : Measure X))
 
 /-- **The Wasserstein distance metrizes weak convergence in `P_p`.** Let `X` be a Polish metric
 space, `p ∈ [1, ∞)`, `x₀ ∈ X`, and let `μ_k` and `μ` be probability measures with finite

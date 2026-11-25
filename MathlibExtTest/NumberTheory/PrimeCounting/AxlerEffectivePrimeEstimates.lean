@@ -75,4 +75,36 @@ example :
   simpa using axlerThetaErrorFactor_tail_antitone (Real.exp 673) (Real.exp 700) le_rfl
     (Real.exp_le_exp.mpr (by norm_num))
 
+-- For squares and `k = 1` the tail is compared with `li(1 / x)` up to `3 η / (x log² x)`.
+example (η x₀ : ℝ) (hη : 0 < η) (hx₀ : 1 < x₀)
+    (hθ : ∀ y : ℝ, x₀ ≤ y → |Chebyshev.theta y - y| < η * y / Real.log y)
+    (x : ℝ) (hx : x₀ ≤ x) :
+    |Real.logarithmicIntegralReal x⁻¹ +
+        ∑' p : ℕ, if p.Prime ∧ x < p then 1 / (p : ℝ) ^ 2 else 0| <
+      3 * η / (x * Real.log x ^ 2) := by
+  have h := abs_logarithmicIntegral_add_tsum_inv_prime_pow_lt 1 one_pos η x₀ hη hx₀
+    (by simpa using hθ) 2 le_rfl x hx
+  have hexp : x ^ ((1 : ℝ) - (2 : ℕ)) = x⁻¹ := by norm_num [Real.rpow_neg_one]
+  have hbound : η / (x ^ (2 - 1) * Real.log x ^ (1 + 1)) * (1 + (2 : ℕ) / ((2 : ℕ) - 1 : ℝ)) =
+      3 * η / (x * Real.log x ^ 2) := by
+    norm_num
+    ring
+  rwa [hexp, hbound] at h
+
+-- For cubes the factor `1 + n / (n - 1)` is `5 / 2` and the power `x ^ (n - 1)` is `x²`.
+example (k : ℕ) (hk : 0 < k) (η x₀ : ℝ) (hη : 0 < η) (hx₀ : 1 < x₀)
+    (hθ : ∀ y : ℝ, x₀ ≤ y → |Chebyshev.theta y - y| < η * y / Real.log y ^ k)
+    (x : ℝ) (hx : x₀ ≤ x) :
+    |Real.logarithmicIntegralReal (x ^ (-2 : ℝ)) +
+        ∑' p : ℕ, if p.Prime ∧ x < p then 1 / (p : ℝ) ^ 3 else 0| <
+      5 * η / (2 * x ^ 2 * Real.log x ^ (k + 1)) := by
+  have h := abs_logarithmicIntegral_add_tsum_inv_prime_pow_lt k hk η x₀ hη hx₀ hθ 3
+    (by norm_num) x hx
+  have hexp : x ^ ((1 : ℝ) - (3 : ℕ)) = x ^ (-2 : ℝ) := by norm_num
+  have hbound : η / (x ^ (3 - 1) * Real.log x ^ (k + 1)) * (1 + (3 : ℕ) / ((3 : ℕ) - 1 : ℝ)) =
+      5 * η / (2 * x ^ 2 * Real.log x ^ (k + 1)) := by
+    norm_num
+    ring
+  rwa [hexp, hbound] at h
+
 end MetaMathlibExt
