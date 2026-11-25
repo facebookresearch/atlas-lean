@@ -65,6 +65,7 @@ private noncomputable def scalarAction (p : ℕ) (A : Type*) [AddCommGroup A]
   map_mul' d e := by
     ext a
     simp [mul_smul]
+    exact smul_comm _ _ _
 
 private lemma scalarAction_apply {p : ℕ} {A : Type*} [AddCommGroup A] [Module (ZMod p) A]
     (d : (ZMod p)ˣ) (a : A) : scalarAction p A d a = (d : ZMod p) • a :=
@@ -78,7 +79,6 @@ private lemma stickelbergerEnd_scalarAction {p : ℕ} [Fact p.Prime] {A : Type*}
   simp only [LinearMap.coe_sum, Finset.sum_apply]
   rw [Finset.sum_smul, ← Finset.sum_attach (exponentSet p) (fun c => ((c : ZMod p))⁻¹ • a)]
   refine Finset.sum_congr rfl fun c _ => ?_
-  dsimp only
   rw [scalarAction_apply, Units.val_inv_eq_inv_val, coe_expUnit]
 
 /-- For `p = 2` there are no Stickelberger exponents, so the endomorphism is zero. -/
@@ -140,9 +140,10 @@ example : unitsEnd 2 (ℤ × ℤ) RingEquiv.prodComm
   intro h
   rw [ModP.proj_apply, ModP.proj_apply, QuotientAddGroup.eq, mem_nsmulRange] at h
   obtain ⟨y, hy⟩ := h
-  have h1 := congrArg (fun z : Additive (ℤ × ℤ)ˣ => ((Additive.toMul z : (ℤ × ℤ)ˣ) : ℤ × ℤ).1) hy
+  have h1 := congrArg (fun z : Additive (ℤ × ℤ)ˣ => ((Additive.toMul z : (ℤ × ℤ)ˣ) : ℤ × ℤ).1)
+    (eq_neg_add_iff_add_eq.mp hy)
   have h2 : ((Additive.toMul y : (ℤ × ℤ)ˣ) : ℤ × ℤ).1 ^ 2 = -1 := by
-    simpa [negOneOne, Units.ext_iff] using h1
+    simpa [negOneOne] using h1
   nlinarith [sq_nonneg ((Additive.toMul y : (ℤ × ℤ)ˣ) : ℤ × ℤ).1]
 
 /-! ### The omega projector -/
@@ -184,7 +185,7 @@ private theorem isOmegaEigenvector_omegaIdempotent' (i : ℕ) (a : M) :
   congr 1
   rw [map_sum, Finset.smul_sum]
   refine Fintype.sum_bijective (d' * ·) (Group.mulLeft_bijective d') _ _ fun d => ?_
-  simp only [map_mul, Module.End.mul_apply, map_smul, smul_smul]
+  simp only [map_mul, mul_apply_eq_comp, map_smul, smul_smul]
   congr 1
   push_cast
   rw [mul_pow, mul_inv, ← mul_assoc,

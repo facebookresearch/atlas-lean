@@ -36,7 +36,7 @@ public import Mathlib.GroupTheory.QuotientGroup.Basic
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.RingTheory.ClassGroup.ExtendedHom
 public import Mathlib.NumberTheory.ClassNumber.AdmissibleAbsoluteValue
-public import Mathlib.RingTheory.ClassGroup
+public import Mathlib.RingTheory.ClassGroup.Basic
 public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 
 @[expose] public section
@@ -142,13 +142,11 @@ theorem ModP.proj_eq_zero_iff {x : M} : ModP.proj p M x = 0 ↔ ∃ y, p • y =
   (QuotientAddGroup.eq_zero_iff x).trans (mem_nsmulRange p M)
 
 variable {M} in
-
 lemma nsmulRange_le_comap (f : M →+ M) : nsmulRange p M ≤ (nsmulRange p M).comap f := by
   rintro _ ⟨x, rfl⟩
   exact ⟨f x, (map_nsmul f p x).symm⟩
 
 variable {M} in
-
 def ModP.mapHom (f : M →+ M) : ModP p M →+ ModP p M :=
   QuotientAddGroup.map (nsmulRange p M) (nsmulRange p M) f (nsmulRange_le_comap p f)
 
@@ -157,7 +155,6 @@ variable {M} in
     ModP.mapHom p f (ModP.proj p M x) = ModP.proj p M (f x) := rfl
 
 variable {M} in
-
 noncomputable def ModP.mapEnd [NeZero p] (f : M →+ M) : Module.End (ZMod p) (ModP p M) :=
   (ModP.mapHom p f).toZModLinearMap p
 
