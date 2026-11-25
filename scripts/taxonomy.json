@@ -13267,6 +13267,7 @@
   "MathlibExt/NumberTheory/Recurrences/FultonMorrisPisanoFixedPoint": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Pisano periods"},
   "MathlibExt/NumberTheory/Recurrences/GFPFibSumChoose": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Catalan identities for generalized Fibonacci polynomials"},
   "MathlibExt/NumberTheory/Recurrences/GFPLucasCatalan": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Catalan identities for generalized Fibonacci polynomials"},
+  "MathlibExt/NumberTheory/Recurrences/GFPLucasSumChoose": {"to": "NumberTheory/linear-recurrences/fibonacci-polynomials", "title": "Catalan identities for generalized Fibonacci polynomials"},
   "MathlibExt/NumberTheory/Recurrences/GelinCesaroAlternatingSum": {"to": "NumberTheory/linear-recurrences/fibonacci-lucas-numbers", "title": "Fibonacci identities via Fibonacci functions"},
   "MathlibExt/NumberTheory/Recurrences/GeneralizedBiPeriodicFibonacciPeriod": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Bi-periodic Fibonacci sequences modulo primes"},
   "MathlibExt/NumberTheory/Recurrences/GeneralizedBiPeriodicFibonacciZeroIndices": {"to": "NumberTheory/linear-recurrences/recurrences-modulo-m", "title": "Bi-periodic Fibonacci sequences modulo primes"},

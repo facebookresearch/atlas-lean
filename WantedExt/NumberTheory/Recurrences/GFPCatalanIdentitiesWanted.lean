@@ -43,6 +43,7 @@ public import MathlibExt.NumberTheory.Recurrences.EvenBinomialAlternatingSum
 public import MathlibExt.NumberTheory.Recurrences.FloorPowBinomialSum
 public import MathlibExt.NumberTheory.Recurrences.GFPFibSumChoose
 public import MathlibExt.NumberTheory.Recurrences.GFPLucasCatalan
+public import MathlibExt.NumberTheory.Recurrences.GFPLucasSumChoose
 public import MathlibExt.NumberTheory.Recurrences.OddBinomialAlternatingSum
 
 namespace MetaMathlibExt
@@ -50,26 +51,6 @@ namespace MetaMathlibExt
 open Polynomial Finset
 
 @[expose] public section
-
-/-- **Explicit formula for Lucas-type generalized Fibonacci polynomials.** Let $\alpha$ and $p_0$
-be integers with $\alpha p_0 = 2$, let $p_1$ and $g$ be polynomials with integer coefficients, and
-put $d = \alpha p_1$. Let $L_n$ be the generalized Fibonacci polynomials defined by $L_0 = p_0$,
-$L_1 = p_1$ and $L_{n+2} = d L_{n+1} + g L_n$. Then for every $n \ge 1$, writing
-$c_i = \lfloor n \binom{n-i}{i} / (n-i) \rfloor$,
-$$\alpha L_n = \sum_{i=0}^{\lfloor n/2 \rfloor} c_i \, d^{n-2i} g^i.$$
-
-The quotient $n \binom{n-i}{i} / (n-i)$ is always an integer, so the floor does not change it;
-the source writes the coefficient as $\frac{n}{n-i} \binom{n-i}{i}$ and quotes the formula from
-Flórez and Saunders.
-
-Source: Maribel Diaz Noguera, Rigoberto Flórez, José L. Ramírez, and Martha Romero Rojas,
-*Catalan Identities for Generalized Fibonacci Polynomials*, The Fibonacci Quarterly 62 (2024),
-Article florez11012023, Lemma 3.1 (2) (`fq-2024-florez11012023-lem-3.1`). -/
-public theorem_wanted gfp_lucas_eq_sum_choose {α p₀ : ℤ} (hα : α * p₀ = 2) {p₁ d : ℤ[X]}
-    (hd : d = C α * p₁) (g : ℤ[X]) {n : ℕ} (hn : 1 ≤ n) :
-    C α * generalizedFibonacciPolynomial (C p₀) p₁ d g n =
-      ∑ i ∈ range (n / 2 + 1),
-        ((n * (n - i).choose i / (n - i) : ℕ) : ℤ[X]) * d ^ (n - 2 * i) * g ^ i
 
 /-- **Webb–Parberry binomial identity.** For natural numbers $m < n$,
 $$\binom{n-m-1}{m} = 2^{2m-n+1} \sum_{j=m}^{\lfloor (n-1)/2 \rfloor} \binom{j}{m} \binom{n}{2j+1},$$
