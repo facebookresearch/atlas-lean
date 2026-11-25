@@ -71,7 +71,7 @@ def IsAccessible (α : ℝ) (z : ℂ) : Prop :=
   ∃ γ : ℝ → ℂ, ContinuousOn γ (Set.Icc 0 1) ∧ (∀ t ∈ Set.Ico (0 : ℝ) 1, γ t ∉ juliaSet α) ∧
     γ 1 = z
 
-/-- Milnor's question, with a positive answer: for some Cremer parameter `α`, the critical point
+/-- The proposition Milnor's question asks about: for some Cremer parameter `α`, the critical point
 `-λ/2` of `P_α` is accessible from the complement of the Julia set. -/
 def cremerCriticalPointAccessible : Prop :=
   ∃ α : ℝ, IsCremer α ∧ IsAccessible α (-(multiplier α) / 2)

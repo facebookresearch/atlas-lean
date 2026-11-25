@@ -50,7 +50,8 @@ abbrev ratKronecker {X : Type*} [MeasurableSpace X] (T : X ≃ᵐ X) : Measurabl
   ⨆ d : ℕ, ⨆ (_ : 0 < d), MeasurableSpace.invariants (⇑T)^[d]
 
 /-- The multiple ergodic averages `E_{n ∈ [N]} ∏ⱼ fⱼ ∘ Tⱼ^{pⱼ(n)}` along integer polynomials, with
-`[N] = {1, …, N}` and integer powers taken in the permutation group of `X`. -/
+`[N] = {1, …, N}` and integer powers taken in the permutation group of `X`. For `N = 0` the average
+is `0`: the sum is empty and `1/N` is read as `0`. -/
 noncomputable def polynomialAverage {ℓ : ℕ} {X : Type*} [MeasurableSpace X] (T : Fin ℓ → X ≃ᵐ X)
     (p : Fin ℓ → Polynomial ℤ) (f : Fin ℓ → X → ℂ) (N : ℕ) (x : X) : ℂ :=
   (N : ℂ)⁻¹ * ∑ n ∈ Finset.Icc 1 N, ∏ j, f j (((T j).toEquiv ^ ((p j).eval (n : ℤ))) x)
