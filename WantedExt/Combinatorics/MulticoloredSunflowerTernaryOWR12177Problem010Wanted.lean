@@ -37,32 +37,46 @@ no multicolored sunflower. `x + y + z = 0` says that `{x, y, z}` is a sunflower 
 coordinate the entries are all equal or all distinct).
 -/
 
-/-- Vectors of length `n` over `ℤ/3`. -/
+/-- **Ternary vectors.** For a natural number $n$, the vectors of length $n$ over $\mathbb{Z}/3$,
+that is, the functions from $\{0, 1, \dots, n - 1\}$ to $\mathbb{Z}/3$. -/
 abbrev TernaryVec (n : ℕ) : Type := Fin n → ZMod 3
 
-/-- A collection `S` of triples contains a multicolored sunflower: three triples
-`(x₁, y₁, z₁), (x₂, y₂, z₂), (x₃, y₃, z₃) ∈ S`, not all equal, with `x₁ + y₂ + z₃ = 0`. -/
+/-- **Multicolored sunflower.** Let $n$ be a natural number and let $S$ be a finite set of triples
+$(x, y, z)$ of vectors in $(\mathbb{Z}/3)^n$. Then $S$ contains a multicolored sunflower if there
+are triples $(x_1, y_1, z_1), (x_2, y_2, z_2), (x_3, y_3, z_3) \in S$, not all three equal, with
+$x_1 + y_2 + z_3 = 0$. -/
 def HasMulticoloredSunflower {n : ℕ} (S : Finset (TernaryVec n × TernaryVec n × TernaryVec n)) :
     Prop :=
   ∃ a ∈ S, ∃ b ∈ S, ∃ c ∈ S, ¬ (a = b ∧ b = c) ∧ a.1 + b.2.1 + c.2.2 = 0
 
-/-- The multicolored sunflower conjecture of Alon, Shpilka and Umans (Oberwolfach Report 54/2012,
-Conjecture 7): there are `ε > 0` and `n₀` such that for `n > n₀` every collection of at least
-`3^{(1 - ε) n}` triples `(x, y, z)` of vectors in `(ℤ/3)ⁿ` with `x + y + z = 0` contains a
-multicolored sunflower. -/
+/-- **Multicolored sunflower conjecture.** There are a real number $\varepsilon > 0$ and a natural
+number $n_0$ such that for every $n > n_0$, every finite set $S$ of triples $(x, y, z)$ of vectors
+in $(\mathbb{Z}/3)^n$ with $x + y + z = 0$ for every $(x, y, z) \in S$ and with
+$|S| \ge 3^{(1 - \varepsilon) n}$ contains a multicolored sunflower: triples
+$(x_1, y_1, z_1), (x_2, y_2, z_2), (x_3, y_3, z_3) \in S$, not all three equal, with
+$x_1 + y_2 + z_3 = 0$.
+
+The conjecture is due to Alon, Shpilka and Umans (Oberwolfach Report 54/2012, Conjecture 7). -/
 def multicoloredSunflowerConjecture : Prop :=
   ∃ ε : ℝ, 0 < ε ∧ ∃ n₀ : ℕ, ∀ n : ℕ, n₀ < n →
     ∀ S : Finset (TernaryVec n × TernaryVec n × TernaryVec n),
       (∀ t ∈ S, t.1 + t.2.1 + t.2.2 = 0) → (3 : ℝ) ^ ((1 - ε) * n) ≤ S.card →
         HasMulticoloredSunflower S
 
-/--
-Resolved true: a collection of triples with `x + y + z = 0` and no multicolored sunflower is a
-tricolored sum-free set (`x_a + y_b + z_c = 0` only for `a = b = c`), the tricolored version of the
-cap set bound that Alon, Shpilka and Umans showed would disprove the strong USP conjecture; Blasiak,
-Church, Cohn, Grochow, Naslund, Sawin and Umans proved (Theorem A′) that such sets in `(ℤ/3)ⁿ` have
-at most `3 · 3^{(1 - δ/log 3) n}` elements, `δ = 0.0566...`, and concluded that the strong USP
-conjecture fails. Source: C. Umans, in Complexity Theory, Oberwolfach Reports 9 (2012), no. 54, p.
+/-- **The multicolored sunflower conjecture holds.** There are a real number $\varepsilon > 0$ and a
+natural number $n_0$ such that for every $n > n_0$, every finite set $S$ of triples $(x, y, z)$ of
+vectors in $(\mathbb{Z}/3)^n$ with $x + y + z = 0$ for every $(x, y, z) \in S$ and with
+$|S| \ge 3^{(1 - \varepsilon) n}$ contains a multicolored sunflower: triples
+$(x_1, y_1, z_1), (x_2, y_2, z_2), (x_3, y_3, z_3) \in S$, not all three equal, with
+$x_1 + y_2 + z_3 = 0$.
+
+This was resolved in the affirmative: a set $S$ as above with no multicolored sunflower is a
+tricolored sum-free set ($x_a + y_b + z_c = 0$ only for $a = b = c$), and Blasiak, Church, Cohn,
+Grochow, Naslund, Sawin and Umans proved (Theorem A′) that such sets in $(\mathbb{Z}/3)^n$ have at
+most $3 \cdot 3^{(1 - \delta/\log 3) n}$ elements, $\delta = 0.0566\ldots$; Alon, Shpilka and Umans
+had shown that this tricolored version of the cap set bound disproves the strong USP conjecture.
+
+Source: C. Umans, in Complexity Theory, Oberwolfach Reports 9 (2012), no. 54, p.
 3292, Conjecture 7, DOI 10.4171/OWR/2012/54; resolution: J. Blasiak, T. Church, H. Cohn, J. A.
 Grochow, E. Naslund, W. F. Sawin and C. Umans, On cap sets and the group-theoretic approach to
 matrix multiplication, Discrete Anal. 2017:3, arXiv:1605.06702, Theorem A′: for H ≅ (ℤ/q)ⁿ, q a

@@ -75,7 +75,11 @@ private theorem valued_irreducible_eq_exp_neg_one
 variable {K L : Type*} [Field K] [Field L] [NumberField K] [NumberField L] [Algebra K L]
 variable (v : HeightOneSpectrum (𝓞 K)) (w : HeightOneSpectrum (𝓞 L))
 variable [w.asIdeal.LiesOver v.asIdeal]
-/-- The restricted canonical map on completion integer rings is injective. -/
+/-- **The map of completed integer rings is injective.** Let $L/K$ be an extension of number
+fields, let $v$ be a nonzero prime ideal of $\mathcal{O}_K$ and $w$ a nonzero prime ideal of
+$\mathcal{O}_L$ lying over $v$. Then the canonical map $\mathcal{O}_{K_v} \to \mathcal{O}_{L_w}$
+from the ring of integers of the completion $K_v$ to the ring of integers of the completion $L_w$
+is injective. -/
 theorem adicCompletionIntegersMap_injective :
     Function.Injective (adicCompletionIntegersMap v w) := by
   intro x y h
@@ -83,7 +87,12 @@ theorem adicCompletionIntegersMap_injective :
   apply adicCompletionMap_injective v w
   simpa only [adicCompletionIntegersMap_apply] using congrArg Subtype.val h
 
-/-- The canonical map on finite-place completion integer rings preserves ramification index. -/
+/-- **Completion preserves the ramification index.** Let $L/K$ be an extension of number fields,
+let $v$ be a nonzero prime ideal of $\mathcal{O}_K$ and $w$ a nonzero prime ideal of
+$\mathcal{O}_L$ lying over $v$. Let $\mathcal{O}_{K_v}$ and $\mathcal{O}_{L_w}$ be the rings of
+integers of the completions $K_v$ and $L_w$, with $\mathcal{O}_{L_w}$ an algebra over
+$\mathcal{O}_{K_v}$ via the canonical map. Then the ramification index of the maximal ideal of
+$\mathcal{O}_{L_w}$ over $\mathcal{O}_{K_v}$ equals the ramification index of $w$ over $v$. -/
 theorem ramificationIdx_adicCompletionIntegersMap :
     (IsLocalRing.maximalIdeal (w.adicCompletionIntegers L)).ramificationIdx
       (v.adicCompletionIntegers K) =

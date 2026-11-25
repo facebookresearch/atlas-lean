@@ -125,10 +125,13 @@ private theorem valuation_eq_exp_neg_count
   rw [FractionalIdeal.count_well_defined K v hI hrep]
   ring
 
-/-- Count bound for a sum of two generators with nonzero sum.
+/-- **Lower bound for the exponent of a sum.** Let $K$ be a number field and $\mathfrak p$ a nonzero
+prime ideal of $\mathcal O_K$. For $x \in K$ write $c_{\mathfrak p}(x)$ for the exponent of
+$\mathfrak p$ in the principal fractional ideal $x \mathcal O_K$, with the convention
+$c_{\mathfrak p}(0) = 0$. If $x, y \in K$ satisfy $x + y \neq 0$ and $n \in \mathbb Z$ satisfies
+$n \le c_{\mathfrak p}(x)$ and $n \le c_{\mathfrak p}(y)$, then $n \le c_{\mathfrak p}(x + y)$.
 
-Only the nonzero-sum guard is required publicly; zero summands are handled
-by reduction to the other summand. -/
+Only $x + y \neq 0$ is assumed: $x$ or $y$ may be zero. -/
 theorem count_spanSingleton_add_ge_of_ne_zero
     (v : IsDedekindDomain.HeightOneSpectrum (𝓞 K))
     {x y : K} {n : ℤ} (hxy : x + y ≠ 0)
@@ -167,8 +170,10 @@ theorem count_spanSingleton_add_ge_of_ne_zero
       rw [evxy, WithZero.exp_le_exp] at hle
       omega
 
-/-- A member of `rayElements m` has principal fractional-ideal count zero
-at every finite prime supported by `m`. -/
+/-- **Ray elements have order zero at the primes dividing the modulus.** Let $m$ be a
+modulus of a number field $K$ and let $x \in K^\times$ be a ray element of $m$. Then for
+every finite prime $\mathfrak p$ of $K$ dividing the finite part of $m$, the exponent of
+$\mathfrak p$ in the principal fractional ideal $x \mathcal O_K$ is $0$. -/
 theorem rayElement_count_spanSingleton_eq_zero
     (m : Modulus K) (x : Kˣ)
     (hx : x ∈ rayElements m)
@@ -181,8 +186,12 @@ theorem rayElement_count_spanSingleton_eq_zero
   have h0 := h v hv
   rwa [coe_toPrincipalIdeal] at h0
 
-/-- A ray element has valuation one at every finite prime supported by the modulus.
-Source (N406 §21.3): the supported-finite-place fact; compare
+/-- **Ray elements have valuation one at the primes dividing the modulus.** Let $m$ be a
+modulus of a number field $K$ and let $x \in K^\times$ be a ray element of $m$. Then for
+every finite prime $\mathfrak p$ of $K$ dividing the finite part of $m$, the multiplicative
+$\mathfrak p$-adic valuation of $x$ equals $1$.
+
+Source: N406 §21.3, the supported-finite-place fact; compare
 [`valuation_eq_one_of_spanSingleton_coprime'`](https://github.com/facebookresearch/atlas-lean/blob/e8b31c5cb0bec89b487ce33fe525a2c0b0f8b9c6/v1/Atlas/NumberTheoryI/code/RayClassFields.lean#L1206-L1248)
 and `hx_coprime`. -/
 theorem rayElement_valuation_eq_one
@@ -194,13 +203,16 @@ theorem rayElement_valuation_eq_one
     rayElement_count_spanSingleton_eq_zero m (x : Kˣ) x.property v hv,
     neg_zero, WithZero.exp_zero]
 
-/-- Valuation-one criterion for ray elements: if the normalized valuation of `a`
-is one at every finite prime supported by `m`, then the principal fractional
-ideal `(a)` has count zero at each such prime, so `a ∈ rayElements m`.
+/-- **Elements of valuation one at the primes dividing a modulus are ray elements.** Let $K$ be a
+number field, $\mathfrak m$ a modulus of $K$ with finite part $\mathfrak m_0$, and
+$a \in K^\times$. If the multiplicative $\mathfrak p$-adic valuation of $a$ equals $1$ at every
+nonzero prime ideal $\mathfrak p$ of $\mathcal O_K$ containing $\mathfrak m_0$, then $a$ is
+coprime to $\mathfrak m$, that is, a ray element of $\mathfrak m$: its principal fractional ideal
+$(a)$ has exponent $0$ at every such $\mathfrak p$.
 
-This is the converse of `rayElement_valuation_eq_one`: the converse valuation
-criterion used to turn the controlled approximation witness into a ray element.
-It is a reusable bridge toward N406, not itself the full source theorem. -/
+Source: N406 Section 21.3. This is the converse of `rayElement_valuation_eq_one`, the converse
+valuation criterion used to turn the controlled approximation witness into a ray element; it is
+a reusable bridge toward N406, not itself the full source theorem. -/
 theorem mem_rayElements_of_valuation_eq_one
     (m : Modulus K) (a : Kˣ)
     (h : ∀ v : IsDedekindDomain.HeightOneSpectrum (𝓞 K),
@@ -216,7 +228,10 @@ theorem mem_rayElements_of_valuation_eq_one
   have hcount := WithZero.exp_inj.mp hval
   omega
 
-/-- Congruence at the finite part is closed under multiplication. -/
+/-- **Product of two elements congruent to one at the finite part.** Let $m$ be a modulus
+of a number field $K$ and let $x, y \in K^\times$ both be congruent to $1$ at the finite
+part of $m$. If moreover $x$ is a ray element of $m$, then $xy$ is congruent to $1$ at the
+finite part of $m$. -/
 theorem CongruentOneAtFinitePart.mul
     {m : Modulus K} {x y : Kˣ}
     (hx : CongruentOneAtFinitePart m x)
@@ -284,7 +299,9 @@ theorem CongruentOneAtFinitePart.mul
             rw [hid] at hfin
             exact Or.inr hfin
 
-/-- Congruence at the finite part is closed under inversion. -/
+/-- **Inverses preserve congruence to one at the finite part.** Let $K$ be a number field and
+$\mathfrak m$ a modulus of $K$. If a ray element $x$ of $\mathfrak m$ is congruent to $1$ at the
+finite part of $\mathfrak m$, then so is $x^{-1}$. -/
 theorem CongruentOneAtFinitePart.inv
     {m : Modulus K} {x : Kˣ}
     (hx : CongruentOneAtFinitePart m x)
@@ -339,7 +356,12 @@ theorem CongruentOneAtFinitePart.inv
         rw [hneg, hcx, add_zero] at hcmul
         exact Or.inr (by omega)
 
-/-- Finite ray-one subgroup: ray elements congruent to `1` at finite places. -/
+/-- **The finite ray-one subgroup.** Let $K$ be a number field and $\mathfrak m$ a modulus of $K$
+with finite part $\mathfrak m_0$. The finite ray-one subgroup of $\mathfrak m$ is the subgroup of
+the group of ray elements of $\mathfrak m$ consisting of the $x$ that are congruent to $1$ at the
+finite part of $\mathfrak m$: for every nonzero prime $\mathfrak p$ of $\mathcal O_K$ containing
+$\mathfrak m_0$, either $x = 1$ or the exponent of $\mathfrak p$ in $(x - 1) \mathcal O_K$ is at
+least the exponent of $\mathfrak p$ in $\mathfrak m_0$. -/
 def finiteRayOneElements (m : Modulus K) : Subgroup (rayElements m) where
   carrier := { x | CongruentOneAtFinitePart m (x : Kˣ) }
   one_mem' := by
@@ -360,7 +382,11 @@ def finiteRayOneElements (m : Modulus K) : Subgroup (rayElements m) where
     x ∈ finiteRayOneElements m ↔ CongruentOneAtFinitePart m (x : Kˣ) :=
   Iff.rfl
 
-/-- Every ray element is a ratio of two integers coprime to the finite part.
+/-- **Coprime representation of ray elements.** Let $K$ be a number field and $\mathfrak m$ a
+modulus of $K$ with finite part $\mathfrak m_0$, a nonzero ideal of $\mathcal O_K$. Every ray
+element $x$ of $\mathfrak m$ can be written as $x = a / b$ in $K$ with $a, b \in \mathcal O_K$
+whose residue classes are units of $\mathcal O_K / \mathfrak m_0$.
+
 Source (N406 §21.3): the
 [`coprime_rep_exists`](https://github.com/facebookresearch/atlas-lean/blob/e8b31c5cb0bec89b487ce33fe525a2c0b0f8b9c6/v1/Atlas/NumberTheoryI/code/RayClassFields.lean#L1553-L1747)
 admissible integral numerator/denominator representation with both residues units. -/
@@ -551,7 +577,12 @@ theorem exists_isUnit_mod_finitePart_div_eq
     rw [ha_eq]
     exact mul_div_cancel_left₀ _ hb_ne
 
-/-- Equal fractions over `K` give equal finite-quotient units. -/
+/-- **Equal fractions give equal residues modulo the finite part.** Let $m$ be a modulus
+of a number field $K$ with finite part $\mathfrak m_0$, an ideal of $\mathcal O_K$, and
+write $\bar x$ for the image of $x \in \mathcal O_K$ in $\mathcal O_K / \mathfrak m_0$.
+Let $a, b, c, d \in \mathcal O_K$ be such that $\bar a$, $\bar b$, $\bar c$ and $\bar d$
+are units. If $a / b = c / d$ in $K$, then $\bar a \bar b^{-1} = \bar c \bar d^{-1}$ in
+the unit group $(\mathcal O_K / \mathfrak m_0)^\times$. -/
 theorem quotientUnits_div_eq_of_div_eq
     (m : Modulus K) (a b c d : 𝓞 K)
     (ha : IsUnit (Ideal.Quotient.mk (m.finitePart : Ideal (𝓞 K)) a))
@@ -615,7 +646,14 @@ private theorem finiteResidueMapFn_eq_of_div_eq
   exact quotientUnits_div_eq_of_div_eq m _ _ a b hs.1 hs.2.1 ha hb
     (hs.2.2.trans hab.symm)
 
-/-- Finite-part residue homomorphism on ray elements.
+/-- **Finite residue map.** Let $K$ be a number field and $\mathfrak m$ a modulus of $K$ with finite
+part $\mathfrak m_0$, a nonzero ideal of $\mathcal O_K$. The finite residue map of $\mathfrak m$ is
+the group homomorphism from the ray elements of $\mathfrak m$ to
+$(\mathcal O_K / \mathfrak m_0)^\times$ sending $x$ to $\bar a \bar b^{-1}$, where $x = a / b$ with
+$a, b \in \mathcal O_K$ whose residue classes $\bar a, \bar b$ are units of
+$\mathcal O_K / \mathfrak m_0$; such $a$ and $b$ exist, and the value does not depend on their
+choice.
+
 Source (N406 §21.3): the
 [`finitePartMapHom`](https://github.com/facebookresearch/atlas-lean/blob/e8b31c5cb0bec89b487ce33fe525a2c0b0f8b9c6/v1/Atlas/NumberTheoryI/code/RayClassFields.lean#L1812-L1864)
 finite component of the quotient isomorphism. -/
@@ -656,7 +694,12 @@ noncomputable def finiteResidueMap (m : Modulus K) :
     rw [hx, hy, hxy, hu1, hu2]
     simp [mul_inv_rev, mul_comm, mul_assoc, mul_left_comm]
 
-/-- Computation API for `finiteResidueMap` from any admissible pair.
+/-- **Computing the finite residue map from a representation.** Let $K$ be a number field and
+$\mathfrak m$ a modulus of $K$ with finite part $\mathfrak m_0$. Let $x$ be a ray element of
+$\mathfrak m$, and let $a, b \in \mathcal O_K$ have residue classes $\bar a, \bar b$ that are
+units of $\mathcal O_K / \mathfrak m_0$ and satisfy $a / b = x$ in $K$. Then the finite residue
+map of $\mathfrak m$ sends $x$ to $\bar a \bar b^{-1}$ in $(\mathcal O_K / \mathfrak m_0)^\times$.
+
 Source (N406 §21.3): the representation-independence computation
 [`coprime_rep_well_def`](https://github.com/facebookresearch/atlas-lean/blob/e8b31c5cb0bec89b487ce33fe525a2c0b0f8b9c6/v1/Atlas/NumberTheoryI/code/RayClassFields.lean#L1757-L1810)
 for the finite component. -/
@@ -839,7 +882,10 @@ private theorem quotientUnits_div_eq_one_iff_congruent
       exact (IsDedekindDomain.HeightOneSpectrum.intValuation_le_pow_iff_mem
         v (a - b) n).mp hle'
 
-/-- The finite residue map is trivial exactly on the finite-part congruence.
+/-- **Kernel criterion for the finite residue map.** Let $K$ be a number field and $\mathfrak m$ a
+modulus of $K$. A ray element $x$ of $\mathfrak m$ is sent to $1$ by the finite residue map of
+$\mathfrak m$ if and only if $x$ is congruent to $1$ at the finite part of $\mathfrak m$.
+
 Source (N406 §21.3): helper
 [`finitePartMapHom_ker_iff`](https://github.com/facebookresearch/atlas-lean/blob/e8b31c5cb0bec89b487ce33fe525a2c0b0f8b9c6/v1/Atlas/NumberTheoryI/code/RayClassFields.lean#L1996-L2011). -/
 theorem finiteResidueMap_eq_one_iff (m : Modulus K) (x : rayElements m) :
@@ -848,7 +894,10 @@ theorem finiteResidueMap_eq_one_iff (m : Modulus K) (x : rayElements m) :
   rw [finiteResidueMap_apply_of_div_eq m x a b ha hb hab]
   exact quotientUnits_div_eq_one_iff_congruent m x a b ha hb hab
 
-/-- The kernel of the finite residue map is `finiteRayOneElements`.
+/-- **Kernel of the finite residue map.** Let $K$ be a number field and $\mathfrak m$ a modulus of
+$K$. The kernel of the finite residue map of $\mathfrak m$ is the finite ray-one subgroup of
+$\mathfrak m$.
+
 Source (N406 §21.3): the finite kernel component used in the
 [`theorem_21_8_quotient_iso`](https://github.com/facebookresearch/atlas-lean/blob/e8b31c5cb0bec89b487ce33fe525a2c0b0f8b9c6/v1/Atlas/NumberTheoryI/code/RayClassFields.lean#L2600-L2647). -/
 theorem finiteResidueMap_ker (m : Modulus K) :
@@ -857,11 +906,17 @@ theorem finiteResidueMap_ker (m : Modulus K) :
   simp only [MonoidHom.mem_ker, mem_finiteRayOneElements_iff,
     finiteResidueMap_eq_one_iff]
 
-/-- Valuation criterion for triviality of the finite residue map: a valuation bound
-on `z - 1` at every supported finite place forces `finiteResidueMap m z = 1`.
+/-- **Valuation criterion for the finite residue map to be trivial.** Let $K$ be a number field,
+$\mathfrak m$ a modulus of $K$ with finite part $\mathfrak m_0$, and $z$ a ray element of
+$\mathfrak m$. Suppose that at every nonzero prime ideal $\mathfrak p$ of $\mathcal O_K$
+containing $\mathfrak m_0$, the multiplicative $\mathfrak p$-adic valuation of $z - 1$ is at most
+$\exp(-e_{\mathfrak p})$, where $e_{\mathfrak p}$ is the exponent of $\mathfrak p$ in
+$\mathfrak m_0$; equivalently, $z = 1$ or $z - 1$ has $\mathfrak p$-adic order at least
+$e_{\mathfrak p}$. Then the finite residue map of $\mathfrak m$ sends $z$ to $1$ in
+$(\mathcal O_K / \mathfrak m_0)^\times$.
 
-Source mapping (N406, Theorem 21.8, Section 21.3; ATLAS NumberTheoryI item N406):
-the native-API finite-congruence step corresponding to
+Source: N406, Theorem 21.8, Section 21.3 (ATLAS NumberTheoryI item N406): the native-API
+finite-congruence step corresponding to
 [`finitePartMapHom_ker_iff`](https://github.com/facebookresearch/atlas-lean/blob/e8b31c5cb0bec89b487ce33fe525a2c0b0f8b9c6/v1/Atlas/NumberTheoryI/code/RayClassFields.lean#L1996-L2011),
 used by the weak-approximation argument before residue/sign surjectivity and by
 [`theorem_21_8_quotient_iso`](https://github.com/facebookresearch/atlas-lean/blob/e8b31c5cb0bec89b487ce33fe525a2c0b0f8b9c6/v1/Atlas/NumberTheoryI/code/RayClassFields.lean#L2607-L2647).

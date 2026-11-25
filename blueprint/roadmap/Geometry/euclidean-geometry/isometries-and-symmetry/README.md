@@ -4,6 +4,7 @@ Distance-preserving maps of Euclidean space, their classification, and discrete 
 
 - [Classification of plane isometries](classification-of-plane-isometries/README.md)
 - [Crystallographic groups](crystallographic-groups/README.md)
+- [Crystallographic restriction, point groups and elastic constants](crystallographic-restriction-point-groups-and-el/README.md)
 - [Discrete groups of plane isometries](discrete-groups-of-plane-isometries/README.md)
 - [Isometries of Euclidean space](isometries-of-euclidean-space/README.md)
 - [Beckman–Quarles theorem](beckman-quarles.md)

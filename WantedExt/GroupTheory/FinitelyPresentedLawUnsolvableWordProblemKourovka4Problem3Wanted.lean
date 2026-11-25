@@ -18,7 +18,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Subgroup.Basic
 public import Mathlib.GroupTheory.QuotientGroup.Defs
-public import WantedExt.GroupTheory.WordProblemSolvableShared
+public import MathlibExt.GroupTheory.WordProblemSolvableShared
 
 @[expose] public section
 

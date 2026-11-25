@@ -81,8 +81,9 @@ open _root_.Turing
 
 namespace Cslib.Turing.SingleTapeTM
 
-/-- The tape alphabet of the fenced machine: the symbols of the simulated machine, two kinds of
-padding cells, which the simulated machine reads as blanks, and the walls around the input. -/
+/-- **Fenced alphabet.** For an alphabet $\Sigma$, the tape alphabet of the fenced machine consists
+of a symbol for each letter of $\Sigma$, two kinds of padding cells (left and right), which the
+simulated machine reads as blanks, and the wall, which marks the ends of the input. -/
 inductive FenceSymbol (Symbol : Type) where
   /-- A symbol of the simulated machine. -/
   | sym (a : Symbol)
@@ -94,8 +95,9 @@ inductive FenceSymbol (Symbol : Type) where
   | wall
   deriving DecidableEq, Fintype
 
-/-- The states of the fenced machine: two start states, the states of the simulated machine, and
-a trap state that loops forever. -/
+/-- **States of the fenced machine.** For a set of states $Q$, the states of the fenced machine are
+two start states, a running state for each state $q \in Q$ of the simulated machine, and a trap
+state. -/
 inductive FenceState (State : Type) where
   /-- The initial state: on a wall, move right; on any other cell, enter the trap. -/
   | start₀
@@ -116,39 +118,51 @@ variable {Symbol : Type}
 instance : Inhabited (FenceSymbol Symbol) :=
   ⟨.pad⟩
 
-/-- The cell of the simulated machine that a cell of the fenced machine stands for: a symbol is
-itself, every other cell is a blank. -/
+/-- **Simulated cell of a fenced cell.** The simulated cell of a cell of the fenced machine is
+the cell of the simulated machine that it stands for: a symbol of the simulated machine stands
+for itself, and every other cell (a padding cell, a wall or a blank) stands for a blank. -/
 def FenceSymbol.read : Option (FenceSymbol Symbol) → Option Symbol
   | some (.sym a) => some a
   | _ => none
 
-/-- The cell of the fenced machine written for a write of the simulated machine: a symbol as
-itself, a blank as `pad`. -/
+/-- **Fenced cell of a write.** For a cell $o$ of the simulated machine, a symbol or a blank,
+the fenced cell of $o$ is the cell the fenced machine writes for a write of $o$: $o$ itself if
+$o$ is a symbol, and the padding cell $\mathrm{pad}$ if $o$ is a blank. -/
 def FenceSymbol.ofCell : Option Symbol → FenceSymbol Symbol
   | some a => .sym a
   | none => .pad
 
-/-- `read` undoes `ofCell`. -/
+/-- **Reading back a fenced cell of a write.** For every cell $o$ of the simulated machine, a
+symbol or a blank, the simulated cell of the fenced cell of $o$ is $o$. -/
 @[simp]
 theorem FenceSymbol.read_ofCell (o : Option Symbol) : read (some (ofCell o)) = o := by
   cases o <;> rfl
 
-/-- `read` undoes `Option.map sym`. -/
+/-- **Reading back a copied cell.** Let $o$ be a cell of the simulated machine, a symbol or a
+blank, and copy it to the fenced machine, a symbol as itself and a blank as a blank. Then the
+simulated cell of the copy is $o$. -/
 @[simp]
 theorem FenceSymbol.read_map_sym (o : Option Symbol) : read (o.map sym) = o := by
   cases o <;> rfl
 
-/-- `ofCell` never writes a wall. -/
+/-- **A fenced cell of a write is never a wall.** For every cell $o$ of the simulated machine, a
+symbol or a blank, the fenced cell of $o$ is not a wall. -/
 theorem FenceSymbol.ofCell_ne_wall (o : Option Symbol) : ofCell o ≠ .wall := by
   cases o <;> simp [ofCell]
 
-/-- The input of the fenced machine for the word `w` with `i` padding cells on the left and `j`
-on the right: the left wall, `i` cells `lpad`, the word, `j` cells `pad` and the right wall. -/
+/-- **Fenced input.** For a word $w$ over an alphabet $\Sigma$ and $i, j \in \mathbb{N}$, the fenced
+input of $w$ with $i$ padding cells on the left and $j$ on the right is the word over the fenced
+alphabet of $\Sigma$ made of a wall, $i$ left padding cells, the letters of $w$ as symbols, $j$
+right padding cells and a wall, in this order. -/
 def fenceInput (w : List Symbol) (i j : ℕ) : List (FenceSymbol Symbol) :=
   .wall :: List.replicate i .lpad ++ w.map .sym ++ List.replicate j .pad ++ [.wall]
 
-/-- The cells of `fenceInput w i j`: the left wall at `0`, then the left padding, the word, the
-right padding, and the right wall at `i + w.length + j + 1`. -/
+/-- **Cells of a fenced input.** Let $w$ be a word of length $\ell$ and $i, j, n \in \mathbb{N}$.
+The cell at position $n$, counting from $0$, of the fenced input of $w$ with $i$ left and $j$
+right padding cells is the wall if $n = 0$; a left padding cell if $1 \le n \le i$; the letter of
+$w$ at position $n - i - 1$, also counting from $0$, as a symbol, if $i < n \le i + \ell$; a right
+padding cell if $i + \ell < n \le i + \ell + j$; the wall if $n = i + \ell + j + 1$; and there is
+no cell at a larger position $n$. -/
 theorem getElem?_fenceInput (w : List Symbol) (i j n : ℕ) :
     (fenceInput w i j)[n]? =
       if n = 0 then some .wall
@@ -164,7 +178,9 @@ theorem getElem?_fenceInput (w : List Symbol) (i j n : ℕ) :
     List.getElem?_map, List.getElem?_singleton]
   split_ifs <;> first | rfl | omega | contradiction | simp
 
-/-- The length of `fenceInput w i j`: the word, the paddings and the two walls. -/
+/-- **Length of a fenced input.** For a word $w$ of length $n$ and natural numbers $i$ and $j$,
+the fenced input of $w$ with $i$ padding cells on the left and $j$ on the right has length
+$i + n + j + 2$: the word, the two paddings and the two walls. -/
 @[simp]
 theorem length_fenceInput (w : List Symbol) (i j : ℕ) :
     (fenceInput w i j).length = i + w.length + j + 2 := by
@@ -175,14 +191,19 @@ end Input
 
 variable {Symbol : Type} [Inhabited Symbol] [Fintype Symbol] (tm : SingleTapeTM Symbol)
 
-/-- A transition of `tm` as a transition of the fenced machine: a write is written through
-`FenceSymbol.ofCell`, the move is kept, and a state `q` becomes `run q`. -/
+/-- **A transition lifted to the fenced machine.** A transition of a single-tape machine $M$, made
+of an optional symbol to write, an optional move and an optional next state, becomes the
+transition of the fenced machine of $M$ that writes the symbol, or a right padding cell where $M$
+writes a blank, makes the same move, and goes to the running state of the next state $q$ of $M$,
+or halts where $M$ halts. -/
 def fenceLift (r : Stmt Symbol × Option tm.State) :
     Stmt (FenceSymbol Symbol) × Option (FenceState tm.State) :=
   (⟨some (FenceSymbol.ofCell r.1.symbol), r.1.movement⟩, r.2.map .run)
 
-/-- The transition of the fenced machine in the state `run q`: on a symbol or a padding cell it
-makes the transition of `tm` on the cell `FenceSymbol.read` of it; on a wall or a blank cell it
+/-- **The running transition of the fenced machine.** In the running state of a state $q$ of a
+single-tape machine $M$, the fenced machine of $M$ acts on the cell under its head as follows: on a
+symbol $a$ it makes the lifted transition of $M$ in state $q$ on $a$; on a left or right padding
+cell it makes the lifted transition of $M$ in state $q$ on a blank; on a wall or a blank cell it
 leaves the cell unchanged, does not move, and enters the trap. -/
 def fenceRun (q : tm.State) (c : Option (FenceSymbol Symbol)) :
     Stmt (FenceSymbol Symbol) × Option (FenceState tm.State) :=
@@ -191,10 +212,19 @@ def fenceRun (q : tm.State) (c : Option (FenceSymbol Symbol)) :
   | some .pad | some .lpad => tm.fenceLift (tm.tr q none)
   | _ => (⟨c, none⟩, some .trap)
 
-/-- **The fenced machine**: on `fenceInput w i j` it starts on the left wall, moves right off it
-and over the left padding, and then runs `tm` from `tm.q₀` (`fenceRun`), entering the trap when it
-reads a wall or a blank cell. On a blank cell, in every state, it writes a blank and does not
-move. An `abbrev`, so that its states unfold to `FenceState tm.State`. -/
+/-- **The fenced machine.** For a single-tape machine $M$ over a finite inhabited alphabet $\Sigma$,
+the fenced machine of $M$ is the single-tape machine over the fenced alphabet of $\Sigma$ whose
+states are the states of the fenced machine for the states of $M$, which starts in the first start
+state and acts on the cell under its head as follows. In the first start state, on a wall it moves
+right into the second start state, and on any other cell it leaves the cell unchanged, does not
+move and enters the trap. In the second start state, on a left padding cell it moves right and
+stays in that state, and on any other cell it makes the running transition of the initial state of
+$M$. In the running state of a state $q$ of $M$ it makes the running transition of $q$. In the
+trap it leaves the cell unchanged, does not move and stays in the trap.
+
+So on the fenced input of a word $w$ it moves right off the left wall and over the left padding,
+then runs $M$ from its initial state, and enters the trap when it reads a wall or a blank cell. On
+a blank cell, in every state, it writes a blank and does not move. -/
 abbrev fence : SingleTapeTM (FenceSymbol Symbol) where
   State := FenceState tm.State
   q₀ := .start₀
@@ -208,8 +238,10 @@ abbrev fence : SingleTapeTM (FenceSymbol Symbol) where
     | .run q, c => tm.fenceRun q c
     | .trap, c => (⟨c, none⟩, some .trap)
 
-/-- **The fenced machine is a linear bounded automaton**: on a blank cell, in every state, it
-writes a blank and does not move. -/
+/-- **The fenced machine is a linear bounded automaton.** For every single-tape Turing machine
+$M$, the fenced machine of $M$ is a linear bounded automaton.
+
+On a blank cell, in every state, the fenced machine writes a blank and does not move. -/
 theorem isLBA_fence : (fence tm).IsLBA :=
   isLBA_of_stays_on_blank fun q ↦ by cases q <;> rfl
 
@@ -452,10 +484,14 @@ private theorem haltsOn_fence_iff (w : List Symbol) (i j : ℕ) :
 
 /-! ### Correctness -/
 
-/-- **The fenced machine halts on some padding of `w` iff `tm` halts on `w`.** A halting run of
-`tm` of `n` steps stays within `n` cells of its start, so it runs unchanged inside the walls of
-`fenceInput w (n + 1) (n + 1)`; conversely, the fenced machine halts only by simulating a halting
-run of `tm`. -/
+/-- **The fenced machine halts on some padding of a word iff the machine halts on it.** Let $M$ be
+a single-tape machine over a finite inhabited alphabet and $w$ a word over that alphabet. The
+fenced machine of $M$ halts on the fenced input of $w$ with $i$ padding cells on the left and $j$
+on the right for some $i, j \in \mathbb{N}$ if and only if $M$ halts on $w$.
+
+A halting run of $M$ of $n$ steps stays within $n$ cells of its start, so it runs unchanged inside
+the walls of the fenced input of $w$ with $n + 1$ padding cells on each side; conversely, the
+fenced machine halts only by simulating a halting run of $M$. -/
 theorem exists_haltsOn_fence_iff (w : List Symbol) :
     (∃ i j, (fence tm).HaltsOn (fenceInput w i j)) ↔ tm.HaltsOn w := by
   constructor
@@ -469,7 +505,10 @@ theorem exists_haltsOn_fence_iff (w : List Symbol) :
     refine ⟨n + 1, n + 1, (haltsOn_fence_iff tm w (n + 1) (n + 1)).2 ⟨_, hrun, ?_⟩⟩
     simp [hstate]
 
-/-- The fenced machine halts on no padding of `w` iff `tm` does not halt on `w`. -/
+/-- **The fenced machine halts on no padding of a word iff the machine does not halt on it.** Let
+$M$ be a single-tape machine over a finite inhabited alphabet and $w$ a word over that alphabet.
+The fenced machine of $M$ halts on none of the fenced inputs of $w$, with $i$ padding cells on the
+left and $j$ on the right for $i, j \in \mathbb{N}$, if and only if $M$ does not halt on $w$. -/
 theorem forall_not_haltsOn_fence_iff (w : List Symbol) :
     (∀ i j, ¬(fence tm).HaltsOn (fenceInput w i j)) ↔ ¬tm.HaltsOn w := by
   rw [← exists_haltsOn_fence_iff]
@@ -477,20 +516,26 @@ theorem forall_not_haltsOn_fence_iff (w : List Symbol) :
 
 /-! ### Emptiness of an LBA on computable input slices is undecidable -/
 
-/-- **Emptiness of a linear bounded automaton on computable input slices is undecidable** (the
-code-free form of Sipser, Theorem 5.10). There are an LBA `F` over a fenced alphabet and a
-primitive recursive family of words `e c` such that "`F` halts on no input `fenceInput (e c) i j`"
-is neither decidable nor recognizable in `c`. Take for `F` the fenced recognizer `fence R` of the
-halting problem of `Nat.Partrec.Code` on `0`, and for `e c` the input of `c` to `R`: then `F`
-halts on no `fenceInput (e c) i j` iff `c` does not halt on `0`. The word `e c` does not see the
-paddings `i` and `j`, so `F` itself runs the computation within the space they give.
+/-- **Emptiness of a linear bounded automaton on computable input slices is undecidable.** There
+exist a finite inhabited alphabet $\Gamma$ with a primitive recursive encoding, a linear bounded
+automaton $F$ over the fenced alphabet of $\Gamma$, and a primitive recursive map $e$ from codes of
+partial recursive functions to words over $\Gamma$, such that the set of codes $c$ for which $F$
+halts on none of the fenced inputs of $e(c)$, with $i$ padding cells on the left and $j$ on the
+right for any $i, j \in \mathbb{N}$, is neither computable nor recursively enumerable.
 
-Sipser's `E_LBA` is a language of machine descriptions, the LBAs with empty language; CSLib has
-no code type for machines, and this is the form available without one. Each slice
-`{fenceInput (e c) i j | i, j}` is regular because of its shape, `wall lpad* (e c) pad* wall`.
-Informally, and not proved here: with codes of machines, the LBA that checks that its input lies in
-the slice of `c` and then runs `F` has empty language iff `F` halts on no input of the slice, and
-`E_LBA` is undecidable by the same reduction. -/
+This is the code-free form of Sipser, Theorem 5.10. Take for $F$ the fenced machine of a
+single-tape recognizer $R$ of the set of codes that halt on input $0$, and for $e(c)$ the input of
+$c$ to $R$: then $F$ halts on no fenced input of $e(c)$ iff $c$ does not halt on $0$. The word
+$e(c)$ does not see the paddings $i$ and $j$, so $F$ itself runs the computation within the space
+they give.
+
+Sipser's $E_{\mathrm{LBA}}$ is a language of machine descriptions, the LBAs with empty language;
+without a type of codes for machines, this is the form available. Each slice, the set of fenced
+inputs of $e(c)$ over all paddings, is regular because of its shape: a wall, any number of left
+padding cells, the word $e(c)$, any number of right padding cells and a wall. Informally, and not
+proved here: with codes of machines, the LBA that checks that its input lies in the slice of $c$
+and then runs $F$ has empty language iff $F$ halts on no input of the slice, and
+$E_{\mathrm{LBA}}$ is undecidable by the same reduction. -/
 theorem exists_isLBA_not_computablePred_forall_not_haltsOn :
     ∃ (Γ : Type) (_ : Inhabited Γ) (_ : Fintype Γ) (_ : Primcodable Γ)
       (F : SingleTapeTM (FenceSymbol Γ)) (e : Nat.Partrec.Code → List Γ), F.IsLBA ∧ Primrec e ∧
