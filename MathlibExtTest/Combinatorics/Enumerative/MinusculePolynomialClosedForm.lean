@@ -29,10 +29,11 @@ example : (minusculePolynomialA 2).comp (X ^ 2) = C 2 * X ^ 2 := by
   simp only [Nat.cast_ofNat, map_mul, map_add, map_one, map_ofNat]
   ring
 
--- Evaluating at x = 1, where 1 - x vanishes, gives 16 N_3(1) = 8 * 4^3 - 4^4, so N_3(1) = 16.
+-- At n = 1 the exponent in the formula is negative.
+example : (minusculePolynomialA 1).eval 1 = 0 := by
+  rw [minusculePolynomialA_eval_one 1 (by decide)]
+  norm_num
+
 example : (minusculePolynomialA 3).eval 1 = 16 := by
-  have h := congrArg (eval 1) (minusculePolynomialA_comp_sq 3)
-  simp only [eval_mul, eval_C, eval_X, eval_comp, eval_pow, eval_sub, eval_add, eval_one]
-    at h
-  norm_num at h
-  linarith
+  rw [minusculePolynomialA_eval_one 3 (by decide)]
+  norm_num
