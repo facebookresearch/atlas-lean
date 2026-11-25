@@ -102600,6 +102600,7 @@
 "ModuleCat.Algebra.Hochschild.Symmetric.RationalProperShuffle.Canonical.cotangentDiagram": "9d9d137b2a7406aa",
 "ModuleCat.Algebra.Hochschild.Symmetric.RationalProperShuffle.Canonical.cotangentTotalComplex": "9aab6954bf25427d",
 "ModuleCat.Algebra.Hochschild.Symmetric.RationalProperShuffle.Canonical.diagram": "eeb675e4e7536340",
+"ModuleCat.Algebra.Hochschild.Symmetric.RationalProperShuffle.Canonical.polynomialVariables": "fb9cfedea2b05dde",
 "ModuleCat.Algebra.Hochschild.Symmetric.RationalProperShuffle.Canonical.resolution": "6454856e6543f9e9",
 "ModuleCat.Algebra.Hochschild.Symmetric.RationalProperShuffle.Canonical.totalComplex": "4f21283663d58de1",
 "ModuleCat.Algebra.Hochschild.Symmetric.RationalProperShuffle.Canonical.totalHomologyIso": "6fa8b31dfab58692",
