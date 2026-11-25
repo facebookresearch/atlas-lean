@@ -17,12 +17,6 @@ A closed reactor ($F_{\mathrm{in}} = F_{\mathrm{out}} = 0$) keeps $A n$ constant
 the elements leaving, $A F_{\mathrm{in}} = A F_{\mathrm{out}}$. A source term that is not balanced changes the elemental totals: with
 two species of one atom each, $A = (1\ \ 1)$, the fictitious reaction $A \to 2B$, $\nu = (-1, 2)$, has $A\nu = 1 \ne 0$.
 
-## Depends on
-
-- [Balanced reaction for a composition matrix](../balanced-reactions-and-stoichiometric-conservati/is-balanced.md)
-
-## Proof depends on
-
 ## Sources
 
 - J. B. Rawlings and J. G. Ekerdt, *Chemical Reactor Analysis and Design Fundamentals*, 2nd edition, paperback, seventh printing (November 2026), Nob Hill Publishing; freely distributed by the authors at <https://sites.engineering.ucsb.edu/~jbraw/chemreacfun/> (page numbers below are the printed ones): Section 4.3, Equation 4.36 (species balance with production rates, p. 127); Exercise 2.8, Equation 2.67, the element balance $\nu A = 0$ (pp. 58–59), written there with the transposed composition matrix.
