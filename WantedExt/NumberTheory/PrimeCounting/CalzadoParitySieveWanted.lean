@@ -10,6 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import MathlibExt.NumberTheory.PrimeCounting.CalzadoSieveEulerProduct
+public import MathlibExt.NumberTheory.PrimeCounting.CalzadoTotientsNearSqrt
 public import Mathlib.Analysis.SpecialFunctions.Gamma.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Nat.Totient
@@ -52,22 +53,6 @@ public theorem_wanted calzado_sum_inv_totient_fifth_to_half_tendsto :
           x ^ ((1 : ℝ) / 5) < (p : ℝ) ∧ (p : ℝ) ≤ x ^ ((1 : ℝ) / 2)),
         1 / (Nat.totient p : ℝ))
       atTop (𝓝 (Real.log (5 / 2)))
-
-/-- **Reciprocal totients of the primes just below $x^{1/2}$.** For every real $B > 0$ there is a
-constant $C$ such that for all sufficiently large real $x$, the sum of $1/\varphi(p)$ over the
-primes $p$ with $x^{1/2} (\log x)^{-B} < p \le x^{1/2}$ is at most $C \log\log x / \log x$, where
-$\varphi$ is Euler's totient function.
-
-Source: Angel Calzado, *A Bombieri-Vinogradov Result to Address the Parity
-Problem*, INTEGERS 26 (2026), Article A117, Lemma 1
-(`integers-2026-A117-lem-1`). -/
-public theorem_wanted calzado_sum_inv_totient_near_sqrt_isBigO (B : ℝ) (hB : 0 < B) :
-    ∃ C : ℝ, ∀ᶠ x : ℝ in atTop,
-      ∑ p ∈ (Finset.range (⌊x⌋₊ + 1)).filter (fun p : ℕ => p.Prime ∧
-          x ^ ((1 : ℝ) / 2) * Real.log x ^ (-B) < (p : ℝ) ∧
-            (p : ℝ) ≤ x ^ ((1 : ℝ) / 2)),
-        1 / (Nat.totient p : ℝ)
-        ≤ C * Real.log (Real.log x) / Real.log x
 
 open Classical in
 /-- **Upper bound for sifted shifted primes divisible by a large prime.** Let $a$ be a nonzero
