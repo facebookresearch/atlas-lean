@@ -16,4 +16,4 @@
 
 ## The unfaithful XOR collider
 
-- [Pc Adjacency xor Net ne skeleton](pc-adjacency-xor-net-ne-skeleton.md)
+- [PC adjacency phase fails on the XOR collider](pc-adjacency-xor-net-ne-skeleton.md)

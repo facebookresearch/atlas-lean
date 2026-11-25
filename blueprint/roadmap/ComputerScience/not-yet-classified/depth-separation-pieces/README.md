@@ -1,3 +1,3 @@
 # Depth Separation Pieces
 
-- [Pieces LE](pieces-le.md)
+- [Bounded number of affine pieces](pieces-le.md)

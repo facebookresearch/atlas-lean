@@ -1,3 +1,3 @@
 # Depth Separation Construction
 
-- [Tent Iter](tent-iter.md)
+- [Iterated tent map](tent-iter.md)

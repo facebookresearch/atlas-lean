@@ -1,5 +1,3 @@
-# Axis Angle
+# Axis-angle quaternion
 
-The quaternion `cos (θ / 2) + sin (θ / 2) * u` for rotation through angle
-`θ` about axis `u`, as the linear combination of `1`, `i`, `j`, `k` those
-components encode; it has norm `1` when `u` is a unit axis.
+For an axis $u = (u_0, u_1, u_2)$ and angle $\theta$, the axis-angle quaternion is $\cos(\theta/2) + \sin(\theta/2)(u_0 i + u_1 j + u_2 k)$.

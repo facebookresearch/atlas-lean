@@ -5,17 +5,17 @@
 
 ## The DAC pass
 
-- [Dac Pass](dac-pass.md)
-- [Dac](dac.md)
-- [No solution is lost](is-solution-dac.md)
-- [The DAC pass establishes directional arc consistency](dir-arc-consistent-dac.md)
-- [Cost bound](dac-time-le.md)
+- [Directional arc consistency pass](dac-pass.md)
+- [Directional arc consistency pass](dac.md)
+- [Directional arc consistency loses no solution](is-solution-dac.md)
+- [Directional arc consistency from the DAC pass](dir-arc-consistent-dac.md)
+- [Cost bound for directional arc consistency](dac-time-le.md)
 
 ## Greedy assignment
 
-- [Greedy](greedy.md)
+- [Greedy tree-CSP assignment](greedy.md)
 - [Greedy assignment is sound on a tree-structured CSP](is-solution-of-greedy-eq-some.md)
-- [Greedy ne none iff](greedy-ne-none-iff.md)
+- [Greedy assignment on a tree CSP](greedy-ne-none-iff.md)
 
 ## The tree-CSP algorithm
 

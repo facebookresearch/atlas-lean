@@ -1,3 +1,3 @@
 # Basic
 
-- [Cost M](cost-m.md)
+- [Cost-annotated computation](cost-m.md)

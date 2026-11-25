@@ -7,5 +7,5 @@
 ## The sampling estimators
 
 - [The likelihood-weighting numerator is unbiased](integral-lw-estimate.md)
-- [The likelihood-weighting numerator is consistent](tendsto-lw-estimate.md)
+- [Consistency of the likelihood-weighting numerator](tendsto-lw-estimate.md)
 - [Self-normalized likelihood weighting is consistent](tendsto-lw-self-normalized.md)

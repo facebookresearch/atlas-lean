@@ -1,4 +1,3 @@
-# Blanket Factor
+# Markov-blanket factor of a Bayesian network
 
-The factors of `BayesNet.joint_eq_prod` that involve the value of node `i`: its own table
-entry and the table entries of its children.
+For a Bayesian network, a node $i$ and an assignment $x$, the blanket factor is the product of the conditional-probability-table entry of node $i$ and the table entries of the children of $i$, all evaluated at $x$. These are the factors of the joint distribution that involve the value of node $i$.

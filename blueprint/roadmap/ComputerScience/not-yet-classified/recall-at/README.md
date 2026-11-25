@@ -1,3 +1,3 @@
 # Recall At
 
-- [Recall At](recall-at.md)
+- [Recall at a cutoff](recall-at.md)

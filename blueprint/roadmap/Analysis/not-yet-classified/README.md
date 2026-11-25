@@ -3,9 +3,10 @@
 Topics added since this subject's fields were last revised.
 
 - [Idempotent Range](idempotent-range/README.md)
-- [Unicycle](unicycle-no-lateral-velocity.md)
-- [LP certificate (M14.T02)](feasible-pair-equal-objectives-optimal.md)
-- [Linear Programming Integrality](exists-int-vec-of-basic-feasible.md)
+- [Interval Expressions](interval-expressions/README.md)
+- [Ideal unicycle has no lateral velocity](unicycle-no-lateral-velocity.md)
+- [Linear-programming optimality certificate](feasible-pair-equal-objectives-optimal.md)
+- [Linear programming integrality](exists-int-vec-of-basic-feasible.md)
 - [Affine Vertex](affine-vertex/README.md)
 - [Boolean Cube Symmetrization](boolean-cube-symmetrization/README.md)
 - [Car Following Gain](car-following-gain/README.md)

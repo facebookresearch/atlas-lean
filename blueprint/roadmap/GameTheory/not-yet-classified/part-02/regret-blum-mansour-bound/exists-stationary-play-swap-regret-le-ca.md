@@ -1,6 +1,3 @@
-# Black-box reduction, existence form
+# Black-box reduction from swap to external regret
 
-Whenever every copy plays a
-distribution at every time, some stationary master play exists, and any
-uniform per-copy external-regret bound `R` for that play bounds its swap
-regret by `|K| * R`.
+Let $q_t(j, \cdot)$ be probability distributions on a finite action set $K$ for every time $t$ and copy $j \in K$. Then there is a play $p_t$ of probability distributions that is stationary, $p_t(i) = \sum_j p_t(j)\,q_t(j, i)$ for all $t$ and $i$, such that if every copy $j$ has external regret at most $R$ against its scaled losses $p_t(j)\,\ell_t$, then the swap regret of $p$ against $\ell$ is at most $|K| R$.

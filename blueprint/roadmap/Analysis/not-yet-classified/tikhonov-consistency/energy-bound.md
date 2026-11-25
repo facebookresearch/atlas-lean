@@ -1,5 +1,5 @@
-# Energy bound
+# Normal-equation energy bound
 
-Normal-equation energy bound: for every real `lam`, if
-`tikhonovOperator A lam x = A† z`, then
-`lam * ‖x‖^2 ≤ ‖z‖ * ‖A x‖ - ‖A x‖^2 ≤ ‖z‖^2 / 4`.
+Let $A : H \to K$ be a bounded linear operator between real Hilbert spaces, $z \in K$, $x \in H$ and $\lambda \in \mathbb{R}$. If $(A^* A + \lambda I)\, x = A^* z$, then
+
+$$\lambda \|x\|^2 \le \|z\|\,\|A x\| - \|A x\|^2 \le \frac{\|z\|^2}{4}.$$

@@ -1,5 +1,3 @@
-# Valid Plan
+# Valid plan
 
-A plan is valid for a task, in Bylander's total `Result` semantics, when
-executing it from the initial state by `Operator.result` reaches a goal
-state. Inapplicable operators in the plan are identity steps.
+A plan, a list of operators, is valid for a STRIPS task when every operator in it belongs to the task and executing it from the initial state reaches a goal state: a state containing every positive goal atom and none of the negative goal atoms. Each step applies its operator when the operator's preconditions hold and leaves the state unchanged otherwise (Bylander's total result semantics).

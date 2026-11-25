@@ -1,6 +1,3 @@
-# Surface inverse meanings
+# Meanings of the surface and inverse scope parses
 
-The surface parse means `∀ x, person x → ∃ y, person y ∧ admire x y`, the
-inverse parse means `∃ y, person y ∧ ∀ x, person x → admire x y`, and these
-two formulas are the only meanings of valid `S`-rooted trees, each attached
-to its own parse.
+In the fragment for \"everybody admires someone\", interpret \"everybody\" and \"someone\" as quantifiers restricted to a predicate $\mathrm{person}$ on a domain $D$ and \"admires\" as a relation $\mathrm{admire}$. The surface parse means $\forall x\,(\mathrm{person}(x) \to \exists y\,(\mathrm{person}(y) \wedge \mathrm{admire}(x, y)))$, the inverse parse means $\exists y\,(\mathrm{person}(y) \wedge \forall x\,(\mathrm{person}(x) \to \mathrm{admire}(x, y)))$, and for every valid sentence tree, its meaning holds exactly when either the tree is the surface parse and the first formula holds, or the tree is the inverse parse and the second formula holds.

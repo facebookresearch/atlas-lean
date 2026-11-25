@@ -1,5 +1,3 @@
-# Unitary Hom Special Orthogonal Group
+# Unit quaternions to SO(3)
 
-The packaged rotation action: unit quaternions act by conjugation on
-pure imaginary quaternions, packaged as a monoid homomorphism into the
-existing `Matrix.specialOrthogonalGroup (Fin 3) ℝ` carrier.
+Unit quaternions act on the pure imaginary quaternions, identified with $\mathbb{R}^3$, by conjugation $v \mapsto q v q^{-1}$. This defines a monoid homomorphism from the unit quaternions to the special orthogonal group of $3 \times 3$ real matrices.

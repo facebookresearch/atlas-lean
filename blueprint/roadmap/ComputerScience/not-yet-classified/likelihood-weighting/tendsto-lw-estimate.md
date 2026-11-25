@@ -1,4 +1,3 @@
-# The likelihood-weighting numerator is consistent
+# Consistency of the likelihood-weighting numerator
 
-For pairwise independent samples with
-the proposal law, the estimate converges almost surely to `∑_{x_E = e} P(x) f(x)`.
+For a Bayesian network, evidence $x_E = e$ and a function $f$, if the samples $X_1, X_2, \ldots$ are measurable, pairwise independent and distributed as the network with the evidence nodes clamped to $e$, then the likelihood-weighting estimate converges almost surely to $\sum_{x : x_E = e} P(x) f(x)$.

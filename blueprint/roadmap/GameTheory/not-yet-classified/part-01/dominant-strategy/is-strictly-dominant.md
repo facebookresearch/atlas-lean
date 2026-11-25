@@ -1,5 +1,3 @@
-# Is Strictly Dominant
+# Strictly dominant strategy
 
-`s` is a strictly dominant strategy of player `i` (every strategy set nonempty): against every
-profile `τ` of the others'
-strategies, `s` gives `i` a strictly higher payoff than any other strategy `t ≠ s`.
+In a game where every strategy set is nonempty, a strategy $s$ of player $i$ is strictly dominant if for every profile $\tau$ and every strategy $t \neq s$ of player $i$, $u_i(s, \tau_{-i}) > u_i(t, \tau_{-i})$.

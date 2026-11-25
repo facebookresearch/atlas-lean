@@ -1,4 +1,3 @@
-# Mass Action lipschitz On
+# Lipschitz bound for the quadratic mass-action reaction
 
-The same mass-action reaction is `(2 * b * M)`-Lipschitz on `[-M, 0]`,
-so the bounded-box corollary also applies to it.
+For $b \ge 0$, $M \ge 0$ and any $a$, the reaction term $u \mapsto a - bu^2$ is Lipschitz on $[-M, 0]$ with constant $2bM$.

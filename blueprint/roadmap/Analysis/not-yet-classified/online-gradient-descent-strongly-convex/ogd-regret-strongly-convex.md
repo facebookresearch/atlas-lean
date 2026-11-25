@@ -1,21 +1,6 @@
-# Ogd regret strongly convex
+# Regret of online gradient descent for strongly convex losses
 
-Regret of online gradient descent for `α`-strongly convex losses.
-
-With step sizes `η t = 1 / (α * (t + 1))` and subgradients bounded by `G`,
-the regret against any comparator fixed by the projection is at most
-`(G ^ 2 / (2 * α)) * (1 + log T)`.
-
-Indexing starts at `t = 0`, so the classical schedule `η t = 1 / (α * t)`
-for `t = 1, .., T` appears here as `η t = 1 / (α * (t + 1))` for
-`t = 0, .., T - 1`. The iterate sequence is not constructed here: any
-sequence satisfying the projected-gradient update hypothesis `hupd` (whose
-existence is elementary by recursion) enjoys the bound.
-
-Only the comparator instance of strong convexity is assumed: no
-strong-convexity inequality outside the comparator instance is assumed.
-Feasible-set strong convexity supplies this hypothesis for feasible iterates
-and comparator.
-
-As `α → 0` both the step-size schedule and the regret bound blow up; there
-is no claim at `α = 0` (the bound is infinite and the schedule undefined).
+Let $E$ be a real inner product space, $\alpha > 0$, $G \ge 0$ and $T \ge 1$. Let the projection $\Pi$ be 1-Lipschitz and fix the comparator, $\Pi(x^*) = x^*$. Suppose the iterates satisfy
+$$x_{t+1} = \Pi\!\left(x_t - \frac{1}{\alpha (t + 1)}\,g_t(x_t)\right),$$
+the losses satisfy the strong-convexity inequality at the comparator, $f_t(x_t) + \langle g_t(x_t), x^* - x_t\rangle + \frac{\alpha}{2}\lVert x^* - x_t\rVert^2 \le f_t(x^*)$, and $\lVert g_t(x_t)\rVert \le G$ for all $t$. Then
+$$\sum_{t=0}^{T-1} \bigl(f_t(x_t) - f_t(x^*)\bigr) \le \frac{G^2}{2\alpha}\,(1 + \log T).$$

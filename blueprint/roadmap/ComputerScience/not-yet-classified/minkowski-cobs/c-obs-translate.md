@@ -1,4 +1,3 @@
-# C Obs translate
+# C-obstacle of a translating robot
 
-The C-obstacle of a translating robot is the Minkowski sum `O ⊕ (-A₀)`,
-with the reference point at the origin.
+In an additive group $V$, let a rigid body $A_0$ translate, so configuration $q$ places it at $A_0 + q$. For every obstacle set $O$, the set of configurations where the placed body meets $O$ is the Minkowski sum $O + (-A_0)$.

@@ -1,26 +1,6 @@
-# Law objective posterior match
+# Item-response mixture: law, joint and responsibilities
 
-The finite item law, the named expectation-maximization joint, and the
-responsibilities agree.
-
-For valid mixture parameters `θ`, an observation pattern `x`, and a latent
-state `k`, all three of the following hold.
-
-1. The locally independent item-response mass of `x` at the `k`-th
-   component probabilities, read as a real number, is the product-Bernoulli
-   mass `bernPMF` at those probabilities.
-2. The named joint `joint θ`, summed over all observation patterns and all
-   latent states, is `1`. This is summation over the full outcome space;
-   it is not a sum over a data list.
-3. Let `κ` be a Markov kernel from latent states to observation patterns
-   and `μ` a finite measure on latent states whose singleton masses and
-   singleton likelihoods are exactly the mixture weights and the locally
-   independent item law. Then the responsibility `resp θ x k` is
-   the real reading of the canonical posterior mass `(κ†μ) x {k}`, the
-   mass described by the copied posterior singleton formula. The evidence
-   `(κ ∘ₘ μ) {x}` is positive (nonzero in `ℝ≥0∞`), since the mixture
-   weights and likelihoods are all positive.
-
-The hypotheses on `κ` and `μ` are pointwise singleton identities, stated
-for the fixed observation `x` in the third part; the kernel and measure
-themselves are not redefined here.
+Let $\theta$ be valid mixture parameters with $K$ components over $d$ binary items (positive mixture weights $\pi_k$, item probabilities $p_{kj} \in (0, 1)$), let $x \in \{0, 1\}^d$ and let $k$ be a component. Then:
+1. the locally independent item-response mass of $x$ under component $k$ is $\prod_j p_{kj}^{x_j} (1 - p_{kj})^{1 - x_j}$;
+2. the joint mixture law sums to $1$ over all patterns and components;
+3. for any Markov kernel $\kappa$ from components to patterns and finite measure $\mu$ on components with $\mu\{k'\} = \pi_{k'}$ and $\kappa_{k'}\{x\}$ equal to the item-response mass of $x$ under $k'$ for every $k'$, the evidence $(\kappa \circ \mu)\{x\}$ is nonzero and the responsibility of $k$ for $x$ equals the posterior mass of $\{k\}$ given $x$.

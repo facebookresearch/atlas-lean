@@ -1,4 +1,3 @@
-# Scale Invariant
+# Scale invariance of a clustering function
 
-Scale invariance: `f d = f (α·d)` for every distance `d` and every
-explicitly positive real `α`.
+A clustering function $f$, which maps each dissimilarity $d$ on $n$ points to a partition of the points, is scale invariant when $f(d) = f(\alpha d)$ for every dissimilarity $d$ and every real $\alpha > 0$.

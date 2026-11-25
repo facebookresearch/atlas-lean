@@ -1,3 +1,3 @@
-# Cost M
+# Cost-annotated computation
 
-CSLib's polymorphic computation carrier with resource annotations.
+The type of computations returning a value of type $\alpha$ together with a resource-cost annotation.

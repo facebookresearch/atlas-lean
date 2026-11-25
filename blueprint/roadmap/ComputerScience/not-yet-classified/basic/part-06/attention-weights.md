@@ -1,7 +1,3 @@
-# Attention Weights
+# Attention weights
 
-Scaled dot-product attention weights for query token `i`.
-
-Rows of `X` are token vectors. `WQ` and `WK` are the query and key matrices.
-There is no positional encoding and no mask. The key dimension `dk` is
-nonzero, as required by the usual scaling factor `1 / √dk`.
+For $n$ tokens with vectors $x_1, \dots, x_n \in \mathbb{R}^d$ (the rows of $X$), query and key matrices $W_Q, W_K \in \mathbb{R}^{d \times d_k}$ with $d_k \ge 1$, the scaled dot-product attention weights of query token $i$ are\n$$\mathrm{softmax}_j\left(\frac{(x_i W_Q) \cdot (x_j W_K)}{\sqrt{d_k}}\right), \qquad j = 1, \dots, n.$$\nThere is no positional encoding and no mask.

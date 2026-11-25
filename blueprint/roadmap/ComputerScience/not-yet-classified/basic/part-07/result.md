@@ -1,6 +1,3 @@
-# Result
+# Total one-step result of a STRIPS operator
 
-Bylander's total one-step result: apply an applicable operator, and leave
-the state unchanged if its preconditions fail. `Task.ResultExecutes` and
-`Task.ValidPlan` use this total step; `Task.Executes` and `Task.toLTS`
-retain the strict applicable-only view.
+For an operator with positive preconditions $P^+$, negative preconditions $P^-$, add set $A$ and delete set $D$, the result on a state $s$ is $(s \cup A) \setminus D$ when $P^+ \subseteq s$ and $P^-$ is disjoint from $s$, and $s$ otherwise (Bylander).

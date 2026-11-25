@@ -1,4 +1,3 @@
-# Is EFX
+# Envy-freeness up to any good
 
-Envy-freeness up to any good: removing any single good from `j`'s bundle
-removes `i`'s envy.
+An allocation of goods to agents with additive valuations $v_i$ is EFX when for all agents $i, j$ and every good $g$ in $j$'s bundle $A_j$, $v_i(A_j \setminus \{g\}) \le v_i(A_i)$.

@@ -2,11 +2,11 @@
 
 ## Graphical Models
 
-- [Kernel CBN](kernel-cbn.md)
+- [Kernel causal Bayesian network](kernel-cbn.md)
 
 ## Kernel CBN
 
-- [Joint](joint.md)
+- [Joint law of a kernel causal Bayesian network](joint.md)
 - [Intervention](intervene.md)
 - [Map joint intervene apply eq dirac](map-joint-intervene-apply-eq-dirac.md)
 

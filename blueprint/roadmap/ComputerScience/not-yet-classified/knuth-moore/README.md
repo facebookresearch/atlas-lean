@@ -4,7 +4,7 @@
 
 ## Minimax facts
 
-- [Perfectly Ordered](perfectly-ordered.md)
+- [Perfectly ordered game tree](perfectly-ordered.md)
 
 ## Principal nodes
 

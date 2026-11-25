@@ -1,3 +1,3 @@
 # Online Gradient Descent Anytime
 
-- [Ogd regret anytime](ogd-regret-anytime.md)
+- [Anytime regret of online gradient descent](ogd-regret-anytime.md)

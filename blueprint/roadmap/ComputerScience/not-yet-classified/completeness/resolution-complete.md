@@ -1,10 +1,3 @@
-# Resolution Complete
+# Resolution completeness
 
-Resolution complete (LaValle, Planning Algorithms, Ch. 5 introduction): sound,
-and on every solvable problem some step finds a path.
-
-The termination clause renders Ch. 5 introduction "if a solution exists, the
-algorithm will find it in finite time" as existence of a finding step `k`; on
-unsolvable problems the planner may answer `running` at every step (Ch. 5
-introduction "may run forever"). This is the exists-`k` reading, not an
-eventually-always reading.
+A planner on a topological configuration space is resolution complete if it is sound and, on every solvable path problem, some step returns a path. On unsolvable problems it may keep running at every step (LaValle, *Planning Algorithms*, Ch. 5).

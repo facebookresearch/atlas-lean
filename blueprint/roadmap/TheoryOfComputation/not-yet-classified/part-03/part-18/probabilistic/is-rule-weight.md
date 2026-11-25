@@ -1,3 +1,3 @@
-# Is Rule Weight
+# Rule weights
 
-Rule weights are nonnegative on the rules of `g`.
+A weighting $q$ of the rules of a context-free grammar $g$ is a rule weight when $q(r) \ge 0$ for every rule $r$ of $g$.

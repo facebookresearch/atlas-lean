@@ -1,6 +1,3 @@
-# Expected Precision At le sorted Prefix
+# Probability ranking principle for expected precision
 
-Probability ranking principle for expected precision at a fixed cutoff: for
-any real joint relevance weights, every injective ranked prefix has expected
-precision at most the sorted-by-marginal prefix. Neither independence nor
-nonnegativity of the weights is used.
+Let $\mu$ be any real weight function on relevance patterns of $N$ documents, and let the marginal relevance of document $i$ be $\sum_{\text{rel}}\mu(\text{rel})\,\mathbf 1[\text{rel}_i]$. For $k \le N$, let the expected precision at $k$ of a ranking $r_1, \dots, r_k$ be $\sum_{\text{rel}}\mu(\text{rel})\cdot\#\{i : \text{rel}_{r_i}\}/k$. Then every ranking of $k$ distinct documents has expected precision at most that of the first $k$ documents of any ordering by nonincreasing marginal relevance. Neither independence nor nonnegativity of $\mu$ is used.

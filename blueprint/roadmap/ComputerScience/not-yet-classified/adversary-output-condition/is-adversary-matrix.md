@@ -1,4 +1,3 @@
-# Is Adversary Matrix
+# Adversary matrix
 
-An adversary matrix for `f` is real symmetric and vanishes on pairs with
-the same output.
+For a Boolean function $f$ on a set $X$, an adversary matrix is a real symmetric matrix $\Gamma$ indexed by $X$ with $\Gamma_{xy} = 0$ whenever $f(x) = f(y)$.

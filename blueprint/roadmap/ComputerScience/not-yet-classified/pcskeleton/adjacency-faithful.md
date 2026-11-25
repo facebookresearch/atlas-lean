@@ -1,5 +1,3 @@
 # Adjacency-faithfulness
 
-**Adjacency-faithfulness** of an oracle (MIT 6.S091 Lecture 5, Definition 5.2): every
-adjacent pair of the graph is declared dependent given every set of other vertices. Both
-endpoint orders are quantified. For `lawOracle P` this is adjacency-faithfulness of `P`.
+A conditional-independence oracle is adjacency-faithful to a graph when for every adjacent pair $i, j$ and every set $S$ of vertices containing neither, the oracle declares $i$ and $j$ dependent given $S$. Both endpoint orders are covered. For the oracle of a law $P$ this is adjacency-faithfulness of $P$.

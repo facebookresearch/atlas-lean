@@ -1,4 +1,4 @@
 # Float Model
 
-- [To Rat? add](to-rat-add.md)
-- [To Rat? mul](to-rat-mul.md)
+- [Binary64 addition rounds the exact sum in the normal range](to-rat-add.md)
+- [Binary64 multiplication rounds the exact product in the normal range](to-rat-mul.md)

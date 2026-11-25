@@ -1,8 +1,3 @@
 # Soundness of Farkas certificates
 
-**Soundness of Farkas certificates** for rational linear
-inequalities. A system of constraints `A i x ≤ b i`
-(`i` ranging over `Fin m`, `x` over `Fin n → ℚ`) is certified
-infeasible by multipliers `y i ≥ 0` with `∑ i, y i * A i j = 0`
-for every coordinate `j` and `∑ i, y i * b i < 0`: any solution
-would force `0 ≤ ∑ i, y i * b i`.
+Let $A$ be a rational $m \times n$ matrix and $b \in \mathbb Q^m$. If $y \in \mathbb Q^m$ satisfies $y \ge 0$, $y^{\mathsf T} A = 0$ and $y^{\mathsf T} b < 0$, then there is no $x \in \mathbb Q^n$ with $A x \le b$.

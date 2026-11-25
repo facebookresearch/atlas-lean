@@ -1,3 +1,3 @@
-# Denom
+# Car-following frequency denominator
 
-The frequency denominator `iω + λ e^{-iωT}`.
+For gain $\lambda$, delay $T$ and frequency $\omega$, the complex number $i\omega + \lambda e^{-i\omega T}$.

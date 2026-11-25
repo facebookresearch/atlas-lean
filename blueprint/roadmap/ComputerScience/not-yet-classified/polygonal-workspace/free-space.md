@@ -1,3 +1,3 @@
-# Free Space
+# Free space of a polygonal workspace
 
-DEFINITIONAL: the free space `F`: the outer interior minus the holes.
+For a polygonal workspace with an outer polygon and a list of polygonal holes, the free space is the interior of the outer polygon's region minus the union of the hole regions.

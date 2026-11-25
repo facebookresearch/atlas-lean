@@ -1,8 +1,8 @@
 # Args Step to Task
 
 - [Softmax](softmax.md)
-- [Attention Weights](attention-weights.md)
-- [Attn](attn.md)
-- [Attn perm](attn-perm.md)
-- [Operator](operator.md)
-- [Task](task.md)
+- [Attention weights](attention-weights.md)
+- [Single-head scaled dot-product attention](attn.md)
+- [Self-attention is permutation-equivariant](attn-perm.md)
+- [STRIPS operator](operator.md)
+- [STRIPS task](task.md)

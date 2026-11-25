@@ -1,6 +1,4 @@
-# Card trace Family le sum vc Dim
+# Sauer-Shelah bound on traces
 
-The finite-sample Sauer-Shelah bound for CSLib's canonical concept class
-and VC dimension. The finite-VC premise is essential: the `ℕ` supremum used
-by `vcDim` is zero for unbounded shattered sizes. This is a combinatorial
-growth bound, not a probabilistic sample-complexity theorem.
+Let $C$ be a concept class of finite VC dimension $d$ and let $s$ be a finite set. The number of distinct traces of concepts of $C$ on $s$ is at most
+$$\sum_{k=0}^{d}\binom{|s|}{k}.$$

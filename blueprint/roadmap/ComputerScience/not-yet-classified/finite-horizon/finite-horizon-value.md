@@ -1,6 +1,4 @@
-# Finite Horizon Value
+# Finite-horizon value
 
-Finite-horizon value: `k` steps of value iteration from the zero terminal
-value. With `0` steps remaining the value is `0` (no terminal reward); with
-`k + 1` steps remaining it is one Bellman optimality update of the `k`-step
-value (`finiteHorizonValue_succ`).
+For a Markov decision process with finitely many states, a finite nonempty set of actions, rewards $r(s, a)$, transition probabilities $P(s, a, s')$ and discount $\gamma$, the $k$-step finite-horizon value is defined by $V_0 = 0$ and
+$$V_{k+1}(s) = \max_a \Big( r(s, a) + \gamma \sum_{s'} P(s, a, s')\, V_k(s') \Big).$$

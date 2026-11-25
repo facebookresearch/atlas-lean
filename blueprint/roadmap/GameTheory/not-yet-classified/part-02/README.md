@@ -9,4 +9,4 @@
 - [Truthful Scheduling](truthful-scheduling/README.md)
 - [Voting Rules](voting-rules/README.md)
 - [Zero Sum Optimal](zero-sum-optimal/README.md)
-- [Nisan–Ronen lower bound (factor 2)](exists-task-count-not-is-approximate-of.md)
+- [Nisan-Ronen lower bound (factor 2)](exists-task-count-not-is-approximate-of.md)

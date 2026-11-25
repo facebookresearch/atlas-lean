@@ -2,7 +2,7 @@
 
 ## Graphical Models
 
-- [ADMG](admg.md)
+- [Acyclic directed mixed graph](admg.md)
 
 ## ADMG
 
@@ -10,6 +10,6 @@
 
 ## Bayes Net
 
-- [Latent Projection](latent-projection.md)
-- [Latent Projection bidir adj iff](latent-projection-bidir-adj-iff.md)
-- [Latent Projection dir iff](latent-projection-dir-iff.md)
+- [Latent projection](latent-projection.md)
+- [Bidirected edges of the latent projection](latent-projection-bidir-adj-iff.md)
+- [Directed edges of the latent projection](latent-projection-dir-iff.md)

@@ -1,5 +1,3 @@
-# Has Deriv At quad Form half
+# Derivative of the half quadratic form
 
-Derivative of the half-quadratic form along componentwise
-differentiable `x t`, for a symmetric matrix `C`
-(`Matrix.IsSymm C`): the derivative is `∑ i j, dx i * C i j * x j`.
+For a symmetric real matrix $C$ over a finite index set and a path $x(s)$ with $x_i'(t) = \dot x_i$ for each $i$, the function $s \mapsto \frac12 x(s)^\top C\,x(s)$ has derivative $\sum_{i,j} \dot x_i C_{ij} x_j(t)$ at $t$.

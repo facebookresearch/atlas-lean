@@ -1,3 +1,3 @@
 # Compositional Meaning
 
-- [Surface inverse meanings](surface-inverse-meanings.md)
+- [Meanings of the surface and inverse scope parses](surface-inverse-meanings.md)

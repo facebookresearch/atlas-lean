@@ -1,6 +1,3 @@
-# Inside eq tree Sum
+# Inside values equal sums of derivation weights
 
-The inside recurrence equals the sum of derivation weights (Collins,
-Section 3): `inside d A w` is the sum of `weightOf` over valid trees of
-depth at most `d` with yield `w` rooted at `A`. This is purely algebraic:
-no normalization is assumed.
+For a context-free grammar with terminal and binary rules and any real rule weights $q$ (no normalization assumed), the inside value of nonterminal $A$, word $w$ and depth bound $d$ equals the sum, over all valid derivation trees of depth at most $d$ rooted at $A$ with yield $w$, of the product of the weights of the rules used.

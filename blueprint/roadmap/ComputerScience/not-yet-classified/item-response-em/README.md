@@ -1,4 +1,4 @@
 # Item Response EM
 
-- [Joint sum one](joint-sum-one.md)
-- [Law objective posterior match](law-objective-posterior-match.md)
+- [Item-response EM joint sums to one](joint-sum-one.md)
+- [Item-response mixture: law, joint and responsibilities](law-objective-posterior-match.md)

@@ -1,7 +1,3 @@
-# Sound
+# Sound motion planner
 
-A planner is sound when every found answer is a solution and noPath only on unsolvable problems.
-
-Clause 1 is LaValle, Planning Algorithms, Ch. 4.3.1 Formulation 4.1 (a reported
-path must lie in the free set); clause 2 is LaValle, Planning Algorithms, Ch. 5
-introduction (a no-path report is correct only when no solution exists).
+A planner is sound if, for every path-planning problem and every step $k$: (1) whenever it reports a path at step $k$, that path solves the problem (it runs from the start to the goal configuration within the free set), and (2) whenever it reports that no path exists, the problem has no solution (LaValle, *Planning Algorithms*, Formulation 4.1 in Section 4.3.1 and the introduction to Chapter 5).

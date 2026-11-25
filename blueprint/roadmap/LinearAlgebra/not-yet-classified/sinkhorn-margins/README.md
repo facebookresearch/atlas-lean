@@ -1,3 +1,3 @@
 # Sinkhorn Margins
 
-- [Scaled Table gauge](scaled-table-gauge.md)
+- [Reciprocal gauge invariance of the scaled table](scaled-table-gauge.md)

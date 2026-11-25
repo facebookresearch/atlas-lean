@@ -1,6 +1,3 @@
 # Softmax
 
-Softmax over a finite index set: the shared `Real.softmax` API.
-
-If the index set is empty this uses Lean's totalized division; the
-normalization theorem below is stated for a nonempty index set.
+For a finite index set $\iota$ and $x \in \mathbb{R}^\iota$, $\operatorname{softmax}(x)_i = e^{x_i} / \sum_{j} e^{x_j}$.

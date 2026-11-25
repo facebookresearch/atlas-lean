@@ -1,3 +1,3 @@
 # Valid Plan to Basic
 
-- [Valid Plan](valid-plan.md)
+- [Valid plan](valid-plan.md)

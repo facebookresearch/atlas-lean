@@ -1,5 +1,3 @@
 # Ancestors of a set of nodes
 
-**Ancestors of a set of nodes** (including the set itself): `v` is an
-ancestor of `S` when there is a directed path from `v` to a node of `S`
-(zero steps allowed). Evans's `an(S)`.
+In a directed graph on nodes $1, \dots, n$, the ancestors of a set $S$ of nodes are the nodes $v$ with a directed path from $v$ to some node of $S$, paths of zero steps allowed, so $S$ is contained in its ancestors.

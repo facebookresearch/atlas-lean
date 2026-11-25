@@ -1,4 +1,3 @@
-# Halving Predict
+# Halving algorithm prediction
 
-The halving algorithm's prediction on `x` given examples
-`S`: majority vote of the version space.
+Given a finite concept class $C$ and labeled examples $S$, the halving algorithm predicts true on $x$ exactly when more than half of the version space (the concepts in $C$ consistent with $S$) predicts true on $x$; ties give false.

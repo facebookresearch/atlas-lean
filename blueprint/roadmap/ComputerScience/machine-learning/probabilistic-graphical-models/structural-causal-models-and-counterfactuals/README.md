@@ -67,7 +67,7 @@ rungs of Pearl's hierarchy: association, intervention, counterfactual.
 
 - [Response SCM](response-scm.md)
 
-- [Finite SCM](finite-scm.md)
+- [Finite recursive structural causal model](finite-scm.md)
 
 - [Unique solvability of a recursive SCM](exists-unique-is-solution.md)
 

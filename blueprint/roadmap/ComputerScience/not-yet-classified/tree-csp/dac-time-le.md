@@ -1,4 +1,3 @@
-# Cost bound
+# Cost bound for directional arc consistency
 
-For domains of size at most `d`, the DAC pass performs at most `n · d²`
-constraint checks, `n` the number of listed variables.
+If every domain has at most $d$ values, the directional arc consistency pass over an ordering of $n$ variables performs at most $n d^2$ constraint checks.

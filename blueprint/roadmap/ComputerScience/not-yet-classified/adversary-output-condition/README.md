@@ -1,4 +1,4 @@
 # Adversary Output Condition
 
-- [Is Adversary Matrix](is-adversary-matrix.md)
-- [Norm hadamard gram Matrix le](norm-hadamard-gram-matrix-le.md)
+- [Adversary matrix](is-adversary-matrix.md)
+- [Operator-norm adversary output condition](norm-hadamard-gram-matrix-le.md)

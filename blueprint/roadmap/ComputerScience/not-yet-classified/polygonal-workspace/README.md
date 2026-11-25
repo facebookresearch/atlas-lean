@@ -1,3 +1,3 @@
 # Polygonal Workspace
 
-- [Free Space](free-space.md)
+- [Free space of a polygonal workspace](free-space.md)

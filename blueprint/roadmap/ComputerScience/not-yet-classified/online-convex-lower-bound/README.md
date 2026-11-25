@@ -1,3 +1,3 @@
 # Online Convex Lower Bound
 
-- [Oco lower bound](oco-lower-bound.md)
+- [Lower bound for online convex optimization](oco-lower-bound.md)

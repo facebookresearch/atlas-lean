@@ -1,4 +1,3 @@
-# Totally Unimodular
+# Totally unimodular systems have integer solutions
 
-Every solution of a nonsingular totally unimodular real system with
-integer right-hand side is an integer vector. Dimensions may be zero.
+Let $A$ be a nonsingular totally unimodular real $n \times n$ matrix and $b \in \mathbb Z^n$. Every real solution $x$ of $A x = b$ is an integer vector. The case $n = 0$ is included.

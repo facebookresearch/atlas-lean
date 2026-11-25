@@ -1,4 +1,3 @@
-# Two not rotation
+# The quaternion 2 does not give a rotation
 
-Invalid input: the nonunit quaternion `2` is not a unit quaternion and its
-conjugation matrix is not in the special orthogonal group.
+The quaternion $2$ is not a unit quaternion, and the matrix of the map $v \mapsto 2v\bar 2$ on the imaginary quaternions, in the basis $i, j, k$, is not in the special orthogonal group $SO(3)$.

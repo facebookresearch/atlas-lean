@@ -1,14 +1,14 @@
 # Probabilistic
 
 - [PDeriv Tree](pderiv-tree.md)
-- [Weight Of](weight-of.md)
-- [Is Rule Weight](is-rule-weight.md)
-- [Is Normalized](is-normalized.md)
-- [Inside](inside.md)
-- [Inside succ](inside-succ.md)
-- [Inside eq tree Sum](inside-eq-tree-sum.md)
+- [Weight of a derivation tree](weight-of.md)
+- [Rule weights](is-rule-weight.md)
+- [Normalized PCFG](is-normalized.md)
+- [Inside recurrence](inside.md)
+- [Inside recurrence at successor depth](inside-succ.md)
+- [Inside values equal sums of derivation weights](inside-eq-tree-sum.md)
 
 ## The Chi-Geman counterexample
 
-- [Chi Geman missing mass](chi-geman-missing-mass.md)
-- [Cg Weight Fun normalized](cg-weight-fun-normalized.md)
+- [Missing mass in the Chi-Geman example](chi-geman-missing-mass.md)
+- [Chi-Geman weights on the ambiguous grammar are normalized](cg-weight-fun-normalized.md)

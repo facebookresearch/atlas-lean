@@ -1,4 +1,3 @@
-# Ntk
+# Empirical neural tangent kernel
 
-Empirical neural tangent kernel at parameters `θ`: the sum over the
-parameters of outer products of output gradients, in matrix form `J Jᵀ`.
+For a map $F : \mathbb{R}^P \to \mathbb{R}^n$ and parameters $\theta$, the empirical neural tangent kernel is the $n \times n$ matrix $J J^{\mathsf T}$, where $J$ is the Jacobian of $F$ at $\theta$.

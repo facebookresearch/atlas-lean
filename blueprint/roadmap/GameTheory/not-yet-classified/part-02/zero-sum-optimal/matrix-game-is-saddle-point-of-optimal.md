@@ -1,6 +1,5 @@
 # Optimal strategies of a finite zero-sum matrix game form a saddle point
 
-**Optimal strategies of a finite zero-sum matrix game form a saddle point** (a Nash
-equilibrium of the zero-sum game). With at least one row and one column, if `p` is a maximin
-strategy and `q` a minimax strategy, neither player gains by a unilateral deviation; the value
-equality is von Neumann's minimax theorem `matrixGame_minimax`.
+Let $A$ be an $m \times n$ real matrix with $m, n \ge 1$, let $p$ be a maximin mixed strategy of the row player and $q$ a minimax mixed strategy of the column player. Then for all mixed strategies $p'$ and $q'$,
+$$p'^{\mathsf T}Aq \le p^{\mathsf T}Aq \le p^{\mathsf T}Aq',$$
+so neither player gains by a unilateral deviation.

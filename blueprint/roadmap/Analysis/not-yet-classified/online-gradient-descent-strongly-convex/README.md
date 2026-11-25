@@ -1,3 +1,3 @@
 # Online Gradient Descent Strongly Convex
 
-- [Ogd regret strongly convex](ogd-regret-strongly-convex.md)
+- [Regret of online gradient descent for strongly convex losses](ogd-regret-strongly-convex.md)

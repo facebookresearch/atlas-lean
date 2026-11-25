@@ -1,7 +1,4 @@
-# Incidence Matrix mul Vec edge Volume
+# Node balance of route edge volumes
 
-Node balance of the edge volumes, route by route: if every supplied route is a valid walk
-from its origin to its destination, inflow minus outflow of the edge volumes at `v` is the
-flow on routes ending at `v` minus the flow on routes starting at `v`. No sign or demand
-condition on `f` is used. The per-route identity is the arc-list form of the telescoping
-`MathlibExt.Probability.CanonicalPaths.sum_pathEdges_sub`.
+Let a network have finitely many nodes and arcs $e$ with tails and heads, and finitely many routes $p$, each a list of arcs forming a walk from its origin to its destination, with flow $f_p \in \mathbb R$. Let the edge volume of $e$ be $\sum_p f_p$ times the number of traversals of $e$ by $p$, and let $B_{ve} = [\mathrm{head}(e) = v] - [\mathrm{tail}(e) = v]$ be the incidence matrix. Then for every node $v$,
+$$(B\,\mathrm{vol})_v = \sum_p f_p\left([\mathrm{dest}(p) = v] - [\mathrm{orig}(p) = v]\right).$$

@@ -1,6 +1,3 @@
-# Certified radius `σ Φ⁻¹(p_A)`
+# Certified radius for randomized smoothing
 
-The one-class form of `smoothedProb_lt_of_norm_lt`. If
-`p_A ≤ P(f(x + σZ) = a)` with `p_A ∈ (0, 1)`, then every other class has probability at most
-`1 - p_A`, and `a` stays the strictly most probable class at `x + δ` for every
-`‖δ‖ < σ * Φ⁻¹ p_A`. The radius is positive exactly when `p_A > 1/2`.
+Let $f$ be a measurable classifier on $\mathbb{R}^\iota$ ($\iota$ finite), $\sigma > 0$, and $Z$ a standard Gaussian vector. Write $P_x(c) = P\big(f(x + \sigma Z) = c\big)$. If $p_A \in (0, 1)$ and $p_A \le P_x(a)$, then for every $\delta$ with $\lVert \delta \rVert < \sigma\, \Phi^{-1}(p_A)$, where $\Phi^{-1}$ is the standard normal quantile function, and every class $c \ne a$, $P_{x + \delta}(c) < P_{x + \delta}(a)$.

@@ -1,3 +1,3 @@
 # Trans to Refl Trans Gen
 
-- [Step](step.md)
+- [CDCL transition](step.md)

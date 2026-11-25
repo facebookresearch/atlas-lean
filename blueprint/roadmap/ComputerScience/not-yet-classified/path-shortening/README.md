@@ -1,4 +1,4 @@
 # Path Shortening
 
-- [Local shortening](local-shortening.md)
-- [Wbtw of minimal](wbtw-of-minimal.md)
+- [Local shortening at an interior bend](local-shortening.md)
+- [A shortest feasible polyline is straight at interior bends](wbtw-of-minimal.md)

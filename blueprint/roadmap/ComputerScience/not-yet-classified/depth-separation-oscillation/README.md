@@ -1,4 +1,4 @@
 # Depth Separation Oscillation
 
-- [Tent Iter l1 ge of relu Net](tent-iter-l1-ge-of-relu-net.md)
-- [Depth separation](depth-separation.md)
+- [Shallow ReLU networks miss the deep tent iterate](tent-iter-l1-ge-of-relu-net.md)
+- [Depth separation for ReLU networks](depth-separation.md)

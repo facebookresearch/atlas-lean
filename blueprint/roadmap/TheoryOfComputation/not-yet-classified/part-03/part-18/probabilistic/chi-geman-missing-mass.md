@@ -1,6 +1,3 @@
-# Chi Geman missing mass
+# Missing mass in the Chi-Geman example
 
-Uncaptured mass at cutoff `h`: `1 - S h >= 1 / 2`. This bounds the weight
-missing from each finite cutoff sum; it is not identified with the probability
-of an infinite derivation, since no probability space on derivations is
-constructed here.
+Let $S_0 = S_1 = 0$ and $S_{n+1} = \tfrac13 + \tfrac23 S_n^2$ for $n \ge 1$, the total weight captured at cutoff $n$. Then $1 - S_h \ge 1/2$ for every $h \in \mathbb N$.

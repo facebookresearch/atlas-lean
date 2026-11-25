@@ -1,4 +1,4 @@
 # Sum Check
 
-- [Sumcheck1 complete](sumcheck1-complete.md)
-- [Sumcheck1 sound](sumcheck1-sound.md)
+- [Sum-check round completeness](sumcheck1-complete.md)
+- [Soundness of one sum-check round](sumcheck1-sound.md)

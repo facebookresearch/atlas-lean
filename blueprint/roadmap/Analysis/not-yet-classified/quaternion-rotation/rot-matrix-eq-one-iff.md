@@ -1,4 +1,3 @@
-# Rot Matrix eq one iff
+# Unit quaternions with identity rotation matrix
 
-Kernel on unit quaternions: `rotMatrix q` is the identity matrix
-exactly when `q = 1` or `q = -1`.
+For a unit quaternion $q$, its rotation matrix is the identity if and only if $q = 1$ or $q = -1$.

@@ -1,6 +1,3 @@
 # Angular velocity skew
 
-Angular-velocity matrix is skew-symmetric: if `R(t)` is orthogonal
-(`R(t) * R(t)ᵀ = 1`) and every entry is differentiable at `t`, then the
-matrix `W` with entries `W i j = ∑ k, R'(t) i k * R(t) j k` satisfies
-`W i j = -W j i`. Here `R'` is the entrywise `deriv`.
+Let $R(s)$ be an $n \times n$ real matrix with $R(s) R(s)^\top = I$ for every $s$, and suppose every entry of $R$ is differentiable at $t$. Then $W = R'(t) R(t)^\top$, with entries $W_{ij} = \sum_k R'_{ik}(t)\,R_{jk}(t)$, satisfies $W_{ij} = -W_{ji}$ for all $i$, $j$.

@@ -1,5 +1,5 @@
-# Maximin Share
+# Maximin share
 
-Maximin share of agent `i`: the best worst-bundle value `i` can guarantee
-by choosing the allocation, as a finset maximum over all allocations `A` of
-the finset minimum over agents `j` of `bundleValue v i (bundle A j)`.
+For finitely many agents and goods with additive valuations $v_i(g)$, the maximin share of agent $i$ is
+$$\max_{A} \min_{j} \sum_{g \in A^{-1}(j)} v_i(g),$$
+the maximum over all allocations $A$ of goods to agents of the smallest value, to $i$, of any agent's bundle.

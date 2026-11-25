@@ -1,4 +1,4 @@
 # Nonminimum Witness
 
-- [Exists lower arbitrarily close](exists-lower-arbitrarily-close.md)
-- [Not forall le line](not-forall-le-line.md)
+- [Negative second derivative along a line excludes a minimum](exists-lower-arbitrarily-close.md)
+- [A negative second derivative along a line rules out a minimum](not-forall-le-line.md)

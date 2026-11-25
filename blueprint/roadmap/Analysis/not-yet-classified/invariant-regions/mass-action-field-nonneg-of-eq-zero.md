@@ -1,10 +1,3 @@
 # Boundary sign of mass-action kinetics
 
-Let the rate constants be nonnegative, and let
-every reaction that consumes a species have that species among its reactants:
-`N s j < 0 → 1 ≤ α j s` for all `s` and `j`. If `y ≥ 0` and `y i = 0`, then `0 ≤ F y i` for the
-mass-action field `F`.
-
-This is the boundary-sign property only. By itself it does not show that solutions stay in the
-nonnegative orthant: that needs a solution together with a first-exit-time or comparison
-argument, which is `massActionField_orthant_invariant`.
+Let $F_i(y) = \sum_j N_{ij}\,k_j\prod_s y_s^{\alpha_{js}}$ be the mass-action field with stoichiometric coefficients $N_{ij} \in \mathbb Z$, reactant orders $\alpha_{js} \in \mathbb N$ and rate constants $k_j \ge 0$, over finitely many species and reactions. Assume every reaction that consumes a species has it among its reactants: $N_{sj} < 0 \Rightarrow \alpha_{js} \ge 1$. If $y \ge 0$ and $y_i = 0$, then $F_i(y) \ge 0$.

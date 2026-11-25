@@ -1,3 +1,3 @@
 # Basic
 
-- [WS1 SFormula](ws1-sformula.md)
+- [WS1S formulas](ws1-sformula.md)

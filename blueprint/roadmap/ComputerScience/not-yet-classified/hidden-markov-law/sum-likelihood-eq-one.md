@@ -1,4 +1,3 @@
-# Sum likelihood eq one
+# Hidden Markov observation likelihoods sum to one
 
-The observation likelihood at fixed length sums to one over all
-observation strings: the marginal law is normalized.
+Let a hidden Markov model have finite state and observation sets, with nonnegative initial, transition and emission weights, initial weights summing to one, and every transition and emission row summing to one. For every $t$, the likelihoods of all observation strings of length $t + 1$ sum to $1$.

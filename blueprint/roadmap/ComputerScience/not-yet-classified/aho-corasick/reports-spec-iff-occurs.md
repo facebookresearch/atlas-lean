@@ -1,5 +1,3 @@
-# Reports Spec iff occurs
+# Specified Aho-Corasick reports are exactly the occurrences
 
-The specified reports are the occurrences: a nonempty pattern is reported ending at position
-`i` iff it occurs in the text ending exactly at `i`. This characterizes `ReportsSpec`; it is not
-a correctness theorem for an Aho–Corasick scanner.
+Let $p$ be a nonempty pattern in the pattern list and let $i$ be a position of the text, $i < |\text{text}|$. Then $p$ is reported ending at position $i$ (it is a suffix of the specified matching state after the first $i + 1$ symbols) if and only if the first $i + 1$ symbols of the text end with $p$.

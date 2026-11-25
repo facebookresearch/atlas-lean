@@ -1,8 +1,5 @@
-# Expected Precision At
+# Expected precision at a cutoff
 
-Expected precision at cutoff `k` under a finite joint relevance law `μ`.
-
-For a relevance vector `rel`, the relevance predicate is `fun i => rel i = true`.
-When `μ` is nonnegative with total weight `1`, this is the expectation of
-`precisionAt` under `μ`; the identity below is just finite linearity and uses
-no independence.
+For a weight $\mu$ on relevance vectors $\mathrm{rel} \in \{0, 1\}^N$ and a ranked prefix $r_1, \dots, r_k$ of documents, the expected precision at $k$ is
+$$\sum_{\mathrm{rel}} \mu(\mathrm{rel}) \cdot \mathrm{P@}k(\mathrm{rel}, r),$$
+where $\mathrm{P@}k$ is the fraction of $r_1, \dots, r_k$ that are relevant (and $0$ when $k = 0$). When $\mu$ is a probability mass function this is the expectation of precision at $k$.

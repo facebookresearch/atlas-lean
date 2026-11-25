@@ -1,3 +1,3 @@
-# Ntk linear
+# Neural tangent kernel of a linear model
 
-A linear model has constant NTK equal to the linear kernel `X Xᵀ`.
+For the linear model $F(\theta) = X \theta$ with $X \in \mathbb{R}^{n \times P}$, the empirical neural tangent kernel $J(\theta) J(\theta)^\top$, with $J$ the Jacobian of $F$, equals $X X^\top$ at every $\theta$.

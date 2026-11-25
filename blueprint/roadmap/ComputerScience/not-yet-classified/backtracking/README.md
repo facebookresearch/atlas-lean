@@ -4,12 +4,12 @@
 
 ## Forward checking
 
-- [Is Solution forward Check](is-solution-forward-check.md)
+- [Forward checking preserves solutions](is-solution-forward-check.md)
 
 ## Soundness
 
-- [Soundness](backtrack-fc-sound.md)
+- [Soundness of backtracking with forward checking](backtrack-fc-sound.md)
 
 ## Completeness
 
-- [Completeness](backtrack-fc-complete.md)
+- [Completeness of backtracking with forward checking](backtrack-fc-complete.md)

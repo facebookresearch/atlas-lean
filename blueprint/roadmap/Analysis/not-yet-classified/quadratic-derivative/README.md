@@ -1,5 +1,5 @@
 # Quadratic Derivative
 
-- [Quad Form half eq sum](quad-form-half-eq-sum.md)
-- [Has Deriv At quad Form half](has-deriv-at-quad-form-half.md)
+- [Half quadratic form as a double sum](quad-form-half-eq-sum.md)
+- [Derivative of the half quadratic form](has-deriv-at-quad-form-half.md)
 - [Derivative of half a quadratic form along a curve](quad-form-half-deriv-eq.md)

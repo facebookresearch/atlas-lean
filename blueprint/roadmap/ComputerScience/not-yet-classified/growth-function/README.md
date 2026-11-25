@@ -1,7 +1,7 @@
 # Growth Function
 
-- [Growth Function](growth-function.md)
-- [Growth Function le two pow](growth-function-le-two-pow.md)
-- [Exists trace Family card eq growth Function](exists-trace-family-card-eq-growth-funct.md)
-- [Growth Function le sum](growth-function-le-sum.md)
-- [Growth Function le exp pow](growth-function-le-exp-pow.md)
+- [Growth function](growth-function.md)
+- [Growth function is at most 2^m](growth-function-le-two-pow.md)
+- [Growth function is attained](exists-trace-family-card-eq-growth-funct.md)
+- [Sauer bound for the growth function](growth-function-le-sum.md)
+- [Exponential bound on the growth function](growth-function-le-exp-pow.md)

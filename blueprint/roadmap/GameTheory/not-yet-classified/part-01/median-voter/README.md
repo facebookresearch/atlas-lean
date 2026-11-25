@@ -2,7 +2,7 @@
 
 ## Social Choice
 
-- [Single Peaked Profile](single-peaked-profile.md)
+- [Single-peaked profile](single-peaked-profile.md)
 
 ## Single Peaked Profile
 

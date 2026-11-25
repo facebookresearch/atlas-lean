@@ -1,4 +1,3 @@
-# Rot Matrix transpose mul self
+# Quaternion rotation matrix: transpose times itself
 
-For every quaternion `q`, `(rotMatrix q)ᵀ * rotMatrix q = (normSq q) ^ 2 • 1`, that is
-`Rᵀ R = |q|⁴ 1`; no unit hypothesis is needed.
+For every quaternion $q$, let $R_q$ be the matrix of $v \mapsto q v \bar q$ on the pure quaternions in the basis $i, j, k$. Then $R_q^{\mathsf T} R_q = |q|^4 I$; no unit hypothesis is needed.

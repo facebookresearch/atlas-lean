@@ -1,6 +1,3 @@
-# Affine Fun nonneg hull iff
+# Affine inequalities on a convex hull
 
-An affine inequality holds on the whole convex hull of a finite
-possibly empty finite vertex set exactly when it holds at every vertex. This is
-the fixed-schedule vertex certificate: precedence inequalities with
-affine durations need only be checked at hull vertices.
+For a finite (possibly empty) set $s$ of points in $\mathbb R^\iota$ with $\iota$ finite, and an affine function $a(x) = c + \sum_i p_i x_i$, $a \ge 0$ on the convex hull of $s$ if and only if $a(v) \ge 0$ for every $v \in s$.

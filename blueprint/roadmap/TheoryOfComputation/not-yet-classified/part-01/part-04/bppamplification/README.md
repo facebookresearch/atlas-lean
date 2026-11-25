@@ -1,3 +1,3 @@
 # BPPAmplification
 
-- [Bpp majority amplify](bpp-majority-amplify.md)
+- [Majority-vote error amplification](bpp-majority-amplify.md)

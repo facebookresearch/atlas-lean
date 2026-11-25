@@ -1,3 +1,3 @@
-# Greedy
+# Greedy tree-CSP assignment
 
-Greedy assignment of all variables in root-first order.
+For a binary constraint problem with a parent map on its variables, a root-first order of the variables, domains and a selection function choosing an element of a finite set (or failing), the greedy assignment visits the variables in order and gives each one the selected value among its domain values compatible with its parent's already chosen value (all domain values for a root). It fails as soon as some variable gets no selection, and otherwise returns the resulting assignment.

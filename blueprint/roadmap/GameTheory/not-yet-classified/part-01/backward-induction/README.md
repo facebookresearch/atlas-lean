@@ -2,9 +2,9 @@
 
 ## Game Theory
 
-- [Perfect Info Game](perfect-info-game.md)
+- [Perfect-information game tree](perfect-info-game.md)
 
 ## Profile
 
-- [Is Nash](is-nash-2.md)
+- [Backward induction gives a Nash equilibrium](is-nash-2.md)
 - [Exists is Backward Induction is Subgame Perfect](exists-is-backward-induction-is-subgame.md)

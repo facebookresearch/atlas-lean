@@ -2,14 +2,14 @@
 
 ## A. Rational interval certificates
 
-- [Rat Interval](rat-interval.md)
-- [Encloses](encloses.md)
-- [Add](add.md)
-- [Neg](neg.md)
-- [Sub](sub.md)
+- [Rational interval](rat-interval.md)
+- [Interval enclosure](encloses.md)
+- [Interval addition](add.md)
+- [Interval negation](neg.md)
+- [Interval subtraction](sub.md)
 - [Round Out](round-out.md)
 
 ## F. Provenance records
 
 - [Certified Root](certified-root.md)
-- [Of Bisection](of-bisection.md)
+- [Certified root from bisection](of-bisection.md)

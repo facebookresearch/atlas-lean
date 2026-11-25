@@ -1,7 +1,7 @@
 # Compositional Fragment
 
-- [G rules card](g-rules-card.md)
+- [The compositional fragment grammar has seven rules](g-rules-card.md)
 
 ## The valid-domain compiler
 
-- [Compile proof irrel](compile-proof-irrel.md)
+- [Compiled term is independent of the validity proof](compile-proof-irrel.md)

@@ -1,5 +1,3 @@
-# Block Frame eq linear Convolution
+# Overlap-add block frames are linear convolutions
 
-With FFT size at least `L + M - 1`, every block frame is the full
-linear convolution of that block with the kernel, at every natural
-offset (the frame tail past `L + M - 1` is zero).
+Let $L, M \ge 1$ and the FFT size $Q \ge L + M - 1$. For a signal $x$ of length $N$, a kernel $h$ of length $M$ and any block index $b$, the length-$Q$ cyclic convolution of the zero-padded block $x_{bL}, \ldots, x_{bL+L-1}$ with the zero-padded kernel, extended by zero beyond $Q$, equals the full linear convolution of that block with $h$.

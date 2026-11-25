@@ -2,5 +2,5 @@
 
 ## Block frames and overlap-add
 
-- [Block Frame eq linear Convolution](block-frame-eq-linear-convolution.md)
-- [Linear Convolution eq sum shifted blocks](linear-convolution-eq-sum-shifted-blocks.md)
+- [Overlap-add block frames are linear convolutions](block-frame-eq-linear-convolution.md)
+- [Overlap-add decomposition of linear convolution](linear-convolution-eq-sum-shifted-blocks.md)

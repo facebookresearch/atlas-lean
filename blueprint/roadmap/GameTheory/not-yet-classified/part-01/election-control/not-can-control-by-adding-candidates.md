@@ -1,5 +1,3 @@
-# Immunity of Condorcet voting to constructive control by adding candidates
+# Condorcet voting is immune to constructive control by adding candidates
 
-**Immunity of Condorcet voting to constructive control by adding
-candidates** (Theorem 7.3(1)): control by adding candidates can never
-succeed for any preferred candidate, registered set, or budget.
+For finitely many candidates and voters, any profile, registered candidate set $S$, preferred candidate $p$ and budget $k$, there is no superset $S'$ of $S$ with at most $k$ added candidates such that $p \in S$ is not the Condorcet winner among $S$ but is the Condorcet winner among $S'$.

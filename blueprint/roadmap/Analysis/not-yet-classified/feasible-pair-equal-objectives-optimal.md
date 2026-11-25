@@ -1,7 +1,3 @@
-# LP certificate (M14.T02)
+# Linear-programming optimality certificate
 
-A feasible primal/dual pair with equal
-objectives is optimal for both: every feasible primal point has objective
-at most `c ⬝ᵥ x`, and every feasible dual point has objective at least
-`b ⬝ᵥ y`. One application of weak duality per conjunct, rewriting with the
-equal-objective hypothesis.
+Let $A$ be a real $m \times n$ matrix, $b \in \mathbb{R}^m$, $c \in \mathbb{R}^n$. Suppose $x \ge 0$ with $A x \le b$ and $y \ge 0$ with $A^{\mathsf T} y \ge c$ (componentwise), and $c^{\mathsf T} x = b^{\mathsf T} y$. Then $c^{\mathsf T} x' \le c^{\mathsf T} x$ for every $x' \ge 0$ with $A x' \le b$, and $b^{\mathsf T} y \le b^{\mathsf T} y'$ for every $y' \ge 0$ with $A^{\mathsf T} y' \ge c$.

@@ -1,6 +1,3 @@
-# Apply
+# Applying a STRIPS operator
 
-Progression for an applicable operator, in Bylander's order:
-`(s ∪ add) \ del`. On well-formed operators (`Disjoint add del`) this agrees
-with delete-first progression; see
-`Operator.apply_eq_deleteFirst_of_disjoint`.
+For an operator with add set $A$ and delete set $D$, applying it to a state $s$ gives $(s \cup A) \setminus D$.

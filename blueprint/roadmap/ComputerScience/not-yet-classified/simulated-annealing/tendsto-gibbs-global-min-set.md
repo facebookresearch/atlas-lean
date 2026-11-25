@@ -1,3 +1,3 @@
-# Tendsto gibbs global Min Set
+# Gibbs law concentrates on global minima
 
-As `T → 0+`, the Gibbs law concentrates on the global minima.
+On a finite nonempty state space with energy $V$, the probability that the Gibbs law at temperature $T$, proportional to $e^{-V(x)/T}$, assigns to the set of global minimizers of $V$ tends to $1$ as $T \to 0^+$.

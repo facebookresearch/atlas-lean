@@ -1,5 +1,7 @@
 # The population PC adjacency phase
 
-**The population PC adjacency phase** (MIT 6.S091 Lecture 5, Algorithm 1; Kalisch and
-Bühlmann 2007, Algorithm 1), made deterministic: rounds `d = 0, …, n - 1` from the complete
-graph; rounds past the largest neighbourhood are no-ops.
+Given a conditional-independence oracle on $n$ variables, the adjacency phase of the population PC algorithm starts from the complete graph and runs rounds $d = 0, \dots, n - 1$ deterministically; rounds past the largest neighborhood size change nothing.
+
+## Sources
+
+- M. Kalisch and P. Bühlmann, "Estimating high-dimensional directed acyclic graphs with the PC-algorithm", *Journal of Machine Learning Research* 8 (2007), Algorithm 1.

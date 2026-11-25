@@ -1,5 +1,5 @@
 # Query Oracle
 
 - [Query Oracle](query-oracle.md)
-- [Query Oracle apply](query-oracle-apply.md)
-- [Query Oracle involutive](query-oracle-involutive.md)
+- [Query oracle action](query-oracle-apply.md)
+- [The query oracle is an involution](query-oracle-involutive.md)

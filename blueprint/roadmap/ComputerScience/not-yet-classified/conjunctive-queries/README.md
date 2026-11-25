@@ -1,8 +1,8 @@
 # Conjunctive Queries
 
 - [CQ](cq.md)
-- [Satisfies](satisfies.md)
+- [Satisfaction of a conjunctive-query body](satisfies.md)
 - [Contained](contained.md)
-- [Hom](hom.md)
+- [Conjunctive-query homomorphism](hom.md)
 - [Canon DB](canon-db.md)
-- [Contained iff hom](contained-iff-hom.md)
+- [Chandra-Merlin containment criterion](contained-iff-hom.md)

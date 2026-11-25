@@ -1,11 +1,11 @@
 # Boolean Retrieval
 
 - [Corpus](corpus.md)
-- [Bool Query](bool-query.md)
-- [Eval Set](eval-set.md)
-- [Postings](postings.md)
-- [Build Index](build-index.md)
-- [Postings pairwise lt](postings-pairwise-lt.md)
+- [Boolean query](bool-query.md)
+- [Set semantics of Boolean queries](eval-set.md)
+- [Postings list](postings.md)
+- [Inverted index](build-index.md)
+- [Postings are strictly increasing](postings-pairwise-lt.md)
 - [Eval Index build Index eq eval Set](eval-index-build-index-eq-eval-set.md)
-- [Card postings union le](card-postings-union-le.md)
-- [Card postings inter le](card-postings-inter-le.md)
+- [Size of a union of postings lists](card-postings-union-le.md)
+- [Linear size bound for a postings intersection](card-postings-inter-le.md)

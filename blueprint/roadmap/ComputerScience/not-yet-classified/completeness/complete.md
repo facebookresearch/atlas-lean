@@ -1,9 +1,3 @@
-# Complete
+# Complete motion planner
 
-Complete (LaValle, Planning Algorithms, Ch. 4.3.1 Formulation 4.1 and Ch. 5
-introduction): sound, and on every problem some step gives a non-running answer.
-
-Soundness carries correctness (Ch. 5 introduction "correctly reports", Ch. 4.3.1
-Formulation 4.1 "compute a path or correctly report none"); the termination clause
-renders Ch. 5 introduction "in a finite amount of time" as existence of a deciding
-step `k`.
+A planner is complete if it is sound and, on every path-planning problem, some step $k$ gives an answer other than "still running", that is, it reports a path or reports that none exists (LaValle, *Planning Algorithms*, Formulation 4.1 in Section 4.3.1 and the introduction to Chapter 5).

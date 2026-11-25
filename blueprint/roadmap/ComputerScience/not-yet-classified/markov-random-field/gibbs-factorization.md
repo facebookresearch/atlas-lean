@@ -1,9 +1,3 @@
-# Gibbs Factorization
+# Gibbs factorization
 
-A weight `p` on configurations **factorizes over the cliques** of `G` (Gibbs
-factorization): `p` is a finite product of nonnegative potentials `ψ C`, one for each
-clique `C` of `G`, where `ψ C` depends only on the variables in `C`. The weight is
-unnormalized: the Gibbs normalizing constant `1 / Z` is absorbed into `p`, which does
-not change any `CondIndep` statement proved from the factorization below. The family
-may include the empty clique; its potential is constant and carries global constants
-such as `1 / Z` (see `GibbsFactorization.const_mul`).
+For a graph $G$ on a finite set of variables, each taking values in a finite set, a weight $p$ on configurations factorizes over the cliques of $G$ if there are a finite family of cliques $\mathcal{C}$ and nonnegative potentials $\psi_C$, each depending only on the variables in $C$, with $p(x) = \prod_{C \in \mathcal{C}} \psi_C(x)$ for every configuration $x$. The weight need not be normalized; the family may include the empty clique, whose constant potential can carry a normalizing constant.

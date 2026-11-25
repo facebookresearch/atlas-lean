@@ -1,5 +1,7 @@
-# Kleinberg impossibility
+# Kleinberg's impossibility theorem
 
-Kleinberg Theorem 2.1: for each `n ≥ 2`, there is no clustering function
-simultaneously satisfying scale invariance, richness (`Function.Surjective`),
-and consistency.
+For $n \ge 2$ points, no clustering function from dissimilarities on $n$ points to partitions is simultaneously scale invariant, rich (every partition is attained) and consistent.
+
+## Sources
+
+- J. Kleinberg, "An impossibility theorem for clustering", NeurIPS 2002, Theorem 2.1.

@@ -1,5 +1,3 @@
 # Backward-recursion value dominates every policy
 
-For a stochastic MDP
-and `0 ≤ γ`, no nonstationary policy earns more than the finite-horizon value
-at any horizon and state. Uses `qValue_mono` (cited, not reproved).
+Let an MDP have finite state and action sets, nonempty action set, and transition probabilities that are nonnegative and sum to one, and let $\gamma \ge 0$. For every nonstationary policy $\pi$, every horizon $k$ and every state $s$, the $k$-step value of $\pi$ from $s$ is at most the $k$-step optimal value from $s$ given by backward recursion.

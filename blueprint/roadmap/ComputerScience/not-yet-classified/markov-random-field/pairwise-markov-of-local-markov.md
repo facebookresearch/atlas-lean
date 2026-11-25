@@ -1,5 +1,3 @@
 # Pairwise Markov of local Markov
 
-For a nonnegative weight, the local Markov property implies the pairwise Markov
-property. Nonnegativity is needed here: this step is weak union for finite
-conditional independence.
+For a finite graph $G$, a finite value set and a nonnegative weight $p$ on configurations, if $p$ has the local Markov property with respect to $G$, then it has the pairwise Markov property.

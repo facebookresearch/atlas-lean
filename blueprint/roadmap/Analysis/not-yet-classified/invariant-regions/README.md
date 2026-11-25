@@ -6,7 +6,7 @@
 
 ## B. Mass-action kinetics and the boundary sign
 
-- [Mass Action Field](mass-action-field.md)
+- [Mass-action vector field](mass-action-field.md)
 - [Boundary sign of mass-action kinetics](mass-action-field-nonneg-of-eq-zero.md)
 
 ## C. Forward invariance of the nonnegative orthant

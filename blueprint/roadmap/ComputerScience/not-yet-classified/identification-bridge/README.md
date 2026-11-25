@@ -2,11 +2,11 @@
 
 ## Graphical Models
 
-- [Identified On univ iff is Identified By](identified-on-univ-iff-is-identified-by.md)
+- [Identification on the whole parameter space](identified-on-univ-iff-is-identified-by.md)
 - [Identified On iff is Identified By subtype](identified-on-iff-is-identified-by-subty.md)
-- [Identified On univ joint iff is Identified By](identified-on-univ-joint-iff-is-identifi.md)
+- [Identification from the joint weight equals identification from the joint law](identified-on-univ-joint-iff-is-identifi.md)
 
 ## Bayes Net
 
-- [Is Identified By backdoor Class](is-identified-by-backdoor-class.md)
-- [Is Identified By frontdoor Class](is-identified-by-frontdoor-class.md)
+- [The back-door criterion identifies the interventional probability](is-identified-by-backdoor-class.md)
+- [Front-door identification](is-identified-by-frontdoor-class.md)

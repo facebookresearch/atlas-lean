@@ -1,4 +1,3 @@
-# Consistent
+# Consistency of a clustering function
 
-Consistency: if `f d = Γ` and `d'` is a `Γ`-transformation of `d`,
-then `f d' = Γ`.
+For $n$ points, a clustering function $f$ (from dissimilarities on the points to partitions) is consistent if, whenever $f(d) = \Gamma$ and $d'$ is a $\Gamma$-transformation of $d$ (no pair in the same cluster of $\Gamma$ gets a larger dissimilarity, and no pair in different clusters gets a smaller one), also $f(d') = \Gamma$.

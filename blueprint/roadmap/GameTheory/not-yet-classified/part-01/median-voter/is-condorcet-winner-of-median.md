@@ -1,4 +1,3 @@
 # Median voter theorem
 
-With an odd number of voters, a median of the
-peaks of a strictly single-peaked profile is a Condorcet winner.
+For a strictly single-peaked profile with an odd number of voters, if at least half the voters have peak $\le m$ and at least half have peak $\ge m$, then $m$ is a Condorcet winner.

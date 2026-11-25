@@ -1,9 +1,3 @@
-# Gradient flow identity
+# Gradient-flow identity for the neural tangent kernel
 
-Gradient-flow identity: if a trajectory satisfies the gradient-flow ODE
-at time `t` (in particular, the hypothesis holds at each positive time of
-such a forward gradient-flow trajectory on `t ≥ 0`, and at `t = 0` when the
-trajectory extends differentiably through `0`), the outputs evolve by the
-negative NTK applied to the residual. The ODE at `t` and global `C¹`
-regularity of `F` are hypotheses; existence and uniqueness of the flow, and
-constancy of the NTK during training, are not claimed.
+Let $F : \mathbb R^P \to \mathbb R^n$ be $C^1$, $y \in \mathbb R^n$, and $L(\theta) = \tfrac12 \|F(\theta) - y\|^2$. If a parameter path satisfies $\theta'(t) = -\nabla L(\theta(t))$ at time $t$, then\n\n$$\frac{d}{dt} F(\theta(t)) = -K(\theta(t))\,\big(F(\theta(t)) - y\big),$$\n\nwhere $K(\theta) = J(\theta) J(\theta)^{\mathsf T}$ is the empirical neural tangent kernel and $J$ is the Jacobian of $F$.

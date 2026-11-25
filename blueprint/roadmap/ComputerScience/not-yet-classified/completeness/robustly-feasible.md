@@ -1,8 +1,7 @@
-# Robustly Feasible
+# Robustly feasible path problem
 
-Robust feasibility (MIT 16.410): a solution whose delta-thickening stays free.
+A path problem in a metric space is robustly feasible when it has a solution path $\gamma$ from start to goal and some $\delta > 0$ such that the $\delta$-thickening of the range of $\gamma$ lies in the free set.
 
-The witness `γ` is a solution (as in LaValle, Planning Algorithms, Ch. 4.3.1
-Formulation 4.1), and for some radius `δ > 0` the `δ`-thickening of its range stays
-inside the free set, i.e. the solution survives dilating the obstacles by `δ` (MIT
-"robust solution").
+## Sources
+
+- S. M. LaValle, *Planning Algorithms*, Cambridge University Press (2006), Section 4.3.1.

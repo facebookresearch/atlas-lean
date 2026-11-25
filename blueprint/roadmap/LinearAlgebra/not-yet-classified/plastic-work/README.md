@@ -1,4 +1,4 @@
 # Plastic Work
 
-- [Load Factor le](load-factor-le.md)
-- [Load Factor eq of complementary](load-factor-eq-of-complementary.md)
+- [Upper bound on the load factor](load-factor-le.md)
+- [Load factor equality from a complementary certificate](load-factor-eq-of-complementary.md)

@@ -1,5 +1,3 @@
-# Hom
+# Conjunctive-query homomorphism
 
-A homomorphism from `Q'` to `Q`: maps variables so that
-the head is preserved and every body atom of `Q'` maps to a
-body atom of `Q`.
+For conjunctive queries $Q'$ and $Q$, a map $h$ on variables is a homomorphism from $Q'$ to $Q$ if applying $h$ to the head of $Q'$ gives the head of $Q$ and $h$ maps every body atom of $Q'$ to a body atom of $Q$.

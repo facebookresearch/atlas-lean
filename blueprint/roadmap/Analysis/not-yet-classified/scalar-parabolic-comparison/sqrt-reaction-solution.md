@@ -1,5 +1,3 @@
-# Sqrt Reaction solution
+# A negative solution with square-root reaction
 
-Invalid example, part 1: `c(t) = -t ^ 2 / 4` solves the spatially
-constant (Neumann/ODE) problem `c_t = -√|c|` for `t ≥ 0`, with `c(0) = 0`
-and quasi-positive reaction `r(0) = 0`, yet `c(t) < 0` for `t > 0`.
+For $t \ge 0$, $c(t) = -t^2/4$ has derivative $c'(t) = -\sqrt{|c(t)|}$. So $c$ solves $c' = -\sqrt{|c|}$ with $c(0) = 0$, yet $c(t) < 0$ for $t > 0$.

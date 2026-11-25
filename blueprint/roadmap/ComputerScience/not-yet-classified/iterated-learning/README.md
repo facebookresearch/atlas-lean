@@ -1,3 +1,3 @@
 # Iterated Learning
 
-- [Stationarity](transmission-stationary.md)
+- [Stationarity of iterated Bayesian learning](transmission-stationary.md)

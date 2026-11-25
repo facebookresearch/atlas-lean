@@ -1,4 +1,3 @@
-# Scaled Table gauge
+# Reciprocal gauge invariance of the scaled table
 
-Reciprocal gauge invariance: scaling `a` by `t` and `b` by
-`t⁻¹` (with `t ≠ 0`) leaves the table unchanged.
+For vectors $a, b$, a matrix $K$ and $t \ne 0$, the scaled table $T_{ij} = a_i K_{ij} b_j$ is unchanged when $a$ is replaced by $t a$ and $b$ by $t^{-1} b$.

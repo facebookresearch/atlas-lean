@@ -1,3 +1,3 @@
-# Quarter Turn rot Matrix ne one
+# A quarter-turn rotation is not the identity
 
-The quarter turn about the `i` axis is not the identity rotation.
+For the quaternion $q = \frac{\sqrt2}{2}(1 + i)$, the rotation matrix $v \mapsto q v \bar q$ on imaginary quaternions is not the identity matrix.

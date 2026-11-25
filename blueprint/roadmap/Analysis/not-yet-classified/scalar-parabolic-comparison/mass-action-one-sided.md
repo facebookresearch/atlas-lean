@@ -1,5 +1,3 @@
-# Mass Action one Sided
+# One-sided bound for the mass-action reaction
 
-Nonzero fixture: the mass-action reaction `r(u) = a - b * u ^ 2`
-(constant production `a ≥ 0`, dimerization rate `b ≥ 0`) satisfies the
-one-sided bound with `K = b * M` on the state range `[-M, 0]`.
+For $a \ge 0$, $b \ge 0$ and $u \in [-M, 0]$, the mass-action reaction $r(u) = a - b u^2$ satisfies the one-sided bound $(bM)\,u \le a - b u^2$.

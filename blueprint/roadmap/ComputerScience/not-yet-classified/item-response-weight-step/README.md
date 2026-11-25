@@ -1,4 +1,4 @@
 # Item Response Weight Step
 
-- [The weights-only step maximizes `Q(· | w)`](em-q-le-weight-only-step.md)
-- [The log-likelihood is monotone along the iterates of the weights-only step](log-lik-iterate-weight-only-step-monoton.md)
+- [The weights-only EM step maximizes Q](em-q-le-weight-only-step.md)
+- [EM weights-only step increases the log-likelihood](log-lik-iterate-weight-only-step-monoton.md)

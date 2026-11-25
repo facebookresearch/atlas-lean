@@ -1,5 +1,3 @@
-# Sqrt Reaction not one Sided
+# Square-root reaction has no one-sided linear bound
 
-Invalid example, part 2: the reaction `r(u) = -√|u|` satisfies no
-one-sided bound `r(u) ≥ K * u` on any nontrivial state range `[-M, 0]`,
-whatever the constant `K`.
+For every constant $K$ and every $M > 0$ there is $u \in [-M, 0]$ with $-\sqrt{|u|} < K u$. Hence the reaction $r(u) = -\sqrt{|u|}$ satisfies no one-sided bound $r(u) \ge K u$ on $[-M, 0]$.

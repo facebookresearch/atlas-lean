@@ -1,3 +1,3 @@
 # Termination
 
-- [Cdcl step potential decreases](cdcl-step-potential-decreases.md)
+- [A potential that decreases along CDCL steps](cdcl-step-potential-decreases.md)

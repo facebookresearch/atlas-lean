@@ -1,12 +1,7 @@
-# Probabilistically Complete
+# Probabilistically complete planner
 
-Probabilistically complete (LaValle, Planning Algorithms, Ch. 5 introduction;
-MIT 16.410): sound, and on robustly feasible problems the probability of a found
-answer by step N tends to 1.
+A randomized path planner on a metric configuration space, driven by a probability measure, is probabilistically complete if (1) it is sound: every path it reports is a solution and it reports \"no path\" only for unsolvable problems; (2) on every robustly feasible problem, the probability that it has found a path by step $N$ tends to $1$ as $N \to \infty$; and (3) for every problem and every $N$, the event of having found a path by step $N$ is measurable.
 
-The soundness clauses are the randomized analogues of `Planner.Sound`
-(LaValle, Planning Algorithms, Ch. 4.3.1 Formulation 4.1 and Ch. 5 introduction).
-The limit clause renders LaValle, Planning Algorithms, Ch. 5 introduction ("with
-enough points, the probability that it finds an existing solution converges to one")
-and MIT 16.410 (`lim Pr(ALG returns a solution) = 1` on robustly feasible
-problems): the probability of having found by step `N` tends to `1`.
+## Sources
+
+- S. M. LaValle, *Planning Algorithms*, Cambridge University Press, 2006, Ch. 4.3.1 (Formulation 4.1) and Ch. 5 introduction.

@@ -1,8 +1,7 @@
-# Growth Function
+# Growth function
 
-The *growth function*: the supremum of the numbers of distinct traces the
-class `C` realizes over `m`-subsets of the domain. This is the maximum when
-an `m`-subset exists (see `exists_traceFamily_card_eq_growthFunction`), and
-`0` when none does (for example `m ≥ 1` on an empty type), since `sSup` on
-`ℕ` of the empty set is `0`. This agrees with `τ_H(m)` of Shalev-Shwartz
-and Ben-David.
+The growth function of a concept class $C$ at $m$ is the supremum, over $m$-element subsets $s$ of the domain, of the number of distinct subsets of $s$ cut out by concepts in $C$. It is $0$ when no $m$-element subset exists. This is $\tau_C(m)$ in Shalev-Shwartz and Ben-David.
+
+## Sources
+
+- S. Shalev-Shwartz and S. Ben-David, *Understanding Machine Learning: From Theory to Algorithms*, Cambridge University Press, 2014, Chapter 6.

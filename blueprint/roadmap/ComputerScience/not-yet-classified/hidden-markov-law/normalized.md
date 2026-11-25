@@ -1,5 +1,3 @@
-# Normalized
+# Normalized hidden Markov model
 
-Normalized HMM parameters over the reals: a nonnegative initial
-distribution with row-stochastic transition and emission matrices. Zeros
-are allowed, unlike `BaumWelch.Valid` which requires positivity.
+A hidden Markov model with finite state and observation sets and real weights is normalized if its initial weights are nonnegative and sum to one, and every row of its transition matrix and of its emission matrix is nonnegative and sums to one. Zero weights are allowed.

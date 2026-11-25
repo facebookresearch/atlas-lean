@@ -1,4 +1,4 @@
 # SOSCertificate
 
-- [Gram Poly](gram-poly.md)
-- [Eval gram Poly nonneg](eval-gram-poly-nonneg.md)
+- [Gram polynomial](gram-poly.md)
+- [Gram polynomial with a positive semidefinite matrix is nonnegative](eval-gram-poly-nonneg.md)

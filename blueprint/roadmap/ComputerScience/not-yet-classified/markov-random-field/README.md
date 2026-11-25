@@ -1,10 +1,10 @@
 # Markov Random Field
 
-- [Separated By](separated-by.md)
-- [Gibbs Factorization](gibbs-factorization.md)
+- [Graph separation](separated-by.md)
+- [Gibbs factorization](gibbs-factorization.md)
 - [Global Markov](global-markov.md)
 - [Local Markov](local-markov.md)
-- [Pairwise Markov](pairwise-markov.md)
-- [Gibbs soundness](global-markov-of-gibbs-factorization.md)
+- [Pairwise Markov property](pairwise-markov.md)
+- [Gibbs factorization implies the global Markov property](global-markov-of-gibbs-factorization.md)
 - [Local Markov of global Markov](local-markov-of-global-markov.md)
 - [Pairwise Markov of local Markov](pairwise-markov-of-local-markov.md)

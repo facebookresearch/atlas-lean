@@ -1,11 +1,5 @@
-# Mass Action Field
+# Mass-action vector field
 
-The mass-action vector field `F y i = ∑ j, N i j * (k j * ∏ s, y s ^ α j s)` of a reaction
-network with species `ι` and reactions `J`: `N i j` is the net change of species `i` in reaction
-`j`, `α j s` is the exponent of species `s` in the rate of reaction `j`, and `k j` is the rate
-constant of reaction `j`.
+For a reaction network with finitely many species $\iota$ and reactions $J$, integer net stoichiometric changes $N_{ij}$ (species $i$ in reaction $j$), natural-number rate exponents $\alpha_{js}$ and rate constants $k_j$, the mass-action vector field at concentrations $y$ has components
 
-For a network with reactant and product complexes `src` and `prod`, the choice
-`N s j = prod j s - src j s`, `α = src` gives the field
-`MathlibExt.Biology.Dynamics.ComplexBalanced.ReactionNetwork.massActionField`, and this choice
-always satisfies the compatibility condition of `massActionField_nonneg_of_eq_zero`.
+$$F(y)_i = \sum_{j} N_{ij}\, k_j \prod_{s} y_s^{\alpha_{js}}.$$

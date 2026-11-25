@@ -1,3 +1,3 @@
-# Encloses
+# Interval enclosure
 
-`I.Encloses x`: the real number `x` lies in the rational interval `I`.
+A rational interval $[a, b]$ encloses a real number $x$ when $a \le x \le b$.

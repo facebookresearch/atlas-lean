@@ -2,4 +2,4 @@
 
 ## Proof helpers for the finite real-valued total
 
-- [Joint Prob snoc](joint-prob-snoc.md)
+- [One-step recurrence for the hidden Markov joint law](joint-prob-snoc.md)

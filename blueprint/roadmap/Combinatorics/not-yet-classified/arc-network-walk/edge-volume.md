@@ -1,7 +1,3 @@
-# Edge Volume
+# Edge volume of a path flow
 
-Edge volume of the path flow `f` on the supplied routes `edges`: every traversal counts,
-`edgeVolume edges f e = ∑ p, f p * (edges p).count e`, in the flow unit of `f`. The
-vertex-pair analogue for canonical paths between states is
-`MathlibExt.Probability.CanonicalPaths.pathLoad`; here arcs are told apart by identity
-and every traversal counts.
+For finitely many routes $p$, each a list of arcs, and a path flow $f$, the edge volume on arc $e$ is $\sum_p f(p)\cdot(\text{number of times route } p \text{ traverses } e)$; every traversal counts.

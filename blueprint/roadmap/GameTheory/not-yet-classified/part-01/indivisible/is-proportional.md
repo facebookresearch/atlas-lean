@@ -1,5 +1,3 @@
-# Is Proportional
+# Proportional allocation
 
-Proportionality: each agent gets at least a `1 / card ι` share of its
-value for all goods, stated without division. The universal form also covers
-the empty-agent case vacuously.
+An allocation of finitely many goods to finitely many agents is proportional when every agent $i$ values its bundle at least $1/n$ of its value for all goods, stated as $\sum_g v_i(g) \le n\, v_i(A_i)$ with $n$ the number of agents.

@@ -1,3 +1,3 @@
 # Vertical Cells Connectivity
 
-- [Reachable iff joined In](reachable-iff-joined-in.md)
+- [Cell-graph reachability iff path-connectivity](reachable-iff-joined-in.md)

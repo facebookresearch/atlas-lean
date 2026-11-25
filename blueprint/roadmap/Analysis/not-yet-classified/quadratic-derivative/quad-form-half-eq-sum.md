@@ -1,5 +1,4 @@
-# Quad Form half eq sum
+# Half quadratic form as a double sum
 
-The half-quadratic value `MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence.quadForm C x / 2` is the explicit
-double sum over entries, halved. (At integration this expression is
-`QuadraticFormCongruence.quadForm C x / 2`.)
+For a real square matrix $C$ indexed by a finite set and a vector $x$,
+$$\frac{x^\top C x}{2} = \frac{1}{2} \sum_i \sum_j x_i C_{ij} x_j.$$

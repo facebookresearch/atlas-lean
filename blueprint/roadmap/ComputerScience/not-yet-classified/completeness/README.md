@@ -1,7 +1,7 @@
 # Completeness
 
-- [Sound](sound.md)
-- [Complete](complete.md)
-- [Resolution Complete](resolution-complete.md)
-- [Robustly Feasible](robustly-feasible.md)
-- [Probabilistically Complete](probabilistically-complete.md)
+- [Sound motion planner](sound.md)
+- [Complete motion planner](complete.md)
+- [Resolution completeness](resolution-complete.md)
+- [Robustly feasible path problem](robustly-feasible.md)
+- [Probabilistically complete planner](probabilistically-complete.md)

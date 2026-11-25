@@ -1,4 +1,3 @@
-# Eval gram Poly nonneg
+# Gram polynomial with a positive semidefinite matrix is nonnegative
 
-Gram soundness: if `Q` is rational PSD then `z^T Q z` is nonnegative at
-every real point. Parrilo (4.4); Prajna-Jadbabaie Sec. 4.
+Let $z_i$, $i$ in a finite index set, be multivariate polynomials with rational coefficients, and let $Q$ be a rational positive semidefinite matrix. Then the Gram polynomial $z^{\mathsf T}Qz = \sum_{i,j}Q_{ij}z_iz_j$ is nonnegative at every real point.

@@ -1,6 +1,3 @@
 # Bayesian Nash equilibrium
 
-The pure strategy profile `s` is a
-Bayesian Nash equilibrium: no type of any player gains in ex-interim
-expectation by a unilateral deviation. This is the mechanism-design
-predicate at the identity outcome rule.
+In a Bayesian game with finitely many players, finite type and action sets, a prior on type profiles that is a probability distribution, and utilities depending on the type profile and the action profile, a pure strategy profile $s$ (each player's action as a function of their own type) is a Bayesian Nash equilibrium if for every player $i$, every type $\theta_i$ and every action $a$, the interim expected utility of $i$ (the prior-weighted sum of $i$'s utility over type profiles in which $i$ has type $\theta_i$) when $i$ plays $a$ and the others follow $s$ is at most its value when everyone follows $s$.

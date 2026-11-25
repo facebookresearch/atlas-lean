@@ -1,4 +1,3 @@
-# Well Formed
+# Well-formed STRIPS task
 
-A task is well-formed when every operator is well-formed and the positive
-and negative goals are disjoint.
+A STRIPS task is well-formed when its positive and negative goals are disjoint and every operator is well-formed: no atom is both a positive and a negative precondition, and no atom is both added and deleted.
