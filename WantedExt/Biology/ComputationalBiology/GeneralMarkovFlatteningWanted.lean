@@ -27,7 +27,8 @@ of a tensor of indeterminates. For four taxa, a flattening along a split that is
 the tree has rank larger than `κ` outside a proper algebraic subset of the parameter space
 (Allman and Rhodes 2006, Theorem 2 with `λ = κ`); since the parameter space is an affine space and
 the locus where all `(κ + 1)`-minors vanish is algebraic, that subset is proper exactly when one
-parameter value gives rank larger than `κ`, which is the form recorded here.
+parameter value gives rank larger than `κ`, the form in which
+`exists_card_lt_rank_flatten_nonEdge` states it.
 
 Trees are the repository's unrooted binary phylogenetic trees (`UnrootedBinaryTree`) with their
 edge splits and quartets (`CSLibExt.Bioinformatics.Phylogenetics.Splits`); the root may be any
@@ -55,20 +56,7 @@ namespace WantedExt.Biology.ComputationalBiology.GeneralMarkovFlatteningWanted
 open MathlibExt.Biology.Phylogenetics.UnrootedTreeCount
 open Cslib.Bioinformatics.Phylogenetics.Splits
 
-section Model
-
-variable {V K X R : Type} [Fintype V] [Fintype K] [CommSemiring R]
-  (G : SimpleGraph V) [DecidableRel G.Adj] (ℓ : X → V)
-
-end Model
-
-section Flattening
-
-variable {X K R : Type} [DecidableEq X]
-
-end Flattening
-
-variable {X K : Type} [Fintype X] [DecidableEq X] [Fintype K] [DecidableEq K]
+variable {X : Type} [Fintype X] [DecidableEq X]
 
 /-- The **phylogenetic ideal** `𝔞_T` of the two-state general Markov model on `T`: the
 polynomials in the indeterminates `p_u`, `u : X → Fin 2`, that vanish at every scalar multiple of

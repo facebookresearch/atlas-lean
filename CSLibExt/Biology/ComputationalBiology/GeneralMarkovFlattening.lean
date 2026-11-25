@@ -742,154 +742,6 @@ public theorem rank_flatten_leafDist_le {X K : Type} [Fintype X] [DecidableEq X]
 
 section Helpers
 
-private theorem dist_split_of_shortest (V : Type) (G : SimpleGraph V) (hG : G.Connected)
-    (n : ℕ) : ∀ (w u : V) (q : G.Walk w u), q.length = n → n = G.dist w u →
-      ∀ z ∈ q.support, G.dist w z + G.dist z u = G.dist w u := by
-  induction n with
-  | zero =>
-    intro w u q hlen hdist z hz
-    cases q with
-    | nil =>
-      simp only [SimpleGraph.Walk.support_nil, List.mem_singleton] at hz
-      subst hz
-      simp [SimpleGraph.dist_self]
-    | cons h q' =>
-      simp only [SimpleGraph.Walk.length_cons] at hlen
-      omega
-  | succ n ih =>
-    intro w u q hlen hdist z hz
-    cases q with
-    | nil =>
-      simp only [SimpleGraph.Walk.length_nil] at hlen
-      omega
-    | @cons _ w' _ h q' =>
-      simp only [SimpleGraph.Walk.length_cons] at hlen
-      simp only [SimpleGraph.Walk.support_cons, List.mem_cons] at hz
-      rcases hz with rfl | hz
-      · simp [SimpleGraph.dist_self]
-      · have hle : G.dist w' u ≤ q'.length := SimpleGraph.dist_le q'
-        have htri : G.dist w u ≤ G.dist w w' + G.dist w' u := hG.dist_triangle
-        have hadj1 : G.dist w w' = 1 := SimpleGraph.dist_eq_one_iff_adj.mpr h
-        have hdu' : G.dist w' u = n := by omega
-        have hlen' : q'.length = n := by omega
-        have ih' := ih w' u q' hlen' hdu'.symm z hz
-        have htri2 : G.dist w z ≤ G.dist w w' + G.dist w' z := hG.dist_triangle
-        have htri3 : G.dist w u ≤ G.dist w z + G.dist z u := hG.dist_triangle
-        omega
-
-private theorem mem_support_sideE (V : Type) (G : SimpleGraph V) (hG : G.IsTree)
-    (e f x : V) (hef : G.Adj e f) (px : G.Walk x e) (hlen : px.length = G.dist x e)
-    (hx : G.dist x e < G.dist x f) (z : V) (hz : z ∈ px.support) :
-    G.dist z e < G.dist z f := by
-  have hsplit := dist_split_of_shortest V G hG.connected _ x e px hlen rfl z hz
-  have htri : G.dist x f ≤ G.dist x z + G.dist z f := hG.connected.dist_triangle
-  rcases hG.dist_eq_dist_add_one_of_adj x hef with h | h
-  · omega
-  · omega
-
-private theorem mem_support_sideF (V : Type) (G : SimpleGraph V) (hG : G.IsTree)
-    (e f y : V) (hef : G.Adj e f) (py : G.Walk f y) (hlen : py.length = G.dist f y)
-    (hy : G.dist y f < G.dist y e) (z : V) (hz : z ∈ py.support) :
-    G.dist z f < G.dist z e := by
-  have hsplit := dist_split_of_shortest V G hG.connected _ f y py hlen rfl z hz
-  have htri : G.dist y e ≤ G.dist y z + G.dist z e := hG.connected.dist_triangle
-  have hcomm1 : G.dist f z = G.dist z f := SimpleGraph.dist_comm
-  have hcomm2 : G.dist z y = G.dist y z := SimpleGraph.dist_comm
-  have hcomm3 : G.dist f y = G.dist y f := SimpleGraph.dist_comm
-  rcases hG.dist_eq_dist_add_one_of_adj y hef with h | h
-  · omega
-  · omega
-
-private theorem cross_edge (V : Type) (G : SimpleGraph V) (hG : G.IsTree)
-    (e f x y : V) (hef : G.Adj e f)
-    (hx : G.dist x e < G.dist x f) (hy : G.dist y f < G.dist y e)
-    (hxy : G.Adj x y) : x = e ∧ y = f := by
-  have hxe : G.dist x f = G.dist x e + 1 := by
-    rcases hG.dist_eq_dist_add_one_of_adj x hef with h | h
-    · omega
-    · exact h
-  have hye : G.dist y e = G.dist y f + 1 := by
-    rcases hG.dist_eq_dist_add_one_of_adj y hef with h | h
-    · exact h
-    · omega
-  have htri1 : G.dist y e ≤ G.dist y x + G.dist x e := hG.connected.dist_triangle
-  have htri2 : G.dist x f ≤ G.dist x y + G.dist y f := hG.connected.dist_triangle
-  have hxy1 : G.dist x y = 1 := SimpleGraph.dist_eq_one_iff_adj.mpr hxy
-  have hyx1 : G.dist y x = 1 := SimpleGraph.dist_eq_one_iff_adj.mpr hxy.symm
-  have heq : G.dist x e = G.dist y f := by omega
-  obtain ⟨px, hpx_path, hpx_len⟩ := hG.connected.exists_path_of_dist x e
-  obtain ⟨py, hpy_path, hpy_len⟩ := hG.connected.exists_path_of_dist f y
-  have hsideE : ∀ z ∈ px.support, G.dist z e < G.dist z f :=
-    fun z hz => mem_support_sideE V G hG e f x hef px hpx_len hx z hz
-  have hsideF : ∀ z ∈ py.support, G.dist z f < G.dist z e :=
-    fun z hz => mem_support_sideF V G hG e f y hef py hpy_len hy z hz
-  have hne : e ≠ f := hef.ne
-  set E : G.Walk e f := SimpleGraph.Walk.cons hef SimpleGraph.Walk.nil with hEdef
-  have hEf : ∀ a ∈ E.support, a = e ∨ a = f := by
-    intro a ha
-    rw [hEdef] at ha
-    simp only [SimpleGraph.Walk.support_cons, SimpleGraph.Walk.support_nil,
-      List.mem_cons, List.not_mem_nil, or_false] at ha
-    exact ha
-  have hE_path : E.IsPath := by
-    rw [hEdef, SimpleGraph.Walk.cons_isPath_iff]
-    refine ⟨SimpleGraph.Walk.IsPath.nil, ?_⟩
-    intro hm
-    simp only [SimpleGraph.Walk.support_nil, List.mem_cons, List.not_mem_nil,
-      or_false] at hm
-    exact hne hm
-  have hQ1_path : (px.append E).IsPath := by
-    apply SimpleGraph.Walk.isPath_append_of_isPath hpx_path hE_path
-    intro a ha1 ha2
-    have hside := hsideE a ha1
-    rcases hEf a ha2 with h | h
-    · exact h
-    · rw [h] at hside
-      have h1 : G.dist f e = 1 := SimpleGraph.dist_eq_one_iff_adj.mpr hef.symm
-      have h0 : G.dist f f = 0 := SimpleGraph.dist_self
-      exfalso
-      omega
-  have hP2_path : ((px.append E).append py).IsPath := by
-    apply SimpleGraph.Walk.isPath_append_of_isPath hQ1_path hpy_path
-    intro a ha1 ha2
-    have hside := hsideF a ha2
-    rw [SimpleGraph.Walk.mem_support_append_iff] at ha1
-    rcases ha1 with ha1 | ha1
-    · have hsideE' := hsideE a ha1
-      exfalso
-      omega
-    · rcases hEf a ha1 with h | h
-      · rw [h] at hside
-        have h1 : G.dist e f = 1 := SimpleGraph.dist_eq_one_iff_adj.mpr hef
-        have h0 : G.dist e e = 0 := SimpleGraph.dist_self
-        exfalso
-        omega
-      · exact h
-  have hP1_path : (SimpleGraph.Walk.cons hxy SimpleGraph.Walk.nil).IsPath := by
-    rw [SimpleGraph.Walk.cons_isPath_iff]
-    refine ⟨SimpleGraph.Walk.IsPath.nil, ?_⟩
-    intro hm
-    simp only [SimpleGraph.Walk.support_nil, List.mem_cons, List.not_mem_nil,
-      or_false] at hm
-    exact hxy.ne hm
-  have heqw : ((px.append E).append py) = SimpleGraph.Walk.cons hxy SimpleGraph.Walk.nil := by
-    have hsub := hG.isAcyclic.subsingleton_path x y
-    have h := hsub.elim (⟨_, hP2_path⟩ : G.Path x y) (⟨_, hP1_path⟩ : G.Path x y)
-    exact congrArg Subtype.val h
-  have hlen_eq := congrArg SimpleGraph.Walk.length heqw
-  rw [SimpleGraph.Walk.length_append, SimpleGraph.Walk.length_append] at hlen_eq
-  have hElen : E.length = 1 := by
-    rw [hEdef]
-    simp [SimpleGraph.Walk.length_cons, SimpleGraph.Walk.length_nil]
-  have hP1len : (SimpleGraph.Walk.cons hxy SimpleGraph.Walk.nil).length = 1 := by
-    simp [SimpleGraph.Walk.length_cons, SimpleGraph.Walk.length_nil]
-  rw [hElen, hP1len, hpx_len, hpy_len] at hlen_eq
-  have hxe0 : G.dist x e = 0 := by omega
-  have hxx : x = e := hG.connected.dist_eq_zero_iff.mp hxe0
-  have hyf0 : G.dist y f = 0 := by omega
-  have hyy : y = f := hG.connected.dist_eq_zero_iff.mp hyf0
-  exact ⟨hxx, hyy⟩
-
 private theorem treeJoint_eq_zero_of_neE (V K : Type) [Fintype V] [DecidableEq K]
     (G : SimpleGraph V) (hG : G.IsTree) (e f : V) (hef : G.Adj e f)
     (c : ℂ) (M : V → V → Matrix K K ℂ)
@@ -1034,10 +886,10 @@ private theorem treeJoint_pattern (V K : Type) [Fintype V] [DecidableEq K]
       have hsame : σ x = σ y := by
         rcases hxside with hxE | hxF <;> rcases hyside with hyE | hyF
         · rw [(hσ x).1 hxE, (hσ y).1 hyE]
-        · obtain ⟨hxe, hyf⟩ := cross_edge V G hG e f x y hef hxE hyF hadj
+        · obtain ⟨hxe, hyf⟩ := eq_crossing_of_mem_sides G hG hef hadj hxE hyF
           rw [hxe, hyf] at hne
           exact absurd rfl hne
-        · obtain ⟨hye, hxf⟩ := cross_edge V G hG e f y x hef hyE hxF hadj.symm
+        · obtain ⟨hye, hxf⟩ := eq_crossing_of_mem_sides G hG hef hadj.symm hyE hxF
           rw [hxf, hye] at hdir
           have h1 : G.dist e f = 1 := SimpleGraph.dist_eq_one_iff_adj.mpr hef
           have h0 : G.dist e e = 0 := SimpleGraph.dist_self
