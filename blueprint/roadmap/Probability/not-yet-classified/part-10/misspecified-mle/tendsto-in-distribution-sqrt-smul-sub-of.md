@@ -1,0 +1,7 @@
+# Asymptotic normality of the misspecified MLE
+
+Let $X_0, X_1, \ldots$ be i.i.d. with law $\mu_X$, not assumed to lie in the model, $\ell(\theta, x)$ a log-likelihood on a finite-dimensional real inner product space, and $\hat\theta_n$ a.e. strongly measurable maximum-likelihood estimators over a compact $K$. Assume: $\ell(\cdot, x)$ is continuous on $K$, a uniform law of large numbers holds on $K$, and the expected log-likelihood has a unique maximizer $\theta^*$ on $K$ lying in the interior of $K$; for some $\delta > 0$, on the ball of radius $\delta$ about $\theta^*$, $\ell(\cdot, x)$ has gradient $\psi(\theta, x)$ with $\|\psi(\theta, x)\| \le G(x)$ for an integrable $G$, $\psi(\cdot, x)$ is differentiable, and $\|D\psi(\theta, x) - D\psi(\theta^*, x)\| \le M(x)\|\theta - \theta^*\|$ for a measurable integrable $M$; $\ell(\theta, \cdot)$ is a.e. strongly measurable there and $\ell(\theta^*, \cdot)$ integrable; $\psi(\theta^*, \cdot)$ is measurable and square-integrable; $D\psi(\theta^*, \cdot)$ is strongly measurable and integrable; and $A = \mathbb{E}\,D\psi(\theta^*, X)$ is invertible. Let $B$ be the covariance of $\psi(\theta^*, X)$. Then $\sqrt{n}(\hat\theta_n - \theta^*)$ converges in distribution to every $Z$ with $\langle Z, t\rangle \sim \mathcal{N}(0, \langle A^{-1} B A^{-\top} t, t\rangle)$ for all $t$.
+
+## Sources
+
+- H. White, "Maximum likelihood estimation of misspecified models", Econometrica 50 (1982), Theorem 3.2.
