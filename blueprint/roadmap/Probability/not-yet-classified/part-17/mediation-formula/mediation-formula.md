@@ -11,7 +11,9 @@ measurable with finite value types having measurable singletons; and let the pot
 * no exposure-induced mediator–outcome confounding: `Y(x, m)` is independent of `M(x')` given
   `Z = z`.
 
-Then for all `x₀, x₁`, with `P(z) = μ(Z = z)`,
+Then for all `x₀, x₁`, with `P(z) = μ(Z = z)`, the natural direct effect (NDE) and the
+total-minus-direct indirect effect (`NIE = TE - NDE`, holding exposure at `x₁` rather than at
+`x₀` as in Pearl 2001's `E[Y(x₀, M(x₁))] - E[Y(x₀, M(x₀))]`) satisfy
 `E[Y(x₁, M(x₀))] - E[Y(x₀, M(x₀))] = ∑_{z, m} (E[Y | x₁, m, z] - E[Y | x₀, m, z]) P(m | x₀, z) P(z)`
 and
 `E[Y(x₁, M(x₁))] - E[Y(x₁, M(x₀))] = ∑_{z, m} E[Y | x₁, m, z] (P(m | x₁, z) - P(m | x₀, z)) P(z)`.
