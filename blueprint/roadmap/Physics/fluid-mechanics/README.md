@@ -1,6 +1,6 @@
 # Fluid mechanics
 
-Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, Bernoulli's theorem, Stokes settling, and continuum models of traffic flow with their shocks. Rotating and stratified flows of the ocean and atmosphere, water waves and open-channel hydraulics are under Earth Science.
+Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, Bernoulli's theorem, Stokes settling, filtration and sedimentation, flow in porous media, laminar, compressible and turbulent flow, pipes and water hammer, airfoils and rotors, and continuum models of traffic flow with their shocks. Shock speeds for concave fluxes are under Partial differential equations, and rotating and stratified flows of the ocean and atmosphere, water waves and open-channel hydraulics are under Earth Science.
 
 - [Bernoulli flows and laminar Couette and Poiseuille flows](bernoulli-flows-and-laminar-couette-and-poiseuil/README.md)
 - [Bernoulli's theorem along a streamline](bernoulli-s-theorem-along-a-streamline/README.md)
@@ -20,7 +20,6 @@ Hydrostatics and elementary fluid dynamics: hydrostatic pressure and buoyancy, B
 - [Resultant of a linear pressure distribution](resultant-of-a-linear-pressure-distribution/README.md)
 - [Reynolds stresses and the mean momentum equation](reynolds-stresses-and-the-mean-momentum-equation/README.md)
 - [Rotor momentum theory and the Euler turbine equation](rotor-momentum-theory-and-the-euler-turbine-equa/README.md)
-- [Shock speeds for a concave traffic flux](shock-speeds-for-a-concave-traffic-flux/README.md)
 - [Stokes settling velocity](stokes-settling-velocity/README.md)
 - [Unsteady parallel shear flows](unsteady-parallel-shear-flows/README.md)
 - [Vehicle conservation, cumulative counts and exit times](vehicle-conservation-cumulative-counts-and-exit/README.md)

@@ -7,6 +7,6 @@ convention `x / 0 = 0` the constant term `(Tb - Ts) / L` is `0` when `L = 0`, wh
 the derivative; the intended domain is `L > 0`.
 
 In terms of the
-[slab gradient](../../../Physics/heat-and-mass-transport/steady-conduction-with-internal-heat-sources/slab-gradient.md)
+[slab gradient](../../../Physics/thermodynamics-and-heat-transfer/steady-conduction-with-internal-heat-sources/slab-gradient.md)
 with the same parameters: for `k > 0`, the slab gradient has derivative `-H / k` at every `d`, and
 `k (-H / k) + H = 0`.
