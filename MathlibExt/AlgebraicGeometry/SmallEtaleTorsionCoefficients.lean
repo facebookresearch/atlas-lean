@@ -132,7 +132,9 @@ $l$ times the identity). Here $\mathbb{G}_m$ is the sheaf of units of regular fu
 def kummerSequence (l : ℕ) : ShortComplex (Coefficients X) :=
   ShortComplex.mk (kernel.ι (powerMap X G l)) (powerMap X G l) (kernel.condition _)
 
-/-- Generic Kummer exactness is a proof on the fixed source sequence, not a new theorem request. -/
+/-- The condition that the Kummer sequence $0 \to \mu_l \to \mathbb{G}_m \to \mathbb{G}_m \to 0$
+of sheaves on the small étale site of $X$, whose last map is the $l$-th power map
+(`kummerSequence`), is short exact. -/
 structure KummerExactness (l : ℕ) : Prop where
   shortExact : (kummerSequence X G l).ShortExact
 

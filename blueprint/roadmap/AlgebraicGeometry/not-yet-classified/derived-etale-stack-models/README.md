@@ -15,4 +15,3 @@
 - [Derived Stack](derived-stack.md)
 - [Affine Stack Model](affine-stack-model.md)
 - [Is Affine](is-affine.md)
-- [An étale derived stack model of a derived affine](derived-affine-etale-stack.md)

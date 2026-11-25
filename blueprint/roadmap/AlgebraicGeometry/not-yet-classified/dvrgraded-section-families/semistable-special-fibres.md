@@ -1,5 +1,6 @@
 # Semistable Special Fibres
 
-Both actual special log-Fano pairs and their native valuative inequalities.
-Finite generation of the resulting Rees ring remains a paper theorem,
-rather than an assumption reclassified as an external toolbox result.
+Valuatively semistable log-Fano special fibres for both models: log-Fano fibre structures on
+the special fibres of the first and of the second model, with their given lines and with the
+boundary ideals and exponent given by `B`, both valuatively semistable
+(`LogFanoFibre.IsValuativelySemistable`).

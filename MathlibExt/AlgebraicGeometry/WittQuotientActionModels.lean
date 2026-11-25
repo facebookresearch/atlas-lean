@@ -108,7 +108,12 @@ structure SheafLeftAction (H : LoopDescent p k B pi G)
     action.app (op (op R)) (g, (quotientUnit p k B pi G).app (op (op R)) x) =
       (quotientUnit p k B pi G).app (op (op R)) (A.action.app R (g, x))
 
-/-- All actual loop actions and their descent proofs are native construction outputs. -/
+/-- The left action of the loop group on the Witt vector affine Grassmannian, with fpqc descent: a
+left action of the loop group presheaf $LG$ on the presheaf quotient $LG/L^+G$ induced by
+multiplication of loops (`RawLeftAction`); the fpqc sheaf property of $LG$ and of the positive
+loop group $L^+G$; and a unital, associative action of the fpqc sheaf $LG$ on the affine
+Grassmannian, the fpqc sheafification of $LG/L^+G$, that agrees with the presheaf action through
+sheafification. -/
 structure QuotientActions where
   raw : RawLeftAction p k B pi G
   loopDescent : LoopDescent p k B pi G

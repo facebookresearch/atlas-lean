@@ -1,3 +1,4 @@
 # Identity finite Presentation
 
-Mathlib's full finite-presentation convention retains quasi-compactness and quasi-separatedness.
+For a commutative ring `k`, the identity of `Spec k` is of finite presentation: it is locally
+of finite presentation, quasi-compact and quasi-separated.

@@ -137,10 +137,13 @@ public def_wanted coefficientDerivedAdjunction (h : RelativeScope p B X Y f)
     DerivedAdjunctionSource Q.functor (Zhat p Y.left PY) (Zhat p X.left PX)
       (coefficientScalar p K B X Y f PX PY E Q N PS)
 
-/-- The module inverse image along the unit to the inverse-image ring of a ring sheaf on `Y` is
-the sheaf inverse image along the relative pro-étale map, which is exact. This provides the
-exactness hypotheses of the Gauss–Manin and higher-association requests (for `O_Y`, `Ẑ_p` and the
-naive structural periods). -/
+/-- For a proper smooth morphism $f : X \to Y$ of smooth, locally Noetherian analytic spaces over
+the base realization $B$ of $K$ (`RelativeScope`) and a sheaf of rings $S$ on the pro-étale site
+of $Y$, with enough injective modules over $S$ and over $f^{-1} S$ and with a left adjoint (the
+module pullback) to the module pushforward along the unit $S \to f_* f^{-1} S$: the module
+pullback along this unit is exact on bounded-below complexes, that is, the unit of its right
+derived functor is an isomorphism at every bounded-below complex of $S$-modules
+(`PullbackSourceUnit`). This pullback is the sheaf inverse image $f^{-1}$. -/
 public def_wanted inverseUnitPullbackExact (h : RelativeScope p B X Y f)
     (S : Sheaf (proTopology p Y.left PY) CommRingCat.{1}) [EnoughInjectives (Modules S)]
     [EnoughInjectives (Modules (inverseRing (J := proTopology p Y.left PY)

@@ -121,12 +121,12 @@ variable [(modulePushforward (etaleInclusion p X.left) (regularEtale p X.left SX
     (ProEtaleDeRhamSources.relativeRing p K B X Y f PX PY SY E Q)
     (basePeriod p K B X Y f PX PY SY E Q) (baseScalar p K B X Y f PX PY SY E Q)).IsRightAdjoint]
 
-/-- **The relative period complexes of a proper smooth morphism.** Let
-$f : X \to Y$ be a proper smooth morphism of smooth, locally Noetherian analytic spaces over the
-base realization $B$ of $K$ (`RelativeScope`), with the given period sources, base-change data,
-relative de Rham data (forms $\Omega$ and a coefficient module $M$ with its connection) and period
-connections of the signature. Then there are positive and full period cochain complexes of $M$,
-vanishing in negative degrees (`PeriodComplexType`). In degree $n$ the positive complex is
+/-- **The relative period complexes of a proper smooth morphism.** Let $f : X \to Y$ be a proper
+smooth morphism of smooth, locally Noetherian analytic spaces over the base realization $B$ of $K$
+(`RelativeScope`), with the given period data on $X$ and $Y$, base-change data, relative de Rham
+data (forms $\Omega$ and a coefficient module $M$ with its connection) and connections on the
+positive and full period sheaves of $X$. Then there are positive and full period cochain complexes
+of $M$, vanishing in negative degrees (`PeriodComplexType`). In degree $n$ the positive complex is
 $M \otimes \Omega^n$ with scalars extended to the naive structural positive period ring of $X$, as a
 module over the inverse image of that ring of $Y$, with differential given on generators by the
 connection on the period coefficients (extending that of $M$ and the period connection by the

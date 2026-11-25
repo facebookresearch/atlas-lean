@@ -1,4 +1,4 @@
 # Open Inclusion
 
-The continuous inclusion of an open subspace: Mathlib's
-`TopologicalSpace.Opens.inclusion'`, with the ambient space explicit.
+The inclusion of an open subset `U` of a topological space `Z`, as a continuous map from `U`
+with the subspace topology to `Z` (`TopologicalSpace.Opens.inclusion'`).

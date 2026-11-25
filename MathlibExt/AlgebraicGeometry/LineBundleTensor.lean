@@ -140,10 +140,9 @@ as an `A`-module through `g` (`ModuleCat.restrictScalars g.hom`). -/
 
 variable {A B : CommRingCat.{u}} (g : A ⟶ B)
 
-/-- Restriction of scalars along a surjective (for instance bijective) map of commutative
-rings commutes with tensor products: `M_A ⊗[A] N_A ≅ (M ⊗[B] N)_A`, `m ⊗ n ↦ m ⊗ n`. This is
-Mathlib's `TensorProduct.equivOfCompatibleSMul` for the compatible actions of
-`TensorProduct.CompatibleSMul.of_algebraMap_surjective`. -/
+/-- Restriction of scalars along a surjective (for instance bijective) map $g : A \to B$ of
+commutative rings commutes with tensor products: for $B$-modules $M$ and $N$, the $A$-linear
+isomorphism $M_A \otimes_A N_A \cong (M \otimes_B N)_A$, $m \otimes n \mapsto m \otimes n$. -/
 def restrictScalarsTensorIso (hg : Function.Surjective g.hom) (M N : ModuleCat.{u} B) :
     (ModuleCat.restrictScalars g.hom).obj M ⊗ (ModuleCat.restrictScalars g.hom).obj N ≅
       (ModuleCat.restrictScalars g.hom).obj (M ⊗ N) :=

@@ -158,8 +158,9 @@ $((W(R) \otimes_{W(k)} B)[1/\pi])^n$, and $\mathrm{GL}_n$ is taken over that loc
 consists of, for every perfect $k$-algebra $R$, an action `act` of $\mathrm{GL}_n$ on lattices,
 sending a lattice to its image under the matrix, and a lattice `standard R` whose module is the
 standard lattice, such that the scalar extensions of $D$ send standard lattices to standard
-lattices, invertible matrices with integral entries fix the standard lattice and preserve every
-bound $N$, and the action commutes with scalar extension along every map $R \to S$. -/
+lattices, the images of matrices in $\mathrm{GL}_n(W(R) \otimes_{W(k)} B)$ (invertible over the
+integral ring, not only over its localization) fix the standard lattice and preserve every bound
+$N$, and the action commutes with scalar extension along every map $R \to S$. -/
 structure MatrixAction (n : ℕ) (D : ScalarExtension p k B pi n) where
   act : ∀ (R : PerfectAlgebra p k), GL (Fin n) (Rational p k B pi R) →
     Lattice p k B pi R n → Lattice p k B pi R n

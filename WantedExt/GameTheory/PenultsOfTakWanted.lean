@@ -10,7 +10,8 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.Bounds.Defs
+public import MathlibExt.GameTheory.PenultsOfTak.FifthBound
+public import MathlibExt.GameTheory.PenultsOfTak.LargestPenult
 public import MathlibExt.GameTheory.PenultsOfTak.WeightedCrossBound
 
 namespace MetaMathlibExt
@@ -92,18 +93,6 @@ public theorem_wanted impartialTak_exists_penult_card {n x : ℕ} (hn : 4 ≤ n)
     (hlo : n ^ 2 - 4 * (n - 2) - 2 ≤ x) (hhi : x ≤ n ^ 2 - 2 * n) :
     ∃ S : Finset (Fin n × Fin n), placementPenult takHasRoad S ∧ S.card = x
 
-/-- **The largest Impartial Tak penult.** Impartial Tak is the placement game on the $n \times n$
-board whose play ends once the tokens contain a road. For every $n \ge 2$, the largest number of
-tokens in an Impartial Tak penult on the $n \times n$ board is $U(n) = n^2 - 2n$: some penult has
-exactly $n^2 - 2n$ tokens and no penult has more.
-
-Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
-Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
-Article G1, Corollary 1 (`integers-2025-G1-cor-1`). -/
-public theorem_wanted impartialTak_isGreatest_penult_card {n : ℕ} (hn : 2 ≤ n) :
-    IsGreatest {x | ∃ S : Finset (Fin n × Fin n), placementPenult takHasRoad S ∧ S.card = x}
-      (n ^ 2 - 2 * n)
-
 /-- **Impartial Tak penults with about $n^2/3$ tokens.** Impartial Tak is the placement game on
 the $n \times n$ board whose play ends once the tokens contain a road. For every $n \ge 6$ there
 is an Impartial Tak penult $S$ on the $n \times n$ board whose number of tokens $|S|$ satisfies
@@ -138,18 +127,6 @@ public theorem_wanted impartialTak_penult_cross_nonempty {n : ℕ} {S : Finset (
     (hS : placementPenult takHasRoad S) (c : Fin n × Fin n) (hr : 1 ≤ (c.1 : ℕ))
     (hr' : (c.1 : ℕ) + 1 < n) (hc : 1 ≤ (c.2 : ℕ)) (hc' : (c.2 : ℕ) + 1 < n) :
     ∃ p ∈ S, p = c ∨ takAdjacent p c
-
-/-- **An $n^2/5$ lower bound for Impartial Tak penults.** Impartial Tak is the placement game on
-the $n \times n$ board whose play ends once the tokens contain a road. There is a real constant $C$
-such that for every natural number $n$, every Impartial Tak penult on the $n \times n$ board has at
-least $n^2/5 - Cn$ tokens; that is, every penult has at least $n^2/5 + O(n)$ tokens.
-
-Source: Boris Alexeev, Paul Ellis, Michael Richter, and Thotsaporn Aek Thanatipanonda, *The
-Penults of Tak: Adventures in Impartial, Normal-Play, Positional Games*, INTEGERS 25 (2025),
-Article G1, Proposition 9 (`integers-2025-G1-prop-9`). -/
-public theorem_wanted impartialTak_penult_card_ge_fifth :
-    ∃ C : ℝ, ∀ (n : ℕ) (S : Finset (Fin n × Fin n)), placementPenult takHasRoad S →
-      (n : ℝ) ^ 2 / 5 - C * n ≤ S.card
 
 /-- **Every Thick Cross holds three tokens of an Impartial Tak penult.** Impartial Tak is the
 placement game on the $n \times n$ board whose play ends once the tokens contain a road. Index the

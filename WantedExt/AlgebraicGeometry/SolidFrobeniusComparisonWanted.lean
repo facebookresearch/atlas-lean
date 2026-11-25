@@ -92,7 +92,9 @@ exists; Mann, Defs. 3.9.10, 3.9.21). -/
 public def_wanted localFpScalars (hdiv : π.element ∣ (p : P.pair.plus))
     (hP : IsStrictlyTotallyDisconnected p P) : FpScalarModel p P π
 
-/-- The elaborated request keeps the divisibility hypothesis `π ∣ p`. -/
+/-- The clopen-idempotent coefficient map `localFpScalars` for the pseudouniformizer $\pi$ of the
+strictly totally disconnected affine untilting $P$ (`hP`), applied to the divisibility hypothesis
+$\pi \mid p$ (`hdiv`). -/
 private def check_localFpScalars (hdiv : π.element ∣ (p : P.pair.plus))
     (hP : IsStrictlyTotallyDisconnected p P) : DefWanted (FpScalarModel p P π) :=
   localFpScalars p P π hdiv hP

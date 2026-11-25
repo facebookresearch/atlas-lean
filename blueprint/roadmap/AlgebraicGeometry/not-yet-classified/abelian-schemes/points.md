@@ -1,4 +1,5 @@
 # Points
 
-Actual T-valued points. With `CategoryTheory.MonObj` open, they form a commutative group
-by Mathlib's `CategoryTheory.Hom.commGroup`.
+The `T`-valued points of `A`, for a scheme `T` over `S`: the morphisms `T ⟶ A` over `S`. They
+form a commutative group under the group law of `A` (`CategoryTheory.Hom.commGroup`, a scoped
+instance in `CategoryTheory.MonObj`).

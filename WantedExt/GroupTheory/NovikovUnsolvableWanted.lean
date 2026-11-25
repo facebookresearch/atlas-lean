@@ -38,7 +38,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.PresentedGroup
 public import Mathlib.GroupTheory.FreeGroup.Basic
 public import Mathlib.Computability.PartrecCode
-public import WantedExt.GroupTheory.WordProblemSolvableShared
+public import MathlibExt.GroupTheory.WordProblemSolvableShared
 
 @[expose] public section
 

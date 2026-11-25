@@ -1,4 +1,5 @@
 # Rational Derivative
 
-A derivation of `ℂ(t)` normalized by the actual rational coordinate.
-This is characterized toolbox data, not an existence axiom.
+A $\mathbb{C}$-linear derivation $\delta$ of the rational function field $\mathbb{C}(t)$
+(`derivation`) normalized by $\delta(t) = 1$ (`coordinate`); it is therefore the derivative
+$d/dt$.

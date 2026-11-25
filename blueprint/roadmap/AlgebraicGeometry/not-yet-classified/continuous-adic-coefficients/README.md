@@ -9,4 +9,3 @@
 - [Scalar Extension](scalar-extension.md)
 - [Lattice Inclusion Sheaf](lattice-inclusion-sheaf.md)
 - [Lattice Scalar Comparison](lattice-scalar-comparison.md)
-- [Scalar extension of continuous maps to an open lattice](lattice-scalar-comparison-is-iso.md)

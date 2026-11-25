@@ -141,12 +141,15 @@ variable {H : Type} [Group H] [Fintype H]
   (r : H →* Equiv.Perm (Fin n)) (i : ℕ) (R : Type 1) [CommRing R]
 
 /-- Thom data for powers of affine cycles: over a perfect field $k$, for the given motivic interface
-data and canonical affine source, a free quotient `U` of a finite group $H$ with affine base, a
-permutation representation $r : H → S_n$, $i ∈ ℕ$ and a ring $R$, every finite correspondence $z$
-with coefficients in $R$ from a smooth affine $k$-scheme $X$ to the affine space $\mathbb A^i$ of
-`A` is the input of a `FinitePowerThomTest` on $X$: a power quotient with its cycle descent and
-diagonal, the pulled-back power bundle and its complement, and a Thom class whose Thom action is
-bijective, assembled for $z$. -/
+data (whose comparison maps
+$\mathbb{Z}_{tr}(\mathbb{A}^m)/\mathbb{Z}_{tr}(\mathbb{A}^m - 0) \otimes M \to K(M(m), 2m)$ are
+assumed to be motivic weak equivalences, natural in $M$, multiplicative and normalized in rank one),
+a free quotient `U` of a finite group $H$ with affine base, a permutation representation
+$r : H → S_n$, $i \in \mathbb{N}$ and a ring $R$, every finite correspondence $z$ with coefficients
+in $R$ from a smooth affine $k$-scheme $X$ to the affine space $\mathbb A^i$ of `A` is the input of
+a `FinitePowerThomTest` on $X$: a power quotient with its cycle descent and diagonal, the
+pulled-back power bundle and its complement, and a Thom class whose Thom action is bijective,
+assembled for $z$. -/
 def_wanted affinePowerThomAssembly [PerfectField k] [IsAffine U.base.scheme.left]
     (independentCanonicalAffineSource : CanonicalAffineSource N B I Q F J V T₀ K₀ F₀ D S M₁ hF
       Kt Et O Raff Caff Lt Zi)
@@ -156,14 +159,16 @@ def_wanted affinePowerThomAssembly [PerfectField k] [IsAffine U.base.scheme.left
       t.X = X ∧ HEq t.input z}
 
 /-- The canonical $n$-th power on a free quotient (Voevodsky, §5): over a perfect field $k$, for the
-given motivic interface data and canonical affine source, assuming that the representability map is
-bijective and that smashing with every pointed space, followed by localization, inverts motivic
-weak equivalences, and for $n > 0$, a free quotient `U` of a finite group $H$, a permutation
-representation $r : H → S_n$, $i \in \mathbb{N}$, a ring $R$ and an affine free replacement of `U`
-(an affine free quotient with an equivariant map to `U` whose map of bases is a motivic weak
-equivalence), there is a morphism from the smash product of the affine model of $K(R(i), 2i)$ with
-the base of `U` to $K(R(ni), 2ni)$ in the motivic homotopy category that satisfies the finite power
-normalization on `U` and on every affine free quotient over `U`. -/
+given motivic interface data (whose comparison maps
+$\mathbb{Z}_{tr}(\mathbb{A}^m)/\mathbb{Z}_{tr}(\mathbb{A}^m - 0) \otimes M \to K(M(m), 2m)$ are
+assumed to be motivic weak equivalences, natural in $M$, multiplicative and normalized in rank one),
+assuming that the representability map is bijective and that smashing with every pointed space,
+followed by localization, inverts motivic weak equivalences, and for $n > 0$, a free quotient `U` of
+a finite group $H$, a permutation representation $r : H → S_n$, $i \in \mathbb{N}$, a ring $R$ and
+an affine free replacement of `U` (an affine free quotient with an equivariant map to `U` whose map
+of bases is a motivic weak equivalence), there is a morphism from the smash product of the affine
+model of $K(R(i), 2i)$ with the base of `U` to $K(R(ni), 2ni)$ in the motivic homotopy category that
+satisfies the finite power normalization on `U` and on every affine free quotient over `U`. -/
 def_wanted finiteCanonicalPower [PerfectField k] (hn : 0 < n)
     (replacement : AffineFreeReplacement A U) :
     {f : PowerRealizationMorphism A N B I Q (representedPointed U.base) i n R //
@@ -182,10 +187,12 @@ def_wanted regularStageAffineReplacement [PerfectField k]
     AffineFreeReplacement A (G.step m).quotient
 
 /-- The canonical $n$-th power on the geometric classifying space (Voevodsky, Construction 5.3):
-over a perfect field $k$, for the given motivic interface data and canonical affine source, assuming
-that the representability map is bijective and that smashing with every pointed space, followed by
-localization, inverts motivic weak equivalences, and for $n > 0$, a finite group $H$ with a
-permutation representation $r : H → S_n$, $i \in \mathbb{N}$, a ring $R$ and a geometric
+over a perfect field $k$, for the given motivic interface data (whose comparison maps
+$\mathbb{Z}_{tr}(\mathbb{A}^m)/\mathbb{Z}_{tr}(\mathbb{A}^m - 0) \otimes M \to K(M(m), 2m)$ are
+assumed to be motivic weak equivalences, natural in $M$, multiplicative and normalized in rank one),
+assuming that the representability map is bijective and that smashing with every pointed space,
+followed by localization, inverts motivic weak equivalences, and for $n > 0$, a finite group $H$
+with a permutation representation $r : H → S_n$, $i \in \mathbb{N}$, a ring $R$ and a geometric
 approximation `G` of $BH$, there is a morphism from the smash product of the affine model of
 $K(R(i), 2i)$ with the geometric classifying space of `G` to $K(R(ni), 2ni)$ in the motivic
 homotopy category whose restriction to every stage of `G` satisfies the finite power normalization
@@ -202,9 +209,11 @@ variable {ell : ℕ} [Fact ell.Prime]
   (Eprime : PrimeThomDiagram G) (point : BasedApproximation P G)
 
 /-- The universal Thom class of the permutation bundle (Voevodsky, §6): over a perfect field $k$,
-for a prime $ℓ$ invertible in $k$, the given motivic interface data and canonical affine source, and
-the permutation bundle diagram `Eprime` of a geometric approximation of $BS_ℓ$, there is an integral
-class of bidegree $(2(ℓ-1), ℓ-1)$ on the colimit of the Thom spaces of the cokernel bundles
+for a prime $ℓ$ invertible in $k$, the given motivic interface data (whose comparison maps
+$\mathbb{Z}_{tr}(\mathbb{A}^m)/\mathbb{Z}_{tr}(\mathbb{A}^m - 0) \otimes M \to K(M(m), 2m)$ are
+assumed to be motivic weak equivalences, natural in $M$, multiplicative and normalized in rank one),
+and the permutation bundle diagram `Eprime` of a geometric approximation of $BS_ℓ$, there is an
+integral class of bidegree $(2(ℓ-1), ℓ-1)$ on the colimit of the Thom spaces of the cokernel bundles
 $ξ_ℓ/\mathcal O$ that restricts at every stage to a Thom class of $ξ_ℓ/\mathcal O$
 (`GlobalPrimeThomClass`). -/
 def_wanted universalPrimeThomClass [PerfectField k]
@@ -216,9 +225,11 @@ variable (t : GlobalPrimeThomClass N B I Q F J V T₀ Eprime)
   (delta : CoefficientConeSource B (integralSequence ell) (primeWeight ell))
 
 /-- The based class $c$ (Voevodsky, Theorem 6.14): over a perfect field $k$, for a prime $ℓ$
-invertible in $k$, the given motivic interface data and canonical affine source, a base point
-`point` of the geometric approximation of $BS_ℓ$, a universal Thom class `t` of its permutation
-bundle diagram and the given integral Bockstein data `delta`, there is a class
+invertible in $k$, the given motivic interface data (whose comparison maps
+$\mathbb{Z}_{tr}(\mathbb{A}^m)/\mathbb{Z}_{tr}(\mathbb{A}^m - 0) \otimes M \to K(M(m), 2m)$ are
+assumed to be motivic weak equivalences, natural in $M$, multiplicative and normalized in rank one),
+a base point `point` of the geometric approximation of $BS_ℓ$, a universal Thom class `t` of its
+permutation bundle diagram and the given integral Bockstein data `delta`, there is a class
 $c ∈ \tilde H^{2ℓ-3, ℓ-1}(BS_ℓ, \mathbb Z/ℓ)$ whose integral Bockstein is the integral Euler class
 (the pullback of `t` along the zero section, whose reduction mod $ℓ$ is $d$) and whose pullback to
 the base point vanishes (`BasedIntegralLift`). -/
@@ -228,9 +239,11 @@ def_wanted basedPrimeBoundaryClass [PerfectField k]
     BasedIntegralLift N B I Q F J V T₀ Eprime point t delta
 
 /-- Uniqueness of the based class $c$ (Voevodsky, Theorem 6.14): over a perfect field $k$, for a
-prime $ℓ$ invertible in $k$, the given motivic interface data and canonical affine source, a base
-point of the geometric approximation of $BS_ℓ$, a universal Thom class `t` of its permutation bundle
-diagram and the given integral Bockstein data `delta`, any two classes in
+prime $ℓ$ invertible in $k$, the given motivic interface data (whose comparison maps
+$\mathbb{Z}_{tr}(\mathbb{A}^m)/\mathbb{Z}_{tr}(\mathbb{A}^m - 0) \otimes M \to K(M(m), 2m)$ are
+assumed to be motivic weak equivalences, natural in $M$, multiplicative and normalized in rank one),
+a base point of the geometric approximation of $BS_ℓ$, a universal Thom class `t` of its permutation
+bundle diagram and the given integral Bockstein data `delta`, any two classes in
 $\tilde H^{2ℓ-3, ℓ-1}(BS_ℓ, \mathbb Z/ℓ)$ whose integral Bockstein is the integral Euler class (the
 pullback of `t` along the zero section, whose reduction mod $ℓ$ is $d$) and whose pullback to the
 base point vanishes (`BasedIntegralLift`) are equal. -/
@@ -252,16 +265,19 @@ def_wanted nativeRootClass [PerfectField k] (hchar : (ell : k) ≠ 0)
 variable (c : BasedIntegralLift N B I Q F J V T₀ Eprime point t delta)
 
 /-- The completed $c$, $d$ expansion of the cohomology of $X ∧ BS_ℓ$ (Voevodsky, Theorem 6.16): over
-a perfect field $k$, for a prime $ℓ$ invertible in $k$, the given motivic interface data and
-canonical affine source, the based class `c` (for a base point, a universal Thom class `t` of the
-permutation bundle diagram and integral Bockstein data `delta`) and the mod-$ℓ$ Euler class $d$ (the
-reduction mod $ℓ$ of the pullback of `t` along the zero section), and for every pointed space $X$
-and all $p, q \in \mathbb{Z}$, there is an additive isomorphism from
-$\tilde H^{p,q}(X ∧ BS_ℓ, \mathbb Z/ℓ)$ to the product, over $i ≥ 0$, of the coefficient groups of
-$d^i$ and of $c\,d^i$ (the groups $\tilde H^{*,*}(X, \mathbb Z/ℓ)$ in the complementary bidegrees)
-that sends the external products $a × d^i$ and $a × c\,d^i$ to $a$ in the corresponding factor, and
-every class is the sum of its series $\sum_i (a_i × d^i + b_i × c\,d^i)$, converging in the
-topology given by the stages of $BS_ℓ$ (`CompletedBSDecomposition`). -/
+a perfect field $k$, for a prime $ℓ$ invertible in $k$, the given motivic interface data (whose
+comparison maps
+$\mathbb{Z}_{tr}(\mathbb{A}^m)/\mathbb{Z}_{tr}(\mathbb{A}^m - 0) \otimes M \to K(M(m), 2m)$ are
+assumed to be motivic weak equivalences, natural in $M$, multiplicative and normalized in rank one),
+the based class `c` (for a base point, a universal Thom class `t` of the permutation bundle diagram
+and integral Bockstein data `delta`) and the mod-$ℓ$ Euler class $d$ (the reduction mod $ℓ$ of the
+pullback of `t` along the zero section), and for every pointed space $X$ and all
+$p, q \in \mathbb{Z}$, there is an additive isomorphism from $\tilde H^{p,q}(X ∧ BS_ℓ, \mathbb Z/ℓ)$
+to the product, over $i ≥ 0$, of the coefficient groups of $d^i$ and of $c\,d^i$ (the groups
+$\tilde H^{*,*}(X, \mathbb Z/ℓ)$ in the complementary bidegrees) that sends the external products
+$a × d^i$ and $a × c\,d^i$ to $a$ in the corresponding factor, and every class is the sum of its
+series $\sum_i (a_i × d^i + b_i × c\,d^i)$, converging in the topology given by the stages of $BS_ℓ$
+(`CompletedBSDecomposition`). -/
 def_wanted canonicalCompletedBSExpansion [PerfectField k]
     (independentCanonicalAffineSource : CanonicalAffineSource N B I Q F J V T₀ K₀ F₀ D S M₁ hF
       Kt Et O Raff Caff Lt Zi) (hchar : (ell : k) ≠ 0)
@@ -269,11 +285,13 @@ def_wanted canonicalCompletedBSExpansion [PerfectField k]
     CompletedBSDecomposition N B I Q F J V T₀ K₀ F₀ D S M₁ hF Eprime point t delta c X p q
 
 /-- $β(c) = d$ (Voevodsky, §6): over a perfect field $k$, for a prime $ℓ$ invertible in $k$, the
-given motivic interface data and canonical affine source and the given mod-$ℓ$ Bockstein data
-`betaSource`, the Bockstein of the based class `c` (for a base point of the geometric approximation
-of $BS_ℓ$, a universal Thom class `t` of its permutation bundle diagram and integral Bockstein data
-`delta`) is the mod-$ℓ$ Euler class $d$ (the reduction mod $ℓ$ of the pullback of `t` along the
-zero section) in $\tilde H^{2ℓ-2, ℓ-1}(BS_ℓ, \mathbb Z/ℓ)$. -/
+given motivic interface data (whose comparison maps
+$\mathbb{Z}_{tr}(\mathbb{A}^m)/\mathbb{Z}_{tr}(\mathbb{A}^m - 0) \otimes M \to K(M(m), 2m)$ are
+assumed to be motivic weak equivalences, natural in $M$, multiplicative and normalized in rank one)
+and the given mod-$ℓ$ Bockstein data `betaSource`, the Bockstein of the based class `c` (for a base
+point of the geometric approximation of $BS_ℓ$, a universal Thom class `t` of its permutation bundle
+diagram and integral Bockstein data `delta`) is the mod-$ℓ$ Euler class $d$ (the reduction mod $ℓ$
+of the pullback of `t` along the zero section) in $\tilde H^{2ℓ-2, ℓ-1}(BS_ℓ, \mathbb Z/ℓ)$. -/
 theorem_wanted beta_prime_c [PerfectField k]
     (independentCanonicalAffineSource : CanonicalAffineSource N B I Q F J V T₀ K₀ F₀ D S M₁ hF
       Kt Et O Raff Caff Lt Zi) (hchar : (ell : k) ≠ 0)
@@ -284,11 +302,13 @@ theorem_wanted beta_prime_c [PerfectField k]
         betaSource c.value) = d N B I Q F J V T₀ Eprime t
 
 /-- $c^2 = 0$ for odd $ℓ$ (Voevodsky, §6): over a perfect field $k$, for an odd prime $ℓ$ invertible
-in $k$ and the given motivic interface data and canonical affine source, the based class `c` (for a
-base point, a universal Thom class `t` and integral Bockstein data `delta`: a class in
-$\tilde H^{2ℓ-3, ℓ-1}(BS_ℓ, \mathbb Z/ℓ)$ whose integral Bockstein is the pullback of `t` along the
-zero section and whose pullback to the base point vanishes) satisfies $c ∪ c = 0$ in the mod-$ℓ$
-motivic cohomology of $BS_ℓ$. -/
+in $k$ and the given motivic interface data (whose comparison maps
+$\mathbb{Z}_{tr}(\mathbb{A}^m)/\mathbb{Z}_{tr}(\mathbb{A}^m - 0) \otimes M \to K(M(m), 2m)$ are
+assumed to be motivic weak equivalences, natural in $M$, multiplicative and normalized in rank one),
+the based class `c` (for a base point, a universal Thom class `t` and integral Bockstein data
+`delta`: a class in $\tilde H^{2ℓ-3, ℓ-1}(BS_ℓ, \mathbb Z/ℓ)$ whose integral Bockstein is the
+pullback of `t` along the zero section and whose pullback to the base point vanishes) satisfies
+$c ∪ c = 0$ in the mod-$ℓ$ motivic cohomology of $BS_ℓ$. -/
 theorem_wanted odd_prime_c_square [PerfectField k]
     (independentCanonicalAffineSource : CanonicalAffineSource N B I Q F J V T₀ K₀ F₀ D S M₁ hF
       Kt Et O Raff Caff Lt Zi) (hchar : (ell : k) ≠ 0) (hodd : ell ≠ 2) :
@@ -296,13 +316,15 @@ theorem_wanted odd_prime_c_square [PerfectField k]
       (cDegree ell) (primeWeight ell) (cDegree ell) (primeWeight ell) c.value c.value = 0
 
 /-- $c^2 = τd + ρc$ for $ℓ = 2$ (Voevodsky, §6): over a perfect field $k$ in which $2$ is
-invertible, for the given motivic interface data and canonical affine source, integral Bockstein
-data `deltaTwo` in weight one and a root-class bijection `rootTwo`, the based class `c` (for a base
-point, a universal Thom class `t` and integral Bockstein data `delta`) satisfies
-$c ∪ c = τ ∪ d + ρ ∪ c$ in the mod-$2$ motivic cohomology of $BS_2$, where $τ ∈ H^{0,1}$ is the
-class of the root $-1$ under `rootTwo` and $ρ ∈ H^{1,1}$ the class of the unit $-1$, both pulled
-back from $\operatorname{Spec} k$, and $d$ is the mod-$2$ Euler class (the reduction mod $2$ of the
-pullback of `t` along the zero section). -/
+invertible, for the given motivic interface data (whose comparison maps
+$\mathbb{Z}_{tr}(\mathbb{A}^m)/\mathbb{Z}_{tr}(\mathbb{A}^m - 0) \otimes M \to K(M(m), 2m)$ are
+assumed to be motivic weak equivalences, natural in $M$, multiplicative and normalized in rank one),
+integral Bockstein data `deltaTwo` in weight one and a root-class bijection `rootTwo`, the based
+class `c` (for a base point, a universal Thom class `t` and integral Bockstein data `delta`)
+satisfies $c ∪ c = τ ∪ d + ρ ∪ c$ in the mod-$2$ motivic cohomology of $BS_2$, where $τ ∈ H^{0,1}$
+is the class of the root $-1$ under `rootTwo` and $ρ ∈ H^{1,1}$ the class of the unit $-1$, both
+pulled back from $\operatorname{Spec} k$, and $d$ is the mod-$2$ Euler class (the reduction mod $2$
+of the pullback of `t` along the zero section). -/
 theorem_wanted two_prime_c_square [PerfectField k]
     (independentCanonicalAffineSource : CanonicalAffineSource N B I Q F J V T₀ K₀ F₀ D S M₁ hF
       Kt Et O Raff Caff Lt Zi) (hchar : (ell : k) ≠ 0) (hell : ell = 2)

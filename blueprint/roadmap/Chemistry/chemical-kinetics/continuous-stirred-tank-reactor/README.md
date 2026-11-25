@@ -16,3 +16,5 @@ explicit solution relaxes exponentially to the steady concentration $Q c_{\mathr
 - [The reactor concentration solves the reactor equation](solution-has-deriv-at.md)
 - [A reactor without flow is a batch decay](solution-zero-flow.md)
 - [A reactor without flow or reaction keeps its concentration](solution-zero-flow-zero-rate.md)
+- [Exact linearization remainder for a second-order stirred tank](linearization-remainder-of-a-second-order-reactor.md)
+- [Uniqueness for the CSTR initial value problem](eq-solution-of-has-deriv-at.md)

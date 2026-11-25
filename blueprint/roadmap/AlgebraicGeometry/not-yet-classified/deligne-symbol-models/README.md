@@ -25,5 +25,3 @@
 - [Regular Tuple](regular-tuple.md)
 - [Symbol Sources](symbol-sources.md)
 - [Local Symbol](local-symbol.md)
-- [Symbols](symbols.md)
-- [Symbols independent](symbols-independent.md)

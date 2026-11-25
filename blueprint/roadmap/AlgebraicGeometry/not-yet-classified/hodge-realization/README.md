@@ -8,5 +8,3 @@
 - [Hodge Filtration](hodge-filtration.md)
 - [Comparison In Degree](comparison-in-degree.md)
 - [Pure Betti Hodge Data](pure-betti-hodge-data.md)
-- [Holomorphic poincare](holomorphic-poincare.md)
-- [Smooth proper hodge realization](smooth-proper-hodge-realization.md)

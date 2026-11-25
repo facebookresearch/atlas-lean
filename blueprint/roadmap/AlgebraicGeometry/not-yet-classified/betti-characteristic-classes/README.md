@@ -13,4 +13,3 @@
 - [Projection Cap Power](projection-cap-power.md)
 - [Whitney Coefficient](whitney-coefficient.md)
 - [Characteristic Class Theory](characteristic-class-theory.md)
-- [Betti characteristic class theory](characteristic-theory.md)

@@ -7,4 +7,3 @@
 - [Gram](gram.md)
 - [Lattice Pairing](lattice-pairing.md)
 - [Integral Cup Comparison](integral-cup-comparison.md)
-- [Integral cup-product lattice of a K3 surface](integral-k3-cup-lattice.md)

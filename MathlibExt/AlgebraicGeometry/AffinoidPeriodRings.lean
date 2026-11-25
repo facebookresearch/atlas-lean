@@ -60,7 +60,9 @@ abbrev Ainf := WittVector p (PreTilt P.plus p)
 /-- The native Fontaine map on these actual rings. -/
 def theta : Ainf p P →+* P.plus := WittVector.fontaineTheta P.plus p
 
-/-- Its ordinary source surjectivity is already native Mathlib. -/
+/-- Fontaine's map $\theta : A_{\mathrm{inf}} = W(A^{+\flat}) \to A^+$ is surjective, for a prime
+$p$ and a perfectoid pair $P$ with ring of integral elements $A^+$ satisfying `IntegralPeriodInput`
+(in particular, Frobenius is surjective on $A^+/p$). -/
 theorem theta_surjective : Function.Surjective (theta p P) :=
   surjective_fontaineTheta D.frobenius
 

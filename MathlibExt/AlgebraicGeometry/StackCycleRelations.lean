@@ -109,9 +109,15 @@ def FiniteTypeArtin (k : Type) [Field k] (X : Stack (Spec (.of k))) : Prop :=
   X.HasRepresentableDiagonal ∧ HasKreschDiagonal X ∧ ∃ a : X.SmoothAtlas,
     LocallyOfFiniteType a.U.hom ∧ QuasiCompact a.U.hom
 
-/-- A construction dictionary on an explicitly fixed geometric scope.
-Closed-substack closure is retained, so no provider on arbitrary fppf
-stacks or arbitrary bases is asserted by a finite-type theorem. -/
+/-- Cycle operations on a class `scope` of stacks over $S$ that is closed under passing to closed
+substacks (`closedScope`). For every stack $X$ in the class, principal cycles (`principal`): when
+$X$ has integral dimension $d + 1$ (`HasIntegralDimension`), a $d$-cycle $\mathrm{div}(f)$ for
+every rational function $f$ on $X$ (a compatible family of units of the function fields of its
+integral atlases), whose pullback to every integral smooth atlas is the divisor of orders of $f$
+there, these pullbacks being defined through the Noetherian atlas fibres of integral closed
+substacks. For every closed substack $C$ of $X$ (`closedImage`): the image in $X$ of every
+integral closed substack $Z$ of $C$ of dimension $d$, an integral closed substack of dimension $d$
+whose objects are those isomorphic to images of objects of $Z$. -/
 structure CycleConstructionData (S : Scheme.{0}) (scope : Stack S → Prop) where
   closedScope : ∀ (X : Stack S), scope X → ∀ C : ClosedSubstack X, scope C.source
   principal : ∀ (X : Stack S), scope X → PrincipalCycleData X

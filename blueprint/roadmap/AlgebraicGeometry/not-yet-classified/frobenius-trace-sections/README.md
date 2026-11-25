@@ -17,4 +17,3 @@
 - [Local Test Infimum is Least](local-test-infimum-is-least.md)
 - [Trace Trivializing Cover](trace-trivializing-cover.md)
 - [Test Ideal Comparison](test-ideal-comparison.md)
-- [Nonzero infimum of the nonzero ideals compatible with Frobenius traces](local-test-infimum-ne-bot.md)

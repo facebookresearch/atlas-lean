@@ -14,5 +14,3 @@
 - [Mapping Prestack Functor](mapping-prestack-functor.md)
 - [Mapping Prestack Functor obj](mapping-prestack-functor-obj.md)
 - [Mapping Prestack Model](mapping-prestack-model.md)
-- [Algebra prestack fibrant replacement](algebra-prestack-fibrant-replacement.md)
-- [Derived mapping prestack](derived-mapping-prestack.md)
