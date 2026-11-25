@@ -44,6 +44,8 @@ section CommRing
 
 variable {R : Type u} [CommRing R] {A : Scheme.{u}} {f : A ⟶ Spec (CommRingCat.of R)}
 
+/-- On a commutative relative group law, multiplication by one is the
+identity endomorphism. -/
 theorem nsmulEnd_one (G : RelativeGroupLaw R f) (hc : G.IsCommutative) :
     G.nsmulEnd hc 1 = G.idEnd :=
   End.ext (G.nsmul_one f idPoint)
@@ -59,6 +61,8 @@ theorem nsmul_one_idPoint (G : RelativeGroupLaw K f) :
     G.nsmul f 1 idPoint = idPoint :=
   G.nsmul_one f idPoint
 
+/-- On a commutative relative group law over a field, multiplication by one
+has degree `1`. -/
 theorem endDegree_nsmulEnd_one (G : RelativeGroupLaw K f) (hc : G.IsCommutative) :
     G.endDegree (G.nsmulEnd hc 1) = 1 := by
   rw [G.nsmulEnd_one hc, G.endDegree_idEnd]
