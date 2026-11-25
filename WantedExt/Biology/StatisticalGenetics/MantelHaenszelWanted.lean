@@ -42,23 +42,28 @@ public import Mathlib.Basic.Real.Basic
 
 namespace WantedExt.Biology.StatisticalGenetics.MantelHaenszelWanted
 
-/-- The fixed-margin null expectation `E(A) = N₁ M₁ / T = (A + B)(A + C) / (A + B + C + D)` of
-the exposed-case count of a 2 × 2 table. -/
+/-- The fixed-margin null expectation `E(A) = N₁ M₁ / T = (A + B)(A + C) / (A + B + C + D)` of the
+exposed-case count of a 2 × 2 table. It is meaningful when the total `T` is positive; if `T = 0`,
+Lean's convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def expectedCount (A B C D : ℝ) : ℝ :=
   (A + B) * (A + C) / (A + B + C + D)
 
-/-- The fixed-margin null variance `V(A) = N₁ N₂ M₁ M₂ / (T² (T - 1))` of the exposed-case count
-of a 2 × 2 table. -/
+/-- The fixed-margin null variance `V(A) = N₁ N₂ M₁ M₂ / (T² (T - 1))` of the exposed-case count of
+a 2 × 2 table. It is meaningful when `T > 1`; if `T = 0` or `T = 1`, Lean's convention `x / 0 = 0`
+makes the value `0`. -/
 noncomputable def countVariance (A B C D : ℝ) : ℝ :=
   (A + B) * (C + D) * (A + C) * (B + D) /
     ((A + B + C + D) ^ 2 * (A + B + C + D - 1))
 
-/-- The Mantel–Haenszel summary relative risk `R = ∑_k (A_k D_k / T_k) / ∑_k (B_k C_k / T_k)`. -/
+/-- The Mantel–Haenszel summary relative risk `R = ∑_k (A_k D_k / T_k) / ∑_k (B_k C_k / T_k)`. It is
+meaningful when every total `T_k` and the denominator `∑_k B_k C_k / T_k` are positive; a zero
+denominator gives `0` by Lean's convention `x / 0 = 0`. -/
 noncomputable def summaryRelativeRisk {K : ℕ} (A B C D : Fin K → ℝ) : ℝ :=
   (∑ k, A k * D k / (A k + B k + C k + D k)) / ∑ k, B k * C k / (A k + B k + C k + D k)
 
 /-- The Mantel–Haenszel summary chi-square `(∑_k A_k - ∑_k E(A_k))² / ∑_k V(A_k)`, without the
-continuity correction. -/
+continuity correction. It is meaningful when `∑_k V(A_k) > 0`; if that sum is `0`, Lean's convention
+`x / 0 = 0` makes the value `0`. -/
 noncomputable def summaryChiSquare {K : ℕ} (A B C D : Fin K → ℝ) : ℝ :=
   (∑ k, A k - ∑ k, expectedCount (A k) (B k) (C k) (D k)) ^ 2 /
     ∑ k, countVariance (A k) (B k) (C k) (D k)

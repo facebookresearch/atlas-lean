@@ -47,7 +47,8 @@ def nullMean (P₀ S : V → ℝ) : ℝ :=
 def nullVariance (P₀ S : V → ℝ) : ℝ :=
   ∑ v, P₀ v * (S v - nullMean P₀ S) ^ 2
 
-/-- The normalized score `Z(v) = (S(v) - μ) / σ`. -/
+/-- The normalized score `Z(v) = (S(v) - μ) / σ`. It is meaningful when the null variance `σ²` is
+positive; if `σ² = 0`, Lean's convention `x / 0 = 0` makes `Z(v) = 0`. -/
 noncomputable def normalizedScore (P₀ S : V → ℝ) (v : V) : ℝ :=
   (S v - nullMean P₀ S) / Real.sqrt (nullVariance P₀ S)
 
@@ -61,7 +62,8 @@ noncomputable def likelihood (P₀ S ℓ : V → ℝ) (γ δ : ℝ) : ℝ :=
   ∑ v, ℓ v * linearModel P₀ S γ δ v
 
 /-- The null posterior mean `Z̄ = ∑_v ℓ(v) P₀(v) Z(v) / ∑_v ℓ(v) P₀(v)` of the normalized score
-given the observed data. -/
+given the observed data. It is meaningful when `∑_v ℓ(v) P₀(v) ≠ 0`; otherwise Lean's convention
+`x / 0 = 0` makes the value `0`. -/
 noncomputable def posteriorMeanScore (P₀ S ℓ : V → ℝ) : ℝ :=
   (∑ v, ℓ v * P₀ v * normalizedScore P₀ S v) / ∑ v, ℓ v * P₀ v
 

@@ -41,11 +41,14 @@ namespace WantedExt.Biology.StatisticalGenetics.PopulationAttributableFractionWa
 
 variable {𝒵 : Type*} [Fintype 𝒵]
 
-/-- Levin's formula `Pe (RR - 1) / (1 + Pe (RR - 1))`. -/
+/-- Levin's formula `Pe (RR - 1) / (1 + Pe (RR - 1))`. It is meaningful when `1 + Pe (RR - 1) ≠ 0`,
+which holds for `Pe ∈ [0, 1)` and `RR ≥ 0` or for `Pe ∈ [0, 1]` and `RR > 0`; a zero denominator
+gives `0` by Lean's convention `x / 0 = 0`. -/
 noncomputable def levin (Pe RR : ℝ) : ℝ :=
   Pe * (RR - 1) / (1 + Pe * (RR - 1))
 
-/-- Miettinen's formula `Pc (RR - 1) / RR`. -/
+/-- Miettinen's formula `Pc (RR - 1) / RR`. It is meaningful for `RR ≠ 0`; at `RR = 0`, Lean's
+convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def miettinen (Pc RR : ℝ) : ℝ :=
   Pc * (RR - 1) / RR
 
@@ -58,32 +61,42 @@ def observedRisk (pz e r₀ r₁ : 𝒵 → ℝ) : ℝ :=
   ∑ z, pz z * (e z * r₁ z + (1 - e z) * r₀ z)
 
 /-- The causal attributable fraction `1 - P(Y(0) = 1) / P(Y = 1)`, with
-`P(Y(0) = 1) = ∑_z P(z) r₀(z)`. -/
+`P(Y(0) = 1) = ∑_z P(z) r₀(z)`. It is meaningful when `P(Y = 1) > 0`; if `P(Y = 1) = 0`, Lean's
+convention `x / 0 = 0` makes the quotient `0` and the value `1`. -/
 noncomputable def causalPAF (pz e r₀ r₁ : 𝒵 → ℝ) : ℝ :=
   1 - (∑ z, pz z * r₀ z) / observedRisk pz e r₀ r₁
 
-/-- The risk among the exposed, `P(Y = 1 | E = 1) = ∑_z P(z) e(z) r₁(z) / Pe`. -/
+/-- The risk among the exposed, `P(Y = 1 | E = 1) = ∑_z P(z) e(z) r₁(z) / Pe`. It is meaningful when
+`Pe > 0`; if `Pe = 0`, Lean's convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def riskExposed (pz e r₁ : 𝒵 → ℝ) : ℝ :=
   (∑ z, pz z * e z * r₁ z) / exposurePrevalence pz e
 
-/-- The risk among the unexposed, `P(Y = 1 | E = 0) = ∑_z P(z) (1 - e(z)) r₀(z) / (1 - Pe)`. -/
+/-- The risk among the unexposed, `P(Y = 1 | E = 0) = ∑_z P(z) (1 - e(z)) r₀(z) / (1 - Pe)`. It is
+meaningful when `Pe < 1`; if `Pe = 1`, Lean's convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def riskUnexposed (pz e r₀ : 𝒵 → ℝ) : ℝ :=
   (∑ z, pz z * (1 - e z) * r₀ z) / (1 - exposurePrevalence pz e)
 
-/-- The crude risk ratio `P(Y = 1 | E = 1) / P(Y = 1 | E = 0)`. -/
+/-- The crude risk ratio `P(Y = 1 | E = 1) / P(Y = 1 | E = 0)`. It is meaningful when `0 < Pe < 1`
+and the risk among the unexposed is positive; a zero denominator gives `0` by Lean's convention
+`x / 0 = 0`. -/
 noncomputable def crudeRR (pz e r₀ r₁ : 𝒵 → ℝ) : ℝ :=
   riskExposed pz e r₁ / riskUnexposed pz e r₀
 
-/-- The risk ratio standardized to the exposed, `∑_z P(z) e(z) r₁(z) / ∑_z P(z) e(z) r₀(z)`. -/
+/-- The risk ratio standardized to the exposed, `∑_z P(z) e(z) r₁(z) / ∑_z P(z) e(z) r₀(z)`. It is
+meaningful when `∑_z P(z) e(z) r₀(z) > 0`; a zero denominator gives `0` by Lean's convention
+`x / 0 = 0`. -/
 noncomputable def exposedStandardizedRR (pz e r₀ r₁ : 𝒵 → ℝ) : ℝ :=
   (∑ z, pz z * e z * r₁ z) / ∑ z, pz z * e z * r₀ z
 
-/-- The risk ratio standardized to the total population, `∑_z P(z) r₁(z) / ∑_z P(z) r₀(z)`. -/
+/-- The risk ratio standardized to the total population, `∑_z P(z) r₁(z) / ∑_z P(z) r₀(z)`. It is
+meaningful when `∑_z P(z) r₀(z) > 0`; a zero denominator gives `0` by Lean's convention `x / 0 = 0`.
+-/
 noncomputable def totalStandardizedRR (pz r₀ r₁ : 𝒵 → ℝ) : ℝ :=
   (∑ z, pz z * r₁ z) / ∑ z, pz z * r₀ z
 
 /-- The exposure prevalence among cases, `Pc = P(E = 1 | Y = 1) = ∑_z P(z) e(z) r₁(z) / P(Y = 1)`.
--/
+It is meaningful when `P(Y = 1) > 0`; if `P(Y = 1) = 0`, Lean's convention `x / 0 = 0` makes the
+value `0`. -/
 noncomputable def casePrevalence (pz e r₀ r₁ : 𝒵 → ℝ) : ℝ :=
   (∑ z, pz z * e z * r₁ z) / observedRisk pz e r₀ r₁
 

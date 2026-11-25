@@ -49,8 +49,8 @@ noncomputable def onlyCaseProb {M K : ℕ} (α : ℝ) (β : Fin K → ℝ) (x : 
     (j : Fin (M + 1)) : ℝ :=
   Real.sigmoid (α + β ⬝ᵥ x j) * ∏ i ∈ Finset.univ.erase j, (1 - Real.sigmoid (α + β ⬝ᵥ x i))
 
-/-- The conditional probability that subject `j` is the case, given exactly one case in the set.
--/
+/-- The conditional probability that subject `j` is the case, given exactly one case in the set. The
+denominator is always positive (every factor lies in `(0, 1)`), so no division by zero occurs. -/
 noncomputable def conditionalCaseProb {M K : ℕ} (α : ℝ) (β : Fin K → ℝ)
     (x : Fin (M + 1) → Fin K → ℝ) (j : Fin (M + 1)) : ℝ :=
   onlyCaseProb α β x j / ∑ i, onlyCaseProb α β x i
@@ -94,7 +94,8 @@ public theorem_wanted conditionalCaseProb_add_const {M K : ℕ} (α : ℝ) (β :
 
 /-- The 1:1 binary-exposure conditional log-likelihood
 `n₁₀ log (e^β / (1 + e^β)) + n₀₁ log (1 / (1 + e^β))`, from `n₁₀` pairs with the case exposed and
-the control unexposed and `n₀₁` pairs with the reverse. -/
+the control unexposed and `n₀₁` pairs with the reverse. The denominators `1 + e^β` are always
+positive, so no division by zero occurs. -/
 noncomputable def pairedConditionalLogLik (n₁₀ n₀₁ : ℕ) (β : ℝ) : ℝ :=
   n₁₀ * Real.log (Real.exp β / (1 + Real.exp β)) + n₀₁ * Real.log (1 / (1 + Real.exp β))
 

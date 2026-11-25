@@ -42,18 +42,21 @@ namespace WantedExt.Biology.StatisticalGenetics.CaseOnlyInteractionWanted
 open Filter Topology
 
 /-- The risk-ratio interaction `SRR = RR_ge / (RR_g RR_e)` for cell masses `a, …, h` (cases and
-non-cases at `(G, E) = (0, 0), (1, 0), (0, 1), (1, 1)`), where each relative risk compares the
-risk in a cell with the risk `a / (a + b)` in the doubly unexposed cell. -/
+non-cases at `(G, E) = (0, 0), (1, 0), (0, 1), (1, 1)`), where each relative risk compares the risk
+in a cell with the risk `a / (a + b)` in the doubly unexposed cell. It is meaningful for positive
+cell masses; if any denominator is `0`, Lean's convention `x / 0 = 0` applies. -/
 noncomputable def riskRatioInteraction (a b c d e f g h : ℝ) : ℝ :=
   (g / (g + h) / (a / (a + b))) /
     ((c / (c + d) / (a / (a + b))) * (e / (e + f) / (a / (a + b))))
 
 /-- The odds-ratio interaction `SOR = OR_ge / (OR_g OR_e)`, with `OR_g = b c / (a d)`,
-`OR_e = b e / (a f)` and `OR_ge = b g / (a h)`. -/
+`OR_e = b e / (a f)` and `OR_ge = b g / (a h)`. It is meaningful for positive cell masses; if any
+denominator is `0`, Lean's convention `x / 0 = 0` applies. -/
 noncomputable def oddsRatioInteraction (a b c d e f g h : ℝ) : ℝ :=
   (b * g / (a * h)) / ((b * c / (a * d)) * (b * e / (a * f)))
 
-/-- The case-only odds ratio `a g / (c e)` between genotype and exposure among the cases. -/
+/-- The case-only odds ratio `a g / (c e)` between genotype and exposure among the cases. It is
+meaningful when `c e ≠ 0`; if `c e = 0`, Lean's convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def caseOnlyOddsRatio (a c e g : ℝ) : ℝ :=
   a * g / (c * e)
 

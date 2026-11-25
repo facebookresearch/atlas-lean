@@ -44,30 +44,35 @@ def massZ (p : Bool → Bool → Bool → ℝ) (z : Bool) : ℝ :=
 def massXZ (p : Bool → Bool → Bool → ℝ) (x z : Bool) : ℝ :=
   ∑ y, p x y z
 
-/-- The crude risk `P(Y = 1 | X = x)`. -/
+/-- The crude risk `P(Y = 1 | X = x)`. It is meaningful when `P(X = x) > 0`; if `P(X = x) = 0`,
+Lean's convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def crudeRisk (p : Bool → Bool → Bool → ℝ) (x : Bool) : ℝ :=
   (∑ z, p x true z) / massX p x
 
-/-- The stratum risk `P(Y = 1 | X = x, Z = z)`. -/
+/-- The stratum risk `P(Y = 1 | X = x, Z = z)`. It is meaningful when `P(X = x, Z = z) > 0`; if that
+mass is `0`, Lean's convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def stratumRisk (p : Bool → Bool → Bool → ℝ) (x z : Bool) : ℝ :=
   p x true z / massXZ p x z
 
-/-- The odds `t / (1 - t)` of a probability `t`. -/
+/-- The odds `t / (1 - t)` of a probability `t`. It is meaningful for `t ≠ 1` (a probability in
+`[0, 1)`); at `t = 1`, Lean's convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def odds (t : ℝ) : ℝ :=
   t / (1 - t)
 
 /-- **Mixture identity without confounding** (Greenland, Robins and Pearl 1999, p. 38). Let
 `p x y z ≥ 0` be a joint mass function of binary `X, Y, Z` with total mass `1`, with `X`
 independent of `Z` (`P(X = x, Z = z) = P(X = x) P(Z = z)` for all `x, z`) and
-`P(X = x, Z = z) > 0` for all `x, z`. Then for each `x`,
+`P(X = x, Z = z) > 0` for all `x, z`, and suppose the crude risk of the unexposed is positive,
+`P(Y = 1 | X = 0) > 0`. Then for each `x`,
 `P(Y = 1 | X = x) = ∑_z P(Z = z) P(Y = 1 | X = x, Z = z)`, and the risk ratio standardized to
 the distribution of `Z`, `∑_z P(z) P(Y = 1 | 1, z) / ∑_z P(z) P(Y = 1 | 0, z)`, equals the crude
-risk ratio `P(Y = 1 | X = 1) / P(Y = 1 | X = 0)`.
+risk ratio `P(Y = 1 | X = 1) / P(Y = 1 | X = 0)`; by the mixture identity both denominators equal
+`P(Y = 1 | X = 0)`, so neither is zero.
 
 Source: Greenland, Robins and Pearl (1999), pp. 37–38. -/
 public theorem_wanted crudeRisk_eq_mixture (p : Bool → Bool → Bool → ℝ) (hp : ∀ x y z, 0 ≤ p x y z)
     (hsum : ∑ x, ∑ y, ∑ z, p x y z = 1) (hind : ∀ x z, massXZ p x z = massX p x * massZ p z)
-    (hpos : ∀ x z, 0 < massXZ p x z) :
+    (hpos : ∀ x z, 0 < massXZ p x z) (hrisk : 0 < crudeRisk p false) :
     (∀ x, crudeRisk p x = ∑ z, massZ p z * stratumRisk p x z) ∧
       (∑ z, massZ p z * stratumRisk p true z) / (∑ z, massZ p z * stratumRisk p false z) =
         crudeRisk p true / crudeRisk p false

@@ -61,7 +61,8 @@ def hospitalMass (p : ι → ℝ) (t₀ : ℝ) (t : ι → ℝ) (S : Finset ι) 
   diseaseSetProb p S * admissionProb t₀ t S
 
 /-- The frequency of disease `c` among admitted persons whose disease set satisfies `G`:
-`∑_{S ∈ G, c ∈ S} P(S, admitted) / ∑_{S ∈ G} P(S, admitted)`. -/
+`∑_{S ∈ G, c ∈ S} P(S, admitted) / ∑_{S ∈ G} P(S, admitted)`. It is meaningful when the group has
+positive admitted mass; if that mass is `0`, Lean's convention `x / 0 = 0` makes the value `0`. -/
 noncomputable def hospitalFrequency (p : ι → ℝ) (t₀ : ℝ) (t : ι → ℝ) (G : Finset ι → Prop)
     [DecidablePred G] (c : ι) : ℝ :=
   (∑ S ∈ Finset.univ.filter (fun S => G S ∧ c ∈ S), hospitalMass p t₀ t S) /
