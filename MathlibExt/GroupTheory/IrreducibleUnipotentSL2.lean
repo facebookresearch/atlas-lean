@@ -38,11 +38,11 @@ public import Mathlib.FieldTheory.Finite.Basic
 public import Mathlib.LinearAlgebra.Matrix.FixedDetMatrices
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
-import Mathlib.Data.Int.GCD
 import Mathlib.NumberTheory.Modular
 import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 import Mathlib.Tactic.Group
 import Mathlib.Tactic.NoncommRing
+import MathlibExt.NumberTheory.ModularForms.FrickeFunctions.SLTwoZModSurjective
 
 @[expose] public section
 
@@ -113,155 +113,6 @@ private lemma lowerElem_mem_closure_elemSet {R : Type*} [CommRing R] (c : R) :
     lowerElem c ∈ closure (elemSet R) :=
   subset_closure (Or.inr ⟨c, rfl⟩)
 
-
-section SurjectiveLift
-
-
-private lemma natCast_dvd_int {p : ℕ} {z : ℤ} : (p : ℤ) ∣ z ↔ p ∣ z.natAbs :=
-  Int.natCast_dvd
-
-private def primeSel (c d : ℤ) : ℕ :=
-  ∏ p ∈ c.natAbs.primeFactors, if p ∣ d.natAbs then 1 else p
-
-private lemma dvd_primeSel {c d : ℤ} {p : ℕ} (hc : c ≠ 0) (hp : p.Prime)
-    (hpc : (p : ℤ) ∣ c) (hpd : ¬(p : ℤ) ∣ d) : p ∣ primeSel c d := by
-  have hmem : p ∈ c.natAbs.primeFactors :=
-    Nat.mem_primeFactors.mpr ⟨hp, natCast_dvd_int.mp hpc, Int.natAbs_ne_zero.mpr hc⟩
-  have h := Finset.dvd_prod_of_mem (fun q : ℕ => if q ∣ d.natAbs then 1 else q) hmem
-  simp only [if_neg (fun hcontra => hpd (natCast_dvd_int.mpr hcontra))] at h
-  exact h
-
-private lemma not_dvd_primeSel {c d : ℤ} {p : ℕ} (hp : p.Prime) (hpd : (p : ℤ) ∣ d) :
-    ¬p ∣ primeSel c d := by
-  intro hdvd
-  obtain ⟨q, hq, hpq⟩ := (Nat.Prime.prime hp).dvd_finsetProd_iff _ |>.mp hdvd
-  by_cases hqd : q ∣ d.natAbs
-  · rw [if_pos hqd] at hpq
-    exact hp.one_lt.ne' (Nat.dvd_one.mp hpq)
-  · rw [if_neg hqd] at hpq
-    have hq' : q.Prime := (Nat.mem_primeFactors.mp hq).1
-    exact hqd (((Nat.prime_dvd_prime_iff_eq hp hq').mp hpq) ▸ natCast_dvd_int.mp hpd)
-
-private theorem exists_coprime_lift (N : ℕ) [NeZero N] {c₀ d₀ : ℤ}
-    (H : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ c₀ → (p : ℤ) ∣ d₀ → ¬(p : ℤ) ∣ (N : ℤ)) :
-    ∃ γ δ : ℤ, Int.gcd γ δ = 1 ∧
-      (γ : ZMod N) = (c₀ : ZMod N) ∧ (δ : ZMod N) = (d₀ : ZMod N) := by
-  set γ : ℤ := if c₀ = 0 then (N : ℤ) else c₀ with hγ_def
-  have hγ0 : γ ≠ 0 := by
-    rw [hγ_def]
-    split
-    · exact_mod_cast NeZero.ne N
-    · assumption
-  have hγc : (γ : ZMod N) = (c₀ : ZMod N) := by
-    rw [hγ_def]
-    split
-    · next h => simp [h]
-    · rfl
-  have Hγ : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ γ → (p : ℤ) ∣ d₀ → ¬(p : ℤ) ∣ (N : ℤ) := by
-    intro p pp hpγ hpd
-    refine H p pp ?_ hpd
-    rw [hγ_def] at hpγ
-    by_cases h : c₀ = 0
-    · simp [h]
-    · rwa [if_neg h] at hpγ
-  refine ⟨γ, d₀ + (primeSel γ d₀ : ℤ) * (N : ℤ), ?_, hγc, ?_⟩
-  · by_contra hne
-    obtain ⟨p, pp, hpdvd⟩ := Nat.exists_prime_and_dvd hne
-    have h1 : (p : ℤ) ∣ γ :=
-      natCast_dvd_int.mpr (hpdvd.trans (Nat.gcd_dvd_left _ _))
-    have h2 : (p : ℤ) ∣ d₀ + (primeSel γ d₀ : ℤ) * (N : ℤ) :=
-      natCast_dvd_int.mpr (hpdvd.trans (Nat.gcd_dvd_right _ _))
-    by_cases hpd : (p : ℤ) ∣ d₀
-    · have h3 : (p : ℤ) ∣ (primeSel γ d₀ : ℤ) * (N : ℤ) := by
-        have := h2.sub hpd
-        rwa [add_sub_cancel_left] at this
-      have h3' : p ∣ primeSel γ d₀ * N := by
-        have heq : (primeSel γ d₀ : ℤ) * (N : ℤ) = ((primeSel γ d₀ * N : ℕ) : ℤ) := by
-          push_cast; ring
-        rw [heq] at h3
-        exact natCast_dvd_int.mp h3
-      rcases (Nat.Prime.dvd_mul pp).mp h3' with h4 | h4
-      · exact not_dvd_primeSel pp hpd h4
-      · exact Hγ p pp h1 hpd (natCast_dvd_int.mpr h4)
-    · have h3 : (p : ℤ) ∣ (primeSel γ d₀ : ℤ) :=
-        natCast_dvd_int.mpr (dvd_primeSel hγ0 pp h1 hpd)
-      refine hpd ?_
-      have := h2.sub (h3.mul_right (N : ℤ))
-      rwa [add_sub_cancel_right] at this
-  · push_cast
-    simp
-
-private theorem exists_sl2_int_lift {N : ℕ} [NeZero N] {a b c d : ZMod N}
-    (h : a * d - b * c = 1) :
-    ∃ α β γ δ : ℤ, α * δ - β * γ = 1 ∧
-      (α : ZMod N) = a ∧ (β : ZMod N) = b ∧ (γ : ZMod N) = c ∧ (δ : ZMod N) = d := by
-  set a₀ : ℤ := ZMod.cast a with ha₀
-  set b₀ : ℤ := ZMod.cast b with hb₀
-  set c₀ : ℤ := ZMod.cast c with hc₀
-  set d₀ : ℤ := ZMod.cast d with hd₀
-  have hcasta : ((a₀ : ℤ) : ZMod N) = a := ZMod.intCast_zmod_cast a
-  have hcastb : ((b₀ : ℤ) : ZMod N) = b := ZMod.intCast_zmod_cast b
-  have hcastc : ((c₀ : ℤ) : ZMod N) = c := ZMod.intCast_zmod_cast c
-  have hcastd : ((d₀ : ℤ) : ZMod N) = d := ZMod.intCast_zmod_cast d
-  have hdvd : (N : ℤ) ∣ a₀ * d₀ - b₀ * c₀ - 1 := by
-    rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-    push_cast
-    rw [hcasta, hcastb, hcastc, hcastd]
-    rw [sub_eq_zero]
-    exact h
-  have H : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ c₀ → (p : ℤ) ∣ d₀ → ¬(p : ℤ) ∣ (N : ℤ) := by
-    intro p pp hpc hpd hpN
-    have hone : (p : ℤ) ∣ 1 := by
-      have h1 : (p : ℤ) ∣ a₀ * d₀ - b₀ * c₀ - 1 := hpN.trans hdvd
-      have h2 : (p : ℤ) ∣ a₀ * d₀ := hpd.mul_left a₀
-      have h3 : (p : ℤ) ∣ b₀ * c₀ := hpc.mul_left b₀
-      have key : (1 : ℤ) = a₀ * d₀ - b₀ * c₀ - (a₀ * d₀ - b₀ * c₀ - 1) := by ring
-      rw [key]
-      exact (h2.sub h3).sub h1
-    exact pp.one_lt.ne' (Nat.dvd_one.mp (by exact_mod_cast hone))
-  obtain ⟨γ, δ, hγδ, hγ, hδ⟩ := exists_coprime_lift N H
-  rw [hcastc] at hγ
-  rw [hcastd] at hδ
-  set α₀ : ℤ := Int.gcdB γ δ with hα₀
-  set β₀ : ℤ := -Int.gcdA γ δ with hβ₀
-  have hdet₀ : α₀ * δ - β₀ * γ = 1 := by
-    have hbez := Int.gcd_eq_gcd_ab γ δ
-    rw [hγδ] at hbez
-    push_cast at hbez
-    rw [hα₀, hβ₀]
-    linear_combination -hbez
-  have hdet₀' : (α₀ : ZMod N) * d - (β₀ : ZMod N) * c = 1 := by
-    have := congrArg (fun z : ℤ => (z : ZMod N)) hdet₀
-    push_cast at this
-    rwa [hγ, hδ] at this
-  set lam : ZMod N := b * (α₀ : ZMod N) - a * (β₀ : ZMod N) with hlam
-  set l : ℤ := ZMod.cast lam with hl
-  have hcastl : ((l : ℤ) : ZMod N) = lam := ZMod.intCast_zmod_cast lam
-  refine ⟨α₀ + l * γ, β₀ + l * δ, γ, δ, ?_, ?_, ?_, hγ, hδ⟩
-  · linear_combination hdet₀
-  · push_cast
-    rw [hcastl, hγ, hlam]
-    linear_combination (-(α₀ : ZMod N)) * h + a * hdet₀'
-  · push_cast
-    rw [hcastl, hδ, hlam]
-    linear_combination (-(β₀ : ZMod N)) * h + b * hdet₀'
-
-private theorem surjective_specialLinearGroup_map_zmod (N : ℕ) [NeZero N] :
-    Function.Surjective
-      (Matrix.SpecialLinearGroup.map (n := Fin 2) (Int.castRingHom (ZMod N))) := by
-  intro M
-  have hdet : M 0 0 * M 1 1 - M 0 1 * M 1 0 = 1 := by
-    have hM := M.prop
-    rwa [Matrix.det_fin_two] at hM
-  obtain ⟨α, β, γ, δ, h1, ha, hb, hc, hd⟩ := exists_sl2_int_lift hdet
-  refine ⟨⟨!![α, β; γ, δ], by rw [Matrix.det_fin_two_of]; exact h1⟩, ?_⟩
-  ext i j
-  fin_cases i <;> fin_cases j <;>
-    simpa [SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, Matrix.map_apply]
-      using ‹_›
-
-end SurjectiveLift
-
 section ClosureElemSet
 
 private theorem closure_elemSet_eq_top (N : ℕ) [NeZero N] :
@@ -277,7 +128,7 @@ private theorem closure_elemSet_eq_top (N : ℕ) [NeZero N] :
     fin_cases i <;> fin_cases j <;>
       simp [hφ, ModularGroup.coe_S, Matrix.mul_apply, Fin.sum_univ_two]
   have hsurj : Function.Surjective φ :=
-    surjective_specialLinearGroup_map_zmod N
+    Matrix.SpecialLinearGroup.map_intCastRingHom_zmod_surjective N
   rw [eq_top_iff, ← Subgroup.map_top_of_surjective φ hsurj,
     ← SpecialLinearGroup.SL2Z_generators, MonoidHom.map_closure]
   refine (closure_le _).mpr ?_
@@ -297,7 +148,7 @@ variable {p : ℕ} [Fact p.Prime]
 
 private lemma exists_natCast_mul_eq {a : ZMod p} (ha : a ≠ 0) (c : ZMod p) :
     ∃ n : ℕ, (n : ZMod p) * a = c := by
-  haveI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  have : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
   obtain ⟨n, hn⟩ := ZMod.natCast_zmod_surjective (c * a⁻¹)
   refine ⟨n, ?_⟩
   rw [hn, mul_assoc, ZMod.inv_mul_of_unit a (isUnit_iff_ne_zero.mpr ha), mul_one]
@@ -312,12 +163,10 @@ private theorem range_toGL_le_of_conj_elem (H : Subgroup (GL (Fin 2) (ZMod p)))
     (hu : P * Matrix.SpecialLinearGroup.toGL (upperElem a) * P⁻¹ ∈ H)
     (hl : P * Matrix.SpecialLinearGroup.toGL (lowerElem b) * P⁻¹ ∈ H) :
     (Matrix.SpecialLinearGroup.toGL (n := Fin 2) (R := ZMod p)).range ≤ H := by
-
   set φ : SL(2, ZMod p) →* GL (Fin 2) (ZMod p) :=
     ((MulAut.conj P).toMonoidHom).comp (Matrix.SpecialLinearGroup.toGL) with hφdef
   have hφ : ∀ M : SL(2, ZMod p),
       φ M = P * Matrix.SpecialLinearGroup.toGL M * P⁻¹ := fun M => rfl
-
   have hupper : ∀ c : ZMod p, φ (upperElem c) ∈ H := by
     intro c
     obtain ⟨n, hn⟩ := exists_natCast_mul_eq ha c
@@ -328,7 +177,6 @@ private theorem range_toGL_le_of_conj_elem (H : Subgroup (GL (Fin 2) (ZMod p)))
     obtain ⟨n, hn⟩ := exists_natCast_mul_eq hb c
     rw [show lowerElem c = (lowerElem b) ^ n by rw [lowerElem_pow, hn], map_pow]
     exact pow_mem (by rw [hφ]; exact hl) n
-
   have hrange : φ.range ≤ H := by
     rw [MonoidHom.range_eq_map, ← closure_elemSet_eq_top p, MonoidHom.map_closure,
       closure_le]
@@ -336,7 +184,6 @@ private theorem range_toGL_le_of_conj_elem (H : Subgroup (GL (Fin 2) (ZMod p)))
     rcases hy with ⟨c, rfl⟩ | ⟨c, rfl⟩
     · exact hupper c
     · exact hlower c
-
   intro g hg
   obtain ⟨M, rfl⟩ := MonoidHom.mem_range.mp hg
   have hdet : Matrix.det ((P⁻¹ * Matrix.SpecialLinearGroup.toGL M * P :
@@ -400,24 +247,21 @@ private lemma eq_one_of_fixes_two {M : Matrix (Fin 2) (Fin 2) F} {v w : Fin 2 �
     (hv : M.mulVec v = v) (hw : M.mulVec w = w) (hD : v 0 * w 1 - v 1 * w 0 ≠ 0) :
     M = 1 := by
   set D := v 0 * w 1 - v 1 * w 0 with hDdef
-
   have hcancel : ∀ x y : Fin 2 → F, D • x = D • y → x = y := by
     intro x y hxy
     funext i
     have hi := congrFun hxy i
     simp only [Pi.smul_apply, smul_eq_mul] at hi
     exact mul_left_cancel₀ hD hi
-
   have hfix : ∀ x y : F, M.mulVec (x • v + y • w) = x • v + y • w := by
     intro x y
     rw [Matrix.mulVec_add, Matrix.mulVec_smul, Matrix.mulVec_smul, hv, hw]
-
   have he0 : (w 1 : F) • v + (-(v 1)) • w = D • ![1, 0] := by
     funext i
-    fin_cases i <;> simp [hDdef] <;> try ring
+    fin_cases i <;> simp [hDdef] <;> ring
   have he1 : (-(w 0) : F) • v + (v 0) • w = D • ![0, 1] := by
     funext i
-    fin_cases i <;> simp [hDdef] <;> try ring
+    fin_cases i <;> simp [hDdef] <;> ring
   have h0 : D • M.mulVec ![1, 0] = D • ![1, 0] := by
     rw [← Matrix.mulVec_smul, ← he0, hfix, he0]
   have h1 : D • M.mulVec ![0, 1] = D • ![0, 1] := by
@@ -440,8 +284,7 @@ private lemma exists_smul_eq_of_cross_eq_zero {v w : Fin 2 → F} (hv : v ≠ 0)
     simp only [not_or, not_not] at hc
     exact hv (funext_fin_two hc.1 hc.2)
   rcases eq_or_ne (v 0) 0 with h0 | h0
-  ·
-    have hv1 : v 1 ≠ 0 := by
+  · have hv1 : v 1 ≠ 0 := by
       rcases hv' with h | h
       · exact absurd h0 h
       · exact h
@@ -452,15 +295,14 @@ private lemma exists_smul_eq_of_cross_eq_zero {v w : Fin 2 → F} (hv : v ≠ 0)
         exact h'
       exact (mul_eq_zero.mp hmul).resolve_left hv1
     refine ⟨w 1 / v 1, funext_fin_two ?_ ?_⟩
-    · show w 0 = w 1 / v 1 * v 0
+    · change w 0 = w 1 / v 1 * v 0
       rw [hw0, h0, mul_zero]
-    · show w 1 = w 1 / v 1 * v 1
+    · change w 1 = w 1 / v 1 * v 1
       rw [div_mul_cancel₀ _ hv1]
-  ·
-    refine ⟨w 0 / v 0, funext_fin_two ?_ ?_⟩
-    · show w 0 = w 0 / v 0 * v 0
+  · refine ⟨w 0 / v 0, funext_fin_two ?_ ?_⟩
+    · change w 0 = w 0 / v 0 * v 0
       rw [div_mul_cancel₀ _ h0]
-    · show w 1 = w 0 / v 0 * v 1
+    · change w 1 = w 0 / v 0 * v 1
       rw [div_mul_eq_mul_div, eq_div_iff h0]
       linear_combination hkey
 
@@ -469,7 +311,6 @@ private lemma eq_upperElem_of_fixes_e0 {Q : Matrix (Fin 2) (Fin 2) F} (hQ : (Q -
   rw [mulVec_e0] at hfix
   have e00 : Q 0 0 = 1 := congrFun hfix 0
   have e10 : Q 1 0 = 0 := congrFun hfix 1
-
   have key : (Q 1 1 - 1) * (Q 1 1 - 1) = 0 := by
     have h11 := (Matrix.ext_iff.mpr hQ) 1 1
     rw [Matrix.zero_apply, pow_two, Matrix.mul_apply, Fin.sum_univ_two] at h11
@@ -534,11 +375,8 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
     (Matrix.SpecialLinearGroup.toGL (n := Fin 2) (R := ZMod p)).range ≤ H := by
   classical
   obtain ⟨u, huH, hu2, hu1⟩ := hunip
-
   obtain ⟨v, hv0, hv⟩ := exists_fixed_vec hu2
-
   obtain ⟨h, hhH, hmove⟩ := hirr v hv0
-
   have hu'H : h * u * h⁻¹ ∈ H := mul_mem (mul_mem hhH huH) (inv_mem hhH)
   have hu'2 : (((h * u * h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) - 1) ^ 2 = 0 :=
     conj_unipotent h hu2
@@ -548,12 +386,10 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
   have hw : ((h * u * h⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄).mulVec w = w := by
     rw [hwdef, Units.val_mul, Units.val_mul, Matrix.mulVec_mulVec,
       mul_assoc ((h : 𝕄) * (u : 𝕄)), hinvh, mul_one, ← Matrix.mulVec_mulVec, hv]
-
   have hD : v 0 * w 1 - v 1 * w 0 ≠ 0 := by
     intro hD0
     obtain ⟨c, hc⟩ := exists_smul_eq_of_cross_eq_zero hv0 hD0
     exact hmove c hc
-
   have hdetP : Matrix.det (!![v 0, w 0; v 1, w 1] : 𝕄) ≠ 0 := by
     rw [Matrix.det_fin_two_of]
     intro hc
@@ -565,7 +401,6 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
     rw [← Units.val_mul, inv_mul_cancel P, Units.val_one]
   have hPinv' : (P : 𝕄) * ((P⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) = 1 := by
     rw [← Units.val_mul, mul_inv_cancel P, Units.val_one]
-
   have hPe0 : (P : 𝕄).mulVec ![1, 0] = v := by
     rw [hPcoe, mulVec_e0]
     funext i
@@ -574,12 +409,10 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
     rw [hPcoe, mulVec_e1]
     funext i
     fin_cases i <;> simp
-
   have hPiv : ((P⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄).mulVec v = ![1, 0] := by
     rw [← hPe0, Matrix.mulVec_mulVec, hPinv, Matrix.one_mulVec]
   have hPiw : ((P⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄).mulVec w = ![0, 1] := by
     rw [← hPe1, Matrix.mulVec_mulVec, hPinv, Matrix.one_mulVec]
-
   have hconjfix : ∀ (g : GL (Fin 2) (ZMod p)) (x : Fin 2 → ZMod p),
       (g : 𝕄).mulVec x = x →
       ((P⁻¹ * g * P : GL (Fin 2) (ZMod p)) : 𝕄).mulVec
@@ -589,7 +422,6 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
     rw [Units.val_mul, Units.val_mul, Matrix.mulVec_mulVec,
       mul_assoc (((P⁻¹ : GL (Fin 2) (ZMod p)) : 𝕄) * (g : 𝕄)), hPinv', mul_one,
       ← Matrix.mulVec_mulVec, hx]
-
   have hQ2 : (((P⁻¹ * u * P : GL (Fin 2) (ZMod p)) : 𝕄) - 1) ^ 2 = 0 := by
     have hc := conj_unipotent (g := u) P⁻¹ hu2
     rwa [inv_inv] at hc
@@ -599,7 +431,6 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
   have hQform : ((P⁻¹ * u * P : GL (Fin 2) (ZMod p)) : 𝕄) =
       !![1, ((P⁻¹ * u * P : GL (Fin 2) (ZMod p)) : 𝕄) 0 1; 0, 1] :=
     eq_upperElem_of_fixes_e0 hQ2 hQfix
-
   have hQ'2 : (((P⁻¹ * (h * u * h⁻¹) * P : GL (Fin 2) (ZMod p)) : 𝕄) - 1) ^ 2 = 0 := by
     have hc := conj_unipotent (g := h * u * h⁻¹) P⁻¹ hu'2
     rwa [inv_inv] at hc
@@ -610,7 +441,6 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
   have hQ'form : ((P⁻¹ * (h * u * h⁻¹) * P : GL (Fin 2) (ZMod p)) : 𝕄) =
       !![1, 0; ((P⁻¹ * (h * u * h⁻¹) * P : GL (Fin 2) (ZMod p)) : 𝕄) 1 0, 1] :=
     eq_lowerElem_of_fixes_e1 hQ'2 hQ'fix
-
   have hQeq : P⁻¹ * u * P = Matrix.SpecialLinearGroup.toGL
       (upperElem (((P⁻¹ * u * P : GL (Fin 2) (ZMod p)) : 𝕄) 0 1)) := by
     apply Units.ext
@@ -619,7 +449,6 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
       (lowerElem (((P⁻¹ * (h * u * h⁻¹) * P : GL (Fin 2) (ZMod p)) : 𝕄) 1 0)) := by
     apply Units.ext
     exact hQ'form
-
   have ha : ((P⁻¹ * u * P : GL (Fin 2) (ZMod p)) : 𝕄) 0 1 ≠ 0 := by
     intro ha0
     apply hu1
@@ -642,7 +471,6 @@ theorem range_toGL_le_of_irreducible_of_exists_unipotent (H : Subgroup (GL (Fin 
     calc u = h⁻¹ * (h * u * h⁻¹) * h := by group
     _ = h⁻¹ * 1 * h := by rw [hu'1]
     _ = 1 := by group
-
   refine range_toGL_le_of_conj_elem H P ha hb ?_ ?_
   · rw [← hQeq]
     have hPQ : P * (P⁻¹ * u * P) * P⁻¹ = u := by group

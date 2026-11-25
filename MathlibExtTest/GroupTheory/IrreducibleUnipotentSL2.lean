@@ -55,7 +55,7 @@ theorem upperElem_one_unipotent_example :
     fin_cases i <;> fin_cases j <;> decide
   · intro h
     have h01 := congrArg (fun M : SL(2, ZMod 5) => (M : Matrix (Fin 2) (Fin 2) (ZMod 5)) 0 1) h
-    simp only [SL2.upperElem_coe, Matrix.one_apply_eq] at h01
+    simp only [SL2.upperElem_coe] at h01
     exact (by decide : (1 : ZMod 5) ≠ 0) h01
 
 end IrreducibleUnipotentSL2Test
