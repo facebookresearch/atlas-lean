@@ -22,6 +22,7 @@
 - [Suboptimality bound from strong convexity](sub-le-norm-sq-div-of-strong-convex-on.md)
 - [Strong convexity modulus is at most the smoothness constant](le-of-strong-convex-on-of-lipschitz-with.md)
 - [Linear convergence of gradient descent for strongly convex functions](gradient-descent-strongly-convex-linear.md)
+- [Linear convergence of gradient descent under the Polyak–Łojasiewicz inequality](linear-convergence-under-the-polyak-lojasiewicz-inequality.md)
 
 ## Expansiveness of the gradient step
 

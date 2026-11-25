@@ -50,3 +50,7 @@
 - [Split sides are neighbor-joining sides](edge-side-eq-side.md)
 - [Neighbor-joining split family](side-splits.md)
 - [Splits correspondence](side-splits-eq-edge-splits.md)
+
+- [Buneman split index and split weights of a tree metric](buneman-split-index-and-split-weights-of-a-tree.md)
+- [Pairwise compatible splits determine a unique unrooted X-tree](pairwise-compatible-splits-determine-a-unique-un.md)
+- [Split decomposition of a tree metric and uniqueness of lengths](split-decomposition-of-a-tree-metric-and-uniquen.md)

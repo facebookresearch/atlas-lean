@@ -40,3 +40,4 @@ cycles, and [Fleischner's theorem](paths-cycles-connectivity/fleischner-s-theore
 - [Directed graphs and tournaments](directed-graphs/README.md)
 - [Graph families and operations](graph-families-and-operations/README.md)
 - [Random graphs and graph limits](random-graphs/README.md)
+- [Social and complex networks](social-networks/README.md)

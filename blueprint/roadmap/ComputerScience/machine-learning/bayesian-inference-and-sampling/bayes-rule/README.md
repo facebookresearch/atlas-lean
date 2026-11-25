@@ -18,3 +18,5 @@
 - [Bayes' rule for densities](posterior-ae-eq-of-mul-eq.md)
 
 - [Simulation-based calibration: conditional no-ties and randomized ranks](simulation-based-calibration-rank-uniformity-und.md)
+
+- [Bernstein–von Mises for the Beta–Binomial allele-frequency posterior](bernstein-von-mises-for-the-beta-binomial-allele.md)
