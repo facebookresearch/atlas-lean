@@ -30,21 +30,24 @@ removed and the names restated in Mathlib style.
 module
 
 public import Mathlib.RingTheory.DedekindDomain.AdicValuation
-import Mathlib.Data.Int.Interval
-import Mathlib.GroupTheory.ArchimedeanDensely
+import Mathlib.NumberTheory.NumberField.Completion.FinitePlace
 import Mathlib.RingTheory.AdicCompletion.Basic
 import Mathlib.RingTheory.DiscreteValuationRing.Basic
 import Mathlib.RingTheory.Valuation.Discrete.Basic
-import Mathlib.RingTheory.Valuation.Archimedean
 import Mathlib.RingTheory.Valuation.Integers
 import Mathlib.Topology.Algebra.Valued.ValuationTopology
 
 /-!
-# Maximal ideal of the adic completion valuation ring
+# The valuation ring of the adic completion
 
 For a height-one prime `v` of a Dedekind domain `A` with fraction field `K`, the
 extension of `v.asIdeal` along the canonical map into the valuation ring of the
-`v`-adic completion of `K` is the maximal ideal of that valuation ring.
+`v`-adic completion of `K` is the maximal ideal of that valuation ring
+(`map_asIdeal_eq_maximalIdeal`).
+
+That valuation ring is also complete for the adic topology of its maximal ideal
+(`adicCompletionIntegers_isAdicComplete`). This needs no finiteness hypothesis on
+the residue field `A ⧸ v.asIdeal`, so the completion need not be locally compact.
 -/
 
 @[expose] public section
@@ -142,35 +145,6 @@ theorem adicCompletionIntegers_isAdicComplete (v : HeightOneSpectrum A) :
   have hv : (Valued.v : Valuation (v.adicCompletion K)
       (WithZero (Multiplicative ℤ))).Integers ↥(v.adicCompletionIntegers K) :=
     adicCompletionIntegers.integers K v
-  have : MulArchimedean (MonoidHom.mrange (Valued.v :
-      Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ)))) :=
-    MulArchimedean.comap (G := ↥(MonoidHom.mrange (Valued.v :
-        Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ)))))
-      (M := WithZero (Multiplicative ℤ))
-      (MonoidHom.mrange (Valued.v :
-        Valuation (v.adicCompletion K) (WithZero (Multiplicative ℤ)))).subtype
-      (by intro a b h; exact h)
-  have : IsPrincipalIdealRing ↥(v.adicCompletionIntegers K) := by
-    have : LocallyFiniteOrder ℤ := Int.instLocallyFiniteOrder
-    have : LocallyFiniteOrder (Multiplicative ℤ) :=
-      OrderIso.locallyFiniteOrder (⟨Multiplicative.toAdd, by simp⟩ :
-        Multiplicative ℤ ≃o ℤ)
-    unfold IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers
-    rw [(Valuation.valuationSubring.integers
-      (Valued.v)).isPrincipalIdealRing_iff_not_denselyOrdered,
-      WithZero.denselyOrdered_set_iff_subsingleton]
-    simpa using Valued.v.range_nontrivial
-  have : IsDiscreteValuationRing ↥(v.adicCompletionIntegers K) := by
-    refine { not_a_field' := ?_ }
-    unfold IsDedekindDomain.HeightOneSpectrum.adicCompletionIntegers
-    simp only [ne_eq, Ideal.ext_iff, Valuation.mem_maximalIdeal_iff, Ideal.mem_bot,
-      Subtype.ext_iff, ZeroMemClass.coe_zero, Subtype.forall,
-      Valuation.mem_valuationSubring_iff, not_forall, exists_prop]
-    obtain ⟨π, hπ⟩ := v.valuation_exists_uniformizer K
-    use (WithVal.equiv (v.valuation K)).symm π
-    simp [hπ, ← WithZero.exp_zero,
-      ← (Valued.v : Valuation (v.adicCompletion K)
-        (WithZero (Multiplicative ℤ))).map_eq_zero_iff]
   obtain ⟨ϖ, hϖ⟩ := IsDiscreteValuationRing.exists_irreducible ↥(v.adicCompletionIntegers K)
   have hball : ∀ n : ℕ, ((IsLocalRing.maximalIdeal ↥(v.adicCompletionIntegers K) ^ n :
       Ideal ↥(v.adicCompletionIntegers K)) : Set ↥(v.adicCompletionIntegers K)) =
