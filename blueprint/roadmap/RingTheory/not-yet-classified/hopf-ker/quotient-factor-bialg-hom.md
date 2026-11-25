@@ -1,4 +1,4 @@
 # Factor maps between Hopf quotients
 
-The factor map between quotients by Hopf ideals, as a
-bialgebra hom.
+For Hopf ideals `I ≤ J` of a commutative Hopf algebra
+`H` over a commutative ring `R`, the factor map `H ⧸ I → H ⧸ J`, as a bialgebra hom.

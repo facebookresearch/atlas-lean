@@ -1,4 +1,4 @@
 # Canonical map
 
-The canonical map `a ⊗ a' ↦ (a ⊗ 1) * coaction π a'` of a bialgebra map
-`π : A → B`, as an `R`-linear map `A ⊗[R] A → A ⊗[R] B`.
+For a map `π : A → B` of commutative bialgebras over a commutative ring
+`R`, the `R`-linear map `A ⊗[R] A → A ⊗[R] B` sending `a ⊗ a'` to `(a ⊗ 1) * coaction π a'`.
