@@ -1,0 +1,16 @@
+# Algebraic Weight Bundle Models
+
+- [Gm Unit](gm-unit.md)
+- [Inverse Character Function](inverse-character-function.md)
+- [Integer Character](integer-character.md)
+- [Scalar End](scalar-end.md)
+- [Fixed Comparison](fixed-comparison.md)
+- [Is Linearized Map](is-linearized-map.md)
+- [Weight Decomposition](weight-decomposition.md)
+- [Fixed Inclusion](fixed-inclusion.md)
+- [Fixed Projection](fixed-projection.md)
+- [Moving Inclusion](moving-inclusion.md)
+- [Moving Projection](moving-projection.md)
+- [Fixed Differential](fixed-differential.md)
+- [Moving Differential](moving-differential.md)
+- [Weight One Coordinate Differential](weight-one-coordinate-differential.md)

@@ -83,7 +83,11 @@ abbrev ringQuasiIso (R : CommRingCat.{u}) :
     MorphismProperty (CochainComplex (ModuleCat.{u} R) ℤ) :=
   HomologicalComplex.quasiIso (ModuleCat.{u} R) (ComplexShape.up ℤ)
 
-/-- Completed-source existence of the left derived functor of the fixed scalar source. -/
+/-- Termwise extension of scalars has a left derived functor: an instance of this class asserts
+that, for every homomorphism of commutative rings $g : R \to S$, the functor
+`scalarExtensionSource g` from $\mathbb{Z}$-indexed cochain complexes of $R$-modules to the derived
+category of $S$-modules (termwise extension of scalars along $g$, followed by the localization
+functor) has a left derived functor with respect to quasi-isomorphisms. -/
 class HasDerivedScalarExtensions : Prop where
   hasLeftDerivedFunctor : ∀ {R S : CommRingCat.{u}} (g : R ⟶ S),
     (scalarExtensionSource g).HasLeftDerivedFunctor (ringQuasiIso R)
@@ -109,7 +113,11 @@ instance derivedScalarExtension_isLeftDerivedFunctor :
   dsimp only [derivedScalarExtension, derivedScalarExtensionCounit]
   infer_instance
 
-/-- The actual derived tilde functor under the completed-source exactness proof input. -/
+/-- The derived tilde functor of a commutative ring $R$ whose tilde functor
+$M \mapsto \widetilde{M}$, from $R$-modules to sheaves of modules on $\operatorname{Spec} R$,
+preserves finite limits: the functor from the derived category of $R$-modules to the derived
+category of sheaves of modules on $\operatorname{Spec} R$ induced by this exact functor
+(`Functor.mapDerivedCategory`), which applies $\widetilde{(-)}$ termwise to cochain complexes. -/
 def derivedTilde (R : CommRingCat.{u}) [PreservesFiniteLimits (tilde.functor R)] :
     DerivedCategory (ModuleCat.{u} R) ⥤ FourierMukai.D (Spec R) :=
   (tilde.functor R).mapDerivedCategory
@@ -123,8 +131,19 @@ def derivedTildeFactors (R : CommRingCat.{u}) [PreservesFiniteLimits (tilde.func
 variable [HasDerivedPullbacks.{u}]
   [PreservesFiniteLimits (tilde.functor R)] [PreservesFiniteLimits (tilde.functor S)]
 
-/-- Completed-source affine comparison. Its map is pinned by the native
-cochain counits and ordinary coefficient comparison, for every actual complex. -/
+/-- A comparison of derived pullback along $\operatorname{Spec} g$ with derived extension of scalars
+along a homomorphism of commutative rings $g : R \to S$, given derived pullbacks, derived scalar
+extensions, and tilde functors of $R$ and $S$ that preserve finite limits: a natural isomorphism
+$L(\operatorname{Spec} g)^* \widetilde{K} \cong (S \otimes^{L}_R K)^\sim$ of functors from the
+derived category of $R$-modules to the derived category of sheaves of modules on
+$\operatorname{Spec} S$, such that for every cochain complex $P$ of $R$-modules the two resulting
+maps $L(\operatorname{Spec} g)^* \widetilde{P} \to (S \otimes_R P)^\sim$ in the derived category
+agree, where $\widetilde{P}$ and $S \otimes_R P$ are taken termwise: the counit of derived pullback
+at $\widetilde{P}$ followed by the termwise isomorphism
+$(\operatorname{Spec} g)^* \widetilde{P} \cong (S \otimes_R P)^\sim$ (`cochainComparison`), and this
+natural isomorphism at $P$ followed by the derived tilde of the counit of derived scalar extension
+at $P$. The derived tilde functors are identified with termwise tilde on complexes by
+`derivedTildeFactors`. -/
 structure DerivedComparison where
   comparison : derivedTilde R ⋙ derivedPullback (Spec.map g) ≅
     derivedScalarExtension g ⋙ derivedTilde S
