@@ -28,6 +28,37 @@ example : 4 ≤ (∑ p : Nat.Partition 4, p.parts.count 1) ∧
       (fun _ _ => Nat.zero_le _) (Finset.mem_univ p)
   exact ⟨h, (sum_count_one_eq_sum_card_toFinset 4) ▸ h⟩
 
+-- At threshold one, Elder's right-hand sum is the distinct-part sum in Stanley's theorem.
+example (n : ℕ) :
+    ∑ p : Nat.Partition n, p.parts.count 1 = ∑ p : Nat.Partition n, p.parts.toFinset.card := by
+  have h (p : Nat.Partition n) : p.parts.toFinset.filter (fun i => 1 ≤ p.parts.count i) =
+      p.parts.toFinset := by
+    apply Finset.filter_eq_self.mpr
+    intro i hi
+    exact Multiset.count_pos.mpr (Multiset.mem_toFinset.mp hi)
+  simpa only [h] using sum_count_eq_sum_card_parts_count_ge n 1 (by decide)
+
+-- At n = 4 and k = 2, 2+2 contributes two copies and 2+1+1 contributes one.
+example : 3 ≤ ∑ p : Nat.Partition 4, (p.parts.toFinset.filter fun i => 2 ≤ p.parts.count i).card := by
+  rw [← sum_count_eq_sum_card_parts_count_ge 4 2 (by decide)]
+  let p : Nat.Partition 4 := ⟨{2, 2}, by simp, by decide⟩
+  let q : Nat.Partition 4 := ⟨{2, 1, 1}, by simp, by decide⟩
+  have hp : p.parts.count 2 = 2 := by decide +kernel
+  have hq : q.parts.count 2 = 1 := by decide +kernel
+  have hpq : p ≠ q := by
+    intro h
+    rw [h, hq] at hp
+    contradiction
+  calc
+    3 = ∑ r ∈ ({p, q} : Finset (Nat.Partition 4)), r.parts.count 2 := by
+      rw [Finset.sum_pair hpq, hp, hq]
+    _ ≤ _ := Finset.sum_le_sum_of_subset (Finset.subset_univ _)
+
+-- No part of size two fits in a partition of one.
+example : (∑ p : Nat.Partition 1, (p.parts.toFinset.filter fun i => 2 ≤ p.parts.count i).card) = 0 := by
+  rw [← sum_count_eq_sum_card_parts_count_ge 1 2 (by decide)]
+  simp
+
 end MetaMathlibExt
 
 namespace MetaMathlibExt.nColor_evenParts_generatingFunction

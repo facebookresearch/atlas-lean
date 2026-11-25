@@ -81,6 +81,67 @@ public theorem sum_count_one_eq_sum_card_toFinset (n : ℕ) :
       (countBySize _).symm
     _ = _ := by simp only [distinctParts]
 
+open Finset in
+/-- **Elder's theorem.** Let $n$ and $k$ be natural numbers with $k \ge 1$. The total number of
+times the part $k$ occurs, counted with multiplicity, over all partitions of $n$ equals the sum,
+over all partitions $\lambda$ of $n$, of the number of distinct parts of $\lambda$ that occur at
+least $k$ times in $\lambda$.
+
+The hypothesis $k \ge 1$ is needed: for $k = 0$ and $n = 1$ the left side is $0$ and the right
+side is $1$.
+
+Source: Shruti Sharma and Amandeep Kaur, *Enumerating Parts of n-Color Partitions*,
+INTEGERS 25 (2025), Article A94, Theorem 2 (Elder's theorem). -/
+public theorem sum_count_eq_sum_card_parts_count_ge (n k : ℕ) (hk : 1 ≤ k) :
+    ∑ p : Nat.Partition n, p.parts.count k =
+      ∑ p : Nat.Partition n, (p.parts.toFinset.filter fun i => k ≤ p.parts.count i).card := by
+  have copies_le (p : Nat.Partition n) {v a : ℕ} (ha : a ≤ p.parts.count v) : a * v ≤ n := by
+    obtain ⟨t, ht⟩ := Multiset.le_iff_exists_add.mp (Multiset.le_count_iff_replicate_le.mp ha)
+    rw [← p.parts_sum, ht, Multiset.sum_add, Multiset.sum_replicate, smul_eq_mul]
+    exact Nat.le_add_right _ _
+  have countCopies (p : Nat.Partition n) :
+      ((Icc 1 n).filter (· ≤ p.parts.count k)).card = p.parts.count k := by
+    have hcount : p.parts.count k ≤ n :=
+      (Nat.le_mul_of_pos_right _ hk).trans (copies_le p le_rfl)
+    have h : (Icc 1 n).filter (· ≤ p.parts.count k) = Icc 1 (p.parts.count k) := by
+      ext m
+      simp only [mem_filter, mem_Icc]
+      exact ⟨fun hm => ⟨hm.1.1, hm.2⟩, fun hm => ⟨⟨hm.1, hm.2.trans hcount⟩, hm.2⟩⟩
+    rw [h, Nat.card_Icc, Nat.add_sub_cancel]
+  have countSizes (p : Nat.Partition n) :
+      (Icc 1 n).filter (fun m => k ≤ p.parts.count m) =
+        p.parts.toFinset.filter (fun m => k ≤ p.parts.count m) := by
+    ext m
+    simp only [mem_filter, mem_Icc, Multiset.mem_toFinset]
+    exact ⟨fun hm => ⟨Multiset.count_pos.mp (hk.trans hm.2), hm.2⟩,
+      fun hm => ⟨⟨p.parts_pos hm.1, p.le_of_mem_parts hm.1⟩, hm.2⟩⟩
+  have countBySize (P : Nat.Partition n → ℕ → Prop) [DecidableRel P] :
+      (∑ p : Nat.Partition n, ((Icc 1 n).filter (P p)).card) =
+        ∑ m ∈ Icc 1 n, Fintype.card {p : Nat.Partition n // P p m} := by
+    simp only [Fintype.card_subtype, card_eq_sum_ones, sum_filter]
+    exact sum_comm
+  calc
+    _ = ∑ p : Nat.Partition n, ((Icc 1 n).filter (· ≤ p.parts.count k)).card := by
+      simp only [countCopies]
+    _ = ∑ m ∈ Icc 1 n, Fintype.card {p : Nat.Partition n // m ≤ p.parts.count k} :=
+      countBySize _
+    _ = ∑ m ∈ Icc 1 n, Fintype.card {p : Nat.Partition n // k ≤ p.parts.count m} := by
+      refine sum_congr rfl fun m hm => ?_
+      have hm₁ := (mem_Icc.mp hm).1
+      -- Both removals take away the same total size: `m` copies of `k` or `k` copies of `m`.
+      by_cases hmk : m * k ≤ n
+      · have hkm : k * m ≤ n := by simpa only [mul_comm k m] using hmk
+        rw [Nat.Partition.card_count_ge hk hmk, Nat.Partition.card_count_ge hm₁ hkm, mul_comm m k]
+      · -- If that size exceeds `n`, neither set of partitions has a member.
+        let : IsEmpty {p : Nat.Partition n // m ≤ p.parts.count k} :=
+          ⟨fun p => hmk (copies_le p.1 p.2)⟩
+        let : IsEmpty {p : Nat.Partition n // k ≤ p.parts.count m} :=
+          ⟨fun p => hmk (by simpa only [mul_comm k m] using copies_le p.1 p.2)⟩
+        simp only [Fintype.card_of_isEmpty]
+    _ = ∑ p : Nat.Partition n, ((Icc 1 n).filter (fun m => k ≤ p.parts.count m)).card :=
+      (countBySize _).symm
+    _ = _ := by simp only [countSizes]
+
 @[expose] public section
 
 /-! ### `n`-color partitions
