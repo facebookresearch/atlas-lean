@@ -17,6 +17,7 @@ The pages below state all three criteria for time-invariant systems on finite-di
 ## Time-varying and discrete-time systems
 
 - [Gramian criterion for controllability of time-varying linear systems](gramian-criterion-time-varying.md)
+- [The reachable set from zero is the range of the controllability Gramian](reachable-set-equals-range-of-the-gramian.md)
 - [Reachability and null-controllability of discrete-time linear systems](kalman-rank-condition-discrete-time.md)
 
 ## Related topics

@@ -18,6 +18,13 @@ Every finite game has a mixed equilibrium ([Nash's theorem](nash-s-theorem/READM
 - [Blackwell approachability](blackwell-approachability/README.md)
 - [Adaptive heuristics](adaptive-heuristics/README.md)
 - [Mean field games](mean-field-games/README.md)
+- [Best-response (support) condition](best-response-condition.md)
+- [Explicit encoding and size of finite games](explicit-encoding-and-size-of-finite-games.md)
+- [Equilibrium search problems](equilibrium-search-problems.md)
+- [Equilibrium search is total and polynomially verifiable](equilibrium-search-is-total-and-polynomially-verifiable.md)
+- [Polynomial-time verification of (approximate) equilibria](polynomial-time-verification-of-equilibria.md)
+- [Optimal mixed strategy to commit to (two-player normal form)](optimal-mixed-strategy-to-commit-to.md)
+- [Commitment is worth at least any Nash equilibrium](commitment-is-worth-at-least-any-nash-equilibrium.md)
 
 ## Related topics
 

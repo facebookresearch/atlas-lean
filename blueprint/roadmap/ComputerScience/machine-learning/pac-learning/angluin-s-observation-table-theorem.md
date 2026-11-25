@@ -5,12 +5,9 @@ acceptor $M(S, E, T)$ constructed from the table is a well-defined deterministic
 consistent with $T$, and every other deterministic finite automaton consistent with $T$ that has at most
 as many states is isomorphic to $M(S, E, T)$.
 
-## Expansion
+## Depends on
 
-This node states a precise result. A good expansion adds a page for each of the following
-prerequisites and links it under the dependency sections below:
-
-- Statement prerequisite: Minimally adequate teacher and observation tables.
+- [Minimally adequate teacher and observation tables](exact-learning-from-queries/minimally-adequate-teacher-and-observation-tables.md)
 
 ## Sources
 

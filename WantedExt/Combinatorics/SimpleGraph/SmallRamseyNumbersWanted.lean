@@ -38,6 +38,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import MathlibExt.Combinatorics.SimpleGraph.RamseyFiveFiveLowerBound
+public import MathlibExt.Combinatorics.SimpleGraph.RamseyFourFour
 public import MathlibExt.Combinatorics.SimpleGraph.RamseyThreeFive
 
 @[expose] public section
@@ -59,14 +60,6 @@ is containment of `K_s` in `G` or of `K_t` in `Gᶜ`.
 `R(5,5) ≥ 43` is proved in `MathlibExt.Combinatorics.SimpleGraph.RamseyFiveFiveLowerBound`,
 which this module imports.
 -/
-
-/-- **The value of $R(4, 4)$.** The classical Ramsey number $R(4, 4)$ equals $18$.
-
-Source: R. E. Greenwood and A. M. Gleason, *Combinatorial relations and
-chromatic graphs*, Canad. J. Math. 7 (1955), 1–7; S. P. Radziszowski, *Small
-Ramsey Numbers*, Electron. J. Combin. Dynamic Survey DS1;
-listed in leansolving/SqueezeBench `SqueezeBench/Problems/Ramsey/README.md`. -/
-public theorem_wanted graphRamsey_four_four : graphRamsey 4 4 = 18
 
 /-- **The Angeltveit–McKay upper bound for $R(5, 5)$.** The classical Ramsey number
 $R(5, 5)$ is at most $46$.
